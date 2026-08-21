@@ -30,7 +30,7 @@ public class PartnerBalanceUpdater {
     /**
      * 重算指定往来单位的应收/应付余额缓存（按辅助账未核销本位币金额汇总，排除 SETTLED/CANCELLED）。
      */
-    public void refresh(Long partnerId) {
+    public void refresh(String partnerId) {
         if (partnerId == null) {
             return;
         }
@@ -43,7 +43,7 @@ public class PartnerBalanceUpdater {
         partner.setPayableBalance(sumOpen(partnerId, ErpFinConstants.DIRECTION_PAYABLE));
     }
 
-    protected BigDecimal sumOpen(Long partnerId, String direction) {
+    protected BigDecimal sumOpen(String partnerId, String direction) {
         IEntityDao<ErpFinArApItem> dao = daoProvider.daoFor(ErpFinArApItem.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("partnerId", partnerId));

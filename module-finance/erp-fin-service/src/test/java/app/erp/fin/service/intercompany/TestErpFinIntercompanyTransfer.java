@@ -57,7 +57,7 @@ public class TestErpFinIntercompanyTransfer extends JunitAutoTestCase {
 
     @Test
     public void testCrossLegalEntityGeneratesPairedVouchers() {
-        Long[] ids = seedReturn(() -> {
+        String[] ids = seedReturn(() -> {
             ErpMdOrganization companyA = seedOrganization("ORG-CA", "公司A", ErpFinConstants.ORG_TYPE_COMPANY, null);
             ErpMdOrganization companyB = seedOrganization("ORG-CB", "公司B", ErpFinConstants.ORG_TYPE_COMPANY, null);
             ErpMdWarehouse whA = seedWarehouse("WH-A", "仓库A", companyA.getId());
@@ -68,16 +68,16 @@ public class TestErpFinIntercompanyTransfer extends JunitAutoTestCase {
             seedSubject("1401", "内部采购成本");
             seedSubject("2202", "内部应付");
             seedOpenPeriod("2026-IC-7", 2026, 7);
-            return new Long[]{companyA.getId(), companyB.getId(), whA.getId(), whB.getId()};
+            return new String[]{companyA.getId(), companyB.getId(), whA.getId(), whB.getId()};
         });
         transferPriceResolver.invalidateCache();
-        Long companyAId = ids[0];
-        Long companyBId = ids[1];
-        Long whAId = ids[2];
-        Long whBId = ids[3];
+        String companyAId = ids[0];
+        String companyBId = ids[1];
+        String whAId = ids[2];
+        String whBId = ids[3];
 
-        List<Long> voucherIds = ormTemplate.runInSession(session ->
-                intercompanyTransferBiz.onTransferConfirmed(5001L, whAId, whBId,
+        List<String> voucherIds = ormTemplate.runInSession(session ->
+                intercompanyTransferBiz.onTransferConfirmed("5001", whAId, whBId,
                         LocalDate.of(2026, 7, 15), CTX));
 
         assertEquals(2, voucherIds.size(), "跨法人调拨应生成 2 条配对凭证（AR + AP）");
@@ -114,15 +114,15 @@ public class TestErpFinIntercompanyTransfer extends JunitAutoTestCase {
 
     @Test
     public void testSameLegalEntityNoVoucher() {
-        Long[] ids = seedReturn(() -> {
+        String[] ids = seedReturn(() -> {
             ErpMdOrganization companyC = seedOrganization("ORG-CC", "公司C", ErpFinConstants.ORG_TYPE_COMPANY, null);
             ErpMdWarehouse whC1 = seedWarehouse("WH-C1", "仓库C1", companyC.getId());
             ErpMdWarehouse whC2 = seedWarehouse("WH-C2", "仓库C2", companyC.getId());
-            return new Long[]{whC1.getId(), whC2.getId()};
+            return new String[]{whC1.getId(), whC2.getId()};
         });
 
-        List<Long> voucherIds = ormTemplate.runInSession(session ->
-                intercompanyTransferBiz.onTransferConfirmed(5002L, ids[0], ids[1],
+        List<String> voucherIds = ormTemplate.runInSession(session ->
+                intercompanyTransferBiz.onTransferConfirmed("5002", ids[0], ids[1],
                         LocalDate.of(2026, 7, 15), CTX));
 
         assertTrue(voucherIds.isEmpty(), "同法人调拨不应生成凭证");
@@ -132,7 +132,7 @@ public class TestErpFinIntercompanyTransfer extends JunitAutoTestCase {
 
     @Test
     public void testCrossLegalEntityPurchaseOrderGeneratesPairedVouchers() {
-        Long[] ids = seedReturn(() -> {
+        String[] ids = seedReturn(() -> {
             ErpMdOrganization seller = seedOrganization("ORG-PO-S", "卖方法人", ErpFinConstants.ORG_TYPE_COMPANY, null);
             ErpMdOrganization buyer = seedOrganization("ORG-PO-B", "买方法人", ErpFinConstants.ORG_TYPE_COMPANY, null);
             // 定价规则：fromOrg=seller(卖方) → toOrg=buyer(买方)，编码 intercompany 关系
@@ -142,15 +142,15 @@ public class TestErpFinIntercompanyTransfer extends JunitAutoTestCase {
             seedSubject("1401", "内部采购成本");
             seedSubject("2202", "内部应付");
             seedOpenPeriod("2026-IC-PO", 2026, 7);
-            return new Long[]{seller.getId(), buyer.getId()};
+            return new String[]{seller.getId(), buyer.getId()};
         });
         transferPriceResolver.invalidateCache();
-        Long sellerId = ids[0];
-        Long buyerId = ids[1];
+        String sellerId = ids[0];
+        String buyerId = ids[1];
 
-        List<Long> voucherIds = ormTemplate.runInSession(session ->
+        List<String> voucherIds = ormTemplate.runInSession(session ->
                 intercompanyTransferBiz.onTradeDocumentApproved(
-                        ErpFinConstants.INTERCOMPANY_DOC_TYPE_PURCHASE_ORDER, 7001L, "PO-TEST-1",
+                        ErpFinConstants.INTERCOMPANY_DOC_TYPE_PURCHASE_ORDER, "7001", "PO-TEST-1",
                         buyerId, new BigDecimal("1000"), LocalDate.of(2026, 7, 15), CTX));
 
         assertEquals(2, voucherIds.size(), "跨法人 PO approve 应生成 2 条配对凭证（AR + AP）");
@@ -168,7 +168,7 @@ public class TestErpFinIntercompanyTransfer extends JunitAutoTestCase {
 
     @Test
     public void testCrossLegalEntitySalesOrderGeneratesPairedVouchers() {
-        Long[] ids = seedReturn(() -> {
+        String[] ids = seedReturn(() -> {
             ErpMdOrganization seller = seedOrganization("ORG-SO-S", "卖方法人", ErpFinConstants.ORG_TYPE_COMPANY, null);
             ErpMdOrganization buyer = seedOrganization("ORG-SO-B", "买方法人", ErpFinConstants.ORG_TYPE_COMPANY, null);
             seedPricingRule(seller.getId(), buyer.getId());
@@ -177,15 +177,15 @@ public class TestErpFinIntercompanyTransfer extends JunitAutoTestCase {
             seedSubject("1401", "内部采购成本");
             seedSubject("2202", "内部应付");
             seedOpenPeriod("2026-IC-SO", 2026, 7);
-            return new Long[]{seller.getId(), buyer.getId()};
+            return new String[]{seller.getId(), buyer.getId()};
         });
         transferPriceResolver.invalidateCache();
-        Long sellerId = ids[0];
-        Long buyerId = ids[1];
+        String sellerId = ids[0];
+        String buyerId = ids[1];
 
-        List<Long> voucherIds = ormTemplate.runInSession(session ->
+        List<String> voucherIds = ormTemplate.runInSession(session ->
                 intercompanyTransferBiz.onTradeDocumentApproved(
-                        ErpFinConstants.INTERCOMPANY_DOC_TYPE_SALES_ORDER, 8001L, "SO-TEST-1",
+                        ErpFinConstants.INTERCOMPANY_DOC_TYPE_SALES_ORDER, "8001", "SO-TEST-1",
                         sellerId, new BigDecimal("2000"), LocalDate.of(2026, 7, 16), CTX));
 
         assertEquals(2, voucherIds.size(), "跨法人 SO approve 应生成 2 条配对凭证（AR + AP）");
@@ -200,7 +200,7 @@ public class TestErpFinIntercompanyTransfer extends JunitAutoTestCase {
 
     @Test
     public void testTradeDocumentReverseApproveRedLetters() {
-        Long[] ids = seedReturn(() -> {
+        String[] ids = seedReturn(() -> {
             ErpMdOrganization seller = seedOrganization("ORG-RV-S", "卖方法人", ErpFinConstants.ORG_TYPE_COMPANY, null);
             ErpMdOrganization buyer = seedOrganization("ORG-RV-B", "买方法人", ErpFinConstants.ORG_TYPE_COMPANY, null);
             seedPricingRule(seller.getId(), buyer.getId());
@@ -209,28 +209,28 @@ public class TestErpFinIntercompanyTransfer extends JunitAutoTestCase {
             seedSubject("1401", "内部采购成本");
             seedSubject("2202", "内部应付");
             seedOpenPeriod("2026-IC-RV", 2026, 7);
-            return new Long[]{seller.getId(), buyer.getId()};
+            return new String[]{seller.getId(), buyer.getId()};
         });
         transferPriceResolver.invalidateCache();
-        Long buyerId = ids[1];
+        String buyerId = ids[1];
 
         String docCode = "PO-REV-1";
-        List<Long> originalIds = ormTemplate.runInSession(session ->
+        List<String> originalIds = ormTemplate.runInSession(session ->
                 intercompanyTransferBiz.onTradeDocumentApproved(
-                        ErpFinConstants.INTERCOMPANY_DOC_TYPE_PURCHASE_ORDER, 9001L, docCode,
+                        ErpFinConstants.INTERCOMPANY_DOC_TYPE_PURCHASE_ORDER, "9001", docCode,
                         buyerId, new BigDecimal("500"), LocalDate.of(2026, 7, 17), CTX));
         assertEquals(2, originalIds.size(), "前置：approve 应生成 2 条配对凭证");
 
-        List<Long> reversalIds = ormTemplate.runInSession(session ->
+        List<String> reversalIds = ormTemplate.runInSession(session ->
                 intercompanyTransferBiz.onTradeDocumentReversed(
-                        ErpFinConstants.INTERCOMPANY_DOC_TYPE_PURCHASE_ORDER, 9001L, docCode, CTX));
+                        ErpFinConstants.INTERCOMPANY_DOC_TYPE_PURCHASE_ORDER, "9001", docCode, CTX));
         assertEquals(2, reversalIds.size(), "reverseApprove 应红冲 2 条配对凭证");
 
-        for (Long originalId : originalIds) {
+        for (String originalId : originalIds) {
             ErpFinVoucher original = daoProvider.daoFor(ErpFinVoucher.class).getEntityById(originalId);
             assertTrue(Boolean.TRUE.equals(original.getIsReversed()), "原凭证应标记 isReversed=true");
         }
-        for (Long reversalId : reversalIds) {
+        for (String reversalId : reversalIds) {
             ErpFinVoucher reversal = daoProvider.daoFor(ErpFinVoucher.class).getEntityById(reversalId);
             assertTrue(Boolean.TRUE.equals(reversal.getIsReversed()), "红冲凭证应 isReversed=true");
             assertTrue(reversal.getReversalOfVoucherId() != null, "红冲凭证应回链原凭证 reversalOfVoucherId");
@@ -239,21 +239,21 @@ public class TestErpFinIntercompanyTransfer extends JunitAutoTestCase {
 
     @Test
     public void testSameLegalEntityTradeDocumentNoVoucher() {
-        Long[] ids = seedReturn(() -> {
+        String[] ids = seedReturn(() -> {
             ErpMdOrganization solo = seedOrganization("ORG-SOLO", "单法人", ErpFinConstants.ORG_TYPE_COMPANY, null);
-            return new Long[]{solo.getId()};
+            return new String[]{solo.getId()};
         });
 
-        List<Long> voucherIds = ormTemplate.runInSession(session ->
+        List<String> voucherIds = ormTemplate.runInSession(session ->
                 intercompanyTransferBiz.onTradeDocumentApproved(
-                        ErpFinConstants.INTERCOMPANY_DOC_TYPE_PURCHASE_ORDER, 9101L, "PO-SOLO-1",
+                        ErpFinConstants.INTERCOMPANY_DOC_TYPE_PURCHASE_ORDER, "9101", "PO-SOLO-1",
                         ids[0], new BigDecimal("300"), LocalDate.of(2026, 7, 18), CTX));
         assertTrue(voucherIds.isEmpty(), "无定价规则（无对手方）的单法人订单不应生成 intercompany 凭证");
     }
 
     // ---------- trade-document 断言辅助 ----------
 
-    private void assertIntercompanyBillR(Long voucherId, String billType, String expectedBillCode) {
+    private void assertIntercompanyBillR(String voucherId, String billType, String expectedBillCode) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("voucherId", voucherId));
         q.addFilter(eq("billType", billType));
@@ -262,7 +262,7 @@ public class TestErpFinIntercompanyTransfer extends JunitAutoTestCase {
         assertEquals(expectedBillCode, links.get(0).getBillCode(), "业财回链 billCode 应为订单 code");
     }
 
-    private void assertVoucherBalanced(Long voucherId, BigDecimal expectedAmount) {
+    private void assertVoucherBalanced(String voucherId, BigDecimal expectedAmount) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("voucherId", voucherId));
         List<ErpFinVoucherLine> lines = daoProvider.daoFor(ErpFinVoucherLine.class).findAllByQuery(q);
@@ -283,7 +283,7 @@ public class TestErpFinIntercompanyTransfer extends JunitAutoTestCase {
         return ormTemplate.runInSession(session -> action.get());
     }
 
-    private ErpMdOrganization seedOrganization(String code, String name, String orgType, Long parentId) {
+    private ErpMdOrganization seedOrganization(String code, String name, String orgType, String parentId) {
         IEntityDao<ErpMdOrganization> dao = daoProvider.daoFor(ErpMdOrganization.class);
         ErpMdOrganization org = new ErpMdOrganization();
         org.setCode(code);
@@ -295,7 +295,7 @@ public class TestErpFinIntercompanyTransfer extends JunitAutoTestCase {
         return org;
     }
 
-    private ErpMdWarehouse seedWarehouse(String code, String name, Long orgId) {
+    private ErpMdWarehouse seedWarehouse(String code, String name, String orgId) {
         IEntityDao<ErpMdWarehouse> dao = daoProvider.daoFor(ErpMdWarehouse.class);
         ErpMdWarehouse wh = new ErpMdWarehouse();
         wh.setCode(code);
@@ -306,14 +306,14 @@ public class TestErpFinIntercompanyTransfer extends JunitAutoTestCase {
         return wh;
     }
 
-    private void seedPricingRule(Long fromOrgId, Long toOrgId) {
+    private void seedPricingRule(String fromOrgId, String toOrgId) {
         IEntityDao<app.erp.fin.dao.entity.ErpFinIntercompanyTransferPrice> dao =
                 daoProvider.daoFor(app.erp.fin.dao.entity.ErpFinIntercompanyTransferPrice.class);
         app.erp.fin.dao.entity.ErpFinIntercompanyTransferPrice rule =
                 new app.erp.fin.dao.entity.ErpFinIntercompanyTransferPrice();
         rule.setCode("TP-TEST-" + fromOrgId + "-" + toOrgId);
         rule.setName("测试定价规则");
-        rule.setOrgId(1L);
+        rule.setOrgId("1");
         rule.setFromOrgId(fromOrgId);
         rule.setToOrgId(toOrgId);
         rule.setPricingMethod(ErpFinConstants.TRANSFER_PRICING_NEGOTIATED);
@@ -340,7 +340,7 @@ public class TestErpFinIntercompanyTransfer extends JunitAutoTestCase {
         app.erp.fin.dao.entity.ErpFinAccountingPeriod p = new app.erp.fin.dao.entity.ErpFinAccountingPeriod();
         p.setCode(code);
         p.setName(code);
-        p.setOrgId(1L);
+        p.setOrgId("1");
         p.setYear(year);
         p.setMonth(month);
         p.setStartDate(LocalDate.of(year, month, 1));

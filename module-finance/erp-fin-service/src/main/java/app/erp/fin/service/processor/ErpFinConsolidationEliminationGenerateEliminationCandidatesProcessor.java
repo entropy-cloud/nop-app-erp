@@ -33,7 +33,7 @@ public class ErpFinConsolidationEliminationGenerateEliminationCandidatesProcesso
     @Inject
     IDaoProvider daoProvider;
 
-    public int generateEliminationCandidates(Long periodId, IServiceContext context) {
+    public int generateEliminationCandidates(String periodId, IServiceContext context) {
         if (!isEliminationEnabled()) {
             return 0;
         }

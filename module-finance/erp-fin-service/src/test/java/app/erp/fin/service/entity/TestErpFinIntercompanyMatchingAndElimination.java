@@ -51,16 +51,16 @@ public class TestErpFinIntercompanyMatchingAndElimination extends JunitAutoTestC
 
     @Test
     public void testRunMatchingIdentifiesMatchedPairs() {
-        Long[] ids = seedReturn(() -> {
-            Long periodId = seedOpenPeriod("2026-MATCH-1", 2026, 6);
+        String[] ids = seedReturn(() -> {
+            String periodId = seedOpenPeriod("2026-MATCH-1", 2026, 6);
             // 模拟跨公司配对凭证：SALE 凭证（orgId=1）+ PURCHASE 凭证（orgId=2），同一 billCode 配对，金额一致
-            seedIntercompanyVoucher(ErpFinConstants.INTERCOMPANY_SALE_BILL_TYPE, 1L, periodId,
+            seedIntercompanyVoucher(ErpFinConstants.INTERCOMPANY_SALE_BILL_TYPE, "1", periodId,
                     new BigDecimal("1000"), "TRANSFER-PAIR-1");
-            seedIntercompanyVoucher(ErpFinConstants.INTERCOMPANY_PURCHASE_BILL_TYPE, 2L, periodId,
+            seedIntercompanyVoucher(ErpFinConstants.INTERCOMPANY_PURCHASE_BILL_TYPE, "2", periodId,
                     new BigDecimal("1000"), "TRANSFER-PAIR-1");
-            return new Long[]{periodId};
+            return new String[]{periodId};
         });
-        Long periodId = ids[0];
+        String periodId = ids[0];
 
         int count = ormTemplate.runInSession(session ->
                 matchBiz.runMatching(periodId, CTX));
@@ -78,16 +78,16 @@ public class TestErpFinIntercompanyMatchingAndElimination extends JunitAutoTestC
 
     @Test
     public void testRunMatchingIdentifiesDiffPairs() {
-        Long[] ids = seedReturn(() -> {
-            Long periodId = seedOpenPeriod("2026-MATCH-2", 2026, 7);
+        String[] ids = seedReturn(() -> {
+            String periodId = seedOpenPeriod("2026-MATCH-2", 2026, 7);
             // 模拟金额不一致的配对：SALE=1000 vs PURCHASE=800 → DIFF，同一 billCode
-            seedIntercompanyVoucher(ErpFinConstants.INTERCOMPANY_SALE_BILL_TYPE, 1L, periodId,
+            seedIntercompanyVoucher(ErpFinConstants.INTERCOMPANY_SALE_BILL_TYPE, "1", periodId,
                     new BigDecimal("1000"), "TRANSFER-PAIR-2");
-            seedIntercompanyVoucher(ErpFinConstants.INTERCOMPANY_PURCHASE_BILL_TYPE, 2L, periodId,
+            seedIntercompanyVoucher(ErpFinConstants.INTERCOMPANY_PURCHASE_BILL_TYPE, "2", periodId,
                     new BigDecimal("800"), "TRANSFER-PAIR-2");
-            return new Long[]{periodId};
+            return new String[]{periodId};
         });
-        Long periodId = ids[0];
+        String periodId = ids[0];
 
         int count = ormTemplate.runInSession(session ->
                 matchBiz.runMatching(periodId, CTX));
@@ -106,13 +106,13 @@ public class TestErpFinIntercompanyMatchingAndElimination extends JunitAutoTestC
 
     @Test
     public void testCheckDualSideConsistencyReturnsReport() {
-        Long[] ids = seedReturn(() -> {
-            Long periodId = seedOpenPeriod("2026-MATCH-3", 2026, 8);
-            seedIntercompanyVoucher(ErpFinConstants.INTERCOMPANY_SALE_BILL_TYPE, 1L, periodId,
+        String[] ids = seedReturn(() -> {
+            String periodId = seedOpenPeriod("2026-MATCH-3", 2026, 8);
+            seedIntercompanyVoucher(ErpFinConstants.INTERCOMPANY_SALE_BILL_TYPE, "1", periodId,
                     new BigDecimal("500"), "TRANSFER-PAIR-3");
-            return new Long[]{periodId};
+            return new String[]{periodId};
         });
-        Long periodId = ids[0];
+        String periodId = ids[0];
 
         ormTemplate.runInSession(session -> matchBiz.runMatching(periodId, CTX));
 
@@ -123,15 +123,15 @@ public class TestErpFinIntercompanyMatchingAndElimination extends JunitAutoTestC
 
     @Test
     public void testGenerateEliminationCandidatesProducesCandidates() {
-        Long[] ids = seedReturn(() -> {
-            Long periodId = seedOpenPeriod("2026-ELIM-1", 2026, 9);
-            seedIntercompanyVoucher(ErpFinConstants.INTERCOMPANY_SALE_BILL_TYPE, 1L, periodId,
+        String[] ids = seedReturn(() -> {
+            String periodId = seedOpenPeriod("2026-ELIM-1", 2026, 9);
+            seedIntercompanyVoucher(ErpFinConstants.INTERCOMPANY_SALE_BILL_TYPE, "1", periodId,
                     new BigDecimal("3000"), "TRANSFER-PAIR-4");
-            seedIntercompanyVoucher(ErpFinConstants.INTERCOMPANY_PURCHASE_BILL_TYPE, 2L, periodId,
+            seedIntercompanyVoucher(ErpFinConstants.INTERCOMPANY_PURCHASE_BILL_TYPE, "2", periodId,
                     new BigDecimal("3000"), "TRANSFER-PAIR-4");
-            return new Long[]{periodId};
+            return new String[]{periodId};
         });
-        Long periodId = ids[0];
+        String periodId = ids[0];
 
         // 先配对
         ormTemplate.runInSession(session -> matchBiz.runMatching(periodId, CTX));
@@ -160,19 +160,19 @@ public class TestErpFinIntercompanyMatchingAndElimination extends JunitAutoTestC
 
     @Test
     public void testPostEliminationGeneratesDraftVoucher() {
-        Long[] ids = seedReturn(() -> {
-            Long periodId = seedOpenPeriod("2026-ELIM-2", 2026, 10);
-            seedIntercompanyVoucher(ErpFinConstants.INTERCOMPANY_SALE_BILL_TYPE, 1L, periodId,
+        String[] ids = seedReturn(() -> {
+            String periodId = seedOpenPeriod("2026-ELIM-2", 2026, 10);
+            seedIntercompanyVoucher(ErpFinConstants.INTERCOMPANY_SALE_BILL_TYPE, "1", periodId,
                     new BigDecimal("2000"), "TRANSFER-PAIR-5");
-            seedIntercompanyVoucher(ErpFinConstants.INTERCOMPANY_PURCHASE_BILL_TYPE, 2L, periodId,
+            seedIntercompanyVoucher(ErpFinConstants.INTERCOMPANY_PURCHASE_BILL_TYPE, "2", periodId,
                     new BigDecimal("2000"), "TRANSFER-PAIR-5");
             seedSubject("1131", "内部应收");
             seedSubject("2202", "内部应付");
             seedSubject("5001", "内部收入");
             seedSubject("1401", "内部成本");
-            return new Long[]{periodId};
+            return new String[]{periodId};
         });
-        Long periodId = ids[0];
+        String periodId = ids[0];
 
         ormTemplate.runInSession(session -> matchBiz.runMatching(periodId, CTX));
         ormTemplate.runInSession(session -> eliminationBiz.generateEliminationCandidates(periodId, CTX));
@@ -186,7 +186,7 @@ public class TestErpFinIntercompanyMatchingAndElimination extends JunitAutoTestC
                 daoProvider.daoFor(ErpFinConsolidationElimination.class).findAllByQuery(q);
         ErpFinConsolidationElimination candidate = candidates.get(0);
 
-        Long voucherId = ormTemplate.runInSession(session ->
+        String voucherId = ormTemplate.runInSession(session ->
                 eliminationBiz.postElimination(candidate.getId(), CTX));
         assertNotNull(voucherId, "应生成草稿抵消凭证");
 
@@ -207,15 +207,15 @@ public class TestErpFinIntercompanyMatchingAndElimination extends JunitAutoTestC
     /** P1-MA2-097：runMatching 填充 5 审计列（arOrgId/apOrgId/arSideVoucherId/apSideVoucherId/materialId）。 */
     @Test
     public void testRunMatchingFillsAuditColumns() {
-        Long[] ids = seedReturn(() -> {
-            Long periodId = seedOpenPeriod("2026-AUDIT-1", 2026, 11);
-            seedIntercompanyVoucherWithMaterial(ErpFinConstants.INTERCOMPANY_SALE_BILL_TYPE, 1L, periodId,
-                    new BigDecimal("1000"), "AUDIT-PAIR-1", 7777L);
-            seedIntercompanyVoucherWithMaterial(ErpFinConstants.INTERCOMPANY_PURCHASE_BILL_TYPE, 2L, periodId,
-                    new BigDecimal("1000"), "AUDIT-PAIR-1", 7777L);
-            return new Long[]{periodId};
+        String[] ids = seedReturn(() -> {
+            String periodId = seedOpenPeriod("2026-AUDIT-1", 2026, 11);
+            seedIntercompanyVoucherWithMaterial(ErpFinConstants.INTERCOMPANY_SALE_BILL_TYPE, "1", periodId,
+                    new BigDecimal("1000"), "AUDIT-PAIR-1", "7777");
+            seedIntercompanyVoucherWithMaterial(ErpFinConstants.INTERCOMPANY_PURCHASE_BILL_TYPE, "2", periodId,
+                    new BigDecimal("1000"), "AUDIT-PAIR-1", "7777");
+            return new String[]{periodId};
         });
-        Long periodId = ids[0];
+        String periodId = ids[0];
 
         ormTemplate.runInSession(session -> matchBiz.runMatching(periodId, CTX));
 
@@ -226,26 +226,26 @@ public class TestErpFinIntercompanyMatchingAndElimination extends JunitAutoTestC
                 daoProvider.daoFor(ErpFinIntercompanyMatch.class).findAllByQuery(q);
         assertEquals(1, records.size(), "应识别 1 条配对记录");
         ErpFinIntercompanyMatch m = records.get(0);
-        assertEquals(1L, m.getArOrgId(), "arOrgId = SALE 凭证组织 1");
-        assertEquals(2L, m.getApOrgId(), "apOrgId = PURCHASE 凭证组织 2");
+        assertEquals("1", m.getArOrgId(), "arOrgId = SALE 凭证组织 1");
+        assertEquals("2", m.getApOrgId(), "apOrgId = PURCHASE 凭证组织 2");
         assertNotNull(m.getArSideVoucherId(), "arSideVoucherId 已填充");
         assertNotNull(m.getApSideVoucherId(), "apSideVoucherId 已填充");
-        assertEquals(7777L, m.getMaterialId(), "materialId 从凭证行反查填充");
-        assertEquals(1L, m.getOrgId(), "配对记录归属 AR 侧组织（移除 hardcoded 1L 后按 arOrgId）");
+        assertEquals("7777", m.getMaterialId(), "materialId 从凭证行反查填充");
+        assertEquals("1", m.getOrgId(), "配对记录归属 AR 侧组织（移除 hardcoded 1L 后按 arOrgId）");
     }
 
     /** P1-MA2-098：重复 runMatching 幂等（前置去重，无重复 Match 行）。 */
     @Test
     public void testRunMatchingIsIdempotent() {
-        Long[] ids = seedReturn(() -> {
-            Long periodId = seedOpenPeriod("2026-IDEM-1", 2026, 12);
-            seedIntercompanyVoucher(ErpFinConstants.INTERCOMPANY_SALE_BILL_TYPE, 1L, periodId,
+        String[] ids = seedReturn(() -> {
+            String periodId = seedOpenPeriod("2026-IDEM-1", 2026, 12);
+            seedIntercompanyVoucher(ErpFinConstants.INTERCOMPANY_SALE_BILL_TYPE, "1", periodId,
                     new BigDecimal("1000"), "IDEM-PAIR-1");
-            seedIntercompanyVoucher(ErpFinConstants.INTERCOMPANY_PURCHASE_BILL_TYPE, 2L, periodId,
+            seedIntercompanyVoucher(ErpFinConstants.INTERCOMPANY_PURCHASE_BILL_TYPE, "2", periodId,
                     new BigDecimal("1000"), "IDEM-PAIR-1");
-            return new Long[]{periodId};
+            return new String[]{periodId};
         });
-        Long periodId = ids[0];
+        String periodId = ids[0];
 
         int first = ormTemplate.runInSession(session -> matchBiz.runMatching(periodId, CTX));
         int second = ormTemplate.runInSession(session -> matchBiz.runMatching(periodId, CTX));
@@ -264,17 +264,17 @@ public class TestErpFinIntercompanyMatchingAndElimination extends JunitAutoTestC
     /** P1-MA2-097：抵消候选设置 fromOrgId/toOrgId，草稿凭证 orgId per-pair。 */
     @Test
     public void testEliminationOrgPerPair() {
-        Long[] ids = seedReturn(() -> {
-            Long periodId = seedOpenPeriod("2026-ORG-1", 2027, 1);
-            seedIntercompanyVoucher(ErpFinConstants.INTERCOMPANY_SALE_BILL_TYPE, 3L, periodId,
+        String[] ids = seedReturn(() -> {
+            String periodId = seedOpenPeriod("2026-ORG-1", 2027, 1);
+            seedIntercompanyVoucher(ErpFinConstants.INTERCOMPANY_SALE_BILL_TYPE, "3", periodId,
                     new BigDecimal("500"), "ORG-PAIR-1");
-            seedIntercompanyVoucher(ErpFinConstants.INTERCOMPANY_PURCHASE_BILL_TYPE, 4L, periodId,
+            seedIntercompanyVoucher(ErpFinConstants.INTERCOMPANY_PURCHASE_BILL_TYPE, "4", periodId,
                     new BigDecimal("500"), "ORG-PAIR-1");
             seedSubject("1131", "内部应收");
             seedSubject("2202", "内部应付");
-            return new Long[]{periodId};
+            return new String[]{periodId};
         });
-        Long periodId = ids[0];
+        String periodId = ids[0];
 
         ormTemplate.runInSession(session -> matchBiz.runMatching(periodId, CTX));
         ormTemplate.runInSession(session -> eliminationBiz.generateEliminationCandidates(periodId, CTX));
@@ -285,14 +285,14 @@ public class TestErpFinIntercompanyMatchingAndElimination extends JunitAutoTestC
         q.setLimit(1);
         ErpFinConsolidationElimination candidate =
                 daoProvider.daoFor(ErpFinConsolidationElimination.class).findAllByQuery(q).get(0);
-        assertEquals(3L, candidate.getFromOrgId(), "fromOrgId = AR 侧组织 3");
-        assertEquals(4L, candidate.getToOrgId(), "toOrgId = AP 侧组织 4");
-        assertEquals(3L, candidate.getOrgId(), "候选归属 AR 侧组织 3（移除 hardcoded 1L）");
+        assertEquals("3", candidate.getFromOrgId(), "fromOrgId = AR 侧组织 3");
+        assertEquals("4", candidate.getToOrgId(), "toOrgId = AP 侧组织 4");
+        assertEquals("3", candidate.getOrgId(), "候选归属 AR 侧组织 3（移除 hardcoded 1L）");
 
-        Long voucherId = ormTemplate.runInSession(session ->
+        String voucherId = ormTemplate.runInSession(session ->
                 eliminationBiz.postElimination(candidate.getId(), CTX));
         ErpFinVoucher voucher = daoProvider.daoFor(ErpFinVoucher.class).getEntityById(voucherId);
-        assertEquals(3L, voucher.getOrgId(), "草稿抵消凭证 orgId per-pair = 候选组织 3");
+        assertEquals("3", voucher.getOrgId(), "草稿抵消凭证 orgId per-pair = 候选组织 3");
     }
 
     // ---------- helpers ----------
@@ -301,13 +301,13 @@ public class TestErpFinIntercompanyMatchingAndElimination extends JunitAutoTestC
         return ormTemplate.runInSession(session -> action.get());
     }
 
-    private Long seedOpenPeriod(String code, int year, int month) {
+    private String seedOpenPeriod(String code, int year, int month) {
         IEntityDao<app.erp.fin.dao.entity.ErpFinAccountingPeriod> dao =
                 daoProvider.daoFor(app.erp.fin.dao.entity.ErpFinAccountingPeriod.class);
         app.erp.fin.dao.entity.ErpFinAccountingPeriod p = new app.erp.fin.dao.entity.ErpFinAccountingPeriod();
         p.setCode(code);
         p.setName(code);
-        p.setOrgId(1L);
+        p.setOrgId("1");
         p.setYear(year);
         p.setMonth(month);
         p.setStartDate(java.time.LocalDate.of(year, month, 1));
@@ -317,13 +317,13 @@ public class TestErpFinIntercompanyMatchingAndElimination extends JunitAutoTestC
         return p.getId();
     }
 
-    private void seedIntercompanyVoucher(String billType, Long orgId, Long periodId, BigDecimal amount,
+    private void seedIntercompanyVoucher(String billType, String orgId, String periodId, BigDecimal amount,
                                          String billCode) {
         seedIntercompanyVoucherWithMaterial(billType, orgId, periodId, amount, billCode, null);
     }
 
-    private void seedIntercompanyVoucherWithMaterial(String billType, Long orgId, Long periodId, BigDecimal amount,
-                                                     String billCode, Long materialId) {
+    private void seedIntercompanyVoucherWithMaterial(String billType, String orgId, String periodId, BigDecimal amount,
+                                                     String billCode, String materialId) {
         IEntityDao<ErpFinVoucher> voucherDao = daoProvider.daoFor(ErpFinVoucher.class);
         IEntityDao<app.erp.fin.dao.entity.ErpFinVoucherBillR> billRDao =
                 daoProvider.daoFor(app.erp.fin.dao.entity.ErpFinVoucherBillR.class);
@@ -333,7 +333,7 @@ public class TestErpFinIntercompanyMatchingAndElimination extends JunitAutoTestC
         voucher.setVoucherType("TRANSFER");
         voucher.setVoucherDate(io.nop.api.core.time.CoreMetrics.today());
         voucher.setOrgId(orgId);
-        voucher.setAcctSchemaId(1L);
+        voucher.setAcctSchemaId("1");
         voucher.setPeriodId(periodId);
         voucher.setTotalDebit(amount);
         voucher.setTotalCredit(amount);
@@ -363,10 +363,10 @@ public class TestErpFinIntercompanyMatchingAndElimination extends JunitAutoTestC
             line.setDcDirection(ErpFinConstants.DC_DEBIT);
             line.setDebitAmount(amount);
             line.setCreditAmount(BigDecimal.ZERO);
-            line.setCurrencyId(1L);
+            line.setCurrencyId("1");
             line.setExchangeRate(BigDecimal.ONE);
             line.setAmountFunctional(amount);
-            line.setAcctSchemaId(1L);
+            line.setAcctSchemaId("1");
             line.setOrgId(orgId);
             line.setMaterialId(materialId);
             lineDao.saveEntity(line);

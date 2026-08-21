@@ -59,15 +59,15 @@ public class TestErpFinBudgetCommitment extends JunitAutoTestCase {
 
     @Test
     public void testCommitGeneratesCommitmentVoucher() {
-        Long[] ids = seedReturn(() -> {
-            Long pid = seedOpenPeriod("2024-CM-1", 2024, 6);
+        String[] ids = seedReturn(() -> {
+            String pid = seedOpenPeriod("2024-CM-1", 2024, 6);
             ErpMdSubject subject = seedSubject("1408", "承付占用科目", ErpFinConstants.SUBJECT_CLASS_EXPENSE, ErpFinConstants.DC_DEBIT);
-            return new Long[]{pid, subject.getId()};
+            return new String[]{pid, subject.getId()};
         });
-        Long periodId = ids[0];
-        Long subjectId = ids[1];
+        String periodId = ids[0];
+        String subjectId = ids[1];
 
-        Long voucherId = ormTemplate.runInSession(session ->
+        String voucherId = ormTemplate.runInSession(session ->
                 commitmentBiz.commit(ErpFinConstants.COMMITMENT_SOURCE_BILL_PURCHASE_ORDER, "PO-CM-001",
                         subjectId, null, periodId, new BigDecimal("500"), CTX));
 
@@ -89,22 +89,22 @@ public class TestErpFinBudgetCommitment extends JunitAutoTestCase {
 
     @Test
     public void testReleaseOnCancelReversesCommitment() {
-        Long[] ids = seedReturn(() -> {
-            Long pid = seedOpenPeriod("2024-CM-2", 2024, 7);
+        String[] ids = seedReturn(() -> {
+            String pid = seedOpenPeriod("2024-CM-2", 2024, 7);
             ErpMdSubject subject = seedSubject("1408", "承付占用科目", ErpFinConstants.SUBJECT_CLASS_EXPENSE, ErpFinConstants.DC_DEBIT);
-            return new Long[]{pid, subject.getId()};
+            return new String[]{pid, subject.getId()};
         });
-        Long periodId = ids[0];
-        Long subjectId = ids[1];
+        String periodId = ids[0];
+        String subjectId = ids[1];
 
         // 先 commit
-        Long originalId = ormTemplate.runInSession(session ->
+        String originalId = ormTemplate.runInSession(session ->
                 commitmentBiz.commit(ErpFinConstants.COMMITMENT_SOURCE_BILL_PURCHASE_ORDER, "PO-CM-002",
                         subjectId, null, periodId, new BigDecimal("300"), CTX));
         assertNotNull(originalId);
 
         // release（release-on-cancel 路径，与 release-on-invoice-approve 共用 SPI.release）
-        Long reversalId = ormTemplate.runInSession(session ->
+        String reversalId = ormTemplate.runInSession(session ->
                 commitmentBiz.release(ErpFinConstants.COMMITMENT_SOURCE_BILL_PURCHASE_ORDER, "PO-CM-002", CTX));
         assertNotNull(reversalId, "应生成红冲凭证 ID");
 
@@ -122,21 +122,21 @@ public class TestErpFinBudgetCommitment extends JunitAutoTestCase {
     public void testReleaseOnInvoiceApproveReversesCommitment() {
         // 与 release-on-cancel 共用 SPI.release（事务边界裁决：均 SYNC 同事务）。
         // 此测试断言 invoice-approve 路径的 release 行为 = cancel 路径行为。
-        Long[] ids = seedReturn(() -> {
-            Long pid = seedOpenPeriod("2024-CM-3", 2024, 8);
+        String[] ids = seedReturn(() -> {
+            String pid = seedOpenPeriod("2024-CM-3", 2024, 8);
             ErpMdSubject subject = seedSubject("1408", "承付占用科目", ErpFinConstants.SUBJECT_CLASS_EXPENSE, ErpFinConstants.DC_DEBIT);
-            return new Long[]{pid, subject.getId()};
+            return new String[]{pid, subject.getId()};
         });
-        Long periodId = ids[0];
-        Long subjectId = ids[1];
+        String periodId = ids[0];
+        String subjectId = ids[1];
 
-        Long originalId = ormTemplate.runInSession(session ->
+        String originalId = ormTemplate.runInSession(session ->
                 commitmentBiz.commit(ErpFinConstants.COMMITMENT_SOURCE_BILL_PURCHASE_ORDER, "PO-CM-003",
                         subjectId, null, periodId, new BigDecimal("700"), CTX));
         assertNotNull(originalId);
 
         // release（release-on-invoice-approve 路径，SPI 入口相同）
-        Long reversalId = ormTemplate.runInSession(session ->
+        String reversalId = ormTemplate.runInSession(session ->
                 commitmentBiz.release(ErpFinConstants.COMMITMENT_SOURCE_BILL_PURCHASE_ORDER, "PO-CM-003", CTX));
         assertNotNull(reversalId);
 
@@ -147,15 +147,15 @@ public class TestErpFinBudgetCommitment extends JunitAutoTestCase {
 
     @Test
     public void testDoubleReleaseThrowsGuard() {
-        Long[] ids = seedReturn(() -> {
-            Long pid = seedOpenPeriod("2024-CM-4", 2024, 9);
+        String[] ids = seedReturn(() -> {
+            String pid = seedOpenPeriod("2024-CM-4", 2024, 9);
             ErpMdSubject subject = seedSubject("1408", "承付占用科目", ErpFinConstants.SUBJECT_CLASS_EXPENSE, ErpFinConstants.DC_DEBIT);
-            return new Long[]{pid, subject.getId()};
+            return new String[]{pid, subject.getId()};
         });
-        Long periodId = ids[0];
-        Long subjectId = ids[1];
+        String periodId = ids[0];
+        String subjectId = ids[1];
 
-        Long originalId = ormTemplate.runInSession(session ->
+        String originalId = ormTemplate.runInSession(session ->
                 commitmentBiz.commit(ErpFinConstants.COMMITMENT_SOURCE_BILL_PURCHASE_ORDER, "PO-CM-004",
                         subjectId, null, periodId, new BigDecimal("200"), CTX));
         assertNotNull(originalId);
@@ -175,20 +175,20 @@ public class TestErpFinBudgetCommitment extends JunitAutoTestCase {
     public void testSalesCommitmentDispatchesSalesBillType() {
         // plan 2026-07-24-1351-3：sales 承付 sourceBillType=SALES_ORDER 派发 billType=SALES_ORDER_COMMITMENT，
         // 且与采购 billType=PURCHASE_ORDER_COMMITMENT lookup 不碰撞（同 billCode 不同 billType 隔离）。
-        Long[] ids = seedReturn(() -> {
-            Long pid = seedOpenPeriod("2024-CM-5", 2024, 10);
+        String[] ids = seedReturn(() -> {
+            String pid = seedOpenPeriod("2024-CM-5", 2024, 10);
             ErpMdSubject subject = seedSubject("6001", "销售承付收入预留科目",
                     ErpFinConstants.SUBJECT_CLASS_INCOME, ErpFinConstants.DC_CREDIT);
-            return new Long[]{pid, subject.getId()};
+            return new String[]{pid, subject.getId()};
         });
-        Long periodId = ids[0];
-        Long subjectId = ids[1];
+        String periodId = ids[0];
+        String subjectId = ids[1];
 
         // 同一 billCode 同时存在采购承付与销售承付（验证 billType 隔离）
         ormTemplate.runInSession(session ->
                 commitmentBiz.commit(ErpFinConstants.COMMITMENT_SOURCE_BILL_PURCHASE_ORDER, "MIXED-001",
                         subjectId, null, periodId, new BigDecimal("100"), CTX));
-        Long salesVoucherId = ormTemplate.runInSession(session ->
+        String salesVoucherId = ormTemplate.runInSession(session ->
                 commitmentBiz.commit(ErpFinConstants.COMMITMENT_SOURCE_BILL_SALES_ORDER, "MIXED-001",
                         subjectId, null, periodId, new BigDecimal("200"), CTX));
         assertNotNull(salesVoucherId, "sales 承付应生成凭证");
@@ -202,7 +202,7 @@ public class TestErpFinBudgetCommitment extends JunitAutoTestCase {
         assertEquals("MIXED-001", salesLinks.get(0).getBillCode());
 
         // release sales 承付不应影响采购承付（billType 隔离）
-        Long reversalId = ormTemplate.runInSession(session ->
+        String reversalId = ormTemplate.runInSession(session ->
                 commitmentBiz.release(ErpFinConstants.COMMITMENT_SOURCE_BILL_SALES_ORDER, "MIXED-001", CTX));
         assertNotNull(reversalId, "sales 承付 release 应成功");
 
@@ -210,7 +210,7 @@ public class TestErpFinBudgetCommitment extends JunitAutoTestCase {
         assertEquals(Boolean.TRUE, salesOriginal.getIsReversed(), "sales 原凭证应 isReversed=true");
 
         // 采购承付仍可独立 release（未被 sales release 误红冲）
-        Long purReversalId = ormTemplate.runInSession(session ->
+        String purReversalId = ormTemplate.runInSession(session ->
                 commitmentBiz.release(ErpFinConstants.COMMITMENT_SOURCE_BILL_PURCHASE_ORDER, "MIXED-001", CTX));
         assertNotNull(purReversalId, "采购承付 release 应成功（billType 隔离未被 sales release 影响）");
     }
@@ -220,22 +220,22 @@ public class TestErpFinBudgetCommitment extends JunitAutoTestCase {
         // P1-MA2-081 全额释放语义 + 多发票容错：一张 PO 多次部分开票时，首张发票 approve 全额释放承付，
         // 后续发票 approve 经容错守卫（ERR_BUDGET_COMMITMENT_ALREADY_RELEASED）跳过——实际占用产生时全额释放，
         // 避免 actual + commitment 双重占用。断言：仅一张红冲凭证 + 第二张发票 release 抛守卫异常（被 Processor 容错吞掉）。
-        Long[] ids = seedReturn(() -> {
-            Long pid = seedOpenPeriod("2024-CM-6", 2024, 11);
+        String[] ids = seedReturn(() -> {
+            String pid = seedOpenPeriod("2024-CM-6", 2024, 11);
             ErpMdSubject subject = seedSubject("1408", "承付占用科目", ErpFinConstants.SUBJECT_CLASS_EXPENSE, ErpFinConstants.DC_DEBIT);
-            return new Long[]{pid, subject.getId()};
+            return new String[]{pid, subject.getId()};
         });
-        Long periodId = ids[0];
-        Long subjectId = ids[1];
+        String periodId = ids[0];
+        String subjectId = ids[1];
 
         // PO approve → commit（全额）
-        Long originalId = ormTemplate.runInSession(session ->
+        String originalId = ormTemplate.runInSession(session ->
                 commitmentBiz.commit(ErpFinConstants.COMMITMENT_SOURCE_BILL_PURCHASE_ORDER, "PO-MULTI-INV",
                         subjectId, null, periodId, new BigDecimal("1000"), CTX));
         assertNotNull(originalId);
 
         // invoice1 approve → 全额 release（首张发票释放整张 PO 承付）
-        Long reversalId = ormTemplate.runInSession(session ->
+        String reversalId = ormTemplate.runInSession(session ->
                 commitmentBiz.release(ErpFinConstants.COMMITMENT_SOURCE_BILL_PURCHASE_ORDER, "PO-MULTI-INV", CTX));
         assertNotNull(reversalId, "首张发票 approve 应全额红冲承付");
 
@@ -279,12 +279,12 @@ public class TestErpFinBudgetCommitment extends JunitAutoTestCase {
         return ormTemplate.runInSession(session -> action.get());
     }
 
-    private Long seedOpenPeriod(String code, int year, int month) {
+    private String seedOpenPeriod(String code, int year, int month) {
         IEntityDao<ErpFinAccountingPeriod> dao = daoProvider.daoFor(ErpFinAccountingPeriod.class);
         ErpFinAccountingPeriod p = new ErpFinAccountingPeriod();
         p.setCode(code);
         p.setName(code);
-        p.setOrgId(1L);
+        p.setOrgId("1");
         p.setYear(year);
         p.setMonth(month);
         p.setStartDate(LocalDate.of(year, month, 1));

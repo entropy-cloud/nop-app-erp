@@ -1,0 +1,7 @@
+_chgType,ID,VOUCHER_ID,LINE_NO,SUBJECT_ID,SUBJECT_CODE,SUBJECT_NAME,DC_DIRECTION,DEBIT_AMOUNT,CREDIT_AMOUNT,CURRENCY_ID,EXCHANGE_RATE,AMOUNT_SOURCE,AMOUNT_FUNCTIONAL,ACCT_SCHEMA_ID,ORG_ID,MEMO,PARTNER_ID,DEPARTMENT_ID,PROJECT_ID,WAREHOUSE_ID,MATERIAL_ID,BUSINESS_TYPE,COST_CENTER_ID,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
+A,15,14,1,2,1001,库存现金,DEBIT,80,0,1,1,80,80,1,,,,,,,,,,@var:ErpFinVoucherLine@delVersion_1,0,autotest-ref,*,autotest-ref,*
+A,16,14,2,2,6001,主营业务收入,CREDIT,0,80,1,1,80,80,1,,,,,,,,,,@var:ErpFinVoucherLine@delVersion_1,0,autotest-ref,*,autotest-ref,*
+A,26,25,1,21,1012,其他货币资金,DEBIT,200,0,1,1,200,200,1,,,,,,,,,,@var:ErpFinVoucherLine@delVersion_1,0,autotest-ref,*,autotest-ref,*
+A,27,25,2,23,1601,固定资产,CREDIT,0,200,1,1,200,200,1,,,,,,,,,,@var:ErpFinVoucherLine@delVersion_1,0,autotest-ref,*,autotest-ref,*
+A,29,28,1,22,1031,存出保证金,CREDIT,0,50,1,1,50,50,1,,,,,,,,,,@var:ErpFinVoucherLine@delVersion_1,0,autotest-ref,*,autotest-ref,*
+A,30,28,2,24,5001,主营业务收入,DEBIT,50,0,1,1,50,50,1,,,,,,,,,,@var:ErpFinVoucherLine@delVersion_1,0,autotest-ref,*,autotest-ref,*

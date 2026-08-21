@@ -76,10 +76,10 @@ public class TestErpFinBadDebtReversal extends JunitAutoTestCase {
         // 反审核触发红冲凭证 voucherDate=今天，故 period 须覆盖今天（参 TestErpFinEmployeeAdvanceCashRepay.seedCurrentMonthOpenPeriod 范式）
         LocalDate today = io.nop.api.core.time.CoreMetrics.today();
         LocalDate asOf = today.minusDays(10);
-        Long[] holder = new Long[2];
+        String[] holder = new String[2];
         ormTemplate.runInSession(() -> {
-            Long pid = seedOpenPeriodCurrentMonth("2026-07");
-            seedCurrency(1L, "CNY", true);
+            String pid = seedOpenPeriodCurrentMonth("2026-07");
+            seedCurrency("1", "CNY", true);
             seedSubject("1231", "坏账准备", "ASSET", ErpFinConstants.DC_CREDIT);
             seedSubject("1122", "应收账款", "ASSET", ErpFinConstants.DC_DEBIT);
             ErpFinArApItem item = seedReceivable("AR-WO-REV-1", pid, asOf, "500");
@@ -89,7 +89,7 @@ public class TestErpFinBadDebtReversal extends JunitAutoTestCase {
 
         // 前置：writeOff approve 生成 BAD_DEBT_WRITE_OFF 凭证 + ArApItem WRITTEN_OFF（write-off-require-approval=false 自动审批）
         ErpFinBadDebt debt = ormTemplate.runInSession(session -> badDebtBiz.writeOff(holder[1], "客户破产", CTX));
-        Long originalVoucherId = debt.getVoucherId();
+        String originalVoucherId = debt.getVoucherId();
         assertNotNull(originalVoucherId, "前置：writeOff 生成原凭证");
 
         ErpFinVoucher originalVoucher = daoProvider.daoFor(ErpFinVoucher.class).requireEntityById(originalVoucherId);
@@ -112,7 +112,7 @@ public class TestErpFinBadDebtReversal extends JunitAutoTestCase {
         assertEquals(Boolean.TRUE, originalAfter.getIsReversed(), "原凭证 isReversed=true");
 
         // 红字凭证存在 + 同向取负（Dr 1231=-500 / Cr 1122=-500）
-        Long reversalVoucherId = findReversalVoucherId(debt.getCode());
+        String reversalVoucherId = findReversalVoucherId(debt.getCode());
         assertNotNull(reversalVoucherId, "红字凭证应生成");
         assertNotEquals(originalVoucherId, reversalVoucherId, "红字凭证 id ≠ 原凭证 id");
 
@@ -140,10 +140,10 @@ public class TestErpFinBadDebtReversal extends JunitAutoTestCase {
     public void testRecoveryReverseApproveRedReversesVoucherAndArApItem() {
         LocalDate today = io.nop.api.core.time.CoreMetrics.today();
         LocalDate asOf = today.minusDays(10);
-        Long[] holder = new Long[2];
+        String[] holder = new String[2];
         ormTemplate.runInSession(() -> {
-            Long pid = seedOpenPeriodCurrentMonth("2026-07-B");
-            seedCurrency(1L, "CNY", true);
+            String pid = seedOpenPeriodCurrentMonth("2026-07-B");
+            seedCurrency("1", "CNY", true);
             seedSubject("1231", "坏账准备", "ASSET", ErpFinConstants.DC_CREDIT);
             seedSubject("1122", "应收账款", "ASSET", ErpFinConstants.DC_DEBIT);
             ErpFinArApItem item = seedReceivable("AR-RC-REV-1", pid, asOf, "300");
@@ -154,7 +154,7 @@ public class TestErpFinBadDebtReversal extends JunitAutoTestCase {
         // 前置：writeOff + recover approve，ArApItem 现为 OPEN（recovery 反向应回到 WRITTEN_OFF）
         ormTemplate.runInSession(session -> badDebtBiz.writeOff(holder[1], "核销", CTX));
         ErpFinBadDebt recovery = ormTemplate.runInSession(session -> badDebtBiz.recover(holder[1], "事后回款", CTX));
-        Long originalVoucherId = recovery.getVoucherId();
+        String originalVoucherId = recovery.getVoucherId();
         assertNotNull(originalVoucherId, "前置：recovery 生成原凭证");
 
         ErpFinArApItem afterRecover = daoProvider.daoFor(ErpFinArApItem.class).getEntityById(holder[1]);
@@ -185,10 +185,10 @@ public class TestErpFinBadDebtReversal extends JunitAutoTestCase {
     public void testGuardNotPostedRejects() {
         LocalDate today = io.nop.api.core.time.CoreMetrics.today();
         LocalDate asOf = today.minusDays(10);
-        Long[] holder = new Long[2];
+        String[] holder = new String[2];
         ormTemplate.runInSession(() -> {
-            Long pid = seedOpenPeriodCurrentMonth("2026-07-C");
-            seedCurrency(1L, "CNY", true);
+            String pid = seedOpenPeriodCurrentMonth("2026-07-C");
+            seedCurrency("1", "CNY", true);
             seedSubject("1231", "坏账准备", "ASSET", ErpFinConstants.DC_CREDIT);
             seedSubject("1122", "应收账款", "ASSET", ErpFinConstants.DC_DEBIT);
             ErpFinArApItem item = seedReceivable("AR-NOPOST-1", pid, asOf, "200");
@@ -200,13 +200,13 @@ public class TestErpFinBadDebtReversal extends JunitAutoTestCase {
         ErpFinBadDebt unsubmitted = ormTemplate.runInSession(session -> {
             ErpFinBadDebt d = daoProvider.daoFor(ErpFinBadDebt.class).newEntity();
             d.setCode("BD-NOPOST-" + System.nanoTime());
-            d.setOrgId(1L);
-            d.setAcctSchemaId(1L);
+            d.setOrgId("1");
+            d.setAcctSchemaId("1");
             d.setDocType(ErpFinConstants.BAD_DEBT_TYPE_WRITE_OFF);
-            d.setPartnerId(1L);
+            d.setPartnerId("1");
             d.setSourceArApItemId(holder[1]);
             d.setAmount(new BigDecimal("200"));
-            d.setCurrencyId(1L);
+            d.setCurrencyId("1");
             d.setExchangeRate(BigDecimal.ONE);
             d.setBusinessDate(asOf);
             d.setApprovalStatus(ErpFinConstants.APPROVE_STATUS_UNSUBMITTED);
@@ -265,12 +265,12 @@ public class TestErpFinBadDebtReversal extends JunitAutoTestCase {
         return m;
     }
 
-    private Long seedOpenPeriod(String code, int year, int month, LocalDate start, LocalDate end) {
+    private String seedOpenPeriod(String code, int year, int month, LocalDate start, LocalDate end) {
         IEntityDao<ErpFinAccountingPeriod> dao = daoProvider.daoFor(ErpFinAccountingPeriod.class);
         ErpFinAccountingPeriod p = new ErpFinAccountingPeriod();
         p.setCode(code);
         p.setName(code);
-        p.setOrgId(1L);
+        p.setOrgId("1");
         p.setYear(year);
         p.setMonth(month);
         p.setStartDate(start);
@@ -284,13 +284,13 @@ public class TestErpFinBadDebtReversal extends JunitAutoTestCase {
      * Seed 当前月份的 OPEN 期间——反审核触发红冲凭证 voucherDate=today，过账引擎 resolveOpenPeriod 按
      * voucherDate 查找期间；须覆盖今天否则红冲失败（参 TestErpFinEmployeeAdvanceCashRepay 范式）。
      */
-    private Long seedOpenPeriodCurrentMonth(String code) {
+    private String seedOpenPeriodCurrentMonth(String code) {
         LocalDate today = io.nop.api.core.time.CoreMetrics.today();
         return seedOpenPeriod(code, today.getYear(), today.getMonthValue(),
                 today.withDayOfMonth(1), today.withDayOfMonth(today.lengthOfMonth()));
     }
 
-    private void seedCurrency(Long id, String code, boolean functional) {
+    private void seedCurrency(String id, String code, boolean functional) {
         IEntityDao<ErpMdCurrency> dao = daoProvider.daoFor(ErpMdCurrency.class);
         ErpMdCurrency c = new ErpMdCurrency();
         c.setId(id);
@@ -311,19 +311,19 @@ public class TestErpFinBadDebtReversal extends JunitAutoTestCase {
         dao.saveEntity(s);
     }
 
-    private ErpFinArApItem seedReceivable(String code, Long periodId, LocalDate businessDate, String amount) {
+    private ErpFinArApItem seedReceivable(String code, String periodId, LocalDate businessDate, String amount) {
         BigDecimal amt = new BigDecimal(amount);
         IEntityDao<ErpFinArApItem> dao = daoProvider.daoFor(ErpFinArApItem.class);
         ErpFinArApItem item = new ErpFinArApItem();
         item.setCode(code);
-        item.setOrgId(1L);
-        item.setAcctSchemaId(1L);
+        item.setOrgId("1");
+        item.setAcctSchemaId("1");
         item.setDirection(ErpFinConstants.DIRECTION_RECEIVABLE);
-        item.setPartnerId(1L);
+        item.setPartnerId("1");
         item.setSourceBillType(ErpFinConstants.SOURCE_BILL_AR_INVOICE);
         item.setSourceBillCode(code);
         item.setBusinessDate(businessDate);
-        item.setCurrencyId(1L);
+        item.setCurrencyId("1");
         item.setExchangeRate(BigDecimal.ONE);
         item.setAmountSource(amt);
         item.setAmountFunctional(amt);
@@ -337,7 +337,7 @@ public class TestErpFinBadDebtReversal extends JunitAutoTestCase {
         return item;
     }
 
-    private Long findReversalVoucherId(String billCode) {
+    private String findReversalVoucherId(String billCode) {
         // 经 ErpFinVoucherBillR 反查同 billCode 的所有 voucherId，取 postingType=REVERSAL 那张
         QueryBean linkQ = new QueryBean();
         linkQ.addFilter(eq("billCode", billCode));
@@ -352,7 +352,7 @@ public class TestErpFinBadDebtReversal extends JunitAutoTestCase {
         return null;
     }
 
-    private List<ErpFinVoucherLine> linesOf(Long voucherId) {
+    private List<ErpFinVoucherLine> linesOf(String voucherId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("voucherId", voucherId));
         return daoProvider.daoFor(ErpFinVoucherLine.class).findAllByQuery(q);

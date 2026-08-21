@@ -20,16 +20,16 @@
 
     <props>
         <prop name="id" displayName="ID" propId="1" i18n-en:displayName="ID" tagSet="seq-default" mandatory="true"
-              queryable="true" sortable="true" insertable="true" updatable="false" graphql:type="String">
-            <schema type="java.lang.Long"/>
+              queryable="true" sortable="true" insertable="true" updatable="false">
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="orgId" displayName="核算组织" propId="2" i18n-en:displayName="Organization" queryable="true"
               sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="fundAccountId" displayName="资金账户" propId="3" i18n-en:displayName="Fund Account" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="fundAccount">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="forecastDate" displayName="预测日期" propId="4" i18n-en:displayName="Forecast Date" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
@@ -49,7 +49,7 @@
         </prop>
         <prop name="partnerId" displayName="往来单位" propId="8" i18n-en:displayName="Partner" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="partner">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="amountSource" displayName="源币种金额" propId="9" i18n-en:displayName="Amt (Source)" queryable="true"
               sortable="true" insertable="true" updatable="true" defaultValue="0">

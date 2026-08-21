@@ -30,7 +30,7 @@ public class ErpFinCreditFacilityAccrueInterestProcessor {
     @Inject
     CreditFacilityInterestVoucherBuilder interestVoucherBuilder;
 
-    public Long accrueInterest(Long creditFacilityId, LocalDate fromDate, LocalDate toDate, IServiceContext context) {
+    public String accrueInterest(String creditFacilityId, LocalDate fromDate, LocalDate toDate, IServiceContext context) {
         ErpFinCreditFacility facility = requireFacility(creditFacilityId);
         if (fromDate == null || toDate == null || fromDate.isAfter(toDate)) {
             throw new NopException(ErpFinErrors.ERR_CREDIT_FACILITY_INTEREST_INVALID_DATE_RANGE)
@@ -57,7 +57,7 @@ public class ErpFinCreditFacilityAccrueInterestProcessor {
         return interestVoucherBuilder.post(facility, fromDate, toDate, interest, context);
     }
 
-    protected ErpFinCreditFacility requireFacility(Long creditFacilityId) {
+    protected ErpFinCreditFacility requireFacility(String creditFacilityId) {
         IEntityDao<ErpFinCreditFacility> dao = daoProvider.daoFor(ErpFinCreditFacility.class);
         ErpFinCreditFacility facility = dao.getEntityById(creditFacilityId);
         if (facility == null) {

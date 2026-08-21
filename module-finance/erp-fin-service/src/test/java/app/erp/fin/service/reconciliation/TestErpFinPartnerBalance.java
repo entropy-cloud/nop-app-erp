@@ -44,8 +44,8 @@ public class TestErpFinPartnerBalance extends JunitAutoTestCase {
 
     @Test
     public void testPayableBalanceDrivenByOpenAmount() {
-        long partner = 80L;
-        Long[] fixture = setupPayable(partner, new BigDecimal("200"), new BigDecimal("1000"));
+        String partner = "80";
+        String[] fixture = setupPayable(partner, new BigDecimal("200"), new BigDecimal("1000"));
 
         assertEquals(0, partner(partner).getPayableBalance().compareTo(BigDecimal.ZERO),
                 "核销前 partner 应付余额缓存为 0（仅核销触发重算）");
@@ -68,8 +68,8 @@ public class TestErpFinPartnerBalance extends JunitAutoTestCase {
 
     @Test
     public void testReceivableBalanceViaReconciliation() {
-        long partner = 81L;
-        Long[] fixture = setupReceivable(partner, new BigDecimal("500"), new BigDecimal("500"));
+        String partner = "81";
+        String[] fixture = setupReceivable(partner, new BigDecimal("500"), new BigDecimal("500"));
 
         ErpFinReconciliation head = ormTemplate.runInSession(session -> reconciliationBiz.create(
                 ErpFinConstants.DIRECTION_RECEIVABLE, partner, LocalDate.of(2026, 6, 20),
@@ -85,31 +85,31 @@ public class TestErpFinPartnerBalance extends JunitAutoTestCase {
     // ---------- helpers ----------
 
     /** 在 session 内建 partner + 付款项 + 发票项（应付方向），返回 [paymentItemId, invoiceItemId]。 */
-    private Long[] setupPayable(long partner, BigDecimal paymentAmt, BigDecimal invoiceAmt) {
+    private String[] setupPayable(String partner, BigDecimal paymentAmt, BigDecimal invoiceAmt) {
         return setup(partner, ErpFinConstants.DIRECTION_PAYABLE, "PAYMENT", "AP_INVOICE",
                 paymentAmt, invoiceAmt);
     }
 
-    private Long[] setupReceivable(long partner, BigDecimal receiptAmt, BigDecimal invoiceAmt) {
+    private String[] setupReceivable(String partner, BigDecimal receiptAmt, BigDecimal invoiceAmt) {
         return setup(partner, ErpFinConstants.DIRECTION_RECEIVABLE, "RECEIPT", "AR_INVOICE",
                 receiptAmt, invoiceAmt);
     }
 
-    private Long[] setup(long partner, String direction, String payBillType, String invBillType,
+    private String[] setup(String partner, String direction, String payBillType, String invBillType,
                          BigDecimal payAmt, BigDecimal invAmt) {
-        final Long[][] holder = new Long[1][];
+        final String[][] holder = new String[1][];
         ormTemplate.runInSession(() -> {
             seedPartner(partner);
             ErpFinArApItem pay = newItem(direction, partner, payBillType,
                     payBillType + "-" + partner, payAmt, LocalDate.of(2026, 6, 8));
             ErpFinArApItem inv = newItem(direction, partner, invBillType,
                     invBillType + "-" + partner, invAmt, LocalDate.of(2026, 6, 10));
-            holder[0] = new Long[]{pay.getId(), inv.getId()};
+            holder[0] = new String[]{pay.getId(), inv.getId()};
         });
         return holder[0];
     }
 
-    private void seedPartner(long partnerId) {
+    private void seedPartner(String partnerId) {
         IEntityDao<ErpMdPartner> dao = daoProvider.daoFor(ErpMdPartner.class);
         if (dao.getEntityById(partnerId) != null) {
             return;
@@ -125,19 +125,19 @@ public class TestErpFinPartnerBalance extends JunitAutoTestCase {
         dao.saveEntity(p);
     }
 
-    private ErpFinArApItem newItem(String direction, long partnerId, String sourceBillType, String sourceBillCode,
+    private ErpFinArApItem newItem(String direction, String partnerId, String sourceBillType, String sourceBillCode,
                                    BigDecimal amount, LocalDate businessDate) {
         IEntityDao<ErpFinArApItem> dao = daoProvider.daoFor(ErpFinArApItem.class);
         ErpFinArApItem item = dao.newEntity();
         item.setCode("ARI-" + sourceBillCode);
-        item.setOrgId(1L);
-        item.setAcctSchemaId(1L);
+        item.setOrgId("1");
+        item.setAcctSchemaId("1");
         item.setDirection(direction);
         item.setPartnerId(partnerId);
         item.setSourceBillType(sourceBillType);
         item.setSourceBillCode(sourceBillCode);
         item.setBusinessDate(businessDate);
-        item.setCurrencyId(1L);
+        item.setCurrencyId("1");
         item.setExchangeRate(BigDecimal.ONE);
         item.setAmountSource(amount);
         item.setAmountFunctional(amount);
@@ -150,7 +150,7 @@ public class TestErpFinPartnerBalance extends JunitAutoTestCase {
         return item;
     }
 
-    private ReconciliationLineInput line(Long paymentItemId, Long invoiceItemId, String amount) {
+    private ReconciliationLineInput line(String paymentItemId, String invoiceItemId, String amount) {
         BigDecimal amt = new BigDecimal(amount);
         ReconciliationLineInput in = new ReconciliationLineInput();
         in.setPaymentItemId(paymentItemId);
@@ -160,7 +160,7 @@ public class TestErpFinPartnerBalance extends JunitAutoTestCase {
         return in;
     }
 
-    private ErpMdPartner partner(long id) {
+    private ErpMdPartner partner(String id) {
         return daoProvider.daoFor(ErpMdPartner.class).getEntityById(id);
     }
 }

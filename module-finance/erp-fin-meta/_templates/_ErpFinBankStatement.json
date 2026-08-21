@@ -1,8 +1,8 @@
 {
-  "id": 0,
+  "id": "",
   "code": "",
-  "orgId": 0,
-  "fundAccountId": 0,
+  "orgId": "",
+  "fundAccountId": "",
   "statementDate": "2000-01-01",
   "beginningBalance": 0.0,
   "endingBalance": 0.0,

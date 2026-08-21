@@ -15,18 +15,18 @@ import java.math.BigDecimal;
  */
 public class BadDebtProvisionReversalResult {
 
-    private Long periodId;
+    private String periodId;
     private String periodCode;
     private int reversedReserveCount;
     private int reversedReleaseCount;
     private BigDecimal reversedReserveAmount = BigDecimal.ZERO;
     private BigDecimal reversedReleaseAmount = BigDecimal.ZERO;
 
-    public Long getPeriodId() {
+    public String getPeriodId() {
         return periodId;
     }
 
-    public void setPeriodId(Long periodId) {
+    public void setPeriodId(String periodId) {
         this.periodId = periodId;
     }
 

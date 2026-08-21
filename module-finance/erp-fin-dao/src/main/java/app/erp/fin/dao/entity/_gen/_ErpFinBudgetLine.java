@@ -248,46 +248,46 @@ public class _ErpFinBudgetLine extends DynamicOrmEntity{
 
     
     /* ID: ID */
-    private java.lang.Long _id;
+    private java.lang.String _id;
     
     /* 预算方案: SCENARIO_ID */
-    private java.lang.Long _scenarioId;
+    private java.lang.String _scenarioId;
     
     /* 行号: LINE_NO */
     private java.lang.Integer _lineNo;
     
     /* 核算组织: ORG_ID */
-    private java.lang.Long _orgId;
+    private java.lang.String _orgId;
     
     /* 账套: ACCT_SCHEMA_ID */
-    private java.lang.Long _acctSchemaId;
+    private java.lang.String _acctSchemaId;
     
     /* 会计期间: PERIOD_ID */
-    private java.lang.Long _periodId;
+    private java.lang.String _periodId;
     
     /* 预算科目: SUBJECT_ID */
-    private java.lang.Long _subjectId;
+    private java.lang.String _subjectId;
     
     /* 科目编码: SUBJECT_CODE */
     private java.lang.String _subjectCode;
     
     /* 成本中心: COST_CENTER_ID */
-    private java.lang.Long _costCenterId;
+    private java.lang.String _costCenterId;
     
     /* 辅助-部门: DEPARTMENT_ID */
-    private java.lang.Long _departmentId;
+    private java.lang.String _departmentId;
     
     /* 辅助-项目: PROJECT_ID */
     private java.lang.Long _projectId;
     
     /* 辅助-往来单位: PARTNER_ID */
-    private java.lang.Long _partnerId;
+    private java.lang.String _partnerId;
     
     /* 辅助-仓库: WAREHOUSE_ID */
-    private java.lang.Long _warehouseId;
+    private java.lang.String _warehouseId;
     
     /* 辅助-物料: MATERIAL_ID */
-    private java.lang.Long _materialId;
+    private java.lang.String _materialId;
     
     /* 预算金额(源币种): BUDGET_AMOUNT_SOURCE */
     private java.math.BigDecimal _budgetAmountSource;
@@ -296,7 +296,7 @@ public class _ErpFinBudgetLine extends DynamicOrmEntity{
     private java.math.BigDecimal _budgetAmountFunctional;
     
     /* 币种: CURRENCY_ID */
-    private java.lang.Long _currencyId;
+    private java.lang.String _currencyId;
     
     /* 汇率: EXCHANGE_RATE */
     private java.math.BigDecimal _exchangeRate;
@@ -483,9 +483,9 @@ public class _ErpFinBudgetLine extends DynamicOrmEntity{
         switch(propId){
         
             case PROP_ID_id:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_id));
                }
                setId(typedValue);
@@ -493,9 +493,9 @@ public class _ErpFinBudgetLine extends DynamicOrmEntity{
             }
         
             case PROP_ID_scenarioId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_scenarioId));
                }
                setScenarioId(typedValue);
@@ -513,9 +513,9 @@ public class _ErpFinBudgetLine extends DynamicOrmEntity{
             }
         
             case PROP_ID_orgId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_orgId));
                }
                setOrgId(typedValue);
@@ -523,9 +523,9 @@ public class _ErpFinBudgetLine extends DynamicOrmEntity{
             }
         
             case PROP_ID_acctSchemaId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_acctSchemaId));
                }
                setAcctSchemaId(typedValue);
@@ -533,9 +533,9 @@ public class _ErpFinBudgetLine extends DynamicOrmEntity{
             }
         
             case PROP_ID_periodId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_periodId));
                }
                setPeriodId(typedValue);
@@ -543,9 +543,9 @@ public class _ErpFinBudgetLine extends DynamicOrmEntity{
             }
         
             case PROP_ID_subjectId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_subjectId));
                }
                setSubjectId(typedValue);
@@ -563,9 +563,9 @@ public class _ErpFinBudgetLine extends DynamicOrmEntity{
             }
         
             case PROP_ID_costCenterId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_costCenterId));
                }
                setCostCenterId(typedValue);
@@ -573,9 +573,9 @@ public class _ErpFinBudgetLine extends DynamicOrmEntity{
             }
         
             case PROP_ID_departmentId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_departmentId));
                }
                setDepartmentId(typedValue);
@@ -593,9 +593,9 @@ public class _ErpFinBudgetLine extends DynamicOrmEntity{
             }
         
             case PROP_ID_partnerId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_partnerId));
                }
                setPartnerId(typedValue);
@@ -603,9 +603,9 @@ public class _ErpFinBudgetLine extends DynamicOrmEntity{
             }
         
             case PROP_ID_warehouseId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_warehouseId));
                }
                setWarehouseId(typedValue);
@@ -613,9 +613,9 @@ public class _ErpFinBudgetLine extends DynamicOrmEntity{
             }
         
             case PROP_ID_materialId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_materialId));
                }
                setMaterialId(typedValue);
@@ -643,9 +643,9 @@ public class _ErpFinBudgetLine extends DynamicOrmEntity{
             }
         
             case PROP_ID_currencyId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_currencyId));
                }
                setCurrencyId(typedValue);
@@ -743,14 +743,14 @@ public class _ErpFinBudgetLine extends DynamicOrmEntity{
         
             case PROP_ID_id:{
                onInitProp(propId);
-               this._id = (java.lang.Long)value;
+               this._id = (java.lang.String)value;
                orm_id(); // 如果是设置主键字段，则触发watcher
                break;
             }
         
             case PROP_ID_scenarioId:{
                onInitProp(propId);
-               this._scenarioId = (java.lang.Long)value;
+               this._scenarioId = (java.lang.String)value;
                
                break;
             }
@@ -764,28 +764,28 @@ public class _ErpFinBudgetLine extends DynamicOrmEntity{
         
             case PROP_ID_orgId:{
                onInitProp(propId);
-               this._orgId = (java.lang.Long)value;
+               this._orgId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_acctSchemaId:{
                onInitProp(propId);
-               this._acctSchemaId = (java.lang.Long)value;
+               this._acctSchemaId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_periodId:{
                onInitProp(propId);
-               this._periodId = (java.lang.Long)value;
+               this._periodId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_subjectId:{
                onInitProp(propId);
-               this._subjectId = (java.lang.Long)value;
+               this._subjectId = (java.lang.String)value;
                
                break;
             }
@@ -799,14 +799,14 @@ public class _ErpFinBudgetLine extends DynamicOrmEntity{
         
             case PROP_ID_costCenterId:{
                onInitProp(propId);
-               this._costCenterId = (java.lang.Long)value;
+               this._costCenterId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_departmentId:{
                onInitProp(propId);
-               this._departmentId = (java.lang.Long)value;
+               this._departmentId = (java.lang.String)value;
                
                break;
             }
@@ -820,21 +820,21 @@ public class _ErpFinBudgetLine extends DynamicOrmEntity{
         
             case PROP_ID_partnerId:{
                onInitProp(propId);
-               this._partnerId = (java.lang.Long)value;
+               this._partnerId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_warehouseId:{
                onInitProp(propId);
-               this._warehouseId = (java.lang.Long)value;
+               this._warehouseId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_materialId:{
                onInitProp(propId);
-               this._materialId = (java.lang.Long)value;
+               this._materialId = (java.lang.String)value;
                
                break;
             }
@@ -855,7 +855,7 @@ public class _ErpFinBudgetLine extends DynamicOrmEntity{
         
             case PROP_ID_currencyId:{
                onInitProp(propId);
-               this._currencyId = (java.lang.Long)value;
+               this._currencyId = (java.lang.String)value;
                
                break;
             }
@@ -925,7 +925,7 @@ public class _ErpFinBudgetLine extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final java.lang.Long getId(){
+    public final java.lang.String getId(){
          onPropGet(PROP_ID_id);
          return _id;
     }
@@ -933,7 +933,7 @@ public class _ErpFinBudgetLine extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final void setId(java.lang.Long value){
+    public final void setId(java.lang.String value){
         if(onPropSet(PROP_ID_id,value)){
             this._id = value;
             internalClearRefs(PROP_ID_id);
@@ -944,7 +944,7 @@ public class _ErpFinBudgetLine extends DynamicOrmEntity{
     /**
      * 预算方案: SCENARIO_ID
      */
-    public final java.lang.Long getScenarioId(){
+    public final java.lang.String getScenarioId(){
          onPropGet(PROP_ID_scenarioId);
          return _scenarioId;
     }
@@ -952,7 +952,7 @@ public class _ErpFinBudgetLine extends DynamicOrmEntity{
     /**
      * 预算方案: SCENARIO_ID
      */
-    public final void setScenarioId(java.lang.Long value){
+    public final void setScenarioId(java.lang.String value){
         if(onPropSet(PROP_ID_scenarioId,value)){
             this._scenarioId = value;
             internalClearRefs(PROP_ID_scenarioId);
@@ -982,7 +982,7 @@ public class _ErpFinBudgetLine extends DynamicOrmEntity{
     /**
      * 核算组织: ORG_ID
      */
-    public final java.lang.Long getOrgId(){
+    public final java.lang.String getOrgId(){
          onPropGet(PROP_ID_orgId);
          return _orgId;
     }
@@ -990,7 +990,7 @@ public class _ErpFinBudgetLine extends DynamicOrmEntity{
     /**
      * 核算组织: ORG_ID
      */
-    public final void setOrgId(java.lang.Long value){
+    public final void setOrgId(java.lang.String value){
         if(onPropSet(PROP_ID_orgId,value)){
             this._orgId = value;
             internalClearRefs(PROP_ID_orgId);
@@ -1001,7 +1001,7 @@ public class _ErpFinBudgetLine extends DynamicOrmEntity{
     /**
      * 账套: ACCT_SCHEMA_ID
      */
-    public final java.lang.Long getAcctSchemaId(){
+    public final java.lang.String getAcctSchemaId(){
          onPropGet(PROP_ID_acctSchemaId);
          return _acctSchemaId;
     }
@@ -1009,7 +1009,7 @@ public class _ErpFinBudgetLine extends DynamicOrmEntity{
     /**
      * 账套: ACCT_SCHEMA_ID
      */
-    public final void setAcctSchemaId(java.lang.Long value){
+    public final void setAcctSchemaId(java.lang.String value){
         if(onPropSet(PROP_ID_acctSchemaId,value)){
             this._acctSchemaId = value;
             internalClearRefs(PROP_ID_acctSchemaId);
@@ -1020,7 +1020,7 @@ public class _ErpFinBudgetLine extends DynamicOrmEntity{
     /**
      * 会计期间: PERIOD_ID
      */
-    public final java.lang.Long getPeriodId(){
+    public final java.lang.String getPeriodId(){
          onPropGet(PROP_ID_periodId);
          return _periodId;
     }
@@ -1028,7 +1028,7 @@ public class _ErpFinBudgetLine extends DynamicOrmEntity{
     /**
      * 会计期间: PERIOD_ID
      */
-    public final void setPeriodId(java.lang.Long value){
+    public final void setPeriodId(java.lang.String value){
         if(onPropSet(PROP_ID_periodId,value)){
             this._periodId = value;
             internalClearRefs(PROP_ID_periodId);
@@ -1039,7 +1039,7 @@ public class _ErpFinBudgetLine extends DynamicOrmEntity{
     /**
      * 预算科目: SUBJECT_ID
      */
-    public final java.lang.Long getSubjectId(){
+    public final java.lang.String getSubjectId(){
          onPropGet(PROP_ID_subjectId);
          return _subjectId;
     }
@@ -1047,7 +1047,7 @@ public class _ErpFinBudgetLine extends DynamicOrmEntity{
     /**
      * 预算科目: SUBJECT_ID
      */
-    public final void setSubjectId(java.lang.Long value){
+    public final void setSubjectId(java.lang.String value){
         if(onPropSet(PROP_ID_subjectId,value)){
             this._subjectId = value;
             internalClearRefs(PROP_ID_subjectId);
@@ -1077,7 +1077,7 @@ public class _ErpFinBudgetLine extends DynamicOrmEntity{
     /**
      * 成本中心: COST_CENTER_ID
      */
-    public final java.lang.Long getCostCenterId(){
+    public final java.lang.String getCostCenterId(){
          onPropGet(PROP_ID_costCenterId);
          return _costCenterId;
     }
@@ -1085,7 +1085,7 @@ public class _ErpFinBudgetLine extends DynamicOrmEntity{
     /**
      * 成本中心: COST_CENTER_ID
      */
-    public final void setCostCenterId(java.lang.Long value){
+    public final void setCostCenterId(java.lang.String value){
         if(onPropSet(PROP_ID_costCenterId,value)){
             this._costCenterId = value;
             internalClearRefs(PROP_ID_costCenterId);
@@ -1096,7 +1096,7 @@ public class _ErpFinBudgetLine extends DynamicOrmEntity{
     /**
      * 辅助-部门: DEPARTMENT_ID
      */
-    public final java.lang.Long getDepartmentId(){
+    public final java.lang.String getDepartmentId(){
          onPropGet(PROP_ID_departmentId);
          return _departmentId;
     }
@@ -1104,7 +1104,7 @@ public class _ErpFinBudgetLine extends DynamicOrmEntity{
     /**
      * 辅助-部门: DEPARTMENT_ID
      */
-    public final void setDepartmentId(java.lang.Long value){
+    public final void setDepartmentId(java.lang.String value){
         if(onPropSet(PROP_ID_departmentId,value)){
             this._departmentId = value;
             internalClearRefs(PROP_ID_departmentId);
@@ -1134,7 +1134,7 @@ public class _ErpFinBudgetLine extends DynamicOrmEntity{
     /**
      * 辅助-往来单位: PARTNER_ID
      */
-    public final java.lang.Long getPartnerId(){
+    public final java.lang.String getPartnerId(){
          onPropGet(PROP_ID_partnerId);
          return _partnerId;
     }
@@ -1142,7 +1142,7 @@ public class _ErpFinBudgetLine extends DynamicOrmEntity{
     /**
      * 辅助-往来单位: PARTNER_ID
      */
-    public final void setPartnerId(java.lang.Long value){
+    public final void setPartnerId(java.lang.String value){
         if(onPropSet(PROP_ID_partnerId,value)){
             this._partnerId = value;
             internalClearRefs(PROP_ID_partnerId);
@@ -1153,7 +1153,7 @@ public class _ErpFinBudgetLine extends DynamicOrmEntity{
     /**
      * 辅助-仓库: WAREHOUSE_ID
      */
-    public final java.lang.Long getWarehouseId(){
+    public final java.lang.String getWarehouseId(){
          onPropGet(PROP_ID_warehouseId);
          return _warehouseId;
     }
@@ -1161,7 +1161,7 @@ public class _ErpFinBudgetLine extends DynamicOrmEntity{
     /**
      * 辅助-仓库: WAREHOUSE_ID
      */
-    public final void setWarehouseId(java.lang.Long value){
+    public final void setWarehouseId(java.lang.String value){
         if(onPropSet(PROP_ID_warehouseId,value)){
             this._warehouseId = value;
             internalClearRefs(PROP_ID_warehouseId);
@@ -1172,7 +1172,7 @@ public class _ErpFinBudgetLine extends DynamicOrmEntity{
     /**
      * 辅助-物料: MATERIAL_ID
      */
-    public final java.lang.Long getMaterialId(){
+    public final java.lang.String getMaterialId(){
          onPropGet(PROP_ID_materialId);
          return _materialId;
     }
@@ -1180,7 +1180,7 @@ public class _ErpFinBudgetLine extends DynamicOrmEntity{
     /**
      * 辅助-物料: MATERIAL_ID
      */
-    public final void setMaterialId(java.lang.Long value){
+    public final void setMaterialId(java.lang.String value){
         if(onPropSet(PROP_ID_materialId,value)){
             this._materialId = value;
             internalClearRefs(PROP_ID_materialId);
@@ -1229,7 +1229,7 @@ public class _ErpFinBudgetLine extends DynamicOrmEntity{
     /**
      * 币种: CURRENCY_ID
      */
-    public final java.lang.Long getCurrencyId(){
+    public final java.lang.String getCurrencyId(){
          onPropGet(PROP_ID_currencyId);
          return _currencyId;
     }
@@ -1237,7 +1237,7 @@ public class _ErpFinBudgetLine extends DynamicOrmEntity{
     /**
      * 币种: CURRENCY_ID
      */
-    public final void setCurrencyId(java.lang.Long value){
+    public final void setCurrencyId(java.lang.String value){
         if(onPropSet(PROP_ID_currencyId,value)){
             this._currencyId = value;
             internalClearRefs(PROP_ID_currencyId);
@@ -1551,7 +1551,8 @@ public class _ErpFinBudgetLine extends DynamicOrmEntity{
            }else{
            internalSetRefEntity(PROP_NAME_project, refEntity,()->{
            
-                           this.setProjectId(refEntity.getId());
+                           this.orm_propValue(PROP_ID_projectId,
+                           refEntity.getId());
                        
            });
            }

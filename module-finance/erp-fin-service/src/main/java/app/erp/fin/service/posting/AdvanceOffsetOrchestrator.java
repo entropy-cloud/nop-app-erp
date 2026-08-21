@@ -59,7 +59,7 @@ public class AdvanceOffsetOrchestrator {
         if (payableItem == null) {
             return false;
         }
-        Long partnerId = payableItem.getPartnerId();
+        String partnerId = payableItem.getPartnerId();
         if (partnerId == null) {
             return false;
         }
@@ -113,7 +113,7 @@ public class AdvanceOffsetOrchestrator {
         // 红冲 SETTLE 凭证
         advanceDispatcher.reverseSettle(claim.getCode());
         // 恢复借款应收辅助账 open（按 settleAdvanceId 定位借款单 → 其应收辅助账）
-        Long advanceId = claim.getSettleAdvanceId();
+        String advanceId = claim.getSettleAdvanceId();
         ErpFinEmployeeAdvance advance = advanceId != null
                 ? daoProvider.daoFor(ErpFinEmployeeAdvance.class).getEntityById(advanceId) : null;
         if (advance != null) {
@@ -149,7 +149,7 @@ public class AdvanceOffsetOrchestrator {
         return items.isEmpty() ? null : items.get(0);
     }
 
-    private ErpFinArApItem findOldestOpenAdvanceItem(Long partnerId) {
+    private ErpFinArApItem findOldestOpenAdvanceItem(String partnerId) {
         IEntityDao<ErpFinArApItem> dao = daoProvider.daoFor(ErpFinArApItem.class);
         QueryBean q = new QueryBean();
         q.addFilter(and(

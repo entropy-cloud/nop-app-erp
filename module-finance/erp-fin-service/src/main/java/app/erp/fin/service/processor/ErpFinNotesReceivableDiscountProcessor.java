@@ -18,7 +18,7 @@ public class ErpFinNotesReceivableDiscountProcessor {
     @Inject
     ErpFinNotesReceivableProcessor facade;
 
-    public ErpFinNotesReceivable discount(Long notesId, LocalDate discountDate, Long bankId,
+    public ErpFinNotesReceivable discount(String notesId, LocalDate discountDate, String bankId,
                                           BigDecimal discountRate, BigDecimal exchangeRate, IServiceContext context) {
         ErpFinNotesReceivable note = facade.requireNote(notesId, context);
         facade.validateTransitionForDiscount(note, context);

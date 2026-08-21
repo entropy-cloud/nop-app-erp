@@ -40,9 +40,9 @@ import static io.nop.api.core.beans.FilterBeans.eq;
  *
  * <p>承载 writeOff/recovery 两类坏账事件（{@code bad-debt.md §步骤3 核销 / §步骤4a 恢复}）：
  * <ul>
- *   <li>{@link #writeOff(Long, String, IServiceContext)} 创建 WRITE_OFF 坏账单（金额 = 源 AR 辅助账项 openAmount）</li>
- *   <li>{@link #recover(Long, String, IServiceContext)} 创建 RECOVERY 坏账单（恢复已核销项）</li>
- *   <li>{@link #approve(Long, IServiceContext)} 审批通过后执行：变异 ArApItem（status/openAmount）+ 生成凭证</li>
+ *   <li>{@link #writeOff(String, String, IServiceContext)} 创建 WRITE_OFF 坏账单（金额 = 源 AR 辅助账项 openAmount）</li>
+ *   <li>{@link #recover(String, String, IServiceContext)} 创建 RECOVERY 坏账单（恢复已核销项）</li>
+ *   <li>{@link #approve(String, IServiceContext)} 审批通过后执行：变异 ArApItem（status/openAmount）+ 生成凭证</li>
  * </ul>
  *
  * <p>审批门控：{@code erp-fin.bad-debt-write-off-require-approval}（默认 true）时核销/恢复强制审批；
@@ -75,15 +75,15 @@ public class ErpFinBadDebtProcessor {
 
     // ===================== 审批状态机 =====================
 
-    public ErpFinBadDebt submit(Long badDebtId, IServiceContext context) {
+    public ErpFinBadDebt submit(String badDebtId, IServiceContext context) {
         return submitForApprovalProcessor.submitForApproval(String.valueOf(badDebtId), context);
     }
 
-    public ErpFinBadDebt approve(Long badDebtId, IServiceContext context) {
+    public ErpFinBadDebt approve(String badDebtId, IServiceContext context) {
         return approveProcessor.approve(String.valueOf(badDebtId), context);
     }
 
-    public ErpFinBadDebt reject(Long badDebtId, IServiceContext context) {
+    public ErpFinBadDebt reject(String badDebtId, IServiceContext context) {
         return rejectProcessor.reject(String.valueOf(badDebtId), context);
     }
 
@@ -102,7 +102,7 @@ public class ErpFinBadDebtProcessor {
      * 抛 NopException 触发事务回滚（强一致：要么全部回滚要么全部生效——比"字段先于凭证"范式更严格，
      * 因为反审核是补救路径不是用户主路径，需要强保证无残留半状态）。
      */
-    public ErpFinBadDebt reverseApprove(Long badDebtId, IServiceContext context) {
+    public ErpFinBadDebt reverseApprove(String badDebtId, IServiceContext context) {
         return reverseApproveProcessor.reverseApprove(String.valueOf(badDebtId), context);
     }
 
@@ -183,7 +183,7 @@ public class ErpFinBadDebtProcessor {
                         ErpFinConstants.DC_DEBIT, amount, item.getPartnerId()),
                 new Line(ar.getId(), ar.getCode(), ar.getName(),
                         ErpFinConstants.DC_CREDIT, amount, item.getPartnerId()));
-        Long voucherId = writeBadDebtVoucher(debt, item, ErpFinBusinessType.BAD_DEBT_WRITE_OFF, "坏账核销", lines);
+        String voucherId = writeBadDebtVoucher(debt, item, ErpFinBusinessType.BAD_DEBT_WRITE_OFF, "坏账核销", lines);
         debt.setVoucherId(voucherId);
     }
 
@@ -207,11 +207,11 @@ public class ErpFinBadDebtProcessor {
                         ErpFinConstants.DC_DEBIT, amount, item.getPartnerId()),
                 new Line(allowance.getId(), allowance.getCode(), allowance.getName(),
                         ErpFinConstants.DC_CREDIT, amount, item.getPartnerId()));
-        Long voucherId = writeBadDebtVoucher(debt, item, ErpFinBusinessType.BAD_DEBT_RECOVERY, "坏账收回恢复", lines);
+        String voucherId = writeBadDebtVoucher(debt, item, ErpFinBusinessType.BAD_DEBT_RECOVERY, "坏账收回恢复", lines);
         debt.setVoucherId(voucherId);
     }
 
-    protected Long writeBadDebtVoucher(ErpFinBadDebt debt, ErpFinArApItem item, ErpFinBusinessType businessType,
+    protected String writeBadDebtVoucher(ErpFinBadDebt debt, ErpFinArApItem item, ErpFinBusinessType businessType,
                                        String memo, List<Line> lines) {
         return CloseVoucherWriter.writeVoucher(daoProvider, "BD",
                 debt.getCode(), businessType.name(), businessType.name(),
@@ -262,7 +262,7 @@ public class ErpFinBadDebtProcessor {
 
     // ===================== 校验/查询辅助 =====================
 
-    protected ErpFinArApItem requireOpenArApItem(Long arApItemId) {
+    protected ErpFinArApItem requireOpenArApItem(String arApItemId) {
         ErpFinArApItem item = arApItemDao().getEntityById(arApItemId);
         if (item == null) {
             throw new NopException(ErpFinErrors.ERR_AR_AP_ITEM_NOT_FOUND).param(ErpFinErrors.ARG_ID, arApItemId);
@@ -280,7 +280,7 @@ public class ErpFinBadDebtProcessor {
         return item;
     }
 
-    protected ErpFinArApItem requireWrittenOffArApItem(Long arApItemId) {
+    protected ErpFinArApItem requireWrittenOffArApItem(String arApItemId) {
         ErpFinArApItem item = arApItemDao().getEntityById(arApItemId);
         if (item == null) {
             throw new NopException(ErpFinErrors.ERR_AR_AP_ITEM_NOT_FOUND).param(ErpFinErrors.ARG_ID, arApItemId);
@@ -303,7 +303,7 @@ public class ErpFinBadDebtProcessor {
         }
     }
 
-    protected ErpFinBadDebt requireBadDebt(Long badDebtId) {
+    protected ErpFinBadDebt requireBadDebt(String badDebtId) {
         ErpFinBadDebt debt = badDebtDao().getEntityById(badDebtId);
         if (debt == null) {
             throw new NopException(ErpFinErrors.ERR_BAD_DEBT_NOT_FOUND).param(ErpFinErrors.ARG_BAD_DEBT_ID, badDebtId);
@@ -311,7 +311,7 @@ public class ErpFinBadDebtProcessor {
         return debt;
     }
 
-    protected ErpFinArApItem loadArApItem(Long arApItemId) {
+    protected ErpFinArApItem loadArApItem(String arApItemId) {
         return arApItemDao().getEntityById(arApItemId);
     }
 

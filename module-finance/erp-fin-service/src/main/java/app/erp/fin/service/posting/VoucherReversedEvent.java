@@ -14,9 +14,9 @@ package app.erp.fin.service.posting;
 public class VoucherReversedEvent {
 
     /** 红字凭证 ID */
-    private Long voucherId;
+    private String voucherId;
     /** 被冲销的原凭证 ID */
-    private Long reversalOfVoucherId;
+    private String reversalOfVoucherId;
     /** 关联的业务单据号（经业财回链反查） */
     private String billHeadCode;
     /** 业务类型（路由回退逻辑用，对应 {@link app.erp.fin.dao.ErpFinBusinessType} 枚举名） */
@@ -26,19 +26,19 @@ public class VoucherReversedEvent {
     /** 端到端追踪 ID（见 posting-log.md） */
     private String traceId;
 
-    public Long getVoucherId() {
+    public String getVoucherId() {
         return voucherId;
     }
 
-    public void setVoucherId(Long voucherId) {
+    public void setVoucherId(String voucherId) {
         this.voucherId = voucherId;
     }
 
-    public Long getReversalOfVoucherId() {
+    public String getReversalOfVoucherId() {
         return reversalOfVoucherId;
     }
 
-    public void setReversalOfVoucherId(Long reversalOfVoucherId) {
+    public void setReversalOfVoucherId(String reversalOfVoucherId) {
         this.reversalOfVoucherId = reversalOfVoucherId;
     }
 

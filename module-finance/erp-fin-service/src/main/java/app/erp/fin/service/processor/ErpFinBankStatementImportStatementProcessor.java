@@ -18,7 +18,7 @@ public class ErpFinBankStatementImportStatementProcessor {
     @Inject
     BankStatementImporter bankStatementImporter;
 
-    public ErpFinBankStatement importStatement(Long fundAccountId, LocalDate statementDate,
+    public ErpFinBankStatement importStatement(String fundAccountId, LocalDate statementDate,
                                                List<BankStatementLineInput> lines, IServiceContext context) {
         return bankStatementImporter.importStatement(fundAccountId, statementDate, lines);
     }

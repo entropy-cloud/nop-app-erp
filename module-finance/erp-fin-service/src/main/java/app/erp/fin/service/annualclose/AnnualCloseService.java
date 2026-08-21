@@ -72,18 +72,18 @@ public class AnnualCloseService {
      * @param period          年末期间（12 月）
      * @param nextYearPeriods 次年已生成的期间列表（用于 populate 年初余额，可为空——此时仅做结转不 populate）
      */
-    public Long executeAnnualClose(ErpFinAccountingPeriod period, IServiceContext context) {
-        Long primarySchemaId = resolveAcctSchemaId(period.getId());
-        List<Long> schemas = schemaPropagator.resolveTargetSchemas(period.getOrgId(), primarySchemaId);
-        Long lastVoucherId = null;
-        for (Long schemaId : schemas) {
+    public String executeAnnualClose(ErpFinAccountingPeriod period, IServiceContext context) {
+        String primarySchemaId = resolveAcctSchemaId(period.getId());
+        List<String> schemas = schemaPropagator.resolveTargetSchemas(period.getOrgId(), primarySchemaId);
+        String lastVoucherId = null;
+        for (String schemaId : schemas) {
             lastVoucherId = executeAnnualCloseForSchema(period, schemaId, context);
         }
         return lastVoucherId;
     }
 
-    private Long executeAnnualCloseForSchema(ErpFinAccountingPeriod period, Long acctSchemaId, IServiceContext context) {
-        Long voucherId = transferProfitToRetainedEarnings(period, acctSchemaId);
+    private String executeAnnualCloseForSchema(ErpFinAccountingPeriod period, String acctSchemaId, IServiceContext context) {
+        String voucherId = transferProfitToRetainedEarnings(period, acctSchemaId);
         populateNextYearOpening(period, acctSchemaId);
         return voucherId;
     }
@@ -92,7 +92,7 @@ public class AnnualCloseService {
      * 本年利润科目余额 → 未分配利润科目结转（{@code period-close.md §年度结转规则} 步骤3）。
      * 聚合本年所有期间的本年利润科目净余额，生成 PROFIT_TO_RETAINED_EARNINGS 凭证使本年利润清零。
      */
-    public Long transferProfitToRetainedEarnings(ErpFinAccountingPeriod period, Long acctSchemaId) {
+    public String transferProfitToRetainedEarnings(ErpFinAccountingPeriod period, String acctSchemaId) {
         Integer year = period.getYear();
         if (year == null) {
             return null;
@@ -122,7 +122,7 @@ public class AnnualCloseService {
                     ErpFinConstants.DC_CREDIT, abs, null));
         }
 
-        Long functionalCurrencyId = resolveFunctionalCurrencyId();
+        String functionalCurrencyId = resolveFunctionalCurrencyId();
         return CloseVoucherWriter.writeVoucher(daoProvider, "ACY", BILL_CODE_PREFIX + period.getCode(),
                 ErpFinBusinessType.PROFIT_TO_RETAINED_EARNINGS.name(),
                 ErpFinBusinessType.PROFIT_TO_RETAINED_EARNINGS.name(),
@@ -135,7 +135,7 @@ public class AnnualCloseService {
      * 取本年各科目年末净余额（贷/借），写入次年 1 月 GlBalance.yearOpening{Debit,Credit}。
      * 次年 1 月期间不存在时跳过（由 closePeriod 在调用前确保 generateNextYearPeriods 已执行）。
      */
-    public void populateNextYearOpening(ErpFinAccountingPeriod period, Long acctSchemaId) {
+    public void populateNextYearOpening(ErpFinAccountingPeriod period, String acctSchemaId) {
         Integer year = period.getYear();
         if (year == null) {
             return;
@@ -145,10 +145,10 @@ public class AnnualCloseService {
             // 次年期间未创建（config 关闭自动创建或手工未建），年初余额 populate 跳过，不阻断结转。
             return;
         }
-        Long functionalCurrencyId = resolveFunctionalCurrencyId();
+        String functionalCurrencyId = resolveFunctionalCurrencyId();
 
         // 本年各科目净余额：按科目聚合 debit/credit。
-        Map<Long, SubjectYearAgg> agg = aggregateYearSubjectActivity(year);
+        Map<String, SubjectYearAgg> agg = aggregateYearSubjectActivity(year);
         if (agg.isEmpty()) {
             return;
         }
@@ -274,8 +274,8 @@ public class AnnualCloseService {
 
     // ===================== helpers =====================
 
-    private BigDecimal subjectNetForYear(Long subjectId, int year) {
-        List<Long> voucherIds = findYearPostedVoucherIds(year);
+    private BigDecimal subjectNetForYear(String subjectId, int year) {
+        List<String> voucherIds = findYearPostedVoucherIds(year);
         if (voucherIds.isEmpty()) {
             return BigDecimal.ZERO;
         }
@@ -291,9 +291,9 @@ public class AnnualCloseService {
         return credit.subtract(debit);
     }
 
-    private Map<Long, SubjectYearAgg> aggregateYearSubjectActivity(int year) {
-        List<Long> voucherIds = findYearPostedVoucherIds(year);
-        Map<Long, SubjectYearAgg> agg = new LinkedHashMap<>();
+    private Map<String, SubjectYearAgg> aggregateYearSubjectActivity(int year) {
+        List<String> voucherIds = findYearPostedVoucherIds(year);
+        Map<String, SubjectYearAgg> agg = new LinkedHashMap<>();
         if (voucherIds.isEmpty()) {
             return agg;
         }
@@ -317,12 +317,12 @@ public class AnnualCloseService {
         return agg;
     }
 
-    private List<Long> findYearPostedVoucherIds(int year) {
+    private List<String> findYearPostedVoucherIds(int year) {
         // 经期间表关联本年所有期间，再取这些期间内已过账非红冲凭证。
         IEntityDao<ErpFinAccountingPeriod> pDao = daoProvider.daoFor(ErpFinAccountingPeriod.class);
         QueryBean pq = new QueryBean();
         pq.addFilter(eq("year", year));
-        List<Long> periodIds = new ArrayList<>();
+        List<String> periodIds = new ArrayList<>();
         for (ErpFinAccountingPeriod p : pDao.findAllByQuery(pq)) {
             if (p.getId() != null) {
                 periodIds.add(p.getId());
@@ -340,14 +340,14 @@ public class AnnualCloseService {
         vq.addFilter(or(isNull("postingType"),
                 notIn("postingType", java.util.Arrays.asList(
                         ErpFinConstants.POSTING_TYPE_BUDGET, ErpFinConstants.POSTING_TYPE_COMMITMENT))));
-        List<Long> ids = new ArrayList<>();
+        List<String> ids = new ArrayList<>();
         for (ErpFinVoucher v : vDao.findAllByQuery(vq)) {
             ids.add(v.getId());
         }
         return ids;
     }
 
-    private ErpFinAccountingPeriod findNextYearJanuaryPeriod(int nextYear, Long orgId) {
+    private ErpFinAccountingPeriod findNextYearJanuaryPeriod(int nextYear, String orgId) {
         IEntityDao<ErpFinAccountingPeriod> dao = daoProvider.daoFor(ErpFinAccountingPeriod.class);
         QueryBean q = new QueryBean();
         q.addFilter(and(eq("year", nextYear), eq("month", 1)));
@@ -378,11 +378,11 @@ public class AnnualCloseService {
         return list.isEmpty() ? null : list.get(0);
     }
 
-    private Long resolveAcctSchemaId(Long periodId) {
+    private String resolveAcctSchemaId(String periodId) {
         ErpFinAccountingPeriod period = daoProvider.daoFor(ErpFinAccountingPeriod.class).getEntityById(periodId);
-        Long orgId = period != null ? period.getOrgId() : null;
+        String orgId = period != null ? period.getOrgId() : null;
         if (orgId != null) {
-            Long schemaId = AcctSchemaResolver.resolvePrimarySchemaId(daoProvider, orgId);
+            String schemaId = AcctSchemaResolver.resolvePrimarySchemaId(daoProvider, orgId);
             if (schemaId != null) {
                 return schemaId;
             }
@@ -395,10 +395,10 @@ public class AnnualCloseService {
         if (!list.isEmpty() && list.get(0).getAcctSchemaId() != null) {
             return list.get(0).getAcctSchemaId();
         }
-        return 1L;
+        return "1";
     }
 
-    private Long resolveFunctionalCurrencyId() {
+    private String resolveFunctionalCurrencyId() {
         IEntityDao<ErpMdCurrency> dao = daoProvider.daoFor(ErpMdCurrency.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("isFunctional", Boolean.TRUE));
@@ -407,15 +407,15 @@ public class AnnualCloseService {
         if (!list.isEmpty()) {
             return list.get(0).getId();
         }
-        return 1L;
+        return "1";
     }
 
     private static final class SubjectYearAgg {
-        final Long subjectId;
+        final String subjectId;
         BigDecimal debit = BigDecimal.ZERO;
         BigDecimal credit = BigDecimal.ZERO;
 
-        SubjectYearAgg(Long subjectId) {
+        SubjectYearAgg(String subjectId) {
             this.subjectId = subjectId;
         }
     }

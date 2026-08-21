@@ -26,7 +26,7 @@ public interface IErpFinTransferPriceResolver {
      * @param businessDate  业务日期（用于 validFrom/validTo 有效期匹配，C3 MUTEX 语义）
      * @return 命中规则并计算后的定价结果；空匹配返回 {@code null}（保留 Provider fallback）
      */
-    TransferPriceResult resolvePrice(Long fromOrgId, Long toOrgId, Long materialId,
+    TransferPriceResult resolvePrice(String fromOrgId, String toOrgId, String materialId,
                                      java.time.LocalDate businessDate);
 
     /**

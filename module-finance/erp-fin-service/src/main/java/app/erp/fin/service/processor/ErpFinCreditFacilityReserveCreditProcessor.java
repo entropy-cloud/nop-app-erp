@@ -21,7 +21,7 @@ public class ErpFinCreditFacilityReserveCreditProcessor {
     @Inject
     IDaoProvider daoProvider;
 
-    public ErpFinCreditFacility reserveCredit(Long creditFacilityId, BigDecimal amount, IServiceContext context) {
+    public ErpFinCreditFacility reserveCredit(String creditFacilityId, BigDecimal amount, IServiceContext context) {
         ErpFinCreditFacility facility = requireFacility(creditFacilityId);
         BigDecimal amt = nz(amount);
         BigDecimal available = nz(facility.getAvailableAmount());
@@ -38,7 +38,7 @@ public class ErpFinCreditFacilityReserveCreditProcessor {
         return facility;
     }
 
-    protected ErpFinCreditFacility requireFacility(Long creditFacilityId) {
+    protected ErpFinCreditFacility requireFacility(String creditFacilityId) {
         IEntityDao<ErpFinCreditFacility> dao = daoProvider.daoFor(ErpFinCreditFacility.class);
         ErpFinCreditFacility facility = dao.getEntityById(creditFacilityId);
         if (facility == null) {

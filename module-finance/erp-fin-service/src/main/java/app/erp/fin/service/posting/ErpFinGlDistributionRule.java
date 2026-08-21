@@ -21,7 +21,7 @@ public class ErpFinGlDistributionRule {
     /** 源科目编码匹配键（null = 不限定科目）。 */
     private String sourceSubjectCode;
     /** 源成本中心匹配键（null = 不限定成本中心）。 */
-    private Long sourceCostCenterId;
+    private String sourceCostCenterId;
     /** 生效起始日期（null = 开放）。 */
     private LocalDate validFrom;
     /** 生效截止日期（null = 开放）。 */
@@ -47,11 +47,11 @@ public class ErpFinGlDistributionRule {
         this.sourceSubjectCode = sourceSubjectCode;
     }
 
-    public Long getSourceCostCenterId() {
+    public String getSourceCostCenterId() {
         return sourceCostCenterId;
     }
 
-    public void setSourceCostCenterId(Long sourceCostCenterId) {
+    public void setSourceCostCenterId(String sourceCostCenterId) {
         this.sourceCostCenterId = sourceCostCenterId;
     }
 

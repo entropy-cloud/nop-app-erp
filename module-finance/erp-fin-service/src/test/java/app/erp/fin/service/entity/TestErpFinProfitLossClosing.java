@@ -52,8 +52,8 @@ public class TestErpFinProfitLossClosing extends JunitAutoTestCase {
 
     @Test
     public void testProfitLossClosing() {
-        Long periodId = seedReturn(() -> {
-            Long pid = seedOpenPeriod("2024-03", 2024, 3,
+        String periodId = seedReturn(() -> {
+            String pid = seedOpenPeriod("2024-03", 2024, 3,
                     LocalDate.of(2024, 3, 1), LocalDate.of(2024, 3, 31));
             java.util.Map<String, ErpMdSubject> subjects = new java.util.HashMap<>();
             subjects.put("1001", seedSubject("1001", "库存现金", "ASSET", ErpFinConstants.DC_DEBIT));
@@ -91,7 +91,7 @@ public class TestErpFinProfitLossClosing extends JunitAutoTestCase {
 
         // 本年利润净额 = 收入 150 − 费用 50 − 成本 30 = 70（贷方余额）。
         ErpMdSubject cyp = findSubjectByCode("4103");
-        BigDecimal cypNet = netCredit(cyp.getId(), periodId);
+        BigDecimal cypNet = netCreditById(cyp.getId(), periodId);
         assertEquals(0, cypNet.compareTo(new BigDecimal("70")), "本年利润净额=收入−费用−成本=70");
 
         // 试算平衡表快照存在。
@@ -107,8 +107,8 @@ public class TestErpFinProfitLossClosing extends JunitAutoTestCase {
      */
     @Test
     public void testProfitLossClosingIncludesFxGainLoss() {
-        Long periodId = seedReturn(() -> {
-            Long pid = seedOpenPeriod("2024-04", 2024, 4,
+        String periodId = seedReturn(() -> {
+            String pid = seedOpenPeriod("2024-04", 2024, 4,
                     LocalDate.of(2024, 4, 1), LocalDate.of(2024, 4, 30));
             java.util.Map<String, ErpMdSubject> subjects = new java.util.HashMap<>();
             subjects.put("1001", seedSubject("1001", "库存现金", "ASSET", ErpFinConstants.DC_DEBIT));
@@ -138,7 +138,7 @@ public class TestErpFinProfitLossClosing extends JunitAutoTestCase {
 
         // 本年利润含汇兑净额：收入 100 + 汇兑收益 50 = 150（贷方余额）。
         ErpMdSubject cyp = findSubjectByCode("4103");
-        BigDecimal cypNet = netCredit(cyp.getId(), periodId);
+        BigDecimal cypNet = netCreditById(cyp.getId(), periodId);
         assertEquals(0, cypNet.compareTo(new BigDecimal("150")),
                 "本年利润净额含汇兑净额=收入100+汇兑收益50=150");
 
@@ -156,12 +156,12 @@ public class TestErpFinProfitLossClosing extends JunitAutoTestCase {
         return ormTemplate.runInSession(session -> action.get());
     }
 
-    private Long seedOpenPeriod(String code, int year, int month, LocalDate start, LocalDate end) {
+    private String seedOpenPeriod(String code, int year, int month, LocalDate start, LocalDate end) {
         IEntityDao<ErpFinAccountingPeriod> dao = daoProvider.daoFor(ErpFinAccountingPeriod.class);
         ErpFinAccountingPeriod p = new ErpFinAccountingPeriod();
         p.setCode(code);
         p.setName(code);
-        p.setOrgId(1L);
+        p.setOrgId("1");
         p.setYear(year);
         p.setMonth(month);
         p.setStartDate(start);
@@ -195,12 +195,12 @@ public class TestErpFinProfitLossClosing extends JunitAutoTestCase {
         return new Object[]{subjectCode, subjectName, dc, new BigDecimal(amount)};
     }
 
-    private void seedPostedVoucher(String code, Long periodId, LocalDate date,
+    private void seedPostedVoucher(String code, String periodId, LocalDate date,
                                    java.util.Map<String, ErpMdSubject> subjects, Object[]... lines) {
         seedPostedVoucherBizType(null, code, periodId, date, subjects, lines);
     }
 
-    private void seedPostedVoucherBizType(String businessType, String code, Long periodId, LocalDate date,
+    private void seedPostedVoucherBizType(String businessType, String code, String periodId, LocalDate date,
                                           java.util.Map<String, ErpMdSubject> subjects, Object[]... lines) {
         IEntityDao<ErpFinVoucher> vDao = daoProvider.daoFor(ErpFinVoucher.class);
         BigDecimal total = BigDecimal.ZERO;
@@ -211,8 +211,8 @@ public class TestErpFinProfitLossClosing extends JunitAutoTestCase {
         v.setCode(code);
         v.setVoucherType("TRANSFER");
         v.setVoucherDate(date);
-        v.setOrgId(1L);
-        v.setAcctSchemaId(1L);
+        v.setOrgId("1");
+        v.setAcctSchemaId("1");
         v.setPeriodId(periodId);
         v.setTotalDebit(total);
         v.setTotalCredit(total);
@@ -235,11 +235,11 @@ public class TestErpFinProfitLossClosing extends JunitAutoTestCase {
             line.setDcDirection(dc);
             line.setDebitAmount(ErpFinConstants.DC_DEBIT.equals(dc) ? amt : BigDecimal.ZERO);
             line.setCreditAmount(ErpFinConstants.DC_CREDIT.equals(dc) ? amt : BigDecimal.ZERO);
-            line.setCurrencyId(1L);
+            line.setCurrencyId("1");
             line.setExchangeRate(BigDecimal.ONE);
             line.setAmountSource(amt);
             line.setAmountFunctional(amt);
-            line.setAcctSchemaId(1L);
+            line.setAcctSchemaId("1");
             if (businessType != null) {
                 line.setBusinessType(businessType);
             }
@@ -259,28 +259,28 @@ public class TestErpFinProfitLossClosing extends JunitAutoTestCase {
     }
 
     /** 该科目在本期所有已过账非红冲凭证分录的净贷方（贷−借）。 */
-    private BigDecimal netCredit(String subjectCode, Long periodId) {
+    private BigDecimal netCredit(String subjectCode, String periodId) {
         ErpMdSubject s = findSubjectByCode(subjectCode);
-        return netCredit(s.getId(), periodId);
+        return netCreditById(s.getId(), periodId);
     }
 
-    private BigDecimal netCredit(Long subjectId, Long periodId) {
+    private BigDecimal netCreditById(String subjectId, String periodId) {
         return sum(subjectId, periodId)[1].subtract(sum(subjectId, periodId)[0]);
     }
 
-    private BigDecimal netDebit(String subjectCode, Long periodId) {
-        return netDebit(findSubjectByCode(subjectCode).getId(), periodId);
+    private BigDecimal netDebit(String subjectCode, String periodId) {
+        return netDebitById(findSubjectByCode(subjectCode).getId(), periodId);
     }
 
-    private BigDecimal netDebit(Long subjectId, Long periodId) {
+    private BigDecimal netDebitById(String subjectId, String periodId) {
         return sum(subjectId, periodId)[0].subtract(sum(subjectId, periodId)[1]);
     }
 
-    private BigDecimal[] sum(Long subjectId, Long periodId) {
+    private BigDecimal[] sum(String subjectId, String periodId) {
         QueryBean vq = new QueryBean();
         vq.addFilter(eq("periodId", periodId));
         vq.addFilter(eq("docStatus", ErpFinConstants.VOUCHER_STATUS_POSTED));
-        List<Long> vids = daoProvider.daoFor(ErpFinVoucher.class).findAllByQuery(vq).stream()
+        List<String> vids = daoProvider.daoFor(ErpFinVoucher.class).findAllByQuery(vq).stream()
                 .map(ErpFinVoucher::getId).collect(java.util.stream.Collectors.toList());
         BigDecimal d = BigDecimal.ZERO, c = BigDecimal.ZERO;
         for (ErpFinVoucherLine l : linesOf(subjectId, vids)) {
@@ -290,7 +290,7 @@ public class TestErpFinProfitLossClosing extends JunitAutoTestCase {
         return new BigDecimal[]{d, c};
     }
 
-    private List<ErpFinVoucherLine> linesOf(Long subjectId, List<Long> vids) {
+    private List<ErpFinVoucherLine> linesOf(String subjectId, List<String> vids) {
         if (vids.isEmpty()) {
             return java.util.Collections.emptyList();
         }
@@ -302,7 +302,7 @@ public class TestErpFinProfitLossClosing extends JunitAutoTestCase {
                 .collect(java.util.stream.Collectors.toList());
     }
 
-    private List<ErpFinTrialBalance> findTrialBalance(Long periodId) {
+    private List<ErpFinTrialBalance> findTrialBalance(String periodId) {
         IEntityDao<ErpFinTrialBalance> dao = daoProvider.daoFor(ErpFinTrialBalance.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("periodId", periodId));

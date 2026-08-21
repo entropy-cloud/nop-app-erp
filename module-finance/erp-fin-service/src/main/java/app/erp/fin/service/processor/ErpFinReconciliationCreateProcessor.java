@@ -22,7 +22,7 @@ import java.util.List;
  */
 public class ErpFinReconciliationCreateProcessor extends AbstractErpFinReconciliationProcessor {
 
-    public ErpFinReconciliation create(String direction, Long partnerId, LocalDate businessDate,
+    public ErpFinReconciliation create(String direction, String partnerId, LocalDate businessDate,
                                        List<ReconciliationLineInput> lines, IServiceContext context) {
         if (direction == null || partnerId == null || businessDate == null
                 || lines == null || lines.isEmpty()) {

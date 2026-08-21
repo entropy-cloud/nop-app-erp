@@ -55,14 +55,14 @@ public class TestErpFinBudgetRollForward extends JunitAutoTestCase {
 
     @Test
     public void testFixedPercentageStrategy() {
-        Long[] ids = seedReturn(() -> {
-            Long pid2024 = seedOpenPeriod("2024-06", 2024, 6);
-            Long pid2025 = seedOpenPeriod("2025-06", 2025, 6);
+        String[] ids = seedReturn(() -> {
+            String pid2024 = seedOpenPeriod("2024-06", 2024, 6);
+            String pid2025 = seedOpenPeriod("2025-06", 2025, 6);
             ErpMdSubject expense = seedSubject("6601", "销售费用", ErpFinConstants.SUBJECT_CLASS_EXPENSE, ErpFinConstants.DC_DEBIT);
-            Long scenarioId = seedApprovedScenario("ROLL-FIX-2024", pid2024, 2024, expense, new BigDecimal("1000"));
-            return new Long[]{pid2024, pid2025, scenarioId};
+            String scenarioId = seedApprovedScenario("ROLL-FIX-2024", pid2024, 2024, expense, new BigDecimal("1000"));
+            return new String[]{pid2024, pid2025, scenarioId};
         });
-        Long scenarioId = ids[2];
+        String scenarioId = ids[2];
 
         ErpFinBudgetScenario target = ormTemplate.runInSession(session ->
                 scenarioBiz.rollForward(scenarioId, 2025, ErpFinConstants.BUDGET_ROLLFORWARD_FIXED_PERCENTAGE, CTX));
@@ -81,14 +81,14 @@ public class TestErpFinBudgetRollForward extends JunitAutoTestCase {
 
     @Test
     public void testZeroBasedStrategy() {
-        Long[] ids = seedReturn(() -> {
-            Long pid2024 = seedOpenPeriod("2024-07", 2024, 7);
-            Long pid2025 = seedOpenPeriod("2025-07", 2025, 7);
+        String[] ids = seedReturn(() -> {
+            String pid2024 = seedOpenPeriod("2024-07", 2024, 7);
+            String pid2025 = seedOpenPeriod("2025-07", 2025, 7);
             ErpMdSubject expense = seedSubject("6602", "管理费用", ErpFinConstants.SUBJECT_CLASS_EXPENSE, ErpFinConstants.DC_DEBIT);
-            Long scenarioId = seedApprovedScenario("ROLL-ZB-2024", pid2024, 2024, expense, new BigDecimal("800"));
-            return new Long[]{pid2024, pid2025, scenarioId};
+            String scenarioId = seedApprovedScenario("ROLL-ZB-2024", pid2024, 2024, expense, new BigDecimal("800"));
+            return new String[]{pid2024, pid2025, scenarioId};
         });
-        Long scenarioId = ids[2];
+        String scenarioId = ids[2];
 
         ErpFinBudgetScenario target = ormTemplate.runInSession(session ->
                 scenarioBiz.rollForward(scenarioId, 2025, ErpFinConstants.BUDGET_ROLLFORWARD_ZERO_BASED, CTX));
@@ -100,14 +100,14 @@ public class TestErpFinBudgetRollForward extends JunitAutoTestCase {
 
     @Test
     public void testIncrementalStrategy() {
-        Long[] ids = seedReturn(() -> {
-            Long pid2024 = seedOpenPeriod("2024-08", 2024, 8);
-            Long pid2025 = seedOpenPeriod("2025-08", 2025, 8);
+        String[] ids = seedReturn(() -> {
+            String pid2024 = seedOpenPeriod("2024-08", 2024, 8);
+            String pid2025 = seedOpenPeriod("2025-08", 2025, 8);
             ErpMdSubject expense = seedSubject("6603", "研发费用", ErpFinConstants.SUBJECT_CLASS_EXPENSE, ErpFinConstants.DC_DEBIT);
-            Long scenarioId = seedApprovedScenario("ROLL-INC-2024", pid2024, 2024, expense, new BigDecimal("2000"));
-            return new Long[]{pid2024, pid2025, scenarioId};
+            String scenarioId = seedApprovedScenario("ROLL-INC-2024", pid2024, 2024, expense, new BigDecimal("2000"));
+            return new String[]{pid2024, pid2025, scenarioId};
         });
-        Long scenarioId = ids[2];
+        String scenarioId = ids[2];
 
         ErpFinBudgetScenario target = ormTemplate.runInSession(session ->
                 scenarioBiz.rollForward(scenarioId, 2025, ErpFinConstants.BUDGET_ROLLFORWARD_INCREMENTAL, CTX));
@@ -124,12 +124,12 @@ public class TestErpFinBudgetRollForward extends JunitAutoTestCase {
         return ormTemplate.runInSession(session -> action.get());
     }
 
-    private Long seedOpenPeriod(String code, int year, int month) {
+    private String seedOpenPeriod(String code, int year, int month) {
         IEntityDao<ErpFinAccountingPeriod> dao = daoProvider.daoFor(ErpFinAccountingPeriod.class);
         ErpFinAccountingPeriod p = new ErpFinAccountingPeriod();
         p.setCode(code);
         p.setName(code);
-        p.setOrgId(1L);
+        p.setOrgId("1");
         p.setYear(year);
         p.setMonth(month);
         p.setStartDate(LocalDate.of(year, month, 1));
@@ -151,17 +151,17 @@ public class TestErpFinBudgetRollForward extends JunitAutoTestCase {
         return s;
     }
 
-    private Long seedApprovedScenario(String code, Long periodId, int fiscalYear,
+    private String seedApprovedScenario(String code, String periodId, int fiscalYear,
                                       ErpMdSubject expense, BigDecimal amount) {
         IEntityDao<ErpFinBudgetScenario> sDao = daoProvider.daoFor(ErpFinBudgetScenario.class);
         ErpFinBudgetScenario s = new ErpFinBudgetScenario();
         s.setCode(code);
         s.setName(code);
-        s.setOrgId(1L);
-        s.setAcctSchemaId(1L);
+        s.setOrgId("1");
+        s.setAcctSchemaId("1");
         s.setFiscalYear(fiscalYear);
         s.setScenarioType("ANNUAL");
-        s.setCurrencyId(1L);
+        s.setCurrencyId("1");
         s.setExchangeRate(BigDecimal.ONE);
         s.setControlLevel(ErpFinConstants.BUDGET_CONTROL_NONE);
         s.setDocStatus(ErpFinConstants.BUDGET_STATUS_APPROVED);
@@ -172,20 +172,20 @@ public class TestErpFinBudgetRollForward extends JunitAutoTestCase {
         ErpFinBudgetLine l = new ErpFinBudgetLine();
         l.setScenarioId(s.getId());
         l.setLineNo(1);
-        l.setOrgId(1L);
-        l.setAcctSchemaId(1L);
+        l.setOrgId("1");
+        l.setAcctSchemaId("1");
         l.setPeriodId(periodId);
         l.setSubjectId(expense.getId());
         l.setSubjectCode(expense.getCode());
         l.setBudgetAmountSource(amount);
         l.setBudgetAmountFunctional(amount);
-        l.setCurrencyId(1L);
+        l.setCurrencyId("1");
         l.setExchangeRate(BigDecimal.ONE);
         lDao.saveEntity(l);
         return s.getId();
     }
 
-    private BigDecimal findLineAmount(Long scenarioId, String subjectCode) {
+    private BigDecimal findLineAmount(String scenarioId, String subjectCode) {
         ErpMdSubject s = findSubjectByCode(subjectCode);
         if (s == null) {
             return BigDecimal.ZERO;
@@ -201,7 +201,7 @@ public class TestErpFinBudgetRollForward extends JunitAutoTestCase {
         return sum;
     }
 
-    private int countRollforwardLogs(Long scenarioId) {
+    private int countRollforwardLogs(String scenarioId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("sourceScenarioId", scenarioId));
         return daoProvider.daoFor(ErpFinBudgetRollforwardLog.class).findAllByQuery(q).size();

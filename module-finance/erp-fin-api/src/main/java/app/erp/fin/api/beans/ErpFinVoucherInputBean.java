@@ -13,16 +13,16 @@
     public class ErpFinVoucherInputBean extends CrudInputBase {
 
     
-        private Long _id;
+        private String _id;
 
     
         @PropMeta(propId=1)
     
-        public Long getId(){
+        public String getId(){
             return _id;
         }
 
-        public void setId(Long value){
+        public void setId(String value){
             this._id = value;
         }
 
@@ -97,44 +97,44 @@
         }
 
 
-        private Long _orgId;
+        private String _orgId;
 
     
         @PropMeta(propId=7)
     
-        public Long getOrgId(){
+        public String getOrgId(){
             return _orgId;
         }
 
-        public void setOrgId(Long value){
+        public void setOrgId(String value){
             this._orgId = value;
         }
 
 
-        private Long _acctSchemaId;
+        private String _acctSchemaId;
 
     
         @PropMeta(propId=8)
     
-        public Long getAcctSchemaId(){
+        public String getAcctSchemaId(){
             return _acctSchemaId;
         }
 
-        public void setAcctSchemaId(Long value){
+        public void setAcctSchemaId(String value){
             this._acctSchemaId = value;
         }
 
 
-        private Long _periodId;
+        private String _periodId;
 
     
         @PropMeta(propId=9)
     
-        public Long getPeriodId(){
+        public String getPeriodId(){
             return _periodId;
         }
 
-        public void setPeriodId(Long value){
+        public void setPeriodId(String value){
             this._periodId = value;
         }
 
@@ -181,16 +181,16 @@
         }
 
 
-        private Long _reversalOfVoucherId;
+        private String _reversalOfVoucherId;
 
     
         @PropMeta(propId=13)
     
-        public Long getReversalOfVoucherId(){
+        public String getReversalOfVoucherId(){
             return _reversalOfVoucherId;
         }
 
-        public void setReversalOfVoucherId(Long value){
+        public void setReversalOfVoucherId(String value){
             this._reversalOfVoucherId = value;
         }
 

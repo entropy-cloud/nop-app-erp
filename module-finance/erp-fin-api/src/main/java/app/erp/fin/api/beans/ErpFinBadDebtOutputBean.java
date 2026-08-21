@@ -13,16 +13,16 @@
     public class ErpFinBadDebtOutputBean {
 
     
-        private Long _id;
+        private String _id;
 
     
         @PropMeta(propId=1)
     
-        public Long getId(){
+        public String getId(){
             return _id;
         }
 
-        public void setId(Long value){
+        public void setId(String value){
             this._id = value;
         }
 
@@ -41,30 +41,30 @@
         }
 
 
-        private Long _orgId;
+        private String _orgId;
 
     
         @PropMeta(propId=3)
     
-        public Long getOrgId(){
+        public String getOrgId(){
             return _orgId;
         }
 
-        public void setOrgId(Long value){
+        public void setOrgId(String value){
             this._orgId = value;
         }
 
 
-        private Long _acctSchemaId;
+        private String _acctSchemaId;
 
     
         @PropMeta(propId=4)
     
-        public Long getAcctSchemaId(){
+        public String getAcctSchemaId(){
             return _acctSchemaId;
         }
 
-        public void setAcctSchemaId(Long value){
+        public void setAcctSchemaId(String value){
             this._acctSchemaId = value;
         }
 
@@ -95,30 +95,30 @@
         }
 
 
-        private Long _partnerId;
+        private String _partnerId;
 
     
         @PropMeta(propId=6)
     
-        public Long getPartnerId(){
+        public String getPartnerId(){
             return _partnerId;
         }
 
-        public void setPartnerId(Long value){
+        public void setPartnerId(String value){
             this._partnerId = value;
         }
 
 
-        private Long _sourceArApItemId;
+        private String _sourceArApItemId;
 
     
         @PropMeta(propId=7)
     
-        public Long getSourceArApItemId(){
+        public String getSourceArApItemId(){
             return _sourceArApItemId;
         }
 
-        public void setSourceArApItemId(Long value){
+        public void setSourceArApItemId(String value){
             this._sourceArApItemId = value;
         }
 
@@ -137,16 +137,16 @@
         }
 
 
-        private Long _currencyId;
+        private String _currencyId;
 
     
         @PropMeta(propId=9)
     
-        public Long getCurrencyId(){
+        public String getCurrencyId(){
             return _currencyId;
         }
 
-        public void setCurrencyId(Long value){
+        public void setCurrencyId(String value){
             this._currencyId = value;
         }
 
@@ -219,30 +219,30 @@
         }
 
 
-        private Long _periodId;
+        private String _periodId;
 
     
         @PropMeta(propId=14)
     
-        public Long getPeriodId(){
+        public String getPeriodId(){
             return _periodId;
         }
 
-        public void setPeriodId(Long value){
+        public void setPeriodId(String value){
             this._periodId = value;
         }
 
 
-        private Long _voucherId;
+        private String _voucherId;
 
     
         @PropMeta(propId=15)
     
-        public Long getVoucherId(){
+        public String getVoucherId(){
             return _voucherId;
         }
 
-        public void setVoucherId(Long value){
+        public void setVoucherId(String value){
             this._voucherId = value;
         }
 

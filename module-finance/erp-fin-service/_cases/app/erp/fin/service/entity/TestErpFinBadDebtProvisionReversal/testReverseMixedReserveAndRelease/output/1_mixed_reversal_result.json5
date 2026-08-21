@@ -1,5 +1,5 @@
 {
-  "periodId": 1,
+  "periodId": "1",
   "periodCode": "@var:ErpFinAccountingPeriod@code",
   "reversedReserveCount": 1,
   "reversedReleaseCount": 1,

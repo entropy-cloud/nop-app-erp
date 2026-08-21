@@ -15,5 +15,5 @@ import app.erp.fin.dao.entity.ErpFinExpenseClaim;
 public interface IErpFinExpenseClaimBiz extends ICrudBiz<ErpFinExpenseClaim> {
 
     @BizMutation
-    ErpFinExpenseClaim cancel(@Name("claimId") Long claimId, IServiceContext context);
+    ErpFinExpenseClaim cancel(@Name("claimId") String claimId, IServiceContext context);
 }

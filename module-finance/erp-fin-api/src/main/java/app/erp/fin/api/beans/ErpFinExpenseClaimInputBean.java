@@ -13,16 +13,16 @@
     public class ErpFinExpenseClaimInputBean extends CrudInputBase {
 
     
-        private Long _id;
+        private String _id;
 
     
         @PropMeta(propId=1)
     
-        public Long getId(){
+        public String getId(){
             return _id;
         }
 
-        public void setId(Long value){
+        public void setId(String value){
             this._id = value;
         }
 
@@ -41,44 +41,44 @@
         }
 
 
-        private Long _orgId;
+        private String _orgId;
 
     
         @PropMeta(propId=3)
     
-        public Long getOrgId(){
+        public String getOrgId(){
             return _orgId;
         }
 
-        public void setOrgId(Long value){
+        public void setOrgId(String value){
             this._orgId = value;
         }
 
 
-        private Long _claimantId;
+        private String _claimantId;
 
     
         @PropMeta(propId=4)
     
-        public Long getClaimantId(){
+        public String getClaimantId(){
             return _claimantId;
         }
 
-        public void setClaimantId(Long value){
+        public void setClaimantId(String value){
             this._claimantId = value;
         }
 
 
-        private Long _departmentId;
+        private String _departmentId;
 
     
         @PropMeta(propId=5)
     
-        public Long getDepartmentId(){
+        public String getDepartmentId(){
             return _departmentId;
         }
 
-        public void setDepartmentId(Long value){
+        public void setDepartmentId(String value){
             this._departmentId = value;
         }
 
@@ -111,16 +111,16 @@
         }
 
 
-        private Long _currencyId;
+        private String _currencyId;
 
     
         @PropMeta(propId=8)
     
-        public Long getCurrencyId(){
+        public String getCurrencyId(){
             return _currencyId;
         }
 
-        public void setCurrencyId(Long value){
+        public void setCurrencyId(String value){
             this._currencyId = value;
         }
 
@@ -209,16 +209,16 @@
         }
 
 
-        private Long _settleAdvanceId;
+        private String _settleAdvanceId;
 
     
         @PropMeta(propId=15)
     
-        public Long getSettleAdvanceId(){
+        public String getSettleAdvanceId(){
             return _settleAdvanceId;
         }
 
-        public void setSettleAdvanceId(Long value){
+        public void setSettleAdvanceId(String value){
             this._settleAdvanceId = value;
         }
 

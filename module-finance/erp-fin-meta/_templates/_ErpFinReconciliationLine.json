@@ -1,9 +1,9 @@
 {
-  "id": 0,
-  "reconciliationId": 0,
+  "id": "",
+  "reconciliationId": "",
   "lineNo": 0,
-  "paymentItemId": 0,
-  "invoiceItemId": 0,
+  "paymentItemId": "",
+  "invoiceItemId": "",
   "settledAmountSource": 0.0,
   "settledAmountFunctional": 0.0,
   "remark": "",

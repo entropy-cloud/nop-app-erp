@@ -88,9 +88,9 @@ public class ErpFinPostingExceptionRecorder {
      */
     public void record(String traceId, String billHeadCode, String businessType, String postingType,
                        String errorCode, String errorMessage, String failedStage,
-                       LocalDate voucherDate, Long orgId, Long acctSchemaId,
-                       Long currencyId, BigDecimal exchangeRate, String eventData) {
-        Long exceptionId = null;
+                       LocalDate voucherDate, String orgId, String acctSchemaId,
+                       String currencyId, BigDecimal exchangeRate, String eventData) {
+        String exceptionId = null;
         try {
             exceptionId = transactionTemplate.runInTransaction(null, TransactionPropagation.REQUIRES_NEW, txn ->
                     ormTemplate.runInSession(session -> {
@@ -133,7 +133,7 @@ public class ErpFinPostingExceptionRecorder {
      * <p>在独立 REQUIRES_NEW 事务内执行 notify：避免外层正在回滚的主过账事务吞掉通知落库。
      * 通知失败降级（warn）不阻断主异常传播。
      */
-    private void dispatchNotify(Long exceptionId, String billHeadCode, String businessType, String postingType,
+    private void dispatchNotify(String exceptionId, String billHeadCode, String businessType, String postingType,
                                 String errorCode, String errorMessage, String failedStage,
                                 LocalDate voucherDate, String eventData) {
         if (!isNotifyEnabled() || notificationBiz == null) {

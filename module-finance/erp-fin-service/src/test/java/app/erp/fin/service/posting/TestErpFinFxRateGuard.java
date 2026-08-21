@@ -71,8 +71,8 @@ public class TestErpFinFxRateGuard extends JunitAutoTestCase {
         LocalDate voucherDate = LocalDate.of(2026, 6, 15);
         seed(() -> {
             seedOpenPeriod(voucherDate);
-            seedCurrency(1L, "RMB", true);
-            seedCurrency(2L, "USD", false);
+            seedCurrency("1", "RMB", true);
+            seedCurrency("2", "USD", false);
             seedSubject("6602", "管理费用");
             seedSubject("2221", "应交税费-进项税");
             seedSubject("2202", "应付账款");
@@ -81,7 +81,7 @@ public class TestErpFinFxRateGuard extends JunitAutoTestCase {
 
         // 外币 USD 且 exchangeRate 缺失 → 守卫拒绝
         PostingEvent event = apInvoiceEvent("FX-REJECT-001", voucherDate,
-                new BigDecimal("100"), new BigDecimal("13"), new BigDecimal("113"), 2L, null);
+                new BigDecimal("100"), new BigDecimal("13"), new BigDecimal("113"), "2", null);
 
         NopException ex = assertThrows(NopException.class,
                 () -> ormTemplate.runInSession(session -> voucherBiz.post(event, CTX)),
@@ -100,8 +100,8 @@ public class TestErpFinFxRateGuard extends JunitAutoTestCase {
         BigDecimal rate = new BigDecimal("6.5");
         seed(() -> {
             seedOpenPeriod(voucherDate);
-            seedCurrency(1L, "RMB", true);
-            seedCurrency(2L, "USD", false);
+            seedCurrency("1", "RMB", true);
+            seedCurrency("2", "USD", false);
             seedSubject("6602", "管理费用");
             seedSubject("2221", "应交税费-进项税");
             seedSubject("2202", "应付账款");
@@ -109,15 +109,15 @@ public class TestErpFinFxRateGuard extends JunitAutoTestCase {
         });
 
         PostingEvent event = apInvoiceEvent("FX-OK-001", voucherDate,
-                new BigDecimal("100"), new BigDecimal("13"), new BigDecimal("113"), 2L, rate);
+                new BigDecimal("100"), new BigDecimal("13"), new BigDecimal("113"), "2", rate);
 
-        Long voucherId = ormTemplate.runInSession(session -> voucherBiz.post(event, CTX));
+        String voucherId = ormTemplate.runInSession(session -> voucherBiz.post(event, CTX));
         assertNotNull(voucherId, "外币显式传 rate 应放行");
         List<ErpFinVoucherLine> lines = linesOf(voucherId);
         assertEquals(3, lines.size(), "行数不变");
         for (ErpFinVoucherLine line : lines) {
             assertEquals(0, line.getExchangeRate().compareTo(rate), "行级 exchangeRate 落库为显式值 6.5");
-            assertEquals(2L, line.getCurrencyId(), "行级币种为外币 USD(2)");
+            assertEquals("2", line.getCurrencyId(), "行级币种为外币 USD(2)");
         }
     }
 
@@ -128,8 +128,8 @@ public class TestErpFinFxRateGuard extends JunitAutoTestCase {
         LocalDate voucherDate = LocalDate.of(2026, 6, 15);
         seed(() -> {
             seedOpenPeriod(voucherDate);
-            seedCurrency(1L, "RMB", true);
-            seedCurrency(2L, "USD", false);
+            seedCurrency("1", "RMB", true);
+            seedCurrency("2", "USD", false);
             seedSubject("6602", "管理费用");
             seedSubject("2221", "应交税费-进项税");
             seedSubject("2202", "应付账款");
@@ -138,15 +138,15 @@ public class TestErpFinFxRateGuard extends JunitAutoTestCase {
 
         // 本位币 RMB 且 exchangeRate 缺失 → 保留 rate=1 语义（既有单币种主路径零回归）
         PostingEvent event = apInvoiceEvent("FX-FUNC-001", voucherDate,
-                new BigDecimal("100"), new BigDecimal("13"), new BigDecimal("113"), 1L, null);
+                new BigDecimal("100"), new BigDecimal("13"), new BigDecimal("113"), "1", null);
 
-        Long voucherId = ormTemplate.runInSession(session -> voucherBiz.post(event, CTX));
+        String voucherId = ormTemplate.runInSession(session -> voucherBiz.post(event, CTX));
         assertNotNull(voucherId, "本位币 rate 缺失应放行");
         List<ErpFinVoucherLine> lines = linesOf(voucherId);
         assertEquals(3, lines.size(), "行数不变");
         for (ErpFinVoucherLine line : lines) {
             assertEquals(0, line.getExchangeRate().compareTo(BigDecimal.ONE), "本位币回退 rate=1");
-            assertEquals(1L, line.getCurrencyId(), "行级币种为本位币 RMB(1)");
+            assertEquals("1", line.getCurrencyId(), "行级币种为本位币 RMB(1)");
         }
     }
 
@@ -165,9 +165,9 @@ public class TestErpFinFxRateGuard extends JunitAutoTestCase {
 
         // currencyId=999 无对应币种行 + rate 缺失 → 无法判定本位币归属，保守放行 rate=1
         PostingEvent event = apInvoiceEvent("FX-UNKNOWN-001", voucherDate,
-                new BigDecimal("100"), new BigDecimal("13"), new BigDecimal("113"), 999L, null);
+                new BigDecimal("100"), new BigDecimal("13"), new BigDecimal("113"), "999", null);
 
-        Long voucherId = ormTemplate.runInSession(session -> voucherBiz.post(event, CTX));
+        String voucherId = ormTemplate.runInSession(session -> voucherBiz.post(event, CTX));
         assertNotNull(voucherId, "币种不存在应保守放行");
         List<ErpFinVoucherLine> lines = linesOf(voucherId);
         for (ErpFinVoucherLine line : lines) {
@@ -182,19 +182,19 @@ public class TestErpFinFxRateGuard extends JunitAutoTestCase {
     }
 
     private PostingEvent apInvoiceEvent(String billHeadCode, LocalDate voucherDate, BigDecimal amount,
-                                        BigDecimal tax, BigDecimal total, Long currencyId, BigDecimal exchangeRate) {
+                                        BigDecimal tax, BigDecimal total, String currencyId, BigDecimal exchangeRate) {
         PostingEvent event = new PostingEvent();
         event.setBusinessType(ErpFinBusinessType.AP_INVOICE);
         event.setBillHeadCode(billHeadCode);
-        event.setAcctSchemaId(1L);
-        event.setOrgId(1L);
+        event.setAcctSchemaId("1");
+        event.setOrgId("1");
         event.setCurrencyId(currencyId);
         event.setExchangeRate(exchangeRate);
         event.setVoucherDate(voucherDate);
         event.getBillData().put("AMOUNT", amount);
         event.getBillData().put("TAX", tax);
         event.getBillData().put("TOTAL", total);
-        event.getBillData().put("partnerId", 1L);
+        event.getBillData().put("partnerId", "1");
         event.getBillData().put("businessDate", voucherDate);
         return event;
     }
@@ -215,7 +215,7 @@ public class TestErpFinFxRateGuard extends JunitAutoTestCase {
         lineDao.saveEntity(templateLine(tpl.getId(), 3, "2202", DC_CREDIT, "TOTAL"));
     }
 
-    private ErpFinVoucherTemplateLine templateLine(Long templateId, int lineNo, String subjectCode,
+    private ErpFinVoucherTemplateLine templateLine(String templateId, int lineNo, String subjectCode,
                                                    String dcDirection, String amountKey) {
         ErpFinVoucherTemplateLine line = new ErpFinVoucherTemplateLine();
         line.setTemplateId(templateId);
@@ -237,7 +237,7 @@ public class TestErpFinFxRateGuard extends JunitAutoTestCase {
         dao.saveEntity(subject);
     }
 
-    private void seedCurrency(Long id, String code, boolean isFunctional) {
+    private void seedCurrency(String id, String code, boolean isFunctional) {
         IEntityDao<ErpMdCurrency> dao = daoProvider.daoFor(ErpMdCurrency.class);
         ErpMdCurrency currency = new ErpMdCurrency();
         currency.setId(id);
@@ -252,7 +252,7 @@ public class TestErpFinFxRateGuard extends JunitAutoTestCase {
         ErpFinAccountingPeriod period = new ErpFinAccountingPeriod();
         period.setCode("2026-06");
         period.setName("2026-06");
-        period.setOrgId(1L);
+        period.setOrgId("1");
         period.setYear(2026);
         period.setMonth(6);
         period.setStartDate(LocalDate.of(2026, 6, 1));
@@ -261,7 +261,7 @@ public class TestErpFinFxRateGuard extends JunitAutoTestCase {
         dao.saveEntity(period);
     }
 
-    private List<ErpFinVoucherLine> linesOf(Long voucherId) {
+    private List<ErpFinVoucherLine> linesOf(String voucherId) {
         IEntityDao<ErpFinVoucherLine> dao = daoProvider.daoFor(ErpFinVoucherLine.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("voucherId", voucherId));

@@ -51,10 +51,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class TestErpFinMultiSchemaPosting extends JunitAutoTestCase {
     private static final IServiceContext CTX = new ServiceContextImpl();
 
-    static final Long ORG_ID = 1L;
-    static final Long PRIMARY_SCHEMA_ID = 8001L;   // FINANCIAL 主账套
-    static final Long SECONDARY_SCHEMA_ID = 8002L; // MANAGEMENT 账套
-    static final Long CURRENCY_ID = 1L;
+    static final String ORG_ID = "1";
+    static final String PRIMARY_SCHEMA_ID = "8001";   // FINANCIAL 主账套
+    static final String SECONDARY_SCHEMA_ID = "8002"; // MANAGEMENT 账套
+    static final String CURRENCY_ID = "1";
 
     static final String DC_DEBIT = ErpFinConstants.DC_DEBIT;
     static final String DC_CREDIT = ErpFinConstants.DC_CREDIT;
@@ -82,7 +82,7 @@ public class TestErpFinMultiSchemaPosting extends JunitAutoTestCase {
 
         PostingEvent event = apInvoiceEvent("AP-MS-PROP-001", PRIMARY_SCHEMA_ID);
 
-        Long primaryVoucherId = ormTemplate.runInSession(session -> voucherBiz.post(event, CTX));
+        String primaryVoucherId = ormTemplate.runInSession(session -> voucherBiz.post(event, CTX));
         assertNotNull(primaryVoucherId, "主账套应返回凭证 ID");
 
         List<ErpFinVoucher> vouchers = findVouchers("AP-MS-PROP-001");
@@ -104,7 +104,7 @@ public class TestErpFinMultiSchemaPosting extends JunitAutoTestCase {
 
         PostingEvent event = apInvoiceEvent("AP-MS-NOPROP-001", PRIMARY_SCHEMA_ID);
 
-        Long voucherId = ormTemplate.runInSession(session -> voucherBiz.post(event, CTX));
+        String voucherId = ormTemplate.runInSession(session -> voucherBiz.post(event, CTX));
         assertNotNull(voucherId, "应生成主账套凭证");
 
         List<ErpFinVoucher> vouchers = findVouchers("AP-MS-NOPROP-001");
@@ -120,7 +120,7 @@ public class TestErpFinMultiSchemaPosting extends JunitAutoTestCase {
 
         PostingEvent event = apInvoiceEvent("AP-MS-DISABLED-001", PRIMARY_SCHEMA_ID);
 
-        Long voucherId = ormTemplate.runInSession(session -> voucherBiz.post(event, CTX));
+        String voucherId = ormTemplate.runInSession(session -> voucherBiz.post(event, CTX));
         assertNotNull(voucherId, "应生成主账套凭证");
 
         List<ErpFinVoucher> vouchers = findVouchers("AP-MS-DISABLED-001");
@@ -168,7 +168,7 @@ public class TestErpFinMultiSchemaPosting extends JunitAutoTestCase {
         });
     }
 
-    private void seedAcctSchema(Long id, String code, String name, String nature, boolean propagate) {
+    private void seedAcctSchema(String id, String code, String name, String nature, boolean propagate) {
         IEntityDao<ErpMdAcctSchema> dao = daoProvider.daoFor(ErpMdAcctSchema.class);
         ErpMdAcctSchema schema = new ErpMdAcctSchema();
         schema.orm_propValueByName("id", id);
@@ -223,7 +223,7 @@ public class TestErpFinMultiSchemaPosting extends JunitAutoTestCase {
         lineDao.saveEntity(templateLine(tpl.getId(), 3, "2202", DC_CREDIT, "TOTAL", "AP"));
     }
 
-    private ErpFinVoucherTemplateLine templateLine(Long templateId, int lineNo, String subjectCode,
+    private ErpFinVoucherTemplateLine templateLine(String templateId, int lineNo, String subjectCode,
                                                    String dcDirection, String amountKey, String accountKey) {
         ErpFinVoucherTemplateLine line = new ErpFinVoucherTemplateLine();
         line.setTemplateId(templateId);
@@ -235,7 +235,7 @@ public class TestErpFinMultiSchemaPosting extends JunitAutoTestCase {
         return line;
     }
 
-    private PostingEvent apInvoiceEvent(String billHeadCode, Long acctSchemaId) {
+    private PostingEvent apInvoiceEvent(String billHeadCode, String acctSchemaId) {
         PostingEvent event = new PostingEvent();
         event.setBusinessType(ErpFinBusinessType.AP_INVOICE);
         event.setBillHeadCode(billHeadCode);
@@ -247,7 +247,7 @@ public class TestErpFinMultiSchemaPosting extends JunitAutoTestCase {
         event.getBillData().put("AMOUNT", new BigDecimal("100"));
         event.getBillData().put("TAX", new BigDecimal("13"));
         event.getBillData().put("TOTAL", new BigDecimal("113"));
-        event.getBillData().put("partnerId", 1L);
+        event.getBillData().put("partnerId", "1");
         event.getBillData().put("businessDate", LocalDate.of(2026, 7, 15));
         return event;
     }
@@ -272,13 +272,13 @@ public class TestErpFinMultiSchemaPosting extends JunitAutoTestCase {
                 .collect(java.util.stream.Collectors.toList());
     }
 
-    private ErpFinVoucher findVoucher(Long acctSchemaId, String billCode) {
+    private ErpFinVoucher findVoucher(String acctSchemaId, String billCode) {
         return findVouchers(billCode).stream()
                 .filter(v -> acctSchemaId.equals(v.getAcctSchemaId()))
                 .findFirst().orElse(null);
     }
 
-    private boolean hasVoucherLine(Long voucherId, String subjectCode) {
+    private boolean hasVoucherLine(String voucherId, String subjectCode) {
         IEntityDao<ErpFinVoucherLine> dao = daoProvider.daoFor(ErpFinVoucherLine.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("voucherId", voucherId));

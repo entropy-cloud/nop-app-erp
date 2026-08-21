@@ -20,7 +20,7 @@ public class ErpFinBadDebtRejectProcessor extends AbstractRejectProcessor<ErpFin
 
     @Override
     public ErpFinBadDebt reject(String id, IServiceContext context) {
-        ErpFinBadDebt debt = processor.requireBadDebt(Long.valueOf(id));
+        ErpFinBadDebt debt = processor.requireBadDebt(id);
         processor.validateTransitionForReject(debt);
         processor.doReject(debt);
         return debt;

@@ -63,7 +63,7 @@ public class TestErpFinBudgetIsolation extends JunitAutoTestCase {
     @Test
     public void testBudgetVoucherExcludedFromProfitLossClosing() {
         Map<String, ErpMdSubject> subjects = seedReturn(() -> {
-            Long pid = seedOpenPeriod("2024-05", 2024, 5, LocalDate.of(2024, 5, 1), LocalDate.of(2024, 5, 31));
+            String pid = seedOpenPeriod("2024-05", 2024, 5, LocalDate.of(2024, 5, 1), LocalDate.of(2024, 5, 31));
             Map<String, ErpMdSubject> subs = new HashMap<>();
             subs.put("1001", seedSubject("1001", "库存现金", "ASSET", ErpFinConstants.DC_DEBIT));
             subs.put("6001", seedSubject("6001", "主营业务收入", ErpFinConstants.SUBJECT_CLASS_INCOME, ErpFinConstants.DC_CREDIT));
@@ -85,7 +85,7 @@ public class TestErpFinBudgetIsolation extends JunitAutoTestCase {
             return subs;
         });
 
-        Long periodId = findPeriodByCode("2024-05").getId();
+        String periodId = findPeriodByCode("2024-05").getId();
 
         ormTemplate.runInSession(() -> periodBiz.closePeriod(periodId, CTX));
 
@@ -113,12 +113,12 @@ public class TestErpFinBudgetIsolation extends JunitAutoTestCase {
         return ormTemplate.runInSession(session -> action.get());
     }
 
-    private Long seedOpenPeriod(String code, int year, int month, LocalDate start, LocalDate end) {
+    private String seedOpenPeriod(String code, int year, int month, LocalDate start, LocalDate end) {
         IEntityDao<ErpFinAccountingPeriod> dao = daoProvider.daoFor(ErpFinAccountingPeriod.class);
         ErpFinAccountingPeriod p = new ErpFinAccountingPeriod();
         p.setCode(code);
         p.setName(code);
-        p.setOrgId(1L);
+        p.setOrgId("1");
         p.setYear(year);
         p.setMonth(month);
         p.setStartDate(start);
@@ -144,7 +144,7 @@ public class TestErpFinBudgetIsolation extends JunitAutoTestCase {
         return new Object[]{subjectCode, subjectName, dc, new BigDecimal(amount)};
     }
 
-    private void seedPostedVoucher(String code, Long periodId, String postingType,
+    private void seedPostedVoucher(String code, String periodId, String postingType,
                                    Map<String, ErpMdSubject> subjects, Object[]... lines) {
         IEntityDao<ErpFinVoucher> vDao = daoProvider.daoFor(ErpFinVoucher.class);
         BigDecimal total = BigDecimal.ZERO;
@@ -156,8 +156,8 @@ public class TestErpFinBudgetIsolation extends JunitAutoTestCase {
         v.setVoucherType("TRANSFER");
         v.setPostingType(postingType);
         v.setVoucherDate(CoreMetrics.today());
-        v.setOrgId(1L);
-        v.setAcctSchemaId(1L);
+        v.setOrgId("1");
+        v.setAcctSchemaId("1");
         v.setPeriodId(periodId);
         v.setTotalDebit(total);
         v.setTotalCredit(total);
@@ -180,11 +180,11 @@ public class TestErpFinBudgetIsolation extends JunitAutoTestCase {
             line.setDcDirection(dc);
             line.setDebitAmount(ErpFinConstants.DC_DEBIT.equals(dc) ? amt : BigDecimal.ZERO);
             line.setCreditAmount(ErpFinConstants.DC_CREDIT.equals(dc) ? amt : BigDecimal.ZERO);
-            line.setCurrencyId(1L);
+            line.setCurrencyId("1");
             line.setExchangeRate(BigDecimal.ONE);
             line.setAmountSource(amt);
             line.setAmountFunctional(amt);
-            line.setAcctSchemaId(1L);
+            line.setAcctSchemaId("1");
             lDao.saveEntity(line);
         }
     }
@@ -214,15 +214,15 @@ public class TestErpFinBudgetIsolation extends JunitAutoTestCase {
         return daoProvider.daoFor(ErpFinVoucher.class).getEntityById(links.get(0).getVoucherId());
     }
 
-    private BigDecimal netCredit(Long subjectId, Long periodId) {
+    private BigDecimal netCredit(String subjectId, String periodId) {
         return sum(subjectId, periodId)[1].subtract(sum(subjectId, periodId)[0]);
     }
 
-    private BigDecimal netDebit(Long subjectId, Long periodId) {
+    private BigDecimal netDebit(String subjectId, String periodId) {
         return sum(subjectId, periodId)[0].subtract(sum(subjectId, periodId)[1]);
     }
 
-    private BigDecimal[] sum(Long subjectId, Long periodId) {
+    private BigDecimal[] sum(String subjectId, String periodId) {
         QueryBean vq = new QueryBean();
         vq.addFilter(eq("periodId", periodId));
         vq.addFilter(eq("docStatus", ErpFinConstants.VOUCHER_STATUS_POSTED));
@@ -230,7 +230,7 @@ public class TestErpFinBudgetIsolation extends JunitAutoTestCase {
         vq.addFilter(io.nop.api.core.beans.FilterBeans.or(
                 io.nop.api.core.beans.FilterBeans.isNull("postingType"),
                 io.nop.api.core.beans.FilterBeans.ne("postingType", ErpFinConstants.POSTING_TYPE_BUDGET)));
-        List<Long> vids = daoProvider.daoFor(ErpFinVoucher.class).findAllByQuery(vq).stream()
+        List<String> vids = daoProvider.daoFor(ErpFinVoucher.class).findAllByQuery(vq).stream()
                 .map(ErpFinVoucher::getId).collect(java.util.stream.Collectors.toList());
         BigDecimal d = BigDecimal.ZERO, c = BigDecimal.ZERO;
         for (ErpFinVoucherLine l : linesOf(subjectId, vids)) {
@@ -240,7 +240,7 @@ public class TestErpFinBudgetIsolation extends JunitAutoTestCase {
         return new BigDecimal[]{d, c};
     }
 
-    private List<ErpFinVoucherLine> linesOf(Long subjectId, List<Long> vids) {
+    private List<ErpFinVoucherLine> linesOf(String subjectId, List<String> vids) {
         if (vids.isEmpty()) {
             return java.util.Collections.emptyList();
         }

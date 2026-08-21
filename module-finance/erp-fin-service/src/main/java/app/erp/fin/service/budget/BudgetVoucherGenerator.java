@@ -50,21 +50,21 @@ public class BudgetVoucherGenerator {
      * 审核通过时生成 BUDGET 影子凭证。按 periodId 分组，每组一张凭证。返回生成的凭证 ID 列表
      * （空列表表示无可用预算行）。凭证业财回链 {@code billCode=scenario.code}，便于作废时反查全部预算凭证。
      */
-    public List<Long> generate(ErpFinBudgetScenario scenario) {
+    public List<String> generate(ErpFinBudgetScenario scenario) {
         List<ErpFinBudgetLine> lines = loadBudgetLines(scenario.getId());
         if (lines.isEmpty()) {
             return new ArrayList<>();
         }
-        Map<Long, List<ErpFinBudgetLine>> byPeriod = new LinkedHashMap<>();
+        Map<String, List<ErpFinBudgetLine>> byPeriod = new LinkedHashMap<>();
         for (ErpFinBudgetLine l : lines) {
             if (l.getPeriodId() == null) {
                 continue;
             }
             byPeriod.computeIfAbsent(l.getPeriodId(), k -> new ArrayList<>()).add(l);
         }
-        List<Long> voucherIds = new ArrayList<>();
-        for (Map.Entry<Long, List<ErpFinBudgetLine>> e : byPeriod.entrySet()) {
-            Long voucherId = writeBudgetVoucher(scenario, e.getKey(), e.getValue(), false, null);
+        List<String> voucherIds = new ArrayList<>();
+        for (Map.Entry<String, List<ErpFinBudgetLine>> e : byPeriod.entrySet()) {
+            String voucherId = writeBudgetVoucher(scenario, e.getKey(), e.getValue(), false, null);
             if (voucherId != null) {
                 voucherIds.add(voucherId);
             }
@@ -76,15 +76,15 @@ public class BudgetVoucherGenerator {
      * 作废时红冲全部 BUDGET 凭证。按 {@code billCode=scenario.code} 反查所有预算凭证，逐张生成红字冲销凭证
      * （postingType=BUDGET，isReversed=true，金额取反），并将原凭证标记 {@code isReversed=true}。
      */
-    public List<Long> reverse(ErpFinBudgetScenario scenario) {
+    public List<String> reverse(ErpFinBudgetScenario scenario) {
         List<ErpFinVoucher> originals = findBudgetVouchers(scenario.getCode());
-        List<Long> reversalIds = new ArrayList<>();
+        List<String> reversalIds = new ArrayList<>();
         for (ErpFinVoucher original : originals) {
             if (Boolean.TRUE.equals(original.getIsReversed())) {
                 continue;
             }
             List<ErpFinVoucherLine> origLines = loadVoucherLines(original.getId());
-            Long reversalId = writeBudgetVoucher(scenario, original.getPeriodId(), origLines, true, original.getId());
+            String reversalId = writeBudgetVoucher(scenario, original.getPeriodId(), origLines, true, original.getId());
             if (reversalId != null) {
                 original.setIsReversed(true);
                 daoProvider.daoFor(ErpFinVoucher.class).updateEntity(original);
@@ -94,12 +94,12 @@ public class BudgetVoucherGenerator {
         return reversalIds;
     }
 
-    private Long writeBudgetVoucher(ErpFinBudgetScenario scenario, Long periodId, List<?> rawLines,
-                                    boolean isReversal, Long reversalOfVoucherId) {
+    private String writeBudgetVoucher(ErpFinBudgetScenario scenario, String periodId, List<?> rawLines,
+                                    boolean isReversal, String reversalOfVoucherId) {
         BigDecimal totalDebit = BigDecimal.ZERO;
         BigDecimal totalCredit = BigDecimal.ZERO;
         List<VoucherFact> facts = new ArrayList<>(rawLines.size());
-        Map<Long, ErpMdSubject> subjectCache = new HashMap<>();
+        Map<String, ErpMdSubject> subjectCache = new HashMap<>();
         for (Object raw : rawLines) {
             VoucherFact f = toFact(raw, subjectCache, isReversal);
             if (f == null) {
@@ -137,7 +137,7 @@ public class BudgetVoucherGenerator {
         voucher.setDocStatus(ErpFinConstants.VOUCHER_STATUS_POSTED);
         voucher.setPostedAt(CoreMetrics.currentTimestamp());
         voucherDao.saveEntity(voucher);
-        Long voucherId = voucher.getId();
+        String voucherId = voucher.getId();
 
         int lineNo = 1;
         for (VoucherFact f : facts) {
@@ -179,7 +179,7 @@ public class BudgetVoucherGenerator {
         return voucherId;
     }
 
-    private VoucherFact toFact(Object raw, Map<Long, ErpMdSubject> subjectCache, boolean isReversal) {
+    private VoucherFact toFact(Object raw, Map<String, ErpMdSubject> subjectCache, boolean isReversal) {
         if (raw instanceof ErpFinBudgetLine) {
             ErpFinBudgetLine l = (ErpFinBudgetLine) raw;
             ErpMdSubject subject = subjectCache.computeIfAbsent(l.getSubjectId(), this::loadSubject);
@@ -216,18 +216,18 @@ public class BudgetVoucherGenerator {
         return CoreMetrics.today();
     }
 
-    private ErpMdSubject loadSubject(Long id) {
+    private ErpMdSubject loadSubject(String id) {
         return daoProvider.daoFor(ErpMdSubject.class).getEntityById(id);
     }
 
-    private List<ErpFinBudgetLine> loadBudgetLines(Long scenarioId) {
+    private List<ErpFinBudgetLine> loadBudgetLines(String scenarioId) {
         IEntityDao<ErpFinBudgetLine> dao = daoProvider.daoFor(ErpFinBudgetLine.class);
         io.nop.api.core.beans.query.QueryBean q = new io.nop.api.core.beans.query.QueryBean();
         q.addFilter(io.nop.api.core.beans.FilterBeans.eq("scenarioId", scenarioId));
         return dao.findAllByQuery(q);
     }
 
-    private List<ErpFinVoucherLine> loadVoucherLines(Long voucherId) {
+    private List<ErpFinVoucherLine> loadVoucherLines(String voucherId) {
         IEntityDao<ErpFinVoucherLine> dao = daoProvider.daoFor(ErpFinVoucherLine.class);
         io.nop.api.core.beans.query.QueryBean q = new io.nop.api.core.beans.query.QueryBean();
         q.addFilter(io.nop.api.core.beans.FilterBeans.eq("voucherId", voucherId));
@@ -243,7 +243,7 @@ public class BudgetVoucherGenerator {
         if (links.isEmpty()) {
             return new ArrayList<>();
         }
-        List<Long> voucherIds = new ArrayList<>(links.size());
+        List<String> voucherIds = new ArrayList<>(links.size());
         for (ErpFinVoucherBillR link : links) {
             voucherIds.add(link.getVoucherId());
         }
@@ -255,21 +255,22 @@ public class BudgetVoucherGenerator {
     }
 
     private static final class VoucherFact {
-        final Long subjectId;
+        final String subjectId;
         final String subjectCode;
         final String subjectName;
         final String dcDirection;
         final BigDecimal amount;
-        final Long costCenterId;
+        final String costCenterId;
+        // ErpFinBudgetLine/ErpFinVoucherLine.projectId 为登记册延后列（prj 未迁移），保持 Long
         final Long projectId;
-        final Long partnerId;
-        final Long departmentId;
-        final Long warehouseId;
-        final Long materialId;
+        final String partnerId;
+        final String departmentId;
+        final String warehouseId;
+        final String materialId;
 
-        VoucherFact(Long subjectId, String subjectCode, String subjectName, String dcDirection,
-                    BigDecimal amount, Long costCenterId, Long projectId, Long partnerId,
-                    Long departmentId, Long warehouseId, Long materialId) {
+        VoucherFact(String subjectId, String subjectCode, String subjectName, String dcDirection,
+                    BigDecimal amount, String costCenterId, Long projectId, String partnerId,
+                    String departmentId, String warehouseId, String materialId) {
             this.subjectId = subjectId;
             this.subjectCode = subjectCode;
             this.subjectName = subjectName;

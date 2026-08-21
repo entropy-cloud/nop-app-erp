@@ -41,14 +41,14 @@ public class ErpFinIntercompanyMatchBizModel extends CrudBizModel<ErpFinIntercom
 
     @Override
     @BizMutation
-    public int runMatching(@Name("periodId") Long periodId, IServiceContext context) {
+    public int runMatching(@Name("periodId") String periodId, IServiceContext context) {
         return runMatchingProcessor.runMatching(periodId, context);
     }
 
     @Override
     @BizQuery
     public DualSideDiffReport checkDualSideConsistency(@Name("pairKey") String pairKey,
-                                                @Name("periodId") Long periodId,
+                                                @Name("periodId") String periodId,
                                                 IServiceContext context) {
         DualSideDiffReport report = new DualSideDiffReport();
         report.setDirection("INTERCOMPANY");

@@ -50,31 +50,31 @@ public class ErpFinBudgetScenarioBizModel extends CrudBizModel<ErpFinBudgetScena
 
     @Override
     @BizMutation
-    public ErpFinBudgetScenario submit(@Name("id") Long id, IServiceContext context) {
-        return submitForApprovalProcessor.submitForApproval(String.valueOf(id), context);
+    public ErpFinBudgetScenario submit(@Name("id") String id, IServiceContext context) {
+        return submitForApprovalProcessor.submitForApproval(id, context);
     }
 
     @Override
     @BizMutation
-    public ErpFinBudgetScenario approve(@Name("id") Long id, IServiceContext context) {
-        return approveProcessor.approve(String.valueOf(id), context);
+    public ErpFinBudgetScenario approve(@Name("id") String id, IServiceContext context) {
+        return approveProcessor.approve(id, context);
     }
 
     @Override
     @BizMutation
-    public ErpFinBudgetScenario reject(@Name("id") Long id, IServiceContext context) {
-        return rejectProcessor.reject(String.valueOf(id), context);
+    public ErpFinBudgetScenario reject(@Name("id") String id, IServiceContext context) {
+        return rejectProcessor.reject(id, context);
     }
 
     @Override
     @BizMutation
-    public ErpFinBudgetScenario cancel(@Name("id") Long id, IServiceContext context) {
-        return cancelProcessor.cancel(String.valueOf(id), context);
+    public ErpFinBudgetScenario cancel(@Name("id") String id, IServiceContext context) {
+        return cancelProcessor.cancel(id, context);
     }
 
     @Override
     @BizMutation
-    public ErpFinBudgetScenario rollForward(@Name("id") Long id,
+    public ErpFinBudgetScenario rollForward(@Name("id") String id,
                                             @Name("newFiscalYear") Integer newFiscalYear,
                                             @Name("strategy") String strategy,
                                             IServiceContext context) {
@@ -83,8 +83,8 @@ public class ErpFinBudgetScenarioBizModel extends CrudBizModel<ErpFinBudgetScena
 
     @Override
     @BizMutation
-    public ErpFinBudgetScenario carryForward(@Name("id") Long id,
-                                             @Name("targetScenarioId") Long targetScenarioId,
+    public ErpFinBudgetScenario carryForward(@Name("id") String id,
+                                             @Name("targetScenarioId") String targetScenarioId,
                                              @Name("rule") String rule,
                                              IServiceContext context) {
         return carryForwardProcessor.carryForward(id, targetScenarioId, rule, context);

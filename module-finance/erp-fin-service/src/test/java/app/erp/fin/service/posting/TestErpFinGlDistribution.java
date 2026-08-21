@@ -88,15 +88,15 @@ public class TestErpFinGlDistribution extends JunitAutoTestCase {
         PostingEvent event = apInvoiceEvent("GL-SPLIT-001", voucherDate,
                 new BigDecimal("100"), new BigDecimal("13"), new BigDecimal("113"));
 
-        Long voucherId = ormTemplate.runInSession(session -> voucherBiz.post(event, CTX));
+        String voucherId = ormTemplate.runInSession(session -> voucherBiz.post(event, CTX));
         assertNotNull(voucherId, "分摊命中应正常过账");
 
         List<ErpFinVoucherLine> lines = linesOf(voucherId);
         // 模板 3 行 → 6602 行拆为 2 行 → 共 4 行
         assertEquals(4, lines.size(), "6602 行应拆为 2 行，总行数 3→4");
 
-        ErpFinVoucherLine line101 = lineOfCostCenter(lines, 101L);
-        ErpFinVoucherLine line102 = lineOfCostCenter(lines, 102L);
+        ErpFinVoucherLine line101 = lineOfCostCenter(lines, "101");
+        ErpFinVoucherLine line102 = lineOfCostCenter(lines, "102");
         assertNotNull(line101, "目标成本中心 101 行应存在");
         assertNotNull(line102, "目标成本中心 102 行应存在");
         assertEquals("6602", line101.getSubjectCode(), "拆分行科目不变");
@@ -158,7 +158,7 @@ public class TestErpFinGlDistribution extends JunitAutoTestCase {
         PostingEvent event = apInvoiceEvent("GL-PASS-001", voucherDate,
                 new BigDecimal("100"), new BigDecimal("13"), new BigDecimal("113"));
 
-        Long voucherId = ormTemplate.runInSession(session -> voucherBiz.post(event, CTX));
+        String voucherId = ormTemplate.runInSession(session -> voucherBiz.post(event, CTX));
         assertNotNull(voucherId, "无规则命中应正常过账");
         List<ErpFinVoucherLine> lines = linesOf(voucherId);
         assertEquals(3, lines.size(), "无规则命中应原样透传（3 行不变）");
@@ -198,15 +198,15 @@ public class TestErpFinGlDistribution extends JunitAutoTestCase {
         PostingEvent event = new PostingEvent();
         event.setBusinessType(ErpFinBusinessType.AP_INVOICE);
         event.setBillHeadCode(billHeadCode);
-        event.setAcctSchemaId(1L);
-        event.setOrgId(1L);
-        event.setCurrencyId(1L);
+        event.setAcctSchemaId("1");
+        event.setOrgId("1");
+        event.setCurrencyId("1");
         event.setExchangeRate(BigDecimal.ONE);
         event.setVoucherDate(voucherDate);
         event.getBillData().put("AMOUNT", amount);
         event.getBillData().put("TAX", tax);
         event.getBillData().put("TOTAL", total);
-        event.getBillData().put("partnerId", 1L);
+        event.getBillData().put("partnerId", "1");
         event.getBillData().put("businessDate", voucherDate);
         return event;
     }
@@ -227,7 +227,7 @@ public class TestErpFinGlDistribution extends JunitAutoTestCase {
         lineDao.saveEntity(templateLine(tpl.getId(), 3, apSubject, DC_CREDIT, "TOTAL"));
     }
 
-    private ErpFinVoucherTemplateLine templateLine(Long templateId, int lineNo, String subjectCode,
+    private ErpFinVoucherTemplateLine templateLine(String templateId, int lineNo, String subjectCode,
                                                    String dcDirection, String amountKey) {
         ErpFinVoucherTemplateLine line = new ErpFinVoucherTemplateLine();
         line.setTemplateId(templateId);
@@ -254,7 +254,7 @@ public class TestErpFinGlDistribution extends JunitAutoTestCase {
         ErpFinAccountingPeriod period = new ErpFinAccountingPeriod();
         period.setCode("2026-06");
         period.setName("2026-06");
-        period.setOrgId(1L);
+        period.setOrgId("1");
         period.setYear(2026);
         period.setMonth(6);
         period.setStartDate(LocalDate.of(2026, 6, 1));
@@ -263,7 +263,7 @@ public class TestErpFinGlDistribution extends JunitAutoTestCase {
         dao.saveEntity(period);
     }
 
-    private List<ErpFinVoucherLine> linesOf(Long voucherId) {
+    private List<ErpFinVoucherLine> linesOf(String voucherId) {
         IEntityDao<ErpFinVoucherLine> dao = daoProvider.daoFor(ErpFinVoucherLine.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("voucherId", voucherId));
@@ -272,7 +272,7 @@ public class TestErpFinGlDistribution extends JunitAutoTestCase {
         return lines;
     }
 
-    private ErpFinVoucherLine lineOfCostCenter(List<ErpFinVoucherLine> lines, Long costCenterId) {
+    private ErpFinVoucherLine lineOfCostCenter(List<ErpFinVoucherLine> lines, String costCenterId) {
         return lines.stream().filter(l -> costCenterId.equals(l.getCostCenterId())).findFirst().orElse(null);
     }
 

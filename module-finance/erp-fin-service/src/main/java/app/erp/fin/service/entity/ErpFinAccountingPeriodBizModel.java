@@ -49,25 +49,25 @@ public class ErpFinAccountingPeriodBizModel extends CrudBizModel<ErpFinAccountin
 
     @Override
     @BizQuery
-    public PeriodPreCheckReport preCheck(@Name("periodId") Long periodId, IServiceContext context) {
+    public PeriodPreCheckReport preCheck(@Name("periodId") String periodId, IServiceContext context) {
         return preCheckProcessor.preCheck(periodId, context);
     }
 
     @Override
     @BizMutation
-    public ErpFinAccountingPeriod closePeriod(@Name("periodId") Long periodId, IServiceContext context) {
+    public ErpFinAccountingPeriod closePeriod(@Name("periodId") String periodId, IServiceContext context) {
         return closePeriodProcessor.closePeriod(periodId, context);
     }
 
     @Override
     @BizMutation
-    public ErpFinAccountingPeriod finalizePeriod(@Name("periodId") Long periodId, IServiceContext context) {
+    public ErpFinAccountingPeriod finalizePeriod(@Name("periodId") String periodId, IServiceContext context) {
         return finalizePeriodProcessor.finalizePeriod(periodId, context);
     }
 
     @Override
     @BizMutation
-    public ErpFinAccountingPeriod reverseClose(@Name("periodId") Long periodId,
+    public ErpFinAccountingPeriod reverseClose(@Name("periodId") String periodId,
                                                @Name("reason") String reason,
                                                IServiceContext context) {
         return reverseCloseProcessor.reverseClose(periodId, reason, context);
@@ -75,7 +75,7 @@ public class ErpFinAccountingPeriodBizModel extends CrudBizModel<ErpFinAccountin
 
     @Override
     @BizMutation
-    public ErpFinAccountingPeriod openPeriod(@Name("periodId") Long periodId, IServiceContext context) {
+    public ErpFinAccountingPeriod openPeriod(@Name("periodId") String periodId, IServiceContext context) {
         return openPeriodProcessor.openPeriod(periodId, context);
     }
 

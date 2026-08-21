@@ -55,7 +55,7 @@ public class TestErpFinNotesPayableStateMachine extends JunitAutoTestCase {
     @Test
     public void testIssueCommercialAcceptanceNoCreditCheck() {
         // 商业承兑不占用授信额度，直接开出。
-        Long noteId = ormTemplate.runInSession(s -> {
+        String noteId = ormTemplate.runInSession(s -> {
             seedBase();
             return seedPayable("NP-001",
                     ErpFinConstants.NOTES_TYPE_COMMERCIAL_ACCEPTANCE, null, new BigDecimal("5000"));
@@ -66,8 +66,8 @@ public class TestErpFinNotesPayableStateMachine extends JunitAutoTestCase {
 
     @Test
     public void testIssueBankAcceptanceOccupiesCredit() {
-        Long facilityId = ormTemplate.runInSession(s -> { seedBase(); return seedCreditFacility("CF-001", new BigDecimal("1000"), BigDecimal.ZERO); });
-        Long noteId = ormTemplate.runInSession(s -> seedPayable("NP-002",
+        String facilityId = ormTemplate.runInSession(s -> { seedBase(); return seedCreditFacility("CF-001", new BigDecimal("1000"), BigDecimal.ZERO); });
+        String noteId = ormTemplate.runInSession(s -> seedPayable("NP-002",
                 ErpFinConstants.NOTES_TYPE_BANK_ACCEPTANCE, facilityId, new BigDecimal("500")));
 
         ErpFinNotesPayable note = ormTemplate.runInSession(session -> notesPayableBiz.issue(noteId, CTX));
@@ -81,8 +81,8 @@ public class TestErpFinNotesPayableStateMachine extends JunitAutoTestCase {
     @Test
     public void testIssueBankAcceptanceInsufficientCreditRejected() {
         // 总额 1000，已用 800，可用 200 < 票面 500 → 拒绝开票（credit 校验先于过账，无需 seedBase）。
-        Long facilityId = ormTemplate.runInSession(s -> seedCreditFacility("CF-002", new BigDecimal("1000"), new BigDecimal("800")));
-        Long noteId = ormTemplate.runInSession(s -> seedPayable("NP-003",
+        String facilityId = ormTemplate.runInSession(s -> seedCreditFacility("CF-002", new BigDecimal("1000"), new BigDecimal("800")));
+        String noteId = ormTemplate.runInSession(s -> seedPayable("NP-003",
                 ErpFinConstants.NOTES_TYPE_BANK_ACCEPTANCE, facilityId, new BigDecimal("500")));
 
         NopException ex = assertThrows(NopException.class, () -> ormTemplate.runInSession(session -> notesPayableBiz.issue(noteId, CTX)));
@@ -91,8 +91,8 @@ public class TestErpFinNotesPayableStateMachine extends JunitAutoTestCase {
 
     @Test
     public void testHonorReleasesCredit() {
-        Long facilityId = ormTemplate.runInSession(s -> { seedBase(); return seedCreditFacility("CF-003", new BigDecimal("1000"), BigDecimal.ZERO); });
-        Long noteId = ormTemplate.runInSession(s -> seedPayable("NP-004",
+        String facilityId = ormTemplate.runInSession(s -> { seedBase(); return seedCreditFacility("CF-003", new BigDecimal("1000"), BigDecimal.ZERO); });
+        String noteId = ormTemplate.runInSession(s -> seedPayable("NP-004",
                 ErpFinConstants.NOTES_TYPE_BANK_ACCEPTANCE, facilityId, new BigDecimal("500")));
 
         ormTemplate.runInSession(() -> notesPayableBiz.issue(noteId, CTX));
@@ -104,8 +104,8 @@ public class TestErpFinNotesPayableStateMachine extends JunitAutoTestCase {
 
     @Test
     public void testWriteOffReleasesCredit() {
-        Long facilityId = ormTemplate.runInSession(s -> { seedBase(); return seedCreditFacility("CF-004", new BigDecimal("1000"), BigDecimal.ZERO); });
-        Long noteId = ormTemplate.runInSession(s -> seedPayable("NP-005",
+        String facilityId = ormTemplate.runInSession(s -> { seedBase(); return seedCreditFacility("CF-004", new BigDecimal("1000"), BigDecimal.ZERO); });
+        String noteId = ormTemplate.runInSession(s -> seedPayable("NP-005",
                 ErpFinConstants.NOTES_TYPE_BANK_ACCEPTANCE, facilityId, new BigDecimal("500")));
 
         ormTemplate.runInSession(() -> notesPayableBiz.issue(noteId, CTX));
@@ -117,7 +117,7 @@ public class TestErpFinNotesPayableStateMachine extends JunitAutoTestCase {
 
     @Test
     public void testIllegalTransitionHonorFromWriteOff() {
-        Long noteId = ormTemplate.runInSession(s -> seedPayable("NP-006",
+        String noteId = ormTemplate.runInSession(s -> seedPayable("NP-006",
                 ErpFinConstants.NOTES_TYPE_COMMERCIAL_ACCEPTANCE, null, new BigDecimal("500"),
                 ErpFinConstants.NOTES_PAY_WRITE_OFF));
         assertThrows(NopException.class, () -> ormTemplate.runInSession(session -> notesPayableBiz.honor(noteId, CTX)));
@@ -133,24 +133,24 @@ public class TestErpFinNotesPayableStateMachine extends JunitAutoTestCase {
         int month = now.getMonthValue();
         String code = year + "-" + String.format("%02d", month);
         seedOpenPeriod(code, year, month, now.atDay(1), now.atEndOfMonth());
-        seedAcctSchema(1L);
+        seedAcctSchema("1");
         seedSubject("2202", "应付账款");
         seedSubject("2203", "应付票据");
         seedSubject("1002", "银行存款");
     }
 
-    private Long seedPayable(String code, String notesType, Long creditFacilityId, BigDecimal amountFunctional) {
+    private String seedPayable(String code, String notesType, String creditFacilityId, BigDecimal amountFunctional) {
         return seedPayable(code, notesType, creditFacilityId, amountFunctional, null);
     }
 
-    private Long seedPayable(String code, String notesType, Long creditFacilityId, BigDecimal amountFunctional, String status) {
+    private String seedPayable(String code, String notesType, String creditFacilityId, BigDecimal amountFunctional, String status) {
         IEntityDao<ErpFinNotesPayable> dao = daoProvider.daoFor(ErpFinNotesPayable.class);
         ErpFinNotesPayable note = new ErpFinNotesPayable();
         note.setCode(code);
-        note.setOrgId(1L);
+        note.setOrgId("1");
         note.setNotesType(notesType);
         note.setNotesNo("N-" + code);
-        note.setCurrencyId(1L);
+        note.setCurrencyId("1");
         note.setExchangeRate(BigDecimal.ONE);
         note.setAmountFunctional(amountFunctional);
         note.setAmountSource(amountFunctional);
@@ -161,11 +161,11 @@ public class TestErpFinNotesPayableStateMachine extends JunitAutoTestCase {
         return note.getId();
     }
 
-    private Long seedCreditFacility(String code, BigDecimal total, BigDecimal used) {
+    private String seedCreditFacility(String code, BigDecimal total, BigDecimal used) {
         IEntityDao<ErpFinCreditFacility> dao = daoProvider.daoFor(ErpFinCreditFacility.class);
         ErpFinCreditFacility facility = new ErpFinCreditFacility();
         facility.setCode(code);
-        facility.setOrgId(1L);
+        facility.setOrgId("1");
         facility.setFacilityType("BANK_ACCEPTANCE_LINE");
         facility.setTotalAmount(total);
         facility.setUsedAmount(used);
@@ -175,7 +175,7 @@ public class TestErpFinNotesPayableStateMachine extends JunitAutoTestCase {
         return facility.getId();
     }
 
-    private ErpFinCreditFacility reloadFacility(Long facilityId) {
+    private ErpFinCreditFacility reloadFacility(String facilityId) {
         IEntityDao<ErpFinCreditFacility> dao = daoProvider.daoFor(ErpFinCreditFacility.class);
         return dao.getEntityById(facilityId);
     }
@@ -191,14 +191,14 @@ public class TestErpFinNotesPayableStateMachine extends JunitAutoTestCase {
         dao.saveEntity(subject);
     }
 
-    private void seedAcctSchema(long orgId) {
+    private void seedAcctSchema(String orgId) {
         IEntityDao<ErpMdAcctSchema> dao = daoProvider.daoFor(ErpMdAcctSchema.class);
         ErpMdAcctSchema schema = new ErpMdAcctSchema();
         schema.setCode("AS-" + orgId);
         schema.setName("账套-" + orgId);
         schema.setOrgId(orgId);
         schema.setNature("FINANCIAL");
-        schema.setFunctionalCurrencyId(1L);
+        schema.setFunctionalCurrencyId("1");
         schema.setStatus("ACTIVE");
         dao.saveEntity(schema);
     }
@@ -208,7 +208,7 @@ public class TestErpFinNotesPayableStateMachine extends JunitAutoTestCase {
         ErpFinAccountingPeriod period = new ErpFinAccountingPeriod();
         period.setCode(code);
         period.setName(code);
-        period.setOrgId(1L);
+        period.setOrgId("1");
         period.setYear(year);
         period.setMonth(month);
         period.setStartDate(start);

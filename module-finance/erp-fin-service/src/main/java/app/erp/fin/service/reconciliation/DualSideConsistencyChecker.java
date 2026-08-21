@@ -49,7 +49,7 @@ public class DualSideConsistencyChecker {
     @Inject
     IDaoProvider daoProvider;
 
-    public DualSideDiffReport check(String direction, Long partnerId, IServiceContext context) {
+    public DualSideDiffReport check(String direction, String partnerId, IServiceContext context) {
         DualSideDiffReport report = new DualSideDiffReport();
         report.setDirection(direction);
         report.setPartnerId(partnerId);
@@ -61,12 +61,12 @@ public class DualSideConsistencyChecker {
         }
 
         BigDecimal precision = precision();
-        Map<Long, BigDecimal> financeSettledByPartner = new HashMap<>();
-        Map<Long, BigDecimal> domainSettledByPartner = new HashMap<>();
-        Map<Long, BigDecimal> invoiceAmountByPartner = new HashMap<>();
+        Map<String, BigDecimal> financeSettledByPartner = new HashMap<>();
+        Map<String, BigDecimal> domainSettledByPartner = new HashMap<>();
+        Map<String, BigDecimal> invoiceAmountByPartner = new HashMap<>();
 
         for (ErpFinArApItem item : invoiceItems) {
-            Long pid = item.getPartnerId();
+            String pid = item.getPartnerId();
             BigDecimal settled = nz(item.getSettledAmountFunctional());
             BigDecimal amount = nz(item.getAmountFunctional());
             financeSettledByPartner.merge(pid, settled, BigDecimal::add);
@@ -77,7 +77,7 @@ public class DualSideConsistencyChecker {
         }
 
         boolean allConsistent = true;
-        for (Long pid : financeSettledByPartner.keySet()) {
+        for (String pid : financeSettledByPartner.keySet()) {
             BigDecimal finSettled = financeSettledByPartner.getOrDefault(pid, BigDecimal.ZERO);
             BigDecimal domSettled = domainSettledByPartner.getOrDefault(pid, BigDecimal.ZERO);
             BigDecimal diff = finSettled.subtract(domSettled).abs();
@@ -101,7 +101,7 @@ public class DualSideConsistencyChecker {
         return report;
     }
 
-    protected List<ErpFinArApItem> findInvoiceItems(String direction, Long partnerId, IServiceContext context) {
+    protected List<ErpFinArApItem> findInvoiceItems(String direction, String partnerId, IServiceContext context) {
         QueryBean query = new QueryBean();
         query.addFilter(eq("direction", direction));
         if (partnerId != null) {

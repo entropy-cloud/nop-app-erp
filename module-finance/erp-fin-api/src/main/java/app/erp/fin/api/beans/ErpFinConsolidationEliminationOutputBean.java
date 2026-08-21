@@ -13,16 +13,16 @@
     public class ErpFinConsolidationEliminationOutputBean {
 
     
-        private Long _id;
+        private String _id;
 
     
         @PropMeta(propId=1)
     
-        public Long getId(){
+        public String getId(){
             return _id;
         }
 
-        public void setId(Long value){
+        public void setId(String value){
             this._id = value;
         }
 
@@ -41,16 +41,16 @@
         }
 
 
-        private Long _orgId;
+        private String _orgId;
 
     
         @PropMeta(propId=3)
     
-        public Long getOrgId(){
+        public String getOrgId(){
             return _orgId;
         }
 
-        public void setOrgId(Long value){
+        public void setOrgId(String value){
             this._orgId = value;
         }
 
@@ -81,16 +81,16 @@
         }
 
 
-        private Long _periodId;
+        private String _periodId;
 
     
         @PropMeta(propId=5)
     
-        public Long getPeriodId(){
+        public String getPeriodId(){
             return _periodId;
         }
 
-        public void setPeriodId(Long value){
+        public void setPeriodId(String value){
             this._periodId = value;
         }
 
@@ -109,44 +109,44 @@
         }
 
 
-        private Long _matchId;
+        private String _matchId;
 
     
         @PropMeta(propId=7)
     
-        public Long getMatchId(){
+        public String getMatchId(){
             return _matchId;
         }
 
-        public void setMatchId(Long value){
+        public void setMatchId(String value){
             this._matchId = value;
         }
 
 
-        private Long _fromOrgId;
+        private String _fromOrgId;
 
     
         @PropMeta(propId=8)
     
-        public Long getFromOrgId(){
+        public String getFromOrgId(){
             return _fromOrgId;
         }
 
-        public void setFromOrgId(Long value){
+        public void setFromOrgId(String value){
             this._fromOrgId = value;
         }
 
 
-        private Long _toOrgId;
+        private String _toOrgId;
 
     
         @PropMeta(propId=9)
     
-        public Long getToOrgId(){
+        public String getToOrgId(){
             return _toOrgId;
         }
 
-        public void setToOrgId(Long value){
+        public void setToOrgId(String value){
             this._toOrgId = value;
         }
 
@@ -165,16 +165,16 @@
         }
 
 
-        private Long _draftVoucherId;
+        private String _draftVoucherId;
 
     
         @PropMeta(propId=11)
     
-        public Long getDraftVoucherId(){
+        public String getDraftVoucherId(){
             return _draftVoucherId;
         }
 
-        public void setDraftVoucherId(Long value){
+        public void setDraftVoucherId(String value){
             this._draftVoucherId = value;
         }
 

@@ -33,7 +33,7 @@ public class ErpFinAccountingPeriodClosePeriodProcessor {
     @Inject
     ErpFinAccountingPeriodStateMachine stateMachine;
 
-    public ErpFinAccountingPeriod closePeriod(Long periodId, IServiceContext context) {
+    public ErpFinAccountingPeriod closePeriod(String periodId, IServiceContext context) {
         ErpFinAccountingPeriod period = facade.requirePeriod(periodId);
         // observability.md §5.1 指标 3（period_close_duration Timer）+ 指标 6 path=period_close：
         // 编排方法入口计时 + path 吞吐计数（period 已加载用于 tag）
@@ -46,7 +46,7 @@ public class ErpFinAccountingPeriodClosePeriodProcessor {
         }
     }
 
-    private ErpFinAccountingPeriod doClosePeriod(Long periodId, ErpFinAccountingPeriod period,
+    private ErpFinAccountingPeriod doClosePeriod(String periodId, ErpFinAccountingPeriod period,
                                                   IServiceContext context) {
         try {
             stateMachine.assertCanClose(period.getStatus());

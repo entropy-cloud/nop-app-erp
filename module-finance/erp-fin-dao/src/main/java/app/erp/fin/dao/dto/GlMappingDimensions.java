@@ -13,72 +13,72 @@ package app.erp.fin.dao.dto;
  * <p>权威：{@code docs/design/finance/gl-mapping-rules.md §3.4 维度数据来源}。
  */
 public class GlMappingDimensions {
-    private Long orgId;
-    private Long partnerId;
-    private Long partnerGroupId;
-    private Long materialId;
-    private Long materialCategoryId;
-    private Long warehouseId;
-    private Long departmentId;
+    private String orgId;
+    private String partnerId;
+    private String partnerGroupId;
+    private String materialId;
+    private String materialCategoryId;
+    private String warehouseId;
+    private String departmentId;
     private Long projectId;
     /** A3 intercompany 维度（plan 2026-07-22-1000-1，multi-company.md §与 Posting+GL Mapping 关系）：跨法人交易双方组织。 */
-    private Long fromOrgId;
+    private String fromOrgId;
     /** A3 intercompany 维度：调入方组织。 */
-    private Long toOrgId;
+    private String toOrgId;
 
-    public Long getOrgId() {
+    public String getOrgId() {
         return orgId;
     }
 
-    public void setOrgId(Long orgId) {
+    public void setOrgId(String orgId) {
         this.orgId = orgId;
     }
 
-    public Long getPartnerId() {
+    public String getPartnerId() {
         return partnerId;
     }
 
-    public void setPartnerId(Long partnerId) {
+    public void setPartnerId(String partnerId) {
         this.partnerId = partnerId;
     }
 
-    public Long getPartnerGroupId() {
+    public String getPartnerGroupId() {
         return partnerGroupId;
     }
 
-    public void setPartnerGroupId(Long partnerGroupId) {
+    public void setPartnerGroupId(String partnerGroupId) {
         this.partnerGroupId = partnerGroupId;
     }
 
-    public Long getMaterialId() {
+    public String getMaterialId() {
         return materialId;
     }
 
-    public void setMaterialId(Long materialId) {
+    public void setMaterialId(String materialId) {
         this.materialId = materialId;
     }
 
-    public Long getMaterialCategoryId() {
+    public String getMaterialCategoryId() {
         return materialCategoryId;
     }
 
-    public void setMaterialCategoryId(Long materialCategoryId) {
+    public void setMaterialCategoryId(String materialCategoryId) {
         this.materialCategoryId = materialCategoryId;
     }
 
-    public Long getWarehouseId() {
+    public String getWarehouseId() {
         return warehouseId;
     }
 
-    public void setWarehouseId(Long warehouseId) {
+    public void setWarehouseId(String warehouseId) {
         this.warehouseId = warehouseId;
     }
 
-    public Long getDepartmentId() {
+    public String getDepartmentId() {
         return departmentId;
     }
 
-    public void setDepartmentId(Long departmentId) {
+    public void setDepartmentId(String departmentId) {
         this.departmentId = departmentId;
     }
 
@@ -90,19 +90,19 @@ public class GlMappingDimensions {
         this.projectId = projectId;
     }
 
-    public Long getFromOrgId() {
+    public String getFromOrgId() {
         return fromOrgId;
     }
 
-    public void setFromOrgId(Long fromOrgId) {
+    public void setFromOrgId(String fromOrgId) {
         this.fromOrgId = fromOrgId;
     }
 
-    public Long getToOrgId() {
+    public String getToOrgId() {
         return toOrgId;
     }
 
-    public void setToOrgId(Long toOrgId) {
+    public void setToOrgId(String toOrgId) {
         this.toOrgId = toOrgId;
     }
 }

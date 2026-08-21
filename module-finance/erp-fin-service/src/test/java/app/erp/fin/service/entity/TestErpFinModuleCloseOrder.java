@@ -46,7 +46,7 @@ public class TestErpFinModuleCloseOrder extends JunitAutoTestCase {
 
     @Test
     public void testModuleCloseOrder() {
-        Long periodId = seedReturn(() -> seedOpenPeriod("2025-01", 2025, 1,
+        String periodId = seedReturn(() -> seedOpenPeriod("2025-01", 2025, 1,
                 LocalDate.of(2025, 1, 1), LocalDate.of(2025, 1, 31),
                 ErpFinConstants.PERIOD_STATUS_OPEN));
 
@@ -63,7 +63,7 @@ public class TestErpFinModuleCloseOrder extends JunitAutoTestCase {
     @Test
     public void testModuleOutOfOrderRejected() {
         // 直接构造 AR=OPEN 的状态记录，跳过 AR 直接关 AP → 应拒绝（AP 前置 AR 未关账）。
-        Long periodId = seedReturn(() -> seedOpenPeriod("2025-02", 2025, 2,
+        String periodId = seedReturn(() -> seedOpenPeriod("2025-02", 2025, 2,
                 LocalDate.of(2025, 2, 1), LocalDate.of(2025, 2, 28),
                 ErpFinConstants.PERIOD_STATUS_OPEN));
 
@@ -78,7 +78,7 @@ public class TestErpFinModuleCloseOrder extends JunitAutoTestCase {
     @Test
     public void testReverseCloseApprovalBlocked() {
         // 默认 reverse-close-approval-required=true：反结账应被审批门控阻断。
-        Long periodId = seedReturn(() -> seedOpenPeriod("2025-03", 2025, 3,
+        String periodId = seedReturn(() -> seedOpenPeriod("2025-03", 2025, 3,
                 LocalDate.of(2025, 3, 1), LocalDate.of(2025, 3, 31),
                 ErpFinConstants.PERIOD_STATUS_CLOSED_FINAL));
 
@@ -99,12 +99,12 @@ public class TestErpFinModuleCloseOrder extends JunitAutoTestCase {
         return ormTemplate.runInSession(session -> action.get());
     }
 
-    private Long seedOpenPeriod(String code, int year, int month, LocalDate start, LocalDate end, String status) {
+    private String seedOpenPeriod(String code, int year, int month, LocalDate start, LocalDate end, String status) {
         IEntityDao<ErpFinAccountingPeriod> dao = daoProvider.daoFor(ErpFinAccountingPeriod.class);
         ErpFinAccountingPeriod period = new ErpFinAccountingPeriod();
         period.setCode(code);
         period.setName(code);
-        period.setOrgId(1L);
+        period.setOrgId("1");
         period.setYear(year);
         period.setMonth(month);
         period.setStartDate(start);
@@ -114,11 +114,11 @@ public class TestErpFinModuleCloseOrder extends JunitAutoTestCase {
         return period.getId();
     }
 
-    private ErpFinAccountingPeriodStatus seedPeriodStatus(Long periodId) {
+    private ErpFinAccountingPeriodStatus seedPeriodStatus(String periodId) {
         IEntityDao<ErpFinAccountingPeriodStatus> dao = daoProvider.daoFor(ErpFinAccountingPeriodStatus.class);
         ErpFinAccountingPeriodStatus status = new ErpFinAccountingPeriodStatus();
         status.setPeriodId(periodId);
-        status.setAcctSchemaId(1L);
+        status.setAcctSchemaId("1");
         status.setArStatus(ErpFinConstants.MODULE_CLOSE_OPEN);
         status.setApStatus(ErpFinConstants.MODULE_CLOSE_OPEN);
         status.setInvStatus(ErpFinConstants.MODULE_CLOSE_OPEN);
@@ -128,7 +128,7 @@ public class TestErpFinModuleCloseOrder extends JunitAutoTestCase {
         return status;
     }
 
-    private ErpFinAccountingPeriodStatus loadStatus(Long periodId) {
+    private ErpFinAccountingPeriodStatus loadStatus(String periodId) {
         IEntityDao<ErpFinAccountingPeriodStatus> dao = daoProvider.daoFor(ErpFinAccountingPeriodStatus.class);
         io.nop.api.core.beans.query.QueryBean q = new io.nop.api.core.beans.query.QueryBean();
         q.addFilter(eq("periodId", periodId));

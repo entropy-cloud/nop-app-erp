@@ -56,7 +56,7 @@ public class ErpFinIntercompanyTransferBizModel implements IErpFinIntercompanyTr
     IntercompanyVoucherGenerator intercompanyVoucherGenerator;
 
     @Override
-    public List<Long> onTransferConfirmed(Long transferOrderId, Long fromWarehouseId, Long toWarehouseId,
+    public List<String> onTransferConfirmed(String transferOrderId, String fromWarehouseId, String toWarehouseId,
                                          LocalDate businessDate, IServiceContext context) {
         if (!isIntercompanyPostingEnabled()) {
             return Collections.emptyList();
@@ -65,14 +65,14 @@ public class ErpFinIntercompanyTransferBizModel implements IErpFinIntercompanyTr
             return Collections.emptyList();
         }
 
-        Long fromOrgId = resolveWarehouseOrgId(fromWarehouseId);
-        Long toOrgId = resolveWarehouseOrgId(toWarehouseId);
+        String fromOrgId = resolveWarehouseOrgId(fromWarehouseId);
+        String toOrgId = resolveWarehouseOrgId(toWarehouseId);
         if (fromOrgId == null || toOrgId == null) {
             return Collections.emptyList();
         }
 
-        Long fromLegalId = resolveLegalEntityRoot(fromOrgId);
-        Long toLegalId = resolveLegalEntityRoot(toOrgId);
+        String fromLegalId = resolveLegalEntityRoot(fromOrgId);
+        String toLegalId = resolveLegalEntityRoot(toOrgId);
         if (fromLegalId == null || toLegalId == null) {
             return Collections.emptyList();
         }
@@ -92,10 +92,10 @@ public class ErpFinIntercompanyTransferBizModel implements IErpFinIntercompanyTr
         }
 
         String transferCode = resolveTransferCode(transferOrderId);
-        Long fromAcctSchemaId = resolveOrgAcctSchemaId(fromLegalId);
-        Long toAcctSchemaId = resolveOrgAcctSchemaId(toLegalId);
-        Long periodId = resolvePeriodId(businessDate);
-        Long currencyId = 1L;
+        String fromAcctSchemaId = resolveOrgAcctSchemaId(fromLegalId);
+        String toAcctSchemaId = resolveOrgAcctSchemaId(toLegalId);
+        String periodId = resolvePeriodId(businessDate);
+        String currencyId = "1";
         java.math.BigDecimal amount = pricing.getUnitPrice();
 
         return intercompanyVoucherGenerator.generatePairedVouchers(transferCode, fromLegalId, toLegalId,
@@ -103,7 +103,7 @@ public class ErpFinIntercompanyTransferBizModel implements IErpFinIntercompanyTr
     }
 
     @Override
-    public List<Long> onTradeDocumentApproved(String docType, Long docId, String docCode, Long executingOrgId,
+    public List<String> onTradeDocumentApproved(String docType, String docId, String docCode, String executingOrgId,
                                               BigDecimal amount, LocalDate businessDate, IServiceContext context) {
         if (!isIntercompanyPostingEnabled()) {
             return Collections.emptyList();
@@ -112,12 +112,12 @@ public class ErpFinIntercompanyTransferBizModel implements IErpFinIntercompanyTr
             return Collections.emptyList();
         }
 
-        Long executingLegal = resolveLegalEntityRoot(executingOrgId);
+        String executingLegal = resolveLegalEntityRoot(executingOrgId);
         if (executingLegal == null) {
             return Collections.emptyList();
         }
 
-        Long counterpartyLegal = resolveCounterpartyLegalEntity(executingLegal, docType, businessDate);
+        String counterpartyLegal = resolveCounterpartyLegalEntity(executingLegal, docType, businessDate);
         if (counterpartyLegal == null) {
             LOG.debug("intercompany trade-document skip (no counterparty pricing rule): docType={} docCode={} executingLegal={}",
                     docType, docCode, executingLegal);
@@ -129,8 +129,8 @@ public class ErpFinIntercompanyTransferBizModel implements IErpFinIntercompanyTr
         }
 
         // AR/AP 方向固定：seller(fromOrg)=AR，buyer(toOrg)=AP（Decision C）
-        Long sellerLegal;
-        Long buyerLegal;
+        String sellerLegal;
+        String buyerLegal;
         if (ErpFinConstants.INTERCOMPANY_DOC_TYPE_PURCHASE_ORDER.equals(docType)) {
             // PO 执行方=买方，对手=卖方
             sellerLegal = counterpartyLegal;
@@ -141,17 +141,17 @@ public class ErpFinIntercompanyTransferBizModel implements IErpFinIntercompanyTr
             buyerLegal = counterpartyLegal;
         }
 
-        Long sellerAcctSchemaId = resolveOrgAcctSchemaId(sellerLegal);
-        Long buyerAcctSchemaId = resolveOrgAcctSchemaId(buyerLegal);
-        Long periodId = resolvePeriodId(businessDate);
-        Long currencyId = 1L;
+        String sellerAcctSchemaId = resolveOrgAcctSchemaId(sellerLegal);
+        String buyerAcctSchemaId = resolveOrgAcctSchemaId(buyerLegal);
+        String periodId = resolvePeriodId(businessDate);
+        String currencyId = "1";
 
         return intercompanyVoucherGenerator.generatePairedVouchers(docCode, sellerLegal, buyerLegal,
                 sellerAcctSchemaId, buyerAcctSchemaId, periodId, currencyId, amount);
     }
 
     @Override
-    public List<Long> onTradeDocumentReversed(String docType, Long docId, String docCode, IServiceContext context) {
+    public List<String> onTradeDocumentReversed(String docType, String docId, String docCode, IServiceContext context) {
         if (!isIntercompanyPostingEnabled()) {
             return Collections.emptyList();
         }
@@ -171,7 +171,7 @@ public class ErpFinIntercompanyTransferBizModel implements IErpFinIntercompanyTr
      * <p>不按 validFrom/validTo 过滤：intercompany 交易关系是稳定的（org A 与 org B 互为对手），
      * 有效期窗口仅影响转移定价金额解析（经 IErpFinTransferPriceResolver），不影响对手方关系存在性。
      */
-    private Long resolveCounterpartyLegalEntity(Long executingLegalId, String docType, LocalDate businessDate) {
+    private String resolveCounterpartyLegalEntity(String executingLegalId, String docType, LocalDate businessDate) {
         IEntityDao<ErpFinIntercompanyTransferPrice> dao =
                 daoProvider.daoFor(ErpFinIntercompanyTransferPrice.class);
         QueryBean q = new QueryBean();
@@ -195,7 +195,7 @@ public class ErpFinIntercompanyTransferBizModel implements IErpFinIntercompanyTr
         return Boolean.TRUE.equals(AppConfig.var(ErpFinConstants.CONFIG_INTERCOMPANY_POSTING_ENABLED, Boolean.FALSE));
     }
 
-    private Long resolveWarehouseOrgId(Long warehouseId) {
+    private String resolveWarehouseOrgId(String warehouseId) {
         ErpMdWarehouse wh = daoProvider.daoFor(ErpMdWarehouse.class).getEntityById(warehouseId);
         return wh == null ? null : wh.getOrgId();
     }
@@ -204,9 +204,9 @@ public class ErpFinIntercompanyTransferBizModel implements IErpFinIntercompanyTr
      * 沿 parentId 链向上找首个 orgType=COMPANY 的法人根。
      * 带环检测（visited set）防止脏数据导致死循环。
      */
-    Long resolveLegalEntityRoot(Long orgId) {
-        Map<Long, Boolean> visited = new HashMap<>();
-        Long current = orgId;
+    String resolveLegalEntityRoot(String orgId) {
+        Map<String, Boolean> visited = new HashMap<>();
+        String current = orgId;
         IEntityDao<ErpMdOrganization> dao = daoProvider.daoFor(ErpMdOrganization.class);
         while (current != null && visited.putIfAbsent(current, Boolean.TRUE) == null) {
             ErpMdOrganization org = dao.getEntityById(current);
@@ -225,17 +225,17 @@ public class ErpFinIntercompanyTransferBizModel implements IErpFinIntercompanyTr
         return null;
     }
 
-    private String resolveTransferCode(Long transferOrderId) {
+    private String resolveTransferCode(String transferOrderId) {
         // 调拨单 code 业财回链（无法直接读 ErpInvTransferOrder 实体因跨模块，用 ID 兜底）
         return "TRANSFER-" + transferOrderId;
     }
 
-    private Long resolveOrgAcctSchemaId(Long orgId) {
+    private String resolveOrgAcctSchemaId(String orgId) {
         // 默认账套 = 1（多账套精确解析归 successor）
-        return 1L;
+        return "1";
     }
 
-    private Long resolvePeriodId(LocalDate businessDate) {
+    private String resolvePeriodId(LocalDate businessDate) {
         if (businessDate == null) {
             return null;
         }

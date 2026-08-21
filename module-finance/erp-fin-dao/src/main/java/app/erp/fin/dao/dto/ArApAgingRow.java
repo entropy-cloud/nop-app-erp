@@ -7,7 +7,7 @@ import java.math.BigDecimal;
  * 各区间值为该 partner 未核销辅助账本位币 openAmount 落入该账龄区间的合计。
  */
 public class ArApAgingRow {
-    private Long partnerId;
+    private String partnerId;
     private BigDecimal bucket030 = BigDecimal.ZERO;
     private BigDecimal bucket3160 = BigDecimal.ZERO;
     private BigDecimal bucket6190 = BigDecimal.ZERO;
@@ -15,11 +15,11 @@ public class ArApAgingRow {
     private BigDecimal bucket180Plus = BigDecimal.ZERO;
     private BigDecimal totalOpen = BigDecimal.ZERO;
 
-    public Long getPartnerId() {
+    public String getPartnerId() {
         return partnerId;
     }
 
-    public void setPartnerId(Long partnerId) {
+    public void setPartnerId(String partnerId) {
         this.partnerId = partnerId;
     }
 

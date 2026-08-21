@@ -71,7 +71,7 @@ public class TestClockRolloverFinance extends JunitBaseTestCase {
         LocalDate today = io.nop.api.core.time.CoreMetrics.today();
         assertEquals(frozenDate, today, "CoreMetrics.today() 应返回冻结日");
 
-        Long noteId = ormTemplate.runInSession(s -> {
+        String noteId = ormTemplate.runInSession(s -> {
             seedBase(today);
             return seedPayable("NP-ROLLOVER-" + today.getMonthValue(),
                     ErpFinConstants.NOTES_TYPE_COMMERCIAL_ACCEPTANCE, null, new BigDecimal("5000"));
@@ -87,20 +87,20 @@ public class TestClockRolloverFinance extends JunitBaseTestCase {
         int month = today.getMonthValue();
         String code = year + "-" + String.format("%02d", month);
         seedOpenPeriod(code, year, month, today.withDayOfMonth(1), today.withDayOfMonth(today.lengthOfMonth()));
-        seedAcctSchema(1L);
+        seedAcctSchema("1");
         seedSubject("2202", "应付账款");
         seedSubject("2203", "应付票据");
         seedSubject("1002", "银行存款");
     }
 
-    private Long seedPayable(String code, String notesType, Long creditFacilityId, BigDecimal amountFunctional) {
+    private String seedPayable(String code, String notesType, String creditFacilityId, BigDecimal amountFunctional) {
         IEntityDao<ErpFinNotesPayable> dao = daoProvider.daoFor(ErpFinNotesPayable.class);
         ErpFinNotesPayable note = new ErpFinNotesPayable();
         note.setCode(code);
-        note.setOrgId(1L);
+        note.setOrgId("1");
         note.setNotesType(notesType);
         note.setNotesNo("N-" + code);
-        note.setCurrencyId(1L);
+        note.setCurrencyId("1");
         note.setExchangeRate(BigDecimal.ONE);
         note.setAmountFunctional(amountFunctional);
         note.setAmountSource(amountFunctional);
@@ -115,7 +115,7 @@ public class TestClockRolloverFinance extends JunitBaseTestCase {
         ErpFinAccountingPeriod period = new ErpFinAccountingPeriod();
         period.setCode(code);
         period.setName(code);
-        period.setOrgId(1L);
+        period.setOrgId("1");
         period.setYear(year);
         period.setMonth(month);
         period.setStartDate(start);
@@ -135,14 +135,14 @@ public class TestClockRolloverFinance extends JunitBaseTestCase {
         dao.saveEntity(subject);
     }
 
-    private void seedAcctSchema(long orgId) {
+    private void seedAcctSchema(String orgId) {
         IEntityDao<ErpMdAcctSchema> dao = daoProvider.daoFor(ErpMdAcctSchema.class);
         ErpMdAcctSchema schema = new ErpMdAcctSchema();
         schema.setCode("AS-" + orgId);
         schema.setName("账套-" + orgId);
         schema.setOrgId(orgId);
         schema.setNature("FINANCIAL");
-        schema.setFunctionalCurrencyId(1L);
+        schema.setFunctionalCurrencyId("1");
         schema.setStatus("ACTIVE");
         dao.saveEntity(schema);
     }

@@ -1,0 +1,5 @@
+_chgType,ID,CODE,NAME,PARENT_ID,SUBJECT_CLASS,DIRECTION,BALANCE_TYPE,CURRENCY_ID,IS_AUXILIARY_PARTNER,IS_AUXILIARY_DEPARTMENT,IS_AUXILIARY_PROJECT,IS_AUXILIARY_WAREHOUSE,IS_AUXILIARY_PRODUCT,IS_AUXILIARY_COST_CENTER,IS_BUDGETABLE,IS_LEAF,STATUS,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME,REMARK,CASH_FLOW_TYPE
+A,6,@var:ErpMdSubject@code,内部应收,,EXPENSE,DEBIT,,,false,false,false,false,false,false,false,true,ACTIVE,@var:ErpMdSubject@delVersion_2,0,autotest-ref,*,autotest-ref,*,,
+A,7,@var:ErpMdSubject@code_1,内部销售收入,,EXPENSE,DEBIT,,,false,false,false,false,false,false,false,true,ACTIVE,@var:ErpMdSubject@delVersion_2,0,autotest-ref,*,autotest-ref,*,,
+A,8,@var:ErpMdSubject@code_2,内部采购成本,,EXPENSE,DEBIT,,,false,false,false,false,false,false,false,true,ACTIVE,@var:ErpMdSubject@delVersion_2,0,autotest-ref,*,autotest-ref,*,,
+A,9,@var:ErpMdSubject@code_3,内部应付,,EXPENSE,DEBIT,,,false,false,false,false,false,false,false,true,ACTIVE,@var:ErpMdSubject@delVersion_2,0,autotest-ref,*,autotest-ref,*,,

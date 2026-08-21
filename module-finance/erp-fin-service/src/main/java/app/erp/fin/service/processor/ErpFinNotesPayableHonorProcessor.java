@@ -14,7 +14,7 @@ public class ErpFinNotesPayableHonorProcessor {
     @Inject
     ErpFinNotesPayableProcessor facade;
 
-    public ErpFinNotesPayable honor(Long notesId, IServiceContext context) {
+    public ErpFinNotesPayable honor(String notesId, IServiceContext context) {
         ErpFinNotesPayable note = facade.requireNote(notesId, context);
         facade.validateTransitionForHonor(note, context);
         facade.releaseOccupiedCredit(note, context);

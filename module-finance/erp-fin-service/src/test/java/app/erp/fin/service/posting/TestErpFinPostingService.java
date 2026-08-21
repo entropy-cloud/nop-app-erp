@@ -84,7 +84,7 @@ public class TestErpFinPostingService extends JunitAutoTestCase {
         PostingEvent event = apInvoiceEvent("AP-HAPPY-001", voucherDate,
                 new BigDecimal("100"), new BigDecimal("13"), new BigDecimal("113"));
 
-        Long voucherId = ormTemplate.runInSession(session -> voucherBiz.post(event, CTX));
+        String voucherId = ormTemplate.runInSession(session -> voucherBiz.post(event, CTX));
         output("1_post_response.json5", voucherId);
 
         assertNotNull(voucherId, "happy path 应生成并返回凭证 ID");
@@ -118,8 +118,8 @@ public class TestErpFinPostingService extends JunitAutoTestCase {
         PostingEvent event = apInvoiceEvent("AP-IDEM-001", voucherDate,
                 new BigDecimal("100"), new BigDecimal("13"), new BigDecimal("113"));
 
-        Long first = ormTemplate.runInSession(session -> voucherBiz.post(event, CTX));
-        Long second = ormTemplate.runInSession(session -> voucherBiz.post(event, CTX));
+        String first = ormTemplate.runInSession(session -> voucherBiz.post(event, CTX));
+        String second = ormTemplate.runInSession(session -> voucherBiz.post(event, CTX));
         output("1_idempotent_responses.json5", java.util.Arrays.asList(first, second));
 
         assertNotNull(first, "首次过账应生成凭证");
@@ -184,11 +184,11 @@ public class TestErpFinPostingService extends JunitAutoTestCase {
             seedApInvoiceTemplate();
         });
 
-        Long originalId = ormTemplate.runInSession(session -> voucherBiz.post(apInvoiceEvent("AP-REV-001", voucherDate,
+        String originalId = ormTemplate.runInSession(session -> voucherBiz.post(apInvoiceEvent("AP-REV-001", voucherDate,
                 new BigDecimal("100"), new BigDecimal("13"), new BigDecimal("113")), CTX));
         assertNotNull(originalId, "前置：先 happy 过账生成原凭证");
 
-        Long redId = ormTemplate.runInSession(session -> voucherBiz.reverse("AP-REV-001", ErpFinBusinessType.AP_INVOICE, CTX));
+        String redId = ormTemplate.runInSession(session -> voucherBiz.reverse("AP-REV-001", ErpFinBusinessType.AP_INVOICE, CTX));
         output("1_reverse_red_id.json5", redId);
         assertNotNull(redId, "红冲应生成红字凭证");
         assertNotEquals(originalId, redId, "红字凭证是新凭证，非原凭证");
@@ -256,15 +256,15 @@ public class TestErpFinPostingService extends JunitAutoTestCase {
             seedSubject("6602", "管理费用");
             seedSubject("2221", "应交税费-进项税");
             seedSubject("2202", "应付账款");
-            seedCurrency(2L, "USD");
+            seedCurrency("2", "USD");
             seedApInvoiceTemplate();
         });
 
         // 外币 AP 发票：源币金额 货款 100 / 税 13 / 价税合计 113，汇率 6.5（外币 USD，currencyId=2）。
         PostingEvent event = apInvoiceEvent("AP-FX-001", voucherDate,
-                new BigDecimal("100"), new BigDecimal("13"), new BigDecimal("113"), 2L, rate);
+                new BigDecimal("100"), new BigDecimal("13"), new BigDecimal("113"), "2", rate);
 
-        Long voucherId = ormTemplate.runInSession(session -> voucherBiz.post(event, CTX));
+        String voucherId = ormTemplate.runInSession(session -> voucherBiz.post(event, CTX));
         assertNotNull(voucherId, "多币种过账应生成凭证");
 
         List<ErpFinVoucherLine> lines = linesOf(voucherId);
@@ -273,7 +273,7 @@ public class TestErpFinPostingService extends JunitAutoTestCase {
         for (ErpFinVoucherLine line : lines) {
             assertEquals(0, line.getExchangeRate().compareTo(rate),
                     "exchangeRate 经 ctx 原样落库（非 ONE 折算率保留）");
-            assertEquals(2L, line.getCurrencyId(), "行级币种为外币 USD(2)");
+            assertEquals("2", line.getCurrencyId(), "行级币种为外币 USD(2)");
         }
 
         // 通用模板路径单币种回退（P1-MA3-039 通用过账路径测试可见性）：amountSource == amountFunctional == 源币金额。
@@ -308,16 +308,16 @@ public class TestErpFinPostingService extends JunitAutoTestCase {
 
     private PostingEvent apInvoiceEvent(String billHeadCode, LocalDate voucherDate, BigDecimal amount,
                                         BigDecimal tax, BigDecimal total) {
-        return apInvoiceEvent(billHeadCode, voucherDate, amount, tax, total, 1L, BigDecimal.ONE);
+        return apInvoiceEvent(billHeadCode, voucherDate, amount, tax, total, "1", BigDecimal.ONE);
     }
 
     private PostingEvent apInvoiceEvent(String billHeadCode, LocalDate voucherDate, BigDecimal amount,
-                                        BigDecimal tax, BigDecimal total, Long currencyId, BigDecimal exchangeRate) {
+                                        BigDecimal tax, BigDecimal total, String currencyId, BigDecimal exchangeRate) {
         PostingEvent event = new PostingEvent();
         event.setBusinessType(ErpFinBusinessType.AP_INVOICE);
         event.setBillHeadCode(billHeadCode);
-        event.setAcctSchemaId(1L);
-        event.setOrgId(1L);
+        event.setAcctSchemaId("1");
+        event.setOrgId("1");
         event.setCurrencyId(currencyId);
         event.setExchangeRate(exchangeRate);
         event.setVoucherDate(voucherDate);
@@ -325,7 +325,7 @@ public class TestErpFinPostingService extends JunitAutoTestCase {
         event.getBillData().put("TAX", tax);
         event.getBillData().put("TOTAL", total);
         // AP 发票生成应收应付辅助账（ErpFinArApItem）需要 partnerId 与业务日期
-        event.getBillData().put("partnerId", 1L);
+        event.getBillData().put("partnerId", "1");
         event.getBillData().put("businessDate", voucherDate);
         return event;
     }
@@ -346,7 +346,7 @@ public class TestErpFinPostingService extends JunitAutoTestCase {
         lineDao.saveEntity(templateLine(tpl.getId(), 3, "2202", DC_CREDIT, "TOTAL", "AP"));
     }
 
-    private ErpFinVoucherTemplateLine templateLine(Long templateId, int lineNo, String subjectCode,
+    private ErpFinVoucherTemplateLine templateLine(String templateId, int lineNo, String subjectCode,
                                                    String dcDirection, String amountKey, String accountKey) {
         ErpFinVoucherTemplateLine line = new ErpFinVoucherTemplateLine();
         line.setTemplateId(templateId);
@@ -369,7 +369,7 @@ public class TestErpFinPostingService extends JunitAutoTestCase {
         dao.saveEntity(subject);
     }
 
-    private void seedCurrency(Long id, String code) {
+    private void seedCurrency(String id, String code) {
         IEntityDao<ErpMdCurrency> dao = daoProvider.daoFor(ErpMdCurrency.class);
         ErpMdCurrency currency = new ErpMdCurrency();
         currency.setId(id);
@@ -379,7 +379,7 @@ public class TestErpFinPostingService extends JunitAutoTestCase {
         dao.saveEntity(currency);
     }
 
-    private List<ErpFinVoucherLine> linesOf(Long voucherId) {
+    private List<ErpFinVoucherLine> linesOf(String voucherId) {
         IEntityDao<ErpFinVoucherLine> dao = daoProvider.daoFor(ErpFinVoucherLine.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("voucherId", voucherId));
@@ -435,7 +435,7 @@ public class TestErpFinPostingService extends JunitAutoTestCase {
         ErpFinAccountingPeriod period = new ErpFinAccountingPeriod();
         period.setCode(code);
         period.setName(code);
-        period.setOrgId(1L);
+        period.setOrgId("1");
         period.setYear(year);
         period.setMonth(month);
         period.setStartDate(start);
@@ -444,7 +444,7 @@ public class TestErpFinPostingService extends JunitAutoTestCase {
         dao.saveEntity(period);
     }
 
-    private long countLines(Long voucherId) {
+    private long countLines(String voucherId) {
         IEntityDao<ErpFinVoucherLine> dao = daoProvider.daoFor(ErpFinVoucherLine.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("voucherId", voucherId));
@@ -460,7 +460,7 @@ public class TestErpFinPostingService extends JunitAutoTestCase {
         return links.size();
     }
 
-    private List<ErpFinVoucher> findVouchersReversing(Long originalVoucherId) {
+    private List<ErpFinVoucher> findVouchersReversing(String originalVoucherId) {
         IEntityDao<ErpFinVoucher> dao = daoProvider.daoFor(ErpFinVoucher.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("reversalOfVoucherId", originalVoucherId));

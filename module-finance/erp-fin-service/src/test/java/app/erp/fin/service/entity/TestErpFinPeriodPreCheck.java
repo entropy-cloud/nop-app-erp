@@ -46,8 +46,8 @@ public class TestErpFinPeriodPreCheck extends JunitAutoTestCase {
 
     @Test
     public void testPreCheckListsIssues() {
-        Long periodId = seedReturn(() -> {
-            Long pid = seedOpenPeriod("2026-10", 2026, 10,
+        String periodId = seedReturn(() -> {
+            String pid = seedOpenPeriod("2026-10", 2026, 10,
                     LocalDate.of(2026, 10, 1), LocalDate.of(2026, 10, 31),
                     ErpFinConstants.PERIOD_STATUS_OPEN);
             seedUnpostedVoucher("V-DRAFT-002", pid, LocalDate.of(2026, 10, 5),
@@ -68,7 +68,7 @@ public class TestErpFinPeriodPreCheck extends JunitAutoTestCase {
 
     @Test
     public void testPreCheckCleanPeriod() {
-        Long periodId = seedReturn(() -> seedOpenPeriod("2026-11", 2026, 11,
+        String periodId = seedReturn(() -> seedOpenPeriod("2026-11", 2026, 11,
                 LocalDate.of(2026, 11, 1), LocalDate.of(2026, 11, 30),
                 ErpFinConstants.PERIOD_STATUS_OPEN));
 
@@ -80,8 +80,8 @@ public class TestErpFinPeriodPreCheck extends JunitAutoTestCase {
     @Test
     public void testBlockingCloseRejectsWithIssues() {
         // 默认 auto-post-on-close=false（阻断模式）：存在未过账凭证 → closePeriod 被阻止。
-        Long periodId = seedReturn(() -> {
-            Long pid = seedOpenPeriod("2026-12", 2026, 12,
+        String periodId = seedReturn(() -> {
+            String pid = seedOpenPeriod("2026-12", 2026, 12,
                     LocalDate.of(2026, 12, 1), LocalDate.of(2026, 12, 31),
                     ErpFinConstants.PERIOD_STATUS_OPEN);
             seedUnpostedVoucher("V-DRAFT-003", pid, LocalDate.of(2026, 12, 5),
@@ -106,12 +106,12 @@ public class TestErpFinPeriodPreCheck extends JunitAutoTestCase {
         return ormTemplate.runInSession(session -> action.get());
     }
 
-    private Long seedOpenPeriod(String code, int year, int month, LocalDate start, LocalDate end, String status) {
+    private String seedOpenPeriod(String code, int year, int month, LocalDate start, LocalDate end, String status) {
         IEntityDao<ErpFinAccountingPeriod> dao = daoProvider.daoFor(ErpFinAccountingPeriod.class);
         ErpFinAccountingPeriod period = new ErpFinAccountingPeriod();
         period.setCode(code);
         period.setName(code);
-        period.setOrgId(1L);
+        period.setOrgId("1");
         period.setYear(year);
         period.setMonth(month);
         period.setStartDate(start);
@@ -121,14 +121,14 @@ public class TestErpFinPeriodPreCheck extends JunitAutoTestCase {
         return period.getId();
     }
 
-    private void seedUnpostedVoucher(String code, Long periodId, LocalDate date, String docStatus) {
+    private void seedUnpostedVoucher(String code, String periodId, LocalDate date, String docStatus) {
         IEntityDao<ErpFinVoucher> dao = daoProvider.daoFor(ErpFinVoucher.class);
         ErpFinVoucher v = new ErpFinVoucher();
         v.setCode(code);
         v.setVoucherType("TRANSFER");
         v.setVoucherDate(date);
-        v.setOrgId(1L);
-        v.setAcctSchemaId(1L);
+        v.setOrgId("1");
+        v.setAcctSchemaId("1");
         v.setPeriodId(periodId);
         v.setTotalDebit(BigDecimal.ZERO);
         v.setTotalCredit(BigDecimal.ZERO);
@@ -136,18 +136,18 @@ public class TestErpFinPeriodPreCheck extends JunitAutoTestCase {
         dao.saveEntity(v);
     }
 
-    private void seedUnsettledArAp(String code, Long periodId, LocalDate businessDate, String status) {
+    private void seedUnsettledArAp(String code, String periodId, LocalDate businessDate, String status) {
         IEntityDao<ErpFinArApItem> dao = daoProvider.daoFor(ErpFinArApItem.class);
         ErpFinArApItem item = new ErpFinArApItem();
         item.setCode(code);
-        item.setOrgId(1L);
-        item.setAcctSchemaId(1L);
+        item.setOrgId("1");
+        item.setAcctSchemaId("1");
         item.setDirection(ErpFinConstants.DIRECTION_RECEIVABLE);
-        item.setPartnerId(1L);
+        item.setPartnerId("1");
         item.setSourceBillType(ErpFinConstants.SOURCE_BILL_AR_INVOICE);
         item.setSourceBillCode(code);
         item.setBusinessDate(businessDate);
-        item.setCurrencyId(1L);
+        item.setCurrencyId("1");
         item.setExchangeRate(BigDecimal.ONE);
         item.setAmountSource(BigDecimal.ZERO);
         item.setAmountFunctional(BigDecimal.ZERO);

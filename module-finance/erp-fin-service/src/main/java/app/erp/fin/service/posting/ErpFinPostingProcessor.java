@@ -127,14 +127,14 @@ public class ErpFinPostingProcessor {
      * <p>可观测性：入口解析 {@code traceId}（缺失生成），各 protected step 经 {@link #timeStage} 埋结构化日志。
      */
     @SingleSession
-    public Long process(PostingEvent event, IServiceContext context) {
+    public String process(PostingEvent event, IServiceContext context) {
         ensureTraceId(event);
         PostingRun run = PostingRun.forPost(event);
         long processBegin = CoreMetrics.nanoTime();
         // observability.md §5.1 指标 6 path=posting：凭证过账关键路径吞吐计数（入口埋点）
         ErpFinBusinessMetrics.recordPostingPathThroughput(null);
 
-        List<Long> targetSchemas = schemaPropagator.resolveTargetSchemas(event.getOrgId(), event.getAcctSchemaId());
+        List<String> targetSchemas = schemaPropagator.resolveTargetSchemas(event.getOrgId(), event.getAcctSchemaId());
 
         if (alreadyPosted(event, event.getAcctSchemaId(), context)) {
             LOG.info("过账幂等命中（源单已过账），空操作：traceId={}, billHeadCode={}, businessType={}",
@@ -162,9 +162,9 @@ public class ErpFinPostingProcessor {
                     () -> balanceTotals(facts, context));
             timeStageVoid("assertBalanced", run, () -> assertBalanced(totals[0], totals[1], context));
 
-            Long primaryVoucherId = null;
-            Long originalSchemaId = event.getAcctSchemaId();
-            for (Long schemaId : targetSchemas) {
+            String primaryVoucherId = null;
+            String originalSchemaId = event.getAcctSchemaId();
+            for (String schemaId : targetSchemas) {
                 if (alreadyPosted(event, schemaId, context)) {
                     LOG.info("跳过已过账账套：traceId={}, billHeadCode={}, schemaId={}",
                             run.traceId, run.billHeadCode, schemaId);
@@ -178,9 +178,9 @@ public class ErpFinPostingProcessor {
                         ? facts
                         : translateFactsForSchema(facts, originalSchemaId, schemaId, context);
 
-                final Long currentSchemaId = schemaId;
+                final String currentSchemaId = schemaId;
                 final List<VoucherFact> factsForLambda = effectiveFacts;
-                Long voucherId = timeStage("persistVoucher_" + schemaId, run,
+                String voucherId = timeStage("persistVoucher_" + schemaId, run,
                         () -> persistVoucher(event, ctx, factsForLambda, totals[0], totals[1], false, null,
                                 POSTING_TYPE_NORMAL, context));
 
@@ -218,7 +218,7 @@ public class ErpFinPostingProcessor {
      * 红冲编排。按业财回链反查<b>所有</b>已过账凭证（多套账模式下跨全部账套），逐张生成红字冲销凭证。
      */
     @SingleSession
-    public Long reverseProcess(String billHeadCode, ErpFinBusinessType businessType, IServiceContext context) {
+    public String reverseProcess(String billHeadCode, ErpFinBusinessType businessType, IServiceContext context) {
         PostingRun run = PostingRun.forReverse(billHeadCode, businessType);
         long reverseBegin = CoreMetrics.nanoTime();
 
@@ -231,8 +231,8 @@ public class ErpFinPostingProcessor {
                         .param(ErpFinPostingErrors.ARG_BUSINESS_TYPE, businessType);
             }
 
-            Long primaryReversalId = null;
-            Long primarySchemaId = originals.get(0).getAcctSchemaId();
+            String primaryReversalId = null;
+            String primarySchemaId = originals.get(0).getAcctSchemaId();
             for (ErpFinVoucher original : originals) {
                 List<ErpFinVoucherLine> originalLines = loadLines(original.getId(), context);
                 ErpFinAccountingPeriod period = resolveOpenPeriod(original.getVoucherDate(), original.getOrgId(), context);
@@ -241,7 +241,7 @@ public class ErpFinPostingProcessor {
 
                 ReversalDraft draft = buildReversalDraft(originalLines, businessType, context);
 
-                Long voucherId = persistVoucher(null, ctx, draft.facts, draft.totalDebit, draft.totalCredit, true,
+                String voucherId = persistVoucher(null, ctx, draft.facts, draft.totalDebit, draft.totalCredit, true,
                         original.getId(), POSTING_TYPE_REVERSAL, billHeadCode, businessType, context);
                 arApItemGenerator.cancelOnReverse(billHeadCode, businessType, context);
 
@@ -250,8 +250,8 @@ public class ErpFinPostingProcessor {
                 }
             }
 
-            final Long finalPrimaryReversalId = primaryReversalId;
-            final Long firstOriginalId = originals.get(0).getId();
+            final String finalPrimaryReversalId = primaryReversalId;
+            final String firstOriginalId = originals.get(0).getId();
             markOriginalVoucherReversed(billHeadCode, businessType, context);
             dispatchReversalEvent(run, finalPrimaryReversalId,
                     firstOriginalId, billHeadCode, businessType, context);
@@ -333,9 +333,9 @@ public class ErpFinPostingProcessor {
             errorMessage = e.getClass().getSimpleName() + ": " + String.valueOf(e.getMessage());
         }
         LocalDate voucherDate = event != null ? event.getVoucherDate() : null;
-        Long orgId = event != null ? event.getOrgId() : null;
-        Long acctSchemaId = event != null ? event.getAcctSchemaId() : null;
-        Long currencyId = event != null ? event.getCurrencyId() : null;
+        String orgId = event != null ? event.getOrgId() : null;
+        String acctSchemaId = event != null ? event.getAcctSchemaId() : null;
+        String currencyId = event != null ? event.getCurrencyId() : null;
         java.math.BigDecimal exchangeRate = event != null ? event.getExchangeRate() : null;
         String eventData = event != null
                 ? ErpFinPostingExceptionRecorder.serializeEventData(event.getBillData()) : null;
@@ -376,7 +376,7 @@ public class ErpFinPostingProcessor {
      *       （对齐 posting.md §总体架构 第②层 ASYNC 模式）。</li>
      * </ul>
      */
-    protected void dispatchReversalEvent(PostingRun run, Long voucherId, Long reversalOfVoucherId,
+    protected void dispatchReversalEvent(PostingRun run, String voucherId, String reversalOfVoucherId,
                                           String billHeadCode, ErpFinBusinessType businessType,
                                           IServiceContext context) {
         VoucherReversedEvent event = new VoucherReversedEvent();
@@ -485,7 +485,7 @@ public class ErpFinPostingProcessor {
      *
      * <p>已冲销凭证（{@code isReversed=true}）不视为幂等命中——允许同 billCode 重新过账生成新正常凭证。
      */
-    protected boolean alreadyPosted(PostingEvent event, Long acctSchemaId, IServiceContext context) {
+    protected boolean alreadyPosted(PostingEvent event, String acctSchemaId, IServiceContext context) {
         List<ErpFinVoucherBillR> links = findBillLinks(event.getBillHeadCode(), event.getBusinessType(), context);
         IEntityDao<ErpFinVoucher> voucherDao = daoProvider.daoFor(ErpFinVoucher.class);
         for (ErpFinVoucherBillR link : links) {
@@ -508,7 +508,7 @@ public class ErpFinPostingProcessor {
         return provider;
     }
 
-    protected ErpFinAccountingPeriod resolveOpenPeriod(LocalDate voucherDate, Long orgId, IServiceContext context) {
+    protected ErpFinAccountingPeriod resolveOpenPeriod(LocalDate voucherDate, String orgId, IServiceContext context) {
         IEntityDao<ErpFinAccountingPeriod> dao = daoProvider.daoFor(ErpFinAccountingPeriod.class);
         QueryBean q = new QueryBean();
         if (voucherDate != null) {
@@ -568,7 +568,7 @@ public class ErpFinPostingProcessor {
     }
 
     /** 按 id 查询币种。跨域只读经 IErpMdCurrencyBiz（对齐 resolveSubjects 的 IBizObjectManager 按名解析范式）。 */
-    protected ErpMdCurrency findCurrencyById(Long currencyId, IServiceContext context) {
+    protected ErpMdCurrency findCurrencyById(String currencyId, IServiceContext context) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("id", currencyId));
         q.setLimit(1);
@@ -602,7 +602,7 @@ public class ErpFinPostingProcessor {
         // orgId plumbing（plan 2026-07-25-1016-2）：PostingEvent.orgId → VoucherFact.orgId，
         // 供 buildGlMappingDimensions 透传至 GlMappingDimensions.orgId 参与 GL 映射 orgId 维度（config-gated）。
         if (facts != null) {
-            Long orgId = event.getOrgId();
+            String orgId = event.getOrgId();
             for (VoucherFact fact : facts) {
                 if (fact.getOrgId() == null) {
                     fact.setOrgId(orgId);
@@ -683,7 +683,7 @@ public class ErpFinPostingProcessor {
     }
 
     /** A1 辅助：当前过账上下文的 acctSchemaId（从首次 fact 推导；后续 translateFactsForSchema 不再调 resolver）。 */
-    protected Long resolveAcctSchemaIdFromContext() {
+    protected String resolveAcctSchemaIdFromContext() {
         return null; // 多账套通配匹配（acctSchemaId IS NULL 规则命中）；具体账套精确规则可选
     }
 
@@ -698,21 +698,21 @@ public class ErpFinPostingProcessor {
      * 跨账套科目翻译：将源账套的 facts 科目翻译为目标账套科目。
      * 无映射时保持源科目（所有账套共享同一科目表的场景）。
      */
-    protected List<VoucherFact> translateFactsForSchema(List<VoucherFact> facts, Long sourceSchemaId,
-                                                         Long targetSchemaId, IServiceContext context) {
-        List<Long> sourceSubjectIds = new ArrayList<>();
+    protected List<VoucherFact> translateFactsForSchema(List<VoucherFact> facts, String sourceSchemaId,
+                                                         String targetSchemaId, IServiceContext context) {
+        List<String> sourceSubjectIds = new ArrayList<>();
         for (VoucherFact f : facts) {
             if (f.getSubjectId() != null) {
                 sourceSubjectIds.add(f.getSubjectId());
             }
         }
-        Map<Long, Long> mapping = subjectMappingResolver.resolveMappings(sourceSubjectIds, targetSchemaId);
+        Map<String, String> mapping = subjectMappingResolver.resolveMappings(sourceSubjectIds, targetSchemaId);
         if (mapping.isEmpty() || mapping.size() == sourceSubjectIds.size()
                 && mapping.entrySet().stream().allMatch(e -> e.getKey().equals(e.getValue()))) {
             return facts;
         }
         IErpMdSubjectBiz mdSubjectBiz = bizObjectManager.getBizObject(ErpMdSubject.class.getSimpleName()).asProxy();
-        Map<Long, ErpMdSubject> targetSubjectCache = new HashMap<>();
+        Map<String, ErpMdSubject> targetSubjectCache = new HashMap<>();
         List<VoucherFact> translated = new ArrayList<>(facts.size());
         for (VoucherFact f : facts) {
             VoucherFact copy = new VoucherFact();
@@ -735,7 +735,7 @@ public class ErpFinPostingProcessor {
             copy.setCostCenterId(f.getCostCenterId());
             copy.setBusinessType(f.getBusinessType());
 
-            Long mappedId = mapping.get(f.getSubjectId());
+            String mappedId = mapping.get(f.getSubjectId());
             if (mappedId != null && !mappedId.equals(f.getSubjectId())) {
                 ErpMdSubject targetSubject = targetSubjectCache.get(mappedId);
                 if (targetSubject == null) {
@@ -809,24 +809,24 @@ public class ErpFinPostingProcessor {
         return new ReversalDraft(facts, totalDebit, totalCredit);
     }
 
-    protected Long persistVoucher(PostingEvent event, AcctDocContext ctx, List<VoucherFact> facts,
+    protected String persistVoucher(PostingEvent event, AcctDocContext ctx, List<VoucherFact> facts,
                                   BigDecimal totalDebit, BigDecimal totalCredit, boolean isReversed,
-                                  Long reversalOfVoucherId, String postingType, IServiceContext context) {
+                                  String reversalOfVoucherId, String postingType, IServiceContext context) {
         return persistVoucher(event, ctx, facts, totalDebit, totalCredit, isReversed, reversalOfVoucherId,
                 postingType, null, null, context);
     }
 
-    protected Long persistVoucher(PostingEvent event, AcctDocContext ctx, List<VoucherFact> facts,
+    protected String persistVoucher(PostingEvent event, AcctDocContext ctx, List<VoucherFact> facts,
                                   BigDecimal totalDebit, BigDecimal totalCredit, boolean isReversed,
-                                  Long reversalOfVoucherId, String postingType, String billHeadCode,
+                                  String reversalOfVoucherId, String postingType, String billHeadCode,
                                   ErpFinBusinessType businessType, IServiceContext context) {
         IEntityDao<ErpFinVoucher> voucherDao = daoProvider.daoFor(ErpFinVoucher.class);
         IEntityDao<ErpFinVoucherLine> lineDao = daoProvider.daoFor(ErpFinVoucherLine.class);
         IEntityDao<ErpFinVoucherBillR> billRDao = daoProvider.daoFor(ErpFinVoucherBillR.class);
 
-        Long acctSchemaId = ctx.getAcctSchemaId();
-        Long orgId = ctx.getOrgId();
-        Long periodId = ctx.getPeriodId();
+        String acctSchemaId = ctx.getAcctSchemaId();
+        String orgId = ctx.getOrgId();
+        String periodId = ctx.getPeriodId();
         LocalDate voucherDate = ctx.getVoucherDate();
         String voucherType = ctx.getVoucherType() != null ? ctx.getVoucherType() : DEFAULT_VOUCHER_TYPE_TRANSFER;
 
@@ -848,9 +848,9 @@ public class ErpFinPostingProcessor {
         voucher.setDocStatus(VOUCHER_STATUS_POSTED);
         voucher.setPostedAt(CoreMetrics.currentTimestamp());
         voucherDao.saveEntity(voucher);
-        Long voucherId = voucher.getId();
+        String voucherId = voucher.getId();
 
-        Long currencyId = ctx.getCurrencyId();
+        String currencyId = ctx.getCurrencyId();
         BigDecimal exchangeRate = ctx.getExchangeRate() != null
                 ? ctx.getExchangeRate()
                 : EXCHANGE_RATE_DEFAULT;
@@ -937,7 +937,8 @@ public class ErpFinPostingProcessor {
                 result.add(voucher);
             }
         }
-        result.sort(Comparator.comparing(v -> v.getAcctSchemaId() == null ? Long.MAX_VALUE : v.getAcctSchemaId()));
+        result.sort(Comparator.comparing(ErpFinVoucher::getAcctSchemaId,
+                Comparator.nullsLast(Comparator.naturalOrder())));
         return result;
     }
 
@@ -949,7 +950,7 @@ public class ErpFinPostingProcessor {
         return dao.findAllByQuery(q);
     }
 
-    protected List<ErpFinVoucherLine> loadLines(Long voucherId, IServiceContext context) {
+    protected List<ErpFinVoucherLine> loadLines(String voucherId, IServiceContext context) {
         IEntityDao<ErpFinVoucherLine> dao = daoProvider.daoFor(ErpFinVoucherLine.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("voucherId", voucherId));

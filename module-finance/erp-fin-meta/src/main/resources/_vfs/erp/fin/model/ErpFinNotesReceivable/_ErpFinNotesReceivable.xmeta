@@ -20,8 +20,8 @@
 
     <props>
         <prop name="id" displayName="ID" propId="1" i18n-en:displayName="ID" tagSet="seq-default" mandatory="true"
-              queryable="true" sortable="true" insertable="true" updatable="false" graphql:type="String">
-            <schema type="java.lang.Long"/>
+              queryable="true" sortable="true" insertable="true" updatable="false">
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="code" displayName="单号" propId="2" i18n-en:displayName="Code" tagSet="var" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
@@ -29,7 +29,7 @@
         </prop>
         <prop name="orgId" displayName="核算组织" propId="3" i18n-en:displayName="Organization" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="org">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="notesType" displayName="票据类型" propId="4" i18n-en:displayName="Notes Type" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
@@ -61,7 +61,7 @@
         </prop>
         <prop name="currencyId" displayName="币种" propId="11" i18n-en:displayName="Currency" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="currency">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="exchangeRate" displayName="汇率" propId="12" i18n-en:displayName="Exchange Rate" queryable="true"
               sortable="true" insertable="true" updatable="true" defaultValue="1">
@@ -77,11 +77,11 @@
         </prop>
         <prop name="partnerId" displayName="出票客户往来" propId="15" i18n-en:displayName="Partner" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="partner">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="endorsementFromId" displayName="背书来源票据" propId="16" i18n-en:displayName="Endorsement From"
               queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="endorsementFrom">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="sourceBillType" displayName="来源单据类型" propId="17" i18n-en:displayName="Source Bill Type"
               queryable="true" sortable="true" insertable="true" updatable="true">
@@ -93,7 +93,7 @@
         </prop>
         <prop name="discountId" displayName="贴现明细" propId="19" i18n-en:displayName="Discount" queryable="true"
               sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="status" displayName="票据状态" propId="20" i18n-en:displayName="Status" queryable="true" sortable="true"
               insertable="true" updatable="true">

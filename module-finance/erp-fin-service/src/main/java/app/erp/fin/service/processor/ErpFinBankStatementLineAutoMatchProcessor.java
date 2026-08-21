@@ -14,7 +14,7 @@ public class ErpFinBankStatementLineAutoMatchProcessor {
     @Inject
     BankStatementMatcher bankStatementMatcher;
 
-    public BankStatementMatchResult autoMatch(Long statementId, IServiceContext context) {
+    public BankStatementMatchResult autoMatch(String statementId, IServiceContext context) {
         return bankStatementMatcher.autoMatch(statementId);
     }
 }

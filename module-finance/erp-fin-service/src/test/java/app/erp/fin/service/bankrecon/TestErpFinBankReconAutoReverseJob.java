@@ -104,11 +104,11 @@ public class TestErpFinBankReconAutoReverseJob extends JunitAutoTestCase {
     @Test
     public void testCrossPeriodPostedReconAutoReversed() {
         long seed = System.nanoTime();
-        long subjectId = 9101L;
-        final Long[] ctx = new Long[1];
+        String subjectId = "9101";
+        final String[] ctx = new String[1];
         ormTemplate.runInSession(() -> {
             seedSubject(subjectId, "1002", "银行存款");
-            seedSubject(91010L, "2240OTHER", "未达账项调整");
+            seedSubject("91010", "2240OTHER", "未达账项调整");
             ctx[0] = seedFundAccount(subjectId, new BigDecimal("1000"));
             seedPeriod("2026-06-OPEN", 2026, 6,
                     LocalDate.of(2026, 6, 1), LocalDate.of(2026, 6, 30),
@@ -116,7 +116,7 @@ public class TestErpFinBankReconAutoReverseJob extends JunitAutoTestCase {
         });
 
         ErpFinBankReconciliation recon = seedPostedCrossPeriodRecon(ctx[0], "2026-06-30", "REF-AUTO-REV-" + seed);
-        Long adjVoucherId = findAdjVoucherId(recon.getCode());
+        String adjVoucherId = findAdjVoucherId(recon.getCode());
         assertNotNull(adjVoucherId, "post 后应存在 BANK_RECON_ADJ 调整凭证");
         ErpFinVoucher adj = daoProvider.daoFor(ErpFinVoucher.class).getEntityById(adjVoucherId);
         assertEquals(VOUCHER_STATUS_POSTED, adj.getDocStatus(), "调整凭证已过账");
@@ -136,12 +136,12 @@ public class TestErpFinBankReconAutoReverseJob extends JunitAutoTestCase {
     @Test
     public void testCurrentMonthReconNotReversed() {
         long seed = System.nanoTime();
-        long subjectId = 9102L;
-        final Long[] ctx = new Long[1];
+        String subjectId = "9102";
+        final String[] ctx = new String[1];
         LocalDate today = LocalDate.now();
         ormTemplate.runInSession(() -> {
             seedSubject(subjectId, "1002", "银行存款");
-            seedSubject(91020L, "2240OTHER", "未达账项调整");
+            seedSubject("91020", "2240OTHER", "未达账项调整");
             ctx[0] = seedFundAccount(subjectId, new BigDecimal("1000"));
             seedPeriod("CUR-MONTH-OPEN", today.getYear(), today.getMonthValue(),
                     today.withDayOfMonth(1), today.withDayOfMonth(today.lengthOfMonth()),
@@ -160,11 +160,11 @@ public class TestErpFinBankReconAutoReverseJob extends JunitAutoTestCase {
     @Test
     public void testConfigDisabledSkips() {
         long seed = System.nanoTime();
-        long subjectId = 9103L;
-        final Long[] ctx = new Long[1];
+        String subjectId = "9103";
+        final String[] ctx = new String[1];
         ormTemplate.runInSession(() -> {
             seedSubject(subjectId, "1002", "银行存款");
-            seedSubject(91030L, "2240OTHER", "未达账项调整");
+            seedSubject("91030", "2240OTHER", "未达账项调整");
             ctx[0] = seedFundAccount(subjectId, new BigDecimal("1000"));
             seedPeriod("2026-06-OPEN-2", 2026, 6,
                     LocalDate.of(2026, 6, 1), LocalDate.of(2026, 6, 30),
@@ -189,11 +189,11 @@ public class TestErpFinBankReconAutoReverseJob extends JunitAutoTestCase {
     @Test
     public void testNonPostedReconsExcludedFromScan() {
         long seed = System.nanoTime();
-        long subjectId = 9104L;
-        final Long[] ctx = new Long[1];
+        String subjectId = "9104";
+        final String[] ctx = new String[1];
         ormTemplate.runInSession(() -> {
             seedSubject(subjectId, "1002", "银行存款");
-            seedSubject(91040L, "2240OTHER", "未达账项调整");
+            seedSubject("91040", "2240OTHER", "未达账项调整");
             ctx[0] = seedFundAccount(subjectId, new BigDecimal("1000"));
             seedPeriod("2026-06-OPEN-3", 2026, 6,
                     LocalDate.of(2026, 6, 1), LocalDate.of(2026, 6, 30),
@@ -223,13 +223,13 @@ public class TestErpFinBankReconAutoReverseJob extends JunitAutoTestCase {
     @Test
     public void testClosedPeriodCandidateFailureIsolation() {
         long seed = System.nanoTime();
-        long subjectId = 9105L;
-        final Long[] ctx = new Long[1];
+        String subjectId = "9105";
+        final String[] ctx = new String[1];
         final ErpFinAccountingPeriod[] mayPeriod = new ErpFinAccountingPeriod[1];
         final ErpFinAccountingPeriod[] junPeriod = new ErpFinAccountingPeriod[1];
         ormTemplate.runInSession(() -> {
             seedSubject(subjectId, "1002", "银行存款");
-            seedSubject(91050L, "2240OTHER", "未达账项调整");
+            seedSubject("91050", "2240OTHER", "未达账项调整");
             ctx[0] = seedFundAccount(subjectId, new BigDecimal("1000"));
             mayPeriod[0] = seedPeriod("2026-05-OPEN", 2026, 5,
                     LocalDate.of(2026, 5, 1), LocalDate.of(2026, 5, 31),
@@ -269,7 +269,7 @@ public class TestErpFinBankReconAutoReverseJob extends JunitAutoTestCase {
     // ---------- helpers ----------
 
     /** seed 跨期（过去月份 statementDate）平衡且含未达的 POSTED 调节表（period 须已 OPEN seed）。 */
-    private ErpFinBankReconciliation seedPostedCrossPeriodRecon(Long fundAccountId, String statementDate,
+    private ErpFinBankReconciliation seedPostedCrossPeriodRecon(String fundAccountId, String statementDate,
                                                                 String refNo) {
         ErpFinBankStatement head = importStatement(fundAccountId, statementDate, refNo, "1500");
         ErpFinBankReconciliation recon = ormTemplate.runInSession(session ->
@@ -281,7 +281,7 @@ public class TestErpFinBankReconAutoReverseJob extends JunitAutoTestCase {
         return recon;
     }
 
-    private ErpFinBankStatement importStatement(Long fundAccountId, String statementDate, String refNo,
+    private ErpFinBankStatement importStatement(String fundAccountId, String statementDate, String refNo,
                                                 String balanceAfter) {
         BankStatementLineInput l1 = line(LocalDate.parse(statementDate), refNo,
                 DC_CREDIT, new BigDecimal("500"), new BigDecimal(balanceAfter));
@@ -297,7 +297,7 @@ public class TestErpFinBankReconAutoReverseJob extends JunitAutoTestCase {
         return dao.findAllByQuery(q).size();
     }
 
-    private Long findAdjVoucherId(String billCode) {
+    private String findAdjVoucherId(String billCode) {
         IEntityDao<ErpFinVoucherBillR> dao = daoProvider.daoFor(ErpFinVoucherBillR.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("billCode", billCode));
@@ -307,7 +307,7 @@ public class TestErpFinBankReconAutoReverseJob extends JunitAutoTestCase {
         return link != null ? link.getVoucherId() : null;
     }
 
-    private long countReversalVouchers(Long originalVoucherId) {
+    private long countReversalVouchers(String originalVoucherId) {
         IEntityDao<ErpFinVoucher> dao = daoProvider.daoFor(ErpFinVoucher.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("reversalOfVoucherId", originalVoucherId));
@@ -323,7 +323,7 @@ public class TestErpFinBankReconAutoReverseJob extends JunitAutoTestCase {
         return null;
     }
 
-    private ErpFinBankReconciliation reloadRecon(Long id) {
+    private ErpFinBankReconciliation reloadRecon(String id) {
         return daoProvider.daoFor(ErpFinBankReconciliation.class).getEntityById(id);
     }
 
@@ -338,15 +338,15 @@ public class TestErpFinBankReconAutoReverseJob extends JunitAutoTestCase {
         return in;
     }
 
-    private long seedFundAccount(long subjectId, BigDecimal currentBalance) {
+    private String seedFundAccount(String subjectId, BigDecimal currentBalance) {
         IEntityDao<ErpFinFundAccount> dao = daoProvider.daoFor(ErpFinFundAccount.class);
         ErpFinFundAccount account = dao.newEntity();
         account.setCode("FA-" + System.nanoTime());
         account.setName("Bank");
-        account.setOrgId(1L);
+        account.setOrgId("1");
         account.setAccountType(ErpFinConstants.FUND_ACCOUNT_TYPE_BANK);
         account.setSubjectId(subjectId);
-        account.setCurrencyId(1L);
+        account.setCurrencyId("1");
         account.setOpeningBalance(currentBalance);
         account.setCurrentBalance(currentBalance);
         account.setStatus("ACTIVE");
@@ -354,7 +354,7 @@ public class TestErpFinBankReconAutoReverseJob extends JunitAutoTestCase {
         return account.getId();
     }
 
-    private void seedSubject(long id, String code, String name) {
+    private void seedSubject(String id, String code, String name) {
         IEntityDao<ErpMdSubject> dao = daoProvider.daoFor(ErpMdSubject.class);
         ErpMdSubject s = new ErpMdSubject();
         s.orm_propValue(1, id);
@@ -372,7 +372,7 @@ public class TestErpFinBankReconAutoReverseJob extends JunitAutoTestCase {
         ErpFinAccountingPeriod p = dao.newEntity();
         p.setCode(code);
         p.setName(code);
-        p.setOrgId(1L);
+        p.setOrgId("1");
         p.setYear(year);
         p.setMonth(month);
         p.setStartDate(start);

@@ -51,18 +51,18 @@ public class TestErpFinNotesPayablePosting extends JunitAutoTestCase {
 
     @Test
     public void testIssuePostsAndOccupiesCredit() {
-        long partnerId = 6601L;
-        Long[] ids = ormTemplate.runInSession(s -> {
+        String partnerId = "6601";
+        String[] ids = ormTemplate.runInSession(s -> {
             seedBase();
             seedSubject("2202", "应付账款");
             seedSubject("2203", "应付票据");
-            Long facilityId = seedCreditFacility("CF-POST-001", new BigDecimal("2000"));
-            Long noteId = seedPayable("NP-POST-001", ErpFinConstants.NOTES_TYPE_BANK_ACCEPTANCE,
+            String facilityId = seedCreditFacility("CF-POST-001", new BigDecimal("2000"));
+            String noteId = seedPayable("NP-POST-001", ErpFinConstants.NOTES_TYPE_BANK_ACCEPTANCE,
                     facilityId, new BigDecimal("800"), partnerId);
-            return new Long[]{facilityId, noteId};
+            return new String[]{facilityId, noteId};
         });
-        Long facilityId = ids[0];
-        Long noteId = ids[1];
+        String facilityId = ids[0];
+        String noteId = ids[1];
 
         ErpFinNotesPayable note = ormTemplate.runInSession(session -> notesPayableBiz.issue(noteId, CTX));
         assertTrue(Boolean.TRUE.equals(note.getPosted()), "开出过账成功 posted=true");
@@ -74,19 +74,19 @@ public class TestErpFinNotesPayablePosting extends JunitAutoTestCase {
 
     @Test
     public void testHonorPostsAndReleasesCredit() {
-        long partnerId = 6602L;
-        Long[] ids = ormTemplate.runInSession(s -> {
+        String partnerId = "6602";
+        String[] ids = ormTemplate.runInSession(s -> {
             seedBase();
             seedSubject("2202", "应付账款");
             seedSubject("2203", "应付票据");
             seedSubject("1002", "银行存款");
-            Long facilityId = seedCreditFacility("CF-POST-002", new BigDecimal("2000"));
-            Long noteId = seedPayable("NP-POST-002", ErpFinConstants.NOTES_TYPE_BANK_ACCEPTANCE,
+            String facilityId = seedCreditFacility("CF-POST-002", new BigDecimal("2000"));
+            String noteId = seedPayable("NP-POST-002", ErpFinConstants.NOTES_TYPE_BANK_ACCEPTANCE,
                     facilityId, new BigDecimal("800"), partnerId);
-            return new Long[]{facilityId, noteId};
+            return new String[]{facilityId, noteId};
         });
-        Long facilityId = ids[0];
-        Long noteId = ids[1];
+        String facilityId = ids[0];
+        String noteId = ids[1];
 
         ormTemplate.runInSession(() -> notesPayableBiz.issue(noteId, CTX));
         ErpFinNotesPayable note = ormTemplate.runInSession(session -> notesPayableBiz.honor(noteId, CTX));
@@ -101,19 +101,19 @@ public class TestErpFinNotesPayablePosting extends JunitAutoTestCase {
 
     private void seedBase() {
         seedOpenPeriod("2026-07", 2026, 7, LocalDate.of(2026, 7, 1), LocalDate.of(2026, 7, 31));
-        seedAcctSchema(1L);
+        seedAcctSchema("1");
     }
 
-    private Long seedPayable(String code, String notesType, Long creditFacilityId, BigDecimal amountFunctional, Long partnerId) {
+    private String seedPayable(String code, String notesType, String creditFacilityId, BigDecimal amountFunctional, String partnerId) {
         IEntityDao<ErpFinNotesPayable> dao = daoProvider.daoFor(ErpFinNotesPayable.class);
         ErpFinNotesPayable note = new ErpFinNotesPayable();
         note.setCode(code);
-        note.setOrgId(1L);
+        note.setOrgId("1");
         note.setNotesType(notesType);
         note.setNotesNo("N-" + code);
         note.setIssueDate(LocalDate.of(2026, 7, 1));
         note.setDueDate(LocalDate.of(2026, 7, 25));
-        note.setCurrencyId(1L);
+        note.setCurrencyId("1");
         note.setExchangeRate(BigDecimal.ONE);
         note.setAmountFunctional(amountFunctional);
         note.setAmountSource(amountFunctional);
@@ -124,11 +124,11 @@ public class TestErpFinNotesPayablePosting extends JunitAutoTestCase {
         return note.getId();
     }
 
-    private Long seedCreditFacility(String code, BigDecimal total) {
+    private String seedCreditFacility(String code, BigDecimal total) {
         IEntityDao<ErpFinCreditFacility> dao = daoProvider.daoFor(ErpFinCreditFacility.class);
         ErpFinCreditFacility facility = new ErpFinCreditFacility();
         facility.setCode(code);
-        facility.setOrgId(1L);
+        facility.setOrgId("1");
         facility.setFacilityType("BANK_ACCEPTANCE_LINE");
         facility.setTotalAmount(total);
         facility.setUsedAmount(BigDecimal.ZERO);
@@ -138,7 +138,7 @@ public class TestErpFinNotesPayablePosting extends JunitAutoTestCase {
         return facility.getId();
     }
 
-    private ErpFinCreditFacility reloadFacility(Long facilityId) {
+    private ErpFinCreditFacility reloadFacility(String facilityId) {
         IEntityDao<ErpFinCreditFacility> dao = daoProvider.daoFor(ErpFinCreditFacility.class);
         return dao.getEntityById(facilityId);
     }
@@ -154,14 +154,14 @@ public class TestErpFinNotesPayablePosting extends JunitAutoTestCase {
         dao.saveEntity(subject);
     }
 
-    private void seedAcctSchema(long orgId) {
+    private void seedAcctSchema(String orgId) {
         IEntityDao<ErpMdAcctSchema> dao = daoProvider.daoFor(ErpMdAcctSchema.class);
         ErpMdAcctSchema schema = new ErpMdAcctSchema();
         schema.setCode("AS-" + orgId);
         schema.setName("账套-" + orgId);
         schema.setOrgId(orgId);
         schema.setNature("FINANCIAL");
-        schema.setFunctionalCurrencyId(1L);
+        schema.setFunctionalCurrencyId("1");
         schema.setStatus("ACTIVE");
         dao.saveEntity(schema);
     }
@@ -171,7 +171,7 @@ public class TestErpFinNotesPayablePosting extends JunitAutoTestCase {
         ErpFinAccountingPeriod period = new ErpFinAccountingPeriod();
         period.setCode(code);
         period.setName(code);
-        period.setOrgId(1L);
+        period.setOrgId("1");
         period.setYear(year);
         period.setMonth(month);
         period.setStartDate(start);

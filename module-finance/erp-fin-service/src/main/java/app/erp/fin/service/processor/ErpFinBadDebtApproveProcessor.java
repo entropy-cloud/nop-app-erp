@@ -20,7 +20,7 @@ public class ErpFinBadDebtApproveProcessor extends AbstractApproveProcessor<ErpF
 
     @Override
     public ErpFinBadDebt approve(String id, IServiceContext context) {
-        Long badDebtId = Long.valueOf(id);
+        String badDebtId = id;
         ErpFinBadDebt debt = processor.requireBadDebt(badDebtId);
         if (debt.isApproved()) {
             return debt;

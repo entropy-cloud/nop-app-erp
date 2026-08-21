@@ -198,34 +198,34 @@ public class _ErpFinIntercompanyMatch extends DynamicOrmEntity{
 
     
     /* ID: ID */
-    private java.lang.Long _id;
+    private java.lang.String _id;
     
     /* 记录编码: CODE */
     private java.lang.String _code;
     
     /* 核算组织: ORG_ID */
-    private java.lang.Long _orgId;
+    private java.lang.String _orgId;
     
     /* 配对键: PAIR_KEY */
     private java.lang.String _pairKey;
     
     /* 会计期间: PERIOD_ID */
-    private java.lang.Long _periodId;
+    private java.lang.String _periodId;
     
     /* AR侧凭证: AR_SIDE_VOUCHER_ID */
-    private java.lang.Long _arSideVoucherId;
+    private java.lang.String _arSideVoucherId;
     
     /* AR侧组织: AR_ORG_ID */
-    private java.lang.Long _arOrgId;
+    private java.lang.String _arOrgId;
     
     /* AP侧凭证: AP_SIDE_VOUCHER_ID */
-    private java.lang.Long _apSideVoucherId;
+    private java.lang.String _apSideVoucherId;
     
     /* AP侧组织: AP_ORG_ID */
-    private java.lang.Long _apOrgId;
+    private java.lang.String _apOrgId;
     
     /* 物料: MATERIAL_ID */
-    private java.lang.Long _materialId;
+    private java.lang.String _materialId;
     
     /* 配对金额: MATCHED_AMOUNT */
     private java.math.BigDecimal _matchedAmount;
@@ -403,9 +403,9 @@ public class _ErpFinIntercompanyMatch extends DynamicOrmEntity{
         switch(propId){
         
             case PROP_ID_id:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_id));
                }
                setId(typedValue);
@@ -423,9 +423,9 @@ public class _ErpFinIntercompanyMatch extends DynamicOrmEntity{
             }
         
             case PROP_ID_orgId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_orgId));
                }
                setOrgId(typedValue);
@@ -443,9 +443,9 @@ public class _ErpFinIntercompanyMatch extends DynamicOrmEntity{
             }
         
             case PROP_ID_periodId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_periodId));
                }
                setPeriodId(typedValue);
@@ -453,9 +453,9 @@ public class _ErpFinIntercompanyMatch extends DynamicOrmEntity{
             }
         
             case PROP_ID_arSideVoucherId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_arSideVoucherId));
                }
                setArSideVoucherId(typedValue);
@@ -463,9 +463,9 @@ public class _ErpFinIntercompanyMatch extends DynamicOrmEntity{
             }
         
             case PROP_ID_arOrgId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_arOrgId));
                }
                setArOrgId(typedValue);
@@ -473,9 +473,9 @@ public class _ErpFinIntercompanyMatch extends DynamicOrmEntity{
             }
         
             case PROP_ID_apSideVoucherId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_apSideVoucherId));
                }
                setApSideVoucherId(typedValue);
@@ -483,9 +483,9 @@ public class _ErpFinIntercompanyMatch extends DynamicOrmEntity{
             }
         
             case PROP_ID_apOrgId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_apOrgId));
                }
                setApOrgId(typedValue);
@@ -493,9 +493,9 @@ public class _ErpFinIntercompanyMatch extends DynamicOrmEntity{
             }
         
             case PROP_ID_materialId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_materialId));
                }
                setMaterialId(typedValue);
@@ -613,7 +613,7 @@ public class _ErpFinIntercompanyMatch extends DynamicOrmEntity{
         
             case PROP_ID_id:{
                onInitProp(propId);
-               this._id = (java.lang.Long)value;
+               this._id = (java.lang.String)value;
                orm_id(); // 如果是设置主键字段，则触发watcher
                break;
             }
@@ -627,7 +627,7 @@ public class _ErpFinIntercompanyMatch extends DynamicOrmEntity{
         
             case PROP_ID_orgId:{
                onInitProp(propId);
-               this._orgId = (java.lang.Long)value;
+               this._orgId = (java.lang.String)value;
                
                break;
             }
@@ -641,42 +641,42 @@ public class _ErpFinIntercompanyMatch extends DynamicOrmEntity{
         
             case PROP_ID_periodId:{
                onInitProp(propId);
-               this._periodId = (java.lang.Long)value;
+               this._periodId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_arSideVoucherId:{
                onInitProp(propId);
-               this._arSideVoucherId = (java.lang.Long)value;
+               this._arSideVoucherId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_arOrgId:{
                onInitProp(propId);
-               this._arOrgId = (java.lang.Long)value;
+               this._arOrgId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_apSideVoucherId:{
                onInitProp(propId);
-               this._apSideVoucherId = (java.lang.Long)value;
+               this._apSideVoucherId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_apOrgId:{
                onInitProp(propId);
-               this._apOrgId = (java.lang.Long)value;
+               this._apOrgId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_materialId:{
                onInitProp(propId);
-               this._materialId = (java.lang.Long)value;
+               this._materialId = (java.lang.String)value;
                
                break;
             }
@@ -760,7 +760,7 @@ public class _ErpFinIntercompanyMatch extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final java.lang.Long getId(){
+    public final java.lang.String getId(){
          onPropGet(PROP_ID_id);
          return _id;
     }
@@ -768,7 +768,7 @@ public class _ErpFinIntercompanyMatch extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final void setId(java.lang.Long value){
+    public final void setId(java.lang.String value){
         if(onPropSet(PROP_ID_id,value)){
             this._id = value;
             internalClearRefs(PROP_ID_id);
@@ -798,7 +798,7 @@ public class _ErpFinIntercompanyMatch extends DynamicOrmEntity{
     /**
      * 核算组织: ORG_ID
      */
-    public final java.lang.Long getOrgId(){
+    public final java.lang.String getOrgId(){
          onPropGet(PROP_ID_orgId);
          return _orgId;
     }
@@ -806,7 +806,7 @@ public class _ErpFinIntercompanyMatch extends DynamicOrmEntity{
     /**
      * 核算组织: ORG_ID
      */
-    public final void setOrgId(java.lang.Long value){
+    public final void setOrgId(java.lang.String value){
         if(onPropSet(PROP_ID_orgId,value)){
             this._orgId = value;
             internalClearRefs(PROP_ID_orgId);
@@ -836,7 +836,7 @@ public class _ErpFinIntercompanyMatch extends DynamicOrmEntity{
     /**
      * 会计期间: PERIOD_ID
      */
-    public final java.lang.Long getPeriodId(){
+    public final java.lang.String getPeriodId(){
          onPropGet(PROP_ID_periodId);
          return _periodId;
     }
@@ -844,7 +844,7 @@ public class _ErpFinIntercompanyMatch extends DynamicOrmEntity{
     /**
      * 会计期间: PERIOD_ID
      */
-    public final void setPeriodId(java.lang.Long value){
+    public final void setPeriodId(java.lang.String value){
         if(onPropSet(PROP_ID_periodId,value)){
             this._periodId = value;
             internalClearRefs(PROP_ID_periodId);
@@ -855,7 +855,7 @@ public class _ErpFinIntercompanyMatch extends DynamicOrmEntity{
     /**
      * AR侧凭证: AR_SIDE_VOUCHER_ID
      */
-    public final java.lang.Long getArSideVoucherId(){
+    public final java.lang.String getArSideVoucherId(){
          onPropGet(PROP_ID_arSideVoucherId);
          return _arSideVoucherId;
     }
@@ -863,7 +863,7 @@ public class _ErpFinIntercompanyMatch extends DynamicOrmEntity{
     /**
      * AR侧凭证: AR_SIDE_VOUCHER_ID
      */
-    public final void setArSideVoucherId(java.lang.Long value){
+    public final void setArSideVoucherId(java.lang.String value){
         if(onPropSet(PROP_ID_arSideVoucherId,value)){
             this._arSideVoucherId = value;
             internalClearRefs(PROP_ID_arSideVoucherId);
@@ -874,7 +874,7 @@ public class _ErpFinIntercompanyMatch extends DynamicOrmEntity{
     /**
      * AR侧组织: AR_ORG_ID
      */
-    public final java.lang.Long getArOrgId(){
+    public final java.lang.String getArOrgId(){
          onPropGet(PROP_ID_arOrgId);
          return _arOrgId;
     }
@@ -882,7 +882,7 @@ public class _ErpFinIntercompanyMatch extends DynamicOrmEntity{
     /**
      * AR侧组织: AR_ORG_ID
      */
-    public final void setArOrgId(java.lang.Long value){
+    public final void setArOrgId(java.lang.String value){
         if(onPropSet(PROP_ID_arOrgId,value)){
             this._arOrgId = value;
             internalClearRefs(PROP_ID_arOrgId);
@@ -893,7 +893,7 @@ public class _ErpFinIntercompanyMatch extends DynamicOrmEntity{
     /**
      * AP侧凭证: AP_SIDE_VOUCHER_ID
      */
-    public final java.lang.Long getApSideVoucherId(){
+    public final java.lang.String getApSideVoucherId(){
          onPropGet(PROP_ID_apSideVoucherId);
          return _apSideVoucherId;
     }
@@ -901,7 +901,7 @@ public class _ErpFinIntercompanyMatch extends DynamicOrmEntity{
     /**
      * AP侧凭证: AP_SIDE_VOUCHER_ID
      */
-    public final void setApSideVoucherId(java.lang.Long value){
+    public final void setApSideVoucherId(java.lang.String value){
         if(onPropSet(PROP_ID_apSideVoucherId,value)){
             this._apSideVoucherId = value;
             internalClearRefs(PROP_ID_apSideVoucherId);
@@ -912,7 +912,7 @@ public class _ErpFinIntercompanyMatch extends DynamicOrmEntity{
     /**
      * AP侧组织: AP_ORG_ID
      */
-    public final java.lang.Long getApOrgId(){
+    public final java.lang.String getApOrgId(){
          onPropGet(PROP_ID_apOrgId);
          return _apOrgId;
     }
@@ -920,7 +920,7 @@ public class _ErpFinIntercompanyMatch extends DynamicOrmEntity{
     /**
      * AP侧组织: AP_ORG_ID
      */
-    public final void setApOrgId(java.lang.Long value){
+    public final void setApOrgId(java.lang.String value){
         if(onPropSet(PROP_ID_apOrgId,value)){
             this._apOrgId = value;
             internalClearRefs(PROP_ID_apOrgId);
@@ -931,7 +931,7 @@ public class _ErpFinIntercompanyMatch extends DynamicOrmEntity{
     /**
      * 物料: MATERIAL_ID
      */
-    public final java.lang.Long getMaterialId(){
+    public final java.lang.String getMaterialId(){
          onPropGet(PROP_ID_materialId);
          return _materialId;
     }
@@ -939,7 +939,7 @@ public class _ErpFinIntercompanyMatch extends DynamicOrmEntity{
     /**
      * 物料: MATERIAL_ID
      */
-    public final void setMaterialId(java.lang.Long value){
+    public final void setMaterialId(java.lang.String value){
         if(onPropSet(PROP_ID_materialId,value)){
             this._materialId = value;
             internalClearRefs(PROP_ID_materialId);

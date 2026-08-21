@@ -37,7 +37,7 @@ public class TestErpFinVoucherPeriodLock extends PeriodCloseTestSupport {
 
     @Test
     public void testPostVoucherBlockedWhenPeriodClosedFinal() {
-        Long periodId = seedPeriodWithVouchers("2025-07");
+        String periodId = seedPeriodWithVouchers("2025-07");
         ErpFinAccountingPeriod period = setPeriodStatus(periodId, ErpFinConstants.PERIOD_STATUS_CLOSED_FINAL);
 
         ErpFinVoucher draftVoucher = findDraftVoucher(periodId);
@@ -50,7 +50,7 @@ public class TestErpFinVoucherPeriodLock extends PeriodCloseTestSupport {
 
     @Test
     public void testPostVoucherBlockedWhenPeriodClosed() {
-        Long periodId = seedPeriodWithVouchers("2025-08");
+        String periodId = seedPeriodWithVouchers("2025-08");
         setPeriodStatus(periodId, ErpFinConstants.PERIOD_STATUS_CLOSED);
 
         ErpFinVoucher draftVoucher = findDraftVoucher(periodId);
@@ -61,7 +61,7 @@ public class TestErpFinVoucherPeriodLock extends PeriodCloseTestSupport {
 
     @Test
     public void testReverseVoucherBlockedWhenPeriodClosedFinal() {
-        Long periodId = seedPeriodWithVouchers("2025-09");
+        String periodId = seedPeriodWithVouchers("2025-09");
         setPeriodStatus(periodId, ErpFinConstants.PERIOD_STATUS_CLOSED_FINAL);
 
         ErpFinVoucher postedVoucher = findPostedVoucher(periodId);
@@ -72,7 +72,7 @@ public class TestErpFinVoucherPeriodLock extends PeriodCloseTestSupport {
 
     @Test
     public void testPostVoucherAllowedWhenPeriodOpen() {
-        Long periodId = seedPeriodWithVouchers("2025-10");
+        String periodId = seedPeriodWithVouchers("2025-10");
         setPeriodStatus(periodId, ErpFinConstants.PERIOD_STATUS_OPEN);
 
         ErpFinVoucher draftVoucher = findDraftVoucher(periodId);
@@ -82,11 +82,11 @@ public class TestErpFinVoucherPeriodLock extends PeriodCloseTestSupport {
                 "OPEN 期间凭证可正常过账");
     }
 
-    private Long seedPeriodWithVouchers(String code) {
+    private String seedPeriodWithVouchers(String code) {
         return ormTemplate.runInSession(session -> {
             int year = Integer.parseInt(code.substring(0, 4));
             int month = Integer.parseInt(code.substring(5));
-            Long pid = seedOpenPeriod(code, year, month);
+            String pid = seedOpenPeriod(code, year, month);
             Map<String, ErpMdSubject> subjects = new HashMap<>();
             subjects.put("1001", seedSubject("1001", "库存现金", "ASSET", ErpFinConstants.DC_DEBIT));
             subjects.put("6001", seedSubject("6001", "主营业务收入", ErpFinConstants.SUBJECT_CLASS_INCOME, ErpFinConstants.DC_CREDIT));
@@ -102,7 +102,7 @@ public class TestErpFinVoucherPeriodLock extends PeriodCloseTestSupport {
         });
     }
 
-    private void seedDraftVoucher(String vcode, Long periodId, LocalDate date,
+    private void seedDraftVoucher(String vcode, String periodId, LocalDate date,
                                    Map<String, ErpMdSubject> subjects, Object[]... lines) {
         IEntityDao<ErpFinVoucher> vDao = daoProvider.daoFor(ErpFinVoucher.class);
         BigDecimal total = BigDecimal.ZERO;
@@ -113,8 +113,8 @@ public class TestErpFinVoucherPeriodLock extends PeriodCloseTestSupport {
         v.setCode(vcode);
         v.setVoucherType("TRANSFER");
         v.setVoucherDate(date);
-        v.setOrgId(1L);
-        v.setAcctSchemaId(1L);
+        v.setOrgId("1");
+        v.setAcctSchemaId("1");
         v.setPeriodId(periodId);
         v.setTotalDebit(total);
         v.setTotalCredit(total);
@@ -137,16 +137,16 @@ public class TestErpFinVoucherPeriodLock extends PeriodCloseTestSupport {
             line.setDcDirection(dc);
             line.setDebitAmount(ErpFinConstants.DC_DEBIT.equals(dc) ? amt : BigDecimal.ZERO);
             line.setCreditAmount(ErpFinConstants.DC_CREDIT.equals(dc) ? amt : BigDecimal.ZERO);
-            line.setCurrencyId(1L);
+            line.setCurrencyId("1");
             line.setExchangeRate(BigDecimal.ONE);
             line.setAmountSource(amt);
             line.setAmountFunctional(amt);
-            line.setAcctSchemaId(1L);
+            line.setAcctSchemaId("1");
             lDao.saveEntity(line);
         }
     }
 
-    private ErpFinAccountingPeriod setPeriodStatus(Long periodId, String status) {
+    private ErpFinAccountingPeriod setPeriodStatus(String periodId, String status) {
         return ormTemplate.runInSession(session -> {
             IEntityDao<ErpFinAccountingPeriod> dao = daoProvider.daoFor(ErpFinAccountingPeriod.class);
             ErpFinAccountingPeriod p = dao.getEntityById(periodId);
@@ -156,7 +156,7 @@ public class TestErpFinVoucherPeriodLock extends PeriodCloseTestSupport {
         });
     }
 
-    private ErpFinVoucher findDraftVoucher(Long periodId) {
+    private ErpFinVoucher findDraftVoucher(String periodId) {
         return ormTemplate.runInSession(session -> {
             IEntityDao<ErpFinVoucher> dao = daoProvider.daoFor(ErpFinVoucher.class);
             io.nop.api.core.beans.query.QueryBean q = new io.nop.api.core.beans.query.QueryBean();
@@ -166,7 +166,7 @@ public class TestErpFinVoucherPeriodLock extends PeriodCloseTestSupport {
         });
     }
 
-    private ErpFinVoucher findPostedVoucher(Long periodId) {
+    private ErpFinVoucher findPostedVoucher(String periodId) {
         return ormTemplate.runInSession(session -> {
             IEntityDao<ErpFinVoucher> dao = daoProvider.daoFor(ErpFinVoucher.class);
             io.nop.api.core.beans.query.QueryBean q = new io.nop.api.core.beans.query.QueryBean();

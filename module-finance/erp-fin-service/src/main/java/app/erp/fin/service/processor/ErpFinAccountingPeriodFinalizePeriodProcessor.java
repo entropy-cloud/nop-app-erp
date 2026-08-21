@@ -21,7 +21,7 @@ public class ErpFinAccountingPeriodFinalizePeriodProcessor {
     @Inject
     ErpFinAccountingPeriodStateMachine stateMachine;
 
-    public ErpFinAccountingPeriod finalizePeriod(Long periodId, IServiceContext context) {
+    public ErpFinAccountingPeriod finalizePeriod(String periodId, IServiceContext context) {
         ErpFinAccountingPeriod period = facade.requirePeriod(periodId);
         try {
             stateMachine.assertCanFinalize(period.getStatus());

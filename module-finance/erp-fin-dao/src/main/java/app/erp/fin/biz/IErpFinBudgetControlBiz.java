@@ -31,9 +31,9 @@ public interface IErpFinBudgetControlBiz {
      * @return 控制结果：PASS/WARNED/BLOCKED + availableAmount + budgetLineId
      */
     @BizMutation
-    BudgetCheckResult check(@Name("subjectId") Long subjectId,
-                            @Name("costCenterId") Long costCenterId,
-                            @Name("periodId") Long periodId,
+    BudgetCheckResult check(@Name("subjectId") String subjectId,
+                            @Name("costCenterId") String costCenterId,
+                            @Name("periodId") String periodId,
                             @Name("amount") BigDecimal amount,
                             @Name("sourceBillType") String sourceBillType,
                             @Name("sourceBillCode") String sourceBillCode,

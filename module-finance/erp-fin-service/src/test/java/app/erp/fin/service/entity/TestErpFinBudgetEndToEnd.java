@@ -69,16 +69,16 @@ public class TestErpFinBudgetEndToEnd extends JunitAutoTestCase {
 
     @Test
     public void testApproveGeneratesBudgetVoucher() {
-        Long[] ids = seedReturn(() -> {
-            Long pid = seedOpenPeriod("2024-06", 2024, 6);
+        String[] ids = seedReturn(() -> {
+            String pid = seedOpenPeriod("2024-06", 2024, 6);
             ErpMdSubject expense = seedSubject("6601", "销售费用", ErpFinConstants.SUBJECT_CLASS_EXPENSE, ErpFinConstants.DC_DEBIT);
             ErpMdSubject income = seedSubject("6001", "主营业务收入", ErpFinConstants.SUBJECT_CLASS_INCOME, ErpFinConstants.DC_CREDIT);
-            Long scenarioId = seedBudgetScenario("BUD-2024-06", pid, 2024, ErpFinConstants.BUDGET_CONTROL_NONE,
+            String scenarioId = seedBudgetScenario("BUD-2024-06", pid, 2024, ErpFinConstants.BUDGET_CONTROL_NONE,
                     expense, income, new BigDecimal("1000"));
-            return new Long[]{pid, scenarioId};
+            return new String[]{pid, scenarioId};
         });
-        Long periodId = ids[0];
-        Long scenarioId = ids[1];
+        String periodId = ids[0];
+        String scenarioId = ids[1];
 
         ormTemplate.runInSession(() -> scenarioBiz.submit(scenarioId, CTX));
         ErpFinBudgetScenario approved = ormTemplate.runInSession(session -> scenarioBiz.approve(scenarioId, CTX));
@@ -93,18 +93,18 @@ public class TestErpFinBudgetEndToEnd extends JunitAutoTestCase {
 
     @Test
     public void testHardControlBlocked() {
-        Long[] ids = seedReturn(() -> {
-            Long pid = seedOpenPeriod("2024-07", 2024, 7);
+        String[] ids = seedReturn(() -> {
+            String pid = seedOpenPeriod("2024-07", 2024, 7);
             ErpMdSubject expense = seedSubject("6601", "销售费用", ErpFinConstants.SUBJECT_CLASS_EXPENSE, ErpFinConstants.DC_DEBIT);
             ErpMdSubject income = seedSubject("6001", "主营业务收入", ErpFinConstants.SUBJECT_CLASS_INCOME, ErpFinConstants.DC_CREDIT);
-            Long scenarioId = seedBudgetScenario("BUD-2024-07", pid, 2024, ErpFinConstants.BUDGET_CONTROL_HARD,
+            String scenarioId = seedBudgetScenario("BUD-2024-07", pid, 2024, ErpFinConstants.BUDGET_CONTROL_HARD,
                     expense, income, new BigDecimal("1000"));
             // 实际凭证：费用 800（NORMAL）
             seedActualVoucher("V-ACT-07", pid, expense, income, new BigDecimal("800"));
-            return new Long[]{pid, scenarioId};
+            return new String[]{pid, scenarioId};
         });
-        Long periodId = ids[0];
-        Long scenarioId = ids[1];
+        String periodId = ids[0];
+        String scenarioId = ids[1];
         ErpMdSubject expense = findSubjectByCode("6601");
 
         ormTemplate.runInSession(() -> scenarioBiz.submit(scenarioId, CTX));
@@ -119,17 +119,17 @@ public class TestErpFinBudgetEndToEnd extends JunitAutoTestCase {
 
     @Test
     public void testWarnControlLogsAndPasses() {
-        Long[] ids = seedReturn(() -> {
-            Long pid = seedOpenPeriod("2024-08", 2024, 8);
+        String[] ids = seedReturn(() -> {
+            String pid = seedOpenPeriod("2024-08", 2024, 8);
             ErpMdSubject expense = seedSubject("6601", "销售费用", ErpFinConstants.SUBJECT_CLASS_EXPENSE, ErpFinConstants.DC_DEBIT);
             ErpMdSubject income = seedSubject("6001", "主营业务收入", ErpFinConstants.SUBJECT_CLASS_INCOME, ErpFinConstants.DC_CREDIT);
-            Long scenarioId = seedBudgetScenario("BUD-2024-08", pid, 2024, ErpFinConstants.BUDGET_CONTROL_WARN,
+            String scenarioId = seedBudgetScenario("BUD-2024-08", pid, 2024, ErpFinConstants.BUDGET_CONTROL_WARN,
                     expense, income, new BigDecimal("1000"));
             seedActualVoucher("V-ACT-08", pid, expense, income, new BigDecimal("800"));
-            return new Long[]{pid, scenarioId};
+            return new String[]{pid, scenarioId};
         });
-        Long periodId = ids[0];
-        Long scenarioId = ids[1];
+        String periodId = ids[0];
+        String scenarioId = ids[1];
         ErpMdSubject expense = findSubjectByCode("6601");
 
         ormTemplate.runInSession(() -> scenarioBiz.submit(scenarioId, CTX));
@@ -145,16 +145,16 @@ public class TestErpFinBudgetEndToEnd extends JunitAutoTestCase {
 
     @Test
     public void testNoneControlPasses() {
-        Long[] ids = seedReturn(() -> {
-            Long pid = seedOpenPeriod("2024-09", 2024, 9);
+        String[] ids = seedReturn(() -> {
+            String pid = seedOpenPeriod("2024-09", 2024, 9);
             ErpMdSubject expense = seedSubject("6601", "销售费用", ErpFinConstants.SUBJECT_CLASS_EXPENSE, ErpFinConstants.DC_DEBIT);
             ErpMdSubject income = seedSubject("6001", "主营业务收入", ErpFinConstants.SUBJECT_CLASS_INCOME, ErpFinConstants.DC_CREDIT);
-            Long scenarioId = seedBudgetScenario("BUD-2024-09", pid, 2024, ErpFinConstants.BUDGET_CONTROL_NONE,
+            String scenarioId = seedBudgetScenario("BUD-2024-09", pid, 2024, ErpFinConstants.BUDGET_CONTROL_NONE,
                     expense, income, new BigDecimal("1000"));
-            return new Long[]{pid, scenarioId};
+            return new String[]{pid, scenarioId};
         });
-        Long periodId = ids[0];
-        Long scenarioId = ids[1];
+        String periodId = ids[0];
+        String scenarioId = ids[1];
         ErpMdSubject expense = findSubjectByCode("6601");
 
         ormTemplate.runInSession(() -> scenarioBiz.submit(scenarioId, CTX));
@@ -167,16 +167,16 @@ public class TestErpFinBudgetEndToEnd extends JunitAutoTestCase {
 
     @Test
     public void testCancelReversesBudgetVoucher() {
-        Long[] ids = seedReturn(() -> {
-            Long pid = seedOpenPeriod("2024-10", 2024, 10);
+        String[] ids = seedReturn(() -> {
+            String pid = seedOpenPeriod("2024-10", 2024, 10);
             ErpMdSubject expense = seedSubject("6601", "销售费用", ErpFinConstants.SUBJECT_CLASS_EXPENSE, ErpFinConstants.DC_DEBIT);
             ErpMdSubject income = seedSubject("6001", "主营业务收入", ErpFinConstants.SUBJECT_CLASS_INCOME, ErpFinConstants.DC_CREDIT);
-            Long scenarioId = seedBudgetScenario("BUD-2024-10", pid, 2024, ErpFinConstants.BUDGET_CONTROL_NONE,
+            String scenarioId = seedBudgetScenario("BUD-2024-10", pid, 2024, ErpFinConstants.BUDGET_CONTROL_NONE,
                     expense, income, new BigDecimal("1000"));
-            return new Long[]{pid, scenarioId};
+            return new String[]{pid, scenarioId};
         });
-        Long periodId = ids[0];
-        Long scenarioId = ids[1];
+        String periodId = ids[0];
+        String scenarioId = ids[1];
 
         ormTemplate.runInSession(() -> scenarioBiz.submit(scenarioId, CTX));
         ormTemplate.runInSession(() -> scenarioBiz.approve(scenarioId, CTX));
@@ -195,26 +195,26 @@ public class TestErpFinBudgetEndToEnd extends JunitAutoTestCase {
     public void testGetBudgetVsActual() {
         // P1-RC-003 三通道：BUDGET(1000) → budgetAmount；NORMAL(400) → actualAmount；COMMITMENT(200) → commitmentAmount；
         // available = budget − actual − commitment = 1000 − 400 − 200 = 400。
-        Long[] ids = seedReturn(() -> {
-            Long pid = seedOpenPeriod("2024-11", 2024, 11);
+        String[] ids = seedReturn(() -> {
+            String pid = seedOpenPeriod("2024-11", 2024, 11);
             ErpMdSubject expense = seedSubject("6601", "销售费用", ErpFinConstants.SUBJECT_CLASS_EXPENSE, ErpFinConstants.DC_DEBIT);
             ErpMdSubject income = seedSubject("6001", "主营业务收入", ErpFinConstants.SUBJECT_CLASS_INCOME, ErpFinConstants.DC_CREDIT);
-            Long scenarioId = seedBudgetScenario("BUD-2024-11", pid, 2024, ErpFinConstants.BUDGET_CONTROL_NONE,
+            String scenarioId = seedBudgetScenario("BUD-2024-11", pid, 2024, ErpFinConstants.BUDGET_CONTROL_NONE,
                     expense, income, new BigDecimal("1000"));
             // 实际凭证：费用 400（NORMAL）
             seedActualVoucher("V-ACT-11", pid, expense, income, new BigDecimal("400"));
             // 承付凭证（postingType=COMMITMENT）：占用 expense 科目 200
             seedCommitmentVoucher("V-CMT-11", pid, expense, new BigDecimal("200"));
-            return new Long[]{pid, scenarioId};
+            return new String[]{pid, scenarioId};
         });
-        Long periodId = ids[0];
-        Long scenarioId = ids[1];
+        String periodId = ids[0];
+        String scenarioId = ids[1];
         ErpMdSubject expense = findSubjectByCode("6601");
 
         ormTemplate.runInSession(() -> scenarioBiz.submit(scenarioId, CTX));
         ormTemplate.runInSession(() -> scenarioBiz.approve(scenarioId, CTX));
 
-        List<BudgetVsActualRow> rows = ormTemplate.runInSession(session -> budgetLineBiz.getBudgetVsActual(1L, periodId, expense.getId(), CTX));
+        List<BudgetVsActualRow> rows = ormTemplate.runInSession(session -> budgetLineBiz.getBudgetVsActual("1", periodId, expense.getId(), CTX));
         assertEquals(1, rows.size(), "应返回 1 行（费用科目×期间×成本中心）");
         BudgetVsActualRow row = rows.get(0);
         assertEquals(0, row.getBudgetAmount().compareTo(new BigDecimal("1000")), "预算数=1000");
@@ -227,24 +227,24 @@ public class TestErpFinBudgetEndToEnd extends JunitAutoTestCase {
     @Test
     public void testGetBudgetVsActualNoCommitmentDegeneratesToTwoTerm() {
         // P1-RC-003 边界等价：无 COMMITMENT 凭证时 commitmentAmount=0，available 退化为两项式（预算−实际）。
-        Long[] ids = seedReturn(() -> {
-            Long pid = seedOpenPeriod("2025-02", 2025, 2);
+        String[] ids = seedReturn(() -> {
+            String pid = seedOpenPeriod("2025-02", 2025, 2);
             ErpMdSubject expense = seedSubject("6601", "销售费用", ErpFinConstants.SUBJECT_CLASS_EXPENSE, ErpFinConstants.DC_DEBIT);
             ErpMdSubject income = seedSubject("6001", "主营业务收入", ErpFinConstants.SUBJECT_CLASS_INCOME, ErpFinConstants.DC_CREDIT);
-            Long scenarioId = seedBudgetScenario("BUD-2025-02", pid, 2025, ErpFinConstants.BUDGET_CONTROL_NONE,
+            String scenarioId = seedBudgetScenario("BUD-2025-02", pid, 2025, ErpFinConstants.BUDGET_CONTROL_NONE,
                     expense, income, new BigDecimal("1000"));
             seedActualVoucher("V-ACT-02", pid, expense, income, new BigDecimal("400"));
             // 无 COMMITMENT 凭证（commitment=0）
-            return new Long[]{pid, scenarioId};
+            return new String[]{pid, scenarioId};
         });
-        Long periodId = ids[0];
-        Long scenarioId = ids[1];
+        String periodId = ids[0];
+        String scenarioId = ids[1];
         ErpMdSubject expense = findSubjectByCode("6601");
 
         ormTemplate.runInSession(() -> scenarioBiz.submit(scenarioId, CTX));
         ormTemplate.runInSession(() -> scenarioBiz.approve(scenarioId, CTX));
 
-        List<BudgetVsActualRow> rows = ormTemplate.runInSession(session -> budgetLineBiz.getBudgetVsActual(1L, periodId, expense.getId(), CTX));
+        List<BudgetVsActualRow> rows = ormTemplate.runInSession(session -> budgetLineBiz.getBudgetVsActual("1", periodId, expense.getId(), CTX));
         assertEquals(1, rows.size(), "应返回 1 行（费用科目×期间×成本中心）");
         BudgetVsActualRow row = rows.get(0);
         assertEquals(0, row.getBudgetAmount().compareTo(new BigDecimal("1000")), "预算数=1000");
@@ -258,19 +258,19 @@ public class TestErpFinBudgetEndToEnd extends JunitAutoTestCase {
     public void testAvailableDeductsCommitmentSeparately() {
         // P1-MA2-084 三通道分离：available = budget − actual − commitment 显式三项式。
         // 构造 BUDGET(1000) + ACTUAL/NORMAL(300) + COMMITMENT(200) → available 应 = 500。
-        Long[] ids = seedReturn(() -> {
-            Long pid = seedOpenPeriod("2024-12", 2024, 12);
+        String[] ids = seedReturn(() -> {
+            String pid = seedOpenPeriod("2024-12", 2024, 12);
             ErpMdSubject expense = seedSubject("6601", "销售费用", ErpFinConstants.SUBJECT_CLASS_EXPENSE, ErpFinConstants.DC_DEBIT);
             ErpMdSubject income = seedSubject("6001", "主营业务收入", ErpFinConstants.SUBJECT_CLASS_INCOME, ErpFinConstants.DC_CREDIT);
-            Long scenarioId = seedBudgetScenario("BUD-2024-12", pid, 2024, ErpFinConstants.BUDGET_CONTROL_WARN,
+            String scenarioId = seedBudgetScenario("BUD-2024-12", pid, 2024, ErpFinConstants.BUDGET_CONTROL_WARN,
                     expense, income, new BigDecimal("1000"));
             seedActualVoucher("V-ACT-12", pid, expense, income, new BigDecimal("300"));
             // 承付凭证（postingType=COMMITMENT）：占用 expense 科目 200
             seedCommitmentVoucher("V-CMT-12", pid, expense, new BigDecimal("200"));
-            return new Long[]{pid, scenarioId};
+            return new String[]{pid, scenarioId};
         });
-        Long periodId = ids[0];
-        Long scenarioId = ids[1];
+        String periodId = ids[0];
+        String scenarioId = ids[1];
         ErpMdSubject expense = findSubjectByCode("6601");
 
         ormTemplate.runInSession(() -> scenarioBiz.submit(scenarioId, CTX));
@@ -288,20 +288,20 @@ public class TestErpFinBudgetEndToEnd extends JunitAutoTestCase {
     public void testCommitmentZeroEquivalentAndReservationCountsAsActual() {
         // P1-MA2-084 回归：(a) commitment=0 时与旧公式等价（available = budget − actual）；
         // (b) RESERVATION 凭证仍计入 actual 通道（不因三通道分离而漏算）。
-        Long[] ids = seedReturn(() -> {
-            Long pid = seedOpenPeriod("2025-01", 2025, 1);
+        String[] ids = seedReturn(() -> {
+            String pid = seedOpenPeriod("2025-01", 2025, 1);
             ErpMdSubject expense = seedSubject("6601", "销售费用", ErpFinConstants.SUBJECT_CLASS_EXPENSE, ErpFinConstants.DC_DEBIT);
             ErpMdSubject income = seedSubject("6001", "主营业务收入", ErpFinConstants.SUBJECT_CLASS_INCOME, ErpFinConstants.DC_CREDIT);
-            Long scenarioId = seedBudgetScenario("BUD-2025-01", pid, 2025, ErpFinConstants.BUDGET_CONTROL_WARN,
+            String scenarioId = seedBudgetScenario("BUD-2025-01", pid, 2025, ErpFinConstants.BUDGET_CONTROL_WARN,
                     expense, income, new BigDecimal("1000"));
             seedActualVoucher("V-ACT-01", pid, expense, income, new BigDecimal("300"));
             // RESERVATION 凭证 100（应计入 actual 通道）
             seedReservationVoucher("V-RSV-01", pid, expense, new BigDecimal("100"));
             // 无 COMMITMENT 凭证（commitment=0）
-            return new Long[]{pid, scenarioId};
+            return new String[]{pid, scenarioId};
         });
-        Long periodId = ids[0];
-        Long scenarioId = ids[1];
+        String periodId = ids[0];
+        String scenarioId = ids[1];
         ErpMdSubject expense = findSubjectByCode("6601");
 
         ormTemplate.runInSession(() -> scenarioBiz.submit(scenarioId, CTX));
@@ -321,12 +321,12 @@ public class TestErpFinBudgetEndToEnd extends JunitAutoTestCase {
         return ormTemplate.runInSession(session -> action.get());
     }
 
-    private Long seedOpenPeriod(String code, int year, int month) {
+    private String seedOpenPeriod(String code, int year, int month) {
         IEntityDao<ErpFinAccountingPeriod> dao = daoProvider.daoFor(ErpFinAccountingPeriod.class);
         ErpFinAccountingPeriod p = new ErpFinAccountingPeriod();
         p.setCode(code);
         p.setName(code);
-        p.setOrgId(1L);
+        p.setOrgId("1");
         p.setYear(year);
         p.setMonth(month);
         p.setStartDate(LocalDate.of(year, month, 1));
@@ -349,17 +349,17 @@ public class TestErpFinBudgetEndToEnd extends JunitAutoTestCase {
     }
 
     /** 创建预算方案（DRAFT）+ 2 行预算（费用 + 收入，金额相同以使预算凭证自然平衡）。返回方案 ID。 */
-    private Long seedBudgetScenario(String code, Long periodId, int fiscalYear, String controlLevel,
+    private String seedBudgetScenario(String code, String periodId, int fiscalYear, String controlLevel,
                                     ErpMdSubject expense, ErpMdSubject income, BigDecimal amount) {
         IEntityDao<ErpFinBudgetScenario> sDao = daoProvider.daoFor(ErpFinBudgetScenario.class);
         ErpFinBudgetScenario s = new ErpFinBudgetScenario();
         s.setCode(code);
         s.setName(code);
-        s.setOrgId(1L);
-        s.setAcctSchemaId(1L);
+        s.setOrgId("1");
+        s.setAcctSchemaId("1");
         s.setFiscalYear(fiscalYear);
         s.setScenarioType("ANNUAL");
-        s.setCurrencyId(1L);
+        s.setCurrencyId("1");
         s.setExchangeRate(BigDecimal.ONE);
         s.setControlLevel(controlLevel);
         s.setDocStatus(ErpFinConstants.BUDGET_STATUS_DRAFT);
@@ -370,43 +370,43 @@ public class TestErpFinBudgetEndToEnd extends JunitAutoTestCase {
         ErpFinBudgetLine l1 = new ErpFinBudgetLine();
         l1.setScenarioId(s.getId());
         l1.setLineNo(1);
-        l1.setOrgId(1L);
-        l1.setAcctSchemaId(1L);
+        l1.setOrgId("1");
+        l1.setAcctSchemaId("1");
         l1.setPeriodId(periodId);
         l1.setSubjectId(expense.getId());
         l1.setSubjectCode(expense.getCode());
         l1.setBudgetAmountSource(amount);
         l1.setBudgetAmountFunctional(amount);
-        l1.setCurrencyId(1L);
+        l1.setCurrencyId("1");
         l1.setExchangeRate(BigDecimal.ONE);
         lDao.saveEntity(l1);
 
         ErpFinBudgetLine l2 = new ErpFinBudgetLine();
         l2.setScenarioId(s.getId());
         l2.setLineNo(2);
-        l2.setOrgId(1L);
-        l2.setAcctSchemaId(1L);
+        l2.setOrgId("1");
+        l2.setAcctSchemaId("1");
         l2.setPeriodId(periodId);
         l2.setSubjectId(income.getId());
         l2.setSubjectCode(income.getCode());
         l2.setBudgetAmountSource(amount);
         l2.setBudgetAmountFunctional(amount);
-        l2.setCurrencyId(1L);
+        l2.setCurrencyId("1");
         l2.setExchangeRate(BigDecimal.ONE);
         lDao.saveEntity(l2);
         return s.getId();
     }
 
     /** 实际费用凭证（NORMAL）：借费用 / 贷收入，平衡。 */
-    private void seedActualVoucher(String code, Long periodId, ErpMdSubject expense, ErpMdSubject income, BigDecimal amount) {
+    private void seedActualVoucher(String code, String periodId, ErpMdSubject expense, ErpMdSubject income, BigDecimal amount) {
         IEntityDao<ErpFinVoucher> vDao = daoProvider.daoFor(ErpFinVoucher.class);
         ErpFinVoucher v = new ErpFinVoucher();
         v.setCode(code);
         v.setVoucherType("TRANSFER");
         v.setPostingType(ErpFinConstants.POSTING_TYPE_NORMAL);
         v.setVoucherDate(CoreMetrics.today());
-        v.setOrgId(1L);
-        v.setAcctSchemaId(1L);
+        v.setOrgId("1");
+        v.setAcctSchemaId("1");
         v.setPeriodId(periodId);
         v.setTotalDebit(amount);
         v.setTotalCredit(amount);
@@ -423,11 +423,11 @@ public class TestErpFinBudgetEndToEnd extends JunitAutoTestCase {
         d.setDcDirection(ErpFinConstants.DC_DEBIT);
         d.setDebitAmount(amount);
         d.setCreditAmount(BigDecimal.ZERO);
-        d.setCurrencyId(1L);
+        d.setCurrencyId("1");
         d.setExchangeRate(BigDecimal.ONE);
         d.setAmountSource(amount);
         d.setAmountFunctional(amount);
-        d.setAcctSchemaId(1L);
+        d.setAcctSchemaId("1");
         lDao.saveEntity(d);
 
         ErpFinVoucherLine c = new ErpFinVoucherLine();
@@ -438,34 +438,34 @@ public class TestErpFinBudgetEndToEnd extends JunitAutoTestCase {
         c.setDcDirection(ErpFinConstants.DC_CREDIT);
         c.setDebitAmount(BigDecimal.ZERO);
         c.setCreditAmount(amount);
-        c.setCurrencyId(1L);
+        c.setCurrencyId("1");
         c.setExchangeRate(BigDecimal.ONE);
         c.setAmountSource(amount);
         c.setAmountFunctional(amount);
-        c.setAcctSchemaId(1L);
+        c.setAcctSchemaId("1");
         lDao.saveEntity(c);
     }
 
     /** 承付凭证（postingType=COMMITMENT）：借承付占用科目（P1-MA2-084 三通道测试种子）。 */
-    private void seedCommitmentVoucher(String code, Long periodId, ErpMdSubject subject, BigDecimal amount) {
+    private void seedCommitmentVoucher(String code, String periodId, ErpMdSubject subject, BigDecimal amount) {
         seedSingleLineVoucher(code, periodId, subject, amount, ErpFinConstants.POSTING_TYPE_COMMITMENT);
     }
 
     /** 预留凭证（postingType=RESERVATION）：借 subject（P1-MA2-084 验证 RESERVATION 仍计入 actual 通道）。 */
-    private void seedReservationVoucher(String code, Long periodId, ErpMdSubject subject, BigDecimal amount) {
+    private void seedReservationVoucher(String code, String periodId, ErpMdSubject subject, BigDecimal amount) {
         seedSingleLineVoucher(code, periodId, subject, amount, "RESERVATION");
     }
 
     /** 单边凭证（仅借方），用于三通道聚合测试。 */
-    private void seedSingleLineVoucher(String code, Long periodId, ErpMdSubject subject, BigDecimal amount, String postingType) {
+    private void seedSingleLineVoucher(String code, String periodId, ErpMdSubject subject, BigDecimal amount, String postingType) {
         IEntityDao<ErpFinVoucher> vDao = daoProvider.daoFor(ErpFinVoucher.class);
         ErpFinVoucher v = new ErpFinVoucher();
         v.setCode(code);
         v.setVoucherType("TRANSFER");
         v.setPostingType(postingType);
         v.setVoucherDate(CoreMetrics.today());
-        v.setOrgId(1L);
-        v.setAcctSchemaId(1L);
+        v.setOrgId("1");
+        v.setAcctSchemaId("1");
         v.setPeriodId(periodId);
         v.setTotalDebit(amount);
         v.setTotalCredit(BigDecimal.ZERO);
@@ -482,23 +482,23 @@ public class TestErpFinBudgetEndToEnd extends JunitAutoTestCase {
         d.setDcDirection(ErpFinConstants.DC_DEBIT);
         d.setDebitAmount(amount);
         d.setCreditAmount(BigDecimal.ZERO);
-        d.setCurrencyId(1L);
+        d.setCurrencyId("1");
         d.setExchangeRate(BigDecimal.ONE);
         d.setAmountSource(amount);
         d.setAmountFunctional(amount);
-        d.setAcctSchemaId(1L);
+        d.setAcctSchemaId("1");
         lDao.saveEntity(d);
     }
 
     /** 聚合 BUDGET 凭证在该期间该科目的净预算额（借方科目=借−贷）。 */
-    private BigDecimal budgetAmountForSubject(Long periodId, String subjectCode) {
+    private BigDecimal budgetAmountForSubject(String periodId, String subjectCode) {
         ErpMdSubject s = findSubjectByCode(subjectCode);
         QueryBean vq = new QueryBean();
         vq.addFilter(eq("periodId", periodId));
         vq.addFilter(eq("docStatus", ErpFinConstants.VOUCHER_STATUS_POSTED));
         vq.addFilter(eq("isReversed", Boolean.FALSE));
         vq.addFilter(eq("postingType", ErpFinConstants.POSTING_TYPE_BUDGET));
-        List<Long> vids = daoProvider.daoFor(ErpFinVoucher.class).findAllByQuery(vq).stream()
+        List<String> vids = daoProvider.daoFor(ErpFinVoucher.class).findAllByQuery(vq).stream()
                 .map(ErpFinVoucher::getId).collect(java.util.stream.Collectors.toList());
         BigDecimal debit = BigDecimal.ZERO, credit = BigDecimal.ZERO;
         if (!vids.isEmpty()) {

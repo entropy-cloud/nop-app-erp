@@ -51,7 +51,7 @@ public class ErpFinAccountingPeriodGenerateNextYearPeriodsProcessor {
                 .map(ErpFinAccountingPeriod::getMonth)
                 .filter(java.util.Objects::nonNull)
                 .collect(Collectors.toSet());
-        Long orgId = existing.isEmpty() ? facade.resolveDefaultOrgId() : existing.get(0).getOrgId();
+        String orgId = existing.isEmpty() ? facade.resolveDefaultOrgId() : existing.get(0).getOrgId();
 
         int created = 0;
         java.time.YearMonth ym = java.time.YearMonth.of(year, 1);

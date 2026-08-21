@@ -17,7 +17,7 @@ import java.math.BigDecimal;
 public interface IErpFinEmployeeAdvanceBiz extends ICrudBiz<ErpFinEmployeeAdvance> {
 
     @BizMutation
-    ErpFinEmployeeAdvance cancel(@Name("advanceId") Long advanceId, IServiceContext context);
+    ErpFinEmployeeAdvance cancel(@Name("advanceId") String advanceId, IServiceContext context);
 
     /**
      * 员工借款现金还款（{@code EMPLOYEE_ADVANCE_SETTLE} 现金还款路径，plan 2026-07-18-0718-2）。
@@ -29,7 +29,7 @@ public interface IErpFinEmployeeAdvanceBiz extends ICrudBiz<ErpFinEmployeeAdvanc
      * {@code EmployeeAdvancePostingDispatcher.postCashRepay} 生成现金还款凭证（Dr 1002 / Cr 1221）。
      */
     @BizMutation
-    ErpFinEmployeeAdvance cashRepay(@Name("advanceId") Long advanceId,
+    ErpFinEmployeeAdvance cashRepay(@Name("advanceId") String advanceId,
                                     @Name("amount") BigDecimal amount,
                                     IServiceContext context);
 
@@ -45,5 +45,5 @@ public interface IErpFinEmployeeAdvanceBiz extends ICrudBiz<ErpFinEmployeeAdvanc
      * 守卫：advance 须存在；存在可红冲的 cashRepay NORMAL 凭证（否则 {@code ERR_EMPLOYEE_ADVANCE_CASH_REPAY_VOUCHER_NOT_FOUND}）。
      */
     @BizMutation
-    ErpFinEmployeeAdvance reverseCashRepay(@Name("advanceId") Long advanceId, IServiceContext context);
+    ErpFinEmployeeAdvance reverseCashRepay(@Name("advanceId") String advanceId, IServiceContext context);
 }

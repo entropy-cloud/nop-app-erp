@@ -1,7 +1,7 @@
 {
   "data": {
     "id": "@var:NopSysChangeLog@newValue",
-    "code": "@var:ErpFinVoucherTemplate@code",
+    "code": "@var:NopSysChangeLog@newValue_1",
     "name": "@var:NopSysChangeLog@newValue_2",
     "businessType": "@var:NopSysChangeLog@newValue_3",
     "businessType_label": "PURCHASE_INPUT-采购入库",

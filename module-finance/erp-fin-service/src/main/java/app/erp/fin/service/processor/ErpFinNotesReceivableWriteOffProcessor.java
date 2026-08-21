@@ -14,7 +14,7 @@ public class ErpFinNotesReceivableWriteOffProcessor {
     @Inject
     ErpFinNotesReceivableProcessor facade;
 
-    public ErpFinNotesReceivable writeOff(Long notesId, IServiceContext context) {
+    public ErpFinNotesReceivable writeOff(String notesId, IServiceContext context) {
         ErpFinNotesReceivable note = facade.requireNote(notesId, context);
         facade.validateTransitionForWriteOff(note, context);
         facade.doWriteOff(note, context);

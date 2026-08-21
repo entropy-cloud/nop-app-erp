@@ -21,7 +21,7 @@ public interface IErpFinConsolidationEliminationBiz extends ICrudBiz<ErpFinConso
      * @return 本次识别写入的候选数
      */
     @BizMutation
-    int generateEliminationCandidates(@Name("periodId") Long periodId, IServiceContext context);
+    int generateEliminationCandidates(@Name("periodId") String periodId, IServiceContext context);
 
     /**
      * 生成抵消分录草稿凭证：将候选（CANDIDATE）转为 DRAFT_VOUCHER（抵消分录凭证 docStatus=DRAFT）。
@@ -31,5 +31,5 @@ public interface IErpFinConsolidationEliminationBiz extends ICrudBiz<ErpFinConso
      * @return 草稿抵消凭证 ID
      */
     @BizMutation
-    Long postElimination(@Name("candidateId") Long candidateId, IServiceContext context);
+    String postElimination(@Name("candidateId") String candidateId, IServiceContext context);
 }

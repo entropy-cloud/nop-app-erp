@@ -17,19 +17,19 @@ public interface IErpFinBankReconciliationBiz extends ICrudBiz<ErpFinBankReconci
      * 不平衡（{@code unreconciledDiff ≠ 0}）抛 {@code NopException} 阻止完成。
      */
     @BizMutation
-    ErpFinBankReconciliation generate(@Name("statementId") Long statementId, IServiceContext context);
+    ErpFinBankReconciliation generate(@Name("statementId") String statementId, IServiceContext context);
 
     /**
      * 过账调节表：置 docStatus=POSTED；若存在「银行已记企业未记」项，
      * 生成 {@code BANK_RECON_ADJ} 调整凭证（经 {@code IErpFinVoucherBiz.post}）。
      */
     @BizMutation
-    ErpFinBankReconciliation post(@Name("reconciliationId") Long reconciliationId, IServiceContext context);
+    ErpFinBankReconciliation post(@Name("reconciliationId") String reconciliationId, IServiceContext context);
 
     /**
      * 红冲未达账项调整凭证（经 {@code IErpFinVoucherBiz.reverse}，
      * 按 {@code ErpFinVoucherBillR.businessType}=BANK_RECON_ADJ 反查）+ 调节表 docStatus=POSTED→CANCELLED。
      */
     @BizMutation
-    ErpFinBankReconciliation reverse(@Name("reconciliationId") Long reconciliationId, IServiceContext context);
+    ErpFinBankReconciliation reverse(@Name("reconciliationId") String reconciliationId, IServiceContext context);
 }

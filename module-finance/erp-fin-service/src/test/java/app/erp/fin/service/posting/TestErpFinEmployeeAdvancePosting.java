@@ -54,13 +54,13 @@ public class TestErpFinEmployeeAdvancePosting extends JunitAutoTestCase {
 
     @Test
     public void testApprovePostsAndGeneratesReceivableSubledger() {
-        long partnerId = 8801L;
-        Long advanceId = ormTemplate.runInSession(session -> {
+        String partnerId = "8801";
+        String advanceId = ormTemplate.runInSession(session -> {
             seedOpenPeriod("2026-06", 2026, 6, LocalDate.of(2026, 6, 1), LocalDate.of(2026, 6, 30));
-            seedAcctSchema(1L);
+            seedAcctSchema("1");
             seedSubject("1221", "其他应收款-员工预支");
             seedSubject("1002", "银行存款");
-            Long empId = seedEmployee(partnerId, ErpFinConstants.EMPLOYEE_STATUS_ACTIVE);
+            String empId = seedEmployee(partnerId, ErpFinConstants.EMPLOYEE_STATUS_ACTIVE);
             return seedAdvance("ADV-POST-001", empId, new BigDecimal("500"));
         });
 
@@ -77,13 +77,13 @@ public class TestErpFinEmployeeAdvancePosting extends JunitAutoTestCase {
 
     @Test
     public void testReverseApproveCancelsSubledger() {
-        long partnerId = 8802L;
-        Long advanceId = ormTemplate.runInSession(session -> {
+        String partnerId = "8802";
+        String advanceId = ormTemplate.runInSession(session -> {
             seedOpenPeriod("2026-06", 2026, 6, LocalDate.of(2026, 6, 1), LocalDate.of(2026, 6, 30));
-            seedAcctSchema(1L);
+            seedAcctSchema("1");
             seedSubject("1221", "其他应收款-员工预支");
             seedSubject("1002", "银行存款");
-            Long empId = seedEmployee(partnerId, ErpFinConstants.EMPLOYEE_STATUS_ACTIVE);
+            String empId = seedEmployee(partnerId, ErpFinConstants.EMPLOYEE_STATUS_ACTIVE);
             return seedAdvance("ADV-POST-002", empId, new BigDecimal("300"));
         });
 
@@ -98,12 +98,12 @@ public class TestErpFinEmployeeAdvancePosting extends JunitAutoTestCase {
 
     // ---------- rpc helpers ----------
 
-    private ApiResponse<?> approve(Long advanceId) {
+    private ApiResponse<?> approve(String advanceId) {
         return executeRpc(mutation, "ErpFinEmployeeAdvance__approve",
                 ApiRequest.build(Map.of("id", String.valueOf(advanceId))));
     }
 
-    private ApiResponse<?> reverseApprove(Long advanceId) {
+    private ApiResponse<?> reverseApprove(String advanceId) {
         return executeRpc(mutation, "ErpFinEmployeeAdvance__reverseApprove",
                 ApiRequest.build(Map.of("id", String.valueOf(advanceId))));
     }
@@ -113,21 +113,21 @@ public class TestErpFinEmployeeAdvancePosting extends JunitAutoTestCase {
         return graphQLEngine.executeRpc(ctx);
     }
 
-    private ErpFinEmployeeAdvance fetchAdvance(Long id) {
+    private ErpFinEmployeeAdvance fetchAdvance(String id) {
         return daoProvider.daoFor(ErpFinEmployeeAdvance.class).getEntityById(id);
     }
 
     // ---------- seed helpers ----------
 
-    private Long seedAdvance(String code, Long employeeId, BigDecimal amount) {
+    private String seedAdvance(String code, String employeeId, BigDecimal amount) {
         IEntityDao<ErpFinEmployeeAdvance> dao = daoProvider.daoFor(ErpFinEmployeeAdvance.class);
         ErpFinEmployeeAdvance advance = new ErpFinEmployeeAdvance();
         advance.setCode(code);
-        advance.setOrgId(1L);
+        advance.setOrgId("1");
         advance.setEmployeeId(employeeId);
         advance.setAdvanceType("EXPENSE_ADVANCE");
         advance.setBusinessDate(LocalDate.of(2026, 6, 10));
-        advance.setCurrencyId(1L);
+        advance.setCurrencyId("1");
         advance.setExchangeRate(BigDecimal.ONE);
         advance.setAmountFunctional(amount);
         advance.setAmountSource(amount);
@@ -139,12 +139,12 @@ public class TestErpFinEmployeeAdvancePosting extends JunitAutoTestCase {
         return advance.getId();
     }
 
-    private Long seedEmployee(long partnerId, String status) {
+    private String seedEmployee(String partnerId, String status) {
         IEntityDao<ErpMdEmployee> dao = daoProvider.daoFor(ErpMdEmployee.class);
         ErpMdEmployee emp = new ErpMdEmployee();
         emp.setCode("E-" + partnerId);
         emp.setName("员工-" + partnerId);
-        emp.setOrgId(1L);
+        emp.setOrgId("1");
         emp.setPartnerId(partnerId);
         emp.setStatus(status);
         dao.saveEntity(emp);
@@ -162,14 +162,14 @@ public class TestErpFinEmployeeAdvancePosting extends JunitAutoTestCase {
         dao.saveEntity(subject);
     }
 
-    private void seedAcctSchema(long orgId) {
+    private void seedAcctSchema(String orgId) {
         IEntityDao<ErpMdAcctSchema> dao = daoProvider.daoFor(ErpMdAcctSchema.class);
         ErpMdAcctSchema schema = new ErpMdAcctSchema();
         schema.setCode("AS-" + orgId);
         schema.setName("账套-" + orgId);
         schema.setOrgId(orgId);
         schema.setNature("FINANCIAL");
-        schema.setFunctionalCurrencyId(1L);
+        schema.setFunctionalCurrencyId("1");
         schema.setStatus("ACTIVE");
         dao.saveEntity(schema);
     }
@@ -179,7 +179,7 @@ public class TestErpFinEmployeeAdvancePosting extends JunitAutoTestCase {
         ErpFinAccountingPeriod period = new ErpFinAccountingPeriod();
         period.setCode(code);
         period.setName(code);
-        period.setOrgId(1L);
+        period.setOrgId("1");
         period.setYear(year);
         period.setMonth(month);
         period.setStartDate(start);

@@ -37,7 +37,7 @@ public class ErpMdEmployeeReferenceCheckerImpl implements IErpMdEmployeeReferenc
     IDaoProvider daoProvider;
 
     @Override
-    public Map<String, Long> countReferences(Long employeeId) {
+    public Map<String, Long> countReferences(String employeeId) {
         Map<String, Long> refs = new LinkedHashMap<>();
         if (employeeId == null) {
             return refs;
@@ -46,7 +46,7 @@ public class ErpMdEmployeeReferenceCheckerImpl implements IErpMdEmployeeReferenc
         return refs;
     }
 
-    private long countAdvances(Long employeeId) {
+    private long countAdvances(String employeeId) {
         IEntityDao<ErpFinEmployeeAdvance> dao = daoProvider.daoFor(ErpFinEmployeeAdvance.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("employeeId", employeeId));

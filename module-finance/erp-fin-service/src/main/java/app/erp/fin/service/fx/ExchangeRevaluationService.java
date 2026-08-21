@@ -66,22 +66,22 @@ public class ExchangeRevaluationService {
     @Inject
     SchemaPropagator schemaPropagator;
 
-    public Long revalue(ErpFinAccountingPeriod period, IServiceContext context) {
-        Long primarySchemaId = resolveAcctSchemaId(period.getId());
-        List<Long> schemas = schemaPropagator.resolveTargetSchemas(period.getOrgId(), primarySchemaId);
-        Long lastVoucherId = null;
-        for (Long schemaId : schemas) {
+    public String revalue(ErpFinAccountingPeriod period, IServiceContext context) {
+        String primarySchemaId = resolveAcctSchemaId(period.getId());
+        List<String> schemas = schemaPropagator.resolveTargetSchemas(period.getOrgId(), primarySchemaId);
+        String lastVoucherId = null;
+        for (String schemaId : schemas) {
             lastVoucherId = revalueForSchema(period, schemaId, context);
         }
         return lastVoucherId;
     }
 
-    private Long revalueForSchema(ErpFinAccountingPeriod period, Long acctSchemaId, IServiceContext context) {
-        Long functionalCurrencyId = resolveFunctionalCurrencyId();
+    private String revalueForSchema(ErpFinAccountingPeriod period, String acctSchemaId, IServiceContext context) {
+        String functionalCurrencyId = resolveFunctionalCurrencyId();
         // 汇率延迟解析：仅当存在外币 AR/AP 或外币银行账户时才要求配置 period-end-exchange-rate
         // （无外币项的干净期间不应因汇率未配而阻断结账，保持与既有行为一致）。
-        Long arApVoucherId = revalueArAp(period, functionalCurrencyId, null, acctSchemaId);
-        Long bankVoucherId = null;
+        String arApVoucherId = revalueArAp(period, functionalCurrencyId, null, acctSchemaId);
+        String bankVoucherId = null;
         if (isBankFxRevaluationEnabled()) {
             bankVoucherId = revalueBankDeposits(period, functionalCurrencyId, null, acctSchemaId);
         }
@@ -100,7 +100,7 @@ public class ExchangeRevaluationService {
     }
 
     /** AR/AP 外币未核销项重估（既有逻辑，抽方法）。periodEndRate 为 null 时按需延迟解析。 */
-    private Long revalueArAp(ErpFinAccountingPeriod period, Long functionalCurrencyId, BigDecimal periodEndRate, Long acctSchemaId) {
+    private String revalueArAp(ErpFinAccountingPeriod period, String functionalCurrencyId, BigDecimal periodEndRate, String acctSchemaId) {
         // 外币未核销项（status != SETTLED/CANCELLED，currencyId != 本位币）。
         IEntityDao<ErpFinArApItem> dao = daoProvider.daoFor(ErpFinArApItem.class);
         QueryBean q = new QueryBean();
@@ -159,8 +159,8 @@ public class ExchangeRevaluationService {
      * 账面本位币（科目已过账分录聚合 debit−credit）vs {@code currentBalance × 期末汇率}，差额生成 EXCHANGE_GAIN_LOSS 凭证
      * （借/贷银行存款科目 / 贷/借汇兑损益）。本位币账户不重估。
      */
-    private Long revalueBankDeposits(ErpFinAccountingPeriod period, Long functionalCurrencyId,
-                                     BigDecimal periodEndRate, Long acctSchemaId) {
+    private String revalueBankDeposits(ErpFinAccountingPeriod period, String functionalCurrencyId,
+                                     BigDecimal periodEndRate, String acctSchemaId) {
         IEntityDao<ErpFinFundAccount> accDao = daoProvider.daoFor(ErpFinFundAccount.class);
         QueryBean q = new QueryBean();
         if (functionalCurrencyId != null) {
@@ -176,7 +176,7 @@ public class ExchangeRevaluationService {
         ErpMdSubject fxSubject = requireSubject(ErpFinConstants.CONFIG_FX_GAIN_LOSS_SUBJECT_CODE);
 
         // 预聚合本期间各银行科目的账面本位币（debit−credit），用于与重估值比对。
-        Map<Long, BigDecimal> bookBySubject = aggregateBankSubjectBookFunctional(period.getId());
+        Map<String, BigDecimal> bookBySubject = aggregateBankSubjectBookFunctional(period.getId());
 
         List<Line> lines = new ArrayList<>();
         for (ErpFinFundAccount acc : accounts) {
@@ -216,8 +216,8 @@ public class ExchangeRevaluationService {
     }
 
     /** 聚合本期间各银行科目已过账非红冲分录的账面本位币（debit−credit），用于银行存款重估比对。 */
-    private Map<Long, BigDecimal> aggregateBankSubjectBookFunctional(Long periodId) {
-        Map<Long, BigDecimal> result = new HashMap<>();
+    private Map<String, BigDecimal> aggregateBankSubjectBookFunctional(String periodId) {
+        Map<String, BigDecimal> result = new HashMap<>();
         IEntityDao<ErpFinVoucher> vDao = daoProvider.daoFor(ErpFinVoucher.class);
         QueryBean vq = new QueryBean();
         vq.addFilter(eq("periodId", periodId));
@@ -227,7 +227,7 @@ public class ExchangeRevaluationService {
         vq.addFilter(or(isNull("postingType"),
                 notIn("postingType", java.util.Arrays.asList(
                         ErpFinConstants.POSTING_TYPE_BUDGET, ErpFinConstants.POSTING_TYPE_COMMITMENT))));
-        java.util.Set<Long> voucherIds = new java.util.HashSet<>();
+        java.util.Set<String> voucherIds = new java.util.HashSet<>();
         for (ErpFinVoucher v : vDao.findAllByQuery(vq)) {
             voucherIds.add(v.getId());
         }
@@ -257,7 +257,7 @@ public class ExchangeRevaluationService {
         return !Boolean.FALSE.equals(flag);
     }
 
-    private ErpMdSubject loadSubject(Long id) {
+    private ErpMdSubject loadSubject(String id) {
         return daoProvider.daoFor(ErpMdSubject.class).getEntityById(id);
     }
 
@@ -279,7 +279,7 @@ public class ExchangeRevaluationService {
         return list.get(0);
     }
 
-    private Long resolveFunctionalCurrencyId() {
+    private String resolveFunctionalCurrencyId() {
         IEntityDao<ErpMdCurrency> dao = daoProvider.daoFor(ErpMdCurrency.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("isFunctional", Boolean.TRUE));
@@ -288,11 +288,11 @@ public class ExchangeRevaluationService {
         return list.isEmpty() ? null : list.get(0).getId();
     }
 
-    private Long resolveAcctSchemaId(Long periodId) {
+    private String resolveAcctSchemaId(String periodId) {
         ErpFinAccountingPeriod period = daoProvider.daoFor(ErpFinAccountingPeriod.class).getEntityById(periodId);
-        Long orgId = period != null ? period.getOrgId() : null;
+        String orgId = period != null ? period.getOrgId() : null;
         if (orgId != null) {
-            Long schemaId = AcctSchemaResolver.resolvePrimarySchemaId(daoProvider, orgId);
+            String schemaId = AcctSchemaResolver.resolvePrimarySchemaId(daoProvider, orgId);
             if (schemaId != null) {
                 return schemaId;
             }
@@ -305,7 +305,7 @@ public class ExchangeRevaluationService {
         if (!list.isEmpty() && list.get(0).getAcctSchemaId() != null) {
             return list.get(0).getAcctSchemaId();
         }
-        return 1L;
+        return "1";
     }
 
     private static BigDecimal nz(BigDecimal v) {

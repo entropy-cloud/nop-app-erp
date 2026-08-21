@@ -33,7 +33,7 @@ public class ErpFinReconciliationRunAutoReconciliationProcessor extends Abstract
     @Inject
     ErpFinReconciliationPostProcessor postProcessor;
 
-    public AutoReconResult runAutoReconciliation(String direction, Long partnerId, String strategy,
+    public AutoReconResult runAutoReconciliation(String direction, String partnerId, String strategy,
                                                  IServiceContext context) {
         if (!isAutoReconcileEnabled()) {
             throw new NopException(ErpFinErrors.ERR_AUTO_RECON_DISABLED);
@@ -43,11 +43,11 @@ public class ErpFinReconciliationRunAutoReconciliationProcessor extends Abstract
         LocalDate businessDate = CoreMetrics.today();
 
         AutoReconResult result = new AutoReconResult();
-        List<Long> partnerIds = partnerId != null
+        List<String> partnerIds = partnerId != null
                 ? Collections.singletonList(partnerId)
                 : autoReconciliationEngine.findPartnersWithOpenItems(direction, ctx);
 
-        for (Long pid : partnerIds) {
+        for (String pid : partnerIds) {
             AutoReconciliationEngine.MatchResult match =
                     autoReconciliationEngine.matchAndBuild(direction, pid, effectiveStrategy, ctx);
             result.getUnmatched().addAll(match.getUnmatched());

@@ -206,7 +206,7 @@ public class _ErpFinIntercompanyTransferPrice extends DynamicOrmEntity{
 
     
     /* ID: ID */
-    private java.lang.Long _id;
+    private java.lang.String _id;
     
     /* 规则编码: CODE */
     private java.lang.String _code;
@@ -215,19 +215,19 @@ public class _ErpFinIntercompanyTransferPrice extends DynamicOrmEntity{
     private java.lang.String _name;
     
     /* 核算组织: ORG_ID */
-    private java.lang.Long _orgId;
+    private java.lang.String _orgId;
     
     /* 调出组织(空=通配): FROM_ORG_ID */
-    private java.lang.Long _fromOrgId;
+    private java.lang.String _fromOrgId;
     
     /* 调入组织(空=通配): TO_ORG_ID */
-    private java.lang.Long _toOrgId;
+    private java.lang.String _toOrgId;
     
     /* 物料(空=通配): MATERIAL_ID */
-    private java.lang.Long _materialId;
+    private java.lang.String _materialId;
     
     /* 物料分类(空=通配): MATERIAL_CATEGORY_ID */
-    private java.lang.Long _materialCategoryId;
+    private java.lang.String _materialCategoryId;
     
     /* 定价方法: PRICING_METHOD */
     private java.lang.String _pricingMethod;
@@ -423,9 +423,9 @@ public class _ErpFinIntercompanyTransferPrice extends DynamicOrmEntity{
         switch(propId){
         
             case PROP_ID_id:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_id));
                }
                setId(typedValue);
@@ -453,9 +453,9 @@ public class _ErpFinIntercompanyTransferPrice extends DynamicOrmEntity{
             }
         
             case PROP_ID_orgId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_orgId));
                }
                setOrgId(typedValue);
@@ -463,9 +463,9 @@ public class _ErpFinIntercompanyTransferPrice extends DynamicOrmEntity{
             }
         
             case PROP_ID_fromOrgId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_fromOrgId));
                }
                setFromOrgId(typedValue);
@@ -473,9 +473,9 @@ public class _ErpFinIntercompanyTransferPrice extends DynamicOrmEntity{
             }
         
             case PROP_ID_toOrgId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_toOrgId));
                }
                setToOrgId(typedValue);
@@ -483,9 +483,9 @@ public class _ErpFinIntercompanyTransferPrice extends DynamicOrmEntity{
             }
         
             case PROP_ID_materialId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_materialId));
                }
                setMaterialId(typedValue);
@@ -493,9 +493,9 @@ public class _ErpFinIntercompanyTransferPrice extends DynamicOrmEntity{
             }
         
             case PROP_ID_materialCategoryId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_materialCategoryId));
                }
                setMaterialCategoryId(typedValue);
@@ -653,7 +653,7 @@ public class _ErpFinIntercompanyTransferPrice extends DynamicOrmEntity{
         
             case PROP_ID_id:{
                onInitProp(propId);
-               this._id = (java.lang.Long)value;
+               this._id = (java.lang.String)value;
                orm_id(); // 如果是设置主键字段，则触发watcher
                break;
             }
@@ -674,35 +674,35 @@ public class _ErpFinIntercompanyTransferPrice extends DynamicOrmEntity{
         
             case PROP_ID_orgId:{
                onInitProp(propId);
-               this._orgId = (java.lang.Long)value;
+               this._orgId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_fromOrgId:{
                onInitProp(propId);
-               this._fromOrgId = (java.lang.Long)value;
+               this._fromOrgId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_toOrgId:{
                onInitProp(propId);
-               this._toOrgId = (java.lang.Long)value;
+               this._toOrgId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_materialId:{
                onInitProp(propId);
-               this._materialId = (java.lang.Long)value;
+               this._materialId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_materialCategoryId:{
                onInitProp(propId);
-               this._materialCategoryId = (java.lang.Long)value;
+               this._materialCategoryId = (java.lang.String)value;
                
                break;
             }
@@ -814,7 +814,7 @@ public class _ErpFinIntercompanyTransferPrice extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final java.lang.Long getId(){
+    public final java.lang.String getId(){
          onPropGet(PROP_ID_id);
          return _id;
     }
@@ -822,7 +822,7 @@ public class _ErpFinIntercompanyTransferPrice extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final void setId(java.lang.Long value){
+    public final void setId(java.lang.String value){
         if(onPropSet(PROP_ID_id,value)){
             this._id = value;
             internalClearRefs(PROP_ID_id);
@@ -871,7 +871,7 @@ public class _ErpFinIntercompanyTransferPrice extends DynamicOrmEntity{
     /**
      * 核算组织: ORG_ID
      */
-    public final java.lang.Long getOrgId(){
+    public final java.lang.String getOrgId(){
          onPropGet(PROP_ID_orgId);
          return _orgId;
     }
@@ -879,7 +879,7 @@ public class _ErpFinIntercompanyTransferPrice extends DynamicOrmEntity{
     /**
      * 核算组织: ORG_ID
      */
-    public final void setOrgId(java.lang.Long value){
+    public final void setOrgId(java.lang.String value){
         if(onPropSet(PROP_ID_orgId,value)){
             this._orgId = value;
             internalClearRefs(PROP_ID_orgId);
@@ -890,7 +890,7 @@ public class _ErpFinIntercompanyTransferPrice extends DynamicOrmEntity{
     /**
      * 调出组织(空=通配): FROM_ORG_ID
      */
-    public final java.lang.Long getFromOrgId(){
+    public final java.lang.String getFromOrgId(){
          onPropGet(PROP_ID_fromOrgId);
          return _fromOrgId;
     }
@@ -898,7 +898,7 @@ public class _ErpFinIntercompanyTransferPrice extends DynamicOrmEntity{
     /**
      * 调出组织(空=通配): FROM_ORG_ID
      */
-    public final void setFromOrgId(java.lang.Long value){
+    public final void setFromOrgId(java.lang.String value){
         if(onPropSet(PROP_ID_fromOrgId,value)){
             this._fromOrgId = value;
             internalClearRefs(PROP_ID_fromOrgId);
@@ -909,7 +909,7 @@ public class _ErpFinIntercompanyTransferPrice extends DynamicOrmEntity{
     /**
      * 调入组织(空=通配): TO_ORG_ID
      */
-    public final java.lang.Long getToOrgId(){
+    public final java.lang.String getToOrgId(){
          onPropGet(PROP_ID_toOrgId);
          return _toOrgId;
     }
@@ -917,7 +917,7 @@ public class _ErpFinIntercompanyTransferPrice extends DynamicOrmEntity{
     /**
      * 调入组织(空=通配): TO_ORG_ID
      */
-    public final void setToOrgId(java.lang.Long value){
+    public final void setToOrgId(java.lang.String value){
         if(onPropSet(PROP_ID_toOrgId,value)){
             this._toOrgId = value;
             internalClearRefs(PROP_ID_toOrgId);
@@ -928,7 +928,7 @@ public class _ErpFinIntercompanyTransferPrice extends DynamicOrmEntity{
     /**
      * 物料(空=通配): MATERIAL_ID
      */
-    public final java.lang.Long getMaterialId(){
+    public final java.lang.String getMaterialId(){
          onPropGet(PROP_ID_materialId);
          return _materialId;
     }
@@ -936,7 +936,7 @@ public class _ErpFinIntercompanyTransferPrice extends DynamicOrmEntity{
     /**
      * 物料(空=通配): MATERIAL_ID
      */
-    public final void setMaterialId(java.lang.Long value){
+    public final void setMaterialId(java.lang.String value){
         if(onPropSet(PROP_ID_materialId,value)){
             this._materialId = value;
             internalClearRefs(PROP_ID_materialId);
@@ -947,7 +947,7 @@ public class _ErpFinIntercompanyTransferPrice extends DynamicOrmEntity{
     /**
      * 物料分类(空=通配): MATERIAL_CATEGORY_ID
      */
-    public final java.lang.Long getMaterialCategoryId(){
+    public final java.lang.String getMaterialCategoryId(){
          onPropGet(PROP_ID_materialCategoryId);
          return _materialCategoryId;
     }
@@ -955,7 +955,7 @@ public class _ErpFinIntercompanyTransferPrice extends DynamicOrmEntity{
     /**
      * 物料分类(空=通配): MATERIAL_CATEGORY_ID
      */
-    public final void setMaterialCategoryId(java.lang.Long value){
+    public final void setMaterialCategoryId(java.lang.String value){
         if(onPropSet(PROP_ID_materialCategoryId,value)){
             this._materialCategoryId = value;
             internalClearRefs(PROP_ID_materialCategoryId);

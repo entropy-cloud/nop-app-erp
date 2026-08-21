@@ -89,7 +89,7 @@ public class ErpFinBudgetScenarioProcessor {
 
     /** 审核通过时生成 BUDGET 影子凭证；首张凭证 ID 回写方案头供审计。 */
     public void generateBudgetVoucher(ErpFinBudgetScenario scenario, IServiceContext context) {
-        List<Long> voucherIds = budgetVoucherGenerator.generate(scenario);
+        List<String> voucherIds = budgetVoucherGenerator.generate(scenario);
         if (voucherIds.isEmpty()) {
             throw new NopException(ErpFinErrors.ERR_BUDGET_SCENARIO_NO_LINES)
                     .param(ErpFinErrors.ARG_SCENARIO_CODE, scenario.getCode());
@@ -100,7 +100,7 @@ public class ErpFinBudgetScenarioProcessor {
 
     /** 作废时红冲全部 BUDGET 凭证。 */
     public void reverseBudgetVoucher(ErpFinBudgetScenario scenario, IServiceContext context) {
-        List<Long> reversalIds = budgetVoucherGenerator.reverse(scenario);
+        List<String> reversalIds = budgetVoucherGenerator.reverse(scenario);
         LOG.info("预算方案 {} 作废，红冲 {} 张 BUDGET 凭证：{}", scenario.getCode(), reversalIds.size(), reversalIds);
     }
 
@@ -133,7 +133,7 @@ public class ErpFinBudgetScenarioProcessor {
         }
     }
 
-    public ErpFinBudgetScenario requireScenario(Long id) {
+    public ErpFinBudgetScenario requireScenario(String id) {
         IEntityDao<ErpFinBudgetScenario> dao = daoProvider.daoFor(ErpFinBudgetScenario.class);
         ErpFinBudgetScenario scenario = dao.getEntityById(id);
         if (scenario == null) {
@@ -148,7 +148,7 @@ public class ErpFinBudgetScenarioProcessor {
     }
 
     /** 加载方案的预算行（按 scenarioId 查询，返回所有未逻辑删除的行）。 */
-    public List<ErpFinBudgetLine> loadBudgetLines(Long scenarioId) {
+    public List<ErpFinBudgetLine> loadBudgetLines(String scenarioId) {
         IEntityDao<ErpFinBudgetLine> dao = daoProvider.daoFor(ErpFinBudgetLine.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("scenarioId", scenarioId));

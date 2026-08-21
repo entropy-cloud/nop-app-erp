@@ -70,8 +70,8 @@ public class TestErpFinTrialBalanceCommitmentExclusion extends JunitAutoTestCase
     /** ① 承付启用 + 承付凭证存在 → 试算平衡快照 ΣclosingDebit==ΣclosingCredit（Dr==Cr 恒等式，修复前破坏）。 */
     @Test
     public void testTrialBalanceIdentityWithCommitmentExcluded() {
-        Long periodId = seedReturn(() -> {
-            Long pid = seedOpenPeriod("2025-05", 2025, 5);
+        String periodId = seedReturn(() -> {
+            String pid = seedOpenPeriod("2025-05", 2025, 5);
             Map<String, ErpMdSubject> subs = new HashMap<>();
             subs.put("1001", seedSubject("1001", "库存现金", "ASSET", ErpFinConstants.DC_DEBIT));
             subs.put("6001", seedSubject("6001", "主营业务收入", ErpFinConstants.SUBJECT_CLASS_INCOME, ErpFinConstants.DC_CREDIT));
@@ -104,15 +104,15 @@ public class TestErpFinTrialBalanceCommitmentExclusion extends JunitAutoTestCase
     /** ②a 年度结转：承付凭证不参与本年利润→未分配利润结转（AnnualCloseService findPostedVoucherIds 过滤）。 */
     @Test
     public void testAnnualCloseExcludesCommitment() {
-        Long periodId = seedReturn(() -> {
-            Long pid = seedOpenPeriod("2025-12", 2025, 12);
+        String periodId = seedReturn(() -> {
+            String pid = seedOpenPeriod("2025-12", 2025, 12);
             Map<String, ErpMdSubject> subs = new HashMap<>();
             subs.put("1001", seedSubject("1001", "库存现金", "ASSET", ErpFinConstants.DC_DEBIT));
             subs.put("6001", seedSubject("6001", "主营业务收入", ErpFinConstants.SUBJECT_CLASS_INCOME, ErpFinConstants.DC_CREDIT));
             subs.put("6601", seedSubject("6601", "销售费用", ErpFinConstants.SUBJECT_CLASS_EXPENSE, ErpFinConstants.DC_DEBIT));
             subs.put("4103", seedSubject("4103", "本年利润", "EQUITY", ErpFinConstants.DC_CREDIT));
             subs.put("4104", seedSubject("4104", "未分配利润", "EQUITY", ErpFinConstants.DC_CREDIT));
-            seedCurrency(1L, "CNY", true);
+            seedCurrency("1", "CNY", true);
             seedPostedVoucher("V-DEC-INC", pid, ErpFinConstants.POSTING_TYPE_NORMAL, subs,
                     line("1001", "库存现金", ErpFinConstants.DC_DEBIT, "1000"),
                     line("6001", "主营业务收入", ErpFinConstants.DC_CREDIT, "1000"));
@@ -135,7 +135,7 @@ public class TestErpFinTrialBalanceCommitmentExclusion extends JunitAutoTestCase
     @Test
     public void testBadDebtAllowanceExcludesCommitment() {
         seedReturn(() -> {
-            Long pid = seedOpenPeriod("2025-06", 2025, 6);
+            String pid = seedOpenPeriod("2025-06", 2025, 6);
             Map<String, ErpMdSubject> subs = new HashMap<>();
             subs.put("1001", seedSubject("1001", "库存现金", "ASSET", ErpFinConstants.DC_DEBIT));
             subs.put("1231", seedSubject("1231", "坏账准备", "ASSET", ErpFinConstants.DC_CREDIT));
@@ -156,19 +156,19 @@ public class TestErpFinTrialBalanceCommitmentExclusion extends JunitAutoTestCase
     /** ②c 汇兑重估：承付凭证不参与银行存款账面本位币聚合（ExchangeRevaluationService aggregateBankSubjectBookFunctional 过滤）。 */
     @Test
     public void testExchangeRevaluationExcludesCommitment() {
-        Long periodId = seedReturn(() -> {
-            Long pid = seedOpenPeriod("2025-08", 2025, 8);
+        String periodId = seedReturn(() -> {
+            String pid = seedOpenPeriod("2025-08", 2025, 8);
             Map<String, ErpMdSubject> subs = new HashMap<>();
             subs.put("1001", seedSubject("1001", "库存现金", "ASSET", ErpFinConstants.DC_DEBIT));
             subs.put("1002", seedSubject("1002", "银行存款", "ASSET", ErpFinConstants.DC_DEBIT));
             subs.put("6603", seedSubject("6603", "汇兑损益", ErpFinConstants.SUBJECT_CLASS_EXPENSE, ErpFinConstants.DC_DEBIT));
-            seedCurrency(1L, "CNY", true);
-            seedCurrency(2L, "EUR", false);
+            seedCurrency("1", "CNY", true);
+            seedCurrency("2", "EUR", false);
             seedPostedVoucher("V-BANK", pid, ErpFinConstants.POSTING_TYPE_NORMAL, subs,
                     line("1002", "银行存款", ErpFinConstants.DC_DEBIT, "800"),
                     line("1001", "库存现金", ErpFinConstants.DC_CREDIT, "800"));
             seedCommitmentVoucher("V-CMT-BANK", pid, subs.get("1002"), new BigDecimal("500"));
-            seedFundAccount("BANK-EUR", 2L, subs.get("1002").getId(), new BigDecimal("100"));
+            seedFundAccount("BANK-EUR", "2", subs.get("1002").getId(), new BigDecimal("100"));
             return pid;
         });
 
@@ -186,8 +186,8 @@ public class TestErpFinTrialBalanceCommitmentExclusion extends JunitAutoTestCase
     /** ③ 承付关闭（默认）：无承付凭证场景行为不变（notIn 语义 == ne 语义的结构性等价实测）。 */
     @Test
     public void testCommitmentDisabledBehaviorUnchanged() {
-        Long periodId = seedReturn(() -> {
-            Long pid = seedOpenPeriod("2025-07", 2025, 7);
+        String periodId = seedReturn(() -> {
+            String pid = seedOpenPeriod("2025-07", 2025, 7);
             Map<String, ErpMdSubject> subs = new HashMap<>();
             subs.put("1001", seedSubject("1001", "库存现金", "ASSET", ErpFinConstants.DC_DEBIT));
             subs.put("6001", seedSubject("6001", "主营业务收入", ErpFinConstants.SUBJECT_CLASS_INCOME, ErpFinConstants.DC_CREDIT));
@@ -234,12 +234,12 @@ public class TestErpFinTrialBalanceCommitmentExclusion extends JunitAutoTestCase
         }
     }
 
-    private Long seedOpenPeriod(String code, int year, int month) {
+    private String seedOpenPeriod(String code, int year, int month) {
         IEntityDao<ErpFinAccountingPeriod> dao = daoProvider.daoFor(ErpFinAccountingPeriod.class);
         ErpFinAccountingPeriod p = new ErpFinAccountingPeriod();
         p.setCode(code);
         p.setName(code);
-        p.setOrgId(1L);
+        p.setOrgId("1");
         p.setYear(year);
         p.setMonth(month);
         p.setStartDate(LocalDate.of(year, month, 1));
@@ -261,7 +261,7 @@ public class TestErpFinTrialBalanceCommitmentExclusion extends JunitAutoTestCase
         return s;
     }
 
-    private void seedCurrency(Long id, String code, boolean functional) {
+    private void seedCurrency(String id, String code, boolean functional) {
         IEntityDao<app.erp.md.dao.entity.ErpMdCurrency> dao = daoProvider.daoFor(app.erp.md.dao.entity.ErpMdCurrency.class);
         app.erp.md.dao.entity.ErpMdCurrency c = new app.erp.md.dao.entity.ErpMdCurrency();
         c.setId(id);
@@ -271,13 +271,13 @@ public class TestErpFinTrialBalanceCommitmentExclusion extends JunitAutoTestCase
         dao.saveEntity(c);
     }
 
-    private void seedFundAccount(String code, Long currencyId, Long subjectId, BigDecimal currentBalance) {
+    private void seedFundAccount(String code, String currencyId, String subjectId, BigDecimal currentBalance) {
         IEntityDao<app.erp.fin.dao.entity.ErpFinFundAccount> dao =
                 daoProvider.daoFor(app.erp.fin.dao.entity.ErpFinFundAccount.class);
         app.erp.fin.dao.entity.ErpFinFundAccount acc = new app.erp.fin.dao.entity.ErpFinFundAccount();
         acc.setCode(code);
         acc.setName(code);
-        acc.setOrgId(1L);
+        acc.setOrgId("1");
         acc.setAccountType(ErpFinConstants.FUND_ACCOUNT_TYPE_BANK);
         acc.setSubjectId(subjectId);
         acc.setCurrencyId(currencyId);
@@ -291,7 +291,7 @@ public class TestErpFinTrialBalanceCommitmentExclusion extends JunitAutoTestCase
         return new Object[]{subjectCode, subjectName, dc, new BigDecimal(amount)};
     }
 
-    private void seedPostedVoucher(String code, Long periodId, String postingType,
+    private void seedPostedVoucher(String code, String periodId, String postingType,
                                    Map<String, ErpMdSubject> subjects, Object[]... lines) {
         IEntityDao<ErpFinVoucher> vDao = daoProvider.daoFor(ErpFinVoucher.class);
         BigDecimal total = BigDecimal.ZERO;
@@ -303,8 +303,8 @@ public class TestErpFinTrialBalanceCommitmentExclusion extends JunitAutoTestCase
         v.setVoucherType("TRANSFER");
         v.setPostingType(postingType);
         v.setVoucherDate(CoreMetrics.today());
-        v.setOrgId(1L);
-        v.setAcctSchemaId(1L);
+        v.setOrgId("1");
+        v.setAcctSchemaId("1");
         v.setPeriodId(periodId);
         v.setTotalDebit(total);
         v.setTotalCredit(total);
@@ -327,11 +327,11 @@ public class TestErpFinTrialBalanceCommitmentExclusion extends JunitAutoTestCase
             line.setDcDirection(dc);
             line.setDebitAmount(ErpFinConstants.DC_DEBIT.equals(dc) ? amt : BigDecimal.ZERO);
             line.setCreditAmount(ErpFinConstants.DC_CREDIT.equals(dc) ? amt : BigDecimal.ZERO);
-            line.setCurrencyId(1L);
+            line.setCurrencyId("1");
             line.setExchangeRate(BigDecimal.ONE);
             line.setAmountSource(amt);
             line.setAmountFunctional(amt);
-            line.setAcctSchemaId(1L);
+            line.setAcctSchemaId("1");
             lDao.saveEntity(line);
         }
     }
@@ -340,15 +340,15 @@ public class TestErpFinTrialBalanceCommitmentExclusion extends JunitAutoTestCase
      * 承付凭证（postingType=COMMITMENT）：单行单边 Dr + totalDebit=amount/totalCredit=0 + docStatus=POSTED +
      * isReversed=false（镜像 {@code CommitmentVoucherGenerator.writeCommitmentVoucher} 影子凭证语义）。
      */
-    private void seedCommitmentVoucher(String code, Long periodId, ErpMdSubject subject, BigDecimal amount) {
+    private void seedCommitmentVoucher(String code, String periodId, ErpMdSubject subject, BigDecimal amount) {
         IEntityDao<ErpFinVoucher> vDao = daoProvider.daoFor(ErpFinVoucher.class);
         ErpFinVoucher v = new ErpFinVoucher();
         v.setCode(code);
         v.setVoucherType("TRANSFER");
         v.setPostingType(ErpFinConstants.POSTING_TYPE_COMMITMENT);
         v.setVoucherDate(CoreMetrics.today());
-        v.setOrgId(1L);
-        v.setAcctSchemaId(1L);
+        v.setOrgId("1");
+        v.setAcctSchemaId("1");
         v.setPeriodId(periodId);
         v.setTotalDebit(amount);
         v.setTotalCredit(BigDecimal.ZERO);
@@ -366,11 +366,11 @@ public class TestErpFinTrialBalanceCommitmentExclusion extends JunitAutoTestCase
         line.setDcDirection(ErpFinConstants.DC_DEBIT);
         line.setDebitAmount(amount);
         line.setCreditAmount(BigDecimal.ZERO);
-        line.setCurrencyId(1L);
+        line.setCurrencyId("1");
         line.setExchangeRate(BigDecimal.ONE);
         line.setAmountSource(amount);
         line.setAmountFunctional(amount);
-        line.setAcctSchemaId(1L);
+        line.setAcctSchemaId("1");
         lDao.saveEntity(line);
     }
 
@@ -382,19 +382,19 @@ public class TestErpFinTrialBalanceCommitmentExclusion extends JunitAutoTestCase
         return list.isEmpty() ? null : list.get(0);
     }
 
-    private ErpFinAccountingPeriod loadPeriod(Long periodId) {
+    private ErpFinAccountingPeriod loadPeriod(String periodId) {
         return daoProvider.daoFor(ErpFinAccountingPeriod.class).getEntityById(periodId);
     }
 
-    private BigDecimal netCredit(Long subjectId, Long periodId) {
+    private BigDecimal netCredit(String subjectId, String periodId) {
         return sum(subjectId, periodId)[1].subtract(sum(subjectId, periodId)[0]);
     }
 
-    private BigDecimal[] sum(Long subjectId, Long periodId) {
+    private BigDecimal[] sum(String subjectId, String periodId) {
         QueryBean vq = new QueryBean();
         vq.addFilter(eq("periodId", periodId));
         vq.addFilter(eq("docStatus", ErpFinConstants.VOUCHER_STATUS_POSTED));
-        List<Long> vids = daoProvider.daoFor(ErpFinVoucher.class).findAllByQuery(vq).stream()
+        List<String> vids = daoProvider.daoFor(ErpFinVoucher.class).findAllByQuery(vq).stream()
                 .map(ErpFinVoucher::getId).collect(java.util.stream.Collectors.toList());
         BigDecimal d = BigDecimal.ZERO, c = BigDecimal.ZERO;
         for (ErpFinVoucherLine l : linesOf(subjectId, vids)) {
@@ -404,7 +404,7 @@ public class TestErpFinTrialBalanceCommitmentExclusion extends JunitAutoTestCase
         return new BigDecimal[]{d, c};
     }
 
-    private List<ErpFinVoucherLine> linesOf(Long subjectId, List<Long> vids) {
+    private List<ErpFinVoucherLine> linesOf(String subjectId, List<String> vids) {
         if (vids.isEmpty()) {
             return java.util.Collections.emptyList();
         }
@@ -416,7 +416,7 @@ public class TestErpFinTrialBalanceCommitmentExclusion extends JunitAutoTestCase
                 .collect(java.util.stream.Collectors.toList());
     }
 
-    private BigDecimal[] trialBalanceTotals(Long periodId) {
+    private BigDecimal[] trialBalanceTotals(String periodId) {
         IEntityDao<ErpFinTrialBalance> dao = daoProvider.daoFor(ErpFinTrialBalance.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("periodId", periodId));

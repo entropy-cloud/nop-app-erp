@@ -12,30 +12,30 @@
     public class ErpFinBudgetLineInputBean extends CrudInputBase {
 
     
-        private Long _id;
+        private String _id;
 
     
         @PropMeta(propId=1)
     
-        public Long getId(){
+        public String getId(){
             return _id;
         }
 
-        public void setId(Long value){
+        public void setId(String value){
             this._id = value;
         }
 
 
-        private Long _scenarioId;
+        private String _scenarioId;
 
     
         @PropMeta(propId=2)
     
-        public Long getScenarioId(){
+        public String getScenarioId(){
             return _scenarioId;
         }
 
-        public void setScenarioId(Long value){
+        public void setScenarioId(String value){
             this._scenarioId = value;
         }
 
@@ -54,58 +54,58 @@
         }
 
 
-        private Long _orgId;
+        private String _orgId;
 
     
         @PropMeta(propId=4)
     
-        public Long getOrgId(){
+        public String getOrgId(){
             return _orgId;
         }
 
-        public void setOrgId(Long value){
+        public void setOrgId(String value){
             this._orgId = value;
         }
 
 
-        private Long _acctSchemaId;
+        private String _acctSchemaId;
 
     
         @PropMeta(propId=5)
     
-        public Long getAcctSchemaId(){
+        public String getAcctSchemaId(){
             return _acctSchemaId;
         }
 
-        public void setAcctSchemaId(Long value){
+        public void setAcctSchemaId(String value){
             this._acctSchemaId = value;
         }
 
 
-        private Long _periodId;
+        private String _periodId;
 
     
         @PropMeta(propId=6)
     
-        public Long getPeriodId(){
+        public String getPeriodId(){
             return _periodId;
         }
 
-        public void setPeriodId(Long value){
+        public void setPeriodId(String value){
             this._periodId = value;
         }
 
 
-        private Long _subjectId;
+        private String _subjectId;
 
     
         @PropMeta(propId=7)
     
-        public Long getSubjectId(){
+        public String getSubjectId(){
             return _subjectId;
         }
 
-        public void setSubjectId(Long value){
+        public void setSubjectId(String value){
             this._subjectId = value;
         }
 
@@ -124,30 +124,30 @@
         }
 
 
-        private Long _costCenterId;
+        private String _costCenterId;
 
     
         @PropMeta(propId=9)
     
-        public Long getCostCenterId(){
+        public String getCostCenterId(){
             return _costCenterId;
         }
 
-        public void setCostCenterId(Long value){
+        public void setCostCenterId(String value){
             this._costCenterId = value;
         }
 
 
-        private Long _departmentId;
+        private String _departmentId;
 
     
         @PropMeta(propId=10)
     
-        public Long getDepartmentId(){
+        public String getDepartmentId(){
             return _departmentId;
         }
 
-        public void setDepartmentId(Long value){
+        public void setDepartmentId(String value){
             this._departmentId = value;
         }
 
@@ -166,44 +166,44 @@
         }
 
 
-        private Long _partnerId;
+        private String _partnerId;
 
     
         @PropMeta(propId=12)
     
-        public Long getPartnerId(){
+        public String getPartnerId(){
             return _partnerId;
         }
 
-        public void setPartnerId(Long value){
+        public void setPartnerId(String value){
             this._partnerId = value;
         }
 
 
-        private Long _warehouseId;
+        private String _warehouseId;
 
     
         @PropMeta(propId=13)
     
-        public Long getWarehouseId(){
+        public String getWarehouseId(){
             return _warehouseId;
         }
 
-        public void setWarehouseId(Long value){
+        public void setWarehouseId(String value){
             this._warehouseId = value;
         }
 
 
-        private Long _materialId;
+        private String _materialId;
 
     
         @PropMeta(propId=14)
     
-        public Long getMaterialId(){
+        public String getMaterialId(){
             return _materialId;
         }
 
-        public void setMaterialId(Long value){
+        public void setMaterialId(String value){
             this._materialId = value;
         }
 
@@ -236,16 +236,16 @@
         }
 
 
-        private Long _currencyId;
+        private String _currencyId;
 
     
         @PropMeta(propId=17)
     
-        public Long getCurrencyId(){
+        public String getCurrencyId(){
             return _currencyId;
         }
 
-        public void setCurrencyId(Long value){
+        public void setCurrencyId(String value){
             this._currencyId = value;
         }
 

@@ -64,15 +64,15 @@ public class TestErpFinBankStatementCounterpartyMatch extends JunitAutoTestCase 
     @Test
     public void testCounterpartyNameNarrowsMultipleCandidatesToUnique() {
         long seed = System.nanoTime();
-        long subjectId = 8101L;
-        long[] ctx = new long[1];
-        final Long[] partnerALineId = new Long[1];
+        String subjectId = "8101";
+        String[] ctx = new String[1];
+        final String[] partnerALineId = new String[1];
         ormTemplate.runInSession(() -> {
             seedSubject(subjectId, "1002", "银行存款");
             ctx[0] = seedFundAccount(ErpFinConstants.FUND_ACCOUNT_TYPE_BANK, subjectId,
                     new BigDecimal("10000"));
-            long partnerA = seedPartner("P-A-" + seed, "甲公司");
-            long partnerB = seedPartner("P-B-" + seed, "乙公司");
+            String partnerA = seedPartner("P-A-" + seed, "甲公司");
+            String partnerB = seedPartner("P-B-" + seed, "乙公司");
             // 账面两笔同额同向分录，对方账号（partner）不同
             ErpFinVoucherLine lineA = seedPostedVoucherLine(subjectId, DC_DEBIT, new BigDecimal("500"),
                     LocalDate.of(2026, 6, 10), partnerA);
@@ -100,13 +100,13 @@ public class TestErpFinBankStatementCounterpartyMatch extends JunitAutoTestCase 
     @Test
     public void testCounterpartyNameMismatchExcludesSingleCandidate() {
         long seed = System.nanoTime();
-        long subjectId = 8102L;
-        long[] ctx = new long[1];
+        String subjectId = "8102";
+        String[] ctx = new String[1];
         ormTemplate.runInSession(() -> {
             seedSubject(subjectId, "1002", "银行存款");
             ctx[0] = seedFundAccount(ErpFinConstants.FUND_ACCOUNT_TYPE_BANK, subjectId,
                     new BigDecimal("10000"));
-            long partnerB = seedPartner("P-B2-" + seed, "乙公司");
+            String partnerB = seedPartner("P-B2-" + seed, "乙公司");
             // 账面仅 1 候选（对方=乙公司）；现状（无过滤）会错误 MATCHED
             seedPostedVoucherLine(subjectId, DC_DEBIT, new BigDecimal("300"),
                     LocalDate.of(2026, 6, 11), partnerB);
@@ -128,14 +128,14 @@ public class TestErpFinBankStatementCounterpartyMatch extends JunitAutoTestCase 
     @Test
     public void testCounterpartyNullNoFilterPassthrough() {
         long seed = System.nanoTime();
-        long subjectId = 8103L;
-        long[] ctx = new long[1];
+        String subjectId = "8103";
+        String[] ctx = new String[1];
         ormTemplate.runInSession(() -> {
             seedSubject(subjectId, "1002", "银行存款");
             ctx[0] = seedFundAccount(ErpFinConstants.FUND_ACCOUNT_TYPE_BANK, subjectId,
                     new BigDecimal("10000"));
-            long partnerA = seedPartner("P-A3-" + seed, "甲公司");
-            long partnerB = seedPartner("P-B3-" + seed, "乙公司");
+            String partnerA = seedPartner("P-A3-" + seed, "甲公司");
+            String partnerB = seedPartner("P-B3-" + seed, "乙公司");
             seedPostedVoucherLine(subjectId, DC_DEBIT, new BigDecimal("400"),
                     LocalDate.of(2026, 6, 12), partnerA);
             seedPostedVoucherLine(subjectId, DC_DEBIT, new BigDecimal("400"),
@@ -159,15 +159,15 @@ public class TestErpFinBankStatementCounterpartyMatch extends JunitAutoTestCase 
     @Test
     public void testCounterpartyFilterAcrossStatements() {
         long seed = System.nanoTime();
-        long subjectId = 8104L;
-        long[] ctx = new long[1];
-        final Long[] partnerBLineId = new Long[1];
+        String subjectId = "8104";
+        String[] ctx = new String[1];
+        final String[] partnerBLineId = new String[1];
         ormTemplate.runInSession(() -> {
             seedSubject(subjectId, "1002", "银行存款");
             ctx[0] = seedFundAccount(ErpFinConstants.FUND_ACCOUNT_TYPE_BANK, subjectId,
                     new BigDecimal("10000"));
-            long partnerA = seedPartner("P-A4-" + seed, "甲公司");
-            long partnerB = seedPartner("P-B4-" + seed, "乙公司");
+            String partnerA = seedPartner("P-A4-" + seed, "甲公司");
+            String partnerB = seedPartner("P-B4-" + seed, "乙公司");
             seedPostedVoucherLine(subjectId, DC_DEBIT, new BigDecimal("600"),
                     LocalDate.of(2026, 6, 13), partnerA);
             ErpFinVoucherLine lineB = seedPostedVoucherLine(subjectId, DC_DEBIT, new BigDecimal("600"),
@@ -196,7 +196,7 @@ public class TestErpFinBankStatementCounterpartyMatch extends JunitAutoTestCase 
 
     // ---------- helpers ----------
 
-    private ErpFinBankStatementLine firstLine(Long statementId) {
+    private ErpFinBankStatementLine firstLine(String statementId) {
         IEntityDao<ErpFinBankStatementLine> dao = daoProvider.daoFor(ErpFinBankStatementLine.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("statementId", statementId));
@@ -215,7 +215,7 @@ public class TestErpFinBankStatementCounterpartyMatch extends JunitAutoTestCase 
         return in;
     }
 
-    private long seedPartner(String code, String name) {
+    private String seedPartner(String code, String name) {
         IEntityDao<ErpMdPartner> dao = daoProvider.daoFor(ErpMdPartner.class);
         ErpMdPartner p = dao.newEntity();
         p.setCode(code);
@@ -226,15 +226,15 @@ public class TestErpFinBankStatementCounterpartyMatch extends JunitAutoTestCase 
         return p.getId();
     }
 
-    private long seedFundAccount(String accountType, long subjectId, BigDecimal currentBalance) {
+    private String seedFundAccount(String accountType, String subjectId, BigDecimal currentBalance) {
         IEntityDao<ErpFinFundAccount> dao = daoProvider.daoFor(ErpFinFundAccount.class);
         ErpFinFundAccount account = dao.newEntity();
         account.setCode("FA-" + System.nanoTime());
         account.setName("Bank " + accountType);
-        account.setOrgId(1L);
+        account.setOrgId("1");
         account.setAccountType(accountType);
         account.setSubjectId(subjectId);
-        account.setCurrencyId(1L);
+        account.setCurrencyId("1");
         account.setOpeningBalance(currentBalance);
         account.setCurrentBalance(currentBalance);
         account.setStatus("ACTIVE");
@@ -242,7 +242,7 @@ public class TestErpFinBankStatementCounterpartyMatch extends JunitAutoTestCase 
         return account.getId();
     }
 
-    private void seedSubject(long id, String code, String name) {
+    private void seedSubject(String id, String code, String name) {
         IEntityDao<ErpMdSubject> dao = daoProvider.daoFor(ErpMdSubject.class);
         ErpMdSubject s = new ErpMdSubject();
         s.orm_propValue(1, id);
@@ -254,16 +254,16 @@ public class TestErpFinBankStatementCounterpartyMatch extends JunitAutoTestCase 
         dao.saveEntity(s);
     }
 
-    private ErpFinVoucherLine seedPostedVoucherLine(long subjectId, String dc, BigDecimal amount,
-                                                     LocalDate voucherDate, Long partnerId) {
+    private ErpFinVoucherLine seedPostedVoucherLine(String subjectId, String dc, BigDecimal amount,
+                                                     LocalDate voucherDate, String partnerId) {
         IEntityDao<ErpFinVoucher> vDao = daoProvider.daoFor(ErpFinVoucher.class);
         ErpFinVoucher v = vDao.newEntity();
         v.setCode("V-" + System.nanoTime());
         v.setVoucherType("TRANSFER");
         v.setVoucherDate(voucherDate);
-        v.setOrgId(1L);
-        v.setAcctSchemaId(1L);
-        v.setPeriodId(1L);
+        v.setOrgId("1");
+        v.setAcctSchemaId("1");
+        v.setPeriodId("1");
         v.setTotalDebit(DC_DEBIT.equals(dc) ? amount : BigDecimal.ZERO);
         v.setTotalCredit(DC_CREDIT.equals(dc) ? amount : BigDecimal.ZERO);
         v.setIsReversed(false);
@@ -280,12 +280,12 @@ public class TestErpFinBankStatementCounterpartyMatch extends JunitAutoTestCase 
         line.setDcDirection(dc);
         line.setDebitAmount(DC_DEBIT.equals(dc) ? amount : BigDecimal.ZERO);
         line.setCreditAmount(DC_CREDIT.equals(dc) ? amount : BigDecimal.ZERO);
-        line.setCurrencyId(1L);
+        line.setCurrencyId("1");
         line.setExchangeRate(BigDecimal.ONE);
         line.setAmountSource(amount);
         line.setAmountFunctional(amount);
-        line.setAcctSchemaId(1L);
-        line.setOrgId(1L);
+        line.setAcctSchemaId("1");
+        line.setOrgId("1");
         line.setPartnerId(partnerId);
         lDao.saveEntity(line);
         return line;

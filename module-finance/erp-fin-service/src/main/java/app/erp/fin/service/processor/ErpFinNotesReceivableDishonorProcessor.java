@@ -22,7 +22,7 @@ public class ErpFinNotesReceivableDishonorProcessor {
     @Inject
     ErpFinNotesReceivableStateMachine stateMachine;
 
-    public ErpFinNotesReceivable dishonor(Long notesId, IServiceContext context) {
+    public ErpFinNotesReceivable dishonor(String notesId, IServiceContext context) {
         ErpFinNotesReceivable note = facade.requireNote(notesId, context);
         try {
             stateMachine.assertCanDishonor(note.getStatus());

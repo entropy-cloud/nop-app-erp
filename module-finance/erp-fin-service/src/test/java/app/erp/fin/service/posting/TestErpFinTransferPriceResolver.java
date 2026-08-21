@@ -39,8 +39,8 @@ public class TestErpFinTransferPriceResolver extends JunitAutoTestCase {
 
     @Test
     public void testCostPlusStrategy() {
-        Long fromOrg = 1001L;
-        Long toOrg = 1002L;
+        String fromOrg = "1001";
+        String toOrg = "1002";
         seedReturn(() -> {
             seedRule("TP-COSTPLUS", fromOrg, toOrg, null, null,
                     "COST_PLUS", new BigDecimal("0.10"), new BigDecimal("100"), null);
@@ -58,8 +58,8 @@ public class TestErpFinTransferPriceResolver extends JunitAutoTestCase {
 
     @Test
     public void testNegotiatedStrategy() {
-        Long fromOrg = 1003L;
-        Long toOrg = 1004L;
+        String fromOrg = "1003";
+        String toOrg = "1004";
         seedReturn(() -> {
             seedRule("TP-NEG", fromOrg, toOrg, null, null,
                     "NEGOTIATED", null, new BigDecimal("250"), null);
@@ -75,8 +75,8 @@ public class TestErpFinTransferPriceResolver extends JunitAutoTestCase {
 
     @Test
     public void testMarketStrategyFallbackToFixedPrice() {
-        Long fromOrg = 1005L;
-        Long toOrg = 1006L;
+        String fromOrg = "1005";
+        String toOrg = "1006";
         seedReturn(() -> {
             seedRule("TP-MKT", fromOrg, toOrg, null, null,
                     "MARKET", null, new BigDecimal("300"), "上月采购均价");
@@ -100,7 +100,7 @@ public class TestErpFinTransferPriceResolver extends JunitAutoTestCase {
         });
         resolver.invalidateCache();
 
-        TransferPriceResult result = resolver.resolvePrice(9999L, 8888L, null, LocalDate.of(2026, 7, 1));
+        TransferPriceResult result = resolver.resolvePrice("9999", "8888", null, LocalDate.of(2026, 7, 1));
         assertNotNull(result, "应回落到全通配 default 规则");
         assertEquals("NEGOTIATED", result.getPricingMethod());
         assertEquals(0, result.getUnitPrice().compareTo(new BigDecimal("180")));
@@ -110,14 +110,14 @@ public class TestErpFinTransferPriceResolver extends JunitAutoTestCase {
     public void testNoMatchReturnsNull() {
         // 清缓存后查不存在的组合（无 default 规则覆盖）
         resolver.invalidateCache();
-        TransferPriceResult result = resolver.resolvePrice(7777L, 6666L, null, LocalDate.of(2026, 7, 1));
+        TransferPriceResult result = resolver.resolvePrice("7777", "6666", null, LocalDate.of(2026, 7, 1));
         assertNull(result, "无匹配规则且无 default 时应返回 null");
     }
 
     @Test
     public void testCacheInvalidate() {
-        Long fromOrg = 1007L;
-        Long toOrg = 1008L;
+        String fromOrg = "1007";
+        String toOrg = "1008";
         seedReturn(() -> {
             seedRule("TP-CACHE", fromOrg, toOrg, null, null,
                     "NEGOTIATED", null, new BigDecimal("500"), null);
@@ -138,8 +138,8 @@ public class TestErpFinTransferPriceResolver extends JunitAutoTestCase {
 
     @Test
     public void testValidityPeriodFiltering() {
-        Long fromOrg = 1009L;
-        Long toOrg = 1010L;
+        String fromOrg = "1009";
+        String toOrg = "1010";
         seedReturn(() -> {
             seedRule("TP-VALID", fromOrg, toOrg, null, null,
                     "NEGOTIATED", null, new BigDecimal("200"), null,
@@ -165,20 +165,20 @@ public class TestErpFinTransferPriceResolver extends JunitAutoTestCase {
         return ormTemplate.runInSession(session -> action.get());
     }
 
-    private void seedRule(String code, Long fromOrgId, Long toOrgId, Long materialId, Long materialCategoryId,
+    private void seedRule(String code, String fromOrgId, String toOrgId, String materialId, String materialCategoryId,
                           String method, BigDecimal markupRate, BigDecimal fixedPrice, String marketRefSource) {
         seedRule(code, fromOrgId, toOrgId, materialId, materialCategoryId, method, markupRate, fixedPrice,
                 marketRefSource, null, null);
     }
 
-    private void seedRule(String code, Long fromOrgId, Long toOrgId, Long materialId, Long materialCategoryId,
+    private void seedRule(String code, String fromOrgId, String toOrgId, String materialId, String materialCategoryId,
                           String method, BigDecimal markupRate, BigDecimal fixedPrice, String marketRefSource,
                           LocalDate validFrom, LocalDate validTo) {
         IEntityDao<ErpFinIntercompanyTransferPrice> dao = daoProvider.daoFor(ErpFinIntercompanyTransferPrice.class);
         ErpFinIntercompanyTransferPrice rule = new ErpFinIntercompanyTransferPrice();
         rule.setCode(code);
         rule.setName(code);
-        rule.setOrgId(1L);
+        rule.setOrgId("1");
         rule.setFromOrgId(fromOrgId);
         rule.setToOrgId(toOrgId);
         rule.setMaterialId(materialId);

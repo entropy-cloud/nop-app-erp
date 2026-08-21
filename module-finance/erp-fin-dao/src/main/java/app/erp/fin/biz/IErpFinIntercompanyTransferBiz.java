@@ -33,9 +33,9 @@ public interface IErpFinIntercompanyTransferBiz {
      * @return 配对凭证 ID 列表（AR 凭证 + AP 凭证）；config-gated 关闭或同法人或无定价规则时返回空列表
      */
     @BizMutation
-    java.util.List<Long> onTransferConfirmed(@Name("transferOrderId") Long transferOrderId,
-                                              @Name("fromWarehouseId") Long fromWarehouseId,
-                                              @Name("toWarehouseId") Long toWarehouseId,
+    java.util.List<String> onTransferConfirmed(@Name("transferOrderId") String transferOrderId,
+                                              @Name("fromWarehouseId") String fromWarehouseId,
+                                              @Name("toWarehouseId") String toWarehouseId,
                                               @Name("businessDate") java.time.LocalDate businessDate,
                                               IServiceContext context);
 
@@ -57,10 +57,10 @@ public interface IErpFinIntercompanyTransferBiz {
      * @return 配对凭证 ID 列表（AR 凭证 + AP 凭证）；config-gated 关闭或同法人或无定价规则时返回空列表
      */
     @BizMutation
-    java.util.List<Long> onTradeDocumentApproved(@Name("docType") String docType,
-                                                  @Name("docId") Long docId,
+    java.util.List<String> onTradeDocumentApproved(@Name("docType") String docType,
+                                                  @Name("docId") String docId,
                                                   @Name("docCode") String docCode,
-                                                  @Name("executingOrgId") Long executingOrgId,
+                                                  @Name("executingOrgId") String executingOrgId,
                                                   @Name("amount") java.math.BigDecimal amount,
                                                   @Name("businessDate") java.time.LocalDate businessDate,
                                                   IServiceContext context);
@@ -78,8 +78,8 @@ public interface IErpFinIntercompanyTransferBiz {
      * @return 红冲凭证 ID 列表（空列表表示无原凭证可红冲）
      */
     @BizMutation
-    java.util.List<Long> onTradeDocumentReversed(@Name("docType") String docType,
-                                                  @Name("docId") Long docId,
+    java.util.List<String> onTradeDocumentReversed(@Name("docType") String docType,
+                                                  @Name("docId") String docId,
                                                   @Name("docCode") String docCode,
                                                   IServiceContext context);
 }

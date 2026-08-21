@@ -20,10 +20,9 @@ public class ErpFinExpenseClaimCancelProcessor extends AbstractCancelProcessor<E
 
     @Override
     public ErpFinExpenseClaim cancel(String id, IServiceContext context) {
-        Long claimId = Long.valueOf(id);
-        ErpFinExpenseClaim claim = processor.requireClaim(claimId, context);
+        ErpFinExpenseClaim claim = processor.requireClaim(id, context);
         processor.validateTransitionForCancel(claim, context);
-        return processor.doCancel(claimId, claim, context);
+        return processor.doCancel(id, claim, context);
     }
 
     @Override

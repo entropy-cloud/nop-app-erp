@@ -38,23 +38,23 @@ public class ErpFinIntercompanyMatchRunMatchingProcessor {
     @Inject
     IDaoProvider daoProvider;
 
-    public int runMatching(Long periodId, IServiceContext context) {
+    public int runMatching(String periodId, IServiceContext context) {
         if (periodId == null) {
             return 0;
         }
         assertPeriodOpen(periodId);
 
         // 经 ErpFinVoucherBillR 反查 INTERCOMPANY_SALE/PURCHASE 凭证，按 billCode（调拨/订单 code）配对
-        Map<String, List<Long>> saleByBillCode = findIntercompanyVoucherIdsByBillCode(
+        Map<String, List<String>> saleByBillCode = findIntercompanyVoucherIdsByBillCode(
                 ErpFinConstants.INTERCOMPANY_SALE_BILL_TYPE, periodId);
-        Map<String, List<Long>> purchaseByBillCode = findIntercompanyVoucherIdsByBillCode(
+        Map<String, List<String>> purchaseByBillCode = findIntercompanyVoucherIdsByBillCode(
                 ErpFinConstants.INTERCOMPANY_PURCHASE_BILL_TYPE, periodId);
 
         // 预加载所有相关凭证的 orgId（批量，避免逐 billCode 重复查）
-        java.util.Set<Long> allVoucherIds = new java.util.HashSet<>();
+        java.util.Set<String> allVoucherIds = new java.util.HashSet<>();
         saleByBillCode.values().forEach(allVoucherIds::addAll);
         purchaseByBillCode.values().forEach(allVoucherIds::addAll);
-        Map<Long, Long> voucherOrgMap = loadVoucherOrgMap(allVoucherIds);
+        Map<String, String> voucherOrgMap = loadVoucherOrgMap(allVoucherIds);
 
         int count = 0;
         IEntityDao<ErpFinIntercompanyMatch> matchDao = daoProvider.daoFor(ErpFinIntercompanyMatch.class);
@@ -70,8 +70,8 @@ public class ErpFinIntercompanyMatchRunMatchingProcessor {
                 continue;
             }
 
-            List<Long> saleIds = saleByBillCode.getOrDefault(billCode, java.util.Collections.emptyList());
-            List<Long> purchaseIds = purchaseByBillCode.getOrDefault(billCode, java.util.Collections.emptyList());
+            List<String> saleIds = saleByBillCode.getOrDefault(billCode, java.util.Collections.emptyList());
+            List<String> purchaseIds = purchaseByBillCode.getOrDefault(billCode, java.util.Collections.emptyList());
             BigDecimal saleAmt = sumVoucherAmounts(saleIds);
             BigDecimal purchaseAmt = sumVoucherAmounts(purchaseIds);
             BigDecimal matched = saleAmt.min(purchaseAmt);
@@ -81,13 +81,13 @@ public class ErpFinIntercompanyMatchRunMatchingProcessor {
                     : ErpFinConstants.INTERCOMPANY_MATCH_DIFF;
 
             // 审计列填充（P1-MA2-097）：AR 侧 = SALE 凭证，AP 侧 = PURCHASE 凭证
-            Long arSideVoucherId = saleIds.isEmpty() ? null : saleIds.get(0);
-            Long apSideVoucherId = purchaseIds.isEmpty() ? null : purchaseIds.get(0);
-            Long arOrgId = arSideVoucherId != null ? voucherOrgMap.get(arSideVoucherId) : null;
-            Long apOrgId = apSideVoucherId != null ? voucherOrgMap.get(apSideVoucherId) : null;
-            Long materialId = resolveMaterialId(allVoucherIds);
+            String arSideVoucherId = saleIds.isEmpty() ? null : saleIds.get(0);
+            String apSideVoucherId = purchaseIds.isEmpty() ? null : purchaseIds.get(0);
+            String arOrgId = arSideVoucherId != null ? voucherOrgMap.get(arSideVoucherId) : null;
+            String apOrgId = apSideVoucherId != null ? voucherOrgMap.get(apSideVoucherId) : null;
+            String materialId = resolveMaterialId(allVoucherIds);
             // 移除 hardcoded orgId=1L：配对记录归属 AR 侧组织（卖方），AR 侧缺失时回落 AP 侧
-            Long recordOrgId = arOrgId != null ? arOrgId : (apOrgId != null ? apOrgId : null);
+            String recordOrgId = arOrgId != null ? arOrgId : (apOrgId != null ? apOrgId : null);
 
             ErpFinIntercompanyMatch record = matchDao.newEntity();
             record.setCode("MATCH-" + periodId + "-" + StringHelper.generateUUID().substring(0, 8));
@@ -112,7 +112,7 @@ public class ErpFinIntercompanyMatchRunMatchingProcessor {
     }
 
     /** 同期同 pairKey 幂等去重：返回已存在 Match 记录的 pairKey 集合（P1-MA2-098）。 */
-    protected java.util.Set<String> findExistingPairKeys(Long periodId, java.util.Set<String> pairKeys) {
+    protected java.util.Set<String> findExistingPairKeys(String periodId, java.util.Set<String> pairKeys) {
         if (pairKeys.isEmpty()) {
             return java.util.Collections.emptySet();
         }
@@ -129,14 +129,14 @@ public class ErpFinIntercompanyMatchRunMatchingProcessor {
     }
 
     /** 批量加载凭证 orgId（凭证的核算组织）。 */
-    protected Map<Long, Long> loadVoucherOrgMap(java.util.Set<Long> voucherIds) {
+    protected Map<String, String> loadVoucherOrgMap(java.util.Set<String> voucherIds) {
         if (voucherIds.isEmpty()) {
             return java.util.Collections.emptyMap();
         }
         IEntityDao<ErpFinVoucher> voucherDao = daoProvider.daoFor(ErpFinVoucher.class);
         QueryBean q = new QueryBean();
         q.addFilter(in("id", voucherIds));
-        Map<Long, Long> map = new HashMap<>();
+        Map<String, String> map = new HashMap<>();
         for (ErpFinVoucher v : voucherDao.findAllByQuery(q)) {
             map.put(v.getId(), v.getOrgId());
         }
@@ -144,7 +144,7 @@ public class ErpFinIntercompanyMatchRunMatchingProcessor {
     }
 
     /** 从相关凭证行取首个非空 materialId（配对审计列，物料维度）。 */
-    protected Long resolveMaterialId(java.util.Set<Long> voucherIds) {
+    protected String resolveMaterialId(java.util.Set<String> voucherIds) {
         if (voucherIds.isEmpty()) {
             return null;
         }
@@ -160,17 +160,17 @@ public class ErpFinIntercompanyMatchRunMatchingProcessor {
     }
 
     /** 按 billType 反查凭证 ID，按 billCode 分组。 */
-    protected Map<String, List<Long>> findIntercompanyVoucherIdsByBillCode(String billType, Long periodId) {
+    protected Map<String, List<String>> findIntercompanyVoucherIdsByBillCode(String billType, String periodId) {
         IEntityDao<ErpFinVoucherBillR> billRDao = daoProvider.daoFor(ErpFinVoucherBillR.class);
         QueryBean billRQ = new QueryBean();
         billRQ.addFilter(eq("billType", billType));
         List<ErpFinVoucherBillR> billRs = billRDao.findAllByQuery(billRQ);
 
-        Map<String, List<Long>> result = new HashMap<>();
+        Map<String, List<String>> result = new HashMap<>();
         if (billRs.isEmpty()) {
             return result;
         }
-        java.util.Set<Long> voucherIds = new java.util.HashSet<>();
+        java.util.Set<String> voucherIds = new java.util.HashSet<>();
         for (ErpFinVoucherBillR br : billRs) {
             voucherIds.add(br.getVoucherId());
         }
@@ -180,7 +180,7 @@ public class ErpFinIntercompanyMatchRunMatchingProcessor {
         vq.addFilter(eq("periodId", periodId));
         vq.addFilter(in("id", voucherIds));
         List<ErpFinVoucher> vouchers = voucherDao.findAllByQuery(vq);
-        java.util.Set<Long> validVoucherIds = new java.util.HashSet<>();
+        java.util.Set<String> validVoucherIds = new java.util.HashSet<>();
         for (ErpFinVoucher v : vouchers) {
             if (!Boolean.TRUE.equals(v.getIsReversed())) {
                 validVoucherIds.add(v.getId());
@@ -195,7 +195,7 @@ public class ErpFinIntercompanyMatchRunMatchingProcessor {
         return result;
     }
 
-    protected BigDecimal sumVoucherAmounts(List<Long> voucherIds) {
+    protected BigDecimal sumVoucherAmounts(List<String> voucherIds) {
         if (voucherIds == null || voucherIds.isEmpty()) {
             return BigDecimal.ZERO;
         }
@@ -211,7 +211,7 @@ public class ErpFinIntercompanyMatchRunMatchingProcessor {
         return total;
     }
 
-    protected void assertPeriodOpen(Long periodId) {
+    protected void assertPeriodOpen(String periodId) {
         ErpFinAccountingPeriod period = daoProvider.daoFor(ErpFinAccountingPeriod.class).getEntityById(periodId);
         if (period == null) {
             throw new NopException(ErpFinErrors.ERR_PERIOD_NOT_FOUND).param(ErpFinErrors.ARG_PERIOD_ID, periodId);

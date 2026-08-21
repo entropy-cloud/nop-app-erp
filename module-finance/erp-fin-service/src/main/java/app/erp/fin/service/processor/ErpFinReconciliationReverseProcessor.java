@@ -20,7 +20,7 @@ public class ErpFinReconciliationReverseProcessor extends AbstractErpFinReconcil
     @Inject
     ErpFinReconciliationDocumentStateMachine stateMachine;
 
-    public ErpFinReconciliation reverse(Long reconciliationId, IServiceContext context) {
+    public ErpFinReconciliation reverse(String reconciliationId, IServiceContext context) {
         ErpFinReconciliation head = requireHead(reconciliationId, context);
         assertCanReverse(head);
         List<ErpFinReconciliationLine> lines = loadLines(reconciliationId);

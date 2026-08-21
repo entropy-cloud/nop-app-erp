@@ -137,13 +137,13 @@ public class ErpFinPostingExceptionBizModel extends CrudBizModel<ErpFinPostingEx
 
     @Override
     @BizMutation
-    public ErpFinPostingException retry(@Name("exceptionId") Long exceptionId, IServiceContext context) {
+    public ErpFinPostingException retry(@Name("exceptionId") String exceptionId, IServiceContext context) {
         return retryProcessor.retry(exceptionId, context);
     }
 
     @Override
     @BizMutation
-    public ErpFinPostingException ignore(@Name("exceptionId") Long exceptionId,
+    public ErpFinPostingException ignore(@Name("exceptionId") String exceptionId,
                                          @Name("resolutionNote") String resolutionNote,
                                          IServiceContext context) {
         return ignoreProcessor.ignore(exceptionId, resolutionNote, context);
@@ -176,8 +176,8 @@ public class ErpFinPostingExceptionBizModel extends CrudBizModel<ErpFinPostingEx
 
     @Override
     @BizMutation
-    public ErpFinPostingException manualEntry(@Name("exceptionId") Long exceptionId,
-                                              @Name("voucherId") Long voucherId,
+    public ErpFinPostingException manualEntry(@Name("exceptionId") String exceptionId,
+                                              @Name("voucherId") String voucherId,
                                               @Name("resolutionNote") String resolutionNote,
                                               IServiceContext context) {
         ErpFinPostingException entity = requirePending(exceptionId);
@@ -318,7 +318,7 @@ public class ErpFinPostingExceptionBizModel extends CrudBizModel<ErpFinPostingEx
     // ---------- helpers ----------
 
     /** 仅 PENDING 状态可处置，其余抛 ErrorCode 守门异常。 */
-    private ErpFinPostingException requirePending(Long exceptionId) {
+    private ErpFinPostingException requirePending(String exceptionId) {
         IEntityDao<ErpFinPostingException> dao = dao();
         ErpFinPostingException entity = dao.getEntityById(exceptionId);
         if (entity == null) {

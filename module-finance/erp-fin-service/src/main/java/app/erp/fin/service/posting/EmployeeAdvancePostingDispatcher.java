@@ -38,7 +38,7 @@ public class EmployeeAdvancePostingDispatcher {
     public boolean tryPost(ErpFinEmployeeAdvance advance) {
         PostingEvent event = buildEvent(advance);
         try {
-            Long voucherId = executor.postEvent(event);
+            String voucherId = executor.postEvent(event);
             return voucherId != null;
         } catch (Exception e) {
             if (e instanceof NopException) {
@@ -58,14 +58,14 @@ public class EmployeeAdvancePostingDispatcher {
      * 抵扣清算过账（由 {@code AdvanceOffsetOrchestrator} 调用）：EMPLOYEE_ADVANCE_SETTLE 净额清算凭证
      * （借应付-员工 / 贷其他应收款-员工预支）。成功返回 true。
      */
-    public boolean postSettle(String claimCode, Long partnerId, BigDecimal netAmount, Long orgId,
-                              Long currencyId, java.time.LocalDate voucherDate) {
+    public boolean postSettle(String claimCode, String partnerId, BigDecimal netAmount, String orgId,
+                              String currencyId, java.time.LocalDate voucherDate) {
         PostingEvent event = new PostingEvent();
         event.setBusinessType(ErpFinBusinessType.EMPLOYEE_ADVANCE_SETTLE);
         event.setBillHeadCode(claimCode);
         event.setOrgId(orgId);
         event.setAcctSchemaId(resolveAcctSchemaId(orgId));
-        event.setCurrencyId(currencyId != null ? currencyId : 1L);
+        event.setCurrencyId(currencyId != null ? currencyId : "1");
         event.setExchangeRate(BigDecimal.ONE);
         event.setVoucherDate(voucherDate != null ? voucherDate : CoreMetrics.today());
         Map<String, Object> billData = new LinkedHashMap<>();
@@ -73,7 +73,7 @@ public class EmployeeAdvancePostingDispatcher {
         billData.put("TOTAL", netAmount);
         event.setBillData(billData);
         try {
-            Long voucherId = executor.postEvent(event);
+            String voucherId = executor.postEvent(event);
             return voucherId != null;
         } catch (Exception e) {
             LOG.error("借款清算过账失败，报销单 {} 净额 {}：{}", claimCode, netAmount, e.getMessage(), e);
@@ -93,14 +93,14 @@ public class EmployeeAdvancePostingDispatcher {
      * 失败语义对齐 {@link #postSettle}：catch Exception → log + return false（不阻断业务字段更新，残留风险由调用方记录）。
      */
     public boolean postCashRepay(ErpFinEmployeeAdvance advance, BigDecimal amount, io.nop.core.context.IServiceContext context) {
-        Long partnerId = resolveEmployeePartnerId(advance.getEmployeeId());
+        String partnerId = resolveEmployeePartnerId(advance.getEmployeeId());
 
         PostingEvent event = new PostingEvent();
         event.setBusinessType(ErpFinBusinessType.EMPLOYEE_ADVANCE_SETTLE);
         event.setBillHeadCode("EA-CASH-REPAY-" + advance.getCode() + "-" + CoreMetrics.currentTimeMillis());
         event.setOrgId(advance.getOrgId());
         event.setAcctSchemaId(resolveAcctSchemaId(advance.getOrgId()));
-        event.setCurrencyId(advance.getCurrencyId() != null ? advance.getCurrencyId() : 1L);
+        event.setCurrencyId(advance.getCurrencyId() != null ? advance.getCurrencyId() : "1");
         event.setExchangeRate(BigDecimal.ONE);
         event.setVoucherDate(CoreMetrics.today());
 
@@ -110,7 +110,7 @@ public class EmployeeAdvancePostingDispatcher {
         billData.put(ErpFinConstants.BILL_DATA_SETTLE_TYPE, ErpFinConstants.SETTLE_TYPE_CASH);
         event.setBillData(billData);
         try {
-            Long voucherId = executor.postEvent(event);
+            String voucherId = executor.postEvent(event);
             return voucherId != null;
         } catch (Exception e) {
             LOG.error("借款现金还款过账失败，借款单 {} 还款金额 {}：{}", advance.getCode(), amount, e.getMessage(), e);
@@ -119,7 +119,7 @@ public class EmployeeAdvancePostingDispatcher {
     }
 
     private PostingEvent buildEvent(ErpFinEmployeeAdvance advance) {
-        Long partnerId = resolveEmployeePartnerId(advance.getEmployeeId());
+        String partnerId = resolveEmployeePartnerId(advance.getEmployeeId());
 
         PostingEvent event = new PostingEvent();
         event.setBusinessType(ErpFinBusinessType.EMPLOYEE_ADVANCE);
@@ -139,12 +139,12 @@ public class EmployeeAdvancePostingDispatcher {
         return event;
     }
 
-    private Long resolveAcctSchemaId(Long orgId) {
+    private String resolveAcctSchemaId(String orgId) {
         return AcctSchemaResolver.resolvePrimarySchemaId(daoProvider, orgId);
     }
 
     /** 经 daoProvider 加载员工读取 partnerId（避免跨会话关系懒加载）。 */
-    private Long resolveEmployeePartnerId(Long employeeId) {
+    private String resolveEmployeePartnerId(String employeeId) {
         if (employeeId == null) {
             return null;
         }

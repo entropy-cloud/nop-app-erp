@@ -1817,8 +1817,8 @@
       ],
       "deferredUntil": "M2.1",
       "retireOwner": "M2.1",
-      "note": "早域 test 引用晚域——早域 plan Phase 3 消费（本域测试适配）；晚域翻转时复核",
-      "status": "active"
+      "note": "早域 test 引用晚域——早域 plan Phase 3 消费（本域测试适配）；晚域翻转时复核。2026-08-22 retired（M2.1 finance 迁移）：TestErpFinDualSideConsistency seed 侧 setSupplierId(Long.valueOf(partnerId)) 局部桥（fin String → pur Long，退役 owner 改挂 M2.5 pur 翻转时回收核对）",
+      "status": "retired"
     },
     {
       "id": "bridge-test-119",

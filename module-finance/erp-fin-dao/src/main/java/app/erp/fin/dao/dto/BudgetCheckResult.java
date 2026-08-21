@@ -20,12 +20,12 @@ public class BudgetCheckResult {
 
     private String actionResult = ACTION_PASS;
     private BigDecimal availableAmount = BigDecimal.ZERO;
-    private Long budgetLineId;
+    private String budgetLineId;
 
     public BudgetCheckResult() {
     }
 
-    public BudgetCheckResult(String actionResult, BigDecimal availableAmount, Long budgetLineId) {
+    public BudgetCheckResult(String actionResult, BigDecimal availableAmount, String budgetLineId) {
         this.actionResult = actionResult;
         this.availableAmount = availableAmount == null ? BigDecimal.ZERO : availableAmount;
         this.budgetLineId = budgetLineId;
@@ -47,11 +47,11 @@ public class BudgetCheckResult {
         this.availableAmount = availableAmount == null ? BigDecimal.ZERO : availableAmount;
     }
 
-    public Long getBudgetLineId() {
+    public String getBudgetLineId() {
         return budgetLineId;
     }
 
-    public void setBudgetLineId(Long budgetLineId) {
+    public void setBudgetLineId(String budgetLineId) {
         this.budgetLineId = budgetLineId;
     }
 

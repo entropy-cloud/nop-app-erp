@@ -13,44 +13,44 @@
     public class ErpFinCashForecastOutputBean {
 
     
-        private Long _id;
+        private String _id;
 
     
         @PropMeta(propId=1)
     
-        public Long getId(){
+        public String getId(){
             return _id;
         }
 
-        public void setId(Long value){
+        public void setId(String value){
             this._id = value;
         }
 
 
-        private Long _orgId;
+        private String _orgId;
 
     
         @PropMeta(propId=2)
     
-        public Long getOrgId(){
+        public String getOrgId(){
             return _orgId;
         }
 
-        public void setOrgId(Long value){
+        public void setOrgId(String value){
             this._orgId = value;
         }
 
 
-        private Long _fundAccountId;
+        private String _fundAccountId;
 
     
         @PropMeta(propId=3)
     
-        public Long getFundAccountId(){
+        public String getFundAccountId(){
             return _fundAccountId;
         }
 
-        public void setFundAccountId(Long value){
+        public void setFundAccountId(String value){
             this._fundAccountId = value;
         }
 
@@ -123,16 +123,16 @@
         }
 
 
-        private Long _partnerId;
+        private String _partnerId;
 
     
         @PropMeta(propId=8)
     
-        public Long getPartnerId(){
+        public String getPartnerId(){
             return _partnerId;
         }
 
-        public void setPartnerId(Long value){
+        public void setPartnerId(String value){
             this._partnerId = value;
         }
 

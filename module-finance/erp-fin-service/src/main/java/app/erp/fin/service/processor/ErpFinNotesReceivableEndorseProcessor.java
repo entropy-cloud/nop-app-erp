@@ -14,7 +14,7 @@ public class ErpFinNotesReceivableEndorseProcessor {
     @Inject
     ErpFinNotesReceivableProcessor facade;
 
-    public ErpFinNotesReceivable endorse(Long notesId, Long endorsementFromId, IServiceContext context) {
+    public ErpFinNotesReceivable endorse(String notesId, String endorsementFromId, IServiceContext context) {
         ErpFinNotesReceivable note = facade.requireNote(notesId, context);
         facade.validateTransitionForEndorse(note, context);
         return facade.doEndorse(notesId, note, endorsementFromId, context);

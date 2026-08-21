@@ -12,30 +12,30 @@
     public class ErpFinBudgetControlLogInputBean extends CrudInputBase {
 
     
-        private Long _id;
+        private String _id;
 
     
         @PropMeta(propId=1)
     
-        public Long getId(){
+        public String getId(){
             return _id;
         }
 
-        public void setId(Long value){
+        public void setId(String value){
             this._id = value;
         }
 
 
-        private Long _orgId;
+        private String _orgId;
 
     
         @PropMeta(propId=2)
     
-        public Long getOrgId(){
+        public String getOrgId(){
             return _orgId;
         }
 
-        public void setOrgId(Long value){
+        public void setOrgId(String value){
             this._orgId = value;
         }
 
@@ -54,30 +54,30 @@
         }
 
 
-        private Long _scenarioId;
+        private String _scenarioId;
 
     
         @PropMeta(propId=4)
     
-        public Long getScenarioId(){
+        public String getScenarioId(){
             return _scenarioId;
         }
 
-        public void setScenarioId(Long value){
+        public void setScenarioId(String value){
             this._scenarioId = value;
         }
 
 
-        private Long _budgetLineId;
+        private String _budgetLineId;
 
     
         @PropMeta(propId=5)
     
-        public Long getBudgetLineId(){
+        public String getBudgetLineId(){
             return _budgetLineId;
         }
 
-        public void setBudgetLineId(Long value){
+        public void setBudgetLineId(String value){
             this._budgetLineId = value;
         }
 
@@ -110,58 +110,58 @@
         }
 
 
-        private Long _subjectId;
+        private String _subjectId;
 
     
         @PropMeta(propId=8)
     
-        public Long getSubjectId(){
+        public String getSubjectId(){
             return _subjectId;
         }
 
-        public void setSubjectId(Long value){
+        public void setSubjectId(String value){
             this._subjectId = value;
         }
 
 
-        private Long _costCenterId;
+        private String _costCenterId;
 
     
         @PropMeta(propId=9)
     
-        public Long getCostCenterId(){
+        public String getCostCenterId(){
             return _costCenterId;
         }
 
-        public void setCostCenterId(Long value){
+        public void setCostCenterId(String value){
             this._costCenterId = value;
         }
 
 
-        private Long _projectId;
+        private String _projectId;
 
     
         @PropMeta(propId=10)
     
-        public Long getProjectId(){
+        public String getProjectId(){
             return _projectId;
         }
 
-        public void setProjectId(Long value){
+        public void setProjectId(String value){
             this._projectId = value;
         }
 
 
-        private Long _periodId;
+        private String _periodId;
 
     
         @PropMeta(propId=11)
     
-        public Long getPeriodId(){
+        public String getPeriodId(){
             return _periodId;
         }
 
-        public void setPeriodId(Long value){
+        public void setPeriodId(String value){
             this._periodId = value;
         }
 

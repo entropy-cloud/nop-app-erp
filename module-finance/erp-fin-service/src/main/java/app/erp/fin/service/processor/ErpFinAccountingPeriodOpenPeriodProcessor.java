@@ -23,7 +23,7 @@ public class ErpFinAccountingPeriodOpenPeriodProcessor {
     @Inject
     ErpFinAccountingPeriodStateMachine stateMachine;
 
-    public ErpFinAccountingPeriod openPeriod(Long periodId, IServiceContext context) {
+    public ErpFinAccountingPeriod openPeriod(String periodId, IServiceContext context) {
         ErpFinAccountingPeriod period = facade.requirePeriod(periodId);
         try {
             stateMachine.assertCanOpenPeriod(period.getStatus());

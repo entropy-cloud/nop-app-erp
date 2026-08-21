@@ -85,7 +85,7 @@ public class ErpFinNotesReceivableProcessor {
         }
     }
 
-    protected void requireDiscountInputs(ErpFinNotesReceivable note, LocalDate discountDate, Long bankId,
+    protected void requireDiscountInputs(ErpFinNotesReceivable note, LocalDate discountDate, String bankId,
                                           BigDecimal discountRate, BigDecimal exchangeRate, IServiceContext context) {
         if (discountDate == null || discountRate == null || bankId == null) {
             throw illegalTransition(note, note.getStatus(), "贴现日/贴现银行/贴现率非空");
@@ -96,7 +96,7 @@ public class ErpFinNotesReceivableProcessor {
 
     // ---------- step：执行（状态推进 + 持久化） ----------
 
-    protected ErpFinNotesReceivable doReceive(Long notesId, ErpFinNotesReceivable note, IServiceContext context) {
+    protected ErpFinNotesReceivable doReceive(String notesId, ErpFinNotesReceivable note, IServiceContext context) {
         note.setStatus(stateMachine.receiveTargetStatus());
         noteDao().updateEntity(note);
 
@@ -107,7 +107,7 @@ public class ErpFinNotesReceivableProcessor {
         return note;
     }
 
-    protected ErpFinNotesReceivable doDiscount(Long notesId, ErpFinNotesReceivable note, ErpFinNotesDiscount discount,
+    protected ErpFinNotesReceivable doDiscount(String notesId, ErpFinNotesReceivable note, ErpFinNotesDiscount discount,
                                                IServiceContext context) {
         IEntityDao<ErpFinNotesDiscount> discountDao = daoProvider.daoFor(ErpFinNotesDiscount.class);
         discountDao.saveEntity(discount);
@@ -123,7 +123,7 @@ public class ErpFinNotesReceivableProcessor {
         return note;
     }
 
-    protected ErpFinNotesReceivable doEndorse(Long notesId, ErpFinNotesReceivable note, Long endorsementFromId,
+    protected ErpFinNotesReceivable doEndorse(String notesId, ErpFinNotesReceivable note, String endorsementFromId,
                                               IServiceContext context) {
         if (endorsementFromId != null) {
             note.setEndorsementFromId(endorsementFromId);
@@ -138,7 +138,7 @@ public class ErpFinNotesReceivableProcessor {
         return note;
     }
 
-    protected ErpFinNotesReceivable doHonor(Long notesId, ErpFinNotesReceivable note, IServiceContext context) {
+    protected ErpFinNotesReceivable doHonor(String notesId, ErpFinNotesReceivable note, IServiceContext context) {
         note.setStatus(stateMachine.honorTargetStatus());
         noteDao().updateEntity(note);
 
@@ -165,7 +165,7 @@ public class ErpFinNotesReceivableProcessor {
 
     // ---------- 实体构造（贴现计算） ----------
 
-    protected ErpFinNotesDiscount buildDiscount(ErpFinNotesReceivable note, LocalDate discountDate, Long bankId,
+    protected ErpFinNotesDiscount buildDiscount(ErpFinNotesReceivable note, LocalDate discountDate, String bankId,
                                                   BigDecimal discountRate, BigDecimal exchangeRate) {
         BigDecimal faceAmountFunctional = nz(note.getAmountFunctional());
         BigDecimal amountSource = nz(note.getAmountSource());
@@ -240,11 +240,11 @@ public class ErpFinNotesReceivableProcessor {
         }
     }
 
-    protected ErpFinNotesReceivable requireNote(Long notesId, IServiceContext context) {
+    protected ErpFinNotesReceivable requireNote(String notesId, IServiceContext context) {
         return requireNote(notesId);
     }
 
-    protected ErpFinNotesReceivable requireNote(Long notesId) {
+    protected ErpFinNotesReceivable requireNote(String notesId) {
         ErpFinNotesReceivable note = noteDao().getEntityById(notesId);
         if (note == null) {
             throw new NopException(ErpFinErrors.ERR_NOTES_RECEIVABLE_NOT_FOUND)
@@ -268,7 +268,7 @@ public class ErpFinNotesReceivableProcessor {
         return status != null && Objects.equals(status, ErpFinConstants.NOTES_RECV_RECEIVED);
     }
 
-    protected ErpFinNotesReceivable reload(Long notesId) {
+    protected ErpFinNotesReceivable reload(String notesId) {
         return noteDao().getEntityById(notesId);
     }
 
@@ -309,14 +309,14 @@ public class ErpFinNotesReceivableProcessor {
      * 反查（对齐 {@code ExchangeRevaluationService:280-287} private {@code resolveFunctionalCurrencyId} 范式）。
      */
     private boolean isForeignCurrency(ErpFinNotesReceivable note) {
-        Long functionalCurrencyId = resolveFunctionalCurrencyId();
+        String functionalCurrencyId = resolveFunctionalCurrencyId();
         if (functionalCurrencyId == null || note.getCurrencyId() == null) {
             return false;
         }
         return !Objects.equals(note.getCurrencyId(), functionalCurrencyId);
     }
 
-    private Long resolveFunctionalCurrencyId() {
+    private String resolveFunctionalCurrencyId() {
         IEntityDao<ErpMdCurrency> dao = daoProvider.daoFor(ErpMdCurrency.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("isFunctional", Boolean.TRUE));

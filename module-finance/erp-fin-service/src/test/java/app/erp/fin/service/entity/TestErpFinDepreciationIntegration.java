@@ -45,7 +45,7 @@ public class TestErpFinDepreciationIntegration extends JunitAutoTestCase {
     @Test
     public void testDepreciationGateNonBlocking() {
         // 默认 auto-depreciation-on-close=true：折旧集成尝试执行；finance 单域无 ast-service → 告警跳过，不阻断。
-        Long periodId = seedReturn(() -> seedOpenPeriod("2024-09", 2024, 9));
+        String periodId = seedReturn(() -> seedOpenPeriod("2024-09", 2024, 9));
 
         ErpFinAccountingPeriod period = ormTemplate.runInSession(session -> periodBiz.closePeriod(periodId, CTX));
 
@@ -62,12 +62,12 @@ public class TestErpFinDepreciationIntegration extends JunitAutoTestCase {
         return ormTemplate.runInSession(session -> action.get());
     }
 
-    private Long seedOpenPeriod(String code, int year, int month) {
+    private String seedOpenPeriod(String code, int year, int month) {
         IEntityDao<ErpFinAccountingPeriod> dao = daoProvider.daoFor(ErpFinAccountingPeriod.class);
         ErpFinAccountingPeriod p = new ErpFinAccountingPeriod();
         p.setCode(code);
         p.setName(code);
-        p.setOrgId(1L);
+        p.setOrgId("1");
         p.setYear(year);
         p.setMonth(month);
         p.setStartDate(LocalDate.of(year, month, 1));
@@ -77,7 +77,7 @@ public class TestErpFinDepreciationIntegration extends JunitAutoTestCase {
         return p.getId();
     }
 
-    private ErpFinAccountingPeriodStatus loadStatus(Long periodId) {
+    private ErpFinAccountingPeriodStatus loadStatus(String periodId) {
         IEntityDao<ErpFinAccountingPeriodStatus> dao = daoProvider.daoFor(ErpFinAccountingPeriodStatus.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("periodId", periodId));

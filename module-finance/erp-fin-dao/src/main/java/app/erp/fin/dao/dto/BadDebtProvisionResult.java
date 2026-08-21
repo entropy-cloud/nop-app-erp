@@ -21,7 +21,7 @@ public class BadDebtProvisionResult {
     /** 本次动作：RESERVE（补提）/ RELEASE（释放）/ NONE（充足，无动作）。 */
     private String action = "NONE";
     /** 本次生成的凭证 ID（无动作时为 null）。 */
-    private Long voucherId;
+    private String voucherId;
 
     public BigDecimal getRequiredProvision() {
         return requiredProvision;
@@ -95,11 +95,11 @@ public class BadDebtProvisionResult {
         this.action = action;
     }
 
-    public Long getVoucherId() {
+    public String getVoucherId() {
         return voucherId;
     }
 
-    public void setVoucherId(Long voucherId) {
+    public void setVoucherId(String voucherId) {
         this.voucherId = voucherId;
     }
 }

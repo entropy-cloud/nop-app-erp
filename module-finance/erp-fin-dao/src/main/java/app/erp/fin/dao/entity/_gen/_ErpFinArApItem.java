@@ -241,22 +241,22 @@ public class _ErpFinArApItem extends DynamicOrmEntity{
 
     
     /* ID: ID */
-    private java.lang.Long _id;
+    private java.lang.String _id;
     
     /* 单号: CODE */
     private java.lang.String _code;
     
     /* 组织: ORG_ID */
-    private java.lang.Long _orgId;
+    private java.lang.String _orgId;
     
     /* 账套: ACCT_SCHEMA_ID */
-    private java.lang.Long _acctSchemaId;
+    private java.lang.String _acctSchemaId;
     
     /* 应收应付: DIRECTION */
     private java.lang.String _direction;
     
     /* 往来单位: PARTNER_ID */
-    private java.lang.Long _partnerId;
+    private java.lang.String _partnerId;
     
     /* 来源单据类型(AP_INVOICE/AR_INVOICE/PAYMENT/RECEIPT): SOURCE_BILL_TYPE */
     private java.lang.String _sourceBillType;
@@ -271,7 +271,7 @@ public class _ErpFinArApItem extends DynamicOrmEntity{
     private java.time.LocalDate _dueDate;
     
     /* 币种: CURRENCY_ID */
-    private java.lang.Long _currencyId;
+    private java.lang.String _currencyId;
     
     /* 汇率: EXCHANGE_RATE */
     private java.math.BigDecimal _exchangeRate;
@@ -298,7 +298,7 @@ public class _ErpFinArApItem extends DynamicOrmEntity{
     private java.lang.String _status;
     
     /* 所属期间: PERIOD_ID */
-    private java.lang.Long _periodId;
+    private java.lang.String _periodId;
     
     /* 备注: REMARK */
     private java.lang.String _remark;
@@ -488,9 +488,9 @@ public class _ErpFinArApItem extends DynamicOrmEntity{
         switch(propId){
         
             case PROP_ID_id:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_id));
                }
                setId(typedValue);
@@ -508,9 +508,9 @@ public class _ErpFinArApItem extends DynamicOrmEntity{
             }
         
             case PROP_ID_orgId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_orgId));
                }
                setOrgId(typedValue);
@@ -518,9 +518,9 @@ public class _ErpFinArApItem extends DynamicOrmEntity{
             }
         
             case PROP_ID_acctSchemaId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_acctSchemaId));
                }
                setAcctSchemaId(typedValue);
@@ -538,9 +538,9 @@ public class _ErpFinArApItem extends DynamicOrmEntity{
             }
         
             case PROP_ID_partnerId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_partnerId));
                }
                setPartnerId(typedValue);
@@ -588,9 +588,9 @@ public class _ErpFinArApItem extends DynamicOrmEntity{
             }
         
             case PROP_ID_currencyId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_currencyId));
                }
                setCurrencyId(typedValue);
@@ -678,9 +678,9 @@ public class _ErpFinArApItem extends DynamicOrmEntity{
             }
         
             case PROP_ID_periodId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_periodId));
                }
                setPeriodId(typedValue);
@@ -768,7 +768,7 @@ public class _ErpFinArApItem extends DynamicOrmEntity{
         
             case PROP_ID_id:{
                onInitProp(propId);
-               this._id = (java.lang.Long)value;
+               this._id = (java.lang.String)value;
                orm_id(); // 如果是设置主键字段，则触发watcher
                break;
             }
@@ -782,14 +782,14 @@ public class _ErpFinArApItem extends DynamicOrmEntity{
         
             case PROP_ID_orgId:{
                onInitProp(propId);
-               this._orgId = (java.lang.Long)value;
+               this._orgId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_acctSchemaId:{
                onInitProp(propId);
-               this._acctSchemaId = (java.lang.Long)value;
+               this._acctSchemaId = (java.lang.String)value;
                
                break;
             }
@@ -803,7 +803,7 @@ public class _ErpFinArApItem extends DynamicOrmEntity{
         
             case PROP_ID_partnerId:{
                onInitProp(propId);
-               this._partnerId = (java.lang.Long)value;
+               this._partnerId = (java.lang.String)value;
                
                break;
             }
@@ -838,7 +838,7 @@ public class _ErpFinArApItem extends DynamicOrmEntity{
         
             case PROP_ID_currencyId:{
                onInitProp(propId);
-               this._currencyId = (java.lang.Long)value;
+               this._currencyId = (java.lang.String)value;
                
                break;
             }
@@ -901,7 +901,7 @@ public class _ErpFinArApItem extends DynamicOrmEntity{
         
             case PROP_ID_periodId:{
                onInitProp(propId);
-               this._periodId = (java.lang.Long)value;
+               this._periodId = (java.lang.String)value;
                
                break;
             }
@@ -964,7 +964,7 @@ public class _ErpFinArApItem extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final java.lang.Long getId(){
+    public final java.lang.String getId(){
          onPropGet(PROP_ID_id);
          return _id;
     }
@@ -972,7 +972,7 @@ public class _ErpFinArApItem extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final void setId(java.lang.Long value){
+    public final void setId(java.lang.String value){
         if(onPropSet(PROP_ID_id,value)){
             this._id = value;
             internalClearRefs(PROP_ID_id);
@@ -1002,7 +1002,7 @@ public class _ErpFinArApItem extends DynamicOrmEntity{
     /**
      * 组织: ORG_ID
      */
-    public final java.lang.Long getOrgId(){
+    public final java.lang.String getOrgId(){
          onPropGet(PROP_ID_orgId);
          return _orgId;
     }
@@ -1010,7 +1010,7 @@ public class _ErpFinArApItem extends DynamicOrmEntity{
     /**
      * 组织: ORG_ID
      */
-    public final void setOrgId(java.lang.Long value){
+    public final void setOrgId(java.lang.String value){
         if(onPropSet(PROP_ID_orgId,value)){
             this._orgId = value;
             internalClearRefs(PROP_ID_orgId);
@@ -1021,7 +1021,7 @@ public class _ErpFinArApItem extends DynamicOrmEntity{
     /**
      * 账套: ACCT_SCHEMA_ID
      */
-    public final java.lang.Long getAcctSchemaId(){
+    public final java.lang.String getAcctSchemaId(){
          onPropGet(PROP_ID_acctSchemaId);
          return _acctSchemaId;
     }
@@ -1029,7 +1029,7 @@ public class _ErpFinArApItem extends DynamicOrmEntity{
     /**
      * 账套: ACCT_SCHEMA_ID
      */
-    public final void setAcctSchemaId(java.lang.Long value){
+    public final void setAcctSchemaId(java.lang.String value){
         if(onPropSet(PROP_ID_acctSchemaId,value)){
             this._acctSchemaId = value;
             internalClearRefs(PROP_ID_acctSchemaId);
@@ -1059,7 +1059,7 @@ public class _ErpFinArApItem extends DynamicOrmEntity{
     /**
      * 往来单位: PARTNER_ID
      */
-    public final java.lang.Long getPartnerId(){
+    public final java.lang.String getPartnerId(){
          onPropGet(PROP_ID_partnerId);
          return _partnerId;
     }
@@ -1067,7 +1067,7 @@ public class _ErpFinArApItem extends DynamicOrmEntity{
     /**
      * 往来单位: PARTNER_ID
      */
-    public final void setPartnerId(java.lang.Long value){
+    public final void setPartnerId(java.lang.String value){
         if(onPropSet(PROP_ID_partnerId,value)){
             this._partnerId = value;
             internalClearRefs(PROP_ID_partnerId);
@@ -1154,7 +1154,7 @@ public class _ErpFinArApItem extends DynamicOrmEntity{
     /**
      * 币种: CURRENCY_ID
      */
-    public final java.lang.Long getCurrencyId(){
+    public final java.lang.String getCurrencyId(){
          onPropGet(PROP_ID_currencyId);
          return _currencyId;
     }
@@ -1162,7 +1162,7 @@ public class _ErpFinArApItem extends DynamicOrmEntity{
     /**
      * 币种: CURRENCY_ID
      */
-    public final void setCurrencyId(java.lang.Long value){
+    public final void setCurrencyId(java.lang.String value){
         if(onPropSet(PROP_ID_currencyId,value)){
             this._currencyId = value;
             internalClearRefs(PROP_ID_currencyId);
@@ -1325,7 +1325,7 @@ public class _ErpFinArApItem extends DynamicOrmEntity{
     /**
      * 所属期间: PERIOD_ID
      */
-    public final java.lang.Long getPeriodId(){
+    public final java.lang.String getPeriodId(){
          onPropGet(PROP_ID_periodId);
          return _periodId;
     }
@@ -1333,7 +1333,7 @@ public class _ErpFinArApItem extends DynamicOrmEntity{
     /**
      * 所属期间: PERIOD_ID
      */
-    public final void setPeriodId(java.lang.Long value){
+    public final void setPeriodId(java.lang.String value){
         if(onPropSet(PROP_ID_periodId,value)){
             this._periodId = value;
             internalClearRefs(PROP_ID_periodId);

@@ -25,9 +25,9 @@ public class PostingEvent {
      */
     private String traceId;
     private String tenantId;
-    private Long acctSchemaId;
-    private Long orgId;
-    private Long currencyId;
+    private String acctSchemaId;
+    private String orgId;
+    private String currencyId;
     private BigDecimal exchangeRate;
     private LocalDate voucherDate;
     private Map<String, Object> billData = new LinkedHashMap<>();
@@ -64,27 +64,27 @@ public class PostingEvent {
         this.tenantId = tenantId;
     }
 
-    public Long getAcctSchemaId() {
+    public String getAcctSchemaId() {
         return acctSchemaId;
     }
 
-    public void setAcctSchemaId(Long acctSchemaId) {
+    public void setAcctSchemaId(String acctSchemaId) {
         this.acctSchemaId = acctSchemaId;
     }
 
-    public Long getOrgId() {
+    public String getOrgId() {
         return orgId;
     }
 
-    public void setOrgId(Long orgId) {
+    public void setOrgId(String orgId) {
         this.orgId = orgId;
     }
 
-    public Long getCurrencyId() {
+    public String getCurrencyId() {
         return currencyId;
     }
 
-    public void setCurrencyId(Long currencyId) {
+    public void setCurrencyId(String currencyId) {
         this.currencyId = currencyId;
     }
 

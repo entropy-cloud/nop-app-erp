@@ -22,20 +22,20 @@ public interface IErpFinPeriodCloseBiz {
      * 是否阻断由 {@code closePeriod} 按 {@code erp-fin.auto-post-on-close} 决定。
      */
     @BizQuery
-    PeriodPreCheckReport preCheck(@Name("periodId") Long periodId, IServiceContext context);
+    PeriodPreCheckReport preCheck(@Name("periodId") String periodId, IServiceContext context);
 
     /**
      * 结账：前置检查 → 期末处理（折旧/汇兑重估/损益结转）→ 模块按序关账 → 期间 OPEN→CLOSED。
      * 要求期间当前为 OPEN。
      */
     @BizMutation
-    ErpFinAccountingPeriod closePeriod(@Name("periodId") Long periodId, IServiceContext context);
+    ErpFinAccountingPeriod closePeriod(@Name("periodId") String periodId, IServiceContext context);
 
     /**
      * 最终锁定：期间 CLOSED→CLOSED_FINAL。要求期间当前为 CLOSED。
      */
     @BizMutation
-    ErpFinAccountingPeriod finalizePeriod(@Name("periodId") Long periodId, IServiceContext context);
+    ErpFinAccountingPeriod finalizePeriod(@Name("periodId") String periodId, IServiceContext context);
 
     /**
      * 反结账：期间 CLOSED_FINAL→OPEN，冲销本期结转/汇兑（及条件折旧）凭证，回开各模块。
@@ -50,7 +50,7 @@ public interface IErpFinPeriodCloseBiz {
      * @param reason   反结账原因（必填，审计要求）
      */
     @BizMutation
-    ErpFinAccountingPeriod reverseClose(@Name("periodId") Long periodId,
+    ErpFinAccountingPeriod reverseClose(@Name("periodId") String periodId,
                                         @Name("reason") String reason,
                                         IServiceContext context);
 
@@ -59,7 +59,7 @@ public interface IErpFinPeriodCloseBiz {
      * 「待自然月到达时由运营开启」契约）。仅 NEVER_OPENED 状态可开启；其余状态抛 {@code ERR_PERIOD_ILLEGAL_TRANSITION}。
      */
     @BizMutation
-    ErpFinAccountingPeriod openPeriod(@Name("periodId") Long periodId, IServiceContext context);
+    ErpFinAccountingPeriod openPeriod(@Name("periodId") String periodId, IServiceContext context);
 
     /**
      * 批量生成指定年度 1-12 月会计期间（年度结转规则步骤5，{@code period-close.md §年度结转规则}）。

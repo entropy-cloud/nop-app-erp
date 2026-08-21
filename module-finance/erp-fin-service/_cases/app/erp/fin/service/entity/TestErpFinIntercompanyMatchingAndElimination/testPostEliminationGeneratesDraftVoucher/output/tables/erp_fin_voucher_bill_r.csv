@@ -1,0 +1,4 @@
+_chgType,ID,VOUCHER_ID,BILL_TYPE,BILL_CODE,BILL_LINE_CODE,BUSINESS_TYPE,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
+A,16,13,CONSOLIDATION_ELIMINATION,@var:ErpFinVoucherBillR@billCode_2,,CONSOLIDATION_ELIMINATION,@var:ErpFinVoucherBillR@delVersion,0,autotest-ref,*,autotest-ref,*
+A,3,2,INTERCOMPANY_SALE,@var:ErpFinVoucherBillR@billCode,,INTERCOMPANY_SALE,@var:ErpFinVoucherBillR@delVersion,0,autotest-ref,*,autotest-ref,*
+A,5,4,INTERCOMPANY_PURCHASE,@var:ErpFinVoucherBillR@billCode,,INTERCOMPANY_PURCHASE,@var:ErpFinVoucherBillR@delVersion,0,autotest-ref,*,autotest-ref,*

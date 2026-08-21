@@ -14,7 +14,7 @@ public class ErpFinBankReconciliationGenerateProcessor {
     @Inject
     BankReconciliationBuilder bankReconciliationBuilder;
 
-    public ErpFinBankReconciliation generate(Long statementId, IServiceContext context) {
+    public ErpFinBankReconciliation generate(String statementId, IServiceContext context) {
         return bankReconciliationBuilder.generate(statementId);
     }
 }

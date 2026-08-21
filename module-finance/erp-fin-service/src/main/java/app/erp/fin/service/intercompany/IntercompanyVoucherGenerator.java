@@ -66,10 +66,10 @@ public class IntercompanyVoucherGenerator {
      * @param amount            交易金额（本位币，正数）
      * @return 配对凭证 ID 列表（AR 凭证 + AP 凭证）
      */
-    public List<Long> generatePairedVouchers(String transferOrderCode, Long fromOrgLegalId, Long toOrgLegalId,
-                                             Long fromAcctSchemaId, Long toAcctSchemaId, Long periodId,
-                                             Long currencyId, BigDecimal amount) {
-        List<Long> voucherIds = new ArrayList<>();
+    public List<String> generatePairedVouchers(String transferOrderCode, String fromOrgLegalId, String toOrgLegalId,
+                                             String fromAcctSchemaId, String toAcctSchemaId, String periodId,
+                                             String currencyId, BigDecimal amount) {
+        List<String> voucherIds = new ArrayList<>();
         if (amount == null || amount.signum() <= 0) {
             return voucherIds;
         }
@@ -85,7 +85,7 @@ public class IntercompanyVoucherGenerator {
         String revenueSubjectCode = resolveSubjectCode(ErpFinConstants.INTERCOMPANY_SALE_BILL_TYPE,
                 ErpFinConstants.ACCOUNT_KEY_INTERCOMPANY_REVENUE, intercompanyDims, fromAcctSchemaId,
                 DEFAULT_REVENUE_SUBJECT_CODE);
-        Long arVoucherId = writeIntercompanyVoucher(transferOrderCode, ErpFinConstants.INTERCOMPANY_SALE_BILL_TYPE,
+        String arVoucherId = writeIntercompanyVoucher(transferOrderCode, ErpFinConstants.INTERCOMPANY_SALE_BILL_TYPE,
                 fromOrgLegalId, fromAcctSchemaId, periodId, currencyId, amount,
                 arSubjectCode, "内部应收", revenueSubjectCode, "内部销售收入");
         if (arVoucherId != null) {
@@ -99,7 +99,7 @@ public class IntercompanyVoucherGenerator {
         String apSubjectCode = resolveSubjectCode(ErpFinConstants.INTERCOMPANY_PURCHASE_BILL_TYPE,
                 ErpFinConstants.ACCOUNT_KEY_INTERCOMPANY_AP, intercompanyDims, toAcctSchemaId,
                 DEFAULT_AP_SUBJECT_CODE);
-        Long apVoucherId = writeIntercompanyVoucher(transferOrderCode, ErpFinConstants.INTERCOMPANY_PURCHASE_BILL_TYPE,
+        String apVoucherId = writeIntercompanyVoucher(transferOrderCode, ErpFinConstants.INTERCOMPANY_PURCHASE_BILL_TYPE,
                 toOrgLegalId, toAcctSchemaId, periodId, currencyId, amount,
                 costSubjectCode, "内部采购成本", apSubjectCode, "内部应付");
         if (apVoucherId != null) {
@@ -120,9 +120,9 @@ public class IntercompanyVoucherGenerator {
      * @param sourceBillCode 业财回链 billCode（订单 code）
      * @return 红冲凭证 ID 列表（空列表表示无原凭证可红冲）
      */
-    public List<Long> reverseIntercompany(String sourceBillCode) {
+    public List<String> reverseIntercompany(String sourceBillCode) {
         List<ErpFinVoucher> originals = findIntercompanyVouchers(sourceBillCode);
-        List<Long> reversalIds = new ArrayList<>();
+        List<String> reversalIds = new ArrayList<>();
         for (ErpFinVoucher original : originals) {
             if (Boolean.TRUE.equals(original.getIsReversed())) {
                 continue;
@@ -160,7 +160,7 @@ public class IntercompanyVoucherGenerator {
         if (links.isEmpty()) {
             return new ArrayList<>();
         }
-        List<Long> voucherIds = new ArrayList<>(links.size());
+        List<String> voucherIds = new ArrayList<>(links.size());
         for (ErpFinVoucherBillR link : links) {
             voucherIds.add(link.getVoucherId());
         }
@@ -170,7 +170,7 @@ public class IntercompanyVoucherGenerator {
         return voucherDao.findAllByQuery(vq);
     }
 
-    private List<ErpFinVoucherLine> loadVoucherLines(Long voucherId) {
+    private List<ErpFinVoucherLine> loadVoucherLines(String voucherId) {
         IEntityDao<ErpFinVoucherLine> dao = daoProvider.daoFor(ErpFinVoucherLine.class);
         io.nop.api.core.beans.query.QueryBean q = new io.nop.api.core.beans.query.QueryBean();
         q.addFilter(io.nop.api.core.beans.FilterBeans.eq("voucherId", voucherId));
@@ -214,7 +214,7 @@ public class IntercompanyVoucherGenerator {
         reversal.setDocStatus(ErpFinConstants.VOUCHER_STATUS_POSTED);
         reversal.setPostedAt(CoreMetrics.currentTimestamp());
         voucherDao.saveEntity(reversal);
-        Long reversalId = reversal.getId();
+        String reversalId = reversal.getId();
 
         int lineNo = 1;
         for (ErpFinVoucherLine ol : origLines) {
@@ -250,7 +250,7 @@ public class IntercompanyVoucherGenerator {
         return reversal;
     }
 
-    private String findOriginalIntercompanyBillCode(Long voucherId) {
+    private String findOriginalIntercompanyBillCode(String voucherId) {
         IEntityDao<ErpFinVoucherBillR> billRDao = daoProvider.daoFor(ErpFinVoucherBillR.class);
         io.nop.api.core.beans.query.QueryBean q = new io.nop.api.core.beans.query.QueryBean();
         q.addFilter(io.nop.api.core.beans.FilterBeans.eq("voucherId", voucherId));
@@ -266,7 +266,7 @@ public class IntercompanyVoucherGenerator {
      * 经 A1 GlMappingResolver 解析 intercompany 科目；规则表无匹配时回落默认编码。
      */
     private String resolveSubjectCode(String billTypeForLog, String accountKey, GlMappingDimensions dims,
-                                      Long acctSchemaId, String defaultCode) {
+                                      String acctSchemaId, String defaultCode) {
         if (glMappingResolver == null) {
             return defaultCode;
         }
@@ -280,8 +280,8 @@ public class IntercompanyVoucherGenerator {
         }
     }
 
-    private Long writeIntercompanyVoucher(String transferOrderCode, String billType, Long orgId, Long acctSchemaId,
-                                          Long periodId, Long currencyId, BigDecimal amount,
+    private String writeIntercompanyVoucher(String transferOrderCode, String billType, String orgId, String acctSchemaId,
+                                          String periodId, String currencyId, BigDecimal amount,
                                           String debitSubjectCode, String debitSubjectName,
                                           String creditSubjectCode, String creditSubjectName) {
         IEntityDao<ErpFinVoucher> voucherDao = daoProvider.daoFor(ErpFinVoucher.class);
@@ -305,7 +305,7 @@ public class IntercompanyVoucherGenerator {
         voucher.setDocStatus(ErpFinConstants.VOUCHER_STATUS_POSTED);
         voucher.setPostedAt(CoreMetrics.currentTimestamp());
         voucherDao.saveEntity(voucher);
-        Long voucherId = voucher.getId();
+        String voucherId = voucher.getId();
 
         // 借方行
         ErpFinVoucherLine debitLine = lineDao.newEntity();

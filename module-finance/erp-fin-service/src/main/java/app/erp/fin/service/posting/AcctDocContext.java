@@ -11,11 +11,11 @@ public class AcctDocContext {
     /** 端到端追踪 ID（由 PostingEvent 透传，串联全链路日志与异常记录）。 */
     private String traceId;
     private LocalDate voucherDate;
-    private Long acctSchemaId;
-    private Long orgId;
-    private Long currencyId;
+    private String acctSchemaId;
+    private String orgId;
+    private String currencyId;
     private BigDecimal exchangeRate;
-    private Long periodId;
+    private String periodId;
     private String periodStatus;
     private String voucherType;
 
@@ -27,27 +27,27 @@ public class AcctDocContext {
         this.voucherDate = voucherDate;
     }
 
-    public Long getAcctSchemaId() {
+    public String getAcctSchemaId() {
         return acctSchemaId;
     }
 
-    public void setAcctSchemaId(Long acctSchemaId) {
+    public void setAcctSchemaId(String acctSchemaId) {
         this.acctSchemaId = acctSchemaId;
     }
 
-    public Long getOrgId() {
+    public String getOrgId() {
         return orgId;
     }
 
-    public void setOrgId(Long orgId) {
+    public void setOrgId(String orgId) {
         this.orgId = orgId;
     }
 
-    public Long getCurrencyId() {
+    public String getCurrencyId() {
         return currencyId;
     }
 
-    public void setCurrencyId(Long currencyId) {
+    public void setCurrencyId(String currencyId) {
         this.currencyId = currencyId;
     }
 
@@ -59,11 +59,11 @@ public class AcctDocContext {
         this.exchangeRate = exchangeRate;
     }
 
-    public Long getPeriodId() {
+    public String getPeriodId() {
         return periodId;
     }
 
-    public void setPeriodId(Long periodId) {
+    public void setPeriodId(String periodId) {
         this.periodId = periodId;
     }
 

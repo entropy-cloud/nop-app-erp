@@ -60,7 +60,7 @@ public class TestErpOrgIsolation extends JunitAutoTestCase {
     @Test
     public void testReadIsolationFiltersOtherOrg() {
         // 隔离关闭态 seed orgId=3 数据（interceptor no-op）
-        ormTemplate.runInSession(() -> seedArApItem(6001L, 3L, "READ-ISO-3"));
+        ormTemplate.runInSession(() -> seedArApItem("6001", "3", "READ-ISO-3"));
 
         IServiceContext ctx = new ServiceContextImpl();
         // 默认关闭：可见 orgId=3 数据
@@ -69,7 +69,7 @@ public class TestErpOrgIsolation extends JunitAutoTestCase {
 
         // 开启隔离 + ctx orgId=2
         AppConfig.getConfigProvider().assignConfigValue(CONFIG_KEY, "true");
-        ErpOrgContext.setCurrentOrgId(ctx, 2L);
+        ErpOrgContext.setCurrentOrgId(ctx, "2");
         List<ErpFinArApItem> isolated = queryByCode(ctx, "READ-ISO-3");
         assertTrue(isolated.isEmpty(), "隔离开启 + ctx orgId=2：orgId=3 数据被过滤");
 
@@ -84,9 +84,9 @@ public class TestErpOrgIsolation extends JunitAutoTestCase {
     public void testWriteStampOverridesClientOrgId() {
         AppConfig.getConfigProvider().assignConfigValue(CONFIG_KEY, "true");
         // 写路径 interceptor 经 ContextProvider（线程上下文）解析，非 IServiceContext 参数
-        ContextProvider.setContextAttr(ErpOrgIsolationConstants.CONTEXT_ATTR_CURRENT_ORG_ID, 2L);
+        ContextProvider.setContextAttr(ErpOrgIsolationConstants.CONTEXT_ATTR_CURRENT_ORG_ID, "2");
 
-        ormTemplate.runInSession(() -> seedArApItem(6002L, 3L, "WRITE-STAMP-3"));
+        ormTemplate.runInSession(() -> seedArApItem("6002", "3", "WRITE-STAMP-3"));
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpFinArApItem> dao = daoProvider.daoFor(ErpFinArApItem.class);
             QueryBean q = new QueryBean();
@@ -94,20 +94,20 @@ public class TestErpOrgIsolation extends JunitAutoTestCase {
             q.setLimit(1);
             ErpFinArApItem saved = dao.findAllByQuery(q).get(0);
             // 客户端传入 orgId=3 被 stamp 覆盖为上下文 orgId=2
-            assertEquals(2L, saved.getOrgId(), "写路径 stamp 覆盖客户端 orgId=3 → 2");
+            assertEquals("2", saved.getOrgId(), "写路径 stamp 覆盖客户端 orgId=3 → 2");
         });
 
         // 关闭隔离：写入保留客户端 orgId
         AppConfig.getConfigProvider().assignConfigValue(CONFIG_KEY, "false");
         ContextProvider.setContextAttr(ErpOrgIsolationConstants.CONTEXT_ATTR_CURRENT_ORG_ID, null);
-        ormTemplate.runInSession(() -> seedArApItem(6003L, 3L, "WRITE-NOSTAMP-3"));
+        ormTemplate.runInSession(() -> seedArApItem("6003", "3", "WRITE-NOSTAMP-3"));
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpFinArApItem> dao = daoProvider.daoFor(ErpFinArApItem.class);
             QueryBean q = new QueryBean();
             q.addFilter(eq("code", "WRITE-NOSTAMP-3"));
             q.setLimit(1);
             ErpFinArApItem saved = dao.findAllByQuery(q).get(0);
-            assertEquals(3L, saved.getOrgId(), "隔离关闭：客户端 orgId=3 保留");
+            assertEquals("3", saved.getOrgId(), "隔离关闭：客户端 orgId=3 保留");
         });
     }
 
@@ -117,20 +117,20 @@ public class TestErpOrgIsolation extends JunitAutoTestCase {
         return arApItemBiz.findList(query, null, ctx);
     }
 
-    private void seedArApItem(long id, long orgId, String code) {
+    private void seedArApItem(String id, String orgId, String code) {
         IEntityDao<ErpFinArApItem> dao = daoProvider.daoFor(ErpFinArApItem.class);
         ErpFinArApItem it = dao.newEntity();
         it.orm_propValue(1, id);
         it.setCode(code);
         it.setOrgId(orgId);
-        it.setAcctSchemaId(1L);
+        it.setAcctSchemaId("1");
         it.setDirection(ErpFinConstants.DIRECTION_RECEIVABLE);
-        it.setPartnerId(900L);
+        it.setPartnerId("900");
         it.setSourceBillType(ErpFinConstants.SOURCE_BILL_AR_INVOICE);
         it.setSourceBillCode("BILL-" + id);
         it.setBusinessDate(LocalDate.of(2026, 7, 1));
         it.setDueDate(LocalDate.of(2026, 7, 30));
-        it.setCurrencyId(1L);
+        it.setCurrencyId("1");
         it.setExchangeRate(BigDecimal.ONE);
         it.setAmountSource(BigDecimal.ZERO);
         it.setAmountFunctional(BigDecimal.ZERO);

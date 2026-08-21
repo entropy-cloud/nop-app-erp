@@ -46,7 +46,7 @@ public class TestErpFinPeriodStateMachine extends JunitAutoTestCase {
 
     @Test
     public void testForwardAndReverse() {
-        Long periodId = seedReturn(() -> seedOpenPeriod("2026-07", 2026, 7,
+        String periodId = seedReturn(() -> seedOpenPeriod("2026-07", 2026, 7,
                 LocalDate.of(2026, 7, 1), LocalDate.of(2026, 7, 31),
                 ErpFinConstants.PERIOD_STATUS_OPEN));
 
@@ -69,7 +69,7 @@ public class TestErpFinPeriodStateMachine extends JunitAutoTestCase {
 
     @Test
     public void testIllegalTransitionsRejected() {
-        Long periodId = seedReturn(() -> seedOpenPeriod("2026-08", 2026, 8,
+        String periodId = seedReturn(() -> seedOpenPeriod("2026-08", 2026, 8,
                 LocalDate.of(2026, 8, 1), LocalDate.of(2026, 8, 31),
                 ErpFinConstants.PERIOD_STATUS_OPEN));
 
@@ -95,8 +95,8 @@ public class TestErpFinPeriodStateMachine extends JunitAutoTestCase {
     @Test
     public void testNonBlockingCloseWithIssues() {
         // auto-post-on-close=true（提示模式）：存在未过账凭证仍允许结账。
-        Long periodId = seedReturn(() -> {
-            Long pid = seedOpenPeriod("2026-09", 2026, 9,
+        String periodId = seedReturn(() -> {
+            String pid = seedOpenPeriod("2026-09", 2026, 9,
                     LocalDate.of(2026, 9, 1), LocalDate.of(2026, 9, 30),
                     ErpFinConstants.PERIOD_STATUS_OPEN);
             seedUnpostedVoucher("V-DRAFT-001", pid, LocalDate.of(2026, 9, 10),
@@ -112,7 +112,7 @@ public class TestErpFinPeriodStateMachine extends JunitAutoTestCase {
     @Test
     public void testOpenPeriodFromNeverOpened() {
         // P1-MA2-033：NEVER_OPENED→OPEN 正向迁移。
-        Long periodId = seedReturn(() -> seedOpenPeriod("2026-10", 2026, 10,
+        String periodId = seedReturn(() -> seedOpenPeriod("2026-10", 2026, 10,
                 LocalDate.of(2026, 10, 1), LocalDate.of(2026, 10, 31),
                 ErpFinConstants.PERIOD_STATUS_NEVER_OPENED));
 
@@ -124,7 +124,7 @@ public class TestErpFinPeriodStateMachine extends JunitAutoTestCase {
     @Test
     public void testOpenPeriodRejectsNonNeverOpened() {
         // P1-MA2-033：非 NEVER_OPENED 状态调用 openPeriod 被守卫拒绝。
-        Long periodId = seedReturn(() -> seedOpenPeriod("2026-11", 2026, 11,
+        String periodId = seedReturn(() -> seedOpenPeriod("2026-11", 2026, 11,
                 LocalDate.of(2026, 11, 1), LocalDate.of(2026, 11, 30),
                 ErpFinConstants.PERIOD_STATUS_OPEN));
 
@@ -143,12 +143,12 @@ public class TestErpFinPeriodStateMachine extends JunitAutoTestCase {
         return ormTemplate.runInSession(session -> action.get());
     }
 
-    private Long seedOpenPeriod(String code, int year, int month, LocalDate start, LocalDate end, String status) {
+    private String seedOpenPeriod(String code, int year, int month, LocalDate start, LocalDate end, String status) {
         IEntityDao<ErpFinAccountingPeriod> dao = daoProvider.daoFor(ErpFinAccountingPeriod.class);
         ErpFinAccountingPeriod period = new ErpFinAccountingPeriod();
         period.setCode(code);
         period.setName(code);
-        period.setOrgId(1L);
+        period.setOrgId("1");
         period.setYear(year);
         period.setMonth(month);
         period.setStartDate(start);
@@ -158,14 +158,14 @@ public class TestErpFinPeriodStateMachine extends JunitAutoTestCase {
         return period.getId();
     }
 
-    private void seedUnpostedVoucher(String code, Long periodId, LocalDate date, String docStatus) {
+    private void seedUnpostedVoucher(String code, String periodId, LocalDate date, String docStatus) {
         IEntityDao<ErpFinVoucher> dao = daoProvider.daoFor(ErpFinVoucher.class);
         ErpFinVoucher v = new ErpFinVoucher();
         v.setCode(code);
         v.setVoucherType("TRANSFER");
         v.setVoucherDate(date);
-        v.setOrgId(1L);
-        v.setAcctSchemaId(1L);
+        v.setOrgId("1");
+        v.setAcctSchemaId("1");
         v.setPeriodId(periodId);
         v.setTotalDebit(BigDecimal.ZERO);
         v.setTotalCredit(BigDecimal.ZERO);

@@ -188,37 +188,37 @@ public class _ErpFinConsolidationElimination extends DynamicOrmEntity{
 
     
     /* ID: ID */
-    private java.lang.Long _id;
+    private java.lang.String _id;
     
     /* 候选编码: CODE */
     private java.lang.String _code;
     
     /* 核算组织: ORG_ID */
-    private java.lang.Long _orgId;
+    private java.lang.String _orgId;
     
     /* 抵消类型: ELIMINATION_TYPE */
     private java.lang.String _eliminationType;
     
     /* 会计期间: PERIOD_ID */
-    private java.lang.Long _periodId;
+    private java.lang.String _periodId;
     
     /* 配对键: PAIR_KEY */
     private java.lang.String _pairKey;
     
     /* 配对记录: MATCH_ID */
-    private java.lang.Long _matchId;
+    private java.lang.String _matchId;
     
     /* 调出组织: FROM_ORG_ID */
-    private java.lang.Long _fromOrgId;
+    private java.lang.String _fromOrgId;
     
     /* 调入组织: TO_ORG_ID */
-    private java.lang.Long _toOrgId;
+    private java.lang.String _toOrgId;
     
     /* 抵消金额: ELIMINATION_AMOUNT */
     private java.math.BigDecimal _eliminationAmount;
     
     /* 草稿抵消凭证: DRAFT_VOUCHER_ID */
-    private java.lang.Long _draftVoucherId;
+    private java.lang.String _draftVoucherId;
     
     /* 抵消状态: STATUS */
     private java.lang.String _status;
@@ -387,9 +387,9 @@ public class _ErpFinConsolidationElimination extends DynamicOrmEntity{
         switch(propId){
         
             case PROP_ID_id:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_id));
                }
                setId(typedValue);
@@ -407,9 +407,9 @@ public class _ErpFinConsolidationElimination extends DynamicOrmEntity{
             }
         
             case PROP_ID_orgId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_orgId));
                }
                setOrgId(typedValue);
@@ -427,9 +427,9 @@ public class _ErpFinConsolidationElimination extends DynamicOrmEntity{
             }
         
             case PROP_ID_periodId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_periodId));
                }
                setPeriodId(typedValue);
@@ -447,9 +447,9 @@ public class _ErpFinConsolidationElimination extends DynamicOrmEntity{
             }
         
             case PROP_ID_matchId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_matchId));
                }
                setMatchId(typedValue);
@@ -457,9 +457,9 @@ public class _ErpFinConsolidationElimination extends DynamicOrmEntity{
             }
         
             case PROP_ID_fromOrgId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_fromOrgId));
                }
                setFromOrgId(typedValue);
@@ -467,9 +467,9 @@ public class _ErpFinConsolidationElimination extends DynamicOrmEntity{
             }
         
             case PROP_ID_toOrgId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_toOrgId));
                }
                setToOrgId(typedValue);
@@ -487,9 +487,9 @@ public class _ErpFinConsolidationElimination extends DynamicOrmEntity{
             }
         
             case PROP_ID_draftVoucherId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_draftVoucherId));
                }
                setDraftVoucherId(typedValue);
@@ -587,7 +587,7 @@ public class _ErpFinConsolidationElimination extends DynamicOrmEntity{
         
             case PROP_ID_id:{
                onInitProp(propId);
-               this._id = (java.lang.Long)value;
+               this._id = (java.lang.String)value;
                orm_id(); // 如果是设置主键字段，则触发watcher
                break;
             }
@@ -601,7 +601,7 @@ public class _ErpFinConsolidationElimination extends DynamicOrmEntity{
         
             case PROP_ID_orgId:{
                onInitProp(propId);
-               this._orgId = (java.lang.Long)value;
+               this._orgId = (java.lang.String)value;
                
                break;
             }
@@ -615,7 +615,7 @@ public class _ErpFinConsolidationElimination extends DynamicOrmEntity{
         
             case PROP_ID_periodId:{
                onInitProp(propId);
-               this._periodId = (java.lang.Long)value;
+               this._periodId = (java.lang.String)value;
                
                break;
             }
@@ -629,21 +629,21 @@ public class _ErpFinConsolidationElimination extends DynamicOrmEntity{
         
             case PROP_ID_matchId:{
                onInitProp(propId);
-               this._matchId = (java.lang.Long)value;
+               this._matchId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_fromOrgId:{
                onInitProp(propId);
-               this._fromOrgId = (java.lang.Long)value;
+               this._fromOrgId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_toOrgId:{
                onInitProp(propId);
-               this._toOrgId = (java.lang.Long)value;
+               this._toOrgId = (java.lang.String)value;
                
                break;
             }
@@ -657,7 +657,7 @@ public class _ErpFinConsolidationElimination extends DynamicOrmEntity{
         
             case PROP_ID_draftVoucherId:{
                onInitProp(propId);
-               this._draftVoucherId = (java.lang.Long)value;
+               this._draftVoucherId = (java.lang.String)value;
                
                break;
             }
@@ -727,7 +727,7 @@ public class _ErpFinConsolidationElimination extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final java.lang.Long getId(){
+    public final java.lang.String getId(){
          onPropGet(PROP_ID_id);
          return _id;
     }
@@ -735,7 +735,7 @@ public class _ErpFinConsolidationElimination extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final void setId(java.lang.Long value){
+    public final void setId(java.lang.String value){
         if(onPropSet(PROP_ID_id,value)){
             this._id = value;
             internalClearRefs(PROP_ID_id);
@@ -765,7 +765,7 @@ public class _ErpFinConsolidationElimination extends DynamicOrmEntity{
     /**
      * 核算组织: ORG_ID
      */
-    public final java.lang.Long getOrgId(){
+    public final java.lang.String getOrgId(){
          onPropGet(PROP_ID_orgId);
          return _orgId;
     }
@@ -773,7 +773,7 @@ public class _ErpFinConsolidationElimination extends DynamicOrmEntity{
     /**
      * 核算组织: ORG_ID
      */
-    public final void setOrgId(java.lang.Long value){
+    public final void setOrgId(java.lang.String value){
         if(onPropSet(PROP_ID_orgId,value)){
             this._orgId = value;
             internalClearRefs(PROP_ID_orgId);
@@ -803,7 +803,7 @@ public class _ErpFinConsolidationElimination extends DynamicOrmEntity{
     /**
      * 会计期间: PERIOD_ID
      */
-    public final java.lang.Long getPeriodId(){
+    public final java.lang.String getPeriodId(){
          onPropGet(PROP_ID_periodId);
          return _periodId;
     }
@@ -811,7 +811,7 @@ public class _ErpFinConsolidationElimination extends DynamicOrmEntity{
     /**
      * 会计期间: PERIOD_ID
      */
-    public final void setPeriodId(java.lang.Long value){
+    public final void setPeriodId(java.lang.String value){
         if(onPropSet(PROP_ID_periodId,value)){
             this._periodId = value;
             internalClearRefs(PROP_ID_periodId);
@@ -841,7 +841,7 @@ public class _ErpFinConsolidationElimination extends DynamicOrmEntity{
     /**
      * 配对记录: MATCH_ID
      */
-    public final java.lang.Long getMatchId(){
+    public final java.lang.String getMatchId(){
          onPropGet(PROP_ID_matchId);
          return _matchId;
     }
@@ -849,7 +849,7 @@ public class _ErpFinConsolidationElimination extends DynamicOrmEntity{
     /**
      * 配对记录: MATCH_ID
      */
-    public final void setMatchId(java.lang.Long value){
+    public final void setMatchId(java.lang.String value){
         if(onPropSet(PROP_ID_matchId,value)){
             this._matchId = value;
             internalClearRefs(PROP_ID_matchId);
@@ -860,7 +860,7 @@ public class _ErpFinConsolidationElimination extends DynamicOrmEntity{
     /**
      * 调出组织: FROM_ORG_ID
      */
-    public final java.lang.Long getFromOrgId(){
+    public final java.lang.String getFromOrgId(){
          onPropGet(PROP_ID_fromOrgId);
          return _fromOrgId;
     }
@@ -868,7 +868,7 @@ public class _ErpFinConsolidationElimination extends DynamicOrmEntity{
     /**
      * 调出组织: FROM_ORG_ID
      */
-    public final void setFromOrgId(java.lang.Long value){
+    public final void setFromOrgId(java.lang.String value){
         if(onPropSet(PROP_ID_fromOrgId,value)){
             this._fromOrgId = value;
             internalClearRefs(PROP_ID_fromOrgId);
@@ -879,7 +879,7 @@ public class _ErpFinConsolidationElimination extends DynamicOrmEntity{
     /**
      * 调入组织: TO_ORG_ID
      */
-    public final java.lang.Long getToOrgId(){
+    public final java.lang.String getToOrgId(){
          onPropGet(PROP_ID_toOrgId);
          return _toOrgId;
     }
@@ -887,7 +887,7 @@ public class _ErpFinConsolidationElimination extends DynamicOrmEntity{
     /**
      * 调入组织: TO_ORG_ID
      */
-    public final void setToOrgId(java.lang.Long value){
+    public final void setToOrgId(java.lang.String value){
         if(onPropSet(PROP_ID_toOrgId,value)){
             this._toOrgId = value;
             internalClearRefs(PROP_ID_toOrgId);
@@ -917,7 +917,7 @@ public class _ErpFinConsolidationElimination extends DynamicOrmEntity{
     /**
      * 草稿抵消凭证: DRAFT_VOUCHER_ID
      */
-    public final java.lang.Long getDraftVoucherId(){
+    public final java.lang.String getDraftVoucherId(){
          onPropGet(PROP_ID_draftVoucherId);
          return _draftVoucherId;
     }
@@ -925,7 +925,7 @@ public class _ErpFinConsolidationElimination extends DynamicOrmEntity{
     /**
      * 草稿抵消凭证: DRAFT_VOUCHER_ID
      */
-    public final void setDraftVoucherId(java.lang.Long value){
+    public final void setDraftVoucherId(java.lang.String value){
         if(onPropSet(PROP_ID_draftVoucherId,value)){
             this._draftVoucherId = value;
             internalClearRefs(PROP_ID_draftVoucherId);

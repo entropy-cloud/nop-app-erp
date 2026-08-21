@@ -22,8 +22,8 @@
 
     <props>
         <prop name="id" displayName="ID" propId="1" i18n-en:displayName="ID" tagSet="seq-default" mandatory="true"
-              queryable="true" sortable="true" insertable="true" updatable="false" graphql:type="String">
-            <schema type="java.lang.Long"/>
+              queryable="true" sortable="true" insertable="true" updatable="false">
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="code" displayName="单号" propId="2" i18n-en:displayName="Code" tagSet="var" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
@@ -31,15 +31,15 @@
         </prop>
         <prop name="orgId" displayName="核算组织" propId="3" i18n-en:displayName="Organization" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="org">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="claimantId" displayName="报销人" propId="4" i18n-en:displayName="Claimant" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="claimant">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="departmentId" displayName="部门" propId="5" i18n-en:displayName="Department" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="department">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="businessDate" displayName="业务日期" propId="6" i18n-en:displayName="Business Date" tagSet="clock"
               mandatory="true" queryable="true" sortable="true" insertable="true" updatable="true">
@@ -51,7 +51,7 @@
         </prop>
         <prop name="currencyId" displayName="币种" propId="8" i18n-en:displayName="Currency" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="currency">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="exchangeRate" displayName="汇率" propId="9" i18n-en:displayName="Exchange Rate" queryable="true"
               sortable="true" insertable="true" updatable="true" defaultValue="1">
@@ -79,7 +79,7 @@
         </prop>
         <prop name="settleAdvanceId" displayName="抵扣借款单" propId="15" i18n-en:displayName="Settle Advance"
               queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="settleAdvance">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="reason" displayName="报销事由" propId="16" i18n-en:displayName="Reason" queryable="true" sortable="true"
               insertable="true" updatable="true">

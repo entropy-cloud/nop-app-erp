@@ -29,7 +29,7 @@ public class ErpFinPostingExceptionIgnoreProcessor {
     @Inject
     IErpSysNotificationBiz notificationBiz;
 
-    public ErpFinPostingException ignore(Long exceptionId, String resolutionNote, IServiceContext context) {
+    public ErpFinPostingException ignore(String exceptionId, String resolutionNote, IServiceContext context) {
         ErpFinPostingException entity = requirePending(exceptionId);
         if (resolutionNote == null || resolutionNote.trim().isEmpty()) {
             throw new NopException(ErpFinPostingErrors.ERR_POSTING_EXCEPTION_IGNORE_REASON_REQUIRED)
@@ -72,7 +72,7 @@ public class ErpFinPostingExceptionIgnoreProcessor {
         }
     }
 
-    protected ErpFinPostingException requirePending(Long exceptionId) {
+    protected ErpFinPostingException requirePending(String exceptionId) {
         IEntityDao<ErpFinPostingException> dao = daoProvider.daoFor(ErpFinPostingException.class);
         ErpFinPostingException entity = dao.getEntityById(exceptionId);
         if (entity == null) {

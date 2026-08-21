@@ -29,7 +29,7 @@ public interface IErpFinGlMappingResolver {
      * @return 命中规则的 {@code targetSubjectCode}；空匹配返回 {@code null}
      */
     String resolveSubjectCode(String businessType, String accountKey, GlMappingDimensions dimensions,
-                              Long acctSchemaId);
+                              String acctSchemaId);
 
     /**
      * 失效进程内缓存并按需全量 reload（{@code ErpFinGlMappingRuleBizModel} 的 {@code save_/update_/delete_}

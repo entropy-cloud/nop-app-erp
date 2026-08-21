@@ -22,8 +22,8 @@
 
     <props>
         <prop name="id" displayName="ID" propId="1" i18n-en:displayName="ID" tagSet="seq-default" mandatory="true"
-              queryable="true" sortable="true" insertable="true" updatable="false" graphql:type="String">
-            <schema type="java.lang.Long"/>
+              queryable="true" sortable="true" insertable="true" updatable="false">
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="code" displayName="模板编码" propId="2" i18n-en:displayName="Code" tagSet="var" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
@@ -35,7 +35,7 @@
         </prop>
         <prop name="acctSchemaId" displayName="账套(空表示所有账套通用)" propId="4" i18n-en:displayName="Acct Schema"
               queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="acctSchema">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="businessType" displayName="业务类型" propId="5" i18n-en:displayName="Business Type" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">

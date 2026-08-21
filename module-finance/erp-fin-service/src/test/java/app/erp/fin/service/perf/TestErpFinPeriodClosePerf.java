@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * 路径 2 性能基线测试：期间结账（大规模 GL 行结账）（plan 2026-08-02-1121-2 Phase 5 / 设计文档 §4.2 + §5.2）。
  *
- * <p><b>被测链路</b>：{@link IErpFinAccountingPeriodBiz#closePeriod(Long, IServiceContext)}
+ * <p><b>被测链路</b>：{@link IErpFinAccountingPeriodBiz#closePeriod(String, IServiceContext)}
  * 编排（前置检查 → AR/AP/INV/AST/GL 按序关账 → 损益结转 → 试算平衡 → CLOSED）。
  *
  * <p><b>复现性协议</b>（设计文档 §4 统一约定）：K=2 untimed warmup + N=10 timed 测量，
@@ -86,7 +86,7 @@ public class TestErpFinPeriodClosePerf extends JunitAutoTestCase {
 
     @Test
     public void testPeriodClosePerformanceBaseline() {
-        Long periodId = seedPeriodWithGlLines();
+        String periodId = seedPeriodWithGlLines();
 
         long[] nanos = new long[TIMED_N];
         for (int round = -WARMUP_K; round < TIMED_N; round++) {
@@ -117,14 +117,14 @@ public class TestErpFinPeriodClosePerf extends JunitAutoTestCase {
                 + " withinThreshold(<" + VARIANCE_THRESHOLD_PERCENT + "%)=" + m.withinThreshold(VARIANCE_THRESHOLD_PERCENT)
                 + " stabilization=scale-increase-2000to6000");
 
-        assertTrue(periodId != null && periodId > 0, "perf 测试应 seed 有效期间");
+        assertTrue(periodId != null, "perf 测试应 seed 有效期间");
     }
 
     // ---------- seed ----------
 
-    private Long seedPeriodWithGlLines() {
+    private String seedPeriodWithGlLines() {
         return ormTemplate.runInSession(session -> {
-            Long pid = seedOpenPeriod();
+            String pid = seedOpenPeriod();
             ErpMdSubject cash = seedSubject("1001", "库存现金", "ASSET", ErpFinConstants.DC_DEBIT);
             ErpMdSubject inc = seedSubject("6001", "主营业务收入", ErpFinConstants.SUBJECT_CLASS_INCOME, ErpFinConstants.DC_CREDIT);
             ErpMdSubject exp = seedSubject("6601", "销售费用", ErpFinConstants.SUBJECT_CLASS_EXPENSE, ErpFinConstants.DC_DEBIT);
@@ -132,8 +132,8 @@ public class TestErpFinPeriodClosePerf extends JunitAutoTestCase {
             ErpMdSubject ar = seedSubject("1122", "应收账款", "ASSET", ErpFinConstants.DC_DEBIT);
             ErpMdSubject ap = seedSubject("2202", "应付账款", "LIABILITY", ErpFinConstants.DC_CREDIT);
             ErpMdSubject fx = seedSubject("6603", "汇兑损益", ErpFinConstants.SUBJECT_CLASS_EXPENSE, ErpFinConstants.DC_DEBIT);
-            seedCurrency(1L, "CNY", true);
-            seedCurrency(2L, "EUR", false);
+            seedCurrency("1", "CNY", true);
+            seedCurrency("2", "EUR", false);
 
             // 批量灌注 N=GL_LINE_COUNT/2 张凭证（每张 2 行 GL），累积到 GL_LINE_COUNT GL 行。
             int vouchers = GL_LINE_COUNT / 2;
@@ -143,21 +143,21 @@ public class TestErpFinPeriodClosePerf extends JunitAutoTestCase {
             }
             // 一笔未核销外币应收 → 触发汇兑重估阶段（period-close 链路完整性，对齐 PeriodCloseTestSupport.seedFullPeriod）。
             seedOpenArAp("ARI-PERF-001", pid, LocalDate.of(2025, 6, 11),
-                    ErpFinConstants.DIRECTION_RECEIVABLE, 2L, new BigDecimal("100"), new BigDecimal("800"));
+                    ErpFinConstants.DIRECTION_RECEIVABLE, "2", new BigDecimal("100"), new BigDecimal("800"));
             return pid;
         });
     }
 
-    private void seedOpenArAp(String code, Long periodId, LocalDate date, String direction,
-                              Long currencyId, BigDecimal openSource, BigDecimal openFunctional) {
+    private void seedOpenArAp(String code, String periodId, LocalDate date, String direction,
+                              String currencyId, BigDecimal openSource, BigDecimal openFunctional) {
         IEntityDao<app.erp.fin.dao.entity.ErpFinArApItem> dao =
                 daoProvider.daoFor(app.erp.fin.dao.entity.ErpFinArApItem.class);
         app.erp.fin.dao.entity.ErpFinArApItem item = new app.erp.fin.dao.entity.ErpFinArApItem();
         item.setCode(code);
-        item.setOrgId(1L);
-        item.setAcctSchemaId(1L);
+        item.setOrgId("1");
+        item.setAcctSchemaId("1");
         item.setDirection(direction);
-        item.setPartnerId(1L);
+        item.setPartnerId("1");
         item.setSourceBillType(ErpFinConstants.SOURCE_BILL_AR_INVOICE);
         item.setSourceBillCode(code);
         item.setBusinessDate(date);
@@ -174,12 +174,12 @@ public class TestErpFinPeriodClosePerf extends JunitAutoTestCase {
         dao.saveEntity(item);
     }
 
-    private Long seedOpenPeriod() {
+    private String seedOpenPeriod() {
         IEntityDao<ErpFinAccountingPeriod> dao = daoProvider.daoFor(ErpFinAccountingPeriod.class);
         ErpFinAccountingPeriod p = new ErpFinAccountingPeriod();
         p.setCode(PERIOD_CODE);
         p.setName(PERIOD_CODE);
-        p.setOrgId(1L);
+        p.setOrgId("1");
         p.setYear(2025);
         p.setMonth(6);
         p.setStartDate(LocalDate.of(2025, 6, 1));
@@ -201,7 +201,7 @@ public class TestErpFinPeriodClosePerf extends JunitAutoTestCase {
         return s;
     }
 
-    private void seedCurrency(Long id, String code, boolean functional) {
+    private void seedCurrency(String id, String code, boolean functional) {
         IEntityDao<ErpMdCurrency> dao = daoProvider.daoFor(ErpMdCurrency.class);
         ErpMdCurrency c = new ErpMdCurrency();
         c.setId(id);
@@ -211,7 +211,7 @@ public class TestErpFinPeriodClosePerf extends JunitAutoTestCase {
         dao.saveEntity(c);
     }
 
-    private void seedPostedVoucher(String vcode, Long periodId, LocalDate date, BigDecimal amt,
+    private void seedPostedVoucher(String vcode, String periodId, LocalDate date, BigDecimal amt,
                                     ErpMdSubject debit, ErpMdSubject credit) {
         IEntityDao<app.erp.fin.dao.entity.ErpFinVoucher> vDao =
                 daoProvider.daoFor(app.erp.fin.dao.entity.ErpFinVoucher.class);
@@ -219,8 +219,8 @@ public class TestErpFinPeriodClosePerf extends JunitAutoTestCase {
         v.setCode(vcode);
         v.setVoucherType("TRANSFER");
         v.setVoucherDate(date);
-        v.setOrgId(1L);
-        v.setAcctSchemaId(1L);
+        v.setOrgId("1");
+        v.setAcctSchemaId("1");
         v.setPeriodId(periodId);
         v.setTotalDebit(amt);
         v.setTotalCredit(amt);
@@ -240,11 +240,11 @@ public class TestErpFinPeriodClosePerf extends JunitAutoTestCase {
         debitLine.setDcDirection(ErpFinConstants.DC_DEBIT);
         debitLine.setDebitAmount(amt);
         debitLine.setCreditAmount(BigDecimal.ZERO);
-        debitLine.setCurrencyId(1L);
+        debitLine.setCurrencyId("1");
         debitLine.setExchangeRate(BigDecimal.ONE);
         debitLine.setAmountSource(amt);
         debitLine.setAmountFunctional(amt);
-        debitLine.setAcctSchemaId(1L);
+        debitLine.setAcctSchemaId("1");
         lDao.saveEntity(debitLine);
 
         app.erp.fin.dao.entity.ErpFinVoucherLine creditLine = new app.erp.fin.dao.entity.ErpFinVoucherLine();
@@ -256,11 +256,11 @@ public class TestErpFinPeriodClosePerf extends JunitAutoTestCase {
         creditLine.setDcDirection(ErpFinConstants.DC_CREDIT);
         creditLine.setDebitAmount(BigDecimal.ZERO);
         creditLine.setCreditAmount(amt);
-        creditLine.setCurrencyId(1L);
+        creditLine.setCurrencyId("1");
         creditLine.setExchangeRate(BigDecimal.ONE);
         creditLine.setAmountSource(amt);
         creditLine.setAmountFunctional(amt);
-        creditLine.setAcctSchemaId(1L);
+        creditLine.setAcctSchemaId("1");
         lDao.saveEntity(creditLine);
     }
 }

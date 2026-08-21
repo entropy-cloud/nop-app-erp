@@ -13,30 +13,30 @@
     public class ErpFinVoucherBillROutputBean {
 
     
-        private Long _id;
+        private String _id;
 
     
         @PropMeta(propId=1)
     
-        public Long getId(){
+        public String getId(){
             return _id;
         }
 
-        public void setId(Long value){
+        public void setId(String value){
             this._id = value;
         }
 
 
-        private Long _voucherId;
+        private String _voucherId;
 
     
         @PropMeta(propId=2)
     
-        public Long getVoucherId(){
+        public String getVoucherId(){
             return _voucherId;
         }
 
-        public void setVoucherId(Long value){
+        public void setVoucherId(String value){
             this._voucherId = value;
         }
 

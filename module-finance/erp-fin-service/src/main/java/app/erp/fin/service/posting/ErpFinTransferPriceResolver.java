@@ -53,12 +53,12 @@ public class ErpFinTransferPriceResolver implements IErpFinTransferPriceResolver
     }
 
     @Override
-    public TransferPriceResult resolvePrice(Long fromOrgId, Long toOrgId, Long materialId,
+    public TransferPriceResult resolvePrice(String fromOrgId, String toOrgId, String materialId,
                                             LocalDate businessDate) {
         if (fromOrgId == null || toOrgId == null) {
             return null;
         }
-        Long materialCategoryId = lookupMaterialCategoryId(materialId);
+        String materialCategoryId = lookupMaterialCategoryId(materialId);
         List<ErpFinIntercompanyTransferPrice> candidates = loadCandidates(fromOrgId, toOrgId);
 
         ErpFinIntercompanyTransferPrice winner = pickBest(candidates, fromOrgId, toOrgId,
@@ -87,8 +87,8 @@ public class ErpFinTransferPriceResolver implements IErpFinTransferPriceResolver
     // ---------- 内部辅助 ----------
 
     private ErpFinIntercompanyTransferPrice pickBest(List<ErpFinIntercompanyTransferPrice> candidates,
-                                                     Long fromOrgId, Long toOrgId, Long materialId,
-                                                     Long materialCategoryId, LocalDate businessDate) {
+                                                     String fromOrgId, String toOrgId, String materialId,
+                                                     String materialCategoryId, LocalDate businessDate) {
         List<ErpFinIntercompanyTransferPrice> matched = new ArrayList<>();
         for (ErpFinIntercompanyTransferPrice rule : candidates) {
             if (!Boolean.TRUE.equals(rule.getIsActive())) {
@@ -115,7 +115,7 @@ public class ErpFinTransferPriceResolver implements IErpFinTransferPriceResolver
         return matched.get(0);
     }
 
-    private boolean matchesMaterial(ErpFinIntercompanyTransferPrice rule, Long materialId, Long materialCategoryId) {
+    private boolean matchesMaterial(ErpFinIntercompanyTransferPrice rule, String materialId, String materialCategoryId) {
         if (rule.getMaterialId() != null) {
             return Objects.equals(rule.getMaterialId(), materialId);
         }
@@ -159,7 +159,7 @@ public class ErpFinTransferPriceResolver implements IErpFinTransferPriceResolver
         return base;
     }
 
-    private Long lookupMaterialCategoryId(Long materialId) {
+    private String lookupMaterialCategoryId(String materialId) {
         if (materialId == null) {
             return null;
         }
@@ -172,7 +172,7 @@ public class ErpFinTransferPriceResolver implements IErpFinTransferPriceResolver
         }
     }
 
-    private List<ErpFinIntercompanyTransferPrice> loadCandidates(Long fromOrgId, Long toOrgId) {
+    private List<ErpFinIntercompanyTransferPrice> loadCandidates(String fromOrgId, String toOrgId) {
         if (!cacheLoaded) {
             reloadCache();
         }
@@ -200,7 +200,7 @@ public class ErpFinTransferPriceResolver implements IErpFinTransferPriceResolver
         LOG.info("转移定价规则缓存已加载：{} 条规则，{} 个 (fromOrgId, toOrgId) 索引", all.size(), newCache.size());
     }
 
-    private static String cacheKey(Long fromOrgId, Long toOrgId) {
+    private static String cacheKey(String fromOrgId, String toOrgId) {
         return (fromOrgId == null ? "_" : fromOrgId.toString()) + ":"
                 + (toOrgId == null ? "_" : toOrgId.toString());
     }

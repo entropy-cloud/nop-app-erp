@@ -1,5 +1,5 @@
 {
-  "id": 20,
+  "id": "20",
   "postingType": "REVERSAL",
   "failedStage": "notify-reversal-listener",
   "errorCode": "erp.err.fin.posting.reversal-listener-failed",

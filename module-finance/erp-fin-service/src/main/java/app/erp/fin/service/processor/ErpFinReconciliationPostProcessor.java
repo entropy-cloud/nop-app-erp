@@ -24,7 +24,7 @@ public class ErpFinReconciliationPostProcessor extends AbstractErpFinReconciliat
     @Inject
     ErpFinReconciliationDocumentStateMachine stateMachine;
 
-    public ErpFinReconciliation post(Long reconciliationId, IServiceContext context) {
+    public ErpFinReconciliation post(String reconciliationId, IServiceContext context) {
         ErpFinReconciliation head = requireHead(reconciliationId, context);
         assertCanPost(head);
         List<ErpFinReconciliationLine> lines = loadLines(reconciliationId);

@@ -70,8 +70,8 @@ public class TestErpFinBankReconciliation extends JunitAutoTestCase {
     @Test
     public void testGenerateBalancedNoUnrecorded() {
         long seed = System.nanoTime();
-        long subjectId = 9001L;
-        long[] ctx = new long[1];
+        String subjectId = "9001";
+        String[] ctx = new String[1];
         ormTemplate.runInSession(() -> {
             seedSubject(subjectId, "1002", "银行存款");
             ctx[0] = seedFundAccount(subjectId, new BigDecimal("1000"));
@@ -92,8 +92,8 @@ public class TestErpFinBankReconciliation extends JunitAutoTestCase {
     @Test
     public void testGenerateUnbalancedRejected() {
         long seed = System.nanoTime();
-        long subjectId = 9002L;
-        long[] ctx = new long[1];
+        String subjectId = "9002";
+        String[] ctx = new String[1];
         ormTemplate.runInSession(() -> {
             seedSubject(subjectId, "1002", "银行存款");
             ctx[0] = seedFundAccount(subjectId, new BigDecimal("1000"));
@@ -113,8 +113,8 @@ public class TestErpFinBankReconciliation extends JunitAutoTestCase {
     @Test
     public void testPostNoAdjustmentVoucherWhenNoUnrecorded() {
         long seed = System.nanoTime();
-        long subjectId = 9003L;
-        long[] ctx = new long[1];
+        String subjectId = "9003";
+        String[] ctx = new String[1];
         ormTemplate.runInSession(() -> {
             seedSubject(subjectId, "1002", "银行存款");
             ctx[0] = seedFundAccount(subjectId, new BigDecimal("1000"));
@@ -135,11 +135,11 @@ public class TestErpFinBankReconciliation extends JunitAutoTestCase {
     @Test
     public void testPostGeneratesAdjustmentVoucherAndReverse() {
         long seed = System.nanoTime();
-        long subjectId = 9004L;
-        long[] ctx = new long[1];
+        String subjectId = "9004";
+        String[] ctx = new String[1];
         ormTemplate.runInSession(() -> {
             seedSubject(subjectId, "1002", "银行存款");
-            seedSubject(90040L, "2240OTHER", "未达账项调整");
+            seedSubject("90040", "2240OTHER", "未达账项调整");
             ctx[0] = seedFundAccount(subjectId, new BigDecimal("1000"));
             // 调整凭证过账需要 OPEN 期间匹配 voucherDate=2026-06-30
             seedPeriod("2026-06-OPEN", 2026, 6,
@@ -160,7 +160,7 @@ public class TestErpFinBankReconciliation extends JunitAutoTestCase {
         ormTemplate.runInSession(() -> bankReconciliationBiz.post(recon.getId(), CTX));
         assertTrue(countBillLinks(recon.getCode()) >= 1, "存在未达项时应生成 BANK_RECON_ADJ 调整凭证");
 
-        Long adjVoucherId = findAdjVoucherId(recon.getCode());
+        String adjVoucherId = findAdjVoucherId(recon.getCode());
         assertNotNull(adjVoucherId, "应能反查到调整凭证 ID");
         ErpFinVoucher adj = daoProvider.daoFor(ErpFinVoucher.class).getEntityById(adjVoucherId);
         assertEquals(VOUCHER_STATUS_POSTED, adj.getDocStatus(), "调整凭证已过账");
@@ -173,8 +173,8 @@ public class TestErpFinBankReconciliation extends JunitAutoTestCase {
     @Test
     public void testPeriodClosedRejectsGenerate() {
         long seed = System.nanoTime();
-        long subjectId = 9005L;
-        long[] ctx = new long[1];
+        String subjectId = "9005";
+        String[] ctx = new String[1];
         ormTemplate.runInSession(() -> {
             seedSubject(subjectId, "1002", "银行存款");
             ctx[0] = seedFundAccount(subjectId, new BigDecimal("1000"));
@@ -203,7 +203,7 @@ public class TestErpFinBankReconciliation extends JunitAutoTestCase {
         return dao.findAllByQuery(q).size();
     }
 
-    private Long findAdjVoucherId(String billCode) {
+    private String findAdjVoucherId(String billCode) {
         IEntityDao<ErpFinVoucherBillR> dao = daoProvider.daoFor(ErpFinVoucherBillR.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("billCode", billCode));
@@ -213,14 +213,14 @@ public class TestErpFinBankReconciliation extends JunitAutoTestCase {
         return link != null ? link.getVoucherId() : null;
     }
 
-    private long countReversalVouchers(Long originalVoucherId) {
+    private long countReversalVouchers(String originalVoucherId) {
         IEntityDao<ErpFinVoucher> dao = daoProvider.daoFor(ErpFinVoucher.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("reversalOfVoucherId", originalVoucherId));
         return dao.findAllByQuery(q).size();
     }
 
-    private ErpFinBankReconciliation reloadRecon(Long id) {
+    private ErpFinBankReconciliation reloadRecon(String id) {
         return daoProvider.daoFor(ErpFinBankReconciliation.class).getEntityById(id);
     }
 
@@ -239,15 +239,15 @@ public class TestErpFinBankReconciliation extends JunitAutoTestCase {
         return in;
     }
 
-    private long seedFundAccount(long subjectId, BigDecimal currentBalance) {
+    private String seedFundAccount(String subjectId, BigDecimal currentBalance) {
         IEntityDao<ErpFinFundAccount> dao = daoProvider.daoFor(ErpFinFundAccount.class);
         ErpFinFundAccount account = dao.newEntity();
         account.setCode("FA-" + System.nanoTime());
         account.setName("Bank");
-        account.setOrgId(1L);
+        account.setOrgId("1");
         account.setAccountType(ErpFinConstants.FUND_ACCOUNT_TYPE_BANK);
         account.setSubjectId(subjectId);
-        account.setCurrencyId(1L);
+        account.setCurrencyId("1");
         account.setOpeningBalance(currentBalance);
         account.setCurrentBalance(currentBalance);
         account.setStatus("ACTIVE");
@@ -255,7 +255,7 @@ public class TestErpFinBankReconciliation extends JunitAutoTestCase {
         return account.getId();
     }
 
-    private void seedSubject(long id, String code, String name) {
+    private void seedSubject(String id, String code, String name) {
         IEntityDao<ErpMdSubject> dao = daoProvider.daoFor(ErpMdSubject.class);
         ErpMdSubject s = new ErpMdSubject();
         s.orm_propValue(1, id);
@@ -273,7 +273,7 @@ public class TestErpFinBankReconciliation extends JunitAutoTestCase {
         ErpFinAccountingPeriod p = dao.newEntity();
         p.setCode(code);
         p.setName(code);
-        p.setOrgId(1L);
+        p.setOrgId("1");
         p.setYear(year);
         p.setMonth(month);
         p.setStartDate(start);
@@ -283,11 +283,11 @@ public class TestErpFinBankReconciliation extends JunitAutoTestCase {
         return p;
     }
 
-    private void seedPeriodStatusClosed(Long periodId) {
+    private void seedPeriodStatusClosed(String periodId) {
         IEntityDao<ErpFinAccountingPeriodStatus> dao = daoProvider.daoFor(ErpFinAccountingPeriodStatus.class);
         ErpFinAccountingPeriodStatus s = dao.newEntity();
         s.setPeriodId(periodId);
-        s.setAcctSchemaId(1L);
+        s.setAcctSchemaId("1");
         s.setArStatus(ErpFinConstants.MODULE_CLOSE_OPEN);
         s.setApStatus(ErpFinConstants.MODULE_CLOSE_OPEN);
         s.setInvStatus(ErpFinConstants.MODULE_CLOSE_OPEN);

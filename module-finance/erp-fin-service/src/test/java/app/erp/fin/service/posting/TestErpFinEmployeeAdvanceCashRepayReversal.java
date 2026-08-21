@@ -76,13 +76,13 @@ public class TestErpFinEmployeeAdvanceCashRepayReversal extends JunitAutoTestCas
 
     @Test
     public void testReverseCashRepayRedReversesVoucherAndRollsBackFields() {
-        long partnerId = 8820L;
-        Long advanceId = ormTemplate.runInSession(session -> {
+        String partnerId = "8820";
+        String advanceId = ormTemplate.runInSession(session -> {
             seedCurrentMonthOpenPeriod();
-            seedAcctSchema(1L);
+            seedAcctSchema("1");
             seedSubject("1221", "其他应收款-员工预支");
             seedSubject("1002", "银行存款");
-            Long empId = seedEmployee(partnerId, ErpFinConstants.EMPLOYEE_STATUS_ACTIVE);
+            String empId = seedEmployee(partnerId, ErpFinConstants.EMPLOYEE_STATUS_ACTIVE);
             return seedPostedAdvance("ADV-REV-001", empId, new BigDecimal("500"));
         });
 
@@ -93,7 +93,7 @@ public class TestErpFinEmployeeAdvanceCashRepayReversal extends JunitAutoTestCas
         assertEquals(0, new BigDecimal("500").compareTo(before.getSettledAmount()), "前置：settled=500");
         assertEquals(0, BigDecimal.ZERO.compareTo(before.getOutstandingAmount()), "前置：outstanding=0");
 
-        Long originalVoucherId = findCashRepayVoucherId("ADV-REV-001", false);
+        String originalVoucherId = findCashRepayVoucherId("ADV-REV-001", false);
         assertNotNull(originalVoucherId, "前置：cashRepay 凭证已生成");
 
         output("1_before_reverse_advance.json5", advanceState(before));
@@ -117,7 +117,7 @@ public class TestErpFinEmployeeAdvanceCashRepayReversal extends JunitAutoTestCas
         assertEquals(Boolean.TRUE, originalVoucher.getIsReversed(), "原 cashRepay 凭证 isReversed=true");
 
         // 红字凭证存在 + 同向取负（Dr 1002=-500 / Cr 1221=-500）
-        Long reversalVoucherId = findCashRepayVoucherId("ADV-REV-001", true);
+        String reversalVoucherId = findCashRepayVoucherId("ADV-REV-001", true);
         assertNotNull(reversalVoucherId, "红字凭证应生成");
         assertNotEquals(originalVoucherId, reversalVoucherId, "红字凭证 id ≠ 原凭证 id");
 
@@ -134,13 +134,13 @@ public class TestErpFinEmployeeAdvanceCashRepayReversal extends JunitAutoTestCas
 
     @Test
     public void testReverseCashRepayOnlyReversesLatestWhenMultiple() {
-        long partnerId = 8821L;
-        Long advanceId = ormTemplate.runInSession(session -> {
+        String partnerId = "8821";
+        String advanceId = ormTemplate.runInSession(session -> {
             seedCurrentMonthOpenPeriod();
-            seedAcctSchema(1L);
+            seedAcctSchema("1");
             seedSubject("1221", "其他应收款-员工预支");
             seedSubject("1002", "银行存款");
-            Long empId = seedEmployee(partnerId, ErpFinConstants.EMPLOYEE_STATUS_ACTIVE);
+            String empId = seedEmployee(partnerId, ErpFinConstants.EMPLOYEE_STATUS_ACTIVE);
             return seedPostedAdvance("ADV-REV-002", empId, new BigDecimal("500"));
         });
 
@@ -165,13 +165,13 @@ public class TestErpFinEmployeeAdvanceCashRepayReversal extends JunitAutoTestCas
 
     @Test
     public void testGuardNoCashRepayVoucherRejects() {
-        long partnerId = 8822L;
-        Long advanceId = ormTemplate.runInSession(session -> {
+        String partnerId = "8822";
+        String advanceId = ormTemplate.runInSession(session -> {
             seedCurrentMonthOpenPeriod();
-            seedAcctSchema(1L);
+            seedAcctSchema("1");
             seedSubject("1221", "其他应收款-员工预支");
             seedSubject("1002", "银行存款");
-            Long empId = seedEmployee(partnerId, ErpFinConstants.EMPLOYEE_STATUS_ACTIVE);
+            String empId = seedEmployee(partnerId, ErpFinConstants.EMPLOYEE_STATUS_ACTIVE);
             return seedPostedAdvance("ADV-REV-003", empId, new BigDecimal("500"));
         });
 
@@ -190,23 +190,23 @@ public class TestErpFinEmployeeAdvanceCashRepayReversal extends JunitAutoTestCas
 
     // ---------- seed helpers ----------
 
-    private Long seedPostedAdvance(String code, Long employeeId, BigDecimal amount) {
+    private String seedPostedAdvance(String code, String employeeId, BigDecimal amount) {
         return seedAdvanceWithState(code, employeeId, amount,
                 ErpFinConstants.APPROVE_STATUS_APPROVED, true,
                 BigDecimal.ZERO, amount);
     }
 
-    private Long seedAdvanceWithState(String code, Long employeeId, BigDecimal amount,
+    private String seedAdvanceWithState(String code, String employeeId, BigDecimal amount,
                                        String approveStatus, boolean posted,
                                        BigDecimal settledAmount, BigDecimal outstandingAmount) {
         IEntityDao<ErpFinEmployeeAdvance> dao = daoProvider.daoFor(ErpFinEmployeeAdvance.class);
         ErpFinEmployeeAdvance advance = new ErpFinEmployeeAdvance();
         advance.setCode(code);
-        advance.setOrgId(1L);
+        advance.setOrgId("1");
         advance.setEmployeeId(employeeId);
         advance.setAdvanceType("EXPENSE_ADVANCE");
         advance.setBusinessDate(LocalDate.of(2026, 8, 10));
-        advance.setCurrencyId(1L);
+        advance.setCurrencyId("1");
         advance.setExchangeRate(BigDecimal.ONE);
         advance.setAmountFunctional(amount);
         advance.setAmountSource(amount);
@@ -219,12 +219,12 @@ public class TestErpFinEmployeeAdvanceCashRepayReversal extends JunitAutoTestCas
         return advance.getId();
     }
 
-    private Long seedEmployee(long partnerId, String status) {
+    private String seedEmployee(String partnerId, String status) {
         IEntityDao<ErpMdEmployee> dao = daoProvider.daoFor(ErpMdEmployee.class);
         ErpMdEmployee emp = new ErpMdEmployee();
         emp.setCode("E-" + partnerId);
         emp.setName("员工-" + partnerId);
-        emp.setOrgId(1L);
+        emp.setOrgId("1");
         emp.setPartnerId(partnerId);
         emp.setStatus(status);
         dao.saveEntity(emp);
@@ -242,14 +242,14 @@ public class TestErpFinEmployeeAdvanceCashRepayReversal extends JunitAutoTestCas
         dao.saveEntity(subject);
     }
 
-    private void seedAcctSchema(long orgId) {
+    private void seedAcctSchema(String orgId) {
         IEntityDao<ErpMdAcctSchema> dao = daoProvider.daoFor(ErpMdAcctSchema.class);
         ErpMdAcctSchema schema = new ErpMdAcctSchema();
         schema.setCode("AS-" + orgId);
         schema.setName("账套-" + orgId);
         schema.setOrgId(orgId);
         schema.setNature("FINANCIAL");
-        schema.setFunctionalCurrencyId(1L);
+        schema.setFunctionalCurrencyId("1");
         schema.setStatus("ACTIVE");
         dao.saveEntity(schema);
     }
@@ -259,7 +259,7 @@ public class TestErpFinEmployeeAdvanceCashRepayReversal extends JunitAutoTestCas
         ErpFinAccountingPeriod period = new ErpFinAccountingPeriod();
         period.setCode(code);
         period.setName(code);
-        period.setOrgId(1L);
+        period.setOrgId("1");
         period.setYear(year);
         period.setMonth(month);
         period.setStartDate(start);
@@ -278,7 +278,7 @@ public class TestErpFinEmployeeAdvanceCashRepayReversal extends JunitAutoTestCas
 
     // ---------- query helpers ----------
 
-    private ErpFinEmployeeAdvance fetchAdvance(Long id) {
+    private ErpFinEmployeeAdvance fetchAdvance(String id) {
         return daoProvider.daoFor(ErpFinEmployeeAdvance.class).getEntityById(id);
     }
 
@@ -286,7 +286,7 @@ public class TestErpFinEmployeeAdvanceCashRepayReversal extends JunitAutoTestCas
      * 经 ErpFinVoucherBillR 反查 cashRepay 凭证 id（按 advanceCode 前缀 + postingType 过滤）。
      * @param reversal true=查红字凭证；false=查原 NORMAL 凭证
      */
-    private Long findCashRepayVoucherId(String advanceCode, boolean reversal) {
+    private String findCashRepayVoucherId(String advanceCode, boolean reversal) {
         IEntityDao<ErpFinVoucherBillR> linkDao = daoProvider.daoFor(ErpFinVoucherBillR.class);
         QueryBean q = new QueryBean();
         q.addFilter(and(
@@ -306,7 +306,7 @@ public class TestErpFinEmployeeAdvanceCashRepayReversal extends JunitAutoTestCas
         return null;
     }
 
-    private List<ErpFinVoucherLine> linesOf(Long voucherId) {
+    private List<ErpFinVoucherLine> linesOf(String voucherId) {
         IEntityDao<ErpFinVoucherLine> dao = daoProvider.daoFor(ErpFinVoucherLine.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("voucherId", voucherId));

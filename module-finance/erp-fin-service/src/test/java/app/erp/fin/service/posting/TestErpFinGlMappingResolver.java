@@ -35,16 +35,16 @@ public class TestErpFinGlMappingResolver extends JunitAutoTestCase {
 
     static final String BT = "AP_INVOICE";
     static final String AK_PURCHASE = "PURCHASE";
-    static final Long ACCT_SCHEMA_7 = 7L;
-    static final Long ACCT_SCHEMA_8 = 8L;
-    static final Long PARTNER_GROUP_A = 100L;
-    static final Long PARTNER_GROUP_B = 200L;
-    static final Long MATERIAL_CATEGORY_42 = 42L;
-    static final Long MATERIAL_CATEGORY_43 = 43L;
-    static final Long WAREHOUSE_1 = 101L;
-    static final Long MATERIAL_ID_5001 = 5001L;
-    static final Long ORG_1 = 1L;
-    static final Long ORG_2 = 2L;
+    static final String ACCT_SCHEMA_7 = "7";
+    static final String ACCT_SCHEMA_8 = "8";
+    static final String PARTNER_GROUP_A = "100";
+    static final String PARTNER_GROUP_B = "200";
+    static final String MATERIAL_CATEGORY_42 = "42";
+    static final String MATERIAL_CATEGORY_43 = "43";
+    static final String WAREHOUSE_1 = "101";
+    static final String MATERIAL_ID_5001 = "5001";
+    static final String ORG_1 = "1";
+    static final String ORG_2 = "2";
 
     @Inject
     IDaoProvider daoProvider;
@@ -349,14 +349,14 @@ public class TestErpFinGlMappingResolver extends JunitAutoTestCase {
 
     // ---------- helpers ----------
 
-    private void seedRule(String code, String businessType, String accountKey, Long acctSchemaId,
-                          Long partnerGroupId, Long materialCategoryId, Long warehouseId, Long departmentId,
-                          Long projectId, Long orgId, String targetSubjectCode, int priority) {
+    private void seedRule(String code, String businessType, String accountKey, String acctSchemaId,
+                          String partnerGroupId, String materialCategoryId, String warehouseId, String departmentId,
+                          Long projectId, String orgId, String targetSubjectCode, int priority) {
         IEntityDao<ErpFinGlMappingRule> dao = daoProvider.daoFor(ErpFinGlMappingRule.class);
         ErpFinGlMappingRule rule = new ErpFinGlMappingRule();
         rule.setCode(code);
         rule.setName(code);
-        rule.setOrgId(orgId == null ? 1L : orgId);
+        rule.setOrgId(orgId == null ? "1" : orgId);
         rule.setBusinessType(businessType);
         rule.setAccountKey(accountKey);
         rule.setAcctSchemaId(acctSchemaId);
@@ -371,14 +371,14 @@ public class TestErpFinGlMappingResolver extends JunitAutoTestCase {
         dao.saveEntity(rule);
     }
 
-    private void seedMaterial(Long id, Long categoryId) {
+    private void seedMaterial(String id, String categoryId) {
         IEntityDao<ErpMdMaterial> dao = daoProvider.daoFor(ErpMdMaterial.class);
         ErpMdMaterial material = new ErpMdMaterial();
         material.setId(id);
         material.setCode("MAT-" + id);
         material.setName("物料" + id);
         material.setMaterialType("FINISHED");
-        material.setUoMId(1L);
+        material.setUoMId("1");
         material.setStatus("ACTIVE");
         material.setCategoryId(categoryId);
         dao.saveEntity(material);

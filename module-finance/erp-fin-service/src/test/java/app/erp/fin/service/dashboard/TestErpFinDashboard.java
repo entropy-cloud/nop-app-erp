@@ -68,27 +68,27 @@ public class TestErpFinDashboard extends JunitAutoTestCase {
     @Test
     public void testKpiAggregationArithmetic() {
         ormTemplate.runInSession(() -> {
-            ErpMdSubject income = seedSubject(101L, "6001", "INCOME", ErpFinConstants.DC_CREDIT);
-            ErpMdSubject expense = seedSubject(102L, "6601", "EXPENSE", ErpFinConstants.DC_DEBIT);
-            ErpFinAccountingPeriod period = seedPeriod(201L, 2026, 7);
+            ErpMdSubject income = seedSubject("101", "6001", "INCOME", ErpFinConstants.DC_CREDIT);
+            ErpMdSubject expense = seedSubject("102", "6601", "EXPENSE", ErpFinConstants.DC_DEBIT);
+            ErpFinAccountingPeriod period = seedPeriod("201", 2026, 7);
             // 收入 1000（credit-debit=1000），费用 300（debit-credit=300）→ 净利润 700
-            seedGlBalance(301L, period.getId(), income.getId(),
+            seedGlBalance("301", period.getId(), income.getId(),
                     new BigDecimal("0"), new BigDecimal("0"),       // opening
                     new BigDecimal("0"), new BigDecimal("1000"),    // period debit/credit
                     new BigDecimal("0"), new BigDecimal("1000"));   // closing
-            seedGlBalance(302L, period.getId(), expense.getId(),
+            seedGlBalance("302", period.getId(), expense.getId(),
                     new BigDecimal("0"), new BigDecimal("0"),
                     new BigDecimal("300"), new BigDecimal("0"),
                     new BigDecimal("300"), new BigDecimal("0"));
             // 银行存款 5000
-            seedBankAccount(401L, "BANK-A", new BigDecimal("5000"));
+            seedBankAccount("401", "BANK-A", new BigDecimal("5000"));
             // AR 余额 800（RECEIVABLE + OPEN）
-            seedArApItem(501L, ErpFinConstants.DIRECTION_RECEIVABLE, ErpFinConstants.AR_AP_STATUS_OPEN, new BigDecimal("800"));
+            seedArApItem("501", ErpFinConstants.DIRECTION_RECEIVABLE, ErpFinConstants.AR_AP_STATUS_OPEN, new BigDecimal("800"));
             // AP 余额 400（PAYABLE + OPEN）
-            seedArApItem(502L, ErpFinConstants.DIRECTION_PAYABLE, ErpFinConstants.AR_AP_STATUS_OPEN, new BigDecimal("400"));
+            seedArApItem("502", ErpFinConstants.DIRECTION_PAYABLE, ErpFinConstants.AR_AP_STATUS_OPEN, new BigDecimal("400"));
         });
 
-        Map<String, Object> kpi = dashboardBiz.getDashboardKpi(201L, CTX);
+        Map<String, Object> kpi = dashboardBiz.getDashboardKpi("201", CTX);
         assertEquals(0, ((BigDecimal) kpi.get("revenue")).compareTo(new BigDecimal("1000")));
         assertEquals(0, ((BigDecimal) kpi.get("expense")).compareTo(new BigDecimal("300")));
         assertEquals(0, ((BigDecimal) kpi.get("netProfit")).compareTo(new BigDecimal("700")));
@@ -105,14 +105,14 @@ public class TestErpFinDashboard extends JunitAutoTestCase {
         java.time.YearMonth now = java.time.YearMonth.from(FinFrozenClockExtension.REFERENCE_DATE);
         java.time.YearMonth prev = now.minusMonths(1);
         ormTemplate.runInSession(() -> {
-            ErpMdSubject income = seedSubject(111L, "6001", "INCOME", ErpFinConstants.DC_CREDIT);
-            ErpFinAccountingPeriod prv = seedPeriod(211L, prev.getYear(), prev.getMonthValue());
-            ErpFinAccountingPeriod cur = seedPeriod(212L, now.getYear(), now.getMonthValue());
-            seedGlBalance(311L, prv.getId(), income.getId(),
+            ErpMdSubject income = seedSubject("111", "6001", "INCOME", ErpFinConstants.DC_CREDIT);
+            ErpFinAccountingPeriod prv = seedPeriod("211", prev.getYear(), prev.getMonthValue());
+            ErpFinAccountingPeriod cur = seedPeriod("212", now.getYear(), now.getMonthValue());
+            seedGlBalance("311", prv.getId(), income.getId(),
                     BigDecimal.ZERO, BigDecimal.ZERO,
                     BigDecimal.ZERO, new BigDecimal("200"),
                     BigDecimal.ZERO, new BigDecimal("200"));
-            seedGlBalance(312L, cur.getId(), income.getId(),
+            seedGlBalance("312", cur.getId(), income.getId(),
                     BigDecimal.ZERO, BigDecimal.ZERO,
                     BigDecimal.ZERO, new BigDecimal("300"),
                     BigDecimal.ZERO, new BigDecimal("300"));
@@ -142,7 +142,7 @@ public class TestErpFinDashboard extends JunitAutoTestCase {
     @Test
     public void testCashFlowAlertDisabledByDefault() {
         ormTemplate.runInSession(() -> {
-            seedBankAccount(411L, "BANK-LOW", new BigDecimal("100"));
+            seedBankAccount("411", "BANK-LOW", new BigDecimal("100"));
         });
         AppConfig.getConfigProvider().assignConfigValue(
                 ErpFinConstants.CONFIG_DASH_FIN_CASH_FLOW_THRESHOLD,
@@ -154,7 +154,7 @@ public class TestErpFinDashboard extends JunitAutoTestCase {
     @Test
     public void testCashFlowAlertTriggersWhenBelowThreshold() {
         ormTemplate.runInSession(() -> {
-            seedBankAccount(421L, "BANK-LOW", new BigDecimal("100"));
+            seedBankAccount("421", "BANK-LOW", new BigDecimal("100"));
         });
         AppConfig.getConfigProvider().assignConfigValue(
                 ErpFinConstants.CONFIG_DASH_FIN_CASH_FLOW_THRESHOLD, "500");
@@ -173,7 +173,7 @@ public class TestErpFinDashboard extends JunitAutoTestCase {
 
     // ---------- helpers ----------
 
-    private ErpMdSubject seedSubject(long id, String code, String subjectClass, String direction) {
+    private ErpMdSubject seedSubject(String id, String code, String subjectClass, String direction) {
         IEntityDao<ErpMdSubject> dao = daoProvider.daoFor(ErpMdSubject.class);
         ErpMdSubject s = dao.newEntity();
         s.orm_propValue(1, id);
@@ -186,7 +186,7 @@ public class TestErpFinDashboard extends JunitAutoTestCase {
         return s;
     }
 
-    private ErpFinAccountingPeriod seedPeriod(long id, int year, int month) {
+    private ErpFinAccountingPeriod seedPeriod(String id, int year, int month) {
         IEntityDao<ErpFinAccountingPeriod> dao = daoProvider.daoFor(ErpFinAccountingPeriod.class);
         ErpFinAccountingPeriod p = dao.newEntity();
         p.orm_propValue(1, id);
@@ -202,18 +202,18 @@ public class TestErpFinDashboard extends JunitAutoTestCase {
         return p;
     }
 
-    private void seedGlBalance(long id, long periodId, long subjectId,
+    private void seedGlBalance(String id, String periodId, String subjectId,
                                BigDecimal openingDebit, BigDecimal openingCredit,
                                BigDecimal periodDebit, BigDecimal periodCredit,
                                BigDecimal closingDebit, BigDecimal closingCredit) {
         IEntityDao<ErpFinGlBalance> dao = daoProvider.daoFor(ErpFinGlBalance.class);
         ErpFinGlBalance b = dao.newEntity();
         b.orm_propValue(1, id);
-        b.setOrgId(1L);
-        b.setAcctSchemaId(1L);
+        b.setOrgId("1");
+        b.setAcctSchemaId("1");
         b.setPeriodId(periodId);
         b.setSubjectId(subjectId);
-        b.setCurrencyId(1L);
+        b.setCurrencyId("1");
         b.setOpeningDebit(openingDebit);
         b.setOpeningCredit(openingCredit);
         b.setPeriodDebit(periodDebit);
@@ -223,35 +223,35 @@ public class TestErpFinDashboard extends JunitAutoTestCase {
         dao.saveEntity(b);
     }
 
-    private void seedBankAccount(long id, String code, BigDecimal balance) {
+    private void seedBankAccount(String id, String code, BigDecimal balance) {
         IEntityDao<ErpFinFundAccount> dao = daoProvider.daoFor(ErpFinFundAccount.class);
         ErpFinFundAccount a = dao.newEntity();
         a.orm_propValue(1, id);
         a.setCode(code);
         a.setName(code);
-        a.setOrgId(1L);
+        a.setOrgId("1");
         a.setAccountType(ErpFinConstants.FUND_ACCOUNT_TYPE_BANK);
-        a.setCurrencyId(1L);
+        a.setCurrencyId("1");
         a.setOpeningBalance(BigDecimal.ZERO);
         a.setCurrentBalance(balance);
         a.setStatus("ACTIVE");
         dao.saveEntity(a);
     }
 
-    private void seedArApItem(long id, String direction, String status, BigDecimal openAmount) {
+    private void seedArApItem(String id, String direction, String status, BigDecimal openAmount) {
         IEntityDao<ErpFinArApItem> dao = daoProvider.daoFor(ErpFinArApItem.class);
         ErpFinArApItem it = dao.newEntity();
         it.orm_propValue(1, id);
         it.setCode("ITEM-" + id);
-        it.setOrgId(1L);
-        it.setAcctSchemaId(1L);
+        it.setOrgId("1");
+        it.setAcctSchemaId("1");
         it.setDirection(direction);
-        it.setPartnerId(900L);
+        it.setPartnerId("900");
         it.setSourceBillType(ErpFinConstants.SOURCE_BILL_AR_INVOICE);
         it.setSourceBillCode("BILL-" + id);
         it.setBusinessDate(LocalDate.of(2026, 7, 1));
         it.setDueDate(LocalDate.of(2026, 7, 30));
-        it.setCurrencyId(1L);
+        it.setCurrencyId("1");
         it.setExchangeRate(BigDecimal.ONE);
         it.setAmountSource(openAmount);
         it.setAmountFunctional(openAmount);

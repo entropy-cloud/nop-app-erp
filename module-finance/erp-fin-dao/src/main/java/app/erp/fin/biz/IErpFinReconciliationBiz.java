@@ -24,7 +24,7 @@ public interface IErpFinReconciliationBiz extends ICrudBiz<ErpFinReconciliation>
      */
     @BizMutation
     ErpFinReconciliation create(@Name("direction") String direction,
-                                @Name("partnerId") Long partnerId,
+                                @Name("partnerId") String partnerId,
                                 @Name("businessDate") LocalDate businessDate,
                                 @Name("lines") List<ReconciliationLineInput> lines,
                                 IServiceContext context);
@@ -34,13 +34,13 @@ public interface IErpFinReconciliationBiz extends ICrudBiz<ErpFinReconciliation>
      * 置核销单 docStatus=POSTED，并重算往来单位余额。
      */
     @BizMutation
-    ErpFinReconciliation post(@Name("reconciliationId") Long reconciliationId, IServiceContext context);
+    ErpFinReconciliation post(@Name("reconciliationId") String reconciliationId, IServiceContext context);
 
     /**
      * 红冲核销单：恢复双方辅助账 settled/open/status，置核销单 docStatus=REVERSED，重算往来单位余额。
      */
     @BizMutation
-    ErpFinReconciliation reverse(@Name("reconciliationId") Long reconciliationId, IServiceContext context);
+    ErpFinReconciliation reverse(@Name("reconciliationId") String reconciliationId, IServiceContext context);
 
     /**
      * F7 §3 核销单冲销预览（plan 2026-07-23-1145-2 Phase 2）。只读，不执行实际冲销。
@@ -53,7 +53,7 @@ public interface IErpFinReconciliationBiz extends ICrudBiz<ErpFinReconciliation>
      * @return 冲销预览 DTO
      */
     @BizQuery
-    ReconciliationReversePreview previewReverse(@Name("reconciliationId") Long reconciliationId,
+    ReconciliationReversePreview previewReverse(@Name("reconciliationId") String reconciliationId,
                                                 IServiceContext context);
 
     /**
@@ -71,7 +71,7 @@ public interface IErpFinReconciliationBiz extends ICrudBiz<ErpFinReconciliation>
      */
     @BizMutation
     AutoReconResult runAutoReconciliation(@Name("direction") String direction,
-                                          @Name("partnerId") Long partnerId,
+                                          @Name("partnerId") String partnerId,
                                           @Name("strategy") String strategy,
                                           IServiceContext context);
 
@@ -87,7 +87,7 @@ public interface IErpFinReconciliationBiz extends ICrudBiz<ErpFinReconciliation>
      */
     @BizQuery
     DualSideDiffReport checkDualSideConsistency(@Name("direction") String direction,
-                                                @Name("partnerId") Long partnerId,
+                                                @Name("partnerId") String partnerId,
                                                 IServiceContext context);
 }
 

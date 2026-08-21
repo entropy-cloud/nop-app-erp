@@ -22,7 +22,7 @@ public interface IErpFinArApItemBiz extends ICrudBiz<ErpFinArApItem>{
      * @param direction  方向（10=应收 RECEIVABLE，20=应付 PAYABLE）
      */
     @BizQuery
-    List<ErpFinArApItem> findOpenItemsByPartner(@Name("partnerId") Long partnerId,
+    List<ErpFinArApItem> findOpenItemsByPartner(@Name("partnerId") String partnerId,
                                                 @Name("direction") String direction,
                                                 IServiceContext context);
 

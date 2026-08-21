@@ -26,7 +26,7 @@ public class ErpFinBankStatementBizModel extends CrudBizModel<ErpFinBankStatemen
 
     @Override
     @BizMutation
-    public ErpFinBankStatement importStatement(@Name("fundAccountId") Long fundAccountId,
+    public ErpFinBankStatement importStatement(@Name("fundAccountId") String fundAccountId,
                                                 @Name("statementDate") LocalDate statementDate,
                                                 @Name("lines") List<BankStatementLineInput> lines,
                                                 IServiceContext context) {

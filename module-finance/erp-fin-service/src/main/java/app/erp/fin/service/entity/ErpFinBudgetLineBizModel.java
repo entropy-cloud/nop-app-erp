@@ -53,9 +53,9 @@ public class ErpFinBudgetLineBizModel extends CrudBizModel<ErpFinBudgetLine> imp
 
     @Override
     @BizQuery
-    public List<BudgetVsActualRow> getBudgetVsActual(@Name("acctSchemaId") Long acctSchemaId,
-                                                     @Name("periodId") Long periodId,
-                                                     @Name("subjectId") Long subjectId,
+    public List<BudgetVsActualRow> getBudgetVsActual(@Name("acctSchemaId") String acctSchemaId,
+                                                     @Name("periodId") String periodId,
+                                                     @Name("subjectId") String subjectId,
                                                      IServiceContext context) {
         IDaoProvider dp = daoProvider();
         IEntityDao<ErpFinVoucher> voucherDao = dp.daoFor(ErpFinVoucher.class);
@@ -76,7 +76,7 @@ public class ErpFinBudgetLineBizModel extends CrudBizModel<ErpFinBudgetLine> imp
         if (vouchers.isEmpty()) {
             return new ArrayList<>();
         }
-        Map<Long, String> voucherChannel = new HashMap<>();
+        Map<String, String> voucherChannel = new HashMap<>();
         for (ErpFinVoucher v : vouchers) {
             voucherChannel.put(v.getId(), channelOf(v.getPostingType()));
         }
@@ -90,7 +90,7 @@ public class ErpFinBudgetLineBizModel extends CrudBizModel<ErpFinBudgetLine> imp
         List<ErpFinVoucherLine> lines = lineDao.findAllByQuery(lq);
 
         Map<String, BudgetVsActualRow> agg = new HashMap<>();
-        Map<Long, ErpMdSubject> subjectCache = new HashMap<>();
+        Map<String, ErpMdSubject> subjectCache = new HashMap<>();
         for (ErpFinVoucherLine l : lines) {
             if (l.getSubjectId() == null) {
                 continue;
@@ -138,7 +138,7 @@ public class ErpFinBudgetLineBizModel extends CrudBizModel<ErpFinBudgetLine> imp
         return row;
     }
 
-    private ErpMdSubject loadSubject(Long id) {
+    private ErpMdSubject loadSubject(String id) {
         return daoProvider().daoFor(ErpMdSubject.class).getEntityById(id);
     }
 

@@ -53,7 +53,7 @@ public class TestErpFinEmployeeAdvanceApproval extends JunitAutoTestCase {
 
     @Test
     public void testSubmitApproveReverse() {
-        Long advanceId = seedValidAdvance("ADV-001", ErpFinConstants.APPROVE_STATUS_UNSUBMITTED,
+        String advanceId = seedValidAdvance("ADV-001", ErpFinConstants.APPROVE_STATUS_UNSUBMITTED,
                 new BigDecimal("500"));
         assertEquals(0, submitForApproval(advanceId).getStatus());
         assertEquals(0, approve(advanceId).getStatus());
@@ -68,7 +68,7 @@ public class TestErpFinEmployeeAdvanceApproval extends JunitAutoTestCase {
 
     @Test
     public void testRejectAndResubmit() {
-        Long advanceId = seedValidAdvance("ADV-002", ErpFinConstants.APPROVE_STATUS_SUBMITTED,
+        String advanceId = seedValidAdvance("ADV-002", ErpFinConstants.APPROVE_STATUS_SUBMITTED,
                 new BigDecimal("300"));
         assertEquals(0, reject(advanceId).getStatus());
         assertEquals(0, submitForApproval(advanceId).getStatus());
@@ -78,7 +78,7 @@ public class TestErpFinEmployeeAdvanceApproval extends JunitAutoTestCase {
 
     @Test
     public void testCancel() {
-        Long advanceId = seedValidAdvance("ADV-003", ErpFinConstants.APPROVE_STATUS_SUBMITTED,
+        String advanceId = seedValidAdvance("ADV-003", ErpFinConstants.APPROVE_STATUS_SUBMITTED,
                 new BigDecimal("200"));
         ErpFinEmployeeAdvance advance = ormTemplate.runInSession(session -> advanceBiz.cancel(advanceId, CTX));
         assertEquals(ErpFinConstants.DOC_STATUS_CANCELLED, advance.getDocStatus());
@@ -86,50 +86,50 @@ public class TestErpFinEmployeeAdvanceApproval extends JunitAutoTestCase {
 
     @Test
     public void testIllegalApproveFromUnsubmitted() {
-        Long advanceId = seedValidAdvance("ADV-004", ErpFinConstants.APPROVE_STATUS_UNSUBMITTED,
+        String advanceId = seedValidAdvance("ADV-004", ErpFinConstants.APPROVE_STATUS_UNSUBMITTED,
                 new BigDecimal("100"));
         assertTrue(approve(advanceId).getStatus() != 0, "UNSUBMITTED 不可审核：状态守卫拒绝");
     }
 
     @Test
     public void testRejectEmployeePartnerMissing() {
-        Long advanceId = seedAdvance("ADV-005", null, ErpFinConstants.EMPLOYEE_STATUS_ACTIVE,
+        String advanceId = seedAdvance("ADV-005", null, ErpFinConstants.EMPLOYEE_STATUS_ACTIVE,
                 ErpFinConstants.APPROVE_STATUS_UNSUBMITTED, new BigDecimal("100"));
         assertTrue(submitForApproval(advanceId).getStatus() != 0, "partnerId 缺失：submit 被前置校验拒绝");
     }
 
     @Test
     public void testRejectEmployeeInactive() {
-        Long advanceId = seedAdvance("ADV-006", 9902L, "INACTIVE",
+        String advanceId = seedAdvance("ADV-006", "9902", "INACTIVE",
                 ErpFinConstants.APPROVE_STATUS_UNSUBMITTED, new BigDecimal("100"));
         assertTrue(submitForApproval(advanceId).getStatus() != 0, "员工停用：submit 被前置校验拒绝");
     }
 
     @Test
     public void testRejectAmountNotPositive() {
-        Long advanceId = seedAdvance("ADV-007", 9902L, ErpFinConstants.EMPLOYEE_STATUS_ACTIVE,
+        String advanceId = seedAdvance("ADV-007", "9902", ErpFinConstants.EMPLOYEE_STATUS_ACTIVE,
                 ErpFinConstants.APPROVE_STATUS_UNSUBMITTED, BigDecimal.ZERO);
         assertTrue(submitForApproval(advanceId).getStatus() != 0, "金额≤0：submit 被前置校验拒绝");
     }
 
     // ---------- rpc helpers ----------
 
-    private ApiResponse<?> submitForApproval(Long advanceId) {
+    private ApiResponse<?> submitForApproval(String advanceId) {
         return executeRpc(mutation, "ErpFinEmployeeAdvance__submitForApproval",
                 ApiRequest.build(Map.of("id", String.valueOf(advanceId))));
     }
 
-    private ApiResponse<?> approve(Long advanceId) {
+    private ApiResponse<?> approve(String advanceId) {
         return executeRpc(mutation, "ErpFinEmployeeAdvance__approve",
                 ApiRequest.build(Map.of("id", String.valueOf(advanceId))));
     }
 
-    private ApiResponse<?> reject(Long advanceId) {
+    private ApiResponse<?> reject(String advanceId) {
         return executeRpc(mutation, "ErpFinEmployeeAdvance__reject",
                 ApiRequest.build(Map.of("id", String.valueOf(advanceId))));
     }
 
-    private ApiResponse<?> reverseApprove(Long advanceId) {
+    private ApiResponse<?> reverseApprove(String advanceId) {
         return executeRpc(mutation, "ErpFinEmployeeAdvance__reverseApprove",
                 ApiRequest.build(Map.of("id", String.valueOf(advanceId))));
     }
@@ -139,23 +139,23 @@ public class TestErpFinEmployeeAdvanceApproval extends JunitAutoTestCase {
         return graphQLEngine.executeRpc(ctx);
     }
 
-    private ErpFinEmployeeAdvance fetchAdvance(Long id) {
+    private ErpFinEmployeeAdvance fetchAdvance(String id) {
         return daoProvider.daoFor(ErpFinEmployeeAdvance.class).getEntityById(id);
     }
 
     // ---------- seed helpers ----------
 
-    private Long seedValidAdvance(String code, String approveStatus, BigDecimal amount) {
-        return seedAdvance(code, 9902L, ErpFinConstants.EMPLOYEE_STATUS_ACTIVE, approveStatus, amount);
+    private String seedValidAdvance(String code, String approveStatus, BigDecimal amount) {
+        return seedAdvance(code, "9902", ErpFinConstants.EMPLOYEE_STATUS_ACTIVE, approveStatus, amount);
     }
 
-    private Long seedAdvance(String code, Long partnerId, String employeeStatus, String approveStatus, BigDecimal amount) {
+    private String seedAdvance(String code, String partnerId, String employeeStatus, String approveStatus, BigDecimal amount) {
         return ormTemplate.runInSession(session -> {
             IEntityDao<ErpMdEmployee> empDao = daoProvider.daoFor(ErpMdEmployee.class);
             ErpMdEmployee emp = new ErpMdEmployee();
             emp.setCode("E-" + code);
             emp.setName("员工-" + code);
-            emp.setOrgId(1L);
+            emp.setOrgId("1");
             emp.setPartnerId(partnerId);
             emp.setStatus(employeeStatus);
             empDao.saveEntity(emp);
@@ -163,11 +163,11 @@ public class TestErpFinEmployeeAdvanceApproval extends JunitAutoTestCase {
             IEntityDao<ErpFinEmployeeAdvance> dao = daoProvider.daoFor(ErpFinEmployeeAdvance.class);
             ErpFinEmployeeAdvance advance = new ErpFinEmployeeAdvance();
             advance.setCode(code);
-            advance.setOrgId(1L);
+            advance.setOrgId("1");
             advance.setEmployeeId(emp.getId());
             advance.setAdvanceType("EXPENSE_ADVANCE");
             advance.setBusinessDate(java.time.LocalDate.of(2026, 6, 10));
-            advance.setCurrencyId(1L);
+            advance.setCurrencyId("1");
             advance.setExchangeRate(BigDecimal.ONE);
             advance.setAmountFunctional(amount);
             advance.setAmountSource(amount);

@@ -62,8 +62,8 @@ public class TestErpFinNotesReceivablePosting extends JunitAutoTestCase {
 
     @Test
     public void testReceivePostsAndGeneratesReceivableSubledger() {
-        long partnerId = 7701L;
-        Long noteId = ormTemplate.runInSession(s -> {
+        String partnerId = "7701";
+        String noteId = ormTemplate.runInSession(s -> {
             seedBase();
             seedSubject("1121", "应收票据");
             seedSubject("1122", "应收账款");
@@ -82,8 +82,8 @@ public class TestErpFinNotesReceivablePosting extends JunitAutoTestCase {
 
     @Test
     public void testDiscountPostsFiveLineDecomposition() {
-        long partnerId = 7702L;
-        Long noteId = ormTemplate.runInSession(s -> {
+        String partnerId = "7702";
+        String noteId = ormTemplate.runInSession(s -> {
             seedBase();
             seedSubject("1121", "应收票据");
             seedSubject("1002", "银行存款");
@@ -92,7 +92,7 @@ public class TestErpFinNotesReceivablePosting extends JunitAutoTestCase {
                     new BigDecimal("36000"), partnerId, LocalDate.of(2026, 7, 1), LocalDate.of(2026, 8, 30));
         });
 
-        ErpFinNotesReceivable note = ormTemplate.runInSession(session -> notesBiz.discount(noteId, LocalDate.of(2026, 7, 1), 9001L, new BigDecimal("0.06"), null, CTX));
+        ErpFinNotesReceivable note = ormTemplate.runInSession(session -> notesBiz.discount(noteId, LocalDate.of(2026, 7, 1), "9001", new BigDecimal("0.06"), null, CTX));
         assertTrue(Boolean.TRUE.equals(note.getPosted()), "贴现过账成功 posted=true");
         assertFalse(findBillLinks("NR-POST-002", ErpFinBusinessType.NOTES_RECEIVABLE_DISCOUNTED.name()).isEmpty(), "DISCOUNTED 凭证回链已落库");
     }
@@ -104,18 +104,18 @@ public class TestErpFinNotesReceivablePosting extends JunitAutoTestCase {
         // discountRate=0.12 / remainingDays=30 / spotRate=6.7000（外币升值）
         // → discountInterestFunctional=6.67 / netAmount=663.3000 / exchangeGainLoss=−3.3000（Cr 6051）
         // 复式平衡：Dr 663.3000 + Dr 6.67 = 669.97 ≡ Cr 3.3000 + Cr 666.67 = 669.97
-        long partnerId = 7706L;
-        Long noteId = ormTemplate.runInSession(s -> {
+        String partnerId = "7706";
+        String noteId = ormTemplate.runInSession(s -> {
             seedBase();
-            seedCurrency(1L, "CNY", true);
-            seedCurrency(2L, "USD", false);
+            seedCurrency("1", "CNY", true);
+            seedCurrency("2", "USD", false);
             seedSubject("1121", "应收票据");
             seedSubject("1002", "银行存款");
             seedSubject("6603", "财务费用-利息支出");
             seedSubject("6051", "汇兑损益");
             return seedFxReceivable("NR-FX-POST-001",
                     app.erp.fin.service.ErpFinConstants.NOTES_RECV_RECEIVED,
-                    new BigDecimal("100"), new BigDecimal("6.6667"), new BigDecimal("666.67"), 2L, partnerId,
+                    new BigDecimal("100"), new BigDecimal("6.6667"), new BigDecimal("666.67"), "2", partnerId,
                     LocalDate.of(2026, 7, 1), LocalDate.of(2026, 7, 31));
         });
 
@@ -125,7 +125,7 @@ public class TestErpFinNotesReceivablePosting extends JunitAutoTestCase {
             AppConfig.getConfigProvider().assignConfigValue(
                     ErpFinConstants.CONFIG_NOTES_FX_GAIN_LOSS_ENABLED, Boolean.TRUE);
             note = ormTemplate.runInSession(session -> notesBiz.discount(
-                    noteId, LocalDate.of(2026, 7, 1), 9001L, new BigDecimal("0.12"), new BigDecimal("6.7000"), CTX));
+                    noteId, LocalDate.of(2026, 7, 1), "9001", new BigDecimal("0.12"), new BigDecimal("6.7000"), CTX));
         } finally {
             AppConfig.getConfigProvider().assignConfigValue(
                     ErpFinConstants.CONFIG_NOTES_FX_GAIN_LOSS_ENABLED, originalFlag);
@@ -160,8 +160,8 @@ public class TestErpFinNotesReceivablePosting extends JunitAutoTestCase {
 
     @Test
     public void testEndorsePostsAndGeneratesPayableSubledger() {
-        long partnerId = 7703L;
-        Long noteId = ormTemplate.runInSession(s -> {
+        String partnerId = "7703";
+        String noteId = ormTemplate.runInSession(s -> {
             seedBase();
             seedSubject("1121", "应收票据");
             seedSubject("2202", "应付账款");
@@ -180,8 +180,8 @@ public class TestErpFinNotesReceivablePosting extends JunitAutoTestCase {
 
     @Test
     public void testReceiveReconcilesAgainstArInvoice() {
-        long partnerId = 7704L;
-        Long noteId = ormTemplate.runInSession(s -> {
+        String partnerId = "7704";
+        String noteId = ormTemplate.runInSession(s -> {
             seedBase();
             seedSubject("1121", "应收票据");
             seedSubject("1122", "应收账款");
@@ -189,7 +189,7 @@ public class TestErpFinNotesReceivablePosting extends JunitAutoTestCase {
         });
 
         // 预置客户应收发票辅助账（AR_INVOICE，RECEIVABLE，同方向，可被票据收到项核销）。
-        Long arItemId = ormTemplate.runInSession(s -> seedArApItem(partnerId,
+        String arItemId = ormTemplate.runInSession(s -> seedArApItem(partnerId,
                 app.erp.fin.service.ErpFinConstants.DIRECTION_RECEIVABLE, "AR_INVOICE", "AR-001", new BigDecimal("5000")));
 
         ormTemplate.runInSession(() -> notesBiz.receive(noteId, CTX));
@@ -213,8 +213,8 @@ public class TestErpFinNotesReceivablePosting extends JunitAutoTestCase {
 
     @Test
     public void testWriteOffReversesPosting() {
-        long partnerId = 7705L;
-        Long noteId = ormTemplate.runInSession(s -> {
+        String partnerId = "7705";
+        String noteId = ormTemplate.runInSession(s -> {
             seedBase();
             seedSubject("1121", "应收票据");
             seedSubject("1122", "应收账款");
@@ -235,25 +235,25 @@ public class TestErpFinNotesReceivablePosting extends JunitAutoTestCase {
 
     private void seedBase() {
         seedOpenPeriod("2026-07", 2026, 7, LocalDate.of(2026, 7, 1), LocalDate.of(2026, 7, 31));
-        seedAcctSchema(1L);
+        seedAcctSchema("1");
     }
 
-    private Long seedReceivable(String code, String status, BigDecimal amountFunctional, Long partnerId) {
+    private String seedReceivable(String code, String status, BigDecimal amountFunctional, String partnerId) {
         return seedReceivable(code, status, amountFunctional, partnerId,
                 LocalDate.of(2026, 7, 1), LocalDate.of(2026, 9, 30));
     }
 
-    private Long seedReceivable(String code, String status, BigDecimal amountFunctional, Long partnerId,
+    private String seedReceivable(String code, String status, BigDecimal amountFunctional, String partnerId,
                                 LocalDate issueDate, LocalDate dueDate) {
         IEntityDao<ErpFinNotesReceivable> dao = daoProvider.daoFor(ErpFinNotesReceivable.class);
         ErpFinNotesReceivable note = new ErpFinNotesReceivable();
         note.setCode(code);
-        note.setOrgId(1L);
+        note.setOrgId("1");
         note.setNotesType(app.erp.fin.service.ErpFinConstants.NOTES_TYPE_BANK_ACCEPTANCE);
         note.setNotesNo("N-" + code);
         note.setIssueDate(issueDate);
         note.setDueDate(dueDate);
-        note.setCurrencyId(1L);
+        note.setCurrencyId("1");
         note.setExchangeRate(BigDecimal.ONE);
         note.setAmountFunctional(amountFunctional);
         note.setAmountSource(amountFunctional);
@@ -264,13 +264,13 @@ public class TestErpFinNotesReceivablePosting extends JunitAutoTestCase {
         return note.getId();
     }
 
-    private Long seedFxReceivable(String code, String status, BigDecimal amountSource, BigDecimal exchangeRate,
-                                  BigDecimal amountFunctional, Long currencyId, Long partnerId,
+    private String seedFxReceivable(String code, String status, BigDecimal amountSource, BigDecimal exchangeRate,
+                                  BigDecimal amountFunctional, String currencyId, String partnerId,
                                   LocalDate issueDate, LocalDate dueDate) {
         IEntityDao<ErpFinNotesReceivable> dao = daoProvider.daoFor(ErpFinNotesReceivable.class);
         ErpFinNotesReceivable note = new ErpFinNotesReceivable();
         note.setCode(code);
-        note.setOrgId(1L);
+        note.setOrgId("1");
         note.setNotesType(app.erp.fin.service.ErpFinConstants.NOTES_TYPE_BANK_ACCEPTANCE);
         note.setNotesNo("N-" + code);
         note.setIssueDate(issueDate);
@@ -286,7 +286,7 @@ public class TestErpFinNotesReceivablePosting extends JunitAutoTestCase {
         return note.getId();
     }
 
-    private void seedCurrency(Long id, String code, boolean functional) {
+    private void seedCurrency(String id, String code, boolean functional) {
         IEntityDao<ErpMdCurrency> dao = daoProvider.daoFor(ErpMdCurrency.class);
         ErpMdCurrency c = new ErpMdCurrency();
         c.setId(id);
@@ -296,19 +296,19 @@ public class TestErpFinNotesReceivablePosting extends JunitAutoTestCase {
         dao.saveEntity(c);
     }
 
-    private Long seedArApItem(Long partnerId, String direction, String sourceBillType, String sourceBillCode, BigDecimal amount) {
+    private String seedArApItem(String partnerId, String direction, String sourceBillType, String sourceBillCode, BigDecimal amount) {
         IEntityDao<ErpFinArApItem> dao = daoProvider.daoFor(ErpFinArApItem.class);
         ErpFinArApItem item = new ErpFinArApItem();
         item.setCode("ARI-" + sourceBillCode);
-        item.setOrgId(1L);
-        item.setAcctSchemaId(1L);
+        item.setOrgId("1");
+        item.setAcctSchemaId("1");
         item.setDirection(direction);
         item.setPartnerId(partnerId);
         item.setSourceBillType(sourceBillType);
         item.setSourceBillCode(sourceBillCode);
         item.setBusinessDate(LocalDate.of(2026, 6, 15));
         item.setDueDate(LocalDate.of(2026, 8, 15));
-        item.setCurrencyId(1L);
+        item.setCurrencyId("1");
         item.setExchangeRate(BigDecimal.ONE);
         item.setAmountSource(amount);
         item.setAmountFunctional(amount);
@@ -332,14 +332,14 @@ public class TestErpFinNotesReceivablePosting extends JunitAutoTestCase {
         dao.saveEntity(subject);
     }
 
-    private void seedAcctSchema(long orgId) {
+    private void seedAcctSchema(String orgId) {
         IEntityDao<ErpMdAcctSchema> dao = daoProvider.daoFor(ErpMdAcctSchema.class);
         ErpMdAcctSchema schema = new ErpMdAcctSchema();
         schema.setCode("AS-" + orgId);
         schema.setName("账套-" + orgId);
         schema.setOrgId(orgId);
         schema.setNature("FINANCIAL");
-        schema.setFunctionalCurrencyId(1L);
+        schema.setFunctionalCurrencyId("1");
         schema.setStatus("ACTIVE");
         dao.saveEntity(schema);
     }
@@ -349,7 +349,7 @@ public class TestErpFinNotesReceivablePosting extends JunitAutoTestCase {
         ErpFinAccountingPeriod period = new ErpFinAccountingPeriod();
         period.setCode(code);
         period.setName(code);
-        period.setOrgId(1L);
+        period.setOrgId("1");
         period.setYear(year);
         period.setMonth(month);
         period.setStartDate(start);
@@ -373,7 +373,7 @@ public class TestErpFinNotesReceivablePosting extends JunitAutoTestCase {
         return dao.findAllByQuery(q);
     }
 
-    private List<ErpFinVoucherLine> linesOf(Long voucherId) {
+    private List<ErpFinVoucherLine> linesOf(String voucherId) {
         IEntityDao<ErpFinVoucherLine> dao = daoProvider.daoFor(ErpFinVoucherLine.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("voucherId", voucherId));

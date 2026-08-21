@@ -16,13 +16,13 @@ public interface IErpFinBankStatementLineBiz extends ICrudBiz<ErpFinBankStatemen
      * 金额一致但凭据不唯一 → SUSPENSE。
      */
     @BizMutation
-    BankStatementMatchResult autoMatch(@Name("statementId") Long statementId, IServiceContext context);
+    BankStatementMatchResult autoMatch(@Name("statementId") String statementId, IServiceContext context);
 
     /**
      * 手工勾对：将指定银行流水行标记为 MANUAL_MATCHED 并回写 matchedLineId。
      */
     @BizMutation
-    ErpFinBankStatementLine manualMatch(@Name("lineId") Long lineId,
-                                        @Name("voucherLineId") Long voucherLineId,
+    ErpFinBankStatementLine manualMatch(@Name("lineId") String lineId,
+                                        @Name("voucherLineId") String voucherLineId,
                                         IServiceContext context);
 }

@@ -10,7 +10,7 @@ import java.math.BigDecimal;
  */
 public class VoucherFact {
     private String subjectCode;
-    private Long subjectId;
+    private String subjectId;
     private String subjectName;
     private String dcDirection;
     private BigDecimal amount;
@@ -28,13 +28,14 @@ public class VoucherFact {
     private String accountKey;
     private String memo;
 
-    private Long orgId;
-    private Long partnerId;
-    private Long departmentId;
+    // projectId 为登记册延后列（prj 未迁移），保持 Long
+    private String orgId;
+    private String partnerId;
+    private String departmentId;
     private Long projectId;
-    private Long warehouseId;
-    private Long materialId;
-    private Long costCenterId;
+    private String warehouseId;
+    private String materialId;
+    private String costCenterId;
     private String businessType;
 
     public String getSubjectCode() {
@@ -45,11 +46,11 @@ public class VoucherFact {
         this.subjectCode = subjectCode;
     }
 
-    public Long getSubjectId() {
+    public String getSubjectId() {
         return subjectId;
     }
 
-    public void setSubjectId(Long subjectId) {
+    public void setSubjectId(String subjectId) {
         this.subjectId = subjectId;
     }
 
@@ -117,27 +118,27 @@ public class VoucherFact {
         this.memo = memo;
     }
 
-    public Long getOrgId() {
+    public String getOrgId() {
         return orgId;
     }
 
-    public void setOrgId(Long orgId) {
+    public void setOrgId(String orgId) {
         this.orgId = orgId;
     }
 
-    public Long getPartnerId() {
+    public String getPartnerId() {
         return partnerId;
     }
 
-    public void setPartnerId(Long partnerId) {
+    public void setPartnerId(String partnerId) {
         this.partnerId = partnerId;
     }
 
-    public Long getDepartmentId() {
+    public String getDepartmentId() {
         return departmentId;
     }
 
-    public void setDepartmentId(Long departmentId) {
+    public void setDepartmentId(String departmentId) {
         this.departmentId = departmentId;
     }
 
@@ -149,27 +150,27 @@ public class VoucherFact {
         this.projectId = projectId;
     }
 
-    public Long getWarehouseId() {
+    public String getWarehouseId() {
         return warehouseId;
     }
 
-    public void setWarehouseId(Long warehouseId) {
+    public void setWarehouseId(String warehouseId) {
         this.warehouseId = warehouseId;
     }
 
-    public Long getMaterialId() {
+    public String getMaterialId() {
         return materialId;
     }
 
-    public void setMaterialId(Long materialId) {
+    public void setMaterialId(String materialId) {
         this.materialId = materialId;
     }
 
-    public Long getCostCenterId() {
+    public String getCostCenterId() {
         return costCenterId;
     }
 
-    public void setCostCenterId(Long costCenterId) {
+    public void setCostCenterId(String costCenterId) {
         this.costCenterId = costCenterId;
     }
 

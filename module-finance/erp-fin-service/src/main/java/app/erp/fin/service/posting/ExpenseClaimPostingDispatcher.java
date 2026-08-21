@@ -39,7 +39,7 @@ public class ExpenseClaimPostingDispatcher {
     public boolean tryPost(ErpFinExpenseClaim claim) {
         PostingEvent event = buildEvent(claim);
         try {
-            Long voucherId = executor.postEvent(event);
+            String voucherId = executor.postEvent(event);
             return voucherId != null;
         } catch (Exception e) {
             if (e instanceof NopException) {
@@ -56,7 +56,7 @@ public class ExpenseClaimPostingDispatcher {
     }
 
     private PostingEvent buildEvent(ErpFinExpenseClaim claim) {
-        Long partnerId = resolveEmployeePartnerId(claim.getClaimantId());
+        String partnerId = resolveEmployeePartnerId(claim.getClaimantId());
 
         PostingEvent event = new PostingEvent();
         event.setBusinessType(ErpFinBusinessType.EXPENSE_CLAIM);
@@ -83,12 +83,12 @@ public class ExpenseClaimPostingDispatcher {
         return event;
     }
 
-    private Long resolveAcctSchemaId(Long orgId) {
+    private String resolveAcctSchemaId(String orgId) {
         return AcctSchemaResolver.resolvePrimarySchemaId(daoProvider, orgId);
     }
 
     /** 经 daoProvider 加载员工读取 partnerId（避免跨会话关系懒加载；master-data-service 为 test 作用域，对齐 PartnerBalanceUpdater）。 */
-    private Long resolveEmployeePartnerId(Long claimantId) {
+    private String resolveEmployeePartnerId(String claimantId) {
         if (claimantId == null) {
             return null;
         }

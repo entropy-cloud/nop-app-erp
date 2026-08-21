@@ -8,27 +8,27 @@ import java.math.BigDecimal;
  */
 public class ReconciliationLineInput {
     /** 付款/收款项辅助账 ID（ErpFinArApItem）。 */
-    private Long paymentItemId;
+    private String paymentItemId;
     /** 被核销发票项辅助账 ID（ErpFinArApItem）。 */
-    private Long invoiceItemId;
+    private String invoiceItemId;
     /** 核销金额（源币）。 */
     private BigDecimal settledAmountSource;
     /** 核销金额（本位币）。 */
     private BigDecimal settledAmountFunctional;
 
-    public Long getPaymentItemId() {
+    public String getPaymentItemId() {
         return paymentItemId;
     }
 
-    public void setPaymentItemId(Long paymentItemId) {
+    public void setPaymentItemId(String paymentItemId) {
         this.paymentItemId = paymentItemId;
     }
 
-    public Long getInvoiceItemId() {
+    public String getInvoiceItemId() {
         return invoiceItemId;
     }
 
-    public void setInvoiceItemId(Long invoiceItemId) {
+    public void setInvoiceItemId(String invoiceItemId) {
         this.invoiceItemId = invoiceItemId;
     }
 

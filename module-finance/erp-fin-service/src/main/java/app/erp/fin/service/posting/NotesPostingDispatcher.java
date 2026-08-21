@@ -56,7 +56,7 @@ public class NotesPostingDispatcher {
 
     private boolean safePost(String code, PostingEvent event) {
         try {
-            Long voucherId = executor.postEvent(event);
+            String voucherId = executor.postEvent(event);
             return voucherId != null;
         } catch (Exception e) {
             if (e instanceof NopException) {
@@ -121,7 +121,7 @@ public class NotesPostingDispatcher {
         return event;
     }
 
-    private ErpFinNotesDiscount loadDiscount(Long discountId) {
+    private ErpFinNotesDiscount loadDiscount(String discountId) {
         if (discountId == null) {
             return null;
         }
@@ -129,7 +129,7 @@ public class NotesPostingDispatcher {
         return dao.getEntityById(discountId);
     }
 
-    private Long resolveAcctSchemaId(Long orgId) {
+    private String resolveAcctSchemaId(String orgId) {
         return AcctSchemaResolver.resolvePrimarySchemaId(daoProvider, orgId);
     }
 

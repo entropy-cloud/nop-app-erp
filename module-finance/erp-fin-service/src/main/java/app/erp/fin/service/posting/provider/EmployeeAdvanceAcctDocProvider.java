@@ -59,7 +59,7 @@ public class EmployeeAdvanceAcctDocProvider implements IErpFinAcctDocProvider {
         }
         List<VoucherFact> facts = new ArrayList<>();
         BigDecimal amount = readDecimal(event, "TOTAL");
-        Long partnerId = asLong(event.getBillData().get(ErpFinConstants.BILL_DATA_EMPLOYEE_ID));
+        String partnerId = asId(event.getBillData().get(ErpFinConstants.BILL_DATA_EMPLOYEE_ID));
 
         if (event.getBusinessType() == ErpFinBusinessType.EMPLOYEE_ADVANCE) {
             VoucherFact debit = fact(SUBJECT_RECEIVABLE_EMPLOYEE, "其他应收款-员工预支", DC_DEBIT, amount, event,
@@ -115,18 +115,16 @@ public class EmployeeAdvanceAcctDocProvider implements IErpFinAcctDocProvider {
         return new BigDecimal(value.toString().trim());
     }
 
-    private Long asLong(Object value) {
+    // billData id 桥接（A2 中间态）：未迁移域派发器写入的 Long id 归一为 String
+    private String asId(Object value) {
         if (value == null) {
             return null;
         }
         if (value instanceof Number) {
-            return ((Number) value).longValue();
+            return String.valueOf(((Number) value).longValue());
         }
-        try {
-            return Long.valueOf(value.toString().trim());
-        } catch (NumberFormatException e) {
-            return null;
-        }
+        String s = value.toString().trim();
+        return s.isEmpty() ? null : s;
     }
 
     private String asString(Object value) {

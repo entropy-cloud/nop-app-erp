@@ -147,7 +147,7 @@ public class TestErpFinPostingMetrics extends JunitAutoTestCase {
         // 1 笔失败 → 手工补录（resolution=MANUAL，计入自动化记账率分母）
         ErpFinPostingException toManual = findException("AP-METRIC-FAIL-0");
         assertNotNull(toManual);
-        ormTemplate.runInSession(() -> postingExceptionBiz.manualEntry(toManual.getId(), 8888L, "财务手工补录", CTX));
+        ormTemplate.runInSession(() -> postingExceptionBiz.manualEntry(toManual.getId(), "8888", "财务手工补录", CTX));
 
         ErpFinPostingMetricsSnapshot snapshot = ormTemplate.runInSession(session -> postingExceptionBiz.getRuntimeMetrics(null, CTX));
         assertTrue(snapshot.getVoucherCount() >= 1, "凭证数 ≥ 1");
@@ -182,15 +182,15 @@ public class TestErpFinPostingMetrics extends JunitAutoTestCase {
         PostingEvent event = new PostingEvent();
         event.setBusinessType(ErpFinBusinessType.AP_INVOICE);
         event.setBillHeadCode(billHeadCode);
-        event.setAcctSchemaId(1L);
-        event.setOrgId(1L);
-        event.setCurrencyId(1L);
+        event.setAcctSchemaId("1");
+        event.setOrgId("1");
+        event.setCurrencyId("1");
         event.setExchangeRate(BigDecimal.ONE);
         event.setVoucherDate(voucherDate);
         event.getBillData().put("AMOUNT", amount);
         event.getBillData().put("TAX", tax);
         event.getBillData().put("TOTAL", total);
-        event.getBillData().put("partnerId", 1L);
+        event.getBillData().put("partnerId", "1");
         event.getBillData().put("businessDate", voucherDate);
         return event;
     }
@@ -201,7 +201,7 @@ public class TestErpFinPostingMetrics extends JunitAutoTestCase {
         ErpFinAccountingPeriod period = new ErpFinAccountingPeriod();
         period.setCode(code);
         period.setName(code);
-        period.setOrgId(1L);
+        period.setOrgId("1");
         period.setYear(year);
         period.setMonth(month);
         period.setStartDate(start);
@@ -227,7 +227,7 @@ public class TestErpFinPostingMetrics extends JunitAutoTestCase {
         lineDao.saveEntity(templateLine(tpl.getId(), 3, "2202", DC_CREDIT, "TOTAL"));
     }
 
-    private ErpFinVoucherTemplateLine templateLine(Long templateId, int lineNo, String subjectCode,
+    private ErpFinVoucherTemplateLine templateLine(String templateId, int lineNo, String subjectCode,
                                                     String dcDirection, String amountKey) {
         ErpFinVoucherTemplateLine line = new ErpFinVoucherTemplateLine();
         line.setTemplateId(templateId);

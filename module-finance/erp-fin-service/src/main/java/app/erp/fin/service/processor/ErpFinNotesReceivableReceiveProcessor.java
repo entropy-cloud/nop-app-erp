@@ -14,7 +14,7 @@ public class ErpFinNotesReceivableReceiveProcessor {
     @Inject
     ErpFinNotesReceivableProcessor facade;
 
-    public ErpFinNotesReceivable receive(Long notesId, IServiceContext context) {
+    public ErpFinNotesReceivable receive(String notesId, IServiceContext context) {
         ErpFinNotesReceivable note = facade.requireNote(notesId, context);
         if (facade.isAlreadyReceived(note)) {
             return note;

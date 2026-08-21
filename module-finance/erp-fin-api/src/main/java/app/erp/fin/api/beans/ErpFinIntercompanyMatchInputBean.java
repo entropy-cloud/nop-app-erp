@@ -12,16 +12,16 @@
     public class ErpFinIntercompanyMatchInputBean extends CrudInputBase {
 
     
-        private Long _id;
+        private String _id;
 
     
         @PropMeta(propId=1)
     
-        public Long getId(){
+        public String getId(){
             return _id;
         }
 
-        public void setId(Long value){
+        public void setId(String value){
             this._id = value;
         }
 
@@ -40,16 +40,16 @@
         }
 
 
-        private Long _orgId;
+        private String _orgId;
 
     
         @PropMeta(propId=3)
     
-        public Long getOrgId(){
+        public String getOrgId(){
             return _orgId;
         }
 
-        public void setOrgId(Long value){
+        public void setOrgId(String value){
             this._orgId = value;
         }
 
@@ -68,86 +68,86 @@
         }
 
 
-        private Long _periodId;
+        private String _periodId;
 
     
         @PropMeta(propId=5)
     
-        public Long getPeriodId(){
+        public String getPeriodId(){
             return _periodId;
         }
 
-        public void setPeriodId(Long value){
+        public void setPeriodId(String value){
             this._periodId = value;
         }
 
 
-        private Long _arSideVoucherId;
+        private String _arSideVoucherId;
 
     
         @PropMeta(propId=6)
     
-        public Long getArSideVoucherId(){
+        public String getArSideVoucherId(){
             return _arSideVoucherId;
         }
 
-        public void setArSideVoucherId(Long value){
+        public void setArSideVoucherId(String value){
             this._arSideVoucherId = value;
         }
 
 
-        private Long _arOrgId;
+        private String _arOrgId;
 
     
         @PropMeta(propId=7)
     
-        public Long getArOrgId(){
+        public String getArOrgId(){
             return _arOrgId;
         }
 
-        public void setArOrgId(Long value){
+        public void setArOrgId(String value){
             this._arOrgId = value;
         }
 
 
-        private Long _apSideVoucherId;
+        private String _apSideVoucherId;
 
     
         @PropMeta(propId=8)
     
-        public Long getApSideVoucherId(){
+        public String getApSideVoucherId(){
             return _apSideVoucherId;
         }
 
-        public void setApSideVoucherId(Long value){
+        public void setApSideVoucherId(String value){
             this._apSideVoucherId = value;
         }
 
 
-        private Long _apOrgId;
+        private String _apOrgId;
 
     
         @PropMeta(propId=9)
     
-        public Long getApOrgId(){
+        public String getApOrgId(){
             return _apOrgId;
         }
 
-        public void setApOrgId(Long value){
+        public void setApOrgId(String value){
             this._apOrgId = value;
         }
 
 
-        private Long _materialId;
+        private String _materialId;
 
     
         @PropMeta(propId=10)
     
-        public Long getMaterialId(){
+        public String getMaterialId(){
             return _materialId;
         }
 
-        public void setMaterialId(Long value){
+        public void setMaterialId(String value){
             this._materialId = value;
         }
 

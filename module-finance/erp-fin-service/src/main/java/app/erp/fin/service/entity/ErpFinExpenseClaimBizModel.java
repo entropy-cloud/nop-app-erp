@@ -30,8 +30,8 @@ public class ErpFinExpenseClaimBizModel extends CrudBizModel<ErpFinExpenseClaim>
 
     @Override
     @BizMutation
-    public ErpFinExpenseClaim cancel(@Name("claimId") Long claimId, IServiceContext context) {
-        return cancelProcessor.cancel(String.valueOf(claimId), context);
+    public ErpFinExpenseClaim cancel(@Name("claimId") String claimId, IServiceContext context) {
+        return cancelProcessor.cancel(claimId, context);
     }
 
 }

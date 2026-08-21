@@ -24,7 +24,7 @@ public class ErpFinBadDebtSubmitForApprovalProcessor extends AbstractSubmitForAp
 
     @Override
     public ErpFinBadDebt submitForApproval(String id, IServiceContext context) {
-        ErpFinBadDebt debt = processor.requireBadDebt(Long.valueOf(id));
+        ErpFinBadDebt debt = processor.requireBadDebt(id);
         processor.validateTransitionForSubmit(debt);
         processor.doSubmit(debt);
         return debt;

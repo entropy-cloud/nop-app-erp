@@ -99,7 +99,7 @@ public class ErpFinTemplateAcctDocProvider implements IErpFinAcctDocProvider {
     private ErpFinVoucherTemplate findTemplate(PostingEvent event) {
         IEntityDao<ErpFinVoucherTemplate> dao = daoProvider.daoFor(ErpFinVoucherTemplate.class);
         String code = event.getBusinessType().name();
-        Long acctSchemaId = event.getAcctSchemaId();
+        String acctSchemaId = event.getAcctSchemaId();
 
         QueryBean q = new QueryBean();
         q.addFilter(eq("businessType", code));

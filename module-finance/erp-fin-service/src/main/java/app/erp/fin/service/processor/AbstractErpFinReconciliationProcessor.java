@@ -90,7 +90,7 @@ public abstract class AbstractErpFinReconciliationProcessor {
         }
     }
 
-    protected void assertOpen(ErpFinArApItem item, Long itemId) {
+    protected void assertOpen(ErpFinArApItem item, String itemId) {
         if (item.getStatus() != null
                 && (Objects.equals(item.getStatus(), ErpFinConstants.AR_AP_STATUS_SETTLED)
                 || Objects.equals(item.getStatus(), ErpFinConstants.AR_AP_STATUS_CANCELLED))) {
@@ -99,7 +99,7 @@ public abstract class AbstractErpFinReconciliationProcessor {
         }
     }
 
-    protected void assertNotOver(BigDecimal amt, ErpFinArApItem item, Long itemId, BigDecimal precision) {
+    protected void assertNotOver(BigDecimal amt, ErpFinArApItem item, String itemId, BigDecimal precision) {
         BigDecimal open = nz(item.getOpenAmountFunctional());
         if (amt.subtract(open).compareTo(precision) > 0) {
             throw new NopException(ErpFinErrors.ERR_RECONCILIATION_OVER_AMOUNT)
@@ -111,7 +111,7 @@ public abstract class AbstractErpFinReconciliationProcessor {
 
     // ---------- helpers ----------
 
-    protected ErpFinReconciliation requireHead(Long id, IServiceContext context) {
+    protected ErpFinReconciliation requireHead(String id, IServiceContext context) {
         ErpFinReconciliation head = daoProvider.daoFor(ErpFinReconciliation.class).getEntityById(id);
         if (head == null) {
             throw new NopException(ErpFinErrors.ERR_RECONCILIATION_NOT_FOUND)
@@ -120,7 +120,7 @@ public abstract class AbstractErpFinReconciliationProcessor {
         return head;
     }
 
-    protected List<ErpFinReconciliationLine> loadLines(Long reconciliationId) {
+    protected List<ErpFinReconciliationLine> loadLines(String reconciliationId) {
         // D2 边界场景：同聚合子表加载，父实体已由 requireHead/get 经数据权限/Meta 管道授权，子行无独立权限规则。
         IEntityDao<ErpFinReconciliationLine> dao = daoProvider.daoFor(ErpFinReconciliationLine.class);
         QueryBean q = new QueryBean();
@@ -132,7 +132,7 @@ public abstract class AbstractErpFinReconciliationProcessor {
         return lines;
     }
 
-    protected ErpFinArApItem loadItem(Long id) {
+    protected ErpFinArApItem loadItem(String id) {
         // D2 边界场景：跨实体只读加载辅助账项（核销内部实体，无独立 IBiz），数据权限由核销单聚合根访问控制覆盖。
         IEntityDao<ErpFinArApItem> dao = daoProvider.daoFor(ErpFinArApItem.class);
         ErpFinArApItem item = dao.getEntityById(id);
@@ -250,7 +250,7 @@ public abstract class AbstractErpFinReconciliationProcessor {
     }
 
     /** 按业务日期解析所属会计期间 ID（FX 凭证需要 periodId 非空）。无匹配期间返回 null。 */
-    protected Long resolvePeriodId(LocalDate businessDate) {
+    protected String resolvePeriodId(LocalDate businessDate) {
         if (businessDate == null) {
             return null;
         }

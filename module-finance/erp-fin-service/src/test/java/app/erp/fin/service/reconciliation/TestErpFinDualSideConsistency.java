@@ -46,7 +46,7 @@ public class TestErpFinDualSideConsistency extends JunitAutoTestCase {
 
     @Test
     public void testConsistentWhenBothSidesEqual() {
-        long partnerId = 3100L;
+        String partnerId = "3100";
         // finance 侧 settled = 80；域级 ErpPurInvoice.paidAmount = 80 → 一致
         seedArApInvoice(partnerId, "AP-3100", new BigDecimal("100"), new BigDecimal("80"));
         seedPurInvoice(partnerId, "AP-3100", new BigDecimal("100"), new BigDecimal("80"));
@@ -62,7 +62,7 @@ public class TestErpFinDualSideConsistency extends JunitAutoTestCase {
 
     @Test
     public void testInconsistentWhenFinanceSettledMore() {
-        long partnerId = 3200L;
+        String partnerId = "3200";
         // finance settled = 90；域级 paidAmount = 50 → finance 多核销 40 → INCONSISTENT
         seedArApInvoice(partnerId, "AP-3200", new BigDecimal("100"), new BigDecimal("90"));
         seedPurInvoice(partnerId, "AP-3200", new BigDecimal("100"), new BigDecimal("50"));
@@ -80,7 +80,7 @@ public class TestErpFinDualSideConsistency extends JunitAutoTestCase {
 
     @Test
     public void testInconsistentWhenDomainSettledMore() {
-        long partnerId = 3300L;
+        String partnerId = "3300";
         // finance settled = 30；域级 paidAmount = 70 → 域级多核销 40 → INCONSISTENT
         seedArApInvoice(partnerId, "AP-3300", new BigDecimal("100"), new BigDecimal("30"));
         seedPurInvoice(partnerId, "AP-3300", new BigDecimal("100"), new BigDecimal("70"));
@@ -95,8 +95,8 @@ public class TestErpFinDualSideConsistency extends JunitAutoTestCase {
 
     @Test
     public void testPartnerLevelReportCorrect() {
-        long partnerA = 3400L;
-        long partnerB = 3401L;
+        String partnerA = "3400";
+        String partnerB = "3401";
         // A 一致；B 不一致
         seedArApInvoice(partnerA, "AP-3400", new BigDecimal("100"), new BigDecimal("50"));
         seedPurInvoice(partnerA, "AP-3400", new BigDecimal("100"), new BigDecimal("50"));
@@ -107,28 +107,28 @@ public class TestErpFinDualSideConsistency extends JunitAutoTestCase {
                 ErpFinConstants.DIRECTION_PAYABLE, null, CTX));
 
         assertEquals(2, report.getRows().size(), "应包含两个 partner 的差异行");
-        assertTrue(report.getRows().stream().anyMatch(r -> Long.valueOf(partnerA).equals(r.getPartnerId())
+        assertTrue(report.getRows().stream().anyMatch(r -> partnerA.equals(r.getPartnerId())
                 && DualSideConsistencyChecker.STATUS_CONSISTENT.equals(r.getStatus())));
-        assertTrue(report.getRows().stream().anyMatch(r -> Long.valueOf(partnerB).equals(r.getPartnerId())
+        assertTrue(report.getRows().stream().anyMatch(r -> partnerB.equals(r.getPartnerId())
                 && DualSideConsistencyChecker.STATUS_INCONSISTENT.equals(r.getStatus())));
     }
 
     // ---------- helpers ----------
 
-    private void seedArApInvoice(long partnerId, String code, BigDecimal amount, BigDecimal settled) {
+    private void seedArApInvoice(String partnerId, String code, BigDecimal amount, BigDecimal settled) {
         ormTemplate.runInSession(() -> {
             seedPartner(partnerId);
             IEntityDao<ErpFinArApItem> dao = daoProvider.daoFor(ErpFinArApItem.class);
             ErpFinArApItem it = dao.newEntity();
             it.setCode("ARI-" + code);
-            it.setOrgId(1L);
-            it.setAcctSchemaId(1L);
+            it.setOrgId("1");
+            it.setAcctSchemaId("1");
             it.setDirection(ErpFinConstants.DIRECTION_PAYABLE);
             it.setPartnerId(partnerId);
             it.setSourceBillType(ErpFinConstants.SOURCE_BILL_AP_INVOICE);
             it.setSourceBillCode(code);
             it.setBusinessDate(LocalDate.of(2026, 5, 20));
-            it.setCurrencyId(1L);
+            it.setCurrencyId("1");
             it.setExchangeRate(BigDecimal.ONE);
             it.setAmountSource(amount);
             it.setAmountFunctional(amount);
@@ -142,12 +142,13 @@ public class TestErpFinDualSideConsistency extends JunitAutoTestCase {
         });
     }
 
-    private void seedPurInvoice(long partnerId, String code, BigDecimal amountFunctional, BigDecimal paidAmount) {
+    private void seedPurInvoice(String partnerId, String code, BigDecimal amountFunctional, BigDecimal paidAmount) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpPurInvoice> dao = daoProvider.daoFor(ErpPurInvoice.class);
             ErpPurInvoice inv = dao.newEntity();
             inv.setCode(code);
-            inv.setSupplierId(partnerId);
+            // bridge-test-118: fin String partnerId → pur Long supplierId（pur 位次 15 未迁移，退役 owner M2.5）
+            inv.setSupplierId(Long.valueOf(partnerId));
             inv.setBusinessDate(LocalDate.of(2026, 5, 20));
             inv.setCurrencyId(1L);
             inv.setExchangeRate(BigDecimal.ONE);
@@ -160,7 +161,7 @@ public class TestErpFinDualSideConsistency extends JunitAutoTestCase {
         });
     }
 
-    private void seedPartner(long partnerId) {
+    private void seedPartner(String partnerId) {
         IEntityDao<ErpMdPartner> dao = daoProvider.daoFor(ErpMdPartner.class);
         if (dao.getEntityById(partnerId) != null) {
             return;

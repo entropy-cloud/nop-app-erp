@@ -24,7 +24,7 @@ public class TestErpFinPeriodCloseEndToEnd extends PeriodCloseTestSupport {
 
     @Test
     public void testFullChain() {
-        Long periodId = seedFullPeriod("2025-06", 2025, 6);
+        String periodId = seedFullPeriod("2025-06", 2025, 6);
 
         // 前置检查（auto-post-on-close=true，未核销 AR 仅提示不阻断）。
         PeriodPreCheckReport report = ormTemplate.runInSession(session -> periodBiz.preCheck(periodId, CTX));

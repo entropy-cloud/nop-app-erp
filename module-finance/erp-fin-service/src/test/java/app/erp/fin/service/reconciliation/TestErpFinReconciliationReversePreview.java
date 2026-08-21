@@ -45,8 +45,8 @@ public class TestErpFinReconciliationReversePreview extends JunitAutoTestCase {
 
     @Test
     public void testPreviewReverseMatchesActual() {
-        long partnerId = 160L;
-        Long[] fixture = setup(partnerId, new BigDecimal("400"), new BigDecimal("400"),
+        String partnerId = "160";
+        String[] fixture = setup(partnerId, new BigDecimal("400"), new BigDecimal("400"),
                 LocalDate.of(2026, 6, 10), LocalDate.of(2026, 6, 8));
 
         ErpFinReconciliation head = ormTemplate.runInSession(session -> reconciliationBiz.create(
@@ -87,21 +87,21 @@ public class TestErpFinReconciliationReversePreview extends JunitAutoTestCase {
 
     // ---------- helpers (镜像 TestErpFinReconciliation) ----------
 
-    private Long[] setup(long partnerId, BigDecimal paymentAmt, BigDecimal invoiceAmt,
+    private String[] setup(String partnerId, BigDecimal paymentAmt, BigDecimal invoiceAmt,
                          LocalDate invoiceDate, LocalDate paymentDate) {
-        final Long[][] holder = new Long[1][];
+        final String[][] holder = new String[1][];
         ormTemplate.runInSession(() -> {
             seedPartner(partnerId);
             ErpFinArApItem payment = newItem(ErpFinConstants.DIRECTION_PAYABLE, partnerId,
                     "PAYMENT", "PAY-" + partnerId, paymentAmt, paymentDate);
             ErpFinArApItem invoice = newItem(ErpFinConstants.DIRECTION_PAYABLE, partnerId,
                     "AP_INVOICE", "AP-" + partnerId, invoiceAmt, invoiceDate);
-            holder[0] = new Long[]{payment.getId(), invoice.getId()};
+            holder[0] = new String[]{payment.getId(), invoice.getId()};
         });
         return holder[0];
     }
 
-    private void seedPartner(long partnerId) {
+    private void seedPartner(String partnerId) {
         IEntityDao<ErpMdPartner> dao = daoProvider.daoFor(ErpMdPartner.class);
         if (dao.getEntityById(partnerId) != null) {
             return;
@@ -117,19 +117,19 @@ public class TestErpFinReconciliationReversePreview extends JunitAutoTestCase {
         dao.saveEntity(partner);
     }
 
-    private ErpFinArApItem newItem(String direction, long partnerId, String sourceBillType, String sourceBillCode,
+    private ErpFinArApItem newItem(String direction, String partnerId, String sourceBillType, String sourceBillCode,
                                    BigDecimal amount, LocalDate businessDate) {
         IEntityDao<ErpFinArApItem> dao = daoProvider.daoFor(ErpFinArApItem.class);
         ErpFinArApItem item = dao.newEntity();
         item.setCode("ARI-" + sourceBillCode);
-        item.setOrgId(1L);
-        item.setAcctSchemaId(1L);
+        item.setOrgId("1");
+        item.setAcctSchemaId("1");
         item.setDirection(direction);
         item.setPartnerId(partnerId);
         item.setSourceBillType(sourceBillType);
         item.setSourceBillCode(sourceBillCode);
         item.setBusinessDate(businessDate);
-        item.setCurrencyId(1L);
+        item.setCurrencyId("1");
         item.setExchangeRate(BigDecimal.ONE);
         item.setAmountSource(amount);
         item.setAmountFunctional(amount);
@@ -142,7 +142,7 @@ public class TestErpFinReconciliationReversePreview extends JunitAutoTestCase {
         return item;
     }
 
-    private ReconciliationLineInput line(Long paymentItemId, Long invoiceItemId, String amount) {
+    private ReconciliationLineInput line(String paymentItemId, String invoiceItemId, String amount) {
         BigDecimal amt = new BigDecimal(amount);
         ReconciliationLineInput in = new ReconciliationLineInput();
         in.setPaymentItemId(paymentItemId);
@@ -152,11 +152,11 @@ public class TestErpFinReconciliationReversePreview extends JunitAutoTestCase {
         return in;
     }
 
-    private ErpFinArApItem item(Long id) {
+    private ErpFinArApItem item(String id) {
         return daoProvider.daoFor(ErpFinArApItem.class).getEntityById(id);
     }
 
-    private ErpFinReconciliation recon(Long id) {
+    private ErpFinReconciliation recon(String id) {
         return daoProvider.daoFor(ErpFinReconciliation.class).getEntityById(id);
     }
 }

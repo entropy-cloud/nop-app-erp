@@ -24,6 +24,7 @@ import app.erp.fin.service.profitloss.ProfitLossClosingService;
 import io.nop.api.core.auth.IUserContext;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.config.AppConfig;
+import io.nop.api.core.convert.ConvertHelper;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.api.core.time.CoreMetrics;
 import io.nop.biz.api.IBizObjectManager;
@@ -134,9 +135,9 @@ public class ErpFinAccountingPeriodProcessor {
         return !dao.findAllByQuery(q).isEmpty();
     }
 
-    protected Long resolveDefaultOrgId() {
-        // 默认 1L（与 findOrCreatePeriodStatus 的 acctSchema fallback 同范式）。
-        return 1L;
+    protected String resolveDefaultOrgId() {
+        // 默认 "1"（与 findOrCreatePeriodStatus 的 acctSchema fallback 同范式）。
+        return "1";
     }
 
     // ===================== 模块关账（AR→AP→INV→AST→GL） =====================
@@ -219,7 +220,8 @@ public class ErpFinAccountingPeriodProcessor {
             return;
         }
         try {
-            CostingRecloseReport report = costingBiz.reclosePeriodCosts(period.getId(),
+            // bridge-main-064: fin String periodId → inv Long periodId（语义级转换，退役 owner M2.2）
+            CostingRecloseReport report = costingBiz.reclosePeriodCosts(ConvertHelper.toLong(period.getId()),
                     period.getStartDate(), period.getEndDate(), context);
             LOG.info("期末结账：期间 {} 存货成本兜底重算完成，扫描 {} 单，补算入库层 {} / 出库 COGS {}",
                     period.getCode(), report.getScannedMoves(),
@@ -330,7 +332,7 @@ public class ErpFinAccountingPeriodProcessor {
      * 凭证行已有 acctSchemaId（过账时按账套写入），此处按实际归属分组。
      */
     protected void populateTrialBalanceForAllSchemas(ErpFinAccountingPeriod period) {
-        List<Long> voucherIds = findPostedVoucherIds(period.getId());
+        List<String> voucherIds = findPostedVoucherIds(period.getId());
         IEntityDao<ErpFinTrialBalance> tbDao = daoProvider.daoFor(ErpFinTrialBalance.class);
         QueryBean clearQ = new QueryBean();
         clearQ.addFilter(eq("periodId", period.getId()));
@@ -346,22 +348,22 @@ public class ErpFinAccountingPeriodProcessor {
         q.addFilter(in("voucherId", voucherIds));
         List<ErpFinVoucherLine> lines = lineDao.findAllByQuery(q);
 
-        Map<Long, Map<Long, TbAgg>> bySchema = new LinkedHashMap<>();
-        Long fallbackSchema = resolveAcctSchemaId(period.getId());
+        Map<String, Map<String, TbAgg>> bySchema = new LinkedHashMap<>();
+        String fallbackSchema = resolveAcctSchemaId(period.getId());
         for (ErpFinVoucherLine l : lines) {
             if (l.getSubjectId() == null) {
                 continue;
             }
-            Long schemaId = l.getAcctSchemaId() != null ? l.getAcctSchemaId() : fallbackSchema;
-            Map<Long, TbAgg> subjectMap = bySchema.computeIfAbsent(schemaId, k -> new LinkedHashMap<>());
+            String schemaId = l.getAcctSchemaId() != null ? l.getAcctSchemaId() : fallbackSchema;
+            Map<String, TbAgg> subjectMap = bySchema.computeIfAbsent(schemaId, k -> new LinkedHashMap<>());
             TbAgg a = subjectMap.computeIfAbsent(l.getSubjectId(), k -> new TbAgg(l));
             a.debit = a.debit.add(l.getDebitAmount() == null ? BigDecimal.ZERO : l.getDebitAmount());
             a.credit = a.credit.add(l.getCreditAmount() == null ? BigDecimal.ZERO : l.getCreditAmount());
         }
 
         Timestamp generatedAt = CoreMetrics.currentTimestamp();
-        for (Map.Entry<Long, Map<Long, TbAgg>> schemaEntry : bySchema.entrySet()) {
-            Long acctSchemaId = schemaEntry.getKey();
+        for (Map.Entry<String, Map<String, TbAgg>> schemaEntry : bySchema.entrySet()) {
+            String acctSchemaId = schemaEntry.getKey();
             for (TbAgg a : schemaEntry.getValue().values()) {
                 ErpFinTrialBalance tb = tbDao.newEntity();
                 tb.setOrgId(period.getOrgId());
@@ -383,7 +385,7 @@ public class ErpFinAccountingPeriodProcessor {
         }
     }
 
-    protected List<Long> findPostedVoucherIds(Long periodId) {
+    protected List<String> findPostedVoucherIds(String periodId) {
         IEntityDao<ErpFinVoucher> dao = daoProvider.daoFor(ErpFinVoucher.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("periodId", periodId));
@@ -396,11 +398,11 @@ public class ErpFinAccountingPeriodProcessor {
         return dao.findAllByQuery(q).stream().map(ErpFinVoucher::getId).collect(Collectors.toList());
     }
 
-    protected Long resolveAcctSchemaId(Long periodId) {
+    protected String resolveAcctSchemaId(String periodId) {
         ErpFinAccountingPeriod period = daoProvider.daoFor(ErpFinAccountingPeriod.class).getEntityById(periodId);
-        Long orgId = period != null ? period.getOrgId() : null;
+        String orgId = period != null ? period.getOrgId() : null;
         if (orgId != null) {
-            Long schemaId = AcctSchemaResolver.resolvePrimarySchemaId(daoProvider, orgId);
+            String schemaId = AcctSchemaResolver.resolvePrimarySchemaId(daoProvider, orgId);
             if (schemaId != null) {
                 return schemaId;
             }
@@ -413,11 +415,11 @@ public class ErpFinAccountingPeriodProcessor {
         if (!list.isEmpty() && list.get(0).getAcctSchemaId() != null) {
             return list.get(0).getAcctSchemaId();
         }
-        return 1L;
+        return "1";
     }
 
     protected static final class TbAgg {
-        final Long subjectId;
+        final String subjectId;
         final String subjectCode;
         final String subjectName;
         BigDecimal debit = BigDecimal.ZERO;
@@ -447,10 +449,10 @@ public class ErpFinAccountingPeriodProcessor {
         QueryBean q = new QueryBean();
         q.addFilter(and(ge("businessDate", period.getStartDate()), le("businessDate", period.getEndDate())));
         // 多账套/多组织读路径隔离（P1-MA2-095）：按期间所属组织 + 主账套限定 AR/AP 明细，避免跨组织/跨账套双计
-        Long orgId = period.getOrgId();
+        String orgId = period.getOrgId();
         if (orgId != null) {
             q.addFilter(eq("orgId", orgId));
-            Long schemaId = AcctSchemaResolver.resolvePrimarySchemaId(daoProvider, orgId);
+            String schemaId = AcctSchemaResolver.resolvePrimarySchemaId(daoProvider, orgId);
             if (schemaId != null) {
                 q.addFilter(eq("acctSchemaId", schemaId));
             }
@@ -566,7 +568,7 @@ public class ErpFinAccountingPeriodProcessor {
 
     // ===================== helpers =====================
 
-    protected ErpFinAccountingPeriod requirePeriod(Long periodId) {
+    protected ErpFinAccountingPeriod requirePeriod(String periodId) {
         ErpFinAccountingPeriod period = daoProvider.daoFor(ErpFinAccountingPeriod.class).getEntityById(periodId);
         if (period == null) {
             throw new NopException(ErpFinErrors.ERR_PERIOD_NOT_FOUND).param(ErpFinErrors.ARG_PERIOD_ID, periodId);
@@ -593,7 +595,7 @@ public class ErpFinAccountingPeriodProcessor {
 
     protected ErpFinAccountingPeriodStatus findOrCreatePeriodStatus(ErpFinAccountingPeriod period) {
         IEntityDao<ErpFinAccountingPeriodStatus> dao = daoProvider.daoFor(ErpFinAccountingPeriodStatus.class);
-        Long scopeSchemaId = resolveAcctSchemaId(period);
+        String scopeSchemaId = resolveAcctSchemaId(period);
         QueryBean q = new QueryBean();
         q.addFilter(eq("periodId", period.getId()));
         // 多账套读路径隔离（P1-MA2-095）：按主账套限定期间状态，避免多账套误取首个状态行
@@ -619,15 +621,15 @@ public class ErpFinAccountingPeriodProcessor {
         return status;
     }
 
-    protected Long resolveAcctSchemaId(ErpFinAccountingPeriod period) {
-        Long orgId = period != null ? period.getOrgId() : null;
+    protected String resolveAcctSchemaId(ErpFinAccountingPeriod period) {
+        String orgId = period != null ? period.getOrgId() : null;
         if (orgId != null) {
-            Long schemaId = AcctSchemaResolver.resolvePrimarySchemaId(daoProvider, orgId);
+            String schemaId = AcctSchemaResolver.resolvePrimarySchemaId(daoProvider, orgId);
             if (schemaId != null) {
                 return schemaId;
             }
         }
-        Long periodId = period != null ? period.getId() : null;
+        String periodId = period != null ? period.getId() : null;
         if (periodId != null) {
             IEntityDao<ErpFinVoucher> dao = daoProvider.daoFor(ErpFinVoucher.class);
             QueryBean q = new QueryBean();
@@ -638,7 +640,7 @@ public class ErpFinAccountingPeriodProcessor {
                 return vouchers.get(0).getAcctSchemaId();
             }
         }
-        return 1L;
+        return "1";
     }
 
     protected boolean isAutoPostOnClose() {

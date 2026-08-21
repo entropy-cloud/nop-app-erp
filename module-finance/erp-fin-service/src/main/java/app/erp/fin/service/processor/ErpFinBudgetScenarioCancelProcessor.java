@@ -21,7 +21,7 @@ public class ErpFinBudgetScenarioCancelProcessor extends AbstractCancelProcessor
 
     @Override
     public ErpFinBudgetScenario cancel(String id, IServiceContext context) {
-        ErpFinBudgetScenario scenario = processor.requireScenario(Long.valueOf(id));
+        ErpFinBudgetScenario scenario = processor.requireScenario(id);
         processor.validateTransition(scenario, ErpFinConstants.BUDGET_STATUS_CANCELLED,
                 ErpFinConstants.BUDGET_STATUS_APPROVED);
         processor.reverseBudgetVoucher(scenario, context);

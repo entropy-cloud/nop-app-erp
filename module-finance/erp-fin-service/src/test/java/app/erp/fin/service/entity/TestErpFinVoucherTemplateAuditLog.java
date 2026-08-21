@@ -46,7 +46,7 @@ public class TestErpFinVoucherTemplateAuditLog extends JunitAutoTestCase {
 
     @Test
     public void testTemplateSaveUpdateDeleteAudited() {
-        final Long[] templateIdHolder = new Long[1];
+        final String[] templateIdHolder = new String[1];
         final String originalName = "应付发票模板-原";
         final String updatedName = "应付发票模板-改";
 
@@ -62,9 +62,9 @@ public class TestErpFinVoucherTemplateAuditLog extends JunitAutoTestCase {
             templateIdHolder[0] = tpl.getId();
             ormTemplate.flushSession();
         });
-        Long templateId = templateIdHolder[0];
+        String templateId = templateIdHolder[0];
 
-        List<NopSysChangeLog> saveLogs = findLogs(BIZ_OBJ_TEMPLATE, templateId.toString(), "save");
+        List<NopSysChangeLog> saveLogs = findLogs(BIZ_OBJ_TEMPLATE, templateId, "save");
         assertTrue(saveLogs.size() >= 4,
                 "audit-save 应记模板初始全量（code/name/businessType/voucherType/isActive 等多列），实际：" + saveLogs.size());
         assertTrue(saveLogs.stream().anyMatch(l -> "code".equals(l.getPropName())
@@ -81,7 +81,7 @@ public class TestErpFinVoucherTemplateAuditLog extends JunitAutoTestCase {
             ormTemplate.flushSession();
         });
 
-        List<NopSysChangeLog> updateLogs = findLogs(BIZ_OBJ_TEMPLATE, templateId.toString(), "update");
+        List<NopSysChangeLog> updateLogs = findLogs(BIZ_OBJ_TEMPLATE, templateId, "update");
         assertTrue(updateLogs.size() <= 3,
                 "update 应只记已变更字段（name + 框架 auto 字段），实际：" + updateLogs.size());
         NopSysChangeLog nameLog = updateLogs.stream()
@@ -100,7 +100,7 @@ public class TestErpFinVoucherTemplateAuditLog extends JunitAutoTestCase {
             ormTemplate.flushSession();
         });
 
-        List<NopSysChangeLog> allTemplateLogs = findAllLogs(BIZ_OBJ_TEMPLATE, templateId.toString());
+        List<NopSysChangeLog> allTemplateLogs = findAllLogs(BIZ_OBJ_TEMPLATE, templateId);
         assertTrue(allTemplateLogs.stream().anyMatch(l -> "delVersion".equals(l.getPropName())
                         && l.getNewValue() != null && !"0".equals(l.getNewValue())),
                 "逻辑删除应在审计日志留 delVersion 非 0 的变更记录（actual：" + describeProps(allTemplateLogs) + "）");
@@ -108,7 +108,7 @@ public class TestErpFinVoucherTemplateAuditLog extends JunitAutoTestCase {
 
     @Test
     public void testTemplateLineSaveAudited() {
-        final Long[] lineIdHolder = new Long[1];
+        final String[] lineIdHolder = new String[1];
 
         ormTemplate.runInSession(() -> {
             ErpFinVoucherTemplate tpl = new ErpFinVoucherTemplate();
@@ -130,7 +130,7 @@ public class TestErpFinVoucherTemplateAuditLog extends JunitAutoTestCase {
             ormTemplate.flushSession();
         });
 
-        List<NopSysChangeLog> lineSaveLogs = findLogs(BIZ_OBJ_TEMPLATE_LINE, lineIdHolder[0].toString(), "save");
+        List<NopSysChangeLog> lineSaveLogs = findLogs(BIZ_OBJ_TEMPLATE_LINE, lineIdHolder[0], "save");
         assertTrue(lineSaveLogs.size() >= 3,
                 "audit-save 应记模板行初始全量（subjectCode/dcDirection/amountKey 等），实际：" + lineSaveLogs.size());
         assertTrue(lineSaveLogs.stream().anyMatch(l -> "subjectCode".equals(l.getPropName())

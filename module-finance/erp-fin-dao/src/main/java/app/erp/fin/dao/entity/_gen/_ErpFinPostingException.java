@@ -245,7 +245,7 @@ public class _ErpFinPostingException extends DynamicOrmEntity{
 
     
     /* ID: ID */
-    private java.lang.Long _id;
+    private java.lang.String _id;
     
     /* 追踪ID: TRACE_ID */
     private java.lang.String _traceId;
@@ -272,10 +272,10 @@ public class _ErpFinPostingException extends DynamicOrmEntity{
     private java.time.LocalDate _voucherDate;
     
     /* 核算组织: ORG_ID */
-    private java.lang.Long _orgId;
+    private java.lang.String _orgId;
     
     /* 账套: ACCT_SCHEMA_ID */
-    private java.lang.Long _acctSchemaId;
+    private java.lang.String _acctSchemaId;
     
     /* 处置状态: STATUS */
     private java.lang.String _status;
@@ -296,7 +296,7 @@ public class _ErpFinPostingException extends DynamicOrmEntity{
     private java.sql.Timestamp _resolvedAt;
     
     /* 关联凭证ID: VOUCHER_ID */
-    private java.lang.Long _voucherId;
+    private java.lang.String _voucherId;
     
     /* 发生时间: OCCURRENCE_TIME */
     private java.sql.Timestamp _occurrenceTime;
@@ -320,7 +320,7 @@ public class _ErpFinPostingException extends DynamicOrmEntity{
     private java.sql.Timestamp _updateTime;
     
     /* 币种: CURRENCY_ID */
-    private java.lang.Long _currencyId;
+    private java.lang.String _currencyId;
     
     /* 汇率: EXCHANGE_RATE */
     private java.math.BigDecimal _exchangeRate;
@@ -498,9 +498,9 @@ public class _ErpFinPostingException extends DynamicOrmEntity{
         switch(propId){
         
             case PROP_ID_id:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_id));
                }
                setId(typedValue);
@@ -588,9 +588,9 @@ public class _ErpFinPostingException extends DynamicOrmEntity{
             }
         
             case PROP_ID_orgId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_orgId));
                }
                setOrgId(typedValue);
@@ -598,9 +598,9 @@ public class _ErpFinPostingException extends DynamicOrmEntity{
             }
         
             case PROP_ID_acctSchemaId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_acctSchemaId));
                }
                setAcctSchemaId(typedValue);
@@ -668,9 +668,9 @@ public class _ErpFinPostingException extends DynamicOrmEntity{
             }
         
             case PROP_ID_voucherId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_voucherId));
                }
                setVoucherId(typedValue);
@@ -748,9 +748,9 @@ public class _ErpFinPostingException extends DynamicOrmEntity{
             }
         
             case PROP_ID_currencyId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_currencyId));
                }
                setCurrencyId(typedValue);
@@ -788,7 +788,7 @@ public class _ErpFinPostingException extends DynamicOrmEntity{
         
             case PROP_ID_id:{
                onInitProp(propId);
-               this._id = (java.lang.Long)value;
+               this._id = (java.lang.String)value;
                orm_id(); // 如果是设置主键字段，则触发watcher
                break;
             }
@@ -851,14 +851,14 @@ public class _ErpFinPostingException extends DynamicOrmEntity{
         
             case PROP_ID_orgId:{
                onInitProp(propId);
-               this._orgId = (java.lang.Long)value;
+               this._orgId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_acctSchemaId:{
                onInitProp(propId);
-               this._acctSchemaId = (java.lang.Long)value;
+               this._acctSchemaId = (java.lang.String)value;
                
                break;
             }
@@ -907,7 +907,7 @@ public class _ErpFinPostingException extends DynamicOrmEntity{
         
             case PROP_ID_voucherId:{
                onInitProp(propId);
-               this._voucherId = (java.lang.Long)value;
+               this._voucherId = (java.lang.String)value;
                
                break;
             }
@@ -963,7 +963,7 @@ public class _ErpFinPostingException extends DynamicOrmEntity{
         
             case PROP_ID_currencyId:{
                onInitProp(propId);
-               this._currencyId = (java.lang.Long)value;
+               this._currencyId = (java.lang.String)value;
                
                break;
             }
@@ -991,7 +991,7 @@ public class _ErpFinPostingException extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final java.lang.Long getId(){
+    public final java.lang.String getId(){
          onPropGet(PROP_ID_id);
          return _id;
     }
@@ -999,7 +999,7 @@ public class _ErpFinPostingException extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final void setId(java.lang.Long value){
+    public final void setId(java.lang.String value){
         if(onPropSet(PROP_ID_id,value)){
             this._id = value;
             internalClearRefs(PROP_ID_id);
@@ -1162,7 +1162,7 @@ public class _ErpFinPostingException extends DynamicOrmEntity{
     /**
      * 核算组织: ORG_ID
      */
-    public final java.lang.Long getOrgId(){
+    public final java.lang.String getOrgId(){
          onPropGet(PROP_ID_orgId);
          return _orgId;
     }
@@ -1170,7 +1170,7 @@ public class _ErpFinPostingException extends DynamicOrmEntity{
     /**
      * 核算组织: ORG_ID
      */
-    public final void setOrgId(java.lang.Long value){
+    public final void setOrgId(java.lang.String value){
         if(onPropSet(PROP_ID_orgId,value)){
             this._orgId = value;
             internalClearRefs(PROP_ID_orgId);
@@ -1181,7 +1181,7 @@ public class _ErpFinPostingException extends DynamicOrmEntity{
     /**
      * 账套: ACCT_SCHEMA_ID
      */
-    public final java.lang.Long getAcctSchemaId(){
+    public final java.lang.String getAcctSchemaId(){
          onPropGet(PROP_ID_acctSchemaId);
          return _acctSchemaId;
     }
@@ -1189,7 +1189,7 @@ public class _ErpFinPostingException extends DynamicOrmEntity{
     /**
      * 账套: ACCT_SCHEMA_ID
      */
-    public final void setAcctSchemaId(java.lang.Long value){
+    public final void setAcctSchemaId(java.lang.String value){
         if(onPropSet(PROP_ID_acctSchemaId,value)){
             this._acctSchemaId = value;
             internalClearRefs(PROP_ID_acctSchemaId);
@@ -1314,7 +1314,7 @@ public class _ErpFinPostingException extends DynamicOrmEntity{
     /**
      * 关联凭证ID: VOUCHER_ID
      */
-    public final java.lang.Long getVoucherId(){
+    public final java.lang.String getVoucherId(){
          onPropGet(PROP_ID_voucherId);
          return _voucherId;
     }
@@ -1322,7 +1322,7 @@ public class _ErpFinPostingException extends DynamicOrmEntity{
     /**
      * 关联凭证ID: VOUCHER_ID
      */
-    public final void setVoucherId(java.lang.Long value){
+    public final void setVoucherId(java.lang.String value){
         if(onPropSet(PROP_ID_voucherId,value)){
             this._voucherId = value;
             internalClearRefs(PROP_ID_voucherId);
@@ -1466,7 +1466,7 @@ public class _ErpFinPostingException extends DynamicOrmEntity{
     /**
      * 币种: CURRENCY_ID
      */
-    public final java.lang.Long getCurrencyId(){
+    public final java.lang.String getCurrencyId(){
          onPropGet(PROP_ID_currencyId);
          return _currencyId;
     }
@@ -1474,7 +1474,7 @@ public class _ErpFinPostingException extends DynamicOrmEntity{
     /**
      * 币种: CURRENCY_ID
      */
-    public final void setCurrencyId(java.lang.Long value){
+    public final void setCurrencyId(java.lang.String value){
         if(onPropSet(PROP_ID_currencyId,value)){
             this._currencyId = value;
             internalClearRefs(PROP_ID_currencyId);

@@ -83,7 +83,7 @@ public class ErpFinBankReconAutoReverseHelper {
      *
      * @return true=红冲成功（或 config 关闭跳过）；false=红冲失败（候选保持 POSTED 下次重试）
      */
-    public boolean reverseOne(Long reconciliationId, IServiceContext ctx) {
+    public boolean reverseOne(String reconciliationId, IServiceContext ctx) {
         if (!isAutoReverseEnabled()) {
             LOG.info("erp-fin-bank-recon-auto-reverse-skipped-by-config: reconciliationId={}, configKey={}",
                     reconciliationId, ErpFinConstants.CONFIG_BANK_RECON_AUTO_REVERSE_NEXT_MONTH);

@@ -34,7 +34,7 @@ public class ErpFinAccountingPeriodReverseCloseProcessor {
     @Inject
     ErpFinAccountingPeriodStateMachine stateMachine;
 
-    public ErpFinAccountingPeriod reverseClose(Long periodId, String reason, IServiceContext context) {
+    public ErpFinAccountingPeriod reverseClose(String periodId, String reason, IServiceContext context) {
         ErpFinAccountingPeriod period = facade.requirePeriod(periodId);
 
         if (StringHelper.isBlank(reason)) {

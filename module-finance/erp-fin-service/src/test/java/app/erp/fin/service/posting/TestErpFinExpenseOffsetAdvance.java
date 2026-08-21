@@ -60,23 +60,23 @@ public class TestErpFinExpenseOffsetAdvance extends JunitAutoTestCase {
 
     @Test
     public void testOffsetThenReverse() {
-        long partnerId = 7701L;
-        long[] ids = ormTemplate.runInSession(session -> {
+        String partnerId = "7701";
+        String[] ids = ormTemplate.runInSession(session -> {
             seedOpenPeriod();
-            seedAcctSchema(1L);
+            seedAcctSchema("1");
             seedSubject("6602", "管理费用");
             seedSubject("2221", "应交税费-进项税额");
             seedSubject("2241", "其他应付款-员工");
             seedSubject("1221", "其他应收款-员工预支");
             seedSubject("1002", "银行存款");
-            Long empId = seedEmployee(partnerId);
-            Long advanceId = seedAdvance("ADV-OFF-001", empId, new BigDecimal("500"));
-            Long claimId = seedClaim("EC-OFF-001", empId, new BigDecimal("100"),
+            String empId = seedEmployee(partnerId);
+            String advanceId = seedAdvance("ADV-OFF-001", empId, new BigDecimal("500"));
+            String claimId = seedClaim("EC-OFF-001", empId, new BigDecimal("100"),
                     new BigDecimal("13"), new BigDecimal("113"));
-            return new long[]{advanceId, claimId};
+            return new String[]{advanceId, claimId};
         });
-        long advanceId = ids[0];
-        long claimId = ids[1];
+        String advanceId = ids[0];
+        String claimId = ids[1];
 
         // 1. 借款审核 → 员工预支应收辅助账 open=500
         assertEquals(0, approveAdvance(advanceId).getStatus());
@@ -124,20 +124,20 @@ public class TestErpFinExpenseOffsetAdvance extends JunitAutoTestCase {
     @Test
     public void testOffsetPartialExpenseLargerThanAdvance() {
         // 报销应付(300) > 借款未还(200)：抵扣 200，报销剩余 100 留作应付-员工
-        long partnerId = 7702L;
-        long[] ids = ormTemplate.runInSession(session -> {
+        String partnerId = "7702";
+        String[] ids = ormTemplate.runInSession(session -> {
             seedOpenPeriod();
-            seedAcctSchema(1L);
+            seedAcctSchema("1");
             seedSubject("6602", "管理费用");
             seedSubject("2221", "应交税费-进项税额");
             seedSubject("2241", "其他应付款-员工");
             seedSubject("1221", "其他应收款-员工预支");
             seedSubject("1002", "银行存款");
-            Long empId = seedEmployee(partnerId);
-            Long advanceId = seedAdvance("ADV-OFF-002", empId, new BigDecimal("200"));
-            Long claimId = seedClaim("EC-OFF-002", empId, new BigDecimal("300"),
+            String empId = seedEmployee(partnerId);
+            String advanceId = seedAdvance("ADV-OFF-002", empId, new BigDecimal("200"));
+            String claimId = seedClaim("EC-OFF-002", empId, new BigDecimal("300"),
                     BigDecimal.ZERO, new BigDecimal("300"));
-            return new long[]{advanceId, claimId};
+            return new String[]{advanceId, claimId};
         });
         assertEquals(0, approveAdvance(ids[0]).getStatus());
         assertEquals(0, approveClaim(ids[1]).getStatus());
@@ -153,17 +153,17 @@ public class TestErpFinExpenseOffsetAdvance extends JunitAutoTestCase {
 
     // ---------- rpc helpers ----------
 
-    private ApiResponse<?> approveClaim(Long id) {
+    private ApiResponse<?> approveClaim(String id) {
         return executeRpc(mutation, "ErpFinExpenseClaim__approve",
                 ApiRequest.build(Map.of("id", String.valueOf(id))));
     }
 
-    private ApiResponse<?> reverseApproveClaim(Long id) {
+    private ApiResponse<?> reverseApproveClaim(String id) {
         return executeRpc(mutation, "ErpFinExpenseClaim__reverseApprove",
                 ApiRequest.build(Map.of("id", String.valueOf(id))));
     }
 
-    private ApiResponse<?> approveAdvance(Long id) {
+    private ApiResponse<?> approveAdvance(String id) {
         return executeRpc(mutation, "ErpFinEmployeeAdvance__approve",
                 ApiRequest.build(Map.of("id", String.valueOf(id))));
     }
@@ -180,7 +180,7 @@ public class TestErpFinExpenseOffsetAdvance extends JunitAutoTestCase {
         ErpFinAccountingPeriod period = new ErpFinAccountingPeriod();
         period.setCode("2026-06");
         period.setName("2026-06");
-        period.setOrgId(1L);
+        period.setOrgId("1");
         period.setYear(2026);
         period.setMonth(6);
         period.setStartDate(LocalDate.of(2026, 6, 1));
@@ -189,27 +189,27 @@ public class TestErpFinExpenseOffsetAdvance extends JunitAutoTestCase {
         dao.saveEntity(period);
     }
 
-    private Long seedEmployee(long partnerId) {
+    private String seedEmployee(String partnerId) {
         IEntityDao<ErpMdEmployee> dao = daoProvider.daoFor(ErpMdEmployee.class);
         ErpMdEmployee emp = new ErpMdEmployee();
         emp.setCode("E-" + partnerId);
         emp.setName("员工-" + partnerId);
-        emp.setOrgId(1L);
+        emp.setOrgId("1");
         emp.setPartnerId(partnerId);
         emp.setStatus("ACTIVE");
         dao.saveEntity(emp);
         return emp.getId();
     }
 
-    private Long seedAdvance(String code, Long employeeId, BigDecimal amount) {
+    private String seedAdvance(String code, String employeeId, BigDecimal amount) {
         IEntityDao<ErpFinEmployeeAdvance> dao = daoProvider.daoFor(ErpFinEmployeeAdvance.class);
         ErpFinEmployeeAdvance advance = new ErpFinEmployeeAdvance();
         advance.setCode(code);
-        advance.setOrgId(1L);
+        advance.setOrgId("1");
         advance.setEmployeeId(employeeId);
         advance.setAdvanceType("EXPENSE_ADVANCE");
         advance.setBusinessDate(LocalDate.of(2026, 6, 5));
-        advance.setCurrencyId(1L);
+        advance.setCurrencyId("1");
         advance.setExchangeRate(BigDecimal.ONE);
         advance.setAmountFunctional(amount);
         advance.setAmountSource(amount);
@@ -221,16 +221,16 @@ public class TestErpFinExpenseOffsetAdvance extends JunitAutoTestCase {
         return advance.getId();
     }
 
-    private Long seedClaim(String code, Long claimantId, BigDecimal amountWithoutTax,
+    private String seedClaim(String code, String claimantId, BigDecimal amountWithoutTax,
                            BigDecimal tax, BigDecimal withTax) {
         IEntityDao<ErpFinExpenseClaim> dao = daoProvider.daoFor(ErpFinExpenseClaim.class);
         ErpFinExpenseClaim claim = new ErpFinExpenseClaim();
         claim.setCode(code);
-        claim.setOrgId(1L);
+        claim.setOrgId("1");
         claim.setClaimantId(claimantId);
         claim.setBusinessDate(LocalDate.of(2026, 6, 15));
         claim.setPaymentMode(ErpFinConstants.PAYMENT_MODE_OWN_ACCOUNT);
-        claim.setCurrencyId(1L);
+        claim.setCurrencyId("1");
         claim.setExchangeRate(BigDecimal.ONE);
         claim.setAmountWithoutTax(amountWithoutTax);
         claim.setTaxAmount(tax);
@@ -263,14 +263,14 @@ public class TestErpFinExpenseOffsetAdvance extends JunitAutoTestCase {
         dao.saveEntity(subject);
     }
 
-    private void seedAcctSchema(long orgId) {
+    private void seedAcctSchema(String orgId) {
         IEntityDao<ErpMdAcctSchema> dao = daoProvider.daoFor(ErpMdAcctSchema.class);
         ErpMdAcctSchema schema = new ErpMdAcctSchema();
         schema.setCode("AS-" + orgId);
         schema.setName("账套-" + orgId);
         schema.setOrgId(orgId);
         schema.setNature("FINANCIAL");
-        schema.setFunctionalCurrencyId(1L);
+        schema.setFunctionalCurrencyId("1");
         schema.setStatus("ACTIVE");
         dao.saveEntity(schema);
     }

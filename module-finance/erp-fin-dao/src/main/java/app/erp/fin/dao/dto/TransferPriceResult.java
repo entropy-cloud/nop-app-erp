@@ -12,7 +12,7 @@ import java.math.BigDecimal;
 public class TransferPriceResult {
     private String pricingMethod;
     private BigDecimal unitPrice;
-    private Long ruleId;
+    private String ruleId;
     private String ruleCode;
 
     public String getPricingMethod() {
@@ -31,11 +31,11 @@ public class TransferPriceResult {
         this.unitPrice = unitPrice;
     }
 
-    public Long getRuleId() {
+    public String getRuleId() {
         return ruleId;
     }
 
-    public void setRuleId(Long ruleId) {
+    public void setRuleId(String ruleId) {
         this.ruleId = ruleId;
     }
 

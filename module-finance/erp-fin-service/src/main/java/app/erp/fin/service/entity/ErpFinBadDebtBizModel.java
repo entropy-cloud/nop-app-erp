@@ -52,7 +52,7 @@ public class ErpFinBadDebtBizModel extends CrudBizModel<ErpFinBadDebt> implement
 
     @Override
     @BizMutation
-    public ErpFinBadDebt writeOff(@Name("arApItemId") Long arApItemId,
+    public ErpFinBadDebt writeOff(@Name("arApItemId") String arApItemId,
                                   @Name("reason") String reason,
                                   IServiceContext context) {
         return writeOffProcessor.writeOff(arApItemId, reason, context);
@@ -60,7 +60,7 @@ public class ErpFinBadDebtBizModel extends CrudBizModel<ErpFinBadDebt> implement
 
     @Override
     @BizMutation
-    public ErpFinBadDebt recover(@Name("arApItemId") Long arApItemId,
+    public ErpFinBadDebt recover(@Name("arApItemId") String arApItemId,
                                  @Name("reason") String reason,
                                  IServiceContext context) {
         return recoverProcessor.recover(arApItemId, reason, context);
@@ -68,37 +68,37 @@ public class ErpFinBadDebtBizModel extends CrudBizModel<ErpFinBadDebt> implement
 
     @Override
     @BizMutation
-    public ErpFinBadDebt submit(@Name("id") Long id, IServiceContext context) {
-        return submitForApprovalProcessor.submitForApproval(String.valueOf(id), context);
+    public ErpFinBadDebt submit(@Name("id") String id, IServiceContext context) {
+        return submitForApprovalProcessor.submitForApproval(id, context);
     }
 
     @Override
     @BizMutation
-    public ErpFinBadDebt approve(@Name("id") Long id, IServiceContext context) {
-        return approveProcessor.approve(String.valueOf(id), context);
+    public ErpFinBadDebt approve(@Name("id") String id, IServiceContext context) {
+        return approveProcessor.approve(id, context);
     }
 
     @Override
     @BizMutation
-    public ErpFinBadDebt reverseApprove(@Name("id") Long id, IServiceContext context) {
-        return reverseApproveProcessor.reverseApprove(String.valueOf(id), context);
+    public ErpFinBadDebt reverseApprove(@Name("id") String id, IServiceContext context) {
+        return reverseApproveProcessor.reverseApprove(id, context);
     }
 
     @Override
     @BizMutation
-    public ErpFinBadDebt reject(@Name("id") Long id, IServiceContext context) {
-        return rejectProcessor.reject(String.valueOf(id), context);
+    public ErpFinBadDebt reject(@Name("id") String id, IServiceContext context) {
+        return rejectProcessor.reject(id, context);
     }
 
     @Override
     @BizMutation
-    public BadDebtProvisionResult runBadDebtProvision(@Name("periodId") Long periodId, IServiceContext context) {
+    public BadDebtProvisionResult runBadDebtProvision(@Name("periodId") String periodId, IServiceContext context) {
         return badDebtProvisionService.runBadDebtProvision(periodId, context);
     }
 
     @Override
     @BizMutation
-    public BadDebtProvisionReversalResult reverseBadDebtProvision(@Name("periodId") Long periodId, IServiceContext context) {
+    public BadDebtProvisionReversalResult reverseBadDebtProvision(@Name("periodId") String periodId, IServiceContext context) {
         return badDebtProvisionService.reverseBadDebtProvision(periodId, context);
     }
 

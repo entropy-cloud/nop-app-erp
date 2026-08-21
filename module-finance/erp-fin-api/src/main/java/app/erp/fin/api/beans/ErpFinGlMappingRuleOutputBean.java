@@ -13,16 +13,16 @@
     public class ErpFinGlMappingRuleOutputBean {
 
     
-        private Long _id;
+        private String _id;
 
     
         @PropMeta(propId=1)
     
-        public Long getId(){
+        public String getId(){
             return _id;
         }
 
-        public void setId(Long value){
+        public void setId(String value){
             this._id = value;
         }
 
@@ -55,16 +55,16 @@
         }
 
 
-        private Long _orgId;
+        private String _orgId;
 
     
         @PropMeta(propId=4)
     
-        public Long getOrgId(){
+        public String getOrgId(){
             return _orgId;
         }
 
-        public void setOrgId(Long value){
+        public void setOrgId(String value){
             this._orgId = value;
         }
 
@@ -121,72 +121,72 @@
         }
 
 
-        private Long _acctSchemaId;
+        private String _acctSchemaId;
 
     
         @PropMeta(propId=7)
     
-        public Long getAcctSchemaId(){
+        public String getAcctSchemaId(){
             return _acctSchemaId;
         }
 
-        public void setAcctSchemaId(Long value){
+        public void setAcctSchemaId(String value){
             this._acctSchemaId = value;
         }
 
 
-        private Long _partnerGroupId;
+        private String _partnerGroupId;
 
     
         @PropMeta(propId=8)
     
-        public Long getPartnerGroupId(){
+        public String getPartnerGroupId(){
             return _partnerGroupId;
         }
 
-        public void setPartnerGroupId(Long value){
+        public void setPartnerGroupId(String value){
             this._partnerGroupId = value;
         }
 
 
-        private Long _materialCategoryId;
+        private String _materialCategoryId;
 
     
         @PropMeta(propId=9)
     
-        public Long getMaterialCategoryId(){
+        public String getMaterialCategoryId(){
             return _materialCategoryId;
         }
 
-        public void setMaterialCategoryId(Long value){
+        public void setMaterialCategoryId(String value){
             this._materialCategoryId = value;
         }
 
 
-        private Long _warehouseId;
+        private String _warehouseId;
 
     
         @PropMeta(propId=10)
     
-        public Long getWarehouseId(){
+        public String getWarehouseId(){
             return _warehouseId;
         }
 
-        public void setWarehouseId(Long value){
+        public void setWarehouseId(String value){
             this._warehouseId = value;
         }
 
 
-        private Long _departmentId;
+        private String _departmentId;
 
     
         @PropMeta(propId=11)
     
-        public Long getDepartmentId(){
+        public String getDepartmentId(){
             return _departmentId;
         }
 
-        public void setDepartmentId(Long value){
+        public void setDepartmentId(String value){
             this._departmentId = value;
         }
 

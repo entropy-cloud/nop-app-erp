@@ -39,7 +39,7 @@ public class TestErpFinReverseCloseAuditTrail extends PeriodCloseTestSupport {
     /** ① reason 落库断言：reverseClose 传 reason → 行字段 reversedBy/reverseCloseReason/reverseCloseAt 全量写入。 */
     @Test
     public void testReasonAuditTrailPersisted() {
-        Long periodId = seedFullPeriod("2024-06", 2024, 6);
+        String periodId = seedFullPeriod("2024-06", 2024, 6);
         ormTemplate.runInSession(() -> periodBiz.closePeriod(periodId, CTX));
         ormTemplate.runInSession(() -> periodBiz.finalizePeriod(periodId, CTX));
 
@@ -61,7 +61,7 @@ public class TestErpFinReverseCloseAuditTrail extends PeriodCloseTestSupport {
     /** ② reason 缺失拒绝断言：必填守卫 ERR_REVERSE_CLOSE_REASON_REQUIRED + 状态保持 CLOSED_FINAL + 零审计字段写入。 */
     @Test
     public void testMissingReasonRejected() {
-        Long periodId = seedFullPeriod("2024-07", 2024, 7);
+        String periodId = seedFullPeriod("2024-07", 2024, 7);
         ormTemplate.runInSession(() -> periodBiz.closePeriod(periodId, CTX));
         ormTemplate.runInSession(() -> periodBiz.finalizePeriod(periodId, CTX));
 
@@ -82,7 +82,7 @@ public class TestErpFinReverseCloseAuditTrail extends PeriodCloseTestSupport {
     /** ③ 空白 reason（空格串）同样拒绝（必填语义覆盖 isBlank）。 */
     @Test
     public void testBlankReasonRejected() {
-        Long periodId = seedFullPeriod("2024-08", 2024, 8);
+        String periodId = seedFullPeriod("2024-08", 2024, 8);
         ormTemplate.runInSession(() -> periodBiz.closePeriod(periodId, CTX));
         ormTemplate.runInSession(() -> periodBiz.finalizePeriod(periodId, CTX));
 

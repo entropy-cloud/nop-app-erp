@@ -21,12 +21,11 @@ public class ErpFinBadDebtReverseApproveProcessor extends AbstractReverseApprove
 
     @Override
     public ErpFinBadDebt reverseApprove(String id, IServiceContext context) {
-        Long badDebtId = Long.valueOf(id);
-        ErpFinBadDebt debt = processor.requireBadDebt(badDebtId);
+        ErpFinBadDebt debt = processor.requireBadDebt(id);
         // 守卫：须已 APPROVED 且已生成凭证（ErpFinBadDebt 无 posted 字段，以 voucherId 非空作为已过账标志）
         if (!debt.isApproved() || debt.getVoucherId() == null) {
             throw new NopException(ErpFinErrors.ERR_BAD_DEBT_NOT_APPROVED_OR_NOT_POSTED)
-                    .param(ErpFinErrors.ARG_BAD_DEBT_ID, badDebtId);
+                    .param(ErpFinErrors.ARG_BAD_DEBT_ID, id);
         }
         return processor.executeReverseApprove(debt, context);
     }

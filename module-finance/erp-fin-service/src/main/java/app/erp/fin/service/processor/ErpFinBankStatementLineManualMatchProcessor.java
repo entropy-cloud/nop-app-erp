@@ -20,7 +20,7 @@ public class ErpFinBankStatementLineManualMatchProcessor {
     @Inject
     IDaoProvider daoProvider;
 
-    public ErpFinBankStatementLine manualMatch(Long lineId, Long voucherLineId, IServiceContext context) {
+    public ErpFinBankStatementLine manualMatch(String lineId, String voucherLineId, IServiceContext context) {
         IEntityDao<ErpFinBankStatementLine> lineDao = daoProvider.daoFor(ErpFinBankStatementLine.class);
         ErpFinBankStatementLine line = lineDao.getEntityById(lineId);
         if (line == null) {

@@ -26,7 +26,7 @@ public class TestErpFinReverseClose extends PeriodCloseTestSupport {
     @Test
     public void testReverseCloseRestoresBalance() {
         // 使用 6 月（非年末）期间隔离月度反结账行为；年度反结账由 TestErpFinAnnualClose 覆盖。
-        Long periodId = seedFullPeriod("2024-06", 2024, 6);
+        String periodId = seedFullPeriod("2024-06", 2024, 6);
 
         ormTemplate.runInSession(() -> periodBiz.closePeriod(periodId, CTX));
         ormTemplate.runInSession(() -> periodBiz.finalizePeriod(periodId, CTX));

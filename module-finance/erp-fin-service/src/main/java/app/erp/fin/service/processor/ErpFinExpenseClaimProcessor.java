@@ -93,8 +93,8 @@ public class ErpFinExpenseClaimProcessor {
         return reverseApproveProcessor.reverseApprove(id, context);
     }
 
-    public ErpFinExpenseClaim cancel(Long claimId, IServiceContext context) {
-        return cancelProcessor.cancel(String.valueOf(claimId), context);
+    public ErpFinExpenseClaim cancel(String claimId, IServiceContext context) {
+        return cancelProcessor.cancel(claimId, context);
     }
 
     // ---------- step：迁移校验（protected，下游可逐个覆盖） ----------
@@ -231,17 +231,17 @@ public class ErpFinExpenseClaimProcessor {
         if (!Boolean.TRUE.equals(AppConfig.var(ErpFinConstants.CONFIG_EXPENSE_BUDGET_CHECK_ENABLED, Boolean.FALSE))) {
             return;
         }
-        Long subjectId = resolveBudgetSubjectId(ErpFinConstants.CONFIG_BUDGET_EXPENSE_SUBJECT_CODE);
+        String subjectId = resolveBudgetSubjectId(ErpFinConstants.CONFIG_BUDGET_EXPENSE_SUBJECT_CODE);
         if (subjectId == null) {
             return;
         }
-        Long periodId = resolvePeriodId(claim.getBusinessDate());
+        String periodId = resolvePeriodId(claim.getBusinessDate());
         BigDecimal amount = claim.getAmountFunctional() != null
                 ? claim.getAmountFunctional() : BigDecimal.ZERO;
         budgetControlBiz.check(subjectId, null, periodId, amount, "EXPENSE_CLAIM", claim.getCode(), context);
     }
 
-    protected Long resolveBudgetSubjectId(String configKey) {
+    protected String resolveBudgetSubjectId(String configKey) {
         String code = AppConfig.var(configKey, null);
         if (code == null || code.isEmpty()) {
             return null;
@@ -254,7 +254,7 @@ public class ErpFinExpenseClaimProcessor {
         return list.isEmpty() ? null : list.get(0).getId();
     }
 
-    protected Long resolvePeriodId(LocalDate businessDate) {
+    protected String resolvePeriodId(LocalDate businessDate) {
         if (businessDate == null) {
             return null;
         }
@@ -319,13 +319,13 @@ public class ErpFinExpenseClaimProcessor {
         return claim;
     }
 
-    protected ErpFinExpenseClaim doCancel(Long claimId, ErpFinExpenseClaim claim, IServiceContext context) {
+    protected ErpFinExpenseClaim doCancel(String claimId, ErpFinExpenseClaim claim, IServiceContext context) {
         String approveStatus = currentApproveStatus(claim);
         if (Objects.equals(approveStatus, ErpFinConstants.APPROVE_STATUS_APPROVED)
                 && Boolean.TRUE.equals(claim.getPosted())) {
             offsetOrchestrator.reverseOffset(claim);
             postingDispatcher.reverse(claim);
-            claim = reload(String.valueOf(claimId));
+            claim = reload(claimId);
             claim.setPosted(false);
             claim.setPostedAt(null);
             claim.setPostedBy(null);
@@ -337,10 +337,6 @@ public class ErpFinExpenseClaimProcessor {
     }
 
     // ---------- 校验/查询辅助（protected，供派生复用与覆盖） ----------
-
-    protected ErpFinExpenseClaim requireClaim(Long claimId, IServiceContext context) {
-        return requireClaim(String.valueOf(claimId), context);
-    }
 
     protected ErpFinExpenseClaim requireClaim(String id, IServiceContext context) {
         ErpFinExpenseClaim claim = claimDao().getEntityById(id);
@@ -355,7 +351,7 @@ public class ErpFinExpenseClaimProcessor {
         validateTransitionForCancel(claim, context);
     }
 
-    protected List<ErpFinExpenseClaimLine> loadLines(Long claimId) {
+    protected List<ErpFinExpenseClaimLine> loadLines(String claimId) {
         IEntityDao<ErpFinExpenseClaimLine> dao = daoProvider.daoFor(ErpFinExpenseClaimLine.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("claimId", claimId));

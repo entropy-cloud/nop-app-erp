@@ -46,7 +46,7 @@ public class TestErpFinVoucherReversePreview extends JunitAutoTestCase {
     @Test
     public void testPreviewReverseVoucherStructure() {
         BigDecimal amount = new BigDecimal("150.00");
-        Long voucherId = seedPostedVoucher("PREVIEW-REV-1", 1L, 1L, amount, "PURCHASE_ORDER", "PO-1");
+        String voucherId = seedPostedVoucher("PREVIEW-REV-1", "1", "1", amount, "PURCHASE_ORDER", "PO-1");
 
         VoucherReversePreview preview = voucherBiz.previewReverseVoucher(voucherId, CTX);
 
@@ -68,7 +68,7 @@ public class TestErpFinVoucherReversePreview extends JunitAutoTestCase {
 
     @Test
     public void testPreviewReverseVoucherRejectsDraft() {
-        Long draftId = seedVoucherWithStatus("PREVIEW-REV-DRAFT", ErpFinConstants.VOUCHER_STATUS_DRAFT);
+        String draftId = seedVoucherWithStatus("PREVIEW-REV-DRAFT", ErpFinConstants.VOUCHER_STATUS_DRAFT);
         // DRAFT 凭证不可红冲，预览应镜像 reverseVoucher 的前置校验抛异常
         assertThrows(NopException.class, () -> voucherBiz.previewReverseVoucher(draftId, CTX),
                 "DRAFT 凭证预览红冲应拒绝");
@@ -76,18 +76,18 @@ public class TestErpFinVoucherReversePreview extends JunitAutoTestCase {
 
     // ---------- helpers ----------
 
-    private Long seedPostedVoucher(String code, Long orgId, Long periodId, BigDecimal amount,
+    private String seedPostedVoucher(String code, String orgId, String periodId, BigDecimal amount,
                                    String billType, String billCode) {
         return seedVoucher(code, orgId, periodId, amount, ErpFinConstants.VOUCHER_STATUS_POSTED, billType, billCode);
     }
 
-    private Long seedVoucherWithStatus(String code, String docStatus) {
-        return seedVoucher(code, 1L, 1L, new BigDecimal("100"), docStatus, null, null);
+    private String seedVoucherWithStatus(String code, String docStatus) {
+        return seedVoucher(code, "1", "1", new BigDecimal("100"), docStatus, null, null);
     }
 
-    private Long seedVoucher(String code, Long orgId, Long periodId, BigDecimal amount, String docStatus,
+    private String seedVoucher(String code, String orgId, String periodId, BigDecimal amount, String docStatus,
                              String billType, String billCode) {
-        final Long[] holder = new Long[1];
+        final String[] holder = new String[1];
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpFinVoucher> voucherDao = daoProvider.daoFor(ErpFinVoucher.class);
             ErpFinVoucher voucher = voucherDao.newEntity();
@@ -95,7 +95,7 @@ public class TestErpFinVoucherReversePreview extends JunitAutoTestCase {
             voucher.setVoucherType("TRANSFER");
             voucher.setVoucherDate(io.nop.api.core.time.CoreMetrics.today());
             voucher.setOrgId(orgId);
-            voucher.setAcctSchemaId(1L);
+            voucher.setAcctSchemaId("1");
             voucher.setPeriodId(periodId);
             voucher.setTotalDebit(amount);
             voucher.setTotalCredit(amount);
@@ -117,7 +117,7 @@ public class TestErpFinVoucherReversePreview extends JunitAutoTestCase {
         return holder[0];
     }
 
-    private ErpFinVoucher voucher(Long id) {
+    private ErpFinVoucher voucher(String id) {
         return daoProvider.daoFor(ErpFinVoucher.class).getEntityById(id);
     }
 }

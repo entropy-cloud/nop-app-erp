@@ -15,7 +15,7 @@ public class ErpFinAccountingPeriodPreCheckProcessor {
     @Inject
     ErpFinAccountingPeriodProcessor facade;
 
-    public PeriodPreCheckReport preCheck(Long periodId, IServiceContext context) {
+    public PeriodPreCheckReport preCheck(String periodId, IServiceContext context) {
         ErpFinAccountingPeriod period = facade.requirePeriod(periodId);
         PeriodPreCheckReport report = new PeriodPreCheckReport();
         report.setUnpostedVoucherCodes(facade.findUnpostedVoucherCodes(period));

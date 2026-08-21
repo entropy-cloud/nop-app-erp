@@ -223,19 +223,19 @@ public class _ErpFinBudgetControlLog extends DynamicOrmEntity{
 
     
     /* ID: ID */
-    private java.lang.Long _id;
+    private java.lang.String _id;
     
     /* 核算组织: ORG_ID */
-    private java.lang.Long _orgId;
+    private java.lang.String _orgId;
     
     /* 业务日期: BUSINESS_DATE */
     private java.time.LocalDate _businessDate;
     
     /* 预算方案: SCENARIO_ID */
-    private java.lang.Long _scenarioId;
+    private java.lang.String _scenarioId;
     
     /* 预算明细行: BUDGET_LINE_ID */
-    private java.lang.Long _budgetLineId;
+    private java.lang.String _budgetLineId;
     
     /* 触发单据类型: SOURCE_BILL_TYPE */
     private java.lang.String _sourceBillType;
@@ -244,16 +244,16 @@ public class _ErpFinBudgetControlLog extends DynamicOrmEntity{
     private java.lang.String _sourceBillCode;
     
     /* 命中科目: SUBJECT_ID */
-    private java.lang.Long _subjectId;
+    private java.lang.String _subjectId;
     
     /* 命中成本中心: COST_CENTER_ID */
-    private java.lang.Long _costCenterId;
+    private java.lang.String _costCenterId;
     
     /* 命中项目: PROJECT_ID */
-    private java.lang.Long _projectId;
+    private java.lang.String _projectId;
     
     /* 命中期间: PERIOD_ID */
-    private java.lang.Long _periodId;
+    private java.lang.String _periodId;
     
     /* 申请占用金额: REQUESTED_AMOUNT */
     private java.math.BigDecimal _requestedAmount;
@@ -452,9 +452,9 @@ public class _ErpFinBudgetControlLog extends DynamicOrmEntity{
         switch(propId){
         
             case PROP_ID_id:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_id));
                }
                setId(typedValue);
@@ -462,9 +462,9 @@ public class _ErpFinBudgetControlLog extends DynamicOrmEntity{
             }
         
             case PROP_ID_orgId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_orgId));
                }
                setOrgId(typedValue);
@@ -482,9 +482,9 @@ public class _ErpFinBudgetControlLog extends DynamicOrmEntity{
             }
         
             case PROP_ID_scenarioId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_scenarioId));
                }
                setScenarioId(typedValue);
@@ -492,9 +492,9 @@ public class _ErpFinBudgetControlLog extends DynamicOrmEntity{
             }
         
             case PROP_ID_budgetLineId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_budgetLineId));
                }
                setBudgetLineId(typedValue);
@@ -522,9 +522,9 @@ public class _ErpFinBudgetControlLog extends DynamicOrmEntity{
             }
         
             case PROP_ID_subjectId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_subjectId));
                }
                setSubjectId(typedValue);
@@ -532,9 +532,9 @@ public class _ErpFinBudgetControlLog extends DynamicOrmEntity{
             }
         
             case PROP_ID_costCenterId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_costCenterId));
                }
                setCostCenterId(typedValue);
@@ -542,9 +542,9 @@ public class _ErpFinBudgetControlLog extends DynamicOrmEntity{
             }
         
             case PROP_ID_projectId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_projectId));
                }
                setProjectId(typedValue);
@@ -552,9 +552,9 @@ public class _ErpFinBudgetControlLog extends DynamicOrmEntity{
             }
         
             case PROP_ID_periodId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_periodId));
                }
                setPeriodId(typedValue);
@@ -702,14 +702,14 @@ public class _ErpFinBudgetControlLog extends DynamicOrmEntity{
         
             case PROP_ID_id:{
                onInitProp(propId);
-               this._id = (java.lang.Long)value;
+               this._id = (java.lang.String)value;
                orm_id(); // 如果是设置主键字段，则触发watcher
                break;
             }
         
             case PROP_ID_orgId:{
                onInitProp(propId);
-               this._orgId = (java.lang.Long)value;
+               this._orgId = (java.lang.String)value;
                
                break;
             }
@@ -723,14 +723,14 @@ public class _ErpFinBudgetControlLog extends DynamicOrmEntity{
         
             case PROP_ID_scenarioId:{
                onInitProp(propId);
-               this._scenarioId = (java.lang.Long)value;
+               this._scenarioId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_budgetLineId:{
                onInitProp(propId);
-               this._budgetLineId = (java.lang.Long)value;
+               this._budgetLineId = (java.lang.String)value;
                
                break;
             }
@@ -751,28 +751,28 @@ public class _ErpFinBudgetControlLog extends DynamicOrmEntity{
         
             case PROP_ID_subjectId:{
                onInitProp(propId);
-               this._subjectId = (java.lang.Long)value;
+               this._subjectId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_costCenterId:{
                onInitProp(propId);
-               this._costCenterId = (java.lang.Long)value;
+               this._costCenterId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_projectId:{
                onInitProp(propId);
-               this._projectId = (java.lang.Long)value;
+               this._projectId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_periodId:{
                onInitProp(propId);
-               this._periodId = (java.lang.Long)value;
+               this._periodId = (java.lang.String)value;
                
                break;
             }
@@ -877,7 +877,7 @@ public class _ErpFinBudgetControlLog extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final java.lang.Long getId(){
+    public final java.lang.String getId(){
          onPropGet(PROP_ID_id);
          return _id;
     }
@@ -885,7 +885,7 @@ public class _ErpFinBudgetControlLog extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final void setId(java.lang.Long value){
+    public final void setId(java.lang.String value){
         if(onPropSet(PROP_ID_id,value)){
             this._id = value;
             internalClearRefs(PROP_ID_id);
@@ -896,7 +896,7 @@ public class _ErpFinBudgetControlLog extends DynamicOrmEntity{
     /**
      * 核算组织: ORG_ID
      */
-    public final java.lang.Long getOrgId(){
+    public final java.lang.String getOrgId(){
          onPropGet(PROP_ID_orgId);
          return _orgId;
     }
@@ -904,7 +904,7 @@ public class _ErpFinBudgetControlLog extends DynamicOrmEntity{
     /**
      * 核算组织: ORG_ID
      */
-    public final void setOrgId(java.lang.Long value){
+    public final void setOrgId(java.lang.String value){
         if(onPropSet(PROP_ID_orgId,value)){
             this._orgId = value;
             internalClearRefs(PROP_ID_orgId);
@@ -934,7 +934,7 @@ public class _ErpFinBudgetControlLog extends DynamicOrmEntity{
     /**
      * 预算方案: SCENARIO_ID
      */
-    public final java.lang.Long getScenarioId(){
+    public final java.lang.String getScenarioId(){
          onPropGet(PROP_ID_scenarioId);
          return _scenarioId;
     }
@@ -942,7 +942,7 @@ public class _ErpFinBudgetControlLog extends DynamicOrmEntity{
     /**
      * 预算方案: SCENARIO_ID
      */
-    public final void setScenarioId(java.lang.Long value){
+    public final void setScenarioId(java.lang.String value){
         if(onPropSet(PROP_ID_scenarioId,value)){
             this._scenarioId = value;
             internalClearRefs(PROP_ID_scenarioId);
@@ -953,7 +953,7 @@ public class _ErpFinBudgetControlLog extends DynamicOrmEntity{
     /**
      * 预算明细行: BUDGET_LINE_ID
      */
-    public final java.lang.Long getBudgetLineId(){
+    public final java.lang.String getBudgetLineId(){
          onPropGet(PROP_ID_budgetLineId);
          return _budgetLineId;
     }
@@ -961,7 +961,7 @@ public class _ErpFinBudgetControlLog extends DynamicOrmEntity{
     /**
      * 预算明细行: BUDGET_LINE_ID
      */
-    public final void setBudgetLineId(java.lang.Long value){
+    public final void setBudgetLineId(java.lang.String value){
         if(onPropSet(PROP_ID_budgetLineId,value)){
             this._budgetLineId = value;
             internalClearRefs(PROP_ID_budgetLineId);
@@ -1010,7 +1010,7 @@ public class _ErpFinBudgetControlLog extends DynamicOrmEntity{
     /**
      * 命中科目: SUBJECT_ID
      */
-    public final java.lang.Long getSubjectId(){
+    public final java.lang.String getSubjectId(){
          onPropGet(PROP_ID_subjectId);
          return _subjectId;
     }
@@ -1018,7 +1018,7 @@ public class _ErpFinBudgetControlLog extends DynamicOrmEntity{
     /**
      * 命中科目: SUBJECT_ID
      */
-    public final void setSubjectId(java.lang.Long value){
+    public final void setSubjectId(java.lang.String value){
         if(onPropSet(PROP_ID_subjectId,value)){
             this._subjectId = value;
             internalClearRefs(PROP_ID_subjectId);
@@ -1029,7 +1029,7 @@ public class _ErpFinBudgetControlLog extends DynamicOrmEntity{
     /**
      * 命中成本中心: COST_CENTER_ID
      */
-    public final java.lang.Long getCostCenterId(){
+    public final java.lang.String getCostCenterId(){
          onPropGet(PROP_ID_costCenterId);
          return _costCenterId;
     }
@@ -1037,7 +1037,7 @@ public class _ErpFinBudgetControlLog extends DynamicOrmEntity{
     /**
      * 命中成本中心: COST_CENTER_ID
      */
-    public final void setCostCenterId(java.lang.Long value){
+    public final void setCostCenterId(java.lang.String value){
         if(onPropSet(PROP_ID_costCenterId,value)){
             this._costCenterId = value;
             internalClearRefs(PROP_ID_costCenterId);
@@ -1048,7 +1048,7 @@ public class _ErpFinBudgetControlLog extends DynamicOrmEntity{
     /**
      * 命中项目: PROJECT_ID
      */
-    public final java.lang.Long getProjectId(){
+    public final java.lang.String getProjectId(){
          onPropGet(PROP_ID_projectId);
          return _projectId;
     }
@@ -1056,7 +1056,7 @@ public class _ErpFinBudgetControlLog extends DynamicOrmEntity{
     /**
      * 命中项目: PROJECT_ID
      */
-    public final void setProjectId(java.lang.Long value){
+    public final void setProjectId(java.lang.String value){
         if(onPropSet(PROP_ID_projectId,value)){
             this._projectId = value;
             internalClearRefs(PROP_ID_projectId);
@@ -1067,7 +1067,7 @@ public class _ErpFinBudgetControlLog extends DynamicOrmEntity{
     /**
      * 命中期间: PERIOD_ID
      */
-    public final java.lang.Long getPeriodId(){
+    public final java.lang.String getPeriodId(){
          onPropGet(PROP_ID_periodId);
          return _periodId;
     }
@@ -1075,7 +1075,7 @@ public class _ErpFinBudgetControlLog extends DynamicOrmEntity{
     /**
      * 命中期间: PERIOD_ID
      */
-    public final void setPeriodId(java.lang.Long value){
+    public final void setPeriodId(java.lang.String value){
         if(onPropSet(PROP_ID_periodId,value)){
             this._periodId = value;
             internalClearRefs(PROP_ID_periodId);

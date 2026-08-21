@@ -39,7 +39,7 @@ public class ErpFinCreditFacilityBizModel extends CrudBizModel<ErpFinCreditFacil
 
     @Override
     @BizMutation
-    public ErpFinCreditFacility reserveCredit(@Name("creditFacilityId") Long creditFacilityId,
+    public ErpFinCreditFacility reserveCredit(@Name("creditFacilityId") String creditFacilityId,
                                               @Name("amount") BigDecimal amount,
                                               IServiceContext context) {
         return reserveCreditProcessor.reserveCredit(creditFacilityId, amount, context);
@@ -47,7 +47,7 @@ public class ErpFinCreditFacilityBizModel extends CrudBizModel<ErpFinCreditFacil
 
     @Override
     @BizMutation
-    public ErpFinCreditFacility releaseCredit(@Name("creditFacilityId") Long creditFacilityId,
+    public ErpFinCreditFacility releaseCredit(@Name("creditFacilityId") String creditFacilityId,
                                               @Name("amount") BigDecimal amount,
                                               IServiceContext context) {
         return releaseCreditProcessor.releaseCredit(creditFacilityId, amount, context);
@@ -55,7 +55,7 @@ public class ErpFinCreditFacilityBizModel extends CrudBizModel<ErpFinCreditFacil
 
     @Override
     @BizMutation
-    public Long accrueInterest(@Name("creditFacilityId") Long creditFacilityId,
+    public String accrueInterest(@Name("creditFacilityId") String creditFacilityId,
                                @Name("fromDate") LocalDate fromDate,
                                @Name("toDate") LocalDate toDate,
                                IServiceContext context) {

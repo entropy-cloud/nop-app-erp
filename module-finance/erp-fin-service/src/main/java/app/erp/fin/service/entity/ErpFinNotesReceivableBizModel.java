@@ -53,15 +53,15 @@ public class ErpFinNotesReceivableBizModel extends CrudBizModel<ErpFinNotesRecei
 
     @Override
     @BizMutation
-    public ErpFinNotesReceivable receive(@Name("notesId") Long notesId, IServiceContext context) {
+    public ErpFinNotesReceivable receive(@Name("notesId") String notesId, IServiceContext context) {
         return receiveProcessor.receive(notesId, context);
     }
 
     @Override
     @BizMutation
-    public ErpFinNotesReceivable discount(@Name("notesId") Long notesId,
+    public ErpFinNotesReceivable discount(@Name("notesId") String notesId,
                                            @Name("discountDate") LocalDate discountDate,
-                                           @Name("bankId") Long bankId,
+                                           @Name("bankId") String bankId,
                                            @Name("discountRate") BigDecimal discountRate,
                                            @Optional @Name("exchangeRate") BigDecimal exchangeRate,
                                            IServiceContext context) {
@@ -70,33 +70,33 @@ public class ErpFinNotesReceivableBizModel extends CrudBizModel<ErpFinNotesRecei
 
     @Override
     @BizMutation
-    public ErpFinNotesReceivable endorse(@Name("notesId") Long notesId,
-                                          @Name("endorsementFromId") Long endorsementFromId,
+    public ErpFinNotesReceivable endorse(@Name("notesId") String notesId,
+                                          @Name("endorsementFromId") String endorsementFromId,
                                           IServiceContext context) {
         return endorseProcessor.endorse(notesId, endorsementFromId, context);
     }
 
     @Override
     @BizMutation
-    public ErpFinNotesReceivable collect(@Name("notesId") Long notesId, IServiceContext context) {
+    public ErpFinNotesReceivable collect(@Name("notesId") String notesId, IServiceContext context) {
         return collectProcessor.collect(notesId, context);
     }
 
     @Override
     @BizMutation
-    public ErpFinNotesReceivable honor(@Name("notesId") Long notesId, IServiceContext context) {
+    public ErpFinNotesReceivable honor(@Name("notesId") String notesId, IServiceContext context) {
         return honorProcessor.honor(notesId, context);
     }
 
     @Override
     @BizMutation
-    public ErpFinNotesReceivable dishonor(@Name("notesId") Long notesId, IServiceContext context) {
+    public ErpFinNotesReceivable dishonor(@Name("notesId") String notesId, IServiceContext context) {
         return dishonorProcessor.dishonor(notesId, context);
     }
 
     @Override
     @BizMutation
-    public ErpFinNotesReceivable writeOff(@Name("notesId") Long notesId, IServiceContext context) {
+    public ErpFinNotesReceivable writeOff(@Name("notesId") String notesId, IServiceContext context) {
         return writeOffProcessor.writeOff(notesId, context);
     }
 

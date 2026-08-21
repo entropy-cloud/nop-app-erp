@@ -145,10 +145,10 @@ public class _ErpFinVoucherTemplateLine extends DynamicOrmEntity{
 
     
     /* ID: ID */
-    private java.lang.Long _id;
+    private java.lang.String _id;
     
     /* 模板ID: TEMPLATE_ID */
-    private java.lang.Long _templateId;
+    private java.lang.String _templateId;
     
     /* 行号: LINE_NO */
     private java.lang.Integer _lineNo;
@@ -320,9 +320,9 @@ public class _ErpFinVoucherTemplateLine extends DynamicOrmEntity{
         switch(propId){
         
             case PROP_ID_id:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_id));
                }
                setId(typedValue);
@@ -330,9 +330,9 @@ public class _ErpFinVoucherTemplateLine extends DynamicOrmEntity{
             }
         
             case PROP_ID_templateId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_templateId));
                }
                setTemplateId(typedValue);
@@ -480,14 +480,14 @@ public class _ErpFinVoucherTemplateLine extends DynamicOrmEntity{
         
             case PROP_ID_id:{
                onInitProp(propId);
-               this._id = (java.lang.Long)value;
+               this._id = (java.lang.String)value;
                orm_id(); // 如果是设置主键字段，则触发watcher
                break;
             }
         
             case PROP_ID_templateId:{
                onInitProp(propId);
-               this._templateId = (java.lang.Long)value;
+               this._templateId = (java.lang.String)value;
                
                break;
             }
@@ -592,7 +592,7 @@ public class _ErpFinVoucherTemplateLine extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final java.lang.Long getId(){
+    public final java.lang.String getId(){
          onPropGet(PROP_ID_id);
          return _id;
     }
@@ -600,7 +600,7 @@ public class _ErpFinVoucherTemplateLine extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final void setId(java.lang.Long value){
+    public final void setId(java.lang.String value){
         if(onPropSet(PROP_ID_id,value)){
             this._id = value;
             internalClearRefs(PROP_ID_id);
@@ -611,7 +611,7 @@ public class _ErpFinVoucherTemplateLine extends DynamicOrmEntity{
     /**
      * 模板ID: TEMPLATE_ID
      */
-    public final java.lang.Long getTemplateId(){
+    public final java.lang.String getTemplateId(){
          onPropGet(PROP_ID_templateId);
          return _templateId;
     }
@@ -619,7 +619,7 @@ public class _ErpFinVoucherTemplateLine extends DynamicOrmEntity{
     /**
      * 模板ID: TEMPLATE_ID
      */
-    public final void setTemplateId(java.lang.Long value){
+    public final void setTemplateId(java.lang.String value){
         if(onPropSet(PROP_ID_templateId,value)){
             this._templateId = value;
             internalClearRefs(PROP_ID_templateId);

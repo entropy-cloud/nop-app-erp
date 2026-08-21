@@ -64,16 +64,16 @@ public class TestErpFinBudgetCarryForward extends JunitAutoTestCase {
 
     @Test
     public void testRemainingFullRule() {
-        Long[] ids = seedReturn(() -> {
-            Long pid = seedOpenPeriod("2024-CF-1", 2024, 6);
+        String[] ids = seedReturn(() -> {
+            String pid = seedOpenPeriod("2024-CF-1", 2024, 6);
             ErpMdSubject expense = seedSubject("7701", "CF-EXP-1", ErpFinConstants.SUBJECT_CLASS_EXPENSE, ErpFinConstants.DC_DEBIT);
-            Long sourceId = seedApprovedScenario("CF-SRC-1", pid, 2024, expense, new BigDecimal("1000"));
-            Long targetId = seedDraftScenario("CF-TGT-1", pid, 2024, expense);
+            String sourceId = seedApprovedScenario("CF-SRC-1", pid, 2024, expense, new BigDecimal("1000"));
+            String targetId = seedDraftScenario("CF-TGT-1", pid, 2024, expense);
             seedActualVoucher("CF-ACT-1", pid, expense, new BigDecimal("400"));
-            return new Long[]{pid, sourceId, targetId};
+            return new String[]{pid, sourceId, targetId};
         });
-        Long sourceId = ids[1];
-        Long targetId = ids[2];
+        String sourceId = ids[1];
+        String targetId = ids[2];
 
         ErpFinBudgetScenario updated = ormTemplate.runInSession(session ->
                 scenarioBiz.carryForward(sourceId, targetId, ErpFinConstants.BUDGET_CARRY_FORWARD_REMAINING_FULL, CTX));
@@ -90,16 +90,16 @@ public class TestErpFinBudgetCarryForward extends JunitAutoTestCase {
 
     @Test
     public void testRemainingRatioRule() {
-        Long[] ids = seedReturn(() -> {
-            Long pid = seedOpenPeriod("2024-CF-2", 2024, 7);
+        String[] ids = seedReturn(() -> {
+            String pid = seedOpenPeriod("2024-CF-2", 2024, 7);
             ErpMdSubject expense = seedSubject("7702", "CF-EXP-2", ErpFinConstants.SUBJECT_CLASS_EXPENSE, ErpFinConstants.DC_DEBIT);
-            Long sourceId = seedApprovedScenario("CF-SRC-2", pid, 2024, expense, new BigDecimal("1000"));
-            Long targetId = seedDraftScenario("CF-TGT-2", pid, 2024, expense);
+            String sourceId = seedApprovedScenario("CF-SRC-2", pid, 2024, expense, new BigDecimal("1000"));
+            String targetId = seedDraftScenario("CF-TGT-2", pid, 2024, expense);
             seedActualVoucher("CF-ACT-2", pid, expense, new BigDecimal("400"));
-            return new Long[]{pid, sourceId, targetId};
+            return new String[]{pid, sourceId, targetId};
         });
-        Long sourceId = ids[1];
-        Long targetId = ids[2];
+        String sourceId = ids[1];
+        String targetId = ids[2];
 
         ErpFinBudgetScenario updated = ormTemplate.runInSession(session ->
                 scenarioBiz.carryForward(sourceId, targetId, ErpFinConstants.BUDGET_CARRY_FORWARD_REMAINING_RATIO, CTX));
@@ -114,16 +114,16 @@ public class TestErpFinBudgetCarryForward extends JunitAutoTestCase {
 
     @Test
     public void testUsedFullRule() {
-        Long[] ids = seedReturn(() -> {
-            Long pid = seedOpenPeriod("2024-CF-3", 2024, 8);
+        String[] ids = seedReturn(() -> {
+            String pid = seedOpenPeriod("2024-CF-3", 2024, 8);
             ErpMdSubject expense = seedSubject("7703", "CF-EXP-3", ErpFinConstants.SUBJECT_CLASS_EXPENSE, ErpFinConstants.DC_DEBIT);
-            Long sourceId = seedApprovedScenario("CF-SRC-3", pid, 2024, expense, new BigDecimal("1000"));
-            Long targetId = seedDraftScenario("CF-TGT-3", pid, 2024, expense);
+            String sourceId = seedApprovedScenario("CF-SRC-3", pid, 2024, expense, new BigDecimal("1000"));
+            String targetId = seedDraftScenario("CF-TGT-3", pid, 2024, expense);
             seedActualVoucher("CF-ACT-3", pid, expense, new BigDecimal("400"));
-            return new Long[]{pid, sourceId, targetId};
+            return new String[]{pid, sourceId, targetId};
         });
-        Long sourceId = ids[1];
-        Long targetId = ids[2];
+        String sourceId = ids[1];
+        String targetId = ids[2];
 
         ErpFinBudgetScenario updated = ormTemplate.runInSession(session ->
                 scenarioBiz.carryForward(sourceId, targetId, ErpFinConstants.BUDGET_CARRY_FORWARD_USED_FULL, CTX));
@@ -138,15 +138,15 @@ public class TestErpFinBudgetCarryForward extends JunitAutoTestCase {
 
     @Test
     public void testNoneRule() {
-        Long[] ids = seedReturn(() -> {
-            Long pid = seedOpenPeriod("2024-CF-4", 2024, 9);
+        String[] ids = seedReturn(() -> {
+            String pid = seedOpenPeriod("2024-CF-4", 2024, 9);
             ErpMdSubject expense = seedSubject("7704", "CF-EXP-4", ErpFinConstants.SUBJECT_CLASS_EXPENSE, ErpFinConstants.DC_DEBIT);
-            Long sourceId = seedApprovedScenario("CF-SRC-4", pid, 2024, expense, new BigDecimal("1000"));
-            Long targetId = seedDraftScenario("CF-TGT-4", pid, 2024, expense);
-            return new Long[]{pid, sourceId, targetId};
+            String sourceId = seedApprovedScenario("CF-SRC-4", pid, 2024, expense, new BigDecimal("1000"));
+            String targetId = seedDraftScenario("CF-TGT-4", pid, 2024, expense);
+            return new String[]{pid, sourceId, targetId};
         });
-        Long sourceId = ids[1];
-        Long targetId = ids[2];
+        String sourceId = ids[1];
+        String targetId = ids[2];
 
         ErpFinBudgetScenario updated = ormTemplate.runInSession(session ->
                 scenarioBiz.carryForward(sourceId, targetId, ErpFinConstants.BUDGET_CARRY_FORWARD_NONE, CTX));
@@ -162,17 +162,17 @@ public class TestErpFinBudgetCarryForward extends JunitAutoTestCase {
     @Test
     public void testRejectsWhenSourceFiscalYearNotFullyClosed() {
         // P1-MA2-034 负向：源年度留一个期间 glStatus=OPEN，carryForward 须抛 ERR_BUDGET_CARRY_FORWARD_RULE_INVALID。
-        Long[] ids = seedReturn(() -> {
-            Long pid = seedPeriodWithGlStatus("2024-CF-5", 2024, 6, ErpFinConstants.MODULE_CLOSE_CLOSED);
+        String[] ids = seedReturn(() -> {
+            String pid = seedPeriodWithGlStatus("2024-CF-5", 2024, 6, ErpFinConstants.MODULE_CLOSE_CLOSED);
             // 同年度另一期间 glStatus=OPEN → 触发硬前置拒绝。
             seedPeriodWithGlStatus("2024-CF-5-OPEN", 2024, 7, ErpFinConstants.MODULE_CLOSE_OPEN);
             ErpMdSubject expense = seedSubject("7705", "CF-EXP-5", ErpFinConstants.SUBJECT_CLASS_EXPENSE, ErpFinConstants.DC_DEBIT);
-            Long sourceId = seedApprovedScenario("CF-SRC-5", pid, 2024, expense, new BigDecimal("1000"));
-            Long targetId = seedDraftScenario("CF-TGT-5", pid, 2024, expense);
-            return new Long[]{pid, sourceId, targetId};
+            String sourceId = seedApprovedScenario("CF-SRC-5", pid, 2024, expense, new BigDecimal("1000"));
+            String targetId = seedDraftScenario("CF-TGT-5", pid, 2024, expense);
+            return new String[]{pid, sourceId, targetId};
         });
-        Long sourceId = ids[1];
-        Long targetId = ids[2];
+        String sourceId = ids[1];
+        String targetId = ids[2];
 
         NopException ex = assertThrows(NopException.class, () ->
                 ormTemplate.runInSession(session ->
@@ -188,17 +188,17 @@ public class TestErpFinBudgetCarryForward extends JunitAutoTestCase {
         return ormTemplate.runInSession(session -> action.get());
     }
 
-    private Long seedOpenPeriod(String code, int year, int month) {
+    private String seedOpenPeriod(String code, int year, int month) {
         // P1-MA2-034：源年度期间 CLOSED 是 carryForward 硬前置，既有 4 happy path 改 seed CLOSED。
         return seedPeriodWithGlStatus(code, year, month, ErpFinConstants.MODULE_CLOSE_CLOSED);
     }
 
-    private Long seedPeriodWithGlStatus(String code, int year, int month, String glStatus) {
+    private String seedPeriodWithGlStatus(String code, int year, int month, String glStatus) {
         IEntityDao<ErpFinAccountingPeriod> dao = daoProvider.daoFor(ErpFinAccountingPeriod.class);
         ErpFinAccountingPeriod p = new ErpFinAccountingPeriod();
         p.setCode(code);
         p.setName(code);
-        p.setOrgId(1L);
+        p.setOrgId("1");
         p.setYear(year);
         p.setMonth(month);
         p.setStartDate(LocalDate.of(year, month, 1));
@@ -209,7 +209,7 @@ public class TestErpFinBudgetCarryForward extends JunitAutoTestCase {
         IEntityDao<ErpFinAccountingPeriodStatus> sDao = daoProvider.daoFor(ErpFinAccountingPeriodStatus.class);
         ErpFinAccountingPeriodStatus s = new ErpFinAccountingPeriodStatus();
         s.setPeriodId(p.getId());
-        s.setAcctSchemaId(1L);
+        s.setAcctSchemaId("1");
         s.setArStatus(glStatus);
         s.setApStatus(glStatus);
         s.setInvStatus(glStatus);
@@ -231,17 +231,17 @@ public class TestErpFinBudgetCarryForward extends JunitAutoTestCase {
         return s;
     }
 
-    private Long seedApprovedScenario(String code, Long periodId, int fiscalYear,
+    private String seedApprovedScenario(String code, String periodId, int fiscalYear,
                                       ErpMdSubject expense, BigDecimal amount) {
         IEntityDao<ErpFinBudgetScenario> sDao = daoProvider.daoFor(ErpFinBudgetScenario.class);
         ErpFinBudgetScenario s = new ErpFinBudgetScenario();
         s.setCode(code);
         s.setName(code);
-        s.setOrgId(1L);
-        s.setAcctSchemaId(1L);
+        s.setOrgId("1");
+        s.setAcctSchemaId("1");
         s.setFiscalYear(fiscalYear);
         s.setScenarioType("ANNUAL");
-        s.setCurrencyId(1L);
+        s.setCurrencyId("1");
         s.setExchangeRate(BigDecimal.ONE);
         s.setControlLevel(ErpFinConstants.BUDGET_CONTROL_NONE);
         s.setDocStatus(ErpFinConstants.BUDGET_STATUS_APPROVED);
@@ -252,29 +252,29 @@ public class TestErpFinBudgetCarryForward extends JunitAutoTestCase {
         ErpFinBudgetLine l = new ErpFinBudgetLine();
         l.setScenarioId(s.getId());
         l.setLineNo(1);
-        l.setOrgId(1L);
-        l.setAcctSchemaId(1L);
+        l.setOrgId("1");
+        l.setAcctSchemaId("1");
         l.setPeriodId(periodId);
         l.setSubjectId(expense.getId());
         l.setSubjectCode(expense.getCode());
         l.setBudgetAmountSource(amount);
         l.setBudgetAmountFunctional(amount);
-        l.setCurrencyId(1L);
+        l.setCurrencyId("1");
         l.setExchangeRate(BigDecimal.ONE);
         lDao.saveEntity(l);
         return s.getId();
     }
 
-    private Long seedDraftScenario(String code, Long periodId, int fiscalYear, ErpMdSubject expense) {
+    private String seedDraftScenario(String code, String periodId, int fiscalYear, ErpMdSubject expense) {
         IEntityDao<ErpFinBudgetScenario> sDao = daoProvider.daoFor(ErpFinBudgetScenario.class);
         ErpFinBudgetScenario s = new ErpFinBudgetScenario();
         s.setCode(code);
         s.setName(code);
-        s.setOrgId(1L);
-        s.setAcctSchemaId(1L);
+        s.setOrgId("1");
+        s.setAcctSchemaId("1");
         s.setFiscalYear(fiscalYear);
         s.setScenarioType("ANNUAL");
-        s.setCurrencyId(1L);
+        s.setCurrencyId("1");
         s.setExchangeRate(BigDecimal.ONE);
         s.setControlLevel(ErpFinConstants.BUDGET_CONTROL_NONE);
         s.setDocStatus(ErpFinConstants.BUDGET_STATUS_DRAFT);
@@ -283,15 +283,15 @@ public class TestErpFinBudgetCarryForward extends JunitAutoTestCase {
         return s.getId();
     }
 
-    private void seedActualVoucher(String code, Long periodId, ErpMdSubject expense, BigDecimal amount) {
+    private void seedActualVoucher(String code, String periodId, ErpMdSubject expense, BigDecimal amount) {
         IEntityDao<ErpFinVoucher> vDao = daoProvider.daoFor(ErpFinVoucher.class);
         ErpFinVoucher v = new ErpFinVoucher();
         v.setCode(code);
         v.setVoucherType("TRANSFER");
         v.setPostingType(ErpFinConstants.POSTING_TYPE_NORMAL);
         v.setVoucherDate(CoreMetrics.today());
-        v.setOrgId(1L);
-        v.setAcctSchemaId(1L);
+        v.setOrgId("1");
+        v.setAcctSchemaId("1");
         v.setPeriodId(periodId);
         v.setTotalDebit(amount);
         v.setTotalCredit(amount);
@@ -308,16 +308,16 @@ public class TestErpFinBudgetCarryForward extends JunitAutoTestCase {
         d.setDcDirection(ErpFinConstants.DC_DEBIT);
         d.setDebitAmount(amount);
         d.setCreditAmount(BigDecimal.ZERO);
-        d.setCurrencyId(1L);
+        d.setCurrencyId("1");
         d.setExchangeRate(BigDecimal.ONE);
         d.setAmountSource(amount);
         d.setAmountFunctional(amount);
-        d.setAcctSchemaId(1L);
+        d.setAcctSchemaId("1");
         lDao.saveEntity(d);
     }
 
     /** 找目标方案中由结转产生的 BudgetLine 金额（subjectCode 含 "CARRY-FORWARD-"）。 */
-    private BigDecimal findCarryForwardLineAmount(Long targetScenarioId) {
+    private BigDecimal findCarryForwardLineAmount(String targetScenarioId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("scenarioId", targetScenarioId));
         List<ErpFinBudgetLine> lines = daoProvider.daoFor(ErpFinBudgetLine.class).findAllByQuery(q);
@@ -331,7 +331,7 @@ public class TestErpFinBudgetCarryForward extends JunitAutoTestCase {
         return sum;
     }
 
-    private int countCarryForwardLogs(Long sourceScenarioId) {
+    private int countCarryForwardLogs(String sourceScenarioId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("sourceScenarioId", sourceScenarioId));
         return daoProvider.daoFor(ErpFinBudgetCarryForwardLog.class).findAllByQuery(q).size();

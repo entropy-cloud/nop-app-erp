@@ -43,7 +43,7 @@ public class ErpFinBudgetScenarioRollForwardProcessor {
     @Inject
     ErpFinBudgetScenarioProcessor facade;
 
-    public ErpFinBudgetScenario rollForward(Long id, Integer newFiscalYear, String strategy, IServiceContext context) {
+    public ErpFinBudgetScenario rollForward(String id, Integer newFiscalYear, String strategy, IServiceContext context) {
         validateEnabled(id);
         ErpFinBudgetScenario source = facade.requireScenario(id);
         validateApproved(source);
@@ -59,7 +59,7 @@ public class ErpFinBudgetScenarioRollForwardProcessor {
         return target;
     }
 
-    protected void validateEnabled(Long id) {
+    protected void validateEnabled(String id) {
         if (!isRollForwardEnabled()) {
             throw new NopException(ErpFinErrors.ERR_BUDGET_SCENARIO_NOT_APPROVED)
                     .param(ErpFinErrors.ARG_SCENARIO_ID, id)
@@ -130,7 +130,7 @@ public class ErpFinBudgetScenarioRollForwardProcessor {
         BigDecimal sourceAmountSum = BigDecimal.ZERO;
         int lineNo = 1;
         for (ErpFinBudgetLine sl : sourceLines) {
-            Long mappedPeriodId = remapPeriodId(sl.getPeriodId(), yearDelta);
+            String mappedPeriodId = remapPeriodId(sl.getPeriodId(), yearDelta);
             BigDecimal sourceAmt = sl.getBudgetAmountFunctional() != null
                     ? sl.getBudgetAmountFunctional() : BigDecimal.ZERO;
             sourceAmountSum = sourceAmountSum.add(sourceAmt);
@@ -176,7 +176,7 @@ public class ErpFinBudgetScenarioRollForwardProcessor {
         }
     }
 
-    protected Long remapPeriodId(Long sourcePeriodId, int yearDelta) {
+    protected String remapPeriodId(String sourcePeriodId, int yearDelta) {
         if (sourcePeriodId == null || yearDelta == 0) {
             return sourcePeriodId;
         }

@@ -79,12 +79,12 @@ public class ErpFinGlMappingResolver implements IErpFinGlMappingResolver {
 
     @Override
     public String resolveSubjectCode(String businessType, String accountKey, GlMappingDimensions dimensions,
-                                     Long acctSchemaId) {
+                                     String acctSchemaId) {
         if (businessType == null || accountKey == null) {
             return null;
         }
         GlMappingDimensions effectiveDims = expandDimensions(dimensions);
-        Long orgId = resolveOrgIdFromDimensions(effectiveDims);
+        String orgId = resolveOrgIdFromDimensions(effectiveDims);
 
         List<ErpFinGlMappingRule> candidates = isCacheEnabled()
                 ? loadFromCache(orgId, businessType, accountKey)
@@ -155,7 +155,7 @@ public class ErpFinGlMappingResolver implements IErpFinGlMappingResolver {
         return count;
     }
 
-    private boolean matches(ErpFinGlMappingRule rule, GlMappingDimensions dims, Long acctSchemaId) {
+    private boolean matches(ErpFinGlMappingRule rule, GlMappingDimensions dims, String acctSchemaId) {
         if (isOrgDimensionEnabled() && rule.getOrgId() != null
                 && !Objects.equals(rule.getOrgId(), dims.getOrgId())) {
             return false;
@@ -205,7 +205,7 @@ public class ErpFinGlMappingResolver implements IErpFinGlMappingResolver {
         if (input.getMaterialCategoryId() != null) {
             expanded.setMaterialCategoryId(input.getMaterialCategoryId());
         } else if (input.getMaterialId() != null) {
-            Long categoryId = lookupMaterialCategoryId(input.getMaterialId());
+            String categoryId = lookupMaterialCategoryId(input.getMaterialId());
             expanded.setMaterialCategoryId(categoryId); // null 表示找不到 → 参与通配
             expanded.setMaterialId(input.getMaterialId());
         } else {
@@ -214,7 +214,7 @@ public class ErpFinGlMappingResolver implements IErpFinGlMappingResolver {
         return expanded;
     }
 
-    private Long lookupMaterialCategoryId(Long materialId) {
+    private String lookupMaterialCategoryId(String materialId) {
         try {
             ErpMdMaterial material = daoProvider.daoFor(ErpMdMaterial.class).getEntityById(materialId);
             return material == null ? null : material.getCategoryId();
@@ -232,7 +232,7 @@ public class ErpFinGlMappingResolver implements IErpFinGlMappingResolver {
      *       对齐 owner doc {@code gl-mapping-rules.md:118/192}。</li>
      * </ul>
      */
-    private Long resolveOrgIdFromDimensions(GlMappingDimensions dims) {
+    private String resolveOrgIdFromDimensions(GlMappingDimensions dims) {
         if (!isOrgDimensionEnabled()) {
             return null;
         }
@@ -247,14 +247,14 @@ public class ErpFinGlMappingResolver implements IErpFinGlMappingResolver {
         return AppConfig.var(CONFIG_ORG_DIMENSION_ENABLED, false);
     }
 
-    private List<ErpFinGlMappingRule> loadFromCache(Long orgId, String businessType, String accountKey) {
+    private List<ErpFinGlMappingRule> loadFromCache(String orgId, String businessType, String accountKey) {
         if (!cacheLoaded) {
             reloadCache();
         }
         return cache.getOrDefault(cacheKey(orgId, businessType, accountKey), Collections.emptyList());
     }
 
-    private List<ErpFinGlMappingRule> loadFromDb(Long orgId, String businessType, String accountKey) {
+    private List<ErpFinGlMappingRule> loadFromDb(String orgId, String businessType, String accountKey) {
         IEntityDao<ErpFinGlMappingRule> dao = daoProvider.daoFor(ErpFinGlMappingRule.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("businessType", businessType));
@@ -275,7 +275,7 @@ public class ErpFinGlMappingResolver implements IErpFinGlMappingResolver {
         for (ErpFinGlMappingRule rule : all) {
             // 关闭态（默认）：统一 "_" 桶（orgId 不参与 cache key），向后兼容现状——所有规则同 (businessType, accountKey) 共桶。
             // 开启态：按 rule.orgId 分桶，对齐 owner doc gl-mapping-rules.md:118/192 的 (orgId, businessType, accountKey) 索引。
-            Long bucketOrgId = orgDimEnabled ? rule.getOrgId() : null;
+            String bucketOrgId = orgDimEnabled ? rule.getOrgId() : null;
             String key = cacheKey(bucketOrgId, rule.getBusinessType(), rule.getAccountKey());
             newCache.computeIfAbsent(key, k -> new ArrayList<>()).add(rule);
         }
@@ -286,7 +286,7 @@ public class ErpFinGlMappingResolver implements IErpFinGlMappingResolver {
         LOG.info("GL 映射规则缓存已加载：{} 条规则，{} 个索引键，orgDimension={}", all.size(), newCache.size(), orgDimEnabled);
     }
 
-    private static String cacheKey(Long orgId, String businessType, String accountKey) {
+    private static String cacheKey(String orgId, String businessType, String accountKey) {
         return (orgId == null ? "_" : orgId.toString()) + ":" + businessType + ":" + accountKey;
     }
 }

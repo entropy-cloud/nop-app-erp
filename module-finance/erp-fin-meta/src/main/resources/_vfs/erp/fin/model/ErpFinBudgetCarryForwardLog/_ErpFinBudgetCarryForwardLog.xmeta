@@ -20,26 +20,26 @@
 
     <props>
         <prop name="id" displayName="ID" propId="1" i18n-en:displayName="ID" tagSet="seq-default" mandatory="true"
-              queryable="true" sortable="true" insertable="true" updatable="false" graphql:type="String">
-            <schema type="java.lang.Long"/>
+              queryable="true" sortable="true" insertable="true" updatable="false">
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="orgId" displayName="核算组织" propId="2" i18n-en:displayName="Organization" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="org">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="scenarioId" displayName="预算方案" propId="3" i18n-en:displayName="Scenario" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="scenario">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="sourceScenarioId" displayName="源方案" propId="4" i18n-en:displayName="Source Scenario"
               mandatory="true" queryable="true" sortable="true" insertable="true" updatable="true"
               ext:relation="sourceScenario">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="targetScenarioId" displayName="目标方案" propId="5" i18n-en:displayName="Target Scenario"
               mandatory="true" queryable="true" sortable="true" insertable="true" updatable="true"
               ext:relation="targetScenario">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="rule" displayName="结转规则" propId="6" i18n-en:displayName="Rule" mandatory="true" queryable="true"
               sortable="true" insertable="true" updatable="true">

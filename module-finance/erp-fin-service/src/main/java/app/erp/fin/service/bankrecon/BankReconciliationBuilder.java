@@ -44,7 +44,7 @@ public class BankReconciliationBuilder {
     @Inject
     BankReconAdjustmentVoucherBuilder adjustmentVoucherBuilder;
 
-    public ErpFinBankReconciliation generate(Long statementId) {
+    public ErpFinBankReconciliation generate(String statementId) {
         ErpFinBankStatement statement = requireStatement(statementId);
         ErpFinFundAccount account = requireFundAccount(statement.getFundAccountId());
         assertPeriodNotClosed(statement.getStatementDate(), statementId);
@@ -116,7 +116,7 @@ public class BankReconciliationBuilder {
         return recon;
     }
 
-    public ErpFinBankReconciliation post(Long reconciliationId, IServiceContext context) {
+    public ErpFinBankReconciliation post(String reconciliationId, IServiceContext context) {
         ErpFinBankReconciliation recon = requireRecon(reconciliationId);
         if (!ErpFinConstants.VOUCHER_STATUS_DRAFT.equals(recon.getDocStatus())) {
             throw illegalTransition(recon, ErpFinConstants.VOUCHER_STATUS_DRAFT);
@@ -130,7 +130,7 @@ public class BankReconciliationBuilder {
         return recon;
     }
 
-    public ErpFinBankReconciliation reverse(Long reconciliationId, IServiceContext context) {
+    public ErpFinBankReconciliation reverse(String reconciliationId, IServiceContext context) {
         ErpFinBankReconciliation recon = requireRecon(reconciliationId);
         if (!ErpFinConstants.VOUCHER_STATUS_POSTED.equals(recon.getDocStatus())) {
             throw illegalTransition(recon, ErpFinConstants.VOUCHER_STATUS_POSTED);
@@ -143,7 +143,7 @@ public class BankReconciliationBuilder {
 
     // ---------- helpers ----------
 
-    protected ErpFinBankStatement requireStatement(Long statementId) {
+    protected ErpFinBankStatement requireStatement(String statementId) {
         IEntityDao<ErpFinBankStatement> dao = daoProvider.daoFor(ErpFinBankStatement.class);
         ErpFinBankStatement s = dao.getEntityById(statementId);
         if (s == null) {
@@ -153,7 +153,7 @@ public class BankReconciliationBuilder {
         return s;
     }
 
-    protected ErpFinFundAccount requireFundAccount(Long fundAccountId) {
+    protected ErpFinFundAccount requireFundAccount(String fundAccountId) {
         IEntityDao<ErpFinFundAccount> dao = daoProvider.daoFor(ErpFinFundAccount.class);
         ErpFinFundAccount account = dao.getEntityById(fundAccountId);
         if (account == null) {
@@ -163,7 +163,7 @@ public class BankReconciliationBuilder {
         return account;
     }
 
-    protected ErpFinBankReconciliation requireRecon(Long reconciliationId) {
+    protected ErpFinBankReconciliation requireRecon(String reconciliationId) {
         IEntityDao<ErpFinBankReconciliation> dao = daoProvider.daoFor(ErpFinBankReconciliation.class);
         ErpFinBankReconciliation recon = dao.getEntityById(reconciliationId);
         if (recon == null) {
@@ -173,14 +173,14 @@ public class BankReconciliationBuilder {
         return recon;
     }
 
-    protected List<ErpFinBankStatementLine> loadStatementLines(Long statementId) {
+    protected List<ErpFinBankStatementLine> loadStatementLines(String statementId) {
         IEntityDao<ErpFinBankStatementLine> dao = daoProvider.daoFor(ErpFinBankStatementLine.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("statementId", statementId));
         return dao.findAllByQuery(q);
     }
 
-    protected List<ErpFinBankStatementLine> loadUnmatchedStatementLines(Long statementId) {
+    protected List<ErpFinBankStatementLine> loadUnmatchedStatementLines(String statementId) {
         IEntityDao<ErpFinBankStatementLine> dao = daoProvider.daoFor(ErpFinBankStatementLine.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("statementId", statementId));
@@ -188,7 +188,7 @@ public class BankReconciliationBuilder {
         return dao.findAllByQuery(q);
     }
 
-    protected void assertPeriodNotClosed(LocalDate statementDate, Long statementId) {
+    protected void assertPeriodNotClosed(LocalDate statementDate, String statementId) {
         ErpFinAccountingPeriod period = findPeriodByDate(statementDate);
         if (period == null) {
             return;
@@ -213,7 +213,7 @@ public class BankReconciliationBuilder {
         return list.isEmpty() ? null : list.get(0);
     }
 
-    protected ErpFinAccountingPeriodStatus findPeriodStatus(Long periodId) {
+    protected ErpFinAccountingPeriodStatus findPeriodStatus(String periodId) {
         IEntityDao<ErpFinAccountingPeriodStatus> dao = daoProvider.daoFor(ErpFinAccountingPeriodStatus.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("periodId", periodId));

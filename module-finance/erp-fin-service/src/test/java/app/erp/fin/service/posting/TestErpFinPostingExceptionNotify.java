@@ -77,7 +77,7 @@ public class TestErpFinPostingExceptionNotify extends JunitAutoTestCase {
             seedSubject("2221", "应交税费-进项税");
             seedSubject("2202", "应付账款");
             seedApInvoiceTemplate();
-            seedNotifyTemplate(7102L, RECIPIENT);
+            seedNotifyTemplate("7102", RECIPIENT);
         });
 
         // 期间关闭 → post 失败 → 异常记录独立事务落 PENDING → notify 派发
@@ -106,7 +106,7 @@ public class TestErpFinPostingExceptionNotify extends JunitAutoTestCase {
                 seedSubject("2221", "应交税费-进项税");
                 seedSubject("2202", "应付账款");
                 seedApInvoiceTemplate();
-                seedNotifyTemplate(7112L, RECIPIENT);
+                seedNotifyTemplate("7112", RECIPIENT);
             });
             int before = countNotifications(NOTIFY_EVENT);
 
@@ -150,7 +150,7 @@ public class TestErpFinPostingExceptionNotify extends JunitAutoTestCase {
         return daoProvider.daoFor(ErpSysNotification.class).findAllByQuery(q).size();
     }
 
-    private void seedNotifyTemplate(Long id, String recipientUserId) {
+    private void seedNotifyTemplate(String id, String recipientUserId) {
         IEntityDao<ErpSysNotificationTemplate> dao = daoProvider.daoFor(ErpSysNotificationTemplate.class);
         ErpSysNotificationTemplate t = new ErpSysNotificationTemplate();
         t.orm_propValueByName("id", id);
@@ -176,15 +176,15 @@ public class TestErpFinPostingExceptionNotify extends JunitAutoTestCase {
         PostingEvent event = new PostingEvent();
         event.setBusinessType(ErpFinBusinessType.AP_INVOICE);
         event.setBillHeadCode(billHeadCode);
-        event.setAcctSchemaId(1L);
-        event.setOrgId(1L);
-        event.setCurrencyId(1L);
+        event.setAcctSchemaId("1");
+        event.setOrgId("1");
+        event.setCurrencyId("1");
         event.setExchangeRate(BigDecimal.ONE);
         event.setVoucherDate(voucherDate);
         event.getBillData().put("AMOUNT", amount);
         event.getBillData().put("TAX", tax);
         event.getBillData().put("TOTAL", total);
-        event.getBillData().put("partnerId", 1L);
+        event.getBillData().put("partnerId", "1");
         event.getBillData().put("businessDate", voucherDate);
         return event;
     }
@@ -205,7 +205,7 @@ public class TestErpFinPostingExceptionNotify extends JunitAutoTestCase {
         lineDao.saveEntity(templateLine(tpl.getId(), 3, "2202", DC_CREDIT, "TOTAL"));
     }
 
-    private ErpFinVoucherTemplateLine templateLine(Long templateId, int lineNo, String subjectCode,
+    private ErpFinVoucherTemplateLine templateLine(String templateId, int lineNo, String subjectCode,
                                                    String dcDirection, String amountKey) {
         ErpFinVoucherTemplateLine line = new ErpFinVoucherTemplateLine();
         line.setTemplateId(templateId);
@@ -232,7 +232,7 @@ public class TestErpFinPostingExceptionNotify extends JunitAutoTestCase {
         ErpFinAccountingPeriod period = new ErpFinAccountingPeriod();
         period.setCode(code);
         period.setName(code);
-        period.setOrgId(1L);
+        period.setOrgId("1");
         period.setYear(year);
         period.setMonth(month);
         period.setStartDate(start);

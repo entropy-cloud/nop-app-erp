@@ -30,7 +30,7 @@ public class ReconciliationSettler {
      * 过账结算：按核销行回写双方辅助账，计算核销单头合计。返回核销行实际生效的本位币结算合计。
      */
     public BigDecimal settle(ErpFinReconciliation head, List<ErpFinReconciliationLine> lines) {
-        Map<Long, ErpFinArApItem> cache = loadItems(lines);
+        Map<String, ErpFinArApItem> cache = loadItems(lines);
         BigDecimal totalFunctional = BigDecimal.ZERO;
         BigDecimal totalSource = BigDecimal.ZERO;
         for (ErpFinReconciliationLine line : lines) {
@@ -56,7 +56,7 @@ public class ReconciliationSettler {
      * @return 已实现汇兑差额（payment − invoice；正=收益，负=损失）
      */
     public BigDecimal settleWithFx(ErpFinReconciliation head, List<ErpFinReconciliationLine> lines) {
-        Map<Long, ErpFinArApItem> cache = loadItems(lines);
+        Map<String, ErpFinArApItem> cache = loadItems(lines);
         BigDecimal totalInvoiceFunctional = BigDecimal.ZERO;
         BigDecimal totalPaymentFunctional = BigDecimal.ZERO;
         BigDecimal totalSource = BigDecimal.ZERO;
@@ -95,7 +95,7 @@ public class ReconciliationSettler {
      * 红冲结算：按原核销行的相反数恢复双方辅助账（settled-=amt / open+=amt / 状态降级回 OPEN 或 PARTIAL）。
      */
     public void reverseSettle(List<ErpFinReconciliationLine> lines) {
-        Map<Long, ErpFinArApItem> cache = loadItems(lines);
+        Map<String, ErpFinArApItem> cache = loadItems(lines);
         for (ErpFinReconciliationLine line : lines) {
             BigDecimal amtFunctional = nz(line.getSettledAmountFunctional());
             BigDecimal amtSource = nz(line.getSettledAmountSource());
@@ -137,9 +137,9 @@ public class ReconciliationSettler {
         return ErpFinConstants.AR_AP_STATUS_PARTIAL;
     }
 
-    protected Map<Long, ErpFinArApItem> loadItems(List<ErpFinReconciliationLine> lines) {
+    protected Map<String, ErpFinArApItem> loadItems(List<ErpFinReconciliationLine> lines) {
         IEntityDao<ErpFinArApItem> dao = daoProvider.daoFor(ErpFinArApItem.class);
-        Map<Long, ErpFinArApItem> cache = new HashMap<>();
+        Map<String, ErpFinArApItem> cache = new HashMap<>();
         for (ErpFinReconciliationLine line : lines) {
             cache.computeIfAbsent(line.getPaymentItemId(), dao::getEntityById);
             cache.computeIfAbsent(line.getInvoiceItemId(), dao::getEntityById);
@@ -152,8 +152,8 @@ public class ReconciliationSettler {
     }
 
     /** 收集核销行涉及的全部辅助账 ID（供校验/重算）。 */
-    public List<Long> collectItemIds(List<ErpFinReconciliationLine> lines) {
-        List<Long> ids = new ArrayList<>();
+    public List<String> collectItemIds(List<ErpFinReconciliationLine> lines) {
+        List<String> ids = new ArrayList<>();
         for (ErpFinReconciliationLine line : lines) {
             if (line.getPaymentItemId() != null) {
                 ids.add(line.getPaymentItemId());

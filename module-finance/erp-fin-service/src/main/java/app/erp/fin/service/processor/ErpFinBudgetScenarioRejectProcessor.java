@@ -21,7 +21,7 @@ public class ErpFinBudgetScenarioRejectProcessor extends AbstractRejectProcessor
 
     @Override
     public ErpFinBudgetScenario reject(String id, IServiceContext context) {
-        ErpFinBudgetScenario scenario = processor.requireScenario(Long.valueOf(id));
+        ErpFinBudgetScenario scenario = processor.requireScenario(id);
         processor.validateTransition(scenario, ErpFinConstants.BUDGET_STATUS_REJECTED,
                 ErpFinConstants.BUDGET_STATUS_SUBMITTED);
         scenario.setDocStatus(ErpFinConstants.BUDGET_STATUS_REJECTED);

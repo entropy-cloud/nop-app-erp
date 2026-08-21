@@ -20,8 +20,8 @@
 
     <props>
         <prop name="id" displayName="ID" propId="1" i18n-en:displayName="ID" tagSet="seq-default" mandatory="true"
-              queryable="true" sortable="true" insertable="true" updatable="false" graphql:type="String">
-            <schema type="java.lang.Long"/>
+              queryable="true" sortable="true" insertable="true" updatable="false">
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="traceId" displayName="追踪ID" propId="2" i18n-en:displayName="Trace ID" tagSet="var" queryable="true"
               sortable="true" insertable="true" updatable="true">
@@ -57,11 +57,11 @@
         </prop>
         <prop name="orgId" displayName="核算组织" propId="10" i18n-en:displayName="Organization" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="org">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="acctSchemaId" displayName="账套" propId="11" i18n-en:displayName="Acct Schema" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="acctSchema">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="status" displayName="处置状态" propId="12" i18n-en:displayName="Status" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
@@ -89,7 +89,7 @@
         </prop>
         <prop name="voucherId" displayName="关联凭证ID" propId="18" i18n-en:displayName="Voucher" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="voucher">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="occurrenceTime" displayName="发生时间" propId="19" i18n-en:displayName="Occurrence Time" tagSet="clock"
               mandatory="true" queryable="true" sortable="true" insertable="true" updatable="true">
@@ -121,7 +121,7 @@
         </prop>
         <prop name="currencyId" displayName="币种" propId="27" i18n-en:displayName="Currency" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="currency">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="exchangeRate" displayName="汇率" propId="28" i18n-en:displayName="Exchange Rate" queryable="true"
               sortable="true" insertable="true" updatable="true">

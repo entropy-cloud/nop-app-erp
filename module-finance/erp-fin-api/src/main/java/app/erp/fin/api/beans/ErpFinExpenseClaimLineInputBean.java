@@ -12,30 +12,30 @@
     public class ErpFinExpenseClaimLineInputBean extends CrudInputBase {
 
     
-        private Long _id;
+        private String _id;
 
     
         @PropMeta(propId=1)
     
-        public Long getId(){
+        public String getId(){
             return _id;
         }
 
-        public void setId(Long value){
+        public void setId(String value){
             this._id = value;
         }
 
 
-        private Long _claimId;
+        private String _claimId;
 
     
         @PropMeta(propId=2)
     
-        public Long getClaimId(){
+        public String getClaimId(){
             return _claimId;
         }
 
-        public void setClaimId(Long value){
+        public void setClaimId(String value){
             this._claimId = value;
         }
 
@@ -82,30 +82,30 @@
         }
 
 
-        private Long _costCenterId;
+        private String _costCenterId;
 
     
         @PropMeta(propId=6)
     
-        public Long getCostCenterId(){
+        public String getCostCenterId(){
             return _costCenterId;
         }
 
-        public void setCostCenterId(Long value){
+        public void setCostCenterId(String value){
             this._costCenterId = value;
         }
 
 
-        private Long _subjectId;
+        private String _subjectId;
 
     
         @PropMeta(propId=7)
     
-        public Long getSubjectId(){
+        public String getSubjectId(){
             return _subjectId;
         }
 
-        public void setSubjectId(Long value){
+        public void setSubjectId(String value){
             this._subjectId = value;
         }
 

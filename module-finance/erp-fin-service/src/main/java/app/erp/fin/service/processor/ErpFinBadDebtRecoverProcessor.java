@@ -16,7 +16,7 @@ public class ErpFinBadDebtRecoverProcessor {
     @Inject
     ErpFinBadDebtProcessor facade;
 
-    public ErpFinBadDebt recover(Long arApItemId, String reason, IServiceContext context) {
+    public ErpFinBadDebt recover(String arApItemId, String reason, IServiceContext context) {
         ErpFinArApItem item = facade.requireWrittenOffArApItem(arApItemId);
         ErpFinBadDebt debt = facade.newBadDebt(ErpFinConstants.BAD_DEBT_TYPE_RECOVERY, item,
                 facade.debtAmountOf(item), reason);

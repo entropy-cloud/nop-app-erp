@@ -12,30 +12,30 @@
     public class ErpFinBankStatementLineInputBean extends CrudInputBase {
 
     
-        private Long _id;
+        private String _id;
 
     
         @PropMeta(propId=1)
     
-        public Long getId(){
+        public String getId(){
             return _id;
         }
 
-        public void setId(Long value){
+        public void setId(String value){
             this._id = value;
         }
 
 
-        private Long _statementId;
+        private String _statementId;
 
     
         @PropMeta(propId=2)
     
-        public Long getStatementId(){
+        public String getStatementId(){
             return _statementId;
         }
 
-        public void setStatementId(Long value){
+        public void setStatementId(String value){
             this._statementId = value;
         }
 
@@ -124,16 +124,16 @@
         }
 
 
-        private Long _currencyId;
+        private String _currencyId;
 
     
         @PropMeta(propId=9)
     
-        public Long getCurrencyId(){
+        public String getCurrencyId(){
             return _currencyId;
         }
 
-        public void setCurrencyId(Long value){
+        public void setCurrencyId(String value){
             this._currencyId = value;
         }
 
@@ -166,16 +166,16 @@
         }
 
 
-        private Long _matchedLineId;
+        private String _matchedLineId;
 
     
         @PropMeta(propId=12)
     
-        public Long getMatchedLineId(){
+        public String getMatchedLineId(){
             return _matchedLineId;
         }
 
-        public void setMatchedLineId(Long value){
+        public void setMatchedLineId(String value){
             this._matchedLineId = value;
         }
 

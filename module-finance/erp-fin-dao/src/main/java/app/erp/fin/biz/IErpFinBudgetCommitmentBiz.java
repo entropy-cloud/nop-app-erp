@@ -38,11 +38,11 @@ public interface IErpFinBudgetCommitmentBiz {
      * @return 承付凭证 ID（commitmentVoucherId）；config-gated 关闭或参数非法时返回 null
      */
     @BizMutation
-    Long commit(@Name("sourceBillType") String sourceBillType,
+    String commit(@Name("sourceBillType") String sourceBillType,
                 @Name("sourceBillCode") String sourceBillCode,
-                @Name("subjectId") Long subjectId,
-                @Name("costCenterId") Long costCenterId,
-                @Name("periodId") Long periodId,
+                @Name("subjectId") String subjectId,
+                @Name("costCenterId") String costCenterId,
+                @Name("periodId") String periodId,
                 @Name("amount") BigDecimal amount,
                 IServiceContext context);
 
@@ -64,7 +64,7 @@ public interface IErpFinBudgetCommitmentBiz {
      *         当原承付凭证已红冲或不存在时抛出（守卫防重复占用预算）
      */
     @BizMutation
-    Long release(@Name("sourceBillType") String sourceBillType,
+    String release(@Name("sourceBillType") String sourceBillType,
                  @Name("sourceBillCode") String sourceBillCode,
                  IServiceContext context);
 
@@ -80,7 +80,7 @@ public interface IErpFinBudgetCommitmentBiz {
      *
      * @return 红冲凭证 ID（首个）；config-gated 关闭、无原凭证可红冲时返回 null
      */
-    Long releaseIfPresent(@Name("sourceBillType") String sourceBillType,
+    String releaseIfPresent(@Name("sourceBillType") String sourceBillType,
                           @Name("sourceBillCode") String sourceBillCode,
                           IServiceContext context);
 }

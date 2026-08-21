@@ -46,19 +46,19 @@ public class TestErpFinMultiSchemaReportIsolation extends JunitAutoTestCase {
     @Test
     public void testBalanceSheetScopedToPrimarySchema() {
         ormTemplate.runInSession(session -> {
-            Long periodId = seedPeriod(801L, 2L, 2026, 5);
+            String periodId = seedPeriod("801", "2", 2026, 5);
             // 组织 2 的两个账套：501=FINANCIAL（主），502=MANAGEMENT
-            seedAcctSchema(501L, "FIN-501", 2L, "FINANCIAL");
-            seedAcctSchema(502L, "MGT-502", 2L, "MANAGEMENT");
-            ErpMdSubject asset = seedSubject(802L, "1001-ASSET", "ASSET", ErpFinConstants.DC_DEBIT);
+            seedAcctSchema("501", "FIN-501", "2", "FINANCIAL");
+            seedAcctSchema("502", "MGT-502", "2", "MANAGEMENT");
+            ErpMdSubject asset = seedSubject("802", "1001-ASSET", "ASSET", ErpFinConstants.DC_DEBIT);
 
             // 同期间同组织同科目，两账套各一行
-            seedGlBalance(9001L, 2L, 501L, periodId, asset.getId(), new BigDecimal("1000"));
-            seedGlBalance(9002L, 2L, 502L, periodId, asset.getId(), new BigDecimal("3000"));
+            seedGlBalance("9001", "2", "501", periodId, asset.getId(), new BigDecimal("1000"));
+            seedGlBalance("9002", "2", "502", periodId, asset.getId(), new BigDecimal("3000"));
             return null;
         });
 
-        Long periodId = 801L;
+        String periodId = "801";
         List<Map<String, Object>> rows = reportBiz.balanceSheetData(periodId, CTX);
 
         BigDecimal totalAsset = BigDecimal.ZERO;
@@ -74,7 +74,7 @@ public class TestErpFinMultiSchemaReportIsolation extends JunitAutoTestCase {
 
     // ---------- helpers ----------
 
-    private Long seedPeriod(long id, long orgId, int year, int month) {
+    private String seedPeriod(String id, String orgId, int year, int month) {
         IEntityDao<ErpFinAccountingPeriod> dao = daoProvider.daoFor(ErpFinAccountingPeriod.class);
         ErpFinAccountingPeriod p = dao.newEntity();
         p.orm_propValue(1, id);
@@ -91,7 +91,7 @@ public class TestErpFinMultiSchemaReportIsolation extends JunitAutoTestCase {
         return p.getId();
     }
 
-    private void seedAcctSchema(long id, String code, long orgId, String nature) {
+    private void seedAcctSchema(String id, String code, String orgId, String nature) {
         IEntityDao<ErpMdAcctSchema> dao = daoProvider.daoFor(ErpMdAcctSchema.class);
         ErpMdAcctSchema s = dao.newEntity();
         s.orm_propValue(1, id);
@@ -99,12 +99,12 @@ public class TestErpFinMultiSchemaReportIsolation extends JunitAutoTestCase {
         s.setName(code);
         s.setOrgId(orgId);
         s.setNature(nature);
-        s.setFunctionalCurrencyId(1L);
+        s.setFunctionalCurrencyId("1");
         s.setStatus("ACTIVE");
         dao.saveEntity(s);
     }
 
-    private ErpMdSubject seedSubject(long id, String code, String subjectClass, String direction) {
+    private ErpMdSubject seedSubject(String id, String code, String subjectClass, String direction) {
         IEntityDao<ErpMdSubject> dao = daoProvider.daoFor(ErpMdSubject.class);
         ErpMdSubject s = dao.newEntity();
         s.orm_propValue(1, id);
@@ -117,7 +117,7 @@ public class TestErpFinMultiSchemaReportIsolation extends JunitAutoTestCase {
         return s;
     }
 
-    private void seedGlBalance(long id, long orgId, long schemaId, long periodId, long subjectId,
+    private void seedGlBalance(String id, String orgId, String schemaId, String periodId, String subjectId,
                                BigDecimal closingDebit) {
         IEntityDao<ErpFinGlBalance> dao = daoProvider.daoFor(ErpFinGlBalance.class);
         ErpFinGlBalance b = dao.newEntity();
@@ -126,7 +126,7 @@ public class TestErpFinMultiSchemaReportIsolation extends JunitAutoTestCase {
         b.setAcctSchemaId(schemaId);
         b.setPeriodId(periodId);
         b.setSubjectId(subjectId);
-        b.setCurrencyId(1L);
+        b.setCurrencyId("1");
         b.setOpeningDebit(BigDecimal.ZERO);
         b.setOpeningCredit(BigDecimal.ZERO);
         b.setPeriodDebit(BigDecimal.ZERO);

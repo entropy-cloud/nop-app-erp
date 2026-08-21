@@ -72,7 +72,7 @@ public class ErpFinVoucherBizModel extends CrudBizModel<ErpFinVoucher> implement
     @BizMutation
     @BizAudit(auditType = AuditType.AUDIT_SUCCESS)
     @Transactional(propagation = TransactionPropagation.REQUIRES_NEW)
-    public Long post(@Name("event") PostingEvent event, IServiceContext context) {
+    public String post(@Name("event") PostingEvent event, IServiceContext context) {
         return postingProcessor.process(event, context);
     }
 
@@ -80,7 +80,7 @@ public class ErpFinVoucherBizModel extends CrudBizModel<ErpFinVoucher> implement
     // nop-check: allow @Transactional(REQUIRES_NEW) — 红冲独立事务边界，与 post 一致
     @BizMutation
     @Transactional(propagation = TransactionPropagation.REQUIRES_NEW)
-    public Long reverse(@Name("billHeadCode") String billHeadCode,
+    public String reverse(@Name("billHeadCode") String billHeadCode,
                         @Name("businessType") ErpFinBusinessType businessType,
                         IServiceContext context) {
         return postingProcessor.reverseProcess(billHeadCode, businessType, context);
@@ -88,7 +88,7 @@ public class ErpFinVoucherBizModel extends CrudBizModel<ErpFinVoucher> implement
 
     @Override
     @BizMutation
-    public ErpFinVoucher postVoucher(@Name("voucherId") Long voucherId, IServiceContext context) {
+    public ErpFinVoucher postVoucher(@Name("voucherId") String voucherId, IServiceContext context) {
         ErpFinVoucher voucher = requireEntity(String.valueOf(voucherId), null, context);
         assertPeriodNotLocked(voucher);
         try {
@@ -108,7 +108,7 @@ public class ErpFinVoucherBizModel extends CrudBizModel<ErpFinVoucher> implement
 
     @Override
     @BizMutation
-    public ErpFinVoucher reverseVoucher(@Name("voucherId") Long voucherId, IServiceContext context) {
+    public ErpFinVoucher reverseVoucher(@Name("voucherId") String voucherId, IServiceContext context) {
         ErpFinVoucher voucher = requireEntity(String.valueOf(voucherId), null, context);
         assertPeriodNotLocked(voucher);
         // isReversed 标志操作的前置分类（POSTED），非 docStatus 迁移边（契约 §3/§对象一；POSTED 保留）。
@@ -128,7 +128,7 @@ public class ErpFinVoucherBizModel extends CrudBizModel<ErpFinVoucher> implement
      */
     @Override
     @BizQuery
-    public VoucherReversePreview previewReverseVoucher(@Name("voucherId") Long voucherId, IServiceContext context) {
+    public VoucherReversePreview previewReverseVoucher(@Name("voucherId") String voucherId, IServiceContext context) {
         ErpFinVoucher voucher = requireEntity(String.valueOf(voucherId), null, context);
         // 只读预览守卫，委托 Bean isPosted 分类 helper（一致性，非迁移边）。
         if (!documentStateMachine.isPosted(voucher.getDocStatus())) {
@@ -160,14 +160,14 @@ public class ErpFinVoucherBizModel extends CrudBizModel<ErpFinVoucher> implement
 
     // 同聚合子表只读加载（对齐 ErpFinReconciliationBizModel.loadLines 的 D2 边界场景，
     // 显式查询避免依赖 to-many 懒加载的会话存活）。
-    private int countLines(Long voucherId) {
+    private int countLines(String voucherId) {
         IEntityDao<ErpFinVoucherLine> dao = daoProvider().daoFor(ErpFinVoucherLine.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("voucherId", voucherId));
         return dao.findAllByQuery(q).size();
     }
 
-    private List<ErpFinVoucherBillR> loadBillLinks(Long voucherId) {
+    private List<ErpFinVoucherBillR> loadBillLinks(String voucherId) {
         IEntityDao<ErpFinVoucherBillR> dao = daoProvider().daoFor(ErpFinVoucherBillR.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("voucherId", voucherId));
@@ -183,7 +183,7 @@ public class ErpFinVoucherBizModel extends CrudBizModel<ErpFinVoucher> implement
      * owner doc state-machine.md §期间控制「CLOSED/CLOSED_FINAL 可修改凭证=否」。
      */
     private void assertPeriodNotLocked(ErpFinVoucher voucher) {
-        Long periodId = voucher.getPeriodId();
+        String periodId = voucher.getPeriodId();
         if (periodId == null) {
             return;
         }

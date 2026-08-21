@@ -14,7 +14,7 @@ public class ErpFinBankReconciliationReverseProcessor {
     @Inject
     BankReconciliationBuilder bankReconciliationBuilder;
 
-    public ErpFinBankReconciliation reverse(Long reconciliationId, IServiceContext context) {
+    public ErpFinBankReconciliation reverse(String reconciliationId, IServiceContext context) {
         return bankReconciliationBuilder.reverse(reconciliationId, context);
     }
 }

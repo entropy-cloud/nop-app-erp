@@ -56,19 +56,19 @@ public class ProfitLossClosingService {
     @Inject
     SchemaPropagator schemaPropagator;
 
-    public Long close(ErpFinAccountingPeriod period, IServiceContext context) {
-        Long primarySchemaId = resolveAcctSchemaId(period.getId());
-        List<Long> schemas = schemaPropagator.resolveTargetSchemas(period.getOrgId(), primarySchemaId);
-        Long lastVoucherId = null;
-        for (Long schemaId : schemas) {
+    public String close(ErpFinAccountingPeriod period, IServiceContext context) {
+        String primarySchemaId = resolveAcctSchemaId(period.getId());
+        List<String> schemas = schemaPropagator.resolveTargetSchemas(period.getOrgId(), primarySchemaId);
+        String lastVoucherId = null;
+        for (String schemaId : schemas) {
             lastVoucherId = closeForSchema(period, schemaId, context);
         }
         return lastVoucherId;
     }
 
-    private Long closeForSchema(ErpFinAccountingPeriod period, Long acctSchemaId, IServiceContext context) {
+    private String closeForSchema(ErpFinAccountingPeriod period, String acctSchemaId, IServiceContext context) {
         // 收集本期已过账、非红冲凭证 ID。
-        List<Long> voucherIds = findPostedVoucherIds(period.getId());
+        List<String> voucherIds = findPostedVoucherIds(period.getId());
         if (voucherIds.isEmpty()) {
             return null;
         }
@@ -79,8 +79,8 @@ public class ProfitLossClosingService {
         List<ErpFinVoucherLine> lines = lineDao.findAllByQuery(q);
 
         // 按科目聚合（缓存科目取 subjectClass）。
-        Map<Long, SubjectAgg> agg = new HashMap<>();
-        Map<Long, ErpMdSubject> subjectCache = new HashMap<>();
+        Map<String, SubjectAgg> agg = new HashMap<>();
+        Map<String, ErpMdSubject> subjectCache = new HashMap<>();
         for (ErpFinVoucherLine l : lines) {
             if (l.getSubjectId() == null) {
                 continue;
@@ -147,8 +147,8 @@ public class ProfitLossClosingService {
                     ErpFinConstants.DC_DEBIT, totalExpenseCost, null));
         }
 
-        Long orgId = period.getOrgId();
-        Long functionalCurrencyId = resolveFunctionalCurrencyId();
+        String orgId = period.getOrgId();
+        String functionalCurrencyId = resolveFunctionalCurrencyId();
         return CloseVoucherWriter.writeVoucher(daoProvider, "CLP", BILL_CODE_PREFIX + period.getCode(),
                 ErpFinBusinessType.PERIOD_CLOSE.name(), ErpFinBusinessType.PERIOD_CLOSE.name(),
                 orgId, acctSchemaId, period.getId(), functionalCurrencyId, BigDecimal.ONE,
@@ -178,11 +178,11 @@ public class ProfitLossClosingService {
         return list.isEmpty() ? null : list.get(0);
     }
 
-    private ErpMdSubject loadSubject(Long id) {
+    private ErpMdSubject loadSubject(String id) {
         return daoProvider.daoFor(ErpMdSubject.class).getEntityById(id);
     }
 
-    private List<Long> findPostedVoucherIds(Long periodId) {
+    private List<String> findPostedVoucherIds(String periodId) {
         IEntityDao<ErpFinVoucher> dao = daoProvider.daoFor(ErpFinVoucher.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("periodId", periodId));
@@ -195,11 +195,11 @@ public class ProfitLossClosingService {
         return dao.findAllByQuery(q).stream().map(ErpFinVoucher::getId).collect(java.util.stream.Collectors.toList());
     }
 
-    private Long resolveAcctSchemaId(Long periodId) {
+    private String resolveAcctSchemaId(String periodId) {
         ErpFinAccountingPeriod period = daoProvider.daoFor(ErpFinAccountingPeriod.class).getEntityById(periodId);
-        Long orgId = period != null ? period.getOrgId() : null;
+        String orgId = period != null ? period.getOrgId() : null;
         if (orgId != null) {
-            Long schemaId = AcctSchemaResolver.resolvePrimarySchemaId(daoProvider, orgId);
+            String schemaId = AcctSchemaResolver.resolvePrimarySchemaId(daoProvider, orgId);
             if (schemaId != null) {
                 return schemaId;
             }
@@ -212,10 +212,10 @@ public class ProfitLossClosingService {
         if (!list.isEmpty() && list.get(0).getAcctSchemaId() != null) {
             return list.get(0).getAcctSchemaId();
         }
-        return 1L;
+        return "1";
     }
 
-    private Long resolveFunctionalCurrencyId() {
+    private String resolveFunctionalCurrencyId() {
         IEntityDao<ErpMdCurrency> dao = daoProvider.daoFor(ErpMdCurrency.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("isFunctional", Boolean.TRUE));
@@ -224,7 +224,7 @@ public class ProfitLossClosingService {
         if (!list.isEmpty()) {
             return list.get(0).getId();
         }
-        return 1L;
+        return "1";
     }
 
     private static BigDecimal nz(BigDecimal v) {

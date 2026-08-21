@@ -399,7 +399,7 @@
                 i18n-en:displayName="Accounting Voucher">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
-                        stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
+                        stdDataType="string" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
                 <column code="CODE" displayName="凭证号" domain="voucherCode" mandatory="true" name="code" precision="50"
                         propId="2" stdDataType="string" stdSqlType="VARCHAR" tagSet="var" i18n-en:displayName="Code"/>
                 <column code="VOUCHER_TYPE" displayName="凭证字" mandatory="true" name="voucherType" precision="20"
@@ -413,12 +413,12 @@
                 <column code="VOUCHER_NO" displayName="凭证编号" domain="voucherNo" name="voucherNo" precision="50"
                         propId="6" stdDataType="string" stdSqlType="VARCHAR" tagSet="var"
                         i18n-en:displayName="Voucher No"/>
-                <column code="ORG_ID" displayName="核算组织" mandatory="true" name="orgId" propId="7" stdDataType="long"
+                <column code="ORG_ID" displayName="核算组织" mandatory="true" name="orgId" propId="7" stdDataType="string"
                         stdSqlType="BIGINT" i18n-en:displayName="Organization"/>
                 <column code="ACCT_SCHEMA_ID" displayName="账套" mandatory="true" name="acctSchemaId" propId="8"
-                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Acct Schema"/>
+                        stdDataType="string" stdSqlType="BIGINT" i18n-en:displayName="Acct Schema"/>
                 <column code="PERIOD_ID" displayName="会计期间" mandatory="true" name="periodId" propId="9"
-                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Period"/>
+                        stdDataType="string" stdSqlType="BIGINT" i18n-en:displayName="Period"/>
                 <column code="TOTAL_DEBIT" defaultValue="0" displayName="借方合计(本位币)" domain="amount" name="totalDebit"
                         precision="20" propId="10" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Total Debit"/>
@@ -428,7 +428,7 @@
                 <column code="IS_REVERSED" defaultValue="false" displayName="是否红字冲销凭证" name="isReversed" propId="12"
                         stdDataType="boolean" stdSqlType="BOOLEAN" i18n-en:displayName="Is Reversed"/>
                 <column code="REVERSAL_OF_VOUCHER_ID" displayName="原冲销凭证ID" name="reversalOfVoucherId" propId="13"
-                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Reversal Of Voucher"/>
+                        stdDataType="string" stdSqlType="BIGINT" i18n-en:displayName="Reversal Of Voucher"/>
                 <column code="DOC_STATUS" displayName="凭证状态" mandatory="true" name="docStatus" precision="20"
                         propId="14" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-fin/voucher-status"
                         i18n-en:displayName="Doc Status"/>
@@ -519,13 +519,13 @@
                 ext:icon="list" i18n-en:displayName="Voucher Line">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
-                        stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
+                        stdDataType="string" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
                 <column code="VOUCHER_ID" displayName="凭证ID" mandatory="true" name="voucherId" propId="2"
-                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Voucher"/>
+                        stdDataType="string" stdSqlType="BIGINT" i18n-en:displayName="Voucher"/>
                 <column code="LINE_NO" displayName="行号" mandatory="true" name="lineNo" propId="3" stdDataType="int"
                         stdSqlType="INTEGER" i18n-en:displayName="Line No"/>
                 <column code="SUBJECT_ID" displayName="科目ID" mandatory="true" name="subjectId" propId="4"
-                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Subject"/>
+                        stdDataType="string" stdSqlType="BIGINT" i18n-en:displayName="Subject"/>
                 <column code="SUBJECT_CODE" displayName="科目编码" domain="subjectCode" mandatory="true" name="subjectCode"
                         precision="50" propId="5" stdDataType="string" stdSqlType="VARCHAR"
                         i18n-en:displayName="Subject Code"/>
@@ -541,7 +541,7 @@
                         name="creditAmount" precision="20" propId="9" scale="4" stdDataType="decimal"
                         stdSqlType="DECIMAL" i18n-en:displayName="Credit Amount"/>
                 <column code="CURRENCY_ID" displayName="币种" mandatory="true" name="currencyId" propId="10"
-                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Currency"/>
+                        stdDataType="string" stdSqlType="BIGINT" i18n-en:displayName="Currency"/>
                 <column code="EXCHANGE_RATE" defaultValue="1" displayName="汇率" domain="exchangeRate" name="exchangeRate"
                         precision="20" propId="11" scale="8" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Exchange Rate"/>
@@ -552,25 +552,25 @@
                         precision="20" propId="13" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Amt (Functional)"/>
                 <column code="ACCT_SCHEMA_ID" displayName="账套" mandatory="true" name="acctSchemaId" propId="14"
-                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Acct Schema"/>
-                <column code="ORG_ID" displayName="核算组织" name="orgId" propId="15" stdDataType="long" stdSqlType="BIGINT"
-                        i18n-en:displayName="Organization"/>
+                        stdDataType="string" stdSqlType="BIGINT" i18n-en:displayName="Acct Schema"/>
+                <column code="ORG_ID" displayName="核算组织" name="orgId" propId="15" stdDataType="string"
+                        stdSqlType="BIGINT" i18n-en:displayName="Organization"/>
                 <column code="MEMO" displayName="摘要" domain="memo" name="memo" precision="1000" propId="16"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Memo"/>
-                <column code="PARTNER_ID" displayName="辅助-往来单位" name="partnerId" propId="17" stdDataType="long"
+                <column code="PARTNER_ID" displayName="辅助-往来单位" name="partnerId" propId="17" stdDataType="string"
                         stdSqlType="BIGINT" i18n-en:displayName="Partner"/>
-                <column code="DEPARTMENT_ID" displayName="辅助-部门" name="departmentId" propId="18" stdDataType="long"
+                <column code="DEPARTMENT_ID" displayName="辅助-部门" name="departmentId" propId="18" stdDataType="string"
                         stdSqlType="BIGINT" i18n-en:displayName="Department"/>
                 <column code="PROJECT_ID" displayName="辅助-项目" name="projectId" propId="19" stdDataType="long"
                         stdSqlType="BIGINT" i18n-en:displayName="Project"/>
-                <column code="WAREHOUSE_ID" displayName="辅助-仓库" name="warehouseId" propId="20" stdDataType="long"
+                <column code="WAREHOUSE_ID" displayName="辅助-仓库" name="warehouseId" propId="20" stdDataType="string"
                         stdSqlType="BIGINT" i18n-en:displayName="Warehouse"/>
-                <column code="MATERIAL_ID" displayName="辅助-物料" name="materialId" propId="21" stdDataType="long"
+                <column code="MATERIAL_ID" displayName="辅助-物料" name="materialId" propId="21" stdDataType="string"
                         stdSqlType="BIGINT" i18n-en:displayName="Material"/>
                 <column code="BUSINESS_TYPE" displayName="业务类型" name="businessType" precision="30" propId="22"
                         stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-fin/business-type"
                         i18n-en:displayName="Business Type"/>
-                <column code="COST_CENTER_ID" displayName="成本中心" name="costCenterId" propId="23" stdDataType="long"
+                <column code="COST_CENTER_ID" displayName="成本中心" name="costCenterId" propId="23" stdDataType="string"
                         stdSqlType="BIGINT" i18n-en:displayName="Cost Center"/>
                 <column code="DEL_VERSION" defaultValue="0" displayName="逻辑删除版本" domain="delVersion" mandatory="true"
                         name="delVersion" propId="24" stdDataType="long" stdSqlType="BIGINT"
@@ -698,13 +698,13 @@
                 orm:bizKeyProp="code">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
-                        stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
+                        stdDataType="string" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
                 <column code="CODE" displayName="模板编码" domain="voucherCode" mandatory="true" name="code" precision="50"
                         propId="2" stdDataType="string" stdSqlType="VARCHAR" tagSet="var" i18n-en:displayName="Code"/>
                 <column code="NAME" displayName="模板名称" mandatory="true" name="name" precision="200" propId="3"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Name"/>
                 <column code="ACCT_SCHEMA_ID" displayName="账套(空表示所有账套通用)" name="acctSchemaId" propId="4"
-                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Acct Schema"/>
+                        stdDataType="string" stdSqlType="BIGINT" i18n-en:displayName="Acct Schema"/>
                 <column code="BUSINESS_TYPE" displayName="业务类型" mandatory="true" name="businessType" precision="30"
                         propId="5" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-fin/business-type"
                         i18n-en:displayName="Business Type"/>
@@ -767,9 +767,9 @@
                 ext:web-renderer="flux" ext:icon="list" i18n-en:displayName="Voucher Template Line">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
-                        stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
+                        stdDataType="string" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
                 <column code="TEMPLATE_ID" displayName="模板ID" mandatory="true" name="templateId" propId="2"
-                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Template"/>
+                        stdDataType="string" stdSqlType="BIGINT" i18n-en:displayName="Template"/>
                 <column code="LINE_NO" displayName="行号" mandatory="true" name="lineNo" propId="3" stdDataType="int"
                         stdSqlType="INTEGER" i18n-en:displayName="Line No"/>
                 <column code="SUBJECT_CODE" displayName="科目编码(可含占位符)" domain="subjectCode" mandatory="true"
@@ -826,9 +826,9 @@
                 ext:icon="link" i18n-en:displayName="Voucher Business Link">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
-                        stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
+                        stdDataType="string" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
                 <column code="VOUCHER_ID" displayName="凭证ID" mandatory="true" name="voucherId" propId="2"
-                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Voucher"/>
+                        stdDataType="string" stdSqlType="BIGINT" i18n-en:displayName="Voucher"/>
                 <column code="BILL_TYPE" displayName="单据类型" mandatory="true" name="billType" precision="50" propId="3"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Bill Type"/>
                 <column code="BILL_CODE" displayName="单据编号" mandatory="true" name="billCode" precision="50" propId="4"
@@ -880,12 +880,12 @@
                 ext:icon="calendar" i18n-en:displayName="Accounting Period">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
-                        stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
+                        stdDataType="string" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
                 <column code="CODE" displayName="期间编码" domain="voucherCode" mandatory="true" name="code" precision="50"
                         propId="2" stdDataType="string" stdSqlType="VARCHAR" tagSet="var" i18n-en:displayName="Code"/>
                 <column code="NAME" displayName="期间名称" mandatory="true" name="name" precision="200" propId="3"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Name"/>
-                <column code="ORG_ID" displayName="组织" name="orgId" propId="4" stdDataType="long" stdSqlType="BIGINT"
+                <column code="ORG_ID" displayName="组织" name="orgId" propId="4" stdDataType="string" stdSqlType="BIGINT"
                         i18n-en:displayName="Organization"/>
                 <column code="YEAR" displayName="年度" mandatory="true" name="year" propId="5" stdDataType="int"
                         stdSqlType="INTEGER" i18n-en:displayName="Year"/>
@@ -962,11 +962,11 @@
                 ext:icon="calendar-check" i18n-en:displayName="Period Close Status">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
-                        stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
+                        stdDataType="string" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
                 <column code="PERIOD_ID" displayName="期间ID" mandatory="true" name="periodId" propId="2"
-                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Period"/>
+                        stdDataType="string" stdSqlType="BIGINT" i18n-en:displayName="Period"/>
                 <column code="ACCT_SCHEMA_ID" displayName="账套" mandatory="true" name="acctSchemaId" propId="3"
-                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Acct Schema"/>
+                        stdDataType="string" stdSqlType="BIGINT" i18n-en:displayName="Acct Schema"/>
                 <column code="TOTAL_VOUCHERS" defaultValue="0" displayName="凭证总数" name="totalVouchers" propId="4"
                         stdDataType="int" stdSqlType="INTEGER" i18n-en:displayName="Total Vouchers"/>
                 <column code="POSTED_VOUCHERS" defaultValue="0" displayName="已过账凭证数" name="postedVouchers" propId="5"
@@ -1035,18 +1035,18 @@
                 i18n-en:displayName="AR/AP Subledger">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
-                        stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
+                        stdDataType="string" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
                 <column code="CODE" displayName="单号" domain="voucherCode" mandatory="true" name="code" precision="50"
                         propId="2" stdDataType="string" stdSqlType="VARCHAR" tagSet="var" i18n-en:displayName="Code"/>
-                <column code="ORG_ID" displayName="组织" mandatory="true" name="orgId" propId="3" stdDataType="long"
+                <column code="ORG_ID" displayName="组织" mandatory="true" name="orgId" propId="3" stdDataType="string"
                         stdSqlType="BIGINT" i18n-en:displayName="Organization"/>
                 <column code="ACCT_SCHEMA_ID" displayName="账套" mandatory="true" name="acctSchemaId" propId="4"
-                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Acct Schema"/>
+                        stdDataType="string" stdSqlType="BIGINT" i18n-en:displayName="Acct Schema"/>
                 <column code="DIRECTION" displayName="应收应付" mandatory="true" name="direction" precision="20" propId="5"
                         stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-fin/ar-ap-direction"
                         i18n-en:displayName="Direction"/>
                 <column code="PARTNER_ID" displayName="往来单位" mandatory="true" name="partnerId" propId="6"
-                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Partner"/>
+                        stdDataType="string" stdSqlType="BIGINT" i18n-en:displayName="Partner"/>
                 <column code="SOURCE_BILL_TYPE" displayName="来源单据类型(AP_INVOICE/AR_INVOICE/PAYMENT/RECEIPT)"
                         mandatory="true" name="sourceBillType" precision="50" propId="7" stdDataType="string"
                         stdSqlType="VARCHAR" i18n-en:displayName="Source Bill Type"/>
@@ -1058,7 +1058,7 @@
                 <column code="DUE_DATE" displayName="到期日" name="dueDate" propId="10" stdDataType="date"
                         stdSqlType="DATE" i18n-en:displayName="Due Date"/>
                 <column code="CURRENCY_ID" displayName="币种" mandatory="true" name="currencyId" propId="11"
-                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Currency"/>
+                        stdDataType="string" stdSqlType="BIGINT" i18n-en:displayName="Currency"/>
                 <column code="EXCHANGE_RATE" defaultValue="1" displayName="汇率" domain="exchangeRate" name="exchangeRate"
                         precision="20" propId="12" scale="8" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Exchange Rate"/>
@@ -1083,7 +1083,7 @@
                 <column code="STATUS" displayName="状态" mandatory="true" name="status" precision="20" propId="19"
                         stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-fin/ar-ap-status"
                         i18n-en:displayName="Status"/>
-                <column code="PERIOD_ID" displayName="所属期间" name="periodId" propId="20" stdDataType="long"
+                <column code="PERIOD_ID" displayName="所属期间" name="periodId" propId="20" stdDataType="string"
                         stdSqlType="BIGINT" i18n-en:displayName="Period"/>
                 <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="21"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Remark"/>
@@ -1167,22 +1167,22 @@
                 ext:icon="check-check" i18n-en:displayName="Reconciliation">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
-                        stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
+                        stdDataType="string" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
                 <column code="CODE" displayName="单号" domain="voucherCode" mandatory="true" name="code" precision="50"
                         propId="2" stdDataType="string" stdSqlType="VARCHAR" tagSet="var" i18n-en:displayName="Code"/>
-                <column code="ORG_ID" displayName="组织" mandatory="true" name="orgId" propId="3" stdDataType="long"
+                <column code="ORG_ID" displayName="组织" mandatory="true" name="orgId" propId="3" stdDataType="string"
                         stdSqlType="BIGINT" i18n-en:displayName="Organization"/>
                 <column code="ACCT_SCHEMA_ID" displayName="账套" mandatory="true" name="acctSchemaId" propId="4"
-                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Acct Schema"/>
+                        stdDataType="string" stdSqlType="BIGINT" i18n-en:displayName="Acct Schema"/>
                 <column code="DIRECTION" displayName="应收应付" mandatory="true" name="direction" precision="20" propId="5"
                         stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-fin/ar-ap-direction"
                         i18n-en:displayName="Direction"/>
                 <column code="PARTNER_ID" displayName="往来单位" mandatory="true" name="partnerId" propId="6"
-                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Partner"/>
+                        stdDataType="string" stdSqlType="BIGINT" i18n-en:displayName="Partner"/>
                 <column code="BUSINESS_DATE" displayName="业务日期" mandatory="true" name="businessDate" propId="7"
                         stdDataType="date" stdSqlType="DATE" tagSet="clock" i18n-en:displayName="Business Date"/>
                 <column code="CURRENCY_ID" displayName="币种" mandatory="true" name="currencyId" propId="8"
-                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Currency"/>
+                        stdDataType="string" stdSqlType="BIGINT" i18n-en:displayName="Currency"/>
                 <column code="EXCHANGE_RATE" defaultValue="1" displayName="汇率" domain="exchangeRate" name="exchangeRate"
                         precision="20" propId="9" scale="8" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Exchange Rate"/>
@@ -1284,16 +1284,16 @@
                 ext:icon="list" i18n-en:displayName="Reconciliation Line">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
-                        stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
+                        stdDataType="string" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
                 <column code="RECONCILIATION_ID" displayName="核销单ID" mandatory="true" name="reconciliationId" propId="2"
-                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Reconciliation"/>
+                        stdDataType="string" stdSqlType="BIGINT" i18n-en:displayName="Reconciliation"/>
                 <column code="LINE_NO" displayName="行号" mandatory="true" name="lineNo" propId="3" stdDataType="int"
                         stdSqlType="INTEGER" i18n-en:displayName="Line No"/>
                 <column code="PAYMENT_ITEM_ID" displayName="付款/收款项(invoice or payment item)" mandatory="true"
-                        name="paymentItemId" propId="4" stdDataType="long" stdSqlType="BIGINT"
+                        name="paymentItemId" propId="4" stdDataType="string" stdSqlType="BIGINT"
                         i18n-en:displayName="Payment Item"/>
                 <column code="INVOICE_ITEM_ID" displayName="被核销发票项" mandatory="true" name="invoiceItemId" propId="5"
-                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Invoice Item"/>
+                        stdDataType="string" stdSqlType="BIGINT" i18n-en:displayName="Invoice Item"/>
                 <column code="SETTLED_AMOUNT_SOURCE" displayName="核销金额(源币)" domain="amount" mandatory="true"
                         name="settledAmountSource" precision="20" propId="6" scale="4" stdDataType="decimal"
                         stdSqlType="DECIMAL" i18n-en:displayName="Settled Amount Source"/>
@@ -1355,17 +1355,17 @@
                 versionProp="version" ext:web-renderer="flux" ext:icon="scale" i18n-en:displayName="GL Balance">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
-                        stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
-                <column code="ORG_ID" displayName="组织" mandatory="true" name="orgId" propId="2" stdDataType="long"
+                        stdDataType="string" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
+                <column code="ORG_ID" displayName="组织" mandatory="true" name="orgId" propId="2" stdDataType="string"
                         stdSqlType="BIGINT" i18n-en:displayName="Organization"/>
                 <column code="ACCT_SCHEMA_ID" displayName="账套" mandatory="true" name="acctSchemaId" propId="3"
-                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Acct Schema"/>
-                <column code="PERIOD_ID" displayName="期间" mandatory="true" name="periodId" propId="4" stdDataType="long"
-                        stdSqlType="BIGINT" i18n-en:displayName="Period"/>
+                        stdDataType="string" stdSqlType="BIGINT" i18n-en:displayName="Acct Schema"/>
+                <column code="PERIOD_ID" displayName="期间" mandatory="true" name="periodId" propId="4"
+                        stdDataType="string" stdSqlType="BIGINT" i18n-en:displayName="Period"/>
                 <column code="SUBJECT_ID" displayName="科目" mandatory="true" name="subjectId" propId="5"
-                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Subject"/>
+                        stdDataType="string" stdSqlType="BIGINT" i18n-en:displayName="Subject"/>
                 <column code="CURRENCY_ID" displayName="币种" mandatory="true" name="currencyId" propId="6"
-                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Currency"/>
+                        stdDataType="string" stdSqlType="BIGINT" i18n-en:displayName="Currency"/>
                 <column code="OPENING_DEBIT" defaultValue="0" displayName="期初借方(本位币)" domain="amount"
                         name="openingDebit" precision="20" propId="7" scale="4" stdDataType="decimal"
                         stdSqlType="DECIMAL" i18n-en:displayName="Opening Debit"/>
@@ -1390,13 +1390,13 @@
                 <column code="YEAR_OPENING_CREDIT" defaultValue="0" displayName="年初贷方" domain="amount"
                         name="yearOpeningCredit" precision="20" propId="14" scale="4" stdDataType="decimal"
                         stdSqlType="DECIMAL" i18n-en:displayName="Year Opening Credit"/>
-                <column code="PARTNER_ID" displayName="辅助-往来单位" name="partnerId" propId="15" stdDataType="long"
+                <column code="PARTNER_ID" displayName="辅助-往来单位" name="partnerId" propId="15" stdDataType="string"
                         stdSqlType="BIGINT" i18n-en:displayName="Partner"/>
-                <column code="DEPARTMENT_ID" displayName="辅助-部门" name="departmentId" propId="16" stdDataType="long"
+                <column code="DEPARTMENT_ID" displayName="辅助-部门" name="departmentId" propId="16" stdDataType="string"
                         stdSqlType="BIGINT" i18n-en:displayName="Department"/>
                 <column code="PROJECT_ID" displayName="辅助-项目" name="projectId" propId="17" stdDataType="long"
                         stdSqlType="BIGINT" i18n-en:displayName="Project"/>
-                <column code="WAREHOUSE_ID" displayName="辅助-仓库" name="warehouseId" propId="18" stdDataType="long"
+                <column code="WAREHOUSE_ID" displayName="辅助-仓库" name="warehouseId" propId="18" stdDataType="string"
                         stdSqlType="BIGINT" i18n-en:displayName="Warehouse"/>
                 <column code="DEL_VERSION" defaultValue="0" displayName="逻辑删除版本" domain="delVersion" mandatory="true"
                         name="delVersion" propId="19" stdDataType="long" stdSqlType="BIGINT"
@@ -1503,15 +1503,15 @@
                 ext:icon="git-compare" i18n-en:displayName="Trial Balance">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
-                        stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
-                <column code="ORG_ID" displayName="组织" mandatory="true" name="orgId" propId="2" stdDataType="long"
+                        stdDataType="string" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
+                <column code="ORG_ID" displayName="组织" mandatory="true" name="orgId" propId="2" stdDataType="string"
                         stdSqlType="BIGINT" i18n-en:displayName="Organization"/>
                 <column code="ACCT_SCHEMA_ID" displayName="账套" mandatory="true" name="acctSchemaId" propId="3"
-                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Acct Schema"/>
-                <column code="PERIOD_ID" displayName="期间" mandatory="true" name="periodId" propId="4" stdDataType="long"
-                        stdSqlType="BIGINT" i18n-en:displayName="Period"/>
+                        stdDataType="string" stdSqlType="BIGINT" i18n-en:displayName="Acct Schema"/>
+                <column code="PERIOD_ID" displayName="期间" mandatory="true" name="periodId" propId="4"
+                        stdDataType="string" stdSqlType="BIGINT" i18n-en:displayName="Period"/>
                 <column code="SUBJECT_ID" displayName="科目" mandatory="true" name="subjectId" propId="5"
-                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Subject"/>
+                        stdDataType="string" stdSqlType="BIGINT" i18n-en:displayName="Subject"/>
                 <column code="SUBJECT_CODE" displayName="科目编码" domain="subjectCode" mandatory="true" name="subjectCode"
                         precision="50" propId="6" stdDataType="string" stdSqlType="VARCHAR"
                         i18n-en:displayName="Subject Code"/>
@@ -1598,24 +1598,24 @@
                 ext:icon="wallet" i18n-en:displayName="Fund Account">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
-                        stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
+                        stdDataType="string" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
                 <column code="CODE" displayName="账户编码" domain="voucherCode" mandatory="true" name="code" precision="50"
                         propId="2" stdDataType="string" stdSqlType="VARCHAR" tagSet="var" i18n-en:displayName="Code"/>
                 <column code="NAME" displayName="账户名称" mandatory="true" name="name" precision="200" propId="3"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Name"/>
-                <column code="ORG_ID" displayName="所属组织" name="orgId" propId="4" stdDataType="long" stdSqlType="BIGINT"
-                        i18n-en:displayName="Organization"/>
+                <column code="ORG_ID" displayName="所属组织" name="orgId" propId="4" stdDataType="string"
+                        stdSqlType="BIGINT" i18n-en:displayName="Organization"/>
                 <column code="ACCOUNT_TYPE" displayName="账户类型" mandatory="true" name="accountType" precision="20"
                         propId="5" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-fin/fund-account-type"
                         i18n-en:displayName="Account Type"/>
-                <column code="SUBJECT_ID" displayName="对应会计科目" name="subjectId" propId="6" stdDataType="long"
+                <column code="SUBJECT_ID" displayName="对应会计科目" name="subjectId" propId="6" stdDataType="string"
                         stdSqlType="BIGINT" i18n-en:displayName="Subject"/>
                 <column code="BANK_NAME" displayName="开户银行" name="bankName" precision="200" propId="7"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Bank Name"/>
                 <column code="BANK_ACCOUNT" displayName="银行账号" name="bankAccount" precision="50" propId="8"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Bank Account"/>
                 <column code="CURRENCY_ID" displayName="币种" mandatory="true" name="currencyId" propId="9"
-                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Currency"/>
+                        stdDataType="string" stdSqlType="BIGINT" i18n-en:displayName="Currency"/>
                 <column code="OPENING_BALANCE" defaultValue="0" displayName="期初余额" domain="amount" name="openingBalance"
                         precision="20" propId="10" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Opening Balance"/>
@@ -1686,13 +1686,13 @@
                 ext:icon="file-text" i18n-en:displayName="Bank Statement">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
-                        stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
+                        stdDataType="string" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
                 <column code="CODE" displayName="单号" domain="voucherCode" mandatory="true" name="code" precision="50"
                         propId="2" stdDataType="string" stdSqlType="VARCHAR" tagSet="var" i18n-en:displayName="Code"/>
-                <column code="ORG_ID" displayName="组织" mandatory="true" name="orgId" propId="3" stdDataType="long"
+                <column code="ORG_ID" displayName="组织" mandatory="true" name="orgId" propId="3" stdDataType="string"
                         stdSqlType="BIGINT" i18n-en:displayName="Organization"/>
                 <column code="FUND_ACCOUNT_ID" displayName="资金账户" mandatory="true" name="fundAccountId" propId="4"
-                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Fund Account"/>
+                        stdDataType="string" stdSqlType="BIGINT" i18n-en:displayName="Fund Account"/>
                 <column code="STATEMENT_DATE" displayName="对账日期" mandatory="true" name="statementDate" propId="5"
                         stdDataType="date" stdSqlType="DATE" i18n-en:displayName="Statement Date"/>
                 <column code="BEGINNING_BALANCE" defaultValue="0" displayName="期初余额" domain="amount"
@@ -1764,9 +1764,9 @@
                 ext:icon="list" i18n-en:displayName="Bank Statement Line">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
-                        stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
+                        stdDataType="string" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
                 <column code="STATEMENT_ID" displayName="对账单ID" mandatory="true" name="statementId" propId="2"
-                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Statement"/>
+                        stdDataType="string" stdSqlType="BIGINT" i18n-en:displayName="Statement"/>
                 <column code="LINE_NO" displayName="行号" mandatory="true" name="lineNo" propId="3" stdDataType="int"
                         stdSqlType="INTEGER" i18n-en:displayName="Line No"/>
                 <column code="TRANSACTION_DATE" displayName="交易日期" mandatory="true" name="transactionDate" propId="4"
@@ -1781,15 +1781,15 @@
                 <column code="AMOUNT" displayName="金额" domain="amount" mandatory="true" name="amount" precision="20"
                         propId="8" scale="4" stdDataType="decimal" stdSqlType="DECIMAL" i18n-en:displayName="Amount"/>
                 <column code="CURRENCY_ID" displayName="币种" mandatory="true" name="currencyId" propId="9"
-                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Currency"/>
+                        stdDataType="string" stdSqlType="BIGINT" i18n-en:displayName="Currency"/>
                 <column code="BALANCE_AFTER" displayName="交易后余额" domain="amount" name="balanceAfter" precision="20"
                         propId="10" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Balance After"/>
                 <column code="MATCH_STATUS" displayName="匹配状态" mandatory="true" name="matchStatus" precision="20"
                         propId="11" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-fin/bank-match-status"
                         i18n-en:displayName="Match Status"/>
-                <column code="MATCHED_LINE_ID" displayName="匹配凭证行ID" name="matchedLineId" propId="12" stdDataType="long"
-                        stdSqlType="BIGINT" i18n-en:displayName="Matched Line"/>
+                <column code="MATCHED_LINE_ID" displayName="匹配凭证行ID" name="matchedLineId" propId="12"
+                        stdDataType="string" stdSqlType="BIGINT" i18n-en:displayName="Matched Line"/>
                 <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="13"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Remark"/>
                 <column code="DEL_VERSION" defaultValue="0" displayName="逻辑删除版本" domain="delVersion" mandatory="true"
@@ -1854,14 +1854,14 @@
                 ext:web-renderer="flux" ext:icon="check-check" i18n-en:displayName="Bank Reconciliation">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
-                        stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
+                        stdDataType="string" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
                 <column code="CODE" displayName="单号" domain="voucherCode" mandatory="true" name="code" precision="50"
                         propId="2" stdDataType="string" stdSqlType="VARCHAR" tagSet="var" i18n-en:displayName="Code"/>
-                <column code="ORG_ID" displayName="组织" mandatory="true" name="orgId" propId="3" stdDataType="long"
+                <column code="ORG_ID" displayName="组织" mandatory="true" name="orgId" propId="3" stdDataType="string"
                         stdSqlType="BIGINT" i18n-en:displayName="Organization"/>
                 <column code="FUND_ACCOUNT_ID" displayName="资金账户" mandatory="true" name="fundAccountId" propId="4"
-                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Fund Account"/>
-                <column code="STATEMENT_ID" displayName="银行对账单" name="statementId" propId="5" stdDataType="long"
+                        stdDataType="string" stdSqlType="BIGINT" i18n-en:displayName="Fund Account"/>
+                <column code="STATEMENT_ID" displayName="银行对账单" name="statementId" propId="5" stdDataType="string"
                         stdSqlType="BIGINT" i18n-en:displayName="Bank Statement"/>
                 <column code="RECONCILIATION_DATE" displayName="对账日期" mandatory="true" name="reconciliationDate"
                         propId="6" stdDataType="date" stdSqlType="DATE" i18n-en:displayName="Reconciliation Date"/>
@@ -1953,9 +1953,9 @@
                 ext:icon="list" i18n-en:displayName="Bank Reconciliation Line">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
-                        stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
+                        stdDataType="string" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
                 <column code="RECONCILIATION_ID" displayName="对账记录ID" mandatory="true" name="reconciliationId"
-                        propId="2" stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Reconciliation"/>
+                        propId="2" stdDataType="string" stdSqlType="BIGINT" i18n-en:displayName="Reconciliation"/>
                 <column code="LINE_NO" displayName="行号" mandatory="true" name="lineNo" propId="3" stdDataType="int"
                         stdSqlType="INTEGER" i18n-en:displayName="Line No"/>
                 <column code="ADJUSTMENT_TYPE" displayName="调整类型" mandatory="true" name="adjustmentType" precision="50"
@@ -2009,14 +2009,14 @@
                 ext:icon="receipt" i18n-en:displayName="Expense Claim">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
-                        stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
+                        stdDataType="string" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
                 <column code="CODE" displayName="单号" domain="voucherCode" mandatory="true" name="code" precision="50"
                         propId="2" stdDataType="string" stdSqlType="VARCHAR" tagSet="var" i18n-en:displayName="Code"/>
-                <column code="ORG_ID" displayName="核算组织" mandatory="true" name="orgId" propId="3" stdDataType="long"
+                <column code="ORG_ID" displayName="核算组织" mandatory="true" name="orgId" propId="3" stdDataType="string"
                         stdSqlType="BIGINT" i18n-en:displayName="Organization"/>
                 <column code="CLAIMANT_ID" displayName="报销人" mandatory="true" name="claimantId" propId="4"
-                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Claimant"/>
-                <column code="DEPARTMENT_ID" displayName="部门" name="departmentId" propId="5" stdDataType="long"
+                        stdDataType="string" stdSqlType="BIGINT" i18n-en:displayName="Claimant"/>
+                <column code="DEPARTMENT_ID" displayName="部门" name="departmentId" propId="5" stdDataType="string"
                         stdSqlType="BIGINT" i18n-en:displayName="Department"/>
                 <column code="BUSINESS_DATE" displayName="业务日期" mandatory="true" name="businessDate" propId="6"
                         stdDataType="date" stdSqlType="DATE" tagSet="clock" i18n-en:displayName="Business Date"/>
@@ -2024,7 +2024,7 @@
                         propId="7" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-fin/expense-payment-mode"
                         i18n-en:displayName="Payment Mode"/>
                 <column code="CURRENCY_ID" displayName="币种" mandatory="true" name="currencyId" propId="8"
-                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Currency"/>
+                        stdDataType="string" stdSqlType="BIGINT" i18n-en:displayName="Currency"/>
                 <column code="EXCHANGE_RATE" defaultValue="1" displayName="汇率" domain="exchangeRate" name="exchangeRate"
                         precision="20" propId="9" scale="8" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Exchange Rate"/>
@@ -2044,7 +2044,7 @@
                         precision="20" propId="14" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Amt With Tax"/>
                 <column code="SETTLE_ADVANCE_ID" displayName="抵扣借款单" name="settleAdvanceId" propId="15"
-                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Settle Advance"/>
+                        stdDataType="string" stdSqlType="BIGINT" i18n-en:displayName="Settle Advance"/>
                 <column code="REASON" displayName="报销事由" domain="memo" name="reason" precision="1000" propId="16"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Reason"/>
                 <column code="DOC_STATUS" displayName="单据状态" mandatory="true" name="docStatus" precision="20"
@@ -2155,9 +2155,9 @@
                 ext:icon="list" i18n-en:displayName="Expense Claim Line">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
-                        stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
+                        stdDataType="string" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
                 <column code="CLAIM_ID" displayName="报销单ID" mandatory="true" name="claimId" propId="2"
-                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Claim"/>
+                        stdDataType="string" stdSqlType="BIGINT" i18n-en:displayName="Claim"/>
                 <column code="LINE_NO" displayName="行号" mandatory="true" name="lineNo" propId="3" stdDataType="int"
                         stdSqlType="INTEGER" i18n-en:displayName="Line No"/>
                 <column code="EXPENSE_TYPE" displayName="费用类型" mandatory="true" name="expenseType" precision="20"
@@ -2165,9 +2165,9 @@
                         i18n-en:displayName="Expense Type"/>
                 <column code="PROJECT_ID" displayName="项目" name="projectId" propId="5" stdDataType="long"
                         stdSqlType="BIGINT" i18n-en:displayName="Project"/>
-                <column code="COST_CENTER_ID" displayName="成本中心" name="costCenterId" propId="6" stdDataType="long"
+                <column code="COST_CENTER_ID" displayName="成本中心" name="costCenterId" propId="6" stdDataType="string"
                         stdSqlType="BIGINT" i18n-en:displayName="Cost Center"/>
-                <column code="SUBJECT_ID" displayName="费用科目" name="subjectId" propId="7" stdDataType="long"
+                <column code="SUBJECT_ID" displayName="费用科目" name="subjectId" propId="7" stdDataType="string"
                         stdSqlType="BIGINT" i18n-en:displayName="Subject"/>
                 <column code="SUBJECT_CODE" displayName="科目编码" domain="subjectCode" name="subjectCode" precision="50"
                         propId="8" stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Subject Code"/>
@@ -2249,20 +2249,20 @@
                 ext:icon="hand-coins" i18n-en:displayName="Employee Advance">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
-                        stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
+                        stdDataType="string" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
                 <column code="CODE" displayName="单号" domain="voucherCode" mandatory="true" name="code" precision="50"
                         propId="2" stdDataType="string" stdSqlType="VARCHAR" tagSet="var" i18n-en:displayName="Code"/>
-                <column code="ORG_ID" displayName="核算组织" mandatory="true" name="orgId" propId="3" stdDataType="long"
+                <column code="ORG_ID" displayName="核算组织" mandatory="true" name="orgId" propId="3" stdDataType="string"
                         stdSqlType="BIGINT" i18n-en:displayName="Organization"/>
                 <column code="EMPLOYEE_ID" displayName="借款人" mandatory="true" name="employeeId" propId="4"
-                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Employee"/>
+                        stdDataType="string" stdSqlType="BIGINT" i18n-en:displayName="Employee"/>
                 <column code="ADVANCE_TYPE" displayName="借款类型" mandatory="true" name="advanceType" precision="20"
                         propId="5" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-fin/advance-type"
                         i18n-en:displayName="Advance Type"/>
                 <column code="BUSINESS_DATE" displayName="借款日期" mandatory="true" name="businessDate" propId="6"
                         stdDataType="date" stdSqlType="DATE" tagSet="clock" i18n-en:displayName="Business Date"/>
                 <column code="CURRENCY_ID" displayName="币种" mandatory="true" name="currencyId" propId="7"
-                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Currency"/>
+                        stdDataType="string" stdSqlType="BIGINT" i18n-en:displayName="Currency"/>
                 <column code="EXCHANGE_RATE" defaultValue="1" displayName="汇率" domain="exchangeRate" name="exchangeRate"
                         precision="20" propId="8" scale="8" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Exchange Rate"/>
@@ -2373,10 +2373,10 @@
                 ext:icon="receipt" i18n-en:displayName="Notes Receivable">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
-                        stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
+                        stdDataType="string" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
                 <column code="CODE" displayName="单号" domain="voucherCode" mandatory="true" name="code" precision="50"
                         propId="2" stdDataType="string" stdSqlType="VARCHAR" tagSet="var" i18n-en:displayName="Code"/>
-                <column code="ORG_ID" displayName="核算组织" mandatory="true" name="orgId" propId="3" stdDataType="long"
+                <column code="ORG_ID" displayName="核算组织" mandatory="true" name="orgId" propId="3" stdDataType="string"
                         stdSqlType="BIGINT" i18n-en:displayName="Organization"/>
                 <column code="NOTES_TYPE" displayName="票据类型" mandatory="true" name="notesType" precision="30" propId="4"
                         stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-fin/notes-type"
@@ -2394,7 +2394,7 @@
                 <column code="DUE_DATE" displayName="到期日" name="dueDate" propId="10" stdDataType="date"
                         stdSqlType="DATE" i18n-en:displayName="Due Date"/>
                 <column code="CURRENCY_ID" displayName="币种" mandatory="true" name="currencyId" propId="11"
-                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Currency"/>
+                        stdDataType="string" stdSqlType="BIGINT" i18n-en:displayName="Currency"/>
                 <column code="EXCHANGE_RATE" defaultValue="1" displayName="汇率" domain="exchangeRate" name="exchangeRate"
                         precision="20" propId="12" scale="8" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Exchange Rate"/>
@@ -2404,15 +2404,15 @@
                 <column code="AMOUNT_FUNCTIONAL" defaultValue="0" displayName="本位币票面金额" domain="amount"
                         name="amountFunctional" precision="20" propId="14" scale="4" stdDataType="decimal"
                         stdSqlType="DECIMAL" i18n-en:displayName="Face Amt (Functional)"/>
-                <column code="PARTNER_ID" displayName="出票客户往来" name="partnerId" propId="15" stdDataType="long"
+                <column code="PARTNER_ID" displayName="出票客户往来" name="partnerId" propId="15" stdDataType="string"
                         stdSqlType="BIGINT" i18n-en:displayName="Partner"/>
                 <column code="ENDORSEMENT_FROM_ID" displayName="背书来源票据" name="endorsementFromId" propId="16"
-                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Endorsement From"/>
+                        stdDataType="string" stdSqlType="BIGINT" i18n-en:displayName="Endorsement From"/>
                 <column code="SOURCE_BILL_TYPE" displayName="来源单据类型" name="sourceBillType" precision="50" propId="17"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Source Bill Type"/>
                 <column code="SOURCE_BILL_CODE" displayName="来源单据号" name="sourceBillCode" precision="50" propId="18"
                         stdDataType="string" stdSqlType="VARCHAR" tagSet="var" i18n-en:displayName="Source Bill Code"/>
-                <column code="DISCOUNT_ID" displayName="贴现明细" name="discountId" propId="19" stdDataType="long"
+                <column code="DISCOUNT_ID" displayName="贴现明细" name="discountId" propId="19" stdDataType="string"
                         stdSqlType="BIGINT" i18n-en:displayName="Discount"/>
                 <column code="STATUS" displayName="票据状态" name="status" precision="20" propId="20" stdDataType="string"
                         stdSqlType="VARCHAR" ext:dict="erp-fin/notes-receivable-status" i18n-en:displayName="Status"/>
@@ -2476,10 +2476,10 @@
                 ext:icon="file-invoice-dollar" i18n-en:displayName="Notes Payable">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
-                        stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
+                        stdDataType="string" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
                 <column code="CODE" displayName="单号" domain="voucherCode" mandatory="true" name="code" precision="50"
                         propId="2" stdDataType="string" stdSqlType="VARCHAR" tagSet="var" i18n-en:displayName="Code"/>
-                <column code="ORG_ID" displayName="核算组织" mandatory="true" name="orgId" propId="3" stdDataType="long"
+                <column code="ORG_ID" displayName="核算组织" mandatory="true" name="orgId" propId="3" stdDataType="string"
                         stdSqlType="BIGINT" i18n-en:displayName="Organization"/>
                 <column code="NOTES_TYPE" displayName="票据类型" mandatory="true" name="notesType" precision="30" propId="4"
                         stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-fin/notes-type"
@@ -2495,7 +2495,7 @@
                 <column code="DUE_DATE" displayName="到期日" name="dueDate" propId="9" stdDataType="date" stdSqlType="DATE"
                         i18n-en:displayName="Due Date"/>
                 <column code="CURRENCY_ID" displayName="币种" mandatory="true" name="currencyId" propId="10"
-                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Currency"/>
+                        stdDataType="string" stdSqlType="BIGINT" i18n-en:displayName="Currency"/>
                 <column code="EXCHANGE_RATE" defaultValue="1" displayName="汇率" domain="exchangeRate" name="exchangeRate"
                         precision="20" propId="11" scale="8" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Exchange Rate"/>
@@ -2505,10 +2505,10 @@
                 <column code="AMOUNT_FUNCTIONAL" defaultValue="0" displayName="本位币票面金额" domain="amount"
                         name="amountFunctional" precision="20" propId="13" scale="4" stdDataType="decimal"
                         stdSqlType="DECIMAL" i18n-en:displayName="Face Amt (Functional)"/>
-                <column code="PARTNER_ID" displayName="收款方往来" name="partnerId" propId="14" stdDataType="long"
+                <column code="PARTNER_ID" displayName="收款方往来" name="partnerId" propId="14" stdDataType="string"
                         stdSqlType="BIGINT" i18n-en:displayName="Partner"/>
                 <column code="CREDIT_FACILITY_ID" displayName="占用授信额度" name="creditFacilityId" propId="15"
-                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Credit Facility"/>
+                        stdDataType="string" stdSqlType="BIGINT" i18n-en:displayName="Credit Facility"/>
                 <column code="SOURCE_BILL_TYPE" displayName="来源单据类型" name="sourceBillType" precision="50" propId="16"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Source Bill Type"/>
                 <column code="SOURCE_BILL_CODE" displayName="来源单据号" name="sourceBillCode" precision="50" propId="17"
@@ -2575,14 +2575,14 @@
                 ext:icon="percent" i18n-en:displayName="Notes Discount">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
-                        stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
+                        stdDataType="string" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
                 <column code="NOTES_RECEIVABLE_ID" displayName="应收票据" mandatory="true" name="notesReceivableId"
-                        propId="2" stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Notes Receivable"/>
-                <column code="ORG_ID" displayName="核算组织" mandatory="true" name="orgId" propId="3" stdDataType="long"
+                        propId="2" stdDataType="string" stdSqlType="BIGINT" i18n-en:displayName="Notes Receivable"/>
+                <column code="ORG_ID" displayName="核算组织" mandatory="true" name="orgId" propId="3" stdDataType="string"
                         stdSqlType="BIGINT" i18n-en:displayName="Organization"/>
                 <column code="DISCOUNT_DATE" displayName="贴现日" mandatory="true" name="discountDate" propId="4"
                         stdDataType="date" stdSqlType="DATE" i18n-en:displayName="Discount Date"/>
-                <column code="BANK_ID" displayName="贴现银行账户" name="bankId" propId="5" stdDataType="long"
+                <column code="BANK_ID" displayName="贴现银行账户" name="bankId" propId="5" stdDataType="string"
                         stdSqlType="BIGINT" i18n-en:displayName="Bank Account"/>
                 <column code="FACE_AMOUNT" defaultValue="0" displayName="票面金额" domain="amount" name="faceAmount"
                         precision="20" propId="6" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
@@ -2594,7 +2594,7 @@
                         precision="20" propId="8" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Net Amount"/>
                 <column code="CURRENCY_ID" displayName="币种" mandatory="true" name="currencyId" propId="9"
-                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Currency"/>
+                        stdDataType="string" stdSqlType="BIGINT" i18n-en:displayName="Currency"/>
                 <column code="EXCHANGE_RATE" defaultValue="1" displayName="汇率" domain="exchangeRate" name="exchangeRate"
                         precision="20" propId="10" scale="8" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Exchange Rate"/>
@@ -2655,12 +2655,12 @@
                 ext:icon="landmark" i18n-en:displayName="Credit Facility">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
-                        stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
+                        stdDataType="string" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
                 <column code="CODE" displayName="单号" domain="voucherCode" mandatory="true" name="code" precision="50"
                         propId="2" stdDataType="string" stdSqlType="VARCHAR" tagSet="var" i18n-en:displayName="Code"/>
-                <column code="ORG_ID" displayName="核算组织" mandatory="true" name="orgId" propId="3" stdDataType="long"
+                <column code="ORG_ID" displayName="核算组织" mandatory="true" name="orgId" propId="3" stdDataType="string"
                         stdSqlType="BIGINT" i18n-en:displayName="Organization"/>
-                <column code="FUND_ACCOUNT_ID" displayName="授信银行账户" name="fundAccountId" propId="4" stdDataType="long"
+                <column code="FUND_ACCOUNT_ID" displayName="授信银行账户" name="fundAccountId" propId="4" stdDataType="string"
                         stdSqlType="BIGINT" i18n-en:displayName="Fund Account"/>
                 <column code="FACILITY_TYPE" displayName="授信类型" mandatory="true" name="facilityType" precision="20"
                         propId="5" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-fin/credit-facility-type"
@@ -2721,10 +2721,10 @@
                 ext:icon="chart-line" i18n-en:displayName="Cash Forecast">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
-                        stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
-                <column code="ORG_ID" displayName="核算组织" name="orgId" propId="2" stdDataType="long" stdSqlType="BIGINT"
-                        i18n-en:displayName="Organization"/>
-                <column code="FUND_ACCOUNT_ID" displayName="资金账户" name="fundAccountId" propId="3" stdDataType="long"
+                        stdDataType="string" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
+                <column code="ORG_ID" displayName="核算组织" name="orgId" propId="2" stdDataType="string"
+                        stdSqlType="BIGINT" i18n-en:displayName="Organization"/>
+                <column code="FUND_ACCOUNT_ID" displayName="资金账户" name="fundAccountId" propId="3" stdDataType="string"
                         stdSqlType="BIGINT" i18n-en:displayName="Fund Account"/>
                 <column code="FORECAST_DATE" displayName="预测日期" mandatory="true" name="forecastDate" propId="4"
                         stdDataType="date" stdSqlType="DATE" i18n-en:displayName="Forecast Date"/>
@@ -2735,7 +2735,7 @@
                 <column code="DIRECTION" displayName="现金流方向" name="direction" precision="20" propId="7"
                         stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-fin/cash-flow-direction"
                         i18n-en:displayName="Direction"/>
-                <column code="PARTNER_ID" displayName="往来单位" name="partnerId" propId="8" stdDataType="long"
+                <column code="PARTNER_ID" displayName="往来单位" name="partnerId" propId="8" stdDataType="string"
                         stdSqlType="BIGINT" i18n-en:displayName="Partner"/>
                 <column code="AMOUNT_SOURCE" defaultValue="0" displayName="源币种金额" domain="amount" name="amountSource"
                         precision="20" propId="9" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
@@ -2784,7 +2784,7 @@
                 ext:icon="triangle-exclamation" i18n-en:displayName="Posting Exception">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
-                        stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
+                        stdDataType="string" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
                 <column code="TRACE_ID" displayName="追踪ID" name="traceId" precision="50" propId="2" stdDataType="string"
                         stdSqlType="VARCHAR" tagSet="var" i18n-en:displayName="Trace ID"/>
                 <column code="BILL_HEAD_CODE" displayName="单据编号" name="billHeadCode" precision="50" propId="3"
@@ -2803,9 +2803,9 @@
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Failed Stage"/>
                 <column code="VOUCHER_DATE" displayName="凭证日期" name="voucherDate" propId="9" stdDataType="date"
                         stdSqlType="DATE" tagSet="clock" i18n-en:displayName="Voucher Date"/>
-                <column code="ORG_ID" displayName="核算组织" name="orgId" propId="10" stdDataType="long" stdSqlType="BIGINT"
-                        i18n-en:displayName="Organization"/>
-                <column code="ACCT_SCHEMA_ID" displayName="账套" name="acctSchemaId" propId="11" stdDataType="long"
+                <column code="ORG_ID" displayName="核算组织" name="orgId" propId="10" stdDataType="string"
+                        stdSqlType="BIGINT" i18n-en:displayName="Organization"/>
+                <column code="ACCT_SCHEMA_ID" displayName="账套" name="acctSchemaId" propId="11" stdDataType="string"
                         stdSqlType="BIGINT" i18n-en:displayName="Acct Schema"/>
                 <column code="STATUS" displayName="处置状态" mandatory="true" name="status" precision="20" propId="12"
                         stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-fin/posting-exception-status"
@@ -2821,7 +2821,7 @@
                         stdDataType="string" stdDomain="userId" stdSqlType="VARCHAR" i18n-en:displayName="Resolved By"/>
                 <column code="RESOLVED_AT" displayName="处置时间" name="resolvedAt" propId="17" stdDataType="timestamp"
                         stdSqlType="TIMESTAMP" tagSet="clock" i18n-en:displayName="Resolved At"/>
-                <column code="VOUCHER_ID" displayName="关联凭证ID" name="voucherId" propId="18" stdDataType="long"
+                <column code="VOUCHER_ID" displayName="关联凭证ID" name="voucherId" propId="18" stdDataType="string"
                         stdSqlType="BIGINT" i18n-en:displayName="Voucher"/>
                 <column code="OCCURRENCE_TIME" displayName="发生时间" mandatory="true" name="occurrenceTime" propId="19"
                         stdDataType="timestamp" stdSqlType="TIMESTAMP" tagSet="clock"
@@ -2841,7 +2841,7 @@
                         i18n-en:displayName="Updated By"/>
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="25" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
-                <column code="CURRENCY_ID" displayName="币种" name="currencyId" propId="27" stdDataType="long"
+                <column code="CURRENCY_ID" displayName="币种" name="currencyId" propId="27" stdDataType="string"
                         stdSqlType="BIGINT" i18n-en:displayName="Currency"/>
                 <column code="EXCHANGE_RATE" displayName="汇率" domain="amount" name="exchangeRate" precision="20"
                         propId="28" scale="8" stdDataType="decimal" stdSqlType="DECIMAL"
@@ -2902,25 +2902,25 @@
                 i18n-en:displayName="Bad Debt">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
-                        stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
+                        stdDataType="string" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
                 <column code="CODE" displayName="单号" domain="voucherCode" mandatory="true" name="code" precision="50"
                         propId="2" stdDataType="string" stdSqlType="VARCHAR" tagSet="var" i18n-en:displayName="Code"/>
-                <column code="ORG_ID" displayName="组织" mandatory="true" name="orgId" propId="3" stdDataType="long"
+                <column code="ORG_ID" displayName="组织" mandatory="true" name="orgId" propId="3" stdDataType="string"
                         stdSqlType="BIGINT" i18n-en:displayName="Organization"/>
                 <column code="ACCT_SCHEMA_ID" displayName="账套" mandatory="true" name="acctSchemaId" propId="4"
-                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Acct Schema"/>
+                        stdDataType="string" stdSqlType="BIGINT" i18n-en:displayName="Acct Schema"/>
                 <column code="DOC_TYPE" displayName="坏账单类型" mandatory="true" name="docType" precision="20" propId="5"
                         stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-fin/bad-debt-type"
                         i18n-en:displayName="Bad Debt Type"/>
                 <column code="PARTNER_ID" displayName="客户" mandatory="true" name="partnerId" propId="6"
-                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Partner"/>
+                        stdDataType="string" stdSqlType="BIGINT" i18n-en:displayName="Partner"/>
                 <column code="SOURCE_AR_AP_ITEM_ID" displayName="源应收辅助账项" mandatory="true" name="sourceArApItemId"
-                        propId="7" stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Source AR/AP Item"/>
+                        propId="7" stdDataType="string" stdSqlType="BIGINT" i18n-en:displayName="Source AR/AP Item"/>
                 <column code="AMOUNT" displayName="核销/恢复金额(本位币)" domain="amount" mandatory="true" name="amount"
                         precision="20" propId="8" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Amount"/>
                 <column code="CURRENCY_ID" displayName="币种" mandatory="true" name="currencyId" propId="9"
-                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Currency"/>
+                        stdDataType="string" stdSqlType="BIGINT" i18n-en:displayName="Currency"/>
                 <column code="EXCHANGE_RATE" defaultValue="1" displayName="汇率" domain="exchangeRate" name="exchangeRate"
                         precision="20" propId="10" scale="8" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Exchange Rate"/>
@@ -2931,9 +2931,9 @@
                 <column code="APPROVAL_STATUS" displayName="审核状态" mandatory="true" name="approvalStatus" precision="20"
                         propId="13" stdDataType="string" stdSqlType="VARCHAR" ext:dict="wf/approve-status"
                         i18n-en:displayName="Approval Status"/>
-                <column code="PERIOD_ID" displayName="所属期间" name="periodId" propId="14" stdDataType="long"
+                <column code="PERIOD_ID" displayName="所属期间" name="periodId" propId="14" stdDataType="string"
                         stdSqlType="BIGINT" i18n-en:displayName="Period"/>
-                <column code="VOUCHER_ID" displayName="关联凭证ID" name="voucherId" propId="15" stdDataType="long"
+                <column code="VOUCHER_ID" displayName="关联凭证ID" name="voucherId" propId="15" stdDataType="string"
                         stdSqlType="BIGINT" i18n-en:displayName="Voucher"/>
                 <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="16"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Remark"/>
@@ -3032,28 +3032,28 @@
                 ext:icon="chart-pie" i18n-en:displayName="Budget Scenario">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
-                        stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
+                        stdDataType="string" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
                 <column code="CODE" displayName="方案编码" domain="voucherCode" mandatory="true" name="code" precision="50"
                         propId="2" stdDataType="string" stdSqlType="VARCHAR" tagSet="var" i18n-en:displayName="Code"/>
                 <column code="NAME" displayName="方案名称" mandatory="true" name="name" precision="200" propId="3"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Name"/>
-                <column code="ORG_ID" displayName="核算组织" mandatory="true" name="orgId" propId="4" stdDataType="long"
+                <column code="ORG_ID" displayName="核算组织" mandatory="true" name="orgId" propId="4" stdDataType="string"
                         stdSqlType="BIGINT" i18n-en:displayName="Organization"/>
                 <column code="ACCT_SCHEMA_ID" displayName="账套" mandatory="true" name="acctSchemaId" propId="5"
-                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Acct Schema"/>
+                        stdDataType="string" stdSqlType="BIGINT" i18n-en:displayName="Acct Schema"/>
                 <column code="FISCAL_YEAR" displayName="预算年度" mandatory="true" name="fiscalYear" propId="6"
                         stdDataType="int" stdSqlType="INTEGER" i18n-en:displayName="Fiscal Year"/>
                 <column code="SCENARIO_TYPE" displayName="方案类型" mandatory="true" name="scenarioType" precision="20"
                         propId="7" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-fin/budget-scenario-type"
                         i18n-en:displayName="Scenario Type"/>
                 <column code="PARENT_SCENARIO_ID" displayName="源方案(调整预算版本链)" name="parentScenarioId" propId="8"
-                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Parent Scenario"/>
+                        stdDataType="string" stdSqlType="BIGINT" i18n-en:displayName="Parent Scenario"/>
                 <column code="VALID_FROM" displayName="生效日期" name="validFrom" propId="9" stdDataType="date"
                         stdSqlType="DATE" i18n-en:displayName="Valid From"/>
                 <column code="VALID_TO" displayName="失效日期" name="validTo" propId="10" stdDataType="date"
                         stdSqlType="DATE" i18n-en:displayName="Valid To"/>
                 <column code="CURRENCY_ID" displayName="币种" mandatory="true" name="currencyId" propId="11"
-                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Currency"/>
+                        stdDataType="string" stdSqlType="BIGINT" i18n-en:displayName="Currency"/>
                 <column code="EXCHANGE_RATE" defaultValue="1" displayName="汇率" domain="exchangeRate" name="exchangeRate"
                         precision="20" propId="12" scale="8" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Exchange Rate"/>
@@ -3072,7 +3072,7 @@
                 <column code="APPROVE_STATUS" displayName="审核状态" mandatory="true" name="approveStatus" precision="20"
                         propId="17" stdDataType="string" stdSqlType="VARCHAR" ext:dict="wf/approve-status"
                         i18n-en:displayName="Approve Status"/>
-                <column code="VOUCHER_ID" displayName="关联预算凭证ID" name="voucherId" propId="18" stdDataType="long"
+                <column code="VOUCHER_ID" displayName="关联预算凭证ID" name="voucherId" propId="18" stdDataType="string"
                         stdSqlType="BIGINT" i18n-en:displayName="Voucher"/>
                 <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="19"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Remark"/>
@@ -3169,33 +3169,33 @@
                 versionProp="version" ext:web-renderer="flux" ext:icon="list" i18n-en:displayName="Budget Line">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
-                        stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
+                        stdDataType="string" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
                 <column code="SCENARIO_ID" displayName="预算方案" mandatory="true" name="scenarioId" propId="2"
-                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Scenario"/>
+                        stdDataType="string" stdSqlType="BIGINT" i18n-en:displayName="Scenario"/>
                 <column code="LINE_NO" displayName="行号" mandatory="true" name="lineNo" propId="3" stdDataType="int"
                         stdSqlType="INTEGER" i18n-en:displayName="Line No"/>
-                <column code="ORG_ID" displayName="核算组织" mandatory="true" name="orgId" propId="4" stdDataType="long"
+                <column code="ORG_ID" displayName="核算组织" mandatory="true" name="orgId" propId="4" stdDataType="string"
                         stdSqlType="BIGINT" i18n-en:displayName="Organization"/>
                 <column code="ACCT_SCHEMA_ID" displayName="账套" mandatory="true" name="acctSchemaId" propId="5"
-                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Acct Schema"/>
-                <column code="PERIOD_ID" displayName="会计期间" name="periodId" propId="6" stdDataType="long"
+                        stdDataType="string" stdSqlType="BIGINT" i18n-en:displayName="Acct Schema"/>
+                <column code="PERIOD_ID" displayName="会计期间" name="periodId" propId="6" stdDataType="string"
                         stdSqlType="BIGINT" i18n-en:displayName="Period"/>
                 <column code="SUBJECT_ID" displayName="预算科目" mandatory="true" name="subjectId" propId="7"
-                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Subject"/>
+                        stdDataType="string" stdSqlType="BIGINT" i18n-en:displayName="Subject"/>
                 <column code="SUBJECT_CODE" displayName="科目编码" domain="subjectCode" mandatory="true" name="subjectCode"
                         precision="50" propId="8" stdDataType="string" stdSqlType="VARCHAR"
                         i18n-en:displayName="Subject Code"/>
-                <column code="COST_CENTER_ID" displayName="成本中心" name="costCenterId" propId="9" stdDataType="long"
+                <column code="COST_CENTER_ID" displayName="成本中心" name="costCenterId" propId="9" stdDataType="string"
                         stdSqlType="BIGINT" i18n-en:displayName="Cost Center"/>
-                <column code="DEPARTMENT_ID" displayName="辅助-部门" name="departmentId" propId="10" stdDataType="long"
+                <column code="DEPARTMENT_ID" displayName="辅助-部门" name="departmentId" propId="10" stdDataType="string"
                         stdSqlType="BIGINT" i18n-en:displayName="Department"/>
                 <column code="PROJECT_ID" displayName="辅助-项目" name="projectId" propId="11" stdDataType="long"
                         stdSqlType="BIGINT" i18n-en:displayName="Project"/>
-                <column code="PARTNER_ID" displayName="辅助-往来单位" name="partnerId" propId="12" stdDataType="long"
+                <column code="PARTNER_ID" displayName="辅助-往来单位" name="partnerId" propId="12" stdDataType="string"
                         stdSqlType="BIGINT" i18n-en:displayName="Partner"/>
-                <column code="WAREHOUSE_ID" displayName="辅助-仓库" name="warehouseId" propId="13" stdDataType="long"
+                <column code="WAREHOUSE_ID" displayName="辅助-仓库" name="warehouseId" propId="13" stdDataType="string"
                         stdSqlType="BIGINT" i18n-en:displayName="Warehouse"/>
-                <column code="MATERIAL_ID" displayName="辅助-物料" name="materialId" propId="14" stdDataType="long"
+                <column code="MATERIAL_ID" displayName="辅助-物料" name="materialId" propId="14" stdDataType="string"
                         stdSqlType="BIGINT" i18n-en:displayName="Material"/>
                 <column code="BUDGET_AMOUNT_SOURCE" defaultValue="0" displayName="预算金额(源币种)" domain="amount"
                         name="budgetAmountSource" precision="20" propId="15" scale="4" stdDataType="decimal"
@@ -3204,7 +3204,7 @@
                         name="budgetAmountFunctional" precision="20" propId="16" scale="4" stdDataType="decimal"
                         stdSqlType="DECIMAL" i18n-en:displayName="Budget Amt (Functional)"/>
                 <column code="CURRENCY_ID" displayName="币种" mandatory="true" name="currencyId" propId="17"
-                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Currency"/>
+                        stdDataType="string" stdSqlType="BIGINT" i18n-en:displayName="Currency"/>
                 <column code="EXCHANGE_RATE" defaultValue="1" displayName="汇率" domain="exchangeRate" name="exchangeRate"
                         precision="20" propId="18" scale="8" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Exchange Rate"/>
@@ -3326,14 +3326,14 @@
                 ext:icon="clipboard-list" i18n-en:displayName="Budget Control Log">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
-                        stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
-                <column code="ORG_ID" displayName="核算组织" mandatory="true" name="orgId" propId="2" stdDataType="long"
+                        stdDataType="string" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
+                <column code="ORG_ID" displayName="核算组织" mandatory="true" name="orgId" propId="2" stdDataType="string"
                         stdSqlType="BIGINT" i18n-en:displayName="Organization"/>
                 <column code="BUSINESS_DATE" displayName="业务日期" mandatory="true" name="businessDate" propId="3"
                         stdDataType="date" stdSqlType="DATE" tagSet="clock" i18n-en:displayName="Business Date"/>
-                <column code="SCENARIO_ID" displayName="预算方案" name="scenarioId" propId="4" stdDataType="long"
+                <column code="SCENARIO_ID" displayName="预算方案" name="scenarioId" propId="4" stdDataType="string"
                         stdSqlType="BIGINT" i18n-en:displayName="Scenario"/>
-                <column code="BUDGET_LINE_ID" displayName="预算明细行" name="budgetLineId" propId="5" stdDataType="long"
+                <column code="BUDGET_LINE_ID" displayName="预算明细行" name="budgetLineId" propId="5" stdDataType="string"
                         stdSqlType="BIGINT" i18n-en:displayName="Budget Line"/>
                 <column code="SOURCE_BILL_TYPE" displayName="触发单据类型" mandatory="true" name="sourceBillType"
                         precision="50" propId="6" stdDataType="string" stdSqlType="VARCHAR"
@@ -3341,13 +3341,13 @@
                 <column code="SOURCE_BILL_CODE" displayName="触发单据号" mandatory="true" name="sourceBillCode"
                         precision="50" propId="7" stdDataType="string" stdSqlType="VARCHAR" tagSet="var"
                         i18n-en:displayName="Source Bill Code"/>
-                <column code="SUBJECT_ID" displayName="命中科目" name="subjectId" propId="8" stdDataType="long"
+                <column code="SUBJECT_ID" displayName="命中科目" name="subjectId" propId="8" stdDataType="string"
                         stdSqlType="BIGINT" i18n-en:displayName="Subject"/>
-                <column code="COST_CENTER_ID" displayName="命中成本中心" name="costCenterId" propId="9" stdDataType="long"
+                <column code="COST_CENTER_ID" displayName="命中成本中心" name="costCenterId" propId="9" stdDataType="string"
                         stdSqlType="BIGINT" i18n-en:displayName="Cost Center"/>
-                <column code="PROJECT_ID" displayName="命中项目" name="projectId" propId="10" stdDataType="long"
+                <column code="PROJECT_ID" displayName="命中项目" name="projectId" propId="10" stdDataType="string"
                         stdSqlType="BIGINT" i18n-en:displayName="Project"/>
-                <column code="PERIOD_ID" displayName="命中期间" name="periodId" propId="11" stdDataType="long"
+                <column code="PERIOD_ID" displayName="命中期间" name="periodId" propId="11" stdDataType="string"
                         stdSqlType="BIGINT" i18n-en:displayName="Period"/>
                 <column code="REQUESTED_AMOUNT" displayName="申请占用金额" domain="amount" mandatory="true"
                         name="requestedAmount" precision="20" propId="12" scale="4" stdDataType="decimal"
@@ -3448,15 +3448,15 @@
                 ext:icon="history" i18n-en:displayName="Budget Roll-Forward Log">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
-                        stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
-                <column code="ORG_ID" displayName="核算组织" mandatory="true" name="orgId" propId="2" stdDataType="long"
+                        stdDataType="string" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
+                <column code="ORG_ID" displayName="核算组织" mandatory="true" name="orgId" propId="2" stdDataType="string"
                         stdSqlType="BIGINT" i18n-en:displayName="Organization"/>
                 <column code="SCENARIO_ID" displayName="预算方案" mandatory="true" name="scenarioId" propId="3"
-                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Scenario"/>
+                        stdDataType="string" stdSqlType="BIGINT" i18n-en:displayName="Scenario"/>
                 <column code="SOURCE_SCENARIO_ID" displayName="源方案" mandatory="true" name="sourceScenarioId" propId="4"
-                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Source Scenario"/>
+                        stdDataType="string" stdSqlType="BIGINT" i18n-en:displayName="Source Scenario"/>
                 <column code="TARGET_SCENARIO_ID" displayName="目标方案" mandatory="true" name="targetScenarioId" propId="5"
-                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Target Scenario"/>
+                        stdDataType="string" stdSqlType="BIGINT" i18n-en:displayName="Target Scenario"/>
                 <column code="STRATEGY" displayName="复制策略" mandatory="true" name="strategy" precision="20" propId="6"
                         stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-fin/budget-rollforward-strategy"
                         i18n-en:displayName="Strategy"/>
@@ -3533,15 +3533,15 @@
                 ext:icon="history" i18n-en:displayName="Budget Carry-Forward Log">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
-                        stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
-                <column code="ORG_ID" displayName="核算组织" mandatory="true" name="orgId" propId="2" stdDataType="long"
+                        stdDataType="string" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
+                <column code="ORG_ID" displayName="核算组织" mandatory="true" name="orgId" propId="2" stdDataType="string"
                         stdSqlType="BIGINT" i18n-en:displayName="Organization"/>
                 <column code="SCENARIO_ID" displayName="预算方案" mandatory="true" name="scenarioId" propId="3"
-                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Scenario"/>
+                        stdDataType="string" stdSqlType="BIGINT" i18n-en:displayName="Scenario"/>
                 <column code="SOURCE_SCENARIO_ID" displayName="源方案" mandatory="true" name="sourceScenarioId" propId="4"
-                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Source Scenario"/>
+                        stdDataType="string" stdSqlType="BIGINT" i18n-en:displayName="Source Scenario"/>
                 <column code="TARGET_SCENARIO_ID" displayName="目标方案" mandatory="true" name="targetScenarioId" propId="5"
-                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Target Scenario"/>
+                        stdDataType="string" stdSqlType="BIGINT" i18n-en:displayName="Target Scenario"/>
                 <column code="RULE" displayName="结转规则" mandatory="true" name="rule" precision="20" propId="6"
                         stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-fin/budget-carry-forward-rule"
                         i18n-en:displayName="Rule"/>
@@ -3620,12 +3620,12 @@
                 orm:bizKeyProp="code">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
-                        stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
+                        stdDataType="string" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
                 <column code="CODE" displayName="规则编码" domain="code" mandatory="true" name="code" precision="50"
                         propId="2" stdDataType="string" stdSqlType="VARCHAR" tagSet="var" i18n-en:displayName="Code"/>
                 <column code="NAME" displayName="规则名称" mandatory="true" name="name" precision="200" propId="3"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Name"/>
-                <column code="ORG_ID" displayName="核算组织" mandatory="true" name="orgId" propId="4" stdDataType="long"
+                <column code="ORG_ID" displayName="核算组织" mandatory="true" name="orgId" propId="4" stdDataType="string"
                         stdSqlType="BIGINT" i18n-en:displayName="Organization"/>
                 <column code="BUSINESS_TYPE" displayName="业务类型" mandatory="true" name="businessType" precision="30"
                         propId="5" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-fin/business-type"
@@ -3633,15 +3633,15 @@
                 <column code="ACCOUNT_KEY" displayName="科目映射键" mandatory="true" name="accountKey" precision="50"
                         propId="6" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-fin/account-key"
                         i18n-en:displayName="Account Key"/>
-                <column code="ACCT_SCHEMA_ID" displayName="账套(空=通配)" name="acctSchemaId" propId="7" stdDataType="long"
+                <column code="ACCT_SCHEMA_ID" displayName="账套(空=通配)" name="acctSchemaId" propId="7" stdDataType="string"
                         stdSqlType="BIGINT" i18n-en:displayName="Acct Schema"/>
                 <column code="PARTNER_GROUP_ID" displayName="往来单位组(空=通配)" name="partnerGroupId" propId="8"
-                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Partner Group"/>
+                        stdDataType="string" stdSqlType="BIGINT" i18n-en:displayName="Partner Group"/>
                 <column code="MATERIAL_CATEGORY_ID" displayName="物料分类(空=通配)" name="materialCategoryId" propId="9"
-                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Material Category"/>
-                <column code="WAREHOUSE_ID" displayName="仓库(空=通配)" name="warehouseId" propId="10" stdDataType="long"
+                        stdDataType="string" stdSqlType="BIGINT" i18n-en:displayName="Material Category"/>
+                <column code="WAREHOUSE_ID" displayName="仓库(空=通配)" name="warehouseId" propId="10" stdDataType="string"
                         stdSqlType="BIGINT" i18n-en:displayName="Warehouse"/>
-                <column code="DEPARTMENT_ID" displayName="部门(空=通配)" name="departmentId" propId="11" stdDataType="long"
+                <column code="DEPARTMENT_ID" displayName="部门(空=通配)" name="departmentId" propId="11" stdDataType="string"
                         stdSqlType="BIGINT" i18n-en:displayName="Department"/>
                 <column code="PROJECT_ID" displayName="项目(空=通配)" name="projectId" propId="12" stdDataType="long"
                         stdSqlType="BIGINT" i18n-en:displayName="Project"/>
@@ -3737,21 +3737,21 @@
                 i18n-en:displayName="Intercompany Transfer Price" orm:bizKeyProp="code">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
-                        stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
+                        stdDataType="string" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
                 <column code="CODE" displayName="规则编码" domain="code" mandatory="true" name="code" precision="50"
                         propId="2" stdDataType="string" stdSqlType="VARCHAR" tagSet="var" i18n-en:displayName="Code"/>
                 <column code="NAME" displayName="规则名称" mandatory="true" name="name" precision="200" propId="3"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Name"/>
-                <column code="ORG_ID" displayName="核算组织" mandatory="true" name="orgId" propId="4" stdDataType="long"
+                <column code="ORG_ID" displayName="核算组织" mandatory="true" name="orgId" propId="4" stdDataType="string"
                         stdSqlType="BIGINT" i18n-en:displayName="Organization"/>
-                <column code="FROM_ORG_ID" displayName="调出组织(空=通配)" name="fromOrgId" propId="5" stdDataType="long"
+                <column code="FROM_ORG_ID" displayName="调出组织(空=通配)" name="fromOrgId" propId="5" stdDataType="string"
                         stdSqlType="BIGINT" i18n-en:displayName="From Org"/>
-                <column code="TO_ORG_ID" displayName="调入组织(空=通配)" name="toOrgId" propId="6" stdDataType="long"
+                <column code="TO_ORG_ID" displayName="调入组织(空=通配)" name="toOrgId" propId="6" stdDataType="string"
                         stdSqlType="BIGINT" i18n-en:displayName="To Org"/>
-                <column code="MATERIAL_ID" displayName="物料(空=通配)" name="materialId" propId="7" stdDataType="long"
+                <column code="MATERIAL_ID" displayName="物料(空=通配)" name="materialId" propId="7" stdDataType="string"
                         stdSqlType="BIGINT" i18n-en:displayName="Material"/>
                 <column code="MATERIAL_CATEGORY_ID" displayName="物料分类(空=通配)" name="materialCategoryId" propId="8"
-                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Material Category"/>
+                        stdDataType="string" stdSqlType="BIGINT" i18n-en:displayName="Material Category"/>
                 <column code="PRICING_METHOD" displayName="定价方法" mandatory="true" name="pricingMethod" precision="20"
                         propId="9" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-fin/transfer-pricing-method"
                         i18n-en:displayName="Pricing Method"/>
@@ -3840,24 +3840,24 @@
                 ext:web-renderer="flux" ext:icon="link" i18n-en:displayName="Intercompany Match" orm:bizKeyProp="code">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
-                        stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
+                        stdDataType="string" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
                 <column code="CODE" displayName="记录编码" domain="code" mandatory="true" name="code" precision="50"
                         propId="2" stdDataType="string" stdSqlType="VARCHAR" tagSet="var" i18n-en:displayName="Code"/>
-                <column code="ORG_ID" displayName="核算组织" mandatory="true" name="orgId" propId="3" stdDataType="long"
+                <column code="ORG_ID" displayName="核算组织" mandatory="true" name="orgId" propId="3" stdDataType="string"
                         stdSqlType="BIGINT" i18n-en:displayName="Organization"/>
                 <column code="PAIR_KEY" displayName="配对键" mandatory="true" name="pairKey" precision="200" propId="4"
                         stdDataType="string" stdSqlType="VARCHAR" tagSet="var" i18n-en:displayName="Pair Key"/>
                 <column code="PERIOD_ID" displayName="会计期间" mandatory="true" name="periodId" propId="5"
-                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Period"/>
+                        stdDataType="string" stdSqlType="BIGINT" i18n-en:displayName="Period"/>
                 <column code="AR_SIDE_VOUCHER_ID" displayName="AR侧凭证" name="arSideVoucherId" propId="6"
-                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="AR Side Voucher"/>
-                <column code="AR_ORG_ID" displayName="AR侧组织" name="arOrgId" propId="7" stdDataType="long"
+                        stdDataType="string" stdSqlType="BIGINT" i18n-en:displayName="AR Side Voucher"/>
+                <column code="AR_ORG_ID" displayName="AR侧组织" name="arOrgId" propId="7" stdDataType="string"
                         stdSqlType="BIGINT" i18n-en:displayName="AR Org"/>
                 <column code="AP_SIDE_VOUCHER_ID" displayName="AP侧凭证" name="apSideVoucherId" propId="8"
-                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="AP Side Voucher"/>
-                <column code="AP_ORG_ID" displayName="AP侧组织" name="apOrgId" propId="9" stdDataType="long"
+                        stdDataType="string" stdSqlType="BIGINT" i18n-en:displayName="AP Side Voucher"/>
+                <column code="AP_ORG_ID" displayName="AP侧组织" name="apOrgId" propId="9" stdDataType="string"
                         stdSqlType="BIGINT" i18n-en:displayName="AP Org"/>
-                <column code="MATERIAL_ID" displayName="物料" name="materialId" propId="10" stdDataType="long"
+                <column code="MATERIAL_ID" displayName="物料" name="materialId" propId="10" stdDataType="string"
                         stdSqlType="BIGINT" i18n-en:displayName="Material"/>
                 <column code="MATCHED_AMOUNT" defaultValue="0" displayName="配对金额" domain="amount" name="matchedAmount"
                         precision="20" propId="11" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
@@ -3950,29 +3950,29 @@
                 orm:bizKeyProp="code">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
-                        stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
+                        stdDataType="string" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
                 <column code="CODE" displayName="候选编码" domain="code" mandatory="true" name="code" precision="50"
                         propId="2" stdDataType="string" stdSqlType="VARCHAR" tagSet="var" i18n-en:displayName="Code"/>
-                <column code="ORG_ID" displayName="核算组织" mandatory="true" name="orgId" propId="3" stdDataType="long"
+                <column code="ORG_ID" displayName="核算组织" mandatory="true" name="orgId" propId="3" stdDataType="string"
                         stdSqlType="BIGINT" i18n-en:displayName="Organization"/>
                 <column code="ELIMINATION_TYPE" displayName="抵消类型" mandatory="true" name="eliminationType"
                         precision="20" propId="4" stdDataType="string" stdSqlType="VARCHAR"
                         ext:dict="erp-fin/elimination-type" i18n-en:displayName="Elimination Type"/>
                 <column code="PERIOD_ID" displayName="会计期间" mandatory="true" name="periodId" propId="5"
-                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Period"/>
+                        stdDataType="string" stdSqlType="BIGINT" i18n-en:displayName="Period"/>
                 <column code="PAIR_KEY" displayName="配对键" name="pairKey" precision="200" propId="6" stdDataType="string"
                         stdSqlType="VARCHAR" tagSet="var" i18n-en:displayName="Pair Key"/>
-                <column code="MATCH_ID" displayName="配对记录" name="matchId" propId="7" stdDataType="long"
+                <column code="MATCH_ID" displayName="配对记录" name="matchId" propId="7" stdDataType="string"
                         stdSqlType="BIGINT" i18n-en:displayName="Match"/>
-                <column code="FROM_ORG_ID" displayName="调出组织" name="fromOrgId" propId="8" stdDataType="long"
+                <column code="FROM_ORG_ID" displayName="调出组织" name="fromOrgId" propId="8" stdDataType="string"
                         stdSqlType="BIGINT" i18n-en:displayName="From Org"/>
-                <column code="TO_ORG_ID" displayName="调入组织" name="toOrgId" propId="9" stdDataType="long"
+                <column code="TO_ORG_ID" displayName="调入组织" name="toOrgId" propId="9" stdDataType="string"
                         stdSqlType="BIGINT" i18n-en:displayName="To Org"/>
                 <column code="ELIMINATION_AMOUNT" defaultValue="0" displayName="抵消金额" domain="amount"
                         name="eliminationAmount" precision="20" propId="10" scale="4" stdDataType="decimal"
                         stdSqlType="DECIMAL" i18n-en:displayName="Elimination Amount"/>
                 <column code="DRAFT_VOUCHER_ID" displayName="草稿抵消凭证" name="draftVoucherId" propId="11"
-                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Draft Voucher"/>
+                        stdDataType="string" stdSqlType="BIGINT" i18n-en:displayName="Draft Voucher"/>
                 <column code="STATUS" displayName="抵消状态" mandatory="true" name="status" precision="20" propId="12"
                         stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-fin/elimination-status"
                         i18n-en:displayName="Status"/>
@@ -4049,13 +4049,13 @@
                 name="app.erp.md.dao.entity.ErpMdSubject" notGenCode="true" tableName="erp_md_subject"
                 ext:web-renderer="flux" biz:moduleId="erp/md">
             <columns>
-                <column code="ID" name="id" primary="true" propId="1" stdDataType="long" stdSqlType="BIGINT"
+                <column code="ID" name="id" primary="true" propId="1" stdDataType="string" stdSqlType="BIGINT"
                         i18n-en:displayName="ID"/>
                 <column code="CODE" name="code" precision="50" propId="2" stdDataType="string" stdSqlType="VARCHAR"
                         tagSet="disp" i18n-en:displayName="Code"/>
                 <column code="NAME" name="name" precision="200" propId="3" stdDataType="string" stdSqlType="VARCHAR"
                         tagSet="disp" i18n-en:displayName="Name"/>
-                <column code="PARENT_ID" name="parentId" propId="4" stdDataType="long" stdSqlType="BIGINT"
+                <column code="PARENT_ID" name="parentId" propId="4" stdDataType="string" stdSqlType="BIGINT"
                         i18n-en:displayName="Parent"/>
                 <column code="SUBJECT_CLASS" name="subjectClass" propId="5" stdDataType="int" stdSqlType="INTEGER"
                         i18n-en:displayName="Subject Class"/>
@@ -4067,13 +4067,13 @@
                 name="app.erp.md.dao.entity.ErpMdAcctSchema" notGenCode="true" tableName="erp_md_acct_schema"
                 ext:web-renderer="flux" biz:moduleId="erp/md">
             <columns>
-                <column code="ID" name="id" primary="true" propId="1" stdDataType="long" stdSqlType="BIGINT"
+                <column code="ID" name="id" primary="true" propId="1" stdDataType="string" stdSqlType="BIGINT"
                         i18n-en:displayName="ID"/>
                 <column code="CODE" name="code" precision="50" propId="2" stdDataType="string" stdSqlType="VARCHAR"
                         tagSet="var" i18n-en:displayName="Code"/>
                 <column code="NAME" name="name" precision="200" propId="3" stdDataType="string" stdSqlType="VARCHAR"
                         tagSet="disp" i18n-en:displayName="Name"/>
-                <column code="CURRENCY_ID" name="currencyId" propId="4" stdDataType="long" stdSqlType="BIGINT"
+                <column code="CURRENCY_ID" name="currencyId" propId="4" stdDataType="string" stdSqlType="BIGINT"
                         i18n-en:displayName="Currency"/>
                 <column code="NATURE" name="nature" propId="5" stdDataType="int" stdSqlType="INTEGER"
                         i18n-en:displayName="Nature"/>
@@ -4083,7 +4083,7 @@
                 name="app.erp.md.dao.entity.ErpMdCurrency" notGenCode="true" tableName="erp_md_currency"
                 ext:web-renderer="flux" biz:moduleId="erp/md">
             <columns>
-                <column code="ID" name="id" primary="true" propId="1" stdDataType="long" stdSqlType="BIGINT"
+                <column code="ID" name="id" primary="true" propId="1" stdDataType="string" stdSqlType="BIGINT"
                         i18n-en:displayName="ID"/>
                 <column code="CODE" name="code" precision="50" propId="2" stdDataType="string" stdSqlType="VARCHAR"
                         tagSet="var" i18n-en:displayName="Code"/>
@@ -4101,7 +4101,7 @@
                 name="app.erp.md.dao.entity.ErpMdPartner" notGenCode="true" tableName="erp_md_partner"
                 ext:web-renderer="flux" biz:moduleId="erp/md">
             <columns>
-                <column code="ID" name="id" primary="true" propId="1" stdDataType="long" stdSqlType="BIGINT"
+                <column code="ID" name="id" primary="true" propId="1" stdDataType="string" stdSqlType="BIGINT"
                         i18n-en:displayName="ID"/>
                 <column code="CODE" name="code" precision="50" propId="2" stdDataType="string" stdSqlType="VARCHAR"
                         tagSet="var" i18n-en:displayName="Code"/>
@@ -4119,15 +4119,15 @@
                 name="app.erp.md.dao.entity.ErpMdEmployee" notGenCode="true" tableName="erp_md_employee"
                 ext:web-renderer="flux" biz:moduleId="erp/md">
             <columns>
-                <column code="ID" name="id" primary="true" propId="1" stdDataType="long" stdSqlType="BIGINT"
+                <column code="ID" name="id" primary="true" propId="1" stdDataType="string" stdSqlType="BIGINT"
                         i18n-en:displayName="ID"/>
                 <column code="CODE" name="code" precision="50" propId="2" stdDataType="string" stdSqlType="VARCHAR"
                         tagSet="var" i18n-en:displayName="Code"/>
                 <column code="NAME" name="name" precision="200" propId="3" stdDataType="string" stdSqlType="VARCHAR"
                         tagSet="disp" i18n-en:displayName="Name"/>
-                <column code="ORG_ID" name="orgId" propId="4" stdDataType="long" stdSqlType="BIGINT"
+                <column code="ORG_ID" name="orgId" propId="4" stdDataType="string" stdSqlType="BIGINT"
                         i18n-en:displayName="Organization"/>
-                <column code="PARTNER_ID" name="partnerId" propId="5" stdDataType="long" stdSqlType="BIGINT"
+                <column code="PARTNER_ID" name="partnerId" propId="5" stdDataType="string" stdSqlType="BIGINT"
                         i18n-en:displayName="Partner"/>
                 <column code="STATUS" name="status" propId="6" stdDataType="int" stdSqlType="INTEGER"
                         i18n-en:displayName="Status"/>
@@ -4137,13 +4137,13 @@
                 name="app.erp.md.dao.entity.ErpMdCostCenter" notGenCode="true" tableName="erp_md_cost_center"
                 ext:web-renderer="flux" biz:moduleId="erp/md">
             <columns>
-                <column code="ID" name="id" primary="true" propId="1" stdDataType="long" stdSqlType="BIGINT"
+                <column code="ID" name="id" primary="true" propId="1" stdDataType="string" stdSqlType="BIGINT"
                         i18n-en:displayName="ID"/>
                 <column code="CODE" name="code" precision="50" propId="2" stdDataType="string" stdSqlType="VARCHAR"
                         tagSet="var" i18n-en:displayName="Code"/>
                 <column code="NAME" name="name" precision="200" propId="3" stdDataType="string" stdSqlType="VARCHAR"
                         tagSet="disp" i18n-en:displayName="Name"/>
-                <column code="ORG_ID" name="orgId" propId="4" stdDataType="long" stdSqlType="BIGINT"
+                <column code="ORG_ID" name="orgId" propId="4" stdDataType="string" stdSqlType="BIGINT"
                         i18n-en:displayName="Organization"/>
             </columns>
         </entity>
@@ -4151,7 +4151,7 @@
                 name="app.erp.md.dao.entity.ErpMdOrganization" notGenCode="true" tableName="erp_md_organization"
                 ext:web-renderer="flux" biz:moduleId="erp/md">
             <columns>
-                <column code="ID" name="id" primary="true" propId="1" stdDataType="long" stdSqlType="BIGINT"
+                <column code="ID" name="id" primary="true" propId="1" stdDataType="string" stdSqlType="BIGINT"
                         i18n-en:displayName="ID"/>
                 <column code="CODE" name="code" precision="50" propId="2" stdDataType="string" stdSqlType="VARCHAR"
                         tagSet="var" i18n-en:displayName="Code"/>
@@ -4159,7 +4159,7 @@
                         tagSet="disp" i18n-en:displayName="Name"/>
                 <column code="ORG_TYPE" name="orgType" propId="4" stdDataType="int" stdSqlType="INTEGER"
                         i18n-en:displayName="Org Type"/>
-                <column code="PARENT_ID" name="parentId" propId="5" stdDataType="long" stdSqlType="BIGINT"
+                <column code="PARENT_ID" name="parentId" propId="5" stdDataType="string" stdSqlType="BIGINT"
                         i18n-en:displayName="Parent"/>
                 <column code="STATUS" name="status" propId="6" stdDataType="int" stdSqlType="INTEGER"
                         i18n-en:displayName="Status"/>
@@ -4169,7 +4169,7 @@
                 name="app.erp.md.dao.entity.ErpMdWarehouse" notGenCode="true" tableName="erp_md_warehouse"
                 ext:web-renderer="flux" biz:moduleId="erp/md">
             <columns>
-                <column code="ID" name="id" primary="true" propId="1" stdDataType="long" stdSqlType="BIGINT"
+                <column code="ID" name="id" primary="true" propId="1" stdDataType="string" stdSqlType="BIGINT"
                         i18n-en:displayName="ID"/>
                 <column code="CODE" name="code" precision="50" propId="2" stdDataType="string" stdSqlType="VARCHAR"
                         tagSet="var" i18n-en:displayName="Code"/>
@@ -4177,7 +4177,7 @@
                         tagSet="disp" i18n-en:displayName="Name"/>
                 <column code="WAREHOUSE_TYPE" name="warehouseType" propId="4" stdDataType="int" stdSqlType="INTEGER"
                         i18n-en:displayName="Warehouse Type"/>
-                <column code="ORG_ID" name="orgId" propId="5" stdDataType="long" stdSqlType="BIGINT"
+                <column code="ORG_ID" name="orgId" propId="5" stdDataType="string" stdSqlType="BIGINT"
                         i18n-en:displayName="Organization"/>
                 <column code="STATUS" name="status" propId="6" stdDataType="int" stdSqlType="INTEGER"
                         i18n-en:displayName="Status"/>
@@ -4187,7 +4187,7 @@
                 name="app.erp.md.dao.entity.ErpMdMaterial" notGenCode="true" tableName="erp_md_material"
                 ext:web-renderer="flux" biz:moduleId="erp/md">
             <columns>
-                <column code="ID" name="id" primary="true" propId="1" stdDataType="long" stdSqlType="BIGINT"
+                <column code="ID" name="id" primary="true" propId="1" stdDataType="string" stdSqlType="BIGINT"
                         i18n-en:displayName="ID"/>
                 <column code="CODE" name="code" precision="50" propId="2" stdDataType="string" stdSqlType="VARCHAR"
                         tagSet="var" i18n-en:displayName="Code"/>
@@ -4203,13 +4203,13 @@
                 name="app.erp.md.dao.entity.ErpMdMaterialCategory" notGenCode="true"
                 tableName="erp_md_material_category" ext:web-renderer="flux" biz:moduleId="erp/md">
             <columns>
-                <column code="ID" name="id" primary="true" propId="1" stdDataType="long" stdSqlType="BIGINT"
+                <column code="ID" name="id" primary="true" propId="1" stdDataType="string" stdSqlType="BIGINT"
                         i18n-en:displayName="ID"/>
                 <column code="CODE" name="code" precision="50" propId="2" stdDataType="string" stdSqlType="VARCHAR"
                         tagSet="var" i18n-en:displayName="Code"/>
                 <column code="NAME" name="name" precision="200" propId="3" stdDataType="string" stdSqlType="VARCHAR"
                         tagSet="disp" i18n-en:displayName="Name"/>
-                <column code="PARENT_ID" name="parentId" propId="4" stdDataType="long" stdSqlType="BIGINT"
+                <column code="PARENT_ID" name="parentId" propId="4" stdDataType="string" stdSqlType="BIGINT"
                         i18n-en:displayName="Parent"/>
             </columns>
         </entity>
@@ -4217,13 +4217,13 @@
                 name="app.erp.prj.dao.entity.ErpPrjProject" notGenCode="true" tableName="erp_prj_project"
                 ext:web-renderer="flux" biz:moduleId="erp/prj">
             <columns>
-                <column code="ID" name="id" primary="true" propId="1" stdDataType="long" stdSqlType="BIGINT"
+                <column code="ID" name="id" primary="true" propId="1" stdDataType="string" stdSqlType="BIGINT"
                         i18n-en:displayName="ID"/>
                 <column code="CODE" name="code" precision="50" propId="2" stdDataType="string" stdSqlType="VARCHAR"
                         tagSet="var" i18n-en:displayName="Code"/>
                 <column code="NAME" name="name" precision="200" propId="3" stdDataType="string" stdSqlType="VARCHAR"
                         tagSet="disp" i18n-en:displayName="Name"/>
-                <column code="CUSTOMER_ID" name="customerId" propId="4" stdDataType="long" stdSqlType="BIGINT"
+                <column code="CUSTOMER_ID" name="customerId" propId="4" stdDataType="string" stdSqlType="BIGINT"
                         i18n-en:displayName="Customer"/>
                 <column code="STATUS" name="status" propId="5" stdDataType="int" stdSqlType="INTEGER"
                         i18n-en:displayName="Status"/>
@@ -4233,7 +4233,7 @@
                 name="app.erp.ast.dao.entity.ErpAstAsset" notGenCode="true" tableName="erp_ast_asset"
                 ext:web-renderer="flux" biz:moduleId="erp/ast">
             <columns>
-                <column code="ID" name="id" primary="true" propId="1" stdDataType="long" stdSqlType="BIGINT"
+                <column code="ID" name="id" primary="true" propId="1" stdDataType="string" stdSqlType="BIGINT"
                         i18n-en:displayName="ID"/>
                 <column code="CODE" name="code" precision="50" propId="2" stdDataType="string" stdSqlType="VARCHAR"
                         tagSet="var" i18n-en:displayName="Code"/>

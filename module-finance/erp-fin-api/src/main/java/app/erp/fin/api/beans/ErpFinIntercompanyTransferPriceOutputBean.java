@@ -13,16 +13,16 @@
     public class ErpFinIntercompanyTransferPriceOutputBean {
 
     
-        private Long _id;
+        private String _id;
 
     
         @PropMeta(propId=1)
     
-        public Long getId(){
+        public String getId(){
             return _id;
         }
 
-        public void setId(Long value){
+        public void setId(String value){
             this._id = value;
         }
 
@@ -55,72 +55,72 @@
         }
 
 
-        private Long _orgId;
+        private String _orgId;
 
     
         @PropMeta(propId=4)
     
-        public Long getOrgId(){
+        public String getOrgId(){
             return _orgId;
         }
 
-        public void setOrgId(Long value){
+        public void setOrgId(String value){
             this._orgId = value;
         }
 
 
-        private Long _fromOrgId;
+        private String _fromOrgId;
 
     
         @PropMeta(propId=5)
     
-        public Long getFromOrgId(){
+        public String getFromOrgId(){
             return _fromOrgId;
         }
 
-        public void setFromOrgId(Long value){
+        public void setFromOrgId(String value){
             this._fromOrgId = value;
         }
 
 
-        private Long _toOrgId;
+        private String _toOrgId;
 
     
         @PropMeta(propId=6)
     
-        public Long getToOrgId(){
+        public String getToOrgId(){
             return _toOrgId;
         }
 
-        public void setToOrgId(Long value){
+        public void setToOrgId(String value){
             this._toOrgId = value;
         }
 
 
-        private Long _materialId;
+        private String _materialId;
 
     
         @PropMeta(propId=7)
     
-        public Long getMaterialId(){
+        public String getMaterialId(){
             return _materialId;
         }
 
-        public void setMaterialId(Long value){
+        public void setMaterialId(String value){
             this._materialId = value;
         }
 
 
-        private Long _materialCategoryId;
+        private String _materialCategoryId;
 
     
         @PropMeta(propId=8)
     
-        public Long getMaterialCategoryId(){
+        public String getMaterialCategoryId(){
             return _materialCategoryId;
         }
 
-        public void setMaterialCategoryId(Long value){
+        public void setMaterialCategoryId(String value){
             this._materialCategoryId = value;
         }
 

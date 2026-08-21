@@ -54,7 +54,7 @@ public class ErpFinDashboardBizModel {
     IOrmTemplate ormTemplate;
 
     @BizQuery
-    public Map<String, Object> getDashboardKpi(@Optional @Name("periodId") Long periodId,
+    public Map<String, Object> getDashboardKpi(@Optional @Name("periodId") String periodId,
                                                 IServiceContext context) {
         return ormTemplate.runInSession(session -> {
             Map<String, Object> kpi = new LinkedHashMap<>();
@@ -158,12 +158,12 @@ public class ErpFinDashboardBizModel {
 
     // ===================== helpers =====================
 
-    private List<ErpFinGlBalance> loadGlBalances(Long periodId) {
+    private List<ErpFinGlBalance> loadGlBalances(String periodId) {
         IEntityDao<ErpFinGlBalance> dao = daoProvider.daoFor(ErpFinGlBalance.class);
         if (periodId == null) {
             // periodId 缺省时限定最近一个会计期间，避免全表回退（原全表加载会物化全表）。
             // 取最近期间的 id 后按该期间过滤；无任何期间时返回空（KPI 退化为 0）。
-            Long latestPeriodId = findLatestPeriodId();
+            String latestPeriodId = findLatestPeriodId();
             if (latestPeriodId == null) {
                 return Collections.emptyList();
             }
@@ -178,7 +178,7 @@ public class ErpFinDashboardBizModel {
         return dao.findAllByQuery(q);
     }
 
-    private Long findLatestPeriodId() {
+    private String findLatestPeriodId() {
         IEntityDao<ErpFinAccountingPeriod> pDao = daoProvider.daoFor(ErpFinAccountingPeriod.class);
         QueryBean q = new QueryBean();
         q.addOrderField("startDate", true);
@@ -194,16 +194,16 @@ public class ErpFinDashboardBizModel {
         pq.addFilter(le("startDate", to));
         List<ErpFinAccountingPeriod> periods = pDao.findAllByQuery(pq);
         if (periods.isEmpty()) return Collections.emptyList();
-        List<Long> periodIds = new ArrayList<>();
+        List<String> periodIds = new ArrayList<>();
         for (ErpFinAccountingPeriod p : periods) periodIds.add(p.getId());
         IEntityDao<ErpFinGlBalance> dao = daoProvider.daoFor(ErpFinGlBalance.class);
         QueryBean q = new QueryBean();
         q.addFilter(in("periodId", periodIds));
         // 多账套隔离：按范围内首个期间的所属组织 + 主账套过滤（同期范围假定同组织）
-        Long orgId = periods.get(0).getOrgId();
+        String orgId = periods.get(0).getOrgId();
         if (orgId != null) {
             q.addFilter(eq("orgId", orgId));
-            Long schemaId = AcctSchemaResolver.resolvePrimarySchemaId(daoProvider, orgId);
+            String schemaId = AcctSchemaResolver.resolvePrimarySchemaId(daoProvider, orgId);
             if (schemaId != null) {
                 q.addFilter(eq("acctSchemaId", schemaId));
             }
@@ -223,7 +223,7 @@ public class ErpFinDashboardBizModel {
         return sum;
     }
 
-    private BigDecimal sumArApOpen(String direction, Long periodId) {
+    private BigDecimal sumArApOpen(String direction, String periodId) {
         IEntityDao<ErpFinArApItem> dao = daoProvider.daoFor(ErpFinArApItem.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("direction", direction));
@@ -242,9 +242,9 @@ public class ErpFinDashboardBizModel {
     // ===================== 多账套/多组织读路径隔离 scope（P1-MA2-095）=====================
     // scope 不可解析时（period.orgId 为空等）跳过 filter，保护单组织基线零回归。
 
-    private Long resolvePeriodOrgId(Long periodId) {
+    private String resolvePeriodOrgId(String periodId) {
         if (periodId == null) {
-            Long latestPeriodId = findLatestPeriodId();
+            String latestPeriodId = findLatestPeriodId();
             if (latestPeriodId == null) {
                 return null;
             }
@@ -254,13 +254,13 @@ public class ErpFinDashboardBizModel {
         return period != null ? period.getOrgId() : null;
     }
 
-    private void applyOrgAndSchemaScope(QueryBean q, Long periodId) {
-        Long orgId = resolvePeriodOrgId(periodId);
+    private void applyOrgAndSchemaScope(QueryBean q, String periodId) {
+        String orgId = resolvePeriodOrgId(periodId);
         if (orgId == null) {
             return;
         }
         q.addFilter(eq("orgId", orgId));
-        Long schemaId = AcctSchemaResolver.resolvePrimarySchemaId(daoProvider, orgId);
+        String schemaId = AcctSchemaResolver.resolvePrimarySchemaId(daoProvider, orgId);
         if (schemaId != null) {
             q.addFilter(eq("acctSchemaId", schemaId));
         }

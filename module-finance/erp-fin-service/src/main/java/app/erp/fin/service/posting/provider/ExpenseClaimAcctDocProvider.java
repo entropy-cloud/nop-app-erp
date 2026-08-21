@@ -69,7 +69,7 @@ public class ExpenseClaimAcctDocProvider implements IErpFinAcctDocProvider {
         VoucherFact credit = fact(creditSubject, creditName, DC_CREDIT, withTax, event, creditAccountKey);
         // 员工垫付挂应付-员工，携带往来维度（partnerId = employee.partnerId），便于辅助账与余额归集。
         if (Objects.equals(paymentMode, ErpFinConstants.PAYMENT_MODE_OWN_ACCOUNT)) {
-            credit.setPartnerId(asLong(event.getBillData().get(ErpFinConstants.BILL_DATA_EMPLOYEE_ID)));
+            credit.setPartnerId(asId(event.getBillData().get(ErpFinConstants.BILL_DATA_EMPLOYEE_ID)));
         }
         facts.add(credit);
         return facts;
@@ -107,17 +107,15 @@ public class ExpenseClaimAcctDocProvider implements IErpFinAcctDocProvider {
         return s.isEmpty() ? defaultValue : s;
     }
 
-    private Long asLong(Object value) {
+    // billData id 桥接（A2 中间态）：未迁移域派发器写入的 Long id 归一为 String
+    private String asId(Object value) {
         if (value == null) {
             return null;
         }
         if (value instanceof Number) {
-            return ((Number) value).longValue();
+            return String.valueOf(((Number) value).longValue());
         }
-        try {
-            return Long.valueOf(value.toString().trim());
-        } catch (NumberFormatException e) {
-            return null;
-        }
+        String s = value.toString().trim();
+        return s.isEmpty() ? null : s;
     }
 }

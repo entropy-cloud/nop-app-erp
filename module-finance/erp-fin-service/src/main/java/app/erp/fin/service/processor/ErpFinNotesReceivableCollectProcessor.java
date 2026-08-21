@@ -22,7 +22,7 @@ public class ErpFinNotesReceivableCollectProcessor {
     @Inject
     ErpFinNotesReceivableStateMachine stateMachine;
 
-    public ErpFinNotesReceivable collect(Long notesId, IServiceContext context) {
+    public ErpFinNotesReceivable collect(String notesId, IServiceContext context) {
         ErpFinNotesReceivable note = facade.requireNote(notesId, context);
         try {
             stateMachine.assertCanCollect(note.getStatus());

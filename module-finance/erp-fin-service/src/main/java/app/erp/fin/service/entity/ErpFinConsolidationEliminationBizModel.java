@@ -35,13 +35,13 @@ public class ErpFinConsolidationEliminationBizModel extends CrudBizModel<ErpFinC
 
     @Override
     @BizMutation
-    public int generateEliminationCandidates(@Name("periodId") Long periodId, IServiceContext context) {
+    public int generateEliminationCandidates(@Name("periodId") String periodId, IServiceContext context) {
         return generateEliminationCandidatesProcessor.generateEliminationCandidates(periodId, context);
     }
 
     @Override
     @BizMutation
-    public Long postElimination(@Name("candidateId") Long candidateId, IServiceContext context) {
+    public String postElimination(@Name("candidateId") String candidateId, IServiceContext context) {
         return postEliminationProcessor.postElimination(candidateId, context);
     }
 }

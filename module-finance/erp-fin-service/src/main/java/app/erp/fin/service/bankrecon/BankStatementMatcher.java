@@ -38,7 +38,7 @@ public class BankStatementMatcher {
     @Inject
     IDaoProvider daoProvider;
 
-    public BankStatementMatchResult autoMatch(Long statementId) {
+    public BankStatementMatchResult autoMatch(String statementId) {
         BankStatementMatchResult result = new BankStatementMatchResult();
         if (statementId == null) {
             return result;
@@ -74,7 +74,7 @@ public class BankStatementMatcher {
         return result;
     }
 
-    protected ErpFinBankStatement loadStatement(Long statementId) {
+    protected ErpFinBankStatement loadStatement(String statementId) {
         IEntityDao<ErpFinBankStatement> dao = daoProvider.daoFor(ErpFinBankStatement.class);
         ErpFinBankStatement statement = dao.getEntityById(statementId);
         if (statement == null) {
@@ -84,7 +84,7 @@ public class BankStatementMatcher {
         return statement;
     }
 
-    protected ErpFinFundAccount requireFundAccount(Long fundAccountId) {
+    protected ErpFinFundAccount requireFundAccount(String fundAccountId) {
         IEntityDao<ErpFinFundAccount> dao = daoProvider.daoFor(ErpFinFundAccount.class);
         ErpFinFundAccount account = dao.getEntityById(fundAccountId);
         if (account == null) {
@@ -94,7 +94,7 @@ public class BankStatementMatcher {
         return account;
     }
 
-    protected List<ErpFinBankStatementLine> loadUnmatchedLines(Long statementId) {
+    protected List<ErpFinBankStatementLine> loadUnmatchedLines(String statementId) {
         IEntityDao<ErpFinBankStatementLine> dao = daoProvider.daoFor(ErpFinBankStatementLine.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("statementId", statementId));

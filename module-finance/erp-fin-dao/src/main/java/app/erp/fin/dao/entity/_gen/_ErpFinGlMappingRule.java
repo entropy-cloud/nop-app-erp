@@ -209,7 +209,7 @@ public class _ErpFinGlMappingRule extends DynamicOrmEntity{
 
     
     /* ID: ID */
-    private java.lang.Long _id;
+    private java.lang.String _id;
     
     /* 规则编码: CODE */
     private java.lang.String _code;
@@ -218,7 +218,7 @@ public class _ErpFinGlMappingRule extends DynamicOrmEntity{
     private java.lang.String _name;
     
     /* 核算组织: ORG_ID */
-    private java.lang.Long _orgId;
+    private java.lang.String _orgId;
     
     /* 业务类型: BUSINESS_TYPE */
     private java.lang.String _businessType;
@@ -227,19 +227,19 @@ public class _ErpFinGlMappingRule extends DynamicOrmEntity{
     private java.lang.String _accountKey;
     
     /* 账套(空=通配): ACCT_SCHEMA_ID */
-    private java.lang.Long _acctSchemaId;
+    private java.lang.String _acctSchemaId;
     
     /* 往来单位组(空=通配): PARTNER_GROUP_ID */
-    private java.lang.Long _partnerGroupId;
+    private java.lang.String _partnerGroupId;
     
     /* 物料分类(空=通配): MATERIAL_CATEGORY_ID */
-    private java.lang.Long _materialCategoryId;
+    private java.lang.String _materialCategoryId;
     
     /* 仓库(空=通配): WAREHOUSE_ID */
-    private java.lang.Long _warehouseId;
+    private java.lang.String _warehouseId;
     
     /* 部门(空=通配): DEPARTMENT_ID */
-    private java.lang.Long _departmentId;
+    private java.lang.String _departmentId;
     
     /* 项目(空=通配): PROJECT_ID */
     private java.lang.Long _projectId;
@@ -426,9 +426,9 @@ public class _ErpFinGlMappingRule extends DynamicOrmEntity{
         switch(propId){
         
             case PROP_ID_id:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_id));
                }
                setId(typedValue);
@@ -456,9 +456,9 @@ public class _ErpFinGlMappingRule extends DynamicOrmEntity{
             }
         
             case PROP_ID_orgId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_orgId));
                }
                setOrgId(typedValue);
@@ -486,9 +486,9 @@ public class _ErpFinGlMappingRule extends DynamicOrmEntity{
             }
         
             case PROP_ID_acctSchemaId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_acctSchemaId));
                }
                setAcctSchemaId(typedValue);
@@ -496,9 +496,9 @@ public class _ErpFinGlMappingRule extends DynamicOrmEntity{
             }
         
             case PROP_ID_partnerGroupId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_partnerGroupId));
                }
                setPartnerGroupId(typedValue);
@@ -506,9 +506,9 @@ public class _ErpFinGlMappingRule extends DynamicOrmEntity{
             }
         
             case PROP_ID_materialCategoryId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_materialCategoryId));
                }
                setMaterialCategoryId(typedValue);
@@ -516,9 +516,9 @@ public class _ErpFinGlMappingRule extends DynamicOrmEntity{
             }
         
             case PROP_ID_warehouseId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_warehouseId));
                }
                setWarehouseId(typedValue);
@@ -526,9 +526,9 @@ public class _ErpFinGlMappingRule extends DynamicOrmEntity{
             }
         
             case PROP_ID_departmentId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_departmentId));
                }
                setDepartmentId(typedValue);
@@ -656,7 +656,7 @@ public class _ErpFinGlMappingRule extends DynamicOrmEntity{
         
             case PROP_ID_id:{
                onInitProp(propId);
-               this._id = (java.lang.Long)value;
+               this._id = (java.lang.String)value;
                orm_id(); // 如果是设置主键字段，则触发watcher
                break;
             }
@@ -677,7 +677,7 @@ public class _ErpFinGlMappingRule extends DynamicOrmEntity{
         
             case PROP_ID_orgId:{
                onInitProp(propId);
-               this._orgId = (java.lang.Long)value;
+               this._orgId = (java.lang.String)value;
                
                break;
             }
@@ -698,35 +698,35 @@ public class _ErpFinGlMappingRule extends DynamicOrmEntity{
         
             case PROP_ID_acctSchemaId:{
                onInitProp(propId);
-               this._acctSchemaId = (java.lang.Long)value;
+               this._acctSchemaId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_partnerGroupId:{
                onInitProp(propId);
-               this._partnerGroupId = (java.lang.Long)value;
+               this._partnerGroupId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_materialCategoryId:{
                onInitProp(propId);
-               this._materialCategoryId = (java.lang.Long)value;
+               this._materialCategoryId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_warehouseId:{
                onInitProp(propId);
-               this._warehouseId = (java.lang.Long)value;
+               this._warehouseId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_departmentId:{
                onInitProp(propId);
-               this._departmentId = (java.lang.Long)value;
+               this._departmentId = (java.lang.String)value;
                
                break;
             }
@@ -817,7 +817,7 @@ public class _ErpFinGlMappingRule extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final java.lang.Long getId(){
+    public final java.lang.String getId(){
          onPropGet(PROP_ID_id);
          return _id;
     }
@@ -825,7 +825,7 @@ public class _ErpFinGlMappingRule extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final void setId(java.lang.Long value){
+    public final void setId(java.lang.String value){
         if(onPropSet(PROP_ID_id,value)){
             this._id = value;
             internalClearRefs(PROP_ID_id);
@@ -874,7 +874,7 @@ public class _ErpFinGlMappingRule extends DynamicOrmEntity{
     /**
      * 核算组织: ORG_ID
      */
-    public final java.lang.Long getOrgId(){
+    public final java.lang.String getOrgId(){
          onPropGet(PROP_ID_orgId);
          return _orgId;
     }
@@ -882,7 +882,7 @@ public class _ErpFinGlMappingRule extends DynamicOrmEntity{
     /**
      * 核算组织: ORG_ID
      */
-    public final void setOrgId(java.lang.Long value){
+    public final void setOrgId(java.lang.String value){
         if(onPropSet(PROP_ID_orgId,value)){
             this._orgId = value;
             internalClearRefs(PROP_ID_orgId);
@@ -931,7 +931,7 @@ public class _ErpFinGlMappingRule extends DynamicOrmEntity{
     /**
      * 账套(空=通配): ACCT_SCHEMA_ID
      */
-    public final java.lang.Long getAcctSchemaId(){
+    public final java.lang.String getAcctSchemaId(){
          onPropGet(PROP_ID_acctSchemaId);
          return _acctSchemaId;
     }
@@ -939,7 +939,7 @@ public class _ErpFinGlMappingRule extends DynamicOrmEntity{
     /**
      * 账套(空=通配): ACCT_SCHEMA_ID
      */
-    public final void setAcctSchemaId(java.lang.Long value){
+    public final void setAcctSchemaId(java.lang.String value){
         if(onPropSet(PROP_ID_acctSchemaId,value)){
             this._acctSchemaId = value;
             internalClearRefs(PROP_ID_acctSchemaId);
@@ -950,7 +950,7 @@ public class _ErpFinGlMappingRule extends DynamicOrmEntity{
     /**
      * 往来单位组(空=通配): PARTNER_GROUP_ID
      */
-    public final java.lang.Long getPartnerGroupId(){
+    public final java.lang.String getPartnerGroupId(){
          onPropGet(PROP_ID_partnerGroupId);
          return _partnerGroupId;
     }
@@ -958,7 +958,7 @@ public class _ErpFinGlMappingRule extends DynamicOrmEntity{
     /**
      * 往来单位组(空=通配): PARTNER_GROUP_ID
      */
-    public final void setPartnerGroupId(java.lang.Long value){
+    public final void setPartnerGroupId(java.lang.String value){
         if(onPropSet(PROP_ID_partnerGroupId,value)){
             this._partnerGroupId = value;
             internalClearRefs(PROP_ID_partnerGroupId);
@@ -969,7 +969,7 @@ public class _ErpFinGlMappingRule extends DynamicOrmEntity{
     /**
      * 物料分类(空=通配): MATERIAL_CATEGORY_ID
      */
-    public final java.lang.Long getMaterialCategoryId(){
+    public final java.lang.String getMaterialCategoryId(){
          onPropGet(PROP_ID_materialCategoryId);
          return _materialCategoryId;
     }
@@ -977,7 +977,7 @@ public class _ErpFinGlMappingRule extends DynamicOrmEntity{
     /**
      * 物料分类(空=通配): MATERIAL_CATEGORY_ID
      */
-    public final void setMaterialCategoryId(java.lang.Long value){
+    public final void setMaterialCategoryId(java.lang.String value){
         if(onPropSet(PROP_ID_materialCategoryId,value)){
             this._materialCategoryId = value;
             internalClearRefs(PROP_ID_materialCategoryId);
@@ -988,7 +988,7 @@ public class _ErpFinGlMappingRule extends DynamicOrmEntity{
     /**
      * 仓库(空=通配): WAREHOUSE_ID
      */
-    public final java.lang.Long getWarehouseId(){
+    public final java.lang.String getWarehouseId(){
          onPropGet(PROP_ID_warehouseId);
          return _warehouseId;
     }
@@ -996,7 +996,7 @@ public class _ErpFinGlMappingRule extends DynamicOrmEntity{
     /**
      * 仓库(空=通配): WAREHOUSE_ID
      */
-    public final void setWarehouseId(java.lang.Long value){
+    public final void setWarehouseId(java.lang.String value){
         if(onPropSet(PROP_ID_warehouseId,value)){
             this._warehouseId = value;
             internalClearRefs(PROP_ID_warehouseId);
@@ -1007,7 +1007,7 @@ public class _ErpFinGlMappingRule extends DynamicOrmEntity{
     /**
      * 部门(空=通配): DEPARTMENT_ID
      */
-    public final java.lang.Long getDepartmentId(){
+    public final java.lang.String getDepartmentId(){
          onPropGet(PROP_ID_departmentId);
          return _departmentId;
     }
@@ -1015,7 +1015,7 @@ public class _ErpFinGlMappingRule extends DynamicOrmEntity{
     /**
      * 部门(空=通配): DEPARTMENT_ID
      */
-    public final void setDepartmentId(java.lang.Long value){
+    public final void setDepartmentId(java.lang.String value){
         if(onPropSet(PROP_ID_departmentId,value)){
             this._departmentId = value;
             internalClearRefs(PROP_ID_departmentId);
@@ -1340,7 +1340,8 @@ public class _ErpFinGlMappingRule extends DynamicOrmEntity{
            }else{
            internalSetRefEntity(PROP_NAME_project, refEntity,()->{
            
-                           this.setProjectId(refEntity.getId());
+                           this.orm_propValue(PROP_ID_projectId,
+                           refEntity.getId());
                        
            });
            }

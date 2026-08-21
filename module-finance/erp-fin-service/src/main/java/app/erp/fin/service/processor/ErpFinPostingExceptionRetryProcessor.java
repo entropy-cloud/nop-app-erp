@@ -32,7 +32,7 @@ public class ErpFinPostingExceptionRetryProcessor {
     @Inject
     IErpFinVoucherBiz voucherBiz;
 
-    public ErpFinPostingException retry(Long exceptionId, IServiceContext context) {
+    public ErpFinPostingException retry(String exceptionId, IServiceContext context) {
         ErpFinPostingException entity = requirePending(exceptionId);
         // 翻 RETRYING 并记重试次数；重新触发过账（独立事务，失败回滚不污染本事务）。
         entity.setStatus(ErpFinConstants.POSTING_EXCEPTION_STATUS_RETRYING);
@@ -45,7 +45,7 @@ public class ErpFinPostingExceptionRetryProcessor {
         if (!ErpFinConstants.POSTING_TYPE_REVERSAL.equals(entity.getPostingType())) {
             // 正向过账重试：从 eventData 重建 PostingEvent 重新过账。
             PostingEvent event = rebuildEvent(entity);
-            Long voucherId = voucherBiz.post(event, context);
+            String voucherId = voucherBiz.post(event, context);
             if (voucherId != null) {
                 entity.setVoucherId(voucherId);
                 entity.setStatus(ErpFinConstants.POSTING_EXCEPTION_STATUS_RETRIED);
@@ -56,7 +56,7 @@ public class ErpFinPostingExceptionRetryProcessor {
         } else {
             // 红冲重试：按回链重新红冲。
             ErpFinBusinessType businessType = parseBusinessType(entity.getBusinessType());
-            Long voucherId = voucherBiz.reverse(entity.getBillHeadCode(), businessType, context);
+            String voucherId = voucherBiz.reverse(entity.getBillHeadCode(), businessType, context);
             if (voucherId != null) {
                 entity.setVoucherId(voucherId);
                 entity.setStatus(ErpFinConstants.POSTING_EXCEPTION_STATUS_RETRIED);
@@ -70,7 +70,7 @@ public class ErpFinPostingExceptionRetryProcessor {
         return daoProvider.daoFor(ErpFinPostingException.class);
     }
 
-    protected ErpFinPostingException requirePending(Long exceptionId) {
+    protected ErpFinPostingException requirePending(String exceptionId) {
         IEntityDao<ErpFinPostingException> dao = daoProvider();
         ErpFinPostingException entity = dao.getEntityById(exceptionId);
         if (entity == null) {

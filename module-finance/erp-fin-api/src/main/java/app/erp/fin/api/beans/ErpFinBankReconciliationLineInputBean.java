@@ -12,30 +12,30 @@
     public class ErpFinBankReconciliationLineInputBean extends CrudInputBase {
 
     
-        private Long _id;
+        private String _id;
 
     
         @PropMeta(propId=1)
     
-        public Long getId(){
+        public String getId(){
             return _id;
         }
 
-        public void setId(Long value){
+        public void setId(String value){
             this._id = value;
         }
 
 
-        private Long _reconciliationId;
+        private String _reconciliationId;
 
     
         @PropMeta(propId=2)
     
-        public Long getReconciliationId(){
+        public String getReconciliationId(){
             return _reconciliationId;
         }
 
-        public void setReconciliationId(Long value){
+        public void setReconciliationId(String value){
             this._reconciliationId = value;
         }
 

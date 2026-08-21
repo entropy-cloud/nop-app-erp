@@ -14,7 +14,7 @@ public class ErpFinBankReconciliationPostProcessor {
     @Inject
     BankReconciliationBuilder bankReconciliationBuilder;
 
-    public ErpFinBankReconciliation post(Long reconciliationId, IServiceContext context) {
+    public ErpFinBankReconciliation post(String reconciliationId, IServiceContext context) {
         return bankReconciliationBuilder.post(reconciliationId, context);
     }
 }

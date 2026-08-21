@@ -265,19 +265,19 @@ public class _ErpFinExpenseClaim extends DynamicOrmEntity{
 
     
     /* ID: ID */
-    private java.lang.Long _id;
+    private java.lang.String _id;
     
     /* 单号: CODE */
     private java.lang.String _code;
     
     /* 核算组织: ORG_ID */
-    private java.lang.Long _orgId;
+    private java.lang.String _orgId;
     
     /* 报销人: CLAIMANT_ID */
-    private java.lang.Long _claimantId;
+    private java.lang.String _claimantId;
     
     /* 部门: DEPARTMENT_ID */
-    private java.lang.Long _departmentId;
+    private java.lang.String _departmentId;
     
     /* 业务日期: BUSINESS_DATE */
     private java.time.LocalDate _businessDate;
@@ -286,7 +286,7 @@ public class _ErpFinExpenseClaim extends DynamicOrmEntity{
     private java.lang.String _paymentMode;
     
     /* 币种: CURRENCY_ID */
-    private java.lang.Long _currencyId;
+    private java.lang.String _currencyId;
     
     /* 汇率: EXCHANGE_RATE */
     private java.math.BigDecimal _exchangeRate;
@@ -307,7 +307,7 @@ public class _ErpFinExpenseClaim extends DynamicOrmEntity{
     private java.math.BigDecimal _amountWithTax;
     
     /* 抵扣借款单: SETTLE_ADVANCE_ID */
-    private java.lang.Long _settleAdvanceId;
+    private java.lang.String _settleAdvanceId;
     
     /* 报销事由: REASON */
     private java.lang.String _reason;
@@ -530,9 +530,9 @@ public class _ErpFinExpenseClaim extends DynamicOrmEntity{
         switch(propId){
         
             case PROP_ID_id:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_id));
                }
                setId(typedValue);
@@ -550,9 +550,9 @@ public class _ErpFinExpenseClaim extends DynamicOrmEntity{
             }
         
             case PROP_ID_orgId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_orgId));
                }
                setOrgId(typedValue);
@@ -560,9 +560,9 @@ public class _ErpFinExpenseClaim extends DynamicOrmEntity{
             }
         
             case PROP_ID_claimantId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_claimantId));
                }
                setClaimantId(typedValue);
@@ -570,9 +570,9 @@ public class _ErpFinExpenseClaim extends DynamicOrmEntity{
             }
         
             case PROP_ID_departmentId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_departmentId));
                }
                setDepartmentId(typedValue);
@@ -600,9 +600,9 @@ public class _ErpFinExpenseClaim extends DynamicOrmEntity{
             }
         
             case PROP_ID_currencyId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_currencyId));
                }
                setCurrencyId(typedValue);
@@ -670,9 +670,9 @@ public class _ErpFinExpenseClaim extends DynamicOrmEntity{
             }
         
             case PROP_ID_settleAdvanceId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_settleAdvanceId));
                }
                setSettleAdvanceId(typedValue);
@@ -840,7 +840,7 @@ public class _ErpFinExpenseClaim extends DynamicOrmEntity{
         
             case PROP_ID_id:{
                onInitProp(propId);
-               this._id = (java.lang.Long)value;
+               this._id = (java.lang.String)value;
                orm_id(); // 如果是设置主键字段，则触发watcher
                break;
             }
@@ -854,21 +854,21 @@ public class _ErpFinExpenseClaim extends DynamicOrmEntity{
         
             case PROP_ID_orgId:{
                onInitProp(propId);
-               this._orgId = (java.lang.Long)value;
+               this._orgId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_claimantId:{
                onInitProp(propId);
-               this._claimantId = (java.lang.Long)value;
+               this._claimantId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_departmentId:{
                onInitProp(propId);
-               this._departmentId = (java.lang.Long)value;
+               this._departmentId = (java.lang.String)value;
                
                break;
             }
@@ -889,7 +889,7 @@ public class _ErpFinExpenseClaim extends DynamicOrmEntity{
         
             case PROP_ID_currencyId:{
                onInitProp(propId);
-               this._currencyId = (java.lang.Long)value;
+               this._currencyId = (java.lang.String)value;
                
                break;
             }
@@ -938,7 +938,7 @@ public class _ErpFinExpenseClaim extends DynamicOrmEntity{
         
             case PROP_ID_settleAdvanceId:{
                onInitProp(propId);
-               this._settleAdvanceId = (java.lang.Long)value;
+               this._settleAdvanceId = (java.lang.String)value;
                
                break;
             }
@@ -1057,7 +1057,7 @@ public class _ErpFinExpenseClaim extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final java.lang.Long getId(){
+    public final java.lang.String getId(){
          onPropGet(PROP_ID_id);
          return _id;
     }
@@ -1065,7 +1065,7 @@ public class _ErpFinExpenseClaim extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final void setId(java.lang.Long value){
+    public final void setId(java.lang.String value){
         if(onPropSet(PROP_ID_id,value)){
             this._id = value;
             internalClearRefs(PROP_ID_id);
@@ -1095,7 +1095,7 @@ public class _ErpFinExpenseClaim extends DynamicOrmEntity{
     /**
      * 核算组织: ORG_ID
      */
-    public final java.lang.Long getOrgId(){
+    public final java.lang.String getOrgId(){
          onPropGet(PROP_ID_orgId);
          return _orgId;
     }
@@ -1103,7 +1103,7 @@ public class _ErpFinExpenseClaim extends DynamicOrmEntity{
     /**
      * 核算组织: ORG_ID
      */
-    public final void setOrgId(java.lang.Long value){
+    public final void setOrgId(java.lang.String value){
         if(onPropSet(PROP_ID_orgId,value)){
             this._orgId = value;
             internalClearRefs(PROP_ID_orgId);
@@ -1114,7 +1114,7 @@ public class _ErpFinExpenseClaim extends DynamicOrmEntity{
     /**
      * 报销人: CLAIMANT_ID
      */
-    public final java.lang.Long getClaimantId(){
+    public final java.lang.String getClaimantId(){
          onPropGet(PROP_ID_claimantId);
          return _claimantId;
     }
@@ -1122,7 +1122,7 @@ public class _ErpFinExpenseClaim extends DynamicOrmEntity{
     /**
      * 报销人: CLAIMANT_ID
      */
-    public final void setClaimantId(java.lang.Long value){
+    public final void setClaimantId(java.lang.String value){
         if(onPropSet(PROP_ID_claimantId,value)){
             this._claimantId = value;
             internalClearRefs(PROP_ID_claimantId);
@@ -1133,7 +1133,7 @@ public class _ErpFinExpenseClaim extends DynamicOrmEntity{
     /**
      * 部门: DEPARTMENT_ID
      */
-    public final java.lang.Long getDepartmentId(){
+    public final java.lang.String getDepartmentId(){
          onPropGet(PROP_ID_departmentId);
          return _departmentId;
     }
@@ -1141,7 +1141,7 @@ public class _ErpFinExpenseClaim extends DynamicOrmEntity{
     /**
      * 部门: DEPARTMENT_ID
      */
-    public final void setDepartmentId(java.lang.Long value){
+    public final void setDepartmentId(java.lang.String value){
         if(onPropSet(PROP_ID_departmentId,value)){
             this._departmentId = value;
             internalClearRefs(PROP_ID_departmentId);
@@ -1190,7 +1190,7 @@ public class _ErpFinExpenseClaim extends DynamicOrmEntity{
     /**
      * 币种: CURRENCY_ID
      */
-    public final java.lang.Long getCurrencyId(){
+    public final java.lang.String getCurrencyId(){
          onPropGet(PROP_ID_currencyId);
          return _currencyId;
     }
@@ -1198,7 +1198,7 @@ public class _ErpFinExpenseClaim extends DynamicOrmEntity{
     /**
      * 币种: CURRENCY_ID
      */
-    public final void setCurrencyId(java.lang.Long value){
+    public final void setCurrencyId(java.lang.String value){
         if(onPropSet(PROP_ID_currencyId,value)){
             this._currencyId = value;
             internalClearRefs(PROP_ID_currencyId);
@@ -1323,7 +1323,7 @@ public class _ErpFinExpenseClaim extends DynamicOrmEntity{
     /**
      * 抵扣借款单: SETTLE_ADVANCE_ID
      */
-    public final java.lang.Long getSettleAdvanceId(){
+    public final java.lang.String getSettleAdvanceId(){
          onPropGet(PROP_ID_settleAdvanceId);
          return _settleAdvanceId;
     }
@@ -1331,7 +1331,7 @@ public class _ErpFinExpenseClaim extends DynamicOrmEntity{
     /**
      * 抵扣借款单: SETTLE_ADVANCE_ID
      */
-    public final void setSettleAdvanceId(java.lang.Long value){
+    public final void setSettleAdvanceId(java.lang.String value){
         if(onPropSet(PROP_ID_settleAdvanceId,value)){
             this._settleAdvanceId = value;
             internalClearRefs(PROP_ID_settleAdvanceId);

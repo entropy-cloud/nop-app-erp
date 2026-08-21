@@ -23,7 +23,7 @@ public interface IErpFinIntercompanyMatchBiz extends ICrudBiz<ErpFinIntercompany
      * @return 本次配对写入的记录数
      */
     @BizMutation
-    int runMatching(@Name("periodId") Long periodId, IServiceContext context);
+    int runMatching(@Name("periodId") String periodId, IServiceContext context);
 
     /**
      * 双向一致性校验：返回指定配对键 + 期间的双面差异报告（复用 DualSideDiffReport 结构范式）。
@@ -35,6 +35,6 @@ public interface IErpFinIntercompanyMatchBiz extends ICrudBiz<ErpFinIntercompany
      */
     @BizQuery
     DualSideDiffReport checkDualSideConsistency(@Name("pairKey") String pairKey,
-                                                @Name("periodId") Long periodId,
+                                                @Name("periodId") String periodId,
                                                 IServiceContext context);
 }

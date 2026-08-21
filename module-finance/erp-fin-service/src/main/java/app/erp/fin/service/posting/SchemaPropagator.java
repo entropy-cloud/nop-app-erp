@@ -41,9 +41,9 @@ public class SchemaPropagator {
      * @param primarySchemaId  源（主）账套 ID（由调用方 resolveAcctSchemaId 解析）
      * @return 目标账套 ID 列表（至少包含 primarySchemaId），primarySchemaId 排首位
      */
-    public List<Long> resolveTargetSchemas(Long orgId, Long primarySchemaId) {
+    public List<String> resolveTargetSchemas(String orgId, String primarySchemaId) {
         if (!isMultiSchemaEnabled()) {
-            List<Long> single = new ArrayList<>();
+            List<String> single = new ArrayList<>();
             if (primarySchemaId != null) {
                 single.add(primarySchemaId);
             }
@@ -56,13 +56,13 @@ public class SchemaPropagator {
 
         ErpMdAcctSchema primary = loadSchema(primarySchemaId);
         if (primary == null) {
-            List<Long> single = new ArrayList<>();
+            List<String> single = new ArrayList<>();
             single.add(primarySchemaId);
             return single;
         }
 
         if (!Boolean.TRUE.equals(primary.getIsPropagate())) {
-            List<Long> single = new ArrayList<>();
+            List<String> single = new ArrayList<>();
             single.add(primarySchemaId);
             return single;
         }
@@ -70,7 +70,7 @@ public class SchemaPropagator {
         List<ErpMdAcctSchema> allActive = findActiveSchemasByOrg(
                 orgId != null ? orgId : primary.getOrgId());
 
-        Set<Long> targets = new LinkedHashSet<>();
+        Set<String> targets = new LinkedHashSet<>();
         targets.add(primarySchemaId);
         for (ErpMdAcctSchema schema : allActive) {
             if (!schema.getId().equals(primarySchemaId)) {
@@ -91,7 +91,7 @@ public class SchemaPropagator {
     /**
      * 查找组织下指定 nature 的主账套（用于 Dispatcher 层 resolveAcctSchemaId 按 nature 选取而非 LIMIT 1）。
      */
-    public Long findPrimarySchemaId(Long orgId) {
+    public String findPrimarySchemaId(String orgId) {
         String nature = AppConfig.var(ErpFinConstants.CONFIG_DEFAULT_SCHEMA_NATURE,
                 ErpFinConstants.DEFAULT_SCHEMA_NATURE_FINANCIAL);
         List<ErpMdAcctSchema> schemas = findActiveSchemasByOrg(orgId);
@@ -103,12 +103,12 @@ public class SchemaPropagator {
         return schemas.isEmpty() ? null : schemas.get(0).getId();
     }
 
-    private ErpMdAcctSchema loadSchema(Long schemaId) {
+    private ErpMdAcctSchema loadSchema(String schemaId) {
         IEntityDao<ErpMdAcctSchema> dao = daoProvider.daoFor(ErpMdAcctSchema.class);
         return dao.getEntityById(schemaId);
     }
 
-    private List<ErpMdAcctSchema> findActiveSchemasByOrg(Long orgId) {
+    private List<ErpMdAcctSchema> findActiveSchemasByOrg(String orgId) {
         IEntityDao<ErpMdAcctSchema> dao = daoProvider.daoFor(ErpMdAcctSchema.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("orgId", orgId));

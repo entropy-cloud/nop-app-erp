@@ -175,19 +175,19 @@ public class _ErpFinBudgetCarryForwardLog extends DynamicOrmEntity{
 
     
     /* ID: ID */
-    private java.lang.Long _id;
+    private java.lang.String _id;
     
     /* 核算组织: ORG_ID */
-    private java.lang.Long _orgId;
+    private java.lang.String _orgId;
     
     /* 预算方案: SCENARIO_ID */
-    private java.lang.Long _scenarioId;
+    private java.lang.String _scenarioId;
     
     /* 源方案: SOURCE_SCENARIO_ID */
-    private java.lang.Long _sourceScenarioId;
+    private java.lang.String _sourceScenarioId;
     
     /* 目标方案: TARGET_SCENARIO_ID */
-    private java.lang.Long _targetScenarioId;
+    private java.lang.String _targetScenarioId;
     
     /* 结转规则: RULE */
     private java.lang.String _rule;
@@ -368,9 +368,9 @@ public class _ErpFinBudgetCarryForwardLog extends DynamicOrmEntity{
         switch(propId){
         
             case PROP_ID_id:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_id));
                }
                setId(typedValue);
@@ -378,9 +378,9 @@ public class _ErpFinBudgetCarryForwardLog extends DynamicOrmEntity{
             }
         
             case PROP_ID_orgId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_orgId));
                }
                setOrgId(typedValue);
@@ -388,9 +388,9 @@ public class _ErpFinBudgetCarryForwardLog extends DynamicOrmEntity{
             }
         
             case PROP_ID_scenarioId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_scenarioId));
                }
                setScenarioId(typedValue);
@@ -398,9 +398,9 @@ public class _ErpFinBudgetCarryForwardLog extends DynamicOrmEntity{
             }
         
             case PROP_ID_sourceScenarioId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_sourceScenarioId));
                }
                setSourceScenarioId(typedValue);
@@ -408,9 +408,9 @@ public class _ErpFinBudgetCarryForwardLog extends DynamicOrmEntity{
             }
         
             case PROP_ID_targetScenarioId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_targetScenarioId));
                }
                setTargetScenarioId(typedValue);
@@ -558,35 +558,35 @@ public class _ErpFinBudgetCarryForwardLog extends DynamicOrmEntity{
         
             case PROP_ID_id:{
                onInitProp(propId);
-               this._id = (java.lang.Long)value;
+               this._id = (java.lang.String)value;
                orm_id(); // 如果是设置主键字段，则触发watcher
                break;
             }
         
             case PROP_ID_orgId:{
                onInitProp(propId);
-               this._orgId = (java.lang.Long)value;
+               this._orgId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_scenarioId:{
                onInitProp(propId);
-               this._scenarioId = (java.lang.Long)value;
+               this._scenarioId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_sourceScenarioId:{
                onInitProp(propId);
-               this._sourceScenarioId = (java.lang.Long)value;
+               this._sourceScenarioId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_targetScenarioId:{
                onInitProp(propId);
-               this._targetScenarioId = (java.lang.Long)value;
+               this._targetScenarioId = (java.lang.String)value;
                
                break;
             }
@@ -691,7 +691,7 @@ public class _ErpFinBudgetCarryForwardLog extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final java.lang.Long getId(){
+    public final java.lang.String getId(){
          onPropGet(PROP_ID_id);
          return _id;
     }
@@ -699,7 +699,7 @@ public class _ErpFinBudgetCarryForwardLog extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final void setId(java.lang.Long value){
+    public final void setId(java.lang.String value){
         if(onPropSet(PROP_ID_id,value)){
             this._id = value;
             internalClearRefs(PROP_ID_id);
@@ -710,7 +710,7 @@ public class _ErpFinBudgetCarryForwardLog extends DynamicOrmEntity{
     /**
      * 核算组织: ORG_ID
      */
-    public final java.lang.Long getOrgId(){
+    public final java.lang.String getOrgId(){
          onPropGet(PROP_ID_orgId);
          return _orgId;
     }
@@ -718,7 +718,7 @@ public class _ErpFinBudgetCarryForwardLog extends DynamicOrmEntity{
     /**
      * 核算组织: ORG_ID
      */
-    public final void setOrgId(java.lang.Long value){
+    public final void setOrgId(java.lang.String value){
         if(onPropSet(PROP_ID_orgId,value)){
             this._orgId = value;
             internalClearRefs(PROP_ID_orgId);
@@ -729,7 +729,7 @@ public class _ErpFinBudgetCarryForwardLog extends DynamicOrmEntity{
     /**
      * 预算方案: SCENARIO_ID
      */
-    public final java.lang.Long getScenarioId(){
+    public final java.lang.String getScenarioId(){
          onPropGet(PROP_ID_scenarioId);
          return _scenarioId;
     }
@@ -737,7 +737,7 @@ public class _ErpFinBudgetCarryForwardLog extends DynamicOrmEntity{
     /**
      * 预算方案: SCENARIO_ID
      */
-    public final void setScenarioId(java.lang.Long value){
+    public final void setScenarioId(java.lang.String value){
         if(onPropSet(PROP_ID_scenarioId,value)){
             this._scenarioId = value;
             internalClearRefs(PROP_ID_scenarioId);
@@ -748,7 +748,7 @@ public class _ErpFinBudgetCarryForwardLog extends DynamicOrmEntity{
     /**
      * 源方案: SOURCE_SCENARIO_ID
      */
-    public final java.lang.Long getSourceScenarioId(){
+    public final java.lang.String getSourceScenarioId(){
          onPropGet(PROP_ID_sourceScenarioId);
          return _sourceScenarioId;
     }
@@ -756,7 +756,7 @@ public class _ErpFinBudgetCarryForwardLog extends DynamicOrmEntity{
     /**
      * 源方案: SOURCE_SCENARIO_ID
      */
-    public final void setSourceScenarioId(java.lang.Long value){
+    public final void setSourceScenarioId(java.lang.String value){
         if(onPropSet(PROP_ID_sourceScenarioId,value)){
             this._sourceScenarioId = value;
             internalClearRefs(PROP_ID_sourceScenarioId);
@@ -767,7 +767,7 @@ public class _ErpFinBudgetCarryForwardLog extends DynamicOrmEntity{
     /**
      * 目标方案: TARGET_SCENARIO_ID
      */
-    public final java.lang.Long getTargetScenarioId(){
+    public final java.lang.String getTargetScenarioId(){
          onPropGet(PROP_ID_targetScenarioId);
          return _targetScenarioId;
     }
@@ -775,7 +775,7 @@ public class _ErpFinBudgetCarryForwardLog extends DynamicOrmEntity{
     /**
      * 目标方案: TARGET_SCENARIO_ID
      */
-    public final void setTargetScenarioId(java.lang.Long value){
+    public final void setTargetScenarioId(java.lang.String value){
         if(onPropSet(PROP_ID_targetScenarioId,value)){
             this._targetScenarioId = value;
             internalClearRefs(PROP_ID_targetScenarioId);

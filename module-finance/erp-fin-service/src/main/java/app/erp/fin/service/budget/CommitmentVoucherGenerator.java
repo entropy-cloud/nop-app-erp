@@ -58,8 +58,8 @@ public class CommitmentVoucherGenerator {
      * @param amount          金额（本位币，正数）
      * @return 凭证 ID
      */
-    public Long generateCommitment(String sourceBillType, String sourceBillCode, ErpMdSubject subject, Long costCenterId,
-                                   Long orgId, Long acctSchemaId, Long periodId, Long currencyId,
+    public String generateCommitment(String sourceBillType, String sourceBillCode, ErpMdSubject subject, String costCenterId,
+                                   String orgId, String acctSchemaId, String periodId, String currencyId,
                                    BigDecimal amount) {
         String billType = resolveCommitmentBillType(sourceBillType);
         ErpFinVoucher voucher = writeCommitmentVoucher(sourceBillCode, billType, subject, costCenterId, orgId,
@@ -74,10 +74,10 @@ public class CommitmentVoucherGenerator {
      * @param sourceBillType  触发单据类型（与 commit 时一致，派发 billType 保证 lookup 对称）
      * @return 红冲凭证 ID 列表（空列表表示无原凭证可红冲）
      */
-    public List<Long> reverseCommitment(String sourceBillType, String sourceBillCode) {
+    public List<String> reverseCommitment(String sourceBillType, String sourceBillCode) {
         String billType = resolveCommitmentBillType(sourceBillType);
         List<ErpFinVoucher> originals = findCommitmentVouchers(billType, sourceBillCode);
-        List<Long> reversalIds = new ArrayList<>();
+        List<String> reversalIds = new ArrayList<>();
         for (ErpFinVoucher original : originals) {
             if (Boolean.TRUE.equals(original.getIsReversed())) {
                 continue;
@@ -116,9 +116,9 @@ public class CommitmentVoucherGenerator {
         return ErpFinConstants.COMMITMENT_VOUCHER_BILL_TYPE;
     }
 
-    private ErpFinVoucher writeCommitmentVoucher(String sourceBillCode, String billType, ErpMdSubject subject, Long costCenterId,
-                                                 Long orgId, Long acctSchemaId, Long periodId, Long currencyId,
-                                                 BigDecimal amount, boolean isReversal, Long reversalOfVoucherId) {
+    private ErpFinVoucher writeCommitmentVoucher(String sourceBillCode, String billType, ErpMdSubject subject, String costCenterId,
+                                                 String orgId, String acctSchemaId, String periodId, String currencyId,
+                                                 BigDecimal amount, boolean isReversal, String reversalOfVoucherId) {
         if (amount == null || amount.signum() == 0 || subject == null) {
             return null;
         }
@@ -149,7 +149,7 @@ public class CommitmentVoucherGenerator {
         voucher.setDocStatus(ErpFinConstants.VOUCHER_STATUS_POSTED);
         voucher.setPostedAt(CoreMetrics.currentTimestamp());
         voucherDao.saveEntity(voucher);
-        Long voucherId = voucher.getId();
+        String voucherId = voucher.getId();
 
         ErpFinVoucherLine line = lineDao.newEntity();
         line.setVoucherId(voucherId);
@@ -217,7 +217,7 @@ public class CommitmentVoucherGenerator {
         reversal.setDocStatus(ErpFinConstants.VOUCHER_STATUS_POSTED);
         reversal.setPostedAt(CoreMetrics.currentTimestamp());
         voucherDao.saveEntity(reversal);
-        Long reversalId = reversal.getId();
+        String reversalId = reversal.getId();
 
         int lineNo = 1;
         for (ErpFinVoucherLine ol : origLines) {
@@ -254,7 +254,7 @@ public class CommitmentVoucherGenerator {
         return reversal;
     }
 
-    private String findOriginalBillCode(Long voucherId, String billType) {
+    private String findOriginalBillCode(String voucherId, String billType) {
         IEntityDao<ErpFinVoucherBillR> billRDao = daoProvider.daoFor(ErpFinVoucherBillR.class);
         io.nop.api.core.beans.query.QueryBean q = new io.nop.api.core.beans.query.QueryBean();
         q.addFilter(io.nop.api.core.beans.FilterBeans.eq("voucherId", voucherId));
@@ -270,7 +270,7 @@ public class CommitmentVoucherGenerator {
                 ? ErpFinConstants.DC_CREDIT : ErpFinConstants.DC_DEBIT;
     }
 
-    private List<ErpFinVoucherLine> loadVoucherLines(Long voucherId) {
+    private List<ErpFinVoucherLine> loadVoucherLines(String voucherId) {
         IEntityDao<ErpFinVoucherLine> dao = daoProvider.daoFor(ErpFinVoucherLine.class);
         io.nop.api.core.beans.query.QueryBean q = new io.nop.api.core.beans.query.QueryBean();
         q.addFilter(io.nop.api.core.beans.FilterBeans.eq("voucherId", voucherId));
@@ -286,7 +286,7 @@ public class CommitmentVoucherGenerator {
         if (links.isEmpty()) {
             return new ArrayList<>();
         }
-        List<Long> voucherIds = new ArrayList<>(links.size());
+        List<String> voucherIds = new ArrayList<>(links.size());
         for (ErpFinVoucherBillR link : links) {
             voucherIds.add(link.getVoucherId());
         }

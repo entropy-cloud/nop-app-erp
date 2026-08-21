@@ -50,10 +50,10 @@ public class TestErpFinCashForecastRefresh extends JunitAutoTestCase {
     public void testRefreshForecastAggregatesArApAndNotes() {
         ormTemplate.runInSession(s -> {
             // 应收辅助账（RECEIVABLE，到期日在区间内）→ INFLOW
-            seedArApItem(5001L, ErpFinConstants.DIRECTION_RECEIVABLE, "AR_INVOICE", "AR-F-001",
+            seedArApItem("5001", ErpFinConstants.DIRECTION_RECEIVABLE, "AR_INVOICE", "AR-F-001",
                     LocalDate.of(2026, 8, 10), new BigDecimal("1000"));
             // 应付辅助账（PAYABLE，到期日在区间内）→ OUTFLOW
-            seedArApItem(5002L, ErpFinConstants.DIRECTION_PAYABLE, "AP_INVOICE", "AP-F-001",
+            seedArApItem("5002", ErpFinConstants.DIRECTION_PAYABLE, "AP_INVOICE", "AP-F-001",
                     LocalDate.of(2026, 8, 20), new BigDecimal("600"));
             // 应收票据到期（RECEIVED，非终态）→ INFLOW
             seedReceivable("NR-F-001", ErpFinConstants.NOTES_RECV_RECEIVED, new BigDecimal("2000"),
@@ -62,7 +62,7 @@ public class TestErpFinCashForecastRefresh extends JunitAutoTestCase {
             seedPayable("NP-F-001", ErpFinConstants.NOTES_PAY_ISSUED, new BigDecimal("800"),
                     LocalDate.of(2026, 8, 25));
             // 区间外到期（不参与预测）
-            seedArApItem(5003L, ErpFinConstants.DIRECTION_RECEIVABLE, "AR_INVOICE", "AR-OUT",
+            seedArApItem("5003", ErpFinConstants.DIRECTION_RECEIVABLE, "AR_INVOICE", "AR-OUT",
                     LocalDate.of(2026, 12, 31), new BigDecimal("9999"));
             return Boolean.TRUE;
         });
@@ -83,20 +83,20 @@ public class TestErpFinCashForecastRefresh extends JunitAutoTestCase {
 
     // ---------- seed helpers ----------
 
-    private void seedArApItem(Long partnerId, String direction, String sourceBillType, String sourceBillCode,
+    private void seedArApItem(String partnerId, String direction, String sourceBillType, String sourceBillCode,
                               LocalDate dueDate, BigDecimal amount) {
         IEntityDao<ErpFinArApItem> dao = daoProvider.daoFor(ErpFinArApItem.class);
         ErpFinArApItem item = new ErpFinArApItem();
         item.setCode("ARI-" + sourceBillCode);
-        item.setOrgId(1L);
-        item.setAcctSchemaId(1L);
+        item.setOrgId("1");
+        item.setAcctSchemaId("1");
         item.setDirection(direction);
         item.setPartnerId(partnerId);
         item.setSourceBillType(sourceBillType);
         item.setSourceBillCode(sourceBillCode);
         item.setBusinessDate(LocalDate.of(2026, 7, 1));
         item.setDueDate(dueDate);
-        item.setCurrencyId(1L);
+        item.setCurrencyId("1");
         item.setExchangeRate(BigDecimal.ONE);
         item.setAmountSource(amount);
         item.setAmountFunctional(amount);
@@ -112,12 +112,12 @@ public class TestErpFinCashForecastRefresh extends JunitAutoTestCase {
         IEntityDao<ErpFinNotesReceivable> dao = daoProvider.daoFor(ErpFinNotesReceivable.class);
         ErpFinNotesReceivable note = new ErpFinNotesReceivable();
         note.setCode(code);
-        note.setOrgId(1L);
+        note.setOrgId("1");
         note.setNotesType(ErpFinConstants.NOTES_TYPE_BANK_ACCEPTANCE);
         note.setNotesNo("N-" + code);
         note.setIssueDate(LocalDate.of(2026, 7, 1));
         note.setDueDate(dueDate);
-        note.setCurrencyId(1L);
+        note.setCurrencyId("1");
         note.setExchangeRate(BigDecimal.ONE);
         note.setAmountFunctional(amount);
         note.setAmountSource(amount);
@@ -129,12 +129,12 @@ public class TestErpFinCashForecastRefresh extends JunitAutoTestCase {
         IEntityDao<ErpFinNotesPayable> dao = daoProvider.daoFor(ErpFinNotesPayable.class);
         ErpFinNotesPayable note = new ErpFinNotesPayable();
         note.setCode(code);
-        note.setOrgId(1L);
+        note.setOrgId("1");
         note.setNotesType(ErpFinConstants.NOTES_TYPE_BANK_ACCEPTANCE);
         note.setNotesNo("N-" + code);
         note.setIssueDate(LocalDate.of(2026, 7, 1));
         note.setDueDate(dueDate);
-        note.setCurrencyId(1L);
+        note.setCurrencyId("1");
         note.setExchangeRate(BigDecimal.ONE);
         note.setAmountFunctional(amount);
         note.setAmountSource(amount);

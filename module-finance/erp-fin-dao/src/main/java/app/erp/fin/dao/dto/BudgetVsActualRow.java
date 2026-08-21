@@ -16,19 +16,19 @@ import java.math.BigDecimal;
  */
 public class BudgetVsActualRow {
 
-    private Long subjectId;
+    private String subjectId;
     private String subjectCode;
     private String subjectName;
-    private Long periodId;
-    private Long costCenterId;
+    private String periodId;
+    private String costCenterId;
     private Long projectId;
     private BigDecimal budgetAmount = BigDecimal.ZERO;
     private BigDecimal commitmentAmount = BigDecimal.ZERO;
     private BigDecimal actualAmount = BigDecimal.ZERO;
     private BigDecimal availableAmount = BigDecimal.ZERO;
 
-    public Long getSubjectId() { return subjectId; }
-    public void setSubjectId(Long subjectId) { this.subjectId = subjectId; }
+    public String getSubjectId() { return subjectId; }
+    public void setSubjectId(String subjectId) { this.subjectId = subjectId; }
 
     public String getSubjectCode() { return subjectCode; }
     public void setSubjectCode(String subjectCode) { this.subjectCode = subjectCode; }
@@ -36,11 +36,11 @@ public class BudgetVsActualRow {
     public String getSubjectName() { return subjectName; }
     public void setSubjectName(String subjectName) { this.subjectName = subjectName; }
 
-    public Long getPeriodId() { return periodId; }
-    public void setPeriodId(Long periodId) { this.periodId = periodId; }
+    public String getPeriodId() { return periodId; }
+    public void setPeriodId(String periodId) { this.periodId = periodId; }
 
-    public Long getCostCenterId() { return costCenterId; }
-    public void setCostCenterId(Long costCenterId) { this.costCenterId = costCenterId; }
+    public String getCostCenterId() { return costCenterId; }
+    public void setCostCenterId(String costCenterId) { this.costCenterId = costCenterId; }
 
     public Long getProjectId() { return projectId; }
     public void setProjectId(Long projectId) { this.projectId = projectId; }

@@ -55,13 +55,13 @@ public class CreditFacilityInterestVoucherBuilder {
      * @param context        服务上下文
      * @return 新生成的凭证 ID；幂等命中（已过账同区间）返回 {@code null}
      */
-    public Long post(ErpFinCreditFacility facility, LocalDate fromDate, LocalDate toDate,
+    public String post(ErpFinCreditFacility facility, LocalDate fromDate, LocalDate toDate,
                      BigDecimal interestAmount, IServiceContext context) {
-        Long acctSchemaId = AcctSchemaResolver.resolvePrimarySchemaId(daoProvider, facility.getOrgId());
+        String acctSchemaId = AcctSchemaResolver.resolvePrimarySchemaId(daoProvider, facility.getOrgId());
         if (acctSchemaId == null) {
-            acctSchemaId = 1L;
+            acctSchemaId = "1";
         }
-        Long currencyId = resolveCurrencyId(facility, acctSchemaId);
+        String currencyId = resolveCurrencyId(facility, acctSchemaId);
 
         PostingEvent event = new PostingEvent();
         event.setBusinessType(ErpFinBusinessType.CREDIT_FACILITY_INTEREST);
@@ -81,7 +81,7 @@ public class CreditFacilityInterestVoucherBuilder {
     }
 
     /** 构造区间级幂等 billHeadCode：CFI-INT-{facilityId}-{fromDate}_{toDate}。 */
-    public static String buildBillHeadCode(Long facilityId, LocalDate fromDate, LocalDate toDate) {
+    public static String buildBillHeadCode(String facilityId, LocalDate fromDate, LocalDate toDate) {
         return BILL_HEAD_CODE_PREFIX + facilityId + "-" + fromDate + "_" + toDate;
     }
 
@@ -89,7 +89,7 @@ public class CreditFacilityInterestVoucherBuilder {
      * 币种解析：优先 {@code facility.fundAccount.currencyId}；facility 未绑定资金账户或账户无币种时
      * 兜底取 {@code acctSchema.functionalCurrencyId}（本位币）。
      */
-    protected Long resolveCurrencyId(ErpFinCreditFacility facility, Long acctSchemaId) {
+    protected String resolveCurrencyId(ErpFinCreditFacility facility, String acctSchemaId) {
         if (facility.getFundAccountId() != null) {
             ErpFinFundAccount account = facility.getFundAccount();
             if (account != null && account.getCurrencyId() != null) {

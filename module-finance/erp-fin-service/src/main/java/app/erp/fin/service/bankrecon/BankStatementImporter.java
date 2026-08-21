@@ -41,7 +41,7 @@ public class BankStatementImporter {
     @Inject
     IDaoProvider daoProvider;
 
-    public ErpFinBankStatement importStatement(Long fundAccountId, LocalDate statementDate,
+    public ErpFinBankStatement importStatement(String fundAccountId, LocalDate statementDate,
                                                 List<BankStatementLineInput> lines) {
         if (fundAccountId == null || statementDate == null || lines == null || lines.isEmpty()) {
             throw new NopException(ErpFinErrors.ERR_BANK_STMT_NOT_FOUND)
@@ -109,7 +109,7 @@ public class BankStatementImporter {
         return head;
     }
 
-    protected ErpFinFundAccount requireBankAccount(Long fundAccountId) {
+    protected ErpFinFundAccount requireBankAccount(String fundAccountId) {
         IEntityDao<ErpFinFundAccount> dao = daoProvider.daoFor(ErpFinFundAccount.class);
         ErpFinFundAccount account = dao.getEntityById(fundAccountId);
         if (account == null) {
@@ -124,7 +124,7 @@ public class BankStatementImporter {
         return account;
     }
 
-    protected void validateLine(BankStatementLineInput in, boolean strictRefNo, Long fundAccountId) {
+    protected void validateLine(BankStatementLineInput in, boolean strictRefNo, String fundAccountId) {
         if (in.getTransactionDate() == null || in.getDcDirection() == null
                 || in.getAmount() == null || in.getAmount().signum() < 0) {
             throw new NopException(ErpFinErrors.ERR_BANK_IMPORT_LINE_INVALID)
@@ -147,7 +147,7 @@ public class BankStatementImporter {
      * 校验待导入行无重复（本次批次内 + 与账户已有流水对比）。refNo 非空时按 refNo 去重，
      * 否则按 (transactionDate, amount, dcDirection) 组合键去重。
      */
-    protected void assertNoDuplicates(Long fundAccountId, List<BankStatementLineInput> lines) {
+    protected void assertNoDuplicates(String fundAccountId, List<BankStatementLineInput> lines) {
         Set<String> seenRefNo = new HashSet<>();
         Set<String> seenComposite = new HashSet<>();
         for (BankStatementLineInput in : lines) {
@@ -181,16 +181,16 @@ public class BankStatementImporter {
     }
 
     /** 经 statement.fundAccountId 关联反查银行流水行是否已存在同 refNo（避免全表扫描）。 */
-    protected boolean existsByRefNo(Long fundAccountId, String refNo) {
-        Long statementId = findStatementIdByAccount(fundAccountId);
+    protected boolean existsByRefNo(String fundAccountId, String refNo) {
+        String statementId = findStatementIdByAccount(fundAccountId);
         if (statementId == null) {
             return false;
         }
         return countLinesByFilter(and(eq("statementId", statementId), eq("refNo", refNo))) > 0;
     }
 
-    protected boolean existsByComposite(Long fundAccountId, LocalDate txnDate, BigDecimal amount, String dcDirection) {
-        Long statementId = findStatementIdByAccount(fundAccountId);
+    protected boolean existsByComposite(String fundAccountId, LocalDate txnDate, BigDecimal amount, String dcDirection) {
+        String statementId = findStatementIdByAccount(fundAccountId);
         if (statementId == null) {
             return false;
         }
@@ -198,7 +198,7 @@ public class BankStatementImporter {
                 eq("transactionDate", txnDate), eq("amount", amount), eq("dcDirection", dcDirection))) > 0;
     }
 
-    protected Long findStatementIdByAccount(Long fundAccountId) {
+    protected String findStatementIdByAccount(String fundAccountId) {
         IEntityDao<ErpFinBankStatement> dao = daoProvider.daoFor(ErpFinBankStatement.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("fundAccountId", fundAccountId));

@@ -22,7 +22,7 @@ import app.erp.fin.dao.entity.ErpFinNotesReceivable;
 public interface IErpFinNotesReceivableBiz extends ICrudBiz<ErpFinNotesReceivable> {
 
     @BizMutation
-    ErpFinNotesReceivable receive(@Name("notesId") Long notesId, IServiceContext context);
+    ErpFinNotesReceivable receive(@Name("notesId") String notesId, IServiceContext context);
 
     /**
      * 票据贴现（{@code treasury.md §业财过账}）。{@code exchangeRate} 为贴现日即期汇率（外币票据 FX 派生用），
@@ -30,27 +30,27 @@ public interface IErpFinNotesReceivableBiz extends ICrudBiz<ErpFinNotesReceivabl
      * 详见 plan 2026-07-19-0730-1。
      */
     @BizMutation
-    ErpFinNotesReceivable discount(@Name("notesId") Long notesId,
+    ErpFinNotesReceivable discount(@Name("notesId") String notesId,
                                    @Name("discountDate") LocalDate discountDate,
-                                   @Name("bankId") Long bankId,
+                                   @Name("bankId") String bankId,
                                    @Name("discountRate") BigDecimal discountRate,
                                    @Optional @Name("exchangeRate") BigDecimal exchangeRate,
                                    IServiceContext context);
 
     @BizMutation
-    ErpFinNotesReceivable endorse(@Name("notesId") Long notesId,
-                                  @Name("endorsementFromId") Long endorsementFromId,
+    ErpFinNotesReceivable endorse(@Name("notesId") String notesId,
+                                  @Name("endorsementFromId") String endorsementFromId,
                                   IServiceContext context);
 
     @BizMutation
-    ErpFinNotesReceivable collect(@Name("notesId") Long notesId, IServiceContext context);
+    ErpFinNotesReceivable collect(@Name("notesId") String notesId, IServiceContext context);
 
     @BizMutation
-    ErpFinNotesReceivable honor(@Name("notesId") Long notesId, IServiceContext context);
+    ErpFinNotesReceivable honor(@Name("notesId") String notesId, IServiceContext context);
 
     @BizMutation
-    ErpFinNotesReceivable dishonor(@Name("notesId") Long notesId, IServiceContext context);
+    ErpFinNotesReceivable dishonor(@Name("notesId") String notesId, IServiceContext context);
 
     @BizMutation
-    ErpFinNotesReceivable writeOff(@Name("notesId") Long notesId, IServiceContext context);
+    ErpFinNotesReceivable writeOff(@Name("notesId") String notesId, IServiceContext context);
 }

@@ -57,14 +57,14 @@ public class TestErpFinExpenseClaimPosting extends JunitAutoTestCase {
 
     @Test
     public void testApprovePostsAndGeneratesPayableSubledger() {
-        long partnerId = 9901L;
-        Long claimId = ormTemplate.runInSession(session -> {
+        String partnerId = "9901";
+        String claimId = ormTemplate.runInSession(session -> {
             seedOpenPeriod("2026-06", 2026, 6, LocalDate.of(2026, 6, 1), LocalDate.of(2026, 6, 30));
-            seedAcctSchema(1L);
+            seedAcctSchema("1");
             seedSubject("6602", "管理费用");
             seedSubject("2221", "应交税费-进项税额");
             seedSubject("2241", "其他应付款-员工");
-            Long empId = seedEmployee(partnerId, ErpFinConstants.EMPLOYEE_STATUS_ACTIVE);
+            String empId = seedEmployee(partnerId, ErpFinConstants.EMPLOYEE_STATUS_ACTIVE);
             return seedClaim("EC-POST-001", empId, ErpFinConstants.APPROVE_STATUS_SUBMITTED,
                     new BigDecimal("100"), new BigDecimal("13"), new BigDecimal("113"),
                     ErpFinConstants.PAYMENT_MODE_OWN_ACCOUNT);
@@ -88,14 +88,14 @@ public class TestErpFinExpenseClaimPosting extends JunitAutoTestCase {
 
     @Test
     public void testReverseApproveCancelsSubledger() {
-        long partnerId = 9902L;
-        Long claimId = ormTemplate.runInSession(session -> {
+        String partnerId = "9902";
+        String claimId = ormTemplate.runInSession(session -> {
             seedOpenPeriod("2026-06", 2026, 6, LocalDate.of(2026, 6, 1), LocalDate.of(2026, 6, 30));
-            seedAcctSchema(1L);
+            seedAcctSchema("1");
             seedSubject("6602", "管理费用");
             seedSubject("2221", "应交税费-进项税额");
             seedSubject("2241", "其他应付款-员工");
-            Long empId = seedEmployee(partnerId, ErpFinConstants.EMPLOYEE_STATUS_ACTIVE);
+            String empId = seedEmployee(partnerId, ErpFinConstants.EMPLOYEE_STATUS_ACTIVE);
             return seedClaim("EC-POST-002", empId, ErpFinConstants.APPROVE_STATUS_SUBMITTED,
                     new BigDecimal("100"), new BigDecimal("13"), new BigDecimal("113"),
                     ErpFinConstants.PAYMENT_MODE_OWN_ACCOUNT);
@@ -116,14 +116,14 @@ public class TestErpFinExpenseClaimPosting extends JunitAutoTestCase {
 
     @Test
     public void testCompanyAccountPaymentModeCreditBank() {
-        long partnerId = 9903L;
-        Long claimId = ormTemplate.runInSession(session -> {
+        String partnerId = "9903";
+        String claimId = ormTemplate.runInSession(session -> {
             seedOpenPeriod("2026-06", 2026, 6, LocalDate.of(2026, 6, 1), LocalDate.of(2026, 6, 30));
-            seedAcctSchema(1L);
+            seedAcctSchema("1");
             seedSubject("6602", "管理费用");
             seedSubject("2221", "应交税费-进项税额");
             seedSubject("1002", "银行存款");
-            Long empId = seedEmployee(partnerId, ErpFinConstants.EMPLOYEE_STATUS_ACTIVE);
+            String empId = seedEmployee(partnerId, ErpFinConstants.EMPLOYEE_STATUS_ACTIVE);
             return seedClaim("EC-POST-003", empId, ErpFinConstants.APPROVE_STATUS_SUBMITTED,
                     new BigDecimal("100"), new BigDecimal("13"), new BigDecimal("113"),
                     ErpFinConstants.PAYMENT_MODE_COMPANY_ACCOUNT);
@@ -139,12 +139,12 @@ public class TestErpFinExpenseClaimPosting extends JunitAutoTestCase {
 
     // ---------- rpc helpers ----------
 
-    private ApiResponse<?> approve(Long claimId) {
+    private ApiResponse<?> approve(String claimId) {
         return executeRpc(mutation, "ErpFinExpenseClaim__approve",
                 ApiRequest.build(Map.of("id", String.valueOf(claimId))));
     }
 
-    private ApiResponse<?> reverseApprove(Long claimId) {
+    private ApiResponse<?> reverseApprove(String claimId) {
         return executeRpc(mutation, "ErpFinExpenseClaim__reverseApprove",
                 ApiRequest.build(Map.of("id", String.valueOf(claimId))));
     }
@@ -154,22 +154,22 @@ public class TestErpFinExpenseClaimPosting extends JunitAutoTestCase {
         return graphQLEngine.executeRpc(ctx);
     }
 
-    private ErpFinExpenseClaim fetchClaim(Long id) {
+    private ErpFinExpenseClaim fetchClaim(String id) {
         return daoProvider.daoFor(ErpFinExpenseClaim.class).getEntityById(id);
     }
 
     // ---------- seed helpers ----------
 
-    private Long seedClaim(String code, Long claimantId, String approveStatus,
+    private String seedClaim(String code, String claimantId, String approveStatus,
                            BigDecimal amountWithoutTax, BigDecimal tax, BigDecimal withTax, String paymentMode) {
         IEntityDao<ErpFinExpenseClaim> dao = daoProvider.daoFor(ErpFinExpenseClaim.class);
         ErpFinExpenseClaim claim = new ErpFinExpenseClaim();
         claim.setCode(code);
-        claim.setOrgId(1L);
+        claim.setOrgId("1");
         claim.setClaimantId(claimantId);
         claim.setBusinessDate(LocalDate.of(2026, 6, 15));
         claim.setPaymentMode(paymentMode);
-        claim.setCurrencyId(1L);
+        claim.setCurrencyId("1");
         claim.setExchangeRate(BigDecimal.ONE);
         claim.setAmountWithoutTax(amountWithoutTax);
         claim.setTaxAmount(tax);
@@ -191,12 +191,12 @@ public class TestErpFinExpenseClaimPosting extends JunitAutoTestCase {
         return claim.getId();
     }
 
-    private Long seedEmployee(long partnerId, String status) {
+    private String seedEmployee(String partnerId, String status) {
         IEntityDao<ErpMdEmployee> dao = daoProvider.daoFor(ErpMdEmployee.class);
         ErpMdEmployee emp = new ErpMdEmployee();
         emp.setCode("E-" + partnerId);
         emp.setName("员工-" + partnerId);
-        emp.setOrgId(1L);
+        emp.setOrgId("1");
         emp.setPartnerId(partnerId);
         emp.setStatus(status);
         dao.saveEntity(emp);
@@ -214,14 +214,14 @@ public class TestErpFinExpenseClaimPosting extends JunitAutoTestCase {
         dao.saveEntity(subject);
     }
 
-    private void seedAcctSchema(long orgId) {
+    private void seedAcctSchema(String orgId) {
         IEntityDao<ErpMdAcctSchema> dao = daoProvider.daoFor(ErpMdAcctSchema.class);
         ErpMdAcctSchema schema = new ErpMdAcctSchema();
         schema.setCode("AS-" + orgId);
         schema.setName("账套-" + orgId);
         schema.setOrgId(orgId);
         schema.setNature("FINANCIAL");
-        schema.setFunctionalCurrencyId(1L);
+        schema.setFunctionalCurrencyId("1");
         schema.setStatus("ACTIVE");
         dao.saveEntity(schema);
     }
@@ -231,7 +231,7 @@ public class TestErpFinExpenseClaimPosting extends JunitAutoTestCase {
         ErpFinAccountingPeriod period = new ErpFinAccountingPeriod();
         period.setCode(code);
         period.setName(code);
-        period.setOrgId(1L);
+        period.setOrgId("1");
         period.setYear(year);
         period.setMonth(month);
         period.setStartDate(start);

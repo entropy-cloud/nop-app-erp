@@ -45,7 +45,7 @@ public class TestErpFinAnnualClose extends PeriodCloseTestSupport {
     @Test
     public void testAnnualCloseTransferProfitToRetainedEarnings() {
         // 12 月期间：收入 1000 / 费用 400 → 月度结转后本年利润 4103 贷方净额 600（净利润）。
-        Long periodId = seedDecemberPeriod();
+        String periodId = seedDecemberPeriod();
 
         ErpFinAccountingPeriod period = ormTemplate.runInSession(session -> periodBiz.closePeriod(periodId, CTX));
         assertEquals(ErpFinConstants.PERIOD_STATUS_CLOSED, period.getStatus(), "12 月结账后 CLOSED");
@@ -75,7 +75,7 @@ public class TestErpFinAnnualClose extends PeriodCloseTestSupport {
     /** 反结账红冲年度结转凭证；次年期间已存在时反结账被阻止。 */
     @Test
     public void testReverseCloseBlockedWhenNextYearExists() {
-        Long periodId = seedDecemberPeriod();
+        String periodId = seedDecemberPeriod();
         ormTemplate.runInSession(() -> periodBiz.closePeriod(periodId, CTX));
 
         // 最终锁定后尝试反结账：次年期间已创建 → 阻止。
@@ -89,7 +89,7 @@ public class TestErpFinAnnualClose extends PeriodCloseTestSupport {
     public void testReverseCloseReversesAnnualVoucherWhenNoNextYear() {
         // annual-close-enabled=true 但 auto-generate-next-year-periods=false → 年度结转执行但不创建次年期间。
         // 用独立 yaml 覆盖；此处以默认配置先验证年度结转凭证生成后可被红冲（关闭次年创建场景）。
-        Long periodId = seedDecemberPeriod();
+        String periodId = seedDecemberPeriod();
         ormTemplate.runInSession(() -> periodBiz.closePeriod(periodId, CTX));
         assertTrue(countVouchersByBillCode("ANNUAL-CLOSE-2025-12",
                 ErpFinBusinessType.PROFIT_TO_RETAINED_EARNINGS.name()) >= 1, "年度结转凭证已生成");
@@ -108,20 +108,20 @@ public class TestErpFinAnnualClose extends PeriodCloseTestSupport {
     @Test
     public void testBankFxRevaluationForeignAccount() {
         // 外币银行账户：source 余额 100 EUR，账面本位币 800（历史汇率 8），期末汇率 8.5 → 重估 850，升值 50（收益）。
-        Long periodId = ormTemplate.runInSession(session -> {
-            Long pid = seedOpenPeriod("2025-08", 2025, 8);
+        String periodId = ormTemplate.runInSession(session -> {
+            String pid = seedOpenPeriod("2025-08", 2025, 8);
             Map<String, ErpMdSubject> subjects = new HashMap<>();
             subjects.put("1001", seedSubject("1001", "库存现金", "ASSET", ErpFinConstants.DC_DEBIT));
             subjects.put("1002", seedSubject("1002", "银行存款", "ASSET", ErpFinConstants.DC_DEBIT));
             subjects.put("6603", seedSubject("6603", "汇兑损益", ErpFinConstants.SUBJECT_CLASS_EXPENSE, ErpFinConstants.DC_DEBIT));
-            seedCurrency(1L, "CNY", true);
-            seedCurrency(2L, "EUR", false);
+            seedCurrency("1", "CNY", true);
+            seedCurrency("2", "EUR", false);
             // 建立账面：借银行存款 800 / 贷库存现金 800（非损益类，不触发 P&L 结转需要 CYP 科目）。
             seedPostedVoucher("V-BANK-1", pid, LocalDate.of(2025, 8, 10), subjects,
                     new Object[]{"1002", "银行存款", ErpFinConstants.DC_DEBIT, new BigDecimal("800")},
                     new Object[]{"1001", "库存现金", ErpFinConstants.DC_CREDIT, new BigDecimal("800")});
             // 外币银行账户：currentBalance(source)=100 EUR，subjectId=银行存款科目。
-            seedFundAccount("BANK-EUR", 2L, subjects.get("1002").getId(), new BigDecimal("100"));
+            seedFundAccount("BANK-EUR", "2", subjects.get("1002").getId(), new BigDecimal("100"));
             return pid;
         });
 
@@ -135,20 +135,20 @@ public class TestErpFinAnnualClose extends PeriodCloseTestSupport {
     /** 本位币银行账户不重估（无外币账户时银行重估无凭证）。 */
     @Test
     public void testBankFxRevaluationFunctionalAccountSkipped() {
-        Long periodId = ormTemplate.runInSession(session -> {
-            Long pid = seedOpenPeriod("2025-09", 2025, 9);
+        String periodId = ormTemplate.runInSession(session -> {
+            String pid = seedOpenPeriod("2025-09", 2025, 9);
             Map<String, ErpMdSubject> subjects = new HashMap<>();
             subjects.put("1001", seedSubject("1001", "库存现金", "ASSET", ErpFinConstants.DC_DEBIT));
             subjects.put("1002", seedSubject("1002", "银行存款", "ASSET", ErpFinConstants.DC_DEBIT));
             subjects.put("6603", seedSubject("6603", "汇兑损益", ErpFinConstants.SUBJECT_CLASS_EXPENSE, ErpFinConstants.DC_DEBIT));
-            seedCurrency(1L, "CNY", true);
-            seedCurrency(2L, "EUR", false);
+            seedCurrency("1", "CNY", true);
+            seedCurrency("2", "EUR", false);
             // 本位币账户：账面 = currentBalance（无差额）。
             seedPostedVoucher("V-BANK-FN", pid, LocalDate.of(2025, 9, 10), subjects,
                     new Object[]{"1002", "银行存款", ErpFinConstants.DC_DEBIT, new BigDecimal("100")},
                     new Object[]{"1001", "库存现金", ErpFinConstants.DC_CREDIT, new BigDecimal("100")});
             // 本位币账户（currencyId=1）→ 不重估。
-            seedFundAccount("BANK-CNY", 1L, subjects.get("1002").getId(), new BigDecimal("100"));
+            seedFundAccount("BANK-CNY", "1", subjects.get("1002").getId(), new BigDecimal("100"));
             return pid;
         });
 
@@ -160,16 +160,16 @@ public class TestErpFinAnnualClose extends PeriodCloseTestSupport {
 
     // ---------- helpers ----------
 
-    private Long seedDecemberPeriod() {
+    private String seedDecemberPeriod() {
         return ormTemplate.runInSession(session -> {
-            Long pid = seedOpenPeriod("2025-12", 2025, 12);
+            String pid = seedOpenPeriod("2025-12", 2025, 12);
             Map<String, ErpMdSubject> subjects = new HashMap<>();
             subjects.put("1001", seedSubject("1001", "库存现金", "ASSET", ErpFinConstants.DC_DEBIT));
             subjects.put("6001", seedSubject("6001", "主营业务收入", ErpFinConstants.SUBJECT_CLASS_INCOME, ErpFinConstants.DC_CREDIT));
             subjects.put("6601", seedSubject("6601", "销售费用", ErpFinConstants.SUBJECT_CLASS_EXPENSE, ErpFinConstants.DC_DEBIT));
             subjects.put("4103", seedSubject("4103", "本年利润", "EQUITY", ErpFinConstants.DC_CREDIT));
             subjects.put("4104", seedSubject("4104", "未分配利润", "EQUITY", ErpFinConstants.DC_CREDIT));
-            seedCurrency(1L, "CNY", true);
+            seedCurrency("1", "CNY", true);
             // 收入 1000 / 费用 400 → 月度结转后 4103 贷方净 600。
             seedPostedVoucher("V-DEC-INC", pid, LocalDate.of(2025, 12, 10), subjects,
                     new Object[]{"1001", "库存现金", ErpFinConstants.DC_DEBIT, new BigDecimal("1000")},
@@ -181,13 +181,13 @@ public class TestErpFinAnnualClose extends PeriodCloseTestSupport {
         });
     }
 
-    private void seedFundAccount(String code, Long currencyId, Long subjectId, BigDecimal currentBalance) {
+    private void seedFundAccount(String code, String currencyId, String subjectId, BigDecimal currentBalance) {
         IEntityDao<app.erp.fin.dao.entity.ErpFinFundAccount> dao =
                 daoProvider.daoFor(app.erp.fin.dao.entity.ErpFinFundAccount.class);
         app.erp.fin.dao.entity.ErpFinFundAccount acc = new app.erp.fin.dao.entity.ErpFinFundAccount();
         acc.setCode(code);
         acc.setName(code);
-        acc.setOrgId(1L);
+        acc.setOrgId("1");
         acc.setAccountType(ErpFinConstants.FUND_ACCOUNT_TYPE_BANK);
         acc.setSubjectId(subjectId);
         acc.setCurrencyId(currencyId);
@@ -210,7 +210,7 @@ public class TestErpFinAnnualClose extends PeriodCloseTestSupport {
         return list.isEmpty() ? null : list.get(0);
     }
 
-    private boolean hasYearOpeningForNextJan(Long closedPeriodId) {
+    private boolean hasYearOpeningForNextJan(String closedPeriodId) {
         ErpFinAccountingPeriod nextJan = findPeriod(2026, 1);
         if (nextJan == null) {
             return false;

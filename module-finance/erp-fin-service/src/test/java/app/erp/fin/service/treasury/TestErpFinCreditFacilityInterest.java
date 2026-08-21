@@ -81,17 +81,17 @@ public class TestErpFinCreditFacilityInterest extends JunitAutoTestCase {
 
     @Test
     public void testAccrueInterestHappyPath() {
-        Long[] ids = ormTemplate.runInSession(s -> {
+        String[] ids = ormTemplate.runInSession(s -> {
             seedBase();
-            Long facilityId = seedCreditFacility("CF-INT-001",
+            String facilityId = seedCreditFacility("CF-INT-001",
                     new BigDecimal("300"), new BigDecimal("1000"));
-            return new Long[]{facilityId};
+            return new String[]{facilityId};
         });
-        Long facilityId = ids[0];
+        String facilityId = ids[0];
 
         LocalDate from = LocalDate.of(2026, 8, 1);
         LocalDate to = LocalDate.of(2026, 8, 31);
-        Long voucherId = ormTemplate.runInSession(session ->
+        String voucherId = ormTemplate.runInSession(session ->
                 creditFacilityBiz.accrueInterest(facilityId, from, to, CTX));
 
         assertNotNull(voucherId, "正路径应生成并返回凭证 ID");
@@ -126,19 +126,19 @@ public class TestErpFinCreditFacilityInterest extends JunitAutoTestCase {
 
     @Test
     public void testIdempotentSecondCallReturnsNull() {
-        Long[] ids = ormTemplate.runInSession(s -> {
+        String[] ids = ormTemplate.runInSession(s -> {
             seedBase();
-            Long facilityId = seedCreditFacility("CF-INT-002",
+            String facilityId = seedCreditFacility("CF-INT-002",
                     new BigDecimal("300"), new BigDecimal("1000"));
-            return new Long[]{facilityId};
+            return new String[]{facilityId};
         });
-        Long facilityId = ids[0];
+        String facilityId = ids[0];
 
         LocalDate from = LocalDate.of(2026, 8, 1);
         LocalDate to = LocalDate.of(2026, 8, 31);
-        Long firstVoucherId = ormTemplate.runInSession(session ->
+        String firstVoucherId = ormTemplate.runInSession(session ->
                 creditFacilityBiz.accrueInterest(facilityId, from, to, CTX));
-        Long secondVoucherId = ormTemplate.runInSession(session ->
+        String secondVoucherId = ormTemplate.runInSession(session ->
                 creditFacilityBiz.accrueInterest(facilityId, from, to, CTX));
 
         assertNotNull(firstVoucherId, "首次调用应生成凭证");
@@ -157,15 +157,15 @@ public class TestErpFinCreditFacilityInterest extends JunitAutoTestCase {
 
     @Test
     public void testZeroUsedAmountReturnsNullNoVoucher() {
-        Long[] ids = ormTemplate.runInSession(s -> {
+        String[] ids = ormTemplate.runInSession(s -> {
             seedBase();
-            Long facilityId = seedCreditFacility("CF-INT-003",
+            String facilityId = seedCreditFacility("CF-INT-003",
                     BigDecimal.ZERO, new BigDecimal("1000"));
-            return new Long[]{facilityId};
+            return new String[]{facilityId};
         });
-        Long facilityId = ids[0];
+        String facilityId = ids[0];
 
-        Long voucherId = ormTemplate.runInSession(session ->
+        String voucherId = ormTemplate.runInSession(session ->
                 creditFacilityBiz.accrueInterest(facilityId,
                         LocalDate.of(2026, 8, 1), LocalDate.of(2026, 8, 31), CTX));
 
@@ -177,13 +177,13 @@ public class TestErpFinCreditFacilityInterest extends JunitAutoTestCase {
 
     @Test
     public void testRateZeroThrowsGuard() {
-        Long[] ids = ormTemplate.runInSession(s -> {
+        String[] ids = ormTemplate.runInSession(s -> {
             seedBase();
-            Long facilityId = seedCreditFacility("CF-INT-004",
+            String facilityId = seedCreditFacility("CF-INT-004",
                     new BigDecimal("300"), new BigDecimal("1000"));
-            return new Long[]{facilityId};
+            return new String[]{facilityId};
         });
-        Long facilityId = ids[0];
+        String facilityId = ids[0];
 
         BigDecimal originalRate = AppConfig.var(
                 ErpFinConstants.CONFIG_CREDIT_FACILITY_DEFAULT_INTEREST_RATE, BigDecimal.ZERO);
@@ -205,13 +205,13 @@ public class TestErpFinCreditFacilityInterest extends JunitAutoTestCase {
 
     @Test
     public void testInvalidDateRangeThrowsGuard() {
-        Long[] ids = ormTemplate.runInSession(s -> {
+        String[] ids = ormTemplate.runInSession(s -> {
             seedBase();
-            Long facilityId = seedCreditFacility("CF-INT-005",
+            String facilityId = seedCreditFacility("CF-INT-005",
                     new BigDecimal("300"), new BigDecimal("1000"));
-            return new Long[]{facilityId};
+            return new String[]{facilityId};
         });
-        Long facilityId = ids[0];
+        String facilityId = ids[0];
 
         assertThrows(NopException.class, () -> ormTemplate.runInSession(session ->
                         creditFacilityBiz.accrueInterest(facilityId,
@@ -265,19 +265,19 @@ public class TestErpFinCreditFacilityInterest extends JunitAutoTestCase {
 
     private void seedBase() {
         seedOpenPeriod("2026-08", 2026, 8, LocalDate.of(2026, 8, 1), LocalDate.of(2026, 8, 31));
-        seedAcctSchema(1L);
+        seedAcctSchema("1");
         seedSubject("6603", "财务费用-利息支出", ErpFinConstants.SUBJECT_CLASS_EXPENSE, DC_DEBIT);
         seedSubject("1002", "银行存款", "ASSET", DC_DEBIT);
     }
 
-    private Long seedCreditFacility(String code, BigDecimal used, BigDecimal total) {
+    private String seedCreditFacility(String code, BigDecimal used, BigDecimal total) {
         IEntityDao<ErpFinFundAccount> faDao = daoProvider.daoFor(ErpFinFundAccount.class);
         ErpFinFundAccount account = faDao.newEntity();
         account.setCode("FA-" + code);
         account.setName("Bank-" + code);
-        account.setOrgId(1L);
+        account.setOrgId("1");
         account.setAccountType(ErpFinConstants.FUND_ACCOUNT_TYPE_BANK);
-        account.setCurrencyId(1L);
+        account.setCurrencyId("1");
         account.setOpeningBalance(total);
         account.setCurrentBalance(total);
         account.setStatus("ACTIVE");
@@ -286,7 +286,7 @@ public class TestErpFinCreditFacilityInterest extends JunitAutoTestCase {
         IEntityDao<ErpFinCreditFacility> dao = daoProvider.daoFor(ErpFinCreditFacility.class);
         ErpFinCreditFacility facility = dao.newEntity();
         facility.setCode(code);
-        facility.setOrgId(1L);
+        facility.setOrgId("1");
         facility.setFundAccountId(account.getId());
         facility.setFacilityType("BANK_ACCEPTANCE_LINE");
         facility.setTotalAmount(total);
@@ -299,7 +299,7 @@ public class TestErpFinCreditFacilityInterest extends JunitAutoTestCase {
         return facility.getId();
     }
 
-    private ErpFinCreditFacility reloadFacility(Long facilityId) {
+    private ErpFinCreditFacility reloadFacility(String facilityId) {
         return daoProvider.daoFor(ErpFinCreditFacility.class).getEntityById(facilityId);
     }
 
@@ -314,14 +314,14 @@ public class TestErpFinCreditFacilityInterest extends JunitAutoTestCase {
         dao.saveEntity(s);
     }
 
-    private void seedAcctSchema(long orgId) {
+    private void seedAcctSchema(String orgId) {
         IEntityDao<ErpMdAcctSchema> dao = daoProvider.daoFor(ErpMdAcctSchema.class);
         ErpMdAcctSchema schema = dao.newEntity();
         schema.setCode("AS-" + orgId);
         schema.setName("账套-" + orgId);
         schema.setOrgId(orgId);
         schema.setNature("FINANCIAL");
-        schema.setFunctionalCurrencyId(1L);
+        schema.setFunctionalCurrencyId("1");
         schema.setStatus("ACTIVE");
         dao.saveEntity(schema);
     }
@@ -331,7 +331,7 @@ public class TestErpFinCreditFacilityInterest extends JunitAutoTestCase {
         ErpFinAccountingPeriod period = dao.newEntity();
         period.setCode(code);
         period.setName(code);
-        period.setOrgId(1L);
+        period.setOrgId("1");
         period.setYear(year);
         period.setMonth(month);
         period.setStartDate(start);
@@ -342,7 +342,7 @@ public class TestErpFinCreditFacilityInterest extends JunitAutoTestCase {
 
     // ---------- query helpers ----------
 
-    private List<ErpFinVoucherLine> linesOf(Long voucherId) {
+    private List<ErpFinVoucherLine> linesOf(String voucherId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("voucherId", voucherId));
         return daoProvider.daoFor(ErpFinVoucherLine.class).findAllByQuery(q);
@@ -368,7 +368,7 @@ public class TestErpFinCreditFacilityInterest extends JunitAutoTestCase {
                 .count();
     }
 
-    private String findBillHeadCode(Long voucherId, String businessType) {
+    private String findBillHeadCode(String voucherId, String businessType) {
         IEntityDao<ErpFinVoucherBillR> dao = daoProvider.daoFor(ErpFinVoucherBillR.class);
         QueryBean q = new QueryBean();
         q.addFilter(and(eq("voucherId", voucherId), eq("businessType", businessType)));

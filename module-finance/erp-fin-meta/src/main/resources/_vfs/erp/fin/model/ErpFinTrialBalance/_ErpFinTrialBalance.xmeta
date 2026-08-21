@@ -20,24 +20,24 @@
 
     <props>
         <prop name="id" displayName="ID" propId="1" i18n-en:displayName="ID" tagSet="seq-default" mandatory="true"
-              queryable="true" sortable="true" insertable="true" updatable="false" graphql:type="String">
-            <schema type="java.lang.Long"/>
+              queryable="true" sortable="true" insertable="true" updatable="false">
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="orgId" displayName="组织" propId="2" i18n-en:displayName="Organization" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="org">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="acctSchemaId" displayName="账套" propId="3" i18n-en:displayName="Acct Schema" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="acctSchema">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="periodId" displayName="期间" propId="4" i18n-en:displayName="Period" mandatory="true" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="period">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="subjectId" displayName="科目" propId="5" i18n-en:displayName="Subject" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="subject">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="subjectCode" displayName="科目编码" propId="6" i18n-en:displayName="Subject Code" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">

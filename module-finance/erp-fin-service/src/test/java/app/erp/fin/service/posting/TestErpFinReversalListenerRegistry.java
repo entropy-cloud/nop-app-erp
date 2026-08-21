@@ -52,8 +52,8 @@ public class TestErpFinReversalListenerRegistry {
 
     private VoucherReversedEvent sampleEvent() {
         VoucherReversedEvent event = new VoucherReversedEvent();
-        event.setVoucherId(1001L);
-        event.setReversalOfVoucherId(2002L);
+        event.setVoucherId("1001");
+        event.setReversalOfVoucherId("2002");
         event.setBillHeadCode("AP-REV-001");
         event.setBusinessType("AP_INVOICE");
         event.setBillType("AP_INVOICE");
@@ -85,8 +85,8 @@ public class TestErpFinReversalListenerRegistry {
         assertEquals(1, capturing.captured.size(), "监听者应收到 1 次事件");
         VoucherReversedEvent received = capturing.captured.get(0);
         assertSame(event, received, "事件应原样透传");
-        assertEquals(Long.valueOf(1001L), received.getVoucherId(), "voucherId 字段正确");
-        assertEquals(Long.valueOf(2002L), received.getReversalOfVoucherId(), "reversalOfVoucherId 字段正确");
+        assertEquals("1001", received.getVoucherId(), "voucherId 字段正确");
+        assertEquals("2002", received.getReversalOfVoucherId(), "reversalOfVoucherId 字段正确");
         assertEquals("AP-REV-001", received.getBillHeadCode(), "billHeadCode 字段正确");
         assertEquals("AP_INVOICE", received.getBusinessType(), "businessType 字段正确");
         assertEquals("AP_INVOICE", received.getBillType(), "billType 字段正确");

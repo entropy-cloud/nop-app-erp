@@ -23,8 +23,8 @@
 
     <props>
         <prop name="id" displayName="ID" propId="1" i18n-en:displayName="ID" tagSet="seq-default" mandatory="true"
-              queryable="true" sortable="true" insertable="true" updatable="false" graphql:type="String">
-            <schema type="java.lang.Long"/>
+              queryable="true" sortable="true" insertable="true" updatable="false">
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="code" displayName="记录编码" propId="2" i18n-en:displayName="Code" tagSet="var" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
@@ -32,7 +32,7 @@
         </prop>
         <prop name="orgId" displayName="核算组织" propId="3" i18n-en:displayName="Organization" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="org">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="pairKey" displayName="配对键" propId="4" i18n-en:displayName="Pair Key" tagSet="var" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
@@ -40,27 +40,27 @@
         </prop>
         <prop name="periodId" displayName="会计期间" propId="5" i18n-en:displayName="Period" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="period">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="arSideVoucherId" displayName="AR侧凭证" propId="6" i18n-en:displayName="AR Side Voucher"
               queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="arSideVoucher">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="arOrgId" displayName="AR侧组织" propId="7" i18n-en:displayName="AR Org" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="arOrg">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="apSideVoucherId" displayName="AP侧凭证" propId="8" i18n-en:displayName="AP Side Voucher"
               queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="apSideVoucher">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="apOrgId" displayName="AP侧组织" propId="9" i18n-en:displayName="AP Org" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="apOrg">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="materialId" displayName="物料" propId="10" i18n-en:displayName="Material" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="material">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="matchedAmount" displayName="配对金额" propId="11" i18n-en:displayName="Matched Amount" queryable="true"
               sortable="true" insertable="true" updatable="true" defaultValue="0">

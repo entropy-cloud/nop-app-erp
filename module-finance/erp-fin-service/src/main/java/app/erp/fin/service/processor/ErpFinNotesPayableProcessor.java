@@ -91,7 +91,7 @@ public class ErpFinNotesPayableProcessor {
 
     // ---------- step：执行（状态推进 + 持久化） ----------
 
-    protected ErpFinNotesPayable doIssue(Long notesId, ErpFinNotesPayable note, IServiceContext context) {
+    protected ErpFinNotesPayable doIssue(String notesId, ErpFinNotesPayable note, IServiceContext context) {
         note.setStatus(stateMachine.issueTargetStatus());
         noteDao().updateEntity(note);
 
@@ -102,7 +102,7 @@ public class ErpFinNotesPayableProcessor {
         return note;
     }
 
-    protected ErpFinNotesPayable doHonor(Long notesId, ErpFinNotesPayable note, IServiceContext context) {
+    protected ErpFinNotesPayable doHonor(String notesId, ErpFinNotesPayable note, IServiceContext context) {
         note.setStatus(stateMachine.honorTargetStatus());
         noteDao().updateEntity(note);
 
@@ -131,11 +131,11 @@ public class ErpFinNotesPayableProcessor {
 
     // ---------- 校验/查询辅助（protected，供派生复用与覆盖） ----------
 
-    protected ErpFinNotesPayable requireNote(Long notesId, IServiceContext context) {
+    protected ErpFinNotesPayable requireNote(String notesId, IServiceContext context) {
         return requireNote(notesId);
     }
 
-    protected ErpFinNotesPayable requireNote(Long notesId) {
+    protected ErpFinNotesPayable requireNote(String notesId) {
         ErpFinNotesPayable note = noteDao().getEntityById(notesId);
         if (note == null) {
             throw new NopException(ErpFinErrors.ERR_NOTES_PAYABLE_NOT_FOUND)
@@ -168,7 +168,7 @@ public class ErpFinNotesPayableProcessor {
         return flag == null ? true : flag;
     }
 
-    protected ErpFinNotesPayable reload(Long notesId) {
+    protected ErpFinNotesPayable reload(String notesId) {
         return noteDao().getEntityById(notesId);
     }
 

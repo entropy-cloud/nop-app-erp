@@ -69,11 +69,11 @@ public class TestErpFinBankReconciliationEndToEnd extends JunitAutoTestCase {
     @Test
     public void testEndToEnd() {
         long seed = System.nanoTime();
-        long subjectId = 9101L;
-        long adjSubjectId = 9102L;
-        long[] ctx = new long[1];
-        final Long[] voucherLine1Id = new Long[1];
-        final Long[] voucherLine2Id = new Long[1];
+        String subjectId = "9101";
+        String adjSubjectId = "9102";
+        String[] ctx = new String[1];
+        final String[] voucherLine1Id = new String[1];
+        final String[] voucherLine2Id = new String[1];
         ormTemplate.runInSession(() -> {
             seedSubject(subjectId, "1002", "银行存款");
             seedSubject(adjSubjectId, "2240OTHER", "未达账项调整");
@@ -121,7 +121,7 @@ public class TestErpFinBankReconciliationEndToEnd extends JunitAutoTestCase {
         assertEquals(ErpFinConstants.VOUCHER_STATUS_POSTED, reloadRecon(recon.getId()).getDocStatus());
         long links = countBillLinks(recon.getCode());
         assertTrue(links >= 1, "应生成 BANK_RECON_ADJ 调整凭证");
-        Long adjVoucherId = findAdjVoucherId(recon.getCode());
+        String adjVoucherId = findAdjVoucherId(recon.getCode());
         assertNotNull(adjVoucherId);
         ErpFinVoucher adj = daoProvider.daoFor(ErpFinVoucher.class).getEntityById(adjVoucherId);
         assertEquals(VOUCHER_STATUS_POSTED, adj.getDocStatus());
@@ -134,7 +134,7 @@ public class TestErpFinBankReconciliationEndToEnd extends JunitAutoTestCase {
 
     // ---------- helpers ----------
 
-    private long countLines(Long statementId) {
+    private long countLines(String statementId) {
         IEntityDao<ErpFinBankStatementLine> dao = daoProvider.daoFor(ErpFinBankStatementLine.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("statementId", statementId));
@@ -150,7 +150,7 @@ public class TestErpFinBankReconciliationEndToEnd extends JunitAutoTestCase {
         return dao.findAllByQuery(q).size();
     }
 
-    private Long findAdjVoucherId(String billCode) {
+    private String findAdjVoucherId(String billCode) {
         IEntityDao<app.erp.fin.dao.entity.ErpFinVoucherBillR> dao =
                 daoProvider.daoFor(app.erp.fin.dao.entity.ErpFinVoucherBillR.class);
         QueryBean q = new QueryBean();
@@ -161,14 +161,14 @@ public class TestErpFinBankReconciliationEndToEnd extends JunitAutoTestCase {
         return link != null ? link.getVoucherId() : null;
     }
 
-    private long countReversalVouchers(Long originalVoucherId) {
+    private long countReversalVouchers(String originalVoucherId) {
         IEntityDao<ErpFinVoucher> dao = daoProvider.daoFor(ErpFinVoucher.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("reversalOfVoucherId", originalVoucherId));
         return dao.findAllByQuery(q).size();
     }
 
-    private ErpFinBankReconciliation reloadRecon(Long id) {
+    private ErpFinBankReconciliation reloadRecon(String id) {
         return daoProvider.daoFor(ErpFinBankReconciliation.class).getEntityById(id);
     }
 
@@ -187,15 +187,15 @@ public class TestErpFinBankReconciliationEndToEnd extends JunitAutoTestCase {
         return in;
     }
 
-    private long seedFundAccount(long subjectId, BigDecimal currentBalance) {
+    private String seedFundAccount(String subjectId, BigDecimal currentBalance) {
         IEntityDao<ErpFinFundAccount> dao = daoProvider.daoFor(ErpFinFundAccount.class);
         ErpFinFundAccount account = dao.newEntity();
         account.setCode("FA-E2E-" + System.nanoTime());
         account.setName("Bank");
-        account.setOrgId(1L);
+        account.setOrgId("1");
         account.setAccountType(ErpFinConstants.FUND_ACCOUNT_TYPE_BANK);
         account.setSubjectId(subjectId);
-        account.setCurrencyId(1L);
+        account.setCurrencyId("1");
         account.setOpeningBalance(currentBalance);
         account.setCurrentBalance(currentBalance);
         account.setStatus("ACTIVE");
@@ -203,7 +203,7 @@ public class TestErpFinBankReconciliationEndToEnd extends JunitAutoTestCase {
         return account.getId();
     }
 
-    private void seedSubject(long id, String code, String name) {
+    private void seedSubject(String id, String code, String name) {
         IEntityDao<ErpMdSubject> dao = daoProvider.daoFor(ErpMdSubject.class);
         ErpMdSubject s = new ErpMdSubject();
         s.orm_propValue(1, id);
@@ -221,7 +221,7 @@ public class TestErpFinBankReconciliationEndToEnd extends JunitAutoTestCase {
         ErpFinAccountingPeriod p = dao.newEntity();
         p.setCode(code);
         p.setName(code);
-        p.setOrgId(1L);
+        p.setOrgId("1");
         p.setYear(year);
         p.setMonth(month);
         p.setStartDate(start);
@@ -231,15 +231,15 @@ public class TestErpFinBankReconciliationEndToEnd extends JunitAutoTestCase {
         return p;
     }
 
-    private ErpFinVoucherLine seedPostedVoucherLine(long subjectId, String dc, BigDecimal amount, LocalDate voucherDate) {
+    private ErpFinVoucherLine seedPostedVoucherLine(String subjectId, String dc, BigDecimal amount, LocalDate voucherDate) {
         IEntityDao<ErpFinVoucher> vDao = daoProvider.daoFor(ErpFinVoucher.class);
         ErpFinVoucher v = vDao.newEntity();
         v.setCode("V-E2E-" + System.nanoTime());
         v.setVoucherType("TRANSFER");
         v.setVoucherDate(voucherDate);
-        v.setOrgId(1L);
-        v.setAcctSchemaId(1L);
-        v.setPeriodId(1L);
+        v.setOrgId("1");
+        v.setAcctSchemaId("1");
+        v.setPeriodId("1");
         v.setTotalDebit(DC_DEBIT.equals(dc) ? amount : amount);
         v.setTotalCredit(DC_CREDIT.equals(dc) ? amount : amount);
         v.setIsReversed(false);
@@ -256,12 +256,12 @@ public class TestErpFinBankReconciliationEndToEnd extends JunitAutoTestCase {
         line.setDcDirection(dc);
         line.setDebitAmount(DC_DEBIT.equals(dc) ? amount : BigDecimal.ZERO);
         line.setCreditAmount(DC_CREDIT.equals(dc) ? amount : BigDecimal.ZERO);
-        line.setCurrencyId(1L);
+        line.setCurrencyId("1");
         line.setExchangeRate(BigDecimal.ONE);
         line.setAmountSource(amount);
         line.setAmountFunctional(amount);
-        line.setAcctSchemaId(1L);
-        line.setOrgId(1L);
+        line.setAcctSchemaId("1");
+        line.setOrgId("1");
         lDao.saveEntity(line);
         return line;
     }

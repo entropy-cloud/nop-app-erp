@@ -73,7 +73,7 @@ public class ErpFinDeferredPostingRetryHelper {
      * 重试单条异常记录。成功（含幂等命中）返回 true；失败返回 false（retryCount 已递增）。
      * 每条独立 REQUIRES_NEW 事务，单条失败不阻断其他记录。
      */
-    public boolean retry(Long exceptionId, IServiceContext ctx) {
+    public boolean retry(String exceptionId, IServiceContext ctx) {
         IEntityDao<ErpFinPostingException> dao = daoProvider.daoFor(ErpFinPostingException.class);
         ErpFinPostingException ex = dao.getEntityById(exceptionId);
         if (ex == null) {
@@ -101,7 +101,7 @@ public class ErpFinDeferredPostingRetryHelper {
         } else {
             PostingEvent event = rebuildEvent(ex);
             if (event != null) {
-                Long voucherId = voucherBiz.post(event, ctx);
+                String voucherId = voucherBiz.post(event, ctx);
                 LOG.debug("erp-fin-deferred-posting-retry-post: exceptionId={}, billHeadCode={}, voucherId={}",
                         ex.getId(), ex.getBillHeadCode(), voucherId);
             }

@@ -100,7 +100,7 @@ public class TestErpFinPostingObservability extends JunitAutoTestCase {
                 new BigDecimal("100"), new BigDecimal("13"), new BigDecimal("113"));
         event.setTraceId(null);
 
-        Long voucherId = ormTemplate.runInSession(session -> voucherBiz.post(event, CTX));
+        String voucherId = ormTemplate.runInSession(session -> voucherBiz.post(event, CTX));
 
         assertNotNull(voucherId, "happy path 应生成凭证");
         assertNotNull(event.getTraceId(), "traceId 缺失时应由引擎入口生成");
@@ -220,15 +220,15 @@ public class TestErpFinPostingObservability extends JunitAutoTestCase {
         PostingEvent event = new PostingEvent();
         event.setBusinessType(ErpFinBusinessType.AP_INVOICE);
         event.setBillHeadCode(billHeadCode);
-        event.setAcctSchemaId(1L);
-        event.setOrgId(1L);
-        event.setCurrencyId(1L);
+        event.setAcctSchemaId("1");
+        event.setOrgId("1");
+        event.setCurrencyId("1");
         event.setExchangeRate(BigDecimal.ONE);
         event.setVoucherDate(voucherDate);
         event.getBillData().put("AMOUNT", amount);
         event.getBillData().put("TAX", tax);
         event.getBillData().put("TOTAL", total);
-        event.getBillData().put("partnerId", 1L);
+        event.getBillData().put("partnerId", "1");
         event.getBillData().put("businessDate", voucherDate);
         return event;
     }
@@ -249,7 +249,7 @@ public class TestErpFinPostingObservability extends JunitAutoTestCase {
         lineDao.saveEntity(templateLine(tpl.getId(), 3, "2202", DC_CREDIT, "TOTAL"));
     }
 
-    private ErpFinVoucherTemplateLine templateLine(Long templateId, int lineNo, String subjectCode,
+    private ErpFinVoucherTemplateLine templateLine(String templateId, int lineNo, String subjectCode,
                                                    String dcDirection, String amountKey) {
         ErpFinVoucherTemplateLine line = new ErpFinVoucherTemplateLine();
         line.setTemplateId(templateId);
@@ -276,7 +276,7 @@ public class TestErpFinPostingObservability extends JunitAutoTestCase {
         ErpFinAccountingPeriod period = new ErpFinAccountingPeriod();
         period.setCode(code);
         period.setName(code);
-        period.setOrgId(1L);
+        period.setOrgId("1");
         period.setYear(year);
         period.setMonth(month);
         period.setStartDate(start);

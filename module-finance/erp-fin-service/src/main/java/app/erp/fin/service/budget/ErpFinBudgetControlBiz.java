@@ -59,7 +59,7 @@ public class ErpFinBudgetControlBiz implements IErpFinBudgetControlBiz {
     IDaoProvider daoProvider;
 
     @Override
-    public BudgetCheckResult check(Long subjectId, Long costCenterId, Long periodId, BigDecimal amount,
+    public BudgetCheckResult check(String subjectId, String costCenterId, String periodId, BigDecimal amount,
                                    String sourceBillType, String sourceBillCode, IServiceContext context) {
         if (!isBudgetCheckEnabled()) {
             return new BudgetCheckResult(BudgetCheckResult.ACTION_PASS, BigDecimal.ZERO, null);
@@ -114,7 +114,7 @@ public class ErpFinBudgetControlBiz implements IErpFinBudgetControlBiz {
      * </ul>
      * <p>借方余额科目取「借 − 贷」，贷方余额科目取「贷 − 借」。
      */
-    private BigDecimal aggregateAmount(Long periodId, Long subjectId, Long costCenterId, String direction, AmountChannel channel) {
+    private BigDecimal aggregateAmount(String periodId, String subjectId, String costCenterId, String direction, AmountChannel channel) {
         IEntityDao<ErpFinVoucher> voucherDao = daoProvider.daoFor(ErpFinVoucher.class);
         QueryBean vq = new QueryBean();
         if (periodId != null) {
@@ -123,7 +123,7 @@ public class ErpFinBudgetControlBiz implements IErpFinBudgetControlBiz {
         vq.addFilter(eq("docStatus", ErpFinConstants.VOUCHER_STATUS_POSTED));
         vq.addFilter(eq("isReversed", Boolean.FALSE));
         applyPostingTypeFilter(vq, channel);
-        List<Long> voucherIds = voucherDao.findAllByQuery(vq).stream()
+        List<String> voucherIds = voucherDao.findAllByQuery(vq).stream()
                 .map(ErpFinVoucher::getId).collect(java.util.stream.Collectors.toList());
         if (voucherIds.isEmpty()) {
             return BigDecimal.ZERO;
@@ -177,7 +177,7 @@ public class ErpFinBudgetControlBiz implements IErpFinBudgetControlBiz {
     }
 
     /** 查找命中的预算行（subjectId + costCenterId + periodId，所属方案 APPROVED）。无匹配返回 null。 */
-    private BudgetLineMatch findMatchingBudgetLine(Long subjectId, Long costCenterId, Long periodId) {
+    private BudgetLineMatch findMatchingBudgetLine(String subjectId, String costCenterId, String periodId) {
         IEntityDao<ErpFinBudgetLine> lineDao = daoProvider.daoFor(ErpFinBudgetLine.class);
         QueryBean lq = new QueryBean();
         lq.addFilter(eq("subjectId", subjectId));
@@ -196,7 +196,7 @@ public class ErpFinBudgetControlBiz implements IErpFinBudgetControlBiz {
         return null;
     }
 
-    private void writeControlLog(BudgetLineMatch match, Long periodId, String sourceBillType, String sourceBillCode,
+    private void writeControlLog(BudgetLineMatch match, String periodId, String sourceBillType, String sourceBillCode,
                                  BigDecimal requested, BigDecimal available, String actionResult, IServiceContext context) {
         IEntityDao<ErpFinBudgetControlLog> dao = daoProvider.daoFor(ErpFinBudgetControlLog.class);
         ErpFinBudgetControlLog logEntry = dao.newEntity();
@@ -227,7 +227,7 @@ public class ErpFinBudgetControlBiz implements IErpFinBudgetControlBiz {
         return Boolean.TRUE.equals(enabled);
     }
 
-    private ErpMdSubject loadSubject(Long id) {
+    private ErpMdSubject loadSubject(String id) {
         return daoProvider.daoFor(ErpMdSubject.class).getEntityById(id);
     }
 

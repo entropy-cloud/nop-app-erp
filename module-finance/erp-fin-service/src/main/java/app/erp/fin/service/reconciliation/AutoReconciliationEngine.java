@@ -55,7 +55,7 @@ public class AutoReconciliationEngine {
      * @param context    服务上下文（引擎内部查询用）
      * @return 候选行列表（可能为空，表示无匹配）+ 未匹配项报告
      */
-    public MatchResult matchAndBuild(String direction, Long partnerId, String strategy, IServiceContext context) {
+    public MatchResult matchAndBuild(String direction, String partnerId, String strategy, IServiceContext context) {
         IServiceContext ctx = context != null ? context : new ServiceContextImpl();
         List<ErpFinArApItem> opens = arApItemBiz.findOpenItemsByPartner(partnerId, direction, ctx);
         List<ErpFinArApItem> invoices = filterInvoices(opens);
@@ -97,9 +97,9 @@ public class AutoReconciliationEngine {
 
     protected void matchFifo(List<ErpFinArApItem> invoices, List<ErpFinArApItem> payments,
                              BigDecimal precision, boolean allowOver,
-                             Long partnerId, String direction, MatchResult result) {
+                             String partnerId, String direction, MatchResult result) {
         List<ErpFinArApItem> sortedInvoices = sortByDueOrBusinessDate(invoices);
-        Map<Long, BigDecimal> paymentOpen = indexOpen(payments);
+        Map<String, BigDecimal> paymentOpen = indexOpen(payments);
 
         for (ErpFinArApItem invoice : sortedInvoices) {
             BigDecimal invoiceOpen = openFunctional(invoice);
@@ -141,7 +141,7 @@ public class AutoReconciliationEngine {
 
     protected void matchByAmount(List<ErpFinArApItem> invoices, List<ErpFinArApItem> payments,
                                  BigDecimal precision, boolean allowOver,
-                                 Long partnerId, String direction, MatchResult result) {
+                                 String partnerId, String direction, MatchResult result) {
         Map<BigDecimal, List<ErpFinArApItem>> invoiceByAmount = new HashMap<>();
         for (ErpFinArApItem inv : invoices) {
             BigDecimal key = norm(openFunctional(inv), precision);
@@ -168,9 +168,9 @@ public class AutoReconciliationEngine {
 
     protected void matchByRatio(List<ErpFinArApItem> invoices, List<ErpFinArApItem> payments,
                                 BigDecimal precision, boolean allowOver,
-                                Long partnerId, String direction, MatchResult result) {
+                                String partnerId, String direction, MatchResult result) {
         List<ErpFinArApItem> sortedInvoices = sortByDueOrBusinessDate(invoices);
-        Map<Long, BigDecimal> invoiceOpen = indexOpen(sortedInvoices);
+        Map<String, BigDecimal> invoiceOpen = indexOpen(sortedInvoices);
         BigDecimal totalInvoiceOpen = sumOpen(sortedInvoices);
 
         for (ErpFinArApItem payment : payments) {
@@ -261,8 +261,8 @@ public class AutoReconciliationEngine {
         return r;
     }
 
-    protected Map<Long, BigDecimal> indexOpen(List<ErpFinArApItem> items) {
-        Map<Long, BigDecimal> m = new HashMap<>();
+    protected Map<String, BigDecimal> indexOpen(List<ErpFinArApItem> items) {
+        Map<String, BigDecimal> m = new HashMap<>();
         for (ErpFinArApItem it : items) {
             m.put(it.getId(), openFunctional(it));
         }
@@ -297,7 +297,7 @@ public class AutoReconciliationEngine {
         return in;
     }
 
-    protected AutoReconUnmatched unmatched(Long partnerId, String direction, ErpFinArApItem item, String reason) {
+    protected AutoReconUnmatched unmatched(String partnerId, String direction, ErpFinArApItem item, String reason) {
         AutoReconUnmatched u = new AutoReconUnmatched();
         u.setPartnerId(partnerId);
         u.setDirection(direction);
@@ -320,14 +320,14 @@ public class AutoReconciliationEngine {
     /**
      * 查询指定 direction 下所有有开口余额的 partner ID（partnerId=null 全量遍历用）。
      */
-    public List<Long> findPartnersWithOpenItems(String direction, IServiceContext context) {
+    public List<String> findPartnersWithOpenItems(String direction, IServiceContext context) {
         IServiceContext ctx = context != null ? context : new ServiceContextImpl();
         QueryBean query = new QueryBean();
         query.addFilter(eq("direction", direction));
         query.addFilter(in("status", Arrays.asList(
                 ErpFinConstants.AR_AP_STATUS_OPEN, ErpFinConstants.AR_AP_STATUS_PARTIAL)));
         List<ErpFinArApItem> items = arApItemBiz.findList(query, null, ctx);
-        List<Long> partners = new ArrayList<>();
+        List<String> partners = new ArrayList<>();
         for (ErpFinArApItem it : items) {
             if (it.getPartnerId() != null && !partners.contains(it.getPartnerId())) {
                 partners.add(it.getPartnerId());

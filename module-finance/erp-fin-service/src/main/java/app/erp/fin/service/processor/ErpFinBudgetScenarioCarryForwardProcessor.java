@@ -52,7 +52,7 @@ public class ErpFinBudgetScenarioCarryForwardProcessor {
     @Inject
     ErpFinBudgetScenarioProcessor facade;
 
-    public ErpFinBudgetScenario carryForward(Long id, Long targetScenarioId, String rule, IServiceContext context) {
+    public ErpFinBudgetScenario carryForward(String id, String targetScenarioId, String rule, IServiceContext context) {
         validateEnabled(id);
         ErpFinBudgetScenario source = facade.requireScenario(id);
         ErpFinBudgetScenario target = facade.requireScenario(targetScenarioId);
@@ -78,7 +78,7 @@ public class ErpFinBudgetScenarioCarryForwardProcessor {
         return source;
     }
 
-    protected void validateEnabled(Long id) {
+    protected void validateEnabled(String id) {
         if (!isCarryForwardEnabled()) {
             throw new NopException(ErpFinErrors.ERR_BUDGET_SCENARIO_NOT_APPROVED)
                     .param(ErpFinErrors.ARG_SCENARIO_ID, id)
@@ -216,7 +216,7 @@ public class ErpFinBudgetScenarioCarryForwardProcessor {
         if (vouchers.isEmpty()) {
             return BigDecimal.ZERO;
         }
-        List<Long> voucherIds = new ArrayList<>(vouchers.size());
+        List<String> voucherIds = new ArrayList<>(vouchers.size());
         for (ErpFinVoucher v : vouchers) {
             if (ErpFinConstants.POSTING_TYPE_BUDGET.equals(v.getPostingType())
                     || ErpFinConstants.POSTING_TYPE_COMMITMENT.equals(v.getPostingType())) {
@@ -295,7 +295,7 @@ public class ErpFinBudgetScenarioCarryForwardProcessor {
         if (carriedAmount == null || carriedAmount.signum() == 0) {
             return;
         }
-        Long periodId = resolveFirstPeriodId(source);
+        String periodId = resolveFirstPeriodId(source);
         IEntityDao<ErpFinVoucher> vDao = daoProvider.daoFor(ErpFinVoucher.class);
         IEntityDao<ErpFinVoucherLine> lDao = daoProvider.daoFor(ErpFinVoucherLine.class);
         IEntityDao<ErpFinVoucherBillR> billRDao = daoProvider.daoFor(ErpFinVoucherBillR.class);
@@ -363,7 +363,7 @@ public class ErpFinBudgetScenarioCarryForwardProcessor {
     }
 
     /** 取源方案第一个 BudgetLine 的 periodId（结转凭证期间归属）。 */
-    protected Long resolveFirstPeriodId(ErpFinBudgetScenario source) {
+    protected String resolveFirstPeriodId(ErpFinBudgetScenario source) {
         List<ErpFinBudgetLine> lines = facade.loadBudgetLines(source.getId());
         for (ErpFinBudgetLine l : lines) {
             if (l.getPeriodId() != null) {

@@ -68,7 +68,7 @@ body:
       method: post
       dataType: raw
       data:
-        query: "query(${'$'}pid:Long,${'$'}lim:Int){ period: ErpFinAccountingPeriod__get(id:${'$'}pid){ id year month status code name } statusPage: ErpFinAccountingPeriodStatus__findPage(query:{limit:${'$'}lim}){ items{ id periodId acctSchemaId arStatus apStatus invStatus glStatus assetStatus totalVouchers postedVouchers unpostedVouchers } total } }"
+        query: "query(${'$'}pid:String,${'$'}lim:Int){ period: ErpFinAccountingPeriod__get(id:${'$'}pid){ id year month status code name } statusPage: ErpFinAccountingPeriodStatus__findPage(query:{limit:${'$'}lim}){ items{ id periodId acctSchemaId arStatus apStatus invStatus glStatus assetStatus totalVouchers postedVouchers unpostedVouchers } total } }"
         variables:
           pid: "${periodId}"
           lim: 500
@@ -167,7 +167,7 @@ body:
                     method: post
                     dataType: raw
                     data:
-                      query: "query(${'$'}pid:Long){ report: ErpFinAccountingPeriod__preCheck(periodId:${'$'}pid){ unpostedVoucherCodes unsettledArApCodes unresolvedPostingExceptionKeys allowanceRequired allowanceBalance allowanceShortfall allowanceExcess } }"
+                      query: "query(${'$'}pid:String){ report: ErpFinAccountingPeriod__preCheck(periodId:${'$'}pid){ unpostedVoucherCodes unsettledArApCodes unresolvedPostingExceptionKeys allowanceRequired allowanceBalance allowanceShortfall allowanceExcess } }"
                       variables:
                         pid: "${period.id}"
                     adaptor: |
@@ -242,7 +242,7 @@ body:
               method: post
               dataType: raw
               data:
-                query: "mutation(${'$'}pid:Long){ ErpFinAccountingPeriod__closePeriod(periodId:${'$'}pid){ id status } }"
+                query: "mutation(${'$'}pid:String){ ErpFinAccountingPeriod__closePeriod(periodId:${'$'}pid){ id status } }"
                 variables:
                   pid: "${period.id}"
               adaptor: |
@@ -343,7 +343,7 @@ body:
               method: post
               dataType: raw
               data:
-                query: "mutation(${'$'}pid:Long){ ErpFinAccountingPeriod__finalizePeriod(periodId:${'$'}pid){ id status } }"
+                query: "mutation(${'$'}pid:String){ ErpFinAccountingPeriod__finalizePeriod(periodId:${'$'}pid){ id status } }"
                 variables:
                   pid: "${period.id}"
               adaptor: |
@@ -383,7 +383,7 @@ body:
                     method: post
                     dataType: raw
                     data:
-                      query: "query(${'$'}pid:Long){ period: ErpFinAccountingPeriod__get(id:${'$'}pid){ id status year month } }"
+                      query: "query(${'$'}pid:String){ period: ErpFinAccountingPeriod__get(id:${'$'}pid){ id status year month } }"
                       variables:
                         pid: "${period.id}"
                     adaptor: |
@@ -412,7 +412,7 @@ body:
                         method: post
                         dataType: raw
                         data:
-                          query: "mutation(${'$'}pid:Long,${'$'}reason:String){ ErpFinAccountingPeriod__reverseClose(periodId:${'$'}pid, reason:${'$'}reason){ id status } }"
+                          query: "mutation(${'$'}pid:String,${'$'}reason:String){ ErpFinAccountingPeriod__reverseClose(periodId:${'$'}pid, reason:${'$'}reason){ id status } }"
                           variables:
                             pid: "${period.id}"
                             reason: "${reverseCloseReason}"

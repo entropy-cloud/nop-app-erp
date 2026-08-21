@@ -14,7 +14,7 @@ public class ErpFinNotesPayableWriteOffProcessor {
     @Inject
     ErpFinNotesPayableProcessor facade;
 
-    public ErpFinNotesPayable writeOff(Long notesId, IServiceContext context) {
+    public ErpFinNotesPayable writeOff(String notesId, IServiceContext context) {
         ErpFinNotesPayable note = facade.requireNote(notesId, context);
         facade.validateTransitionForWriteOff(note, context);
         facade.releaseOccupiedCredit(note, context);

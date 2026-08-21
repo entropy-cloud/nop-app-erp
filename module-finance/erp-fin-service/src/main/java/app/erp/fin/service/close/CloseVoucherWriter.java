@@ -32,15 +32,15 @@ public final class CloseVoucherWriter {
 
     /** 结账凭证分录（借/贷 + 科目 + 金额 + 辅助维度）。 */
     public static final class Line {
-        public final Long subjectId;
+        public final String subjectId;
         public final String subjectCode;
         public final String subjectName;
         public final String dcDirection;
         public final BigDecimal amount;
-        public final Long partnerId;
+        public final String partnerId;
 
-        public Line(Long subjectId, String subjectCode, String subjectName, String dcDirection,
-                    BigDecimal amount, Long partnerId) {
+        public Line(String subjectId, String subjectCode, String subjectName, String dcDirection,
+                    BigDecimal amount, String partnerId) {
             this.subjectId = subjectId;
             this.subjectCode = subjectCode;
             this.subjectName = subjectName;
@@ -58,9 +58,9 @@ public final class CloseVoucherWriter {
      * @param businessTypeCode 业财类型数值（ErpFinBusinessType.getCode）
      * @param businessTypeName 业财类型名（ErpFinBusinessType.name，写入 BillR.billType）
      */
-    public static Long writeVoucher(IDaoProvider daoProvider, String codePrefix, String billHeadCode,
+    public static String writeVoucher(IDaoProvider daoProvider, String codePrefix, String billHeadCode,
                                     String businessTypeCode, String businessTypeName,
-                                    Long orgId, Long acctSchemaId, Long periodId, Long currencyId,
+                                    String orgId, String acctSchemaId, String periodId, String currencyId,
                                     BigDecimal exchangeRate, LocalDate voucherDate,
                                     List<Line> lines, String memo) {
         if (lines == null || lines.isEmpty()) {
@@ -102,7 +102,7 @@ public final class CloseVoucherWriter {
         voucher.setDocStatus(ErpFinConstants.VOUCHER_STATUS_POSTED);
         voucher.setPostedAt(CoreMetrics.currentTimestamp());
         voucherDao.saveEntity(voucher);
-        Long voucherId = voucher.getId();
+        String voucherId = voucher.getId();
 
         BigDecimal rate = exchangeRate != null ? exchangeRate : BigDecimal.ONE;
         int lineNo = 1;

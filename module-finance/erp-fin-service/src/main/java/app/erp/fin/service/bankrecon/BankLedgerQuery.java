@@ -53,7 +53,7 @@ public class BankLedgerQuery {
 
         // 两步查询：先按日期窗口取出已过账且未红冲的凭证 ID，再按科目+方向+金额取出对应分录。
         // VoucherLine 无日期列，必须经 voucherId 关联头表过滤（见计划 D1 + S1 修订）。
-        List<Long> voucherIds = findVoucherIdsInWindow(from, to);
+        List<String> voucherIds = findVoucherIdsInWindow(from, to);
         if (voucherIds.isEmpty()) {
             return new ArrayList<>();
         }
@@ -64,7 +64,7 @@ public class BankLedgerQuery {
         int batchSize = 500;
         for (int start = 0; start < voucherIds.size(); start += batchSize) {
             int end = Math.min(start + batchSize, voucherIds.size());
-            List<Long> chunk = voucherIds.subList(start, end);
+            List<String> chunk = voucherIds.subList(start, end);
 
             QueryBean q = new QueryBean();
             q.addFilter(eq("subjectId", fundAccount.getSubjectId()));
@@ -79,7 +79,7 @@ public class BankLedgerQuery {
         }
 
         // 排除已被其他银行流水行勾对占用的分录：单次匹配应使用未占用分录。
-        Set<Long> occupied = findOccupiedLineIds(fundAccount.getId());
+        Set<String> occupied = findOccupiedLineIds(fundAccount.getId());
         List<ErpFinVoucherLine> filtered = new ArrayList<>(result.size());
         for (ErpFinVoucherLine line : result) {
             if (!occupied.contains(line.getId())) {
@@ -100,14 +100,14 @@ public class BankLedgerQuery {
     }
 
     /** 取日期窗口内已过账（POSTED）且未红冲的凭证 ID。 */
-    protected List<Long> findVoucherIdsInWindow(LocalDate from, LocalDate to) {
+    protected List<String> findVoucherIdsInWindow(LocalDate from, LocalDate to) {
         IEntityDao<ErpFinVoucher> dao = daoProvider.daoFor(ErpFinVoucher.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("docStatus", ErpFinConstants.VOUCHER_STATUS_POSTED));
         q.addFilter(ge("voucherDate", from));
         q.addFilter(le("voucherDate", to));
         List<ErpFinVoucher> vouchers = dao.findAllByQuery(q);
-        List<Long> ids = new ArrayList<>(vouchers.size());
+        List<String> ids = new ArrayList<>(vouchers.size());
         for (ErpFinVoucher v : vouchers) {
             if (Boolean.TRUE.equals(v.getIsReversed())) {
                 continue;
@@ -118,13 +118,13 @@ public class BankLedgerQuery {
     }
 
     /** 查询已被勾对的银行流水行（matchStatus MATCHED/MANUAL_MATCHED，且 matchedLineId 非空）所占用的凭证行 ID。 */
-    protected Set<Long> findOccupiedLineIds(Long fundAccountId) {
+    protected Set<String> findOccupiedLineIds(String fundAccountId) {
         IEntityDao<app.erp.fin.dao.entity.ErpFinBankStatementLine> dao =
                 daoProvider.daoFor(app.erp.fin.dao.entity.ErpFinBankStatementLine.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("statement.fundAccountId", fundAccountId));
         List<app.erp.fin.dao.entity.ErpFinBankStatementLine> matched = dao.findAllByQuery(q);
-        Set<Long> ids = new HashSet<>();
+        Set<String> ids = new HashSet<>();
         for (app.erp.fin.dao.entity.ErpFinBankStatementLine l : matched) {
             if (l.getMatchedLineId() == null) {
                 continue;

@@ -71,7 +71,7 @@ public class ErpFinReconciliationBizModel extends CrudBizModel<ErpFinReconciliat
     @Override
     @BizMutation
     public ErpFinReconciliation create(@Name("direction") String direction,
-                                       @Name("partnerId") Long partnerId,
+                                       @Name("partnerId") String partnerId,
                                        @Name("businessDate") LocalDate businessDate,
                                        @Name("lines") List<ReconciliationLineInput> lines,
                                        IServiceContext context) {
@@ -80,13 +80,13 @@ public class ErpFinReconciliationBizModel extends CrudBizModel<ErpFinReconciliat
 
     @Override
     @BizMutation
-    public ErpFinReconciliation post(@Name("reconciliationId") Long reconciliationId, IServiceContext context) {
+    public ErpFinReconciliation post(@Name("reconciliationId") String reconciliationId, IServiceContext context) {
         return postProcessor.post(reconciliationId, context);
     }
 
     @Override
     @BizMutation
-    public ErpFinReconciliation reverse(@Name("reconciliationId") Long reconciliationId, IServiceContext context) {
+    public ErpFinReconciliation reverse(@Name("reconciliationId") String reconciliationId, IServiceContext context) {
         return reverseProcessor.reverse(reconciliationId, context);
     }
 
@@ -96,7 +96,7 @@ public class ErpFinReconciliationBizModel extends CrudBizModel<ErpFinReconciliat
      */
     @Override
     @BizQuery
-    public ReconciliationReversePreview previewReverse(@Name("reconciliationId") Long reconciliationId,
+    public ReconciliationReversePreview previewReverse(@Name("reconciliationId") String reconciliationId,
                                                        IServiceContext context) {
         ErpFinReconciliation head = requireHead(reconciliationId, context);
         try {
@@ -133,7 +133,7 @@ public class ErpFinReconciliationBizModel extends CrudBizModel<ErpFinReconciliat
     @Override
     @BizMutation
     public AutoReconResult runAutoReconciliation(@Name("direction") String direction,
-                                                  @Name("partnerId") Long partnerId,
+                                                  @Name("partnerId") String partnerId,
                                                   @Name("strategy") String strategy,
                                                   IServiceContext context) {
         return runAutoReconciliationProcessor.runAutoReconciliation(direction, partnerId, strategy, context);
@@ -142,7 +142,7 @@ public class ErpFinReconciliationBizModel extends CrudBizModel<ErpFinReconciliat
     @Override
     @BizQuery
     public DualSideDiffReport checkDualSideConsistency(@Name("direction") String direction,
-                                                       @Name("partnerId") Long partnerId,
+                                                       @Name("partnerId") String partnerId,
                                                        IServiceContext context) {
         IServiceContext ctx = context != null ? context : new ServiceContextImpl();
         return dualSideConsistencyChecker.check(direction, partnerId, ctx);
@@ -150,7 +150,7 @@ public class ErpFinReconciliationBizModel extends CrudBizModel<ErpFinReconciliat
 
     // ---------- previewReverse helpers ----------
 
-    private ReconciliationReversePreview.RevertedItem toRevertedItem(Long itemId, String side,
+    private ReconciliationReversePreview.RevertedItem toRevertedItem(String itemId, String side,
                                                                      ErpFinArApItem item, BigDecimal restoreAmount) {
         ReconciliationReversePreview.RevertedItem ri = new ReconciliationReversePreview.RevertedItem();
         ri.setArApItemId(itemId);
@@ -172,7 +172,7 @@ public class ErpFinReconciliationBizModel extends CrudBizModel<ErpFinReconciliat
         return ErpFinConstants.AR_AP_STATUS_PARTIAL;
     }
 
-    protected ErpFinReconciliation requireHead(Long id, IServiceContext context) {
+    protected ErpFinReconciliation requireHead(String id, IServiceContext context) {
         ErpFinReconciliation head = get(String.valueOf(id), true, context);
         if (head == null) {
             throw new NopException(ErpFinErrors.ERR_RECONCILIATION_NOT_FOUND)
@@ -181,7 +181,7 @@ public class ErpFinReconciliationBizModel extends CrudBizModel<ErpFinReconciliat
         return head;
     }
 
-    protected List<ErpFinReconciliationLine> loadLines(Long reconciliationId) {
+    protected List<ErpFinReconciliationLine> loadLines(String reconciliationId) {
         IEntityDao<ErpFinReconciliationLine> dao = daoProvider().daoFor(ErpFinReconciliationLine.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("reconciliationId", reconciliationId));
@@ -192,7 +192,7 @@ public class ErpFinReconciliationBizModel extends CrudBizModel<ErpFinReconciliat
         return lines;
     }
 
-    protected ErpFinArApItem loadItem(Long id) {
+    protected ErpFinArApItem loadItem(String id) {
         IEntityDao<ErpFinArApItem> dao = daoProvider().daoFor(ErpFinArApItem.class);
         ErpFinArApItem item = dao.getEntityById(id);
         if (item == null) {

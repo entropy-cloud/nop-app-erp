@@ -57,7 +57,7 @@ public class TestErpFinExpenseClaimApproval extends JunitAutoTestCase {
 
     @Test
     public void testSubmitWithdrawApproveReverse() {
-        Long claimId = seedValidClaim("EC-APP-001", ErpFinConstants.APPROVE_STATUS_UNSUBMITTED, null);
+        String claimId = seedValidClaim("EC-APP-001", ErpFinConstants.APPROVE_STATUS_UNSUBMITTED, null);
         // UNSUBMITTED → SUBMITTED
         assertEquals(0, submitForApproval(claimId).getStatus());
         ErpFinExpenseClaim claim = fetchClaim(claimId);
@@ -80,7 +80,7 @@ public class TestErpFinExpenseClaimApproval extends JunitAutoTestCase {
 
     @Test
     public void testRejectAndResubmit() {
-        Long claimId = seedValidClaim("EC-APP-002", ErpFinConstants.APPROVE_STATUS_SUBMITTED, null);
+        String claimId = seedValidClaim("EC-APP-002", ErpFinConstants.APPROVE_STATUS_SUBMITTED, null);
         assertEquals(0, reject(claimId).getStatus());
         ErpFinExpenseClaim claim = fetchClaim(claimId);
         assertEquals(ErpFinConstants.APPROVE_STATUS_REJECTED, claim.getApproveStatus());
@@ -92,40 +92,40 @@ public class TestErpFinExpenseClaimApproval extends JunitAutoTestCase {
 
     @Test
     public void testCancel() {
-        Long claimId = seedValidClaim("EC-APP-003", ErpFinConstants.APPROVE_STATUS_SUBMITTED, null);
+        String claimId = seedValidClaim("EC-APP-003", ErpFinConstants.APPROVE_STATUS_SUBMITTED, null);
         ErpFinExpenseClaim claim = ormTemplate.runInSession(session -> claimBiz.cancel(claimId, CTX));
         assertEquals(ErpFinConstants.DOC_STATUS_CANCELLED, claim.getDocStatus());
     }
 
     @Test
     public void testIllegalApproveFromUnsubmitted() {
-        Long claimId = seedValidClaim("EC-APP-004", ErpFinConstants.APPROVE_STATUS_UNSUBMITTED, null);
+        String claimId = seedValidClaim("EC-APP-004", ErpFinConstants.APPROVE_STATUS_UNSUBMITTED, null);
         assertTrue(approve(claimId).getStatus() != 0, "UNSUBMITTED 不可审核：状态守卫拒绝");
     }
 
     @Test
     public void testRejectClaimantPartnerMissing() {
-        Long claimId = seedClaimWithClaimant("EC-APP-005", null, ErpFinConstants.EMPLOYEE_STATUS_ACTIVE,
+        String claimId = seedClaimWithClaimant("EC-APP-005", null, ErpFinConstants.EMPLOYEE_STATUS_ACTIVE,
                 ErpFinConstants.APPROVE_STATUS_UNSUBMITTED, true);
         assertTrue(submitForApproval(claimId).getStatus() != 0, "partnerId 缺失：submit 被前置校验拒绝");
     }
 
     @Test
     public void testRejectClaimantInactive() {
-        Long claimId = seedClaimWithClaimant("EC-APP-006", 9901L, "INACTIVE",
+        String claimId = seedClaimWithClaimant("EC-APP-006", "9901", "INACTIVE",
                 ErpFinConstants.APPROVE_STATUS_UNSUBMITTED, true);
         assertTrue(submitForApproval(claimId).getStatus() != 0, "员工停用：submit 被前置校验拒绝");
     }
 
     @Test
     public void testRejectLinesEmpty() {
-        Long claimId = seedValidClaimNoLines("EC-APP-007");
+        String claimId = seedValidClaimNoLines("EC-APP-007");
         assertTrue(submitForApproval(claimId).getStatus() != 0, "无明细行：submit 被前置校验拒绝");
     }
 
     @Test
     public void testRejectAmountMismatch() {
-        Long claimId = seedClaimAmountMismatch("EC-APP-008");
+        String claimId = seedClaimAmountMismatch("EC-APP-008");
         assertTrue(submitForApproval(claimId).getStatus() != 0, "价税合计不匹配：submit 被前置校验拒绝");
     }
 
@@ -133,7 +133,7 @@ public class TestErpFinExpenseClaimApproval extends JunitAutoTestCase {
 
     @Test
     public void testSoDCreatorCannotSelfApprove() {
-        Long claimId = seedValidClaim("EC-SOD-001", ErpFinConstants.APPROVE_STATUS_UNSUBMITTED, null);
+        String claimId = seedValidClaim("EC-SOD-001", ErpFinConstants.APPROVE_STATUS_UNSUBMITTED, null);
         assertEquals(0, submitForApproval(claimId).getStatus(), "提交应成功 → SUBMITTED");
 
         // 创建人尝试自审：置 IUserContext.userId = 单据 createdBy
@@ -152,27 +152,27 @@ public class TestErpFinExpenseClaimApproval extends JunitAutoTestCase {
 
     // ---------- rpc helpers ----------
 
-    private ApiResponse<?> submitForApproval(Long claimId) {
+    private ApiResponse<?> submitForApproval(String claimId) {
         return executeRpc(mutation, "ErpFinExpenseClaim__submitForApproval",
                 ApiRequest.build(Map.of("id", String.valueOf(claimId))));
     }
 
-    private ApiResponse<?> withdrawApproval(Long claimId) {
+    private ApiResponse<?> withdrawApproval(String claimId) {
         return executeRpc(mutation, "ErpFinExpenseClaim__withdrawApproval",
                 ApiRequest.build(Map.of("id", String.valueOf(claimId))));
     }
 
-    private ApiResponse<?> approve(Long claimId) {
+    private ApiResponse<?> approve(String claimId) {
         return executeRpc(mutation, "ErpFinExpenseClaim__approve",
                 ApiRequest.build(Map.of("id", String.valueOf(claimId))));
     }
 
-    private ApiResponse<?> reject(Long claimId) {
+    private ApiResponse<?> reject(String claimId) {
         return executeRpc(mutation, "ErpFinExpenseClaim__reject",
                 ApiRequest.build(Map.of("id", String.valueOf(claimId))));
     }
 
-    private ApiResponse<?> reverseApprove(Long claimId) {
+    private ApiResponse<?> reverseApprove(String claimId) {
         return executeRpc(mutation, "ErpFinExpenseClaim__reverseApprove",
                 ApiRequest.build(Map.of("id", String.valueOf(claimId))));
     }
@@ -182,20 +182,20 @@ public class TestErpFinExpenseClaimApproval extends JunitAutoTestCase {
         return graphQLEngine.executeRpc(ctx);
     }
 
-    private ErpFinExpenseClaim fetchClaim(Long id) {
+    private ErpFinExpenseClaim fetchClaim(String id) {
         return daoProvider.daoFor(ErpFinExpenseClaim.class).getEntityById(id);
     }
 
     // ---------- seed helpers ----------
 
-    private Long seedValidClaim(String code, String approveStatus, Long docStatus) {
-        return seedClaimWithClaimant(code, 9901L, ErpFinConstants.EMPLOYEE_STATUS_ACTIVE, approveStatus, true);
+    private String seedValidClaim(String code, String approveStatus, Long docStatus) {
+        return seedClaimWithClaimant(code, "9901", ErpFinConstants.EMPLOYEE_STATUS_ACTIVE, approveStatus, true);
     }
 
-    private Long seedClaimWithClaimant(String code, Long partnerId, String employeeStatus,
+    private String seedClaimWithClaimant(String code, String partnerId, String employeeStatus,
                                        String approveStatus, boolean withLines) {
         return ormTemplate.runInSession(session -> {
-            Long empId = seedEmployee(partnerId, employeeStatus);
+            String empId = seedEmployee(partnerId, employeeStatus);
             ErpFinExpenseClaim claim = newClaim(code, empId, approveStatus);
             if (withLines) {
                 addLine(claim.getId(), new BigDecimal("113"));
@@ -204,14 +204,14 @@ public class TestErpFinExpenseClaimApproval extends JunitAutoTestCase {
         });
     }
 
-    private Long seedValidClaimNoLines(String code) {
-        return seedClaimWithClaimant(code, 9901L, ErpFinConstants.EMPLOYEE_STATUS_ACTIVE,
+    private String seedValidClaimNoLines(String code) {
+        return seedClaimWithClaimant(code, "9901", ErpFinConstants.EMPLOYEE_STATUS_ACTIVE,
                 ErpFinConstants.APPROVE_STATUS_UNSUBMITTED, false);
     }
 
-    private Long seedClaimAmountMismatch(String code) {
+    private String seedClaimAmountMismatch(String code) {
         return ormTemplate.runInSession(session -> {
-            Long empId = seedEmployee(9901L, ErpFinConstants.EMPLOYEE_STATUS_ACTIVE);
+            String empId = seedEmployee("9901", ErpFinConstants.EMPLOYEE_STATUS_ACTIVE);
             ErpFinExpenseClaim claim = newClaim(code, empId, ErpFinConstants.APPROVE_STATUS_UNSUBMITTED);
             // head total = 113（newClaim 默认），line total = 200 → mismatch
             addLine(claim.getId(), new BigDecimal("200"));
@@ -219,29 +219,29 @@ public class TestErpFinExpenseClaimApproval extends JunitAutoTestCase {
         });
     }
 
-    private Long seedEmployee(Long partnerId, String status) {
+    private String seedEmployee(String partnerId, String status) {
         // 测试库不强制 FK（对齐 TestErpFinArApItemGeneration 用合成 partnerId=2L/3L），故仅 set partnerId，
         // 不必先建 ErpMdPartner。partnerId=null 表示员工无内部往来单位（partner-missing 用例）。
         IEntityDao<ErpMdEmployee> empDao = daoProvider.daoFor(ErpMdEmployee.class);
         ErpMdEmployee emp = new ErpMdEmployee();
         emp.setCode("E-" + (partnerId != null ? partnerId : "nopartner"));
         emp.setName("员工-" + (partnerId != null ? partnerId : "nopartner"));
-        emp.setOrgId(1L);
+        emp.setOrgId("1");
         emp.setPartnerId(partnerId);
         emp.setStatus(status);
         empDao.saveEntity(emp);
         return emp.getId();
     }
 
-    private ErpFinExpenseClaim newClaim(String code, Long claimantId, String approveStatus) {
+    private ErpFinExpenseClaim newClaim(String code, String claimantId, String approveStatus) {
         IEntityDao<ErpFinExpenseClaim> dao = daoProvider.daoFor(ErpFinExpenseClaim.class);
         ErpFinExpenseClaim claim = new ErpFinExpenseClaim();
         claim.setCode(code);
-        claim.setOrgId(1L);
+        claim.setOrgId("1");
         claim.setClaimantId(claimantId);
         claim.setBusinessDate(java.time.LocalDate.of(2026, 6, 15));
         claim.setPaymentMode(ErpFinConstants.PAYMENT_MODE_OWN_ACCOUNT);
-        claim.setCurrencyId(1L);
+        claim.setCurrencyId("1");
         claim.setExchangeRate(BigDecimal.ONE);
         claim.setAmountWithoutTax(new BigDecimal("100"));
         claim.setTaxAmount(new BigDecimal("13"));
@@ -253,7 +253,7 @@ public class TestErpFinExpenseClaimApproval extends JunitAutoTestCase {
         return claim;
     }
 
-    private void addLine(Long claimId, BigDecimal amountWithTax) {
+    private void addLine(String claimId, BigDecimal amountWithTax) {
         IEntityDao<ErpFinExpenseClaimLine> dao = daoProvider.daoFor(ErpFinExpenseClaimLine.class);
         ErpFinExpenseClaimLine line = new ErpFinExpenseClaimLine();
         line.setClaimId(claimId);

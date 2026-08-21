@@ -16,7 +16,7 @@ public class ErpFinBadDebtWriteOffProcessor {
     @Inject
     ErpFinBadDebtProcessor facade;
 
-    public ErpFinBadDebt writeOff(Long arApItemId, String reason, IServiceContext context) {
+    public ErpFinBadDebt writeOff(String arApItemId, String reason, IServiceContext context) {
         ErpFinArApItem item = facade.requireOpenArApItem(arApItemId);
         ErpFinBadDebt debt = facade.newBadDebt(ErpFinConstants.BAD_DEBT_TYPE_WRITE_OFF, item,
                 item.getOpenAmountFunctional(), reason);

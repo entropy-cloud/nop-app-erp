@@ -23,7 +23,7 @@ public interface IErpFinBankStatementBiz extends ICrudBiz<ErpFinBankStatement> {
      * @return 落库的银行对账单头
      */
     @BizMutation
-    ErpFinBankStatement importStatement(@Name("fundAccountId") Long fundAccountId,
+    ErpFinBankStatement importStatement(@Name("fundAccountId") String fundAccountId,
                                         @Name("statementDate") LocalDate statementDate,
                                         @Name("lines") List<BankStatementLineInput> lines,
                                         IServiceContext context);

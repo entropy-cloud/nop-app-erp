@@ -103,7 +103,7 @@ public class TestErpFinVoucherPostingPerf extends JunitAutoTestCase {
             seedSubject("6602", "管理费用");
             seedSubject("2221", "应交税费-进项税");
             seedSubject("2202", "应付账款");
-            seedCurrency(1L, "CNY");
+            seedCurrency("1", "CNY");
             seedApInvoiceTemplate();
         });
 
@@ -178,15 +178,15 @@ public class TestErpFinVoucherPostingPerf extends JunitAutoTestCase {
         PostingEvent event = new PostingEvent();
         event.setBusinessType(ErpFinBusinessType.AP_INVOICE);
         event.setBillHeadCode(billHeadCode);
-        event.setAcctSchemaId(1L);
-        event.setOrgId(1L);
-        event.setCurrencyId(1L);
+        event.setAcctSchemaId("1");
+        event.setOrgId("1");
+        event.setCurrencyId("1");
         event.setExchangeRate(BigDecimal.ONE);
         event.setVoucherDate(voucherDate);
         event.getBillData().put("AMOUNT", amount);
         event.getBillData().put("TAX", tax);
         event.getBillData().put("TOTAL", total);
-        event.getBillData().put("partnerId", 1L);
+        event.getBillData().put("partnerId", "1");
         event.getBillData().put("businessDate", voucherDate);
         return event;
     }
@@ -207,7 +207,7 @@ public class TestErpFinVoucherPostingPerf extends JunitAutoTestCase {
         lineDao.saveEntity(templateLine(tpl.getId(), 3, "2202", DC_CREDIT, "TOTAL", "AP"));
     }
 
-    private ErpFinVoucherTemplateLine templateLine(Long templateId, int lineNo, String subjectCode,
+    private ErpFinVoucherTemplateLine templateLine(String templateId, int lineNo, String subjectCode,
                                                    String dcDirection, String amountKey, String accountKey) {
         ErpFinVoucherTemplateLine line = new ErpFinVoucherTemplateLine();
         line.setTemplateId(templateId);
@@ -230,7 +230,7 @@ public class TestErpFinVoucherPostingPerf extends JunitAutoTestCase {
         dao.saveEntity(subject);
     }
 
-    private void seedCurrency(Long id, String code) {
+    private void seedCurrency(String id, String code) {
         IEntityDao<ErpMdCurrency> dao = daoProvider.daoFor(ErpMdCurrency.class);
         ErpMdCurrency currency = new ErpMdCurrency();
         currency.setId(id);
@@ -245,7 +245,7 @@ public class TestErpFinVoucherPostingPerf extends JunitAutoTestCase {
         ErpFinAccountingPeriod period = new ErpFinAccountingPeriod();
         period.setCode(code);
         period.setName(code);
-        period.setOrgId(1L);
+        period.setOrgId("1");
         period.setYear(year);
         period.setMonth(month);
         period.setStartDate(start);

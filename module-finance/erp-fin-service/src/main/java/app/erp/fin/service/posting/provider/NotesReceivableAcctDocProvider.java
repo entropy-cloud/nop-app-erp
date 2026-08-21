@@ -61,7 +61,7 @@ public class NotesReceivableAcctDocProvider implements IErpFinAcctDocProvider {
 
     @Override
     public List<VoucherFact> createFacts(PostingEvent event, AcctDocContext ctx) {
-        Long partnerId = asLong(event.getBillData().get(ErpFinConstants.BILL_DATA_PARTNER_ID));
+        String partnerId = asId(event.getBillData().get(ErpFinConstants.BILL_DATA_PARTNER_ID));
         List<VoucherFact> facts = new ArrayList<>();
         switch (event.getBusinessType()) {
             case NOTES_RECEIVABLE_RECEIVED: {
@@ -137,17 +137,15 @@ public class NotesReceivableAcctDocProvider implements IErpFinAcctDocProvider {
         return new BigDecimal(value.toString().trim());
     }
 
-    private Long asLong(Object value) {
+    // billData id 桥接（A2 中间态）：未迁移域派发器写入的 Long id 归一为 String
+    private String asId(Object value) {
         if (value == null) {
             return null;
         }
         if (value instanceof Number) {
-            return ((Number) value).longValue();
+            return String.valueOf(((Number) value).longValue());
         }
-        try {
-            return Long.valueOf(value.toString().trim());
-        } catch (NumberFormatException e) {
-            return null;
-        }
+        String s = value.toString().trim();
+        return s.isEmpty() ? null : s;
     }
 }

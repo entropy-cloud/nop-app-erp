@@ -19,14 +19,14 @@ import app.erp.fin.dao.entity.ErpFinNotesPayable;
 public interface IErpFinNotesPayableBiz extends ICrudBiz<ErpFinNotesPayable> {
 
     @BizMutation
-    ErpFinNotesPayable issue(@Name("notesId") Long notesId, IServiceContext context);
+    ErpFinNotesPayable issue(@Name("notesId") String notesId, IServiceContext context);
 
     @BizMutation
-    ErpFinNotesPayable honor(@Name("notesId") Long notesId, IServiceContext context);
+    ErpFinNotesPayable honor(@Name("notesId") String notesId, IServiceContext context);
 
     @BizMutation
-    ErpFinNotesPayable dishonor(@Name("notesId") Long notesId, IServiceContext context);
+    ErpFinNotesPayable dishonor(@Name("notesId") String notesId, IServiceContext context);
 
     @BizMutation
-    ErpFinNotesPayable writeOff(@Name("notesId") Long notesId, IServiceContext context);
+    ErpFinNotesPayable writeOff(@Name("notesId") String notesId, IServiceContext context);
 }

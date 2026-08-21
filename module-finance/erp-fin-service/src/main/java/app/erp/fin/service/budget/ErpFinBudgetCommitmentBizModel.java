@@ -52,8 +52,8 @@ public class ErpFinBudgetCommitmentBizModel implements IErpFinBudgetCommitmentBi
     CommitmentVoucherGenerator commitmentVoucherGenerator;
 
     @Override
-    public Long commit(String sourceBillType, String sourceBillCode, Long subjectId, Long costCenterId,
-                       Long periodId, BigDecimal amount, IServiceContext context) {
+    public String commit(String sourceBillType, String sourceBillCode, String subjectId, String costCenterId,
+                       String periodId, BigDecimal amount, IServiceContext context) {
         if (!isCommitmentEnabled()) {
             return null;
         }
@@ -65,12 +65,12 @@ public class ErpFinBudgetCommitmentBizModel implements IErpFinBudgetCommitmentBi
         if (subject == null) {
             return null;
         }
-        Long currencyId = resolveCurrencyId(periodId);
-        Long[] orgSchema = resolveOrgAndSchema(periodId);
-        Long orgId = orgSchema[0] != null ? orgSchema[0] : 1L;
-        Long acctSchemaId = orgSchema[1] != null ? orgSchema[1] : 1L;
+        String currencyId = resolveCurrencyId(periodId);
+        String[] orgSchema = resolveOrgAndSchema(periodId);
+        String orgId = orgSchema[0] != null ? orgSchema[0] : "1";
+        String acctSchemaId = orgSchema[1] != null ? orgSchema[1] : "1";
 
-        Long voucherId = commitmentVoucherGenerator.generateCommitment(sourceBillType, sourceBillCode, subject, costCenterId,
+        String voucherId = commitmentVoucherGenerator.generateCommitment(sourceBillType, sourceBillCode, subject, costCenterId,
                 orgId, acctSchemaId, periodId, currencyId, amount);
         LOG.info("承付占用：单据 {}/{} 科目 {} 期间 {} 金额 {} → 凭证 {}",
                 sourceBillType, sourceBillCode, subjectId, periodId, amount, voucherId);
@@ -78,7 +78,7 @@ public class ErpFinBudgetCommitmentBizModel implements IErpFinBudgetCommitmentBi
     }
 
     @Override
-    public Long release(String sourceBillType, String sourceBillCode, IServiceContext context) {
+    public String release(String sourceBillType, String sourceBillCode, IServiceContext context) {
         if (!isCommitmentEnabled()) {
             return null;
         }
@@ -90,7 +90,7 @@ public class ErpFinBudgetCommitmentBizModel implements IErpFinBudgetCommitmentBi
                     .param(ErpFinErrors.ARG_SOURCE_BILL_TYPE, sourceBillType)
                     .param(ErpFinErrors.ARG_SOURCE_BILL_CODE, sourceBillCode);
         }
-        List<Long> reversalIds = commitmentVoucherGenerator.reverseCommitment(sourceBillType, sourceBillCode);
+        List<String> reversalIds = commitmentVoucherGenerator.reverseCommitment(sourceBillType, sourceBillCode);
         if (reversalIds.isEmpty()) {
             return null;
         }
@@ -101,7 +101,7 @@ public class ErpFinBudgetCommitmentBizModel implements IErpFinBudgetCommitmentBi
     /** 容错释放（{@link IErpFinBudgetCommitmentBiz#releaseIfPresent}）：无原承付凭证时静默返回 null，不抛守卫异常。
      *  供 release-on-cancel / release-on-return（P1-MA2-082）容错路径调用。 */
     @Override
-    public Long releaseIfPresent(String sourceBillType, String sourceBillCode, IServiceContext context) {
+    public String releaseIfPresent(String sourceBillType, String sourceBillCode, IServiceContext context) {
         if (!isCommitmentEnabled()) {
             return null;
         }
@@ -118,7 +118,7 @@ public class ErpFinBudgetCommitmentBizModel implements IErpFinBudgetCommitmentBi
         return Boolean.TRUE.equals(AppConfig.var(ErpFinConstants.CONFIG_BUDGET_COMMITMENT_ENABLED, Boolean.FALSE));
     }
 
-    private ErpMdSubject loadSubject(Long subjectId) {
+    private ErpMdSubject loadSubject(String subjectId) {
         return daoProvider.daoFor(ErpMdSubject.class).getEntityById(subjectId);
     }
 
@@ -137,7 +137,7 @@ public class ErpFinBudgetCommitmentBizModel implements IErpFinBudgetCommitmentBi
     }
 
     /** 按业务日期解析会计期间（与 ErpPurOrderProcessor.resolvePeriodId 同型）。 */
-    public Long resolvePeriodId(LocalDate businessDate) {
+    public String resolvePeriodId(LocalDate businessDate) {
         if (businessDate == null) {
             return null;
         }
@@ -150,25 +150,25 @@ public class ErpFinBudgetCommitmentBizModel implements IErpFinBudgetCommitmentBi
         return list.isEmpty() ? null : list.get(0).getId();
     }
 
-    private Long resolveCurrencyId(Long periodId) {
+    private String resolveCurrencyId(String periodId) {
         if (periodId == null) {
-            return 1L;
+            return "1";
         }
         ErpFinAccountingPeriod p = daoProvider.daoFor(ErpFinAccountingPeriod.class).getEntityById(periodId);
         if (p == null || p.getOrgId() == null) {
-            return 1L;
+            return "1";
         }
-        return 1L;
+        return "1";
     }
 
-    private Long[] resolveOrgAndSchema(Long periodId) {
+    private String[] resolveOrgAndSchema(String periodId) {
         if (periodId == null) {
-            return new Long[]{1L, 1L};
+            return new String[]{"1", "1"};
         }
         ErpFinAccountingPeriod p = daoProvider.daoFor(ErpFinAccountingPeriod.class).getEntityById(periodId);
         if (p == null) {
-            return new Long[]{1L, 1L};
+            return new String[]{"1", "1"};
         }
-        return new Long[]{p.getOrgId(), 1L};
+        return new String[]{p.getOrgId(), "1"};
     }
 }

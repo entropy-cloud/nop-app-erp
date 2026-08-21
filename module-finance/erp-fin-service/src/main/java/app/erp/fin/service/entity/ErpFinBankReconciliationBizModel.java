@@ -31,19 +31,19 @@ public class ErpFinBankReconciliationBizModel extends CrudBizModel<ErpFinBankRec
 
     @Override
     @BizMutation
-    public ErpFinBankReconciliation generate(@Name("statementId") Long statementId, IServiceContext context) {
+    public ErpFinBankReconciliation generate(@Name("statementId") String statementId, IServiceContext context) {
         return generateProcessor.generate(statementId, context);
     }
 
     @Override
     @BizMutation
-    public ErpFinBankReconciliation post(@Name("reconciliationId") Long reconciliationId, IServiceContext context) {
+    public ErpFinBankReconciliation post(@Name("reconciliationId") String reconciliationId, IServiceContext context) {
         return postProcessor.post(reconciliationId, context);
     }
 
     @Override
     @BizMutation
-    public ErpFinBankReconciliation reverse(@Name("reconciliationId") Long reconciliationId, IServiceContext context) {
+    public ErpFinBankReconciliation reverse(@Name("reconciliationId") String reconciliationId, IServiceContext context) {
         return reverseProcessor.reverse(reconciliationId, context);
     }
 

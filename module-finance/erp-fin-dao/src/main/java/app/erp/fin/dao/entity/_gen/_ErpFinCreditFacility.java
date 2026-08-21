@@ -169,16 +169,16 @@ public class _ErpFinCreditFacility extends DynamicOrmEntity{
 
     
     /* ID: ID */
-    private java.lang.Long _id;
+    private java.lang.String _id;
     
     /* 单号: CODE */
     private java.lang.String _code;
     
     /* 核算组织: ORG_ID */
-    private java.lang.Long _orgId;
+    private java.lang.String _orgId;
     
     /* 授信银行账户: FUND_ACCOUNT_ID */
-    private java.lang.Long _fundAccountId;
+    private java.lang.String _fundAccountId;
     
     /* 授信类型: FACILITY_TYPE */
     private java.lang.String _facilityType;
@@ -362,9 +362,9 @@ public class _ErpFinCreditFacility extends DynamicOrmEntity{
         switch(propId){
         
             case PROP_ID_id:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_id));
                }
                setId(typedValue);
@@ -382,9 +382,9 @@ public class _ErpFinCreditFacility extends DynamicOrmEntity{
             }
         
             case PROP_ID_orgId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_orgId));
                }
                setOrgId(typedValue);
@@ -392,9 +392,9 @@ public class _ErpFinCreditFacility extends DynamicOrmEntity{
             }
         
             case PROP_ID_fundAccountId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_fundAccountId));
                }
                setFundAccountId(typedValue);
@@ -552,7 +552,7 @@ public class _ErpFinCreditFacility extends DynamicOrmEntity{
         
             case PROP_ID_id:{
                onInitProp(propId);
-               this._id = (java.lang.Long)value;
+               this._id = (java.lang.String)value;
                orm_id(); // 如果是设置主键字段，则触发watcher
                break;
             }
@@ -566,14 +566,14 @@ public class _ErpFinCreditFacility extends DynamicOrmEntity{
         
             case PROP_ID_orgId:{
                onInitProp(propId);
-               this._orgId = (java.lang.Long)value;
+               this._orgId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_fundAccountId:{
                onInitProp(propId);
-               this._fundAccountId = (java.lang.Long)value;
+               this._fundAccountId = (java.lang.String)value;
                
                break;
             }
@@ -685,7 +685,7 @@ public class _ErpFinCreditFacility extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final java.lang.Long getId(){
+    public final java.lang.String getId(){
          onPropGet(PROP_ID_id);
          return _id;
     }
@@ -693,7 +693,7 @@ public class _ErpFinCreditFacility extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final void setId(java.lang.Long value){
+    public final void setId(java.lang.String value){
         if(onPropSet(PROP_ID_id,value)){
             this._id = value;
             internalClearRefs(PROP_ID_id);
@@ -723,7 +723,7 @@ public class _ErpFinCreditFacility extends DynamicOrmEntity{
     /**
      * 核算组织: ORG_ID
      */
-    public final java.lang.Long getOrgId(){
+    public final java.lang.String getOrgId(){
          onPropGet(PROP_ID_orgId);
          return _orgId;
     }
@@ -731,7 +731,7 @@ public class _ErpFinCreditFacility extends DynamicOrmEntity{
     /**
      * 核算组织: ORG_ID
      */
-    public final void setOrgId(java.lang.Long value){
+    public final void setOrgId(java.lang.String value){
         if(onPropSet(PROP_ID_orgId,value)){
             this._orgId = value;
             internalClearRefs(PROP_ID_orgId);
@@ -742,7 +742,7 @@ public class _ErpFinCreditFacility extends DynamicOrmEntity{
     /**
      * 授信银行账户: FUND_ACCOUNT_ID
      */
-    public final java.lang.Long getFundAccountId(){
+    public final java.lang.String getFundAccountId(){
          onPropGet(PROP_ID_fundAccountId);
          return _fundAccountId;
     }
@@ -750,7 +750,7 @@ public class _ErpFinCreditFacility extends DynamicOrmEntity{
     /**
      * 授信银行账户: FUND_ACCOUNT_ID
      */
-    public final void setFundAccountId(java.lang.Long value){
+    public final void setFundAccountId(java.lang.String value){
         if(onPropSet(PROP_ID_fundAccountId,value)){
             this._fundAccountId = value;
             internalClearRefs(PROP_ID_fundAccountId);

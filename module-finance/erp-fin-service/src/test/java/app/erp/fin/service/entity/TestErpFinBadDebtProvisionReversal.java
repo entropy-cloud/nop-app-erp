@@ -76,10 +76,10 @@ public class TestErpFinBadDebtProvisionReversal extends JunitAutoTestCase {
     @Test
     public void testReverseSingleReserveVoucherReversesAndRollsBackAllowance() {
         LocalDate asOf = LocalDate.of(2025, 1, 31);
-        Long[] holder = new Long[1];
+        String[] holder = new String[1];
         ormTemplate.runInSession(() -> {
-            Long pid = seedOpenPeriod("2025-01", 2025, 1, LocalDate.of(2025, 1, 1), asOf);
-            seedCurrency(1L, "CNY", true);
+            String pid = seedOpenPeriod("2025-01", 2025, 1, LocalDate.of(2025, 1, 1), asOf);
+            seedCurrency("1", "CNY", true);
             seedSubject("1231", "坏账准备", "ASSET", ErpFinConstants.DC_CREDIT);
             seedSubject("6701", "信用减值损失", ErpFinConstants.SUBJECT_CLASS_EXPENSE, ErpFinConstants.DC_DEBIT);
             seedSubject("1122", "应收账款", "ASSET", ErpFinConstants.DC_DEBIT);
@@ -94,7 +94,7 @@ public class TestErpFinBadDebtProvisionReversal extends JunitAutoTestCase {
                 badDebtBiz.runBadDebtProvision(holder[0], CTX));
         assertEquals("RESERVE", provision.getAction(), "前置：补提");
         BigDecimal provisionAmount = provision.getRequiredProvision();
-        Long originalVoucherId = provision.getVoucherId();
+        String originalVoucherId = provision.getVoucherId();
         assertNotNull(originalVoucherId, "前置：BDR 凭证已生成");
 
         BigDecimal allowanceAfterProvision = ormTemplate.runInSession(session -> provisionService.getAllowanceBalance());
@@ -136,10 +136,10 @@ public class TestErpFinBadDebtProvisionReversal extends JunitAutoTestCase {
     @Test
     public void testReverseAllWhenMultipleVouchersAccumulated() {
         LocalDate asOf = LocalDate.of(2025, 2, 28);
-        Long[] holder = new Long[1];
+        String[] holder = new String[1];
         ormTemplate.runInSession(() -> {
-            Long pid = seedOpenPeriod("2025-02", 2025, 2, LocalDate.of(2025, 2, 1), asOf);
-            seedCurrency(1L, "CNY", true);
+            String pid = seedOpenPeriod("2025-02", 2025, 2, LocalDate.of(2025, 2, 1), asOf);
+            seedCurrency("1", "CNY", true);
             seedSubject("1231", "坏账准备", "ASSET", ErpFinConstants.DC_CREDIT);
             seedSubject("6701", "信用减值损失", ErpFinConstants.SUBJECT_CLASS_EXPENSE, ErpFinConstants.DC_DEBIT);
             seedSubject("1122", "应收账款", "ASSET", ErpFinConstants.DC_DEBIT);
@@ -177,10 +177,10 @@ public class TestErpFinBadDebtProvisionReversal extends JunitAutoTestCase {
     @Test
     public void testGuardNoProvisionVoucherRejects() {
         LocalDate asOf = LocalDate.of(2025, 3, 31);
-        Long[] holder = new Long[1];
+        String[] holder = new String[1];
         ormTemplate.runInSession(() -> {
-            Long pid = seedOpenPeriod("2025-03", 2025, 3, LocalDate.of(2025, 3, 1), asOf);
-            seedCurrency(1L, "CNY", true);
+            String pid = seedOpenPeriod("2025-03", 2025, 3, LocalDate.of(2025, 3, 1), asOf);
+            seedCurrency("1", "CNY", true);
             seedSubject("1231", "坏账准备", "ASSET", ErpFinConstants.DC_CREDIT);
             seedSubject("6701", "信用减值损失", ErpFinConstants.SUBJECT_CLASS_EXPENSE, ErpFinConstants.DC_DEBIT);
             seedSubject("1122", "应收账款", "ASSET", ErpFinConstants.DC_DEBIT);
@@ -196,10 +196,10 @@ public class TestErpFinBadDebtProvisionReversal extends JunitAutoTestCase {
     @Test
     public void testGuardPeriodFinalClosedRejects() {
         LocalDate asOf = LocalDate.of(2025, 4, 30);
-        Long[] holder = new Long[1];
+        String[] holder = new String[1];
         ormTemplate.runInSession(() -> {
-            Long pid = seedOpenPeriod("2025-04", 2025, 4, LocalDate.of(2025, 4, 1), asOf);
-            seedCurrency(1L, "CNY", true);
+            String pid = seedOpenPeriod("2025-04", 2025, 4, LocalDate.of(2025, 4, 1), asOf);
+            seedCurrency("1", "CNY", true);
             seedSubject("1231", "坏账准备", "ASSET", ErpFinConstants.DC_CREDIT);
             seedSubject("6701", "信用减值损失", ErpFinConstants.SUBJECT_CLASS_EXPENSE, ErpFinConstants.DC_DEBIT);
             seedSubject("1122", "应收账款", "ASSET", ErpFinConstants.DC_DEBIT);
@@ -226,10 +226,10 @@ public class TestErpFinBadDebtProvisionReversal extends JunitAutoTestCase {
     @Test
     public void testReverseMixedReserveAndRelease() {
         LocalDate asOf = LocalDate.of(2025, 5, 31);
-        Long[] holder = new Long[1];
+        String[] holder = new String[1];
         ormTemplate.runInSession(() -> {
-            Long pid = seedOpenPeriod("2025-05", 2025, 5, LocalDate.of(2025, 5, 1), asOf);
-            seedCurrency(1L, "CNY", true);
+            String pid = seedOpenPeriod("2025-05", 2025, 5, LocalDate.of(2025, 5, 1), asOf);
+            seedCurrency("1", "CNY", true);
             seedSubject("1231", "坏账准备", "ASSET", ErpFinConstants.DC_CREDIT);
             seedSubject("6701", "信用减值损失", ErpFinConstants.SUBJECT_CLASS_EXPENSE, ErpFinConstants.DC_DEBIT);
             seedSubject("1122", "应收账款", "ASSET", ErpFinConstants.DC_DEBIT);
@@ -276,12 +276,12 @@ public class TestErpFinBadDebtProvisionReversal extends JunitAutoTestCase {
         return m;
     }
 
-    private Long seedOpenPeriod(String code, int year, int month, LocalDate start, LocalDate end) {
+    private String seedOpenPeriod(String code, int year, int month, LocalDate start, LocalDate end) {
         IEntityDao<ErpFinAccountingPeriod> dao = daoProvider.daoFor(ErpFinAccountingPeriod.class);
         ErpFinAccountingPeriod p = new ErpFinAccountingPeriod();
         p.setCode(code);
         p.setName(code);
-        p.setOrgId(1L);
+        p.setOrgId("1");
         p.setYear(year);
         p.setMonth(month);
         p.setStartDate(start);
@@ -291,7 +291,7 @@ public class TestErpFinBadDebtProvisionReversal extends JunitAutoTestCase {
         return p.getId();
     }
 
-    private void seedCurrency(Long id, String code, boolean functional) {
+    private void seedCurrency(String id, String code, boolean functional) {
         IEntityDao<ErpMdCurrency> dao = daoProvider.daoFor(ErpMdCurrency.class);
         ErpMdCurrency c = new ErpMdCurrency();
         c.setId(id);
@@ -312,19 +312,19 @@ public class TestErpFinBadDebtProvisionReversal extends JunitAutoTestCase {
         dao.saveEntity(s);
     }
 
-    private void seedReceivable(String code, Long periodId, LocalDate businessDate, String amount) {
+    private void seedReceivable(String code, String periodId, LocalDate businessDate, String amount) {
         BigDecimal amt = new BigDecimal(amount);
         IEntityDao<ErpFinArApItem> dao = daoProvider.daoFor(ErpFinArApItem.class);
         ErpFinArApItem item = new ErpFinArApItem();
         item.setCode(code);
-        item.setOrgId(1L);
-        item.setAcctSchemaId(1L);
+        item.setOrgId("1");
+        item.setAcctSchemaId("1");
         item.setDirection(ErpFinConstants.DIRECTION_RECEIVABLE);
-        item.setPartnerId(1L);
+        item.setPartnerId("1");
         item.setSourceBillType(ErpFinConstants.SOURCE_BILL_AR_INVOICE);
         item.setSourceBillCode(code);
         item.setBusinessDate(businessDate);
-        item.setCurrencyId(1L);
+        item.setCurrencyId("1");
         item.setExchangeRate(BigDecimal.ONE);
         item.setAmountSource(amt);
         item.setAmountFunctional(amt);
@@ -342,7 +342,7 @@ public class TestErpFinBadDebtProvisionReversal extends JunitAutoTestCase {
      * 参 Phase 1 Decision (a) 残留风险注释）。billHeadCode = {@code BAD_DEBT_RESERVE_BILL_CODE_PREFIX + period.code}
      * 完全匹配（与 {@code BadDebtProvisionService.runBadDebtProvisionForSchema:98-102} 写入逻辑一致）。
      */
-    private void seedExtraReserveVoucher(Long periodId, LocalDate voucherDate, BigDecimal amount) {
+    private void seedExtraReserveVoucher(String periodId, LocalDate voucherDate, BigDecimal amount) {
         ormTemplate.flushSession();
         ErpFinAccountingPeriod period = daoProvider.daoFor(ErpFinAccountingPeriod.class).getEntityById(periodId);
         ErpMdSubject expense = findSubject("6701");
@@ -357,7 +357,7 @@ public class TestErpFinBadDebtProvisionReversal extends JunitAutoTestCase {
                 ErpFinBusinessType.BAD_DEBT_RESERVE);
     }
 
-    private void seedExtraReleaseVoucher(Long periodId, LocalDate voucherDate, BigDecimal amount) {
+    private void seedExtraReleaseVoucher(String periodId, LocalDate voucherDate, BigDecimal amount) {
         ormTemplate.flushSession();
         ErpFinAccountingPeriod period = daoProvider.daoFor(ErpFinAccountingPeriod.class).getEntityById(periodId);
         ErpMdSubject expense = findSubject("6701");
@@ -372,7 +372,7 @@ public class TestErpFinBadDebtProvisionReversal extends JunitAutoTestCase {
                 ErpFinBusinessType.BAD_DEBT_RELEASE);
     }
 
-    private void seedProvisionVoucher(Long periodId, String periodCode, LocalDate voucherDate,
+    private void seedProvisionVoucher(String periodId, String periodCode, LocalDate voucherDate,
                                        List<LineSeed> lines, BigDecimal amount,
                                        String billHeadCode, ErpFinBusinessType businessType) {
         IEntityDao<ErpFinVoucher> vDao = daoProvider.daoFor(ErpFinVoucher.class);
@@ -383,8 +383,8 @@ public class TestErpFinBadDebtProvisionReversal extends JunitAutoTestCase {
         v.setVoucherType("TRANSFER");
         v.setPostingType(ErpFinConstants.POSTING_TYPE_NORMAL);
         v.setVoucherDate(voucherDate);
-        v.setOrgId(1L);
-        v.setAcctSchemaId(1L);
+        v.setOrgId("1");
+        v.setAcctSchemaId("1");
         v.setPeriodId(periodId);
         v.setTotalDebit(amount);
         v.setTotalCredit(amount);
@@ -403,11 +403,11 @@ public class TestErpFinBadDebtProvisionReversal extends JunitAutoTestCase {
             boolean isCredit = ErpFinConstants.DC_CREDIT.equals(ls.dcDirection);
             line.setDebitAmount(isCredit ? BigDecimal.ZERO : ls.amount);
             line.setCreditAmount(isCredit ? ls.amount : BigDecimal.ZERO);
-            line.setCurrencyId(1L);
+            line.setCurrencyId("1");
             line.setExchangeRate(BigDecimal.ONE);
             line.setAmountSource(ls.amount);
             line.setAmountFunctional(ls.amount);
-            line.setAcctSchemaId(1L);
+            line.setAcctSchemaId("1");
             line.setBusinessType(businessType.name());
             lDao.saveEntity(line);
         }
@@ -454,13 +454,13 @@ public class TestErpFinBadDebtProvisionReversal extends JunitAutoTestCase {
     }
 
     private static final class LineSeed {
-        final Long subjectId;
+        final String subjectId;
         final String subjectCode;
         final String subjectName;
         final String dcDirection;
         final BigDecimal amount;
 
-        LineSeed(Long subjectId, String subjectCode, String subjectName, String dcDirection, BigDecimal amount) {
+        LineSeed(String subjectId, String subjectCode, String subjectName, String dcDirection, BigDecimal amount) {
             this.subjectId = subjectId;
             this.subjectCode = subjectCode;
             this.subjectName = subjectName;

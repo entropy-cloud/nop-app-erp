@@ -193,19 +193,19 @@ public class _ErpFinNotesDiscount extends DynamicOrmEntity{
 
     
     /* ID: ID */
-    private java.lang.Long _id;
+    private java.lang.String _id;
     
     /* 应收票据: NOTES_RECEIVABLE_ID */
-    private java.lang.Long _notesReceivableId;
+    private java.lang.String _notesReceivableId;
     
     /* 核算组织: ORG_ID */
-    private java.lang.Long _orgId;
+    private java.lang.String _orgId;
     
     /* 贴现日: DISCOUNT_DATE */
     private java.time.LocalDate _discountDate;
     
     /* 贴现银行账户: BANK_ID */
-    private java.lang.Long _bankId;
+    private java.lang.String _bankId;
     
     /* 票面金额: FACE_AMOUNT */
     private java.math.BigDecimal _faceAmount;
@@ -217,7 +217,7 @@ public class _ErpFinNotesDiscount extends DynamicOrmEntity{
     private java.math.BigDecimal _netAmount;
     
     /* 币种: CURRENCY_ID */
-    private java.lang.Long _currencyId;
+    private java.lang.String _currencyId;
     
     /* 汇率: EXCHANGE_RATE */
     private java.math.BigDecimal _exchangeRate;
@@ -404,9 +404,9 @@ public class _ErpFinNotesDiscount extends DynamicOrmEntity{
         switch(propId){
         
             case PROP_ID_id:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_id));
                }
                setId(typedValue);
@@ -414,9 +414,9 @@ public class _ErpFinNotesDiscount extends DynamicOrmEntity{
             }
         
             case PROP_ID_notesReceivableId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_notesReceivableId));
                }
                setNotesReceivableId(typedValue);
@@ -424,9 +424,9 @@ public class _ErpFinNotesDiscount extends DynamicOrmEntity{
             }
         
             case PROP_ID_orgId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_orgId));
                }
                setOrgId(typedValue);
@@ -444,9 +444,9 @@ public class _ErpFinNotesDiscount extends DynamicOrmEntity{
             }
         
             case PROP_ID_bankId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_bankId));
                }
                setBankId(typedValue);
@@ -484,9 +484,9 @@ public class _ErpFinNotesDiscount extends DynamicOrmEntity{
             }
         
             case PROP_ID_currencyId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_currencyId));
                }
                setCurrencyId(typedValue);
@@ -624,21 +624,21 @@ public class _ErpFinNotesDiscount extends DynamicOrmEntity{
         
             case PROP_ID_id:{
                onInitProp(propId);
-               this._id = (java.lang.Long)value;
+               this._id = (java.lang.String)value;
                orm_id(); // 如果是设置主键字段，则触发watcher
                break;
             }
         
             case PROP_ID_notesReceivableId:{
                onInitProp(propId);
-               this._notesReceivableId = (java.lang.Long)value;
+               this._notesReceivableId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_orgId:{
                onInitProp(propId);
-               this._orgId = (java.lang.Long)value;
+               this._orgId = (java.lang.String)value;
                
                break;
             }
@@ -652,7 +652,7 @@ public class _ErpFinNotesDiscount extends DynamicOrmEntity{
         
             case PROP_ID_bankId:{
                onInitProp(propId);
-               this._bankId = (java.lang.Long)value;
+               this._bankId = (java.lang.String)value;
                
                break;
             }
@@ -680,7 +680,7 @@ public class _ErpFinNotesDiscount extends DynamicOrmEntity{
         
             case PROP_ID_currencyId:{
                onInitProp(propId);
-               this._currencyId = (java.lang.Long)value;
+               this._currencyId = (java.lang.String)value;
                
                break;
             }
@@ -778,7 +778,7 @@ public class _ErpFinNotesDiscount extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final java.lang.Long getId(){
+    public final java.lang.String getId(){
          onPropGet(PROP_ID_id);
          return _id;
     }
@@ -786,7 +786,7 @@ public class _ErpFinNotesDiscount extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final void setId(java.lang.Long value){
+    public final void setId(java.lang.String value){
         if(onPropSet(PROP_ID_id,value)){
             this._id = value;
             internalClearRefs(PROP_ID_id);
@@ -797,7 +797,7 @@ public class _ErpFinNotesDiscount extends DynamicOrmEntity{
     /**
      * 应收票据: NOTES_RECEIVABLE_ID
      */
-    public final java.lang.Long getNotesReceivableId(){
+    public final java.lang.String getNotesReceivableId(){
          onPropGet(PROP_ID_notesReceivableId);
          return _notesReceivableId;
     }
@@ -805,7 +805,7 @@ public class _ErpFinNotesDiscount extends DynamicOrmEntity{
     /**
      * 应收票据: NOTES_RECEIVABLE_ID
      */
-    public final void setNotesReceivableId(java.lang.Long value){
+    public final void setNotesReceivableId(java.lang.String value){
         if(onPropSet(PROP_ID_notesReceivableId,value)){
             this._notesReceivableId = value;
             internalClearRefs(PROP_ID_notesReceivableId);
@@ -816,7 +816,7 @@ public class _ErpFinNotesDiscount extends DynamicOrmEntity{
     /**
      * 核算组织: ORG_ID
      */
-    public final java.lang.Long getOrgId(){
+    public final java.lang.String getOrgId(){
          onPropGet(PROP_ID_orgId);
          return _orgId;
     }
@@ -824,7 +824,7 @@ public class _ErpFinNotesDiscount extends DynamicOrmEntity{
     /**
      * 核算组织: ORG_ID
      */
-    public final void setOrgId(java.lang.Long value){
+    public final void setOrgId(java.lang.String value){
         if(onPropSet(PROP_ID_orgId,value)){
             this._orgId = value;
             internalClearRefs(PROP_ID_orgId);
@@ -854,7 +854,7 @@ public class _ErpFinNotesDiscount extends DynamicOrmEntity{
     /**
      * 贴现银行账户: BANK_ID
      */
-    public final java.lang.Long getBankId(){
+    public final java.lang.String getBankId(){
          onPropGet(PROP_ID_bankId);
          return _bankId;
     }
@@ -862,7 +862,7 @@ public class _ErpFinNotesDiscount extends DynamicOrmEntity{
     /**
      * 贴现银行账户: BANK_ID
      */
-    public final void setBankId(java.lang.Long value){
+    public final void setBankId(java.lang.String value){
         if(onPropSet(PROP_ID_bankId,value)){
             this._bankId = value;
             internalClearRefs(PROP_ID_bankId);
@@ -930,7 +930,7 @@ public class _ErpFinNotesDiscount extends DynamicOrmEntity{
     /**
      * 币种: CURRENCY_ID
      */
-    public final java.lang.Long getCurrencyId(){
+    public final java.lang.String getCurrencyId(){
          onPropGet(PROP_ID_currencyId);
          return _currencyId;
     }
@@ -938,7 +938,7 @@ public class _ErpFinNotesDiscount extends DynamicOrmEntity{
     /**
      * 币种: CURRENCY_ID
      */
-    public final void setCurrencyId(java.lang.Long value){
+    public final void setCurrencyId(java.lang.String value){
         if(onPropSet(PROP_ID_currencyId,value)){
             this._currencyId = value;
             internalClearRefs(PROP_ID_currencyId);

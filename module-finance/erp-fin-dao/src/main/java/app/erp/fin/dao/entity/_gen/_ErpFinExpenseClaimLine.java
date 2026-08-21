@@ -182,10 +182,10 @@ public class _ErpFinExpenseClaimLine extends DynamicOrmEntity{
 
     
     /* ID: ID */
-    private java.lang.Long _id;
+    private java.lang.String _id;
     
     /* 报销单ID: CLAIM_ID */
-    private java.lang.Long _claimId;
+    private java.lang.String _claimId;
     
     /* 行号: LINE_NO */
     private java.lang.Integer _lineNo;
@@ -197,10 +197,10 @@ public class _ErpFinExpenseClaimLine extends DynamicOrmEntity{
     private java.lang.Long _projectId;
     
     /* 成本中心: COST_CENTER_ID */
-    private java.lang.Long _costCenterId;
+    private java.lang.String _costCenterId;
     
     /* 费用科目: SUBJECT_ID */
-    private java.lang.Long _subjectId;
+    private java.lang.String _subjectId;
     
     /* 科目编码: SUBJECT_CODE */
     private java.lang.String _subjectCode;
@@ -381,9 +381,9 @@ public class _ErpFinExpenseClaimLine extends DynamicOrmEntity{
         switch(propId){
         
             case PROP_ID_id:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_id));
                }
                setId(typedValue);
@@ -391,9 +391,9 @@ public class _ErpFinExpenseClaimLine extends DynamicOrmEntity{
             }
         
             case PROP_ID_claimId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_claimId));
                }
                setClaimId(typedValue);
@@ -431,9 +431,9 @@ public class _ErpFinExpenseClaimLine extends DynamicOrmEntity{
             }
         
             case PROP_ID_costCenterId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_costCenterId));
                }
                setCostCenterId(typedValue);
@@ -441,9 +441,9 @@ public class _ErpFinExpenseClaimLine extends DynamicOrmEntity{
             }
         
             case PROP_ID_subjectId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_subjectId));
                }
                setSubjectId(typedValue);
@@ -581,14 +581,14 @@ public class _ErpFinExpenseClaimLine extends DynamicOrmEntity{
         
             case PROP_ID_id:{
                onInitProp(propId);
-               this._id = (java.lang.Long)value;
+               this._id = (java.lang.String)value;
                orm_id(); // 如果是设置主键字段，则触发watcher
                break;
             }
         
             case PROP_ID_claimId:{
                onInitProp(propId);
-               this._claimId = (java.lang.Long)value;
+               this._claimId = (java.lang.String)value;
                
                break;
             }
@@ -616,14 +616,14 @@ public class _ErpFinExpenseClaimLine extends DynamicOrmEntity{
         
             case PROP_ID_costCenterId:{
                onInitProp(propId);
-               this._costCenterId = (java.lang.Long)value;
+               this._costCenterId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_subjectId:{
                onInitProp(propId);
-               this._subjectId = (java.lang.Long)value;
+               this._subjectId = (java.lang.String)value;
                
                break;
             }
@@ -721,7 +721,7 @@ public class _ErpFinExpenseClaimLine extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final java.lang.Long getId(){
+    public final java.lang.String getId(){
          onPropGet(PROP_ID_id);
          return _id;
     }
@@ -729,7 +729,7 @@ public class _ErpFinExpenseClaimLine extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final void setId(java.lang.Long value){
+    public final void setId(java.lang.String value){
         if(onPropSet(PROP_ID_id,value)){
             this._id = value;
             internalClearRefs(PROP_ID_id);
@@ -740,7 +740,7 @@ public class _ErpFinExpenseClaimLine extends DynamicOrmEntity{
     /**
      * 报销单ID: CLAIM_ID
      */
-    public final java.lang.Long getClaimId(){
+    public final java.lang.String getClaimId(){
          onPropGet(PROP_ID_claimId);
          return _claimId;
     }
@@ -748,7 +748,7 @@ public class _ErpFinExpenseClaimLine extends DynamicOrmEntity{
     /**
      * 报销单ID: CLAIM_ID
      */
-    public final void setClaimId(java.lang.Long value){
+    public final void setClaimId(java.lang.String value){
         if(onPropSet(PROP_ID_claimId,value)){
             this._claimId = value;
             internalClearRefs(PROP_ID_claimId);
@@ -816,7 +816,7 @@ public class _ErpFinExpenseClaimLine extends DynamicOrmEntity{
     /**
      * 成本中心: COST_CENTER_ID
      */
-    public final java.lang.Long getCostCenterId(){
+    public final java.lang.String getCostCenterId(){
          onPropGet(PROP_ID_costCenterId);
          return _costCenterId;
     }
@@ -824,7 +824,7 @@ public class _ErpFinExpenseClaimLine extends DynamicOrmEntity{
     /**
      * 成本中心: COST_CENTER_ID
      */
-    public final void setCostCenterId(java.lang.Long value){
+    public final void setCostCenterId(java.lang.String value){
         if(onPropSet(PROP_ID_costCenterId,value)){
             this._costCenterId = value;
             internalClearRefs(PROP_ID_costCenterId);
@@ -835,7 +835,7 @@ public class _ErpFinExpenseClaimLine extends DynamicOrmEntity{
     /**
      * 费用科目: SUBJECT_ID
      */
-    public final java.lang.Long getSubjectId(){
+    public final java.lang.String getSubjectId(){
          onPropGet(PROP_ID_subjectId);
          return _subjectId;
     }
@@ -843,7 +843,7 @@ public class _ErpFinExpenseClaimLine extends DynamicOrmEntity{
     /**
      * 费用科目: SUBJECT_ID
      */
-    public final void setSubjectId(java.lang.Long value){
+    public final void setSubjectId(java.lang.String value){
         if(onPropSet(PROP_ID_subjectId,value)){
             this._subjectId = value;
             internalClearRefs(PROP_ID_subjectId);
@@ -1118,7 +1118,8 @@ public class _ErpFinExpenseClaimLine extends DynamicOrmEntity{
            }else{
            internalSetRefEntity(PROP_NAME_project, refEntity,()->{
            
-                           this.setProjectId(refEntity.getId());
+                           this.orm_propValue(PROP_ID_projectId,
+                           refEntity.getId());
                        
            });
            }

@@ -55,7 +55,7 @@ public class BankReconAdjustmentVoucherBuilder {
      *
      * @return 调整凭证 ID；无未达项返回 null
      */
-    public Long post(ErpFinBankReconciliation recon, ErpFinFundAccount fundAccount,
+    public String post(ErpFinBankReconciliation recon, ErpFinFundAccount fundAccount,
                      List<ErpFinBankStatementLine> unmatchedLines, IServiceContext context) {
         if (unmatchedLines == null || unmatchedLines.isEmpty()) {
             return null;
@@ -75,7 +75,7 @@ public class BankReconAdjustmentVoucherBuilder {
 
         String bankSubjectCode = resolveBankSubjectCode(fundAccount);
         String adjSubjectCode = resolveAdjSubjectCode();
-        Long acctSchemaId = resolveAcctSchemaId(recon, fundAccount);
+        String acctSchemaId = resolveAcctSchemaId(recon, fundAccount);
 
         PostingEvent event = new PostingEvent();
         event.setBusinessType(ErpFinBusinessType.BANK_RECON_ADJ);
@@ -94,7 +94,7 @@ public class BankReconAdjustmentVoucherBuilder {
         return voucherBiz.post(event, context);
     }
 
-    public Long reverse(ErpFinBankReconciliation recon, IServiceContext context) {
+    public String reverse(ErpFinBankReconciliation recon, IServiceContext context) {
         if (!hasAdjustmentVoucher(recon)) {
             return null;
         }
@@ -138,13 +138,13 @@ public class BankReconAdjustmentVoucherBuilder {
         return code.trim();
     }
 
-    protected Long resolveAcctSchemaId(ErpFinBankReconciliation recon, ErpFinFundAccount fundAccount) {
-        Long orgId = fundAccount != null ? fundAccount.getOrgId() : null;
+    protected String resolveAcctSchemaId(ErpFinBankReconciliation recon, ErpFinFundAccount fundAccount) {
+        String orgId = fundAccount != null ? fundAccount.getOrgId() : null;
         if (orgId == null && recon != null) {
             orgId = recon.getOrgId();
         }
-        Long schemaId = AcctSchemaResolver.resolvePrimarySchemaId(daoProvider, orgId);
-        return schemaId != null ? schemaId : 1L;
+        String schemaId = AcctSchemaResolver.resolvePrimarySchemaId(daoProvider, orgId);
+        return schemaId != null ? schemaId : "1";
     }
 
     private static BigDecimal nz(BigDecimal v) {

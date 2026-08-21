@@ -68,10 +68,10 @@ public class TestErpFinArApItemGeneration extends JunitAutoTestCase {
             seedApInvoiceTemplate();
         });
 
-        PostingEvent event = apInvoiceEvent("AP-ARAP-001", voucherDate, 2L,
+        PostingEvent event = apInvoiceEvent("AP-ARAP-001", voucherDate, "2",
                 new BigDecimal("113"));
 
-        Long voucherId = ormTemplate.runInSession(session -> voucherBiz.post(event, CTX));
+        String voucherId = ormTemplate.runInSession(session -> voucherBiz.post(event, CTX));
         assertNotNull(voucherId, "前置：过账成功");
         output("1_voucher_id.json5", voucherId);
 
@@ -80,7 +80,7 @@ public class TestErpFinArApItemGeneration extends JunitAutoTestCase {
         ErpFinArApItem item = items.get(0);
         assertEquals(ErpFinConstants.DIRECTION_PAYABLE, item.getDirection(), "方向=应付");
         assertEquals("AP_INVOICE", item.getSourceBillType());
-        assertEquals(2L, item.getPartnerId());
+        assertEquals("2", item.getPartnerId());
         assertEquals(0, item.getAmountFunctional().compareTo(new BigDecimal("113")), "本位币金额=113");
         assertEquals(0, item.getOpenAmountFunctional().compareTo(new BigDecimal("113")), "未核销=113");
         assertEquals(0, item.getSettledAmountFunctional().compareTo(BigDecimal.ZERO), "已核销=0");
@@ -102,16 +102,16 @@ public class TestErpFinArApItemGeneration extends JunitAutoTestCase {
         PostingEvent event = new PostingEvent();
         event.setBusinessType(ErpFinBusinessType.RECEIPT);
         event.setBillHeadCode("RC-ARAP-001");
-        event.setAcctSchemaId(1L);
-        event.setOrgId(1L);
-        event.setCurrencyId(1L);
+        event.setAcctSchemaId("1");
+        event.setOrgId("1");
+        event.setCurrencyId("1");
         event.setExchangeRate(BigDecimal.ONE);
         event.setVoucherDate(voucherDate);
-        event.getBillData().put("partnerId", 3L);
+        event.getBillData().put("partnerId", "3");
         event.getBillData().put("AMOUNT", new BigDecimal("200"));
         event.getBillData().put("businessDate", voucherDate);
 
-        Long voucherId = ormTemplate.runInSession(session -> voucherBiz.post(event, CTX));
+        String voucherId = ormTemplate.runInSession(session -> voucherBiz.post(event, CTX));
         assertNotNull(voucherId, "前置：收款过账成功");
         output("1_voucher_id.json5", voucherId);
 
@@ -136,7 +136,7 @@ public class TestErpFinArApItemGeneration extends JunitAutoTestCase {
             seedApInvoiceTemplate();
         });
 
-        PostingEvent event = apInvoiceEvent("AP-ARAP-IDEM", voucherDate, 1L, new BigDecimal("100"));
+        PostingEvent event = apInvoiceEvent("AP-ARAP-IDEM", voucherDate, "1", new BigDecimal("100"));
 
         ormTemplate.runInSession(() -> voucherBiz.post(event, CTX));
         ormTemplate.runInSession(() -> voucherBiz.post(event, CTX));
@@ -157,7 +157,7 @@ public class TestErpFinArApItemGeneration extends JunitAutoTestCase {
             seedApInvoiceTemplate();
         });
 
-        ormTemplate.runInSession(() -> voucherBiz.post(apInvoiceEvent("AP-ARAP-REV", voucherDate, 1L, new BigDecimal("150")), CTX));
+        ormTemplate.runInSession(() -> voucherBiz.post(apInvoiceEvent("AP-ARAP-REV", voucherDate, "1", new BigDecimal("150")), CTX));
 
         List<ErpFinArApItem> before = findItems("AP_INVOICE", "AP-ARAP-REV");
         assertEquals(1, before.size());
@@ -186,14 +186,14 @@ public class TestErpFinArApItemGeneration extends JunitAutoTestCase {
         PostingEvent event = new PostingEvent();
         event.setBusinessType(ErpFinBusinessType.PURCHASE_INPUT);
         event.setBillHeadCode("PO-NOARAP-001");
-        event.setAcctSchemaId(1L);
-        event.setOrgId(1L);
-        event.setCurrencyId(1L);
+        event.setAcctSchemaId("1");
+        event.setOrgId("1");
+        event.setCurrencyId("1");
         event.setExchangeRate(BigDecimal.ONE);
         event.setVoucherDate(voucherDate);
         event.getBillData().put("AMOUNT", new BigDecimal("500"));
 
-        Long voucherId = ormTemplate.runInSession(session -> voucherBiz.post(event, CTX));
+        String voucherId = ormTemplate.runInSession(session -> voucherBiz.post(event, CTX));
         assertNotNull(voucherId);
         output("1_voucher_id.json5", voucherId);
         // PURCHASE_INPUT 非 AR/AP 类型，不应生成辅助账
@@ -228,8 +228,8 @@ public class TestErpFinArApItemGeneration extends JunitAutoTestCase {
             seedNotesReceivableReceivedTemplate();
         });
 
-        Long voucherId = ormTemplate.runInSession(session -> voucherBiz.post(
-                notesReceivableEvent(longNoteCode, voucherDate, 5L, new BigDecimal("10000")), CTX));
+        String voucherId = ormTemplate.runInSession(session -> voucherBiz.post(
+                notesReceivableEvent(longNoteCode, voucherDate, "5", new BigDecimal("10000")), CTX));
         assertNotNull(voucherId, "过账成功（未吞 22001 截断异常）");
         output("1_voucher_id.json5", voucherId);
 
@@ -244,7 +244,7 @@ public class TestErpFinArApItemGeneration extends JunitAutoTestCase {
 
         // 幂等：同 sourceBillCode 再过账不产生第二条且不抛异常。
         ormTemplate.runInSession(session -> voucherBiz.post(
-                notesReceivableEvent(longNoteCode, voucherDate, 5L, new BigDecimal("10000")), CTX));
+                notesReceivableEvent(longNoteCode, voucherDate, "5", new BigDecimal("10000")), CTX));
         List<ErpFinArApItem> itemsAfterDup = findItems("NOTES_RECEIVABLE", longNoteCode);
         assertEquals(1, itemsAfterDup.size(), "幂等：重复过账不应重复生成辅助账项");
         output("3_items_count_after_dup.json5", itemsAfterDup.size());
@@ -268,13 +268,13 @@ public class TestErpFinArApItemGeneration extends JunitAutoTestCase {
         ormTemplate.runInSession(action);
     }
 
-    private PostingEvent apInvoiceEvent(String billHeadCode, LocalDate voucherDate, long partnerId, BigDecimal total) {
+    private PostingEvent apInvoiceEvent(String billHeadCode, LocalDate voucherDate, String partnerId, BigDecimal total) {
         PostingEvent event = new PostingEvent();
         event.setBusinessType(ErpFinBusinessType.AP_INVOICE);
         event.setBillHeadCode(billHeadCode);
-        event.setAcctSchemaId(1L);
-        event.setOrgId(1L);
-        event.setCurrencyId(1L);
+        event.setAcctSchemaId("1");
+        event.setOrgId("1");
+        event.setCurrencyId("1");
         event.setExchangeRate(BigDecimal.ONE);
         event.setVoucherDate(voucherDate);
         event.getBillData().put("AMOUNT", total);
@@ -285,14 +285,14 @@ public class TestErpFinArApItemGeneration extends JunitAutoTestCase {
         return event;
     }
 
-    private PostingEvent notesReceivableEvent(String billHeadCode, LocalDate voucherDate, long partnerId,
+    private PostingEvent notesReceivableEvent(String billHeadCode, LocalDate voucherDate, String partnerId,
                                               BigDecimal faceAmount) {
         PostingEvent event = new PostingEvent();
         event.setBusinessType(ErpFinBusinessType.NOTES_RECEIVABLE_RECEIVED);
         event.setBillHeadCode(billHeadCode);
-        event.setAcctSchemaId(1L);
-        event.setOrgId(1L);
-        event.setCurrencyId(1L);
+        event.setAcctSchemaId("1");
+        event.setOrgId("1");
+        event.setCurrencyId("1");
         event.setExchangeRate(BigDecimal.ONE);
         event.setVoucherDate(voucherDate);
         event.getBillData().put("partnerId", partnerId);
@@ -358,7 +358,7 @@ public class TestErpFinArApItemGeneration extends JunitAutoTestCase {
         lineDao.saveEntity(tplLine(tpl.getId(), 2, "2202", DC_CREDIT, "AMOUNT"));
     }
 
-    private ErpFinVoucherTemplateLine tplLine(Long templateId, int lineNo, String subjectCode,
+    private ErpFinVoucherTemplateLine tplLine(String templateId, int lineNo, String subjectCode,
                                               String dcDirection, String amountKey) {
         ErpFinVoucherTemplateLine line = new ErpFinVoucherTemplateLine();
         line.setTemplateId(templateId);
@@ -386,7 +386,7 @@ public class TestErpFinArApItemGeneration extends JunitAutoTestCase {
         ErpFinAccountingPeriod period = new ErpFinAccountingPeriod();
         period.setCode(code);
         period.setName(code);
-        period.setOrgId(1L);
+        period.setOrgId("1");
         period.setYear(year);
         period.setMonth(month);
         period.setStartDate(start);

@@ -1,0 +1,3 @@
+_chgType,ID,CODE,ORG_ID,ELIMINATION_TYPE,PERIOD_ID,PAIR_KEY,MATCH_ID,FROM_ORG_ID,TO_ORG_ID,ELIMINATION_AMOUNT,DRAFT_VOUCHER_ID,STATUS,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME,REMARK
+A,10,@var:ErpFinConsolidationElimination@code_1,3,REVENUE_COST,1,@var:ErpFinConsolidationElimination@pairKey_1,8,3,4,500.0000,,CANDIDATE,@var:ErpFinConsolidationElimination@delVersion,0,autotest-ref,*,autotest-ref,*,
+A,9,@var:ErpFinConsolidationElimination@code,3,AR_AP,1,@var:ErpFinConsolidationElimination@pairKey_1,8,3,4,500.0000,11,DRAFT_VOUCHER,@var:ErpFinConsolidationElimination@delVersion,1,autotest-ref,*,autotest-ref,*,

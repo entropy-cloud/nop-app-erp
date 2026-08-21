@@ -47,14 +47,14 @@ public class TestErpFinReconciliation extends JunitAutoTestCase {
 
     @Test
     public void testPartialSettlement() {
-        long partnerId = 10L;
-        Long[] fixture = setup(partnerId, new BigDecimal("300"), new BigDecimal("1000"),
+        String partnerId = "10";
+        String[] fixture = setup(partnerId, new BigDecimal("300"), new BigDecimal("1000"),
                 LocalDate.of(2026, 6, 10), LocalDate.of(2026, 6, 8));
 
         ErpFinReconciliation head = ormTemplate.runInSession(session -> reconciliationBiz.create(
                 ErpFinConstants.DIRECTION_PAYABLE, partnerId, LocalDate.of(2026, 6, 20),
                 java.util.Collections.singletonList(line(fixture[0], fixture[1], "300")), CTX));
-        final Long headId = head.getId();
+        final String headId = head.getId();
         ormTemplate.runInSession(() -> reconciliationBiz.post(headId, CTX));
 
         ErpFinArApItem payment = item(fixture[0]);
@@ -72,8 +72,8 @@ public class TestErpFinReconciliation extends JunitAutoTestCase {
 
     @Test
     public void testFullSettlement() {
-        long partnerId = 20L;
-        Long[] fixture = setup(partnerId, new BigDecimal("500"), new BigDecimal("500"),
+        String partnerId = "20";
+        String[] fixture = setup(partnerId, new BigDecimal("500"), new BigDecimal("500"),
                 LocalDate.of(2026, 6, 10), LocalDate.of(2026, 6, 8));
 
         ErpFinReconciliation head = ormTemplate.runInSession(session -> reconciliationBiz.create(
@@ -87,10 +87,10 @@ public class TestErpFinReconciliation extends JunitAutoTestCase {
 
     @Test
     public void testCrossPartnerRejected() {
-        long partnerA = 30L;
-        long partnerB = 32L;
-        Long[] a = setup(partnerA, "100", "100", LocalDate.of(2026, 6, 10), LocalDate.of(2026, 6, 8));
-        Long[] b = setup(partnerB, "100", "100", LocalDate.of(2026, 6, 10), LocalDate.of(2026, 6, 8));
+        String partnerA = "30";
+        String partnerB = "32";
+        String[] a = setup(partnerA, "100", "100", LocalDate.of(2026, 6, 10), LocalDate.of(2026, 6, 8));
+        String[] b = setup(partnerB, "100", "100", LocalDate.of(2026, 6, 10), LocalDate.of(2026, 6, 8));
 
         // 用 A 的付款核销 B 的发票 → 跨 partner
         ErpFinReconciliation head = ormTemplate.runInSession(session -> reconciliationBiz.create(
@@ -102,9 +102,9 @@ public class TestErpFinReconciliation extends JunitAutoTestCase {
 
     @Test
     public void testOverAmountRejected() {
-        long partnerId = 40L;
+        String partnerId = "40";
         // 付款 100，发票 50，核销 100 → 超出发票 open
-        Long[] fixture = setup(partnerId, new BigDecimal("100"), new BigDecimal("50"),
+        String[] fixture = setup(partnerId, new BigDecimal("100"), new BigDecimal("50"),
                 LocalDate.of(2026, 6, 10), LocalDate.of(2026, 6, 8));
 
         ErpFinReconciliation head = ormTemplate.runInSession(session -> reconciliationBiz.create(
@@ -116,9 +116,9 @@ public class TestErpFinReconciliation extends JunitAutoTestCase {
 
     @Test
     public void testDateBeforeInvoiceRejected() {
-        long partnerId = 50L;
+        String partnerId = "50";
         // 发票业务日期 6-25，核销日期 6-20 → 早于发票
-        Long[] fixture = setup(partnerId, "100", "100", LocalDate.of(2026, 6, 25), LocalDate.of(2026, 6, 8));
+        String[] fixture = setup(partnerId, "100", "100", LocalDate.of(2026, 6, 25), LocalDate.of(2026, 6, 8));
 
         ErpFinReconciliation head = ormTemplate.runInSession(session -> reconciliationBiz.create(
                 ErpFinConstants.DIRECTION_PAYABLE, partnerId, LocalDate.of(2026, 6, 20),
@@ -129,8 +129,8 @@ public class TestErpFinReconciliation extends JunitAutoTestCase {
 
     @Test
     public void testReverseRestoresItems() {
-        long partnerId = 60L;
-        Long[] fixture = setup(partnerId, new BigDecimal("400"), new BigDecimal("400"),
+        String partnerId = "60";
+        String[] fixture = setup(partnerId, new BigDecimal("400"), new BigDecimal("400"),
                 LocalDate.of(2026, 6, 10), LocalDate.of(2026, 6, 8));
 
         ErpFinReconciliation head = ormTemplate.runInSession(session -> reconciliationBiz.create(
@@ -153,8 +153,8 @@ public class TestErpFinReconciliation extends JunitAutoTestCase {
 
     @Test
     public void testPostPostedAgainRejected() {
-        long partnerId = 70L;
-        Long[] fixture = setup(partnerId, "100", "100", LocalDate.of(2026, 6, 10), LocalDate.of(2026, 6, 8));
+        String partnerId = "70";
+        String[] fixture = setup(partnerId, "100", "100", LocalDate.of(2026, 6, 10), LocalDate.of(2026, 6, 8));
         ErpFinReconciliation head = ormTemplate.runInSession(session -> reconciliationBiz.create(
                 ErpFinConstants.DIRECTION_PAYABLE, partnerId, LocalDate.of(2026, 6, 20),
                 java.util.Collections.singletonList(line(fixture[0], fixture[1], "100")), CTX));
@@ -167,26 +167,26 @@ public class TestErpFinReconciliation extends JunitAutoTestCase {
     // ---------- helpers ----------
 
     /** 在 session 内建 partner + 付款项 + 发票项，返回 [paymentItemId, invoiceItemId]。 */
-    private Long[] setup(long partnerId, String paymentAmt, String invoiceAmt,
+    private String[] setup(String partnerId, String paymentAmt, String invoiceAmt,
                          LocalDate invoiceDate, LocalDate paymentDate) {
         return setup(partnerId, new BigDecimal(paymentAmt), new BigDecimal(invoiceAmt), invoiceDate, paymentDate);
     }
 
-    private Long[] setup(long partnerId, BigDecimal paymentAmt, BigDecimal invoiceAmt,
+    private String[] setup(String partnerId, BigDecimal paymentAmt, BigDecimal invoiceAmt,
                          LocalDate invoiceDate, LocalDate paymentDate) {
-        final Long[][] holder = new Long[1][];
+        final String[][] holder = new String[1][];
         ormTemplate.runInSession(() -> {
             seedPartner(partnerId);
             ErpFinArApItem payment = newItem(ErpFinConstants.DIRECTION_PAYABLE, partnerId,
                     "PAYMENT", "PAY-" + partnerId, paymentAmt, paymentDate);
             ErpFinArApItem invoice = newItem(ErpFinConstants.DIRECTION_PAYABLE, partnerId,
                     "AP_INVOICE", "AP-" + partnerId, invoiceAmt, invoiceDate);
-            holder[0] = new Long[]{payment.getId(), invoice.getId()};
+            holder[0] = new String[]{payment.getId(), invoice.getId()};
         });
         return holder[0];
     }
 
-    private void seedPartner(long partnerId) {
+    private void seedPartner(String partnerId) {
         IEntityDao<ErpMdPartner> dao = daoProvider.daoFor(ErpMdPartner.class);
         if (dao.getEntityById(partnerId) != null) {
             return;
@@ -202,19 +202,19 @@ public class TestErpFinReconciliation extends JunitAutoTestCase {
         dao.saveEntity(partner);
     }
 
-    private ErpFinArApItem newItem(String direction, long partnerId, String sourceBillType, String sourceBillCode,
+    private ErpFinArApItem newItem(String direction, String partnerId, String sourceBillType, String sourceBillCode,
                                    BigDecimal amount, LocalDate businessDate) {
         IEntityDao<ErpFinArApItem> dao = daoProvider.daoFor(ErpFinArApItem.class);
         ErpFinArApItem item = dao.newEntity();
         item.setCode("ARI-" + sourceBillCode);
-        item.setOrgId(1L);
-        item.setAcctSchemaId(1L);
+        item.setOrgId("1");
+        item.setAcctSchemaId("1");
         item.setDirection(direction);
         item.setPartnerId(partnerId);
         item.setSourceBillType(sourceBillType);
         item.setSourceBillCode(sourceBillCode);
         item.setBusinessDate(businessDate);
-        item.setCurrencyId(1L);
+        item.setCurrencyId("1");
         item.setExchangeRate(BigDecimal.ONE);
         item.setAmountSource(amount);
         item.setAmountFunctional(amount);
@@ -227,7 +227,7 @@ public class TestErpFinReconciliation extends JunitAutoTestCase {
         return item;
     }
 
-    private ReconciliationLineInput line(Long paymentItemId, Long invoiceItemId, String amount) {
+    private ReconciliationLineInput line(String paymentItemId, String invoiceItemId, String amount) {
         BigDecimal amt = new BigDecimal(amount);
         ReconciliationLineInput in = new ReconciliationLineInput();
         in.setPaymentItemId(paymentItemId);
@@ -237,11 +237,11 @@ public class TestErpFinReconciliation extends JunitAutoTestCase {
         return in;
     }
 
-    private ErpFinArApItem item(Long id) {
+    private ErpFinArApItem item(String id) {
         return daoProvider.daoFor(ErpFinArApItem.class).getEntityById(id);
     }
 
-    private ErpFinReconciliation recon(Long id) {
+    private ErpFinReconciliation recon(String id) {
         return daoProvider.daoFor(ErpFinReconciliation.class).getEntityById(id);
     }
 }

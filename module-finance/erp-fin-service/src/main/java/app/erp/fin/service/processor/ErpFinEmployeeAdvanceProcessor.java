@@ -73,8 +73,8 @@ public class ErpFinEmployeeAdvanceProcessor {
         return reverseApproveProcessor.reverseApprove(id, context);
     }
 
-    public ErpFinEmployeeAdvance cancel(Long advanceId, IServiceContext context) {
-        return cancelProcessor.cancel(String.valueOf(advanceId), context);
+    public ErpFinEmployeeAdvance cancel(String advanceId, IServiceContext context) {
+        return cancelProcessor.cancel(advanceId, context);
     }
 
     // ---------- step：迁移校验（protected，下游可逐个覆盖） ----------
@@ -223,12 +223,12 @@ public class ErpFinEmployeeAdvanceProcessor {
         return advance;
     }
 
-    protected ErpFinEmployeeAdvance doCancel(Long advanceId, ErpFinEmployeeAdvance advance, IServiceContext context) {
+    protected ErpFinEmployeeAdvance doCancel(String advanceId, ErpFinEmployeeAdvance advance, IServiceContext context) {
         String approveStatus = currentApproveStatus(advance);
         if (Objects.equals(approveStatus, ErpFinConstants.APPROVE_STATUS_APPROVED)
                 && Boolean.TRUE.equals(advance.getPosted())) {
             postingDispatcher.reverse(advance);
-            advance = reload(String.valueOf(advanceId));
+            advance = reload(advanceId);
             clearPosted(advance);
         }
         advance.setDocStatus(documentStateMachine.cancelTargetStatus());
@@ -237,10 +237,6 @@ public class ErpFinEmployeeAdvanceProcessor {
     }
 
     // ---------- 校验/查询辅助（protected，供派生复用与覆盖） ----------
-
-    protected ErpFinEmployeeAdvance requireAdvance(Long advanceId, IServiceContext context) {
-        return requireAdvance(String.valueOf(advanceId), context);
-    }
 
     protected ErpFinEmployeeAdvance requireAdvance(String id, IServiceContext context) {
         ErpFinEmployeeAdvance advance = advanceDao().getEntityById(id);

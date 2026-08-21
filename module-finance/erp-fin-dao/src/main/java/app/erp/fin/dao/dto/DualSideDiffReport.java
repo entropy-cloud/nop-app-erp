@@ -15,7 +15,7 @@ import java.util.List;
  */
 public class DualSideDiffReport {
     private String direction;
-    private Long partnerId;
+    private String partnerId;
     /** 全部 partner 级差异行（partnerId 为 null 时为全量，非 null 时仅含该 partner）。 */
     private List<DualSideDiffRow> rows = new ArrayList<>();
     /** 是否一致（所有 row 差额 ≤ precision）。 */
@@ -29,11 +29,11 @@ public class DualSideDiffReport {
         this.direction = direction;
     }
 
-    public Long getPartnerId() {
+    public String getPartnerId() {
         return partnerId;
     }
 
-    public void setPartnerId(Long partnerId) {
+    public void setPartnerId(String partnerId) {
         this.partnerId = partnerId;
     }
 
@@ -54,7 +54,7 @@ public class DualSideDiffReport {
     }
 
     public static class DualSideDiffRow {
-        private Long partnerId;
+        private String partnerId;
         /** finance 侧已核销额（本位币）——ErpFinArApItem.settledAmountFunctional 聚合（发票项）。 */
         private BigDecimal financeSettled;
         /** 域级侧已核销额（本位币）——ErpPurInvoice.paidAmount / ErpSalInvoice.receivedAmount 聚合。 */
@@ -64,11 +64,11 @@ public class DualSideDiffReport {
         /** CONSISTENT / INCONSISTENT。 */
         private String status;
 
-        public Long getPartnerId() {
+        public String getPartnerId() {
             return partnerId;
         }
 
-        public void setPartnerId(Long partnerId) {
+        public void setPartnerId(String partnerId) {
             this.partnerId = partnerId;
         }
 

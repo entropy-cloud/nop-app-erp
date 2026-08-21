@@ -12,72 +12,72 @@
     public class ErpFinBudgetCarryForwardLogInputBean extends CrudInputBase {
 
     
-        private Long _id;
+        private String _id;
 
     
         @PropMeta(propId=1)
     
-        public Long getId(){
+        public String getId(){
             return _id;
         }
 
-        public void setId(Long value){
+        public void setId(String value){
             this._id = value;
         }
 
 
-        private Long _orgId;
+        private String _orgId;
 
     
         @PropMeta(propId=2)
     
-        public Long getOrgId(){
+        public String getOrgId(){
             return _orgId;
         }
 
-        public void setOrgId(Long value){
+        public void setOrgId(String value){
             this._orgId = value;
         }
 
 
-        private Long _scenarioId;
+        private String _scenarioId;
 
     
         @PropMeta(propId=3)
     
-        public Long getScenarioId(){
+        public String getScenarioId(){
             return _scenarioId;
         }
 
-        public void setScenarioId(Long value){
+        public void setScenarioId(String value){
             this._scenarioId = value;
         }
 
 
-        private Long _sourceScenarioId;
+        private String _sourceScenarioId;
 
     
         @PropMeta(propId=4)
     
-        public Long getSourceScenarioId(){
+        public String getSourceScenarioId(){
             return _sourceScenarioId;
         }
 
-        public void setSourceScenarioId(Long value){
+        public void setSourceScenarioId(String value){
             this._sourceScenarioId = value;
         }
 
 
-        private Long _targetScenarioId;
+        private String _targetScenarioId;
 
     
         @PropMeta(propId=5)
     
-        public Long getTargetScenarioId(){
+        public String getTargetScenarioId(){
             return _targetScenarioId;
         }
 
-        public void setTargetScenarioId(Long value){
+        public void setTargetScenarioId(String value){
             this._targetScenarioId = value;
         }
 

@@ -14,7 +14,7 @@ public class ErpFinNotesReceivableHonorProcessor {
     @Inject
     ErpFinNotesReceivableProcessor facade;
 
-    public ErpFinNotesReceivable honor(Long notesId, IServiceContext context) {
+    public ErpFinNotesReceivable honor(String notesId, IServiceContext context) {
         ErpFinNotesReceivable note = facade.requireNote(notesId, context);
         facade.validateTransitionForHonorOrDishonor(note, context);
         return facade.doHonor(notesId, note, context);

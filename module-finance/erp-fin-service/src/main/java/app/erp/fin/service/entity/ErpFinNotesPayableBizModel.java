@@ -41,25 +41,25 @@ public class ErpFinNotesPayableBizModel extends CrudBizModel<ErpFinNotesPayable>
 
     @Override
     @BizMutation
-    public ErpFinNotesPayable issue(@Name("notesId") Long notesId, IServiceContext context) {
+    public ErpFinNotesPayable issue(@Name("notesId") String notesId, IServiceContext context) {
         return issueProcessor.issue(notesId, context);
     }
 
     @Override
     @BizMutation
-    public ErpFinNotesPayable honor(@Name("notesId") Long notesId, IServiceContext context) {
+    public ErpFinNotesPayable honor(@Name("notesId") String notesId, IServiceContext context) {
         return honorProcessor.honor(notesId, context);
     }
 
     @Override
     @BizMutation
-    public ErpFinNotesPayable dishonor(@Name("notesId") Long notesId, IServiceContext context) {
+    public ErpFinNotesPayable dishonor(@Name("notesId") String notesId, IServiceContext context) {
         return dishonorProcessor.dishonor(notesId, context);
     }
 
     @Override
     @BizMutation
-    public ErpFinNotesPayable writeOff(@Name("notesId") Long notesId, IServiceContext context) {
+    public ErpFinNotesPayable writeOff(@Name("notesId") String notesId, IServiceContext context) {
         return writeOffProcessor.writeOff(notesId, context);
     }
 

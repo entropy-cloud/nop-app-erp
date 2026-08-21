@@ -45,6 +45,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -183,27 +184,27 @@ public class ErpFinReportBizModel {
         if (data.containsKey(DS_VAR) && !"cash-flow-statement".equals(key)) return;
         switch (key) {
             case "balance-sheet":
-                data.put(DS_VAR, buildBalanceSheetDataset(asLong(data, "periodId")));
+                data.put(DS_VAR, buildBalanceSheetDataset(asId(data, "periodId")));
                 break;
             case "income-statement":
-                data.put(DS_VAR, buildIncomeStatementDataset(asLong(data, "periodId")));
+                data.put(DS_VAR, buildIncomeStatementDataset(asId(data, "periodId")));
                 break;
             case "cash-flow-statement":
                 // 直接法行（section=OPERATING/INVESTING/FINANCING）+ 间接法行（section=INDIRECT）双数据集
                 if (!data.containsKey(DS_VAR)) {
-                    data.put(DS_VAR, buildCashFlowDataset(asLong(data, "periodId")));
+                    data.put(DS_VAR, buildCashFlowDataset(asId(data, "periodId")));
                 }
-                data.put("indirectDs", buildIndirectCashFlowDataset(asLong(data, "periodId")));
+                data.put("indirectDs", buildIndirectCashFlowDataset(asId(data, "periodId")));
                 break;
             case "ar-ap-aging":
                 data.put(DS_VAR, buildArApAgingDataset(asDate(data, "asOfDate")));
                 break;
             case "period-close-report":
-                data.put(DS_VAR, buildPeriodCloseDataset(asLong(data, "periodId")));
+                data.put(DS_VAR, buildPeriodCloseDataset(asId(data, "periodId")));
                 break;
             case "budget-vs-actual":
-                data.put(DS_VAR, buildBudgetVsActualDataset(asLong(data, "acctSchemaId"),
-                        asLong(data, "periodId"), asLong(data, "subjectId")));
+                data.put(DS_VAR, buildBudgetVsActualDataset(asId(data, "acctSchemaId"),
+                        asId(data, "periodId"), asId(data, "subjectId")));
                 break;
             default:
                 // 未知报表：不自动装配，模板可经 beforeExpand 自行构造数据集
@@ -211,13 +212,14 @@ public class ErpFinReportBizModel {
         }
     }
 
-    private static Long asLong(Map<String, Object> data, String k) {
+    // 报表参数 id 归一为 String（fin id String 化后取参口径）
+    private static String asId(Map<String, Object> data, String k) {
         if (data == null) return null;
         Object v = data.get(k);
         if (v == null) return null;
         String s = v.toString();
         if (s.trim().isEmpty()) return null;
-        return Long.valueOf(s);
+        return s;
     }
 
     private static LocalDate asDate(Map<String, Object> data, String k) {
@@ -235,27 +237,27 @@ public class ErpFinReportBizModel {
     // ===================== 数据集构造（也作 @BizQuery 供前端取原始数据） =====================
 
     /** 预算对比数据集（budget.md §业务规则5）：委托 {@link IErpFinBudgetLineBiz#getBudgetVsActual} 聚合。 */
-    public List<app.erp.fin.dao.dto.BudgetVsActualRow> buildBudgetVsActualDataset(Long acctSchemaId,
-                                                                                   Long periodId, Long subjectId) {
+    public List<app.erp.fin.dao.dto.BudgetVsActualRow> buildBudgetVsActualDataset(String acctSchemaId,
+                                                                                   String periodId, String subjectId) {
         return budgetLineBiz.getBudgetVsActual(acctSchemaId, periodId, subjectId,
                 new io.nop.core.context.ServiceContextImpl());
     }
 
     /** 资产负债表数据集：按科目层级汇总资产/负债/权益期末余额。口径对齐 finance owner doc 与年度结转产物。 */
     @BizQuery
-    public List<Map<String, Object>> balanceSheetData(@Name("periodId") Long periodId, IServiceContext context) {
+    public List<Map<String, Object>> balanceSheetData(@Name("periodId") String periodId, IServiceContext context) {
         return buildBalanceSheetDataset(periodId);
     }
 
     /** 利润表数据集：损益类科目本期累计发生额，对齐结转损益业务类型。 */
     @BizQuery
-    public List<Map<String, Object>> incomeStatementData(@Name("periodId") Long periodId, IServiceContext context) {
+    public List<Map<String, Object>> incomeStatementData(@Name("periodId") String periodId, IServiceContext context) {
         return buildIncomeStatementDataset(periodId);
     }
 
     /** 现金流量表数据集：现金类科目本期净变动（直接法），按科目 cashFlowType 三分类（经营/投资/筹资）。 */
     @BizQuery
-    public List<Map<String, Object>> cashFlowStatementData(@Name("periodId") Long periodId, IServiceContext context) {
+    public List<Map<String, Object>> cashFlowStatementData(@Name("periodId") String periodId, IServiceContext context) {
         List<Map<String, Object>> rows = new ArrayList<>(buildCashFlowDataset(periodId));
         rows.addAll(buildIndirectCashFlowDataset(periodId));
         return rows;
@@ -263,7 +265,7 @@ public class ErpFinReportBizModel {
 
     /** 间接法现金流量数据集：净利润 + 非现金项目 + 营运资金变动（RC-R1.45 / P1-RC-007）。 */
     @BizQuery
-    public List<Map<String, Object>> indirectCashFlowData(@Name("periodId") Long periodId, IServiceContext context) {
+    public List<Map<String, Object>> indirectCashFlowData(@Name("periodId") String periodId, IServiceContext context) {
         return buildIndirectCashFlowDataset(periodId);
     }
 
@@ -276,13 +278,13 @@ public class ErpFinReportBizModel {
 
     /** 期末结账报告数据集：覆盖结转损益/汇兑重估/坏账计提/存货成本核算/期间状态，对齐 1000-3/0540-2 结账流程。 */
     @BizQuery
-    public List<Map<String, Object>> periodCloseReportData(@Name("periodId") Long periodId, IServiceContext context) {
+    public List<Map<String, Object>> periodCloseReportData(@Name("periodId") String periodId, IServiceContext context) {
         return buildPeriodCloseDataset(periodId);
     }
 
     // ===================== 数据集聚合实现 =====================
 
-    List<Map<String, Object>> buildBalanceSheetDataset(Long periodId) {
+    List<Map<String, Object>> buildBalanceSheetDataset(String periodId) {
         return ormTemplate.runInSession(session -> {
             List<Map<String, Object>> rows = new ArrayList<>();
             for (ErpFinGlBalance b : loadGlBalances(periodId)) {
@@ -297,7 +299,7 @@ public class ErpFinReportBizModel {
         });
     }
 
-    List<Map<String, Object>> buildIncomeStatementDataset(Long periodId) {
+    List<Map<String, Object>> buildIncomeStatementDataset(String periodId) {
         return ormTemplate.runInSession(session -> {
             List<Map<String, Object>> rows = new ArrayList<>();
             for (ErpFinGlBalance b : loadGlBalances(periodId)) {
@@ -317,7 +319,7 @@ public class ErpFinReportBizModel {
      * section 按科目 cashFlowType 分类（OPERATING/INVESTING/FINANCING，null/NON_CASH 回退 OPERATING）。
      * 与 {@link #buildIndirectCashFlowDataset} 同源（loadPostedVoucherLines），模板双数据集渲染。
      */
-    List<Map<String, Object>> buildCashFlowDataset(Long periodId) {
+    List<Map<String, Object>> buildCashFlowDataset(String periodId) {
         return ormTemplate.runInSession(session -> {
             List<Map<String, Object>> rows = new ArrayList<>();
             List<ErpFinVoucherLine> lines = loadPostedVoucherLines(periodId);
@@ -364,7 +366,7 @@ public class ErpFinReportBizModel {
      * 三组件共享 voucher 头侧 postingType 过滤（D3 子裁决）：postingType notIn(BUDGET, COMMITMENT)——
      * BUDGET/COMMITMENT 影子凭证的损益类行（6601/6001 等）不得污染净利润（对齐 RC-R1.46 模式）。
      */
-    List<Map<String, Object>> buildIndirectCashFlowDataset(Long periodId) {
+    List<Map<String, Object>> buildIndirectCashFlowDataset(String periodId) {
         return ormTemplate.runInSession(session -> {
             BigDecimal netProfit = BigDecimal.ZERO;
             BigDecimal nonCash = BigDecimal.ZERO;
@@ -427,7 +429,7 @@ public class ErpFinReportBizModel {
         });
     }
 
-    List<Map<String, Object>> buildPeriodCloseDataset(Long periodId) {
+    List<Map<String, Object>> buildPeriodCloseDataset(String periodId) {
         return ormTemplate.runInSession(session -> {
             List<Map<String, Object>> rows = new ArrayList<>();
             if (periodId == null) return rows;
@@ -462,12 +464,12 @@ public class ErpFinReportBizModel {
 
     // ===================== helpers =====================
 
-    private List<ErpFinGlBalance> loadGlBalances(Long periodId) {
+    private List<ErpFinGlBalance> loadGlBalances(String periodId) {
         IEntityDao<ErpFinGlBalance> dao = daoProvider.daoFor(ErpFinGlBalance.class);
         List<ErpFinGlBalance> list;
         if (periodId == null) {
             // periodId 缺省时限定最近一个会计期间，避免全表回退（原全表加载会物化全表）。
-            Long latestPeriodId = findLatestPeriodId();
+            String latestPeriodId = findLatestPeriodId();
             if (latestPeriodId == null) {
                 list = Collections.emptyList();
             } else {
@@ -482,16 +484,12 @@ public class ErpFinReportBizModel {
             applyOrgAndSchemaScope(q, periodId);
             list = dao.findAllByQuery(q);
         }
-        list.sort((a, b) -> {
-            Long sa = a.getSubjectId(), sb = b.getSubjectId();
-            if (sa == null) sa = 0L;
-            if (sb == null) sb = 0L;
-            return sa.compareTo(sb);
-        });
+        list.sort(Comparator.comparing(ErpFinGlBalance::getSubjectId,
+                Comparator.nullsFirst(Comparator.naturalOrder())));
         return list;
     }
 
-    private Long findLatestPeriodId() {
+    private String findLatestPeriodId() {
         IEntityDao<ErpFinAccountingPeriod> pDao = daoProvider.daoFor(ErpFinAccountingPeriod.class);
         QueryBean q = new QueryBean();
         q.addOrderField("startDate", true);
@@ -500,7 +498,7 @@ public class ErpFinReportBizModel {
         return latest.isEmpty() ? null : latest.get(0).getId();
     }
 
-    private List<ErpFinVoucherLine> loadPostedVoucherLines(Long periodId) {
+    private List<ErpFinVoucherLine> loadPostedVoucherLines(String periodId) {
         return loadPostedVoucherLines(periodId, false);
     }
 
@@ -509,7 +507,7 @@ public class ErpFinReportBizModel {
      * postingType notIn(BUDGET, COMMITMENT)（D3 子裁决——间接法三组件共享该过滤，
      * BUDGET/COMMITMENT 影子凭证的损益类行不得污染净利润聚合；直接法保持不过滤零回归）。
      */
-    private List<ErpFinVoucherLine> loadPostedVoucherLines(Long periodId, boolean excludeShadowPostings) {
+    private List<ErpFinVoucherLine> loadPostedVoucherLines(String periodId, boolean excludeShadowPostings) {
         IEntityDao<ErpFinVoucher> vDao = daoProvider.daoFor(ErpFinVoucher.class);
         QueryBean vq = new QueryBean();
         vq.addFilter(eq("docStatus", ErpFinConstants.VOUCHER_STATUS_POSTED));
@@ -523,7 +521,7 @@ public class ErpFinReportBizModel {
         }
         List<ErpFinVoucher> vouchers = vDao.findAllByQuery(vq);
         if (vouchers.isEmpty()) return Collections.emptyList();
-        Set<Long> voucherIds = new HashSet<>();
+        Set<String> voucherIds = new HashSet<>();
         for (ErpFinVoucher v : vouchers) voucherIds.add(v.getId());
         QueryBean lq = new QueryBean();
         lq.addFilter(in("voucherId", voucherIds));
@@ -538,7 +536,7 @@ public class ErpFinReportBizModel {
         return q;
     }
 
-    private ErpFinAccountingPeriodStatus loadPeriodStatus(Long periodId) {
+    private ErpFinAccountingPeriodStatus loadPeriodStatus(String periodId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("periodId", periodId));
         applySchemaScope(q, periodId);
@@ -547,13 +545,13 @@ public class ErpFinReportBizModel {
         return list.isEmpty() ? null : list.get(0);
     }
 
-    private int countBillR(Long periodId, String businessType) {
+    private int countBillR(String periodId, String businessType) {
         QueryBean vq = new QueryBean();
         vq.addFilter(eq("periodId", periodId));
         applyOrgAndSchemaScope(vq, periodId);
         List<ErpFinVoucher> vouchers = daoProvider.daoFor(ErpFinVoucher.class).findAllByQuery(vq);
         if (vouchers.isEmpty()) return 0;
-        Set<Long> voucherIds = new HashSet<>();
+        Set<String> voucherIds = new HashSet<>();
         for (ErpFinVoucher v : vouchers) voucherIds.add(v.getId());
         QueryBean bq = new QueryBean();
         bq.addFilter(eq("businessType", businessType));
@@ -565,7 +563,7 @@ public class ErpFinReportBizModel {
     // 多账套部署下报表按 periodId 聚合会双计；按期间所属组织 + 主账套补 filter 使单账套不双计。
     // scope 不可解析时（period.orgId 为空等）跳过 filter，保护单组织基线零回归。
 
-    private Long resolvePeriodOrgId(Long periodId) {
+    private String resolvePeriodOrgId(String periodId) {
         if (periodId == null) {
             return null;
         }
@@ -573,27 +571,27 @@ public class ErpFinReportBizModel {
         return period != null ? period.getOrgId() : null;
     }
 
-    private Long resolveOrgSchemaId(Long orgId) {
+    private String resolveOrgSchemaId(String orgId) {
         return orgId != null ? AcctSchemaResolver.resolvePrimarySchemaId(daoProvider, orgId) : null;
     }
 
     /** 适用于同时含 orgId + acctSchemaId 列的实体（GlBalance/Voucher）。 */
-    private void applyOrgAndSchemaScope(QueryBean q, Long periodId) {
-        Long orgId = resolvePeriodOrgId(periodId);
+    private void applyOrgAndSchemaScope(QueryBean q, String periodId) {
+        String orgId = resolvePeriodOrgId(periodId);
         if (orgId == null) {
             return;
         }
         q.addFilter(eq("orgId", orgId));
-        Long schemaId = resolveOrgSchemaId(orgId);
+        String schemaId = resolveOrgSchemaId(orgId);
         if (schemaId != null) {
             q.addFilter(eq("acctSchemaId", schemaId));
         }
     }
 
     /** 适用于仅含 acctSchemaId 列的实体（AccountingPeriodStatus）。 */
-    private void applySchemaScope(QueryBean q, Long periodId) {
-        Long orgId = resolvePeriodOrgId(periodId);
-        Long schemaId = resolveOrgSchemaId(orgId);
+    private void applySchemaScope(QueryBean q, String periodId) {
+        String orgId = resolvePeriodOrgId(periodId);
+        String schemaId = resolveOrgSchemaId(orgId);
         if (schemaId != null) {
             q.addFilter(eq("acctSchemaId", schemaId));
         }

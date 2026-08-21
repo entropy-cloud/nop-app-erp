@@ -75,10 +75,10 @@ public class TestErpFinBadDebt extends JunitAutoTestCase {
     @Test
     public void testAgingBucketProvisionAndReserve() {
         LocalDate asOf = LocalDate.of(2024, 6, 30);
-        Long[] holder = new Long[1];
+        String[] holder = new String[1];
         ormTemplate.runInSession(() -> {
-            Long pid = seedOpenPeriod("2024-06", 2024, 6, LocalDate.of(2024, 6, 1), asOf);
-            seedCurrency(1L, "CNY", true);
+            String pid = seedOpenPeriod("2024-06", 2024, 6, LocalDate.of(2024, 6, 1), asOf);
+            seedCurrency("1", "CNY", true);
             seedSubject("1231", "坏账准备", "ASSET", ErpFinConstants.DC_CREDIT);
             seedSubject("6701", "信用减值损失", ErpFinConstants.SUBJECT_CLASS_EXPENSE, ErpFinConstants.DC_DEBIT);
             seedSubject("1122", "应收账款", "ASSET", ErpFinConstants.DC_DEBIT);
@@ -113,10 +113,10 @@ public class TestErpFinBadDebt extends JunitAutoTestCase {
     @Test
     public void testProvisionExcludesNegativeAndWrittenOff() {
         LocalDate asOf = LocalDate.of(2024, 7, 31);
-        Long[] holder = new Long[1];
+        String[] holder = new String[1];
         ormTemplate.runInSession(() -> {
-            Long pid = seedOpenPeriod("2024-07", 2024, 7, LocalDate.of(2024, 7, 1), asOf);
-            seedCurrency(1L, "CNY", true);
+            String pid = seedOpenPeriod("2024-07", 2024, 7, LocalDate.of(2024, 7, 1), asOf);
+            seedCurrency("1", "CNY", true);
             seedSubject("1231", "坏账准备", "ASSET", ErpFinConstants.DC_CREDIT);
             seedSubject("6701", "信用减值损失", ErpFinConstants.SUBJECT_CLASS_EXPENSE, ErpFinConstants.DC_DEBIT);
             seedSubject("1122", "应收账款", "ASSET", ErpFinConstants.DC_DEBIT);
@@ -139,11 +139,11 @@ public class TestErpFinBadDebt extends JunitAutoTestCase {
     @Test
     public void testWriteOffSetsStatusAndVoucherNoPL() {
         LocalDate asOf = LocalDate.of(2024, 8, 31);
-        Long[] holder = new Long[1];
-        Long[] itemId = new Long[1];
+        String[] holder = new String[1];
+        String[] itemId = new String[1];
         ormTemplate.runInSession(() -> {
-            Long pid = seedOpenPeriod("2024-08", 2024, 8, LocalDate.of(2024, 8, 1), asOf);
-            seedCurrency(1L, "CNY", true);
+            String pid = seedOpenPeriod("2024-08", 2024, 8, LocalDate.of(2024, 8, 1), asOf);
+            seedCurrency("1", "CNY", true);
             seedSubject("1231", "坏账准备", "ASSET", ErpFinConstants.DC_CREDIT);
             seedSubject("1122", "应收账款", "ASSET", ErpFinConstants.DC_DEBIT);
             ErpFinArApItem item = seedReceivable("AR-WO-1", pid, asOf.minusDays(10), "500");
@@ -178,11 +178,11 @@ public class TestErpFinBadDebt extends JunitAutoTestCase {
     @Test
     public void testRecoveryRestoresArApItem() {
         LocalDate asOf = LocalDate.of(2024, 9, 30);
-        Long[] holder = new Long[1];
-        Long[] itemId = new Long[1];
+        String[] holder = new String[1];
+        String[] itemId = new String[1];
         ormTemplate.runInSession(() -> {
-            Long pid = seedOpenPeriod("2024-09", 2024, 9, LocalDate.of(2024, 9, 1), asOf);
-            seedCurrency(1L, "CNY", true);
+            String pid = seedOpenPeriod("2024-09", 2024, 9, LocalDate.of(2024, 9, 1), asOf);
+            seedCurrency("1", "CNY", true);
             seedSubject("1231", "坏账准备", "ASSET", ErpFinConstants.DC_CREDIT);
             seedSubject("1122", "应收账款", "ASSET", ErpFinConstants.DC_DEBIT);
             ErpFinArApItem item = seedReceivable("AR-RC-1", pid, asOf.minusDays(10), "300");
@@ -212,10 +212,10 @@ public class TestErpFinBadDebt extends JunitAutoTestCase {
     @Test
     public void testReleaseWhenAllowanceExceedsRequired() {
         LocalDate asOf = LocalDate.of(2024, 10, 31);
-        Long[] holder = new Long[1];
+        String[] holder = new String[1];
         ormTemplate.runInSession(() -> {
-            Long pid = seedOpenPeriod("2024-10", 2024, 10, LocalDate.of(2024, 10, 1), asOf);
-            seedCurrency(1L, "CNY", true);
+            String pid = seedOpenPeriod("2024-10", 2024, 10, LocalDate.of(2024, 10, 1), asOf);
+            seedCurrency("1", "CNY", true);
             seedSubject("1231", "坏账准备", "ASSET", ErpFinConstants.DC_CREDIT);
             seedSubject("6701", "信用减值损失", ErpFinConstants.SUBJECT_CLASS_EXPENSE, ErpFinConstants.DC_DEBIT);
             seedSubject("1122", "应收账款", "ASSET", ErpFinConstants.DC_DEBIT);
@@ -242,10 +242,10 @@ public class TestErpFinBadDebt extends JunitAutoTestCase {
     @Test
     public void testNoActionWhenAllowanceSufficient() {
         LocalDate asOf = LocalDate.of(2024, 11, 30);
-        Long[] holder = new Long[1];
+        String[] holder = new String[1];
         ormTemplate.runInSession(() -> {
-            Long pid = seedOpenPeriod("2024-11", 2024, 11, LocalDate.of(2024, 11, 1), asOf);
-            seedCurrency(1L, "CNY", true);
+            String pid = seedOpenPeriod("2024-11", 2024, 11, LocalDate.of(2024, 11, 1), asOf);
+            seedCurrency("1", "CNY", true);
             seedSubject("1231", "坏账准备", "ASSET", ErpFinConstants.DC_CREDIT);
             seedSubject("6701", "信用减值损失", ErpFinConstants.SUBJECT_CLASS_EXPENSE, ErpFinConstants.DC_DEBIT);
             seedSubject("1122", "应收账款", "ASSET", ErpFinConstants.DC_DEBIT);
@@ -265,10 +265,10 @@ public class TestErpFinBadDebt extends JunitAutoTestCase {
     @Test
     public void testPeriodCloseAllowanceGateBlocksWhenShortfall() {
         LocalDate asOf = LocalDate.of(2024, 12, 31);
-        Long[] holder = new Long[1];
+        String[] holder = new String[1];
         ormTemplate.runInSession(() -> {
-            Long pid = seedOpenPeriod("2024-12", 2024, 12, LocalDate.of(2024, 12, 1), asOf);
-            seedCurrency(1L, "CNY", true);
+            String pid = seedOpenPeriod("2024-12", 2024, 12, LocalDate.of(2024, 12, 1), asOf);
+            seedCurrency("1", "CNY", true);
             seedSubject("1231", "坏账准备", "ASSET", ErpFinConstants.DC_CREDIT);
             seedSubject("6701", "信用减值损失", ErpFinConstants.SUBJECT_CLASS_EXPENSE, ErpFinConstants.DC_DEBIT);
             seedSubject("1122", "应收账款", "ASSET", ErpFinConstants.DC_DEBIT);
@@ -333,12 +333,12 @@ public class TestErpFinBadDebt extends JunitAutoTestCase {
         return m;
     }
 
-    private Long seedOpenPeriod(String code, int year, int month, LocalDate start, LocalDate end) {
+    private String seedOpenPeriod(String code, int year, int month, LocalDate start, LocalDate end) {
         IEntityDao<ErpFinAccountingPeriod> dao = daoProvider.daoFor(ErpFinAccountingPeriod.class);
         ErpFinAccountingPeriod p = new ErpFinAccountingPeriod();
         p.setCode(code);
         p.setName(code);
-        p.setOrgId(1L);
+        p.setOrgId("1");
         p.setYear(year);
         p.setMonth(month);
         p.setStartDate(start);
@@ -348,7 +348,7 @@ public class TestErpFinBadDebt extends JunitAutoTestCase {
         return p.getId();
     }
 
-    private void seedCurrency(Long id, String code, boolean functional) {
+    private void seedCurrency(String id, String code, boolean functional) {
         IEntityDao<ErpMdCurrency> dao = daoProvider.daoFor(ErpMdCurrency.class);
         ErpMdCurrency c = new ErpMdCurrency();
         c.setId(id);
@@ -369,33 +369,33 @@ public class TestErpFinBadDebt extends JunitAutoTestCase {
         dao.saveEntity(s);
     }
 
-    private ErpFinArApItem seedReceivable(String code, Long periodId, LocalDate businessDate, String amount) {
+    private ErpFinArApItem seedReceivable(String code, String periodId, LocalDate businessDate, String amount) {
         return seedReceivableStatus(code, periodId, businessDate, amount, ErpFinConstants.AR_AP_STATUS_OPEN);
     }
 
-    private ErpFinArApItem seedReceivableStatus(String code, Long periodId, LocalDate businessDate,
+    private ErpFinArApItem seedReceivableStatus(String code, String periodId, LocalDate businessDate,
                                                 String amount, String status) {
         BigDecimal amt = new BigDecimal(amount);
         return seedReceivableRaw(code, periodId, businessDate, amt, amt, status);
     }
 
-    private ErpFinArApItem seedReceivableOpen(String code, Long periodId, LocalDate businessDate, BigDecimal open) {
+    private ErpFinArApItem seedReceivableOpen(String code, String periodId, LocalDate businessDate, BigDecimal open) {
         return seedReceivableRaw(code, periodId, businessDate, open, open, ErpFinConstants.AR_AP_STATUS_OPEN);
     }
 
-    private ErpFinArApItem seedReceivableRaw(String code, Long periodId, LocalDate businessDate,
+    private ErpFinArApItem seedReceivableRaw(String code, String periodId, LocalDate businessDate,
                                              BigDecimal openFunctional, BigDecimal amountFunctional, String status) {
         IEntityDao<ErpFinArApItem> dao = daoProvider.daoFor(ErpFinArApItem.class);
         ErpFinArApItem item = new ErpFinArApItem();
         item.setCode(code);
-        item.setOrgId(1L);
-        item.setAcctSchemaId(1L);
+        item.setOrgId("1");
+        item.setAcctSchemaId("1");
         item.setDirection(ErpFinConstants.DIRECTION_RECEIVABLE);
-        item.setPartnerId(1L);
+        item.setPartnerId("1");
         item.setSourceBillType(ErpFinConstants.SOURCE_BILL_AR_INVOICE);
         item.setSourceBillCode(code);
         item.setBusinessDate(businessDate);
-        item.setCurrencyId(1L);
+        item.setCurrencyId("1");
         item.setExchangeRate(BigDecimal.ONE);
         item.setAmountSource(amountFunctional);
         item.setAmountFunctional(amountFunctional);
@@ -410,7 +410,7 @@ public class TestErpFinBadDebt extends JunitAutoTestCase {
     }
 
     /** 预置 Allowance 账面：直接写入一张已过账凭证，贷 Allowance 科目（模拟前期计提累积）。 */
-    private void seedAllowanceVoucher(Long periodId, String creditAmount, LocalDate voucherDate) {
+    private void seedAllowanceVoucher(String periodId, String creditAmount, LocalDate voucherDate) {
         ormTemplate.flushSession();
         BigDecimal amt = new BigDecimal(creditAmount);
         IEntityDao<ErpFinVoucher> vDao = daoProvider.daoFor(ErpFinVoucher.class);
@@ -422,8 +422,8 @@ public class TestErpFinBadDebt extends JunitAutoTestCase {
         v.setVoucherType("TRANSFER");
         v.setPostingType("NORMAL");
         v.setVoucherDate(voucherDate);
-        v.setOrgId(1L);
-        v.setAcctSchemaId(1L);
+        v.setOrgId("1");
+        v.setAcctSchemaId("1");
         v.setPeriodId(periodId);
         v.setTotalDebit(amt);
         v.setTotalCredit(amt);
@@ -439,11 +439,11 @@ public class TestErpFinBadDebt extends JunitAutoTestCase {
         dr.setDcDirection(ErpFinConstants.DC_DEBIT);
         dr.setDebitAmount(amt);
         dr.setCreditAmount(BigDecimal.ZERO);
-        dr.setCurrencyId(1L);
+        dr.setCurrencyId("1");
         dr.setExchangeRate(BigDecimal.ONE);
         dr.setAmountSource(amt);
         dr.setAmountFunctional(amt);
-        dr.setAcctSchemaId(1L);
+        dr.setAcctSchemaId("1");
         lDao.saveEntity(dr);
         ErpFinVoucherLine cr = new ErpFinVoucherLine();
         cr.setVoucherId(v.getId());
@@ -454,11 +454,11 @@ public class TestErpFinBadDebt extends JunitAutoTestCase {
         cr.setDcDirection(ErpFinConstants.DC_CREDIT);
         cr.setDebitAmount(BigDecimal.ZERO);
         cr.setCreditAmount(amt);
-        cr.setCurrencyId(1L);
+        cr.setCurrencyId("1");
         cr.setExchangeRate(BigDecimal.ONE);
         cr.setAmountSource(amt);
         cr.setAmountFunctional(amt);
-        cr.setAcctSchemaId(1L);
+        cr.setAcctSchemaId("1");
         lDao.saveEntity(cr);
     }
 
@@ -471,7 +471,7 @@ public class TestErpFinBadDebt extends JunitAutoTestCase {
         return list.isEmpty() ? null : list.get(0);
     }
 
-    private List<ErpFinVoucherLine> linesOf(Long voucherId) {
+    private List<ErpFinVoucherLine> linesOf(String voucherId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("voucherId", voucherId));
         return daoProvider.daoFor(ErpFinVoucherLine.class).findAllByQuery(q);

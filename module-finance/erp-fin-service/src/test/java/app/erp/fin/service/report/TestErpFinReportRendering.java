@@ -59,14 +59,14 @@ public class TestErpFinReportRendering extends JunitAutoTestCase {
     @Inject
     IDaoProvider daoProvider;
 
-    private Long periodId;
-    private Long cashSubjectId;
+    private String periodId;
+    private String cashSubjectId;
 
     // ===================== 数据准备 =====================
 
     private void seed() {
         periodId = seedPeriod("2025-06", 2025, 6);
-        seedCurrency(1L, "CNY");
+        seedCurrency("1", "CNY");
 
         ErpMdSubject cash = seedSubject("1001", "库存现金", "ASSET", ErpFinConstants.DC_DEBIT);
         ErpMdSubject ar = seedSubject("1122", "应收账款", "ASSET", ErpFinConstants.DC_DEBIT);
@@ -86,7 +86,7 @@ public class TestErpFinReportRendering extends JunitAutoTestCase {
         seedGlBalance(exp, null, null, new BigDecimal("600"), null);      // 费用 600（借方科目 periodDebit-periodCredit）
 
         // 现金流量表：posted 凭证含 1001 现金科目借方 80（流入）
-        Long voucherId = seedPostedVoucherWithCashLine();
+        String voucherId = seedPostedVoucherWithCashLine();
 
         // AR/AP 账龄：一笔 100 天前的开口应收 → 90+ 桶
         seedOpenArAp(CoreMetrics.currentDate().minusDays(100), new BigDecimal("250"));
@@ -208,7 +208,7 @@ public class TestErpFinReportRendering extends JunitAutoTestCase {
     @Test
     public void testIndirectCashFlowDataset() {
         periodId = seedPeriod("2025-06", 2025, 6);
-        seedCurrency(1L, "CNY");
+        seedCurrency("1", "CNY");
         Map<String, ErpMdSubject> subs = new HashMap<>();
         subs.put("1001", seedSubject("1001", "库存现金", "ASSET", ErpFinConstants.DC_DEBIT,
                 ErpFinConstants.CASH_FLOW_TYPE_OPERATING));
@@ -272,7 +272,7 @@ public class TestErpFinReportRendering extends JunitAutoTestCase {
     @Test
     public void testIndirectExcludesShadowVoucherLines() {
         periodId = seedPeriod("2025-06", 2025, 6);
-        seedCurrency(1L, "CNY");
+        seedCurrency("1", "CNY");
         Map<String, ErpMdSubject> subs = new HashMap<>();
         subs.put("1001", seedSubject("1001", "库存现金", "ASSET", ErpFinConstants.DC_DEBIT,
                 ErpFinConstants.CASH_FLOW_TYPE_OPERATING));
@@ -381,12 +381,12 @@ public class TestErpFinReportRendering extends JunitAutoTestCase {
         return Integer.parseInt(v.toString());
     }
 
-    private Long seedPeriod(String code, int year, int month) {
+    private String seedPeriod(String code, int year, int month) {
         IEntityDao<ErpFinAccountingPeriod> dao = daoProvider.daoFor(ErpFinAccountingPeriod.class);
         ErpFinAccountingPeriod p = new ErpFinAccountingPeriod();
         p.setCode(code);
         p.setName(code);
-        p.setOrgId(1L);
+        p.setOrgId("1");
         p.setYear(year);
         p.setMonth(month);
         p.setStartDate(LocalDate.of(year, month, 1));
@@ -396,7 +396,7 @@ public class TestErpFinReportRendering extends JunitAutoTestCase {
         return p.getId();
     }
 
-    private void seedCurrency(Long id, String code) {
+    private void seedCurrency(String id, String code) {
         IEntityDao<ErpMdCurrency> dao = daoProvider.daoFor(ErpMdCurrency.class);
         ErpMdCurrency c = new ErpMdCurrency();
         c.setId(id);
@@ -440,8 +440,8 @@ public class TestErpFinReportRendering extends JunitAutoTestCase {
         v.setVoucherType("TRANSFER");
         v.setPostingType(postingType);
         v.setVoucherDate(LocalDate.of(2025, 6, 10));
-        v.setOrgId(1L);
-        v.setAcctSchemaId(1L);
+        v.setOrgId("1");
+        v.setAcctSchemaId("1");
         v.setPeriodId(periodId);
         v.setTotalDebit(total);
         v.setTotalCredit(total);
@@ -464,11 +464,11 @@ public class TestErpFinReportRendering extends JunitAutoTestCase {
             line.setDcDirection(dc);
             line.setDebitAmount(ErpFinConstants.DC_DEBIT.equals(dc) ? amt : BigDecimal.ZERO);
             line.setCreditAmount(ErpFinConstants.DC_CREDIT.equals(dc) ? amt : BigDecimal.ZERO);
-            line.setCurrencyId(1L);
+            line.setCurrencyId("1");
             line.setExchangeRate(BigDecimal.ONE);
             line.setAmountSource(amt);
             line.setAmountFunctional(amt);
-            line.setAcctSchemaId(1L);
+            line.setAcctSchemaId("1");
             lDao.saveEntity(line);
         }
     }
@@ -502,11 +502,11 @@ public class TestErpFinReportRendering extends JunitAutoTestCase {
                                BigDecimal periodDebit, BigDecimal periodCredit) {
         IEntityDao<ErpFinGlBalance> dao = daoProvider.daoFor(ErpFinGlBalance.class);
         ErpFinGlBalance b = new ErpFinGlBalance();
-        b.setOrgId(1L);
-        b.setAcctSchemaId(1L);
+        b.setOrgId("1");
+        b.setAcctSchemaId("1");
         b.setPeriodId(periodId);
         b.setSubjectId(s.getId());
-        b.setCurrencyId(1L);
+        b.setCurrencyId("1");
         b.setOpeningDebit(BigDecimal.ZERO);
         b.setOpeningCredit(BigDecimal.ZERO);
         b.setClosingDebit(closingDebit != null ? closingDebit : BigDecimal.ZERO);
@@ -518,15 +518,15 @@ public class TestErpFinReportRendering extends JunitAutoTestCase {
         dao.saveEntity(b);
     }
 
-    private Long seedPostedVoucherWithCashLine() {
+    private String seedPostedVoucherWithCashLine() {
         IEntityDao<ErpFinVoucher> vDao = daoProvider.daoFor(ErpFinVoucher.class);
         BigDecimal amt = new BigDecimal("80");
         ErpFinVoucher v = new ErpFinVoucher();
         v.setCode("V-CF-2025-06");
         v.setVoucherType("TRANSFER");
         v.setVoucherDate(LocalDate.of(2025, 6, 10));
-        v.setOrgId(1L);
-        v.setAcctSchemaId(1L);
+        v.setOrgId("1");
+        v.setAcctSchemaId("1");
         v.setPeriodId(periodId);
         v.setTotalDebit(amt);
         v.setTotalCredit(amt);
@@ -544,11 +544,11 @@ public class TestErpFinReportRendering extends JunitAutoTestCase {
         cashLine.setDcDirection(ErpFinConstants.DC_DEBIT);
         cashLine.setDebitAmount(amt);
         cashLine.setCreditAmount(BigDecimal.ZERO);
-        cashLine.setCurrencyId(1L);
+        cashLine.setCurrencyId("1");
         cashLine.setExchangeRate(BigDecimal.ONE);
         cashLine.setAmountSource(amt);
         cashLine.setAmountFunctional(amt);
-        cashLine.setAcctSchemaId(1L);
+        cashLine.setAcctSchemaId("1");
         lDao.saveEntity(cashLine);
 
         ErpFinVoucherLine offsetLine = new ErpFinVoucherLine();
@@ -560,11 +560,11 @@ public class TestErpFinReportRendering extends JunitAutoTestCase {
         offsetLine.setDcDirection(ErpFinConstants.DC_CREDIT);
         offsetLine.setDebitAmount(BigDecimal.ZERO);
         offsetLine.setCreditAmount(amt);
-        offsetLine.setCurrencyId(1L);
+        offsetLine.setCurrencyId("1");
         offsetLine.setExchangeRate(BigDecimal.ONE);
         offsetLine.setAmountSource(amt);
         offsetLine.setAmountFunctional(amt);
-        offsetLine.setAcctSchemaId(1L);
+        offsetLine.setAcctSchemaId("1");
         lDao.saveEntity(offsetLine);
         return v.getId();
     }
@@ -573,15 +573,15 @@ public class TestErpFinReportRendering extends JunitAutoTestCase {
         IEntityDao<ErpFinArApItem> dao = daoProvider.daoFor(ErpFinArApItem.class);
         ErpFinArApItem it = new ErpFinArApItem();
         it.setCode("ARI-AGING-001");
-        it.setOrgId(1L);
-        it.setAcctSchemaId(1L);
+        it.setOrgId("1");
+        it.setAcctSchemaId("1");
         it.setDirection(ErpFinConstants.DIRECTION_RECEIVABLE);
-        it.setPartnerId(1L);
+        it.setPartnerId("1");
         it.setSourceBillType(ErpFinConstants.SOURCE_BILL_AR_INVOICE);
         it.setSourceBillCode("ARI-AGING-001");
         it.setBusinessDate(businessDate);
         it.setDueDate(businessDate);
-        it.setCurrencyId(1L);
+        it.setCurrencyId("1");
         it.setExchangeRate(BigDecimal.ONE);
         it.setAmountSource(openFunctional);
         it.setAmountFunctional(openFunctional);
@@ -598,7 +598,7 @@ public class TestErpFinReportRendering extends JunitAutoTestCase {
         IEntityDao<ErpFinAccountingPeriodStatus> dao = daoProvider.daoFor(ErpFinAccountingPeriodStatus.class);
         ErpFinAccountingPeriodStatus s = new ErpFinAccountingPeriodStatus();
         s.setPeriodId(periodId);
-        s.setAcctSchemaId(1L);
+        s.setAcctSchemaId("1");
         s.setTotalVouchers(1);
         s.setPostedVouchers(1);
         s.setUnpostedVouchers(0);
@@ -610,7 +610,7 @@ public class TestErpFinReportRendering extends JunitAutoTestCase {
         dao.saveEntity(s);
     }
 
-    private void seedVoucherBillR(Long voucherId, String businessType, String billCode) {
+    private void seedVoucherBillR(String voucherId, String businessType, String billCode) {
         IEntityDao<ErpFinVoucherBillR> dao = daoProvider.daoFor(ErpFinVoucherBillR.class);
         ErpFinVoucherBillR r = new ErpFinVoucherBillR();
         r.setVoucherId(voucherId);

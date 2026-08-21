@@ -21,7 +21,7 @@ public class ErpFinBudgetScenarioApproveProcessor extends AbstractApproveProcess
 
     @Override
     public ErpFinBudgetScenario approve(String id, IServiceContext context) {
-        ErpFinBudgetScenario scenario = processor.requireScenario(Long.valueOf(id));
+        ErpFinBudgetScenario scenario = processor.requireScenario(id);
         processor.validateTransition(scenario, ErpFinConstants.BUDGET_STATUS_APPROVED,
                 ErpFinConstants.BUDGET_STATUS_SUBMITTED);
         processor.generateBudgetVoucher(scenario, context);

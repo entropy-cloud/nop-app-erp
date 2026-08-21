@@ -10,15 +10,15 @@ import java.math.BigDecimal;
 public class GlDistributionTarget {
 
     /** 目标成本中心。 */
-    private Long targetCostCenterId;
+    private String targetCostCenterId;
     /** 分摊比例（百分数，如 60 表示 60%）。 */
     private BigDecimal percent;
 
-    public Long getTargetCostCenterId() {
+    public String getTargetCostCenterId() {
         return targetCostCenterId;
     }
 
-    public void setTargetCostCenterId(Long targetCostCenterId) {
+    public void setTargetCostCenterId(String targetCostCenterId) {
         this.targetCostCenterId = targetCostCenterId;
     }
 

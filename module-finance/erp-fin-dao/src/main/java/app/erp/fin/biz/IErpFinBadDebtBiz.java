@@ -31,7 +31,7 @@ public interface IErpFinBadDebtBiz extends ICrudBiz<ErpFinBadDebt> {
      * 审批门控 {@code erp-fin.bad-debt-write-off-require-approval}（默认 true）：关闭时创建即自动审批执行。
      */
     @BizMutation
-    ErpFinBadDebt writeOff(@Name("arApItemId") Long arApItemId,
+    ErpFinBadDebt writeOff(@Name("arApItemId") String arApItemId,
                            @Name("reason") String reason,
                            IServiceContext context);
 
@@ -39,17 +39,17 @@ public interface IErpFinBadDebtBiz extends ICrudBiz<ErpFinBadDebt> {
      * 坏账收回恢复：创建 RECOVERY 坏账单（恢复已核销项）。审批门控同 {@link #writeOff}。
      */
     @BizMutation
-    ErpFinBadDebt recover(@Name("arApItemId") Long arApItemId,
+    ErpFinBadDebt recover(@Name("arApItemId") String arApItemId,
                           @Name("reason") String reason,
                           IServiceContext context);
 
     /** 提交审核：UNSUBMITTED → SUBMITTED。 */
     @BizMutation
-    ErpFinBadDebt submit(@Name("id") Long id, IServiceContext context);
+    ErpFinBadDebt submit(@Name("id") String id, IServiceContext context);
 
     /** 审核通过：SUBMITTED → APPROVED，执行 ArApItem 变异 + 凭证生成。 */
     @BizMutation
-    ErpFinBadDebt approve(@Name("id") Long id, IServiceContext context);
+    ErpFinBadDebt approve(@Name("id") String id, IServiceContext context);
 
     /**
      * 反审核（红冲闭环）：APPROVED → REJECTED，红冲 BAD_DEBT_WRITE_OFF/RECOVERY 凭证 + 回退 ArApItem 状态对称
@@ -60,18 +60,18 @@ public interface IErpFinBadDebtBiz extends ICrudBiz<ErpFinBadDebt> {
      * 反向，DIRECT 路径调 {@code FinPostingExecutor.reverse(badDebt.code, BAD_DEBT_WRITE_OFF|RECOVERY)}。
      */
     @BizMutation
-    ErpFinBadDebt reverseApprove(@Name("id") Long id, IServiceContext context);
+    ErpFinBadDebt reverseApprove(@Name("id") String id, IServiceContext context);
 
     /** 驳回：SUBMITTED → REJECTED。 */
     @BizMutation
-    ErpFinBadDebt reject(@Name("id") Long id, IServiceContext context);
+    ErpFinBadDebt reject(@Name("id") String id, IServiceContext context);
 
     /**
      * 期末坏账准备计提/释放（账龄分桶法）。必需准备 &gt; Allowance 账面 → 补提 BAD_DEBT_RESERVE；
      * 必需准备 &lt; 账面 → 释放 BAD_DEBT_RELEASE；相等 → 无动作。
      */
     @BizMutation
-    BadDebtProvisionResult runBadDebtProvision(@Name("periodId") Long periodId, IServiceContext context);
+    BadDebtProvisionResult runBadDebtProvision(@Name("periodId") String periodId, IServiceContext context);
 
     /**
      * 反向坏账准备计提/释放红冲闭环（{@code bad-debt.md §步骤2b 反向红冲}，plan 2026-07-18-2251-2）。
@@ -88,5 +88,5 @@ public interface IErpFinBadDebtBiz extends ICrudBiz<ErpFinBadDebt> {
      * （{@code getAllowanceBalance} 基于红冲后状态重算）。
      */
     @BizMutation
-    BadDebtProvisionReversalResult reverseBadDebtProvision(@Name("periodId") Long periodId, IServiceContext context);
+    BadDebtProvisionReversalResult reverseBadDebtProvision(@Name("periodId") String periodId, IServiceContext context);
 }

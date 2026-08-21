@@ -39,9 +39,9 @@ public abstract class PeriodCloseTestSupport extends JunitAutoTestCase {
     @Inject
     protected IErpFinAccountingPeriodBiz periodBiz;
 
-    protected Long seedFullPeriod(String code, int year, int month) {
+    protected String seedFullPeriod(String code, int year, int month) {
         return ormTemplate.runInSession(session -> {
-            Long pid = seedOpenPeriod(code, year, month);
+            String pid = seedOpenPeriod(code, year, month);
             Map<String, ErpMdSubject> subjects = new HashMap<>();
             subjects.put("1001", seedSubject("1001", "库存现金", "ASSET", ErpFinConstants.DC_DEBIT));
             subjects.put("6001", seedSubject("6001", "主营业务收入", ErpFinConstants.SUBJECT_CLASS_INCOME, ErpFinConstants.DC_CREDIT));
@@ -50,23 +50,23 @@ public abstract class PeriodCloseTestSupport extends JunitAutoTestCase {
             subjects.put("1122", seedSubject("1122", "应收账款", "ASSET", ErpFinConstants.DC_DEBIT));
             subjects.put("2202", seedSubject("2202", "应付账款", "LIABILITY", ErpFinConstants.DC_CREDIT));
             subjects.put("6603", seedSubject("6603", "汇兑损益", ErpFinConstants.SUBJECT_CLASS_EXPENSE, ErpFinConstants.DC_DEBIT));
-            seedCurrency(1L, "CNY", true);
-            seedCurrency(2L, "EUR", false);
+            seedCurrency("1", "CNY", true);
+            seedCurrency("2", "EUR", false);
             seedPostedVoucher("V-" + code + "-INC", pid, LocalDate.of(year, month, 10), subjects,
                     new Object[]{"1001", "库存现金", ErpFinConstants.DC_DEBIT, new BigDecimal("100")},
                     new Object[]{"6001", "主营业务收入", ErpFinConstants.DC_CREDIT, new BigDecimal("100")});
             seedOpenArAp("ARI-" + code + "-001", pid, LocalDate.of(year, month, 11),
-                    ErpFinConstants.DIRECTION_RECEIVABLE, 2L, new BigDecimal("100"), new BigDecimal("800"));
+                    ErpFinConstants.DIRECTION_RECEIVABLE, "2", new BigDecimal("100"), new BigDecimal("800"));
             return pid;
         });
     }
 
-    protected Long seedOpenPeriod(String code, int year, int month) {
+    protected String seedOpenPeriod(String code, int year, int month) {
         IEntityDao<ErpFinAccountingPeriod> dao = daoProvider.daoFor(ErpFinAccountingPeriod.class);
         ErpFinAccountingPeriod p = new ErpFinAccountingPeriod();
         p.setCode(code);
         p.setName(code);
-        p.setOrgId(1L);
+        p.setOrgId("1");
         p.setYear(year);
         p.setMonth(month);
         p.setStartDate(LocalDate.of(year, month, 1));
@@ -88,7 +88,7 @@ public abstract class PeriodCloseTestSupport extends JunitAutoTestCase {
         return s;
     }
 
-    protected void seedCurrency(Long id, String code, boolean functional) {
+    protected void seedCurrency(String id, String code, boolean functional) {
         IEntityDao<ErpMdCurrency> dao = daoProvider.daoFor(ErpMdCurrency.class);
         ErpMdCurrency c = new ErpMdCurrency();
         c.setId(id);
@@ -98,7 +98,7 @@ public abstract class PeriodCloseTestSupport extends JunitAutoTestCase {
         dao.saveEntity(c);
     }
 
-    protected void seedPostedVoucher(String vcode, Long periodId, LocalDate date,
+    protected void seedPostedVoucher(String vcode, String periodId, LocalDate date,
                                      Map<String, ErpMdSubject> subjects, Object[]... lines) {
         IEntityDao<ErpFinVoucher> vDao = daoProvider.daoFor(ErpFinVoucher.class);
         BigDecimal total = BigDecimal.ZERO;
@@ -109,8 +109,8 @@ public abstract class PeriodCloseTestSupport extends JunitAutoTestCase {
         v.setCode(vcode);
         v.setVoucherType("TRANSFER");
         v.setVoucherDate(date);
-        v.setOrgId(1L);
-        v.setAcctSchemaId(1L);
+        v.setOrgId("1");
+        v.setAcctSchemaId("1");
         v.setPeriodId(periodId);
         v.setTotalDebit(total);
         v.setTotalCredit(total);
@@ -132,24 +132,24 @@ public abstract class PeriodCloseTestSupport extends JunitAutoTestCase {
             line.setDcDirection(dc);
             line.setDebitAmount(ErpFinConstants.DC_DEBIT.equals(dc) ? amt : BigDecimal.ZERO);
             line.setCreditAmount(ErpFinConstants.DC_CREDIT.equals(dc) ? amt : BigDecimal.ZERO);
-            line.setCurrencyId(1L);
+            line.setCurrencyId("1");
             line.setExchangeRate(BigDecimal.ONE);
             line.setAmountSource(amt);
             line.setAmountFunctional(amt);
-            line.setAcctSchemaId(1L);
+            line.setAcctSchemaId("1");
             lDao.saveEntity(line);
         }
     }
 
-    protected void seedOpenArAp(String code, Long periodId, LocalDate date, String direction,
-                                Long currencyId, BigDecimal openSource, BigDecimal openFunctional) {
+    protected void seedOpenArAp(String code, String periodId, LocalDate date, String direction,
+                                String currencyId, BigDecimal openSource, BigDecimal openFunctional) {
         IEntityDao<ErpFinArApItem> dao = daoProvider.daoFor(ErpFinArApItem.class);
         ErpFinArApItem item = new ErpFinArApItem();
         item.setCode(code);
-        item.setOrgId(1L);
-        item.setAcctSchemaId(1L);
+        item.setOrgId("1");
+        item.setAcctSchemaId("1");
         item.setDirection(direction);
-        item.setPartnerId(1L);
+        item.setPartnerId("1");
         item.setSourceBillType(ErpFinConstants.SOURCE_BILL_AR_INVOICE);
         item.setSourceBillCode(code);
         item.setBusinessDate(date);
@@ -166,7 +166,7 @@ public abstract class PeriodCloseTestSupport extends JunitAutoTestCase {
         dao.saveEntity(item);
     }
 
-    protected BigDecimal netCredit(String subjectCode, Long periodId) {
+    protected BigDecimal netCredit(String subjectCode, String periodId) {
         ErpMdSubject s = findSubjectByCode(subjectCode);
         QueryBean vq = new QueryBean();
         vq.addFilter(eq("periodId", periodId));
@@ -189,7 +189,7 @@ public abstract class PeriodCloseTestSupport extends JunitAutoTestCase {
         return daoProvider.daoFor(ErpMdSubject.class).findAllByQuery(q).get(0);
     }
 
-    protected ErpFinAccountingPeriodStatus loadStatus(Long periodId) {
+    protected ErpFinAccountingPeriodStatus loadStatus(String periodId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("periodId", periodId));
         return daoProvider.daoFor(ErpFinAccountingPeriodStatus.class).findAllByQuery(q).get(0);

@@ -29,7 +29,7 @@ public interface IErpFinCreditFacilityBiz extends ICrudBiz<ErpFinCreditFacility>
      * 可用不足抛 {@code NopException}（{@code erp.err.fin.credit-facility.insufficient}）。
      */
     @BizMutation
-    ErpFinCreditFacility reserveCredit(@Name("creditFacilityId") Long creditFacilityId,
+    ErpFinCreditFacility reserveCredit(@Name("creditFacilityId") String creditFacilityId,
                                        @Name("amount") BigDecimal amount,
                                        IServiceContext context);
 
@@ -37,7 +37,7 @@ public interface IErpFinCreditFacilityBiz extends ICrudBiz<ErpFinCreditFacility>
      * 释放授信额度：decrement usedAmount（不低于 0）并重算 available。
      */
     @BizMutation
-    ErpFinCreditFacility releaseCredit(@Name("creditFacilityId") Long creditFacilityId,
+    ErpFinCreditFacility releaseCredit(@Name("creditFacilityId") String creditFacilityId,
                                        @Name("amount") BigDecimal amount,
                                        IServiceContext context);
 
@@ -51,7 +51,7 @@ public interface IErpFinCreditFacilityBiz extends ICrudBiz<ErpFinCreditFacility>
      * @return 新生成的凭证 ID；幂等命中（已计提过同区间）或 usedAmount=0 空操作时返回 {@code null}
      */
     @BizMutation
-    Long accrueInterest(@Name("creditFacilityId") Long creditFacilityId,
+    String accrueInterest(@Name("creditFacilityId") String creditFacilityId,
                         @Name("fromDate") LocalDate fromDate,
                         @Name("toDate") LocalDate toDate,
                         IServiceContext context);

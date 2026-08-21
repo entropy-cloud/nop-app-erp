@@ -61,11 +61,11 @@ public class TestErpFinPartnerIdResolution extends JunitAutoTestCase {
 
     @Test
     public void testApproveRejectedWhenClaimantPartnerIdNull() {
-        Long claimId = ormTemplate.runInSession(session -> {
+        String claimId = ormTemplate.runInSession(session -> {
             seedOpenPeriod();
-            seedAcctSchema(1L);
+            seedAcctSchema("1");
             // 员工无 partnerId
-            Long empId = seedEmployee(null, ErpFinConstants.EMPLOYEE_STATUS_ACTIVE);
+            String empId = seedEmployee(null, ErpFinConstants.EMPLOYEE_STATUS_ACTIVE);
             return seedSubmittedClaim("EC-PID-001", empId);
         });
         // 直接置 SUBMITTED（绕过 submit 校验），approve 时 validateForApproval 拦截 partnerId 缺失
@@ -75,10 +75,10 @@ public class TestErpFinPartnerIdResolution extends JunitAutoTestCase {
 
     @Test
     public void testApproveRejectedWhenEmployeePartnerIdNull() {
-        Long advanceId = ormTemplate.runInSession(session -> {
+        String advanceId = ormTemplate.runInSession(session -> {
             seedOpenPeriod();
-            seedAcctSchema(1L);
-            Long empId = seedEmployee(null, ErpFinConstants.EMPLOYEE_STATUS_ACTIVE);
+            seedAcctSchema("1");
+            String empId = seedEmployee(null, ErpFinConstants.EMPLOYEE_STATUS_ACTIVE);
             return seedSubmittedAdvance("ADV-PID-001", empId, new BigDecimal("100"));
         });
         assertTrue(approveAdvance(advanceId).getStatus() != 0,
@@ -87,23 +87,23 @@ public class TestErpFinPartnerIdResolution extends JunitAutoTestCase {
 
     @Test
     public void testSubledgerPartnerIdIsEmployeePartnerIdNotEmployeeId() {
-        long partnerId = 6601L;
-        Long[] ids = ormTemplate.runInSession(session -> {
+        String partnerId = "6601";
+        String[] ids = ormTemplate.runInSession(session -> {
             seedOpenPeriod();
-            seedAcctSchema(1L);
+            seedAcctSchema("1");
             seedSubject("6602", "管理费用");
             seedSubject("2221", "应交税费-进项税额");
             seedSubject("2241", "其他应付款-员工");
             seedSubject("1221", "其他应收款-员工预支");
             seedSubject("1002", "银行存款");
-            Long empId = seedEmployee(partnerId, ErpFinConstants.EMPLOYEE_STATUS_ACTIVE);
-            Long claimId = seedSubmittedClaimAmount("EC-PID-002", empId, new BigDecimal("113"));
-            Long advanceId = seedSubmittedAdvance("ADV-PID-002", empId, new BigDecimal("200"));
-            return new Long[]{empId, claimId, advanceId};
+            String empId = seedEmployee(partnerId, ErpFinConstants.EMPLOYEE_STATUS_ACTIVE);
+            String claimId = seedSubmittedClaimAmount("EC-PID-002", empId, new BigDecimal("113"));
+            String advanceId = seedSubmittedAdvance("ADV-PID-002", empId, new BigDecimal("200"));
+            return new String[]{empId, claimId, advanceId};
         });
-        Long employeeId = ids[0];
-        Long claimId = ids[1];
-        Long advanceId = ids[2];
+        String employeeId = ids[0];
+        String claimId = ids[1];
+        String advanceId = ids[2];
 
         assertEquals(0, approveClaim(claimId).getStatus());
         ErpFinArApItem payableItem = findItem("EXPENSE_CLAIM", "EC-PID-002");
@@ -118,12 +118,12 @@ public class TestErpFinPartnerIdResolution extends JunitAutoTestCase {
 
     // ---------- rpc helpers ----------
 
-    private ApiResponse<?> approveClaim(Long id) {
+    private ApiResponse<?> approveClaim(String id) {
         return executeRpc(mutation, "ErpFinExpenseClaim__approve",
                 ApiRequest.build(Map.of("id", String.valueOf(id))));
     }
 
-    private ApiResponse<?> approveAdvance(Long id) {
+    private ApiResponse<?> approveAdvance(String id) {
         return executeRpc(mutation, "ErpFinEmployeeAdvance__approve",
                 ApiRequest.build(Map.of("id", String.valueOf(id))));
     }
@@ -140,7 +140,7 @@ public class TestErpFinPartnerIdResolution extends JunitAutoTestCase {
         ErpFinAccountingPeriod period = new ErpFinAccountingPeriod();
         period.setCode("2026-06");
         period.setName("2026-06");
-        period.setOrgId(1L);
+        period.setOrgId("1");
         period.setYear(2026);
         period.setMonth(6);
         period.setStartDate(LocalDate.of(2026, 6, 1));
@@ -149,31 +149,31 @@ public class TestErpFinPartnerIdResolution extends JunitAutoTestCase {
         dao.saveEntity(period);
     }
 
-    private Long seedEmployee(Long partnerId, String status) {
+    private String seedEmployee(String partnerId, String status) {
         IEntityDao<ErpMdEmployee> dao = daoProvider.daoFor(ErpMdEmployee.class);
         ErpMdEmployee emp = new ErpMdEmployee();
         emp.setCode("E-" + (partnerId != null ? partnerId : "nopartner"));
         emp.setName("员工");
-        emp.setOrgId(1L);
+        emp.setOrgId("1");
         emp.setPartnerId(partnerId);
         emp.setStatus(status);
         dao.saveEntity(emp);
         return emp.getId();
     }
 
-    private Long seedSubmittedClaim(String code, Long claimantId) {
+    private String seedSubmittedClaim(String code, String claimantId) {
         return seedSubmittedClaimAmount(code, claimantId, new BigDecimal("113"));
     }
 
-    private Long seedSubmittedClaimAmount(String code, Long claimantId, BigDecimal withTax) {
+    private String seedSubmittedClaimAmount(String code, String claimantId, BigDecimal withTax) {
         IEntityDao<ErpFinExpenseClaim> dao = daoProvider.daoFor(ErpFinExpenseClaim.class);
         ErpFinExpenseClaim claim = new ErpFinExpenseClaim();
         claim.setCode(code);
-        claim.setOrgId(1L);
+        claim.setOrgId("1");
         claim.setClaimantId(claimantId);
         claim.setBusinessDate(LocalDate.of(2026, 6, 15));
         claim.setPaymentMode(ErpFinConstants.PAYMENT_MODE_OWN_ACCOUNT);
-        claim.setCurrencyId(1L);
+        claim.setCurrencyId("1");
         claim.setExchangeRate(BigDecimal.ONE);
         claim.setAmountWithoutTax(new BigDecimal("100"));
         claim.setTaxAmount(new BigDecimal("13"));
@@ -195,16 +195,16 @@ public class TestErpFinPartnerIdResolution extends JunitAutoTestCase {
         return claim.getId();
     }
 
-    private Long seedSubmittedAdvance(String code, Long employeeId, BigDecimal amount) {
+    private String seedSubmittedAdvance(String code, String employeeId, BigDecimal amount) {
         IEntityDao<app.erp.fin.dao.entity.ErpFinEmployeeAdvance> dao =
                 daoProvider.daoFor(app.erp.fin.dao.entity.ErpFinEmployeeAdvance.class);
         app.erp.fin.dao.entity.ErpFinEmployeeAdvance advance = new app.erp.fin.dao.entity.ErpFinEmployeeAdvance();
         advance.setCode(code);
-        advance.setOrgId(1L);
+        advance.setOrgId("1");
         advance.setEmployeeId(employeeId);
         advance.setAdvanceType("EXPENSE_ADVANCE");
         advance.setBusinessDate(LocalDate.of(2026, 6, 10));
-        advance.setCurrencyId(1L);
+        advance.setCurrencyId("1");
         advance.setExchangeRate(BigDecimal.ONE);
         advance.setAmountFunctional(amount);
         advance.setAmountSource(amount);
@@ -227,14 +227,14 @@ public class TestErpFinPartnerIdResolution extends JunitAutoTestCase {
         dao.saveEntity(subject);
     }
 
-    private void seedAcctSchema(long orgId) {
+    private void seedAcctSchema(String orgId) {
         IEntityDao<ErpMdAcctSchema> dao = daoProvider.daoFor(ErpMdAcctSchema.class);
         ErpMdAcctSchema schema = new ErpMdAcctSchema();
         schema.setCode("AS-" + orgId);
         schema.setName("账套-" + orgId);
         schema.setOrgId(orgId);
         schema.setNature("FINANCIAL");
-        schema.setFunctionalCurrencyId(1L);
+        schema.setFunctionalCurrencyId("1");
         schema.setStatus("ACTIVE");
         dao.saveEntity(schema);
     }

@@ -16,7 +16,7 @@ import java.util.List;
  * 供用户在执行冲销前评估影响。
  */
 public class VoucherReversePreview {
-    private Long voucherId;
+    private String voucherId;
     private String voucherCode;
     private String voucherType;
     private LocalDate voucherDate;
@@ -32,8 +32,8 @@ public class VoucherReversePreview {
     /** 关联业财回链（凭证由哪些域单据生成），信息上下文。 */
     private List<BillLinkInfo> billLinks = new ArrayList<>();
 
-    public Long getVoucherId() { return voucherId; }
-    public void setVoucherId(Long voucherId) { this.voucherId = voucherId; }
+    public String getVoucherId() { return voucherId; }
+    public void setVoucherId(String voucherId) { this.voucherId = voucherId; }
     public String getVoucherCode() { return voucherCode; }
     public void setVoucherCode(String voucherCode) { this.voucherCode = voucherCode; }
     public String getVoucherType() { return voucherType; }

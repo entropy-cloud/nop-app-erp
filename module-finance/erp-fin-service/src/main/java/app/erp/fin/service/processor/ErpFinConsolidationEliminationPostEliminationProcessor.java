@@ -37,7 +37,7 @@ public class ErpFinConsolidationEliminationPostEliminationProcessor {
     @Inject
     IDaoProvider daoProvider;
 
-    public Long postElimination(Long candidateId, IServiceContext context) {
+    public String postElimination(String candidateId, IServiceContext context) {
         if (!isEliminationEnabled()) {
             return null;
         }
@@ -55,7 +55,7 @@ public class ErpFinConsolidationEliminationPostEliminationProcessor {
 
         BigDecimal amount = candidate.getEliminationAmount() != null
                 ? candidate.getEliminationAmount() : BigDecimal.ZERO;
-        Long voucherId = writeDraftEliminationVoucher(candidate, amount);
+        String voucherId = writeDraftEliminationVoucher(candidate, amount);
 
         candidate.setDraftVoucherId(voucherId);
         candidate.setStatus(ErpFinConstants.ELIMINATION_STATUS_DRAFT_VOUCHER);
@@ -70,7 +70,7 @@ public class ErpFinConsolidationEliminationPostEliminationProcessor {
                 AppConfig.var(ErpFinConstants.CONFIG_CONSOLIDATION_ELIMINATION_ENABLED, Boolean.FALSE));
     }
 
-    protected Long writeDraftEliminationVoucher(ErpFinConsolidationElimination candidate, BigDecimal amount) {
+    protected String writeDraftEliminationVoucher(ErpFinConsolidationElimination candidate, BigDecimal amount) {
         IEntityDao<ErpFinVoucher> voucherDao = daoProvider.daoFor(ErpFinVoucher.class);
         IEntityDao<ErpFinVoucherLine> lineDao = daoProvider.daoFor(ErpFinVoucherLine.class);
         IEntityDao<ErpFinVoucherBillR> billRDao = daoProvider.daoFor(ErpFinVoucherBillR.class);
@@ -81,14 +81,14 @@ public class ErpFinConsolidationEliminationPostEliminationProcessor {
         voucher.setVoucherType("TRANSFER");
         voucher.setVoucherDate(CoreMetrics.today());
         voucher.setOrgId(candidate.getOrgId());
-        voucher.setAcctSchemaId(1L);
+        voucher.setAcctSchemaId("1");
         voucher.setPeriodId(candidate.getPeriodId());
         voucher.setTotalDebit(amount);
         voucher.setTotalCredit(amount);
         voucher.setIsReversed(false);
         voucher.setDocStatus(ErpFinConstants.VOUCHER_STATUS_DRAFT);
         voucherDao.saveEntity(voucher);
-        Long voucherId = voucher.getId();
+        String voucherId = voucher.getId();
 
         // 借方行（抵消方向由 eliminationType 决定，简化为 Dr 抵消科目 / Cr 抵消对冲科目）
         String debitSubjectCode = resolveEliminationSubjectCode(candidate.getEliminationType(), true);
@@ -104,11 +104,11 @@ public class ErpFinConsolidationEliminationPostEliminationProcessor {
         debitLine.setDcDirection(ErpFinConstants.DC_DEBIT);
         debitLine.setDebitAmount(amount);
         debitLine.setCreditAmount(BigDecimal.ZERO);
-        debitLine.setCurrencyId(1L);
+        debitLine.setCurrencyId("1");
         debitLine.setExchangeRate(BigDecimal.ONE);
         debitLine.setAmountSource(amount);
         debitLine.setAmountFunctional(amount);
-        debitLine.setAcctSchemaId(1L);
+        debitLine.setAcctSchemaId("1");
         debitLine.setOrgId(candidate.getOrgId());
         debitLine.setBusinessType(ErpFinConstants.ELIMINATION_VOUCHER_BILL_TYPE);
         debitLine.setMemo("合并抵消借方-" + candidate.getEliminationType());
@@ -128,11 +128,11 @@ public class ErpFinConsolidationEliminationPostEliminationProcessor {
         creditLine.setDcDirection(ErpFinConstants.DC_CREDIT);
         creditLine.setDebitAmount(BigDecimal.ZERO);
         creditLine.setCreditAmount(amount);
-        creditLine.setCurrencyId(1L);
+        creditLine.setCurrencyId("1");
         creditLine.setExchangeRate(BigDecimal.ONE);
         creditLine.setAmountSource(amount);
         creditLine.setAmountFunctional(amount);
-        creditLine.setAcctSchemaId(1L);
+        creditLine.setAcctSchemaId("1");
         creditLine.setOrgId(candidate.getOrgId());
         creditLine.setBusinessType(ErpFinConstants.ELIMINATION_VOUCHER_BILL_TYPE);
         creditLine.setMemo("合并抵消贷方-" + candidate.getEliminationType());

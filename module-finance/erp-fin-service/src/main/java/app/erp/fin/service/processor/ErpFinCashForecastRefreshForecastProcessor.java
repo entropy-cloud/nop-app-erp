@@ -129,9 +129,9 @@ public class ErpFinCashForecastRefreshForecastProcessor {
                 ? ErpFinConstants.CASH_FLOW_INFLOW : ErpFinConstants.CASH_FLOW_OUTFLOW;
     }
 
-    protected ErpFinCashForecast newForecast(Long orgId, Long fundAccountId, LocalDate forecastDate,
+    protected ErpFinCashForecast newForecast(String orgId, String fundAccountId, LocalDate forecastDate,
                                              String sourceBillType, String sourceBillCode, String direction,
-                                             Long partnerId,
+                                             String partnerId,
                                              BigDecimal amountSource, BigDecimal amountFunctional) {
         IEntityDao<ErpFinCashForecast> dao = daoProvider.daoFor(ErpFinCashForecast.class);
         ErpFinCashForecast row = dao.newEntity();

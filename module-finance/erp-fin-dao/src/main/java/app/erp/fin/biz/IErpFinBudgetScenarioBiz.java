@@ -22,19 +22,19 @@ public interface IErpFinBudgetScenarioBiz extends ICrudBiz<ErpFinBudgetScenario>
 
     /** 提交审核：DRAFT/REJECTED → SUBMITTED。 */
     @BizMutation
-    ErpFinBudgetScenario submit(@Name("id") Long id, IServiceContext context);
+    ErpFinBudgetScenario submit(@Name("id") String id, IServiceContext context);
 
     /** 审核通过：SUBMITTED → APPROVED，生成 BUDGET 影子凭证。 */
     @BizMutation
-    ErpFinBudgetScenario approve(@Name("id") Long id, IServiceContext context);
+    ErpFinBudgetScenario approve(@Name("id") String id, IServiceContext context);
 
     /** 驳回：SUBMITTED → REJECTED。 */
     @BizMutation
-    ErpFinBudgetScenario reject(@Name("id") Long id, IServiceContext context);
+    ErpFinBudgetScenario reject(@Name("id") String id, IServiceContext context);
 
     /** 作废：APPROVED → CANCELLED，红冲原 BUDGET 凭证。 */
     @BizMutation
-    ErpFinBudgetScenario cancel(@Name("id") Long id, IServiceContext context);
+    ErpFinBudgetScenario cancel(@Name("id") String id, IServiceContext context);
 
     /**
      * 滚动预算自动复制（A2，plan 2026-07-21-1206-2，budget.md §滚动预算自动复制引擎）。
@@ -48,7 +48,7 @@ public interface IErpFinBudgetScenarioBiz extends ICrudBiz<ErpFinBudgetScenario>
      * @param context       服务上下文
      */
     @BizMutation
-    ErpFinBudgetScenario rollForward(@Name("id") Long id,
+    ErpFinBudgetScenario rollForward(@Name("id") String id,
                                      @Name("newFiscalYear") Integer newFiscalYear,
                                      @Name("strategy") String strategy,
                                      IServiceContext context);
@@ -65,8 +65,8 @@ public interface IErpFinBudgetScenarioBiz extends ICrudBiz<ErpFinBudgetScenario>
      * @param context         服务上下文
      */
     @BizMutation
-    ErpFinBudgetScenario carryForward(@Name("id") Long id,
-                                      @Name("targetScenarioId") Long targetScenarioId,
+    ErpFinBudgetScenario carryForward(@Name("id") String id,
+                                      @Name("targetScenarioId") String targetScenarioId,
                                       @Name("rule") String rule,
                                       IServiceContext context);
 }

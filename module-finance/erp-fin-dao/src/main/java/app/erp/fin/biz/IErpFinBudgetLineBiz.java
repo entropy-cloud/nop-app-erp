@@ -27,8 +27,8 @@ public interface IErpFinBudgetLineBiz extends ICrudBiz<ErpFinBudgetLine> {
      * @return 对比行列表
      */
     @BizQuery
-    List<BudgetVsActualRow> getBudgetVsActual(@Name("acctSchemaId") Long acctSchemaId,
-                                              @Name("periodId") Long periodId,
-                                              @Name("subjectId") Long subjectId,
+    List<BudgetVsActualRow> getBudgetVsActual(@Name("acctSchemaId") String acctSchemaId,
+                                              @Name("periodId") String periodId,
+                                              @Name("subjectId") String subjectId,
                                               IServiceContext context);
 }

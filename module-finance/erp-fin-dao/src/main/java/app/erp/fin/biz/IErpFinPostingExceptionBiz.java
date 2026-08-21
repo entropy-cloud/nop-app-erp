@@ -13,9 +13,9 @@ import app.erp.fin.dao.entity.ErpFinPostingException;
 /**
  * 过账异常工作台契约（{@code posting-log.md §过账异常处置}）。CRUD 之外承载三个处置动作：
  * <ul>
- *   <li>{@link #retry(Long, IServiceContext)} —— 重试：重新触发过账，成功翻 RETRIED。</li>
- *   <li>{@link #ignore(Long, String, IServiceContext)} —— 忽略：标记 IGNORED + 原因必填。</li>
- *   <li>{@link #manualEntry(Long, Long, String, IServiceContext)} —— 手工补录：关联源单已过账凭证。</li>
+ *   <li>{@link #retry(String, IServiceContext)} —— 重试：重新触发过账，成功翻 RETRIED。</li>
+ *   <li>{@link #ignore(String, String, IServiceContext)} —— 忽略：标记 IGNORED + 原因必填。</li>
+ *   <li>{@link #manualEntry(String, String, String, IServiceContext)} —— 手工补录：关联源单已过账凭证。</li>
  * </ul>
  *
  * <p>处置状态机经 ErrorCode 守门（仅 PENDING 可处置；忽略须原因；补录须关联凭证）。
@@ -32,13 +32,13 @@ public interface IErpFinPostingExceptionBiz extends ICrudBiz<ErpFinPostingExcept
      * @return 处置后的异常记录（成功为 RETRIED，失败为 RETRYING 并记 retryCount）
      */
     @BizMutation
-    ErpFinPostingException retry(@Name("exceptionId") Long exceptionId, IServiceContext context);
+    ErpFinPostingException retry(@Name("exceptionId") String exceptionId, IServiceContext context);
 
     /**
      * 忽略异常。标记 IGNORED，须填写处置说明。
      */
     @BizMutation
-    ErpFinPostingException ignore(@Name("exceptionId") Long exceptionId,
+    ErpFinPostingException ignore(@Name("exceptionId") String exceptionId,
                                   @Name("resolutionNote") String resolutionNote,
                                   IServiceContext context);
 
@@ -46,8 +46,8 @@ public interface IErpFinPostingExceptionBiz extends ICrudBiz<ErpFinPostingExcept
      * 手工补录。关联源单已过账凭证（voucherId 必填），标记 MANUAL。
      */
     @BizMutation
-    ErpFinPostingException manualEntry(@Name("exceptionId") Long exceptionId,
-                                       @Name("voucherId") Long voucherId,
+    ErpFinPostingException manualEntry(@Name("exceptionId") String exceptionId,
+                                       @Name("voucherId") String voucherId,
                                        @Name("resolutionNote") String resolutionNote,
                                        IServiceContext context);
 

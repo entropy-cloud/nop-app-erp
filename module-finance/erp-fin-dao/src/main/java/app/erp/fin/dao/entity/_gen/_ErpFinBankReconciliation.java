@@ -189,19 +189,19 @@ public class _ErpFinBankReconciliation extends DynamicOrmEntity{
 
     
     /* ID: ID */
-    private java.lang.Long _id;
+    private java.lang.String _id;
     
     /* 单号: CODE */
     private java.lang.String _code;
     
     /* 组织: ORG_ID */
-    private java.lang.Long _orgId;
+    private java.lang.String _orgId;
     
     /* 资金账户: FUND_ACCOUNT_ID */
-    private java.lang.Long _fundAccountId;
+    private java.lang.String _fundAccountId;
     
     /* 银行对账单: STATEMENT_ID */
-    private java.lang.Long _statementId;
+    private java.lang.String _statementId;
     
     /* 对账日期: RECONCILIATION_DATE */
     private java.time.LocalDate _reconciliationDate;
@@ -394,9 +394,9 @@ public class _ErpFinBankReconciliation extends DynamicOrmEntity{
         switch(propId){
         
             case PROP_ID_id:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_id));
                }
                setId(typedValue);
@@ -414,9 +414,9 @@ public class _ErpFinBankReconciliation extends DynamicOrmEntity{
             }
         
             case PROP_ID_orgId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_orgId));
                }
                setOrgId(typedValue);
@@ -424,9 +424,9 @@ public class _ErpFinBankReconciliation extends DynamicOrmEntity{
             }
         
             case PROP_ID_fundAccountId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_fundAccountId));
                }
                setFundAccountId(typedValue);
@@ -434,9 +434,9 @@ public class _ErpFinBankReconciliation extends DynamicOrmEntity{
             }
         
             case PROP_ID_statementId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_statementId));
                }
                setStatementId(typedValue);
@@ -604,7 +604,7 @@ public class _ErpFinBankReconciliation extends DynamicOrmEntity{
         
             case PROP_ID_id:{
                onInitProp(propId);
-               this._id = (java.lang.Long)value;
+               this._id = (java.lang.String)value;
                orm_id(); // 如果是设置主键字段，则触发watcher
                break;
             }
@@ -618,21 +618,21 @@ public class _ErpFinBankReconciliation extends DynamicOrmEntity{
         
             case PROP_ID_orgId:{
                onInitProp(propId);
-               this._orgId = (java.lang.Long)value;
+               this._orgId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_fundAccountId:{
                onInitProp(propId);
-               this._fundAccountId = (java.lang.Long)value;
+               this._fundAccountId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_statementId:{
                onInitProp(propId);
-               this._statementId = (java.lang.Long)value;
+               this._statementId = (java.lang.String)value;
                
                break;
             }
@@ -751,7 +751,7 @@ public class _ErpFinBankReconciliation extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final java.lang.Long getId(){
+    public final java.lang.String getId(){
          onPropGet(PROP_ID_id);
          return _id;
     }
@@ -759,7 +759,7 @@ public class _ErpFinBankReconciliation extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final void setId(java.lang.Long value){
+    public final void setId(java.lang.String value){
         if(onPropSet(PROP_ID_id,value)){
             this._id = value;
             internalClearRefs(PROP_ID_id);
@@ -789,7 +789,7 @@ public class _ErpFinBankReconciliation extends DynamicOrmEntity{
     /**
      * 组织: ORG_ID
      */
-    public final java.lang.Long getOrgId(){
+    public final java.lang.String getOrgId(){
          onPropGet(PROP_ID_orgId);
          return _orgId;
     }
@@ -797,7 +797,7 @@ public class _ErpFinBankReconciliation extends DynamicOrmEntity{
     /**
      * 组织: ORG_ID
      */
-    public final void setOrgId(java.lang.Long value){
+    public final void setOrgId(java.lang.String value){
         if(onPropSet(PROP_ID_orgId,value)){
             this._orgId = value;
             internalClearRefs(PROP_ID_orgId);
@@ -808,7 +808,7 @@ public class _ErpFinBankReconciliation extends DynamicOrmEntity{
     /**
      * 资金账户: FUND_ACCOUNT_ID
      */
-    public final java.lang.Long getFundAccountId(){
+    public final java.lang.String getFundAccountId(){
          onPropGet(PROP_ID_fundAccountId);
          return _fundAccountId;
     }
@@ -816,7 +816,7 @@ public class _ErpFinBankReconciliation extends DynamicOrmEntity{
     /**
      * 资金账户: FUND_ACCOUNT_ID
      */
-    public final void setFundAccountId(java.lang.Long value){
+    public final void setFundAccountId(java.lang.String value){
         if(onPropSet(PROP_ID_fundAccountId,value)){
             this._fundAccountId = value;
             internalClearRefs(PROP_ID_fundAccountId);
@@ -827,7 +827,7 @@ public class _ErpFinBankReconciliation extends DynamicOrmEntity{
     /**
      * 银行对账单: STATEMENT_ID
      */
-    public final java.lang.Long getStatementId(){
+    public final java.lang.String getStatementId(){
          onPropGet(PROP_ID_statementId);
          return _statementId;
     }
@@ -835,7 +835,7 @@ public class _ErpFinBankReconciliation extends DynamicOrmEntity{
     /**
      * 银行对账单: STATEMENT_ID
      */
-    public final void setStatementId(java.lang.Long value){
+    public final void setStatementId(java.lang.String value){
         if(onPropSet(PROP_ID_statementId,value)){
             this._statementId = value;
             internalClearRefs(PROP_ID_statementId);

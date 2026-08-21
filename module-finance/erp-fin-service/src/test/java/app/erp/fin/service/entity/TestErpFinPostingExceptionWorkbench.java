@@ -74,7 +74,7 @@ public class TestErpFinPostingExceptionWorkbench extends JunitAutoTestCase {
     @Test
     public void testFailedPostRecordsPendingExceptionAndPreCheckBlocks() {
         LocalDate voucherDate = LocalDate.of(2026, 7, 15);
-        final Long[] periodIdHolder = new Long[1];
+        final String[] periodIdHolder = new String[1];
         seed(() -> {
             ErpFinAccountingPeriod period = seedPeriod("2026-07", 2026, 7,
                     LocalDate.of(2026, 7, 1), LocalDate.of(2026, 7, 31), PERIOD_STATUS_CLOSED);
@@ -84,7 +84,7 @@ public class TestErpFinPostingExceptionWorkbench extends JunitAutoTestCase {
             seedSubject("2202", "应付账款");
             seedApInvoiceTemplate();
         });
-        Long periodId = periodIdHolder[0];
+        String periodId = periodIdHolder[0];
 
         // 期间关闭 → post 失败 → 异常记录以独立事务写入 PENDING（不随主过账回滚丢失）
         PostingEvent event = apInvoiceEvent("AP-EXC-CLOSED-001", voucherDate,
@@ -112,7 +112,7 @@ public class TestErpFinPostingExceptionWorkbench extends JunitAutoTestCase {
     @Test
     public void testRetrySucceedsAfterFixAndPreCheckPasses() {
         LocalDate voucherDate = LocalDate.of(2026, 7, 15);
-        final Long[] periodIdHolder = new Long[1];
+        final String[] periodIdHolder = new String[1];
         seed(() -> {
             ErpFinAccountingPeriod period = seedPeriod("2026-07", 2026, 7,
                     LocalDate.of(2026, 7, 1), LocalDate.of(2026, 7, 31), PERIOD_STATUS_CLOSED);
@@ -122,7 +122,7 @@ public class TestErpFinPostingExceptionWorkbench extends JunitAutoTestCase {
             seedSubject("2202", "应付账款");
             seedApInvoiceTemplate();
         });
-        Long periodId = periodIdHolder[0];
+        String periodId = periodIdHolder[0];
 
         PostingEvent event = apInvoiceEvent("AP-EXC-RETRY-001", voucherDate,
                 new BigDecimal("100"), new BigDecimal("13"), new BigDecimal("113"));
@@ -203,9 +203,9 @@ public class TestErpFinPostingExceptionWorkbench extends JunitAutoTestCase {
                 "手工补录缺 voucherId 应抛 ErrorCode");
 
         // 关联凭证后 → MANUAL
-        ErpFinPostingException manual = ormTemplate.runInSession(session -> postingExceptionBiz.manualEntry(ex.getId(), 9999L, "财务手工补录", CTX));
+        ErpFinPostingException manual = ormTemplate.runInSession(session -> postingExceptionBiz.manualEntry(ex.getId(), "9999", "财务手工补录", CTX));
         assertEquals(ErpFinConstants.POSTING_EXCEPTION_STATUS_MANUAL, manual.getStatus());
-        assertEquals(9999L, manual.getVoucherId());
+        assertEquals("9999", manual.getVoucherId());
     }
 
     // ---------- helpers ----------
@@ -222,7 +222,7 @@ public class TestErpFinPostingExceptionWorkbench extends JunitAutoTestCase {
                     PERIOD_STATUS_CLOSED);
         });
         // 直接 seed 一条 retryCount=2 的 PENDING 异常记录（近 MAX_RETRY）。
-        Long exceptionId = seedReturn(() -> seedPendingException("AP-EXC-RETRY-MAX-001", voucherDate, 2));
+        String exceptionId = seedReturn(() -> seedPendingException("AP-EXC-RETRY-MAX-001", voucherDate, 2));
 
         // 重试 → post 失败（期间关闭）→ incrementRetryAndRethrow → retryCount=3 → MANUAL（G2 升级）。
         boolean ok = ormTemplate.runInSession(session -> retryHelper.retry(exceptionId, CTX));
@@ -243,7 +243,7 @@ public class TestErpFinPostingExceptionWorkbench extends JunitAutoTestCase {
         return ormTemplate.runInSession(session -> action.get());
     }
 
-    private Long seedPendingException(String billHeadCode, LocalDate voucherDate, int retryCount) {
+    private String seedPendingException(String billHeadCode, LocalDate voucherDate, int retryCount) {
         IEntityDao<ErpFinPostingException> dao = daoProvider.daoFor(ErpFinPostingException.class);
         ErpFinPostingException ex = new ErpFinPostingException();
         ex.setTraceId("trace-test-" + billHeadCode);
@@ -254,16 +254,16 @@ public class TestErpFinPostingExceptionWorkbench extends JunitAutoTestCase {
         ex.setErrorMessage("期间关闭");
         ex.setFailedStage("resolveOpenPeriod");
         ex.setVoucherDate(voucherDate);
-        ex.setOrgId(1L);
-        ex.setAcctSchemaId(1L);
-        ex.setCurrencyId(1L);
+        ex.setOrgId("1");
+        ex.setAcctSchemaId("1");
+        ex.setCurrencyId("1");
         ex.setExchangeRate(java.math.BigDecimal.ONE);
         // eventData 使 rebuildEvent 重建有效事件→post 因期间关闭失败→incrementRetry→MAX_RETRY→MANUAL。
         java.util.Map<String, Object> billData = new java.util.LinkedHashMap<>();
         billData.put("AMOUNT", new java.math.BigDecimal("100"));
         billData.put("TAX", new java.math.BigDecimal("13"));
         billData.put("TOTAL", new java.math.BigDecimal("113"));
-        billData.put("partnerId", 1L);
+        billData.put("partnerId", "1");
         billData.put("businessDate", voucherDate);
         ex.setEventData(app.erp.fin.service.posting.ErpFinPostingExceptionRecorder.serializeEventData(billData));
         ex.setStatus(ErpFinConstants.POSTING_EXCEPTION_STATUS_PENDING);
@@ -290,15 +290,15 @@ public class TestErpFinPostingExceptionWorkbench extends JunitAutoTestCase {
         PostingEvent event = new PostingEvent();
         event.setBusinessType(ErpFinBusinessType.AP_INVOICE);
         event.setBillHeadCode(billHeadCode);
-        event.setAcctSchemaId(1L);
-        event.setOrgId(1L);
-        event.setCurrencyId(1L);
+        event.setAcctSchemaId("1");
+        event.setOrgId("1");
+        event.setCurrencyId("1");
         event.setExchangeRate(BigDecimal.ONE);
         event.setVoucherDate(voucherDate);
         event.getBillData().put("AMOUNT", amount);
         event.getBillData().put("TAX", tax);
         event.getBillData().put("TOTAL", total);
-        event.getBillData().put("partnerId", 1L);
+        event.getBillData().put("partnerId", "1");
         event.getBillData().put("businessDate", voucherDate);
         return event;
     }
@@ -309,7 +309,7 @@ public class TestErpFinPostingExceptionWorkbench extends JunitAutoTestCase {
         ErpFinAccountingPeriod period = new ErpFinAccountingPeriod();
         period.setCode(code);
         period.setName(code);
-        period.setOrgId(1L);
+        period.setOrgId("1");
         period.setYear(year);
         period.setMonth(month);
         period.setStartDate(start);
@@ -335,7 +335,7 @@ public class TestErpFinPostingExceptionWorkbench extends JunitAutoTestCase {
         lineDao.saveEntity(templateLine(tpl.getId(), 3, "2202", DC_CREDIT, "TOTAL"));
     }
 
-    private ErpFinVoucherTemplateLine templateLine(Long templateId, int lineNo, String subjectCode,
+    private ErpFinVoucherTemplateLine templateLine(String templateId, int lineNo, String subjectCode,
                                                    String dcDirection, String amountKey) {
         ErpFinVoucherTemplateLine line = new ErpFinVoucherTemplateLine();
         line.setTemplateId(templateId);

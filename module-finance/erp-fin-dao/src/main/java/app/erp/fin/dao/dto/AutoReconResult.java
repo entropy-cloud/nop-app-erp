@@ -11,15 +11,15 @@ import java.util.List;
  */
 public class AutoReconResult {
     /** 本次生成的核销单 ID 列表（每 partner+direction+批次一张）。 */
-    private List<Long> reconciliationIds = new ArrayList<>();
+    private List<String> reconciliationIds = new ArrayList<>();
     /** 未匹配项报告（按 partner 汇总）。 */
     private List<AutoReconUnmatched> unmatched = new ArrayList<>();
 
-    public List<Long> getReconciliationIds() {
+    public List<String> getReconciliationIds() {
         return reconciliationIds;
     }
 
-    public void setReconciliationIds(List<Long> reconciliationIds) {
+    public void setReconciliationIds(List<String> reconciliationIds) {
         this.reconciliationIds = reconciliationIds;
     }
 

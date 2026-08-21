@@ -56,13 +56,13 @@ public class ErpFinEmployeeAdvanceBizModel extends CrudBizModel<ErpFinEmployeeAd
 
     @Override
     @BizMutation
-    public ErpFinEmployeeAdvance cancel(@Name("advanceId") Long advanceId, IServiceContext context) {
-        return cancelProcessor.cancel(String.valueOf(advanceId), context);
+    public ErpFinEmployeeAdvance cancel(@Name("advanceId") String advanceId, IServiceContext context) {
+        return cancelProcessor.cancel(advanceId, context);
     }
 
     @Override
     @BizMutation
-    public ErpFinEmployeeAdvance cashRepay(@Name("advanceId") Long advanceId,
+    public ErpFinEmployeeAdvance cashRepay(@Name("advanceId") String advanceId,
                                            @Name("amount") BigDecimal amount,
                                            IServiceContext context) {
         ErpFinEmployeeAdvance advance = requireAdvance(advanceId, context);
@@ -117,7 +117,7 @@ public class ErpFinEmployeeAdvanceBizModel extends CrudBizModel<ErpFinEmployeeAd
      */
     @Override
     @BizMutation
-    public ErpFinEmployeeAdvance reverseCashRepay(@Name("advanceId") Long advanceId, IServiceContext context) {
+    public ErpFinEmployeeAdvance reverseCashRepay(@Name("advanceId") String advanceId, IServiceContext context) {
         ErpFinEmployeeAdvance advance = requireAdvance(advanceId, context);
 
         // 反查最近一笔未红冲的 cashRepay NORMAL 凭证（按 billCode 前缀 + businessType + voucher.isReversed=false）
@@ -162,6 +162,8 @@ public class ErpFinEmployeeAdvanceBizModel extends CrudBizModel<ErpFinEmployeeAd
         if (links.isEmpty()) {
             return null;
         }
+        // id String 化后 voucherId 字典序不再等价时间序，改按 billCode 内嵌毫秒时间戳取最近一笔
+        // （billHeadCode=EA-CASH-REPAY-<code>-<millis>，13 位毫秒等宽，字典序==时间序）
         return links.stream()
                 .filter(lnk -> {
                     ErpFinVoucher v = lnk.getVoucher();
@@ -169,11 +171,11 @@ public class ErpFinEmployeeAdvanceBizModel extends CrudBizModel<ErpFinEmployeeAd
                             && Objects.equals(ErpFinConstants.POSTING_TYPE_NORMAL, v.getPostingType())
                             && !Boolean.TRUE.equals(v.getIsReversed());
                 })
-                .max(Comparator.comparing(ErpFinVoucherBillR::getVoucherId))
+                .max(Comparator.comparing(ErpFinVoucherBillR::getBillCode))
                 .orElse(null);
     }
 
-    private ErpFinEmployeeAdvance requireAdvance(Long advanceId, IServiceContext context) {
+    private ErpFinEmployeeAdvance requireAdvance(String advanceId, IServiceContext context) {
         ErpFinEmployeeAdvance advance = get(String.valueOf(advanceId), true, context);
         if (advance == null) {
             throw new NopException(ErpFinErrors.ERR_EMPLOYEE_ADVANCE_NOT_FOUND)

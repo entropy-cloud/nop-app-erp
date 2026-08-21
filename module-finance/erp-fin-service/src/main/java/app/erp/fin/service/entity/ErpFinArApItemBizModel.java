@@ -35,7 +35,7 @@ public class ErpFinArApItemBizModel extends CrudBizModel<ErpFinArApItem> impleme
 
     @Override
     @BizQuery
-    public List<ErpFinArApItem> findOpenItemsByPartner(@Name("partnerId") Long partnerId,
+    public List<ErpFinArApItem> findOpenItemsByPartner(@Name("partnerId") String partnerId,
                                                        @Name("direction") String direction,
                                                        IServiceContext context) {
         QueryBean query = new QueryBean();
@@ -73,7 +73,7 @@ public class ErpFinArApItemBizModel extends CrudBizModel<ErpFinArApItem> impleme
                 ErpFinConstants.AR_AP_STATUS_OPEN, ErpFinConstants.AR_AP_STATUS_PARTIAL)));
         List<ErpFinArApItem> items = findList(query, null, context);
 
-        Map<Long, ArApAgingRow> byPartner = new HashMap<>();
+        Map<String, ArApAgingRow> byPartner = new HashMap<>();
         for (ErpFinArApItem item : items) {
             LocalDate baseDate = byDueDate && item.getDueDate() != null ? item.getDueDate() : item.getBusinessDate();
             ArApAgingRow row = byPartner.computeIfAbsent(item.getPartnerId(), k -> {

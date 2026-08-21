@@ -23,8 +23,8 @@
 
     <props>
         <prop name="id" displayName="ID" propId="1" i18n-en:displayName="ID" tagSet="seq-default" mandatory="true"
-              queryable="true" sortable="true" insertable="true" updatable="false" graphql:type="String">
-            <schema type="java.lang.Long"/>
+              queryable="true" sortable="true" insertable="true" updatable="false">
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="code" displayName="候选编码" propId="2" i18n-en:displayName="Code" tagSet="var" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
@@ -32,7 +32,7 @@
         </prop>
         <prop name="orgId" displayName="核算组织" propId="3" i18n-en:displayName="Organization" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="org">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="eliminationType" displayName="抵消类型" propId="4" i18n-en:displayName="Elimination Type"
               mandatory="true" queryable="true" sortable="true" insertable="true" updatable="true">
@@ -40,7 +40,7 @@
         </prop>
         <prop name="periodId" displayName="会计期间" propId="5" i18n-en:displayName="Period" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="period">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="pairKey" displayName="配对键" propId="6" i18n-en:displayName="Pair Key" tagSet="var" queryable="true"
               sortable="true" insertable="true" updatable="true">
@@ -48,15 +48,15 @@
         </prop>
         <prop name="matchId" displayName="配对记录" propId="7" i18n-en:displayName="Match" queryable="true" sortable="true"
               insertable="true" updatable="true" ext:relation="match">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="fromOrgId" displayName="调出组织" propId="8" i18n-en:displayName="From Org" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="fromOrg">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="toOrgId" displayName="调入组织" propId="9" i18n-en:displayName="To Org" queryable="true" sortable="true"
               insertable="true" updatable="true" ext:relation="toOrg">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="eliminationAmount" displayName="抵消金额" propId="10" i18n-en:displayName="Elimination Amount"
               queryable="true" sortable="true" insertable="true" updatable="true" defaultValue="0">
@@ -64,7 +64,7 @@
         </prop>
         <prop name="draftVoucherId" displayName="草稿抵消凭证" propId="11" i18n-en:displayName="Draft Voucher"
               queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="draftVoucher">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="status" displayName="抵消状态" propId="12" i18n-en:displayName="Status" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">

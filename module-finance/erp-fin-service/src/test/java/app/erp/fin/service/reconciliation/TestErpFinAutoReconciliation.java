@@ -46,11 +46,11 @@ public class TestErpFinAutoReconciliation extends JunitAutoTestCase {
 
     @Test
     public void testFifoMultipleInvoicesPaidBySingleReceipt() {
-        long partnerId = 1100L;
+        String partnerId = "1100";
         // 收款项 1000，发票项两张 400(dueDate 6/1) + 700(dueDate 6/10)
-        Long receipt = seedPayment(partnerId, "1000", LocalDate.of(2026, 6, 15));
-        Long inv1 = seedInvoice(partnerId, "400", LocalDate.of(2026, 5, 20), LocalDate.of(2026, 6, 1));
-        Long inv2 = seedInvoice(partnerId, "700", LocalDate.of(2026, 5, 20), LocalDate.of(2026, 6, 10));
+        String receipt = seedPayment(partnerId, "1000", LocalDate.of(2026, 6, 15));
+        String inv1 = seedInvoice(partnerId, "400", LocalDate.of(2026, 5, 20), LocalDate.of(2026, 6, 1));
+        String inv2 = seedInvoice(partnerId, "700", LocalDate.of(2026, 5, 20), LocalDate.of(2026, 6, 10));
 
         AutoReconResult result = ormTemplate.runInSession(session -> reconciliationBiz.runAutoReconciliation(
                 ErpFinConstants.DIRECTION_PAYABLE, partnerId, ErpFinConstants.AUTO_RECON_STRATEGY_FIFO, CTX));
@@ -69,10 +69,10 @@ public class TestErpFinAutoReconciliation extends JunitAutoTestCase {
 
     @Test
     public void testByAmountExactMatch() {
-        long partnerId = 1200L;
+        String partnerId = "1200";
         // 收款项 500 精确匹配发票项 500（1:1）
-        Long receipt = seedPayment(partnerId, "500", LocalDate.of(2026, 6, 15));
-        Long inv = seedInvoice(partnerId, "500", LocalDate.of(2026, 5, 20), LocalDate.of(2026, 6, 1));
+        String receipt = seedPayment(partnerId, "500", LocalDate.of(2026, 6, 15));
+        String inv = seedInvoice(partnerId, "500", LocalDate.of(2026, 5, 20), LocalDate.of(2026, 6, 1));
 
         AutoReconResult result = ormTemplate.runInSession(session -> reconciliationBiz.runAutoReconciliation(
                 ErpFinConstants.DIRECTION_PAYABLE, partnerId, ErpFinConstants.AUTO_RECON_STRATEGY_BY_AMOUNT, CTX));
@@ -84,10 +84,10 @@ public class TestErpFinAutoReconciliation extends JunitAutoTestCase {
 
     @Test
     public void testByAmountNonUniqueUnmatched() {
-        long partnerId = 1300L;
+        String partnerId = "1300";
         // 收款项 300，发票 500（金额不匹配 → UNMATCHED）
-        Long receipt = seedPayment(partnerId, "300", LocalDate.of(2026, 6, 15));
-        Long inv = seedInvoice(partnerId, "500", LocalDate.of(2026, 5, 20), LocalDate.of(2026, 6, 1));
+        String receipt = seedPayment(partnerId, "300", LocalDate.of(2026, 6, 15));
+        String inv = seedInvoice(partnerId, "500", LocalDate.of(2026, 5, 20), LocalDate.of(2026, 6, 1));
 
         AutoReconResult result = ormTemplate.runInSession(session -> reconciliationBiz.runAutoReconciliation(
                 ErpFinConstants.DIRECTION_PAYABLE, partnerId, ErpFinConstants.AUTO_RECON_STRATEGY_BY_AMOUNT, CTX));
@@ -98,11 +98,11 @@ public class TestErpFinAutoReconciliation extends JunitAutoTestCase {
 
     @Test
     public void testByRatioProportionalAllocation() {
-        long partnerId = 1400L;
+        String partnerId = "1400";
         // 发票 300 + 700 = 1000，收款项 500 → 按比例 30%/70% = 150/350
-        Long inv1 = seedInvoice(partnerId, "300", LocalDate.of(2026, 5, 20), LocalDate.of(2026, 6, 1));
-        Long inv2 = seedInvoice(partnerId, "700", LocalDate.of(2026, 5, 20), LocalDate.of(2026, 6, 10));
-        Long receipt = seedPayment(partnerId, "500", LocalDate.of(2026, 6, 15));
+        String inv1 = seedInvoice(partnerId, "300", LocalDate.of(2026, 5, 20), LocalDate.of(2026, 6, 1));
+        String inv2 = seedInvoice(partnerId, "700", LocalDate.of(2026, 5, 20), LocalDate.of(2026, 6, 10));
+        String receipt = seedPayment(partnerId, "500", LocalDate.of(2026, 6, 15));
 
         AutoReconResult result = ormTemplate.runInSession(session -> reconciliationBiz.runAutoReconciliation(
                 ErpFinConstants.DIRECTION_PAYABLE, partnerId, ErpFinConstants.AUTO_RECON_STRATEGY_BY_RATIO, CTX));
@@ -121,7 +121,7 @@ public class TestErpFinAutoReconciliation extends JunitAutoTestCase {
         // 此测试方法不能复用全局 auto-recon-test.yaml 的 true；通过直接调一个临时 partner 验证 false 抛错。
         // 由于 NopTestConfig 类级配置无法按方法覆盖，此处验证 enabled 流程：在 enabled 配置下应正常执行。
         // config-gated false 抛错的覆盖留同会话单独的 disabled 配置（见下）。
-        long partnerId = 1500L;
+        String partnerId = "1500";
         seedPayment(partnerId, "100", LocalDate.of(2026, 6, 15));
         seedInvoice(partnerId, "100", LocalDate.of(2026, 5, 20), LocalDate.of(2026, 6, 1));
 
@@ -132,9 +132,9 @@ public class TestErpFinAutoReconciliation extends JunitAutoTestCase {
 
     @Test
     public void testIdempotentSecondRunNoNewRecon() {
-        long partnerId = 1600L;
-        Long receipt = seedPayment(partnerId, "100", LocalDate.of(2026, 6, 15));
-        Long inv = seedInvoice(partnerId, "100", LocalDate.of(2026, 5, 20), LocalDate.of(2026, 6, 1));
+        String partnerId = "1600";
+        String receipt = seedPayment(partnerId, "100", LocalDate.of(2026, 6, 15));
+        String inv = seedInvoice(partnerId, "100", LocalDate.of(2026, 5, 20), LocalDate.of(2026, 6, 1));
 
         AutoReconResult first = ormTemplate.runInSession(session -> reconciliationBiz.runAutoReconciliation(
                 ErpFinConstants.DIRECTION_PAYABLE, partnerId, ErpFinConstants.AUTO_RECON_STRATEGY_FIFO, CTX));
@@ -147,9 +147,9 @@ public class TestErpFinAutoReconciliation extends JunitAutoTestCase {
 
     @Test
     public void testUnmatchedReportCorrect() {
-        long partnerId = 1700L;
+        String partnerId = "1700";
         // 收款项无对侧发票 → NO_COUNTERPART
-        Long receipt = seedPayment(partnerId, "200", LocalDate.of(2026, 6, 15));
+        String receipt = seedPayment(partnerId, "200", LocalDate.of(2026, 6, 15));
 
         AutoReconResult result = ormTemplate.runInSession(session -> reconciliationBiz.runAutoReconciliation(
                 ErpFinConstants.DIRECTION_PAYABLE, partnerId, ErpFinConstants.AUTO_RECON_STRATEGY_FIFO, CTX));
@@ -161,33 +161,33 @@ public class TestErpFinAutoReconciliation extends JunitAutoTestCase {
 
     // ---------- helpers ----------
 
-    private Long seedPayment(long partnerId, String amount, LocalDate businessDate) {
+    private String seedPayment(String partnerId, String amount, LocalDate businessDate) {
         return seedItem(partnerId, ErpFinConstants.SOURCE_BILL_PAYMENT, "PAY-" + partnerId + "-" + System.nanoTime(),
                 new BigDecimal(amount), businessDate, null);
     }
 
-    private Long seedInvoice(long partnerId, String amount, LocalDate businessDate, LocalDate dueDate) {
+    private String seedInvoice(String partnerId, String amount, LocalDate businessDate, LocalDate dueDate) {
         return seedItem(partnerId, ErpFinConstants.SOURCE_BILL_AP_INVOICE, "AP-" + partnerId + "-" + System.nanoTime(),
                 new BigDecimal(amount), businessDate, dueDate);
     }
 
-    private Long seedItem(long partnerId, String sourceBillType, String sourceBillCode,
+    private String seedItem(String partnerId, String sourceBillType, String sourceBillCode,
                           BigDecimal amount, LocalDate businessDate, LocalDate dueDate) {
-        final Long[] holder = new Long[1];
+        final String[] holder = new String[1];
         ormTemplate.runInSession(() -> {
             seedPartner(partnerId);
             IEntityDao<ErpFinArApItem> dao = daoProvider.daoFor(ErpFinArApItem.class);
             ErpFinArApItem it = dao.newEntity();
             it.setCode("ARI-" + sourceBillCode);
-            it.setOrgId(1L);
-            it.setAcctSchemaId(1L);
+            it.setOrgId("1");
+            it.setAcctSchemaId("1");
             it.setDirection(ErpFinConstants.DIRECTION_PAYABLE);
             it.setPartnerId(partnerId);
             it.setSourceBillType(sourceBillType);
             it.setSourceBillCode(sourceBillCode);
             it.setBusinessDate(businessDate);
             it.setDueDate(dueDate);
-            it.setCurrencyId(1L);
+            it.setCurrencyId("1");
             it.setExchangeRate(BigDecimal.ONE);
             it.setAmountSource(amount);
             it.setAmountFunctional(amount);
@@ -202,7 +202,7 @@ public class TestErpFinAutoReconciliation extends JunitAutoTestCase {
         return holder[0];
     }
 
-    private void seedPartner(long partnerId) {
+    private void seedPartner(String partnerId) {
         IEntityDao<ErpMdPartner> dao = daoProvider.daoFor(ErpMdPartner.class);
         if (dao.getEntityById(partnerId) != null) {
             return;
@@ -218,7 +218,7 @@ public class TestErpFinAutoReconciliation extends JunitAutoTestCase {
         dao.saveEntity(partner);
     }
 
-    private ErpFinArApItem item(Long id) {
+    private ErpFinArApItem item(String id) {
         return daoProvider.daoFor(ErpFinArApItem.class).getEntityById(id);
     }
 }

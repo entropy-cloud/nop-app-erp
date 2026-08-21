@@ -14,11 +14,11 @@ import java.util.List;
  * 故本预览不含红字凭证段。
  */
 public class ReconciliationReversePreview {
-    private Long reconciliationId;
+    private String reconciliationId;
     private String code;
     private String direction;
     private BigDecimal totalAmountFunctional;
-    private Long partnerId;
+    private String partnerId;
     /** reverse 将把核销单 docStatus 置为 REVERSED。 */
     private boolean willSetReversed;
     /** partner 余额将刷新（refresh）。 */
@@ -26,16 +26,16 @@ public class ReconciliationReversePreview {
     /** 将回退的 AR/AP 辅助账项列表。 */
     private List<RevertedItem> revertedItems = new ArrayList<>();
 
-    public Long getReconciliationId() { return reconciliationId; }
-    public void setReconciliationId(Long reconciliationId) { this.reconciliationId = reconciliationId; }
+    public String getReconciliationId() { return reconciliationId; }
+    public void setReconciliationId(String reconciliationId) { this.reconciliationId = reconciliationId; }
     public String getCode() { return code; }
     public void setCode(String code) { this.code = code; }
     public String getDirection() { return direction; }
     public void setDirection(String direction) { this.direction = direction; }
     public BigDecimal getTotalAmountFunctional() { return totalAmountFunctional; }
     public void setTotalAmountFunctional(BigDecimal totalAmountFunctional) { this.totalAmountFunctional = totalAmountFunctional; }
-    public Long getPartnerId() { return partnerId; }
-    public void setPartnerId(Long partnerId) { this.partnerId = partnerId; }
+    public String getPartnerId() { return partnerId; }
+    public void setPartnerId(String partnerId) { this.partnerId = partnerId; }
     public boolean isWillSetReversed() { return willSetReversed; }
     public void setWillSetReversed(boolean willSetReversed) { this.willSetReversed = willSetReversed; }
     public boolean isWillRefreshPartnerBalance() { return willRefreshPartnerBalance; }
@@ -44,7 +44,7 @@ public class ReconciliationReversePreview {
     public void setRevertedItems(List<RevertedItem> revertedItems) { this.revertedItems = revertedItems; }
 
     public static class RevertedItem {
-        private Long arApItemId;
+        private String arApItemId;
         private String sourceBillType;
         private String sourceBillCode;
         /** 核销单行侧（payment 或 invoice）。 */
@@ -55,8 +55,8 @@ public class ReconciliationReversePreview {
         /** 本次将恢复到开口的核销金额（本位币）。 */
         private BigDecimal restoreAmountFunctional;
 
-        public Long getArApItemId() { return arApItemId; }
-        public void setArApItemId(Long arApItemId) { this.arApItemId = arApItemId; }
+        public String getArApItemId() { return arApItemId; }
+        public void setArApItemId(String arApItemId) { this.arApItemId = arApItemId; }
         public String getSourceBillType() { return sourceBillType; }
         public void setSourceBillType(String sourceBillType) { this.sourceBillType = sourceBillType; }
         public String getSourceBillCode() { return sourceBillCode; }

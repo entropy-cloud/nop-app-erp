@@ -20,17 +20,17 @@
 
     <props>
         <prop name="id" displayName="ID" propId="1" i18n-en:displayName="ID" tagSet="seq-default" mandatory="true"
-              queryable="true" sortable="true" insertable="true" updatable="false" graphql:type="String">
-            <schema type="java.lang.Long"/>
+              queryable="true" sortable="true" insertable="true" updatable="false">
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="notesReceivableId" displayName="应收票据" propId="2" i18n-en:displayName="Notes Receivable"
               mandatory="true" queryable="true" sortable="true" insertable="true" updatable="true"
               ext:relation="notesReceivable">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="orgId" displayName="核算组织" propId="3" i18n-en:displayName="Organization" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="org">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="discountDate" displayName="贴现日" propId="4" i18n-en:displayName="Discount Date" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
@@ -38,7 +38,7 @@
         </prop>
         <prop name="bankId" displayName="贴现银行账户" propId="5" i18n-en:displayName="Bank Account" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="bank">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="faceAmount" displayName="票面金额" propId="6" i18n-en:displayName="Face Amount" queryable="true"
               sortable="true" insertable="true" updatable="true" defaultValue="0">
@@ -54,7 +54,7 @@
         </prop>
         <prop name="currencyId" displayName="币种" propId="9" i18n-en:displayName="Currency" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="exchangeRate" displayName="汇率" propId="10" i18n-en:displayName="Exchange Rate" queryable="true"
               sortable="true" insertable="true" updatable="true" defaultValue="1">

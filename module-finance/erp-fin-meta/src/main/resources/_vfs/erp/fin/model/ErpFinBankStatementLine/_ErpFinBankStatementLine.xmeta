@@ -20,12 +20,12 @@
 
     <props>
         <prop name="id" displayName="ID" propId="1" i18n-en:displayName="ID" tagSet="seq-default" mandatory="true"
-              queryable="true" sortable="true" insertable="true" updatable="false" graphql:type="String">
-            <schema type="java.lang.Long"/>
+              queryable="true" sortable="true" insertable="true" updatable="false">
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="statementId" displayName="对账单ID" propId="2" i18n-en:displayName="Statement" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="statement">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="lineNo" displayName="行号" propId="3" i18n-en:displayName="Line No" mandatory="true" queryable="true"
               sortable="true" insertable="true" updatable="true">
@@ -53,7 +53,7 @@
         </prop>
         <prop name="currencyId" displayName="币种" propId="9" i18n-en:displayName="Currency" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="currency">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="balanceAfter" displayName="交易后余额" propId="10" i18n-en:displayName="Balance After" queryable="true"
               sortable="true" insertable="true" updatable="true">
@@ -65,7 +65,7 @@
         </prop>
         <prop name="matchedLineId" displayName="匹配凭证行ID" propId="12" i18n-en:displayName="Matched Line" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="matchedLine">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="remark" displayName="备注" propId="13" i18n-en:displayName="Remark" queryable="true" sortable="true"
               insertable="true" updatable="true">

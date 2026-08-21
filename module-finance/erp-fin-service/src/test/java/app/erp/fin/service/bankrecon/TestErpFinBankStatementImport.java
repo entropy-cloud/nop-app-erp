@@ -52,7 +52,7 @@ public class TestErpFinBankStatementImport extends JunitAutoTestCase {
 
     @Test
     public void testImportHappyPath() {
-        final Long[] accountId = new Long[1];
+        final String[] accountId = new String[1];
         ormTemplate.runInSession(() -> accountId[0] = seedFundAccount(ErpFinConstants.FUND_ACCOUNT_TYPE_BANK,
                 new BigDecimal("1000")));
 
@@ -79,7 +79,7 @@ public class TestErpFinBankStatementImport extends JunitAutoTestCase {
 
     @Test
     public void testDuplicateByRefNoRejected() {
-        final Long[] accountId = new Long[1];
+        final String[] accountId = new String[1];
         ormTemplate.runInSession(() -> accountId[0] = seedFundAccount(ErpFinConstants.FUND_ACCOUNT_TYPE_BANK,
                 BigDecimal.ZERO));
 
@@ -99,7 +99,7 @@ public class TestErpFinBankStatementImport extends JunitAutoTestCase {
 
     @Test
     public void testNonBankAccountRejected() {
-        final Long[] accountId = new Long[1];
+        final String[] accountId = new String[1];
         ormTemplate.runInSession(() -> accountId[0] = seedFundAccount("CASH", BigDecimal.ZERO));
 
         BankStatementLineInput l1 = line(LocalDate.of(2026, 6, 10), "REF-CASH-1",
@@ -116,7 +116,7 @@ public class TestErpFinBankStatementImport extends JunitAutoTestCase {
         AppConfig.getConfigProvider().assignConfigValue(
                 ErpFinConstants.CONFIG_BANK_IMPORT_STRICT_REFNO, "true");
         try {
-            final Long[] accountId = new Long[1];
+            final String[] accountId = new String[1];
             ormTemplate.runInSession(() -> accountId[0] = seedFundAccount(
                     ErpFinConstants.FUND_ACCOUNT_TYPE_BANK, BigDecimal.ZERO));
 
@@ -135,7 +135,7 @@ public class TestErpFinBankStatementImport extends JunitAutoTestCase {
 
     @Test
     public void testCompositeKeyDedupWhenNoRefNo() {
-        final Long[] accountId = new Long[1];
+        final String[] accountId = new String[1];
         ormTemplate.runInSession(() -> accountId[0] = seedFundAccount(
                 ErpFinConstants.FUND_ACCOUNT_TYPE_BANK, BigDecimal.ZERO));
 
@@ -154,8 +154,8 @@ public class TestErpFinBankStatementImport extends JunitAutoTestCase {
 
     @Test
     public void testImportDistinctStatementsNoCrossAccountDuplicate() {
-        final Long[] a1 = new Long[1];
-        final Long[] a2 = new Long[1];
+        final String[] a1 = new String[1];
+        final String[] a2 = new String[1];
         ormTemplate.runInSession(() -> {
             a1[0] = seedFundAccount(ErpFinConstants.FUND_ACCOUNT_TYPE_BANK, BigDecimal.ZERO);
             a2[0] = seedFundAccount(ErpFinConstants.FUND_ACCOUNT_TYPE_BANK, BigDecimal.ZERO);
@@ -179,7 +179,7 @@ public class TestErpFinBankStatementImport extends JunitAutoTestCase {
 
     @Test
     public void testImportPersistsCounterpartyFields() {
-        final Long[] accountId = new Long[1];
+        final String[] accountId = new String[1];
         ormTemplate.runInSession(() -> accountId[0] = seedFundAccount(ErpFinConstants.FUND_ACCOUNT_TYPE_BANK,
                 new BigDecimal("1000")));
 
@@ -202,7 +202,7 @@ public class TestErpFinBankStatementImport extends JunitAutoTestCase {
 
     @Test
     public void testImportCounterpartyNullsPassthrough() {
-        final Long[] accountId = new Long[1];
+        final String[] accountId = new String[1];
         ormTemplate.runInSession(() -> accountId[0] = seedFundAccount(ErpFinConstants.FUND_ACCOUNT_TYPE_BANK,
                 new BigDecimal("1000")));
 
@@ -221,7 +221,7 @@ public class TestErpFinBankStatementImport extends JunitAutoTestCase {
 
     // ---------- helpers ----------
 
-    private List<ErpFinBankStatementLine> loadLines(Long statementId) {
+    private List<ErpFinBankStatementLine> loadLines(String statementId) {
         IEntityDao<ErpFinBankStatementLine> dao = daoProvider.daoFor(ErpFinBankStatementLine.class);
         io.nop.api.core.beans.query.QueryBean q = new io.nop.api.core.beans.query.QueryBean();
         q.addFilter(io.nop.api.core.beans.FilterBeans.eq("statementId", statementId));
@@ -238,14 +238,14 @@ public class TestErpFinBankStatementImport extends JunitAutoTestCase {
     }
 
     @SuppressWarnings("unused")
-    private Long seedFundAccount(String accountType, BigDecimal currentBalance) {
+    private String seedFundAccount(String accountType, BigDecimal currentBalance) {
         IEntityDao<ErpFinFundAccount> dao = daoProvider.daoFor(ErpFinFundAccount.class);
         ErpFinFundAccount account = dao.newEntity();
         account.setCode("FA-" + System.nanoTime());
         account.setName("Account " + accountType);
-        account.setOrgId(1L);
+        account.setOrgId("1");
         account.setAccountType(accountType);
-        account.setCurrencyId(1L);
+        account.setCurrencyId("1");
         account.setOpeningBalance(currentBalance);
         account.setCurrentBalance(currentBalance);
         account.setStatus("ACTIVE");

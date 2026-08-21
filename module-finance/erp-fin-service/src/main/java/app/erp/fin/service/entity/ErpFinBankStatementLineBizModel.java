@@ -29,14 +29,14 @@ public class ErpFinBankStatementLineBizModel extends CrudBizModel<ErpFinBankStat
 
     @Override
     @BizMutation
-    public BankStatementMatchResult autoMatch(@Name("statementId") Long statementId, IServiceContext context) {
+    public BankStatementMatchResult autoMatch(@Name("statementId") String statementId, IServiceContext context) {
         return autoMatchProcessor.autoMatch(statementId, context);
     }
 
     @Override
     @BizMutation
-    public ErpFinBankStatementLine manualMatch(@Name("lineId") Long lineId,
-                                                @Name("voucherLineId") Long voucherLineId,
+    public ErpFinBankStatementLine manualMatch(@Name("lineId") String lineId,
+                                                @Name("voucherLineId") String voucherLineId,
                                                 IServiceContext context) {
         return manualMatchProcessor.manualMatch(lineId, voucherLineId, context);
     }

@@ -31,7 +31,7 @@ public interface IErpFinVoucherBiz extends ICrudBiz<ErpFinVoucher> {
      * @return 新建凭证 ID；源单据已过账（幂等命中）返回 {@code null}
      */
     @BizMutation
-    Long post(@Name("event") PostingEvent event, IServiceContext context);
+    String post(@Name("event") PostingEvent event, IServiceContext context);
 
     /**
      * 按业财回链反查原已过账凭证，生成红字冲销凭证。
@@ -39,7 +39,7 @@ public interface IErpFinVoucherBiz extends ICrudBiz<ErpFinVoucher> {
      * @return 红字凭证 ID；找不到原已过账凭证抛 {@code NopException}
      */
     @BizMutation
-    Long reverse(@Name("billHeadCode") String billHeadCode,
+    String reverse(@Name("billHeadCode") String billHeadCode,
                  @Name("businessType") ErpFinBusinessType businessType,
                  IServiceContext context);
 
@@ -48,13 +48,13 @@ public interface IErpFinVoucherBiz extends ICrudBiz<ErpFinVoucher> {
      * 与 {@link #post(PostingEvent, IServiceContext)}（业财事件→凭证工厂）不同——本方法作用于已存在的 DRAFT 凭证。
      */
     @BizMutation
-    ErpFinVoucher postVoucher(@Name("voucherId") Long voucherId, IServiceContext context);
+    ErpFinVoucher postVoucher(@Name("voucherId") String voucherId, IServiceContext context);
 
     /**
      * 凭证红冲：标记原凭证为已红冲并生成反向凭证的简化入口（按 voucherId 调用 reverse）。
      */
     @BizMutation
-    ErpFinVoucher reverseVoucher(@Name("voucherId") Long voucherId, IServiceContext context);
+    ErpFinVoucher reverseVoucher(@Name("voucherId") String voucherId, IServiceContext context);
 
     /**
      * F7 §3 凭证红字冲销预览（plan 2026-07-23-1145-2 Phase 2）。只读，不执行实际冲销。
@@ -66,5 +66,5 @@ public interface IErpFinVoucherBiz extends ICrudBiz<ErpFinVoucher> {
      * @return 冲销预览 DTO
      */
     @BizQuery
-    VoucherReversePreview previewReverseVoucher(@Name("voucherId") Long voucherId, IServiceContext context);
+    VoucherReversePreview previewReverseVoucher(@Name("voucherId") String voucherId, IServiceContext context);
 }

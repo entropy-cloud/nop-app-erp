@@ -14,7 +14,7 @@ public class ErpFinNotesPayableIssueProcessor {
     @Inject
     ErpFinNotesPayableProcessor facade;
 
-    public ErpFinNotesPayable issue(Long notesId, IServiceContext context) {
+    public ErpFinNotesPayable issue(String notesId, IServiceContext context) {
         ErpFinNotesPayable note = facade.requireNote(notesId, context);
         if (facade.isAlreadyIssued(note)) {
             return note;

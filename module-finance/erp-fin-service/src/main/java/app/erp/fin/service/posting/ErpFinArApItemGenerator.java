@@ -77,7 +77,7 @@ public class ErpFinArApItemGenerator {
         }
 
         Map<String, Object> data = event.getBillData();
-        Long partnerId = resolvePartnerId(data);
+        String partnerId = resolvePartnerId(data);
         if (partnerId == null) {
             throw new NopException(ErpFinErrors.ERR_AR_AP_ITEM_PARTNER_MISSING)
                     .param(ErpFinErrors.ARG_SOURCE_BILL_CODE, event.getBillHeadCode())
@@ -241,20 +241,20 @@ public class ErpFinArApItemGenerator {
      * <b>已解析的 {@code employee.partnerId}</b>（即 ErpMdPartner.id，非 employee.id——员工与 partner 是不同
      * id 空间），本生成器直接采用，不二次反查 master-data（finance 为 DAG 顶，生成器只读 billData）。
      */
-    protected Long resolvePartnerId(Map<String, Object> data) {
-        Long partnerId = asLong(data.get("partnerId"));
+    protected String resolvePartnerId(Map<String, Object> data) {
+        String partnerId = asId(data.get("partnerId"));
         if (partnerId != null) {
             return partnerId;
         }
-        partnerId = asLong(data.get(ErpFinConstants.BILL_DATA_EMPLOYEE_ID));
+        partnerId = asId(data.get(ErpFinConstants.BILL_DATA_EMPLOYEE_ID));
         if (partnerId != null) {
             return partnerId;
         }
-        partnerId = asLong(data.get("SUPPLIER_ID"));
+        partnerId = asId(data.get("SUPPLIER_ID"));
         if (partnerId != null) {
             return partnerId;
         }
-        return asLong(data.get("CUSTOMER_ID"));
+        return asId(data.get("CUSTOMER_ID"));
     }
 
     /**
@@ -323,22 +323,20 @@ public class ErpFinArApItemGenerator {
         return new BigDecimal(s);
     }
 
-    private static Long asLong(Object value) {
+    // billData id 桥接（A2 中间态）：未迁移域（pur/sal，Long 形态）与已迁移域（String 形态）派发器写入的
+    // id 值统一归一为 String；M2.5/M2.6 回收后全部来源均为 String。
+    private static String asId(Object value) {
         if (value == null) {
             return null;
         }
         if (value instanceof Number) {
-            return ((Number) value).longValue();
+            return String.valueOf(((Number) value).longValue());
         }
         String s = value.toString();
         if (StringHelper.isBlank(s)) {
             return null;
         }
-        try {
-            return Long.valueOf(s);
-        } catch (NumberFormatException e) {
-            return null;
-        }
+        return s;
     }
 
     private static LocalDate asLocalDate(Object value, LocalDate fallback) {

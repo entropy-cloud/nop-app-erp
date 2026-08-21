@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpFinAging extends JunitAutoTestCase {
     private static final IServiceContext CTX = new ServiceContextImpl();
-    private static final long PARTNER = 90L;
+    private static final String PARTNER = "90";
 
     @Inject
     IDaoProvider daoProvider;
@@ -108,7 +108,7 @@ public class TestErpFinAging extends JunitAutoTestCase {
 
     // ---------- helpers ----------
 
-    private void seedPartner(long partnerId) {
+    private void seedPartner(String partnerId) {
         IEntityDao<ErpMdPartner> dao = daoProvider.daoFor(ErpMdPartner.class);
         if (dao.getEntityById(partnerId) != null) {
             return;
@@ -124,20 +124,20 @@ public class TestErpFinAging extends JunitAutoTestCase {
         dao.saveEntity(p);
     }
 
-    private ErpFinArApItem newItem(long partnerId, String sourceBillCode, LocalDate businessDate,
+    private ErpFinArApItem newItem(String partnerId, String sourceBillCode, LocalDate businessDate,
                                    LocalDate dueDate, String amount) {
         IEntityDao<ErpFinArApItem> dao = daoProvider.daoFor(ErpFinArApItem.class);
         ErpFinArApItem item = dao.newEntity();
         item.setCode("ARI-" + sourceBillCode);
-        item.setOrgId(1L);
-        item.setAcctSchemaId(1L);
+        item.setOrgId("1");
+        item.setAcctSchemaId("1");
         item.setDirection(ErpFinConstants.DIRECTION_PAYABLE);
         item.setPartnerId(partnerId);
         item.setSourceBillType("AP_INVOICE");
         item.setSourceBillCode(sourceBillCode);
         item.setBusinessDate(businessDate);
         item.setDueDate(dueDate);
-        item.setCurrencyId(1L);
+        item.setCurrencyId("1");
         item.setExchangeRate(BigDecimal.ONE);
         BigDecimal amt = new BigDecimal(amount);
         item.setAmountSource(amt);

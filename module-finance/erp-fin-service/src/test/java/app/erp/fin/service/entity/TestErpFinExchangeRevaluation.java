@@ -56,20 +56,20 @@ public class TestErpFinExchangeRevaluation extends JunitAutoTestCase {
     @Test
     public void testForeignReceivableGain() {
         // 外币应收：源币 100，账面本位币 800（历史汇率 8），期末汇率 8.5 → 重估 850，应收升值 50（收益）。
-        Long periodId = seedReturn(() -> {
-            Long pid = seedOpenPeriod("2024-06", 2024, 6);
-            seedCurrency(1L, "CNY", true);
-            seedCurrency(2L, "EUR", false);
+        String periodId = seedReturn(() -> {
+            String pid = seedOpenPeriod("2024-06", 2024, 6);
+            seedCurrency("1", "CNY", true);
+            seedCurrency("2", "EUR", false);
             seedSubject("1122", "应收账款", "ASSET", ErpFinConstants.DC_DEBIT);
             seedSubject("2202", "应付账款", "LIABILITY", ErpFinConstants.DC_CREDIT);
             seedSubject("6603", "财务费用-汇兑损益", ErpFinConstants.SUBJECT_CLASS_EXPENSE, ErpFinConstants.DC_DEBIT);
             seedOpenArAp("ARI-FX-001", pid, LocalDate.of(2024, 6, 10),
-                    ErpFinConstants.DIRECTION_RECEIVABLE, 2L,
+                    ErpFinConstants.DIRECTION_RECEIVABLE, "2",
                     new BigDecimal("100"), new BigDecimal("800"));
             return pid;
         });
 
-        Long voucherId = exchangeRevaluationService.revalue(loadPeriod(periodId), CTX);
+        String voucherId = exchangeRevaluationService.revalue(loadPeriod(periodId), CTX);
 
         assertNotNull(voucherId, "应生成汇兑重估凭证");
         ErpFinVoucher v = daoProvider.daoFor(ErpFinVoucher.class).getEntityById(voucherId);
@@ -87,16 +87,16 @@ public class TestErpFinExchangeRevaluation extends JunitAutoTestCase {
     @Test
     public void testFunctionalItemNotRevalued() {
         // 本位币应收项不重估 → 无凭证。
-        Long periodId = seedReturn(() -> {
-            Long pid = seedOpenPeriod("2024-07", 2024, 7);
-            seedCurrency(1L, "CNY", true);
+        String periodId = seedReturn(() -> {
+            String pid = seedOpenPeriod("2024-07", 2024, 7);
+            seedCurrency("1", "CNY", true);
             seedOpenArAp("ARI-FN-001", pid, LocalDate.of(2024, 7, 10),
-                    ErpFinConstants.DIRECTION_RECEIVABLE, 1L,
+                    ErpFinConstants.DIRECTION_RECEIVABLE, "1",
                     new BigDecimal("100"), new BigDecimal("100"));
             return pid;
         });
 
-        Long voucherId = exchangeRevaluationService.revalue(loadPeriod(periodId), CTX);
+        String voucherId = exchangeRevaluationService.revalue(loadPeriod(periodId), CTX);
 
         assertNull(voucherId, "本位币项不重估，无凭证");
     }
@@ -121,21 +121,21 @@ public class TestErpFinExchangeRevaluation extends JunitAutoTestCase {
         BigDecimal openSource = new BigDecimal("100");
         BigDecimal openFunctional = new BigDecimal("800");
 
-        Long[] seed = seedReturn(() -> {
-            Long p1 = seedOpenPeriod("2024-06", 2024, 6, LocalDate.of(2024, 6, 1), LocalDate.of(2024, 6, 30));
-            Long p2 = seedOpenPeriod("2024-07", 2024, 7, LocalDate.of(2024, 7, 1), LocalDate.of(2024, 7, 31));
-            seedCurrency(1L, "CNY", true);
-            seedCurrency(2L, "EUR", false);
+        String[] seed = seedReturn(() -> {
+            String p1 = seedOpenPeriod("2024-06", 2024, 6, LocalDate.of(2024, 6, 1), LocalDate.of(2024, 6, 30));
+            String p2 = seedOpenPeriod("2024-07", 2024, 7, LocalDate.of(2024, 7, 1), LocalDate.of(2024, 7, 31));
+            seedCurrency("1", "CNY", true);
+            seedCurrency("2", "EUR", false);
             seedSubject("1122", "应收账款", "ASSET", ErpFinConstants.DC_DEBIT);
             seedSubject("2202", "应付账款", "LIABILITY", ErpFinConstants.DC_CREDIT);
             seedSubject("6603", "财务费用-汇兑损益", ErpFinConstants.SUBJECT_CLASS_EXPENSE, ErpFinConstants.DC_DEBIT);
             // AR 项 originated in P1，但 revalue 不按期间过滤，故 P2 重估仍会拾取同一项。
             seedOpenArAp("ARI-FX-CROSS-001", p1, LocalDate.of(2024, 6, 10),
-                    ErpFinConstants.DIRECTION_RECEIVABLE, 2L, openSource, openFunctional);
-            return new Long[]{p1, p2};
+                    ErpFinConstants.DIRECTION_RECEIVABLE, "2", openSource, openFunctional);
+            return new String[]{p1, p2};
         });
-        Long p1Id = seed[0];
-        Long p2Id = seed[1];
+        String p1Id = seed[0];
+        String p2Id = seed[1];
 
         BigDecimal originalRate = AppConfig.var(
                 ErpFinConstants.CONFIG_PERIOD_END_EXCHANGE_RATE, BigDecimal.ONE);
@@ -143,7 +143,7 @@ public class TestErpFinExchangeRevaluation extends JunitAutoTestCase {
             // P1 重估：期末汇率 8.5 → revalued 850，diff = 800 − 850 = −50 → 应收升值收益 50。
             AppConfig.getConfigProvider().assignConfigValue(
                     ErpFinConstants.CONFIG_PERIOD_END_EXCHANGE_RATE, new BigDecimal("8.5"));
-            Long p1VoucherId = exchangeRevaluationService.revalue(loadPeriod(p1Id), CTX);
+            String p1VoucherId = exchangeRevaluationService.revalue(loadPeriod(p1Id), CTX);
             assertNotNull(p1VoucherId, "P1 重估应生成 FX 凭证");
             ErpFinVoucher p1Voucher = daoProvider.daoFor(ErpFinVoucher.class).getEntityById(p1VoucherId);
             BigDecimal p1Diff = new BigDecimal("50");
@@ -153,7 +153,7 @@ public class TestErpFinExchangeRevaluation extends JunitAutoTestCase {
             // （非以 P1 重估后 850 为基准 → 证明无前期 reversal、无 openAmountFunctional 更新）。
             AppConfig.getConfigProvider().assignConfigValue(
                     ErpFinConstants.CONFIG_PERIOD_END_EXCHANGE_RATE, new BigDecimal("9.0"));
-            Long p2VoucherId = exchangeRevaluationService.revalue(loadPeriod(p2Id), CTX);
+            String p2VoucherId = exchangeRevaluationService.revalue(loadPeriod(p2Id), CTX);
             assertNotNull(p2VoucherId, "P2 重估应生成 FX 凭证");
             ErpFinVoucher p2Voucher = daoProvider.daoFor(ErpFinVoucher.class).getEntityById(p2VoucherId);
             BigDecimal p2Diff = new BigDecimal("100");
@@ -193,12 +193,12 @@ public class TestErpFinExchangeRevaluation extends JunitAutoTestCase {
         return ormTemplate.runInSession(session -> action.get());
     }
 
-    private Long seedOpenPeriod(String code, int year, int month, LocalDate start, LocalDate end) {
+    private String seedOpenPeriod(String code, int year, int month, LocalDate start, LocalDate end) {
         IEntityDao<ErpFinAccountingPeriod> dao = daoProvider.daoFor(ErpFinAccountingPeriod.class);
         ErpFinAccountingPeriod p = new ErpFinAccountingPeriod();
         p.setCode(code);
         p.setName(code);
-        p.setOrgId(1L);
+        p.setOrgId("1");
         p.setYear(year);
         p.setMonth(month);
         p.setStartDate(start);
@@ -208,12 +208,12 @@ public class TestErpFinExchangeRevaluation extends JunitAutoTestCase {
         return p.getId();
     }
 
-    private Long seedOpenPeriod(String code, int year, int month) {
+    private String seedOpenPeriod(String code, int year, int month) {
         return seedOpenPeriod(code, year, month,
                 LocalDate.of(year, month, 1), LocalDate.of(year, month, 28));
     }
 
-    private void seedCurrency(Long id, String code, boolean functional) {
+    private void seedCurrency(String id, String code, boolean functional) {
         IEntityDao<ErpMdCurrency> dao = daoProvider.daoFor(ErpMdCurrency.class);
         ErpMdCurrency c = new ErpMdCurrency();
         c.setId(id);
@@ -234,16 +234,16 @@ public class TestErpFinExchangeRevaluation extends JunitAutoTestCase {
         dao.saveEntity(s);
     }
 
-    private void seedOpenArAp(String code, Long periodId, LocalDate date, String direction,
-                             Long currencyId, BigDecimal openSource, BigDecimal openFunctional) {
+    private void seedOpenArAp(String code, String periodId, LocalDate date, String direction,
+                             String currencyId, BigDecimal openSource, BigDecimal openFunctional) {
         IEntityDao<app.erp.fin.dao.entity.ErpFinArApItem> dao =
                 daoProvider.daoFor(app.erp.fin.dao.entity.ErpFinArApItem.class);
         app.erp.fin.dao.entity.ErpFinArApItem item = new app.erp.fin.dao.entity.ErpFinArApItem();
         item.setCode(code);
-        item.setOrgId(1L);
-        item.setAcctSchemaId(1L);
+        item.setOrgId("1");
+        item.setAcctSchemaId("1");
         item.setDirection(direction);
-        item.setPartnerId(1L);
+        item.setPartnerId("1");
         item.setSourceBillType(ErpFinConstants.SOURCE_BILL_AR_INVOICE);
         item.setSourceBillCode(code);
         item.setBusinessDate(date);
@@ -260,11 +260,11 @@ public class TestErpFinExchangeRevaluation extends JunitAutoTestCase {
         dao.saveEntity(item);
     }
 
-    private ErpFinAccountingPeriod loadPeriod(Long periodId) {
+    private ErpFinAccountingPeriod loadPeriod(String periodId) {
         return daoProvider.daoFor(ErpFinAccountingPeriod.class).getEntityById(periodId);
     }
 
-    private List<ErpFinVoucherLine> linesOf(Long voucherId) {
+    private List<ErpFinVoucherLine> linesOf(String voucherId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("voucherId", voucherId));
         return daoProvider.daoFor(ErpFinVoucherLine.class).findAllByQuery(q);
