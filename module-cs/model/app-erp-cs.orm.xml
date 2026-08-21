@@ -165,18 +165,18 @@
                 displayName="客服工单" ext:icon="headset" i18n-en:displayName="Ticket" name="app.erp.cs.dao.entity.ErpCsTicket"
                 tableName="erp_cs_ticket" tagSet="gid,erp.cs" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
-                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long" i18n-en:displayName='ID' />
+                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="string" i18n-en:displayName='ID' />
                 <column name="code" displayName="单号" domain="orderCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Code' tagSet="var" />
-                <column name="orgId" displayName="业务组织" stdSqlType="BIGINT" code="ORG_ID" propId="3" stdDataType="long" i18n-en:displayName='Organization' />
+                <column name="orgId" displayName="业务组织" stdSqlType="BIGINT" code="ORG_ID" propId="3" stdDataType="string" i18n-en:displayName='Organization' />
                 <column name="subject" displayName="工单主题" stdSqlType="VARCHAR" precision="200" mandatory="true" code="SUBJECT" propId="4" stdDataType="string" i18n-en:displayName='Subject' />
                 <column name="description" displayName="问题描述" stdSqlType="VARCHAR" precision="2000" code="DESCRIPTION" propId="5" stdDataType="string" i18n-en:displayName='Description' />
-                <column name="customerId" displayName="客户" stdSqlType="BIGINT" mandatory="true" code="CUSTOMER_ID" propId="6" stdDataType="long" i18n-en:displayName='Customer' />
-                <column name="contactId" displayName="联系人" stdSqlType="BIGINT" code="CONTACT_ID" propId="7" stdDataType="long" i18n-en:displayName='Contact' />
-                <column name="ticketTypeId" displayName="工单类型" stdSqlType="BIGINT" mandatory="true" code="TICKET_TYPE_ID" propId="8" stdDataType="long" i18n-en:displayName='Ticket Type' />
+                <column name="customerId" displayName="客户" stdSqlType="BIGINT" mandatory="true" code="CUSTOMER_ID" propId="6" stdDataType="string" i18n-en:displayName='Customer' />
+                <column name="contactId" displayName="联系人" stdSqlType="BIGINT" code="CONTACT_ID" propId="7" stdDataType="string" i18n-en:displayName='Contact' />
+                <column name="ticketTypeId" displayName="工单类型" stdSqlType="BIGINT" mandatory="true" code="TICKET_TYPE_ID" propId="8" stdDataType="string" i18n-en:displayName='Ticket Type' />
                 <column name="priority" displayName="优先级" ext:dict="erp-cs/ticket-priority" mandatory="true" code="PRIORITY" propId="9" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Priority' />
                 <column name="source" displayName="来源" ext:dict="erp-cs/ticket-source" code="SOURCE" propId="10" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Source' />
                 <column name="assignedToId" stdDomain="userId" displayName="分配处理人" stdSqlType="VARCHAR" precision="36" code="ASSIGNED_TO_ID" propId="11" stdDataType="string" i18n-en:displayName='Assigned To' />
-                <column name="slaPolicyId" displayName="SLA 策略" stdSqlType="BIGINT" code="SLA_POLICY_ID" propId="12" stdDataType="long" i18n-en:displayName='SLA Policy' />
+                <column name="slaPolicyId" displayName="SLA 策略" stdSqlType="BIGINT" code="SLA_POLICY_ID" propId="12" stdDataType="string" i18n-en:displayName='SLA Policy' />
                 <column name="deadlineDateTime" displayName="SLA 截止时间" tagSet="clock" stdSqlType="TIMESTAMP" code="DEADLINE_DATE_TIME" propId="13" i18n-en:displayName='SLA Deadline' />
                 <column name="isSlaCompleted" displayName="SLA 是否完成" stdSqlType="BOOLEAN" defaultValue="false" code="IS_SLA_COMPLETED" propId="14" stdDataType="boolean" i18n-en:displayName='SLA Completed' />
                 <column name="startDateTime" displayName="开始处理时间" tagSet="clock" stdSqlType="TIMESTAMP" code="START_DATE_TIME" propId="15" i18n-en:displayName='Start Time' />
@@ -189,7 +189,7 @@
                 <column name="approvedBy" stdDomain="userId" displayName="审核人" stdSqlType="VARCHAR" precision="36" code="APPROVED_BY" propId="200" stdDataType="string" i18n-en:displayName='Approved By'  ui:show="R"/>
                 <column name="approvedAt" displayName="审核时间" tagSet="clock" stdSqlType="TIMESTAMP" code="APPROVED_AT" propId="201" i18n-en:displayName='Approved At'  ui:show="R"/>
                 <column name="remark" displayName="备注" domain="remark" code="REMARK" propId="22" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Remark' />
-                <column name="catalogItemId" displayName="服务目录项" stdSqlType="BIGINT" code="CATALOG_ITEM_ID" propId="23" stdDataType="long" i18n-en:displayName='Catalog Item' />
+                <column name="catalogItemId" displayName="服务目录项" stdSqlType="BIGINT" code="CATALOG_ITEM_ID" propId="23" stdDataType="string" i18n-en:displayName='Catalog Item' />
                 <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="24" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0" i18n-en:displayName='Del Flag'  ui:show="R"/>
                 <column name="version" code="VERSION" displayName="数据版本" propId="25" domain="version" stdSqlType="INTEGER" stdDataType="int" mandatory="true" defaultValue="0" i18n-en:displayName='Version' />
                 <column name="createdBy" code="CREATED_BY" displayName="创建人" propId="26" domain="createdBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string" i18n-en:displayName='Created By' />
@@ -248,11 +248,11 @@
                 displayName="工单类型" ext:icon="tag" i18n-en:displayName="Ticket Type" name="app.erp.cs.dao.entity.ErpCsTicketType"
                 tableName="erp_cs_ticket_type" tagSet="gid,erp.cs" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
-                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long" i18n-en:displayName='ID' />
+                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="string" i18n-en:displayName='ID' />
                 <column name="code" displayName="编码" domain="orderCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Code' tagSet="var" />
                 <column name="name" displayName="名称" stdSqlType="VARCHAR" precision="200" mandatory="true" code="NAME" propId="3" stdDataType="string" i18n-en:displayName='Name' />
                 <column name="defaultPriority" displayName="默认优先级" ext:dict="erp-cs/ticket-priority" code="DEFAULT_PRIORITY" propId="4" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Default Priority' />
-                <column name="defaultSlaPolicyId" displayName="默认 SLA 策略" stdSqlType="BIGINT" code="DEFAULT_SLA_POLICY_ID" propId="5" stdDataType="long" i18n-en:displayName='Default SLA Policy' />
+                <column name="defaultSlaPolicyId" displayName="默认 SLA 策略" stdSqlType="BIGINT" code="DEFAULT_SLA_POLICY_ID" propId="5" stdDataType="string" i18n-en:displayName='Default SLA Policy' />
                 <column name="sequence" displayName="排序" stdSqlType="INTEGER" defaultValue="0" code="SEQUENCE" propId="6" stdDataType="int" i18n-en:displayName='Sequence' />
                 <column name="remark" displayName="备注" domain="remark" code="REMARK" propId="7" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Remark' />
                 <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="8" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0" i18n-en:displayName='Del Flag'  ui:show="R"/>
@@ -283,16 +283,16 @@
                 displayName="SLA 策略" ext:icon="clock" i18n-en:displayName="SLA Policy" name="app.erp.cs.dao.entity.ErpCsSlaPolicy"
                 tableName="erp_cs_sla_policy" tagSet="gid,erp.cs" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
-                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long" i18n-en:displayName='ID' />
+                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="string" i18n-en:displayName='ID' />
                 <column name="code" displayName="编码" domain="orderCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Code' tagSet="var" />
                 <column name="name" displayName="名称" stdSqlType="VARCHAR" precision="200" mandatory="true" code="NAME" propId="3" stdDataType="string" i18n-en:displayName='Name' />
-                <column name="ticketTypeId" displayName="适用工单类型" stdSqlType="BIGINT" code="TICKET_TYPE_ID" propId="4" stdDataType="long" i18n-en:displayName='Ticket Type' />
+                <column name="ticketTypeId" displayName="适用工单类型" stdSqlType="BIGINT" code="TICKET_TYPE_ID" propId="4" stdDataType="string" i18n-en:displayName='Ticket Type' />
                 <column name="minPriority" displayName="最低触发优先级" ext:dict="erp-cs/ticket-priority" code="MIN_PRIORITY" propId="5" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Min Priority' />
-                <column name="teamId" displayName="适用团队" stdSqlType="BIGINT" code="TEAM_ID" propId="6" stdDataType="long" i18n-en:displayName='Team' />
+                <column name="teamId" displayName="适用团队" stdSqlType="BIGINT" code="TEAM_ID" propId="6" stdDataType="string" i18n-en:displayName='Team' />
                 <column name="resolveHours" displayName="解决时限(小时)" stdSqlType="INTEGER" code="RESOLVE_HOURS" propId="7" stdDataType="int" i18n-en:displayName='Resolve Hours' />
                 <column name="resolveDays" displayName="解决时限(天)" stdSqlType="INTEGER" code="RESOLVE_DAYS" propId="8" stdDataType="int" i18n-en:displayName='Resolve Days' />
                 <column name="isWorkingDays" displayName="仅计算工作日" stdSqlType="BOOLEAN" defaultValue="true" code="IS_WORKING_DAYS" propId="9" stdDataType="boolean" i18n-en:displayName='Working Days Only' />
-                <column name="escalationUserId" displayName="升级通知人" stdSqlType="BIGINT" code="ESCALATION_USER_ID" propId="10" stdDataType="long" i18n-en:displayName='Escalation User' />
+                <column name="escalationUserId" displayName="升级通知人" stdSqlType="BIGINT" code="ESCALATION_USER_ID" propId="10" stdDataType="string" i18n-en:displayName='Escalation User' />
                 <column name="description" displayName="说明" domain="remark" code="DESCRIPTION" propId="11" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Description' />
                 <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="12" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0" i18n-en:displayName='Del Flag'  ui:show="R"/>
                 <column name="version" code="VERSION" displayName="数据版本" propId="13" domain="version" stdSqlType="INTEGER" stdDataType="int" mandatory="true" defaultValue="0" i18n-en:displayName='Version' />
@@ -300,7 +300,7 @@
                 <column name="createTime" code="CREATE_TIME" displayName="创建时间" propId="15" domain="createTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Create Time' />
                 <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="16" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string" i18n-en:displayName='Updated By' />
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="17" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
-                <column name="secondEscalationUserId" displayName="二级升级通知人" stdSqlType="BIGINT" code="SECOND_ESCALATION_USER_ID" propId="18" stdDataType="long" i18n-en:displayName='Second Escalation User' />
+                <column name="secondEscalationUserId" displayName="二级升级通知人" stdSqlType="BIGINT" code="SECOND_ESCALATION_USER_ID" propId="18" stdDataType="string" i18n-en:displayName='Second Escalation User' />
                 <column name="escalationDelayHours" displayName="升级等待小时数" stdSqlType="INTEGER" code="ESCALATION_DELAY_HOURS" propId="19" stdDataType="int" i18n-en:displayName='Escalation Delay Hours' />
             </columns>
             <relations>
@@ -328,7 +328,7 @@
                 displayName="客服团队" ext:icon="users" i18n-en:displayName="CS Team" name="app.erp.cs.dao.entity.ErpCsTeam"
                 tableName="erp_cs_team" tagSet="gid,erp.cs" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
-                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long" i18n-en:displayName='ID' />
+                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="string" i18n-en:displayName='ID' />
                 <column name="code" displayName="编码" domain="orderCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Code' tagSet="var" />
                 <column name="name" displayName="名称" stdSqlType="VARCHAR" precision="200" mandatory="true" code="NAME" propId="3" stdDataType="string" i18n-en:displayName='Name' />
                 <column name="teamLeaderId" stdDomain="userId" displayName="团队负责人" stdSqlType="VARCHAR" precision="36" code="TEAM_LEADER_ID" propId="4" stdDataType="string" i18n-en:displayName='Team Leader' />
@@ -357,8 +357,8 @@
                 displayName="工单操作日志" ext:icon="list" i18n-en:displayName="Ticket Action" name="app.erp.cs.dao.entity.ErpCsTicketAction"
                 tableName="erp_cs_ticket_action" tagSet="gid,erp.cs" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
-                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long" i18n-en:displayName='ID' />
-                <column name="ticketId" displayName="工单ID" stdSqlType="BIGINT" mandatory="true" code="TICKET_ID" propId="2" stdDataType="long" i18n-en:displayName='Ticket' />
+                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="string" i18n-en:displayName='ID' />
+                <column name="ticketId" displayName="工单ID" stdSqlType="BIGINT" mandatory="true" code="TICKET_ID" propId="2" stdDataType="string" i18n-en:displayName='Ticket' />
                 <column name="actionType" displayName="操作类型" ext:dict="erp-cs/action-type" mandatory="true" code="ACTION_TYPE" propId="3" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Action Type' />
                 <column name="fromStatus" displayName="起始状态" ext:dict="erp-cs/ticket-status" code="FROM_STATUS" propId="4" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='From Status' />
                 <column name="toStatus" displayName="目标状态" ext:dict="erp-cs/ticket-status" code="TO_STATUS" propId="5" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='To Status' />
@@ -389,11 +389,11 @@
                 displayName="知识库" ext:icon="book-open" i18n-en:displayName="Knowledge Base" name="app.erp.cs.dao.entity.ErpCsKnowledgeBase"
                 tableName="erp_cs_knowledge_base" tagSet="gid,erp.cs" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
-                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long" i18n-en:displayName='ID' />
+                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="string" i18n-en:displayName='ID' />
                 <column name="code" displayName="编码" domain="orderCode" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Code' tagSet="var" />
                 <column name="title" displayName="标题" stdSqlType="VARCHAR" precision="200" mandatory="true" code="TITLE" propId="3" stdDataType="string" i18n-en:displayName='Title' />
                 <column name="content" displayName="正文" domain="content" code="CONTENT" propId="4" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Content' />
-                <column name="categoryId" displayName="分类" stdSqlType="BIGINT" code="CATEGORY_ID" propId="5" stdDataType="long" i18n-en:displayName='Category' />
+                <column name="categoryId" displayName="分类" stdSqlType="BIGINT" code="CATEGORY_ID" propId="5" stdDataType="string" i18n-en:displayName='Category' />
                 <column name="isPublished" displayName="是否发布" stdSqlType="BOOLEAN" defaultValue="false" code="IS_PUBLISHED" propId="6" stdDataType="boolean" i18n-en:displayName='Published' />
                 <column name="remark" displayName="备注" domain="remark" code="REMARK" propId="7" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Remark' />
                 <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="8" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0" i18n-en:displayName='Del Flag'  ui:show="R"/>
@@ -424,11 +424,11 @@
                 displayName="预设应答分类" ext:icon="folder" i18n-en:displayName="Canned Category" name="app.erp.cs.dao.entity.ErpCsCannedCategory"
                 tableName="erp_cs_canned_category" tagSet="gid,erp.cs" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
-                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long" i18n-en:displayName='ID' />
+                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="string" i18n-en:displayName='ID' />
                 <column name="code" displayName="编码" domain="orderCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Code' tagSet="var" />
                 <column name="name" displayName="名称" stdSqlType="VARCHAR" precision="200" mandatory="true" code="NAME" propId="3" stdDataType="string" i18n-en:displayName='Name' />
-                <column name="orgId" displayName="业务组织" stdSqlType="BIGINT" code="ORG_ID" propId="4" stdDataType="long" i18n-en:displayName='Organization' />
-                <column name="parentId" displayName="父分类" stdSqlType="BIGINT" code="PARENT_ID" propId="5" stdDataType="long" i18n-en:displayName='Parent Category' />
+                <column name="orgId" displayName="业务组织" stdSqlType="BIGINT" code="ORG_ID" propId="4" stdDataType="string" i18n-en:displayName='Organization' />
+                <column name="parentId" displayName="父分类" stdSqlType="BIGINT" code="PARENT_ID" propId="5" stdDataType="string" i18n-en:displayName='Parent Category' />
                 <column name="icon" displayName="图标" stdSqlType="VARCHAR" precision="100" code="ICON" propId="6" stdDataType="string" i18n-en:displayName='Icon' />
                 <column name="sequence" displayName="排序" stdSqlType="INTEGER" defaultValue="0" code="SEQUENCE" propId="7" stdDataType="int" i18n-en:displayName='Sequence' />
                 <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="8" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0" i18n-en:displayName='Del Flag'  ui:show="R"/>
@@ -459,14 +459,14 @@
                 displayName="预设应答模板" ext:icon="message-square" i18n-en:displayName="Canned Response" name="app.erp.cs.dao.entity.ErpCsCannedResponse"
                 tableName="erp_cs_canned_response" tagSet="gid,erp.cs" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
-                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long" i18n-en:displayName='ID' />
+                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="string" i18n-en:displayName='ID' />
                 <column name="code" displayName="编码" domain="orderCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Code' tagSet="var" />
-                <column name="orgId" displayName="业务组织" stdSqlType="BIGINT" code="ORG_ID" propId="3" stdDataType="long" i18n-en:displayName='Organization' />
+                <column name="orgId" displayName="业务组织" stdSqlType="BIGINT" code="ORG_ID" propId="3" stdDataType="string" i18n-en:displayName='Organization' />
                 <column name="title" displayName="模板标题" stdSqlType="VARCHAR" precision="200" mandatory="true" code="TITLE" propId="4" stdDataType="string" i18n-en:displayName='Title' />
                 <column name="content" displayName="模板正文" stdSqlType="VARCHAR" precision="4000" mandatory="true" code="CONTENT" propId="5" stdDataType="string" i18n-en:displayName='Content' />
-                <column name="categoryId" displayName="应答分类" stdSqlType="BIGINT" code="CATEGORY_ID" propId="6" stdDataType="long" i18n-en:displayName='Category' />
+                <column name="categoryId" displayName="应答分类" stdSqlType="BIGINT" code="CATEGORY_ID" propId="6" stdDataType="string" i18n-en:displayName='Category' />
                 <column name="variableDefs" displayName="变量定义" domain="json" code="VARIABLE_DEFS" propId="7" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Variable Defs' />
-                <column name="macroTicketTypeId" displayName="自动匹配工单类型" stdSqlType="BIGINT" code="MACRO_TICKET_TYPE_ID" propId="8" stdDataType="long" i18n-en:displayName='Macro Ticket Type' />
+                <column name="macroTicketTypeId" displayName="自动匹配工单类型" stdSqlType="BIGINT" code="MACRO_TICKET_TYPE_ID" propId="8" stdDataType="string" i18n-en:displayName='Macro Ticket Type' />
                 <column name="macroPriority" displayName="自动匹配优先级" ext:dict="erp-cs/ticket-priority" code="MACRO_PRIORITY" propId="9" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Macro Priority' />
                 <column name="sequence" displayName="排序" stdSqlType="INTEGER" defaultValue="0" code="SEQUENCE" propId="10" stdDataType="int" i18n-en:displayName='Sequence' />
                 <column name="isActive" displayName="是否启用" stdSqlType="BOOLEAN" defaultValue="true" code="IS_ACTIVE" propId="11" stdDataType="boolean" i18n-en:displayName='Active' />
@@ -503,9 +503,9 @@
                 displayName="满意度调查" ext:icon="star" i18n-en:displayName="CSAT Survey" name="app.erp.cs.dao.entity.ErpCsSurvey"
                 tableName="erp_cs_survey" tagSet="gid,erp.cs" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
-                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long" i18n-en:displayName='ID' />
-                <column name="orgId" displayName="业务组织" stdSqlType="BIGINT" code="ORG_ID" propId="2" stdDataType="long" i18n-en:displayName='Organization' />
-                <column name="ticketId" displayName="关联工单" stdSqlType="BIGINT" mandatory="true" code="TICKET_ID" propId="3" stdDataType="long" i18n-en:displayName='Ticket' />
+                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="string" i18n-en:displayName='ID' />
+                <column name="orgId" displayName="业务组织" stdSqlType="BIGINT" code="ORG_ID" propId="2" stdDataType="string" i18n-en:displayName='Organization' />
+                <column name="ticketId" displayName="关联工单" stdSqlType="BIGINT" mandatory="true" code="TICKET_ID" propId="3" stdDataType="string" i18n-en:displayName='Ticket' />
                 <column name="surveyToken" displayName="调查令牌" stdSqlType="VARCHAR" precision="50" code="SURVEY_TOKEN" propId="4" stdDataType="string" i18n-en:displayName='Survey Token' tagSet="var" />
                 <column name="csatScore" displayName="CSAT评分" stdSqlType="INTEGER" code="CSAT_SCORE" propId="5" stdDataType="int" i18n-en:displayName='CSAT Score' />
                 <column name="npsScore" displayName="NPS评分" stdSqlType="INTEGER" code="NPS_SCORE" propId="6" stdDataType="int" i18n-en:displayName='NPS Score' />
@@ -541,9 +541,9 @@
                 displayName="客服费率" ext:icon="dollar-sign" i18n-en:displayName="Agent Rate" name="app.erp.cs.dao.entity.ErpCsAgentRate"
                 tableName="erp_cs_agent_rate" tagSet="gid,erp.cs" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
-                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long" i18n-en:displayName='ID' />
-                <column name="orgId" displayName="业务组织" stdSqlType="BIGINT" code="ORG_ID" propId="2" stdDataType="long" i18n-en:displayName='Organization' />
-                <column name="agentId" displayName="客服" stdSqlType="BIGINT" mandatory="true" code="AGENT_ID" propId="3" stdDataType="long" i18n-en:displayName='Agent' />
+                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="string" i18n-en:displayName='ID' />
+                <column name="orgId" displayName="业务组织" stdSqlType="BIGINT" code="ORG_ID" propId="2" stdDataType="string" i18n-en:displayName='Organization' />
+                <column name="agentId" displayName="客服" stdSqlType="BIGINT" mandatory="true" code="AGENT_ID" propId="3" stdDataType="string" i18n-en:displayName='Agent' />
                 <column name="serviceType" displayName="服务类型" ext:dict="erp-cs/service-type" code="SERVICE_TYPE" propId="4" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Service Type' />
                 <column name="rate" displayName="费率(元/小时)" domain="amount" code="RATE" propId="5" stdSqlType="DECIMAL" stdDataType="decimal" i18n-en:displayName='Rate' />
                 <column name="effectiveDate" displayName="生效日期" stdSqlType="DATE" code="EFFECTIVE_DATE" propId="6" i18n-en:displayName='Effective Date' />
@@ -572,11 +572,11 @@
                 displayName="支持合同" ext:icon="file-text" i18n-en:displayName="Support Contract" name="app.erp.cs.dao.entity.ErpCsContract"
                 tableName="erp_cs_contract" tagSet="gid,erp.cs" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
-                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long" i18n-en:displayName='ID' />
+                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="string" i18n-en:displayName='ID' />
                 <column name="code" displayName="编码" domain="orderCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Code' tagSet="var" />
                 <column name="name" displayName="名称" stdSqlType="VARCHAR" precision="200" mandatory="true" code="NAME" propId="3" stdDataType="string" i18n-en:displayName='Name' />
-                <column name="orgId" displayName="业务组织" stdSqlType="BIGINT" code="ORG_ID" propId="4" stdDataType="long" i18n-en:displayName='Organization' />
-                <column name="partnerId" displayName="签约客户" stdSqlType="BIGINT" code="PARTNER_ID" propId="5" stdDataType="long" i18n-en:displayName='Partner' />
+                <column name="orgId" displayName="业务组织" stdSqlType="BIGINT" code="ORG_ID" propId="4" stdDataType="string" i18n-en:displayName='Organization' />
+                <column name="partnerId" displayName="签约客户" stdSqlType="BIGINT" code="PARTNER_ID" propId="5" stdDataType="string" i18n-en:displayName='Partner' />
                 <column name="contractType" displayName="合同类型" ext:dict="erp-cs/contract-type" code="CONTRACT_TYPE" propId="6" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Contract Type' />
                 <column name="startDate" displayName="生效日期" stdSqlType="DATE" code="START_DATE" propId="7" i18n-en:displayName='Start Date' />
                 <column name="endDate" displayName="到期日期" stdSqlType="DATE" code="END_DATE" propId="8" i18n-en:displayName='End Date' />
@@ -625,12 +625,12 @@
                 displayName="服务权益" ext:icon="shield" i18n-en:displayName="Entitlement" name="app.erp.cs.dao.entity.ErpCsEntitlement"
                 tableName="erp_cs_entitlement" tagSet="gid,erp.cs" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
-                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long" i18n-en:displayName='ID' />
+                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="string" i18n-en:displayName='ID' />
                 <column name="code" displayName="编码" domain="orderCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Code' tagSet="var" />
-                <column name="orgId" displayName="业务组织" stdSqlType="BIGINT" code="ORG_ID" propId="3" stdDataType="long" i18n-en:displayName='Organization' />
-                <column name="partnerId" displayName="客户" stdSqlType="BIGINT" mandatory="true" code="PARTNER_ID" propId="4" stdDataType="long" i18n-en:displayName='Partner' />
-                <column name="contractId" displayName="支持合同" stdSqlType="BIGINT" code="CONTRACT_ID" propId="5" stdDataType="long" i18n-en:displayName='Contract' />
-                <column name="slaPolicyId" displayName="SLA策略" stdSqlType="BIGINT" code="SLA_POLICY_ID" propId="6" stdDataType="long" i18n-en:displayName='SLA Policy' />
+                <column name="orgId" displayName="业务组织" stdSqlType="BIGINT" code="ORG_ID" propId="3" stdDataType="string" i18n-en:displayName='Organization' />
+                <column name="partnerId" displayName="客户" stdSqlType="BIGINT" mandatory="true" code="PARTNER_ID" propId="4" stdDataType="string" i18n-en:displayName='Partner' />
+                <column name="contractId" displayName="支持合同" stdSqlType="BIGINT" code="CONTRACT_ID" propId="5" stdDataType="string" i18n-en:displayName='Contract' />
+                <column name="slaPolicyId" displayName="SLA策略" stdSqlType="BIGINT" code="SLA_POLICY_ID" propId="6" stdDataType="string" i18n-en:displayName='SLA Policy' />
                 <column name="serviceType" displayName="服务类型" ext:dict="erp-cs/service-type" mandatory="true" code="SERVICE_TYPE" propId="7" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Service Type' />
                 <column name="startDate" displayName="生效日期" stdSqlType="DATE" code="START_DATE" propId="8" i18n-en:displayName='Start Date' />
                 <column name="endDate" displayName="失效日期" stdSqlType="DATE" code="END_DATE" propId="9" i18n-en:displayName='End Date' />
@@ -676,11 +676,11 @@
                 displayName="目录分类" ext:icon="folder" i18n-en:displayName="Catalog Category" name="app.erp.cs.dao.entity.ErpCsCatalogCategory"
                 tableName="erp_cs_catalog_category" tagSet="gid,erp.cs" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
-                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long" i18n-en:displayName='ID' />
+                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="string" i18n-en:displayName='ID' />
                 <column name="code" displayName="编码" domain="orderCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Code' tagSet="var" />
                 <column name="name" displayName="名称" stdSqlType="VARCHAR" precision="200" mandatory="true" code="NAME" propId="3" stdDataType="string" i18n-en:displayName='Name' />
-                <column name="orgId" displayName="业务组织" stdSqlType="BIGINT" code="ORG_ID" propId="4" stdDataType="long" i18n-en:displayName='Organization' />
-                <column name="parentId" displayName="父分类" stdSqlType="BIGINT" code="PARENT_ID" propId="5" stdDataType="long" i18n-en:displayName='Parent Category' />
+                <column name="orgId" displayName="业务组织" stdSqlType="BIGINT" code="ORG_ID" propId="4" stdDataType="string" i18n-en:displayName='Organization' />
+                <column name="parentId" displayName="父分类" stdSqlType="BIGINT" code="PARENT_ID" propId="5" stdDataType="string" i18n-en:displayName='Parent Category' />
                 <column name="icon" displayName="图标" stdSqlType="VARCHAR" precision="100" code="ICON" propId="6" stdDataType="string" i18n-en:displayName='Icon' />
                 <column name="sequence" displayName="排序" stdSqlType="INTEGER" defaultValue="0" code="SEQUENCE" propId="7" stdDataType="int" i18n-en:displayName='Sequence' />
                 <column name="isActive" displayName="是否启用" stdSqlType="BOOLEAN" defaultValue="true" code="IS_ACTIVE" propId="8" stdDataType="boolean" i18n-en:displayName='Active' />
@@ -712,16 +712,16 @@
                 displayName="服务目录项" ext:icon="book" i18n-en:displayName="Service Catalog Item" name="app.erp.cs.dao.entity.ErpCsServiceCatalogItem"
                 tableName="erp_cs_service_catalog_item" tagSet="gid,erp.cs" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
-                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long" i18n-en:displayName='ID' />
+                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="string" i18n-en:displayName='ID' />
                 <column name="code" displayName="编码" domain="orderCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Code' tagSet="var" />
                 <column name="name" displayName="名称" stdSqlType="VARCHAR" precision="200" mandatory="true" code="NAME" propId="3" stdDataType="string" i18n-en:displayName='Name' />
-                <column name="orgId" displayName="业务组织" stdSqlType="BIGINT" code="ORG_ID" propId="4" stdDataType="long" i18n-en:displayName='Organization' />
-                <column name="categoryId" displayName="目录分类" stdSqlType="BIGINT" code="CATEGORY_ID" propId="5" stdDataType="long" i18n-en:displayName='Category' />
-                <column name="parentId" displayName="父项" stdSqlType="BIGINT" code="PARENT_ID" propId="6" stdDataType="long" i18n-en:displayName='Parent Item' />
+                <column name="orgId" displayName="业务组织" stdSqlType="BIGINT" code="ORG_ID" propId="4" stdDataType="string" i18n-en:displayName='Organization' />
+                <column name="categoryId" displayName="目录分类" stdSqlType="BIGINT" code="CATEGORY_ID" propId="5" stdDataType="string" i18n-en:displayName='Category' />
+                <column name="parentId" displayName="父项" stdSqlType="BIGINT" code="PARENT_ID" propId="6" stdDataType="string" i18n-en:displayName='Parent Item' />
                 <column name="shortDescription" displayName="简短描述" stdSqlType="VARCHAR" precision="500" code="SHORT_DESCRIPTION" propId="7" stdDataType="string" i18n-en:displayName='Short Description' />
                 <column name="fullDescription" displayName="详细说明" domain="content" code="FULL_DESCRIPTION" propId="8" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Full Description' />
-                <column name="ticketTypeId" displayName="关联工单类型" stdSqlType="BIGINT" code="TICKET_TYPE_ID" propId="9" stdDataType="long" i18n-en:displayName='Ticket Type' />
-                <column name="slaPolicyId" displayName="默认SLA策略" stdSqlType="BIGINT" code="SLA_POLICY_ID" propId="10" stdDataType="long" i18n-en:displayName='SLA Policy' />
+                <column name="ticketTypeId" displayName="关联工单类型" stdSqlType="BIGINT" code="TICKET_TYPE_ID" propId="9" stdDataType="string" i18n-en:displayName='Ticket Type' />
+                <column name="slaPolicyId" displayName="默认SLA策略" stdSqlType="BIGINT" code="SLA_POLICY_ID" propId="10" stdDataType="string" i18n-en:displayName='SLA Policy' />
                 <column name="fulfillmentProcessId" displayName="履行流程标识" stdSqlType="VARCHAR" precision="100" code="FULFILLMENT_PROCESS_ID" propId="11" stdDataType="string" i18n-en:displayName='Fulfillment Process' />
                 <column name="requestFormConfig" displayName="请求表单配置" domain="json" code="REQUEST_FORM_CONFIG" propId="12" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Request Form Config' />
                 <column name="isActive" displayName="是否上架" stdSqlType="BOOLEAN" defaultValue="true" code="IS_ACTIVE" propId="13" stdDataType="boolean" i18n-en:displayName='Active' />
@@ -771,10 +771,10 @@
                 displayName="目录项履行映射" ext:icon="git-branch" i18n-en:displayName="Catalog Fulfillment" name="app.erp.cs.dao.entity.ErpCsCatalogFulfillment"
                 tableName="erp_cs_catalog_fulfillment" tagSet="gid,erp.cs" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
-                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long" i18n-en:displayName='ID' />
+                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="string" i18n-en:displayName='ID' />
                 <column name="code" displayName="编码" domain="orderCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Code' tagSet="var" />
-                <column name="orgId" displayName="业务组织" stdSqlType="BIGINT" code="ORG_ID" propId="3" stdDataType="long" i18n-en:displayName='Organization' />
-                <column name="catalogItemId" displayName="目录项" stdSqlType="BIGINT" mandatory="true" code="CATALOG_ITEM_ID" propId="4" stdDataType="long" i18n-en:displayName='Catalog Item' />
+                <column name="orgId" displayName="业务组织" stdSqlType="BIGINT" code="ORG_ID" propId="3" stdDataType="string" i18n-en:displayName='Organization' />
+                <column name="catalogItemId" displayName="目录项" stdSqlType="BIGINT" mandatory="true" code="CATALOG_ITEM_ID" propId="4" stdDataType="string" i18n-en:displayName='Catalog Item' />
                 <column name="sequence" displayName="执行顺序" stdSqlType="INTEGER" code="SEQUENCE" propId="5" stdDataType="int" i18n-en:displayName='Sequence' />
                 <column name="actionType" displayName="动作类型" ext:dict="erp-cs/fulfillment-action-type" mandatory="true" code="ACTION_TYPE" propId="6" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Action Type' />
                 <column name="actionConfig" displayName="动作配置" domain="json" code="ACTION_CONFIG" propId="7" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Action Config' />
@@ -809,10 +809,10 @@
                 displayName="工单计时条目" ext:icon="clock" i18n-en:displayName="Time Entry" name="app.erp.cs.dao.entity.ErpCsTimeEntry"
                 tableName="erp_cs_time_entry" tagSet="gid,erp.cs" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
-                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long" i18n-en:displayName='ID' />
-                <column name="orgId" displayName="业务组织" stdSqlType="BIGINT" code="ORG_ID" propId="2" stdDataType="long" i18n-en:displayName='Organization' />
-                <column name="ticketId" displayName="关联工单" stdSqlType="BIGINT" mandatory="true" code="TICKET_ID" propId="3" stdDataType="long" i18n-en:displayName='Ticket' />
-                <column name="agentId" displayName="处理人" stdSqlType="BIGINT" mandatory="true" code="AGENT_ID" propId="4" stdDataType="long" i18n-en:displayName='Agent' />
+                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="string" i18n-en:displayName='ID' />
+                <column name="orgId" displayName="业务组织" stdSqlType="BIGINT" code="ORG_ID" propId="2" stdDataType="string" i18n-en:displayName='Organization' />
+                <column name="ticketId" displayName="关联工单" stdSqlType="BIGINT" mandatory="true" code="TICKET_ID" propId="3" stdDataType="string" i18n-en:displayName='Ticket' />
+                <column name="agentId" displayName="处理人" stdSqlType="BIGINT" mandatory="true" code="AGENT_ID" propId="4" stdDataType="string" i18n-en:displayName='Agent' />
                 <column name="startTime" displayName="开始时间" tagSet="clock" stdSqlType="TIMESTAMP" code="START_TIME" propId="5" i18n-en:displayName='Start Time' />
                 <column name="endTime" displayName="结束时间" tagSet="clock" stdSqlType="TIMESTAMP" code="END_TIME" propId="6" i18n-en:displayName='End Time' />
                 <column name="duration" displayName="时长(分钟)" stdSqlType="INTEGER" code="DURATION" propId="7" stdDataType="int" i18n-en:displayName='Duration' />
@@ -823,8 +823,8 @@
                 <column name="approvalStatus" displayName="审批状态" ext:dict="erp-cs/time-entry-approve-status" code="APPROVAL_STATUS" propId="12" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Approval Status' />
                 <column name="approvedById" stdDomain="userId" displayName="审批人" stdSqlType="VARCHAR" precision="36" code="APPROVED_BY_ID" propId="13" stdDataType="string" i18n-en:displayName='Approved By' />
                 <column name="approvedAt" displayName="审批时间" tagSet="clock" stdSqlType="TIMESTAMP" code="APPROVED_AT" propId="14" i18n-en:displayName='Approved At'  ui:show="R"/>
-                <column name="projectId" displayName="关联项目" stdSqlType="BIGINT" code="PROJECT_ID" propId="15" stdDataType="long" i18n-en:displayName='Project' />
-                <column name="taskId" displayName="关联任务" stdSqlType="BIGINT" code="TASK_ID" propId="16" stdDataType="long" i18n-en:displayName='Task' />
+                <column name="projectId" displayName="关联项目" stdSqlType="BIGINT" code="PROJECT_ID" propId="15" stdDataType="string" i18n-en:displayName='Project' />
+                <column name="taskId" displayName="关联任务" stdSqlType="BIGINT" code="TASK_ID" propId="16" stdDataType="string" i18n-en:displayName='Task' />
                 <column name="source" displayName="来源" ext:dict="erp-cs/time-entry-source" code="SOURCE" propId="17" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Source' />
                 <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="18" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0" i18n-en:displayName='Del Flag'  ui:show="R"/>
                 <column name="version" code="VERSION" displayName="数据版本" propId="19" domain="version" stdSqlType="INTEGER" stdDataType="int" mandatory="true" defaultValue="0" i18n-en:displayName='Version' />
@@ -863,10 +863,10 @@
                 displayName="工单计时器会话" ext:icon="timer" i18n-en:displayName="Ticket Timer Session" name="app.erp.cs.dao.entity.ErpCsTicketTimerSession"
                 tableName="erp_cs_ticket_timer_session" tagSet="gid,erp.cs" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
-                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long" i18n-en:displayName='ID' />
-                <column name="orgId" displayName="业务组织" stdSqlType="BIGINT" code="ORG_ID" propId="2" stdDataType="long" i18n-en:displayName='Organization' />
+                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="string" i18n-en:displayName='ID' />
+                <column name="orgId" displayName="业务组织" stdSqlType="BIGINT" code="ORG_ID" propId="2" stdDataType="string" i18n-en:displayName='Organization' />
                 <column name="agentId" stdDomain="userId" displayName="客服" stdSqlType="VARCHAR" precision="36" mandatory="true" code="AGENT_ID" propId="3" stdDataType="string" i18n-en:displayName='Agent' />
-                <column name="ticketId" displayName="关联工单" stdSqlType="BIGINT" mandatory="true" code="TICKET_ID" propId="4" stdDataType="long" i18n-en:displayName='Ticket' />
+                <column name="ticketId" displayName="关联工单" stdSqlType="BIGINT" mandatory="true" code="TICKET_ID" propId="4" stdDataType="string" i18n-en:displayName='Ticket' />
                 <column name="startTime" displayName="开始时间" tagSet="clock" stdSqlType="TIMESTAMP" mandatory="true" code="START_TIME" propId="5" i18n-en:displayName='Start Time' />
                 <column name="stopTime" displayName="停止时间" tagSet="clock" stdSqlType="TIMESTAMP" code="STOP_TIME" propId="6" i18n-en:displayName='Stop Time' />
                 <column name="pauseStartDateTime" displayName="暂停开始时间" tagSet="clock" stdSqlType="TIMESTAMP" code="PAUSE_START_DATE_TIME" propId="7" i18n-en:displayName='Pause Start' />
@@ -904,11 +904,11 @@
                 displayName="工单履行步骤" ext:icon="git-branch" i18n-en:displayName="Ticket Fulfillment Step" name="app.erp.cs.dao.entity.ErpCsTicketFulfillmentStep"
                 tableName="erp_cs_ticket_fulfillment_step" tagSet="gid,erp.cs" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
-                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long" i18n-en:displayName='ID' />
-                <column name="orgId" displayName="业务组织" stdSqlType="BIGINT" code="ORG_ID" propId="2" stdDataType="long" i18n-en:displayName='Organization' />
-                <column name="ticketId" displayName="关联工单" stdSqlType="BIGINT" mandatory="true" code="TICKET_ID" propId="3" stdDataType="long" i18n-en:displayName='Ticket' />
-                <column name="fulfillmentId" displayName="履行映射" stdSqlType="BIGINT" mandatory="true" code="FULFILLMENT_ID" propId="4" stdDataType="long" i18n-en:displayName='Fulfillment' />
-                <column name="catalogItemId" displayName="目录项" stdSqlType="BIGINT" code="CATALOG_ITEM_ID" propId="5" stdDataType="long" i18n-en:displayName='Catalog Item' />
+                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="string" i18n-en:displayName='ID' />
+                <column name="orgId" displayName="业务组织" stdSqlType="BIGINT" code="ORG_ID" propId="2" stdDataType="string" i18n-en:displayName='Organization' />
+                <column name="ticketId" displayName="关联工单" stdSqlType="BIGINT" mandatory="true" code="TICKET_ID" propId="3" stdDataType="string" i18n-en:displayName='Ticket' />
+                <column name="fulfillmentId" displayName="履行映射" stdSqlType="BIGINT" mandatory="true" code="FULFILLMENT_ID" propId="4" stdDataType="string" i18n-en:displayName='Fulfillment' />
+                <column name="catalogItemId" displayName="目录项" stdSqlType="BIGINT" code="CATALOG_ITEM_ID" propId="5" stdDataType="string" i18n-en:displayName='Catalog Item' />
                 <column name="sequence" displayName="执行顺序" stdSqlType="INTEGER" code="SEQUENCE" propId="6" stdDataType="int" i18n-en:displayName='Sequence' />
                 <column name="actionType" displayName="动作类型" ext:dict="erp-cs/fulfillment-action-type" code="ACTION_TYPE" propId="7" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Action Type' />
                 <column name="actionConfig" displayName="动作配置快照" domain="json" code="ACTION_CONFIG" propId="8" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Action Config' />
@@ -951,14 +951,14 @@
         <entity ext:web-renderer="flux" displayName="ErpMdPartner" name="app.erp.md.dao.entity.ErpMdPartner"
                 notGenCode="true" biz:moduleId="erp/md" tableName="erp_md_partner">
             <columns>
-                <column name="id" code="ID" stdSqlType="BIGINT" primary="true" mandatory="true" tagSet="seq-default" stdDataType="long" />
+                <column name="id" code="ID" stdSqlType="BIGINT" primary="true" mandatory="true" tagSet="seq-default" stdDataType="string" />
                             <column name="name" code="NAME" stdSqlType="VARCHAR" precision="200" stdDataType="string" tagSet="disp" />
             </columns>
         </entity>
         <entity ext:web-renderer="flux" displayName="ErpMdOrganization" name="app.erp.md.dao.entity.ErpMdOrganization"
                 notGenCode="true" biz:moduleId="erp/md" tableName="erp_md_organization">
             <columns>
-                <column name="id" code="ID" stdSqlType="BIGINT" primary="true" mandatory="true" tagSet="seq-default" stdDataType="long" />
+                <column name="id" code="ID" stdSqlType="BIGINT" primary="true" mandatory="true" tagSet="seq-default" stdDataType="string" />
                             <column name="name" code="NAME" stdSqlType="VARCHAR" precision="200" stdDataType="string" tagSet="disp" />
             </columns>
         </entity>

@@ -65,18 +65,19 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpCsTicketCreateEnrichment extends JunitAutoTestCase {
 
-    static final Long CUSTOMER_ID = 5301L;
-    static final Long TICKET_TYPE_ID = 6301L;
-    static final Long CS_TEAM_ID = 6401L;
+    static final String CUSTOMER_ID = "5301";
+    static final String TICKET_TYPE_ID = "6301";
+    static final String CS_TEAM_ID = "6401";
     static final String TEAM_CODE = "TEAM-ENRICH";
-    static final Long POLICY_ATTACH_ID = 6501L;   // teamId NULL（可被 matcher 匹配，resolveHours=8）
-    static final Long POLICY_TEAM_ID = 6502L;     // teamId=CS_TEAM（类型默认策略——team 解析主链载体）
-    static final Long POLICY_ENT_ID = 6503L;      // 权益覆盖策略（teamId NULL，resolveHours=2）
+    static final String POLICY_ATTACH_ID = "6501";   // teamId NULL（可被 matcher 匹配，resolveHours=8）
+    static final String POLICY_TEAM_ID = "6502";     // teamId=CS_TEAM（类型默认策略——team 解析主链载体）
+    static final String POLICY_ENT_ID = "6503";      // 权益覆盖策略（teamId NULL，resolveHours=2）
+    // bridge-test-115: crm 未迁移（M3.4）Long 实体侧局部桥（crm seed 保持 Long，退役 owner M3.4）
     static final Long CRM_TEAM_ID = 6601L;
     static final String USER_A = "cs-enrich-user-a";
     static final String USER_B = "cs-enrich-user-b";
     static final String USER_C = "cs-enrich-user-c";
-    static final Long ENT_ID = 6801L;
+    static final String ENT_ID = "6801";
     static final String CS_SUPERVISOR = "cs-enrich-supervisor";
 
     @Inject
@@ -100,7 +101,7 @@ public class TestErpCsTicketCreateEnrichment extends JunitAutoTestCase {
             LocalDateTime before = CoreMetrics.currentDateTime();
             ApiResponse<?> resp = saveTicket(ticketData("TK 缺省填充", null));
             assertEquals(0, resp.getStatus(), "save 应成功: " + resp);
-            Long id = idOf(resp);
+            String id = idOf(resp);
             ErpCsTicket t = reload(id);
 
             assertEquals(ErpCsConstants.TICKET_STATUS_NEW, t.getStatus(), "缺省 status=NEW（fill-when-absent）");
@@ -199,12 +200,12 @@ public class TestErpCsTicketCreateEnrichment extends JunitAutoTestCase {
         seedCustomer(CUSTOMER_ID, "ACME Corp");
         seedBaseSlaPolicies();
         seedTeamChain();
-        seedNotifyTemplate(7301L, ErpCsConstants.NOTIFY_EVENT_TICKET_CREATED,
+        seedNotifyTemplate("7301", ErpCsConstants.NOTIFY_EVENT_TICKET_CREATED,
                 "USER_LIST", "{\"userIds\":[\"${submitterUserId}\"]}");
 
         ApiResponse<?> resp = saveTicket(ticketData("TK-AUTO-ASSIGN", null));
         assertEquals(0, resp.getStatus(), "save 应成功: " + resp);
-        Long id = idOf(resp);
+        String id = idOf(resp);
         ErpCsTicket t = reload(id);
 
         assertEquals(ErpCsConstants.TICKET_STATUS_ASSIGNED, t.getStatus(), "自动分配成功 NEW→ASSIGNED");
@@ -239,12 +240,12 @@ public class TestErpCsTicketCreateEnrichment extends JunitAutoTestCase {
         seedCustomer(CUSTOMER_ID, "ACME Corp");
         seedBaseSlaPolicies(); // 含 cs 团队（仅 cs 侧，无同码 crm 团队/成员 → 池空）
         seedSupervisorRole();
-        seedNotifyTemplate(7302L, ErpCsConstants.NOTIFY_EVENT_TICKET_ASSIGN_NO_MATCH,
+        seedNotifyTemplate("7302", ErpCsConstants.NOTIFY_EVENT_TICKET_ASSIGN_NO_MATCH,
                 "ROLE", "{\"roles\":[\"客服主管\"]}");
 
         ApiResponse<?> resp = saveTicket(ticketData("TK-NO-MATCH", null));
         assertEquals(0, resp.getStatus(), "save 应成功: " + resp);
-        Long id = idOf(resp);
+        String id = idOf(resp);
         ErpCsTicket t = reload(id);
 
         assertEquals(ErpCsConstants.TICKET_STATUS_NEW, t.getStatus(), "⑧ 无匹配留 NEW 待人工分派");
@@ -272,7 +273,7 @@ public class TestErpCsTicketCreateEnrichment extends JunitAutoTestCase {
         try {
             ApiResponse<?> resp = saveTicket(ticketData("TK-CFG-OFF", null));
             assertEquals(0, resp.getStatus(), "save 应成功: " + resp);
-            Long id = idOf(resp);
+            String id = idOf(resp);
             ErpCsTicket t = reload(id);
 
             assertEquals(ErpCsConstants.TICKET_STATUS_NEW, t.getStatus(), "config off 跳过分配（留 NEW）");
@@ -362,7 +363,7 @@ public class TestErpCsTicketCreateEnrichment extends JunitAutoTestCase {
         return code != null && code.matches("^TK\\d{10}$");
     }
 
-    private ErpCsTicket reload(Long id) {
+    private ErpCsTicket reload(String id) {
         return daoProvider.daoFor(ErpCsTicket.class).getEntityById(id);
     }
 
@@ -370,24 +371,21 @@ public class TestErpCsTicketCreateEnrichment extends JunitAutoTestCase {
         return daoProvider.daoFor(ErpCsEntitlement.class).getEntityById(ENT_ID);
     }
 
-    private Long idOf(ApiResponse<?> resp) {
+    private String idOf(ApiResponse<?> resp) {
         Object data = resp.getData();
         assertNotNull(data, "save 响应应含实体: " + resp);
         @SuppressWarnings("unchecked")
         Map<String, Object> map = (Map<String, Object>) data;
         Object id = map.get("id");
         assertNotNull(id, "save 响应应含 id: " + resp);
-        if (id instanceof Number) {
-            return ((Number) id).longValue();
-        }
-        return Long.valueOf(String.valueOf(id));
+        return String.valueOf(id);
     }
 
-    private boolean hasAction(Long ticketId, String actionType) {
+    private boolean hasAction(String ticketId, String actionType) {
         return firstAction(ticketId, actionType) != null;
     }
 
-    private ErpCsTicketAction firstAction(Long ticketId, String actionType) {
+    private ErpCsTicketAction firstAction(String ticketId, String actionType) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("ticketId", ticketId));
         q.addFilter(eq("actionType", actionType));
@@ -442,7 +440,7 @@ public class TestErpCsTicketCreateEnrichment extends JunitAutoTestCase {
         });
     }
 
-    private void seedCustomer(Long id, String name) {
+    private void seedCustomer(String id, String name) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMdPartner> dao = daoProvider.daoFor(ErpMdPartner.class);
             ErpMdPartner p = new ErpMdPartner();
@@ -537,7 +535,7 @@ public class TestErpCsTicketCreateEnrichment extends JunitAutoTestCase {
         dao.saveEntity(member);
     }
 
-    private void seedEntitlement(Long id, Long partnerId, Integer maxTickets, Integer usedTickets) {
+    private void seedEntitlement(String id, String partnerId, Integer maxTickets, Integer usedTickets) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpCsEntitlement> dao = daoProvider.daoFor(ErpCsEntitlement.class);
             ErpCsEntitlement e = new ErpCsEntitlement();
@@ -555,7 +553,7 @@ public class TestErpCsTicketCreateEnrichment extends JunitAutoTestCase {
         });
     }
 
-    private void seedNotifyTemplate(Long id, String notificationType, String resolver, String recipientConfig) {
+    private void seedNotifyTemplate(String id, String notificationType, String resolver, String recipientConfig) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpSysNotificationTemplate> dao = daoProvider.daoFor(ErpSysNotificationTemplate.class);
             ErpSysNotificationTemplate t = new ErpSysNotificationTemplate();
@@ -606,7 +604,7 @@ public class TestErpCsTicketCreateEnrichment extends JunitAutoTestCase {
 
     /** dao 直插历史工单（ROUND_ROBIN 历史锚点 / LEAST_OPEN 活跃计数锚点）。 */
     private void seedTicketRow(String code, String status, String assignedToId) {
-        Long id = 7000L + (long) (Math.abs(code.hashCode()) % 1000);
+        String id = String.valueOf(7000 + Math.abs(code.hashCode()) % 1000);
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpCsTicket> dao = daoProvider.daoFor(ErpCsTicket.class);
             ErpCsTicket t = new ErpCsTicket();

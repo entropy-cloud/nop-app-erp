@@ -1729,8 +1729,8 @@
       ],
       "deferredUntil": "M3.5",
       "retireOwner": "M3.5",
-      "note": "早域 test 引用晚域——早域 plan Phase 3 消费（本域测试适配）；晚域翻转时复核",
-      "status": "active"
+      "note": "早域 test 引用晚域——早域 plan Phase 3 消费（本域测试适配）；晚域翻转时复核。已退役（本域侧）：M3.5 cs plan 2026-08-22-0002-3 Phase 3 兑付（crm seed 局部桥——TestErpCsCatalogFulfillmentEngine:72 注释 + CRM_TEAM_ID Long 常量 + seedMember(Long,Long) crm Long 实体侧自洽，cs String 侧转换消费，读路径核验 = 185 测试全绿）；晚域 M3.4 翻转时移除局部桥",
+      "status": "retired"
     },
     {
       "id": "bridge-test-114",
@@ -1746,8 +1746,8 @@
       ],
       "deferredUntil": "M3.5",
       "retireOwner": "M3.5",
-      "note": "早域 test 引用晚域——早域 plan Phase 3 消费（本域测试适配）；晚域翻转时复核",
-      "status": "active"
+      "note": "早域 test 引用晚域——早域 plan Phase 3 消费（本域测试适配）；晚域翻转时复核。已退役（本域侧）：M3.5 cs plan 2026-08-22-0002-3 Phase 3 兑付（qa 断言局部桥——TestErpCsQualityEscalation:66 注释 + MATERIAL_ID_LONG Long 常量断言 qa save-map Long 值，读路径核验 = 185 测试全绿）；晚域 M2.3 翻转时移除局部桥",
+      "status": "retired"
     },
     {
       "id": "bridge-test-115",
@@ -1764,8 +1764,8 @@
       ],
       "deferredUntil": "M3.5",
       "retireOwner": "M3.5",
-      "note": "早域 test 引用晚域——早域 plan Phase 3 消费（本域测试适配）；晚域翻转时复核",
-      "status": "active"
+      "note": "早域 test 引用晚域——早域 plan Phase 3 消费（本域测试适配）；晚域翻转时复核。已退役（本域侧）：M3.5 cs plan 2026-08-22-0002-3 Phase 3 兑付（crm seed 局部桥——TestErpCsTicketCreateEnrichment:75 注释 + seedMemberInSession(Long,Long) crm Long 实体侧自洽，cs String 侧转换消费，读路径核验 = 185 测试全绿）；晚域 M3.4 翻转时移除局部桥",
+      "status": "retired"
     },
     {
       "id": "bridge-test-116",
@@ -1784,8 +1784,8 @@
       ],
       "deferredUntil": "M3.5",
       "retireOwner": "M3.5",
-      "note": "早域 test 引用晚域——早域 plan Phase 3 消费（本域测试适配）；晚域翻转时复核",
-      "status": "active"
+      "note": "早域 test 引用晚域——早域 plan Phase 3 消费（本域测试适配）；晚域翻转时复核。已退役（本域侧）：M3.5 cs plan 2026-08-22-0002-3 Phase 3 兑付（mock 桩保持 crm Long 实体/IBiz 签名（TestMockCrmBizModels:23 类注释 + app-test-mock-crm.beans.xml ioc:type），与未迁移 crm jar 签名一致，cs 侧断言局部转换消费，读路径核验 = 185 测试全绿）；晚域 M3.4 翻转时随 mock 一并回收",
+      "status": "retired"
     },
     {
       "id": "bridge-test-117",
@@ -1803,8 +1803,8 @@
       ],
       "deferredUntil": "M3.5",
       "retireOwner": "M3.5",
-      "note": "早域 test 引用晚域——早域 plan Phase 3 消费（本域测试适配）；晚域翻转时复核",
-      "status": "active"
+      "note": "早域 test 引用晚域——早域 plan Phase 3 消费（本域测试适配）；晚域翻转时复核。已退役（本域侧）：M3.5 cs plan 2026-08-22-0002-3 Phase 3 兑付（mock 桩保持 qa Long 实体/IBiz 签名（TestMockQaBizModels:26 类注释 + submitReview(Long) 等 7 方法 + app-test-mock-qa.beans.xml ioc:type），与未迁移 qa jar 签名一致，cs 侧断言局部转换消费，读路径核验 = 185 测试全绿）；晚域 M2.3 翻转时随 mock 一并回收",
+      "status": "retired"
     },
     {
       "id": "bridge-test-118",
@@ -2113,6 +2113,42 @@
       "deferredUntil": "M2.4",
       "retireOwner": "M2.4",
       "note": "A3' 同类补登条目（登记册扫描器 import 口径盲区：FQN 内联字段引用不产生 import 语句；补登证据 = M2.4 assets plan 2026-08-22-0002-2 Phase 1 FQN 复扫）。与 bridge-test-107 同 mock 基建（TestMockMntBizModels + test-mock-mnt.beans.xml）。已退役：M2.4 assets plan 2026-08-22-0002-2 Phase 3 兑付（ast 侧 seed/局部全 String 化 + 断言经 ConvertHelper.toLong(assetId) 桥接 mock Long 字段，退役 owner M3.2 时随 mock 一并回收）",
+      "status": "retired"
+    },
+    {
+      "id": "bridge-test-135",
+      "kind": "service-bridge",
+      "scope": "test",
+      "domain": "cs",
+      "callSite": "module-cs/erp-cs-service/src/test/java/app/erp/cs/service/TestErpCsQualityEscalation.java",
+      "target": "IErpQaNonConformanceBiz(quality) FQN 内联字段引用 @L78（无 import 语句）+ 同一 mock 基建 app-test-mock-qa.beans.xml:11 ioc:type FQN",
+      "longParams": [],
+      "refDomain": "quality",
+      "evidence": [
+        "module-cs/erp-cs-service/src/test/java/app/erp/cs/service/TestErpCsQualityEscalation.java:78",
+        "module-cs/erp-cs-service/src/test/resources/_vfs/erp/cs/beans/app-test-mock-qa.beans.xml:11"
+      ],
+      "deferredUntil": "M3.5",
+      "retireOwner": "M3.5",
+      "note": "A3' 同类补登条目（登记册扫描器 import 口径盲区；补登证据 = M3.5 cs plan 2026-08-22-0002-3 Phase 1 FQN 复扫）。与 bridge-test-114/117 同测试面/mock 基建，Phase 3 随批适配退役",
+      "status": "retired"
+    },
+    {
+      "id": "bridge-test-136",
+      "kind": "service-bridge",
+      "scope": "test",
+      "domain": "cs",
+      "callSite": "module-cs/erp-cs-service/src/test/resources/_vfs/erp/cs/beans/app-test-mock-crm.beans.xml",
+      "target": "IErpCrmTeamBiz(crm) ioc:type FQN @L11 + IErpCrmTeamMemberBiz(crm) ioc:type FQN @L15（beans 资源无 import 语句）",
+      "longParams": [],
+      "refDomain": "crm",
+      "evidence": [
+        "module-cs/erp-cs-service/src/test/resources/_vfs/erp/cs/beans/app-test-mock-crm.beans.xml:11",
+        "module-cs/erp-cs-service/src/test/resources/_vfs/erp/cs/beans/app-test-mock-crm.beans.xml:15"
+      ],
+      "deferredUntil": "M3.5",
+      "retireOwner": "M3.5",
+      "note": "A3' 同类补登条目（登记册扫描器 import 口径盲区：beans 资源 ioc:type FQN 不产生 import 语句；补登证据 = M3.5 cs plan 2026-08-22-0002-3 Phase 1 FQN 复扫）。与 bridge-test-116 同 mock 基建，Phase 3 随批适配退役",
       "status": "retired"
     },
     {
@@ -4403,7 +4439,7 @@
   "counts": {
     "orm-column-deferral": 8,
     "service-bridge:main": 94,
-    "service-bridge:test": 32,
+    "service-bridge:test": 34,
     "backward-pointer:main": 60,
     "backward-pointer:test": 62
   }

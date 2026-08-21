@@ -3,7 +3,7 @@
     "id": "2",
     "code": "@var:ErpCsSlaPolicy@code",
     "name": "冒烟SLA",
-    "ticketTypeId": 1,
+    "ticketTypeId": "1",
     "isWorkingDays": true,
     "delVersion": 0,
     "version": 0,
@@ -17,7 +17,9 @@
     "resolveHours": null,
     "resolveDays": null,
     "escalationUserId": null,
-    "description": null
+    "description": null,
+    "secondEscalationUserId": null,
+    "escalationDelayHours": null
   },
   "status": 0
 }

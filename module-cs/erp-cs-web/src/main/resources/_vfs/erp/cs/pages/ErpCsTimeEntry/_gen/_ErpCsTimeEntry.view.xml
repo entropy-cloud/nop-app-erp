@@ -19,16 +19,16 @@
             <cols>
 
                 <!--ID-->
-                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="id" mandatory="true" sortable="true"/>
 
                 <!--业务组织-->
-                <col id="orgId" ui:number="true" sortable="true"/>
+                <col id="orgId" sortable="true"/>
 
                 <!--关联工单-->
-                <col id="ticketId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="ticketId" mandatory="true" sortable="true"/>
 
                 <!--处理人-->
-                <col id="agentId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="agentId" mandatory="true" sortable="true"/>
 
                 <!--开始时间-->
                 <col id="startTime" sortable="true"/>
@@ -61,10 +61,10 @@
                 <col id="approvedAt" sortable="true"/>
 
                 <!--关联项目-->
-                <col id="projectId" ui:number="true" sortable="true"/>
+                <col id="projectId" sortable="true"/>
 
                 <!--关联任务-->
-                <col id="taskId" ui:number="true" sortable="true"/>
+                <col id="taskId" sortable="true"/>
 
                 <!--来源-->
                 <col id="source" sortable="true"/>

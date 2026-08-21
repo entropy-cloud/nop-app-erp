@@ -46,7 +46,7 @@ public class ErpCsKnowledgeBaseBizModel extends CrudBizModel<ErpCsKnowledgeBase>
     @Override
     @BizQuery
     public List<Map<String, Object>> searchKnowledge(@Optional @Name("keyword") String keyword,
-                                                     @Optional @Name("categoryId") Long categoryId,
+                                                     @Optional @Name("categoryId") String categoryId,
                                                      @Optional @Name("limit") Integer limit,
                                                      IServiceContext context) {
         if (keyword == null || keyword.trim().isEmpty()) {
@@ -117,7 +117,7 @@ public class ErpCsKnowledgeBaseBizModel extends CrudBizModel<ErpCsKnowledgeBase>
      */
     @Override
     @BizQuery
-    public List<Map<String, Object>> knowledgeUsageStats(@Optional @Name("knowledgeBaseId") Long knowledgeBaseId,
+    public List<Map<String, Object>> knowledgeUsageStats(@Optional @Name("knowledgeBaseId") String knowledgeBaseId,
                                                          IServiceContext context) {
         QueryBean query = new QueryBean();
         query.addFilter(FilterBeans.eq("actionType", ErpCsConstants.ACTION_TYPE_ADOPT_KNOWLEDGE));
@@ -142,15 +142,12 @@ public class ErpCsKnowledgeBaseBizModel extends CrudBizModel<ErpCsKnowledgeBase>
         return result;
     }
 
-    private static Long parseKnowledgeBaseId(String content) {
+    private static String parseKnowledgeBaseId(String content) {
         if (content == null || !content.startsWith("knowledgeBaseId=")) {
             return null;
         }
-        try {
-            return Long.valueOf(content.substring("knowledgeBaseId=".length()));
-        } catch (NumberFormatException e) {
-            return null;
-        }
+        String id = content.substring("knowledgeBaseId=".length()).trim();
+        return id.isEmpty() ? null : id;
     }
 
     private int resolveLimit(Integer limit) {

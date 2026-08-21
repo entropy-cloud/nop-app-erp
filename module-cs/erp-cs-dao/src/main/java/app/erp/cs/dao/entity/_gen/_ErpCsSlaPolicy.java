@@ -176,7 +176,7 @@ public class _ErpCsSlaPolicy extends DynamicOrmEntity{
 
     
     /* ID: ID */
-    private java.lang.Long _id;
+    private java.lang.String _id;
     
     /* 编码: CODE */
     private java.lang.String _code;
@@ -185,13 +185,13 @@ public class _ErpCsSlaPolicy extends DynamicOrmEntity{
     private java.lang.String _name;
     
     /* 适用工单类型: TICKET_TYPE_ID */
-    private java.lang.Long _ticketTypeId;
+    private java.lang.String _ticketTypeId;
     
     /* 最低触发优先级: MIN_PRIORITY */
     private java.lang.String _minPriority;
     
     /* 适用团队: TEAM_ID */
-    private java.lang.Long _teamId;
+    private java.lang.String _teamId;
     
     /* 解决时限(小时): RESOLVE_HOURS */
     private java.lang.Integer _resolveHours;
@@ -203,7 +203,7 @@ public class _ErpCsSlaPolicy extends DynamicOrmEntity{
     private java.lang.Boolean _isWorkingDays;
     
     /* 升级通知人: ESCALATION_USER_ID */
-    private java.lang.Long _escalationUserId;
+    private java.lang.String _escalationUserId;
     
     /* 说明: DESCRIPTION */
     private java.lang.String _description;
@@ -227,7 +227,7 @@ public class _ErpCsSlaPolicy extends DynamicOrmEntity{
     private java.sql.Timestamp _updateTime;
     
     /* 二级升级通知人: SECOND_ESCALATION_USER_ID */
-    private java.lang.Long _secondEscalationUserId;
+    private java.lang.String _secondEscalationUserId;
     
     /* 升级等待小时数: ESCALATION_DELAY_HOURS */
     private java.lang.Integer _escalationDelayHours;
@@ -375,9 +375,9 @@ public class _ErpCsSlaPolicy extends DynamicOrmEntity{
         switch(propId){
         
             case PROP_ID_id:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_id));
                }
                setId(typedValue);
@@ -405,9 +405,9 @@ public class _ErpCsSlaPolicy extends DynamicOrmEntity{
             }
         
             case PROP_ID_ticketTypeId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_ticketTypeId));
                }
                setTicketTypeId(typedValue);
@@ -425,9 +425,9 @@ public class _ErpCsSlaPolicy extends DynamicOrmEntity{
             }
         
             case PROP_ID_teamId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_teamId));
                }
                setTeamId(typedValue);
@@ -465,9 +465,9 @@ public class _ErpCsSlaPolicy extends DynamicOrmEntity{
             }
         
             case PROP_ID_escalationUserId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_escalationUserId));
                }
                setEscalationUserId(typedValue);
@@ -545,9 +545,9 @@ public class _ErpCsSlaPolicy extends DynamicOrmEntity{
             }
         
             case PROP_ID_secondEscalationUserId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_secondEscalationUserId));
                }
                setSecondEscalationUserId(typedValue);
@@ -575,7 +575,7 @@ public class _ErpCsSlaPolicy extends DynamicOrmEntity{
         
             case PROP_ID_id:{
                onInitProp(propId);
-               this._id = (java.lang.Long)value;
+               this._id = (java.lang.String)value;
                orm_id(); // 如果是设置主键字段，则触发watcher
                break;
             }
@@ -596,7 +596,7 @@ public class _ErpCsSlaPolicy extends DynamicOrmEntity{
         
             case PROP_ID_ticketTypeId:{
                onInitProp(propId);
-               this._ticketTypeId = (java.lang.Long)value;
+               this._ticketTypeId = (java.lang.String)value;
                
                break;
             }
@@ -610,7 +610,7 @@ public class _ErpCsSlaPolicy extends DynamicOrmEntity{
         
             case PROP_ID_teamId:{
                onInitProp(propId);
-               this._teamId = (java.lang.Long)value;
+               this._teamId = (java.lang.String)value;
                
                break;
             }
@@ -638,7 +638,7 @@ public class _ErpCsSlaPolicy extends DynamicOrmEntity{
         
             case PROP_ID_escalationUserId:{
                onInitProp(propId);
-               this._escalationUserId = (java.lang.Long)value;
+               this._escalationUserId = (java.lang.String)value;
                
                break;
             }
@@ -694,7 +694,7 @@ public class _ErpCsSlaPolicy extends DynamicOrmEntity{
         
             case PROP_ID_secondEscalationUserId:{
                onInitProp(propId);
-               this._secondEscalationUserId = (java.lang.Long)value;
+               this._secondEscalationUserId = (java.lang.String)value;
                
                break;
             }
@@ -715,7 +715,7 @@ public class _ErpCsSlaPolicy extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final java.lang.Long getId(){
+    public final java.lang.String getId(){
          onPropGet(PROP_ID_id);
          return _id;
     }
@@ -723,7 +723,7 @@ public class _ErpCsSlaPolicy extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final void setId(java.lang.Long value){
+    public final void setId(java.lang.String value){
         if(onPropSet(PROP_ID_id,value)){
             this._id = value;
             internalClearRefs(PROP_ID_id);
@@ -772,7 +772,7 @@ public class _ErpCsSlaPolicy extends DynamicOrmEntity{
     /**
      * 适用工单类型: TICKET_TYPE_ID
      */
-    public final java.lang.Long getTicketTypeId(){
+    public final java.lang.String getTicketTypeId(){
          onPropGet(PROP_ID_ticketTypeId);
          return _ticketTypeId;
     }
@@ -780,7 +780,7 @@ public class _ErpCsSlaPolicy extends DynamicOrmEntity{
     /**
      * 适用工单类型: TICKET_TYPE_ID
      */
-    public final void setTicketTypeId(java.lang.Long value){
+    public final void setTicketTypeId(java.lang.String value){
         if(onPropSet(PROP_ID_ticketTypeId,value)){
             this._ticketTypeId = value;
             internalClearRefs(PROP_ID_ticketTypeId);
@@ -810,7 +810,7 @@ public class _ErpCsSlaPolicy extends DynamicOrmEntity{
     /**
      * 适用团队: TEAM_ID
      */
-    public final java.lang.Long getTeamId(){
+    public final java.lang.String getTeamId(){
          onPropGet(PROP_ID_teamId);
          return _teamId;
     }
@@ -818,7 +818,7 @@ public class _ErpCsSlaPolicy extends DynamicOrmEntity{
     /**
      * 适用团队: TEAM_ID
      */
-    public final void setTeamId(java.lang.Long value){
+    public final void setTeamId(java.lang.String value){
         if(onPropSet(PROP_ID_teamId,value)){
             this._teamId = value;
             internalClearRefs(PROP_ID_teamId);
@@ -886,7 +886,7 @@ public class _ErpCsSlaPolicy extends DynamicOrmEntity{
     /**
      * 升级通知人: ESCALATION_USER_ID
      */
-    public final java.lang.Long getEscalationUserId(){
+    public final java.lang.String getEscalationUserId(){
          onPropGet(PROP_ID_escalationUserId);
          return _escalationUserId;
     }
@@ -894,7 +894,7 @@ public class _ErpCsSlaPolicy extends DynamicOrmEntity{
     /**
      * 升级通知人: ESCALATION_USER_ID
      */
-    public final void setEscalationUserId(java.lang.Long value){
+    public final void setEscalationUserId(java.lang.String value){
         if(onPropSet(PROP_ID_escalationUserId,value)){
             this._escalationUserId = value;
             internalClearRefs(PROP_ID_escalationUserId);
@@ -1038,7 +1038,7 @@ public class _ErpCsSlaPolicy extends DynamicOrmEntity{
     /**
      * 二级升级通知人: SECOND_ESCALATION_USER_ID
      */
-    public final java.lang.Long getSecondEscalationUserId(){
+    public final java.lang.String getSecondEscalationUserId(){
          onPropGet(PROP_ID_secondEscalationUserId);
          return _secondEscalationUserId;
     }
@@ -1046,7 +1046,7 @@ public class _ErpCsSlaPolicy extends DynamicOrmEntity{
     /**
      * 二级升级通知人: SECOND_ESCALATION_USER_ID
      */
-    public final void setSecondEscalationUserId(java.lang.Long value){
+    public final void setSecondEscalationUserId(java.lang.String value){
         if(onPropSet(PROP_ID_secondEscalationUserId,value)){
             this._secondEscalationUserId = value;
             internalClearRefs(PROP_ID_secondEscalationUserId);

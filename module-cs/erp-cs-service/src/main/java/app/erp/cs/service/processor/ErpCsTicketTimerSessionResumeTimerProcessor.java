@@ -27,7 +27,7 @@ public class ErpCsTicketTimerSessionResumeTimerProcessor {
     @Inject
     ErpCsTicketTimerSessionOps ops;
 
-    public ErpCsTicketTimerSession resumeTimer(Long sessionId, IServiceContext context) {
+    public ErpCsTicketTimerSession resumeTimer(String sessionId, IServiceContext context) {
         if (!ErpCsConfigs.isTimeTrackingEnabled()) {
             throw new NopException(ErpCsErrors.ERR_CS_TIME_TRACKING_DISABLED)
                     .param(ErpCsErrors.ARG_SESSION_ID, sessionId);

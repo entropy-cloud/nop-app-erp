@@ -7,8 +7,10 @@ import app.erp.cs.service.ErpCsConfigs;
 import app.erp.cs.service.ErpCsConstants;
 import app.erp.cs.service.ErpCsErrors;
 import app.erp.qa.biz.IErpQaNonConformanceBiz;
+// bridge-main-057: ErpQaNonConformance 为 qa 未迁移（M2.3）Long 实体，本类经弱指针/值桥交互（退役 owner M2.3）
 import app.erp.qa.dao.entity.ErpQaNonConformance;
 import io.nop.api.core.beans.query.QueryBean;
+import io.nop.api.core.convert.ConvertHelper;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.api.core.time.CoreMetrics;
 import io.nop.commons.util.StringHelper;
@@ -73,9 +75,9 @@ public class ErpCsTicketEscalateToQualityProcessor {
      * materialId/defectDescription 必填；成功写 QUALITY_ESCALATE 审计行（content=NCR:{code}），
      * 工单不改状态（L1 ④ NCR 流程独立）；quality 调用失败降级 PENDING 审计行（工单保持）。
      */
-    public ErpCsTicket escalateToQuality(ErpCsTicket ticket, Long materialId, String defectDescription,
+    public ErpCsTicket escalateToQuality(ErpCsTicket ticket, String materialId, String defectDescription,
                                          String batchInfo, BigDecimal quantity, String severity,
-                                         Long supplierId, IServiceContext context) {
+                                         String supplierId, IServiceContext context) {
         if (!ErpCsConfigs.isQualityEscalationEnabled()) {
             throw new NopException(ErpCsErrors.ERR_CS_QUALITY_ESCALATION_DISABLED)
                     .param(ErpCsErrors.ARG_TICKET_ID, ticket.getId());
@@ -130,10 +132,10 @@ public class ErpCsTicketEscalateToQualityProcessor {
         ErpQaNonConformance ncr = findExistingNcr(ticket.getCode(), context);
         if (ncr == null) {
             try {
-                ncr = createNcr(ticket, asLong(payload.get("materialId")),
+                ncr = createNcr(ticket, asText(payload.get("materialId")),
                         asText(payload.get("defectDescription")), asText(payload.get("batchInfo")),
                         asDecimal(payload.get("quantity")), asText(payload.get("severity")),
-                        asLong(payload.get("supplierId")), context);
+                        asText(payload.get("supplierId")), context);
             } catch (Exception e) {
                 LOG.warn("cs-quality-escalation-retry-failed: ticketId={}, attempted={}, reason={}",
                         pendingAction.getTicketId(), attempted, e.getMessage());
@@ -148,6 +150,7 @@ public class ErpCsTicketEscalateToQualityProcessor {
 
     /** 工单关联 NCR 闭环结果投影（UC-CS-06 ⑤，经 qaNcrBiz 弱指针反查）。 */
     public List<Map<String, Object>> findQualityNcrs(ErpCsTicket ticket, IServiceContext context) {
+        // bridge-main-058: findList 弱指针反查仅 sourceType/sourceCode（VARCHAR）过滤，零 id 值穿越（退役 owner M2.3）
         List<ErpQaNonConformance> ncrs = qaNcrBiz.findList(buildNcrLookupQuery(ticket.getCode()), null, context);
         return ncrs.stream().map(this::toNcrSummary).collect(java.util.stream.Collectors.toList());
     }
@@ -159,15 +162,16 @@ public class ErpCsTicketEscalateToQualityProcessor {
      * NCR code 显式构造 NCR-CS-{ticket.code}（镜像 quality 域 SPC 级联先例 SpcOutOfControlHandler
      * 的 NCR-SPC-{chart}-{subgroup} 显式 setCode 模式）。
      */
-    protected ErpQaNonConformance createNcr(ErpCsTicket ticket, Long materialId, String defectDescription,
+    protected ErpQaNonConformance createNcr(ErpCsTicket ticket, String materialId, String defectDescription,
                                             String batchInfo, BigDecimal quantity, String severity,
-                                            Long supplierId, IServiceContext context) {
+                                            String supplierId, IServiceContext context) {
         Map<String, Object> data = new LinkedHashMap<>();
         data.put("code", "NCR-CS-" + ticket.getCode());
         data.put("ncrDate", CoreMetrics.today());
         data.put("sourceType", ErpCsConstants.NCR_SOURCE_TYPE_CS_TICKET);
         data.put("sourceCode", ticket.getCode());
-        data.put("materialId", materialId);
+        // bridge-main-059: cs String materialId/supplierId → qa ErpQaNonConformance Long 列（退役 owner M2.3）
+        data.put("materialId", ConvertHelper.toLong(materialId));
         String description = defectDescription;
         if (!StringHelper.isBlank(batchInfo)) {
             description = description + "；批次：" + batchInfo.trim();
@@ -179,13 +183,15 @@ public class ErpCsTicketEscalateToQualityProcessor {
         data.put("severity", StringHelper.isBlank(severity) ? ErpCsConstants.QUALITY_SEVERITY_NORMAL : severity);
         data.put("status", ErpCsConstants.NCR_STATUS_OPEN);
         if (supplierId != null) {
-            data.put("supplierId", supplierId);
+            // bridge-main-059: cs String supplierId → qa Long supplierId（退役 owner M2.3）
+            data.put("supplierId", ConvertHelper.toLong(supplierId));
         }
         return qaNcrBiz.save(data, context);
     }
 
     /** 弱指针反查（sourceType=CS_TICKET + sourceCode=ticket.code）。 */
     protected ErpQaNonConformance findExistingNcr(String ticketCode, IServiceContext context) {
+        // bridge-main-060: findList 弱指针反查仅 sourceType/sourceCode（VARCHAR）过滤，零 id 值穿越（退役 owner M2.3）
         List<ErpQaNonConformance> found = qaNcrBiz.findList(buildNcrLookupQuery(ticketCode), null, context);
         return found.isEmpty() ? null : found.get(0);
     }
@@ -209,9 +215,9 @@ public class ErpCsTicketEscalateToQualityProcessor {
         return m;
     }
 
-    /** PENDING 载荷（自足重建 NCR 参数；defectDescription 截断为摘要，content 列 2000 内）。 */
-    static String buildPendingContent(Long materialId, String defectDescription, String batchInfo,
-                                      BigDecimal quantity, String severity, Long supplierId) {
+    /** PENDING 载荷（自足重建 NCR 参数；defectDescription 截断为摘要，content 列 2000 内；id 以 String 形态落 JSON）。 */
+    static String buildPendingContent(String materialId, String defectDescription, String batchInfo,
+                                      BigDecimal quantity, String severity, String supplierId) {
         Map<String, Object> payload = new LinkedHashMap<>();
         payload.put("materialId", materialId);
         payload.put("defectDescription", truncate(defectDescription, PENDING_DESCRIPTION_MAX_LENGTH));
@@ -269,20 +275,6 @@ public class ErpCsTicketEscalateToQualityProcessor {
 
     private static String asText(Object v) {
         return v == null ? null : String.valueOf(v);
-    }
-
-    private static Long asLong(Object v) {
-        if (v == null) {
-            return null;
-        }
-        if (v instanceof Number) {
-            return ((Number) v).longValue();
-        }
-        try {
-            return Long.valueOf(String.valueOf(v));
-        } catch (NumberFormatException e) {
-            return null;
-        }
     }
 
     private static BigDecimal asDecimal(Object v) {

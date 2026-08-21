@@ -74,8 +74,8 @@ public class ErpCsCannedResponseBizModel extends CrudBizModel<ErpCsCannedRespons
 
     @Override
     @BizQuery
-    public String renderTemplate(@Name("cannedResponseId") Long cannedResponseId,
-                                 @Name("ticketId") Long ticketId,
+    public String renderTemplate(@Name("cannedResponseId") String cannedResponseId,
+                                 @Name("ticketId") String ticketId,
                                  @Optional @Name("customVariables") Map<String, String> customVariables,
                                  IServiceContext context) {
         ErpCsCannedResponse resp = requireCannedResponse(cannedResponseId, context);
@@ -86,7 +86,7 @@ public class ErpCsCannedResponseBizModel extends CrudBizModel<ErpCsCannedRespons
 
     @Override
     @BizQuery
-    public List<ErpCsCannedResponse> suggestForTicket(@Name("ticketId") Long ticketId,
+    public List<ErpCsCannedResponse> suggestForTicket(@Name("ticketId") String ticketId,
                                                        IServiceContext context) {
         if (!ErpCsConfigs.isCannedResponseEnabled()) {
             return Collections.emptyList();
@@ -95,7 +95,7 @@ public class ErpCsCannedResponseBizModel extends CrudBizModel<ErpCsCannedRespons
         if (ticket == null) {
             return Collections.emptyList();
         }
-        Long ticketTypeId = ticket.getTicketTypeId();
+        String ticketTypeId = ticket.getTicketTypeId();
         String priority = ticket.getPriority();
         int limit = ErpCsConfigs.getCannedResponseMacroCount();
 
@@ -106,7 +106,7 @@ public class ErpCsCannedResponseBizModel extends CrudBizModel<ErpCsCannedRespons
         List<ErpCsCannedResponse> all = findList(q, null, context);
 
         List<ErpCsCannedResponse> result = new ArrayList<>();
-        Set<Long> collected = new java.util.HashSet<>();
+        Set<String> collected = new java.util.HashSet<>();
 
         // 第一级：精确匹配 type + priority
         fillMatching(all, result, collected, ticketTypeId, priority, limit - result.size());
@@ -129,8 +129,8 @@ public class ErpCsCannedResponseBizModel extends CrudBizModel<ErpCsCannedRespons
 
     @Override
     @BizMutation
-    public String applyCannedResponse(@Name("cannedResponseId") Long cannedResponseId,
-                                      @Name("ticketId") Long ticketId,
+    public String applyCannedResponse(@Name("cannedResponseId") String cannedResponseId,
+                                      @Name("ticketId") String ticketId,
                                       @Optional @Name("customVariables") Map<String, String> customVariables,
                                       IServiceContext context) {
         return applyCannedResponseProcessor.applyCannedResponse(cannedResponseId, ticketId, customVariables, context);
@@ -138,7 +138,7 @@ public class ErpCsCannedResponseBizModel extends CrudBizModel<ErpCsCannedRespons
 
     // ===================== helpers =====================
 
-    private ErpCsCannedResponse requireCannedResponse(Long id, IServiceContext context) {
+    private ErpCsCannedResponse requireCannedResponse(String id, IServiceContext context) {
         if (id == null) {
             throw new NopException(ErpCsErrors.ERR_CANNED_RESPONSE_NOT_FOUND)
                     .param(ErpCsErrors.ARG_CANNED_RESPONSE_ID, id);
@@ -158,7 +158,7 @@ public class ErpCsCannedResponseBizModel extends CrudBizModel<ErpCsCannedRespons
         }
     }
 
-    private Map<String, String> resolveSystemVars(ErpCsCannedResponse resp, Long ticketId, IServiceContext context) {
+    private Map<String, String> resolveSystemVars(ErpCsCannedResponse resp, String ticketId, IServiceContext context) {
         Map<String, String> vars = new LinkedHashMap<>();
         LocalDate today = CoreMetrics.currentDate();
         LocalDateTime now = CoreMetrics.currentDateTime();
@@ -183,14 +183,14 @@ public class ErpCsCannedResponseBizModel extends CrudBizModel<ErpCsCannedRespons
         return vars;
     }
 
-    private ErpCsTicket loadTicket(Long ticketId, IServiceContext context) {
+    private ErpCsTicket loadTicket(String ticketId, IServiceContext context) {
         if (ticketId == null) {
             return null;
         }
-        return ticketBiz.get(String.valueOf(ticketId), false, context);
+        return ticketBiz.get(ticketId, false, context);
     }
 
-    private String resolveCustomerName(Long customerId, IServiceContext context) {
+    private String resolveCustomerName(String customerId, IServiceContext context) {
         if (customerId == null) {
             return null;
         }
@@ -213,8 +213,8 @@ public class ErpCsCannedResponseBizModel extends CrudBizModel<ErpCsCannedRespons
      * @param limit             本次最大补充条数
      */
     private static void fillMatching(List<ErpCsCannedResponse> all,
-                                     List<ErpCsCannedResponse> result, Set<Long> collected,
-                                     Long macroTicketTypeId, String macroPriority, int limit) {
+                                     List<ErpCsCannedResponse> result, Set<String> collected,
+                                     String macroTicketTypeId, String macroPriority, int limit) {
         if (limit <= 0) {
             return;
         }

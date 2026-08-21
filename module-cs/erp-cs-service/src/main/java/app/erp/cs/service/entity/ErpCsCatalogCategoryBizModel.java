@@ -73,8 +73,8 @@ public class ErpCsCatalogCategoryBizModel extends CrudBizModel<ErpCsCatalogCateg
         if (category == null || category.getParentId() == null) {
             return;
         }
-        Long selfId = category.getId();
-        Long parentId = category.getParentId();
+        String selfId = category.getId();
+        String parentId = category.getParentId();
 
         // 自环拒绝
         if (selfId != null && selfId.equals(parentId)) {
@@ -90,7 +90,7 @@ public class ErpCsCatalogCategoryBizModel extends CrudBizModel<ErpCsCatalogCateg
         }
 
         // 成环检测：沿 parentId 上溯，若命中 selfId 即成环
-        Set<Long> visited = new HashSet<>();
+        Set<String> visited = new HashSet<>();
         visited.add(parentId);
         if (selfId != null) {
             visited.add(selfId);
@@ -98,7 +98,7 @@ public class ErpCsCatalogCategoryBizModel extends CrudBizModel<ErpCsCatalogCateg
         ErpCsCatalogCategory cursor = parent;
         int depth = 1;
         while (cursor.getParentId() != null) {
-            Long ancestorId = cursor.getParentId();
+            String ancestorId = cursor.getParentId();
             if (selfId != null && selfId.equals(ancestorId)) {
                 throw new NopException(ErpCsErrors.ERR_CATALOG_CATEGORY_CYCLE)
                         .param(ErpCsErrors.ARG_CATEGORY_ID, selfId);
@@ -130,7 +130,7 @@ public class ErpCsCatalogCategoryBizModel extends CrudBizModel<ErpCsCatalogCateg
         }
     }
 
-    private boolean hasChildren(Long categoryId) {
+    private boolean hasChildren(String categoryId) {
         if (categoryId == null) {
             return false;
         }
@@ -141,7 +141,7 @@ public class ErpCsCatalogCategoryBizModel extends CrudBizModel<ErpCsCatalogCateg
         return !dao.findAllByQuery(q).isEmpty();
     }
 
-    private ErpCsCatalogCategory loadCategory(Long categoryId) {
+    private ErpCsCatalogCategory loadCategory(String categoryId) {
         if (categoryId == null) {
             return null;
         }

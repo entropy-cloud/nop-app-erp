@@ -19,10 +19,10 @@
             <cols>
 
                 <!--ID-->
-                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="id" mandatory="true" sortable="true"/>
 
                 <!--工单ID-->
-                <col id="ticketId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="ticketId" mandatory="true" sortable="true"/>
 
                 <!--操作类型-->
                 <col id="actionType" mandatory="true" sortable="true"/>

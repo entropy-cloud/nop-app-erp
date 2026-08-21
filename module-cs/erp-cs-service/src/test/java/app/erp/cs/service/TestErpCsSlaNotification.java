@@ -50,8 +50,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpCsSlaNotification extends JunitAutoTestCase {
 
-    static final Long CUSTOMER_ID = 5101L;
-    static final Long TICKET_TYPE_ID = 6101L;
+    static final String CUSTOMER_ID = "5101";
+    static final String TICKET_TYPE_ID = "6101";
     static final String RECIPIENT = "cs-sla-recipient";
     static final String NOTIFY_EVENT = ErpCsConstants.NOTIFY_EVENT_SLA_OVERDUE;
 
@@ -65,8 +65,8 @@ public class TestErpCsSlaNotification extends JunitAutoTestCase {
     @Test
     public void testScanOverdueTriggersNotify() {
         seedCustomer(CUSTOMER_ID, "ACME Corp");
-        seedSlaNotifyTemplate(7001L, RECIPIENT);
-        Long ticketId = seedTicket("TK-NOTIFY-OVERDUE", ErpCsConstants.TICKET_STATUS_ASSIGNED,
+        seedSlaNotifyTemplate("7001", RECIPIENT);
+        String ticketId = seedTicket("TK-NOTIFY-OVERDUE", ErpCsConstants.TICKET_STATUS_ASSIGNED,
                 CoreMetrics.currentDateTime().minusHours(2));
         int before = countNotifications(NOTIFY_EVENT);
 
@@ -83,7 +83,7 @@ public class TestErpCsSlaNotification extends JunitAutoTestCase {
     @Test
     public void testFindSlaWarningsTriggersNotify() {
         seedCustomer(CUSTOMER_ID, "ACME Corp");
-        seedSlaNotifyTemplate(7002L, RECIPIENT);
+        seedSlaNotifyTemplate("7002", RECIPIENT);
         // deadline 在 now 到 now+60min 之间 → 命中预警
         seedTicket("TK-NOTIFY-WARN", ErpCsConstants.TICKET_STATUS_ASSIGNED,
                 CoreMetrics.currentDateTime().plusMinutes(30));
@@ -104,7 +104,7 @@ public class TestErpCsSlaNotification extends JunitAutoTestCase {
                 ErpCsConstants.CONFIG_SLA_NOTIFY_ENABLED, "false");
         try {
             seedCustomer(CUSTOMER_ID, "ACME Corp");
-            seedSlaNotifyTemplate(7003L, RECIPIENT);
+            seedSlaNotifyTemplate("7003", RECIPIENT);
             seedTicket("TK-NOTIFY-DISABLED", ErpCsConstants.TICKET_STATUS_ASSIGNED,
                     CoreMetrics.currentDateTime().minusHours(2));
             int before = countNotifications(NOTIFY_EVENT);
@@ -137,7 +137,7 @@ public class TestErpCsSlaNotification extends JunitAutoTestCase {
         return list.isEmpty() ? null : list.get(0);
     }
 
-    private void seedCustomer(Long id, String name) {
+    private void seedCustomer(String id, String name) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMdPartner> dao = daoProvider.daoFor(ErpMdPartner.class);
             ErpMdPartner p = new ErpMdPartner();
@@ -150,7 +150,7 @@ public class TestErpCsSlaNotification extends JunitAutoTestCase {
         });
     }
 
-    private void seedSlaNotifyTemplate(Long id, String recipientUserId) {
+    private void seedSlaNotifyTemplate(String id, String recipientUserId) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpSysNotificationTemplate> dao = daoProvider.daoFor(ErpSysNotificationTemplate.class);
             ErpSysNotificationTemplate t = new ErpSysNotificationTemplate();
@@ -169,8 +169,8 @@ public class TestErpCsSlaNotification extends JunitAutoTestCase {
         });
     }
 
-    private Long seedTicket(String code, String status, LocalDateTime deadline) {
-        Long id = 7000L + (long) (Math.abs(code.hashCode()) % 1000);
+    private String seedTicket(String code, String status, LocalDateTime deadline) {
+        String id = String.valueOf(7000 + Math.abs(code.hashCode()) % 1000);
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpCsTicket> dao = daoProvider.daoFor(ErpCsTicket.class);
             ErpCsTicket t = new ErpCsTicket();

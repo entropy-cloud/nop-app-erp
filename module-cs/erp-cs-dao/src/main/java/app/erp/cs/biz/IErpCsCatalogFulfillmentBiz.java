@@ -29,8 +29,8 @@ public interface IErpCsCatalogFulfillmentBiz extends ICrudBiz<ErpCsCatalogFulfil
      * @return 物化的工单履行步骤执行行
      */
     @BizMutation
-    List<ErpCsTicketFulfillmentStep> executeFulfillmentSteps(@Name("catalogItemId") Long catalogItemId,
-                                                             @Name("ticketId") Long ticketId,
+    List<ErpCsTicketFulfillmentStep> executeFulfillmentSteps(@Name("catalogItemId") String catalogItemId,
+                                                             @Name("ticketId") String ticketId,
                                                              IServiceContext context);
 
     /**
@@ -39,7 +39,7 @@ public interface IErpCsCatalogFulfillmentBiz extends ICrudBiz<ErpCsCatalogFulfil
      * + 管理员通知人工介入。
      */
     @BizMutation
-    List<ErpCsTicketFulfillmentStep> retryFulfillment(@Name("ticketId") Long ticketId,
+    List<ErpCsTicketFulfillmentStep> retryFulfillment(@Name("ticketId") String ticketId,
                                                       IServiceContext context);
 
     /**
@@ -48,7 +48,7 @@ public interface IErpCsCatalogFulfillmentBiz extends ICrudBiz<ErpCsCatalogFulfil
      * （人工决定终局语义，阻断自动重试链）+ lastError=「审批驳回: {comment}」。
      */
     @BizMutation
-    ErpCsTicketFulfillmentStep approveFulfillmentStep(@Name("stepId") Long stepId,
+    ErpCsTicketFulfillmentStep approveFulfillmentStep(@Name("stepId") String stepId,
                                                       @Name("approved") boolean approved,
                                                       @Optional @Name("comment") String comment,
                                                       IServiceContext context);
@@ -58,6 +58,6 @@ public interface IErpCsCatalogFulfillmentBiz extends ICrudBiz<ErpCsCatalogFulfil
      * （sequence/actionType/status/retryCount/lastError/executedAt/executedBy）。
      */
     @BizQuery
-    List<Map<String, Object>> findFulfillmentProgress(@Name("ticketId") Long ticketId,
+    List<Map<String, Object>> findFulfillmentProgress(@Name("ticketId") String ticketId,
                                                       IServiceContext context);
 }

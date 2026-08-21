@@ -22,6 +22,8 @@ import java.util.Map;
  * 不受本测试覆写影响）。{@code lastSaveData} 捕获 data map 供全字段断言；
  * {@code failSave} 旗标驱动「quality 域服务不可用」异常路径（UC-CS-06 异常条款）。
  * 经 test resources 的 app-test-mock-qa.beans.xml 自动合并（app- 前缀约定），仅测试容器生效。
+ *
+ * <p>bridge-test-117: qa 未迁移（M2.3），mock 桩保持 qa Long 实体/IBiz 签名（cs 侧适配消费，退役 owner M2.3）。
  */
 public final class TestMockQaBizModels {
 

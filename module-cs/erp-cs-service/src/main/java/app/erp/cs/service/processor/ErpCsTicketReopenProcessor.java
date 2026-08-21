@@ -35,7 +35,7 @@ public class ErpCsTicketReopenProcessor {
     @Inject
     ErpCsTicketStateMachine stateMachine;
 
-    public ErpCsTicket reopen(Long ticketId, IServiceContext context) {
+    public ErpCsTicket reopen(String ticketId, IServiceContext context) {
         ErpCsTicket ticket = requireTicket(ticketId, context);
         String from = ticket.getStatus();
         try {
@@ -54,7 +54,7 @@ public class ErpCsTicketReopenProcessor {
         return ticket;
     }
 
-    private void cancelUnrespondedSurvey(Long ticketId, IServiceContext context) {
+    private void cancelUnrespondedSurvey(String ticketId, IServiceContext context) {
         // 查找该工单未响应的调查（respondedAt 空），删除以避免误发
         QueryBean q = new QueryBean();
         q.addFilter(eq("ticketId", ticketId));
@@ -67,7 +67,7 @@ public class ErpCsTicketReopenProcessor {
         }
     }
 
-    private ErpCsTicket requireTicket(Long ticketId, IServiceContext context) {
+    private ErpCsTicket requireTicket(String ticketId, IServiceContext context) {
         if (ticketId == null) {
             throw new NopException(ErpCsErrors.ERR_TICKET_NOT_FOUND).param(ErpCsErrors.ARG_TICKET_ID, ticketId);
         }

@@ -77,7 +77,7 @@ public class ErpCsEntitlementBizModel extends CrudBizModel<ErpCsEntitlement> imp
 
     @Override
     @BizMutation
-    public ErpCsEntitlement consumeEntitlement(@Name("entitlementId") Long entitlementId,
+    public ErpCsEntitlement consumeEntitlement(@Name("entitlementId") String entitlementId,
                                                 IServiceContext context) {
         ErpCsEntitlement entitlement = requireEntitlement(entitlementId, context);
         validateConsumable(entitlement);
@@ -102,7 +102,7 @@ public class ErpCsEntitlementBizModel extends CrudBizModel<ErpCsEntitlement> imp
 
     @Override
     @BizMutation
-    public ErpCsEntitlement releaseEntitlement(@Name("entitlementId") Long entitlementId,
+    public ErpCsEntitlement releaseEntitlement(@Name("entitlementId") String entitlementId,
                                                 IServiceContext context) {
         ErpCsEntitlement entitlement = requireEntitlement(entitlementId, context);
         if (!ErpCsConstants.SERVICE_TYPE_PAY_PER_TICKET.equals(entitlement.getServiceType())) {
@@ -144,7 +144,7 @@ public class ErpCsEntitlementBizModel extends CrudBizModel<ErpCsEntitlement> imp
 
     @Override
     @BizQuery
-    public List<Map<String, Object>> getEntitlementUsage(@Name("partnerId") Long partnerId,
+    public List<Map<String, Object>> getEntitlementUsage(@Name("partnerId") String partnerId,
                                                           IServiceContext context) {
         QueryBean q = new QueryBean();
         if (partnerId != null) {
@@ -181,7 +181,7 @@ public class ErpCsEntitlementBizModel extends CrudBizModel<ErpCsEntitlement> imp
     /**
      * 加载某客户全部 active 权益（供 EntitlementMatcher 注入）。protected 以允许测试覆盖。
      */
-    protected List<ErpCsEntitlement> loadActiveByPartner(Long partnerId) {
+    protected List<ErpCsEntitlement> loadActiveByPartner(String partnerId) {
         if (partnerId == null) {
             return new ArrayList<>();
         }
@@ -197,12 +197,12 @@ public class ErpCsEntitlementBizModel extends CrudBizModel<ErpCsEntitlement> imp
      * config-gated 由调用方（ErpCsTicketBizModel）控制是否调用本方法。
      */
     @Override
-    public ErpCsEntitlement matchForCustomer(Long customerIdAsPartnerId) {
+    public ErpCsEntitlement matchForCustomer(String customerIdAsPartnerId) {
         LocalDate now = CoreMetrics.currentDateTime().toLocalDate();
         return EntitlementMatcher.match(customerIdAsPartnerId, now, this::loadActiveByPartner);
     }
 
-    private ErpCsEntitlement requireEntitlement(Long entitlementId, IServiceContext context) {
+    private ErpCsEntitlement requireEntitlement(String entitlementId, IServiceContext context) {
         if (entitlementId == null) {
             throw new NopException(ErpCsErrors.ERR_ENTITLEMENT_NOT_FOUND)
                     .param(ErpCsErrors.ARG_ENTITLEMENT_ID, entitlementId);
@@ -221,7 +221,7 @@ public class ErpCsEntitlementBizModel extends CrudBizModel<ErpCsEntitlement> imp
         }
     }
 
-    private String resolvePartnerName(Long partnerId, IServiceContext context) {
+    private String resolvePartnerName(String partnerId, IServiceContext context) {
         if (partnerId == null || mdPartnerBiz == null) {
             return null;
         }

@@ -20,20 +20,20 @@
 
     <props>
         <prop name="id" displayName="ID" propId="1" i18n-en:displayName="ID" tagSet="seq-default" mandatory="true"
-              queryable="true" sortable="true" insertable="true" updatable="false" graphql:type="String">
-            <schema type="java.lang.Long"/>
+              queryable="true" sortable="true" insertable="true" updatable="false">
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="orgId" displayName="业务组织" propId="2" i18n-en:displayName="Organization" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="org">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="ticketId" displayName="关联工单" propId="3" i18n-en:displayName="Ticket" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="ticket">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="agentId" displayName="处理人" propId="4" i18n-en:displayName="Agent" mandatory="true" queryable="true"
               sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="startTime" displayName="开始时间" propId="5" i18n-en:displayName="Start Time" tagSet="clock"
               queryable="true" sortable="true" insertable="true" updatable="true">
@@ -77,11 +77,11 @@
         </prop>
         <prop name="projectId" displayName="关联项目" propId="15" i18n-en:displayName="Project" queryable="true"
               sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="taskId" displayName="关联任务" propId="16" i18n-en:displayName="Task" queryable="true" sortable="true"
               insertable="true" updatable="true">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="source" displayName="来源" propId="17" i18n-en:displayName="Source" queryable="true" sortable="true"
               insertable="true" updatable="true">

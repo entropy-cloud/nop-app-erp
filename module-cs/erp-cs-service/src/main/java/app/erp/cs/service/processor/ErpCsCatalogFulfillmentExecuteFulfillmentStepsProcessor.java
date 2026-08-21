@@ -99,7 +99,7 @@ public class ErpCsCatalogFulfillmentExecuteFulfillmentStepsProcessor {
 
     // ---------- 主入口：物化 + 链推进 ----------
 
-    public List<ErpCsTicketFulfillmentStep> executeFulfillmentSteps(Long catalogItemId, Long ticketId,
+    public List<ErpCsTicketFulfillmentStep> executeFulfillmentSteps(String catalogItemId, String ticketId,
                                                                     IServiceContext context) {
         if (catalogItemId == null || ticketId == null) {
             return new ArrayList<>();
@@ -127,7 +127,7 @@ public class ErpCsCatalogFulfillmentExecuteFulfillmentStepsProcessor {
      * （actionType/actionConfig/sequence/catalogItemId）。重试路径的 actionConfig 刷新见 {@link #retryFulfillment}。
      */
     protected List<ErpCsTicketFulfillmentStep> materializeSteps(List<ErpCsCatalogFulfillment> templates,
-                                                                Long ticketId, IServiceContext context) {
+                                                                String ticketId, IServiceContext context) {
         List<ErpCsTicketFulfillmentStep> steps = new ArrayList<>();
         for (ErpCsCatalogFulfillment template : templates) {
             steps.add(materializeStep(template, ticketId, context));
@@ -136,7 +136,7 @@ public class ErpCsCatalogFulfillmentExecuteFulfillmentStepsProcessor {
         return steps;
     }
 
-    private ErpCsTicketFulfillmentStep materializeStep(ErpCsCatalogFulfillment template, Long ticketId,
+    private ErpCsTicketFulfillmentStep materializeStep(ErpCsCatalogFulfillment template, String ticketId,
                                                        IServiceContext context) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("ticketId", ticketId));
@@ -202,7 +202,7 @@ public class ErpCsCatalogFulfillmentExecuteFulfillmentStepsProcessor {
     }
 
     /** 链恢复推进（审批通过/超时自动审批/重试成功后）：重载工单与步骤行续跑。 */
-    public void continueChain(Long ticketId, IServiceContext context) {
+    public void continueChain(String ticketId, IServiceContext context) {
         ErpCsTicket ticket = ticketBiz.get(String.valueOf(ticketId), true, context);
         if (ticket == null) {
             return;
@@ -403,7 +403,7 @@ public class ErpCsCatalogFulfillmentExecuteFulfillmentStepsProcessor {
      * cs-local 轻量审批 mutation（D3）：IN_PROGRESS 守卫；approved=true → DONE + 审计 + 链恢复推进；
      * approved=false → FAILED + retryCount 置 max（人工决定终局语义：阻断自动重试链）+ lastError=「审批驳回: {comment}」。
      */
-    public ErpCsTicketFulfillmentStep approveFulfillmentStep(Long stepId, boolean approved, String comment,
+    public ErpCsTicketFulfillmentStep approveFulfillmentStep(String stepId, boolean approved, String comment,
                                                              IServiceContext context) {
         ErpCsTicketFulfillmentStep step = requireStep(stepId, context);
         if (!ErpCsConstants.FULFILLMENT_STEP_IN_PROGRESS.equals(step.getStatus())) {
@@ -435,7 +435,7 @@ public class ErpCsCatalogFulfillmentExecuteFulfillmentStepsProcessor {
      * actionConfig（修正配置即生效；快照列保留最后执行配置作审计）再重执行；retryCount &gt;= max 拒绝
      * + notify 管理员人工介入。重试成功 → 链恢复推进。
      */
-    public List<ErpCsTicketFulfillmentStep> retryFulfillment(Long ticketId, IServiceContext context) {
+    public List<ErpCsTicketFulfillmentStep> retryFulfillment(String ticketId, IServiceContext context) {
         ErpCsTicket ticket = requireTicket(ticketId, context);
         List<ErpCsTicketFulfillmentStep> steps = loadStepsByTicket(ticketId, context);
         int retryMax = ErpCsConfigs.getFulfillmentRetryMax();
@@ -465,7 +465,7 @@ public class ErpCsCatalogFulfillmentExecuteFulfillmentStepsProcessor {
      *
      * @return 本工单实际重试的步骤数
      */
-    public int retryForJob(Long ticketId, IServiceContext context) {
+    public int retryForJob(String ticketId, IServiceContext context) {
         ErpCsTicket ticket = ticketBiz.get(String.valueOf(ticketId), true, context);
         if (ticket == null) {
             return 0;
@@ -506,7 +506,7 @@ public class ErpCsCatalogFulfillmentExecuteFulfillmentStepsProcessor {
         }
     }
 
-    private ErpCsTicket requireTicket(Long ticketId, IServiceContext context) {
+    private ErpCsTicket requireTicket(String ticketId, IServiceContext context) {
         ErpCsTicket ticket = ticketBiz.get(String.valueOf(ticketId), true, context);
         if (ticket == null) {
             throw new NopException(ErpCsErrors.ERR_TICKET_NOT_FOUND)
@@ -552,13 +552,13 @@ public class ErpCsCatalogFulfillmentExecuteFulfillmentStepsProcessor {
     }
 
     /** 重试候选工单（job 扫描入口）：存在 FAILED 且 retryCount &lt; max 步骤的工单 id（去重 + limit）。 */
-    public List<Long> findRetryCandidateTicketIds(IServiceContext context) {
+    public List<String> findRetryCandidateTicketIds(IServiceContext context) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("status", ErpCsConstants.FULFILLMENT_STEP_FAILED));
         q.setLimit(SCAN_LIMIT);
         List<ErpCsTicketFulfillmentStep> failed = stepBiz.findList(q, null, context);
         int retryMax = ErpCsConfigs.getFulfillmentRetryMax();
-        Set<Long> ticketIds = new LinkedHashSet<>();
+        Set<String> ticketIds = new LinkedHashSet<>();
         for (ErpCsTicketFulfillmentStep step : failed) {
             if (step.getRetryCount() == null || step.getRetryCount() < retryMax) {
                 ticketIds.add(step.getTicketId());
@@ -738,7 +738,7 @@ public class ErpCsCatalogFulfillmentExecuteFulfillmentStepsProcessor {
         }
     }
 
-    private ErpCsTicketFulfillmentStep requireStep(Long stepId, IServiceContext context) {
+    private ErpCsTicketFulfillmentStep requireStep(String stepId, IServiceContext context) {
         if (stepId == null) {
             throw new NopException(ErpCsErrors.ERR_CS_FULFILLMENT_STEP_NOT_FOUND)
                     .param(ErpCsErrors.ARG_STEP_ID, stepId);
@@ -843,14 +843,14 @@ public class ErpCsCatalogFulfillmentExecuteFulfillmentStepsProcessor {
         return counts;
     }
 
-    private List<ErpCsTicketFulfillmentStep> loadStepsByTicket(Long ticketId, IServiceContext context) {
+    private List<ErpCsTicketFulfillmentStep> loadStepsByTicket(String ticketId, IServiceContext context) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("ticketId", ticketId));
         q.addOrderField("sequence", true);
         List<ErpCsTicketFulfillmentStep> steps = stepBiz.findList(q, null, context);
         steps.sort(Comparator.comparingInt(this::sequenceOfStep));
         return steps;
-    }    private List<ErpCsCatalogFulfillment> loadTemplatesByCatalogItem(Long catalogItemId) {
+    }    private List<ErpCsCatalogFulfillment> loadTemplatesByCatalogItem(String catalogItemId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("catalogItemId", catalogItemId));
         // 模板行加载走 daoFor：本 Processor 属 biz_ErpCsCatalogFulfillment 调用链，注入自有 IBiz 会成环

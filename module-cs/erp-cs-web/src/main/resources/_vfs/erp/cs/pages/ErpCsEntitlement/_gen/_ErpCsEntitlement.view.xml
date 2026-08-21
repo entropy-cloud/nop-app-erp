@@ -19,22 +19,22 @@
             <cols>
 
                 <!--ID-->
-                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="id" mandatory="true" sortable="true"/>
 
                 <!--编码-->
                 <col id="code" mandatory="true" sortable="true"/>
 
                 <!--业务组织-->
-                <col id="orgId" ui:number="true" sortable="true"/>
+                <col id="orgId" sortable="true"/>
 
                 <!--客户-->
-                <col id="partnerId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="partnerId" mandatory="true" sortable="true"/>
 
                 <!--支持合同-->
-                <col id="contractId" ui:number="true" sortable="true"/>
+                <col id="contractId" sortable="true"/>
 
                 <!--SLA策略-->
-                <col id="slaPolicyId" ui:number="true" sortable="true"/>
+                <col id="slaPolicyId" sortable="true"/>
 
                 <!--服务类型-->
                 <col id="serviceType" mandatory="true" sortable="true"/>

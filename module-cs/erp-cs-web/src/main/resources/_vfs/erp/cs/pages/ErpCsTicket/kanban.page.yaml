@@ -41,7 +41,7 @@ body:
           method: post
           dataType: raw
           data:
-            query: "query(${'$'}s:String,${'$'}c:Long,${'$'}lim:Int){ ErpCsTicket__findPage(filter_status:${'$'}s,filter_customerId:${'$'}c,limit:${'$'}lim){ items{ id code subject priority status assignedToId deadlineDateTime isSlaCompleted customerId } total } }"
+            query: "query(${'$'}s:String,${'$'}c:String,${'$'}lim:Int){ ErpCsTicket__findPage(filter_status:${'$'}s,filter_customerId:${'$'}c,limit:${'$'}lim){ items{ id code subject priority status assignedToId deadlineDateTime isSlaCompleted customerId } total } }"
             variables:
               s: "NEW"
               c: "${customerId || null}"
@@ -83,7 +83,7 @@ body:
                       url: /graphql
                       dataType: raw
                       data:
-                        query: "mutation(${'$'}id:Long,${'$'}a:String){ ErpCsTicket__assign(ticketId:${'$'}id,assignedToId:${'$'}a){ id status } }"
+                        query: "mutation(${'$'}id:String,${'$'}a:String){ ErpCsTicket__assign(ticketId:${'$'}id,assignedToId:${'$'}a){ id status } }"
                         variables:
                           id: "${id}"
                           a: "${assignedToId}"
@@ -104,7 +104,7 @@ body:
         api:
           <<: *ticketApiTpl
           data:
-            query: "query(${'$'}s:String,${'$'}c:Long,${'$'}lim:Int){ ErpCsTicket__findPage(filter_status:${'$'}s,filter_customerId:${'$'}c,limit:${'$'}lim){ items{ id code subject priority status assignedToId deadlineDateTime isSlaCompleted customerId } total } }"
+            query: "query(${'$'}s:String,${'$'}c:String,${'$'}lim:Int){ ErpCsTicket__findPage(filter_status:${'$'}s,filter_customerId:${'$'}c,limit:${'$'}lim){ items{ id code subject priority status assignedToId deadlineDateTime isSlaCompleted customerId } total } }"
             variables:
               s: "ASSIGNED"
               c: "${customerId || null}"
@@ -137,7 +137,7 @@ body:
                   url: /graphql
                   dataType: raw
                   data:
-                    query: "mutation(${'$'}id:Long){ ErpCsTicket__start(ticketId:${'$'}id){ id status } }"
+                    query: "mutation(${'$'}id:String){ ErpCsTicket__start(ticketId:${'$'}id){ id status } }"
                     variables:
                       id: "${id}"
                 reload: colAssigned,colInProgress
@@ -152,7 +152,7 @@ body:
         api:
           <<: *ticketApiTpl
           data:
-            query: "query(${'$'}s:String,${'$'}c:Long,${'$'}lim:Int){ ErpCsTicket__findPage(filter_status:${'$'}s,filter_customerId:${'$'}c,limit:${'$'}lim){ items{ id code subject priority status assignedToId deadlineDateTime isSlaCompleted customerId } total } }"
+            query: "query(${'$'}s:String,${'$'}c:String,${'$'}lim:Int){ ErpCsTicket__findPage(filter_status:${'$'}s,filter_customerId:${'$'}c,limit:${'$'}lim){ items{ id code subject priority status assignedToId deadlineDateTime isSlaCompleted customerId } total } }"
             variables:
               s: "IN_PROGRESS"
               c: "${customerId || null}"
@@ -189,7 +189,7 @@ body:
                       url: /graphql
                       dataType: raw
                       data:
-                        query: "mutation(${'$'}id:Long,${'$'}r:String){ ErpCsTicket__resolve(ticketId:${'$'}id,resolution:${'$'}r){ id status } }"
+                        query: "mutation(${'$'}id:String,${'$'}r:String){ ErpCsTicket__resolve(ticketId:${'$'}id,resolution:${'$'}r){ id status } }"
                         variables:
                           id: "${id}"
                           r: "${resolution}"
@@ -210,7 +210,7 @@ body:
         api:
           <<: *ticketApiTpl
           data:
-            query: "query(${'$'}s:String,${'$'}c:Long,${'$'}lim:Int){ ErpCsTicket__findPage(filter_status:${'$'}s,filter_customerId:${'$'}c,limit:${'$'}lim){ items{ id code subject priority status assignedToId deadlineDateTime isSlaCompleted customerId } total } }"
+            query: "query(${'$'}s:String,${'$'}c:String,${'$'}lim:Int){ ErpCsTicket__findPage(filter_status:${'$'}s,filter_customerId:${'$'}c,limit:${'$'}lim){ items{ id code subject priority status assignedToId deadlineDateTime isSlaCompleted customerId } total } }"
             variables:
               s: "RESOLVED"
               c: "${customerId || null}"
@@ -239,7 +239,7 @@ body:
                   url: /graphql
                   dataType: raw
                   data:
-                    query: "mutation(${'$'}id:Long){ ErpCsTicket__close(ticketId:${'$'}id){ id status } }"
+                    query: "mutation(${'$'}id:String){ ErpCsTicket__close(ticketId:${'$'}id){ id status } }"
                     variables:
                       id: "${id}"
                 reload: colResolved,colClosed
@@ -253,7 +253,7 @@ body:
                   url: /graphql
                   dataType: raw
                   data:
-                    query: "mutation(${'$'}id:Long){ ErpCsTicket__reopen(ticketId:${'$'}id){ id status } }"
+                    query: "mutation(${'$'}id:String){ ErpCsTicket__reopen(ticketId:${'$'}id){ id status } }"
                     variables:
                       id: "${id}"
                 reload: colResolved,colInProgress
@@ -268,7 +268,7 @@ body:
         api:
           <<: *ticketApiTpl
           data:
-            query: "query(${'$'}s:String,${'$'}c:Long,${'$'}lim:Int){ ErpCsTicket__findPage(filter_status:${'$'}s,filter_customerId:${'$'}c,limit:${'$'}lim){ items{ id code subject priority status assignedToId deadlineDateTime isSlaCompleted customerId } total } }"
+            query: "query(${'$'}s:String,${'$'}c:String,${'$'}lim:Int){ ErpCsTicket__findPage(filter_status:${'$'}s,filter_customerId:${'$'}c,limit:${'$'}lim){ items{ id code subject priority status assignedToId deadlineDateTime isSlaCompleted customerId } total } }"
             variables:
               s: "CLOSED"
               c: "${customerId || null}"
@@ -297,7 +297,7 @@ body:
         api:
           <<: *ticketApiTpl
           data:
-            query: "query(${'$'}s:String,${'$'}c:Long,${'$'}lim:Int){ ErpCsTicket__findPage(filter_status:${'$'}s,filter_customerId:${'$'}c,limit:${'$'}lim){ items{ id code subject priority status assignedToId deadlineDateTime isSlaCompleted customerId } total } }"
+            query: "query(${'$'}s:String,${'$'}c:String,${'$'}lim:Int){ ErpCsTicket__findPage(filter_status:${'$'}s,filter_customerId:${'$'}c,limit:${'$'}lim){ items{ id code subject priority status assignedToId deadlineDateTime isSlaCompleted customerId } total } }"
             variables:
               s: "CANCELLED"
               c: "${customerId || null}"

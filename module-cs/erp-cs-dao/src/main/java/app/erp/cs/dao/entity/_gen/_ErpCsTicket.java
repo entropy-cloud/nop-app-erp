@@ -303,13 +303,13 @@ public class _ErpCsTicket extends DynamicOrmEntity{
 
     
     /* ID: ID */
-    private java.lang.Long _id;
+    private java.lang.String _id;
     
     /* 单号: CODE */
     private java.lang.String _code;
     
     /* 业务组织: ORG_ID */
-    private java.lang.Long _orgId;
+    private java.lang.String _orgId;
     
     /* 工单主题: SUBJECT */
     private java.lang.String _subject;
@@ -318,13 +318,13 @@ public class _ErpCsTicket extends DynamicOrmEntity{
     private java.lang.String _description;
     
     /* 客户: CUSTOMER_ID */
-    private java.lang.Long _customerId;
+    private java.lang.String _customerId;
     
     /* 联系人: CONTACT_ID */
-    private java.lang.Long _contactId;
+    private java.lang.String _contactId;
     
     /* 工单类型: TICKET_TYPE_ID */
-    private java.lang.Long _ticketTypeId;
+    private java.lang.String _ticketTypeId;
     
     /* 优先级: PRIORITY */
     private java.lang.String _priority;
@@ -336,7 +336,7 @@ public class _ErpCsTicket extends DynamicOrmEntity{
     private java.lang.String _assignedToId;
     
     /* SLA 策略: SLA_POLICY_ID */
-    private java.lang.Long _slaPolicyId;
+    private java.lang.String _slaPolicyId;
     
     /* SLA 截止时间: DEADLINE_DATE_TIME */
     private java.sql.Timestamp _deadlineDateTime;
@@ -369,7 +369,7 @@ public class _ErpCsTicket extends DynamicOrmEntity{
     private java.lang.String _remark;
     
     /* 服务目录项: CATALOG_ITEM_ID */
-    private java.lang.Long _catalogItemId;
+    private java.lang.String _catalogItemId;
     
     /* 逻辑删除版本: DEL_VERSION */
     private java.lang.Long _delVersion;
@@ -598,9 +598,9 @@ public class _ErpCsTicket extends DynamicOrmEntity{
         switch(propId){
         
             case PROP_ID_id:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_id));
                }
                setId(typedValue);
@@ -618,9 +618,9 @@ public class _ErpCsTicket extends DynamicOrmEntity{
             }
         
             case PROP_ID_orgId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_orgId));
                }
                setOrgId(typedValue);
@@ -648,9 +648,9 @@ public class _ErpCsTicket extends DynamicOrmEntity{
             }
         
             case PROP_ID_customerId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_customerId));
                }
                setCustomerId(typedValue);
@@ -658,9 +658,9 @@ public class _ErpCsTicket extends DynamicOrmEntity{
             }
         
             case PROP_ID_contactId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_contactId));
                }
                setContactId(typedValue);
@@ -668,9 +668,9 @@ public class _ErpCsTicket extends DynamicOrmEntity{
             }
         
             case PROP_ID_ticketTypeId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_ticketTypeId));
                }
                setTicketTypeId(typedValue);
@@ -708,9 +708,9 @@ public class _ErpCsTicket extends DynamicOrmEntity{
             }
         
             case PROP_ID_slaPolicyId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_slaPolicyId));
                }
                setSlaPolicyId(typedValue);
@@ -818,9 +818,9 @@ public class _ErpCsTicket extends DynamicOrmEntity{
             }
         
             case PROP_ID_catalogItemId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_catalogItemId));
                }
                setCatalogItemId(typedValue);
@@ -958,7 +958,7 @@ public class _ErpCsTicket extends DynamicOrmEntity{
         
             case PROP_ID_id:{
                onInitProp(propId);
-               this._id = (java.lang.Long)value;
+               this._id = (java.lang.String)value;
                orm_id(); // 如果是设置主键字段，则触发watcher
                break;
             }
@@ -972,7 +972,7 @@ public class _ErpCsTicket extends DynamicOrmEntity{
         
             case PROP_ID_orgId:{
                onInitProp(propId);
-               this._orgId = (java.lang.Long)value;
+               this._orgId = (java.lang.String)value;
                
                break;
             }
@@ -993,21 +993,21 @@ public class _ErpCsTicket extends DynamicOrmEntity{
         
             case PROP_ID_customerId:{
                onInitProp(propId);
-               this._customerId = (java.lang.Long)value;
+               this._customerId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_contactId:{
                onInitProp(propId);
-               this._contactId = (java.lang.Long)value;
+               this._contactId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_ticketTypeId:{
                onInitProp(propId);
-               this._ticketTypeId = (java.lang.Long)value;
+               this._ticketTypeId = (java.lang.String)value;
                
                break;
             }
@@ -1035,7 +1035,7 @@ public class _ErpCsTicket extends DynamicOrmEntity{
         
             case PROP_ID_slaPolicyId:{
                onInitProp(propId);
-               this._slaPolicyId = (java.lang.Long)value;
+               this._slaPolicyId = (java.lang.String)value;
                
                break;
             }
@@ -1112,7 +1112,7 @@ public class _ErpCsTicket extends DynamicOrmEntity{
         
             case PROP_ID_catalogItemId:{
                onInitProp(propId);
-               this._catalogItemId = (java.lang.Long)value;
+               this._catalogItemId = (java.lang.String)value;
                
                break;
             }
@@ -1210,7 +1210,7 @@ public class _ErpCsTicket extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final java.lang.Long getId(){
+    public final java.lang.String getId(){
          onPropGet(PROP_ID_id);
          return _id;
     }
@@ -1218,7 +1218,7 @@ public class _ErpCsTicket extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final void setId(java.lang.Long value){
+    public final void setId(java.lang.String value){
         if(onPropSet(PROP_ID_id,value)){
             this._id = value;
             internalClearRefs(PROP_ID_id);
@@ -1248,7 +1248,7 @@ public class _ErpCsTicket extends DynamicOrmEntity{
     /**
      * 业务组织: ORG_ID
      */
-    public final java.lang.Long getOrgId(){
+    public final java.lang.String getOrgId(){
          onPropGet(PROP_ID_orgId);
          return _orgId;
     }
@@ -1256,7 +1256,7 @@ public class _ErpCsTicket extends DynamicOrmEntity{
     /**
      * 业务组织: ORG_ID
      */
-    public final void setOrgId(java.lang.Long value){
+    public final void setOrgId(java.lang.String value){
         if(onPropSet(PROP_ID_orgId,value)){
             this._orgId = value;
             internalClearRefs(PROP_ID_orgId);
@@ -1305,7 +1305,7 @@ public class _ErpCsTicket extends DynamicOrmEntity{
     /**
      * 客户: CUSTOMER_ID
      */
-    public final java.lang.Long getCustomerId(){
+    public final java.lang.String getCustomerId(){
          onPropGet(PROP_ID_customerId);
          return _customerId;
     }
@@ -1313,7 +1313,7 @@ public class _ErpCsTicket extends DynamicOrmEntity{
     /**
      * 客户: CUSTOMER_ID
      */
-    public final void setCustomerId(java.lang.Long value){
+    public final void setCustomerId(java.lang.String value){
         if(onPropSet(PROP_ID_customerId,value)){
             this._customerId = value;
             internalClearRefs(PROP_ID_customerId);
@@ -1324,7 +1324,7 @@ public class _ErpCsTicket extends DynamicOrmEntity{
     /**
      * 联系人: CONTACT_ID
      */
-    public final java.lang.Long getContactId(){
+    public final java.lang.String getContactId(){
          onPropGet(PROP_ID_contactId);
          return _contactId;
     }
@@ -1332,7 +1332,7 @@ public class _ErpCsTicket extends DynamicOrmEntity{
     /**
      * 联系人: CONTACT_ID
      */
-    public final void setContactId(java.lang.Long value){
+    public final void setContactId(java.lang.String value){
         if(onPropSet(PROP_ID_contactId,value)){
             this._contactId = value;
             internalClearRefs(PROP_ID_contactId);
@@ -1343,7 +1343,7 @@ public class _ErpCsTicket extends DynamicOrmEntity{
     /**
      * 工单类型: TICKET_TYPE_ID
      */
-    public final java.lang.Long getTicketTypeId(){
+    public final java.lang.String getTicketTypeId(){
          onPropGet(PROP_ID_ticketTypeId);
          return _ticketTypeId;
     }
@@ -1351,7 +1351,7 @@ public class _ErpCsTicket extends DynamicOrmEntity{
     /**
      * 工单类型: TICKET_TYPE_ID
      */
-    public final void setTicketTypeId(java.lang.Long value){
+    public final void setTicketTypeId(java.lang.String value){
         if(onPropSet(PROP_ID_ticketTypeId,value)){
             this._ticketTypeId = value;
             internalClearRefs(PROP_ID_ticketTypeId);
@@ -1419,7 +1419,7 @@ public class _ErpCsTicket extends DynamicOrmEntity{
     /**
      * SLA 策略: SLA_POLICY_ID
      */
-    public final java.lang.Long getSlaPolicyId(){
+    public final java.lang.String getSlaPolicyId(){
          onPropGet(PROP_ID_slaPolicyId);
          return _slaPolicyId;
     }
@@ -1427,7 +1427,7 @@ public class _ErpCsTicket extends DynamicOrmEntity{
     /**
      * SLA 策略: SLA_POLICY_ID
      */
-    public final void setSlaPolicyId(java.lang.Long value){
+    public final void setSlaPolicyId(java.lang.String value){
         if(onPropSet(PROP_ID_slaPolicyId,value)){
             this._slaPolicyId = value;
             internalClearRefs(PROP_ID_slaPolicyId);
@@ -1628,7 +1628,7 @@ public class _ErpCsTicket extends DynamicOrmEntity{
     /**
      * 服务目录项: CATALOG_ITEM_ID
      */
-    public final java.lang.Long getCatalogItemId(){
+    public final java.lang.String getCatalogItemId(){
          onPropGet(PROP_ID_catalogItemId);
          return _catalogItemId;
     }
@@ -1636,7 +1636,7 @@ public class _ErpCsTicket extends DynamicOrmEntity{
     /**
      * 服务目录项: CATALOG_ITEM_ID
      */
-    public final void setCatalogItemId(java.lang.Long value){
+    public final void setCatalogItemId(java.lang.String value){
         if(onPropSet(PROP_ID_catalogItemId,value)){
             this._catalogItemId = value;
             internalClearRefs(PROP_ID_catalogItemId);

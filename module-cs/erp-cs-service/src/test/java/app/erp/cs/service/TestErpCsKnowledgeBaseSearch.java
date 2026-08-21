@@ -44,8 +44,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpCsKnowledgeBaseSearch extends JunitAutoTestCase {
 
-    static final Long TICKET_TYPE_ID = 6001L;
-    static final Long CUSTOMER_ID = 5001L;
+    static final String TICKET_TYPE_ID = "6001";
+    static final String CUSTOMER_ID = "5001";
 
     @Inject
     IDaoProvider daoProvider;
@@ -79,9 +79,9 @@ public class TestErpCsKnowledgeBaseSearch extends JunitAutoTestCase {
 
     @Test
     public void testSearchKnowledgeCategoryFilter() {
-        seedKbArticle("KB-CAT-1", "退货流程指南", "客户退货操作步骤", true, 1001L);
-        seedKbArticle("KB-CAT-2", "退货物流说明", "退货物流费用说明", true, 1002L);
-        seedKbArticle("KB-CAT-3", "退货政策摘要", "7天无理由退货政策", true, 1001L);
+        seedKbArticle("KB-CAT-1", "退货流程指南", "客户退货操作步骤", true, "1001");
+        seedKbArticle("KB-CAT-2", "退货物流说明", "退货物流费用说明", true, "1002");
+        seedKbArticle("KB-CAT-3", "退货政策摘要", "7天无理由退货政策", true, "1001");
 
         ApiResponse<?> resp = rpc(query, "ErpCsKnowledgeBase__searchKnowledge",
                 args("keyword", "退货", "categoryId", 1001L));
@@ -90,7 +90,7 @@ public class TestErpCsKnowledgeBaseSearch extends JunitAutoTestCase {
         List<Map<String, Object>> data = (List<Map<String, Object>>) resp.getData();
         assertEquals(2, data.size(), "categoryId=1001 应命中 2 篇");
         for (Map<String, Object> article : data) {
-            assertEquals(1001L, toLong(article.get("categoryId")));
+            assertEquals("1001", String.valueOf(article.get("categoryId")));
         }
     }
 
@@ -181,8 +181,8 @@ public class TestErpCsKnowledgeBaseSearch extends JunitAutoTestCase {
 
     @Test
     public void testAdoptKnowledgeRecordsTicketAction() {
-        Long ticketId = seedTicket("TK-ADOPT", ErpCsConstants.TICKET_STATUS_NEW);
-        Long kbId = seedKbArticle("KB-ADOPT-1", "采纳测试文章", "采纳测试内容", true, null);
+        String ticketId = seedTicket("TK-ADOPT", ErpCsConstants.TICKET_STATUS_NEW);
+        String kbId = seedKbArticle("KB-ADOPT-1", "采纳测试文章", "采纳测试内容", true, null);
 
         int actionsBefore = countActions(ticketId);
 
@@ -206,8 +206,8 @@ public class TestErpCsKnowledgeBaseSearch extends JunitAutoTestCase {
 
     // ---------- helpers ----------
 
-    private Long seedKbArticle(String code, String title, String content, boolean published, Long categoryId) {
-        Long id = 9000L + (long) (Math.abs(code.hashCode()) % 1000);
+    private String seedKbArticle(String code, String title, String content, boolean published, String categoryId) {
+        String id = String.valueOf(9000 + Math.abs(code.hashCode()) % 1000);
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpCsKnowledgeBase> dao = daoProvider.daoFor(ErpCsKnowledgeBase.class);
             ErpCsKnowledgeBase kb = new ErpCsKnowledgeBase();
@@ -224,8 +224,8 @@ public class TestErpCsKnowledgeBaseSearch extends JunitAutoTestCase {
         return id;
     }
 
-    private Long seedTicket(String code, String status) {
-        Long id = 7000L + (long) (Math.abs(code.hashCode()) % 1000);
+    private String seedTicket(String code, String status) {
+        String id = String.valueOf(7000 + Math.abs(code.hashCode()) % 1000);
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpCsTicket> dao = daoProvider.daoFor(ErpCsTicket.class);
             ErpCsTicket t = new ErpCsTicket();
@@ -246,7 +246,7 @@ public class TestErpCsKnowledgeBaseSearch extends JunitAutoTestCase {
         return id;
     }
 
-    private int countActions(Long ticketId) {
+    private int countActions(String ticketId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("ticketId", ticketId));
         return daoProvider.daoFor(ErpCsTicketAction.class).findAllByQuery(q).size();
@@ -258,13 +258,6 @@ public class TestErpCsKnowledgeBaseSearch extends JunitAutoTestCase {
             m.put((String) kv[i], kv[i + 1]);
         }
         return m;
-    }
-
-    private static Long toLong(Object v) {
-        if (v == null) return null;
-        if (v instanceof Long) return (Long) v;
-        if (v instanceof Number) return ((Number) v).longValue();
-        return Long.valueOf(String.valueOf(v));
     }
 
     private ApiResponse<?> rpc(io.nop.graphql.core.ast.GraphQLOperationType op, String action,

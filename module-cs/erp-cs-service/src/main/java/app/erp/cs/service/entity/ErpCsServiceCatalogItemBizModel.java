@@ -37,7 +37,7 @@ public class ErpCsServiceCatalogItemBizModel extends CrudBizModel<ErpCsServiceCa
 
     @Override
     @BizMutation
-    public ErpCsTicket createFromCatalog(@Name("catalogItemId") Long catalogItemId,
+    public ErpCsTicket createFromCatalog(@Name("catalogItemId") String catalogItemId,
                                          @Optional @Name("formData") Map<String, Object> formData,
                                          IServiceContext context) {
         return createFromCatalogProcessor.createFromCatalog(catalogItemId, formData, context);

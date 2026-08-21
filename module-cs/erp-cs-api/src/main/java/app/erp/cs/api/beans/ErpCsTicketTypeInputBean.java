@@ -12,16 +12,16 @@
     public class ErpCsTicketTypeInputBean extends CrudInputBase {
 
     
-        private Long _id;
+        private String _id;
 
     
         @PropMeta(propId=1)
     
-        public Long getId(){
+        public String getId(){
             return _id;
         }
 
-        public void setId(Long value){
+        public void setId(String value){
             this._id = value;
         }
 
@@ -68,16 +68,16 @@
         }
 
 
-        private Long _defaultSlaPolicyId;
+        private String _defaultSlaPolicyId;
 
     
         @PropMeta(propId=5)
     
-        public Long getDefaultSlaPolicyId(){
+        public String getDefaultSlaPolicyId(){
             return _defaultSlaPolicyId;
         }
 
-        public void setDefaultSlaPolicyId(Long value){
+        public void setDefaultSlaPolicyId(String value){
             this._defaultSlaPolicyId = value;
         }
 

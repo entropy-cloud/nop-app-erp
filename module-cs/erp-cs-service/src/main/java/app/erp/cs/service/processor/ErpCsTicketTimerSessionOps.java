@@ -71,7 +71,7 @@ public class ErpCsTicketTimerSessionOps {
      * 12h 惰性结算（REQUIRES_NEW 独立事务）：按 id 重载会话结算并提交——外层事务后续回滚/只读不影响结算物化。
      * 用于 pause/resume 拒绝路径与 findActiveTimer 读取路径。
      */
-    public boolean settleIfOverdueInNewTx(Long sessionId, IServiceContext context) {
+    public boolean settleIfOverdueInNewTx(String sessionId, IServiceContext context) {
         Boolean settled = ormTemplate.runInNewSession(session ->
                 transactionTemplate.runInTransaction(null, TransactionPropagation.REQUIRES_NEW, txn -> {
                     ErpCsTicketTimerSession reloaded = dao().getEntityById(sessionId);
@@ -117,12 +117,8 @@ public class ErpCsTicketTimerSessionOps {
         ErpCsTimeEntry entry = timeEntryBiz.newEntity();
         entry.setOrgId(session.getOrgId());
         entry.setTicketId(session.getTicketId());
-        long entryAgent = TimerSessionCalculator.toEntryAgentId(session.getAgentId());
-        if (!Objects.equals(String.valueOf(entryAgent), session.getAgentId())) {
-            // D2 残留风险登记：非数字 userId 映射为 0 哨兵（BIGINT agentId 为语义孤儿列，归 successor 统一）
-            LOG.warn("计时条目 agentId 映射哨兵 0：session.agentId={} 非数字 userId", session.getAgentId());
-        }
-        entry.setAgentId(entryAgent);
+        // D2 映射随 agentId String 化（id-string-migration M3.5）：userId 恒等直写，0 哨兵退役
+        entry.setAgentId(TimerSessionCalculator.toEntryAgentId(session.getAgentId()));
         entry.setStartTime(session.getStartTime());
         entry.setEndTime(session.getStopTime());
         entry.setDuration((int) durationMinutes);
@@ -139,7 +135,7 @@ public class ErpCsTicketTimerSessionOps {
     }
 
     /** 按会话 id 加载（不存在抛领域错误码）。 */
-    public ErpCsTicketTimerSession requireSession(Long sessionId) {
+    public ErpCsTicketTimerSession requireSession(String sessionId) {
         if (sessionId == null) {
             throw new NopException(ErpCsErrors.ERR_CS_TIMER_SESSION_NOT_FOUND)
                     .param(ErpCsErrors.ARG_SESSION_ID, sessionId);

@@ -8,7 +8,7 @@
         "id": "2",
         "code": "@var:ErpCsSlaPolicy@code",
         "name": "冒烟SLA",
-        "ticketTypeId": 1,
+        "ticketTypeId": "1",
         "minPriority": null,
         "minPriority_label": null,
         "teamId": null,
@@ -22,7 +22,9 @@
         "createdBy": "autotest-ref",
         "createTime": "@var:ErpCsSlaPolicy@updateTime",
         "updatedBy": "autotest-ref",
-        "updateTime": "@var:ErpCsSlaPolicy@updateTime"
+        "updateTime": "@var:ErpCsSlaPolicy@updateTime",
+        "secondEscalationUserId": null,
+        "escalationDelayHours": null
       }
     ],
     "limit": 10,

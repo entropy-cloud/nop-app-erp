@@ -16,17 +16,17 @@ public interface IErpCsTimeEntryBiz extends ICrudBiz<ErpCsTimeEntry> {
      * require-description 门控 → isBillable 或 duration≥阈值 → PENDING；否则直通 APPROVED。
      */
     @BizMutation
-    ErpCsTimeEntry submit(@Name("timeEntryId") Long timeEntryId,
+    ErpCsTimeEntry submit(@Name("timeEntryId") String timeEntryId,
                           IServiceContext context);
 
     /** 审批通过（UC-CS-11 ⑦ 前置）：PENDING → APPROVED。 */
     @BizMutation
-    ErpCsTimeEntry approve(@Name("timeEntryId") Long timeEntryId,
+    ErpCsTimeEntry approve(@Name("timeEntryId") String timeEntryId,
                            IServiceContext context);
 
     /** 审批驳回（plan D4 §3.2）：PENDING → REJECTED，可选原因追加 description 前缀；可修改后重新 submit。 */
     @BizMutation
-    ErpCsTimeEntry reject(@Name("timeEntryId") Long timeEntryId,
+    ErpCsTimeEntry reject(@Name("timeEntryId") String timeEntryId,
                           @Optional @Name("rejectReason") String rejectReason,
                           IServiceContext context);
 }

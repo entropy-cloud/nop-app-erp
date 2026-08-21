@@ -227,7 +227,7 @@ public class ErpCsTicketBizModel extends CrudBizModel<ErpCsTicket> implements IE
 
     @Override
     @BizMutation
-    public ErpCsTicket assign(@Name("ticketId") Long ticketId,
+    public ErpCsTicket assign(@Name("ticketId") String ticketId,
                               @Optional @Name("assignedToId") String assignedToId,
                               IServiceContext context) {
         ErpCsTicket ticket = requireTicket(ticketId, context);
@@ -243,7 +243,7 @@ public class ErpCsTicketBizModel extends CrudBizModel<ErpCsTicket> implements IE
 
     @Override
     @BizMutation
-    public ErpCsTicket start(@Name("ticketId") Long ticketId, IServiceContext context) {
+    public ErpCsTicket start(@Name("ticketId") String ticketId, IServiceContext context) {
         ErpCsTicket ticket = requireTicket(ticketId, context);
         String from = ticket.getStatus();
         assertCan("start", ticket, from, ErpCsConstants.TICKET_STATUS_ASSIGNED);
@@ -258,7 +258,7 @@ public class ErpCsTicketBizModel extends CrudBizModel<ErpCsTicket> implements IE
 
     @Override
     @BizMutation
-    public ErpCsTicket resolve(@Name("ticketId") Long ticketId,
+    public ErpCsTicket resolve(@Name("ticketId") String ticketId,
                                @Optional @Name("resolution") String resolution,
                                IServiceContext context) {
         return resolveProcessor.resolve(ticketId, resolution, context);
@@ -266,7 +266,7 @@ public class ErpCsTicketBizModel extends CrudBizModel<ErpCsTicket> implements IE
 
     @Override
     @BizMutation
-    public ErpCsTicket close(@Name("ticketId") Long ticketId, IServiceContext context) {
+    public ErpCsTicket close(@Name("ticketId") String ticketId, IServiceContext context) {
         ErpCsTicket ticket = requireTicket(ticketId, context);
         String from = ticket.getStatus();
         assertCan("close", ticket, from, ErpCsConstants.TICKET_STATUS_RESOLVED);
@@ -286,13 +286,13 @@ public class ErpCsTicketBizModel extends CrudBizModel<ErpCsTicket> implements IE
 
     @Override
     @BizMutation
-    public ErpCsTicket reopen(@Name("ticketId") Long ticketId, IServiceContext context) {
+    public ErpCsTicket reopen(@Name("ticketId") String ticketId, IServiceContext context) {
         return reopenProcessor.reopen(ticketId, context);
     }
 
     @Override
     @BizMutation
-    public ErpCsTicket cancel(@Name("ticketId") Long ticketId,
+    public ErpCsTicket cancel(@Name("ticketId") String ticketId,
                               @Optional @Name("cancelReason") String cancelReason,
                               IServiceContext context) {
         ErpCsTicket ticket = requireTicket(ticketId, context);
@@ -325,8 +325,8 @@ public class ErpCsTicketBizModel extends CrudBizModel<ErpCsTicket> implements IE
      */
     @Override
     @BizMutation
-    public ErpCsTicket adoptKnowledge(@Name("ticketId") Long ticketId,
-                                      @Name("knowledgeBaseId") Long knowledgeBaseId,
+    public ErpCsTicket adoptKnowledge(@Name("ticketId") String ticketId,
+                                      @Name("knowledgeBaseId") String knowledgeBaseId,
                                       @Optional @Name("autoResolve") Boolean autoResolve,
                                       IServiceContext context) {
         ErpCsTicket ticket = requireTicket(ticketId, context);
@@ -348,13 +348,13 @@ public class ErpCsTicketBizModel extends CrudBizModel<ErpCsTicket> implements IE
      */
     @Override
     @BizMutation
-    public ErpCsTicket escalateToQuality(@Name("ticketId") Long ticketId,
-                                         @Optional @Name("materialId") Long materialId,
+    public ErpCsTicket escalateToQuality(@Name("ticketId") String ticketId,
+                                         @Optional @Name("materialId") String materialId,
                                          @Optional @Name("defectDescription") String defectDescription,
                                          @Optional @Name("batchInfo") String batchInfo,
                                          @Optional @Name("quantity") java.math.BigDecimal quantity,
                                          @Optional @Name("severity") String severity,
-                                         @Optional @Name("supplierId") Long supplierId,
+                                         @Optional @Name("supplierId") String supplierId,
                                          IServiceContext context) {
         ErpCsTicket ticket = requireTicket(ticketId, context);
         return escalateToQualityProcessor.escalateToQuality(ticket, materialId, defectDescription,
@@ -364,14 +364,14 @@ public class ErpCsTicketBizModel extends CrudBizModel<ErpCsTicket> implements IE
     /** 工单关联 NCR 闭环结果投影（UC-CS-06 ⑤，弱指针反查）。 */
     @Override
     @BizQuery
-    public List<Map<String, Object>> findQualityNcrs(@Name("ticketId") Long ticketId, IServiceContext context) {
+    public List<Map<String, Object>> findQualityNcrs(@Name("ticketId") String ticketId, IServiceContext context) {
         ErpCsTicket ticket = requireTicket(ticketId, context);
         return escalateToQualityProcessor.findQualityNcrs(ticket, context);
     }
 
     @Override
     @BizMutation
-    public ErpCsTicket matchAndAttachSla(@Name("ticketId") Long ticketId, IServiceContext context) {
+    public ErpCsTicket matchAndAttachSla(@Name("ticketId") String ticketId, IServiceContext context) {
         return matchAndAttachSlaProcessor.matchAndAttachSla(ticketId, context);
     }
 
@@ -405,7 +405,7 @@ public class ErpCsTicketBizModel extends CrudBizModel<ErpCsTicket> implements IE
 
     @Override
     @BizQuery
-    public Map<String, Object> findBoardData(@Optional @Name("customerId") Long customerId, IServiceContext context) {
+    public Map<String, Object> findBoardData(@Optional @Name("customerId") String customerId, IServiceContext context) {
         QueryBean query = new QueryBean();
         query.setLimit(200);
         if (customerId != null) {
@@ -472,7 +472,7 @@ public class ErpCsTicketBizModel extends CrudBizModel<ErpCsTicket> implements IE
 
     @Override
     @BizQuery
-    public long totalTimeSpent(@Name("ticketId") Long ticketId, IServiceContext context) {
+    public long totalTimeSpent(@Name("ticketId") String ticketId, IServiceContext context) {
         long sum = 0;
         for (ErpCsTimeEntry e : findEntries(ticketId, java.util.Arrays.asList(
                 ErpCsConstants.TIME_ENTRY_APPROVE_APPROVED, ErpCsConstants.TIME_ENTRY_APPROVE_PENDING), context)) {
@@ -485,7 +485,7 @@ public class ErpCsTicketBizModel extends CrudBizModel<ErpCsTicket> implements IE
 
     @Override
     @BizQuery
-    public long totalBillableTime(@Name("ticketId") Long ticketId, IServiceContext context) {
+    public long totalBillableTime(@Name("ticketId") String ticketId, IServiceContext context) {
         long sum = 0;
         for (ErpCsTimeEntry e : findEntries(ticketId,
                 java.util.Arrays.asList(ErpCsConstants.TIME_ENTRY_APPROVE_APPROVED), context)) {
@@ -498,7 +498,7 @@ public class ErpCsTicketBizModel extends CrudBizModel<ErpCsTicket> implements IE
 
     @Override
     @BizQuery
-    public java.math.BigDecimal totalBilledAmount(@Name("ticketId") Long ticketId, IServiceContext context) {
+    public java.math.BigDecimal totalBilledAmount(@Name("ticketId") String ticketId, IServiceContext context) {
         java.math.BigDecimal sum = java.math.BigDecimal.ZERO;
         for (ErpCsTimeEntry e : findEntries(ticketId,
                 java.util.Arrays.asList(ErpCsConstants.TIME_ENTRY_APPROVE_APPROVED), context)) {
@@ -510,7 +510,7 @@ public class ErpCsTicketBizModel extends CrudBizModel<ErpCsTicket> implements IE
     }
 
     /** 经 IErpCsTimeEntryBiz findList 聚合口径查询（R2b 合规跨 BizModel 注入，plan D5）。 */
-    private List<ErpCsTimeEntry> findEntries(Long ticketId, List<String> approvalStatuses,
+    private List<ErpCsTimeEntry> findEntries(String ticketId, List<String> approvalStatuses,
                                              IServiceContext context) {
         QueryBean query = new QueryBean();
         query.addFilter(eq("ticketId", ticketId));
@@ -553,7 +553,7 @@ public class ErpCsTicketBizModel extends CrudBizModel<ErpCsTicket> implements IE
     private static String resolveEscalationTarget(ErpCsTicket ticket) {
         ErpCsSlaPolicy policy = ticket.getSlaPolicy();
         if (policy != null && policy.getEscalationUserId() != null) {
-            return String.valueOf(policy.getEscalationUserId());
+            return policy.getEscalationUserId();
         }
         return ticket.getAssignedToId();
     }
@@ -594,7 +594,7 @@ public class ErpCsTicketBizModel extends CrudBizModel<ErpCsTicket> implements IE
         }
     }
 
-    private String resolveCustomerName(Long customerId, IServiceContext context) {
+    private String resolveCustomerName(String customerId, IServiceContext context) {
         if (customerId == null) {
             return null;
         }
@@ -606,11 +606,11 @@ public class ErpCsTicketBizModel extends CrudBizModel<ErpCsTicket> implements IE
         }
     }
 
-    private ErpCsTicket requireTicket(Long ticketId, IServiceContext context) {
+    private ErpCsTicket requireTicket(String ticketId, IServiceContext context) {
         if (ticketId == null) {
             throw new NopException(ErpCsErrors.ERR_TICKET_NOT_FOUND).param(ErpCsErrors.ARG_TICKET_ID, ticketId);
         }
-        return requireEntity(String.valueOf(ticketId), null, context);
+        return requireEntity(ticketId, null, context);
     }
 
     /**

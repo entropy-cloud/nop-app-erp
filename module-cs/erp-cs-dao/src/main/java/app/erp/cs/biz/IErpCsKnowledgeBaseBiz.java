@@ -16,7 +16,7 @@ public interface IErpCsKnowledgeBaseBiz extends ICrudBiz<ErpCsKnowledgeBase>{
 
     @BizQuery
     List<Map<String, Object>> searchKnowledge(@Optional @Name("keyword") String keyword,
-                                              @Optional @Name("categoryId") Long categoryId,
+                                              @Optional @Name("categoryId") String categoryId,
                                               @Optional @Name("limit") Integer limit,
                                               IServiceContext context);
 
@@ -31,6 +31,6 @@ public interface IErpCsKnowledgeBaseBiz extends ICrudBiz<ErpCsKnowledgeBase>{
      * {@code knowledgeBaseId} 提供时返回单条计数；缺省返回全量 group（每 KB 一条 {knowledgeBaseId, adoptCount}）。
      */
     @BizQuery
-    List<Map<String, Object>> knowledgeUsageStats(@Optional @Name("knowledgeBaseId") Long knowledgeBaseId,
+    List<Map<String, Object>> knowledgeUsageStats(@Optional @Name("knowledgeBaseId") String knowledgeBaseId,
                                                   IServiceContext context);
 }

@@ -60,10 +60,12 @@ public class TestErpCsQualityEscalation extends JunitAutoTestCase {
     static CsFrozenClockExtension frozenClock = new CsFrozenClockExtension();
 
     static final LocalDate TODAY = LocalDate.of(2026, 7, 17);
-    static final Long CUSTOMER_ID = 8101L;
-    static final Long TICKET_TYPE_ID = 8201L;
-    static final Long MATERIAL_ID = 8301L;
-    static final Long SUPPLIER_ID = 8401L;
+    static final String CUSTOMER_ID = "8101";
+    static final String TICKET_TYPE_ID = "8201";
+    static final String MATERIAL_ID = "8301";
+    // bridge-test-114/135: qa 未迁移（M2.3）Long 实体侧局部桥（cs String ↔ qa Long，退役 owner M2.3）
+    static final Long MATERIAL_ID_LONG = 8301L;
+    static final String SUPPLIER_ID = "8401";
     static final String ASSIGNEE = "cs-qa-handler";
 
     @Inject
@@ -86,7 +88,7 @@ public class TestErpCsQualityEscalation extends JunitAutoTestCase {
 
     @Test
     public void testEscalateToQualitySuccessCreatesNcrAndAudit() {
-        Long ticketId = seedTicket("TK-QA-OK", ErpCsConstants.TICKET_STATUS_IN_PROGRESS);
+        String ticketId = seedTicket("TK-QA-OK", ErpCsConstants.TICKET_STATUS_IN_PROGRESS);
 
         ApiResponse<?> resp = rpc(mutation, "ErpCsTicket__escalateToQuality", args(
                 "ticketId", ticketId,
@@ -104,12 +106,12 @@ public class TestErpCsQualityEscalation extends JunitAutoTestCase {
         assertEquals(TODAY, data.get("ncrDate"));
         assertEquals(ErpCsConstants.NCR_SOURCE_TYPE_CS_TICKET, data.get("sourceType"));
         assertEquals("TK-QA-OK", data.get("sourceCode"));
-        assertEquals(MATERIAL_ID, data.get("materialId"));
+        assertEquals(MATERIAL_ID_LONG, data.get("materialId"));
         assertEquals("屏幕出现坏点；批次：B20260801", data.get("description"));
         assertEquals(new BigDecimal("5"), data.get("quantity"));
         assertEquals("NORMAL", data.get("severity"));
         assertEquals("OPEN", data.get("status"));
-        assertEquals(SUPPLIER_ID, data.get("supplierId"));
+        assertEquals(Long.valueOf(8401L), data.get("supplierId"));
 
         // NCR 落库 + 双弱指针
         ErpQaNonConformance ncr = findNcr("NCR-CS-TK-QA-OK");
@@ -135,7 +137,7 @@ public class TestErpCsQualityEscalation extends JunitAutoTestCase {
 
     @Test
     public void testEscalateToQualityRejectsNonInProgress() {
-        Long ticketId = seedTicket("TK-QA-ST", ErpCsConstants.TICKET_STATUS_NEW);
+        String ticketId = seedTicket("TK-QA-ST", ErpCsConstants.TICKET_STATUS_NEW);
 
         ApiResponse<?> resp = rpc(mutation, "ErpCsTicket__escalateToQuality", args(
                 "ticketId", ticketId,
@@ -151,8 +153,8 @@ public class TestErpCsQualityEscalation extends JunitAutoTestCase {
 
     @Test
     public void testEscalateToQualityRejectsMissingParams() {
-        Long noMaterial = seedTicket("TK-QA-NM", ErpCsConstants.TICKET_STATUS_IN_PROGRESS);
-        Long noDesc = seedTicket("TK-QA-ND", ErpCsConstants.TICKET_STATUS_IN_PROGRESS);
+        String noMaterial = seedTicket("TK-QA-NM", ErpCsConstants.TICKET_STATUS_IN_PROGRESS);
+        String noDesc = seedTicket("TK-QA-ND", ErpCsConstants.TICKET_STATUS_IN_PROGRESS);
 
         ApiResponse<?> r1 = rpc(mutation, "ErpCsTicket__escalateToQuality", args(
                 "ticketId", noMaterial,
@@ -175,7 +177,7 @@ public class TestErpCsQualityEscalation extends JunitAutoTestCase {
 
     @Test
     public void testQualityUnavailableDegradesToPendingAudit() {
-        Long ticketId = seedTicket("TK-QA-PD", ErpCsConstants.TICKET_STATUS_IN_PROGRESS);
+        String ticketId = seedTicket("TK-QA-PD", ErpCsConstants.TICKET_STATUS_IN_PROGRESS);
         mockNcr().failSave = true;
         try {
             ApiResponse<?> resp = rpc(mutation, "ErpCsTicket__escalateToQuality", args(
@@ -201,7 +203,7 @@ public class TestErpCsQualityEscalation extends JunitAutoTestCase {
 
     @Test
     public void testRetryJobFixesPendingAction() {
-        Long ticketId = seedTicket("TK-QA-RT", ErpCsConstants.TICKET_STATUS_IN_PROGRESS);
+        String ticketId = seedTicket("TK-QA-RT", ErpCsConstants.TICKET_STATUS_IN_PROGRESS);
         mockNcr().failSave = true;
         rpc(mutation, "ErpCsTicket__escalateToQuality", args(
                 "ticketId", ticketId,
@@ -241,7 +243,7 @@ public class TestErpCsQualityEscalation extends JunitAutoTestCase {
 
     @Test
     public void testRetryJobSkipsWhenRetryExceeded() {
-        Long ticketId = seedTicket("TK-QA-MX", ErpCsConstants.TICKET_STATUS_IN_PROGRESS);
+        String ticketId = seedTicket("TK-QA-MX", ErpCsConstants.TICKET_STATUS_IN_PROGRESS);
         seedPendingAction(ticketId, "PENDING:{\"materialId\":" + MATERIAL_ID
                 + ",\"defectDescription\":\"超限场景\",\"severity\":\"NORMAL\"}#retry=3");
 
@@ -265,7 +267,7 @@ public class TestErpCsQualityEscalation extends JunitAutoTestCase {
 
     @Test
     public void testRetryJobSkipsWhenCronEmpty() {
-        Long ticketId = seedTicket("TK-QA-CR", ErpCsConstants.TICKET_STATUS_IN_PROGRESS);
+        String ticketId = seedTicket("TK-QA-CR", ErpCsConstants.TICKET_STATUS_IN_PROGRESS);
         seedPendingAction(ticketId, "PENDING:{\"materialId\":" + MATERIAL_ID
                 + ",\"defectDescription\":\"cron 空场景\",\"severity\":\"NORMAL\"}");
 
@@ -282,7 +284,7 @@ public class TestErpCsQualityEscalation extends JunitAutoTestCase {
 
     @Test
     public void testFindQualityNcrsProjectsClosure() {
-        Long ticketId = seedTicket("TK-QA-FN", ErpCsConstants.TICKET_STATUS_IN_PROGRESS);
+        String ticketId = seedTicket("TK-QA-FN", ErpCsConstants.TICKET_STATUS_IN_PROGRESS);
         seedNcr("NCR-CS-TK-QA-FN-1", "TK-QA-FN", "OPEN", null, null);
         seedNcr("NCR-CS-TK-QA-FN-2", "TK-QA-FN", "RESOLVED",
                 Timestamp.valueOf(LocalDateTime.of(2026, 7, 18, 10, 0)), "换货处理");
@@ -309,7 +311,7 @@ public class TestErpCsQualityEscalation extends JunitAutoTestCase {
 
     @Test
     public void testGraphqlRpcSmokeEndToEnd() {
-        Long ticketId = seedTicket("TK-QA-RPC", ErpCsConstants.TICKET_STATUS_IN_PROGRESS);
+        String ticketId = seedTicket("TK-QA-RPC", ErpCsConstants.TICKET_STATUS_IN_PROGRESS);
         // config 门控关闭 → 拒绝
         AppConfig.getConfigProvider().assignConfigValue(
                 ErpCsConstants.CONFIG_QUALITY_ESCALATION_ENABLED, "false");
@@ -353,8 +355,8 @@ public class TestErpCsQualityEscalation extends JunitAutoTestCase {
         return graphQLEngine.executeRpc(ctx);
     }
 
-    private Long seedTicket(String code, String status) {
-        Long id = 7600L + (long) (Math.abs(code.hashCode()) % 500);
+    private String seedTicket(String code, String status) {
+        String id = String.valueOf(7600 + Math.abs(code.hashCode()) % 500);
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpCsTicket> dao = daoProvider.daoFor(ErpCsTicket.class);
             ErpCsTicket t = new ErpCsTicket();
@@ -375,11 +377,11 @@ public class TestErpCsQualityEscalation extends JunitAutoTestCase {
         return id;
     }
 
-    private void seedPendingAction(Long ticketId, String content) {
+    private void seedPendingAction(String ticketId, String content) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpCsTicketAction> dao = daoProvider.daoFor(ErpCsTicketAction.class);
             ErpCsTicketAction a = new ErpCsTicketAction();
-            a.orm_propValueByName("id", 9700L + (long) (Math.abs(content.hashCode()) % 200));
+            a.orm_propValueByName("id", String.valueOf(9700 + Math.abs(content.hashCode()) % 200));
             a.setTicketId(ticketId);
             a.setActionType(ErpCsConstants.ACTION_TYPE_QUALITY_ESCALATE);
             a.setContent(content);
@@ -396,7 +398,7 @@ public class TestErpCsQualityEscalation extends JunitAutoTestCase {
             n.setNcrDate(LocalDate.of(2026, 7, 17));
             n.setSourceType(ErpCsConstants.NCR_SOURCE_TYPE_CS_TICKET);
             n.setSourceCode(ticketCode);
-            n.setMaterialId(MATERIAL_ID);
+            n.setMaterialId(MATERIAL_ID_LONG);
             n.setSeverity("NORMAL");
             n.setStatus(status);
             if (resolvedAt != null) {
@@ -409,11 +411,11 @@ public class TestErpCsQualityEscalation extends JunitAutoTestCase {
         });
     }
 
-    private ErpCsTicket reloadTicket(Long ticketId) {
+    private ErpCsTicket reloadTicket(String ticketId) {
         return daoProvider.daoFor(ErpCsTicket.class).getEntityById(ticketId);
     }
 
-    private ErpCsTicketAction findQualityAction(Long ticketId) {
+    private ErpCsTicketAction findQualityAction(String ticketId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("ticketId", ticketId));
         q.addFilter(eq("actionType", ErpCsConstants.ACTION_TYPE_QUALITY_ESCALATE));
@@ -422,7 +424,7 @@ public class TestErpCsQualityEscalation extends JunitAutoTestCase {
         return list.isEmpty() ? null : list.get(0);
     }
 
-    private int countActions(Long ticketId, String actionType) {
+    private int countActions(String ticketId, String actionType) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("ticketId", ticketId));
         q.addFilter(eq("actionType", actionType));

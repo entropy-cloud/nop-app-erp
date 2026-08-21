@@ -43,8 +43,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class TestErpCsQualityDashboard extends JunitAutoTestCase {
 
     private static final IServiceContext CTX = new ServiceContextImpl();
-    static final Long PARTNER_ID = 9801L;
-    static final Long TICKET_TYPE_ID = 6201L;
+    static final String PARTNER_ID = "9801";
+    static final String TICKET_TYPE_ID = "6201";
 
     @Inject
     IDaoProvider daoProvider;
@@ -66,9 +66,9 @@ public class TestErpCsQualityDashboard extends JunitAutoTestCase {
     public void testKpiAggregation() {
         LocalDate today = CoreMetrics.today();
         ormTemplate.runInSession(() -> {
-            seedClosedTicket(9501L, "TK-KPI-1", true, 120, today);
-            seedClosedTicket(9502L, "TK-KPI-2", true, 60, today);
-            seedClosedTicket(9503L, "TK-KPI-3", false, 30, today);
+            seedClosedTicket("9501", "TK-KPI-1", true, 120, today);
+            seedClosedTicket("9502", "TK-KPI-2", true, 60, today);
+            seedClosedTicket("9503", "TK-KPI-3", false, 30, today);
         });
 
         Map<String, Object> kpi = dashboardBiz.getDashboardKpi(null, null, CTX);
@@ -84,10 +84,10 @@ public class TestErpCsQualityDashboard extends JunitAutoTestCase {
     public void testTeamSlaRanking() {
         LocalDate today = CoreMetrics.today();
         ormTemplate.runInSession(() -> {
-            Long teamId = seedTeam(9601L, "技术支持组");
-            Long slaPolicyId = seedSlaPolicy(9602L, teamId);
-            seedClosedTicketWithSla(9510L, "TK-TEAM-1", true, 60, today, slaPolicyId);
-            seedClosedTicketWithSla(9511L, "TK-TEAM-2", false, 30, today, slaPolicyId);
+            String teamId = seedTeam("9601", "技术支持组");
+            String slaPolicyId = seedSlaPolicy("9602", teamId);
+            seedClosedTicketWithSla("9510", "TK-TEAM-1", true, 60, today, slaPolicyId);
+            seedClosedTicketWithSla("9511", "TK-TEAM-2", false, 30, today, slaPolicyId);
         });
 
         List<Map<String, Object>> rows = dashboardBiz.getTeamSlaRanking(null, null, CTX);
@@ -107,8 +107,8 @@ public class TestErpCsQualityDashboard extends JunitAutoTestCase {
     public void testAgentCsatBreakdown() {
         LocalDate today = CoreMetrics.today();
         ormTemplate.runInSession(() -> {
-            Long ticketId = seedClosedTicketAssigned(9520L, "TK-CSAT-1", true, 60, today, "agent-001");
-            seedSurvey(9701L, ticketId, 5, 9, 4);
+            String ticketId = seedClosedTicketAssigned("9520", "TK-CSAT-1", true, 60, today, "agent-001");
+            seedSurvey("9701", ticketId, 5, 9, 4);
         });
 
         List<Map<String, Object>> rows = dashboardBiz.getAgentCsatBreakdown(null, null, CTX);
@@ -127,7 +127,7 @@ public class TestErpCsQualityDashboard extends JunitAutoTestCase {
 
     // ---------- helpers ----------
 
-    private void seedClosedTicket(Long id, String code, boolean slaCompleted, int durationMin, LocalDate createDate) {
+    private void seedClosedTicket(String id, String code, boolean slaCompleted, int durationMin, LocalDate createDate) {
         seedCustomerIfNeeded();
         IEntityDao<ErpCsTicket> dao = daoProvider.daoFor(ErpCsTicket.class);
         ErpCsTicket t = new ErpCsTicket();
@@ -147,8 +147,8 @@ public class TestErpCsQualityDashboard extends JunitAutoTestCase {
         dao.saveEntity(t);
     }
 
-    private void seedClosedTicketWithSla(Long id, String code, boolean slaCompleted, int durationMin,
-                                          LocalDate createDate, Long slaPolicyId) {
+    private void seedClosedTicketWithSla(String id, String code, boolean slaCompleted, int durationMin,
+                                          LocalDate createDate, String slaPolicyId) {
         seedCustomerIfNeeded();
         IEntityDao<ErpCsTicket> dao = daoProvider.daoFor(ErpCsTicket.class);
         ErpCsTicket t = new ErpCsTicket();
@@ -169,7 +169,7 @@ public class TestErpCsQualityDashboard extends JunitAutoTestCase {
         dao.saveEntity(t);
     }
 
-    private Long seedClosedTicketAssigned(Long id, String code, boolean slaCompleted, int durationMin,
+    private String seedClosedTicketAssigned(String id, String code, boolean slaCompleted, int durationMin,
                                            LocalDate createDate, String assignedToId) {
         seedCustomerIfNeeded();
         IEntityDao<ErpCsTicket> dao = daoProvider.daoFor(ErpCsTicket.class);
@@ -207,7 +207,7 @@ public class TestErpCsQualityDashboard extends JunitAutoTestCase {
         customerSeeded = true;
     }
 
-    private Long seedTeam(Long id, String name) {
+    private String seedTeam(String id, String name) {
         IEntityDao<ErpCsTeam> dao = daoProvider.daoFor(ErpCsTeam.class);
         ErpCsTeam team = new ErpCsTeam();
         team.orm_propValueByName("id", id);
@@ -217,7 +217,7 @@ public class TestErpCsQualityDashboard extends JunitAutoTestCase {
         return id;
     }
 
-    private Long seedSlaPolicy(Long id, Long teamId) {
+    private String seedSlaPolicy(String id, String teamId) {
         IEntityDao<ErpCsSlaPolicy> dao = daoProvider.daoFor(ErpCsSlaPolicy.class);
         ErpCsSlaPolicy p = new ErpCsSlaPolicy();
         p.orm_propValueByName("id", id);
@@ -230,7 +230,7 @@ public class TestErpCsQualityDashboard extends JunitAutoTestCase {
         return id;
     }
 
-    private void seedSurvey(Long id, Long ticketId, Integer csat, Integer nps, Integer ces) {
+    private void seedSurvey(String id, String ticketId, Integer csat, Integer nps, Integer ces) {
         IEntityDao<ErpCsSurvey> dao = daoProvider.daoFor(ErpCsSurvey.class);
         ErpCsSurvey s = new ErpCsSurvey();
         s.orm_propValueByName("id", id);

@@ -27,7 +27,7 @@ public class ErpCsSurveyCreateSurveyProcessor {
     @Inject
     IDaoProvider daoProvider;
 
-    public ErpCsSurvey createSurvey(Long ticketId, IServiceContext context) {
+    public ErpCsSurvey createSurvey(String ticketId, IServiceContext context) {
         if (!ErpCsConfigs.isSurveyEnabled()) {
             return null;
         }
@@ -59,7 +59,7 @@ public class ErpCsSurveyCreateSurveyProcessor {
         return survey;
     }
 
-    private ErpCsSurvey findSurveyByTicket(Long ticketId) {
+    private ErpCsSurvey findSurveyByTicket(String ticketId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("ticketId", ticketId));
         q.setLimit(1);

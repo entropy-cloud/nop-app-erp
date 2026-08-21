@@ -50,8 +50,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpCsTicketSlaCsat extends JunitAutoTestCase {
 
-    static final Long CUSTOMER_ID = 5001L;
-    static final Long TICKET_TYPE_ID = 6001L;
+    static final String CUSTOMER_ID = "5001";
+    static final String TICKET_TYPE_ID = "6001";
     static final String ASSIGNEE = "user-zhang";
 
     @Inject
@@ -63,7 +63,7 @@ public class TestErpCsTicketSlaCsat extends JunitAutoTestCase {
 
     @Test
     public void testTicketFullLifecycleAndIllegalTransitions() {
-        Long ticketId = seedTicket("TK-LIFE", ErpCsConstants.TICKET_STATUS_NEW,
+        String ticketId = seedTicket("TK-LIFE", ErpCsConstants.TICKET_STATUS_NEW,
                 CoreMetrics.currentDateTime().plusHours(8));
 
         // assign NEW→ASSIGNED
@@ -102,7 +102,7 @@ public class TestErpCsTicketSlaCsat extends JunitAutoTestCase {
 
     @Test
     public void testIllegalStartFromNew() {
-        Long ticketId = seedTicket("TK-ILL", ErpCsConstants.TICKET_STATUS_NEW, null);
+        String ticketId = seedTicket("TK-ILL", ErpCsConstants.TICKET_STATUS_NEW, null);
         // NEW→start 非法（须 ASSIGNED）
         ApiResponse<?> resp = rpc(mutation, "ErpCsTicket__start", args("ticketId", ticketId));
         assertEquals(ErpCsErrors.ERR_INVALID_TICKET_STATUS_TRANSITION.getErrorCode(), resp.getCode(),
@@ -113,7 +113,7 @@ public class TestErpCsTicketSlaCsat extends JunitAutoTestCase {
     public void testSlaPolicyMatchCalendarDeadline() {
         // 日历小时模式 SLA 策略：resolveHours=8
         seedSlaPolicy("SLA-CAL", TICKET_TYPE_ID, 8, null, false);
-        Long ticketId = seedTicket("TK-SLA-CAL", ErpCsConstants.TICKET_STATUS_NEW, null);
+        String ticketId = seedTicket("TK-SLA-CAL", ErpCsConstants.TICKET_STATUS_NEW, null);
 
         LocalDateTime before = CoreMetrics.currentDateTime();
         rpcOk(mutation, "ErpCsTicket__matchAndAttachSla", args("ticketId", ticketId));
@@ -129,7 +129,7 @@ public class TestErpCsTicketSlaCsat extends JunitAutoTestCase {
     public void testSlaPolicyMatchWorkingDaysSkipsWeekend() {
         // 工作日模式 SLA 策略：resolveHours=48（2 天），跳周末
         seedSlaPolicy("SLA-WD", TICKET_TYPE_ID, 48, null, true);
-        Long ticketId = seedTicket("TK-SLA-WD", ErpCsConstants.TICKET_STATUS_NEW, null);
+        String ticketId = seedTicket("TK-SLA-WD", ErpCsConstants.TICKET_STATUS_NEW, null);
 
         rpcOk(mutation, "ErpCsTicket__matchAndAttachSla", args("ticketId", ticketId));
         ErpCsTicket t = reload(ticketId);
@@ -141,7 +141,7 @@ public class TestErpCsTicketSlaCsat extends JunitAutoTestCase {
     @Test
     public void testScanOverdueTicketsCreatesEscalateAction() {
         // 已超时工单：deadline 在过去，isSlaCompleted=false，status=ASSIGNED
-        Long ticketId = seedTicket("TK-OVERDUE", ErpCsConstants.TICKET_STATUS_ASSIGNED,
+        String ticketId = seedTicket("TK-OVERDUE", ErpCsConstants.TICKET_STATUS_ASSIGNED,
                 CoreMetrics.currentDateTime().minusHours(2));
         int actionsBefore = countActions(ticketId);
 
@@ -162,7 +162,7 @@ public class TestErpCsTicketSlaCsat extends JunitAutoTestCase {
      */
     @Test
     public void testScanOverdueTicketsIdempotentNoDuplicateEscalation() {
-        Long ticketId = seedTicket("TK-OVERDUE-IDEM", ErpCsConstants.TICKET_STATUS_ASSIGNED,
+        String ticketId = seedTicket("TK-OVERDUE-IDEM", ErpCsConstants.TICKET_STATUS_ASSIGNED,
                 CoreMetrics.currentDateTime().minusHours(2));
 
         rpc(mutation, "ErpCsTicket__scanOverdueTickets", new java.util.HashMap<>());
@@ -192,7 +192,7 @@ public class TestErpCsTicketSlaCsat extends JunitAutoTestCase {
 
     @Test
     public void testSurveyCreatedOnResolveAndSubmitted() {
-        Long ticketId = seedTicket("TK-CSAT", ErpCsConstants.TICKET_STATUS_NEW,
+        String ticketId = seedTicket("TK-CSAT", ErpCsConstants.TICKET_STATUS_NEW,
                 CoreMetrics.currentDateTime().plusHours(8));
         rpcOk(mutation, "ErpCsTicket__assign", args("ticketId", ticketId, "assignedToId", ASSIGNEE));
         rpcOk(mutation, "ErpCsTicket__start", args("ticketId", ticketId));
@@ -221,7 +221,7 @@ public class TestErpCsTicketSlaCsat extends JunitAutoTestCase {
 
     @Test
     public void testSurveyDuplicateCreateRejected() {
-        Long ticketId = seedTicket("TK-DUP", ErpCsConstants.TICKET_STATUS_NEW,
+        String ticketId = seedTicket("TK-DUP", ErpCsConstants.TICKET_STATUS_NEW,
                 CoreMetrics.currentDateTime().plusHours(8));
         rpcOk(mutation, "ErpCsSurvey__createSurvey", args("ticketId", ticketId));
         // 重复创建 → ERR_SURVEY_ALREADY_EXISTS
@@ -240,7 +240,7 @@ public class TestErpCsTicketSlaCsat extends JunitAutoTestCase {
 
     @Test
     public void testReopenCancelsUnrespondedSurvey() {
-        Long ticketId = seedTicket("TK-REOPEN", ErpCsConstants.TICKET_STATUS_NEW,
+        String ticketId = seedTicket("TK-REOPEN", ErpCsConstants.TICKET_STATUS_NEW,
                 CoreMetrics.currentDateTime().plusHours(8));
         rpcOk(mutation, "ErpCsTicket__assign", args("ticketId", ticketId, "assignedToId", ASSIGNEE));
         rpcOk(mutation, "ErpCsTicket__start", args("ticketId", ticketId));
@@ -257,7 +257,7 @@ public class TestErpCsTicketSlaCsat extends JunitAutoTestCase {
     @Test
     public void testCloseBreachedWithoutReasonRejected() {
         // 超时工单（isSlaCompleted=false）关闭需 remark 注明超时原因
-        Long ticketId = seedTicket("TK-BREACH", ErpCsConstants.TICKET_STATUS_NEW, null);
+        String ticketId = seedTicket("TK-BREACH", ErpCsConstants.TICKET_STATUS_NEW, null);
         rpcOk(mutation, "ErpCsTicket__assign", args("ticketId", ticketId, "assignedToId", ASSIGNEE));
         rpcOk(mutation, "ErpCsTicket__start", args("ticketId", ticketId));
         // 手动设 isSlaCompleted=false 且 remark 为空（resolve 会因 deadline null 算 isSlaCompleted=true，
@@ -287,7 +287,7 @@ public class TestErpCsTicketSlaCsat extends JunitAutoTestCase {
 
     @Test
     public void testCancelFromInProgress() {
-        Long ticketId = seedTicket("TK-CANCEL", ErpCsConstants.TICKET_STATUS_NEW, null);
+        String ticketId = seedTicket("TK-CANCEL", ErpCsConstants.TICKET_STATUS_NEW, null);
         rpcOk(mutation, "ErpCsTicket__assign", args("ticketId", ticketId, "assignedToId", ASSIGNEE));
         rpcOk(mutation, "ErpCsTicket__start", args("ticketId", ticketId));
         rpcOk(mutation, "ErpCsTicket__cancel",
@@ -304,7 +304,7 @@ public class TestErpCsTicketSlaCsat extends JunitAutoTestCase {
     @Test
     public void testFindSlaWarnings() {
         // deadline 在 now 到 now+60min 之间 → 命中预警
-        Long ticketId = seedTicket("TK-WARN", ErpCsConstants.TICKET_STATUS_ASSIGNED,
+        String ticketId = seedTicket("TK-WARN", ErpCsConstants.TICKET_STATUS_ASSIGNED,
                 CoreMetrics.currentDateTime().plusMinutes(30));
         ApiResponse<?> resp = rpc(query, "ErpCsTicket__findSlaWarnings",
                 args("beforeMinutes", 60));
@@ -314,7 +314,7 @@ public class TestErpCsTicketSlaCsat extends JunitAutoTestCase {
         assertNotNull(data);
         boolean found = false;
         for (Map<String, Object> row : data) {
-            if (ticketId.equals(toLong(row.get("id")))) {
+            if (ticketId.equals(String.valueOf(row.get("id")))) {
                 found = true;
                 break;
             }
@@ -324,17 +324,17 @@ public class TestErpCsTicketSlaCsat extends JunitAutoTestCase {
 
     // ---------- helpers ----------
 
-    private ErpCsTicket reload(Long ticketId) {
+    private ErpCsTicket reload(String ticketId) {
         return daoProvider.daoFor(ErpCsTicket.class).getEntityById(ticketId);
     }
 
-    private int countActions(Long ticketId) {
+    private int countActions(String ticketId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("ticketId", ticketId));
         return daoProvider.daoFor(ErpCsTicketAction.class).findAllByQuery(q).size();
     }
 
-    private boolean hasActionType(Long ticketId, String actionType) {
+    private boolean hasActionType(String ticketId, String actionType) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("ticketId", ticketId));
         q.addFilter(eq("actionType", actionType));
@@ -342,14 +342,14 @@ public class TestErpCsTicketSlaCsat extends JunitAutoTestCase {
         return !daoProvider.daoFor(ErpCsTicketAction.class).findAllByQuery(q).isEmpty();
     }
 
-    private int countActionsByType(Long ticketId, String actionType) {
+    private int countActionsByType(String ticketId, String actionType) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("ticketId", ticketId));
         q.addFilter(eq("actionType", actionType));
         return daoProvider.daoFor(ErpCsTicketAction.class).findAllByQuery(q).size();
     }
 
-    private ErpCsSurvey findSurveyByTicket(Long ticketId) {
+    private ErpCsSurvey findSurveyByTicket(String ticketId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("ticketId", ticketId));
         q.setLimit(1);
@@ -357,8 +357,8 @@ public class TestErpCsTicketSlaCsat extends JunitAutoTestCase {
         return list.isEmpty() ? null : list.get(0);
     }
 
-    private Long seedTicket(String code, String status, LocalDateTime deadline) {
-        Long id = 7000L + (long) (Math.abs(code.hashCode()) % 1000);
+    private String seedTicket(String code, String status, LocalDateTime deadline) {
+        String id = String.valueOf(7000 + Math.abs(code.hashCode()) % 1000);
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpCsTicket> dao = daoProvider.daoFor(ErpCsTicket.class);
             ErpCsTicket t = new ErpCsTicket();
@@ -382,9 +382,9 @@ public class TestErpCsTicketSlaCsat extends JunitAutoTestCase {
         return id;
     }
 
-    private void seedSlaPolicy(String code, Long ticketTypeId, Integer resolveHours,
+    private void seedSlaPolicy(String code, String ticketTypeId, Integer resolveHours,
                                Integer resolveDays, boolean isWorkingDays) {
-        Long id = 8000L + (long) (Math.abs(code.hashCode()) % 1000);
+        String id = String.valueOf(8000 + Math.abs(code.hashCode()) % 1000);
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpCsSlaPolicy> dao = daoProvider.daoFor(ErpCsSlaPolicy.class);
             ErpCsSlaPolicy p = new ErpCsSlaPolicy();
@@ -405,13 +405,6 @@ public class TestErpCsTicketSlaCsat extends JunitAutoTestCase {
             m.put((String) kv[i], kv[i + 1]);
         }
         return m;
-    }
-
-    private static Long toLong(Object v) {
-        if (v == null) return null;
-        if (v instanceof Long) return (Long) v;
-        if (v instanceof Number) return ((Number) v).longValue();
-        return Long.valueOf(String.valueOf(v));
     }
 
     private ApiResponse<?> rpc(io.nop.graphql.core.ast.GraphQLOperationType op, String action,

@@ -39,9 +39,9 @@ public class TestErpCsReportRendering extends JunitAutoTestCase {
 
     private static final io.nop.core.context.IServiceContext CTX = new io.nop.core.context.ServiceContextImpl();
 
-    static final Long ORG_ID = 1L;
-    static final Long CUSTOMER_ID = 5001L;
-    static final Long TICKET_TYPE_ID = 6001L;
+    static final String ORG_ID = "1";
+    static final String CUSTOMER_ID = "5001";
+    static final String TICKET_TYPE_ID = "6001";
 
     @Inject
     ErpCsReportBizModel reportBiz;
@@ -119,16 +119,16 @@ public class TestErpCsReportRendering extends JunitAutoTestCase {
     private void seedBaseline() {
         ormTemplate.runInSession(() -> {
             // 3 工单：1 SLA 命中 + 2 SLA 超时
-            Long t1 = seedTicket(7001L, "TKT-RPT-1", Boolean.TRUE);
-            Long t2 = seedTicket(7002L, "TKT-RPT-2", Boolean.FALSE);
-            Long t3 = seedTicket(7003L, "TKT-RPT-3", Boolean.FALSE);
+            String t1 = seedTicket("7001", "TKT-RPT-1", Boolean.TRUE);
+            String t2 = seedTicket("7002", "TKT-RPT-2", Boolean.FALSE);
+            String t3 = seedTicket("7003", "TKT-RPT-3", Boolean.FALSE);
             // 2 调查回复：csat 4/5, nps 8/9
-            seedSurvey(7101L, t1, 4, 8);
-            seedSurvey(7102L, t2, 5, 9);
+            seedSurvey("7101", t1, 4, 8);
+            seedSurvey("7102", t2, 5, 9);
         });
     }
 
-    private Long seedTicket(Long id, String code, Boolean isSlaCompleted) {
+    private String seedTicket(String id, String code, Boolean isSlaCompleted) {
         IEntityDao<ErpCsTicket> dao = daoProvider.daoFor(ErpCsTicket.class);
         ErpCsTicket t = new ErpCsTicket();
         t.setBusinessDate(java.time.LocalDate.of(2026, 7, 1));
@@ -148,7 +148,7 @@ public class TestErpCsReportRendering extends JunitAutoTestCase {
         return id;
     }
 
-    private void seedSurvey(Long id, Long ticketId, int csat, int nps) {
+    private void seedSurvey(String id, String ticketId, int csat, int nps) {
         IEntityDao<ErpCsSurvey> dao = daoProvider.daoFor(ErpCsSurvey.class);
         ErpCsSurvey s = new ErpCsSurvey();
         s.orm_propValueByName("id", id);

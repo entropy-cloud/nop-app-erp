@@ -22,8 +22,8 @@
 
     <props>
         <prop name="id" displayName="ID" propId="1" i18n-en:displayName="ID" tagSet="seq-default" mandatory="true"
-              queryable="true" sortable="true" insertable="true" updatable="false" graphql:type="String">
-            <schema type="java.lang.Long"/>
+              queryable="true" sortable="true" insertable="true" updatable="false">
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="code" displayName="编码" propId="2" i18n-en:displayName="Code" tagSet="var" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
@@ -35,15 +35,15 @@
         </prop>
         <prop name="orgId" displayName="业务组织" propId="4" i18n-en:displayName="Organization" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="org">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="categoryId" displayName="目录分类" propId="5" i18n-en:displayName="Category" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="category">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="parentId" displayName="父项" propId="6" i18n-en:displayName="Parent Item" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="parent">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="shortDescription" displayName="简短描述" propId="7" i18n-en:displayName="Short Description"
               queryable="true" sortable="true" insertable="true" updatable="true">
@@ -55,11 +55,11 @@
         </prop>
         <prop name="ticketTypeId" displayName="关联工单类型" propId="9" i18n-en:displayName="Ticket Type" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="ticketType">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="slaPolicyId" displayName="默认SLA策略" propId="10" i18n-en:displayName="SLA Policy" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="slaPolicy">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="fulfillmentProcessId" displayName="履行流程标识" propId="11" i18n-en:displayName="Fulfillment Process"
               queryable="true" sortable="true" insertable="true" updatable="true">

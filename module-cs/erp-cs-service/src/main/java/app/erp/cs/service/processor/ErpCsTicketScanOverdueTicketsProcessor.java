@@ -117,7 +117,7 @@ public class ErpCsTicketScanOverdueTicketsProcessor {
                 nextLevel = 1;
                 target = resolveL1Target(ticket, policy);
             } else {
-                Long second = policy != null ? policy.getSecondEscalationUserId() : null;
+                String second = policy != null ? policy.getSecondEscalationUserId() : null;
                 if (second != null) {
                     nextLevel = 2;
                     target = String.valueOf(second);
@@ -177,7 +177,7 @@ public class ErpCsTicketScanOverdueTicketsProcessor {
      * 缺失回退 assignedToId（stdDomain=userId VARCHAR(36)）——修正既有漂移（UC-CS-04 ③）。
      */
     protected String resolveL1Target(ErpCsTicket ticket, ErpCsSlaPolicy policy) {
-        Long escalation = policy != null ? policy.getEscalationUserId() : null;
+        String escalation = policy != null ? policy.getEscalationUserId() : null;
         if (escalation != null) {
             return String.valueOf(escalation);
         }
@@ -221,7 +221,7 @@ public class ErpCsTicketScanOverdueTicketsProcessor {
         }
     }
 
-    private String resolveCustomerName(Long customerId, IServiceContext context) {
+    private String resolveCustomerName(String customerId, IServiceContext context) {
         if (customerId == null) {
             return null;
         }

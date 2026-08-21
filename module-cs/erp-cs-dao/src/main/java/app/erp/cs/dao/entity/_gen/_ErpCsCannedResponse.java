@@ -172,13 +172,13 @@ public class _ErpCsCannedResponse extends DynamicOrmEntity{
 
     
     /* ID: ID */
-    private java.lang.Long _id;
+    private java.lang.String _id;
     
     /* 编码: CODE */
     private java.lang.String _code;
     
     /* 业务组织: ORG_ID */
-    private java.lang.Long _orgId;
+    private java.lang.String _orgId;
     
     /* 模板标题: TITLE */
     private java.lang.String _title;
@@ -187,13 +187,13 @@ public class _ErpCsCannedResponse extends DynamicOrmEntity{
     private java.lang.String _content;
     
     /* 应答分类: CATEGORY_ID */
-    private java.lang.Long _categoryId;
+    private java.lang.String _categoryId;
     
     /* 变量定义: VARIABLE_DEFS */
     private java.lang.String _variableDefs;
     
     /* 自动匹配工单类型: MACRO_TICKET_TYPE_ID */
-    private java.lang.Long _macroTicketTypeId;
+    private java.lang.String _macroTicketTypeId;
     
     /* 自动匹配优先级: MACRO_PRIORITY */
     private java.lang.String _macroPriority;
@@ -365,9 +365,9 @@ public class _ErpCsCannedResponse extends DynamicOrmEntity{
         switch(propId){
         
             case PROP_ID_id:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_id));
                }
                setId(typedValue);
@@ -385,9 +385,9 @@ public class _ErpCsCannedResponse extends DynamicOrmEntity{
             }
         
             case PROP_ID_orgId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_orgId));
                }
                setOrgId(typedValue);
@@ -415,9 +415,9 @@ public class _ErpCsCannedResponse extends DynamicOrmEntity{
             }
         
             case PROP_ID_categoryId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_categoryId));
                }
                setCategoryId(typedValue);
@@ -435,9 +435,9 @@ public class _ErpCsCannedResponse extends DynamicOrmEntity{
             }
         
             case PROP_ID_macroTicketTypeId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_macroTicketTypeId));
                }
                setMacroTicketTypeId(typedValue);
@@ -555,7 +555,7 @@ public class _ErpCsCannedResponse extends DynamicOrmEntity{
         
             case PROP_ID_id:{
                onInitProp(propId);
-               this._id = (java.lang.Long)value;
+               this._id = (java.lang.String)value;
                orm_id(); // 如果是设置主键字段，则触发watcher
                break;
             }
@@ -569,7 +569,7 @@ public class _ErpCsCannedResponse extends DynamicOrmEntity{
         
             case PROP_ID_orgId:{
                onInitProp(propId);
-               this._orgId = (java.lang.Long)value;
+               this._orgId = (java.lang.String)value;
                
                break;
             }
@@ -590,7 +590,7 @@ public class _ErpCsCannedResponse extends DynamicOrmEntity{
         
             case PROP_ID_categoryId:{
                onInitProp(propId);
-               this._categoryId = (java.lang.Long)value;
+               this._categoryId = (java.lang.String)value;
                
                break;
             }
@@ -604,7 +604,7 @@ public class _ErpCsCannedResponse extends DynamicOrmEntity{
         
             case PROP_ID_macroTicketTypeId:{
                onInitProp(propId);
-               this._macroTicketTypeId = (java.lang.Long)value;
+               this._macroTicketTypeId = (java.lang.String)value;
                
                break;
             }
@@ -688,7 +688,7 @@ public class _ErpCsCannedResponse extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final java.lang.Long getId(){
+    public final java.lang.String getId(){
          onPropGet(PROP_ID_id);
          return _id;
     }
@@ -696,7 +696,7 @@ public class _ErpCsCannedResponse extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final void setId(java.lang.Long value){
+    public final void setId(java.lang.String value){
         if(onPropSet(PROP_ID_id,value)){
             this._id = value;
             internalClearRefs(PROP_ID_id);
@@ -726,7 +726,7 @@ public class _ErpCsCannedResponse extends DynamicOrmEntity{
     /**
      * 业务组织: ORG_ID
      */
-    public final java.lang.Long getOrgId(){
+    public final java.lang.String getOrgId(){
          onPropGet(PROP_ID_orgId);
          return _orgId;
     }
@@ -734,7 +734,7 @@ public class _ErpCsCannedResponse extends DynamicOrmEntity{
     /**
      * 业务组织: ORG_ID
      */
-    public final void setOrgId(java.lang.Long value){
+    public final void setOrgId(java.lang.String value){
         if(onPropSet(PROP_ID_orgId,value)){
             this._orgId = value;
             internalClearRefs(PROP_ID_orgId);
@@ -783,7 +783,7 @@ public class _ErpCsCannedResponse extends DynamicOrmEntity{
     /**
      * 应答分类: CATEGORY_ID
      */
-    public final java.lang.Long getCategoryId(){
+    public final java.lang.String getCategoryId(){
          onPropGet(PROP_ID_categoryId);
          return _categoryId;
     }
@@ -791,7 +791,7 @@ public class _ErpCsCannedResponse extends DynamicOrmEntity{
     /**
      * 应答分类: CATEGORY_ID
      */
-    public final void setCategoryId(java.lang.Long value){
+    public final void setCategoryId(java.lang.String value){
         if(onPropSet(PROP_ID_categoryId,value)){
             this._categoryId = value;
             internalClearRefs(PROP_ID_categoryId);
@@ -821,7 +821,7 @@ public class _ErpCsCannedResponse extends DynamicOrmEntity{
     /**
      * 自动匹配工单类型: MACRO_TICKET_TYPE_ID
      */
-    public final java.lang.Long getMacroTicketTypeId(){
+    public final java.lang.String getMacroTicketTypeId(){
          onPropGet(PROP_ID_macroTicketTypeId);
          return _macroTicketTypeId;
     }
@@ -829,7 +829,7 @@ public class _ErpCsCannedResponse extends DynamicOrmEntity{
     /**
      * 自动匹配工单类型: MACRO_TICKET_TYPE_ID
      */
-    public final void setMacroTicketTypeId(java.lang.Long value){
+    public final void setMacroTicketTypeId(java.lang.String value){
         if(onPropSet(PROP_ID_macroTicketTypeId,value)){
             this._macroTicketTypeId = value;
             internalClearRefs(PROP_ID_macroTicketTypeId);

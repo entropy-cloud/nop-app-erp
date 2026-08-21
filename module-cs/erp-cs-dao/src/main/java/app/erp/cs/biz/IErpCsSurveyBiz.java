@@ -14,7 +14,7 @@ import java.util.List;
 public interface IErpCsSurveyBiz extends ICrudBiz<ErpCsSurvey> {
 
     @BizMutation
-    ErpCsSurvey createSurvey(@Name("ticketId") Long ticketId, IServiceContext context);
+    ErpCsSurvey createSurvey(@Name("ticketId") String ticketId, IServiceContext context);
 
     @BizMutation
     ErpCsSurvey submitSurvey(@Name("surveyToken") String surveyToken,

@@ -39,7 +39,7 @@ public class ErpCsTimeEntryBizModel extends CrudBizModel<ErpCsTimeEntry> impleme
 
     @Override
     @BizMutation
-    public ErpCsTimeEntry submit(@Name("timeEntryId") Long timeEntryId, IServiceContext context) {
+    public ErpCsTimeEntry submit(@Name("timeEntryId") String timeEntryId, IServiceContext context) {
         ErpCsTimeEntry entry = requireEntry(timeEntryId, context);
         String current = entry.getApprovalStatus();
         if (current != null && !ErpCsConstants.TIME_ENTRY_APPROVE_REJECTED.equals(current)) {
@@ -67,7 +67,7 @@ public class ErpCsTimeEntryBizModel extends CrudBizModel<ErpCsTimeEntry> impleme
 
     @Override
     @BizMutation
-    public ErpCsTimeEntry approve(@Name("timeEntryId") Long timeEntryId, IServiceContext context) {
+    public ErpCsTimeEntry approve(@Name("timeEntryId") String timeEntryId, IServiceContext context) {
         ErpCsTimeEntry entry = requireEntry(timeEntryId, context);
         if (!ErpCsConstants.TIME_ENTRY_APPROVE_PENDING.equals(entry.getApprovalStatus())) {
             throw illegalApprovalStatus(entry, ErpCsConstants.TIME_ENTRY_APPROVE_PENDING);
@@ -81,7 +81,7 @@ public class ErpCsTimeEntryBizModel extends CrudBizModel<ErpCsTimeEntry> impleme
 
     @Override
     @BizMutation
-    public ErpCsTimeEntry reject(@Name("timeEntryId") Long timeEntryId,
+    public ErpCsTimeEntry reject(@Name("timeEntryId") String timeEntryId,
                                  @Optional @Name("rejectReason") String rejectReason,
                                  IServiceContext context) {
         ErpCsTimeEntry entry = requireEntry(timeEntryId, context);
@@ -139,7 +139,7 @@ public class ErpCsTimeEntryBizModel extends CrudBizModel<ErpCsTimeEntry> impleme
     }
 
     /** 镜像 {@link ErpCsTicketBizModel#requireTicket} 范式：null id 领域错误码，存在性走 requireEntity 管道。 */
-    private ErpCsTimeEntry requireEntry(Long timeEntryId, IServiceContext context) {
+    private ErpCsTimeEntry requireEntry(String timeEntryId, IServiceContext context) {
         if (timeEntryId == null) {
             throw new NopException(ErpCsErrors.ERR_CS_TIME_ENTRY_NOT_FOUND)
                     .param(ErpCsErrors.ARG_TIME_ENTRY_ID, timeEntryId);

@@ -65,14 +65,14 @@ public class TestErpCsTicketTimerSession extends JunitAutoTestCase {
     /** 冻结参考时刻：2026-07-17T00:00（CoreMetrics.currentDateTime() 在测试线程恒返回此值）。 */
     static final LocalDateTime NOW = LocalDate.of(2026, 7, 17).atStartOfDay();
 
-    static final Long CUSTOMER_ID = 7501L;
-    static final Long TICKET_TYPE_ID = 7601L;
-    static final Long TICKET_A = 7101L;
-    static final Long TICKET_B = 7102L;
+    static final String CUSTOMER_ID = "7501";
+    static final String TICKET_TYPE_ID = "7601";
+    static final String TICKET_A = "7101";
+    static final String TICKET_B = "7102";
     static final String AGENT_A = "1001";
     static final String AGENT_B = "1002";
-    static final Long SESSION_ID = 7301L;
-    static final Long ENTRY_ID_BASE = 7400L;
+    static final String SESSION_ID = "7301";
+    static final String ENTRY_ID_BASE = "7400";
 
     @Inject
     IDaoProvider daoProvider;
@@ -147,7 +147,7 @@ public class TestErpCsTicketTimerSession extends JunitAutoTestCase {
     public void testPauseResumeAccumulatesPauseAndOptionalReason() {
         seedTicket(TICKET_A, null);
         // 路径 a) 应用入口暂停：RUNNING → PAUSED + pauseReason 可选（填写）
-        Long running = seedRunningSession(7311L, AGENT_A, TICKET_A, NOW.minusHours(5), null);
+        String running = seedRunningSession("7311", AGENT_A, TICKET_A, NOW.minusHours(5), null);
         ApiResponse<?> paused = rpc(mutation, "ErpCsTicketTimerSession__pauseTimer",
                 args("sessionId", running, "pauseReason", "等待客户回复"));
         assertEquals(0, paused.getStatus(), "pauseTimer 应成功: " + paused);
@@ -159,7 +159,7 @@ public class TestErpCsTicketTimerSession extends JunitAutoTestCase {
         assertNotNull(afterPause.getPauseStartDateTime(), "暂停开始时间记录");
 
         // 路径 b) 既有未闭合暂停 40 分钟 → resume 结算入累计（种子直插 PAUSED 会话，时间确定性）
-        Long pausedSeed = seedPausedSession(7312L, AGENT_B, TICKET_A, NOW.minusHours(8), NOW.minusMinutes(40), 0);
+        String pausedSeed = seedPausedSession("7312", AGENT_B, TICKET_A, NOW.minusHours(8), NOW.minusMinutes(40), 0);
         ApiResponse<?> resumed = rpc(mutation, "ErpCsTicketTimerSession__resumeTimer",
                 args("sessionId", pausedSeed));
         assertEquals(0, resumed.getStatus(), "resumeTimer 应成功: " + resumed);
@@ -169,7 +169,7 @@ public class TestErpCsTicketTimerSession extends JunitAutoTestCase {
         assertNull(afterResume.getPauseStartDateTime(), "未闭合暂停清空");
 
         // pauseReason 不填路径（可选）+ 状态守卫：RUNNING 上 resume 非法（先恢复回 RUNNING 再试）
-        Long running2 = seedRunningSession(7313L, AGENT_B, TICKET_A, NOW.minusMinutes(30), null);
+        String running2 = seedRunningSession("7313", AGENT_B, TICKET_A, NOW.minusMinutes(30), null);
         ApiResponse<?> paused2 = rpc(mutation, "ErpCsTicketTimerSession__pauseTimer",
                 args("sessionId", running2));
         assertEquals(0, paused2.getStatus(), "不填暂停原因的 pauseTimer 应成功（可选）: " + paused2);
@@ -187,7 +187,7 @@ public class TestErpCsTicketTimerSession extends JunitAutoTestCase {
     public void testStopGeneratesEntryWithDurationMath() {
         seedTicket(TICKET_A, null);
         // 墙钟 300 分钟 − 累计暂停 45 分钟 = 有效 255 分钟
-        Long sessionId = seedRunningSession(SESSION_ID, AGENT_A, TICKET_A, NOW.minusMinutes(300), 45);
+        String sessionId = seedRunningSession(SESSION_ID, AGENT_A, TICKET_A, NOW.minusMinutes(300), 45);
 
         ApiResponse<?> resp = rpc(mutation, "ErpCsTicketTimerSession__stopTimer",
                 args("sessionId", sessionId));
@@ -201,7 +201,7 @@ public class TestErpCsTicketTimerSession extends JunitAutoTestCase {
         assertEquals(1, entries.size(), "停止生成恰好 1 条 ErpCsTimeEntry（④）");
         ErpCsTimeEntry entry = entries.get(0);
         assertEquals(TICKET_A, entry.getTicketId(), "条目关联工单");
-        assertEquals(Long.parseLong(AGENT_A), entry.getAgentId(), "D2 映射：数字 userId 直写 BIGINT");
+        assertEquals(AGENT_A, entry.getAgentId(), "D2 映射：userId 恒等直写");
         assertEquals(Timestamp.valueOf(NOW.minusMinutes(300)), entry.getStartTime(), "条目 startTime = 会话开始时间");
         assertEquals(Timestamp.valueOf(NOW), entry.getEndTime(), "条目 endTime = 停止时间");
         assertEquals(255, entry.getDuration(), "duration = 墙钟 300 − Σ暂停 45 = 255（④数学断言）");
@@ -222,12 +222,12 @@ public class TestErpCsTicketTimerSession extends JunitAutoTestCase {
     public void testTwelveHourLazySettlementOnAnyTouch() {
         seedTicket(TICKET_A, null);
         // a) 超 12h（有效 840 分钟）→ pause 入口先封顶结算再拒绝暂停
-        Long overdue = seedRunningSession(7321L, AGENT_A, TICKET_A, NOW.minusHours(14), 0);
+        String overdue = seedRunningSession("7321", AGENT_A, TICKET_A, NOW.minusHours(14), 0);
         ApiResponse<?> pauseResp = rpc(mutation, "ErpCsTicketTimerSession__pauseTimer",
                 args("sessionId", overdue));
         assertEquals(ErpCsErrors.ERR_CS_TIMER_SESSION_NOT_OPEN.getErrorCode(), pauseResp.getCode(),
                 "超时会话 pause 触发结算后按已停止拒绝");
-        ErpCsTicketTimerSession settled = reloadSession(7321L);
+        ErpCsTicketTimerSession settled = reloadSession("7321");
         assertEquals(ErpCsConstants.TIMER_SESSION_STATUS_STOPPED, settled.getStatus(), "惰性结算置 STOPPED");
         assertNull(settled.getActiveFlag(), "结算释放槽位");
         assertEquals(Timestamp.valueOf(NOW.minusHours(14).plusMinutes(720)), settled.getStopTime(),
@@ -239,17 +239,17 @@ public class TestErpCsTicketTimerSession extends JunitAutoTestCase {
         assertEquals(Timestamp.valueOf(NOW.minusHours(14)), capped.getStartTime(), "封顶条目 startTime = 会话开始");
 
         // b) findActiveTimer 读取入口：超时会话封顶后返回 null
-        Long overdue2 = seedRunningSession(7322L, AGENT_A, TICKET_A, NOW.minusHours(13).minusMinutes(30), 0);
+        String overdue2 = seedRunningSession("7322", AGENT_A, TICKET_A, NOW.minusHours(13).minusMinutes(30), 0);
         ApiResponse<?> active = rpc(query, "ErpCsTicketTimerSession__findActiveTimer",
                 args("agentId", AGENT_A));
         assertEquals(0, active.getStatus(), "findActiveTimer 应成功: " + active);
         assertNull(active.getData(), "超时会话读取时惰性结算后无活跃计时器（返回 null）");
-        assertEquals(ErpCsConstants.TIMER_SESSION_STATUS_STOPPED, reloadSession(7322L).getStatus(),
+        assertEquals(ErpCsConstants.TIMER_SESSION_STATUS_STOPPED, reloadSession("7322").getStatus(),
                 "读取入口完成封顶结算");
         assertEquals(720, entriesOf(TICKET_A).get(1).getDuration(), "第二笔封顶条目 720 分钟");
 
         // c) 边界：有效恰好 720 分钟（13h 墙钟 − 60 暂停）不触发结算，正常停止 duration=720
-        Long boundary = seedPausedSession(7323L, AGENT_A, TICKET_A, NOW.minusHours(13), NOW.minusMinutes(1), 59);
+        String boundary = seedPausedSession("7323", AGENT_A, TICKET_A, NOW.minusHours(13), NOW.minusMinutes(1), 59);
         ApiResponse<?> stopBoundary = rpc(mutation, "ErpCsTicketTimerSession__stopTimer",
                 args("sessionId", boundary));
         assertEquals(0, stopBoundary.getStatus(), "边界会话（有效=720）stop 应成功: " + stopBoundary);
@@ -257,11 +257,11 @@ public class TestErpCsTicketTimerSession extends JunitAutoTestCase {
                 "边界（未超 720）正常停止 duration = 780 − 60 = 720");
 
         // d) PAUSED 态超时（墙钟 14h，暂停中 1h → 有效 780 > 720）：stop 入口结算幂等返回
-        Long pausedOverdue = seedPausedSession(7324L, AGENT_A, TICKET_A, NOW.minusHours(14), NOW.minusHours(1), 0);
+        String pausedOverdue = seedPausedSession("7324", AGENT_A, TICKET_A, NOW.minusHours(14), NOW.minusHours(1), 0);
         ApiResponse<?> stopOverdue = rpc(mutation, "ErpCsTicketTimerSession__stopTimer",
                 args("sessionId", pausedOverdue));
         assertEquals(0, stopOverdue.getStatus(), "PAUSED 超时 stop 经结算幂等成功: " + stopOverdue);
-        ErpCsTicketTimerSession settledPaused = reloadSession(7324L);
+        ErpCsTicketTimerSession settledPaused = reloadSession("7324");
         assertEquals(ErpCsConstants.TIMER_SESSION_STATUS_STOPPED, settledPaused.getStatus(), "PAUSED 超时结算 STOPPED");
         assertEquals(60, settledPaused.getCumulativePauseMinutes(), "未闭合暂停 60 分钟结算入累计");
         assertEquals(Timestamp.valueOf(NOW.minusHours(14).plusMinutes(720).plusMinutes(60)),
@@ -281,7 +281,7 @@ public class TestErpCsTicketTimerSession extends JunitAutoTestCase {
         assertEquals(ErpCsErrors.ERR_CS_TIME_TRACKING_DISABLED.getErrorCode(), start.getCode(),
                 "config off 时 startTimer 拒绝（①前置门控）");
 
-        Long session = seedRunningSession(7331L, AGENT_A, TICKET_A, NOW.minusMinutes(30), 0);
+        String session = seedRunningSession("7331", AGENT_A, TICKET_A, NOW.minusMinutes(30), 0);
         assertEquals(ErpCsErrors.ERR_CS_TIME_TRACKING_DISABLED.getErrorCode(),
                 rpc(mutation, "ErpCsTicketTimerSession__pauseTimer", args("sessionId", session)).getCode(),
                 "config off 时 pauseTimer 拒绝");
@@ -292,7 +292,7 @@ public class TestErpCsTicketTimerSession extends JunitAutoTestCase {
         // MANUAL 条目 CRUD + submit 不受计时开关影响（plan D6：开关仅门控计时器）
         ApiResponse<?> manualSave = rpc(mutation, "ErpCsTimeEntry__save", Map.of("data", manualEntryData(null, "手工补录", 30)));
         assertEquals(0, manualSave.getStatus(), "MANUAL 条目保存不受计时开关影响: " + manualSave);
-        Long manualId = idOf(manualSave);
+        String manualId = idOf(manualSave);
         ApiResponse<?> manualSubmit = rpc(mutation, "ErpCsTimeEntry__submit", args("timeEntryId", manualId));
         assertEquals(0, manualSubmit.getStatus(), "MANUAL 条目 submit 不受计时开关影响: " + manualSubmit);
         assertEquals(ErpCsConstants.TIME_ENTRY_APPROVE_APPROVED,
@@ -301,7 +301,7 @@ public class TestErpCsTicketTimerSession extends JunitAutoTestCase {
         assign(ErpCsConstants.CONFIG_TIME_TRACKING_ENABLED, "true");
 
         // require-description 双路径：true + 空 description → 拒绝；false → 放行
-        Long noDesc = seedManualEntry(7341L, TICKET_A, "", false, 30);
+        String noDesc = seedManualEntry("7341", TICKET_A, "", false, 30);
         assertEquals(ErpCsErrors.ERR_CS_TIME_ENTRY_DESCRIPTION_REQUIRED.getErrorCode(),
                 rpc(mutation, "ErpCsTimeEntry__submit", args("timeEntryId", noDesc)).getCode(),
                 "require-description=true 且空描述 → submit 拒绝");
@@ -319,7 +319,7 @@ public class TestErpCsTicketTimerSession extends JunitAutoTestCase {
         seedTicket(TICKET_A, AGENT_B);
 
         // isBillable → PENDING → approve → APPROVED
-        Long billable = seedManualEntry(7351L, TICKET_A, "远程排查故障", true, 60);
+        String billable = seedManualEntry("7351", TICKET_A, "远程排查故障", true, 60);
         assertEquals(0, rpc(mutation, "ErpCsTimeEntry__submit", args("timeEntryId", billable)).getStatus(),
                 "可计费条目 submit 成功");
         assertEquals(ErpCsConstants.TIME_ENTRY_APPROVE_PENDING, reloadEntry(billable).getApprovalStatus(),
@@ -332,7 +332,7 @@ public class TestErpCsTicketTimerSession extends JunitAutoTestCase {
         assertNotNull(approved.getApprovedAt(), "审批时间落库");
 
         // PENDING → reject（原因前缀）→ REJECTED → 修改后重新 submit
-        Long rejected = seedManualEntry(7352L, TICKET_A, "现场支持", true, 90);
+        String rejected = seedManualEntry("7352", TICKET_A, "现场支持", true, 90);
         rpcOk(mutation, "ErpCsTimeEntry__submit", args("timeEntryId", rejected));
         assertEquals(0, rpc(mutation, "ErpCsTimeEntry__reject",
                 args("timeEntryId", rejected, "rejectReason", "时长与工单记录不符")).getStatus(), "reject 成功");
@@ -351,7 +351,7 @@ public class TestErpCsTicketTimerSession extends JunitAutoTestCase {
                 "重提后回到 PENDING");
 
         // threshold 触发：不可计费但 500 分钟 > 480 → PENDING
-        Long overThreshold = seedManualEntry(7353L, TICKET_A, "大工单处理", false, 500);
+        String overThreshold = seedManualEntry("7353", TICKET_A, "大工单处理", false, 500);
         rpcOk(mutation, "ErpCsTimeEntry__submit", args("timeEntryId", overThreshold));
         assertEquals(ErpCsConstants.TIME_ENTRY_APPROVE_PENDING, reloadEntry(overThreshold).getApprovalStatus(),
                 "超阈值（500>480）不可计费仍触发审批（⑥）");
@@ -366,7 +366,7 @@ public class TestErpCsTicketTimerSession extends JunitAutoTestCase {
 
         // auto-approve 直通：可计费也跳过 PENDING
         assign(ErpCsConstants.CONFIG_TIME_ENTRY_AUTO_APPROVE, "true");
-        Long autoEntry = seedManualEntry(7354L, TICKET_A, "自动审批路径", true, 60);
+        String autoEntry = seedManualEntry("7354", TICKET_A, "自动审批路径", true, 60);
         rpcOk(mutation, "ErpCsTimeEntry__submit", args("timeEntryId", autoEntry));
         assertEquals(ErpCsConstants.TIME_ENTRY_APPROVE_APPROVED, reloadEntry(autoEntry).getApprovalStatus(),
                 "auto-approve=true 可计费直通 APPROVED");
@@ -378,12 +378,12 @@ public class TestErpCsTicketTimerSession extends JunitAutoTestCase {
     public void testTicketTimeAggregations() {
         seedTicket(TICKET_A, null);
         seedTicket(TICKET_B, null);
-        seedManualEntrySpec(7361L, TICKET_A, 100, true, ErpCsConstants.TIME_ENTRY_APPROVE_APPROVED, "50.00");
-        seedManualEntrySpec(7362L, TICKET_A, 60, true, ErpCsConstants.TIME_ENTRY_APPROVE_PENDING, "30.00");
-        seedManualEntrySpec(7363L, TICKET_A, 40, false, ErpCsConstants.TIME_ENTRY_APPROVE_APPROVED, "999.00");
-        seedManualEntrySpec(7364L, TICKET_A, 25, true, ErpCsConstants.TIME_ENTRY_APPROVE_REJECTED, "12.50");
-        seedManualEntrySpec(7365L, TICKET_A, 10, true, null, "5.00");
-        seedManualEntrySpec(7366L, TICKET_B, 999, true, ErpCsConstants.TIME_ENTRY_APPROVE_APPROVED, "1.00");
+        seedManualEntrySpec("7361", TICKET_A, 100, true, ErpCsConstants.TIME_ENTRY_APPROVE_APPROVED, "50.00");
+        seedManualEntrySpec("7362", TICKET_A, 60, true, ErpCsConstants.TIME_ENTRY_APPROVE_PENDING, "30.00");
+        seedManualEntrySpec("7363", TICKET_A, 40, false, ErpCsConstants.TIME_ENTRY_APPROVE_APPROVED, "999.00");
+        seedManualEntrySpec("7364", TICKET_A, 25, true, ErpCsConstants.TIME_ENTRY_APPROVE_REJECTED, "12.50");
+        seedManualEntrySpec("7365", TICKET_A, 10, true, null, "5.00");
+        seedManualEntrySpec("7366", TICKET_B, 999, true, ErpCsConstants.TIME_ENTRY_APPROVE_APPROVED, "1.00");
 
         assertEquals(200L, agg("ErpCsTicket__totalTimeSpent", TICKET_A),
                 "totalTimeSpent = APPROVED(100) + PENDING(60) + APPROVED不可计费(40)，REJECTED/DRAFT/他单排除");
@@ -425,33 +425,33 @@ public class TestErpCsTicketTimerSession extends JunitAutoTestCase {
         assertEquals(0, resp.getStatus(), action + " 应成功: " + resp);
     }
 
-    private Long idOf(ApiResponse<?> resp) {
+    private String idOf(ApiResponse<?> resp) {
         Object data = resp.getData();
         assertNotNull(data, "响应应含实体: " + resp);
         @SuppressWarnings("unchecked")
         Map<String, Object> map = (Map<String, Object>) data;
         Object id = map.get("id");
-        return id instanceof Number ? ((Number) id).longValue() : Long.valueOf(String.valueOf(id));
+        return String.valueOf(id);
     }
 
-    private long agg(String action, Long ticketId) {
+    private long agg(String action, String ticketId) {
         ApiResponse<?> resp = rpc(query, action, args("ticketId", ticketId));
         assertEquals(0, resp.getStatus(), action + " 应成功: " + resp);
         Object data = resp.getData();
         return data instanceof Number ? ((Number) data).longValue() : Long.parseLong(String.valueOf(data));
     }
 
-    private BigDecimal aggAmount(String action, Long ticketId) {
+    private BigDecimal aggAmount(String action, String ticketId) {
         ApiResponse<?> resp = rpc(query, action, args("ticketId", ticketId));
         assertEquals(0, resp.getStatus(), action + " 应成功: " + resp);
         return new BigDecimal(String.valueOf(resp.getData()));
     }
 
-    private ErpCsTicketTimerSession reloadSession(Long id) {
+    private ErpCsTicketTimerSession reloadSession(String id) {
         return daoProvider.daoFor(ErpCsTicketTimerSession.class).getEntityById(id);
     }
 
-    private ErpCsTimeEntry reloadEntry(Long id) {
+    private ErpCsTimeEntry reloadEntry(String id) {
         return daoProvider.daoFor(ErpCsTimeEntry.class).getEntityById(id);
     }
 
@@ -464,7 +464,7 @@ public class TestErpCsTicketTimerSession extends JunitAutoTestCase {
         return list.isEmpty() ? null : list.get(0);
     }
 
-    private List<ErpCsTimeEntry> entriesOf(Long ticketId) {
+    private List<ErpCsTimeEntry> entriesOf(String ticketId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("ticketId", ticketId));
         q.addOrderField("id", false);
@@ -475,7 +475,7 @@ public class TestErpCsTicketTimerSession extends JunitAutoTestCase {
     private void insertDuplicateOpenSession() {
         IEntityDao<ErpCsTicketTimerSession> dao = daoProvider.daoFor(ErpCsTicketTimerSession.class);
         ErpCsTicketTimerSession dup = dao.newEntity();
-        dup.orm_propValueByName("id", 7302L);
+        dup.orm_propValueByName("id", "7302");
         dup.setAgentId(AGENT_B);
         dup.setTicketId(TICKET_B);
         dup.setStartTime(Timestamp.valueOf(NOW.minusMinutes(10)));
@@ -485,7 +485,7 @@ public class TestErpCsTicketTimerSession extends JunitAutoTestCase {
         dao.flushSession();
     }
 
-    private void seedTicket(Long id, String assignedToId) {
+    private void seedTicket(String id, String assignedToId) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpCsTicket> dao = daoProvider.daoFor(ErpCsTicket.class);
             ErpCsTicket t = dao.newEntity();
@@ -524,7 +524,7 @@ public class TestErpCsTicketTimerSession extends JunitAutoTestCase {
     }
 
     /** dao 直插 RUNNING 会话（时间受控种子；cumulative 可预置暂停历史）。 */
-    private Long seedRunningSession(Long id, String agentId, Long ticketId, LocalDateTime startTime,
+    private String seedRunningSession(String id, String agentId, String ticketId, LocalDateTime startTime,
                                     Integer cumulativePauseMinutes) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpCsTicketTimerSession> dao = daoProvider.daoFor(ErpCsTicketTimerSession.class);
@@ -542,7 +542,7 @@ public class TestErpCsTicketTimerSession extends JunitAutoTestCase {
     }
 
     /** dao 直插 PAUSED 会话（含未闭合暂停）。 */
-    private Long seedPausedSession(Long id, String agentId, Long ticketId, LocalDateTime startTime,
+    private String seedPausedSession(String id, String agentId, String ticketId, LocalDateTime startTime,
                                    LocalDateTime pauseStart, Integer cumulativePauseMinutes) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpCsTicketTimerSession> dao = daoProvider.daoFor(ErpCsTicketTimerSession.class);
@@ -560,13 +560,13 @@ public class TestErpCsTicketTimerSession extends JunitAutoTestCase {
         return id;
     }
 
-    private Map<String, Object> manualEntryData(Long id, String description, Integer duration) {
+    private Map<String, Object> manualEntryData(String id, String description, Integer duration) {
         Map<String, Object> data = new LinkedHashMap<>();
         if (id != null) {
             data.put("id", id);
         }
         data.put("ticketId", TICKET_A);
-        data.put("agentId", Long.parseLong(AGENT_A));
+        data.put("agentId", AGENT_A);
         data.put("startTime", Timestamp.valueOf(NOW.minusMinutes(duration == null ? 0 : duration)));
         data.put("endTime", Timestamp.valueOf(NOW));
         data.put("duration", duration);
@@ -576,13 +576,13 @@ public class TestErpCsTicketTimerSession extends JunitAutoTestCase {
         return data;
     }
 
-    private Long seedManualEntry(Long id, Long ticketId, String description, boolean billable, int duration) {
+    private String seedManualEntry(String id, String ticketId, String description, boolean billable, int duration) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpCsTimeEntry> dao = daoProvider.daoFor(ErpCsTimeEntry.class);
             ErpCsTimeEntry e = dao.newEntity();
             e.orm_propValueByName("id", id);
             e.setTicketId(ticketId);
-            e.setAgentId(Long.parseLong(AGENT_A));
+            e.setAgentId(AGENT_A);
             e.setStartTime(Timestamp.valueOf(NOW.minusMinutes(duration)));
             e.setEndTime(Timestamp.valueOf(NOW));
             e.setDuration(duration);
@@ -594,14 +594,14 @@ public class TestErpCsTicketTimerSession extends JunitAutoTestCase {
         return id;
     }
 
-    private void seedManualEntrySpec(Long id, Long ticketId, int duration, boolean billable,
+    private void seedManualEntrySpec(String id, String ticketId, int duration, boolean billable,
                                      String approvalStatus, String billableAmount) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpCsTimeEntry> dao = daoProvider.daoFor(ErpCsTimeEntry.class);
             ErpCsTimeEntry e = dao.newEntity();
             e.orm_propValueByName("id", id);
             e.setTicketId(ticketId);
-            e.setAgentId(Long.parseLong(AGENT_A));
+            e.setAgentId(AGENT_A);
             e.setStartTime(Timestamp.valueOf(NOW.minusMinutes(duration)));
             e.setEndTime(Timestamp.valueOf(NOW));
             e.setDuration(duration);

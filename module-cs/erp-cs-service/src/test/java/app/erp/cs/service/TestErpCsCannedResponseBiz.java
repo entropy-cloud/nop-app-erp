@@ -45,8 +45,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpCsCannedResponseBiz extends JunitAutoTestCase {
 
-    static final Long PARTNER_ID = 9201L;
-    static final Long TICKET_TYPE_ID = 6201L;
+    static final String PARTNER_ID = "9201";
+    static final String TICKET_TYPE_ID = "6201";
 
     @Inject
     IDaoProvider daoProvider;
@@ -60,8 +60,8 @@ public class TestErpCsCannedResponseBiz extends JunitAutoTestCase {
     @Test
     public void testRenderTemplateSystemVars() {
         seedCustomer(PARTNER_ID, "ACME公司");
-        Long ticketId = seedTicket("TK-RENDER-001", PARTNER_ID);
-        Long crId = seedCannedResponse(9301L, "CR-RENDER-001", "您好 {customer_name}，工单 {ticket_id} 由 {agent_name} 处理",
+        String ticketId = seedTicket("TK-RENDER-001", PARTNER_ID);
+        String crId = seedCannedResponse("9301", "CR-RENDER-001", "您好 {customer_name}，工单 {ticket_id} 由 {agent_name} 处理",
                 null, null, null, Boolean.TRUE, 0);
 
         ApiResponse<?> resp = rpc(query, "ErpCsCannedResponse__renderTemplate",
@@ -77,8 +77,8 @@ public class TestErpCsCannedResponseBiz extends JunitAutoTestCase {
     @Test
     public void testRenderTemplateCustomVarOverride() {
         seedCustomer(PARTNER_ID, "系统客户名");
-        Long ticketId = seedTicket("TK-RENDER-002", PARTNER_ID);
-        Long crId = seedCannedResponse(9302L, "CR-RENDER-002", "{customer_name}",
+        String ticketId = seedTicket("TK-RENDER-002", PARTNER_ID);
+        String crId = seedCannedResponse("9302", "CR-RENDER-002", "{customer_name}",
                 "{\"variables\":[{\"key\":\"{customer_name}\",\"required\":false}]}", null, null, Boolean.TRUE, 0);
 
         ApiResponse<?> resp = rpc(query, "ErpCsCannedResponse__renderTemplate",
@@ -90,7 +90,7 @@ public class TestErpCsCannedResponseBiz extends JunitAutoTestCase {
 
     @Test
     public void testRenderTemplateInactiveRejected() {
-        Long crId = seedCannedResponse(9303L, "CR-INACTIVE", "内容",
+        String crId = seedCannedResponse("9303", "CR-INACTIVE", "内容",
                 null, null, null, Boolean.FALSE, 0);
 
         ApiResponse<?> resp = rpc(query, "ErpCsCannedResponse__renderTemplate",
@@ -101,15 +101,15 @@ public class TestErpCsCannedResponseBiz extends JunitAutoTestCase {
 
     @Test
     public void testSuggestExactMatch() {
-        Long ticketId = seedTicket("TK-SUGGEST-EXACT", PARTNER_ID);
+        String ticketId = seedTicket("TK-SUGGEST-EXACT", PARTNER_ID);
         // 精确匹配：type=6201 + priority=NORMAL
-        Long exactId = seedCannedResponse(9310L, "CR-EXACT", "精确匹配",
+        String exactId = seedCannedResponse("9310", "CR-EXACT", "精确匹配",
                 null, TICKET_TYPE_ID, ErpCsConstants.TICKET_PRIORITY_NORMAL, Boolean.TRUE, 10);
         // 类型匹配：type=6201 + priority=null
-        seedCannedResponse(9311L, "CR-TYPE", "类型匹配",
+        seedCannedResponse("9311", "CR-TYPE", "类型匹配",
                 null, TICKET_TYPE_ID, null, Boolean.TRUE, 20);
         // 全局兜底：type=null + priority=null
-        seedCannedResponse(9312L, "CR-GLOBAL", "全局兜底",
+        seedCannedResponse("9312", "CR-GLOBAL", "全局兜底",
                 null, null, null, Boolean.TRUE, 30);
 
         ApiResponse<?> resp = rpc(query, "ErpCsCannedResponse__suggestForTicket",
@@ -121,7 +121,7 @@ public class TestErpCsCannedResponseBiz extends JunitAutoTestCase {
         // 精确匹配应排在最前
         boolean foundExact = false;
         for (Map<String, Object> r : items) {
-            if (toLong(r.get("id")).equals(exactId)) {
+            if (String.valueOf(r.get("id")).equals(exactId)) {
                 foundExact = true;
                 break;
             }
@@ -132,11 +132,11 @@ public class TestErpCsCannedResponseBiz extends JunitAutoTestCase {
     @Test
     public void testSuggestFallbackToTypeMatch() {
         // 工单 type=6201, priority=LOW（无精确 LOW 匹配，应 fallback 到类型匹配）
-        Long ticketId = seedTicketWithPriority("TK-SUGGEST-LOW", PARTNER_ID, ErpCsConstants.TICKET_PRIORITY_LOW);
-        Long typeId = seedCannedResponse(9320L, "CR-TYPE-ONLY", "类型匹配",
+        String ticketId = seedTicketWithPriority("TK-SUGGEST-LOW", PARTNER_ID, ErpCsConstants.TICKET_PRIORITY_LOW);
+        String typeId = seedCannedResponse("9320", "CR-TYPE-ONLY", "类型匹配",
                 null, TICKET_TYPE_ID, null, Boolean.TRUE, 20);
         // 全局兜底
-        seedCannedResponse(9321L, "CR-GLOBAL-2", "全局兜底",
+        seedCannedResponse("9321", "CR-GLOBAL-2", "全局兜底",
                 null, null, null, Boolean.TRUE, 30);
 
         ApiResponse<?> resp = rpc(query, "ErpCsCannedResponse__suggestForTicket",
@@ -146,7 +146,7 @@ public class TestErpCsCannedResponseBiz extends JunitAutoTestCase {
         List<Map<String, Object>> items = (List<Map<String, Object>>) resp.getData();
         boolean foundType = false;
         for (Map<String, Object> r : items) {
-            if (toLong(r.get("id")).equals(typeId)) {
+            if (String.valueOf(r.get("id")).equals(typeId)) {
                 foundType = true;
                 break;
             }
@@ -157,8 +157,8 @@ public class TestErpCsCannedResponseBiz extends JunitAutoTestCase {
     @Test
     public void testSuggestFallbackToGlobal() {
         // 工单 type=9999（无任何匹配），应 fallback 到全局兜底
-        Long ticketId = seedTicketWithPriorityAndType("TK-SUGGEST-GLOBAL", PARTNER_ID, 9999L, ErpCsConstants.TICKET_PRIORITY_NORMAL);
-        Long globalId = seedCannedResponse(9330L, "CR-GLOBAL-3", "全局兜底",
+        String ticketId = seedTicketWithPriorityAndType("TK-SUGGEST-GLOBAL", PARTNER_ID, "9999", ErpCsConstants.TICKET_PRIORITY_NORMAL);
+        String globalId = seedCannedResponse("9330", "CR-GLOBAL-3", "全局兜底",
                 null, null, null, Boolean.TRUE, 30);
 
         ApiResponse<?> resp = rpc(query, "ErpCsCannedResponse__suggestForTicket",
@@ -168,7 +168,7 @@ public class TestErpCsCannedResponseBiz extends JunitAutoTestCase {
         List<Map<String, Object>> items = (List<Map<String, Object>>) resp.getData();
         boolean foundGlobal = false;
         for (Map<String, Object> r : items) {
-            if (toLong(r.get("id")).equals(globalId)) {
+            if (String.valueOf(r.get("id")).equals(globalId)) {
                 foundGlobal = true;
                 break;
             }
@@ -179,8 +179,8 @@ public class TestErpCsCannedResponseBiz extends JunitAutoTestCase {
     @Test
     public void testApplyCannedResponseIncrementsUsageAndWritesAction() {
         seedCustomer(PARTNER_ID, "ACME");
-        Long ticketId = seedTicket("TK-APPLY-001", PARTNER_ID);
-        Long crId = seedCannedResponse(9340L, "CR-APPLY", "应答内容 {ticket_id}",
+        String ticketId = seedTicket("TK-APPLY-001", PARTNER_ID);
+        String crId = seedCannedResponse("9340", "CR-APPLY", "应答内容 {ticket_id}",
                 null, null, null, Boolean.TRUE, 5);
 
         ApiResponse<?> resp = rpc(mutation, "ErpCsCannedResponse__applyCannedResponse",
@@ -202,7 +202,7 @@ public class TestErpCsCannedResponseBiz extends JunitAutoTestCase {
         boolean hasNote = false;
     }
 
-    private QueryCheckResult findTicketActions(Long ticketId) {
+    private QueryCheckResult findTicketActions(String ticketId) {
         QueryCheckResult r = new QueryCheckResult();
         io.nop.api.core.beans.query.QueryBean q = new io.nop.api.core.beans.query.QueryBean();
         q.addFilter(io.nop.api.core.beans.FilterBeans.eq("ticketId", ticketId));
@@ -215,7 +215,7 @@ public class TestErpCsCannedResponseBiz extends JunitAutoTestCase {
         return r;
     }
 
-    private void seedCustomer(Long id, String name) {
+    private void seedCustomer(String id, String name) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMdPartner> dao = daoProvider.daoFor(ErpMdPartner.class);
             ErpMdPartner p = new ErpMdPartner();
@@ -228,16 +228,16 @@ public class TestErpCsCannedResponseBiz extends JunitAutoTestCase {
         });
     }
 
-    private Long seedTicket(String code, Long customerId) {
+    private String seedTicket(String code, String customerId) {
         return seedTicketWithPriorityAndType(code, customerId, TICKET_TYPE_ID, ErpCsConstants.TICKET_PRIORITY_NORMAL);
     }
 
-    private Long seedTicketWithPriority(String code, Long customerId, String priority) {
+    private String seedTicketWithPriority(String code, String customerId, String priority) {
         return seedTicketWithPriorityAndType(code, customerId, TICKET_TYPE_ID, priority);
     }
 
-    private Long seedTicketWithPriorityAndType(String code, Long customerId, Long ticketTypeId, String priority) {
-        Long id = 9400L + (long) (Math.abs(code.hashCode()) % 500);
+    private String seedTicketWithPriorityAndType(String code, String customerId, String ticketTypeId, String priority) {
+        String id = String.valueOf(9400 + Math.abs(code.hashCode()) % 500);
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpCsTicket> dao = daoProvider.daoFor(ErpCsTicket.class);
             ErpCsTicket t = new ErpCsTicket();
@@ -257,8 +257,8 @@ public class TestErpCsCannedResponseBiz extends JunitAutoTestCase {
         return id;
     }
 
-    private Long seedCannedResponse(Long id, String code, String content,
-                                     String variableDefs, Long macroTicketTypeId, String macroPriority,
+    private String seedCannedResponse(String id, String code, String content,
+                                     String variableDefs, String macroTicketTypeId, String macroPriority,
                                      Boolean isActive, Integer usageCount) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpCsCannedResponse> dao = daoProvider.daoFor(ErpCsCannedResponse.class);
@@ -281,12 +281,5 @@ public class TestErpCsCannedResponseBiz extends JunitAutoTestCase {
                                 Map<String, Object> args) {
         IGraphQLExecutionContext graphQLCtx = graphQLEngine.newRpcContext(op, action, ApiRequest.build(args));
         return graphQLEngine.executeRpc(graphQLCtx);
-    }
-
-    private static Long toLong(Object v) {
-        if (v == null) return null;
-        if (v instanceof Long) return (Long) v;
-        if (v instanceof Number) return ((Number) v).longValue();
-        return Long.valueOf(String.valueOf(v));
     }
 }

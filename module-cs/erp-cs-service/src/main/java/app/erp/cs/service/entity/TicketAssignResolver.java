@@ -1,11 +1,12 @@
 package app.erp.cs.service.entity;
 
+import app.erp.cs.dao.entity.ErpCsSlaPolicy;
+import app.erp.cs.dao.entity.ErpCsTeam;
+// bridge-main-053/054: ErpCrmTeam/ErpCrmTeamMember 为 crm 未迁移（M3.4）Long 实体，类型级引用（退役 owner M3.4）
 import app.erp.crm.biz.IErpCrmTeamBiz;
 import app.erp.crm.biz.IErpCrmTeamMemberBiz;
 import app.erp.crm.dao.entity.ErpCrmTeam;
 import app.erp.crm.dao.entity.ErpCrmTeamMember;
-import app.erp.cs.dao.entity.ErpCsSlaPolicy;
-import app.erp.cs.dao.entity.ErpCsTeam;
 import app.erp.cs.service.ErpCsConfigs;
 import app.erp.cs.service.ErpCsConstants;
 import io.nop.api.core.beans.query.QueryBean;
@@ -49,13 +50,17 @@ public class TicketAssignResolver {
             QueryBean q = new QueryBean();
             q.addFilter(eq("code", csTeam.getCode()));
             q.setLimit(1);
+            // bridge-main-055: findList 仅 code（VARCHAR）过滤，零 id 值穿越（退役 owner M3.4）
             List<ErpCrmTeam> matched = crmTeamBiz.findList(q, null, context);
             if (matched.isEmpty()) {
                 return new ArrayList<>();
             }
             QueryBean mq = new QueryBean();
+            // bridge-main-056: crm getId()（Long）→ crm teamId 过滤值，crm 域内 Long↔Long 自洽
+            // （M3.4 翻转后 String↔String 仍自洽，无跨域类型穿越；退役 owner M3.4）
             mq.addFilter(eq("teamId", matched.get(0).getId()));
             mq.addOrderField("id", false);
+            // bridge-main-056: findList 成员查询，id 值流见上（退役 owner M3.4）
             List<ErpCrmTeamMember> members = crmTeamMemberBiz.findList(mq, null, context);
             List<String> userIds = new ArrayList<>();
             for (ErpCrmTeamMember m : members) {

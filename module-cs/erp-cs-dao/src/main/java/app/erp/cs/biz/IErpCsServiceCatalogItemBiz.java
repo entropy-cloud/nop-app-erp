@@ -21,7 +21,7 @@ public interface IErpCsServiceCatalogItemBiz extends ICrudBiz<ErpCsServiceCatalo
      * @param formData      表单数据（subject/description/productId/orderNumber/urgency 等）
      */
     @BizMutation
-    ErpCsTicket createFromCatalog(@Name("catalogItemId") Long catalogItemId,
+    ErpCsTicket createFromCatalog(@Name("catalogItemId") String catalogItemId,
                                   @Optional @Name("formData") java.util.Map<String, Object> formData,
                                   IServiceContext context);
 }

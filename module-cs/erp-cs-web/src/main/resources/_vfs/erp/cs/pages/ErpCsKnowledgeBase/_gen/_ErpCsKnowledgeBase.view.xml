@@ -19,7 +19,7 @@
             <cols>
 
                 <!--ID-->
-                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="id" mandatory="true" sortable="true"/>
 
                 <!--编码-->
                 <col id="code" sortable="true"/>
@@ -31,7 +31,7 @@
                 <col id="content" sortable="true"/>
 
                 <!--分类-->
-                <col id="categoryId" ui:number="true" sortable="true"/>
+                <col id="categoryId" sortable="true"/>
 
                 <!--是否发布-->
                 <col id="isPublished" sortable="true"/>

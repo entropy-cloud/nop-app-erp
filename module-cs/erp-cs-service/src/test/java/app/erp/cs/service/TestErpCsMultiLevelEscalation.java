@@ -65,15 +65,15 @@ public class TestErpCsMultiLevelEscalation extends JunitAutoTestCase {
     /** 冻结参考时刻：2026-07-17T00:00（CoreMetrics.currentDateTime() 在测试线程恒返回此值）。 */
     static final LocalDateTime NOW = LocalDate.of(2026, 7, 17).atStartOfDay();
 
-    static final Long CUSTOMER_ID = 7701L;
-    static final Long TICKET_TYPE_ID = 7801L;
-    static final Long POLICY_ID = 7901L;
-    static final Long ESCALATION_USER = 9001L;      // policy L1 目标（BIGINT → stringify "9001"）
-    static final Long SECOND_USER = 9002L;          // policy L2 目标（→ "9002"）
+    static final String CUSTOMER_ID = "7701";
+    static final String TICKET_TYPE_ID = "7801";
+    static final String POLICY_ID = "7901";
+    static final String ESCALATION_USER = "9001";      // policy L1 目标（BIGINT → stringify "9001"）
+    static final String SECOND_USER = "9002";          // policy L2 目标（→ "9002"）
     static final String L3_DIRECTOR = "9003";       // config 总监（字符串 userId）
     static final String ASSIGNEE = "user-zhang";    // assignedToId 回退目标
-    static final Long TICKET_ID = 7201L;
-    static final Long TEMPLATE_ID = 7011L;
+    static final String TICKET_ID = "7201";
+    static final String TEMPLATE_ID = "7011";
 
     @Inject
     IDaoProvider daoProvider;
@@ -295,7 +295,7 @@ public class TestErpCsMultiLevelEscalation extends JunitAutoTestCase {
         seedTemplate(TEMPLATE_ID);
         seedPolicy(POLICY_ID, ESCALATION_USER, SECOND_USER, null);
         seedTicket(TICKET_ID, "TK-ESC-LEGACY", NOW.minusHours(2), POLICY_ID);
-        seedLegacyEscalateAction(7211L, TICKET_ID, "SLA 超时升级通知 escalationUserId");
+        seedLegacyEscalateAction("7211", TICKET_ID, "SLA 超时升级通知 escalationUserId");
 
         scanOk();
         ErpCsTicket t = reload(TICKET_ID);
@@ -316,7 +316,7 @@ public class TestErpCsMultiLevelEscalation extends JunitAutoTestCase {
     // ---------- helpers ----------
 
 
-    private ErpCsTicket reload(Long ticketId) {
+    private ErpCsTicket reload(String ticketId) {
         return daoProvider.daoFor(ErpCsTicket.class).getEntityById(ticketId);
     }
 
@@ -335,11 +335,11 @@ public class TestErpCsMultiLevelEscalation extends JunitAutoTestCase {
         AppConfig.getConfigProvider().assignConfigValue(key, value);
     }
 
-    private int countEscalateActions(Long ticketId) {
+    private int countEscalateActions(String ticketId) {
         return escalateActions(ticketId).size();
     }
 
-    private List<ErpCsTicketAction> escalateActions(Long ticketId) {
+    private List<ErpCsTicketAction> escalateActions(String ticketId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("ticketId", ticketId));
         q.addFilter(eq("actionType", ErpCsConstants.ACTION_TYPE_ESCALATE));
@@ -347,7 +347,7 @@ public class TestErpCsMultiLevelEscalation extends JunitAutoTestCase {
         return daoProvider.daoFor(ErpCsTicketAction.class).findAllByQuery(q);
     }
 
-    private ErpCsTicketAction lastEscalateAction(Long ticketId) {
+    private ErpCsTicketAction lastEscalateAction(String ticketId) {
         List<ErpCsTicketAction> list = escalateActions(ticketId);
         return list.get(list.size() - 1);
     }
@@ -371,7 +371,7 @@ public class TestErpCsMultiLevelEscalation extends JunitAutoTestCase {
         return list.isEmpty() ? null : list.get(0);
     }
 
-    private void seedTemplate(Long id) {
+    private void seedTemplate(String id) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpSysNotificationTemplate> dao = daoProvider.daoFor(ErpSysNotificationTemplate.class);
             ErpSysNotificationTemplate t = new ErpSysNotificationTemplate();
@@ -390,7 +390,7 @@ public class TestErpCsMultiLevelEscalation extends JunitAutoTestCase {
         });
     }
 
-    private void seedPolicy(Long id, Long escalationUserId, Long secondEscalationUserId, Integer delayHours) {
+    private void seedPolicy(String id, String escalationUserId, String secondEscalationUserId, Integer delayHours) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpCsSlaPolicy> dao = daoProvider.daoFor(ErpCsSlaPolicy.class);
             ErpCsSlaPolicy p = new ErpCsSlaPolicy();
@@ -407,7 +407,7 @@ public class TestErpCsMultiLevelEscalation extends JunitAutoTestCase {
         });
     }
 
-    private void seedTicket(Long id, String code, LocalDateTime deadline, Long policyId) {
+    private void seedTicket(String id, String code, LocalDateTime deadline, String policyId) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpCsTicket> dao = daoProvider.daoFor(ErpCsTicket.class);
             ErpCsTicket t = new ErpCsTicket();
@@ -430,7 +430,7 @@ public class TestErpCsMultiLevelEscalation extends JunitAutoTestCase {
         seedCustomerOnce();
     }
 
-    private void seedLegacyEscalateAction(Long id, Long ticketId, String content) {
+    private void seedLegacyEscalateAction(String id, String ticketId, String content) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpCsTicketAction> dao = daoProvider.daoFor(ErpCsTicketAction.class);
             ErpCsTicketAction a = new ErpCsTicketAction();

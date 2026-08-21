@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- 平台 bean 初始化循环等待兼容层（plan 2026-08-22-0002-3 Phase 3（M3.5 cs 迁移），2026-08-22）：
+     nop-entropy 08-21 09:33 重装 jar 后 IoC 容器启动出现 nopSequenceGenerator 与
+     nopOrmTemplate/nopOrmSessionFactory 循环等待（nop.err.ioc.bean-init-self-wait），
+     与 M1.1（master-data）、M1.2（notify）、M3.9（aps）、M3.8（b2b）、M3.6（contract）、M2.1（finance）、M2.4（assets）执行期发现同源。
+     本 delta 以 XML 显式 ioc:lazy-property 恢复容器级延迟注入（镜像平台 orm-defaults.beans.xml
+     中 nopDefaultTransactionListener.ormTemplate 先例）。平台修复后移除（见 bug 登记）。
+     修正（2026-08-22）：补 x:extends="super" —— 先例 delta（md/notify/aps/b2b/contract 五域）缺该属性导致
+     整文件替换平台 app-dao.beans.xml，静默丢弃 nopOrmEntityChangeLogInterceptor（finance audit 测试依赖）
+     与 nopCodeRuleGenerator/SysDictLoader 等同文件 bean。见 docs/bugs/2026-08-22-ioc-delta-missing-extends-super.md。 -->
+<beans x:schema="/nop/schema/beans.xdef" xmlns:x="/nop/schema/xdsl.xdef" xmlns:feature="feature"
+       xmlns="http://www.springframework.org/schema/beans" xmlns:ioc="ioc"
+       x:extends="super">
+
+    <bean id="nopSequenceGenerator" class="io.nop.sys.dao.seq.SysSequenceGenerator"
+          ioc:delay-method="lazyInit" x:override="replace">
+        <property name="ormTemplate" ref="nopOrmTemplate" ioc:lazy-property="true"/>
+        <property name="transactionTemplate" ref="nopTransactionTemplate" ioc:lazy-property="true"/>
+    </bean>
+</beans>

@@ -54,9 +54,9 @@ public class TestErpCsKnowledgeAdoption extends JunitAutoTestCase {
     @RegisterExtension
     static CsFrozenClockExtension frozenClock = new CsFrozenClockExtension();
 
-    static final Long CUSTOMER_ID = 8601L;
-    static final Long TICKET_TYPE_ID = 8701L;
-    static final Long TEMPLATE_ID = 8811L;
+    static final String CUSTOMER_ID = "8601";
+    static final String TICKET_TYPE_ID = "8701";
+    static final String TEMPLATE_ID = "8811";
     static final String HANDLER = "cs-kb-handler";
 
     @Inject
@@ -70,8 +70,8 @@ public class TestErpCsKnowledgeAdoption extends JunitAutoTestCase {
 
     @Test
     public void testAdoptWithAutoResolveResolvesTicket() {
-        Long ticketId = seedTicket("TK-KB-AR", ErpCsConstants.TICKET_STATUS_IN_PROGRESS);
-        Long kbId = seedKbArticle("KB-AR-1");
+        String ticketId = seedTicket("TK-KB-AR", ErpCsConstants.TICKET_STATUS_IN_PROGRESS);
+        String kbId = seedKbArticle("KB-AR-1");
 
         ApiResponse<?> resp = rpc(mutation, "ErpCsTicket__adoptKnowledge", args(
                 "ticketId", ticketId, "knowledgeBaseId", kbId, "autoResolve", true));
@@ -96,8 +96,8 @@ public class TestErpCsKnowledgeAdoption extends JunitAutoTestCase {
 
     @Test
     public void testAdoptWithoutAutoResolveOnlyAudits() {
-        Long ticketId = seedTicket("TK-KB-NA", ErpCsConstants.TICKET_STATUS_IN_PROGRESS);
-        Long kbId = seedKbArticle("KB-NA-1");
+        String ticketId = seedTicket("TK-KB-NA", ErpCsConstants.TICKET_STATUS_IN_PROGRESS);
+        String kbId = seedKbArticle("KB-NA-1");
 
         ApiResponse<?> resp = rpc(mutation, "ErpCsTicket__adoptKnowledge", args(
                 "ticketId", ticketId, "knowledgeBaseId", kbId));
@@ -114,11 +114,11 @@ public class TestErpCsKnowledgeAdoption extends JunitAutoTestCase {
 
     @Test
     public void testKnowledgeUsageStatsDerivedCounting() {
-        Long ticketA = seedTicket("TK-KB-SA", ErpCsConstants.TICKET_STATUS_NEW);
-        Long ticketB = seedTicket("TK-KB-SB", ErpCsConstants.TICKET_STATUS_NEW);
-        Long ticketC = seedTicket("TK-KB-SC", ErpCsConstants.TICKET_STATUS_NEW);
-        Long kb1 = seedKbArticle("KB-ST-1");
-        Long kb12 = seedKbArticle("KB-ST-12");
+        String ticketA = seedTicket("TK-KB-SA", ErpCsConstants.TICKET_STATUS_NEW);
+        String ticketB = seedTicket("TK-KB-SB", ErpCsConstants.TICKET_STATUS_NEW);
+        String ticketC = seedTicket("TK-KB-SC", ErpCsConstants.TICKET_STATUS_NEW);
+        String kb1 = seedKbArticle("KB-ST-1");
+        String kb12 = seedKbArticle("KB-ST-12");
 
         // kb1 采纳 2 次（不同工单）+ kb12 采纳 1 次
         rpc(mutation, "ErpCsTicket__adoptKnowledge", args("ticketId", ticketA, "knowledgeBaseId", kb1));
@@ -132,7 +132,7 @@ public class TestErpCsKnowledgeAdoption extends JunitAutoTestCase {
         @SuppressWarnings("unchecked")
         List<Map<String, Object>> singleData = (List<Map<String, Object>>) single.getData();
         assertEquals(1, singleData.size(), "单条查询应只返回该 KB 统计");
-        assertEquals(kb1, toLong(singleData.get(0).get("knowledgeBaseId")));
+        assertEquals(kb1, String.valueOf(singleData.get(0).get("knowledgeBaseId")));
         assertEquals(2, toInt(singleData.get(0).get("adoptCount")), "kb1 采纳计数 = 2");
 
         // 前缀碰撞防护：content eq 精确匹配语义断言（like id=1% 会误配 id=12）
@@ -176,7 +176,7 @@ public class TestErpCsKnowledgeAdoption extends JunitAutoTestCase {
     @Test
     public void testResolveWithoutAdoptNotifiesSuggestCreate() {
         seedTemplate(TEMPLATE_ID);
-        Long ticketId = seedTicket("TK-KB-SG", ErpCsConstants.TICKET_STATUS_IN_PROGRESS);
+        String ticketId = seedTicket("TK-KB-SG", ErpCsConstants.TICKET_STATUS_IN_PROGRESS);
 
         ApiResponse<?> resp = rpc(mutation, "ErpCsTicket__resolve", args("ticketId", ticketId));
         assertEquals(0, resp.getStatus(), "resolve 应成功: " + resp);
@@ -192,8 +192,8 @@ public class TestErpCsKnowledgeAdoption extends JunitAutoTestCase {
     @Test
     public void testResolveWithAdoptSkipsSuggestNotify() {
         seedTemplate(TEMPLATE_ID);
-        Long ticketId = seedTicket("TK-KB-SD", ErpCsConstants.TICKET_STATUS_IN_PROGRESS);
-        Long kbId = seedKbArticle("KB-SD-1");
+        String ticketId = seedTicket("TK-KB-SD", ErpCsConstants.TICKET_STATUS_IN_PROGRESS);
+        String kbId = seedKbArticle("KB-SD-1");
 
         rpc(mutation, "ErpCsTicket__adoptKnowledge", args("ticketId", ticketId, "knowledgeBaseId", kbId));
         // 回到 IN_PROCESS 经 reopen（RESOLVED→IN_PROCESS）后再 resolve，工单已有 ADOPT_KNOWLEDGE 行
@@ -209,7 +209,7 @@ public class TestErpCsKnowledgeAdoption extends JunitAutoTestCase {
     @Test
     public void testSuggestConfigOffSkipsNotify() {
         seedTemplate(TEMPLATE_ID);
-        Long ticketId = seedTicket("TK-KB-CF", ErpCsConstants.TICKET_STATUS_IN_PROGRESS);
+        String ticketId = seedTicket("TK-KB-CF", ErpCsConstants.TICKET_STATUS_IN_PROGRESS);
 
         AppConfig.getConfigProvider().assignConfigValue(
                 ErpCsConstants.CONFIG_KNOWLEDGE_SUGGEST_ON_RESOLVE, "false");
@@ -239,8 +239,8 @@ public class TestErpCsKnowledgeAdoption extends JunitAutoTestCase {
         return graphQLEngine.executeRpc(ctx);
     }
 
-    private Long seedTicket(String code, String status) {
-        Long id = 8900L + (long) (Math.abs(code.hashCode()) % 90);
+    private String seedTicket(String code, String status) {
+        String id = String.valueOf(8900 + Math.abs(code.hashCode()) % 90);
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpCsTicket> dao = daoProvider.daoFor(ErpCsTicket.class);
             ErpCsTicket t = new ErpCsTicket();
@@ -261,8 +261,8 @@ public class TestErpCsKnowledgeAdoption extends JunitAutoTestCase {
         return id;
     }
 
-    private Long seedKbArticle(String code) {
-        Long id = 9200L + (long) (Math.abs(code.hashCode()) % 200);
+    private String seedKbArticle(String code) {
+        String id = String.valueOf(9200 + Math.abs(code.hashCode()) % 200);
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpCsKnowledgeBase> dao = daoProvider.daoFor(ErpCsKnowledgeBase.class);
             ErpCsKnowledgeBase kb = new ErpCsKnowledgeBase();
@@ -276,7 +276,7 @@ public class TestErpCsKnowledgeAdoption extends JunitAutoTestCase {
         return id;
     }
 
-    private void seedTemplate(Long id) {
+    private void seedTemplate(String id) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpSysNotificationTemplate> dao = daoProvider.daoFor(ErpSysNotificationTemplate.class);
             ErpSysNotificationTemplate t = new ErpSysNotificationTemplate();
@@ -295,11 +295,11 @@ public class TestErpCsKnowledgeAdoption extends JunitAutoTestCase {
         });
     }
 
-    private void seedLegacyNoteAction(Long ticketId, String content) {
+    private void seedLegacyNoteAction(String ticketId, String content) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpCsTicketAction> dao = daoProvider.daoFor(ErpCsTicketAction.class);
             ErpCsTicketAction a = new ErpCsTicketAction();
-            a.orm_propValueByName("id", 9900L + (long) (Math.abs(content.hashCode()) % 90));
+            a.orm_propValueByName("id", String.valueOf(9900 + Math.abs(content.hashCode()) % 90));
             a.setTicketId(ticketId);
             a.setActionType(ErpCsConstants.ACTION_TYPE_NOTE);
             a.setContent(content);
@@ -307,11 +307,11 @@ public class TestErpCsKnowledgeAdoption extends JunitAutoTestCase {
         });
     }
 
-    private ErpCsTicket reloadTicket(Long ticketId) {
+    private ErpCsTicket reloadTicket(String ticketId) {
         return daoProvider.daoFor(ErpCsTicket.class).getEntityById(ticketId);
     }
 
-    private ErpCsTicketAction findAction(Long ticketId, String actionType) {
+    private ErpCsTicketAction findAction(String ticketId, String actionType) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("ticketId", ticketId));
         q.addFilter(eq("actionType", actionType));
@@ -320,7 +320,7 @@ public class TestErpCsKnowledgeAdoption extends JunitAutoTestCase {
         return list.isEmpty() ? null : list.get(0);
     }
 
-    private ErpCsTicketAction findActionContentContains(Long ticketId, String actionType, String keyword) {
+    private ErpCsTicketAction findActionContentContains(String ticketId, String actionType, String keyword) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("ticketId", ticketId));
         q.addFilter(eq("actionType", actionType));
@@ -332,7 +332,7 @@ public class TestErpCsKnowledgeAdoption extends JunitAutoTestCase {
         return null;
     }
 
-    private int countSurveys(Long ticketId) {
+    private int countSurveys(String ticketId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("ticketId", ticketId));
         return daoProvider.daoFor(ErpCsSurvey.class).findAllByQuery(q).size();
@@ -344,13 +344,6 @@ public class TestErpCsKnowledgeAdoption extends JunitAutoTestCase {
         q.setLimit(1);
         List<ErpSysNotification> list = daoProvider.daoFor(ErpSysNotification.class).findAllByQuery(q);
         return list.isEmpty() ? null : list.get(0);
-    }
-
-    private static Long toLong(Object v) {
-        if (v == null) return null;
-        if (v instanceof Long) return (Long) v;
-        if (v instanceof Number) return ((Number) v).longValue();
-        return Long.valueOf(String.valueOf(v));
     }
 
     private static int toInt(Object v) {

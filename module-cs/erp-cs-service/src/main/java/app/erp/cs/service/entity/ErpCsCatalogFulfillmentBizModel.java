@@ -48,22 +48,22 @@ public class ErpCsCatalogFulfillmentBizModel extends CrudBizModel<ErpCsCatalogFu
 
     @Override
     @BizMutation
-    public List<ErpCsTicketFulfillmentStep> executeFulfillmentSteps(@Name("catalogItemId") Long catalogItemId,
-                                                                    @Name("ticketId") Long ticketId,
+    public List<ErpCsTicketFulfillmentStep> executeFulfillmentSteps(@Name("catalogItemId") String catalogItemId,
+                                                                    @Name("ticketId") String ticketId,
                                                                     IServiceContext context) {
         return executeFulfillmentStepsProcessor.executeFulfillmentSteps(catalogItemId, ticketId, context);
     }
 
     @Override
     @BizMutation
-    public List<ErpCsTicketFulfillmentStep> retryFulfillment(@Name("ticketId") Long ticketId,
+    public List<ErpCsTicketFulfillmentStep> retryFulfillment(@Name("ticketId") String ticketId,
                                                              IServiceContext context) {
         return executeFulfillmentStepsProcessor.retryFulfillment(ticketId, context);
     }
 
     @Override
     @BizMutation
-    public ErpCsTicketFulfillmentStep approveFulfillmentStep(@Name("stepId") Long stepId,
+    public ErpCsTicketFulfillmentStep approveFulfillmentStep(@Name("stepId") String stepId,
                                                              @Name("approved") boolean approved,
                                                              @Optional @Name("comment") String comment,
                                                              IServiceContext context) {
@@ -73,7 +73,7 @@ public class ErpCsCatalogFulfillmentBizModel extends CrudBizModel<ErpCsCatalogFu
     /** 履行进度投影（D6）：sequence 升序 step 行 → map（sequence/actionType/status/retryCount/lastError/executedAt/executedBy）。 */
     @Override
     @BizQuery
-    public List<Map<String, Object>> findFulfillmentProgress(@Name("ticketId") Long ticketId,
+    public List<Map<String, Object>> findFulfillmentProgress(@Name("ticketId") String ticketId,
                                                              IServiceContext context) {
         if (ticketId == null) {
             return new ArrayList<>();

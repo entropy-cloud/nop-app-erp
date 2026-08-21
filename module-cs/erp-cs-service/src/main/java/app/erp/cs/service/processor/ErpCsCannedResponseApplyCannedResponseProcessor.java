@@ -42,7 +42,7 @@ public class ErpCsCannedResponseApplyCannedResponseProcessor {
     @Inject
     IErpMdPartnerBiz mdPartnerBiz;
 
-    public String applyCannedResponse(Long cannedResponseId, Long ticketId,
+    public String applyCannedResponse(String cannedResponseId, String ticketId,
                                       Map<String, String> customVariables, IServiceContext context) {
         ErpCsCannedResponse resp = requireCannedResponse(cannedResponseId, context);
         assertActive(resp);
@@ -60,7 +60,7 @@ public class ErpCsCannedResponseApplyCannedResponseProcessor {
         return rendered;
     }
 
-    private ErpCsCannedResponse requireCannedResponse(Long id, IServiceContext context) {
+    private ErpCsCannedResponse requireCannedResponse(String id, IServiceContext context) {
         if (id == null) {
             throw new NopException(ErpCsErrors.ERR_CANNED_RESPONSE_NOT_FOUND)
                     .param(ErpCsErrors.ARG_CANNED_RESPONSE_ID, id);
@@ -80,7 +80,7 @@ public class ErpCsCannedResponseApplyCannedResponseProcessor {
         }
     }
 
-    private Map<String, String> resolveSystemVars(ErpCsCannedResponse resp, Long ticketId, IServiceContext context) {
+    private Map<String, String> resolveSystemVars(ErpCsCannedResponse resp, String ticketId, IServiceContext context) {
         Map<String, String> vars = new LinkedHashMap<>();
         LocalDate today = CoreMetrics.currentDate();
         LocalDateTime now = CoreMetrics.currentDateTime();
@@ -105,14 +105,14 @@ public class ErpCsCannedResponseApplyCannedResponseProcessor {
         return vars;
     }
 
-    private ErpCsTicket loadTicket(Long ticketId, IServiceContext context) {
+    private ErpCsTicket loadTicket(String ticketId, IServiceContext context) {
         if (ticketId == null) {
             return null;
         }
         return ticketBiz.get(String.valueOf(ticketId), false, context);
     }
 
-    private String resolveCustomerName(Long customerId, IServiceContext context) {
+    private String resolveCustomerName(String customerId, IServiceContext context) {
         if (customerId == null) {
             return null;
         }
@@ -124,7 +124,7 @@ public class ErpCsCannedResponseApplyCannedResponseProcessor {
         }
     }
 
-    private void writeNoteAction(Long ticketId, String content, Long cannedResponseId, IServiceContext context) {
+    private void writeNoteAction(String ticketId, String content, String cannedResponseId, IServiceContext context) {
         if (ticketId == null) {
             return;
         }

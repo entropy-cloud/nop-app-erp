@@ -187,10 +187,10 @@ public class ErpCsReportBizModel {
             if (tickets.isEmpty()) {
                 return Collections.emptyList();
             }
-            Map<Long, TicketAggregator> agg = new LinkedHashMap<>();
-            Set<Long> ticketIds = new HashSet<>();
+            Map<String, TicketAggregator> agg = new LinkedHashMap<>();
+            Set<String> ticketIds = new HashSet<>();
             for (ErpCsTicket t : tickets) {
-                Long key = t.getTicketTypeId();
+                String key = t.getTicketTypeId();
                 TicketAggregator a = agg.computeIfAbsent(key, TicketAggregator::new);
                 a.totalTickets++;
                 if (Boolean.TRUE.equals(t.orm_propValueByName("isSlaCompleted"))) {
@@ -200,16 +200,16 @@ public class ErpCsReportBizModel {
                 }
                 if (t.getId() != null) ticketIds.add(t.getId());
             }
-            Map<Long, SurveyAggregator> surveyAgg = aggregateSurveys(ticketIds);
+            Map<String, SurveyAggregator> surveyAgg = aggregateSurveys(ticketIds);
             // 把 survey 均值分摊回每个 ticketType 桶（按 ticketId 查 ticketTypeId）
-            Map<Long, Long> ticketTypeByTicket = new HashMap<>();
+            Map<String, String> ticketTypeByTicket = new HashMap<>();
             for (ErpCsTicket t : tickets) {
                 if (t.getId() != null) {
                     ticketTypeByTicket.put(t.getId(), t.getTicketTypeId());
                 }
             }
-            for (Map.Entry<Long, SurveyAggregator> e : surveyAgg.entrySet()) {
-                Long ttId = ticketTypeByTicket.get(e.getKey());
+            for (Map.Entry<String, SurveyAggregator> e : surveyAgg.entrySet()) {
+                String ttId = ticketTypeByTicket.get(e.getKey());
                 if (ttId == null) continue;
                 TicketAggregator a = agg.get(ttId);
                 if (a == null) continue;
@@ -218,7 +218,7 @@ public class ErpCsReportBizModel {
                 a.csatSum = a.csatSum.add(sa.csatSum);
                 a.npsSum = a.npsSum.add(sa.npsSum);
             }
-            Map<Long, String> typeNames = resolveTicketTypeNames(agg.keySet());
+            Map<String, String> typeNames = resolveTicketTypeNames(agg.keySet());
             List<Map<String, Object>> rows = new ArrayList<>(agg.size());
             for (TicketAggregator a : agg.values()) {
                 BigDecimal avgCsat = a.surveyCount > 0
@@ -246,18 +246,18 @@ public class ErpCsReportBizModel {
 
     private List<ErpCsTicket> loadTickets(String ticketType) {
         QueryBean q = new QueryBean();
-        if (ticketType != null) q.addFilter(eq("ticketTypeId", Long.valueOf(ticketType)));
+        if (ticketType != null) q.addFilter(eq("ticketTypeId", ticketType));
         return daoProvider.daoFor(ErpCsTicket.class).findAllByQuery(q);
     }
 
-    private Map<Long, SurveyAggregator> aggregateSurveys(Set<Long> ticketIds) {
+    private Map<String, SurveyAggregator> aggregateSurveys(Set<String> ticketIds) {
         if (ticketIds.isEmpty()) return Collections.emptyMap();
         QueryBean q = new QueryBean();
         q.addFilter(in("ticketId", ticketIds));
         List<ErpCsSurvey> surveys = daoProvider.daoFor(ErpCsSurvey.class).findAllByQuery(q);
-        Map<Long, SurveyAggregator> map = new HashMap<>();
+        Map<String, SurveyAggregator> map = new HashMap<>();
         for (ErpCsSurvey s : surveys) {
-            Long tId = s.getTicketId();
+            String tId = s.getTicketId();
             if (tId == null) continue;
             SurveyAggregator a = map.computeIfAbsent(tId, k -> new SurveyAggregator());
             a.count++;
@@ -267,11 +267,11 @@ public class ErpCsReportBizModel {
         return map;
     }
 
-    private Map<Long, String> resolveTicketTypeNames(Set<Long> typeIds) {
+    private Map<String, String> resolveTicketTypeNames(Set<String> typeIds) {
         if (typeIds.isEmpty()) return Collections.emptyMap();
         // 仅解析非 null 的 typeId；ErpCsTicketType 实体存在
-        Set<Long> nonNull = new HashSet<>();
-        for (Long id : typeIds) {
+        Set<String> nonNull = new HashSet<>();
+        for (String id : typeIds) {
             if (id != null) nonNull.add(id);
         }
         if (nonNull.isEmpty()) return Collections.emptyMap();
@@ -280,7 +280,7 @@ public class ErpCsReportBizModel {
             q.addFilter(in("id", nonNull));
             List<ErpCsTicketType> types =
                     daoProvider.daoFor(ErpCsTicketType.class).findAllByQuery(q);
-            Map<Long, String> names = new HashMap<>();
+            Map<String, String> names = new HashMap<>();
             for (ErpCsTicketType t : types) {
                 names.put(t.getId(), t.getName());
             }
@@ -303,7 +303,7 @@ public class ErpCsReportBizModel {
     }
 
     private static class TicketAggregator {
-        final Long ticketTypeId;
+        final String ticketTypeId;
         int totalTickets = 0;
         int slaCompletedCount = 0;
         int slaBreachedCount = 0;
@@ -311,7 +311,7 @@ public class ErpCsReportBizModel {
         BigDecimal csatSum = BigDecimal.ZERO;
         BigDecimal npsSum = BigDecimal.ZERO;
 
-        TicketAggregator(Long ticketTypeId) {
+        TicketAggregator(String ticketTypeId) {
             this.ticketTypeId = ticketTypeId;
         }
     }

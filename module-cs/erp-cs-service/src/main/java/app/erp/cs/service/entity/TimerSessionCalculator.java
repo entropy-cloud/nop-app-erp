@@ -52,16 +52,12 @@ public final class TimerSessionCalculator {
                 .plusMinutes(maxActiveMinutes).plusMinutes(totalPauseMinutes(session, now));
     }
 
-    /** D2 映射：userId 字符串 → ErpCsTimeEntry.agentId(BIGINT)；数字直写，非数字/空 → 0 哨兵（调用方 WARN）。 */
-    public static long toEntryAgentId(String userId) {
+    /** D2 映射（agentId String 化后为恒等直写）：userId 字符串直写 ErpCsTimeEntry.agentId，空白 → null。 */
+    public static String toEntryAgentId(String userId) {
         if (userId == null || userId.trim().isEmpty()) {
-            return 0L;
+            return null;
         }
-        try {
-            return Long.parseLong(userId.trim());
-        } catch (NumberFormatException e) {
-            return 0L;
-        }
+        return userId.trim();
     }
 
     public static long minutesBetween(LocalDateTime from, LocalDateTime to) {

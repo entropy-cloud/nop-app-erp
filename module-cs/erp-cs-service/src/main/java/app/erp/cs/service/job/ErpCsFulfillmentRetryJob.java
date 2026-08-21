@@ -73,8 +73,8 @@ public class ErpCsFulfillmentRetryJob {
     protected int[] runRetry(IServiceContext ctx) {
         int autoApproved = fulfillmentProcessor.autoApproveTimedOut(ctx);
         int retried = 0;
-        List<Long> candidates = fulfillmentProcessor.findRetryCandidateTicketIds(ctx);
-        for (Long ticketId : candidates) {
+        List<String> candidates = fulfillmentProcessor.findRetryCandidateTicketIds(ctx);
+        for (String ticketId : candidates) {
             try {
                 retried += fulfillmentProcessor.retryForJob(ticketId, ctx);
             } catch (Exception e) {

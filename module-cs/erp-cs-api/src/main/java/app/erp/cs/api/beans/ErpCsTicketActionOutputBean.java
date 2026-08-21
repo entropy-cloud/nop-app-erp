@@ -13,30 +13,30 @@
     public class ErpCsTicketActionOutputBean {
 
     
-        private Long _id;
+        private String _id;
 
     
         @PropMeta(propId=1)
     
-        public Long getId(){
+        public String getId(){
             return _id;
         }
 
-        public void setId(Long value){
+        public void setId(String value){
             this._id = value;
         }
 
 
-        private Long _ticketId;
+        private String _ticketId;
 
     
         @PropMeta(propId=2)
     
-        public Long getTicketId(){
+        public String getTicketId(){
             return _ticketId;
         }
 
-        public void setTicketId(Long value){
+        public void setTicketId(String value){
             this._ticketId = value;
         }
 

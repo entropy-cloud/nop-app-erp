@@ -47,9 +47,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpCsServiceCatalog extends JunitAutoTestCase {
 
-    static final Long PARTNER_ID = 9301L;
-    static final Long TICKET_TYPE_ID = 6301L;
-    static final Long SLA_POLICY_ID = 7301L;
+    static final String PARTNER_ID = "9301";
+    static final String TICKET_TYPE_ID = "6301";
+    static final String SLA_POLICY_ID = "7301";
 
     @Inject
     IDaoProvider daoProvider;
@@ -62,7 +62,7 @@ public class TestErpCsServiceCatalog extends JunitAutoTestCase {
 
     @Test
     public void testCategorySelfCycleRejected() {
-        Long rootId = seedCategory(5001L, "技术支持", null);
+        String rootId = seedCategory("5001", "技术支持", null);
         // 自环：parentId = self
         ApiResponse<?> resp = rpc(mutation, "ErpCsCatalogCategory__update",
                 Map.of("data", Map.of("id", rootId, "parentId", rootId)));
@@ -72,8 +72,8 @@ public class TestErpCsServiceCatalog extends JunitAutoTestCase {
 
     @Test
     public void testCategoryChainCycleRejected() {
-        Long aId = seedCategory(5010L, "A", null);
-        Long bId = seedCategory(5011L, "B", aId);
+        String aId = seedCategory("5010", "A", null);
+        String bId = seedCategory("5011", "B", aId);
         // B → A 已有；现把 A 的 parentId 设为 B → 形成环 A→B→A
         ApiResponse<?> resp = rpc(mutation, "ErpCsCatalogCategory__update",
                 Map.of("data", Map.of("id", aId, "parentId", bId)));
@@ -84,9 +84,9 @@ public class TestErpCsServiceCatalog extends JunitAutoTestCase {
     @Test
     public void testCategoryMaxDepthExceededRejected() {
         // 默认 maxDepth=3：建 4 层链应失败
-        Long l1 = seedCategory(5020L, "L1", null);
-        Long l2 = seedCategory(5021L, "L2", l1);
-        Long l3 = seedCategory(5022L, "L3", l2);
+        String l1 = seedCategory("5020", "L1", null);
+        String l2 = seedCategory("5021", "L2", l1);
+        String l3 = seedCategory("5022", "L3", l2);
         // 第 4 层（深度超 3）应拒绝
         ApiResponse<?> resp = rpc(mutation, "ErpCsCatalogCategory__save",
                 Map.of("data", Map.of("code", "CAT-L4", "name", "L4", "parentId", l3)));
@@ -97,8 +97,8 @@ public class TestErpCsServiceCatalog extends JunitAutoTestCase {
     @Test
     public void testCategoryDepthWithinLimitAllowed() {
         // 默认 maxDepth=3：建 3 层链应成功
-        Long l1 = seedCategory(5030L, "L1", null);
-        Long l2 = seedCategory(5031L, "L2", l1);
+        String l1 = seedCategory("5030", "L1", null);
+        String l2 = seedCategory("5031", "L2", l1);
         // 第 3 层（深度=3）应允许
         ApiResponse<?> resp = rpc(mutation, "ErpCsCatalogCategory__save",
                 Map.of("data", Map.of("code", "CAT-L3", "name", "L3", "parentId", l2)));
@@ -107,8 +107,8 @@ public class TestErpCsServiceCatalog extends JunitAutoTestCase {
 
     @Test
     public void testCategoryDeleteWithChildrenRejected() {
-        Long parent = seedCategory(5040L, "父分类", null);
-        seedCategory(5041L, "子分类", parent);
+        String parent = seedCategory("5040", "父分类", null);
+        seedCategory("5041", "子分类", parent);
         ApiResponse<?> resp = rpc(mutation, "ErpCsCatalogCategory__delete",
                 Map.of("id", parent));
         assertEquals(ErpCsErrors.ERR_CATALOG_CATEGORY_HAS_CHILDREN.getErrorCode(), resp.getCode(),
@@ -121,7 +121,7 @@ public class TestErpCsServiceCatalog extends JunitAutoTestCase {
     public void testCreateFromCatalogFillsTicketFields() {
         seedCustomer(PARTNER_ID, "ACME");
         seedSlaPolicy(SLA_POLICY_ID, TICKET_TYPE_ID);
-        Long catalogItemId = seedCatalogItem(6001L, "设备维修", TICKET_TYPE_ID, SLA_POLICY_ID, true);
+        String catalogItemId = seedCatalogItem("6001", "设备维修", TICKET_TYPE_ID, SLA_POLICY_ID, true);
 
         Map<String, Object> formData = new HashMap<>();
         formData.put("subject", "打印机故障");
@@ -134,7 +134,7 @@ public class TestErpCsServiceCatalog extends JunitAutoTestCase {
         assertEquals(0, resp.getStatus(), "createFromCatalog 应成功: " + resp);
 
         Map<?, ?> ticketData = (Map<?, ?>) resp.getData();
-        Long ticketId = toLong(ticketData.get("id"));
+        String ticketId = idStr(ticketData.get("id"));
         ErpCsTicket ticket = daoProvider.daoFor(ErpCsTicket.class).getEntityById(ticketId);
         assertEquals(TICKET_TYPE_ID, ticket.getTicketTypeId(), "ticketType 应从目录项自动填充");
         assertEquals(SLA_POLICY_ID, ticket.getSlaPolicyId(), "slaPolicy 应从目录项自动填充");
@@ -150,7 +150,7 @@ public class TestErpCsServiceCatalog extends JunitAutoTestCase {
     public void testCreateFromCatalogInactiveRejected() {
         seedCustomer(PARTNER_ID, "ACME");
         seedSlaPolicy(SLA_POLICY_ID, TICKET_TYPE_ID);
-        Long catalogItemId = seedCatalogItem(6002L, "已下架项", TICKET_TYPE_ID, SLA_POLICY_ID, false);
+        String catalogItemId = seedCatalogItem("6002", "已下架项", TICKET_TYPE_ID, SLA_POLICY_ID, false);
 
         ApiResponse<?> resp = rpc(mutation, "ErpCsServiceCatalogItem__createFromCatalog",
                 Map.of("catalogItemId", catalogItemId, "formData", new HashMap<>()));
@@ -162,7 +162,7 @@ public class TestErpCsServiceCatalog extends JunitAutoTestCase {
     public void testCreateFromCatalogSubjectFallbackToItemName() {
         seedCustomer(PARTNER_ID, "ACME");
         seedSlaPolicy(SLA_POLICY_ID, TICKET_TYPE_ID);
-        Long catalogItemId = seedCatalogItem(6003L, "网络咨询", TICKET_TYPE_ID, SLA_POLICY_ID, true);
+        String catalogItemId = seedCatalogItem("6003", "网络咨询", TICKET_TYPE_ID, SLA_POLICY_ID, true);
 
         // formData 无 subject → 应回退为目录项 name
         Map<String, Object> formData = new HashMap<>();
@@ -172,7 +172,7 @@ public class TestErpCsServiceCatalog extends JunitAutoTestCase {
                 Map.of("catalogItemId", catalogItemId, "formData", formData));
         assertEquals(0, resp.getStatus(), "createFromCatalog 应成功: " + resp);
 
-        Long ticketId = toLong(((Map<?, ?>) resp.getData()).get("id"));
+        String ticketId = idStr(((Map<?, ?>) resp.getData()).get("id"));
         ErpCsTicket ticket = daoProvider.daoFor(ErpCsTicket.class).getEntityById(ticketId);
         assertEquals("网络咨询", ticket.getSubject(), "subject 缺省应回退为目录项 name");
     }
@@ -196,8 +196,8 @@ public class TestErpCsServiceCatalog extends JunitAutoTestCase {
         seedCustomer(PARTNER_ID, "ACME");
         seedSlaPolicy(SLA_POLICY_ID, TICKET_TYPE_ID);
         // 活跃 PAY_PER_TICKET 权益：若校验未拦截，扣减会使 usedTickets 0 → 1（断言非平凡）
-        seedEntitlement(8301L, PARTNER_ID, ErpCsConstants.SERVICE_TYPE_PAY_PER_TICKET, 0, 10, 30);
-        Long catalogItemId = seedCatalogItemWithFormConfig(6004L, "必填校验项", TICKET_TYPE_ID, SLA_POLICY_ID,
+        seedEntitlement("8301", PARTNER_ID, ErpCsConstants.SERVICE_TYPE_PAY_PER_TICKET, 0, 10, 30);
+        String catalogItemId = seedCatalogItemWithFormConfig("6004", "必填校验项", TICKET_TYPE_ID, SLA_POLICY_ID,
                 true, FORM_CONFIG_SUBJECT_DESC_REQUIRED);
 
         Map<String, Object> formData = new HashMap<>();
@@ -219,7 +219,7 @@ public class TestErpCsServiceCatalog extends JunitAutoTestCase {
     public void testCreateFromCatalogRequiredFieldsSatisfiedAllowed() {
         seedCustomer(PARTNER_ID, "ACME");
         seedSlaPolicy(SLA_POLICY_ID, TICKET_TYPE_ID);
-        Long catalogItemId = seedCatalogItemWithFormConfig(6005L, "必填满足项", TICKET_TYPE_ID, SLA_POLICY_ID,
+        String catalogItemId = seedCatalogItemWithFormConfig("6005", "必填满足项", TICKET_TYPE_ID, SLA_POLICY_ID,
                 true, FORM_CONFIG_SUBJECT_URGENCY_REQUIRED);
 
         Map<String, Object> formData = new HashMap<>();
@@ -231,7 +231,7 @@ public class TestErpCsServiceCatalog extends JunitAutoTestCase {
                 Map.of("catalogItemId", catalogItemId, "formData", formData));
         assertEquals(0, resp.getStatus(), "必填全满足应放行: " + resp);
 
-        Long ticketId = toLong(((Map<?, ?>) resp.getData()).get("id"));
+        String ticketId = idStr(((Map<?, ?>) resp.getData()).get("id"));
         ErpCsTicket ticket = daoProvider.daoFor(ErpCsTicket.class).getEntityById(ticketId);
         assertEquals("打印机故障", ticket.getSubject(), "subject 应从 formData 映射");
         assertEquals(ErpCsConstants.TICKET_PRIORITY_HIGH, ticket.getPriority(),
@@ -242,7 +242,7 @@ public class TestErpCsServiceCatalog extends JunitAutoTestCase {
     public void testCreateFromCatalogNoRequestFormConfigAllowed() {
         seedCustomer(PARTNER_ID, "ACME");
         seedSlaPolicy(SLA_POLICY_ID, TICKET_TYPE_ID);
-        Long catalogItemId = seedCatalogItem(6006L, "无表单配置项", TICKET_TYPE_ID, SLA_POLICY_ID, true);
+        String catalogItemId = seedCatalogItem("6006", "无表单配置项", TICKET_TYPE_ID, SLA_POLICY_ID, true);
 
         Map<String, Object> formData = new HashMap<>();
         formData.put("subject", "咨询");
@@ -257,7 +257,7 @@ public class TestErpCsServiceCatalog extends JunitAutoTestCase {
     public void testCreateFromCatalogInvalidJsonConfigAllowed() {
         seedCustomer(PARTNER_ID, "ACME");
         seedSlaPolicy(SLA_POLICY_ID, TICKET_TYPE_ID);
-        Long catalogItemId = seedCatalogItemWithFormConfig(6007L, "非法配置项", TICKET_TYPE_ID, SLA_POLICY_ID,
+        String catalogItemId = seedCatalogItemWithFormConfig("6007", "非法配置项", TICKET_TYPE_ID, SLA_POLICY_ID,
                 true, "{invalid-json!!");
 
         Map<String, Object> formData = new HashMap<>();
@@ -273,7 +273,7 @@ public class TestErpCsServiceCatalog extends JunitAutoTestCase {
     public void testCreateFromCatalogBlankValueTreatedAsMissing() {
         seedCustomer(PARTNER_ID, "ACME");
         seedSlaPolicy(SLA_POLICY_ID, TICKET_TYPE_ID);
-        Long catalogItemId = seedCatalogItemWithFormConfig(6008L, "空白值项", TICKET_TYPE_ID, SLA_POLICY_ID,
+        String catalogItemId = seedCatalogItemWithFormConfig("6008", "空白值项", TICKET_TYPE_ID, SLA_POLICY_ID,
                 true, FORM_CONFIG_SUBJECT_REQUIRED);
 
         Map<String, Object> formData = new HashMap<>();
@@ -289,7 +289,7 @@ public class TestErpCsServiceCatalog extends JunitAutoTestCase {
     public void testCreateFromCatalogOptionalFieldMissingAllowed() {
         seedCustomer(PARTNER_ID, "ACME");
         seedSlaPolicy(SLA_POLICY_ID, TICKET_TYPE_ID);
-        Long catalogItemId = seedCatalogItemWithFormConfig(6009L, "可选字段项", TICKET_TYPE_ID, SLA_POLICY_ID,
+        String catalogItemId = seedCatalogItemWithFormConfig("6009", "可选字段项", TICKET_TYPE_ID, SLA_POLICY_ID,
                 true, FORM_CONFIG_SUBJECT_REQUIRED_PRODUCT_OPTIONAL);
 
         Map<String, Object> formData = new HashMap<>();
@@ -307,13 +307,13 @@ public class TestErpCsServiceCatalog extends JunitAutoTestCase {
     public void testFulfillmentCreateTicketStepRegistered() {
         seedCustomer(PARTNER_ID, "ACME");
         seedSlaPolicy(SLA_POLICY_ID, TICKET_TYPE_ID);
-        Long catalogItemId = seedCatalogItem(6101L, "履行测试项", TICKET_TYPE_ID, SLA_POLICY_ID, true);
+        String catalogItemId = seedCatalogItem("6101", "履行测试项", TICKET_TYPE_ID, SLA_POLICY_ID, true);
         // 履行链：CREATE_TICKET（DONE 审计）+ INVOKE_WORKFLOW（SKIPPED，L1 未枚举边界）+
         // ASSIGN_TEAM（本测试无团队成员池 → FAILED 触发失败暂停）+ NOTIFY_CUSTOMER（中断后保持 PENDING）
-        seedFulfillmentStep(6201L, catalogItemId, 1, ErpCsConstants.FULFILLMENT_ACTION_CREATE_TICKET);
-        seedFulfillmentStep(6202L, catalogItemId, 2, ErpCsConstants.FULFILLMENT_ACTION_INVOKE_WORKFLOW);
-        seedFulfillmentStep(6203L, catalogItemId, 3, ErpCsConstants.FULFILLMENT_ACTION_ASSIGN_TEAM);
-        seedFulfillmentStep(6204L, catalogItemId, 4, ErpCsConstants.FULFILLMENT_ACTION_NOTIFY_CUSTOMER);
+        seedFulfillmentStep("6201", catalogItemId, 1, ErpCsConstants.FULFILLMENT_ACTION_CREATE_TICKET);
+        seedFulfillmentStep("6202", catalogItemId, 2, ErpCsConstants.FULFILLMENT_ACTION_INVOKE_WORKFLOW);
+        seedFulfillmentStep("6203", catalogItemId, 3, ErpCsConstants.FULFILLMENT_ACTION_ASSIGN_TEAM);
+        seedFulfillmentStep("6204", catalogItemId, 4, ErpCsConstants.FULFILLMENT_ACTION_NOTIFY_CUSTOMER);
 
         Map<String, Object> formData = new HashMap<>();
         formData.put("customerId", PARTNER_ID);
@@ -323,7 +323,7 @@ public class TestErpCsServiceCatalog extends JunitAutoTestCase {
                 Map.of("catalogItemId", catalogItemId, "formData", formData));
         assertEquals(0, resp.getStatus(), "createFromCatalog 应成功: " + resp);
 
-        Long ticketId = toLong(((Map<?, ?>) resp.getData()).get("id"));
+        String ticketId = idStr(((Map<?, ?>) resp.getData()).get("id"));
         List<ErpCsTicketFulfillmentStep> steps = listFulfillmentSteps(ticketId);
         assertEquals(4, steps.size(), "物化步骤执行行数 = 模板数（4）");
 
@@ -360,13 +360,13 @@ public class TestErpCsServiceCatalog extends JunitAutoTestCase {
 
     // ---------- helpers ----------
 
-    private List<ErpCsTicketAction> listTicketActions(Long ticketId) {
+    private List<ErpCsTicketAction> listTicketActions(String ticketId) {
         io.nop.api.core.beans.query.QueryBean q = new io.nop.api.core.beans.query.QueryBean();
         q.addFilter(eq("ticketId", ticketId));
         return daoProvider.daoFor(ErpCsTicketAction.class).findAllByQuery(q);
     }
 
-    private List<ErpCsTicketFulfillmentStep> listFulfillmentSteps(Long ticketId) {
+    private List<ErpCsTicketFulfillmentStep> listFulfillmentSteps(String ticketId) {
         io.nop.api.core.beans.query.QueryBean q = new io.nop.api.core.beans.query.QueryBean();
         q.addFilter(eq("ticketId", ticketId));
         return daoProvider.daoFor(ErpCsTicketFulfillmentStep.class).findAllByQuery(q);
@@ -390,7 +390,7 @@ public class TestErpCsServiceCatalog extends JunitAutoTestCase {
         return null;
     }
 
-    private void seedCustomer(Long id, String name) {
+    private void seedCustomer(String id, String name) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMdPartner> dao = daoProvider.daoFor(ErpMdPartner.class);
             ErpMdPartner p = new ErpMdPartner();
@@ -403,7 +403,7 @@ public class TestErpCsServiceCatalog extends JunitAutoTestCase {
         });
     }
 
-    private void seedSlaPolicy(Long id, Long ticketTypeId) {
+    private void seedSlaPolicy(String id, String ticketTypeId) {
         seedTicketType(ticketTypeId);
         ormTemplate.runInSession(() -> {
             IEntityDao<app.erp.cs.dao.entity.ErpCsSlaPolicy> dao =
@@ -419,7 +419,7 @@ public class TestErpCsServiceCatalog extends JunitAutoTestCase {
         });
     }
 
-    private void seedTicketType(Long id) {
+    private void seedTicketType(String id) {
         ormTemplate.runInSession(() -> {
             IEntityDao<app.erp.cs.dao.entity.ErpCsTicketType> dao =
                     daoProvider.daoFor(app.erp.cs.dao.entity.ErpCsTicketType.class);
@@ -431,7 +431,7 @@ public class TestErpCsServiceCatalog extends JunitAutoTestCase {
         });
     }
 
-    private Long seedCategory(Long id, String name, Long parentId) {
+    private String seedCategory(String id, String name, String parentId) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpCsCatalogCategory> dao = daoProvider.daoFor(ErpCsCatalogCategory.class);
             ErpCsCatalogCategory c = new ErpCsCatalogCategory();
@@ -445,7 +445,7 @@ public class TestErpCsServiceCatalog extends JunitAutoTestCase {
         return id;
     }
 
-    private Long seedCatalogItem(Long id, String name, Long ticketTypeId, Long slaPolicyId, boolean active) {
+    private String seedCatalogItem(String id, String name, String ticketTypeId, String slaPolicyId, boolean active) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpCsServiceCatalogItem> dao = daoProvider.daoFor(ErpCsServiceCatalogItem.class);
             ErpCsServiceCatalogItem item = new ErpCsServiceCatalogItem();
@@ -461,7 +461,7 @@ public class TestErpCsServiceCatalog extends JunitAutoTestCase {
         return id;
     }
 
-    private Long seedCatalogItemWithFormConfig(Long id, String name, Long ticketTypeId, Long slaPolicyId,
+    private String seedCatalogItemWithFormConfig(String id, String name, String ticketTypeId, String slaPolicyId,
                                                boolean active, String requestFormConfig) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpCsServiceCatalogItem> dao = daoProvider.daoFor(ErpCsServiceCatalogItem.class);
@@ -479,7 +479,7 @@ public class TestErpCsServiceCatalog extends JunitAutoTestCase {
         return id;
     }
 
-    private void seedEntitlement(Long id, Long partnerId, String serviceType, int usedTickets,
+    private void seedEntitlement(String id, String partnerId, String serviceType, int usedTickets,
                                  int maxTickets, int daysUntilEnd) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpCsEntitlement> dao = daoProvider.daoFor(ErpCsEntitlement.class);
@@ -498,13 +498,13 @@ public class TestErpCsServiceCatalog extends JunitAutoTestCase {
         });
     }
 
-    private long countTickets(Long catalogItemId) {
+    private long countTickets(String catalogItemId) {
         io.nop.api.core.beans.query.QueryBean q = new io.nop.api.core.beans.query.QueryBean();
         q.addFilter(eq("catalogItemId", catalogItemId));
         return daoProvider.daoFor(ErpCsTicket.class).findAllByQuery(q).size();
     }
 
-    private void seedFulfillmentStep(Long id, Long catalogItemId, int sequence, String actionType) {
+    private void seedFulfillmentStep(String id, String catalogItemId, int sequence, String actionType) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpCsCatalogFulfillment> dao = daoProvider.daoFor(ErpCsCatalogFulfillment.class);
             ErpCsCatalogFulfillment f = new ErpCsCatalogFulfillment();
@@ -518,11 +518,8 @@ public class TestErpCsServiceCatalog extends JunitAutoTestCase {
         });
     }
 
-    private static Long toLong(Object v) {
-        if (v == null) return null;
-        if (v instanceof Long) return (Long) v;
-        if (v instanceof Number) return ((Number) v).longValue();
-        return Long.valueOf(String.valueOf(v));
+    private static String idStr(Object v) {
+        return v == null ? null : String.valueOf(v);
     }
 
     private ApiResponse<?> rpc(io.nop.graphql.core.ast.GraphQLOperationType op, String action,

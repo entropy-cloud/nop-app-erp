@@ -19,6 +19,8 @@ import java.util.List;
  * 测试容器无 crm 生成的 xbiz/服务 bean，defaultPrepareQuery action 不可达；生产路径
  * app-erp-all 经 crm-service 走标准管道，不受本测试覆写影响）。
  * 经 test resources 的 app-test-mock-crm.beans.xml 自动合并（app- 前缀约定），仅测试容器生效。
+ *
+ * <p>bridge-test-116/136: crm 未迁移（M3.4），mock 桩保持 crm Long 实体/IBiz 签名（cs 侧适配消费，退役 owner M3.4）。
  */
 public final class TestMockCrmBizModels {
 

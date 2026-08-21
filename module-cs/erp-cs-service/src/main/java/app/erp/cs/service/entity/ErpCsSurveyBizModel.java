@@ -53,7 +53,7 @@ public class ErpCsSurveyBizModel extends CrudBizModel<ErpCsSurvey> implements IE
 
     @Override
     @BizMutation
-    public ErpCsSurvey createSurvey(@Name("ticketId") Long ticketId, IServiceContext context) {
+    public ErpCsSurvey createSurvey(@Name("ticketId") String ticketId, IServiceContext context) {
         return createSurveyProcessor.createSurvey(ticketId, context);
     }
 

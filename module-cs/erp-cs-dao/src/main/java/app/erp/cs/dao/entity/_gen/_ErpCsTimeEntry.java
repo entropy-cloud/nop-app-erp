@@ -204,16 +204,16 @@ public class _ErpCsTimeEntry extends DynamicOrmEntity{
 
     
     /* ID: ID */
-    private java.lang.Long _id;
+    private java.lang.String _id;
     
     /* 业务组织: ORG_ID */
-    private java.lang.Long _orgId;
+    private java.lang.String _orgId;
     
     /* 关联工单: TICKET_ID */
-    private java.lang.Long _ticketId;
+    private java.lang.String _ticketId;
     
     /* 处理人: AGENT_ID */
-    private java.lang.Long _agentId;
+    private java.lang.String _agentId;
     
     /* 开始时间: START_TIME */
     private java.sql.Timestamp _startTime;
@@ -246,10 +246,10 @@ public class _ErpCsTimeEntry extends DynamicOrmEntity{
     private java.sql.Timestamp _approvedAt;
     
     /* 关联项目: PROJECT_ID */
-    private java.lang.Long _projectId;
+    private java.lang.String _projectId;
     
     /* 关联任务: TASK_ID */
-    private java.lang.Long _taskId;
+    private java.lang.String _taskId;
     
     /* 来源: SOURCE */
     private java.lang.String _source;
@@ -427,9 +427,9 @@ public class _ErpCsTimeEntry extends DynamicOrmEntity{
         switch(propId){
         
             case PROP_ID_id:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_id));
                }
                setId(typedValue);
@@ -437,9 +437,9 @@ public class _ErpCsTimeEntry extends DynamicOrmEntity{
             }
         
             case PROP_ID_orgId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_orgId));
                }
                setOrgId(typedValue);
@@ -447,9 +447,9 @@ public class _ErpCsTimeEntry extends DynamicOrmEntity{
             }
         
             case PROP_ID_ticketId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_ticketId));
                }
                setTicketId(typedValue);
@@ -457,9 +457,9 @@ public class _ErpCsTimeEntry extends DynamicOrmEntity{
             }
         
             case PROP_ID_agentId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_agentId));
                }
                setAgentId(typedValue);
@@ -567,9 +567,9 @@ public class _ErpCsTimeEntry extends DynamicOrmEntity{
             }
         
             case PROP_ID_projectId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_projectId));
                }
                setProjectId(typedValue);
@@ -577,9 +577,9 @@ public class _ErpCsTimeEntry extends DynamicOrmEntity{
             }
         
             case PROP_ID_taskId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_taskId));
                }
                setTaskId(typedValue);
@@ -667,28 +667,28 @@ public class _ErpCsTimeEntry extends DynamicOrmEntity{
         
             case PROP_ID_id:{
                onInitProp(propId);
-               this._id = (java.lang.Long)value;
+               this._id = (java.lang.String)value;
                orm_id(); // 如果是设置主键字段，则触发watcher
                break;
             }
         
             case PROP_ID_orgId:{
                onInitProp(propId);
-               this._orgId = (java.lang.Long)value;
+               this._orgId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_ticketId:{
                onInitProp(propId);
-               this._ticketId = (java.lang.Long)value;
+               this._ticketId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_agentId:{
                onInitProp(propId);
-               this._agentId = (java.lang.Long)value;
+               this._agentId = (java.lang.String)value;
                
                break;
             }
@@ -765,14 +765,14 @@ public class _ErpCsTimeEntry extends DynamicOrmEntity{
         
             case PROP_ID_projectId:{
                onInitProp(propId);
-               this._projectId = (java.lang.Long)value;
+               this._projectId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_taskId:{
                onInitProp(propId);
-               this._taskId = (java.lang.Long)value;
+               this._taskId = (java.lang.String)value;
                
                break;
             }
@@ -835,7 +835,7 @@ public class _ErpCsTimeEntry extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final java.lang.Long getId(){
+    public final java.lang.String getId(){
          onPropGet(PROP_ID_id);
          return _id;
     }
@@ -843,7 +843,7 @@ public class _ErpCsTimeEntry extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final void setId(java.lang.Long value){
+    public final void setId(java.lang.String value){
         if(onPropSet(PROP_ID_id,value)){
             this._id = value;
             internalClearRefs(PROP_ID_id);
@@ -854,7 +854,7 @@ public class _ErpCsTimeEntry extends DynamicOrmEntity{
     /**
      * 业务组织: ORG_ID
      */
-    public final java.lang.Long getOrgId(){
+    public final java.lang.String getOrgId(){
          onPropGet(PROP_ID_orgId);
          return _orgId;
     }
@@ -862,7 +862,7 @@ public class _ErpCsTimeEntry extends DynamicOrmEntity{
     /**
      * 业务组织: ORG_ID
      */
-    public final void setOrgId(java.lang.Long value){
+    public final void setOrgId(java.lang.String value){
         if(onPropSet(PROP_ID_orgId,value)){
             this._orgId = value;
             internalClearRefs(PROP_ID_orgId);
@@ -873,7 +873,7 @@ public class _ErpCsTimeEntry extends DynamicOrmEntity{
     /**
      * 关联工单: TICKET_ID
      */
-    public final java.lang.Long getTicketId(){
+    public final java.lang.String getTicketId(){
          onPropGet(PROP_ID_ticketId);
          return _ticketId;
     }
@@ -881,7 +881,7 @@ public class _ErpCsTimeEntry extends DynamicOrmEntity{
     /**
      * 关联工单: TICKET_ID
      */
-    public final void setTicketId(java.lang.Long value){
+    public final void setTicketId(java.lang.String value){
         if(onPropSet(PROP_ID_ticketId,value)){
             this._ticketId = value;
             internalClearRefs(PROP_ID_ticketId);
@@ -892,7 +892,7 @@ public class _ErpCsTimeEntry extends DynamicOrmEntity{
     /**
      * 处理人: AGENT_ID
      */
-    public final java.lang.Long getAgentId(){
+    public final java.lang.String getAgentId(){
          onPropGet(PROP_ID_agentId);
          return _agentId;
     }
@@ -900,7 +900,7 @@ public class _ErpCsTimeEntry extends DynamicOrmEntity{
     /**
      * 处理人: AGENT_ID
      */
-    public final void setAgentId(java.lang.Long value){
+    public final void setAgentId(java.lang.String value){
         if(onPropSet(PROP_ID_agentId,value)){
             this._agentId = value;
             internalClearRefs(PROP_ID_agentId);
@@ -1101,7 +1101,7 @@ public class _ErpCsTimeEntry extends DynamicOrmEntity{
     /**
      * 关联项目: PROJECT_ID
      */
-    public final java.lang.Long getProjectId(){
+    public final java.lang.String getProjectId(){
          onPropGet(PROP_ID_projectId);
          return _projectId;
     }
@@ -1109,7 +1109,7 @@ public class _ErpCsTimeEntry extends DynamicOrmEntity{
     /**
      * 关联项目: PROJECT_ID
      */
-    public final void setProjectId(java.lang.Long value){
+    public final void setProjectId(java.lang.String value){
         if(onPropSet(PROP_ID_projectId,value)){
             this._projectId = value;
             internalClearRefs(PROP_ID_projectId);
@@ -1120,7 +1120,7 @@ public class _ErpCsTimeEntry extends DynamicOrmEntity{
     /**
      * 关联任务: TASK_ID
      */
-    public final java.lang.Long getTaskId(){
+    public final java.lang.String getTaskId(){
          onPropGet(PROP_ID_taskId);
          return _taskId;
     }
@@ -1128,7 +1128,7 @@ public class _ErpCsTimeEntry extends DynamicOrmEntity{
     /**
      * 关联任务: TASK_ID
      */
-    public final void setTaskId(java.lang.Long value){
+    public final void setTaskId(java.lang.String value){
         if(onPropSet(PROP_ID_taskId,value)){
             this._taskId = value;
             internalClearRefs(PROP_ID_taskId);

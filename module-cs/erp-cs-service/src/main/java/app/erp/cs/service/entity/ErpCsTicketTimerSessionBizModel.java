@@ -47,13 +47,13 @@ public class ErpCsTicketTimerSessionBizModel extends CrudBizModel<ErpCsTicketTim
 
     @Override
     @BizMutation
-    public ErpCsTicketTimerSession startTimer(@Name("ticketId") Long ticketId, IServiceContext context) {
+    public ErpCsTicketTimerSession startTimer(@Name("ticketId") String ticketId, IServiceContext context) {
         return startTimerProcessor.startTimer(ticketId, context);
     }
 
     @Override
     @BizMutation
-    public ErpCsTicketTimerSession pauseTimer(@Name("sessionId") Long sessionId,
+    public ErpCsTicketTimerSession pauseTimer(@Name("sessionId") String sessionId,
                                               @Optional @Name("pauseReason") String pauseReason,
                                               IServiceContext context) {
         return pauseTimerProcessor.pauseTimer(sessionId, pauseReason, context);
@@ -61,13 +61,13 @@ public class ErpCsTicketTimerSessionBizModel extends CrudBizModel<ErpCsTicketTim
 
     @Override
     @BizMutation
-    public ErpCsTicketTimerSession resumeTimer(@Name("sessionId") Long sessionId, IServiceContext context) {
+    public ErpCsTicketTimerSession resumeTimer(@Name("sessionId") String sessionId, IServiceContext context) {
         return resumeTimerProcessor.resumeTimer(sessionId, context);
     }
 
     @Override
     @BizMutation
-    public ErpCsTicketTimerSession stopTimer(@Name("sessionId") Long sessionId, IServiceContext context) {
+    public ErpCsTicketTimerSession stopTimer(@Name("sessionId") String sessionId, IServiceContext context) {
         return stopTimerProcessor.stopTimer(sessionId, context);
     }
 

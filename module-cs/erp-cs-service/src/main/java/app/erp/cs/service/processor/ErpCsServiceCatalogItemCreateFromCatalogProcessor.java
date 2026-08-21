@@ -41,7 +41,7 @@ public class ErpCsServiceCatalogItemCreateFromCatalogProcessor {
     @Inject
     IErpCsEntitlementBiz entitlementBiz;
 
-    public ErpCsTicket createFromCatalog(Long catalogItemId, Map<String, Object> formData, IServiceContext context) {
+    public ErpCsTicket createFromCatalog(String catalogItemId, Map<String, Object> formData, IServiceContext context) {
         if (!ErpCsConfigs.isServiceCatalogEnabled()) {
             throw new NopException(ErpCsErrors.ERR_CATALOG_ITEM_INACTIVE)
                     .param(ErpCsErrors.ARG_CATALOG_ITEM_ID, catalogItemId);
@@ -84,7 +84,7 @@ public class ErpCsServiceCatalogItemCreateFromCatalogProcessor {
             return;
         }
         Object customerIdObj = ticketData.get("customerId");
-        Long customerId = customerIdObj == null ? null : Long.valueOf(String.valueOf(customerIdObj));
+        String customerId = customerIdObj == null ? null : String.valueOf(customerIdObj);
         if (customerId == null) {
             return;
         }
@@ -105,7 +105,7 @@ public class ErpCsServiceCatalogItemCreateFromCatalogProcessor {
         entitlementBiz.consumeEntitlement(matched.getId(), context);
     }
 
-    private ErpCsServiceCatalogItem requireCatalogItem(Long catalogItemId, IServiceContext context) {
+    private ErpCsServiceCatalogItem requireCatalogItem(String catalogItemId, IServiceContext context) {
         if (catalogItemId == null) {
             throw new NopException(ErpCsErrors.ERR_CATALOG_ITEM_NOT_FOUND)
                     .param(ErpCsErrors.ARG_CATALOG_ITEM_ID, catalogItemId);

@@ -51,9 +51,9 @@ public class TestErpCsEntitlement extends JunitAutoTestCase {
     @RegisterExtension
     static CsFrozenClockExtension frozenClock = new CsFrozenClockExtension();
 
-    static final Long PARTNER_ID = 9101L;
-    static final Long TICKET_TYPE_ID = 6201L;
-    static final Long SLA_POLICY_ID = 7201L;
+    static final String PARTNER_ID = "9101";
+    static final String TICKET_TYPE_ID = "6201";
+    static final String SLA_POLICY_ID = "7201";
 
     @Inject
     IDaoProvider daoProvider;
@@ -65,7 +65,7 @@ public class TestErpCsEntitlement extends JunitAutoTestCase {
     @Test
     public void testConsumePayPerTicketIncrementsUsed() {
         seedCustomer(PARTNER_ID, "ACME");
-        Long id = seedEntitlement(8001L, PARTNER_ID, ErpCsConstants.SERVICE_TYPE_PAY_PER_TICKET,
+        String id = seedEntitlement("8001", PARTNER_ID, ErpCsConstants.SERVICE_TYPE_PAY_PER_TICKET,
                 CoreMetrics.currentDate().minusDays(5), CoreMetrics.currentDate().plusDays(30), 5, 2);
 
         ApiResponse<?> resp = rpc(mutation, "ErpCsEntitlement__consumeEntitlement",
@@ -77,7 +77,7 @@ public class TestErpCsEntitlement extends JunitAutoTestCase {
     @Test
     public void testConsumeExhaustedRejected() {
         seedCustomer(PARTNER_ID, "ACME");
-        Long id = seedEntitlement(8002L, PARTNER_ID, ErpCsConstants.SERVICE_TYPE_PAY_PER_TICKET,
+        String id = seedEntitlement("8002", PARTNER_ID, ErpCsConstants.SERVICE_TYPE_PAY_PER_TICKET,
                 CoreMetrics.currentDate().minusDays(5), CoreMetrics.currentDate().plusDays(30), 1, 1);
 
         ApiResponse<?> resp = rpc(mutation, "ErpCsEntitlement__consumeEntitlement",
@@ -89,7 +89,7 @@ public class TestErpCsEntitlement extends JunitAutoTestCase {
     @Test
     public void testConsumeWarrantyDoesNotIncrement() {
         seedCustomer(PARTNER_ID, "ACME");
-        Long id = seedEntitlement(8003L, PARTNER_ID, ErpCsConstants.SERVICE_TYPE_WARRANTY,
+        String id = seedEntitlement("8003", PARTNER_ID, ErpCsConstants.SERVICE_TYPE_WARRANTY,
                 CoreMetrics.currentDate().minusDays(5), CoreMetrics.currentDate().plusDays(30), null, null);
 
         ApiResponse<?> resp = rpc(mutation, "ErpCsEntitlement__consumeEntitlement",
@@ -103,7 +103,7 @@ public class TestErpCsEntitlement extends JunitAutoTestCase {
     @Test
     public void testConsumeSupportContractDoesNotIncrement() {
         seedCustomer(PARTNER_ID, "ACME");
-        Long id = seedEntitlement(8004L, PARTNER_ID, ErpCsConstants.SERVICE_TYPE_SUPPORT_CONTRACT,
+        String id = seedEntitlement("8004", PARTNER_ID, ErpCsConstants.SERVICE_TYPE_SUPPORT_CONTRACT,
                 CoreMetrics.currentDate().minusDays(5), CoreMetrics.currentDate().plusDays(30), 10, 0);
 
         ApiResponse<?> resp = rpc(mutation, "ErpCsEntitlement__consumeEntitlement",
@@ -115,7 +115,7 @@ public class TestErpCsEntitlement extends JunitAutoTestCase {
     @Test
     public void testConsumeExpiredRejected() {
         seedCustomer(PARTNER_ID, "ACME");
-        Long id = seedEntitlement(8005L, PARTNER_ID, ErpCsConstants.SERVICE_TYPE_PAY_PER_TICKET,
+        String id = seedEntitlement("8005", PARTNER_ID, ErpCsConstants.SERVICE_TYPE_PAY_PER_TICKET,
                 CoreMetrics.currentDate().minusDays(30), CoreMetrics.currentDate().minusDays(1), 5, 0);
 
         ApiResponse<?> resp = rpc(mutation, "ErpCsEntitlement__consumeEntitlement",
@@ -127,7 +127,7 @@ public class TestErpCsEntitlement extends JunitAutoTestCase {
     @Test
     public void testReleaseDecrementsNotBelowZero() {
         seedCustomer(PARTNER_ID, "ACME");
-        Long id = seedEntitlement(8006L, PARTNER_ID, ErpCsConstants.SERVICE_TYPE_PAY_PER_TICKET,
+        String id = seedEntitlement("8006", PARTNER_ID, ErpCsConstants.SERVICE_TYPE_PAY_PER_TICKET,
                 CoreMetrics.currentDate().minusDays(5), CoreMetrics.currentDate().plusDays(30), 5, 3);
 
         rpc(mutation, "ErpCsEntitlement__releaseEntitlement", Map.of("entitlementId", id));
@@ -142,9 +142,9 @@ public class TestErpCsEntitlement extends JunitAutoTestCase {
     @Test
     public void testScanExpiringEntitlements() {
         seedCustomer(PARTNER_ID, "ACME");
-        seedEntitlement(8010L, PARTNER_ID, ErpCsConstants.SERVICE_TYPE_WARRANTY,
+        seedEntitlement("8010", PARTNER_ID, ErpCsConstants.SERVICE_TYPE_WARRANTY,
                 CoreMetrics.currentDate().minusDays(5), CoreMetrics.currentDate().plusDays(10), null, null);
-        seedEntitlement(8011L, PARTNER_ID, ErpCsConstants.SERVICE_TYPE_WARRANTY,
+        seedEntitlement("8011", PARTNER_ID, ErpCsConstants.SERVICE_TYPE_WARRANTY,
                 CoreMetrics.currentDate().minusDays(5), CoreMetrics.currentDate().plusDays(100), null, null);
 
         ApiResponse<?> resp = rpc(query, "ErpCsEntitlement__scanExpiringEntitlements",
@@ -155,9 +155,9 @@ public class TestErpCsEntitlement extends JunitAutoTestCase {
         boolean foundInWindow = false;
         boolean foundOutside = false;
         for (Map<String, Object> row : items) {
-            Long id = toLong(row.get("id"));
-            if (Long.valueOf(8010L).equals(id)) foundInWindow = true;
-            if (Long.valueOf(8011L).equals(id)) foundOutside = true;
+            String id = String.valueOf(row.get("id"));
+            if ("8010".equals(id)) foundInWindow = true;
+            if ("8011".equals(id)) foundOutside = true;
         }
         assertTrue(foundInWindow, "窗口内（10 天后到期）应在结果中");
         assertFalse(foundOutside, "窗口外（100 天后到期）不应在结果中");
@@ -166,25 +166,25 @@ public class TestErpCsEntitlement extends JunitAutoTestCase {
     @Test
     public void testDeactivateExpiredEntitlements() {
         seedCustomer(PARTNER_ID, "ACME");
-        seedEntitlement(8020L, PARTNER_ID, ErpCsConstants.SERVICE_TYPE_WARRANTY,
+        seedEntitlement("8020", PARTNER_ID, ErpCsConstants.SERVICE_TYPE_WARRANTY,
                 CoreMetrics.currentDate().minusDays(30), CoreMetrics.currentDate().minusDays(1), null, null);
-        seedEntitlement(8021L, PARTNER_ID, ErpCsConstants.SERVICE_TYPE_WARRANTY,
+        seedEntitlement("8021", PARTNER_ID, ErpCsConstants.SERVICE_TYPE_WARRANTY,
                 CoreMetrics.currentDate().minusDays(5), CoreMetrics.currentDate().plusDays(30), null, null);
 
         ApiResponse<?> resp = rpc(mutation, "ErpCsEntitlement__deactivateExpiredEntitlements",
                 new java.util.HashMap<>());
         assertEquals(0, resp.getStatus(), "deactivateExpiredEntitlements 应成功: " + resp);
 
-        assertFalse(loadEntitlement(8020L).getIsActive(), "已到期权益应 isActive=false");
-        assertTrue(loadEntitlement(8021L).getIsActive(), "未到期权益应保持 isActive=true");
+        assertFalse(loadEntitlement("8020").getIsActive(), "已到期权益应 isActive=false");
+        assertTrue(loadEntitlement("8021").getIsActive(), "未到期权益应保持 isActive=true");
     }
 
     @Test
     public void testGetEntitlementUsage() {
         seedCustomer(PARTNER_ID, "ACME");
-        seedEntitlement(8030L, PARTNER_ID, ErpCsConstants.SERVICE_TYPE_PAY_PER_TICKET,
+        seedEntitlement("8030", PARTNER_ID, ErpCsConstants.SERVICE_TYPE_PAY_PER_TICKET,
                 CoreMetrics.currentDate().minusDays(5), CoreMetrics.currentDate().plusDays(30), 10, 4);
-        seedEntitlement(8031L, PARTNER_ID, ErpCsConstants.SERVICE_TYPE_PAY_PER_TICKET,
+        seedEntitlement("8031", PARTNER_ID, ErpCsConstants.SERVICE_TYPE_PAY_PER_TICKET,
                 CoreMetrics.currentDate().minusDays(5), CoreMetrics.currentDate().plusDays(30), 10, 6);
 
         ApiResponse<?> resp = rpc(query, "ErpCsEntitlement__getEntitlementUsage",
@@ -204,9 +204,9 @@ public class TestErpCsEntitlement extends JunitAutoTestCase {
     public void testTicketMatchAndAttachSlaConsumesEntitlement() {
         seedCustomer(PARTNER_ID, "ACME");
         seedSlaPolicy(SLA_POLICY_ID, TICKET_TYPE_ID);
-        Long entitlementId = seedEntitlement(8040L, PARTNER_ID, ErpCsConstants.SERVICE_TYPE_PAY_PER_TICKET,
+        String entitlementId = seedEntitlement("8040", PARTNER_ID, ErpCsConstants.SERVICE_TYPE_PAY_PER_TICKET,
                 CoreMetrics.currentDate().minusDays(5), CoreMetrics.currentDate().plusDays(30), 5, 1);
-        Long ticketId = seedTicket("TK-ENT-CONSUME", PARTNER_ID);
+        String ticketId = seedTicket("TK-ENT-CONSUME", PARTNER_ID);
 
         // matchAndAttachSla 应触发权益匹配 + 扣减（config-gated 默认开启）
         ApiResponse<?> resp = rpc(mutation, "ErpCsTicket__matchAndAttachSla",
@@ -220,7 +220,7 @@ public class TestErpCsEntitlement extends JunitAutoTestCase {
     @Test
     public void testNoEntitlementAllowedByDefault() {
         seedCustomer(PARTNER_ID, "ACME");
-        Long ticketId = seedTicket("TK-NO-ENT-ALLOW", PARTNER_ID);
+        String ticketId = seedTicket("TK-NO-ENT-ALLOW", PARTNER_ID);
 
         ApiResponse<?> resp = rpc(mutation, "ErpCsTicket__matchAndAttachSla",
                 Map.of("ticketId", ticketId));
@@ -231,7 +231,7 @@ public class TestErpCsEntitlement extends JunitAutoTestCase {
     @Test
     public void testNoEntitlementRejectedWhenDisallow() {
         seedCustomer(PARTNER_ID, "ACME");
-        Long ticketId = seedTicket("TK-NO-ENT-REJECT", PARTNER_ID);
+        String ticketId = seedTicket("TK-NO-ENT-REJECT", PARTNER_ID);
 
         AppConfig.getConfigProvider().assignConfigValue(
                 ErpCsConstants.CONFIG_ENTITLEMENT_ALLOW_NO_ENTITLEMENT, "false");
@@ -249,9 +249,9 @@ public class TestErpCsEntitlement extends JunitAutoTestCase {
     @Test
     public void testEntitlementCheckDisabledSkipsConsume() {
         seedCustomer(PARTNER_ID, "ACME");
-        Long entitlementId = seedEntitlement(8050L, PARTNER_ID, ErpCsConstants.SERVICE_TYPE_PAY_PER_TICKET,
+        String entitlementId = seedEntitlement("8050", PARTNER_ID, ErpCsConstants.SERVICE_TYPE_PAY_PER_TICKET,
                 CoreMetrics.currentDate().minusDays(5), CoreMetrics.currentDate().plusDays(30), 5, 1);
-        Long ticketId = seedTicket("TK-ENT-DISABLED", PARTNER_ID);
+        String ticketId = seedTicket("TK-ENT-DISABLED", PARTNER_ID);
 
         AppConfig.getConfigProvider().assignConfigValue(
                 ErpCsConstants.CONFIG_ENTITLEMENT_CHECK_ENABLED, "false");
@@ -270,11 +270,11 @@ public class TestErpCsEntitlement extends JunitAutoTestCase {
 
     // ---------- helpers ----------
 
-    private ErpCsEntitlement loadEntitlement(Long id) {
+    private ErpCsEntitlement loadEntitlement(String id) {
         return daoProvider.daoFor(ErpCsEntitlement.class).getEntityById(id);
     }
 
-    private void seedCustomer(Long id, String name) {
+    private void seedCustomer(String id, String name) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMdPartner> dao = daoProvider.daoFor(ErpMdPartner.class);
             ErpMdPartner p = new ErpMdPartner();
@@ -287,7 +287,7 @@ public class TestErpCsEntitlement extends JunitAutoTestCase {
         });
     }
 
-    private Long seedEntitlement(Long id, Long partnerId, String serviceType,
+    private String seedEntitlement(String id, String partnerId, String serviceType,
                                   LocalDate start, LocalDate end,
                                   Integer maxTickets, Integer usedTickets) {
         ormTemplate.runInSession(() -> {
@@ -308,7 +308,7 @@ public class TestErpCsEntitlement extends JunitAutoTestCase {
         return id;
     }
 
-    private void seedSlaPolicy(Long id, Long ticketTypeId) {
+    private void seedSlaPolicy(String id, String ticketTypeId) {
         ormTemplate.runInSession(() -> {
             IEntityDao<app.erp.cs.dao.entity.ErpCsSlaPolicy> dao =
                     daoProvider.daoFor(app.erp.cs.dao.entity.ErpCsSlaPolicy.class);
@@ -323,8 +323,8 @@ public class TestErpCsEntitlement extends JunitAutoTestCase {
         });
     }
 
-    private Long seedTicket(String code, Long customerId) {
-        Long id = 8000L + (long) (Math.abs(code.hashCode()) % 1000);
+    private String seedTicket(String code, String customerId) {
+        String id = String.valueOf(8000 + Math.abs(code.hashCode()) % 1000);
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpCsTicket> dao = daoProvider.daoFor(ErpCsTicket.class);
             ErpCsTicket t = new ErpCsTicket();
@@ -349,13 +349,6 @@ public class TestErpCsEntitlement extends JunitAutoTestCase {
                                 Map<String, Object> args) {
         IGraphQLExecutionContext graphQLCtx = graphQLEngine.newRpcContext(op, action, ApiRequest.build(args));
         return graphQLEngine.executeRpc(graphQLCtx);
-    }
-
-    private static Long toLong(Object v) {
-        if (v == null) return null;
-        if (v instanceof Long) return (Long) v;
-        if (v instanceof Number) return ((Number) v).longValue();
-        return Long.valueOf(String.valueOf(v));
     }
 
     private static int toInt(Object v) {

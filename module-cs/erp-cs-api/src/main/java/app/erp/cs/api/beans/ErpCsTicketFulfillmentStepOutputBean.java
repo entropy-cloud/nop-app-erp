@@ -13,72 +13,72 @@
     public class ErpCsTicketFulfillmentStepOutputBean {
 
     
-        private Long _id;
+        private String _id;
 
     
         @PropMeta(propId=1)
     
-        public Long getId(){
+        public String getId(){
             return _id;
         }
 
-        public void setId(Long value){
+        public void setId(String value){
             this._id = value;
         }
 
 
-        private Long _orgId;
+        private String _orgId;
 
     
         @PropMeta(propId=2)
     
-        public Long getOrgId(){
+        public String getOrgId(){
             return _orgId;
         }
 
-        public void setOrgId(Long value){
+        public void setOrgId(String value){
             this._orgId = value;
         }
 
 
-        private Long _ticketId;
+        private String _ticketId;
 
     
         @PropMeta(propId=3)
     
-        public Long getTicketId(){
+        public String getTicketId(){
             return _ticketId;
         }
 
-        public void setTicketId(Long value){
+        public void setTicketId(String value){
             this._ticketId = value;
         }
 
 
-        private Long _fulfillmentId;
+        private String _fulfillmentId;
 
     
         @PropMeta(propId=4)
     
-        public Long getFulfillmentId(){
+        public String getFulfillmentId(){
             return _fulfillmentId;
         }
 
-        public void setFulfillmentId(Long value){
+        public void setFulfillmentId(String value){
             this._fulfillmentId = value;
         }
 
 
-        private Long _catalogItemId;
+        private String _catalogItemId;
 
     
         @PropMeta(propId=5)
     
-        public Long getCatalogItemId(){
+        public String getCatalogItemId(){
             return _catalogItemId;
         }
 
-        public void setCatalogItemId(Long value){
+        public void setCatalogItemId(String value){
             this._catalogItemId = value;
         }
 

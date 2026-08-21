@@ -13,16 +13,16 @@
     public class ErpCsTicketInputBean extends CrudInputBase {
 
     
-        private Long _id;
+        private String _id;
 
     
         @PropMeta(propId=1)
     
-        public Long getId(){
+        public String getId(){
             return _id;
         }
 
-        public void setId(Long value){
+        public void setId(String value){
             this._id = value;
         }
 
@@ -41,16 +41,16 @@
         }
 
 
-        private Long _orgId;
+        private String _orgId;
 
     
         @PropMeta(propId=3)
     
-        public Long getOrgId(){
+        public String getOrgId(){
             return _orgId;
         }
 
-        public void setOrgId(Long value){
+        public void setOrgId(String value){
             this._orgId = value;
         }
 
@@ -83,44 +83,44 @@
         }
 
 
-        private Long _customerId;
+        private String _customerId;
 
     
         @PropMeta(propId=6)
     
-        public Long getCustomerId(){
+        public String getCustomerId(){
             return _customerId;
         }
 
-        public void setCustomerId(Long value){
+        public void setCustomerId(String value){
             this._customerId = value;
         }
 
 
-        private Long _contactId;
+        private String _contactId;
 
     
         @PropMeta(propId=7)
     
-        public Long getContactId(){
+        public String getContactId(){
             return _contactId;
         }
 
-        public void setContactId(Long value){
+        public void setContactId(String value){
             this._contactId = value;
         }
 
 
-        private Long _ticketTypeId;
+        private String _ticketTypeId;
 
     
         @PropMeta(propId=8)
     
-        public Long getTicketTypeId(){
+        public String getTicketTypeId(){
             return _ticketTypeId;
         }
 
-        public void setTicketTypeId(Long value){
+        public void setTicketTypeId(String value){
             this._ticketTypeId = value;
         }
 
@@ -167,16 +167,16 @@
         }
 
 
-        private Long _slaPolicyId;
+        private String _slaPolicyId;
 
     
         @PropMeta(propId=12)
     
-        public Long getSlaPolicyId(){
+        public String getSlaPolicyId(){
             return _slaPolicyId;
         }
 
-        public void setSlaPolicyId(Long value){
+        public void setSlaPolicyId(String value){
             this._slaPolicyId = value;
         }
 
@@ -321,16 +321,16 @@
         }
 
 
-        private Long _catalogItemId;
+        private String _catalogItemId;
 
     
         @PropMeta(propId=23)
     
-        public Long getCatalogItemId(){
+        public String getCatalogItemId(){
             return _catalogItemId;
         }
 
-        public void setCatalogItemId(Long value){
+        public void setCatalogItemId(String value){
             this._catalogItemId = value;
         }
 

@@ -34,9 +34,9 @@ public final class EntitlementMatcher {
      * @param now                   当前日期（用于期间有效判断；精确到日）
      * @param loadActiveByPartner   加载函数：传入 partnerId，返回该客户全部 active 权益（由调用方实现 ORM 查询）
      */
-    public static ErpCsEntitlement match(Long customerIdAsPartnerId,
+    public static ErpCsEntitlement match(String customerIdAsPartnerId,
                                          LocalDate now,
-                                         Function<Long, List<ErpCsEntitlement>> loadActiveByPartner) {
+                                         Function<String, List<ErpCsEntitlement>> loadActiveByPartner) {
         if (customerIdAsPartnerId == null || loadActiveByPartner == null) {
             return null;
         }
@@ -70,7 +70,7 @@ public final class EntitlementMatcher {
         return entitlement.getMaxResponseTime();
     }
 
-    private static boolean isPartnerMatched(ErpCsEntitlement e, Long partnerId) {
+    private static boolean isPartnerMatched(ErpCsEntitlement e, String partnerId) {
         return partnerId.equals(e.getPartnerId());
     }
 

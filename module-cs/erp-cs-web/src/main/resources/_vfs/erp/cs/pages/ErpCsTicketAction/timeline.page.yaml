@@ -33,7 +33,7 @@ body:
       method: post
       dataType: raw
       data:
-        query: "query(${'$'}tid:Long,${'$'}lim:Int){ ErpCsTicketAction__findPage(filter_ticketId:${'$'}tid,limit:${'$'}lim,orderBy:\"createTime DESC\"){ items{ id ticketId actionType fromStatus toStatus operatorId content createTime } total } }"
+        query: "query(${'$'}tid:String,${'$'}lim:Int){ ErpCsTicketAction__findPage(filter_ticketId:${'$'}tid,limit:${'$'}lim,orderBy:\"createTime DESC\"){ items{ id ticketId actionType fromStatus toStatus operatorId content createTime } total } }"
         variables:
           tid: "${ticketId || null}"
           lim: 100

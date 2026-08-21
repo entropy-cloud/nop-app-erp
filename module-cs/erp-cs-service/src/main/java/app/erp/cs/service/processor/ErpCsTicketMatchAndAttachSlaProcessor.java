@@ -31,7 +31,7 @@ public class ErpCsTicketMatchAndAttachSlaProcessor {
     @Inject
     IErpCsEntitlementBiz entitlementBiz;
 
-    public ErpCsTicket matchAndAttachSla(Long ticketId, IServiceContext context) {
+    public ErpCsTicket matchAndAttachSla(String ticketId, IServiceContext context) {
         if (!ErpCsConfigs.isSlaEnabled()) {
             return requireTicket(ticketId, context);
         }
@@ -108,7 +108,7 @@ public class ErpCsTicketMatchAndAttachSlaProcessor {
         }
     }
 
-    private ErpCsTicket requireTicket(Long ticketId, IServiceContext context) {
+    private ErpCsTicket requireTicket(String ticketId, IServiceContext context) {
         if (ticketId == null) {
             throw new NopException(ErpCsErrors.ERR_TICKET_NOT_FOUND).param(ErpCsErrors.ARG_TICKET_ID, ticketId);
         }

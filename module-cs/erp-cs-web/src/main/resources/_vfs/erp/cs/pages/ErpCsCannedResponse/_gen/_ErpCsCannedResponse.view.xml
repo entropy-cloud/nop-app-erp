@@ -19,13 +19,13 @@
             <cols>
 
                 <!--ID-->
-                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="id" mandatory="true" sortable="true"/>
 
                 <!--编码-->
                 <col id="code" mandatory="true" sortable="true"/>
 
                 <!--业务组织-->
-                <col id="orgId" ui:number="true" sortable="true"/>
+                <col id="orgId" sortable="true"/>
 
                 <!--模板标题-->
                 <col id="title" mandatory="true" sortable="true"/>
@@ -34,13 +34,13 @@
                 <col id="content" mandatory="true" sortable="true"/>
 
                 <!--应答分类-->
-                <col id="categoryId" ui:number="true" sortable="true"/>
+                <col id="categoryId" sortable="true"/>
 
                 <!--变量定义-->
                 <col id="variableDefs" sortable="true"/>
 
                 <!--自动匹配工单类型-->
-                <col id="macroTicketTypeId" ui:number="true" sortable="true"/>
+                <col id="macroTicketTypeId" sortable="true"/>
 
                 <!--自动匹配优先级-->
                 <col id="macroPriority" sortable="true"/>

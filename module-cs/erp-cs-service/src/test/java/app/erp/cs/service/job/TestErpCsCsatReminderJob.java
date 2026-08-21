@@ -42,8 +42,8 @@ public class TestErpCsCsatReminderJob extends JunitAutoTestCase {
         CountingJob job = new CountingJob();
         job.cron = "0 0 2 * * ?";
         // 模拟 findSurveyReminders 返回 1 条 + findExpiredSurveys 返回 1 条
-        job.reminders = Collections.singletonList(newSurvey(201L));
-        job.expired = Collections.singletonList(newSurvey(202L));
+        job.reminders = Collections.singletonList(newSurvey("201"));
+        job.expired = Collections.singletonList(newSurvey("202"));
         job.execute();
         assertEquals(1, job.delegateCalls, "cron 非空应委托 runReminders 1 次");
         assertEquals(2, job.notifyCalls, "1 提醒 + 1 过期应通知 2 次");
@@ -67,7 +67,7 @@ public class TestErpCsCsatReminderJob extends JunitAutoTestCase {
         assertTrue(Modifier.isPublic(m.getModifiers()), "execute() 必须为 public");
     }
 
-    private ErpCsSurvey newSurvey(Long id) {
+    private ErpCsSurvey newSurvey(String id) {
         ErpCsSurvey s = new ErpCsSurvey();
         s.orm_propValueByName("id", id);
         return s;

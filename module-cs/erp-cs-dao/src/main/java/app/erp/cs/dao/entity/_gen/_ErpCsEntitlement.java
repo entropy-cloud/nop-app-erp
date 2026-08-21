@@ -196,22 +196,22 @@ public class _ErpCsEntitlement extends DynamicOrmEntity{
 
     
     /* ID: ID */
-    private java.lang.Long _id;
+    private java.lang.String _id;
     
     /* 编码: CODE */
     private java.lang.String _code;
     
     /* 业务组织: ORG_ID */
-    private java.lang.Long _orgId;
+    private java.lang.String _orgId;
     
     /* 客户: PARTNER_ID */
-    private java.lang.Long _partnerId;
+    private java.lang.String _partnerId;
     
     /* 支持合同: CONTRACT_ID */
-    private java.lang.Long _contractId;
+    private java.lang.String _contractId;
     
     /* SLA策略: SLA_POLICY_ID */
-    private java.lang.Long _slaPolicyId;
+    private java.lang.String _slaPolicyId;
     
     /* 服务类型: SERVICE_TYPE */
     private java.lang.String _serviceType;
@@ -407,9 +407,9 @@ public class _ErpCsEntitlement extends DynamicOrmEntity{
         switch(propId){
         
             case PROP_ID_id:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_id));
                }
                setId(typedValue);
@@ -427,9 +427,9 @@ public class _ErpCsEntitlement extends DynamicOrmEntity{
             }
         
             case PROP_ID_orgId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_orgId));
                }
                setOrgId(typedValue);
@@ -437,9 +437,9 @@ public class _ErpCsEntitlement extends DynamicOrmEntity{
             }
         
             case PROP_ID_partnerId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_partnerId));
                }
                setPartnerId(typedValue);
@@ -447,9 +447,9 @@ public class _ErpCsEntitlement extends DynamicOrmEntity{
             }
         
             case PROP_ID_contractId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_contractId));
                }
                setContractId(typedValue);
@@ -457,9 +457,9 @@ public class _ErpCsEntitlement extends DynamicOrmEntity{
             }
         
             case PROP_ID_slaPolicyId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_slaPolicyId));
                }
                setSlaPolicyId(typedValue);
@@ -627,7 +627,7 @@ public class _ErpCsEntitlement extends DynamicOrmEntity{
         
             case PROP_ID_id:{
                onInitProp(propId);
-               this._id = (java.lang.Long)value;
+               this._id = (java.lang.String)value;
                orm_id(); // 如果是设置主键字段，则触发watcher
                break;
             }
@@ -641,28 +641,28 @@ public class _ErpCsEntitlement extends DynamicOrmEntity{
         
             case PROP_ID_orgId:{
                onInitProp(propId);
-               this._orgId = (java.lang.Long)value;
+               this._orgId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_partnerId:{
                onInitProp(propId);
-               this._partnerId = (java.lang.Long)value;
+               this._partnerId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_contractId:{
                onInitProp(propId);
-               this._contractId = (java.lang.Long)value;
+               this._contractId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_slaPolicyId:{
                onInitProp(propId);
-               this._slaPolicyId = (java.lang.Long)value;
+               this._slaPolicyId = (java.lang.String)value;
                
                break;
             }
@@ -781,7 +781,7 @@ public class _ErpCsEntitlement extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final java.lang.Long getId(){
+    public final java.lang.String getId(){
          onPropGet(PROP_ID_id);
          return _id;
     }
@@ -789,7 +789,7 @@ public class _ErpCsEntitlement extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final void setId(java.lang.Long value){
+    public final void setId(java.lang.String value){
         if(onPropSet(PROP_ID_id,value)){
             this._id = value;
             internalClearRefs(PROP_ID_id);
@@ -819,7 +819,7 @@ public class _ErpCsEntitlement extends DynamicOrmEntity{
     /**
      * 业务组织: ORG_ID
      */
-    public final java.lang.Long getOrgId(){
+    public final java.lang.String getOrgId(){
          onPropGet(PROP_ID_orgId);
          return _orgId;
     }
@@ -827,7 +827,7 @@ public class _ErpCsEntitlement extends DynamicOrmEntity{
     /**
      * 业务组织: ORG_ID
      */
-    public final void setOrgId(java.lang.Long value){
+    public final void setOrgId(java.lang.String value){
         if(onPropSet(PROP_ID_orgId,value)){
             this._orgId = value;
             internalClearRefs(PROP_ID_orgId);
@@ -838,7 +838,7 @@ public class _ErpCsEntitlement extends DynamicOrmEntity{
     /**
      * 客户: PARTNER_ID
      */
-    public final java.lang.Long getPartnerId(){
+    public final java.lang.String getPartnerId(){
          onPropGet(PROP_ID_partnerId);
          return _partnerId;
     }
@@ -846,7 +846,7 @@ public class _ErpCsEntitlement extends DynamicOrmEntity{
     /**
      * 客户: PARTNER_ID
      */
-    public final void setPartnerId(java.lang.Long value){
+    public final void setPartnerId(java.lang.String value){
         if(onPropSet(PROP_ID_partnerId,value)){
             this._partnerId = value;
             internalClearRefs(PROP_ID_partnerId);
@@ -857,7 +857,7 @@ public class _ErpCsEntitlement extends DynamicOrmEntity{
     /**
      * 支持合同: CONTRACT_ID
      */
-    public final java.lang.Long getContractId(){
+    public final java.lang.String getContractId(){
          onPropGet(PROP_ID_contractId);
          return _contractId;
     }
@@ -865,7 +865,7 @@ public class _ErpCsEntitlement extends DynamicOrmEntity{
     /**
      * 支持合同: CONTRACT_ID
      */
-    public final void setContractId(java.lang.Long value){
+    public final void setContractId(java.lang.String value){
         if(onPropSet(PROP_ID_contractId,value)){
             this._contractId = value;
             internalClearRefs(PROP_ID_contractId);
@@ -876,7 +876,7 @@ public class _ErpCsEntitlement extends DynamicOrmEntity{
     /**
      * SLA策略: SLA_POLICY_ID
      */
-    public final java.lang.Long getSlaPolicyId(){
+    public final java.lang.String getSlaPolicyId(){
          onPropGet(PROP_ID_slaPolicyId);
          return _slaPolicyId;
     }
@@ -884,7 +884,7 @@ public class _ErpCsEntitlement extends DynamicOrmEntity{
     /**
      * SLA策略: SLA_POLICY_ID
      */
-    public final void setSlaPolicyId(java.lang.Long value){
+    public final void setSlaPolicyId(java.lang.String value){
         if(onPropSet(PROP_ID_slaPolicyId,value)){
             this._slaPolicyId = value;
             internalClearRefs(PROP_ID_slaPolicyId);

@@ -37,7 +37,7 @@ public class ErpCsTicketTimerSessionStartTimerProcessor {
     @Inject
     IErpCsTicketBiz ticketBiz;
 
-    public ErpCsTicketTimerSession startTimer(Long ticketId, IServiceContext context) {
+    public ErpCsTicketTimerSession startTimer(String ticketId, IServiceContext context) {
         assertTimeTrackingEnabled(ticketId);
         ErpCsTicket ticket = ticketBiz.requireEntity(String.valueOf(ticketId), null, context);
 
@@ -70,7 +70,7 @@ public class ErpCsTicketTimerSessionStartTimerProcessor {
         return session;
     }
 
-    protected void assertTimeTrackingEnabled(Long ticketId) {
+    protected void assertTimeTrackingEnabled(String ticketId) {
         if (!ErpCsConfigs.isTimeTrackingEnabled()) {
             throw new NopException(ErpCsErrors.ERR_CS_TIME_TRACKING_DISABLED)
                     .param(ErpCsErrors.ARG_TICKET_ID, ticketId);

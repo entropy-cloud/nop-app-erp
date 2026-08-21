@@ -128,7 +128,7 @@ public class ErpCsCsatReminderJob {
         notificationBiz.notify(ErpCsConstants.NOTIFY_EVENT_CSAT_REMINDER, map, ctx);
     }
 
-    private ErpCsTicket loadTicket(Long ticketId) {
+    private ErpCsTicket loadTicket(String ticketId) {
         if (ticketId == null) {
             return null;
         }

@@ -56,8 +56,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpCsSurveySendJob extends JunitAutoTestCase {
 
-    static final Long CUSTOMER_ID = 9101L;
-    static final Long TICKET_TYPE_ID = 9201L;
+    static final String CUSTOMER_ID = "9101";
+    static final String TICKET_TYPE_ID = "9201";
     static final String RECIPIENT = "cs-survey-recipient";
     static final String NOTIFY_EVENT = ErpCsConstants.NOTIFY_EVENT_SURVEY_INVITATION;
     static final String SURVEY_TOKEN_PREFIX = "tok-send-";
@@ -75,12 +75,12 @@ public class TestErpCsSurveySendJob extends JunitAutoTestCase {
 
     @Test
     public void testCronEmptySkipsExecution() {
-        Long ticketId = seedTicket("TK-SND-CRON", ErpCsConstants.TICKET_STATUS_RESOLVED);
-        seedSurvey(9301L, ticketId, SURVEY_TOKEN_PREFIX + "cron", ErpCsConstants.SURVEY_STATUS_PENDING, null, null);
+        String ticketId = seedTicket("TK-SND-CRON", ErpCsConstants.TICKET_STATUS_RESOLVED);
+        seedSurvey("9301", ticketId, SURVEY_TOKEN_PREFIX + "cron", ErpCsConstants.SURVEY_STATUS_PENDING, null, null);
 
         sendJob.execute(); // cron 未配置（默认空）= 「不调度」语义
 
-        ErpCsSurvey survey = reloadSurvey(9301L);
+        ErpCsSurvey survey = reloadSurvey("9301");
         assertEquals(ErpCsConstants.SURVEY_STATUS_PENDING, survey.getStatus(), "cron 空值应跳过扫描（状态不变）");
         assertNull(survey.getSurveySentAt(), "cron 空值不应发送");
         assertEquals(0, countNotifications(NOTIFY_EVENT), "零通知行");
@@ -91,13 +91,13 @@ public class TestErpCsSurveySendJob extends JunitAutoTestCase {
     @Test
     public void testDuePendingSurveySentWithNotificationRow() {
         seedCustomer(CUSTOMER_ID, "ACME Corp");
-        seedSurveyInviteTemplate(7901L, RECIPIENT);
-        Long ticketId = seedTicket("TK-SND-OK", ErpCsConstants.TICKET_STATUS_RESOLVED);
-        seedSurvey(9302L, ticketId, SURVEY_TOKEN_PREFIX + "ok", ErpCsConstants.SURVEY_STATUS_PENDING, null, null);
+        seedSurveyInviteTemplate("7901", RECIPIENT);
+        String ticketId = seedTicket("TK-SND-OK", ErpCsConstants.TICKET_STATUS_RESOLVED);
+        seedSurvey("9302", ticketId, SURVEY_TOKEN_PREFIX + "ok", ErpCsConstants.SURVEY_STATUS_PENDING, null, null);
 
         withSurveySendCron(sendJob::execute);
 
-        ErpCsSurvey survey = reloadSurvey(9302L);
+        ErpCsSurvey survey = reloadSurvey("9302");
         assertEquals(ErpCsConstants.SURVEY_STATUS_SENT, survey.getStatus(), "到期 PENDING 应转 SENT");
         assertNotNull(survey.getSurveySentAt(), "发送时间应落库");
         ErpSysNotification n = findNotification(NOTIFY_EVENT);
@@ -110,10 +110,10 @@ public class TestErpCsSurveySendJob extends JunitAutoTestCase {
     @Test
     public void testNotDueWithinDelayWindowSkipped() {
         seedCustomer(CUSTOMER_ID, "ACME Corp");
-        seedSurveyInviteTemplate(7902L, RECIPIENT);
-        Long ticketId = seedTicket("TK-SND-WAIT", ErpCsConstants.TICKET_STATUS_RESOLVED);
+        seedSurveyInviteTemplate("7902", RECIPIENT);
+        String ticketId = seedTicket("TK-SND-WAIT", ErpCsConstants.TICKET_STATUS_RESOLVED);
         // createTime=冻结 now（seed 即时），delay=24 → now < createTime+24h 未到期
-        seedSurvey(9303L, ticketId, SURVEY_TOKEN_PREFIX + "wait", ErpCsConstants.SURVEY_STATUS_PENDING, null, null);
+        seedSurvey("9303", ticketId, SURVEY_TOKEN_PREFIX + "wait", ErpCsConstants.SURVEY_STATUS_PENDING, null, null);
 
         AppConfig.getConfigProvider().assignConfigValue(ErpCsConstants.CONFIG_SURVEY_SEND_DELAY, "24");
         try {
@@ -122,7 +122,7 @@ public class TestErpCsSurveySendJob extends JunitAutoTestCase {
             AppConfig.getConfigProvider().assignConfigValue(ErpCsConstants.CONFIG_SURVEY_SEND_DELAY, "0");
         }
 
-        ErpCsSurvey survey = reloadSurvey(9303L);
+        ErpCsSurvey survey = reloadSurvey("9303");
         assertEquals(ErpCsConstants.SURVEY_STATUS_PENDING, survey.getStatus(), "delay 窗口内不应发送");
         assertNull(survey.getSurveySentAt(), "未到期 surveySentAt 保持空");
         assertEquals(0, countNotifications(NOTIFY_EVENT), "未到期零通知行");
@@ -133,14 +133,14 @@ public class TestErpCsSurveySendJob extends JunitAutoTestCase {
     @Test
     public void testLegacyNullStatusRowDerivedPendingAndSent() {
         seedCustomer(CUSTOMER_ID, "ACME Corp");
-        seedSurveyInviteTemplate(7903L, RECIPIENT);
-        Long ticketId = seedTicket("TK-SND-LEGACY", ErpCsConstants.TICKET_STATUS_RESOLVED);
+        seedSurveyInviteTemplate("7903", RECIPIENT);
+        String ticketId = seedTicket("TK-SND-LEGACY", ErpCsConstants.TICKET_STATUS_RESOLVED);
         // 遗留行：status=null + surveySentAt=null（派生 PENDING）——job 应派发并显式写 SENT
-        seedSurvey(9304L, ticketId, SURVEY_TOKEN_PREFIX + "legacy", null, null, null);
+        seedSurvey("9304", ticketId, SURVEY_TOKEN_PREFIX + "legacy", null, null, null);
 
         withSurveySendCron(sendJob::execute);
 
-        ErpCsSurvey survey = reloadSurvey(9304L);
+        ErpCsSurvey survey = reloadSurvey("9304");
         assertEquals(ErpCsConstants.SURVEY_STATUS_SENT, survey.getStatus(), "遗留派生 PENDING 应派发并显式转 SENT");
         assertNotNull(survey.getSurveySentAt(), "发送时间应落库");
         assertTrue(countNotifications(NOTIFY_EVENT) > 0, "遗留行派发应产生通知行");
@@ -150,13 +150,13 @@ public class TestErpCsSurveySendJob extends JunitAutoTestCase {
 
     @Test
     public void testDispatchFailureMarksFailedWithCount() {
-        Long ticketId = seedTicket("TK-SND-FAIL", ErpCsConstants.TICKET_STATUS_RESOLVED);
-        seedSurvey(9305L, ticketId, SURVEY_TOKEN_PREFIX + "fail", ErpCsConstants.SURVEY_STATUS_PENDING, null, null);
+        String ticketId = seedTicket("TK-SND-FAIL", ErpCsConstants.TICKET_STATUS_RESOLVED);
+        seedSurvey("9305", ticketId, SURVEY_TOKEN_PREFIX + "fail", ErpCsConstants.SURVEY_STATUS_PENDING, null, null);
 
         ErpCsSurveySendJob failingJob = newFailingDispatchJob();
         withSurveySendCron(failingJob::execute);
 
-        ErpCsSurvey survey = reloadSurvey(9305L);
+        ErpCsSurvey survey = reloadSurvey("9305");
         assertEquals(ErpCsConstants.SURVEY_STATUS_FAILED, survey.getStatus(), "派发异常应标记 FAILED");
         assertEquals(Integer.valueOf(1), survey.getFailureCount(), "failureCount 应起算 1");
         assertNull(survey.getSurveySentAt(), "失败行 surveySentAt 保持空");
@@ -167,13 +167,13 @@ public class TestErpCsSurveySendJob extends JunitAutoTestCase {
     @Test
     public void testRetryFailedSurveySucceeds() {
         seedCustomer(CUSTOMER_ID, "ACME Corp");
-        seedSurveyInviteTemplate(7904L, RECIPIENT);
-        Long ticketId = seedTicket("TK-SND-RETRY", ErpCsConstants.TICKET_STATUS_RESOLVED);
-        seedSurvey(9306L, ticketId, SURVEY_TOKEN_PREFIX + "retry", ErpCsConstants.SURVEY_STATUS_FAILED, null, 1);
+        seedSurveyInviteTemplate("7904", RECIPIENT);
+        String ticketId = seedTicket("TK-SND-RETRY", ErpCsConstants.TICKET_STATUS_RESOLVED);
+        seedSurvey("9306", ticketId, SURVEY_TOKEN_PREFIX + "retry", ErpCsConstants.SURVEY_STATUS_FAILED, null, 1);
 
         withSurveySendCron(sendJob::execute);
 
-        ErpCsSurvey survey = reloadSurvey(9306L);
+        ErpCsSurvey survey = reloadSurvey("9306");
         assertEquals(ErpCsConstants.SURVEY_STATUS_SENT, survey.getStatus(), "FAILED 未超限应重试成功转 SENT");
         assertNotNull(survey.getSurveySentAt(), "重试发送时间应落库");
         assertTrue(countNotifications(NOTIFY_EVENT) > 0, "重试派发应产生通知行");
@@ -184,14 +184,14 @@ public class TestErpCsSurveySendJob extends JunitAutoTestCase {
     @Test
     public void testRetryExceededStaysTerminalFailed() {
         seedCustomer(CUSTOMER_ID, "ACME Corp");
-        seedSurveyInviteTemplate(7905L, RECIPIENT);
-        Long ticketId = seedTicket("TK-SND-MAX", ErpCsConstants.TICKET_STATUS_RESOLVED);
+        seedSurveyInviteTemplate("7905", RECIPIENT);
+        String ticketId = seedTicket("TK-SND-MAX", ErpCsConstants.TICKET_STATUS_RESOLVED);
         // failureCount=3 = 默认 retry-max → 终态 FAILED 保留
-        seedSurvey(9307L, ticketId, SURVEY_TOKEN_PREFIX + "max", ErpCsConstants.SURVEY_STATUS_FAILED, null, 3);
+        seedSurvey("9307", ticketId, SURVEY_TOKEN_PREFIX + "max", ErpCsConstants.SURVEY_STATUS_FAILED, null, 3);
 
         withSurveySendCron(sendJob::execute);
 
-        ErpCsSurvey survey = reloadSurvey(9307L);
+        ErpCsSurvey survey = reloadSurvey("9307");
         assertEquals(ErpCsConstants.SURVEY_STATUS_FAILED, survey.getStatus(), "超限终态 FAILED 保留");
         assertEquals(Integer.valueOf(3), survey.getFailureCount(), "超限不再重试（计数不变）");
         assertNull(survey.getSurveySentAt(), "超限不再发送");
@@ -202,8 +202,8 @@ public class TestErpCsSurveySendJob extends JunitAutoTestCase {
 
     @Test
     public void testSubmitSurveyWritesCompleted() {
-        Long ticketId = seedTicket("TK-SND-SUBMIT", ErpCsConstants.TICKET_STATUS_RESOLVED);
-        seedSurvey(9308L, ticketId, SURVEY_TOKEN_PREFIX + "submit", ErpCsConstants.SURVEY_STATUS_SENT,
+        String ticketId = seedTicket("TK-SND-SUBMIT", ErpCsConstants.TICKET_STATUS_RESOLVED);
+        seedSurvey("9308", ticketId, SURVEY_TOKEN_PREFIX + "submit", ErpCsConstants.SURVEY_STATUS_SENT,
                 Timestamp.valueOf("2026-07-17 08:00:00"), null);
 
         Map<String, Object> args = new HashMap<>();
@@ -212,7 +212,7 @@ public class TestErpCsSurveySendJob extends JunitAutoTestCase {
         ApiResponse<?> resp = rpc(mutation, "ErpCsSurvey__submitSurvey", args);
         assertEquals(0, resp.getStatus(), "submitSurvey 应成功: " + resp);
 
-        ErpCsSurvey survey = reloadSurvey(9308L);
+        ErpCsSurvey survey = reloadSurvey("9308");
         assertEquals(ErpCsConstants.SURVEY_STATUS_COMPLETED, survey.getStatus(), "提交后终态 COMPLETED 落库");
         assertNotNull(survey.getRespondedAt(), "respondedAt 应设置");
         assertEquals(Integer.valueOf(5), survey.getCsatScore());
@@ -223,25 +223,25 @@ public class TestErpCsSurveySendJob extends JunitAutoTestCase {
     @Test
     public void testReopenCancelsPendingAndFailedUnrespondedSurveys() {
         // PENDING 未响应：reopen 删除
-        Long pendingTicket = seedTicket("TK-SND-RP", ErpCsConstants.TICKET_STATUS_RESOLVED);
-        seedSurvey(9309L, pendingTicket, SURVEY_TOKEN_PREFIX + "rp", ErpCsConstants.SURVEY_STATUS_PENDING, null, null);
+        String pendingTicket = seedTicket("TK-SND-RP", ErpCsConstants.TICKET_STATUS_RESOLVED);
+        seedSurvey("9309", pendingTicket, SURVEY_TOKEN_PREFIX + "rp", ErpCsConstants.SURVEY_STATUS_PENDING, null, null);
         // FAILED 未响应（对称断言）：reopen 删除
-        Long failedTicket = seedTicket("TK-SND-RF", ErpCsConstants.TICKET_STATUS_RESOLVED);
-        seedSurvey(9310L, failedTicket, SURVEY_TOKEN_PREFIX + "rf", ErpCsConstants.SURVEY_STATUS_FAILED, null, 2);
+        String failedTicket = seedTicket("TK-SND-RF", ErpCsConstants.TICKET_STATUS_RESOLVED);
+        seedSurvey("9310", failedTicket, SURVEY_TOKEN_PREFIX + "rf", ErpCsConstants.SURVEY_STATUS_FAILED, null, 2);
         // 已响应 COMPLETED：reopen 保留
-        Long doneTicket = seedTicket("TK-SND-RC", ErpCsConstants.TICKET_STATUS_RESOLVED);
-        seedSurvey(9311L, doneTicket, SURVEY_TOKEN_PREFIX + "rc", ErpCsConstants.SURVEY_STATUS_COMPLETED,
+        String doneTicket = seedTicket("TK-SND-RC", ErpCsConstants.TICKET_STATUS_RESOLVED);
+        seedSurvey("9311", doneTicket, SURVEY_TOKEN_PREFIX + "rc", ErpCsConstants.SURVEY_STATUS_COMPLETED,
                 Timestamp.valueOf("2026-07-17 08:00:00"), null);
-        markResponded(9311L);
+        markResponded("9311");
 
         rpcOk(mutation, "ErpCsTicket__reopen", Map.of("ticketId", pendingTicket));
         rpcOk(mutation, "ErpCsTicket__reopen", Map.of("ticketId", failedTicket));
         rpcOk(mutation, "ErpCsTicket__reopen", Map.of("ticketId", doneTicket));
 
-        assertNull(reloadSurvey(9309L), "reopen 应删除 PENDING 未响应调查（避免误发）");
-        assertNull(reloadSurvey(9310L), "reopen 应删除 FAILED 未响应调查（对称取消）");
+        assertNull(reloadSurvey("9309"), "reopen 应删除 PENDING 未响应调查（避免误发）");
+        assertNull(reloadSurvey("9310"), "reopen 应删除 FAILED 未响应调查（对称取消）");
         assertEquals(ErpCsConstants.TICKET_STATUS_IN_PROGRESS, reloadTicket(pendingTicket).getStatus());
-        assertNotNull(reloadSurvey(9311L), "已响应 COMPLETED 调查应保留");
+        assertNotNull(reloadSurvey("9311"), "已响应 COMPLETED 调查应保留");
     }
 
     // ---------- ⑩ execute() 为 public 无参方法（BeanMethodJobInvoker 兼容） ----------
@@ -279,7 +279,7 @@ public class TestErpCsSurveySendJob extends JunitAutoTestCase {
         return job;
     }
 
-    private ErpCsSurvey reloadSurvey(Long id) {
+    private ErpCsSurvey reloadSurvey(String id) {
         // findAllByQuery 过滤逻辑删除行（getEntityById 不过滤——reopen 逻辑删除断言需要感知删除）
         QueryBean q = new QueryBean();
         q.addFilter(eq("id", id));
@@ -288,7 +288,7 @@ public class TestErpCsSurveySendJob extends JunitAutoTestCase {
         return list.isEmpty() ? null : list.get(0);
     }
 
-    private ErpCsTicket reloadTicket(Long id) {
+    private ErpCsTicket reloadTicket(String id) {
         return daoProvider.daoFor(ErpCsTicket.class).getEntityById(id);
     }
 
@@ -307,7 +307,7 @@ public class TestErpCsSurveySendJob extends JunitAutoTestCase {
         return list.isEmpty() ? null : list.get(0);
     }
 
-    private void markResponded(Long surveyId) {
+    private void markResponded(String surveyId) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpCsSurvey> dao = daoProvider.daoFor(ErpCsSurvey.class);
             ErpCsSurvey s = dao.getEntityById(surveyId);
@@ -316,7 +316,7 @@ public class TestErpCsSurveySendJob extends JunitAutoTestCase {
         });
     }
 
-    private void seedCustomer(Long id, String name) {
+    private void seedCustomer(String id, String name) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMdPartner> dao = daoProvider.daoFor(ErpMdPartner.class);
             ErpMdPartner p = new ErpMdPartner();
@@ -329,7 +329,7 @@ public class TestErpCsSurveySendJob extends JunitAutoTestCase {
         });
     }
 
-    private void seedSurveyInviteTemplate(Long id, String recipientUserId) {
+    private void seedSurveyInviteTemplate(String id, String recipientUserId) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpSysNotificationTemplate> dao = daoProvider.daoFor(ErpSysNotificationTemplate.class);
             ErpSysNotificationTemplate t = new ErpSysNotificationTemplate();
@@ -348,8 +348,8 @@ public class TestErpCsSurveySendJob extends JunitAutoTestCase {
         });
     }
 
-    private Long seedTicket(String code, String status) {
-        Long id = 9000L + (long) (Math.abs(code.hashCode()) % 500);
+    private String seedTicket(String code, String status) {
+        String id = String.valueOf(9000 + Math.abs(code.hashCode()) % 500);
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpCsTicket> dao = daoProvider.daoFor(ErpCsTicket.class);
             ErpCsTicket t = new ErpCsTicket();
@@ -369,7 +369,7 @@ public class TestErpCsSurveySendJob extends JunitAutoTestCase {
         return id;
     }
 
-    private void seedSurvey(Long id, Long ticketId, String token, String status,
+    private void seedSurvey(String id, String ticketId, String token, String status,
                             java.sql.Timestamp surveySentAt, Integer failureCount) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpCsSurvey> dao = daoProvider.daoFor(ErpCsSurvey.class);

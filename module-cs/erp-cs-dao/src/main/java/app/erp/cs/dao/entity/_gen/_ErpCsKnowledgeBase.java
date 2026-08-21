@@ -131,7 +131,7 @@ public class _ErpCsKnowledgeBase extends DynamicOrmEntity{
 
     
     /* ID: ID */
-    private java.lang.Long _id;
+    private java.lang.String _id;
     
     /* 编码: CODE */
     private java.lang.String _code;
@@ -143,7 +143,7 @@ public class _ErpCsKnowledgeBase extends DynamicOrmEntity{
     private java.lang.String _content;
     
     /* 分类: CATEGORY_ID */
-    private java.lang.Long _categoryId;
+    private java.lang.String _categoryId;
     
     /* 是否发布: IS_PUBLISHED */
     private java.lang.Boolean _isPublished;
@@ -294,9 +294,9 @@ public class _ErpCsKnowledgeBase extends DynamicOrmEntity{
         switch(propId){
         
             case PROP_ID_id:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_id));
                }
                setId(typedValue);
@@ -334,9 +334,9 @@ public class _ErpCsKnowledgeBase extends DynamicOrmEntity{
             }
         
             case PROP_ID_categoryId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_categoryId));
                }
                setCategoryId(typedValue);
@@ -434,7 +434,7 @@ public class _ErpCsKnowledgeBase extends DynamicOrmEntity{
         
             case PROP_ID_id:{
                onInitProp(propId);
-               this._id = (java.lang.Long)value;
+               this._id = (java.lang.String)value;
                orm_id(); // 如果是设置主键字段，则触发watcher
                break;
             }
@@ -462,7 +462,7 @@ public class _ErpCsKnowledgeBase extends DynamicOrmEntity{
         
             case PROP_ID_categoryId:{
                onInitProp(propId);
-               this._categoryId = (java.lang.Long)value;
+               this._categoryId = (java.lang.String)value;
                
                break;
             }
@@ -532,7 +532,7 @@ public class _ErpCsKnowledgeBase extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final java.lang.Long getId(){
+    public final java.lang.String getId(){
          onPropGet(PROP_ID_id);
          return _id;
     }
@@ -540,7 +540,7 @@ public class _ErpCsKnowledgeBase extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final void setId(java.lang.Long value){
+    public final void setId(java.lang.String value){
         if(onPropSet(PROP_ID_id,value)){
             this._id = value;
             internalClearRefs(PROP_ID_id);
@@ -608,7 +608,7 @@ public class _ErpCsKnowledgeBase extends DynamicOrmEntity{
     /**
      * 分类: CATEGORY_ID
      */
-    public final java.lang.Long getCategoryId(){
+    public final java.lang.String getCategoryId(){
          onPropGet(PROP_ID_categoryId);
          return _categoryId;
     }
@@ -616,7 +616,7 @@ public class _ErpCsKnowledgeBase extends DynamicOrmEntity{
     /**
      * 分类: CATEGORY_ID
      */
-    public final void setCategoryId(java.lang.Long value){
+    public final void setCategoryId(java.lang.String value){
         if(onPropSet(PROP_ID_categoryId,value)){
             this._categoryId = value;
             internalClearRefs(PROP_ID_categoryId);

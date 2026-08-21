@@ -26,8 +26,8 @@ public interface IErpCsCannedResponseBiz extends ICrudBiz<ErpCsCannedResponse> {
      * @return 渲染后的正文
      */
     @BizQuery
-    String renderTemplate(@Name("cannedResponseId") Long cannedResponseId,
-                          @Name("ticketId") Long ticketId,
+    String renderTemplate(@Name("cannedResponseId") String cannedResponseId,
+                          @Name("ticketId") String ticketId,
                           @Optional @Name("customVariables") Map<String, String> customVariables,
                           IServiceContext context);
 
@@ -39,7 +39,7 @@ public interface IErpCsCannedResponseBiz extends ICrudBiz<ErpCsCannedResponse> {
      * @return 匹配到的预设应答列表（≤ macro-count 条）
      */
     @BizQuery
-    List<ErpCsCannedResponse> suggestForTicket(@Name("ticketId") Long ticketId,
+    List<ErpCsCannedResponse> suggestForTicket(@Name("ticketId") String ticketId,
                                                 IServiceContext context);
 
     /**
@@ -54,8 +54,8 @@ public interface IErpCsCannedResponseBiz extends ICrudBiz<ErpCsCannedResponse> {
      * @return 渲染后的正文
      */
     @BizMutation
-    String applyCannedResponse(@Name("cannedResponseId") Long cannedResponseId,
-                               @Name("ticketId") Long ticketId,
+    String applyCannedResponse(@Name("cannedResponseId") String cannedResponseId,
+                               @Name("ticketId") String ticketId,
                                @Optional @Name("customVariables") Map<String, String> customVariables,
                                IServiceContext context);
 }

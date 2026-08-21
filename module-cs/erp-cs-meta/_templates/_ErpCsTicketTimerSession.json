@@ -1,8 +1,8 @@
 {
-  "id": 0,
-  "orgId": 0,
+  "id": "",
+  "orgId": "",
   "agentId": "",
-  "ticketId": 0,
+  "ticketId": "",
   "startTime": "2000-01-01 14:00:00",
   "stopTime": "2000-01-01 14:00:00",
   "pauseStartDateTime": "2000-01-01 14:00:00",

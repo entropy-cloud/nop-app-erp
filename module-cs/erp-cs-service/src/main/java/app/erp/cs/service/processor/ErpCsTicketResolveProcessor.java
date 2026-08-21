@@ -49,7 +49,7 @@ public class ErpCsTicketResolveProcessor {
     @Inject
     IErpSysNotificationBiz notificationBiz;
 
-    public ErpCsTicket resolve(Long ticketId, String resolution, IServiceContext context) {
+    public ErpCsTicket resolve(String ticketId, String resolution, IServiceContext context) {
         ErpCsTicket ticket = requireTicket(ticketId, context);
         String from = ticket.getStatus();
         try {
@@ -112,7 +112,7 @@ public class ErpCsTicketResolveProcessor {
         }
     }
 
-    private boolean hasAdoptKnowledgeAction(Long ticketId, IServiceContext context) {
+    private boolean hasAdoptKnowledgeAction(String ticketId, IServiceContext context) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("ticketId", ticketId));
         q.addFilter(eq("actionType", ErpCsConstants.ACTION_TYPE_ADOPT_KNOWLEDGE));
@@ -120,7 +120,7 @@ public class ErpCsTicketResolveProcessor {
         return !ticketActionBiz.findList(q, null, context).isEmpty();
     }
 
-    private ErpCsTicket requireTicket(Long ticketId, IServiceContext context) {
+    private ErpCsTicket requireTicket(String ticketId, IServiceContext context) {
         if (ticketId == null) {
             throw new NopException(ErpCsErrors.ERR_TICKET_NOT_FOUND).param(ErpCsErrors.ARG_TICKET_ID, ticketId);
         }

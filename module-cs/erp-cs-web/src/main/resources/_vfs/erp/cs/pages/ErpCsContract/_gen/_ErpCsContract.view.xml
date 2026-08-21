@@ -19,7 +19,7 @@
             <cols>
 
                 <!--ID-->
-                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="id" mandatory="true" sortable="true"/>
 
                 <!--编码-->
                 <col id="code" mandatory="true" sortable="true"/>
@@ -28,10 +28,10 @@
                 <col id="name" mandatory="true" sortable="true"/>
 
                 <!--业务组织-->
-                <col id="orgId" ui:number="true" sortable="true"/>
+                <col id="orgId" sortable="true"/>
 
                 <!--签约客户-->
-                <col id="partnerId" ui:number="true" sortable="true"/>
+                <col id="partnerId" sortable="true"/>
 
                 <!--合同类型-->
                 <col id="contractType" sortable="true"/>

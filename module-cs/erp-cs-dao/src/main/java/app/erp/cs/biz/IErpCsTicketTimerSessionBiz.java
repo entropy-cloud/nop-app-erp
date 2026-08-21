@@ -20,23 +20,23 @@ public interface IErpCsTicketTimerSessionBiz extends ICrudBiz<ErpCsTicketTimerSe
 
     /** 客服开始计时（UC-CS-11 ②）：创建 RUNNING 会话；已有进行中会话则拒绝。 */
     @BizMutation
-    ErpCsTicketTimerSession startTimer(@Name("ticketId") Long ticketId,
+    ErpCsTicketTimerSession startTimer(@Name("ticketId") String ticketId,
                                        IServiceContext context);
 
     /** 暂停计时（UC-CS-11 ③）：RUNNING→PAUSED，暂停原因可选。 */
     @BizMutation
-    ErpCsTicketTimerSession pauseTimer(@Name("sessionId") Long sessionId,
+    ErpCsTicketTimerSession pauseTimer(@Name("sessionId") String sessionId,
                                        @Optional @Name("pauseReason") String pauseReason,
                                        IServiceContext context);
 
     /** 恢复计时（UC-CS-11 ③）：PAUSED→RUNNING，累计暂停时长结算。 */
     @BizMutation
-    ErpCsTicketTimerSession resumeTimer(@Name("sessionId") Long sessionId,
+    ErpCsTicketTimerSession resumeTimer(@Name("sessionId") String sessionId,
                                         IServiceContext context);
 
     /** 停止计时（UC-CS-11 ④）：STOPPED + 生成 ErpCsTimeEntry（duration = 运行 − Σ暂停，source=TIMER_IMPORT）。 */
     @BizMutation
-    ErpCsTicketTimerSession stopTimer(@Name("sessionId") Long sessionId,
+    ErpCsTicketTimerSession stopTimer(@Name("sessionId") String sessionId,
                                       IServiceContext context);
 
     /** 查询客服当前进行中的计时器（读取时惰性结算：超 12h 会话先封顶停止后返回 null）。 */

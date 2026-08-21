@@ -13,16 +13,16 @@
     public class ErpCsSlaPolicyOutputBean {
 
     
-        private Long _id;
+        private String _id;
 
     
         @PropMeta(propId=1)
     
-        public Long getId(){
+        public String getId(){
             return _id;
         }
 
-        public void setId(Long value){
+        public void setId(String value){
             this._id = value;
         }
 
@@ -55,16 +55,16 @@
         }
 
 
-        private Long _ticketTypeId;
+        private String _ticketTypeId;
 
     
         @PropMeta(propId=4)
     
-        public Long getTicketTypeId(){
+        public String getTicketTypeId(){
             return _ticketTypeId;
         }
 
-        public void setTicketTypeId(Long value){
+        public void setTicketTypeId(String value){
             this._ticketTypeId = value;
         }
 
@@ -95,16 +95,16 @@
         }
 
 
-        private Long _teamId;
+        private String _teamId;
 
     
         @PropMeta(propId=6)
     
-        public Long getTeamId(){
+        public String getTeamId(){
             return _teamId;
         }
 
-        public void setTeamId(Long value){
+        public void setTeamId(String value){
             this._teamId = value;
         }
 
@@ -151,16 +151,16 @@
         }
 
 
-        private Long _escalationUserId;
+        private String _escalationUserId;
 
     
         @PropMeta(propId=10)
     
-        public Long getEscalationUserId(){
+        public String getEscalationUserId(){
             return _escalationUserId;
         }
 
-        public void setEscalationUserId(Long value){
+        public void setEscalationUserId(String value){
             this._escalationUserId = value;
         }
 
@@ -263,16 +263,16 @@
         }
 
 
-        private Long _secondEscalationUserId;
+        private String _secondEscalationUserId;
 
     
         @PropMeta(propId=18)
     
-        public Long getSecondEscalationUserId(){
+        public String getSecondEscalationUserId(){
             return _secondEscalationUserId;
         }
 
-        public void setSecondEscalationUserId(Long value){
+        public void setSecondEscalationUserId(String value){
             this._secondEscalationUserId = value;
         }
 

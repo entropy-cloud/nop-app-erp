@@ -15,31 +15,31 @@ import java.util.Map;
 public interface IErpCsTicketBiz extends ICrudBiz<ErpCsTicket> {
 
     @BizMutation
-    ErpCsTicket assign(@Name("ticketId") Long ticketId,
+    ErpCsTicket assign(@Name("ticketId") String ticketId,
                        @Optional @Name("assignedToId") String assignedToId,
                        IServiceContext context);
 
     @BizMutation
-    ErpCsTicket start(@Name("ticketId") Long ticketId, IServiceContext context);
+    ErpCsTicket start(@Name("ticketId") String ticketId, IServiceContext context);
 
     @BizMutation
-    ErpCsTicket resolve(@Name("ticketId") Long ticketId,
+    ErpCsTicket resolve(@Name("ticketId") String ticketId,
                         @Optional @Name("resolution") String resolution,
                         IServiceContext context);
 
     @BizMutation
-    ErpCsTicket close(@Name("ticketId") Long ticketId, IServiceContext context);
+    ErpCsTicket close(@Name("ticketId") String ticketId, IServiceContext context);
 
     @BizMutation
-    ErpCsTicket reopen(@Name("ticketId") Long ticketId, IServiceContext context);
+    ErpCsTicket reopen(@Name("ticketId") String ticketId, IServiceContext context);
 
     @BizMutation
-    ErpCsTicket cancel(@Name("ticketId") Long ticketId,
+    ErpCsTicket cancel(@Name("ticketId") String ticketId,
                        @Optional @Name("cancelReason") String cancelReason,
                        IServiceContext context);
 
     @BizMutation
-    ErpCsTicket matchAndAttachSla(@Name("ticketId") Long ticketId, IServiceContext context);
+    ErpCsTicket matchAndAttachSla(@Name("ticketId") String ticketId, IServiceContext context);
 
     @BizMutation
     List<ErpCsTicket> scanOverdueTickets(IServiceContext context);
@@ -54,8 +54,8 @@ public interface IErpCsTicketBiz extends ICrudBiz<ErpCsTicket> {
      * （复用既有 resolve 状态机守卫/审计/survey 触发链）。
      */
     @BizMutation
-    ErpCsTicket adoptKnowledge(@Name("ticketId") Long ticketId,
-                               @Name("knowledgeBaseId") Long knowledgeBaseId,
+    ErpCsTicket adoptKnowledge(@Name("ticketId") String ticketId,
+                               @Name("knowledgeBaseId") String knowledgeBaseId,
                                @Optional @Name("autoResolve") Boolean autoResolve,
                                IServiceContext context);
 
@@ -69,37 +69,37 @@ public interface IErpCsTicketBiz extends ICrudBiz<ErpCsTicket> {
      * PENDING 审计行（工单状态保持，后台 job 重试）。工单不迁移状态（L1 ④ NCR 流程独立）。
      */
     @BizMutation
-    ErpCsTicket escalateToQuality(@Name("ticketId") Long ticketId,
-                                  @Optional @Name("materialId") Long materialId,
+    ErpCsTicket escalateToQuality(@Name("ticketId") String ticketId,
+                                  @Optional @Name("materialId") String materialId,
                                   @Optional @Name("defectDescription") String defectDescription,
                                   @Optional @Name("batchInfo") String batchInfo,
                                   @Optional @Name("quantity") java.math.BigDecimal quantity,
                                   @Optional @Name("severity") String severity,
-                                  @Optional @Name("supplierId") Long supplierId,
+                                  @Optional @Name("supplierId") String supplierId,
                                   IServiceContext context);
 
     /** 工单关联 NCR 闭环结果投影（UC-CS-06 ⑤）：{code,status,severity,ncrDate,resolvedAt,resolution}。 */
     @BizQuery
-    List<Map<String, Object>> findQualityNcrs(@Name("ticketId") Long ticketId, IServiceContext context);
+    List<Map<String, Object>> findQualityNcrs(@Name("ticketId") String ticketId, IServiceContext context);
 
     /**
      * 看板扁平图结构聚合查询（flux kanban 原生渲染）。6 列（NEW/ASSIGNED/IN_PROGRESS/RESOLVED/CLOSED/CANCELLED）
      * + 每工单一个 card 节点（含 SLA 标记 data）。
      */
     @BizQuery
-    Map<String, Object> findBoardData(@Optional @Name("customerId") Long customerId, IServiceContext context);
+    Map<String, Object> findBoardData(@Optional @Name("customerId") String customerId, IServiceContext context);
 
     // ---------- 工单总计时聚合（RC-R1.66，UC-CS-11 ⑦；SQL 聚合口径 owner doc time-tracking.md §四，零 ticket 加列） ----------
 
     /** 总处理时长（分钟）＝ SUM(duration)，approvalStatus IN (APPROVED, PENDING)。 */
     @BizQuery
-    long totalTimeSpent(@Name("ticketId") Long ticketId, IServiceContext context);
+    long totalTimeSpent(@Name("ticketId") String ticketId, IServiceContext context);
 
     /** 总可计费时长（分钟）＝ SUM(duration)，isBillable=true AND approvalStatus=APPROVED。 */
     @BizQuery
-    long totalBillableTime(@Name("ticketId") Long ticketId, IServiceContext context);
+    long totalBillableTime(@Name("ticketId") String ticketId, IServiceContext context);
 
     /** 总计费金额＝ SUM(billableAmount)，isBillable=true AND approvalStatus=APPROVED。 */
     @BizQuery
-    java.math.BigDecimal totalBilledAmount(@Name("ticketId") Long ticketId, IServiceContext context);
+    java.math.BigDecimal totalBilledAmount(@Name("ticketId") String ticketId, IServiceContext context);
 }

@@ -19,14 +19,14 @@ public interface IErpCsEntitlementBiz extends ICrudBiz<ErpCsEntitlement> {
      * {@code ERR_ENTITLEMENT_EXHAUSTED}；WARRANTY/SUPPORT_CONTRACT 不限余量时仅记日志不增计。
      */
     @BizMutation
-    ErpCsEntitlement consumeEntitlement(@Name("entitlementId") Long entitlementId,
+    ErpCsEntitlement consumeEntitlement(@Name("entitlementId") String entitlementId,
                                         IServiceContext context);
 
     /**
      * 退回权益余量（工单 CLOSED 退款回退）。{@code usedTickets=max(0, usedTickets-1)}，不低于 0。
      */
     @BizMutation
-    ErpCsEntitlement releaseEntitlement(@Name("entitlementId") Long entitlementId,
+    ErpCsEntitlement releaseEntitlement(@Name("entitlementId") String entitlementId,
                                         IServiceContext context);
 
     /**
@@ -49,7 +49,7 @@ public interface IErpCsEntitlementBiz extends ICrudBiz<ErpCsEntitlement> {
      * @return 每客户一条聚合：partnerId, totalEntitlements, totalUsed, totalMax, usageRate
      */
     @BizQuery
-    List<Map<String, Object>> getEntitlementUsage(@Name("partnerId") Long partnerId,
+    List<Map<String, Object>> getEntitlementUsage(@Name("partnerId") String partnerId,
                                                    IServiceContext context);
 
     /**
@@ -57,5 +57,5 @@ public interface IErpCsEntitlementBiz extends ICrudBiz<ErpCsEntitlement> {
      * config-gated 由调用方（ErpCsTicketBizModel）控制是否调用本方法。
      * 此方法为内部业务调用（非 GraphQL 暴露），不加 @BizQuery/@BizMutation。
      */
-    ErpCsEntitlement matchForCustomer(Long customerIdAsPartnerId);
+    ErpCsEntitlement matchForCustomer(String customerIdAsPartnerId);
 }

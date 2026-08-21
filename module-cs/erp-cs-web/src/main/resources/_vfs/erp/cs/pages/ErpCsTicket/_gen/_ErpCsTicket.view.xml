@@ -19,13 +19,13 @@
             <cols>
 
                 <!--ID-->
-                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="id" mandatory="true" sortable="true"/>
 
                 <!--单号-->
                 <col id="code" mandatory="true" sortable="true"/>
 
                 <!--业务组织-->
-                <col id="orgId" ui:number="true" sortable="true"/>
+                <col id="orgId" sortable="true"/>
 
                 <!--工单主题-->
                 <col id="subject" mandatory="true" sortable="true"/>
@@ -34,13 +34,13 @@
                 <col id="description" sortable="true"/>
 
                 <!--客户-->
-                <col id="customerId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="customerId" mandatory="true" sortable="true"/>
 
                 <!--联系人-->
-                <col id="contactId" ui:number="true" sortable="true"/>
+                <col id="contactId" sortable="true"/>
 
                 <!--工单类型-->
-                <col id="ticketTypeId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="ticketTypeId" mandatory="true" sortable="true"/>
 
                 <!--优先级-->
                 <col id="priority" mandatory="true" sortable="true"/>
@@ -52,7 +52,7 @@
                 <col id="assignedToId" sortable="true"/>
 
                 <!--SLA 策略-->
-                <col id="slaPolicyId" ui:number="true" sortable="true"/>
+                <col id="slaPolicyId" sortable="true"/>
 
                 <!--SLA 截止时间-->
                 <col id="deadlineDateTime" sortable="true"/>
@@ -85,7 +85,7 @@
                 <col id="remark" sortable="true"/>
 
                 <!--服务目录项-->
-                <col id="catalogItemId" ui:number="true" sortable="true"/>
+                <col id="catalogItemId" sortable="true"/>
 
                 <!--逻辑删除版本-->
                 <col id="delVersion" mandatory="true" ui:number="true" sortable="true"/>

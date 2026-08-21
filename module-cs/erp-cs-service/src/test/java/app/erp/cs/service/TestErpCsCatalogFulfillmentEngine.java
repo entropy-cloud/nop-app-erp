@@ -64,21 +64,25 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpCsCatalogFulfillmentEngine extends JunitAutoTestCase {
 
-    static final Long CUSTOMER_ID = 9401L;
-    static final Long TICKET_TYPE_ID = 9402L;
-    static final Long CS_TEAM_ID = 9403L;
+    static final String CUSTOMER_ID = "9401";
+    static final String TICKET_TYPE_ID = "9402";
+    static final String CS_TEAM_ID = "9403";
     static final String TEAM_CODE = "TEAM-FULFILL";
-    static final Long POLICY_TEAM_ID = 9404L;
+    static final String POLICY_TEAM_ID = "9404";
+    // bridge-test-113: crm 未迁移（M3.4）Long 实体侧局部桥（crm seed 保持 Long，退役 owner M3.4）
     static final Long CRM_TEAM_ID = 9405L;
     static final String USER_A = "cs-fulfill-user-a";
     static final String USER_B = "cs-fulfill-user-b";
     static final String CS_SUPERVISOR = "cs-fulfill-supervisor";
     static final String CS_AGENT = "cs-fulfill-agent";
 
-    static final Long CATALOG_ITEM_ID = 9410L;
-    static final Long FULFILLMENT_ID_BASE = 9420L;
-    static final Long TICKET_ID_BASE = 9450L;
-    static final Long TEMPLATE_ID_BASE = 9301L;
+    static final String CATALOG_ITEM_ID = "9410";
+    static final String FULFILLMENT_ID_BASE = "9420";
+    static final String TICKET_ID_BASE = "9450";
+    static final String TEMPLATE_ID_BASE = "9301";
+    static final String TEMPLATE_ID_BASE_1 = "9302";
+    static final String TEMPLATE_ID_BASE_2 = "9303";
+    static final String TEMPLATE_ID_BASE_3 = "9304";
 
     @Inject
     IDaoProvider daoProvider;
@@ -94,9 +98,9 @@ public class TestErpCsCatalogFulfillmentEngine extends JunitAutoTestCase {
     @Test
     public void test01MaterializeIdempotent() {
         seedBase();
-        seedFulfillment(9421L, CATALOG_ITEM_ID, 1, ErpCsConstants.FULFILLMENT_ACTION_CREATE_TICKET, null);
-        seedFulfillment(9422L, CATALOG_ITEM_ID, 2, ErpCsConstants.FULFILLMENT_ACTION_NOTIFY_CUSTOMER, null);
-        Long ticketId = seedTicket(9451L, "TK-FUL-IDEM", null, null);
+        seedFulfillment("9421", CATALOG_ITEM_ID, 1, ErpCsConstants.FULFILLMENT_ACTION_CREATE_TICKET, null);
+        seedFulfillment("9422", CATALOG_ITEM_ID, 2, ErpCsConstants.FULFILLMENT_ACTION_NOTIFY_CUSTOMER, null);
+        String ticketId = seedTicket("9451", "TK-FUL-IDEM", null, null);
 
         ApiResponse<?> r1 = rpc(mutation, "ErpCsCatalogFulfillment__executeFulfillmentSteps",
                 Map.of("catalogItemId", CATALOG_ITEM_ID, "ticketId", ticketId));
@@ -126,10 +130,10 @@ public class TestErpCsCatalogFulfillmentEngine extends JunitAutoTestCase {
         seedTeamChain();
         // 尾随 NOTIFY 步骤：ensureInProgress 仅在末步前触发——ASSIGN(seq1) 执行时工单仍 NEW，
         // NEW→ASSIGNED 迁移可达（单步 ASSIGN 链会被末步前铺底先推至 IN_PROGRESS，非本用例语义）
-        seedFulfillment(9421L, CATALOG_ITEM_ID, 1, ErpCsConstants.FULFILLMENT_ACTION_ASSIGN_TEAM,
+        seedFulfillment("9421", CATALOG_ITEM_ID, 1, ErpCsConstants.FULFILLMENT_ACTION_ASSIGN_TEAM,
                 "{\"mode\":\"ROUND_ROBIN\"}");
-        seedFulfillment(9422L, CATALOG_ITEM_ID, 2, ErpCsConstants.FULFILLMENT_ACTION_NOTIFY_CUSTOMER, null);
-        Long ticketId = seedTicket(9452L, "TK-FUL-ASSIGN", POLICY_TEAM_ID, null);
+        seedFulfillment("9422", CATALOG_ITEM_ID, 2, ErpCsConstants.FULFILLMENT_ACTION_NOTIFY_CUSTOMER, null);
+        String ticketId = seedTicket("9452", "TK-FUL-ASSIGN", POLICY_TEAM_ID, null);
 
         ApiResponse<?> resp = rpc(mutation, "ErpCsCatalogFulfillment__executeFulfillmentSteps",
                 Map.of("catalogItemId", CATALOG_ITEM_ID, "ticketId", ticketId));
@@ -155,9 +159,9 @@ public class TestErpCsCatalogFulfillmentEngine extends JunitAutoTestCase {
         seedRoleWithUser("role-fulfill-approver", "客服主管", CS_SUPERVISOR);
         seedTemplate(TEMPLATE_ID_BASE, ErpCsConstants.NOTIFY_EVENT_FULFILLMENT_APPROVAL_REQUEST,
                 "ROLE", "{\"roles\":[\"客服主管\"]}");
-        seedFulfillment(9421L, CATALOG_ITEM_ID, 1, ErpCsConstants.FULFILLMENT_ACTION_REQUEST_APPROVAL, null);
-        seedFulfillment(9422L, CATALOG_ITEM_ID, 2, ErpCsConstants.FULFILLMENT_ACTION_NOTIFY_CUSTOMER, null);
-        Long ticketId = seedTicket(9453L, "TK-FUL-APPROVE", null, null);
+        seedFulfillment("9421", CATALOG_ITEM_ID, 1, ErpCsConstants.FULFILLMENT_ACTION_REQUEST_APPROVAL, null);
+        seedFulfillment("9422", CATALOG_ITEM_ID, 2, ErpCsConstants.FULFILLMENT_ACTION_NOTIFY_CUSTOMER, null);
+        String ticketId = seedTicket("9453", "TK-FUL-APPROVE", null, null);
 
         ApiResponse<?> r1 = rpc(mutation, "ErpCsCatalogFulfillment__executeFulfillmentSteps",
                 Map.of("catalogItemId", CATALOG_ITEM_ID, "ticketId", ticketId));
@@ -190,8 +194,8 @@ public class TestErpCsCatalogFulfillmentEngine extends JunitAutoTestCase {
     @Test
     public void test04ApproveRejectTerminal() {
         seedBase();
-        seedFulfillment(9421L, CATALOG_ITEM_ID, 1, ErpCsConstants.FULFILLMENT_ACTION_REQUEST_APPROVAL, null);
-        Long ticketId = seedTicket(9454L, "TK-FUL-REJECT", null, null);
+        seedFulfillment("9421", CATALOG_ITEM_ID, 1, ErpCsConstants.FULFILLMENT_ACTION_REQUEST_APPROVAL, null);
+        String ticketId = seedTicket("9454", "TK-FUL-REJECT", null, null);
 
         ApiResponse<?> r1 = rpc(mutation, "ErpCsCatalogFulfillment__executeFulfillmentSteps",
                 Map.of("catalogItemId", CATALOG_ITEM_ID, "ticketId", ticketId));
@@ -215,10 +219,10 @@ public class TestErpCsCatalogFulfillmentEngine extends JunitAutoTestCase {
     public void test05NotifyCustomerDispatched() {
         seedBase();
         seedRoleWithUser("role-fulfill-agent", "客服员", CS_AGENT);
-        seedTemplate(TEMPLATE_ID_BASE + 1, ErpCsConstants.NOTIFY_EVENT_FULFILLMENT_NOTIFY_CUSTOMER,
+        seedTemplate(TEMPLATE_ID_BASE_1, ErpCsConstants.NOTIFY_EVENT_FULFILLMENT_NOTIFY_CUSTOMER,
                 "ROLE", "{\"roles\":[\"客服员\"]}");
-        seedFulfillment(9421L, CATALOG_ITEM_ID, 1, ErpCsConstants.FULFILLMENT_ACTION_NOTIFY_CUSTOMER, null);
-        Long ticketId = seedTicket(9455L, "TK-FUL-NOTIFY", null, null);
+        seedFulfillment("9421", CATALOG_ITEM_ID, 1, ErpCsConstants.FULFILLMENT_ACTION_NOTIFY_CUSTOMER, null);
+        String ticketId = seedTicket("9455", "TK-FUL-NOTIFY", null, null);
 
         ApiResponse<?> resp = rpc(mutation, "ErpCsCatalogFulfillment__executeFulfillmentSteps",
                 Map.of("catalogItemId", CATALOG_ITEM_ID, "ticketId", ticketId));
@@ -238,10 +242,10 @@ public class TestErpCsCatalogFulfillmentEngine extends JunitAutoTestCase {
         seedBase();
 
         // a) 合法迁移：NEW→ASSIGNED（assign 边），链尾 NOTIFY 前铺底 IN_PROGRESS
-        seedFulfillment(9421L, CATALOG_ITEM_ID, 1, ErpCsConstants.FULFILLMENT_ACTION_UPDATE_STATUS,
+        seedFulfillment("9421", CATALOG_ITEM_ID, 1, ErpCsConstants.FULFILLMENT_ACTION_UPDATE_STATUS,
                 "{\"status\":\"ASSIGNED\"}");
-        seedFulfillment(9422L, CATALOG_ITEM_ID, 2, ErpCsConstants.FULFILLMENT_ACTION_NOTIFY_CUSTOMER, null);
-        Long ticketA = seedTicket(9456L, "TK-FUL-LEGAL", null, null);
+        seedFulfillment("9422", CATALOG_ITEM_ID, 2, ErpCsConstants.FULFILLMENT_ACTION_NOTIFY_CUSTOMER, null);
+        String ticketA = seedTicket("9456", "TK-FUL-LEGAL", null, null);
         ApiResponse<?> ra = rpc(mutation, "ErpCsCatalogFulfillment__executeFulfillmentSteps",
                 Map.of("catalogItemId", CATALOG_ITEM_ID, "ticketId", ticketA));
         assertEquals(0, ra.getStatus(), "合法链应成功: " + ra);
@@ -252,12 +256,12 @@ public class TestErpCsCatalogFulfillmentEngine extends JunitAutoTestCase {
         assertEquals(ErpCsConstants.TICKET_STATUS_ASSIGNED, audit.getToStatus(), "UPDATE_STATUS 审计 toStatus=ASSIGNED");
 
         // b) 非法迁移：NEW→CLOSED（矩阵无边）→ FAILED + 链中断
-        Long itemB = 9411L;
+        String itemB = "9411";
         seedCatalogItem(itemB);
-        seedFulfillment(9423L, itemB, 1, ErpCsConstants.FULFILLMENT_ACTION_UPDATE_STATUS,
+        seedFulfillment("9423", itemB, 1, ErpCsConstants.FULFILLMENT_ACTION_UPDATE_STATUS,
                 "{\"status\":\"CLOSED\"}");
-        seedFulfillment(9424L, itemB, 2, ErpCsConstants.FULFILLMENT_ACTION_NOTIFY_CUSTOMER, null);
-        Long ticketB = seedTicket(9457L, "TK-FUL-ILLEGAL", null, null);
+        seedFulfillment("9424", itemB, 2, ErpCsConstants.FULFILLMENT_ACTION_NOTIFY_CUSTOMER, null);
+        String ticketB = seedTicket("9457", "TK-FUL-ILLEGAL", null, null);
         ApiResponse<?> rb = rpc(mutation, "ErpCsCatalogFulfillment__executeFulfillmentSteps",
                 Map.of("catalogItemId", itemB, "ticketId", ticketB));
         assertEquals(0, rb.getStatus(), "mutation 本身成功（步骤级失败不抛出）: " + rb);
@@ -267,10 +271,10 @@ public class TestErpCsCatalogFulfillmentEngine extends JunitAutoTestCase {
         assertEquals(ErpCsConstants.FULFILLMENT_STEP_PENDING, stepBySeq(ticketB, 2).getStatus(), "链中断：后续 PENDING");
 
         // c) 缺配置：UPDATE_STATUS 无 actionConfig → FAILED 配置错误
-        Long itemC = 9412L;
+        String itemC = "9412";
         seedCatalogItem(itemC);
-        seedFulfillment(9425L, itemC, 1, ErpCsConstants.FULFILLMENT_ACTION_UPDATE_STATUS, null);
-        Long ticketC = seedTicket(9458L, "TK-FUL-NOCFG", null, null);
+        seedFulfillment("9425", itemC, 1, ErpCsConstants.FULFILLMENT_ACTION_UPDATE_STATUS, null);
+        String ticketC = seedTicket("9458", "TK-FUL-NOCFG", null, null);
         rpc(mutation, "ErpCsCatalogFulfillment__executeFulfillmentSteps",
                 Map.of("catalogItemId", itemC, "ticketId", ticketC));
         ErpCsTicketFulfillmentStep stepC1 = stepBySeq(ticketC, 1);
@@ -284,8 +288,8 @@ public class TestErpCsCatalogFulfillmentEngine extends JunitAutoTestCase {
     public void test07CreateChildTicketWithWeakLinks() {
         seedBase();
         seedCodeRule();
-        seedFulfillment(9421L, CATALOG_ITEM_ID, 1, ErpCsConstants.FULFILLMENT_ACTION_CREATE_CHILD_TICKET, null);
-        Long ticketId = seedTicket(9459L, "TK-FUL-PARENT", null, null);
+        seedFulfillment("9421", CATALOG_ITEM_ID, 1, ErpCsConstants.FULFILLMENT_ACTION_CREATE_CHILD_TICKET, null);
+        String ticketId = seedTicket("9459", "TK-FUL-PARENT", null, null);
 
         ApiResponse<?> resp = rpc(mutation, "ErpCsCatalogFulfillment__executeFulfillmentSteps",
                 Map.of("catalogItemId", CATALOG_ITEM_ID, "ticketId", ticketId));
@@ -312,13 +316,13 @@ public class TestErpCsCatalogFulfillmentEngine extends JunitAutoTestCase {
     public void test08FailurePausesChainAndNotifiesAdmin() {
         seedBase();
         seedRoleWithUser("role-fulfill-supervisor", "客服主管", CS_SUPERVISOR);
-        seedTemplate(TEMPLATE_ID_BASE + 2, ErpCsConstants.NOTIFY_EVENT_FULFILLMENT_STEP_FAILED,
+        seedTemplate(TEMPLATE_ID_BASE_2, ErpCsConstants.NOTIFY_EVENT_FULFILLMENT_STEP_FAILED,
                 "ROLE", "{\"roles\":[\"客服主管\"]}");
-        seedFulfillment(9421L, CATALOG_ITEM_ID, 1, ErpCsConstants.FULFILLMENT_ACTION_NOTIFY_CUSTOMER, null);
-        seedFulfillment(9422L, CATALOG_ITEM_ID, 2, ErpCsConstants.FULFILLMENT_ACTION_UPDATE_STATUS,
+        seedFulfillment("9421", CATALOG_ITEM_ID, 1, ErpCsConstants.FULFILLMENT_ACTION_NOTIFY_CUSTOMER, null);
+        seedFulfillment("9422", CATALOG_ITEM_ID, 2, ErpCsConstants.FULFILLMENT_ACTION_UPDATE_STATUS,
                 "{\"status\":\"CLOSED\"}");
-        seedFulfillment(9423L, CATALOG_ITEM_ID, 3, ErpCsConstants.FULFILLMENT_ACTION_NOTIFY_CUSTOMER, null);
-        Long ticketId = seedTicket(9460L, "TK-FUL-PAUSE", null, null);
+        seedFulfillment("9423", CATALOG_ITEM_ID, 3, ErpCsConstants.FULFILLMENT_ACTION_NOTIFY_CUSTOMER, null);
+        String ticketId = seedTicket("9460", "TK-FUL-PAUSE", null, null);
 
         ApiResponse<?> resp = rpc(mutation, "ErpCsCatalogFulfillment__executeFulfillmentSteps",
                 Map.of("catalogItemId", CATALOG_ITEM_ID, "ticketId", ticketId));
@@ -342,9 +346,9 @@ public class TestErpCsCatalogFulfillmentEngine extends JunitAutoTestCase {
     @Test
     public void test09AllDoneAdvancesToInProgressWithAutoAssign() {
         seedBase();
-        seedFulfillment(9421L, CATALOG_ITEM_ID, 1, ErpCsConstants.FULFILLMENT_ACTION_CREATE_TICKET, null);
-        seedFulfillment(9422L, CATALOG_ITEM_ID, 2, ErpCsConstants.FULFILLMENT_ACTION_NOTIFY_CUSTOMER, null);
-        Long ticketId = seedTicket(9461L, "TK-FUL-ADVANCE", null, null);
+        seedFulfillment("9421", CATALOG_ITEM_ID, 1, ErpCsConstants.FULFILLMENT_ACTION_CREATE_TICKET, null);
+        seedFulfillment("9422", CATALOG_ITEM_ID, 2, ErpCsConstants.FULFILLMENT_ACTION_NOTIFY_CUSTOMER, null);
+        String ticketId = seedTicket("9461", "TK-FUL-ADVANCE", null, null);
 
         ApiResponse<?> resp = rpc(mutation, "ErpCsCatalogFulfillment__executeFulfillmentSteps",
                 Map.of("catalogItemId", CATALOG_ITEM_ID, "ticketId", ticketId));
@@ -366,10 +370,10 @@ public class TestErpCsCatalogFulfillmentEngine extends JunitAutoTestCase {
     public void test10TailUpdateStatusResolvedCombo() {
         seedBase();
         seedTeamChain();
-        seedFulfillment(9421L, CATALOG_ITEM_ID, 1, ErpCsConstants.FULFILLMENT_ACTION_ASSIGN_TEAM, null);
-        seedFulfillment(9422L, CATALOG_ITEM_ID, 2, ErpCsConstants.FULFILLMENT_ACTION_UPDATE_STATUS,
+        seedFulfillment("9421", CATALOG_ITEM_ID, 1, ErpCsConstants.FULFILLMENT_ACTION_ASSIGN_TEAM, null);
+        seedFulfillment("9422", CATALOG_ITEM_ID, 2, ErpCsConstants.FULFILLMENT_ACTION_UPDATE_STATUS,
                 "{\"status\":\"RESOLVED\"}");
-        Long ticketId = seedTicket(9462L, "TK-FUL-RESOLVED", POLICY_TEAM_ID, null);
+        String ticketId = seedTicket("9462", "TK-FUL-RESOLVED", POLICY_TEAM_ID, null);
 
         ApiResponse<?> resp = rpc(mutation, "ErpCsCatalogFulfillment__executeFulfillmentSteps",
                 Map.of("catalogItemId", CATALOG_ITEM_ID, "ticketId", ticketId));
@@ -394,17 +398,17 @@ public class TestErpCsCatalogFulfillmentEngine extends JunitAutoTestCase {
     public void test11ManualRetryRecoversChain() {
         seedBase();
         // 票 A：UPDATE_STATUS 非法配置（NEW→CLOSED）失败 → 修正模板 → 手动重试恢复
-        seedFulfillment(9421L, CATALOG_ITEM_ID, 1, ErpCsConstants.FULFILLMENT_ACTION_UPDATE_STATUS,
+        seedFulfillment("9421", CATALOG_ITEM_ID, 1, ErpCsConstants.FULFILLMENT_ACTION_UPDATE_STATUS,
                 "{\"status\":\"CLOSED\"}");
-        seedFulfillment(9422L, CATALOG_ITEM_ID, 2, ErpCsConstants.FULFILLMENT_ACTION_NOTIFY_CUSTOMER, null);
-        Long ticketA = seedTicket(9463L, "TK-FUL-RETRY", null, null);
+        seedFulfillment("9422", CATALOG_ITEM_ID, 2, ErpCsConstants.FULFILLMENT_ACTION_NOTIFY_CUSTOMER, null);
+        String ticketA = seedTicket("9463", "TK-FUL-RETRY", null, null);
         rpc(mutation, "ErpCsCatalogFulfillment__executeFulfillmentSteps",
                 Map.of("catalogItemId", CATALOG_ITEM_ID, "ticketId", ticketA));
         assertEquals(ErpCsConstants.FULFILLMENT_STEP_FAILED, stepBySeq(ticketA, 1).getStatus(), "前置：step1 FAILED");
         assertEquals(ErpCsConstants.FULFILLMENT_STEP_PENDING, stepBySeq(ticketA, 2).getStatus(), "前置：step2 PENDING");
 
         // 修正模板 actionConfig（CLOSED → ASSIGNED）：重试应刷新读取模板配置（修正即生效）
-        updateTemplateConfig(9421L, "{\"status\":\"ASSIGNED\"}");
+        updateTemplateConfig("9421", "{\"status\":\"ASSIGNED\"}");
 
         ApiResponse<?> resp = rpc(mutation, "ErpCsCatalogFulfillment__retryFulfillment",
                 Map.of("ticketId", ticketA));
@@ -419,11 +423,11 @@ public class TestErpCsCatalogFulfillmentEngine extends JunitAutoTestCase {
                 "全链完成 → 工单 IN_PROGRESS");
 
         // 票 B：REQUEST_APPROVAL IN_PROGRESS（待审批）步骤不被重试重执行（审批请求审计不重复）
-        Long itemB = 9417L;
+        String itemB = "9417";
         seedCatalogItem(itemB);
-        seedFulfillment(9423L, itemB, 1, ErpCsConstants.FULFILLMENT_ACTION_REQUEST_APPROVAL, null);
-        seedFulfillment(9424L, itemB, 2, ErpCsConstants.FULFILLMENT_ACTION_NOTIFY_CUSTOMER, null);
-        Long ticketB = seedTicket(9464L, "TK-FUL-NORETRY", null, null);
+        seedFulfillment("9423", itemB, 1, ErpCsConstants.FULFILLMENT_ACTION_REQUEST_APPROVAL, null);
+        seedFulfillment("9424", itemB, 2, ErpCsConstants.FULFILLMENT_ACTION_NOTIFY_CUSTOMER, null);
+        String ticketB = seedTicket("9464", "TK-FUL-NORETRY", null, null);
         seedTicketOnItem(ticketB, itemB);
         rpc(mutation, "ErpCsCatalogFulfillment__executeFulfillmentSteps",
                 Map.of("catalogItemId", itemB, "ticketId", ticketB));
@@ -448,18 +452,18 @@ public class TestErpCsCatalogFulfillmentEngine extends JunitAutoTestCase {
     public void test12RetryExceededRejectedAndNotifiesAdmin() {
         seedBase();
         seedRoleWithUser("role-fulfill-supervisor", "客服主管", CS_SUPERVISOR);
-        seedTemplate(TEMPLATE_ID_BASE + 3, ErpCsConstants.NOTIFY_EVENT_FULFILLMENT_STEP_FAILED,
+        seedTemplate(TEMPLATE_ID_BASE_3, ErpCsConstants.NOTIFY_EVENT_FULFILLMENT_STEP_FAILED,
                 "ROLE", "{\"roles\":[\"客服主管\"]}");
-        seedFulfillment(9421L, CATALOG_ITEM_ID, 1, ErpCsConstants.FULFILLMENT_ACTION_UPDATE_STATUS,
+        seedFulfillment("9421", CATALOG_ITEM_ID, 1, ErpCsConstants.FULFILLMENT_ACTION_UPDATE_STATUS,
                 "{\"status\":\"CLOSED\"}");
-        Long ticketId = seedTicket(9465L, "TK-FUL-MAXRETRY", null, null);
+        String ticketId = seedTicket("9465", "TK-FUL-MAXRETRY", null, null);
         rpc(mutation, "ErpCsCatalogFulfillment__executeFulfillmentSteps",
                 Map.of("catalogItemId", CATALOG_ITEM_ID, "ticketId", ticketId));
         ErpCsTicketFulfillmentStep step1 = stepBySeq(ticketId, 1);
         assertEquals(ErpCsConstants.FULFILLMENT_STEP_FAILED, step1.getStatus(), "前置：step1 FAILED");
 
         // 重试计数已达上限（默认 3）→ 拒绝 + 通知管理员人工介入
-        Long failedStepId = step1.getId();
+        String failedStepId = step1.getId();
         ormTemplate.runInSession(() -> {
             ErpCsTicketFulfillmentStep s = daoProvider.daoFor(ErpCsTicketFulfillmentStep.class)
                     .getEntityById(failedStepId);
@@ -488,10 +492,10 @@ public class TestErpCsCatalogFulfillmentEngine extends JunitAutoTestCase {
         seedBase();
 
         // 票 A：REQUEST_APPROVAL 超时（timeoutHours=1，executedAt 回拨 2h）→ 自动审批 + 链恢复
-        seedFulfillment(9421L, CATALOG_ITEM_ID, 1, ErpCsConstants.FULFILLMENT_ACTION_REQUEST_APPROVAL,
+        seedFulfillment("9421", CATALOG_ITEM_ID, 1, ErpCsConstants.FULFILLMENT_ACTION_REQUEST_APPROVAL,
                 "{\"timeoutHours\":1}");
-        seedFulfillment(9422L, CATALOG_ITEM_ID, 2, ErpCsConstants.FULFILLMENT_ACTION_NOTIFY_CUSTOMER, null);
-        Long ticketA = seedTicket(9466L, "TK-FUL-TIMEOUT", null, null);
+        seedFulfillment("9422", CATALOG_ITEM_ID, 2, ErpCsConstants.FULFILLMENT_ACTION_NOTIFY_CUSTOMER, null);
+        String ticketA = seedTicket("9466", "TK-FUL-TIMEOUT", null, null);
         rpc(mutation, "ErpCsCatalogFulfillment__executeFulfillmentSteps",
                 Map.of("catalogItemId", CATALOG_ITEM_ID, "ticketId", ticketA));
         ErpCsTicketFulfillmentStep stepA1 = stepBySeq(ticketA, 1);
@@ -503,11 +507,11 @@ public class TestErpCsCatalogFulfillmentEngine extends JunitAutoTestCase {
         });
 
         // 票 B：REQUEST_APPROVAL 未超时（executedAt 即时）→ 不自动审批
-        Long itemB = 9413L;
+        String itemB = "9413";
         seedCatalogItem(itemB);
-        seedFulfillment(9425L, itemB, 1, ErpCsConstants.FULFILLMENT_ACTION_REQUEST_APPROVAL,
+        seedFulfillment("9425", itemB, 1, ErpCsConstants.FULFILLMENT_ACTION_REQUEST_APPROVAL,
                 "{\"timeoutHours\":1}");
-        Long ticketB = seedTicket(9467L, "TK-FUL-WITHIN", null, null);
+        String ticketB = seedTicket("9467", "TK-FUL-WITHIN", null, null);
         seedTicketOnItem(ticketB, itemB);
         rpc(mutation, "ErpCsCatalogFulfillment__executeFulfillmentSteps",
                 Map.of("catalogItemId", itemB, "ticketId", ticketB));
@@ -515,23 +519,23 @@ public class TestErpCsCatalogFulfillmentEngine extends JunitAutoTestCase {
         assertEquals(ErpCsConstants.FULFILLMENT_STEP_IN_PROGRESS, stepB1.getStatus(), "前置：票 B 待审批");
 
         // 票 C：FAILED 未超限 → job 自动重试（刷新模板配置）恢复
-        Long itemC = 9414L;
+        String itemC = "9414";
         seedCatalogItem(itemC);
-        seedFulfillment(9426L, itemC, 1, ErpCsConstants.FULFILLMENT_ACTION_UPDATE_STATUS,
+        seedFulfillment("9426", itemC, 1, ErpCsConstants.FULFILLMENT_ACTION_UPDATE_STATUS,
                 "{\"status\":\"CLOSED\"}");
-        seedFulfillment(9427L, itemC, 2, ErpCsConstants.FULFILLMENT_ACTION_NOTIFY_CUSTOMER, null);
-        Long ticketC = seedTicket(9468L, "TK-FUL-JOBRETRY", null, null);
+        seedFulfillment("9427", itemC, 2, ErpCsConstants.FULFILLMENT_ACTION_NOTIFY_CUSTOMER, null);
+        String ticketC = seedTicket("9468", "TK-FUL-JOBRETRY", null, null);
         seedTicketOnItem(ticketC, itemC);
         rpc(mutation, "ErpCsCatalogFulfillment__executeFulfillmentSteps",
                 Map.of("catalogItemId", itemC, "ticketId", ticketC));
         assertEquals(ErpCsConstants.FULFILLMENT_STEP_FAILED, stepBySeq(ticketC, 1).getStatus(), "前置：票 C FAILED");
-        updateTemplateConfig(9426L, "{\"status\":\"ASSIGNED\"}");
+        updateTemplateConfig("9426", "{\"status\":\"ASSIGNED\"}");
 
         // 票 D：审批驳回终局（retryCount=max）→ 不被自动重试
-        Long itemD = 9415L;
+        String itemD = "9415";
         seedCatalogItem(itemD);
-        seedFulfillment(9428L, itemD, 1, ErpCsConstants.FULFILLMENT_ACTION_REQUEST_APPROVAL, null);
-        Long ticketD = seedTicket(9469L, "TK-FUL-REJECTED", null, null);
+        seedFulfillment("9428", itemD, 1, ErpCsConstants.FULFILLMENT_ACTION_REQUEST_APPROVAL, null);
+        String ticketD = seedTicket("9469", "TK-FUL-REJECTED", null, null);
         seedTicketOnItem(ticketD, itemD);
         rpc(mutation, "ErpCsCatalogFulfillment__executeFulfillmentSteps",
                 Map.of("catalogItemId", itemD, "ticketId", ticketD));
@@ -571,10 +575,10 @@ public class TestErpCsCatalogFulfillmentEngine extends JunitAutoTestCase {
     @Test
     public void test14CronEmptySkipsExecution() {
         seedBase();
-        seedFulfillment(9421L, CATALOG_ITEM_ID, 1, ErpCsConstants.FULFILLMENT_ACTION_UPDATE_STATUS,
+        seedFulfillment("9421", CATALOG_ITEM_ID, 1, ErpCsConstants.FULFILLMENT_ACTION_UPDATE_STATUS,
                 "{\"status\":\"CLOSED\"}");
-        seedFulfillment(9422L, CATALOG_ITEM_ID, 2, ErpCsConstants.FULFILLMENT_ACTION_NOTIFY_CUSTOMER, null);
-        Long ticketId = seedTicket(9470L, "TK-FUL-CRONSKIP", null, null);
+        seedFulfillment("9422", CATALOG_ITEM_ID, 2, ErpCsConstants.FULFILLMENT_ACTION_NOTIFY_CUSTOMER, null);
+        String ticketId = seedTicket("9470", "TK-FUL-CRONSKIP", null, null);
         rpc(mutation, "ErpCsCatalogFulfillment__executeFulfillmentSteps",
                 Map.of("catalogItemId", CATALOG_ITEM_ID, "ticketId", ticketId));
         assertEquals(ErpCsConstants.FULFILLMENT_STEP_FAILED, stepBySeq(ticketId, 1).getStatus(), "前置：step1 FAILED");
@@ -593,10 +597,10 @@ public class TestErpCsCatalogFulfillmentEngine extends JunitAutoTestCase {
     @Test
     public void test15FindFulfillmentProgressProjection() {
         seedBase();
-        seedFulfillment(9421L, CATALOG_ITEM_ID, 1, ErpCsConstants.FULFILLMENT_ACTION_CREATE_TICKET, null);
-        seedFulfillment(9422L, CATALOG_ITEM_ID, 2, ErpCsConstants.FULFILLMENT_ACTION_REQUEST_APPROVAL, null);
-        seedFulfillment(9423L, CATALOG_ITEM_ID, 3, ErpCsConstants.FULFILLMENT_ACTION_NOTIFY_CUSTOMER, null);
-        Long ticketId = seedTicket(9471L, "TK-FUL-PROGRESS", null, null);
+        seedFulfillment("9421", CATALOG_ITEM_ID, 1, ErpCsConstants.FULFILLMENT_ACTION_CREATE_TICKET, null);
+        seedFulfillment("9422", CATALOG_ITEM_ID, 2, ErpCsConstants.FULFILLMENT_ACTION_REQUEST_APPROVAL, null);
+        seedFulfillment("9423", CATALOG_ITEM_ID, 3, ErpCsConstants.FULFILLMENT_ACTION_NOTIFY_CUSTOMER, null);
+        String ticketId = seedTicket("9471", "TK-FUL-PROGRESS", null, null);
         rpc(mutation, "ErpCsCatalogFulfillment__executeFulfillmentSteps",
                 Map.of("catalogItemId", CATALOG_ITEM_ID, "ticketId", ticketId));
 
@@ -626,9 +630,9 @@ public class TestErpCsCatalogFulfillmentEngine extends JunitAutoTestCase {
     public void test16RpcSmokeRetryAndApprove() {
         seedBase();
         // 票 A：approveFulfillmentStep RPC 冒烟
-        seedFulfillment(9421L, CATALOG_ITEM_ID, 1, ErpCsConstants.FULFILLMENT_ACTION_REQUEST_APPROVAL, null);
-        seedFulfillment(9422L, CATALOG_ITEM_ID, 2, ErpCsConstants.FULFILLMENT_ACTION_NOTIFY_CUSTOMER, null);
-        Long ticketA = seedTicket(9472L, "TK-FUL-SMOKE-APPROVE", null, null);
+        seedFulfillment("9421", CATALOG_ITEM_ID, 1, ErpCsConstants.FULFILLMENT_ACTION_REQUEST_APPROVAL, null);
+        seedFulfillment("9422", CATALOG_ITEM_ID, 2, ErpCsConstants.FULFILLMENT_ACTION_NOTIFY_CUSTOMER, null);
+        String ticketA = seedTicket("9472", "TK-FUL-SMOKE-APPROVE", null, null);
         rpc(mutation, "ErpCsCatalogFulfillment__executeFulfillmentSteps",
                 Map.of("catalogItemId", CATALOG_ITEM_ID, "ticketId", ticketA));
         ApiResponse<?> approve = rpc(mutation, "ErpCsCatalogFulfillment__approveFulfillmentStep",
@@ -639,15 +643,15 @@ public class TestErpCsCatalogFulfillmentEngine extends JunitAutoTestCase {
 
         // 票 B：retryFulfillment RPC 冒烟（修正配置后恢复）——单步链铺底后工单 IN_PROGRESS，
         // 修正目标取 RESOLVED（resolve 边 IN_PROGRESS→RESOLVED 可达；ASSIGNED 自 IN_PROGRESS 无边不可达）
-        Long itemB = 9416L;
+        String itemB = "9416";
         seedCatalogItem(itemB);
-        seedFulfillment(9424L, itemB, 1, ErpCsConstants.FULFILLMENT_ACTION_UPDATE_STATUS,
+        seedFulfillment("9424", itemB, 1, ErpCsConstants.FULFILLMENT_ACTION_UPDATE_STATUS,
                 "{\"status\":\"CLOSED\"}");
-        Long ticketB = seedTicket(9473L, "TK-FUL-SMOKE-RETRY", null, null);
+        String ticketB = seedTicket("9473", "TK-FUL-SMOKE-RETRY", null, null);
         seedTicketOnItem(ticketB, itemB);
         rpc(mutation, "ErpCsCatalogFulfillment__executeFulfillmentSteps",
                 Map.of("catalogItemId", itemB, "ticketId", ticketB));
-        updateTemplateConfig(9424L, "{\"status\":\"RESOLVED\"}");
+        updateTemplateConfig("9424", "{\"status\":\"RESOLVED\"}");
         ApiResponse<?> retry = rpc(mutation, "ErpCsCatalogFulfillment__retryFulfillment",
                 Map.of("ticketId", ticketB));
         assertEquals(0, retry.getStatus(), "retryFulfillment RPC 冒烟: " + retry);
@@ -674,7 +678,7 @@ public class TestErpCsCatalogFulfillmentEngine extends JunitAutoTestCase {
     }
 
     /** 修正模板 actionConfig（重试路径「刷新读取模板配置，修正即生效」的驱动器）。 */
-    private void updateTemplateConfig(Long templateId, String actionConfig) {
+    private void updateTemplateConfig(String templateId, String actionConfig) {
         ormTemplate.runInSession(() -> {
             ErpCsCatalogFulfillment template =
                     daoProvider.daoFor(ErpCsCatalogFulfillment.class).getEntityById(templateId);
@@ -683,28 +687,28 @@ public class TestErpCsCatalogFulfillmentEngine extends JunitAutoTestCase {
     }
 
     /** 绑定非默认目录项的工单种子修正（默认 {@link #seedTicket} 固定 CATALOG_ITEM_ID）。 */
-    private void seedTicketOnItem(Long ticketId, Long catalogItemId) {
+    private void seedTicketOnItem(String ticketId, String catalogItemId) {
         ormTemplate.runInSession(() -> {
             ErpCsTicket t = daoProvider.daoFor(ErpCsTicket.class).getEntityById(ticketId);
             t.setCatalogItemId(catalogItemId);
         });
     }
 
-    private ErpCsTicket reload(Long id) {
+    private ErpCsTicket reload(String id) {
         return daoProvider.daoFor(ErpCsTicket.class).getEntityById(id);
     }
 
-    private ErpCsTicketFulfillmentStep reloadStep(Long id) {
+    private ErpCsTicketFulfillmentStep reloadStep(String id) {
         return daoProvider.daoFor(ErpCsTicketFulfillmentStep.class).getEntityById(id);
     }
 
-    private List<ErpCsTicketFulfillmentStep> stepsOf(Long ticketId) {
+    private List<ErpCsTicketFulfillmentStep> stepsOf(String ticketId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("ticketId", ticketId));
         return daoProvider.daoFor(ErpCsTicketFulfillmentStep.class).findAllByQuery(q);
     }
 
-    private ErpCsTicketFulfillmentStep stepBySeq(Long ticketId, int sequence) {
+    private ErpCsTicketFulfillmentStep stepBySeq(String ticketId, int sequence) {
         for (ErpCsTicketFulfillmentStep s : stepsOf(ticketId)) {
             if (s.getSequence() != null && s.getSequence() == sequence) {
                 return s;
@@ -713,7 +717,7 @@ public class TestErpCsCatalogFulfillmentEngine extends JunitAutoTestCase {
         return null;
     }
 
-    private List<ErpCsTicketAction> actionsOf(Long ticketId, String actionType) {
+    private List<ErpCsTicketAction> actionsOf(String ticketId, String actionType) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("ticketId", ticketId));
         q.addFilter(eq("actionType", actionType));
@@ -749,7 +753,7 @@ public class TestErpCsCatalogFulfillmentEngine extends JunitAutoTestCase {
         seedCatalogItem(CATALOG_ITEM_ID);
     }
 
-    private void seedCustomer(Long id, String name) {
+    private void seedCustomer(String id, String name) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMdPartner> dao = daoProvider.daoFor(ErpMdPartner.class);
             ErpMdPartner p = new ErpMdPartner();
@@ -762,7 +766,7 @@ public class TestErpCsCatalogFulfillmentEngine extends JunitAutoTestCase {
         });
     }
 
-    private void seedTicketType(Long id) {
+    private void seedTicketType(String id) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpCsTicketType> dao = daoProvider.daoFor(ErpCsTicketType.class);
             ErpCsTicketType t = new ErpCsTicketType();
@@ -774,7 +778,7 @@ public class TestErpCsCatalogFulfillmentEngine extends JunitAutoTestCase {
         });
     }
 
-    private void seedSlaPolicyTeam(Long id, Long ticketTypeId, Long teamId) {
+    private void seedSlaPolicyTeam(String id, String ticketTypeId, String teamId) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpCsSlaPolicy> dao = daoProvider.daoFor(ErpCsSlaPolicy.class);
             ErpCsSlaPolicy p = new ErpCsSlaPolicy();
@@ -789,7 +793,7 @@ public class TestErpCsCatalogFulfillmentEngine extends JunitAutoTestCase {
         });
     }
 
-    private void seedCsTeam(Long id, String code) {
+    private void seedCsTeam(String id, String code) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpCsTeam> dao = daoProvider.daoFor(ErpCsTeam.class);
             ErpCsTeam team = new ErpCsTeam();
@@ -824,7 +828,7 @@ public class TestErpCsCatalogFulfillmentEngine extends JunitAutoTestCase {
         dao.saveEntity(m);
     }
 
-    private void seedCatalogItem(Long id) {
+    private void seedCatalogItem(String id) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpCsServiceCatalogItem> dao = daoProvider.daoFor(ErpCsServiceCatalogItem.class);
             ErpCsServiceCatalogItem item = new ErpCsServiceCatalogItem();
@@ -838,7 +842,7 @@ public class TestErpCsCatalogFulfillmentEngine extends JunitAutoTestCase {
         });
     }
 
-    private void seedFulfillment(Long id, Long catalogItemId, int sequence, String actionType, String actionConfig) {
+    private void seedFulfillment(String id, String catalogItemId, int sequence, String actionType, String actionConfig) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpCsCatalogFulfillment> dao = daoProvider.daoFor(ErpCsCatalogFulfillment.class);
             ErpCsCatalogFulfillment f = new ErpCsCatalogFulfillment();
@@ -854,7 +858,7 @@ public class TestErpCsCatalogFulfillmentEngine extends JunitAutoTestCase {
     }
 
     /** dao 直插工单（不走 save 管道，隔离富化干扰；status 默认 NEW）。 */
-    private Long seedTicket(Long id, String code, Long slaPolicyId, String assignedToId) {
+    private String seedTicket(String id, String code, String slaPolicyId, String assignedToId) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpCsTicket> dao = daoProvider.daoFor(ErpCsTicket.class);
             ErpCsTicket t = new ErpCsTicket();
@@ -893,7 +897,7 @@ public class TestErpCsCatalogFulfillmentEngine extends JunitAutoTestCase {
         });
     }
 
-    private void seedTemplate(Long id, String notificationType, String resolver, String recipientConfig) {
+    private void seedTemplate(String id, String notificationType, String resolver, String recipientConfig) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpSysNotificationTemplate> dao = daoProvider.daoFor(ErpSysNotificationTemplate.class);
             ErpSysNotificationTemplate t = new ErpSysNotificationTemplate();

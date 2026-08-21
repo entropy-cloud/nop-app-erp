@@ -19,7 +19,7 @@
             <cols>
 
                 <!--ID-->
-                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="id" mandatory="true" sortable="true"/>
 
                 <!--编码-->
                 <col id="code" mandatory="true" sortable="true"/>
@@ -31,7 +31,7 @@
                 <col id="defaultPriority" sortable="true"/>
 
                 <!--默认 SLA 策略-->
-                <col id="defaultSlaPolicyId" ui:number="true" sortable="true"/>
+                <col id="defaultSlaPolicyId" sortable="true"/>
 
                 <!--排序-->
                 <col id="sequence" ui:number="true" sortable="true"/>

@@ -22,8 +22,8 @@
 
     <props>
         <prop name="id" displayName="ID" propId="1" i18n-en:displayName="ID" tagSet="seq-default" mandatory="true"
-              queryable="true" sortable="true" insertable="true" updatable="false" graphql:type="String">
-            <schema type="java.lang.Long"/>
+              queryable="true" sortable="true" insertable="true" updatable="false">
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="code" displayName="编码" propId="2" i18n-en:displayName="Code" tagSet="var" queryable="true"
               sortable="true" insertable="true" updatable="true">
@@ -39,7 +39,7 @@
         </prop>
         <prop name="categoryId" displayName="分类" propId="5" i18n-en:displayName="Category" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="category">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="isPublished" displayName="是否发布" propId="6" i18n-en:displayName="Published" queryable="true"
               sortable="true" insertable="true" updatable="true" defaultValue="false">

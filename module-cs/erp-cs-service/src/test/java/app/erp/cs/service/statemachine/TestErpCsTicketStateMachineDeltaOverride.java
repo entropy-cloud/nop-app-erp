@@ -28,13 +28,15 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * <p>与 {@link TestErpCsTicketStateMachineBaselineIoC} 对照：同一 {@code assertCanAssign(RESOLVED)}
  * 在基线抛异常、在 Delta 放行 —— 构成可区分的基线/Delta 双加载证据（契约 §6 业务级 Delta 实证义务）。
  *
- * <p>Delta 层经 {@code @NopTestProperty} 设置 {@code nop.core.vfs.delta-layer-ids=test-cs-delta} 激活，
+ * <p>Delta 层经 {@code @NopTestProperty} 设置 {@code nop.core.vfs.delta-layer-ids=default,test-cs-delta} 激活
+ * （default 层集补入 = plan 2026-08-22-0002-3 Phase 3：IoC self-wait delta 落 _delta/default 后，
+ * 本测试原仅 test-cs-delta 单层集不再加载平台 beans 兼容层，镜像 md 先例补 default），
  * Delta 层文件 {@code _vfs/_delta/test-cs-delta/erp/cs/beans/app-service.beans.xml} 以同名 bean id 覆盖基线。
  */
 @NopTestConfig(localDb = true,
         initDatabaseSchema = OptionalBoolean.TRUE,
         enableActionAuth = OptionalBoolean.FALSE)
-@NopTestProperty(name = "nop.core.vfs.delta-layer-ids", value = "test-cs-delta")
+@NopTestProperty(name = "nop.core.vfs.delta-layer-ids", value = "default,test-cs-delta")
 public class TestErpCsTicketStateMachineDeltaOverride extends JunitAutoTestCase {
 
     @Inject

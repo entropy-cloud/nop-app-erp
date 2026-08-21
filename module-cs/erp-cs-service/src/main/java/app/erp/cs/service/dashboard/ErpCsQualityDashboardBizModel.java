@@ -134,22 +134,22 @@ public class ErpCsQualityDashboardBizModel {
             }
 
             // 收集 slaPolicyId，批量加载 SlaPolicy → teamId 映射
-            Set<Long> slaPolicyIds = new HashSet<>();
+            Set<String> slaPolicyIds = new HashSet<>();
             for (ErpCsTicket t : tickets) {
                 if (t.getSlaPolicyId() != null) {
                     slaPolicyIds.add(t.getSlaPolicyId());
                 }
             }
-            Map<Long, Long> policyToTeam = loadSlaPolicyTeamMap(slaPolicyIds);
+            Map<String, String> policyToTeam = loadSlaPolicyTeamMap(slaPolicyIds);
 
             // 收集 teamId，批量加载 Team → name 映射
-            Set<Long> teamIds = new HashSet<>(policyToTeam.values());
-            Map<Long, String> teamNames = loadTeamNames(teamIds);
+            Set<String> teamIds = new HashSet<>(policyToTeam.values());
+            Map<String, String> teamNames = loadTeamNames(teamIds);
 
             // 按 teamId 聚合
-            Map<Long, TeamAgg> agg = new LinkedHashMap<>();
+            Map<String, TeamAgg> agg = new LinkedHashMap<>();
             for (ErpCsTicket t : tickets) {
-                Long teamId = t.getSlaPolicyId() == null ? null : policyToTeam.get(t.getSlaPolicyId());
+                String teamId = t.getSlaPolicyId() == null ? null : policyToTeam.get(t.getSlaPolicyId());
                 TeamAgg a = agg.computeIfAbsent(teamId, TeamAgg::new);
                 a.totalTickets++;
                 if (Boolean.TRUE.equals(t.getIsSlaCompleted())) {
@@ -200,16 +200,16 @@ public class ErpCsQualityDashboardBizModel {
             }
 
             // 收集 ticketIds，批量加载 Survey 聚合
-            Set<Long> ticketIds = new HashSet<>();
+            Set<String> ticketIds = new HashSet<>();
             for (ErpCsTicket t : tickets) {
                 if (t.getId() != null) {
                     ticketIds.add(t.getId());
                 }
             }
-            Map<Long, SurveyAgg> surveyByTicket = loadSurveyByTicket(ticketIds);
+            Map<String, SurveyAgg> surveyByTicket = loadSurveyByTicket(ticketIds);
 
             // ticketId → assignedToId 映射
-            Map<Long, String> ticketToAgent = new HashMap<>();
+            Map<String, String> ticketToAgent = new HashMap<>();
             for (ErpCsTicket t : tickets) {
                 if (t.getId() != null && t.getAssignedToId() != null) {
                     ticketToAgent.put(t.getId(), t.getAssignedToId());
@@ -266,26 +266,26 @@ public class ErpCsQualityDashboardBizModel {
         return daoProvider.daoFor(ErpCsTicket.class).findAllByQuery(q);
     }
 
-    private Map<Long, Long> loadSlaPolicyTeamMap(Set<Long> slaPolicyIds) {
+    private Map<String, String> loadSlaPolicyTeamMap(Set<String> slaPolicyIds) {
         if (slaPolicyIds.isEmpty()) {
             return Collections.emptyMap();
         }
         QueryBean q = new QueryBean();
         q.addFilter(in("id", slaPolicyIds));
         List<ErpCsSlaPolicy> policies = daoProvider.daoFor(ErpCsSlaPolicy.class).findAllByQuery(q);
-        Map<Long, Long> map = new HashMap<>();
+        Map<String, String> map = new HashMap<>();
         for (ErpCsSlaPolicy p : policies) {
             map.put(p.getId(), p.getTeamId());
         }
         return map;
     }
 
-    private Map<Long, String> loadTeamNames(Set<Long> teamIds) {
+    private Map<String, String> loadTeamNames(Set<String> teamIds) {
         if (teamIds.isEmpty()) {
             return Collections.emptyMap();
         }
-        Set<Long> nonNull = new HashSet<>();
-        for (Long id : teamIds) {
+        Set<String> nonNull = new HashSet<>();
+        for (String id : teamIds) {
             if (id != null) {
                 nonNull.add(id);
             }
@@ -296,23 +296,23 @@ public class ErpCsQualityDashboardBizModel {
         QueryBean q = new QueryBean();
         q.addFilter(in("id", nonNull));
         List<ErpCsTeam> teams = daoProvider.daoFor(ErpCsTeam.class).findAllByQuery(q);
-        Map<Long, String> names = new HashMap<>();
+        Map<String, String> names = new HashMap<>();
         for (ErpCsTeam t : teams) {
             names.put(t.getId(), t.getName());
         }
         return names;
     }
 
-    private Map<Long, SurveyAgg> loadSurveyByTicket(Set<Long> ticketIds) {
+    private Map<String, SurveyAgg> loadSurveyByTicket(Set<String> ticketIds) {
         if (ticketIds.isEmpty()) {
             return Collections.emptyMap();
         }
         QueryBean q = new QueryBean();
         q.addFilter(in("ticketId", ticketIds));
         List<ErpCsSurvey> surveys = daoProvider.daoFor(ErpCsSurvey.class).findAllByQuery(q);
-        Map<Long, SurveyAgg> map = new HashMap<>();
+        Map<String, SurveyAgg> map = new HashMap<>();
         for (ErpCsSurvey s : surveys) {
-            Long tId = s.getTicketId();
+            String tId = s.getTicketId();
             if (tId == null) {
                 continue;
             }
@@ -376,13 +376,13 @@ public class ErpCsQualityDashboardBizModel {
     // ===================== aggregator inner classes =====================
 
     private static class TeamAgg {
-        final Long teamId;
+        final String teamId;
         int totalTickets = 0;
         int slaCompleted = 0;
         long durationSumMs = 0L;
         int durationCount = 0;
 
-        TeamAgg(Long teamId) {
+        TeamAgg(String teamId) {
             this.teamId = teamId;
         }
     }

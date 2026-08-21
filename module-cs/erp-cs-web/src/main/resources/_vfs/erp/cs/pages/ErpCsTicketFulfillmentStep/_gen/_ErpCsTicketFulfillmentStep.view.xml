@@ -19,19 +19,19 @@
             <cols>
 
                 <!--ID-->
-                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="id" mandatory="true" sortable="true"/>
 
                 <!--业务组织-->
-                <col id="orgId" ui:number="true" sortable="true"/>
+                <col id="orgId" sortable="true"/>
 
                 <!--关联工单-->
-                <col id="ticketId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="ticketId" mandatory="true" sortable="true"/>
 
                 <!--履行映射-->
-                <col id="fulfillmentId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="fulfillmentId" mandatory="true" sortable="true"/>
 
                 <!--目录项-->
-                <col id="catalogItemId" ui:number="true" sortable="true"/>
+                <col id="catalogItemId" sortable="true"/>
 
                 <!--执行顺序-->
                 <col id="sequence" ui:number="true" sortable="true"/>

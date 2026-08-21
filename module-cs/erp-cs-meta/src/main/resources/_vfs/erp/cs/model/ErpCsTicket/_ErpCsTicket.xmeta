@@ -22,8 +22,8 @@
 
     <props>
         <prop name="id" displayName="ID" propId="1" i18n-en:displayName="ID" tagSet="seq-default" mandatory="true"
-              queryable="true" sortable="true" insertable="true" updatable="false" graphql:type="String">
-            <schema type="java.lang.Long"/>
+              queryable="true" sortable="true" insertable="true" updatable="false">
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="code" displayName="单号" propId="2" i18n-en:displayName="Code" tagSet="var" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
@@ -31,7 +31,7 @@
         </prop>
         <prop name="orgId" displayName="业务组织" propId="3" i18n-en:displayName="Organization" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="org">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="subject" displayName="工单主题" propId="4" i18n-en:displayName="Subject" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
@@ -43,15 +43,15 @@
         </prop>
         <prop name="customerId" displayName="客户" propId="6" i18n-en:displayName="Customer" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="customer">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="contactId" displayName="联系人" propId="7" i18n-en:displayName="Contact" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="contact">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="ticketTypeId" displayName="工单类型" propId="8" i18n-en:displayName="Ticket Type" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="ticketType">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="priority" displayName="优先级" propId="9" i18n-en:displayName="Priority" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
@@ -67,7 +67,7 @@
         </prop>
         <prop name="slaPolicyId" displayName="SLA 策略" propId="12" i18n-en:displayName="SLA Policy" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="slaPolicy">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="deadlineDateTime" displayName="SLA 截止时间" propId="13" i18n-en:displayName="SLA Deadline"
               tagSet="clock" queryable="true" sortable="true" insertable="true" updatable="true">
@@ -111,7 +111,7 @@
         </prop>
         <prop name="catalogItemId" displayName="服务目录项" propId="23" i18n-en:displayName="Catalog Item" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="catalogItem">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="delVersion" displayName="逻辑删除版本" propId="24" i18n-en:displayName="Del Flag" mandatory="true"
               queryable="true" sortable="true" insertable="false" updatable="false" ui:show="R" defaultValue="0">

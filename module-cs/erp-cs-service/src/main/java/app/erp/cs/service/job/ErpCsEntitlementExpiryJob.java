@@ -116,7 +116,7 @@ public class ErpCsEntitlementExpiryJob {
         notificationBiz.notify(ErpCsConstants.NOTIFY_EVENT_ENTITLEMENT_EXPIRY, map, ctx);
     }
 
-    private String resolvePartnerName(Long partnerId, IServiceContext ctx) {
+    private String resolvePartnerName(String partnerId, IServiceContext ctx) {
         if (partnerId == null || mdPartnerBiz == null) {
             return null;
         }

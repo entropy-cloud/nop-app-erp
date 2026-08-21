@@ -26,7 +26,7 @@ public class ErpCsTicketTimerSessionPauseTimerProcessor {
     @Inject
     ErpCsTicketTimerSessionOps ops;
 
-    public ErpCsTicketTimerSession pauseTimer(Long sessionId, String pauseReason, IServiceContext context) {
+    public ErpCsTicketTimerSession pauseTimer(String sessionId, String pauseReason, IServiceContext context) {
         assertTimeTrackingEnabled(sessionId);
         ErpCsTicketTimerSession session = ops.requireSession(sessionId);
         // 12h 惰性结算先行（REQUIRES_NEW 独立事务物化）：超时封顶停止后本操作按「会话已停止」拒绝
@@ -47,13 +47,13 @@ public class ErpCsTicketTimerSessionPauseTimerProcessor {
     }
 
     /** 结算后拒绝：状态即结算后的 STOPPED（外层实体为回滚前快照，不读取其状态）。 */
-    protected NopException notOpenAfterSettle(Long sessionId) {
+    protected NopException notOpenAfterSettle(String sessionId) {
         return new NopException(ErpCsErrors.ERR_CS_TIMER_SESSION_NOT_OPEN)
                 .param(ErpCsErrors.ARG_SESSION_ID, sessionId)
                 .param(ErpCsErrors.ARG_CURRENT_STATUS, ErpCsConstants.TIMER_SESSION_STATUS_STOPPED);
     }
 
-    protected void assertTimeTrackingEnabled(Long sessionId) {
+    protected void assertTimeTrackingEnabled(String sessionId) {
         if (!ErpCsConfigs.isTimeTrackingEnabled()) {
             throw new NopException(ErpCsErrors.ERR_CS_TIME_TRACKING_DISABLED)
                     .param(ErpCsErrors.ARG_SESSION_ID, sessionId);

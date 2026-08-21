@@ -13,16 +13,16 @@
     public class ErpCsServiceCatalogItemOutputBean {
 
     
-        private Long _id;
+        private String _id;
 
     
         @PropMeta(propId=1)
     
-        public Long getId(){
+        public String getId(){
             return _id;
         }
 
-        public void setId(Long value){
+        public void setId(String value){
             this._id = value;
         }
 
@@ -55,44 +55,44 @@
         }
 
 
-        private Long _orgId;
+        private String _orgId;
 
     
         @PropMeta(propId=4)
     
-        public Long getOrgId(){
+        public String getOrgId(){
             return _orgId;
         }
 
-        public void setOrgId(Long value){
+        public void setOrgId(String value){
             this._orgId = value;
         }
 
 
-        private Long _categoryId;
+        private String _categoryId;
 
     
         @PropMeta(propId=5)
     
-        public Long getCategoryId(){
+        public String getCategoryId(){
             return _categoryId;
         }
 
-        public void setCategoryId(Long value){
+        public void setCategoryId(String value){
             this._categoryId = value;
         }
 
 
-        private Long _parentId;
+        private String _parentId;
 
     
         @PropMeta(propId=6)
     
-        public Long getParentId(){
+        public String getParentId(){
             return _parentId;
         }
 
-        public void setParentId(Long value){
+        public void setParentId(String value){
             this._parentId = value;
         }
 
@@ -125,30 +125,30 @@
         }
 
 
-        private Long _ticketTypeId;
+        private String _ticketTypeId;
 
     
         @PropMeta(propId=9)
     
-        public Long getTicketTypeId(){
+        public String getTicketTypeId(){
             return _ticketTypeId;
         }
 
-        public void setTicketTypeId(Long value){
+        public void setTicketTypeId(String value){
             this._ticketTypeId = value;
         }
 
 
-        private Long _slaPolicyId;
+        private String _slaPolicyId;
 
     
         @PropMeta(propId=10)
     
-        public Long getSlaPolicyId(){
+        public String getSlaPolicyId(){
             return _slaPolicyId;
         }
 
-        public void setSlaPolicyId(Long value){
+        public void setSlaPolicyId(String value){
             this._slaPolicyId = value;
         }
 

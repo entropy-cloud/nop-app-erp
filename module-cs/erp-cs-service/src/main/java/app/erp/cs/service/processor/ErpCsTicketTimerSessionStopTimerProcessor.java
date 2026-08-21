@@ -29,7 +29,7 @@ public class ErpCsTicketTimerSessionStopTimerProcessor {
     @Inject
     ErpCsTicketTimerSessionOps ops;
 
-    public ErpCsTicketTimerSession stopTimer(Long sessionId, IServiceContext context) {
+    public ErpCsTicketTimerSession stopTimer(String sessionId, IServiceContext context) {
         if (!ErpCsConfigs.isTimeTrackingEnabled()) {
             throw new NopException(ErpCsErrors.ERR_CS_TIME_TRACKING_DISABLED)
                     .param(ErpCsErrors.ARG_SESSION_ID, sessionId);

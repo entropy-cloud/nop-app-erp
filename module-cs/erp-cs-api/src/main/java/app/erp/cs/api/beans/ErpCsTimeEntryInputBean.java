@@ -12,58 +12,58 @@
     public class ErpCsTimeEntryInputBean extends CrudInputBase {
 
     
-        private Long _id;
+        private String _id;
 
     
         @PropMeta(propId=1)
     
-        public Long getId(){
+        public String getId(){
             return _id;
         }
 
-        public void setId(Long value){
+        public void setId(String value){
             this._id = value;
         }
 
 
-        private Long _orgId;
+        private String _orgId;
 
     
         @PropMeta(propId=2)
     
-        public Long getOrgId(){
+        public String getOrgId(){
             return _orgId;
         }
 
-        public void setOrgId(Long value){
+        public void setOrgId(String value){
             this._orgId = value;
         }
 
 
-        private Long _ticketId;
+        private String _ticketId;
 
     
         @PropMeta(propId=3)
     
-        public Long getTicketId(){
+        public String getTicketId(){
             return _ticketId;
         }
 
-        public void setTicketId(Long value){
+        public void setTicketId(String value){
             this._ticketId = value;
         }
 
 
-        private Long _agentId;
+        private String _agentId;
 
     
         @PropMeta(propId=4)
     
-        public Long getAgentId(){
+        public String getAgentId(){
             return _agentId;
         }
 
-        public void setAgentId(Long value){
+        public void setAgentId(String value){
             this._agentId = value;
         }
 
@@ -194,30 +194,30 @@
         }
 
 
-        private Long _projectId;
+        private String _projectId;
 
     
         @PropMeta(propId=15)
     
-        public Long getProjectId(){
+        public String getProjectId(){
             return _projectId;
         }
 
-        public void setProjectId(Long value){
+        public void setProjectId(String value){
             this._projectId = value;
         }
 
 
-        private Long _taskId;
+        private String _taskId;
 
     
         @PropMeta(propId=16)
     
-        public Long getTaskId(){
+        public String getTaskId(){
             return _taskId;
         }
 
-        public void setTaskId(Long value){
+        public void setTaskId(String value){
             this._taskId = value;
         }
 
