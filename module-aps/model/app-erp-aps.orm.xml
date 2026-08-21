@@ -66,12 +66,12 @@
                 displayName="工序工单" ext:icon="cpu" i18n-en:displayName="Operation Order" name="app.erp.aps.dao.entity.ErpApsOperationOrder"
                 tableName="erp_aps_operation_order" tagSet="gid,erp.aps" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
-                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long" i18n-en:displayName='ID' />
+                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="string" i18n-en:displayName='ID' />
                 <column name="code" displayName="编号" domain="orderCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Code' tagSet="var" />
-                <column name="workOrderId" displayName="主工单" stdSqlType="BIGINT" mandatory="true" code="WORK_ORDER_ID" propId="3" stdDataType="long" i18n-en:displayName='Work Order' />
+                <column name="workOrderId" displayName="主工单" stdSqlType="BIGINT" mandatory="true" code="WORK_ORDER_ID" propId="3" stdDataType="string" i18n-en:displayName='Work Order' />
                 <column name="operationName" displayName="工序名称" stdSqlType="VARCHAR" precision="200" mandatory="true" code="OPERATION_NAME" propId="4" stdDataType="string" i18n-en:displayName='Operation Name' />
                 <column name="sequence" displayName="工序顺序" stdSqlType="INTEGER" mandatory="true" code="SEQUENCE" propId="5" stdDataType="int" i18n-en:displayName='Sequence' />
-                <column name="machineId" displayName="工作中心/设备" stdSqlType="BIGINT" mandatory="true" code="MACHINE_ID" propId="6" stdDataType="long" i18n-en:displayName='Machine' />
+                <column name="machineId" displayName="工作中心/设备" stdSqlType="BIGINT" mandatory="true" code="MACHINE_ID" propId="6" stdDataType="string" i18n-en:displayName='Machine' />
                 <column name="priority" displayName="优先级" stdSqlType="INTEGER" defaultValue="50" code="PRIORITY" propId="7" stdDataType="int" i18n-en:displayName='Priority' />
                 <column name="plannedStartDateT" displayName="计划开工时间" tagSet="clock" stdSqlType="TIMESTAMP" code="PLANNED_START_DATE_T" propId="8" i18n-en:displayName='Planned Start Date' />
                 <column name="plannedEndDateT" displayName="计划完工时间" tagSet="clock" stdSqlType="TIMESTAMP" code="PLANNED_END_DATE_T" propId="9" i18n-en:displayName='Planned End Date' />
@@ -86,7 +86,7 @@
                 <column name="assignedToId" stdDomain="userId" displayName="操作工" stdSqlType="VARCHAR" precision="36" code="ASSIGNED_TO_ID" propId="16" stdDataType="string" i18n-en:displayName='Assigned To' />
                 <column name="isOutsourced" displayName="是否外协" stdSqlType="BOOLEAN" defaultValue="false" code="IS_OUTSOURCED" propId="17" stdDataType="boolean" i18n-en:displayName='Is Outsourced' />
                 <column name="status" displayName="状态" ext:dict="erp-aps/operation-order-status" mandatory="true" code="STATUS" propId="18" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Status' />
-                <column name="orgId" displayName="业务组织" stdSqlType="BIGINT" code="ORG_ID" propId="19" stdDataType="long" i18n-en:displayName='Organization' />
+                <column name="orgId" displayName="业务组织" stdSqlType="BIGINT" code="ORG_ID" propId="19" stdDataType="string" i18n-en:displayName='Organization' />
                 <column name="remark" displayName="备注" domain="remark" code="REMARK" propId="20" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Remark' />
                 <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="21" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0" i18n-en:displayName='Del Flag'  ui:show="R"/>
                 <column name="version" code="VERSION" displayName="数据版本" propId="22" domain="version" stdSqlType="INTEGER" stdDataType="int" mandatory="true" defaultValue="0" i18n-en:displayName='Version' />
@@ -101,7 +101,7 @@
                     selectedRoutingId 为 ErpApsOpRouting.id 弱引用（无 to-one，对齐跨域弱指针范式——
                     同域弱引用以纯 ID 列承载，selectedRoutingId 语义详见 alternative-routing.md §2.2）。
                 -->
-                <column name="selectedRoutingId" displayName="选用路由" stdSqlType="BIGINT" code="SELECTED_ROUTING_ID" propId="30" stdDataType="long" i18n-en:displayName='Selected Routing' />
+                <column name="selectedRoutingId" displayName="选用路由" stdSqlType="BIGINT" code="SELECTED_ROUTING_ID" propId="30" stdDataType="string" i18n-en:displayName='Selected Routing' />
                 <column name="routingSelectionReason" displayName="路由选择原因" ext:dict="erp-aps/routing-selection-reason" stdSqlType="VARCHAR" precision="50" code="ROUTING_SELECTION_REASON" propId="31" stdDataType="string" i18n-en:displayName='Routing Selection Reason' />
                 <column name="manualOverride" displayName="人工强制路由" stdSqlType="BOOLEAN" code="MANUAL_OVERRIDE" propId="32" stdDataType="boolean" i18n-en:displayName='Manual Override' />
                 <column name="allowFallback" displayName="允许降级备选" stdSqlType="BOOLEAN" code="ALLOW_FALLBACK" propId="33" stdDataType="boolean" i18n-en:displayName='Allow Fallback' />
@@ -138,7 +138,7 @@
                 displayName="排产方案" ext:icon="calendar-check" i18n-en:displayName="Schedule" name="app.erp.aps.dao.entity.ErpApsSchedule"
                 tableName="erp_aps_schedule" tagSet="gid,erp.aps" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
-                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long" i18n-en:displayName='ID' />
+                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="string" i18n-en:displayName='ID' />
                 <column name="code" displayName="编号" domain="orderCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Code' tagSet="var" />
                 <column name="name" displayName="方案名称" domain="name" mandatory="true" code="NAME" propId="3" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Name' />
                 <column name="scheduleDate" displayName="排产日期" stdSqlType="DATE" mandatory="true" code="SCHEDULE_DATE" propId="4" i18n-en:displayName='Schedule Date' />
@@ -146,7 +146,7 @@
                 <column name="horizonStart" displayName="展望期开始" tagSet="clock" stdSqlType="TIMESTAMP" mandatory="true" code="HORIZON_START" propId="6" i18n-en:displayName='Horizon Start' />
                 <column name="horizonEnd" displayName="展望期结束" tagSet="clock" stdSqlType="TIMESTAMP" mandatory="true" code="HORIZON_END" propId="7" i18n-en:displayName='Horizon End' />
                 <column name="status" displayName="状态" ext:dict="erp-aps/schedule-status" mandatory="true" code="STATUS" propId="8" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Status' />
-                <column name="orgId" displayName="业务组织" stdSqlType="BIGINT" code="ORG_ID" propId="9" stdDataType="long" i18n-en:displayName='Organization' />
+                <column name="orgId" displayName="业务组织" stdSqlType="BIGINT" code="ORG_ID" propId="9" stdDataType="string" i18n-en:displayName='Organization' />
                 <column name="remark" displayName="备注" domain="remark" code="REMARK" propId="10" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Remark' />
                 <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="11" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0" i18n-en:displayName='Del Flag'  ui:show="R"/>
                 <column name="version" code="VERSION" displayName="数据版本" propId="12" domain="version" stdSqlType="INTEGER" stdDataType="int" mandatory="true" defaultValue="0" i18n-en:displayName='Version' />
@@ -179,13 +179,13 @@
                 displayName="排产约束" ext:icon="ban" i18n-en:displayName="Constraint" name="app.erp.aps.dao.entity.ErpApsConstraint"
                 tableName="erp_aps_constraint" tagSet="gid,erp.aps" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
-                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long" i18n-en:displayName='ID' />
-                <column name="machineId" displayName="工作中心/设备" stdSqlType="BIGINT" mandatory="true" code="MACHINE_ID" propId="2" stdDataType="long" i18n-en:displayName='Machine' />
+                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="string" i18n-en:displayName='ID' />
+                <column name="machineId" displayName="工作中心/设备" stdSqlType="BIGINT" mandatory="true" code="MACHINE_ID" propId="2" stdDataType="string" i18n-en:displayName='Machine' />
                 <column name="constraintType" displayName="约束类型" ext:dict="erp-aps/constraint-type" mandatory="true" code="CONSTRAINT_TYPE" propId="3" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Constraint Type' />
                 <column name="startTime" displayName="开始时间" tagSet="clock" stdSqlType="TIMESTAMP" mandatory="true" code="START_TIME" propId="4" i18n-en:displayName='Start Time' />
                 <column name="endTime" displayName="结束时间" tagSet="clock" stdSqlType="TIMESTAMP" mandatory="true" code="END_TIME" propId="5" i18n-en:displayName='End Time' />
                 <column name="description" displayName="约束描述" stdSqlType="VARCHAR" precision="500" code="DESCRIPTION" propId="6" stdDataType="string" i18n-en:displayName='Description' />
-                <column name="orgId" displayName="业务组织" stdSqlType="BIGINT" code="ORG_ID" propId="7" stdDataType="long" i18n-en:displayName='Organization' />
+                <column name="orgId" displayName="业务组织" stdSqlType="BIGINT" code="ORG_ID" propId="7" stdDataType="string" i18n-en:displayName='Organization' />
                 <column name="remark" displayName="备注" domain="remark" code="REMARK" propId="8" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Remark' />
                 <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="9" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0" i18n-en:displayName='Del Flag'  ui:show="R"/>
                 <column name="version" code="VERSION" displayName="数据版本" propId="10" domain="version" stdSqlType="INTEGER" stdDataType="int" mandatory="true" defaultValue="0" i18n-en:displayName='Version' />
@@ -209,10 +209,10 @@
                 displayName="替代工艺路线" ext:icon="shuffle" i18n-en:displayName="OP Routing" name="app.erp.aps.dao.entity.ErpApsOpRouting"
                 tableName="erp_aps_op_routing" tagSet="gid,erp.aps" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
-                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long" i18n-en:displayName='ID' />
-                <column name="orgId" displayName="业务组织" stdSqlType="BIGINT" code="ORG_ID" propId="2" stdDataType="long" i18n-en:displayName='Organization' />
-                <column name="operationId" displayName="工序" stdSqlType="BIGINT" mandatory="true" code="OPERATION_ID" propId="3" stdDataType="long" i18n-en:displayName='Operation' />
-                <column name="machineId" displayName="工作中心" stdSqlType="BIGINT" mandatory="true" code="MACHINE_ID" propId="4" stdDataType="long" i18n-en:displayName='Machine' />
+                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="string" i18n-en:displayName='ID' />
+                <column name="orgId" displayName="业务组织" stdSqlType="BIGINT" code="ORG_ID" propId="2" stdDataType="string" i18n-en:displayName='Organization' />
+                <column name="operationId" displayName="工序" stdSqlType="BIGINT" mandatory="true" code="OPERATION_ID" propId="3" stdDataType="string" i18n-en:displayName='Operation' />
+                <column name="machineId" displayName="工作中心" stdSqlType="BIGINT" mandatory="true" code="MACHINE_ID" propId="4" stdDataType="string" i18n-en:displayName='Machine' />
                 <column name="priority" displayName="优先级" stdSqlType="INTEGER" mandatory="true" code="PRIORITY" propId="5" stdDataType="int" i18n-en:displayName='Priority' />
                 <column name="setupTimeDelta" displayName="换模时间差(分钟)" domain="duration" code="SETUP_TIME_DELTA" propId="6" stdSqlType="DECIMAL" stdDataType="decimal" i18n-en:displayName='Setup Time Delta' />
                 <column name="runtimePerUnitDelta" displayName="单件加工时间差(分钟)" domain="duration" code="RUNTIME_PER_UNIT_DELTA" propId="7" stdSqlType="DECIMAL" stdDataType="decimal" i18n-en:displayName='Runtime Per Unit Delta' />
@@ -248,9 +248,9 @@
                 displayName="自动派工规则" ext:icon="play-circle" i18n-en:displayName="Dispatch Rule" name="app.erp.aps.dao.entity.ErpApsDispatchRule"
                 tableName="erp_aps_dispatch_rule" tagSet="gid,erp.aps" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
-                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long" i18n-en:displayName='ID' />
-                <column name="orgId" displayName="业务组织" stdSqlType="BIGINT" code="ORG_ID" propId="2" stdDataType="long" i18n-en:displayName='Organization' />
-                <column name="workcenterId" displayName="工作中心" stdSqlType="BIGINT" mandatory="true" code="WORKCENTER_ID" propId="3" stdDataType="long" i18n-en:displayName='Workcenter' />
+                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="string" i18n-en:displayName='ID' />
+                <column name="orgId" displayName="业务组织" stdSqlType="BIGINT" code="ORG_ID" propId="2" stdDataType="string" i18n-en:displayName='Organization' />
+                <column name="workcenterId" displayName="工作中心" stdSqlType="BIGINT" mandatory="true" code="WORKCENTER_ID" propId="3" stdDataType="string" i18n-en:displayName='Workcenter' />
                 <column name="ruleName" displayName="规则名称" domain="name" mandatory="true" code="RULE_NAME" propId="4" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Rule Name' />
                 <column name="enableAuto" displayName="自动派工启用" stdSqlType="BOOLEAN" defaultValue="true" code="ENABLE_AUTO" propId="5" stdDataType="boolean" i18n-en:displayName='Enable Auto' />
                 <column name="requireMaterial" displayName="物料齐套检查" stdSqlType="BOOLEAN" defaultValue="true" code="REQUIRE_MATERIAL" propId="6" stdDataType="boolean" i18n-en:displayName='Require Material' />
@@ -287,10 +287,10 @@
                 displayName="派工日志" ext:icon="scroll-text" i18n-en:displayName="Dispatch Log" name="app.erp.aps.dao.entity.ErpApsDispatchLog"
                 tableName="erp_aps_dispatch_log" tagSet="gid,erp.aps" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
-                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long" i18n-en:displayName='ID' />
-                <column name="orgId" displayName="业务组织" stdSqlType="BIGINT" code="ORG_ID" propId="2" stdDataType="long" i18n-en:displayName='Organization' />
-                <column name="operationOrderId" displayName="工序工单" stdSqlType="BIGINT" mandatory="true" code="OPERATION_ORDER_ID" propId="3" stdDataType="long" i18n-en:displayName='Operation Order' />
-                <column name="workcenterId" displayName="工作中心" stdSqlType="BIGINT" code="WORKCENTER_ID" propId="4" stdDataType="long" i18n-en:displayName='Workcenter' />
+                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="string" i18n-en:displayName='ID' />
+                <column name="orgId" displayName="业务组织" stdSqlType="BIGINT" code="ORG_ID" propId="2" stdDataType="string" i18n-en:displayName='Organization' />
+                <column name="operationOrderId" displayName="工序工单" stdSqlType="BIGINT" mandatory="true" code="OPERATION_ORDER_ID" propId="3" stdDataType="string" i18n-en:displayName='Operation Order' />
+                <column name="workcenterId" displayName="工作中心" stdSqlType="BIGINT" code="WORKCENTER_ID" propId="4" stdDataType="string" i18n-en:displayName='Workcenter' />
                 <column name="dispatchType" displayName="派工类型" ext:dict="erp-aps/dispatch-type" mandatory="true" code="DISPATCH_TYPE" propId="5" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Dispatch Type' />
                 <column name="previousStatus" displayName="派工前状态" stdSqlType="VARCHAR" precision="50" code="PREVIOUS_STATUS" propId="6" stdDataType="string" i18n-en:displayName='Previous Status' />
                 <column name="newStatus" displayName="派工后状态" stdSqlType="VARCHAR" precision="50" code="NEW_STATUS" propId="7" stdDataType="string" i18n-en:displayName='New Status' />
@@ -335,12 +335,12 @@
                 tableName="erp_aps_capacity_reservation" tagSet="gid,erp.aps" registerShortName="true"
                 versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
-                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long" i18n-en:displayName='ID' />
-                <column name="machineId" displayName="工作中心/设备" stdSqlType="BIGINT" mandatory="true" code="MACHINE_ID" propId="2" stdDataType="long" i18n-en:displayName='Machine' />
+                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="string" i18n-en:displayName='ID' />
+                <column name="machineId" displayName="工作中心/设备" stdSqlType="BIGINT" mandatory="true" code="MACHINE_ID" propId="2" stdDataType="string" i18n-en:displayName='Machine' />
                 <column name="plannedStartT" displayName="预留开始时间" tagSet="clock" stdSqlType="TIMESTAMP" mandatory="true" code="PLANNED_START_T" propId="3" i18n-en:displayName='Planned Start' />
                 <column name="plannedEndT" displayName="预留结束时间" tagSet="clock" stdSqlType="TIMESTAMP" mandatory="true" code="PLANNED_END_T" propId="4" i18n-en:displayName='Planned End' />
-                <column name="operationOrderId" displayName="工序工单" stdSqlType="BIGINT" mandatory="true" code="OPERATION_ORDER_ID" propId="5" stdDataType="long" i18n-en:displayName='Operation Order' />
-                <column name="orgId" displayName="业务组织" stdSqlType="BIGINT" code="ORG_ID" propId="6" stdDataType="long" i18n-en:displayName='Organization' />
+                <column name="operationOrderId" displayName="工序工单" stdSqlType="BIGINT" mandatory="true" code="OPERATION_ORDER_ID" propId="5" stdDataType="string" i18n-en:displayName='Operation Order' />
+                <column name="orgId" displayName="业务组织" stdSqlType="BIGINT" code="ORG_ID" propId="6" stdDataType="string" i18n-en:displayName='Organization' />
                 <column name="remark" displayName="备注" domain="remark" code="REMARK" propId="7" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Remark' />
                 <column name="version" code="VERSION" displayName="数据版本" propId="8" domain="version" stdSqlType="INTEGER" stdDataType="int" mandatory="true" defaultValue="0" i18n-en:displayName='Version' />
                 <column name="createdBy" code="CREATED_BY" displayName="创建人" propId="9" domain="createdBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string" i18n-en:displayName='Created By' />
@@ -366,7 +366,7 @@
         <entity ext:web-renderer="flux" displayName="ErpMdOrganization" name="app.erp.md.dao.entity.ErpMdOrganization"
                 notGenCode="true" biz:moduleId="erp/md" tableName="erp_md_organization">
             <columns>
-                <column name="id" code="ID" stdSqlType="BIGINT" primary="true" mandatory="true" tagSet="seq-default" stdDataType="long" />
+                <column name="id" code="ID" stdSqlType="BIGINT" primary="true" mandatory="true" tagSet="seq-default" stdDataType="string" />
                             <column name="name" code="NAME" stdSqlType="VARCHAR" precision="200" stdDataType="string" tagSet="disp" />
             </columns>
         </entity>

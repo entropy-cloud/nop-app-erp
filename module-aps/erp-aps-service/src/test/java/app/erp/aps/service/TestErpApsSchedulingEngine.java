@@ -39,8 +39,8 @@ public class TestErpApsSchedulingEngine extends JunitAutoTestCase {
     @Inject
     IGraphQLEngine graphQLEngine;
 
-    private static final Long MACHINE_A = 100L;
-    private static final Long MACHINE_B = 101L;
+    private static final String MACHINE_A = "100";
+    private static final String MACHINE_B = "101";
     private static final LocalDateTime HORIZON_START = LocalDateTime.parse("2026-07-10T00:00:00");
     private static final LocalDateTime HORIZON_END = LocalDateTime.parse("2026-07-20T00:00:00");
 
@@ -48,15 +48,15 @@ public class TestErpApsSchedulingEngine extends JunitAutoTestCase {
 
     @Test
     public void testForwardScheduleSequenceMaintenanceCapacity() {
-        Long scheduleId = createSchedule("S-FWD", "FORWARD");
+        String scheduleId = createSchedule("S-FWD", "FORWARD");
         // 维护停机：machineA 08:00~09:30（阻塞 08:00 起点，A 须让到 09:30）
         createConstraint(MACHINE_A, "2026-07-10T08:00:00", "2026-07-10T09:30:00");
         // 工序 10（machineA，30min，最早 08:00）→ 因维护避让到 09:30~10:00
-        Long opA = createOp("OA", 1L, 10, MACHINE_A, 10, "0", "10", "3", "2026-07-10T08:00:00");
+        String opA = createOp("OA", "1", 10, MACHINE_A, 10, "0", "10", "3", "2026-07-10T08:00:00");
         // 工序 20（machineB，40min，最早 08:00）→ 受前序约束 10:00+buffer5=10:05，排到 10:05~10:45
-        Long opB = createOp("OB", 1L, 20, MACHINE_B, 10, "0", "20", "2", "2026-07-10T08:00:00");
+        String opB = createOp("OB", "1", 20, MACHINE_B, 10, "0", "20", "2", "2026-07-10T08:00:00");
         // 工序 C（machineA，30min，优先级 20 低，最早 08:00）→ A 占 09:30~10:00，C 排 10:00~10:30
-        Long opC = createOp("OC", 2L, 10, MACHINE_A, 20, "0", "10", "3", "2026-07-10T08:00:00");
+        String opC = createOp("OC", "2", 10, MACHINE_A, 20, "0", "10", "3", "2026-07-10T08:00:00");
 
         runScheduleForward(scheduleId);
 
@@ -84,9 +84,9 @@ public class TestErpApsSchedulingEngine extends JunitAutoTestCase {
 
     @Test
     public void testBackwardScheduleDeadlineReachable() {
-        Long scheduleId = createSchedule("S-BWD", "BACKWARD");
+        String scheduleId = createSchedule("S-BWD", "BACKWARD");
         // 末道工序 latestEndDateT=07-11T12:00，前向推算应早于该交期
-        createOpWithLatest("OP-B1", 1L, 10, MACHINE_A, 10, "0", "60", "1",
+        createOpWithLatest("OP-B1", "1", 10, MACHINE_A, 10, "0", "60", "1",
                 "2026-07-10T08:00:00", "2026-07-11T12:00:00");
 
         ApiResponse<?> resp = runMutation("ErpApsOperationOrder__scheduleBackward",
@@ -98,15 +98,15 @@ public class TestErpApsSchedulingEngine extends JunitAutoTestCase {
 
     @Test
     public void testInsertRushOrderRevertsLowerPriorityOnly() {
-        Long scheduleId = createSchedule("S-INS", "FORWARD");
+        String scheduleId = createSchedule("S-INS", "FORWARD");
         // 已有 PLANNED 低优先级（priority=80）工序占 09:00~09:30
-        Long existing = createOpPlanned("OE", 1L, 10, MACHINE_A, 80, "0", "30", "1",
+        String existing = createOpPlanned("OE", "1", 10, MACHINE_A, 80, "0", "30", "1",
                 "2026-07-11T09:00:00", "2026-07-11T09:30:00");
         // 已有 PLANNED 高优先级（priority=5）工序占 11:00~11:30（窗口外，保留）
-        Long kept = createOpPlanned("OK", 2L, 10, MACHINE_A, 5, "0", "30", "1",
+        String kept = createOpPlanned("OK", "2", 10, MACHINE_A, 5, "0", "30", "1",
                 "2026-07-11T11:00:00", "2026-07-11T11:30:00");
         // 急单：priority=10（高于 OE 的 80，低于 OK 的 5），窗口 09:00~10:00
-        Long rush = createOp("OR", 3L, 10, MACHINE_A, 10, "0", "20", "1", "2026-07-11T09:00:00");
+        String rush = createOp("OR", "3", 10, MACHINE_A, 10, "0", "20", "1", "2026-07-11T09:00:00");
         setLatest(rush, "2026-07-11T09:55:00");
 
         ApiResponse<?> resp = runMutation("ErpApsOperationOrder__insertRushOrder",
@@ -126,11 +126,11 @@ public class TestErpApsSchedulingEngine extends JunitAutoTestCase {
 
     @Test
     public void testInsertRushOrderRejectsInProgress() {
-        Long scheduleId = createSchedule("S-IP", "FORWARD");
-        Long inProgress = createOpWithStatus("OIP", 1L, 10, MACHINE_A, 80, "0", "30", "1",
+        String scheduleId = createSchedule("S-IP", "FORWARD");
+        String inProgress = createOpWithStatus("OIP", "1", 10, MACHINE_A, 80, "0", "30", "1",
                 "2026-07-12T09:00:00", "IN_PROGRESS");
         setPlanned(inProgress, "2026-07-12T09:00:00", "2026-07-12T09:30:00");
-        Long rush = createOp("OR2", 2L, 10, MACHINE_A, 10, "0", "20", "1", "2026-07-12T09:00:00");
+        String rush = createOp("OR2", "2", 10, MACHINE_A, 10, "0", "20", "1", "2026-07-12T09:00:00");
         setLatest(rush, "2026-07-12T09:55:00");
 
         ApiResponse<?> resp = runMutation("ErpApsOperationOrder__insertRushOrder",
@@ -144,7 +144,7 @@ public class TestErpApsSchedulingEngine extends JunitAutoTestCase {
 
     @Test
     public void testScheduleStateMachine() {
-        Long scheduleId = createSchedule("S-SM", "FORWARD");
+        String scheduleId = createSchedule("S-SM", "FORWARD");
 
         ApiResponse<?> published = runMutation("ErpApsSchedule__publish",
                 ApiRequest.build(Map.of("id", scheduleId)));
@@ -164,7 +164,7 @@ public class TestErpApsSchedulingEngine extends JunitAutoTestCase {
         long before = countOpOrders();
         ApiResponse<?> resp = runQuery("ErpApsOperationOrder__checkFeasibility",
                 ApiRequest.build(Map.of(
-                        "materialId", 9999L,
+                        "materialId", "9999",
                         "qty", new BigDecimal("10"),
                         "desiredDate", "2026-07-30T00:00:00")));
         assertEquals(0, resp.getStatus(), "checkFeasibility 查询应可执行");
@@ -179,7 +179,7 @@ public class TestErpApsSchedulingEngine extends JunitAutoTestCase {
 
     // ==================== 辅助：数据 seeding 与 RPC ====================
 
-    private Long createSchedule(String code, String mode) {
+    private String createSchedule(String code, String mode) {
         Map<String, Object> d = new LinkedHashMap<>();
         d.put("code", code);
         d.put("name", code);
@@ -193,7 +193,7 @@ public class TestErpApsSchedulingEngine extends JunitAutoTestCase {
         return idOf(r.getData());
     }
 
-    private void createConstraint(Long machineId, String start, String end) {
+    private void createConstraint(String machineId, String start, String end) {
         Map<String, Object> d = new LinkedHashMap<>();
         d.put("machineId", machineId);
         d.put("constraintType", "MAINTENANCE");
@@ -204,7 +204,7 @@ public class TestErpApsSchedulingEngine extends JunitAutoTestCase {
         assertEquals(0, r.getStatus(), "创建 Constraint 应成功");
     }
 
-    private Long createOp(String code, Long workOrderId, int sequence, Long machineId, int priority,
+    private String createOp(String code, String workOrderId, int sequence, String machineId, int priority,
                           String setup, String perUnit, String qty, String earliestStart) {
         Map<String, Object> d = baseOp(code, workOrderId, sequence, machineId, priority, setup, perUnit, qty);
         d.put("status", "DRAFT");
@@ -212,7 +212,7 @@ public class TestErpApsSchedulingEngine extends JunitAutoTestCase {
         return saveOp(d, code);
     }
 
-    private Long createOpWithStatus(String code, Long workOrderId, int sequence, Long machineId, int priority,
+    private String createOpWithStatus(String code, String workOrderId, int sequence, String machineId, int priority,
                                     String setup, String perUnit, String qty, String earliestStart, String status) {
         Map<String, Object> d = baseOp(code, workOrderId, sequence, machineId, priority, setup, perUnit, qty);
         d.put("status", status);
@@ -220,7 +220,7 @@ public class TestErpApsSchedulingEngine extends JunitAutoTestCase {
         return saveOp(d, code);
     }
 
-    private Long createOpWithLatest(String code, Long workOrderId, int sequence, Long machineId, int priority,
+    private String createOpWithLatest(String code, String workOrderId, int sequence, String machineId, int priority,
                                     String setup, String perUnit, String qty, String earliestStart, String latestEnd) {
         Map<String, Object> d = baseOp(code, workOrderId, sequence, machineId, priority, setup, perUnit, qty);
         d.put("status", "DRAFT");
@@ -229,7 +229,7 @@ public class TestErpApsSchedulingEngine extends JunitAutoTestCase {
         return saveOp(d, code);
     }
 
-    private Long createOpPlanned(String code, Long workOrderId, int sequence, Long machineId, int priority,
+    private String createOpPlanned(String code, String workOrderId, int sequence, String machineId, int priority,
                                  String setup, String perUnit, String qty, String plannedStart, String plannedEnd) {
         Map<String, Object> d = baseOp(code, workOrderId, sequence, machineId, priority, setup, perUnit, qty);
         d.put("status", "PLANNED");
@@ -239,7 +239,7 @@ public class TestErpApsSchedulingEngine extends JunitAutoTestCase {
         return saveOp(d, code);
     }
 
-    private Map<String, Object> baseOp(String code, Long workOrderId, int sequence, Long machineId, int priority,
+    private Map<String, Object> baseOp(String code, String workOrderId, int sequence, String machineId, int priority,
                                        String setup, String perUnit, String qty) {
         Map<String, Object> d = new LinkedHashMap<>();
         d.put("code", code);
@@ -254,18 +254,14 @@ public class TestErpApsSchedulingEngine extends JunitAutoTestCase {
         return d;
     }
 
-    private Long saveOp(Map<String, Object> d, String code) {
+    private String saveOp(Map<String, Object> d, String code) {
         ApiResponse<?> r = runMutation("ErpApsOperationOrder__save", ApiRequest.build(Map.of("data", d)));
         assertEquals(0, r.getStatus(), "创建 OperationOrder " + code + " 应成功: " + r);
         return idOf(r.getData());
     }
 
-    private Long idOf(Object data) {
-        Object id = ((Map<?, ?>) data).get("id");
-        if (id instanceof Number) {
-            return ((Number) id).longValue();
-        }
-        return Long.parseLong(String.valueOf(id));
+    private String idOf(Object data) {
+        return String.valueOf(((Map<?, ?>) data).get("id"));
     }
 
     /** DB/JSON 返回的时间值可能是 java.sql.Timestamp 或字符串（"yyyy-MM-dd HH:mm:ss"），统一转 LocalDateTime。 */
@@ -283,7 +279,7 @@ public class TestErpApsSchedulingEngine extends JunitAutoTestCase {
         return LocalDateTime.parse(s);
     }
 
-    private void setLatest(Long id, String latestEnd) {
+    private void setLatest(String id, String latestEnd) {
         Map<String, Object> d = new LinkedHashMap<>();
         d.put("id", id);
         d.put("latestEndDateT", latestEnd);
@@ -291,7 +287,7 @@ public class TestErpApsSchedulingEngine extends JunitAutoTestCase {
         assertEquals(0, r.getStatus(), "update latestEndDateT 应成功");
     }
 
-    private void setPlanned(Long id, String start, String end) {
+    private void setPlanned(String id, String start, String end) {
         Map<String, Object> d = new LinkedHashMap<>();
         d.put("id", id);
         d.put("plannedStartDateT", start);
@@ -300,15 +296,15 @@ public class TestErpApsSchedulingEngine extends JunitAutoTestCase {
         assertEquals(0, r.getStatus(), "update plannedStart/End 应成功");
     }
 
-    private void runScheduleForward(Long scheduleId) {
+    private void runScheduleForward(String scheduleId) {
         ApiResponse<?> r = runMutation("ErpApsOperationOrder__scheduleForward",
                 ApiRequest.build(Map.of("scheduleId", scheduleId)));
         assertEquals(0, r.getStatus(), "前向排产应成功: " + r);
     }
 
-    private Map<String, Object> reloadOp(Long id) {
+    private Map<String, Object> reloadOp(String id) {
         ApiResponse<?> r = runQuery("ErpApsOperationOrder__get",
-                ApiRequest.build(Map.of("id", String.valueOf(id))));
+                ApiRequest.build(Map.of("id", id)));
         assertEquals(0, r.getStatus(), "reload op " + id + " 应成功");
         return (Map<String, Object>) r.getData();
     }

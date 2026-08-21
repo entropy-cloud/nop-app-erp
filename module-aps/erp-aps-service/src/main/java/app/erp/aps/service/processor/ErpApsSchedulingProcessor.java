@@ -111,7 +111,7 @@ public class ErpApsSchedulingProcessor {
 
     /** 窗口内同工作中心 PLANNED/IN_PROGRESS 工序（区间重叠：plannedEnd > windowStart 且 plannedStart < windowEnd）。
      * IN_PROGRESS 一并载入以触发不可回退硬约束校验。 */
-    protected List<ErpApsOperationOrder> loadPlannedInWindow(Long machineId,
+    protected List<ErpApsOperationOrder> loadPlannedInWindow(String machineId,
                                                              LocalDateTime windowStart,
                                                              LocalDateTime windowEnd) {
         QueryBean q = new QueryBean();
@@ -123,7 +123,7 @@ public class ErpApsSchedulingProcessor {
         return opOrderDao().findAllByQuery(q);
     }
 
-    protected List<ErpApsConstraint> loadMaintenanceConstraintsByMachine(Long machineId,
+    protected List<ErpApsConstraint> loadMaintenanceConstraintsByMachine(String machineId,
                                                                          LocalDateTime windowStart,
                                                                          LocalDateTime windowEnd) {
         QueryBean q = new QueryBean();
@@ -197,7 +197,7 @@ public class ErpApsSchedulingProcessor {
     }
 
     /** 区间重叠判定（边界可相切）：existing.start &lt; newEnd AND existing.end &gt; newStart。 */
-    protected boolean hasOverlappingReservation(Long machineId, Timestamp newStart, Timestamp newEnd) {
+    protected boolean hasOverlappingReservation(String machineId, Timestamp newStart, Timestamp newEnd) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("machineId", machineId));
         q.addFilter(lt("plannedStartT", newEnd));
@@ -207,7 +207,7 @@ public class ErpApsSchedulingProcessor {
 
     /** 释放某工序的全部产能预留（PLANNED→DRAFT/CANCELLED 重排前置）。ErpApsCapacityReservation 不启用逻辑删除，硬删除。
      *  释放后立即 flushSession：确保后续 persist 的重叠 pre-check 查询能反映已删除行，避免幻读阻塞重排。 */
-    protected void releaseReservationsByOrder(Long operationOrderId) {
+    protected void releaseReservationsByOrder(String operationOrderId) {
         if (operationOrderId == null) {
             return;
         }
@@ -226,7 +226,7 @@ public class ErpApsSchedulingProcessor {
 
     // ---------- 查询/校验辅助 ----------
 
-    protected ErpApsSchedule requireSchedule(Long scheduleId, IServiceContext context) {
+    protected ErpApsSchedule requireSchedule(String scheduleId, IServiceContext context) {
         ErpApsSchedule schedule = scheduleDao().getEntityById(scheduleId);
         if (schedule == null) {
             throw new NopException(ErpApsErrors.ERR_APS_SCHEDULE_NOT_FOUND)
@@ -241,7 +241,7 @@ public class ErpApsSchedulingProcessor {
         return schedule;
     }
 
-    protected ErpApsOperationOrder requireOperationOrder(Long operationOrderId, IServiceContext context) {
+    protected ErpApsOperationOrder requireOperationOrder(String operationOrderId, IServiceContext context) {
         ErpApsOperationOrder op = opOrderDao().getEntityById(operationOrderId);
         if (op == null) {
             throw new NopException(ErpApsErrors.ERR_APS_OP_ORDER_NOT_FOUND)

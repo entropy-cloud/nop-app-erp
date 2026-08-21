@@ -1,8 +1,8 @@
 {
-  "id": 0,
-  "orgId": 0,
-  "operationId": 0,
-  "machineId": 0,
+  "id": "",
+  "orgId": "",
+  "operationId": "",
+  "machineId": "",
   "priority": 0,
   "setupTimeDelta": 0.0,
   "runtimePerUnitDelta": 0.0,

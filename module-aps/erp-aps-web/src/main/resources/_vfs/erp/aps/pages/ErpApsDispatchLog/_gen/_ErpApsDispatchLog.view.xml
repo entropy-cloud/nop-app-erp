@@ -19,16 +19,16 @@
             <cols>
 
                 <!--ID-->
-                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="id" mandatory="true" sortable="true"/>
 
                 <!--业务组织-->
-                <col id="orgId" ui:number="true" sortable="true"/>
+                <col id="orgId" sortable="true"/>
 
                 <!--工序工单-->
-                <col id="operationOrderId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="operationOrderId" mandatory="true" sortable="true"/>
 
                 <!--工作中心-->
-                <col id="workcenterId" ui:number="true" sortable="true"/>
+                <col id="workcenterId" sortable="true"/>
 
                 <!--派工类型-->
                 <col id="dispatchType" mandatory="true" sortable="true"/>

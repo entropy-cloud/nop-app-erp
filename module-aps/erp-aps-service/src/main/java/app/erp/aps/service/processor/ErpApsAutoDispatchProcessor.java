@@ -14,6 +14,7 @@ import app.erp.mfg.dao.entity.ErpMfgWorkOrder;
 import app.erp.mfg.dao.entity.ErpMfgWorkcenter;
 import app.erp.notify.biz.IErpSysNotificationBiz;
 import io.nop.api.core.beans.query.QueryBean;
+import io.nop.api.core.convert.ConvertHelper;
 import io.nop.api.core.auth.IUserContext;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.api.core.time.CoreMetrics;
@@ -224,14 +225,16 @@ public class ErpApsAutoDispatchProcessor {
             return rule.getMaxConcurrentOps();
         }
         // 默认 = 工作中心 capacity（auto-dispatch.md §1.2；缺省 1）
-        ErpMfgWorkcenter wc = daoProvider.daoFor(ErpMfgWorkcenter.class).getEntityById(rule.getWorkcenterId());
+        // A2 桥接（bridge-main-020）：aps String workcenterId ↔ mfg Long 实体 API，退役 owner M3.1
+        ErpMfgWorkcenter wc = rule.getWorkcenterId() == null ? null
+                : daoProvider.daoFor(ErpMfgWorkcenter.class).getEntityById(ConvertHelper.toLong(rule.getWorkcenterId()));
         if (wc != null && wc.getCapacity() != null) {
             return Math.max(1, wc.getCapacity().setScale(0, RoundingMode.CEILING).intValueExact());
         }
         return 1;
     }
 
-    protected int countRunningOps(Long workcenterId) {
+    protected int countRunningOps(String workcenterId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("machineId", workcenterId));
         q.addFilter(eq("status", ErpApsConstants.OP_STATUS_IN_PROGRESS));
@@ -257,8 +260,9 @@ public class ErpApsAutoDispatchProcessor {
      * 无工单/无 BOM/无子件行 → null（无需求视为满足，记条件结果 null）。
      */
     protected Boolean checkMaterialAvailability(ErpApsOperationOrder op) {
+        // A2 桥接（bridge-main-019）：aps String workOrderId ↔ mfg Long 实体 API，退役 owner M3.1
         ErpMfgWorkOrder wo = op.getWorkOrderId() == null ? null
-                : daoProvider.daoFor(ErpMfgWorkOrder.class).getEntityById(op.getWorkOrderId());
+                : daoProvider.daoFor(ErpMfgWorkOrder.class).getEntityById(ConvertHelper.toLong(op.getWorkOrderId()));
         if (wo == null) {
             return null;
         }
@@ -273,6 +277,7 @@ public class ErpApsAutoDispatchProcessor {
         BigDecimal bomQty = bom.getQty() == null || bom.getQty().signum() == 0 ? BigDecimal.ONE : bom.getQty();
         BigDecimal planned = wo.getPlannedQuantity() == null ? BigDecimal.ZERO : wo.getPlannedQuantity();
 
+        // A2 桥接（bridge-main-017）：键 = mfg ErpMfgBomLine.materialId（Long，mfg 未迁移），退役 owner M3.1
         Map<Long, BigDecimal> requiredByMaterial = new LinkedHashMap<>();
         for (ErpMfgBomLine line : lines) {
             if (line.getMaterialId() == null) {
@@ -307,12 +312,14 @@ public class ErpApsAutoDispatchProcessor {
         return found.isEmpty() ? null : found.get(0);
     }
 
+    // A2 桥接（bridge-main-018）：mfg ErpMfgBomLine bomId Long 查询，退役 owner M3.1
     protected List<ErpMfgBomLine> loadBomLines(Long bomId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("bomId", bomId));
         return daoProvider.daoFor(ErpMfgBomLine.class).findAllByQuery(q);
     }
 
+    // A2 桥接（bridge-main-016）：inv ErpInvStockBalance materialId Long 查询，退役 owner M2.2
     protected BigDecimal sumAvailable(Long materialId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("materialId", materialId));
@@ -418,7 +425,7 @@ public class ErpApsAutoDispatchProcessor {
     // ---------- 手动 mutation 族（auto-dispatch.md §3.2/§3.3） ----------
 
     /** 手动强制派工：可跳过条件检查但原因（note）必填；dispatchType=MANUAL。 */
-    public ErpApsOperationOrder dispatchManually(Long operationOrderId, String note, IServiceContext context) {
+    public ErpApsOperationOrder dispatchManually(String operationOrderId, String note, IServiceContext context) {
         ErpApsOperationOrder op = requireOp(operationOrderId);
         if (note == null || note.isBlank()) {
             throw new NopException(ErpApsErrors.ERR_APS_DISPATCH_REASON_REQUIRED)
@@ -430,7 +437,7 @@ public class ErpApsAutoDispatchProcessor {
     }
 
     /** 保持：PLANNED→HOLD（计划员暂不派工）。 */
-    public ErpApsOperationOrder hold(Long operationOrderId, IServiceContext context) {
+    public ErpApsOperationOrder hold(String operationOrderId, IServiceContext context) {
         ErpApsOperationOrder op = requireOp(operationOrderId);
         try {
             stateMachine.assertCanHold(op.getStatus());
@@ -446,7 +453,7 @@ public class ErpApsAutoDispatchProcessor {
     }
 
     /** 解除保持：HOLD/ON_HOLD→PLANNED，重新进入自动派工检查循环。 */
-    public ErpApsOperationOrder unhold(Long operationOrderId, IServiceContext context) {
+    public ErpApsOperationOrder unhold(String operationOrderId, IServiceContext context) {
         ErpApsOperationOrder op = requireOp(operationOrderId);
         try {
             stateMachine.assertCanUnhold(op.getStatus());
@@ -488,7 +495,7 @@ public class ErpApsAutoDispatchProcessor {
         }
     }
 
-    protected ErpApsOperationOrder requireOp(Long operationOrderId) {
+    protected ErpApsOperationOrder requireOp(String operationOrderId) {
         ErpApsOperationOrder op = operationOrderId == null ? null : opOrderDao().getEntityById(operationOrderId);
         if (op == null) {
             throw new NopException(ErpApsErrors.ERR_APS_OP_ORDER_NOT_FOUND)

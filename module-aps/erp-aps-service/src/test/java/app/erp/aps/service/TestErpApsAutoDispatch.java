@@ -63,12 +63,12 @@ public class TestErpApsAutoDispatch extends JunitAutoTestCase {
     @Inject
     IErpApsOperationOrderBiz operationOrderBiz;
 
-    static final Long WC = 4001L;
+    static final String WC = "4001";
     static final Long WO = 5001L;
     static final Long BOM = 5101L;
     static final Long MATERIAL_CHILD = 5201L;
-    static final Long RULE_ID = 5301L;
-    static final Long NOTIFY_TPL = 5401L;
+    static final String RULE_ID = "5301";
+    static final String NOTIFY_TPL = "5401";
     static final String RECIPIENT = "planner-1";
 
     @AfterEach
@@ -83,7 +83,7 @@ public class TestErpApsAutoDispatch extends JunitAutoTestCase {
     public void testRuleSkipsDisabledHoldUntilAndOutsideHours() {
         enableDispatch();
         seedRule(r -> r.orm_propValueByName("enableAuto", Boolean.FALSE));
-        Long opDisabled = seedPlannedOp("AD-1A", inMinutes(5));
+        String opDisabled = seedPlannedOp("AD-1A", inMinutes(5));
         scan();
         assertEquals("PLANNED", status(opDisabled), "enableAuto=false 工作中心不自动派工");
 
@@ -91,7 +91,7 @@ public class TestErpApsAutoDispatch extends JunitAutoTestCase {
             r.orm_propValueByName("enableAuto", Boolean.TRUE);
             r.setHoldUntil(java.sql.Timestamp.valueOf(inMinutes(30))); // 暂停到 30 分钟后
         });
-        Long opHold = seedPlannedOp("AD-1B", inMinutes(5));
+        String opHold = seedPlannedOp("AD-1B", inMinutes(5));
         scan();
         assertEquals("PLANNED", status(opHold), "holdUntil 未到应跳过");
 
@@ -99,7 +99,7 @@ public class TestErpApsAutoDispatch extends JunitAutoTestCase {
             r.orm_propValueByName("enableAuto", Boolean.TRUE);
             r.setEnabledHours("[{\"start\":\"01:00\",\"end\":\"02:00\"}]"); // 当前时刻必然窗外（宽 1h）
         });
-        Long opHours = seedPlannedOp("AD-1C", inMinutes(5));
+        String opHours = seedPlannedOp("AD-1C", inMinutes(5));
         scan();
         assertEquals("PLANNED", status(opHours), "enabledHours 窗口外应跳过");
     }
@@ -111,26 +111,26 @@ public class TestErpApsAutoDispatch extends JunitAutoTestCase {
         enableDispatch();
         seedRule(null); // 默认 enableAuto=true, require 全关（隔离窗口过滤断言）
 
-        Long tooEarly = seedPlannedOp("AD-2A", inMinutes(200)); // > lookahead 120
-        Long tooLate = seedPlannedOp("AD-2B", inMinutes(-60));  // < -dispatchAhead 15
+        String tooEarly = seedPlannedOp("AD-2A", inMinutes(200)); // > lookahead 120
+        String tooLate = seedPlannedOp("AD-2B", inMinutes(-60));  // < -dispatchAhead 15
         scan();
         assertEquals("PLANNED", status(tooEarly), "超出前瞻窗口不派工");
         assertEquals("PLANNED", status(tooLate), "已过期工序不派工");
 
         seedRule(r -> r.setPriorityThreshold(20));
-        Long lowPriority = seedPlannedOp("AD-2C", inMinutes(5), 80);
+        String lowPriority = seedPlannedOp("AD-2C", inMinutes(5), 80);
         scan();
         assertEquals("PLANNED", status(lowPriority), "优先级低于阈值不派工");
 
         // HOLD 态排除（status dict 值承载保持态）
-        Long held = seedOp("AD-2D", inMinutes(5), "HOLD");
+        String held = seedOp("AD-2D", inMinutes(5), "HOLD");
         scan();
         assertEquals("HOLD", status(held), "HOLD 保持态不被自动派工");
 
         // maxConcurrentOps 满额：已有 1 条 IN_PROGRESS，maxConcurrentOps=1 → 不再派
         seedRule(r -> r.orm_propValueByName("maxConcurrentOps", 1));
         seedOp("AD-2E-RUNNING", inMinutes(5), "IN_PROGRESS");
-        Long queued = seedPlannedOp("AD-2F", inMinutes(6));
+        String queued = seedPlannedOp("AD-2F", inMinutes(6));
         scan();
         assertEquals("PLANNED", status(queued), "maxConcurrentOps 满额不派工");
     }
@@ -146,7 +146,7 @@ public class TestErpApsAutoDispatch extends JunitAutoTestCase {
             r.orm_propValueByName("requireOperator", Boolean.TRUE);
             r.orm_propValueByName("requireTooling", Boolean.TRUE);
         });
-        Long op = seedPlannedOp("AD-3", inMinutes(5));
+        String op = seedPlannedOp("AD-3", inMinutes(5));
         seedOpWorkOrder(op, WO);
 
         Integer dispatched = scan();
@@ -179,7 +179,7 @@ public class TestErpApsAutoDispatch extends JunitAutoTestCase {
         seedNotifyTemplate(NOTIFY_TPL, ErpApsConstants.NOTIFY_EVENT_DISPATCH_MATERIAL_SHORTAGE);
         seedKittedWorkOrder("100"); // 需求 5×100=500，库存 100 → 缺料
         seedRule(r -> r.orm_propValueByName("requireMaterial", Boolean.TRUE));
-        Long op = seedPlannedOp("AD-4", inMinutes(5));
+        String op = seedPlannedOp("AD-4", inMinutes(5));
         seedOpWorkOrder(op, WO);
 
         Integer dispatched = scan();
@@ -217,7 +217,7 @@ public class TestErpApsAutoDispatch extends JunitAutoTestCase {
             dao.saveEntity(wo);
         });
         seedRule(r -> r.orm_propValueByName("requireMaterial", Boolean.TRUE));
-        Long op = seedPlannedOp("AD-5", inMinutes(5));
+        String op = seedPlannedOp("AD-5", inMinutes(5));
         seedOpWorkOrder(op, 5502L);
 
         assertEquals(1, scan());
@@ -230,7 +230,7 @@ public class TestErpApsAutoDispatch extends JunitAutoTestCase {
     @Test
     public void testManualDispatchSkipsChecksAndRequiresNote() {
         seedRule(null);
-        Long op = seedPlannedOp("AD-6", inMinutes(5));
+        String op = seedPlannedOp("AD-6", inMinutes(5));
 
         ApiResponse<?> missing = rpc(mutation, "ErpApsOperationOrder__dispatchManually",
                 ApiRequest.build(Map.of("operationOrderId", op, "note", "")));
@@ -252,7 +252,7 @@ public class TestErpApsAutoDispatch extends JunitAutoTestCase {
 
     @Test
     public void testHoldAndUnholdTransitionsWithLogs() {
-        Long op = seedPlannedOp("AD-7", inMinutes(5));
+        String op = seedPlannedOp("AD-7", inMinutes(5));
 
         ApiResponse<?> hold = rpc(mutation, "ErpApsOperationOrder__hold",
                 ApiRequest.build(Map.of("operationOrderId", op)));
@@ -294,7 +294,7 @@ public class TestErpApsAutoDispatch extends JunitAutoTestCase {
     public void testConcurrentDoubleDispatchRejected() {
         enableDispatch();
         seedRule(null);
-        Long op = seedPlannedOp("AD-8", inMinutes(5));
+        String op = seedPlannedOp("AD-8", inMinutes(5));
 
         assertEquals(1, scan(), "首轮派工成功");
         assertEquals("IN_PROGRESS", status(op));
@@ -314,7 +314,7 @@ public class TestErpApsAutoDispatch extends JunitAutoTestCase {
     public void testGlobalSwitchOffSkipsScan() {
         // 默认 false，不开启
         seedRule(null);
-        Long op = seedPlannedOp("AD-9", inMinutes(5));
+        String op = seedPlannedOp("AD-9", inMinutes(5));
         assertEquals(0, scan());
         assertEquals("PLANNED", status(op), "全局开关关闭不派工");
     }
@@ -324,7 +324,7 @@ public class TestErpApsAutoDispatch extends JunitAutoTestCase {
     @Test
     public void testJobCronEmptySkipsAndFullJobPathDispatches() {
         seedRule(null);
-        Long op = seedPlannedOp("AD-10", inMinutes(5));
+        String op = seedPlannedOp("AD-10", inMinutes(5));
 
         ErpApsAutoDispatchJob job = new ErpApsAutoDispatchJob();
         job.setOperationOrderBiz(operationOrderBiz);
@@ -393,24 +393,24 @@ public class TestErpApsAutoDispatch extends JunitAutoTestCase {
         });
     }
 
-    private Long seedPlannedOp(String code, LocalDateTime plannedStart) {
+    private String seedPlannedOp(String code, LocalDateTime plannedStart) {
         return seedPlannedOp(code, plannedStart, 50);
     }
 
-    private Long seedPlannedOp(String code, LocalDateTime plannedStart, int priority) {
+    private String seedPlannedOp(String code, LocalDateTime plannedStart, int priority) {
         return seedOp(code, plannedStart, "PLANNED", priority);
     }
 
-    private Long seedOp(String code, LocalDateTime plannedStart, String status) {
+    private String seedOp(String code, LocalDateTime plannedStart, String status) {
         return seedOp(code, plannedStart, status, 50);
     }
 
-    private Long seedOp(String code, LocalDateTime plannedStart, String status, int priority) {
+    private String seedOp(String code, LocalDateTime plannedStart, String status, int priority) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpApsOperationOrder> dao = daoProvider.daoFor(ErpApsOperationOrder.class);
             ErpApsOperationOrder op = dao.newEntity();
             op.setCode(code);
-            op.setWorkOrderId(6601L);
+            op.setWorkOrderId("6601");
             op.setOperationName(code);
             op.setSequence(10);
             op.setMachineId(WC);
@@ -427,11 +427,11 @@ public class TestErpApsAutoDispatch extends JunitAutoTestCase {
         return idOf(code);
     }
 
-    private void seedOpWorkOrder(Long opId, Long workOrderId) {
+    private void seedOpWorkOrder(String opId, Long workOrderId) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpApsOperationOrder> dao = daoProvider.daoFor(ErpApsOperationOrder.class);
             ErpApsOperationOrder op = dao.getEntityById(opId);
-            op.setWorkOrderId(workOrderId);
+            op.setWorkOrderId(String.valueOf(workOrderId));
             dao.updateEntity(op);
         });
     }
@@ -485,7 +485,7 @@ public class TestErpApsAutoDispatch extends JunitAutoTestCase {
         });
     }
 
-    private void seedNotifyTemplate(Long id, String eventType) {
+    private void seedNotifyTemplate(String id, String eventType) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpSysNotificationTemplate> dao = daoProvider.daoFor(ErpSysNotificationTemplate.class);
             ErpSysNotificationTemplate t = new ErpSysNotificationTemplate();
@@ -510,7 +510,7 @@ public class TestErpApsAutoDispatch extends JunitAutoTestCase {
         return daoProvider.daoFor(ErpSysNotification.class).findAllByQuery(q).size();
     }
 
-    private Long idOf(String code) {
+    private String idOf(String code) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("code", code));
         List<ErpApsOperationOrder> found = daoProvider.daoFor(ErpApsOperationOrder.class).findAllByQuery(q);
@@ -518,18 +518,18 @@ public class TestErpApsAutoDispatch extends JunitAutoTestCase {
         return found.get(0).getId();
     }
 
-    private String status(Long opId) {
+    private String status(String opId) {
         return String.valueOf(reloadOp(opId).get("status"));
     }
 
-    private Map<String, Object> reloadOp(Long id) {
+    private Map<String, Object> reloadOp(String id) {
         ApiResponse<?> r = rpc(GraphQLOperationType.query, "ErpApsOperationOrder__get",
-                ApiRequest.build(Map.of("id", String.valueOf(id))));
+                ApiRequest.build(Map.of("id", id)));
         assertEquals(0, r.getStatus());
         return (Map<String, Object>) r.getData();
     }
 
-    private ErpApsDispatchLog latestLog(Long opId) {
+    private ErpApsDispatchLog latestLog(String opId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("operationOrderId", opId));
         q.addOrderField("id", true); // true=降序，取最新
@@ -537,7 +537,7 @@ public class TestErpApsAutoDispatch extends JunitAutoTestCase {
         return logs.isEmpty() ? null : logs.get(0);
     }
 
-    private int countLogs(Long opId) {
+    private int countLogs(String opId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("operationOrderId", opId));
         return daoProvider.daoFor(ErpApsDispatchLog.class).findAllByQuery(q).size();

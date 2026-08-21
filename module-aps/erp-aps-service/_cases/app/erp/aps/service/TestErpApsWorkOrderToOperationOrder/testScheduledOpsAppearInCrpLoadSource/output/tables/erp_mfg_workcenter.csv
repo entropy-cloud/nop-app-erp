@@ -1,0 +1,3 @@
+_chgType,ID,CODE,NAME,CAPACITY,CAPACITY_UNIT,HOURLY_RATE,WORK_HOURS_PER_DAY,IS_EXTERNAL,REMARK,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
+A,9301,@var:ErpMfgWorkcenter@code,工作中心9301,,,,,false,,@var:ErpMfgWorkcenter@delVersion,0,autotest-ref,*,autotest-ref,*
+A,9302,@var:ErpMfgWorkcenter@code_1,工作中心9302,,,,,false,,@var:ErpMfgWorkcenter@delVersion,0,autotest-ref,*,autotest-ref,*

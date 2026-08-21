@@ -121,10 +121,10 @@ public class _ErpApsCapacityReservation extends DynamicOrmEntity{
 
     
     /* ID: ID */
-    private java.lang.Long _id;
+    private java.lang.String _id;
     
     /* 工作中心/设备: MACHINE_ID */
-    private java.lang.Long _machineId;
+    private java.lang.String _machineId;
     
     /* 预留开始时间: PLANNED_START_T */
     private java.sql.Timestamp _plannedStartT;
@@ -133,10 +133,10 @@ public class _ErpApsCapacityReservation extends DynamicOrmEntity{
     private java.sql.Timestamp _plannedEndT;
     
     /* 工序工单: OPERATION_ORDER_ID */
-    private java.lang.Long _operationOrderId;
+    private java.lang.String _operationOrderId;
     
     /* 业务组织: ORG_ID */
-    private java.lang.Long _orgId;
+    private java.lang.String _orgId;
     
     /* 备注: REMARK */
     private java.lang.String _remark;
@@ -278,9 +278,9 @@ public class _ErpApsCapacityReservation extends DynamicOrmEntity{
         switch(propId){
         
             case PROP_ID_id:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_id));
                }
                setId(typedValue);
@@ -288,9 +288,9 @@ public class _ErpApsCapacityReservation extends DynamicOrmEntity{
             }
         
             case PROP_ID_machineId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_machineId));
                }
                setMachineId(typedValue);
@@ -318,9 +318,9 @@ public class _ErpApsCapacityReservation extends DynamicOrmEntity{
             }
         
             case PROP_ID_operationOrderId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_operationOrderId));
                }
                setOperationOrderId(typedValue);
@@ -328,9 +328,9 @@ public class _ErpApsCapacityReservation extends DynamicOrmEntity{
             }
         
             case PROP_ID_orgId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_orgId));
                }
                setOrgId(typedValue);
@@ -408,14 +408,14 @@ public class _ErpApsCapacityReservation extends DynamicOrmEntity{
         
             case PROP_ID_id:{
                onInitProp(propId);
-               this._id = (java.lang.Long)value;
+               this._id = (java.lang.String)value;
                orm_id(); // 如果是设置主键字段，则触发watcher
                break;
             }
         
             case PROP_ID_machineId:{
                onInitProp(propId);
-               this._machineId = (java.lang.Long)value;
+               this._machineId = (java.lang.String)value;
                
                break;
             }
@@ -436,14 +436,14 @@ public class _ErpApsCapacityReservation extends DynamicOrmEntity{
         
             case PROP_ID_operationOrderId:{
                onInitProp(propId);
-               this._operationOrderId = (java.lang.Long)value;
+               this._operationOrderId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_orgId:{
                onInitProp(propId);
-               this._orgId = (java.lang.Long)value;
+               this._orgId = (java.lang.String)value;
                
                break;
             }
@@ -499,7 +499,7 @@ public class _ErpApsCapacityReservation extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final java.lang.Long getId(){
+    public final java.lang.String getId(){
          onPropGet(PROP_ID_id);
          return _id;
     }
@@ -507,7 +507,7 @@ public class _ErpApsCapacityReservation extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final void setId(java.lang.Long value){
+    public final void setId(java.lang.String value){
         if(onPropSet(PROP_ID_id,value)){
             this._id = value;
             internalClearRefs(PROP_ID_id);
@@ -518,7 +518,7 @@ public class _ErpApsCapacityReservation extends DynamicOrmEntity{
     /**
      * 工作中心/设备: MACHINE_ID
      */
-    public final java.lang.Long getMachineId(){
+    public final java.lang.String getMachineId(){
          onPropGet(PROP_ID_machineId);
          return _machineId;
     }
@@ -526,7 +526,7 @@ public class _ErpApsCapacityReservation extends DynamicOrmEntity{
     /**
      * 工作中心/设备: MACHINE_ID
      */
-    public final void setMachineId(java.lang.Long value){
+    public final void setMachineId(java.lang.String value){
         if(onPropSet(PROP_ID_machineId,value)){
             this._machineId = value;
             internalClearRefs(PROP_ID_machineId);
@@ -575,7 +575,7 @@ public class _ErpApsCapacityReservation extends DynamicOrmEntity{
     /**
      * 工序工单: OPERATION_ORDER_ID
      */
-    public final java.lang.Long getOperationOrderId(){
+    public final java.lang.String getOperationOrderId(){
          onPropGet(PROP_ID_operationOrderId);
          return _operationOrderId;
     }
@@ -583,7 +583,7 @@ public class _ErpApsCapacityReservation extends DynamicOrmEntity{
     /**
      * 工序工单: OPERATION_ORDER_ID
      */
-    public final void setOperationOrderId(java.lang.Long value){
+    public final void setOperationOrderId(java.lang.String value){
         if(onPropSet(PROP_ID_operationOrderId,value)){
             this._operationOrderId = value;
             internalClearRefs(PROP_ID_operationOrderId);
@@ -594,7 +594,7 @@ public class _ErpApsCapacityReservation extends DynamicOrmEntity{
     /**
      * 业务组织: ORG_ID
      */
-    public final java.lang.Long getOrgId(){
+    public final java.lang.String getOrgId(){
          onPropGet(PROP_ID_orgId);
          return _orgId;
     }
@@ -602,7 +602,7 @@ public class _ErpApsCapacityReservation extends DynamicOrmEntity{
     /**
      * 业务组织: ORG_ID
      */
-    public final void setOrgId(java.lang.Long value){
+    public final void setOrgId(java.lang.String value){
         if(onPropSet(PROP_ID_orgId,value)){
             this._orgId = value;
             internalClearRefs(PROP_ID_orgId);

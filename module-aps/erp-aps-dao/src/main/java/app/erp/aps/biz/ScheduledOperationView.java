@@ -11,17 +11,17 @@ import java.time.LocalDateTime;
 @DataBean
 public class ScheduledOperationView {
 
-    private Long workcenterId;
+    private String workcenterId;
     private String operationName;
     private LocalDateTime plannedStartDateT;
     private LocalDateTime plannedEndDateT;
     private long durationMinutes;
 
-    public Long getWorkcenterId() {
+    public String getWorkcenterId() {
         return workcenterId;
     }
 
-    public void setWorkcenterId(Long workcenterId) {
+    public void setWorkcenterId(String workcenterId) {
         this.workcenterId = workcenterId;
     }
 

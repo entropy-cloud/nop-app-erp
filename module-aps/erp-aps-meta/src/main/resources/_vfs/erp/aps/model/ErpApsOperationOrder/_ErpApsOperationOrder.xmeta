@@ -22,8 +22,8 @@
 
     <props>
         <prop name="id" displayName="ID" propId="1" i18n-en:displayName="ID" tagSet="seq-default" mandatory="true"
-              queryable="true" sortable="true" insertable="true" updatable="false" graphql:type="String">
-            <schema type="java.lang.Long"/>
+              queryable="true" sortable="true" insertable="true" updatable="false">
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="code" displayName="编号" propId="2" i18n-en:displayName="Code" tagSet="var" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
@@ -31,7 +31,7 @@
         </prop>
         <prop name="workOrderId" displayName="主工单" propId="3" i18n-en:displayName="Work Order" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="operationName" displayName="工序名称" propId="4" i18n-en:displayName="Operation Name" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
@@ -43,7 +43,7 @@
         </prop>
         <prop name="machineId" displayName="工作中心/设备" propId="6" i18n-en:displayName="Machine" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="priority" displayName="优先级" propId="7" i18n-en:displayName="Priority" queryable="true"
               sortable="true" insertable="true" updatable="true" defaultValue="50">
@@ -95,7 +95,7 @@
         </prop>
         <prop name="orgId" displayName="业务组织" propId="19" i18n-en:displayName="Organization" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="org">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="remark" displayName="备注" propId="20" i18n-en:displayName="Remark" queryable="true" sortable="true"
               insertable="true" updatable="true">
@@ -139,7 +139,7 @@
         </prop>
         <prop name="selectedRoutingId" displayName="选用路由" propId="30" i18n-en:displayName="Selected Routing"
               queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="routingSelectionReason" displayName="路由选择原因" propId="31"
               i18n-en:displayName="Routing Selection Reason" queryable="true" sortable="true" insertable="true"

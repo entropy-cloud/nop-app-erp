@@ -94,9 +94,9 @@ public class TestErpApsWorkOrderToOperationOrder extends JunitAutoTestCase {
 
         ErpApsOperationOrder op10 = opBySequence(ops, 10);
         assertEquals("WO-9101-OP10", op10.getCode());
-        assertEquals(WO_FULL, op10.getWorkOrderId());
+        assertEquals(String.valueOf(WO_FULL), op10.getWorkOrderId());
         assertEquals("下料", op10.getOperationName());
-        assertEquals(WC_1, op10.getMachineId());
+        assertEquals(String.valueOf(WC_1), op10.getMachineId());
         assertEquals(0, new BigDecimal("5").compareTo(op10.getSetupTime()));
         assertEquals(0, new BigDecimal("2").compareTo(op10.getRuntimePerUnit()));
         assertEquals(0, new BigDecimal("10").compareTo(op10.getQty()));
@@ -106,7 +106,7 @@ public class TestErpApsWorkOrderToOperationOrder extends JunitAutoTestCase {
 
         ErpApsOperationOrder op20 = opBySequence(ops, 20);
         assertEquals("车削", op20.getOperationName());
-        assertEquals(WC_2, op20.getMachineId());
+        assertEquals(String.valueOf(WC_2), op20.getMachineId());
         // 15 + 3×10 = 45
         assertEquals(0, new BigDecimal("45").compareTo(op20.getTotalDuration()));
     }
@@ -132,7 +132,7 @@ public class TestErpApsWorkOrderToOperationOrder extends JunitAutoTestCase {
 
     @Test
     public void testMissingRoutingSkipsAndNotifies() {
-        seedNotifyTemplate(9401L, ErpApsConstants.NOTIFY_EVENT_WORKORDER_NO_ROUTING);
+        seedNotifyTemplate("9401", ErpApsConstants.NOTIFY_EVENT_WORKORDER_NO_ROUTING);
         seedWorkOrder(WO_NO_ROUTING, "NOT_STARTED", null, "10");
 
         Map<String, Object> r = createFromWorkOrder(WO_NO_ROUTING);
@@ -148,7 +148,7 @@ public class TestErpApsWorkOrderToOperationOrder extends JunitAutoTestCase {
 
     @Test
     public void testWorkcenterMissingRejectsOperationAndNotifies() {
-        seedNotifyTemplate(9402L, ErpApsConstants.NOTIFY_EVENT_OPERATION_WORKCENTER_MISSING);
+        seedNotifyTemplate("9402", ErpApsConstants.NOTIFY_EVENT_OPERATION_WORKCENTER_MISSING);
         seedWorkOrder(WO_BAD_WC, "NOT_STARTED", ROUTING_1, "5");
         seedRoutingOp(ROUTING_1, 10, WC_1, "0", "1");
         seedRoutingOp(ROUTING_1, 20, 999999L, "0", "1"); // 不存在的工作中心
@@ -209,7 +209,7 @@ public class TestErpApsWorkOrderToOperationOrder extends JunitAutoTestCase {
         createFromWorkOrder(WO_FULL);
 
         // 排产后（DRAFT→PLANNED + planned 时间），WorkOrder 出现在 CRP 负荷来源（此前 apsSlotsByWo.get 为 null 盲区）
-        Long scheduleId = createSchedule("S-WO-CRP");
+        String scheduleId = createSchedule("S-WO-CRP");
         for (ErpApsOperationOrder op : findOps(WO_FULL)) {
             Map<String, Object> d = new LinkedHashMap<>();
             d.put("id", op.getId());
@@ -227,14 +227,14 @@ public class TestErpApsWorkOrderToOperationOrder extends JunitAutoTestCase {
 
     private Map<String, Object> createFromWorkOrder(Long workOrderId) {
         ApiResponse<?> r = rpc(mutation, "ErpApsOperationOrder__createOperationOrdersFromWorkOrder",
-                ApiRequest.build(Map.of("workOrderId", workOrderId)));
+                ApiRequest.build(Map.of("workOrderId", String.valueOf(workOrderId))));
         assertEquals(0, r.getStatus(), "createOperationOrdersFromWorkOrder 应成功: " + r);
         return (Map<String, Object>) r.getData();
     }
 
     private List<ErpApsOperationOrder> findOps(Long workOrderId) {
         QueryBean q = new QueryBean();
-        q.addFilter(eq("workOrderId", workOrderId));
+        q.addFilter(eq("workOrderId", String.valueOf(workOrderId)));
         q.addOrderField("sequence", false);
         return daoProvider.daoFor(ErpApsOperationOrder.class).findAllByQuery(q);
     }
@@ -244,7 +244,7 @@ public class TestErpApsWorkOrderToOperationOrder extends JunitAutoTestCase {
                 .findFirst().orElseThrow();
     }
 
-    private Long createSchedule(String code) {
+    private String createSchedule(String code) {
         Map<String, Object> d = new LinkedHashMap<>();
         d.put("code", code);
         d.put("name", code);
@@ -255,8 +255,7 @@ public class TestErpApsWorkOrderToOperationOrder extends JunitAutoTestCase {
         d.put("status", "DRAFT");
         ApiResponse<?> r = rpc(mutation, "ErpApsSchedule__save", ApiRequest.build(Map.of("data", d)));
         assertEquals(0, r.getStatus());
-        Object id = ((Map<?, ?>) r.getData()).get("id");
-        return Long.valueOf(String.valueOf(id));
+        return String.valueOf(((Map<?, ?>) r.getData()).get("id"));
     }
 
     private void seedWorkOrder(Long id, String docStatus, Long routingId, String qty) {
@@ -320,7 +319,7 @@ public class TestErpApsWorkOrderToOperationOrder extends JunitAutoTestCase {
         });
     }
 
-    private void seedNotifyTemplate(Long id, String eventType) {
+    private void seedNotifyTemplate(String id, String eventType) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpSysNotificationTemplate> dao = daoProvider.daoFor(ErpSysNotificationTemplate.class);
             ErpSysNotificationTemplate t = new ErpSysNotificationTemplate();

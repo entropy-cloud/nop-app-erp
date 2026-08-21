@@ -1,0 +1,3 @@
+_chgType,ID,CODE,NAME,SCHEDULE_DATE,SCHEDULING_MODE,HORIZON_START,HORIZON_END,STATUS,ORG_ID,REMARK,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME,BUSINESS_DATE
+A,4,@var:ErpApsSchedule@code,S-AR-4,2026-07-10,FORWARD,@var:ErpApsSchedule@horizonStart_1,@var:ErpApsSchedule@horizonEnd_1,DRAFT,,,@var:ErpApsSchedule@delVersion_1,0,autotest-ref,*,autotest-ref,*,@var:ErpApsSchedule@businessDate_1
+A,5,@var:ErpApsSchedule@code_1,S-AR-4B,2026-07-10,FORWARD,@var:ErpApsSchedule@horizonStart_1,@var:ErpApsSchedule@horizonEnd_1,DRAFT,,,@var:ErpApsSchedule@delVersion_1,0,autotest-ref,*,autotest-ref,*,@var:ErpApsSchedule@businessDate_1

@@ -1,8 +1,8 @@
 {
-  "id": 0,
-  "orgId": 0,
-  "operationOrderId": 0,
-  "workcenterId": 0,
+  "id": "",
+  "orgId": "",
+  "operationOrderId": "",
+  "workcenterId": "",
   "dispatchType": "",
   "dispatchType_label": "",
   "previousStatus": "",

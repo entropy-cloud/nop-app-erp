@@ -12,16 +12,16 @@
     public class ErpApsOperationOrderInputBean extends CrudInputBase {
 
     
-        private Long _id;
+        private String _id;
 
     
         @PropMeta(propId=1)
     
-        public Long getId(){
+        public String getId(){
             return _id;
         }
 
-        public void setId(Long value){
+        public void setId(String value){
             this._id = value;
         }
 
@@ -40,16 +40,16 @@
         }
 
 
-        private Long _workOrderId;
+        private String _workOrderId;
 
     
         @PropMeta(propId=3)
     
-        public Long getWorkOrderId(){
+        public String getWorkOrderId(){
             return _workOrderId;
         }
 
-        public void setWorkOrderId(Long value){
+        public void setWorkOrderId(String value){
             this._workOrderId = value;
         }
 
@@ -82,16 +82,16 @@
         }
 
 
-        private Long _machineId;
+        private String _machineId;
 
     
         @PropMeta(propId=6)
     
-        public Long getMachineId(){
+        public String getMachineId(){
             return _machineId;
         }
 
-        public void setMachineId(Long value){
+        public void setMachineId(String value){
             this._machineId = value;
         }
 
@@ -264,16 +264,16 @@
         }
 
 
-        private Long _orgId;
+        private String _orgId;
 
     
         @PropMeta(propId=19)
     
-        public Long getOrgId(){
+        public String getOrgId(){
             return _orgId;
         }
 
-        public void setOrgId(Long value){
+        public void setOrgId(String value){
             this._orgId = value;
         }
 
@@ -334,16 +334,16 @@
         }
 
 
-        private Long _selectedRoutingId;
+        private String _selectedRoutingId;
 
     
         @PropMeta(propId=30)
     
-        public Long getSelectedRoutingId(){
+        public String getSelectedRoutingId(){
             return _selectedRoutingId;
         }
 
-        public void setSelectedRoutingId(Long value){
+        public void setSelectedRoutingId(String value){
             this._selectedRoutingId = value;
         }
 

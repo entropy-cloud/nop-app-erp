@@ -40,8 +40,8 @@ public class ErpApsScheduleBizModel extends CrudBizModel<ErpApsSchedule> impleme
 
     @Override
     @BizMutation
-    public ErpApsSchedule publish(@Name("id") Long id, IServiceContext context) {
-        ErpApsSchedule schedule = this.get(String.valueOf(id), false, context);
+    public ErpApsSchedule publish(@Name("id") String id, IServiceContext context) {
+        ErpApsSchedule schedule = this.get(id, false, context);
         if (schedule == null) {
             throw new NopException(ErpApsErrors.ERR_APS_SCHEDULE_NOT_FOUND)
                     .param(ErpApsErrors.ARG_SCHEDULE_ID, id);
@@ -58,8 +58,8 @@ public class ErpApsScheduleBizModel extends CrudBizModel<ErpApsSchedule> impleme
 
     @Override
     @BizMutation
-    public ErpApsSchedule archive(@Name("id") Long id, IServiceContext context) {
-        ErpApsSchedule schedule = this.get(String.valueOf(id), false, context);
+    public ErpApsSchedule archive(@Name("id") String id, IServiceContext context) {
+        ErpApsSchedule schedule = this.get(id, false, context);
         if (schedule == null) {
             throw new NopException(ErpApsErrors.ERR_APS_SCHEDULE_NOT_FOUND)
                     .param(ErpApsErrors.ARG_SCHEDULE_ID, id);

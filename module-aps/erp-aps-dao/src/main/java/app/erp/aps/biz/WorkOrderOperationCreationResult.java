@@ -13,7 +13,7 @@ import java.util.List;
 @DataBean
 public class WorkOrderOperationCreationResult {
 
-    private Long workOrderId;
+    private String workOrderId;
     private String workOrderCode;
     /** 已存在 OperationOrder（幂等守卫命中，本次零创建）。 */
     private boolean alreadyCreated;
@@ -24,11 +24,11 @@ public class WorkOrderOperationCreationResult {
     /** 因工作中心不存在被拒绝创建的工序 sequence 列表（每项均已告警）。 */
     private List<Integer> rejectedSequences = new ArrayList<>();
 
-    public Long getWorkOrderId() {
+    public String getWorkOrderId() {
         return workOrderId;
     }
 
-    public void setWorkOrderId(Long workOrderId) {
+    public void setWorkOrderId(String workOrderId) {
         this.workOrderId = workOrderId;
     }
 

@@ -35,7 +35,7 @@ public class ErpApsSchedulingInsertRushOrderProcessor {
     @Inject
     ErpApsOperationOrderStateMachine stateMachine;
 
-    public SchedulingResult insertRushOrder(Long operationOrderId, IServiceContext context) {
+    public SchedulingResult insertRushOrder(String operationOrderId, IServiceContext context) {
         ErpApsOperationOrder rush = facade.requireOperationOrder(operationOrderId, context);
         int buffer = AppConfig.var(ErpApsConfigs.CONFIG_BUFFER_MINUTES_BETWEEN_OPS,
                 ErpApsConfigs.DEFAULT_BUFFER_MINUTES_BETWEEN_OPS);

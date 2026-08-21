@@ -7,10 +7,10 @@
       {
         "id": "1",
         "code": "@var:ErpApsOperationOrder@code",
-        "workOrderId": 1,
+        "workOrderId": "1",
         "operationName": "冒烟工序",
         "sequence": 10,
-        "machineId": 1,
+        "machineId": "1",
         "priority": 50,
         "plannedStartDateT": null,
         "plannedEndDateT": null,
@@ -34,7 +34,12 @@
         "updateTime": "@var:ErpApsOperationOrder@createTime",
         "earliestStartDateT": null,
         "latestEndDateT": null,
-        "businessDate": "@var:ErpApsOperationOrder@businessDate"
+        "businessDate": "@var:ErpApsOperationOrder@businessDate",
+        "selectedRoutingId": null,
+        "routingSelectionReason": null,
+        "routingSelectionReason_label": null,
+        "manualOverride": null,
+        "allowFallback": null
       }
     ],
     "limit": 10,

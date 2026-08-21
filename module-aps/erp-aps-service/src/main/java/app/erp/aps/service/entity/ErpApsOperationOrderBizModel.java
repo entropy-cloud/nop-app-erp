@@ -87,13 +87,13 @@ public class ErpApsOperationOrderBizModel extends CrudBizModel<ErpApsOperationOr
 
     @Override
     @BizMutation
-    public SchedulingResult scheduleForward(@Name("scheduleId") Long scheduleId, IServiceContext context) {
+    public SchedulingResult scheduleForward(@Name("scheduleId") String scheduleId, IServiceContext context) {
         return scheduleForwardProcessor.scheduleForward(scheduleId, context);
     }
 
     @Override
     @BizMutation
-    public SchedulingResult scheduleBackward(@Name("scheduleId") Long scheduleId, IServiceContext context) {
+    public SchedulingResult scheduleBackward(@Name("scheduleId") String scheduleId, IServiceContext context) {
         return scheduleBackwardProcessor.scheduleBackward(scheduleId, context);
     }
 
@@ -110,12 +110,10 @@ public class ErpApsOperationOrderBizModel extends CrudBizModel<ErpApsOperationOr
         }
         for (String id : ids) {
             try {
-                scheduleForward(Long.valueOf(id), context);
+                scheduleForward(id, context);
                 result.recordSuccess();
             } catch (NopException e) {
                 result.recordFailure(id, e.getErrorCode(), e.getDescription());
-            } catch (NumberFormatException e) {
-                result.recordFailure(id, "INVALID_ID", "非数字 ID：" + id);
             }
         }
         return result;
@@ -123,7 +121,7 @@ public class ErpApsOperationOrderBizModel extends CrudBizModel<ErpApsOperationOr
 
     @Override
     @BizMutation
-    public SchedulingResult insertRushOrder(@Name("operationOrderId") Long operationOrderId, IServiceContext context) {
+    public SchedulingResult insertRushOrder(@Name("operationOrderId") String operationOrderId, IServiceContext context) {
         return insertRushOrderProcessor.insertRushOrder(operationOrderId, context);
     }
 
@@ -132,7 +130,7 @@ public class ErpApsOperationOrderBizModel extends CrudBizModel<ErpApsOperationOr
      */
     @Override
     @BizMutation
-    public WorkOrderOperationCreationResult createOperationOrdersFromWorkOrder(@Name("workOrderId") Long workOrderId,
+    public WorkOrderOperationCreationResult createOperationOrdersFromWorkOrder(@Name("workOrderId") String workOrderId,
                                                                                IServiceContext context) {
         return workOrderToOperationProcessor.createOperationOrdersFromWorkOrder(workOrderId, context);
     }
@@ -151,8 +149,8 @@ public class ErpApsOperationOrderBizModel extends CrudBizModel<ErpApsOperationOr
      */
     @Override
     @BizMutation
-    public ErpApsOperationOrder manualOverrideRouting(@Name("operationOrderId") Long operationOrderId,
-                                                      @Name("routingId") Long routingId,
+    public ErpApsOperationOrder manualOverrideRouting(@Name("operationOrderId") String operationOrderId,
+                                                      @Name("routingId") String routingId,
                                                       IServiceContext context) {
         return routingManualOverrideProcessor.manualOverrideRouting(
                 schedulingProcessor, operationOrderId, routingId, context);
@@ -172,7 +170,7 @@ public class ErpApsOperationOrderBizModel extends CrudBizModel<ErpApsOperationOr
      */
     @Override
     @BizMutation
-    public ErpApsOperationOrder dispatchManually(@Name("operationOrderId") Long operationOrderId,
+    public ErpApsOperationOrder dispatchManually(@Name("operationOrderId") String operationOrderId,
                                                  @Name("note") String note,
                                                  IServiceContext context) {
         return autoDispatchProcessor.dispatchManually(operationOrderId, note, context);
@@ -183,7 +181,7 @@ public class ErpApsOperationOrderBizModel extends CrudBizModel<ErpApsOperationOr
      */
     @Override
     @BizMutation
-    public ErpApsOperationOrder hold(@Name("operationOrderId") Long operationOrderId, IServiceContext context) {
+    public ErpApsOperationOrder hold(@Name("operationOrderId") String operationOrderId, IServiceContext context) {
         return autoDispatchProcessor.hold(operationOrderId, context);
     }
 
@@ -192,19 +190,19 @@ public class ErpApsOperationOrderBizModel extends CrudBizModel<ErpApsOperationOr
      */
     @Override
     @BizMutation
-    public ErpApsOperationOrder unhold(@Name("operationOrderId") Long operationOrderId, IServiceContext context) {
+    public ErpApsOperationOrder unhold(@Name("operationOrderId") String operationOrderId, IServiceContext context) {
         return autoDispatchProcessor.unhold(operationOrderId, context);
     }
 
     @Override
     @BizQuery
-    public LocalDateTime earliestCompletionDate(@Name("materialId") Long materialId, @Name("qty") BigDecimal qty) {
+    public LocalDateTime earliestCompletionDate(@Name("materialId") String materialId, @Name("qty") BigDecimal qty) {
         return atpCtpService.earliestCompletionDate(materialId, qty);
     }
 
     @Override
     @BizQuery
-    public CtpResult checkFeasibility(@Name("materialId") Long materialId,
+    public CtpResult checkFeasibility(@Name("materialId") String materialId,
                                       @Name("qty") BigDecimal qty,
                                       @Name("desiredDate") LocalDateTime desiredDate) {
         return atpCtpService.checkFeasibility(materialId, qty, desiredDate);
@@ -212,8 +210,8 @@ public class ErpApsOperationOrderBizModel extends CrudBizModel<ErpApsOperationOr
 
     @Override
     @BizMutation
-    public ErpApsOperationOrder start(@Name("operationOrderId") Long operationOrderId, IServiceContext context) {
-        ErpApsOperationOrder order = requireEntity(String.valueOf(operationOrderId), null, context);
+    public ErpApsOperationOrder start(@Name("operationOrderId") String operationOrderId, IServiceContext context) {
+        ErpApsOperationOrder order = requireEntity(operationOrderId, null, context);
         // 矩阵守卫下沉 Bean（PLANNED→IN_PROGRESS），非法边 Bean 抛 common 码，此处映射领域码。
         try {
             stateMachine.assertCanStart(order.getStatus());
@@ -227,8 +225,8 @@ public class ErpApsOperationOrderBizModel extends CrudBizModel<ErpApsOperationOr
 
     @Override
     @BizMutation
-    public ErpApsOperationOrder complete(@Name("operationOrderId") Long operationOrderId, IServiceContext context) {
-        ErpApsOperationOrder order = requireEntity(String.valueOf(operationOrderId), null, context);
+    public ErpApsOperationOrder complete(@Name("operationOrderId") String operationOrderId, IServiceContext context) {
+        ErpApsOperationOrder order = requireEntity(operationOrderId, null, context);
         // 矩阵守卫下沉 Bean（IN_PROGRESS→FINISHED），非法边 Bean 抛 common 码，此处映射领域码。
         try {
             stateMachine.assertCanComplete(order.getStatus());
@@ -242,8 +240,8 @@ public class ErpApsOperationOrderBizModel extends CrudBizModel<ErpApsOperationOr
 
     @Override
     @BizMutation
-    public ErpApsOperationOrder cancel(@Name("operationOrderId") Long operationOrderId, IServiceContext context) {
-        ErpApsOperationOrder order = requireEntity(String.valueOf(operationOrderId), null, context);
+    public ErpApsOperationOrder cancel(@Name("operationOrderId") String operationOrderId, IServiceContext context) {
+        ErpApsOperationOrder order = requireEntity(operationOrderId, null, context);
         // 矩阵守卫下沉 Bean（cancel 三源 {DRAFT,PLANNED,IN_PROGRESS}→CANCELLED），非法边 Bean 抛 common 码，
         // 此处映射领域码。cancel 三源经 Bean 正向枚举合法来源（对齐 owner doc §2 :24/:29/:33 + §3 终态不可恢复）。
         try {
@@ -277,7 +275,7 @@ public class ErpApsOperationOrderBizModel extends CrudBizModel<ErpApsOperationOr
 
     @Override
     @BizQuery
-    public Map<String, Object> findGanttData(@Optional @Name("machineId") Long machineId,
+    public Map<String, Object> findGanttData(@Optional @Name("machineId") String machineId,
                                              @Optional @Name("status") String status,
                                              IServiceContext context) {
         QueryBean query = new QueryBean();
@@ -310,7 +308,7 @@ public class ErpApsOperationOrderBizModel extends CrudBizModel<ErpApsOperationOr
         }
 
         List<Map<String, Object>> links = new ArrayList<>();
-        Map<Long, List<ErpApsOperationOrder>> byWorkOrder = new LinkedHashMap<>();
+        Map<String, List<ErpApsOperationOrder>> byWorkOrder = new LinkedHashMap<>();
         for (ErpApsOperationOrder o : orders) {
             byWorkOrder.computeIfAbsent(o.getWorkOrderId(), k -> new ArrayList<>()).add(o);
         }
@@ -341,11 +339,11 @@ public class ErpApsOperationOrderBizModel extends CrudBizModel<ErpApsOperationOr
 
     @Override
     @BizMutation
-    public ErpApsOperationOrder updateSchedule(@Name("opOrderId") Long opOrderId,
+    public ErpApsOperationOrder updateSchedule(@Name("opOrderId") String opOrderId,
                                                @Name("start") LocalDateTime start,
                                                @Name("end") LocalDateTime end,
                                                IServiceContext context) {
-        ErpApsOperationOrder order = requireEntity(String.valueOf(opOrderId), null, context);
+        ErpApsOperationOrder order = requireEntity(opOrderId, null, context);
         if (start == null) {
             throw new NopException(ErpApsErrors.ERR_APS_OP_ILLEGAL_TRANSITION)
                     .param(ErpApsErrors.ARG_OP_CODE, order.getCode())

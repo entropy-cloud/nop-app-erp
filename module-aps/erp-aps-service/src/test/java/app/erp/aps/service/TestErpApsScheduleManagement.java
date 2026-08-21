@@ -31,7 +31,7 @@ public class TestErpApsScheduleManagement extends JunitAutoTestCase {
 
     @Test
     public void testPublishDraftSucceeds() {
-        Long scheduleId = createSchedule("S-PUB", "FORWARD");
+        String scheduleId = createSchedule("S-PUB", "FORWARD");
 
         ApiResponse<?> resp = executeRpc(mutation, "ErpApsSchedule__publish",
                 ApiRequest.build(Map.of("id", scheduleId)));
@@ -42,7 +42,7 @@ public class TestErpApsScheduleManagement extends JunitAutoTestCase {
 
     @Test
     public void testArchiveFromPublishedSucceeds() {
-        Long scheduleId = createSchedule("S-ARC-P", "FORWARD");
+        String scheduleId = createSchedule("S-ARC-P", "FORWARD");
 
         ApiResponse<?> published = executeRpc(mutation, "ErpApsSchedule__publish",
                 ApiRequest.build(Map.of("id", scheduleId)));
@@ -56,7 +56,7 @@ public class TestErpApsScheduleManagement extends JunitAutoTestCase {
 
     @Test
     public void testArchiveFromDraftSucceeds() {
-        Long scheduleId = createSchedule("S-ARC-D", "FORWARD");
+        String scheduleId = createSchedule("S-ARC-D", "FORWARD");
 
         ApiResponse<?> archived = executeRpc(mutation, "ErpApsSchedule__archive",
                 ApiRequest.build(Map.of("id", scheduleId)));
@@ -67,7 +67,7 @@ public class TestErpApsScheduleManagement extends JunitAutoTestCase {
 
     @Test
     public void testPublishNonDraftFails() {
-        Long scheduleId = createSchedule("S-PNF", "FORWARD");
+        String scheduleId = createSchedule("S-PNF", "FORWARD");
 
         ApiResponse<?> published = executeRpc(mutation, "ErpApsSchedule__publish",
                 ApiRequest.build(Map.of("id", scheduleId)));
@@ -80,7 +80,7 @@ public class TestErpApsScheduleManagement extends JunitAutoTestCase {
 
     @Test
     public void testArchiveAlreadyArchivedIsIdempotent() {
-        Long scheduleId = createSchedule("S-AI", "FORWARD");
+        String scheduleId = createSchedule("S-AI", "FORWARD");
 
         ApiResponse<?> published = executeRpc(mutation, "ErpApsSchedule__publish",
                 ApiRequest.build(Map.of("id", scheduleId)));
@@ -96,7 +96,7 @@ public class TestErpApsScheduleManagement extends JunitAutoTestCase {
         assertEquals(0, again.getStatus(), "archive ARCHIVED should be idempotent");
     }
 
-    private Long createSchedule(String code, String mode) {
+    private String createSchedule(String code, String mode) {
         Map<String, Object> d = new LinkedHashMap<>();
         d.put("code", code);
         d.put("name", code);
@@ -110,12 +110,8 @@ public class TestErpApsScheduleManagement extends JunitAutoTestCase {
         return idOf(r.getData());
     }
 
-    private Long idOf(Object data) {
-        Object id = ((Map<?, ?>) data).get("id");
-        if (id instanceof Number) {
-            return ((Number) id).longValue();
-        }
-        return Long.parseLong(String.valueOf(id));
+    private String idOf(Object data) {
+        return String.valueOf(((Map<?, ?>) data).get("id"));
     }
 
     private ApiResponse<?> executeRpc(GraphQLOperationType opType, String action, ApiRequest<?> request) {

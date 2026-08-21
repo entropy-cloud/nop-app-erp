@@ -8,24 +8,24 @@ import io.nop.api.core.annotations.data.DataBean;
 @DataBean
 public class ConflictReport {
 
-    private Long operationOrderId;
+    private String operationOrderId;
     private String code;
     private String reason;
 
     public ConflictReport() {
     }
 
-    public ConflictReport(Long operationOrderId, String code, String reason) {
+    public ConflictReport(String operationOrderId, String code, String reason) {
         this.operationOrderId = operationOrderId;
         this.code = code;
         this.reason = reason;
     }
 
-    public Long getOperationOrderId() {
+    public String getOperationOrderId() {
         return operationOrderId;
     }
 
-    public void setOperationOrderId(Long operationOrderId) {
+    public void setOperationOrderId(String operationOrderId) {
         this.operationOrderId = operationOrderId;
     }
 

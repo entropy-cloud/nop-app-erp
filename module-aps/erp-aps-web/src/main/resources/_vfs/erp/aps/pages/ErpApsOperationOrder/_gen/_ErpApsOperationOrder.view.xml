@@ -19,13 +19,13 @@
             <cols>
 
                 <!--ID-->
-                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="id" mandatory="true" sortable="true"/>
 
                 <!--编号-->
                 <col id="code" mandatory="true" sortable="true"/>
 
                 <!--主工单-->
-                <col id="workOrderId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="workOrderId" mandatory="true" sortable="true"/>
 
                 <!--工序名称-->
                 <col id="operationName" mandatory="true" sortable="true"/>
@@ -34,7 +34,7 @@
                 <col id="sequence" mandatory="true" ui:number="true" sortable="true"/>
 
                 <!--工作中心/设备-->
-                <col id="machineId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="machineId" mandatory="true" sortable="true"/>
 
                 <!--优先级-->
                 <col id="priority" ui:number="true" sortable="true"/>
@@ -73,7 +73,7 @@
                 <col id="status" mandatory="true" sortable="true"/>
 
                 <!--业务组织-->
-                <col id="orgId" ui:number="true" sortable="true"/>
+                <col id="orgId" sortable="true"/>
 
                 <!--备注-->
                 <col id="remark" sortable="true"/>
@@ -103,7 +103,7 @@
                 <col id="businessDate" mandatory="true" sortable="true"/>
 
                 <!--选用路由-->
-                <col id="selectedRoutingId" ui:number="true" sortable="true"/>
+                <col id="selectedRoutingId" sortable="true"/>
 
                 <!--路由选择原因-->
                 <col id="routingSelectionReason" sortable="true"/>

@@ -13,11 +13,11 @@ public interface IErpApsScheduleBiz extends ICrudBiz<ErpApsSchedule>{
      * 发布排产方案（DRAFT→PUBLISHED）：锁定为执行参照，供 manufacturing JobCard 创建参照（弱引用）。
      */
     @BizMutation
-    ErpApsSchedule publish(@Name("id") Long id, IServiceContext context);
+    ErpApsSchedule publish(@Name("id") String id, IServiceContext context);
 
     /**
      * 归档排产方案（DRAFT|PUBLISHED→ARCHIVED）：转为历史版本，不再作为执行参照。
      */
     @BizMutation
-    ErpApsSchedule archive(@Name("id") Long id, IServiceContext context);
+    ErpApsSchedule archive(@Name("id") String id, IServiceContext context);
 }

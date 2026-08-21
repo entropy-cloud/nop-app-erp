@@ -93,9 +93,9 @@ public class ErpApsSchedulingEngine {
                                             List<ErpApsOpRouting> routings,
                                             LocalDateTime defaultEarliestStart) {
         SchedulingResult result = new SchedulingResult();
-        Map<Long, WorkCenterTimeline> timelines = buildTimelines(maintenanceConstraints);
+        Map<String, WorkCenterTimeline> timelines = buildTimelines(maintenanceConstraints);
         seedFrozenPlanned(timelines, frozenPlanned);
-        Map<Long, OpChain> chainByWorkOrder = new HashMap<>();
+        Map<String, OpChain> chainByWorkOrder = new HashMap<>();
 
         List<ErpApsOperationOrder> sorted = sortByForward(orders);
         LocalDateTime floor = floor(defaultEarliestStart);
@@ -175,8 +175,8 @@ public class ErpApsSchedulingEngine {
                                              List<ErpApsOpRouting> routings,
                                              LocalDateTime defaultEarliestStart) {
         SchedulingResult result = new SchedulingResult();
-        Map<Long, WorkCenterTimeline> timelines = buildTimelines(maintenanceConstraints);
-        Map<Long, OpChain> chainByWorkOrder = new HashMap<>();
+        Map<String, WorkCenterTimeline> timelines = buildTimelines(maintenanceConstraints);
+        Map<String, OpChain> chainByWorkOrder = new HashMap<>();
 
         List<ErpApsOperationOrder> sorted = sortByBackward(orders);
         LocalDateTime floor = floor(defaultEarliestStart);
@@ -332,7 +332,7 @@ public class ErpApsSchedulingEngine {
 
     /** 选中候选回写工序：machineId/setupTime/runtimePerUnit/selectedRoutingId/routingSelectionReason/totalDuration。 */
     private void applySelection(ErpApsOperationOrder op, RoutingCandidate chosen,
-                                Map<Long, WorkCenterTimeline> timelines) {
+                                Map<String, WorkCenterTimeline> timelines) {
         op.setTotalDuration(BigDecimal.valueOf(chosen.duration));
         if (chosen.row == null) {
             return; // 传统单候选：不触碰路由字段（零行为变化）
@@ -344,7 +344,7 @@ public class ErpApsSchedulingEngine {
         op.setRoutingSelectionReason(selectionReason(chosen, timelines));
     }
 
-    private String selectionReason(RoutingCandidate chosen, Map<Long, WorkCenterTimeline> timelines) {
+    private String selectionReason(RoutingCandidate chosen, Map<String, WorkCenterTimeline> timelines) {
         if (Boolean.TRUE.equals(chosen.row.getIsDefault())) {
             return ErpApsConstants.ROUTING_REASON_DEFAULT;
         }
@@ -442,7 +442,7 @@ public class ErpApsSchedulingEngine {
 
     /** 路由候选（machineId × 路由行 × 时间差计入后的 duration）。row=null 表示传统单候选。 */
     private static final class RoutingCandidate {
-        Long machineId;
+        String machineId;
         ErpApsOpRouting row;
         ErpApsOpRouting defaultRow;
         boolean defaultBatchExcluded;
@@ -459,8 +459,8 @@ public class ErpApsSchedulingEngine {
 
     // ---------- 时间轴构建 ----------
 
-    private Map<Long, WorkCenterTimeline> buildTimelines(List<ErpApsConstraint> maintenanceConstraints) {
-        Map<Long, WorkCenterTimeline> timelines = new HashMap<>();
+    private Map<String, WorkCenterTimeline> buildTimelines(List<ErpApsConstraint> maintenanceConstraints) {
+        Map<String, WorkCenterTimeline> timelines = new HashMap<>();
         if (maintenanceConstraints != null) {
             for (ErpApsConstraint c : maintenanceConstraints) {
                 if (!ErpApsConstants.CONSTRAINT_TYPE_MAINTENANCE.equals(c.getConstraintType())) {
@@ -473,7 +473,7 @@ public class ErpApsSchedulingEngine {
         return timelines;
     }
 
-    private void seedFrozenPlanned(Map<Long, WorkCenterTimeline> timelines,
+    private void seedFrozenPlanned(Map<String, WorkCenterTimeline> timelines,
                                    List<ErpApsOperationOrder> frozenPlanned) {
         if (frozenPlanned == null) {
             return;
@@ -517,7 +517,7 @@ public class ErpApsSchedulingEngine {
     // ---------- 工序链约束 ----------
 
     private LocalDateTime applyPredecessorConstraint(ErpApsOperationOrder op, LocalDateTime earliest,
-                                                     Map<Long, OpChain> chainByWorkOrder) {
+                                                     Map<String, OpChain> chainByWorkOrder) {
         OpChain chain = chainByWorkOrder.get(op.getWorkOrderId());
         if (chain == null || chain.lastSequence == null || chain.lastEnd == null) {
             return earliest;
@@ -531,7 +531,7 @@ public class ErpApsSchedulingEngine {
     }
 
     private LocalDateTime applySuccessorConstraint(ErpApsOperationOrder op, LocalDateTime before,
-                                                   Map<Long, OpChain> chainByWorkOrder) {
+                                                   Map<String, OpChain> chainByWorkOrder) {
         OpChain chain = chainByWorkOrder.get(op.getWorkOrderId());
         if (chain == null || chain.lastSequence == null || chain.lastStart == null) {
             return before;
@@ -544,7 +544,7 @@ public class ErpApsSchedulingEngine {
         return before;
     }
 
-    private void recordChain(Map<Long, OpChain> chainByWorkOrder, ErpApsOperationOrder op, LocalDateTime end) {
+    private void recordChain(Map<String, OpChain> chainByWorkOrder, ErpApsOperationOrder op, LocalDateTime end) {
         OpChain chain = chainByWorkOrder.computeIfAbsent(op.getWorkOrderId(), k -> new OpChain());
         if (chain.lastSequence == null || (op.getSequence() != null && op.getSequence() > chain.lastSequence)) {
             chain.lastSequence = op.getSequence();
@@ -552,7 +552,7 @@ public class ErpApsSchedulingEngine {
         }
     }
 
-    private void recordChainBackward(Map<Long, OpChain> chainByWorkOrder, ErpApsOperationOrder op, LocalDateTime start) {
+    private void recordChainBackward(Map<String, OpChain> chainByWorkOrder, ErpApsOperationOrder op, LocalDateTime start) {
         OpChain chain = chainByWorkOrder.computeIfAbsent(op.getWorkOrderId(), k -> new OpChain());
         if (chain.lastSequence == null || (op.getSequence() != null && op.getSequence() < chain.lastSequence)) {
             chain.lastSequence = op.getSequence();
@@ -614,9 +614,9 @@ public class ErpApsSchedulingEngine {
      * 暴露内部时间轴（供 ATP/CTP 模拟在现有排产方案上叠加影子工序）。
      * 返回的 Timeline 可被继续 addBusy 而不影响本引擎已记录的状态（按 machineId 复制繁忙区间）。
      */
-    public Map<Long, WorkCenterTimeline> snapshotTimelines(List<ErpApsConstraint> maintenanceConstraints,
+    public Map<String, WorkCenterTimeline> snapshotTimelines(List<ErpApsConstraint> maintenanceConstraints,
                                                            List<ErpApsOperationOrder> plannedOrders) {
-        Map<Long, WorkCenterTimeline> timelines = buildTimelines(maintenanceConstraints);
+        Map<String, WorkCenterTimeline> timelines = buildTimelines(maintenanceConstraints);
         if (plannedOrders != null) {
             for (ErpApsOperationOrder op : plannedOrders) {
                 if (op.getPlannedStartDateT() == null || op.getPlannedEndDateT() == null) {

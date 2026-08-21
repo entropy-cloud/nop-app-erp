@@ -180,16 +180,16 @@ public class _ErpApsOpRouting extends DynamicOrmEntity{
 
     
     /* ID: ID */
-    private java.lang.Long _id;
+    private java.lang.String _id;
     
     /* 业务组织: ORG_ID */
-    private java.lang.Long _orgId;
+    private java.lang.String _orgId;
     
     /* 工序: OPERATION_ID */
-    private java.lang.Long _operationId;
+    private java.lang.String _operationId;
     
     /* 工作中心: MACHINE_ID */
-    private java.lang.Long _machineId;
+    private java.lang.String _machineId;
     
     /* 优先级: PRIORITY */
     private java.lang.Integer _priority;
@@ -385,9 +385,9 @@ public class _ErpApsOpRouting extends DynamicOrmEntity{
         switch(propId){
         
             case PROP_ID_id:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_id));
                }
                setId(typedValue);
@@ -395,9 +395,9 @@ public class _ErpApsOpRouting extends DynamicOrmEntity{
             }
         
             case PROP_ID_orgId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_orgId));
                }
                setOrgId(typedValue);
@@ -405,9 +405,9 @@ public class _ErpApsOpRouting extends DynamicOrmEntity{
             }
         
             case PROP_ID_operationId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_operationId));
                }
                setOperationId(typedValue);
@@ -415,9 +415,9 @@ public class _ErpApsOpRouting extends DynamicOrmEntity{
             }
         
             case PROP_ID_machineId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_machineId));
                }
                setMachineId(typedValue);
@@ -595,28 +595,28 @@ public class _ErpApsOpRouting extends DynamicOrmEntity{
         
             case PROP_ID_id:{
                onInitProp(propId);
-               this._id = (java.lang.Long)value;
+               this._id = (java.lang.String)value;
                orm_id(); // 如果是设置主键字段，则触发watcher
                break;
             }
         
             case PROP_ID_orgId:{
                onInitProp(propId);
-               this._orgId = (java.lang.Long)value;
+               this._orgId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_operationId:{
                onInitProp(propId);
-               this._operationId = (java.lang.Long)value;
+               this._operationId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_machineId:{
                onInitProp(propId);
-               this._machineId = (java.lang.Long)value;
+               this._machineId = (java.lang.String)value;
                
                break;
             }
@@ -742,7 +742,7 @@ public class _ErpApsOpRouting extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final java.lang.Long getId(){
+    public final java.lang.String getId(){
          onPropGet(PROP_ID_id);
          return _id;
     }
@@ -750,7 +750,7 @@ public class _ErpApsOpRouting extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final void setId(java.lang.Long value){
+    public final void setId(java.lang.String value){
         if(onPropSet(PROP_ID_id,value)){
             this._id = value;
             internalClearRefs(PROP_ID_id);
@@ -761,7 +761,7 @@ public class _ErpApsOpRouting extends DynamicOrmEntity{
     /**
      * 业务组织: ORG_ID
      */
-    public final java.lang.Long getOrgId(){
+    public final java.lang.String getOrgId(){
          onPropGet(PROP_ID_orgId);
          return _orgId;
     }
@@ -769,7 +769,7 @@ public class _ErpApsOpRouting extends DynamicOrmEntity{
     /**
      * 业务组织: ORG_ID
      */
-    public final void setOrgId(java.lang.Long value){
+    public final void setOrgId(java.lang.String value){
         if(onPropSet(PROP_ID_orgId,value)){
             this._orgId = value;
             internalClearRefs(PROP_ID_orgId);
@@ -780,7 +780,7 @@ public class _ErpApsOpRouting extends DynamicOrmEntity{
     /**
      * 工序: OPERATION_ID
      */
-    public final java.lang.Long getOperationId(){
+    public final java.lang.String getOperationId(){
          onPropGet(PROP_ID_operationId);
          return _operationId;
     }
@@ -788,7 +788,7 @@ public class _ErpApsOpRouting extends DynamicOrmEntity{
     /**
      * 工序: OPERATION_ID
      */
-    public final void setOperationId(java.lang.Long value){
+    public final void setOperationId(java.lang.String value){
         if(onPropSet(PROP_ID_operationId,value)){
             this._operationId = value;
             internalClearRefs(PROP_ID_operationId);
@@ -799,7 +799,7 @@ public class _ErpApsOpRouting extends DynamicOrmEntity{
     /**
      * 工作中心: MACHINE_ID
      */
-    public final java.lang.Long getMachineId(){
+    public final java.lang.String getMachineId(){
          onPropGet(PROP_ID_machineId);
          return _machineId;
     }
@@ -807,7 +807,7 @@ public class _ErpApsOpRouting extends DynamicOrmEntity{
     /**
      * 工作中心: MACHINE_ID
      */
-    public final void setMachineId(java.lang.Long value){
+    public final void setMachineId(java.lang.String value){
         if(onPropSet(PROP_ID_machineId,value)){
             this._machineId = value;
             internalClearRefs(PROP_ID_machineId);

@@ -21,15 +21,15 @@ import java.util.List;
  */
 public class WorkCenterTimeline {
 
-    private final long machineId;
+    private final String machineId;
     /** 已排序的繁忙区间（按 start 升序，区间互不重叠）。 */
     private final List<Interval> busy = new ArrayList<>();
 
-    public WorkCenterTimeline(long machineId) {
+    public WorkCenterTimeline(String machineId) {
         this.machineId = machineId;
     }
 
-    public long getMachineId() {
+    public String getMachineId() {
         return machineId;
     }
 

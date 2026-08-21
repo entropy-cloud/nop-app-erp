@@ -1,0 +1,3 @@
+_chgType,ID,MACHINE_ID,PLANNED_START_T,PLANNED_END_T,OPERATION_ORDER_ID,ORG_ID,REMARK,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
+A,4,9301,@var:ErpApsCapacityReservation@plannedStartT,@var:ErpApsCapacityReservation@plannedEndT,1,,,0,autotest-ref,*,autotest-ref,*
+A,5,9302,@var:ErpApsCapacityReservation@plannedStartT_1,@var:ErpApsCapacityReservation@plannedEndT_1,2,,,0,autotest-ref,*,autotest-ref,*

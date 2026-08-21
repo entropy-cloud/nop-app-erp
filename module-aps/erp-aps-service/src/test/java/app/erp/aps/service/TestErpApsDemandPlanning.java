@@ -46,7 +46,7 @@ public class TestErpApsDemandPlanning extends JunitAutoTestCase {
 
         ApiResponse<?> resp = executeRpc(query, "ErpApsOperationOrder__checkFeasibility",
                 ApiRequest.build(Map.of(
-                        "materialId", MATERIAL_ID,
+                        "materialId", String.valueOf(MATERIAL_ID),
                         "qty", new BigDecimal("10"),
                         "desiredDate", "2026-07-30T00:00:00")));
 
@@ -62,7 +62,7 @@ public class TestErpApsDemandPlanning extends JunitAutoTestCase {
 
         ApiResponse<?> resp = executeRpc(query, "ErpApsOperationOrder__checkFeasibility",
                 ApiRequest.build(Map.of(
-                        "materialId", MATERIAL_ID,
+                        "materialId", String.valueOf(MATERIAL_ID),
                         "qty", new BigDecimal("10"),
                         "desiredDate", "2026-07-30T00:00:00")));
 
@@ -78,7 +78,7 @@ public class TestErpApsDemandPlanning extends JunitAutoTestCase {
 
         ApiResponse<?> resp = executeRpc(query, "ErpApsOperationOrder__earliestCompletionDate",
                 ApiRequest.build(Map.of(
-                        "materialId", MATERIAL_ID,
+                        "materialId", String.valueOf(MATERIAL_ID),
                         "qty", new BigDecimal("10"))));
 
         assertEquals(0, resp.getStatus());

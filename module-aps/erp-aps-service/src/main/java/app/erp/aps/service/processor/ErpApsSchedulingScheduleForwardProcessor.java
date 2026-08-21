@@ -17,7 +17,7 @@ public class ErpApsSchedulingScheduleForwardProcessor {
     @Inject
     ErpApsSchedulingProcessor facade;
 
-    public SchedulingResult scheduleForward(Long scheduleId, IServiceContext context) {
+    public SchedulingResult scheduleForward(String scheduleId, IServiceContext context) {
         ErpApsSchedule schedule = facade.requireSchedule(scheduleId, context);
         return facade.run(schedule, ErpApsConstants.SCHEDULING_MODE_FORWARD, context);
     }

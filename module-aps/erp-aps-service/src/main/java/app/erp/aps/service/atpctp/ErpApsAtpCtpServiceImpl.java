@@ -16,6 +16,7 @@ import app.erp.mfg.dao.entity.ErpMfgBom;
 import app.erp.mfg.dao.entity.ErpMfgBomOperation;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.beans.query.QueryBean;
+import io.nop.api.core.convert.ConvertHelper;
 import io.nop.api.core.config.AppConfig;
 import io.nop.api.core.time.CoreMetrics;
 import io.nop.dao.api.IDaoProvider;
@@ -50,28 +51,30 @@ public class ErpApsAtpCtpServiceImpl implements IErpApsAtpCtpService {
     IDaoProvider daoProvider;
 
     @Override
-    public LocalDateTime earliestCompletionDate(Long materialId, BigDecimal qty) {
-        if (atpAvailable(materialId, qty)) {
+    public LocalDateTime earliestCompletionDate(String materialId, BigDecimal qty) {
+        Long materialKey = ConvertHelper.toLong(materialId);
+        if (atpAvailable(materialKey, qty)) {
             return CoreMetrics.currentDateTime();
         }
-        CtpResult ctp = simulateCtp(materialId, qty, CoreMetrics.currentDateTime(), null);
+        CtpResult ctp = simulateCtp(materialKey, qty, CoreMetrics.currentDateTime(), null);
         return ctp.getEarliestCompletionDate();
     }
 
     @Override
-    public CtpResult checkFeasibility(Long materialId, BigDecimal qty, LocalDateTime desiredDate) {
-        if (atpAvailable(materialId, qty)) {
+    public CtpResult checkFeasibility(String materialId, BigDecimal qty, LocalDateTime desiredDate) {
+        Long materialKey = ConvertHelper.toLong(materialId);
+        if (atpAvailable(materialKey, qty)) {
             CtpResult ok = new CtpResult();
             ok.setFeasible(true);
             ok.setEarliestCompletionDate(CoreMetrics.currentDateTime());
             return ok;
         }
-        return simulateCtp(materialId, qty, CoreMetrics.currentDateTime(), desiredDate);
+        return simulateCtp(materialKey, qty, CoreMetrics.currentDateTime(), desiredDate);
     }
 
     @Override
-    public List<ScheduledOperationView> simulateSchedule(Long materialId, BigDecimal qty, LocalDateTime startDate) {
-        List<ErpApsOperationOrder> shadows = buildShadowOps(materialId, qty);
+    public List<ScheduledOperationView> simulateSchedule(String materialId, BigDecimal qty, LocalDateTime startDate) {
+        List<ErpApsOperationOrder> shadows = buildShadowOps(ConvertHelper.toLong(materialId), qty);
         if (shadows.isEmpty()) {
             return new ArrayList<>();
         }
@@ -79,7 +82,7 @@ public class ErpApsAtpCtpServiceImpl implements IErpApsAtpCtpService {
                 ErpApsConfigs.DEFAULT_BUFFER_MINUTES_BETWEEN_OPS);
         // ErpApsSchedulingEngine 为纯算法 POJO，非 ORM 实体，不适用 newEntity()
         ErpApsSchedulingEngine engine = new ErpApsSchedulingEngine(buffer, startDate, null);
-        Map<Long, WorkCenterTimeline> timelines = engine.snapshotTimelines(loadMaintenance(), loadPlannedOps());
+        Map<String, WorkCenterTimeline> timelines = engine.snapshotTimelines(loadMaintenance(), loadPlannedOps());
 
         LocalDateTime cursor = startDate;
         List<ScheduledOperationView> views = new ArrayList<>();
@@ -105,7 +108,7 @@ public class ErpApsAtpCtpServiceImpl implements IErpApsAtpCtpService {
         return views;
     }
 
-    // ---------- ATP 库存聚合（只读，IDaoProvider） ----------
+    // ---------- ATP 库存聚合（只读，IDaoProvider；materialId 为 inv/mfg 侧 Long id——A2 桥接 bridge-main-009/011，退役 owner M2.2） ----------
 
     protected boolean atpAvailable(Long materialId, BigDecimal qty) {
         BigDecimal onHand = sumOnHand(materialId);
@@ -125,6 +128,7 @@ public class ErpApsAtpCtpServiceImpl implements IErpApsAtpCtpService {
         return total;
     }
 
+    // A2 桥接（bridge-main-010）：inv ErpInvReservationLine materialId Long 查询，退役 owner M2.2
     protected BigDecimal sumReserved(Long materialId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("materialId", materialId));
@@ -162,11 +166,11 @@ public class ErpApsAtpCtpServiceImpl implements IErpApsAtpCtpService {
                 ErpApsConfigs.DEFAULT_BUFFER_MINUTES_BETWEEN_OPS);
         // ErpApsSchedulingEngine 为纯算法 POJO，非 ORM 实体，不适用 newEntity()
         ErpApsSchedulingEngine engine = new ErpApsSchedulingEngine(buffer, startDate, null);
-        Map<Long, WorkCenterTimeline> timelines = engine.snapshotTimelines(loadMaintenance(), loadPlannedOps());
+        Map<String, WorkCenterTimeline> timelines = engine.snapshotTimelines(loadMaintenance(), loadPlannedOps());
 
         LocalDateTime cursor = startDate;
         LocalDateTime latestEnd = startDate;
-        Long bottleneckWc = null;
+        String bottleneckWc = null;
         long maxDur = 0;
         for (ErpApsOperationOrder shadow : shadows) {
             WorkCenterTimeline tl = timelines.computeIfAbsent(shadow.getMachineId(), WorkCenterTimeline::new);
@@ -191,7 +195,7 @@ public class ErpApsAtpCtpServiceImpl implements IErpApsAtpCtpService {
             }
         }
         result.setEarliestCompletionDate(latestEnd);
-        result.setBottleneckWorkcenter(bottleneckWc == null ? null : String.valueOf(bottleneckWc));
+        result.setBottleneckWorkcenter(bottleneckWc);
         boolean feasible = desiredDate == null || !latestEnd.isAfter(desiredDate);
         result.setFeasible(feasible);
         if (!feasible && desiredDate != null) {
@@ -215,7 +219,8 @@ public class ErpApsAtpCtpServiceImpl implements IErpApsAtpCtpService {
             }
             ErpApsOperationOrder shadow = apsDao.newEntity();
             shadow.setBusinessDate(io.nop.api.core.time.CoreMetrics.today());
-            shadow.setMachineId(bo.getWorkcenterId());
+            // A2 桥接（bridge-main-013）：mfg Long workcenterId → aps String 列，退役 owner M3.1
+            shadow.setMachineId(ConvertHelper.toString(bo.getWorkcenterId()));
             shadow.setOperationName("工序-" + bo.getLineNo());
             shadow.setSequence(seq);
             shadow.setSetupTime(BigDecimal.ZERO);
@@ -231,6 +236,7 @@ public class ErpApsAtpCtpServiceImpl implements IErpApsAtpCtpService {
         return shadows;
     }
 
+    // A2 桥接（bridge-main-012）：mfg ErpMfgBom productId Long 查询，退役 owner M3.1
     protected ErpMfgBom findDefaultBom(Long materialId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("productId", materialId));

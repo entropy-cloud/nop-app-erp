@@ -7,8 +7,8 @@
       {
         "id": "2",
         "orgId": null,
-        "operationId": 1,
-        "machineId": 1,
+        "operationId": "1",
+        "machineId": "1",
         "priority": 1,
         "setupTimeDelta": null,
         "runtimePerUnitDelta": null,

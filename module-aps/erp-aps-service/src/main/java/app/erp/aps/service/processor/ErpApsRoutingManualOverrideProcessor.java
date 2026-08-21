@@ -24,7 +24,7 @@ import java.math.RoundingMode;
 public class ErpApsRoutingManualOverrideProcessor {
 
     public ErpApsOperationOrder manualOverrideRouting(ErpApsSchedulingProcessor facade,
-                                                      Long operationOrderId, Long routingId,
+                                                      String operationOrderId, String routingId,
                                                       IServiceContext context) {
         ErpApsOperationOrder op = facade.requireOperationOrder(operationOrderId, context);
         ErpApsOpRouting row = requireRouting(facade, routingId);
@@ -85,7 +85,7 @@ public class ErpApsRoutingManualOverrideProcessor {
                                 + "/" + ErpApsConstants.OP_STATUS_UNSCHEDULABLE);
     }
 
-    protected ErpApsOpRouting requireRouting(ErpApsSchedulingProcessor facade, Long routingId) {
+    protected ErpApsOpRouting requireRouting(ErpApsSchedulingProcessor facade, String routingId) {
         ErpApsOpRouting row = findRouting(facade, routingId);
         if (row == null || !Boolean.TRUE.equals(row.getIsEnabled())) {
             throw new NopException(ErpApsErrors.ERR_APS_ROUTING_NOT_AVAILABLE)
@@ -94,7 +94,7 @@ public class ErpApsRoutingManualOverrideProcessor {
         return row;
     }
 
-    protected ErpApsOpRouting findRouting(ErpApsSchedulingProcessor facade, Long routingId) {
+    protected ErpApsOpRouting findRouting(ErpApsSchedulingProcessor facade, String routingId) {
         if (routingId == null) {
             return null;
         }

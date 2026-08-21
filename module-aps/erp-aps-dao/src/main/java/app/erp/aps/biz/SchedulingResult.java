@@ -15,7 +15,7 @@ import java.util.List;
 public class SchedulingResult {
 
     private List<ConflictReport> conflicts = new ArrayList<>();
-    private List<Long> scheduledOperationIds = new ArrayList<>();
+    private List<String> scheduledOperationIds = new ArrayList<>();
     private boolean feasible = true;
 
     public List<ConflictReport> getConflicts() {
@@ -26,11 +26,11 @@ public class SchedulingResult {
         this.conflicts = conflicts;
     }
 
-    public List<Long> getScheduledOperationIds() {
+    public List<String> getScheduledOperationIds() {
         return scheduledOperationIds;
     }
 
-    public void setScheduledOperationIds(List<Long> scheduledOperationIds) {
+    public void setScheduledOperationIds(List<String> scheduledOperationIds) {
         this.scheduledOperationIds = scheduledOperationIds;
     }
 
@@ -42,11 +42,11 @@ public class SchedulingResult {
         this.feasible = feasible;
     }
 
-    public void addConflict(Long operationOrderId, String code, String reason) {
+    public void addConflict(String operationOrderId, String code, String reason) {
         conflicts.add(new ConflictReport(operationOrderId, code, reason));
     }
 
-    public void addScheduled(Long operationOrderId) {
+    public void addScheduled(String operationOrderId) {
         scheduledOperationIds.add(operationOrderId);
     }
 }

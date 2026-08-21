@@ -5,6 +5,7 @@ import app.erp.aps.service.ErpApsConstants;
 import app.erp.mfg.biz.ApsLoadSlot;
 import app.erp.mfg.biz.IErpApsLoadSourceProvider;
 import io.nop.api.core.beans.query.QueryBean;
+import io.nop.api.core.convert.ConvertHelper;
 import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
@@ -46,8 +47,13 @@ public class ApsLoadSourceProvider implements IErpApsLoadSourceProvider {
             return Collections.emptyList();
         }
 
+        // A2 桥接（bridge-main-014/015 SPI）：mfg Long workOrderId 集 → aps String 列过滤，退役 owner M3.1
+        List<String> woIdStrings = new ArrayList<>(workOrderIds.size());
+        for (Long woId : workOrderIds) {
+            woIdStrings.add(ConvertHelper.toString(woId));
+        }
         QueryBean q = new QueryBean();
-        q.addFilter(in("workOrderId", new ArrayList<>(workOrderIds)));
+        q.addFilter(in("workOrderId", woIdStrings));
         // 仅 PLANNED/IN_PROGRESS 状态的 OperationOrder 才有有效排程时间；IN_PROGRESS（已派工，RC-R1.88 D6
         // 裁决）一并导出——派工先于 mfg 日批建卡的工序仍须进入建卡来源（mfg 建卡 seam 幂等增量，零双卡）；
         // FINISHED/CANCELLED 已完工/取消不再构成未来负荷。DRAFT 冲突时引擎已清空时间为 null，自然被过滤。
@@ -77,10 +83,11 @@ public class ApsLoadSourceProvider implements IErpApsLoadSourceProvider {
                 continue;
             }
             ApsLoadSlot slot = new ApsLoadSlot();
-            slot.setOperationOrderId(op.getId());
-            slot.setWorkOrderId(op.getWorkOrderId());
+            // A2 桥接（bridge-main-014/015 SPI）：aps String id → mfg Long DTO 字段，退役 owner M3.1
+            slot.setOperationOrderId(ConvertHelper.toLong(op.getId()));
+            slot.setWorkOrderId(ConvertHelper.toLong(op.getWorkOrderId()));
             slot.setSequence(op.getSequence());
-            slot.setWorkcenterId(op.getMachineId());
+            slot.setWorkcenterId(ConvertHelper.toLong(op.getMachineId()));
             slot.setPlannedStartT(op.getPlannedStartDateT().toLocalDateTime());
             slot.setPlannedEndT(op.getPlannedEndDateT().toLocalDateTime());
             slot.setSetupTime(op.getSetupTime());

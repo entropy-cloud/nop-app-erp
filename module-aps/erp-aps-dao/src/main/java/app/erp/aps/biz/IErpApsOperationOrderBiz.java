@@ -23,7 +23,7 @@ public interface IErpApsOperationOrderBiz extends ICrudBiz<ErpApsOperationOrder>
      * 幂等守卫：同 WorkOrder 重复触发不重复建单。计划员手动触发入口（与 job 拉取扫描同源编排）。
      */
     @BizMutation
-    WorkOrderOperationCreationResult createOperationOrdersFromWorkOrder(@Name("workOrderId") Long workOrderId,
+    WorkOrderOperationCreationResult createOperationOrdersFromWorkOrder(@Name("workOrderId") String workOrderId,
                                                                         IServiceContext context);
 
     /**
@@ -40,8 +40,8 @@ public interface IErpApsOperationOrderBiz extends ICrudBiz<ErpApsOperationOrder>
      * 下次重排在新工作中心排程且跳过自动路由选择。
      */
     @BizMutation
-    ErpApsOperationOrder manualOverrideRouting(@Name("operationOrderId") Long operationOrderId,
-                                               @Name("routingId") Long routingId,
+    ErpApsOperationOrder manualOverrideRouting(@Name("operationOrderId") String operationOrderId,
+                                               @Name("routingId") String routingId,
                                                IServiceContext context);
 
     /**
@@ -58,7 +58,7 @@ public interface IErpApsOperationOrderBiz extends ICrudBiz<ErpApsOperationOrder>
      * DispatchLog dispatchType=MANUAL。
      */
     @BizMutation
-    ErpApsOperationOrder dispatchManually(@Name("operationOrderId") Long operationOrderId,
+    ErpApsOperationOrder dispatchManually(@Name("operationOrderId") String operationOrderId,
                                           @Name("note") String note,
                                           IServiceContext context);
 
@@ -66,26 +66,26 @@ public interface IErpApsOperationOrderBiz extends ICrudBiz<ErpApsOperationOrder>
      * UC-APS-07 派工保持：PLANNED→HOLD（计划员暂不派工，自动派工扫描跳过），DispatchLog dispatchType=HOLD。
      */
     @BizMutation
-    ErpApsOperationOrder hold(@Name("operationOrderId") Long operationOrderId, IServiceContext context);
+    ErpApsOperationOrder hold(@Name("operationOrderId") String operationOrderId, IServiceContext context);
 
     /**
      * UC-APS-07 解除保持：HOLD/ON_HOLD→PLANNED（重新进入自动派工检查循环），DispatchLog dispatchType=UNHOLD。
      */
     @BizMutation
-    ErpApsOperationOrder unhold(@Name("operationOrderId") Long operationOrderId, IServiceContext context);
+    ErpApsOperationOrder unhold(@Name("operationOrderId") String operationOrderId, IServiceContext context);
 
     /**
      * 前向排产：按 ErpApsSchedule.horizonStart/horizonEnd 拉取 DRAFT 工序，
      * 从 earliestStartDateT 正向填充工作中心可用时段，写回 plannedStart/EndDateT 并置 PLANNED。
      */
     @BizMutation
-    SchedulingResult scheduleForward(@Name("scheduleId") Long scheduleId, IServiceContext context);
+    SchedulingResult scheduleForward(@Name("scheduleId") String scheduleId, IServiceContext context);
 
     /**
      * 后向排产：从 latestEndDateT 逆向倒推每工序最晚开工；交期不可达标记冲突。
      */
     @BizMutation
-    SchedulingResult scheduleBackward(@Name("scheduleId") Long scheduleId, IServiceContext context);
+    SchedulingResult scheduleBackward(@Name("scheduleId") String scheduleId, IServiceContext context);
 
     /**
      * F11 批量前向排产（plan 2026-07-22-0444-2 Phase 2）：循环调单条 {@link #scheduleForward}，
@@ -101,19 +101,19 @@ public interface IErpApsOperationOrderBiz extends ICrudBiz<ErpApsOperationOrder>
      * IN_PROGRESS 永不回退，窗口外工序不受影响（{@code scheduling.md §六}）。
      */
     @BizMutation
-    SchedulingResult insertRushOrder(@Name("operationOrderId") Long operationOrderId, IServiceContext context);
+    SchedulingResult insertRushOrder(@Name("operationOrderId") String operationOrderId, IServiceContext context);
 
     /**
      * 最早可交付日期（ATP/CTP）：ATP 充足立即承诺，否则影子模拟最早完工。
      */
     @BizQuery
-    LocalDateTime earliestCompletionDate(@Name("materialId") Long materialId, @Name("qty") BigDecimal qty);
+    LocalDateTime earliestCompletionDate(@Name("materialId") String materialId, @Name("qty") BigDecimal qty);
 
     /**
      * 期望交期可行性检查（CTP）：返回 {@link CtpResult}。
      */
     @BizQuery
-    CtpResult checkFeasibility(@Name("materialId") Long materialId,
+    CtpResult checkFeasibility(@Name("materialId") String materialId,
                                @Name("qty") BigDecimal qty,
                                @Name("desiredDate") LocalDateTime desiredDate);
 
@@ -121,19 +121,19 @@ public interface IErpApsOperationOrderBiz extends ICrudBiz<ErpApsOperationOrder>
      * 启动工序工单：PLANNED→IN_PROGRESS。
      */
     @BizMutation
-    ErpApsOperationOrder start(@Name("operationOrderId") Long operationOrderId, IServiceContext context);
+    ErpApsOperationOrder start(@Name("operationOrderId") String operationOrderId, IServiceContext context);
 
     /**
      * 完成工序工单：IN_PROGRESS→FINISHED。
      */
     @BizMutation
-    ErpApsOperationOrder complete(@Name("operationOrderId") Long operationOrderId, IServiceContext context);
+    ErpApsOperationOrder complete(@Name("operationOrderId") String operationOrderId, IServiceContext context);
 
     /**
      * 作废工序工单：DRAFT/PLANNED/IN_PROGRESS→CANCELLED。
      */
     @BizMutation
-    ErpApsOperationOrder cancel(@Name("operationOrderId") Long operationOrderId, IServiceContext context);
+    ErpApsOperationOrder cancel(@Name("operationOrderId") String operationOrderId, IServiceContext context);
 
     /**
      * 甘特图聚合查询（plan 2026-08-03-1232-3 Phase 0）：返回 flux gantt 契约
@@ -141,7 +141,7 @@ public interface IErpApsOperationOrderBiz extends ICrudBiz<ErpApsOperationOrder>
      * links 按 Phase 0 裁决=方案 A（同 workOrderId 按 sequence 相邻连边，FS type=0）。
      */
     @BizQuery
-    Map<String, Object> findGanttData(@Optional @Name("machineId") Long machineId,
+    Map<String, Object> findGanttData(@Optional @Name("machineId") String machineId,
                                       @Optional @Name("status") String status,
                                       IServiceContext context);
 
@@ -150,7 +150,7 @@ public interface IErpApsOperationOrderBiz extends ICrudBiz<ErpApsOperationOrder>
      * 不内联产能校验（裁决：产能由排程引擎在下次运行暴露，见 plan Decision）。
      */
     @BizMutation
-    ErpApsOperationOrder updateSchedule(@Name("opOrderId") Long opOrderId,
+    ErpApsOperationOrder updateSchedule(@Name("opOrderId") String opOrderId,
                                         @Name("start") LocalDateTime start,
                                         @Name("end") LocalDateTime end,
                                         IServiceContext context);

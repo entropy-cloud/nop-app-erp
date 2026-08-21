@@ -1548,8 +1548,8 @@
       ],
       "deferredUntil": "M3.9",
       "retireOwner": "M3.9",
-      "note": "早域 test 引用晚域——早域 plan Phase 3 消费（本域测试适配）；晚域翻转时复核",
-      "status": "active"
+      "note": "早域 test 引用晚域——早域 plan Phase 3 消费（本域测试适配）；晚域翻转时复核。已退役：M3.9 aps plan 2026-08-21-2025-1 Phase 3 兑付（String.valueOf 桥 + mfg/inv 种子保持 Long），晚域 M2.2/M3.1 翻转时移除桥接点",
+      "status": "retired"
     },
     {
       "id": "bridge-test-104",
@@ -1565,8 +1565,8 @@
       ],
       "deferredUntil": "M3.9",
       "retireOwner": "M3.9",
-      "note": "早域 test 引用晚域——早域 plan Phase 3 消费（本域测试适配）；晚域翻转时复核",
-      "status": "active"
+      "note": "早域 test 引用晚域——早域 plan Phase 3 消费（本域测试适配）；晚域翻转时复核。已退役：M3.9 aps plan 2026-08-21-2025-1 Phase 3 兑付（String.valueOf 桥 + mfg/inv 种子保持 Long），晚域 M2.2/M3.1 翻转时移除桥接点",
+      "status": "retired"
     },
     {
       "id": "bridge-test-105",
@@ -1582,8 +1582,8 @@
       ],
       "deferredUntil": "M3.9",
       "retireOwner": "M3.9",
-      "note": "早域 test 引用晚域——早域 plan Phase 3 消费（本域测试适配）；晚域翻转时复核",
-      "status": "active"
+      "note": "早域 test 引用晚域——早域 plan Phase 3 消费（本域测试适配）；晚域翻转时复核。已退役：M3.9 aps plan 2026-08-21-2025-1 Phase 3 兑付（String.valueOf 桥 + mfg/inv 种子保持 Long），晚域 M2.2/M3.1 翻转时移除桥接点",
+      "status": "retired"
     },
     {
       "id": "bridge-test-106",
@@ -1604,8 +1604,8 @@
       ],
       "deferredUntil": "M3.9",
       "retireOwner": "M3.9",
-      "note": "早域 test 引用晚域——早域 plan Phase 3 消费（本域测试适配）；晚域翻转时复核",
-      "status": "active"
+      "note": "早域 test 引用晚域——早域 plan Phase 3 消费（本域测试适配）；晚域翻转时复核。已退役：M3.9 aps plan 2026-08-21-2025-1 Phase 3 兑付（String.valueOf 桥 + mfg/inv 种子保持 Long），晚域 M2.2/M3.1 翻转时移除桥接点",
+      "status": "retired"
     },
     {
       "id": "bridge-test-107",

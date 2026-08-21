@@ -22,13 +22,13 @@ public interface IErpApsAtpCtpService {
      * 最早可交付日期：ATP 充足返回当前时间（立即承诺）；不足触发 CTP 模拟。
      */
     @BizQuery
-    LocalDateTime earliestCompletionDate(@Name("materialId") Long materialId, @Name("qty") java.math.BigDecimal qty);
+    LocalDateTime earliestCompletionDate(@Name("materialId") String materialId, @Name("qty") java.math.BigDecimal qty);
 
     /**
      * 检查期望交期是否可行：CTP 模拟，返回 {@link CtpResult}。
      */
     @BizQuery
-    CtpResult checkFeasibility(@Name("materialId") Long materialId,
+    CtpResult checkFeasibility(@Name("materialId") String materialId,
                                @Name("qty") java.math.BigDecimal qty,
                                @Name("desiredDate") LocalDateTime desiredDate);
 
@@ -36,7 +36,7 @@ public interface IErpApsAtpCtpService {
      * 模拟排程：返回模拟得出的各工序时间（用于展示承诺排程，不落库）。
      */
     @BizQuery
-    List<ScheduledOperationView> simulateSchedule(@Name("materialId") Long materialId,
+    List<ScheduledOperationView> simulateSchedule(@Name("materialId") String materialId,
                                                   @Name("qty") java.math.BigDecimal qty,
                                                   @Name("startDate") LocalDateTime startDate);
 }

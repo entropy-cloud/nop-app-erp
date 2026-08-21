@@ -39,7 +39,7 @@ public class TestErpApsOperationOrderStateGuards extends JunitAutoTestCase {
 
     @Test
     public void testStartFromPlannedSucceeds() {
-        Long id = createOrder("OP-START-OK", OP_STATUS_PLANNED);
+        String id = createOrder("OP-START-OK", OP_STATUS_PLANNED);
 
         ApiResponse<?> resp = executeRpc(mutation, "ErpApsOperationOrder__start",
                 ApiRequest.build(Map.of("operationOrderId", id)));
@@ -50,7 +50,7 @@ public class TestErpApsOperationOrderStateGuards extends JunitAutoTestCase {
 
     @Test
     public void testStartFromFinishedFails() {
-        Long id = createOrder("OP-START-F", OP_STATUS_FINISHED);
+        String id = createOrder("OP-START-F", OP_STATUS_FINISHED);
 
         ApiResponse<?> resp = executeRpc(mutation, "ErpApsOperationOrder__start",
                 ApiRequest.build(Map.of("operationOrderId", id)));
@@ -60,7 +60,7 @@ public class TestErpApsOperationOrderStateGuards extends JunitAutoTestCase {
 
     @Test
     public void testStartFromCancelledFails() {
-        Long id = createOrder("OP-START-C", OP_STATUS_CANCELLED);
+        String id = createOrder("OP-START-C", OP_STATUS_CANCELLED);
 
         ApiResponse<?> resp = executeRpc(mutation, "ErpApsOperationOrder__start",
                 ApiRequest.build(Map.of("operationOrderId", id)));
@@ -70,7 +70,7 @@ public class TestErpApsOperationOrderStateGuards extends JunitAutoTestCase {
 
     @Test
     public void testCompleteFromInProgressSucceeds() {
-        Long id = createOrder("OP-COMP-OK", OP_STATUS_IN_PROGRESS);
+        String id = createOrder("OP-COMP-OK", OP_STATUS_IN_PROGRESS);
 
         ApiResponse<?> resp = executeRpc(mutation, "ErpApsOperationOrder__complete",
                 ApiRequest.build(Map.of("operationOrderId", id)));
@@ -81,7 +81,7 @@ public class TestErpApsOperationOrderStateGuards extends JunitAutoTestCase {
 
     @Test
     public void testCompleteFromPlannedFails() {
-        Long id = createOrder("OP-COMP-P", OP_STATUS_PLANNED);
+        String id = createOrder("OP-COMP-P", OP_STATUS_PLANNED);
 
         ApiResponse<?> resp = executeRpc(mutation, "ErpApsOperationOrder__complete",
                 ApiRequest.build(Map.of("operationOrderId", id)));
@@ -91,7 +91,7 @@ public class TestErpApsOperationOrderStateGuards extends JunitAutoTestCase {
 
     @Test
     public void testCompleteFromFinishedFails() {
-        Long id = createOrder("OP-COMP-F", OP_STATUS_FINISHED);
+        String id = createOrder("OP-COMP-F", OP_STATUS_FINISHED);
 
         ApiResponse<?> resp = executeRpc(mutation, "ErpApsOperationOrder__complete",
                 ApiRequest.build(Map.of("operationOrderId", id)));
@@ -101,7 +101,7 @@ public class TestErpApsOperationOrderStateGuards extends JunitAutoTestCase {
 
     @Test
     public void testCancelFromDraftSucceeds() {
-        Long id = createOrder("OP-CANC-D", OP_STATUS_DRAFT);
+        String id = createOrder("OP-CANC-D", OP_STATUS_DRAFT);
 
         ApiResponse<?> resp = executeRpc(mutation, "ErpApsOperationOrder__cancel",
                 ApiRequest.build(Map.of("operationOrderId", id)));
@@ -112,7 +112,7 @@ public class TestErpApsOperationOrderStateGuards extends JunitAutoTestCase {
 
     @Test
     public void testCancelFromPlannedSucceeds() {
-        Long id = createOrder("OP-CANC-P", OP_STATUS_PLANNED);
+        String id = createOrder("OP-CANC-P", OP_STATUS_PLANNED);
 
         ApiResponse<?> resp = executeRpc(mutation, "ErpApsOperationOrder__cancel",
                 ApiRequest.build(Map.of("operationOrderId", id)));
@@ -123,7 +123,7 @@ public class TestErpApsOperationOrderStateGuards extends JunitAutoTestCase {
 
     @Test
     public void testCancelFromInProgressSucceeds() {
-        Long id = createOrder("OP-CANC-I", OP_STATUS_IN_PROGRESS);
+        String id = createOrder("OP-CANC-I", OP_STATUS_IN_PROGRESS);
 
         ApiResponse<?> resp = executeRpc(mutation, "ErpApsOperationOrder__cancel",
                 ApiRequest.build(Map.of("operationOrderId", id)));
@@ -134,7 +134,7 @@ public class TestErpApsOperationOrderStateGuards extends JunitAutoTestCase {
 
     @Test
     public void testCancelFromFinishedFails() {
-        Long id = createOrder("OP-CANC-F", OP_STATUS_FINISHED);
+        String id = createOrder("OP-CANC-F", OP_STATUS_FINISHED);
 
         ApiResponse<?> resp = executeRpc(mutation, "ErpApsOperationOrder__cancel",
                 ApiRequest.build(Map.of("operationOrderId", id)));
@@ -144,7 +144,7 @@ public class TestErpApsOperationOrderStateGuards extends JunitAutoTestCase {
 
     @Test
     public void testCancelFromCancelledFails() {
-        Long id = createOrder("OP-CANC-C", OP_STATUS_CANCELLED);
+        String id = createOrder("OP-CANC-C", OP_STATUS_CANCELLED);
 
         ApiResponse<?> resp = executeRpc(mutation, "ErpApsOperationOrder__cancel",
                 ApiRequest.build(Map.of("operationOrderId", id)));
@@ -158,7 +158,7 @@ public class TestErpApsOperationOrderStateGuards extends JunitAutoTestCase {
     private static final String OP_STATUS_FINISHED = "FINISHED";
     private static final String OP_STATUS_CANCELLED = "CANCELLED";
 
-    private Long createOrder(String code, String status) {
+    private String createOrder(String code, String status) {
         Map<String, Object> d = new LinkedHashMap<>();
         d.put("code", code);
         d.put("workOrderId", 1);
@@ -172,12 +172,8 @@ public class TestErpApsOperationOrderStateGuards extends JunitAutoTestCase {
         return idOf(r.getData());
     }
 
-    private Long idOf(Object data) {
-        Object id = ((Map<?, ?>) data).get("id");
-        if (id instanceof Number) {
-            return ((Number) id).longValue();
-        }
-        return Long.parseLong(String.valueOf(id));
+    private String idOf(Object data) {
+        return String.valueOf(((Map<?, ?>) data).get("id"));
     }
 
     private ApiResponse<?> executeRpc(GraphQLOperationType opType, String action, ApiRequest<?> request) {

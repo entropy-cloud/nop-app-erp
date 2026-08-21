@@ -31,13 +31,15 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * <p>与 {@link TestErpApsOperationOrderStateMachineBaselineIoC} 对照：同一 {@code assertCanCancel(IN_PROGRESS)}
  * 在基线放行、在 Delta 抛异常 —— 构成可区分的基线/Delta 双加载证据（契约 §6 业务级 Delta 实证义务）。
  *
- * <p>Delta 层经 {@code @NopTestProperty} 设置 {@code nop.core.vfs.delta-layer-ids=test-aps-delta} 激活，
+ * <p>Delta 层经 {@code @NopTestProperty} 设置 {@code nop.core.vfs.delta-layer-ids=default,test-aps-delta} 激活
+ * （含 {@code default} 层以保留 {@code nop/sys/beans/app-dao.beans.xml} 的 nopSequenceGenerator
+ * lazy-property 兼容 delta——平台 IoC self-wait 回归修复，M1.1/M1.2 同款，见 _delta/default 下登记），
  * Delta 层文件 {@code _vfs/_delta/test-aps-delta/erp/aps/beans/app-service.beans.xml} 以同名 bean id 覆盖基线。
  */
 @NopTestConfig(localDb = true,
         initDatabaseSchema = OptionalBoolean.TRUE,
         enableActionAuth = OptionalBoolean.FALSE)
-@NopTestProperty(name = "nop.core.vfs.delta-layer-ids", value = "test-aps-delta")
+@NopTestProperty(name = "nop.core.vfs.delta-layer-ids", value = "default,test-aps-delta")
 public class TestErpApsOperationOrderStateMachineDeltaOverride extends JunitAutoTestCase {
 
     /**

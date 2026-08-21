@@ -84,14 +84,14 @@ public class TestErpApsCrossDomainIntegration extends JunitAutoTestCase {
         assertEquals(WORK_ORDER_1, slots.get(0).getWorkOrderId());
     }
 
-    private Long createOp(String code, Long workOrderId, int sequence, Long machineId, int priority,
+    private String createOp(String code, Long workOrderId, int sequence, Long machineId, int priority,
                           String setup, String perUnit, String qty, String earliestStart, String status) {
         Map<String, Object> d = new LinkedHashMap<>();
         d.put("code", code);
-        d.put("workOrderId", workOrderId);
+        d.put("workOrderId", String.valueOf(workOrderId));
         d.put("operationName", code);
         d.put("sequence", sequence);
-        d.put("machineId", machineId);
+        d.put("machineId", String.valueOf(machineId));
         d.put("priority", priority);
         d.put("setupTime", new BigDecimal(setup));
         d.put("runtimePerUnit", new BigDecimal(perUnit));
@@ -103,15 +103,15 @@ public class TestErpApsCrossDomainIntegration extends JunitAutoTestCase {
         return idOf(r.getData());
     }
 
-    private Long createPlannedOp(String code, Long workOrderId, int sequence, Long machineId, int priority,
+    private String createPlannedOp(String code, Long workOrderId, int sequence, Long machineId, int priority,
                                  String setup, String perUnit, String qty,
                                  String plannedStart, String plannedEnd) {
         Map<String, Object> d = new LinkedHashMap<>();
         d.put("code", code);
-        d.put("workOrderId", workOrderId);
+        d.put("workOrderId", String.valueOf(workOrderId));
         d.put("operationName", code);
         d.put("sequence", sequence);
-        d.put("machineId", machineId);
+        d.put("machineId", String.valueOf(machineId));
         d.put("priority", priority);
         d.put("setupTime", new BigDecimal(setup));
         d.put("runtimePerUnit", new BigDecimal(perUnit));
@@ -125,12 +125,8 @@ public class TestErpApsCrossDomainIntegration extends JunitAutoTestCase {
         return idOf(r.getData());
     }
 
-    private Long idOf(Object data) {
-        Object id = ((Map<?, ?>) data).get("id");
-        if (id instanceof Number) {
-            return ((Number) id).longValue();
-        }
-        return Long.parseLong(String.valueOf(id));
+    private String idOf(Object data) {
+        return String.valueOf(((Map<?, ?>) data).get("id"));
     }
 
     private ApiResponse<?> executeRpc(GraphQLOperationType opType, String action, ApiRequest<?> request) {

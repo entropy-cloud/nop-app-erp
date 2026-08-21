@@ -67,7 +67,7 @@ public class TestErpApsCapacityReservation extends JunitAutoTestCase {
     @Inject
     IOrmTemplate ormTemplate;
 
-    private static final Long MACHINE_A = 100L;
+    private static final String MACHINE_A = "100";
     private static final LocalDateTime HORIZON_START = LocalDateTime.parse("2026-07-10T00:00:00");
     private static final LocalDateTime HORIZON_END = LocalDateTime.parse("2026-07-20T00:00:00");
 
@@ -78,13 +78,13 @@ public class TestErpApsCapacityReservation extends JunitAutoTestCase {
      */
     @Test
     public void testConcurrentScheduleForwardSharedWorkcenterThrowsCapacityConflict() {
-        Long scheduleId = createSchedule("S-CONC");
+        String scheduleId = createSchedule("S-CONC");
         // 工序 X：DRAFT, machineA, earliest=09:00, setup=0 + runtime=60 * qty=1 → duration=60min
         // 引擎将 X 排到 [09:00, 10:00]（machineA 在展望期起点空闲，无维护停机）。
-        createOp("OX-CONC", 1L, 10, MACHINE_A, 10, "0", "60", "1", "2026-07-10T09:00:00");
+        createOp("OX-CONC", "1", 10, MACHINE_A, 10, "0", "60", "1", "2026-07-10T09:00:00");
 
         // 模拟另一并发 scheduleForward 已抢先占用同工作中心同时段（不同 orderId，UK 仍冲突）
-        seedReservation(MACHINE_A, "2026-07-10T09:00:00", "2026-07-10T10:00:00", 999_001L);
+        seedReservation(MACHINE_A, "2026-07-10T09:00:00", "2026-07-10T10:00:00", "999001");
 
         ApiResponse<?> resp = runMutation("ErpApsOperationOrder__scheduleForward",
                 ApiRequest.build(Map.of("scheduleId", scheduleId)));
@@ -100,8 +100,8 @@ public class TestErpApsCapacityReservation extends JunitAutoTestCase {
      */
     @Test
     public void testForwardScheduleAcquiresReservation() {
-        Long scheduleId = createSchedule("S-OK");
-        Long opId = createOp("OX-OK", 1L, 10, MACHINE_A, 10, "0", "30", "1", "2026-07-10T09:00:00");
+        String scheduleId = createSchedule("S-OK");
+        String opId = createOp("OX-OK", "1", 10, MACHINE_A, 10, "0", "30", "1", "2026-07-10T09:00:00");
 
         ApiResponse<?> resp = runMutation("ErpApsOperationOrder__scheduleForward",
                 ApiRequest.build(Map.of("scheduleId", scheduleId)));
@@ -125,14 +125,14 @@ public class TestErpApsCapacityReservation extends JunitAutoTestCase {
      */
     @Test
     public void testReservationsReleasedOnRushOrderRevert() {
-        Long scheduleId = createSchedule("S-REVERT");
+        String scheduleId = createSchedule("S-REVERT");
         // 已 PLANNED 的低优先级工序 OE（占 09:00-09:30）
-        Long existing = createOpPlanned("OE-REL", 1L, 10, MACHINE_A, 80, "0", "30", "1",
+        String existing = createOpPlanned("OE-REL", "1", 10, MACHINE_A, 80, "0", "30", "1",
                 "2026-07-11T09:00:00", "2026-07-11T09:30:00");
         // 手工补建对应预留（createOpPlanned 不走 persist，须补建以模拟 release 前的稳态）
         seedReservation(MACHINE_A, "2026-07-11T09:00:00", "2026-07-11T09:30:00", existing);
         // 急单：priority=10 高于 OE 的 80，窗口 09:00-10:00 → OE 被回退重排
-        Long rush = createOp("OR-REL", 2L, 10, MACHINE_A, 10, "0", "20", "1", "2026-07-11T09:00:00");
+        String rush = createOp("OR-REL", "2", 10, MACHINE_A, 10, "0", "20", "1", "2026-07-11T09:00:00");
         setLatest(rush, "2026-07-11T09:55:00");
 
         assertEquals(1, findReservationsByOrder(existing).size(),
@@ -153,7 +153,7 @@ public class TestErpApsCapacityReservation extends JunitAutoTestCase {
 
     // ==================== 辅助 ====================
 
-    private Long createSchedule(String code) {
+    private String createSchedule(String code) {
         Map<String, Object> d = new LinkedHashMap<>();
         d.put("code", code);
         d.put("name", code);
@@ -167,7 +167,7 @@ public class TestErpApsCapacityReservation extends JunitAutoTestCase {
         return idOf(r.getData());
     }
 
-    private Long createOp(String code, Long workOrderId, int sequence, Long machineId, int priority,
+    private String createOp(String code, String workOrderId, int sequence, String machineId, int priority,
                           String setup, String perUnit, String qty, String earliestStart) {
         Map<String, Object> d = baseOp(code, workOrderId, sequence, machineId, priority, setup, perUnit, qty);
         d.put("status", "DRAFT");
@@ -175,7 +175,7 @@ public class TestErpApsCapacityReservation extends JunitAutoTestCase {
         return saveOp(d, code);
     }
 
-    private Long createOpPlanned(String code, Long workOrderId, int sequence, Long machineId, int priority,
+    private String createOpPlanned(String code, String workOrderId, int sequence, String machineId, int priority,
                                  String setup, String perUnit, String qty,
                                  String plannedStart, String plannedEnd) {
         Map<String, Object> d = baseOp(code, workOrderId, sequence, machineId, priority, setup, perUnit, qty);
@@ -186,7 +186,7 @@ public class TestErpApsCapacityReservation extends JunitAutoTestCase {
         return saveOp(d, code);
     }
 
-    private Map<String, Object> baseOp(String code, Long workOrderId, int sequence, Long machineId, int priority,
+    private Map<String, Object> baseOp(String code, String workOrderId, int sequence, String machineId, int priority,
                                        String setup, String perUnit, String qty) {
         Map<String, Object> d = new LinkedHashMap<>();
         d.put("code", code);
@@ -201,13 +201,13 @@ public class TestErpApsCapacityReservation extends JunitAutoTestCase {
         return d;
     }
 
-    private Long saveOp(Map<String, Object> d, String code) {
+    private String saveOp(Map<String, Object> d, String code) {
         ApiResponse<?> r = runMutation("ErpApsOperationOrder__save", ApiRequest.build(Map.of("data", d)));
         assertEquals(0, r.getStatus(), "创建 OperationOrder " + code + " 应成功: " + r);
         return idOf(r.getData());
     }
 
-    private void setLatest(Long id, String latestEnd) {
+    private void setLatest(String id, String latestEnd) {
         Map<String, Object> d = new LinkedHashMap<>();
         d.put("id", id);
         d.put("latestEndDateT", latestEnd);
@@ -216,7 +216,7 @@ public class TestErpApsCapacityReservation extends JunitAutoTestCase {
     }
 
     /** 直接持久化一条预留（模拟并发调度已抢先占用），flushSession 使其对当前 session 的 pre-check 可见。 */
-    private void seedReservation(Long machineId, String start, String end, Long operationOrderId) {
+    private void seedReservation(String machineId, String start, String end, String operationOrderId) {
         ErpApsCapacityReservation r = reservationDao().newEntity();
         r.setMachineId(machineId);
         r.setPlannedStartT(Timestamp.valueOf(LocalDateTime.parse(start)));
@@ -226,15 +226,15 @@ public class TestErpApsCapacityReservation extends JunitAutoTestCase {
         ormTemplate.flushSession();
     }
 
-    private List<ErpApsCapacityReservation> findReservationsByOrder(Long operationOrderId) {
+    private List<ErpApsCapacityReservation> findReservationsByOrder(String operationOrderId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("operationOrderId", operationOrderId));
         return reservationDao().findAllByQuery(q);
     }
 
-    private Map<String, Object> reloadOp(Long id) {
+    private Map<String, Object> reloadOp(String id) {
         ApiResponse<?> r = runQuery("ErpApsOperationOrder__get",
-                ApiRequest.build(Map.of("id", String.valueOf(id))));
+                ApiRequest.build(Map.of("id", id)));
         assertEquals(0, r.getStatus(), "reload op " + id + " 应成功");
         return (Map<String, Object>) r.getData();
     }
@@ -243,12 +243,8 @@ public class TestErpApsCapacityReservation extends JunitAutoTestCase {
         return daoProvider.daoFor(ErpApsCapacityReservation.class);
     }
 
-    private Long idOf(Object data) {
-        Object id = ((Map<?, ?>) data).get("id");
-        if (id instanceof Number) {
-            return ((Number) id).longValue();
-        }
-        return Long.parseLong(String.valueOf(id));
+    private String idOf(Object data) {
+        return String.valueOf(((Map<?, ?>) data).get("id"));
     }
 
     private ApiResponse<?> runMutation(String action, ApiRequest<?> request) {

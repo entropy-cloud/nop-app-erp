@@ -43,9 +43,9 @@ public class TestErpApsAlternativeRouting extends JunitAutoTestCase {
     @Inject
     IOrmTemplate ormTemplate;
 
-    static final Long WC_PRIMARY = 2001L;
-    static final Long WC_ALT = 2002L;
-    static final Long OP_DEF = 3001L; // ErpApsOpRouting.operationId（工序定义锚）
+    static final String WC_PRIMARY = "2001";
+    static final String WC_ALT = "2002";
+    static final String OP_DEF = "3001"; // ErpApsOpRouting.operationId（工序定义锚）
     private static final LocalDateTime HORIZON_START = LocalDateTime.parse("2026-07-10T00:00:00");
     private static final LocalDateTime HORIZON_END = LocalDateTime.parse("2026-07-20T00:00:00");
 
@@ -53,9 +53,9 @@ public class TestErpApsAlternativeRouting extends JunitAutoTestCase {
 
     @Test
     public void testPrimaryAvailableSelectsPrimary() {
-        seedRouting(101L, OP_DEF, WC_PRIMARY, 1, "0", "0", true);
-        seedRouting(102L, OP_DEF, WC_ALT, 2, "5", "1", false);
-        Long op = createOp("AR-1", 10, WC_PRIMARY, 10, "5", "2", "10");
+        seedRouting("101", OP_DEF, WC_PRIMARY, 1, "0", "0", true);
+        seedRouting("102", OP_DEF, WC_ALT, 2, "5", "1", false);
+        String op = createOp("AR-1", 10, WC_PRIMARY, 10, "5", "2", "10");
 
         runScheduleForward(createSchedule("S-AR-1"));
 
@@ -63,7 +63,7 @@ public class TestErpApsAlternativeRouting extends JunitAutoTestCase {
         assertEquals("PLANNED", reloaded.get("status"));
         assertEquals(101L, toLong(reloaded.get("selectedRoutingId")), "主选可用应选主选路由");
         assertEquals("DEFAULT", reloaded.get("routingSelectionReason"));
-        assertEquals(WC_PRIMARY, toLong(reloaded.get("machineId")));
+        assertEquals(WC_PRIMARY, reloaded.get("machineId"));
         // 时间差 0：duration = 5 + 2×10 = 25 分钟
         assertEquals(0, new BigDecimal("25").compareTo(toBd(reloaded.get("totalDuration"))));
     }
@@ -72,11 +72,11 @@ public class TestErpApsAlternativeRouting extends JunitAutoTestCase {
 
     @Test
     public void testPrimaryOverloadedFallsBackWithTimeDeltas() {
-        seedRouting(111L, OP_DEF, WC_PRIMARY, 1, "0", "0", true);
-        seedRouting(112L, OP_DEF, WC_ALT, 2, "5", "1", false);
+        seedRouting("111", OP_DEF, WC_PRIMARY, 1, "0", "0", true);
+        seedRouting("112", OP_DEF, WC_ALT, 2, "5", "1", false);
         // 同批高优先级长工序先占满 WC_PRIMARY（busy reason=op:*，非维护）
         createOp("AR-2-BLOCKER", 20, WC_PRIMARY, 5, "0", "1440", "10"); // duration=14400min>展望期
-        Long op = createOp("AR-2", 10, WC_PRIMARY, 10, "5", "2", "10");
+        String op = createOp("AR-2", 10, WC_PRIMARY, 10, "5", "2", "10");
 
         runScheduleForward(createSchedule("S-AR-2"));
 
@@ -84,7 +84,7 @@ public class TestErpApsAlternativeRouting extends JunitAutoTestCase {
         assertEquals("PLANNED", reloaded.get("status"), "主选过载应自动降级到备选");
         assertEquals(112L, toLong(reloaded.get("selectedRoutingId")));
         assertEquals("PRIMARY_OVERBOOKED", reloaded.get("routingSelectionReason"));
-        assertEquals(WC_ALT, toLong(reloaded.get("machineId")));
+        assertEquals(WC_ALT, reloaded.get("machineId"));
         // 时间差计入断言：duration = (5+5) + (2+1)×10 = 40 分钟（对比无备选差值的 25）
         assertEquals(0, new BigDecimal("40").compareTo(toBd(reloaded.get("totalDuration"))),
                 "备选时间差应计入 totalDuration");
@@ -99,9 +99,9 @@ public class TestErpApsAlternativeRouting extends JunitAutoTestCase {
 
     @Test
     public void testBatchConstraintFiltersPrimary() {
-        seedRoutingFull(121L, OP_DEF, WC_PRIMARY, 1, "0", "0", true, "100", null); // minBatch=100
-        seedRouting(122L, OP_DEF, WC_ALT, 2, "0", "0", false);
-        Long op = createOp("AR-3", 10, WC_PRIMARY, 10, "5", "2", "10"); // qty=10 < 100
+        seedRoutingFull("121", OP_DEF, WC_PRIMARY, 1, "0", "0", true, "100", null); // minBatch=100
+        seedRouting("122", OP_DEF, WC_ALT, 2, "0", "0", false);
+        String op = createOp("AR-3", 10, WC_PRIMARY, 10, "5", "2", "10"); // qty=10 < 100
 
         runScheduleForward(createSchedule("S-AR-3"));
 
@@ -116,12 +116,12 @@ public class TestErpApsAlternativeRouting extends JunitAutoTestCase {
 
     @Test
     public void testAllRoutingsUnavailableMarksUnschedulableAndSelfHeals() {
-        seedRouting(131L, OP_DEF, WC_PRIMARY, 1, "0", "0", true);
-        seedRouting(132L, OP_DEF, WC_ALT, 2, "0", "0", false);
+        seedRouting("131", OP_DEF, WC_PRIMARY, 1, "0", "0", true);
+        seedRouting("132", OP_DEF, WC_ALT, 2, "0", "0", false);
         // 两个工作中心均维护停机覆盖整个展望期
         createConstraint(WC_PRIMARY, "2026-07-10T00:00:00", "2026-07-20T00:00:00");
         createConstraint(WC_ALT, "2026-07-10T00:00:00", "2026-07-20T00:00:00");
-        Long op = createOp("AR-4", 10, WC_PRIMARY, 10, "5", "2", "10");
+        String op = createOp("AR-4", 10, WC_PRIMARY, 10, "5", "2", "10");
 
         runScheduleForward(createSchedule("S-AR-4"));
         assertEquals("UNSCHEDULABLE", reloadOp(op).get("status"), "全部候选不可用应标 UNSCHEDULABLE");
@@ -132,7 +132,7 @@ public class TestErpApsAlternativeRouting extends JunitAutoTestCase {
         runScheduleForward(createSchedule("S-AR-4B"));
         Map<String, Object> healed = reloadOp(op);
         assertEquals("PLANNED", healed.get("status"), "路由可用后重排应自愈为 PLANNED");
-        assertEquals(WC_ALT, toLong(healed.get("machineId")));
+        assertEquals(WC_ALT, healed.get("machineId"));
         assertEquals("PRIMARY_DOWN", healed.get("routingSelectionReason"),
                 "主选被维护停机阻断、备选承接应记 PRIMARY_DOWN");
     }
@@ -141,17 +141,17 @@ public class TestErpApsAlternativeRouting extends JunitAutoTestCase {
 
     @Test
     public void testManualOverrideWinsAndSurvivesReschedule() {
-        seedRouting(141L, OP_DEF, WC_PRIMARY, 1, "0", "0", true);
-        seedRouting(142L, OP_DEF, WC_ALT, 2, "5", "1", false);
-        Long op = createOp("AR-5", 10, WC_PRIMARY, 10, "5", "2", "10");
+        seedRouting("141", OP_DEF, WC_PRIMARY, 1, "0", "0", true);
+        seedRouting("142", OP_DEF, WC_ALT, 2, "5", "1", false);
+        String op = createOp("AR-5", 10, WC_PRIMARY, 10, "5", "2", "10");
 
         ApiResponse<?> r = rpc(mutation, "ErpApsOperationOrder__manualOverrideRouting",
-                ApiRequest.build(Map.of("operationOrderId", op, "routingId", 142L)));
+                ApiRequest.build(Map.of("operationOrderId", op, "routingId", "142")));
         assertEquals(0, r.getStatus(), "manualOverrideRouting 应成功: " + r);
         Map<String, Object> overridden = reloadOp(op);
         assertEquals(Boolean.TRUE, overridden.get("manualOverride"));
         assertEquals(142L, toLong(overridden.get("selectedRoutingId")));
-        assertEquals(WC_ALT, toLong(overridden.get("machineId")));
+        assertEquals(WC_ALT, overridden.get("machineId"));
         assertEquals("DRAFT", overridden.get("status"), "强制指定后回退 DRAFT 待重排");
         assertEquals(0, new BigDecimal("10").compareTo(toBd(overridden.get("setupTime"))), "差值 5 已叠加");
         assertEquals(0, new BigDecimal("3").compareTo(toBd(overridden.get("runtimePerUnit"))));
@@ -161,7 +161,7 @@ public class TestErpApsAlternativeRouting extends JunitAutoTestCase {
         runScheduleForward(createSchedule("S-AR-5"));
         Map<String, Object> rescheduled = reloadOp(op);
         assertEquals("PLANNED", rescheduled.get("status"));
-        assertEquals(WC_ALT, toLong(rescheduled.get("machineId")), "重排保持人工指定工作中心");
+        assertEquals(WC_ALT, rescheduled.get("machineId"), "重排保持人工指定工作中心");
         assertEquals(142L, toLong(rescheduled.get("selectedRoutingId")));
         assertEquals(Boolean.TRUE, rescheduled.get("manualOverride"));
     }
@@ -170,13 +170,13 @@ public class TestErpApsAlternativeRouting extends JunitAutoTestCase {
 
     @Test
     public void testNoRoutingConfigKeepsLegacyBehavior() {
-        Long op = createOp("AR-6", 10, WC_PRIMARY, 10, "5", "2", "10");
+        String op = createOp("AR-6", 10, WC_PRIMARY, 10, "5", "2", "10");
 
         runScheduleForward(createSchedule("S-AR-6"));
 
         Map<String, Object> reloaded = reloadOp(op);
         assertEquals("PLANNED", reloaded.get("status"));
-        assertEquals(WC_PRIMARY, toLong(reloaded.get("machineId")));
+        assertEquals(WC_PRIMARY, reloaded.get("machineId"));
         assertNull(reloaded.get("selectedRoutingId"), "无路由配置不触碰路由字段");
         assertNull(reloaded.get("routingSelectionReason"));
         LocalDateTime start = toLdt(reloaded.get("plannedStartDateT"));
@@ -187,10 +187,10 @@ public class TestErpApsAlternativeRouting extends JunitAutoTestCase {
 
     @Test
     public void testFallbackDisabledKeepsUnschedulable() {
-        seedRouting(151L, OP_DEF, WC_PRIMARY, 1, "0", "0", true);
-        seedRouting(152L, OP_DEF, WC_ALT, 2, "0", "0", false);
+        seedRouting("151", OP_DEF, WC_PRIMARY, 1, "0", "0", true);
+        seedRouting("152", OP_DEF, WC_ALT, 2, "0", "0", false);
         createConstraint(WC_PRIMARY, "2026-07-10T00:00:00", "2026-07-20T00:00:00");
-        Long op = createOpWithFallback("AR-7", 10, WC_PRIMARY, 10, "5", "2", "10", Boolean.FALSE);
+        String op = createOpWithFallback("AR-7", 10, WC_PRIMARY, 10, "5", "2", "10", Boolean.FALSE);
 
         runScheduleForward(createSchedule("S-AR-7"));
 
@@ -198,36 +198,36 @@ public class TestErpApsAlternativeRouting extends JunitAutoTestCase {
         assertEquals("UNSCHEDULABLE", reloaded.get("status"),
                 "allowFallback=false 主选不可用应保持 UNSCHEDULABLE（不尝试备选）");
         assertNull(reloaded.get("selectedRoutingId"));
-        assertEquals(WC_PRIMARY, toLong(reloaded.get("machineId")), "未降级则不改变工作中心");
+        assertEquals(WC_PRIMARY, reloaded.get("machineId"), "未降级则不改变工作中心");
     }
 
     // ---------------- 8. 强制指定非法路由被拒 ----------------
 
     @Test
     public void testManualOverrideRejectsDisabledOrMissingRouting() {
-        seedRouting(161L, OP_DEF, WC_PRIMARY, 1, "0", "0", true);
-        Long disabledRoutingId = 162L;
+        seedRouting("161", OP_DEF, WC_PRIMARY, 1, "0", "0", true);
+        String disabledRoutingId = "162";
         seedRoutingFull(disabledRoutingId, OP_DEF, WC_ALT, 2, "0", "0", false, null, null);
         setRoutingEnabled(disabledRoutingId, Boolean.FALSE);
-        Long op = createOp("AR-8", 10, WC_PRIMARY, 10, "5", "2", "10");
+        String op = createOp("AR-8", 10, WC_PRIMARY, 10, "5", "2", "10");
 
         ApiResponse<?> r = rpc(mutation, "ErpApsOperationOrder__manualOverrideRouting",
                 ApiRequest.build(Map.of("operationOrderId", op, "routingId", disabledRoutingId)));
         assertTrue(r.getStatus() != 0, "未启用路由强制指定应被拒绝");
 
         ApiResponse<?> missing = rpc(mutation, "ErpApsOperationOrder__manualOverrideRouting",
-                ApiRequest.build(Map.of("operationOrderId", op, "routingId", 999999L)));
+                ApiRequest.build(Map.of("operationOrderId", op, "routingId", "999999")));
         assertTrue(missing.getStatus() != 0, "不存在路由强制指定应被拒绝");
     }
 
     // ==================== helpers ====================
 
-    private void seedRouting(Long id, Long operationId, Long machineId, int priority,
+    private void seedRouting(String id, String operationId, String machineId, int priority,
                              String setupDelta, String perUnitDelta, boolean isDefault) {
         seedRoutingFull(id, operationId, machineId, priority, setupDelta, perUnitDelta, isDefault, null, null);
     }
 
-    private void seedRoutingFull(Long id, Long operationId, Long machineId, int priority,
+    private void seedRoutingFull(String id, String operationId, String machineId, int priority,
                                  String setupDelta, String perUnitDelta, boolean isDefault,
                                  String minBatch, String maxBatch) {
         ormTemplate.runInSession(() -> {
@@ -250,7 +250,7 @@ public class TestErpApsAlternativeRouting extends JunitAutoTestCase {
         });
     }
 
-    private void setRoutingEnabled(Long id, Boolean enabled) {
+    private void setRoutingEnabled(String id, Boolean enabled) {
         ormTemplate.runInSession(() -> {
             ErpApsOpRouting r = daoProvider.daoFor(ErpApsOpRouting.class).getEntityById(id);
             r.orm_propValueByName("isEnabled", enabled);
@@ -258,7 +258,7 @@ public class TestErpApsAlternativeRouting extends JunitAutoTestCase {
         });
     }
 
-    private void createConstraint(Long machineId, String start, String end) {
+    private void createConstraint(String machineId, String start, String end) {
         Map<String, Object> d = new LinkedHashMap<>();
         d.put("machineId", machineId);
         d.put("constraintType", "MAINTENANCE");
@@ -268,7 +268,7 @@ public class TestErpApsAlternativeRouting extends JunitAutoTestCase {
         assertEquals(0, rpc(mutation, "ErpApsConstraint__save", ApiRequest.build(Map.of("data", d))).getStatus());
     }
 
-    private void clearMaintenance(Long machineId) {
+    private void clearMaintenance(String machineId) {
         ormTemplate.runInSession(() -> {
             io.nop.api.core.beans.query.QueryBean q = new io.nop.api.core.beans.query.QueryBean();
             q.addFilter(io.nop.api.core.beans.FilterBeans.eq("machineId", machineId));
@@ -279,16 +279,16 @@ public class TestErpApsAlternativeRouting extends JunitAutoTestCase {
         });
     }
 
-    private Long createOp(String code, int sequence, Long machineId, int priority,
+    private String createOp(String code, int sequence, String machineId, int priority,
                           String setup, String perUnit, String qty) {
         return createOpWithFallback(code, sequence, machineId, priority, setup, perUnit, qty, null);
     }
 
-    private Long createOpWithFallback(String code, int sequence, Long machineId, int priority,
+    private String createOpWithFallback(String code, int sequence, String machineId, int priority,
                                       String setup, String perUnit, String qty, Boolean allowFallback) {
         Map<String, Object> d = new LinkedHashMap<>();
         d.put("code", code);
-        d.put("workOrderId", 7001L);
+        d.put("workOrderId", "7001");
         d.put("operationName", code);
         d.put("sequence", sequence);
         d.put("machineId", machineId);
@@ -303,10 +303,10 @@ public class TestErpApsAlternativeRouting extends JunitAutoTestCase {
         }
         ApiResponse<?> r = rpc(mutation, "ErpApsOperationOrder__save", ApiRequest.build(Map.of("data", d)));
         assertEquals(0, r.getStatus(), "创建 OperationOrder " + code + " 应成功: " + r);
-        return toLong(((Map<?, ?>) r.getData()).get("id"));
+        return String.valueOf(((Map<?, ?>) r.getData()).get("id"));
     }
 
-    private Long createSchedule(String code) {
+    private String createSchedule(String code) {
         Map<String, Object> d = new LinkedHashMap<>();
         d.put("code", code);
         d.put("name", code);
@@ -317,18 +317,18 @@ public class TestErpApsAlternativeRouting extends JunitAutoTestCase {
         d.put("status", "DRAFT");
         ApiResponse<?> r = rpc(mutation, "ErpApsSchedule__save", ApiRequest.build(Map.of("data", d)));
         assertEquals(0, r.getStatus());
-        return toLong(((Map<?, ?>) r.getData()).get("id"));
+        return String.valueOf(((Map<?, ?>) r.getData()).get("id"));
     }
 
-    private void runScheduleForward(Long scheduleId) {
+    private void runScheduleForward(String scheduleId) {
         ApiResponse<?> r = rpc(mutation, "ErpApsOperationOrder__scheduleForward",
                 ApiRequest.build(Map.of("scheduleId", scheduleId)));
         assertEquals(0, r.getStatus(), "前向排产应成功: " + r);
     }
 
-    private Map<String, Object> reloadOp(Long id) {
+    private Map<String, Object> reloadOp(String id) {
         ApiResponse<?> r = rpc(GraphQLOperationType.query, "ErpApsOperationOrder__get",
-                ApiRequest.build(Map.of("id", String.valueOf(id))));
+                ApiRequest.build(Map.of("id", id)));
         assertEquals(0, r.getStatus());
         return (Map<String, Object>) r.getData();
     }
