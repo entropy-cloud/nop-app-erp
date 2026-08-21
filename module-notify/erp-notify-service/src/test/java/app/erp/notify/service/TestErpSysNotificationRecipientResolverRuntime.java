@@ -149,7 +149,7 @@ public class TestErpSysNotificationRecipientResolverRuntime extends JunitAutoTes
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpSysNotificationTemplate> dao = daoProvider.daoFor(ErpSysNotificationTemplate.class);
             ErpSysNotificationTemplate t = new ErpSysNotificationTemplate();
-            t.orm_propValueByName("id", id);
+            t.orm_propValueByName("id", String.valueOf(id));
             t.setNotificationType(notificationType);
             t.setName("TPL-" + notificationType);
             t.setChannelSet(ErpNotifyConstants.CHANNEL_IN_APP);

@@ -20,12 +20,12 @@
 
     <props>
         <prop name="id" displayName="ID" propId="1" i18n-en:displayName="ID" tagSet="seq-default" mandatory="true"
-              queryable="true" sortable="true" insertable="true" updatable="false" graphql:type="String">
-            <schema type="java.lang.Long"/>
+              queryable="true" sortable="true" insertable="true" updatable="false">
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="templateId" displayName="模板ID" propId="2" i18n-en:displayName="Template" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="template">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="notificationType" displayName="业务事件键" propId="3" i18n-en:displayName="Notification Type"
               mandatory="true" queryable="true" sortable="true" insertable="true" updatable="true">
@@ -37,11 +37,11 @@
         </prop>
         <prop name="recipientPartnerId" displayName="接收业务伙伴" propId="5" i18n-en:displayName="Recipient Partner"
               queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="recipientDeptId" displayName="接收部门" propId="6" i18n-en:displayName="Recipient Dept" queryable="true"
               sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="channel" displayName="渠道" propId="7" i18n-en:displayName="Channel" mandatory="true" queryable="true"
               sortable="true" insertable="true" updatable="true" defaultValue="IN_APP">

@@ -203,7 +203,7 @@ public class NotificationDispatcher {
      * 模板渲染：{@code ${varName}} 占位符从 context 插值；无占位符原样返回。
      * 渲染失败抛 {@link ErpNotifyErrors#ERR_NOTIFY_RENDER_FAILED}。
      */
-    String renderTemplate(Long templateId, String tpl, Map<String, Object> context) {
+    String renderTemplate(String templateId, String tpl, Map<String, Object> context) {
         if (StringHelper.isBlank(tpl)) {
             return "";
         }

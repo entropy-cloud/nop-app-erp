@@ -110,10 +110,10 @@ public class _ErpSysNotificationRead extends DynamicOrmEntity{
 
     
     /* ID: ID */
-    private java.lang.Long _id;
+    private java.lang.String _id;
     
     /* 通知ID: NOTIFICATION_ID */
-    private java.lang.Long _notificationId;
+    private java.lang.String _notificationId;
     
     /* 用户: USER_ID */
     private java.lang.String _userId;
@@ -255,9 +255,9 @@ public class _ErpSysNotificationRead extends DynamicOrmEntity{
         switch(propId){
         
             case PROP_ID_id:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_id));
                }
                setId(typedValue);
@@ -265,9 +265,9 @@ public class _ErpSysNotificationRead extends DynamicOrmEntity{
             }
         
             case PROP_ID_notificationId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_notificationId));
                }
                setNotificationId(typedValue);
@@ -365,14 +365,14 @@ public class _ErpSysNotificationRead extends DynamicOrmEntity{
         
             case PROP_ID_id:{
                onInitProp(propId);
-               this._id = (java.lang.Long)value;
+               this._id = (java.lang.String)value;
                orm_id(); // 如果是设置主键字段，则触发watcher
                break;
             }
         
             case PROP_ID_notificationId:{
                onInitProp(propId);
-               this._notificationId = (java.lang.Long)value;
+               this._notificationId = (java.lang.String)value;
                
                break;
             }
@@ -442,7 +442,7 @@ public class _ErpSysNotificationRead extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final java.lang.Long getId(){
+    public final java.lang.String getId(){
          onPropGet(PROP_ID_id);
          return _id;
     }
@@ -450,7 +450,7 @@ public class _ErpSysNotificationRead extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final void setId(java.lang.Long value){
+    public final void setId(java.lang.String value){
         if(onPropSet(PROP_ID_id,value)){
             this._id = value;
             internalClearRefs(PROP_ID_id);
@@ -461,7 +461,7 @@ public class _ErpSysNotificationRead extends DynamicOrmEntity{
     /**
      * 通知ID: NOTIFICATION_ID
      */
-    public final java.lang.Long getNotificationId(){
+    public final java.lang.String getNotificationId(){
          onPropGet(PROP_ID_notificationId);
          return _notificationId;
     }
@@ -469,7 +469,7 @@ public class _ErpSysNotificationRead extends DynamicOrmEntity{
     /**
      * 通知ID: NOTIFICATION_ID
      */
-    public final void setNotificationId(java.lang.Long value){
+    public final void setNotificationId(java.lang.String value){
         if(onPropSet(PROP_ID_notificationId,value)){
             this._notificationId = value;
             internalClearRefs(PROP_ID_notificationId);

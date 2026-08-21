@@ -11,7 +11,7 @@ import io.nop.dao.api.IEntityDao;
  */
 public class ErpSysNotificationMarkReadProcessor extends AbstractErpSysNotificationProcessor {
 
-    public ErpSysNotification markRead(Long notificationId, IServiceContext ctx) {
+    public ErpSysNotification markRead(String notificationId, IServiceContext ctx) {
         IEntityDao<ErpSysNotification> dao = notificationDao();
         ErpSysNotification n = dao.getEntityById(notificationId);
         // 通知按 recipientUserId 投递，已读记录以接收人为准（与 findUnread/countUnread 口径一致）；

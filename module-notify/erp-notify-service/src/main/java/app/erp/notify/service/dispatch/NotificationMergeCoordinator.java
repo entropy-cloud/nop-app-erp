@@ -93,7 +93,7 @@ public class NotificationMergeCoordinator {
         return existing;
     }
 
-    private boolean isRead(Long notificationId, String userId) {
+    private boolean isRead(String notificationId, String userId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("notificationId", notificationId));
         q.addFilter(eq("userId", userId));

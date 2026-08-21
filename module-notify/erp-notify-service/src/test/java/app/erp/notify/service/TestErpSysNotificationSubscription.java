@@ -72,7 +72,7 @@ public class TestErpSysNotificationSubscription extends JunitAutoTestCase {
         List<ErpSysNotification> all = notificationsOf(user, "sub-event-2");
         assertEquals(2, all.size());
 
-        Long firstId = all.get(0).getId();
+        String firstId = all.get(0).getId();
         ApiResponse<?> resp = executeRpc(mutation, "ErpSysNotification__markRead",
                 ApiRequest.build(Map.of("notificationId", firstId)));
         assertEquals(0, resp.getStatus());
@@ -134,7 +134,7 @@ public class TestErpSysNotificationSubscription extends JunitAutoTestCase {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpSysNotificationTemplate> dao = daoProvider.daoFor(ErpSysNotificationTemplate.class);
             ErpSysNotificationTemplate t = new ErpSysNotificationTemplate();
-            t.orm_propValueByName("id", id);
+            t.orm_propValueByName("id", String.valueOf(id));
             t.setNotificationType(notificationType);
             t.setName("TPL-" + notificationType);
             t.setChannelSet(channelSet);

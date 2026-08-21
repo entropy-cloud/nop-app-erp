@@ -26,7 +26,7 @@ public interface IErpSysNotificationBiz extends ICrudBiz<ErpSysNotification> {
      * 标记单条通知为已读：写入 ErpSysNotificationRead（唯一键 notificationId+userId 防重复）。
      */
     @BizMutation
-    ErpSysNotification markRead(@Name("notificationId") Long notificationId, IServiceContext ctx);
+    ErpSysNotification markRead(@Name("notificationId") String notificationId, IServiceContext ctx);
 
     /**
      * 标记某用户所有未读通知为已读，返回处理条数。userId 留空时回退到当前登录用户 ctx.getUserId()

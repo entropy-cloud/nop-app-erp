@@ -69,7 +69,7 @@
                 ext:icon="bell" i18n-en:displayName="Notification Template">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
-                        stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
+                        stdDataType="string" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
                 <column code="NOTIFICATION_TYPE" displayName="业务事件键" mandatory="true" name="notificationType"
                         precision="100" propId="2" stdDataType="string" stdSqlType="VARCHAR"
                         i18n-en:displayName="Notification Type"/>
@@ -130,8 +130,8 @@
                 ext:icon="envelope" i18n-en:displayName="Notification">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
-                        stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
-                <column code="TEMPLATE_ID" displayName="模板ID" name="templateId" propId="2" stdDataType="long"
+                        stdDataType="string" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
+                <column code="TEMPLATE_ID" displayName="模板ID" name="templateId" propId="2" stdDataType="string"
                         stdSqlType="BIGINT" i18n-en:displayName="Template"/>
                 <column code="NOTIFICATION_TYPE" displayName="业务事件键" mandatory="true" name="notificationType"
                         precision="100" propId="3" stdDataType="string" stdSqlType="VARCHAR"
@@ -140,9 +140,9 @@
                         stdDataType="string" stdDomain="userId" stdSqlType="VARCHAR"
                         i18n-en:displayName="Recipient User"/>
                 <column code="RECIPIENT_PARTNER_ID" displayName="接收业务伙伴" name="recipientPartnerId" propId="5"
-                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Recipient Partner"/>
-                <column code="RECIPIENT_DEPT_ID" displayName="接收部门" name="recipientDeptId" propId="6" stdDataType="long"
-                        stdSqlType="BIGINT" i18n-en:displayName="Recipient Dept"/>
+                        stdDataType="string" stdSqlType="BIGINT" i18n-en:displayName="Recipient Partner"/>
+                <column code="RECIPIENT_DEPT_ID" displayName="接收部门" name="recipientDeptId" propId="6"
+                        stdDataType="string" stdSqlType="BIGINT" i18n-en:displayName="Recipient Dept"/>
                 <column code="CHANNEL" defaultValue="IN_APP" displayName="渠道" mandatory="true" name="channel"
                         precision="20" propId="7" stdDataType="string" stdSqlType="VARCHAR"
                         ext:dict="erp-notify/notification-channel" i18n-en:displayName="Channel"/>
@@ -210,9 +210,9 @@
                 ext:icon="check-square" i18n-en:displayName="Notification Read">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
-                        stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
+                        stdDataType="string" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
                 <column code="NOTIFICATION_ID" displayName="通知ID" mandatory="true" name="notificationId" propId="2"
-                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Notification"/>
+                        stdDataType="string" stdSqlType="BIGINT" i18n-en:displayName="Notification"/>
                 <column code="USER_ID" displayName="用户" mandatory="true" name="userId" precision="36" propId="3"
                         stdDataType="string" stdDomain="userId" stdSqlType="VARCHAR" i18n-en:displayName="User"/>
                 <column code="READ_TIME" displayName="阅读时间" mandatory="true" name="readTime" propId="4"

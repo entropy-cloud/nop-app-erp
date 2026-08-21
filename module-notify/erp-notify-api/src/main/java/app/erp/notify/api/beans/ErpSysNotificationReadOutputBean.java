@@ -13,30 +13,30 @@
     public class ErpSysNotificationReadOutputBean {
 
     
-        private Long _id;
+        private String _id;
 
     
         @PropMeta(propId=1)
     
-        public Long getId(){
+        public String getId(){
             return _id;
         }
 
-        public void setId(Long value){
+        public void setId(String value){
             this._id = value;
         }
 
 
-        private Long _notificationId;
+        private String _notificationId;
 
     
         @PropMeta(propId=2)
     
-        public Long getNotificationId(){
+        public String getNotificationId(){
             return _notificationId;
         }
 
-        public void setNotificationId(Long value){
+        public void setNotificationId(String value){
             this._notificationId = value;
         }
 

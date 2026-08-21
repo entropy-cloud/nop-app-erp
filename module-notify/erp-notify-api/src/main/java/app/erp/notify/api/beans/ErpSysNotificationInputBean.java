@@ -12,30 +12,30 @@
     public class ErpSysNotificationInputBean extends CrudInputBase {
 
     
-        private Long _id;
+        private String _id;
 
     
         @PropMeta(propId=1)
     
-        public Long getId(){
+        public String getId(){
             return _id;
         }
 
-        public void setId(Long value){
+        public void setId(String value){
             this._id = value;
         }
 
 
-        private Long _templateId;
+        private String _templateId;
 
     
         @PropMeta(propId=2)
     
-        public Long getTemplateId(){
+        public String getTemplateId(){
             return _templateId;
         }
 
-        public void setTemplateId(Long value){
+        public void setTemplateId(String value){
             this._templateId = value;
         }
 
@@ -68,30 +68,30 @@
         }
 
 
-        private Long _recipientPartnerId;
+        private String _recipientPartnerId;
 
     
         @PropMeta(propId=5)
     
-        public Long getRecipientPartnerId(){
+        public String getRecipientPartnerId(){
             return _recipientPartnerId;
         }
 
-        public void setRecipientPartnerId(Long value){
+        public void setRecipientPartnerId(String value){
             this._recipientPartnerId = value;
         }
 
 
-        private Long _recipientDeptId;
+        private String _recipientDeptId;
 
     
         @PropMeta(propId=6)
     
-        public Long getRecipientDeptId(){
+        public String getRecipientDeptId(){
             return _recipientDeptId;
         }
 
-        public void setRecipientDeptId(Long value){
+        public void setRecipientDeptId(String value){
             this._recipientDeptId = value;
         }
 

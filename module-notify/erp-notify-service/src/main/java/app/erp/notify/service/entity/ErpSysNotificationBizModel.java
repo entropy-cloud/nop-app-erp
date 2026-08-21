@@ -59,7 +59,7 @@ public class ErpSysNotificationBizModel extends CrudBizModel<ErpSysNotification>
 
     @Override
     @BizMutation
-    public ErpSysNotification markRead(@Name("notificationId") Long notificationId, IServiceContext ctx) {
+    public ErpSysNotification markRead(@Name("notificationId") String notificationId, IServiceContext ctx) {
         return markReadProcessor.markRead(notificationId, ctx);
     }
 
@@ -90,7 +90,7 @@ public class ErpSysNotificationBizModel extends CrudBizModel<ErpSysNotification>
         if (reads.isEmpty()) {
             return Collections.emptyList();
         }
-        Set<Long> readIds = new HashSet<>();
+        Set<String> readIds = new HashSet<>();
         for (ErpSysNotificationRead r : reads) {
             if (r.getNotificationId() != null) readIds.add(r.getNotificationId());
         }
@@ -125,7 +125,7 @@ public class ErpSysNotificationBizModel extends CrudBizModel<ErpSysNotification>
         QueryBean readQ = new QueryBean();
         readQ.addFilter(eq("userId", userId));
         List<ErpSysNotificationRead> reads = daoProvider().daoFor(ErpSysNotificationRead.class).findAllByQuery(readQ);
-        Set<Long> readIds = new HashSet<>();
+        Set<String> readIds = new HashSet<>();
         for (ErpSysNotificationRead r : reads) {
             if (r.getNotificationId() != null) readIds.add(r.getNotificationId());
         }

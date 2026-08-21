@@ -187,10 +187,10 @@ public class _ErpSysNotification extends DynamicOrmEntity{
 
     
     /* ID: ID */
-    private java.lang.Long _id;
+    private java.lang.String _id;
     
     /* 模板ID: TEMPLATE_ID */
-    private java.lang.Long _templateId;
+    private java.lang.String _templateId;
     
     /* 业务事件键: NOTIFICATION_TYPE */
     private java.lang.String _notificationType;
@@ -199,10 +199,10 @@ public class _ErpSysNotification extends DynamicOrmEntity{
     private java.lang.String _recipientUserId;
     
     /* 接收业务伙伴: RECIPIENT_PARTNER_ID */
-    private java.lang.Long _recipientPartnerId;
+    private java.lang.String _recipientPartnerId;
     
     /* 接收部门: RECIPIENT_DEPT_ID */
-    private java.lang.Long _recipientDeptId;
+    private java.lang.String _recipientDeptId;
     
     /* 渠道: CHANNEL */
     private java.lang.String _channel;
@@ -398,9 +398,9 @@ public class _ErpSysNotification extends DynamicOrmEntity{
         switch(propId){
         
             case PROP_ID_id:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_id));
                }
                setId(typedValue);
@@ -408,9 +408,9 @@ public class _ErpSysNotification extends DynamicOrmEntity{
             }
         
             case PROP_ID_templateId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_templateId));
                }
                setTemplateId(typedValue);
@@ -438,9 +438,9 @@ public class _ErpSysNotification extends DynamicOrmEntity{
             }
         
             case PROP_ID_recipientPartnerId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_recipientPartnerId));
                }
                setRecipientPartnerId(typedValue);
@@ -448,9 +448,9 @@ public class _ErpSysNotification extends DynamicOrmEntity{
             }
         
             case PROP_ID_recipientDeptId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_recipientDeptId));
                }
                setRecipientDeptId(typedValue);
@@ -618,14 +618,14 @@ public class _ErpSysNotification extends DynamicOrmEntity{
         
             case PROP_ID_id:{
                onInitProp(propId);
-               this._id = (java.lang.Long)value;
+               this._id = (java.lang.String)value;
                orm_id(); // 如果是设置主键字段，则触发watcher
                break;
             }
         
             case PROP_ID_templateId:{
                onInitProp(propId);
-               this._templateId = (java.lang.Long)value;
+               this._templateId = (java.lang.String)value;
                
                break;
             }
@@ -646,14 +646,14 @@ public class _ErpSysNotification extends DynamicOrmEntity{
         
             case PROP_ID_recipientPartnerId:{
                onInitProp(propId);
-               this._recipientPartnerId = (java.lang.Long)value;
+               this._recipientPartnerId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_recipientDeptId:{
                onInitProp(propId);
-               this._recipientDeptId = (java.lang.Long)value;
+               this._recipientDeptId = (java.lang.String)value;
                
                break;
             }
@@ -772,7 +772,7 @@ public class _ErpSysNotification extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final java.lang.Long getId(){
+    public final java.lang.String getId(){
          onPropGet(PROP_ID_id);
          return _id;
     }
@@ -780,7 +780,7 @@ public class _ErpSysNotification extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final void setId(java.lang.Long value){
+    public final void setId(java.lang.String value){
         if(onPropSet(PROP_ID_id,value)){
             this._id = value;
             internalClearRefs(PROP_ID_id);
@@ -791,7 +791,7 @@ public class _ErpSysNotification extends DynamicOrmEntity{
     /**
      * 模板ID: TEMPLATE_ID
      */
-    public final java.lang.Long getTemplateId(){
+    public final java.lang.String getTemplateId(){
          onPropGet(PROP_ID_templateId);
          return _templateId;
     }
@@ -799,7 +799,7 @@ public class _ErpSysNotification extends DynamicOrmEntity{
     /**
      * 模板ID: TEMPLATE_ID
      */
-    public final void setTemplateId(java.lang.Long value){
+    public final void setTemplateId(java.lang.String value){
         if(onPropSet(PROP_ID_templateId,value)){
             this._templateId = value;
             internalClearRefs(PROP_ID_templateId);
@@ -848,7 +848,7 @@ public class _ErpSysNotification extends DynamicOrmEntity{
     /**
      * 接收业务伙伴: RECIPIENT_PARTNER_ID
      */
-    public final java.lang.Long getRecipientPartnerId(){
+    public final java.lang.String getRecipientPartnerId(){
          onPropGet(PROP_ID_recipientPartnerId);
          return _recipientPartnerId;
     }
@@ -856,7 +856,7 @@ public class _ErpSysNotification extends DynamicOrmEntity{
     /**
      * 接收业务伙伴: RECIPIENT_PARTNER_ID
      */
-    public final void setRecipientPartnerId(java.lang.Long value){
+    public final void setRecipientPartnerId(java.lang.String value){
         if(onPropSet(PROP_ID_recipientPartnerId,value)){
             this._recipientPartnerId = value;
             internalClearRefs(PROP_ID_recipientPartnerId);
@@ -867,7 +867,7 @@ public class _ErpSysNotification extends DynamicOrmEntity{
     /**
      * 接收部门: RECIPIENT_DEPT_ID
      */
-    public final java.lang.Long getRecipientDeptId(){
+    public final java.lang.String getRecipientDeptId(){
          onPropGet(PROP_ID_recipientDeptId);
          return _recipientDeptId;
     }
@@ -875,7 +875,7 @@ public class _ErpSysNotification extends DynamicOrmEntity{
     /**
      * 接收部门: RECIPIENT_DEPT_ID
      */
-    public final void setRecipientDeptId(java.lang.Long value){
+    public final void setRecipientDeptId(java.lang.String value){
         if(onPropSet(PROP_ID_recipientDeptId,value)){
             this._recipientDeptId = value;
             internalClearRefs(PROP_ID_recipientDeptId);

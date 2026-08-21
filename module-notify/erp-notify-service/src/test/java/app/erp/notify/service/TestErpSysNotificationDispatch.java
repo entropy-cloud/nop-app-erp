@@ -153,7 +153,7 @@ public class TestErpSysNotificationDispatch extends JunitAutoTestCase {
                 Map.of("eventType", eventType, "context", context));
     }
 
-    private void markRead(Long notificationId) {
+    private void markRead(String notificationId) {
         ApiResponse<?> resp = rpc(mutation, "ErpSysNotification__markRead",
                 Map.of("notificationId", notificationId));
         assertEquals(0, resp.getStatus(), "markRead 应成功: " + resp);
@@ -199,7 +199,7 @@ public class TestErpSysNotificationDispatch extends JunitAutoTestCase {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpSysNotificationTemplate> dao = daoProvider.daoFor(ErpSysNotificationTemplate.class);
             ErpSysNotificationTemplate t = new ErpSysNotificationTemplate();
-            t.orm_propValueByName("id", id);
+            t.orm_propValueByName("id", String.valueOf(id));
             t.setNotificationType(notificationType);
             t.setName("TPL-" + notificationType);
             t.setChannelSet(channelSet);

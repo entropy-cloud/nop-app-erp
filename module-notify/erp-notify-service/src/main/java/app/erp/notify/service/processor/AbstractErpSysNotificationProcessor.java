@@ -44,7 +44,7 @@ public abstract class AbstractErpSysNotificationProcessor {
         return ctx == null ? null : ctx.getUserId();
     }
 
-    protected boolean isRead(Long notificationId, String userId, IEntityDao<ErpSysNotificationRead> dao) {
+    protected boolean isRead(String notificationId, String userId, IEntityDao<ErpSysNotificationRead> dao) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("notificationId", notificationId));
         q.addFilter(eq("userId", userId));
@@ -60,7 +60,7 @@ public abstract class AbstractErpSysNotificationProcessor {
         QueryBean readQ = new QueryBean();
         readQ.addFilter(eq("userId", userId));
         List<ErpSysNotificationRead> reads = readDao().findAllByQuery(readQ);
-        Set<Long> readIds = new HashSet<>();
+        Set<String> readIds = new HashSet<>();
         for (ErpSysNotificationRead r : reads) {
             if (r.getNotificationId() != null) readIds.add(r.getNotificationId());
         }
@@ -75,7 +75,7 @@ public abstract class AbstractErpSysNotificationProcessor {
         return dao.findAllByQuery(q);
     }
 
-    protected ErpSysNotificationRead newReadEntry(Long notificationId, String userId) {
+    protected ErpSysNotificationRead newReadEntry(String notificationId, String userId) {
         ErpSysNotificationRead read = readDao().newEntity();
         read.setNotificationId(notificationId);
         read.setUserId(userId);
