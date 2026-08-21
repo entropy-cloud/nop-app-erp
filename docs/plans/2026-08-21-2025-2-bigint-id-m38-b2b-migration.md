@@ -1,6 +1,6 @@
 # 2026-08-21-2025-2-bigint-id-m38-b2b-migration 主键/外键 string 化 M3.8：b2b 域迁移（冻结序位次 4）
 
-> Plan Status: active（2026-08-21：iteration 1 治理审查 pass + 技术审查 needs revision → 修订后 iteration 2 技术复审 `passes draft review`；保护区域双独立子 agent 批准，见 Draft Review Record）
+> Plan Status: completed（2026-08-21：四 Phase 执行完毕 + 独立结束审计 `passes closure audit`（0 BLOCKER / 0 MAJOR / 0 MINOR），见 Closure；iteration 1 治理审查 pass + 技术审查 needs revision → 修订后 iteration 2 技术复审 `passes draft review`；保护区域双独立子 agent 批准，见 Draft Review Record）
 > Mission: id-string-migration
 > Work Item: M3.8（b2b，冻结序位次 4）
 > Last Reviewed: 2026-08-21
@@ -53,100 +53,116 @@
 
 ### Phase 1 - 消费登记册 + orm 回写（保护区域，双批准前置）
 
-Status: planned
+Status: completed（2026-08-21 执行记录：登记册消费核对一致——(i) A1 orm 延后 = 0（登记册 8 条 orm-column-deferral 全为 fin ×6 + hr ×2，零 b2b 条目）；(ii) A2 main 桥接 7 条 = bridge-main-026..031（pur 6 编译级，`ErpB2bAsnCreateReceiveFromAsnProcessor:10-13` + `ErpB2bAsnMatchPurchaseOrderProcessor:9/10`）+ bridge-main-032（sal 1 语义级，`UblInvoiceEdiProvider:53`）与 Current Baseline 预对账一致（双源复核通过）；(iii) A3 登记册口径 = 0，FQN 复扫 `rg 'app\.erp\.(pur|inv|sal|mfg)\.' module-b2b/erp-b2b-service/src/test`（排除 import、按行计数）= 恰 1 文件 `TestErpB2bAsnInventoryIntegration` / 20 行命中（token 口径 22 = 18 类型引用 + 4 `.class`，:330/:346 双 token 行如预测）——零新增未登记 FQN 耦合，无 rule-6 触发；(iv) C1 = backward-137（md，`ErpB2bAsnCreateReceiveFromAsnProcessor`）+ backward-138（notify，`ErpB2bOnboardingMonitorJob`）；C2 = backward-197（md）+ backward-198（notify）同文件 `TestErpB2bPartnerOnboarding`——定位面在案，零冲突。回写三步执行：dry-run 全量刷新（1553 列副本）→ `verify-id-fix-copy-diff.mjs module-b2b` 门控通过（40 变更行、零非 stdDataType 行、延后列 0）→ 单文件 cp 落源。git diff 归一化逐行核对：40 行 = id ×16（13 自有 PK + 3 notGenCode stub `ErpMdPartner/ErpMdOrganization/ErpMdMaterial`）+ orgId ×9 + partnerId ×5 + partnerProfileId ×3 + formatId/sourceEdiDocId/asnId/materialId/ediDocId/certId/configId 各 ×1，每行仅 `stdDataType="long"→"string"`（归一化对比 40/40 行字节一致），`stdSqlType="BIGINT"` 40/40 保留，`attachmentFileId`/`delVersion` ×13/`fileSize`/`durationMs`/标签结构零变化。工具重扫 b2b 段：40 列全 `ok`（含 3 stub `(notGenCode) ok`），VARCHAR FK（attachmentFileId/localAs2Id/remoteAs2Id/messageId）`n/a` 不动，未分类 BIGINT 残留 = delVersion ×13 + fileSize + durationMs（规则 4 不改），零 `NEEDS FIX`/零 `DEFERRED`。双独立子 agent 批准记录已在案（Draft Review Record 批准 1/2，ses_fdb6895b4ffeOw2YQNEQBE823r + ses_fdb727e6affed0cGqzLfS1Gte2，2026-08-21））
 Targets: `module-b2b/model/app-erp-b2b.orm.xml`
 Skill: none
 
 - Item Types: `Proof | Fix`
 - Prereqs: M1.1 ✅ + M1.2 ✅ + M0.2 ✅（精确前置已满足）；冻结序位次 3（aps）done（批内执行顺序）；本计划已通过独立 plan-audit + 第二独立子 agent 复核（保护区域 `auto + dual-agent-approval`，批准记录落盘 Draft Review Record）
 
-- [ ] Proof: 消费 M0.2 登记册——读取 `tools/id-migration-registry.json5` + 登记册文档 §6.4 b2b 节，逐条核对：(i) A1 orm 延后 = 0（40 列全翻转）；(ii) A2 main 桥接 7 条与本地实测对账（pur 6 编译级 + sal 1 语义级，本计划 Current Baseline 已预对账一致，执行时双源复核）；(iii) A3 登记册口径 = 0，**另以 FQN 口径复扫本域测试**（`rg 'app\.erp\.(pur|inv|sal|mfg)\.' module-b2b/erp-b2b-service/src/test`，排除 import 行；**按行计数**——该文件 20 行命中 / 22 token，:330/:346 各含双 token，勿以 token 计数误触 rule-6）核证唯一 FQN 耦合文件 = `TestErpB2bAsnInventoryIntegration`（20 处，A3' 补登条目，Phase 3 适配）——若复扫发现**新增**未登记 FQN 耦合，按路线图规则 6 停止回报（登记册与实况冲突）；(iv) C1/C2 后向指针（md 1 main + notify 1 main；test 1 文件双指向）作为 Phase 2/3 定位面。矛盾则按路线图规则 6 停止回报。
+- [x] Proof: 消费 M0.2 登记册——读取 `tools/id-migration-registry.json5` + 登记册文档 §6.4 b2b 节，逐条核对：(i) A1 orm 延后 = 0（40 列全翻转）；(ii) A2 main 桥接 7 条与本地实测对账（pur 6 编译级 + sal 1 语义级，本计划 Current Baseline 已预对账一致，执行时双源复核）；(iii) A3 登记册口径 = 0，**另以 FQN 口径复扫本域测试**（`rg 'app\.erp\.(pur|inv|sal|mfg)\.' module-b2b/erp-b2b-service/src/test`，排除 import 行；**按行计数**——该文件 20 行命中 / 22 token，:330/:346 各含双 token，勿以 token 计数误触 rule-6）核证唯一 FQN 耦合文件 = `TestErpB2bAsnInventoryIntegration`（20 处，A3' 补登条目，Phase 3 适配）——若复扫发现**新增**未登记 FQN 耦合，按路线图规则 6 停止回报（登记册与实况冲突）；(iv) C1/C2 后向指针（md 1 main + notify 1 main；test 1 文件双指向）作为 Phase 2/3 定位面。矛盾则按路线图规则 6 停止回报。
   - Skill: none
-- [ ] Proof: 双独立子 agent 批准记录落盘（批准人指针 + 结论 + 时间），未获批不得进入回写。
+- [x] Proof: 双独立子 agent 批准记录落盘（批准人指针 + 结论 + 时间），未获批不得进入回写。
   - Skill: none
-- [ ] Fix: 回写 orm（M0.1 裁定三步机制）——① `node tools/check-bigint-id-types.mjs dry-run` 时点刷新；② `node tools/verify-id-fix-copy-diff.mjs module-b2b` 新鲜度门控（零非 stdDataType 行）；③ 门控通过后单文件落源。禁止盲 cp 静态副本、禁止 apply 模式。
+- [x] Fix: 回写 orm（M0.1 裁定三步机制）——① `node tools/check-bigint-id-types.mjs dry-run` 时点刷新；② `node tools/verify-id-fix-copy-diff.mjs module-b2b` 新鲜度门控（零非 stdDataType 行）；③ 门控通过后单文件落源。禁止盲 cp 静态副本、禁止 apply 模式。
   - Skill: none
-- [ ] Proof: `git diff module-b2b/model/app-erp-b2b.orm.xml` 逐行核对——仅 40 列 `stdDataType="long"→"string"`（自有 37 = PK 13 + FK 24 + notGenCode stub 3），`stdSqlType` 零变化、`attachmentFileId`/`delVersion`/标签结构零变化；scan b2b 段重扫零 `NEEDS FIX`/零 `DEFERRED` 残留。
+- [x] Proof: `git diff module-b2b/model/app-erp-b2b.orm.xml` 逐行核对——仅 40 列 `stdDataType="long"→"string"`（自有 37 = PK 13 + FK 24 + notGenCode stub 3），`stdSqlType` 零变化、`attachmentFileId`/`delVersion`/标签结构零变化；scan b2b 段重扫零 `NEEDS FIX`/零 `DEFERRED` 残留。
   - Skill: none
 
 Exit Criteria:
 
-- [ ] 登记册消费核对在案；双批准记录在案；新鲜度门控 + git diff + 工具重扫三重证明变更面精确 = 40 列 stdDataType
+- [x] 登记册消费核对在案；双批准记录在案；新鲜度门控 + git diff + 工具重扫三重证明变更面精确 = 40 列 stdDataType
 
 ### Phase 2 - 增量重生成 + 主代码编译修复 + A2 桥接落桥
 
-Status: planned
+Status: completed（2026-08-21 执行记录：7 模块链 `clean install`（显式列表、no-am、`-Dmaven.test.skip=true`）**BUILD SUCCESS**（首轮 16 错/7 文件 → 修复后全绿）。重生成验证：dao `_gen` 13 实体 String 化 + md 关系胶水 `setOrgId(refEntity.getId())` 两端同 String 自愈（M1.1 登记中间态 D3 兑现）；meta `_templates` 13 + web `_gen` view 13 + api beans 26 全部随动重生成（Long→String）；**手写 view 零改动**（git status 证实 web 仅 `_gen/` 前缀文件变更）。
+**主代码修复清单（编译器驱动，16 错/7 文件 + 接口联动，合计 dao 3 + service 12 文件）**：
+- dao 手写 3 文件：`IErpB2bAsnBiz`（handleInboundWebhook 返回 Long→String + matchPurchaseOrder/createReceiveFromAsn/retryMatch 参数）、`IErpB2bEdiDocBiz`（markSent/markAcknowledged/markError/retry/cancel/archive ediDocId ×6）、`IErpB2bPartnerProfileBiz`（promoteToTesting/promoteToCertified/activate/suspend/deactivate profileId ×5）。
+- service 手写 12 文件：`ErpB2bAsnBizModel`（4 入口签名）、`ErpB2bEdiDocBizModel`（6 入口 + requireDoc）、`ErpB2bPartnerProfileBizModel`（5 入口 + requireEntity 直传去 String.valueOf + countTestExchanges/countKeyCasePassed 签名）、`ErpB2bAsnMatchPurchaseOrderProcessor`（入口/requireAsn/findAsnLines/markEdiDocError→String + findMatchingPoLine 桥）、`ErpB2bAsnCreateReceiveFromAsnProcessor`（入口/requireAsn/findAsnLines→String + materialId String 化 + 行回填桥）、`ErpB2bAsnHandleInboundWebhookProcessor`（入口/parseToAsn 返回→String，markError/archive/setSourceEdiDocId 随动）、`ErpB2bAsnRetryMatchProcessor`（入口/requireAsn）、`ErpB2bEdiDocCreateOutboundProcessor`（checkDuplicate formatId）、`ErpB2bEdiDocCreateInboundProcessor`（checkDuplicate formatId）、`ErpB2bOnboardingMonitorJob`（resolveFormatIds/countEdiDocs `List<Long>`→`List<String>` ×3 处）、`CodeMappingResolver`（resolveOutbound/resolveInbound/findMapping partnerId）、`TransportManager`（send/findActiveConfig/markEdiDocSent/writeLog ediDocId+partnerId）。
+**A2 桥接例外清单（7 条处置，退役 owner M2.5×6 / M2.6×1）**：
+| 条目 | file:line | 转换方向 |
+| --- | --- | --- |
+| bridge-main-026/028/030 | ErpB2bAsnCreateReceiveFromAsnProcessor / MatchPurchaseOrderProcessor 的 ErpPurOrder/ErpPurReceive 引用 | pur→pur id 流（orderId/supplierId/warehouseId/currencyId/receiveId/orderLineId 均留在 pur 实体侧）——零 String↔Long 转换点，无需桥（类型级引用核对结论） |
+| bridge-main-027 | ErpB2bAsnCreateReceiveFromAsnProcessor findMatchingPoLine：`ConvertHelper.toLong(materialId)` → pur Long 对比 | b2b String → pur Long |
+| bridge-main-029 | ErpB2bAsnCreateReceiveFromAsnProcessor 行回填：`receiveLine.setMaterialId(ConvertHelper.toLong(materialId))` + `setUoMId(ConvertHelper.toLong(material.getUoMId()))`（md String → pur Long） | b2b/md String → pur Long |
+| bridge-main-031 | ErpB2bAsnMatchPurchaseOrderProcessor findMatchingPoLine：`ConvertHelper.toLong(materialId)` → pur Long 对比 | b2b String → pur Long |
+| bridge-main-032 | UblInvoiceEdiProvider:53 经 IDaoProvider 反射查 ErpSalInvoice——**语义级核验结论：零 id 传递**（过滤仅 `eq("code", relatedBillCode)` String + 排序 `invoiceDate` 日期 + 存在性 null 检查；XML 构建用 relatedBillCode/CoreMetrics.today()，无任何 id 属性读写）——无需归一转换，条目保持 active 至 M2.6 翻转 sal 时复核退役 | 无转换点（核验豁免） |
+**C1 后向修复**：md 侧（backward-137）——`ErpB2bAsnCreateReceiveFromAsnProcessor` 的 `materialDao.getEntityById(materialId)` 直传 String（md 自 M1.1 String，零适配）；notify 侧（backward-138）——`ErpB2bOnboardingMonitorJob.notifyAlert` 调 `notificationBiz.notify(String,Map,ctx)` 签名不变零编译破坏（M1.2 登记的「main 侧零破坏」核证成立，BUILD SUCCESS 佐证）。
+**自身链破坏处置**：no-am 口径下零未登记破坏（7 模块全绿，reactor 不含外域模块）。）
 Targets: `module-b2b/erp-b2b-dao/src/main/java/**`、`module-b2b/erp-b2b-service/src/main/java/**`（手写 IBiz/BizModel/Processor/Job/SPI；web main 手写实测 0；api beans 生成件随动）
 Skill: `nop-backend-dev`
 
 - Item Types: `Fix`
 - Prereqs: Phase 1
 
-- [ ] Fix: `mvn clean install -pl module-b2b/erp-b2b-codegen,module-b2b/erp-b2b-dao,module-b2b/erp-b2b-meta,module-b2b/erp-b2b-service,module-b2b/erp-b2b-web,module-b2b/erp-b2b-app,module-b2b/erp-b2b-api -Dmaven.test.skip=true`（D3 口径：7 模块显式列表、不带 `-am`、`-Dmaven.test.skip=true`）触发增量重生成。预期：b2b-dao `_gen` md 关系胶水（15 处 md refEntityName 对应）自 M1.1 的登记中间态自愈。
+- [x] Fix: `mvn clean install -pl module-b2b/erp-b2b-codegen,module-b2b/erp-b2b-dao,module-b2b/erp-b2b-meta,module-b2b/erp-b2b-service,module-b2b/erp-b2b-web,module-b2b/erp-b2b-app,module-b2b/erp-b2b-api -Dmaven.test.skip=true`（D3 口径：7 模块显式列表、不带 `-am`、`-Dmaven.test.skip=true`）触发增量重生成。预期：b2b-dao `_gen` md 关系胶水（15 处 md refEntityName 对应）自 M1.1 的登记中间态自愈。
   - Skill: `nop-backend-dev`
-- [ ] Fix: 编译器驱动修复主代码——逐条修复 b2b dao + service 手写代码类型错误（基线预判：dao 3 文件 IBiz 签名、service 12 文件 Long 语义 + 26 处 `.getId()` 下游；以编译器实际清单为准），直到 7 模块链 `-Dmaven.test.skip=true` 构建全绿。修复清单落盘本计划；测试编译错误由 Phase 3 首轮 `test-compile` 产生后修复（`-Dmaven.test.skip=true` 阶段不编译测试）。
+- [x] Fix: 编译器驱动修复主代码——逐条修复 b2b dao + service 手写代码类型错误（基线预判：dao 3 文件 IBiz 签名、service 12 文件 Long 语义 + 26 处 `.getId()` 下游；以编译器实际清单为准），直到 7 模块链 `-Dmaven.test.skip=true` 构建全绿。修复清单落盘本计划；测试编译错误由 Phase 3 首轮 `test-compile` 产生后修复（`-Dmaven.test.skip=true` 阶段不编译测试）。
   - Skill: `nop-backend-dev`
-- [ ] Fix: A2 前向桥接落桥（D4 消费协议）——pur 6 处编译级调用点加 String↔Long 转换桥（`ErpB2bAsnCreateReceiveFromAsnProcessor`/`ErpB2bAsnMatchPurchaseOrderProcessor`），每处登记 grep 例外清单（条目 id + file:line + 转换方向），退役 owner M2.5。
+- [x] Fix: A2 前向桥接落桥（D4 消费协议）——pur 6 处编译级调用点加 String↔Long 转换桥（`ErpB2bAsnCreateReceiveFromAsnProcessor`/`ErpB2bAsnMatchPurchaseOrderProcessor`），每处登记 grep 例外清单（条目 id + file:line + 转换方向），退役 owner M2.5。
   - Skill: `nop-backend-dev`
-- [ ] Fix: A2 语义级桥接核验（bridge-main-032）——`UblInvoiceEdiProvider` 经 IDaoProvider 字符串引用 `ErpSalInvoice`（无编译面）：核验其对 invoice 属性读取（code/invoiceDate/关联 id 属性）在 String id 语义下的行为正确性（b2b String id ↔ sal Long 字段的反射读写路径），若存在 id 传递则加归一转换 + 登记；结论落盘（退役 owner M2.6）。
+- [x] Fix: A2 语义级桥接核验（bridge-main-032）——`UblInvoiceEdiProvider` 经 IDaoProvider 字符串引用 `ErpSalInvoice`（无编译面）：核验其对 invoice 属性读取（code/invoiceDate/关联 id 属性）在 String id 语义下的行为正确性（b2b String id ↔ sal Long 字段的反射读写路径），若存在 id 传递则加归一转换 + 登记；结论落盘（退役 owner M2.6）。
   - Skill: `nop-backend-dev`
-- [ ] Fix: C1 后向修复——md/notify 引用点（`ErpB2bAsnCreateReceiveFromAsnProcessor` md 侧；`ErpB2bOnboardingMonitorJob` notify 侧）对已 String 化 API 的编译适配（编译器驱动，定位面 = backward-137/138；notify 侧调用面预期 `notify(String,Map,ctx)` 签名不变零破坏——M1.2 已证，编译核验即可）。
+- [x] Fix: C1 后向修复——md/notify 引用点（`ErpB2bAsnCreateReceiveFromAsnProcessor` md 侧；`ErpB2bOnboardingMonitorJob` notify 侧）对已 String 化 API 的编译适配（编译器驱动，定位面 = backward-137/138；notify 侧调用面预期 `notify(String,Map,ctx)` 签名不变零破坏——M1.2 已证，编译核验即可）。
   - Skill: `nop-backend-dev`
-- [ ] Fix: 自身链破坏处置（D4 carve-out）——no-am 口径下预期零外域破坏；未登记破坏按路线图规则 6 停止回报；已登记破坏按中间态继续并履行登记义务。
+- [x] Fix: 自身链破坏处置（D4 carve-out）——no-am 口径下预期零外域破坏；未登记破坏按路线图规则 6 停止回报；已登记破坏按中间态继续并履行登记义务。
   - Skill: `nop-backend-dev`
 
 Exit Criteria:
 
-- [ ] b2b 7 模块链（显式列表、no-am、`-Dmaven.test.skip=true`）构建全绿（main 代码）；主代码修复清单 + 桥接例外清单（含语义级核验结论）在案
+- [x] b2b 7 模块链（显式列表、no-am、`-Dmaven.test.skip=true`）构建全绿（main 代码）；主代码修复清单 + 桥接例外清单（含语义级核验结论）在案
 
 ### Phase 3 - 测试修复 + 快照重录 + 域级测试
 
-Status: planned
+Status: completed（2026-08-21 执行记录：首轮 `test-compile` 产生 170 错/6 文件 → 逐文件修复至零编译错（statemachine 3 测试 + CrudSmoke + 2 helpers 零 Long 改动——GraphQL 数字标量由引擎 coerce）。**测试修复清单（6 文件）**：TestErpB2bAsnInbound（partnerId/asnId×7 局部 + seedPartner/seedPartnerProfile/findAsnLines 签名 String 化）、TestErpB2bEdiEnvelope（formatId/docId×6 + seedFormat/createDoc/findLogs 签名）、TestErpB2bEdiPosting（同 EdiEnvelope 型 ×6）、TestErpB2bMftTransport（partnerId/configId/formatId/ediDocId ×6 场景 + seedPartner/seedMftConfig/seedFormat/findMftLogs 签名）、TestErpB2bPartnerOnboarding（**C2 backward-197/198 兑付**：ORG_ID Long→"1601" + reload/partnerId/seedProfile/seedCompleteProfile/seedPassedExchanges/seedTestExchange/seedChecklist/seedFormat/seedEdiDoc/seedAlertTemplate/5 个 Rpc helper 签名 String 化 + 60+ 字面量 6001L→"6001" 形态 + `orm_propValueByName("id", String)`（notify 模板 seed M1.2 String 适配）+ 循环 seed `String.valueOf(9000L + i)`）、TestErpB2bAsnInventoryIntegration（**A3' FQN 桥接 6 处转换点**：`seedMaterial(Long uoMId`→String（"1"）md 适配 + `seedPurchaseOrderLine(poId, n, ConvertHelper.toLong(materialId/matId1/matId2))` pur 桥 ×3 + `assertEquals(materialId/matId1/matId2, String.valueOf(line.getMaterialId()))` pur Long→String 断言桥 ×3；poId/receiveId/seedPurchaseOrder/findReceivesByOrderId/findReceiveLinesByReceiveId 保持 Long（pur 侧内部）+ assertEquals(7001L/1L...) pur-pur 断言保持——见例外清单）。
+**平台 IoC 回归复现与修复**：首轮 `mvn test` 9 类挂 `nop.err.ioc.bean-init-self-wait(nopSequenceGenerator)`（已知风险①如期复现）——按 md/notify/aps 先例新增 test-scope VFS delta `_vfs/_delta/default/nop/sys/beans/app-dao.beans.xml`（ioc:lazy-property 镜像，注释指向本 plan）修复 8 类；第 9 类 TestErpB2bEdiDocStateMachineDeltaOverride 因 `delta-layer-ids=test-b2b-delta` 替换 default 层集而失效——对齐 aps 先例改为 `value = "default,test-b2b-delta"` 后全绿。
+**快照重录（RECORDING→CHECKING）**：9 个快照测试类临时加 `snapshotTest = SnapshotTest.RECORDING` 运行（80 方法，52 个预期 `snapshot-finished` 异常，零真实失败）→ 足迹 = 19 文件内容 diff（CSV 列集刷新（erp_pur_order_line 增 CT_CONTRACT_LINE_ID 等 08-20 后续 R-item 落地列，旧行快照滞后）+ json5 字段序调整（businessDate 前移，随 api beans 重生成）+ CRLF 行尾（M1.1 先例同款））+ 43 新增落盘（此前无 table 快照方法的 input/output tables CSV——AsnInbound Deterministic/NullEventId、PartnerOnboarding 全部方法、CrudSmoke testCreateHead input 等）；**重录后 id 全 String 形态实证**（testCreateHead `"id": "1"`、testLineRelation `"id": "2"`/`"asnId": "1"`）→ 逐案审核无需确定性修正（无 aps 墙钟 payload 类单元格）→ 注解还原（grep RECORDING/forceSaveOutput 零残留）→ CHECKING 复跑 **80/80 全绿 ×2 次**（稳定性确认）。
+**域级测试命令**：`mvn test -pl module-b2b/erp-b2b-service,module-b2b/erp-b2b-web`（no-am）——service 80/80 绿 + web BUILD SUCCESS 0 tests（`ErpB2bWebPagesTest` 治理排除预期，successor M4.1）。Closure Gates 口径 `mvn clean install -pl <7 模块> -DskipTests` 亦全绿。）
 Targets: `module-b2b/**/src/test/**`、`module-b2b/erp-b2b-service/_cases/**`
 Skill: `nop-testing`
 
 - Item Types: `Fix | Proof`
 - Prereqs: Phase 2
 
-- [ ] Fix: 测试代码修复——12 个 service 测试类的 Long 用法（字面量断言、helper 签名、seed `orm_propValueByName("id", id)` 形态——md/notify 先例），逐文件修复至测试编译通过；测试编译错误由本轮 `test-compile` 产生后修复（`-Dmaven.test.skip=true` 阶段不编译测试，无移交清单）。
+- [x] Fix: 测试代码修复——12 个 service 测试类的 Long 用法（字面量断言、helper 签名、seed `orm_propValueByName("id", id)` 形态——md/notify 先例），逐文件修复至测试编译通过；测试编译错误由本轮 `test-compile` 产生后修复（`-Dmaven.test.skip=true` 阶段不编译测试，无移交清单）。
   - Skill: `nop-testing`
-- [ ] Fix: A3' test 桥接适配（FQN 级补登条目，1 文件）——`TestErpB2bAsnInventoryIntegration` 对 pur 实体（Long）与本域 String id 边界的 20 处 FQN 引用点加局部 String↔Long 转换（与 Phase 2 桥接同型，转换点入 grep 例外清单，退役 owner M2.5），修复至该测试编译且行为通过。
+- [x] Fix: A3' test 桥接适配（FQN 级补登条目，1 文件）——`TestErpB2bAsnInventoryIntegration` 对 pur 实体（Long）与本域 String id 边界的 20 处 FQN 引用点加局部 String↔Long 转换（与 Phase 2 桥接同型，转换点入 grep 例外清单，退役 owner M2.5），修复至该测试编译且行为通过。
   - Skill: `nop-testing`
-- [ ] Fix: C2 后向 test 适配——`TestErpB2bPartnerOnboarding`（md + notify 双指向，backward-197/198）对 String 化 API 的适配（M1.2 登记的 successor 义务兑付）。
+- [x] Fix: C2 后向 test 适配——`TestErpB2bPartnerOnboarding`（md + notify 双指向，backward-197/198）对 String 化 API 的适配（M1.2 登记的 successor 义务兑付）。
   - Skill: `nop-testing`
-- [ ] Fix: 快照每域重录（用户裁决固定步骤）——`RECORDING` 模式运行 b2b service 测试 → 逐案审核 `_cases/` 新形态（324 文件基线：261 csv + 53 yaml + 10 json5；id 以 String 形态落盘）→ 注解还原（grep 零 RECORDING/forceSaveOutput 残留）→ 切回 `CHECKING` 复跑确认全绿。重录足迹（内容 diff vs 新增落盘分列）与审核结论记录本计划。
+- [x] Fix: 快照每域重录（用户裁决固定步骤）——`RECORDING` 模式运行 b2b service 测试 → 逐案审核 `_cases/` 新形态（324 文件基线：261 csv + 53 yaml + 10 json5；id 以 String 形态落盘）→ 注解还原（grep 零 RECORDING/forceSaveOutput 残留）→ 切回 `CHECKING` 复跑确认全绿。重录足迹（内容 diff vs 新增落盘分列）与审核结论记录本计划。
   - Skill: `nop-testing`
-- [ ] Proof: `mvn test -pl module-b2b/erp-b2b-service,module-b2b/erp-b2b-web`（D3 口径：不带 `-am`）全绿——service 12 测试类 + web BUILD SUCCESS（`ErpB2bWebPagesTest` 治理排除，0 tests 预期）。若复现平台 IoC 回归，按 md/notify 先例修复（test-scope VFS delta）并登记。
+- [x] Proof: `mvn test -pl module-b2b/erp-b2b-service,module-b2b/erp-b2b-web`（D3 口径：不带 `-am`）全绿——service 12 测试类 + web BUILD SUCCESS（`ErpB2bWebPagesTest` 治理排除，0 tests 预期）。若复现平台 IoC 回归，按 md/notify 先例修复（test-scope VFS delta）并登记。
   - Skill: `nop-testing`
 
 Exit Criteria:
 
-- [ ] b2b 域级测试全绿（service 12 类；web 治理排除偏差登记）；快照重录完成且 `CHECKING` 复跑通过；重录清单在案
+- [x] b2b 域级测试全绿（service 12 类；web 治理排除偏差登记）；快照重录完成且 `CHECKING` 复跑通过；重录清单在案
 
 ### Phase 4 - 语义陷阱 grep 门控 + 收尾登记
 
-Status: planned
+Status: completed（2026-08-21 执行记录：**grep 门控结果逐项**——① `.longValue()`：0 命中；② `Long.parseLong(`：0 命中；③ `Map<Long`：0 命中；④ `Set<Long`：0 命中；⑤ `String.format("%d`/`%d` 变体：0 命中（仅 `%02x` HMAC hex 编码，非 id）；⑥ Long 装箱 id `==`/`!=`：0 命中；⑦ 残留 `Long` 逐条核清 = `_gen/` 13 实体 delVersion ×13 + ErpB2bMftLog fileSize/durationMs（生成件 + 非 PK/FK，规则 4 合法）+ main 手写 findPoLines(Long orderId) ×2（pur orderId 参数，A2 桥接登记例外 bridge-main-027/030/031 pur 侧内部）+ Long materialKey = ConvertHelper.toLong ×2（bridge-main-027/031 桥接本体）+ test 侧 TestErpB2bAsnInventoryIntegration poId/receiveId/seedPurchaseOrder 族/findReceivesByOrderId/findReceiveLinesByReceiveId（A3' bridge-test-133 登记例外，pur 侧内部 + 转换点）——全部为登记例外或合法非 id，非 b2b id；⑧ `sql-lib.xml` 仓内零存在（M0.1 已核，本计划复核维持）。**view 零手改动验证**：`git status module-b2b/erp-b2b-web` = 仅 13 个 `_gen/` 前缀 view 变更（codegen 随动），手写 view 零被动变更。**登记册更新**：补登 bridge-test-133（A3' FQN 条目：domain b2b → purchase，20 行/22 token，owner M3.8，退役 owner M2.5；status = retired——Phase 3 已兑付适配（ConvertHelper.toLong ×3 + String.valueOf ×3），晚域 M2.5 翻转 pur 时移除桥接点）+ counts service-bridge:test 30→31 + 登记册文档 §6.4 追注「扫描器 import 口径对 FQN 内联引用盲区」说明（补登证据 = 本计划 Phase 1 复扫记录，含晚域复扫命令口径）；A2 main 7 条保持 active（退役 owner M2.5 ×6/M2.6 ×1，代码内 bridge 注释双向指针在案）。**owner doc 注记**：grep `docs/design/b2b/` 8 文件 = 1 命中（`edi-formats.md:547` `createReceiveFromAsn(@Name("asnId") Long)` 签名引用）→ 就地注记 Java 层已 String 化（引用本计划，stdSqlType 保持 BIGINT DDL 零变化）。**roadmap + 日志**：M3.8 → done（位次 4 行证据摘要 + 头部最后更新 + 位次 5 contract 解锁）+ `docs/logs/2026/08-21.md` 条目（含验证状态全绿）。）
 Targets: `module-b2b/**`（手写代码）、`docs/backlog/id-string-migration-roadmap.md`、`docs/logs/2026/{08-21 或执行日}.md`、`tools/id-migration-registry.json5`
 Skill: none
 
 - Item Types: `Proof | Add`
 - Prereqs: Phase 3
 
-- [ ] Proof: 语义陷阱 grep 门控（路线图横切 §3，b2b 手写 main+test 范围）清零——`\.longValue\(\)`、`Long\.parseLong\(`、`Map<Long`、`Set<Long`、`String\.format\("%d` 及 `%d` 变体零命中（A2 桥接转换点为登记例外，逐条列于例外清单并标注退役 owner M2.5/M2.6）；Long 装箱 `==`/`!=` 比较（id 上下文）逐条核清；残留 `Long` 逐条判定合法非 id 或登记 successor；sql-lib.xml 仓内零存在（M0.1 已核，注明即可）。结果逐项记录本计划。
+- [x] Proof: 语义陷阱 grep 门控（路线图横切 §3，b2b 手写 main+test 范围）清零——`\.longValue\(\)`、`Long\.parseLong\(`、`Map<Long`、`Set<Long`、`String\.format\("%d` 及 `%d` 变体零命中（A2 桥接转换点为登记例外，逐条列于例外清单并标注退役 owner M2.5/M2.6）；Long 装箱 `==`/`!=` 比较（id 上下文）逐条核清；残留 `Long` 逐条判定合法非 id 或登记 successor；sql-lib.xml 仓内零存在（M0.1 已核，注明即可）。结果逐项记录本计划。
   - Skill: none
-- [ ] Proof: 手写 view.xml 零改动验证——`git status module-b2b/erp-b2b-web` 确认无手写 view 文件被动变更（生成 view 随 codegen 更新不在此列）。
+- [x] Proof: 手写 view.xml 零改动验证——`git status module-b2b/erp-b2b-web` 确认无手写 view 文件被动变更（生成 view 随 codegen 更新不在此列）。
   - Skill: none
-- [ ] Add: 登记册状态更新与补登——(i) 在 `tools/id-migration-registry.json5` 补登 A3' 条目（b2b test FQN 前向耦合：`TestErpB2bAsnInventoryIntegration` → pur，20 处，owner M3.8，退役 owner M2.5），并在登记册文档 §6.4 追注「扫描器 import 口径对 FQN 内联引用盲区」说明（补登证据 = 本计划 Phase 1 复扫记录）；(ii) A3' 适配完成后（Phase 3）条目 status → retired；(iii) A2 main 桥接 7 条（pur 6 编译级 + sal 1 语义级）保持 active（退役 owner M2.5/M2.6，晚域翻转时退役并移除本域桥接点——例外清单留双向指针）。
+- [x] Add: 登记册状态更新与补登——(i) 在 `tools/id-migration-registry.json5` 补登 A3' 条目（b2b test FQN 前向耦合：`TestErpB2bAsnInventoryIntegration` → pur，20 处，owner M3.8，退役 owner M2.5），并在登记册文档 §6.4 追注「扫描器 import 口径对 FQN 内联引用盲区」说明（补登证据 = 本计划 Phase 1 复扫记录）；(ii) A3' 适配完成后（Phase 3）条目 status → retired；(iii) A2 main 桥接 7 条（pur 6 编译级 + sal 1 语义级）保持 active（退役 owner M2.5/M2.6，晚域翻转时退役并移除本域桥接点——例外清单留双向指针）。
   - Skill: none
-- [ ] Add: owner doc 注记——grep `docs/design/b2b/` 中关于 b2b id 为 Long/数字的陈述；存在则就地注记 Java 层已 String 化（引用本计划），不存在则记录「零 Long id 陈述，零文档变更」结论。
+- [x] Add: owner doc 注记——grep `docs/design/b2b/` 中关于 b2b id 为 Long/数字的陈述；存在则就地注记 Java 层已 String 化（引用本计划），不存在则记录「零 Long id 陈述，零文档变更」结论。
   - Skill: none
-- [ ] Add: 路线图 M3.8 → `done`（M2/M3 表位次 4 + 头部「最后更新」；位次 5 contract 解锁）+ 日志条目（含验证状态）。
+- [x] Add: 路线图 M3.8 → `done`（M2/M3 表位次 4 + 头部「最后更新」；位次 5 contract 解锁）+ 日志条目（含验证状态）。
   - Skill: none
 
 Exit Criteria:
 
-- [ ] grep 门控零残留（例外为零或逐条核清记录 + 桥接例外清单在案）；view 零手改动在案
-- [ ] 路线图状态、登记册、日志三者一致
+- [x] grep 门控零残留（例外为零或逐条核清记录 + 桥接例外清单在案）；view 零手改动在案
+- [x] 路线图状态、登记册、日志三者一致
 
 ## Draft Review Record
 
@@ -166,15 +182,15 @@ Exit Criteria:
 
 > 完整仓库验证定制为域级口径（路线图规则 3 D3 修订：禁止以全量构建为中间 gate；全量构建仅存在于 M4.1）。
 
-- [ ] 范围内行为完成（40 列落源 + no-am 重生成 + 手写代码/测试修复 + A2 桥接落桥/语义核验 + 快照重录 + grep 门控清零）
-- [ ] 相关文档对齐（owner doc 注记或零变更结论、路线图 M3.8 状态、日志）
-- [ ] 已运行验证：`mvn clean install -pl module-b2b/erp-b2b-codegen,module-b2b/erp-b2b-dao,module-b2b/erp-b2b-meta,module-b2b/erp-b2b-service,module-b2b/erp-b2b-web,module-b2b/erp-b2b-app,module-b2b/erp-b2b-api -DskipTests` 全绿 + `mvn test -pl module-b2b/erp-b2b-service,module-b2b/erp-b2b-web` 全绿 + 工具重扫零残留（b2b 段 `NEEDS FIX` = 0）
-- [ ] 无范围内项目降级为 deferred/follow-up（web 页面测试治理排除为已提交决策 + M4.1 successor 登记，属偏差登记而非范围降级）
-- [ ] 保护区域双独立子 agent 批准记录落盘（Phase 1 前置）
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：状态、阶段、门控和日志都一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成（40 列落源 + no-am 重生成 + 手写代码/测试修复 + A2 桥接落桥/语义核验 + A3' 桥接补登与兑付 + 快照重录 + grep 门控清零）
+- [x] 相关文档对齐（owner doc 注记（edi-formats.md 1 处 String 化注记）、路线图 M3.8 状态、登记册（bridge-test-133 补登 + §6.4 盲区追注 + counts）、日志）
+- [x] 已运行验证：`mvn clean install -pl module-b2b/erp-b2b-codegen,module-b2b/erp-b2b-dao,module-b2b/erp-b2b-meta,module-b2b/erp-b2b-service,module-b2b/erp-b2b-web,module-b2b/erp-b2b-app,module-b2b/erp-b2b-api -DskipTests` 全绿 + `mvn test -pl module-b2b/erp-b2b-service,module-b2b/erp-b2b-web` 全绿 + 工具重扫零残留（b2b 段 `NEEDS FIX` = 0）
+- [x] 无范围内项目降级为 deferred/follow-up（web 页面测试治理排除为已提交决策 + M4.1 successor 登记，属偏差登记而非范围降级）
+- [x] 保护区域双独立子 agent 批准记录落盘（Phase 1 前置）
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证：状态、阶段、门控和日志都一致
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符（ses_fdb2afb2fffeffW12cf6iM7amf，见 Closure Audit Evidence）
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
@@ -204,11 +220,12 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: （待结束审计）
+Status Note: completed（2026-08-21：四 Phase 全部执行完毕 + 独立结束审计 `passes closure audit`）
 
 Closure Audit Evidence:
 
-- （待独立结束审计填充）
+- **独立结束审计（ses_fdb2afb2fffeffW12cf6iM7amf，2026-08-21，fresh session 仅审计零修改）：`passes closure audit` — 0 BLOCKER / 0 MAJOR / 0 MINOR**。九项活仓核验全 PASS：① orm 40 列 stdDataType-only（归一化 40/40 字节一致 + stdSqlType BIGINT 40/40 保留 + scan b2b 段零 NEEDS FIX/DEFERRED）② 7 模块 `-DskipTests` no-am BUILD SUCCESS（7/7）③ service 80/80 绿（12 类全枚举）+ web 0 tests（治理排除 `@Tag("full-app")` + pom excludedGroups 证实）④ grep 门控五项零命中 + 残留 Long 逐条核清全为登记例外（bridge-main-027/029/031 注释在案 + A3' bridge-test-133 例外）⑤ 手写 view 零改动（13 文件全 `_gen/` 前缀）⑥ 登记册 bridge-test-133 retired/retireOwner M2.5 + counts test=31 + bridge-main-026..032 7 条 active + §6.4 盲区追注 ⑦ roadmap M3.8 done（:51）+ 日志条目 + owner doc 注记 + 计划四 Phase completed 全 [x] 一致 ⑧ 快照卫生零 RECORDING/forceSaveOutput 残留 + json5 String id 实证（"id": "1"/"asnId": "1"）+ delVersion 保持数字（规则 4）⑨ IoC delta 存在（lazy-property 镜像，注释指向本 plan）+ DeltaOverride delta-layer 含 default 层。
+- **验证状态（全绿，审计独立复跑确认）**：`mvn clean install -pl module-b2b/erp-b2b-{codegen,dao,meta,service,web,app,api} -DskipTests` BUILD SUCCESS（no-am）+ `mvn test -pl module-b2b/erp-b2b-service,module-b2b/erp-b2b-web -o` service 80/80（执行者侧累计 2 轮 + 审计侧 1 轮全绿）+ `node tools/check-bigint-id-types.mjs` b2b 段零残留。
 
 Follow-up:
 

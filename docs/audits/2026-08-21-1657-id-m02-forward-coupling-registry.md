@@ -173,6 +173,8 @@ C2 后向 test（2 条，本域测试适配清单）：
 - backward-197 → master-data（1），引用 1 文件：`module-b2b/erp-b2b-service/src/test/java/app/erp/b2b/service/TestErpB2bPartnerOnboarding.java`（successor M3.8）
 - backward-198 → notify（2），引用 1 文件：`module-b2b/erp-b2b-service/src/test/java/app/erp/b2b/service/TestErpB2bPartnerOnboarding.java`（successor M3.8）
 
+> **扫描器盲区追注（2026-08-21，M3.8 b2b plan Phase 1 复扫发现）**：本登记册扫描器按 **import 语句口径**统计 A3 test 桥接，对**以全限定名（FQN）内联引用、无 import 语句**的跨域实体引用存在盲区。实证：`TestErpB2bAsnInventoryIntegration` 以 FQN 引用 pur 实体 20 行/22 token（`app.erp.pur.dao.entity.ErpPurReceive/ReceiveLine/PurOrder/PurOrderLine`），本节 A3 却登记为 0。已补登 **bridge-test-133**（owner M3.8，退役 owner M2.5，Phase 3 兑付后 retired）。晚于 b2b 的域在 Phase 1 消费登记册时，除 import 口径条目外须另跑 FQN 口径复扫（`rg 'app\.erp\.<晚域包>\.' module-<domain>/erp-<short>-service/src/test`，排除 import 行、按行计数）。
+
 ### 6.5 contract（位次 5，M3.6）
 
 **A. 前向义务（作为早域）**

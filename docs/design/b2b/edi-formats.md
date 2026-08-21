@@ -546,6 +546,8 @@ RECEIVED ──(解析处理)──→ ARCHIVED(终态)
 
 `ErpB2bAsnBizModel.createReceiveFromAsn(@Name("asnId") Long)` 早期实现仅建采购入库**头**（`ErpPurReceive`）。扩展为迭代 `asn.lines` → 为每条 AsnLine 创建对应 `ErpPurReceiveLine`，使 ASN→采购入库链下游 approve/入库触发可达成（无 ReceiveLine 则后续链断裂）。
 
+> 注：本节签名引用中的 `asnId` Java 层已 String 化（`@Name("asnId") String`，plan `docs/plans/2026-08-21-2025-2-bigint-id-m38-b2b-migration.md` M3.8 id-string 迁移；`stdSqlType` 保持 BIGINT，DB DDL 零变化）。
+
 ### 字段映射规则（权威）
 
 | ReceiveLine 字段 | 来源（按优先级） | 备注 |
