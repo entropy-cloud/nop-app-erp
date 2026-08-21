@@ -23,7 +23,7 @@ public class ErpAstInventoryApproveProcessor extends AbstractApproveProcessor<Er
 
     @Override
     public ErpAstInventory approve(String id, IServiceContext context) {
-        ErpAstInventory inv = processor.requireInventory(Long.valueOf(id), context);
+        ErpAstInventory inv = processor.requireInventory(id, context);
         processor.validateReconciling(inv);
         inv.setApprovedBy(currentUserId());
         inv.setApprovedAt(now());

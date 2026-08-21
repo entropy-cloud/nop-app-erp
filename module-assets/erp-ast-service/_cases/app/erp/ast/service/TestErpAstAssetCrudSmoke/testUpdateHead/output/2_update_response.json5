@@ -24,7 +24,7 @@
     "delVersion": 0,
     "version": 1,
     "createdBy": "autotest-ref",
-    "createTime": "@var:ErpAstAsset@createTime",
+    "createTime": "@var:ErpAstAsset@updateTime",
     "updatedBy": "autotest-ref",
     "updateTime": "@var:ErpAstAsset@updateTime_1",
     "remark": "冒烟-已修改",

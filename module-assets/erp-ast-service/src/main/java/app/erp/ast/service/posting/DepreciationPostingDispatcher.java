@@ -51,7 +51,7 @@ public class DepreciationPostingDispatcher {
      * <p>G4 错误传播分级（posting-log.md）：折旧路径无 DeferredPostingSweepJob 覆盖——失败派发
      * IErpSysNotificationBiz 告警使运营感知，自愈路径为手动重跑 executeDepreciation / reverseDepreciation。
      */
-    public Long tryPost(ErpAstDepreciationSchedule schedule, ErpAstAsset asset, ErpAstAssetCategory category) {
+    public String tryPost(ErpAstDepreciationSchedule schedule, ErpAstAsset asset, ErpAstAssetCategory category) {
         PostingEvent event = buildEvent(schedule, asset, category);
         try {
             return executor.postEvent(event);
@@ -99,7 +99,7 @@ public class DepreciationPostingDispatcher {
      * 逐漏提期的归属经 billData 键 {@code CATCHUP_PERIODS} 传递，Provider 在凭证行 memo 标注「补提 {periods}」
      * （L1「补提凭证标注所属期间(审计)」）。失败语义对齐 {@link #tryPost}：吞异常返回 null（保持 posted=false），不阻塞补提终态。
      */
-    public Long tryPostCatchUp(ErpAstAsset asset, ErpAstAssetCategory category, String currentPeriod,
+    public String tryPostCatchUp(ErpAstAsset asset, ErpAstAssetCategory category, String currentPeriod,
                                BigDecimal totalAmount, List<String> caughtUpPeriods) {
         PostingEvent event = buildCatchUpEvent(asset, category, currentPeriod, totalAmount, caughtUpPeriods);
         try {
@@ -217,11 +217,11 @@ public class DepreciationPostingDispatcher {
         return assetCode + "#" + period;
     }
 
-    private Long resolveAcctSchemaId(Long orgId) {
+    private String resolveAcctSchemaId(String orgId) {
         return AcctSchemaResolver.resolvePrimarySchemaId(daoProvider, orgId);
     }
 
-    private String resolveSubjectCode(Long subjectId, String defaultCode) {
+    private String resolveSubjectCode(String subjectId, String defaultCode) {
         if (subjectId == null) {
             return defaultCode;
         }

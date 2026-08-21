@@ -19,13 +19,13 @@
             <cols>
 
                 <!--ID-->
-                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="id" mandatory="true" sortable="true"/>
 
                 <!--维修工单-->
-                <col id="maintenanceId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="maintenanceId" mandatory="true" sortable="true"/>
 
                 <!--所属组织-->
-                <col id="orgId" ui:number="true" sortable="true"/>
+                <col id="orgId" sortable="true"/>
 
                 <!--行号-->
                 <col id="lineNo" ui:number="true" sortable="true"/>
@@ -40,7 +40,7 @@
                 <col id="businessDate" sortable="true"/>
 
                 <!--币种-->
-                <col id="currencyId" ui:number="true" sortable="true"/>
+                <col id="currencyId" sortable="true"/>
 
                 <!--逻辑删除版本-->
                 <col id="delVersion" mandatory="true" ui:number="true" sortable="true"/>

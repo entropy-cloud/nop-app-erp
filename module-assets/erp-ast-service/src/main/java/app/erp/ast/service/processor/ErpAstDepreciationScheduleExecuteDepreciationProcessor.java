@@ -39,7 +39,7 @@ public class ErpAstDepreciationScheduleExecuteDepreciationProcessor {
     @Inject
     ErpAstDepreciationScheduleStateMachine scheduleStateMachine;
 
-    public ErpAstDepreciationSchedule executeDepreciation(Long assetId, String period, IServiceContext context) {
+    public ErpAstDepreciationSchedule executeDepreciation(String assetId, String period, IServiceContext context) {
         ErpAstAsset asset = facade.requireAsset(assetId);
         facade.validateAssetInService(asset, context);
         facade.requirePeriodOpen(period, context);
@@ -82,7 +82,7 @@ public class ErpAstDepreciationScheduleExecuteDepreciationProcessor {
         IEntityDao<ErpAstDepreciationSchedule> scheduleDao = daoProvider.daoFor(ErpAstDepreciationSchedule.class);
         if (schedule == null) {
             schedule = scheduleDao.newEntity();
-            schedule.setAssetId(assetId);
+            schedule.setAssetId(String.valueOf(assetId));
             schedule.setOrgId(asset.getOrgId());
             schedule.setPeriod(period);
             schedule.setPlannedAmount(BigDecimal.ZERO);
@@ -113,7 +113,7 @@ public class ErpAstDepreciationScheduleExecuteDepreciationProcessor {
             throw e;
         }
 
-        Long voucherId = postingDispatcher.tryPost(schedule, asset, category);
+        String voucherId = postingDispatcher.tryPost(schedule, asset, category);
         schedule = facade.findSchedule(assetId, period);
         if (voucherId != null) {
             schedule.setPosted(true);

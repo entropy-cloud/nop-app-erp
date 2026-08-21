@@ -42,7 +42,7 @@ public class TestAstPostingFaultInjection {
         asset.setCode("AST-FAIL-001");
         asset.setOrgId(null);
 
-        Long voucherId = dispatcher.tryPost(schedule, asset, null);
+        String voucherId = dispatcher.tryPost(schedule, asset, null);
 
         assertNull(voucherId,
                 "折旧过账失败应吞异常返回 null（保持 posted=false 悬挂，A1）");

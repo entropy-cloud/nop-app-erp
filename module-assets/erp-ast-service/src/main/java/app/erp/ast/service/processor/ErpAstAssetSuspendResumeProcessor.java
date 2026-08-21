@@ -30,7 +30,7 @@ public class ErpAstAssetSuspendResumeProcessor {
     /** 暂停时点 remark 标记前缀（闲置时长派生的时间基准，idleSince 列不落 ORM）。 */
     static final String IDLE_SINCE_PREFIX = "闲置自 ";
 
-    public ErpAstAsset suspend(Long assetId, IServiceContext context) {
+    public ErpAstAsset suspend(String assetId, IServiceContext context) {
         ErpAstAsset asset = requireAsset(assetId);
         try {
             assetStateMachine.assertCanSuspend(asset.getStatus());
@@ -46,7 +46,7 @@ public class ErpAstAssetSuspendResumeProcessor {
         return asset;
     }
 
-    public ErpAstAsset resume(Long assetId, IServiceContext context) {
+    public ErpAstAsset resume(String assetId, IServiceContext context) {
         ErpAstAsset asset = requireAsset(assetId);
         try {
             assetStateMachine.assertCanResume(asset.getStatus());
@@ -60,7 +60,7 @@ public class ErpAstAssetSuspendResumeProcessor {
 
     // ---------- 校验/查询辅助（protected，供派生复用与覆盖） ----------
 
-    protected ErpAstAsset requireAsset(Long assetId) {
+    protected ErpAstAsset requireAsset(String assetId) {
         ErpAstAsset asset = assetDao().getEntityById(assetId);
         if (asset == null) {
             throw new NopException(ErpAstErrors.ERR_ASSET_NOT_FOUND)

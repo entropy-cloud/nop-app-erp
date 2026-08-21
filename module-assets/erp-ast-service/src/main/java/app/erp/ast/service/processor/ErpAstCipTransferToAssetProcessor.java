@@ -19,7 +19,7 @@ public class ErpAstCipTransferToAssetProcessor {
     @Inject
     ErpAstCipProcessor facade;
 
-    public ErpAstCip transferToAsset(Long cipId, List<Long> costItemIds, LocalDate transferDate,
+    public ErpAstCip transferToAsset(String cipId, List<String> costItemIds, LocalDate transferDate,
                                        IServiceContext context) {
         ErpAstCip cip = facade.requireCip(cipId, context);
         List<ErpAstCipCostItem> costItems = facade.resolveCostItems(cip, costItemIds);

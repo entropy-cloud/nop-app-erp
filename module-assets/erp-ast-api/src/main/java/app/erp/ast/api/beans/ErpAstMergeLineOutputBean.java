@@ -13,44 +13,44 @@
     public class ErpAstMergeLineOutputBean {
 
     
-        private Long _id;
+        private String _id;
 
     
         @PropMeta(propId=1)
     
-        public Long getId(){
+        public String getId(){
             return _id;
         }
 
-        public void setId(Long value){
+        public void setId(String value){
             this._id = value;
         }
 
 
-        private Long _mergeId;
+        private String _mergeId;
 
     
         @PropMeta(propId=2)
     
-        public Long getMergeId(){
+        public String getMergeId(){
             return _mergeId;
         }
 
-        public void setMergeId(Long value){
+        public void setMergeId(String value){
             this._mergeId = value;
         }
 
 
-        private Long _orgId;
+        private String _orgId;
 
     
         @PropMeta(propId=3)
     
-        public Long getOrgId(){
+        public String getOrgId(){
             return _orgId;
         }
 
-        public void setOrgId(Long value){
+        public void setOrgId(String value){
             this._orgId = value;
         }
 
@@ -69,16 +69,16 @@
         }
 
 
-        private Long _sourceAssetId;
+        private String _sourceAssetId;
 
     
         @PropMeta(propId=5)
     
-        public Long getSourceAssetId(){
+        public String getSourceAssetId(){
             return _sourceAssetId;
         }
 
-        public void setSourceAssetId(Long value){
+        public void setSourceAssetId(String value){
             this._sourceAssetId = value;
         }
 

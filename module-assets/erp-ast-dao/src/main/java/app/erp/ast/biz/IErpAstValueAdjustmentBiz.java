@@ -15,5 +15,5 @@ import app.erp.ast.dao.entity.ErpAstValueAdjustment;
 public interface IErpAstValueAdjustmentBiz extends ICrudBiz<ErpAstValueAdjustment> {
 
     @BizMutation
-    ErpAstValueAdjustment cancel(@Name("id") Long id, IServiceContext context);
+    ErpAstValueAdjustment cancel(@Name("id") String id, IServiceContext context);
 }

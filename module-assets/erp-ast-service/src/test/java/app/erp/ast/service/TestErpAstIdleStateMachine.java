@@ -72,20 +72,20 @@ public class TestErpAstIdleStateMachine extends JunitAutoTestCase {
     public void testSuspendSkipsBatchDepreciation() {
         ormTemplate.runInSession(session -> {
             seedBasics();
-            Long categoryId = AstTestSupport.seedCategory(daoProvider, "CAT-IDLE-B", "闲置批量类别",
+            String categoryId = AstTestSupport.seedCategory(daoProvider, "CAT-IDLE-B", "闲置批量类别",
                     ErpAstConstants.DEPRECIATION_METHOD_STRAIGHT_LINE, 12, null, null, null);
-            AstTestSupport.seedAsset(daoProvider, "AST-IDLE-B1", "闲置批量资产1", categoryId, 1L,
+            AstTestSupport.seedAsset(daoProvider, "AST-IDLE-B1", "闲置批量资产1", categoryId, "1",
                     new BigDecimal("12000"), BigDecimal.ZERO,
                     ErpAstConstants.DEPRECIATION_METHOD_STRAIGHT_LINE, 12,
                     ErpAstConstants.ASSET_STATUS_IN_SERVICE);
-            AstTestSupport.seedAsset(daoProvider, "AST-IDLE-B2", "闲置批量资产2", categoryId, 1L,
+            AstTestSupport.seedAsset(daoProvider, "AST-IDLE-B2", "闲置批量资产2", categoryId, "1",
                     new BigDecimal("12000"), BigDecimal.ZERO,
                     ErpAstConstants.DEPRECIATION_METHOD_STRAIGHT_LINE, 12,
                     ErpAstConstants.ASSET_STATUS_IN_SERVICE);
             return null;
         });
 
-        Long idleAssetId = findAssetByCode("AST-IDLE-B1").getId();
+        String idleAssetId = findAssetByCode("AST-IDLE-B1").getId();
         ormTemplate.runInSession(session -> assetBiz.suspend(idleAssetId, CTX));
 
         // 批量折旧：IDLE 不入 batch（仅 IN_SERVICE 资产）
@@ -102,11 +102,11 @@ public class TestErpAstIdleStateMachine extends JunitAutoTestCase {
 
     @Test
     public void testSuspendRejectsSingleDepreciation() {
-        Long assetId = ormTemplate.runInSession(session -> {
+        String assetId = ormTemplate.runInSession(session -> {
             seedBasics();
-            Long categoryId = AstTestSupport.seedCategory(daoProvider, "CAT-IDLE-S", "闲置单资产类别",
+            String categoryId = AstTestSupport.seedCategory(daoProvider, "CAT-IDLE-S", "闲置单资产类别",
                     ErpAstConstants.DEPRECIATION_METHOD_STRAIGHT_LINE, 12, null, null, null);
-            return AstTestSupport.seedAsset(daoProvider, "AST-IDLE-S", "闲置单资产", categoryId, 1L,
+            return AstTestSupport.seedAsset(daoProvider, "AST-IDLE-S", "闲置单资产", categoryId, "1",
                     new BigDecimal("12000"), BigDecimal.ZERO,
                     ErpAstConstants.DEPRECIATION_METHOD_STRAIGHT_LINE, 12,
                     ErpAstConstants.ASSET_STATUS_IN_SERVICE);
@@ -122,11 +122,11 @@ public class TestErpAstIdleStateMachine extends JunitAutoTestCase {
 
     @Test
     public void testResumeRestoresDepreciation() {
-        Long assetId = ormTemplate.runInSession(session -> {
+        String assetId = ormTemplate.runInSession(session -> {
             seedBasics();
-            Long categoryId = AstTestSupport.seedCategory(daoProvider, "CAT-IDLE-R", "闲置恢复类别",
+            String categoryId = AstTestSupport.seedCategory(daoProvider, "CAT-IDLE-R", "闲置恢复类别",
                     ErpAstConstants.DEPRECIATION_METHOD_STRAIGHT_LINE, 12, null, null, null);
-            return AstTestSupport.seedAsset(daoProvider, "AST-IDLE-R", "闲置恢复资产", categoryId, 1L,
+            return AstTestSupport.seedAsset(daoProvider, "AST-IDLE-R", "闲置恢复资产", categoryId, "1",
                     new BigDecimal("12000"), BigDecimal.ZERO,
                     ErpAstConstants.DEPRECIATION_METHOD_STRAIGHT_LINE, 12,
                     ErpAstConstants.ASSET_STATUS_IN_SERVICE);
@@ -150,17 +150,17 @@ public class TestErpAstIdleStateMachine extends JunitAutoTestCase {
 
     @Test
     public void testIllegalTransitionsRejected() {
-        long[] draftAsset = new long[1];
-        long[] idleAsset = new long[1];
+        String[] draftAsset = new String[1];
+        String[] idleAsset = new String[1];
         ormTemplate.runInSession(session -> {
             seedBasics();
-            Long categoryId = AstTestSupport.seedCategory(daoProvider, "CAT-IDLE-I", "闲置非法类别",
+            String categoryId = AstTestSupport.seedCategory(daoProvider, "CAT-IDLE-I", "闲置非法类别",
                     ErpAstConstants.DEPRECIATION_METHOD_STRAIGHT_LINE, 12, null, null, null);
-            draftAsset[0] = AstTestSupport.seedAsset(daoProvider, "AST-IDLE-DRAFT", "草稿资产", categoryId, 1L,
+            draftAsset[0] = AstTestSupport.seedAsset(daoProvider, "AST-IDLE-DRAFT", "草稿资产", categoryId, "1",
                     new BigDecimal("12000"), BigDecimal.ZERO,
                     ErpAstConstants.DEPRECIATION_METHOD_STRAIGHT_LINE, 12,
                     ErpAstConstants.ASSET_STATUS_DRAFT);
-            idleAsset[0] = AstTestSupport.seedAsset(daoProvider, "AST-IDLE-I2", "已闲置资产", categoryId, 1L,
+            idleAsset[0] = AstTestSupport.seedAsset(daoProvider, "AST-IDLE-I2", "已闲置资产", categoryId, "1",
                     new BigDecimal("12000"), BigDecimal.ZERO,
                     ErpAstConstants.DEPRECIATION_METHOD_STRAIGHT_LINE, 12,
                     ErpAstConstants.ASSET_STATUS_IN_SERVICE);
@@ -183,11 +183,11 @@ public class TestErpAstIdleStateMachine extends JunitAutoTestCase {
 
     @Test
     public void testSuspendRecordsIdleSinceInRemark() {
-        Long assetId = ormTemplate.runInSession(session -> {
+        String assetId = ormTemplate.runInSession(session -> {
             seedBasics();
-            Long categoryId = AstTestSupport.seedCategory(daoProvider, "CAT-IDLE-M", "闲置标注类别",
+            String categoryId = AstTestSupport.seedCategory(daoProvider, "CAT-IDLE-M", "闲置标注类别",
                     ErpAstConstants.DEPRECIATION_METHOD_STRAIGHT_LINE, 12, null, null, null);
-            return AstTestSupport.seedAsset(daoProvider, "AST-IDLE-M", "闲置标注资产", categoryId, 1L,
+            return AstTestSupport.seedAsset(daoProvider, "AST-IDLE-M", "闲置标注资产", categoryId, "1",
                     new BigDecimal("12000"), BigDecimal.ZERO,
                     ErpAstConstants.DEPRECIATION_METHOD_STRAIGHT_LINE, 12,
                     ErpAstConstants.ASSET_STATUS_IN_SERVICE);
@@ -203,23 +203,23 @@ public class TestErpAstIdleStateMachine extends JunitAutoTestCase {
 
     @Test
     public void testPendingSchedulesKeptDuringSuspendThenCancelledAtDisposal() {
-        long[] assetIdHolder = new long[1];
-        Long disposalId = ormTemplate.runInSession(session -> {
+        String[] assetIdHolder = new String[1];
+        String disposalId = ormTemplate.runInSession(session -> {
             seedBasics();
-            Long gainLossSubjectId = AstTestSupport.seedSubject(daoProvider, "6711", "营业外支出");
-            Long categoryId = AstTestSupport.seedCategory(daoProvider, "CAT-IDLE-P", "闲置处置类别",
+            String gainLossSubjectId = AstTestSupport.seedSubject(daoProvider, "6711", "营业外支出");
+            String categoryId = AstTestSupport.seedCategory(daoProvider, "CAT-IDLE-P", "闲置处置类别",
                     ErpAstConstants.DEPRECIATION_METHOD_STRAIGHT_LINE, 12,
                     AstTestSupport.seedSubject(daoProvider, "1601", "固定资产"),
                     AstTestSupport.seedSubject(daoProvider, "1602", "累计折旧"),
                     AstTestSupport.seedSubject(daoProvider, "6602", "管理费用"));
             daoProvider.daoFor(app.erp.ast.dao.entity.ErpAstAssetCategory.class).getEntityById(categoryId)
                     .setDisposalGainLossSubjectId(gainLossSubjectId);
-            Long assetId = AstTestSupport.seedAsset(daoProvider, "AST-IDLE-P", "闲置处置资产", categoryId, 1L,
+            String assetId = AstTestSupport.seedAsset(daoProvider, "AST-IDLE-P", "闲置处置资产", categoryId, "1",
                     new BigDecimal("12000"), BigDecimal.ZERO,
                     ErpAstConstants.DEPRECIATION_METHOD_STRAIGHT_LINE, 12,
                     ErpAstConstants.ASSET_STATUS_IN_SERVICE);
             assetIdHolder[0] = assetId;
-            AstTestSupport.seedPendingSchedule(daoProvider, assetId, 1L, "2026-08");
+            AstTestSupport.seedPendingSchedule(daoProvider, assetId, "1", "2026-08");
             return seedDisposal("DISP-IDLE-001", assetId, ErpAstConstants.DISPOSAL_TYPE_SCRAPPED,
                     BigDecimal.ZERO, LocalDate.of(2026, 7, 20));
         });
@@ -232,8 +232,8 @@ public class TestErpAstIdleStateMachine extends JunitAutoTestCase {
 
         // 处置路径：IDLE→SCRAPPED 放行（Phase 3 处置 Decision 选项 A——扩展 StateMachine Bean 对齐 owner doc §2）
         setUser();
-        executeRpc("ErpAstDisposal__submitForApproval", Map.of("id", String.valueOf(disposalId)));
-        executeRpc("ErpAstDisposal__approve", Map.of("id", String.valueOf(disposalId)));
+        executeRpc("ErpAstDisposal__submitForApproval", Map.of("id", disposalId));
+        executeRpc("ErpAstDisposal__approve", Map.of("id", disposalId));
 
         ErpAstDisposal disposal = daoProvider.daoFor(ErpAstDisposal.class).getEntityById(disposalId);
         assertTrue(Boolean.TRUE.equals(disposal.getPosted()), "IDLE 资产处置过账成功");
@@ -254,7 +254,7 @@ public class TestErpAstIdleStateMachine extends JunitAutoTestCase {
     // ---------- helpers ----------
 
     private void seedBasics() {
-        AstTestSupport.seedAcctSchema(daoProvider, 1L);
+        AstTestSupport.seedAcctSchema(daoProvider, "1");
         AstTestSupport.seedSubject(daoProvider, "6602", "管理费用");
         AstTestSupport.seedSubject(daoProvider, "1602", "累计折旧");
         AstTestSupport.seedSubject(daoProvider, "1601", "固定资产");
@@ -281,7 +281,7 @@ public class TestErpAstIdleStateMachine extends JunitAutoTestCase {
         return findSchedule(asset.getId(), period);
     }
 
-    private ErpAstDepreciationSchedule findSchedule(Long assetId, String period) {
+    private ErpAstDepreciationSchedule findSchedule(String assetId, String period) {
         IEntityDao<ErpAstDepreciationSchedule> dao = daoProvider.daoFor(ErpAstDepreciationSchedule.class);
         QueryBean q = new QueryBean();
         q.addFilter(and(eq("assetId", assetId), eq("period", period)));
@@ -289,16 +289,16 @@ public class TestErpAstIdleStateMachine extends JunitAutoTestCase {
         return list.isEmpty() ? null : list.get(0);
     }
 
-    private Long seedDisposal(String code, Long assetId, String disposalType, BigDecimal disposalAmount,
+    private String seedDisposal(String code, String assetId, String disposalType, BigDecimal disposalAmount,
                               LocalDate businessDate) {
         IEntityDao<ErpAstDisposal> dao = daoProvider.daoFor(ErpAstDisposal.class);
         ErpAstDisposal disposal = new ErpAstDisposal();
         disposal.setCode(code);
-        disposal.setOrgId(1L);
+        disposal.setOrgId("1");
         disposal.setAssetId(assetId);
         disposal.setDisposalType(disposalType);
         disposal.setDisposalAmount(disposalAmount);
-        disposal.setCurrencyId(1L);
+        disposal.setCurrencyId("1");
         disposal.setExchangeRate(BigDecimal.ONE);
         disposal.setBusinessDate(businessDate);
         disposal.setDocStatus(ErpAstConstants.DOC_STATUS_DRAFT);

@@ -15,7 +15,7 @@ public interface IErpAstDepreciationScheduleBiz extends ICrudBiz<ErpAstDepreciat
      * 更新计划条目与资产卡片汇总列，触发 DEPRECIATION(70) 业财过账。同期间重复执行先红冲再重生成（幂等）。
      */
     @BizMutation
-    ErpAstDepreciationSchedule executeDepreciation(@Name("assetId") Long assetId, @Name("period") String period,
+    ErpAstDepreciationSchedule executeDepreciation(@Name("assetId") String assetId, @Name("period") String period,
                                                    IServiceContext context);
 
     /**
@@ -32,7 +32,7 @@ public interface IErpAstDepreciationScheduleBiz extends ICrudBiz<ErpAstDepreciat
      * 计划条目置 REVERSED。供反审核/调整场景调用。
      */
     @BizMutation
-    ErpAstDepreciationSchedule reverseDepreciation(@Name("assetId") Long assetId, @Name("period") String period,
+    ErpAstDepreciationSchedule reverseDepreciation(@Name("assetId") String assetId, @Name("period") String period,
                                                    IServiceContext context);
 
     /**
@@ -44,7 +44,7 @@ public interface IErpAstDepreciationScheduleBiz extends ICrudBiz<ErpAstDepreciat
      * @param increment 资本化增量金额（资产原值已 += increment）
      */
     @BizMutation
-    int recalculateForCapitalizationMaintenance(@Name("assetId") Long assetId,
+    int recalculateForCapitalizationMaintenance(@Name("assetId") String assetId,
                                                 @Name("increment") java.math.BigDecimal increment,
                                                 IServiceContext context);
 
@@ -61,7 +61,7 @@ public interface IErpAstDepreciationScheduleBiz extends ICrudBiz<ErpAstDepreciat
      * @return 本次补提落行的折旧计划条目
      */
     @BizMutation
-    java.util.List<ErpAstDepreciationSchedule> catchUpDepreciation(@Name("assetId") Long assetId,
+    java.util.List<ErpAstDepreciationSchedule> catchUpDepreciation(@Name("assetId") String assetId,
                                                                     @Name("currentPeriod") String currentPeriod,
                                                                     @Name("missedPeriods") java.util.List<String> missedPeriods,
                                                                     IServiceContext context);

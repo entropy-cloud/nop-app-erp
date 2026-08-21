@@ -171,7 +171,7 @@ public class _ErpAstAssetCategory extends DynamicOrmEntity{
 
     
     /* ID: ID */
-    private java.lang.Long _id;
+    private java.lang.String _id;
     
     /* 类别编码: CODE */
     private java.lang.String _code;
@@ -186,13 +186,13 @@ public class _ErpAstAssetCategory extends DynamicOrmEntity{
     private java.lang.Integer _usefulLifeMonths;
     
     /* 资产科目: SUBJECT_ID */
-    private java.lang.Long _subjectId;
+    private java.lang.String _subjectId;
     
     /* 累计折旧科目: DEPRECIATION_SUBJECT_ID */
-    private java.lang.Long _depreciationSubjectId;
+    private java.lang.String _depreciationSubjectId;
     
     /* 折旧费用科目: EXPENSE_SUBJECT_ID */
-    private java.lang.Long _expenseSubjectId;
+    private java.lang.String _expenseSubjectId;
     
     /* 逻辑删除版本: DEL_VERSION */
     private java.lang.Long _delVersion;
@@ -216,10 +216,10 @@ public class _ErpAstAssetCategory extends DynamicOrmEntity{
     private java.lang.String _remark;
     
     /* 清理损益科目: DISPOSAL_GAIN_LOSS_SUBJECT_ID */
-    private java.lang.Long _disposalGainLossSubjectId;
+    private java.lang.String _disposalGainLossSubjectId;
     
     /* 在建工程科目: CIP_SUBJECT_ID */
-    private java.lang.Long _cipSubjectId;
+    private java.lang.String _cipSubjectId;
     
 
     public _ErpAstAssetCategory(){
@@ -358,9 +358,9 @@ public class _ErpAstAssetCategory extends DynamicOrmEntity{
         switch(propId){
         
             case PROP_ID_id:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_id));
                }
                setId(typedValue);
@@ -408,9 +408,9 @@ public class _ErpAstAssetCategory extends DynamicOrmEntity{
             }
         
             case PROP_ID_subjectId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_subjectId));
                }
                setSubjectId(typedValue);
@@ -418,9 +418,9 @@ public class _ErpAstAssetCategory extends DynamicOrmEntity{
             }
         
             case PROP_ID_depreciationSubjectId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_depreciationSubjectId));
                }
                setDepreciationSubjectId(typedValue);
@@ -428,9 +428,9 @@ public class _ErpAstAssetCategory extends DynamicOrmEntity{
             }
         
             case PROP_ID_expenseSubjectId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_expenseSubjectId));
                }
                setExpenseSubjectId(typedValue);
@@ -508,9 +508,9 @@ public class _ErpAstAssetCategory extends DynamicOrmEntity{
             }
         
             case PROP_ID_disposalGainLossSubjectId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_disposalGainLossSubjectId));
                }
                setDisposalGainLossSubjectId(typedValue);
@@ -518,9 +518,9 @@ public class _ErpAstAssetCategory extends DynamicOrmEntity{
             }
         
             case PROP_ID_cipSubjectId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_cipSubjectId));
                }
                setCipSubjectId(typedValue);
@@ -538,7 +538,7 @@ public class _ErpAstAssetCategory extends DynamicOrmEntity{
         
             case PROP_ID_id:{
                onInitProp(propId);
-               this._id = (java.lang.Long)value;
+               this._id = (java.lang.String)value;
                orm_id(); // 如果是设置主键字段，则触发watcher
                break;
             }
@@ -573,21 +573,21 @@ public class _ErpAstAssetCategory extends DynamicOrmEntity{
         
             case PROP_ID_subjectId:{
                onInitProp(propId);
-               this._subjectId = (java.lang.Long)value;
+               this._subjectId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_depreciationSubjectId:{
                onInitProp(propId);
-               this._depreciationSubjectId = (java.lang.Long)value;
+               this._depreciationSubjectId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_expenseSubjectId:{
                onInitProp(propId);
-               this._expenseSubjectId = (java.lang.Long)value;
+               this._expenseSubjectId = (java.lang.String)value;
                
                break;
             }
@@ -643,14 +643,14 @@ public class _ErpAstAssetCategory extends DynamicOrmEntity{
         
             case PROP_ID_disposalGainLossSubjectId:{
                onInitProp(propId);
-               this._disposalGainLossSubjectId = (java.lang.Long)value;
+               this._disposalGainLossSubjectId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_cipSubjectId:{
                onInitProp(propId);
-               this._cipSubjectId = (java.lang.Long)value;
+               this._cipSubjectId = (java.lang.String)value;
                
                break;
             }
@@ -664,7 +664,7 @@ public class _ErpAstAssetCategory extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final java.lang.Long getId(){
+    public final java.lang.String getId(){
          onPropGet(PROP_ID_id);
          return _id;
     }
@@ -672,7 +672,7 @@ public class _ErpAstAssetCategory extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final void setId(java.lang.Long value){
+    public final void setId(java.lang.String value){
         if(onPropSet(PROP_ID_id,value)){
             this._id = value;
             internalClearRefs(PROP_ID_id);
@@ -759,7 +759,7 @@ public class _ErpAstAssetCategory extends DynamicOrmEntity{
     /**
      * 资产科目: SUBJECT_ID
      */
-    public final java.lang.Long getSubjectId(){
+    public final java.lang.String getSubjectId(){
          onPropGet(PROP_ID_subjectId);
          return _subjectId;
     }
@@ -767,7 +767,7 @@ public class _ErpAstAssetCategory extends DynamicOrmEntity{
     /**
      * 资产科目: SUBJECT_ID
      */
-    public final void setSubjectId(java.lang.Long value){
+    public final void setSubjectId(java.lang.String value){
         if(onPropSet(PROP_ID_subjectId,value)){
             this._subjectId = value;
             internalClearRefs(PROP_ID_subjectId);
@@ -778,7 +778,7 @@ public class _ErpAstAssetCategory extends DynamicOrmEntity{
     /**
      * 累计折旧科目: DEPRECIATION_SUBJECT_ID
      */
-    public final java.lang.Long getDepreciationSubjectId(){
+    public final java.lang.String getDepreciationSubjectId(){
          onPropGet(PROP_ID_depreciationSubjectId);
          return _depreciationSubjectId;
     }
@@ -786,7 +786,7 @@ public class _ErpAstAssetCategory extends DynamicOrmEntity{
     /**
      * 累计折旧科目: DEPRECIATION_SUBJECT_ID
      */
-    public final void setDepreciationSubjectId(java.lang.Long value){
+    public final void setDepreciationSubjectId(java.lang.String value){
         if(onPropSet(PROP_ID_depreciationSubjectId,value)){
             this._depreciationSubjectId = value;
             internalClearRefs(PROP_ID_depreciationSubjectId);
@@ -797,7 +797,7 @@ public class _ErpAstAssetCategory extends DynamicOrmEntity{
     /**
      * 折旧费用科目: EXPENSE_SUBJECT_ID
      */
-    public final java.lang.Long getExpenseSubjectId(){
+    public final java.lang.String getExpenseSubjectId(){
          onPropGet(PROP_ID_expenseSubjectId);
          return _expenseSubjectId;
     }
@@ -805,7 +805,7 @@ public class _ErpAstAssetCategory extends DynamicOrmEntity{
     /**
      * 折旧费用科目: EXPENSE_SUBJECT_ID
      */
-    public final void setExpenseSubjectId(java.lang.Long value){
+    public final void setExpenseSubjectId(java.lang.String value){
         if(onPropSet(PROP_ID_expenseSubjectId,value)){
             this._expenseSubjectId = value;
             internalClearRefs(PROP_ID_expenseSubjectId);
@@ -949,7 +949,7 @@ public class _ErpAstAssetCategory extends DynamicOrmEntity{
     /**
      * 清理损益科目: DISPOSAL_GAIN_LOSS_SUBJECT_ID
      */
-    public final java.lang.Long getDisposalGainLossSubjectId(){
+    public final java.lang.String getDisposalGainLossSubjectId(){
          onPropGet(PROP_ID_disposalGainLossSubjectId);
          return _disposalGainLossSubjectId;
     }
@@ -957,7 +957,7 @@ public class _ErpAstAssetCategory extends DynamicOrmEntity{
     /**
      * 清理损益科目: DISPOSAL_GAIN_LOSS_SUBJECT_ID
      */
-    public final void setDisposalGainLossSubjectId(java.lang.Long value){
+    public final void setDisposalGainLossSubjectId(java.lang.String value){
         if(onPropSet(PROP_ID_disposalGainLossSubjectId,value)){
             this._disposalGainLossSubjectId = value;
             internalClearRefs(PROP_ID_disposalGainLossSubjectId);
@@ -968,7 +968,7 @@ public class _ErpAstAssetCategory extends DynamicOrmEntity{
     /**
      * 在建工程科目: CIP_SUBJECT_ID
      */
-    public final java.lang.Long getCipSubjectId(){
+    public final java.lang.String getCipSubjectId(){
          onPropGet(PROP_ID_cipSubjectId);
          return _cipSubjectId;
     }
@@ -976,7 +976,7 @@ public class _ErpAstAssetCategory extends DynamicOrmEntity{
     /**
      * 在建工程科目: CIP_SUBJECT_ID
      */
-    public final void setCipSubjectId(java.lang.Long value){
+    public final void setCipSubjectId(java.lang.String value){
         if(onPropSet(PROP_ID_cipSubjectId,value)){
             this._cipSubjectId = value;
             internalClearRefs(PROP_ID_cipSubjectId);

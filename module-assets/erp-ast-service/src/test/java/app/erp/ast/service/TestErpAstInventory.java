@@ -58,16 +58,16 @@ public class TestErpAstInventory extends JunitAutoTestCase {
 
     @Test
     public void testFullFlowSurplusAndShortage() {
-        long[] matchedAssetHolder = new long[1];
-        long[] shortageAssetHolder = new long[1];
-        Long invId = ormTemplate.runInSession(session -> {
+        String[] matchedAssetHolder = new String[1];
+        String[] shortageAssetHolder = new String[1];
+        String invId = ormTemplate.runInSession(session -> {
             seedCoreBasics();
-            Long categoryId = seedCategory("CAT-INV-1", "盘点类别一");
-            Long matched = AstTestSupport.seedAsset(daoProvider, "AST-MATCHED", "一致资产", categoryId, 1L,
+            String categoryId = seedCategory("CAT-INV-1", "盘点类别一");
+            String matched = AstTestSupport.seedAsset(daoProvider, "AST-MATCHED", "一致资产", categoryId, "1",
                     new BigDecimal("10000"), BigDecimal.ZERO,
                     ErpAstConstants.DEPRECIATION_METHOD_STRAIGHT_LINE, 12,
                     ErpAstConstants.ASSET_STATUS_IN_SERVICE);
-            Long shortage = AstTestSupport.seedAsset(daoProvider, "AST-SHORTAGE", "盘亏资产", categoryId, 1L,
+            String shortage = AstTestSupport.seedAsset(daoProvider, "AST-SHORTAGE", "盘亏资产", categoryId, "1",
                     new BigDecimal("8000"), BigDecimal.ZERO,
                     ErpAstConstants.DEPRECIATION_METHOD_STRAIGHT_LINE, 12,
                     ErpAstConstants.ASSET_STATUS_IN_SERVICE);
@@ -86,7 +86,7 @@ public class TestErpAstInventory extends JunitAutoTestCase {
         ormTemplate.runInSession(session -> {
             List<ErpAstInventoryLine> lines = findLines(invId);
             for (ErpAstInventoryLine line : lines) {
-                if (line.getAssetId() != null && line.getAssetId() == matchedAssetHolder[0]) {
+                if (matchedAssetHolder[0].equals(line.getAssetId())) {
                     line.setActualQuantity(1);
                 } else {
                     line.setActualQuantity(0);
@@ -95,7 +95,7 @@ public class TestErpAstInventory extends JunitAutoTestCase {
             }
             ErpAstInventoryLine surplusLine = daoProvider.daoFor(ErpAstInventoryLine.class).newEntity();
             surplusLine.setInventoryId(invId);
-            surplusLine.setOrgId(1L);
+            surplusLine.setOrgId("1");
             surplusLine.setLineNo(99);
             surplusLine.setAssetId(null);
             surplusLine.setAssetNameSnapshot("盘盈新设备");
@@ -143,10 +143,10 @@ public class TestErpAstInventory extends JunitAutoTestCase {
 
     @Test
     public void testIllegalTransitionPostBeforeReconcile() {
-        Long invId = ormTemplate.runInSession(session -> {
+        String invId = ormTemplate.runInSession(session -> {
             seedCoreBasics();
-            Long categoryId = seedCategory("CAT-ILL-INV", "非法迁移类别");
-            AstTestSupport.seedAsset(daoProvider, "AST-ILL-INV", "非法迁移资产", categoryId, 1L,
+            String categoryId = seedCategory("CAT-ILL-INV", "非法迁移类别");
+            AstTestSupport.seedAsset(daoProvider, "AST-ILL-INV", "非法迁移资产", categoryId, "1",
                     new BigDecimal("10000"), BigDecimal.ZERO,
                     ErpAstConstants.DEPRECIATION_METHOD_STRAIGHT_LINE, 12,
                     ErpAstConstants.ASSET_STATUS_IN_SERVICE);
@@ -162,10 +162,10 @@ public class TestErpAstInventory extends JunitAutoTestCase {
 
     @Test
     public void testCancelDraftInventory() {
-        Long invId = ormTemplate.runInSession(session -> {
+        String invId = ormTemplate.runInSession(session -> {
             seedCoreBasics();
-            Long categoryId = seedCategory("CAT-CANC-INV", "作废类别");
-            AstTestSupport.seedAsset(daoProvider, "AST-CANC-INV", "作废资产", categoryId, 1L,
+            String categoryId = seedCategory("CAT-CANC-INV", "作废类别");
+            AstTestSupport.seedAsset(daoProvider, "AST-CANC-INV", "作废资产", categoryId, "1",
                     new BigDecimal("10000"), BigDecimal.ZERO,
                     ErpAstConstants.DEPRECIATION_METHOD_STRAIGHT_LINE, 12,
                     ErpAstConstants.ASSET_STATUS_IN_SERVICE);
@@ -179,15 +179,15 @@ public class TestErpAstInventory extends JunitAutoTestCase {
 
     @Test
     public void testReverseRollsBackPosted() {
-        long[] shortageAssetHolder = new long[1];
-        Long invId = ormTemplate.runInSession(session -> {
+        String[] shortageAssetHolder = new String[1];
+        String invId = ormTemplate.runInSession(session -> {
             seedCoreBasics();
-            Long categoryId = seedCategory("CAT-REV-INV", "红冲类别");
-            AstTestSupport.seedAsset(daoProvider, "AST-REV-M", "红冲一致资产", categoryId, 1L,
+            String categoryId = seedCategory("CAT-REV-INV", "红冲类别");
+            AstTestSupport.seedAsset(daoProvider, "AST-REV-M", "红冲一致资产", categoryId, "1",
                     new BigDecimal("10000"), BigDecimal.ZERO,
                     ErpAstConstants.DEPRECIATION_METHOD_STRAIGHT_LINE, 12,
                     ErpAstConstants.ASSET_STATUS_IN_SERVICE);
-            Long shortage = AstTestSupport.seedAsset(daoProvider, "AST-REV-S", "红冲盘亏资产", categoryId, 1L,
+            String shortage = AstTestSupport.seedAsset(daoProvider, "AST-REV-S", "红冲盘亏资产", categoryId, "1",
                     new BigDecimal("8000"), BigDecimal.ZERO,
                     ErpAstConstants.DEPRECIATION_METHOD_STRAIGHT_LINE, 12,
                     ErpAstConstants.ASSET_STATUS_IN_SERVICE);
@@ -205,7 +205,7 @@ public class TestErpAstInventory extends JunitAutoTestCase {
             }
             // 把第二个（盘亏资产）标记为未找到
             for (ErpAstInventoryLine line : lines) {
-                if (line.getAssetId() != null && line.getAssetId() == shortageAssetHolder[0]) {
+                if (shortageAssetHolder[0].equals(line.getAssetId())) {
                     line.setActualQuantity(0);
                     daoProvider.daoFor(ErpAstInventoryLine.class).saveOrUpdateEntity(line);
                 }
@@ -233,10 +233,10 @@ public class TestErpAstInventory extends JunitAutoTestCase {
 
     @Test
     public void testRangeEmptyRejected() {
-        Long invId = ormTemplate.runInSession(session -> {
+        String invId = ormTemplate.runInSession(session -> {
             seedCoreBasics();
             // 类别存在但无任何资产落在范围内
-            Long categoryId = seedCategory("CAT-EMPTY-INV", "空范围类别");
+            String categoryId = seedCategory("CAT-EMPTY-INV", "空范围类别");
             return seedInventory("INV-EMPTY-001", "空范围盘点", categoryId, LocalDate.of(2026, 7, 15));
         });
 
@@ -246,32 +246,32 @@ public class TestErpAstInventory extends JunitAutoTestCase {
 
     // ---------- rpc helpers ----------
 
-    private ApiResponse<?> createInventory(Long id) {
-        return executeRpc("ErpAstInventory__createInventory", Map.of("id", String.valueOf(id)));
+    private ApiResponse<?> createInventory(String id) {
+        return executeRpc("ErpAstInventory__createInventory", Map.of("id", id));
     }
 
-    private ApiResponse<?> submitForCount(Long id) {
-        return executeRpc("ErpAstInventory__submitForCount", Map.of("id", String.valueOf(id)));
+    private ApiResponse<?> submitForCount(String id) {
+        return executeRpc("ErpAstInventory__submitForCount", Map.of("id", id));
     }
 
-    private ApiResponse<?> reconcile(Long id) {
-        return executeRpc("ErpAstInventory__reconcile", Map.of("id", String.valueOf(id)));
+    private ApiResponse<?> reconcile(String id) {
+        return executeRpc("ErpAstInventory__reconcile", Map.of("id", id));
     }
 
-    private ApiResponse<?> processVariance(Long id) {
-        return executeRpc("ErpAstInventory__processVariance", Map.of("id", String.valueOf(id)));
+    private ApiResponse<?> processVariance(String id) {
+        return executeRpc("ErpAstInventory__processVariance", Map.of("id", id));
     }
 
-    private ApiResponse<?> approve(Long id) {
-        return executeRpc("ErpAstInventory__approve", Map.of("id", String.valueOf(id)));
+    private ApiResponse<?> approve(String id) {
+        return executeRpc("ErpAstInventory__approve", Map.of("id", id));
     }
 
-    private ApiResponse<?> post(Long id) {
-        return executeRpc("ErpAstInventory__post", Map.of("id", String.valueOf(id)));
+    private ApiResponse<?> post(String id) {
+        return executeRpc("ErpAstInventory__post", Map.of("id", id));
     }
 
-    private ApiResponse<?> reverse(Long id) {
-        return executeRpc("ErpAstInventory__reverse", Map.of("id", String.valueOf(id)));
+    private ApiResponse<?> reverse(String id) {
+        return executeRpc("ErpAstInventory__reverse", Map.of("id", id));
     }
 
     private ApiResponse<?> executeRpc(String action, Map<String, Object> data) {
@@ -282,7 +282,7 @@ public class TestErpAstInventory extends JunitAutoTestCase {
     // ---------- helpers ----------
 
     private void seedCoreBasics() {
-        AstTestSupport.seedAcctSchema(daoProvider, 1L);
+        AstTestSupport.seedAcctSchema(daoProvider, "1");
         AstTestSupport.seedPeriod(daoProvider, "2026-07", 2026, 7, ErpAstConstants.PERIOD_STATUS_OPEN);
         AstTestSupport.seedSubject(daoProvider, "1601", "固定资产");
         AstTestSupport.seedSubject(daoProvider, "6301", "营业外收入");
@@ -290,7 +290,7 @@ public class TestErpAstInventory extends JunitAutoTestCase {
         AstTestSupport.seedSubject(daoProvider, "1002", "银行存款");
     }
 
-    private Long seedCategory(String code, String name) {
+    private String seedCategory(String code, String name) {
         return AstTestSupport.seedCategory(daoProvider, code, name,
                 ErpAstConstants.DEPRECIATION_METHOD_STRAIGHT_LINE, 12,
                 AstTestSupport.seedSubject(daoProvider, "1601-" + code, "固定资产-" + code),
@@ -298,29 +298,29 @@ public class TestErpAstInventory extends JunitAutoTestCase {
                 AstTestSupport.seedSubject(daoProvider, "6602-" + code, "管理费用-" + code));
     }
 
-    private Long seedInventory(String code, String name, Long categoryId, LocalDate businessDate) {
+    private String seedInventory(String code, String name, String categoryId, LocalDate businessDate) {
         IEntityDao<ErpAstInventory> dao = daoProvider.daoFor(ErpAstInventory.class);
         ErpAstInventory inv = new ErpAstInventory();
         inv.setCode(code);
         inv.setName(name);
-        inv.setOrgId(1L);
+        inv.setOrgId("1");
         inv.setStatus(ErpAstConstants.INVENTORY_STATUS_DRAFT);
         inv.setRangeCategoryId(categoryId);
         inv.setBusinessDate(businessDate);
-        inv.setCurrencyId(1L);
+        inv.setCurrencyId("1");
         inv.setExchangeRate(BigDecimal.ONE);
         dao.saveEntity(inv);
         return inv.getId();
     }
 
-    private List<ErpAstInventoryLine> findLines(Long inventoryId) {
+    private List<ErpAstInventoryLine> findLines(String inventoryId) {
         IEntityDao<ErpAstInventoryLine> dao = daoProvider.daoFor(ErpAstInventoryLine.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("inventoryId", inventoryId));
         return dao.findAllByQuery(q);
     }
 
-    private ErpAstInventoryLine findSurplusLine(Long inventoryId) {
+    private ErpAstInventoryLine findSurplusLine(String inventoryId) {
         IEntityDao<ErpAstInventoryLine> dao = daoProvider.daoFor(ErpAstInventoryLine.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("inventoryId", inventoryId));

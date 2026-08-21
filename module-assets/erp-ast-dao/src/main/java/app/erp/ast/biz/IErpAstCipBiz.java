@@ -21,14 +21,14 @@ public interface IErpAstCipBiz extends ICrudBiz<ErpAstCip> {
      * CIP 草稿 → 建设中（DRAFT → IN_CONSTRUCTION）。
      */
     @BizMutation
-    ErpAstCip startConstruction(@Name("cipId") Long cipId, IServiceContext context);
+    ErpAstCip startConstruction(@Name("cipId") String cipId, IServiceContext context);
 
     /**
      * CIP 成本归集行录入（仅 IN_CONSTRUCTION 状态允许）。累加 CIP.accumulatedCost。
      * INTEREST_CAPITALIZATION 类型受配置 {@code erp-ast.cip-interest-capitalization-enabled} 控制。
      */
     @BizMutation
-    ErpAstCipCostItem addCostItem(@Name("cipId") Long cipId,
+    ErpAstCipCostItem addCostItem(@Name("cipId") String cipId,
                                   @Name("costType") String costType,
                                   @Name("amountFunctional") BigDecimal amountFunctional,
                                   @Name("sourceBillType") String sourceBillType,
@@ -40,7 +40,7 @@ public interface IErpAstCipBiz extends ICrudBiz<ErpAstCip> {
      * CIP 进度付款记录（仅 IN_CONSTRUCTION 允许）。进度款本身不转固，只作已付工程款记录。
      */
     @BizMutation
-    ErpAstCipProgressBilling addProgressBilling(@Name("cipId") Long cipId,
+    ErpAstCipProgressBilling addProgressBilling(@Name("cipId") String cipId,
                                                 @Name("billingDate") LocalDate billingDate,
                                                 @Name("billingMilestone") String billingMilestone,
                                                 @Name("amountFunctional") BigDecimal amountFunctional,
@@ -51,7 +51,7 @@ public interface IErpAstCipBiz extends ICrudBiz<ErpAstCip> {
      * 查询 CIP 成本归集行（按 cipId）。{@code onlyUntransferred=true} 仅返回未转固行。
      */
     @BizQuery
-    List<ErpAstCipCostItem> findCostItems(@Name("cipId") Long cipId,
+    List<ErpAstCipCostItem> findCostItems(@Name("cipId") String cipId,
                                           @Name("onlyUntransferred") boolean onlyUntransferred,
                                           IServiceContext context);
 
@@ -59,7 +59,7 @@ public interface IErpAstCipBiz extends ICrudBiz<ErpAstCip> {
      * 查询 CIP 进度付款记录（按 cipId）。
      */
     @BizQuery
-    List<ErpAstCipProgressBilling> findProgressBillings(@Name("cipId") Long cipId,
+    List<ErpAstCipProgressBilling> findProgressBillings(@Name("cipId") String cipId,
                                                         IServiceContext context);
 
     /**
@@ -68,8 +68,8 @@ public interface IErpAstCipBiz extends ICrudBiz<ErpAstCip> {
      * {@code costItemIds=null} 表示全部 CostItem。
      */
     @BizMutation
-    ErpAstCip transferToAsset(@Name("cipId") Long cipId,
-                              @Name("costItemIds") List<Long> costItemIds,
+    ErpAstCip transferToAsset(@Name("cipId") String cipId,
+                              @Name("costItemIds") List<String> costItemIds,
                               @Name("transferDate") LocalDate transferDate,
                               IServiceContext context);
 
@@ -78,7 +78,7 @@ public interface IErpAstCipBiz extends ICrudBiz<ErpAstCip> {
      * → 回退 CostItem.postedTransferFlag → CIP 从 TRANSFERRED 回 IN_CONSTRUCTION（仅全部红冲）。
      */
     @BizMutation
-    ErpAstCip reverseTransfer(@Name("cipId") Long cipId,
-                              @Name("capitalizationId") Long capitalizationId,
+    ErpAstCip reverseTransfer(@Name("cipId") String cipId,
+                              @Name("capitalizationId") String capitalizationId,
                               IServiceContext context);
 }

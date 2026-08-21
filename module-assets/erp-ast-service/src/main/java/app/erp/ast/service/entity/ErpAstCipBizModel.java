@@ -57,13 +57,13 @@ public class ErpAstCipBizModel extends CrudBizModel<ErpAstCip> implements IErpAs
 
     @Override
     @BizMutation
-    public ErpAstCip startConstruction(@Name("cipId") Long cipId, IServiceContext context) {
+    public ErpAstCip startConstruction(@Name("cipId") String cipId, IServiceContext context) {
         return startConstructionProcessor.startConstruction(cipId, context);
     }
 
     @Override
     @BizMutation
-    public ErpAstCipCostItem addCostItem(@Name("cipId") Long cipId,
+    public ErpAstCipCostItem addCostItem(@Name("cipId") String cipId,
                                          @Name("costType") String costType,
                                          @Name("amountFunctional") BigDecimal amountFunctional,
                                          @Name("sourceBillType") String sourceBillType,
@@ -76,7 +76,7 @@ public class ErpAstCipBizModel extends CrudBizModel<ErpAstCip> implements IErpAs
 
     @Override
     @BizMutation
-    public ErpAstCipProgressBilling addProgressBilling(@Name("cipId") Long cipId,
+    public ErpAstCipProgressBilling addProgressBilling(@Name("cipId") String cipId,
                                                        @Name("billingDate") LocalDate billingDate,
                                                        @Name("billingMilestone") String billingMilestone,
                                                        @Name("amountFunctional") BigDecimal amountFunctional,
@@ -88,7 +88,7 @@ public class ErpAstCipBizModel extends CrudBizModel<ErpAstCip> implements IErpAs
 
     @Override
     @BizQuery
-    public List<ErpAstCipCostItem> findCostItems(@Name("cipId") Long cipId,
+    public List<ErpAstCipCostItem> findCostItems(@Name("cipId") String cipId,
                                                   @Name("onlyUntransferred") boolean onlyUntransferred,
                                                   IServiceContext context) {
         return cipProcessor.findCostItems(cipId, onlyUntransferred, context);
@@ -96,15 +96,15 @@ public class ErpAstCipBizModel extends CrudBizModel<ErpAstCip> implements IErpAs
 
     @Override
     @BizQuery
-    public List<ErpAstCipProgressBilling> findProgressBillings(@Name("cipId") Long cipId,
+    public List<ErpAstCipProgressBilling> findProgressBillings(@Name("cipId") String cipId,
                                                                 IServiceContext context) {
         return cipProcessor.findProgressBillings(cipId, context);
     }
 
     @Override
     @BizMutation
-    public ErpAstCip transferToAsset(@Name("cipId") Long cipId,
-                                     @Name("costItemIds") List<Long> costItemIds,
+    public ErpAstCip transferToAsset(@Name("cipId") String cipId,
+                                     @Name("costItemIds") List<String> costItemIds,
                                      @Name("transferDate") LocalDate transferDate,
                                      IServiceContext context) {
         return transferToAssetProcessor.transferToAsset(cipId, costItemIds, transferDate, context);
@@ -112,8 +112,8 @@ public class ErpAstCipBizModel extends CrudBizModel<ErpAstCip> implements IErpAs
 
     @Override
     @BizMutation
-    public ErpAstCip reverseTransfer(@Name("cipId") Long cipId,
-                                     @Name("capitalizationId") Long capitalizationId,
+    public ErpAstCip reverseTransfer(@Name("cipId") String cipId,
+                                     @Name("capitalizationId") String capitalizationId,
                                      IServiceContext context) {
         return reverseTransferProcessor.reverseTransfer(cipId, capitalizationId, context);
     }

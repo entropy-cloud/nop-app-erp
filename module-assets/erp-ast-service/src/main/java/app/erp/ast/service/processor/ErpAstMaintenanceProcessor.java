@@ -66,11 +66,11 @@ public class ErpAstMaintenanceProcessor {
     // 拆为独立 per-mutation Processor。本 facade 处置 = slim-to-S-delegation-facade：
     // 保留 approve（S-mutation 单行委托）+ cancel（`:45` 单步状态翻转豁免）+ protected helper（单一真相源）。
 
-    public ErpAstMaintenance approve(Long id, IServiceContext context) {
-        return approveProcessor.approve(String.valueOf(id), context);
+    public ErpAstMaintenance approve(String id, IServiceContext context) {
+        return approveProcessor.approve(id, context);
     }
 
-    public ErpAstMaintenance cancel(Long id, IServiceContext context) {
+    public ErpAstMaintenance cancel(String id, IServiceContext context) {
         ErpAstMaintenance m = requireMaintenance(id, context);
         String status = m.getStatus();
         // 固定来源态守卫委托 StateMachine Bean（M4.53，契约 §4/§7；Bean 抛 common 层码 → cause-chain 领域码）
@@ -99,7 +99,8 @@ public class ErpAstMaintenanceProcessor {
 
         // 折旧计划重算（config-gated）
         if (shouldAdjustDepreciationBase()) {
-            depreciationScheduleBiz.recalculateForCapitalizationMaintenance(asset.getId(), increment, context);
+            depreciationScheduleBiz.recalculateForCapitalizationMaintenance(asset.getId(),
+                    increment, context);
         }
     }
 
@@ -116,8 +117,8 @@ public class ErpAstMaintenanceProcessor {
 
         if (shouldAdjustDepreciationBase()) {
             // 回退重算：用负增量删除重算生成的条目并恢复（负增量使基数回到原值）
-            depreciationScheduleBiz.recalculateForCapitalizationMaintenance(asset.getId(), increment.negate(),
-                    context);
+            depreciationScheduleBiz.recalculateForCapitalizationMaintenance(asset.getId(),
+                    increment.negate(), context);
         }
     }
 
@@ -150,7 +151,7 @@ public class ErpAstMaintenanceProcessor {
 
     // ---------- 费用归集辅助 ----------
 
-    protected BigDecimal aggregateCost(Long maintenanceId) {
+    protected BigDecimal aggregateCost(String maintenanceId) {
         BigDecimal total = BigDecimal.ZERO;
         for (ErpAstMaintenanceCost line : findCostLines(maintenanceId)) {
             total = total.add(nz(line.getAmount()));
@@ -158,7 +159,7 @@ public class ErpAstMaintenanceProcessor {
         return total;
     }
 
-    protected List<ErpAstMaintenanceCost> findCostLines(Long maintenanceId) {
+    protected List<ErpAstMaintenanceCost> findCostLines(String maintenanceId) {
         IEntityDao<ErpAstMaintenanceCost> dao = daoProvider.daoFor(ErpAstMaintenanceCost.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("maintenanceId", maintenanceId));
@@ -167,7 +168,7 @@ public class ErpAstMaintenanceProcessor {
 
     // ---------- 校验/查询辅助（protected，供派生复用与覆盖） ----------
 
-    protected ErpAstMaintenance requireMaintenance(Long id, IServiceContext context) {
+    protected ErpAstMaintenance requireMaintenance(String id, IServiceContext context) {
         ErpAstMaintenance m = maintenanceDao().getEntityById(id);
         if (m == null) {
             throw new NopException(ErpAstErrors.ERR_AST_MAINTENANCE_NOT_FOUND)
@@ -176,7 +177,7 @@ public class ErpAstMaintenanceProcessor {
         return m;
     }
 
-    protected ErpAstAsset requireAsset(Long assetId) {
+    protected ErpAstAsset requireAsset(String assetId) {
         ErpAstAsset asset = daoProvider.daoFor(ErpAstAsset.class).getEntityById(assetId);
         if (asset == null) {
             throw new NopException(ErpAstErrors.ERR_ASSET_NOT_FOUND)
@@ -185,7 +186,7 @@ public class ErpAstMaintenanceProcessor {
         return asset;
     }
 
-    protected ErpAstMaintenance reload(Long id) {
+    protected ErpAstMaintenance reload(String id) {
         return maintenanceDao().getEntityById(id);
     }
 

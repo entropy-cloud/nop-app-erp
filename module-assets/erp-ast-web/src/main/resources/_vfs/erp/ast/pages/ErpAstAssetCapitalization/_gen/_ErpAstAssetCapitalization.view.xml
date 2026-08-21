@@ -19,13 +19,13 @@
             <cols>
 
                 <!--ID-->
-                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="id" mandatory="true" sortable="true"/>
 
                 <!--单号-->
                 <col id="code" mandatory="true" sortable="true"/>
 
                 <!--业务组织-->
-                <col id="orgId" ui:number="true" sortable="true"/>
+                <col id="orgId" sortable="true"/>
 
                 <!--资产编码-->
                 <col id="assetCode" sortable="true"/>
@@ -34,10 +34,10 @@
                 <col id="assetName" sortable="true"/>
 
                 <!--资产类别-->
-                <col id="categoryId" ui:number="true" sortable="true"/>
+                <col id="categoryId" sortable="true"/>
 
                 <!--币种-->
-                <col id="currencyId" ui:number="true" sortable="true"/>
+                <col id="currencyId" sortable="true"/>
 
                 <!--资本化日期-->
                 <col id="capitalizationDate" mandatory="true" sortable="true"/>

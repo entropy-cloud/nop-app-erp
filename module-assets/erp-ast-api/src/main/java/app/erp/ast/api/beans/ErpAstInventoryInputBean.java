@@ -13,16 +13,16 @@
     public class ErpAstInventoryInputBean extends CrudInputBase {
 
     
-        private Long _id;
+        private String _id;
 
     
         @PropMeta(propId=1)
     
-        public Long getId(){
+        public String getId(){
             return _id;
         }
 
-        public void setId(Long value){
+        public void setId(String value){
             this._id = value;
         }
 
@@ -55,16 +55,16 @@
         }
 
 
-        private Long _orgId;
+        private String _orgId;
 
     
         @PropMeta(propId=4)
     
-        public Long getOrgId(){
+        public String getOrgId(){
             return _orgId;
         }
 
-        public void setOrgId(Long value){
+        public void setOrgId(String value){
             this._orgId = value;
         }
 
@@ -83,58 +83,58 @@
         }
 
 
-        private Long _rangeDepartmentId;
+        private String _rangeDepartmentId;
 
     
         @PropMeta(propId=6)
     
-        public Long getRangeDepartmentId(){
+        public String getRangeDepartmentId(){
             return _rangeDepartmentId;
         }
 
-        public void setRangeDepartmentId(Long value){
+        public void setRangeDepartmentId(String value){
             this._rangeDepartmentId = value;
         }
 
 
-        private Long _rangeCategoryId;
+        private String _rangeCategoryId;
 
     
         @PropMeta(propId=7)
     
-        public Long getRangeCategoryId(){
+        public String getRangeCategoryId(){
             return _rangeCategoryId;
         }
 
-        public void setRangeCategoryId(Long value){
+        public void setRangeCategoryId(String value){
             this._rangeCategoryId = value;
         }
 
 
-        private Long _rangeLocationId;
+        private String _rangeLocationId;
 
     
         @PropMeta(propId=8)
     
-        public Long getRangeLocationId(){
+        public String getRangeLocationId(){
             return _rangeLocationId;
         }
 
-        public void setRangeLocationId(Long value){
+        public void setRangeLocationId(String value){
             this._rangeLocationId = value;
         }
 
 
-        private Long _responsibleById;
+        private String _responsibleById;
 
     
         @PropMeta(propId=9)
     
-        public Long getResponsibleById(){
+        public String getResponsibleById(){
             return _responsibleById;
         }
 
-        public void setResponsibleById(Long value){
+        public void setResponsibleById(String value){
             this._responsibleById = value;
         }
 
@@ -153,16 +153,16 @@
         }
 
 
-        private Long _currencyId;
+        private String _currencyId;
 
     
         @PropMeta(propId=11)
     
-        public Long getCurrencyId(){
+        public String getCurrencyId(){
             return _currencyId;
         }
 
-        public void setCurrencyId(Long value){
+        public void setCurrencyId(String value){
             this._currencyId = value;
         }
 

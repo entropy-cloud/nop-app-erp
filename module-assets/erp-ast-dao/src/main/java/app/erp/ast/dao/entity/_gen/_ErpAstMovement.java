@@ -298,16 +298,16 @@ public class _ErpAstMovement extends DynamicOrmEntity{
 
     
     /* ID: ID */
-    private java.lang.Long _id;
+    private java.lang.String _id;
     
     /* 单号: CODE */
     private java.lang.String _code;
     
     /* 业务组织: ORG_ID */
-    private java.lang.Long _orgId;
+    private java.lang.String _orgId;
     
     /* 资产ID: ASSET_ID */
-    private java.lang.Long _assetId;
+    private java.lang.String _assetId;
     
     /* 移动日期: BUSINESS_DATE */
     private java.time.LocalDate _businessDate;
@@ -319,25 +319,25 @@ public class _ErpAstMovement extends DynamicOrmEntity{
     private java.time.LocalDate _thruDate;
     
     /* 原使用部门: FROM_DEPARTMENT_ID */
-    private java.lang.Long _fromDepartmentId;
+    private java.lang.String _fromDepartmentId;
     
     /* 新使用部门: TO_DEPARTMENT_ID */
-    private java.lang.Long _toDepartmentId;
+    private java.lang.String _toDepartmentId;
     
     /* 原使用人: FROM_STAFF_ID */
-    private java.lang.Long _fromStaffId;
+    private java.lang.String _fromStaffId;
     
     /* 新使用人: TO_STAFF_ID */
-    private java.lang.Long _toStaffId;
+    private java.lang.String _toStaffId;
     
     /* 原使用地点: FROM_LOCATION_ID */
-    private java.lang.Long _fromLocationId;
+    private java.lang.String _fromLocationId;
     
     /* 新使用地点: TO_LOCATION_ID */
-    private java.lang.Long _toLocationId;
+    private java.lang.String _toLocationId;
     
     /* 经办人: HANDLER_ID */
-    private java.lang.Long _handlerId;
+    private java.lang.String _handlerId;
     
     /* 单据状态: DOC_STATUS */
     private java.lang.String _docStatus;
@@ -361,7 +361,7 @@ public class _ErpAstMovement extends DynamicOrmEntity{
     private java.lang.String _postedBy;
     
     /* 币种: CURRENCY_ID */
-    private java.lang.Long _currencyId;
+    private java.lang.String _currencyId;
     
     /* 汇率: EXCHANGE_RATE */
     private java.math.BigDecimal _exchangeRate;
@@ -581,9 +581,9 @@ public class _ErpAstMovement extends DynamicOrmEntity{
         switch(propId){
         
             case PROP_ID_id:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_id));
                }
                setId(typedValue);
@@ -601,9 +601,9 @@ public class _ErpAstMovement extends DynamicOrmEntity{
             }
         
             case PROP_ID_orgId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_orgId));
                }
                setOrgId(typedValue);
@@ -611,9 +611,9 @@ public class _ErpAstMovement extends DynamicOrmEntity{
             }
         
             case PROP_ID_assetId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_assetId));
                }
                setAssetId(typedValue);
@@ -651,9 +651,9 @@ public class _ErpAstMovement extends DynamicOrmEntity{
             }
         
             case PROP_ID_fromDepartmentId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_fromDepartmentId));
                }
                setFromDepartmentId(typedValue);
@@ -661,9 +661,9 @@ public class _ErpAstMovement extends DynamicOrmEntity{
             }
         
             case PROP_ID_toDepartmentId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_toDepartmentId));
                }
                setToDepartmentId(typedValue);
@@ -671,9 +671,9 @@ public class _ErpAstMovement extends DynamicOrmEntity{
             }
         
             case PROP_ID_fromStaffId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_fromStaffId));
                }
                setFromStaffId(typedValue);
@@ -681,9 +681,9 @@ public class _ErpAstMovement extends DynamicOrmEntity{
             }
         
             case PROP_ID_toStaffId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_toStaffId));
                }
                setToStaffId(typedValue);
@@ -691,9 +691,9 @@ public class _ErpAstMovement extends DynamicOrmEntity{
             }
         
             case PROP_ID_fromLocationId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_fromLocationId));
                }
                setFromLocationId(typedValue);
@@ -701,9 +701,9 @@ public class _ErpAstMovement extends DynamicOrmEntity{
             }
         
             case PROP_ID_toLocationId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_toLocationId));
                }
                setToLocationId(typedValue);
@@ -711,9 +711,9 @@ public class _ErpAstMovement extends DynamicOrmEntity{
             }
         
             case PROP_ID_handlerId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_handlerId));
                }
                setHandlerId(typedValue);
@@ -791,9 +791,9 @@ public class _ErpAstMovement extends DynamicOrmEntity{
             }
         
             case PROP_ID_currencyId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_currencyId));
                }
                setCurrencyId(typedValue);
@@ -921,7 +921,7 @@ public class _ErpAstMovement extends DynamicOrmEntity{
         
             case PROP_ID_id:{
                onInitProp(propId);
-               this._id = (java.lang.Long)value;
+               this._id = (java.lang.String)value;
                orm_id(); // 如果是设置主键字段，则触发watcher
                break;
             }
@@ -935,14 +935,14 @@ public class _ErpAstMovement extends DynamicOrmEntity{
         
             case PROP_ID_orgId:{
                onInitProp(propId);
-               this._orgId = (java.lang.Long)value;
+               this._orgId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_assetId:{
                onInitProp(propId);
-               this._assetId = (java.lang.Long)value;
+               this._assetId = (java.lang.String)value;
                
                break;
             }
@@ -970,49 +970,49 @@ public class _ErpAstMovement extends DynamicOrmEntity{
         
             case PROP_ID_fromDepartmentId:{
                onInitProp(propId);
-               this._fromDepartmentId = (java.lang.Long)value;
+               this._fromDepartmentId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_toDepartmentId:{
                onInitProp(propId);
-               this._toDepartmentId = (java.lang.Long)value;
+               this._toDepartmentId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_fromStaffId:{
                onInitProp(propId);
-               this._fromStaffId = (java.lang.Long)value;
+               this._fromStaffId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_toStaffId:{
                onInitProp(propId);
-               this._toStaffId = (java.lang.Long)value;
+               this._toStaffId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_fromLocationId:{
                onInitProp(propId);
-               this._fromLocationId = (java.lang.Long)value;
+               this._fromLocationId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_toLocationId:{
                onInitProp(propId);
-               this._toLocationId = (java.lang.Long)value;
+               this._toLocationId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_handlerId:{
                onInitProp(propId);
-               this._handlerId = (java.lang.Long)value;
+               this._handlerId = (java.lang.String)value;
                
                break;
             }
@@ -1068,7 +1068,7 @@ public class _ErpAstMovement extends DynamicOrmEntity{
         
             case PROP_ID_currencyId:{
                onInitProp(propId);
-               this._currencyId = (java.lang.Long)value;
+               this._currencyId = (java.lang.String)value;
                
                break;
             }
@@ -1159,7 +1159,7 @@ public class _ErpAstMovement extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final java.lang.Long getId(){
+    public final java.lang.String getId(){
          onPropGet(PROP_ID_id);
          return _id;
     }
@@ -1167,7 +1167,7 @@ public class _ErpAstMovement extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final void setId(java.lang.Long value){
+    public final void setId(java.lang.String value){
         if(onPropSet(PROP_ID_id,value)){
             this._id = value;
             internalClearRefs(PROP_ID_id);
@@ -1197,7 +1197,7 @@ public class _ErpAstMovement extends DynamicOrmEntity{
     /**
      * 业务组织: ORG_ID
      */
-    public final java.lang.Long getOrgId(){
+    public final java.lang.String getOrgId(){
          onPropGet(PROP_ID_orgId);
          return _orgId;
     }
@@ -1205,7 +1205,7 @@ public class _ErpAstMovement extends DynamicOrmEntity{
     /**
      * 业务组织: ORG_ID
      */
-    public final void setOrgId(java.lang.Long value){
+    public final void setOrgId(java.lang.String value){
         if(onPropSet(PROP_ID_orgId,value)){
             this._orgId = value;
             internalClearRefs(PROP_ID_orgId);
@@ -1216,7 +1216,7 @@ public class _ErpAstMovement extends DynamicOrmEntity{
     /**
      * 资产ID: ASSET_ID
      */
-    public final java.lang.Long getAssetId(){
+    public final java.lang.String getAssetId(){
          onPropGet(PROP_ID_assetId);
          return _assetId;
     }
@@ -1224,7 +1224,7 @@ public class _ErpAstMovement extends DynamicOrmEntity{
     /**
      * 资产ID: ASSET_ID
      */
-    public final void setAssetId(java.lang.Long value){
+    public final void setAssetId(java.lang.String value){
         if(onPropSet(PROP_ID_assetId,value)){
             this._assetId = value;
             internalClearRefs(PROP_ID_assetId);
@@ -1292,7 +1292,7 @@ public class _ErpAstMovement extends DynamicOrmEntity{
     /**
      * 原使用部门: FROM_DEPARTMENT_ID
      */
-    public final java.lang.Long getFromDepartmentId(){
+    public final java.lang.String getFromDepartmentId(){
          onPropGet(PROP_ID_fromDepartmentId);
          return _fromDepartmentId;
     }
@@ -1300,7 +1300,7 @@ public class _ErpAstMovement extends DynamicOrmEntity{
     /**
      * 原使用部门: FROM_DEPARTMENT_ID
      */
-    public final void setFromDepartmentId(java.lang.Long value){
+    public final void setFromDepartmentId(java.lang.String value){
         if(onPropSet(PROP_ID_fromDepartmentId,value)){
             this._fromDepartmentId = value;
             internalClearRefs(PROP_ID_fromDepartmentId);
@@ -1311,7 +1311,7 @@ public class _ErpAstMovement extends DynamicOrmEntity{
     /**
      * 新使用部门: TO_DEPARTMENT_ID
      */
-    public final java.lang.Long getToDepartmentId(){
+    public final java.lang.String getToDepartmentId(){
          onPropGet(PROP_ID_toDepartmentId);
          return _toDepartmentId;
     }
@@ -1319,7 +1319,7 @@ public class _ErpAstMovement extends DynamicOrmEntity{
     /**
      * 新使用部门: TO_DEPARTMENT_ID
      */
-    public final void setToDepartmentId(java.lang.Long value){
+    public final void setToDepartmentId(java.lang.String value){
         if(onPropSet(PROP_ID_toDepartmentId,value)){
             this._toDepartmentId = value;
             internalClearRefs(PROP_ID_toDepartmentId);
@@ -1330,7 +1330,7 @@ public class _ErpAstMovement extends DynamicOrmEntity{
     /**
      * 原使用人: FROM_STAFF_ID
      */
-    public final java.lang.Long getFromStaffId(){
+    public final java.lang.String getFromStaffId(){
          onPropGet(PROP_ID_fromStaffId);
          return _fromStaffId;
     }
@@ -1338,7 +1338,7 @@ public class _ErpAstMovement extends DynamicOrmEntity{
     /**
      * 原使用人: FROM_STAFF_ID
      */
-    public final void setFromStaffId(java.lang.Long value){
+    public final void setFromStaffId(java.lang.String value){
         if(onPropSet(PROP_ID_fromStaffId,value)){
             this._fromStaffId = value;
             internalClearRefs(PROP_ID_fromStaffId);
@@ -1349,7 +1349,7 @@ public class _ErpAstMovement extends DynamicOrmEntity{
     /**
      * 新使用人: TO_STAFF_ID
      */
-    public final java.lang.Long getToStaffId(){
+    public final java.lang.String getToStaffId(){
          onPropGet(PROP_ID_toStaffId);
          return _toStaffId;
     }
@@ -1357,7 +1357,7 @@ public class _ErpAstMovement extends DynamicOrmEntity{
     /**
      * 新使用人: TO_STAFF_ID
      */
-    public final void setToStaffId(java.lang.Long value){
+    public final void setToStaffId(java.lang.String value){
         if(onPropSet(PROP_ID_toStaffId,value)){
             this._toStaffId = value;
             internalClearRefs(PROP_ID_toStaffId);
@@ -1368,7 +1368,7 @@ public class _ErpAstMovement extends DynamicOrmEntity{
     /**
      * 原使用地点: FROM_LOCATION_ID
      */
-    public final java.lang.Long getFromLocationId(){
+    public final java.lang.String getFromLocationId(){
          onPropGet(PROP_ID_fromLocationId);
          return _fromLocationId;
     }
@@ -1376,7 +1376,7 @@ public class _ErpAstMovement extends DynamicOrmEntity{
     /**
      * 原使用地点: FROM_LOCATION_ID
      */
-    public final void setFromLocationId(java.lang.Long value){
+    public final void setFromLocationId(java.lang.String value){
         if(onPropSet(PROP_ID_fromLocationId,value)){
             this._fromLocationId = value;
             internalClearRefs(PROP_ID_fromLocationId);
@@ -1387,7 +1387,7 @@ public class _ErpAstMovement extends DynamicOrmEntity{
     /**
      * 新使用地点: TO_LOCATION_ID
      */
-    public final java.lang.Long getToLocationId(){
+    public final java.lang.String getToLocationId(){
          onPropGet(PROP_ID_toLocationId);
          return _toLocationId;
     }
@@ -1395,7 +1395,7 @@ public class _ErpAstMovement extends DynamicOrmEntity{
     /**
      * 新使用地点: TO_LOCATION_ID
      */
-    public final void setToLocationId(java.lang.Long value){
+    public final void setToLocationId(java.lang.String value){
         if(onPropSet(PROP_ID_toLocationId,value)){
             this._toLocationId = value;
             internalClearRefs(PROP_ID_toLocationId);
@@ -1406,7 +1406,7 @@ public class _ErpAstMovement extends DynamicOrmEntity{
     /**
      * 经办人: HANDLER_ID
      */
-    public final java.lang.Long getHandlerId(){
+    public final java.lang.String getHandlerId(){
          onPropGet(PROP_ID_handlerId);
          return _handlerId;
     }
@@ -1414,7 +1414,7 @@ public class _ErpAstMovement extends DynamicOrmEntity{
     /**
      * 经办人: HANDLER_ID
      */
-    public final void setHandlerId(java.lang.Long value){
+    public final void setHandlerId(java.lang.String value){
         if(onPropSet(PROP_ID_handlerId,value)){
             this._handlerId = value;
             internalClearRefs(PROP_ID_handlerId);
@@ -1558,7 +1558,7 @@ public class _ErpAstMovement extends DynamicOrmEntity{
     /**
      * 币种: CURRENCY_ID
      */
-    public final java.lang.Long getCurrencyId(){
+    public final java.lang.String getCurrencyId(){
          onPropGet(PROP_ID_currencyId);
          return _currencyId;
     }
@@ -1566,7 +1566,7 @@ public class _ErpAstMovement extends DynamicOrmEntity{
     /**
      * 币种: CURRENCY_ID
      */
-    public final void setCurrencyId(java.lang.Long value){
+    public final void setCurrencyId(java.lang.String value){
         if(onPropSet(PROP_ID_currencyId,value)){
             this._currencyId = value;
             internalClearRefs(PROP_ID_currencyId);

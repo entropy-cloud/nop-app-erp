@@ -22,11 +22,11 @@ public interface IErpAstMaintenanceBiz extends ICrudBiz<ErpAstMaintenance> {
      * 校验资产非终态（SCRAPPED/SOLD/DISPOSED 拒绝）。
      */
     @BizMutation
-    ErpAstMaintenance createMaintenance(@Name("assetId") Long assetId,
+    ErpAstMaintenance createMaintenance(@Name("assetId") String assetId,
                                         @Name("code") String code,
                                         @Name("name") @Optional String name,
                                         @Name("businessDate") @Optional String businessDate,
-                                        @Name("maintenanceVisitId") @Optional Long maintenanceVisitId,
+                                        @Name("maintenanceVisitId") @Optional String maintenanceVisitId,
                                         @Name("reason") @Optional String reason,
                                         IServiceContext context);
 
@@ -34,26 +34,26 @@ public interface IErpAstMaintenanceBiz extends ICrudBiz<ErpAstMaintenance> {
      * 提交维修工单：DRAFT → SUBMITTED。
      */
     @BizMutation
-    ErpAstMaintenance submit(@Name("id") Long id, IServiceContext context);
+    ErpAstMaintenance submit(@Name("id") String id, IServiceContext context);
 
     /**
      * 开工：SUBMITTED → IN_PROGRESS。开工后可归集费用。
      */
     @BizMutation
-    ErpAstMaintenance startWork(@Name("id") Long id, IServiceContext context);
+    ErpAstMaintenance startWork(@Name("id") String id, IServiceContext context);
 
     /**
      * 完工：IN_PROGRESS → COMPLETED。完工后待裁决处置。
      */
     @BizMutation
-    ErpAstMaintenance completeWork(@Name("id") Long id, IServiceContext context);
+    ErpAstMaintenance completeWork(@Name("id") String id, IServiceContext context);
 
     /**
      * 裁决处置方式（COMPLETED 态）：CAPITALIZE（延长寿命/提升效能）或 EXPENSE（日常维修）。
      * 阈值门控：资本化金额 < 阈值时强制费用化。
      */
     @BizMutation
-    ErpAstMaintenance decideTreatment(@Name("id") Long id,
+    ErpAstMaintenance decideTreatment(@Name("id") String id,
                                       @Name("treatment") String treatment,
                                       @Name("capitalizedAmount") @Optional java.math.BigDecimal capitalizedAmount,
                                       IServiceContext context);
@@ -62,24 +62,24 @@ public interface IErpAstMaintenanceBiz extends ICrudBiz<ErpAstMaintenance> {
      * 审核维修工单（config-gated，默认强制审批）。审核后可执行 post。
      */
     @BizMutation
-    ErpAstMaintenance approve(@Name("id") Long id, IServiceContext context);
+    ErpAstMaintenance approve(@Name("id") String id, IServiceContext context);
 
     /**
      * 过账：COMPLETED → POSTED。按 treatment 分派 CAPITALIZE（原值增量 + 折旧重算 + MAINTENANCE_CAPITALIZATION 凭证）
      * 或 EXPENSE（MAINTENANCE_EXPENSE 凭证）。posted=true。
      */
     @BizMutation
-    ErpAstMaintenance post(@Name("id") Long id, IServiceContext context);
+    ErpAstMaintenance post(@Name("id") String id, IServiceContext context);
 
     /**
      * 作废：DRAFT/SUBMITTED → CANCELLED（终态）。
      */
     @BizMutation
-    ErpAstMaintenance cancel(@Name("id") Long id, IServiceContext context);
+    ErpAstMaintenance cancel(@Name("id") String id, IServiceContext context);
 
     /**
      * 红冲纠错：POSTED 维修单纠错必经 reverse。红字凭证 + 资本化路径回退原值/折旧计划或费用化路径仅凭证回退。
      */
     @BizMutation
-    ErpAstMaintenance reverse(@Name("id") Long id, IServiceContext context);
+    ErpAstMaintenance reverse(@Name("id") String id, IServiceContext context);
 }

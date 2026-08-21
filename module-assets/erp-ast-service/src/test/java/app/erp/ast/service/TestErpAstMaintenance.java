@@ -63,18 +63,18 @@ public class TestErpAstMaintenance extends JunitAutoTestCase {
     @Test
     public void testCapitalizePathWithDepreciationRecalc() {
         BigDecimal[] originalHolder = new BigDecimal[1];
-        Long[] assetHolder = new Long[1];
-        Long mntId = ormTemplate.runInSession(session -> {
+        String[] assetHolder = new String[1];
+        String mntId = ormTemplate.runInSession(session -> {
             seedCoreBasics();
-            Long categoryId = seedCategory("CAT-MNT-CAP", "资本化维修类别");
-            Long assetId = AstTestSupport.seedAsset(daoProvider, "AST-MNT-CAP", "资本化维修资产", categoryId, 1L,
+            String categoryId = seedCategory("CAT-MNT-CAP", "资本化维修类别");
+            String assetId = AstTestSupport.seedAsset(daoProvider, "AST-MNT-CAP", "资本化维修资产", categoryId, "1",
                     new BigDecimal("100000"), new BigDecimal("5000"),
                     ErpAstConstants.DEPRECIATION_METHOD_STRAIGHT_LINE, 24,
                     ErpAstConstants.ASSET_STATUS_IN_SERVICE);
             assetHolder[0] = assetId;
             originalHolder[0] = new BigDecimal("100000");
             // 预置一个 PENDING 折旧计划条目（模拟资本化前已有计划）
-            AstTestSupport.seedPendingSchedule(daoProvider, assetId, 1L, "2026-08");
+            AstTestSupport.seedPendingSchedule(daoProvider, assetId, "1", "2026-08");
             return createMaintenanceEntity(assetId, "MNT-CAP-001", "资本化维修单", null);
         });
 
@@ -117,18 +117,18 @@ public class TestErpAstMaintenance extends JunitAutoTestCase {
 
     @Test
     public void testCapitalizePathLinkedVisitCreditsClearing() {
-        Long[] assetHolder = new Long[1];
-        Long mntId = ormTemplate.runInSession(session -> {
+        String[] assetHolder = new String[1];
+        String mntId = ormTemplate.runInSession(session -> {
             seedCoreBasics();
-            Long categoryId = seedCategory("CAT-MNT-CAP-LNK", "资本化关联维护类别");
-            Long assetId = AstTestSupport.seedAsset(daoProvider, "AST-MNT-CAP-LNK", "资本化关联维护资产", categoryId, 1L,
+            String categoryId = seedCategory("CAT-MNT-CAP-LNK", "资本化关联维护类别");
+            String assetId = AstTestSupport.seedAsset(daoProvider, "AST-MNT-CAP-LNK", "资本化关联维护资产", categoryId, "1",
                     new BigDecimal("100000"), BigDecimal.ZERO,
                     ErpAstConstants.DEPRECIATION_METHOD_STRAIGHT_LINE, 24,
                     ErpAstConstants.ASSET_STATUS_IN_SERVICE);
             assetHolder[0] = assetId;
-            AstTestSupport.seedPendingSchedule(daoProvider, assetId, 1L, "2026-08");
+            AstTestSupport.seedPendingSchedule(daoProvider, assetId, "1", "2026-08");
             // maintenanceVisitId=888L 非空 → linkedVisit=true → Cr 2502 中转清算分支
-            return createMaintenanceEntity(assetId, "MNT-CAP-LNK-001", "资本化关联维护维修单", 888L);
+            return createMaintenanceEntity(assetId, "MNT-CAP-LNK-001", "资本化关联维护维修单", "888");
         });
 
         submit(mntId);
@@ -159,14 +159,14 @@ public class TestErpAstMaintenance extends JunitAutoTestCase {
 
     @Test
     public void testCapitalizePathIndependentCreditsBank() {
-        Long mntId = ormTemplate.runInSession(session -> {
+        String mntId = ormTemplate.runInSession(session -> {
             seedCoreBasics();
-            Long categoryId = seedCategory("CAT-MNT-CAP-IND", "资本化独立维修类别");
-            Long assetId = AstTestSupport.seedAsset(daoProvider, "AST-MNT-CAP-IND", "资本化独立维修资产", categoryId, 1L,
+            String categoryId = seedCategory("CAT-MNT-CAP-IND", "资本化独立维修类别");
+            String assetId = AstTestSupport.seedAsset(daoProvider, "AST-MNT-CAP-IND", "资本化独立维修资产", categoryId, "1",
                     new BigDecimal("80000"), BigDecimal.ZERO,
                     ErpAstConstants.DEPRECIATION_METHOD_STRAIGHT_LINE, 12,
                     ErpAstConstants.ASSET_STATUS_IN_SERVICE);
-            AstTestSupport.seedPendingSchedule(daoProvider, assetId, 1L, "2026-08");
+            AstTestSupport.seedPendingSchedule(daoProvider, assetId, "1", "2026-08");
             // maintenanceVisitId=null → linkedVisit=false → Cr 1002 银行存款既有路径
             return createMaintenanceEntity(assetId, "MNT-CAP-IND-001", "资本化独立维修单", null);
         });
@@ -187,17 +187,17 @@ public class TestErpAstMaintenance extends JunitAutoTestCase {
 
     @Test
     public void testReverseCapitalizeLinkedVisitCreditsClearingRollsBack() {
-        Long[] assetHolder = new Long[1];
-        Long mntId = ormTemplate.runInSession(session -> {
+        String[] assetHolder = new String[1];
+        String mntId = ormTemplate.runInSession(session -> {
             seedCoreBasics();
-            Long categoryId = seedCategory("CAT-MNT-CAP-LNK-REV", "红冲资本化关联维护类别");
-            Long assetId = AstTestSupport.seedAsset(daoProvider, "AST-MNT-CAP-LNK-REV", "红冲资本化关联维护资产",
-                    categoryId, 1L, new BigDecimal("100000"), BigDecimal.ZERO,
+            String categoryId = seedCategory("CAT-MNT-CAP-LNK-REV", "红冲资本化关联维护类别");
+            String assetId = AstTestSupport.seedAsset(daoProvider, "AST-MNT-CAP-LNK-REV", "红冲资本化关联维护资产",
+                    categoryId, "1", new BigDecimal("100000"), BigDecimal.ZERO,
                     ErpAstConstants.DEPRECIATION_METHOD_STRAIGHT_LINE, 24,
                     ErpAstConstants.ASSET_STATUS_IN_SERVICE);
             assetHolder[0] = assetId;
-            AstTestSupport.seedPendingSchedule(daoProvider, assetId, 1L, "2026-08");
-            return createMaintenanceEntity(assetId, "MNT-CAP-LNK-REV-001", "红冲资本化关联维护维修单", 777L);
+            AstTestSupport.seedPendingSchedule(daoProvider, assetId, "1", "2026-08");
+            return createMaintenanceEntity(assetId, "MNT-CAP-LNK-REV-001", "红冲资本化关联维护维修单", "777");
         });
 
         submit(mntId);
@@ -224,12 +224,12 @@ public class TestErpAstMaintenance extends JunitAutoTestCase {
 
     @Test
     public void testExpensePathDoesNotAffectAsset() {
-        Long[] assetHolder = new Long[1];
+        String[] assetHolder = new String[1];
         BigDecimal[] originalHolder = new BigDecimal[1];
-        Long mntId = ormTemplate.runInSession(session -> {
+        String mntId = ormTemplate.runInSession(session -> {
             seedCoreBasics();
-            Long categoryId = seedCategory("CAT-MNT-EXP", "费用化维修类别");
-            Long assetId = AstTestSupport.seedAsset(daoProvider, "AST-MNT-EXP", "费用化维修资产", categoryId, 1L,
+            String categoryId = seedCategory("CAT-MNT-EXP", "费用化维修类别");
+            String assetId = AstTestSupport.seedAsset(daoProvider, "AST-MNT-EXP", "费用化维修资产", categoryId, "1",
                     new BigDecimal("50000"), BigDecimal.ZERO,
                     ErpAstConstants.DEPRECIATION_METHOD_STRAIGHT_LINE, 12,
                     ErpAstConstants.ASSET_STATUS_IN_SERVICE);
@@ -257,15 +257,15 @@ public class TestErpAstMaintenance extends JunitAutoTestCase {
 
     @Test
     public void testExpensePathLinkedVisitCreditsClearing() {
-        Long mntId = ormTemplate.runInSession(session -> {
+        String mntId = ormTemplate.runInSession(session -> {
             seedCoreBasics();
-            Long categoryId = seedCategory("CAT-MNT-LNK", "关联维护工单类别");
-            Long assetId = AstTestSupport.seedAsset(daoProvider, "AST-MNT-LNK", "关联维护资产", categoryId, 1L,
+            String categoryId = seedCategory("CAT-MNT-LNK", "关联维护工单类别");
+            String assetId = AstTestSupport.seedAsset(daoProvider, "AST-MNT-LNK", "关联维护资产", categoryId, "1",
                     new BigDecimal("50000"), BigDecimal.ZERO,
                     ErpAstConstants.DEPRECIATION_METHOD_STRAIGHT_LINE, 12,
                     ErpAstConstants.ASSET_STATUS_IN_SERVICE);
             // maintenanceVisitId=999L 非空 → 贷中转科目分支
-            return createMaintenanceEntity(assetId, "MNT-LNK-001", "关联维护维修单", 999L);
+            return createMaintenanceEntity(assetId, "MNT-LNK-001", "关联维护维修单", "999");
         });
 
         submit(mntId);
@@ -285,10 +285,10 @@ public class TestErpAstMaintenance extends JunitAutoTestCase {
 
     @Test
     public void testCapitalizeBelowThresholdRejected() {
-        Long mntId = ormTemplate.runInSession(session -> {
+        String mntId = ormTemplate.runInSession(session -> {
             seedCoreBasics();
-            Long categoryId = seedCategory("CAT-MNT-THR", "阈值门控类别");
-            Long assetId = AstTestSupport.seedAsset(daoProvider, "AST-MNT-THR", "阈值门控资产", categoryId, 1L,
+            String categoryId = seedCategory("CAT-MNT-THR", "阈值门控类别");
+            String assetId = AstTestSupport.seedAsset(daoProvider, "AST-MNT-THR", "阈值门控资产", categoryId, "1",
                     new BigDecimal("50000"), BigDecimal.ZERO,
                     ErpAstConstants.DEPRECIATION_METHOD_STRAIGHT_LINE, 12,
                     ErpAstConstants.ASSET_STATUS_IN_SERVICE);
@@ -310,8 +310,8 @@ public class TestErpAstMaintenance extends JunitAutoTestCase {
     public void testTerminalAssetRejected() {
         ApiResponse<?> bad = ormTemplate.runInSession(session -> {
             seedCoreBasics();
-            Long categoryId = seedCategory("CAT-MNT-TERM", "终态资产类别");
-            Long assetId = AstTestSupport.seedAsset(daoProvider, "AST-MNT-TERM", "终态资产", categoryId, 1L,
+            String categoryId = seedCategory("CAT-MNT-TERM", "终态资产类别");
+            String assetId = AstTestSupport.seedAsset(daoProvider, "AST-MNT-TERM", "终态资产", categoryId, "1",
                     new BigDecimal("50000"), BigDecimal.ZERO,
                     ErpAstConstants.DEPRECIATION_METHOD_STRAIGHT_LINE, 12,
                     ErpAstConstants.ASSET_STATUS_SCRAPPED);
@@ -322,10 +322,10 @@ public class TestErpAstMaintenance extends JunitAutoTestCase {
 
     @Test
     public void testIllegalTransitionStartWorkBeforeSubmit() {
-        Long mntId = ormTemplate.runInSession(session -> {
+        String mntId = ormTemplate.runInSession(session -> {
             seedCoreBasics();
-            Long categoryId = seedCategory("CAT-MNT-ILL", "非法迁移类别");
-            Long assetId = AstTestSupport.seedAsset(daoProvider, "AST-MNT-ILL", "非法迁移资产", categoryId, 1L,
+            String categoryId = seedCategory("CAT-MNT-ILL", "非法迁移类别");
+            String assetId = AstTestSupport.seedAsset(daoProvider, "AST-MNT-ILL", "非法迁移资产", categoryId, "1",
                     new BigDecimal("50000"), BigDecimal.ZERO,
                     ErpAstConstants.DEPRECIATION_METHOD_STRAIGHT_LINE, 12,
                     ErpAstConstants.ASSET_STATUS_IN_SERVICE);
@@ -339,10 +339,10 @@ public class TestErpAstMaintenance extends JunitAutoTestCase {
 
     @Test
     public void testPostWithoutCostRejected() {
-        Long mntId = ormTemplate.runInSession(session -> {
+        String mntId = ormTemplate.runInSession(session -> {
             seedCoreBasics();
-            Long categoryId = seedCategory("CAT-MNT-NC", "无费用类别");
-            Long assetId = AstTestSupport.seedAsset(daoProvider, "AST-MNT-NC", "无费用资产", categoryId, 1L,
+            String categoryId = seedCategory("CAT-MNT-NC", "无费用类别");
+            String assetId = AstTestSupport.seedAsset(daoProvider, "AST-MNT-NC", "无费用资产", categoryId, "1",
                     new BigDecimal("50000"), BigDecimal.ZERO,
                     ErpAstConstants.DEPRECIATION_METHOD_STRAIGHT_LINE, 12,
                     ErpAstConstants.ASSET_STATUS_IN_SERVICE);
@@ -360,10 +360,10 @@ public class TestErpAstMaintenance extends JunitAutoTestCase {
 
     @Test
     public void testCancelDraftMaintenance() {
-        Long mntId = ormTemplate.runInSession(session -> {
+        String mntId = ormTemplate.runInSession(session -> {
             seedCoreBasics();
-            Long categoryId = seedCategory("CAT-MNT-CANC", "作废类别");
-            Long assetId = AstTestSupport.seedAsset(daoProvider, "AST-MNT-CANC", "作废资产", categoryId, 1L,
+            String categoryId = seedCategory("CAT-MNT-CANC", "作废类别");
+            String assetId = AstTestSupport.seedAsset(daoProvider, "AST-MNT-CANC", "作废资产", categoryId, "1",
                     new BigDecimal("50000"), BigDecimal.ZERO,
                     ErpAstConstants.DEPRECIATION_METHOD_STRAIGHT_LINE, 12,
                     ErpAstConstants.ASSET_STATUS_IN_SERVICE);
@@ -376,16 +376,16 @@ public class TestErpAstMaintenance extends JunitAutoTestCase {
 
     @Test
     public void testReverseCapitalizeRollsBack() {
-        Long[] assetHolder = new Long[1];
-        Long mntId = ormTemplate.runInSession(session -> {
+        String[] assetHolder = new String[1];
+        String mntId = ormTemplate.runInSession(session -> {
             seedCoreBasics();
-            Long categoryId = seedCategory("CAT-MNT-REV-CAP", "红冲资本化类别");
-            Long assetId = AstTestSupport.seedAsset(daoProvider, "AST-MNT-REV-CAP", "红冲资本化资产", categoryId, 1L,
+            String categoryId = seedCategory("CAT-MNT-REV-CAP", "红冲资本化类别");
+            String assetId = AstTestSupport.seedAsset(daoProvider, "AST-MNT-REV-CAP", "红冲资本化资产", categoryId, "1",
                     new BigDecimal("100000"), BigDecimal.ZERO,
                     ErpAstConstants.DEPRECIATION_METHOD_STRAIGHT_LINE, 24,
                     ErpAstConstants.ASSET_STATUS_IN_SERVICE);
             assetHolder[0] = assetId;
-            AstTestSupport.seedPendingSchedule(daoProvider, assetId, 1L, "2026-08");
+            AstTestSupport.seedPendingSchedule(daoProvider, assetId, "1", "2026-08");
             return createMaintenanceEntity(assetId, "MNT-REV-CAP-001", "红冲资本化维修单", null);
         });
 
@@ -413,10 +413,10 @@ public class TestErpAstMaintenance extends JunitAutoTestCase {
 
     @Test
     public void testReverseExpenseOnlyReversesVoucher() {
-        Long mntId = ormTemplate.runInSession(session -> {
+        String mntId = ormTemplate.runInSession(session -> {
             seedCoreBasics();
-            Long categoryId = seedCategory("CAT-MNT-REV-EXP", "红冲费用化类别");
-            Long assetId = AstTestSupport.seedAsset(daoProvider, "AST-MNT-REV-EXP", "红冲费用化资产", categoryId, 1L,
+            String categoryId = seedCategory("CAT-MNT-REV-EXP", "红冲费用化类别");
+            String assetId = AstTestSupport.seedAsset(daoProvider, "AST-MNT-REV-EXP", "红冲费用化资产", categoryId, "1",
                     new BigDecimal("50000"), BigDecimal.ZERO,
                     ErpAstConstants.DEPRECIATION_METHOD_STRAIGHT_LINE, 12,
                     ErpAstConstants.ASSET_STATUS_IN_SERVICE);
@@ -438,10 +438,10 @@ public class TestErpAstMaintenance extends JunitAutoTestCase {
 
     @Test
     public void testThreeCostTypesAggregated() {
-        Long mntId = ormTemplate.runInSession(session -> {
+        String mntId = ormTemplate.runInSession(session -> {
             seedCoreBasics();
-            Long categoryId = seedCategory("CAT-MNT-3C", "三类成本类别");
-            Long assetId = AstTestSupport.seedAsset(daoProvider, "AST-MNT-3C", "三类成本资产", categoryId, 1L,
+            String categoryId = seedCategory("CAT-MNT-3C", "三类成本类别");
+            String assetId = AstTestSupport.seedAsset(daoProvider, "AST-MNT-3C", "三类成本资产", categoryId, "1",
                     new BigDecimal("50000"), BigDecimal.ZERO,
                     ErpAstConstants.DEPRECIATION_METHOD_STRAIGHT_LINE, 12,
                     ErpAstConstants.ASSET_STATUS_IN_SERVICE);
@@ -464,10 +464,10 @@ public class TestErpAstMaintenance extends JunitAutoTestCase {
 
     @Test
     public void testReverseTwiceRejected() {
-        Long mntId = ormTemplate.runInSession(session -> {
+        String mntId = ormTemplate.runInSession(session -> {
             seedCoreBasics();
-            Long categoryId = seedCategory("CAT-MNT-2R", "二次红冲类别");
-            Long assetId = AstTestSupport.seedAsset(daoProvider, "AST-MNT-2R", "二次红冲资产", categoryId, 1L,
+            String categoryId = seedCategory("CAT-MNT-2R", "二次红冲类别");
+            String assetId = AstTestSupport.seedAsset(daoProvider, "AST-MNT-2R", "二次红冲资产", categoryId, "1",
                     new BigDecimal("50000"), BigDecimal.ZERO,
                     ErpAstConstants.DEPRECIATION_METHOD_STRAIGHT_LINE, 12,
                     ErpAstConstants.ASSET_STATUS_IN_SERVICE);
@@ -489,21 +489,21 @@ public class TestErpAstMaintenance extends JunitAutoTestCase {
 
     // ---------- rpc helpers ----------
 
-    private ApiResponse<?> submit(Long id) {
+    private ApiResponse<?> submit(String id) {
         return executeRpc("ErpAstMaintenance__submit", Map.of("id", String.valueOf(id)));
     }
 
-    private ApiResponse<?> startWork(Long id) {
+    private ApiResponse<?> startWork(String id) {
         return executeRpc("ErpAstMaintenance__startWork", Map.of("id", String.valueOf(id)));
     }
 
-    private ApiResponse<?> completeWork(Long id) {
+    private ApiResponse<?> completeWork(String id) {
         return executeRpc("ErpAstMaintenance__completeWork", Map.of("id", String.valueOf(id)));
     }
 
-    private ApiResponse<?> decideTreatment(Long id, String treatment, BigDecimal capitalizedAmount) {
+    private ApiResponse<?> decideTreatment(String id, String treatment, BigDecimal capitalizedAmount) {
         Map<String, Object> data = new LinkedHashMap<>();
-        data.put("id", String.valueOf(id));
+        data.put("id", id);
         data.put("treatment", treatment);
         if (capitalizedAmount != null) {
             data.put("capitalizedAmount", capitalizedAmount);
@@ -511,15 +511,15 @@ public class TestErpAstMaintenance extends JunitAutoTestCase {
         return executeRpc("ErpAstMaintenance__decideTreatment", data);
     }
 
-    private ApiResponse<?> approve(Long id) {
+    private ApiResponse<?> approve(String id) {
         return executeRpc("ErpAstMaintenance__approve", Map.of("id", String.valueOf(id)));
     }
 
-    private ApiResponse<?> post(Long id) {
+    private ApiResponse<?> post(String id) {
         return executeRpc("ErpAstMaintenance__post", Map.of("id", String.valueOf(id)));
     }
 
-    private ApiResponse<?> reverse(Long id) {
+    private ApiResponse<?> reverse(String id) {
         return executeRpc("ErpAstMaintenance__reverse", Map.of("id", String.valueOf(id)));
     }
 
@@ -528,15 +528,15 @@ public class TestErpAstMaintenance extends JunitAutoTestCase {
         return graphQLEngine.executeRpc(ctx);
     }
 
-    private void addCostLine(Long maintenanceId, String costType, BigDecimal amount) {
+    private void addCostLine(String maintenanceId, String costType, BigDecimal amount) {
         ormTemplate.runInSession(session -> {
             ErpAstMaintenanceCost line = daoProvider.daoFor(ErpAstMaintenanceCost.class).newEntity();
             line.setMaintenanceId(maintenanceId);
-            line.setOrgId(1L);
+            line.setOrgId("1");
             line.setCostType(costType);
             line.setAmount(amount);
             line.setBusinessDate(LocalDate.of(2026, 7, 15));
-            line.setCurrencyId(1L);
+            line.setCurrencyId("1");
             daoProvider.daoFor(ErpAstMaintenanceCost.class).saveEntity(line);
             return null;
         });
@@ -545,7 +545,7 @@ public class TestErpAstMaintenance extends JunitAutoTestCase {
     // ---------- helpers ----------
 
     private void seedCoreBasics() {
-        AstTestSupport.seedAcctSchema(daoProvider, 1L);
+        AstTestSupport.seedAcctSchema(daoProvider, "1");
         AstTestSupport.seedPeriod(daoProvider, "2026-07", 2026, 7, ErpAstConstants.PERIOD_STATUS_OPEN);
         AstTestSupport.seedSubject(daoProvider, "1601", "固定资产");
         AstTestSupport.seedSubject(daoProvider, "6602", "维修费用");
@@ -554,7 +554,7 @@ public class TestErpAstMaintenance extends JunitAutoTestCase {
         AstTestSupport.seedSubject(daoProvider, "2502", "维修中转清算");
     }
 
-    private Long seedCategory(String code, String name) {
+    private String seedCategory(String code, String name) {
         return AstTestSupport.seedCategory(daoProvider, code, name,
                 ErpAstConstants.DEPRECIATION_METHOD_STRAIGHT_LINE, 12,
                 AstTestSupport.seedSubject(daoProvider, "1601-" + code, "固定资产-" + code),
@@ -562,17 +562,17 @@ public class TestErpAstMaintenance extends JunitAutoTestCase {
                 AstTestSupport.seedSubject(daoProvider, "6602-" + code, "维修费用-" + code));
     }
 
-    private Long createMaintenanceEntity(Long assetId, String code, String name, Long maintenanceVisitId) {
+    private String createMaintenanceEntity(String assetId, String code, String name, String maintenanceVisitId) {
         return ormTemplate.runInSession(session -> {
             ErpAstMaintenance m = daoProvider.daoFor(ErpAstMaintenance.class).newEntity();
             m.setCode(code);
             m.setName(name);
-            m.setOrgId(1L);
+            m.setOrgId("1");
             m.setAssetId(assetId);
             m.setMaintenanceVisitId(maintenanceVisitId);
             m.setStatus(ErpAstConstants.MAINTENANCE_STATUS_DRAFT);
             m.setBusinessDate(LocalDate.of(2026, 7, 15));
-            m.setCurrencyId(1L);
+            m.setCurrencyId("1");
             m.setExchangeRate(BigDecimal.ONE);
             m.setCapitalizedAmount(BigDecimal.ZERO);
             m.setTotalCostAmount(BigDecimal.ZERO);
@@ -583,15 +583,15 @@ public class TestErpAstMaintenance extends JunitAutoTestCase {
         });
     }
 
-    private ApiResponse<?> createMaintenanceRpc(Long assetId, String code) {
+    private ApiResponse<?> createMaintenanceRpc(String assetId, String code) {
         Map<String, Object> data = new LinkedHashMap<>();
-        data.put("assetId", String.valueOf(assetId));
+        data.put("assetId", assetId);
         data.put("code", code);
         data.put("businessDate", "2026-07-15");
         return executeRpc("ErpAstMaintenance__createMaintenance", data);
     }
 
-    private List<ErpAstDepreciationSchedule> findPendingSchedules(Long assetId) {
+    private List<ErpAstDepreciationSchedule> findPendingSchedules(String assetId) {
         IEntityDao<ErpAstDepreciationSchedule> dao = daoProvider.daoFor(ErpAstDepreciationSchedule.class);
         QueryBean q = new QueryBean();
         q.addFilter(and(eq("assetId", assetId), eq("status", ErpAstConstants.SCHEDULE_STATUS_PENDING)));
@@ -627,7 +627,7 @@ public class TestErpAstMaintenance extends JunitAutoTestCase {
      * 类别专属 code 如 1601-CAT-XXX）/ Cr {creditSubject}=amount（1002 独立维修 / 2502 关联维护工单，
      * plan 2026-07-19-0849-3 落地）。
      */
-    private void assertCapitalizeVoucherLines(Long voucherId, String creditSubject, BigDecimal amount) {
+    private void assertCapitalizeVoucherLines(String voucherId, String creditSubject, BigDecimal amount) {
         IEntityDao<ErpFinVoucherLine> dao = daoProvider.daoFor(ErpFinVoucherLine.class);
         QueryBean debitQ = new QueryBean();
         debitQ.addFilter(eq("voucherId", voucherId));
@@ -644,7 +644,7 @@ public class TestErpAstMaintenance extends JunitAutoTestCase {
                 "Cr " + creditSubject + " creditAmount=" + amount);
     }
 
-    private ErpFinVoucherLine findVoucherLine(Long voucherId, String subjectCode, String dcDirection) {
+    private ErpFinVoucherLine findVoucherLine(String voucherId, String subjectCode, String dcDirection) {
         IEntityDao<ErpFinVoucherLine> dao = daoProvider.daoFor(ErpFinVoucherLine.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("voucherId", voucherId));

@@ -40,8 +40,8 @@ public class TestErpAstReportRendering extends JunitAutoTestCase {
 
     private static final io.nop.core.context.IServiceContext CTX = new io.nop.core.context.ServiceContextImpl();
 
-    static final Long ORG_ID = 1L;
-    static final Long CURRENCY_ID = 1L;
+    static final String ORG_ID = "1";
+    static final String CURRENCY_ID = "1";
 
     @Inject
     ErpAstReportBizModel reportBiz;
@@ -161,27 +161,27 @@ public class TestErpAstReportRendering extends JunitAutoTestCase {
 
     private void seedDepreciationBaseline() {
         ormTemplate.runInSession(() -> {
-            Long categoryId = seedCategory("CAT-RPT-DEP", "折旧报表类别");
-            Long assetId = 2001L;
+            String categoryId = seedCategory("CAT-RPT-DEP", "折旧报表类别");
+            String assetId = "2001";
             seedAsset(assetId, "AST-DEP-1", "折旧报表资产", categoryId,
                     bd("12000"), bd("2000"), bd("10000"),
                     ErpAstConstants.ASSET_STATUS_IN_SERVICE);
             // 本期已执行折旧计划：actualAmount=1000
-            seedSchedule(9001L, assetId, "2026-07", bd("1000"), LocalDate.of(2026, 7, 31));
+            seedSchedule("9001", assetId, "2026-07", bd("1000"), LocalDate.of(2026, 7, 31));
         });
     }
 
     private void seedDisposalBaseline() {
         ormTemplate.runInSession(() -> {
-            Long categoryId = seedCategory("CAT-RPT-DISP", "处置报表类别");
-            Long assetId = 2002L;
+            String categoryId = seedCategory("CAT-RPT-DISP", "处置报表类别");
+            String assetId = "2002";
             seedAsset(assetId, "AST-DISP-1", "处置报表资产", categoryId,
                     bd("12000"), bd("2000"), bd("10000"),
                     ErpAstConstants.ASSET_STATUS_IN_SERVICE);
             // 处置单：disposalAmount=8000, gainLoss=8000-(12000-2000)=-2000
             IEntityDao<ErpAstDisposal> dao = daoProvider.daoFor(ErpAstDisposal.class);
             ErpAstDisposal d = new ErpAstDisposal();
-            d.orm_propValueByName("id", 2011L);
+            d.orm_propValueByName("id", "2011");
             d.setCode("DISP-RPT-1");
             d.setOrgId(ORG_ID);
             d.setAssetId(assetId);
@@ -197,10 +197,10 @@ public class TestErpAstReportRendering extends JunitAutoTestCase {
         });
     }
 
-    private Long seedCategory(String code, String name) {
+    private String seedCategory(String code, String name) {
         IEntityDao<ErpAstAssetCategory> dao = daoProvider.daoFor(ErpAstAssetCategory.class);
         ErpAstAssetCategory c = new ErpAstAssetCategory();
-        long id = 3000L + (long) Math.abs(code.hashCode() % 1000);
+        String id = String.valueOf(3000L + (long) Math.abs(code.hashCode() % 1000));
         c.orm_propValueByName("id", id);
         c.setCode(code);
         c.setName(name);
@@ -208,7 +208,7 @@ public class TestErpAstReportRendering extends JunitAutoTestCase {
         return id;
     }
 
-    private void seedAsset(Long id, String code, String name, Long categoryId,
+    private void seedAsset(String id, String code, String name, String categoryId,
                            BigDecimal originalValue, BigDecimal accumulatedDep,
                            BigDecimal netBookValue, String status) {
         IEntityDao<ErpAstAsset> dao = daoProvider.daoFor(ErpAstAsset.class);
@@ -229,7 +229,7 @@ public class TestErpAstReportRendering extends JunitAutoTestCase {
         dao.saveEntity(a);
     }
 
-    private void seedSchedule(Long id, Long assetId, String period, BigDecimal actualAmount, LocalDate businessDate) {
+    private void seedSchedule(String id, String assetId, String period, BigDecimal actualAmount, LocalDate businessDate) {
         IEntityDao<ErpAstDepreciationSchedule> dao = daoProvider.daoFor(ErpAstDepreciationSchedule.class);
         ErpAstDepreciationSchedule s = new ErpAstDepreciationSchedule();
         s.orm_propValueByName("id", id);

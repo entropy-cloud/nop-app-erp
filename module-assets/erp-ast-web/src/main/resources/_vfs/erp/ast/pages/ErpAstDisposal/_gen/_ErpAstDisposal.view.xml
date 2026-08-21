@@ -19,16 +19,16 @@
             <cols>
 
                 <!--ID-->
-                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="id" mandatory="true" sortable="true"/>
 
                 <!--单号-->
                 <col id="code" mandatory="true" sortable="true"/>
 
                 <!--业务组织-->
-                <col id="orgId" ui:number="true" sortable="true"/>
+                <col id="orgId" sortable="true"/>
 
                 <!--资产ID-->
-                <col id="assetId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="assetId" mandatory="true" sortable="true"/>
 
                 <!--处置类型-->
                 <col id="disposalType" mandatory="true" sortable="true"/>
@@ -37,7 +37,7 @@
                 <col id="disposalAmount" ui:number="true" sortable="true"/>
 
                 <!--币种-->
-                <col id="currencyId" ui:number="true" sortable="true"/>
+                <col id="currencyId" sortable="true"/>
 
                 <!--汇率-->
                 <col id="exchangeRate" ui:number="true" sortable="true"/>

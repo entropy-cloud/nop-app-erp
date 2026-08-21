@@ -22,8 +22,8 @@
 
     <props>
         <prop name="id" displayName="ID" propId="1" i18n-en:displayName="ID" tagSet="seq-default" mandatory="true"
-              queryable="true" sortable="true" insertable="true" updatable="false" graphql:type="String">
-            <schema type="java.lang.Long"/>
+              queryable="true" sortable="true" insertable="true" updatable="false">
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="code" displayName="工程编码" propId="2" i18n-en:displayName="Code" tagSet="var" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
@@ -35,15 +35,15 @@
         </prop>
         <prop name="orgId" displayName="所属组织" propId="4" i18n-en:displayName="Organization" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="org">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="categoryId" displayName="预定资产类别(完工后转入)" propId="5" i18n-en:displayName="Category" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="category">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="currencyId" displayName="币种" propId="6" i18n-en:displayName="Currency" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="currency">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="businessDate" displayName="开工日期" propId="7" i18n-en:displayName="Business Date" tagSet="clock"
               mandatory="true" queryable="true" sortable="true" insertable="true" updatable="true">
@@ -64,7 +64,7 @@
         </prop>
         <prop name="completedAssetId" displayName="完工转出资产" propId="11" i18n-en:displayName="Completed Asset"
               queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="completedAsset">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="status" displayName="状态" propId="12" i18n-en:displayName="Status" mandatory="true" queryable="true"
               sortable="true" insertable="true" updatable="true">
@@ -96,7 +96,7 @@
         </prop>
         <prop name="projectId" displayName="关联项目(可空)" propId="19" i18n-en:displayName="Project" queryable="true"
               sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="cipAssetCategorySnapshot" displayName="转固时类别快照" propId="20"
               i18n-en:displayName="CIP Category Snapshot" queryable="true" sortable="true" insertable="true"

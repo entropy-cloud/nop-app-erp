@@ -32,7 +32,7 @@ public class ErpAstDepreciationScheduleReverseDepreciationProcessor {
     @Inject
     ErpAstDepreciationScheduleStateMachine scheduleStateMachine;
 
-    public ErpAstDepreciationSchedule reverseDepreciation(Long assetId, String period, IServiceContext context) {
+    public ErpAstDepreciationSchedule reverseDepreciation(String assetId, String period, IServiceContext context) {
         ErpAstDepreciationSchedule schedule = facade.findSchedule(assetId, period);
         if (schedule == null) {
             throw new NopException(ErpAstErrors.ERR_SCHEDULE_ILLEGAL_STATUS_TRANSITION)

@@ -29,7 +29,7 @@ public class ErpAstInventoryPostProcessor {
     @Inject
     ErpAstInventoryStateMachine stateMachine;
 
-    public ErpAstInventory post(Long id, IServiceContext context) {
+    public ErpAstInventory post(String id, IServiceContext context) {
         ErpAstInventory inv = facade.requireInventory(id, context);
         // 固定来源态守卫委托 StateMachine Bean（M4.52，契约 §4/§7；Bean 抛 common 层码 → cause-chain 领域码）
         try {
@@ -45,7 +45,7 @@ public class ErpAstInventoryPostProcessor {
         facade.validateAllVarianceProcessed(inv);
         facade.validateShortageBlocks(inv);
 
-        Long voucherId = postingDispatcher.tryPost(inv);
+        String voucherId = postingDispatcher.tryPost(inv);
         inv = facade.reload(id);
         if (voucherId != null) {
             Timestamp now = CoreMetrics.currentTimestamp();

@@ -21,7 +21,7 @@ public class ErpAstInventorySubmitForCountProcessor {
     @Inject
     ErpAstInventoryStateMachine stateMachine;
 
-    public ErpAstInventory submitForCount(Long id, IServiceContext context) {
+    public ErpAstInventory submitForCount(String id, IServiceContext context) {
         ErpAstInventory inv = facade.requireInventory(id, context);
         // 固定来源态守卫委托 StateMachine Bean（M4.52，契约 §4/§7；Bean 抛 common 层码 → cause-chain 领域码）
         try {

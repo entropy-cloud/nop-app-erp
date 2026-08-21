@@ -20,7 +20,7 @@ public class ErpAstInventoryReconcileProcessor {
     @Inject
     ErpAstInventoryStateMachine stateMachine;
 
-    public ErpAstInventory reconcile(Long id, IServiceContext context) {
+    public ErpAstInventory reconcile(String id, IServiceContext context) {
         ErpAstInventory inv = facade.requireInventory(id, context);
         // 固定来源态守卫委托 StateMachine Bean（M4.52，契约 §4/§7；Bean 抛 common 层码 → cause-chain 领域码）
         try {

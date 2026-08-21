@@ -146,8 +146,8 @@ public class ErpAstSplitProcessor {
         return reverseApproveProcessor.reverseApprove(id, context);
     }
 
-    public ErpAstSplit cancel(Long id, IServiceContext context) {
-        return cancelProcessor.cancel(String.valueOf(id), context);
+    public ErpAstSplit cancel(String id, IServiceContext context) {
+        return cancelProcessor.cancel(id, context);
     }
 
     // ---------- step：迁移校验（protected，下游可逐个覆盖） ----------
@@ -498,13 +498,6 @@ public class ErpAstSplitProcessor {
         q.addFilter(eq("splitId", split.getId()));
         q.addOrderField("lineNo", false);
         return splitLineDao().findAllByQuery(q);
-    }
-
-    protected ErpAstAssetCategory loadCategory(Long categoryId) {
-        if (categoryId == null) {
-            return null;
-        }
-        return daoProvider.daoFor(ErpAstAssetCategory.class).getEntityById(categoryId);
     }
 
     // ---------- misc helpers ----------

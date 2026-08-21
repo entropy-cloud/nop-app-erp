@@ -12,44 +12,44 @@
     public class ErpAstInventoryLineInputBean extends CrudInputBase {
 
     
-        private Long _id;
+        private String _id;
 
     
         @PropMeta(propId=1)
     
-        public Long getId(){
+        public String getId(){
             return _id;
         }
 
-        public void setId(Long value){
+        public void setId(String value){
             this._id = value;
         }
 
 
-        private Long _inventoryId;
+        private String _inventoryId;
 
     
         @PropMeta(propId=2)
     
-        public Long getInventoryId(){
+        public String getInventoryId(){
             return _inventoryId;
         }
 
-        public void setInventoryId(Long value){
+        public void setInventoryId(String value){
             this._inventoryId = value;
         }
 
 
-        private Long _orgId;
+        private String _orgId;
 
     
         @PropMeta(propId=3)
     
-        public Long getOrgId(){
+        public String getOrgId(){
             return _orgId;
         }
 
-        public void setOrgId(Long value){
+        public void setOrgId(String value){
             this._orgId = value;
         }
 
@@ -68,16 +68,16 @@
         }
 
 
-        private Long _assetId;
+        private String _assetId;
 
     
         @PropMeta(propId=5)
     
-        public Long getAssetId(){
+        public String getAssetId(){
             return _assetId;
         }
 
-        public void setAssetId(Long value){
+        public void setAssetId(String value){
             this._assetId = value;
         }
 
@@ -110,16 +110,16 @@
         }
 
 
-        private Long _categoryId;
+        private String _categoryId;
 
     
         @PropMeta(propId=8)
     
-        public Long getCategoryId(){
+        public String getCategoryId(){
             return _categoryId;
         }
 
-        public void setCategoryId(Long value){
+        public void setCategoryId(String value){
             this._categoryId = value;
         }
 
@@ -236,44 +236,44 @@
         }
 
 
-        private Long _newAssetId;
+        private String _newAssetId;
 
     
         @PropMeta(propId=17)
     
-        public Long getNewAssetId(){
+        public String getNewAssetId(){
             return _newAssetId;
         }
 
-        public void setNewAssetId(Long value){
+        public void setNewAssetId(String value){
             this._newAssetId = value;
         }
 
 
-        private Long _capitalizationId;
+        private String _capitalizationId;
 
     
         @PropMeta(propId=18)
     
-        public Long getCapitalizationId(){
+        public String getCapitalizationId(){
             return _capitalizationId;
         }
 
-        public void setCapitalizationId(Long value){
+        public void setCapitalizationId(String value){
             this._capitalizationId = value;
         }
 
 
-        private Long _disposalId;
+        private String _disposalId;
 
     
         @PropMeta(propId=19)
     
-        public Long getDisposalId(){
+        public String getDisposalId(){
             return _disposalId;
         }
 
-        public void setDisposalId(Long value){
+        public void setDisposalId(String value){
             this._disposalId = value;
         }
 

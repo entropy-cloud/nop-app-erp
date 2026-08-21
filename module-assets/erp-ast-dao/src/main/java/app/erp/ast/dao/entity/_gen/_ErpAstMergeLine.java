@@ -158,19 +158,19 @@ public class _ErpAstMergeLine extends DynamicOrmEntity{
 
     
     /* ID: ID */
-    private java.lang.Long _id;
+    private java.lang.String _id;
     
     /* 合并单: MERGE_ID */
-    private java.lang.Long _mergeId;
+    private java.lang.String _mergeId;
     
     /* 所属组织: ORG_ID */
-    private java.lang.Long _orgId;
+    private java.lang.String _orgId;
     
     /* 行号: LINE_NO */
     private java.lang.Integer _lineNo;
     
     /* 源资产: SOURCE_ASSET_ID */
-    private java.lang.Long _sourceAssetId;
+    private java.lang.String _sourceAssetId;
     
     /* 贡献比例: CONTRIBUTION_PROPORTION */
     private java.math.BigDecimal _contributionProportion;
@@ -339,9 +339,9 @@ public class _ErpAstMergeLine extends DynamicOrmEntity{
         switch(propId){
         
             case PROP_ID_id:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_id));
                }
                setId(typedValue);
@@ -349,9 +349,9 @@ public class _ErpAstMergeLine extends DynamicOrmEntity{
             }
         
             case PROP_ID_mergeId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_mergeId));
                }
                setMergeId(typedValue);
@@ -359,9 +359,9 @@ public class _ErpAstMergeLine extends DynamicOrmEntity{
             }
         
             case PROP_ID_orgId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_orgId));
                }
                setOrgId(typedValue);
@@ -379,9 +379,9 @@ public class _ErpAstMergeLine extends DynamicOrmEntity{
             }
         
             case PROP_ID_sourceAssetId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_sourceAssetId));
                }
                setSourceAssetId(typedValue);
@@ -509,21 +509,21 @@ public class _ErpAstMergeLine extends DynamicOrmEntity{
         
             case PROP_ID_id:{
                onInitProp(propId);
-               this._id = (java.lang.Long)value;
+               this._id = (java.lang.String)value;
                orm_id(); // 如果是设置主键字段，则触发watcher
                break;
             }
         
             case PROP_ID_mergeId:{
                onInitProp(propId);
-               this._mergeId = (java.lang.Long)value;
+               this._mergeId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_orgId:{
                onInitProp(propId);
-               this._orgId = (java.lang.Long)value;
+               this._orgId = (java.lang.String)value;
                
                break;
             }
@@ -537,7 +537,7 @@ public class _ErpAstMergeLine extends DynamicOrmEntity{
         
             case PROP_ID_sourceAssetId:{
                onInitProp(propId);
-               this._sourceAssetId = (java.lang.Long)value;
+               this._sourceAssetId = (java.lang.String)value;
                
                break;
             }
@@ -628,7 +628,7 @@ public class _ErpAstMergeLine extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final java.lang.Long getId(){
+    public final java.lang.String getId(){
          onPropGet(PROP_ID_id);
          return _id;
     }
@@ -636,7 +636,7 @@ public class _ErpAstMergeLine extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final void setId(java.lang.Long value){
+    public final void setId(java.lang.String value){
         if(onPropSet(PROP_ID_id,value)){
             this._id = value;
             internalClearRefs(PROP_ID_id);
@@ -647,7 +647,7 @@ public class _ErpAstMergeLine extends DynamicOrmEntity{
     /**
      * 合并单: MERGE_ID
      */
-    public final java.lang.Long getMergeId(){
+    public final java.lang.String getMergeId(){
          onPropGet(PROP_ID_mergeId);
          return _mergeId;
     }
@@ -655,7 +655,7 @@ public class _ErpAstMergeLine extends DynamicOrmEntity{
     /**
      * 合并单: MERGE_ID
      */
-    public final void setMergeId(java.lang.Long value){
+    public final void setMergeId(java.lang.String value){
         if(onPropSet(PROP_ID_mergeId,value)){
             this._mergeId = value;
             internalClearRefs(PROP_ID_mergeId);
@@ -666,7 +666,7 @@ public class _ErpAstMergeLine extends DynamicOrmEntity{
     /**
      * 所属组织: ORG_ID
      */
-    public final java.lang.Long getOrgId(){
+    public final java.lang.String getOrgId(){
          onPropGet(PROP_ID_orgId);
          return _orgId;
     }
@@ -674,7 +674,7 @@ public class _ErpAstMergeLine extends DynamicOrmEntity{
     /**
      * 所属组织: ORG_ID
      */
-    public final void setOrgId(java.lang.Long value){
+    public final void setOrgId(java.lang.String value){
         if(onPropSet(PROP_ID_orgId,value)){
             this._orgId = value;
             internalClearRefs(PROP_ID_orgId);
@@ -704,7 +704,7 @@ public class _ErpAstMergeLine extends DynamicOrmEntity{
     /**
      * 源资产: SOURCE_ASSET_ID
      */
-    public final java.lang.Long getSourceAssetId(){
+    public final java.lang.String getSourceAssetId(){
          onPropGet(PROP_ID_sourceAssetId);
          return _sourceAssetId;
     }
@@ -712,7 +712,7 @@ public class _ErpAstMergeLine extends DynamicOrmEntity{
     /**
      * 源资产: SOURCE_ASSET_ID
      */
-    public final void setSourceAssetId(java.lang.Long value){
+    public final void setSourceAssetId(java.lang.String value){
         if(onPropSet(PROP_ID_sourceAssetId,value)){
             this._sourceAssetId = value;
             internalClearRefs(PROP_ID_sourceAssetId);

@@ -46,7 +46,7 @@ public class AssetMergePostingDispatcher {
                            ErpAstAsset target) {
         PostingEvent event = buildEvent(merge, sources, lines, target);
         try {
-            Long voucherId = executor.postEvent(event);
+            String voucherId = executor.postEvent(event);
             return voucherId != null;
         } catch (Exception e) {
             if (e instanceof NopException) {
@@ -63,11 +63,11 @@ public class AssetMergePostingDispatcher {
         PostingEvent event = new PostingEvent();
         event.setBusinessType(ErpFinBusinessType.ASSET_MERGE);
         event.setBillHeadCode(merge.getCode());
-        Long orgId = merge.getOrgId() != null ? merge.getOrgId()
+        String orgId = merge.getOrgId() != null ? merge.getOrgId()
                 : (target != null ? target.getOrgId() : (sources.isEmpty() ? null : sources.get(0).getOrgId()));
         event.setOrgId(orgId);
         event.setAcctSchemaId(resolveAcctSchemaId(orgId));
-        Long currencyId = merge.getCurrencyId() != null ? merge.getCurrencyId()
+        String currencyId = merge.getCurrencyId() != null ? merge.getCurrencyId()
                 : (target != null ? target.getCurrencyId() : (sources.isEmpty() ? null : sources.get(0).getCurrencyId()));
         event.setCurrencyId(currencyId);
         event.setExchangeRate(merge.getExchangeRate() != null ? merge.getExchangeRate() : BigDecimal.ONE);
@@ -103,18 +103,18 @@ public class AssetMergePostingDispatcher {
         return event;
     }
 
-    private ErpAstAssetCategory loadCategory(Long categoryId) {
+    private ErpAstAssetCategory loadCategory(String categoryId) {
         if (categoryId == null) {
             return null;
         }
         return daoProvider.daoFor(ErpAstAssetCategory.class).getEntityById(categoryId);
     }
 
-    private Long resolveAcctSchemaId(Long orgId) {
+    private String resolveAcctSchemaId(String orgId) {
         return AcctSchemaResolver.resolvePrimarySchemaId(daoProvider, orgId);
     }
 
-    private String resolveSubjectCode(Long subjectId, String defaultCode) {
+    private String resolveSubjectCode(String subjectId, String defaultCode) {
         if (subjectId == null) {
             return defaultCode;
         }

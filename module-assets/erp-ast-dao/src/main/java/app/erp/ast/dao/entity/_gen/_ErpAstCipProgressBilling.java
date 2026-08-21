@@ -179,13 +179,13 @@ public class _ErpAstCipProgressBilling extends DynamicOrmEntity{
 
     
     /* ID: ID */
-    private java.lang.Long _id;
+    private java.lang.String _id;
     
     /* 在建工程: CIP_ID */
-    private java.lang.Long _cipId;
+    private java.lang.String _cipId;
     
     /* 所属组织: ORG_ID */
-    private java.lang.Long _orgId;
+    private java.lang.String _orgId;
     
     /* 行号: LINE_NO */
     private java.lang.Integer _lineNo;
@@ -212,7 +212,7 @@ public class _ErpAstCipProgressBilling extends DynamicOrmEntity{
     private java.lang.Boolean _paidFlag;
     
     /* 币种: CURRENCY_ID */
-    private java.lang.Long _currencyId;
+    private java.lang.String _currencyId;
     
     /* 逻辑删除版本: DEL_VERSION */
     private java.lang.Long _delVersion;
@@ -378,9 +378,9 @@ public class _ErpAstCipProgressBilling extends DynamicOrmEntity{
         switch(propId){
         
             case PROP_ID_id:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_id));
                }
                setId(typedValue);
@@ -388,9 +388,9 @@ public class _ErpAstCipProgressBilling extends DynamicOrmEntity{
             }
         
             case PROP_ID_cipId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_cipId));
                }
                setCipId(typedValue);
@@ -398,9 +398,9 @@ public class _ErpAstCipProgressBilling extends DynamicOrmEntity{
             }
         
             case PROP_ID_orgId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_orgId));
                }
                setOrgId(typedValue);
@@ -488,9 +488,9 @@ public class _ErpAstCipProgressBilling extends DynamicOrmEntity{
             }
         
             case PROP_ID_currencyId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_currencyId));
                }
                setCurrencyId(typedValue);
@@ -578,21 +578,21 @@ public class _ErpAstCipProgressBilling extends DynamicOrmEntity{
         
             case PROP_ID_id:{
                onInitProp(propId);
-               this._id = (java.lang.Long)value;
+               this._id = (java.lang.String)value;
                orm_id(); // 如果是设置主键字段，则触发watcher
                break;
             }
         
             case PROP_ID_cipId:{
                onInitProp(propId);
-               this._cipId = (java.lang.Long)value;
+               this._cipId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_orgId:{
                onInitProp(propId);
-               this._orgId = (java.lang.Long)value;
+               this._orgId = (java.lang.String)value;
                
                break;
             }
@@ -655,7 +655,7 @@ public class _ErpAstCipProgressBilling extends DynamicOrmEntity{
         
             case PROP_ID_currencyId:{
                onInitProp(propId);
-               this._currencyId = (java.lang.Long)value;
+               this._currencyId = (java.lang.String)value;
                
                break;
             }
@@ -718,7 +718,7 @@ public class _ErpAstCipProgressBilling extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final java.lang.Long getId(){
+    public final java.lang.String getId(){
          onPropGet(PROP_ID_id);
          return _id;
     }
@@ -726,7 +726,7 @@ public class _ErpAstCipProgressBilling extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final void setId(java.lang.Long value){
+    public final void setId(java.lang.String value){
         if(onPropSet(PROP_ID_id,value)){
             this._id = value;
             internalClearRefs(PROP_ID_id);
@@ -737,7 +737,7 @@ public class _ErpAstCipProgressBilling extends DynamicOrmEntity{
     /**
      * 在建工程: CIP_ID
      */
-    public final java.lang.Long getCipId(){
+    public final java.lang.String getCipId(){
          onPropGet(PROP_ID_cipId);
          return _cipId;
     }
@@ -745,7 +745,7 @@ public class _ErpAstCipProgressBilling extends DynamicOrmEntity{
     /**
      * 在建工程: CIP_ID
      */
-    public final void setCipId(java.lang.Long value){
+    public final void setCipId(java.lang.String value){
         if(onPropSet(PROP_ID_cipId,value)){
             this._cipId = value;
             internalClearRefs(PROP_ID_cipId);
@@ -756,7 +756,7 @@ public class _ErpAstCipProgressBilling extends DynamicOrmEntity{
     /**
      * 所属组织: ORG_ID
      */
-    public final java.lang.Long getOrgId(){
+    public final java.lang.String getOrgId(){
          onPropGet(PROP_ID_orgId);
          return _orgId;
     }
@@ -764,7 +764,7 @@ public class _ErpAstCipProgressBilling extends DynamicOrmEntity{
     /**
      * 所属组织: ORG_ID
      */
-    public final void setOrgId(java.lang.Long value){
+    public final void setOrgId(java.lang.String value){
         if(onPropSet(PROP_ID_orgId,value)){
             this._orgId = value;
             internalClearRefs(PROP_ID_orgId);
@@ -927,7 +927,7 @@ public class _ErpAstCipProgressBilling extends DynamicOrmEntity{
     /**
      * 币种: CURRENCY_ID
      */
-    public final java.lang.Long getCurrencyId(){
+    public final java.lang.String getCurrencyId(){
          onPropGet(PROP_ID_currencyId);
          return _currencyId;
     }
@@ -935,7 +935,7 @@ public class _ErpAstCipProgressBilling extends DynamicOrmEntity{
     /**
      * 币种: CURRENCY_ID
      */
-    public final void setCurrencyId(java.lang.Long value){
+    public final void setCurrencyId(java.lang.String value){
         if(onPropSet(PROP_ID_currencyId,value)){
             this._currencyId = value;
             internalClearRefs(PROP_ID_currencyId);

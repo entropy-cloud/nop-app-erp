@@ -55,7 +55,7 @@ public class CapitalizationPostingDispatcher {
     public boolean tryPost(ErpAstAssetCapitalization cap) {
         PostingEvent event = buildEvent(cap);
         try {
-            Long voucherId = executor.postEvent(event);
+            String voucherId = executor.postEvent(event);
             return voucherId != null;
         } catch (Exception e) {
             if (e instanceof NopException) {
@@ -131,17 +131,17 @@ public class CapitalizationPostingDispatcher {
         return event;
     }
 
-    private ErpAstAssetCategory loadCategory(Long categoryId) {
+    private ErpAstAssetCategory loadCategory(String categoryId) {
         // 资本化驱动同模块聚合读取（对齐 ExpenseClaimBizModel.loadItem 经 daoProvider 范式）
         IEntityDao<ErpAstAssetCategory> dao = daoProvider.daoFor(ErpAstAssetCategory.class);
         return dao.getEntityById(categoryId);
     }
 
-    private Long resolveAcctSchemaId(Long orgId) {
+    private String resolveAcctSchemaId(String orgId) {
         return AcctSchemaResolver.resolvePrimarySchemaId(daoProvider, orgId);
     }
 
-    private String resolveSubjectCode(Long subjectId, String defaultCode) {
+    private String resolveSubjectCode(String subjectId, String defaultCode) {
         if (subjectId == null) {
             return defaultCode;
         }

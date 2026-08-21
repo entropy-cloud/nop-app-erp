@@ -13,16 +13,16 @@
     public class ErpAstAssetCategoryOutputBean {
 
     
-        private Long _id;
+        private String _id;
 
     
         @PropMeta(propId=1)
     
-        public Long getId(){
+        public String getId(){
             return _id;
         }
 
-        public void setId(Long value){
+        public void setId(String value){
             this._id = value;
         }
 
@@ -95,44 +95,44 @@
         }
 
 
-        private Long _subjectId;
+        private String _subjectId;
 
     
         @PropMeta(propId=6)
     
-        public Long getSubjectId(){
+        public String getSubjectId(){
             return _subjectId;
         }
 
-        public void setSubjectId(Long value){
+        public void setSubjectId(String value){
             this._subjectId = value;
         }
 
 
-        private Long _depreciationSubjectId;
+        private String _depreciationSubjectId;
 
     
         @PropMeta(propId=7)
     
-        public Long getDepreciationSubjectId(){
+        public String getDepreciationSubjectId(){
             return _depreciationSubjectId;
         }
 
-        public void setDepreciationSubjectId(Long value){
+        public void setDepreciationSubjectId(String value){
             this._depreciationSubjectId = value;
         }
 
 
-        private Long _expenseSubjectId;
+        private String _expenseSubjectId;
 
     
         @PropMeta(propId=8)
     
-        public Long getExpenseSubjectId(){
+        public String getExpenseSubjectId(){
             return _expenseSubjectId;
         }
 
-        public void setExpenseSubjectId(Long value){
+        public void setExpenseSubjectId(String value){
             this._expenseSubjectId = value;
         }
 
@@ -235,30 +235,30 @@
         }
 
 
-        private Long _disposalGainLossSubjectId;
+        private String _disposalGainLossSubjectId;
 
     
         @PropMeta(propId=16)
     
-        public Long getDisposalGainLossSubjectId(){
+        public String getDisposalGainLossSubjectId(){
             return _disposalGainLossSubjectId;
         }
 
-        public void setDisposalGainLossSubjectId(Long value){
+        public void setDisposalGainLossSubjectId(String value){
             this._disposalGainLossSubjectId = value;
         }
 
 
-        private Long _cipSubjectId;
+        private String _cipSubjectId;
 
     
         @PropMeta(propId=17)
     
-        public Long getCipSubjectId(){
+        public String getCipSubjectId(){
             return _cipSubjectId;
         }
 
-        public void setCipSubjectId(Long value){
+        public void setCipSubjectId(String value){
             this._cipSubjectId = value;
         }
 

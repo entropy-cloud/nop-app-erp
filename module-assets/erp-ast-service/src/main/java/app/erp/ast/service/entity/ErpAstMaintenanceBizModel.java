@@ -67,11 +67,11 @@ public class ErpAstMaintenanceBizModel extends CrudBizModel<ErpAstMaintenance>
 
     @Override
     @BizMutation
-    public ErpAstMaintenance createMaintenance(@Name("assetId") Long assetId,
+    public ErpAstMaintenance createMaintenance(@Name("assetId") String assetId,
                                                @Name("code") String code,
                                                @Name("name") @Optional String name,
                                                @Name("businessDate") @Optional String businessDate,
-                                               @Name("maintenanceVisitId") @Optional Long maintenanceVisitId,
+                                               @Name("maintenanceVisitId") @Optional String maintenanceVisitId,
                                                @Name("reason") @Optional String reason,
                                                IServiceContext context) {
         return createMaintenanceProcessor.createMaintenance(assetId, code, name, businessDate, maintenanceVisitId,
@@ -80,25 +80,25 @@ public class ErpAstMaintenanceBizModel extends CrudBizModel<ErpAstMaintenance>
 
     @Override
     @BizMutation
-    public ErpAstMaintenance submit(@Name("id") Long id, IServiceContext context) {
+    public ErpAstMaintenance submit(@Name("id") String id, IServiceContext context) {
         return submitProcessor.submit(id, context);
     }
 
     @Override
     @BizMutation
-    public ErpAstMaintenance startWork(@Name("id") Long id, IServiceContext context) {
+    public ErpAstMaintenance startWork(@Name("id") String id, IServiceContext context) {
         return startWorkProcessor.startWork(id, context);
     }
 
     @Override
     @BizMutation
-    public ErpAstMaintenance completeWork(@Name("id") Long id, IServiceContext context) {
+    public ErpAstMaintenance completeWork(@Name("id") String id, IServiceContext context) {
         return completeWorkProcessor.completeWork(id, context);
     }
 
     @Override
     @BizMutation
-    public ErpAstMaintenance decideTreatment(@Name("id") Long id,
+    public ErpAstMaintenance decideTreatment(@Name("id") String id,
                                              @Name("treatment") String treatment,
                                              @Name("capitalizedAmount") @Optional BigDecimal capitalizedAmount,
                                              IServiceContext context) {
@@ -107,25 +107,25 @@ public class ErpAstMaintenanceBizModel extends CrudBizModel<ErpAstMaintenance>
 
     @Override
     @BizMutation
-    public ErpAstMaintenance approve(@Name("id") Long id, IServiceContext context) {
-        return approveProcessor.approve(String.valueOf(id), context);
+    public ErpAstMaintenance approve(@Name("id") String id, IServiceContext context) {
+        return approveProcessor.approve(id, context);
     }
 
     @Override
     @BizMutation
-    public ErpAstMaintenance post(@Name("id") Long id, IServiceContext context) {
+    public ErpAstMaintenance post(@Name("id") String id, IServiceContext context) {
         return postProcessor.post(id, context);
     }
 
     @Override
     @BizMutation
-    public ErpAstMaintenance cancel(@Name("id") Long id, IServiceContext context) {
+    public ErpAstMaintenance cancel(@Name("id") String id, IServiceContext context) {
         return maintenanceProcessor.cancel(id, context);
     }
 
     @Override
     @BizMutation
-    public ErpAstMaintenance reverse(@Name("id") Long id, IServiceContext context) {
+    public ErpAstMaintenance reverse(@Name("id") String id, IServiceContext context) {
         return reverseProcessor.reverse(id, context);
     }
 }

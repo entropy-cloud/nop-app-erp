@@ -14,6 +14,7 @@ import app.erp.ast.service.statemachine.ErpAstDisposalDocumentStateMachine;
 import app.erp.mnt.biz.IErpMntEquipmentBiz;
 import io.nop.api.core.auth.IUserContext;
 import io.nop.api.core.beans.query.QueryBean;
+import io.nop.api.core.convert.ConvertHelper;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.api.core.time.CoreMetrics;
 import io.nop.core.context.IServiceContext;
@@ -131,7 +132,7 @@ public class ErpAstDisposalProcessor {
         orm().flushSession();
 
         ErpAstAssetCategory category = asset.getCategory();
-        Long voucherId = postingDispatcher.tryPost(disposal, asset, category);
+        String voucherId = postingDispatcher.tryPost(disposal, asset, category);
 
         disposal = reload(id);
         Timestamp now = CoreMetrics.currentTimestamp();
@@ -261,14 +262,16 @@ public class ErpAstDisposalProcessor {
         if (mntEquipmentBiz == null || asset == null || asset.getId() == null) {
             return;
         }
-        mntEquipmentBiz.changeStatusForAssetDisposal(asset.getId(), disposal.getCode(), context);
+        // bridge: ast String assetId → mnt Long（登记册 bridge-main-024/025，退役 owner M3.2）
+        mntEquipmentBiz.changeStatusForAssetDisposal(ConvertHelper.toLong(asset.getId()), disposal.getCode(), context);
     }
 
     protected void restoreLinkedEquipment(ErpAstDisposal disposal, IServiceContext context) {
         if (mntEquipmentBiz == null || disposal.getAssetId() == null) {
             return;
         }
-        mntEquipmentBiz.restoreFromAssetDisposal(disposal.getAssetId(), disposal.getCode(), context);
+        // bridge: ast String assetId → mnt Long（登记册 bridge-main-024/025，退役 owner M3.2）
+        mntEquipmentBiz.restoreFromAssetDisposal(ConvertHelper.toLong(disposal.getAssetId()), disposal.getCode(), context);
     }
 
     // ---------- 折旧计划状态联动 ----------
@@ -308,7 +311,7 @@ public class ErpAstDisposalProcessor {
         catchUpDepreciationProcessor.catchUpDepreciation(asset.getId(), disposalPeriod, missed, context);
     }
 
-    protected void cancelPendingSchedules(Long assetId) {
+    protected void cancelPendingSchedules(String assetId) {
         IEntityDao<ErpAstDepreciationSchedule> dao = daoProvider.daoFor(ErpAstDepreciationSchedule.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("assetId", assetId));
@@ -319,7 +322,7 @@ public class ErpAstDisposalProcessor {
         }
     }
 
-    protected void restoreCancelledSchedules(Long assetId) {
+    protected void restoreCancelledSchedules(String assetId) {
         IEntityDao<ErpAstDepreciationSchedule> dao = daoProvider.daoFor(ErpAstDepreciationSchedule.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("assetId", assetId));

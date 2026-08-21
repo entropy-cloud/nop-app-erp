@@ -5,6 +5,7 @@ import app.erp.ast.dao.entity.ErpAstAsset;
 import app.erp.ast.dao.entity.ErpAstDepreciationSchedule;
 import app.erp.fin.dao.entity.ErpFinVoucher;
 import app.erp.fin.dao.entity.ErpFinVoucherBillR;
+import io.nop.api.core.annotations.autotest.EnableSnapshot;
 import io.nop.api.core.annotations.autotest.NopTestConfig;
 import io.nop.api.core.annotations.core.OptionalBoolean;
 import io.nop.api.core.beans.query.QueryBean;
@@ -61,11 +62,11 @@ public class TestErpAstDepreciation extends JunitAutoTestCase {
 
     @Test
     public void testStraightLinePerPeriodEqualAndLastToResidual() {
-        Long assetId = ormTemplate.runInSession(session -> {
+        String assetId = ormTemplate.runInSession(session -> {
             seedBasics();
-            Long categoryId = AstTestSupport.seedCategory(daoProvider, "CAT-SL", "直线法类别",
+            String categoryId = AstTestSupport.seedCategory(daoProvider, "CAT-SL", "直线法类别",
                     ErpAstConstants.DEPRECIATION_METHOD_STRAIGHT_LINE, 12, null, null, null);
-            return AstTestSupport.seedAsset(daoProvider, "AST-SL", "直线法资产", categoryId, 1L,
+            return AstTestSupport.seedAsset(daoProvider, "AST-SL", "直线法资产", categoryId, "1",
                     new BigDecimal("12000"), BigDecimal.ZERO,
                     ErpAstConstants.DEPRECIATION_METHOD_STRAIGHT_LINE, 12,
                     ErpAstConstants.ASSET_STATUS_IN_SERVICE);
@@ -99,11 +100,11 @@ public class TestErpAstDepreciation extends JunitAutoTestCase {
 
     @Test
     public void testDoubleDecliningResidualConstraint() {
-        Long assetId = ormTemplate.runInSession(session -> {
+        String assetId = ormTemplate.runInSession(session -> {
             seedBasics();
-            Long categoryId = AstTestSupport.seedCategory(daoProvider, "CAT-DDB", "双倍余额递减类别",
+            String categoryId = AstTestSupport.seedCategory(daoProvider, "CAT-DDB", "双倍余额递减类别",
                     ErpAstConstants.DEPRECIATION_METHOD_DECLINING, 48, null, null, null);
-            return AstTestSupport.seedAsset(daoProvider, "AST-DDB", "双倍余额递减资产", categoryId, 1L,
+            return AstTestSupport.seedAsset(daoProvider, "AST-DDB", "双倍余额递减资产", categoryId, "1",
                     new BigDecimal("48000"), BigDecimal.ZERO,
                     ErpAstConstants.DEPRECIATION_METHOD_DECLINING, 48,
                     ErpAstConstants.ASSET_STATUS_IN_SERVICE);
@@ -131,13 +132,13 @@ public class TestErpAstDepreciation extends JunitAutoTestCase {
     public void testBatchDepreciationProcessesAllAssets() {
         ormTemplate.runInSession(session -> {
             seedBasics();
-            Long categoryId = AstTestSupport.seedCategory(daoProvider, "CAT-BAT", "批量类别",
+            String categoryId = AstTestSupport.seedCategory(daoProvider, "CAT-BAT", "批量类别",
                     ErpAstConstants.DEPRECIATION_METHOD_STRAIGHT_LINE, 12, null, null, null);
-            AstTestSupport.seedAsset(daoProvider, "AST-BAT-1", "批量资产1", categoryId, 1L,
+            AstTestSupport.seedAsset(daoProvider, "AST-BAT-1", "批量资产1", categoryId, "1",
                     new BigDecimal("12000"), BigDecimal.ZERO,
                     ErpAstConstants.DEPRECIATION_METHOD_STRAIGHT_LINE, 12,
                     ErpAstConstants.ASSET_STATUS_IN_SERVICE);
-            AstTestSupport.seedAsset(daoProvider, "AST-BAT-2", "批量资产2", categoryId, 1L,
+            AstTestSupport.seedAsset(daoProvider, "AST-BAT-2", "批量资产2", categoryId, "1",
                     new BigDecimal("6000"), BigDecimal.ZERO,
                     ErpAstConstants.DEPRECIATION_METHOD_STRAIGHT_LINE, 12,
                     ErpAstConstants.ASSET_STATUS_IN_SERVICE);
@@ -162,13 +163,13 @@ public class TestErpAstDepreciation extends JunitAutoTestCase {
 
     @Test
     public void testPeriodControlRejectsClosedAndMissing() {
-        Long assetId = ormTemplate.runInSession(session -> {
+        String assetId = ormTemplate.runInSession(session -> {
             seedBasics();
             // 目标期间已结账（取开放序列之外的期间，避免与 seedBasics 的开放期重复）
             AstTestSupport.seedPeriod(daoProvider, "2026-05", 2026, 5, ErpAstConstants.PERIOD_STATUS_CLOSED);
-            Long categoryId = AstTestSupport.seedCategory(daoProvider, "CAT-PC", "期间控制类别",
+            String categoryId = AstTestSupport.seedCategory(daoProvider, "CAT-PC", "期间控制类别",
                     ErpAstConstants.DEPRECIATION_METHOD_STRAIGHT_LINE, 12, null, null, null);
-            return AstTestSupport.seedAsset(daoProvider, "AST-PC", "期间控制资产", categoryId, 1L,
+            return AstTestSupport.seedAsset(daoProvider, "AST-PC", "期间控制资产", categoryId, "1",
                     new BigDecimal("12000"), BigDecimal.ZERO,
                     ErpAstConstants.DEPRECIATION_METHOD_STRAIGHT_LINE, 12,
                     ErpAstConstants.ASSET_STATUS_IN_SERVICE);
@@ -187,11 +188,11 @@ public class TestErpAstDepreciation extends JunitAutoTestCase {
 
     @Test
     public void testIdempotentReExecuteReversesAndRegenerates() {
-        Long assetId = ormTemplate.runInSession(session -> {
+        String assetId = ormTemplate.runInSession(session -> {
             seedBasics();
-            Long categoryId = AstTestSupport.seedCategory(daoProvider, "CAT-IDEM", "幂等类别",
+            String categoryId = AstTestSupport.seedCategory(daoProvider, "CAT-IDEM", "幂等类别",
                     ErpAstConstants.DEPRECIATION_METHOD_STRAIGHT_LINE, 12, null, null, null);
-            return AstTestSupport.seedAsset(daoProvider, "AST-IDEM", "幂等资产", categoryId, 1L,
+            return AstTestSupport.seedAsset(daoProvider, "AST-IDEM", "幂等资产", categoryId, "1",
                     new BigDecimal("12000"), BigDecimal.ZERO,
                     ErpAstConstants.DEPRECIATION_METHOD_STRAIGHT_LINE, 12,
                     ErpAstConstants.ASSET_STATUS_IN_SERVICE);
@@ -233,19 +234,19 @@ public class TestErpAstDepreciation extends JunitAutoTestCase {
     public void testBatchDepreciationIsolatesFailingAsset() {
         ormTemplate.runInSession(session -> {
             seedBasics();
-            Long categoryId = AstTestSupport.seedCategory(daoProvider, "CAT-BAT-ISO", "批量隔离类别",
+            String categoryId = AstTestSupport.seedCategory(daoProvider, "CAT-BAT-ISO", "批量隔离类别",
                     ErpAstConstants.DEPRECIATION_METHOD_STRAIGHT_LINE, 12, null,
                     AstTestSupport.seedSubject(daoProvider, "1602", "累计折旧"),
                     AstTestSupport.seedSubject(daoProvider, "6602", "管理费用"));
             // 资产 A：IN_SERVICE 但持孤儿 EXECUTED+posted=true 计划（无凭证回链）→ 批量重执行触发红冲硬前置失败
-            Long assetA = AstTestSupport.seedAsset(daoProvider, "AST-BAT-FAIL", "批量失败资产", categoryId, 1L,
+            String assetA = AstTestSupport.seedAsset(daoProvider, "AST-BAT-FAIL", "批量失败资产", categoryId, "1",
                     new BigDecimal("12000"), BigDecimal.ZERO,
                     ErpAstConstants.DEPRECIATION_METHOD_STRAIGHT_LINE, 12,
                     ErpAstConstants.ASSET_STATUS_IN_SERVICE);
-            AstTestSupport.seedExecutedPostedSchedule(daoProvider, assetA, 1L, START_PERIOD,
+            AstTestSupport.seedExecutedPostedSchedule(daoProvider, assetA, "1", START_PERIOD,
                     new BigDecimal("1000"), new BigDecimal("1000"), new BigDecimal("11000"));
             // 资产 B：干净 IN_SERVICE → 正常计提并过账
-            AstTestSupport.seedAsset(daoProvider, "AST-BAT-OK", "批量正常资产", categoryId, 1L,
+            AstTestSupport.seedAsset(daoProvider, "AST-BAT-OK", "批量正常资产", categoryId, "1",
                     new BigDecimal("12000"), BigDecimal.ZERO,
                     ErpAstConstants.DEPRECIATION_METHOD_STRAIGHT_LINE, 12,
                     ErpAstConstants.ASSET_STATUS_IN_SERVICE);
@@ -281,12 +282,12 @@ public class TestErpAstDepreciation extends JunitAutoTestCase {
      */
     @Test
     public void testDepreciationTryPostFailureLeavesSuspendedThenSelfHeals() {
-        Long assetId = ormTemplate.runInSession(session -> {
+        String assetId = ormTemplate.runInSession(session -> {
             // seedBasicsNoDepSubjects：seed 会计账套 + OPEN 期间序列，但省略折旧科目 6602/1602
             seedBasicsNoDepSubjects();
-            Long categoryId = AstTestSupport.seedCategory(daoProvider, "CAT-SUSP", "悬挂态类别",
+            String categoryId = AstTestSupport.seedCategory(daoProvider, "CAT-SUSP", "悬挂态类别",
                     ErpAstConstants.DEPRECIATION_METHOD_STRAIGHT_LINE, 12, null, null, null);
-            return AstTestSupport.seedAsset(daoProvider, "AST-SUSP", "悬挂态资产", categoryId, 1L,
+            return AstTestSupport.seedAsset(daoProvider, "AST-SUSP", "悬挂态资产", categoryId, "1",
                     new BigDecimal("12000"), BigDecimal.ZERO,
                     ErpAstConstants.DEPRECIATION_METHOD_STRAIGHT_LINE, 12,
                     ErpAstConstants.ASSET_STATUS_IN_SERVICE);
@@ -332,13 +333,13 @@ public class TestErpAstDepreciation extends JunitAutoTestCase {
      */
     @Test
     public void testNonZeroResidualStraightLineClampsToResidual() {
-        Long assetId = ormTemplate.runInSession(session -> {
+        String assetId = ormTemplate.runInSession(session -> {
             seedBasics();
-            Long categoryId = AstTestSupport.seedCategory(daoProvider, "CAT-RES", "非零残值类别",
+            String categoryId = AstTestSupport.seedCategory(daoProvider, "CAT-RES", "非零残值类别",
                     ErpAstConstants.DEPRECIATION_METHOD_STRAIGHT_LINE, 3, null,
                     AstTestSupport.seedSubject(daoProvider, "1602", "累计折旧"),
                     AstTestSupport.seedSubject(daoProvider, "6602", "管理费用"));
-            return AstTestSupport.seedAsset(daoProvider, "AST-RES", "非零残值资产", categoryId, 1L,
+            return AstTestSupport.seedAsset(daoProvider, "AST-RES", "非零残值资产", categoryId, "1",
                     new BigDecimal("10000"), new BigDecimal("2000"),
                     ErpAstConstants.DEPRECIATION_METHOD_STRAIGHT_LINE, 3,
                     ErpAstConstants.ASSET_STATUS_IN_SERVICE);
@@ -371,13 +372,16 @@ public class TestErpAstDepreciation extends JunitAutoTestCase {
      * 并发首次折旧 UK 兜底（plan 2026-07-30-0841-2 R1.28 P1-MA2-089）：2 线程同时为同资产同期首次计提，
      * UK_AST_DEPRECIATION_ASSET_PERIOD 保证仅 1 条 active 计划行 + 累计折旧不双计；冲突方抛友好错误码。
      */
+    // 并发赢家的 schedule id 非确定（两事务抢占序 56/57 随机），DB 快照基线不可比对——
+    // 关闭输出表校验，以方法内确定性断言为准（nop-testing「非确定路径不录制不可比基线」）。
+    @EnableSnapshot(checkOutput = false)
     @Test
     public void testConcurrentFirstDepreciationNoDuplicate() throws Exception {
-        Long assetId = ormTemplate.runInSession(session -> {
+        String assetId = ormTemplate.runInSession(session -> {
             seedBasics();
-            Long categoryId = AstTestSupport.seedCategory(daoProvider, "CAT-UK089", "UK089类别",
+            String categoryId = AstTestSupport.seedCategory(daoProvider, "CAT-UK089", "UK089类别",
                     ErpAstConstants.DEPRECIATION_METHOD_STRAIGHT_LINE, 12, null, null, null);
-            return AstTestSupport.seedAsset(daoProvider, "AST-UK089", "UK089资产", categoryId, 1L,
+            return AstTestSupport.seedAsset(daoProvider, "AST-UK089", "UK089资产", categoryId, "1",
                     new BigDecimal("12000"), BigDecimal.ZERO,
                     ErpAstConstants.DEPRECIATION_METHOD_STRAIGHT_LINE, 12,
                     ErpAstConstants.ASSET_STATUS_IN_SERVICE);
@@ -415,8 +419,15 @@ public class TestErpAstDepreciation extends JunitAutoTestCase {
         // 二者均使第二事务回滚——schedule UK 作为纵深防御。
         QueryBean q = new QueryBean();
         q.addFilter(and(eq("assetId", assetId), eq("period", period)));
-        long count = daoProvider.daoFor(ErpAstDepreciationSchedule.class).findAllByQuery(q).size();
-        assertEquals(1L, count, "并发首次折旧：仅 1 条计划行（无重复，UK + 乐观锁兜底）");
+        List<ErpAstDepreciationSchedule> schedules = daoProvider.daoFor(ErpAstDepreciationSchedule.class)
+                .findAllByQuery(q);
+        assertEquals(1L, schedules.size(), "并发首次折旧：仅 1 条计划行（无重复，UK + 乐观锁兜底）");
+        ErpAstDepreciationSchedule schedule = schedules.get(0);
+        assertEquals(ErpAstConstants.SCHEDULE_STATUS_EXECUTED, schedule.getStatus(), "并发赢家计划行状态 EXECUTED");
+        assertEquals(0, schedule.getActualAmount().compareTo(new BigDecimal("1000")), "赢家单期折旧额 1000");
+        assertEquals(0, schedule.getAccumulatedDepreciation().compareTo(new BigDecimal("1000")), "计划行累计折旧 1000");
+        assertEquals(0, schedule.getNetBookValue().compareTo(new BigDecimal("11000")), "计划行净值 12000-1000");
+        assertTrue(Boolean.TRUE.equals(schedule.getPosted()), "赢家计划行已过账 posted=true");
         ErpAstAsset asset = daoProvider.daoFor(ErpAstAsset.class).getEntityById(assetId);
         assertEquals(0, nz(asset.getAccumulatedDepreciation()).compareTo(new BigDecimal("1000")),
                 "累计折旧不双计（单期 1000）");
@@ -455,7 +466,7 @@ public class TestErpAstDepreciation extends JunitAutoTestCase {
     }
 
     private void seedBasics() {
-        AstTestSupport.seedAcctSchema(daoProvider, 1L);
+        AstTestSupport.seedAcctSchema(daoProvider, "1");
         AstTestSupport.seedSubject(daoProvider, "6602", "管理费用");
         AstTestSupport.seedSubject(daoProvider, "1602", "累计折旧");
         AstTestSupport.seedSubject(daoProvider, "1601", "固定资产");
@@ -473,7 +484,7 @@ public class TestErpAstDepreciation extends JunitAutoTestCase {
      * 确定性诱导 tryPost 失败（引擎 resolveSubjects 抛 ERR_SUBJECT_NOT_FOUND），构造 posted=false 悬挂态。
      */
     private void seedBasicsNoDepSubjects() {
-        AstTestSupport.seedAcctSchema(daoProvider, 1L);
+        AstTestSupport.seedAcctSchema(daoProvider, "1");
         for (int i = 0; i < 48; i++) {
             YearMonth ym = YearMonth.parse(START_PERIOD).plusMonths(i);
             AstTestSupport.seedPeriod(daoProvider, ym.toString(), ym.getYear(), ym.getMonthValue(),

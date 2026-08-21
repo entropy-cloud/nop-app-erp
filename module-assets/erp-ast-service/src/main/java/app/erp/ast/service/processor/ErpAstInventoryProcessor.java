@@ -81,11 +81,11 @@ public class ErpAstInventoryProcessor {
     // 拆为独立 per-mutation Processor。本 facade 处置 = slim-to-S-delegation-facade：
     // 保留 approve（S-mutation 单行委托）+ cancel（`:45` 单步状态翻转豁免）+ protected helper（单一真相源）。
 
-    public ErpAstInventory approve(Long id, IServiceContext context) {
-        return approveProcessor.approve(String.valueOf(id), context);
+    public ErpAstInventory approve(String id, IServiceContext context) {
+        return approveProcessor.approve(id, context);
     }
 
-    public ErpAstInventory cancel(Long id, IServiceContext context) {
+    public ErpAstInventory cancel(String id, IServiceContext context) {
         ErpAstInventory inv = requireInventory(id, context);
         String status = inv.getStatus();
         // 固定来源态守卫委托 StateMachine Bean（M4.52，契约 §4/§7；Bean 抛 common 层码 → cause-chain 领域码）
@@ -103,7 +103,7 @@ public class ErpAstInventoryProcessor {
 
     protected void expandAssetsToLines(ErpAstInventory inv, IServiceContext context) {
         List<ErpAstInventoryLine> existing = findLines(inv.getId());
-        Set<Long> existingAssetIds = new HashSet<>();
+        Set<String> existingAssetIds = new HashSet<>();
         for (ErpAstInventoryLine line : existing) {
             if (line.getAssetId() != null) {
                 existingAssetIds.add(line.getAssetId());
@@ -223,7 +223,7 @@ public class ErpAstInventoryProcessor {
         if (line.getNewAssetId() != null) {
             return;
         }
-        Long categoryId = line.getCategoryId() != null ? line.getCategoryId() : inv.getRangeCategoryId();
+        String categoryId = line.getCategoryId() != null ? line.getCategoryId() : inv.getRangeCategoryId();
         BigDecimal assessed = nz(line.getAssessedValue());
         if (assessed.signum() <= 0) {
             assessed = nz(line.getBookValue());
@@ -342,7 +342,7 @@ public class ErpAstInventoryProcessor {
 
     // ---------- 校验/查询辅助（protected，供派生复用与覆盖） ----------
 
-    protected ErpAstInventory requireInventory(Long id, IServiceContext context) {
+    protected ErpAstInventory requireInventory(String id, IServiceContext context) {
         ErpAstInventory inv = inventoryDao().getEntityById(id);
         if (inv == null) {
             throw new NopException(ErpAstErrors.ERR_AST_INVENTORY_NOT_FOUND)
@@ -351,11 +351,11 @@ public class ErpAstInventoryProcessor {
         return inv;
     }
 
-    protected ErpAstInventory reload(Long id) {
+    protected ErpAstInventory reload(String id) {
         return inventoryDao().getEntityById(id);
     }
 
-    protected List<ErpAstInventoryLine> findLines(Long inventoryId) {
+    protected List<ErpAstInventoryLine> findLines(String inventoryId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("inventoryId", inventoryId));
         q.addOrderField("lineNo", false);

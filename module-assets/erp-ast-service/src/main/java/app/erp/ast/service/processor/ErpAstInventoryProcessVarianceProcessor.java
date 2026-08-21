@@ -17,7 +17,7 @@ public class ErpAstInventoryProcessVarianceProcessor {
     @Inject
     ErpAstInventoryProcessor facade;
 
-    public ErpAstInventory processVariance(Long id, IServiceContext context) {
+    public ErpAstInventory processVariance(String id, IServiceContext context) {
         ErpAstInventory inv = facade.requireInventory(id, context);
         facade.validateReconciling(inv);
         List<ErpAstInventoryLine> lines = facade.findLines(inv.getId());

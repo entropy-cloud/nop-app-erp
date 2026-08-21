@@ -167,7 +167,7 @@ public class ErpAstReportBizModel {
         switch (key) {
             case "asset-depreciation-detail":
                 data.put(DS_VAR, buildAssetDepreciationDetailDataset(
-                        asLong(data, "categoryId"), asDate(data, "startDate"), asDate(data, "endDate")));
+                        asString(data, "categoryId"), asDate(data, "startDate"), asDate(data, "endDate")));
                 break;
             case "asset-disposal-detail":
                 data.put(DS_VAR, buildAssetDisposalDetailDataset(
@@ -179,13 +179,13 @@ public class ErpAstReportBizModel {
         }
     }
 
-    private static Long asLong(Map<String, Object> data, String k) {
+    private static String asString(Map<String, Object> data, String k) {
         if (data == null) return null;
         Object v = data.get(k);
         if (v == null) return null;
         String s = v.toString();
         if (s.trim().isEmpty()) return null;
-        return Long.valueOf(s);
+        return s.trim();
     }
 
     private static LocalDate asDate(Map<String, Object> data, String k) {
@@ -204,7 +204,7 @@ public class ErpAstReportBizModel {
 
     /** 资产折旧明细数据集：按资产×类别聚合原值/累计折旧/净值/本期折旧，对齐 {@code assets/state-machine.md}。 */
     @BizQuery
-    public List<Map<String, Object>> assetDepreciationDetailData(@Optional @Name("categoryId") Long categoryId,
+    public List<Map<String, Object>> assetDepreciationDetailData(@Optional @Name("categoryId") String categoryId,
                                                                   @Optional @Name("startDate") LocalDate startDate,
                                                                   @Optional @Name("endDate") LocalDate endDate,
                                                                   IServiceContext context) {
@@ -227,14 +227,14 @@ public class ErpAstReportBizModel {
      *
      * <p>类别名称经 {@link ErpAstAsset#getCategory()} 关系解析（避免 N+1：批量预取）。
      */
-    List<Map<String, Object>> buildAssetDepreciationDetailDataset(Long categoryId, LocalDate startDate, LocalDate endDate) {
+    List<Map<String, Object>> buildAssetDepreciationDetailDataset(String categoryId, LocalDate startDate, LocalDate endDate) {
         return ormTemplate.runInSession(session -> {
             List<ErpAstAsset> assets = loadAssets(categoryId);
             if (assets.isEmpty()) {
                 return Collections.emptyList();
             }
-            Map<Long, BigDecimal> periodDepByAsset = aggregatePeriodDepreciation(assets, startDate, endDate);
-            Map<Long, String> categoryNames = resolveCategoryNames(assets);
+            Map<String, BigDecimal> periodDepByAsset = aggregatePeriodDepreciation(assets, startDate, endDate);
+            Map<String, String> categoryNames = resolveCategoryNames(assets);
             List<Map<String, Object>> rows = new ArrayList<>(assets.size());
             for (ErpAstAsset a : assets) {
                 Map<String, Object> r = new LinkedHashMap<>();
@@ -286,16 +286,16 @@ public class ErpAstReportBizModel {
 
     // ===================== helpers =====================
 
-    private List<ErpAstAsset> loadAssets(Long categoryId) {
+    private List<ErpAstAsset> loadAssets(String categoryId) {
         QueryBean q = new QueryBean();
         if (categoryId != null) q.addFilter(eq("categoryId", categoryId));
         q.addOrderField("code", false);
         return daoProvider.daoFor(ErpAstAsset.class).findAllByQuery(q);
     }
 
-    private Map<Long, BigDecimal> aggregatePeriodDepreciation(List<ErpAstAsset> assets,
-                                                               LocalDate startDate, LocalDate endDate) {
-        Set<Long> assetIds = new HashSet<>();
+    private Map<String, BigDecimal> aggregatePeriodDepreciation(List<ErpAstAsset> assets,
+                                                                 LocalDate startDate, LocalDate endDate) {
+        Set<String> assetIds = new HashSet<>();
         for (ErpAstAsset a : assets) {
             if (a.getId() != null) assetIds.add(a.getId());
         }
@@ -307,7 +307,7 @@ public class ErpAstReportBizModel {
         if (startDate != null) q.addFilter(ge("businessDate", startDate));
         if (endDate != null) q.addFilter(le("businessDate", endDate));
         List<ErpAstDepreciationSchedule> schedules = daoProvider.daoFor(ErpAstDepreciationSchedule.class).findAllByQuery(q);
-        Map<Long, BigDecimal> map = new HashMap<>();
+        Map<String, BigDecimal> map = new HashMap<>();
         for (ErpAstDepreciationSchedule s : schedules) {
             BigDecimal amt = nz(s.getActualAmount());
             if (amt.signum() == 0) continue;
@@ -316,8 +316,8 @@ public class ErpAstReportBizModel {
         return map;
     }
 
-    private Map<Long, String> resolveCategoryNames(List<ErpAstAsset> assets) {
-        Set<Long> catIds = new HashSet<>();
+    private Map<String, String> resolveCategoryNames(List<ErpAstAsset> assets) {
+        Set<String> catIds = new HashSet<>();
         for (ErpAstAsset a : assets) {
             if (a.getCategoryId() != null) catIds.add(a.getCategoryId());
         }
@@ -327,7 +327,7 @@ public class ErpAstReportBizModel {
         QueryBean q = new QueryBean();
         q.addFilter(in("id", catIds));
         List<ErpAstAssetCategory> cats = daoProvider.daoFor(ErpAstAssetCategory.class).findAllByQuery(q);
-        Map<Long, String> names = new HashMap<>();
+        Map<String, String> names = new HashMap<>();
         for (ErpAstAssetCategory c : cats) {
             names.put(c.getId(), c.getName());
         }

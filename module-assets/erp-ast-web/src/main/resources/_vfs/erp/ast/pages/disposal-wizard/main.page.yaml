@@ -71,7 +71,7 @@ body:
       method: post
       dataType: raw
       data:
-        query: "query(${'$'}aid:Long){ ErpAstAsset__get(id:${'$'}aid){ id code name netBookValue originalValue accumulatedDepreciation status } }"
+        query: "query(${'$'}aid:String){ ErpAstAsset__get(id:${'$'}aid){ id code name netBookValue originalValue accumulatedDepreciation status } }"
         variables:
           aid: "${assetId}"
       adaptor: |

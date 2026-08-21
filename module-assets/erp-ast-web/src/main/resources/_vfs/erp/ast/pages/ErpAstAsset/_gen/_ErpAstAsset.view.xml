@@ -19,7 +19,7 @@
             <cols>
 
                 <!--ID-->
-                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="id" mandatory="true" sortable="true"/>
 
                 <!--资产编码-->
                 <col id="code" mandatory="true" sortable="true"/>
@@ -28,16 +28,16 @@
                 <col id="name" mandatory="true" sortable="true"/>
 
                 <!--所属组织-->
-                <col id="orgId" ui:number="true" sortable="true"/>
+                <col id="orgId" sortable="true"/>
 
                 <!--资产类别-->
-                <col id="categoryId" ui:number="true" sortable="true"/>
+                <col id="categoryId" sortable="true"/>
 
                 <!--取得日期-->
                 <col id="acquisitionDate" mandatory="true" sortable="true"/>
 
                 <!--币种-->
-                <col id="currencyId" ui:number="true" sortable="true"/>
+                <col id="currencyId" sortable="true"/>
 
                 <!--原值-->
                 <col id="originalValue" mandatory="true" ui:number="true" sortable="true"/>
@@ -58,16 +58,16 @@
                 <col id="usefulLifeMonths" ui:number="true" sortable="true"/>
 
                 <!--使用部门-->
-                <col id="departmentId" ui:number="true" sortable="true"/>
+                <col id="departmentId" sortable="true"/>
 
                 <!--使用地点-->
-                <col id="locationId" ui:number="true" sortable="true"/>
+                <col id="locationId" sortable="true"/>
 
                 <!--使用人(职员)-->
-                <col id="employeeId" ui:number="true" sortable="true"/>
+                <col id="employeeId" sortable="true"/>
 
                 <!--使用人(往来单位,旧字段保留)-->
-                <col id="staffId" ui:number="true" sortable="true"/>
+                <col id="staffId" sortable="true"/>
 
                 <!--品牌型号-->
                 <col id="brandModel" sortable="true"/>

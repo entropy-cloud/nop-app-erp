@@ -55,11 +55,11 @@ public class TestErpAstValueAdjustment extends JunitAutoTestCase {
 
     @Test
     public void testImpairmentDecreasesNetValue() {
-        long[] assetIdHolder = new long[1];
-        Long adjustmentId = ormTemplate.runInSession(session -> {
+        String[] assetIdHolder = new String[1];
+        String adjustmentId = ormTemplate.runInSession(session -> {
             seedCoreBasics();
-            Long categoryId = seedCategoryWithSubjects("CAT-IMP", "减值类别");
-            Long assetId = AstTestSupport.seedAsset(daoProvider, "AST-IMP", "减值资产", categoryId, 1L,
+            String categoryId = seedCategoryWithSubjects("CAT-IMP", "减值类别");
+            String assetId = AstTestSupport.seedAsset(daoProvider, "AST-IMP", "减值资产", categoryId, "1",
                     new BigDecimal("12000"), BigDecimal.ZERO,
                     ErpAstConstants.DEPRECIATION_METHOD_STRAIGHT_LINE, 12,
                     ErpAstConstants.ASSET_STATUS_IN_SERVICE);
@@ -85,11 +85,11 @@ public class TestErpAstValueAdjustment extends JunitAutoTestCase {
 
     @Test
     public void testRevaluationUpIncreasesNetValue() {
-        long[] assetIdHolder = new long[1];
-        Long adjustmentId = ormTemplate.runInSession(session -> {
+        String[] assetIdHolder = new String[1];
+        String adjustmentId = ormTemplate.runInSession(session -> {
             seedCoreBasics();
-            Long categoryId = seedCategoryWithSubjects("CAT-REV-UP", "重估增值类别");
-            Long assetId = AstTestSupport.seedAsset(daoProvider, "AST-REV-UP", "重估增值资产", categoryId, 1L,
+            String categoryId = seedCategoryWithSubjects("CAT-REV-UP", "重估增值类别");
+            String assetId = AstTestSupport.seedAsset(daoProvider, "AST-REV-UP", "重估增值资产", categoryId, "1",
                     new BigDecimal("12000"), BigDecimal.ZERO,
                     ErpAstConstants.DEPRECIATION_METHOD_STRAIGHT_LINE, 12,
                     ErpAstConstants.ASSET_STATUS_IN_SERVICE);
@@ -111,11 +111,11 @@ public class TestErpAstValueAdjustment extends JunitAutoTestCase {
 
     @Test
     public void testRevaluationDownDecreasesNetValue() {
-        long[] assetIdHolder = new long[1];
-        Long adjustmentId = ormTemplate.runInSession(session -> {
+        String[] assetIdHolder = new String[1];
+        String adjustmentId = ormTemplate.runInSession(session -> {
             seedCoreBasics();
-            Long categoryId = seedCategoryWithSubjects("CAT-REV-DOWN", "重估减值类别");
-            Long assetId = AstTestSupport.seedAsset(daoProvider, "AST-REV-DOWN", "重估减值资产", categoryId, 1L,
+            String categoryId = seedCategoryWithSubjects("CAT-REV-DOWN", "重估减值类别");
+            String assetId = AstTestSupport.seedAsset(daoProvider, "AST-REV-DOWN", "重估减值资产", categoryId, "1",
                     new BigDecimal("12000"), BigDecimal.ZERO,
                     ErpAstConstants.DEPRECIATION_METHOD_STRAIGHT_LINE, 12,
                     ErpAstConstants.ASSET_STATUS_IN_SERVICE);
@@ -137,10 +137,10 @@ public class TestErpAstValueAdjustment extends JunitAutoTestCase {
 
     @Test
     public void testIllegalTransitionApproveBeforeSubmit() {
-        Long adjustmentId = ormTemplate.runInSession(session -> {
+        String adjustmentId = ormTemplate.runInSession(session -> {
             seedCoreBasics();
-            Long categoryId = seedCategoryWithSubjects("CAT-ILL", "非法迁移类别");
-            Long assetId = AstTestSupport.seedAsset(daoProvider, "AST-ILL", "非法迁移资产", categoryId, 1L,
+            String categoryId = seedCategoryWithSubjects("CAT-ILL", "非法迁移类别");
+            String assetId = AstTestSupport.seedAsset(daoProvider, "AST-ILL", "非法迁移资产", categoryId, "1",
                     new BigDecimal("12000"), BigDecimal.ZERO,
                     ErpAstConstants.DEPRECIATION_METHOD_STRAIGHT_LINE, 12,
                     ErpAstConstants.ASSET_STATUS_IN_SERVICE);
@@ -154,10 +154,10 @@ public class TestErpAstValueAdjustment extends JunitAutoTestCase {
 
     @Test
     public void testCancelDraftAdjustment() {
-        Long adjustmentId = ormTemplate.runInSession(session -> {
+        String adjustmentId = ormTemplate.runInSession(session -> {
             seedCoreBasics();
-            Long categoryId = seedCategoryWithSubjects("CAT-CANC", "作废类别");
-            Long assetId = AstTestSupport.seedAsset(daoProvider, "AST-CANC", "作废资产", categoryId, 1L,
+            String categoryId = seedCategoryWithSubjects("CAT-CANC", "作废类别");
+            String assetId = AstTestSupport.seedAsset(daoProvider, "AST-CANC", "作废资产", categoryId, "1",
                     new BigDecimal("12000"), BigDecimal.ZERO,
                     ErpAstConstants.DEPRECIATION_METHOD_STRAIGHT_LINE, 12,
                     ErpAstConstants.ASSET_STATUS_IN_SERVICE);
@@ -171,11 +171,11 @@ public class TestErpAstValueAdjustment extends JunitAutoTestCase {
 
     @Test
     public void testReverseRollsBackNetValue() {
-        long[] assetIdHolder = new long[1];
-        Long adjustmentId = ormTemplate.runInSession(session -> {
+        String[] assetIdHolder = new String[1];
+        String adjustmentId = ormTemplate.runInSession(session -> {
             seedCoreBasics();
-            Long categoryId = seedCategoryWithSubjects("CAT-REV-IMP", "红冲减值类别");
-            Long assetId = AstTestSupport.seedAsset(daoProvider, "AST-REV-IMP", "红冲减值资产", categoryId, 1L,
+            String categoryId = seedCategoryWithSubjects("CAT-REV-IMP", "红冲减值类别");
+            String assetId = AstTestSupport.seedAsset(daoProvider, "AST-REV-IMP", "红冲减值资产", categoryId, "1",
                     new BigDecimal("12000"), BigDecimal.ZERO,
                     ErpAstConstants.DEPRECIATION_METHOD_STRAIGHT_LINE, 12,
                     ErpAstConstants.ASSET_STATUS_IN_SERVICE);
@@ -202,16 +202,16 @@ public class TestErpAstValueAdjustment extends JunitAutoTestCase {
 
     // ---------- rpc helpers ----------
 
-    private ApiResponse<?> submitForApproval(Long id) {
-        return executeRpc("ErpAstValueAdjustment__submitForApproval", Map.of("id", String.valueOf(id)));
+    private ApiResponse<?> submitForApproval(String id) {
+        return executeRpc("ErpAstValueAdjustment__submitForApproval", Map.of("id", id));
     }
 
-    private ApiResponse<?> approve(Long id) {
-        return executeRpc("ErpAstValueAdjustment__approve", Map.of("id", String.valueOf(id)));
+    private ApiResponse<?> approve(String id) {
+        return executeRpc("ErpAstValueAdjustment__approve", Map.of("id", id));
     }
 
-    private ApiResponse<?> reverseApprove(Long id) {
-        return executeRpc("ErpAstValueAdjustment__reverseApprove", Map.of("id", String.valueOf(id)));
+    private ApiResponse<?> reverseApprove(String id) {
+        return executeRpc("ErpAstValueAdjustment__reverseApprove", Map.of("id", id));
     }
 
     private ApiResponse<?> executeRpc(String action, Map<String, Object> data) {
@@ -222,7 +222,7 @@ public class TestErpAstValueAdjustment extends JunitAutoTestCase {
     // ---------- helpers ----------
 
     private void seedCoreBasics() {
-        AstTestSupport.seedAcctSchema(daoProvider, 1L);
+        AstTestSupport.seedAcctSchema(daoProvider, "1");
         AstTestSupport.seedPeriod(daoProvider, "2026-07", 2026, 7, ErpAstConstants.PERIOD_STATUS_OPEN);
         AstTestSupport.seedSubject(daoProvider, "1002", "银行存款");
         AstTestSupport.seedSubject(daoProvider, "6702", "资产减值损失");
@@ -230,7 +230,7 @@ public class TestErpAstValueAdjustment extends JunitAutoTestCase {
         AstTestSupport.seedSubject(daoProvider, "4002", "资本公积");
     }
 
-    private Long seedCategoryWithSubjects(String code, String name) {
+    private String seedCategoryWithSubjects(String code, String name) {
         return AstTestSupport.seedCategory(daoProvider, code, name,
                 ErpAstConstants.DEPRECIATION_METHOD_STRAIGHT_LINE, 12,
                 AstTestSupport.seedSubject(daoProvider, "1601", "固定资产"),
@@ -238,16 +238,16 @@ public class TestErpAstValueAdjustment extends JunitAutoTestCase {
                 AstTestSupport.seedSubject(daoProvider, "6602", "管理费用"));
     }
 
-    private Long seedAdjustment(String code, Long assetId, String adjustmentType, BigDecimal amount,
+    private String seedAdjustment(String code, String assetId, String adjustmentType, BigDecimal amount,
                                 LocalDate businessDate) {
         IEntityDao<ErpAstValueAdjustment> dao = daoProvider.daoFor(ErpAstValueAdjustment.class);
         ErpAstValueAdjustment adj = new ErpAstValueAdjustment();
         adj.setCode(code);
-        adj.setOrgId(1L);
+        adj.setOrgId("1");
         adj.setAssetId(assetId);
         adj.setAdjustmentType(adjustmentType);
         adj.setAdjustmentAmount(amount);
-        adj.setCurrencyId(1L);
+        adj.setCurrencyId("1");
         adj.setExchangeRate(BigDecimal.ONE);
         adj.setBusinessDate(businessDate);
         adj.setDocStatus(ErpAstConstants.DOC_STATUS_DRAFT);

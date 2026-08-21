@@ -84,17 +84,17 @@ public class ErpAstDashboardBizModel {
     public List<Map<String, Object>> getAssetCategoryDistribution(IServiceContext context) {
         return ormTemplate.runInSession(session -> {
             List<ErpAstAsset> assets = loadInServiceAssets();
-            Map<Long, BigDecimal> netByCategory = new LinkedHashMap<>();
+            Map<String, BigDecimal> netByCategory = new LinkedHashMap<>();
             for (ErpAstAsset a : assets) {
-                Long cid = a.getCategoryId();
+                String cid = a.getCategoryId();
                 if (cid == null) continue;
                 BigDecimal net = DashboardUtil.nz(a.getOriginalValue()).subtract(DashboardUtil.nz(a.getAccumulatedDepreciation()));
                 netByCategory.merge(cid, net, BigDecimal::add);
             }
-            Map<Long, String> categoryNames = loadCategoryNames(netByCategory.keySet());
+            Map<String, String> categoryNames = loadCategoryNames(netByCategory.keySet());
             List<Map<String, Object>> rows = new ArrayList<>();
             netByCategory.entrySet().stream()
-                    .sorted(Map.Entry.<Long, BigDecimal>comparingByValue(Comparator.reverseOrder()))
+                    .sorted(Map.Entry.<String, BigDecimal>comparingByValue(Comparator.reverseOrder()))
                     .forEach(e -> {
                         Map<String, Object> row = new LinkedHashMap<>();
                         row.put("categoryId", e.getKey());
@@ -142,7 +142,7 @@ public class ErpAstDashboardBizModel {
         return ormTemplate.runInSession(session -> {
             String period = currentPeriod();
             List<ErpAstAsset> inServiceAssets = loadInServiceAssets();
-            Set<Long> assetIdsWithDepreciation = loadAssetIdsWithExecutedDepreciationInPeriod(period);
+            Set<String> assetIdsWithDepreciation = loadAssetIdsWithExecutedDepreciationInPeriod(period);
             List<Map<String, Object>> rows = new ArrayList<>();
             for (ErpAstAsset a : inServiceAssets) {
                 if (!assetIdsWithDepreciation.contains(a.getId())) {
@@ -161,12 +161,12 @@ public class ErpAstDashboardBizModel {
 
     // ===================== helpers =====================
 
-    private Map<Long, String> loadCategoryNames(java.util.Set<Long> categoryIds) {
+    private Map<String, String> loadCategoryNames(java.util.Set<String> categoryIds) {
         if (categoryIds.isEmpty()) return Collections.emptyMap();
         IEntityDao<ErpAstAssetCategory> dao = daoProvider.daoFor(ErpAstAssetCategory.class);
         QueryBean q = new QueryBean();
         q.addFilter(in("id", categoryIds));
-        Map<Long, String> map = new HashMap<>();
+        Map<String, String> map = new HashMap<>();
         for (ErpAstAssetCategory c : dao.findAllByQuery(q)) {
             map.put(c.getId(), c.getName());
         }
@@ -210,12 +210,12 @@ public class ErpAstDashboardBizModel {
         return dao.findAllByQuery(q);
     }
 
-    private Set<Long> loadAssetIdsWithExecutedDepreciationInPeriod(String period) {
+    private Set<String> loadAssetIdsWithExecutedDepreciationInPeriod(String period) {
         IEntityDao<ErpAstDepreciationSchedule> dao = daoProvider.daoFor(ErpAstDepreciationSchedule.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("status", ErpAstConstants.SCHEDULE_STATUS_EXECUTED));
         q.addFilter(eq("period", period));
-        Set<Long> ids = new HashSet<>();
+        Set<String> ids = new HashSet<>();
         for (ErpAstDepreciationSchedule s : dao.findAllByQuery(q)) {
             if (s.getAssetId() != null) ids.add(s.getAssetId());
         }

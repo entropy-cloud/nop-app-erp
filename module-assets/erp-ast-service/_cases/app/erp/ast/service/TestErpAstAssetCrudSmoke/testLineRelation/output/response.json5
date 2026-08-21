@@ -6,7 +6,7 @@
     "items": [
       {
         "id": "2",
-        "assetId": 1,
+        "assetId": "1",
         "orgId": null,
         "period": "2026-07",
         "plannedAmount": 1000.0000,
@@ -20,17 +20,17 @@
         "postedAt": null,
         "postedBy": null,
         "voucherId": null,
-        "delVersion": 0,
-        "version": 0,
-        "createdBy": "autotest-ref",
-        "createTime": "@var:ErpAstDepreciationSchedule@updateTime",
-        "updatedBy": "autotest-ref",
-        "updateTime": "@var:ErpAstDepreciationSchedule@updateTime",
         "businessDate": null,
         "currencyId": null,
         "exchangeRate": 1.00000000,
         "amountSource": 0.0000,
-        "amountFunctional": 0.0000
+        "amountFunctional": 0.0000,
+        "delVersion": 0,
+        "version": 0,
+        "createdBy": "autotest-ref",
+        "createTime": "@var:ErpAstDepreciationSchedule@createTime",
+        "updatedBy": "autotest-ref",
+        "updateTime": "@var:ErpAstDepreciationSchedule@createTime"
       }
     ],
     "limit": 10,

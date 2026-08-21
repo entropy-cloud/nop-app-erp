@@ -66,11 +66,11 @@ public class TestErpAstCatchUpDepreciation extends JunitAutoTestCase {
 
     @Test
     public void testSingleMissedPeriodCatchUpAmount() {
-        Long assetId = ormTemplate.runInSession(session -> {
+        String assetId = ormTemplate.runInSession(session -> {
             seedBasics();
-            Long categoryId = AstTestSupport.seedCategory(daoProvider, "CAT-CU-S", "补提单期类别",
+            String categoryId = AstTestSupport.seedCategory(daoProvider, "CAT-CU-S", "补提单期类别",
                     ErpAstConstants.DEPRECIATION_METHOD_STRAIGHT_LINE, 12, null, null, null);
-            return AstTestSupport.seedAsset(daoProvider, "AST-CU-S", "补提单期资产", categoryId, 1L,
+            return AstTestSupport.seedAsset(daoProvider, "AST-CU-S", "补提单期资产", categoryId, "1",
                     new BigDecimal("12000"), BigDecimal.ZERO,
                     ErpAstConstants.DEPRECIATION_METHOD_STRAIGHT_LINE, 12,
                     ErpAstConstants.ASSET_STATUS_IN_SERVICE);
@@ -100,11 +100,11 @@ public class TestErpAstCatchUpDepreciation extends JunitAutoTestCase {
 
     @Test
     public void testMultiMissedPeriodsAggregatedSingleVoucher() {
-        Long assetId = ormTemplate.runInSession(session -> {
+        String assetId = ormTemplate.runInSession(session -> {
             seedBasics();
-            Long categoryId = AstTestSupport.seedCategory(daoProvider, "CAT-CU-M", "补提多期类别",
+            String categoryId = AstTestSupport.seedCategory(daoProvider, "CAT-CU-M", "补提多期类别",
                     ErpAstConstants.DEPRECIATION_METHOD_STRAIGHT_LINE, 12, null, null, null);
-            return AstTestSupport.seedAsset(daoProvider, "AST-CU-M", "补提多期资产", categoryId, 1L,
+            return AstTestSupport.seedAsset(daoProvider, "AST-CU-M", "补提多期资产", categoryId, "1",
                     new BigDecimal("12000"), BigDecimal.ZERO,
                     ErpAstConstants.DEPRECIATION_METHOD_STRAIGHT_LINE, 12,
                     ErpAstConstants.ASSET_STATUS_IN_SERVICE);
@@ -131,13 +131,13 @@ public class TestErpAstCatchUpDepreciation extends JunitAutoTestCase {
 
     @Test
     public void testClosedCurrentPeriodRejected() {
-        Long assetId = ormTemplate.runInSession(session -> {
+        String assetId = ormTemplate.runInSession(session -> {
             seedBasics();
             // 当前期间取开放序列之外的期间（2026-04）标记 CLOSED
             AstTestSupport.seedPeriod(daoProvider, "2026-04", 2026, 4, ErpAstConstants.PERIOD_STATUS_CLOSED);
-            Long categoryId = AstTestSupport.seedCategory(daoProvider, "CAT-CU-C", "补提结账拒绝类别",
+            String categoryId = AstTestSupport.seedCategory(daoProvider, "CAT-CU-C", "补提结账拒绝类别",
                     ErpAstConstants.DEPRECIATION_METHOD_STRAIGHT_LINE, 12, null, null, null);
-            return AstTestSupport.seedAsset(daoProvider, "AST-CU-C", "补提结账拒绝资产", categoryId, 1L,
+            return AstTestSupport.seedAsset(daoProvider, "AST-CU-C", "补提结账拒绝资产", categoryId, "1",
                     new BigDecimal("12000"), BigDecimal.ZERO,
                     ErpAstConstants.DEPRECIATION_METHOD_STRAIGHT_LINE, 12,
                     ErpAstConstants.ASSET_STATUS_IN_SERVICE);
@@ -153,11 +153,11 @@ public class TestErpAstCatchUpDepreciation extends JunitAutoTestCase {
 
     @Test
     public void testIdleAssetRejectedFromCatchUp() {
-        Long assetId = ormTemplate.runInSession(session -> {
+        String assetId = ormTemplate.runInSession(session -> {
             seedBasics();
-            Long categoryId = AstTestSupport.seedCategory(daoProvider, "CAT-CU-IDLE", "补提闲置拒绝类别",
+            String categoryId = AstTestSupport.seedCategory(daoProvider, "CAT-CU-IDLE", "补提闲置拒绝类别",
                     ErpAstConstants.DEPRECIATION_METHOD_STRAIGHT_LINE, 12, null, null, null);
-            return AstTestSupport.seedAsset(daoProvider, "AST-CU-IDLE", "补提闲置拒绝资产", categoryId, 1L,
+            return AstTestSupport.seedAsset(daoProvider, "AST-CU-IDLE", "补提闲置拒绝资产", categoryId, "1",
                     new BigDecimal("12000"), BigDecimal.ZERO,
                     ErpAstConstants.DEPRECIATION_METHOD_STRAIGHT_LINE, 12,
                     ErpAstConstants.ASSET_STATUS_IDLE);
@@ -173,11 +173,11 @@ public class TestErpAstCatchUpDepreciation extends JunitAutoTestCase {
 
     @Test
     public void testFutureMissedPeriodRejected() {
-        Long assetId = ormTemplate.runInSession(session -> {
+        String assetId = ormTemplate.runInSession(session -> {
             seedBasics();
-            Long categoryId = AstTestSupport.seedCategory(daoProvider, "CAT-CU-F", "补提未来期拒绝类别",
+            String categoryId = AstTestSupport.seedCategory(daoProvider, "CAT-CU-F", "补提未来期拒绝类别",
                     ErpAstConstants.DEPRECIATION_METHOD_STRAIGHT_LINE, 12, null, null, null);
-            return AstTestSupport.seedAsset(daoProvider, "AST-CU-F", "补提未来期拒绝资产", categoryId, 1L,
+            return AstTestSupport.seedAsset(daoProvider, "AST-CU-F", "补提未来期拒绝资产", categoryId, "1",
                     new BigDecimal("12000"), BigDecimal.ZERO,
                     ErpAstConstants.DEPRECIATION_METHOD_STRAIGHT_LINE, 12,
                     ErpAstConstants.ASSET_STATUS_IN_SERVICE);
@@ -193,11 +193,11 @@ public class TestErpAstCatchUpDepreciation extends JunitAutoTestCase {
 
     @Test
     public void testIdempotentReCatchUpNoDoubleCount() {
-        Long assetId = ormTemplate.runInSession(session -> {
+        String assetId = ormTemplate.runInSession(session -> {
             seedBasics();
-            Long categoryId = AstTestSupport.seedCategory(daoProvider, "CAT-CU-IDEM", "补提幂等类别",
+            String categoryId = AstTestSupport.seedCategory(daoProvider, "CAT-CU-IDEM", "补提幂等类别",
                     ErpAstConstants.DEPRECIATION_METHOD_STRAIGHT_LINE, 12, null, null, null);
-            return AstTestSupport.seedAsset(daoProvider, "AST-CU-IDEM", "补提幂等资产", categoryId, 1L,
+            return AstTestSupport.seedAsset(daoProvider, "AST-CU-IDEM", "补提幂等资产", categoryId, "1",
                     new BigDecimal("12000"), BigDecimal.ZERO,
                     ErpAstConstants.DEPRECIATION_METHOD_STRAIGHT_LINE, 12,
                     ErpAstConstants.ASSET_STATUS_IN_SERVICE);
@@ -223,39 +223,39 @@ public class TestErpAstCatchUpDepreciation extends JunitAutoTestCase {
     @Test
     public void testDisposalSaleCatchUpWiringCorrectsGainLoss() {
         setUser();
-        long[] assetIdHolder = new long[1];
-        Long disposalId = ormTemplate.runInSession(session -> {
+        String[] assetIdHolder = new String[1];
+        String disposalId = ormTemplate.runInSession(session -> {
             seedBasics();
-            Long gainLossSubjectId = AstTestSupport.seedSubject(daoProvider, "6711", "营业外支出");
-            Long categoryId = AstTestSupport.seedCategory(daoProvider, "CAT-CU-DISP", "出售接线类别",
+            String gainLossSubjectId = AstTestSupport.seedSubject(daoProvider, "6711", "营业外支出");
+            String categoryId = AstTestSupport.seedCategory(daoProvider, "CAT-CU-DISP", "出售接线类别",
                     ErpAstConstants.DEPRECIATION_METHOD_STRAIGHT_LINE, 12,
                     AstTestSupport.seedSubject(daoProvider, "1601", "固定资产"),
                     AstTestSupport.seedSubject(daoProvider, "1602", "累计折旧"),
                     AstTestSupport.seedSubject(daoProvider, "6602", "管理费用"));
             daoProvider.daoFor(app.erp.ast.dao.entity.ErpAstAssetCategory.class).getEntityById(categoryId)
                     .setDisposalGainLossSubjectId(gainLossSubjectId);
-            Long assetId = AstTestSupport.seedAsset(daoProvider, "AST-CU-DISP", "出售接线资产", categoryId, 1L,
+            String assetId = AstTestSupport.seedAsset(daoProvider, "AST-CU-DISP", "出售接线资产", categoryId, "1",
                     new BigDecimal("12000"), BigDecimal.ZERO,
                     ErpAstConstants.DEPRECIATION_METHOD_STRAIGHT_LINE, 12,
                     ErpAstConstants.ASSET_STATUS_IN_SERVICE);
             assetIdHolder[0] = assetId;
             // 已执行 2026-05/06 两期折旧（各 1000，累计 2000，净值 10000）
-            AstTestSupport.seedExecutedPostedSchedule(daoProvider, assetId, 1L, "2026-05",
+            AstTestSupport.seedExecutedPostedSchedule(daoProvider, assetId, "1", "2026-05",
                     new BigDecimal("1000"), new BigDecimal("1000"), new BigDecimal("11000"));
-            AstTestSupport.seedExecutedPostedSchedule(daoProvider, assetId, 1L, "2026-06",
+            AstTestSupport.seedExecutedPostedSchedule(daoProvider, assetId, "1", "2026-06",
                     new BigDecimal("1000"), new BigDecimal("2000"), new BigDecimal("10000"));
             ErpAstAsset asset = daoProvider.daoFor(ErpAstAsset.class).getEntityById(assetId);
             asset.setAccumulatedDepreciation(new BigDecimal("2000"));
             asset.setNetBookValue(new BigDecimal("10000"));
             daoProvider.daoFor(ErpAstAsset.class).saveEntity(asset);
             // 后续未执行折旧计划（处置后应 CANCELLED）
-            AstTestSupport.seedPendingSchedule(daoProvider, assetId, 1L, "2026-08");
+            AstTestSupport.seedPendingSchedule(daoProvider, assetId, "1", "2026-08");
             return seedDisposal("DISP-CU-001", assetId, ErpAstConstants.DISPOSAL_TYPE_SOLD,
                     new BigDecimal("7000"), LocalDate.of(2026, 7, 15));
         });
 
-        executeRpc("ErpAstDisposal__submitForApproval", Map.of("id", String.valueOf(disposalId)));
-        executeRpc("ErpAstDisposal__approve", Map.of("id", String.valueOf(disposalId)));
+        executeRpc("ErpAstDisposal__submitForApproval", Map.of("id", disposalId));
+        executeRpc("ErpAstDisposal__approve", Map.of("id", disposalId));
         ErpAstDisposal disposal = daoProvider.daoFor(ErpAstDisposal.class).getEntityById(disposalId);
 
         // 接线：处置前补提 2026-07 当期折旧 1000 → 累计折旧 3000 → 净值 9000
@@ -291,7 +291,7 @@ public class TestErpAstCatchUpDepreciation extends JunitAutoTestCase {
     // ---------- helpers ----------
 
     private void seedBasics() {
-        AstTestSupport.seedAcctSchema(daoProvider, 1L);
+        AstTestSupport.seedAcctSchema(daoProvider, "1");
         AstTestSupport.seedSubject(daoProvider, "6602", "管理费用");
         AstTestSupport.seedSubject(daoProvider, "1602", "累计折旧");
         AstTestSupport.seedSubject(daoProvider, "1601", "固定资产");
@@ -342,16 +342,16 @@ public class TestErpAstCatchUpDepreciation extends JunitAutoTestCase {
         ContextProvider.getOrCreateContext().setUserName("SYS");
     }
 
-    private Long seedDisposal(String code, Long assetId, String disposalType, BigDecimal disposalAmount,
+    private String seedDisposal(String code, String assetId, String disposalType, BigDecimal disposalAmount,
                               LocalDate businessDate) {
         IEntityDao<ErpAstDisposal> dao = daoProvider.daoFor(ErpAstDisposal.class);
         ErpAstDisposal disposal = new ErpAstDisposal();
         disposal.setCode(code);
-        disposal.setOrgId(1L);
+        disposal.setOrgId("1");
         disposal.setAssetId(assetId);
         disposal.setDisposalType(disposalType);
         disposal.setDisposalAmount(disposalAmount);
-        disposal.setCurrencyId(1L);
+        disposal.setCurrencyId("1");
         disposal.setExchangeRate(BigDecimal.ONE);
         disposal.setBusinessDate(businessDate);
         disposal.setDocStatus(ErpAstConstants.DOC_STATUS_DRAFT);
@@ -360,7 +360,7 @@ public class TestErpAstCatchUpDepreciation extends JunitAutoTestCase {
         return disposal.getId();
     }
 
-    private ErpAstDepreciationSchedule findSchedule(Long assetId, String period) {
+    private ErpAstDepreciationSchedule findSchedule(String assetId, String period) {
         IEntityDao<ErpAstDepreciationSchedule> dao = daoProvider.daoFor(ErpAstDepreciationSchedule.class);
         QueryBean q = new QueryBean();
         q.addFilter(and(eq("assetId", assetId), eq("period", period)));

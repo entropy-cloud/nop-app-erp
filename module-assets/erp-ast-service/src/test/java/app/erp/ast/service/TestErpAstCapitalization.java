@@ -55,14 +55,14 @@ public class TestErpAstCapitalization extends JunitAutoTestCase {
 
     @Test
     public void testApproveCreatesAssetScheduleAndPosting() {
-        Long[] categorySubjectIds = new Long[1];
-        Long capId = ormTemplate.runInSession(session -> {
+        String[] categorySubjectIds = new String[1];
+        String capId = ormTemplate.runInSession(session -> {
             seedOpenPeriod("2026-06", 2026, 6, LocalDate.of(2026, 6, 1), LocalDate.of(2026, 6, 30));
-            seedAcctSchema(1L);
-            Long fixedAssetSubjectId = seedSubject("1601", "固定资产");
+            seedAcctSchema("1");
+            String fixedAssetSubjectId = seedSubject("1601", "固定资产");
             seedSubject("1002", "银行存款");
             categorySubjectIds[0] = fixedAssetSubjectId;
-            Long categoryId = seedCategory("CAT-AST-1", "设备类",
+            String categoryId = seedCategory("CAT-AST-1", "设备类",
                     ErpAstConstants.DEPRECIATION_METHOD_STRAIGHT_LINE, 12, fixedAssetSubjectId);
             return seedCapitalization("CAP-AST-001", categoryId,
                     ErpAstConstants.SOURCE_TYPE_DIRECT_PURCHASE, new BigDecimal("12000"),
@@ -103,11 +103,11 @@ public class TestErpAstCapitalization extends JunitAutoTestCase {
 
     @Test
     public void testRejectFromSubmitted() {
-        Long capId = ormTemplate.runInSession(session -> {
+        String capId = ormTemplate.runInSession(session -> {
             seedOpenPeriod("2026-06", 2026, 6, LocalDate.of(2026, 6, 1), LocalDate.of(2026, 6, 30));
-            seedAcctSchema(1L);
-            Long fixedAssetSubjectId = seedSubject("1601", "固定资产");
-            Long categoryId = seedCategory("CAT-AST-2", "设备类",
+            seedAcctSchema("1");
+            String fixedAssetSubjectId = seedSubject("1601", "固定资产");
+            String categoryId = seedCategory("CAT-AST-2", "设备类",
                     ErpAstConstants.DEPRECIATION_METHOD_STRAIGHT_LINE, 12, fixedAssetSubjectId);
             return seedCapitalization("CAP-AST-002", categoryId,
                     ErpAstConstants.SOURCE_TYPE_DIRECT_PURCHASE, new BigDecimal("12000"),
@@ -126,12 +126,12 @@ public class TestErpAstCapitalization extends JunitAutoTestCase {
 
     @Test
     public void testCipSourceCreditsCipSubject() {
-        Long capId = ormTemplate.runInSession(session -> {
+        String capId = ormTemplate.runInSession(session -> {
             seedOpenPeriod("2026-06", 2026, 6, LocalDate.of(2026, 6, 1), LocalDate.of(2026, 6, 30));
-            seedAcctSchema(1L);
-            Long fixedAssetSubjectId = seedSubject("1601", "固定资产");
-            Long cipSubjectId = seedSubject("1603", "在建工程");
-            Long categoryId = seedCategory("CAT-AST-3", "自建工程",
+            seedAcctSchema("1");
+            String fixedAssetSubjectId = seedSubject("1601", "固定资产");
+            String cipSubjectId = seedSubject("1603", "在建工程");
+            String categoryId = seedCategory("CAT-AST-3", "自建工程",
                     ErpAstConstants.DEPRECIATION_METHOD_STRAIGHT_LINE, 12, fixedAssetSubjectId);
             // 类别配置在建工程科目
             daoProvider.daoFor(ErpAstAssetCategory.class).getEntityById(categoryId).setCipSubjectId(cipSubjectId);
@@ -149,16 +149,16 @@ public class TestErpAstCapitalization extends JunitAutoTestCase {
 
     // ---------- rpc helpers ----------
 
-    private ApiResponse<?> submitForApproval(Long id) {
-        return executeRpc("ErpAstAssetCapitalization__submitForApproval", Map.of("id", String.valueOf(id)));
+    private ApiResponse<?> submitForApproval(String id) {
+        return executeRpc("ErpAstAssetCapitalization__submitForApproval", Map.of("id", id));
     }
 
-    private ApiResponse<?> approve(Long id) {
-        return executeRpc("ErpAstAssetCapitalization__approve", Map.of("id", String.valueOf(id)));
+    private ApiResponse<?> approve(String id) {
+        return executeRpc("ErpAstAssetCapitalization__approve", Map.of("id", id));
     }
 
-    private ApiResponse<?> reject(Long id) {
-        return executeRpc("ErpAstAssetCapitalization__reject", Map.of("id", String.valueOf(id)));
+    private ApiResponse<?> reject(String id) {
+        return executeRpc("ErpAstAssetCapitalization__reject", Map.of("id", id));
     }
 
     private ApiResponse<?> executeRpc(String action, Map<String, Object> data) {
@@ -168,16 +168,16 @@ public class TestErpAstCapitalization extends JunitAutoTestCase {
 
     // ---------- seed helpers ----------
 
-    private Long seedCapitalization(String code, Long categoryId, String sourceType, BigDecimal originalValue,
+    private String seedCapitalization(String code, String categoryId, String sourceType, BigDecimal originalValue,
                                     LocalDate capitalizationDate) {
         IEntityDao<ErpAstAssetCapitalization> dao = daoProvider.daoFor(ErpAstAssetCapitalization.class);
         ErpAstAssetCapitalization cap = new ErpAstAssetCapitalization();
         cap.setCode(code);
-        cap.setOrgId(1L);
+        cap.setOrgId("1");
         cap.setAssetCode("AST-" + code);
         cap.setAssetName("资产-" + code);
         cap.setCategoryId(categoryId);
-        cap.setCurrencyId(1L);
+        cap.setCurrencyId("1");
         cap.setCapitalizationDate(capitalizationDate);
         cap.setOriginalValue(originalValue);
         cap.setSourceType(sourceType);
@@ -188,7 +188,7 @@ public class TestErpAstCapitalization extends JunitAutoTestCase {
         return cap.getId();
     }
 
-    private Long seedCategory(String code, String name, String method, int usefulLifeMonths, Long subjectId) {
+    private String seedCategory(String code, String name, String method, int usefulLifeMonths, String subjectId) {
         IEntityDao<ErpAstAssetCategory> dao = daoProvider.daoFor(ErpAstAssetCategory.class);
         ErpAstAssetCategory category = new ErpAstAssetCategory();
         category.setCode(code);
@@ -200,7 +200,7 @@ public class TestErpAstCapitalization extends JunitAutoTestCase {
         return category.getId();
     }
 
-    private Long seedSubject(String code, String name) {
+    private String seedSubject(String code, String name) {
         IEntityDao<ErpMdSubject> dao = daoProvider.daoFor(ErpMdSubject.class);
         ErpMdSubject subject = new ErpMdSubject();
         subject.setCode(code);
@@ -212,14 +212,14 @@ public class TestErpAstCapitalization extends JunitAutoTestCase {
         return subject.getId();
     }
 
-    private void seedAcctSchema(long orgId) {
+    private void seedAcctSchema(String orgId) {
         IEntityDao<ErpMdAcctSchema> dao = daoProvider.daoFor(ErpMdAcctSchema.class);
         ErpMdAcctSchema schema = new ErpMdAcctSchema();
         schema.setCode("AS-" + orgId);
         schema.setName("账套-" + orgId);
         schema.setOrgId(orgId);
         schema.setNature("FINANCIAL");
-        schema.setFunctionalCurrencyId(1L);
+        schema.setFunctionalCurrencyId("1");
         schema.setStatus("ACTIVE");
         dao.saveEntity(schema);
     }
@@ -229,7 +229,7 @@ public class TestErpAstCapitalization extends JunitAutoTestCase {
         ErpFinAccountingPeriod period = new ErpFinAccountingPeriod();
         period.setCode(code);
         period.setName(code);
-        period.setOrgId(1L);
+        period.setOrgId("1");
         period.setYear(year);
         period.setMonth(month);
         period.setStartDate(start);
@@ -246,7 +246,7 @@ public class TestErpAstCapitalization extends JunitAutoTestCase {
         return list.isEmpty() ? null : list.get(0);
     }
 
-    private List<ErpAstDepreciationSchedule> findSchedulesByAsset(Long assetId) {
+    private List<ErpAstDepreciationSchedule> findSchedulesByAsset(String assetId) {
         IEntityDao<ErpAstDepreciationSchedule> dao = daoProvider.daoFor(ErpAstDepreciationSchedule.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("assetId", assetId));

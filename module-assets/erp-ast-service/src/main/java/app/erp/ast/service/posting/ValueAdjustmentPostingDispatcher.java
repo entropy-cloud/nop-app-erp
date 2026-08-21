@@ -36,7 +36,7 @@ public class ValueAdjustmentPostingDispatcher {
     @Inject
     IDaoProvider daoProvider;
 
-    public Long tryPost(ErpAstValueAdjustment adjustment, ErpAstAsset asset, ErpAstAssetCategory category) {
+    public String tryPost(ErpAstValueAdjustment adjustment, ErpAstAsset asset, ErpAstAssetCategory category) {
         PostingEvent event = buildEvent(adjustment, asset, category);
         try {
             return executor.postEvent(event);
@@ -91,11 +91,11 @@ public class ValueAdjustmentPostingDispatcher {
         return event;
     }
 
-    private Long resolveAcctSchemaId(Long orgId) {
+    private String resolveAcctSchemaId(String orgId) {
         return AcctSchemaResolver.resolvePrimarySchemaId(daoProvider, orgId);
     }
 
-    private String resolveSubjectCode(Long subjectId, String defaultCode) {
+    private String resolveSubjectCode(String subjectId, String defaultCode) {
         if (subjectId == null) {
             return defaultCode;
         }

@@ -19,19 +19,19 @@
             <cols>
 
                 <!--ID-->
-                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="id" mandatory="true" sortable="true"/>
 
                 <!--合并单-->
-                <col id="mergeId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="mergeId" mandatory="true" sortable="true"/>
 
                 <!--所属组织-->
-                <col id="orgId" ui:number="true" sortable="true"/>
+                <col id="orgId" sortable="true"/>
 
                 <!--行号-->
                 <col id="lineNo" ui:number="true" sortable="true"/>
 
                 <!--源资产-->
-                <col id="sourceAssetId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="sourceAssetId" mandatory="true" sortable="true"/>
 
                 <!--贡献比例-->
                 <col id="contributionProportion" ui:number="true" sortable="true"/>

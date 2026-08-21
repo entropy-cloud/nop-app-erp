@@ -17,7 +17,7 @@ public class ErpAstCipStartConstructionProcessor {
     @Inject
     ErpAstCipProcessor facade;
 
-    public ErpAstCip startConstruction(Long cipId, IServiceContext context) {
+    public ErpAstCip startConstruction(String cipId, IServiceContext context) {
         ErpAstCip cip = facade.requireCip(cipId, context);
         String current = cip.getStatus();
         if (!Objects.equals(current, ErpAstConstants.CIP_STATUS_DRAFT)) {

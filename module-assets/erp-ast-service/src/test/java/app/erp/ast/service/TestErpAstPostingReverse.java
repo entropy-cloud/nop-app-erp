@@ -68,11 +68,11 @@ public class TestErpAstPostingReverse extends JunitAutoTestCase {
 
     @Test
     public void testCapitalizationReverseApproveRollsBack() {
-        Long capId = ormTemplate.runInSession(session -> {
+        String capId = ormTemplate.runInSession(session -> {
             seedCoreBasics();
             AstTestSupport.seedPeriod(daoProvider, "2026-06", 2026, 6, ErpAstConstants.PERIOD_STATUS_OPEN);
-            Long fixedAssetSubjectId = AstTestSupport.seedSubject(daoProvider, "1601", "固定资产");
-            Long categoryId = AstTestSupport.seedCategory(daoProvider, "CAT-REV-CAP", "资本化冲销类别",
+            String fixedAssetSubjectId = AstTestSupport.seedSubject(daoProvider, "1601", "固定资产");
+            String categoryId = AstTestSupport.seedCategory(daoProvider, "CAT-REV-CAP", "资本化冲销类别",
                     ErpAstConstants.DEPRECIATION_METHOD_STRAIGHT_LINE, 12, fixedAssetSubjectId, null, null);
             return seedCapitalization("CAP-REV-001", categoryId,
                     ErpAstConstants.SOURCE_TYPE_DIRECT_PURCHASE, new BigDecimal("12000"),
@@ -116,12 +116,12 @@ public class TestErpAstPostingReverse extends JunitAutoTestCase {
      */
     @Test
     public void testCapitalizationReverseApproveOnSuspendedPostedFalseKeepsAssetInService() {
-        Long capId = ormTemplate.runInSession(session -> {
+        String capId = ormTemplate.runInSession(session -> {
             seedCoreBasics();
             AstTestSupport.seedPeriod(daoProvider, "2026-06", 2026, 6, ErpAstConstants.PERIOD_STATUS_OPEN);
             // 故意省略固定资产科目 1601（仅 seed 信用科目 1002 由 seedCoreBasics 提供），
             // 使资本化过账 resolveSubjects 失败 → posted=false 悬挂。category.subjectId=null → 派发器回退默认 1601 仍缺失。
-            Long categoryId = AstTestSupport.seedCategory(daoProvider, "CAT-SUSP-CAP", "悬挂资本化类别",
+            String categoryId = AstTestSupport.seedCategory(daoProvider, "CAT-SUSP-CAP", "悬挂资本化类别",
                     ErpAstConstants.DEPRECIATION_METHOD_STRAIGHT_LINE, 12, null, null, null);
             return seedCapitalization("CAP-SUSP-001", categoryId,
                     ErpAstConstants.SOURCE_TYPE_DIRECT_PURCHASE, new BigDecimal("12000"),
@@ -169,14 +169,14 @@ public class TestErpAstPostingReverse extends JunitAutoTestCase {
 
     @Test
     public void testDepreciationReverseRollsBackAssetCard() {
-        Long assetId = ormTemplate.runInSession(session -> {
+        String assetId = ormTemplate.runInSession(session -> {
             seedCoreBasics();
             AstTestSupport.seedPeriod(daoProvider, "2026-07", 2026, 7, ErpAstConstants.PERIOD_STATUS_OPEN);
-            Long categoryId = AstTestSupport.seedCategory(daoProvider, "CAT-REV-DEP", "折旧冲销类别",
+            String categoryId = AstTestSupport.seedCategory(daoProvider, "CAT-REV-DEP", "折旧冲销类别",
                     ErpAstConstants.DEPRECIATION_METHOD_STRAIGHT_LINE, 12, null,
                     AstTestSupport.seedSubject(daoProvider, "1602", "累计折旧"),
                     AstTestSupport.seedSubject(daoProvider, "6602", "管理费用"));
-            return AstTestSupport.seedAsset(daoProvider, "AST-REV-DEP", "折旧冲销资产", categoryId, 1L,
+            return AstTestSupport.seedAsset(daoProvider, "AST-REV-DEP", "折旧冲销资产", categoryId, "1",
                     new BigDecimal("12000"), BigDecimal.ZERO,
                     ErpAstConstants.DEPRECIATION_METHOD_STRAIGHT_LINE, 12,
                     ErpAstConstants.ASSET_STATUS_IN_SERVICE);
@@ -198,24 +198,24 @@ public class TestErpAstPostingReverse extends JunitAutoTestCase {
 
     @Test
     public void testDisposalReverseApproveRestoresAsset() {
-        long[] assetIdHolder = new long[1];
-        Long disposalId = ormTemplate.runInSession(session -> {
+        String[] assetIdHolder = new String[1];
+        String disposalId = ormTemplate.runInSession(session -> {
             seedCoreBasics();
             AstTestSupport.seedPeriod(daoProvider, "2026-07", 2026, 7, ErpAstConstants.PERIOD_STATUS_OPEN);
-            Long gainLossSubjectId = AstTestSupport.seedSubject(daoProvider, "6711", "营业外支出");
-            Long categoryId = AstTestSupport.seedCategory(daoProvider, "CAT-REV-DISP", "处置冲销类别",
+            String gainLossSubjectId = AstTestSupport.seedSubject(daoProvider, "6711", "营业外支出");
+            String categoryId = AstTestSupport.seedCategory(daoProvider, "CAT-REV-DISP", "处置冲销类别",
                     ErpAstConstants.DEPRECIATION_METHOD_STRAIGHT_LINE, 12,
                     AstTestSupport.seedSubject(daoProvider, "1601", "固定资产"),
                     AstTestSupport.seedSubject(daoProvider, "1602", "累计折旧"),
                     AstTestSupport.seedSubject(daoProvider, "6602", "管理费用"));
             daoProvider.daoFor(ErpAstAssetCategory.class).getEntityById(categoryId)
                     .setDisposalGainLossSubjectId(gainLossSubjectId);
-            Long assetId = AstTestSupport.seedAsset(daoProvider, "AST-REV-DISP", "处置冲销资产", categoryId, 1L,
+            String assetId = AstTestSupport.seedAsset(daoProvider, "AST-REV-DISP", "处置冲销资产", categoryId, "1",
                     new BigDecimal("12000"), BigDecimal.ZERO,
                     ErpAstConstants.DEPRECIATION_METHOD_STRAIGHT_LINE, 12,
                     ErpAstConstants.ASSET_STATUS_IN_SERVICE);
             assetIdHolder[0] = assetId;
-            AstTestSupport.seedPendingSchedule(daoProvider, assetId, 1L, "2026-08");
+            AstTestSupport.seedPendingSchedule(daoProvider, assetId, "1", "2026-08");
             return seedDisposal("DISP-REV-001", assetId, ErpAstConstants.DISPOSAL_TYPE_SCRAPPED,
                     BigDecimal.ZERO, LocalDate.of(2026, 7, 15));
         });
@@ -242,28 +242,28 @@ public class TestErpAstPostingReverse extends JunitAutoTestCase {
 
     // ---------- rpc helpers ----------
 
-    private ApiResponse<?> submitCap(Long id) {
-        return executeRpc("ErpAstAssetCapitalization__submitForApproval", Map.of("id", String.valueOf(id)));
+    private ApiResponse<?> submitCap(String id) {
+        return executeRpc("ErpAstAssetCapitalization__submitForApproval", Map.of("id", id));
     }
 
-    private ApiResponse<?> approveCap(Long id) {
-        return executeRpc("ErpAstAssetCapitalization__approve", Map.of("id", String.valueOf(id)));
+    private ApiResponse<?> approveCap(String id) {
+        return executeRpc("ErpAstAssetCapitalization__approve", Map.of("id", id));
     }
 
-    private ApiResponse<?> reverseApproveCap(Long id) {
-        return executeRpc("ErpAstAssetCapitalization__reverseApprove", Map.of("id", String.valueOf(id)));
+    private ApiResponse<?> reverseApproveCap(String id) {
+        return executeRpc("ErpAstAssetCapitalization__reverseApprove", Map.of("id", id));
     }
 
-    private ApiResponse<?> submitDisposal(Long id) {
-        return executeRpc("ErpAstDisposal__submitForApproval", Map.of("id", String.valueOf(id)));
+    private ApiResponse<?> submitDisposal(String id) {
+        return executeRpc("ErpAstDisposal__submitForApproval", Map.of("id", id));
     }
 
-    private ApiResponse<?> approveDisposal(Long id) {
-        return executeRpc("ErpAstDisposal__approve", Map.of("id", String.valueOf(id)));
+    private ApiResponse<?> approveDisposal(String id) {
+        return executeRpc("ErpAstDisposal__approve", Map.of("id", id));
     }
 
-    private ApiResponse<?> reverseApproveDisposal(Long id) {
-        return executeRpc("ErpAstDisposal__reverseApprove", Map.of("id", String.valueOf(id)));
+    private ApiResponse<?> reverseApproveDisposal(String id) {
+        return executeRpc("ErpAstDisposal__reverseApprove", Map.of("id", id));
     }
 
     private ApiResponse<?> executeRpc(String action, Map<String, Object> data) {
@@ -274,7 +274,7 @@ public class TestErpAstPostingReverse extends JunitAutoTestCase {
     // ---------- helpers ----------
 
     private void seedCoreBasics() {
-        AstTestSupport.seedAcctSchema(daoProvider, 1L);
+        AstTestSupport.seedAcctSchema(daoProvider, "1");
         AstTestSupport.seedSubject(daoProvider, "1002", "银行存款");
         // RC-R1.53：处置凭证 1606 固定资产清理中间科目腿（两步流 Provider 引用，缺失则过账 ERR_SUBJECT_NOT_FOUND）
         AstTestSupport.seedSubject(daoProvider, "1606", "固定资产清理");
@@ -283,17 +283,17 @@ public class TestErpAstPostingReverse extends JunitAutoTestCase {
     @Test
     public void testEndToEndCapitalizationDepreciationDisposal() {
         // 端到端：资本化 → 多期折旧 → 处置，全程状态与汇总一致（plan Phase 4 端到端退出标准）
-        long[] assetIdHolder = new long[1];
-        Long capId = ormTemplate.runInSession(session -> {
+        String[] assetIdHolder = new String[1];
+        String capId = ormTemplate.runInSession(session -> {
             seedCoreBasics();
             AstTestSupport.seedPeriod(daoProvider, "2026-06", 2026, 6, ErpAstConstants.PERIOD_STATUS_OPEN);
             AstTestSupport.seedPeriod(daoProvider, "2026-07", 2026, 7, ErpAstConstants.PERIOD_STATUS_OPEN);
             AstTestSupport.seedPeriod(daoProvider, "2026-08", 2026, 8, ErpAstConstants.PERIOD_STATUS_OPEN);
-            Long fixedAssetSubjectId = AstTestSupport.seedSubject(daoProvider, "1601", "固定资产");
-            Long accumDepSubjectId = AstTestSupport.seedSubject(daoProvider, "1602", "累计折旧");
-            Long expenseSubjectId = AstTestSupport.seedSubject(daoProvider, "6602", "管理费用");
-            Long gainLossSubjectId = AstTestSupport.seedSubject(daoProvider, "6711", "营业外支出");
-            Long categoryId = AstTestSupport.seedCategory(daoProvider, "CAT-E2E", "端到端类别",
+            String fixedAssetSubjectId = AstTestSupport.seedSubject(daoProvider, "1601", "固定资产");
+            String accumDepSubjectId = AstTestSupport.seedSubject(daoProvider, "1602", "累计折旧");
+            String expenseSubjectId = AstTestSupport.seedSubject(daoProvider, "6602", "管理费用");
+            String gainLossSubjectId = AstTestSupport.seedSubject(daoProvider, "6711", "营业外支出");
+            String categoryId = AstTestSupport.seedCategory(daoProvider, "CAT-E2E", "端到端类别",
                     ErpAstConstants.DEPRECIATION_METHOD_STRAIGHT_LINE, 12, fixedAssetSubjectId,
                     accumDepSubjectId, expenseSubjectId);
             daoProvider.daoFor(ErpAstAssetCategory.class).getEntityById(categoryId)
@@ -320,7 +320,7 @@ public class TestErpAstPostingReverse extends JunitAutoTestCase {
         assertEquals(0, nz(asset.getNetBookValue()).compareTo(new BigDecimal("10000")), "净值=10000");
 
         // 3. 处置（账面净值 10000，报废收入 0 → 损失 -10000）
-        Long disposalId = ormTemplate.runInSession(session -> seedDisposal("DISP-E2E-001", assetIdHolder[0],
+        String disposalId = ormTemplate.runInSession(session -> seedDisposal("DISP-E2E-001", assetIdHolder[0],
                 ErpAstConstants.DISPOSAL_TYPE_SCRAPPED, BigDecimal.ZERO, LocalDate.of(2026, 8, 20)));
         submitDisposal(disposalId);
         approveDisposal(disposalId);
@@ -338,16 +338,16 @@ public class TestErpAstPostingReverse extends JunitAutoTestCase {
         return q;
     }
 
-    private Long seedCapitalization(String code, Long categoryId, String sourceType, BigDecimal originalValue,
+    private String seedCapitalization(String code, String categoryId, String sourceType, BigDecimal originalValue,
                                     LocalDate capitalizationDate, String assetCode) {
         IEntityDao<ErpAstAssetCapitalization> dao = daoProvider.daoFor(ErpAstAssetCapitalization.class);
         ErpAstAssetCapitalization cap = new ErpAstAssetCapitalization();
         cap.setCode(code);
-        cap.setOrgId(1L);
+        cap.setOrgId("1");
         cap.setAssetCode(assetCode);
         cap.setAssetName("资产-" + code);
         cap.setCategoryId(categoryId);
-        cap.setCurrencyId(1L);
+        cap.setCurrencyId("1");
         cap.setCapitalizationDate(capitalizationDate);
         cap.setOriginalValue(originalValue);
         cap.setSourceType(sourceType);
@@ -358,16 +358,16 @@ public class TestErpAstPostingReverse extends JunitAutoTestCase {
         return cap.getId();
     }
 
-    private Long seedDisposal(String code, Long assetId, String disposalType, BigDecimal disposalAmount,
+    private String seedDisposal(String code, String assetId, String disposalType, BigDecimal disposalAmount,
                               LocalDate businessDate) {
         IEntityDao<ErpAstDisposal> dao = daoProvider.daoFor(ErpAstDisposal.class);
         ErpAstDisposal disposal = new ErpAstDisposal();
         disposal.setCode(code);
-        disposal.setOrgId(1L);
+        disposal.setOrgId("1");
         disposal.setAssetId(assetId);
         disposal.setDisposalType(disposalType);
         disposal.setDisposalAmount(disposalAmount);
-        disposal.setCurrencyId(1L);
+        disposal.setCurrencyId("1");
         disposal.setExchangeRate(BigDecimal.ONE);
         disposal.setBusinessDate(businessDate);
         disposal.setDocStatus(ErpAstConstants.DOC_STATUS_DRAFT);
@@ -384,7 +384,7 @@ public class TestErpAstPostingReverse extends JunitAutoTestCase {
         return list.isEmpty() ? null : list.get(0);
     }
 
-    private List<ErpAstDepreciationSchedule> findSchedulesByAsset(Long assetId) {
+    private List<ErpAstDepreciationSchedule> findSchedulesByAsset(String assetId) {
         IEntityDao<ErpAstDepreciationSchedule> dao = daoProvider.daoFor(ErpAstDepreciationSchedule.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("assetId", assetId));

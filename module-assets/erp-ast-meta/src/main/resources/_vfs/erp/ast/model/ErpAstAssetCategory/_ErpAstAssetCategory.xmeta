@@ -22,8 +22,8 @@
 
     <props>
         <prop name="id" displayName="ID" propId="1" i18n-en:displayName="ID" tagSet="seq-default" mandatory="true"
-              queryable="true" sortable="true" insertable="true" updatable="false" graphql:type="String">
-            <schema type="java.lang.Long"/>
+              queryable="true" sortable="true" insertable="true" updatable="false">
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="code" displayName="类别编码" propId="2" i18n-en:displayName="Code" tagSet="var" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
@@ -43,15 +43,15 @@
         </prop>
         <prop name="subjectId" displayName="资产科目" propId="6" i18n-en:displayName="Subject" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="subject">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="depreciationSubjectId" displayName="累计折旧科目" propId="7" i18n-en:displayName="Depreciation Subject"
               queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="depreciationSubject">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="expenseSubjectId" displayName="折旧费用科目" propId="8" i18n-en:displayName="Expense Subject"
               queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="expenseSubject">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="delVersion" displayName="逻辑删除版本" propId="9" i18n-en:displayName="Del Flag" mandatory="true"
               queryable="true" sortable="true" insertable="false" updatable="false" ui:show="R" defaultValue="0">
@@ -84,11 +84,11 @@
         <prop name="disposalGainLossSubjectId" displayName="清理损益科目" propId="16"
               i18n-en:displayName="Disposal Gain/Loss Subject" queryable="true" sortable="true" insertable="true"
               updatable="true" ext:relation="disposalGainLossSubject">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="cipSubjectId" displayName="在建工程科目" propId="17" i18n-en:displayName="CIP Subject" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="cipSubject">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="subject" i18n-en:displayName="Subject" tagSet="pub" ext:kind="to-one" internal="true"
               queryable="true" ext:joinLeftProp="subjectId" ext:joinRightProp="id" ext:joinRightDisplayProp="name"

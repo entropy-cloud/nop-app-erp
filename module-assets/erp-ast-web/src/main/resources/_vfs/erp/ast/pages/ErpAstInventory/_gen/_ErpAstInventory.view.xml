@@ -19,7 +19,7 @@
             <cols>
 
                 <!--ID-->
-                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="id" mandatory="true" sortable="true"/>
 
                 <!--盘点单号-->
                 <col id="code" mandatory="true" sortable="true"/>
@@ -28,28 +28,28 @@
                 <col id="name" sortable="true"/>
 
                 <!--业务组织-->
-                <col id="orgId" ui:number="true" sortable="true"/>
+                <col id="orgId" sortable="true"/>
 
                 <!--盘点状态-->
                 <col id="status" mandatory="true" sortable="true"/>
 
                 <!--范围-部门-->
-                <col id="rangeDepartmentId" ui:number="true" sortable="true"/>
+                <col id="rangeDepartmentId" sortable="true"/>
 
                 <!--范围-资产类别-->
-                <col id="rangeCategoryId" ui:number="true" sortable="true"/>
+                <col id="rangeCategoryId" sortable="true"/>
 
                 <!--范围-地点-->
-                <col id="rangeLocationId" ui:number="true" sortable="true"/>
+                <col id="rangeLocationId" sortable="true"/>
 
                 <!--盘点负责人-->
-                <col id="responsibleById" ui:number="true" sortable="true"/>
+                <col id="responsibleById" sortable="true"/>
 
                 <!--盘点基准日-->
                 <col id="businessDate" mandatory="true" sortable="true"/>
 
                 <!--币种-->
-                <col id="currencyId" ui:number="true" sortable="true"/>
+                <col id="currencyId" sortable="true"/>
 
                 <!--汇率-->
                 <col id="exchangeRate" ui:number="true" sortable="true"/>

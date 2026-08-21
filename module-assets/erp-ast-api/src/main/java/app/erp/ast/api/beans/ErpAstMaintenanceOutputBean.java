@@ -14,16 +14,16 @@
     public class ErpAstMaintenanceOutputBean {
 
     
-        private Long _id;
+        private String _id;
 
     
         @PropMeta(propId=1)
     
-        public Long getId(){
+        public String getId(){
             return _id;
         }
 
-        public void setId(Long value){
+        public void setId(String value){
             this._id = value;
         }
 
@@ -56,44 +56,44 @@
         }
 
 
-        private Long _orgId;
+        private String _orgId;
 
     
         @PropMeta(propId=4)
     
-        public Long getOrgId(){
+        public String getOrgId(){
             return _orgId;
         }
 
-        public void setOrgId(Long value){
+        public void setOrgId(String value){
             this._orgId = value;
         }
 
 
-        private Long _assetId;
+        private String _assetId;
 
     
         @PropMeta(propId=5)
     
-        public Long getAssetId(){
+        public String getAssetId(){
             return _assetId;
         }
 
-        public void setAssetId(Long value){
+        public void setAssetId(String value){
             this._assetId = value;
         }
 
 
-        private Long _maintenanceVisitId;
+        private String _maintenanceVisitId;
 
     
         @PropMeta(propId=6)
     
-        public Long getMaintenanceVisitId(){
+        public String getMaintenanceVisitId(){
             return _maintenanceVisitId;
         }
 
-        public void setMaintenanceVisitId(Long value){
+        public void setMaintenanceVisitId(String value){
             this._maintenanceVisitId = value;
         }
 
@@ -192,16 +192,16 @@
         }
 
 
-        private Long _currencyId;
+        private String _currencyId;
 
     
         @PropMeta(propId=12)
     
-        public Long getCurrencyId(){
+        public String getCurrencyId(){
             return _currencyId;
         }
 
-        public void setCurrencyId(Long value){
+        public void setCurrencyId(String value){
             this._currencyId = value;
         }
 

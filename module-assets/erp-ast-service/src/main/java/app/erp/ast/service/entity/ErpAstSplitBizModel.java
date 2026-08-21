@@ -33,7 +33,7 @@ public class ErpAstSplitBizModel extends CrudBizModel<ErpAstSplit> implements IE
 
     @Override
     @BizMutation
-    public ErpAstSplit cancel(@Name("id") Long id, IServiceContext context) {
-        return cancelProcessor.cancel(String.valueOf(id), context);
+    public ErpAstSplit cancel(@Name("id") String id, IServiceContext context) {
+        return cancelProcessor.cancel(id, context);
     }
 }

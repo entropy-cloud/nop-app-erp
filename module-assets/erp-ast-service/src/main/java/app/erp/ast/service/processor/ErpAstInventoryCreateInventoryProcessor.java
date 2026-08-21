@@ -20,7 +20,7 @@ public class ErpAstInventoryCreateInventoryProcessor {
     @Inject
     ErpAstInventoryStateMachine stateMachine;
 
-    public ErpAstInventory createInventory(Long id, IServiceContext context) {
+    public ErpAstInventory createInventory(String id, IServiceContext context) {
         ErpAstInventory inv = facade.requireInventory(id, context);
         // 固定来源态守卫委托 StateMachine Bean（M4.52，契约 §4/§7；创建种子初始态守卫）
         try {

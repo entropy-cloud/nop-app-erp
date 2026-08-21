@@ -20,16 +20,16 @@
 
     <props>
         <prop name="id" displayName="ID" propId="1" i18n-en:displayName="ID" tagSet="seq-default" mandatory="true"
-              queryable="true" sortable="true" insertable="true" updatable="false" graphql:type="String">
-            <schema type="java.lang.Long"/>
+              queryable="true" sortable="true" insertable="true" updatable="false">
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="inventoryId" displayName="盘点单" propId="2" i18n-en:displayName="Inventory" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="inventory">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="orgId" displayName="所属组织" propId="3" i18n-en:displayName="Organization" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="org">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="lineNo" displayName="行号" propId="4" i18n-en:displayName="Line No" queryable="true" sortable="true"
               insertable="true" updatable="true">
@@ -37,7 +37,7 @@
         </prop>
         <prop name="assetId" displayName="账面资产" propId="5" i18n-en:displayName="Asset" queryable="true" sortable="true"
               insertable="true" updatable="true" ext:relation="asset">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="assetCodeSnapshot" displayName="资产编码快照" propId="6" i18n-en:displayName="Asset Code Snapshot"
               tagSet="var" queryable="true" sortable="true" insertable="true" updatable="true">
@@ -49,7 +49,7 @@
         </prop>
         <prop name="categoryId" displayName="资产类别" propId="8" i18n-en:displayName="Category" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="category">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="bookQuantity" displayName="账面数量" propId="9" i18n-en:displayName="Book Quantity" queryable="true"
               sortable="true" insertable="true" updatable="true" defaultValue="0">
@@ -85,15 +85,15 @@
         </prop>
         <prop name="newAssetId" displayName="盘盈新建资产" propId="17" i18n-en:displayName="New Asset" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="newAsset">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="capitalizationId" displayName="盘盈资本化单" propId="18" i18n-en:displayName="Capitalization"
               queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="capitalization">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="disposalId" displayName="盘亏处置单" propId="19" i18n-en:displayName="Disposal" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="disposal">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="investigatedRemark" displayName="调查备注" propId="20" i18n-en:displayName="Investigated Remark"
               queryable="true" sortable="true" insertable="true" updatable="true">

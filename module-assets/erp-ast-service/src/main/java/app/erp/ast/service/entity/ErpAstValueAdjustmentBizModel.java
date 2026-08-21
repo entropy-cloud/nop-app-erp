@@ -31,7 +31,7 @@ public class ErpAstValueAdjustmentBizModel extends CrudBizModel<ErpAstValueAdjus
 
     @Override
     @BizMutation
-    public ErpAstValueAdjustment cancel(@Name("id") Long id, IServiceContext context) {
-        return cancelProcessor.cancel(String.valueOf(id), context);
+    public ErpAstValueAdjustment cancel(@Name("id") String id, IServiceContext context) {
+        return cancelProcessor.cancel(id, context);
     }
 }

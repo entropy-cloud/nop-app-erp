@@ -19,7 +19,7 @@
             <cols>
 
                 <!--ID-->
-                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="id" mandatory="true" sortable="true"/>
 
                 <!--类别编码-->
                 <col id="code" mandatory="true" sortable="true"/>
@@ -34,13 +34,13 @@
                 <col id="usefulLifeMonths" ui:number="true" sortable="true"/>
 
                 <!--资产科目-->
-                <col id="subjectId" ui:number="true" sortable="true"/>
+                <col id="subjectId" sortable="true"/>
 
                 <!--累计折旧科目-->
-                <col id="depreciationSubjectId" ui:number="true" sortable="true"/>
+                <col id="depreciationSubjectId" sortable="true"/>
 
                 <!--折旧费用科目-->
-                <col id="expenseSubjectId" ui:number="true" sortable="true"/>
+                <col id="expenseSubjectId" sortable="true"/>
 
                 <!--逻辑删除版本-->
                 <col id="delVersion" mandatory="true" ui:number="true" sortable="true"/>
@@ -61,10 +61,10 @@
                 <col id="remark" sortable="true"/>
 
                 <!--清理损益科目-->
-                <col id="disposalGainLossSubjectId" ui:number="true" sortable="true"/>
+                <col id="disposalGainLossSubjectId" sortable="true"/>
 
                 <!--在建工程科目-->
-                <col id="cipSubjectId" ui:number="true" sortable="true"/>
+                <col id="cipSubjectId" sortable="true"/>
             </cols>
         </grid>
         <grid id="pick-list" x:prototype="list" x:abstract="true"/>

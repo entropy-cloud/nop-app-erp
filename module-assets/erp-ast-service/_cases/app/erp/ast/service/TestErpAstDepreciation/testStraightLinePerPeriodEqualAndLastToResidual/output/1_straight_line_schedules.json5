@@ -1,6 +1,6 @@
 [
   {
-    "id": 56,
+    "id": "56",
     "period": "@var:ErpFinAccountingPeriod@code",
     "status": "EXECUTED",
     "actualAmount": 1000.0000,
@@ -8,7 +8,7 @@
     "posted": true
   },
   {
-    "id": 61,
+    "id": "61",
     "period": "@var:ErpFinAccountingPeriod@code_1",
     "status": "EXECUTED",
     "actualAmount": 1000.0000,
@@ -16,7 +16,7 @@
     "posted": true
   },
   {
-    "id": 66,
+    "id": "66",
     "period": "@var:ErpFinAccountingPeriod@code_2",
     "status": "EXECUTED",
     "actualAmount": 1000.0000,
@@ -24,7 +24,7 @@
     "posted": true
   },
   {
-    "id": 71,
+    "id": "71",
     "period": "@var:ErpFinAccountingPeriod@code_3",
     "status": "EXECUTED",
     "actualAmount": 1000.0000,
@@ -32,7 +32,7 @@
     "posted": true
   },
   {
-    "id": 76,
+    "id": "76",
     "period": "@var:ErpFinAccountingPeriod@code_4",
     "status": "EXECUTED",
     "actualAmount": 1000.0000,
@@ -40,7 +40,7 @@
     "posted": true
   },
   {
-    "id": 81,
+    "id": "81",
     "period": "@var:ErpFinAccountingPeriod@code_5",
     "status": "EXECUTED",
     "actualAmount": 1000.0000,
@@ -48,7 +48,7 @@
     "posted": true
   },
   {
-    "id": 86,
+    "id": "86",
     "period": "@var:ErpFinAccountingPeriod@code_6",
     "status": "EXECUTED",
     "actualAmount": 1000.0000,
@@ -56,7 +56,7 @@
     "posted": true
   },
   {
-    "id": 91,
+    "id": "91",
     "period": "@var:ErpFinAccountingPeriod@code_7",
     "status": "EXECUTED",
     "actualAmount": 1000.0000,
@@ -64,7 +64,7 @@
     "posted": true
   },
   {
-    "id": 96,
+    "id": "96",
     "period": "@var:ErpFinAccountingPeriod@code_8",
     "status": "EXECUTED",
     "actualAmount": 1000.0000,
@@ -72,7 +72,7 @@
     "posted": true
   },
   {
-    "id": 101,
+    "id": "101",
     "period": "@var:ErpFinAccountingPeriod@code_9",
     "status": "EXECUTED",
     "actualAmount": 1000.0000,
@@ -80,7 +80,7 @@
     "posted": true
   },
   {
-    "id": 106,
+    "id": "106",
     "period": "@var:ErpFinAccountingPeriod@code_10",
     "status": "EXECUTED",
     "actualAmount": 1000.0000,
@@ -88,7 +88,7 @@
     "posted": true
   },
   {
-    "id": 111,
+    "id": "111",
     "period": "@var:ErpFinAccountingPeriod@code_11",
     "status": "EXECUTED",
     "actualAmount": 1000.0000,

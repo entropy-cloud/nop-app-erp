@@ -48,7 +48,7 @@ public class AssetSplitPostingDispatcher {
                            List<ErpAstAsset> targets) {
         PostingEvent event = buildEvent(split, source, lines, targets);
         try {
-            Long voucherId = executor.postEvent(event);
+            String voucherId = executor.postEvent(event);
             return voucherId != null;
         } catch (Exception e) {
             if (e instanceof NopException) {
@@ -78,7 +78,7 @@ public class AssetSplitPostingDispatcher {
         for (int i = 0; i < lines.size(); i++) {
             ErpAstSplitLine line = lines.get(i);
             ErpAstAsset target = targets.get(i);
-            Long categoryId = line.getCategoryId() != null ? line.getCategoryId() : source.getCategoryId();
+            String categoryId = line.getCategoryId() != null ? line.getCategoryId() : source.getCategoryId();
             ErpAstAssetCategory category = loadCategory(categoryId);
             String subjectCode = resolveSubjectCode(category != null ? category.getSubjectId() : null, "1601");
             debitLines.add(lineMap(subjectCode, "固定资产", nz(line.getOriginalCostAmount()),
@@ -100,18 +100,18 @@ public class AssetSplitPostingDispatcher {
         return event;
     }
 
-    private ErpAstAssetCategory loadCategory(Long categoryId) {
+    private ErpAstAssetCategory loadCategory(String categoryId) {
         if (categoryId == null) {
             return null;
         }
         return daoProvider.daoFor(ErpAstAssetCategory.class).getEntityById(categoryId);
     }
 
-    private Long resolveAcctSchemaId(Long orgId) {
+    private String resolveAcctSchemaId(String orgId) {
         return AcctSchemaResolver.resolvePrimarySchemaId(daoProvider, orgId);
     }
 
-    private String resolveSubjectCode(Long subjectId, String defaultCode) {
+    private String resolveSubjectCode(String subjectId, String defaultCode) {
         if (subjectId == null) {
             return defaultCode;
         }

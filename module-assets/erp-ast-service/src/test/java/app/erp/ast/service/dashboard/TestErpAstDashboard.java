@@ -66,25 +66,25 @@ public class TestErpAstDashboard extends JunitAutoTestCase {
     public void testKpiAggregationArithmetic() {
         ormTemplate.runInSession(() -> {
             // 资产 A: 原值 1000, 累计折旧 200 → 净值 800
-            seedAsset(101L, 11L, new BigDecimal("1000"), new BigDecimal("200"),
+            seedAsset("101", "11", new BigDecimal("1000"), new BigDecimal("200"),
                     ErpAstConstants.ASSET_STATUS_IN_SERVICE);
             // 资产 B: 原值 3000, 累计折旧 500 → 净值 2500
-            seedAsset(102L, 12L, new BigDecimal("3000"), new BigDecimal("500"),
+            seedAsset("102", "12", new BigDecimal("3000"), new BigDecimal("500"),
                     ErpAstConstants.ASSET_STATUS_IN_SERVICE);
             // 非 IN_SERVICE 资产不计入（SCRAPPED）
-            seedAsset(103L, 11L, new BigDecimal("9999"), new BigDecimal("0"),
+            seedAsset("103", "11", new BigDecimal("9999"), new BigDecimal("0"),
                     ErpAstConstants.ASSET_STATUS_SCRAPPED);
             // 本期已计提折旧：A 分摊 50, B 分摊 80 → 合计 130
-            seedDepreciationSchedule(201L, 101L, CURRENT_PERIOD,
+            seedDepreciationSchedule("201", "101", CURRENT_PERIOD,
                     new BigDecimal("50"), ErpAstConstants.SCHEDULE_STATUS_EXECUTED);
-            seedDepreciationSchedule(202L, 102L, CURRENT_PERIOD,
+            seedDepreciationSchedule("202", "102", CURRENT_PERIOD,
                     new BigDecimal("80"), ErpAstConstants.SCHEDULE_STATUS_EXECUTED);
             // PENDING 状态不计入本期折旧
-            seedDepreciationSchedule(203L, 101L, CURRENT_PERIOD,
+            seedDepreciationSchedule("203", "101", CURRENT_PERIOD,
                     new BigDecimal("999"), ErpAstConstants.SCHEDULE_STATUS_PENDING);
             // 在建工程：未转固 600 + 已转固 100（不计入）
-            seedCip(301L, new BigDecimal("600"), false);
-            seedCip(302L, new BigDecimal("100"), true);
+            seedCip("301", new BigDecimal("600"), false);
+            seedCip("302", new BigDecimal("100"), true);
         });
 
         Map<String, Object> kpi = dashboardBiz.getDashboardKpi(null, CTX);
@@ -103,25 +103,25 @@ public class TestErpAstDashboard extends JunitAutoTestCase {
     @Test
     public void testAssetCategoryDistribution() {
         ormTemplate.runInSession(() -> {
-            seedCategory(21L, "机器设备");
-            seedCategory(22L, "交通工具");
+            seedCategory("21", "机器设备");
+            seedCategory("22", "交通工具");
             // 类别 21: 原值 1000 折旧 200 → 净值 800
-            seedAsset(111L, 21L, new BigDecimal("1000"), new BigDecimal("200"),
+            seedAsset("111", "21", new BigDecimal("1000"), new BigDecimal("200"),
                     ErpAstConstants.ASSET_STATUS_IN_SERVICE);
             // 类别 21: 原值 500 折旧 100 → 净值 400（类别 21 合计 1200）
-            seedAsset(112L, 21L, new BigDecimal("500"), new BigDecimal("100"),
+            seedAsset("112", "21", new BigDecimal("500"), new BigDecimal("100"),
                     ErpAstConstants.ASSET_STATUS_IN_SERVICE);
             // 类别 22: 原值 2000 折旧 0 → 净值 2000
-            seedAsset(113L, 22L, new BigDecimal("2000"), new BigDecimal("0"),
+            seedAsset("113", "22", new BigDecimal("2000"), new BigDecimal("0"),
                     ErpAstConstants.ASSET_STATUS_IN_SERVICE);
         });
         List<Map<String, Object>> dist = dashboardBiz.getAssetCategoryDistribution(CTX);
         assertEquals(2, dist.size(), "2 个类别");
         // 类别 22 净值 2000 > 类别 21 净值 1200 → 22 排第一
-        assertEquals(22L, dist.get(0).get("categoryId"));
+        assertEquals("22", dist.get(0).get("categoryId"));
         assertEquals("交通工具", dist.get(0).get("categoryName"), "类别名称已解析");
         assertEquals(0, ((BigDecimal) dist.get(0).get("netBookValue")).compareTo(new BigDecimal("2000")));
-        assertEquals(21L, dist.get(1).get("categoryId"));
+        assertEquals("21", dist.get(1).get("categoryId"));
         assertEquals("机器设备", dist.get(1).get("categoryName"), "类别名称已解析");
         assertEquals(0, ((BigDecimal) dist.get(1).get("netBookValue")).compareTo(new BigDecimal("1200")));
     }
@@ -130,29 +130,29 @@ public class TestErpAstDashboard extends JunitAutoTestCase {
     public void testDepreciationMissingAlertTriggers() {
         ormTemplate.runInSession(() -> {
             // 资产 A: IN_SERVICE 但本期无 EXECUTED 折旧 → 触发预警
-            seedAsset(121L, 31L, new BigDecimal("1000"), new BigDecimal("0"),
+            seedAsset("121", "31", new BigDecimal("1000"), new BigDecimal("0"),
                     ErpAstConstants.ASSET_STATUS_IN_SERVICE);
             // 资产 B: IN_SERVICE 且本期有 EXECUTED 折旧 → 不触发
-            seedAsset(122L, 31L, new BigDecimal("2000"), new BigDecimal("0"),
+            seedAsset("122", "31", new BigDecimal("2000"), new BigDecimal("0"),
                     ErpAstConstants.ASSET_STATUS_IN_SERVICE);
-            seedDepreciationSchedule(221L, 122L, CURRENT_PERIOD,
+            seedDepreciationSchedule("221", "122", CURRENT_PERIOD,
                     new BigDecimal("100"), ErpAstConstants.SCHEDULE_STATUS_EXECUTED);
             // 资产 C: 非 IN_SERVICE → 不计入
-            seedAsset(123L, 31L, new BigDecimal("3000"), new BigDecimal("0"),
+            seedAsset("123", "31", new BigDecimal("3000"), new BigDecimal("0"),
                     ErpAstConstants.ASSET_STATUS_IDLE);
         });
         List<Map<String, Object>> alerts = dashboardBiz.findDepreciationMissingAlert(CTX);
         assertEquals(1, alerts.size(), "仅资产 A 触发预警");
-        assertEquals(121L, alerts.get(0).get("assetId"));
+        assertEquals("121", alerts.get(0).get("assetId"));
     }
 
     @Test
     public void testTrendMonthlySeries() {
         String lastMonth = minusMonthsPeriod(1);
         ormTemplate.runInSession(() -> {
-            seedDepreciationSchedule(231L, 141L, CURRENT_PERIOD,
+            seedDepreciationSchedule("231", "141", CURRENT_PERIOD,
                     new BigDecimal("150"), ErpAstConstants.SCHEDULE_STATUS_EXECUTED);
-            seedDepreciationSchedule(232L, 142L, lastMonth,
+            seedDepreciationSchedule("232", "142", lastMonth,
                     new BigDecimal("250"), ErpAstConstants.SCHEDULE_STATUS_EXECUTED);
         });
         List<Map<String, Object>> trend = dashboardBiz.getDashboardTrend(2, CTX);
@@ -166,7 +166,7 @@ public class TestErpAstDashboard extends JunitAutoTestCase {
 
     // ---------- helpers ----------
 
-    private void seedCategory(long id, String name) {
+    private void seedCategory(String id, String name) {
         IEntityDao<ErpAstAssetCategory> dao = daoProvider.daoFor(ErpAstAssetCategory.class);
         ErpAstAssetCategory c = dao.newEntity();
         c.orm_propValue(1, id);
@@ -175,17 +175,17 @@ public class TestErpAstDashboard extends JunitAutoTestCase {
         dao.saveEntity(c);
     }
 
-    private void seedAsset(long id, long categoryId, BigDecimal originalValue,
+    private void seedAsset(String id, String categoryId, BigDecimal originalValue,
                            BigDecimal accumulatedDepreciation, String status) {
         IEntityDao<ErpAstAsset> dao = daoProvider.daoFor(ErpAstAsset.class);
         ErpAstAsset a = dao.newEntity();
         a.orm_propValue(1, id);
         a.setCode("AST-" + id);
         a.setName("资产-" + id);
-        a.setOrgId(1L);
+        a.setOrgId("1");
         a.setCategoryId(categoryId);
         a.setAcquisitionDate(LocalDate.of(2026, 1, 1));
-        a.setCurrencyId(1L);
+        a.setCurrencyId("1");
         a.setOriginalValue(originalValue);
         a.setCurrentValue(originalValue);
         a.setResidualValue(BigDecimal.ZERO);
@@ -197,13 +197,13 @@ public class TestErpAstDashboard extends JunitAutoTestCase {
         dao.saveEntity(a);
     }
 
-    private void seedDepreciationSchedule(long id, long assetId, String period,
+    private void seedDepreciationSchedule(String id, String assetId, String period,
                                           BigDecimal actualAmount, String status) {
         IEntityDao<ErpAstDepreciationSchedule> dao = daoProvider.daoFor(ErpAstDepreciationSchedule.class);
         ErpAstDepreciationSchedule s = dao.newEntity();
         s.orm_propValue(1, id);
         s.setAssetId(assetId);
-        s.setOrgId(1L);
+        s.setOrgId("1");
         s.setPeriod(period);
         s.setPlannedAmount(actualAmount);
         s.setActualAmount(actualAmount);
@@ -214,19 +214,19 @@ public class TestErpAstDashboard extends JunitAutoTestCase {
         dao.saveEntity(s);
     }
 
-    private void seedCip(long id, BigDecimal balance, boolean completed) {
+    private void seedCip(String id, BigDecimal balance, boolean completed) {
         IEntityDao<ErpAstCip> dao = daoProvider.daoFor(ErpAstCip.class);
         ErpAstCip c = dao.newEntity();
         c.orm_propValue(1, id);
         c.setCode("CIP-" + id);
         c.setName("在建工程-" + id);
-        c.setOrgId(1L);
-        c.setCategoryId(1L);
+        c.setOrgId("1");
+        c.setCategoryId("1");
         c.setBusinessDate(LocalDate.of(2026, 1, 1));
         c.setAccumulatedCost(balance);
         c.setIsCompleted(completed);
         c.setStatus(ErpAstConstants.ASSET_STATUS_DRAFT);
-        c.setCurrencyId(1L);
+        c.setCurrencyId("1");
         c.setExchangeRate(BigDecimal.ONE);
         c.setAmountSource(balance);
         c.setAmountFunctional(balance);

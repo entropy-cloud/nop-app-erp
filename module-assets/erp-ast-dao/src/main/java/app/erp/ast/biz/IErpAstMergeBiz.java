@@ -18,5 +18,5 @@ import app.erp.ast.dao.entity.ErpAstMerge;
 public interface IErpAstMergeBiz extends ICrudBiz<ErpAstMerge> {
 
     @BizMutation
-    ErpAstMerge cancel(@Name("id") Long id, IServiceContext context);
+    ErpAstMerge cancel(@Name("id") String id, IServiceContext context);
 }

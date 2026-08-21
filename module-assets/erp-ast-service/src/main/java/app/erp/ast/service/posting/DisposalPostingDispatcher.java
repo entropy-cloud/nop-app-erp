@@ -48,7 +48,7 @@ public class DisposalPostingDispatcher {
      * <p>G2/G4 错误传播分级（plan 2026-07-30-0341-2 P1-MA2-060）：Disposal 有 DeferredPostingSweepJob 兜底重试；
      * posted=false 悬挂补 IErpSysNotificationBiz 告警使运营感知（reverseApprove 不对称见 state-machine.md 标注）。
      */
-    public Long tryPost(ErpAstDisposal disposal, ErpAstAsset asset, ErpAstAssetCategory category) {
+    public String tryPost(ErpAstDisposal disposal, ErpAstAsset asset, ErpAstAssetCategory category) {
         PostingEvent event = buildEvent(disposal, asset, category);
         try {
             return executor.postEvent(event);
@@ -130,11 +130,11 @@ public class DisposalPostingDispatcher {
         return event;
     }
 
-    private Long resolveAcctSchemaId(Long orgId) {
+    private String resolveAcctSchemaId(String orgId) {
         return AcctSchemaResolver.resolvePrimarySchemaId(daoProvider, orgId);
     }
 
-    private String resolveSubjectCode(Long subjectId, String defaultCode) {
+    private String resolveSubjectCode(String subjectId, String defaultCode) {
         if (subjectId == null) {
             return defaultCode;
         }

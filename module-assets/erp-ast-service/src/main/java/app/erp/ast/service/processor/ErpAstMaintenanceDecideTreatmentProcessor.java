@@ -22,7 +22,7 @@ public class ErpAstMaintenanceDecideTreatmentProcessor {
     @Inject
     ErpAstMaintenanceProcessor facade;
 
-    public ErpAstMaintenance decideTreatment(Long id, String treatment, BigDecimal capitalizedAmount,
+    public ErpAstMaintenance decideTreatment(String id, String treatment, BigDecimal capitalizedAmount,
                                                IServiceContext context) {
         ErpAstMaintenance m = facade.requireMaintenance(id, context);
         facade.validateTransition(m, ErpAstConstants.MAINTENANCE_STATUS_COMPLETED, "decideTreatment");

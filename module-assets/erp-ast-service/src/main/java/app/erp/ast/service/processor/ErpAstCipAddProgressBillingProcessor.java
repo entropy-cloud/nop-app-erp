@@ -22,7 +22,7 @@ public class ErpAstCipAddProgressBillingProcessor {
     @Inject
     ErpAstCipProcessor facade;
 
-    public ErpAstCipProgressBilling addProgressBilling(Long cipId, LocalDate billingDate, String billingMilestone,
+    public ErpAstCipProgressBilling addProgressBilling(String cipId, LocalDate billingDate, String billingMilestone,
                                                         BigDecimal amountFunctional, String paymentVoucherCode,
                                                         IServiceContext context) {
         ErpAstCip cip = facade.requireCip(cipId, context);

@@ -238,7 +238,7 @@ public class _ErpAstCip extends DynamicOrmEntity{
 
     
     /* ID: ID */
-    private java.lang.Long _id;
+    private java.lang.String _id;
     
     /* 工程编码: CODE */
     private java.lang.String _code;
@@ -247,13 +247,13 @@ public class _ErpAstCip extends DynamicOrmEntity{
     private java.lang.String _name;
     
     /* 所属组织: ORG_ID */
-    private java.lang.Long _orgId;
+    private java.lang.String _orgId;
     
     /* 预定资产类别(完工后转入): CATEGORY_ID */
-    private java.lang.Long _categoryId;
+    private java.lang.String _categoryId;
     
     /* 币种: CURRENCY_ID */
-    private java.lang.Long _currencyId;
+    private java.lang.String _currencyId;
     
     /* 开工日期: BUSINESS_DATE */
     private java.time.LocalDate _businessDate;
@@ -268,7 +268,7 @@ public class _ErpAstCip extends DynamicOrmEntity{
     private java.lang.Boolean _isCompleted;
     
     /* 完工转出资产: COMPLETED_ASSET_ID */
-    private java.lang.Long _completedAssetId;
+    private java.lang.String _completedAssetId;
     
     /* 状态: STATUS */
     private java.lang.String _status;
@@ -292,7 +292,7 @@ public class _ErpAstCip extends DynamicOrmEntity{
     private java.math.BigDecimal _amountFunctional;
     
     /* 关联项目(可空): PROJECT_ID */
-    private java.lang.Long _projectId;
+    private java.lang.String _projectId;
     
     /* 转固时类别快照: CIP_ASSET_CATEGORY_SNAPSHOT */
     private java.lang.String _cipAssetCategorySnapshot;
@@ -485,9 +485,9 @@ public class _ErpAstCip extends DynamicOrmEntity{
         switch(propId){
         
             case PROP_ID_id:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_id));
                }
                setId(typedValue);
@@ -515,9 +515,9 @@ public class _ErpAstCip extends DynamicOrmEntity{
             }
         
             case PROP_ID_orgId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_orgId));
                }
                setOrgId(typedValue);
@@ -525,9 +525,9 @@ public class _ErpAstCip extends DynamicOrmEntity{
             }
         
             case PROP_ID_categoryId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_categoryId));
                }
                setCategoryId(typedValue);
@@ -535,9 +535,9 @@ public class _ErpAstCip extends DynamicOrmEntity{
             }
         
             case PROP_ID_currencyId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_currencyId));
                }
                setCurrencyId(typedValue);
@@ -585,9 +585,9 @@ public class _ErpAstCip extends DynamicOrmEntity{
             }
         
             case PROP_ID_completedAssetId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_completedAssetId));
                }
                setCompletedAssetId(typedValue);
@@ -665,9 +665,9 @@ public class _ErpAstCip extends DynamicOrmEntity{
             }
         
             case PROP_ID_projectId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_projectId));
                }
                setProjectId(typedValue);
@@ -765,7 +765,7 @@ public class _ErpAstCip extends DynamicOrmEntity{
         
             case PROP_ID_id:{
                onInitProp(propId);
-               this._id = (java.lang.Long)value;
+               this._id = (java.lang.String)value;
                orm_id(); // 如果是设置主键字段，则触发watcher
                break;
             }
@@ -786,21 +786,21 @@ public class _ErpAstCip extends DynamicOrmEntity{
         
             case PROP_ID_orgId:{
                onInitProp(propId);
-               this._orgId = (java.lang.Long)value;
+               this._orgId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_categoryId:{
                onInitProp(propId);
-               this._categoryId = (java.lang.Long)value;
+               this._categoryId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_currencyId:{
                onInitProp(propId);
-               this._currencyId = (java.lang.Long)value;
+               this._currencyId = (java.lang.String)value;
                
                break;
             }
@@ -835,7 +835,7 @@ public class _ErpAstCip extends DynamicOrmEntity{
         
             case PROP_ID_completedAssetId:{
                onInitProp(propId);
-               this._completedAssetId = (java.lang.Long)value;
+               this._completedAssetId = (java.lang.String)value;
                
                break;
             }
@@ -891,7 +891,7 @@ public class _ErpAstCip extends DynamicOrmEntity{
         
             case PROP_ID_projectId:{
                onInitProp(propId);
-               this._projectId = (java.lang.Long)value;
+               this._projectId = (java.lang.String)value;
                
                break;
             }
@@ -961,7 +961,7 @@ public class _ErpAstCip extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final java.lang.Long getId(){
+    public final java.lang.String getId(){
          onPropGet(PROP_ID_id);
          return _id;
     }
@@ -969,7 +969,7 @@ public class _ErpAstCip extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final void setId(java.lang.Long value){
+    public final void setId(java.lang.String value){
         if(onPropSet(PROP_ID_id,value)){
             this._id = value;
             internalClearRefs(PROP_ID_id);
@@ -1018,7 +1018,7 @@ public class _ErpAstCip extends DynamicOrmEntity{
     /**
      * 所属组织: ORG_ID
      */
-    public final java.lang.Long getOrgId(){
+    public final java.lang.String getOrgId(){
          onPropGet(PROP_ID_orgId);
          return _orgId;
     }
@@ -1026,7 +1026,7 @@ public class _ErpAstCip extends DynamicOrmEntity{
     /**
      * 所属组织: ORG_ID
      */
-    public final void setOrgId(java.lang.Long value){
+    public final void setOrgId(java.lang.String value){
         if(onPropSet(PROP_ID_orgId,value)){
             this._orgId = value;
             internalClearRefs(PROP_ID_orgId);
@@ -1037,7 +1037,7 @@ public class _ErpAstCip extends DynamicOrmEntity{
     /**
      * 预定资产类别(完工后转入): CATEGORY_ID
      */
-    public final java.lang.Long getCategoryId(){
+    public final java.lang.String getCategoryId(){
          onPropGet(PROP_ID_categoryId);
          return _categoryId;
     }
@@ -1045,7 +1045,7 @@ public class _ErpAstCip extends DynamicOrmEntity{
     /**
      * 预定资产类别(完工后转入): CATEGORY_ID
      */
-    public final void setCategoryId(java.lang.Long value){
+    public final void setCategoryId(java.lang.String value){
         if(onPropSet(PROP_ID_categoryId,value)){
             this._categoryId = value;
             internalClearRefs(PROP_ID_categoryId);
@@ -1056,7 +1056,7 @@ public class _ErpAstCip extends DynamicOrmEntity{
     /**
      * 币种: CURRENCY_ID
      */
-    public final java.lang.Long getCurrencyId(){
+    public final java.lang.String getCurrencyId(){
          onPropGet(PROP_ID_currencyId);
          return _currencyId;
     }
@@ -1064,7 +1064,7 @@ public class _ErpAstCip extends DynamicOrmEntity{
     /**
      * 币种: CURRENCY_ID
      */
-    public final void setCurrencyId(java.lang.Long value){
+    public final void setCurrencyId(java.lang.String value){
         if(onPropSet(PROP_ID_currencyId,value)){
             this._currencyId = value;
             internalClearRefs(PROP_ID_currencyId);
@@ -1151,7 +1151,7 @@ public class _ErpAstCip extends DynamicOrmEntity{
     /**
      * 完工转出资产: COMPLETED_ASSET_ID
      */
-    public final java.lang.Long getCompletedAssetId(){
+    public final java.lang.String getCompletedAssetId(){
          onPropGet(PROP_ID_completedAssetId);
          return _completedAssetId;
     }
@@ -1159,7 +1159,7 @@ public class _ErpAstCip extends DynamicOrmEntity{
     /**
      * 完工转出资产: COMPLETED_ASSET_ID
      */
-    public final void setCompletedAssetId(java.lang.Long value){
+    public final void setCompletedAssetId(java.lang.String value){
         if(onPropSet(PROP_ID_completedAssetId,value)){
             this._completedAssetId = value;
             internalClearRefs(PROP_ID_completedAssetId);
@@ -1303,7 +1303,7 @@ public class _ErpAstCip extends DynamicOrmEntity{
     /**
      * 关联项目(可空): PROJECT_ID
      */
-    public final java.lang.Long getProjectId(){
+    public final java.lang.String getProjectId(){
          onPropGet(PROP_ID_projectId);
          return _projectId;
     }
@@ -1311,7 +1311,7 @@ public class _ErpAstCip extends DynamicOrmEntity{
     /**
      * 关联项目(可空): PROJECT_ID
      */
-    public final void setProjectId(java.lang.Long value){
+    public final void setProjectId(java.lang.String value){
         if(onPropSet(PROP_ID_projectId,value)){
             this._projectId = value;
             internalClearRefs(PROP_ID_projectId);

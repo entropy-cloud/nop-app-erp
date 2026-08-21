@@ -56,49 +56,49 @@ public class ErpAstInventoryBizModel extends CrudBizModel<ErpAstInventory> imple
 
     @Override
     @BizMutation
-    public ErpAstInventory createInventory(@Name("id") Long id, IServiceContext context) {
+    public ErpAstInventory createInventory(@Name("id") String id, IServiceContext context) {
         return createInventoryProcessor.createInventory(id, context);
     }
 
     @Override
     @BizMutation
-    public ErpAstInventory submitForCount(@Name("id") Long id, IServiceContext context) {
+    public ErpAstInventory submitForCount(@Name("id") String id, IServiceContext context) {
         return submitForCountProcessor.submitForCount(id, context);
     }
 
     @Override
     @BizMutation
-    public ErpAstInventory reconcile(@Name("id") Long id, IServiceContext context) {
+    public ErpAstInventory reconcile(@Name("id") String id, IServiceContext context) {
         return reconcileProcessor.reconcile(id, context);
     }
 
     @Override
     @BizMutation
-    public ErpAstInventory processVariance(@Name("id") Long id, IServiceContext context) {
+    public ErpAstInventory processVariance(@Name("id") String id, IServiceContext context) {
         return processVarianceProcessor.processVariance(id, context);
     }
 
     @Override
     @BizMutation
-    public ErpAstInventory approve(@Name("id") Long id, IServiceContext context) {
-        return approveProcessor.approve(String.valueOf(id), context);
+    public ErpAstInventory approve(@Name("id") String id, IServiceContext context) {
+        return approveProcessor.approve(id, context);
     }
 
     @Override
     @BizMutation
-    public ErpAstInventory post(@Name("id") Long id, IServiceContext context) {
+    public ErpAstInventory post(@Name("id") String id, IServiceContext context) {
         return postProcessor.post(id, context);
     }
 
     @Override
     @BizMutation
-    public ErpAstInventory cancel(@Name("id") Long id, IServiceContext context) {
+    public ErpAstInventory cancel(@Name("id") String id, IServiceContext context) {
         return inventoryProcessor.cancel(id, context);
     }
 
     @Override
     @BizMutation
-    public ErpAstInventory reverse(@Name("id") Long id, IServiceContext context) {
+    public ErpAstInventory reverse(@Name("id") String id, IServiceContext context) {
         return reverseProcessor.reverse(id, context);
     }
 }

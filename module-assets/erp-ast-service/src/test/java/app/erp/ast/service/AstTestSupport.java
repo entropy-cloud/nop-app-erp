@@ -20,7 +20,7 @@ final class AstTestSupport {
     private AstTestSupport() {
     }
 
-    static Long seedSubject(IDaoProvider daoProvider, String code, String name) {
+    static String seedSubject(IDaoProvider daoProvider, String code, String name) {
         IEntityDao<ErpMdSubject> dao = daoProvider.daoFor(ErpMdSubject.class);
         ErpMdSubject subject = new ErpMdSubject();
         subject.setCode(code);
@@ -32,14 +32,14 @@ final class AstTestSupport {
         return subject.getId();
     }
 
-    static void seedAcctSchema(IDaoProvider daoProvider, long orgId) {
+    static void seedAcctSchema(IDaoProvider daoProvider, String orgId) {
         IEntityDao<ErpMdAcctSchema> dao = daoProvider.daoFor(ErpMdAcctSchema.class);
         ErpMdAcctSchema schema = new ErpMdAcctSchema();
         schema.setCode("AS-" + orgId);
         schema.setName("账套-" + orgId);
         schema.setOrgId(orgId);
         schema.setNature("FINANCIAL");
-        schema.setFunctionalCurrencyId(1L);
+        schema.setFunctionalCurrencyId("1");
         schema.setStatus("ACTIVE");
         dao.saveEntity(schema);
     }
@@ -49,7 +49,7 @@ final class AstTestSupport {
         ErpFinAccountingPeriod period = new ErpFinAccountingPeriod();
         period.setCode(code);
         period.setName(code);
-        period.setOrgId(1L);
+        period.setOrgId("1");
         period.setYear(year);
         period.setMonth(month);
         period.setStartDate(LocalDate.of(year, month, 1));
@@ -59,8 +59,8 @@ final class AstTestSupport {
         dao.saveEntity(period);
     }
 
-    static Long seedCategory(IDaoProvider daoProvider, String code, String name, String method, int months,
-                             Long subjectId, Long depreciationSubjectId, Long expenseSubjectId) {
+    static String seedCategory(IDaoProvider daoProvider, String code, String name, String method, int months,
+                              String subjectId, String depreciationSubjectId, String expenseSubjectId) {
         IEntityDao<ErpAstAssetCategory> dao = daoProvider.daoFor(ErpAstAssetCategory.class);
         ErpAstAssetCategory category = new ErpAstAssetCategory();
         category.setCode(code);
@@ -74,9 +74,9 @@ final class AstTestSupport {
         return category.getId();
     }
 
-    static Long seedAsset(IDaoProvider daoProvider, String code, String name, Long categoryId, long orgId,
-                          BigDecimal originalValue, BigDecimal residualValue, String method, int months,
-                          String status) {
+    static String seedAsset(IDaoProvider daoProvider, String code, String name, String categoryId, String orgId,
+                            BigDecimal originalValue, BigDecimal residualValue, String method, int months,
+                            String status) {
         IEntityDao<ErpAstAsset> dao = daoProvider.daoFor(ErpAstAsset.class);
         ErpAstAsset asset = new ErpAstAsset();
         asset.setCode(code);
@@ -84,7 +84,7 @@ final class AstTestSupport {
         asset.setOrgId(orgId);
         asset.setCategoryId(categoryId);
         asset.setAcquisitionDate(LocalDate.of(2026, 6, 1));
-        asset.setCurrencyId(1L);
+        asset.setCurrencyId("1");
         asset.setOriginalValue(originalValue);
         asset.setCurrentValue(originalValue);
         asset.setResidualValue(residualValue);
@@ -97,7 +97,7 @@ final class AstTestSupport {
         return asset.getId();
     }
 
-    static void seedPendingSchedule(IDaoProvider daoProvider, Long assetId, Long orgId, String period) {
+    static void seedPendingSchedule(IDaoProvider daoProvider, String assetId, String orgId, String period) {
         IEntityDao<ErpAstDepreciationSchedule> dao = daoProvider.daoFor(ErpAstDepreciationSchedule.class);
         ErpAstDepreciationSchedule s = new ErpAstDepreciationSchedule();
         s.setAssetId(assetId);
@@ -112,8 +112,8 @@ final class AstTestSupport {
      * 种子一条已执行且 posted=true 的折旧计划（用于批量折旧错误隔离测试：构造悬挂/孤儿态使重执行触发
      * 红冲硬前置抛 ERR_REVERSE_SOURCE_NOT_FOUND，验证 executeBatchDepreciation try/catch 隔离）。
      */
-    static Long seedExecutedPostedSchedule(IDaoProvider daoProvider, Long assetId, Long orgId, String period,
-                                           BigDecimal actualAmount, BigDecimal accumDep, BigDecimal nbv) {
+    static String seedExecutedPostedSchedule(IDaoProvider daoProvider, String assetId, String orgId, String period,
+                                             BigDecimal actualAmount, BigDecimal accumDep, BigDecimal nbv) {
         IEntityDao<ErpAstDepreciationSchedule> dao = daoProvider.daoFor(ErpAstDepreciationSchedule.class);
         ErpAstDepreciationSchedule s = new ErpAstDepreciationSchedule();
         s.setAssetId(assetId);
@@ -126,7 +126,7 @@ final class AstTestSupport {
         s.setBusinessDate(java.time.YearMonth.parse(period).atDay(1));
         s.setStatus(ErpAstConstants.SCHEDULE_STATUS_EXECUTED);
         s.setPosted(true);
-        s.setVoucherId(999_000L);
+        s.setVoucherId("999000");
         dao.saveEntity(s);
         return s.getId();
     }

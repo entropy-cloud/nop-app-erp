@@ -28,13 +28,13 @@ public class ErpAstAssetBizModel extends CrudBizModel<ErpAstAsset> implements IE
 
     @Override
     @BizMutation
-    public ErpAstAsset suspend(@Name("assetId") Long assetId, IServiceContext context) {
+    public ErpAstAsset suspend(@Name("assetId") String assetId, IServiceContext context) {
         return suspendResumeProcessor.suspend(assetId, context);
     }
 
     @Override
     @BizMutation
-    public ErpAstAsset resume(@Name("assetId") Long assetId, IServiceContext context) {
+    public ErpAstAsset resume(@Name("assetId") String assetId, IServiceContext context) {
         return suspendResumeProcessor.resume(assetId, context);
     }
 

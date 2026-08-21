@@ -275,7 +275,7 @@ public class _ErpAstInventory extends DynamicOrmEntity{
 
     
     /* ID: ID */
-    private java.lang.Long _id;
+    private java.lang.String _id;
     
     /* 盘点单号: CODE */
     private java.lang.String _code;
@@ -284,28 +284,28 @@ public class _ErpAstInventory extends DynamicOrmEntity{
     private java.lang.String _name;
     
     /* 业务组织: ORG_ID */
-    private java.lang.Long _orgId;
+    private java.lang.String _orgId;
     
     /* 盘点状态: STATUS */
     private java.lang.String _status;
     
     /* 范围-部门: RANGE_DEPARTMENT_ID */
-    private java.lang.Long _rangeDepartmentId;
+    private java.lang.String _rangeDepartmentId;
     
     /* 范围-资产类别: RANGE_CATEGORY_ID */
-    private java.lang.Long _rangeCategoryId;
+    private java.lang.String _rangeCategoryId;
     
     /* 范围-地点: RANGE_LOCATION_ID */
-    private java.lang.Long _rangeLocationId;
+    private java.lang.String _rangeLocationId;
     
     /* 盘点负责人: RESPONSIBLE_BY_ID */
-    private java.lang.Long _responsibleById;
+    private java.lang.String _responsibleById;
     
     /* 盘点基准日: BUSINESS_DATE */
     private java.time.LocalDate _businessDate;
     
     /* 币种: CURRENCY_ID */
-    private java.lang.Long _currencyId;
+    private java.lang.String _currencyId;
     
     /* 汇率: EXCHANGE_RATE */
     private java.math.BigDecimal _exchangeRate;
@@ -546,9 +546,9 @@ public class _ErpAstInventory extends DynamicOrmEntity{
         switch(propId){
         
             case PROP_ID_id:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_id));
                }
                setId(typedValue);
@@ -576,9 +576,9 @@ public class _ErpAstInventory extends DynamicOrmEntity{
             }
         
             case PROP_ID_orgId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_orgId));
                }
                setOrgId(typedValue);
@@ -596,9 +596,9 @@ public class _ErpAstInventory extends DynamicOrmEntity{
             }
         
             case PROP_ID_rangeDepartmentId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_rangeDepartmentId));
                }
                setRangeDepartmentId(typedValue);
@@ -606,9 +606,9 @@ public class _ErpAstInventory extends DynamicOrmEntity{
             }
         
             case PROP_ID_rangeCategoryId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_rangeCategoryId));
                }
                setRangeCategoryId(typedValue);
@@ -616,9 +616,9 @@ public class _ErpAstInventory extends DynamicOrmEntity{
             }
         
             case PROP_ID_rangeLocationId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_rangeLocationId));
                }
                setRangeLocationId(typedValue);
@@ -626,9 +626,9 @@ public class _ErpAstInventory extends DynamicOrmEntity{
             }
         
             case PROP_ID_responsibleById:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_responsibleById));
                }
                setResponsibleById(typedValue);
@@ -646,9 +646,9 @@ public class _ErpAstInventory extends DynamicOrmEntity{
             }
         
             case PROP_ID_currencyId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_currencyId));
                }
                setCurrencyId(typedValue);
@@ -866,7 +866,7 @@ public class _ErpAstInventory extends DynamicOrmEntity{
         
             case PROP_ID_id:{
                onInitProp(propId);
-               this._id = (java.lang.Long)value;
+               this._id = (java.lang.String)value;
                orm_id(); // 如果是设置主键字段，则触发watcher
                break;
             }
@@ -887,7 +887,7 @@ public class _ErpAstInventory extends DynamicOrmEntity{
         
             case PROP_ID_orgId:{
                onInitProp(propId);
-               this._orgId = (java.lang.Long)value;
+               this._orgId = (java.lang.String)value;
                
                break;
             }
@@ -901,28 +901,28 @@ public class _ErpAstInventory extends DynamicOrmEntity{
         
             case PROP_ID_rangeDepartmentId:{
                onInitProp(propId);
-               this._rangeDepartmentId = (java.lang.Long)value;
+               this._rangeDepartmentId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_rangeCategoryId:{
                onInitProp(propId);
-               this._rangeCategoryId = (java.lang.Long)value;
+               this._rangeCategoryId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_rangeLocationId:{
                onInitProp(propId);
-               this._rangeLocationId = (java.lang.Long)value;
+               this._rangeLocationId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_responsibleById:{
                onInitProp(propId);
-               this._responsibleById = (java.lang.Long)value;
+               this._responsibleById = (java.lang.String)value;
                
                break;
             }
@@ -936,7 +936,7 @@ public class _ErpAstInventory extends DynamicOrmEntity{
         
             case PROP_ID_currencyId:{
                onInitProp(propId);
-               this._currencyId = (java.lang.Long)value;
+               this._currencyId = (java.lang.String)value;
                
                break;
             }
@@ -1090,7 +1090,7 @@ public class _ErpAstInventory extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final java.lang.Long getId(){
+    public final java.lang.String getId(){
          onPropGet(PROP_ID_id);
          return _id;
     }
@@ -1098,7 +1098,7 @@ public class _ErpAstInventory extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final void setId(java.lang.Long value){
+    public final void setId(java.lang.String value){
         if(onPropSet(PROP_ID_id,value)){
             this._id = value;
             internalClearRefs(PROP_ID_id);
@@ -1147,7 +1147,7 @@ public class _ErpAstInventory extends DynamicOrmEntity{
     /**
      * 业务组织: ORG_ID
      */
-    public final java.lang.Long getOrgId(){
+    public final java.lang.String getOrgId(){
          onPropGet(PROP_ID_orgId);
          return _orgId;
     }
@@ -1155,7 +1155,7 @@ public class _ErpAstInventory extends DynamicOrmEntity{
     /**
      * 业务组织: ORG_ID
      */
-    public final void setOrgId(java.lang.Long value){
+    public final void setOrgId(java.lang.String value){
         if(onPropSet(PROP_ID_orgId,value)){
             this._orgId = value;
             internalClearRefs(PROP_ID_orgId);
@@ -1185,7 +1185,7 @@ public class _ErpAstInventory extends DynamicOrmEntity{
     /**
      * 范围-部门: RANGE_DEPARTMENT_ID
      */
-    public final java.lang.Long getRangeDepartmentId(){
+    public final java.lang.String getRangeDepartmentId(){
          onPropGet(PROP_ID_rangeDepartmentId);
          return _rangeDepartmentId;
     }
@@ -1193,7 +1193,7 @@ public class _ErpAstInventory extends DynamicOrmEntity{
     /**
      * 范围-部门: RANGE_DEPARTMENT_ID
      */
-    public final void setRangeDepartmentId(java.lang.Long value){
+    public final void setRangeDepartmentId(java.lang.String value){
         if(onPropSet(PROP_ID_rangeDepartmentId,value)){
             this._rangeDepartmentId = value;
             internalClearRefs(PROP_ID_rangeDepartmentId);
@@ -1204,7 +1204,7 @@ public class _ErpAstInventory extends DynamicOrmEntity{
     /**
      * 范围-资产类别: RANGE_CATEGORY_ID
      */
-    public final java.lang.Long getRangeCategoryId(){
+    public final java.lang.String getRangeCategoryId(){
          onPropGet(PROP_ID_rangeCategoryId);
          return _rangeCategoryId;
     }
@@ -1212,7 +1212,7 @@ public class _ErpAstInventory extends DynamicOrmEntity{
     /**
      * 范围-资产类别: RANGE_CATEGORY_ID
      */
-    public final void setRangeCategoryId(java.lang.Long value){
+    public final void setRangeCategoryId(java.lang.String value){
         if(onPropSet(PROP_ID_rangeCategoryId,value)){
             this._rangeCategoryId = value;
             internalClearRefs(PROP_ID_rangeCategoryId);
@@ -1223,7 +1223,7 @@ public class _ErpAstInventory extends DynamicOrmEntity{
     /**
      * 范围-地点: RANGE_LOCATION_ID
      */
-    public final java.lang.Long getRangeLocationId(){
+    public final java.lang.String getRangeLocationId(){
          onPropGet(PROP_ID_rangeLocationId);
          return _rangeLocationId;
     }
@@ -1231,7 +1231,7 @@ public class _ErpAstInventory extends DynamicOrmEntity{
     /**
      * 范围-地点: RANGE_LOCATION_ID
      */
-    public final void setRangeLocationId(java.lang.Long value){
+    public final void setRangeLocationId(java.lang.String value){
         if(onPropSet(PROP_ID_rangeLocationId,value)){
             this._rangeLocationId = value;
             internalClearRefs(PROP_ID_rangeLocationId);
@@ -1242,7 +1242,7 @@ public class _ErpAstInventory extends DynamicOrmEntity{
     /**
      * 盘点负责人: RESPONSIBLE_BY_ID
      */
-    public final java.lang.Long getResponsibleById(){
+    public final java.lang.String getResponsibleById(){
          onPropGet(PROP_ID_responsibleById);
          return _responsibleById;
     }
@@ -1250,7 +1250,7 @@ public class _ErpAstInventory extends DynamicOrmEntity{
     /**
      * 盘点负责人: RESPONSIBLE_BY_ID
      */
-    public final void setResponsibleById(java.lang.Long value){
+    public final void setResponsibleById(java.lang.String value){
         if(onPropSet(PROP_ID_responsibleById,value)){
             this._responsibleById = value;
             internalClearRefs(PROP_ID_responsibleById);
@@ -1280,7 +1280,7 @@ public class _ErpAstInventory extends DynamicOrmEntity{
     /**
      * 币种: CURRENCY_ID
      */
-    public final java.lang.Long getCurrencyId(){
+    public final java.lang.String getCurrencyId(){
          onPropGet(PROP_ID_currencyId);
          return _currencyId;
     }
@@ -1288,7 +1288,7 @@ public class _ErpAstInventory extends DynamicOrmEntity{
     /**
      * 币种: CURRENCY_ID
      */
-    public final void setCurrencyId(java.lang.Long value){
+    public final void setCurrencyId(java.lang.String value){
         if(onPropSet(PROP_ID_currencyId,value)){
             this._currencyId = value;
             internalClearRefs(PROP_ID_currencyId);

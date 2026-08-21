@@ -19,19 +19,19 @@
             <cols>
 
                 <!--ID-->
-                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="id" mandatory="true" sortable="true"/>
 
                 <!--盘点单-->
-                <col id="inventoryId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="inventoryId" mandatory="true" sortable="true"/>
 
                 <!--所属组织-->
-                <col id="orgId" ui:number="true" sortable="true"/>
+                <col id="orgId" sortable="true"/>
 
                 <!--行号-->
                 <col id="lineNo" ui:number="true" sortable="true"/>
 
                 <!--账面资产-->
-                <col id="assetId" ui:number="true" sortable="true"/>
+                <col id="assetId" sortable="true"/>
 
                 <!--资产编码快照-->
                 <col id="assetCodeSnapshot" sortable="true"/>
@@ -40,7 +40,7 @@
                 <col id="assetNameSnapshot" sortable="true"/>
 
                 <!--资产类别-->
-                <col id="categoryId" ui:number="true" sortable="true"/>
+                <col id="categoryId" sortable="true"/>
 
                 <!--账面数量-->
                 <col id="bookQuantity" ui:number="true" sortable="true"/>
@@ -67,13 +67,13 @@
                 <col id="disposition" sortable="true"/>
 
                 <!--盘盈新建资产-->
-                <col id="newAssetId" ui:number="true" sortable="true"/>
+                <col id="newAssetId" sortable="true"/>
 
                 <!--盘盈资本化单-->
-                <col id="capitalizationId" ui:number="true" sortable="true"/>
+                <col id="capitalizationId" sortable="true"/>
 
                 <!--盘亏处置单-->
-                <col id="disposalId" ui:number="true" sortable="true"/>
+                <col id="disposalId" sortable="true"/>
 
                 <!--调查备注-->
                 <col id="investigatedRemark" sortable="true"/>

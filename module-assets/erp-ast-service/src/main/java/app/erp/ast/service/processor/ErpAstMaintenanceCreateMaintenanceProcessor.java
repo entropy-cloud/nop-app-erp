@@ -23,8 +23,8 @@ public class ErpAstMaintenanceCreateMaintenanceProcessor {
     @Inject
     ErpAstMaintenanceStateMachine stateMachine;
 
-    public ErpAstMaintenance createMaintenance(Long assetId, String code, String name, String businessDate,
-                                                Long maintenanceVisitId, String reason, IServiceContext context) {
+    public ErpAstMaintenance createMaintenance(String assetId, String code, String name, String businessDate,
+                                                String maintenanceVisitId, String reason, IServiceContext context) {
         ErpAstAsset asset = facade.requireAsset(assetId);
         facade.validateAssetNotTerminal(asset, context);
 
@@ -33,7 +33,7 @@ public class ErpAstMaintenanceCreateMaintenanceProcessor {
         maintenance.setCode(code);
         maintenance.setName(name);
         maintenance.setOrgId(asset.getOrgId());
-        maintenance.setAssetId(assetId);
+        maintenance.setAssetId(String.valueOf(assetId));
         maintenance.setMaintenanceVisitId(maintenanceVisitId);
         // 创建种子初始态目标态委托 StateMachine Bean（M4.53，契约 §4）
         maintenance.setStatus(stateMachine.createTargetStatus());

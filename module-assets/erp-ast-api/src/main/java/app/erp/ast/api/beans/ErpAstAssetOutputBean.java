@@ -13,16 +13,16 @@
     public class ErpAstAssetOutputBean {
 
     
-        private Long _id;
+        private String _id;
 
     
         @PropMeta(propId=1)
     
-        public Long getId(){
+        public String getId(){
             return _id;
         }
 
-        public void setId(Long value){
+        public void setId(String value){
             this._id = value;
         }
 
@@ -55,30 +55,30 @@
         }
 
 
-        private Long _orgId;
+        private String _orgId;
 
     
         @PropMeta(propId=4)
     
-        public Long getOrgId(){
+        public String getOrgId(){
             return _orgId;
         }
 
-        public void setOrgId(Long value){
+        public void setOrgId(String value){
             this._orgId = value;
         }
 
 
-        private Long _categoryId;
+        private String _categoryId;
 
     
         @PropMeta(propId=5)
     
-        public Long getCategoryId(){
+        public String getCategoryId(){
             return _categoryId;
         }
 
-        public void setCategoryId(Long value){
+        public void setCategoryId(String value){
             this._categoryId = value;
         }
 
@@ -97,16 +97,16 @@
         }
 
 
-        private Long _currencyId;
+        private String _currencyId;
 
     
         @PropMeta(propId=7)
     
-        public Long getCurrencyId(){
+        public String getCurrencyId(){
             return _currencyId;
         }
 
-        public void setCurrencyId(Long value){
+        public void setCurrencyId(String value){
             this._currencyId = value;
         }
 
@@ -207,58 +207,58 @@
         }
 
 
-        private Long _departmentId;
+        private String _departmentId;
 
     
         @PropMeta(propId=14)
     
-        public Long getDepartmentId(){
+        public String getDepartmentId(){
             return _departmentId;
         }
 
-        public void setDepartmentId(Long value){
+        public void setDepartmentId(String value){
             this._departmentId = value;
         }
 
 
-        private Long _locationId;
+        private String _locationId;
 
     
         @PropMeta(propId=15)
     
-        public Long getLocationId(){
+        public String getLocationId(){
             return _locationId;
         }
 
-        public void setLocationId(Long value){
+        public void setLocationId(String value){
             this._locationId = value;
         }
 
 
-        private Long _employeeId;
+        private String _employeeId;
 
     
         @PropMeta(propId=16)
     
-        public Long getEmployeeId(){
+        public String getEmployeeId(){
             return _employeeId;
         }
 
-        public void setEmployeeId(Long value){
+        public void setEmployeeId(String value){
             this._employeeId = value;
         }
 
 
-        private Long _staffId;
+        private String _staffId;
 
     
         @PropMeta(propId=17)
     
-        public Long getStaffId(){
+        public String getStaffId(){
             return _staffId;
         }
 
-        public void setStaffId(Long value){
+        public void setStaffId(String value){
             this._staffId = value;
         }
 

@@ -36,7 +36,7 @@ public class AssetInventoryPostingDispatcher {
     @Inject
     IDaoProvider daoProvider;
 
-    public Long tryPost(ErpAstInventory inventory) {
+    public String tryPost(ErpAstInventory inventory) {
         PostingEvent event = buildEvent(inventory);
         try {
             return executor.postEvent(event);
@@ -88,18 +88,18 @@ public class AssetInventoryPostingDispatcher {
         return event;
     }
 
-    private ErpAstAssetCategory resolveRangeCategory(Long rangeCategoryId) {
+    private ErpAstAssetCategory resolveRangeCategory(String rangeCategoryId) {
         if (rangeCategoryId == null) {
             return null;
         }
         return daoProvider.daoFor(ErpAstAssetCategory.class).getEntityById(rangeCategoryId);
     }
 
-    private Long resolveAcctSchemaId(Long orgId) {
+    private String resolveAcctSchemaId(String orgId) {
         return AcctSchemaResolver.resolvePrimarySchemaId(daoProvider, orgId);
     }
 
-    private String resolveSubjectCode(Long subjectId, String defaultCode) {
+    private String resolveSubjectCode(String subjectId, String defaultCode) {
         if (subjectId == null) {
             return defaultCode;
         }

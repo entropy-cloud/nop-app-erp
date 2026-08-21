@@ -32,7 +32,7 @@ public class ErpAstDepreciationScheduleRecalculateForCapitalizationMaintenancePr
     @Inject
     IDaoProvider daoProvider;
 
-    public int recalculateForCapitalizationMaintenance(Long assetId, BigDecimal increment, IServiceContext context) {
+    public int recalculateForCapitalizationMaintenance(String assetId, BigDecimal increment, IServiceContext context) {
         ErpAstAsset asset = facade.requireAsset(assetId);
         BigDecimal original = ErpAstDepreciationScheduleProcessor.nz(asset.getOriginalValue());
         BigDecimal residual = ErpAstDepreciationScheduleProcessor.nz(asset.getResidualValue());
@@ -74,7 +74,7 @@ public class ErpAstDepreciationScheduleRecalculateForCapitalizationMaintenancePr
                         : monthly;
 
                 ErpAstDepreciationSchedule schedule = scheduleDao.newEntity();
-                schedule.setAssetId(assetId);
+                schedule.setAssetId(String.valueOf(assetId));
                 schedule.setOrgId(asset.getOrgId());
                 schedule.setPeriod(period);
                 schedule.setPlannedAmount(planned);

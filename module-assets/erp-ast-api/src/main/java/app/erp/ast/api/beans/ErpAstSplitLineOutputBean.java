@@ -13,44 +13,44 @@
     public class ErpAstSplitLineOutputBean {
 
     
-        private Long _id;
+        private String _id;
 
     
         @PropMeta(propId=1)
     
-        public Long getId(){
+        public String getId(){
             return _id;
         }
 
-        public void setId(Long value){
+        public void setId(String value){
             this._id = value;
         }
 
 
-        private Long _splitId;
+        private String _splitId;
 
     
         @PropMeta(propId=2)
     
-        public Long getSplitId(){
+        public String getSplitId(){
             return _splitId;
         }
 
-        public void setSplitId(Long value){
+        public void setSplitId(String value){
             this._splitId = value;
         }
 
 
-        private Long _orgId;
+        private String _orgId;
 
     
         @PropMeta(propId=3)
     
-        public Long getOrgId(){
+        public String getOrgId(){
             return _orgId;
         }
 
-        public void setOrgId(Long value){
+        public void setOrgId(String value){
             this._orgId = value;
         }
 
@@ -97,16 +97,16 @@
         }
 
 
-        private Long _categoryId;
+        private String _categoryId;
 
     
         @PropMeta(propId=7)
     
-        public Long getCategoryId(){
+        public String getCategoryId(){
             return _categoryId;
         }
 
-        public void setCategoryId(Long value){
+        public void setCategoryId(String value){
             this._categoryId = value;
         }
 
@@ -193,16 +193,16 @@
         }
 
 
-        private Long _targetAssetId;
+        private String _targetAssetId;
 
     
         @PropMeta(propId=13)
     
-        public Long getTargetAssetId(){
+        public String getTargetAssetId(){
             return _targetAssetId;
         }
 
-        public void setTargetAssetId(Long value){
+        public void setTargetAssetId(String value){
             this._targetAssetId = value;
         }
 

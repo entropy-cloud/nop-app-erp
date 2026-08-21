@@ -25,7 +25,7 @@ public class ErpAstCipReverseTransferProcessor {
     @Inject
     ErpAstAssetCapitalizationProcessor capitalizationProcessor;
 
-    public ErpAstCip reverseTransfer(Long cipId, Long capitalizationId, IServiceContext context) {
+    public ErpAstCip reverseTransfer(String cipId, String capitalizationId, IServiceContext context) {
         ErpAstCip cip = facade.requireCip(cipId, context);
         if (!Objects.equals(cip.getStatus(), ErpAstConstants.CIP_STATUS_TRANSFERRED)) {
             throw facade.illegalTransition(cip, cip.getStatus(), ErpAstConstants.CIP_STATUS_IN_CONSTRUCTION);
@@ -38,7 +38,7 @@ public class ErpAstCipReverseTransferProcessor {
                     .param(ErpAstErrors.ARG_CIP_CODE, cip.getCode());
         }
 
-        capitalizationProcessor.reverseApprove(String.valueOf(capitalizationId), context);
+        capitalizationProcessor.reverseApprove(capitalizationId, context);
 
         IEntityDao<ErpAstCipCostItem> dao = facade.costItemDao();
         for (ErpAstCipCostItem item : capCostItems) {

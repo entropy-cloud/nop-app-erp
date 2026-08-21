@@ -12,44 +12,44 @@
     public class ErpAstDepreciationScheduleInputBean extends CrudInputBase {
 
     
-        private Long _id;
+        private String _id;
 
     
         @PropMeta(propId=1)
     
-        public Long getId(){
+        public String getId(){
             return _id;
         }
 
-        public void setId(Long value){
+        public void setId(String value){
             this._id = value;
         }
 
 
-        private Long _assetId;
+        private String _assetId;
 
     
         @PropMeta(propId=2)
     
-        public Long getAssetId(){
+        public String getAssetId(){
             return _assetId;
         }
 
-        public void setAssetId(Long value){
+        public void setAssetId(String value){
             this._assetId = value;
         }
 
 
-        private Long _orgId;
+        private String _orgId;
 
     
         @PropMeta(propId=3)
     
-        public Long getOrgId(){
+        public String getOrgId(){
             return _orgId;
         }
 
-        public void setOrgId(Long value){
+        public void setOrgId(String value){
             this._orgId = value;
         }
 
@@ -152,16 +152,16 @@
         }
 
 
-        private Long _voucherId;
+        private String _voucherId;
 
     
         @PropMeta(propId=14)
     
-        public Long getVoucherId(){
+        public String getVoucherId(){
             return _voucherId;
         }
 
-        public void setVoucherId(Long value){
+        public void setVoucherId(String value){
             this._voucherId = value;
         }
 
@@ -180,16 +180,16 @@
         }
 
 
-        private Long _currencyId;
+        private String _currencyId;
 
     
         @PropMeta(propId=16)
     
-        public Long getCurrencyId(){
+        public String getCurrencyId(){
             return _currencyId;
         }
 
-        public void setCurrencyId(Long value){
+        public void setCurrencyId(String value){
             this._currencyId = value;
         }
 

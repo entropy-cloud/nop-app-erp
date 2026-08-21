@@ -24,7 +24,7 @@ public class ErpAstMaintenanceApproveProcessor extends AbstractApproveProcessor<
 
     @Override
     public ErpAstMaintenance approve(String id, IServiceContext context) {
-        ErpAstMaintenance m = processor.requireMaintenance(Long.valueOf(id), context);
+        ErpAstMaintenance m = processor.requireMaintenance(id, context);
         if (Objects.equals(m.getStatus(), ErpAstConstants.MAINTENANCE_STATUS_POSTED)) {
             return m;
         }

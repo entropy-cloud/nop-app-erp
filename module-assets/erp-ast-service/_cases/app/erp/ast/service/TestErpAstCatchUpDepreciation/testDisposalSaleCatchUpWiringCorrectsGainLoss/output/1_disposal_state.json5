@@ -1,5 +1,5 @@
 {
-  "id": 21,
+  "id": "@var:NopWfInstance@bizObjId",
   "code": "@var:ErpFinVoucherBillR@billCode_1",
   "gainLoss": -2000.0000,
   "posted": true,

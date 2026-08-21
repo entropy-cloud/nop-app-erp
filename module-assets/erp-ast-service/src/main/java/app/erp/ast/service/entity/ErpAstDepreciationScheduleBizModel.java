@@ -50,7 +50,7 @@ public class ErpAstDepreciationScheduleBizModel extends CrudBizModel<ErpAstDepre
 
     @Override
     @BizMutation
-    public ErpAstDepreciationSchedule executeDepreciation(@Name("assetId") Long assetId,
+    public ErpAstDepreciationSchedule executeDepreciation(@Name("assetId") String assetId,
                                                            @Name("period") String period,
                                                            IServiceContext context) {
         return executeDepreciationProcessor.executeDepreciation(assetId, period, context);
@@ -64,7 +64,7 @@ public class ErpAstDepreciationScheduleBizModel extends CrudBizModel<ErpAstDepre
 
     @Override
     @BizMutation
-    public ErpAstDepreciationSchedule reverseDepreciation(@Name("assetId") Long assetId,
+    public ErpAstDepreciationSchedule reverseDepreciation(@Name("assetId") String assetId,
                                                            @Name("period") String period,
                                                            IServiceContext context) {
         return reverseDepreciationProcessor.reverseDepreciation(assetId, period, context);
@@ -72,7 +72,7 @@ public class ErpAstDepreciationScheduleBizModel extends CrudBizModel<ErpAstDepre
 
     @Override
     @BizMutation
-    public int recalculateForCapitalizationMaintenance(@Name("assetId") Long assetId,
+    public int recalculateForCapitalizationMaintenance(@Name("assetId") String assetId,
                                                        @Name("increment") BigDecimal increment,
                                                        IServiceContext context) {
         return recalculateProcessor.recalculateForCapitalizationMaintenance(assetId, increment, context);
@@ -80,7 +80,7 @@ public class ErpAstDepreciationScheduleBizModel extends CrudBizModel<ErpAstDepre
 
     @Override
     @BizMutation
-    public List<ErpAstDepreciationSchedule> catchUpDepreciation(@Name("assetId") Long assetId,
+    public List<ErpAstDepreciationSchedule> catchUpDepreciation(@Name("assetId") String assetId,
                                                                 @Name("currentPeriod") String currentPeriod,
                                                                 @Name("missedPeriods") List<String> missedPeriods,
                                                                 IServiceContext context) {

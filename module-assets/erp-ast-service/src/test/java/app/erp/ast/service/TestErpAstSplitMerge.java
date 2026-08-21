@@ -67,11 +67,11 @@ public class TestErpAstSplitMerge extends JunitAutoTestCase {
 
     @Test
     public void testProportionalSplitHappyPath() {
-        long[] sourceHolder = new long[1];
-        Long splitId = ormTemplate.runInSession(session -> {
+        String[] sourceHolder = new String[1];
+        String splitId = ormTemplate.runInSession(session -> {
             seedCoreBasics();
-            Long categoryId = seedCategory("CAT-SP1", "拆分类别1");
-            Long assetId = AstTestSupport.seedAsset(daoProvider, "AST-SP1", "拆分源资产", categoryId, 1L,
+            String categoryId = seedCategory("CAT-SP1", "拆分类别1");
+            String assetId = AstTestSupport.seedAsset(daoProvider, "AST-SP1", "拆分源资产", categoryId, "1",
                     new BigDecimal("100000"), BigDecimal.ZERO,
                     ErpAstConstants.DEPRECIATION_METHOD_STRAIGHT_LINE, 60,
                     ErpAstConstants.ASSET_STATUS_IN_SERVICE);
@@ -81,9 +81,9 @@ public class TestErpAstSplitMerge extends JunitAutoTestCase {
             src.setNetBookValue(new BigDecimal("60000"));
             daoProvider.daoFor(ErpAstAsset.class).saveOrUpdateEntity(src);
             sourceHolder[0] = assetId;
-            return seedSplit("SPL-001", assetId, categoryId, new BigDecimal("100000"), 1L);
+            return seedSplit("SPL-001", assetId, categoryId, new BigDecimal("100000"), "1");
         });
-        seedProportionalLines(splitId, 1L, new BigDecimal[]{
+        seedProportionalLines(splitId, "1", new BigDecimal[]{
                 new BigDecimal("0.5"), new BigDecimal("0.3"), new BigDecimal("0.2")});
 
         assertEquals(0, submitForApproval(splitId).getStatus(), "拆分提交成功");
@@ -126,11 +126,11 @@ public class TestErpAstSplitMerge extends JunitAutoTestCase {
 
     @Test
     public void testFixedAmountSplit() {
-        long[] sourceHolder = new long[1];
-        Long splitId = ormTemplate.runInSession(session -> {
+        String[] sourceHolder = new String[1];
+        String splitId = ormTemplate.runInSession(session -> {
             seedCoreBasics();
-            Long categoryId = seedCategory("CAT-SP2", "拆分类别2");
-            Long assetId = AstTestSupport.seedAsset(daoProvider, "AST-SP2", "固定金额拆分源", categoryId, 1L,
+            String categoryId = seedCategory("CAT-SP2", "拆分类别2");
+            String assetId = AstTestSupport.seedAsset(daoProvider, "AST-SP2", "固定金额拆分源", categoryId, "1",
                     new BigDecimal("100000"), BigDecimal.ZERO,
                     ErpAstConstants.DEPRECIATION_METHOD_STRAIGHT_LINE, 60,
                     ErpAstConstants.ASSET_STATUS_IN_SERVICE);
@@ -139,9 +139,9 @@ public class TestErpAstSplitMerge extends JunitAutoTestCase {
             src.setNetBookValue(new BigDecimal("60000"));
             daoProvider.daoFor(ErpAstAsset.class).saveOrUpdateEntity(src);
             sourceHolder[0] = assetId;
-            return seedSplit("SPL-002", assetId, categoryId, new BigDecimal("100000"), 1L);
+            return seedSplit("SPL-002", assetId, categoryId, new BigDecimal("100000"), "1");
         });
-        seedFixedAmountLines(splitId, 1L, new BigDecimal[]{
+        seedFixedAmountLines(splitId, "1", new BigDecimal[]{
                 new BigDecimal("50000"), new BigDecimal("30000"), new BigDecimal("20000")});
 
         assertEquals(0, submitForApproval(splitId).getStatus(), "固定金额拆分提交成功");
@@ -157,17 +157,17 @@ public class TestErpAstSplitMerge extends JunitAutoTestCase {
 
     @Test
     public void testProportionNotBalancedRejected() {
-        Long splitId = ormTemplate.runInSession(session -> {
+        String splitId = ormTemplate.runInSession(session -> {
             seedCoreBasics();
-            Long categoryId = seedCategory("CAT-SP3", "拆分类别3");
-            Long assetId = AstTestSupport.seedAsset(daoProvider, "AST-SP3", "不平衡源", categoryId, 1L,
+            String categoryId = seedCategory("CAT-SP3", "拆分类别3");
+            String assetId = AstTestSupport.seedAsset(daoProvider, "AST-SP3", "不平衡源", categoryId, "1",
                     new BigDecimal("100000"), BigDecimal.ZERO,
                     ErpAstConstants.DEPRECIATION_METHOD_STRAIGHT_LINE, 60,
                     ErpAstConstants.ASSET_STATUS_IN_SERVICE);
-            return seedSplit("SPL-003", assetId, categoryId, new BigDecimal("100000"), 1L);
+            return seedSplit("SPL-003", assetId, categoryId, new BigDecimal("100000"), "1");
         });
         // Σ = 0.95（不平衡）
-        seedProportionalLines(splitId, 1L, new BigDecimal[]{
+        seedProportionalLines(splitId, "1", new BigDecimal[]{
                 new BigDecimal("0.5"), new BigDecimal("0.3"), new BigDecimal("0.15")});
 
         ApiResponse<?> bad = submitForApproval(splitId);
@@ -176,17 +176,17 @@ public class TestErpAstSplitMerge extends JunitAutoTestCase {
 
     @Test
     public void testCrossCategoryConfigGatedRejected() {
-        Long splitId = ormTemplate.runInSession(session -> {
+        String splitId = ormTemplate.runInSession(session -> {
             seedCoreBasics();
-            Long categoryId = seedCategory("CAT-SP4", "拆分类别4");
-            Long otherCategoryId = seedCategory("CAT-SP4-OTHER", "其他类别");
-            Long assetId = AstTestSupport.seedAsset(daoProvider, "AST-SP4", "跨类别源", categoryId, 1L,
+            String categoryId = seedCategory("CAT-SP4", "拆分类别4");
+            String otherCategoryId = seedCategory("CAT-SP4-OTHER", "其他类别");
+            String assetId = AstTestSupport.seedAsset(daoProvider, "AST-SP4", "跨类别源", categoryId, "1",
                     new BigDecimal("100000"), BigDecimal.ZERO,
                     ErpAstConstants.DEPRECIATION_METHOD_STRAIGHT_LINE, 60,
                     ErpAstConstants.ASSET_STATUS_IN_SERVICE);
-            Long sid = seedSplit("SPL-004", assetId, categoryId, new BigDecimal("100000"), 1L);
+            String sid = seedSplit("SPL-004", assetId, categoryId, new BigDecimal("100000"), "1");
             // 行类别设为其他类别（与源不同），config=false 默认
-            seedProportionalLinesWithCategory(sid, 1L, otherCategoryId,
+            seedProportionalLinesWithCategory(sid, "1", otherCategoryId,
                     new BigDecimal("0.5"));
             return sid;
         });
@@ -197,16 +197,16 @@ public class TestErpAstSplitMerge extends JunitAutoTestCase {
 
     @Test
     public void testSourceNotInServiceRejected() {
-        Long splitId = ormTemplate.runInSession(session -> {
+        String splitId = ormTemplate.runInSession(session -> {
             seedCoreBasics();
-            Long categoryId = seedCategory("CAT-SP5", "拆分类别5");
-            Long assetId = AstTestSupport.seedAsset(daoProvider, "AST-SP5", "已报废源", categoryId, 1L,
+            String categoryId = seedCategory("CAT-SP5", "拆分类别5");
+            String assetId = AstTestSupport.seedAsset(daoProvider, "AST-SP5", "已报废源", categoryId, "1",
                     new BigDecimal("100000"), BigDecimal.ZERO,
                     ErpAstConstants.DEPRECIATION_METHOD_STRAIGHT_LINE, 60,
                     ErpAstConstants.ASSET_STATUS_SCRAPPED);
-            return seedSplit("SPL-005", assetId, categoryId, new BigDecimal("100000"), 1L);
+            return seedSplit("SPL-005", assetId, categoryId, new BigDecimal("100000"), "1");
         });
-        seedProportionalLines(splitId, 1L, new BigDecimal[]{new BigDecimal("1.0")});
+        seedProportionalLines(splitId, "1", new BigDecimal[]{new BigDecimal("1.0")});
 
         ApiResponse<?> bad = submitForApproval(splitId);
         assertNotEquals(0, bad.getStatus(), "源资产非 IN_SERVICE 应被拒绝");
@@ -214,18 +214,18 @@ public class TestErpAstSplitMerge extends JunitAutoTestCase {
 
     @Test
     public void testApproveThenReverseNotSupported() {
-        long[] sourceHolder = new long[1];
-        Long splitId = ormTemplate.runInSession(session -> {
+        String[] sourceHolder = new String[1];
+        String splitId = ormTemplate.runInSession(session -> {
             seedCoreBasics();
-            Long categoryId = seedCategory("CAT-SP6", "拆分类别6");
-            Long assetId = AstTestSupport.seedAsset(daoProvider, "AST-SP6", "不可逆源", categoryId, 1L,
+            String categoryId = seedCategory("CAT-SP6", "拆分类别6");
+            String assetId = AstTestSupport.seedAsset(daoProvider, "AST-SP6", "不可逆源", categoryId, "1",
                     new BigDecimal("100000"), BigDecimal.ZERO,
                     ErpAstConstants.DEPRECIATION_METHOD_STRAIGHT_LINE, 60,
                     ErpAstConstants.ASSET_STATUS_IN_SERVICE);
             sourceHolder[0] = assetId;
-            return seedSplit("SPL-006", assetId, categoryId, new BigDecimal("100000"), 1L);
+            return seedSplit("SPL-006", assetId, categoryId, new BigDecimal("100000"), "1");
         });
-        seedProportionalLines(splitId, 1L, new BigDecimal[]{new BigDecimal("1.0")});
+        seedProportionalLines(splitId, "1", new BigDecimal[]{new BigDecimal("1.0")});
 
         assertEquals(0, submitForApproval(splitId).getStatus(), "提交成功");
         assertEquals(0, approve(splitId).getStatus(), "审核成功");
@@ -241,17 +241,17 @@ public class TestErpAstSplitMerge extends JunitAutoTestCase {
 
     @Test
     public void testMergeWeightedHappyPath() {
-        long[] targetHolder = new long[1];
-        Long mergeId = ormTemplate.runInSession(session -> {
+        String[] targetHolder = new String[1];
+        String mergeId = ormTemplate.runInSession(session -> {
             seedCoreBasics();
-            Long categoryId = seedCategory("CAT-MG1", "合并类别1");
-            Long a1 = seedAssetWithDep("AST-MG1", categoryId, new BigDecimal("50000"), new BigDecimal("10000"));
-            Long a2 = seedAssetWithDep("AST-MG2", categoryId, new BigDecimal("30000"), new BigDecimal("6000"));
-            Long a3 = seedAssetWithDep("AST-MG3", categoryId, new BigDecimal("20000"), new BigDecimal("4000"));
-            Long mid = seedMerge("MRG-001", 1L, 1L);
-            seedMergeLine(mid, 1L, a1, 10);
-            seedMergeLine(mid, 1L, a2, 20);
-            seedMergeLine(mid, 1L, a3, 30);
+            String categoryId = seedCategory("CAT-MG1", "合并类别1");
+            String a1 = seedAssetWithDep("AST-MG1", categoryId, new BigDecimal("50000"), new BigDecimal("10000"));
+            String a2 = seedAssetWithDep("AST-MG2", categoryId, new BigDecimal("30000"), new BigDecimal("6000"));
+            String a3 = seedAssetWithDep("AST-MG3", categoryId, new BigDecimal("20000"), new BigDecimal("4000"));
+            String mid = seedMerge("MRG-001", "1", "1");
+            seedMergeLine(mid, "1", a1, 10);
+            seedMergeLine(mid, "1", a2, 20);
+            seedMergeLine(mid, "1", a3, 30);
             return mid;
         });
 
@@ -284,17 +284,17 @@ public class TestErpAstSplitMerge extends JunitAutoTestCase {
 
     @Test
     public void testMergeCrossCurrencyRejected() {
-        Long mergeId = ormTemplate.runInSession(session -> {
+        String mergeId = ormTemplate.runInSession(session -> {
             seedCoreBasics();
             AstTestSupport.seedPeriod(daoProvider, "2026-07", 2026, 7, ErpAstConstants.PERIOD_STATUS_OPEN);
-            Long categoryId = seedCategory("CAT-MG2", "合并类别2");
-            Long a1 = seedAssetWithDepAndCurrency("AST-MG-CCY1", categoryId,
-                    new BigDecimal("50000"), new BigDecimal("10000"), 1L);
-            Long a2 = seedAssetWithDepAndCurrency("AST-MG-CCY2", categoryId,
-                    new BigDecimal("30000"), new BigDecimal("6000"), 999L);
-            Long mid = seedMerge("MRG-002", 1L, 1L);
-            seedMergeLine(mid, 1L, a1, 10);
-            seedMergeLine(mid, 1L, a2, 20);
+            String categoryId = seedCategory("CAT-MG2", "合并类别2");
+            String a1 = seedAssetWithDepAndCurrency("AST-MG-CCY1", categoryId,
+                    new BigDecimal("50000"), new BigDecimal("10000"), "1");
+            String a2 = seedAssetWithDepAndCurrency("AST-MG-CCY2", categoryId,
+                    new BigDecimal("30000"), new BigDecimal("6000"), "999");
+            String mid = seedMerge("MRG-001", "1", "1");
+            seedMergeLine(mid, "1", a1, 10);
+            seedMergeLine(mid, "1", a2, 20);
             return mid;
         });
 
@@ -304,24 +304,24 @@ public class TestErpAstSplitMerge extends JunitAutoTestCase {
 
     // ---------- rpc helpers ----------
 
-    private ApiResponse<?> submitForApproval(Long id) {
-        return executeRpc("ErpAstSplit__submitForApproval", Map.of("id", String.valueOf(id)));
+    private ApiResponse<?> submitForApproval(String id) {
+        return executeRpc("ErpAstSplit__submitForApproval", Map.of("id", id));
     }
 
-    private ApiResponse<?> approve(Long id) {
-        return executeRpc("ErpAstSplit__approve", Map.of("id", String.valueOf(id)));
+    private ApiResponse<?> approve(String id) {
+        return executeRpc("ErpAstSplit__approve", Map.of("id", id));
     }
 
-    private ApiResponse<?> reverseApprove(Long id) {
-        return executeRpc("ErpAstSplit__reverseApprove", Map.of("id", String.valueOf(id)));
+    private ApiResponse<?> reverseApprove(String id) {
+        return executeRpc("ErpAstSplit__reverseApprove", Map.of("id", id));
     }
 
-    private ApiResponse<?> mergeSubmit(Long id) {
-        return executeRpc("ErpAstMerge__submitForApproval", Map.of("id", String.valueOf(id)));
+    private ApiResponse<?> mergeSubmit(String id) {
+        return executeRpc("ErpAstMerge__submitForApproval", Map.of("id", id));
     }
 
-    private ApiResponse<?> mergeApprove(Long id) {
-        return executeRpc("ErpAstMerge__approve", Map.of("id", String.valueOf(id)));
+    private ApiResponse<?> mergeApprove(String id) {
+        return executeRpc("ErpAstMerge__approve", Map.of("id", id));
     }
 
     private ApiResponse<?> executeRpc(String action, Map<String, Object> data) {
@@ -332,12 +332,12 @@ public class TestErpAstSplitMerge extends JunitAutoTestCase {
     // ---------- helpers ----------
 
     private void seedCoreBasics() {
-        AstTestSupport.seedAcctSchema(daoProvider, 1L);
+        AstTestSupport.seedAcctSchema(daoProvider, "1");
         AstTestSupport.seedPeriod(daoProvider, "2026-07", 2026, 7, ErpAstConstants.PERIOD_STATUS_OPEN);
         AstTestSupport.seedSubject(daoProvider, "1601", "固定资产");
     }
 
-    private Long seedCategory(String code, String name) {
+    private String seedCategory(String code, String name) {
         return AstTestSupport.seedCategory(daoProvider, code, name,
                 ErpAstConstants.DEPRECIATION_METHOD_STRAIGHT_LINE, 60,
                 AstTestSupport.seedSubject(daoProvider, "1601", "固定资产"),
@@ -345,8 +345,8 @@ public class TestErpAstSplitMerge extends JunitAutoTestCase {
                 AstTestSupport.seedSubject(daoProvider, "6602", "管理费用"));
     }
 
-    private Long seedAssetWithDep(String code, Long categoryId, BigDecimal original, BigDecimal accumDep) {
-        Long assetId = AstTestSupport.seedAsset(daoProvider, code, code, categoryId, 1L,
+    private String seedAssetWithDep(String code, String categoryId, BigDecimal original, BigDecimal accumDep) {
+        String assetId = AstTestSupport.seedAsset(daoProvider, code, code, categoryId, "1",
                 original, BigDecimal.ZERO,
                 ErpAstConstants.DEPRECIATION_METHOD_STRAIGHT_LINE, 60,
                 ErpAstConstants.ASSET_STATUS_IN_SERVICE);
@@ -357,13 +357,13 @@ public class TestErpAstSplitMerge extends JunitAutoTestCase {
         return assetId;
     }
 
-    private Long seedAssetWithDepAndCurrency(String code, Long categoryId, BigDecimal original,
-                                             BigDecimal accumDep, Long currencyId) {
+    private String seedAssetWithDepAndCurrency(String code, String categoryId, BigDecimal original,
+                                               BigDecimal accumDep, String currencyId) {
         IEntityDao<ErpAstAsset> dao = daoProvider.daoFor(ErpAstAsset.class);
         ErpAstAsset asset = dao.newEntity();
         asset.setCode(code);
         asset.setName(code);
-        asset.setOrgId(1L);
+        asset.setOrgId("1");
         asset.setCategoryId(categoryId);
         asset.setAcquisitionDate(LocalDate.of(2026, 6, 1));
         asset.setCurrencyId(currencyId);
@@ -379,11 +379,11 @@ public class TestErpAstSplitMerge extends JunitAutoTestCase {
         return asset.getId();
     }
 
-    private Long seedSplit(String code, Long sourceAssetId, Long categoryId, BigDecimal amountSource, Long currencyId) {
+    private String seedSplit(String code, String sourceAssetId, String categoryId, BigDecimal amountSource, String currencyId) {
         IEntityDao<ErpAstSplit> dao = daoProvider.daoFor(ErpAstSplit.class);
         ErpAstSplit split = dao.newEntity();
         split.setCode(code);
-        split.setOrgId(1L);
+        split.setOrgId("1");
         split.setSourceAssetId(sourceAssetId);
         split.setBusinessDate(LocalDate.of(2026, 7, 15));
         split.setCurrencyId(currencyId);
@@ -397,7 +397,7 @@ public class TestErpAstSplitMerge extends JunitAutoTestCase {
         return split.getId();
     }
 
-    private void seedProportionalLines(Long splitId, Long orgId, BigDecimal[] proportions) {
+    private void seedProportionalLines(String splitId, String orgId, BigDecimal[] proportions) {
         IEntityDao<ErpAstSplitLine> dao = daoProvider.daoFor(ErpAstSplitLine.class);
         for (int i = 0; i < proportions.length; i++) {
             ErpAstSplitLine line = dao.newEntity();
@@ -412,7 +412,7 @@ public class TestErpAstSplitMerge extends JunitAutoTestCase {
         }
     }
 
-    private void seedProportionalLinesWithCategory(Long splitId, Long orgId, Long categoryId, BigDecimal proportion) {
+    private void seedProportionalLinesWithCategory(String splitId, String orgId, String categoryId, BigDecimal proportion) {
         IEntityDao<ErpAstSplitLine> dao = daoProvider.daoFor(ErpAstSplitLine.class);
         ErpAstSplitLine line = dao.newEntity();
         line.setSplitId(splitId);
@@ -426,7 +426,7 @@ public class TestErpAstSplitMerge extends JunitAutoTestCase {
         dao.saveEntity(line);
     }
 
-    private void seedFixedAmountLines(Long splitId, Long orgId, BigDecimal[] amounts) {
+    private void seedFixedAmountLines(String splitId, String orgId, BigDecimal[] amounts) {
         IEntityDao<ErpAstSplitLine> dao = daoProvider.daoFor(ErpAstSplitLine.class);
         for (int i = 0; i < amounts.length; i++) {
             ErpAstSplitLine line = dao.newEntity();
@@ -442,7 +442,7 @@ public class TestErpAstSplitMerge extends JunitAutoTestCase {
         }
     }
 
-    private Long seedMerge(String code, Long orgId, Long currencyId) {
+    private String seedMerge(String code, String orgId, String currencyId) {
         IEntityDao<ErpAstMerge> dao = daoProvider.daoFor(ErpAstMerge.class);
         ErpAstMerge merge = dao.newEntity();
         merge.setCode(code);
@@ -457,7 +457,7 @@ public class TestErpAstSplitMerge extends JunitAutoTestCase {
         return merge.getId();
     }
 
-    private void seedMergeLine(Long mergeId, Long orgId, Long sourceAssetId, int lineNo) {
+    private void seedMergeLine(String mergeId, String orgId, String sourceAssetId, int lineNo) {
         IEntityDao<ErpAstMergeLine> dao = daoProvider.daoFor(ErpAstMergeLine.class);
         ErpAstMergeLine line = dao.newEntity();
         line.setMergeId(mergeId);
@@ -467,7 +467,7 @@ public class TestErpAstSplitMerge extends JunitAutoTestCase {
         dao.saveEntity(line);
     }
 
-    private List<ErpAstSplitLine> loadSplitLines(Long splitId) {
+    private List<ErpAstSplitLine> loadSplitLines(String splitId) {
         IEntityDao<ErpAstSplitLine> dao = daoProvider.daoFor(ErpAstSplitLine.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("splitId", splitId));
@@ -475,7 +475,7 @@ public class TestErpAstSplitMerge extends JunitAutoTestCase {
         return dao.findAllByQuery(q);
     }
 
-    private List<ErpAstMergeLine> loadMergeLines(Long mergeId) {
+    private List<ErpAstMergeLine> loadMergeLines(String mergeId) {
         IEntityDao<ErpAstMergeLine> dao = daoProvider.daoFor(ErpAstMergeLine.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("mergeId", mergeId));

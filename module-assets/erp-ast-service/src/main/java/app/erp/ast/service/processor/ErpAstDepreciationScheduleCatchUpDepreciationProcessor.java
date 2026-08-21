@@ -60,7 +60,7 @@ public class ErpAstDepreciationScheduleCatchUpDepreciationProcessor {
      * @param missedPeriods 漏提期间列表（可含已结账期间；须不晚于 currentPeriod；可重复/乱序，内部去重升序）
      * @return 本次补提落行的折旧计划条目（未跳过的新增/更新行）
      */
-    public List<ErpAstDepreciationSchedule> catchUpDepreciation(Long assetId, String currentPeriod,
+    public List<ErpAstDepreciationSchedule> catchUpDepreciation(String assetId, String currentPeriod,
                                                                 List<String> missedPeriods, IServiceContext context) {
         ErpAstAsset asset = facade.requireAsset(assetId);
         facade.validateAssetInService(asset, context);
@@ -98,7 +98,7 @@ public class ErpAstDepreciationScheduleCatchUpDepreciationProcessor {
 
             if (schedule == null) {
                 schedule = scheduleDao.newEntity();
-                schedule.setAssetId(assetId);
+                schedule.setAssetId(String.valueOf(assetId));
                 schedule.setOrgId(asset.getOrgId());
                 schedule.setPeriod(period);
                 schedule.setPlannedAmount(BigDecimal.ZERO);
@@ -140,7 +140,7 @@ public class ErpAstDepreciationScheduleCatchUpDepreciationProcessor {
         List<String> caughtPeriods = created.stream().map(ErpAstDepreciationSchedule::getPeriod)
                 .sorted().collect(Collectors.toList());
         if (total.signum() != 0) {
-            Long voucherId = postingDispatcher.tryPostCatchUp(asset, category, currentPeriod, total, caughtPeriods);
+            String voucherId = postingDispatcher.tryPostCatchUp(asset, category, currentPeriod, total, caughtPeriods);
             if (voucherId != null) {
                 for (ErpAstDepreciationSchedule s : created) {
                     s.setPosted(true);

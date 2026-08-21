@@ -53,7 +53,7 @@ public class ErpAstDepreciationScheduleProcessor {
     // recalculateForCapitalizationMaintenance）已按 R6.3 拆为独立 per-mutation Processor。
     // 本 facade 处置 = delete-after-extract：保留为共享 protected helper 持有者（单一真相源），无 `:45` 查询。
 
-    protected String findLastExecutedPeriod(Long assetId) {
+    protected String findLastExecutedPeriod(String assetId) {
         IEntityDao<ErpAstDepreciationSchedule> dao = daoProvider.daoFor(ErpAstDepreciationSchedule.class);
         QueryBean q = new QueryBean();
         q.addFilter(and(eq("assetId", assetId), eq("status", ErpAstConstants.SCHEDULE_STATUS_EXECUTED)));
@@ -88,7 +88,7 @@ public class ErpAstDepreciationScheduleProcessor {
 
     // ---------- 校验/查询辅助（protected，供派生复用与覆盖） ----------
 
-    protected ErpAstAsset requireAsset(Long assetId) {
+    protected ErpAstAsset requireAsset(String assetId) {
         ErpAstAsset asset = daoProvider.daoFor(ErpAstAsset.class).getEntityById(assetId);
         if (asset == null) {
             throw new NopException(ErpAstErrors.ERR_ASSET_NOT_FOUND)
@@ -114,7 +114,7 @@ public class ErpAstDepreciationScheduleProcessor {
         }
     }
 
-    protected ErpAstDepreciationSchedule findSchedule(Long assetId, String period) {
+    protected ErpAstDepreciationSchedule findSchedule(String assetId, String period) {
         IEntityDao<ErpAstDepreciationSchedule> dao = daoProvider.daoFor(ErpAstDepreciationSchedule.class);
         QueryBean q = new QueryBean();
         q.addFilter(and(eq("assetId", assetId), eq("period", period)));
@@ -123,7 +123,7 @@ public class ErpAstDepreciationScheduleProcessor {
         return list.isEmpty() ? null : list.get(0);
     }
 
-    protected int countExecuted(Long assetId) {
+    protected int countExecuted(String assetId) {
         IEntityDao<ErpAstDepreciationSchedule> dao = daoProvider.daoFor(ErpAstDepreciationSchedule.class);
         QueryBean q = new QueryBean();
         q.addFilter(and(eq("assetId", assetId), eq("status", ErpAstConstants.SCHEDULE_STATUS_EXECUTED)));

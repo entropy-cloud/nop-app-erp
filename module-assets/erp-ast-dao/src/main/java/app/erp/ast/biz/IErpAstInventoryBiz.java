@@ -16,26 +16,26 @@ import io.nop.orm.biz.ICrudBiz;
 public interface IErpAstInventoryBiz extends ICrudBiz<ErpAstInventory> {
 
     @BizMutation
-    ErpAstInventory createInventory(@Name("id") Long id, IServiceContext context);
+    ErpAstInventory createInventory(@Name("id") String id, IServiceContext context);
 
     @BizMutation
-    ErpAstInventory submitForCount(@Name("id") Long id, IServiceContext context);
+    ErpAstInventory submitForCount(@Name("id") String id, IServiceContext context);
 
     @BizMutation
-    ErpAstInventory reconcile(@Name("id") Long id, IServiceContext context);
+    ErpAstInventory reconcile(@Name("id") String id, IServiceContext context);
 
     @BizMutation
-    ErpAstInventory processVariance(@Name("id") Long id, IServiceContext context);
+    ErpAstInventory processVariance(@Name("id") String id, IServiceContext context);
 
     @BizMutation
-    ErpAstInventory approve(@Name("id") Long id, IServiceContext context);
+    ErpAstInventory approve(@Name("id") String id, IServiceContext context);
 
     @BizMutation
-    ErpAstInventory post(@Name("id") Long id, IServiceContext context);
+    ErpAstInventory post(@Name("id") String id, IServiceContext context);
 
     @BizMutation
-    ErpAstInventory cancel(@Name("id") Long id, IServiceContext context);
+    ErpAstInventory cancel(@Name("id") String id, IServiceContext context);
 
     @BizMutation
-    ErpAstInventory reverse(@Name("id") Long id, IServiceContext context);
+    ErpAstInventory reverse(@Name("id") String id, IServiceContext context);
 }

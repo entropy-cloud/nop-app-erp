@@ -38,7 +38,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpAstMovementReverseApprove extends JunitAutoTestCase {
 
-    static final long ORG_ID = 1L;
+    static final String ORG_ID = "1";
 
     @Inject
     IDaoProvider daoProvider;
@@ -49,14 +49,14 @@ public class TestErpAstMovementReverseApprove extends JunitAutoTestCase {
 
     @Test
     public void testReverseApproveSetsRejectedAndClearsApprover() {
-        Long assetId = ormTemplate.runInSession(session -> seedAsset());
-        Long id = ormTemplate.runInSession(session -> seedMovementApproved("MV-RA-001", assetId));
+        String assetId = ormTemplate.runInSession(session -> seedAsset());
+        String id = ormTemplate.runInSession(session -> seedMovementApproved("MV-RA-001", assetId));
         ErpAstMovement before = reload(id);
         assertEquals(ErpAstConstants.APPROVE_STATUS_APPROVED, before.getApproveStatus());
         assertEquals("approver-x", before.getApprovedBy(), "前置：approve 已写入 approvedBy");
 
         assertEquals(0, rpc(mutation, "ErpAstMovement__reverseApprove",
-                ApiRequest.build(Map.of("id", String.valueOf(id)))).getStatus());
+                ApiRequest.build(Map.of("id", id))).getStatus());
 
         ErpAstMovement after = reload(id);
         assertEquals(ErpAstConstants.APPROVE_STATUS_REJECTED, after.getApproveStatus(),
@@ -67,20 +67,20 @@ public class TestErpAstMovementReverseApprove extends JunitAutoTestCase {
 
     @Test
     public void testSubmitApproveReverseApproveHappyPath() {
-        Long assetId = ormTemplate.runInSession(session -> seedAsset());
-        Long id = ormTemplate.runInSession(session -> seedMovement("MV-HP-001", assetId,
+        String assetId = ormTemplate.runInSession(session -> seedAsset());
+        String id = ormTemplate.runInSession(session -> seedMovement("MV-HP-001", assetId,
                 ErpAstConstants.APPROVE_STATUS_UNSUBMITTED));
 
         assertEquals(0, rpc(mutation, "ErpAstMovement__submitForApproval",
-                ApiRequest.build(Map.of("id", String.valueOf(id)))).getStatus(), "提交 → SUBMITTED");
+                ApiRequest.build(Map.of("id", id))).getStatus(), "提交 → SUBMITTED");
         assertEquals(ErpAstConstants.APPROVE_STATUS_SUBMITTED, reload(id).getApproveStatus());
 
         assertEquals(0, rpc(mutation, "ErpAstMovement__approve",
-                ApiRequest.build(Map.of("id", String.valueOf(id)))).getStatus(), "审核 → APPROVED");
+                ApiRequest.build(Map.of("id", id))).getStatus(), "审核 → APPROVED");
         assertEquals(ErpAstConstants.APPROVE_STATUS_APPROVED, reload(id).getApproveStatus());
 
         assertEquals(0, rpc(mutation, "ErpAstMovement__reverseApprove",
-                ApiRequest.build(Map.of("id", String.valueOf(id)))).getStatus(), "反审核 → REJECTED");
+                ApiRequest.build(Map.of("id", id))).getStatus(), "反审核 → REJECTED");
         assertEquals(ErpAstConstants.APPROVE_STATUS_REJECTED, reload(id).getApproveStatus());
     }
 
@@ -88,12 +88,12 @@ public class TestErpAstMovementReverseApprove extends JunitAutoTestCase {
 
     @Test
     public void testCancelledDocRejectBlocked() {
-        Long assetId = ormTemplate.runInSession(session -> seedAsset());
-        Long id = ormTemplate.runInSession(session -> seedMovementCancelled("MV-CN-001", assetId,
+        String assetId = ormTemplate.runInSession(session -> seedAsset());
+        String id = ormTemplate.runInSession(session -> seedMovementCancelled("MV-CN-001", assetId,
                 ErpAstConstants.APPROVE_STATUS_SUBMITTED));
 
         assertNotEquals(0, rpc(mutation, "ErpAstMovement__reject",
-                ApiRequest.build(Map.of("id", String.valueOf(id)))).getStatus(),
+                ApiRequest.build(Map.of("id", id))).getStatus(),
                 "CANCELLED 单据 reject 应被 isCancelled 守卫阻断");
         assertEquals(ErpAstConstants.APPROVE_STATUS_SUBMITTED, reload(id).getApproveStatus(),
                 "阻断后 approveStatus 不变（无副轴漂移）");
@@ -101,12 +101,12 @@ public class TestErpAstMovementReverseApprove extends JunitAutoTestCase {
 
     @Test
     public void testCancelledDocReverseApproveBlocked() {
-        Long assetId = ormTemplate.runInSession(session -> seedAsset());
-        Long id = ormTemplate.runInSession(session -> seedMovementCancelled("MV-CN-002", assetId,
+        String assetId = ormTemplate.runInSession(session -> seedAsset());
+        String id = ormTemplate.runInSession(session -> seedMovementCancelled("MV-CN-002", assetId,
                 ErpAstConstants.APPROVE_STATUS_APPROVED));
 
         assertNotEquals(0, rpc(mutation, "ErpAstMovement__reverseApprove",
-                ApiRequest.build(Map.of("id", String.valueOf(id)))).getStatus(),
+                ApiRequest.build(Map.of("id", id))).getStatus(),
                 "CANCELLED 单据 reverseApprove 应被 isCancelled 守卫阻断");
         assertEquals(ErpAstConstants.APPROVE_STATUS_APPROVED, reload(id).getApproveStatus());
     }
@@ -115,71 +115,71 @@ public class TestErpAstMovementReverseApprove extends JunitAutoTestCase {
 
     @Test
     public void testWithdrawApprovalHappyPath() {
-        Long assetId = ormTemplate.runInSession(session -> seedAsset());
-        Long id = ormTemplate.runInSession(session -> seedMovement("MV-WD-001", assetId,
+        String assetId = ormTemplate.runInSession(session -> seedAsset());
+        String id = ormTemplate.runInSession(session -> seedMovement("MV-WD-001", assetId,
                 ErpAstConstants.APPROVE_STATUS_SUBMITTED));
 
         assertEquals(0, rpc(mutation, "ErpAstMovement__withdrawApproval",
-                ApiRequest.build(Map.of("id", String.valueOf(id)))).getStatus(), "撤回 → UNSUBMITTED");
+                ApiRequest.build(Map.of("id", id))).getStatus(), "撤回 → UNSUBMITTED");
         assertEquals(ErpAstConstants.APPROVE_STATUS_UNSUBMITTED, reload(id).getApproveStatus());
     }
 
     @Test
     public void testWithdrawApprovalIllegalStatusBlocked() {
-        Long assetId = ormTemplate.runInSession(session -> seedAsset());
-        Long id = ormTemplate.runInSession(session -> seedMovement("MV-WD-002", assetId,
+        String assetId = ormTemplate.runInSession(session -> seedAsset());
+        String id = ormTemplate.runInSession(session -> seedMovement("MV-WD-002", assetId,
                 ErpAstConstants.APPROVE_STATUS_APPROVED));
 
         assertNotEquals(0, rpc(mutation, "ErpAstMovement__withdrawApproval",
-                ApiRequest.build(Map.of("id", String.valueOf(id)))).getStatus(),
+                ApiRequest.build(Map.of("id", id))).getStatus(),
                 "APPROVED 状态 withdrawApproval 应被 Bean 矩阵守卫阻断");
         assertEquals(ErpAstConstants.APPROVE_STATUS_APPROVED, reload(id).getApproveStatus());
     }
 
     @Test
     public void testCancelledDocSubmitForApprovalBlocked() {
-        Long assetId = ormTemplate.runInSession(session -> seedAsset());
-        Long id = ormTemplate.runInSession(session -> seedMovementCancelled("MV-CN-003", assetId,
+        String assetId = ormTemplate.runInSession(session -> seedAsset());
+        String id = ormTemplate.runInSession(session -> seedMovementCancelled("MV-CN-003", assetId,
                 ErpAstConstants.APPROVE_STATUS_UNSUBMITTED));
 
         assertNotEquals(0, rpc(mutation, "ErpAstMovement__submitForApproval",
-                ApiRequest.build(Map.of("id", String.valueOf(id)))).getStatus(),
+                ApiRequest.build(Map.of("id", id))).getStatus(),
                 "CANCELLED 单据 submitForApproval 应被 isCancelled 守卫阻断");
         assertEquals(ErpAstConstants.APPROVE_STATUS_UNSUBMITTED, reload(id).getApproveStatus());
     }
 
     @Test
     public void testCancelledDocApproveBlocked() {
-        Long assetId = ormTemplate.runInSession(session -> seedAsset());
-        Long id = ormTemplate.runInSession(session -> seedMovementCancelled("MV-CN-004", assetId,
+        String assetId = ormTemplate.runInSession(session -> seedAsset());
+        String id = ormTemplate.runInSession(session -> seedMovementCancelled("MV-CN-004", assetId,
                 ErpAstConstants.APPROVE_STATUS_SUBMITTED));
 
         assertNotEquals(0, rpc(mutation, "ErpAstMovement__approve",
-                ApiRequest.build(Map.of("id", String.valueOf(id)))).getStatus(),
+                ApiRequest.build(Map.of("id", id))).getStatus(),
                 "CANCELLED 单据 approve 应被 isCancelled 守卫阻断");
         assertEquals(ErpAstConstants.APPROVE_STATUS_SUBMITTED, reload(id).getApproveStatus());
     }
 
     @Test
     public void testCancelledDocWithdrawApprovalBlocked() {
-        Long assetId = ormTemplate.runInSession(session -> seedAsset());
-        Long id = ormTemplate.runInSession(session -> seedMovementCancelled("MV-CN-005", assetId,
+        String assetId = ormTemplate.runInSession(session -> seedAsset());
+        String id = ormTemplate.runInSession(session -> seedMovementCancelled("MV-CN-005", assetId,
                 ErpAstConstants.APPROVE_STATUS_SUBMITTED));
 
         assertNotEquals(0, rpc(mutation, "ErpAstMovement__withdrawApproval",
-                ApiRequest.build(Map.of("id", String.valueOf(id)))).getStatus(),
+                ApiRequest.build(Map.of("id", id))).getStatus(),
                 "CANCELLED 单据 withdrawApproval 应被 isCancelled 守卫阻断");
         assertEquals(ErpAstConstants.APPROVE_STATUS_SUBMITTED, reload(id).getApproveStatus());
     }
 
     @Test
     public void testRejectSetsApprovedByAndApprovedAt() {
-        Long assetId = ormTemplate.runInSession(session -> seedAsset());
-        Long id = ormTemplate.runInSession(session -> seedMovement("MV-RJ-001", assetId,
+        String assetId = ormTemplate.runInSession(session -> seedAsset());
+        String id = ormTemplate.runInSession(session -> seedMovement("MV-RJ-001", assetId,
                 ErpAstConstants.APPROVE_STATUS_SUBMITTED));
 
         assertEquals(0, rpc(mutation, "ErpAstMovement__reject",
-                ApiRequest.build(Map.of("id", String.valueOf(id)))).getStatus(), "驳回 → REJECTED");
+                ApiRequest.build(Map.of("id", id))).getStatus(), "驳回 → REJECTED");
         ErpAstMovement after = reload(id);
         assertEquals(ErpAstConstants.APPROVE_STATUS_REJECTED, after.getApproveStatus());
         assertNotNull(after.getApprovedBy(), "reject 应写入 approvedBy");
@@ -193,34 +193,34 @@ public class TestErpAstMovementReverseApprove extends JunitAutoTestCase {
         return graphQLEngine.executeRpc(ctx);
     }
 
-    private ErpAstMovement reload(Long id) {
+    private ErpAstMovement reload(String id) {
         return daoProvider.daoFor(ErpAstMovement.class).getEntityById(id);
     }
 
-    private Long seedAsset() {
-        Long subjectId = AstTestSupport.seedSubject(daoProvider, "1601", "固定资产");
-        Long categoryId = AstTestSupport.seedCategory(daoProvider, "CAT-MV", "设备类",
+    private String seedAsset() {
+        String subjectId = AstTestSupport.seedSubject(daoProvider, "1601", "固定资产");
+        String categoryId = AstTestSupport.seedCategory(daoProvider, "CAT-MV", "设备类",
                 "STRAIGHT_LINE", 60, subjectId, subjectId, subjectId);
         return AstTestSupport.seedAsset(daoProvider, "AST-MV-001", "测试设备", categoryId, ORG_ID,
                 new BigDecimal("10000"), new BigDecimal("500"), "STRAIGHT_LINE", 60, "IN_SERVICE");
     }
 
-    private Long seedMovementApproved(String code, Long assetId) {
+    private String seedMovementApproved(String code, String assetId) {
         return seedMovement(code, assetId, ErpAstConstants.APPROVE_STATUS_APPROVED, true);
     }
 
-    private Long seedMovement(String code, Long assetId, String approveStatus) {
+    private String seedMovement(String code, String assetId, String approveStatus) {
         return seedMovement(code, assetId, approveStatus, false);
     }
 
-    private Long seedMovementCancelled(String code, Long assetId, String approveStatus) {
+    private String seedMovementCancelled(String code, String assetId, String approveStatus) {
         IEntityDao<ErpAstMovement> dao = daoProvider.daoFor(ErpAstMovement.class);
         ErpAstMovement m = new ErpAstMovement();
         m.setCode(code);
         m.setAssetId(assetId);
         m.setBusinessDate(LocalDate.of(2026, 7, 30));
         m.setFromDate(LocalDate.of(2026, 7, 30));
-        m.setCurrencyId(1L);
+        m.setCurrencyId("1");
         m.setExchangeRate(BigDecimal.ONE);
         m.setDocStatus(ErpAstConstants.DOC_STATUS_CANCELLED);
         m.setApproveStatus(approveStatus);
@@ -228,14 +228,14 @@ public class TestErpAstMovementReverseApprove extends JunitAutoTestCase {
         return m.getId();
     }
 
-    private Long seedMovement(String code, Long assetId, String approveStatus, boolean withApprover) {
+    private String seedMovement(String code, String assetId, String approveStatus, boolean withApprover) {
         IEntityDao<ErpAstMovement> dao = daoProvider.daoFor(ErpAstMovement.class);
         ErpAstMovement m = new ErpAstMovement();
         m.setCode(code);
         m.setAssetId(assetId);
         m.setBusinessDate(LocalDate.of(2026, 7, 30));
         m.setFromDate(LocalDate.of(2026, 7, 30));
-        m.setCurrencyId(1L);
+        m.setCurrencyId("1");
         m.setExchangeRate(BigDecimal.ONE);
         m.setDocStatus(ErpAstConstants.DOC_STATUS_DRAFT);
         m.setApproveStatus(approveStatus);

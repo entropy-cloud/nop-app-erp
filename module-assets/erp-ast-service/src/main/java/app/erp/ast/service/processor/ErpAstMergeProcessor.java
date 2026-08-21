@@ -149,8 +149,8 @@ public class ErpAstMergeProcessor {
         return reverseApproveProcessor.reverseApprove(id, context);
     }
 
-    public ErpAstMerge cancel(Long id, IServiceContext context) {
-        return cancelProcessor.cancel(String.valueOf(id), context);
+    public ErpAstMerge cancel(String id, IServiceContext context) {
+        return cancelProcessor.cancel(id, context);
     }
 
     // ---------- step：迁移校验 ----------
@@ -214,8 +214,8 @@ public class ErpAstMergeProcessor {
         }
         boolean allowCrossCategory = AppConfig.var(
                 ErpAstConstants.CONFIG_SPLIT_MERGE_ALLOW_CROSS_CATEGORY, false);
-        Long firstCategory = null;
-        Long firstCurrency = null;
+        String firstCategory = null;
+        String firstCurrency = null;
         for (int i = 0; i < sources.size(); i++) {
             ErpAstAsset src = sources.get(i);
             if (src == null) {
@@ -441,13 +441,6 @@ public class ErpAstMergeProcessor {
             sources.add(line.getSourceAsset());
         }
         return sources;
-    }
-
-    protected ErpAstAssetCategory loadCategory(Long categoryId) {
-        if (categoryId == null) {
-            return null;
-        }
-        return daoProvider.daoFor(ErpAstAssetCategory.class).getEntityById(categoryId);
     }
 
     // ---------- misc helpers ----------

@@ -18,5 +18,5 @@ import app.erp.ast.dao.entity.ErpAstSplit;
 public interface IErpAstSplitBiz extends ICrudBiz<ErpAstSplit> {
 
     @BizMutation
-    ErpAstSplit cancel(@Name("id") Long id, IServiceContext context);
+    ErpAstSplit cancel(@Name("id") String id, IServiceContext context);
 }

@@ -63,18 +63,18 @@ public class TestErpAstCipTransfer extends JunitAutoTestCase {
 
     @Test
     public void testFullTransferCreatesAssetVoucherAndTransitionsCip() {
-        Long[] holders = new Long[2];
+        String[] holders = new String[2];
         ormTemplate.runInSession(session -> {
             seedCoreBasics();
-            Long categoryId = seedCategoryWithCipSubject("CAT-CIP-FULL", "自建工程类");
+            String categoryId = seedCategoryWithCipSubject("CAT-CIP-FULL", "自建工程类");
             holders[0] = categoryId;
-            Long cipId = seedCip("CIP-FULL-001", categoryId,
+            String cipId = seedCip("CIP-FULL-001", categoryId,
                     LocalDate.of(2026, 1, 1), LocalDate.of(2026, 6, 30));
             holders[1] = cipId;
             return null;
         });
-        Long categoryId = holders[0];
-        Long cipId = holders[1];
+        String categoryId = holders[0];
+        String cipId = holders[1];
 
         ormTemplate.runInSession(() -> cipBiz.startConstruction(cipId, CTX));
         ErpAstCipCostItem item1 = ormTemplate.runInSession(session -> cipBiz.addCostItem(cipId, ErpAstConstants.CIP_COST_TYPE_PURCHASE,
@@ -121,17 +121,17 @@ public class TestErpAstCipTransfer extends JunitAutoTestCase {
 
     @Test
     public void testPartialTransferKeepsInConstruction() {
-        Long[] holders = new Long[2];
+        String[] holders = new String[2];
         ormTemplate.runInSession(session -> {
             seedCoreBasics();
-            Long categoryId = seedCategoryWithCipSubject("CAT-CIP-PART", "部分转固类");
+            String categoryId = seedCategoryWithCipSubject("CAT-CIP-PART", "部分转固类");
             holders[0] = categoryId;
-            Long cipId = seedCip("CIP-PART-001", categoryId,
+            String cipId = seedCip("CIP-PART-001", categoryId,
                     LocalDate.of(2026, 1, 1), LocalDate.of(2026, 12, 31));
             holders[1] = cipId;
             return null;
         });
-        Long cipId = holders[1];
+        String cipId = holders[1];
 
         ormTemplate.runInSession(() -> cipBiz.startConstruction(cipId, CTX));
         ErpAstCipCostItem item1 = ormTemplate.runInSession(session -> cipBiz.addCostItem(cipId, ErpAstConstants.CIP_COST_TYPE_PURCHASE,
@@ -166,16 +166,16 @@ public class TestErpAstCipTransfer extends JunitAutoTestCase {
 
     @Test
     public void testIllegalStateTransitionDirectTransferFromDraft() {
-        Long[] holders = new Long[1];
+        String[] holders = new String[1];
         ormTemplate.runInSession(session -> {
             seedCoreBasics();
-            Long categoryId = seedCategoryWithCipSubject("CAT-CIP-ILL", "非法迁移类");
-            Long cipId = seedCip("CIP-ILL-001", categoryId,
+            String categoryId = seedCategoryWithCipSubject("CAT-CIP-ILL", "非法迁移类");
+            String cipId = seedCip("CIP-ILL-001", categoryId,
                     LocalDate.of(2026, 1, 1), LocalDate.of(2026, 6, 30));
             holders[0] = cipId;
             return null;
         });
-        Long cipId = holders[0];
+        String cipId = holders[0];
 
         NopException ex = assertThrows(NopException.class,
                 () -> ormTemplate.runInSession(session -> cipBiz.transferToAsset(cipId, null, LocalDate.of(2026, 7, 1), CTX)));
@@ -185,16 +185,16 @@ public class TestErpAstCipTransfer extends JunitAutoTestCase {
 
     @Test
     public void testIllegalStateTransferOnAlreadyCompleted() {
-        Long[] holders = new Long[1];
+        String[] holders = new String[1];
         ormTemplate.runInSession(session -> {
             seedCoreBasics();
-            Long categoryId = seedCategoryWithCipSubject("CAT-CIP-COMP", "终态防护类");
-            Long cipId = seedCip("CIP-COMP-001", categoryId,
+            String categoryId = seedCategoryWithCipSubject("CAT-CIP-COMP", "终态防护类");
+            String cipId = seedCip("CIP-COMP-001", categoryId,
                     LocalDate.of(2026, 1, 1), LocalDate.of(2026, 6, 30));
             holders[0] = cipId;
             return null;
         });
-        Long cipId = holders[0];
+        String cipId = holders[0];
 
         ormTemplate.runInSession(() -> cipBiz.startConstruction(cipId, CTX));
         ormTemplate.runInSession(() -> cipBiz.addCostItem(cipId, ErpAstConstants.CIP_COST_TYPE_PURCHASE,
@@ -211,17 +211,17 @@ public class TestErpAstCipTransfer extends JunitAutoTestCase {
 
     @Test
     public void testReTransferAlreadyTransferredCostItem() {
-        Long[] holders = new Long[2];
+        String[] holders = new String[2];
         ormTemplate.runInSession(session -> {
             seedCoreBasics();
-            Long categoryId = seedCategoryWithCipSubject("CAT-CIP-RE", "重复转固类");
-            Long cipId = seedCip("CIP-RE-001", categoryId,
+            String categoryId = seedCategoryWithCipSubject("CAT-CIP-RE", "重复转固类");
+            String cipId = seedCip("CIP-RE-001", categoryId,
                     LocalDate.of(2026, 1, 1), LocalDate.of(2026, 6, 30));
             holders[0] = categoryId;
             holders[1] = cipId;
             return null;
         });
-        Long cipId = holders[1];
+        String cipId = holders[1];
 
         ormTemplate.runInSession(() -> cipBiz.startConstruction(cipId, CTX));
         ErpAstCipCostItem item1 = ormTemplate.runInSession(session -> cipBiz.addCostItem(cipId, ErpAstConstants.CIP_COST_TYPE_PURCHASE,
@@ -243,16 +243,16 @@ public class TestErpAstCipTransfer extends JunitAutoTestCase {
 
     @Test
     public void testInterestCapitalizationDisabledByDefault() {
-        Long[] holders = new Long[1];
+        String[] holders = new String[1];
         ormTemplate.runInSession(session -> {
             seedCoreBasics();
-            Long categoryId = seedCategoryWithCipSubject("CAT-CIP-INT", "利息资本化类");
-            Long cipId = seedCip("CIP-INT-001", categoryId,
+            String categoryId = seedCategoryWithCipSubject("CAT-CIP-INT", "利息资本化类");
+            String cipId = seedCip("CIP-INT-001", categoryId,
                     LocalDate.of(2026, 1, 1), LocalDate.of(2026, 6, 30));
             holders[0] = cipId;
             return null;
         });
-        Long cipId = holders[0];
+        String cipId = holders[0];
 
         ormTemplate.runInSession(() -> cipBiz.startConstruction(cipId, CTX));
 
@@ -271,16 +271,16 @@ public class TestErpAstCipTransfer extends JunitAutoTestCase {
 
     @Test
     public void testProgressBillingDoesNotAffectTransferCost() {
-        Long[] holders = new Long[1];
+        String[] holders = new String[1];
         ormTemplate.runInSession(session -> {
             seedCoreBasics();
-            Long categoryId = seedCategoryWithCipSubject("CAT-CIP-BILL", "进度付款类");
-            Long cipId = seedCip("CIP-BILL-001", categoryId,
+            String categoryId = seedCategoryWithCipSubject("CAT-CIP-BILL", "进度付款类");
+            String cipId = seedCip("CIP-BILL-001", categoryId,
                     LocalDate.of(2026, 1, 1), LocalDate.of(2026, 6, 30));
             holders[0] = cipId;
             return null;
         });
-        Long cipId = holders[0];
+        String cipId = holders[0];
 
         ormTemplate.runInSession(() -> cipBiz.startConstruction(cipId, CTX));
         ormTemplate.runInSession(() -> cipBiz.addCostItem(cipId, ErpAstConstants.CIP_COST_TYPE_PURCHASE,
@@ -300,17 +300,17 @@ public class TestErpAstCipTransfer extends JunitAutoTestCase {
 
     @Test
     public void testReverseTransferRollsBackCipStatus() {
-        Long[] holders = new Long[2];
+        String[] holders = new String[2];
         ormTemplate.runInSession(session -> {
             seedCoreBasics();
-            Long categoryId = seedCategoryWithCipSubject("CAT-CIP-REV", "红冲类");
-            Long cipId = seedCip("CIP-REV-001", categoryId,
+            String categoryId = seedCategoryWithCipSubject("CAT-CIP-REV", "红冲类");
+            String cipId = seedCip("CIP-REV-001", categoryId,
                     LocalDate.of(2026, 1, 1), LocalDate.of(2026, 6, 30));
             holders[0] = categoryId;
             holders[1] = cipId;
             return null;
         });
-        Long cipId = holders[1];
+        String cipId = holders[1];
 
         ormTemplate.runInSession(() -> cipBiz.startConstruction(cipId, CTX));
         ormTemplate.runInSession(() -> cipBiz.addCostItem(cipId, ErpAstConstants.CIP_COST_TYPE_PURCHASE,
@@ -318,7 +318,7 @@ public class TestErpAstCipTransfer extends JunitAutoTestCase {
         ormTemplate.runInSession(() -> cipBiz.transferToAsset(cipId, null, LocalDate.of(2026, 7, 1), CTX));
 
         ErpAstCip cipBeforeReverse = daoProvider.daoFor(ErpAstCip.class).getEntityById(cipId);
-        Long capitalizationId = findCapitalizationByCip(cipBeforeReverse.getCode());
+        String capitalizationId = findCapitalizationByCip(cipBeforeReverse.getCode());
         assertNotNull(capitalizationId, "找到资本化单");
 
         ormTemplate.runInSession(() -> cipBiz.reverseTransfer(cipId, capitalizationId, CTX));
@@ -344,28 +344,28 @@ public class TestErpAstCipTransfer extends JunitAutoTestCase {
     // ---------- seed helpers ----------
 
     private void seedCoreBasics() {
-        AstTestSupport.seedAcctSchema(daoProvider, 1L);
+        AstTestSupport.seedAcctSchema(daoProvider, "1");
         AstTestSupport.seedPeriod(daoProvider, "2026-07", 2026, 7, ErpAstConstants.PERIOD_STATUS_OPEN);
         AstTestSupport.seedSubject(daoProvider, "1601", "固定资产");
         AstTestSupport.seedSubject(daoProvider, "1603", "在建工程");
     }
 
-    private Long seedCategoryWithCipSubject(String code, String name) {
+    private String seedCategoryWithCipSubject(String code, String name) {
         IEntityDao<ErpAstAssetCategory> dao = daoProvider.daoFor(ErpAstAssetCategory.class);
         ErpAstAssetCategory category = new ErpAstAssetCategory();
         category.setCode(code);
         category.setName(name);
         category.setDepreciationMethod(ErpAstConstants.DEPRECIATION_METHOD_STRAIGHT_LINE);
         category.setUsefulLifeMonths(12);
-        Long fixedAssetSubjectId = findSubjectIdByCode("1601");
-        Long cipSubjectId = findSubjectIdByCode("1603");
+        String fixedAssetSubjectId = findSubjectIdByCode("1601");
+        String cipSubjectId = findSubjectIdByCode("1603");
         category.setSubjectId(fixedAssetSubjectId);
         category.setCipSubjectId(cipSubjectId);
         dao.saveEntity(category);
         return category.getId();
     }
 
-    private Long findSubjectIdByCode(String code) {
+    private String findSubjectIdByCode(String code) {
         IEntityDao<ErpMdSubject> dao = daoProvider.daoFor(ErpMdSubject.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("code", code));
@@ -374,15 +374,15 @@ public class TestErpAstCipTransfer extends JunitAutoTestCase {
         return list.isEmpty() ? null : list.get(0).getId();
     }
 
-    private Long seedCip(String code, Long categoryId, LocalDate businessDate,
+    private String seedCip(String code, String categoryId, LocalDate businessDate,
                          LocalDate estimatedCompletionDate) {
         IEntityDao<ErpAstCip> dao = daoProvider.daoFor(ErpAstCip.class);
         ErpAstCip cip = new ErpAstCip();
         cip.setCode(code);
         cip.setName("CIP-" + code);
-        cip.setOrgId(1L);
+        cip.setOrgId("1");
         cip.setCategoryId(categoryId);
-        cip.setCurrencyId(1L);
+        cip.setCurrencyId("1");
         cip.setBusinessDate(businessDate);
         cip.setEstimatedCompletionDate(estimatedCompletionDate);
         cip.setAccumulatedCost(BigDecimal.ZERO);
@@ -397,14 +397,14 @@ public class TestErpAstCipTransfer extends JunitAutoTestCase {
 
     // ---------- query helpers ----------
 
-    private List<ErpAstDepreciationSchedule> findSchedulesByAsset(Long assetId) {
+    private List<ErpAstDepreciationSchedule> findSchedulesByAsset(String assetId) {
         IEntityDao<ErpAstDepreciationSchedule> dao = daoProvider.daoFor(ErpAstDepreciationSchedule.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("assetId", assetId));
         return dao.findAllByQuery(q);
     }
 
-    private List<ErpFinVoucherBillR> findCapitalizationBillLinks(Long cipId) {
+    private List<ErpFinVoucherBillR> findCapitalizationBillLinks(String cipId) {
         ErpAstCip cip = daoProvider.daoFor(ErpAstCip.class).getEntityById(cipId);
         IEntityDao<ErpFinVoucherBillR> dao = daoProvider.daoFor(ErpFinVoucherBillR.class);
         QueryBean q = new QueryBean();
@@ -422,7 +422,7 @@ public class TestErpAstCipTransfer extends JunitAutoTestCase {
         return list.isEmpty() ? null : list.get(0);
     }
 
-    private Long findCapitalizationByCip(String cipCode) {
+    private String findCapitalizationByCip(String cipCode) {
         ErpAstAssetCapitalization cap = findCapitalizationEntityByCip(cipCode);
         return cap == null ? null : cap.getId();
     }

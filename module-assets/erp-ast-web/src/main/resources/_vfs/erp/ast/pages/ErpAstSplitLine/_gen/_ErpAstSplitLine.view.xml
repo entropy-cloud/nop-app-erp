@@ -19,13 +19,13 @@
             <cols>
 
                 <!--ID-->
-                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="id" mandatory="true" sortable="true"/>
 
                 <!--拆分单-->
-                <col id="splitId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="splitId" mandatory="true" sortable="true"/>
 
                 <!--所属组织-->
-                <col id="orgId" ui:number="true" sortable="true"/>
+                <col id="orgId" sortable="true"/>
 
                 <!--行号-->
                 <col id="lineNo" ui:number="true" sortable="true"/>
@@ -37,7 +37,7 @@
                 <col id="targetAssetName" sortable="true"/>
 
                 <!--目标资产类别-->
-                <col id="categoryId" ui:number="true" sortable="true"/>
+                <col id="categoryId" sortable="true"/>
 
                 <!--分摊方式-->
                 <col id="allocationMethod" sortable="true"/>
@@ -55,7 +55,7 @@
                 <col id="netBookValue" ui:number="true" sortable="true"/>
 
                 <!--目标资产-->
-                <col id="targetAssetId" ui:number="true" sortable="true"/>
+                <col id="targetAssetId" sortable="true"/>
 
                 <!--逻辑删除版本-->
                 <col id="delVersion" mandatory="true" ui:number="true" sortable="true"/>

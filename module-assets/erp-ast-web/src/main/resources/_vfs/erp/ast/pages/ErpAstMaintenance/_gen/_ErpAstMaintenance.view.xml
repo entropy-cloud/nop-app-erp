@@ -19,7 +19,7 @@
             <cols>
 
                 <!--ID-->
-                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="id" mandatory="true" sortable="true"/>
 
                 <!--维修单号-->
                 <col id="code" mandatory="true" sortable="true"/>
@@ -28,13 +28,13 @@
                 <col id="name" sortable="true"/>
 
                 <!--业务组织-->
-                <col id="orgId" ui:number="true" sortable="true"/>
+                <col id="orgId" sortable="true"/>
 
                 <!--资产卡片-->
-                <col id="assetId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="assetId" mandatory="true" sortable="true"/>
 
                 <!--维护工单(弱关联)-->
-                <col id="maintenanceVisitId" ui:number="true" sortable="true"/>
+                <col id="maintenanceVisitId" sortable="true"/>
 
                 <!--维修状态-->
                 <col id="status" mandatory="true" sortable="true"/>
@@ -52,7 +52,7 @@
                 <col id="businessDate" mandatory="true" sortable="true"/>
 
                 <!--币种-->
-                <col id="currencyId" ui:number="true" sortable="true"/>
+                <col id="currencyId" sortable="true"/>
 
                 <!--汇率-->
                 <col id="exchangeRate" ui:number="true" sortable="true"/>

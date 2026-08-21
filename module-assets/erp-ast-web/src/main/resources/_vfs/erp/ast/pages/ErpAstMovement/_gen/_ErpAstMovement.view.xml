@@ -19,16 +19,16 @@
             <cols>
 
                 <!--ID-->
-                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="id" mandatory="true" sortable="true"/>
 
                 <!--单号-->
                 <col id="code" mandatory="true" sortable="true"/>
 
                 <!--业务组织-->
-                <col id="orgId" ui:number="true" sortable="true"/>
+                <col id="orgId" sortable="true"/>
 
                 <!--资产ID-->
-                <col id="assetId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="assetId" mandatory="true" sortable="true"/>
 
                 <!--移动日期-->
                 <col id="businessDate" mandatory="true" sortable="true"/>
@@ -40,25 +40,25 @@
                 <col id="thruDate" sortable="true"/>
 
                 <!--原使用部门-->
-                <col id="fromDepartmentId" ui:number="true" sortable="true"/>
+                <col id="fromDepartmentId" sortable="true"/>
 
                 <!--新使用部门-->
-                <col id="toDepartmentId" ui:number="true" sortable="true"/>
+                <col id="toDepartmentId" sortable="true"/>
 
                 <!--原使用人-->
-                <col id="fromStaffId" ui:number="true" sortable="true"/>
+                <col id="fromStaffId" sortable="true"/>
 
                 <!--新使用人-->
-                <col id="toStaffId" ui:number="true" sortable="true"/>
+                <col id="toStaffId" sortable="true"/>
 
                 <!--原使用地点-->
-                <col id="fromLocationId" ui:number="true" sortable="true"/>
+                <col id="fromLocationId" sortable="true"/>
 
                 <!--新使用地点-->
-                <col id="toLocationId" ui:number="true" sortable="true"/>
+                <col id="toLocationId" sortable="true"/>
 
                 <!--经办人-->
-                <col id="handlerId" ui:number="true" sortable="true"/>
+                <col id="handlerId" sortable="true"/>
 
                 <!--单据状态-->
                 <col id="docStatus" mandatory="true" sortable="true"/>
@@ -82,7 +82,7 @@
                 <col id="postedBy" sortable="true"/>
 
                 <!--币种-->
-                <col id="currencyId" ui:number="true" sortable="true"/>
+                <col id="currencyId" sortable="true"/>
 
                 <!--汇率-->
                 <col id="exchangeRate" mandatory="true" ui:number="true" sortable="true"/>

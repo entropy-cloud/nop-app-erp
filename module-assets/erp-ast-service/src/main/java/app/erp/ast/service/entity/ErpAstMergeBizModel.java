@@ -33,7 +33,7 @@ public class ErpAstMergeBizModel extends CrudBizModel<ErpAstMerge> implements IE
 
     @Override
     @BizMutation
-    public ErpAstMerge cancel(@Name("id") Long id, IServiceContext context) {
-        return cancelProcessor.cancel(String.valueOf(id), context);
+    public ErpAstMerge cancel(@Name("id") String id, IServiceContext context) {
+        return cancelProcessor.cancel(id, context);
     }
 }

@@ -25,7 +25,7 @@ public class ErpAstInventoryReverseProcessor {
     @Inject
     ErpAstInventoryStateMachine stateMachine;
 
-    public ErpAstInventory reverse(Long id, IServiceContext context) {
+    public ErpAstInventory reverse(String id, IServiceContext context) {
         ErpAstInventory inv = facade.requireInventory(id, context);
         // posted boolean 为动态过账契约守卫（§11.2 M4 (iii) 不入轴），保留原位
         if (!Boolean.TRUE.equals(inv.getPosted())) {

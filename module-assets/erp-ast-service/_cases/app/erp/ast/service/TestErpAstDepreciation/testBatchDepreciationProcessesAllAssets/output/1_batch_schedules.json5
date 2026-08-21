@@ -1,6 +1,6 @@
 [
   {
-    "id": 57,
+    "id": "57",
     "period": "@var:ErpFinAccountingPeriod@code",
     "status": "EXECUTED",
     "actualAmount": 1000.0000,
@@ -8,7 +8,7 @@
     "posted": true
   },
   {
-    "id": 62,
+    "id": "62",
     "period": "@var:ErpFinAccountingPeriod@code",
     "status": "EXECUTED",
     "actualAmount": 500.0000,

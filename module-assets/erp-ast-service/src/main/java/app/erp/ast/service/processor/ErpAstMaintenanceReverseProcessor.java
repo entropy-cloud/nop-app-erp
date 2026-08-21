@@ -32,7 +32,7 @@ public class ErpAstMaintenanceReverseProcessor {
     @Inject
     ErpAstMaintenanceStateMachine stateMachine;
 
-    public ErpAstMaintenance reverse(Long id, IServiceContext context) {
+    public ErpAstMaintenance reverse(String id, IServiceContext context) {
         ErpAstMaintenance m = facade.requireMaintenance(id, context);
         if (Boolean.TRUE.equals(m.getReversed())) {
             throw new NopException(ErpAstErrors.ERR_AST_MAINTENANCE_ALREADY_REVERSED)

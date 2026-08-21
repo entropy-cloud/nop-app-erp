@@ -24,7 +24,7 @@ public class ErpAstCipAddCostItemProcessor {
     @Inject
     ErpAstCipProcessor facade;
 
-    public ErpAstCipCostItem addCostItem(Long cipId, String costType, BigDecimal amountFunctional,
+    public ErpAstCipCostItem addCostItem(String cipId, String costType, BigDecimal amountFunctional,
                                           String sourceBillType, String sourceBillCode, String remark,
                                           IServiceContext context) {
         ErpAstCip cip = facade.requireCip(cipId, context);

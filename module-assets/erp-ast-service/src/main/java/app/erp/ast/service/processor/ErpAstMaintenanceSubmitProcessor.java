@@ -20,7 +20,7 @@ public class ErpAstMaintenanceSubmitProcessor {
     @Inject
     ErpAstMaintenanceStateMachine stateMachine;
 
-    public ErpAstMaintenance submit(Long id, IServiceContext context) {
+    public ErpAstMaintenance submit(String id, IServiceContext context) {
         ErpAstMaintenance m = facade.requireMaintenance(id, context);
         // 固定来源态守卫委托 StateMachine Bean（M4.53，契约 §4/§7；Bean 抛 common 层码 → cause-chain 领域码）
         try {

@@ -37,7 +37,7 @@ public class ErpAstMaintenancePostProcessor {
     @Inject
     ErpAstMaintenanceStateMachine stateMachine;
 
-    public ErpAstMaintenance post(Long id, IServiceContext context) {
+    public ErpAstMaintenance post(String id, IServiceContext context) {
         ErpAstMaintenance m = facade.requireMaintenance(id, context);
         // 固定来源态守卫委托 StateMachine Bean（M4.53，契约 §4/§7；Bean 抛 common 层码 → cause-chain 领域码）
         try {
@@ -69,7 +69,7 @@ public class ErpAstMaintenancePostProcessor {
         ErpAstAsset asset = facade.requireAsset(m.getAssetId());
         ErpAstAssetCategory category = asset.getCategory();
 
-        Long voucherId;
+        String voucherId;
         if (Objects.equals(m.getTreatment(), ErpAstConstants.MAINTENANCE_TREATMENT_CAPITALIZE)) {
             facade.applyTreatmentCapitalize(m, asset, context);
             facade.orm().flushSession();

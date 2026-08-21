@@ -296,7 +296,7 @@ public class ErpAstAssetCapitalizationProcessor {
         validateTransitionForCancel(cap, context);
     }
 
-    protected ErpAstAssetCategory loadCategory(Long categoryId) {
+    protected ErpAstAssetCategory loadCategory(String categoryId) {
         return daoProvider.daoFor(ErpAstAssetCategory.class).getEntityById(categoryId);
     }
 
@@ -307,7 +307,7 @@ public class ErpAstAssetCapitalizationProcessor {
         return list.isEmpty() ? null : list.get(0);
     }
 
-    protected void cancelSchedules(Long assetId) {
+    protected void cancelSchedules(String assetId) {
         IEntityDao<ErpAstDepreciationSchedule> dao = daoProvider.daoFor(ErpAstDepreciationSchedule.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("assetId", assetId));

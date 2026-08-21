@@ -16,7 +16,7 @@ public interface IErpAstAssetBiz extends ICrudBiz<ErpAstAsset>{
      * 非法来源态拒绝（须 IN_SERVICE）。
      */
     @BizMutation
-    ErpAstAsset suspend(@Name("assetId") Long assetId, IServiceContext context);
+    ErpAstAsset suspend(@Name("assetId") String assetId, IServiceContext context);
 
     /**
      * 资产恢复使用（RC-R1.54，L1 UC-AST-03 ②）：IDLE→IN_SERVICE，恢复计提折旧
@@ -24,6 +24,6 @@ public interface IErpAstAssetBiz extends ICrudBiz<ErpAstAsset>{
      * 非法来源态拒绝（须 IDLE）。
      */
     @BizMutation
-    ErpAstAsset resume(@Name("assetId") Long assetId, IServiceContext context);
+    ErpAstAsset resume(@Name("assetId") String assetId, IServiceContext context);
 
 }

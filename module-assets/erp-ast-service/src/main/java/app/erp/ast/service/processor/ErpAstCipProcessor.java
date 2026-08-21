@@ -60,7 +60,7 @@ public class ErpAstCipProcessor {
     // 已按 R6.3 拆为独立 per-mutation Processor；本 facade 保留 :45 只读查询（findCostItems/findProgressBillings）
     // + protected helper（单一真相源），处置 = slim-to-query-only-facade。
 
-    public List<ErpAstCipCostItem> findCostItems(Long cipId, boolean onlyUntransferred, IServiceContext context) {
+    public List<ErpAstCipCostItem> findCostItems(String cipId, boolean onlyUntransferred, IServiceContext context) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("cipId", cipId));
         if (onlyUntransferred) {
@@ -70,7 +70,7 @@ public class ErpAstCipProcessor {
         return costItemDao().findAllByQuery(q);
     }
 
-    public List<ErpAstCipProgressBilling> findProgressBillings(Long cipId, IServiceContext context) {
+    public List<ErpAstCipProgressBilling> findProgressBillings(String cipId, IServiceContext context) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("cipId", cipId));
         q.addOrderField("billingDate", false);
@@ -244,7 +244,7 @@ public class ErpAstCipProcessor {
 
     // ---------- 查询/解析辅助 ----------
 
-    protected ErpAstCip requireCip(Long cipId, IServiceContext context) {
+    protected ErpAstCip requireCip(String cipId, IServiceContext context) {
         ErpAstCip cip = cipDao().getEntityById(cipId);
         if (cip == null) {
             throw new NopException(ErpAstErrors.ERR_CIP_NOT_FOUND)
@@ -253,7 +253,7 @@ public class ErpAstCipProcessor {
         return cip;
     }
 
-    protected List<ErpAstCipCostItem> resolveCostItems(ErpAstCip cip, List<Long> costItemIds) {
+    protected List<ErpAstCipCostItem> resolveCostItems(ErpAstCip cip, List<String> costItemIds) {
         if (costItemIds == null || costItemIds.isEmpty()) {
             return findCostItems(cip.getId(), true, null);
         }
@@ -264,7 +264,7 @@ public class ErpAstCipProcessor {
         return costItemDao().findAllByQuery(q);
     }
 
-    protected List<ErpAstCipCostItem> findCostItemsByCapitalization(Long capitalizationId) {
+    protected List<ErpAstCipCostItem> findCostItemsByCapitalization(String capitalizationId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("capitalizationId", capitalizationId));
         return costItemDao().findAllByQuery(q);
@@ -296,7 +296,7 @@ public class ErpAstCipProcessor {
         return "AST-CIP-" + cip.getCode() + "-" + CoreMetrics.currentTimeMillis();
     }
 
-    protected int nextCostItemLineNo(Long cipId) {
+    protected int nextCostItemLineNo(String cipId) {
         List<ErpAstCipCostItem> items = findCostItems(cipId, false, null);
         int max = 0;
         for (ErpAstCipCostItem item : items) {
@@ -307,7 +307,7 @@ public class ErpAstCipProcessor {
         return max + 10;
     }
 
-    protected int nextProgressBillingLineNo(Long cipId) {
+    protected int nextProgressBillingLineNo(String cipId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("cipId", cipId));
         List<ErpAstCipProgressBilling> list = progressBillingDao().findAllByQuery(q);

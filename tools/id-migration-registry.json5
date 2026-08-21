@@ -906,7 +906,8 @@
       "note": "类型级引用（id 语境经变量流转时由编译器驱动/域 plan grep 定位调用点）",
       "deferredUntil": "M2.4",
       "retireOwner": "M2.4",
-      "status": "active"
+      "retiredNote": "已退役：M2.4 assets plan 2026-08-22-0002-2 Phase 2 兑付（ast 翻转 String 后 fin 侧类型级引用直接对齐 String 实体，fin 5 模块链重建绿 + fin-service 测试复跑全绿，无显式 Long 桥接点需移除）",
+      "status": "retired"
     },
     {
       "id": "bridge-main-062",
@@ -936,7 +937,8 @@
       "note": "",
       "deferredUntil": "M2.4",
       "retireOwner": "M2.4",
-      "status": "active"
+      "retiredNote": "已退役：M2.4 assets plan 2026-08-22-0002-2 Phase 2 兑付（签名本为 (String period, ctx) 无 Long 参数，ast 翻转后 fin 直传 String 编译绿）",
+      "status": "retired"
     },
     {
       "id": "bridge-main-064",
@@ -970,7 +972,8 @@
       "note": "",
       "deferredUntil": "M2.4",
       "retireOwner": "M2.4",
-      "status": "active"
+      "retiredNote": "已退役：M2.4 assets plan 2026-08-22-0002-2 Phase 2 兑付（ast IBiz assetId 翻转 String，fin 侧 s.getAssetId() 同步 String，直传编译绿，无显式转换点）",
+      "status": "retired"
     },
     {
       "id": "bridge-main-066",
@@ -1622,8 +1625,8 @@
       ],
       "deferredUntil": "M2.4",
       "retireOwner": "M2.4",
-      "note": "早域 test 引用晚域——早域 plan Phase 3 消费（本域测试适配）；晚域翻转时复核",
-      "status": "active"
+      "note": "早域 test 引用晚域——早域 plan Phase 3 消费（本域测试适配）；晚域翻转时复核。已退役：M2.4 assets plan 2026-08-22-0002-2 Phase 3 兑付（mock 保持 Long 桩签名实现未迁移 mnt IBiz = 适配形态；ast 侧断言经 ConvertHelper.toLong 桥（bridge-test-134 文件内）；晚域 M3.2 翻转时随 mock 一并回收）",
+      "status": "retired"
     },
     {
       "id": "bridge-test-108",
@@ -2092,6 +2095,24 @@
       "deferredUntil": "M3.8",
       "retireOwner": "M2.5",
       "note": "A3' 补登条目（登记册扫描器 import 口径盲区：FQN 内联引用 20 行/22 token 不产生 import 语句，M0.2 扫描器漏扫；补登证据 = b2b plan 2026-08-21-2025-2 Phase 1 FQN 复扫）。已适配退役（本域侧）：M3.8 b2b plan 2026-08-21-2025-2 Phase 3 兑付（ConvertHelper.toLong ×3 seed 桥 + String.valueOf ×3 断言桥；poId/receiveId/pur 种子保持 Long），晚域 M2.5 翻转 pur 时移除桥接点",
+      "status": "retired"
+    },
+    {
+      "id": "bridge-test-134",
+      "kind": "service-bridge",
+      "scope": "test",
+      "domain": "assets",
+      "callSite": "module-assets/erp-ast-service/src/test/java/app/erp/ast/service/TestErpAstDisposalEquipmentLinkage.java",
+      "target": "IErpMntEquipmentBiz(maintenance) FQN 内联字段引用 @L59（无 import 语句），同一 mock 基建 test-mock-mnt.beans.xml:9 ioc:type FQN",
+      "longParams": [],
+      "refDomain": "maintenance",
+      "evidence": [
+        "module-assets/erp-ast-service/src/test/java/app/erp/ast/service/TestErpAstDisposalEquipmentLinkage.java:59",
+        "module-assets/erp-ast-service/src/test/resources/_vfs/erp/ast/beans/test-mock-mnt.beans.xml:9"
+      ],
+      "deferredUntil": "M2.4",
+      "retireOwner": "M2.4",
+      "note": "A3' 同类补登条目（登记册扫描器 import 口径盲区：FQN 内联字段引用不产生 import 语句；补登证据 = M2.4 assets plan 2026-08-22-0002-2 Phase 1 FQN 复扫）。与 bridge-test-107 同 mock 基建（TestMockMntBizModels + test-mock-mnt.beans.xml）。已退役：M2.4 assets plan 2026-08-22-0002-2 Phase 3 兑付（ast 侧 seed/局部全 String 化 + 断言经 ConvertHelper.toLong(assetId) 桥接 mock Long 字段，退役 owner M3.2 时随 mock 一并回收）",
       "status": "retired"
     },
     {
@@ -4382,7 +4403,7 @@
   "counts": {
     "orm-column-deferral": 8,
     "service-bridge:main": 94,
-    "service-bridge:test": 31,
+    "service-bridge:test": 32,
     "backward-pointer:main": 60,
     "backward-pointer:test": 62
   }

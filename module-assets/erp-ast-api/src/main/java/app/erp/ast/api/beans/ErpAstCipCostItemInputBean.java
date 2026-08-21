@@ -12,44 +12,44 @@
     public class ErpAstCipCostItemInputBean extends CrudInputBase {
 
     
-        private Long _id;
+        private String _id;
 
     
         @PropMeta(propId=1)
     
-        public Long getId(){
+        public String getId(){
             return _id;
         }
 
-        public void setId(Long value){
+        public void setId(String value){
             this._id = value;
         }
 
 
-        private Long _cipId;
+        private String _cipId;
 
     
         @PropMeta(propId=2)
     
-        public Long getCipId(){
+        public String getCipId(){
             return _cipId;
         }
 
-        public void setCipId(Long value){
+        public void setCipId(String value){
             this._cipId = value;
         }
 
 
-        private Long _orgId;
+        private String _orgId;
 
     
         @PropMeta(propId=3)
     
-        public Long getOrgId(){
+        public String getOrgId(){
             return _orgId;
         }
 
-        public void setOrgId(Long value){
+        public void setOrgId(String value){
             this._orgId = value;
         }
 
@@ -166,16 +166,16 @@
         }
 
 
-        private Long _capitalizationId;
+        private String _capitalizationId;
 
     
         @PropMeta(propId=12)
     
-        public Long getCapitalizationId(){
+        public String getCapitalizationId(){
             return _capitalizationId;
         }
 
-        public void setCapitalizationId(Long value){
+        public void setCapitalizationId(String value){
             this._capitalizationId = value;
         }
 
@@ -194,16 +194,16 @@
         }
 
 
-        private Long _currencyId;
+        private String _currencyId;
 
     
         @PropMeta(propId=14)
     
-        public Long getCurrencyId(){
+        public String getCurrencyId(){
             return _currencyId;
         }
 
-        public void setCurrencyId(Long value){
+        public void setCurrencyId(String value){
             this._currencyId = value;
         }
 

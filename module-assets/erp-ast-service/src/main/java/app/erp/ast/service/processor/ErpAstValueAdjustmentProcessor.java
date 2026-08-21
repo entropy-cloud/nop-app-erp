@@ -80,7 +80,7 @@ public class ErpAstValueAdjustmentProcessor {
         orm().flushSession();
 
         ErpAstAssetCategory category = asset.getCategory();
-        Long voucherId = postingDispatcher.tryPost(adjustment, asset, category);
+        String voucherId = postingDispatcher.tryPost(adjustment, asset, category);
 
         if (voucherId != null) {
             applyAssetValueChange(adjustment, asset);
@@ -120,8 +120,8 @@ public class ErpAstValueAdjustmentProcessor {
         return adjustment;
     }
 
-    public ErpAstValueAdjustment cancel(Long id, IServiceContext context) {
-        return cancelProcessor.cancel(String.valueOf(id), context);
+    public ErpAstValueAdjustment cancel(String id, IServiceContext context) {
+        return cancelProcessor.cancel(id, context);
     }
 
     // ---------- step：迁移校验（protected，下游可逐个覆盖） ----------
@@ -292,7 +292,7 @@ public class ErpAstValueAdjustmentProcessor {
         orm().flushSession();
 
         ErpAstAssetCategory category = asset.getCategory();
-        Long voucherId = postingDispatcher.tryPost(adjustment, asset, category);
+        String voucherId = postingDispatcher.tryPost(adjustment, asset, category);
 
         if (voucherId != null) {
             applyAssetValueChange(adjustment, asset);
@@ -310,10 +310,6 @@ public class ErpAstValueAdjustmentProcessor {
     }
 
     // ---------- 校验/查询辅助（protected，供派生复用与覆盖） ----------
-
-    protected ErpAstValueAdjustment requireAdjustment(Long id, IServiceContext context) {
-        return requireAdjustment(String.valueOf(id), context);
-    }
 
     protected ErpAstValueAdjustment requireAdjustment(String id, IServiceContext context) {
         ErpAstValueAdjustment adjustment = adjustmentDao().getEntityById(id);
