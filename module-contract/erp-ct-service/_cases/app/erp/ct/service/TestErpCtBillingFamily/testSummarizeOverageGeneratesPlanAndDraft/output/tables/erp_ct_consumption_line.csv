@@ -1,0 +1,3 @@
+_chgType,ID,CONTRACT_LINE_ID,CONSUMPTION_DATE,QUANTITY,UNIT_PRICE,AMOUNT,SOURCE_BILL_TYPE,SOURCE_BILL_CODE,REMARK,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
+A,8,6,2026-06-01,80,10,800,,,,@var:ErpCtConsumptionLine@delVersion,0,autotest-ref,*,autotest-ref,*
+A,9,6,2026-06-15,70,10,700,,,,@var:ErpCtConsumptionLine@delVersion,0,autotest-ref,*,autotest-ref,*

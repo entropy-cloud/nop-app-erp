@@ -193,19 +193,19 @@ public class _ErpCtRebateAgreement extends DynamicOrmEntity{
 
     
     /* ID: ID */
-    private java.lang.Long _id;
+    private java.lang.String _id;
     
     /* 协议编号: CODE */
     private java.lang.String _code;
     
     /* 业务组织: ORG_ID */
-    private java.lang.Long _orgId;
+    private java.lang.String _orgId;
     
     /* 关联合同: CONTRACT_ID */
-    private java.lang.Long _contractId;
+    private java.lang.String _contractId;
     
     /* 对方伙伴: PARTNER_ID */
-    private java.lang.Long _partnerId;
+    private java.lang.String _partnerId;
     
     /* 返利类型: REBATE_TYPE */
     private java.lang.String _rebateType;
@@ -404,9 +404,9 @@ public class _ErpCtRebateAgreement extends DynamicOrmEntity{
         switch(propId){
         
             case PROP_ID_id:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_id));
                }
                setId(typedValue);
@@ -424,9 +424,9 @@ public class _ErpCtRebateAgreement extends DynamicOrmEntity{
             }
         
             case PROP_ID_orgId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_orgId));
                }
                setOrgId(typedValue);
@@ -434,9 +434,9 @@ public class _ErpCtRebateAgreement extends DynamicOrmEntity{
             }
         
             case PROP_ID_contractId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_contractId));
                }
                setContractId(typedValue);
@@ -444,9 +444,9 @@ public class _ErpCtRebateAgreement extends DynamicOrmEntity{
             }
         
             case PROP_ID_partnerId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_partnerId));
                }
                setPartnerId(typedValue);
@@ -624,7 +624,7 @@ public class _ErpCtRebateAgreement extends DynamicOrmEntity{
         
             case PROP_ID_id:{
                onInitProp(propId);
-               this._id = (java.lang.Long)value;
+               this._id = (java.lang.String)value;
                orm_id(); // 如果是设置主键字段，则触发watcher
                break;
             }
@@ -638,21 +638,21 @@ public class _ErpCtRebateAgreement extends DynamicOrmEntity{
         
             case PROP_ID_orgId:{
                onInitProp(propId);
-               this._orgId = (java.lang.Long)value;
+               this._orgId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_contractId:{
                onInitProp(propId);
-               this._contractId = (java.lang.Long)value;
+               this._contractId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_partnerId:{
                onInitProp(propId);
-               this._partnerId = (java.lang.Long)value;
+               this._partnerId = (java.lang.String)value;
                
                break;
             }
@@ -778,7 +778,7 @@ public class _ErpCtRebateAgreement extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final java.lang.Long getId(){
+    public final java.lang.String getId(){
          onPropGet(PROP_ID_id);
          return _id;
     }
@@ -786,7 +786,7 @@ public class _ErpCtRebateAgreement extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final void setId(java.lang.Long value){
+    public final void setId(java.lang.String value){
         if(onPropSet(PROP_ID_id,value)){
             this._id = value;
             internalClearRefs(PROP_ID_id);
@@ -816,7 +816,7 @@ public class _ErpCtRebateAgreement extends DynamicOrmEntity{
     /**
      * 业务组织: ORG_ID
      */
-    public final java.lang.Long getOrgId(){
+    public final java.lang.String getOrgId(){
          onPropGet(PROP_ID_orgId);
          return _orgId;
     }
@@ -824,7 +824,7 @@ public class _ErpCtRebateAgreement extends DynamicOrmEntity{
     /**
      * 业务组织: ORG_ID
      */
-    public final void setOrgId(java.lang.Long value){
+    public final void setOrgId(java.lang.String value){
         if(onPropSet(PROP_ID_orgId,value)){
             this._orgId = value;
             internalClearRefs(PROP_ID_orgId);
@@ -835,7 +835,7 @@ public class _ErpCtRebateAgreement extends DynamicOrmEntity{
     /**
      * 关联合同: CONTRACT_ID
      */
-    public final java.lang.Long getContractId(){
+    public final java.lang.String getContractId(){
          onPropGet(PROP_ID_contractId);
          return _contractId;
     }
@@ -843,7 +843,7 @@ public class _ErpCtRebateAgreement extends DynamicOrmEntity{
     /**
      * 关联合同: CONTRACT_ID
      */
-    public final void setContractId(java.lang.Long value){
+    public final void setContractId(java.lang.String value){
         if(onPropSet(PROP_ID_contractId,value)){
             this._contractId = value;
             internalClearRefs(PROP_ID_contractId);
@@ -854,7 +854,7 @@ public class _ErpCtRebateAgreement extends DynamicOrmEntity{
     /**
      * 对方伙伴: PARTNER_ID
      */
-    public final java.lang.Long getPartnerId(){
+    public final java.lang.String getPartnerId(){
          onPropGet(PROP_ID_partnerId);
          return _partnerId;
     }
@@ -862,7 +862,7 @@ public class _ErpCtRebateAgreement extends DynamicOrmEntity{
     /**
      * 对方伙伴: PARTNER_ID
      */
-    public final void setPartnerId(java.lang.Long value){
+    public final void setPartnerId(java.lang.String value){
         if(onPropSet(PROP_ID_partnerId,value)){
             this._partnerId = value;
             internalClearRefs(PROP_ID_partnerId);

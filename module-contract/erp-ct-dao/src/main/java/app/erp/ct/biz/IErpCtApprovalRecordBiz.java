@@ -27,15 +27,15 @@ import app.erp.contract.dao.entity.ErpCtApprovalRecord;
 public interface IErpCtApprovalRecordBiz extends ICrudBiz<ErpCtApprovalRecord>{
 
     @BizMutation
-    ErpCtApprovalRecord approve(@Name("recordId") Long recordId,
+    ErpCtApprovalRecord approve(@Name("recordId") String recordId,
                                 @Optional @Name("comment") String comment,
                                 IServiceContext context);
 
     @BizMutation
-    ErpCtApprovalRecord reject(@Name("recordId") Long recordId,
+    ErpCtApprovalRecord reject(@Name("recordId") String recordId,
                                @Optional @Name("comment") String comment,
                                IServiceContext context);
 
     @BizMutation
-    int resubmit(@Name("contractId") Long contractId, IServiceContext context);
+    int resubmit(@Name("contractId") String contractId, IServiceContext context);
 }

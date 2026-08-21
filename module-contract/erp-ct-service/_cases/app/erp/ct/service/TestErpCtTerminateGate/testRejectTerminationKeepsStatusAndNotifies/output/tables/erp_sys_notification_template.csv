@@ -1,0 +1,2 @@
+_chgType,ID,NOTIFICATION_TYPE,NAME,CHANNEL_SET,SUBJECT_TPL,BODY_TPL,RECIPIENT_RESOLVER,RECIPIENT_CONFIG,MERGE_WINDOW_SECONDS,MERGE_STRATEGY,STATUS,REMARK,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
+A,8812,ct.terminate-rejected,TPL-ct.terminate-rejected,IN_APP,合同终止 ${contractCode},合同 ${contractCode} 终止流程 ${terminationReason},USER_LIST,"{""userIds"":[""${submitterUserId}""]}",0,NONE,ACTIVE,,@var:ErpSysNotificationTemplate@delVersion,0,ct-owner-user,*,ct-owner-user,*

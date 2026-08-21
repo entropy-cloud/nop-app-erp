@@ -23,8 +23,8 @@ import app.erp.contract.dao.entity.ErpCtContractVersion;
 public interface IErpCtContractVersionBiz extends ICrudBiz<ErpCtContractVersion> {
 
     @BizMutation
-    ErpCtContractVersion finalizeVersion(@Name("versionId") Long versionId, IServiceContext context);
+    ErpCtContractVersion finalizeVersion(@Name("versionId") String versionId, IServiceContext context);
 
     @BizMutation
-    ErpCtContractVersion signVersion(@Name("versionId") Long versionId, IServiceContext context);
+    ErpCtContractVersion signVersion(@Name("versionId") String versionId, IServiceContext context);
 }

@@ -29,7 +29,7 @@ import java.util.List;
 public interface IErpCtSignatureRequestBiz extends ICrudBiz<ErpCtSignatureRequest> {
 
     @BizMutation
-    ErpCtSignatureRequest initSignatureRequest(@Name("contractVersionId") Long contractVersionId,
+    ErpCtSignatureRequest initSignatureRequest(@Name("contractVersionId") String contractVersionId,
                                                @Name("signers") String signersJson,
                                                @Name("providerCode") String providerCode,
                                                IServiceContext context);
@@ -42,15 +42,15 @@ public interface IErpCtSignatureRequestBiz extends ICrudBiz<ErpCtSignatureReques
                                                   IServiceContext context);
 
     @BizMutation
-    ErpCtSignatureRequest queryAndUpdateStatus(@Name("requestId") Long requestId,
+    ErpCtSignatureRequest queryAndUpdateStatus(@Name("requestId") String requestId,
                                                IServiceContext context);
 
     @BizMutation
-    ErpCtSignatureRequest cancelSignatureRequest(@Name("requestId") Long requestId,
+    ErpCtSignatureRequest cancelSignatureRequest(@Name("requestId") String requestId,
                                                  IServiceContext context);
 
     @BizMutation
-    ErpCtSignatureRequest rejectSignature(@Name("requestId") Long requestId,
+    ErpCtSignatureRequest rejectSignature(@Name("requestId") String requestId,
                                           @Name("reason") String reason,
                                           IServiceContext context);
 

@@ -20,7 +20,7 @@ import java.util.Objects;
  */
 public class ErpCtSignatureRequestInitSignatureRequestProcessor extends AbstractErpCtSignatureRequestProcessor {
 
-    public ErpCtSignatureRequest initSignatureRequest(Long contractVersionId, String signersJson,
+    public ErpCtSignatureRequest initSignatureRequest(String contractVersionId, String signersJson,
                                                       String providerCode, IServiceContext context) {
         boolean enabled = AppConfig.var(ErpCtConfigs.CFG_E_SIGNATURE_ENABLED, false);
         if (!enabled) {
@@ -29,7 +29,7 @@ public class ErpCtSignatureRequestInitSignatureRequestProcessor extends Abstract
                     .param("errorMsg", "erp-ct.e-signature-enabled=false，未启用电子签章（走线下签署）");
         }
 
-        ErpCtContractVersion version = contractVersionBiz.get(String.valueOf(contractVersionId), false, context);
+        ErpCtContractVersion version = contractVersionBiz.get(contractVersionId, false, context);
         if (version == null || !Objects.equals(version.getStatus(), ErpCtConstants.VERSION_STATUS_FINALIZED)) {
             throw new NopException(ErpCtErrors.ERR_CT_SIGNATURE_VERSION_NOT_FINALIZED)
                     .param(ErpCtErrors.ARG_VERSION_ID, contractVersionId);

@@ -30,10 +30,10 @@ import app.erp.contract.dao.entity.ErpCtInvoicePlan;
 public interface IErpCtInvoicePlanBiz extends ICrudBiz<ErpCtInvoicePlan> {
 
     @BizMutation
-    ErpCtInvoicePlan triggerInvoice(@Name("planId") Long planId, IServiceContext context);
+    ErpCtInvoicePlan triggerInvoice(@Name("planId") String planId, IServiceContext context);
 
     @BizMutation
-    int triggerDuePlans(@Name("contractId") Long contractId,
+    int triggerDuePlans(@Name("contractId") String contractId,
                         @Name("asOfDate") java.time.LocalDate asOfDate,
                         IServiceContext context);
 
@@ -44,7 +44,7 @@ public interface IErpCtInvoicePlanBiz extends ICrudBiz<ErpCtInvoicePlan> {
      * {@code ERR_CT_INVOICE_PLAN_DUPLICATE}）。返回生成的计划集合。
      */
     @BizMutation
-    List<ErpCtInvoicePlan> generateInvoicePlansByTerm(@Name("contractId") Long contractId,
+    List<ErpCtInvoicePlan> generateInvoicePlansByTerm(@Name("contractId") String contractId,
                                                       @Name("items") List<ErpCtInvoicePlanGenerateItem> items,
                                                       IServiceContext context);
 }

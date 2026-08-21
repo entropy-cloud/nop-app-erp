@@ -76,7 +76,7 @@ public class TestErpCtDocumentGuards extends JunitAutoTestCase {
 
     @Test
     public void testLegalHoldBlocksArchiveAndDelete() {
-        long docId = seedDocument(null, false, null);
+        String docId = seedDocument(null, false, null);
         ApiResponse<?> set = executeRpc(mutation, "ErpCtDocument__setLegalHold",
                 ApiRequest.build(Map.of("documentId", docId, "legalHold", true)));
         assertEquals(0, set.getStatus(), "admin 设置 legalHold 应成功: " + set);
@@ -106,7 +106,7 @@ public class TestErpCtDocumentGuards extends JunitAutoTestCase {
 
     @Test
     public void testSetLegalHoldRoleGuardBothSides() {
-        long docId = seedDocument(null, false, null);
+        String docId = seedDocument(null, false, null);
 
         loginAsPlainUser();
         ApiResponse<?> denied = executeRpc(mutation, "ErpCtDocument__setLegalHold",
@@ -135,7 +135,7 @@ public class TestErpCtDocumentGuards extends JunitAutoTestCase {
 
     @Test
     public void testArchivedDocumentReadOnlyExceptLegalHold() {
-        long docId = seedDocument(null, true, LocalDate.of(2026, 7, 1));
+        String docId = seedDocument(null, true, LocalDate.of(2026, 7, 1));
 
         ApiResponse<?> update = executeRpc(mutation, "ErpCtDocument__update",
                 ApiRequest.build(Map.of("data", Map.of("id", docId, "docName", "篡改归档文档"))));
@@ -162,8 +162,8 @@ public class TestErpCtDocumentGuards extends JunitAutoTestCase {
 
     @Test
     public void testActiveContractBlocksArchive() {
-        long contractId = seedContract("CT-DOC-GUARD-ACTIVE", ErpCtConstants.CONTRACT_STATUS_ACTIVE);
-        long docId = seedDocument(contractId, false, null);
+        String contractId = seedContract("CT-DOC-GUARD-ACTIVE", ErpCtConstants.CONTRACT_STATUS_ACTIVE);
+        String docId = seedDocument(contractId, false, null);
 
         ApiResponse<?> blocked = executeRpc(mutation, "ErpCtDocument__archive",
                 ApiRequest.build(Map.of("documentId", docId)));
@@ -213,13 +213,13 @@ public class TestErpCtDocumentGuards extends JunitAutoTestCase {
         IUserContext.set(uc);
     }
 
-    private ErpCtDocument document(long docId) {
+    private ErpCtDocument document(String docId) {
         return ormTemplate.runInSession(session -> daoProvider.daoFor(ErpCtDocument.class).getEntityById(docId));
     }
 
     /** seed 文档：docType=CONTRACT_SCAN，可选关联合同/已归档态。 */
-    private long seedDocument(Long contractId, boolean archived, LocalDate archiveDate) {
-        long[] ret = new long[1];
+    private String seedDocument(String contractId, boolean archived, LocalDate archiveDate) {
+        String[] ret = new String[1];
         ormTemplate.runInSession(session -> {
             ErpCtDocument doc = daoProvider.daoFor(ErpCtDocument.class).newEntity();
             doc.setCode("CT-DOC-GUARD-" + System.nanoTime());
@@ -237,8 +237,8 @@ public class TestErpCtDocumentGuards extends JunitAutoTestCase {
         return ret[0];
     }
 
-    private long seedContract(String code, String status) {
-        long[] ids = new long[2];
+    private String seedContract(String code, String status) {
+        String[] ids = new String[2];
         ormTemplate.runInSession(session -> {
             ErpMdPartner p = daoProvider.daoFor(ErpMdPartner.class).newEntity();
             p.setCode("CT-DOC-PARTNER");
@@ -254,7 +254,7 @@ public class TestErpCtDocumentGuards extends JunitAutoTestCase {
             ids[1] = c.getId();
             return null;
         });
-        long[] ret = new long[1];
+        String[] ret = new String[1];
         ormTemplate.runInSession(session -> {
             ErpCtContract contract = daoProvider.daoFor(ErpCtContract.class).newEntity();
             contract.orm_disableAutoStamp(true);
@@ -264,7 +264,7 @@ public class TestErpCtDocumentGuards extends JunitAutoTestCase {
             contract.setContractDirection("INBOUND");
             contract.setPartnerId(ids[0]);
             contract.setCurrencyId(ids[1]);
-            contract.setOrgId(1L);
+            contract.setOrgId("1");
             contract.setStartDate(LocalDate.of(2026, 1, 1));
             contract.setEndDate(LocalDate.of(2026, 12, 31));
             contract.setTotalAmount(new BigDecimal("1000"));

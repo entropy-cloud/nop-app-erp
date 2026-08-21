@@ -1,6 +1,6 @@
 {
-  "id": 0,
-  "rebateAgreementId": 0,
+  "id": "",
+  "rebateAgreementId": "",
   "fromAmount": 0.0,
   "toAmount": 0.0,
   "rebatePercent": 0.0,

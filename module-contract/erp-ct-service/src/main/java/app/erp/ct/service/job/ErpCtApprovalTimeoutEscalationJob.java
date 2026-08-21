@@ -182,11 +182,11 @@ public class ErpCtApprovalTimeoutEscalationJob {
         notificationBiz.notify(ErpCtConstants.NOTIFY_EVENT_APPROVAL_TIMEOUT_ESCALATION, map, ctx);
     }
 
-    protected ErpCtContract findContract(Long contractId, IServiceContext ctx) {
+    protected ErpCtContract findContract(String contractId, IServiceContext ctx) {
         if (contractId == null) {
             return null;
         }
-        return contractBiz.get(String.valueOf(contractId), true, ctx);
+        return contractBiz.get(contractId, true, ctx);
     }
 
     protected String resolveCronConfig() {

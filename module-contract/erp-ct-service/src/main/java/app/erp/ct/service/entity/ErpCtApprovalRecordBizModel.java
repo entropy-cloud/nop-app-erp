@@ -53,7 +53,7 @@ public class ErpCtApprovalRecordBizModel extends CrudBizModel<ErpCtApprovalRecor
 
     @Override
     @BizMutation
-    public ErpCtApprovalRecord approve(@Name("recordId") Long recordId,
+    public ErpCtApprovalRecord approve(@Name("recordId") String recordId,
                                        @Optional @Name("comment") String comment,
                                        IServiceContext context) {
         ErpCtApprovalRecord record = requireChainRecord(recordId, context);
@@ -72,7 +72,7 @@ public class ErpCtApprovalRecordBizModel extends CrudBizModel<ErpCtApprovalRecor
 
     @Override
     @BizMutation
-    public ErpCtApprovalRecord reject(@Name("recordId") Long recordId,
+    public ErpCtApprovalRecord reject(@Name("recordId") String recordId,
                                       @Optional @Name("comment") String comment,
                                       IServiceContext context) {
         ErpCtApprovalRecord record = requireChainRecord(recordId, context);
@@ -96,7 +96,7 @@ public class ErpCtApprovalRecordBizModel extends CrudBizModel<ErpCtApprovalRecor
 
     @Override
     @BizMutation
-    public int resubmit(@Name("contractId") Long contractId, IServiceContext context) {
+    public int resubmit(@Name("contractId") String contractId, IServiceContext context) {
         ErpCtContract contract = findContract(contractId, context);
         if (contract == null
                 || !ErpCtConstants.CONTRACT_STATUS_NEGOTIATION.equals(contract.getStatus())) {
@@ -141,8 +141,8 @@ public class ErpCtApprovalRecordBizModel extends CrudBizModel<ErpCtApprovalRecor
     // ---------- guards ----------
 
     /** 链记录守卫：记录存在 + approvalMatrixId != null（terminate 记录走 contract BizModel 双轨）。 */
-    protected ErpCtApprovalRecord requireChainRecord(Long recordId, IServiceContext context) {
-        ErpCtApprovalRecord record = get(String.valueOf(recordId), false, context);
+    protected ErpCtApprovalRecord requireChainRecord(String recordId, IServiceContext context) {
+        ErpCtApprovalRecord record = get(recordId, false, context);
         if (record == null) {
             throw new NopException(ErpCtErrors.ERR_CT_APPROVAL_RECORD_NOT_FOUND)
                     .param(ErpCtErrors.ARG_APPROVAL_RECORD_ID, recordId);
@@ -181,7 +181,7 @@ public class ErpCtApprovalRecordBizModel extends CrudBizModel<ErpCtApprovalRecor
     }
 
     /** D3 超限锁定守卫：派生驳回计数 ≥ max-retries 时拒绝（锁定需强制升级）。 */
-    protected void guardNotLocked(Long contractId, Integer approvalOrder, IServiceContext context) {
+    protected void guardNotLocked(String contractId, Integer approvalOrder, IServiceContext context) {
         if (engine.rejectedCount(contractId, approvalOrder, context) >= resolveMaxRetries()) {
             throw new NopException(ErpCtErrors.ERR_CT_APPROVAL_LOCKED)
                     .param(ErpCtErrors.ARG_CONTRACT_ID, contractId)
@@ -193,7 +193,7 @@ public class ErpCtApprovalRecordBizModel extends CrudBizModel<ErpCtApprovalRecor
     // ---------- helpers ----------
 
     /** 激活下一节点：approvalOrder 大于当前节点的最小 order 的最新记录 → PENDING + 通知。 */
-    protected void activateNext(Long contractId, Integer currentOrder, IServiceContext context) {
+    protected void activateNext(String contractId, Integer currentOrder, IServiceContext context) {
         Integer nextOrder = null;
         for (ErpCtApprovalRecord record : engine.findRecords(contractId, context)) {
             if (record.getApprovalMatrixId() == null || record.getApprovalOrder() == null) {
@@ -228,11 +228,11 @@ public class ErpCtApprovalRecordBizModel extends CrudBizModel<ErpCtApprovalRecor
         return record;
     }
 
-    protected ErpCtContract findContract(Long contractId, IServiceContext context) {
+    protected ErpCtContract findContract(String contractId, IServiceContext context) {
         if (contractId == null) {
             return null;
         }
-        return contractBiz.get(String.valueOf(contractId), true, context);
+        return contractBiz.get(contractId, true, context);
     }
 
     protected int resolveMaxRetries() {

@@ -189,13 +189,13 @@ public class _ErpCtSignatureRequest extends DynamicOrmEntity{
 
     
     /* ID: ID */
-    private java.lang.Long _id;
+    private java.lang.String _id;
     
     /* 业务组织: ORG_ID */
-    private java.lang.Long _orgId;
+    private java.lang.String _orgId;
     
     /* 合同版本: CONTRACT_VERSION_ID */
-    private java.lang.Long _contractVersionId;
+    private java.lang.String _contractVersionId;
     
     /* 签名提供商: PROVIDER */
     private java.lang.String _provider;
@@ -394,9 +394,9 @@ public class _ErpCtSignatureRequest extends DynamicOrmEntity{
         switch(propId){
         
             case PROP_ID_id:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_id));
                }
                setId(typedValue);
@@ -404,9 +404,9 @@ public class _ErpCtSignatureRequest extends DynamicOrmEntity{
             }
         
             case PROP_ID_orgId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_orgId));
                }
                setOrgId(typedValue);
@@ -414,9 +414,9 @@ public class _ErpCtSignatureRequest extends DynamicOrmEntity{
             }
         
             case PROP_ID_contractVersionId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_contractVersionId));
                }
                setContractVersionId(typedValue);
@@ -604,21 +604,21 @@ public class _ErpCtSignatureRequest extends DynamicOrmEntity{
         
             case PROP_ID_id:{
                onInitProp(propId);
-               this._id = (java.lang.Long)value;
+               this._id = (java.lang.String)value;
                orm_id(); // 如果是设置主键字段，则触发watcher
                break;
             }
         
             case PROP_ID_orgId:{
                onInitProp(propId);
-               this._orgId = (java.lang.Long)value;
+               this._orgId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_contractVersionId:{
                onInitProp(propId);
-               this._contractVersionId = (java.lang.Long)value;
+               this._contractVersionId = (java.lang.String)value;
                
                break;
             }
@@ -751,7 +751,7 @@ public class _ErpCtSignatureRequest extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final java.lang.Long getId(){
+    public final java.lang.String getId(){
          onPropGet(PROP_ID_id);
          return _id;
     }
@@ -759,7 +759,7 @@ public class _ErpCtSignatureRequest extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final void setId(java.lang.Long value){
+    public final void setId(java.lang.String value){
         if(onPropSet(PROP_ID_id,value)){
             this._id = value;
             internalClearRefs(PROP_ID_id);
@@ -770,7 +770,7 @@ public class _ErpCtSignatureRequest extends DynamicOrmEntity{
     /**
      * 业务组织: ORG_ID
      */
-    public final java.lang.Long getOrgId(){
+    public final java.lang.String getOrgId(){
          onPropGet(PROP_ID_orgId);
          return _orgId;
     }
@@ -778,7 +778,7 @@ public class _ErpCtSignatureRequest extends DynamicOrmEntity{
     /**
      * 业务组织: ORG_ID
      */
-    public final void setOrgId(java.lang.Long value){
+    public final void setOrgId(java.lang.String value){
         if(onPropSet(PROP_ID_orgId,value)){
             this._orgId = value;
             internalClearRefs(PROP_ID_orgId);
@@ -789,7 +789,7 @@ public class _ErpCtSignatureRequest extends DynamicOrmEntity{
     /**
      * 合同版本: CONTRACT_VERSION_ID
      */
-    public final java.lang.Long getContractVersionId(){
+    public final java.lang.String getContractVersionId(){
          onPropGet(PROP_ID_contractVersionId);
          return _contractVersionId;
     }
@@ -797,7 +797,7 @@ public class _ErpCtSignatureRequest extends DynamicOrmEntity{
     /**
      * 合同版本: CONTRACT_VERSION_ID
      */
-    public final void setContractVersionId(java.lang.Long value){
+    public final void setContractVersionId(java.lang.String value){
         if(onPropSet(PROP_ID_contractVersionId,value)){
             this._contractVersionId = value;
             internalClearRefs(PROP_ID_contractVersionId);
@@ -1190,8 +1190,7 @@ public class _ErpCtSignatureRequest extends DynamicOrmEntity{
            }else{
            internalSetRefEntity(PROP_NAME_providerRequest, refEntity,()->{
            
-                           this.orm_propValue(PROP_ID_providerRequestId,
-                           refEntity.getId());
+                           this.setProviderRequestId(refEntity.getId());
                        
            });
            }

@@ -20,12 +20,12 @@
 
     <props>
         <prop name="id" displayName="ID" propId="1" i18n-en:displayName="ID" tagSet="seq-default" mandatory="true"
-              queryable="true" sortable="true" insertable="true" updatable="false" graphql:type="String">
-            <schema type="java.lang.Long"/>
+              queryable="true" sortable="true" insertable="true" updatable="false">
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="contractLineId" displayName="合同行ID" propId="2" i18n-en:displayName="Contract Line" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="contractLine">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="consumptionDate" displayName="消耗日期" propId="3" i18n-en:displayName="Consumption Date"
               mandatory="true" queryable="true" sortable="true" insertable="true" updatable="true">

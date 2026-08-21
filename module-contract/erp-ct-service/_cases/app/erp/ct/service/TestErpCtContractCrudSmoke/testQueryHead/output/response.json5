@@ -13,7 +13,7 @@
         "contractType_label": "PURCHASE-采购合同",
         "contractDirection": "INBOUND",
         "contractDirection_label": "INBOUND-进向(我方付款)",
-        "partnerId": 1,
+        "partnerId": "1",
         "currencyId": null,
         "totalAmount": null,
         "startDate": "2026-07-01",

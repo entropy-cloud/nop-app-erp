@@ -96,7 +96,7 @@ public class ErpCtSignatureRequestBizModel extends CrudBizModel<ErpCtSignatureRe
 
     @Override
     @BizMutation
-    public ErpCtSignatureRequest initSignatureRequest(@Name("contractVersionId") Long contractVersionId,
+    public ErpCtSignatureRequest initSignatureRequest(@Name("contractVersionId") String contractVersionId,
                                                       @Name("signers") String signersJson,
                                                       @Name("providerCode") String providerCode,
                                                       IServiceContext context) {
@@ -115,16 +115,16 @@ public class ErpCtSignatureRequestBizModel extends CrudBizModel<ErpCtSignatureRe
 
     @Override
     @BizMutation
-    public ErpCtSignatureRequest queryAndUpdateStatus(@Name("requestId") Long requestId,
+    public ErpCtSignatureRequest queryAndUpdateStatus(@Name("requestId") String requestId,
                                                       IServiceContext context) {
         return queryAndUpdateStatusProcessor.queryAndUpdateStatus(requestId, context);
     }
 
     @Override
     @BizMutation
-    public ErpCtSignatureRequest cancelSignatureRequest(@Name("requestId") Long requestId,
+    public ErpCtSignatureRequest cancelSignatureRequest(@Name("requestId") String requestId,
                                                         IServiceContext context) {
-        ErpCtSignatureRequest request = requireEntity(String.valueOf(requestId), null, context);
+        ErpCtSignatureRequest request = requireEntity(requestId, null, context);
         String status = request.getStatus();
         if (!ErpCtConstants.SIGNATURE_STATUS_PENDING.equals(status)
                 && !ErpCtConstants.SIGNATURE_STATUS_PARTIALLY.equals(status)) {
@@ -138,10 +138,10 @@ public class ErpCtSignatureRequestBizModel extends CrudBizModel<ErpCtSignatureRe
 
     @Override
     @BizMutation
-    public ErpCtSignatureRequest rejectSignature(@Name("requestId") Long requestId,
+    public ErpCtSignatureRequest rejectSignature(@Name("requestId") String requestId,
                                                  @Name("reason") String reason,
                                                  IServiceContext context) {
-        ErpCtSignatureRequest request = requireEntity(String.valueOf(requestId), null, context);
+        ErpCtSignatureRequest request = requireEntity(requestId, null, context);
         String status = request.getStatus();
         if (isTerminal(status)) {
             throw illegalTransition(request, "non-terminal");

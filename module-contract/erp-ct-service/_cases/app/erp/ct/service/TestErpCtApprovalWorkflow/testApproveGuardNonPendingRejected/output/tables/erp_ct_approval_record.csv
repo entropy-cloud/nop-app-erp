@@ -1,0 +1,3 @@
+_chgType,ID,CONTRACT_ID,ORG_ID,APPROVAL_MATRIX_ID,APPROVAL_ORDER,APPROVER_ID,APPROVAL_STATUS,COMMENT,APPROVED_AT,REJECTED_AT,REMARK,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
+A,7,5,,1,1,ct-approver-user,PENDING,,,,,@var:ErpCtApprovalRecord@delVersion_1,0,autotest-ref,*,autotest-ref,*
+A,8,5,,2,2,ct-approver-user,WAITING,,,,,@var:ErpCtApprovalRecord@delVersion_1,0,autotest-ref,*,autotest-ref,*

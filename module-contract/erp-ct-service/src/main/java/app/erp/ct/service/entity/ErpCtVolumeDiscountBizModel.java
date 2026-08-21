@@ -41,7 +41,7 @@ public class ErpCtVolumeDiscountBizModel extends CrudBizModel<ErpCtVolumeDiscoun
 
     @Override
     @BizQuery
-    public DiscountResult resolveDiscount(@Name("contractLineId") Long contractLineId,
+    public DiscountResult resolveDiscount(@Name("contractLineId") String contractLineId,
                                           @Name("qty") BigDecimal qty,
                                           @Name("unitPrice") BigDecimal unitPrice,
                                           IServiceContext context) {
@@ -131,7 +131,7 @@ public class ErpCtVolumeDiscountBizModel extends CrudBizModel<ErpCtVolumeDiscoun
     }
 
     @SuppressWarnings("unchecked")
-    protected List<ErpCtVolumeDiscount> findBands(Long contractLineId, IServiceContext context) {
+    protected List<ErpCtVolumeDiscount> findBands(String contractLineId, IServiceContext context) {
         QueryBean query = new QueryBean();
         query.addFilter(eq("contractLineId", contractLineId));
         Object result = findList(query, null, context);

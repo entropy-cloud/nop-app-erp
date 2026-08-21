@@ -87,8 +87,8 @@ public class TestErpCtESignature extends JunitAutoTestCase {
 
     @Test
     public void testInitRejectsNonFinalizedVersion() {
-        long contractId = seedContract();
-        long versionId = seedVersion(contractId, 1, true, ErpCtConstants.VERSION_STATUS_DRAFT);
+        String contractId = seedContract();
+        String versionId = seedVersion(contractId, 1, true, ErpCtConstants.VERSION_STATUS_DRAFT);
 
         NopException ex = assertThrows(NopException.class,
                 () -> ormTemplate.runInSession(session -> signatureRequestBiz.initSignatureRequest(versionId,
@@ -98,8 +98,8 @@ public class TestErpCtESignature extends JunitAutoTestCase {
 
     @Test
     public void testInitCreatesPendingSignatureRequest() {
-        long contractId = seedContract();
-        long versionId = seedVersion(contractId, 1, true, ErpCtConstants.VERSION_STATUS_FINALIZED);
+        String contractId = seedContract();
+        String versionId = seedVersion(contractId, 1, true, ErpCtConstants.VERSION_STATUS_FINALIZED);
         String signersJson = "[{\"name\":\"张三\",\"email\":\"zhang@ex.com\"},{\"name\":\"李四\",\"email\":\"li@ex.com\"}]";
 
         ErpCtSignatureRequest request = ormTemplate.runInSession(session -> signatureRequestBiz.initSignatureRequest(
@@ -116,8 +116,8 @@ public class TestErpCtESignature extends JunitAutoTestCase {
     @Test
     public void testInitFailsWhenESignatureDisabled() {
         AppConfig.getConfigProvider().assignConfigValue(ErpCtConfigs.CFG_E_SIGNATURE_ENABLED, "false");
-        long contractId = seedContract();
-        long versionId = seedVersion(contractId, 1, true, ErpCtConstants.VERSION_STATUS_FINALIZED);
+        String contractId = seedContract();
+        String versionId = seedVersion(contractId, 1, true, ErpCtConstants.VERSION_STATUS_FINALIZED);
 
         NopException ex = assertThrows(NopException.class,
                 () -> ormTemplate.runInSession(session -> signatureRequestBiz.initSignatureRequest(versionId, "[]", null, CTX)));
@@ -154,8 +154,8 @@ public class TestErpCtESignature extends JunitAutoTestCase {
 
     @Test
     public void testCallbackCompletedTransitionsToFullySignedAndSignsVersion() {
-        long contractId = seedContract();
-        long versionId = seedVersion(contractId, 1, true, ErpCtConstants.VERSION_STATUS_FINALIZED);
+        String contractId = seedContract();
+        String versionId = seedVersion(contractId, 1, true, ErpCtConstants.VERSION_STATUS_FINALIZED);
         ErpCtSignatureRequest request = seedPendingRequestForVersion(versionId);
         String payload = buildPayload(request.getProviderRequestId(),
                 ErpCtConstants.SIGNATURE_EVENT_COMPLETED, null, null);
@@ -238,8 +238,8 @@ public class TestErpCtESignature extends JunitAutoTestCase {
 
     @Test
     public void testQueryAndUpdateStatusPollingAdvancesState() {
-        long contractId = seedContract();
-        long versionId = seedVersion(contractId, 1, true, ErpCtConstants.VERSION_STATUS_FINALIZED);
+        String contractId = seedContract();
+        String versionId = seedVersion(contractId, 1, true, ErpCtConstants.VERSION_STATUS_FINALIZED);
         ErpCtSignatureRequest request = seedPendingRequestForVersion(versionId);
 
         // 首次轮询：mock 返回 PARTIALLY → PENDING→PARTIALLY
@@ -269,8 +269,8 @@ public class TestErpCtESignature extends JunitAutoTestCase {
     @Test
     public void testFullySignedIdempotentRejectsRepeatCompletion() {
         // 已 FULLY_SIGNED 的请求再次收到 completed → 抛 ALREADY_COMPLETED
-        long contractId = seedContract();
-        long versionId = seedVersion(contractId, 1, true, ErpCtConstants.VERSION_STATUS_SIGNED);
+        String contractId = seedContract();
+        String versionId = seedVersion(contractId, 1, true, ErpCtConstants.VERSION_STATUS_SIGNED);
         ErpCtSignatureRequest request = seedRequestForVersion(versionId, ErpCtConstants.SIGNATURE_STATUS_FULLY);
         String payload = buildPayload(request.getProviderRequestId(),
                 ErpCtConstants.SIGNATURE_EVENT_COMPLETED, null, null);
@@ -341,9 +341,9 @@ public class TestErpCtESignature extends JunitAutoTestCase {
 
     // ============ helpers ============
 
-    private long seedContract() {
+    private String seedContract() {
         return ormTemplate.runInSession(session -> {
-            long partnerId = seedPartner();
+            String partnerId = seedPartner();
             IEntityDao<app.erp.contract.dao.entity.ErpCtContract> dao =
                     daoProvider.daoFor(app.erp.contract.dao.entity.ErpCtContract.class);
             app.erp.contract.dao.entity.ErpCtContract c = new app.erp.contract.dao.entity.ErpCtContract();
@@ -361,7 +361,7 @@ public class TestErpCtESignature extends JunitAutoTestCase {
         });
     }
 
-    private long seedPartner() {
+    private String seedPartner() {
         ErpMdPartner p = new ErpMdPartner();
         p.setCode("SIG-PARTNER-" + System.nanoTime());
         p.setName("签章测试伙伴");
@@ -371,7 +371,7 @@ public class TestErpCtESignature extends JunitAutoTestCase {
         return p.getId();
     }
 
-    private long seedVersion(long contractId, int versionNo, boolean isCurrent, String status) {
+    private String seedVersion(String contractId, int versionNo, boolean isCurrent, String status) {
         return ormTemplate.runInSession(session -> {
             IEntityDao<ErpCtContractVersion> dao = daoProvider.daoFor(ErpCtContractVersion.class);
             ErpCtContractVersion v = new ErpCtContractVersion();
@@ -387,16 +387,16 @@ public class TestErpCtESignature extends JunitAutoTestCase {
 
     private ErpCtSignatureRequest seedPendingRequest() {
         return ormTemplate.runInSession(session -> {
-            long contractId = seedContract();
-            long versionId = seedVersion(contractId, 1, true, ErpCtConstants.VERSION_STATUS_FINALIZED);
+            String contractId = seedContract();
+            String versionId = seedVersion(contractId, 1, true, ErpCtConstants.VERSION_STATUS_FINALIZED);
             return seedRequestForVersion(versionId, ErpCtConstants.SIGNATURE_STATUS_PENDING);
         });
     }
 
     private ErpCtSignatureRequest seedPendingRequestWithSigners() {
         return ormTemplate.runInSession(session -> {
-            long contractId = seedContract();
-            long versionId = seedVersion(contractId, 1, true, ErpCtConstants.VERSION_STATUS_FINALIZED);
+            String contractId = seedContract();
+            String versionId = seedVersion(contractId, 1, true, ErpCtConstants.VERSION_STATUS_FINALIZED);
             ErpCtSignatureRequest r = new ErpCtSignatureRequest();
             r.setContractVersionId(versionId);
             r.setProvider(ErpCtConstants.SIGNATURE_PROVIDER_MOCK);
@@ -409,11 +409,11 @@ public class TestErpCtESignature extends JunitAutoTestCase {
         });
     }
 
-    private ErpCtSignatureRequest seedPendingRequestForVersion(long versionId) {
+    private ErpCtSignatureRequest seedPendingRequestForVersion(String versionId) {
         return seedRequestForVersion(versionId, ErpCtConstants.SIGNATURE_STATUS_PENDING);
     }
 
-    private ErpCtSignatureRequest seedRequestForVersion(long versionId, String status) {
+    private ErpCtSignatureRequest seedRequestForVersion(String versionId, String status) {
         return ormTemplate.runInSession(session -> {
             ErpCtSignatureRequest r = new ErpCtSignatureRequest();
             r.setContractVersionId(versionId);
@@ -432,16 +432,16 @@ public class TestErpCtESignature extends JunitAutoTestCase {
 
     private ErpCtSignatureRequest seedRequest(String status) {
         return ormTemplate.runInSession(session -> {
-            long contractId = seedContract();
-            long versionId = seedVersion(contractId, 1, true, ErpCtConstants.VERSION_STATUS_FINALIZED);
+            String contractId = seedContract();
+            String versionId = seedVersion(contractId, 1, true, ErpCtConstants.VERSION_STATUS_FINALIZED);
             return seedRequestForVersion(versionId, status);
         });
     }
 
     private void seedRequestWithDeadline(String status, LocalDate deadline) {
         ormTemplate.runInSession(session -> {
-            long contractId = seedContract();
-            long versionId = seedVersion(contractId, 1, true, ErpCtConstants.VERSION_STATUS_FINALIZED);
+            String contractId = seedContract();
+            String versionId = seedVersion(contractId, 1, true, ErpCtConstants.VERSION_STATUS_FINALIZED);
             ErpCtSignatureRequest r = new ErpCtSignatureRequest();
             r.setContractVersionId(versionId);
             r.setProvider(ErpCtConstants.SIGNATURE_PROVIDER_MOCK);
@@ -454,7 +454,7 @@ public class TestErpCtESignature extends JunitAutoTestCase {
         });
     }
 
-    private ErpCtSignatureRequest reload(Long requestId) {
+    private ErpCtSignatureRequest reload(String requestId) {
         return daoProvider.daoFor(ErpCtSignatureRequest.class).getEntityById(requestId);
     }
 

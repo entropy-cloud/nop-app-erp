@@ -24,7 +24,7 @@ import app.erp.ct.dao.dto.DiscountResult;
 public interface IErpCtVolumeDiscountBiz extends ICrudBiz<ErpCtVolumeDiscount> {
 
     @BizQuery
-    DiscountResult resolveDiscount(@Name("contractLineId") Long contractLineId,
+    DiscountResult resolveDiscount(@Name("contractLineId") String contractLineId,
                                    @Name("qty") java.math.BigDecimal qty,
                                    @Name("unitPrice") java.math.BigDecimal unitPrice,
                                    IServiceContext context);

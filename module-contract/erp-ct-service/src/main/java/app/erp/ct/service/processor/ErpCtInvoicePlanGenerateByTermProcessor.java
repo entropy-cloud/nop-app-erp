@@ -34,7 +34,7 @@ public class ErpCtInvoicePlanGenerateByTermProcessor {
     @Inject
     IDaoProvider daoProvider;
 
-    public List<ErpCtInvoicePlan> generateInvoicePlansByTerm(Long contractId,
+    public List<ErpCtInvoicePlan> generateInvoicePlansByTerm(String contractId,
                                                              List<ErpCtInvoicePlanGenerateItem> items,
                                                              IServiceContext context) {
         ErpCtContract contract = requireContract(contractId);
@@ -51,7 +51,7 @@ public class ErpCtInvoicePlanGenerateByTermProcessor {
 
     // ---------- steps（protected，下游可经 Delta 覆盖） ----------
 
-    protected ErpCtContract requireContract(Long contractId) {
+    protected ErpCtContract requireContract(String contractId) {
         ErpCtContract contract = dao().daoFor(ErpCtContract.class).getEntityById(contractId);
         if (contract == null) {
             throw new NopException(ErpCtErrors.ERR_CT_ILLEGAL_STATUS_TRANSITION)
@@ -73,7 +73,7 @@ public class ErpCtInvoicePlanGenerateByTermProcessor {
         }
     }
 
-    protected void assertLineBelongsTo(Long contractId, Long contractLineId) {
+    protected void assertLineBelongsTo(String contractId, String contractLineId) {
         ErpCtContractLine line = contractLineDao().getEntityById(contractLineId);
         if (line == null || !Objects.equals(line.getContractId(), contractId)) {
             throw new NopException(ErpCtErrors.ERR_CT_INVOICE_PLAN_LINE_NOT_IN_CONTRACT)

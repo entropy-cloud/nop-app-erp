@@ -154,16 +154,16 @@ public class _ErpCtContractLine extends DynamicOrmEntity{
 
     
     /* ID: ID */
-    private java.lang.Long _id;
+    private java.lang.String _id;
     
     /* 合同ID: CONTRACT_ID */
-    private java.lang.Long _contractId;
+    private java.lang.String _contractId;
     
     /* 行号: LINE_NO */
     private java.lang.Integer _lineNo;
     
     /* 物料: MATERIAL_ID */
-    private java.lang.Long _materialId;
+    private java.lang.String _materialId;
     
     /* 行描述: DESCRIPTION */
     private java.lang.String _description;
@@ -329,9 +329,9 @@ public class _ErpCtContractLine extends DynamicOrmEntity{
         switch(propId){
         
             case PROP_ID_id:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_id));
                }
                setId(typedValue);
@@ -339,9 +339,9 @@ public class _ErpCtContractLine extends DynamicOrmEntity{
             }
         
             case PROP_ID_contractId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_contractId));
                }
                setContractId(typedValue);
@@ -359,9 +359,9 @@ public class _ErpCtContractLine extends DynamicOrmEntity{
             }
         
             case PROP_ID_materialId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_materialId));
                }
                setMaterialId(typedValue);
@@ -489,14 +489,14 @@ public class _ErpCtContractLine extends DynamicOrmEntity{
         
             case PROP_ID_id:{
                onInitProp(propId);
-               this._id = (java.lang.Long)value;
+               this._id = (java.lang.String)value;
                orm_id(); // 如果是设置主键字段，则触发watcher
                break;
             }
         
             case PROP_ID_contractId:{
                onInitProp(propId);
-               this._contractId = (java.lang.Long)value;
+               this._contractId = (java.lang.String)value;
                
                break;
             }
@@ -510,7 +510,7 @@ public class _ErpCtContractLine extends DynamicOrmEntity{
         
             case PROP_ID_materialId:{
                onInitProp(propId);
-               this._materialId = (java.lang.Long)value;
+               this._materialId = (java.lang.String)value;
                
                break;
             }
@@ -601,7 +601,7 @@ public class _ErpCtContractLine extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final java.lang.Long getId(){
+    public final java.lang.String getId(){
          onPropGet(PROP_ID_id);
          return _id;
     }
@@ -609,7 +609,7 @@ public class _ErpCtContractLine extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final void setId(java.lang.Long value){
+    public final void setId(java.lang.String value){
         if(onPropSet(PROP_ID_id,value)){
             this._id = value;
             internalClearRefs(PROP_ID_id);
@@ -620,7 +620,7 @@ public class _ErpCtContractLine extends DynamicOrmEntity{
     /**
      * 合同ID: CONTRACT_ID
      */
-    public final java.lang.Long getContractId(){
+    public final java.lang.String getContractId(){
          onPropGet(PROP_ID_contractId);
          return _contractId;
     }
@@ -628,7 +628,7 @@ public class _ErpCtContractLine extends DynamicOrmEntity{
     /**
      * 合同ID: CONTRACT_ID
      */
-    public final void setContractId(java.lang.Long value){
+    public final void setContractId(java.lang.String value){
         if(onPropSet(PROP_ID_contractId,value)){
             this._contractId = value;
             internalClearRefs(PROP_ID_contractId);
@@ -658,7 +658,7 @@ public class _ErpCtContractLine extends DynamicOrmEntity{
     /**
      * 物料: MATERIAL_ID
      */
-    public final java.lang.Long getMaterialId(){
+    public final java.lang.String getMaterialId(){
          onPropGet(PROP_ID_materialId);
          return _materialId;
     }
@@ -666,7 +666,7 @@ public class _ErpCtContractLine extends DynamicOrmEntity{
     /**
      * 物料: MATERIAL_ID
      */
-    public final void setMaterialId(java.lang.Long value){
+    public final void setMaterialId(java.lang.String value){
         if(onPropSet(PROP_ID_materialId,value)){
             this._materialId = value;
             internalClearRefs(PROP_ID_materialId);

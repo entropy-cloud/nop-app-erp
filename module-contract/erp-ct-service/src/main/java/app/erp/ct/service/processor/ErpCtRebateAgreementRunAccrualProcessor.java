@@ -9,6 +9,7 @@ import app.erp.ct.service.statemachine.ErpCtRebateAgreementStateMachine;
 import app.erp.pur.dao.entity.ErpPurInvoice;
 import app.erp.sal.dao.entity.ErpSalInvoice;
 import io.nop.api.core.beans.query.QueryBean;
+import io.nop.api.core.convert.ConvertHelper;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.api.core.time.CoreMetrics;
 import io.nop.core.context.IServiceContext;
@@ -45,7 +46,7 @@ public class ErpCtRebateAgreementRunAccrualProcessor {
     @Inject
     ErpCtRebateAgreementStateMachine stateMachine;
 
-    public ErpCtRebateAgreement runAccrual(Long agreementId, LocalDate asOfDate, IServiceContext context) {
+    public ErpCtRebateAgreement runAccrual(String agreementId, LocalDate asOfDate, IServiceContext context) {
         ErpCtRebateAgreement agreement = requireAgreement(agreementId);
         if (!stateMachine.isActive(agreement.getStatus())) {
             throw new NopException(ErpCtErrors.ERR_CT_REBATE_AGREEMENT_NOT_ACTIVE)
@@ -80,7 +81,7 @@ public class ErpCtRebateAgreementRunAccrualProcessor {
 
     // ---------- helpers ----------
 
-    protected ErpCtRebateAgreement requireAgreement(Long agreementId) {
+    protected ErpCtRebateAgreement requireAgreement(String agreementId) {
         ErpCtRebateAgreement agreement = dao().getEntityById(agreementId);
         if (agreement == null) {
             throw new NopException(ErpCtErrors.ERR_CT_REBATE_AGREEMENT_NOT_ACTIVE)
@@ -89,7 +90,7 @@ public class ErpCtRebateAgreementRunAccrualProcessor {
         return agreement;
     }
 
-    protected Set<String> loadAccruedBillCodes(Long agreementId) {
+    protected Set<String> loadAccruedBillCodes(String agreementId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("rebateAgreementId", agreementId));
         List<ErpCtRebateAccrual> accruals = daoProvider.daoFor(ErpCtRebateAccrual.class).findAllByQuery(q);
@@ -109,10 +110,12 @@ public class ErpCtRebateAgreementRunAccrualProcessor {
         q.addFilter(ge("businessDate", from));
         q.addFilter(le("businessDate", to));
         if (Objects.equals(agreement.getRebateType(), ErpCtConstants.REBATE_TYPE_PURCHASE)) {
-            q.addFilter(eq("supplierId", agreement.getPartnerId()));
+            // bridge-main-047: ct String partnerId → pur Long supplierId 过滤值（退役 owner M2.5）
+            q.addFilter(eq("supplierId", ConvertHelper.toLong(agreement.getPartnerId())));
             return daoProvider.daoFor(ErpPurInvoice.class).findAllByQuery(q);
         } else {
-            q.addFilter(eq("customerId", agreement.getPartnerId()));
+            // bridge-main-048: ct String partnerId → sal Long customerId 过滤值（退役 owner M2.6）
+            q.addFilter(eq("customerId", ConvertHelper.toLong(agreement.getPartnerId())));
             return daoProvider.daoFor(ErpSalInvoice.class).findAllByQuery(q);
         }
     }

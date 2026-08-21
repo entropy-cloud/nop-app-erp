@@ -12,7 +12,7 @@ import java.time.LocalDate;
  */
 public class ErpCtInvoicePlanGenerateItem {
 
-    private Long contractLineId;
+    private String contractLineId;
 
     private String invoiceTerm;
 
@@ -20,11 +20,11 @@ public class ErpCtInvoicePlanGenerateItem {
 
     private BigDecimal amount;
 
-    public Long getContractLineId() {
+    public String getContractLineId() {
         return contractLineId;
     }
 
-    public void setContractLineId(Long contractLineId) {
+    public void setContractLineId(String contractLineId) {
         this.contractLineId = contractLineId;
     }
 

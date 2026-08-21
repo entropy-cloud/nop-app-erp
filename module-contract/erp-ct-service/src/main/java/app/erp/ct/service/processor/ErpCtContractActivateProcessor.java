@@ -45,7 +45,7 @@ public class ErpCtContractActivateProcessor {
     @Inject
     ErpCtContractStateMachine stateMachine;
 
-    public ErpCtContract activate(Long contractId, IServiceContext context) {
+    public ErpCtContract activate(String contractId, IServiceContext context) {
         ErpCtContract contract = requireContract(contractId);
         try {
             stateMachine.assertCanActivate(contract.getStatus());
@@ -76,7 +76,7 @@ public class ErpCtContractActivateProcessor {
 
     // ---------- helpers ----------
 
-    protected ErpCtContract requireContract(Long contractId) {
+    protected ErpCtContract requireContract(String contractId) {
         ErpCtContract contract = dao().getEntityById(contractId);
         if (contract == null) {
             throw new NopException(ErpCtErrors.ERR_CT_ILLEGAL_STATUS_TRANSITION)
@@ -102,7 +102,7 @@ public class ErpCtContractActivateProcessor {
         }
     }
 
-    protected ErpCtContractVersion findCurrentVersion(Long contractId, IServiceContext context) {
+    protected ErpCtContractVersion findCurrentVersion(String contractId, IServiceContext context) {
         QueryBean query = new QueryBean();
         query.addFilter(eq("contractId", contractId));
         query.addFilter(eq("isCurrent", true));

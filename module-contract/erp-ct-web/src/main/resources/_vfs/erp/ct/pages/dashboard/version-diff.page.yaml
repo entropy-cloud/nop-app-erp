@@ -108,10 +108,10 @@ body:
       method: post
       dataType: raw
       data:
-        query: "query(${'$'}aid:Long,${'$'}bid:Long){ va: ErpCtContractVersion__get(id:${'$'}aid){ id versionNo versionDate status approvedBy approvedAt isCurrent content remark } vb: ErpCtContractVersion__get(id:${'$'}bid){ id versionNo versionDate status approvedBy approvedAt isCurrent content remark } }"
+        query: "query(${'$'}aid:String,${'$'}bid:String){ va: ErpCtContractVersion__get(id:${'$'}aid){ id versionNo versionDate status approvedBy approvedAt isCurrent content remark } vb: ErpCtContractVersion__get(id:${'$'}bid){ id versionNo versionDate status approvedBy approvedAt isCurrent content remark } }"
         variables:
-          aid: "${versionAId || 0}"
-          bid: "${versionBId || 0}"
+          aid: "${versionAId || ''}"
+          bid: "${versionBId || ''}"
       adaptor: |
         const d = payload.data || {};
         if (d.errors || !d.data) {

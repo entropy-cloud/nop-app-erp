@@ -115,7 +115,7 @@ public class ErpCtContractBizModel extends CrudBizModel<ErpCtContract> implement
 
     @Override
     @BizMutation
-    public ErpCtContract submit(@Name("contractId") Long contractId, IServiceContext context) {
+    public ErpCtContract submit(@Name("contractId") String contractId, IServiceContext context) {
         ErpCtContract contract = requireContract(contractId, context);
         try {
             stateMachine.assertCanSubmitForNegotiation(contract.getStatus());
@@ -159,7 +159,7 @@ public class ErpCtContractBizModel extends CrudBizModel<ErpCtContract> implement
 
     @Override
     @BizMutation
-    public ErpCtContract rejectAmend(@Name("contractId") Long contractId, IServiceContext context) {
+    public ErpCtContract rejectAmend(@Name("contractId") String contractId, IServiceContext context) {
         ErpCtContract contract = requireContract(contractId, context);
         try {
             stateMachine.assertCanRejectAmend(contract.getStatus());
@@ -177,13 +177,13 @@ public class ErpCtContractBizModel extends CrudBizModel<ErpCtContract> implement
 
     @Override
     @BizMutation
-    public ErpCtContract activate(@Name("contractId") Long contractId, IServiceContext context) {
+    public ErpCtContract activate(@Name("contractId") String contractId, IServiceContext context) {
         return activateProcessor.activate(contractId, context);
     }
 
     @Override
     @BizMutation
-    public ErpCtContract suspend(@Name("contractId") Long contractId, IServiceContext context) {
+    public ErpCtContract suspend(@Name("contractId") String contractId, IServiceContext context) {
         ErpCtContract contract = requireContract(contractId, context);
         try {
             stateMachine.assertCanSuspend(contract.getStatus());
@@ -197,7 +197,7 @@ public class ErpCtContractBizModel extends CrudBizModel<ErpCtContract> implement
 
     @Override
     @BizMutation
-    public ErpCtContract resume(@Name("contractId") Long contractId, IServiceContext context) {
+    public ErpCtContract resume(@Name("contractId") String contractId, IServiceContext context) {
         ErpCtContract contract = requireContract(contractId, context);
         try {
             stateMachine.assertCanResume(contract.getStatus());
@@ -211,9 +211,9 @@ public class ErpCtContractBizModel extends CrudBizModel<ErpCtContract> implement
 
     @Override
     @BizMutation
-    public ErpCtContract terminate(@Name("contractId") Long contractId,
+    public ErpCtContract terminate(@Name("contractId") String contractId,
                                    @Optional @Name("reason") String reason,
-                                   @Optional @Name("attachmentId") Long attachmentId,
+                                   @Optional @Name("attachmentId") String attachmentId,
                                    IServiceContext context) {
         ErpCtContract contract = requireContract(contractId, context);
         // 守卫接受 ACTIVE（生效合同提前终止）与 NEGOTIATION（谈判破裂放弃）两类源态
@@ -249,7 +249,7 @@ public class ErpCtContractBizModel extends CrudBizModel<ErpCtContract> implement
 
     @Override
     @BizMutation
-    public ErpCtContract approveTermination(@Name("recordId") Long recordId,
+    public ErpCtContract approveTermination(@Name("recordId") String recordId,
                                             @Optional @Name("comment") String comment,
                                             IServiceContext context) {
         ErpCtApprovalRecord record = requireTerminationRecord(recordId, context);
@@ -273,7 +273,7 @@ public class ErpCtContractBizModel extends CrudBizModel<ErpCtContract> implement
 
     @Override
     @BizMutation
-    public ErpCtContract rejectTermination(@Name("recordId") Long recordId,
+    public ErpCtContract rejectTermination(@Name("recordId") String recordId,
                                            @Optional @Name("comment") String comment,
                                            IServiceContext context) {
         ErpCtApprovalRecord record = requireTerminationRecord(recordId, context);
@@ -292,7 +292,7 @@ public class ErpCtContractBizModel extends CrudBizModel<ErpCtContract> implement
 
     @Override
     @BizMutation
-    public ErpCtContract expire(@Name("contractId") Long contractId, IServiceContext context) {
+    public ErpCtContract expire(@Name("contractId") String contractId, IServiceContext context) {
         ErpCtContract contract = requireContract(contractId, context);
         try {
             stateMachine.assertCanExpire(contract.getStatus());
@@ -306,7 +306,7 @@ public class ErpCtContractBizModel extends CrudBizModel<ErpCtContract> implement
 
     @Override
     @BizMutation
-    public ErpCtContract amend(@Name("contractId") Long contractId, IServiceContext context) {
+    public ErpCtContract amend(@Name("contractId") String contractId, IServiceContext context) {
         return amendProcessor.amend(contractId, context);
     }
 
@@ -373,7 +373,7 @@ public class ErpCtContractBizModel extends CrudBizModel<ErpCtContract> implement
         if (lines.isEmpty()) {
             return;
         }
-        List<Long> lineIds = new java.util.ArrayList<>();
+        List<String> lineIds = new java.util.ArrayList<>();
         for (ErpCtContractLine line : lines) {
             lineIds.add(line.getId());
         }
@@ -449,8 +449,8 @@ public class ErpCtContractBizModel extends CrudBizModel<ErpCtContract> implement
 
     // ---------- helpers ----------
 
-    protected ErpCtContract requireContract(Long contractId, IServiceContext context) {
-        ErpCtContract contract = get(String.valueOf(contractId), false, context);
+    protected ErpCtContract requireContract(String contractId, IServiceContext context) {
+        ErpCtContract contract = get(contractId, false, context);
         if (contract == null) {
             throw new NopException(ErpCtErrors.ERR_CT_ILLEGAL_STATUS_TRANSITION)
                     .param(ErpCtErrors.ARG_CONTRACT_ID, contractId);
@@ -461,8 +461,8 @@ public class ErpCtContractBizModel extends CrudBizModel<ErpCtContract> implement
     // ---------- RC-R1.34 terminate 两段化 helpers（P1-RC-076） ----------
 
     /** 终止法务记录装载：存在 + approvalMatrixId=null（链记录归 ApprovalRecordBizModel 双轨）。 */
-    protected ErpCtApprovalRecord requireTerminationRecord(Long recordId, IServiceContext context) {
-        ErpCtApprovalRecord record = approvalRecordBiz.get(String.valueOf(recordId), false, context);
+    protected ErpCtApprovalRecord requireTerminationRecord(String recordId, IServiceContext context) {
+        ErpCtApprovalRecord record = approvalRecordBiz.get(recordId, false, context);
         if (record == null) {
             throw new NopException(ErpCtErrors.ERR_CT_APPROVAL_RECORD_NOT_FOUND)
                     .param(ErpCtErrors.ARG_APPROVAL_RECORD_ID, recordId);
@@ -498,7 +498,7 @@ public class ErpCtContractBizModel extends CrudBizModel<ErpCtContract> implement
     }
 
     /** 终止申请 remark 承载（D1 裁决——零 ORM）：reason + 可选附件引用。 */
-    protected String buildTerminationRemark(String reason, Long attachmentId) {
+    protected String buildTerminationRemark(String reason, String attachmentId) {
         StringBuilder sb = new StringBuilder();
         if (reason != null && !reason.isBlank()) {
             sb.append(reason);
@@ -513,7 +513,7 @@ public class ErpCtContractBizModel extends CrudBizModel<ErpCtContract> implement
     }
 
     /** 当前版本归档（L1 UC-CT-06 step 3）：isCurrent=true 版本 → isCurrent=false。 */
-    protected void archiveCurrentVersion(Long contractId, IServiceContext context) {
+    protected void archiveCurrentVersion(String contractId, IServiceContext context) {
         ErpCtContractVersion current = findCurrentVersion(contractId, context);
         if (current != null && Boolean.TRUE.equals(current.getIsCurrent())) {
             current.setIsCurrent(false);
@@ -526,12 +526,12 @@ public class ErpCtContractBizModel extends CrudBizModel<ErpCtContract> implement
      * （useLogicalDelete 既有语义 delVersion=1，「标记作废」显式落库 + TERMINATED 隐式失效双保险）；
      * 已开票行保留（历史发票证据）。
      */
-    protected void haltUnexecutedInvoicePlans(Long contractId, IServiceContext context) {
+    protected void haltUnexecutedInvoicePlans(String contractId, IServiceContext context) {
         List<ErpCtContractLine> lines = findLines(contractId, context);
         if (lines.isEmpty()) {
             return;
         }
-        List<Long> lineIds = new java.util.ArrayList<>();
+        List<String> lineIds = new java.util.ArrayList<>();
         for (ErpCtContractLine line : lines) {
             lineIds.add(line.getId());
         }
@@ -606,14 +606,14 @@ public class ErpCtContractBizModel extends CrudBizModel<ErpCtContract> implement
         }
     }
 
-    protected ErpCtContractVersion findCurrentVersion(Long contractId, IServiceContext context) {
+    protected ErpCtContractVersion findCurrentVersion(String contractId, IServiceContext context) {
         QueryBean query = new QueryBean();
         query.addFilter(eq("contractId", contractId));
         query.addFilter(eq("isCurrent", true));
         return contractVersionBiz.findFirst(query, null, context);
     }
 
-    protected List<ErpCtContractVersion> findVersions(Long contractId, IServiceContext context) {
+    protected List<ErpCtContractVersion> findVersions(String contractId, IServiceContext context) {
         QueryBean query = new QueryBean();
         query.addFilter(eq("contractId", contractId));
         return contractVersionBiz.findList(query, null, context);
@@ -641,7 +641,7 @@ public class ErpCtContractBizModel extends CrudBizModel<ErpCtContract> implement
      * 提交校验（D1 语义复用，submit 权威门卫）：行金额数据源 = DAO 查询（跨请求已落库行可靠，
      * 对齐 R1.8 totalHours 先例 {@code ErpHrTimesheetBizModel#sumHoursByTimesheet}）。
      */
-    protected void validateContractFields(ErpCtContract contract, Long contractId, IServiceContext context) {
+    protected void validateContractFields(ErpCtContract contract, String contractId, IServiceContext context) {
         validateDateRange(contract);
         List<ErpCtContractLine> lines = findLines(contractId, context);
         if (lines.isEmpty()) {
@@ -657,7 +657,7 @@ public class ErpCtContractBizModel extends CrudBizModel<ErpCtContract> implement
      * 版本创建语义（D2/MAJOR-1）：零版本时自动创建 v1（versionNo=1、isCurrent=true、VERSION_STATUS_DRAFT）；
      * 已有版本时零操作（保留既有 DRAFT 当前版本不动——amend 场景 v2 已 isCurrent=true + DRAFT）。
      */
-    protected void ensureVersionOnSubmit(Long contractId, IServiceContext context) {
+    protected void ensureVersionOnSubmit(String contractId, IServiceContext context) {
         List<ErpCtContractVersion> versions = findVersions(contractId, context);
         if (versions != null && !versions.isEmpty()) {
             return;
@@ -677,7 +677,7 @@ public class ErpCtContractBizModel extends CrudBizModel<ErpCtContract> implement
      * 边界（无 SIGNED/FINALIZED 候选——零版本 ACTIVE 合同 amend 后驳回）：清空遗留 DRAFT 版本 isCurrent，
      * 恢复「无 current 版本」前置不变量（防 ACTIVE+DRAFT-current 不一致态）。
      */
-    protected void restoreCurrentVersion(Long contractId, IServiceContext context) {
+    protected void restoreCurrentVersion(String contractId, IServiceContext context) {
         List<ErpCtContractVersion> versions = findVersions(contractId, context);
         if (versions == null || versions.isEmpty()) {
             return;
@@ -711,7 +711,7 @@ public class ErpCtContractBizModel extends CrudBizModel<ErpCtContract> implement
                 && (b.getVersionNo() == null || a.getVersionNo() > b.getVersionNo());
     }
 
-    protected List<ErpCtContractLine> findLines(Long contractId, IServiceContext context) {
+    protected List<ErpCtContractLine> findLines(String contractId, IServiceContext context) {
         QueryBean query = new QueryBean();
         query.addFilter(eq("contractId", contractId));
         List<ErpCtContractLine> list = contractLineBiz.findList(query, null, context);

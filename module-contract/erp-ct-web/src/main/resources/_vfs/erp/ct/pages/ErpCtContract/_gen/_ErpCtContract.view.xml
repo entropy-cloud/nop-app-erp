@@ -19,13 +19,13 @@
             <cols>
 
                 <!--ID-->
-                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="id" mandatory="true" sortable="true"/>
 
                 <!--合同编号-->
                 <col id="code" mandatory="true" sortable="true"/>
 
                 <!--业务组织-->
-                <col id="orgId" ui:number="true" sortable="true"/>
+                <col id="orgId" sortable="true"/>
 
                 <!--合同名称-->
                 <col id="contractName" mandatory="true" sortable="true"/>
@@ -37,10 +37,10 @@
                 <col id="contractDirection" mandatory="true" sortable="true"/>
 
                 <!--合作方-->
-                <col id="partnerId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="partnerId" mandatory="true" sortable="true"/>
 
                 <!--币种-->
-                <col id="currencyId" ui:number="true" sortable="true"/>
+                <col id="currencyId" sortable="true"/>
 
                 <!--合同总额-->
                 <col id="totalAmount" ui:number="true" sortable="true"/>
@@ -58,10 +58,10 @@
                 <col id="status" mandatory="true" sortable="true"/>
 
                 <!--合同模板-->
-                <col id="templateId" ui:number="true" sortable="true"/>
+                <col id="templateId" sortable="true"/>
 
                 <!--父合同-->
-                <col id="parentContractId" ui:number="true" sortable="true"/>
+                <col id="parentContractId" sortable="true"/>
 
                 <!--描述-->
                 <col id="description" sortable="true"/>

@@ -13,6 +13,7 @@ import io.nop.api.core.annotations.core.OptionalBoolean;
 import io.nop.api.core.beans.ApiRequest;
 import io.nop.api.core.beans.ApiResponse;
 import io.nop.api.core.beans.query.QueryBean;
+import io.nop.api.core.convert.ConvertHelper;
 import io.nop.api.core.time.CoreMetrics;
 import io.nop.autotest.junit.JunitAutoTestCase;
 import io.nop.dao.api.IDaoProvider;
@@ -51,8 +52,8 @@ public class TestErpCtRebateSettlementEnd extends JunitAutoTestCase {
 
     @Test
     public void testSalesRebateSettlementGeneratesArCreditMemo() {
-        long[] setup = setupSalesRebateAndAccrue();
-        long settlementId = setup[1];
+        String[] setup = setupSalesRebateAndAccrue();
+        String settlementId = setup[1];
 
         ApiResponse<?> resp = executeRpc(mutation, "ErpCtRebateSettlement__postSettlement",
                 ApiRequest.build(Map.of("settlementId", settlementId)));
@@ -73,9 +74,9 @@ public class TestErpCtRebateSettlementEnd extends JunitAutoTestCase {
 
     @Test
     public void testSettlementMarksAccrualsSettled() {
-        long[] setup = setupSalesRebateAndAccrue();
-        long agreementId = setup[0];
-        long settlementId = setup[1];
+        String[] setup = setupSalesRebateAndAccrue();
+        String agreementId = setup[0];
+        String settlementId = setup[1];
 
         ApiResponse<?> resp = executeRpc(mutation, "ErpCtRebateSettlement__postSettlement",
                 ApiRequest.build(Map.of("settlementId", settlementId)));
@@ -88,13 +89,13 @@ public class TestErpCtRebateSettlementEnd extends JunitAutoTestCase {
         }
     }
 
-    private long[] setupSalesRebateAndAccrue() {
-        long[] setup = setupActiveContract("SALES", "OUTBOUND");
-        long partnerId = setup[2];
-        long currencyId = setup[3];
-        long contractId = setup[0];
+    private String[] setupSalesRebateAndAccrue() {
+        String[] setup = setupActiveContract("SALES", "OUTBOUND");
+        String partnerId = setup[2];
+        String currencyId = setup[3];
+        String contractId = setup[0];
 
-        long agreementId = createRebateAgreement(partnerId, contractId, "SALES", "PROGRESSIVE");
+        String agreementId = createRebateAgreement(partnerId, contractId, "SALES", "PROGRESSIVE");
         createRebateTier(agreementId, new BigDecimal("0"), new BigDecimal("1000000"), new BigDecimal("0"));
         createRebateTier(agreementId, new BigDecimal("1000000"), null, new BigDecimal("2"));
 
@@ -102,22 +103,22 @@ public class TestErpCtRebateSettlementEnd extends JunitAutoTestCase {
         executeRpc(mutation, "ErpCtRebateAgreement__runAccrual",
                 ApiRequest.build(Map.of("agreementId", agreementId, "asOfDate", CoreMetrics.currentDate().toString())));
 
-        long settlementId = createSettlement(agreementId);
-        return new long[]{agreementId, settlementId};
+        String settlementId = createSettlement(agreementId);
+        return new String[]{agreementId, settlementId};
     }
 
-    private long[] setupActiveContract(String contractType, String direction) {
-        long[] ids = new long[5];
+    private String[] setupActiveContract(String contractType, String direction) {
+        String[] ids = new String[5];
         ormTemplate.runInSession(session -> {
-            long partnerId = createPartner();
-            long currencyId = createCurrency();
-            long uomId = createUoM();
-            long materialId = createMaterial(uomId);
+            String partnerId = createPartner();
+            String currencyId = createCurrency();
+            String uomId = createUoM();
+            String materialId = createMaterial(uomId);
             ids[2] = partnerId;
             ids[3] = currencyId;
             ids[4] = materialId;
 
-            long contractId = createContract(partnerId, currencyId, contractType, direction);
+            String contractId = createContract(partnerId, currencyId, contractType, direction);
             ids[0] = contractId;
             ids[1] = createContractLine(contractId, materialId);
             createVersion(contractId, 1, true, "FINALIZED");
@@ -128,7 +129,7 @@ public class TestErpCtRebateSettlementEnd extends JunitAutoTestCase {
         return ids;
     }
 
-    private long createPartner() {
+    private String createPartner() {
         ErpMdPartner p = daoProvider.daoFor(ErpMdPartner.class).newEntity();
         p.setCode("CT-SREB-PARTNER-" + System.nanoTime());
         p.setName("销售返利测试伙伴");
@@ -138,7 +139,7 @@ public class TestErpCtRebateSettlementEnd extends JunitAutoTestCase {
         return p.getId();
     }
 
-    private long createCurrency() {
+    private String createCurrency() {
         ErpMdCurrency c = daoProvider.daoFor(ErpMdCurrency.class).newEntity();
         c.setCode("CNY-SREB");
         c.setName("人民币");
@@ -146,7 +147,7 @@ public class TestErpCtRebateSettlementEnd extends JunitAutoTestCase {
         return c.getId();
     }
 
-    private long createUoM() {
+    private String createUoM() {
         ErpMdUoM u = daoProvider.daoFor(ErpMdUoM.class).newEntity();
         u.setCode("PCS-SREB");
         u.setName("个");
@@ -154,7 +155,7 @@ public class TestErpCtRebateSettlementEnd extends JunitAutoTestCase {
         return u.getId();
     }
 
-    private long createMaterial(long uomId) {
+    private String createMaterial(String uomId) {
         ErpMdMaterial m = daoProvider.daoFor(ErpMdMaterial.class).newEntity();
         m.setCode("MAT-SREB-" + System.nanoTime());
         m.setName("销售返利测试物料");
@@ -165,15 +166,11 @@ public class TestErpCtRebateSettlementEnd extends JunitAutoTestCase {
         return m.getId();
     }
 
-    private long toLongId(Map<?, ?> r) {
-        Object id = r.get("id");
-        if (id instanceof Number) {
-            return ((Number) id).longValue();
-        }
-        return Long.parseLong(String.valueOf(id));
+    private String toLongId(Map<?, ?> r) {
+        return String.valueOf(r.get("id"));
     }
 
-    private long createContract(long partnerId, long currencyId, String type, String direction) {
+    private String createContract(String partnerId, String currencyId, String type, String direction) {
         Map<String, Object> data = new LinkedHashMap<>();
         data.put("code", "CT-SREB-" + System.nanoTime());
         data.put("contractName", "销售返利测试合同");
@@ -189,7 +186,7 @@ public class TestErpCtRebateSettlementEnd extends JunitAutoTestCase {
         return toLongId(r);
     }
 
-    private long createContractLine(long contractId, long materialId) {
+    private String createContractLine(String contractId, String materialId) {
         Map<String, Object> data = new LinkedHashMap<>();
         data.put("lineNo", 1);
         data.put("contractId", contractId);
@@ -202,7 +199,7 @@ public class TestErpCtRebateSettlementEnd extends JunitAutoTestCase {
         return toLongId(r);
     }
 
-    private void createVersion(long contractId, int versionNo, boolean isCurrent, String status) {
+    private void createVersion(String contractId, int versionNo, boolean isCurrent, String status) {
         Map<String, Object> data = new LinkedHashMap<>();
         data.put("contractId", contractId);
         data.put("versionNo", versionNo);
@@ -213,7 +210,7 @@ public class TestErpCtRebateSettlementEnd extends JunitAutoTestCase {
                 ApiRequest.build(Map.of("data", data)));
     }
 
-    private long createRebateAgreement(long partnerId, long contractId, String rebateType, String method) {
+    private String createRebateAgreement(String partnerId, String contractId, String rebateType, String method) {
         Map<String, Object> data = new LinkedHashMap<>();
         data.put("code", "SREB-AG-" + System.nanoTime());
         data.put("contractId", contractId);
@@ -228,7 +225,7 @@ public class TestErpCtRebateSettlementEnd extends JunitAutoTestCase {
         return toLongId(r);
     }
 
-    private void createRebateTier(long agreementId, BigDecimal from, BigDecimal to, BigDecimal percent) {
+    private void createRebateTier(String agreementId, BigDecimal from, BigDecimal to, BigDecimal percent) {
         app.erp.contract.dao.entity.ErpCtRebateTier tier =
                 daoProvider.daoFor(app.erp.contract.dao.entity.ErpCtRebateTier.class).newEntity();
         tier.setRebateAgreementId(agreementId);
@@ -238,12 +235,12 @@ public class TestErpCtRebateSettlementEnd extends JunitAutoTestCase {
         daoProvider.daoFor(app.erp.contract.dao.entity.ErpCtRebateTier.class).saveEntity(tier);
     }
 
-    private void createPostedArInvoice(String code, long customerId, long currencyId, BigDecimal amount) {
+    private void createPostedArInvoice(String code, String customerId, String currencyId, BigDecimal amount) {
         ErpSalInvoice invoice = daoProvider.daoFor(ErpSalInvoice.class).newEntity();
         invoice.setCode(code);
-        invoice.setCustomerId(customerId);
+        invoice.setCustomerId(ConvertHelper.toLong(customerId));
         invoice.setBusinessDate(LocalDate.of(2026, 6, 15));
-        invoice.setCurrencyId(currencyId);
+        invoice.setCurrencyId(ConvertHelper.toLong(currencyId));
         invoice.setExchangeRate(BigDecimal.ONE);
         invoice.setTotalAmount(amount);
         invoice.setAmountSource(amount);
@@ -256,7 +253,7 @@ public class TestErpCtRebateSettlementEnd extends JunitAutoTestCase {
         daoProvider.daoFor(ErpSalInvoice.class).saveEntity(invoice);
     }
 
-    private long createSettlement(long agreementId) {
+    private String createSettlement(String agreementId) {
         Map<String, Object> data = new LinkedHashMap<>();
         data.put("rebateAgreementId", agreementId);
         data.put("settlementDate", CoreMetrics.currentDate().toString());
@@ -266,7 +263,7 @@ public class TestErpCtRebateSettlementEnd extends JunitAutoTestCase {
         return toLongId(r);
     }
 
-    private List<ErpCtRebateAccrual> findAccruals(long agreementId) {
+    private List<ErpCtRebateAccrual> findAccruals(String agreementId) {
         return ormTemplate.runInSession(session -> {
             QueryBean q = new QueryBean();
             q.addFilter(eq("rebateAgreementId", agreementId));

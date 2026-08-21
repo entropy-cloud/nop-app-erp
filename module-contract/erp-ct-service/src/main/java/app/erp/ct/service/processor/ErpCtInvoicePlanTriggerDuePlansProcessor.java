@@ -30,7 +30,7 @@ public class ErpCtInvoicePlanTriggerDuePlansProcessor {
     @Inject
     ErpCtInvoicePlanTriggerInvoiceProcessor triggerInvoiceProcessor;
 
-    public int triggerDuePlans(Long contractId, LocalDate asOfDate, IServiceContext context) {
+    public int triggerDuePlans(String contractId, LocalDate asOfDate, IServiceContext context) {
         // config-gated：erp-ct.invoiceplan-auto-trigger 默认 true
         if (!AppConfig.var(ErpCtConfigs.CFG_INVOICEPLAN_AUTO_TRIGGER, true)) {
             return 0;

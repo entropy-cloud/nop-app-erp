@@ -22,7 +22,7 @@ import app.erp.contract.dao.entity.ErpCtRebateAgreement;
 public interface IErpCtRebateAgreementBiz extends ICrudBiz<ErpCtRebateAgreement> {
 
     @BizMutation
-    ErpCtRebateAgreement runAccrual(@Name("agreementId") Long agreementId,
+    ErpCtRebateAgreement runAccrual(@Name("agreementId") String agreementId,
                                     @Name("asOfDate") java.time.LocalDate asOfDate,
                                     IServiceContext context);
 }

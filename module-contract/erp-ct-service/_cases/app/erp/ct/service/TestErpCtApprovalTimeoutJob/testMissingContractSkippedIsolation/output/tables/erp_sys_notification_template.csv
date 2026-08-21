@@ -1,0 +1,2 @@
+_chgType,ID,NOTIFICATION_TYPE,NAME,CHANNEL_SET,SUBJECT_TPL,BODY_TPL,RECIPIENT_RESOLVER,RECIPIENT_CONFIG,MERGE_WINDOW_SECONDS,MERGE_STRATEGY,STATUS,REMARK,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
+A,8823,ct.approval-timeout-escalation,TPL-TIMEOUT-ESCALATION,IN_APP,审批超时升级: ${contractCode},合同 ${contractCode} 审批节点 ${approvalOrder} 超时未处理，请跟进,USER_LIST,"{""userIds"":[""${escalationUserId}""]}",0,NONE,ACTIVE,,@var:ErpSysNotificationTemplate@delVersion,0,autotest-ref,*,autotest-ref,*

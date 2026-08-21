@@ -11,6 +11,7 @@ import io.nop.api.core.auth.IUserContext;
 import io.nop.api.core.beans.ApiRequest;
 import io.nop.api.core.beans.ApiResponse;
 import io.nop.api.core.beans.query.QueryBean;
+import io.nop.api.core.convert.ConvertHelper;
 import io.nop.api.core.config.AppConfig;
 import io.nop.api.core.context.ContextProvider;
 import io.nop.auth.core.login.UserContextImpl;
@@ -92,7 +93,7 @@ public class TestErpCtApprovalWorkflow extends JunitAutoTestCase {
 
     @Test
     public void testSubmitNoRecordsWhenApprovalDisabled() {
-        long contractId = createContract("DRAFT", "CT-AWF-1-", new BigDecimal("1000"));
+        String contractId = createContract("DRAFT", "CT-AWF-1-", new BigDecimal("1000"));
         ApiResponse<?> resp = executeRpc(mutation, "ErpCtContract__submit",
                 ApiRequest.build(Map.of("contractId", contractId)));
         assertEquals(0, resp.getStatus(), "submit 应成功: " + resp);
@@ -104,9 +105,9 @@ public class TestErpCtApprovalWorkflow extends JunitAutoTestCase {
         AppConfig.getConfigProvider().assignConfigValue(ErpCtConfigs.CFG_APPROVAL_ENABLED, "true");
         seedRole("CT-ROLE-A", "role-a-1", APPROVER_USER);
         seedRole("CT-ROLE-B", "role-b-1", OTHER_USER);
-        long matrixA = seedMatrix("CT-MTX-A-1", "CT-ROLE-A", 1, null, new BigDecimal("2000"));
-        long matrixB = seedMatrix("CT-MTX-B-1", "CT-ROLE-B", 2, null, new BigDecimal("2000"));
-        long contractId = createContract("DRAFT", "CT-AWF-2-", new BigDecimal("1000"));
+        String matrixA = seedMatrix("CT-MTX-A-1", "CT-ROLE-A", 1, null, new BigDecimal("2000"));
+        String matrixB = seedMatrix("CT-MTX-B-1", "CT-ROLE-B", 2, null, new BigDecimal("2000"));
+        String contractId = createContract("DRAFT", "CT-AWF-2-", new BigDecimal("1000"));
 
         ApiResponse<?> resp = executeRpc(mutation, "ErpCtContract__submit",
                 ApiRequest.build(Map.of("contractId", contractId)));
@@ -128,7 +129,7 @@ public class TestErpCtApprovalWorkflow extends JunitAutoTestCase {
     public void testSubmitNoNodesWhenMatrixNotMatching() {
         AppConfig.getConfigProvider().assignConfigValue(ErpCtConfigs.CFG_APPROVAL_ENABLED, "true");
         seedMatrix("CT-MTX-HI-1", "CT-ROLE-HI", 1, new BigDecimal("5000"), new BigDecimal("10000"));
-        long contractId = createContract("DRAFT", "CT-AWF-3-", new BigDecimal("1000"));
+        String contractId = createContract("DRAFT", "CT-AWF-3-", new BigDecimal("1000"));
 
         ApiResponse<?> resp = executeRpc(mutation, "ErpCtContract__submit",
                 ApiRequest.build(Map.of("contractId", contractId)));
@@ -144,10 +145,10 @@ public class TestErpCtApprovalWorkflow extends JunitAutoTestCase {
         seedRole("CT-ROLE-C", "role-c-1", APPROVER_USER);
         seedMatrix("CT-MTX-C-1", "CT-ROLE-C", 1, null, new BigDecimal("2000"));
         seedMatrix("CT-MTX-D-1", "CT-ROLE-C", 2, null, new BigDecimal("2000"));
-        long contractId = createContract("DRAFT", "CT-AWF-4-", new BigDecimal("1000"));
+        String contractId = createContract("DRAFT", "CT-AWF-4-", new BigDecimal("1000"));
         executeRpc(mutation, "ErpCtContract__submit", ApiRequest.build(Map.of("contractId", contractId)));
-        long firstId = latestRecord(contractId, 1).getId();
-        long secondId = latestRecord(contractId, 2).getId();
+        String firstId = latestRecord(contractId, 1).getId();
+        String secondId = latestRecord(contractId, 2).getId();
 
         loginAs(APPROVER_USER);
         ApiResponse<?> resp = executeRpc(mutation, "ErpCtApprovalRecord__approve",
@@ -165,10 +166,10 @@ public class TestErpCtApprovalWorkflow extends JunitAutoTestCase {
         AppConfig.getConfigProvider().assignConfigValue(ErpCtConfigs.CFG_APPROVAL_ENABLED, "true");
         seedRole("CT-ROLE-E", "role-e-1", APPROVER_USER);
         seedMatrix("CT-MTX-E-1", "CT-ROLE-E", 1, null, new BigDecimal("2000"));
-        long contractId = createContract("DRAFT", "CT-AWF-5-", new BigDecimal("1000"));
+        String contractId = createContract("DRAFT", "CT-AWF-5-", new BigDecimal("1000"));
         executeRpc(mutation, "ErpCtContract__submit", ApiRequest.build(Map.of("contractId", contractId)));
         // 版本定稿（activate 级联签署前置）
-        long versionId = findVersionId(contractId);
+        String versionId = findVersionId(contractId);
         executeRpc(mutation, "ErpCtContractVersion__finalizeVersion",
                 ApiRequest.build(Map.of("versionId", versionId)));
         loginAs(APPROVER_USER);
@@ -187,9 +188,9 @@ public class TestErpCtApprovalWorkflow extends JunitAutoTestCase {
         AppConfig.getConfigProvider().assignConfigValue(ErpCtConfigs.CFG_APPROVAL_ENABLED, "true");
         seedRole("CT-ROLE-F", "role-f-1", APPROVER_USER);
         seedMatrix("CT-MTX-F-1", "CT-ROLE-F", 1, null, new BigDecimal("2000"));
-        long contractId = createContract("DRAFT", "CT-AWF-6-", new BigDecimal("1000"));
+        String contractId = createContract("DRAFT", "CT-AWF-6-", new BigDecimal("1000"));
         executeRpc(mutation, "ErpCtContract__submit", ApiRequest.build(Map.of("contractId", contractId)));
-        long versionId = findVersionId(contractId);
+        String versionId = findVersionId(contractId);
         executeRpc(mutation, "ErpCtContractVersion__finalizeVersion",
                 ApiRequest.build(Map.of("versionId", versionId)));
 
@@ -207,9 +208,9 @@ public class TestErpCtApprovalWorkflow extends JunitAutoTestCase {
         seedRole("CT-ROLE-G", "role-g-1", APPROVER_USER);
         seedMatrix("CT-MTX-G-1", "CT-ROLE-G", 1, null, new BigDecimal("2000"));
         loginAs(OWNER_USER);
-        long contractId = createContract("DRAFT", "CT-AWF-7-", new BigDecimal("1000"));
+        String contractId = createContract("DRAFT", "CT-AWF-7-", new BigDecimal("1000"));
         executeRpc(mutation, "ErpCtContract__submit", ApiRequest.build(Map.of("contractId", contractId)));
-        seedNotifyTemplate(8801L, ErpCtConstants.NOTIFY_EVENT_APPROVAL_REJECTED);
+        seedNotifyTemplate("8801", ErpCtConstants.NOTIFY_EVENT_APPROVAL_REJECTED);
         ErpCtContract contract = daoProvider.daoFor(ErpCtContract.class).getEntityById(contractId);
         assertEquals(OWNER_USER, contract.getCreatedBy(), "合同应以经办人身份创建（createdBy 断言）");
 
@@ -226,7 +227,7 @@ public class TestErpCtApprovalWorkflow extends JunitAutoTestCase {
                 "驳回应通知经办人");
     }
 
-    private ErpCtContract contract(long contractId) {
+    private ErpCtContract contract(String contractId) {
         return daoProvider.daoFor(ErpCtContract.class).getEntityById(contractId);
     }
 
@@ -237,7 +238,7 @@ public class TestErpCtApprovalWorkflow extends JunitAutoTestCase {
         AppConfig.getConfigProvider().assignConfigValue(ErpCtConfigs.CFG_APPROVAL_ENABLED, "true");
         seedRole("CT-ROLE-H", "role-h-1", APPROVER_USER);
         seedMatrix("CT-MTX-H-2", "CT-ROLE-H", 1, null, new BigDecimal("2000"));
-        long contractId = createContract("DRAFT", "CT-AWF-8-", new BigDecimal("1000"));
+        String contractId = createContract("DRAFT", "CT-AWF-8-", new BigDecimal("1000"));
         executeRpc(mutation, "ErpCtContract__submit", ApiRequest.build(Map.of("contractId", contractId)));
 
         loginAs(OTHER_USER);
@@ -255,10 +256,10 @@ public class TestErpCtApprovalWorkflow extends JunitAutoTestCase {
         seedRole("CT-ROLE-I", "role-i-1", APPROVER_USER);
         seedMatrix("CT-MTX-I-1", "CT-ROLE-I", 1, null, new BigDecimal("2000"));
         seedMatrix("CT-MTX-J-1", "CT-ROLE-I", 2, null, new BigDecimal("2000"));
-        long contractId = createContract("DRAFT", "CT-AWF-9-", new BigDecimal("1000"));
+        String contractId = createContract("DRAFT", "CT-AWF-9-", new BigDecimal("1000"));
         executeRpc(mutation, "ErpCtContract__submit", ApiRequest.build(Map.of("contractId", contractId)));
         loginAs(APPROVER_USER);
-        long secondId = latestRecord(contractId, 2).getId();
+        String secondId = latestRecord(contractId, 2).getId();
 
         ApiResponse<?> resp = executeRpc(mutation, "ErpCtApprovalRecord__approve",
                 ApiRequest.build(Map.of("recordId", secondId)));
@@ -277,7 +278,7 @@ public class TestErpCtApprovalWorkflow extends JunitAutoTestCase {
         seedRole("CT-ROLE-K", "role-k-1", APPROVER_USER);
         seedMatrix("CT-MTX-K-1", "CT-ROLE-K", 1, null, new BigDecimal("2000"));
         seedMatrix("CT-MTX-L-1", "CT-ROLE-K", 2, null, new BigDecimal("2000"));
-        long contractId = createContract("DRAFT", "CT-AWF-10-", new BigDecimal("1000"));
+        String contractId = createContract("DRAFT", "CT-AWF-10-", new BigDecimal("1000"));
         executeRpc(mutation, "ErpCtContract__submit", ApiRequest.build(Map.of("contractId", contractId)));
         loginAs(APPROVER_USER);
 
@@ -333,7 +334,7 @@ public class TestErpCtApprovalWorkflow extends JunitAutoTestCase {
         AppConfig.getConfigProvider().assignConfigValue(ErpCtConfigs.CFG_APPROVAL_ENABLED, "true");
         seedRole("CT-ROLE-M", "role-m-1", APPROVER_USER);
         seedMatrix("CT-MTX-M-1", "CT-ROLE-M", 1, null, new BigDecimal("2000"));
-        long contractId = createContract("DRAFT", "CT-AWF-11-", new BigDecimal("1000"));
+        String contractId = createContract("DRAFT", "CT-AWF-11-", new BigDecimal("1000"));
         executeRpc(mutation, "ErpCtContract__submit", ApiRequest.build(Map.of("contractId", contractId)));
 
         ApiResponse<?> resp = executeRpc(mutation, "ErpCtApprovalRecord__resubmit",
@@ -346,13 +347,13 @@ public class TestErpCtApprovalWorkflow extends JunitAutoTestCase {
 
     // ---------- helpers ----------
 
-    private void reject(long contractId, int order) {
+    private void reject(String contractId, int order) {
         ApiResponse<?> resp = executeRpc(mutation, "ErpCtApprovalRecord__reject",
                 ApiRequest.build(Map.of("recordId", latestRecord(contractId, order).getId())));
         assertEquals(0, resp.getStatus(), "reject 应成功: " + resp);
     }
 
-    private int rejectedCount(long contractId, int order) {
+    private int rejectedCount(String contractId, int order) {
         int n = 0;
         for (ErpCtApprovalRecord r : findRecords(contractId)) {
             if (r.getApprovalOrder() == order
@@ -363,25 +364,26 @@ public class TestErpCtApprovalWorkflow extends JunitAutoTestCase {
         return n;
     }
 
-    private List<ErpCtApprovalRecord> recordsOfNode(long contractId, int order) {
+    private List<ErpCtApprovalRecord> recordsOfNode(String contractId, int order) {
         return findRecords(contractId).stream()
                 .filter(r -> r.getApprovalOrder() == order)
                 .collect(java.util.stream.Collectors.toList());
     }
 
-    private ErpCtApprovalRecord latestRecord(long contractId, int order) {
+    private ErpCtApprovalRecord latestRecord(String contractId, int order) {
+        // seq-string id 数值序比较（id 为 String 后保留跨轮次取 id 最大者语义）
         return recordsOfNode(contractId, order).stream()
-                .max(java.util.Comparator.comparing(ErpCtApprovalRecord::getId))
+                .max(java.util.Comparator.comparingLong(r -> ConvertHelper.toLong(r.getId())))
                 .orElseThrow();
     }
 
-    private List<ErpCtApprovalRecord> findRecords(long contractId) {
+    private List<ErpCtApprovalRecord> findRecords(String contractId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("contractId", contractId));
         return daoProvider.daoFor(ErpCtApprovalRecord.class).findAllByQuery(q);
     }
 
-    private long findVersionId(long contractId) {
+    private String findVersionId(String contractId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("contractId", contractId));
         q.addFilter(eq("isCurrent", true));
@@ -410,8 +412,8 @@ public class TestErpCtApprovalWorkflow extends JunitAutoTestCase {
         });
     }
 
-    private long seedMatrix(String code, String roleName, int order, BigDecimal min, BigDecimal max) {
-        long[] holder = new long[1];
+    private String seedMatrix(String code, String roleName, int order, BigDecimal min, BigDecimal max) {
+        String[] holder = new String[1];
         ormTemplate.runInSession(() -> {
             ErpCtApprovalMatrix m = daoProvider.daoFor(ErpCtApprovalMatrix.class).newEntity();
             m.setCode(code);
@@ -426,8 +428,8 @@ public class TestErpCtApprovalWorkflow extends JunitAutoTestCase {
         return holder[0];
     }
 
-    private long createContract(String status, String codePrefix, BigDecimal totalAmount) {
-        long[] ids = new long[2];
+    private String createContract(String status, String codePrefix, BigDecimal totalAmount) {
+        String[] ids = new String[2];
         ormTemplate.runInSession(session -> {
             ErpMdPartner p = daoProvider.daoFor(ErpMdPartner.class).newEntity();
             p.setCode(codePrefix + "P-" + System.nanoTime());
@@ -460,7 +462,7 @@ public class TestErpCtApprovalWorkflow extends JunitAutoTestCase {
         return toLong(((Map<?, ?>) resp.getData()).get("id"));
     }
 
-    private void seedNotifyTemplate(Long id, String eventType) {
+    private void seedNotifyTemplate(String id, String eventType) {
         ormTemplate.runInSession(() -> {
             app.erp.notify.dao.entity.ErpSysNotificationTemplate t =
                     daoProvider.daoFor(app.erp.notify.dao.entity.ErpSysNotificationTemplate.class).newEntity();
@@ -486,11 +488,8 @@ public class TestErpCtApprovalWorkflow extends JunitAutoTestCase {
         return daoProvider.daoFor(app.erp.notify.dao.entity.ErpSysNotification.class).findAllByQuery(q);
     }
 
-    private long toLong(Object o) {
-        if (o instanceof Number) {
-            return ((Number) o).longValue();
-        }
-        return Long.parseLong(String.valueOf(o));
+    private String toLong(Object o) {
+        return String.valueOf(o);
     }
 
     private ApiResponse<?> executeRpc(GraphQLOperationType opType, String action, ApiRequest<?> request) {

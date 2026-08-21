@@ -47,7 +47,7 @@ public class ErpCtContractVersionBizModel extends CrudBizModel<ErpCtContractVers
 
     @Override
     @BizMutation
-    public ErpCtContractVersion finalizeVersion(@Name("versionId") Long versionId, IServiceContext context) {
+    public ErpCtContractVersion finalizeVersion(@Name("versionId") String versionId, IServiceContext context) {
         ErpCtContractVersion version = requireVersion(versionId, context);
         try {
             stateMachine.assertCanFinalize(version.getStatus());
@@ -61,13 +61,13 @@ public class ErpCtContractVersionBizModel extends CrudBizModel<ErpCtContractVers
 
     @Override
     @BizMutation
-    public ErpCtContractVersion signVersion(@Name("versionId") Long versionId, IServiceContext context) {
+    public ErpCtContractVersion signVersion(@Name("versionId") String versionId, IServiceContext context) {
         return signVersionProcessor.signVersion(versionId, context);
     }
 
     // ---------- helpers ----------
 
-    protected ErpCtContractVersion requireVersion(Long versionId, IServiceContext context) {
+    protected ErpCtContractVersion requireVersion(String versionId, IServiceContext context) {
         ErpCtContractVersion version = get(String.valueOf(versionId), false, context);
         if (version == null) {
             throw new NopException(ErpCtErrors.ERR_CT_VERSION_NOT_CURRENT)
@@ -77,7 +77,7 @@ public class ErpCtContractVersionBizModel extends CrudBizModel<ErpCtContractVers
     }
 
     @SuppressWarnings("unchecked")
-    protected List<ErpCtContractVersion> findSiblings(Long contractId, IServiceContext context) {
+    protected List<ErpCtContractVersion> findSiblings(String contractId, IServiceContext context) {
         QueryBean query = new QueryBean();
         query.addFilter(eq("contractId", contractId));
         List<ErpCtContractVersion> list = findList(query, null, context);

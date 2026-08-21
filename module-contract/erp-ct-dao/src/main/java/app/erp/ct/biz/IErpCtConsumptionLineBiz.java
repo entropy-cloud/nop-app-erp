@@ -30,7 +30,7 @@ public interface IErpCtConsumptionLineBiz extends ICrudBiz<ErpCtConsumptionLine>
      */
     @BizMutation
     ErpCtConsumptionPeriodSummarizeResult periodSummarize(
-            @Name("contractLineId") Long contractLineId,
+            @Name("contractLineId") String contractLineId,
             @Name("fromDate") LocalDate fromDate,
             @Name("toDate") LocalDate toDate,
             @Name("invoiceTerm") String invoiceTerm,

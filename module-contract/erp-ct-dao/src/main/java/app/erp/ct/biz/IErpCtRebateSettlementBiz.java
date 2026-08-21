@@ -22,5 +22,5 @@ import app.erp.contract.dao.entity.ErpCtRebateSettlement;
 public interface IErpCtRebateSettlementBiz extends ICrudBiz<ErpCtRebateSettlement> {
 
     @BizMutation
-    ErpCtRebateSettlement postSettlement(@Name("settlementId") Long settlementId, IServiceContext context);
+    ErpCtRebateSettlement postSettlement(@Name("settlementId") String settlementId, IServiceContext context);
 }

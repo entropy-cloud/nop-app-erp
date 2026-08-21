@@ -31,7 +31,7 @@ public class ErpCtContractVersionSignVersionProcessor {
     @Inject
     ErpCtContractVersionStateMachine stateMachine;
 
-    public ErpCtContractVersion signVersion(Long versionId, IServiceContext context) {
+    public ErpCtContractVersion signVersion(String versionId, IServiceContext context) {
         ErpCtContractVersion version = requireVersion(versionId);
         // 仅当前版本可签署（动态业务守卫，保留原位）
         if (!Boolean.TRUE.equals(version.getIsCurrent())) {
@@ -63,7 +63,7 @@ public class ErpCtContractVersionSignVersionProcessor {
 
     // ---------- helpers ----------
 
-    protected ErpCtContractVersion requireVersion(Long versionId) {
+    protected ErpCtContractVersion requireVersion(String versionId) {
         ErpCtContractVersion version = dao().getEntityById(versionId);
         if (version == null) {
             throw new NopException(ErpCtErrors.ERR_CT_VERSION_NOT_CURRENT)
@@ -73,7 +73,7 @@ public class ErpCtContractVersionSignVersionProcessor {
     }
 
     @SuppressWarnings("unchecked")
-    protected List<ErpCtContractVersion> findSiblings(Long contractId) {
+    protected List<ErpCtContractVersion> findSiblings(String contractId) {
         QueryBean query = new QueryBean();
         query.addFilter(eq("contractId", contractId));
         List<ErpCtContractVersion> list = dao().findAllByQuery(query);

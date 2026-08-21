@@ -115,16 +115,16 @@ public class TestErpCtContractExpiryJob extends JunitAutoTestCase {
     public void testTieredWarningsByRemainingDays() {
         seedOwnerUser();
         // 30 天档（16 天 > 15 → 30 天通知经办人）
-        long c30 = seedContract("CT-EXP-30", LocalDate.of(2026, 8, 2));
+        String c30 = seedContract("CT-EXP-30", LocalDate.of(2026, 8, 2));
         // 15 天档（10 天 ≤ 15 → 15 天通知经办人）
-        long c15 = seedContract("CT-EXP-15", LocalDate.of(2026, 7, 27));
+        String c15 = seedContract("CT-EXP-15", LocalDate.of(2026, 7, 27));
         // 7 天档（3 天 ≤ 7 → 升级通知经办人上级）
-        long c7 = seedContract("CT-EXP-7", LocalDate.of(2026, 7, 20));
-        seedTemplate(8831L, ErpCtConstants.NOTIFY_EVENT_CONTRACT_EXPIRY_WARNING_30,
+        String c7 = seedContract("CT-EXP-7", LocalDate.of(2026, 7, 20));
+        seedTemplate("8831", ErpCtConstants.NOTIFY_EVENT_CONTRACT_EXPIRY_WARNING_30,
                 "{\"userIds\":[\"${ownerUserId}\"]}");
-        seedTemplate(8832L, ErpCtConstants.NOTIFY_EVENT_CONTRACT_EXPIRY_WARNING_15,
+        seedTemplate("8832", ErpCtConstants.NOTIFY_EVENT_CONTRACT_EXPIRY_WARNING_15,
                 "{\"userIds\":[\"${ownerUserId}\"]}");
-        seedTemplate(8833L, ErpCtConstants.NOTIFY_EVENT_CONTRACT_EXPIRY_ESCALATION_7,
+        seedTemplate("8833", ErpCtConstants.NOTIFY_EVENT_CONTRACT_EXPIRY_ESCALATION_7,
                 "{\"userIds\":[\"${escalationUserId}\"]}");
         setCron("0 0 1 * * ?");
 
@@ -153,21 +153,21 @@ public class TestErpCtContractExpiryJob extends JunitAutoTestCase {
     public void testTierBoundaries() {
         seedOwnerUser();
         // 边界：剩余 15 天 → 15 天档；剩余 16 天 → 30 天档
-        long c15 = seedContract("CT-EXP-B15", LocalDate.of(2026, 8, 1));
-        long c30 = seedContract("CT-EXP-B30", LocalDate.of(2026, 8, 2));
-        seedTemplate(8834L, ErpCtConstants.NOTIFY_EVENT_CONTRACT_EXPIRY_WARNING_30,
+        String c15 = seedContract("CT-EXP-B15", LocalDate.of(2026, 8, 1));
+        String c30 = seedContract("CT-EXP-B30", LocalDate.of(2026, 8, 2));
+        seedTemplate("8834", ErpCtConstants.NOTIFY_EVENT_CONTRACT_EXPIRY_WARNING_30,
                 "{\"userIds\":[\"${ownerUserId}\"]}");
-        seedTemplate(8835L, ErpCtConstants.NOTIFY_EVENT_CONTRACT_EXPIRY_WARNING_15,
+        seedTemplate("8835", ErpCtConstants.NOTIFY_EVENT_CONTRACT_EXPIRY_WARNING_15,
                 "{\"userIds\":[\"${ownerUserId}\"]}");
         setCron("0 0 1 * * ?");
 
         newWiredJob().execute();
 
         assertTrue(notificationsOf(OWNER_USER, ErpCtConstants.NOTIFY_EVENT_CONTRACT_EXPIRY_WARNING_15)
-                        .stream().anyMatch(n -> payloadContractId(n) == c15),
+                        .stream().anyMatch(n -> payloadContractId(n).equals(c15)),
                 "剩余 15 天应落入 15 天档");
         assertTrue(notificationsOf(OWNER_USER, ErpCtConstants.NOTIFY_EVENT_CONTRACT_EXPIRY_WARNING_30)
-                        .stream().anyMatch(n -> payloadContractId(n) == c30),
+                        .stream().anyMatch(n -> payloadContractId(n).equals(c30)),
                 "剩余 16 天应落入 30 天档");
     }
 
@@ -177,7 +177,7 @@ public class TestErpCtContractExpiryJob extends JunitAutoTestCase {
         seedUser(OWNER_USER, null, DEPT_ID);
         seedDept(DEPT_ID, DEPT_MANAGER_USER);
         seedContract("CT-EXP-DEPT", LocalDate.of(2026, 7, 20));
-        seedTemplate(8836L, ErpCtConstants.NOTIFY_EVENT_CONTRACT_EXPIRY_ESCALATION_7,
+        seedTemplate("8836", ErpCtConstants.NOTIFY_EVENT_CONTRACT_EXPIRY_ESCALATION_7,
                 "{\"userIds\":[\"${escalationUserId}\"]}");
         setCron("0 0 1 * * ?");
 
@@ -192,7 +192,7 @@ public class TestErpCtContractExpiryJob extends JunitAutoTestCase {
     public void testEscalationSkippedWhenNoSuperior() {
         seedUser(OWNER_USER, null, null);
         seedContract("CT-EXP-NO-SUP", LocalDate.of(2026, 7, 20));
-        seedTemplate(8837L, ErpCtConstants.NOTIFY_EVENT_CONTRACT_EXPIRY_ESCALATION_7,
+        seedTemplate("8837", ErpCtConstants.NOTIFY_EVENT_CONTRACT_EXPIRY_ESCALATION_7,
                 "{\"userIds\":[\"${escalationUserId}\"]}");
         setCron("0 0 1 * * ?");
 
@@ -220,8 +220,8 @@ public class TestErpCtContractExpiryJob extends JunitAutoTestCase {
 
     @Test
     public void testBatchExpireOverdueContracts() {
-        long overdue = seedContract("CT-EXP-OVERDUE", LocalDate.of(2026, 7, 16));
-        long future = seedContract("CT-EXP-FUTURE", LocalDate.of(2026, 12, 31));
+        String overdue = seedContract("CT-EXP-OVERDUE", LocalDate.of(2026, 7, 16));
+        String future = seedContract("CT-EXP-FUTURE", LocalDate.of(2026, 12, 31));
         setCron("0 0 1 * * ?");
 
         newWiredJob().execute();
@@ -236,10 +236,10 @@ public class TestErpCtContractExpiryJob extends JunitAutoTestCase {
 
     @Test
     public void testDueInvoiceTriggeredBeforeExpire() {
-        long contractId = seedContract("CT-EXP-INV", LocalDate.of(2026, 7, 16));
-        long lineId = seedContractLine(contractId, true);
+        String contractId = seedContract("CT-EXP-INV", LocalDate.of(2026, 7, 16));
+        String lineId = seedContractLine(contractId, true);
         // isInvoiced=false 且 planDate ≤ today → 先完成开票再 EXPIRED
-        long planId = seedInvoicePlan(lineId, LocalDate.of(2026, 7, 1), false);
+        String planId = seedInvoicePlan(lineId, LocalDate.of(2026, 7, 1), false);
         setCron("0 0 1 * * ?");
 
         newWiredJob().execute();
@@ -258,9 +258,9 @@ public class TestErpCtContractExpiryJob extends JunitAutoTestCase {
     public void testInvoiceTriggerFailureIsolatedPerPlan() {
         // 构造 plan 对应合同行物理删除 → triggerInvoice 行加载失败 → 单 plan WARN 隔离，
         // 合同仍 EXPIRED（D3 触发失败不影响 expire 主路径的失败隔离语义）
-        long contractId = seedContract("CT-EXP-INV-FAIL", LocalDate.of(2026, 7, 16));
-        long lineId = seedContractLine(contractId, true);
-        long planId = seedInvoicePlan(lineId, LocalDate.of(2026, 7, 1), false);
+        String contractId = seedContract("CT-EXP-INV-FAIL", LocalDate.of(2026, 7, 16));
+        String lineId = seedContractLine(contractId, true);
+        String planId = seedInvoicePlan(lineId, LocalDate.of(2026, 7, 1), false);
         ormTemplate.runInSession(session -> {
             ErpCtContractLine line = daoProvider.daoFor(ErpCtContractLine.class).getEntityById(lineId);
             line.orm_disableLogicalDelete(true);
@@ -281,7 +281,7 @@ public class TestErpCtContractExpiryJob extends JunitAutoTestCase {
 
     @Test
     public void testRenewalDraftCreatedWhenConfigOn() {
-        long contractId = seedContract("CT-EXP-RN-ON", LocalDate.of(2026, 7, 16));
+        String contractId = seedContract("CT-EXP-RN-ON", LocalDate.of(2026, 7, 16));
         AppConfig.getConfigProvider().assignConfigValue(
                 ErpCtConfigs.CFG_AUTO_CREATE_RENEWAL_DRAFT, "true");
         setCron("0 0 1 * * ?");
@@ -295,14 +295,14 @@ public class TestErpCtContractExpiryJob extends JunitAutoTestCase {
         assertEquals(1, drafts.size(), "config on 应创建 1 份续期草稿");
         ErpCtContract draft = drafts.get(0);
         assertEquals(ErpCtConstants.CONTRACT_STATUS_DRAFT, draft.getStatus(), "续期草稿应为 DRAFT");
-        assertEquals(contractId, toLong(draft.getParentContractId()), "parentContractId 关联原合同");
+        assertEquals(contractId, draft.getParentContractId(), "parentContractId 关联原合同");
         assertEquals("CT-EXP-RN-ON-RN", draft.getCode(), "草稿 code 带 -RN 后缀");
         assertTrue(draft.getStartDate().isAfter(original.getEndDate()), "草稿生效日应在原到期日后");
     }
 
     @Test
     public void testRenewalDraftSkippedWhenConfigOff() {
-        long contractId = seedContract("CT-EXP-RN-OFF", LocalDate.of(2026, 7, 16));
+        String contractId = seedContract("CT-EXP-RN-OFF", LocalDate.of(2026, 7, 16));
         setCron("0 0 1 * * ?");
 
         newWiredJob().execute();
@@ -315,7 +315,7 @@ public class TestErpCtContractExpiryJob extends JunitAutoTestCase {
 
     @Test
     public void testRenewalDraftIdempotentGuard() {
-        long contractId = seedContract("CT-EXP-RN-IDEM", LocalDate.of(2026, 7, 16));
+        String contractId = seedContract("CT-EXP-RN-IDEM", LocalDate.of(2026, 7, 16));
         AppConfig.getConfigProvider().assignConfigValue(
                 ErpCtConfigs.CFG_AUTO_CREATE_RENEWAL_DRAFT, "true");
         // 预置一份已存在续期草稿 → 幂等守卫应跳过创建（仅 1 份）
@@ -333,7 +333,7 @@ public class TestErpCtContractExpiryJob extends JunitAutoTestCase {
 
     @Test
     public void testCronEmptySkipsScan() {
-        long overdue = seedContract("CT-EXP-CRON-EMPTY", LocalDate.of(2026, 7, 16));
+        String overdue = seedContract("CT-EXP-CRON-EMPTY", LocalDate.of(2026, 7, 16));
         setCron("");
 
         newWiredJob().execute();
@@ -349,10 +349,10 @@ public class TestErpCtContractExpiryJob extends JunitAutoTestCase {
         AppConfig.getConfigProvider().assignConfigValue(
                 ErpCtConfigs.CFG_AUTO_CREATE_RENEWAL_DRAFT, "true");
         // 合同 A：预置同 orgId 同 code 草稿行 → 建续期草稿 UK 冲突 → 该合同 WARN 跳过不 EXPIRED
-        long bad = seedContract("CT-EXP-ISO-BAD", LocalDate.of(2026, 7, 16));
+        String bad = seedContract("CT-EXP-ISO-BAD", LocalDate.of(2026, 7, 16));
         seedDraftWithCode("CT-EXP-ISO-BAD-RN");
         // 合同 B：正常 → 应正常推进 EXPIRED
-        long good = seedContract("CT-EXP-ISO-GOOD", LocalDate.of(2026, 7, 16));
+        String good = seedContract("CT-EXP-ISO-GOOD", LocalDate.of(2026, 7, 16));
         setCron("0 0 1 * * ?");
 
         newWiredJob().execute();
@@ -424,8 +424,8 @@ public class TestErpCtContractExpiryJob extends JunitAutoTestCase {
         });
     }
 
-    private long seedContract(String code, LocalDate endDate) {
-        long[] ids = new long[2];
+    private String seedContract(String code, LocalDate endDate) {
+        String[] ids = new String[2];
         ormTemplate.runInSession(session -> {
             ErpMdPartner p = daoProvider.daoFor(ErpMdPartner.class).newEntity();
             p.setCode("CT-EXP-PARTNER");
@@ -444,9 +444,9 @@ public class TestErpCtContractExpiryJob extends JunitAutoTestCase {
         return seedContractWithMaster(code, endDate, ids[0], ids[1], null);
     }
 
-    private long seedContractWithMaster(String code, LocalDate endDate, long partnerId, long currencyId,
-                                        Long parentContractId) {
-        long[] ret = new long[1];
+    private String seedContractWithMaster(String code, LocalDate endDate, String partnerId, String currencyId,
+                                        String parentContractId) {
+        String[] ret = new String[1];
         ormTemplate.runInSession(session -> {
             ErpCtContract contract = daoProvider.daoFor(ErpCtContract.class).newEntity();
             contract.orm_disableAutoStamp(true);
@@ -456,7 +456,7 @@ public class TestErpCtContractExpiryJob extends JunitAutoTestCase {
             contract.setContractDirection(ErpCtConstants.CONTRACT_DIRECTION_INBOUND);
             contract.setPartnerId(partnerId);
             contract.setCurrencyId(currencyId);
-            contract.setOrgId(1L);
+            contract.setOrgId("1");
             contract.setStartDate(LocalDate.of(2026, 1, 1));
             contract.setEndDate(endDate);
             contract.setTotalAmount(new BigDecimal("1000"));
@@ -478,8 +478,8 @@ public class TestErpCtContractExpiryJob extends JunitAutoTestCase {
     }
 
     /** 预置续期草稿（parentContractId 关联 + DRAFT），供幂等守卫测试。 */
-    private void seedRenewalDraft(long parentContractId, String code) {
-        long[] ids = new long[2];
+    private void seedRenewalDraft(String parentContractId, String code) {
+        String[] ids = new String[2];
         ormTemplate.runInSession(session -> {
             ErpMdPartner p = daoProvider.daoFor(ErpMdPartner.class).newEntity();
             p.setCode("CT-EXP-RN-PARTNER");
@@ -504,7 +504,7 @@ public class TestErpCtContractExpiryJob extends JunitAutoTestCase {
             draft.setContractDirection(ErpCtConstants.CONTRACT_DIRECTION_INBOUND);
             draft.setPartnerId(ids[0]);
             draft.setCurrencyId(ids[1]);
-            draft.setOrgId(1L);
+            draft.setOrgId("1");
             draft.setStartDate(LocalDate.of(2026, 8, 1));
             draft.setEndDate(LocalDate.of(2027, 7, 31));
             draft.setTotalAmount(new BigDecimal("1000"));
@@ -521,7 +521,7 @@ public class TestErpCtContractExpiryJob extends JunitAutoTestCase {
 
     /** 预置独立草稿（无 parentContractId），供 UK 冲突隔离测试。 */
     private void seedDraftWithCode(String code) {
-        long[] ids = new long[2];
+        String[] ids = new String[2];
         ormTemplate.runInSession(session -> {
             ErpMdPartner p = daoProvider.daoFor(ErpMdPartner.class).newEntity();
             p.setCode("CT-EXP-CONFLICT-PARTNER");
@@ -546,7 +546,7 @@ public class TestErpCtContractExpiryJob extends JunitAutoTestCase {
             draft.setContractDirection(ErpCtConstants.CONTRACT_DIRECTION_INBOUND);
             draft.setPartnerId(ids[0]);
             draft.setCurrencyId(ids[1]);
-            draft.setOrgId(1L);
+            draft.setOrgId("1");
             draft.setStartDate(LocalDate.of(2026, 1, 1));
             draft.setEndDate(LocalDate.of(2027, 12, 31));
             draft.setTotalAmount(new BigDecimal("1000"));
@@ -560,9 +560,9 @@ public class TestErpCtContractExpiryJob extends JunitAutoTestCase {
         });
     }
 
-    private long seedContractLine(long contractId, boolean withMaterial) {
-        final long materialId = withMaterial ? seedMaterial() : 0;
-        long[] ret = new long[1];
+    private String seedContractLine(String contractId, boolean withMaterial) {
+        final String materialId = withMaterial ? seedMaterial() : null;
+        String[] ret = new String[1];
         ormTemplate.runInSession(() -> {
             ErpCtContractLine line = daoProvider.daoFor(ErpCtContractLine.class).newEntity();
             line.setContractId(contractId);
@@ -579,8 +579,8 @@ public class TestErpCtContractExpiryJob extends JunitAutoTestCase {
         return ret[0];
     }
 
-    private long seedMaterial() {
-        long[] ret = new long[2];
+    private String seedMaterial() {
+        String[] ret = new String[2];
         ormTemplate.runInSession(session -> {
             ErpMdUoM u = daoProvider.daoFor(ErpMdUoM.class).newEntity();
             u.setCode("PCS-EXP");
@@ -600,8 +600,8 @@ public class TestErpCtContractExpiryJob extends JunitAutoTestCase {
         return ret[1];
     }
 
-    private long seedInvoicePlan(long lineId, LocalDate planDate, boolean isInvoiced) {
-        long[] ret = new long[1];
+    private String seedInvoicePlan(String lineId, LocalDate planDate, boolean isInvoiced) {
+        String[] ret = new String[1];
         ormTemplate.runInSession(() -> {
             ErpCtInvoicePlan plan = daoProvider.daoFor(ErpCtInvoicePlan.class).newEntity();
             plan.setContractLineId(lineId);
@@ -615,7 +615,7 @@ public class TestErpCtContractExpiryJob extends JunitAutoTestCase {
         return ret[0];
     }
 
-    private void seedTemplate(Long id, String notificationType, String recipientConfig) {
+    private void seedTemplate(String id, String notificationType, String recipientConfig) {
         ormTemplate.runInSession(() -> {
             ErpSysNotificationTemplate t = daoProvider.daoFor(ErpSysNotificationTemplate.class).newEntity();
             t.orm_propValueByName("id", id);
@@ -640,7 +640,7 @@ public class TestErpCtContractExpiryJob extends JunitAutoTestCase {
         return daoProvider.daoFor(ErpSysNotification.class).findAllByQuery(q);
     }
 
-    private ErpCtContract contract(long contractId) {
+    private ErpCtContract contract(String contractId) {
         return daoProvider.daoFor(ErpCtContract.class).getEntityById(contractId);
     }
 
@@ -652,21 +652,10 @@ public class TestErpCtContractExpiryJob extends JunitAutoTestCase {
 
     /** 从通知 payloadJson 提取 contractId（通知与合同关联断言载体）。 */
     @SuppressWarnings("unchecked")
-    private long payloadContractId(ErpSysNotification notification) {
+    private String payloadContractId(ErpSysNotification notification) {
         Object parsed = JsonTool.parseNonStrict(notification.getPayloadJson());
         Map<String, Object> payload = (Map<String, Object>) parsed;
-        Object v = payload.get("contractId");
-        if (v instanceof Number) {
-            return ((Number) v).longValue();
-        }
-        return Long.parseLong(String.valueOf(v));
-    }
-
-    private long toLong(Object o) {
-        if (o instanceof Number) {
-            return ((Number) o).longValue();
-        }
-        return Long.parseLong(String.valueOf(o));
+        return String.valueOf(payload.get("contractId"));
     }
 
     private ApiResponse<?> executeRpc(GraphQLOperationType opType,

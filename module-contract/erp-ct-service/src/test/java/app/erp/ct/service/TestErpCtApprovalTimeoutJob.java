@@ -95,8 +95,8 @@ public class TestErpCtApprovalTimeoutJob extends JunitAutoTestCase {
 
     @Test
     public void testTimeoutRecordEscalatesToPrevApproverAndNotifies() {
-        seedTemplate(8821L, "{\"userIds\":[\"${escalationUserId}\"]}");
-        long contractId = createContractWithOwner();
+        seedTemplate("8821", "{\"userIds\":[\"${escalationUserId}\"]}");
+        String contractId = createContractWithOwner();
         seedMatrix(1, "CT-ROLE-P");
         seedMatrix(2, "CT-ROLE-P");
         // node1 APPROVED（上一节点，approver=PREV_APPROVER）
@@ -119,8 +119,8 @@ public class TestErpCtApprovalTimeoutJob extends JunitAutoTestCase {
 
     @Test
     public void testNotTimeoutRecordUntouched() {
-        seedTemplate(8822L, "{\"userIds\":[\"${escalationUserId}\"]}");
-        long contractId = createContractWithOwner();
+        seedTemplate("8822", "{\"userIds\":[\"${escalationUserId}\"]}");
+        String contractId = createContractWithOwner();
         seedMatrix(1, "CT-ROLE-Q");
         seedRecord(contractId, 1, true, ErpCtConstants.APPROVAL_STATUS_PENDING, "ct-pending-user", recentTs());
         setCron("0 0 1 * * ?");
@@ -137,8 +137,8 @@ public class TestErpCtApprovalTimeoutJob extends JunitAutoTestCase {
 
     @Test
     public void testMissingContractSkippedIsolation() {
-        seedTemplate(8823L, "{\"userIds\":[\"${escalationUserId}\"]}");
-        long contractId = createContractWithOwner();
+        seedTemplate("8823", "{\"userIds\":[\"${escalationUserId}\"]}");
+        String contractId = createContractWithOwner();
         seedMatrix(1, "CT-ROLE-R");
         // 超时记录 + 合同随后删除 → resolveEscalationUserId 无接收人 → 跳过（LOG.warn）
         seedRecord(contractId, 1, true, ErpCtConstants.APPROVAL_STATUS_PENDING, "ct-pending-user", oldTs());
@@ -158,8 +158,8 @@ public class TestErpCtApprovalTimeoutJob extends JunitAutoTestCase {
 
     @Test
     public void testCronEmptySkipsScan() {
-        seedTemplate(8824L, "{\"userIds\":[\"${escalationUserId}\"]}");
-        long contractId = createContractWithOwner();
+        seedTemplate("8824", "{\"userIds\":[\"${escalationUserId}\"]}");
+        String contractId = createContractWithOwner();
         seedMatrix(1, "CT-ROLE-S");
         seedRecord(contractId, 1, true, ErpCtConstants.APPROVAL_STATUS_PENDING, "ct-pending-user", oldTs());
         setCron("");
@@ -194,8 +194,8 @@ public class TestErpCtApprovalTimeoutJob extends JunitAutoTestCase {
         return new Timestamp(CoreMetrics.currentTimeMillis() - 1L * 3600_000L);
     }
 
-    private long createContractWithOwner() {
-        long[] ids = new long[2];
+    private String createContractWithOwner() {
+        String[] ids = new String[2];
         ormTemplate.runInSession(session -> {
             ErpMdPartner p = daoProvider.daoFor(ErpMdPartner.class).newEntity();
             p.setCode("CT-JOB-PARTNER-" + System.nanoTime());
@@ -240,7 +240,7 @@ public class TestErpCtApprovalTimeoutJob extends JunitAutoTestCase {
         });
     }
 
-    private void seedRecord(long contractId, int order, boolean matrixIdSet, String status,
+    private void seedRecord(String contractId, int order, boolean matrixIdSet, String status,
                             String approverId, Timestamp updateTime) {
         ormTemplate.runInSession(() -> {
             ErpCtApprovalRecord r = daoProvider.daoFor(ErpCtApprovalRecord.class).newEntity();
@@ -254,13 +254,13 @@ public class TestErpCtApprovalTimeoutJob extends JunitAutoTestCase {
             r.setApproverId(approverId);
             r.setApprovalStatus(status);
             if (matrixIdSet) {
-                r.setApprovalMatrixId(1L);
+                r.setApprovalMatrixId("1");
             }
             daoProvider.daoFor(ErpCtApprovalRecord.class).saveEntity(r);
         });
     }
 
-    private void seedTemplate(Long id, String recipientConfig) {
+    private void seedTemplate(String id, String recipientConfig) {
         ormTemplate.runInSession(() -> {
             ErpSysNotificationTemplate t = daoProvider.daoFor(ErpSysNotificationTemplate.class).newEntity();
             t.orm_propValueByName("id", id);
@@ -291,11 +291,8 @@ public class TestErpCtApprovalTimeoutJob extends JunitAutoTestCase {
         return q;
     }
 
-    private long toLong(Object o) {
-        if (o instanceof Number) {
-            return ((Number) o).longValue();
-        }
-        return Long.parseLong(String.valueOf(o));
+    private String toLong(Object o) {
+        return String.valueOf(o);
     }
 
     private ApiResponse<?> executeRpc(GraphQLOperationType opType, String action, ApiRequest<?> request) {

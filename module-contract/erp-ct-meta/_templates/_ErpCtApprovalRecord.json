@@ -1,8 +1,8 @@
 {
-  "id": 0,
-  "contractId": 0,
-  "orgId": 0,
-  "approvalMatrixId": 0,
+  "id": "",
+  "contractId": "",
+  "orgId": "",
+  "approvalMatrixId": "",
   "approvalOrder": 0,
   "approverId": "",
   "approvalStatus": "",

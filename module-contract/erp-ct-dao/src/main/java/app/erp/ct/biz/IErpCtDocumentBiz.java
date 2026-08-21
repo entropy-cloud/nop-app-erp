@@ -32,21 +32,21 @@ import app.erp.ct.dao.dto.DocumentSearchResult;
 public interface IErpCtDocumentBiz extends ICrudBiz<ErpCtDocument> {
 
     @BizMutation
-    ErpCtDocument setLegalHold(@Name("documentId") Long documentId,
+    ErpCtDocument setLegalHold(@Name("documentId") String documentId,
                                @Name("legalHold") Boolean legalHold,
                                IServiceContext context);
 
     @BizMutation
-    ErpCtDocument archive(@Name("documentId") Long documentId, IServiceContext context);
+    ErpCtDocument archive(@Name("documentId") String documentId, IServiceContext context);
 
     @BizMutation
-    ErpCtDocument purge(@Name("documentId") Long documentId, IServiceContext context);
+    ErpCtDocument purge(@Name("documentId") String documentId, IServiceContext context);
 
     @BizMutation
-    ErpCtDocument startOcr(@Name("documentId") Long documentId, IServiceContext context);
+    ErpCtDocument startOcr(@Name("documentId") String documentId, IServiceContext context);
 
     @BizMutation
-    ErpCtDocument submitOcrText(@Name("documentId") Long documentId,
+    ErpCtDocument submitOcrText(@Name("documentId") String documentId,
                                 @Name("ocrText") String ocrText,
                                 IServiceContext context);
 
@@ -60,7 +60,7 @@ public interface IErpCtDocumentBiz extends ICrudBiz<ErpCtDocument> {
     DocumentSearchResult searchDocuments(@Optional @Name("keyword") String keyword,
                                          @Optional @Name("code") String code,
                                          @Optional @Name("docType") String docType,
-                                         @Optional @Name("contractId") Long contractId,
+                                         @Optional @Name("contractId") String contractId,
                                          @Optional @Name("uploadDateFrom") String uploadDateFrom,
                                          @Optional @Name("uploadDateTo") String uploadDateTo,
                                          @Optional @Name("ocrStatus") String ocrStatus,

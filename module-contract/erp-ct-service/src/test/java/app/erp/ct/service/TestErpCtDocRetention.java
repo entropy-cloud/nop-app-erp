@@ -103,8 +103,8 @@ public class TestErpCtDocRetention extends JunitAutoTestCase {
 
     @Test
     public void testDueRetentionArchives() {
-        long due = seedDocument("CT-RET-DUE", LocalDate.of(2026, 7, 1), null, false, null);
-        long notDue = seedDocument("CT-RET-FUTURE", LocalDate.of(2027, 12, 31), null, false, null);
+        String due = seedDocument("CT-RET-DUE", LocalDate.of(2026, 7, 1), null, false, null);
+        String notDue = seedDocument("CT-RET-FUTURE", LocalDate.of(2027, 12, 31), null, false, null);
 
         newWiredJob().execute();
 
@@ -117,7 +117,7 @@ public class TestErpCtDocRetention extends JunitAutoTestCase {
     @Test
     public void testAutoArchiveConfigOffZeroAction() {
         AppConfig.getConfigProvider().assignConfigValue(ErpCtConfigs.CFG_DOC_AUTO_ARCHIVE, "false");
-        long due = seedDocument("CT-RET-OFF", LocalDate.of(2026, 7, 1), null, false, null);
+        String due = seedDocument("CT-RET-OFF", LocalDate.of(2026, 7, 1), null, false, null);
 
         newWiredJob().execute();
 
@@ -129,9 +129,9 @@ public class TestErpCtDocRetention extends JunitAutoTestCase {
 
     @Test
     public void testLegalHoldBlocksArchiveAndPurge() {
-        long holdArchive = seedDocument("CT-RET-HOLD-A", LocalDate.of(2026, 7, 1), null, false, true);
+        String holdArchive = seedDocument("CT-RET-HOLD-A", LocalDate.of(2026, 7, 1), null, false, true);
         // 已归档 + 到期销毁 + legalHold
-        long holdPurge = seedDocument("CT-RET-HOLD-P", LocalDate.of(2020, 1, 1),
+        String holdPurge = seedDocument("CT-RET-HOLD-P", LocalDate.of(2020, 1, 1),
                 LocalDate.of(2026, 7, 1), true, true);
 
         newWiredJob().execute();
@@ -145,10 +145,10 @@ public class TestErpCtDocRetention extends JunitAutoTestCase {
 
     @Test
     public void testActiveContractBlocksAutoArchive() {
-        long activeId = seedContract("CT-RET-ACTIVE", ErpCtConstants.CONTRACT_STATUS_ACTIVE);
-        long expiredId = seedContract("CT-RET-EXPIRED", ErpCtConstants.CONTRACT_STATUS_EXPIRED);
-        long docActive = seedDocument("CT-RET-DOC-A", LocalDate.of(2026, 7, 1), null, false, null);
-        long docExpired = seedDocument("CT-RET-DOC-E", LocalDate.of(2026, 7, 1), null, false, null);
+        String activeId = seedContract("CT-RET-ACTIVE", ErpCtConstants.CONTRACT_STATUS_ACTIVE);
+        String expiredId = seedContract("CT-RET-EXPIRED", ErpCtConstants.CONTRACT_STATUS_EXPIRED);
+        String docActive = seedDocument("CT-RET-DOC-A", LocalDate.of(2026, 7, 1), null, false, null);
+        String docExpired = seedDocument("CT-RET-DOC-E", LocalDate.of(2026, 7, 1), null, false, null);
         linkContract(docActive, activeId);
         linkContract(docExpired, expiredId);
 
@@ -164,10 +164,10 @@ public class TestErpCtDocRetention extends JunitAutoTestCase {
 
     @Test
     public void testPurgeLogicalDeleteWithAuditRecord() {
-        seedTemplate(8841L, ErpCtConstants.NOTIFY_EVENT_DOCUMENT_PURGED,
+        seedTemplate("8841", ErpCtConstants.NOTIFY_EVENT_DOCUMENT_PURGED,
                 "{\"userIds\":[\"" + PURGE_ADMIN_USER + "\"]}");
         AppConfig.getConfigProvider().assignConfigValue(ErpCtConfigs.CFG_DOC_AUTO_PURGE, "true");
-        long docId = seedDocument("CT-RET-PURGE", LocalDate.of(2020, 1, 1), LocalDate.of(2026, 7, 1),
+        String docId = seedDocument("CT-RET-PURGE", LocalDate.of(2020, 1, 1), LocalDate.of(2026, 7, 1),
                 true, null);
 
         newWiredJob().execute();
@@ -199,7 +199,7 @@ public class TestErpCtDocRetention extends JunitAutoTestCase {
     public void testPurgeSilentSkipWithoutTemplate() {
         // 无 ACTIVE 模板 → best-effort 静默跳过，不阻断销毁主流程
         AppConfig.getConfigProvider().assignConfigValue(ErpCtConfigs.CFG_DOC_AUTO_PURGE, "true");
-        long docId = seedDocument("CT-RET-PURGE-NT", LocalDate.of(2020, 1, 1), LocalDate.of(2026, 7, 1),
+        String docId = seedDocument("CT-RET-PURGE-NT", LocalDate.of(2020, 1, 1), LocalDate.of(2026, 7, 1),
                 true, null);
 
         newWiredJob().execute();
@@ -212,9 +212,9 @@ public class TestErpCtDocRetention extends JunitAutoTestCase {
 
     @Test
     public void testPurgeGuards() {
-        long notArchived = seedDocument("CT-RET-PG-NA", LocalDate.of(2020, 1, 1), LocalDate.of(2026, 7, 1),
+        String notArchived = seedDocument("CT-RET-PG-NA", LocalDate.of(2020, 1, 1), LocalDate.of(2026, 7, 1),
                 false, null);
-        long notDue = seedDocument("CT-RET-PG-ND", LocalDate.of(2020, 1, 1), LocalDate.of(2027, 12, 31),
+        String notDue = seedDocument("CT-RET-PG-ND", LocalDate.of(2020, 1, 1), LocalDate.of(2027, 12, 31),
                 true, null);
 
         ApiResponse<?> na = executeRpc(mutation, "ErpCtDocument__purge",
@@ -236,7 +236,7 @@ public class TestErpCtDocRetention extends JunitAutoTestCase {
         plain.setUserName("ct-plain");
         plain.setRoles(java.util.Set.of("合同专员"));
         IUserContext.set(plain);
-        long due = seedDocument("CT-RET-PG-ROLE", LocalDate.of(2020, 1, 1), LocalDate.of(2026, 7, 1),
+        String due = seedDocument("CT-RET-PG-ROLE", LocalDate.of(2020, 1, 1), LocalDate.of(2026, 7, 1),
                 true, null);
         ApiResponse<?> denied = executeRpc(mutation, "ErpCtDocument__purge",
                 ApiRequest.build(Map.of("documentId", due)));
@@ -250,7 +250,7 @@ public class TestErpCtDocRetention extends JunitAutoTestCase {
 
     @Test
     public void testAutoPurgeConfigOff() {
-        long docId = seedDocument("CT-RET-PURGE-OFF", LocalDate.of(2020, 1, 1), LocalDate.of(2026, 7, 1),
+        String docId = seedDocument("CT-RET-PURGE-OFF", LocalDate.of(2020, 1, 1), LocalDate.of(2026, 7, 1),
                 true, null);
 
         newWiredJob().execute();
@@ -262,7 +262,7 @@ public class TestErpCtDocRetention extends JunitAutoTestCase {
 
     @Test
     public void testJobIdempotentAndCronEmptySkips() {
-        long due = seedDocument("CT-RET-IDEM", LocalDate.of(2026, 7, 1), null, false, null);
+        String due = seedDocument("CT-RET-IDEM", LocalDate.of(2026, 7, 1), null, false, null);
 
         newWiredJob().execute();
         LocalDate firstArchiveDate = document(due).getArchiveDate();
@@ -272,7 +272,7 @@ public class TestErpCtDocRetention extends JunitAutoTestCase {
         assertEquals(firstArchiveDate, document(due).getArchiveDate());
 
         // cron 空值 = 不调度语义
-        long another = seedDocument("CT-RET-CRON", LocalDate.of(2026, 7, 1), null, false, null);
+        String another = seedDocument("CT-RET-CRON", LocalDate.of(2026, 7, 1), null, false, null);
         setCron("");
         newWiredJob().execute();
         assertFalse(Boolean.TRUE.equals(document(another).getIsArchived()),
@@ -293,11 +293,11 @@ public class TestErpCtDocRetention extends JunitAutoTestCase {
         return job;
     }
 
-    private ErpCtDocument document(long docId) {
+    private ErpCtDocument document(String docId) {
         return ormTemplate.runInSession(session -> daoProvider.daoFor(ErpCtDocument.class).getEntityById(docId));
     }
 
-    private ErpCtDocument visibleRow(long docId) {
+    private ErpCtDocument visibleRow(String docId) {
         return ormTemplate.runInSession(session -> {
             QueryBean q = new QueryBean();
             q.addFilter(eq("id", docId));
@@ -307,9 +307,9 @@ public class TestErpCtDocRetention extends JunitAutoTestCase {
     }
 
     /** seed 文档：retentionDate/purgeDate/isArchived/legalHold 可配。 */
-    private long seedDocument(String code, LocalDate retentionDate, LocalDate purgeDate,
+    private String seedDocument(String code, LocalDate retentionDate, LocalDate purgeDate,
                               boolean archived, Boolean legalHold) {
-        long[] ret = new long[1];
+        String[] ret = new String[1];
         ormTemplate.runInSession(session -> {
             ErpCtDocument doc = daoProvider.daoFor(ErpCtDocument.class).newEntity();
             doc.orm_disableAutoStamp(true);
@@ -334,7 +334,7 @@ public class TestErpCtDocRetention extends JunitAutoTestCase {
         return ret[0];
     }
 
-    private void linkContract(long docId, long contractId) {
+    private void linkContract(String docId, String contractId) {
         ormTemplate.runInSession(session -> {
             ErpCtDocument doc = daoProvider.daoFor(ErpCtDocument.class).getEntityById(docId);
             doc.setContractId(contractId);
@@ -343,8 +343,8 @@ public class TestErpCtDocRetention extends JunitAutoTestCase {
         });
     }
 
-    private long seedContract(String code, String status) {
-        long[] ids = new long[2];
+    private String seedContract(String code, String status) {
+        String[] ids = new String[2];
         ormTemplate.runInSession(session -> {
             ErpMdPartner p = daoProvider.daoFor(ErpMdPartner.class).newEntity();
             p.setCode("CT-RET-PARTNER");
@@ -360,7 +360,7 @@ public class TestErpCtDocRetention extends JunitAutoTestCase {
             ids[1] = c.getId();
             return null;
         });
-        long[] ret = new long[1];
+        String[] ret = new String[1];
         ormTemplate.runInSession(session -> {
             ErpCtContract contract = daoProvider.daoFor(ErpCtContract.class).newEntity();
             contract.orm_disableAutoStamp(true);
@@ -370,7 +370,7 @@ public class TestErpCtDocRetention extends JunitAutoTestCase {
             contract.setContractDirection("INBOUND");
             contract.setPartnerId(ids[0]);
             contract.setCurrencyId(ids[1]);
-            contract.setOrgId(1L);
+            contract.setOrgId("1");
             contract.setStartDate(LocalDate.of(2026, 1, 1));
             contract.setEndDate(LocalDate.of(2026, 12, 31));
             contract.setTotalAmount(new BigDecimal("1000"));
@@ -387,7 +387,7 @@ public class TestErpCtDocRetention extends JunitAutoTestCase {
         return ret[0];
     }
 
-    private void seedTemplate(Long id, String notificationType, String recipientConfig) {
+    private void seedTemplate(String id, String notificationType, String recipientConfig) {
         ormTemplate.runInSession(() -> {
             ErpSysNotificationTemplate t = daoProvider.daoFor(ErpSysNotificationTemplate.class).newEntity();
             t.orm_propValueByName("id", id);

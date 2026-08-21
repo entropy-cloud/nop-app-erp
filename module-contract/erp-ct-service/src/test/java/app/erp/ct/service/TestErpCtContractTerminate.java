@@ -56,14 +56,14 @@ public class TestErpCtContractTerminate extends JunitAutoTestCase {
 
     @Test
     public void testTerminateFromActiveSucceeds() {
-        long contractId = setupActiveContract();
-        long vid = contractId;
+        String contractId = setupActiveContract();
+        String vid = contractId;
 
         ApiResponse<?> resp = terminate(contractId);
         assertEquals(0, resp.getStatus(), "ACTIVE 合同 terminate 发起应成功: " + resp);
         ErpCtContract pending = daoProvider.daoFor(ErpCtContract.class).getEntityById(vid);
         assertEquals("ACTIVE", pending.getStatus(), "发起终止申请合同保持 ACTIVE");
-        long recordId = pendingTerminationRecordId(contractId);
+        String recordId = pendingTerminationRecordId(contractId);
         assertNotNull(recordId, "应生成 PENDING 法务记录");
 
         ApiResponse<?> approve = executeRpc(mutation, "ErpCtContract__approveTermination",
@@ -76,13 +76,13 @@ public class TestErpCtContractTerminate extends JunitAutoTestCase {
 
     @Test
     public void testTerminateFromNegotiationSucceeds() {
-        long partnerId = createPartner();
-        long currencyId = createCurrency();
-        long contractId = createContract(partnerId, currencyId, "NEGOTIATION");
+        String partnerId = createPartner();
+        String currencyId = createCurrency();
+        String contractId = createContract(partnerId, currencyId, "NEGOTIATION");
 
         ApiResponse<?> resp = terminate(contractId);
         assertEquals(0, resp.getStatus(), "NEGOTIATION 合同 terminate 发起应成功（谈判破裂出口）: " + resp);
-        long recordId = pendingTerminationRecordId(contractId);
+        String recordId = pendingTerminationRecordId(contractId);
         assertNotNull(recordId, "应生成 PENDING 法务记录");
         ApiResponse<?> approve = executeRpc(mutation, "ErpCtContract__approveTermination",
                 ApiRequest.build(Map.of("recordId", recordId)));
@@ -113,54 +113,54 @@ public class TestErpCtContractTerminate extends JunitAutoTestCase {
     }
 
     private void assertTerminateRejected(String illegalStatus) {
-        long contractId = setupContractInStatus(illegalStatus);
+        String contractId = setupContractInStatus(illegalStatus);
         ApiResponse<?> resp = terminate(contractId);
         assertNotEquals(0, resp.getStatus(),
                 illegalStatus + " 合同 terminate 应被拒绝（ERR_CT_ILLEGAL_STATUS_TRANSITION）: " + resp);
     }
 
-    private long pendingTerminationRecordId(long contractId) {
+    private String pendingTerminationRecordId(String contractId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("contractId", contractId));
         q.addFilter(eq("approvalMatrixId", null));
         List<ErpCtApprovalRecord> records = daoProvider.daoFor(ErpCtApprovalRecord.class).findAllByQuery(q);
         if (records == null) {
-            return 0L;
+            return null;
         }
         for (ErpCtApprovalRecord r : records) {
             if (ErpCtConstants.APPROVAL_STATUS_PENDING.equals(r.getApprovalStatus())) {
                 return r.getId();
             }
         }
-        return 0L;
+        return null;
     }
 
-    private long setupContractInStatus(String status) {
-        long partnerId = createPartner();
-        long currencyId = createCurrency();
+    private String setupContractInStatus(String status) {
+        String partnerId = createPartner();
+        String currencyId = createCurrency();
         switch (status) {
             case "DRAFT":
                 return createContract(partnerId, currencyId, "DRAFT");
             case "NEGOTIATION":
                 return createContract(partnerId, currencyId, "NEGOTIATION");
             case "ACTIVE": {
-                long id = createContract(partnerId, currencyId, "NEGOTIATION");
+                String id = createContract(partnerId, currencyId, "NEGOTIATION");
                 createVersion(id, 1, true, "FINALIZED");
                 executeRpc(mutation, "ErpCtContract__activate", ApiRequest.build(Map.of("contractId", id)));
                 return id;
             }
             case "SUSPENDED": {
-                long id = setupContractInStatus("ACTIVE");
+                String id = setupContractInStatus("ACTIVE");
                 executeRpc(mutation, "ErpCtContract__suspend", ApiRequest.build(Map.of("contractId", id)));
                 return id;
             }
             case "EXPIRED": {
-                long id = setupContractInStatus("ACTIVE");
+                String id = setupContractInStatus("ACTIVE");
                 executeRpc(mutation, "ErpCtContract__expire", ApiRequest.build(Map.of("contractId", id)));
                 return id;
             }
             case "TERMINATED": {
-                long id = setupContractInStatus("ACTIVE");
+                String id = setupContractInStatus("ACTIVE");
                 executeRpc(mutation, "ErpCtContract__terminate", ApiRequest.build(Map.of("contractId", id)));
                 executeRpc(mutation, "ErpCtContract__approveTermination",
                         ApiRequest.build(Map.of("recordId", pendingTerminationRecordId(id))));
@@ -171,12 +171,12 @@ public class TestErpCtContractTerminate extends JunitAutoTestCase {
         }
     }
 
-    private long setupActiveContract() {
+    private String setupActiveContract() {
         return setupContractInStatus("ACTIVE");
     }
 
-    private long createPartner() {
-        long[] holder = new long[1];
+    private String createPartner() {
+        String[] holder = new String[1];
         ormTemplate.runInSession(session -> {
             ErpMdPartner p = daoProvider.daoFor(ErpMdPartner.class).newEntity();
             p.setCode("CT-TRM-PARTNER-" + System.nanoTime());
@@ -190,8 +190,8 @@ public class TestErpCtContractTerminate extends JunitAutoTestCase {
         return holder[0];
     }
 
-    private long createCurrency() {
-        long[] holder = new long[1];
+    private String createCurrency() {
+        String[] holder = new String[1];
         ormTemplate.runInSession(session -> {
             ErpMdCurrency c = daoProvider.daoFor(ErpMdCurrency.class).newEntity();
             // CODE precision=10，使用短固定码（JunitAutoTestCase localDb=true 每测试方法隔离 DB）
@@ -204,7 +204,7 @@ public class TestErpCtContractTerminate extends JunitAutoTestCase {
         return holder[0];
     }
 
-    private long createContract(long partnerId, long currencyId, String status) {
+    private String createContract(String partnerId, String currencyId, String status) {
         Map<String, Object> data = new LinkedHashMap<>();
         data.put("code", "CT-TRM-" + System.nanoTime());
         data.put("contractName", "终止状态机测试合同");
@@ -221,7 +221,7 @@ public class TestErpCtContractTerminate extends JunitAutoTestCase {
         return toLongId((Map<?, ?>) resp.getData());
     }
 
-    private void createVersion(long contractId, int versionNo, boolean isCurrent, String status) {
+    private void createVersion(String contractId, int versionNo, boolean isCurrent, String status) {
         Map<String, Object> data = new LinkedHashMap<>();
         data.put("contractId", contractId);
         data.put("versionNo", versionNo);
@@ -233,17 +233,13 @@ public class TestErpCtContractTerminate extends JunitAutoTestCase {
         assertEquals(0, resp.getStatus(), "ErpCtContractVersion__save 应成功: " + resp);
     }
 
-    private ApiResponse<?> terminate(long contractId) {
+    private ApiResponse<?> terminate(String contractId) {
         return executeRpc(mutation, "ErpCtContract__terminate",
                 ApiRequest.build(Map.of("contractId", contractId)));
     }
 
-    private long toLongId(Map<?, ?> r) {
-        Object id = r.get("id");
-        if (id instanceof Number) {
-            return ((Number) id).longValue();
-        }
-        return Long.parseLong(String.valueOf(id));
+    private String toLongId(Map<?, ?> r) {
+        return String.valueOf(r.get("id"));
     }
 
     private ApiResponse<?> executeRpc(GraphQLOperationType opType, String action, ApiRequest<?> request) {

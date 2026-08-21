@@ -12,30 +12,30 @@
     public class ErpCtConsumptionLineInputBean extends CrudInputBase {
 
     
-        private Long _id;
+        private String _id;
 
     
         @PropMeta(propId=1)
     
-        public Long getId(){
+        public String getId(){
             return _id;
         }
 
-        public void setId(Long value){
+        public void setId(String value){
             this._id = value;
         }
 
 
-        private Long _contractLineId;
+        private String _contractLineId;
 
     
         @PropMeta(propId=2)
     
-        public Long getContractLineId(){
+        public String getContractLineId(){
             return _contractLineId;
         }
 
-        public void setContractLineId(Long value){
+        public void setContractLineId(String value){
             this._contractLineId = value;
         }
 

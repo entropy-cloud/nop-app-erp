@@ -81,10 +81,10 @@ public class TestErpCtBillingFamily extends JunitAutoTestCase {
 
     @Test
     public void testGenerateByTermMultiLineMultiTerm() {
-        long[] setup = setupActiveContract("PURCHASE", "INBOUND");
-        long contractId = setup[0];
-        long line1 = setup[1];
-        long line2 = addLine(contractId, new BigDecimal("50"), new BigDecimal("20"));
+        String[] setup = setupActiveContract("PURCHASE", "INBOUND");
+        String contractId = setup[0];
+        String line1 = setup[1];
+        String line2 = addLine(contractId, new BigDecimal("50"), new BigDecimal("20"));
 
         List<Map<String, Object>> items = new ArrayList<>();
         items.add(item(line1, "ADVANCE", "2026-03-01", "300"));
@@ -108,9 +108,9 @@ public class TestErpCtBillingFamily extends JunitAutoTestCase {
 
     @Test
     public void testGenerateByTermRejectedForNonActive() {
-        long[] setup = setupContractWithLine("NEGOTIATION");
-        long contractId = setup[0];
-        long lineId = setup[1];
+        String[] setup = setupContractWithLine("NEGOTIATION");
+        String contractId = setup[0];
+        String lineId = setup[1];
 
         ApiResponse<?> resp = executeRpc(mutation, "ErpCtInvoicePlan__generateInvoicePlansByTerm",
                 ApiRequest.build(Map.of("contractId", contractId,
@@ -122,9 +122,9 @@ public class TestErpCtBillingFamily extends JunitAutoTestCase {
 
     @Test
     public void testGenerateByTermDuplicateRejected() {
-        long[] setup = setupActiveContract("PURCHASE", "INBOUND");
-        long contractId = setup[0];
-        long lineId = setup[1];
+        String[] setup = setupActiveContract("PURCHASE", "INBOUND");
+        String contractId = setup[0];
+        String lineId = setup[1];
 
         ApiResponse<?> ok = executeRpc(mutation, "ErpCtInvoicePlan__generateInvoicePlansByTerm",
                 ApiRequest.build(Map.of("contractId", contractId,
@@ -141,10 +141,10 @@ public class TestErpCtBillingFamily extends JunitAutoTestCase {
 
     @Test
     public void testGenerateByTermLineNotInContractRejected() {
-        long[] setup1 = setupActiveContract("PURCHASE", "INBOUND");
-        long contractId1 = setup1[0];
-        long[] setup2 = setupActiveContract("PURCHASE", "INBOUND");
-        long lineOfOther = setup2[1];
+        String[] setup1 = setupActiveContract("PURCHASE", "INBOUND");
+        String contractId1 = setup1[0];
+        String[] setup2 = setupActiveContract("PURCHASE", "INBOUND");
+        String lineOfOther = setup2[1];
 
         ApiResponse<?> resp = executeRpc(mutation, "ErpCtInvoicePlan__generateInvoicePlansByTerm",
                 ApiRequest.build(Map.of("contractId", contractId1,
@@ -158,10 +158,10 @@ public class TestErpCtBillingFamily extends JunitAutoTestCase {
 
     @Test
     public void testInvoicedPlanAmountUpdateRejected() {
-        long[] setup = setupActiveContract("PURCHASE", "INBOUND");
-        long lineId = setup[1];
+        String[] setup = setupActiveContract("PURCHASE", "INBOUND");
+        String lineId = setup[1];
 
-        long planId = saveInvoicePlan(lineId, new BigDecimal("1000"));
+        String planId = saveInvoicePlan(lineId, new BigDecimal("1000"));
         ApiResponse<?> trigger = executeRpc(mutation, "ErpCtInvoicePlan__triggerInvoice",
                 ApiRequest.build(Map.of("planId", planId)));
         assertEquals(0, trigger.getStatus(), "triggerInvoice 应成功: " + trigger);
@@ -179,10 +179,10 @@ public class TestErpCtBillingFamily extends JunitAutoTestCase {
 
     @Test
     public void testNotInvoicedPlanAmountUpdatable() {
-        long[] setup = setupActiveContract("PURCHASE", "INBOUND");
-        long lineId = setup[1];
+        String[] setup = setupActiveContract("PURCHASE", "INBOUND");
+        String lineId = setup[1];
 
-        long planId = saveInvoicePlan(lineId, new BigDecimal("1000"));
+        String planId = saveInvoicePlan(lineId, new BigDecimal("1000"));
         Map<String, Object> upd = new LinkedHashMap<>();
         upd.put("id", planId);
         upd.put("amount", new BigDecimal("2000"));
@@ -195,10 +195,10 @@ public class TestErpCtBillingFamily extends JunitAutoTestCase {
 
     @Test
     public void testInvoicedPlanRemarkUpdateAllowed() {
-        long[] setup = setupActiveContract("PURCHASE", "INBOUND");
-        long lineId = setup[1];
+        String[] setup = setupActiveContract("PURCHASE", "INBOUND");
+        String lineId = setup[1];
 
-        long planId = saveInvoicePlan(lineId, new BigDecimal("1000"));
+        String planId = saveInvoicePlan(lineId, new BigDecimal("1000"));
         ApiResponse<?> trigger = executeRpc(mutation, "ErpCtInvoicePlan__triggerInvoice",
                 ApiRequest.build(Map.of("planId", planId)));
         assertEquals(0, trigger.getStatus());
@@ -216,8 +216,8 @@ public class TestErpCtBillingFamily extends JunitAutoTestCase {
 
     @Test
     public void testSummarizeNoOverageNoAction() {
-        long[] setup = setupActiveContract("PURCHASE", "INBOUND");
-        long lineId = setup[1];
+        String[] setup = setupActiveContract("PURCHASE", "INBOUND");
+        String lineId = setup[1];
         // line.quantity=100（预估），Σ=40 < 预估
         seedConsumption(lineId, "2026-06-01", "20", "10");
         seedConsumption(lineId, "2026-06-15", "20", "10");
@@ -237,8 +237,8 @@ public class TestErpCtBillingFamily extends JunitAutoTestCase {
 
     @Test
     public void testSummarizeOverageGeneratesPlanAndDraft() {
-        long[] setup = setupActiveContract("PURCHASE", "INBOUND");
-        long lineId = setup[1];
+        String[] setup = setupActiveContract("PURCHASE", "INBOUND");
+        String lineId = setup[1];
         // line.quantity=100 预估，Σ=150 > 预估（超量生成计划+发票草稿；无模板时 120% 通知静默跳过）
         seedConsumption(lineId, "2026-06-01", "80", "10");
         seedConsumption(lineId, "2026-06-15", "70", "10");
@@ -268,8 +268,8 @@ public class TestErpCtBillingFamily extends JunitAutoTestCase {
     @Test
     public void testSummarizeOver120Notifies() {
         seedConsumptionTemplate();
-        long[] setup = setupActiveContract("PURCHASE", "INBOUND");
-        long lineId = setup[1];
+        String[] setup = setupActiveContract("PURCHASE", "INBOUND");
+        String lineId = setup[1];
         // line.quantity=100 预估，Σ=180 > 预估 × 1.2（120）
         seedConsumption(lineId, "2026-06-01", "100", "10");
         seedConsumption(lineId, "2026-06-15", "80", "10");
@@ -290,8 +290,8 @@ public class TestErpCtBillingFamily extends JunitAutoTestCase {
     @Test
     public void testSummarizeOver120NoTemplateSilentSkip() {
         // 不 seed 模板 → notify best-effort 静默跳过（R1.4 范式，不阻断业务事实）
-        long[] setup = setupActiveContract("PURCHASE", "INBOUND");
-        long lineId = setup[1];
+        String[] setup = setupActiveContract("PURCHASE", "INBOUND");
+        String lineId = setup[1];
         seedConsumption(lineId, "2026-06-01", "100", "10");
         seedConsumption(lineId, "2026-06-15", "80", "10");
 
@@ -304,14 +304,14 @@ public class TestErpCtBillingFamily extends JunitAutoTestCase {
 
     @Test
     public void testSummarizeNonExistentLineRejected() {
-        ApiResponse<?> resp = summarize(999999L, "2026-06-01", "2026-06-30");
+        ApiResponse<?> resp = summarize("999999", "2026-06-01", "2026-06-30");
         assertNotEquals(0, resp.getStatus(), "行不存在应拒绝");
         assertTrue(resp.getMsg().contains("不存在"), "应报 ERR_CT_CONSUMPTION_LINE_NOT_FOUND: " + resp.getMsg());
     }
 
     // ---------- helpers ----------
 
-    private Map<String, Object> item(long contractLineId, String invoiceTerm, String planDate, String amount) {
+    private Map<String, Object> item(String contractLineId, String invoiceTerm, String planDate, String amount) {
         Map<String, Object> m = new LinkedHashMap<>();
         m.put("contractLineId", contractLineId);
         m.put("invoiceTerm", invoiceTerm);
@@ -320,14 +320,14 @@ public class TestErpCtBillingFamily extends JunitAutoTestCase {
         return m;
     }
 
-    private ApiResponse<?> summarize(long contractLineId, String fromDate, String toDate) {
+    private ApiResponse<?> summarize(String contractLineId, String fromDate, String toDate) {
         return executeRpc(mutation, "ErpCtConsumptionLine__periodSummarize",
                 ApiRequest.build(Map.of("contractLineId", contractLineId,
                         "fromDate", fromDate, "toDate", toDate,
                         "invoiceTerm", "MONTHLY", "planDate", toDate)));
     }
 
-    private void seedConsumption(long contractLineId, String date, String quantity, String unitPrice) {
+    private void seedConsumption(String contractLineId, String date, String quantity, String unitPrice) {
         ormTemplate.runInSession(() -> {
             ErpCtConsumptionLine c = daoProvider.daoFor(ErpCtConsumptionLine.class).newEntity();
             c.setContractLineId(contractLineId);
@@ -343,7 +343,7 @@ public class TestErpCtBillingFamily extends JunitAutoTestCase {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpSysNotificationTemplate> dao = daoProvider.daoFor(ErpSysNotificationTemplate.class);
             ErpSysNotificationTemplate t = new ErpSysNotificationTemplate();
-            t.orm_propValueByName("id", 8331L);
+            t.orm_propValueByName("id", "8331");
             t.setNotificationType(ErpCtConstants.NOTIFY_EVENT_CONSUMPTION_OVER_120);
             t.setName("TPL-CONSUMPTION-OVER-120");
             t.setChannelSet(ErpNotifyConstants.CHANNEL_IN_APP);
@@ -365,9 +365,9 @@ public class TestErpCtBillingFamily extends JunitAutoTestCase {
         return daoProvider.daoFor(ErpSysNotification.class).findAllByQuery(q);
     }
 
-    private long[] setupActiveContract(String contractType, String direction) {
-        long[] setup = setupContractWithLine("NEGOTIATION");
-        long contractId = setup[0];
+    private String[] setupActiveContract(String contractType, String direction) {
+        String[] setup = setupContractWithLine("NEGOTIATION");
+        String contractId = setup[0];
         createVersion(contractId, 1, true, "FINALIZED");
         ApiResponse<?> act = executeRpc(mutation, "ErpCtContract__activate",
                 ApiRequest.build(Map.of("contractId", contractId)));
@@ -375,20 +375,20 @@ public class TestErpCtBillingFamily extends JunitAutoTestCase {
         return setup;
     }
 
-    private long[] setupContractWithLine(String status) {
-        long[] ids = new long[3];
+    private String[] setupContractWithLine(String status) {
+        String[] ids = new String[3];
         ormTemplate.runInSession(session -> {
             ids[0] = createPartner();
             ids[1] = createCurrency();
             ids[2] = createMaterial(createUoM());
             return null;
         });
-        long contractId = createContract(ids[0], ids[1], status);
-        long lineId = saveLine(contractId, ids[2], new BigDecimal("100"), new BigDecimal("10"), new BigDecimal("1000"));
-        return new long[]{contractId, lineId};
+        String contractId = createContract(ids[0], ids[1], status);
+        String lineId = saveLine(contractId, ids[2], new BigDecimal("100"), new BigDecimal("10"), new BigDecimal("1000"));
+        return new String[]{contractId, lineId};
     }
 
-    private long createPartner() {
+    private String createPartner() {
         ErpMdPartner p = daoProvider.daoFor(ErpMdPartner.class).newEntity();
         p.setCode("CT-BILL-PARTNER-" + System.nanoTime());
         p.setName("计费测试伙伴");
@@ -398,7 +398,7 @@ public class TestErpCtBillingFamily extends JunitAutoTestCase {
         return p.getId();
     }
 
-    private long createCurrency() {
+    private String createCurrency() {
         ErpMdCurrency c = daoProvider.daoFor(ErpMdCurrency.class).newEntity();
         c.setCode("CNY-BILL");
         c.setName("人民币");
@@ -406,7 +406,7 @@ public class TestErpCtBillingFamily extends JunitAutoTestCase {
         return c.getId();
     }
 
-    private long createUoM() {
+    private String createUoM() {
         ErpMdUoM u = daoProvider.daoFor(ErpMdUoM.class).newEntity();
         u.setCode("PCS-CT-BILL");
         u.setName("个");
@@ -414,7 +414,7 @@ public class TestErpCtBillingFamily extends JunitAutoTestCase {
         return u.getId();
     }
 
-    private long createMaterial(long uomId) {
+    private String createMaterial(String uomId) {
         ErpMdMaterial m = daoProvider.daoFor(ErpMdMaterial.class).newEntity();
         m.setCode("MAT-CT-BILL-" + System.nanoTime());
         m.setName("计费测试物料");
@@ -425,7 +425,7 @@ public class TestErpCtBillingFamily extends JunitAutoTestCase {
         return m.getId();
     }
 
-    private long createContract(long partnerId, long currencyId, String status) {
+    private String createContract(String partnerId, String currencyId, String status) {
         Map<String, Object> data = new LinkedHashMap<>();
         data.put("code", "CT-BILL-" + System.nanoTime());
         data.put("contractName", "计费测试合同");
@@ -443,7 +443,7 @@ public class TestErpCtBillingFamily extends JunitAutoTestCase {
         return toLong(((Map<?, ?>) resp.getData()).get("id"));
     }
 
-    private long saveLine(long contractId, long materialId, BigDecimal quantity, BigDecimal unitPrice, BigDecimal amount) {
+    private String saveLine(String contractId, String materialId, BigDecimal quantity, BigDecimal unitPrice, BigDecimal amount) {
         Map<String, Object> data = new LinkedHashMap<>();
         data.put("lineNo", 1);
         data.put("contractId", contractId);
@@ -457,7 +457,7 @@ public class TestErpCtBillingFamily extends JunitAutoTestCase {
         return toLong(((Map<?, ?>) resp.getData()).get("id"));
     }
 
-    private long addLine(long contractId, BigDecimal quantity, BigDecimal unitPrice) {
+    private String addLine(String contractId, BigDecimal quantity, BigDecimal unitPrice) {
         Map<String, Object> data = new LinkedHashMap<>();
         data.put("lineNo", 2);
         data.put("contractId", contractId);
@@ -470,7 +470,7 @@ public class TestErpCtBillingFamily extends JunitAutoTestCase {
         return toLong(((Map<?, ?>) resp.getData()).get("id"));
     }
 
-    private void createVersion(long contractId, int versionNo, boolean isCurrent, String status) {
+    private void createVersion(String contractId, int versionNo, boolean isCurrent, String status) {
         Map<String, Object> data = new LinkedHashMap<>();
         data.put("contractId", contractId);
         data.put("versionNo", versionNo);
@@ -482,7 +482,7 @@ public class TestErpCtBillingFamily extends JunitAutoTestCase {
         assertEquals(0, resp.getStatus(), "ErpCtContractVersion__save 应成功: " + resp);
     }
 
-    private long saveInvoicePlan(long contractLineId, BigDecimal amount) {
+    private String saveInvoicePlan(String contractLineId, BigDecimal amount) {
         Map<String, Object> data = new LinkedHashMap<>();
         data.put("contractLineId", contractLineId);
         data.put("planDate", "2026-06-01");
@@ -495,11 +495,11 @@ public class TestErpCtBillingFamily extends JunitAutoTestCase {
         return toLong(((Map<?, ?>) resp.getData()).get("id"));
     }
 
-    private ErpCtInvoicePlan reloadPlan(long planId) {
+    private ErpCtInvoicePlan reloadPlan(String planId) {
         return daoProvider.daoFor(ErpCtInvoicePlan.class).getEntityById(planId);
     }
 
-    private List<ErpCtInvoicePlan> findPlansByLine(long contractLineId) {
+    private List<ErpCtInvoicePlan> findPlansByLine(String contractLineId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("contractLineId", contractLineId));
         return daoProvider.daoFor(ErpCtInvoicePlan.class).findAllByQuery(q);
@@ -512,11 +512,8 @@ public class TestErpCtBillingFamily extends JunitAutoTestCase {
         return new BigDecimal(String.valueOf(o));
     }
 
-    private long toLong(Object o) {
-        if (o instanceof Number) {
-            return ((Number) o).longValue();
-        }
-        return Long.parseLong(String.valueOf(o));
+    private String toLong(Object o) {
+        return String.valueOf(o);
     }
 
     private QueryBean eqQuery(String field, Object value) {

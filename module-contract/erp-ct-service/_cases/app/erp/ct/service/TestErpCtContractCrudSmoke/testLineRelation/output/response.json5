@@ -6,7 +6,7 @@
     "items": [
       {
         "id": "3",
-        "contractId": 2,
+        "contractId": "2",
         "lineNo": 1,
         "materialId": null,
         "description": null,

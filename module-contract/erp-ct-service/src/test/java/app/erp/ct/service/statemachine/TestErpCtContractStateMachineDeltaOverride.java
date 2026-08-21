@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @NopTestConfig(localDb = true,
         initDatabaseSchema = OptionalBoolean.TRUE,
         enableActionAuth = OptionalBoolean.FALSE)
-@NopTestProperty(name = "nop.core.vfs.delta-layer-ids", value = "test-ct-delta")
+@NopTestProperty(name = "nop.core.vfs.delta-layer-ids", value = "default,test-ct-delta")
 public class TestErpCtContractStateMachineDeltaOverride extends JunitAutoTestCase {
 
     @Inject

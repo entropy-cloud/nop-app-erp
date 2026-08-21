@@ -131,7 +131,7 @@ public class RebateEngine {
                 .orElse(null);
     }
 
-    protected BigDecimal sumAccrued(Long agreementId) {
+    protected BigDecimal sumAccrued(String agreementId) {
         BigDecimal sum = BigDecimal.ZERO;
         for (ErpCtRebateAccrual a : loadAccruals(agreementId)) {
             sum = sum.add(nz(a.getAccruedRebate()));
@@ -147,13 +147,13 @@ public class RebateEngine {
         }
     }
 
-    protected List<ErpCtRebateTier> loadTiers(Long agreementId) {
+    protected List<ErpCtRebateTier> loadTiers(String agreementId) {
         QueryBean query = new QueryBean();
         query.addFilter(eq("rebateAgreementId", agreementId));
         return daoProvider.daoFor(ErpCtRebateTier.class).findAllByQuery(query);
     }
 
-    protected List<ErpCtRebateAccrual> loadAccruals(Long agreementId) {
+    protected List<ErpCtRebateAccrual> loadAccruals(String agreementId) {
         QueryBean query = new QueryBean();
         query.addFilter(eq("rebateAgreementId", agreementId));
         return daoProvider.daoFor(ErpCtRebateAccrual.class).findAllByQuery(query);

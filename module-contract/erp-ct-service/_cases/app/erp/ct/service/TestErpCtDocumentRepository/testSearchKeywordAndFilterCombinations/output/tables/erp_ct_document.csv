@@ -1,0 +1,3 @@
+_chgType,ID,ORG_ID,CONTRACT_ID,CODE,DOC_NAME,DOC_TYPE,ATTACHMENT_FILE_ID,FILE_SIZE,FILE_HASH,MIME_TYPE,OCR_TEXT,OCR_STATUS,FULL_TEXT_SEARCH,METADATA_TAGS,RETENTION_DATE,ARCHIVE_DATE,PURGE_DATE,IS_ARCHIVED,VERSION_NO,REMARK,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME,LEGAL_HOLD
+A,1,,88001,@var:ErpCtDocument@code,采购框架合同扫描,10,,,,,关键字段 SUPPLIER-GOLD-STAR,30,采购框架合同扫描 关键字段 SUPPLIER-GOLD-STAR CT-DOC-SRCH-A party=供应商A,"{""party"":""供应商A""}",,,,false,1,,@var:ErpCtDocument@delVersion_1,1,ct-repo-test,*,autotest-ref,*,
+A,2,,,@var:ErpCtDocument@code_1,质量证明文件,40,,,,,,10,质量证明文件 CT-DOC-SRCH-B,,,2026-07-01,,true,1,,@var:ErpCtDocument@delVersion_1,0,ct-repo-test,*,ct-repo-test,*,

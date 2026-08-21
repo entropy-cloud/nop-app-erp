@@ -1,0 +1,2 @@
+_chgType,USER_ID,ROLE_ID,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME,REMARK
+A,ct-approver-user,role-i-1,0,autotest-ref,*,autotest-ref,*,

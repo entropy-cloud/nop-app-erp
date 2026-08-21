@@ -1,8 +1,8 @@
 {
-  "id": 0,
-  "contractId": 0,
+  "id": "",
+  "contractId": "",
   "lineNo": 0,
-  "materialId": 0,
+  "materialId": "",
   "description": "",
   "quantity": 0.0,
   "unitPrice": 0.0,

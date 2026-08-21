@@ -13,30 +13,30 @@
     public class ErpCtRebateTierOutputBean {
 
     
-        private Long _id;
+        private String _id;
 
     
         @PropMeta(propId=1)
     
-        public Long getId(){
+        public String getId(){
             return _id;
         }
 
-        public void setId(Long value){
+        public void setId(String value){
             this._id = value;
         }
 
 
-        private Long _rebateAgreementId;
+        private String _rebateAgreementId;
 
     
         @PropMeta(propId=2)
     
-        public Long getRebateAgreementId(){
+        public String getRebateAgreementId(){
             return _rebateAgreementId;
         }
 
-        public void setRebateAgreementId(Long value){
+        public void setRebateAgreementId(String value){
             this._rebateAgreementId = value;
         }
 

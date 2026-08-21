@@ -11,7 +11,7 @@ import java.math.BigDecimal;
 public class ErpCtConsumptionPeriodSummarizeResult {
 
     /** 合同行 ID（入参回显）。 */
-    private Long contractLineId;
+    private String contractLineId;
 
     /** 合同行预估总量（line.quantity）。 */
     private BigDecimal estimatedQuantity;
@@ -29,7 +29,7 @@ public class ErpCtConsumptionPeriodSummarizeResult {
     private BigDecimal overRatio;
 
     /** 超量生成的 InvoicePlan ID（未超量为 null）。 */
-    private Long overagePlanId;
+    private String overagePlanId;
 
     /** 超量发票草稿单号（未超量或未触发为 null）。 */
     private String invoiceBillCode;
@@ -37,11 +37,11 @@ public class ErpCtConsumptionPeriodSummarizeResult {
     /** 是否已派发超 120% 审批通知（无 ACTIVE 模板静默跳过时为 false）。 */
     private boolean notificationSent;
 
-    public Long getContractLineId() {
+    public String getContractLineId() {
         return contractLineId;
     }
 
-    public void setContractLineId(Long contractLineId) {
+    public void setContractLineId(String contractLineId) {
         this.contractLineId = contractLineId;
     }
 
@@ -85,11 +85,11 @@ public class ErpCtConsumptionPeriodSummarizeResult {
         this.overRatio = overRatio;
     }
 
-    public Long getOveragePlanId() {
+    public String getOveragePlanId() {
         return overagePlanId;
     }
 
-    public void setOveragePlanId(Long overagePlanId) {
+    public void setOveragePlanId(String overagePlanId) {
         this.overagePlanId = overagePlanId;
     }
 

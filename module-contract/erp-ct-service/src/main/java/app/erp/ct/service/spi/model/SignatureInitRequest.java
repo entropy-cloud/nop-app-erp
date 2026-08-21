@@ -11,7 +11,7 @@ import java.util.List;
 public class SignatureInitRequest {
 
     /** 待签署合同版本 ID（审计/日志用，不直接传给三方）。 */
-    private Long contractVersionId;
+    private String contractVersionId;
 
     /** 已定稿合同文档的附件 fileId（{@code stdDomain="file"}）。Provider 上传到其侧。 */
     private String attachmentFileId;
@@ -25,11 +25,11 @@ public class SignatureInitRequest {
     /** 回调通知 URL（Provider webhook 推送目标）。{@code null}=不注册回调，仅轮询。 */
     private String callbackUrl;
 
-    public Long getContractVersionId() {
+    public String getContractVersionId() {
         return contractVersionId;
     }
 
-    public void setContractVersionId(Long contractVersionId) {
+    public void setContractVersionId(String contractVersionId) {
         this.contractVersionId = contractVersionId;
     }
 

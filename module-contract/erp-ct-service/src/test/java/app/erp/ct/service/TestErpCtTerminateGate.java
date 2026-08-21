@@ -101,7 +101,7 @@ public class TestErpCtTerminateGate extends JunitAutoTestCase {
     @Test
     public void testTerminateCreatesPendingRecordAndKeepsStatus() {
         seedLegalRole();
-        long contractId = setupActiveContract();
+        String contractId = setupActiveContract();
         ErpCtContract before = contract(contractId);
 
         ApiResponse<?> resp = executeRpc(mutation, "ErpCtContract__terminate",
@@ -120,7 +120,7 @@ public class TestErpCtTerminateGate extends JunitAutoTestCase {
     @Test
     public void testTerminateDuplicatePendingRejected() {
         seedLegalRole();
-        long contractId = setupActiveContract();
+        String contractId = setupActiveContract();
         executeRpc(mutation, "ErpCtContract__terminate",
                 ApiRequest.build(Map.of("contractId", contractId, "reason", "协商解约")));
 
@@ -136,10 +136,10 @@ public class TestErpCtTerminateGate extends JunitAutoTestCase {
     public void testTerminateKeepsInvoicePlanTriggerableUntilApproved() {
         // 未过法务：合同保持 ACTIVE，InvoicePlan 仍可触发（终止副作用未执行）
         seedLegalRole();
-        long[] setup = setupActiveContractWithLine();
-        long contractId = setup[0];
-        long lineId = setup[1];
-        long planId = saveInvoicePlan(lineId, new BigDecimal("1000"));
+        String[] setup = setupActiveContractWithLine();
+        String contractId = setup[0];
+        String lineId = setup[1];
+        String planId = saveInvoicePlan(lineId, new BigDecimal("1000"));
 
         executeRpc(mutation, "ErpCtContract__terminate",
                 ApiRequest.build(Map.of("contractId", contractId, "reason", "违约")));
@@ -155,16 +155,16 @@ public class TestErpCtTerminateGate extends JunitAutoTestCase {
     public void testApproveTerminationExecutesAllSideEffects() {
         seedLegalRole();
         loginAs(OWNER_USER);
-        long[] setup = setupActiveContractWithLine();
-        long contractId = setup[0];
-        long lineId = setup[1];
-        long planId = saveInvoicePlan(lineId, new BigDecimal("1000"));
+        String[] setup = setupActiveContractWithLine();
+        String contractId = setup[0];
+        String lineId = setup[1];
+        String planId = saveInvoicePlan(lineId, new BigDecimal("1000"));
         // 版本归档断言载体：v1 为当前版本（activate 级联 SIGNED），v2 非 current 历史版本
         createVersion(contractId, 2, false, "SIGNED");
-        seedNotifyTemplate(8811L, ErpCtConstants.NOTIFY_EVENT_TERMINATE_WINDDOWN);
+        seedNotifyTemplate("8811", ErpCtConstants.NOTIFY_EVENT_TERMINATE_WINDDOWN);
         executeRpc(mutation, "ErpCtContract__terminate",
                 ApiRequest.build(Map.of("contractId", contractId, "reason", "供应商违约")));
-        long recordId = pendingTerminationRecord(contractId).getId();
+        String recordId = pendingTerminationRecord(contractId).getId();
         assertEquals(OWNER_USER, contract(contractId).getCreatedBy(), "合同应以经办人身份创建");
 
         loginAs(LEGAL_USER);
@@ -197,10 +197,10 @@ public class TestErpCtTerminateGate extends JunitAutoTestCase {
     @Test
     public void testApproveTerminationGuardApproverMismatch() {
         seedLegalRole();
-        long contractId = setupActiveContract();
+        String contractId = setupActiveContract();
         executeRpc(mutation, "ErpCtContract__terminate",
                 ApiRequest.build(Map.of("contractId", contractId, "reason", "违约")));
-        long recordId = pendingTerminationRecord(contractId).getId();
+        String recordId = pendingTerminationRecord(contractId).getId();
 
         loginAs(OTHER_USER);
         ApiResponse<?> resp = executeRpc(mutation, "ErpCtContract__approveTermination",
@@ -219,11 +219,11 @@ public class TestErpCtTerminateGate extends JunitAutoTestCase {
     public void testRejectTerminationKeepsStatusAndNotifies() {
         seedLegalRole();
         loginAs(OWNER_USER);
-        long contractId = setupActiveContract();
-        seedNotifyTemplate(8812L, ErpCtConstants.NOTIFY_EVENT_TERMINATE_REJECTED);
+        String contractId = setupActiveContract();
+        seedNotifyTemplate("8812", ErpCtConstants.NOTIFY_EVENT_TERMINATE_REJECTED);
         executeRpc(mutation, "ErpCtContract__terminate",
                 ApiRequest.build(Map.of("contractId", contractId, "reason", "违约")));
-        long recordId = pendingTerminationRecord(contractId).getId();
+        String recordId = pendingTerminationRecord(contractId).getId();
         String statusBefore = contract(contractId).getStatus();
 
         loginAs(LEGAL_USER);
@@ -268,11 +268,11 @@ public class TestErpCtTerminateGate extends JunitAutoTestCase {
         ContextProvider.getOrCreateContext().setUserRefNo(userId);
     }
 
-    private ErpCtContract contract(long contractId) {
+    private ErpCtContract contract(String contractId) {
         return daoProvider.daoFor(ErpCtContract.class).getEntityById(contractId);
     }
 
-    private ErpCtApprovalRecord pendingTerminationRecord(long contractId) {
+    private ErpCtApprovalRecord pendingTerminationRecord(String contractId) {
         List<ErpCtApprovalRecord> records = findRecords(contractId);
         for (ErpCtApprovalRecord r : records) {
             if (r.getApprovalMatrixId() == null
@@ -283,48 +283,48 @@ public class TestErpCtTerminateGate extends JunitAutoTestCase {
         return null;
     }
 
-    private List<ErpCtApprovalRecord> findRecords(long contractId) {
+    private List<ErpCtApprovalRecord> findRecords(String contractId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("contractId", contractId));
         return daoProvider.daoFor(ErpCtApprovalRecord.class).findAllByQuery(q);
     }
 
-    private List<ErpCtContractVersion> findVersions(long contractId) {
+    private List<ErpCtContractVersion> findVersions(String contractId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("contractId", contractId));
         return daoProvider.daoFor(ErpCtContractVersion.class).findAllByQuery(q);
     }
 
-    private List<ErpCtInvoicePlan> findUnexecutedPlans(long contractLineId) {
+    private List<ErpCtInvoicePlan> findUnexecutedPlans(String contractLineId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("contractLineId", contractLineId));
         q.addFilter(eq("isInvoiced", false));
         return daoProvider.daoFor(ErpCtInvoicePlan.class).findAllByQuery(q);
     }
 
-    private long setupActiveContract() {
-        long[] setup = setupActiveContractWithLine();
+    private String setupActiveContract() {
+        String[] setup = setupActiveContractWithLine();
         return setup[0];
     }
 
-    private long[] setupActiveContractWithLine() {
-        long[] ids = new long[2];
+    private String[] setupActiveContractWithLine() {
+        String[] ids = new String[2];
         ormTemplate.runInSession(session -> {
             ids[0] = createPartner();
             ids[1] = createCurrency();
             return null;
         });
-        long partnerId = ids[0];
-        long currencyId = ids[1];
-        long contractId = createContract(partnerId, currencyId, "ACTIVE");
-        long lineId = saveLine(contractId);
+        String partnerId = ids[0];
+        String currencyId = ids[1];
+        String contractId = createContract(partnerId, currencyId, "ACTIVE");
+        String lineId = saveLine(contractId);
         createVersion(contractId, 1, true, "FINALIZED");
         executeRpc(mutation, "ErpCtContract__activate",
                 ApiRequest.build(Map.of("contractId", contractId)));
-        return new long[]{contractId, lineId};
+        return new String[]{contractId, lineId};
     }
 
-    private long createPartner() {
+    private String createPartner() {
         ErpMdPartner p = daoProvider.daoFor(ErpMdPartner.class).newEntity();
         p.setCode("CT-TG-PARTNER-" + System.nanoTime());
         p.setName("终止门控测试伙伴");
@@ -334,7 +334,7 @@ public class TestErpCtTerminateGate extends JunitAutoTestCase {
         return p.getId();
     }
 
-    private long createCurrency() {
+    private String createCurrency() {
         ErpMdCurrency c = daoProvider.daoFor(ErpMdCurrency.class).newEntity();
         c.setCode("CNY-TG");
         c.setName("人民币");
@@ -342,7 +342,7 @@ public class TestErpCtTerminateGate extends JunitAutoTestCase {
         return c.getId();
     }
 
-    private long createContract(long partnerId, long currencyId, String status) {
+    private String createContract(String partnerId, String currencyId, String status) {
         Map<String, Object> data = new LinkedHashMap<>();
         data.put("code", "CT-TG-" + System.nanoTime());
         data.put("contractName", "终止门控测试合同");
@@ -360,8 +360,8 @@ public class TestErpCtTerminateGate extends JunitAutoTestCase {
         return toLong(((Map<?, ?>) resp.getData()).get("id"));
     }
 
-    private long saveLine(long contractId) {
-        long[] holder = new long[1];
+    private String saveLine(String contractId) {
+        String[] holder = new String[1];
         ormTemplate.runInSession(session -> {
             ErpMdUoM uom = daoProvider.daoFor(ErpMdUoM.class).newEntity();
             uom.setCode("PCS-TG");
@@ -390,7 +390,7 @@ public class TestErpCtTerminateGate extends JunitAutoTestCase {
         return toLong(((Map<?, ?>) resp.getData()).get("id"));
     }
 
-    private long saveInvoicePlan(long contractLineId, BigDecimal amount) {
+    private String saveInvoicePlan(String contractLineId, BigDecimal amount) {
         Map<String, Object> data = new LinkedHashMap<>();
         data.put("contractLineId", contractLineId);
         data.put("planDate", "2026-06-01");
@@ -403,7 +403,7 @@ public class TestErpCtTerminateGate extends JunitAutoTestCase {
         return toLong(((Map<?, ?>) resp.getData()).get("id"));
     }
 
-    private void createVersion(long contractId, int versionNo, boolean isCurrent, String status) {
+    private void createVersion(String contractId, int versionNo, boolean isCurrent, String status) {
         Map<String, Object> data = new LinkedHashMap<>();
         data.put("contractId", contractId);
         data.put("versionNo", versionNo);
@@ -415,7 +415,7 @@ public class TestErpCtTerminateGate extends JunitAutoTestCase {
         assertEquals(0, resp.getStatus(), "ErpCtContractVersion__save 应成功: " + resp);
     }
 
-    private void seedNotifyTemplate(Long id, String eventType) {
+    private void seedNotifyTemplate(String id, String eventType) {
         ormTemplate.runInSession(() -> {
             ErpSysNotificationTemplate t = daoProvider.daoFor(ErpSysNotificationTemplate.class).newEntity();
             t.orm_propValueByName("id", id);
@@ -440,11 +440,8 @@ public class TestErpCtTerminateGate extends JunitAutoTestCase {
         return daoProvider.daoFor(ErpSysNotification.class).findAllByQuery(q);
     }
 
-    private long toLong(Object o) {
-        if (o instanceof Number) {
-            return ((Number) o).longValue();
-        }
-        return Long.parseLong(String.valueOf(o));
+    private String toLong(Object o) {
+        return String.valueOf(o);
     }
 
     private ApiResponse<?> executeRpc(GraphQLOperationType opType, String action, ApiRequest<?> request) {

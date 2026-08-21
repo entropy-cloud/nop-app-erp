@@ -8,6 +8,7 @@ import app.erp.ct.biz.IErpCtApprovalRecordBiz;
 import app.erp.ct.service.ErpCtConfigs;
 import app.erp.ct.service.ErpCtConstants;
 import io.nop.api.core.beans.query.QueryBean;
+import io.nop.api.core.convert.ConvertHelper;
 import io.nop.auth.biz.INopAuthRoleBiz;
 import io.nop.auth.biz.INopAuthUserRoleBiz;
 import io.nop.auth.dao.entity.NopAuthRole;
@@ -159,7 +160,7 @@ public class ErpCtApprovalWorkflowEngine {
     // ---------- 链状态推导（approve/reject/resubmit/activate 联动消费） ----------
 
     /** 合同全部审批记录（含历史轮次；terminate 记录 approvalMatrixId=null 亦含）。 */
-    public List<ErpCtApprovalRecord> findRecords(Long contractId, IServiceContext ctx) {
+    public List<ErpCtApprovalRecord> findRecords(String contractId, IServiceContext ctx) {
         QueryBean query = new QueryBean();
         query.addFilter(eq("contractId", contractId));
         List<ErpCtApprovalRecord> list = recordBiz.findList(query, null, ctx);
@@ -167,22 +168,27 @@ public class ErpCtApprovalWorkflowEngine {
     }
 
     /** 某 (contractId, approvalOrder) 的最新记录（跨轮次取 id 最大者）；无记录返回 null。 */
-    public ErpCtApprovalRecord latestRecord(Long contractId, Integer approvalOrder, IServiceContext ctx) {
+    public ErpCtApprovalRecord latestRecord(String contractId, Integer approvalOrder, IServiceContext ctx) {
         ErpCtApprovalRecord latest = null;
         for (ErpCtApprovalRecord record : findRecords(contractId, ctx)) {
             if (approvalOrder.equals(record.getApprovalOrder())
-                    && (latest == null || record.getId() > latest.getId())) {
+                    && (latest == null || idOrder(record, latest) > 0)) {
                 latest = record;
             }
         }
         return latest;
     }
 
+    // seq-string id 数值序比较（id 为 String 后保留跨轮次取 id 最大者语义）
+    protected int idOrder(ErpCtApprovalRecord record, ErpCtApprovalRecord latest) {
+        return Long.compare(ConvertHelper.toLong(record.getId()), ConvertHelper.toLong(latest.getId()));
+    }
+
     /**
      * 派生驳回计数（D3）：(contractId, approvalOrder) 组的 REJECTED 记录数。
      * 追加行生命周期（D7）下随轮次递增，锁定可达。
      */
-    public int rejectedCount(Long contractId, Integer approvalOrder, IServiceContext ctx) {
+    public int rejectedCount(String contractId, Integer approvalOrder, IServiceContext ctx) {
         int count = 0;
         for (ErpCtApprovalRecord record : findRecords(contractId, ctx)) {
             if (approvalOrder.equals(record.getApprovalOrder())
@@ -197,14 +203,14 @@ public class ErpCtApprovalWorkflowEngine {
      * 最新被驳回节点（D7 resubmit 基准）：最新轮次中 id 最大的 REJECTED 链记录；
      * 无驳回返回 null。非链记录（terminate，approvalMatrixId=null）排除。
      */
-    public ErpCtApprovalRecord latestRejected(Long contractId, IServiceContext ctx) {
+    public ErpCtApprovalRecord latestRejected(String contractId, IServiceContext ctx) {
         ErpCtApprovalRecord latest = null;
         for (ErpCtApprovalRecord record : findRecords(contractId, ctx)) {
             if (record.getApprovalMatrixId() == null) {
                 continue;
             }
             if (ErpCtConstants.APPROVAL_STATUS_REJECTED.equals(record.getApprovalStatus())
-                    && (latest == null || record.getId() > latest.getId())) {
+                    && (latest == null || idOrder(record, latest) > 0)) {
                 latest = record;
             }
         }
@@ -216,7 +222,7 @@ public class ErpCtApprovalWorkflowEngine {
      * 不同 approvalOrder）的最新记录均 APPROVED 时链完整；零链记录亦视为完整（引擎未启用
      * 或矩阵无匹配节点 = 无需审批）。终止记录（approvalMatrixId=null）不参与。
      */
-    public boolean isChainComplete(Long contractId, IServiceContext ctx) {
+    public boolean isChainComplete(String contractId, IServiceContext ctx) {
         Set<Integer> orders = new LinkedHashSet<>();
         for (ErpCtApprovalRecord record : findRecords(contractId, ctx)) {
             if (record.getApprovalMatrixId() != null && record.getApprovalOrder() != null) {
@@ -234,7 +240,7 @@ public class ErpCtApprovalWorkflowEngine {
     }
 
     /** 合同是否存在待处理（PENDING）终止申请记录（D1 terminate 幂等守卫）。 */
-    public boolean hasPendingTermination(Long contractId, IServiceContext ctx) {
+    public boolean hasPendingTermination(String contractId, IServiceContext ctx) {
         for (ErpCtApprovalRecord record : findRecords(contractId, ctx)) {
             if (record.getApprovalMatrixId() == null
                     && ErpCtConstants.APPROVAL_STATUS_PENDING.equals(record.getApprovalStatus())) {
@@ -250,7 +256,7 @@ public class ErpCtApprovalWorkflowEngine {
         return nodeType == null || nodeType.equals(contractType);
     }
 
-    protected boolean matchOrg(Long nodeOrgId, Long contractOrgId) {
+    protected boolean matchOrg(String nodeOrgId, String contractOrgId) {
         return nodeOrgId == null || nodeOrgId.equals(contractOrgId);
     }
 

@@ -1,7 +1,7 @@
 {
-  "id": 0,
-  "rebateAgreementId": 0,
-  "orgId": 0,
+  "id": "",
+  "rebateAgreementId": "",
+  "orgId": "",
   "sourceBillType": "",
   "sourceBillCode": "",
   "billAmountSource": 0.0,

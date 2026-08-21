@@ -12,7 +12,7 @@ import io.nop.core.context.IServiceContext;
  */
 public class ErpCtSignatureRequestQueryAndUpdateStatusProcessor extends AbstractErpCtSignatureRequestProcessor {
 
-    public ErpCtSignatureRequest queryAndUpdateStatus(Long requestId, IServiceContext context) {
+    public ErpCtSignatureRequest queryAndUpdateStatus(String requestId, IServiceContext context) {
         ErpCtSignatureRequest request = dao().getEntityById(requestId);
         if (request == null) {
             throw new NopException(app.erp.ct.service.ErpCtErrors.ERR_CT_SIGNATURE_ILLEGAL_TRANSITION)

@@ -31,7 +31,7 @@ public class ErpCtConsumptionLineBizModel extends CrudBizModel<ErpCtConsumptionL
 
     @Override
     @BizMutation
-    public ErpCtConsumptionPeriodSummarizeResult periodSummarize(@Name("contractLineId") Long contractLineId,
+    public ErpCtConsumptionPeriodSummarizeResult periodSummarize(@Name("contractLineId") String contractLineId,
                                                                  @Name("fromDate") LocalDate fromDate,
                                                                  @Name("toDate") LocalDate toDate,
                                                                  @Name("invoiceTerm") String invoiceTerm,

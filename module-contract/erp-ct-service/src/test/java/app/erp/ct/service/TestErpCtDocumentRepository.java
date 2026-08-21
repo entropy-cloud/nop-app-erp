@@ -120,7 +120,7 @@ public class TestErpCtDocumentRepository extends JunitAutoTestCase {
 
     @Test
     public void testOcrManualEngineFailsWithReason() {
-        long docId = seedDocument("CT-DOC-OCR-FAIL", "OCR 失败路径文档");
+        String docId = seedDocument("CT-DOC-OCR-FAIL", "OCR 失败路径文档");
 
         ApiResponse<?> resp = executeRpc(mutation, "ErpCtDocument__startOcr",
                 ApiRequest.build(Map.of("documentId", docId)));
@@ -135,7 +135,7 @@ public class TestErpCtDocumentRepository extends JunitAutoTestCase {
 
     @Test
     public void testOcrFullTransitionToCompletedAndRetryFromFailed() {
-        long docId = seedDocument("CT-DOC-OCR-OK", "OCR 成功路径文档");
+        String docId = seedDocument("CT-DOC-OCR-OK", "OCR 成功路径文档");
 
         // manual（默认）→ FAILED
         ormTemplate.runInSession(session -> documentBiz.startOcr(docId, new ServiceContextImpl()));
@@ -154,7 +154,7 @@ public class TestErpCtDocumentRepository extends JunitAutoTestCase {
 
     @Test
     public void testOcrProcessingRejectsConcurrentSubmit() {
-        long docId = seedDocumentWithOcrStatus("CT-DOC-OCR-PROC", ErpCtDaoConstants.OCR_STATUS_PROCESSING);
+        String docId = seedDocumentWithOcrStatus("CT-DOC-OCR-PROC", ErpCtDaoConstants.OCR_STATUS_PROCESSING);
 
         ApiResponse<?> resp = executeRpc(mutation, "ErpCtDocument__startOcr",
                 ApiRequest.build(Map.of("documentId", docId)));
@@ -170,7 +170,7 @@ public class TestErpCtDocumentRepository extends JunitAutoTestCase {
 
     @Test
     public void testSubmitOcrTextManualEntry() {
-        long docId = seedDocument("CT-DOC-OCR-MANUAL", "人工补录文档");
+        String docId = seedDocument("CT-DOC-OCR-MANUAL", "人工补录文档");
         ormTemplate.runInSession(session -> documentBiz.startOcr(docId, new ServiceContextImpl()));
         assertEquals(ErpCtDaoConstants.OCR_STATUS_FAILED, documentById(docId).getOcrStatus(),
                 "manual 引擎先落 FAILED");
@@ -187,10 +187,10 @@ public class TestErpCtDocumentRepository extends JunitAutoTestCase {
 
     @Test
     public void testSearchKeywordAndFilterCombinations() {
-        long contractId = 88001L;
-        long docA = seedDocumentFull("CT-DOC-SRCH-A", "采购框架合同扫描", ErpCtDaoConstants.DOC_TYPE_CONTRACT_SCAN,
+        String contractId = "88001";
+        String docA = seedDocumentFull("CT-DOC-SRCH-A", "采购框架合同扫描", ErpCtDaoConstants.DOC_TYPE_CONTRACT_SCAN,
                 contractId, ErpCtDaoConstants.OCR_STATUS_COMPLETED, false, "{\"party\":\"供应商A\"}");
-        long docB = seedDocumentFull("CT-DOC-SRCH-B", "质量证明文件", ErpCtDaoConstants.DOC_TYPE_CERTIFICATE,
+        String docB = seedDocumentFull("CT-DOC-SRCH-B", "质量证明文件", ErpCtDaoConstants.DOC_TYPE_CERTIFICATE,
                 null, ErpCtDaoConstants.OCR_STATUS_PENDING, true, null);
         // docA 补入可检索 OCR 文本
         ormTemplate.runInSession(session -> documentBiz.submitOcrText(docA, "关键字段 SUPPLIER-GOLD-STAR",
@@ -231,12 +231,12 @@ public class TestErpCtDocumentRepository extends JunitAutoTestCase {
 
     @Test
     public void testArchivedDocumentSearchableButImmutable() {
-        long docId = seedDocumentFull("CT-DOC-SRCH-ARC", "已归档仍可检索", ErpCtDaoConstants.DOC_TYPE_OTHER,
+        String docId = seedDocumentFull("CT-DOC-SRCH-ARC", "已归档仍可检索", ErpCtDaoConstants.DOC_TYPE_OTHER,
                 null, ErpCtDaoConstants.OCR_STATUS_PENDING, true, null);
 
         List<ErpCtDocument> hits = search(null, "已归档仍可检索", null, null, null, null, null, true).getDocuments();
         assertEquals(1, hits.size(), "归档文档仍可被 keyword 检索（归档期可搜索）");
-        assertEquals(docId, hits.get(0).getId().longValue());
+        assertEquals(docId, hits.get(0).getId());
 
         ApiResponse<?> update = executeRpc(mutation, "ErpCtDocument__update",
                 ApiRequest.build(Map.of("data", Map.of("id", docId, "ocrText", "late-entry"))));
@@ -247,7 +247,7 @@ public class TestErpCtDocumentRepository extends JunitAutoTestCase {
 
     @Test
     public void testGraphQLRpcSmoke() {
-        long docId = seedDocument("CT-DOC-RPC", "RPC 冒烟文档");
+        String docId = seedDocument("CT-DOC-RPC", "RPC 冒烟文档");
         ApiResponse<?> ocr = executeRpc(mutation, "ErpCtDocument__startOcr",
                 ApiRequest.build(Map.of("documentId", docId)));
         assertEquals(0, ocr.getStatus(), "startOcr 可路由: " + ocr);
@@ -263,7 +263,7 @@ public class TestErpCtDocumentRepository extends JunitAutoTestCase {
 
     // ---------- helpers ----------
 
-    private DocumentSearchResult search(String code, String keyword, String docType, Long contractId,
+    private DocumentSearchResult search(String code, String keyword, String docType, String contractId,
                                         String from, String to, String ocrStatus, Boolean archived) {
         return ormTemplate.runInSession(session -> documentBiz.searchDocuments(keyword, code, docType,
                 contractId, from, to, ocrStatus, archived, new ServiceContextImpl()));
@@ -274,23 +274,23 @@ public class TestErpCtDocumentRepository extends JunitAutoTestCase {
                         eqQuery("code", code)).get(0));
     }
 
-    private ErpCtDocument documentById(long docId) {
+    private ErpCtDocument documentById(String docId) {
         return ormTemplate.runInSession(session -> daoProvider.daoFor(ErpCtDocument.class).getEntityById(docId));
     }
 
-    private long seedDocument(String code, String docName) {
+    private String seedDocument(String code, String docName) {
         return seedDocumentFull(code, docName, ErpCtDaoConstants.DOC_TYPE_CONTRACT_SCAN,
                 null, ErpCtDaoConstants.OCR_STATUS_PENDING, false, null);
     }
 
-    private long seedDocumentWithOcrStatus(String code, String ocrStatus) {
+    private String seedDocumentWithOcrStatus(String code, String ocrStatus) {
         return seedDocumentFull(code, "OCR 状态预设文档", ErpCtDaoConstants.DOC_TYPE_CONTRACT_SCAN,
                 null, ocrStatus, false, null);
     }
 
-    private long seedDocumentFull(String code, String docName, String docType, Long contractId,
+    private String seedDocumentFull(String code, String docName, String docType, String contractId,
                                   String ocrStatus, boolean archived, String metadataTags) {
-        long[] ret = new long[1];
+        String[] ret = new String[1];
         ormTemplate.runInSession(session -> {
             ErpCtDocument doc = daoProvider.daoFor(ErpCtDocument.class).newEntity();
             doc.orm_disableAutoStamp(true);

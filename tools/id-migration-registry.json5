@@ -1639,8 +1639,8 @@
       ],
       "deferredUntil": "M3.6",
       "retireOwner": "M3.6",
-      "note": "早域 test 引用晚域——早域 plan Phase 3 消费（本域测试适配）；晚域翻转时复核",
-      "status": "active"
+      "note": "已适配退役（本域侧）：M3.6 contract plan 2026-08-21-2025-3 Phase 3 兑付（读路径核验（仅按 code String 访问 ErpPurInvoice），零 id 穿越，无需转换点）；晚域 M2.5/M2.6 翻转 pur/sal 时移除桥接点/复核读路径",
+      "status": "retired"
     },
     {
       "id": "bridge-test-109",
@@ -1656,8 +1656,8 @@
       ],
       "deferredUntil": "M3.6",
       "retireOwner": "M3.6",
-      "note": "早域 test 引用晚域——早域 plan Phase 3 消费（本域测试适配）；晚域翻转时复核",
-      "status": "active"
+      "note": "已适配退役（本域侧）：M3.6 contract plan 2026-08-21-2025-3 Phase 3 兑付（读路径核验（仅按 code String 访问 ErpPurInvoice），零 id 穿越，无需转换点）；晚域 M2.5/M2.6 翻转 pur/sal 时移除桥接点/复核读路径",
+      "status": "retired"
     },
     {
       "id": "bridge-test-110",
@@ -1674,8 +1674,8 @@
       ],
       "deferredUntil": "M3.6",
       "retireOwner": "M3.6",
-      "note": "早域 test 引用晚域——早域 plan Phase 3 消费（本域测试适配）；晚域翻转时复核",
-      "status": "active"
+      "note": "已适配退役（本域侧）：M3.6 contract plan 2026-08-21-2025-3 Phase 3 兑付（读路径核验（pur/sal 均仅按 code String 访问），零 id 穿越，无需转换点）；晚域 M2.5/M2.6 翻转 pur/sal 时移除桥接点/复核读路径",
+      "status": "retired"
     },
     {
       "id": "bridge-test-111",
@@ -1691,8 +1691,8 @@
       ],
       "deferredUntil": "M3.6",
       "retireOwner": "M3.6",
-      "note": "早域 test 引用晚域——早域 plan Phase 3 消费（本域测试适配）；晚域翻转时复核",
-      "status": "active"
+      "note": "已适配退役（本域侧）：M3.6 contract plan 2026-08-21-2025-3 Phase 3 兑付（ConvertHelper.toLong ×2 落桥（createPostedApInvoice setSupplierId/setCurrencyId））；晚域 M2.5/M2.6 翻转 pur/sal 时移除桥接点/复核读路径",
+      "status": "retired"
     },
     {
       "id": "bridge-test-112",
@@ -1708,8 +1708,8 @@
       ],
       "deferredUntil": "M3.6",
       "retireOwner": "M3.6",
-      "note": "早域 test 引用晚域——早域 plan Phase 3 消费（本域测试适配）；晚域翻转时复核",
-      "status": "active"
+      "note": "已适配退役（本域侧）：M3.6 contract plan 2026-08-21-2025-3 Phase 3 兑付（ConvertHelper.toLong ×2 落桥（createPostedArInvoice setCustomerId/setCurrencyId））；晚域 M2.5/M2.6 翻转 pur/sal 时移除桥接点/复核读路径",
+      "status": "retired"
     },
     {
       "id": "bridge-test-113",

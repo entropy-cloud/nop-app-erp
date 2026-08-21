@@ -1,0 +1,2 @@
+_chgType,DEPT_ID,DEPT_NAME,PARENT_ID,ORDER_NUM,DEPT_TYPE,MANAGER_ID,EMAIL,PHONE,DEL_FLAG,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME,REMARK,EXT_FLAGS
+A,@var:NopAuthDept@deptId,到期升级测试部门,,,,ct-exp-dept-mgr,,,0,0,autotest-ref,*,autotest-ref,*,,

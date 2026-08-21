@@ -40,7 +40,7 @@ public class ErpCtContractAmendProcessor {
     @Inject
     ErpCtContractStateMachine stateMachine;
 
-    public ErpCtContract amend(Long contractId, IServiceContext context) {
+    public ErpCtContract amend(String contractId, IServiceContext context) {
         ErpCtContract contract = requireContract(contractId);
         try {
             stateMachine.assertCanAmend(contract.getStatus());
@@ -81,7 +81,7 @@ public class ErpCtContractAmendProcessor {
 
     // ---------- helpers ----------
 
-    protected ErpCtContract requireContract(Long contractId) {
+    protected ErpCtContract requireContract(String contractId) {
         ErpCtContract contract = dao().getEntityById(contractId);
         if (contract == null) {
             throw new NopException(ErpCtErrors.ERR_CT_ILLEGAL_STATUS_TRANSITION)
@@ -90,7 +90,7 @@ public class ErpCtContractAmendProcessor {
         return contract;
     }
 
-    protected List<ErpCtContractVersion> findVersions(Long contractId, IServiceContext context) {
+    protected List<ErpCtContractVersion> findVersions(String contractId, IServiceContext context) {
         QueryBean query = new QueryBean();
         query.addFilter(eq("contractId", contractId));
         List<ErpCtContractVersion> list = contractVersionBiz.findList(query, null, context);

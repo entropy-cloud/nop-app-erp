@@ -1,0 +1,2 @@
+_chgType,ID,NOTIFICATION_TYPE,NAME,CHANNEL_SET,SUBJECT_TPL,BODY_TPL,RECIPIENT_RESOLVER,RECIPIENT_CONFIG,MERGE_WINDOW_SECONDS,MERGE_STRATEGY,STATUS,REMARK,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
+A,8331,ct.consumption-over-120-percent,TPL-CONSUMPTION-OVER-120,IN_APP,消耗超量预警 ${contractCode},合同 ${contractCode} 行 ${contractLineId} 期间消耗 ${totalConsumedQuantity}，预估 ${estimatedQuantity}，超量 ${overQuantity},USER_LIST,"{""userIds"":[""ct-consume-approver""]}",300,NONE,ACTIVE,,@var:ErpSysNotificationTemplate@delVersion,0,autotest-ref,*,autotest-ref,*

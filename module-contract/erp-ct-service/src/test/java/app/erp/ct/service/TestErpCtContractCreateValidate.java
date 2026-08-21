@@ -71,7 +71,7 @@ public class TestErpCtContractCreateValidate extends JunitAutoTestCase {
 
     @Test
     public void testSaveAcceptsNoLinesMissingAmounts() {
-        long contractId = createContract("DRAFT", null, null, null);
+        String contractId = createContract("DRAFT", null, null, null);
         ErpCtContract contract = daoProvider.daoFor(ErpCtContract.class).getEntityById(contractId);
         assertNotNull(contract);
         assertEquals("DRAFT", contract.getStatus());
@@ -119,7 +119,7 @@ public class TestErpCtContractCreateValidate extends JunitAutoTestCase {
 
     @Test
     public void testSubmitCreatesV1AndMovesToNegotiation() {
-        long contractId = createContract("DRAFT", null, null, null);
+        String contractId = createContract("DRAFT", null, null, null);
         ApiResponse<?> resp = submit(contractId);
         assertEquals(0, resp.getStatus(), "DRAFT 合同 submit 应成功: " + resp);
 
@@ -136,7 +136,7 @@ public class TestErpCtContractCreateValidate extends JunitAutoTestCase {
 
     @Test
     public void testSubmitRejectedForNonDraft() {
-        long contractId = createContract("NEGOTIATION", null, null, null);
+        String contractId = createContract("NEGOTIATION", null, null, null);
         ApiResponse<?> resp = submit(contractId);
         assertNotEquals(0, resp.getStatus(), "非 DRAFT 合同 submit 应被拒绝: " + resp);
         ErpCtContract contract = daoProvider.daoFor(ErpCtContract.class).getEntityById(contractId);
@@ -147,7 +147,7 @@ public class TestErpCtContractCreateValidate extends JunitAutoTestCase {
     public void testSubmitKeepsExistingDraftCurrentVersion() {
         // amend 生命周期场景：v1 SIGNED current → amend（v2 DRAFT current，合同 DRAFT）→ submit
         // → 合同 NEGOTIATION + v2 保持 DRAFT current 不动（MAJOR-1 语义：已有版本放行，不新建 v3）
-        long contractId = setupActiveWithSignedV1();
+        String contractId = setupActiveWithSignedV1();
         executeRpc(mutation, "ErpCtContract__amend", ApiRequest.build(Map.of("contractId", contractId)));
 
         ApiResponse<?> resp = submit(contractId);
@@ -168,8 +168,8 @@ public class TestErpCtContractCreateValidate extends JunitAutoTestCase {
     @Test
     public void testSubmitRejectsAmountMismatchViaDaoLines() {
         // 头先存（无行，totalAmount=1000）→ 行后加（amount=500）→ submit 权威门卫拒绝（DAO 查询口径）
-        long contractId = createContract("DRAFT", new BigDecimal("1000"), "2026-01-01", "2027-12-31");
-        long materialId = createMaterial(createUoM());
+        String contractId = createContract("DRAFT", new BigDecimal("1000"), "2026-01-01", "2027-12-31");
+        String materialId = createMaterial(createUoM());
         saveLine(contractId, materialId, new BigDecimal("500"));
 
         ApiResponse<?> resp = submit(contractId);
@@ -183,7 +183,7 @@ public class TestErpCtContractCreateValidate extends JunitAutoTestCase {
     @Test
     public void testFullChainFirstSubmissionPath() {
         // 零版本首提路径：submit（建 v1 DRAFT）→ finalizeVersion(v1) → activate（级联签署 v1 SIGNED）
-        long contractId = createContract("DRAFT", null, null, null);
+        String contractId = createContract("DRAFT", null, null, null);
         assertEquals(0, submit(contractId).getStatus());
 
         ErpCtContractVersion v1 = findVersions(contractId).get(0);
@@ -202,7 +202,7 @@ public class TestErpCtContractCreateValidate extends JunitAutoTestCase {
     @Test
     public void testFullChainAmendPath() {
         // amend 路径：amend（v2 DRAFT current）→ submit → finalizeVersion(v2) → activate（级联签署 v2 SIGNED）
-        long contractId = setupActiveWithSignedV1();
+        String contractId = setupActiveWithSignedV1();
         executeRpc(mutation, "ErpCtContract__amend", ApiRequest.build(Map.of("contractId", contractId)));
         assertEquals(0, submit(contractId).getStatus());
 
@@ -225,7 +225,7 @@ public class TestErpCtContractCreateValidate extends JunitAutoTestCase {
 
     @Test
     public void testRejectAmendRestoresSignedMaxVersion() {
-        long contractId = setupActiveWithSignedV1();
+        String contractId = setupActiveWithSignedV1();
         executeRpc(mutation, "ErpCtContract__amend", ApiRequest.build(Map.of("contractId", contractId)));
 
         ApiResponse<?> resp = rejectAmend(contractId);
@@ -243,7 +243,7 @@ public class TestErpCtContractCreateValidate extends JunitAutoTestCase {
 
     @Test
     public void testRejectAmendRejectedForNonDraft() {
-        long contractId = createContract("NEGOTIATION", null, null, null);
+        String contractId = createContract("NEGOTIATION", null, null, null);
         ApiResponse<?> resp = rejectAmend(contractId);
         assertNotEquals(0, resp.getStatus(), "非 DRAFT 合同 rejectAmend 应被拒绝: " + resp);
         ErpCtContract contract = daoProvider.daoFor(ErpCtContract.class).getEntityById(contractId);
@@ -254,7 +254,7 @@ public class TestErpCtContractCreateValidate extends JunitAutoTestCase {
     public void testRejectAmendFinalizeThenRejectRestoresSigned() {
         // finalize-then-reject 边界（iteration-4）：amend → finalizeVersion(v2) → rejectAmend
         // → 恢复 SIGNED v1 而非 FINALIZED v2（防 ACTIVE + 未签署 current 版本不一致态）
-        long contractId = setupActiveWithSignedV1();
+        String contractId = setupActiveWithSignedV1();
         executeRpc(mutation, "ErpCtContract__amend", ApiRequest.build(Map.of("contractId", contractId)));
         ErpCtContractVersion v2 = findVersionByNo(findVersions(contractId), 2);
         assertEquals(0, finalizeVersion(v2.getId()).getStatus(), "finalizeVersion(v2) 应成功（可达路径）");
@@ -273,7 +273,7 @@ public class TestErpCtContractCreateValidate extends JunitAutoTestCase {
     public void testRepeatedAmendRejectCycleRestoresSignedTarget() {
         // 重复 amend→rejectAmend 周期（MAJOR-2 修正）：二次周期后恢复目标仍为 SIGNED v1，
         // 遗留 DRAFT 行（v2/v3）不被误恢复为 current
-        long contractId = setupActiveWithSignedV1();
+        String contractId = setupActiveWithSignedV1();
         for (int i = 0; i < 2; i++) {
             executeRpc(mutation, "ErpCtContract__amend", ApiRequest.build(Map.of("contractId", contractId)));
             ApiResponse<?> resp = rejectAmend(contractId);
@@ -296,9 +296,9 @@ public class TestErpCtContractCreateValidate extends JunitAutoTestCase {
     @Test
     public void testAmendKeepsLinesRetained() {
         // 同合同 amend 模型：行留 contractId 下，amend 后行保留且仍可编辑（复制语义 = 行保留）
-        long[] setup = setupActiveContractWithLine();
-        long contractId = setup[0];
-        long lineId = setup[1];
+        String[] setup = setupActiveContractWithLine();
+        String contractId = setup[0];
+        String lineId = setup[1];
 
         ApiResponse<?> resp = executeRpc(mutation, "ErpCtContract__amend",
                 ApiRequest.build(Map.of("contractId", contractId)));
@@ -325,10 +325,10 @@ public class TestErpCtContractCreateValidate extends JunitAutoTestCase {
 
     // ---------- helpers ----------
 
-    private long setupActiveWithSignedV1() {
-        long partnerId = createPartner();
-        long currencyId = createCurrency();
-        long contractId = createContract("NEGOTIATION", null, "2026-01-01", "2027-12-31");
+    private String setupActiveWithSignedV1() {
+        String partnerId = createPartner();
+        String currencyId = createCurrency();
+        String contractId = createContract("NEGOTIATION", null, "2026-01-01", "2027-12-31");
         createVersion(contractId, 1, true, "FINALIZED");
         ApiResponse<?> act = activate(contractId);
         assertEquals(0, act.getStatus(), "setup activate 应成功: " + act);
@@ -338,19 +338,19 @@ public class TestErpCtContractCreateValidate extends JunitAutoTestCase {
         return contractId;
     }
 
-    private long[] setupActiveContractWithLine() {
-        long partnerId = createPartner();
-        long currencyId = createCurrency();
-        long materialId = createMaterial(createUoM());
-        long contractId = createContract("NEGOTIATION", null, "2026-01-01", "2027-12-31");
-        long lineId = saveLine(contractId, materialId, new BigDecimal("1000"));
+    private String[] setupActiveContractWithLine() {
+        String partnerId = createPartner();
+        String currencyId = createCurrency();
+        String materialId = createMaterial(createUoM());
+        String contractId = createContract("NEGOTIATION", null, "2026-01-01", "2027-12-31");
+        String lineId = saveLine(contractId, materialId, new BigDecimal("1000"));
         createVersion(contractId, 1, true, "FINALIZED");
         ApiResponse<?> act = activate(contractId);
         assertEquals(0, act.getStatus(), "setup activate 应成功: " + act);
-        return new long[]{contractId, lineId};
+        return new String[]{contractId, lineId};
     }
 
-    private long createPartner() {
+    private String createPartner() {
         ErpMdPartner p = daoProvider.daoFor(ErpMdPartner.class).newEntity();
         p.setCode("CT-CV-PARTNER-" + System.nanoTime());
         p.setName("创建校验测试伙伴");
@@ -360,7 +360,7 @@ public class TestErpCtContractCreateValidate extends JunitAutoTestCase {
         return p.getId();
     }
 
-    private long createCurrency() {
+    private String createCurrency() {
         ErpMdCurrency c = daoProvider.daoFor(ErpMdCurrency.class).newEntity();
         c.setCode("CNY-CV");
         c.setName("人民币");
@@ -368,7 +368,7 @@ public class TestErpCtContractCreateValidate extends JunitAutoTestCase {
         return c.getId();
     }
 
-    private long createUoM() {
+    private String createUoM() {
         ErpMdUoM u = daoProvider.daoFor(ErpMdUoM.class).newEntity();
         u.setCode("PCS-CT-CV");
         u.setName("个");
@@ -376,7 +376,7 @@ public class TestErpCtContractCreateValidate extends JunitAutoTestCase {
         return u.getId();
     }
 
-    private long createMaterial(long uomId) {
+    private String createMaterial(String uomId) {
         ErpMdMaterial m = daoProvider.daoFor(ErpMdMaterial.class).newEntity();
         m.setCode("MAT-CT-CV-" + System.nanoTime());
         m.setName("创建校验测试物料");
@@ -387,7 +387,7 @@ public class TestErpCtContractCreateValidate extends JunitAutoTestCase {
         return m.getId();
     }
 
-    private long createContract(String status, BigDecimal totalAmount, String startDate, String endDate) {
+    private String createContract(String status, BigDecimal totalAmount, String startDate, String endDate) {
         Map<String, Object> data = headData(status);
         if (totalAmount != null) {
             data.put("totalAmount", totalAmount);
@@ -425,7 +425,7 @@ public class TestErpCtContractCreateValidate extends JunitAutoTestCase {
         return line;
     }
 
-    private long saveLine(long contractId, long materialId, BigDecimal amount) {
+    private String saveLine(String contractId, String materialId, BigDecimal amount) {
         Map<String, Object> data = new LinkedHashMap<>();
         data.put("lineNo", 1);
         data.put("contractId", contractId);
@@ -439,7 +439,7 @@ public class TestErpCtContractCreateValidate extends JunitAutoTestCase {
         return toLongId((Map<?, ?>) resp.getData());
     }
 
-    private void createVersion(long contractId, int versionNo, boolean isCurrent, String status) {
+    private void createVersion(String contractId, int versionNo, boolean isCurrent, String status) {
         Map<String, Object> data = new LinkedHashMap<>();
         data.put("contractId", contractId);
         data.put("versionNo", versionNo);
@@ -451,13 +451,13 @@ public class TestErpCtContractCreateValidate extends JunitAutoTestCase {
         assertEquals(0, resp.getStatus(), "ErpCtContractVersion__save 应成功: " + resp);
     }
 
-    private List<ErpCtContractVersion> findVersions(long contractId) {
+    private List<ErpCtContractVersion> findVersions(String contractId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("contractId", contractId));
         return daoProvider.daoFor(ErpCtContractVersion.class).findAllByQuery(q);
     }
 
-    private List<ErpCtContractLine> findLines(long contractId) {
+    private List<ErpCtContractLine> findLines(String contractId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("contractId", contractId));
         return daoProvider.daoFor(ErpCtContractLine.class).findAllByQuery(q);
@@ -472,29 +472,25 @@ public class TestErpCtContractCreateValidate extends JunitAutoTestCase {
         throw new IllegalStateException("versionNo=" + versionNo + " not found");
     }
 
-    private ApiResponse<?> submit(long contractId) {
+    private ApiResponse<?> submit(String contractId) {
         return executeRpc(mutation, "ErpCtContract__submit", ApiRequest.build(Map.of("contractId", contractId)));
     }
 
-    private ApiResponse<?> rejectAmend(long contractId) {
+    private ApiResponse<?> rejectAmend(String contractId) {
         return executeRpc(mutation, "ErpCtContract__rejectAmend", ApiRequest.build(Map.of("contractId", contractId)));
     }
 
-    private ApiResponse<?> finalizeVersion(long versionId) {
+    private ApiResponse<?> finalizeVersion(String versionId) {
         return executeRpc(mutation, "ErpCtContractVersion__finalizeVersion",
                 ApiRequest.build(Map.of("versionId", versionId)));
     }
 
-    private ApiResponse<?> activate(long contractId) {
+    private ApiResponse<?> activate(String contractId) {
         return executeRpc(mutation, "ErpCtContract__activate", ApiRequest.build(Map.of("contractId", contractId)));
     }
 
-    private long toLongId(Map<?, ?> r) {
-        Object id = r.get("id");
-        if (id instanceof Number) {
-            return ((Number) id).longValue();
-        }
-        return Long.parseLong(String.valueOf(id));
+    private String toLongId(Map<?, ?> r) {
+        return String.valueOf(r.get("id"));
     }
 
     private QueryBean eqQuery(String field, Object value) {

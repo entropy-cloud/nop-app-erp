@@ -1,0 +1,7 @@
+_chgType,ID,CONTRACT_ID,ORG_ID,APPROVAL_MATRIX_ID,APPROVAL_ORDER,APPROVER_ID,APPROVAL_STATUS,COMMENT,APPROVED_AT,REJECTED_AT,REMARK,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
+A,10,5,,2,2,ct-approver-user,WAITING,,,,,@var:ErpCtApprovalRecord@delVersion_3,0,ct-approver-user,*,ct-approver-user,*
+A,11,5,,1,1,ct-approver-user,REJECTED,,,@var:ErpCtApprovalRecord@rejectedAt_2,,@var:ErpCtApprovalRecord@delVersion_3,1,ct-approver-user,*,ct-approver-user,*
+A,12,5,,2,2,ct-approver-user,WAITING,,,,,@var:ErpCtApprovalRecord@delVersion_3,0,ct-approver-user,*,ct-approver-user,*
+A,7,5,,1,1,ct-approver-user,REJECTED,,,@var:ErpCtApprovalRecord@rejectedAt,,@var:ErpCtApprovalRecord@delVersion_3,1,autotest-ref,*,ct-approver-user,*
+A,8,5,,2,2,ct-approver-user,WAITING,,,,,@var:ErpCtApprovalRecord@delVersion_3,0,autotest-ref,*,autotest-ref,*
+A,9,5,,1,1,ct-approver-user,REJECTED,,,@var:ErpCtApprovalRecord@rejectedAt_1,,@var:ErpCtApprovalRecord@delVersion_3,1,ct-approver-user,*,ct-approver-user,*

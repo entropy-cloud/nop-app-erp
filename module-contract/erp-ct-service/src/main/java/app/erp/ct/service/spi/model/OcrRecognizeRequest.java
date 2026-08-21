@@ -6,19 +6,19 @@ package app.erp.ct.service.spi.model;
  */
 public class OcrRecognizeRequest {
 
-    private final Long documentId;
+    private final String documentId;
     private final String attachmentFileId;
     private final String docName;
     private final String mimeType;
 
-    public OcrRecognizeRequest(Long documentId, String attachmentFileId, String docName, String mimeType) {
+    public OcrRecognizeRequest(String documentId, String attachmentFileId, String docName, String mimeType) {
         this.documentId = documentId;
         this.attachmentFileId = attachmentFileId;
         this.docName = docName;
         this.mimeType = mimeType;
     }
 
-    public Long getDocumentId() {
+    public String getDocumentId() {
         return documentId;
     }
 

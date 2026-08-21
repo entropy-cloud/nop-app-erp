@@ -60,7 +60,7 @@ public class ErpCtConsumptionPeriodSummarizeProcessor {
     @Inject
     IErpSysNotificationBiz notificationBiz;
 
-    public ErpCtConsumptionPeriodSummarizeResult periodSummarize(Long contractLineId,
+    public ErpCtConsumptionPeriodSummarizeResult periodSummarize(String contractLineId,
                                                                   LocalDate fromDate,
                                                                   LocalDate toDate,
                                                                   String invoiceTerm,
@@ -140,7 +140,7 @@ public class ErpCtConsumptionPeriodSummarizeProcessor {
         }
     }
 
-    protected ErpCtContractLine requireLine(Long contractLineId) {
+    protected ErpCtContractLine requireLine(String contractLineId) {
         ErpCtContractLine line = contractLineDao().getEntityById(contractLineId);
         if (line == null) {
             throw new NopException(ErpCtErrors.ERR_CT_CONSUMPTION_LINE_NOT_FOUND)
@@ -162,7 +162,7 @@ public class ErpCtConsumptionPeriodSummarizeProcessor {
         }
     }
 
-    protected BigDecimal sumConsumedQuantity(Long contractLineId, LocalDate fromDate, LocalDate toDate) {
+    protected BigDecimal sumConsumedQuantity(String contractLineId, LocalDate fromDate, LocalDate toDate) {
         QueryBean query = new QueryBean();
         query.addFilter(eq("contractLineId", contractLineId));
         if (fromDate != null) {

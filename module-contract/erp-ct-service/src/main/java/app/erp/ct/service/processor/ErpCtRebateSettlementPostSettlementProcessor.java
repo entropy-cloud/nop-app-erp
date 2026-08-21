@@ -14,6 +14,7 @@ import app.erp.sal.dao.entity.ErpSalInvoice;
 import app.erp.sal.dao.entity.ErpSalInvoiceLine;
 import io.nop.api.core.auth.IUserContext;
 import io.nop.api.core.beans.query.QueryBean;
+import io.nop.api.core.convert.ConvertHelper;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.api.core.time.CoreMetrics;
 import io.nop.core.context.IServiceContext;
@@ -44,7 +45,7 @@ public class ErpCtRebateSettlementPostSettlementProcessor {
     @Inject
     ErpCtRebateSettlementStateMachine stateMachine;
 
-    public ErpCtRebateSettlement postSettlement(Long settlementId, IServiceContext context) {
+    public ErpCtRebateSettlement postSettlement(String settlementId, IServiceContext context) {
         ErpCtRebateSettlement settlement = requireSettlement(settlementId);
         try {
             stateMachine.assertCanPostSettlement(settlement.getStatus());
@@ -66,7 +67,7 @@ public class ErpCtRebateSettlementPostSettlementProcessor {
         Long currencyId = resolveCurrencyId(agreement);
         // 贷项行 materialId/uoMId 取自关联合同首行及其主物料（返利为金额型；发票行 MATERIAL_ID/UO_M_ID NOT NULL）
         Long materialId = resolveMaterialId(agreement);
-        Long uomId = resolveUoMId(materialId);
+        Long uomId = resolveUoMId(ConvertHelper.toString(materialId));
 
         // 生成贷项凭证（负额发票）——Phase 1 Decision：复用既有发票实体以负额表达
         String creditMemoCode = "CT-REBATE-" + settlement.getId();
@@ -107,10 +108,11 @@ public class ErpCtRebateSettlementPostSettlementProcessor {
         IEntityDao<ErpPurInvoice> dao = daoProvider.daoFor(ErpPurInvoice.class);
         ErpPurInvoice invoice = dao.newEntity();
         invoice.setCode(code);
+        // bridge-main-049: ct String orgId/partnerId → pur Long（退役 owner M2.5）
         if (agreement.getOrgId() != null) {
-            invoice.setOrgId(agreement.getOrgId());
+            invoice.setOrgId(ConvertHelper.toLong(agreement.getOrgId()));
         }
-        invoice.setSupplierId(agreement.getPartnerId());
+        invoice.setSupplierId(ConvertHelper.toLong(agreement.getPartnerId()));
         invoice.setBusinessDate(CoreMetrics.today());
         invoice.setCurrencyId(currencyId);
         invoice.setExchangeRate(BigDecimal.ONE);
@@ -140,10 +142,11 @@ public class ErpCtRebateSettlementPostSettlementProcessor {
         IEntityDao<ErpSalInvoice> dao = daoProvider.daoFor(ErpSalInvoice.class);
         ErpSalInvoice invoice = dao.newEntity();
         invoice.setCode(code);
+        // bridge-main-051: ct String orgId/partnerId → sal Long（退役 owner M2.6）
         if (agreement.getOrgId() != null) {
-            invoice.setOrgId(agreement.getOrgId());
+            invoice.setOrgId(ConvertHelper.toLong(agreement.getOrgId()));
         }
-        invoice.setCustomerId(agreement.getPartnerId());
+        invoice.setCustomerId(ConvertHelper.toLong(agreement.getPartnerId()));
         invoice.setBusinessDate(CoreMetrics.today());
         invoice.setCurrencyId(currencyId);
         invoice.setExchangeRate(BigDecimal.ONE);
@@ -176,13 +179,13 @@ public class ErpCtRebateSettlementPostSettlementProcessor {
      * 实体编号/上下文，common 码作 cause 保留）。领域 re-throw 仅传 {@code settlementId} + {@code currentStatus}
      * （action/expectedStatus 仅存于 common 码 cause，不向领域码传播）。
      */
-    protected NopException illegalTransition(Long settlementId, ErpCtRebateSettlement settlement, Throwable cause) {
+    protected NopException illegalTransition(String settlementId, ErpCtRebateSettlement settlement, Throwable cause) {
         return new NopException(ErpCtErrors.ERR_CT_SETTLEMENT_ILLEGAL_TRANSITION, cause)
                 .param(ErpCtErrors.ARG_SETTLEMENT_ID, settlementId)
                 .param(ErpCtErrors.ARG_CURRENT_STATUS, settlement.getStatus());
     }
 
-    protected ErpCtRebateSettlement requireSettlement(Long settlementId) {
+    protected ErpCtRebateSettlement requireSettlement(String settlementId) {
         ErpCtRebateSettlement settlement = dao().getEntityById(settlementId);
         if (settlement == null) {
             throw new NopException(ErpCtErrors.ERR_CT_SETTLEMENT_ILLEGAL_TRANSITION)
@@ -191,7 +194,7 @@ public class ErpCtRebateSettlementPostSettlementProcessor {
         return settlement;
     }
 
-    protected List<ErpCtRebateAccrual> findUnsettledAccruals(Long agreementId) {
+    protected List<ErpCtRebateAccrual> findUnsettledAccruals(String agreementId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("rebateAgreementId", agreementId));
         q.addFilter(eq("isSettled", false));
@@ -202,19 +205,21 @@ public class ErpCtRebateSettlementPostSettlementProcessor {
      * 币种取自关联合同（协议无独立币种列；发票 CURRENCY_ID NOT NULL）。
      * 无关联合同时返回 null（由调用方确保关联存在）。
      */
+    // bridge-main-049/051: ct String currencyId → pur/sal Long（退役 owner M2.5/M2.6）
     protected Long resolveCurrencyId(ErpCtRebateAgreement agreement) {
         if (agreement == null || agreement.getContractId() == null) {
             return null;
         }
         ErpCtContract contract = daoProvider.daoFor(ErpCtContract.class)
                 .getEntityById(agreement.getContractId());
-        return contract == null ? null : contract.getCurrencyId();
+        return contract == null ? null : ConvertHelper.toLong(contract.getCurrencyId());
     }
 
     /**
      * 贷项行 materialId 取自关联合同首行（返利为金额型，无独立物料；发票行 MATERIAL_ID NOT NULL）。
      */
     @SuppressWarnings("unchecked")
+    // bridge-main-050/052: ct String materialId → pur/sal Long（退役 owner M2.5/M2.6）
     protected Long resolveMaterialId(ErpCtRebateAgreement agreement) {
         if (agreement == null || agreement.getContractId() == null) {
             return null;
@@ -223,19 +228,20 @@ public class ErpCtRebateSettlementPostSettlementProcessor {
         q.addFilter(eq("contractId", agreement.getContractId()));
         q.setLimit(1);
         List<ErpCtContractLine> lines = daoProvider.daoFor(ErpCtContractLine.class).findAllByQuery(q);
-        return lines.isEmpty() ? null : lines.get(0).getMaterialId();
+        return lines.isEmpty() ? null : ConvertHelper.toLong(lines.get(0).getMaterialId());
     }
 
     /**
      * uoMId 取自主物料的默认计量单位（material.uoMId）。
      */
-    protected Long resolveUoMId(Long materialId) {
+    // bridge-main-050/052: md String uoMId → pur/sal Long（退役 owner M2.5/M2.6）
+    protected Long resolveUoMId(String materialId) {
         if (materialId == null) {
             return null;
         }
         app.erp.md.dao.entity.ErpMdMaterial material =
                 daoProvider.daoFor(app.erp.md.dao.entity.ErpMdMaterial.class).getEntityById(materialId);
-        return material == null ? null : material.getUoMId();
+        return material == null ? null : ConvertHelper.toLong(material.getUoMId());
     }
 
     protected String currentUserId() {

@@ -162,10 +162,10 @@ public class _ErpCtContractVersion extends DynamicOrmEntity{
 
     
     /* ID: ID */
-    private java.lang.Long _id;
+    private java.lang.String _id;
     
     /* 合同ID: CONTRACT_ID */
-    private java.lang.Long _contractId;
+    private java.lang.String _contractId;
     
     /* 版本号: VERSION_NO */
     private java.lang.Integer _versionNo;
@@ -349,9 +349,9 @@ public class _ErpCtContractVersion extends DynamicOrmEntity{
         switch(propId){
         
             case PROP_ID_id:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_id));
                }
                setId(typedValue);
@@ -359,9 +359,9 @@ public class _ErpCtContractVersion extends DynamicOrmEntity{
             }
         
             case PROP_ID_contractId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_contractId));
                }
                setContractId(typedValue);
@@ -529,14 +529,14 @@ public class _ErpCtContractVersion extends DynamicOrmEntity{
         
             case PROP_ID_id:{
                onInitProp(propId);
-               this._id = (java.lang.Long)value;
+               this._id = (java.lang.String)value;
                orm_id(); // 如果是设置主键字段，则触发watcher
                break;
             }
         
             case PROP_ID_contractId:{
                onInitProp(propId);
-               this._contractId = (java.lang.Long)value;
+               this._contractId = (java.lang.String)value;
                
                break;
             }
@@ -655,7 +655,7 @@ public class _ErpCtContractVersion extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final java.lang.Long getId(){
+    public final java.lang.String getId(){
          onPropGet(PROP_ID_id);
          return _id;
     }
@@ -663,7 +663,7 @@ public class _ErpCtContractVersion extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final void setId(java.lang.Long value){
+    public final void setId(java.lang.String value){
         if(onPropSet(PROP_ID_id,value)){
             this._id = value;
             internalClearRefs(PROP_ID_id);
@@ -674,7 +674,7 @@ public class _ErpCtContractVersion extends DynamicOrmEntity{
     /**
      * 合同ID: CONTRACT_ID
      */
-    public final java.lang.Long getContractId(){
+    public final java.lang.String getContractId(){
          onPropGet(PROP_ID_contractId);
          return _contractId;
     }
@@ -682,7 +682,7 @@ public class _ErpCtContractVersion extends DynamicOrmEntity{
     /**
      * 合同ID: CONTRACT_ID
      */
-    public final void setContractId(java.lang.Long value){
+    public final void setContractId(java.lang.String value){
         if(onPropSet(PROP_ID_contractId,value)){
             this._contractId = value;
             internalClearRefs(PROP_ID_contractId);

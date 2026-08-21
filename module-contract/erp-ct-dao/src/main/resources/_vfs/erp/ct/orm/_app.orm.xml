@@ -127,11 +127,11 @@
                 versionProp="version" ext:web-renderer="flux" ext:icon="file-text" i18n-en:displayName="Contract">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
-                        stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
+                        stdDataType="string" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
                 <column code="CODE" displayName="合同编号" domain="orderCode" mandatory="true" name="code" precision="50"
                         propId="2" stdDataType="string" stdSqlType="VARCHAR" tagSet="var" i18n-en:displayName="Code"/>
-                <column code="ORG_ID" displayName="业务组织" name="orgId" propId="3" stdDataType="long" stdSqlType="BIGINT"
-                        i18n-en:displayName="Organization"/>
+                <column code="ORG_ID" displayName="业务组织" name="orgId" propId="3" stdDataType="string"
+                        stdSqlType="BIGINT" i18n-en:displayName="Organization"/>
                 <column code="CONTRACT_NAME" displayName="合同名称" mandatory="true" name="contractName" precision="200"
                         propId="4" stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Contract Name"/>
                 <column code="CONTRACT_TYPE" displayName="合同类型" mandatory="true" name="contractType" precision="20"
@@ -141,8 +141,8 @@
                         precision="20" propId="6" stdDataType="string" stdSqlType="VARCHAR"
                         ext:dict="erp-ct/contract-direction" i18n-en:displayName="Direction"/>
                 <column code="PARTNER_ID" displayName="合作方" mandatory="true" name="partnerId" propId="7"
-                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Partner"/>
-                <column code="CURRENCY_ID" displayName="币种" name="currencyId" propId="8" stdDataType="long"
+                        stdDataType="string" stdSqlType="BIGINT" i18n-en:displayName="Partner"/>
+                <column code="CURRENCY_ID" displayName="币种" name="currencyId" propId="8" stdDataType="string"
                         stdSqlType="BIGINT" i18n-en:displayName="Currency"/>
                 <column code="TOTAL_AMOUNT" displayName="合同总额" domain="amount" name="totalAmount" precision="20"
                         propId="9" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
@@ -156,10 +156,10 @@
                 <column code="STATUS" displayName="合同状态" mandatory="true" name="status" precision="20" propId="13"
                         stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-ct/contract-status"
                         i18n-en:displayName="Status"/>
-                <column code="TEMPLATE_ID" displayName="合同模板" name="templateId" propId="14" stdDataType="long"
+                <column code="TEMPLATE_ID" displayName="合同模板" name="templateId" propId="14" stdDataType="string"
                         stdSqlType="BIGINT" i18n-en:displayName="Template"/>
                 <column code="PARENT_CONTRACT_ID" displayName="父合同" name="parentContractId" propId="15"
-                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Parent Contract"/>
+                        stdDataType="string" stdSqlType="BIGINT" i18n-en:displayName="Parent Contract"/>
                 <column code="DESCRIPTION" displayName="描述" domain="content" name="description" precision="4000"
                         propId="16" stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Description"/>
                 <column code="ATTACHMENT_FILE_ID" displayName="合同附件" name="attachmentFileId" precision="200" propId="17"
@@ -267,12 +267,12 @@
                 ext:icon="list" i18n-en:displayName="Contract Line">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
-                        stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
+                        stdDataType="string" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
                 <column code="CONTRACT_ID" displayName="合同ID" mandatory="true" name="contractId" propId="2"
-                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Contract"/>
+                        stdDataType="string" stdSqlType="BIGINT" i18n-en:displayName="Contract"/>
                 <column code="LINE_NO" displayName="行号" mandatory="true" name="lineNo" propId="3" stdDataType="int"
                         stdSqlType="INTEGER" i18n-en:displayName="Line No"/>
-                <column code="MATERIAL_ID" displayName="物料" name="materialId" propId="4" stdDataType="long"
+                <column code="MATERIAL_ID" displayName="物料" name="materialId" propId="4" stdDataType="string"
                         stdSqlType="BIGINT" i18n-en:displayName="Material"/>
                 <column code="DESCRIPTION" displayName="行描述" name="description" precision="500" propId="5"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Description"/>
@@ -346,9 +346,9 @@
                 ext:icon="file-stack" i18n-en:displayName="Contract Version">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
-                        stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
+                        stdDataType="string" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
                 <column code="CONTRACT_ID" displayName="合同ID" mandatory="true" name="contractId" propId="2"
-                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Contract"/>
+                        stdDataType="string" stdSqlType="BIGINT" i18n-en:displayName="Contract"/>
                 <column code="VERSION_NO" displayName="版本号" mandatory="true" name="versionNo" propId="3"
                         stdDataType="int" stdSqlType="INTEGER" i18n-en:displayName="Version No"/>
                 <column code="VERSION_DATE" displayName="版本日期" mandatory="true" name="versionDate" propId="4"
@@ -414,9 +414,9 @@
                 ext:icon="receipt" i18n-en:displayName="Invoice Plan">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
-                        stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
+                        stdDataType="string" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
                 <column code="CONTRACT_LINE_ID" displayName="合同行ID" mandatory="true" name="contractLineId" propId="2"
-                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Contract Line"/>
+                        stdDataType="string" stdSqlType="BIGINT" i18n-en:displayName="Contract Line"/>
                 <column code="PLAN_DATE" displayName="计划开票日期" name="planDate" propId="3" stdDataType="date"
                         stdSqlType="DATE" i18n-en:displayName="Plan Date"/>
                 <column code="AMOUNT" displayName="开票金额" domain="amount" name="amount" precision="20" propId="4"
@@ -470,9 +470,9 @@
                 ext:icon="trending-up" i18n-en:displayName="Consumption Line">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
-                        stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
+                        stdDataType="string" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
                 <column code="CONTRACT_LINE_ID" displayName="合同行ID" mandatory="true" name="contractLineId" propId="2"
-                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Contract Line"/>
+                        stdDataType="string" stdSqlType="BIGINT" i18n-en:displayName="Contract Line"/>
                 <column code="CONSUMPTION_DATE" displayName="消耗日期" mandatory="true" name="consumptionDate" propId="3"
                         stdDataType="date" stdSqlType="DATE" i18n-en:displayName="Consumption Date"/>
                 <column code="QUANTITY" displayName="消耗数量" domain="quantity" name="quantity" precision="20" propId="4"
@@ -525,7 +525,7 @@
                 i18n-en:displayName="Contract Template">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
-                        stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
+                        stdDataType="string" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
                 <column code="CODE" displayName="编码" domain="orderCode" mandatory="true" name="code" precision="50"
                         propId="2" stdDataType="string" stdSqlType="VARCHAR" tagSet="var" i18n-en:displayName="Code"/>
                 <column code="NAME" displayName="名称" mandatory="true" name="name" precision="200" propId="3"
@@ -568,11 +568,11 @@
                 ext:icon="check-square" i18n-en:displayName="Approval Matrix">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
-                        stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
+                        stdDataType="string" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
                 <column code="CODE" displayName="编码" domain="orderCode" mandatory="true" name="code" precision="50"
                         propId="2" stdDataType="string" stdSqlType="VARCHAR" tagSet="var" i18n-en:displayName="Code"/>
-                <column code="ORG_ID" displayName="业务组织" name="orgId" propId="3" stdDataType="long" stdSqlType="BIGINT"
-                        i18n-en:displayName="Organization"/>
+                <column code="ORG_ID" displayName="业务组织" name="orgId" propId="3" stdDataType="string"
+                        stdSqlType="BIGINT" i18n-en:displayName="Organization"/>
                 <column code="MIN_AMOUNT" displayName="最小金额" domain="amount" name="minAmount" precision="18" propId="4"
                         scale="2" stdDataType="decimal" stdSqlType="DECIMAL" i18n-en:displayName="Min Amount"/>
                 <column code="MAX_AMOUNT" displayName="最大金额" domain="amount" name="maxAmount" precision="18" propId="5"
@@ -625,13 +625,13 @@
                 ext:icon="clipboard-check" i18n-en:displayName="Approval Record">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
-                        stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
+                        stdDataType="string" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
                 <column code="CONTRACT_ID" displayName="合同" mandatory="true" name="contractId" propId="2"
-                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Contract"/>
-                <column code="ORG_ID" displayName="业务组织" name="orgId" propId="3" stdDataType="long" stdSqlType="BIGINT"
-                        i18n-en:displayName="Organization"/>
+                        stdDataType="string" stdSqlType="BIGINT" i18n-en:displayName="Contract"/>
+                <column code="ORG_ID" displayName="业务组织" name="orgId" propId="3" stdDataType="string"
+                        stdSqlType="BIGINT" i18n-en:displayName="Organization"/>
                 <column code="APPROVAL_MATRIX_ID" displayName="审批矩阵" name="approvalMatrixId" propId="4"
-                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Approval Matrix"/>
+                        stdDataType="string" stdSqlType="BIGINT" i18n-en:displayName="Approval Matrix"/>
                 <column code="APPROVAL_ORDER" displayName="顺序号" name="approvalOrder" propId="5" stdDataType="int"
                         stdSqlType="INTEGER" i18n-en:displayName="Approval Order"/>
                 <column code="APPROVER_ID" displayName="审批人" name="approverId" precision="36" propId="6"
@@ -703,11 +703,11 @@
                 ext:icon="percent" i18n-en:displayName="Volume Discount">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
-                        stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
+                        stdDataType="string" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
                 <column code="CONTRACT_LINE_ID" displayName="合同行" mandatory="true" name="contractLineId" propId="2"
-                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Contract Line"/>
-                <column code="ORG_ID" displayName="业务组织" name="orgId" propId="3" stdDataType="long" stdSqlType="BIGINT"
-                        i18n-en:displayName="Organization"/>
+                        stdDataType="string" stdSqlType="BIGINT" i18n-en:displayName="Contract Line"/>
+                <column code="ORG_ID" displayName="业务组织" name="orgId" propId="3" stdDataType="string"
+                        stdSqlType="BIGINT" i18n-en:displayName="Organization"/>
                 <column code="FROM_QTY" displayName="起始数量" domain="quantity" mandatory="true" name="fromQty"
                         precision="20" propId="4" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="From Qty"/>
@@ -764,15 +764,15 @@
                 ext:icon="gift" i18n-en:displayName="Rebate Agreement">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
-                        stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
+                        stdDataType="string" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
                 <column code="CODE" displayName="协议编号" domain="orderCode" mandatory="true" name="code" precision="50"
                         propId="2" stdDataType="string" stdSqlType="VARCHAR" tagSet="var" i18n-en:displayName="Code"/>
-                <column code="ORG_ID" displayName="业务组织" name="orgId" propId="3" stdDataType="long" stdSqlType="BIGINT"
-                        i18n-en:displayName="Organization"/>
-                <column code="CONTRACT_ID" displayName="关联合同" name="contractId" propId="4" stdDataType="long"
+                <column code="ORG_ID" displayName="业务组织" name="orgId" propId="3" stdDataType="string"
+                        stdSqlType="BIGINT" i18n-en:displayName="Organization"/>
+                <column code="CONTRACT_ID" displayName="关联合同" name="contractId" propId="4" stdDataType="string"
                         stdSqlType="BIGINT" i18n-en:displayName="Contract"/>
                 <column code="PARTNER_ID" displayName="对方伙伴" mandatory="true" name="partnerId" propId="5"
-                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Partner"/>
+                        stdDataType="string" stdSqlType="BIGINT" i18n-en:displayName="Partner"/>
                 <column code="REBATE_TYPE" displayName="返利类型" mandatory="true" name="rebateType" precision="20"
                         propId="6" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-ct/rebate-type"
                         i18n-en:displayName="Rebate Type"/>
@@ -861,9 +861,9 @@
                 ext:icon="layers" i18n-en:displayName="Rebate Tier">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
-                        stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
+                        stdDataType="string" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
                 <column code="REBATE_AGREEMENT_ID" displayName="返利协议" mandatory="true" name="rebateAgreementId"
-                        propId="2" stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Rebate Agreement"/>
+                        propId="2" stdDataType="string" stdSqlType="BIGINT" i18n-en:displayName="Rebate Agreement"/>
                 <column code="FROM_AMOUNT" displayName="起始金额" domain="amount" mandatory="true" name="fromAmount"
                         precision="18" propId="3" scale="2" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="From Amount"/>
@@ -914,11 +914,11 @@
                 ext:icon="trending-up" i18n-en:displayName="Rebate Accrual">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
-                        stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
+                        stdDataType="string" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
                 <column code="REBATE_AGREEMENT_ID" displayName="返利协议" mandatory="true" name="rebateAgreementId"
-                        propId="2" stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Rebate Agreement"/>
-                <column code="ORG_ID" displayName="业务组织" name="orgId" propId="3" stdDataType="long" stdSqlType="BIGINT"
-                        i18n-en:displayName="Organization"/>
+                        propId="2" stdDataType="string" stdSqlType="BIGINT" i18n-en:displayName="Rebate Agreement"/>
+                <column code="ORG_ID" displayName="业务组织" name="orgId" propId="3" stdDataType="string"
+                        stdSqlType="BIGINT" i18n-en:displayName="Organization"/>
                 <column code="SOURCE_BILL_TYPE" displayName="来源单据类型" name="sourceBillType" precision="50" propId="4"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Source Bill Type"/>
                 <column code="SOURCE_BILL_CODE" displayName="来源单据号" name="sourceBillCode" precision="50" propId="5"
@@ -981,11 +981,11 @@
                 ext:icon="file-check" i18n-en:displayName="Rebate Settlement">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
-                        stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
+                        stdDataType="string" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
                 <column code="REBATE_AGREEMENT_ID" displayName="返利协议" mandatory="true" name="rebateAgreementId"
-                        propId="2" stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Rebate Agreement"/>
-                <column code="ORG_ID" displayName="业务组织" name="orgId" propId="3" stdDataType="long" stdSqlType="BIGINT"
-                        i18n-en:displayName="Organization"/>
+                        propId="2" stdDataType="string" stdSqlType="BIGINT" i18n-en:displayName="Rebate Agreement"/>
+                <column code="ORG_ID" displayName="业务组织" name="orgId" propId="3" stdDataType="string"
+                        stdSqlType="BIGINT" i18n-en:displayName="Organization"/>
                 <column code="SETTLEMENT_DATE" displayName="结算日期" mandatory="true" name="settlementDate" propId="4"
                         stdDataType="date" stdSqlType="DATE" i18n-en:displayName="Settlement Date"/>
                 <column code="TOTAL_REBATE_AMOUNT" displayName="结算返利总额" domain="amount" name="totalRebateAmount"
@@ -1061,11 +1061,11 @@
                 ext:icon="file-signature" i18n-en:displayName="Signature Request">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
-                        stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
-                <column code="ORG_ID" displayName="业务组织" name="orgId" propId="2" stdDataType="long" stdSqlType="BIGINT"
-                        i18n-en:displayName="Organization"/>
+                        stdDataType="string" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
+                <column code="ORG_ID" displayName="业务组织" name="orgId" propId="2" stdDataType="string"
+                        stdSqlType="BIGINT" i18n-en:displayName="Organization"/>
                 <column code="CONTRACT_VERSION_ID" displayName="合同版本" mandatory="true" name="contractVersionId"
-                        propId="3" stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Contract Version"/>
+                        propId="3" stdDataType="string" stdSqlType="BIGINT" i18n-en:displayName="Contract Version"/>
                 <column code="PROVIDER" displayName="签名提供商" mandatory="true" name="provider" precision="50" propId="4"
                         stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-ct/sign-provider"
                         i18n-en:displayName="Provider"/>
@@ -1151,10 +1151,10 @@
                 versionProp="version" ext:web-renderer="flux" ext:icon="archive" i18n-en:displayName="Contract Document">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
-                        stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
-                <column code="ORG_ID" displayName="业务组织" name="orgId" propId="2" stdDataType="long" stdSqlType="BIGINT"
-                        i18n-en:displayName="Organization"/>
-                <column code="CONTRACT_ID" displayName="关联合同" name="contractId" propId="3" stdDataType="long"
+                        stdDataType="string" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
+                <column code="ORG_ID" displayName="业务组织" name="orgId" propId="2" stdDataType="string"
+                        stdSqlType="BIGINT" i18n-en:displayName="Organization"/>
+                <column code="CONTRACT_ID" displayName="关联合同" name="contractId" propId="3" stdDataType="string"
                         stdSqlType="BIGINT" i18n-en:displayName="Contract"/>
                 <column code="CODE" displayName="文档编码" domain="orderCode" mandatory="true" name="code" precision="50"
                         propId="4" stdDataType="string" stdSqlType="VARCHAR" tagSet="var" i18n-en:displayName="Code"/>
@@ -1241,7 +1241,7 @@
                 name="app.erp.md.dao.entity.ErpMdPartner" notGenCode="true" tableName="erp_md_partner"
                 ext:web-renderer="flux" biz:moduleId="erp/md">
             <columns>
-                <column code="ID" mandatory="true" name="id" primary="true" propId="1" stdDataType="long"
+                <column code="ID" mandatory="true" name="id" primary="true" propId="1" stdDataType="string"
                         stdSqlType="BIGINT" tagSet="seq-default"/>
                 <column code="NAME" name="name" precision="200" propId="2" stdDataType="string" stdSqlType="VARCHAR"
                         tagSet="disp"/>
@@ -1251,7 +1251,7 @@
                 name="app.erp.md.dao.entity.ErpMdOrganization" notGenCode="true" tableName="erp_md_organization"
                 ext:web-renderer="flux" biz:moduleId="erp/md">
             <columns>
-                <column code="ID" mandatory="true" name="id" primary="true" propId="1" stdDataType="long"
+                <column code="ID" mandatory="true" name="id" primary="true" propId="1" stdDataType="string"
                         stdSqlType="BIGINT" tagSet="seq-default"/>
                 <column code="NAME" name="name" precision="200" propId="2" stdDataType="string" stdSqlType="VARCHAR"
                         tagSet="disp"/>
@@ -1261,7 +1261,7 @@
                 name="app.erp.md.dao.entity.ErpMdCurrency" notGenCode="true" tableName="erp_md_currency"
                 ext:web-renderer="flux" biz:moduleId="erp/md">
             <columns>
-                <column code="ID" name="id" primary="true" propId="1" stdDataType="long" stdSqlType="BIGINT"
+                <column code="ID" name="id" primary="true" propId="1" stdDataType="string" stdSqlType="BIGINT"
                         i18n-en:displayName="ID"/>
                 <column code="CODE" name="code" precision="50" propId="2" stdDataType="string" stdSqlType="VARCHAR"
                         tagSet="var" i18n-en:displayName="Code"/>
@@ -1273,7 +1273,7 @@
                 name="app.erp.md.dao.entity.ErpMdMaterial" notGenCode="true" tableName="erp_md_material"
                 ext:web-renderer="flux" biz:moduleId="erp/md">
             <columns>
-                <column code="ID" name="id" primary="true" propId="1" stdDataType="long" stdSqlType="BIGINT"
+                <column code="ID" name="id" primary="true" propId="1" stdDataType="string" stdSqlType="BIGINT"
                         i18n-en:displayName="ID"/>
                 <column code="CODE" name="code" precision="50" propId="2" stdDataType="string" stdSqlType="VARCHAR"
                         tagSet="var" i18n-en:displayName="Code"/>

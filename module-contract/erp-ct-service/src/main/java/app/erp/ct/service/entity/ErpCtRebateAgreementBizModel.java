@@ -7,6 +7,7 @@ import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.biz.ContextSource;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.beans.query.QueryBean;
+import io.nop.api.core.convert.ConvertHelper;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.api.core.time.CoreMetrics;
 import io.nop.biz.crud.CrudBizModel;
@@ -71,7 +72,7 @@ public class ErpCtRebateAgreementBizModel extends CrudBizModel<ErpCtRebateAgreem
 
     @Override
     @BizMutation
-    public ErpCtRebateAgreement runAccrual(@Name("agreementId") Long agreementId,
+    public ErpCtRebateAgreement runAccrual(@Name("agreementId") String agreementId,
                                            @Name("asOfDate") LocalDate asOfDate,
                                            IServiceContext context) {
         return runAccrualProcessor.runAccrual(agreementId, asOfDate, context);
@@ -79,8 +80,8 @@ public class ErpCtRebateAgreementBizModel extends CrudBizModel<ErpCtRebateAgreem
 
     // ---------- helpers ----------
 
-    protected ErpCtRebateAgreement requireAgreement(Long agreementId, IServiceContext context) {
-        ErpCtRebateAgreement agreement = get(String.valueOf(agreementId), false, context);
+    protected ErpCtRebateAgreement requireAgreement(String agreementId, IServiceContext context) {
+        ErpCtRebateAgreement agreement = get(agreementId, false, context);
         if (agreement == null) {
             throw new NopException(ErpCtErrors.ERR_CT_REBATE_AGREEMENT_NOT_ACTIVE)
                     .param(ErpCtErrors.ARG_REBATE_AGREEMENT_ID, agreementId);
@@ -88,7 +89,7 @@ public class ErpCtRebateAgreementBizModel extends CrudBizModel<ErpCtRebateAgreem
         return agreement;
     }
 
-    protected Set<String> loadAccruedBillCodes(Long agreementId) {
+    protected Set<String> loadAccruedBillCodes(String agreementId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("rebateAgreementId", agreementId));
         List<ErpCtRebateAccrual> accruals = daoProvider().daoFor(ErpCtRebateAccrual.class).findAllByQuery(q);
@@ -108,10 +109,12 @@ public class ErpCtRebateAgreementBizModel extends CrudBizModel<ErpCtRebateAgreem
         q.addFilter(ge("businessDate", from));
         q.addFilter(le("businessDate", to));
         if (Objects.equals(agreement.getRebateType(), ErpCtConstants.REBATE_TYPE_PURCHASE)) {
-            q.addFilter(eq("supplierId", agreement.getPartnerId()));
+            // bridge-main-037: ct String partnerId → pur Long supplierId 过滤值（退役 owner M2.5）
+            q.addFilter(eq("supplierId", ConvertHelper.toLong(agreement.getPartnerId())));
             return daoProvider().daoFor(ErpPurInvoice.class).findAllByQuery(q);
         } else {
-            q.addFilter(eq("customerId", agreement.getPartnerId()));
+            // bridge-main-038: ct String partnerId → sal Long customerId 过滤值（退役 owner M2.6）
+            q.addFilter(eq("customerId", ConvertHelper.toLong(agreement.getPartnerId())));
             return daoProvider().daoFor(ErpSalInvoice.class).findAllByQuery(q);
         }
     }

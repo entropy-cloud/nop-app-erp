@@ -37,21 +37,21 @@ import java.util.List;
 public interface IErpCtContractBiz extends ICrudBiz<ErpCtContract> {
 
     @BizMutation
-    ErpCtContract submit(@Name("contractId") Long contractId, IServiceContext context);
+    ErpCtContract submit(@Name("contractId") String contractId, IServiceContext context);
 
     @BizMutation
-    ErpCtContract activate(@Name("contractId") Long contractId, IServiceContext context);
+    ErpCtContract activate(@Name("contractId") String contractId, IServiceContext context);
 
     @BizMutation
-    ErpCtContract suspend(@Name("contractId") Long contractId, IServiceContext context);
+    ErpCtContract suspend(@Name("contractId") String contractId, IServiceContext context);
 
     @BizMutation
-    ErpCtContract resume(@Name("contractId") Long contractId, IServiceContext context);
+    ErpCtContract resume(@Name("contractId") String contractId, IServiceContext context);
 
     @BizMutation
-    ErpCtContract terminate(@Name("contractId") Long contractId,
+    ErpCtContract terminate(@Name("contractId") String contractId,
                             @Optional @Name("reason") String reason,
-                            @Optional @Name("attachmentId") Long attachmentId,
+                            @Optional @Name("attachmentId") String attachmentId,
                             IServiceContext context);
 
     /**
@@ -60,7 +60,7 @@ public interface IErpCtContractBiz extends ICrudBiz<ErpCtContract> {
      * 当前版本 isCurrent=false 归档 + 未执行 InvoicePlan 逻辑删除截停 + 善后 TODO 通知）。
      */
     @BizMutation
-    ErpCtContract approveTermination(@Name("recordId") Long recordId,
+    ErpCtContract approveTermination(@Name("recordId") String recordId,
                                      @Optional @Name("comment") String comment,
                                      IServiceContext context);
 
@@ -69,18 +69,18 @@ public interface IErpCtContractBiz extends ICrudBiz<ErpCtContract> {
      * 合同保持原状态（ACTIVE/NEGOTIATION）。
      */
     @BizMutation
-    ErpCtContract rejectTermination(@Name("recordId") Long recordId,
+    ErpCtContract rejectTermination(@Name("recordId") String recordId,
                                     @Optional @Name("comment") String comment,
                                     IServiceContext context);
 
     @BizMutation
-    ErpCtContract expire(@Name("contractId") Long contractId, IServiceContext context);
+    ErpCtContract expire(@Name("contractId") String contractId, IServiceContext context);
 
     @BizMutation
-    ErpCtContract amend(@Name("contractId") Long contractId, IServiceContext context);
+    ErpCtContract amend(@Name("contractId") String contractId, IServiceContext context);
 
     @BizMutation
-    ErpCtContract rejectAmend(@Name("contractId") Long contractId, IServiceContext context);
+    ErpCtContract rejectAmend(@Name("contractId") String contractId, IServiceContext context);
 
     /**
      * 扫描到期预警合同（UC-CT-05，RC-R1.35）：status=ACTIVE 且 endDate 在 [today, today+warningDays] 区间。

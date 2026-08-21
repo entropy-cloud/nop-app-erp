@@ -74,13 +74,13 @@ public class ErpCtInvoicePlanBizModel extends CrudBizModel<ErpCtInvoicePlan> imp
 
     @Override
     @BizMutation
-    public ErpCtInvoicePlan triggerInvoice(@Name("planId") Long planId, IServiceContext context) {
+    public ErpCtInvoicePlan triggerInvoice(@Name("planId") String planId, IServiceContext context) {
         return triggerInvoiceProcessor.triggerInvoice(planId, context);
     }
 
     @Override
     @BizMutation
-    public int triggerDuePlans(@Name("contractId") Long contractId,
+    public int triggerDuePlans(@Name("contractId") String contractId,
                                @Name("asOfDate") LocalDate asOfDate,
                                IServiceContext context) {
         return triggerDuePlansProcessor.triggerDuePlans(contractId, asOfDate, context);
@@ -88,7 +88,7 @@ public class ErpCtInvoicePlanBizModel extends CrudBizModel<ErpCtInvoicePlan> imp
 
     @Override
     @BizMutation
-    public List<ErpCtInvoicePlan> generateInvoicePlansByTerm(@Name("contractId") Long contractId,
+    public List<ErpCtInvoicePlan> generateInvoicePlansByTerm(@Name("contractId") String contractId,
                                                              @Name("items") List<ErpCtInvoicePlanGenerateItem> items,
                                                              IServiceContext context) {
         return generateByTermProcessor.generateInvoicePlansByTerm(contractId, items, context);
@@ -138,12 +138,13 @@ public class ErpCtInvoicePlanBizModel extends CrudBizModel<ErpCtInvoicePlan> imp
         IEntityDao<ErpPurInvoice> dao = daoProvider().daoFor(ErpPurInvoice.class);
         ErpPurInvoice invoice = dao.newEntity();
         invoice.setCode(code);
+        // bridge-main-033: ct String orgId/supplierId/currencyId → pur Long（退役 owner M2.5）
         if (contract.getOrgId() != null) {
-            invoice.setOrgId(contract.getOrgId());
+            invoice.setOrgId(ConvertHelper.toLong(contract.getOrgId()));
         }
-        invoice.setSupplierId(contract.getPartnerId());
+        invoice.setSupplierId(ConvertHelper.toLong(contract.getPartnerId()));
         invoice.setBusinessDate(CoreMetrics.today());
-        invoice.setCurrencyId(contract.getCurrencyId());
+        invoice.setCurrencyId(ConvertHelper.toLong(contract.getCurrencyId()));
         invoice.setExchangeRate(BigDecimal.ONE);
         invoice.setTotalAmount(amount);
         invoice.setAmountSource(amount);
@@ -158,10 +159,11 @@ public class ErpCtInvoicePlanBizModel extends CrudBizModel<ErpCtInvoicePlan> imp
         ErpPurInvoiceLine invLine = daoProvider().daoFor(ErpPurInvoiceLine.class).newEntity();
         invLine.setInvoiceId(invoice.getId());
         invLine.setLineNo(1);
+        // bridge-main-034: ct String materialId / md String uoMId → pur Long（退役 owner M2.5）
         if (line.getMaterialId() != null) {
-            invLine.setMaterialId(line.getMaterialId());
+            invLine.setMaterialId(ConvertHelper.toLong(line.getMaterialId()));
             if (line.getMaterial() != null) {
-                invLine.setUoMId(line.getMaterial().getUoMId());
+                invLine.setUoMId(ConvertHelper.toLong(line.getMaterial().getUoMId()));
             }
         }
         invLine.setQuantity(nz(line.getQuantity()));
@@ -175,12 +177,13 @@ public class ErpCtInvoicePlanBizModel extends CrudBizModel<ErpCtInvoicePlan> imp
         IEntityDao<ErpSalInvoice> dao = daoProvider().daoFor(ErpSalInvoice.class);
         ErpSalInvoice invoice = dao.newEntity();
         invoice.setCode(code);
+        // bridge-main-035: ct String orgId/customerId/currencyId → sal Long（退役 owner M2.6）
         if (contract.getOrgId() != null) {
-            invoice.setOrgId(contract.getOrgId());
+            invoice.setOrgId(ConvertHelper.toLong(contract.getOrgId()));
         }
-        invoice.setCustomerId(contract.getPartnerId());
+        invoice.setCustomerId(ConvertHelper.toLong(contract.getPartnerId()));
         invoice.setBusinessDate(CoreMetrics.today());
-        invoice.setCurrencyId(contract.getCurrencyId());
+        invoice.setCurrencyId(ConvertHelper.toLong(contract.getCurrencyId()));
         invoice.setExchangeRate(BigDecimal.ONE);
         invoice.setTotalAmount(amount);
         invoice.setAmountSource(amount);
@@ -195,10 +198,11 @@ public class ErpCtInvoicePlanBizModel extends CrudBizModel<ErpCtInvoicePlan> imp
         ErpSalInvoiceLine invLine = daoProvider().daoFor(ErpSalInvoiceLine.class).newEntity();
         invLine.setInvoiceId(invoice.getId());
         invLine.setLineNo(1);
+        // bridge-main-036: ct String materialId / md String uoMId → sal Long（退役 owner M2.6）
         if (line.getMaterialId() != null) {
-            invLine.setMaterialId(line.getMaterialId());
+            invLine.setMaterialId(ConvertHelper.toLong(line.getMaterialId()));
             if (line.getMaterial() != null) {
-                invLine.setUoMId(line.getMaterial().getUoMId());
+                invLine.setUoMId(ConvertHelper.toLong(line.getMaterial().getUoMId()));
             }
         }
         invLine.setQuantity(nz(line.getQuantity()));
@@ -209,8 +213,8 @@ public class ErpCtInvoicePlanBizModel extends CrudBizModel<ErpCtInvoicePlan> imp
 
     // ---------- helpers ----------
 
-    protected ErpCtInvoicePlan requirePlan(Long planId, IServiceContext context) {
-        ErpCtInvoicePlan plan = get(String.valueOf(planId), false, context);
+    protected ErpCtInvoicePlan requirePlan(String planId, IServiceContext context) {
+        ErpCtInvoicePlan plan = get(planId, false, context);
         if (plan == null) {
             throw new NopException(ErpCtErrors.ERR_CT_INVOICE_PLAN_ALREADY_INVOICED)
                     .param(ErpCtErrors.ARG_INVOICE_PLAN_ID, planId);

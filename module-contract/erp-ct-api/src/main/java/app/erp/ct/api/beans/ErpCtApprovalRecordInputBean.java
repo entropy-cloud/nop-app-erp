@@ -12,58 +12,58 @@
     public class ErpCtApprovalRecordInputBean extends CrudInputBase {
 
     
-        private Long _id;
+        private String _id;
 
     
         @PropMeta(propId=1)
     
-        public Long getId(){
+        public String getId(){
             return _id;
         }
 
-        public void setId(Long value){
+        public void setId(String value){
             this._id = value;
         }
 
 
-        private Long _contractId;
+        private String _contractId;
 
     
         @PropMeta(propId=2)
     
-        public Long getContractId(){
+        public String getContractId(){
             return _contractId;
         }
 
-        public void setContractId(Long value){
+        public void setContractId(String value){
             this._contractId = value;
         }
 
 
-        private Long _orgId;
+        private String _orgId;
 
     
         @PropMeta(propId=3)
     
-        public Long getOrgId(){
+        public String getOrgId(){
             return _orgId;
         }
 
-        public void setOrgId(Long value){
+        public void setOrgId(String value){
             this._orgId = value;
         }
 
 
-        private Long _approvalMatrixId;
+        private String _approvalMatrixId;
 
     
         @PropMeta(propId=4)
     
-        public Long getApprovalMatrixId(){
+        public String getApprovalMatrixId(){
             return _approvalMatrixId;
         }
 
-        public void setApprovalMatrixId(Long value){
+        public void setApprovalMatrixId(String value){
             this._approvalMatrixId = value;
         }
 

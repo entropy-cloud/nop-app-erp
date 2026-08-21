@@ -1,0 +1,5 @@
+_chgType,ID,CONTRACT_LINE_ID,PLAN_DATE,AMOUNT,IS_INVOICED,INVOICE_BILL_CODE,INVOICE_DATE,INVOICE_TERM,REMARK,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
+A,10,6,2026-12-31,700,false,,,COMPLETION,,@var:ErpCtInvoicePlan@delVersion_2,0,autotest-ref,*,autotest-ref,*
+A,11,8,2026-03-01,400,false,,,ADVANCE,,@var:ErpCtInvoicePlan@delVersion_2,0,autotest-ref,*,autotest-ref,*
+A,12,8,2026-04-01,600,false,,,MONTHLY,,@var:ErpCtInvoicePlan@delVersion_2,0,autotest-ref,*,autotest-ref,*
+A,9,6,2026-03-01,300,false,,,ADVANCE,,@var:ErpCtInvoicePlan@delVersion_2,0,autotest-ref,*,autotest-ref,*

@@ -12,44 +12,44 @@
     public class ErpCtSignatureRequestInputBean extends CrudInputBase {
 
     
-        private Long _id;
+        private String _id;
 
     
         @PropMeta(propId=1)
     
-        public Long getId(){
+        public String getId(){
             return _id;
         }
 
-        public void setId(Long value){
+        public void setId(String value){
             this._id = value;
         }
 
 
-        private Long _orgId;
+        private String _orgId;
 
     
         @PropMeta(propId=2)
     
-        public Long getOrgId(){
+        public String getOrgId(){
             return _orgId;
         }
 
-        public void setOrgId(Long value){
+        public void setOrgId(String value){
             this._orgId = value;
         }
 
 
-        private Long _contractVersionId;
+        private String _contractVersionId;
 
     
         @PropMeta(propId=3)
     
-        public Long getContractVersionId(){
+        public String getContractVersionId(){
             return _contractVersionId;
         }
 
-        public void setContractVersionId(Long value){
+        public void setContractVersionId(String value){
             this._contractVersionId = value;
         }
 

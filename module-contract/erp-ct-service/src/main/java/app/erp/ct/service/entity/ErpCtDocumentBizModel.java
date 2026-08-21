@@ -91,7 +91,7 @@ public class ErpCtDocumentBizModel extends CrudBizModel<ErpCtDocument> implement
      */
     @Override
     @BizMutation
-    public ErpCtDocument setLegalHold(@Name("documentId") Long documentId,
+    public ErpCtDocument setLegalHold(@Name("documentId") String documentId,
                                       @Name("legalHold") Boolean legalHold,
                                       IServiceContext context) {
         checkLegalHoldRole();
@@ -110,7 +110,7 @@ public class ErpCtDocumentBizModel extends CrudBizModel<ErpCtDocument> implement
      */
     @Override
     @BizMutation
-    public ErpCtDocument archive(@Name("documentId") Long documentId, IServiceContext context) {
+    public ErpCtDocument archive(@Name("documentId") String documentId, IServiceContext context) {
         ErpCtDocument doc = requireDocument(documentId, context);
         if (Boolean.TRUE.equals(doc.getIsArchived())) {
             return doc;
@@ -147,7 +147,7 @@ public class ErpCtDocumentBizModel extends CrudBizModel<ErpCtDocument> implement
      */
     @Override
     @BizMutation
-    public ErpCtDocument purge(@Name("documentId") Long documentId, IServiceContext context) {
+    public ErpCtDocument purge(@Name("documentId") String documentId, IServiceContext context) {
         checkPurgeRole();
         ErpCtDocument doc = requireDocument(documentId, context);
         if (Boolean.TRUE.equals(doc.getLegalHold())) {
@@ -246,7 +246,7 @@ public class ErpCtDocumentBizModel extends CrudBizModel<ErpCtDocument> implement
      */
     @Override
     @BizMutation
-    public ErpCtDocument startOcr(@Name("documentId") Long documentId, IServiceContext context) {
+    public ErpCtDocument startOcr(@Name("documentId") String documentId, IServiceContext context) {
         ErpCtDocument doc = requireDocument(documentId, context);
         checkOcrNotProcessing(doc);
         doc.setOcrStatus(ErpCtDaoConstants.OCR_STATUS_PROCESSING);
@@ -273,7 +273,7 @@ public class ErpCtDocumentBizModel extends CrudBizModel<ErpCtDocument> implement
      */
     @Override
     @BizMutation
-    public ErpCtDocument submitOcrText(@Name("documentId") Long documentId,
+    public ErpCtDocument submitOcrText(@Name("documentId") String documentId,
                                        @Name("ocrText") String ocrText,
                                        IServiceContext context) {
         ErpCtDocument doc = requireDocument(documentId, context);
@@ -297,7 +297,7 @@ public class ErpCtDocumentBizModel extends CrudBizModel<ErpCtDocument> implement
     public DocumentSearchResult searchDocuments(@Optional @Name("keyword") String keyword,
                                                 @Optional @Name("code") String code,
                                                 @Optional @Name("docType") String docType,
-                                                @Optional @Name("contractId") Long contractId,
+                                                @Optional @Name("contractId") String contractId,
                                                 @Optional @Name("uploadDateFrom") String uploadDateFrom,
                                                 @Optional @Name("uploadDateTo") String uploadDateTo,
                                                 @Optional @Name("ocrStatus") String ocrStatus,
@@ -560,8 +560,8 @@ public class ErpCtDocumentBizModel extends CrudBizModel<ErpCtDocument> implement
         }
     }
 
-    ErpCtDocument requireDocument(Long documentId, IServiceContext context) {
-        ErpCtDocument doc = get(String.valueOf(documentId), false, context);
+    ErpCtDocument requireDocument(String documentId, IServiceContext context) {
+        ErpCtDocument doc = get(documentId, false, context);
         if (doc == null) {
             throw new NopException(ErpCtErrors.ERR_CT_DOCUMENT_NOT_FOUND)
                     .param(ErpCtErrors.ARG_DOCUMENT_ID, documentId);

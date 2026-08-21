@@ -14,30 +14,30 @@
     public class ErpCtContractLineOutputBean {
 
     
-        private Long _id;
+        private String _id;
 
     
         @PropMeta(propId=1)
     
-        public Long getId(){
+        public String getId(){
             return _id;
         }
 
-        public void setId(Long value){
+        public void setId(String value){
             this._id = value;
         }
 
 
-        private Long _contractId;
+        private String _contractId;
 
     
         @PropMeta(propId=2)
     
-        public Long getContractId(){
+        public String getContractId(){
             return _contractId;
         }
 
-        public void setContractId(Long value){
+        public void setContractId(String value){
             this._contractId = value;
         }
 
@@ -56,16 +56,16 @@
         }
 
 
-        private Long _materialId;
+        private String _materialId;
 
     
         @PropMeta(propId=4)
     
-        public Long getMaterialId(){
+        public String getMaterialId(){
             return _materialId;
         }
 
-        public void setMaterialId(Long value){
+        public void setMaterialId(String value){
             this._materialId = value;
         }
 
