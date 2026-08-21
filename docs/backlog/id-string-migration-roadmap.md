@@ -34,7 +34,7 @@
 
 | Work Item | 描述 | 状态 | 依赖 |
 | --- | --- | --- | --- |
-| M1.3 | common-service 组织隔离适配（`ErpOrgContext`/`ErpOrgIsolationOrmInterceptor`/`QueryTransformer` 的 orgId Long 语义，走反射 API 编译器不报错） | `ready`（M0.1 done 解锁，规则 1；plan `docs/plans/2026-08-21-1045-2-*.md` 已批准 active） | M0.1 ✅ |
+| M1.3 | common-service 组织隔离适配（`ErpOrgContext`/`ErpOrgIsolationOrmInterceptor`/`QueryTransformer` 的 orgId Long 语义，走反射 API 编译器不报错） | `done`（2026-08-21，plan `docs/plans/2026-08-21-1045-2-*.md`：三文件 String 语义 + `TestErpOrgContext` 12 单测 + grep 门控零残留；`TestErpOrgIsolation` 编译破坏按中间态登记，successor M2.1） | M0.1 ✅ |
 | M1.1 | master-data 域迁移（根域，~120 处被引用，先导试点） | `todo` | M0.1 + M1.3 |
 | M1.2 | notify 域迁移（跨域通知派发子系统，唯一无 orgId 域） | `todo` | M0.1 |
 
@@ -114,7 +114,7 @@ M0 是唯一包含顺序冻结门控的里程碑。M0.1 **已完成（2026-08-21
 - **M0.1**（已完成，2026-08-21）：① 工具裁定——per-domain 复制改为「时点 dry-run + 新鲜度门控」机制（`verify-id-fix-copy-diff.mjs`），apply 实测不回写源文件被否；② 依赖序冻结——`tools/freeze-id-migration-order.mjs` 解析全部 pom（compile/test 闭包分开建模；实测 Maven 3.9.12 `-am` reactor 含 test 闭包且遍历中间模块 test 边：sal-service `-am` = 49 模块），按判据「closure(D) ∩ 未迁移域 ⊆ 惰性模块 ∪ {自身}」迭代产出冻结总序（惰性层经实测扩展为 dao/codegen/meta/api/web：codegen/main 零手写、meta 零手写、api 全生成件、web 手写仅本域页面测试）；③ 跨域 id 调用点审计——19/19 惰性 dao 证实零证伪（跨域 import 仅 crm 3 文件类型级 + pur/sal 4 行非实体）、205 耦合文件/289 跨域边清单、dao 层语义 FK Long 参数 82 处/11 域（随域迁移翻转）、orgId 语义调用点全量清单（ErpOrgContext 外部调用唯一 = TestErpOrgIsolation:72）；④ Proofs——seq-string 行为实证（`module-common-test` `TestSeqStringIdProof` 4/4 绿）、E2E 影响面清单（`Number(` 874/105 文件、`Number(lnk.voucherId)` 11、`eqFilter('id'` 36）；⑤ 冻结序写回本路线图 + M1 内部序核验（md orm 6 个 orgId FK 列实证，M1.3 先于 M1.1 维持）。全部证据：`docs/audits/2026-08-21-1045-id-migration-m0-freeze-audit.md` + 附录。
 - **M1.1 master-data**：全仓根域先导。覆盖 ~120 处被引用 + 全域手写代码 511 处 id 引用；验证「根域迁移后其 -am 闭包仍全绿」作为后续域顺序的 Proof 先例。
 - **M1.2 notify**：无业务域依赖的第二个根域。
-- **M1.3 common-service 组织隔离适配**：`ErpOrgContext`/`ErpOrgIsolationOrmInterceptor`/`ErpOrgIsolationQueryTransformer` 三文件的 orgId 处理改 String 语义（`Long.equals(String)` 恒 false、QueryTransformer 过滤值类型错——反射 API 无编译错误，须显式适配 + grep 门控 `orgId.equals|FilterBeans.eq\([^,]*PROP_ORG_ID`）；orgId 列迁移（226 处真实 FK 列）随各域 orm 变更，**本项须先于 M1.1 master-data 完成**（master-data orm 含 6 个 orgId FK 列）。
+- **M1.3 common-service 组织隔离适配**（已完成，2026-08-21）：`ErpOrgContext`/`ErpOrgIsolationOrmInterceptor`/`ErpOrgIsolationQueryTransformer` 三文件的 orgId 处理改 String 语义（`currentOrgId`/`setCurrentOrgId` String 签名 + 过渡期宽容归一 `toStringValue`、stamp 前 String 归一比较、eq 过滤值 String）；grep 门控 `orgId.equals|FilterBeans.eq\([^,]*PROP_ORG_ID` 2 命中逐条核对 String 语义 + `Long` 零代码残留（2 处 Javadoc 历史注记例外）；新增 `TestErpOrgContext` 12 单测（转换矩阵 + config-gate），module 级 `mvn clean install -pl module-common-service -am -DskipTests` + `mvn test -pl module-common-service` 22/22 全绿。`TestErpOrgIsolation`（fin-service test）`setCurrentOrgId(ctx, 2L)` 编译破坏按中间态登记（successor = M2.1，M0.1 审计 §6 已标注）。证据：plan `docs/plans/2026-08-21-1045-2-bigint-id-m13-common-service-orgid-string.md`。
 - **M2.x / M3.x**：按冻结顺序执行，内容同标准结构；规模参考 M0.1 基线统计。
 - **M4.1**：全量恢复 + E2E + compliance + baseline + 文档（含 `domain-design-guidelines.md` §16A「存量 Long id 实体不强制改」登记行清理、`orm-model-design.md` 规则落地注记）。
 

@@ -110,7 +110,7 @@
 
 ## 6. orgId 语义调用点（M1.3 / M2.1 / 各域 plan 归属）
 
-全量清单见附录 D：`ErpOrgContext` 外部调用**全仓唯一** = TestErpOrgIsolation.java:72（fin-service test，M2.1 修复预告）；`setContextAttr(CONTEXT_ATTR_CURRENT_ORG_ID,...)` 写入 3 处（同类 :56/:87/:102）；`eq("orgId",...)` 业务调用 34 行/13 模块（值全部来自实体 getter 或其派生——随域迁移自洽；inv 测试 1 处 `ORG_ID` 常量登记 inv plan Phase 3）。M1 内部序核验：**md orm 含 6 个 orgId FK 列**（552/872/972/1135/1185/1238 行；1215 行为 `<index>` 成员引用非列定义）→ **M1.3 先于 M1.1 维持**。
+全量清单见附录 D：`ErpOrgContext` 外部调用**全仓唯一** = TestErpOrgIsolation.java:72（fin-service test；**M1.3 落地（2026-08-21）后 `setCurrentOrgId(ctx, 2L)` 编译破坏已发生，为已知中间态产物，successor = M2.1 finance plan**：签名 String 化 + 断言随 fin 实体 orgId 列迁移重录，见 plan `2026-08-21-1045-2` Deferred But Adjudicated）；`setContextAttr(CONTEXT_ATTR_CURRENT_ORG_ID,...)` 写入 3 处（同类 :56/:87/:102，Object 通道非编译级，M1.3 过渡期宽容转换可读通）；`eq("orgId",...)` 业务调用 34 行/13 模块（值全部来自实体 getter 或其派生——随域迁移自洽；inv 测试 1 处 `ORG_ID` 常量登记 inv plan Phase 3）。M1 内部序核验：**md orm 含 6 个 orgId FK 列**（552/872/972/1135/1185/1238 行；1215 行为 `<index>` 成员引用非列定义）→ **M1.3 先于 M1.1 维持**。
 
 ## 7. Decisions
 

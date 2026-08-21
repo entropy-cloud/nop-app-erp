@@ -1,6 +1,6 @@
 # 2026-08-21-1045-2-bigint-id-m13-common-service-orgid-string 主键/外键 string 化 M1.3：common-service 组织隔离 orgId String 语义适配
 
-> Plan Status: active
+> Plan Status: completed
 > Mission: id-string-migration
 > Work Item: M1.3
 > Last Reviewed: 2026-08-21
@@ -50,64 +50,68 @@
 
 ### Phase 1 - 三文件 Long→String 语义适配
 
-Status: planned
+Status: completed
 Targets: `module-common-service/src/main/java/app/erp/common/org/{ErpOrgContext,ErpOrgIsolationOrmInterceptor,ErpOrgIsolationQueryTransformer}.java`
 Skill: `nop-backend-dev`
 
 - Item Types: `Fix | Decision`
 - Prereqs: M0.1 done（审计 ③ 调用点清单复核无新增编译级调用方）
 
-- [ ] Fix: `ErpOrgContext`——`currentOrgId` 返回 `String`；`setCurrentOrgId(IServiceContext, String)`；`toLong` 改 `toStringValue`（String 先做数字合法性校验，合法直接返回、非法返回 null；Number 经 `String.valueOf`；null/空白返回 null——**校验式契约**：与现状 `toLong` 的 no-op 语义对齐，非法输入统一静默返回 null）。Javadoc 同步（Long→String、过渡期宽容说明）。
+- [x] Fix: `ErpOrgContext`——`currentOrgId` 返回 `String`；`setCurrentOrgId(IServiceContext, String)`；`toLong` 改 `toStringValue`（String 先做数字合法性校验，合法直接返回、非法返回 null；Number 经 `String.valueOf`；null/空白返回 null——**校验式契约**：与现状 `toLong` 的 no-op 语义对齐，非法输入统一静默返回 null）。Javadoc 同步（Long→String、过渡期宽容说明）。
   - Skill: `nop-backend-dev`
-- [ ] Fix: `ErpOrgIsolationOrmInterceptor.stampOrgId`——局部变量 `Long orgId` → `String orgId`；`orgId.equals(current)` 语义保持（String vs String；列值经 `orm_propValueByName` 读取为 Object，须先做 String 归一比较再 stamp，比较与写入均 String）。
+- [x] Fix: `ErpOrgIsolationOrmInterceptor.stampOrgId`——局部变量 `Long orgId` → `String orgId`；`orgId.equals(current)` 语义保持（String vs String；列值经 `orm_propValueByName` 读取为 Object，须先做 String 归一比较再 stamp，比较与写入均 String）。
   - Skill: `nop-backend-dev`
-- [ ] Fix: `ErpOrgIsolationQueryTransformer.transform`——`Long orgId` → `String orgId`，`FilterBeans.eq(PROP_ORG_ID, orgId)` 过滤值 String。
+- [x] Fix: `ErpOrgIsolationQueryTransformer.transform`——`Long orgId` → `String orgId`，`FilterBeans.eq(PROP_ORG_ID, orgId)` 过滤值 String。
   - Skill: `nop-backend-dev`
-- [ ] Decision: 转换函数过渡期宽容 vs 严格 String-only——选宽容（Number/String 均接受）：过渡期内未迁移写入方（如 `TestErpOrgIsolation` 的 `setContextAttr(..., 2L)`）向 context 放 Long 仍可读通；严格模式无收益且增加中间态破坏面。残留风险：宽容转换对非法字符串静默返回 null（与现状 no-op 语义一致，隔离开启时表现为跳过 stamp，可接受）。
+- [x] Decision: 转换函数过渡期宽容 vs 严格 String-only——选宽容（Number/String 均接受）：过渡期内未迁移写入方（如 `TestErpOrgIsolation` 的 `setContextAttr(..., 2L)`）向 context 放 Long 仍可读通；严格模式无收益且增加中间态破坏面。残留风险：宽容转换对非法字符串静默返回 null（与现状 no-op 语义一致，隔离开启时表现为跳过 stamp，可接受）。
   - Skill: none
 
 Exit Criteria:
 
-- [ ] 三文件零 `Long` orgId 语义残留（Phase 2 grep 门控证明）；common-service 编译通过（`mvn clean install -pl module-common-service -am -DskipTests`）
+- [x] 三文件零 `Long` orgId 语义残留（Phase 2 grep 门控证明）；common-service 编译通过（`mvn clean install -pl module-common-service -am -DskipTests`）
 
 ### Phase 2 - 单元测试 + 语义陷阱 grep 门控
 
-Status: planned
+Status: completed
 Targets: `module-common-service/src/test/java/app/erp/common/org/TestErpOrgContext.java`（新增）
 Skill: `nop-testing`
 
 - Item Types: `Add | Proof`
 - Prereqs: Phase 1
 
-- [ ] Add: `TestErpOrgContext` 纯单元测试（无 orm 依赖，覆盖转换矩阵）：context attr 为 `String "2"` → `currentOrgId` 返回 `"2"`；为 `Long 2L` → 返回 `"2"`（过渡宽容）；为 `String "abc"` → 返回 null（非法输入 no-op，锁定校验式契约）；为 `null` / 空白串 → 返回 null；`setCurrentOrgId(String)` 写入后可读回；`isActive` 在隔离 config 关闭时恒 false（config-gated 默认关闭行为锁定）。
+- [x] Add: `TestErpOrgContext` 纯单元测试（无 orm 依赖，覆盖转换矩阵）：context attr 为 `String "2"` → `currentOrgId` 返回 `"2"`；为 `Long 2L` → 返回 `"2"`（过渡宽容）；为 `String "abc"` → 返回 null（非法输入 no-op，锁定校验式契约）；为 `null` / 空白串 → 返回 null；`setCurrentOrgId(String)` 写入后可读回；`isActive` 在隔离 config 关闭时恒 false（config-gated 默认关闭行为锁定）。
   - Skill: `nop-testing`
-- [ ] Proof: 语义陷阱 grep 门控（路线图 M1.3 指定清单）——`grep -nE "orgId\.equals|FilterBeans\.eq\([^,]*PROP_ORG_ID" module-common-service/src/main` 逐条人工核对为 String 语义；`grep -nE "Long" module-common-service/src/main/java/app/erp/common/org/` 零命中（Javadoc 历史注记除外，逐条列出）。结果记录本计划文件。
+- [x] Proof: 语义陷阱 grep 门控（路线图 M1.3 指定清单）——`grep -nE "orgId\.equals|FilterBeans\.eq\([^,]*PROP_ORG_ID" module-common-service/src/main` 逐条人工核对为 String 语义；`grep -nE "Long" module-common-service/src/main/java/app/erp/common/org/` 零命中（Javadoc 历史注记除外，逐条列出）。结果记录本计划文件。
   - Skill: none
-- [ ] Proof: 域级 verify——`mvn clean install -pl module-common-service -am -DskipTests` 全绿 + `mvn test -pl module-common-service` 全绿（含新增测试）。
+  - **门控结果（2026-08-21 执行）**：Gate 1 `orgId.equals|FilterBeans.eq(...PROP_ORG_ID` 2 命中，逐条核对均 String 语义——`ErpOrgIsolationQueryTransformer.java:61`（`eq(PROP_ORG_ID, orgId)`，:60 声明 `String orgId`）；`ErpOrgIsolationOrmInterceptor.java:50`（`orgId.equals(ErpOrgContext.toStringValue(current))`，两侧均 String 归一）。Gate 2 `Long` 残留 2 命中，均为 Javadoc 历史注记例外——`ErpOrgContext.java:15`（过渡期宽容说明：未迁移写入方可能放 Long/Number）、`ErpOrgContext.java:16`（迁移前 `toLong` no-op 语义对齐注记）；非 Javadoc 代码零残留。**例外核可：两处均为计划 sanctioned 的历史注记类别，非代码语义。**
+- [x] Proof: 域级 verify——`mvn clean install -pl module-common-service -am -DskipTests` 全绿 + `mvn test -pl module-common-service` 全绿（含新增测试）。
   - Skill: `nop-testing`
+  - **verify 结果（2026-08-21 执行）**：install BUILD SUCCESS；test `Tests run: 22, Failures: 0, Errors: 0`（TestErpOrgContext 12 + TestMaskAuditRecorder 10）。
 
 Exit Criteria:
 
-- [ ] 新增单测全绿且覆盖转换矩阵全部形态；grep 门控零残留（例外逐条列出并核可）
-- [ ] common-service 模块 build + test 全绿
+- [x] 新增单测全绿且覆盖转换矩阵全部形态；grep 门控零残留（例外逐条列出并核可）
+- [x] common-service 模块 build + test 全绿
 
 ### Phase 3 - 中间态破坏登记 + 状态流转
 
-Status: planned
+Status: completed
 Targets: 本计划文件、`docs/backlog/id-string-migration-roadmap.md`、`docs/logs/2026/08-21.md`
 Skill: none
 
 - Item Types: `Add`
 - Prereqs: Phase 2
 
-- [ ] Add: 登记 `TestErpOrgIsolation`（fin-service test）编译破坏为已知中间态产物（本计划 Deferred But Adjudicated + M0.1 审计工件调用点清单 successor 标注 M2.1）——`setCurrentOrgId(ctx, 2L)` 编译级破坏，M2.1 finance plan 修复为 String 形态并随 fin 实体 orgId 列迁移恢复运行时语义。
+- [x] Add: 登记 `TestErpOrgIsolation`（fin-service test）编译破坏为已知中间态产物（本计划 Deferred But Adjudicated + M0.1 审计工件调用点清单 successor 标注 M2.1）——`setCurrentOrgId(ctx, 2L)` 编译级破坏，M2.1 finance plan 修复为 String 形态并随 fin 实体 orgId 列迁移恢复运行时语义。
   - Skill: none
-- [ ] Add: 路线图 M1.3 → `done`；日志条目（含验证状态）。
+  - **登记落点**：本计划 Deferred But Adjudicated 节补「已实际发生」行；`docs/audits/2026-08-21-1045-id-migration-m0-freeze-audit.md` §6 调用点清单 successor 标注更新（M1.3 落地后破坏已发生，successor = M2.1）。
+- [x] Add: 路线图 M1.3 → `done`；日志条目（含验证状态）。
   - Skill: none
+  - **落点**：`docs/backlog/id-string-migration-roadmap.md` 状态表 M1.3 `done` + Work Item Details M1.3 执行记录；`docs/logs/2026/08-21.md` 顶部新条目（含 22/22 全绿验证状态）。
 
 Exit Criteria:
 
-- [ ] 中间态破坏在计划与审计工件双登记且 successor 明确；路线图状态与日志一致
+- [x] 中间态破坏在计划与审计工件双登记且 successor 明确；路线图状态与日志一致
 
 ## Draft Review Record
 
@@ -119,20 +123,21 @@ Exit Criteria:
 
 > 本计划改 1 个共享模块的 3 个生产文件 + 新增 1 个测试类，不改 orm 模型/公共契约。完整仓库验证定制为：common-service 模块级 build + test（中间态全量构建失败属路线图设计使然，禁止以全量构建为 gate）。
 
-- [ ] 范围内行为完成（三文件 String 语义 + 单测 + grep 门控零残留）
-- [ ] 相关文档对齐（三文件 Javadoc、路线图 M1.3 状态、M0.1 审计工件 successor 标注、日志）
-- [ ] 已运行验证：`mvn clean install -pl module-common-service -am -DskipTests` + `mvn test -pl module-common-service` 全绿；grep 门控记录在案
-- [ ] 无范围内项目降级为 deferred/follow-up（TestErpOrgIsolation 修复非本计划范围，属路线图预先裁决的中间态设计，登记非降级）
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：状态、阶段、门控和日志都一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成（三文件 String 语义 + 单测 + grep 门控零残留）
+- [x] 相关文档对齐（三文件 Javadoc、路线图 M1.3 状态、M0.1 审计工件 successor 标注、日志）
+- [x] 已运行验证：`mvn clean install -pl module-common-service -am -DskipTests` + `mvn test -pl module-common-service` 全绿；grep 门控记录在案
+- [x] 无范围内项目降级为 deferred/follow-up（TestErpOrgIsolation 修复非本计划范围，属路线图预先裁决的中间态设计，登记非降级）
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证：状态、阶段、门控和日志都一致
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
 ### TestErpOrgIsolation（fin-service test）编译破坏
 
 - Classification: `watch-only residual`
+- **已实际发生（2026-08-21 M1.3 落地时）**：`setCurrentOrgId(ctx, 2L)` 因签名 String 化产生编译级破坏，按本登记作为已知中间态产物保留；M0.1 审计工件 §6 调用点清单已同步 successor 标注。
 - Why Not Blocking Closure: 该测试同时依赖 `ErpOrgContext` API 签名与 fin 实体 orgId 列类型（`seedArApItem(long id, long orgId)`、`assertEquals(2L, saved.getOrgId())`），只有 M2.1 finance 迁移时才能同时修复编译与运行时语义；本计划阶段任何单独修复都无法恢复其运行时行为。fin-service test 不在 M1.3/M1.1 的任何 verify 闭包内（-am 只向上游构建），中间态破坏面为零。
 - Successor Required: `yes`（M2.1 finance plan：签名 String 化 + 断言随 fin 迁移重录）
 
@@ -144,13 +149,13 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: pending
+Status Note: closed（2026-08-21）
 
 Closure Audit Evidence:
 
-- Auditor / Agent: pending
-- Evidence: pending
+- Auditor / Agent: independent closure auditor subagent, fresh session（ses_fdd6facd9ffealvr5rqqoA3Yie / closure-audit-m13-orgid-7f4k2q9z）
+- Evidence: `VERDICT: passes closure audit` — 10 findings 全部 NON-ISSUE，0 BLOCKER / 0 MAJOR / 0 MINOR。独立复核项：① 三文件 String 语义逐行核验（ErpOrgContext.java:34,48,63-75 + Javadoc :14-16；ErpOrgIsolationOrmInterceptor.java:41,49-53 归一比较；ErpOrgIsolationQueryTransformer.java:60-61 String 过滤值）；② TestErpOrgContext 12 用例纯单测矩阵核验（含 "007" 直返、Integer、provider 路径、isActive 双侧 bonus）；③ 双 grep 门控独立重跑（Gate 1 = 2 hits String 语义、Gate 2 = 2 hits 均为 sanctioned Javadoc 例外、代码级零残留）；④ 独立重跑验证：install BUILD SUCCESS + test 22/22（TestErpOrgContext 12 + TestMaskAuditRecorder 10）；⑤ 中间态双登记确认（plan:140-142 已实际发生 + 审计 §6:113 successor M2.1）；⑥ 状态一致性（roadmap :37,:117 done、log :3-12、Phase 1-3 全 [x] completed）；⑦ 无范围蔓延（git status = 3 主代码 + 1 新测试 + 4 docs，无 orm.xml/fin-service 触碰；全量构建按 plan:120 禁令未运行）。
 
 Follow-up:
 
-- 无（已确认缺陷零；TestErpOrgIsolation 已按中间态设计登记 successor）
+- 无（已确认缺陷零；TestErpOrgIsolation 已按中间态设计登记 successor M2.1）
