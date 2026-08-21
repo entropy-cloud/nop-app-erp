@@ -118,7 +118,7 @@
 
 **Decision B（seq-string Proof 载体）**：裁定 **(a) module-common-test 测试专用 orm**，spike 成功。脚手架 3 个实质新文件（`_vfs/erp/tst/orm/app.orm.xml` DynamicOrmEntity 免实体类 proof 模型 + `app/erp/common/test/seq-proof-test.yaml` 测试配置（禁用 erp-fin/erp-notify 模块——optional 依赖的 orm 进 VFS 但外部实体类不在本模块 test classpath）+ `TestSeqStringIdProof.java`）+ 1 个零字节 `_module` VFS 模块标记。spike 判据核对：① 未触发（**零 pom 改动**，nop-autotest-junit/junit/H2 均既有）；③ 未触发（单会话跑通）；② 实质文件 = 3 ≤ 3 未触发（若计零字节 `_module` 标记则 4 > 3——两种计数均如实登记，采信实质内容口径：标记是 `ModuleManager.findAll("*/*/_module")` 的目录哨兵，与 .gitkeep 同性质；判据原意拦截脚手架膨胀/pom 污染，本载体 3 文件全 test-only 零生产影响）。**无需登记 Proof 语义变化**（未降级 (b)；M1.1 Phase 3 硬退出标准仍保留为双保险）。
 
-**Decision C（惰性 dao 证伪处置）**：无证伪域，不适用路线图规则 6，冻结序维持。
+**Decision C（惰性 dao 证伪处置）**：无证伪域，不适用路线图规则 6，冻结序维持。**【2026-08-21 M1.1 执行证伪修正】**：本裁定基于 §5 的手写层口径，M1.1 执行中在**生成件层**被证伪（`_gen/` to-one 关系胶水构成编译级跨域 id 耦合），处置见 §10 Decision D（域级 verify 闭包收窄 + 前向耦合登记册 + M4.1 兜底，冻结总序维持）。§5 手写层结论本身仍成立。
 
 ## 8. Proofs 结论
 
@@ -137,3 +137,35 @@
 - E2E 修复统一 M4.1（附录 F）；
 - SettlementAllocation.invoiceId DTO 字段（md 托管、pur/sal 语义）——pur/sal plan 登记；
 - 路线图 08-16 旧计数口径已废止并刷新（含共识行笔误修正）。
+
+## 10. Falsification Addendum（M1.1 执行证伪 + M0 裁决，2026-08-21）
+
+> 触发：M1.1（master-data 先导迁移）Phase 2 闭包门控触发路线图规则 6 停止（plan `2026-08-21-1045-3` §Rule-6 Stop Report）。M0 裁决经双独立子 agent 三轮审查收敛（A 轮 plan-audit 视角 + B 轮独立复核视角，迭代记录见下），批准记录落盘本节。
+
+### 10.1 证伪事实（双审查者独立复测一致）
+
+- **§5「惰性 dao 19/19 证实」在手写层成立、在生成件层被证伪**：dao 模块 `_gen/` 实体的 to-one 关系胶水 `internalSetRefEntity(..., () -> setXxxId(refEntity.getId()))` 构成编译级跨域 id 类型耦合——未迁移域 orm 的 `refEntityName` 指向已迁移域实体时，FK setter（Long）与 id getter（String）类型不兼容；耦合**对称**（任一端先行迁移都同样破坏），重生成无法修复（产物相同），唯两端同时 String 才自愈。
+- javac 权威计数：**prj-dao 27 错误/15 文件**（与 27 处 md 关系 1:1，非 `_gen`=0）、**fin-dao 97 错误/32 文件**（与 97 处 md 关系 1:1，非 `_gen`=0）、notify-dao 0 处（M1.1 停止报告原「28 个编译错误」为误计，「54/194」为 Maven 双打印伪口径，均以此更正）。手写层结论仍成立（两域 dao 非 `_gen` 错误均为 0）。
+- **冻结序判据另一盲区＝前向耦合**（与 §4.1 惰性层分析同源盲点，方向相反）：orm 级全仓扫描（双独立审查者各全量复扫 19 orm × 冻结序位次）**恰 2 簇**——fin orm→prj 6 to-one（:517/:958/:1361/:1417/:1859/:2063；fin-dao pom 编译依赖 prj-dao）、hr orm→prj 2 to-one（:651-652）；service 级已确认 ≥1 簇（ast-service `ErpAstDisposalProcessor:264/271` → `IErpMntEquipmentBiz:26/35` Long assetId）且独立抽查显示更大面（~28 文件/11 域，含 fin→inv `ErpFinAccountingPeriodProcessor:222` → `IErpInvCostingBiz:30` Long periodId），完整 service 级清册归 M0.2 登记册。**md orm 52 处 refEntityName 全本域——M1.1 无前向边**。
+
+### 10.2 Decision D（M1.1 rule-6 停止的 M0 裁决）：采纳选项 (c)——域级 verify 闭包收窄 + 前向耦合登记册 + M4.1 兜底
+
+**D2 选项裁决**：(b) 调整冻结序——否决（对称耦合使调序只转移不消除破坏；fin↔prj 结构性纠缠：fin-dao 编译依赖 prj-dao、prj-service 编译依赖 fin/ast-service，双向不可先行全链迁移）；(a) 合并域 plan（md+fin+prj 同批）——否决（把 M2.1 规模 214 列 + M2.7 76 列并入 M1.1 违背每域原子工作项设计，且 md 本体已全绿）；(c) 采纳，叠加 D3-D6。
+
+**D3 规则 3 修订（域级 verify 闭包新口径）**：域 D 的 build/test verify = **D 自身模块链**（`-pl <域>/erp-<short>-{codegen,dao,meta,service,web,app,api}` 显式列表，**不带 `-am`**；上游一律经本地 Maven 仓库解析——硬前置 = 最后一个全绿基线 commit 的全量 install + 每个已完成域链 install（各域 plan Phase 2 install 步骤保证；迁移中途的 fresh clone 须锚定最后全绿基线 commit 而非 HEAD，因 HEAD 中未迁移域源码处于登记破坏态）。经 optional test 边或直接编译依赖进入 `-am` reactor 的未迁移域模块，其编译破坏为**已登记中间态**，由登记 successor 域 plan 愈合，M4.1 兜底全量恢复。**登记义务**：每域 plan 登记 (i) 破坏模块清单 + successor 指针 + (ii) 逐模块 javac 错误点清单证明登记错误 100% 位于 `_gen` 生成胶水或已登记手写前向边。**已知中间态登记**：陈旧 jar 二进制不兼容（本地仓未迁移 dao jar 引用旧 `getId()` 签名，跨迁移边的关系遍历运行路径在 M4.1 前可能 NoSuchMethodError；域级测试按设计不跨这些边界）；no-am 测试 classpath 的 VFS 模块集变化（失去 optional fin/notify orm 模型）预登记 seq-proof-yaml 模块禁用模式为回退方案。
+
+**D4 前向耦合处置机制（登记册模板，最终设计落各域 plan 并走其双批准）**：
+- **orm 级前向边**（fin→prj 6 列、hr→prj 2 列）＝**列延后**——早域迁移时该 8 个 FK 列保持 Long（工具回写显式豁免登记 + scan 门控例外记录「残留 ⊆ 登记册延后列」，豁免机制归 M0.2 实现）；M2.7 projects plan 同批翻转 prj orm + fin 6 列 + hr 2 列（跨域 orm 变更，保护区域双批准 + 路线图规则 4 登记例外），且 **M2.7 显式拥有 fin/hr 链的代码修复 + 重生成 + 重建 + install 责任**。
+- **service 级前向边**（如 ast→mnt 2 调用点）＝**临时桥接**——早域 plan 调用点加 String→Long 转换桥（语义陷阱 grep 清单登记例外），晚域 plan 翻转 IBiz 参数为 String 并移除登记桥接点（跨域主代码修复，双批准 + 登记）。
+- **规则 6 修订**：登记册内预先登记的自身链破坏不触发 rule-6 停止；未登记破坏仍触发。
+
+**D5 文本修正与新增工作项**（修正随 M1.1 恢复同批执行）：(a) 本审计 §5/Decision C 修正 + 计数更正（本节）；(b) roadmap 七处修正（横切 §1 措辞、当前基线「惰性 dao 已逐域证实」行、Work Item Details M0.1 ③ 行、§M1-M3 标准结构命令 no-am 化、规则 3/6 修订、M1.1 状态与文件头「待裁决」注记解除）；(c) M1.1 plan 修正（Phase 2 退出标准 D3 口径改写含范围变更理由（plan 指南规则 10）、Phase 2 重生成/回滚命令与 Phase 3/Closure Gates 命令去 `-am`、Phase 2 第 3 项补 D4 carve-out 引用）；(d) **新增工作项 M0.2（M1.2 之前执行）：前向耦合登记册**——19 orm refEntityName 跨域图 × 冻结序系统扫描（orm 级已双审清：仅 2 簇）+ M0 审计附录 A 205 文件 service 耦合 id 流向全量复核 + `check-bigint-id-types.mjs` 豁免机制实现，产出每域登记册（含 disposition），后续每个域 plan 起草强制消费。
+
+**D6 M1.1 先导试点结论**：原判据「根域迁移后其 -am 闭包（含惰性 dao）仍全绿」**不成立**（生成件耦合证伪 + 前向边发现）；修订口径判据「根域迁移后自身模块链全绿 + 闭包内破坏仅限已登记未迁移耦合点（逐模块 `_gen`/登记手写证明）」**在 md 成立**（md 52 orm 引用全本域、自身模块链 BUILD SUCCESS、prj/fin-dao 破坏全 `_gen`、notify-dao/common-test/common-service 零破坏），作为后续域 plan 的 Proof 先例（md 专项事实，非一般不变量）。**冻结总序维持不变**。
+
+### 10.3 裁决审查记录（双独立子 agent，fresh session，三轮迭代收敛）
+
+- Iteration 1（plan-audit 视角 ses_fdd50f565ffeoDaE5oBx51BRKo / 独立复核视角 ses_fdd50780dffeOMWCs1tLpjm6g）：均 `needs revision`——发现草案「M2.1 fin-dao 自愈」为伪（fin→prj 6 前向关系）、hr→prj 2 前向关系与 ast→mnt 手写前向耦合未登记、「破坏仅限 common-test optional 边」口径错误、须强制 M0.2 系统重扫与文本修正、计数 28→更正。
+- Iteration 2（plan-audit 视角 ses_fdd44eba7ffeYDOTzAZQUs0Rii / 独立复核视角 ses_fdd449f10ffe1KZ8JZjblug0）：均 `needs revision`（收窄为文书级）——计数再更正为 javac 权威 27/97（54/194 为双打印伪口径）、前向耦合措辞改「orm 级 2 簇 + service 级清册归 M0.2」、修正清单须显式含 M1.1 plan 与 roadmap 全部伪门控文本、scan 工具豁免归 M0.2、fresh clone 锚定全绿基线 commit、M2.7 拥有 fin/hr 链修复责任、陈旧 jar 二进制不兼容登记；两位审查者各自全量复扫 19 orm 确认前向 orm 边恰 2 簇。
+- Iteration 3（plan-audit 视角 ses_fdd3b4bbeffeZN4s5rXL1rQ2ph / 独立复核视角 ses_fdd3af4c1ffe77yeaOYy861WJC）：均 `passes adjudication review`——全部修订忠实落地、无新增可证伪声明、裁决为 M1.1 恢复与后续全部域 plan 构成完整可执行契约（残留 2 条非阻塞 nit：plan 重生成/回滚命令行与 roadmap 文件头注记同批修正，已并入 D5 执行）。
+- **裁定：M0 裁决达成（iteration 3 双 passes），M1.1 按 Decision D 恢复执行。**

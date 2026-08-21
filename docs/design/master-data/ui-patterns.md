@@ -216,6 +216,8 @@
 
 > 落地计划：`docs/plans/2026-07-20-1020-2-f7-non-status-visibleon-and-master-data-interactions.md`
 > 跨域范式参考：`docs/design/visible-on-patterns.md`
+>
+> **id 类型注记（2026-08-21）**：本节各 `Long` id 签名（`isCodeUnique(..., Long excludeId)`、`countReferences(Long id)`）在 Java 层已全部 String 化（`stdDataType` long→string 迁移，见 plan `docs/plans/2026-08-21-1045-3-bigint-id-m11-master-data-migration.md`）；下表保留历史签名形态仅作语义参考，`Map<String,Long>` 返回值中 Long 为引用计数（非 id，保持不变）。
 
 主数据实体（物料/往来单位/科目）有 3 类区别于业务单据的专用交互模式。本节固化本域 3 高频实体（`ErpMdMaterial` / `ErpMdPartner` / `ErpMdSubject`）的统一实现约定。
 

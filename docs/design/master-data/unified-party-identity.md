@@ -30,7 +30,7 @@
 | PartyRef 字段 | ErpMdPartner | ErpMdEmployee | ErpMdOrganization | 备注 |
 |---------------|--------------|---------------|-------------------|------|
 | `partyType` | PARTNER | EMPLOYEE | ORGANIZATION | 由 `ErpPartyType` enum 携带 |
-| `partyId` | id | id | id | Long |
+| `partyId` | id | id | id | String（2026-08-21 起 Java 层 String 化，原 Long；见 plan `docs/plans/2026-08-21-1045-3-bigint-id-m11-master-data-migration.md`） |
 | `code` | code | code | code | 全员公共 |
 | `name` | name | name | name | 全员公共 |
 | `phone` | phone | phone | — | **Organization 无此列，投影为 null** |
@@ -107,7 +107,7 @@
 
 **选定方案 (a) Path A 严格同构**：
 
-- 2 新 SPI 端口签名：`Map<String, Long> countReferences(Long partyId)` —— **无 IServiceContext 参数，返回 `Map<String, Long>`（key=引用域名 + value=引用计数），无 listReferences 方法**，与既有 Partner SPI 完全一致；
+- 2 新 SPI 端口签名：`Map<String, Long> countReferences(String partyId)`（2026-08-21 起 Java 层 id 参数 String 化，原 `Long partyId`；见 plan `docs/plans/2026-08-21-1045-3-bigint-id-m11-master-data-migration.md`）—— **无 IServiceContext 参数，返回 `Map<String, Long>`（key=引用域名 + value=引用计数），无 listReferences 方法**，与既有 Partner SPI 完全一致；
 - `ErpPartyBizModel` 注入方式：`@Inject(required=false) IErpMdEmployeeReferenceChecker employeeReferenceChecker;`（单实例 nullable，非 `List<>`）；
 - 下游域实现注册归 Deferred successor（仅试点 Employee/Organization 引用扫描机制；具体下游域实现按业务需求驱动落地）。
 

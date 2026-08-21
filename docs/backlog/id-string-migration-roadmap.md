@@ -1,6 +1,6 @@
 # 主键/外键 stdDataType string 化迁移路线图（BIGINT PK/FK → String）
 
-> 最后更新：2026-08-21（M0.1 执行完成：冻结序写回 + 跨域 id 调用点审计 + Proofs；M2/M3 表按冻结序重排、依赖链精确化、基线数字块刷新 08-21 实况。M0 完成后按冻结顺序展开 M1-M3 域迁移，M4 收尾）
+> 最后更新：2026-08-21（**M1.1 done**：先导试点按 D6 判据成立（自身模块链全绿 + 闭包破坏仅限已登记 `_gen` 耦合点，successor M2.7/M2.1 + M4.1），冻结总序维持，详见 plan `2026-08-21-1045-3`；下一可执行项 = M0.2 前向耦合登记册（M1.2 前置）→ M1.2 notify。此前同日：M0 裁决 Decision D 落盘（D3 闭包收窄/D4 登记册/D6 判据修订）、M1.1 rule-6 停止与恢复、M0.1 done 冻结序写回、M1.3 done）
 > 来源：用户请求（「将主键和外键的数据类型全部改成 string」）+ `nop-entropy/docs-for-ai/02-core-guides/orm-model-design.md` §主键设计强制规则
 > 现状：`tools/check-bigint-id-types.mjs` scan/dry-run 可用（19 文件、1662 列、零残留、幂等，08-21 权威口径）；`apply` 模式经实测**不回写源文件**，回写一律走「时点 dry-run + 新鲜度门控」机制（见 §框架/平台复用）。副本在 `_tmp/bigint-id-string-fix/`（08-21 全量刷新，**未回写任何源文件**）。M0.1 产出：冻结序脚本 + 审计工件 + seq-string Proof（module-common-test 4/4 绿）。详见 `docs/audits/2026-08-21-1045-id-migration-m0-freeze-audit.md`。
 
@@ -25,6 +25,7 @@
 | Work Item | 描述 | 状态 | 依赖 |
 | --- | --- | --- | --- |
 | M0.1 | 工具 scope 化 + 依赖序冻结 + 跨域 id 调用点审计 + Proofs（seq-string 行为 / E2E 影响） | `done`（2026-08-21：plan `docs/plans/2026-08-21-1045-1-bigint-id-m0-order-freeze-audit-proofs.md` 四 Phase 完成 + 独立结束审计 `passes closure audit`，ses_fdd7d3f54ffeuesGsgCqk2so5J） | — |
+| M0.2 | 前向耦合登记册（**M0 裁决 D5(d) 新增，M1.2 之前执行**）：19 orm refEntityName 跨域图 × 冻结序系统扫描（orm 级已双审清 = fin→prj 6 列 + hr→prj 2 列恰 2 簇）+ M0 审计附录 A 205 文件 service 耦合 id 流向全量复核 + `check-bigint-id-types.mjs` 豁免机制实现（登记册延后列 `残留 ⊆ 登记册` scan 门控例外），产出每域登记册（含 disposition：orm 级列延后 / service 级临时桥接），后续每个域 plan 起草强制消费 | `todo` | M0.1 ✅（M1.2 前执行） |
 
 **M0.1 产出指针**：冻结序脚本 `tools/freeze-id-migration-order.mjs`（compile/test 闭包分开建模，`--edges`/`--why`/`--format json`）；回写新鲜度门控 `tools/verify-id-fix-copy-diff.mjs`；跨域耦合扫描器 `tools/scan-cross-domain-id-coupling.mjs`（各域 plan Phase 2/4 grep 门控复用）；审计工件 `docs/audits/2026-08-21-1045-id-migration-m0-freeze-audit.md`（冻结序/闭包构成/惰性 dao 结论/`-am` 实测/Proof/裁定）+ 附录 `docs/audits/2026-08-21-1045-id-migration-m0-cross-domain-coupling-appendix.md`（205 耦合文件 file:line / dao 语义 FK 清单 / orgId 调用点 / 计数复测 / E2E 影响面清单附录 F）；seq-string Proof = `module-common-test` 的 `TestSeqStringIdProof`（4/4 绿，方案 B 三断言迁移前实证）。
 
@@ -35,7 +36,7 @@
 | Work Item | 描述 | 状态 | 依赖 |
 | --- | --- | --- | --- |
 | M1.3 | common-service 组织隔离适配（`ErpOrgContext`/`ErpOrgIsolationOrmInterceptor`/`QueryTransformer` 的 orgId Long 语义，走反射 API 编译器不报错） | `done`（2026-08-21，plan `docs/plans/2026-08-21-1045-2-*.md`：三文件 String 语义 + `TestErpOrgContext` 12 单测 + grep 门控零残留；`TestErpOrgIsolation` 编译破坏按中间态登记，successor M2.1） | M0.1 ✅ |
-| M1.1 | master-data 域迁移（根域，~120 处被引用，先导试点） | `todo` | M0.1 + M1.3 |
+| M1.1 | master-data 域迁移（根域，~120 处被引用，先导试点） | `done`（2026-08-21，plan `docs/plans/2026-08-21-1045-3-*.md` 四 Phase 完成：68 列落源 + 7 模块链 no-am main 绿 + 测试修复（24 类，含 5 TestStub* 桩）+ 快照重录（93 标记修改 = 44 内容 diff + 49 CRLF 行尾；11 方法新增落盘，String 形态零数字 id 残留）+ `mvn test -pl erp-md-service,erp-md-web` 155/155 绿 + grep 门控零残留；**先导试点结论（D6 判据）成立**：自身模块链全绿 + 闭包破坏仅限已登记耦合点（prj-dao 27/fin-dao 97 错 100% `_gen`，successor M2.7/M2.1 + M4.1 兜底，冻结总序维持）。偏差登记：`ErpMdWebPagesTest` 按已提交治理决策（plan 2026-07-24-0930-1 `@Tag("full-app")` + surefire excludedGroups）模块级排除，实证依赖全量 classpath（`/erp/xlib/control.xlib` 模块级缺失），页面校验 successor = M4.1 app-erp-all `ErpAllWebPagesTest`。平台 IoC 回归 test-scope delta 修复 + bug 登记 `docs/bugs/2026-08-21-nop-sequence-generator-ioc-self-wait-*.md`） | M0.1 + M1.3 |
 | M1.2 | notify 域迁移（跨域通知派发子系统，唯一无 orgId 域） | `todo` | M0.1 |
 
 ### Milestones M2/M3 — 域迁移（冻结总序，M0.1 冻结写回）
@@ -85,7 +86,7 @@
 - `stdSqlType` 全保持 BIGINT（工具仅改 `stdDataType`），DB DDL 零变化；CSV 种子、`NOP_SYS_SEQUENCE`（E2E `zz-sequence-advance.sql`）不受影响。**seq-string 行为已迁移前实证**（M0.1 Proof：`module-common-test` `TestSeqStringIdProof` 4/4 绿——无显式 id 保存 → String 非空；显式 `5L`/`"5"` → 存活且 String；BIGINT+string FK 形态列值 String 往返）。
 - 手写代码冲击面（08-21 复测）：`.getId()` 调用 **1176** 处/352 文件（`rg -c "\.getId\(\)" module-*/erp-*-service/src/main/java`）；`Long xxxId` 声明 **2586 行/2896 occurrence**；合计行口径 3740。跨域耦合面 205 文件/289 跨域边（清单见审计工件附录 A）。测试代码（request.json5、断言）与 E2E spec（`Number(lnk.voucherId)` 11 处、`Number(` 全量 **874**/105 文件、`eqFilter('id'` 36 处）需要同步修复——E2E 影响面清单见审计工件附录 F。
 - **`module-common-service` 组织隔离代码（新增基线）**：`ErpOrgContext.currentOrgId` 返回 `Long`（org/ErpOrgContext.java:30,44）、`ErpOrgIsolationOrmInterceptor.stampOrgId` 做 `orgId.equals(current)` 后写值（:50,:53）、`ErpOrgIsolationQueryTransformer` 构造 `FilterBeans.eq(orgId)`（:60-61）。orgId 是 226 列的真实 FK（工具 scan 标记 `NEEDS FIX`；orm.xml 中 `name="orgId"` 出现 404 次含 178 处 `<index>` 内索引成员引用，扣除后 = 226），迁移后 `Long.equals(String)` 恒 false → 隔离开启时每次 save 重复 stamp、QueryTransformer 过滤值类型错。这些代码走反射 API **不产生编译错误**，属 §3 语义陷阱类别，由 M1.3 工作项显式覆盖（**归属已指派，不再落入空白区**）。
-- **已核零存在面**：仓内无 sql-lib.xml / 手写 xbiz.xml / task.xml（xbiz 仅 `app-erp-all/_dump/` 运行时产物）；api 模块 19 个全部 codegen 生成件、零手写。**dao 模块惰性已逐域证实（M0.1，19/19 成立零证伪）**：dao 手写跨域 import 全量枚举——实体跨域 import 仅 crm-dao 3 文件（`IErpCrmLeadBiz`/`IErpCrmConversionBiz`/`IErpCrmProductConfiguratorBiz` 引入 md/sal 实体，类型级用法非 `.getId()` 赋 Long）+ 非实体跨域 import 4 行（pur/sal-dao 引入 `app.erp.md.biz.SettlementAllocation`、`app.erp.md.dao.daterange.IDateRange`），其余 16 域为零，交叉引用主体在 `_gen`；另 dao 层存在本域签名声明 Long 但语义指向他域实体的 FK 参数/字段 82 处/11 域（编译自洽，本域迁移时按语义陷阱门控显式翻转，清单见审计工件附录 C）。
+- **已核零存在面**：仓内无 sql-lib.xml / 手写 xbiz.xml / task.xml（xbiz 仅 `app-erp-all/_dump/` 运行时产物）；api 模块 19 个全部 codegen 生成件、零手写。**dao 模块惰性：手写层成立（M0.1 逐域证实）、生成件层已证伪（M1.1 执行，2026-08-21 M0 裁决修正）**：dao 手写跨域 import 全量枚举——实体跨域 import 仅 crm-dao 3 文件（`IErpCrmLeadBiz`/`IErpCrmConversionBiz`/`IErpCrmProductConfiguratorBiz` 引入 md/sal 实体，类型级用法非 `.getId()` 赋 Long）+ 非实体跨域 import 4 行（pur/sal-dao 引入 `app.erp.md.biz.SettlementAllocation`、`app.erp.md.dao.daterange.IDateRange`），其余 16 域为零；**但 `_gen/` 实体 to-one 关系胶水（`internalSetRefEntity(..., () -> setXxxId(refEntity.getId()))`）构成编译级跨域 id 耦合**——javac 权威计数 prj-dao 27 错/15 文件、fin-dao 97 错/32 文件（100% `_gen`，与 orm md 关系数 1:1），处置 = D3 已登记中间态 + D4 前向耦合登记册（M0.2）+ M4.1 兜底；另 dao 层存在本域签名声明 Long 但语义指向他域实体的 FK 参数/字段 82 处/11 域（编译自洽，本域迁移时按语义陷阱门控显式翻转，清单见审计工件附录 C）。
 - 模块级依赖 DAG 无环（Maven 156 模块可构建）；**域级合并依赖存在环**（如 assets↔finance：ast-dao→fin-dao 与 fin-service→ast-dao 交叉；purchase↔finance：pur-service→fin-service 与 fin-service→pur-dao；projects→finance：prj-service→ast-service→fin-service 与 fin-service→prj-dao）——**环全部是"合并域级"的 dao/service 交叉，编译级模块图无真环**（实测：compile 边 prj-service→ast-service 见 prj pom:52-57；sal→qa、mfg→qa 为 test-scope 边，qa 侧用 `test-mock-sales.beans.xml` 桩避免反向 test 依赖），由 M0.1 跨域审计裁决。
 
 ## Milestones
@@ -98,10 +99,10 @@ M0 是唯一包含顺序冻结门控的里程碑。M0.1 **已完成（2026-08-21
 
 每域一个原子工作项，标准结构（写入各 plan）：
 - **Phase 1**：回写 orm（M0.1 裁定机制三步）——① `node tools/check-bigint-id-types.mjs dry-run` 时点刷新；② `node tools/verify-id-fix-copy-diff.mjs module-<domain>` 新鲜度门控（零非 stdDataType 行）；③ 单文件落源 + `git diff` 审核仅 `stdDataType` 变化。**禁止盲 cp 静态副本、禁止用 apply 模式回写**。
-- **Phase 2**：增量重生成 + 主代码编译修复：`mvn clean install -pl <域模块> -am -DskipTests`（编译器错误即清单，逐条修复；`-Dmaven.test.skip=true` 先行隔离测试编译）。模块锚点用 `<域>/erp-<short>-api,<域>/erp-<short>-app`（M1.1 实测：`-pl module-<domain>` 聚合器不展开子模块恒绿 no-op；纠缠域见 M2.1 注记）。
-- **Phase 3**：测试代码修复 + **快照每域重录**（RECORDING→CHECKING，用户裁决——不依赖 Number 宽容）+ 域级测试：`mvn test -pl <域 service>,<域 web> -am`（web 页面测试须显式并入，M1.1 实测）。
+- **Phase 2**：增量重生成 + 主代码编译修复：`mvn clean install -pl <域>/erp-<short>-codegen,<域>/erp-<short>-dao,<域>/erp-<short>-meta,<域>/erp-<short>-service,<域>/erp-<short>-web,<域>/erp-<short>-app,<域>/erp-<short>-api -Dmaven.test.skip=true`（**D3 修订：自身模块链 7 模块显式列表、不带 `-am`**，上游经本地 Maven 仓库解析——硬前置 = 最后全绿基线 commit 的全量 install + 每个已完成域链 install；编译器错误即清单，逐条修复；`-Dmaven.test.skip=true` 先行隔离测试编译。原 `-pl <域>/erp-<short>-api,<域>/erp-<short>-app -am` 聚合锚点口径经 M1.1 rule-6 证伪废止：`-am` reactor 经 optional/test 边拉入未迁移域 dao，`_gen` 关系胶水对称耦合破坏）。
+- **Phase 3**：测试代码修复 + **快照每域重录**（RECORDING→CHECKING，用户裁决——不依赖 Number 宽容）+ 域级测试：`mvn test -pl <域>/erp-<short>-service,<域>/erp-<short>-web`（**D3 修订：不带 `-am`**；web 页面测试须显式并入，M1.1 实测）。
 - **Phase 4**：语义陷阱 grep 门控（见横切关注点 §3 + 审计工件附录 C 的本域语义 FK Long 参数清单）+ owner doc 注记 + 日志。
-- **verify**：域级 `mvn clean install -pl <域模块> -am -DskipTests` 全绿 + `mvn test -pl <域 service> -am` 全绿。**不跑全量构建**（中间态设计使然）。
+- **verify**：域级 `mvn clean install -pl <域 7 模块显式列表> -DskipTests` 全绿 + `mvn test -pl <域 service>,<域 web>` 全绿（**D3 修订：均不带 `-am`**）。**不跑全量构建**（中间态设计使然）。
 
 **预期技能**（写入各 plan 的 `Skill:` 行）：M0.1 → `orm-model-audit-prompt` + `cross-module-dependency-audit-prompt`；域迁移 plan → `nop-backend-dev` + `nop-testing`；M4.1 → `nop-testing` + `compliance-baseline-drift-adjudication-prompt`。
 
@@ -111,7 +112,7 @@ M0 是唯一包含顺序冻结门控的里程碑。M0.1 **已完成（2026-08-21
 
 ## Work Item Details
 
-- **M0.1**（已完成，2026-08-21）：① 工具裁定——per-domain 复制改为「时点 dry-run + 新鲜度门控」机制（`verify-id-fix-copy-diff.mjs`），apply 实测不回写源文件被否；② 依赖序冻结——`tools/freeze-id-migration-order.mjs` 解析全部 pom（compile/test 闭包分开建模；实测 Maven 3.9.12 `-am` reactor 含 test 闭包且遍历中间模块 test 边：sal-service `-am` = 49 模块），按判据「closure(D) ∩ 未迁移域 ⊆ 惰性模块 ∪ {自身}」迭代产出冻结总序（惰性层经实测扩展为 dao/codegen/meta/api/web：codegen/main 零手写、meta 零手写、api 全生成件、web 手写仅本域页面测试）；③ 跨域 id 调用点审计——19/19 惰性 dao 证实零证伪（跨域 import 仅 crm 3 文件类型级 + pur/sal 4 行非实体）、205 耦合文件/289 跨域边清单、dao 层语义 FK Long 参数 82 处/11 域（随域迁移翻转）、orgId 语义调用点全量清单（ErpOrgContext 外部调用唯一 = TestErpOrgIsolation:72）；④ Proofs——seq-string 行为实证（`module-common-test` `TestSeqStringIdProof` 4/4 绿）、E2E 影响面清单（`Number(` 874/105 文件、`Number(lnk.voucherId)` 11、`eqFilter('id'` 36）；⑤ 冻结序写回本路线图 + M1 内部序核验（md orm 6 个 orgId FK 列实证，M1.3 先于 M1.1 维持）。全部证据：`docs/audits/2026-08-21-1045-id-migration-m0-freeze-audit.md` + 附录。
+- **M0.1**（已完成，2026-08-21）：① 工具裁定——per-domain 复制改为「时点 dry-run + 新鲜度门控」机制（`verify-id-fix-copy-diff.mjs`），apply 实测不回写源文件被否；② 依赖序冻结——`tools/freeze-id-migration-order.mjs` 解析全部 pom（compile/test 闭包分开建模；实测 Maven 3.9.12 `-am` reactor 含 test 闭包且遍历中间模块 test 边：sal-service `-am` = 49 模块），按判据「closure(D) ∩ 未迁移域 ⊆ 惰性模块 ∪ {自身}」迭代产出冻结总序（惰性层经实测扩展为 dao/codegen/meta/api/web：codegen/main 零手写、meta 零手写、api 全生成件、web 手写仅本域页面测试）；③ 跨域 id 调用点审计——19/19 惰性 dao **手写层**证实零证伪（跨域 import 仅 crm 3 文件类型级 + pur/sal 4 行非实体）、205 耦合文件/289 跨域边清单、dao 层语义 FK Long 参数 82 处/11 域（随域迁移翻转）、orgId 语义调用点全量清单（ErpOrgContext 外部调用唯一 = TestErpOrgIsolation:72）——**【M0 裁决修正，2026-08-21】③ 的惰性结论在生成件层被 M1.1 执行证伪（prj-dao/fin-dao `_gen` 关系胶水 27+97 编译错误），修正与处置见 audit §10（Decision C 修正注 + §10.1）**；④ Proofs——seq-string 行为实证（`module-common-test` `TestSeqStringIdProof` 4/4 绿）、E2E 影响面清单（`Number(` 874/105 文件、`Number(lnk.voucherId)` 11、`eqFilter('id'` 36）；⑤ 冻结序写回本路线图 + M1 内部序核验（md orm 6 个 orgId FK 列实证，M1.3 先于 M1.1 维持）。全部证据：`docs/audits/2026-08-21-1045-id-migration-m0-freeze-audit.md` + 附录。
 - **M1.1 master-data**：全仓根域先导。覆盖 ~120 处被引用 + 全域手写代码 511 处 id 引用；验证「根域迁移后其 -am 闭包仍全绿」作为后续域顺序的 Proof 先例。
 - **M1.2 notify**：无业务域依赖的第二个根域。
 - **M1.3 common-service 组织隔离适配**（已完成，2026-08-21）：`ErpOrgContext`/`ErpOrgIsolationOrmInterceptor`/`ErpOrgIsolationQueryTransformer` 三文件的 orgId 处理改 String 语义（`currentOrgId`/`setCurrentOrgId` String 签名 + 过渡期宽容归一 `toStringValue`、stamp 前 String 归一比较、eq 过滤值 String）；grep 门控 `orgId.equals|FilterBeans.eq\([^,]*PROP_ORG_ID` 2 命中逐条核对 String 语义 + `Long` 零代码残留（2 处 Javadoc 历史注记例外）；新增 `TestErpOrgContext` 12 单测（转换矩阵 + config-gate），module 级 `mvn clean install -pl module-common-service -am -DskipTests` + `mvn test -pl module-common-service` 22/22 全绿。`TestErpOrgIsolation`（fin-service test）`setCurrentOrgId(ctx, 2L)` 编译破坏按中间态登记（successor = M2.1，M0.1 审计 §6 已标注）。证据：plan `docs/plans/2026-08-21-1045-2-bigint-id-m13-common-service-orgid-string.md`。
@@ -122,9 +123,11 @@ M0 是唯一包含顺序冻结门控的里程碑。M0.1 **已完成（2026-08-21
 
 ```mermaid
 graph TD
-    M0[M0.1 顺序冻结门控 done] --> M1_3[M1.3 common-service 适配]
-    M1_3 --> M1_1[M1.1 master-data]
+    M0[M0.1 顺序冻结门控 done] --> M1_3[M1.3 common-service 适配 done]
+    M1_3 --> M1_1[M1.1 master-data done]
+    M0 --> M0_2[M0.2 前向耦合登记册 M0 裁决新增]
     M0 --> M1_2[M1.2 notify]
+    M0_2 --> M1_2
     M1_1 --> SEQ[M2/M3 域迁移冻结总序 位次3-19]
     M1_2 --> SEQ
     SEQ --> M4[M4.1 全量收尾]
@@ -134,7 +137,7 @@ graph TD
 
 ## 横切关注点
 
-1. **中间态全量构建失败是设计使然**：M1-M3 期间 `mvn clean install`（无 `-pl`）预期失败（未迁移域源码调用已迁移域 String API 编译错误）。所有中间验证只允许域级 `-pl ... -am`。这是「如何避免修改后无法编译且通过测试」的核心答案：**每个 plan 的 verify 范围 = 目标域 + 其 -am 闭包**。闭包构成（实测）：已迁移域（全绿）+ 未迁移域的**惰性 dao 模块**（无手写跨域实体 import，Long 自洽可编译）——M0.1 审计 ③ 逐域证实该假设，证伪则调整顺序；**不包含未迁移下游域的 service 模块**（-am 只向上游构建）。顺序冻结保证闭包内不存在「未迁移 service 引用已迁移域类型」的组合。
+1. **中间态全量构建失败是设计使然**：M1-M3 期间 `mvn clean install`（无 `-pl`）预期失败（未迁移域源码调用已迁移域 String API 编译错误）。所有中间验证只允许**域级自身模块链**口径。这是「如何避免修改后无法编译且通过测试」的核心答案：**每个 plan 的 verify 范围 = 目标域自身模块链（显式列表、不带 `-am`，上游经本地 Maven 仓库解析）**（**D3 修订，2026-08-21 M0 裁决**；原「目标域 + 其 -am 闭包」口径经 M1.1 执行证伪后废止——`-am` reactor 会经 optional/test 边拉入未迁移域 dao 模块，其 `_gen` 生成件 to-one 关系胶水存在**对称**编译级 id 耦合，任一端先行迁移都破坏、重生成无法修复、唯两端同时 String 才自愈，详见 audit §10）。进入 `-am` reactor 的未迁移域模块破坏为**已登记中间态**（登记义务：破坏模块清单 + successor 指针 + 逐模块 javac 错误点清单证明 100% 位于 `_gen` 或已登记手写前向边；前向耦合清册归 M0.2 登记册），由 successor 域 plan 愈合，M4.1 兜底全量恢复；**不包含未迁移下游域的 service 模块**。已知登记中间态：陈旧 jar 二进制不兼容（本地仓未迁移 dao jar 引用旧 `getId()` 签名，跨迁移边关系遍历运行路径在 M4.1 前可能 NoSuchMethodError，域级测试按设计不跨这些边界）；no-am 测试 classpath 的 VFS 模块集变化（失去 optional fin/notify orm 模型，回退方案 = seq-proof-yaml 模块禁用模式）。
 2. **编译器驱动修复**：类型迁移类错误（`Long id` 参数、`.getId()` 赋 Long、`setXxxId(Long)`）由编译器强制报告，遗漏必被编译阻断（对齐 `2026-07-03-2108-1` dict int→string 先例的风险 (a)）。
 3. **语义陷阱 grep 门控**（编译器不报错的隐蔽 bug，对齐 dict 先例风险 (b)）：`Long` 装箱 `==`/`!=` 比较、`.longValue()`/`Long.parseLong()`、`Map<Long,...>` 键、`String.format("%d")`、E2E `Number(id)`；`sql-lib.xml` 的 `:id` 参数条目保留但已核仓内零存在（执行时注明即可）。每域 plan Phase 4 用 grep 清单清零。**common-service 的反射路径 orgId 语义（`orgId.equals`、`FilterBeans.eq(orgId)`）单独归 M1.3，不依赖各域 plan**。
 4. **快照与 E2E**：JUnit 快照（`_cases/`）**每域 plan 固定重录**（RECORDING→CHECKING，用户裁决——不依赖 `JsonMatchHelper` Number 宽容；实测 35/291 输出快照含数字实体 id，重录后全部以 String 形态落盘）；Playwright E2E 套件统一在 M4.1 修复（`Number(lnk.voucherId)` 11 处等），中途不跑 E2E。
@@ -146,10 +149,10 @@ graph TD
 
 1. 工作项状态只存在于本表；M0.1 通过独立草案审查 + 双独立子 agent 批准后转 `ready`，其余工作项仅在其依赖顺序前置项 `done` 后转 `ready`。
 2. 每域 plan 执行前必须已有独立 plan-audit（保护区域要求）+ 结束审计；审计证据保留在 plan 文件。
-3. 每域 plan 的 build verify 严格执行「域级 `-am`」口径，**不得**以全量构建作为中间 gate；全量构建仅存在于 M4.1 的 Closure Gates。
+3. 每域 plan 的 build/test verify 严格执行**域级自身模块链**口径（**D3 修订，2026-08-21 M0 裁决**：`-pl <域 7 模块显式列表>` 不带 `-am`，上游经本地 Maven 仓库解析——硬前置 = 最后全绿基线 commit 的全量 install + 每个已完成域链 install；迁移中途 fresh clone 须锚定最后全绿基线 commit 而非 HEAD），**不得**以全量构建作为中间 gate；全量构建仅存在于 M4.1 的 Closure Gates。进入 `-am` reactor 的未迁移域模块（经 optional test 边或直接编译依赖）其编译破坏为已登记中间态：每域 plan 登记 (i) 破坏模块清单 + successor 指针 + (ii) 逐模块 javac 错误点清单证明 100% 位于 `_gen` 或已登记手写前向边，由 successor 愈合、M4.1 兜底。
 4. 只修改目标域的 `orm.xml`；`delVersion` 等非 PK/FK BIGINT 列保持 `long` 不动（工具已防御性限定）。
 5. 禁止手动编辑任何生成件（`_gen/`、`_` 前缀、`*DaoConstants` 等）；类型修复全部落在手写代码。
-6. 顺序由 M0.1 冻结；执行中发现冻结顺序不可行（某域 -am 闭包出现未迁移域引用已迁移域类型的编译错误）时**停止该 plan**，回报 M0 裁决（调整顺序或合并域 plan），不自行重排。
+6. 顺序由 M0.1 冻结（**冻结总序经 M0 裁决 D6 维持不变**）；执行中发现冻结顺序不可行（未迁移域引用已迁移域类型的编译错误且超出登记范围）时**停止该 plan**，回报 M0 裁决（调整顺序或合并域 plan），不自行重排。**D4 修订（2026-08-21 M0 裁决）**：登记册（M0.2 产出，各域 plan 登记）内预先登记的自身链破坏**不触发** rule-6 停止（已登记中间态，successor 愈合 + M4.1 兜底）；未登记破坏仍触发。
 7. 语义陷阱 grep 门控（§3 清单）在每域 plan Phase 4 清零后才可声明完成。
 8. 每个完成的工作项更新 `docs/logs/{year}/{month}-{day}.md`；M4.1 更新 `domain-design-guidelines.md` §16A 已知偏离表与 `known-good-baselines.md`。
 
