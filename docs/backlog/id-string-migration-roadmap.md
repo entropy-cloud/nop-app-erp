@@ -1,6 +1,6 @@
 # 主键/外键 stdDataType string 化迁移路线图（BIGINT PK/FK → String）
 
-> 最后更新：2026-08-21（**M1.1 done**：先导试点按 D6 判据成立（自身模块链全绿 + 闭包破坏仅限已登记 `_gen` 耦合点，successor M2.7/M2.1 + M4.1），冻结总序维持，详见 plan `2026-08-21-1045-3`；下一可执行项 = M0.2 前向耦合登记册（M1.2 前置）→ M1.2 notify。此前同日：M0 裁决 Decision D 落盘（D3 闭包收窄/D4 登记册/D6 判据修订）、M1.1 rule-6 停止与恢复、M0.1 done 冻结序写回、M1.3 done）
+> 最后更新：2026-08-21（**M0.2 done**：前向耦合登记册 254 active 条目 + 工具豁免机制 + 每域消费协议落盘，详见 plan `2026-08-21-1657-1` 与「M0.2 产出指针」；下一可执行项 = M1.2 notify（登记册走查结论：零前向义务 + 零退役义务 + 后向被引用清单，见 plan Phase 3）。此前同日：M1.1 done（先导试点 D6 判据成立）、M0 裁决 Decision D 落盘（D3 闭包收窄/D4 登记册/D6 判据修订）、M1.1 rule-6 停止与恢复、M0.1 done 冻结序写回、M1.3 done）
 > 来源：用户请求（「将主键和外键的数据类型全部改成 string」）+ `nop-entropy/docs-for-ai/02-core-guides/orm-model-design.md` §主键设计强制规则
 > 现状：`tools/check-bigint-id-types.mjs` scan/dry-run 可用（19 文件、1662 列、零残留、幂等，08-21 权威口径）；`apply` 模式经实测**不回写源文件**，回写一律走「时点 dry-run + 新鲜度门控」机制（见 §框架/平台复用）。副本在 `_tmp/bigint-id-string-fix/`（08-21 全量刷新，**未回写任何源文件**）。M0.1 产出：冻结序脚本 + 审计工件 + seq-string Proof（module-common-test 4/4 绿）。详见 `docs/audits/2026-08-21-1045-id-migration-m0-freeze-audit.md`。
 
@@ -25,9 +25,11 @@
 | Work Item | 描述 | 状态 | 依赖 |
 | --- | --- | --- | --- |
 | M0.1 | 工具 scope 化 + 依赖序冻结 + 跨域 id 调用点审计 + Proofs（seq-string 行为 / E2E 影响） | `done`（2026-08-21：plan `docs/plans/2026-08-21-1045-1-bigint-id-m0-order-freeze-audit-proofs.md` 四 Phase 完成 + 独立结束审计 `passes closure audit`，ses_fdd7d3f54ffeuesGsgCqk2so5J） | — |
-| M0.2 | 前向耦合登记册（**M0 裁决 D5(d) 新增，M1.2 之前执行**）：19 orm refEntityName 跨域图 × 冻结序系统扫描（orm 级已双审清 = fin→prj 6 列 + hr→prj 2 列恰 2 簇）+ M0 审计附录 A 205 文件 service 耦合 id 流向全量复核 + `check-bigint-id-types.mjs` 豁免机制实现（登记册延后列 `残留 ⊆ 登记册` scan 门控例外），产出每域登记册（含 disposition：orm 级列延后 / service 级临时桥接），后续每个域 plan 起草强制消费 | `todo` | M0.1 ✅（M1.2 前执行） |
+| M0.2 | 前向耦合登记册（**M0 裁决 D5(d) 新增，M1.2 之前执行**）：19 orm refEntityName 跨域图 × 冻结序系统扫描（orm 级已双审清 = fin→prj 6 列 + hr→prj 2 列恰 2 簇）+ M0 审计附录 A 205 文件 service 耦合 id 流向全量复核 + `check-bigint-id-types.mjs` 豁免机制实现（登记册延后列 `残留 ⊆ 登记册` scan 门控例外），产出每域登记册（含 disposition：orm 级列延后 / service 级临时桥接），后续每个域 plan 起草强制消费 | `done`（2026-08-21，plan `docs/plans/2026-08-21-1657-1-bigint-id-m02-forward-coupling-registry.md` 三 Phase 完成 + 独立结束审计 `passes closure audit`（ses_fdb9a38d7ffeV343h80hI006iM，证据见 plan Closure 节）：orm 图 640 边机器化复扫 = 恰 2 前向簇（fin→prj 6 + hr→prj 2，行号逐行吻合 M0 裁决 §10.1）；service 前向清册 94 main 编译级 + 30 test 文件；登记册 254 active 条目（含后向指针 122 强制登记）；两工具豁免机制 + fail-closed + 负面测试 4 项全过（scan = 1586 NEEDS FIX + 8 DEFERRED + md 0）；M1.2 notify 消费走查可直读。产出指针见下） | M0.1 ✅ |
 
 **M0.1 产出指针**：冻结序脚本 `tools/freeze-id-migration-order.mjs`（compile/test 闭包分开建模，`--edges`/`--why`/`--format json`）；回写新鲜度门控 `tools/verify-id-fix-copy-diff.mjs`；跨域耦合扫描器 `tools/scan-cross-domain-id-coupling.mjs`（各域 plan Phase 2/4 grep 门控复用）；审计工件 `docs/audits/2026-08-21-1045-id-migration-m0-freeze-audit.md`（冻结序/闭包构成/惰性 dao 结论/`-am` 实测/Proof/裁定）+ 附录 `docs/audits/2026-08-21-1045-id-migration-m0-cross-domain-coupling-appendix.md`（205 耦合文件 file:line / dao 语义 FK 清单 / orgId 调用点 / 计数复测 / E2E 影响面清单附录 F）；seq-string Proof = `module-common-test` 的 `TestSeqStringIdProof`（4/4 绿，方案 B 三断言迁移前实证）。
+
+**M0.2 产出指针（前向耦合登记册 + 消费协议，各域 plan 强制）**：机器可读权威 `tools/id-migration-registry.json5`（254 active 条目 = orm-column-deferral 8 + service-bridge main 94/test 30 + backward-pointer main 60/test 62；退役后转手工维护权威）；人类可读逐域汇编 `docs/audits/2026-08-21-1657-id-m02-forward-coupling-registry.md`（§1 消费协议 + §2 总览矩阵 + §6 逐域 A 前向义务/B 退役义务/C 消费集）；扫描器 `tools/scan-id-coupling-directions.mjs`（`--registry-out` 对账复核用，勿覆盖登记册）+ 证据 JSON（orm 图 640 边 / coupling-directions main 300 对 + test 434 文件）。**消费协议**：① 各域 plan 起草与 Phase 1 强制消费本域条目全集（A1 列延后保持 long——dry-run 已豁免不翻转；A2 main 桥接 = 早域 plan 加 String→Long 桥 + grep 例外；A3 test 桥接 = 早域 plan Phase 3 测试适配；C 后向指针 = 编译器驱动修复/测试适配定位面）；② 退役：M2.7 翻转 prj orm 时同批翻转 fin 6 列 + hr 2 列并退役 orm-deferral-001..008，main 桥接由晚域 plan 翻转 IBiz 参数时退役（test 桥接由早域自身 plan 退役）；③ 工具门控（scan/dry-run/新鲜度门控）仅消费 active orm-column-deferral 条目，登记册缺失/不可解析 fail-closed 非零退出；④ 规则 6 联动（D4 修订）：登记册内预登记的自身链破坏不触发停止，未登记破坏仍触发。
 
 ### Milestone M1 — 根域 + 跨域基础设施迁移（先迁移，被全部业务域 R 引用）
 
@@ -98,7 +100,7 @@ M0 是唯一包含顺序冻结门控的里程碑。M0.1 **已完成（2026-08-21
 ### M1-M3 — 逐域迁移
 
 每域一个原子工作项，标准结构（写入各 plan）：
-- **Phase 1**：回写 orm（M0.1 裁定机制三步）——① `node tools/check-bigint-id-types.mjs dry-run` 时点刷新；② `node tools/verify-id-fix-copy-diff.mjs module-<domain>` 新鲜度门控（零非 stdDataType 行）；③ 单文件落源 + `git diff` 审核仅 `stdDataType` 变化。**禁止盲 cp 静态副本、禁止用 apply 模式回写**。
+- **Phase 1**：回写 orm（M0.1 裁定机制三步）——① `node tools/check-bigint-id-types.mjs dry-run` 时点刷新；② `node tools/verify-id-fix-copy-diff.mjs module-<domain>` 新鲜度门控（零非 stdDataType 行）；③ 单文件落源 + `git diff` 审核仅 `stdDataType` 变化。**禁止盲 cp 静态副本、禁止用 apply 模式回写**。**M0.2 登记册强制消费**：起草与 Phase 1 消费本域条目全集（A1 延后列不翻转——工具已按登记册豁免；A2/A3 桥接 disposition 写入本 plan；见「M0.2 产出指针」）。
 - **Phase 2**：增量重生成 + 主代码编译修复：`mvn clean install -pl <域>/erp-<short>-codegen,<域>/erp-<short>-dao,<域>/erp-<short>-meta,<域>/erp-<short>-service,<域>/erp-<short>-web,<域>/erp-<short>-app,<域>/erp-<short>-api -Dmaven.test.skip=true`（**D3 修订：自身模块链 7 模块显式列表、不带 `-am`**，上游经本地 Maven 仓库解析——硬前置 = 最后全绿基线 commit 的全量 install + 每个已完成域链 install；编译器错误即清单，逐条修复；`-Dmaven.test.skip=true` 先行隔离测试编译。原 `-pl <域>/erp-<short>-api,<域>/erp-<short>-app -am` 聚合锚点口径经 M1.1 rule-6 证伪废止：`-am` reactor 经 optional/test 边拉入未迁移域 dao，`_gen` 关系胶水对称耦合破坏）。
 - **Phase 3**：测试代码修复 + **快照每域重录**（RECORDING→CHECKING，用户裁决——不依赖 Number 宽容）+ 域级测试：`mvn test -pl <域>/erp-<short>-service,<域>/erp-<short>-web`（**D3 修订：不带 `-am`**；web 页面测试须显式并入，M1.1 实测）。
 - **Phase 4**：语义陷阱 grep 门控（见横切关注点 §3 + 审计工件附录 C 的本域语义 FK Long 参数清单）+ owner doc 注记 + 日志。
@@ -125,7 +127,7 @@ M0 是唯一包含顺序冻结门控的里程碑。M0.1 **已完成（2026-08-21
 graph TD
     M0[M0.1 顺序冻结门控 done] --> M1_3[M1.3 common-service 适配 done]
     M1_3 --> M1_1[M1.1 master-data done]
-    M0 --> M0_2[M0.2 前向耦合登记册 M0 裁决新增]
+    M0 --> M0_2[M0.2 前向耦合登记册 done]
     M0 --> M1_2[M1.2 notify]
     M0_2 --> M1_2
     M1_1 --> SEQ[M2/M3 域迁移冻结总序 位次3-19]
