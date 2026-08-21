@@ -1,6 +1,6 @@
 # 主键/外键 stdDataType string 化迁移路线图（BIGINT PK/FK → String）
 
-> 最后更新：2026-08-21（**M1.2 done**：notify 域迁移四 Phase 完成，plan `2026-08-21-1657-2`，见 M1.2 行证据摘要；冻结序位次 3（aps）解锁。此前同日：M0.2 done（前向耦合登记册 254 active 条目 + 工具豁免机制，plan `2026-08-21-1657-1`）、M1.1 done（先导试点 D6 判据成立）、M0 裁决 Decision D 落盘（D3 闭包收窄/D4 登记册/D6 判据修订）、M1.1 rule-6 停止与恢复、M0.1 done 冻结序写回、M1.3 done）
+> 最后更新：2026-08-21（**M3.9 done**：aps 域迁移四 Phase 完成，plan `2026-08-21-2025-1`，见 M2/M3 表位次 3 行证据摘要；冻结序位次 4（b2b）解锁。此前同日：M1.2 done（notify，plan `2026-08-21-1657-2`）、M0.2 done（前向耦合登记册，plan `2026-08-21-1657-1`）、M1.1 done（先导试点 D6 判据成立）、M0 裁决 Decision D 落盘（D3 闭包收窄/D4 登记册/D6 判据修订）、M1.1 rule-6 停止与恢复、M0.1 done 冻结序写回、M1.3 done）
 > 来源：用户请求（「将主键和外键的数据类型全部改成 string」）+ `nop-entropy/docs-for-ai/02-core-guides/orm-model-design.md` §主键设计强制规则
 > 现状：`tools/check-bigint-id-types.mjs` scan/dry-run 可用（19 文件、1662 列、零残留、幂等，08-21 权威口径）；`apply` 模式经实测**不回写源文件**，回写一律走「时点 dry-run + 新鲜度门控」机制（见 §框架/平台复用）。副本在 `_tmp/bigint-id-string-fix/`（08-21 全量刷新，**未回写任何源文件**）。M0.1 产出：冻结序脚本 + 审计工件 + seq-string Proof（module-common-test 4/4 绿）。详见 `docs/audits/2026-08-21-1045-id-migration-m0-freeze-audit.md`。
 
@@ -47,7 +47,7 @@
 
 | 位次 | Work Item | 域 | 状态 | 依赖（精确前置） |
 | --- | --- | --- | --- | --- |
-| 3 | M3.9 | aps | `todo` | M1.1 + M1.2 |
+| 3 | M3.9 | aps | `done`（2026-08-21，plan `docs/plans/2026-08-21-2025-1-bigint-id-m39-aps-migration.md` 四 Phase 完成：26 列落源（自有 25 = PK 7 + FK 18 + notGenCode md stub 1，新鲜度门控 + git diff + 工具重扫三重证明）+ 7 模块链 no-am main 绿（dao 7 文件 IBiz/值对象 + service 12 文件 Long 语义修复；`_gen` md org 关系胶水自 M1.1 登记中间态自愈）+ A2 前向桥接 15 条落桥（inv 4/mfg 11，ConvertHelper 双向转换 + 代码内 bridge 注释，退役 owner M2.2/M3.1）+ A3 test 桥接 4 条退役（bridge-test-103..106）+ C1/C2 后向兑付（notify String API 零编译破坏核证 + 2 测试文件适配）+ 测试修复 10 文件 + 快照重录 RECORDING→CHECKING（32 内容 diff = json5 id 引号 String 形态 + CSV R1.87 四列刷新 + CRLF；103 新增 table 快照落盘；1 处墙钟 payload 单元格 `*` 通配确定性修正）+ `mvn test -pl erp-aps-service,erp-aps-web` 76/76 绿 ×2（web 0 tests 治理排除，successor M4.1）+ grep 门控零残留（A2 桥接为登记例外）；平台 IoC 回归 self-wait 复现，test-scope VFS delta 修复（successor 平台修复后移除）+ DeltaOverride 测试 delta-layer 补 default 层集） | M1.1 + M1.2 |
 | 4 | M3.8 | b2b | `todo` | M1.1 + M1.2 |
 | 5 | M3.6 | contract | `todo` | M1.1 + M1.2 |
 | 6 | M2.1 | finance（service 锚点闭包仅依赖 md/notify service；被 12 域 service compile 依赖；web/app 重生成延后至位次 12 后） | `todo` | M1.1 + M1.2 |
