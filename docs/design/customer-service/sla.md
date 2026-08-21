@@ -27,7 +27,7 @@
 | isActive | 是否激活 | — |
 | description | 说明 | 🟢 Axelor Sla.description |
 
-> **实现注记（RC-R1.67，plan `2026-08-17-2125-3`）**：`escalationUserId`/`secondEscalationUserId` 已落地 ORM（`ErpCsSlaPolicy` propId 10/18，BIGINT(long)，非 `stdDomain=userId` 的 VARCHAR(36)——通知 ctx 值统一 stringify 归一化）；`escalationDelayHours` 已落地（propId 19，可空 INTEGER——非空时优先，null 回退 config `erp-cs.escalation-l1-to-l2-hours` 默认 2）。
+> **实现注记（RC-R1.67，plan `2026-08-17-2125-3`）**：`escalationUserId`/`secondEscalationUserId` 已落地 ORM（`ErpCsSlaPolicy` propId 10/18，BIGINT(long)，非 `stdDomain=userId` 的 VARCHAR(36)——通知 ctx 值统一 stringify 归一化）；`escalationDelayHours` 已落地（propId 19，可空 INTEGER——非空时优先，null 回退 config `erp-cs.escalation-l1-to-l2-hours` 默认 2）。（**2026-08-22 注记**：cs 域主键/外键 Java 层已 String 化（plan `2026-08-22-0002-3`）——propId 10/18 现为 `stdDataType="string"`（DB 列保持 BIGINT），Java 侧以 String 流转。）
 
 ### 1.2 SLA 策略匹配规则
 
@@ -349,7 +349,7 @@ ErpHolidayCalendar（节假日日历）
 - **§1.3 deadline 计算**：日历小时模式 `now + resolveHours`（days 折算 24h/天）；工作日模式仅跳周末（Sat/Sun），不含 `workingHourStart/End` 工作时段窗口与节假日日历（ORM 无 workingHour 字段，`ErpHolidayCalendar` 未确认存在）。精确工时累计与法定节假日准确截止归 Non-Goal。
 - **§2.1 计时起止**：`startDateTime = 首次 IN_PROGRESS 时间`（start 动作设置，非 NEW 创建时）；`duration = resolve 时 now - startDateTime`（分钟）。
 - **§2.2 暂停/恢复机制**：归 Non-Goal（无 `ErpCsTicketSlaPause` 实体与 `adjustedDeadlineDateTime` 列）。
-- **§3.1-3.2 超时升级**：多级升级链已实现（RC-R1.67，plan `2026-08-17-2125-3`；原「仅 L1、L2/L3 归 Non-Goal」标注失效移除）——`ErpCsTicket` 加 `lastEscalationLevel/escalationCount/lastEscalationAt`（propId 203-205）+ `ErpCsSlaPolicy` 加 `secondEscalationUserId/escalationDelayHours`（propId 18/19，2026-08-12 A 类批量裁决授权纯加性）；完整判定式/重复上限解释/跳级/封顶语义见 §3.2 实现注记。`escalationUserId` 类型为 BIGINT(long)，非 `stdDomain=userId` 的 VARCHAR(36)。
+- **§3.1-3.2 超时升级**：多级升级链已实现（RC-R1.67，plan `2026-08-17-2125-3`；原「仅 L1、L2/L3 归 Non-Goal」标注失效移除）——`ErpCsTicket` 加 `lastEscalationLevel/escalationCount/lastEscalationAt`（propId 203-205）+ `ErpCsSlaPolicy` 加 `secondEscalationUserId/escalationDelayHours`（propId 18/19，2026-08-12 A 类批量裁决授权纯加性）；完整判定式/重复上限解释/跳级/封顶语义见 §3.2 实现注记。`escalationUserId` 类型为 BIGINT(long)，非 `stdDomain=userId` 的 VARCHAR(36)。（**2026-08-22 注记**：Java 层已 String 化（plan `2026-08-22-0002-3`），`stdDataType="string"`、DB 列保持 BIGINT。）
 - **§3.4 预警**：`findSlaWarnings(beforeMinutes)` 查询 `deadlineDateTime BETWEEN now AND now+beforeMinutes`（dateTimeBetween）且未完成，供 nop-job 调用；cron 实际注册归 Non-Goal（Follow-up：生产部署需定时自动触发时接 nop-job）。
 - **§5.2 节假日日历**：`ErpHolidayCalendar` 未确认存在，首版不接入。
 - **配置默认值**：`erp-cs.sla-enabled=true`、`erp-cs.sla-warning-before=60`（分钟）、`erp-cs.auto-assign-on-create=true`。

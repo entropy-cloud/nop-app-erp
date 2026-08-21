@@ -343,6 +343,12 @@ A3 test 桥接（5 条；本域 plan Phase 3 修复本域测试时适配，随�
 | bridge-test-115 | `module-cs/erp-cs-service/src/test/java/app/erp/cs/service/TestErpCsTicketCreateEnrichment.java` | ErpCrmTeam(crm) @L10, ErpCrmTeamMember(crm) @L11 | M3.5 |
 | bridge-test-116 | `module-cs/erp-cs-service/src/test/java/app/erp/cs/service/TestMockCrmBizModels.java` | IErpCrmTeamBiz(crm) @L3, IErpCrmTeamMemberBiz(crm) @L4, ErpCrmTeam(crm) @L5, ErpCrmTeamMember(crm) @L6 | M3.5 |
 | bridge-test-117 | `module-cs/erp-cs-service/src/test/java/app/erp/cs/service/TestMockQaBizModels.java` | IErpQaNonConformanceBiz(quality) @L3, ErpQaNonConformance(quality) @L4, ErpQaRecall(quality) @L5 | M3.5 |
+| bridge-test-135 | `module-cs/erp-cs-service/src/test/java/app/erp/cs/service/TestErpCsQualityEscalation.java` | IErpQaNonConformanceBiz(quality) FQN 内联 @L78 + app-test-mock-qa.beans.xml:11 ioc:type FQN | M3.5 |
+| bridge-test-136 | `module-cs/erp-cs-service/src/test/resources/_vfs/erp/cs/beans/app-test-mock-crm.beans.xml` | IErpCrmTeamBiz(crm) ioc:type FQN @L11, IErpCrmTeamMemberBiz(crm) ioc:type FQN @L15 | M3.5 |
+
+> **扫描器盲区追注（M3.5 cs plan Phase 1 FQN 复扫补登，2026-08-22）**：bridge-test-135/136 为 import 口径扫描器盲区（FQN 内联字段引用与 beans 资源 ioc:type 不产生 import 语句），与 §6.4/§6.7 已追注的 A3' 盲区同类；复扫命令口径 `rg 'app\.erp\.(hr|inv|mnt|prj|pur|sal|qa|crm|drp|log|mfg)\.' module-cs/erp-cs-service/src/test`（排除 import 行），命中 4 处全部落入 114/116/117 已登记文件面或其 mock 基建，随批（owner M3.5）Phase 3 适配退役。
+
+> **A3 退役记录（M3.5 cs plan 2026-08-22-0002-3 Phase 3 兑付，2026-08-22）**：bridge-test-113..117 + 135/136 共 7 条 status → retired（json5 权威已更新）。兑付形态：113/115 = crm seed 局部桥（Long 实体侧自洽 + cs String 转换消费，退役 owner M3.4）；114/135 = qa 断言局部桥（Long 常量断言 qa save-map Long 值，退役 owner M2.3）；116/136 = crm mock 桩保持 Long 签名（与未迁移 crm jar 一致，M3.4 随 mock 回收）；117 = qa mock 桩保持 Long 签名（M2.3 随 mock 回收）。读路径核验 = cs 域级测试 185/185 全绿。C1/C2（backward-144/145/203/204）successor 义务同批兑付（md String 直传 / notify 签名不变零破坏，证据落 plan Phase 2/3），backward-pointer 条目按登记册口径保持 active 作引用清单。A2 main 8 条（bridge-main-053..060）保持 active，退役 owner M3.4（crm 4）/M2.3（qa 4）。
 
 **B. 退役/翻转义务（作为晚域）**
 
