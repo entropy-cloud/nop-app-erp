@@ -1,0 +1,6 @@
+# seq-string Proof 载体 (a) 测试专用配置（M0.1 Phase 3）
+# module-common-test 的 optional 依赖 fin-dao/notify-dao 使其 orm 模块进入 VFS，
+# 但外部实体类（ast 等 6 域 dao）不在本模块 test classpath —— SchemaInitializer
+# 创建 persist driver 时 NoClassDefFound。Proof 仅需本测试模块 erp/tst，禁用两个业务 orm 模块。
+# 注：module name 为 moduleId 的 '/'→'-' 形态（ResourceHelper.getModuleName）。
+nop.core.module.disabled-module-names: erp-fin,erp-notify

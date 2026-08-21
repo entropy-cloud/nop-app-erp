@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- seq-string 行为 Proof 专用 orm（M0.1 Phase 3 载体 (a)）：
+     BIGINT 主键 + stdDataType="string" + tagSet="seq-default"（平台 orm-model-design.md §主键设计方案 B），
+     FK 形态列 refId 同配（BIGINT + string，无关系声明）。DynamicOrmEntity 免实体类。 -->
+<orm x:schema="/nop/schema/orm/orm.xdef" xmlns:x="/nop/schema/xdsl.xdef">
+    <entities>
+    <entity name="ErpTstSeqProof" tableName="erp_tst_seq_proof" displayName="seq-string Proof 实体"
+            className="io.nop.orm.support.DynamicOrmEntity" notGenCode="true">
+        <columns>
+            <column name="id" code="ID" displayName="ID" propId="1" stdSqlType="BIGINT" stdDataType="string"
+                    primary="true" mandatory="true" tagSet="seq-default"/>
+            <column name="code" code="CODE" displayName="编码" propId="2" stdSqlType="VARCHAR" precision="64"/>
+            <column name="refId" code="REF_ID" displayName="引用ID(FK形态)" propId="3" stdSqlType="BIGINT" stdDataType="string"/>
+        </columns>
+    </entity>
+    </entities>
+</orm>
