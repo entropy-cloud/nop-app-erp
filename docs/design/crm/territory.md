@@ -219,6 +219,7 @@
 ### 1. Lead 加性列 `territoryId`
 
 - 经 Phase 1 Decision 落地：`ErpCrmLead` 新增可空 `territoryId`(propId 41, BIGINT, stdDataType=long) + to-one `territory` + 索引 `IDX_CRM_LEAD_TERRITORY_ID`。改动为加性可空列（无数据回填、无破坏性变更），经 codegen 重生成 `erp-crm-dao` + `erp-crm-meta`。替代方案「不新增列，分配仅回写 teamId/ownerId」被拒绝：区域维度在 Lead 上丢失，管道报表无法按 Lead 区域下钻。
+  - **注（2026-08-23，plan 2026-08-22-2311-1 M3.4 主键/外键 string 化）**：本条所述 `stdDataType=long` 为落地时点形态；现 `territoryId` 已随 crm 域迁移翻转为 `stdDataType=string`（stdSqlType 保持 BIGINT，DDL 零变化），Java 侧类型为 `String`。id-string-migration-roadmap M3.4。
 - 分配规则匹配出 territoryId 后回写 `lead.territoryId`；管理员可经 `reassignLead` 手动覆盖。
 
 ### 2. 团队成员模型 + 挑人算法（已实现，plan 2026-08-16-1634-1 RC-R1.57）
