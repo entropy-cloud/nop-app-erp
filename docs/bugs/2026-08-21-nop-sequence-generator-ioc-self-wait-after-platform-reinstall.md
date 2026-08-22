@@ -36,3 +36,10 @@
 - 修复（hr 侧 2026-08-22 落地）：`module-hr/erp-hr-service/src/test/resources/_vfs/_delta/default/erp/common/beans/app-service.beans.xml`——`nopDataAuthChecker` 的 daoProvider 注入改 XML 显式 `ioc:lazy-property="true"`（`x:override="replace"`，根元素 `x:extends="super"` 保全同文件其余 bean，含 E4.2 MaskAuditRecorder）。ErpRoleDataAuthChecker 为 config-gated 默认关闭（getFilter→null），运行期延迟注入零语义影响。hr 237/237 绿 ×2 实证。
 - 同款兑付登记：aps/fin（M2.2 plan `2026-08-22-0731-2` Phase 3，76/76 + 497/497 复跑绿）+ **ast（M3.2 plan `2026-08-22-0731-3` Phase 3，mnt jar 重装后 classpath 时序变化复现——TestErpAstPostingReverse 等 17 类；同款 delta 落位后 320/320 基线维持）**。
 - successor：其他域（md/notify/b2b/contract/cs…凡依赖 common-service）测试再现本环时按同款 delta 处理（或平台修复 nopDaoProvider/ormTemplate 豁免后统一移除全部兼容层 delta——归 M4.1 复核）。
+
+## 2026-08-23 M4.1 复核（plan `2026-08-23-0434-1` Phase 1 Decision）
+
+- **第一环（nopSequenceGenerator）平台修复已落地**：上游 nop-entropy commit `d2c8e7ed42`（2026-08-22，「sequenceGenerator ref 加 ignore-depends 断开声明环」）——live 源码 `nop-persistence/nop-orm/src/main/resources/_vfs/nop/orm/beans/orm-defaults.beans.xml:42` 实证 `<property name="sequenceGenerator" ref="nopSequenceGenerator" ioc:ignore-depends="true"/>`。
+- **第二环（nopDataAuthChecker → nopDaoProvider → nopOrmTemplate → sessionFactory）平台未修复**：同文件 `nopDaoProvider`（:56-59）ctor-arg ref `nopOrmTemplate` 仍无 lazy/ignore-depends 豁免；该文件最后一次变更即第一环修复，其后无跟进。
+- **裁决：保持全部兼容层 delta（首环 ×9 域 + 第二环 ×9 域）**。理由：两环 delta 为同一「平台重装引发初始化顺序回归」兼容层族，整体移除触发条件（bug 登记原文「平台修复 nopDaoProvider/ormTemplate 豁免后统一移除全部兼容层 delta」）未满足；首环 delta 虽因平台 ignore-depends 冗余化，但 x:override replace + lazy-property 形态无害且与第二环 delta 同生共管，拆分移除收益为零、回归风险非零。替代方案（仅移除首环 delta + 九域复跑）被否决：验证成本 = 9 域全量测试复跑，兑付收益 = 零行为变化。风险：平台未来落地第二环修复后需一次性回收 18 个 delta 文件（触发条件维持登记）。
+- **md/notify 第二环 delta 补位（2026-08-23）**：M4.1 统一回收 md/notify 首环 delta 的 `x:extends="super"` 后，被整文件替换屏蔽的第二环路径恢复暴露（md 21 类 self-wait 实证），按 hr 先例落位 `erp/common/beans/app-service.beans.xml` 第二 delta；md 155/155 + notify 23/23 复跑绿。九域第二 delta 在位面：aps/ast/b2b/ct/cs/fin/hr/md/notify。
