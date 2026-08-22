@@ -212,6 +212,7 @@ Exit Criteria:
 ## Closure
 
 Status Note: 2026-08-22 执行完成（四 Phase 全绿收口：136 列落源三重证明 + 7 模块链 main 绿 + 237/237 域级测试 ×2 + grep 门控/page.yaml/收尾登记；平台 IoC 回归两段落 delta 处置并登记 bug 补记）。
+Deferred 兑付追注（2026-08-22，M2.7 plan `2026-08-22-1302-1`）：hr 2 条 A1 延后列（orm-deferral-007/008，ErpHrTimesheetLine.projectId/taskId）已同批翻转 String + hr 7 模块链重建绿（零手写修复面——本计划预测验证）+ 早域复跑 237/237 基线维持。
 
 Closure Audit Evidence:
 

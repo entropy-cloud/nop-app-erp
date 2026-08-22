@@ -258,6 +258,7 @@ Execution Record §Phase 4（2026-08-22）:
 ## Closure
 
 Status Note: completed（2026-08-22。四 Phase 全部执行完毕；独立结束审计 `passes closure audit`（0 BLOCKER / 0 MAJOR / 2 MINOR，均已处置：MINOR-1 = Current Baseline/Phase 1 记录的延后列行号 `:517/:958/:1361/:1417/:1859/:2063` 为起草时点行号，落源后文件行号漂移为 `:495/:932/:1343/:1398/:1836/:2046`（实体身份与列集实质一致，审计 live 复核确认）；MINOR-2 = ErpFinBudgetControlLog.projectId 观察项登记 Deferred But Adjudicated（M2.7 核对写入点无双重转换））。
+Deferred 兑付追注（2026-08-22，M2.7 plan `2026-08-22-1302-1`）：6 条 A1 延后列（orm-deferral-001..006）已同批翻转 String + **web/app 延后补做已兑现**（fin-web/fin-app 首次 String 形态 7 链重建绿 + page.yaml `:Long` 清零复核 + YAML 良构）；MINOR-2 观察项核对结论 = 无双重转换面（writeControlLog 不写 projectId 列）；早域复跑 497/497 基线维持。
 
 Closure Audit Evidence:
 
