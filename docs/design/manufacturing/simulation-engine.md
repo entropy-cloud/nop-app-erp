@@ -115,6 +115,7 @@ ErpMfgMrpScenario（场景，1）           ErpDrpScenario（DRP 同构）
 
 ```java
 public class SimulationVersionComparator {
+    // 注（2026-08-22，plan 2026-08-22-1302-3 M3.1 id-string 迁移）：版本 id 已 String 化，现签名为 compareMrpVersions(String versionIdA, String versionIdB)
     public SimulationDiffResult compareMrpVersions(Long versionIdA, Long versionIdB) {
         // 1. 加载两版本的 computedMrpPlanId → ErpMfgMrpPlanLine 集合
         // 2. 按 materialId 对齐（union 键集）
@@ -136,7 +137,7 @@ public class SimulationVersionComparator {
 
 ### 核心约束（Current Baseline 经仓库核实）
 
-`MrpEngine.runMrp(Long planId, List<ErpMfgMrpDemand> demands)`（`MrpEngine.java:77`）签名**无覆盖上下文参数**。lot size 读全局 `AppConfig.var(ErpMfgConstants.CONFIG_MRP_DEFAULT_LOT_SIZE)`（`lotSize():159-163`）；制造提前期读全局 `AppConfig.var(CONFIG_MFG_LEADTIME_DAYS_PER_ROUTING_HOUR)`（`mfgLeadDays():173-185`）；采购提前期读主数据 `ErpMdMaterial.getLeadTimeDays()`（`purLeadDays():191-196`）。safety stock 在上游 `DemandAggregator.collectSafetyStockDemands:123-150` 整合（读 `ErpMdMaterial.getSafetyStock()`）。
+`MrpEngine.runMrp(Long planId, List<ErpMfgMrpDemand> demands)`（`MrpEngine.java:77`；注（2026-08-22，plan 2026-08-22-1302-3 M3.1 id-string 迁移）：planId 已 String 化，现为 `runMrp(String planId, ...)`）签名**无覆盖上下文参数**。lot size 读全局 `AppConfig.var(ErpMfgConstants.CONFIG_MRP_DEFAULT_LOT_SIZE)`（`lotSize():159-163`）；制造提前期读全局 `AppConfig.var(CONFIG_MFG_LEADTIME_DAYS_PER_ROUTING_HOUR)`（`mfgLeadDays():173-185`）；采购提前期读主数据 `ErpMdMaterial.getLeadTimeDays()`（`purLeadDays():191-196`）。safety stock 在上游 `DemandAggregator.collectSafetyStockDemands:123-150` 整合（读 `ErpMdMaterial.getSafetyStock()`）。
 
 **约束含义**：仿真"参数覆盖不改主数据、不动单次引擎代码路径"**无法经纯包装实现**。
 
@@ -288,6 +289,7 @@ DRP 侧与 MRP 侧完全同构，仅参数类型字典与覆盖目标不同：
   lineDiffs: [{ materialId, netRequirementA/B/Delta, plannedQuantityA/B/Delta }],
   totalNetRequirementDelta, totalPlannedQuantityDelta, totalPurchaseAmountDelta,
   shortageOnlyInA: [Long], shortageOnlyInB: [Long], shortageInBoth: [Long] }
+// 注（2026-08-22，plan 2026-08-22-1302-3 M3.1 id-string 迁移）：versionIdA/B 与 shortage* 集合内 materialId 已 String 化（shortageOnlyInA: [String] 等）
 ```
 
 **DRP `compareVersions`** → `DrpSimulationDiffResult`（2 维）：
