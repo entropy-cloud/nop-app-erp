@@ -19,7 +19,7 @@
             <cols>
 
                 <!--ID-->
-                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="id" mandatory="true" sortable="true"/>
 
                 <!--方案编码-->
                 <col id="code" mandatory="true" sortable="true"/>
@@ -28,10 +28,10 @@
                 <col id="name" mandatory="true" sortable="true"/>
 
                 <!--核算组织-->
-                <col id="orgId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="orgId" mandatory="true" sortable="true"/>
 
                 <!--账套-->
-                <col id="acctSchemaId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="acctSchemaId" mandatory="true" sortable="true"/>
 
                 <!--预算年度-->
                 <col id="fiscalYear" mandatory="true" ui:number="true" sortable="true"/>
@@ -40,7 +40,7 @@
                 <col id="scenarioType" mandatory="true" sortable="true"/>
 
                 <!--源方案(调整预算版本链)-->
-                <col id="parentScenarioId" ui:number="true" sortable="true"/>
+                <col id="parentScenarioId" sortable="true"/>
 
                 <!--生效日期-->
                 <col id="validFrom" sortable="true"/>
@@ -49,7 +49,7 @@
                 <col id="validTo" sortable="true"/>
 
                 <!--币种-->
-                <col id="currencyId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="currencyId" mandatory="true" sortable="true"/>
 
                 <!--汇率-->
                 <col id="exchangeRate" ui:number="true" sortable="true"/>
@@ -70,7 +70,7 @@
                 <col id="approveStatus" mandatory="true" sortable="true"/>
 
                 <!--关联预算凭证ID-->
-                <col id="voucherId" ui:number="true" sortable="true"/>
+                <col id="voucherId" sortable="true"/>
 
                 <!--备注-->
                 <col id="remark" sortable="true"/>

@@ -41,7 +41,7 @@ public class ProjectSettlementPostingDispatcher {
     public boolean tryPost(ErpPrjProjectSettlement settlement) {
         PostingEvent event = buildEvent(settlement);
         try {
-            Long voucherId = executor.postEvent(event);
+            String voucherId = executor.postEvent(event);
             return voucherId != null;
         } catch (Exception e) {
             if (e instanceof NopException) {
@@ -75,7 +75,7 @@ public class ProjectSettlementPostingDispatcher {
      * 与主结算过账失败隔离语义区分——返还是用户显式操作，失败显式抛
      * {@link ErpPrjErrors#ERR_RETENTION_RETURN_POSTING_FAILED}（不吞异常）。
      */
-    public Long postRetentionReturn(ErpPrjProjectSettlement settlement) {
+    public String postRetentionReturn(ErpPrjProjectSettlement settlement) {
         PostingEvent event = buildReturnEvent(settlement);
         try {
             return executor.postEvent(event);
@@ -129,7 +129,7 @@ public class ProjectSettlementPostingDispatcher {
         return event;
     }
 
-    private Long resolveAcctSchemaId(Long orgId) {
+    private String resolveAcctSchemaId(String orgId) {
         return AcctSchemaResolver.resolvePrimarySchemaId(daoProvider, orgId);
     }
 

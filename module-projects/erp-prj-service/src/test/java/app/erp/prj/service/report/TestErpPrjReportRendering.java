@@ -37,8 +37,8 @@ public class TestErpPrjReportRendering extends JunitAutoTestCase {
 
     private static final io.nop.core.context.IServiceContext CTX = new io.nop.core.context.ServiceContextImpl();
 
-    static final Long ORG_ID = 1L;
-    static final Long CURRENCY_ID = 1L;
+    static final String ORG_ID = "1";
+    static final String CURRENCY_ID = "1";
     static final String PROJECT_STATUS_OPEN = "OPEN";
     static final String TIMESHEET_STATUS_APPROVED = "APPROVED";
 
@@ -156,7 +156,7 @@ public class TestErpPrjReportRendering extends JunitAutoTestCase {
 
     private void seedProjectBaseline() {
         ormTemplate.runInSession(() -> {
-            seedProject(5001L, "PRJ-CST-1", "成本汇总报表项目",
+            seedProject("5001", "PRJ-CST-1", "成本汇总报表项目",
                     bd("10000"), bd("4000"), PROJECT_STATUS_OPEN,
                     LocalDate.of(2026, 7, 1), LocalDate.of(2026, 7, 31));
         });
@@ -164,19 +164,19 @@ public class TestErpPrjReportRendering extends JunitAutoTestCase {
 
     private void seedTimesheetBaseline() {
         ormTemplate.runInSession(() -> {
-            Long projectId = 5002L;
+            String projectId = "5002";
             seedProject(projectId, "PRJ-TS-1", "工时明细报表项目",
                     bd("5000"), bd("700"), PROJECT_STATUS_OPEN,
                     LocalDate.of(2026, 7, 1), LocalDate.of(2026, 7, 31));
             // 同员工 2 行：hours 8/6, costAmount 400/300
-            seedTimesheet(6001L, projectId, 7001L, "TS-RPT-1",
+            seedTimesheet("6001", projectId, "7001", "TS-RPT-1",
                     LocalDate.of(2026, 7, 10), bd("8"), bd("400"));
-            seedTimesheet(6002L, projectId, 7001L, "TS-RPT-2",
+            seedTimesheet("6002", projectId, "7001", "TS-RPT-2",
                     LocalDate.of(2026, 7, 11), bd("6"), bd("300"));
         });
     }
 
-    private void seedProject(Long id, String code, String name, BigDecimal budget, BigDecimal actualCost,
+    private void seedProject(String id, String code, String name, BigDecimal budget, BigDecimal actualCost,
                              String status, LocalDate startDate, LocalDate endDate) {
         IEntityDao<ErpPrjProject> dao = daoProvider.daoFor(ErpPrjProject.class);
         ErpPrjProject p = new ErpPrjProject();
@@ -195,7 +195,7 @@ public class TestErpPrjReportRendering extends JunitAutoTestCase {
         dao.saveEntity(p);
     }
 
-    private void seedTimesheet(Long id, Long projectId, Long userId, String code,
+    private void seedTimesheet(String id, String projectId, String userId, String code,
                                LocalDate workDate, BigDecimal hours, BigDecimal costAmount) {
         IEntityDao<ErpPrjTimesheet> dao = daoProvider.daoFor(ErpPrjTimesheet.class);
         ErpPrjTimesheet t = new ErpPrjTimesheet();

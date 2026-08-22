@@ -81,8 +81,8 @@ public class ErpPrjTaskBizModel extends CrudBizModel<ErpPrjTask> implements IErp
         if (task == null || task.getDependsOnId() == null) {
             return;
         }
-        Long taskId = task.getId();
-        Long dependsOnId = task.getDependsOnId();
+        String taskId = task.getId();
+        String dependsOnId = task.getDependsOnId();
 
         if (taskId != null && taskId.equals(dependsOnId)) {
             throw new NopException(ErpPrjErrors.ERR_TASK_SELF_DEPENDENCY)
@@ -110,7 +110,7 @@ public class ErpPrjTaskBizModel extends CrudBizModel<ErpPrjTask> implements IErp
 
     @Override
     @BizMutation
-    public ErpPrjTask startTask(@Name("taskId") Long taskId, IServiceContext context) {
+    public ErpPrjTask startTask(@Name("taskId") String taskId, IServiceContext context) {
         ErpPrjTask task = requireEntity(String.valueOf(taskId), null, context);
         String status = task.getStatus();
         assertCan("start", taskId, status, ErpPrjConstants.TASK_STATUS_IN_PROGRESS);
@@ -124,7 +124,7 @@ public class ErpPrjTaskBizModel extends CrudBizModel<ErpPrjTask> implements IErp
 
     @Override
     @BizMutation
-    public ErpPrjTask completeTask(@Name("taskId") Long taskId, IServiceContext context) {
+    public ErpPrjTask completeTask(@Name("taskId") String taskId, IServiceContext context) {
         ErpPrjTask task = requireEntity(String.valueOf(taskId), null, context);
         String status = task.getStatus();
         assertCan("complete", taskId, status, ErpPrjConstants.TASK_STATUS_DONE);
@@ -136,7 +136,7 @@ public class ErpPrjTaskBizModel extends CrudBizModel<ErpPrjTask> implements IErp
 
     @Override
     @BizMutation
-    public ErpPrjTask blockTask(@Name("taskId") Long taskId,
+    public ErpPrjTask blockTask(@Name("taskId") String taskId,
                                 @Name("blockReason") String blockReason,
                                 IServiceContext context) {
         ErpPrjTask task = requireEntity(String.valueOf(taskId), null, context);
@@ -155,7 +155,7 @@ public class ErpPrjTaskBizModel extends CrudBizModel<ErpPrjTask> implements IErp
 
     @Override
     @BizMutation
-    public ErpPrjTask unblockTask(@Name("taskId") Long taskId, IServiceContext context) {
+    public ErpPrjTask unblockTask(@Name("taskId") String taskId, IServiceContext context) {
         ErpPrjTask task = requireEntity(String.valueOf(taskId), null, context);
         String status = task.getStatus();
         assertCan("unblock", taskId, status, ErpPrjConstants.TASK_STATUS_IN_PROGRESS);
@@ -169,7 +169,7 @@ public class ErpPrjTaskBizModel extends CrudBizModel<ErpPrjTask> implements IErp
      * 校验前置任务完成（task-dag.md §4.3）。STRICT 模式拦截，WARN 模式仅告警放行。
      */
     private void validatePredecessorDone(ErpPrjTask task) {
-        Long dependsOnId = task.getDependsOnId();
+        String dependsOnId = task.getDependsOnId();
         if (dependsOnId == null) {
             return;
         }
@@ -195,7 +195,7 @@ public class ErpPrjTaskBizModel extends CrudBizModel<ErpPrjTask> implements IErp
 
     @Override
     @BizQuery
-    public List<ErpPrjTask> findPredecessors(@Name("taskId") Long taskId, IServiceContext context) {
+    public List<ErpPrjTask> findPredecessors(@Name("taskId") String taskId, IServiceContext context) {
         if (taskId == null) {
             return new ArrayList<>();
         }
@@ -205,17 +205,17 @@ public class ErpPrjTaskBizModel extends CrudBizModel<ErpPrjTask> implements IErp
 
     @Override
     @BizQuery
-    public List<ErpPrjTask> findSuccessors(@Name("taskId") Long taskId, IServiceContext context) {
+    public List<ErpPrjTask> findSuccessors(@Name("taskId") String taskId, IServiceContext context) {
         List<ErpPrjTask> result = new ArrayList<>();
         if (taskId == null) {
             return result;
         }
-        Set<Long> visited = new HashSet<>();
+        Set<String> visited = new HashSet<>();
         visited.add(taskId);
-        Queue<Long> queue = new ArrayDeque<>();
+        Queue<String> queue = new ArrayDeque<>();
         queue.offer(taskId);
         while (!queue.isEmpty()) {
-            Long current = queue.poll();
+            String current = queue.poll();
             for (ErpPrjTask successor : findDirectSuccessors(current)) {
                 if (visited.contains(successor.getId())) {
                     continue;
@@ -230,7 +230,7 @@ public class ErpPrjTaskBizModel extends CrudBizModel<ErpPrjTask> implements IErp
 
     @Override
     @BizQuery
-    public List<ErpPrjTask> getDependencyChain(@Name("taskId") Long taskId, IServiceContext context) {
+    public List<ErpPrjTask> getDependencyChain(@Name("taskId") String taskId, IServiceContext context) {
         return findPredecessors(taskId, context);
     }
 
@@ -238,7 +238,7 @@ public class ErpPrjTaskBizModel extends CrudBizModel<ErpPrjTask> implements IErp
      * 下行直接后继（dependsOnId == taskId 的所有任务）。经 daoProvider 直接查询，
      * 用于 {@link #findSuccessors} 的 BFS 递归反查。
      */
-    private List<ErpPrjTask> findDirectSuccessors(Long taskId) {
+    private List<ErpPrjTask> findDirectSuccessors(String taskId) {
         IEntityDao<ErpPrjTask> dao = daoProvider().daoFor(ErpPrjTask.class);
         return dao.findAllByQuery(new io.nop.api.core.beans.query.QueryBean().addFilter(eq("dependsOnId", taskId)));
     }
@@ -247,7 +247,7 @@ public class ErpPrjTaskBizModel extends CrudBizModel<ErpPrjTask> implements IErp
 
     @Override
     @BizQuery
-    public Map<String, Object> findBoardData(@Optional @Name("projectId") Long projectId, IServiceContext context) {
+    public Map<String, Object> findBoardData(@Optional @Name("projectId") String projectId, IServiceContext context) {
         QueryBean query = new QueryBean();
         query.setLimit(200);
         if (projectId != null) {
@@ -314,7 +314,7 @@ public class ErpPrjTaskBizModel extends CrudBizModel<ErpPrjTask> implements IErp
         return node;
     }
 
-    private ErpPrjTask loadTask(Long taskId) {
+    private ErpPrjTask loadTask(String taskId) {
         if (taskId == null) {
             return null;
         }
@@ -326,7 +326,7 @@ public class ErpPrjTaskBizModel extends CrudBizModel<ErpPrjTask> implements IErp
      * 经 StateMachine Bean 断言来源态合法；非法边（Bean 报告 common 层码）映射为领域
      * {@code ERR_TASK_ILLEGAL_STATUS_TRANSITION} + 任务编号/上下文，common 码作 cause 保留（契约 §7）。
      */
-    private void assertCan(String action, Long taskId, String from, String target) {
+    private void assertCan(String action, String taskId, String from, String target) {
         try {
             switch (action) {
                 case "start":
@@ -349,11 +349,11 @@ public class ErpPrjTaskBizModel extends CrudBizModel<ErpPrjTask> implements IErp
         }
     }
 
-    private NopException illegalTransition(Long taskId, String current, String target) {
+    private NopException illegalTransition(String taskId, String current, String target) {
         return illegalTransition(taskId, current, target, null);
     }
 
-    private NopException illegalTransition(Long taskId, String current, String target, Throwable cause) {
+    private NopException illegalTransition(String taskId, String current, String target, Throwable cause) {
         return new NopException(ErpPrjErrors.ERR_TASK_ILLEGAL_STATUS_TRANSITION, cause)
                 .param(ErpPrjErrors.ARG_TASK_ID, taskId)
                 .param(ErpPrjErrors.ARG_CURRENT_STATUS, current)

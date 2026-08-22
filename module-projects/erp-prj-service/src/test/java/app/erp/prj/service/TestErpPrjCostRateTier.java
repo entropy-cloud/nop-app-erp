@@ -72,12 +72,12 @@ public class TestErpPrjCostRateTier extends JunitAutoTestCase {
     @Test
     public void testUserTierOverridesActivityType() {
         // 用户级费率 500 命中，覆盖活动类型 300（tier ② > tier ④）
-        Long tsId = ormTemplate.runInSession(session -> {
+        String tsId = ormTemplate.runInSession(session -> {
             clearGlobalRate();
-            Long projectId = seedProject("R1-60-001", ErpPrjConstants.PROJECT_STATUS_OPEN);
-            Long activityTypeId = seedActivityType("DEV-001", "开发", "300");
-            Long taskId = seedTask(projectId, "任务-001", ErpPrjConstants.TASK_STATUS_IN_PROGRESS);
-            Long empId = seedEmployee();
+            String projectId = seedProject("R1-60-001", ErpPrjConstants.PROJECT_STATUS_OPEN);
+            String activityTypeId = seedActivityType("DEV-001", "开发", "300");
+            String taskId = seedTask(projectId, "任务-001", ErpPrjConstants.TASK_STATUS_IN_PROGRESS);
+            String empId = seedEmployee();
             seedProjectMember(projectId, empId, null, "500");
             return seedTimesheet("TS-001", projectId, taskId, activityTypeId, empId, "10", null);
         });
@@ -92,12 +92,12 @@ public class TestErpPrjCostRateTier extends JunitAutoTestCase {
     @Test
     public void testRoleTierBelowUserTier() {
         // 用户级 500 与角色级 400 并存 → 用户级胜（角色级低于用户级）；角色级高于活动类型 300
-        Long tsId = ormTemplate.runInSession(session -> {
+        String tsId = ormTemplate.runInSession(session -> {
             clearGlobalRate();
-            Long projectId = seedProject("R1-60-002", ErpPrjConstants.PROJECT_STATUS_OPEN);
-            Long activityTypeId = seedActivityType("DEV-002", "开发", "300");
-            Long taskId = seedTask(projectId, "任务-002", ErpPrjConstants.TASK_STATUS_IN_PROGRESS);
-            Long empId = seedEmployee();
+            String projectId = seedProject("R1-60-002", ErpPrjConstants.PROJECT_STATUS_OPEN);
+            String activityTypeId = seedActivityType("DEV-002", "开发", "300");
+            String taskId = seedTask(projectId, "任务-002", ErpPrjConstants.TASK_STATUS_IN_PROGRESS);
+            String empId = seedEmployee();
             seedRole("SENIOR", "高级工程师", "400");
             seedProjectMember(projectId, empId, "SENIOR", "500");
             return seedTimesheet("TS-002", projectId, taskId, activityTypeId, empId, "10", null);
@@ -111,12 +111,12 @@ public class TestErpPrjCostRateTier extends JunitAutoTestCase {
     @Test
     public void testUserMissingFallsBackToRoleTier() {
         // 用户级 costRate 缺失（null）→ 回落角色级 400（覆盖活动类型 300）
-        Long tsId = ormTemplate.runInSession(session -> {
+        String tsId = ormTemplate.runInSession(session -> {
             clearGlobalRate();
-            Long projectId = seedProject("R1-60-003", ErpPrjConstants.PROJECT_STATUS_OPEN);
-            Long activityTypeId = seedActivityType("DEV-003", "开发", "300");
-            Long taskId = seedTask(projectId, "任务-003", ErpPrjConstants.TASK_STATUS_IN_PROGRESS);
-            Long empId = seedEmployee();
+            String projectId = seedProject("R1-60-003", ErpPrjConstants.PROJECT_STATUS_OPEN);
+            String activityTypeId = seedActivityType("DEV-003", "开发", "300");
+            String taskId = seedTask(projectId, "任务-003", ErpPrjConstants.TASK_STATUS_IN_PROGRESS);
+            String empId = seedEmployee();
             seedRole("SENIOR", "高级工程师", "400");
             seedProjectMember(projectId, empId, "SENIOR", null);
             return seedTimesheet("TS-003", projectId, taskId, activityTypeId, empId, "10", null);
@@ -132,12 +132,12 @@ public class TestErpPrjCostRateTier extends JunitAutoTestCase {
     @Test
     public void testGlobalFallbackWhenAllTiersMissing() {
         // 无成员行 + 活动类型无费率 → 回落全局 config 250
-        Long tsId = ormTemplate.runInSession(session -> {
+        String tsId = ormTemplate.runInSession(session -> {
             System.setProperty(ErpPrjConstants.CONFIG_DEFAULT_LABOR_COST_RATE, "250");
-            Long projectId = seedProject("R1-60-004", ErpPrjConstants.PROJECT_STATUS_OPEN);
-            Long activityTypeId = seedActivityType("DEV-NO-RATE", "开发-无费率", null);
-            Long taskId = seedTask(projectId, "任务-004", ErpPrjConstants.TASK_STATUS_IN_PROGRESS);
-            Long empId = seedEmployee();
+            String projectId = seedProject("R1-60-004", ErpPrjConstants.PROJECT_STATUS_OPEN);
+            String activityTypeId = seedActivityType("DEV-NO-RATE", "开发-无费率", null);
+            String taskId = seedTask(projectId, "任务-004", ErpPrjConstants.TASK_STATUS_IN_PROGRESS);
+            String empId = seedEmployee();
             return seedTimesheet("TS-004", projectId, taskId, activityTypeId, empId, "10", null);
         });
 
@@ -149,12 +149,12 @@ public class TestErpPrjCostRateTier extends JunitAutoTestCase {
     @Test
     public void testTimesheetRateOverridesAllTiers() {
         // 单填 800 覆盖全链（用户 500 / 角色 400 / 活动类型 300），Phase 1 D2 裁决 A：显式录入优先
-        Long tsId = ormTemplate.runInSession(session -> {
+        String tsId = ormTemplate.runInSession(session -> {
             clearGlobalRate();
-            Long projectId = seedProject("R1-60-005", ErpPrjConstants.PROJECT_STATUS_OPEN);
-            Long activityTypeId = seedActivityType("DEV-005", "开发", "300");
-            Long taskId = seedTask(projectId, "任务-005", ErpPrjConstants.TASK_STATUS_IN_PROGRESS);
-            Long empId = seedEmployee();
+            String projectId = seedProject("R1-60-005", ErpPrjConstants.PROJECT_STATUS_OPEN);
+            String activityTypeId = seedActivityType("DEV-005", "开发", "300");
+            String taskId = seedTask(projectId, "任务-005", ErpPrjConstants.TASK_STATUS_IN_PROGRESS);
+            String empId = seedEmployee();
             seedRole("SENIOR", "高级工程师", "400");
             seedProjectMember(projectId, empId, "SENIOR", "500");
             return seedTimesheet("TS-005", projectId, taskId, activityTypeId, empId, "10", "800");
@@ -168,12 +168,12 @@ public class TestErpPrjCostRateTier extends JunitAutoTestCase {
     @Test
     public void testNullUserAndRoleRatesSkipped() {
         // 成员行存在但 costRate null + 角色实体 costRate null → 两级跳过，回落活动类型 300
-        Long tsId = ormTemplate.runInSession(session -> {
+        String tsId = ormTemplate.runInSession(session -> {
             clearGlobalRate();
-            Long projectId = seedProject("R1-60-006", ErpPrjConstants.PROJECT_STATUS_OPEN);
-            Long activityTypeId = seedActivityType("DEV-006", "开发", "300");
-            Long taskId = seedTask(projectId, "任务-006", ErpPrjConstants.TASK_STATUS_IN_PROGRESS);
-            Long empId = seedEmployee();
+            String projectId = seedProject("R1-60-006", ErpPrjConstants.PROJECT_STATUS_OPEN);
+            String activityTypeId = seedActivityType("DEV-006", "开发", "300");
+            String taskId = seedTask(projectId, "任务-006", ErpPrjConstants.TASK_STATUS_IN_PROGRESS);
+            String empId = seedEmployee();
             seedRole("SENIOR", "高级工程师", null);
             seedProjectMember(projectId, empId, "SENIOR", null);
             return seedTimesheet("TS-006", projectId, taskId, activityTypeId, empId, "10", null);
@@ -206,12 +206,12 @@ public class TestErpPrjCostRateTier extends JunitAutoTestCase {
     @Test
     public void testCostRateNotAvailableWhenAllTiersMissing() {
         // 单填空 + 成员/角色费率 null + 活动类型无费率 + 全局 config 清空 → 抛 ERR_COST_RATE_NOT_AVAILABLE
-        Long tsId = ormTemplate.runInSession(session -> {
+        String tsId = ormTemplate.runInSession(session -> {
             clearGlobalRate();
-            Long projectId = seedProject("R1-60-007", ErpPrjConstants.PROJECT_STATUS_OPEN);
-            Long activityTypeId = seedActivityType("DEV-NONE", "开发-无费率", null);
-            Long taskId = seedTask(projectId, "任务-007", ErpPrjConstants.TASK_STATUS_IN_PROGRESS);
-            Long empId = seedEmployee();
+            String projectId = seedProject("R1-60-007", ErpPrjConstants.PROJECT_STATUS_OPEN);
+            String activityTypeId = seedActivityType("DEV-NONE", "开发-无费率", null);
+            String taskId = seedTask(projectId, "任务-007", ErpPrjConstants.TASK_STATUS_IN_PROGRESS);
+            String empId = seedEmployee();
             seedRole("SENIOR", "高级工程师", null);
             seedProjectMember(projectId, empId, "SENIOR", null);
             return seedTimesheet("TS-007", projectId, taskId, activityTypeId, empId, "10", null);
@@ -228,12 +228,12 @@ public class TestErpPrjCostRateTier extends JunitAutoTestCase {
         System.clearProperty(ErpPrjConstants.CONFIG_DEFAULT_LABOR_COST_RATE);
     }
 
-    private Long seedTimesheet(String code, Long projectId, Long taskId, Long activityTypeId,
-                               Long userId, String hours, String costRate) {
+    private String seedTimesheet(String code, String projectId, String taskId, String activityTypeId,
+                               String userId, String hours, String costRate) {
         IEntityDao<ErpPrjTimesheet> dao = daoProvider.daoFor(ErpPrjTimesheet.class);
         ErpPrjTimesheet ts = new ErpPrjTimesheet();
         ts.setCode(code);
-        ts.setOrgId(1L);
+        ts.setOrgId("1");
         ts.setProjectId(projectId);
         ts.setTaskId(taskId);
         ts.setUserId(userId);
@@ -241,31 +241,31 @@ public class TestErpPrjCostRateTier extends JunitAutoTestCase {
         ts.setWorkDate(LocalDate.of(2026, 7, 15));
         ts.setHours(hours != null ? new BigDecimal(hours) : null);
         ts.setCostRate(costRate != null ? new BigDecimal(costRate) : null);
-        ts.setCurrencyId(1L);
+        ts.setCurrencyId("1");
         ts.setStatus(ErpPrjConstants.APPROVE_STATUS_UNSUBMITTED);
         dao.saveEntity(ts);
         return ts.getId();
     }
 
-    private Long seedEmployee() {
+    private String seedEmployee() {
         IEntityDao<ErpMdEmployee> dao = daoProvider.daoFor(ErpMdEmployee.class);
         ErpMdEmployee emp = new ErpMdEmployee();
         emp.setCode("EMP-" + System.nanoTime());
         emp.setName("测试员工");
-        emp.setOrgId(1L);
+        emp.setOrgId("1");
         emp.setStatus(ErpMdConstants.ACTIVE_STATUS_ACTIVE);
         dao.saveEntity(emp);
         return emp.getId();
     }
 
-    private Long seedProject(String code, String status) {
+    private String seedProject(String code, String status) {
         IEntityDao<ErpPrjProject> dao = daoProvider.daoFor(ErpPrjProject.class);
         ErpPrjProject p = new ErpPrjProject();
         p.setCode(code);
         p.setName("成本率测试-" + code);
-        p.setOrgId(1L);
+        p.setOrgId("1");
         p.setProjectTypeId(seedProjectType());
-        p.setCurrencyId(1L);
+        p.setCurrencyId("1");
         p.setStatus(status);
         p.setBudget(new BigDecimal("100000"));
         p.setActualCost(BigDecimal.ZERO);
@@ -273,7 +273,7 @@ public class TestErpPrjCostRateTier extends JunitAutoTestCase {
         return p.getId();
     }
 
-    private Long seedProjectType() {
+    private String seedProjectType() {
         IEntityDao<ErpPrjProjectType> dao = daoProvider.daoFor(ErpPrjProjectType.class);
         ErpPrjProjectType t = new ErpPrjProjectType();
         t.setCode("PT-R1-60-" + System.nanoTime());
@@ -282,7 +282,7 @@ public class TestErpPrjCostRateTier extends JunitAutoTestCase {
         return t.getId();
     }
 
-    private Long seedTask(Long projectId, String title, String status) {
+    private String seedTask(String projectId, String title, String status) {
         IEntityDao<ErpPrjTask> dao = daoProvider.daoFor(ErpPrjTask.class);
         ErpPrjTask task = new ErpPrjTask();
         task.setProjectId(projectId);
@@ -292,7 +292,7 @@ public class TestErpPrjCostRateTier extends JunitAutoTestCase {
         return task.getId();
     }
 
-    private Long seedActivityType(String code, String name, String costRate) {
+    private String seedActivityType(String code, String name, String costRate) {
         IEntityDao<ErpPrjActivityType> dao = daoProvider.daoFor(ErpPrjActivityType.class);
         ErpPrjActivityType a = new ErpPrjActivityType();
         a.setCode(code);
@@ -311,7 +311,7 @@ public class TestErpPrjCostRateTier extends JunitAutoTestCase {
         dao.saveEntity(role);
     }
 
-    private void seedProjectMember(Long projectId, Long userId, String role, String costRate) {
+    private void seedProjectMember(String projectId, String userId, String role, String costRate) {
         IEntityDao<ErpPrjProjectUser> dao = daoProvider.daoFor(ErpPrjProjectUser.class);
         ErpPrjProjectUser member = new ErpPrjProjectUser();
         member.setProjectId(projectId);

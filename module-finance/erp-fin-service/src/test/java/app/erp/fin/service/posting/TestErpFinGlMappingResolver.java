@@ -351,7 +351,7 @@ public class TestErpFinGlMappingResolver extends JunitAutoTestCase {
 
     private void seedRule(String code, String businessType, String accountKey, String acctSchemaId,
                           String partnerGroupId, String materialCategoryId, String warehouseId, String departmentId,
-                          Long projectId, String orgId, String targetSubjectCode, int priority) {
+                          String projectId, String orgId, String targetSubjectCode, int priority) {
         IEntityDao<ErpFinGlMappingRule> dao = daoProvider.daoFor(ErpFinGlMappingRule.class);
         ErpFinGlMappingRule rule = new ErpFinGlMappingRule();
         rule.setCode(code);

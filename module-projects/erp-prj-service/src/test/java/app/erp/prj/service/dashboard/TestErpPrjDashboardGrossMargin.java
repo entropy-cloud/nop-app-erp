@@ -51,7 +51,7 @@ public class TestErpPrjDashboardGrossMargin extends JunitAutoTestCase {
     public void testSingleProjectSum() {
         ormTemplate.runInSession(() -> {
             // P1: revenue 10000, cost 6000, profit 4000 → 毛利率 0.4
-            seedPnl("PNL-S-1", 101L, "10000", "6000", "4000");
+            seedPnl("PNL-S-1", "101", "10000", "6000", "4000");
         });
 
         Map<String, Object> kpi = dashboardBiz.getProjectGrossMargin(null, CTX);
@@ -66,9 +66,9 @@ public class TestErpPrjDashboardGrossMargin extends JunitAutoTestCase {
     public void testMultiProjectWeightedMargin() {
         ormTemplate.runInSession(() -> {
             // P1: revenue 10000, cost 6000, profit 4000
-            seedPnl("PNL-M-1", 201L, "10000", "6000", "4000");
+            seedPnl("PNL-M-1", "201", "10000", "6000", "4000");
             // P2: revenue 5000, cost 4000, profit 1000
-            seedPnl("PNL-M-2", 202L, "5000", "4000", "1000");
+            seedPnl("PNL-M-2", "202", "5000", "4000", "1000");
         });
 
         Map<String, Object> kpi = dashboardBiz.getProjectGrossMargin(null, CTX);
@@ -84,11 +84,11 @@ public class TestErpPrjDashboardGrossMargin extends JunitAutoTestCase {
     @Test
     public void testProjectIdFilter() {
         ormTemplate.runInSession(() -> {
-            seedPnl("PNL-F-1", 301L, "10000", "6000", "4000");
-            seedPnl("PNL-F-2", 302L, "5000", "4000", "1000");
+            seedPnl("PNL-F-1", "301", "10000", "6000", "4000");
+            seedPnl("PNL-F-2", "302", "5000", "4000", "1000");
         });
 
-        Map<String, Object> kpi = dashboardBiz.getProjectGrossMargin(301L, CTX);
+        Map<String, Object> kpi = dashboardBiz.getProjectGrossMargin("301", CTX);
         assertEquals(1L, kpi.get("projectCount"), "仅 301 项目");
         assertEquals(0, ((BigDecimal) kpi.get("totalRevenue")).compareTo(new BigDecimal("10000")));
         assertEquals(0, ((BigDecimal) kpi.get("grossMarginPct")).compareTo(new BigDecimal("0.4000")));
@@ -96,7 +96,7 @@ public class TestErpPrjDashboardGrossMargin extends JunitAutoTestCase {
 
     // ---------- helpers ----------
 
-    private void seedPnl(String code, long projectId, String revenue, String cost, String profit) {
+    private void seedPnl(String code, String projectId, String revenue, String cost, String profit) {
         IEntityDao<ErpPrjProjectPnl> dao = daoProvider.daoFor(ErpPrjProjectPnl.class);
         ErpPrjProjectPnl p = dao.newEntity();
         p.setCode(code);

@@ -19,7 +19,7 @@
             <cols>
 
                 <!--ID-->
-                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="id" mandatory="true" sortable="true"/>
 
                 <!--模板编码-->
                 <col id="code" mandatory="true" sortable="true"/>
@@ -28,7 +28,7 @@
                 <col id="name" mandatory="true" sortable="true"/>
 
                 <!--账套(空表示所有账套通用)-->
-                <col id="acctSchemaId" ui:number="true" sortable="true"/>
+                <col id="acctSchemaId" sortable="true"/>
 
                 <!--业务类型-->
                 <col id="businessType" mandatory="true" sortable="true"/>

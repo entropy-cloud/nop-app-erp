@@ -54,7 +54,7 @@ public class ProjectPnlCalculator {
     @Inject
     IDaoProvider daoProvider;
 
-    public ErpPrjProjectPnl refreshPnl(Long projectId, LocalDate periodFrom, LocalDate periodTo) {
+    public ErpPrjProjectPnl refreshPnl(String projectId, LocalDate periodFrom, LocalDate periodTo) {
         ErpPrjProject project = loadProject(projectId);
         if (project == null) {
             throw new NopException(ErpPrjErrors.ERR_PROJECT_NOT_REFERENCEABLE)
@@ -131,7 +131,7 @@ public class ProjectPnlCalculator {
         return pnl;
     }
 
-    public ErpPrjProjectPnl findLatestCalculated(Long projectId) {
+    public ErpPrjProjectPnl findLatestCalculated(String projectId) {
         IEntityDao<ErpPrjProjectPnl> dao = daoProvider.daoFor(ErpPrjProjectPnl.class);
         QueryBean q = new QueryBean();
         q.addFilter(and(eq("projectId", projectId), eq("calcStatus", ErpPrjConstants.PNL_CALC_STATUS_CALCULATED)));
@@ -141,7 +141,7 @@ public class ProjectPnlCalculator {
         return list.isEmpty() ? null : list.get(0);
     }
 
-    private BigDecimal sumRevenue(Long projectId, LocalDate from, LocalDate to) {
+    private BigDecimal sumRevenue(String projectId, LocalDate from, LocalDate to) {
         IEntityDao<ErpPrjBilling> dao = daoProvider.daoFor(ErpPrjBilling.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("projectId", projectId));
@@ -160,12 +160,12 @@ public class ProjectPnlCalculator {
         return sum;
     }
 
-    private CostBreakdown sumCostByCategory(Long projectId, LocalDate from, LocalDate to) {
+    private CostBreakdown sumCostByCategory(String projectId, LocalDate from, LocalDate to) {
         List<ErpPrjCostCollection> heads = findCostHeads(projectId, from, to);
         if (heads.isEmpty()) {
             return new CostBreakdown();
         }
-        Set<Long> headIds = new HashSet<>();
+        Set<String> headIds = new HashSet<>();
         for (ErpPrjCostCollection h : heads) {
             headIds.add(h.getId());
         }
@@ -193,7 +193,7 @@ public class ProjectPnlCalculator {
         return cb;
     }
 
-    private List<ErpPrjCostCollection> findCostHeads(Long projectId, LocalDate from, LocalDate to) {
+    private List<ErpPrjCostCollection> findCostHeads(String projectId, LocalDate from, LocalDate to) {
         IEntityDao<ErpPrjCostCollection> dao = daoProvider.daoFor(ErpPrjCostCollection.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("projectId", projectId));
@@ -207,12 +207,12 @@ public class ProjectPnlCalculator {
         return dao.findAllByQuery(q);
     }
 
-    private BigDecimal sumCommittedCost(Long projectId) {
+    private BigDecimal sumCommittedCost(String projectId) {
         List<ErpPrjBudget> budgets = findBudgets(projectId);
         if (budgets.isEmpty()) {
             return BigDecimal.ZERO;
         }
-        Set<Long> budgetIds = new HashSet<>();
+        Set<String> budgetIds = new HashSet<>();
         for (ErpPrjBudget b : budgets) {
             budgetIds.add(b.getId());
         }
@@ -227,7 +227,7 @@ public class ProjectPnlCalculator {
         return sum;
     }
 
-    private BigDecimal sumBudgetAmount(Long projectId) {
+    private BigDecimal sumBudgetAmount(String projectId) {
         List<ErpPrjBudget> budgets = findBudgets(projectId);
         BigDecimal sum = BigDecimal.ZERO;
         for (ErpPrjBudget b : budgets) {
@@ -236,7 +236,7 @@ public class ProjectPnlCalculator {
         return sum;
     }
 
-    private List<ErpPrjBudget> findBudgets(Long projectId) {
+    private List<ErpPrjBudget> findBudgets(String projectId) {
         IEntityDao<ErpPrjBudget> dao = daoProvider.daoFor(ErpPrjBudget.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("projectId", projectId));
@@ -244,7 +244,7 @@ public class ProjectPnlCalculator {
         return dao.findAllByQuery(q);
     }
 
-    private ErpPrjProjectPnl findExisting(Long projectId, LocalDate from, LocalDate to) {
+    private ErpPrjProjectPnl findExisting(String projectId, LocalDate from, LocalDate to) {
         IEntityDao<ErpPrjProjectPnl> dao = daoProvider.daoFor(ErpPrjProjectPnl.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("projectId", projectId));
@@ -267,7 +267,7 @@ public class ProjectPnlCalculator {
                 .divide(revenue, 4, RoundingMode.HALF_UP);
     }
 
-    private ErpPrjProject loadProject(Long projectId) {
+    private ErpPrjProject loadProject(String projectId) {
         if (projectId == null) {
             return null;
         }

@@ -158,10 +158,10 @@ public class _ErpPrjCostCollectionLine extends DynamicOrmEntity{
 
     
     /* ID: ID */
-    private java.lang.Long _id;
+    private java.lang.String _id;
     
     /* 归集单ID: COST_COLLECTION_ID */
-    private java.lang.Long _costCollectionId;
+    private java.lang.String _costCollectionId;
     
     /* 行号: LINE_NO */
     private java.lang.Integer _lineNo;
@@ -176,10 +176,10 @@ public class _ErpPrjCostCollectionLine extends DynamicOrmEntity{
     private java.lang.String _sourceBillCode;
     
     /* 科目: SUBJECT_ID */
-    private java.lang.Long _subjectId;
+    private java.lang.String _subjectId;
     
     /* 任务: TASK_ID */
-    private java.lang.Long _taskId;
+    private java.lang.String _taskId;
     
     /* 金额: AMOUNT */
     private java.math.BigDecimal _amount;
@@ -339,9 +339,9 @@ public class _ErpPrjCostCollectionLine extends DynamicOrmEntity{
         switch(propId){
         
             case PROP_ID_id:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_id));
                }
                setId(typedValue);
@@ -349,9 +349,9 @@ public class _ErpPrjCostCollectionLine extends DynamicOrmEntity{
             }
         
             case PROP_ID_costCollectionId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_costCollectionId));
                }
                setCostCollectionId(typedValue);
@@ -399,9 +399,9 @@ public class _ErpPrjCostCollectionLine extends DynamicOrmEntity{
             }
         
             case PROP_ID_subjectId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_subjectId));
                }
                setSubjectId(typedValue);
@@ -409,9 +409,9 @@ public class _ErpPrjCostCollectionLine extends DynamicOrmEntity{
             }
         
             case PROP_ID_taskId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_taskId));
                }
                setTaskId(typedValue);
@@ -509,14 +509,14 @@ public class _ErpPrjCostCollectionLine extends DynamicOrmEntity{
         
             case PROP_ID_id:{
                onInitProp(propId);
-               this._id = (java.lang.Long)value;
+               this._id = (java.lang.String)value;
                orm_id(); // 如果是设置主键字段，则触发watcher
                break;
             }
         
             case PROP_ID_costCollectionId:{
                onInitProp(propId);
-               this._costCollectionId = (java.lang.Long)value;
+               this._costCollectionId = (java.lang.String)value;
                
                break;
             }
@@ -551,14 +551,14 @@ public class _ErpPrjCostCollectionLine extends DynamicOrmEntity{
         
             case PROP_ID_subjectId:{
                onInitProp(propId);
-               this._subjectId = (java.lang.Long)value;
+               this._subjectId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_taskId:{
                onInitProp(propId);
-               this._taskId = (java.lang.Long)value;
+               this._taskId = (java.lang.String)value;
                
                break;
             }
@@ -628,7 +628,7 @@ public class _ErpPrjCostCollectionLine extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final java.lang.Long getId(){
+    public final java.lang.String getId(){
          onPropGet(PROP_ID_id);
          return _id;
     }
@@ -636,7 +636,7 @@ public class _ErpPrjCostCollectionLine extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final void setId(java.lang.Long value){
+    public final void setId(java.lang.String value){
         if(onPropSet(PROP_ID_id,value)){
             this._id = value;
             internalClearRefs(PROP_ID_id);
@@ -647,7 +647,7 @@ public class _ErpPrjCostCollectionLine extends DynamicOrmEntity{
     /**
      * 归集单ID: COST_COLLECTION_ID
      */
-    public final java.lang.Long getCostCollectionId(){
+    public final java.lang.String getCostCollectionId(){
          onPropGet(PROP_ID_costCollectionId);
          return _costCollectionId;
     }
@@ -655,7 +655,7 @@ public class _ErpPrjCostCollectionLine extends DynamicOrmEntity{
     /**
      * 归集单ID: COST_COLLECTION_ID
      */
-    public final void setCostCollectionId(java.lang.Long value){
+    public final void setCostCollectionId(java.lang.String value){
         if(onPropSet(PROP_ID_costCollectionId,value)){
             this._costCollectionId = value;
             internalClearRefs(PROP_ID_costCollectionId);
@@ -742,7 +742,7 @@ public class _ErpPrjCostCollectionLine extends DynamicOrmEntity{
     /**
      * 科目: SUBJECT_ID
      */
-    public final java.lang.Long getSubjectId(){
+    public final java.lang.String getSubjectId(){
          onPropGet(PROP_ID_subjectId);
          return _subjectId;
     }
@@ -750,7 +750,7 @@ public class _ErpPrjCostCollectionLine extends DynamicOrmEntity{
     /**
      * 科目: SUBJECT_ID
      */
-    public final void setSubjectId(java.lang.Long value){
+    public final void setSubjectId(java.lang.String value){
         if(onPropSet(PROP_ID_subjectId,value)){
             this._subjectId = value;
             internalClearRefs(PROP_ID_subjectId);
@@ -761,7 +761,7 @@ public class _ErpPrjCostCollectionLine extends DynamicOrmEntity{
     /**
      * 任务: TASK_ID
      */
-    public final java.lang.Long getTaskId(){
+    public final java.lang.String getTaskId(){
          onPropGet(PROP_ID_taskId);
          return _taskId;
     }
@@ -769,7 +769,7 @@ public class _ErpPrjCostCollectionLine extends DynamicOrmEntity{
     /**
      * 任务: TASK_ID
      */
-    public final void setTaskId(java.lang.Long value){
+    public final void setTaskId(java.lang.String value){
         if(onPropSet(PROP_ID_taskId,value)){
             this._taskId = value;
             internalClearRefs(PROP_ID_taskId);

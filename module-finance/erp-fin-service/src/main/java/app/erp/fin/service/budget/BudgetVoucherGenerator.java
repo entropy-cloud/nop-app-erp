@@ -261,15 +261,15 @@ public class BudgetVoucherGenerator {
         final String dcDirection;
         final BigDecimal amount;
         final String costCenterId;
-        // ErpFinBudgetLine/ErpFinVoucherLine.projectId 为登记册延后列（prj 未迁移），保持 Long
-        final Long projectId;
+        // projectId 已随 M2.7 同批翻转（登记册延后列兑付）
+        final String projectId;
         final String partnerId;
         final String departmentId;
         final String warehouseId;
         final String materialId;
 
         VoucherFact(String subjectId, String subjectCode, String subjectName, String dcDirection,
-                    BigDecimal amount, String costCenterId, Long projectId, String partnerId,
+                    BigDecimal amount, String costCenterId, String projectId, String partnerId,
                     String departmentId, String warehouseId, String materialId) {
             this.subjectId = subjectId;
             this.subjectCode = subjectCode;

@@ -19,16 +19,16 @@
             <cols>
 
                 <!--ID-->
-                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="id" mandatory="true" sortable="true"/>
 
                 <!--单号-->
                 <col id="code" mandatory="true" sortable="true"/>
 
                 <!--核算组织-->
-                <col id="orgId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="orgId" mandatory="true" sortable="true"/>
 
                 <!--授信银行账户-->
-                <col id="fundAccountId" ui:number="true" sortable="true"/>
+                <col id="fundAccountId" sortable="true"/>
 
                 <!--授信类型-->
                 <col id="facilityType" mandatory="true" sortable="true"/>

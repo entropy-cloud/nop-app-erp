@@ -180,16 +180,16 @@
         }
 
 
-        private Long _projectId;
+        private String _projectId;
 
     
         @PropMeta(propId=13)
     
-        public Long getProjectId(){
+        public String getProjectId(){
             return _projectId;
         }
 
-        public void setProjectId(Long value){
+        public void setProjectId(String value){
             this._projectId = value;
         }
 

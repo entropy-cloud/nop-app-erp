@@ -19,37 +19,37 @@
             <cols>
 
                 <!--ID-->
-                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="id" mandatory="true" sortable="true"/>
 
                 <!--候选编码-->
                 <col id="code" mandatory="true" sortable="true"/>
 
                 <!--核算组织-->
-                <col id="orgId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="orgId" mandatory="true" sortable="true"/>
 
                 <!--抵消类型-->
                 <col id="eliminationType" mandatory="true" sortable="true"/>
 
                 <!--会计期间-->
-                <col id="periodId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="periodId" mandatory="true" sortable="true"/>
 
                 <!--配对键-->
                 <col id="pairKey" sortable="true"/>
 
                 <!--配对记录-->
-                <col id="matchId" ui:number="true" sortable="true"/>
+                <col id="matchId" sortable="true"/>
 
                 <!--调出组织-->
-                <col id="fromOrgId" ui:number="true" sortable="true"/>
+                <col id="fromOrgId" sortable="true"/>
 
                 <!--调入组织-->
-                <col id="toOrgId" ui:number="true" sortable="true"/>
+                <col id="toOrgId" sortable="true"/>
 
                 <!--抵消金额-->
                 <col id="eliminationAmount" ui:number="true" sortable="true"/>
 
                 <!--草稿抵消凭证-->
-                <col id="draftVoucherId" ui:number="true" sortable="true"/>
+                <col id="draftVoucherId" sortable="true"/>
 
                 <!--抵消状态-->
                 <col id="status" mandatory="true" sortable="true"/>

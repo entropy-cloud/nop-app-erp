@@ -62,8 +62,8 @@ public class TestErpPrjTimesheetMulticurrencyPosting extends JunitAutoTestCase {
 
     private static final IServiceContext CTX = new ServiceContextImpl();
 
-    private static final Long CNY_ID = 1L;
-    private static final Long USD_ID = 2L;
+    private static final String CNY_ID = "1";
+    private static final String USD_ID = "2";
 
     @Inject
     IDaoProvider daoProvider;
@@ -78,20 +78,20 @@ public class TestErpPrjTimesheetMulticurrencyPosting extends JunitAutoTestCase {
     public void testApprovePostsForeignCurrencyVoucherWithResolvedRate() {
         final String tsCode = "TS-FX-001";
         BigDecimal rate = new BigDecimal("7.0");
-        Long tsId = ormTemplate.runInSession(session -> {
+        String tsId = ormTemplate.runInSession(session -> {
             seedOpenPeriod("2026-07");
-            seedAcctSchema(1L);
+            seedAcctSchema("1");
             seedCurrency(CNY_ID, "CNY", true);
             seedCurrency(USD_ID, "USD", false);
             seedExchangeRate(USD_ID, CNY_ID, rate, LocalDate.of(2026, 1, 1), LocalDate.of(2026, 12, 31));
-            Long debitSubjectId = seedSubject("5101", "项目开发成本");
-            Long payrollSubjectId = seedSubject("2211", "应付职工薪酬");
+            String debitSubjectId = seedSubject("5101", "项目开发成本");
+            String payrollSubjectId = seedSubject("2211", "应付职工薪酬");
             seedConfigSubject(payrollSubjectId);
-            Long projectTypeId = seedProjectType("PT-RD-FX", "研发项目-外币", debitSubjectId);
-            Long projectId = seedProject("PRJ-FX-001", "外币工时过账项目", projectTypeId,
+            String projectTypeId = seedProjectType("PT-RD-FX", "研发项目-外币", debitSubjectId);
+            String projectId = seedProject("PRJ-FX-001", "外币工时过账项目", projectTypeId,
                     ErpPrjConstants.PROJECT_STATUS_OPEN, new BigDecimal("100000"));
-            Long activityTypeId = seedActivityType("DEV-FX", "开发", "300", null);
-            Long taskId = seedTask(projectId, "任务-外币", ErpPrjConstants.TASK_STATUS_IN_PROGRESS);
+            String activityTypeId = seedActivityType("DEV-FX", "开发", "300", null);
+            String taskId = seedTask(projectId, "任务-外币", ErpPrjConstants.TASK_STATUS_IN_PROGRESS);
             return seedTimesheet(tsCode, projectId, taskId, activityTypeId,
                     "10", "800", ErpPrjConstants.APPROVE_STATUS_UNSUBMITTED, USD_ID);
         });
@@ -137,20 +137,20 @@ public class TestErpPrjTimesheetMulticurrencyPosting extends JunitAutoTestCase {
     @Test
     public void testApproveRejectsForeignCurrencyWhenRateMissing() {
         final String tsCode = "TS-FX-REJECT-001";
-        Long tsId = ormTemplate.runInSession(session -> {
+        String tsId = ormTemplate.runInSession(session -> {
             seedOpenPeriod("2026-07");
-            seedAcctSchema(1L);
+            seedAcctSchema("1");
             seedCurrency(CNY_ID, "CNY", true);
             seedCurrency(USD_ID, "USD", false);
             // 不 seed ErpMdExchangeRate → 汇率缺失
-            Long debitSubjectId = seedSubject("5101", "项目开发成本");
-            Long payrollSubjectId = seedSubject("2211", "应付职工薪酬");
+            String debitSubjectId = seedSubject("5101", "项目开发成本");
+            String payrollSubjectId = seedSubject("2211", "应付职工薪酬");
             seedConfigSubject(payrollSubjectId);
-            Long projectTypeId = seedProjectType("PT-RD-FX", "研发项目-外币", debitSubjectId);
-            Long projectId = seedProject("PRJ-FX-REJECT-001", "汇率缺失项目", projectTypeId,
+            String projectTypeId = seedProjectType("PT-RD-FX", "研发项目-外币", debitSubjectId);
+            String projectId = seedProject("PRJ-FX-REJECT-001", "汇率缺失项目", projectTypeId,
                     ErpPrjConstants.PROJECT_STATUS_OPEN, new BigDecimal("100000"));
-            Long activityTypeId = seedActivityType("DEV-FX", "开发", "300", null);
-            Long taskId = seedTask(projectId, "任务-汇率缺失", ErpPrjConstants.TASK_STATUS_IN_PROGRESS);
+            String activityTypeId = seedActivityType("DEV-FX", "开发", "300", null);
+            String taskId = seedTask(projectId, "任务-汇率缺失", ErpPrjConstants.TASK_STATUS_IN_PROGRESS);
             return seedTimesheet(tsCode, projectId, taskId, activityTypeId,
                     "10", "800", ErpPrjConstants.APPROVE_STATUS_UNSUBMITTED, USD_ID);
         });
@@ -179,18 +179,18 @@ public class TestErpPrjTimesheetMulticurrencyPosting extends JunitAutoTestCase {
     @Test
     public void testFunctionalCurrencyKeepsRateOneBehavior() {
         final String tsCode = "TS-FX-FUNC-001";
-        Long tsId = ormTemplate.runInSession(session -> {
+        String tsId = ormTemplate.runInSession(session -> {
             seedOpenPeriod("2026-07");
-            seedAcctSchema(1L);
+            seedAcctSchema("1");
             seedCurrency(CNY_ID, "CNY", true);
-            Long debitSubjectId = seedSubject("5101", "项目开发成本");
-            Long payrollSubjectId = seedSubject("2211", "应付职工薪酬");
+            String debitSubjectId = seedSubject("5101", "项目开发成本");
+            String payrollSubjectId = seedSubject("2211", "应付职工薪酬");
             seedConfigSubject(payrollSubjectId);
-            Long projectTypeId = seedProjectType("PT-RD-FX", "研发项目-外币", debitSubjectId);
-            Long projectId = seedProject("PRJ-FX-FUNC-001", "本位币项目", projectTypeId,
+            String projectTypeId = seedProjectType("PT-RD-FX", "研发项目-外币", debitSubjectId);
+            String projectId = seedProject("PRJ-FX-FUNC-001", "本位币项目", projectTypeId,
                     ErpPrjConstants.PROJECT_STATUS_OPEN, new BigDecimal("100000"));
-            Long activityTypeId = seedActivityType("DEV-FX", "开发", "300", null);
-            Long taskId = seedTask(projectId, "任务-本位币", ErpPrjConstants.TASK_STATUS_IN_PROGRESS);
+            String activityTypeId = seedActivityType("DEV-FX", "开发", "300", null);
+            String taskId = seedTask(projectId, "任务-本位币", ErpPrjConstants.TASK_STATUS_IN_PROGRESS);
             return seedTimesheet(tsCode, projectId, taskId, activityTypeId,
                     "10", "800", ErpPrjConstants.APPROVE_STATUS_UNSUBMITTED, CNY_ID);
         });
@@ -218,12 +218,12 @@ public class TestErpPrjTimesheetMulticurrencyPosting extends JunitAutoTestCase {
 
     // ---------- seed helpers ----------
 
-    private Long seedTimesheet(String code, Long projectId, Long taskId, Long activityTypeId,
-                               String hours, String costRate, String status, Long currencyId) {
+    private String seedTimesheet(String code, String projectId, String taskId, String activityTypeId,
+                               String hours, String costRate, String status, String currencyId) {
         IEntityDao<ErpPrjTimesheet> dao = daoProvider.daoFor(ErpPrjTimesheet.class);
         ErpPrjTimesheet ts = new ErpPrjTimesheet();
         ts.setCode(code);
-        ts.setOrgId(1L);
+        ts.setOrgId("1");
         ts.setProjectId(projectId);
         ts.setTaskId(taskId);
         ts.setUserId(seedEmployee());
@@ -237,23 +237,23 @@ public class TestErpPrjTimesheetMulticurrencyPosting extends JunitAutoTestCase {
         return ts.getId();
     }
 
-    private Long seedEmployee() {
+    private String seedEmployee() {
         IEntityDao<ErpMdEmployee> dao = daoProvider.daoFor(ErpMdEmployee.class);
         ErpMdEmployee emp = new ErpMdEmployee();
         emp.setCode("EMP-" + System.nanoTime());
         emp.setName("测试员工");
-        emp.setOrgId(1L);
+        emp.setOrgId("1");
         emp.setStatus(ErpMdConstants.ACTIVE_STATUS_ACTIVE);
         dao.saveEntity(emp);
         return emp.getId();
     }
 
-    private Long seedProject(String code, String name, Long projectTypeId, String status, BigDecimal budget) {
+    private String seedProject(String code, String name, String projectTypeId, String status, BigDecimal budget) {
         IEntityDao<ErpPrjProject> dao = daoProvider.daoFor(ErpPrjProject.class);
         ErpPrjProject p = new ErpPrjProject();
         p.setCode(code);
         p.setName(name);
-        p.setOrgId(1L);
+        p.setOrgId("1");
         p.setProjectTypeId(projectTypeId);
         p.setCurrencyId(CNY_ID);
         p.setStatus(status);
@@ -263,7 +263,7 @@ public class TestErpPrjTimesheetMulticurrencyPosting extends JunitAutoTestCase {
         return p.getId();
     }
 
-    private Long seedProjectType(String code, String name, Long defaultSubjectId) {
+    private String seedProjectType(String code, String name, String defaultSubjectId) {
         IEntityDao<ErpPrjProjectType> dao = daoProvider.daoFor(ErpPrjProjectType.class);
         ErpPrjProjectType t = new ErpPrjProjectType();
         t.setCode(code);
@@ -273,7 +273,7 @@ public class TestErpPrjTimesheetMulticurrencyPosting extends JunitAutoTestCase {
         return t.getId();
     }
 
-    private Long seedTask(Long projectId, String title, String status) {
+    private String seedTask(String projectId, String title, String status) {
         IEntityDao<ErpPrjTask> dao = daoProvider.daoFor(ErpPrjTask.class);
         ErpPrjTask task = new ErpPrjTask();
         task.setProjectId(projectId);
@@ -283,7 +283,7 @@ public class TestErpPrjTimesheetMulticurrencyPosting extends JunitAutoTestCase {
         return task.getId();
     }
 
-    private Long seedActivityType(String code, String name, String costRate, Long subjectId) {
+    private String seedActivityType(String code, String name, String costRate, String subjectId) {
         IEntityDao<ErpPrjActivityType> dao = daoProvider.daoFor(ErpPrjActivityType.class);
         ErpPrjActivityType a = new ErpPrjActivityType();
         a.setCode(code);
@@ -294,7 +294,7 @@ public class TestErpPrjTimesheetMulticurrencyPosting extends JunitAutoTestCase {
         return a.getId();
     }
 
-    private Long seedSubject(String code, String name) {
+    private String seedSubject(String code, String name) {
         IEntityDao<ErpMdSubject> dao = daoProvider.daoFor(ErpMdSubject.class);
         ErpMdSubject s = new ErpMdSubject();
         s.setCode(code);
@@ -306,7 +306,7 @@ public class TestErpPrjTimesheetMulticurrencyPosting extends JunitAutoTestCase {
         return s.getId();
     }
 
-    private void seedCurrency(Long id, String code, boolean isFunctional) {
+    private void seedCurrency(String id, String code, boolean isFunctional) {
         IEntityDao<ErpMdCurrency> dao = daoProvider.daoFor(ErpMdCurrency.class);
         ErpMdCurrency currency = new ErpMdCurrency();
         currency.setId(id);
@@ -316,7 +316,7 @@ public class TestErpPrjTimesheetMulticurrencyPosting extends JunitAutoTestCase {
         dao.saveEntity(currency);
     }
 
-    private void seedExchangeRate(Long fromCurrencyId, Long toCurrencyId, BigDecimal rate,
+    private void seedExchangeRate(String fromCurrencyId, String toCurrencyId, BigDecimal rate,
                                   LocalDate validFrom, LocalDate validTo) {
         IEntityDao<ErpMdExchangeRate> dao = daoProvider.daoFor(ErpMdExchangeRate.class);
         ErpMdExchangeRate rateRow = new ErpMdExchangeRate();
@@ -329,7 +329,7 @@ public class TestErpPrjTimesheetMulticurrencyPosting extends JunitAutoTestCase {
         dao.saveEntity(rateRow);
     }
 
-    private void seedAcctSchema(long orgId) {
+    private void seedAcctSchema(String orgId) {
         IEntityDao<ErpMdAcctSchema> dao = daoProvider.daoFor(ErpMdAcctSchema.class);
         ErpMdAcctSchema schema = new ErpMdAcctSchema();
         schema.setCode("AS-" + orgId);
@@ -346,7 +346,7 @@ public class TestErpPrjTimesheetMulticurrencyPosting extends JunitAutoTestCase {
         ErpFinAccountingPeriod period = new ErpFinAccountingPeriod();
         period.setCode(code);
         period.setName(code);
-        period.setOrgId(1L);
+        period.setOrgId("1");
         period.setYear(2026);
         period.setMonth(7);
         period.setStartDate(LocalDate.of(2026, 7, 1));
@@ -355,7 +355,7 @@ public class TestErpPrjTimesheetMulticurrencyPosting extends JunitAutoTestCase {
         dao.saveEntity(period);
     }
 
-    private void seedConfigSubject(Long payrollSubjectId) {
+    private void seedConfigSubject(String payrollSubjectId) {
         IEntityDao<ErpMdSubject> dao = daoProvider.daoFor(ErpMdSubject.class);
         ErpMdSubject s = dao.getEntityById(payrollSubjectId);
         if (s != null) {
@@ -371,7 +371,7 @@ public class TestErpPrjTimesheetMulticurrencyPosting extends JunitAutoTestCase {
         return dao.findAllByQuery(q);
     }
 
-    private List<ErpFinVoucherLine> findVoucherLines(Long voucherId) {
+    private List<ErpFinVoucherLine> findVoucherLines(String voucherId) {
         IEntityDao<ErpFinVoucherLine> dao = daoProvider.daoFor(ErpFinVoucherLine.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("voucherId", voucherId));

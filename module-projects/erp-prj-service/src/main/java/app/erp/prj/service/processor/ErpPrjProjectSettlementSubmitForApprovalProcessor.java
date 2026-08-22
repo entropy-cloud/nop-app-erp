@@ -26,8 +26,7 @@ public class ErpPrjProjectSettlementSubmitForApprovalProcessor extends AbstractS
 
     @Override
     public ErpPrjProjectSettlement submitForApproval(String id, IServiceContext context) {
-        Long longId = Long.valueOf(id);
-        ErpPrjProjectSettlement settlement = processor.requireSettlement(longId);
+        ErpPrjProjectSettlement settlement = processor.requireSettlement(id);
         processor.validateTransitionForSubmit(settlement);
         processor.doSubmit(settlement, context);
         processor.save(settlement);

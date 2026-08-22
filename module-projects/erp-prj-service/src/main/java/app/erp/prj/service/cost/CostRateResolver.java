@@ -66,7 +66,7 @@ public class CostRateResolver {
             }
         }
 
-        Long activityTypeId = timesheet.getActivityTypeId();
+        String activityTypeId = timesheet.getActivityTypeId();
         if (activityTypeId != null) {
             IEntityDao<ErpPrjActivityType> dao = daoProvider.daoFor(ErpPrjActivityType.class);
             ErpPrjActivityType activityType = dao.getEntityById(activityTypeId);

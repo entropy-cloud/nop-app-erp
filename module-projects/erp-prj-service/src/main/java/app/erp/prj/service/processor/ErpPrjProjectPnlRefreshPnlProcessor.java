@@ -19,7 +19,7 @@ public class ErpPrjProjectPnlRefreshPnlProcessor {
     @Inject
     ProjectPnlCalculator pnlCalculator;
 
-    public ErpPrjProjectPnl refreshPnl(Long projectId, LocalDate periodFrom, LocalDate periodTo,
+    public ErpPrjProjectPnl refreshPnl(String projectId, LocalDate periodFrom, LocalDate periodTo,
                                        IServiceContext context) {
         return pnlCalculator.refreshPnl(projectId, periodFrom, periodTo);
     }

@@ -20,7 +20,7 @@ public class GlMappingDimensions {
     private String materialCategoryId;
     private String warehouseId;
     private String departmentId;
-    private Long projectId;
+    private String projectId;
     /** A3 intercompany 维度（plan 2026-07-22-1000-1，multi-company.md §与 Posting+GL Mapping 关系）：跨法人交易双方组织。 */
     private String fromOrgId;
     /** A3 intercompany 维度：调入方组织。 */
@@ -82,11 +82,11 @@ public class GlMappingDimensions {
         this.departmentId = departmentId;
     }
 
-    public Long getProjectId() {
+    public String getProjectId() {
         return projectId;
     }
 
-    public void setProjectId(Long projectId) {
+    public void setProjectId(String projectId) {
         this.projectId = projectId;
     }
 

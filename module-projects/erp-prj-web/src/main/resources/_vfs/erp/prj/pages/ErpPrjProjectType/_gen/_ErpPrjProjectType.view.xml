@@ -19,7 +19,7 @@
             <cols>
 
                 <!--ID-->
-                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="id" mandatory="true" sortable="true"/>
 
                 <!--类型编码-->
                 <col id="code" mandatory="true" sortable="true"/>
@@ -28,7 +28,7 @@
                 <col id="name" mandatory="true" sortable="true"/>
 
                 <!--默认科目-->
-                <col id="defaultSubjectId" ui:number="true" sortable="true"/>
+                <col id="defaultSubjectId" sortable="true"/>
 
                 <!--备注-->
                 <col id="remark" sortable="true"/>

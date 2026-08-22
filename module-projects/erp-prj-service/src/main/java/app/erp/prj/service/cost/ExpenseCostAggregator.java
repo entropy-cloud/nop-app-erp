@@ -68,7 +68,7 @@ public class ExpenseCostAggregator {
      * 刷新项目的费用报销归集。扫描所有已审核报销单中 projectId 命中的行，
      * 幂等地写入归集行 + 增量回写 actualCost。返回本次新增的归集金额合计。
      */
-    public BigDecimal refreshExpenseCost(Long projectId) {
+    public BigDecimal refreshExpenseCost(String projectId) {
         if (projectId == null) {
             return BigDecimal.ZERO;
         }
@@ -150,9 +150,9 @@ public class ExpenseCostAggregator {
     private static final class PendingExpenseLine {
         final String sourceBillCode;
         final BigDecimal amount;
-        final Long subjectId;
+        final String subjectId;
 
-        PendingExpenseLine(String sourceBillCode, BigDecimal amount, Long subjectId) {
+        PendingExpenseLine(String sourceBillCode, BigDecimal amount, String subjectId) {
             this.sourceBillCode = sourceBillCode;
             this.amount = amount;
             this.subjectId = subjectId;
@@ -186,7 +186,7 @@ public class ExpenseCostAggregator {
      * 报销行经 daoProvider 直接查（跨域只读，简单过滤查询；IErpFinExpenseClaimLineBiz
      * 仅为 CRUD 壳，无业务逻辑，daoProvider 等效且避免引入额外 IBiz 依赖）。
      */
-    private List<ErpFinExpenseClaimLine> findLinesForProject(Long claimId, Long projectId) {
+    private List<ErpFinExpenseClaimLine> findLinesForProject(String claimId, String projectId) {
         IEntityDao<ErpFinExpenseClaimLine> dao = daoProvider.daoFor(ErpFinExpenseClaimLine.class);
         QueryBean q = new QueryBean();
         q.addFilter(and(eq("claimId", claimId), eq("projectId", projectId)));
@@ -201,12 +201,12 @@ public class ExpenseCostAggregator {
         return !dao.findAllByQuery(q).isEmpty();
     }
 
-    private void saveExpenseLine(Long headId, String sourceBillCode, BigDecimal amount, Long subjectId) {
+    private void saveExpenseLine(String headId, String sourceBillCode, BigDecimal amount, String subjectId) {
         saveExpenseLine(headId, nextLineNo(headId), sourceBillCode, amount, subjectId);
     }
 
-    private void saveExpenseLine(Long headId, int lineNo, String sourceBillCode, BigDecimal amount,
-                                 Long subjectId) {
+    private void saveExpenseLine(String headId, int lineNo, String sourceBillCode, BigDecimal amount,
+                                 String subjectId) {
         IEntityDao<ErpPrjCostCollectionLine> dao = daoProvider.daoFor(ErpPrjCostCollectionLine.class);
         ErpPrjCostCollectionLine line = dao.newEntity();
         line.setCostCollectionId(headId);
@@ -219,14 +219,14 @@ public class ExpenseCostAggregator {
         dao.saveEntity(line);
     }
 
-    private int nextLineNo(Long headId) {
+    private int nextLineNo(String headId) {
         IEntityDao<ErpPrjCostCollectionLine> dao = daoProvider.daoFor(ErpPrjCostCollectionLine.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("costCollectionId", headId));
         return (int) dao.findAllByQuery(q).size() + 1;
     }
 
-    private ErpPrjCostCollection findHead(Long projectId) {
+    private ErpPrjCostCollection findHead(String projectId) {
         IEntityDao<ErpPrjCostCollection> dao = daoProvider.daoFor(ErpPrjCostCollection.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("projectId", projectId));
@@ -236,7 +236,7 @@ public class ExpenseCostAggregator {
         return existing.isEmpty() ? null : existing.get(0);
     }
 
-    private ErpPrjProject loadProject(Long projectId) {
+    private ErpPrjProject loadProject(String projectId) {
         IEntityDao<ErpPrjProject> dao = daoProvider.daoFor(ErpPrjProject.class);
         return dao.getEntityById(projectId);
     }

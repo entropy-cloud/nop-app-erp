@@ -16,7 +16,8 @@
       "evidence": "module-finance/model/app-erp-finance.orm.xml:517",
       "deferredUntil": "M2.7",
       "retireOwner": "M2.7",
-      "status": "active"
+      "note": "已退役：M2.7 prj plan 2026-08-22-1302-1 同批兑付——prj 76 列 + fin 6 + hr 2 列 stdDataType long→string 同批落源（三 orm git diff）+ fin/hr 7 模块链重建 + 早域复跑基线（fin 497/497 + hr 237/237）+ prj 复跑终态全绿",
+      "status": "retired"
     },
     {
       "id": "orm-deferral-002",
@@ -29,7 +30,8 @@
       "evidence": "module-finance/model/app-erp-finance.orm.xml:958",
       "deferredUntil": "M2.7",
       "retireOwner": "M2.7",
-      "status": "active"
+      "note": "已退役：M2.7 prj plan 2026-08-22-1302-1 同批兑付（同 orm-deferral-001）",
+      "status": "retired"
     },
     {
       "id": "orm-deferral-003",
@@ -42,7 +44,8 @@
       "evidence": "module-finance/model/app-erp-finance.orm.xml:1361",
       "deferredUntil": "M2.7",
       "retireOwner": "M2.7",
-      "status": "active"
+      "note": "已退役：M2.7 prj plan 2026-08-22-1302-1 同批兑付（同 orm-deferral-001）",
+      "status": "retired"
     },
     {
       "id": "orm-deferral-004",
@@ -55,7 +58,8 @@
       "evidence": "module-finance/model/app-erp-finance.orm.xml:1417",
       "deferredUntil": "M2.7",
       "retireOwner": "M2.7",
-      "status": "active"
+      "note": "已退役：M2.7 prj plan 2026-08-22-1302-1 同批兑付（同 orm-deferral-001）",
+      "status": "retired"
     },
     {
       "id": "orm-deferral-005",
@@ -68,7 +72,8 @@
       "evidence": "module-finance/model/app-erp-finance.orm.xml:1859",
       "deferredUntil": "M2.7",
       "retireOwner": "M2.7",
-      "status": "active"
+      "note": "已退役：M2.7 prj plan 2026-08-22-1302-1 同批兑付（同 orm-deferral-001）",
+      "status": "retired"
     },
     {
       "id": "orm-deferral-006",
@@ -81,7 +86,8 @@
       "evidence": "module-finance/model/app-erp-finance.orm.xml:2063",
       "deferredUntil": "M2.7",
       "retireOwner": "M2.7",
-      "status": "active"
+      "note": "已退役：M2.7 prj plan 2026-08-22-1302-1 同批兑付（同 orm-deferral-001）",
+      "status": "retired"
     },
     {
       "id": "orm-deferral-007",
@@ -94,7 +100,8 @@
       "evidence": "module-hr/model/app-erp-hr.orm.xml:651",
       "deferredUntil": "M2.7",
       "retireOwner": "M2.7",
-      "status": "active"
+      "note": "已退役：M2.7 prj plan 2026-08-22-1302-1 同批兑付（同 orm-deferral-001；hr 侧零手写修复面，链重建 + 复跑 237/237）",
+      "status": "retired"
     },
     {
       "id": "orm-deferral-008",
@@ -107,7 +114,8 @@
       "evidence": "module-hr/model/app-erp-hr.orm.xml:652",
       "deferredUntil": "M2.7",
       "retireOwner": "M2.7",
-      "status": "active"
+      "note": "已退役：M2.7 prj plan 2026-08-22-1302-1 同批兑付（同 orm-deferral-001；hr 侧零手写修复面，链重建 + 复跑 237/237）",
+      "status": "retired"
     },
     {
       "id": "bridge-main-009",

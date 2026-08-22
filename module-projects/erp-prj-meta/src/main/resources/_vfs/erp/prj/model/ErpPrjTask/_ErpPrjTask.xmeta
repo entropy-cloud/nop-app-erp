@@ -20,16 +20,16 @@
 
     <props>
         <prop name="id" displayName="ID" propId="1" i18n-en:displayName="ID" tagSet="seq-default" mandatory="true"
-              queryable="true" sortable="true" insertable="true" updatable="false" graphql:type="String">
-            <schema type="java.lang.Long"/>
+              queryable="true" sortable="true" insertable="true" updatable="false">
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="projectId" displayName="项目" propId="2" i18n-en:displayName="Project" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="project">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="parentTaskId" displayName="父任务" propId="3" i18n-en:displayName="Parent Task" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="parentTask">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="title" displayName="任务标题" propId="4" i18n-en:displayName="Title" mandatory="true" queryable="true"
               sortable="true" insertable="true" updatable="true">
@@ -37,7 +37,7 @@
         </prop>
         <prop name="assigneeId" displayName="负责人" propId="5" i18n-en:displayName="Assignee" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="assignee">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="plannedStartDate" displayName="计划开始日期" propId="6" i18n-en:displayName="Planned Start Date"
               queryable="true" sortable="true" insertable="true" updatable="true">
@@ -65,7 +65,7 @@
         </prop>
         <prop name="dependsOnId" displayName="依赖任务" propId="12" i18n-en:displayName="Depends On" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="dependsOn">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="status" displayName="状态" propId="13" i18n-en:displayName="Status" mandatory="true" queryable="true"
               sortable="true" insertable="true" updatable="true">

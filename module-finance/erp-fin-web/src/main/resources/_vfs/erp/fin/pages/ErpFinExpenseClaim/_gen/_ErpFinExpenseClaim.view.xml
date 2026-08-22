@@ -19,19 +19,19 @@
             <cols>
 
                 <!--ID-->
-                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="id" mandatory="true" sortable="true"/>
 
                 <!--单号-->
                 <col id="code" mandatory="true" sortable="true"/>
 
                 <!--核算组织-->
-                <col id="orgId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="orgId" mandatory="true" sortable="true"/>
 
                 <!--报销人-->
-                <col id="claimantId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="claimantId" mandatory="true" sortable="true"/>
 
                 <!--部门-->
-                <col id="departmentId" ui:number="true" sortable="true"/>
+                <col id="departmentId" sortable="true"/>
 
                 <!--业务日期-->
                 <col id="businessDate" mandatory="true" sortable="true"/>
@@ -40,7 +40,7 @@
                 <col id="paymentMode" mandatory="true" sortable="true"/>
 
                 <!--币种-->
-                <col id="currencyId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="currencyId" mandatory="true" sortable="true"/>
 
                 <!--汇率-->
                 <col id="exchangeRate" ui:number="true" sortable="true"/>
@@ -61,7 +61,7 @@
                 <col id="amountWithTax" ui:number="true" sortable="true"/>
 
                 <!--抵扣借款单-->
-                <col id="settleAdvanceId" ui:number="true" sortable="true"/>
+                <col id="settleAdvanceId" sortable="true"/>
 
                 <!--报销事由-->
                 <col id="reason" sortable="true"/>

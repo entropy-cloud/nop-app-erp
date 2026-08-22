@@ -21,7 +21,7 @@ public class ErpPrjProjectSettlementReverseSettlementProcessor {
     @Inject
     ErpPrjProjectSettlementProcessor facade;
 
-    public ErpPrjProjectSettlement reverseSettlement(Long settlementId, IServiceContext context) {
+    public ErpPrjProjectSettlement reverseSettlement(String settlementId, IServiceContext context) {
         ErpPrjProjectSettlement settlement = facade.requireSettlement(settlementId);
         if (!Objects.equals(Boolean.TRUE, settlement.getPosted())) {
             throw new NopException(ErpPrjErrors.ERR_SETTLEMENT_ILLEGAL_STATUS_TRANSITION)

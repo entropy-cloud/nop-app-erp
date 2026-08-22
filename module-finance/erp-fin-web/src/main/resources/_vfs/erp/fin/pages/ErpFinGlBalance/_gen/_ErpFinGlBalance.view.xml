@@ -19,34 +19,34 @@
             <cols>
 
                 <!--ID-->
-                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="id" mandatory="true" sortable="true"/>
 
                 <!--组织-->
-                <col id="orgId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="orgId" mandatory="true" sortable="true"/>
 
                 <!--账套-->
-                <col id="acctSchemaId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="acctSchemaId" mandatory="true" sortable="true"/>
 
                 <!--期间-->
-                <col id="periodId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="periodId" mandatory="true" sortable="true"/>
 
                 <!--科目-->
-                <col id="subjectId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="subjectId" mandatory="true" sortable="true"/>
 
                 <!--币种-->
-                <col id="currencyId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="currencyId" mandatory="true" sortable="true"/>
 
                 <!--辅助-往来单位-->
-                <col id="partnerId" ui:number="true" sortable="true"/>
+                <col id="partnerId" sortable="true"/>
 
                 <!--辅助-部门-->
-                <col id="departmentId" ui:number="true" sortable="true"/>
+                <col id="departmentId" sortable="true"/>
 
                 <!--辅助-项目-->
-                <col id="projectId" ui:number="true" sortable="true"/>
+                <col id="projectId" sortable="true"/>
 
                 <!--辅助-仓库-->
-                <col id="warehouseId" ui:number="true" sortable="true"/>
+                <col id="warehouseId" sortable="true"/>
 
                 <!--逻辑删除版本-->
                 <col id="delVersion" mandatory="true" ui:number="true" sortable="true"/>

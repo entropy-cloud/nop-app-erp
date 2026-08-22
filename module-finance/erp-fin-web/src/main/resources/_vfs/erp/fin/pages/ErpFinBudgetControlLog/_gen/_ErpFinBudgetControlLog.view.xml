@@ -19,19 +19,19 @@
             <cols>
 
                 <!--ID-->
-                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="id" mandatory="true" sortable="true"/>
 
                 <!--核算组织-->
-                <col id="orgId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="orgId" mandatory="true" sortable="true"/>
 
                 <!--业务日期-->
                 <col id="businessDate" mandatory="true" sortable="true"/>
 
                 <!--预算方案-->
-                <col id="scenarioId" ui:number="true" sortable="true"/>
+                <col id="scenarioId" sortable="true"/>
 
                 <!--预算明细行-->
-                <col id="budgetLineId" ui:number="true" sortable="true"/>
+                <col id="budgetLineId" sortable="true"/>
 
                 <!--触发单据类型-->
                 <col id="sourceBillType" mandatory="true" sortable="true"/>
@@ -40,16 +40,16 @@
                 <col id="sourceBillCode" mandatory="true" sortable="true"/>
 
                 <!--命中科目-->
-                <col id="subjectId" ui:number="true" sortable="true"/>
+                <col id="subjectId" sortable="true"/>
 
                 <!--命中成本中心-->
-                <col id="costCenterId" ui:number="true" sortable="true"/>
+                <col id="costCenterId" sortable="true"/>
 
                 <!--命中项目-->
-                <col id="projectId" ui:number="true" sortable="true"/>
+                <col id="projectId" sortable="true"/>
 
                 <!--命中期间-->
-                <col id="periodId" ui:number="true" sortable="true"/>
+                <col id="periodId" sortable="true"/>
 
                 <!--申请占用金额-->
                 <col id="requestedAmount" mandatory="true" ui:number="true" sortable="true"/>

@@ -19,16 +19,16 @@
             <cols>
 
                 <!--ID-->
-                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="id" mandatory="true" sortable="true"/>
 
                 <!--单号-->
                 <col id="code" mandatory="true" sortable="true"/>
 
                 <!--核算组织-->
-                <col id="orgId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="orgId" mandatory="true" sortable="true"/>
 
                 <!--借款人-->
-                <col id="employeeId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="employeeId" mandatory="true" sortable="true"/>
 
                 <!--借款类型-->
                 <col id="advanceType" mandatory="true" sortable="true"/>
@@ -37,7 +37,7 @@
                 <col id="businessDate" mandatory="true" sortable="true"/>
 
                 <!--币种-->
-                <col id="currencyId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="currencyId" mandatory="true" sortable="true"/>
 
                 <!--汇率-->
                 <col id="exchangeRate" ui:number="true" sortable="true"/>
@@ -55,7 +55,7 @@
                 <col id="outstandingAmount" ui:number="true" sortable="true"/>
 
                 <!--关联项目-->
-                <col id="projectId" ui:number="true" sortable="true"/>
+                <col id="projectId" sortable="true"/>
 
                 <!--单据状态-->
                 <col id="docStatus" mandatory="true" sortable="true"/>

@@ -19,13 +19,13 @@
             <cols>
 
                 <!--ID-->
-                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="id" mandatory="true" sortable="true"/>
 
                 <!--期间ID-->
-                <col id="periodId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="periodId" mandatory="true" sortable="true"/>
 
                 <!--账套-->
-                <col id="acctSchemaId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="acctSchemaId" mandatory="true" sortable="true"/>
 
                 <!--凭证总数-->
                 <col id="totalVouchers" ui:number="true" sortable="true"/>

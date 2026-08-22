@@ -19,19 +19,19 @@
             <cols>
 
                 <!--ID-->
-                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="id" mandatory="true" sortable="true"/>
 
                 <!--核销单ID-->
-                <col id="reconciliationId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="reconciliationId" mandatory="true" sortable="true"/>
 
                 <!--行号-->
                 <col id="lineNo" mandatory="true" ui:number="true" sortable="true"/>
 
                 <!--付款/收款项(invoice or payment item)-->
-                <col id="paymentItemId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="paymentItemId" mandatory="true" sortable="true"/>
 
                 <!--被核销发票项-->
-                <col id="invoiceItemId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="invoiceItemId" mandatory="true" sortable="true"/>
 
                 <!--核销金额(源币)-->
                 <col id="settledAmountSource" mandatory="true" ui:number="true" sortable="true"/>

@@ -1,9 +1,17 @@
 {
   "data": {
     "id": "2",
-    "projectId": 1,
-    "parentTaskId": null,
+    "projectId": "1",
     "title": "冒烟任务",
+    "status": "TODO",
+    "status_label": "TODO-待开始",
+    "delVersion": 0,
+    "version": 0,
+    "createdBy": "autotest-ref",
+    "createTime": "@var:ErpPrjTask@updateTime",
+    "updatedBy": "autotest-ref",
+    "updateTime": "@var:ErpPrjTask@updateTime",
+    "parentTaskId": null,
     "assigneeId": null,
     "plannedStartDate": null,
     "plannedEndDate": null,
@@ -12,19 +20,11 @@
     "estimatedHours": null,
     "actualHours": null,
     "dependsOnId": null,
-    "status": "TODO",
-    "status_label": "TODO-待开始",
     "priority": null,
     "priority_label": null,
     "blockReason": null,
     "sortNum": null,
-    "remark": null,
-    "delVersion": 0,
-    "version": 0,
-    "createdBy": "autotest-ref",
-    "createTime": "@var:ErpPrjTask@updateTime",
-    "updatedBy": "autotest-ref",
-    "updateTime": "@var:ErpPrjTask@updateTime"
+    "remark": null
   },
   "status": 0
 }

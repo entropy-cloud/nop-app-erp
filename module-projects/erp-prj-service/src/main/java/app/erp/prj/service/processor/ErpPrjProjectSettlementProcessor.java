@@ -78,19 +78,19 @@ public class ErpPrjProjectSettlementProcessor {
     @Inject
     ErpPrjProjectSettlementCancelProcessor cancelProcessor;
 
-    public ErpPrjProjectSettlement submit(Long id, IServiceContext context) {
+    public ErpPrjProjectSettlement submit(String id, IServiceContext context) {
         return submitForApprovalProcessor.submitForApproval(String.valueOf(id), context);
     }
 
-    public ErpPrjProjectSettlement approve(Long id, IServiceContext context) {
+    public ErpPrjProjectSettlement approve(String id, IServiceContext context) {
         return approveProcessor.approve(String.valueOf(id), context);
     }
 
-    public ErpPrjProjectSettlement reject(Long id, IServiceContext context) {
+    public ErpPrjProjectSettlement reject(String id, IServiceContext context) {
         return rejectProcessor.reject(String.valueOf(id), context);
     }
 
-    public ErpPrjProjectSettlement cancel(Long id, IServiceContext context) {
+    public ErpPrjProjectSettlement cancel(String id, IServiceContext context) {
         return cancelProcessor.cancel(String.valueOf(id), context);
     }
 
@@ -234,7 +234,7 @@ public class ErpPrjProjectSettlementProcessor {
 
     // ---- helpers ----
 
-    protected ErpPrjProjectSettlement requireSettlement(Long id) {
+    protected ErpPrjProjectSettlement requireSettlement(String id) {
         IEntityDao<ErpPrjProjectSettlement> dao = daoProvider.daoFor(ErpPrjProjectSettlement.class);
         ErpPrjProjectSettlement settlement = dao.getEntityById(id);
         if (settlement == null) {
@@ -248,7 +248,7 @@ public class ErpPrjProjectSettlementProcessor {
         daoProvider.daoFor(ErpPrjProjectSettlement.class).updateEntity(settlement);
     }
 
-    protected List<ErpPrjBilling> findBillings(Long projectId) {
+    protected List<ErpPrjBilling> findBillings(String projectId) {
         IEntityDao<ErpPrjBilling> dao = daoProvider.daoFor(ErpPrjBilling.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("projectId", projectId));
@@ -256,7 +256,7 @@ public class ErpPrjProjectSettlementProcessor {
         return dao.findAllByQuery(q);
     }
 
-    protected List<ErpPrjCostCollection> findCostCollections(Long projectId) {
+    protected List<ErpPrjCostCollection> findCostCollections(String projectId) {
         IEntityDao<ErpPrjCostCollection> dao = daoProvider.daoFor(ErpPrjCostCollection.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("projectId", projectId));
@@ -264,7 +264,7 @@ public class ErpPrjProjectSettlementProcessor {
         return dao.findAllByQuery(q);
     }
 
-    protected ErpPrjProject loadProject(Long projectId) {
+    protected ErpPrjProject loadProject(String projectId) {
         if (projectId == null) {
             return null;
         }

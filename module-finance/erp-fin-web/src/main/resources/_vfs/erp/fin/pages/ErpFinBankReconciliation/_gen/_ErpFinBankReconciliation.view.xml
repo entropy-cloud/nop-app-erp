@@ -19,19 +19,19 @@
             <cols>
 
                 <!--ID-->
-                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="id" mandatory="true" sortable="true"/>
 
                 <!--单号-->
                 <col id="code" mandatory="true" sortable="true"/>
 
                 <!--组织-->
-                <col id="orgId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="orgId" mandatory="true" sortable="true"/>
 
                 <!--资金账户-->
-                <col id="fundAccountId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="fundAccountId" mandatory="true" sortable="true"/>
 
                 <!--银行对账单-->
-                <col id="statementId" ui:number="true" sortable="true"/>
+                <col id="statementId" sortable="true"/>
 
                 <!--对账日期-->
                 <col id="reconciliationDate" mandatory="true" sortable="true"/>

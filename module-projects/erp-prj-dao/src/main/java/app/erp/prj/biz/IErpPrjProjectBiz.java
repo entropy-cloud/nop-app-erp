@@ -24,41 +24,41 @@ public interface IErpPrjProjectBiz extends ICrudBiz<ErpPrjProject> {
      * 跨域（如费用报销归集）调用方在写归集前调用本方法。
      */
     @BizMutation
-    ErpPrjProject requireReferenceable(@Name("projectId") Long projectId, IServiceContext context);
+    ErpPrjProject requireReferenceable(@Name("projectId") String projectId, IServiceContext context);
 
     /**
      * 聚合项目所有归集行金额 → 回写 {@code actualCost}。返回刷新后的实际成本合计。
      */
     @BizMutation
-    BigDecimal refreshActualCost(@Name("projectId") Long projectId, IServiceContext context);
+    BigDecimal refreshActualCost(@Name("projectId") String projectId, IServiceContext context);
 
     /**
      * 关闭项目（OPEN→COMPLETED）。关闭后不可再被新单据引用（{@link #requireReferenceable} 拒绝）。
      */
     @BizMutation
-    ErpPrjProject closeProject(@Name("projectId") Long projectId, IServiceContext context);
+    ErpPrjProject closeProject(@Name("projectId") String projectId, IServiceContext context);
 
     /**
      * 启动项目（DRAFT→OPEN）。
      */
     @BizMutation
-    ErpPrjProject startProject(@Name("projectId") Long projectId, IServiceContext context);
+    ErpPrjProject startProject(@Name("projectId") String projectId, IServiceContext context);
 
     /**
      * 暂停项目（OPEN→ON_HOLD）。
      */
     @BizMutation
-    ErpPrjProject holdProject(@Name("projectId") Long projectId, IServiceContext context);
+    ErpPrjProject holdProject(@Name("projectId") String projectId, IServiceContext context);
 
     /**
      * 恢复项目（ON_HOLD→OPEN）。
      */
     @BizMutation
-    ErpPrjProject resumeProject(@Name("projectId") Long projectId, IServiceContext context);
+    ErpPrjProject resumeProject(@Name("projectId") String projectId, IServiceContext context);
 
     /**
      * 取消项目（DRAFT/OPEN/ON_HOLD→CANCELLED）。
      */
     @BizMutation
-    ErpPrjProject cancelProject(@Name("projectId") Long projectId, IServiceContext context);
+    ErpPrjProject cancelProject(@Name("projectId") String projectId, IServiceContext context);
 }

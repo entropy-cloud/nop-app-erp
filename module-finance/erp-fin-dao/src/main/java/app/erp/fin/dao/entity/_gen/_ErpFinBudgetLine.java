@@ -278,7 +278,7 @@ public class _ErpFinBudgetLine extends DynamicOrmEntity{
     private java.lang.String _departmentId;
     
     /* 辅助-项目: PROJECT_ID */
-    private java.lang.Long _projectId;
+    private java.lang.String _projectId;
     
     /* 辅助-往来单位: PARTNER_ID */
     private java.lang.String _partnerId;
@@ -583,9 +583,9 @@ public class _ErpFinBudgetLine extends DynamicOrmEntity{
             }
         
             case PROP_ID_projectId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_projectId));
                }
                setProjectId(typedValue);
@@ -813,7 +813,7 @@ public class _ErpFinBudgetLine extends DynamicOrmEntity{
         
             case PROP_ID_projectId:{
                onInitProp(propId);
-               this._projectId = (java.lang.Long)value;
+               this._projectId = (java.lang.String)value;
                
                break;
             }
@@ -1115,7 +1115,7 @@ public class _ErpFinBudgetLine extends DynamicOrmEntity{
     /**
      * 辅助-项目: PROJECT_ID
      */
-    public final java.lang.Long getProjectId(){
+    public final java.lang.String getProjectId(){
          onPropGet(PROP_ID_projectId);
          return _projectId;
     }
@@ -1123,7 +1123,7 @@ public class _ErpFinBudgetLine extends DynamicOrmEntity{
     /**
      * 辅助-项目: PROJECT_ID
      */
-    public final void setProjectId(java.lang.Long value){
+    public final void setProjectId(java.lang.String value){
         if(onPropSet(PROP_ID_projectId,value)){
             this._projectId = value;
             internalClearRefs(PROP_ID_projectId);
@@ -1551,8 +1551,7 @@ public class _ErpFinBudgetLine extends DynamicOrmEntity{
            }else{
            internalSetRefEntity(PROP_NAME_project, refEntity,()->{
            
-                           this.orm_propValue(PROP_ID_projectId,
-                           refEntity.getId());
+                           this.setProjectId(refEntity.getId());
                        
            });
            }

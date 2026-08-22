@@ -28,7 +28,7 @@ public class ErpPrjCostCollectionAggregateMaterialCostProcessor {
     @Inject
     MaterialCostAggregator materialCostAggregator;
 
-    public BigDecimal aggregateMaterialCost(Long projectId, BigDecimal amount, String sourceBillCode,
+    public BigDecimal aggregateMaterialCost(String projectId, BigDecimal amount, String sourceBillCode,
                                             IServiceContext context) {
         if (!ErpPrjConfigs.materialAggregationEnabled()) {
             return BigDecimal.ZERO;

@@ -148,10 +148,10 @@ public class _ErpPrjProjectSettlementLine extends DynamicOrmEntity{
 
     
     /* ID: ID */
-    private java.lang.Long _id;
+    private java.lang.String _id;
     
     /* 结算单ID: SETTLEMENT_ID */
-    private java.lang.Long _settlementId;
+    private java.lang.String _settlementId;
     
     /* 行号: LINE_NO */
     private java.lang.Integer _lineNo;
@@ -166,7 +166,7 @@ public class _ErpPrjProjectSettlementLine extends DynamicOrmEntity{
     private java.lang.String _sourceBillCode;
     
     /* 科目: SUBJECT_ID */
-    private java.lang.Long _subjectId;
+    private java.lang.String _subjectId;
     
     /* 金额: AMOUNT */
     private java.math.BigDecimal _amount;
@@ -323,9 +323,9 @@ public class _ErpPrjProjectSettlementLine extends DynamicOrmEntity{
         switch(propId){
         
             case PROP_ID_id:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_id));
                }
                setId(typedValue);
@@ -333,9 +333,9 @@ public class _ErpPrjProjectSettlementLine extends DynamicOrmEntity{
             }
         
             case PROP_ID_settlementId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_settlementId));
                }
                setSettlementId(typedValue);
@@ -383,9 +383,9 @@ public class _ErpPrjProjectSettlementLine extends DynamicOrmEntity{
             }
         
             case PROP_ID_subjectId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_subjectId));
                }
                setSubjectId(typedValue);
@@ -483,14 +483,14 @@ public class _ErpPrjProjectSettlementLine extends DynamicOrmEntity{
         
             case PROP_ID_id:{
                onInitProp(propId);
-               this._id = (java.lang.Long)value;
+               this._id = (java.lang.String)value;
                orm_id(); // 如果是设置主键字段，则触发watcher
                break;
             }
         
             case PROP_ID_settlementId:{
                onInitProp(propId);
-               this._settlementId = (java.lang.Long)value;
+               this._settlementId = (java.lang.String)value;
                
                break;
             }
@@ -525,7 +525,7 @@ public class _ErpPrjProjectSettlementLine extends DynamicOrmEntity{
         
             case PROP_ID_subjectId:{
                onInitProp(propId);
-               this._subjectId = (java.lang.Long)value;
+               this._subjectId = (java.lang.String)value;
                
                break;
             }
@@ -595,7 +595,7 @@ public class _ErpPrjProjectSettlementLine extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final java.lang.Long getId(){
+    public final java.lang.String getId(){
          onPropGet(PROP_ID_id);
          return _id;
     }
@@ -603,7 +603,7 @@ public class _ErpPrjProjectSettlementLine extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final void setId(java.lang.Long value){
+    public final void setId(java.lang.String value){
         if(onPropSet(PROP_ID_id,value)){
             this._id = value;
             internalClearRefs(PROP_ID_id);
@@ -614,7 +614,7 @@ public class _ErpPrjProjectSettlementLine extends DynamicOrmEntity{
     /**
      * 结算单ID: SETTLEMENT_ID
      */
-    public final java.lang.Long getSettlementId(){
+    public final java.lang.String getSettlementId(){
          onPropGet(PROP_ID_settlementId);
          return _settlementId;
     }
@@ -622,7 +622,7 @@ public class _ErpPrjProjectSettlementLine extends DynamicOrmEntity{
     /**
      * 结算单ID: SETTLEMENT_ID
      */
-    public final void setSettlementId(java.lang.Long value){
+    public final void setSettlementId(java.lang.String value){
         if(onPropSet(PROP_ID_settlementId,value)){
             this._settlementId = value;
             internalClearRefs(PROP_ID_settlementId);
@@ -709,7 +709,7 @@ public class _ErpPrjProjectSettlementLine extends DynamicOrmEntity{
     /**
      * 科目: SUBJECT_ID
      */
-    public final java.lang.Long getSubjectId(){
+    public final java.lang.String getSubjectId(){
          onPropGet(PROP_ID_subjectId);
          return _subjectId;
     }
@@ -717,7 +717,7 @@ public class _ErpPrjProjectSettlementLine extends DynamicOrmEntity{
     /**
      * 科目: SUBJECT_ID
      */
-    public final void setSubjectId(java.lang.Long value){
+    public final void setSubjectId(java.lang.String value){
         if(onPropSet(PROP_ID_subjectId,value)){
             this._subjectId = value;
             internalClearRefs(PROP_ID_subjectId);

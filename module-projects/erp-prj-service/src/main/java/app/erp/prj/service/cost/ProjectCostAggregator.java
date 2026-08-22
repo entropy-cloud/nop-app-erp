@@ -52,7 +52,7 @@ public class ProjectCostAggregator {
 
         BigDecimal amount = nz(timesheet.getCostAmount());
         ErpPrjProject project = loadProject(timesheet.getProjectId());
-        Long subjectId = resolveLaborSubjectId(timesheet, project);
+        String subjectId = resolveLaborSubjectId(timesheet, project);
 
         ErpPrjCostCollection existingHead = findOpenHead(timesheet.getProjectId());
         ErpPrjCostCollectionLine line = daoProvider.daoFor(ErpPrjCostCollectionLine.class).newEntity();
@@ -101,7 +101,7 @@ public class ProjectCostAggregator {
     /**
      * 聚合项目所有归集行金额 → 回写 {@link ErpPrjProject#getActualCost()}。
      */
-    public BigDecimal refreshActualCost(Long projectId) {
+    public BigDecimal refreshActualCost(String projectId) {
         if (projectId == null) {
             return BigDecimal.ZERO;
         }
@@ -115,7 +115,7 @@ public class ProjectCostAggregator {
         return used;
     }
 
-    private BigDecimal sumCollectedAmount(Long projectId) {
+    private BigDecimal sumCollectedAmount(String projectId) {
         IEntityDao<ErpPrjCostCollection> headDao = daoProvider.daoFor(ErpPrjCostCollection.class);
         QueryBean headQuery = new QueryBean();
         headQuery.addFilter(eq("projectId", projectId));
@@ -123,7 +123,7 @@ public class ProjectCostAggregator {
         if (heads.isEmpty()) {
             return BigDecimal.ZERO;
         }
-        java.util.List<Long> headIds = new java.util.ArrayList<>(heads.size());
+        java.util.List<String> headIds = new java.util.ArrayList<>(heads.size());
         for (ErpPrjCostCollection h : heads) {
             headIds.add(h.getId());
         }
@@ -146,7 +146,7 @@ public class ProjectCostAggregator {
         return !dao.findAllByQuery(q).isEmpty();
     }
 
-    private ErpPrjCostCollection findOpenHead(Long projectId) {
+    private ErpPrjCostCollection findOpenHead(String projectId) {
         IEntityDao<ErpPrjCostCollection> dao = daoProvider.daoFor(ErpPrjCostCollection.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("projectId", projectId));
@@ -156,14 +156,14 @@ public class ProjectCostAggregator {
         return existing.isEmpty() ? null : existing.get(0);
     }
 
-    private int nextLineNo(Long headId) {
+    private int nextLineNo(String headId) {
         IEntityDao<ErpPrjCostCollectionLine> dao = daoProvider.daoFor(ErpPrjCostCollectionLine.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("costCollectionId", headId));
         return (int) dao.findAllByQuery(q).size() + 1;
     }
 
-    private Long resolveLaborSubjectId(ErpPrjTimesheet timesheet, ErpPrjProject project) {
+    private String resolveLaborSubjectId(ErpPrjTimesheet timesheet, ErpPrjProject project) {
         if (timesheet.getActivityTypeId() != null) {
             ErpPrjActivityType activityType = timesheet.getActivityType();
             if (activityType != null && activityType.getSubjectId() != null) {
@@ -179,7 +179,7 @@ public class ProjectCostAggregator {
         return null;
     }
 
-    private ErpPrjProject loadProject(Long projectId) {
+    private ErpPrjProject loadProject(String projectId) {
         IEntityDao<ErpPrjProject> dao = daoProvider.daoFor(ErpPrjProject.class);
         return dao.getEntityById(projectId);
     }

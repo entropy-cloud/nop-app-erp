@@ -19,13 +19,13 @@
             <cols>
 
                 <!--ID-->
-                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="id" mandatory="true" sortable="true"/>
 
                 <!--项目-->
-                <col id="projectId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="projectId" mandatory="true" sortable="true"/>
 
                 <!--用户-->
-                <col id="userId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="userId" mandatory="true" sortable="true"/>
 
                 <!--角色-->
                 <col id="role" sortable="true"/>

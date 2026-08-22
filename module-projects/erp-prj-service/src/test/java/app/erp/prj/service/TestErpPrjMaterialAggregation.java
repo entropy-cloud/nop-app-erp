@@ -74,13 +74,13 @@ public class TestErpPrjMaterialAggregation extends JunitAutoTestCase {
 
     @Test
     public void testAggregateMaterialCostWritesCollectionLine() {
-        Long[] projectHolder = new Long[1];
+        String[] projectHolder = new String[1];
         ormTemplate.runInSession(session -> {
             seedOpenPeriod("2026-07");
-            seedAcctSchema(1L);
-            Long subjectId = seedSubject("5101", "项目开发成本");
-            Long projectTypeId = seedProjectType("PT-MAT", "研发", subjectId);
-            Long projectId = seedProject("PRJ-MAT-001", "物料归集项目", projectTypeId,
+            seedAcctSchema("1");
+            String subjectId = seedSubject("5101", "项目开发成本");
+            String projectTypeId = seedProjectType("PT-MAT", "研发", subjectId);
+            String projectId = seedProject("PRJ-MAT-001", "物料归集项目", projectTypeId,
                     ErpPrjConstants.PROJECT_STATUS_OPEN);
             projectHolder[0] = projectId;
             return null;
@@ -111,13 +111,13 @@ public class TestErpPrjMaterialAggregation extends JunitAutoTestCase {
 
     @Test
     public void testAggregateMaterialCostIsIdempotent() {
-        Long[] projectHolder = new Long[1];
+        String[] projectHolder = new String[1];
         ormTemplate.runInSession(session -> {
             seedOpenPeriod("2026-07");
-            seedAcctSchema(1L);
-            Long subjectId = seedSubject("5101", "项目开发成本");
-            Long projectTypeId = seedProjectType("PT-MAT", "研发", subjectId);
-            Long projectId = seedProject("PRJ-MAT-002", "幂等项目", projectTypeId,
+            seedAcctSchema("1");
+            String subjectId = seedSubject("5101", "项目开发成本");
+            String projectTypeId = seedProjectType("PT-MAT", "研发", subjectId);
+            String projectId = seedProject("PRJ-MAT-002", "幂等项目", projectTypeId,
                     ErpPrjConstants.PROJECT_STATUS_OPEN);
             projectHolder[0] = projectId;
             return null;
@@ -147,13 +147,13 @@ public class TestErpPrjMaterialAggregation extends JunitAutoTestCase {
     public void testBudgetStrictRejectsOverBudget() {
         System.setProperty(ErpPrjConstants.CONFIG_BUDGET_CONTROL_MODE, "STRICT");
         try {
-            Long[] projectHolder = new Long[1];
+            String[] projectHolder = new String[1];
             ormTemplate.runInSession(session -> {
                 seedOpenPeriod("2026-07");
-                seedAcctSchema(1L);
-                Long subjectId = seedSubject("5101", "项目开发成本");
-                Long projectTypeId = seedProjectType("PT-MAT", "研发", subjectId);
-                Long projectId = seedProject("PRJ-MAT-S-001", "STRICT 项目", projectTypeId,
+                seedAcctSchema("1");
+                String subjectId = seedSubject("5101", "项目开发成本");
+                String projectTypeId = seedProjectType("PT-MAT", "研发", subjectId);
+                String projectId = seedProject("PRJ-MAT-S-001", "STRICT 项目", projectTypeId,
                         ErpPrjConstants.PROJECT_STATUS_OPEN);
                 daoProvider.daoFor(ErpPrjProject.class).getEntityById(projectId)
                         .setBudget(new BigDecimal("1000"));
@@ -177,13 +177,13 @@ public class TestErpPrjMaterialAggregation extends JunitAutoTestCase {
     public void testBudgetWarningAllowsOverBudget() {
         System.setProperty(ErpPrjConstants.CONFIG_BUDGET_CONTROL_MODE, "WARNING");
         try {
-            Long[] projectHolder = new Long[1];
+            String[] projectHolder = new String[1];
             ormTemplate.runInSession(session -> {
                 seedOpenPeriod("2026-07");
-                seedAcctSchema(1L);
-                Long subjectId = seedSubject("5101", "项目开发成本");
-                Long projectTypeId = seedProjectType("PT-MAT", "研发", subjectId);
-                Long projectId = seedProject("PRJ-MAT-W-001", "WARNING 项目", projectTypeId,
+                seedAcctSchema("1");
+                String subjectId = seedSubject("5101", "项目开发成本");
+                String projectTypeId = seedProjectType("PT-MAT", "研发", subjectId);
+                String projectId = seedProject("PRJ-MAT-W-001", "WARNING 项目", projectTypeId,
                         ErpPrjConstants.PROJECT_STATUS_OPEN);
                 daoProvider.daoFor(ErpPrjProject.class).getEntityById(projectId)
                         .setBudget(new BigDecimal("1000"));
@@ -203,13 +203,13 @@ public class TestErpPrjMaterialAggregation extends JunitAutoTestCase {
 
     @Test
     public void testRequireReferenceableRejectsNonOpen() {
-        Long[] projectHolder = new Long[1];
+        String[] projectHolder = new String[1];
         ormTemplate.runInSession(session -> {
             seedOpenPeriod("2026-07");
-            seedAcctSchema(1L);
-            Long subjectId = seedSubject("5101", "项目开发成本");
-            Long projectTypeId = seedProjectType("PT-MAT", "研发", subjectId);
-            Long projectId = seedProject("PRJ-MAT-C-001", "已关闭项目", projectTypeId,
+            seedAcctSchema("1");
+            String subjectId = seedSubject("5101", "项目开发成本");
+            String projectTypeId = seedProjectType("PT-MAT", "研发", subjectId);
+            String projectId = seedProject("PRJ-MAT-C-001", "已关闭项目", projectTypeId,
                     ErpPrjConstants.PROJECT_STATUS_COMPLETED);
             projectHolder[0] = projectId;
             return null;
@@ -228,13 +228,13 @@ public class TestErpPrjMaterialAggregation extends JunitAutoTestCase {
     public void testMaterialAggregationDisabledByConfig() {
         System.setProperty(ErpPrjConstants.CONFIG_MATERIAL_AGGREGATION_ENABLED, "false");
         try {
-            Long[] projectHolder = new Long[1];
+            String[] projectHolder = new String[1];
             ormTemplate.runInSession(session -> {
                 seedOpenPeriod("2026-07");
-                seedAcctSchema(1L);
-                Long subjectId = seedSubject("5101", "项目开发成本");
-                Long projectTypeId = seedProjectType("PT-MAT", "研发", subjectId);
-                Long projectId = seedProject("PRJ-MAT-OFF-001", "禁用项目", projectTypeId,
+                seedAcctSchema("1");
+                String subjectId = seedSubject("5101", "项目开发成本");
+                String projectTypeId = seedProjectType("PT-MAT", "研发", subjectId);
+                String projectId = seedProject("PRJ-MAT-OFF-001", "禁用项目", projectTypeId,
                         ErpPrjConstants.PROJECT_STATUS_OPEN);
                 projectHolder[0] = projectId;
                 return null;
@@ -252,13 +252,13 @@ public class TestErpPrjMaterialAggregation extends JunitAutoTestCase {
 
     @Test
     public void testPnlFourCategoryAggregationWithMaterialViaFacade() {
-        Long[] projectHolder = new Long[1];
+        String[] projectHolder = new String[1];
         ormTemplate.runInSession(session -> {
             seedOpenPeriod("2026-07");
-            seedAcctSchema(1L);
-            Long subjectId = seedSubject("5101", "项目成本");
-            Long projectTypeId = seedProjectType("PT-PNL", "损益", subjectId);
-            Long projectId = seedProject("PRJ-PNL-MAT-001", "四分类损益项目", projectTypeId,
+            seedAcctSchema("1");
+            String subjectId = seedSubject("5101", "项目成本");
+            String projectTypeId = seedProjectType("PT-PNL", "损益", subjectId);
+            String projectId = seedProject("PRJ-PNL-MAT-001", "四分类损益项目", projectTypeId,
                     ErpPrjConstants.PROJECT_STATUS_OPEN);
             projectHolder[0] = projectId;
             seedCostLine(projectId, ErpPrjConstants.COST_CATEGORY_LABOR, "2000");
@@ -282,12 +282,12 @@ public class TestErpPrjMaterialAggregation extends JunitAutoTestCase {
 
     // ---------- seed helpers ----------
 
-    private void seedCostLine(Long projectId, String category, String amount) {
+    private void seedCostLine(String projectId, String category, String amount) {
         IEntityDao<ErpPrjCostCollection> headDao = daoProvider.daoFor(ErpPrjCostCollection.class);
         ErpPrjCostCollection head = new ErpPrjCostCollection();
         head.setCode("CC-SEED-" + projectId + "-" + category + "-" + System.nanoTime());
         head.setProjectId(projectId);
-        head.setOrgId(1L);
+        head.setOrgId("1");
         head.setBusinessDate(LocalDate.of(2026, 7, 15));
         head.setTotalAmount(new BigDecimal(amount));
         head.setDocStatus(ErpPrjConstants.DOC_STATUS_APPROVED);
@@ -309,14 +309,14 @@ public class TestErpPrjMaterialAggregation extends JunitAutoTestCase {
         lineDao.saveEntity(line);
     }
 
-    private Long seedProject(String code, String name, Long projectTypeId, String status) {
+    private String seedProject(String code, String name, String projectTypeId, String status) {
         IEntityDao<ErpPrjProject> dao = daoProvider.daoFor(ErpPrjProject.class);
         ErpPrjProject p = new ErpPrjProject();
         p.setCode(code);
         p.setName(name);
-        p.setOrgId(1L);
+        p.setOrgId("1");
         p.setProjectTypeId(projectTypeId);
-        p.setCurrencyId(1L);
+        p.setCurrencyId("1");
         p.setStatus(status);
         p.setBudget(new BigDecimal("100000"));
         p.setActualCost(BigDecimal.ZERO);
@@ -324,7 +324,7 @@ public class TestErpPrjMaterialAggregation extends JunitAutoTestCase {
         return p.getId();
     }
 
-    private Long seedProjectType(String code, String name, Long defaultSubjectId) {
+    private String seedProjectType(String code, String name, String defaultSubjectId) {
         IEntityDao<ErpPrjProjectType> dao = daoProvider.daoFor(ErpPrjProjectType.class);
         ErpPrjProjectType t = new ErpPrjProjectType();
         t.setCode(code);
@@ -334,7 +334,7 @@ public class TestErpPrjMaterialAggregation extends JunitAutoTestCase {
         return t.getId();
     }
 
-    private Long seedSubject(String code, String name) {
+    private String seedSubject(String code, String name) {
         IEntityDao<ErpMdSubject> dao = daoProvider.daoFor(ErpMdSubject.class);
         ErpMdSubject s = new ErpMdSubject();
         s.setCode(code);
@@ -346,14 +346,14 @@ public class TestErpPrjMaterialAggregation extends JunitAutoTestCase {
         return s.getId();
     }
 
-    private void seedAcctSchema(long orgId) {
+    private void seedAcctSchema(String orgId) {
         IEntityDao<ErpMdAcctSchema> dao = daoProvider.daoFor(ErpMdAcctSchema.class);
         ErpMdAcctSchema schema = new ErpMdAcctSchema();
         schema.setCode("AS-" + orgId);
         schema.setName("账套-" + orgId);
         schema.setOrgId(orgId);
         schema.setNature("FINANCIAL");
-        schema.setFunctionalCurrencyId(1L);
+        schema.setFunctionalCurrencyId("1");
         schema.setStatus(ErpMdConstants.ACTIVE_STATUS_ACTIVE);
         dao.saveEntity(schema);
     }
@@ -363,7 +363,7 @@ public class TestErpPrjMaterialAggregation extends JunitAutoTestCase {
         ErpFinAccountingPeriod period = new ErpFinAccountingPeriod();
         period.setCode(code);
         period.setName(code);
-        period.setOrgId(1L);
+        period.setOrgId("1");
         period.setYear(2026);
         period.setMonth(7);
         period.setStartDate(LocalDate.of(2026, 7, 1));

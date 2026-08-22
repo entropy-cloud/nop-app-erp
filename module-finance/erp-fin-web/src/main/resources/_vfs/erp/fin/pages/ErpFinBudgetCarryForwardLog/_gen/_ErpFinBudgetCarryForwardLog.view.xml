@@ -19,19 +19,19 @@
             <cols>
 
                 <!--ID-->
-                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="id" mandatory="true" sortable="true"/>
 
                 <!--核算组织-->
-                <col id="orgId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="orgId" mandatory="true" sortable="true"/>
 
                 <!--预算方案-->
-                <col id="scenarioId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="scenarioId" mandatory="true" sortable="true"/>
 
                 <!--源方案-->
-                <col id="sourceScenarioId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="sourceScenarioId" mandatory="true" sortable="true"/>
 
                 <!--目标方案-->
-                <col id="targetScenarioId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="targetScenarioId" mandatory="true" sortable="true"/>
 
                 <!--结转规则-->
                 <col id="rule" mandatory="true" sortable="true"/>

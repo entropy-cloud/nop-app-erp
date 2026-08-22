@@ -216,19 +216,19 @@ public class _ErpPrjTask extends DynamicOrmEntity{
 
     
     /* ID: ID */
-    private java.lang.Long _id;
+    private java.lang.String _id;
     
     /* 项目: PROJECT_ID */
-    private java.lang.Long _projectId;
+    private java.lang.String _projectId;
     
     /* 父任务: PARENT_TASK_ID */
-    private java.lang.Long _parentTaskId;
+    private java.lang.String _parentTaskId;
     
     /* 任务标题: TITLE */
     private java.lang.String _title;
     
     /* 负责人: ASSIGNEE_ID */
-    private java.lang.Long _assigneeId;
+    private java.lang.String _assigneeId;
     
     /* 计划开始日期: PLANNED_START_DATE */
     private java.time.LocalDate _plannedStartDate;
@@ -249,7 +249,7 @@ public class _ErpPrjTask extends DynamicOrmEntity{
     private java.math.BigDecimal _actualHours;
     
     /* 依赖任务: DEPENDS_ON_ID */
-    private java.lang.Long _dependsOnId;
+    private java.lang.String _dependsOnId;
     
     /* 状态: STATUS */
     private java.lang.String _status;
@@ -439,9 +439,9 @@ public class _ErpPrjTask extends DynamicOrmEntity{
         switch(propId){
         
             case PROP_ID_id:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_id));
                }
                setId(typedValue);
@@ -449,9 +449,9 @@ public class _ErpPrjTask extends DynamicOrmEntity{
             }
         
             case PROP_ID_projectId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_projectId));
                }
                setProjectId(typedValue);
@@ -459,9 +459,9 @@ public class _ErpPrjTask extends DynamicOrmEntity{
             }
         
             case PROP_ID_parentTaskId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_parentTaskId));
                }
                setParentTaskId(typedValue);
@@ -479,9 +479,9 @@ public class _ErpPrjTask extends DynamicOrmEntity{
             }
         
             case PROP_ID_assigneeId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_assigneeId));
                }
                setAssigneeId(typedValue);
@@ -549,9 +549,9 @@ public class _ErpPrjTask extends DynamicOrmEntity{
             }
         
             case PROP_ID_dependsOnId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_dependsOnId));
                }
                setDependsOnId(typedValue);
@@ -679,21 +679,21 @@ public class _ErpPrjTask extends DynamicOrmEntity{
         
             case PROP_ID_id:{
                onInitProp(propId);
-               this._id = (java.lang.Long)value;
+               this._id = (java.lang.String)value;
                orm_id(); // 如果是设置主键字段，则触发watcher
                break;
             }
         
             case PROP_ID_projectId:{
                onInitProp(propId);
-               this._projectId = (java.lang.Long)value;
+               this._projectId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_parentTaskId:{
                onInitProp(propId);
-               this._parentTaskId = (java.lang.Long)value;
+               this._parentTaskId = (java.lang.String)value;
                
                break;
             }
@@ -707,7 +707,7 @@ public class _ErpPrjTask extends DynamicOrmEntity{
         
             case PROP_ID_assigneeId:{
                onInitProp(propId);
-               this._assigneeId = (java.lang.Long)value;
+               this._assigneeId = (java.lang.String)value;
                
                break;
             }
@@ -756,7 +756,7 @@ public class _ErpPrjTask extends DynamicOrmEntity{
         
             case PROP_ID_dependsOnId:{
                onInitProp(propId);
-               this._dependsOnId = (java.lang.Long)value;
+               this._dependsOnId = (java.lang.String)value;
                
                break;
             }
@@ -847,7 +847,7 @@ public class _ErpPrjTask extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final java.lang.Long getId(){
+    public final java.lang.String getId(){
          onPropGet(PROP_ID_id);
          return _id;
     }
@@ -855,7 +855,7 @@ public class _ErpPrjTask extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final void setId(java.lang.Long value){
+    public final void setId(java.lang.String value){
         if(onPropSet(PROP_ID_id,value)){
             this._id = value;
             internalClearRefs(PROP_ID_id);
@@ -866,7 +866,7 @@ public class _ErpPrjTask extends DynamicOrmEntity{
     /**
      * 项目: PROJECT_ID
      */
-    public final java.lang.Long getProjectId(){
+    public final java.lang.String getProjectId(){
          onPropGet(PROP_ID_projectId);
          return _projectId;
     }
@@ -874,7 +874,7 @@ public class _ErpPrjTask extends DynamicOrmEntity{
     /**
      * 项目: PROJECT_ID
      */
-    public final void setProjectId(java.lang.Long value){
+    public final void setProjectId(java.lang.String value){
         if(onPropSet(PROP_ID_projectId,value)){
             this._projectId = value;
             internalClearRefs(PROP_ID_projectId);
@@ -885,7 +885,7 @@ public class _ErpPrjTask extends DynamicOrmEntity{
     /**
      * 父任务: PARENT_TASK_ID
      */
-    public final java.lang.Long getParentTaskId(){
+    public final java.lang.String getParentTaskId(){
          onPropGet(PROP_ID_parentTaskId);
          return _parentTaskId;
     }
@@ -893,7 +893,7 @@ public class _ErpPrjTask extends DynamicOrmEntity{
     /**
      * 父任务: PARENT_TASK_ID
      */
-    public final void setParentTaskId(java.lang.Long value){
+    public final void setParentTaskId(java.lang.String value){
         if(onPropSet(PROP_ID_parentTaskId,value)){
             this._parentTaskId = value;
             internalClearRefs(PROP_ID_parentTaskId);
@@ -923,7 +923,7 @@ public class _ErpPrjTask extends DynamicOrmEntity{
     /**
      * 负责人: ASSIGNEE_ID
      */
-    public final java.lang.Long getAssigneeId(){
+    public final java.lang.String getAssigneeId(){
          onPropGet(PROP_ID_assigneeId);
          return _assigneeId;
     }
@@ -931,7 +931,7 @@ public class _ErpPrjTask extends DynamicOrmEntity{
     /**
      * 负责人: ASSIGNEE_ID
      */
-    public final void setAssigneeId(java.lang.Long value){
+    public final void setAssigneeId(java.lang.String value){
         if(onPropSet(PROP_ID_assigneeId,value)){
             this._assigneeId = value;
             internalClearRefs(PROP_ID_assigneeId);
@@ -1056,7 +1056,7 @@ public class _ErpPrjTask extends DynamicOrmEntity{
     /**
      * 依赖任务: DEPENDS_ON_ID
      */
-    public final java.lang.Long getDependsOnId(){
+    public final java.lang.String getDependsOnId(){
          onPropGet(PROP_ID_dependsOnId);
          return _dependsOnId;
     }
@@ -1064,7 +1064,7 @@ public class _ErpPrjTask extends DynamicOrmEntity{
     /**
      * 依赖任务: DEPENDS_ON_ID
      */
-    public final void setDependsOnId(java.lang.Long value){
+    public final void setDependsOnId(java.lang.String value){
         if(onPropSet(PROP_ID_dependsOnId,value)){
             this._dependsOnId = value;
             internalClearRefs(PROP_ID_dependsOnId);

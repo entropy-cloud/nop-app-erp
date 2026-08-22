@@ -54,19 +54,19 @@ public class ErpPrjTimesheetBizModel extends CrudBizModel<ErpPrjTimesheet> imple
 
     @Override
     @BizMutation
-    public ErpPrjTimesheet submit(@Name("timesheetId") Long timesheetId, IServiceContext context) {
+    public ErpPrjTimesheet submit(@Name("timesheetId") String timesheetId, IServiceContext context) {
         return submitProcessor.submit(timesheetId, context);
     }
 
     @Override
     @BizMutation
-    public ErpPrjTimesheet approve(@Name("timesheetId") Long timesheetId, IServiceContext context) {
+    public ErpPrjTimesheet approve(@Name("timesheetId") String timesheetId, IServiceContext context) {
         return approveProcessor.approve(timesheetId, context);
     }
 
     @Override
     @BizMutation
-    public ErpPrjTimesheet reject(@Name("timesheetId") Long timesheetId, IServiceContext context) {
+    public ErpPrjTimesheet reject(@Name("timesheetId") String timesheetId, IServiceContext context) {
         ErpPrjTimesheet timesheet = requireTimesheet(timesheetId, context);
         String status = timesheet.getStatus();
         // 固定来源态守卫委托 StateMachine Bean（非法边映射为领域码 + expected="SUBMITTED" 文案保持）
@@ -82,13 +82,13 @@ public class ErpPrjTimesheetBizModel extends CrudBizModel<ErpPrjTimesheet> imple
 
     @Override
     @BizMutation
-    public ErpPrjTimesheet cancel(@Name("timesheetId") Long timesheetId, IServiceContext context) {
+    public ErpPrjTimesheet cancel(@Name("timesheetId") String timesheetId, IServiceContext context) {
         return cancelProcessor.cancel(timesheetId, context);
     }
 
     // ---------- helpers ----------
 
-    private ErpPrjTimesheet requireTimesheet(Long timesheetId, IServiceContext context) {
+    private ErpPrjTimesheet requireTimesheet(String timesheetId, IServiceContext context) {
         return requireEntity(String.valueOf(timesheetId), null, context);
     }
 

@@ -64,7 +64,7 @@ public class ProjectSettlementAcctDocProvider implements IErpFinAcctDocProvider 
         String settlementType = readString(event, ErpPrjConstants.BILL_DATA_SETTLEMENT_TYPE);
         BigDecimal finalRevenue = readDecimal(event, ErpPrjConstants.BILL_DATA_FINAL_REVENUE);
         BigDecimal finalCost = readDecimal(event, ErpPrjConstants.BILL_DATA_FINAL_COST);
-        Long projectId = readLong(event, ErpPrjConstants.BILL_DATA_PROJECT_ID);
+        String projectId = readString(event, ErpPrjConstants.BILL_DATA_PROJECT_ID);
         boolean transferToAsset = readBoolean(event, ErpPrjConstants.BILL_DATA_TRANSFER_TO_ASSET);
         BigDecimal retentionAmount = readDecimal(event, ErpPrjConstants.BILL_DATA_RETENTION_AMOUNT);
         boolean retentionReturn = readBoolean(event, ErpPrjConstants.BILL_DATA_RETENTION_RETURN);
@@ -162,21 +162,6 @@ public class ProjectSettlementAcctDocProvider implements IErpFinAcctDocProvider 
     private String readString(PostingEvent event, String key) {
         Object value = event.getBillData().get(key);
         return value == null ? null : value.toString().trim();
-    }
-
-    private Long readLong(PostingEvent event, String key) {
-        Object value = event.getBillData().get(key);
-        if (value == null) {
-            return null;
-        }
-        if (value instanceof Number) {
-            return ((Number) value).longValue();
-        }
-        try {
-            return Long.valueOf(value.toString().trim());
-        } catch (NumberFormatException e) {
-            return null;
-        }
     }
 
     private boolean readBoolean(PostingEvent event, String key) {

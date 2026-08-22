@@ -14,7 +14,6 @@ import jakarta.inject.Inject;
  * → [若 CLOSE+transferToAsset+assetCardId==null: createAndActivateAsset（转固）]
  * → doPost（postingDispatcher 过账） → doApprove(APPROVED+docStatus=APPROVED+approvedBy/At) → save。
  * 转固+过账经 facade protected helper（单一真相源），per-mutation 不复制会计规则。
- * Long 签名边界：custom override 内 Long.valueOf(id) 转换。
  * 运行时经 BizModel→facade 旧路径，R5.8 重配线后激活本路径。
  */
 public class ErpPrjProjectSettlementApproveProcessor extends AbstractApproveProcessor<ErpPrjProjectSettlement> {
@@ -24,8 +23,7 @@ public class ErpPrjProjectSettlementApproveProcessor extends AbstractApproveProc
 
     @Override
     public ErpPrjProjectSettlement approve(String id, IServiceContext context) {
-        Long longId = Long.valueOf(id);
-        ErpPrjProjectSettlement settlement = processor.requireSettlement(longId);
+        ErpPrjProjectSettlement settlement = processor.requireSettlement(id);
         processor.validateTransitionForApprove(settlement);
         if (ErpPrjConstants.SETTLEMENT_TYPE_CLOSE.equals(settlement.getSettlementType())
                 && Boolean.TRUE.equals(settlement.getTransferToAsset()) && settlement.getAssetCardId() == null) {

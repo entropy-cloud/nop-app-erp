@@ -49,7 +49,7 @@ public class ErpPrjProjectCloseProjectProcessor {
     @Inject
     ErpPrjProjectStateMachine stateMachine;
 
-    public ErpPrjProject closeProject(Long projectId, IServiceContext context) {
+    public ErpPrjProject closeProject(String projectId, IServiceContext context) {
         ErpPrjProject project = requireProject(projectId);
         String status = project.getStatus();
         try {
@@ -82,7 +82,7 @@ public class ErpPrjProjectCloseProjectProcessor {
      * 这 4 态（无 CANCELLED，任务取消走 useLogicalDelete），故 in 未结束集等价于 not in {DONE}；
      * ErpPrjTask.status 的 XMeta 仅允许 in 不允许 notIn。
      */
-    private void validateTasksFinished(Long projectId, IServiceContext context) {
+    private void validateTasksFinished(String projectId, IServiceContext context) {
         QueryBean query = new QueryBean();
         query.addFilter(eq("projectId", projectId));
         query.addFilter(in("status", UNFINISHED_TASK_STATUSES));
@@ -99,7 +99,7 @@ public class ErpPrjProjectCloseProjectProcessor {
                 projectId, count, UNFINISHED_TASK_STATUSES);
     }
 
-    private ErpPrjProject requireProject(Long projectId) {
+    private ErpPrjProject requireProject(String projectId) {
         ErpPrjProject project = projectDao().getEntityById(projectId);
         if (project == null) {
             throw new NopException(ErpPrjErrors.ERR_PROJECT_NOT_FOUND)

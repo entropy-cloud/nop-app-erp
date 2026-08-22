@@ -144,10 +144,10 @@ public class _ErpPrjBillingLine extends DynamicOrmEntity{
 
     
     /* ID: ID */
-    private java.lang.Long _id;
+    private java.lang.String _id;
     
     /* 开票单ID: BILLING_ID */
-    private java.lang.Long _billingId;
+    private java.lang.String _billingId;
     
     /* 行号: LINE_NO */
     private java.lang.Integer _lineNo;
@@ -156,10 +156,10 @@ public class _ErpPrjBillingLine extends DynamicOrmEntity{
     private java.lang.String _costCategory;
     
     /* 任务: TASK_ID */
-    private java.lang.Long _taskId;
+    private java.lang.String _taskId;
     
     /* 科目: SUBJECT_ID */
-    private java.lang.Long _subjectId;
+    private java.lang.String _subjectId;
     
     /* 金额: AMOUNT */
     private java.math.BigDecimal _amount;
@@ -313,9 +313,9 @@ public class _ErpPrjBillingLine extends DynamicOrmEntity{
         switch(propId){
         
             case PROP_ID_id:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_id));
                }
                setId(typedValue);
@@ -323,9 +323,9 @@ public class _ErpPrjBillingLine extends DynamicOrmEntity{
             }
         
             case PROP_ID_billingId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_billingId));
                }
                setBillingId(typedValue);
@@ -353,9 +353,9 @@ public class _ErpPrjBillingLine extends DynamicOrmEntity{
             }
         
             case PROP_ID_taskId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_taskId));
                }
                setTaskId(typedValue);
@@ -363,9 +363,9 @@ public class _ErpPrjBillingLine extends DynamicOrmEntity{
             }
         
             case PROP_ID_subjectId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_subjectId));
                }
                setSubjectId(typedValue);
@@ -463,14 +463,14 @@ public class _ErpPrjBillingLine extends DynamicOrmEntity{
         
             case PROP_ID_id:{
                onInitProp(propId);
-               this._id = (java.lang.Long)value;
+               this._id = (java.lang.String)value;
                orm_id(); // 如果是设置主键字段，则触发watcher
                break;
             }
         
             case PROP_ID_billingId:{
                onInitProp(propId);
-               this._billingId = (java.lang.Long)value;
+               this._billingId = (java.lang.String)value;
                
                break;
             }
@@ -491,14 +491,14 @@ public class _ErpPrjBillingLine extends DynamicOrmEntity{
         
             case PROP_ID_taskId:{
                onInitProp(propId);
-               this._taskId = (java.lang.Long)value;
+               this._taskId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_subjectId:{
                onInitProp(propId);
-               this._subjectId = (java.lang.Long)value;
+               this._subjectId = (java.lang.String)value;
                
                break;
             }
@@ -568,7 +568,7 @@ public class _ErpPrjBillingLine extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final java.lang.Long getId(){
+    public final java.lang.String getId(){
          onPropGet(PROP_ID_id);
          return _id;
     }
@@ -576,7 +576,7 @@ public class _ErpPrjBillingLine extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final void setId(java.lang.Long value){
+    public final void setId(java.lang.String value){
         if(onPropSet(PROP_ID_id,value)){
             this._id = value;
             internalClearRefs(PROP_ID_id);
@@ -587,7 +587,7 @@ public class _ErpPrjBillingLine extends DynamicOrmEntity{
     /**
      * 开票单ID: BILLING_ID
      */
-    public final java.lang.Long getBillingId(){
+    public final java.lang.String getBillingId(){
          onPropGet(PROP_ID_billingId);
          return _billingId;
     }
@@ -595,7 +595,7 @@ public class _ErpPrjBillingLine extends DynamicOrmEntity{
     /**
      * 开票单ID: BILLING_ID
      */
-    public final void setBillingId(java.lang.Long value){
+    public final void setBillingId(java.lang.String value){
         if(onPropSet(PROP_ID_billingId,value)){
             this._billingId = value;
             internalClearRefs(PROP_ID_billingId);
@@ -644,7 +644,7 @@ public class _ErpPrjBillingLine extends DynamicOrmEntity{
     /**
      * 任务: TASK_ID
      */
-    public final java.lang.Long getTaskId(){
+    public final java.lang.String getTaskId(){
          onPropGet(PROP_ID_taskId);
          return _taskId;
     }
@@ -652,7 +652,7 @@ public class _ErpPrjBillingLine extends DynamicOrmEntity{
     /**
      * 任务: TASK_ID
      */
-    public final void setTaskId(java.lang.Long value){
+    public final void setTaskId(java.lang.String value){
         if(onPropSet(PROP_ID_taskId,value)){
             this._taskId = value;
             internalClearRefs(PROP_ID_taskId);
@@ -663,7 +663,7 @@ public class _ErpPrjBillingLine extends DynamicOrmEntity{
     /**
      * 科目: SUBJECT_ID
      */
-    public final java.lang.Long getSubjectId(){
+    public final java.lang.String getSubjectId(){
          onPropGet(PROP_ID_subjectId);
          return _subjectId;
     }
@@ -671,7 +671,7 @@ public class _ErpPrjBillingLine extends DynamicOrmEntity{
     /**
      * 科目: SUBJECT_ID
      */
-    public final void setSubjectId(java.lang.Long value){
+    public final void setSubjectId(java.lang.String value){
         if(onPropSet(PROP_ID_subjectId,value)){
             this._subjectId = value;
             internalClearRefs(PROP_ID_subjectId);

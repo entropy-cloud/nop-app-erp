@@ -19,7 +19,7 @@
             <cols>
 
                 <!--ID-->
-                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="id" mandatory="true" sortable="true"/>
 
                 <!--项目编码-->
                 <col id="code" mandatory="true" sortable="true"/>
@@ -28,16 +28,16 @@
                 <col id="name" mandatory="true" sortable="true"/>
 
                 <!--业务组织-->
-                <col id="orgId" ui:number="true" sortable="true"/>
+                <col id="orgId" sortable="true"/>
 
                 <!--项目类型-->
-                <col id="projectTypeId" ui:number="true" sortable="true"/>
+                <col id="projectTypeId" sortable="true"/>
 
                 <!--客户-->
-                <col id="customerId" ui:number="true" sortable="true"/>
+                <col id="customerId" sortable="true"/>
 
                 <!--币种-->
-                <col id="currencyId" ui:number="true" sortable="true"/>
+                <col id="currencyId" sortable="true"/>
 
                 <!--开始日期-->
                 <col id="startDate" sortable="true"/>
@@ -61,7 +61,7 @@
                 <col id="status" mandatory="true" sortable="true"/>
 
                 <!--项目经理(职员)-->
-                <col id="managerId" ui:number="true" sortable="true"/>
+                <col id="managerId" sortable="true"/>
 
                 <!--备注-->
                 <col id="remark" sortable="true"/>

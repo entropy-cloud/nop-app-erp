@@ -31,10 +31,10 @@
                 <col id="workDate" mandatory="true" sortable="true"/>
 
                 <!--项目-->
-                <col id="projectId" ui:number="true" sortable="true"/>
+                <col id="projectId" sortable="true"/>
 
                 <!--任务-->
-                <col id="taskId" ui:number="true" sortable="true"/>
+                <col id="taskId" sortable="true"/>
 
                 <!--活动类型-->
                 <col id="activityType" sortable="true"/>

@@ -166,10 +166,10 @@ public class _ErpHrTimesheetLine extends DynamicOrmEntity{
     private java.time.LocalDate _workDate;
     
     /* 项目: PROJECT_ID */
-    private java.lang.Long _projectId;
+    private java.lang.String _projectId;
     
     /* 任务: TASK_ID */
-    private java.lang.Long _taskId;
+    private java.lang.String _taskId;
     
     /* 活动类型: ACTIVITY_TYPE */
     private java.lang.String _activityType;
@@ -369,9 +369,9 @@ public class _ErpHrTimesheetLine extends DynamicOrmEntity{
             }
         
             case PROP_ID_projectId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_projectId));
                }
                setProjectId(typedValue);
@@ -379,9 +379,9 @@ public class _ErpHrTimesheetLine extends DynamicOrmEntity{
             }
         
             case PROP_ID_taskId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_taskId));
                }
                setTaskId(typedValue);
@@ -517,14 +517,14 @@ public class _ErpHrTimesheetLine extends DynamicOrmEntity{
         
             case PROP_ID_projectId:{
                onInitProp(propId);
-               this._projectId = (java.lang.Long)value;
+               this._projectId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_taskId:{
                onInitProp(propId);
-               this._taskId = (java.lang.Long)value;
+               this._taskId = (java.lang.String)value;
                
                break;
             }
@@ -677,7 +677,7 @@ public class _ErpHrTimesheetLine extends DynamicOrmEntity{
     /**
      * 项目: PROJECT_ID
      */
-    public final java.lang.Long getProjectId(){
+    public final java.lang.String getProjectId(){
          onPropGet(PROP_ID_projectId);
          return _projectId;
     }
@@ -685,7 +685,7 @@ public class _ErpHrTimesheetLine extends DynamicOrmEntity{
     /**
      * 项目: PROJECT_ID
      */
-    public final void setProjectId(java.lang.Long value){
+    public final void setProjectId(java.lang.String value){
         if(onPropSet(PROP_ID_projectId,value)){
             this._projectId = value;
             internalClearRefs(PROP_ID_projectId);
@@ -696,7 +696,7 @@ public class _ErpHrTimesheetLine extends DynamicOrmEntity{
     /**
      * 任务: TASK_ID
      */
-    public final java.lang.Long getTaskId(){
+    public final java.lang.String getTaskId(){
          onPropGet(PROP_ID_taskId);
          return _taskId;
     }
@@ -704,7 +704,7 @@ public class _ErpHrTimesheetLine extends DynamicOrmEntity{
     /**
      * 任务: TASK_ID
      */
-    public final void setTaskId(java.lang.Long value){
+    public final void setTaskId(java.lang.String value){
         if(onPropSet(PROP_ID_taskId,value)){
             this._taskId = value;
             internalClearRefs(PROP_ID_taskId);
@@ -945,8 +945,7 @@ public class _ErpHrTimesheetLine extends DynamicOrmEntity{
            }else{
            internalSetRefEntity(PROP_NAME_project, refEntity,()->{
            
-                           this.orm_propValue(PROP_ID_projectId,
-                           refEntity.getId());
+                           this.setProjectId(refEntity.getId());
                        
            });
            }
@@ -969,8 +968,7 @@ public class _ErpHrTimesheetLine extends DynamicOrmEntity{
            }else{
            internalSetRefEntity(PROP_NAME_task, refEntity,()->{
            
-                           this.orm_propValue(PROP_ID_taskId,
-                           refEntity.getId());
+                           this.setTaskId(refEntity.getId());
                        
            });
            }

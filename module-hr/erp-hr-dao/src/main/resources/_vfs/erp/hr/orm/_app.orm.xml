@@ -954,10 +954,10 @@
                         stdDataType="string" stdSqlType="BIGINT" i18n-en:displayName="Employee"/>
                 <column code="WORK_DATE" displayName="工作日期" mandatory="true" name="workDate" propId="4"
                         stdDataType="date" stdSqlType="DATE" i18n-en:displayName="Work Date"/>
-                <column code="PROJECT_ID" displayName="项目" name="projectId" propId="5" stdDataType="long"
+                <column code="PROJECT_ID" displayName="项目" name="projectId" propId="5" stdDataType="string"
                         stdSqlType="BIGINT" i18n-en:displayName="Project"/>
-                <column code="TASK_ID" displayName="任务" name="taskId" propId="6" stdDataType="long" stdSqlType="BIGINT"
-                        i18n-en:displayName="Task"/>
+                <column code="TASK_ID" displayName="任务" name="taskId" propId="6" stdDataType="string"
+                        stdSqlType="BIGINT" i18n-en:displayName="Task"/>
                 <column code="ACTIVITY_TYPE" displayName="活动类型" name="activityType" precision="100" propId="7"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Activity Type"/>
                 <column code="HOURS" displayName="小时数" domain="hours" mandatory="true" name="hours" precision="10"

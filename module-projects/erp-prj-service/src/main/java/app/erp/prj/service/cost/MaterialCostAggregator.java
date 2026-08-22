@@ -44,7 +44,7 @@ public class MaterialCostAggregator {
     /**
      * 归集一笔物料成本。返回新增金额；幂等命中或入参无效返回 0。
      */
-    public BigDecimal aggregateMaterial(Long projectId, BigDecimal amount, String sourceBillCode) {
+    public BigDecimal aggregateMaterial(String projectId, BigDecimal amount, String sourceBillCode) {
         if (projectId == null || amount == null || amount.signum() <= 0) {
             return BigDecimal.ZERO;
         }
@@ -52,7 +52,7 @@ public class MaterialCostAggregator {
             return BigDecimal.ZERO;
         }
         ErpPrjProject project = loadProject(projectId);
-        Long subjectId = resolveMaterialSubjectId(project);
+        String subjectId = resolveMaterialSubjectId(project);
 
         ErpPrjCostCollection existingHead = findHead(projectId);
         if (existingHead != null) {
@@ -84,7 +84,7 @@ public class MaterialCostAggregator {
         return amount;
     }
 
-    private void saveLine(Long headId, int lineNo, String sourceBillCode, BigDecimal amount, Long subjectId) {
+    private void saveLine(String headId, int lineNo, String sourceBillCode, BigDecimal amount, String subjectId) {
         IEntityDao<ErpPrjCostCollectionLine> dao = daoProvider.daoFor(ErpPrjCostCollectionLine.class);
         ErpPrjCostCollectionLine line = dao.newEntity();
         line.setCostCollectionId(headId);
@@ -105,7 +105,7 @@ public class MaterialCostAggregator {
         return !dao.findAllByQuery(q).isEmpty();
     }
 
-    private ErpPrjCostCollection findHead(Long projectId) {
+    private ErpPrjCostCollection findHead(String projectId) {
         IEntityDao<ErpPrjCostCollection> dao = daoProvider.daoFor(ErpPrjCostCollection.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("projectId", projectId));
@@ -115,14 +115,14 @@ public class MaterialCostAggregator {
         return existing.isEmpty() ? null : existing.get(0);
     }
 
-    private int nextLineNo(Long headId) {
+    private int nextLineNo(String headId) {
         IEntityDao<ErpPrjCostCollectionLine> dao = daoProvider.daoFor(ErpPrjCostCollectionLine.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("costCollectionId", headId));
         return (int) dao.findAllByQuery(q).size() + 1;
     }
 
-    private Long resolveMaterialSubjectId(ErpPrjProject project) {
+    private String resolveMaterialSubjectId(ErpPrjProject project) {
         if (project != null && project.getProjectTypeId() != null) {
             ErpPrjProjectType projectType = project.getProjectType();
             if (projectType != null) {
@@ -132,7 +132,7 @@ public class MaterialCostAggregator {
         return null;
     }
 
-    private ErpPrjProject loadProject(Long projectId) {
+    private ErpPrjProject loadProject(String projectId) {
         IEntityDao<ErpPrjProject> dao = daoProvider.daoFor(ErpPrjProject.class);
         return dao.getEntityById(projectId);
     }

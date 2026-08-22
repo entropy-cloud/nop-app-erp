@@ -21,7 +21,7 @@ public class BudgetVsActualRow {
     private String subjectName;
     private String periodId;
     private String costCenterId;
-    private Long projectId;
+    private String projectId;
     private BigDecimal budgetAmount = BigDecimal.ZERO;
     private BigDecimal commitmentAmount = BigDecimal.ZERO;
     private BigDecimal actualAmount = BigDecimal.ZERO;
@@ -42,8 +42,8 @@ public class BudgetVsActualRow {
     public String getCostCenterId() { return costCenterId; }
     public void setCostCenterId(String costCenterId) { this.costCenterId = costCenterId; }
 
-    public Long getProjectId() { return projectId; }
-    public void setProjectId(Long projectId) { this.projectId = projectId; }
+    public String getProjectId() { return projectId; }
+    public void setProjectId(String projectId) { this.projectId = projectId; }
 
     public BigDecimal getBudgetAmount() { return budgetAmount; }
     public void setBudgetAmount(BigDecimal budgetAmount) {

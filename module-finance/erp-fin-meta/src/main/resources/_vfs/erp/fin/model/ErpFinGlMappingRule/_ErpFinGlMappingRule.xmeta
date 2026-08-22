@@ -69,7 +69,7 @@
         </prop>
         <prop name="projectId" displayName="项目(空=通配)" propId="12" i18n-en:displayName="Project" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="project">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="targetSubjectCode" displayName="目标科目编码" propId="13" i18n-en:displayName="Target Subject Code"
               mandatory="true" queryable="true" sortable="true" insertable="true" updatable="true">

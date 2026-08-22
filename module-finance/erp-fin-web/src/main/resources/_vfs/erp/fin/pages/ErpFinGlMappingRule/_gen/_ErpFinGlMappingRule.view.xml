@@ -19,7 +19,7 @@
             <cols>
 
                 <!--ID-->
-                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="id" mandatory="true" sortable="true"/>
 
                 <!--规则编码-->
                 <col id="code" mandatory="true" sortable="true"/>
@@ -28,7 +28,7 @@
                 <col id="name" mandatory="true" sortable="true"/>
 
                 <!--核算组织-->
-                <col id="orgId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="orgId" mandatory="true" sortable="true"/>
 
                 <!--业务类型-->
                 <col id="businessType" mandatory="true" sortable="true"/>
@@ -37,22 +37,22 @@
                 <col id="accountKey" mandatory="true" sortable="true"/>
 
                 <!--账套(空=通配)-->
-                <col id="acctSchemaId" ui:number="true" sortable="true"/>
+                <col id="acctSchemaId" sortable="true"/>
 
                 <!--往来单位组(空=通配)-->
-                <col id="partnerGroupId" ui:number="true" sortable="true"/>
+                <col id="partnerGroupId" sortable="true"/>
 
                 <!--物料分类(空=通配)-->
-                <col id="materialCategoryId" ui:number="true" sortable="true"/>
+                <col id="materialCategoryId" sortable="true"/>
 
                 <!--仓库(空=通配)-->
-                <col id="warehouseId" ui:number="true" sortable="true"/>
+                <col id="warehouseId" sortable="true"/>
 
                 <!--部门(空=通配)-->
-                <col id="departmentId" ui:number="true" sortable="true"/>
+                <col id="departmentId" sortable="true"/>
 
                 <!--项目(空=通配)-->
-                <col id="projectId" ui:number="true" sortable="true"/>
+                <col id="projectId" sortable="true"/>
 
                 <!--目标科目编码-->
                 <col id="targetSubjectCode" mandatory="true" sortable="true"/>

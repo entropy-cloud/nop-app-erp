@@ -19,19 +19,19 @@
             <cols>
 
                 <!--ID-->
-                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="id" mandatory="true" sortable="true"/>
 
                 <!--单号-->
                 <col id="code" mandatory="true" sortable="true"/>
 
                 <!--项目-->
-                <col id="projectId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="projectId" mandatory="true" sortable="true"/>
 
                 <!--业务组织-->
-                <col id="orgId" ui:number="true" sortable="true"/>
+                <col id="orgId" sortable="true"/>
 
                 <!--客户-->
-                <col id="customerId" ui:number="true" sortable="true"/>
+                <col id="customerId" sortable="true"/>
 
                 <!--结算日期-->
                 <col id="businessDate" mandatory="true" sortable="true"/>
@@ -40,10 +40,10 @@
                 <col id="settlementType" mandatory="true" sortable="true"/>
 
                 <!--关联损益汇总-->
-                <col id="pnlSnapshotId" ui:number="true" sortable="true"/>
+                <col id="pnlSnapshotId" sortable="true"/>
 
                 <!--币种-->
-                <col id="currencyId" ui:number="true" sortable="true"/>
+                <col id="currencyId" sortable="true"/>
 
                 <!--汇率-->
                 <col id="exchangeRate" mandatory="true" ui:number="true" sortable="true"/>
@@ -73,7 +73,7 @@
                 <col id="transferToAsset" sortable="true"/>
 
                 <!--转固资产卡片-->
-                <col id="assetCardId" ui:number="true" sortable="true"/>
+                <col id="assetCardId" sortable="true"/>
 
                 <!--结算凭证号-->
                 <col id="settlementVoucherCode" sortable="true"/>

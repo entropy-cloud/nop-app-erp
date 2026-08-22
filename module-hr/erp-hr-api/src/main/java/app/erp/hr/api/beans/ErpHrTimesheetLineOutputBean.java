@@ -69,30 +69,30 @@
         }
 
 
-        private Long _projectId;
+        private String _projectId;
 
     
         @PropMeta(propId=5)
     
-        public Long getProjectId(){
+        public String getProjectId(){
             return _projectId;
         }
 
-        public void setProjectId(Long value){
+        public void setProjectId(String value){
             this._projectId = value;
         }
 
 
-        private Long _taskId;
+        private String _taskId;
 
     
         @PropMeta(propId=6)
     
-        public Long getTaskId(){
+        public String getTaskId(){
             return _taskId;
         }
 
-        public void setTaskId(Long value){
+        public void setTaskId(String value){
             this._taskId = value;
         }
 

@@ -104,27 +104,27 @@ public class TestErpPrjPnlCalcJob extends JunitAutoTestCase {
     /** ① batch 任务级执行：active（OPEN + DRAFT）项目经调度路径生成损益汇总（null ctx 兜底回归）。 */
     @Test
     public void testScheduledBatchCalculatesActiveProjects() {
-        final Long[] openProject = new Long[1];
-        final Long[] draftProject = new Long[1];
+        final String[] openProject = new String[1];
+        final String[] draftProject = new String[1];
         ormTemplate.runInSession(() -> {
             seedOpenPeriod("2026-07");
-            seedAcctSchema(1L);
-            Long subjectId = seedSubject("5101", "项目成本");
-            Long projectTypeId = seedProjectType("PT-PNL", "损益", subjectId);
-            Long customerId = seedPartner("CUST-PNL", "测试客户");
+            seedAcctSchema("1");
+            String subjectId = seedSubject("5101", "项目成本");
+            String projectTypeId = seedProjectType("PT-PNL", "损益", subjectId);
+            String customerId = seedPartner("CUST-PNL", "测试客户");
             openProject[0] = seedProject("PRJ-PNL-B001", "批量损益项目", projectTypeId,
                     ErpPrjConstants.PROJECT_STATUS_OPEN);
             draftProject[0] = seedProject("PRJ-PNL-B002", "批量空项目", projectTypeId,
                     ErpPrjConstants.PROJECT_STATUS_DRAFT);
 
             seedBilling("B-PNL-B001", openProject[0], customerId, "10000");
-            Long ccId = seedCostCollection("CC-PNL-B001", openProject[0]);
+            String ccId = seedCostCollection("CC-PNL-B001", openProject[0]);
             seedCostLine(ccId, ErpPrjConstants.COST_CATEGORY_LABOR, "2000");
             seedCostLine(ccId, ErpPrjConstants.COST_CATEGORY_MATERIAL, "1500");
             seedCostLine(ccId, ErpPrjConstants.COST_CATEGORY_EXPENSE, "1000");
             seedCostLine(ccId, ErpPrjConstants.COST_CATEGORY_SUBCONTRACT, "1500");
 
-            Long budgetId = seedBudget("BG-PNL-B001", openProject[0], "20000");
+            String budgetId = seedBudget("BG-PNL-B001", openProject[0], "20000");
             seedBudgetLine(budgetId, ErpPrjConstants.COST_CATEGORY_LABOR, "8000", "3000");
         });
 
@@ -160,11 +160,11 @@ public class TestErpPrjPnlCalcJob extends JunitAutoTestCase {
     /** ② loader 过滤：COMPLETED/CANCELLED 终态项目被排除不汇总。 */
     @Test
     public void testTerminalProjectsExcludedByLoader() {
-        final Long[] completed = new Long[1];
-        final Long[] cancelled = new Long[1];
+        final String[] completed = new String[1];
+        final String[] cancelled = new String[1];
         ormTemplate.runInSession(() -> {
-            Long subjectId = seedSubject("5102", "项目成本2");
-            Long projectTypeId = seedProjectType("PT-PNL-T", "终态", subjectId);
+            String subjectId = seedSubject("5102", "项目成本2");
+            String projectTypeId = seedProjectType("PT-PNL-T", "终态", subjectId);
             completed[0] = seedProject("PRJ-PNL-T001", "已完成项目", projectTypeId,
                     ErpPrjConstants.PROJECT_STATUS_COMPLETED);
             cancelled[0] = seedProject("PRJ-PNL-T002", "已取消项目", projectTypeId,
@@ -185,10 +185,10 @@ public class TestErpPrjPnlCalcJob extends JunitAutoTestCase {
     /** ③ cron 空值跳过语义：{@code erp-prj.pnl-calc-cron} 显式置空（auto-calc-enabled=true）时 helper 跳过（INFO，不汇总）。 */
     @Test
     public void testCronEmptySkipsHelperCalc() {
-        final Long[] project = new Long[1];
+        final String[] project = new String[1];
         ormTemplate.runInSession(() -> {
-            Long subjectId = seedSubject("5103", "项目成本3");
-            Long projectTypeId = seedProjectType("PT-PNL-C", "cron空", subjectId);
+            String subjectId = seedSubject("5103", "项目成本3");
+            String projectTypeId = seedProjectType("PT-PNL-C", "cron空", subjectId);
             project[0] = seedProject("PRJ-PNL-C001", "cron空项目", projectTypeId,
                     ErpPrjConstants.PROJECT_STATUS_OPEN);
         });
@@ -210,10 +210,10 @@ public class TestErpPrjPnlCalcJob extends JunitAutoTestCase {
     /** ④ auto-calc-enabled 门控关闭（默认 false）跳过语义：cron 默认非空但总开关关闭 → 跳过。 */
     @Test
     public void testAutoCalcDisabledSkipsHelperCalc() {
-        final Long[] project = new Long[1];
+        final String[] project = new String[1];
         ormTemplate.runInSession(() -> {
-            Long subjectId = seedSubject("5104", "项目成本4");
-            Long projectTypeId = seedProjectType("PT-PNL-D", "门控关", subjectId);
+            String subjectId = seedSubject("5104", "项目成本4");
+            String projectTypeId = seedProjectType("PT-PNL-D", "门控关", subjectId);
             project[0] = seedProject("PRJ-PNL-D001", "门控关闭项目", projectTypeId,
                     ErpPrjConstants.PROJECT_STATUS_OPEN);
         });
@@ -228,11 +228,11 @@ public class TestErpPrjPnlCalcJob extends JunitAutoTestCase {
     /** ⑤ 失败隔离：不存在项目（ERR_PROJECT_NOT_REFERENCEABLE）→ REQUIRES_NEW 回滚 + WARN，不阻断后续项目汇总。 */
     @Test
     public void testPerItemFailureIsolation() {
-        final Long[] project = new Long[1];
+        final String[] project = new String[1];
         ormTemplate.runInSession(() -> {
-            Long subjectId = seedSubject("5105", "项目成本5");
-            Long projectTypeId = seedProjectType("PT-PNL-F", "隔离", subjectId);
-            Long customerId = seedPartner("CUST-PNL-F", "隔离客户");
+            String subjectId = seedSubject("5105", "项目成本5");
+            String projectTypeId = seedProjectType("PT-PNL-F", "隔离", subjectId);
+            String customerId = seedPartner("CUST-PNL-F", "隔离客户");
             project[0] = seedProject("PRJ-PNL-F001", "隔离项目", projectTypeId,
                     ErpPrjConstants.PROJECT_STATUS_OPEN);
             seedBilling("B-PNL-F001", project[0], customerId, "5000");
@@ -241,7 +241,7 @@ public class TestErpPrjPnlCalcJob extends JunitAutoTestCase {
         assignAutoCalcEnabled("true");
         try {
             // 失败项目（不存在）→ REQUIRES_NEW 回滚 + WARN，不抛出
-            boolean failed = ormTemplate.runInSession(session -> calcHelper.recalculateOne(999999L, CTX));
+            boolean failed = ormTemplate.runInSession(session -> calcHelper.recalculateOne("999999", CTX));
             assertFalse(failed, "不存在的项目汇总失败应返回 false（隔离）");
             ILoggingEvent warnLog = findLog("erp-prj-pnl-calc-failed");
             assertNotNull(warnLog, "失败应记录 WARN 日志（显式可观测）");
@@ -263,7 +263,7 @@ public class TestErpPrjPnlCalcJob extends JunitAutoTestCase {
                 ErpPrjConstants.CONFIG_PNL_AUTO_CALC_ENABLED, value);
     }
 
-    private ErpPrjProjectPnl reloadPnl(Long projectId) {
+    private ErpPrjProjectPnl reloadPnl(String projectId) {
         IEntityDao<ErpPrjProjectPnl> dao = daoProvider.daoFor(ErpPrjProjectPnl.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("projectId", projectId));
@@ -272,7 +272,7 @@ public class TestErpPrjPnlCalcJob extends JunitAutoTestCase {
         return dao.findAllByQuery(q).stream().findFirst().orElse(null);
     }
 
-    private int countPnlForProject(Long projectId) {
+    private int countPnlForProject(String projectId) {
         IEntityDao<ErpPrjProjectPnl> dao = daoProvider.daoFor(ErpPrjProjectPnl.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("projectId", projectId));
@@ -288,15 +288,15 @@ public class TestErpPrjPnlCalcJob extends JunitAutoTestCase {
         return null;
     }
 
-    private void seedBilling(String code, Long projectId, Long customerId, String amountFunctional) {
+    private void seedBilling(String code, String projectId, String customerId, String amountFunctional) {
         IEntityDao<ErpPrjBilling> dao = daoProvider.daoFor(ErpPrjBilling.class);
         ErpPrjBilling b = new ErpPrjBilling();
         b.setCode(code);
         b.setProjectId(projectId);
-        b.setOrgId(1L);
+        b.setOrgId("1");
         b.setCustomerId(customerId);
         b.setBusinessDate(LocalDate.of(2026, 6, 15));
-        b.setCurrencyId(1L);
+        b.setCurrencyId("1");
         b.setExchangeRate(BigDecimal.ONE);
         b.setTotalAmount(new BigDecimal(amountFunctional));
         b.setAmountFunctional(new BigDecimal(amountFunctional));
@@ -305,14 +305,14 @@ public class TestErpPrjPnlCalcJob extends JunitAutoTestCase {
         dao.saveEntity(b);
     }
 
-    private Long seedCostCollection(String code, Long projectId) {
+    private String seedCostCollection(String code, String projectId) {
         IEntityDao<ErpPrjCostCollection> dao = daoProvider.daoFor(ErpPrjCostCollection.class);
         ErpPrjCostCollection cc = new ErpPrjCostCollection();
         cc.setCode(code);
         cc.setProjectId(projectId);
-        cc.setOrgId(1L);
+        cc.setOrgId("1");
         cc.setBusinessDate(LocalDate.of(2026, 6, 15));
-        cc.setCurrencyId(1L);
+        cc.setCurrencyId("1");
         cc.setTotalAmount(BigDecimal.ZERO);
         cc.setDocStatus(ErpPrjConstants.DOC_STATUS_APPROVED);
         cc.setApproveStatus(ErpPrjConstants.APPROVE_STATUS_APPROVED);
@@ -324,7 +324,7 @@ public class TestErpPrjPnlCalcJob extends JunitAutoTestCase {
         return cc.getId();
     }
 
-    private void seedCostLine(Long costCollectionId, String category, String amount) {
+    private void seedCostLine(String costCollectionId, String category, String amount) {
         IEntityDao<ErpPrjCostCollectionLine> dao = daoProvider.daoFor(ErpPrjCostCollectionLine.class);
         ErpPrjCostCollectionLine line = new ErpPrjCostCollectionLine();
         line.setCostCollectionId(costCollectionId);
@@ -334,14 +334,14 @@ public class TestErpPrjPnlCalcJob extends JunitAutoTestCase {
         dao.saveEntity(line);
     }
 
-    private Long seedBudget(String code, Long projectId, String totalAmount) {
+    private String seedBudget(String code, String projectId, String totalAmount) {
         IEntityDao<ErpPrjBudget> dao = daoProvider.daoFor(ErpPrjBudget.class);
         ErpPrjBudget bg = new ErpPrjBudget();
         bg.setCode(code);
         bg.setProjectId(projectId);
-        bg.setOrgId(1L);
+        bg.setOrgId("1");
         bg.setBusinessDate(LocalDate.of(2026, 7, 1));
-        bg.setCurrencyId(1L);
+        bg.setCurrencyId("1");
         bg.setTotalAmount(new BigDecimal(totalAmount));
         bg.setDocStatus(ErpPrjConstants.DOC_STATUS_APPROVED);
         bg.setApproveStatus(ErpPrjConstants.APPROVE_STATUS_APPROVED);
@@ -349,7 +349,7 @@ public class TestErpPrjPnlCalcJob extends JunitAutoTestCase {
         return bg.getId();
     }
 
-    private void seedBudgetLine(Long budgetId, String category, String planned, String committed) {
+    private void seedBudgetLine(String budgetId, String category, String planned, String committed) {
         IEntityDao<ErpPrjBudgetLine> dao = daoProvider.daoFor(ErpPrjBudgetLine.class);
         ErpPrjBudgetLine line = new ErpPrjBudgetLine();
         line.setBudgetId(budgetId);
@@ -361,14 +361,14 @@ public class TestErpPrjPnlCalcJob extends JunitAutoTestCase {
         dao.saveEntity(line);
     }
 
-    private Long seedProject(String code, String name, Long projectTypeId, String status) {
+    private String seedProject(String code, String name, String projectTypeId, String status) {
         IEntityDao<ErpPrjProject> dao = daoProvider.daoFor(ErpPrjProject.class);
         ErpPrjProject p = new ErpPrjProject();
         p.setCode(code);
         p.setName(name);
-        p.setOrgId(1L);
+        p.setOrgId("1");
         p.setProjectTypeId(projectTypeId);
-        p.setCurrencyId(1L);
+        p.setCurrencyId("1");
         p.setStatus(status);
         p.setBudget(new BigDecimal("100000"));
         p.setActualCost(BigDecimal.ZERO);
@@ -376,7 +376,7 @@ public class TestErpPrjPnlCalcJob extends JunitAutoTestCase {
         return p.getId();
     }
 
-    private Long seedProjectType(String code, String name, Long defaultSubjectId) {
+    private String seedProjectType(String code, String name, String defaultSubjectId) {
         IEntityDao<ErpPrjProjectType> dao = daoProvider.daoFor(ErpPrjProjectType.class);
         ErpPrjProjectType t = new ErpPrjProjectType();
         t.setCode(code);
@@ -386,7 +386,7 @@ public class TestErpPrjPnlCalcJob extends JunitAutoTestCase {
         return t.getId();
     }
 
-    private Long seedPartner(String code, String name) {
+    private String seedPartner(String code, String name) {
         IEntityDao<ErpMdPartner> dao = daoProvider.daoFor(ErpMdPartner.class);
         ErpMdPartner p = new ErpMdPartner();
         p.setCode(code);
@@ -397,7 +397,7 @@ public class TestErpPrjPnlCalcJob extends JunitAutoTestCase {
         return p.getId();
     }
 
-    private Long seedSubject(String code, String name) {
+    private String seedSubject(String code, String name) {
         IEntityDao<ErpMdSubject> dao = daoProvider.daoFor(ErpMdSubject.class);
         ErpMdSubject s = new ErpMdSubject();
         s.setCode(code);
@@ -409,14 +409,14 @@ public class TestErpPrjPnlCalcJob extends JunitAutoTestCase {
         return s.getId();
     }
 
-    private void seedAcctSchema(long orgId) {
+    private void seedAcctSchema(String orgId) {
         IEntityDao<ErpMdAcctSchema> dao = daoProvider.daoFor(ErpMdAcctSchema.class);
         ErpMdAcctSchema schema = new ErpMdAcctSchema();
         schema.setCode("AS-" + orgId);
         schema.setName("账套-" + orgId);
         schema.setOrgId(orgId);
         schema.setNature("FINANCIAL");
-        schema.setFunctionalCurrencyId(1L);
+        schema.setFunctionalCurrencyId("1");
         schema.setStatus(ErpMdConstants.ACTIVE_STATUS_ACTIVE);
         dao.saveEntity(schema);
     }
@@ -426,7 +426,7 @@ public class TestErpPrjPnlCalcJob extends JunitAutoTestCase {
         ErpFinAccountingPeriod period = new ErpFinAccountingPeriod();
         period.setCode(code);
         period.setName(code);
-        period.setOrgId(1L);
+        period.setOrgId("1");
         period.setYear(2026);
         period.setMonth(7);
         period.setStartDate(LocalDate.of(2026, 7, 1));

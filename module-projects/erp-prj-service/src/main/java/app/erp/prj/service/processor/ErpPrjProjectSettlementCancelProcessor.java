@@ -15,7 +15,6 @@ import jakarta.inject.Inject;
  * → [若 posted: postingDispatcher.reverse（冲销过账）+ rollbackAssetIfNeeded（回滚资产）+ 重载 + 清 posted/postedAt/postedBy]
  * → doCancel(docStatus=CANCELLED) → save。
  * 冲销+回滚经 facade protected helper + 包级 postingDispatcher 字段（单一真相源），per-mutation 不复制会计规则。
- * Long 签名边界：custom override 内 Long.valueOf(id) 转换。
  * 运行时经 BizModel→facade 旧路径，R5.8 重配线后激活本路径。
  */
 public class ErpPrjProjectSettlementCancelProcessor extends AbstractCancelProcessor<ErpPrjProjectSettlement> {
@@ -25,8 +24,7 @@ public class ErpPrjProjectSettlementCancelProcessor extends AbstractCancelProces
 
     @Override
     public ErpPrjProjectSettlement cancel(String id, IServiceContext context) {
-        Long longId = Long.valueOf(id);
-        ErpPrjProjectSettlement settlement = processor.requireSettlement(longId);
+        ErpPrjProjectSettlement settlement = processor.requireSettlement(id);
         processor.validateTransitionForCancel(settlement);
         if (Boolean.TRUE.equals(settlement.getPosted())) {
             // RC-R1.63 / P1-RC-052（D2 选项 A，Explore ⑥）：已返还后取消会悬挂独立返还凭证 → 取消前须守卫「未返还」
@@ -37,7 +35,7 @@ public class ErpPrjProjectSettlementCancelProcessor extends AbstractCancelProces
             }
             processor.postingDispatcher.reverse(settlement);
             processor.rollbackAssetIfNeeded(settlement);
-            settlement = processor.requireSettlement(longId);
+            settlement = processor.requireSettlement(id);
             settlement.setPosted(false);
             settlement.setPostedAt(null);
             settlement.setPostedBy(null);

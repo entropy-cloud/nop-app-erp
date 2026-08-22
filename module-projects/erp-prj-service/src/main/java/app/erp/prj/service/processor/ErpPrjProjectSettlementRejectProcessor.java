@@ -11,7 +11,6 @@ import jakarta.inject.Inject;
 /**
  * ErpPrjProjectSettlement reject per-mutation Processor (plan 2026-07-30-2046-1 R5.7, Pattern B)。
  * 自包含编排：requireSettlement → validateTransitionForReject → doReject(REJECTED) → save。
- * Long 签名边界：custom override 内 Long.valueOf(id) 转换；域逻辑经 facade protected helper（单一真相源）。
  * 运行时经 BizModel→facade 旧路径，R5.8 重配线后激活本路径。
  */
 public class ErpPrjProjectSettlementRejectProcessor extends AbstractRejectProcessor<ErpPrjProjectSettlement> {
@@ -21,8 +20,7 @@ public class ErpPrjProjectSettlementRejectProcessor extends AbstractRejectProces
 
     @Override
     public ErpPrjProjectSettlement reject(String id, IServiceContext context) {
-        Long longId = Long.valueOf(id);
-        ErpPrjProjectSettlement settlement = processor.requireSettlement(longId);
+        ErpPrjProjectSettlement settlement = processor.requireSettlement(id);
         processor.validateTransitionForReject(settlement);
         processor.doReject(settlement, context);
         processor.save(settlement);

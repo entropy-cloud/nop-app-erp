@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
  * {@link TaskDependencyValidator} 纯逻辑单测（task-dag.md §2 算法）。
  *
  * <p>纯逻辑、无 IoC 无 DB —— 直接构造 ErpPrjTask 实例（经 orm_internalSet 设置 id 与 dependsOnId），
- * 用 Map<Long, ErpPrjTask> 模拟加载源。验证算法本身（自环/成环/深度上限/上行链收集）。
+ * 用 Map<String, ErpPrjTask> 模拟加载源。验证算法本身（自环/成环/深度上限/上行链收集）。
  */
 public class TestTaskDependencyValidator {
 
@@ -28,11 +28,11 @@ public class TestTaskDependencyValidator {
      */
     @Test
     public void testSelfDependency() {
-        Map<Long, ErpPrjTask> tasks = new HashMap<>();
-        tasks.put(1L, newTask(1L, 1L)); // A depends on A
+        Map<String, ErpPrjTask> tasks = new HashMap<>();
+        tasks.put("1", newTask("1", "1")); // A depends on A
 
         NopException ex = assertThrows(NopException.class,
-                () -> TaskDependencyValidator.detectCycle(1L, 1L, loader(tasks), 100));
+                () -> TaskDependencyValidator.detectCycle("1", "1", loader(tasks), 100));
         assertEquals(ErpPrjErrors.ERR_TASK_SELF_DEPENDENCY.getErrorCode(), ex.getErrorCode());
     }
 
@@ -41,13 +41,13 @@ public class TestTaskDependencyValidator {
      */
     @Test
     public void testTwoNodeCycle() {
-        Map<Long, ErpPrjTask> tasks = new HashMap<>();
+        Map<String, ErpPrjTask> tasks = new HashMap<>();
         // A.dependsOnId=B(2), B.dependsOnId=A(1) ⇒ 环
-        tasks.put(1L, newTask(1L, 2L));
-        tasks.put(2L, newTask(2L, 1L));
+        tasks.put("1", newTask("1", "2"));
+        tasks.put("2", newTask("2", "1"));
 
         NopException ex = assertThrows(NopException.class,
-                () -> TaskDependencyValidator.detectCycle(1L, 2L, loader(tasks), 100));
+                () -> TaskDependencyValidator.detectCycle("1", "2", loader(tasks), 100));
         assertEquals(ErpPrjErrors.ERR_TASK_DEPENDENCY_CYCLE.getErrorCode(), ex.getErrorCode());
         assertEquals("1→2→1", ex.getParam(ErpPrjErrors.ARG_CHAIN));
     }
@@ -57,14 +57,14 @@ public class TestTaskDependencyValidator {
      */
     @Test
     public void testThreeNodeCycle() {
-        Map<Long, ErpPrjTask> tasks = new HashMap<>();
+        Map<String, ErpPrjTask> tasks = new HashMap<>();
         // A.dependsOnId=B(2), B.dependsOnId=C(3), C.dependsOnId=A(1) ⇒ 环
-        tasks.put(1L, newTask(1L, 2L));
-        tasks.put(2L, newTask(2L, 3L));
-        tasks.put(3L, newTask(3L, 1L));
+        tasks.put("1", newTask("1", "2"));
+        tasks.put("2", newTask("2", "3"));
+        tasks.put("3", newTask("3", "1"));
 
         NopException ex = assertThrows(NopException.class,
-                () -> TaskDependencyValidator.detectCycle(1L, 2L, loader(tasks), 100));
+                () -> TaskDependencyValidator.detectCycle("1", "2", loader(tasks), 100));
         assertEquals(ErpPrjErrors.ERR_TASK_DEPENDENCY_CYCLE.getErrorCode(), ex.getErrorCode());
         assertEquals("1→2→3→1", ex.getParam(ErpPrjErrors.ARG_CHAIN));
     }
@@ -74,14 +74,14 @@ public class TestTaskDependencyValidator {
      */
     @Test
     public void testLongChainNoCycle() {
-        Map<Long, ErpPrjTask> tasks = new HashMap<>();
+        Map<String, ErpPrjTask> tasks = new HashMap<>();
         // A(1)→B(2)→C(3)→D(4)，D 无前置
-        tasks.put(1L, newTask(1L, 2L));
-        tasks.put(2L, newTask(2L, 3L));
-        tasks.put(3L, newTask(3L, 4L));
-        tasks.put(4L, newTask(4L, null));
+        tasks.put("1", newTask("1", "2"));
+        tasks.put("2", newTask("2", "3"));
+        tasks.put("3", newTask("3", "4"));
+        tasks.put("4", newTask("4", null));
 
-        assertDoesNotThrow(() -> TaskDependencyValidator.detectCycle(1L, 2L, loader(tasks), 100));
+        assertDoesNotThrow(() -> TaskDependencyValidator.detectCycle("1", "2", loader(tasks), 100));
     }
 
     /**
@@ -93,19 +93,19 @@ public class TestTaskDependencyValidator {
      */
     @Test
     public void testDepthExceeded() {
-        Map<Long, ErpPrjTask> tasks = new HashMap<>();
+        Map<String, ErpPrjTask> tasks = new HashMap<>();
         // 101 节点链：节点 i 的 dependsOnId = i+1（i 从 1 到 100）；节点 101 无前置
         for (long i = 1; i <= 100; i++) {
-            tasks.put(i, newTask(i, i + 1));
+            tasks.put(String.valueOf(i), newTask(String.valueOf(i), String.valueOf(i + 1)));
         }
-        tasks.put(101L, newTask(101L, null));
+        tasks.put("101", newTask("101", null));
 
         // maxDepth=100 容许：从 A1 经 A2 上行追溯 100 步到 A101，depth 到 100 时 cursor=A101，A101.dependsOnId=null，退出。
-        assertDoesNotThrow(() -> TaskDependencyValidator.detectCycle(1L, 2L, loader(tasks), 100));
+        assertDoesNotThrow(() -> TaskDependencyValidator.detectCycle("1", "2", loader(tasks), 100));
 
         // maxDepth=99 触发超限：depth=100 时 cursor=A101 > maxDepth=99
         NopException ex = assertThrows(NopException.class,
-                () -> TaskDependencyValidator.detectCycle(1L, 2L, loader(tasks), 99));
+                () -> TaskDependencyValidator.detectCycle("1", "2", loader(tasks), 99));
         assertEquals(ErpPrjErrors.ERR_TASK_DEPENDENCY_DEPTH_EXCEEDED.getErrorCode(), ex.getErrorCode());
         assertEquals(100, ex.getParam(ErpPrjErrors.ARG_ACTUAL_DEPTH));
         assertEquals(99, ex.getParam(ErpPrjErrors.ARG_MAX_DEPTH));
@@ -116,32 +116,32 @@ public class TestTaskDependencyValidator {
      */
     @Test
     public void testCollectPredecessors() {
-        Map<Long, ErpPrjTask> tasks = new HashMap<>();
+        Map<String, ErpPrjTask> tasks = new HashMap<>();
         // A(1)→B(2)→C(3)→D(4)，D 无前置
-        tasks.put(1L, newTask(1L, 2L));
-        tasks.put(2L, newTask(2L, 3L));
-        tasks.put(3L, newTask(3L, 4L));
-        tasks.put(4L, newTask(4L, null));
+        tasks.put("1", newTask("1", "2"));
+        tasks.put("2", newTask("2", "3"));
+        tasks.put("3", newTask("3", "4"));
+        tasks.put("4", newTask("4", null));
 
-        List<ErpPrjTask> predecessors = TaskDependencyValidator.collectPredecessors(1L, loader(tasks), 100);
+        List<ErpPrjTask> predecessors = TaskDependencyValidator.collectPredecessors("1", loader(tasks), 100);
         assertEquals(3, predecessors.size(), "应返回 3 个前置任务");
-        List<Long> ids = new ArrayList<>();
+        List<String> ids = new ArrayList<>();
         for (ErpPrjTask t : predecessors) {
             ids.add(t.getId());
         }
-        assertEquals(java.util.Arrays.asList(2L, 3L, 4L), ids, "上行链顺序应为 [B, C, D]");
+        assertEquals(java.util.Arrays.asList("2", "3", "4"), ids, "上行链顺序应为 [B, C, D]");
     }
 
     // ---------- helpers ----------
 
-    private ErpPrjTask newTask(Long id, Long dependsOnId) {
+    private ErpPrjTask newTask(String id, String dependsOnId) {
         ErpPrjTask t = new ErpPrjTask();
         t.orm_internalSet(ErpPrjTask.PROP_ID_id, id);
         t.orm_internalSet(ErpPrjTask.PROP_ID_dependsOnId, dependsOnId);
         return t;
     }
 
-    private Function<Long, ErpPrjTask> loader(Map<Long, ErpPrjTask> tasks) {
+    private Function<String, ErpPrjTask> loader(Map<String, ErpPrjTask> tasks) {
         return tasks::get;
     }
 }

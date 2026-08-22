@@ -28,11 +28,11 @@ public class VoucherFact {
     private String accountKey;
     private String memo;
 
-    // projectId 为登记册延后列（prj 未迁移），保持 Long
+    // projectId 已随 M2.7 同批翻转（原登记册延后列 orm-deferral-001..006 兑付）
     private String orgId;
     private String partnerId;
     private String departmentId;
-    private Long projectId;
+    private String projectId;
     private String warehouseId;
     private String materialId;
     private String costCenterId;
@@ -142,11 +142,11 @@ public class VoucherFact {
         this.departmentId = departmentId;
     }
 
-    public Long getProjectId() {
+    public String getProjectId() {
         return projectId;
     }
 
-    public void setProjectId(Long projectId) {
+    public void setProjectId(String projectId) {
         this.projectId = projectId;
     }
 

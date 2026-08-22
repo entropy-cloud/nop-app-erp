@@ -18,7 +18,7 @@ public class ErpPrjProjectRefreshActualCostProcessor {
     @Inject
     ProjectCostAggregator costAggregator;
 
-    public BigDecimal refreshActualCost(Long projectId, IServiceContext context) {
+    public BigDecimal refreshActualCost(String projectId, IServiceContext context) {
         return costAggregator.refreshActualCost(projectId);
     }
 }

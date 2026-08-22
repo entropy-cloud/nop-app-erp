@@ -152,10 +152,10 @@ public class _ErpPrjMilestone extends DynamicOrmEntity{
 
     
     /* ID: ID */
-    private java.lang.Long _id;
+    private java.lang.String _id;
     
     /* 项目: PROJECT_ID */
-    private java.lang.Long _projectId;
+    private java.lang.String _projectId;
     
     /* 编码: CODE */
     private java.lang.String _code;
@@ -333,9 +333,9 @@ public class _ErpPrjMilestone extends DynamicOrmEntity{
         switch(propId){
         
             case PROP_ID_id:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_id));
                }
                setId(typedValue);
@@ -343,9 +343,9 @@ public class _ErpPrjMilestone extends DynamicOrmEntity{
             }
         
             case PROP_ID_projectId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_projectId));
                }
                setProjectId(typedValue);
@@ -503,14 +503,14 @@ public class _ErpPrjMilestone extends DynamicOrmEntity{
         
             case PROP_ID_id:{
                onInitProp(propId);
-               this._id = (java.lang.Long)value;
+               this._id = (java.lang.String)value;
                orm_id(); // 如果是设置主键字段，则触发watcher
                break;
             }
         
             case PROP_ID_projectId:{
                onInitProp(propId);
-               this._projectId = (java.lang.Long)value;
+               this._projectId = (java.lang.String)value;
                
                break;
             }
@@ -622,7 +622,7 @@ public class _ErpPrjMilestone extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final java.lang.Long getId(){
+    public final java.lang.String getId(){
          onPropGet(PROP_ID_id);
          return _id;
     }
@@ -630,7 +630,7 @@ public class _ErpPrjMilestone extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final void setId(java.lang.Long value){
+    public final void setId(java.lang.String value){
         if(onPropSet(PROP_ID_id,value)){
             this._id = value;
             internalClearRefs(PROP_ID_id);
@@ -641,7 +641,7 @@ public class _ErpPrjMilestone extends DynamicOrmEntity{
     /**
      * 项目: PROJECT_ID
      */
-    public final java.lang.Long getProjectId(){
+    public final java.lang.String getProjectId(){
          onPropGet(PROP_ID_projectId);
          return _projectId;
     }
@@ -649,7 +649,7 @@ public class _ErpPrjMilestone extends DynamicOrmEntity{
     /**
      * 项目: PROJECT_ID
      */
-    public final void setProjectId(java.lang.Long value){
+    public final void setProjectId(java.lang.String value){
         if(onPropSet(PROP_ID_projectId,value)){
             this._projectId = value;
             internalClearRefs(PROP_ID_projectId);

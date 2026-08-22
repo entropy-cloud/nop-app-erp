@@ -165,11 +165,11 @@ public class ErpPrjReportBizModel {
         switch (key) {
             case "project-cost-summary":
                 data.put(DS_VAR, buildProjectCostSummaryDataset(
-                        asLong(data, "projectId"), asDate(data, "startDate"), asDate(data, "endDate")));
+                        asString(data, "projectId"), asDate(data, "startDate"), asDate(data, "endDate")));
                 break;
             case "timesheet-detail":
                 data.put(DS_VAR, buildTimesheetDetailDataset(
-                        asLong(data, "projectId"),
+                        asString(data, "projectId"),
                         asDate(data, "startDate"), asDate(data, "endDate")));
                 break;
             default:
@@ -178,13 +178,12 @@ public class ErpPrjReportBizModel {
         }
     }
 
-    private static Long asLong(Map<String, Object> data, String k) {
+    private static String asString(Map<String, Object> data, String k) {
         if (data == null) return null;
         Object v = data.get(k);
         if (v == null) return null;
-        String s = v.toString();
-        if (s.trim().isEmpty()) return null;
-        return Long.valueOf(s);
+        String s = v.toString().trim();
+        return s.isEmpty() ? null : s;
     }
 
     private static LocalDate asDate(Map<String, Object> data, String k) {
@@ -203,7 +202,7 @@ public class ErpPrjReportBizModel {
 
     /** 项目成本汇总数据集：actualCost/budget/committedCost/billedAmount + 预算执行率，对齐 {@code projects/cost-collection.md}。 */
     @BizQuery
-    public List<Map<String, Object>> projectCostSummaryData(@Optional @Name("projectId") Long projectId,
+    public List<Map<String, Object>> projectCostSummaryData(@Optional @Name("projectId") String projectId,
                                                              @Optional @Name("startDate") LocalDate startDate,
                                                              @Optional @Name("endDate") LocalDate endDate,
                                                              IServiceContext context) {
@@ -212,7 +211,7 @@ public class ErpPrjReportBizModel {
 
     /** 工时明细数据集：按项目/员工/周期聚合工时与工时成本，对齐 {@code projects/cost-collection.md}。 */
     @BizQuery
-    public List<Map<String, Object>> timesheetDetailData(@Optional @Name("projectId") Long projectId,
+    public List<Map<String, Object>> timesheetDetailData(@Optional @Name("projectId") String projectId,
                                                           @Optional @Name("startDate") LocalDate startDate,
                                                           @Optional @Name("endDate") LocalDate endDate,
                                                           IServiceContext context) {
@@ -228,7 +227,7 @@ public class ErpPrjReportBizModel {
      *
      * <p>区间过滤对齐项目 {@code startDate}/{@code endDate}：[pStart,pEnd] ∩ [startDate,endDate] 非空。
      */
-    List<Map<String, Object>> buildProjectCostSummaryDataset(Long projectId, LocalDate startDate, LocalDate endDate) {
+    List<Map<String, Object>> buildProjectCostSummaryDataset(String projectId, LocalDate startDate, LocalDate endDate) {
         return ormTemplate.runInSession(session -> {
             List<ErpPrjProject> projects = loadProjects(projectId, startDate, endDate);
             if (projects.isEmpty()) {
@@ -261,17 +260,17 @@ public class ErpPrjReportBizModel {
      * 工时明细数据集。从 {@link ErpPrjTimesheet}（workDate 区间过滤 + 可选 projectId）按
      * projectId × userId 聚合 hours/costAmount，对齐 {@code projects/cost-collection.md}。
      */
-    List<Map<String, Object>> buildTimesheetDetailDataset(Long projectId, LocalDate startDate, LocalDate endDate) {
+    List<Map<String, Object>> buildTimesheetDetailDataset(String projectId, LocalDate startDate, LocalDate endDate) {
         return ormTemplate.runInSession(session -> {
             List<ErpPrjTimesheet> timesheets = loadTimesheets(projectId, startDate, endDate);
             if (timesheets.isEmpty()) {
                 return Collections.emptyList();
             }
             Map<String, Aggregator> agg = new LinkedHashMap<>();
-            Map<String, Long> projectIdByUser = new HashMap<>();
+            Map<String, String> projectIdByUser = new HashMap<>();
             for (ErpPrjTimesheet t : timesheets) {
-                Long pid = t.getProjectId();
-                Long uid = t.getUserId();
+                String pid = t.getProjectId();
+                String uid = t.getUserId();
                 String key = pid + "|" + uid;
                 Aggregator a = agg.computeIfAbsent(key, k -> new Aggregator(pid, uid));
                 a.hours = a.hours.add(nz(t.getHours()));
@@ -292,7 +291,7 @@ public class ErpPrjReportBizModel {
 
     // ===================== helpers =====================
 
-    private List<ErpPrjProject> loadProjects(Long projectId, LocalDate startDate, LocalDate endDate) {
+    private List<ErpPrjProject> loadProjects(String projectId, LocalDate startDate, LocalDate endDate) {
         QueryBean q = new QueryBean();
         if (projectId != null) q.addFilter(eq("id", projectId));
         if (startDate != null) q.addFilter(ge("endDate", startDate));
@@ -301,7 +300,7 @@ public class ErpPrjReportBizModel {
         return daoProvider.daoFor(ErpPrjProject.class).findAllByQuery(q);
     }
 
-    private List<ErpPrjTimesheet> loadTimesheets(Long projectId, LocalDate startDate, LocalDate endDate) {
+    private List<ErpPrjTimesheet> loadTimesheets(String projectId, LocalDate startDate, LocalDate endDate) {
         QueryBean q = new QueryBean();
         if (projectId != null) q.addFilter(eq("projectId", projectId));
         if (startDate != null) q.addFilter(ge("workDate", startDate));
@@ -316,12 +315,12 @@ public class ErpPrjReportBizModel {
     }
 
     private static class Aggregator {
-        final Long projectId;
-        final Long userId;
+        final String projectId;
+        final String userId;
         BigDecimal hours = BigDecimal.ZERO;
         BigDecimal costAmount = BigDecimal.ZERO;
 
-        Aggregator(Long projectId, Long userId) {
+        Aggregator(String projectId, String userId) {
             this.projectId = projectId;
             this.userId = userId;
         }

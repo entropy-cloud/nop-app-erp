@@ -76,7 +76,7 @@ public class TimesheetPostingDispatcher {
     public boolean tryPost(ErpPrjTimesheet timesheet) {
         PostingEvent event = buildEvent(timesheet);
         try {
-            Long voucherId = executor.postEvent(event);
+            String voucherId = executor.postEvent(event);
             return voucherId != null;
         } catch (Exception e) {
             if (e instanceof NopException) {
@@ -169,7 +169,7 @@ public class TimesheetPostingDispatcher {
         return event;
     }
 
-    private ErpPrjProject loadProject(Long projectId) {
+    private ErpPrjProject loadProject(String projectId) {
         if (projectId == null) {
             return null;
         }
@@ -177,17 +177,17 @@ public class TimesheetPostingDispatcher {
         return dao.getEntityById(projectId);
     }
 
-    private ErpPrjProjectType loadProjectType(Long projectTypeId) {
+    private ErpPrjProjectType loadProjectType(String projectTypeId) {
         IEntityDao<ErpPrjProjectType> dao = daoProvider.daoFor(ErpPrjProjectType.class);
         return dao.getEntityById(projectTypeId);
     }
 
-    private ErpPrjActivityType loadActivityType(Long activityTypeId) {
+    private ErpPrjActivityType loadActivityType(String activityTypeId) {
         IEntityDao<ErpPrjActivityType> dao = daoProvider.daoFor(ErpPrjActivityType.class);
         return dao.getEntityById(activityTypeId);
     }
 
-    private Long resolveAcctSchemaId(Long orgId) {
+    private String resolveAcctSchemaId(String orgId) {
         return AcctSchemaResolver.resolvePrimarySchemaId(daoProvider, orgId);
     }
 
@@ -198,7 +198,7 @@ public class TimesheetPostingDispatcher {
      * from=currencyId + to=本位币 + validFrom<=voucherDate<=validTo 边界匹配（最近生效优先，limit 1）解析，
      * 本位币缺失或汇率行未命中 → 抛 {@link ErpFinErrors#ERR_EXCHANGE_RATE_REQUIRED}（跨域语义同源 R1.42 守卫）。
      */
-    protected BigDecimal resolveExchangeRate(Long currencyId, LocalDate voucherDate) {
+    protected BigDecimal resolveExchangeRate(String currencyId, LocalDate voucherDate) {
         if (currencyId == null) {
             return BigDecimal.ONE;
         }
@@ -223,7 +223,7 @@ public class TimesheetPostingDispatcher {
     }
 
     /** 按 id 查询币种。跨域只读经 IErpMdCurrencyBiz（IBizObjectManager 按名解析，对齐 ErpFinPostingProcessor.findCurrencyById 范式）。 */
-    protected ErpMdCurrency findCurrencyById(Long currencyId, IServiceContext context) {
+    protected ErpMdCurrency findCurrencyById(String currencyId, IServiceContext context) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("id", currencyId));
         q.setLimit(1);
@@ -247,7 +247,7 @@ public class TimesheetPostingDispatcher {
      * 无 ge/le（对齐 ErpCtContractBizModel:340-342 / ErpHrLeaveRequestBizModel MAX_QUERY_DATE 先例）。
      * rateType 不作过滤（信息性维度：default SPOT 与 refresh API 写入 MIDDLE 并存，按类型过滤会漏另一类数据行）。
      */
-    protected BigDecimal findExchangeRate(Long fromCurrencyId, Long toCurrencyId, LocalDate voucherDate,
+    protected BigDecimal findExchangeRate(String fromCurrencyId, String toCurrencyId, LocalDate voucherDate,
                                           IServiceContext context) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("fromCurrencyId", fromCurrencyId));
@@ -271,7 +271,7 @@ public class TimesheetPostingDispatcher {
                 .param(ErpFinErrors.ARG_CURRENCY_CODE, currency.getCode());
     }
 
-    private String resolveSubjectCode(Long subjectId, String defaultCode) {
+    private String resolveSubjectCode(String subjectId, String defaultCode) {
         if (subjectId == null) {
             return defaultCode;
         }

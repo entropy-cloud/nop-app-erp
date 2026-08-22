@@ -64,7 +64,7 @@ public class ErpPrjProjectBizModel extends CrudBizModel<ErpPrjProject> implement
 
     @Override
     @BizMutation
-    public ErpPrjProject requireReferenceable(@Name("projectId") Long projectId, IServiceContext context) {
+    public ErpPrjProject requireReferenceable(@Name("projectId") String projectId, IServiceContext context) {
         ErpPrjProject project = requireEntity(String.valueOf(projectId), null, context);
         String status = project.getStatus();
         if (status == null || !Objects.equals(status, ErpPrjConstants.PROJECT_STATUS_OPEN)) {
@@ -77,19 +77,19 @@ public class ErpPrjProjectBizModel extends CrudBizModel<ErpPrjProject> implement
 
     @Override
     @BizMutation
-    public BigDecimal refreshActualCost(@Name("projectId") Long projectId, IServiceContext context) {
+    public BigDecimal refreshActualCost(@Name("projectId") String projectId, IServiceContext context) {
         return refreshActualCostProcessor.refreshActualCost(projectId, context);
     }
 
     @Override
     @BizMutation
-    public ErpPrjProject closeProject(@Name("projectId") Long projectId, IServiceContext context) {
+    public ErpPrjProject closeProject(@Name("projectId") String projectId, IServiceContext context) {
         return closeProjectProcessor.closeProject(projectId, context);
     }
 
     @Override
     @BizMutation
-    public ErpPrjProject startProject(@Name("projectId") Long projectId, IServiceContext context) {
+    public ErpPrjProject startProject(@Name("projectId") String projectId, IServiceContext context) {
         ErpPrjProject project = requireEntity(String.valueOf(projectId), null, context);
         // 动态守卫保留原位：立项前校验必填字段（config-gated STRICT/WARN，对齐 state-machine.md §迁移完整性 DRAFT→OPEN）
         validateStartPreconditions(project);
@@ -102,19 +102,19 @@ public class ErpPrjProjectBizModel extends CrudBizModel<ErpPrjProject> implement
 
     @Override
     @BizMutation
-    public ErpPrjProject holdProject(@Name("projectId") Long projectId, IServiceContext context) {
+    public ErpPrjProject holdProject(@Name("projectId") String projectId, IServiceContext context) {
         return holdProjectProcessor.holdProject(projectId, context);
     }
 
     @Override
     @BizMutation
-    public ErpPrjProject resumeProject(@Name("projectId") Long projectId, IServiceContext context) {
+    public ErpPrjProject resumeProject(@Name("projectId") String projectId, IServiceContext context) {
         return resumeProjectProcessor.resumeProject(projectId, context);
     }
 
     @Override
     @BizMutation
-    public ErpPrjProject cancelProject(@Name("projectId") Long projectId, IServiceContext context) {
+    public ErpPrjProject cancelProject(@Name("projectId") String projectId, IServiceContext context) {
         ErpPrjProject project = requireEntity(String.valueOf(projectId), null, context);
         String status = project.getStatus();
         // 终态走领域码 ERR_PROJECT_NOT_CLOSABLE（保持既有外部错误码）；非终态经 Bean 矩阵守卫
@@ -135,7 +135,7 @@ public class ErpPrjProjectBizModel extends CrudBizModel<ErpPrjProject> implement
      * {@code ERR_PROJECT_NOT_CLOSABLE}（项目域 start/cancel/Hold/Resume/Close 共享此码）+ 项目编号/上下文，
      * common 码作 cause 保留（契约 §7）。cancel 的终态拒绝不经此 helper（终态优先走领域码路径，见 cancelProject）。
      */
-    private void assertCan(String action, Long projectId, String from) {
+    private void assertCan(String action, String projectId, String from) {
         try {
             switch (action) {
                 case "start":

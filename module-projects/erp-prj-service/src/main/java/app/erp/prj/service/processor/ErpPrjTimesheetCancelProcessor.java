@@ -26,7 +26,7 @@ public class ErpPrjTimesheetCancelProcessor {
     @Inject
     ErpPrjTimesheetStateMachine stateMachine;
 
-    public ErpPrjTimesheet cancel(Long timesheetId, IServiceContext context) {
+    public ErpPrjTimesheet cancel(String timesheetId, IServiceContext context) {
         ErpPrjTimesheet timesheet = requireTimesheet(timesheetId);
         // 固定迁移守卫委托 StateMachine Bean（撤回语义：基线对所有状态放行，不抛——行为保持）
         stateMachine.assertCanCancel(timesheet.getStatus());
@@ -48,7 +48,7 @@ public class ErpPrjTimesheetCancelProcessor {
 
     // ---------- helpers ----------
 
-    private ErpPrjTimesheet requireTimesheet(Long timesheetId) {
+    private ErpPrjTimesheet requireTimesheet(String timesheetId) {
         ErpPrjTimesheet timesheet = timesheetDao().getEntityById(timesheetId);
         if (timesheet == null) {
             throw new NopException(ErpPrjErrors.ERR_TIMESHEET_NOT_FOUND)

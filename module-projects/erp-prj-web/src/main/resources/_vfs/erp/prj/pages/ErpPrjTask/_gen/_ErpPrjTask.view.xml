@@ -19,19 +19,19 @@
             <cols>
 
                 <!--ID-->
-                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="id" mandatory="true" sortable="true"/>
 
                 <!--项目-->
-                <col id="projectId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="projectId" mandatory="true" sortable="true"/>
 
                 <!--父任务-->
-                <col id="parentTaskId" ui:number="true" sortable="true"/>
+                <col id="parentTaskId" sortable="true"/>
 
                 <!--任务标题-->
                 <col id="title" mandatory="true" sortable="true"/>
 
                 <!--负责人-->
-                <col id="assigneeId" ui:number="true" sortable="true"/>
+                <col id="assigneeId" sortable="true"/>
 
                 <!--计划开始日期-->
                 <col id="plannedStartDate" sortable="true"/>
@@ -52,7 +52,7 @@
                 <col id="actualHours" ui:number="true" sortable="true"/>
 
                 <!--依赖任务-->
-                <col id="dependsOnId" ui:number="true" sortable="true"/>
+                <col id="dependsOnId" sortable="true"/>
 
                 <!--状态-->
                 <col id="status" mandatory="true" sortable="true"/>

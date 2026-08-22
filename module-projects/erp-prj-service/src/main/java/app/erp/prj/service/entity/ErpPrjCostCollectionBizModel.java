@@ -17,7 +17,7 @@ import java.math.BigDecimal;
  * 项目成本归集 BizModel。CRUD 之上承载费用报销归集接入（projects 驱动只读聚合）+ 物料归集接入
  * （purchase 侧入库审核触发，RC-R1.61）。
  *
- * <p>{@link #refreshExpenseCost(Long, IServiceContext)} 受 {@code erp-prj.expense-aggregation-enabled}
+ * <p>{@link #refreshExpenseCost(String, IServiceContext)} 受 {@code erp-prj.expense-aggregation-enabled}
  * （默认 true）config-gated。关闭时直接返回 0（{@code closeProject} 也据此跳过费用刷新）。
  * {@link #aggregateMaterialCost(Long, BigDecimal, String, IServiceContext)} 受
  * {@code erp-prj.material-aggregation-enabled}（默认 true）config-gated，关闭时返回 0。
@@ -40,13 +40,13 @@ public class ErpPrjCostCollectionBizModel extends CrudBizModel<ErpPrjCostCollect
 
     @Override
     @BizMutation
-    public BigDecimal refreshExpenseCost(@Name("projectId") Long projectId, IServiceContext context) {
+    public BigDecimal refreshExpenseCost(@Name("projectId") String projectId, IServiceContext context) {
         return refreshExpenseCostProcessor.refreshExpenseCost(projectId, context);
     }
 
     @Override
     @BizMutation
-    public BigDecimal aggregateMaterialCost(@Name("projectId") Long projectId,
+    public BigDecimal aggregateMaterialCost(@Name("projectId") String projectId,
                                             @Name("amount") BigDecimal amount,
                                             @Name("sourceBillCode") String sourceBillCode,
                                             IServiceContext context) {

@@ -293,19 +293,19 @@ public class _ErpPrjProjectSettlement extends DynamicOrmEntity{
 
     
     /* ID: ID */
-    private java.lang.Long _id;
+    private java.lang.String _id;
     
     /* 单号: CODE */
     private java.lang.String _code;
     
     /* 项目: PROJECT_ID */
-    private java.lang.Long _projectId;
+    private java.lang.String _projectId;
     
     /* 业务组织: ORG_ID */
-    private java.lang.Long _orgId;
+    private java.lang.String _orgId;
     
     /* 客户: CUSTOMER_ID */
-    private java.lang.Long _customerId;
+    private java.lang.String _customerId;
     
     /* 结算日期: BUSINESS_DATE */
     private java.time.LocalDate _businessDate;
@@ -314,10 +314,10 @@ public class _ErpPrjProjectSettlement extends DynamicOrmEntity{
     private java.lang.String _settlementType;
     
     /* 关联损益汇总: PNL_SNAPSHOT_ID */
-    private java.lang.Long _pnlSnapshotId;
+    private java.lang.String _pnlSnapshotId;
     
     /* 币种: CURRENCY_ID */
-    private java.lang.Long _currencyId;
+    private java.lang.String _currencyId;
     
     /* 汇率: EXCHANGE_RATE */
     private java.math.BigDecimal _exchangeRate;
@@ -347,7 +347,7 @@ public class _ErpPrjProjectSettlement extends DynamicOrmEntity{
     private java.lang.Boolean _transferToAsset;
     
     /* 转固资产卡片: ASSET_CARD_ID */
-    private java.lang.Long _assetCardId;
+    private java.lang.String _assetCardId;
     
     /* 结算凭证号: SETTLEMENT_VOUCHER_CODE */
     private java.lang.String _settlementVoucherCode;
@@ -582,9 +582,9 @@ public class _ErpPrjProjectSettlement extends DynamicOrmEntity{
         switch(propId){
         
             case PROP_ID_id:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_id));
                }
                setId(typedValue);
@@ -602,9 +602,9 @@ public class _ErpPrjProjectSettlement extends DynamicOrmEntity{
             }
         
             case PROP_ID_projectId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_projectId));
                }
                setProjectId(typedValue);
@@ -612,9 +612,9 @@ public class _ErpPrjProjectSettlement extends DynamicOrmEntity{
             }
         
             case PROP_ID_orgId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_orgId));
                }
                setOrgId(typedValue);
@@ -622,9 +622,9 @@ public class _ErpPrjProjectSettlement extends DynamicOrmEntity{
             }
         
             case PROP_ID_customerId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_customerId));
                }
                setCustomerId(typedValue);
@@ -652,9 +652,9 @@ public class _ErpPrjProjectSettlement extends DynamicOrmEntity{
             }
         
             case PROP_ID_pnlSnapshotId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_pnlSnapshotId));
                }
                setPnlSnapshotId(typedValue);
@@ -662,9 +662,9 @@ public class _ErpPrjProjectSettlement extends DynamicOrmEntity{
             }
         
             case PROP_ID_currencyId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_currencyId));
                }
                setCurrencyId(typedValue);
@@ -762,9 +762,9 @@ public class _ErpPrjProjectSettlement extends DynamicOrmEntity{
             }
         
             case PROP_ID_assetCardId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_assetCardId));
                }
                setAssetCardId(typedValue);
@@ -932,7 +932,7 @@ public class _ErpPrjProjectSettlement extends DynamicOrmEntity{
         
             case PROP_ID_id:{
                onInitProp(propId);
-               this._id = (java.lang.Long)value;
+               this._id = (java.lang.String)value;
                orm_id(); // 如果是设置主键字段，则触发watcher
                break;
             }
@@ -946,21 +946,21 @@ public class _ErpPrjProjectSettlement extends DynamicOrmEntity{
         
             case PROP_ID_projectId:{
                onInitProp(propId);
-               this._projectId = (java.lang.Long)value;
+               this._projectId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_orgId:{
                onInitProp(propId);
-               this._orgId = (java.lang.Long)value;
+               this._orgId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_customerId:{
                onInitProp(propId);
-               this._customerId = (java.lang.Long)value;
+               this._customerId = (java.lang.String)value;
                
                break;
             }
@@ -981,14 +981,14 @@ public class _ErpPrjProjectSettlement extends DynamicOrmEntity{
         
             case PROP_ID_pnlSnapshotId:{
                onInitProp(propId);
-               this._pnlSnapshotId = (java.lang.Long)value;
+               this._pnlSnapshotId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_currencyId:{
                onInitProp(propId);
-               this._currencyId = (java.lang.Long)value;
+               this._currencyId = (java.lang.String)value;
                
                break;
             }
@@ -1058,7 +1058,7 @@ public class _ErpPrjProjectSettlement extends DynamicOrmEntity{
         
             case PROP_ID_assetCardId:{
                onInitProp(propId);
-               this._assetCardId = (java.lang.Long)value;
+               this._assetCardId = (java.lang.String)value;
                
                break;
             }
@@ -1177,7 +1177,7 @@ public class _ErpPrjProjectSettlement extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final java.lang.Long getId(){
+    public final java.lang.String getId(){
          onPropGet(PROP_ID_id);
          return _id;
     }
@@ -1185,7 +1185,7 @@ public class _ErpPrjProjectSettlement extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final void setId(java.lang.Long value){
+    public final void setId(java.lang.String value){
         if(onPropSet(PROP_ID_id,value)){
             this._id = value;
             internalClearRefs(PROP_ID_id);
@@ -1215,7 +1215,7 @@ public class _ErpPrjProjectSettlement extends DynamicOrmEntity{
     /**
      * 项目: PROJECT_ID
      */
-    public final java.lang.Long getProjectId(){
+    public final java.lang.String getProjectId(){
          onPropGet(PROP_ID_projectId);
          return _projectId;
     }
@@ -1223,7 +1223,7 @@ public class _ErpPrjProjectSettlement extends DynamicOrmEntity{
     /**
      * 项目: PROJECT_ID
      */
-    public final void setProjectId(java.lang.Long value){
+    public final void setProjectId(java.lang.String value){
         if(onPropSet(PROP_ID_projectId,value)){
             this._projectId = value;
             internalClearRefs(PROP_ID_projectId);
@@ -1234,7 +1234,7 @@ public class _ErpPrjProjectSettlement extends DynamicOrmEntity{
     /**
      * 业务组织: ORG_ID
      */
-    public final java.lang.Long getOrgId(){
+    public final java.lang.String getOrgId(){
          onPropGet(PROP_ID_orgId);
          return _orgId;
     }
@@ -1242,7 +1242,7 @@ public class _ErpPrjProjectSettlement extends DynamicOrmEntity{
     /**
      * 业务组织: ORG_ID
      */
-    public final void setOrgId(java.lang.Long value){
+    public final void setOrgId(java.lang.String value){
         if(onPropSet(PROP_ID_orgId,value)){
             this._orgId = value;
             internalClearRefs(PROP_ID_orgId);
@@ -1253,7 +1253,7 @@ public class _ErpPrjProjectSettlement extends DynamicOrmEntity{
     /**
      * 客户: CUSTOMER_ID
      */
-    public final java.lang.Long getCustomerId(){
+    public final java.lang.String getCustomerId(){
          onPropGet(PROP_ID_customerId);
          return _customerId;
     }
@@ -1261,7 +1261,7 @@ public class _ErpPrjProjectSettlement extends DynamicOrmEntity{
     /**
      * 客户: CUSTOMER_ID
      */
-    public final void setCustomerId(java.lang.Long value){
+    public final void setCustomerId(java.lang.String value){
         if(onPropSet(PROP_ID_customerId,value)){
             this._customerId = value;
             internalClearRefs(PROP_ID_customerId);
@@ -1310,7 +1310,7 @@ public class _ErpPrjProjectSettlement extends DynamicOrmEntity{
     /**
      * 关联损益汇总: PNL_SNAPSHOT_ID
      */
-    public final java.lang.Long getPnlSnapshotId(){
+    public final java.lang.String getPnlSnapshotId(){
          onPropGet(PROP_ID_pnlSnapshotId);
          return _pnlSnapshotId;
     }
@@ -1318,7 +1318,7 @@ public class _ErpPrjProjectSettlement extends DynamicOrmEntity{
     /**
      * 关联损益汇总: PNL_SNAPSHOT_ID
      */
-    public final void setPnlSnapshotId(java.lang.Long value){
+    public final void setPnlSnapshotId(java.lang.String value){
         if(onPropSet(PROP_ID_pnlSnapshotId,value)){
             this._pnlSnapshotId = value;
             internalClearRefs(PROP_ID_pnlSnapshotId);
@@ -1329,7 +1329,7 @@ public class _ErpPrjProjectSettlement extends DynamicOrmEntity{
     /**
      * 币种: CURRENCY_ID
      */
-    public final java.lang.Long getCurrencyId(){
+    public final java.lang.String getCurrencyId(){
          onPropGet(PROP_ID_currencyId);
          return _currencyId;
     }
@@ -1337,7 +1337,7 @@ public class _ErpPrjProjectSettlement extends DynamicOrmEntity{
     /**
      * 币种: CURRENCY_ID
      */
-    public final void setCurrencyId(java.lang.Long value){
+    public final void setCurrencyId(java.lang.String value){
         if(onPropSet(PROP_ID_currencyId,value)){
             this._currencyId = value;
             internalClearRefs(PROP_ID_currencyId);
@@ -1519,7 +1519,7 @@ public class _ErpPrjProjectSettlement extends DynamicOrmEntity{
     /**
      * 转固资产卡片: ASSET_CARD_ID
      */
-    public final java.lang.Long getAssetCardId(){
+    public final java.lang.String getAssetCardId(){
          onPropGet(PROP_ID_assetCardId);
          return _assetCardId;
     }
@@ -1527,7 +1527,7 @@ public class _ErpPrjProjectSettlement extends DynamicOrmEntity{
     /**
      * 转固资产卡片: ASSET_CARD_ID
      */
-    public final void setAssetCardId(java.lang.Long value){
+    public final void setAssetCardId(java.lang.String value){
         if(onPropSet(PROP_ID_assetCardId,value)){
             this._assetCardId = value;
             internalClearRefs(PROP_ID_assetCardId);

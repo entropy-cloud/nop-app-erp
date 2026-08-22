@@ -13,30 +13,30 @@
     public class ErpPrjProjectSettlementLineOutputBean {
 
     
-        private Long _id;
+        private String _id;
 
     
         @PropMeta(propId=1)
     
-        public Long getId(){
+        public String getId(){
             return _id;
         }
 
-        public void setId(Long value){
+        public void setId(String value){
             this._id = value;
         }
 
 
-        private Long _settlementId;
+        private String _settlementId;
 
     
         @PropMeta(propId=2)
     
-        public Long getSettlementId(){
+        public String getSettlementId(){
             return _settlementId;
         }
 
-        public void setSettlementId(Long value){
+        public void setSettlementId(String value){
             this._settlementId = value;
         }
 
@@ -97,16 +97,16 @@
         }
 
 
-        private Long _subjectId;
+        private String _subjectId;
 
     
         @PropMeta(propId=7)
     
-        public Long getSubjectId(){
+        public String getSubjectId(){
             return _subjectId;
         }
 
-        public void setSubjectId(Long value){
+        public void setSubjectId(String value){
             this._subjectId = value;
         }
 

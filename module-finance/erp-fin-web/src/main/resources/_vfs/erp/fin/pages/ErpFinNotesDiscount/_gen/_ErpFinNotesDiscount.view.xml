@@ -19,19 +19,19 @@
             <cols>
 
                 <!--ID-->
-                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="id" mandatory="true" sortable="true"/>
 
                 <!--应收票据-->
-                <col id="notesReceivableId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="notesReceivableId" mandatory="true" sortable="true"/>
 
                 <!--核算组织-->
-                <col id="orgId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="orgId" mandatory="true" sortable="true"/>
 
                 <!--贴现日-->
                 <col id="discountDate" mandatory="true" sortable="true"/>
 
                 <!--贴现银行账户-->
-                <col id="bankId" ui:number="true" sortable="true"/>
+                <col id="bankId" sortable="true"/>
 
                 <!--票面金额-->
                 <col id="faceAmount" ui:number="true" sortable="true"/>
@@ -43,7 +43,7 @@
                 <col id="netAmount" ui:number="true" sortable="true"/>
 
                 <!--币种-->
-                <col id="currencyId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="currencyId" mandatory="true" sortable="true"/>
 
                 <!--汇率-->
                 <col id="exchangeRate" ui:number="true" sortable="true"/>

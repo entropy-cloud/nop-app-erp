@@ -561,7 +561,7 @@
                         stdSqlType="BIGINT" i18n-en:displayName="Partner"/>
                 <column code="DEPARTMENT_ID" displayName="辅助-部门" name="departmentId" propId="18" stdDataType="string"
                         stdSqlType="BIGINT" i18n-en:displayName="Department"/>
-                <column code="PROJECT_ID" displayName="辅助-项目" name="projectId" propId="19" stdDataType="long"
+                <column code="PROJECT_ID" displayName="辅助-项目" name="projectId" propId="19" stdDataType="string"
                         stdSqlType="BIGINT" i18n-en:displayName="Project"/>
                 <column code="WAREHOUSE_ID" displayName="辅助-仓库" name="warehouseId" propId="20" stdDataType="string"
                         stdSqlType="BIGINT" i18n-en:displayName="Warehouse"/>
@@ -1394,7 +1394,7 @@
                         stdSqlType="BIGINT" i18n-en:displayName="Partner"/>
                 <column code="DEPARTMENT_ID" displayName="辅助-部门" name="departmentId" propId="16" stdDataType="string"
                         stdSqlType="BIGINT" i18n-en:displayName="Department"/>
-                <column code="PROJECT_ID" displayName="辅助-项目" name="projectId" propId="17" stdDataType="long"
+                <column code="PROJECT_ID" displayName="辅助-项目" name="projectId" propId="17" stdDataType="string"
                         stdSqlType="BIGINT" i18n-en:displayName="Project"/>
                 <column code="WAREHOUSE_ID" displayName="辅助-仓库" name="warehouseId" propId="18" stdDataType="string"
                         stdSqlType="BIGINT" i18n-en:displayName="Warehouse"/>
@@ -2163,7 +2163,7 @@
                 <column code="EXPENSE_TYPE" displayName="费用类型" mandatory="true" name="expenseType" precision="20"
                         propId="4" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-fin/expense-type"
                         i18n-en:displayName="Expense Type"/>
-                <column code="PROJECT_ID" displayName="项目" name="projectId" propId="5" stdDataType="long"
+                <column code="PROJECT_ID" displayName="项目" name="projectId" propId="5" stdDataType="string"
                         stdSqlType="BIGINT" i18n-en:displayName="Project"/>
                 <column code="COST_CENTER_ID" displayName="成本中心" name="costCenterId" propId="6" stdDataType="string"
                         stdSqlType="BIGINT" i18n-en:displayName="Cost Center"/>
@@ -2278,7 +2278,7 @@
                 <column code="OUTSTANDING_AMOUNT" defaultValue="0" displayName="未还金额" domain="amount"
                         name="outstandingAmount" precision="20" propId="12" scale="4" stdDataType="decimal"
                         stdSqlType="DECIMAL" i18n-en:displayName="Outstanding Amount"/>
-                <column code="PROJECT_ID" displayName="关联项目" name="projectId" propId="13" stdDataType="long"
+                <column code="PROJECT_ID" displayName="关联项目" name="projectId" propId="13" stdDataType="string"
                         stdSqlType="BIGINT" i18n-en:displayName="Project"/>
                 <column code="DOC_STATUS" displayName="单据状态" mandatory="true" name="docStatus" precision="20"
                         propId="14" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-fin/advance-status"
@@ -3189,7 +3189,7 @@
                         stdSqlType="BIGINT" i18n-en:displayName="Cost Center"/>
                 <column code="DEPARTMENT_ID" displayName="辅助-部门" name="departmentId" propId="10" stdDataType="string"
                         stdSqlType="BIGINT" i18n-en:displayName="Department"/>
-                <column code="PROJECT_ID" displayName="辅助-项目" name="projectId" propId="11" stdDataType="long"
+                <column code="PROJECT_ID" displayName="辅助-项目" name="projectId" propId="11" stdDataType="string"
                         stdSqlType="BIGINT" i18n-en:displayName="Project"/>
                 <column code="PARTNER_ID" displayName="辅助-往来单位" name="partnerId" propId="12" stdDataType="string"
                         stdSqlType="BIGINT" i18n-en:displayName="Partner"/>
@@ -3643,7 +3643,7 @@
                         stdSqlType="BIGINT" i18n-en:displayName="Warehouse"/>
                 <column code="DEPARTMENT_ID" displayName="部门(空=通配)" name="departmentId" propId="11" stdDataType="string"
                         stdSqlType="BIGINT" i18n-en:displayName="Department"/>
-                <column code="PROJECT_ID" displayName="项目(空=通配)" name="projectId" propId="12" stdDataType="long"
+                <column code="PROJECT_ID" displayName="项目(空=通配)" name="projectId" propId="12" stdDataType="string"
                         stdSqlType="BIGINT" i18n-en:displayName="Project"/>
                 <column code="TARGET_SUBJECT_CODE" displayName="目标科目编码" domain="subjectCode" mandatory="true"
                         name="targetSubjectCode" precision="50" propId="13" stdDataType="string" stdSqlType="VARCHAR"

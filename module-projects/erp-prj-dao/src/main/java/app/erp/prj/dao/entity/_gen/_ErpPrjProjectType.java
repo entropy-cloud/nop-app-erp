@@ -117,7 +117,7 @@ public class _ErpPrjProjectType extends DynamicOrmEntity{
 
     
     /* ID: ID */
-    private java.lang.Long _id;
+    private java.lang.String _id;
     
     /* 类型编码: CODE */
     private java.lang.String _code;
@@ -126,7 +126,7 @@ public class _ErpPrjProjectType extends DynamicOrmEntity{
     private java.lang.String _name;
     
     /* 默认科目: DEFAULT_SUBJECT_ID */
-    private java.lang.Long _defaultSubjectId;
+    private java.lang.String _defaultSubjectId;
     
     /* 备注: REMARK */
     private java.lang.String _remark;
@@ -268,9 +268,9 @@ public class _ErpPrjProjectType extends DynamicOrmEntity{
         switch(propId){
         
             case PROP_ID_id:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_id));
                }
                setId(typedValue);
@@ -298,9 +298,9 @@ public class _ErpPrjProjectType extends DynamicOrmEntity{
             }
         
             case PROP_ID_defaultSubjectId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_defaultSubjectId));
                }
                setDefaultSubjectId(typedValue);
@@ -388,7 +388,7 @@ public class _ErpPrjProjectType extends DynamicOrmEntity{
         
             case PROP_ID_id:{
                onInitProp(propId);
-               this._id = (java.lang.Long)value;
+               this._id = (java.lang.String)value;
                orm_id(); // 如果是设置主键字段，则触发watcher
                break;
             }
@@ -409,7 +409,7 @@ public class _ErpPrjProjectType extends DynamicOrmEntity{
         
             case PROP_ID_defaultSubjectId:{
                onInitProp(propId);
-               this._defaultSubjectId = (java.lang.Long)value;
+               this._defaultSubjectId = (java.lang.String)value;
                
                break;
             }
@@ -472,7 +472,7 @@ public class _ErpPrjProjectType extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final java.lang.Long getId(){
+    public final java.lang.String getId(){
          onPropGet(PROP_ID_id);
          return _id;
     }
@@ -480,7 +480,7 @@ public class _ErpPrjProjectType extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final void setId(java.lang.Long value){
+    public final void setId(java.lang.String value){
         if(onPropSet(PROP_ID_id,value)){
             this._id = value;
             internalClearRefs(PROP_ID_id);
@@ -529,7 +529,7 @@ public class _ErpPrjProjectType extends DynamicOrmEntity{
     /**
      * 默认科目: DEFAULT_SUBJECT_ID
      */
-    public final java.lang.Long getDefaultSubjectId(){
+    public final java.lang.String getDefaultSubjectId(){
          onPropGet(PROP_ID_defaultSubjectId);
          return _defaultSubjectId;
     }
@@ -537,7 +537,7 @@ public class _ErpPrjProjectType extends DynamicOrmEntity{
     /**
      * 默认科目: DEFAULT_SUBJECT_ID
      */
-    public final void setDefaultSubjectId(java.lang.Long value){
+    public final void setDefaultSubjectId(java.lang.String value){
         if(onPropSet(PROP_ID_defaultSubjectId,value)){
             this._defaultSubjectId = value;
             internalClearRefs(PROP_ID_defaultSubjectId);

@@ -49,7 +49,7 @@ public class ProjectCostCollectionProvider implements IErpFinAcctDocProvider {
     public List<VoucherFact> createFacts(PostingEvent event, AcctDocContext ctx) {
         String sourceBillType = readString(event, ErpPrjConstants.BILL_DATA_SOURCE_BILL_TYPE);
         BigDecimal amount = readDecimal(event, ErpPrjConstants.BILL_DATA_COST_AMOUNT);
-        Long projectId = readLong(event, ErpPrjConstants.BILL_DATA_PROJECT_ID);
+        String projectId = readString(event, ErpPrjConstants.BILL_DATA_PROJECT_ID);
 
         String debitSubjectCode = readString(event, ErpPrjConstants.BILL_DATA_DEBIT_SUBJECT_CODE);
         if (debitSubjectCode == null || debitSubjectCode.isEmpty()) {
@@ -131,20 +131,5 @@ public class ProjectCostCollectionProvider implements IErpFinAcctDocProvider {
         }
         String s = value.toString().trim();
         return s.isEmpty() ? null : s;
-    }
-
-    private Long readLong(PostingEvent event, String key) {
-        Object value = event.getBillData().get(key);
-        if (value == null) {
-            return null;
-        }
-        if (value instanceof Number) {
-            return ((Number) value).longValue();
-        }
-        try {
-            return Long.valueOf(value.toString().trim());
-        } catch (NumberFormatException e) {
-            return null;
-        }
     }
 }

@@ -13,16 +13,16 @@
     public class ErpPrjProjectTypeOutputBean {
 
     
-        private Long _id;
+        private String _id;
 
     
         @PropMeta(propId=1)
     
-        public Long getId(){
+        public String getId(){
             return _id;
         }
 
-        public void setId(Long value){
+        public void setId(String value){
             this._id = value;
         }
 
@@ -55,16 +55,16 @@
         }
 
 
-        private Long _defaultSubjectId;
+        private String _defaultSubjectId;
 
     
         @PropMeta(propId=4)
     
-        public Long getDefaultSubjectId(){
+        public String getDefaultSubjectId(){
             return _defaultSubjectId;
         }
 
-        public void setDefaultSubjectId(Long value){
+        public void setDefaultSubjectId(String value){
             this._defaultSubjectId = value;
         }
 

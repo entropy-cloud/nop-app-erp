@@ -32,7 +32,7 @@ public class ErpPrjTimesheetApproveProcessor {
     @Inject
     ErpPrjTimesheetStateMachine stateMachine;
 
-    public ErpPrjTimesheet approve(Long timesheetId, IServiceContext context) {
+    public ErpPrjTimesheet approve(String timesheetId, IServiceContext context) {
         ErpPrjTimesheet timesheet = requireTimesheet(timesheetId);
         String status = timesheet.getStatus();
         // 幂等：已审批直接返回（既有行为保持）
@@ -66,7 +66,7 @@ public class ErpPrjTimesheetApproveProcessor {
 
     // ---------- helpers ----------
 
-    private ErpPrjTimesheet requireTimesheet(Long timesheetId) {
+    private ErpPrjTimesheet requireTimesheet(String timesheetId) {
         ErpPrjTimesheet timesheet = timesheetDao().getEntityById(timesheetId);
         if (timesheet == null) {
             throw new NopException(ErpPrjErrors.ERR_TIMESHEET_NOT_FOUND)

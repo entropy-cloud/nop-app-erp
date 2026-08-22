@@ -27,35 +27,35 @@ public interface IErpPrjProjectSettlementBiz extends ICrudBiz<ErpPrjProjectSettl
      * 按来源单据（Billing/CostCollection）生成明细行。
      */
     @BizMutation
-    ErpPrjProjectSettlement createSettlement(@Name("projectId") Long projectId,
+    ErpPrjProjectSettlement createSettlement(@Name("projectId") String projectId,
                                              @Name("settlementType") String settlementType,
                                              IServiceContext context);
 
     /** 提交审核：UNSUBMITTED → SUBMITTED。 */
     @BizMutation
-    ErpPrjProjectSettlement submit(@Name("id") Long id, IServiceContext context);
+    ErpPrjProjectSettlement submit(@Name("id") String id, IServiceContext context);
 
     /**
      * 审核通过：SUBMITTED → APPROVED，按 settlementType 分派过账（FINAL/INTERIM 仅凭证；CLOSE 额外转固建卡 + 凭证）。
      * 强制审批关闭时（{@code erp-prj.settlement-require-approval=false}）允许 UNSUBMITTED 直接审批。
      */
     @BizMutation
-    ErpPrjProjectSettlement approve(@Name("id") Long id, IServiceContext context);
+    ErpPrjProjectSettlement approve(@Name("id") String id, IServiceContext context);
 
     /** 驳回：SUBMITTED → REJECTED。 */
     @BizMutation
-    ErpPrjProjectSettlement reject(@Name("id") Long id, IServiceContext context);
+    ErpPrjProjectSettlement reject(@Name("id") String id, IServiceContext context);
 
     /** 取消：→ CANCELLED。已过账时先红冲凭证 + 回退卡片。 */
     @BizMutation
-    ErpPrjProjectSettlement cancel(@Name("id") Long id, IServiceContext context);
+    ErpPrjProjectSettlement cancel(@Name("id") String id, IServiceContext context);
 
     /**
      * 红字冲销结算单。冲销已过账的 PROJECT_SETTLEMENT 凭证 + 回退资产卡片状态（已转固时）+ {@code posted=false}。
      * 冲销是硬前置，失败向上抛出阻断。
      */
     @BizMutation
-    ErpPrjProjectSettlement reverseSettlement(@Name("settlementId") Long settlementId, IServiceContext context);
+    ErpPrjProjectSettlement reverseSettlement(@Name("settlementId") String settlementId, IServiceContext context);
 
     /**
      * 质保金到期返还（RC-R1.63 / P1-RC-052，UC-PRJ-07 ⑤）。扫描到期结算（docStatus/approveStatus=APPROVED
@@ -64,5 +64,5 @@ public interface IErpPrjProjectSettlementBiz extends ICrudBiz<ErpPrjProjectSettl
      * 守卫失败抛 {@code ERR_RETENTION_RETURN_NOT_ALLOWED}；返还过账失败抛 {@code ERR_RETENTION_RETURN_POSTING_FAILED}。
      */
     @BizMutation
-    ErpPrjProjectSettlement returnRetention(@Name("settlementId") Long settlementId, IServiceContext context);
+    ErpPrjProjectSettlement returnRetention(@Name("settlementId") String settlementId, IServiceContext context);
 }

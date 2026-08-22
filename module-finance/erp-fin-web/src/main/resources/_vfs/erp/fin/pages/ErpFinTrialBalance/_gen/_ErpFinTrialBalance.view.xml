@@ -19,19 +19,19 @@
             <cols>
 
                 <!--ID-->
-                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="id" mandatory="true" sortable="true"/>
 
                 <!--组织-->
-                <col id="orgId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="orgId" mandatory="true" sortable="true"/>
 
                 <!--账套-->
-                <col id="acctSchemaId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="acctSchemaId" mandatory="true" sortable="true"/>
 
                 <!--期间-->
-                <col id="periodId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="periodId" mandatory="true" sortable="true"/>
 
                 <!--科目-->
-                <col id="subjectId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="subjectId" mandatory="true" sortable="true"/>
 
                 <!--科目编码-->
                 <col id="subjectCode" mandatory="true" sortable="true"/>

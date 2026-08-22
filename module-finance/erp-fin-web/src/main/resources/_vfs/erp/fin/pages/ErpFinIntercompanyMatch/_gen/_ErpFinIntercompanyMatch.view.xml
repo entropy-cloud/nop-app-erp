@@ -19,34 +19,34 @@
             <cols>
 
                 <!--ID-->
-                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="id" mandatory="true" sortable="true"/>
 
                 <!--记录编码-->
                 <col id="code" mandatory="true" sortable="true"/>
 
                 <!--核算组织-->
-                <col id="orgId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="orgId" mandatory="true" sortable="true"/>
 
                 <!--配对键-->
                 <col id="pairKey" mandatory="true" sortable="true"/>
 
                 <!--会计期间-->
-                <col id="periodId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="periodId" mandatory="true" sortable="true"/>
 
                 <!--AR侧凭证-->
-                <col id="arSideVoucherId" ui:number="true" sortable="true"/>
+                <col id="arSideVoucherId" sortable="true"/>
 
                 <!--AR侧组织-->
-                <col id="arOrgId" ui:number="true" sortable="true"/>
+                <col id="arOrgId" sortable="true"/>
 
                 <!--AP侧凭证-->
-                <col id="apSideVoucherId" ui:number="true" sortable="true"/>
+                <col id="apSideVoucherId" sortable="true"/>
 
                 <!--AP侧组织-->
-                <col id="apOrgId" ui:number="true" sortable="true"/>
+                <col id="apOrgId" sortable="true"/>
 
                 <!--物料-->
-                <col id="materialId" ui:number="true" sortable="true"/>
+                <col id="materialId" sortable="true"/>
 
                 <!--配对金额-->
                 <col id="matchedAmount" ui:number="true" sortable="true"/>

@@ -19,7 +19,7 @@
             <cols>
 
                 <!--ID-->
-                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="id" mandatory="true" sortable="true"/>
 
                 <!--类型编码-->
                 <col id="code" mandatory="true" sortable="true"/>
@@ -31,7 +31,7 @@
                 <col id="costRate" ui:number="true" sortable="true"/>
 
                 <!--科目-->
-                <col id="subjectId" ui:number="true" sortable="true"/>
+                <col id="subjectId" sortable="true"/>
 
                 <!--备注-->
                 <col id="remark" sortable="true"/>

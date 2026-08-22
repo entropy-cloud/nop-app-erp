@@ -41,8 +41,8 @@ public final class TaskDependencyValidator {
      *                      成环（{@link ErpPrjErrors#ERR_TASK_DEPENDENCY_CYCLE}）/
      *                      深度超限（{@link ErpPrjErrors#ERR_TASK_DEPENDENCY_DEPTH_EXCEEDED}）
      */
-    public static void detectCycle(Long taskId, Long dependsOnId,
-                                   Function<Long, ErpPrjTask> loader, int maxDepth) {
+    public static void detectCycle(String taskId, String dependsOnId,
+                                   Function<String, ErpPrjTask> loader, int maxDepth) {
         if (dependsOnId == null) {
             return;
         }
@@ -51,14 +51,14 @@ public final class TaskDependencyValidator {
                     .param(ErpPrjErrors.ARG_TASK_ID, taskId);
         }
 
-        Set<Long> visited = new HashSet<>();
-        List<Long> chainOrder = new ArrayList<>();
+        Set<String> visited = new HashSet<>();
+        List<String> chainOrder = new ArrayList<>();
         if (taskId != null) {
             visited.add(taskId);
             chainOrder.add(taskId);
         }
 
-        Long cursor = dependsOnId;
+        String cursor = dependsOnId;
         int depth = 0;
         while (cursor != null) {
             depth++;
@@ -94,8 +94,8 @@ public final class TaskDependencyValidator {
      * @param maxDepth 深度上限（与 {@link #detectCycle} 一致，防恶意长链）
      * @return 上行链全量列表（{@code taskId} 无前置时返回空列表）
      */
-    public static List<ErpPrjTask> collectPredecessors(Long taskId,
-                                                       Function<Long, ErpPrjTask> loader,
+    public static List<ErpPrjTask> collectPredecessors(String taskId,
+                                                       Function<String, ErpPrjTask> loader,
                                                        int maxDepth) {
         List<ErpPrjTask> result = new ArrayList<>();
         if (taskId == null) {
@@ -105,10 +105,10 @@ public final class TaskDependencyValidator {
         if (start == null) {
             return result;
         }
-        Set<Long> visited = new HashSet<>();
+        Set<String> visited = new HashSet<>();
         visited.add(taskId);
 
-        Long cursor = start.getDependsOnId();
+        String cursor = start.getDependsOnId();
         int depth = 0;
         while (cursor != null) {
             depth++;
@@ -134,7 +134,7 @@ public final class TaskDependencyValidator {
         return result;
     }
 
-    private static String formatChain(List<Long> chainOrder) {
+    private static String formatChain(List<String> chainOrder) {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < chainOrder.size(); i++) {
             if (i > 0) {
@@ -145,7 +145,7 @@ public final class TaskDependencyValidator {
         return sb.toString();
     }
 
-    private static String formatChainWith(List<ErpPrjTask> collected, Long cycleNode) {
+    private static String formatChainWith(List<ErpPrjTask> collected, String cycleNode) {
         StringBuilder sb = new StringBuilder();
         boolean first = true;
         for (ErpPrjTask t : collected) {

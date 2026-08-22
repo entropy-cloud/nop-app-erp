@@ -19,13 +19,13 @@
             <cols>
 
                 <!--ID-->
-                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="id" mandatory="true" sortable="true"/>
 
                 <!--单号-->
                 <col id="code" mandatory="true" sortable="true"/>
 
                 <!--核算组织-->
-                <col id="orgId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="orgId" mandatory="true" sortable="true"/>
 
                 <!--票据类型-->
                 <col id="notesType" mandatory="true" sortable="true"/>
@@ -49,7 +49,7 @@
                 <col id="dueDate" sortable="true"/>
 
                 <!--币种-->
-                <col id="currencyId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="currencyId" mandatory="true" sortable="true"/>
 
                 <!--汇率-->
                 <col id="exchangeRate" ui:number="true" sortable="true"/>
@@ -61,10 +61,10 @@
                 <col id="amountFunctional" ui:number="true" sortable="true"/>
 
                 <!--出票客户往来-->
-                <col id="partnerId" ui:number="true" sortable="true"/>
+                <col id="partnerId" sortable="true"/>
 
                 <!--背书来源票据-->
-                <col id="endorsementFromId" ui:number="true" sortable="true"/>
+                <col id="endorsementFromId" sortable="true"/>
 
                 <!--来源单据类型-->
                 <col id="sourceBillType" sortable="true"/>
@@ -73,7 +73,7 @@
                 <col id="sourceBillCode" sortable="true"/>
 
                 <!--贴现明细-->
-                <col id="discountId" ui:number="true" sortable="true"/>
+                <col id="discountId" sortable="true"/>
 
                 <!--票据状态-->
                 <col id="status" sortable="true"/>

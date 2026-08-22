@@ -93,7 +93,7 @@
         </prop>
         <prop name="projectId" displayName="辅助-项目" propId="19" i18n-en:displayName="Project" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="project">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="warehouseId" displayName="辅助-仓库" propId="20" i18n-en:displayName="Warehouse" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="warehouse">

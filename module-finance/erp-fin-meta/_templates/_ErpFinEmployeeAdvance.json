@@ -12,7 +12,7 @@
   "amountFunctional": 0.0,
   "settledAmount": 0.0,
   "outstandingAmount": 0.0,
-  "projectId": 0,
+  "projectId": "",
   "docStatus": "",
   "docStatus_label": "",
   "approveStatus": "",

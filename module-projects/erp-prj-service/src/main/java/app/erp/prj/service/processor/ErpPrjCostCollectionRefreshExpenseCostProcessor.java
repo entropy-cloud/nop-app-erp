@@ -19,7 +19,7 @@ public class ErpPrjCostCollectionRefreshExpenseCostProcessor {
     @Inject
     ExpenseCostAggregator expenseCostAggregator;
 
-    public BigDecimal refreshExpenseCost(Long projectId, IServiceContext context) {
+    public BigDecimal refreshExpenseCost(String projectId, IServiceContext context) {
         if (!ErpPrjConfigs.expenseAggregationEnabled()) {
             return BigDecimal.ZERO;
         }

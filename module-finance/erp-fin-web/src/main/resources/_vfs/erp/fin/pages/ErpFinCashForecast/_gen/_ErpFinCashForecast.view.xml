@@ -19,13 +19,13 @@
             <cols>
 
                 <!--ID-->
-                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="id" mandatory="true" sortable="true"/>
 
                 <!--核算组织-->
-                <col id="orgId" ui:number="true" sortable="true"/>
+                <col id="orgId" sortable="true"/>
 
                 <!--资金账户-->
-                <col id="fundAccountId" ui:number="true" sortable="true"/>
+                <col id="fundAccountId" sortable="true"/>
 
                 <!--预测日期-->
                 <col id="forecastDate" mandatory="true" sortable="true"/>
@@ -40,7 +40,7 @@
                 <col id="direction" sortable="true"/>
 
                 <!--往来单位-->
-                <col id="partnerId" ui:number="true" sortable="true"/>
+                <col id="partnerId" sortable="true"/>
 
                 <!--源币种金额-->
                 <col id="amountSource" ui:number="true" sortable="true"/>

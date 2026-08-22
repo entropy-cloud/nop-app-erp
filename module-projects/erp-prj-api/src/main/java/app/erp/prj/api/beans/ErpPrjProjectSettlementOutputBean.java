@@ -14,16 +14,16 @@
     public class ErpPrjProjectSettlementOutputBean {
 
     
-        private Long _id;
+        private String _id;
 
     
         @PropMeta(propId=1)
     
-        public Long getId(){
+        public String getId(){
             return _id;
         }
 
-        public void setId(Long value){
+        public void setId(String value){
             this._id = value;
         }
 
@@ -42,44 +42,44 @@
         }
 
 
-        private Long _projectId;
+        private String _projectId;
 
     
         @PropMeta(propId=3)
     
-        public Long getProjectId(){
+        public String getProjectId(){
             return _projectId;
         }
 
-        public void setProjectId(Long value){
+        public void setProjectId(String value){
             this._projectId = value;
         }
 
 
-        private Long _orgId;
+        private String _orgId;
 
     
         @PropMeta(propId=4)
     
-        public Long getOrgId(){
+        public String getOrgId(){
             return _orgId;
         }
 
-        public void setOrgId(Long value){
+        public void setOrgId(String value){
             this._orgId = value;
         }
 
 
-        private Long _customerId;
+        private String _customerId;
 
     
         @PropMeta(propId=5)
     
-        public Long getCustomerId(){
+        public String getCustomerId(){
             return _customerId;
         }
 
-        public void setCustomerId(Long value){
+        public void setCustomerId(String value){
             this._customerId = value;
         }
 
@@ -124,30 +124,30 @@
         }
 
 
-        private Long _pnlSnapshotId;
+        private String _pnlSnapshotId;
 
     
         @PropMeta(propId=8)
     
-        public Long getPnlSnapshotId(){
+        public String getPnlSnapshotId(){
             return _pnlSnapshotId;
         }
 
-        public void setPnlSnapshotId(Long value){
+        public void setPnlSnapshotId(String value){
             this._pnlSnapshotId = value;
         }
 
 
-        private Long _currencyId;
+        private String _currencyId;
 
     
         @PropMeta(propId=9)
     
-        public Long getCurrencyId(){
+        public String getCurrencyId(){
             return _currencyId;
         }
 
-        public void setCurrencyId(Long value){
+        public void setCurrencyId(String value){
             this._currencyId = value;
         }
 
@@ -278,16 +278,16 @@
         }
 
 
-        private Long _assetCardId;
+        private String _assetCardId;
 
     
         @PropMeta(propId=19)
     
-        public Long getAssetCardId(){
+        public String getAssetCardId(){
             return _assetCardId;
         }
 
-        public void setAssetCardId(Long value){
+        public void setAssetCardId(String value){
             this._assetCardId = value;
         }
 

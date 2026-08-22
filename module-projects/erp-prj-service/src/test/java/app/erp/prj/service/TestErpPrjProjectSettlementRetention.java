@@ -92,7 +92,7 @@ public class TestErpPrjProjectSettlementRetention extends JunitAutoTestCase {
         System.setProperty(ErpPrjConstants.CONFIG_SETTLEMENT_RETENTION_RATIO, "0.05");
         System.setProperty(ErpPrjConstants.CONFIG_SETTLEMENT_RETENTION_DUE_MONTHS, "12");
 
-        Long[] holder = new Long[1];
+        String[] holder = new String[1];
         ormTemplate.runInSession(session -> {
             seedFullSetup("STL-RET-FILL");
             holder[0] = seedProjectWithBillingAndCost("PRJ-RET-FILL", "质保金填充项目");
@@ -116,8 +116,8 @@ public class TestErpPrjProjectSettlementRetention extends JunitAutoTestCase {
     public void testCreateSettlementDoesNotFillForInterimAndClose() {
         System.setProperty(ErpPrjConstants.CONFIG_SETTLEMENT_RETENTION_RATIO, "0.05");
 
-        Long[] interimHolder = new Long[1];
-        Long[] closeHolder = new Long[1];
+        String[] interimHolder = new String[1];
+        String[] closeHolder = new String[1];
         ormTemplate.runInSession(session -> {
             seedFullSetup("STL-RET-IC");
             interimHolder[0] = seedProjectWithBillingAndCost("PRJ-RET-IC-INTERIM", "阶段结算项目");
@@ -146,7 +146,7 @@ public class TestErpPrjProjectSettlementRetention extends JunitAutoTestCase {
     public void testReturnRetentionSuccess() {
         System.setProperty(ErpPrjConstants.CONFIG_SETTLEMENT_RETENTION_RATIO, "0.05");
 
-        Long settlementId = seedApprovedPostedSettlement("STL-RET-OK", "PRJ-RET-OK", "质保金返还成功项目");
+        String settlementId = seedApprovedPostedSettlement("STL-RET-OK", "PRJ-RET-OK", "质保金返还成功项目");
         // 手工覆盖路径（D1 保留）：把到期日改到过去（冻结时钟 2026-07-17），使到期条件成立
         // 注意：Nop ORM 自动脏检查，session 提交时 flush 持久化 MANAGED 实体的字段变更，无需（也不能）再 updateEntity。
         ormTemplate.runInSession(session -> {
@@ -165,7 +165,7 @@ public class TestErpPrjProjectSettlementRetention extends JunitAutoTestCase {
         assertEquals(1, links.size(), "返还凭证回链恰 1 条");
 
         // D2：返还凭证行级断言——镜像对冲 借 2241 / 贷 1122，金额=retentionAmount，标 projectId
-        Long voucherId = links.get(0).getVoucherId();
+        String voucherId = links.get(0).getVoucherId();
         List<ErpFinVoucherLine> lines = findVoucherLines(voucherId);
         assertTrue(hasLine(lines, "2241", ErpFinConstants.DC_DEBIT, new BigDecimal("500.0000")),
                 "返还凭证含 借 2241 其他应付款-质保金 500");
@@ -181,7 +181,7 @@ public class TestErpPrjProjectSettlementRetention extends JunitAutoTestCase {
     public void testReturnRetentionIdempotent() {
         System.setProperty(ErpPrjConstants.CONFIG_SETTLEMENT_RETENTION_RATIO, "0.05");
 
-        Long settlementId = seedApprovedPostedSettlement("STL-RET-IDEM", "PRJ-RET-IDEM", "质保金幂等项目");
+        String settlementId = seedApprovedPostedSettlement("STL-RET-IDEM", "PRJ-RET-IDEM", "质保金幂等项目");
         // 手工覆盖路径（D1 保留）：把到期日改到过去，使到期条件成立（Nop 脏检查 + session flush 持久化）
         String[] codeHolder = new String[1];
         ormTemplate.runInSession(session -> {
@@ -209,7 +209,7 @@ public class TestErpPrjProjectSettlementRetention extends JunitAutoTestCase {
     public void testReturnRetentionGuardNotApproved() {
         System.setProperty(ErpPrjConstants.CONFIG_SETTLEMENT_RETENTION_RATIO, "0.05");
 
-        Long settlementId = seedSettlement("STL-RET-G-APP", "PRJ-RET-G-APP", "守卫-未审批项目");
+        String settlementId = seedSettlement("STL-RET-G-APP", "PRJ-RET-G-APP", "守卫-未审批项目");
         // 保持 DRAFT/UNSUBMITTED，手工补质保金字段到可返还形态
         ormTemplate.runInSession(session -> {
             ErpPrjProjectSettlement s = daoProvider.daoFor(ErpPrjProjectSettlement.class).getEntityById(settlementId);
@@ -228,7 +228,7 @@ public class TestErpPrjProjectSettlementRetention extends JunitAutoTestCase {
     public void testReturnRetentionGuardNotPosted() {
         System.setProperty(ErpPrjConstants.CONFIG_SETTLEMENT_RETENTION_RATIO, "0.05");
 
-        Long settlementId = seedSettlement("STL-RET-G-POST", "PRJ-RET-G-POST", "守卫-未过账项目");
+        String settlementId = seedSettlement("STL-RET-G-POST", "PRJ-RET-G-POST", "守卫-未过账项目");
         // 构造 APPROVED 但 posted=false（过账失败隔离场景：留存凭证未生成不可返还）
         ormTemplate.runInSession(session -> {
             ErpPrjProjectSettlement s = daoProvider.daoFor(ErpPrjProjectSettlement.class).getEntityById(settlementId);
@@ -249,7 +249,7 @@ public class TestErpPrjProjectSettlementRetention extends JunitAutoTestCase {
     public void testReturnRetentionGuardNotDue() {
         System.setProperty(ErpPrjConstants.CONFIG_SETTLEMENT_RETENTION_RATIO, "0.05");
 
-        Long settlementId = seedApprovedPostedSettlement("STL-RET-G-DUE", "PRJ-RET-G-DUE", "守卫-未到期项目");
+        String settlementId = seedApprovedPostedSettlement("STL-RET-G-DUE", "PRJ-RET-G-DUE", "守卫-未到期项目");
         // retentionDueDate 保持 createSettlement 推演值 2027-07-17（> 冻结时钟 2026-07-17）→ 未到期拒绝
         NopException ex = assertThrows(NopException.class,
                 () -> ormTemplate.runInSession(session -> settlementBiz.returnRetention(settlementId, CTX)));
@@ -260,7 +260,7 @@ public class TestErpPrjProjectSettlementRetention extends JunitAutoTestCase {
     @Test
     public void testReturnRetentionGuardZeroRetention() {
         // ratio 默认 0（设计性 opt-in）→ createSettlement 不填留存 → retentionAmount 空/0 → 无质保金拒绝
-        Long settlementId = seedApprovedPostedSettlement("STL-RET-G-ZERO", "PRJ-RET-G-ZERO", "守卫-零质保金项目");
+        String settlementId = seedApprovedPostedSettlement("STL-RET-G-ZERO", "PRJ-RET-G-ZERO", "守卫-零质保金项目");
         ErpPrjProjectSettlement s = daoProvider.daoFor(ErpPrjProjectSettlement.class).getEntityById(settlementId);
         assertTrue(s.getRetentionAmount() == null || s.getRetentionAmount().signum() <= 0,
                 "ratio=0 默认不填留存");
@@ -275,7 +275,7 @@ public class TestErpPrjProjectSettlementRetention extends JunitAutoTestCase {
     public void testMainVoucherContainsRetentionLegs() {
         System.setProperty(ErpPrjConstants.CONFIG_SETTLEMENT_RETENTION_RATIO, "0.05");
 
-        Long settlementId = seedApprovedPostedSettlement("STL-RET-MAIN", "PRJ-RET-MAIN", "主凭证留存腿项目");
+        String settlementId = seedApprovedPostedSettlement("STL-RET-MAIN", "PRJ-RET-MAIN", "主凭证留存腿项目");
         ErpPrjProjectSettlement s = daoProvider.daoFor(ErpPrjProjectSettlement.class).getEntityById(settlementId);
         assertTrue(Boolean.TRUE.equals(s.getPosted()), "已过账（留存凭证随主结算生成）");
 
@@ -304,7 +304,7 @@ public class TestErpPrjProjectSettlementRetention extends JunitAutoTestCase {
     public void testReverseSettlementRejectedAfterReturn() {
         System.setProperty(ErpPrjConstants.CONFIG_SETTLEMENT_RETENTION_RATIO, "0.05");
 
-        Long settlementId = seedApprovedPostedSettlement("STL-RET-REV", "PRJ-RET-REV", "红冲守卫项目");
+        String settlementId = seedApprovedPostedSettlement("STL-RET-REV", "PRJ-RET-REV", "红冲守卫项目");
         // 手工覆盖路径：把到期日改到过去，使到期条件成立（Nop 脏检查 + session flush 持久化）
         ormTemplate.runInSession(session -> {
             ErpPrjProjectSettlement s = daoProvider.daoFor(ErpPrjProjectSettlement.class).getEntityById(settlementId);
@@ -324,9 +324,9 @@ public class TestErpPrjProjectSettlementRetention extends JunitAutoTestCase {
     // ---------- seed & query helpers ----------
 
     /** 创建 FINAL 结算 + submit + approve（过账成功 posted=true），返回结算单 ID。 */
-    private Long seedApprovedPostedSettlement(String tag, String projectCode, String projectName) {
-        Long[] holder = new Long[1];
-        Long[] settlementId = new Long[1];
+    private String seedApprovedPostedSettlement(String tag, String projectCode, String projectName) {
+        String[] holder = new String[1];
+        String[] settlementId = new String[1];
         ormTemplate.runInSession(session -> {
             seedFullSetup(tag);
             holder[0] = seedProjectWithBillingAndCost(projectCode, projectName);
@@ -343,9 +343,9 @@ public class TestErpPrjProjectSettlementRetention extends JunitAutoTestCase {
     }
 
     /** 仅创建 FINAL 结算单（DRAFT/UNSUBMITTED/posted=false），不提交。 */
-    private Long seedSettlement(String tag, String projectCode, String projectName) {
-        Long[] holder = new Long[1];
-        Long[] settlementId = new Long[1];
+    private String seedSettlement(String tag, String projectCode, String projectName) {
+        String[] holder = new String[1];
+        String[] settlementId = new String[1];
         ormTemplate.runInSession(session -> {
             seedFullSetup(tag);
             holder[0] = seedProjectWithBillingAndCost(projectCode, projectName);
@@ -362,7 +362,7 @@ public class TestErpPrjProjectSettlementRetention extends JunitAutoTestCase {
         seedCurrency();
         seedOpenPeriod("2026-06");
         seedOpenPeriod("2026-07");
-        seedAcctSchema(1L);
+        seedAcctSchema("1");
         seedSubject("6001", "主营业务收入");
         seedSubject("5101", "项目成本");
         seedSubject("1601", "固定资产");
@@ -374,26 +374,26 @@ public class TestErpPrjProjectSettlementRetention extends JunitAutoTestCase {
         seedSubject("2241", "其他应付款-质保金");
     }
 
-    private Long seedProjectWithBillingAndCost(String projectCode, String projectName) {
-        Long subjectId = seedSubject("5101-" + projectCode, "项目成本");
-        Long projectTypeId = seedProjectType("PT-" + projectCode, projectName, subjectId);
-        Long customerId = seedPartner("CUST-" + projectCode, "客户-" + projectName);
-        Long projectId = seedProject(projectCode, projectName, projectTypeId);
+    private String seedProjectWithBillingAndCost(String projectCode, String projectName) {
+        String subjectId = seedSubject("5101-" + projectCode, "项目成本");
+        String projectTypeId = seedProjectType("PT-" + projectCode, projectName, subjectId);
+        String customerId = seedPartner("CUST-" + projectCode, "客户-" + projectName);
+        String projectId = seedProject(projectCode, projectName, projectTypeId);
         seedBilling("B-" + projectCode, projectId, customerId, "10000");
-        Long ccId = seedCostCollection("CC-" + projectCode, projectId);
+        String ccId = seedCostCollection("CC-" + projectCode, projectId);
         seedCostLine(ccId, ErpPrjConstants.COST_CATEGORY_LABOR, "6000");
         return projectId;
     }
 
-    private void seedBilling(String code, Long projectId, Long customerId, String amountFunctional) {
+    private void seedBilling(String code, String projectId, String customerId, String amountFunctional) {
         IEntityDao<ErpPrjBilling> dao = daoProvider.daoFor(ErpPrjBilling.class);
         ErpPrjBilling b = new ErpPrjBilling();
         b.setCode(code);
         b.setProjectId(projectId);
-        b.setOrgId(1L);
+        b.setOrgId("1");
         b.setCustomerId(customerId);
         b.setBusinessDate(LocalDate.of(2026, 6, 15));
-        b.setCurrencyId(1L);
+        b.setCurrencyId("1");
         b.setExchangeRate(BigDecimal.ONE);
         b.setTotalAmount(new BigDecimal(amountFunctional));
         b.setAmountFunctional(new BigDecimal(amountFunctional));
@@ -402,14 +402,14 @@ public class TestErpPrjProjectSettlementRetention extends JunitAutoTestCase {
         dao.saveEntity(b);
     }
 
-    private Long seedCostCollection(String code, Long projectId) {
+    private String seedCostCollection(String code, String projectId) {
         IEntityDao<ErpPrjCostCollection> dao = daoProvider.daoFor(ErpPrjCostCollection.class);
         ErpPrjCostCollection cc = new ErpPrjCostCollection();
         cc.setCode(code);
         cc.setProjectId(projectId);
-        cc.setOrgId(1L);
+        cc.setOrgId("1");
         cc.setBusinessDate(LocalDate.of(2026, 6, 15));
-        cc.setCurrencyId(1L);
+        cc.setCurrencyId("1");
         cc.setTotalAmount(BigDecimal.ZERO);
         cc.setDocStatus(ErpPrjConstants.DOC_STATUS_APPROVED);
         cc.setApproveStatus(ErpPrjConstants.APPROVE_STATUS_APPROVED);
@@ -421,7 +421,7 @@ public class TestErpPrjProjectSettlementRetention extends JunitAutoTestCase {
         return cc.getId();
     }
 
-    private void seedCostLine(Long costCollectionId, String category, String amount) {
+    private void seedCostLine(String costCollectionId, String category, String amount) {
         IEntityDao<ErpPrjCostCollectionLine> dao = daoProvider.daoFor(ErpPrjCostCollectionLine.class);
         ErpPrjCostCollectionLine line = new ErpPrjCostCollectionLine();
         line.setCostCollectionId(costCollectionId);
@@ -431,14 +431,14 @@ public class TestErpPrjProjectSettlementRetention extends JunitAutoTestCase {
         dao.saveEntity(line);
     }
 
-    private Long seedProject(String code, String name, Long projectTypeId) {
+    private String seedProject(String code, String name, String projectTypeId) {
         IEntityDao<ErpPrjProject> dao = daoProvider.daoFor(ErpPrjProject.class);
         ErpPrjProject p = new ErpPrjProject();
         p.setCode(code);
         p.setName(name);
-        p.setOrgId(1L);
+        p.setOrgId("1");
         p.setProjectTypeId(projectTypeId);
-        p.setCurrencyId(1L);
+        p.setCurrencyId("1");
         p.setStatus(ErpPrjConstants.PROJECT_STATUS_OPEN);
         p.setBudget(new BigDecimal("100000"));
         p.setActualCost(BigDecimal.ZERO);
@@ -446,7 +446,7 @@ public class TestErpPrjProjectSettlementRetention extends JunitAutoTestCase {
         return p.getId();
     }
 
-    private Long seedProjectType(String code, String name, Long defaultSubjectId) {
+    private String seedProjectType(String code, String name, String defaultSubjectId) {
         IEntityDao<ErpPrjProjectType> dao = daoProvider.daoFor(ErpPrjProjectType.class);
         ErpPrjProjectType t = new ErpPrjProjectType();
         t.setCode(code);
@@ -456,7 +456,7 @@ public class TestErpPrjProjectSettlementRetention extends JunitAutoTestCase {
         return t.getId();
     }
 
-    private Long seedPartner(String code, String name) {
+    private String seedPartner(String code, String name) {
         IEntityDao<ErpMdPartner> dao = daoProvider.daoFor(ErpMdPartner.class);
         ErpMdPartner p = new ErpMdPartner();
         p.setCode(code);
@@ -467,7 +467,7 @@ public class TestErpPrjProjectSettlementRetention extends JunitAutoTestCase {
         return p.getId();
     }
 
-    private Long seedSubject(String code, String name) {
+    private String seedSubject(String code, String name) {
         IEntityDao<ErpMdSubject> dao = daoProvider.daoFor(ErpMdSubject.class);
         ErpMdSubject s = new ErpMdSubject();
         s.setCode(code);
@@ -501,14 +501,14 @@ public class TestErpPrjProjectSettlementRetention extends JunitAutoTestCase {
         dao.saveEntity(org);
     }
 
-    private void seedAcctSchema(long orgId) {
+    private void seedAcctSchema(String orgId) {
         IEntityDao<ErpMdAcctSchema> dao = daoProvider.daoFor(ErpMdAcctSchema.class);
         ErpMdAcctSchema schema = new ErpMdAcctSchema();
         schema.setCode("AS-" + orgId);
         schema.setName("账套-" + orgId);
         schema.setOrgId(orgId);
         schema.setNature("FINANCIAL");
-        schema.setFunctionalCurrencyId(1L);
+        schema.setFunctionalCurrencyId("1");
         schema.setStatus(ErpMdConstants.ACTIVE_STATUS_ACTIVE);
         dao.saveEntity(schema);
     }
@@ -518,7 +518,7 @@ public class TestErpPrjProjectSettlementRetention extends JunitAutoTestCase {
         ErpFinAccountingPeriod period = new ErpFinAccountingPeriod();
         period.setCode(code);
         period.setName(code);
-        period.setOrgId(1L);
+        period.setOrgId("1");
         int year = Integer.parseInt(code.substring(0, 4));
         int month = Integer.parseInt(code.substring(5));
         period.setYear(year);
@@ -537,7 +537,7 @@ public class TestErpPrjProjectSettlementRetention extends JunitAutoTestCase {
         return dao.findAllByQuery(q);
     }
 
-    private List<ErpFinVoucherLine> findVoucherLines(Long voucherId) {
+    private List<ErpFinVoucherLine> findVoucherLines(String voucherId) {
         IEntityDao<ErpFinVoucherLine> dao = daoProvider.daoFor(ErpFinVoucherLine.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("voucherId", voucherId));

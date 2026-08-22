@@ -13,16 +13,16 @@
     public class ErpPrjProjectInputBean extends CrudInputBase {
 
     
-        private Long _id;
+        private String _id;
 
     
         @PropMeta(propId=1)
     
-        public Long getId(){
+        public String getId(){
             return _id;
         }
 
-        public void setId(Long value){
+        public void setId(String value){
             this._id = value;
         }
 
@@ -55,58 +55,58 @@
         }
 
 
-        private Long _orgId;
+        private String _orgId;
 
     
         @PropMeta(propId=4)
     
-        public Long getOrgId(){
+        public String getOrgId(){
             return _orgId;
         }
 
-        public void setOrgId(Long value){
+        public void setOrgId(String value){
             this._orgId = value;
         }
 
 
-        private Long _projectTypeId;
+        private String _projectTypeId;
 
     
         @PropMeta(propId=5)
     
-        public Long getProjectTypeId(){
+        public String getProjectTypeId(){
             return _projectTypeId;
         }
 
-        public void setProjectTypeId(Long value){
+        public void setProjectTypeId(String value){
             this._projectTypeId = value;
         }
 
 
-        private Long _customerId;
+        private String _customerId;
 
     
         @PropMeta(propId=6)
     
-        public Long getCustomerId(){
+        public String getCustomerId(){
             return _customerId;
         }
 
-        public void setCustomerId(Long value){
+        public void setCustomerId(String value){
             this._customerId = value;
         }
 
 
-        private Long _currencyId;
+        private String _currencyId;
 
     
         @PropMeta(propId=7)
     
-        public Long getCurrencyId(){
+        public String getCurrencyId(){
             return _currencyId;
         }
 
-        public void setCurrencyId(Long value){
+        public void setCurrencyId(String value){
             this._currencyId = value;
         }
 
@@ -209,16 +209,16 @@
         }
 
 
-        private Long _managerId;
+        private String _managerId;
 
     
         @PropMeta(propId=15)
     
-        public Long getManagerId(){
+        public String getManagerId(){
             return _managerId;
         }
 
-        public void setManagerId(Long value){
+        public void setManagerId(String value){
             this._managerId = value;
         }
 

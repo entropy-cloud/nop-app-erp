@@ -56,7 +56,7 @@ public class ErpPrjProjectSettlementBizModel extends CrudBizModel<ErpPrjProjectS
 
     @Override
     @BizMutation
-    public ErpPrjProjectSettlement createSettlement(@Name("projectId") Long projectId,
+    public ErpPrjProjectSettlement createSettlement(@Name("projectId") String projectId,
                                                     @Name("settlementType") String settlementType,
                                                     IServiceContext context) {
         return createSettlementProcessor.createSettlement(projectId, settlementType, context);
@@ -64,37 +64,37 @@ public class ErpPrjProjectSettlementBizModel extends CrudBizModel<ErpPrjProjectS
 
     @Override
     @BizMutation
-    public ErpPrjProjectSettlement submit(@Name("id") Long id, IServiceContext context) {
+    public ErpPrjProjectSettlement submit(@Name("id") String id, IServiceContext context) {
         return submitForApprovalProcessor.submitForApproval(String.valueOf(id), context);
     }
 
     @Override
     @BizMutation
-    public ErpPrjProjectSettlement approve(@Name("id") Long id, IServiceContext context) {
+    public ErpPrjProjectSettlement approve(@Name("id") String id, IServiceContext context) {
         return approveProcessor.approve(String.valueOf(id), context);
     }
 
     @Override
     @BizMutation
-    public ErpPrjProjectSettlement reject(@Name("id") Long id, IServiceContext context) {
+    public ErpPrjProjectSettlement reject(@Name("id") String id, IServiceContext context) {
         return rejectProcessor.reject(String.valueOf(id), context);
     }
 
     @Override
     @BizMutation
-    public ErpPrjProjectSettlement cancel(@Name("id") Long id, IServiceContext context) {
+    public ErpPrjProjectSettlement cancel(@Name("id") String id, IServiceContext context) {
         return cancelProcessor.cancel(String.valueOf(id), context);
     }
 
     @Override
     @BizMutation
-    public ErpPrjProjectSettlement reverseSettlement(@Name("settlementId") Long settlementId, IServiceContext context) {
+    public ErpPrjProjectSettlement reverseSettlement(@Name("settlementId") String settlementId, IServiceContext context) {
         return reverseSettlementProcessor.reverseSettlement(settlementId, context);
     }
 
     @Override
     @BizMutation
-    public ErpPrjProjectSettlement returnRetention(@Name("settlementId") Long settlementId, IServiceContext context) {
+    public ErpPrjProjectSettlement returnRetention(@Name("settlementId") String settlementId, IServiceContext context) {
         return returnRetentionProcessor.returnRetention(settlementId, context);
     }
 

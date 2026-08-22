@@ -19,10 +19,10 @@
             <cols>
 
                 <!--ID-->
-                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="id" mandatory="true" sortable="true"/>
 
                 <!--对账单ID-->
-                <col id="statementId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="statementId" mandatory="true" sortable="true"/>
 
                 <!--行号-->
                 <col id="lineNo" mandatory="true" ui:number="true" sortable="true"/>
@@ -43,7 +43,7 @@
                 <col id="amount" mandatory="true" ui:number="true" sortable="true"/>
 
                 <!--币种-->
-                <col id="currencyId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="currencyId" mandatory="true" sortable="true"/>
 
                 <!--交易后余额-->
                 <col id="balanceAfter" ui:number="true" sortable="true"/>
@@ -52,7 +52,7 @@
                 <col id="matchStatus" mandatory="true" sortable="true"/>
 
                 <!--匹配凭证行ID-->
-                <col id="matchedLineId" ui:number="true" sortable="true"/>
+                <col id="matchedLineId" sortable="true"/>
 
                 <!--备注-->
                 <col id="remark" sortable="true"/>

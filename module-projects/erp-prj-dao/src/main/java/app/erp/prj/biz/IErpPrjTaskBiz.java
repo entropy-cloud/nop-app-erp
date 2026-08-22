@@ -30,19 +30,19 @@ public interface IErpPrjTaskBiz extends ICrudBiz<ErpPrjTask> {
      * 否则按 {@code erp-prj.task-strict-predecessor-check} 配置：STRICT 拦截 / WARN 放行。
      */
     @BizMutation
-    ErpPrjTask startTask(@Name("taskId") Long taskId, IServiceContext context);
+    ErpPrjTask startTask(@Name("taskId") String taskId, IServiceContext context);
 
     /**
      * 完成任务（IN_PROGRESS→DONE）。
      */
     @BizMutation
-    ErpPrjTask completeTask(@Name("taskId") Long taskId, IServiceContext context);
+    ErpPrjTask completeTask(@Name("taskId") String taskId, IServiceContext context);
 
     /**
      * 阻塞任务（IN_PROGRESS→BLOCKED）。{@code blockReason} 必填。
      */
     @BizMutation
-    ErpPrjTask blockTask(@Name("taskId") Long taskId,
+    ErpPrjTask blockTask(@Name("taskId") String taskId,
                          @Name("blockReason") String blockReason,
                          IServiceContext context);
 
@@ -50,30 +50,30 @@ public interface IErpPrjTaskBiz extends ICrudBiz<ErpPrjTask> {
      * 解除阻塞（BLOCKED→IN_PROGRESS）。
      */
     @BizMutation
-    ErpPrjTask unblockTask(@Name("taskId") Long taskId, IServiceContext context);
+    ErpPrjTask unblockTask(@Name("taskId") String taskId, IServiceContext context);
 
     /**
      * 上行链全量前置任务（前置 + 前置的前置 + ...）。
      */
     @BizQuery
-    List<ErpPrjTask> findPredecessors(@Name("taskId") Long taskId, IServiceContext context);
+    List<ErpPrjTask> findPredecessors(@Name("taskId") String taskId, IServiceContext context);
 
     /**
      * 下行反查全量后继任务（所有直接/间接后继）。
      */
     @BizQuery
-    List<ErpPrjTask> findSuccessors(@Name("taskId") Long taskId, IServiceContext context);
+    List<ErpPrjTask> findSuccessors(@Name("taskId") String taskId, IServiceContext context);
 
     /**
      * 单链全量（对齐单前置模型，至多一条线性链）。
      */
     @BizQuery
-    List<ErpPrjTask> getDependencyChain(@Name("taskId") Long taskId, IServiceContext context);
+    List<ErpPrjTask> getDependencyChain(@Name("taskId") String taskId, IServiceContext context);
 
     /**
      * 看板扁平图结构聚合查询（flux kanban 原生渲染）。返回 {@code id → BoardItem} 图：
      * root 节点 + 4 列（TODO/IN_PROGRESS/DONE/BLOCKED）+ 每任务一个 card 节点。
      */
     @BizQuery
-    Map<String, Object> findBoardData(@Optional @Name("projectId") Long projectId, IServiceContext context);
+    Map<String, Object> findBoardData(@Optional @Name("projectId") String projectId, IServiceContext context);
 }

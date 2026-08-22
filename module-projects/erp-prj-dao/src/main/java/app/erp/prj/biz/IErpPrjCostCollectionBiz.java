@@ -32,7 +32,7 @@ public interface IErpPrjCostCollectionBiz extends ICrudBiz<ErpPrjCostCollection>
      * 刷新项目的费用报销归集。返回本次新增的归集金额合计。
      */
     @BizMutation
-    BigDecimal refreshExpenseCost(@Name("projectId") Long projectId, IServiceContext context);
+    BigDecimal refreshExpenseCost(@Name("projectId") String projectId, IServiceContext context);
 
     /**
      * 跨域物料归集入口（采购入库→项目，RC-R1.61）。purchase 侧入库移动单生成后按行调用：
@@ -46,7 +46,7 @@ public interface IErpPrjCostCollectionBiz extends ICrudBiz<ErpPrjCostCollection>
      * @param sourceBillCode 来源单据行标识（{@code 入库单号-行号}，幂等去重键之一）
      */
     @BizMutation
-    BigDecimal aggregateMaterialCost(@Name("projectId") Long projectId,
+    BigDecimal aggregateMaterialCost(@Name("projectId") String projectId,
                                      @Name("amount") BigDecimal amount,
                                      @Name("sourceBillCode") String sourceBillCode,
                                      IServiceContext context);

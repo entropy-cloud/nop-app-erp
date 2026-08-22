@@ -51,8 +51,8 @@ public class TestErpPrjProjectPrecheck extends JunitAutoTestCase {
 
     @Test
     public void testCloseProject_strict_unfinishedTasks_throws() {
-        Long projectId = ormTemplate.runInSession(session -> {
-            Long pid = seedProject("PRJ-UT-STRICT", "未结束任务项目-严格",
+        String projectId = ormTemplate.runInSession(session -> {
+            String pid = seedProject("PRJ-UT-STRICT", "未结束任务项目-严格",
                     ErpPrjConstants.PROJECT_STATUS_OPEN, true);
             seedTask(pid, "TODO 任务", ErpPrjConstants.TASK_STATUS_TODO);
             seedTask(pid, "IN_PROGRESS 任务", ErpPrjConstants.TASK_STATUS_IN_PROGRESS);
@@ -68,8 +68,8 @@ public class TestErpPrjProjectPrecheck extends JunitAutoTestCase {
 
     @Test
     public void testCloseProject_allTasksDone_success() {
-        Long projectId = ormTemplate.runInSession(session -> {
-            Long pid = seedProject("PRJ-DONE-OK", "全完成任务项目",
+        String projectId = ormTemplate.runInSession(session -> {
+            String pid = seedProject("PRJ-DONE-OK", "全完成任务项目",
                     ErpPrjConstants.PROJECT_STATUS_OPEN, true);
             seedTask(pid, "完成 1", ErpPrjConstants.TASK_STATUS_DONE);
             seedTask(pid, "完成 2", ErpPrjConstants.TASK_STATUS_DONE);
@@ -84,8 +84,8 @@ public class TestErpPrjProjectPrecheck extends JunitAutoTestCase {
     public void testCloseProject_warnMode_allowsUnfinished() {
         System.setProperty(ErpPrjConstants.CONFIG_STRICT_PROJECT_TASK_COMPLETION_CHECK, "false");
         try {
-            Long projectId = ormTemplate.runInSession(session -> {
-                Long pid = seedProject("PRJ-UT-WARN", "未结束任务项目-WARN",
+            String projectId = ormTemplate.runInSession(session -> {
+                String pid = seedProject("PRJ-UT-WARN", "未结束任务项目-WARN",
                         ErpPrjConstants.PROJECT_STATUS_OPEN, true);
                 seedTask(pid, "TODO 任务-WARN", ErpPrjConstants.TASK_STATUS_TODO);
                 return pid;
@@ -103,7 +103,7 @@ public class TestErpPrjProjectPrecheck extends JunitAutoTestCase {
 
     @Test
     public void testStartProject_strict_missingFields_throws() {
-        Long projectId = ormTemplate.runInSession(session ->
+        String projectId = ormTemplate.runInSession(session ->
                 seedProject("PRJ-START-STRICT", "立项缺字段项目",
                         ErpPrjConstants.PROJECT_STATUS_DRAFT, false));
 
@@ -119,7 +119,7 @@ public class TestErpPrjProjectPrecheck extends JunitAutoTestCase {
 
     @Test
     public void testStartProject_completeFields_success() {
-        Long projectId = ormTemplate.runInSession(session ->
+        String projectId = ormTemplate.runInSession(session ->
                 seedProject("PRJ-START-OK", "立项完整项目",
                         ErpPrjConstants.PROJECT_STATUS_DRAFT, true));
 
@@ -131,7 +131,7 @@ public class TestErpPrjProjectPrecheck extends JunitAutoTestCase {
     public void testStartProject_warnMode_missingFields_allows() {
         System.setProperty(ErpPrjConstants.CONFIG_STRICT_PROJECT_START_PRECHECK, "false");
         try {
-            Long projectId = ormTemplate.runInSession(session ->
+            String projectId = ormTemplate.runInSession(session ->
                     seedProject("PRJ-START-WARN", "立项缺字段项目-WARN",
                             ErpPrjConstants.PROJECT_STATUS_DRAFT, false));
 
@@ -148,13 +148,13 @@ public class TestErpPrjProjectPrecheck extends JunitAutoTestCase {
     /**
      * @param withDates  true=填充 startDate/endDate/budget（立项完整）；false=留空（缺必填字段）
      */
-    private Long seedProject(String code, String name, String status, boolean withDates) {
+    private String seedProject(String code, String name, String status, boolean withDates) {
         IEntityDao<ErpPrjProject> dao = daoProvider.daoFor(ErpPrjProject.class);
         ErpPrjProject p = new ErpPrjProject();
         p.setCode(code);
         p.setName(name);
-        p.setOrgId(1L);
-        p.setCurrencyId(1L);
+        p.setOrgId("1");
+        p.setCurrencyId("1");
         p.setStatus(status);
         p.setActualCost(BigDecimal.ZERO);
         if (withDates) {
@@ -166,7 +166,7 @@ public class TestErpPrjProjectPrecheck extends JunitAutoTestCase {
         return p.getId();
     }
 
-    private Long seedTask(Long projectId, String title, String status) {
+    private String seedTask(String projectId, String title, String status) {
         IEntityDao<ErpPrjTask> dao = daoProvider.daoFor(ErpPrjTask.class);
         ErpPrjTask t = new ErpPrjTask();
         t.setProjectId(projectId);

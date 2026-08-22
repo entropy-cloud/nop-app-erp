@@ -19,22 +19,22 @@
             <cols>
 
                 <!--ID-->
-                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="id" mandatory="true" sortable="true"/>
 
                 <!--单号-->
                 <col id="code" mandatory="true" sortable="true"/>
 
                 <!--业务组织-->
-                <col id="orgId" ui:number="true" sortable="true"/>
+                <col id="orgId" sortable="true"/>
 
                 <!--项目-->
-                <col id="projectId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="projectId" mandatory="true" sortable="true"/>
 
                 <!--任务-->
-                <col id="taskId" ui:number="true" sortable="true"/>
+                <col id="taskId" sortable="true"/>
 
                 <!--用户(职员)-->
-                <col id="userId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="userId" mandatory="true" sortable="true"/>
 
                 <!--工作日期-->
                 <col id="workDate" mandatory="true" sortable="true"/>
@@ -43,10 +43,10 @@
                 <col id="hours" mandatory="true" ui:number="true" sortable="true"/>
 
                 <!--活动类型-->
-                <col id="activityTypeId" ui:number="true" sortable="true"/>
+                <col id="activityTypeId" sortable="true"/>
 
                 <!--币种-->
-                <col id="currencyId" ui:number="true" sortable="true"/>
+                <col id="currencyId" sortable="true"/>
 
                 <!--成本费率-->
                 <col id="costRate" ui:number="true" sortable="true"/>

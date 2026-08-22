@@ -41,7 +41,7 @@ public class BudgetChecker {
     /**
      * 检查「已使用 + 拟新增」是否超总预算。无预算配置或非超预算时静默返回。
      */
-    public void check(Long projectId, BigDecimal addAmount) {
+    public void check(String projectId, BigDecimal addAmount) {
         if (projectId == null || addAmount == null || addAmount.signum() <= 0) {
             return;
         }
@@ -68,7 +68,7 @@ public class BudgetChecker {
         }
     }
 
-    private ErpPrjProject loadProject(Long projectId) {
+    private ErpPrjProject loadProject(String projectId) {
         IEntityDao<ErpPrjProject> dao = daoProvider.daoFor(ErpPrjProject.class);
         return dao.getEntityById(projectId);
     }
@@ -76,7 +76,7 @@ public class BudgetChecker {
     /**
      * 聚合项目所有归集行金额（已使用预算）。归集行经 {@link ErpPrjCostCollection#getProjectId()} 反查所属项目。
      */
-    public BigDecimal sumUsedAmount(Long projectId) {
+    public BigDecimal sumUsedAmount(String projectId) {
         IEntityDao<ErpPrjCostCollection> headDao = daoProvider.daoFor(ErpPrjCostCollection.class);
         QueryBean headQuery = new QueryBean();
         headQuery.addFilter(eq("projectId", projectId));
@@ -85,7 +85,7 @@ public class BudgetChecker {
             return BigDecimal.ZERO;
         }
 
-        java.util.List<Long> headIds = new java.util.ArrayList<>(heads.size());
+        java.util.List<String> headIds = new java.util.ArrayList<>(heads.size());
         for (ErpPrjCostCollection h : heads) {
             headIds.add(h.getId());
         }

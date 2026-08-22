@@ -21,7 +21,7 @@ public class ErpPrjProjectResumeProjectProcessor {
     @Inject
     ErpPrjProjectStateMachine stateMachine;
 
-    public ErpPrjProject resumeProject(Long projectId, IServiceContext context) {
+    public ErpPrjProject resumeProject(String projectId, IServiceContext context) {
         ErpPrjProject project = requireProject(projectId);
         String status = project.getStatus();
         try {
@@ -37,7 +37,7 @@ public class ErpPrjProjectResumeProjectProcessor {
         return project;
     }
 
-    private ErpPrjProject requireProject(Long projectId) {
+    private ErpPrjProject requireProject(String projectId) {
         ErpPrjProject project = projectDao().getEntityById(projectId);
         if (project == null) {
             throw new NopException(ErpPrjErrors.ERR_PROJECT_NOT_FOUND)

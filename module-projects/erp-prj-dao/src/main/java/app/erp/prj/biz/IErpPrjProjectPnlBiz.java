@@ -32,7 +32,7 @@ public interface IErpPrjProjectPnlBiz extends ICrudBiz<ErpPrjProjectPnl> {
      * @return 计算后的损益汇总快照
      */
     @BizMutation
-    ErpPrjProjectPnl refreshPnl(@Name("projectId") Long projectId,
+    ErpPrjProjectPnl refreshPnl(@Name("projectId") String projectId,
                                 @Name("periodFrom") LocalDate periodFrom,
                                 @Name("periodTo") LocalDate periodTo,
                                 IServiceContext context);
@@ -41,5 +41,5 @@ public interface IErpPrjProjectPnlBiz extends ICrudBiz<ErpPrjProjectPnl> {
      * 查询项目最新已计算的损益汇总快照（{@code calcStatus=CALCULATED}，按 periodTo 倒序取首条）。
      */
     @BizQuery
-    ErpPrjProjectPnl getProjectPnl(@Name("projectId") Long projectId, IServiceContext context);
+    ErpPrjProjectPnl getProjectPnl(@Name("projectId") String projectId, IServiceContext context);
 }

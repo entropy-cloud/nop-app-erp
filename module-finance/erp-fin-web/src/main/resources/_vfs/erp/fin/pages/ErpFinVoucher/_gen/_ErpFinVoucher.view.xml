@@ -19,7 +19,7 @@
             <cols>
 
                 <!--ID-->
-                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="id" mandatory="true" sortable="true"/>
 
                 <!--凭证号-->
                 <col id="code" mandatory="true" sortable="true"/>
@@ -37,13 +37,13 @@
                 <col id="voucherNo" sortable="true"/>
 
                 <!--核算组织-->
-                <col id="orgId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="orgId" mandatory="true" sortable="true"/>
 
                 <!--账套-->
-                <col id="acctSchemaId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="acctSchemaId" mandatory="true" sortable="true"/>
 
                 <!--会计期间-->
-                <col id="periodId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="periodId" mandatory="true" sortable="true"/>
 
                 <!--借方合计(本位币)-->
                 <col id="totalDebit" ui:number="true" sortable="true"/>
@@ -55,7 +55,7 @@
                 <col id="isReversed" sortable="true"/>
 
                 <!--原冲销凭证ID-->
-                <col id="reversalOfVoucherId" ui:number="true" sortable="true"/>
+                <col id="reversalOfVoucherId" sortable="true"/>
 
                 <!--凭证状态-->
                 <col id="docStatus" mandatory="true" sortable="true"/>

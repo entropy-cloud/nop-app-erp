@@ -19,14 +19,14 @@ import io.nop.orm.biz.ICrudBiz;
 public interface IErpPrjTimesheetBiz extends ICrudBiz<ErpPrjTimesheet> {
 
     @BizMutation
-    ErpPrjTimesheet submit(@Name("timesheetId") Long timesheetId, IServiceContext context);
+    ErpPrjTimesheet submit(@Name("timesheetId") String timesheetId, IServiceContext context);
 
     @BizMutation
-    ErpPrjTimesheet approve(@Name("timesheetId") Long timesheetId, IServiceContext context);
+    ErpPrjTimesheet approve(@Name("timesheetId") String timesheetId, IServiceContext context);
 
     @BizMutation
-    ErpPrjTimesheet reject(@Name("timesheetId") Long timesheetId, IServiceContext context);
+    ErpPrjTimesheet reject(@Name("timesheetId") String timesheetId, IServiceContext context);
 
     @BizMutation
-    ErpPrjTimesheet cancel(@Name("timesheetId") Long timesheetId, IServiceContext context);
+    ErpPrjTimesheet cancel(@Name("timesheetId") String timesheetId, IServiceContext context);
 }

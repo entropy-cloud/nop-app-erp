@@ -63,7 +63,7 @@ public class ErpPrjDashboardBizModel {
     public Map<String, Object> getDashboardKpi(IServiceContext context) {
         return ormTemplate.runInSession(session -> {
             List<ErpPrjProject> openProjects = loadOpenProjects();
-            Set<Long> openProjectIds = collectIds(openProjects);
+            Set<String> openProjectIds = collectIds(openProjects);
 
             BigDecimal totalBudget = sumBudgetForProjects(openProjectIds);
             BigDecimal incurredCost = sumCostForProjects(openProjectIds);
@@ -113,8 +113,8 @@ public class ErpPrjDashboardBizModel {
             QueryBean pq = new QueryBean();
             pq.setLimit(ALERT_MAX_ROWS);
             List<ErpPrjProject> projects = daoProvider.daoFor(ErpPrjProject.class).findAllByQuery(pq);
-            Map<Long, BigDecimal> budgetByProject = loadBudgetByProject();
-            Map<Long, BigDecimal> costByProject = loadCostByProject();
+            Map<String, BigDecimal> budgetByProject = loadBudgetByProject();
+            Map<String, BigDecimal> costByProject = loadCostByProject();
             List<Map<String, Object>> rows = new ArrayList<>();
             for (ErpPrjProject p : projects) {
                 BigDecimal budget = budgetByProject.getOrDefault(p.getId(), BigDecimal.ZERO);
@@ -170,7 +170,7 @@ public class ErpPrjDashboardBizModel {
      * @param projectId 可选项目过滤；为空时聚合全部 PnL 汇总记录
      */
     @BizQuery
-    public Map<String, Object> getProjectGrossMargin(@Optional @Name("projectId") Long projectId,
+    public Map<String, Object> getProjectGrossMargin(@Optional @Name("projectId") String projectId,
                                                       IServiceContext context) {
         return ormTemplate.runInSession(session -> {
             IEntityDao<ErpPrjProjectPnl> dao = daoProvider.daoFor(ErpPrjProjectPnl.class);
@@ -183,7 +183,7 @@ public class ErpPrjDashboardBizModel {
             BigDecimal totalRevenue = BigDecimal.ZERO;
             BigDecimal totalCost = BigDecimal.ZERO;
             BigDecimal totalGrossProfit = BigDecimal.ZERO;
-            Set<Long> projectIds = new HashSet<>();
+            Set<String> projectIds = new HashSet<>();
             for (ErpPrjProjectPnl p : rows) {
                 totalRevenue = totalRevenue.add(DashboardUtil.nz(p.getRevenueAmount()));
                 totalCost = totalCost.add(DashboardUtil.nz(p.getTotalCost()));
@@ -213,7 +213,7 @@ public class ErpPrjDashboardBizModel {
         return dao.findAllByQuery(q);
     }
 
-    private BigDecimal sumBudgetForProjects(Set<Long> projectIds) {
+    private BigDecimal sumBudgetForProjects(Set<String> projectIds) {
         if (projectIds.isEmpty()) return BigDecimal.ZERO;
         IEntityDao<ErpPrjBudget> dao = daoProvider.daoFor(ErpPrjBudget.class);
         QueryBean q = new QueryBean();
@@ -225,7 +225,7 @@ public class ErpPrjDashboardBizModel {
         return sum;
     }
 
-    private BigDecimal sumCostForProjects(Set<Long> projectIds) {
+    private BigDecimal sumCostForProjects(Set<String> projectIds) {
         if (projectIds.isEmpty()) return BigDecimal.ZERO;
         IEntityDao<ErpPrjCostCollection> dao = daoProvider.daoFor(ErpPrjCostCollection.class);
         QueryBean q = new QueryBean();
@@ -238,33 +238,33 @@ public class ErpPrjDashboardBizModel {
     }
 
     /** DB 级 GROUP BY projectId + SUM(totalAmount)，返回 projectId → 总预算。 */
-    private Map<Long, BigDecimal> loadBudgetByProject() {
+    private Map<String, BigDecimal> loadBudgetByProject() {
         return sumByProject(ErpPrjBudget.class.getName(), "totalAmount");
     }
 
     /** DB 级 GROUP BY projectId + SUM(totalAmount)，返回 projectId → 已发生成本。 */
-    private Map<Long, BigDecimal> loadCostByProject() {
+    private Map<String, BigDecimal> loadCostByProject() {
         return sumByProject(ErpPrjCostCollection.class.getName(), "totalAmount");
     }
 
-    private Map<Long, BigDecimal> sumByProject(String entityName, String amountField) {
+    private Map<String, BigDecimal> sumByProject(String entityName, String amountField) {
         QueryBean q = new QueryBean();
         q.setSourceName(entityName);
         QueryFieldBean dim = QueryFieldBean.mainField("projectId");
         QueryFieldBean sumAmt = QueryFieldBean.mainField(amountField).sum().alias("total");
         q.setFields(java.util.Arrays.asList(dim, sumAmt));
         List<Map<String, Object>> rows = ormTemplate.findListByQuery(q);
-        Map<Long, BigDecimal> map = new HashMap<>();
+        Map<String, BigDecimal> map = new HashMap<>();
         for (Map<String, Object> row : rows) {
             Object pid = row.get("projectId");
             if (pid == null) continue;
-            map.put(((Number) pid).longValue(), DashboardUtil.toBigDecimal(row.get("total")));
+            map.put(String.valueOf(pid), DashboardUtil.toBigDecimal(row.get("total")));
         }
         return map;
     }
 
-    private static Set<Long> collectIds(List<ErpPrjProject> projects) {
-        Set<Long> ids = new HashSet<>();
+    private static Set<String> collectIds(List<ErpPrjProject> projects) {
+        Set<String> ids = new HashSet<>();
         for (ErpPrjProject p : projects) ids.add(p.getId());
         return ids;
     }

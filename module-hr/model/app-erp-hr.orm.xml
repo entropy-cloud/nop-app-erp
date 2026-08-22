@@ -633,8 +633,8 @@
                 <column name="timesheetId" displayName="工时表ID" stdSqlType="BIGINT" mandatory="true" code="TIMESHEET_ID" propId="2" stdDataType="string" i18n-en:displayName='Timesheet' />
                 <column name="employeeId" displayName="员工" stdSqlType="BIGINT" mandatory="true" code="EMPLOYEE_ID" propId="3" stdDataType="string" i18n-en:displayName='Employee' />
                 <column name="workDate" displayName="工作日期" stdSqlType="DATE" mandatory="true" code="WORK_DATE" propId="4" i18n-en:displayName='Work Date' />
-                <column name="projectId" displayName="项目" stdSqlType="BIGINT" code="PROJECT_ID" propId="5" stdDataType="long" i18n-en:displayName='Project' />
-                <column name="taskId" displayName="任务" stdSqlType="BIGINT" code="TASK_ID" propId="6" stdDataType="long" i18n-en:displayName='Task' />
+                <column name="projectId" displayName="项目" stdSqlType="BIGINT" code="PROJECT_ID" propId="5" stdDataType="string" i18n-en:displayName='Project' />
+                <column name="taskId" displayName="任务" stdSqlType="BIGINT" code="TASK_ID" propId="6" stdDataType="string" i18n-en:displayName='Task' />
                 <column name="activityType" displayName="活动类型" stdSqlType="VARCHAR" precision="100" code="ACTIVITY_TYPE" propId="7" stdDataType="string" i18n-en:displayName='Activity Type' />
                 <column name="hours" displayName="小时数" domain="hours" mandatory="true" code="HOURS" propId="8" stdSqlType="DECIMAL" stdDataType="decimal" i18n-en:displayName='Hours' />
                 <column name="description" displayName="工作内容" stdSqlType="VARCHAR" precision="500" code="DESCRIPTION" propId="9" stdDataType="string" i18n-en:displayName='Description' />

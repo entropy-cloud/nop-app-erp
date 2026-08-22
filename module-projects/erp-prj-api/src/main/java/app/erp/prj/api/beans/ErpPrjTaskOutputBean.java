@@ -14,44 +14,44 @@
     public class ErpPrjTaskOutputBean {
 
     
-        private Long _id;
+        private String _id;
 
     
         @PropMeta(propId=1)
     
-        public Long getId(){
+        public String getId(){
             return _id;
         }
 
-        public void setId(Long value){
+        public void setId(String value){
             this._id = value;
         }
 
 
-        private Long _projectId;
+        private String _projectId;
 
     
         @PropMeta(propId=2)
     
-        public Long getProjectId(){
+        public String getProjectId(){
             return _projectId;
         }
 
-        public void setProjectId(Long value){
+        public void setProjectId(String value){
             this._projectId = value;
         }
 
 
-        private Long _parentTaskId;
+        private String _parentTaskId;
 
     
         @PropMeta(propId=3)
     
-        public Long getParentTaskId(){
+        public String getParentTaskId(){
             return _parentTaskId;
         }
 
-        public void setParentTaskId(Long value){
+        public void setParentTaskId(String value){
             this._parentTaskId = value;
         }
 
@@ -70,16 +70,16 @@
         }
 
 
-        private Long _assigneeId;
+        private String _assigneeId;
 
     
         @PropMeta(propId=5)
     
-        public Long getAssigneeId(){
+        public String getAssigneeId(){
             return _assigneeId;
         }
 
-        public void setAssigneeId(Long value){
+        public void setAssigneeId(String value){
             this._assigneeId = value;
         }
 
@@ -168,16 +168,16 @@
         }
 
 
-        private Long _dependsOnId;
+        private String _dependsOnId;
 
     
         @PropMeta(propId=12)
     
-        public Long getDependsOnId(){
+        public String getDependsOnId(){
             return _dependsOnId;
         }
 
-        public void setDependsOnId(Long value){
+        public void setDependsOnId(String value){
             this._dependsOnId = value;
         }
 

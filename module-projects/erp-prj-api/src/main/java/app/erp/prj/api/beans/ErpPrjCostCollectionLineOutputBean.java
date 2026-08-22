@@ -13,30 +13,30 @@
     public class ErpPrjCostCollectionLineOutputBean {
 
     
-        private Long _id;
+        private String _id;
 
     
         @PropMeta(propId=1)
     
-        public Long getId(){
+        public String getId(){
             return _id;
         }
 
-        public void setId(Long value){
+        public void setId(String value){
             this._id = value;
         }
 
 
-        private Long _costCollectionId;
+        private String _costCollectionId;
 
     
         @PropMeta(propId=2)
     
-        public Long getCostCollectionId(){
+        public String getCostCollectionId(){
             return _costCollectionId;
         }
 
-        public void setCostCollectionId(Long value){
+        public void setCostCollectionId(String value){
             this._costCollectionId = value;
         }
 
@@ -97,30 +97,30 @@
         }
 
 
-        private Long _subjectId;
+        private String _subjectId;
 
     
         @PropMeta(propId=7)
     
-        public Long getSubjectId(){
+        public String getSubjectId(){
             return _subjectId;
         }
 
-        public void setSubjectId(Long value){
+        public void setSubjectId(String value){
             this._subjectId = value;
         }
 
 
-        private Long _taskId;
+        private String _taskId;
 
     
         @PropMeta(propId=8)
     
-        public Long getTaskId(){
+        public String getTaskId(){
             return _taskId;
         }
 
-        public void setTaskId(Long value){
+        public void setTaskId(String value){
             this._taskId = value;
         }
 

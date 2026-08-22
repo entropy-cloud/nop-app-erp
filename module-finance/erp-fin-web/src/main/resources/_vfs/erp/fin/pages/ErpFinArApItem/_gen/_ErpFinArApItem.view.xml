@@ -19,22 +19,22 @@
             <cols>
 
                 <!--ID-->
-                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="id" mandatory="true" sortable="true"/>
 
                 <!--单号-->
                 <col id="code" mandatory="true" sortable="true"/>
 
                 <!--组织-->
-                <col id="orgId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="orgId" mandatory="true" sortable="true"/>
 
                 <!--账套-->
-                <col id="acctSchemaId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="acctSchemaId" mandatory="true" sortable="true"/>
 
                 <!--应收应付-->
                 <col id="direction" mandatory="true" sortable="true"/>
 
                 <!--往来单位-->
-                <col id="partnerId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="partnerId" mandatory="true" sortable="true"/>
 
                 <!--来源单据类型(AP_INVOICE/AR_INVOICE/PAYMENT/RECEIPT)-->
                 <col id="sourceBillType" mandatory="true" sortable="true"/>
@@ -49,7 +49,7 @@
                 <col id="dueDate" sortable="true"/>
 
                 <!--币种-->
-                <col id="currencyId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="currencyId" mandatory="true" sortable="true"/>
 
                 <!--汇率-->
                 <col id="exchangeRate" ui:number="true" sortable="true"/>
@@ -76,7 +76,7 @@
                 <col id="status" mandatory="true" sortable="true"/>
 
                 <!--所属期间-->
-                <col id="periodId" ui:number="true" sortable="true"/>
+                <col id="periodId" sortable="true"/>
 
                 <!--备注-->
                 <col id="remark" sortable="true"/>

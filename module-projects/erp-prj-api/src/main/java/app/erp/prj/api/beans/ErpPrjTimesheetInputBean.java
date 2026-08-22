@@ -12,16 +12,16 @@
     public class ErpPrjTimesheetInputBean extends CrudInputBase {
 
     
-        private Long _id;
+        private String _id;
 
     
         @PropMeta(propId=1)
     
-        public Long getId(){
+        public String getId(){
             return _id;
         }
 
-        public void setId(Long value){
+        public void setId(String value){
             this._id = value;
         }
 
@@ -40,58 +40,58 @@
         }
 
 
-        private Long _orgId;
+        private String _orgId;
 
     
         @PropMeta(propId=3)
     
-        public Long getOrgId(){
+        public String getOrgId(){
             return _orgId;
         }
 
-        public void setOrgId(Long value){
+        public void setOrgId(String value){
             this._orgId = value;
         }
 
 
-        private Long _projectId;
+        private String _projectId;
 
     
         @PropMeta(propId=4)
     
-        public Long getProjectId(){
+        public String getProjectId(){
             return _projectId;
         }
 
-        public void setProjectId(Long value){
+        public void setProjectId(String value){
             this._projectId = value;
         }
 
 
-        private Long _taskId;
+        private String _taskId;
 
     
         @PropMeta(propId=5)
     
-        public Long getTaskId(){
+        public String getTaskId(){
             return _taskId;
         }
 
-        public void setTaskId(Long value){
+        public void setTaskId(String value){
             this._taskId = value;
         }
 
 
-        private Long _userId;
+        private String _userId;
 
     
         @PropMeta(propId=6)
     
-        public Long getUserId(){
+        public String getUserId(){
             return _userId;
         }
 
-        public void setUserId(Long value){
+        public void setUserId(String value){
             this._userId = value;
         }
 
@@ -124,30 +124,30 @@
         }
 
 
-        private Long _activityTypeId;
+        private String _activityTypeId;
 
     
         @PropMeta(propId=9)
     
-        public Long getActivityTypeId(){
+        public String getActivityTypeId(){
             return _activityTypeId;
         }
 
-        public void setActivityTypeId(Long value){
+        public void setActivityTypeId(String value){
             this._activityTypeId = value;
         }
 
 
-        private Long _currencyId;
+        private String _currencyId;
 
     
         @PropMeta(propId=10)
     
-        public Long getCurrencyId(){
+        public String getCurrencyId(){
             return _currencyId;
         }
 
-        public void setCurrencyId(Long value){
+        public void setCurrencyId(String value){
             this._currencyId = value;
         }
 

@@ -26,7 +26,7 @@ public class ErpPrjProjectSettlementReturnRetentionProcessor {
     @Inject
     ErpPrjProjectSettlementProcessor facade;
 
-    public ErpPrjProjectSettlement returnRetention(Long settlementId, IServiceContext context) {
+    public ErpPrjProjectSettlement returnRetention(String settlementId, IServiceContext context) {
         ErpPrjProjectSettlement settlement = facade.requireSettlement(settlementId);
 
         // 幂等：已返还 → no-op 零副作用（D3 选项 A——已返还重复调用非错误，重复调返回单不重复过账）

@@ -64,7 +64,7 @@ public class ErpPrjProjectPnlCalcHelper {
      *
      * @return true=汇总成功（或 config 关闭跳过）；false=汇总失败（候选下次重试）
      */
-    public boolean recalculateOne(Long projectId, IServiceContext ctx) {
+    public boolean recalculateOne(String projectId, IServiceContext ctx) {
         if (!isScheduleConfigured()) {
             LOG.info("erp-prj-pnl-calc-skipped-by-config: projectId={}, configKey={}",
                     projectId, ErpPrjConstants.CONFIG_PNL_AUTO_CALC_ENABLED);

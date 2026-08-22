@@ -65,18 +65,18 @@ public class TestErpPrjTimesheetCost extends JunitAutoTestCase {
 
     @Test
     public void testCostRateFromTimesheetOverridesActivityType() {
-        Long[] ids = new Long[1];
-        Long tsId = ormTemplate.runInSession(session -> {
+        String[] ids = new String[1];
+        String tsId = ormTemplate.runInSession(session -> {
             seedOpenPeriod("2026-07");
-            seedAcctSchema(1L);
-            Long debitSubjectId = seedSubject("5101", "项目开发成本");
-            Long payrollSubjectId = seedSubject("2211", "应付职工薪酬");
+            seedAcctSchema("1");
+            String debitSubjectId = seedSubject("5101", "项目开发成本");
+            String payrollSubjectId = seedSubject("2211", "应付职工薪酬");
             seedConfigSubject(payrollSubjectId);
-            Long projectTypeId = seedProjectType("PT-RD", "研发项目", debitSubjectId);
-            Long projectId = seedProject("PRJ-TS-001", "成本率测试项目", projectTypeId,
+            String projectTypeId = seedProjectType("PT-RD", "研发项目", debitSubjectId);
+            String projectId = seedProject("PRJ-TS-001", "成本率测试项目", projectTypeId,
                     ErpPrjConstants.PROJECT_STATUS_OPEN, new BigDecimal("100000"));
-            Long activityTypeId = seedActivityType("DEV", "开发", "300", null);
-            Long taskId = seedTask(projectId, "任务-001", ErpPrjConstants.TASK_STATUS_IN_PROGRESS);
+            String activityTypeId = seedActivityType("DEV", "开发", "300", null);
+            String taskId = seedTask(projectId, "任务-001", ErpPrjConstants.TASK_STATUS_IN_PROGRESS);
             ids[0] = projectId;
             // 工时单填 costRate=800（应优先于活动类型 300）
             return seedTimesheet("TS-001", projectId, taskId, activityTypeId,
@@ -94,17 +94,17 @@ public class TestErpPrjTimesheetCost extends JunitAutoTestCase {
 
     @Test
     public void testCostRateFallsBackToActivityType() {
-        Long tsId = ormTemplate.runInSession(session -> {
+        String tsId = ormTemplate.runInSession(session -> {
             seedOpenPeriod("2026-07");
-            seedAcctSchema(1L);
-            Long debitSubjectId = seedSubject("5101", "项目开发成本");
-            Long payrollSubjectId = seedSubject("2211", "应付职工薪酬");
+            seedAcctSchema("1");
+            String debitSubjectId = seedSubject("5101", "项目开发成本");
+            String payrollSubjectId = seedSubject("2211", "应付职工薪酬");
             seedConfigSubject(payrollSubjectId);
-            Long projectTypeId = seedProjectType("PT-RD", "研发项目", debitSubjectId);
-            Long projectId = seedProject("PRJ-TS-002", "活动类型回退项目", projectTypeId,
+            String projectTypeId = seedProjectType("PT-RD", "研发项目", debitSubjectId);
+            String projectId = seedProject("PRJ-TS-002", "活动类型回退项目", projectTypeId,
                     ErpPrjConstants.PROJECT_STATUS_OPEN, new BigDecimal("100000"));
-            Long activityTypeId = seedActivityType("DEV", "开发", "300", null);
-            Long taskId = seedTask(projectId, "任务-002", ErpPrjConstants.TASK_STATUS_IN_PROGRESS);
+            String activityTypeId = seedActivityType("DEV", "开发", "300", null);
+            String taskId = seedTask(projectId, "任务-002", ErpPrjConstants.TASK_STATUS_IN_PROGRESS);
             // costRate 留空 → 应取活动类型 300
             return seedTimesheet("TS-002", projectId, taskId, activityTypeId,
                     "10", null, ErpPrjConstants.APPROVE_STATUS_UNSUBMITTED);
@@ -120,17 +120,17 @@ public class TestErpPrjTimesheetCost extends JunitAutoTestCase {
 
     @Test
     public void testCostRateThrowsWhenNoRateAvailable() {
-        Long tsId = ormTemplate.runInSession(session -> {
+        String tsId = ormTemplate.runInSession(session -> {
             seedOpenPeriod("2026-07");
-            seedAcctSchema(1L);
-            Long debitSubjectId = seedSubject("5101", "项目开发成本");
-            Long payrollSubjectId = seedSubject("2211", "应付职工薪酬");
+            seedAcctSchema("1");
+            String debitSubjectId = seedSubject("5101", "项目开发成本");
+            String payrollSubjectId = seedSubject("2211", "应付职工薪酬");
             seedConfigSubject(payrollSubjectId);
-            Long projectTypeId = seedProjectType("PT-RD", "研发项目", debitSubjectId);
-            Long projectId = seedProject("PRJ-TS-003", "无费率项目", projectTypeId,
+            String projectTypeId = seedProjectType("PT-RD", "研发项目", debitSubjectId);
+            String projectId = seedProject("PRJ-TS-003", "无费率项目", projectTypeId,
                     ErpPrjConstants.PROJECT_STATUS_OPEN, new BigDecimal("100000"));
-            Long activityTypeId = seedActivityType("DEV-NO-RATE", "开发-无费率", null, null);
-            Long taskId = seedTask(projectId, "任务-003", ErpPrjConstants.TASK_STATUS_IN_PROGRESS);
+            String activityTypeId = seedActivityType("DEV-NO-RATE", "开发-无费率", null, null);
+            String taskId = seedTask(projectId, "任务-003", ErpPrjConstants.TASK_STATUS_IN_PROGRESS);
             return seedTimesheet("TS-003", projectId, taskId, activityTypeId,
                     "10", null, ErpPrjConstants.APPROVE_STATUS_UNSUBMITTED);
         });
@@ -141,17 +141,17 @@ public class TestErpPrjTimesheetCost extends JunitAutoTestCase {
 
     @Test
     public void testSubmitRejectsNonOpenProject() {
-        Long tsId = ormTemplate.runInSession(session -> {
+        String tsId = ormTemplate.runInSession(session -> {
             seedOpenPeriod("2026-07");
-            seedAcctSchema(1L);
-            Long debitSubjectId = seedSubject("5101", "项目开发成本");
-            Long payrollSubjectId = seedSubject("2211", "应付职工薪酬");
+            seedAcctSchema("1");
+            String debitSubjectId = seedSubject("5101", "项目开发成本");
+            String payrollSubjectId = seedSubject("2211", "应付职工薪酬");
             seedConfigSubject(payrollSubjectId);
-            Long projectTypeId = seedProjectType("PT-RD", "研发项目", debitSubjectId);
-            Long projectId = seedProject("PRJ-TS-004", "已完成项目", projectTypeId,
+            String projectTypeId = seedProjectType("PT-RD", "研发项目", debitSubjectId);
+            String projectId = seedProject("PRJ-TS-004", "已完成项目", projectTypeId,
                     ErpPrjConstants.PROJECT_STATUS_COMPLETED, new BigDecimal("100000"));
-            Long activityTypeId = seedActivityType("DEV", "开发", "300", null);
-            Long taskId = seedTask(projectId, "任务-004", ErpPrjConstants.TASK_STATUS_IN_PROGRESS);
+            String activityTypeId = seedActivityType("DEV", "开发", "300", null);
+            String taskId = seedTask(projectId, "任务-004", ErpPrjConstants.TASK_STATUS_IN_PROGRESS);
             return seedTimesheet("TS-004", projectId, taskId, activityTypeId,
                     "10", "800", ErpPrjConstants.APPROVE_STATUS_UNSUBMITTED);
         });
@@ -162,17 +162,17 @@ public class TestErpPrjTimesheetCost extends JunitAutoTestCase {
 
     @Test
     public void testSubmitRejectsBlockedTask() {
-        Long tsId = ormTemplate.runInSession(session -> {
+        String tsId = ormTemplate.runInSession(session -> {
             seedOpenPeriod("2026-07");
-            seedAcctSchema(1L);
-            Long debitSubjectId = seedSubject("5101", "项目开发成本");
-            Long payrollSubjectId = seedSubject("2211", "应付职工薪酬");
+            seedAcctSchema("1");
+            String debitSubjectId = seedSubject("5101", "项目开发成本");
+            String payrollSubjectId = seedSubject("2211", "应付职工薪酬");
             seedConfigSubject(payrollSubjectId);
-            Long projectTypeId = seedProjectType("PT-RD", "研发项目", debitSubjectId);
-            Long projectId = seedProject("PRJ-TS-005", "阻塞任务项目", projectTypeId,
+            String projectTypeId = seedProjectType("PT-RD", "研发项目", debitSubjectId);
+            String projectId = seedProject("PRJ-TS-005", "阻塞任务项目", projectTypeId,
                     ErpPrjConstants.PROJECT_STATUS_OPEN, new BigDecimal("100000"));
-            Long activityTypeId = seedActivityType("DEV", "开发", "300", null);
-            Long taskId = seedTask(projectId, "任务-阻塞", ErpPrjConstants.TASK_STATUS_BLOCKED);
+            String activityTypeId = seedActivityType("DEV", "开发", "300", null);
+            String taskId = seedTask(projectId, "任务-阻塞", ErpPrjConstants.TASK_STATUS_BLOCKED);
             return seedTimesheet("TS-005", projectId, taskId, activityTypeId,
                     "10", "800", ErpPrjConstants.APPROVE_STATUS_UNSUBMITTED);
         });
@@ -184,17 +184,17 @@ public class TestErpPrjTimesheetCost extends JunitAutoTestCase {
     @Test
     public void testApprovePostsProjectCostCollectionVoucher() {
         final String tsCode = "TS-POST-001";
-        Long tsId = ormTemplate.runInSession(session -> {
+        String tsId = ormTemplate.runInSession(session -> {
             seedOpenPeriod("2026-07");
-            seedAcctSchema(1L);
-            Long debitSubjectId = seedSubject("5101", "项目开发成本");
-            Long payrollSubjectId = seedSubject("2211", "应付职工薪酬");
+            seedAcctSchema("1");
+            String debitSubjectId = seedSubject("5101", "项目开发成本");
+            String payrollSubjectId = seedSubject("2211", "应付职工薪酬");
             seedConfigSubject(payrollSubjectId);
-            Long projectTypeId = seedProjectType("PT-RD", "研发项目", debitSubjectId);
-            Long projectId = seedProject("PRJ-POST-001", "过账测试项目", projectTypeId,
+            String projectTypeId = seedProjectType("PT-RD", "研发项目", debitSubjectId);
+            String projectId = seedProject("PRJ-POST-001", "过账测试项目", projectTypeId,
                     ErpPrjConstants.PROJECT_STATUS_OPEN, new BigDecimal("100000"));
-            Long activityTypeId = seedActivityType("DEV", "开发", "300", null);
-            Long taskId = seedTask(projectId, "任务-过账", ErpPrjConstants.TASK_STATUS_IN_PROGRESS);
+            String activityTypeId = seedActivityType("DEV", "开发", "300", null);
+            String taskId = seedTask(projectId, "任务-过账", ErpPrjConstants.TASK_STATUS_IN_PROGRESS);
             return seedTimesheet(tsCode, projectId, taskId, activityTypeId,
                     "10", "800", ErpPrjConstants.APPROVE_STATUS_UNSUBMITTED);
         });
@@ -226,17 +226,17 @@ public class TestErpPrjTimesheetCost extends JunitAutoTestCase {
 
     @Test
     public void testApproveFromNonSubmittedThrows() {
-        Long tsId = ormTemplate.runInSession(session -> {
+        String tsId = ormTemplate.runInSession(session -> {
             seedOpenPeriod("2026-07");
-            seedAcctSchema(1L);
-            Long debitSubjectId = seedSubject("5101", "项目开发成本");
-            Long payrollSubjectId = seedSubject("2211", "应付职工薪酬");
+            seedAcctSchema("1");
+            String debitSubjectId = seedSubject("5101", "项目开发成本");
+            String payrollSubjectId = seedSubject("2211", "应付职工薪酬");
             seedConfigSubject(payrollSubjectId);
-            Long projectTypeId = seedProjectType("PT-RD", "研发项目", debitSubjectId);
-            Long projectId = seedProject("PRJ-TS-006", "非法迁移项目", projectTypeId,
+            String projectTypeId = seedProjectType("PT-RD", "研发项目", debitSubjectId);
+            String projectId = seedProject("PRJ-TS-006", "非法迁移项目", projectTypeId,
                     ErpPrjConstants.PROJECT_STATUS_OPEN, new BigDecimal("100000"));
-            Long activityTypeId = seedActivityType("DEV", "开发", "300", null);
-            Long taskId = seedTask(projectId, "任务-006", ErpPrjConstants.TASK_STATUS_IN_PROGRESS);
+            String activityTypeId = seedActivityType("DEV", "开发", "300", null);
+            String taskId = seedTask(projectId, "任务-006", ErpPrjConstants.TASK_STATUS_IN_PROGRESS);
             return seedTimesheet("TS-006", projectId, taskId, activityTypeId,
                     "10", "800", ErpPrjConstants.APPROVE_STATUS_UNSUBMITTED);
         });
@@ -248,12 +248,12 @@ public class TestErpPrjTimesheetCost extends JunitAutoTestCase {
 
     // ---------- seed helpers ----------
 
-    private Long seedTimesheet(String code, Long projectId, Long taskId, Long activityTypeId,
+    private String seedTimesheet(String code, String projectId, String taskId, String activityTypeId,
                                String hours, String costRate, String status) {
         IEntityDao<ErpPrjTimesheet> dao = daoProvider.daoFor(ErpPrjTimesheet.class);
         ErpPrjTimesheet ts = new ErpPrjTimesheet();
         ts.setCode(code);
-        ts.setOrgId(1L);
+        ts.setOrgId("1");
         ts.setProjectId(projectId);
         ts.setTaskId(taskId);
         ts.setUserId(seedEmployee());
@@ -261,31 +261,31 @@ public class TestErpPrjTimesheetCost extends JunitAutoTestCase {
         ts.setWorkDate(LocalDate.of(2026, 7, 15));
         ts.setHours(hours != null ? new BigDecimal(hours) : null);
         ts.setCostRate(costRate != null ? new BigDecimal(costRate) : null);
-        ts.setCurrencyId(1L);
+        ts.setCurrencyId("1");
         ts.setStatus(status);
         dao.saveEntity(ts);
         return ts.getId();
     }
 
-    private Long seedEmployee() {
+    private String seedEmployee() {
         IEntityDao<ErpMdEmployee> dao = daoProvider.daoFor(ErpMdEmployee.class);
         ErpMdEmployee emp = new ErpMdEmployee();
         emp.setCode("EMP-" + System.nanoTime());
         emp.setName("测试员工");
-        emp.setOrgId(1L);
+        emp.setOrgId("1");
         emp.setStatus(ErpMdConstants.ACTIVE_STATUS_ACTIVE);
         dao.saveEntity(emp);
         return emp.getId();
     }
 
-    private Long seedProject(String code, String name, Long projectTypeId, String status, BigDecimal budget) {
+    private String seedProject(String code, String name, String projectTypeId, String status, BigDecimal budget) {
         IEntityDao<ErpPrjProject> dao = daoProvider.daoFor(ErpPrjProject.class);
         ErpPrjProject p = new ErpPrjProject();
         p.setCode(code);
         p.setName(name);
-        p.setOrgId(1L);
+        p.setOrgId("1");
         p.setProjectTypeId(projectTypeId);
-        p.setCurrencyId(1L);
+        p.setCurrencyId("1");
         p.setStatus(status);
         p.setBudget(budget);
         p.setActualCost(BigDecimal.ZERO);
@@ -293,7 +293,7 @@ public class TestErpPrjTimesheetCost extends JunitAutoTestCase {
         return p.getId();
     }
 
-    private Long seedProjectType(String code, String name, Long defaultSubjectId) {
+    private String seedProjectType(String code, String name, String defaultSubjectId) {
         IEntityDao<ErpPrjProjectType> dao = daoProvider.daoFor(ErpPrjProjectType.class);
         ErpPrjProjectType t = new ErpPrjProjectType();
         t.setCode(code);
@@ -303,7 +303,7 @@ public class TestErpPrjTimesheetCost extends JunitAutoTestCase {
         return t.getId();
     }
 
-    private Long seedTask(Long projectId, String title, String status) {
+    private String seedTask(String projectId, String title, String status) {
         IEntityDao<ErpPrjTask> dao = daoProvider.daoFor(ErpPrjTask.class);
         ErpPrjTask task = new ErpPrjTask();
         task.setProjectId(projectId);
@@ -313,7 +313,7 @@ public class TestErpPrjTimesheetCost extends JunitAutoTestCase {
         return task.getId();
     }
 
-    private Long seedActivityType(String code, String name, String costRate, Long subjectId) {
+    private String seedActivityType(String code, String name, String costRate, String subjectId) {
         IEntityDao<ErpPrjActivityType> dao = daoProvider.daoFor(ErpPrjActivityType.class);
         ErpPrjActivityType a = new ErpPrjActivityType();
         a.setCode(code);
@@ -324,7 +324,7 @@ public class TestErpPrjTimesheetCost extends JunitAutoTestCase {
         return a.getId();
     }
 
-    private Long seedSubject(String code, String name) {
+    private String seedSubject(String code, String name) {
         IEntityDao<ErpMdSubject> dao = daoProvider.daoFor(ErpMdSubject.class);
         ErpMdSubject s = new ErpMdSubject();
         s.setCode(code);
@@ -336,14 +336,14 @@ public class TestErpPrjTimesheetCost extends JunitAutoTestCase {
         return s.getId();
     }
 
-    private void seedAcctSchema(long orgId) {
+    private void seedAcctSchema(String orgId) {
         IEntityDao<ErpMdAcctSchema> dao = daoProvider.daoFor(ErpMdAcctSchema.class);
         ErpMdAcctSchema schema = new ErpMdAcctSchema();
         schema.setCode("AS-" + orgId);
         schema.setName("账套-" + orgId);
         schema.setOrgId(orgId);
         schema.setNature("FINANCIAL");
-        schema.setFunctionalCurrencyId(1L);
+        schema.setFunctionalCurrencyId("1");
         schema.setStatus(ErpMdConstants.ACTIVE_STATUS_ACTIVE);
         dao.saveEntity(schema);
     }
@@ -353,7 +353,7 @@ public class TestErpPrjTimesheetCost extends JunitAutoTestCase {
         ErpFinAccountingPeriod period = new ErpFinAccountingPeriod();
         period.setCode(code);
         period.setName(code);
-        period.setOrgId(1L);
+        period.setOrgId("1");
         period.setYear(2026);
         period.setMonth(7);
         period.setStartDate(LocalDate.of(2026, 7, 1));
@@ -366,7 +366,7 @@ public class TestErpPrjTimesheetCost extends JunitAutoTestCase {
      * 测试用：直接把应付职工薪酬科目编码登记到测试配置覆盖表（写库 NopConfigDao），便于派发器解析。
      * 简化做法：派发器读 {@code AppConfig.var}；测试环境用系统属性注入。
      */
-    private void seedConfigSubject(Long payrollSubjectId) {
+    private void seedConfigSubject(String payrollSubjectId) {
         IEntityDao<ErpMdSubject> dao = daoProvider.daoFor(ErpMdSubject.class);
         ErpMdSubject s = dao.getEntityById(payrollSubjectId);
         if (s != null) {
@@ -383,7 +383,7 @@ public class TestErpPrjTimesheetCost extends JunitAutoTestCase {
         return dao.findAllByQuery(q);
     }
 
-    private List<ErpFinVoucherLine> findVoucherLines(Long voucherId) {
+    private List<ErpFinVoucherLine> findVoucherLines(String voucherId) {
         IEntityDao<ErpFinVoucherLine> dao = daoProvider.daoFor(ErpFinVoucherLine.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("voucherId", voucherId));

@@ -75,16 +75,16 @@ public class TestErpPrjExpenseAggregation extends JunitAutoTestCase {
 
     @Test
     public void testRefreshExpenseCostAggregatesFromApprovedClaim() {
-        Long[] projectHolder = new Long[1];
+        String[] projectHolder = new String[1];
         ormTemplate.runInSession(session -> {
             seedOpenPeriod("2026-07");
-            seedAcctSchema(1L);
-            Long expenseSubjectId = seedSubject("6602", "管理费用");
-            Long projectTypeId = seedProjectType("PT-RD", "研发", expenseSubjectId);
-            Long projectId = seedProject("PRJ-EXP-001", "费用归集项目", projectTypeId,
+            seedAcctSchema("1");
+            String expenseSubjectId = seedSubject("6602", "管理费用");
+            String projectTypeId = seedProjectType("PT-RD", "研发", expenseSubjectId);
+            String projectId = seedProject("PRJ-EXP-001", "费用归集项目", projectTypeId,
                     ErpPrjConstants.PROJECT_STATUS_OPEN);
             projectHolder[0] = projectId;
-            Long claimantId = seedEmployee();
+            String claimantId = seedEmployee();
             // 报销单 100（不含税），行标 projectId
             seedApprovedClaimWithProjectLine("EC-EXP-001", claimantId, projectId, expenseSubjectId,
                     new BigDecimal("100"), new BigDecimal("13"), new BigDecimal("113"));
@@ -110,16 +110,16 @@ public class TestErpPrjExpenseAggregation extends JunitAutoTestCase {
 
     @Test
     public void testRefreshExpenseCostIsIdempotent() {
-        Long[] projectHolder = new Long[1];
+        String[] projectHolder = new String[1];
         ormTemplate.runInSession(session -> {
             seedOpenPeriod("2026-07");
-            seedAcctSchema(1L);
-            Long expenseSubjectId = seedSubject("6602", "管理费用");
-            Long projectTypeId = seedProjectType("PT-RD", "研发", expenseSubjectId);
-            Long projectId = seedProject("PRJ-EXP-002", "幂等项目", projectTypeId,
+            seedAcctSchema("1");
+            String expenseSubjectId = seedSubject("6602", "管理费用");
+            String projectTypeId = seedProjectType("PT-RD", "研发", expenseSubjectId);
+            String projectId = seedProject("PRJ-EXP-002", "幂等项目", projectTypeId,
                     ErpPrjConstants.PROJECT_STATUS_OPEN);
             projectHolder[0] = projectId;
-            Long claimantId = seedEmployee();
+            String claimantId = seedEmployee();
             seedApprovedClaimWithProjectLine("EC-EXP-002", claimantId, projectId, expenseSubjectId,
                     new BigDecimal("200"), new BigDecimal("26"), new BigDecimal("226"));
             return null;
@@ -138,16 +138,16 @@ public class TestErpPrjExpenseAggregation extends JunitAutoTestCase {
     public void testExpenseAggregationDisabledByConfig() {
         System.setProperty(ErpPrjConstants.CONFIG_EXPENSE_AGGREGATION_ENABLED, "false");
         try {
-            Long[] projectHolder = new Long[1];
+            String[] projectHolder = new String[1];
             ormTemplate.runInSession(session -> {
                 seedOpenPeriod("2026-07");
-                seedAcctSchema(1L);
-                Long expenseSubjectId = seedSubject("6602", "管理费用");
-                Long projectTypeId = seedProjectType("PT-RD", "研发", expenseSubjectId);
-                Long projectId = seedProject("PRJ-EXP-003", "禁用项目", projectTypeId,
+                seedAcctSchema("1");
+                String expenseSubjectId = seedSubject("6602", "管理费用");
+                String projectTypeId = seedProjectType("PT-RD", "研发", expenseSubjectId);
+                String projectId = seedProject("PRJ-EXP-003", "禁用项目", projectTypeId,
                         ErpPrjConstants.PROJECT_STATUS_OPEN);
                 projectHolder[0] = projectId;
-                Long claimantId = seedEmployee();
+                String claimantId = seedEmployee();
                 seedApprovedClaimWithProjectLine("EC-EXP-003", claimantId, projectId, expenseSubjectId,
                         new BigDecimal("100"), new BigDecimal("13"), new BigDecimal("113"));
                 return null;
@@ -164,16 +164,16 @@ public class TestErpPrjExpenseAggregation extends JunitAutoTestCase {
 
     @Test
     public void testCloseProjectRefreshesExpenseBeforeClose() {
-        Long[] projectHolder = new Long[1];
+        String[] projectHolder = new String[1];
         ormTemplate.runInSession(session -> {
             seedOpenPeriod("2026-07");
-            seedAcctSchema(1L);
-            Long expenseSubjectId = seedSubject("6602", "管理费用");
-            Long projectTypeId = seedProjectType("PT-RD", "研发", expenseSubjectId);
-            Long projectId = seedProject("PRJ-CLOSE-EXP", "关闭前刷新项目", projectTypeId,
+            seedAcctSchema("1");
+            String expenseSubjectId = seedSubject("6602", "管理费用");
+            String projectTypeId = seedProjectType("PT-RD", "研发", expenseSubjectId);
+            String projectId = seedProject("PRJ-CLOSE-EXP", "关闭前刷新项目", projectTypeId,
                     ErpPrjConstants.PROJECT_STATUS_OPEN);
             projectHolder[0] = projectId;
-            Long claimantId = seedEmployee();
+            String claimantId = seedEmployee();
             seedApprovedClaimWithProjectLine("EC-CLOSE-EXP", claimantId, projectId, expenseSubjectId,
                     new BigDecimal("500"), new BigDecimal("65"), new BigDecimal("565"));
             return null;
@@ -193,16 +193,16 @@ public class TestErpPrjExpenseAggregation extends JunitAutoTestCase {
 
     @Test
     public void testOnHoldProjectRejectsExpenseAggregation() {
-        Long[] projectHolder = new Long[1];
+        String[] projectHolder = new String[1];
         ormTemplate.runInSession(session -> {
             seedOpenPeriod("2026-07");
-            seedAcctSchema(1L);
-            Long expenseSubjectId = seedSubject("6602", "管理费用");
-            Long projectTypeId = seedProjectType("PT-ONHOLD", "研发", expenseSubjectId);
-            Long projectId = seedProject("PRJ-ONHOLD-001", "暂停项目", projectTypeId,
+            seedAcctSchema("1");
+            String expenseSubjectId = seedSubject("6602", "管理费用");
+            String projectTypeId = seedProjectType("PT-ONHOLD", "研发", expenseSubjectId);
+            String projectId = seedProject("PRJ-ONHOLD-001", "暂停项目", projectTypeId,
                     ErpPrjConstants.PROJECT_STATUS_ON_HOLD);
             projectHolder[0] = projectId;
-            Long claimantId = seedEmployee();
+            String claimantId = seedEmployee();
             seedApprovedClaimWithProjectLine("EC-ONHOLD-001", claimantId, projectId, expenseSubjectId,
                     new BigDecimal("100"), new BigDecimal("13"), new BigDecimal("113"));
             // 既有归集保留断言：预先落一条 EXPENSE 归集行
@@ -232,16 +232,16 @@ public class TestErpPrjExpenseAggregation extends JunitAutoTestCase {
                 ErpPrjConstants.PROJECT_STATUS_COMPLETED, ErpPrjConstants.PROJECT_STATUS_CANCELLED}) {
             String subjectCode = "660" + (status.equals(ErpPrjConstants.PROJECT_STATUS_COMPLETED) ? "4" : "5");
             String code = "EC-" + status + "-001";
-            Long[] projectHolder = new Long[1];
+            String[] projectHolder = new String[1];
             ormTemplate.runInSession(session -> {
                 seedOpenPeriod("2026-07-" + status);
-                seedAcctSchema(status.equals(ErpPrjConstants.PROJECT_STATUS_COMPLETED) ? 1L : 2L);
-                Long expenseSubjectId = seedSubject(subjectCode, status + " 费用");
-                Long projectTypeId = seedProjectType("PT-" + status, status, expenseSubjectId);
-                Long projectId = seedProject("PRJ-" + status + "-001", status + " 项目", projectTypeId,
+                seedAcctSchema(status.equals(ErpPrjConstants.PROJECT_STATUS_COMPLETED) ? "1" : "2");
+                String expenseSubjectId = seedSubject(subjectCode, status + " 费用");
+                String projectTypeId = seedProjectType("PT-" + status, status, expenseSubjectId);
+                String projectId = seedProject("PRJ-" + status + "-001", status + " 项目", projectTypeId,
                         status);
                 projectHolder[0] = projectId;
-                Long claimantId = seedEmployee();
+                String claimantId = seedEmployee();
                 seedApprovedClaimWithProjectLine(code, claimantId, projectId, expenseSubjectId,
                         new BigDecimal("100"), new BigDecimal("13"), new BigDecimal("113"));
                 return null;
@@ -260,18 +260,18 @@ public class TestErpPrjExpenseAggregation extends JunitAutoTestCase {
     public void testExpenseBudgetStrictRejectsOverBudget() {
         System.setProperty(ErpPrjConstants.CONFIG_BUDGET_CONTROL_MODE, "STRICT");
         try {
-            Long[] projectHolder = new Long[1];
+            String[] projectHolder = new String[1];
             ormTemplate.runInSession(session -> {
                 seedOpenPeriod("2026-07");
-                seedAcctSchema(1L);
-                Long expenseSubjectId = seedSubject("6602", "管理费用");
-                Long projectTypeId = seedProjectType("PT-EXP-S", "STRICT", expenseSubjectId);
-                Long projectId = seedProject("PRJ-EXP-S-001", "STRICT 费用项目", projectTypeId,
+                seedAcctSchema("1");
+                String expenseSubjectId = seedSubject("6602", "管理费用");
+                String projectTypeId = seedProjectType("PT-EXP-S", "STRICT", expenseSubjectId);
+                String projectId = seedProject("PRJ-EXP-S-001", "STRICT 费用项目", projectTypeId,
                         ErpPrjConstants.PROJECT_STATUS_OPEN);
                 daoProvider.daoFor(ErpPrjProject.class).getEntityById(projectId)
                         .setBudget(new BigDecimal("1000"));
                 projectHolder[0] = projectId;
-                Long claimantId = seedEmployee();
+                String claimantId = seedEmployee();
                 seedApprovedClaimWithProjectLine("EC-EXP-S-001", claimantId, projectId, expenseSubjectId,
                         new BigDecimal("1500"), new BigDecimal("195"), new BigDecimal("1695"));
                 return null;
@@ -294,18 +294,18 @@ public class TestErpPrjExpenseAggregation extends JunitAutoTestCase {
     public void testExpenseBudgetWarningAllowsOverBudget() {
         System.setProperty(ErpPrjConstants.CONFIG_BUDGET_CONTROL_MODE, "WARNING");
         try {
-            Long[] projectHolder = new Long[1];
+            String[] projectHolder = new String[1];
             ormTemplate.runInSession(session -> {
                 seedOpenPeriod("2026-07");
-                seedAcctSchema(1L);
-                Long expenseSubjectId = seedSubject("6602", "管理费用");
-                Long projectTypeId = seedProjectType("PT-EXP-W", "WARNING", expenseSubjectId);
-                Long projectId = seedProject("PRJ-EXP-W-001", "WARNING 费用项目", projectTypeId,
+                seedAcctSchema("1");
+                String expenseSubjectId = seedSubject("6602", "管理费用");
+                String projectTypeId = seedProjectType("PT-EXP-W", "WARNING", expenseSubjectId);
+                String projectId = seedProject("PRJ-EXP-W-001", "WARNING 费用项目", projectTypeId,
                         ErpPrjConstants.PROJECT_STATUS_OPEN);
                 daoProvider.daoFor(ErpPrjProject.class).getEntityById(projectId)
                         .setBudget(new BigDecimal("1000"));
                 projectHolder[0] = projectId;
-                Long claimantId = seedEmployee();
+                String claimantId = seedEmployee();
                 seedApprovedClaimWithProjectLine("EC-EXP-W-001", claimantId, projectId, expenseSubjectId,
                         new BigDecimal("1500"), new BigDecimal("195"), new BigDecimal("1695"));
                 return null;
@@ -323,17 +323,17 @@ public class TestErpPrjExpenseAggregation extends JunitAutoTestCase {
 
     // ---------- seed helpers ----------
 
-    private void seedApprovedClaimWithProjectLine(String code, Long claimantId, Long projectId,
-                                                  Long subjectId, BigDecimal amountWithoutTax,
+    private void seedApprovedClaimWithProjectLine(String code, String claimantId, String projectId,
+                                                  String subjectId, BigDecimal amountWithoutTax,
                                                   BigDecimal tax, BigDecimal withTax) {
         IEntityDao<ErpFinExpenseClaim> dao = daoProvider.daoFor(ErpFinExpenseClaim.class);
         ErpFinExpenseClaim claim = new ErpFinExpenseClaim();
         claim.setCode(code);
-        claim.setOrgId(1L);
+        claim.setOrgId("1");
         claim.setClaimantId(claimantId);
         claim.setBusinessDate(LocalDate.of(2026, 7, 15));
         claim.setPaymentMode(ErpFinConstants.PAYMENT_MODE_OWN_ACCOUNT);
-        claim.setCurrencyId(1L);
+        claim.setCurrencyId("1");
         claim.setExchangeRate(BigDecimal.ONE);
         claim.setAmountWithoutTax(amountWithoutTax);
         claim.setTaxAmount(tax);
@@ -356,24 +356,24 @@ public class TestErpPrjExpenseAggregation extends JunitAutoTestCase {
         lineDao.saveEntity(line);
     }
 
-    private Long seedEmployee() {
+    private String seedEmployee() {
         IEntityDao<ErpMdEmployee> dao = daoProvider.daoFor(ErpMdEmployee.class);
         ErpMdEmployee emp = new ErpMdEmployee();
         emp.setCode("EMP-" + System.nanoTime());
         emp.setName("测试员工");
-        emp.setOrgId(1L);
+        emp.setOrgId("1");
         emp.setStatus(ErpMdConstants.ACTIVE_STATUS_ACTIVE);
         dao.saveEntity(emp);
         return emp.getId();
     }
 
     /** 预置一条 EXPENSE 归集行（既有归集保留断言用）。 */
-    private void seedCostCollectionLine(Long projectId, String sourceBillCode) {
+    private void seedCostCollectionLine(String projectId, String sourceBillCode) {
         IEntityDao<ErpPrjCostCollection> headDao = daoProvider.daoFor(ErpPrjCostCollection.class);
         ErpPrjCostCollection head = new ErpPrjCostCollection();
         head.setCode("CC-EXIST-" + sourceBillCode + "-" + System.nanoTime());
         head.setProjectId(projectId);
-        head.setOrgId(1L);
+        head.setOrgId("1");
         head.setBusinessDate(LocalDate.of(2026, 7, 15));
         head.setTotalAmount(BigDecimal.ONE);
         head.setDocStatus(ErpPrjConstants.DOC_STATUS_APPROVED);
@@ -395,21 +395,21 @@ public class TestErpPrjExpenseAggregation extends JunitAutoTestCase {
         lineDao.saveEntity(line);
     }
 
-    private Long seedProject(String code, String name, Long projectTypeId, String status) {
+    private String seedProject(String code, String name, String projectTypeId, String status) {
         IEntityDao<ErpPrjProject> dao = daoProvider.daoFor(ErpPrjProject.class);
         ErpPrjProject p = new ErpPrjProject();
         p.setCode(code);
         p.setName(name);
-        p.setOrgId(1L);
+        p.setOrgId("1");
         p.setProjectTypeId(projectTypeId);
-        p.setCurrencyId(1L);
+        p.setCurrencyId("1");
         p.setStatus(status);
         p.setActualCost(BigDecimal.ZERO);
         dao.saveEntity(p);
         return p.getId();
     }
 
-    private Long seedProjectType(String code, String name, Long defaultSubjectId) {
+    private String seedProjectType(String code, String name, String defaultSubjectId) {
         IEntityDao<ErpPrjProjectType> dao = daoProvider.daoFor(ErpPrjProjectType.class);
         ErpPrjProjectType t = new ErpPrjProjectType();
         t.setCode(code);
@@ -419,7 +419,7 @@ public class TestErpPrjExpenseAggregation extends JunitAutoTestCase {
         return t.getId();
     }
 
-    private Long seedSubject(String code, String name) {
+    private String seedSubject(String code, String name) {
         IEntityDao<ErpMdSubject> dao = daoProvider.daoFor(ErpMdSubject.class);
         ErpMdSubject s = new ErpMdSubject();
         s.setCode(code);
@@ -431,14 +431,14 @@ public class TestErpPrjExpenseAggregation extends JunitAutoTestCase {
         return s.getId();
     }
 
-    private void seedAcctSchema(long orgId) {
+    private void seedAcctSchema(String orgId) {
         IEntityDao<ErpMdAcctSchema> dao = daoProvider.daoFor(ErpMdAcctSchema.class);
         ErpMdAcctSchema schema = new ErpMdAcctSchema();
         schema.setCode("AS-" + orgId);
         schema.setName("账套-" + orgId);
         schema.setOrgId(orgId);
         schema.setNature("FINANCIAL");
-        schema.setFunctionalCurrencyId(1L);
+        schema.setFunctionalCurrencyId("1");
         schema.setStatus(ErpMdConstants.ACTIVE_STATUS_ACTIVE);
         dao.saveEntity(schema);
     }
@@ -448,7 +448,7 @@ public class TestErpPrjExpenseAggregation extends JunitAutoTestCase {
         ErpFinAccountingPeriod period = new ErpFinAccountingPeriod();
         period.setCode(code);
         period.setName(code);
-        period.setOrgId(1L);
+        period.setOrgId("1");
         period.setYear(2026);
         period.setMonth(7);
         period.setStartDate(LocalDate.of(2026, 7, 1));

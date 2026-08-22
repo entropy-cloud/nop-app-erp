@@ -34,7 +34,7 @@ public class ErpPrjTimesheetSubmitProcessor {
     @Inject
     ErpPrjTimesheetStateMachine stateMachine;
 
-    public ErpPrjTimesheet submit(Long timesheetId, IServiceContext context) {
+    public ErpPrjTimesheet submit(String timesheetId, IServiceContext context) {
         ErpPrjTimesheet timesheet = requireTimesheet(timesheetId);
         String status = timesheet.getStatus();
         // 幂等：已提交直接返回（既有行为保持）
@@ -110,7 +110,7 @@ public class ErpPrjTimesheetSubmitProcessor {
 
     // ---------- helpers ----------
 
-    private ErpPrjTimesheet requireTimesheet(Long timesheetId) {
+    private ErpPrjTimesheet requireTimesheet(String timesheetId) {
         ErpPrjTimesheet timesheet = timesheetDao().getEntityById(timesheetId);
         if (timesheet == null) {
             throw new NopException(ErpPrjErrors.ERR_TIMESHEET_NOT_FOUND)
@@ -119,7 +119,7 @@ public class ErpPrjTimesheetSubmitProcessor {
         return timesheet;
     }
 
-    private ErpPrjProject loadProject(Long projectId) {
+    private ErpPrjProject loadProject(String projectId) {
         if (projectId == null) {
             return null;
         }
@@ -127,7 +127,7 @@ public class ErpPrjTimesheetSubmitProcessor {
         return dao.getEntityById(projectId);
     }
 
-    private ErpPrjTask loadTask(Long taskId) {
+    private ErpPrjTask loadTask(String taskId) {
         IEntityDao<ErpPrjTask> dao = daoProvider.daoFor(ErpPrjTask.class);
         return dao.getEntityById(taskId);
     }

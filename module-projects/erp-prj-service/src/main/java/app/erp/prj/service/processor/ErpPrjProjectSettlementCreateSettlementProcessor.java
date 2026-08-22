@@ -23,7 +23,7 @@ public class ErpPrjProjectSettlementCreateSettlementProcessor {
     @Inject
     ErpPrjProjectSettlementProcessor facade;
 
-    public ErpPrjProjectSettlement createSettlement(Long projectId, String settlementType, IServiceContext context) {
+    public ErpPrjProjectSettlement createSettlement(String projectId, String settlementType, IServiceContext context) {
         ErpPrjProject project = facade.loadProject(projectId);
         ErpPrjProjectPnl snapshot = facade.pnlBiz.getProjectPnl(projectId, context);
         if (snapshot == null) {

@@ -39,7 +39,7 @@ public class ErpPrjProjectPnlBizModel extends CrudBizModel<ErpPrjProjectPnl> imp
 
     @Override
     @BizMutation
-    public ErpPrjProjectPnl refreshPnl(@Name("projectId") Long projectId,
+    public ErpPrjProjectPnl refreshPnl(@Name("projectId") String projectId,
                                        @Name("periodFrom") LocalDate periodFrom,
                                        @Name("periodTo") LocalDate periodTo,
                                        IServiceContext context) {
@@ -48,7 +48,7 @@ public class ErpPrjProjectPnlBizModel extends CrudBizModel<ErpPrjProjectPnl> imp
 
     @Override
     @BizQuery
-    public ErpPrjProjectPnl getProjectPnl(@Name("projectId") Long projectId, IServiceContext context) {
+    public ErpPrjProjectPnl getProjectPnl(@Name("projectId") String projectId, IServiceContext context) {
         return pnlCalculator.findLatestCalculated(projectId);
     }
 

@@ -19,7 +19,7 @@
             <cols>
 
                 <!--ID-->
-                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="id" mandatory="true" sortable="true"/>
 
                 <!--规则编码-->
                 <col id="code" mandatory="true" sortable="true"/>
@@ -28,19 +28,19 @@
                 <col id="name" mandatory="true" sortable="true"/>
 
                 <!--核算组织-->
-                <col id="orgId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="orgId" mandatory="true" sortable="true"/>
 
                 <!--调出组织(空=通配)-->
-                <col id="fromOrgId" ui:number="true" sortable="true"/>
+                <col id="fromOrgId" sortable="true"/>
 
                 <!--调入组织(空=通配)-->
-                <col id="toOrgId" ui:number="true" sortable="true"/>
+                <col id="toOrgId" sortable="true"/>
 
                 <!--物料(空=通配)-->
-                <col id="materialId" ui:number="true" sortable="true"/>
+                <col id="materialId" sortable="true"/>
 
                 <!--物料分类(空=通配)-->
-                <col id="materialCategoryId" ui:number="true" sortable="true"/>
+                <col id="materialCategoryId" sortable="true"/>
 
                 <!--定价方法-->
                 <col id="pricingMethod" mandatory="true" sortable="true"/>

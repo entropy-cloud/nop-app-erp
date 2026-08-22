@@ -59,8 +59,8 @@ public class TestErpPrjTaskDependency extends JunitAutoTestCase {
 
     @Test
     public void scenario1_saveSelfDependency() {
-        Long projectId = seedProject();
-        Long taskId = seedTask(projectId, "自环任务", ErpPrjConstants.TASK_STATUS_TODO, null);
+        String projectId = seedProject();
+        String taskId = seedTask(projectId, "自环任务", ErpPrjConstants.TASK_STATUS_TODO, null);
 
         // 经 biz.update 触发 defaultPrepareUpdate 钩子；dependsOnId=自身 → SELF_DEPENDENCY
         Map<String, Object> data = new LinkedHashMap<>();
@@ -75,9 +75,9 @@ public class TestErpPrjTaskDependency extends JunitAutoTestCase {
 
     @Test
     public void scenario2_saveCycleDependency() {
-        Long projectId = seedProject();
-        Long bId = seedTask(projectId, "前置-B", ErpPrjConstants.TASK_STATUS_DONE, null);
-        Long aId = seedTask(projectId, "后继-A", ErpPrjConstants.TASK_STATUS_TODO, bId); // A→B，无环
+        String projectId = seedProject();
+        String bId = seedTask(projectId, "前置-B", ErpPrjConstants.TASK_STATUS_DONE, null);
+        String aId = seedTask(projectId, "后继-A", ErpPrjConstants.TASK_STATUS_TODO, bId); // A→B，无环
 
         // 更新 B.dependsOnId=A → 形成 A→B→A 环
         Map<String, Object> data = new LinkedHashMap<>();
@@ -92,9 +92,9 @@ public class TestErpPrjTaskDependency extends JunitAutoTestCase {
 
     @Test
     public void scenario3_saveCrossProjectDependency() {
-        Long p1 = seedProject();
-        Long p2 = seedProject();
-        Long aId = seedTask(p1, "项目1-任务A", ErpPrjConstants.TASK_STATUS_DONE, null);
+        String p1 = seedProject();
+        String p2 = seedProject();
+        String aId = seedTask(p1, "项目1-任务A", ErpPrjConstants.TASK_STATUS_DONE, null);
 
         // 新建任务属于项目 2，依赖项目 1 的任务 A → 跨项目
         Map<String, Object> data = new LinkedHashMap<>();
@@ -113,9 +113,9 @@ public class TestErpPrjTaskDependency extends JunitAutoTestCase {
     public void scenario4_startTask_predecessorNotDone_strict() {
         System.setProperty(ErpPrjConstants.CONFIG_TASK_STRICT_PREDECESSOR_CHECK, "true");
         try {
-            Long projectId = seedProject();
-            Long bId = seedTask(projectId, "前置-B-未完成", ErpPrjConstants.TASK_STATUS_IN_PROGRESS, null);
-            Long aId = seedTask(projectId, "后继-A", ErpPrjConstants.TASK_STATUS_TODO, bId);
+            String projectId = seedProject();
+            String bId = seedTask(projectId, "前置-B-未完成", ErpPrjConstants.TASK_STATUS_IN_PROGRESS, null);
+            String aId = seedTask(projectId, "后继-A", ErpPrjConstants.TASK_STATUS_TODO, bId);
 
             NopException ex = assertThrows(NopException.class, () -> ormTemplate.runInSession(session -> taskBiz.startTask(aId, CTX)));
             assertEquals(ErpPrjErrors.ERR_TASK_PREDECESSOR_NOT_DONE.getErrorCode(), ex.getErrorCode());
@@ -128,9 +128,9 @@ public class TestErpPrjTaskDependency extends JunitAutoTestCase {
     public void scenario4_startTask_predecessorNotDone_warn() {
         System.setProperty(ErpPrjConstants.CONFIG_TASK_STRICT_PREDECESSOR_CHECK, "false");
         try {
-            Long projectId = seedProject();
-            Long bId = seedTask(projectId, "前置-B-WARN", ErpPrjConstants.TASK_STATUS_IN_PROGRESS, null);
-            Long aId = seedTask(projectId, "后继-A-WARN", ErpPrjConstants.TASK_STATUS_TODO, bId);
+            String projectId = seedProject();
+            String bId = seedTask(projectId, "前置-B-WARN", ErpPrjConstants.TASK_STATUS_IN_PROGRESS, null);
+            String aId = seedTask(projectId, "后继-A-WARN", ErpPrjConstants.TASK_STATUS_TODO, bId);
 
             // WARN 模式：仅日志告警，迁移放行
             ErpPrjTask started = ormTemplate.runInSession(session -> taskBiz.startTask(aId, CTX));
@@ -144,9 +144,9 @@ public class TestErpPrjTaskDependency extends JunitAutoTestCase {
 
     @Test
     public void scenario5_startTask_happyPath() {
-        Long projectId = seedProject();
-        Long bId = seedTask(projectId, "前置-B-完成", ErpPrjConstants.TASK_STATUS_DONE, null);
-        Long aId = seedTask(projectId, "后继-A", ErpPrjConstants.TASK_STATUS_TODO, bId);
+        String projectId = seedProject();
+        String bId = seedTask(projectId, "前置-B-完成", ErpPrjConstants.TASK_STATUS_DONE, null);
+        String aId = seedTask(projectId, "后继-A", ErpPrjConstants.TASK_STATUS_TODO, bId);
 
         ErpPrjTask started = ormTemplate.runInSession(session -> taskBiz.startTask(aId, CTX));
         assertEquals(ErpPrjConstants.TASK_STATUS_IN_PROGRESS, started.getStatus());
@@ -156,15 +156,15 @@ public class TestErpPrjTaskDependency extends JunitAutoTestCase {
 
     @Test
     public void scenario6_illegalTransition() {
-        Long projectId = seedProject();
-        Long taskId = seedTask(projectId, "TODO-任务", ErpPrjConstants.TASK_STATUS_TODO, null);
+        String projectId = seedProject();
+        String taskId = seedTask(projectId, "TODO-任务", ErpPrjConstants.TASK_STATUS_TODO, null);
 
         // TODO 直接 completeTask → 非法（须先 IN_PROGRESS）
         NopException ex1 = assertThrows(NopException.class, () -> ormTemplate.runInSession(session -> taskBiz.completeTask(taskId, CTX)));
         assertEquals(ErpPrjErrors.ERR_TASK_ILLEGAL_STATUS_TRANSITION.getErrorCode(), ex1.getErrorCode());
 
         // 进入 BLOCKED 后直接 completeTask → 非法
-        Long progressId = seedTask(projectId, "IN_PROGRESS-任务", ErpPrjConstants.TASK_STATUS_IN_PROGRESS, null);
+        String progressId = seedTask(projectId, "IN_PROGRESS-任务", ErpPrjConstants.TASK_STATUS_IN_PROGRESS, null);
         ErpPrjTask blocked = ormTemplate.runInSession(session -> taskBiz.blockTask(progressId, "等待外部依赖", CTX));
         assertEquals(ErpPrjConstants.TASK_STATUS_BLOCKED, blocked.getStatus());
 
@@ -174,8 +174,8 @@ public class TestErpPrjTaskDependency extends JunitAutoTestCase {
 
     @Test
     public void scenario6_blockReasonRequired() {
-        Long projectId = seedProject();
-        Long taskId = seedTask(projectId, "待阻塞", ErpPrjConstants.TASK_STATUS_IN_PROGRESS, null);
+        String projectId = seedProject();
+        String taskId = seedTask(projectId, "待阻塞", ErpPrjConstants.TASK_STATUS_IN_PROGRESS, null);
 
         NopException ex = assertThrows(NopException.class, () -> ormTemplate.runInSession(session -> taskBiz.blockTask(taskId, "", CTX)));
         assertEquals(ErpPrjErrors.ERR_TASK_BLOCK_REASON_REQUIRED.getErrorCode(), ex.getErrorCode());
@@ -183,8 +183,8 @@ public class TestErpPrjTaskDependency extends JunitAutoTestCase {
 
     @Test
     public void scenario6_stateMachineRoundTrip() {
-        Long projectId = seedProject();
-        Long taskId = seedTask(projectId, "全链路", ErpPrjConstants.TASK_STATUS_TODO, null);
+        String projectId = seedProject();
+        String taskId = seedTask(projectId, "全链路", ErpPrjConstants.TASK_STATUS_TODO, null);
 
         ErpPrjTask started = ormTemplate.runInSession(session -> taskBiz.startTask(taskId, CTX));
         assertEquals(ErpPrjConstants.TASK_STATUS_IN_PROGRESS, started.getStatus());
@@ -203,13 +203,13 @@ public class TestErpPrjTaskDependency extends JunitAutoTestCase {
 
     @Test
     public void scenario7_findPredecessorsAndSuccessors() {
-        Long projectId = seedProject();
+        String projectId = seedProject();
         // 链 A→B→C：A.dependsOnId=B, B.dependsOnId=C
-        Long cId = seedTask(projectId, "C", ErpPrjConstants.TASK_STATUS_DONE, null);
-        Long bId = seedTask(projectId, "B", ErpPrjConstants.TASK_STATUS_DONE, cId);
-        Long aId = seedTask(projectId, "A", ErpPrjConstants.TASK_STATUS_TODO, bId);
+        String cId = seedTask(projectId, "C", ErpPrjConstants.TASK_STATUS_DONE, null);
+        String bId = seedTask(projectId, "B", ErpPrjConstants.TASK_STATUS_DONE, cId);
+        String aId = seedTask(projectId, "A", ErpPrjConstants.TASK_STATUS_TODO, bId);
         // D 反向引用 A：D.dependsOnId=A
-        Long dId = seedTask(projectId, "D", ErpPrjConstants.TASK_STATUS_TODO, aId);
+        String dId = seedTask(projectId, "D", ErpPrjConstants.TASK_STATUS_TODO, aId);
 
         // findPredecessors(A)=[B,C]：A 的前置是 B，B 的前置是 C → 上行链全量 [B,C]
         List<ErpPrjTask> preds = ormTemplate.runInSession(session -> taskBiz.findPredecessors(aId, CTX));
@@ -233,9 +233,9 @@ public class TestErpPrjTaskDependency extends JunitAutoTestCase {
 
     @Test
     public void scenario8a_headSelfLoopFirst() {
-        Long projectId = seedProject();
+        String projectId = seedProject();
         // 构造 101 节点长链 A1→A2→...→A101（A1.dependsOnId=A2，...）
-        Long[] chain = seedLongChain(projectId, 101);
+        String[] chain = seedLongChain(projectId, 101);
 
         // 在链头 A1 上设置自环 A1.dependsOnId=A1 → SELF_DEPENDENCY 优先（在 detectCycle 第一步即被检测）
         Map<String, Object> data = new LinkedHashMap<>();
@@ -253,9 +253,9 @@ public class TestErpPrjTaskDependency extends JunitAutoTestCase {
     public void scenario8b_longChainDepthExceeded() {
         System.setProperty(ErpPrjConstants.CONFIG_TASK_DEPENDENCY_MAX_DEPTH, "100");
         try {
-            Long projectId = seedProject();
+            String projectId = seedProject();
             // 102 节点链 A1→A2→...→A102（边数=101，自 A1 上行追溯至 A102 步数=101）
-            Long[] chain = seedLongChain(projectId, 102);
+            String[] chain = seedLongChain(projectId, 102);
 
             // findPredecessors(A1) 上行追溯 101 步 → 超过 maxDepth=100
             NopException ex = assertThrows(NopException.class,
@@ -271,19 +271,19 @@ public class TestErpPrjTaskDependency extends JunitAutoTestCase {
 
     // ============ helpers ============
 
-    private Long seedProject() {
+    private String seedProject() {
         IEntityDao<ErpPrjProject> dao = daoProvider.daoFor(ErpPrjProject.class);
         ErpPrjProject p = new ErpPrjProject();
         p.setCode("PRJ-DAG-" + System.nanoTime());
         p.setName("DAG 测试项目");
-        p.setOrgId(1L);
-        p.setCurrencyId(1L);
+        p.setOrgId("1");
+        p.setCurrencyId("1");
         p.setStatus(ErpPrjConstants.PROJECT_STATUS_OPEN);
         dao.saveEntity(p);
         return p.getId();
     }
 
-    private Long seedTask(Long projectId, String title, String status, Long dependsOnId) {
+    private String seedTask(String projectId, String title, String status, String dependsOnId) {
         IEntityDao<ErpPrjTask> dao = daoProvider.daoFor(ErpPrjTask.class);
         ErpPrjTask t = new ErpPrjTask();
         t.setProjectId(projectId);
@@ -299,16 +299,16 @@ public class TestErpPrjTaskDependency extends JunitAutoTestCase {
      * 返回数组 chain[0]=A1.id, chain[1]=A2.id, ..., chain[N-1]=A(N).id。
      * 从末尾向前建（末尾无前置），保证外键引用顺序。
      */
-    private Long[] seedLongChain(Long projectId, int nodeCount) {
-        Long[] ids = new Long[nodeCount];
+    private String[] seedLongChain(String projectId, int nodeCount) {
+        String[] ids = new String[nodeCount];
         for (int i = nodeCount - 1; i >= 0; i--) {
-            Long dependsOn = (i + 1 < nodeCount) ? ids[i + 1] : null;
+            String dependsOn = (i + 1 < nodeCount) ? ids[i + 1] : null;
             ids[i] = seedTask(projectId, "A" + (i + 1), ErpPrjConstants.TASK_STATUS_DONE, dependsOn);
         }
         return ids;
     }
 
-    private boolean containsId(List<ErpPrjTask> tasks, Long id) {
+    private boolean containsId(List<ErpPrjTask> tasks, String id) {
         for (ErpPrjTask t : tasks) {
             if (id.equals(t.getId())) {
                 return true;
