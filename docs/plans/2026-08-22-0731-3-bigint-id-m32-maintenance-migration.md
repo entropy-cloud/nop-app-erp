@@ -1,6 +1,6 @@
 # 2026-08-22-0731-3-bigint-id-m32-maintenance-migration 主键/外键 string 化 M3.2：maintenance 域迁移（冻结序位次 11）
 
-> Plan Status: active（2026-08-22：iteration 1-2 独立草案审查收敛 + 保护区域双独立子 agent 批准（治理批准经 iteration 2 MAJOR-1 RESOLVED 生效），见 Draft Review Record）
+> Plan Status: completed（2026-08-22：iteration 1-2 独立草案审查收敛 + 保护区域双独立子 agent 批准（治理批准经 iteration 2 MAJOR-1 RESOLVED 生效），见 Draft Review Record；四 Phase 执行完毕 + 独立结束审计 `passes closure audit`（ses_fd82ff66dffeDiFiKHponOD1Jc），见 Closure 节）
 > Mission: id-string-migration
 > Work Item: M3.2（maintenance，冻结序位次 11）
 > Last Reviewed: 2026-08-22
@@ -55,104 +55,139 @@
 
 ### Phase 1 - 消费登记册 + orm 回写（保护区域，双批准前置）
 
-Status: planned
+Status: completed
 Targets: `module-maintenance/model/app-erp-maintenance.orm.xml`
 Skill: none
 
 - Item Types: `Proof | Fix`
 - Prereqs: M2.2 ✅（批内序 2 完成且 inv-dao/inv-service 已 install String 形态）+ M2.1 ✅ + M1.1 ✅ + M1.2 ✅（精确前置满足）；本计划已通过独立 plan-audit + 第二独立子 agent 复核（保护区域 `auto + dual-agent-approval`，批准记录落盘 Draft Review Record）
 
-- [ ] Proof: 消费 M0.2 登记册——读取 `tools/id-migration-registry.json5` + 登记册文档 §6.11 mnt 节，逐条核对：(i) A1 = 0（64 列全翻转）；(ii) A2 = bridge-main-080..085（mfg 5 + qa 1，全部位于 `OeeCalculator.java`）与本地实测 import 对账；(iii) A3 = bridge-test-125 作为 Phase 3 定位面；(iv) **B 退役义务 = bridge-main-024/025（ast `ErpAstDisposalProcessor:266/:274`）+ retired bridge-test-107/134 mock 回收（`TestMockMntBizModels`/`test-mock-mnt.beans.xml`/`TestErpAstDisposalEquipmentLinkage`）作为 Phase 2/3 定位面**；(v) C1 = backward-164/165/166/167 与 C2 = backward-225/226/227/228 作为 Phase 2/3 定位面（backward-165/226 为批内序 2（M2.2）登记的 successor 兑付面）；(vi) 按 b2b/assets A3' 先例做 FQN 盲区复扫（`rg 'app\.erp\.(prj|pur|sal|qa|crm|drp|log|mfg)\.' module-maintenance/erp-mnt-service/src/test module-maintenance/erp-mnt-web/src/test` 排除 import 行 + test beans.xml ioc:type FQN——覆盖本域执行时点全部未迁移晚域；起草实测零命中，执行时点复扫确认）。矛盾则按路线图规则 6 停止回报。
+- [x] Proof: 消费 M0.2 登记册——读取 `tools/id-migration-registry.json5` + 登记册文档 §6.11 mnt 节，逐条核对：(i) A1 = 0（64 列全翻转）；(ii) A2 = bridge-main-080..085（mfg 5 + qa 1，全部位于 `OeeCalculator.java`）与本地实测 import 对账；(iii) A3 = bridge-test-125 作为 Phase 3 定位面；(iv) **B 退役义务 = bridge-main-024/025（ast `ErpAstDisposalProcessor:266/:274`）+ retired bridge-test-107/134 mock 回收（`TestMockMntBizModels`/`test-mock-mnt.beans.xml`/`TestErpAstDisposalEquipmentLinkage`）作为 Phase 2/3 定位面**；(v) C1 = backward-164/165/166/167 与 C2 = backward-225/226/227/228 作为 Phase 2/3 定位面（backward-165/226 为批内序 2（M2.2）登记的 successor 兑付面）；(vi) 按 b2b/assets A3' 先例做 FQN 盲区复扫（`rg 'app\.erp\.(prj|pur|sal|qa|crm|drp|log|mfg)\.' module-maintenance/erp-mnt-service/src/test module-maintenance/erp-mnt-web/src/test` 排除 import 行 + test beans.xml ioc:type FQN——覆盖本域执行时点全部未迁移晚域；起草实测零命中，执行时点复扫确认）。矛盾则按路线图规则 6 停止回报。
   - Skill: none
-- [ ] Proof: 双独立子 agent 批准记录落盘（批准人指针 + 结论 + 时间），未获批不得进入回写。
+  - **执行证据（2026-08-22）**：(i) `verify-id-fix-copy-diff.mjs module-maintenance` 门控输出「变更行 64 / 非法差异行 0 / 延后列 0」= A1 0 延后、64 列全翻转；(ii) 本地实测 `OeeCalculator.java:3/:4/:5/:6/:7/:10` 六个 import（mfg 5 + qa 1）与登记册逐条吻合；(iii)(iv)(v) 登记册条目全量读取核对，定位面与计划一致；(vi) FQN 复扫 = 非 import 行**零命中**（仅 `TestErpMntOee.java:3-13` 六个 import 行 = 已登记 bridge-test-125）+ test beans.xml ioc:type FQN 零命中 → **零补登**。
+- [x] Proof: 双独立子 agent 批准记录落盘（批准人指针 + 结论 + 时间），未获批不得进入回写。
   - Skill: none
-- [ ] Fix: 回写 orm（M0.1 裁定三步机制）——① `node tools/check-bigint-id-types.mjs dry-run` 时点刷新；② `node tools/verify-id-fix-copy-diff.mjs module-maintenance` 新鲜度门控（零非 stdDataType 行）；③ 门控通过后单文件落源。禁止盲 cp 静态副本、禁止 apply 模式。
+  - **执行证据**：Draft Review Record 已落盘批准 1（ses_fd94d6b83ffe9pO64KerPOnxfm，技术视角）+ 批准 2（ses_fd94d2446ffeFbAMaE2TINLbRo，治理视角，经 iteration 2 MAJOR-1 RESOLVED 生效），2026-08-22。
+- [x] Fix: 回写 orm（M0.1 裁定三步机制）——① `node tools/check-bigint-id-types.mjs dry-run` 时点刷新；② `node tools/verify-id-fix-copy-diff.mjs module-maintenance` 新鲜度门控（零非 stdDataType 行）；③ 门控通过后单文件落源。禁止盲 cp 静态副本、禁止 apply 模式。
   - Skill: none
-- [ ] Proof: `git diff module-maintenance/model/app-erp-maintenance.orm.xml` 逐行核对——仅 64 列 `stdDataType="long"→"string"`（自有 50 + md stub 13 + ast stub 1），`stdSqlType` 零变化、`delVersion`/`assignedTo`/`completedBy`/标签结构零变化；scan mnt 段重扫零 `NEEDS FIX`/零 `DEFERRED` 残留。
+  - **执行证据**：① dry-run 幂等（主外键 BIGINT 1662 / 实际修改 808 列 / 校验告警 0）；② 门控通过（64 变更行全为 stdDataType，非法差异行 0）；③ 单文件 cp 落源。
+- [x] Proof: `git diff module-maintenance/model/app-erp-maintenance.orm.xml` 逐行核对——仅 64 列 `stdDataType="long"→"string"`（自有 50 + md stub 13 + ast stub 1），`stdSqlType` 零变化、`delVersion`/`assignedTo`/`completedBy`/标签结构零变化；scan mnt 段重扫零 `NEEDS FIX`/零 `DEFERRED` 残留。
   - Skill: none
+  - **执行证据**：git diff 64 insertions / 64 deletions，全部含 `stdDataType`（非 stdDataType 差异行 = 0）；构成复核 = PK `name="id"` ×23（自有 15 + md stub 7 + ast stub 1）+ FK ×41（含 orgId ×7 = 自有 5 + md stub 2，与 MINOR-1 修订口径一致）；`delVersion`/`assignedTo`×2/`completedBy`×2 保持 long（grep 证实）；scan mnt 段 NEEDS FIX = 0、DEFERRED = 0。
 
 Exit Criteria:
 
-- [ ] 登记册消费核对在案（含 FQN 盲区复扫结论 + B 义务定位面）；双批准记录在案；新鲜度门控 + git diff + 工具重扫三重证明变更面精确 = 64 列 stdDataType
+- [x] 登记册消费核对在案（含 FQN 盲区复扫结论 + B 义务定位面）；双批准记录在案；新鲜度门控 + git diff + 工具重扫三重证明变更面精确 = 64 列 stdDataType
 
 ### Phase 2 - 增量重生成 + 主代码编译修复 + A2 落桥 + B 退役兑付
 
-Status: planned
+Status: completed
 Targets: `module-maintenance/erp-mnt-{dao,service}/src/main/java/**`（手写 IBiz/BizModel/Processor/Support/SPI）；**跨域编辑面：`module-assets/erp-ast-service/src/{main,test}/**`（2 main 桥接点 + test mock 回收）**
 Skill: `nop-backend-dev`
 
 - Item Types: `Fix`
 - Prereqs: Phase 1
 
-- [ ] Fix: `mvn clean install -pl module-maintenance/erp-mnt-codegen,module-maintenance/erp-mnt-dao,module-maintenance/erp-mnt-meta,module-maintenance/erp-mnt-service,module-maintenance/erp-mnt-web,module-maintenance/erp-mnt-app,module-maintenance/erp-mnt-api -Dmaven.test.skip=true`（D3 口径：7 模块显式列表、不带 `-am`、`-Dmaven.test.skip=true`）触发增量重生成。预期：mnt-dao `_gen` md 关系胶水自愈（M1.1 登记中间态）；ast 胶水随 stub 翻转与 ast-dao String jar 完全一致。
+- [x] Fix: `mvn clean install -pl module-maintenance/erp-mnt-codegen,module-maintenance/erp-mnt-dao,module-maintenance/erp-mnt-meta,module-maintenance/erp-mnt-service,module-maintenance/erp-mnt-web,module-maintenance/erp-mnt-app,module-maintenance/erp-mnt-api -Dmaven.test.skip=true`（D3 口径：7 模块显式列表、不带 `-am`、`-Dmaven.test.skip=true`）触发增量重生成。预期：mnt-dao `_gen` md 关系胶水自愈（M1.1 登记中间态）；ast 胶水随 stub 翻转与 ast-dao String jar 完全一致。
   - Skill: `nop-backend-dev`
-- [ ] Fix: 编译器驱动修复主代码——逐条修复 mnt dao + service 手写代码类型错误（定位面：fin 3 文件（C1）+ inv 5 文件（C1，inv 已 String 直传按语境）+ md 2 文件 + notify 3 文件（C1，签名不变预期零破坏核验）+ 全域 IBiz/值对象 Long 签名 + `.getId()` 下游；fin/inv posting 族 id 值流转以编译器实际清单为准；**`EquipmentStatusLinker.priorStatusCache` `ConcurrentHashMap<Long,String>` 键 String 化**——equipment-integration.md:148 实现注记对象），直到 7 模块链 `-Dmaven.test.skip=true` 构建全绿。修复清单落盘本计划。
+  - **执行证据**：首轮构建 mnt-dao 一次通过（`_gen` 15 实体重生成 + `_app.orm.xml`/xmeta/view 同步；md/ast 关系胶水自愈 = 零手改）；首轮 javac 报错 50 处/20 文件全部位于 erp-mnt-service main。
+- [x] Fix: 编译器驱动修复主代码——逐条修复 mnt dao + service 手写代码类型错误（定位面：fin 3 文件（C1）+ inv 5 文件（C1，inv 已 String 直传按语境）+ md 2 文件 + notify 3 文件（C1，签名不变预期零破坏核验）+ 全域 IBiz/值对象 Long 签名 + `.getId()` 下游；fin/inv posting 族 id 值流转以编译器实际清单为准；**`EquipmentStatusLinker.priorStatusCache` `ConcurrentHashMap<Long,String>` 键 String 化**——equipment-integration.md:148 实现注记对象），直到 7 模块链 `-Dmaven.test.skip=true` 构建全绿。修复清单落盘本计划。
   - Skill: `nop-backend-dev`
-- [ ] Fix: A2 前向桥接 6 处落桥（D4 消费协议）——mnt String id ↔ mfg/qa Long API 的调用点加转换桥（mfg 5 + qa 1，全部位于 `OeeCalculator.java`：`ErpMfgJobCard`/`JobCardTimeLog`/`WorkOrder`/`WorkcenterCalendar`/`WorkcenterCapacity`/`ErpQaInspection` 类型级引用——id 语境经变量流转处按编译器/域 plan grep 定位落 `ConvertHelper.toLong` 桥；**eq/filter 语义值桥主动识别**（Long 列传 String 静默空匹配，contract 037/038 + cs 059 先例）），每处登记 grep 例外清单（条目 id + file:line + 转换方向），退役 owner M3.1（mfg 5）/M2.3（qa 1）；代码内 bridge 注释双向指针。
+  - **主代码修复清单（2026-08-22）**：
+    - **dao（6 文件）**：`IErpMntDowntimeEntryBiz`（record/complete）、`IErpMntEquipmentBiz`（changeStatus/changeStatusForAssetDisposal/restoreFromAssetDisposal）、`IErpMntRequestBiz`（5 方法）、`IErpMntSparePartUsageBiz`（confirm/reverseConfirm + javadoc）、`IErpMntVisitBiz`（5 方法）id 参数 Long→String；`MntOpenDowntimeWindow` equipmentId/workcenterId 字段+getter String 化。
+    - **posting（3 文件，C1 backward-164/165/166 定位面）**：`MaintenanceIssuePostingDispatcher`（dispatchIfApplicable/loadLedgers/resolveAcctSchemaId/resolveFunctionalCurrencyId 签名 String + acctSchemaId/currencyId 局部变量 String）、`MaintenanceLaborPostingDispatcher`（同型 + equipmentId 局部 + voucherId String）、`MntPostingExecutor`（postEvent 返回 String）。md/fin/inv API 均 String 直传，零语义桥。
+    - **support（6 文件）**：`EquipmentStatusLinker`（全部 equipmentId/assetId 参数 String + **`priorStatusCache` `ConcurrentHashMap<String,String>` 键 String 化**）、`EquipmentStatusLogWriter`（append(String)）、`EquipmentRuntimeCalculator`（computeRunningHours/computeRunningHoursInRange/loadEquipment/findLogs String）、`ScheduleDueGenerator`（existsVisitForScheduleDate）、`DecommissionedEquipmentGuard`（2 方法）、`OeeCalculator`（computeOee/computeDowntimeHours String + A2 桥，见下条）。
+    - **entity BizModel（5 文件）**：ErpMntSparePartUsageBizModel/ErpMntDowntimeEntryBizModel/ErpMntVisitBizModel/ErpMntEquipmentBizModel/ErpMntRequestBizModel 的 `@Name` id 参数 Long→String（@Override 对齐翻转后 IBiz）。
+    - **processor（19 文件）**：全部 mnt id 入参 String（accept/start/complete/cancel/schedule/start/record/rejectRequest/confirm/reverseConfirm/reportAdditionalFault + requireVisit/requireRequest/requireUsage/requireDowntime/loadLines）；`ErpMntVisitReportAdditionalFaultProcessor` 的 `requestedBy`/`visit.getAssignedTo()` **保持 Long**（规则 4 孤儿操作人列，orm `REQUESTED_BY`/`ASSIGNED_TO` 未翻转）。
+    - **report（1 文件）**：`ErpMntReportBizModel`（equipmentId 参数/数据集聚合签名 String + `asLong`→`asString` + visitIds/taskCountByVisit/usageCountByVisit/equipmentNames/DowntimeAggregator/collectEquipmentIds 键类型 String 化；`asDate` 内 epoch `Long.parseLong` 合法非 id 保留）。
+    - **dashboard（1 文件）**：`ErpMntDashboardBizModel`（computeOee(String) + equipmentIds/scheduleIds 集合 String；`(Long) r.get("count")` 计数聚合合法非 id 保留）。
+    - **C1 兑付核验**：backward-165（inv 5 文件面）`SparePartIssueService`/`AbstractErpMntSparePartUsageProcessor`/`ErpMntSparePartUsageConfirmProcessor`/`ErpMntSparePartUsageReverseConfirmProcessor` —— inv API 已 String（M2.2），mnt 翻转后 String↔String 直传，`SparePartIssueService` 零代码改动；backward-164（fin）/166（md）/167（notify）签名全 String 化后编译零破坏（notify `notify(String,Map,ctx)` 签名不变）。
+- [x] Fix: A2 前向桥接 6 处落桥（D4 消费协议）——mnt String id ↔ mfg/qa Long API 的调用点加转换桥（mfg 5 + qa 1，全部位于 `OeeCalculator.java`：`ErpMfgJobCard`/`JobCardTimeLog`/`WorkOrder`/`WorkcenterCalendar`/`WorkcenterCapacity`/`ErpQaInspection` 类型级引用——id 语境经变量流转处按编译器/域 plan grep 定位落 `ConvertHelper.toLong` 桥；**eq/filter 语义值桥主动识别**（Long 列传 String 静默空匹配，contract 037/038 + cs 059 先例）），每处登记 grep 例外清单（条目 id + file:line + 转换方向），退役 owner M3.1（mfg 5）/M2.3（qa 1）；代码内 bridge 注释双向指针。
   - Skill: `nop-backend-dev`
-- [ ] Fix: **B 退役义务兑付（main 2 条）**——mnt `IErpMntEquipmentBiz.changeStatusForAssetDisposal/restoreFromAssetDisposal(assetId)` 签名翻转 String 后，ast 侧实值桥错型：`ErpAstDisposalProcessor:266/:274` `ConvertHelper.toLong(asset.getId())`/`toLong(disposal.getAssetId())` → String 直传，移除 :265/:273 bridge 注释；ast 7 模块链（`module-assets/erp-ast-{codegen,dao,meta,service,web,app,api}` no-am、`-Dmaven.test.skip=true`）重建绿；ast grep 复核 mnt 桥残留清零（M2.4 先例口径）。M2.4 assets 先例（mission 首例晚域退役早域桥接点）为执行范式。
+  - **A2 桥接例外清单（全部位于 `OeeCalculator.java`，退役 owner M3.1/M2.3）**：
+    | 条目 | 转换点 | 方向 | 说明 |
+    | --- | --- | --- | --- |
+    | bridge-main-080/083/084 | `OeeCalculator.computeOee` 头部 `Long workcenterId = ConvertHelper.toLong(equipment.getWorkcenterId())`（单转换点覆盖三实体的 eq 过滤：JobCard `collectOutput`、WorkcenterCalendar `computeCalendarHours`、WorkcenterCapacity `resolveCapacityPerHour`） | mnt String → mfg Long | eq/filter 语义值桥（String 传 Long 列静默空匹配）；代码内 bridge 注释双向指针已落 |
+    | bridge-main-081 | JobCardTimeLog `in("jobCardId", cardIds)` | 无转换点 | cardIds 自 mfg `getId()` Long 原生流转 |
+    | bridge-main-082 | WorkOrder `in("id", workOrderIds)` | 无转换点 | workOrderIds 自 mfg `getWorkOrderId()` Long 原生流转 |
+    | bridge-main-085 | QaInspection `in("relatedBillCode", workOrderCodes)` | 无转换点 | 按工单编码（String）关联，零 id 穿越 |
+- [x] Fix: **B 退役义务兑付（main 2 条）**——mnt `IErpMntEquipmentBiz.changeStatusForAssetDisposal/restoreFromAssetDisposal(assetId)` 签名翻转 String 后，ast 侧实值桥错型：`ErpAstDisposalProcessor:266/:274` `ConvertHelper.toLong(asset.getId())`/`toLong(disposal.getAssetId())` → String 直传，移除 :265/:273 bridge 注释；ast 7 模块链（`module-assets/erp-ast-{codegen,dao,meta,service,web,app,api}` no-am、`-Dmaven.test.skip=true`）重建绿；ast grep 复核 mnt 桥残留清零（M2.4 先例口径）。M2.4 assets 先例（mission 首例晚域退役早域桥接点）为执行范式。
   - Skill: `nop-backend-dev`
-- [ ] Fix: **B 退役义务兑付（retired test mock 回收）**——ast 测试侧 mnt 桩翻转 String（`TestMockMntBizModels` mock 实现 `IErpMntEquipmentBiz` Long 桩签名 → String + `TestErpAstDisposalEquipmentLinkage` 断言侧 ConvertHelper.toLong 桥 → String 直传；`test-mock-mnt.beans.xml` ioc:type FQN 类名不变零改动核验）——retired bridge-test-107/134 note 兑付。
+  - **执行证据**：ast `ErpAstDisposalProcessor` 两处 toLong 桥 → String 直传 + bridge 注释移除 + 未用 import 移除（编辑后行号 :264/:271）；ast 7 模块链 `-Dmaven.test.skip=true` BUILD SUCCESS；`rg 'app\.erp\.mnt|IErpMnt|ConvertHelper\.toLong' module-assets --glob '!**/target/**'` = 仅余 4 个合法消费文件（Processor 接口消费 + test mock 基建），零 mnt 桥残留。
+- [x] Fix: **B 退役义务兑付（retired test mock 回收）**——ast 测试侧 mnt 桩翻转 String（`TestMockMntBizModels` mock 实现 `IErpMntEquipmentBiz` Long 桩签名 → String + `TestErpAstDisposalEquipmentLinkage` 断言侧 ConvertHelper.toLong 桥 → String 直传；`test-mock-mnt.beans.xml` ioc:type FQN 类名不变零改动核验）——retired bridge-test-107/134 note 兑付。
   - Skill: `nop-testing`
-- [ ] Fix: 自身链破坏处置（D4 carve-out）——no-am 口径下预期零外域破坏（7 模块全绿，reactor 不含外域模块）；mfg 对 mnt 的引用破坏（main 1 + test 1 文件）为已登记中间态（successor M3.1），Phase 4 登记；未登记破坏按路线图规则 6 停止回报。
+  - **执行证据**：`TestMockMntBizModels`（changeStatus/changeStatusForAssetDisposal/restoreFromAssetDisposal + lastDecommissionAssetId/lastRestoreAssetId 字段 → String）；`TestErpAstDisposalEquipmentLinkage` 2 处断言 `ConvertHelper.toLong(assetId)` → `assetId` 直传 + 注释/import 移除；`test-mock-mnt.beans.xml` 零改动（ioc:type = `app.erp.mnt.biz.IErpMntEquipmentBiz` FQN 不变）——test-compile 证明归 Phase 3 早域复跑。
+- [x] Fix: 自身链破坏处置（D4 carve-out）——no-am 口径下预期零外域破坏（7 模块全绿，reactor 不含外域模块）；mfg 对 mnt 的引用破坏（main 1 + test 1 文件）为已登记中间态（successor M3.1），Phase 4 登记；未登记破坏按路线图规则 6 停止回报。
   - Skill: `nop-backend-dev`
+  - **执行证据**：mnt 7 模块链全绿（reactor 仅 7 模块）；`rg -l 'app\.erp\.mnt' module-manufacturing/erp-mfg-service/src` = 恰 2 文件（`ErpMfgScheduleToJobCardProcessor` main + `TestErpMfgJobCardDowntimeGate` test）与登记册 §6.11 被引用清单吻合，无未登记破坏。
 
 Exit Criteria:
 
-- [ ] mnt 7 模块链（显式列表、no-am、`-Dmaven.test.skip=true`）构建全绿（main 代码）；主代码修复清单 + A2 桥接例外清单在案
-- [ ] **B 义务：ast 7 模块链重建绿（main 口径 `-Dmaven.test.skip=true`）+ ast grep 桥残留清零**（mock 回收后的 ast test-compile 证明归 Phase 3 早域复跑——批内序 2 对 aps 同形状处理）
+- [x] mnt 7 模块链（显式列表、no-am、`-Dmaven.test.skip=true`）构建全绿（main 代码）；主代码修复清单 + A2 桥接例外清单在案
+- [x] **B 义务：ast 7 模块链重建绿（main 口径 `-Dmaven.test.skip=true`）+ ast grep 桥残留清零**（mock 回收后的 ast test-compile 证明归 Phase 3 早域复跑——批内序 2 对 aps 同形状处理）
 
 ### Phase 3 - 测试修复 + A3 桥接退役 + 快照重录 + 域级测试 + 早域测试复跑
 
-Status: planned
+Status: completed
 Targets: `module-maintenance/**/src/test/**`、`module-maintenance/erp-mnt-service/_cases/**`；早域复跑：`module-assets` 测试
 Skill: `nop-testing`
 
 - Item Types: `Fix | Proof`
 - Prereqs: Phase 2
 
-- [ ] Fix: 测试代码修复——27 个测试类的 Long 用法（字面量断言、helper 签名、seed `orm_propValueByName("id", id)` 形态——md/notify 先例），逐文件修复至测试编译通过；C2 后向 test 适配（backward-225 fin 7 + backward-226 inv 4（批内序 2 登记的 successor 兑付）+ backward-227 md 6 + backward-228 notify 1 文件）；mnt-web test-scope ast-dao（String）/prj-dao（陈旧 Long jar）编译对象零 id 穿越核验（`ErpMntWebPagesTest` 治理排除但参与 test-compile）。
+- [x] Fix: 测试代码修复——27 个测试类的 Long 用法（字面量断言、helper 签名、seed `orm_propValueByName("id", id)` 形态——md/notify 先例），逐文件修复至测试编译通过；C2 后向 test 适配（backward-225 fin 7 + backward-226 inv 4（批内序 2 登记的 successor 兑付）+ backward-227 md 6 + backward-228 notify 1 文件）；mnt-web test-scope ast-dao（String）/prj-dao（陈旧 Long jar）编译对象零 id 穿越核验（`ErpMntWebPagesTest` 治理排除但参与 test-compile）。
   - Skill: `nop-testing`
-- [ ] Fix: A3 test 桥接适配（bridge-test-125，1 条）——`TestErpMntOee` 引用 mfg 5 实体 + qa 1 实体的 id 形态桥接（String↔Long 局部转换或 mock 桩签名适配，与 Phase 2 桥接同型），适配后在登记册退役对应 test 桥接条目（owner M3.2 = 本计划）。
+  - **执行证据（2026-08-22）**：javac test 报错三轮清零（210→110→11→0），共修复 **19 个测试文件**（TestErpMntDowntimeAndE2E/SparePartPosting/SparePartUsageReversal/LaborPosting/VisitRequestLinkage/EquipmentReferenceGuard/DowntimeSchedulingLinkage/DueVisitIdempotency/EmployeeIdRowFilterIsolation/AssetDisposalLinkage/RuntimeTrigger/Oee/SparePartAndSchedule/TaskTemplate/VisitCancelReversal/VisitReportAdditionalFault/VisitRequestStateMachine + dashboard/TestErpMntDashboard + report/TestErpMntReportRendering）：种子常量 Long→String 字面量（ASSIGNEE_ID/requestedBy/assignedTo 孤儿操作人列合法保持 Long）、nextId()/rpc helper/seed helper 签名 String 化、`orm_propValue(1, id)` → `orm_propValueByName("id", id)`（Dashboard）、notify 模板 seed id String（backward-228 兑付）、`responseId` Long.parseLong 消除（ReportAdditionalFault）、`findLatestLog` id 序比较 `a.getId() < b.getId()` 字典序陷阱改 `ConvertHelper.toLong` 数值序（contract idOrder 先例，RuntimeTrigger）、dashboard 2 处 `assertEquals(121L/301L, ...)` 改 String 断言、`seedUsageLine` lineNo 派生 `Integer.parseInt(materialId)`（Posting/Reversal）；**mnt-web test-compile 通过 = ast-dao（String）+ prj-dao（陈旧 Long jar）零 id 穿越实证**（`ErpMntWebPagesTest` 参与编译，治理排除仅运行期）。C2 定位面文件全数命中：fin 7（TestErpMntAcctDocProviderAccountKey/DowntimeAndE2E/LaborPosting/SparePartAndSchedule/SparePartPosting/SparePartUsageReversal/VisitCancelReversal）+ inv 4（DowntimeAndE2E/SparePartAndSchedule/SparePartPosting/SparePartUsageReversal——inv String 直传）+ md 6 + notify 1（DowntimeSchedulingLinkage）。
+- [x] Fix: A3 test 桥接适配（bridge-test-125，1 条）——`TestErpMntOee` 引用 mfg 5 实体 + qa 1 实体的 id 形态桥接（String↔Long 局部转换或 mock 桩签名适配，与 Phase 2 桥接同型），适配后在登记册退役对应 test 桥接条目（owner M3.2 = 本计划）。
   - Skill: `nop-testing`
-- [ ] Fix: 快照每域重录（用户裁决固定步骤）——`RECORDING` 模式运行 mnt service 测试 → 逐案审核 `_cases/` 新形态（619 文件基线；id 以 String 形态落盘；非确定性单元格按 aps/contract 先例 `*` 通配修正；**「断言式 + 空 autotest.yaml」范式测试不录快照——cs 81 方法目录超录回退先例**）→ 注解还原（grep 零 RECORDING/forceSaveOutput 残留）→ 切回 `CHECKING` 复跑确认全绿。重录足迹（内容 diff vs 新增落盘分列）与审核结论记录本计划。
+  - **执行证据**：mnt 侧设备/状态日志/停机种子 String 化；mfg/qa 种子（JobCard/TimeLog/WorkOrder/WorkcenterCalendar/WorkcenterCapacity/QaInspection + WC_A/WC_B/MATERIAL_1/WO_A 常量）保持 Long；mnt `seedEquipment` 的 workcenterId 参数经 `String.valueOf(WC)` 局部桥接 + 双向指针 bridge 注释（owner M3.1/M2.3）；登记册退役归 Phase 4 落盘。9/9 OEE 用例绿。
+- [x] Fix: 快照每域重录（用户裁决固定步骤）——`RECORDING` 模式运行 mnt service 测试 → 逐案审核 `_cases/` 新形态（619 文件基线；id 以 String 形态落盘；非确定性单元格按 aps/contract 先例 `*` 通配修正；**「断言式 + 空 autotest.yaml」范式测试不录快照——cs 81 方法目录超录回退先例**）→ 注解还原（grep 零 RECORDING/forceSaveOutput 残留）→ 切回 `CHECKING` 复跑确认全绿。重录足迹（内容 diff vs 新增落盘分列）与审核结论记录本计划。
   - Skill: `nop-testing`
-- [ ] Proof: `mvn test -pl module-maintenance/erp-mnt-service,module-maintenance/erp-mnt-web`（D3 口径：不带 `-am`）全绿——service 27 测试类 + web BUILD SUCCESS（`ErpMntWebPagesTest` 治理排除，0 tests 预期）。若复现平台 IoC 回归，按 fin 修正版先例修复（test-scope VFS delta 带根元素 `x:extends="super"` + DeltaOverride delta-layer 补 default 层集）并登记。
+  - **执行证据**：快照式 4 类（TestErpMntVisitCrudSmoke/TaskTemplate/RuntimeTrigger/VisitRequestLinkage）`snapshotTest = RECORDING` 运行（预期 snapshot-finished 异常 = 录制完成）→ 注解还原 grep 零残留 → CHECKING 复跑 156/156 全绿。**重录足迹 = 23 内容 diff + 45 新增落盘 = 68 文件（619 → 664）**：内容 diff = response.json5 id String 形态（`"equipmentId": 1` → `"1"` 实证）+ xmeta 重生成字段序/新增 posted/createdBy 列 + CSV 列刷新 + CRLF 行尾；新增 = RuntimeTrigger 8 方法目录首录（input/output tables，`@var:` + `*` 通配确定性保持，零日期地雷——按 cs 先例仅录快照式类，断言式 + 空 autotest.yaml 类不录）。
+- [x] Proof: `mvn test -pl module-maintenance/erp-mnt-service,module-maintenance/erp-mnt-web`（D3 口径：不带 `-am`）全绿——service 27 测试类 + web BUILD SUCCESS（`ErpMntWebPagesTest` 治理排除，0 tests 预期）。若复现平台 IoC 回归，按 fin 修正版先例修复（test-scope VFS delta 带根元素 `x:extends="super"` + DeltaOverride delta-layer 补 default 层集）并登记。
   - Skill: `nop-testing`
-- [ ] Proof: **早域测试复跑（B 义务验证）**——`mvn test -pl module-assets/erp-ast-service,module-assets/erp-ast-web` 全绿（320/320 基线，web 0 tests 治理排除；含 mock 回收后形态）。红则修复至绿（桥接退役遗留问题在本计划内闭环）。
+  - **执行证据**：service **156/156 绿**（28 编译对象含 statemachine 矩阵 + posting 注入）+ web **BUILD SUCCESS（0 tests，`@Tag("full-app")` 治理排除，successor M4.1）**。mnt 侧 IoC self-wait 未复现（先例 delta 已在位）；第二环在 ast 复跑侧复现，处置见下一项。
+- [x] Proof: **早域测试复跑（B 义务验证）**——`mvn test -pl module-assets/erp-ast-service,module-assets/erp-ast-web` 全绿（320/320 基线，web 0 tests 治理排除；含 mock 回收后形态）。红则修复至绿（桥接退役遗留问题在本计划内闭环）。
   - Skill: `nop-testing`
+  - **执行证据**：首轮 228 run 17 errors = 平台 IoC 回归**第二环**（`$DEFAULT$nopOrmSessionFactory` self-wait 经 nopDataAuthChecker→nopDaoProvider 环，M3.3 hr 首发现 + M2.2 aps/fin 兑付同型；本域执行时点 mnt jar 重装后 classpath 时序变化复现）——按 hr 修正版先例落 ast test-scope VFS delta（`_delta/default/erp/common/beans/app-service.beans.xml`，`nopDataAuthChecker.daoProvider` `ioc:lazy-property` + 根元素 `x:extends="super"`，xmllint 良构）；复跑 **320/320 绿**（web 0 tests 治理排除）——mock 回收后形态（TestMockMntBizModels String 桩 + TestErpAstDisposalEquipmentLinkage String 直传断言）全部通过。
 
 Exit Criteria:
 
-- [ ] mnt 域级测试全绿（service 27 类 + web 治理排除偏差登记）；快照重录完成且 `CHECKING` 复跑通过；重录清单在案
-- [ ] **早域复跑全绿（ast 320/320 基线维持）；A3 1 条退役在案**
+- [x] mnt 域级测试全绿（service 27 类 + web 治理排除偏差登记）；快照重录完成且 `CHECKING` 复跑通过；重录清单在案
+- [x] **早域复跑全绿（ast 320/320 基线维持）；A3 1 条退役在案**（登记册状态更新归 Phase 4 落盘）
 
 ### Phase 4 - 语义陷阱 grep 门控 + page.yaml Fix + 收尾登记
 
-Status: planned
+Status: completed
 Targets: `module-maintenance/**`（手写代码 + mnt-web 手写 page.yaml）、`docs/backlog/id-string-migration-roadmap.md`、`docs/logs/2026/{08-22 或执行日}.md`、`tools/id-migration-registry.json5`
 Skill: none
 
 - Item Types: `Proof | Fix | Add`
 - Prereqs: Phase 3
 
-- [ ] Proof: 语义陷阱 grep 门控（路线图横切 §3，mnt 手写 main+test 范围）清零——`\.longValue\(\)`、`Long\.parseLong\(`、`Map<Long`、`Set<Long`、`String\.format\("%d` 及 `%d` 变体零命中（`Map<Long` 含 `priorStatusCache` 键 String 化核验；A2 桥接转换点为登记例外，逐条列于例外清单并标注退役 owner M3.1/M2.3）；Long 装箱 `==`/`!=` 比较（id 上下文）逐条核清；id 序比较陷阱（String 字典序，contract idOrder 先例）专项 grep：`getId\(\)\s*[<>]|comparing.*getId`；残留 `Long` 逐条判定合法非 id 或登记 successor；sql-lib.xml 仓内零存在（注明即可）。结果逐项记录本计划。
+- [x] Proof: 语义陷阱 grep 门控（路线图横切 §3，mnt 手写 main+test 范围）清零——`\.longValue\(\)`、`Long\.parseLong\(`、`Map<Long`、`Set<Long`、`String\.format\("%d` 及 `%d` 变体零命中（`Map<Long` 含 `priorStatusCache` 键 String 化核验；A2 桥接转换点为登记例外，逐条列于例外清单并标注退役 owner M3.1/M2.3）；Long 装箱 `==`/`!=` 比较（id 上下文）逐条核清；id 序比较陷阱（String 字典序，contract idOrder 先例）专项 grep：`getId\(\)\s*[<>]|comparing.*getId`；残留 `Long` 逐条判定合法非 id 或登记 successor；sql-lib.xml 仓内零存在（注明即可）。结果逐项记录本计划。
   - Skill: none
-- [ ] Fix: mnt-web 手写 page.yaml raw-GraphQL `:Long` 变量 4 处就地 String 化——`visit-wizard/main.page.yaml:70/:161/:270/:291`（`$vid:Long` → `:String`，visitId 查询/mutation 变量）；variables 链与 options value 链一致性核证（contract version-diff 先例）；随后 `rg ':Long' module-maintenance/erp-mnt-web/src/main/resources/_vfs --glob '!**/_gen/**'` 清零（非 id 类型变量如 `$lim:Int` 合法保留并逐条判定）；mnt-web 重建 BUILD SUCCESS 验证。
+  - **执行证据（2026-08-22）**：`.longValue()` ×5 = 全部合法非 id（DashboardBizModel:208 count 聚合、TestErpMntOee:256/257 equipmentTotal/computedCount 计数、DowntimeAndE2E:130/ReportRendering:246 totalMinutes 时长）；`Long.parseLong` ×3 = 合法非 id（Report:190/191 epoch 日期 parse（fin 先例同型）+ ReportAdditionalFaultProcessor:84 孤儿操作人列 requestedBy 转换（规则 4 保持 Long））；`Map<Long`/`Set<Long` ×4 = 全部位于 OeeCalculator（cardIds/workOrderIds/productIds mfg 侧）= A2 登记例外（退役 owner M3.1）；`%d` 变体零命中；装箱 `==`/`!=` 仅 `v.getId() != null` null 检查；id 序比较专项零命中（test 侧 RuntimeTrigger `findLatestLog` `a.getId() < b.getId()` 陷阱已于 Phase 3 修复为 `ConvertHelper.toLong` 数值序）；`priorStatusCache` = `ConcurrentHashMap<String,String>` 键 String 化核验 ✓；sql-lib.xml 零存在 ✓。
+- [x] Fix: mnt-web 手写 page.yaml raw-GraphQL `:Long` 变量 4 处就地 String 化——`visit-wizard/main.page.yaml:70/:161/:270/:291`（`$vid:Long` → `:String`，visitId 查询/mutation 变量）；variables 链与 options value 链一致性核证（contract version-diff 先例）；随后 `rg ':Long' module-maintenance/erp-mnt-web/src/main/resources/_vfs --glob '!**/_gen/**'` 清零（非 id 类型变量如 `$lim:Int` 合法保留并逐条判定）；mnt-web 重建 BUILD SUCCESS 验证。
   - Skill: none
-- [ ] Proof: 手写 view.xml 零改动验证——`git status module-maintenance/erp-mnt-web` 确认无手写 view 文件被动变更（生成 view 随 codegen 更新不在此列；page.yaml 修复 diff 为本计划主动变更）。
+  - **执行证据**：4 处 `$vid:Long` → `$vid:String`（:70 查询 `ErpMntVisit__get` + :161/:270/:291 `start/complete/cancel` mutation）；variables 链 `vid: "${visitId}"` / `"${visit.id}"` 与新 String 变量类型一致（visitId/visit.id 均已 String）；`rg ':Long'` 手写清零（唯一保留 `$lim:Int` = 分页 limit 非 id 合法）；YAML 良构校验通过 + mnt-web 重建 BUILD SUCCESS。
+- [x] Proof: 手写 view.xml 零改动验证——`git status module-maintenance/erp-mnt-web` 确认无手写 view 文件被动变更（生成 view 随 codegen 更新不在此列；page.yaml 修复 diff 为本计划主动变更）。
   - Skill: none
-- [ ] Add: 登记册状态更新——B main 桥接 2 条（bridge-main-024/025）→ retired（兑付 note：ast 侧移除证据 + 链重建 + 测试复跑 + mock 回收指针）；A3 test 桥接 1 条（bridge-test-125）→ retired（owner M3.2 兑付 note）；A2 main 桥接 6 条保持 active（退役 owner M3.1（mfg 5）/M2.3（qa 1））；被引用面确认（mfg 2 文件 successor 指针已由 backward-pointer 登记）；登记册消费工具 fail-closed 解析验证通过（dry-run 正常消费 + mnt 段 0 待改列）。
+  - **执行证据**：mnt-web 非 `_gen` 变更 = 仅 `visit-wizard/main.page.yaml`（本计划主动 Fix）；view 变更全部位于 `pages/*/​_gen/`（16 文件随 codegen 重生成），零手写 view 被动变更。
+- [x] Add: 登记册状态更新——B main 桥接 2 条（bridge-main-024/025）→ retired（兑付 note：ast 侧移除证据 + 链重建 + 测试复跑 + mock 回收指针）；A3 test 桥接 1 条（bridge-test-125）→ retired（owner M3.2 兑付 note）；A2 main 桥接 6 条保持 active（退役 owner M3.1（mfg 5）/M2.3（qa 1））；被引用面确认（mfg 2 文件 successor 指针已由 backward-pointer 登记）；登记册消费工具 fail-closed 解析验证通过（dry-run 正常消费 + mnt 段 0 待改列）。
   - Skill: none
-- [ ] Add: owner doc 注记——`docs/design/maintenance/equipment-integration.md:148` `priorStatusCache` `ConcurrentHashMap<Long,String>` 陈述就地注记 Java 层已 String 化（引用本计划）；其余 mnt 设计文档 grep 复核（零 Long id 陈述则记录结论）。
+  - **执行证据**：`tools/id-migration-registry.json5`——bridge-main-024/025 + bridge-test-125 → `"status": "retired"` + 兑付 note（ast 侧移除/链重建/复跑/mock 回收指针 + TestErpMntOee 局部桥形态）；A2 6 条保持 active 未动；mfg 被引用面 = 恰 2 文件与登记册 §6.11 吻合（successor M3.1）；fail-closed 验证 = dry-run 正常解析消费（修改列 808 → 744，mnt 64 已落源）+ scan mnt 段 0 NEEDS FIX / 0 DEFERRED。
+- [x] Add: owner doc 注记——`docs/design/maintenance/equipment-integration.md:148` `priorStatusCache` `ConcurrentHashMap<Long,String>` 陈述就地注记 Java 层已 String 化（引用本计划）；其余 mnt 设计文档 grep 复核（零 Long id 陈述则记录结论）。
   - Skill: none
-- [ ] Add: 路线图 M3.2 → `done`（M2/M3 表位次 11 + 头部「最后更新」；位次 12 prj 解锁——供后续批次）+ 日志条目（含验证状态 + B 义务兑付）。
+  - **执行证据**：equipment-integration.md §3.3 实现注记更新为 `ConcurrentHashMap<String,String>`（键 = 设备 id String——Java 层已随主键 string 化迁移（plan 2026-08-22-0731-3，M3.2））；`rg 'Long' docs/design/maintenance/*.md` 其余零 Long id 陈述（结论：零文档变更）。
+- [x] Add: 路线图 M3.2 → `done`（M2/M3 表位次 11 + 头部「最后更新」；位次 12 prj 解锁——供后续批次）+ 日志条目（含验证状态 + B 义务兑付）。
   - Skill: none
+  - **执行证据**：roadmap M2/M3 表位次 11 → `done`（证据摘要行）+ 头部「最后更新」改为 M3.2 done（位次 12 prj 解锁）；`docs/logs/2026/08-22.md` 顶部新增 M3.2 条目（含验证状态全绿 + B 义务兑付 + ast IoC 第二环 delta 兑付）；bug doc `2026-08-21-nop-sequence-generator-ioc-self-wait-*.md` 补记 ast 同款兑付登记。
 
 Exit Criteria:
 
-- [ ] grep 门控零残留（例外逐条核清 + 桥接例外清单在案 + priorStatusCache 键 String 化核验）；page.yaml `:Long` 清零 + mnt-web 重建绿 + view 零被动变更在案
-- [ ] 路线图状态、登记册退役（B 2 条 + A3 1 条）、日志一致
+- [x] grep 门控零残留（例外逐条核清 + 桥接例外清单在案 + priorStatusCache 键 String 化核验）；page.yaml `:Long` 清零 + mnt-web 重建绿 + view 零被动变更在案
+- [x] 路线图状态、登记册退役（B 2 条 + A3 1 条）、日志一致
 
 ## Draft Review Record
 
@@ -170,15 +205,15 @@ Exit Criteria:
 
 > 完整仓库验证定制为域级口径（路线图规则 3 D3 修订：禁止以全量构建为中间 gate；全量构建仅存在于 M4.1）。
 
-- [ ] 范围内行为完成（64 列落源 + no-am 7 模块重生成 + 手写代码/测试修复 + A2 落桥 6 + B 退役 2 与 mock 回收 + 快照重录 + grep 门控清零 + page.yaml 4 处 Fix）
-- [ ] 相关文档对齐（owner doc 注记（equipment-integration.md:148）、路线图 M3.2 状态、登记册退役（B 2 + A3 1）、日志）
-- [ ] 已运行验证：`mvn clean install -pl module-maintenance/erp-mnt-{codegen,dao,meta,service,web,app,api} -DskipTests` 全绿 + `mvn test -pl module-maintenance/erp-mnt-service,module-maintenance/erp-mnt-web` 全绿 + **早域复跑 ast 320/320** + 工具重扫零残留（mnt 段 `NEEDS FIX` = 0）
-- [ ] 无范围内项目降级为 deferred/follow-up（web 页面测试治理排除为已提交决策 + M4.1 successor 登记，属偏差登记而非范围降级）
-- [ ] 保护区域双独立子 agent 批准记录落盘（Phase 1 前置）
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：状态、阶段、门控和日志都一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成（64 列落源 + no-am 7 模块重生成 + 手写代码/测试修复 + A2 落桥 6 + B 退役 2 与 mock 回收 + 快照重录 + grep 门控清零 + page.yaml 4 处 Fix）
+- [x] 相关文档对齐（owner doc 注记（equipment-integration.md:148）、路线图 M3.2 状态、登记册退役（B 2 + A3 1）、日志）
+- [x] 已运行验证：`mvn clean install -pl module-maintenance/erp-mnt-{codegen,dao,meta,service,web,app,api} -DskipTests` 全绿 + `mvn test -pl module-maintenance/erp-mnt-service,module-maintenance/erp-mnt-web` 全绿（156/156 + web 0 tests 治理排除）+ **早域复跑 ast 320/320** + 工具重扫零残留（mnt 段 `NEEDS FIX` = 0）
+- [x] 无范围内项目降级为 deferred/follow-up（web 页面测试治理排除为已提交决策 + M4.1 successor 登记，属偏差登记而非范围降级）
+- [x] 保护区域双独立子 agent 批准记录落盘（Phase 1 前置）
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证：状态、阶段、门控和日志都一致
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
@@ -200,20 +235,20 @@ Exit Criteria:
 - Why Not Blocking Closure: `@Tag("full-app")` + surefire excludedGroups 为先于本 mission 的已提交治理决策（plan 2026-07-24-0930-1），实证依赖全量 classpath
 - Successor Required: `yes`（M4.1 app-erp-all `ErpAllWebPagesTest`）
 
-### 平台 IoC 回归 delta（若 Phase 3 复现并落盘）
+### 平台 IoC 回归 delta（Phase 3 已复现并落盘——ast 侧第二环）
 
 - Classification: `watch-only residual`
-- Why Not Blocking Closure: 平台 `nopSequenceGenerator` bean-init-self-wait 为已登记平台 Bug，先例修复 = test-scope VFS delta（fin 修正版带 `x:extends="super"`）
-- Successor Required: `yes`（平台修复后统一移除，M4.1 复核）
+- Why Not Blocking Closure: 平台 bean-init self-wait 为已登记平台 Bug。本计划 Phase 3 早域复跑时 ast 侧复现**第二环**（`$DEFAULT$nopOrmSessionFactory` 经 nopDataAuthChecker→nopDaoProvider 环，M3.3 首发现 + M2.2 aps/fin 兑付同型；mnt jar 重装后 classpath 时序变化触发）——按 hr 修正版先例落 ast test-scope VFS delta（`x:extends="super"` + `nopDataAuthChecker.daoProvider` `ioc:lazy-property`）断环，ast 320/320 复跑全绿；bug doc 补记 ast 兑付登记
+- Successor Required: `yes`（平台修复后统一移除全部兼容层 delta，M4.1 复核）
 
 ## Closure
 
-Status Note: （待执行）
+Status Note: completed（2026-08-22：四 Phase 全部执行完毕，全部验证全绿——mnt 7 模块链 `-DskipTests` BUILD SUCCESS + mnt service 156/156 + mnt web 0 tests 治理排除 + ast 7 链重建绿 + ast 320/320 基线维持 + 工具重扫 mnt 段 0 残留；位次 12 prj 解锁供后续批次。）
 
 Closure Audit Evidence:
 
-（待执行后由独立结束审计填充）
+- **独立结束审计（ses_fd82ff66dffeDiFiKHponOD1Jc，2026-08-22，fresh session 冷审计）**：`passes closure audit` — 0 BLOCKER / 0 MAJOR / **1 MINOR**（OeeCalculator 桥注释仅标注 bridge-main-083/084 而单转换点实际覆盖 080/083/084——traceability 标签缺口，非功能/登记册影响）→ **当场修复**（注释补 080 + mnt-service 重建 BUILD SUCCESS 复核）。逐项核证：①orm 64/64 stdDataType-only + 规则 4 列保持 long；②scan mnt 段 0 NEEDS FIX/0 DEFERRED；③登记册 024/025/125 retired + 080..085 active + fail-closed 解析 exit 0；④ast 桥移除 + mock String 化 + beans.xml 零 diff；⑤A2 桥 + mfg Long 流；⑥page.yaml 4 处 :String + rg 清零；⑦grep 门控例外仅 OeeCalculator；⑧owner doc String 键注记；⑨⑩roadmap/log M3.2 done；⑪plan 内部一致（唯一 `[ ]` 为本审计项占位）；⑫零 RECORDING/forceSaveOutput 残留；⑬快照足迹 68 = 23M+45?? 与计划吻合 + String id 实证（`"equipmentId": "1"`）；加证：ast IoC 第二环 delta 在位（`x:extends="super"` + lazy-property）。
 
 Follow-up:
 
-- （无范围内跟进项；已确认缺陷不得出现在此处。中间态 successor 指针见 Deferred But Adjudicated 与 Phase 4 登记记录。）
+- （无范围内跟进项；已确认缺陷不得出现在此处。中间态 successor 指针见 Deferred But Adjudicated 与 Phase 4 登记记录：A2 桥 6 条（M3.1/M2.3 回收）+ mfg 引用破坏 2 文件（M3.1）+ `ErpMntWebPagesTest` 治理排除（M4.1）+ ast IoC 兼容层 delta（平台修复后 M4.1 统一移除）。）
