@@ -19,13 +19,13 @@
             <cols>
 
                 <!--ID-->
-                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="id" mandatory="true" sortable="true"/>
 
                 <!--合同编号-->
                 <col id="code" mandatory="true" sortable="true"/>
 
                 <!--员工-->
-                <col id="employeeId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="employeeId" mandatory="true" sortable="true"/>
 
                 <!--合同类型-->
                 <col id="contractType" mandatory="true" sortable="true"/>
@@ -52,7 +52,7 @@
                 <col id="monthlySalary" ui:number="true" sortable="true"/>
 
                 <!--薪资币种-->
-                <col id="salaryCurrencyId" ui:number="true" sortable="true"/>
+                <col id="salaryCurrencyId" sortable="true"/>
 
                 <!--发薪方式-->
                 <col id="salaryPayMethod" sortable="true"/>
@@ -70,7 +70,7 @@
                 <col id="attachmentFileId" sortable="true"/>
 
                 <!--业务组织-->
-                <col id="orgId" ui:number="true" sortable="true"/>
+                <col id="orgId" sortable="true"/>
 
                 <!--备注-->
                 <col id="remark" sortable="true"/>

@@ -50,8 +50,8 @@ public interface IErpHrSalarySimulationBiz extends ICrudBiz<ErpHrSalarySimulatio
      *                       mealAllowance/transportAllowance/otherAllowance/otherDeductions）
      */
     @BizMutation
-    ErpHrSalary adjustItem(@Name("simulationId") Long simulationId,
-                           @Name("employeeId") Long employeeId,
+    ErpHrSalary adjustItem(@Name("simulationId") String simulationId,
+                           @Name("employeeId") String employeeId,
                            @Name("salaryItemCode") String salaryItemCode,
                            @Name("adjustedAmount") java.math.BigDecimal adjustedAmount,
                            @Name("reason") String reason,
@@ -61,45 +61,45 @@ public interface IErpHrSalarySimulationBiz extends ICrudBiz<ErpHrSalarySimulatio
      * 只读返回某员工模拟薪酬（据源 base + 全部已记 ItemAdjustment 经覆盖重算）。
      */
     @BizQuery
-    ErpHrSalary getSimulatedSalary(@Name("simulationId") Long simulationId,
-                                   @Name("employeeId") Long employeeId,
+    ErpHrSalary getSimulatedSalary(@Name("simulationId") String simulationId,
+                                   @Name("employeeId") String employeeId,
                                    IServiceContext context);
 
     /**
      * 列出模拟下某员工的全部 ItemAdjustment（用于对比/审计）。
      */
     @BizQuery
-    List<ErpHrSalarySimulationItemAdjustment> listAdjustments(@Name("simulationId") Long simulationId,
-                                                              @Name("employeeId") Long employeeId,
+    List<ErpHrSalarySimulationItemAdjustment> listAdjustments(@Name("simulationId") String simulationId,
+                                                              @Name("employeeId") String employeeId,
                                                               IServiceContext context);
 
     /**
      * 员工级三列对比（上期/当前期/模拟值 + 差额），按薪酬项目行展开（payroll-simulation.md §3.2）。
      */
     @BizQuery
-    Map<String, Object> getComparison(@Name("simulationId") Long simulationId,
-                                      @Name("employeeId") Long employeeId,
+    Map<String, Object> getComparison(@Name("simulationId") String simulationId,
+                                      @Name("employeeId") String employeeId,
                                       IServiceContext context);
 
     /**
      * 部门汇总（应发/实发合计差异聚合，按部门分组）。
      */
     @BizQuery
-    List<Map<String, Object>> getDepartmentSummary(@Name("simulationId") Long simulationId,
+    List<Map<String, Object>> getDepartmentSummary(@Name("simulationId") String simulationId,
                                                     IServiceContext context);
 
     /**
      * 薪酬项目汇总（各薪酬项目合计变化，按 salaryItemCode 分组）。
      */
     @BizQuery
-    List<Map<String, Object>> getProjectSummary(@Name("simulationId") Long simulationId,
+    List<Map<String, Object>> getProjectSummary(@Name("simulationId") String simulationId,
                                                  IServiceContext context);
 
     /**
      * 公司级汇总（总人工成本变化）。
      */
     @BizQuery
-    Map<String, Object> getCompanySummary(@Name("simulationId") Long simulationId,
+    Map<String, Object> getCompanySummary(@Name("simulationId") String simulationId,
                                           IServiceContext context);
 
     /**
@@ -111,7 +111,7 @@ public interface IErpHrSalarySimulationBiz extends ICrudBiz<ErpHrSalarySimulatio
      * @return 影响汇总（affectedCount/totalGrossIncrease/avgIncrease）
      */
     @BizMutation
-    Map<String, Object> applyBatchAdjustment(@Name("simulationId") Long simulationId,
+    Map<String, Object> applyBatchAdjustment(@Name("simulationId") String simulationId,
                                              @Name("scope") Map<String, Object> scope,
                                              @Name("adjustType") String adjustType,
                                              @Name("value") Object value,
@@ -121,29 +121,29 @@ public interface IErpHrSalarySimulationBiz extends ICrudBiz<ErpHrSalarySimulatio
      * 异常告警扫描（payroll-simulation.md §3.3）。按 config 阈值标异常。
      */
     @BizQuery
-    List<Map<String, Object>> findAnomalies(@Name("simulationId") Long simulationId,
+    List<Map<String, Object>> findAnomalies(@Name("simulationId") String simulationId,
                                              IServiceContext context);
 
     /**
      * DRAFT → IN_REVIEW（提交审核）。前置：至少一项 ItemAdjustment（否则 ERR_HR_SIMULATION_NO_ADJUSTMENT）。
      */
     @BizMutation
-    ErpHrSalarySimulation submitForReview(@Name("simulationId") Long simulationId,
+    ErpHrSalarySimulation submitForReview(@Name("simulationId") String simulationId,
                                           IServiceContext context);
 
     /**
      * IN_REVIEW → APPROVED（审批通过，写 reviewerId/reviewedAt，锁定不可再调）。
      */
     @BizMutation
-    ErpHrSalarySimulation approve(@Name("simulationId") Long simulationId,
-                                  @Name("reviewerId") Long reviewerId,
+    ErpHrSalarySimulation approve(@Name("simulationId") String simulationId,
+                                  @Name("reviewerId") String reviewerId,
                                   IServiceContext context);
 
     /**
      * IN_REVIEW → REJECTED（终态，notes=reason）。
      */
     @BizMutation
-    ErpHrSalarySimulation reject(@Name("simulationId") Long simulationId,
+    ErpHrSalarySimulation reject(@Name("simulationId") String simulationId,
                                  @Name("reason") String reason,
                                  IServiceContext context);
 
@@ -156,13 +156,13 @@ public interface IErpHrSalarySimulationBiz extends ICrudBiz<ErpHrSalarySimulatio
      * 回填 convertedSalaryId（首条）+ convertedAt；部分冲突仅转无冲突员工。
      */
     @BizMutation
-    ErpHrSalarySimulation convertToFormal(@Name("simulationId") Long simulationId,
+    ErpHrSalarySimulation convertToFormal(@Name("simulationId") String simulationId,
                                           IServiceContext context);
 
     /**
      * 反向追溯查询：根据正式薪酬 ID 查关联的模拟（单向追溯补全，payroll-simulation.md §四）。
      */
     @BizQuery
-    List<ErpHrSalarySimulation> findSimulationsByConvertedSalary(@Name("salaryId") Long salaryId,
+    List<ErpHrSalarySimulation> findSimulationsByConvertedSalary(@Name("salaryId") String salaryId,
                                                                  IServiceContext context);
 }

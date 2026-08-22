@@ -13,44 +13,44 @@
     public class ErpHrSalarySimulationItemAdjustmentOutputBean {
 
     
-        private Long _id;
+        private String _id;
 
     
         @PropMeta(propId=1)
     
-        public Long getId(){
+        public String getId(){
             return _id;
         }
 
-        public void setId(Long value){
+        public void setId(String value){
             this._id = value;
         }
 
 
-        private Long _simulationId;
+        private String _simulationId;
 
     
         @PropMeta(propId=2)
     
-        public Long getSimulationId(){
+        public String getSimulationId(){
             return _simulationId;
         }
 
-        public void setSimulationId(Long value){
+        public void setSimulationId(String value){
             this._simulationId = value;
         }
 
 
-        private Long _employeeId;
+        private String _employeeId;
 
     
         @PropMeta(propId=3)
     
-        public Long getEmployeeId(){
+        public String getEmployeeId(){
             return _employeeId;
         }
 
-        public void setEmployeeId(Long value){
+        public void setEmployeeId(String value){
             this._employeeId = value;
         }
 
@@ -151,16 +151,16 @@
         }
 
 
-        private Long _orgId;
+        private String _orgId;
 
     
         @PropMeta(propId=10)
     
-        public Long getOrgId(){
+        public String getOrgId(){
             return _orgId;
         }
 
-        public void setOrgId(Long value){
+        public void setOrgId(String value){
             this._orgId = value;
         }
 

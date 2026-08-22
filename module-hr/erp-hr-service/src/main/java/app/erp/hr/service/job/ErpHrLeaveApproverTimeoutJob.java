@@ -149,7 +149,7 @@ public class ErpHrLeaveApproverTimeoutJob {
      * 单条超时转派：解析转派目标 → 幂等守卫 → 回写 approverId → 派发通知。返回 true 表示已转派。
      */
     protected boolean escalateLeave(ErpHrLeaveRequest leave, IServiceContext ctx) {
-        Long targetId = resolveEscalationTarget(leave.getEmployeeId(), ctx);
+        String targetId = resolveEscalationTarget(leave.getEmployeeId(), ctx);
         if (targetId == null) {
             LOG.warn("erp-hr-leave-approver-timeout: 休假单无转派目标（无直接上级且无部门负责人），跳过：leaveId={}, employeeId={}",
                     leave.getId(), leave.getEmployeeId());
@@ -170,8 +170,8 @@ public class ErpHrLeaveApproverTimeoutJob {
      * 转派目标解析链：直接上级（{@code ErpHrEmployee.superiorId}）→ 兜底部门负责人
      * （{@code ErpHrDepartment.managerId}，经 employee.departmentId 关联）；均缺失返回 null。
      */
-    protected Long resolveEscalationTarget(Long employeeId, IServiceContext ctx) {
-        ErpHrEmployee employee = employeeBiz.get(String.valueOf(employeeId), true, ctx);
+    protected String resolveEscalationTarget(String employeeId, IServiceContext ctx) {
+        ErpHrEmployee employee = employeeBiz.get(employeeId, true, ctx);
         if (employee == null) {
             return null;
         }
@@ -179,7 +179,7 @@ public class ErpHrLeaveApproverTimeoutJob {
             return employee.getSuperiorId();
         }
         if (employee.getDepartmentId() != null) {
-            ErpHrDepartment department = departmentBiz.get(String.valueOf(employee.getDepartmentId()), true, ctx);
+            ErpHrDepartment department = departmentBiz.get(employee.getDepartmentId(), true, ctx);
             if (department != null && department.getManagerId() != null) {
                 return department.getManagerId();
             }
@@ -192,7 +192,7 @@ public class ErpHrLeaveApproverTimeoutJob {
      * context 键对齐 {@code hr.leave-approver-timeout} 模板约定：leaveCode/leaveType/employeeId/
      * submitterUserId/superiorUserId/superiorId，USER_LIST 接收人经 ${superiorUserId} 插值。
      */
-    protected void notifyEscalation(ErpHrLeaveRequest leave, Long targetId, IServiceContext ctx) {
+    protected void notifyEscalation(ErpHrLeaveRequest leave, String targetId, IServiceContext ctx) {
         if (notificationBiz == null) {
             return;
         }
@@ -210,11 +210,11 @@ public class ErpHrLeaveApproverTimeoutJob {
      * 员工 → 系统用户解析（userName 约定：{@code NopAuthUser.userName} == 员工工号 {@code code}）。
      * 无匹配用户时返回 null（通知接收人插值为空 → config-gated 跳过派发）。
      */
-    protected String resolveUserId(Long employeeId, IServiceContext ctx) {
+    protected String resolveUserId(String employeeId, IServiceContext ctx) {
         if (employeeId == null) {
             return null;
         }
-        ErpHrEmployee employee = employeeBiz.get(String.valueOf(employeeId), true, ctx);
+        ErpHrEmployee employee = employeeBiz.get(employeeId, true, ctx);
         if (employee == null || StringHelper.isEmpty(employee.getCode())) {
             return null;
         }

@@ -15,7 +15,7 @@ import io.nop.core.context.IServiceContext;
  */
 public class ErpHrShiftSwapRequestSubmitProcessor extends AbstractErpHrShiftSwapRequestProcessor {
 
-    public ErpHrShiftSwapRequest submit(Long sourceAssignmentId, Long targetAssignmentId, String reason,
+    public ErpHrShiftSwapRequest submit(String sourceAssignmentId, String targetAssignmentId, String reason,
                                         IServiceContext context) {
         ErpHrShiftAssignment source = assignmentBiz.requireEntity(String.valueOf(sourceAssignmentId), null, context);
         ErpHrShiftAssignment target = targetAssignmentId != null

@@ -32,7 +32,7 @@ public interface IErpHrSalaryBiz extends ICrudBiz<ErpHrSalary> {
      * 单员工月度薪酬核算。生成 ErpHrSalary（approveStatus=UNSUBMITTED, paymentStatus=PENDING）。
      */
     @BizMutation
-    ErpHrSalary calculateSalary(@Name("employeeId") Long employeeId,
+    ErpHrSalary calculateSalary(@Name("employeeId") String employeeId,
                                 @Name("year") int year,
                                 @Name("month") int month,
                                 IServiceContext context);
@@ -48,11 +48,11 @@ public interface IErpHrSalaryBiz extends ICrudBiz<ErpHrSalary> {
 
     /** approveStatus=APPROVED + paymentStatus=PENDING → paymentStatus=PAID（锁定，触发发放凭证）。 */
     @BizMutation
-    ErpHrSalary markPaid(@Name("salaryId") Long salaryId, IServiceContext context);
+    ErpHrSalary markPaid(@Name("salaryId") String salaryId, IServiceContext context);
 
     /** 非 PAID → paymentStatus=VOID（作废终态）。 */
     @BizMutation
-    ErpHrSalary voidSalary(@Name("salaryId") Long salaryId, IServiceContext context);
+    ErpHrSalary voidSalary(@Name("salaryId") String salaryId, IServiceContext context);
 
     /**
      * 银行代发文件生成。检索 APPROVED + paymentStatus=PENDING 薪酬生成 ErpHrPayrollBankFile（GENERATED），
@@ -61,14 +61,14 @@ public interface IErpHrSalaryBiz extends ICrudBiz<ErpHrSalary> {
     @BizMutation
     ErpHrPayrollBankFile generateBankFile(@Name("year") int year,
                                           @Name("month") int month,
-                                          @Name("bankId") Long bankId,
+                                          @Name("bankId") String bankId,
                                           IServiceContext context);
 
     /**
      * 查询某员工年度累计个税数据（用于核算预扣，可选辅助查询）。
      */
     @BizQuery
-    String queryCumulativeTaxData(@Name("employeeId") Long employeeId,
+    String queryCumulativeTaxData(@Name("employeeId") String employeeId,
                                   @Name("year") int year,
                                   @Name("upToMonth") int upToMonth,
                                   IServiceContext context);

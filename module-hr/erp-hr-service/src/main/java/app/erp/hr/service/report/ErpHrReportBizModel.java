@@ -169,7 +169,7 @@ public class ErpHrReportBizModel {
                 data.put(DS_VAR, buildEmployeeNetBalanceDataset(context));
                 break;
             case "payroll-simulation-comparison":
-                data.put(DS_VAR, buildPayrollSimulationComparisonDataset(asLong(data, "simulationId"), context));
+                data.put(DS_VAR, buildPayrollSimulationComparisonDataset(asString(data, "simulationId"), context));
                 break;
             default:
                 // 未知报表：不自动装配，模板可经 beforeExpand 自行构造数据集
@@ -177,10 +177,10 @@ public class ErpHrReportBizModel {
         }
     }
 
-    private static Long asLong(Map<String, Object> data, String k) {
+    private static String asString(Map<String, Object> data, String k) {
         if (data == null) return null;
         Object v = data.get(k);
-        return v == null ? null : Long.valueOf(v.toString());
+        return v == null ? null : v.toString();
     }
 
     // ===================== 数据集构造（也作 @BizQuery 供前端取原始数据） =====================
@@ -193,7 +193,7 @@ public class ErpHrReportBizModel {
 
     /** 薪酬模拟对比数据集：源 vs 模拟三列对比 + 部门小计，对齐 {@code payroll-simulation.md}。 */
     @BizQuery
-    public List<Map<String, Object>> payrollSimulationComparisonData(@Optional @Name("simulationId") Long simulationId,
+    public List<Map<String, Object>> payrollSimulationComparisonData(@Optional @Name("simulationId") String simulationId,
                                                                      IServiceContext context) {
         return buildPayrollSimulationComparisonDataset(simulationId, context);
     }
@@ -212,19 +212,19 @@ public class ErpHrReportBizModel {
      * 避免混入客户 AR / 供应商 AP（对齐 plan Phase 2 Decision + {@code ErpFinArApItemGenerator.java:150,153} 口径）。
      */
     List<Map<String, Object>> buildEmployeeNetBalanceDataset(IServiceContext context) {
-        Map<Long, BigDecimal> advanceByPartner = sumEmployeeItems(
+        Map<String, BigDecimal> advanceByPartner = sumEmployeeItems(
                 ErpFinConstants.DIRECTION_RECEIVABLE, ErpFinConstants.SOURCE_BILL_EMPLOYEE_ADVANCE, context);
-        Map<Long, BigDecimal> expenseByPartner = sumEmployeeItems(
+        Map<String, BigDecimal> expenseByPartner = sumEmployeeItems(
                 ErpFinConstants.DIRECTION_PAYABLE, ErpFinConstants.SOURCE_BILL_EXPENSE_CLAIM, context);
-        Set<Long> partnerIds = new TreeSet<>();
+        Set<String> partnerIds = new TreeSet<>();
         partnerIds.addAll(advanceByPartner.keySet());
         partnerIds.addAll(expenseByPartner.keySet());
         if (partnerIds.isEmpty()) {
             return Collections.emptyList();
         }
-        Map<Long, String> partnerNames = resolvePartnerNames(partnerIds);
+        Map<String, String> partnerNames = resolvePartnerNames(partnerIds);
         List<Map<String, Object>> rows = new ArrayList<>(partnerIds.size());
-        for (Long partnerId : partnerIds) {
+        for (String partnerId : partnerIds) {
             BigDecimal advance = nz(advanceByPartner.get(partnerId));
             BigDecimal expense = nz(expenseByPartner.get(partnerId));
             BigDecimal net = advance.subtract(expense);
@@ -240,17 +240,17 @@ public class ErpHrReportBizModel {
         return rows;
     }
 
-    private Map<Long, BigDecimal> sumEmployeeItems(String direction, String sourceBillType, IServiceContext context) {
+    private Map<String, BigDecimal> sumEmployeeItems(String direction, String sourceBillType, IServiceContext context) {
         List<ErpFinArApItem> items = arApItemBiz.findOpenItems(direction, context);
         if (items == null || items.isEmpty()) {
             return Collections.emptyMap();
         }
-        Map<Long, BigDecimal> sums = new HashMap<>();
+        Map<String, BigDecimal> sums = new HashMap<>();
         for (ErpFinArApItem item : items) {
             if (!sourceBillType.equals(item.getSourceBillType())) {
                 continue;
             }
-            Long partnerId = item.getPartnerId();
+            String partnerId = item.getPartnerId();
             if (partnerId == null) {
                 continue;
             }
@@ -259,9 +259,9 @@ public class ErpHrReportBizModel {
         return sums;
     }
 
-    private Map<Long, String> resolvePartnerNames(Set<Long> partnerIds) {
+    private Map<String, String> resolvePartnerNames(Set<String> partnerIds) {
         // 按 partnerId 批量解析名称（ErpMdPartner 在 master-data，hr-service 经 finance-service 传递依赖可访问）
-        Map<Long, String> names = new HashMap<>();
+        Map<String, String> names = new HashMap<>();
         if (partnerIds.isEmpty()) {
             return names;
         }
@@ -279,7 +279,7 @@ public class ErpHrReportBizModel {
      * 每行 = 员工 × 薪酬项目（employeeId/employeeName/departmentId/salaryItemCode/originalAmount/adjustedAmount/difference），
      * 末尾追加按部门小计行（对齐 {@code payroll-simulation.md} {@code getComparison}/{@code getDepartmentSummary} 口径）。
      */
-    List<Map<String, Object>> buildPayrollSimulationComparisonDataset(Long simulationId, IServiceContext context) {
+    List<Map<String, Object>> buildPayrollSimulationComparisonDataset(String simulationId, IServiceContext context) {
         if (simulationId == null) {
             return Collections.emptyList();
         }
@@ -287,15 +287,15 @@ public class ErpHrReportBizModel {
         if (adjustments.isEmpty()) {
             return Collections.emptyList();
         }
-        Map<Long, ErpHrEmployee> employees = loadEmployees(adjustments);
-        Map<Long, BigDecimal> deptDiff = new HashMap<>();
+        Map<String, ErpHrEmployee> employees = loadEmployees(adjustments);
+        Map<String, BigDecimal> deptDiff = new HashMap<>();
         List<Map<String, Object>> rows = new ArrayList<>(adjustments.size());
         for (ErpHrSalarySimulationItemAdjustment adj : adjustments) {
             BigDecimal original = nz(adj.getOriginalAmount());
             BigDecimal adjusted = nz(adj.getAdjustedAmount());
             BigDecimal diff = adjusted.subtract(original);
             ErpHrEmployee emp = employees.get(adj.getEmployeeId());
-            Long departmentId = emp != null ? emp.getDepartmentId() : null;
+            String departmentId = emp != null ? emp.getDepartmentId() : null;
             Map<String, Object> r = new LinkedHashMap<>();
             r.put("simulationId", simulationId);
             r.put("employeeId", adj.getEmployeeId());
@@ -312,7 +312,7 @@ public class ErpHrReportBizModel {
             }
         }
         // 部门小计行（对齐 getDepartmentSummary 口径）
-        for (Map.Entry<Long, BigDecimal> e : deptDiff.entrySet()) {
+        for (Map.Entry<String, BigDecimal> e : deptDiff.entrySet()) {
             Map<String, Object> r = new LinkedHashMap<>();
             r.put("departmentId", e.getKey());
             r.put("employeeName", "部门小计");
@@ -323,7 +323,7 @@ public class ErpHrReportBizModel {
         return rows;
     }
 
-    private List<ErpHrSalarySimulationItemAdjustment> loadAdjustments(Long simulationId) {
+    private List<ErpHrSalarySimulationItemAdjustment> loadAdjustments(String simulationId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("simulationId", simulationId));
         q.addOrderField("employeeId", false);
@@ -331,8 +331,8 @@ public class ErpHrReportBizModel {
         return daoProvider.daoFor(ErpHrSalarySimulationItemAdjustment.class).findAllByQuery(q);
     }
 
-    private Map<Long, ErpHrEmployee> loadEmployees(List<ErpHrSalarySimulationItemAdjustment> adjustments) {
-        Set<Long> empIds = new HashSet<>();
+    private Map<String, ErpHrEmployee> loadEmployees(List<ErpHrSalarySimulationItemAdjustment> adjustments) {
+        Set<String> empIds = new HashSet<>();
         for (ErpHrSalarySimulationItemAdjustment adj : adjustments) {
             if (adj.getEmployeeId() != null) {
                 empIds.add(adj.getEmployeeId());
@@ -345,7 +345,7 @@ public class ErpHrReportBizModel {
         QueryBean q = new QueryBean();
         q.addFilter(io.nop.api.core.beans.FilterBeans.in("id", empIds));
         List<ErpHrEmployee> employees = dao.findAllByQuery(q);
-        Map<Long, ErpHrEmployee> map = new HashMap<>();
+        Map<String, ErpHrEmployee> map = new HashMap<>();
         for (ErpHrEmployee e : employees) {
             map.put(e.getId(), e);
         }

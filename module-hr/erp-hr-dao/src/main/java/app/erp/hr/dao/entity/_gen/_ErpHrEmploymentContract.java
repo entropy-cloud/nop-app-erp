@@ -231,13 +231,13 @@ public class _ErpHrEmploymentContract extends DynamicOrmEntity{
 
     
     /* ID: ID */
-    private java.lang.Long _id;
+    private java.lang.String _id;
     
     /* 合同编号: CODE */
     private java.lang.String _code;
     
     /* 员工: EMPLOYEE_ID */
-    private java.lang.Long _employeeId;
+    private java.lang.String _employeeId;
     
     /* 合同类型: CONTRACT_TYPE */
     private java.lang.String _contractType;
@@ -264,7 +264,7 @@ public class _ErpHrEmploymentContract extends DynamicOrmEntity{
     private java.math.BigDecimal _monthlySalary;
     
     /* 薪资币种: SALARY_CURRENCY_ID */
-    private java.lang.Long _salaryCurrencyId;
+    private java.lang.String _salaryCurrencyId;
     
     /* 发薪方式: SALARY_PAY_METHOD */
     private java.lang.String _salaryPayMethod;
@@ -282,7 +282,7 @@ public class _ErpHrEmploymentContract extends DynamicOrmEntity{
     private java.lang.String _attachmentFileId;
     
     /* 业务组织: ORG_ID */
-    private java.lang.Long _orgId;
+    private java.lang.String _orgId;
     
     /* 备注: REMARK */
     private java.lang.String _remark;
@@ -472,9 +472,9 @@ public class _ErpHrEmploymentContract extends DynamicOrmEntity{
         switch(propId){
         
             case PROP_ID_id:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_id));
                }
                setId(typedValue);
@@ -492,9 +492,9 @@ public class _ErpHrEmploymentContract extends DynamicOrmEntity{
             }
         
             case PROP_ID_employeeId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_employeeId));
                }
                setEmployeeId(typedValue);
@@ -582,9 +582,9 @@ public class _ErpHrEmploymentContract extends DynamicOrmEntity{
             }
         
             case PROP_ID_salaryCurrencyId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_salaryCurrencyId));
                }
                setSalaryCurrencyId(typedValue);
@@ -642,9 +642,9 @@ public class _ErpHrEmploymentContract extends DynamicOrmEntity{
             }
         
             case PROP_ID_orgId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_orgId));
                }
                setOrgId(typedValue);
@@ -742,7 +742,7 @@ public class _ErpHrEmploymentContract extends DynamicOrmEntity{
         
             case PROP_ID_id:{
                onInitProp(propId);
-               this._id = (java.lang.Long)value;
+               this._id = (java.lang.String)value;
                orm_id(); // 如果是设置主键字段，则触发watcher
                break;
             }
@@ -756,7 +756,7 @@ public class _ErpHrEmploymentContract extends DynamicOrmEntity{
         
             case PROP_ID_employeeId:{
                onInitProp(propId);
-               this._employeeId = (java.lang.Long)value;
+               this._employeeId = (java.lang.String)value;
                
                break;
             }
@@ -819,7 +819,7 @@ public class _ErpHrEmploymentContract extends DynamicOrmEntity{
         
             case PROP_ID_salaryCurrencyId:{
                onInitProp(propId);
-               this._salaryCurrencyId = (java.lang.Long)value;
+               this._salaryCurrencyId = (java.lang.String)value;
                
                break;
             }
@@ -861,7 +861,7 @@ public class _ErpHrEmploymentContract extends DynamicOrmEntity{
         
             case PROP_ID_orgId:{
                onInitProp(propId);
-               this._orgId = (java.lang.Long)value;
+               this._orgId = (java.lang.String)value;
                
                break;
             }
@@ -931,7 +931,7 @@ public class _ErpHrEmploymentContract extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final java.lang.Long getId(){
+    public final java.lang.String getId(){
          onPropGet(PROP_ID_id);
          return _id;
     }
@@ -939,7 +939,7 @@ public class _ErpHrEmploymentContract extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final void setId(java.lang.Long value){
+    public final void setId(java.lang.String value){
         if(onPropSet(PROP_ID_id,value)){
             this._id = value;
             internalClearRefs(PROP_ID_id);
@@ -969,7 +969,7 @@ public class _ErpHrEmploymentContract extends DynamicOrmEntity{
     /**
      * 员工: EMPLOYEE_ID
      */
-    public final java.lang.Long getEmployeeId(){
+    public final java.lang.String getEmployeeId(){
          onPropGet(PROP_ID_employeeId);
          return _employeeId;
     }
@@ -977,7 +977,7 @@ public class _ErpHrEmploymentContract extends DynamicOrmEntity{
     /**
      * 员工: EMPLOYEE_ID
      */
-    public final void setEmployeeId(java.lang.Long value){
+    public final void setEmployeeId(java.lang.String value){
         if(onPropSet(PROP_ID_employeeId,value)){
             this._employeeId = value;
             internalClearRefs(PROP_ID_employeeId);
@@ -1140,7 +1140,7 @@ public class _ErpHrEmploymentContract extends DynamicOrmEntity{
     /**
      * 薪资币种: SALARY_CURRENCY_ID
      */
-    public final java.lang.Long getSalaryCurrencyId(){
+    public final java.lang.String getSalaryCurrencyId(){
          onPropGet(PROP_ID_salaryCurrencyId);
          return _salaryCurrencyId;
     }
@@ -1148,7 +1148,7 @@ public class _ErpHrEmploymentContract extends DynamicOrmEntity{
     /**
      * 薪资币种: SALARY_CURRENCY_ID
      */
-    public final void setSalaryCurrencyId(java.lang.Long value){
+    public final void setSalaryCurrencyId(java.lang.String value){
         if(onPropSet(PROP_ID_salaryCurrencyId,value)){
             this._salaryCurrencyId = value;
             internalClearRefs(PROP_ID_salaryCurrencyId);
@@ -1254,7 +1254,7 @@ public class _ErpHrEmploymentContract extends DynamicOrmEntity{
     /**
      * 业务组织: ORG_ID
      */
-    public final java.lang.Long getOrgId(){
+    public final java.lang.String getOrgId(){
          onPropGet(PROP_ID_orgId);
          return _orgId;
     }
@@ -1262,7 +1262,7 @@ public class _ErpHrEmploymentContract extends DynamicOrmEntity{
     /**
      * 业务组织: ORG_ID
      */
-    public final void setOrgId(java.lang.Long value){
+    public final void setOrgId(java.lang.String value){
         if(onPropSet(PROP_ID_orgId,value)){
             this._orgId = value;
             internalClearRefs(PROP_ID_orgId);

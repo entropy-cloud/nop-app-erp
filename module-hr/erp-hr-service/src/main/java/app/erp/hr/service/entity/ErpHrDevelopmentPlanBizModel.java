@@ -72,14 +72,14 @@ public class ErpHrDevelopmentPlanBizModel extends CrudBizModel<ErpHrDevelopmentP
 
     @Override
     @BizMutation
-    public ErpHrDevelopmentPlan generateDevelopmentPlan(@Name("employeeId") Long employeeId,
+    public ErpHrDevelopmentPlan generateDevelopmentPlan(@Name("employeeId") String employeeId,
                                                          IServiceContext context) {
         return generateDevelopmentPlanProcessor.generateDevelopmentPlan(employeeId, context);
     }
 
     @Override
     @BizMutation
-    public ErpHrDevelopmentPlanItem updatePlanItemStatus(@Name("planItemId") Long planItemId,
+    public ErpHrDevelopmentPlanItem updatePlanItemStatus(@Name("planItemId") String planItemId,
                                                           @Name("status") String status,
                                                           IServiceContext context) {
         return updatePlanItemStatusProcessor.updatePlanItemStatus(planItemId, status, context);
@@ -87,8 +87,8 @@ public class ErpHrDevelopmentPlanBizModel extends CrudBizModel<ErpHrDevelopmentP
 
     @Override
     @BizMutation
-    public ErpHrDevelopmentPlan completePlan(@Name("planId") Long planId, IServiceContext context) {
-        ErpHrDevelopmentPlan plan = requireEntity(String.valueOf(planId), null, context);
+    public ErpHrDevelopmentPlan completePlan(@Name("planId") String planId, IServiceContext context) {
+        ErpHrDevelopmentPlan plan = requireEntity(planId, null, context);
         String status = plan.getStatus();
         if (!ErpHrConstants.DEV_PLAN_STATUS_DRAFT.equals(status)
                 && !ErpHrConstants.DEV_PLAN_STATUS_IN_PROGRESS.equals(status)) {
@@ -104,7 +104,7 @@ public class ErpHrDevelopmentPlanBizModel extends CrudBizModel<ErpHrDevelopmentP
 
     // ---------- helpers ----------
 
-    List<ErpHrGapAnalysis> findActionableGaps(Long employeeId, IServiceContext context) {
+    List<ErpHrGapAnalysis> findActionableGaps(String employeeId, IServiceContext context) {
         QueryBean q = new QueryBean();
         q.addFilter(and(
                 eq("employeeId", employeeId),
@@ -142,7 +142,7 @@ public class ErpHrDevelopmentPlanBizModel extends CrudBizModel<ErpHrDevelopmentP
         return v != null ? v : 0;
     }
 
-    ErpHrDevelopmentPlanItem newPlanItem(Long planId, ErpHrGapAnalysis gap) {
+    ErpHrDevelopmentPlanItem newPlanItem(String planId, ErpHrGapAnalysis gap) {
         IEntityDao<ErpHrDevelopmentPlanItem> dao = daoProvider().daoFor(ErpHrDevelopmentPlanItem.class);
         ErpHrDevelopmentPlanItem item = dao.newEntity();
         item.setPlanId(planId);
@@ -157,8 +157,8 @@ public class ErpHrDevelopmentPlanBizModel extends CrudBizModel<ErpHrDevelopmentP
         return item;
     }
 
-    ErpHrDevelopmentPlanItem requirePlanItem(Long planItemId, IServiceContext context) {
-        ErpHrDevelopmentPlanItem item = planItemBiz.get(String.valueOf(planItemId), false, context);
+    ErpHrDevelopmentPlanItem requirePlanItem(String planItemId, IServiceContext context) {
+        ErpHrDevelopmentPlanItem item = planItemBiz.get(planItemId, false, context);
         if (item == null) {
             throw new NopException(ErpHrErrors.ERR_DEV_PLAN_ILLEGAL_STATUS_TRANSITION)
                     .param(ErpHrErrors.ARG_DEV_PLAN_ITEM_ID, planItemId);

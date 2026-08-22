@@ -96,18 +96,18 @@ public class TestErpHrTimesheetFamily extends JunitAutoTestCase {
 
     @Test
     public void testLineSaveDailyHoursExceededAndBoundary() {
-        Long[] seeded = ormTemplate.runInSession(session -> {
-            Long empId = seedEmployee("EMP-TS-BOUND");
-            Long tsId = seedTimesheet(empId, "TS-BOUND", ErpHrConstants.TIMESHEET_STATUS_DRAFT);
-            return new Long[]{empId, tsId};
+        String[] seeded = ormTemplate.runInSession(session -> {
+            String empId = seedEmployee("EMP-TS-BOUND");
+            String tsId = seedTimesheet(empId, "TS-BOUND", ErpHrConstants.TIMESHEET_STATUS_DRAFT);
+            return new String[]{empId, tsId};
         });
-        Long empId = seeded[0];
-        Long tsId = seeded[1];
+        String empId = seeded[0];
+        String tsId = seeded[1];
 
-        Long l1 = ormTemplate.runInSession(session -> saveLine(tsId, empId, REF, "20"));
+        String l1 = ormTemplate.runInSession(session -> saveLine(tsId, empId, REF, "20"));
         assertNotNull(l1, "首行 20h 应保存成功");
 
-        Long l2 = ormTemplate.runInSession(session -> saveLine(tsId, empId, REF, "4"));
+        String l2 = ormTemplate.runInSession(session -> saveLine(tsId, empId, REF, "4"));
         assertNotNull(l2, "第二行 4h 合计=24 边界应放行");
 
         NopException ex = assertThrows(NopException.class,
@@ -119,15 +119,15 @@ public class TestErpHrTimesheetFamily extends JunitAutoTestCase {
 
     @Test
     public void testLineUpdateDailyHoursExceededRejected() {
-        Long[] seeded = ormTemplate.runInSession(session -> {
-            Long empId = seedEmployee("EMP-TS-UPD");
-            Long tsId = seedTimesheet(empId, "TS-UPD", ErpHrConstants.TIMESHEET_STATUS_DRAFT);
-            Long l1 = seedLine(tsId, empId, REF, new BigDecimal("20"));
-            Long l2 = seedLine(tsId, empId, REF, new BigDecimal("4"));
-            return new Long[]{tsId, l1, l2};
+        String[] seeded = ormTemplate.runInSession(session -> {
+            String empId = seedEmployee("EMP-TS-UPD");
+            String tsId = seedTimesheet(empId, "TS-UPD", ErpHrConstants.TIMESHEET_STATUS_DRAFT);
+            String l1 = seedLine(tsId, empId, REF, new BigDecimal("20"));
+            String l2 = seedLine(tsId, empId, REF, new BigDecimal("4"));
+            return new String[]{tsId, l1, l2};
         });
-        Long tsId = seeded[0];
-        Long l2 = seeded[2];
+        String tsId = seeded[0];
+        String l2 = seeded[2];
 
         Map<String, Object> data = new HashMap<>();
         data.put("id", String.valueOf(l2));
@@ -145,15 +145,15 @@ public class TestErpHrTimesheetFamily extends JunitAutoTestCase {
 
     @Test
     public void testDailyHoursExceededCrossTimesheetScope() {
-        Long[] seeded = ormTemplate.runInSession(session -> {
-            Long empId = seedEmployee("EMP-TS-CROSS");
-            Long ts1 = seedTimesheet(empId, "TS-CROSS-1", ErpHrConstants.TIMESHEET_STATUS_DRAFT);
-            Long ts2 = seedTimesheet(empId, "TS-CROSS-2", ErpHrConstants.TIMESHEET_STATUS_DRAFT);
+        String[] seeded = ormTemplate.runInSession(session -> {
+            String empId = seedEmployee("EMP-TS-CROSS");
+            String ts1 = seedTimesheet(empId, "TS-CROSS-1", ErpHrConstants.TIMESHEET_STATUS_DRAFT);
+            String ts2 = seedTimesheet(empId, "TS-CROSS-2", ErpHrConstants.TIMESHEET_STATUS_DRAFT);
             seedLine(ts1, empId, REF, new BigDecimal("10"));
-            return new Long[]{empId, ts2};
+            return new String[]{empId, ts2};
         });
-        Long empId = seeded[0];
-        Long ts2 = seeded[1];
+        String empId = seeded[0];
+        String ts2 = seeded[1];
 
         NopException ex = assertThrows(NopException.class,
                 () -> ormTemplate.runInSession(session -> saveLine(ts2, empId, REF, "15")));
@@ -165,19 +165,19 @@ public class TestErpHrTimesheetFamily extends JunitAutoTestCase {
     @EnableSnapshot(checkOutput = false)
     @Test
     public void testTotalHoursRecomputedAfterLineChanges() {
-        Long[] seeded = ormTemplate.runInSession(session -> {
-            Long empId = seedEmployee("EMP-TS-SUM");
-            Long tsId = seedTimesheet(empId, "TS-SUM", ErpHrConstants.TIMESHEET_STATUS_DRAFT);
-            Long l2 = seedLine(tsId, empId, REF, new BigDecimal("9.5"));
-            return new Long[]{empId, tsId, l2};
+        String[] seeded = ormTemplate.runInSession(session -> {
+            String empId = seedEmployee("EMP-TS-SUM");
+            String tsId = seedTimesheet(empId, "TS-SUM", ErpHrConstants.TIMESHEET_STATUS_DRAFT);
+            String l2 = seedLine(tsId, empId, REF, new BigDecimal("9.5"));
+            return new String[]{empId, tsId, l2};
         });
-        Long empId = seeded[0];
-        Long tsId = seeded[1];
-        Long l2 = seeded[2];
+        String empId = seeded[0];
+        String tsId = seeded[1];
+        String l2 = seeded[2];
 
         assertNull(reloadTimesheet(tsId).getTotalHours(), "DAO 直 seed 场景 totalHours 为 null（stale 前置）");
 
-        Long l1 = ormTemplate.runInSession(session -> saveLine(tsId, empId, REF, "8"));
+        String l1 = ormTemplate.runInSession(session -> saveLine(tsId, empId, REF, "8"));
         assertEquals(new BigDecimal("17.50"), reloadTimesheet(tsId).getTotalHours(),
                 "行保存后 totalHours = Σ(8+9.5)");
 
@@ -195,8 +195,8 @@ public class TestErpHrTimesheetFamily extends JunitAutoTestCase {
 
     @Test
     public void testApproveFromSubmittedSetsAuditFields() {
-        Long tsId = ormTemplate.runInSession(session -> {
-            Long empId = seedEmployee("EMP-TS-APP");
+        String tsId = ormTemplate.runInSession(session -> {
+            String empId = seedEmployee("EMP-TS-APP");
             return seedTimesheet(empId, "TS-APP", ErpHrConstants.TIMESHEET_STATUS_DRAFT);
         });
 
@@ -211,8 +211,8 @@ public class TestErpHrTimesheetFamily extends JunitAutoTestCase {
 
     @Test
     public void testRejectReasonRequiredAndResubmitChain() {
-        Long tsId = ormTemplate.runInSession(session -> {
-            Long empId = seedEmployee("EMP-TS-REJ");
+        String tsId = ormTemplate.runInSession(session -> {
+            String empId = seedEmployee("EMP-TS-REJ");
             return seedTimesheet(empId, "TS-REJ", ErpHrConstants.TIMESHEET_STATUS_DRAFT);
         });
         ormTemplate.runInSession(session -> timesheetBiz.submit(tsId, CTX));
@@ -239,8 +239,8 @@ public class TestErpHrTimesheetFamily extends JunitAutoTestCase {
 
     @Test
     public void testIllegalTransitionsRejected() {
-        Long tsId = ormTemplate.runInSession(session -> {
-            Long empId = seedEmployee("EMP-TS-ILL");
+        String tsId = ormTemplate.runInSession(session -> {
+            String empId = seedEmployee("EMP-TS-ILL");
             return seedTimesheet(empId, "TS-ILL", ErpHrConstants.TIMESHEET_STATUS_DRAFT);
         });
 
@@ -262,8 +262,8 @@ public class TestErpHrTimesheetFamily extends JunitAutoTestCase {
         assertEquals(ErpHrErrors.ERR_HR_TIMESHEET_ILLEGAL_TRANSITION.getErrorCode(), exResubmit.getErrorCode(),
                 "APPROVED 再 submit 应拒绝");
 
-        Long ts2 = ormTemplate.runInSession(session -> {
-            Long empId = seedEmployee("EMP-TS-ILL2");
+        String ts2 = ormTemplate.runInSession(session -> {
+            String empId = seedEmployee("EMP-TS-ILL2");
             return seedTimesheet(empId, "TS-ILL2", ErpHrConstants.TIMESHEET_STATUS_DRAFT);
         });
         ormTemplate.runInSession(session -> timesheetBiz.submit(ts2, CTX));
@@ -276,8 +276,8 @@ public class TestErpHrTimesheetFamily extends JunitAutoTestCase {
 
     @Test
     public void testGraphQLSmokeSubmitRejectApprove() {
-        Long tsId = ormTemplate.runInSession(session -> {
-            Long empId = seedEmployee("EMP-TS-GQL");
+        String tsId = ormTemplate.runInSession(session -> {
+            String empId = seedEmployee("EMP-TS-GQL");
             return seedTimesheet(empId, "TS-GQL", ErpHrConstants.TIMESHEET_STATUS_DRAFT);
         });
 
@@ -312,7 +312,7 @@ public class TestErpHrTimesheetFamily extends JunitAutoTestCase {
         return graphQLEngine.executeRpc(ctx);
     }
 
-    private Long seedEmployee(String code) {
+    private String seedEmployee(String code) {
         IEntityDao<ErpHrEmployee> dao = daoProvider.daoFor(ErpHrEmployee.class);
         ErpHrEmployee emp = new ErpHrEmployee();
         emp.setCode(code);
@@ -327,7 +327,7 @@ public class TestErpHrTimesheetFamily extends JunitAutoTestCase {
         return emp.getId();
     }
 
-    private Long seedTimesheet(Long employeeId, String code, String status) {
+    private String seedTimesheet(String employeeId, String code, String status) {
         IEntityDao<ErpHrTimesheet> dao = daoProvider.daoFor(ErpHrTimesheet.class);
         ErpHrTimesheet ts = new ErpHrTimesheet();
         ts.setCode(code);
@@ -340,7 +340,7 @@ public class TestErpHrTimesheetFamily extends JunitAutoTestCase {
         return ts.getId();
     }
 
-    private Long seedLine(Long timesheetId, Long employeeId, LocalDate workDate, BigDecimal hours) {
+    private String seedLine(String timesheetId, String employeeId, LocalDate workDate, BigDecimal hours) {
         IEntityDao<ErpHrTimesheetLine> dao = daoProvider.daoFor(ErpHrTimesheetLine.class);
         ErpHrTimesheetLine line = new ErpHrTimesheetLine();
         line.setTimesheetId(timesheetId);
@@ -351,7 +351,7 @@ public class TestErpHrTimesheetFamily extends JunitAutoTestCase {
         return line.getId();
     }
 
-    private Long saveLine(Long timesheetId, Long employeeId, LocalDate workDate, String hours) {
+    private String saveLine(String timesheetId, String employeeId, LocalDate workDate, String hours) {
         Map<String, Object> data = new HashMap<>();
         data.put("timesheetId", timesheetId);
         data.put("employeeId", employeeId);
@@ -361,11 +361,11 @@ public class TestErpHrTimesheetFamily extends JunitAutoTestCase {
         return line.getId();
     }
 
-    private ErpHrTimesheet reloadTimesheet(Long timesheetId) {
+    private ErpHrTimesheet reloadTimesheet(String timesheetId) {
         return ormTemplate.runInSession(session -> timesheetBiz.get(String.valueOf(timesheetId), false, CTX));
     }
 
-    private ErpHrTimesheetLine reloadLine(Long lineId) {
+    private ErpHrTimesheetLine reloadLine(String lineId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("id", lineId));
         q.setLimit(1);
@@ -375,7 +375,7 @@ public class TestErpHrTimesheetFamily extends JunitAutoTestCase {
         });
     }
 
-    private long countLines(Long timesheetId) {
+    private long countLines(String timesheetId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("timesheetId", timesheetId));
         return ormTemplate.runInSession(session ->

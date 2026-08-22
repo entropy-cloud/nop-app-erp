@@ -127,13 +127,13 @@ public class _ErpHrSurveyAnswer extends DynamicOrmEntity{
 
     
     /* ID: ID */
-    private java.lang.Long _id;
+    private java.lang.String _id;
     
     /* 答卷: RESPONSE_ID */
-    private java.lang.Long _responseId;
+    private java.lang.String _responseId;
     
     /* 题目: QUESTION_ID */
-    private java.lang.Long _questionId;
+    private java.lang.String _questionId;
     
     /* 评分值: RATING_VALUE */
     private java.lang.Integer _ratingValue;
@@ -284,9 +284,9 @@ public class _ErpHrSurveyAnswer extends DynamicOrmEntity{
         switch(propId){
         
             case PROP_ID_id:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_id));
                }
                setId(typedValue);
@@ -294,9 +294,9 @@ public class _ErpHrSurveyAnswer extends DynamicOrmEntity{
             }
         
             case PROP_ID_responseId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_responseId));
                }
                setResponseId(typedValue);
@@ -304,9 +304,9 @@ public class _ErpHrSurveyAnswer extends DynamicOrmEntity{
             }
         
             case PROP_ID_questionId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_questionId));
                }
                setQuestionId(typedValue);
@@ -414,21 +414,21 @@ public class _ErpHrSurveyAnswer extends DynamicOrmEntity{
         
             case PROP_ID_id:{
                onInitProp(propId);
-               this._id = (java.lang.Long)value;
+               this._id = (java.lang.String)value;
                orm_id(); // 如果是设置主键字段，则触发watcher
                break;
             }
         
             case PROP_ID_responseId:{
                onInitProp(propId);
-               this._responseId = (java.lang.Long)value;
+               this._responseId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_questionId:{
                onInitProp(propId);
-               this._questionId = (java.lang.Long)value;
+               this._questionId = (java.lang.String)value;
                
                break;
             }
@@ -505,7 +505,7 @@ public class _ErpHrSurveyAnswer extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final java.lang.Long getId(){
+    public final java.lang.String getId(){
          onPropGet(PROP_ID_id);
          return _id;
     }
@@ -513,7 +513,7 @@ public class _ErpHrSurveyAnswer extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final void setId(java.lang.Long value){
+    public final void setId(java.lang.String value){
         if(onPropSet(PROP_ID_id,value)){
             this._id = value;
             internalClearRefs(PROP_ID_id);
@@ -524,7 +524,7 @@ public class _ErpHrSurveyAnswer extends DynamicOrmEntity{
     /**
      * 答卷: RESPONSE_ID
      */
-    public final java.lang.Long getResponseId(){
+    public final java.lang.String getResponseId(){
          onPropGet(PROP_ID_responseId);
          return _responseId;
     }
@@ -532,7 +532,7 @@ public class _ErpHrSurveyAnswer extends DynamicOrmEntity{
     /**
      * 答卷: RESPONSE_ID
      */
-    public final void setResponseId(java.lang.Long value){
+    public final void setResponseId(java.lang.String value){
         if(onPropSet(PROP_ID_responseId,value)){
             this._responseId = value;
             internalClearRefs(PROP_ID_responseId);
@@ -543,7 +543,7 @@ public class _ErpHrSurveyAnswer extends DynamicOrmEntity{
     /**
      * 题目: QUESTION_ID
      */
-    public final java.lang.Long getQuestionId(){
+    public final java.lang.String getQuestionId(){
          onPropGet(PROP_ID_questionId);
          return _questionId;
     }
@@ -551,7 +551,7 @@ public class _ErpHrSurveyAnswer extends DynamicOrmEntity{
     /**
      * 题目: QUESTION_ID
      */
-    public final void setQuestionId(java.lang.Long value){
+    public final void setQuestionId(java.lang.String value){
         if(onPropSet(PROP_ID_questionId,value)){
             this._questionId = value;
             internalClearRefs(PROP_ID_questionId);

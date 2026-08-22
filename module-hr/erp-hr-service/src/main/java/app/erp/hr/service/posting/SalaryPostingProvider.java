@@ -67,8 +67,8 @@ public class SalaryPostingProvider implements IErpFinAcctDocProvider {
             amount = readDecimal(event, ErpHrConstants.BILL_DATA_NET_AMOUNT);
         }
         amount = nz(amount);
-        Long departmentId = readLong(event, ErpHrConstants.BILL_DATA_DEPARTMENT_ID);
-        Long costCenterId = readLong(event, ErpHrConstants.BILL_DATA_COST_CENTER_ID);
+        String departmentId = readString(event, ErpHrConstants.BILL_DATA_DEPARTMENT_ID);
+        String costCenterId = readString(event, ErpHrConstants.BILL_DATA_COST_CENTER_ID);
         String memo = buildMemo(event);
 
         String debitCode = readString(event, ErpHrConstants.BILL_DATA_DEBIT_SUBJECT_CODE);
@@ -120,7 +120,7 @@ public class SalaryPostingProvider implements IErpFinAcctDocProvider {
     }
 
     private VoucherFact fact(String subjectCode, String subjectName, String dcDirection, BigDecimal amount,
-                             PostingEvent event, String memo, Long departmentId, Long costCenterId) {
+                             PostingEvent event, String memo, String departmentId, String costCenterId) {
         VoucherFact f = new VoucherFact();
         f.setSubjectCode(subjectCode);
         f.setSubjectName(subjectName);
@@ -151,21 +151,6 @@ public class SalaryPostingProvider implements IErpFinAcctDocProvider {
         }
         String s = value.toString().trim();
         return s.isEmpty() ? null : s;
-    }
-
-    private Long readLong(PostingEvent event, String key) {
-        Object value = event.getBillData().get(key);
-        if (value == null) {
-            return null;
-        }
-        if (value instanceof Number) {
-            return ((Number) value).longValue();
-        }
-        try {
-            return Long.valueOf(value.toString().trim());
-        } catch (NumberFormatException e) {
-            return null;
-        }
     }
 
     private static String defaultIfBlank(String value, String defaultValue) {

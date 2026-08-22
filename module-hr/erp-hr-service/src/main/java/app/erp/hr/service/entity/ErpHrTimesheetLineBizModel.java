@@ -54,8 +54,8 @@ public class ErpHrTimesheetLineBizModel extends CrudBizModel<ErpHrTimesheetLine>
 
     // ---------- helpers ----------
 
-    private void recomputeParentTotalHours(Long timesheetId, IServiceContext context) {
-        ErpHrTimesheet timesheet = timesheetBiz.requireEntity(String.valueOf(timesheetId), null, context);
+    private void recomputeParentTotalHours(String timesheetId, IServiceContext context) {
+        ErpHrTimesheet timesheet = timesheetBiz.requireEntity(timesheetId, null, context);
         orm().flushSession();
         QueryBean q = new QueryBean();
         q.addFilter(eq("timesheetId", timesheetId));

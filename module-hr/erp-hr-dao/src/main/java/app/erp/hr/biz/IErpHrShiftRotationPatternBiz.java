@@ -35,8 +35,8 @@ public interface IErpHrShiftRotationPatternBiz extends ICrudBiz<ErpHrShiftRotati
      */
     @BizMutation
     @SingleSession
-    List<ErpHrShiftAssignment> generateRotation(@Name("patternId") Long patternId,
-                                                @Name("groupMemberIds") List<Long> groupMemberIds,
+    List<ErpHrShiftAssignment> generateRotation(@Name("patternId") String patternId,
+                                                @Name("groupMemberIds") List<String> groupMemberIds,
                                                 @Name("staggerDays") int staggerDays,
                                                 @Name("startDate") LocalDate startDate,
                                                 @Name("endDate") LocalDate endDate,

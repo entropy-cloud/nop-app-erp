@@ -48,7 +48,7 @@ public abstract class AbstractErpHrShiftProcessor {
         return daoProvider.daoFor(ErpHrShiftAssignment.class);
     }
 
-    protected ErpHrLeaveRequest requireLeaveRequest(Long leaveRequestId, IServiceContext context) {
+    protected ErpHrLeaveRequest requireLeaveRequest(String leaveRequestId, IServiceContext context) {
         ErpHrLeaveRequest leave = leaveRequestBiz.get(String.valueOf(leaveRequestId), false, context);
         if (leave == null) {
             throw new NopException(ErpHrErrors.ERR_LEAVE_REQUEST_NOT_FOUND)
@@ -57,7 +57,7 @@ public abstract class AbstractErpHrShiftProcessor {
         return leave;
     }
 
-    protected ErpHrAttendance upsertAttendanceForAbsent(ErpHrAttendance existing, Long employeeId, LocalDate date,
+    protected ErpHrAttendance upsertAttendanceForAbsent(ErpHrAttendance existing, String employeeId, LocalDate date,
                                                          IServiceContext context) {
         if (existing == null) {
             existing = newAttendance(employeeId, date, context);
@@ -69,7 +69,7 @@ public abstract class AbstractErpHrShiftProcessor {
         return existing;
     }
 
-    protected ErpHrAttendance upsertAttendanceForLeave(ErpHrAttendance existing, Long employeeId, LocalDate date,
+    protected ErpHrAttendance upsertAttendanceForLeave(ErpHrAttendance existing, String employeeId, LocalDate date,
                                                         ErpHrShiftAssignment assignment,
                                                         IServiceContext context) {
         if (existing == null) {
@@ -83,7 +83,7 @@ public abstract class AbstractErpHrShiftProcessor {
         return existing;
     }
 
-    protected ErpHrAttendance newAttendance(Long employeeId, LocalDate date, IServiceContext context) {
+    protected ErpHrAttendance newAttendance(String employeeId, LocalDate date, IServiceContext context) {
         IEntityDao<ErpHrAttendance> dao = attendanceDao();
         ErpHrAttendance a = dao.newEntity();
         a.setBusinessDate(io.nop.api.core.time.CoreMetrics.today());
@@ -111,7 +111,7 @@ public abstract class AbstractErpHrShiftProcessor {
         dao.updateEntity(assignment);
     }
 
-    protected List<ErpHrShiftAssignment> findAssignmentsByEmployeeRange(Long employeeId,
+    protected List<ErpHrShiftAssignment> findAssignmentsByEmployeeRange(String employeeId,
                                                                         LocalDate startDate,
                                                                         LocalDate endDate,
                                                                         IServiceContext context) {

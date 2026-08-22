@@ -46,7 +46,7 @@ public abstract class AbstractErpHrSalaryProcessor {
         return daoProvider.daoFor(ErpHrSalary.class);
     }
 
-    protected ErpHrSalary requireSalary(Long salaryId, IServiceContext context) {
+    protected ErpHrSalary requireSalary(String salaryId, IServiceContext context) {
         ErpHrSalary salary = salaryDao().getEntityById(salaryId);
         if (salary == null) {
             throw new UnknownEntityException(salaryDao().getEntityName(), salaryId);
@@ -54,7 +54,7 @@ public abstract class AbstractErpHrSalaryProcessor {
         return salary;
     }
 
-    protected void assertNotDuplicated(Long employeeId, int year, int month, IServiceContext context) {
+    protected void assertNotDuplicated(String employeeId, int year, int month, IServiceContext context) {
         if (existsNonVoidSalary(employeeId, year, month, context)) {
             throw new NopException(ErpHrErrors.ERR_SALARY_ALREADY_EXISTS)
                     .param(ErpHrErrors.ARG_EMPLOYEE_ID, employeeId)
@@ -63,7 +63,7 @@ public abstract class AbstractErpHrSalaryProcessor {
         }
     }
 
-    protected boolean existsNonVoidSalary(Long employeeId, int year, int month, IServiceContext context) {
+    protected boolean existsNonVoidSalary(String employeeId, int year, int month, IServiceContext context) {
         QueryBean q = new QueryBean();
         q.addFilter(and(
                 eq("employeeId", employeeId),

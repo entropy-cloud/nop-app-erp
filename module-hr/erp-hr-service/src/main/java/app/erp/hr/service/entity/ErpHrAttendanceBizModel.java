@@ -58,25 +58,25 @@ public class ErpHrAttendanceBizModel extends CrudBizModel<ErpHrAttendance> imple
 
     @Override
     @BizMutation
-    public ErpHrAttendance clockIn(@Name("employeeId") Long employeeId, IServiceContext context) {
+    public ErpHrAttendance clockIn(@Name("employeeId") String employeeId, IServiceContext context) {
         return clockInProcessor.clockIn(employeeId, context);
     }
 
     @Override
     @BizMutation
-    public ErpHrAttendance clockOut(@Name("employeeId") Long employeeId, IServiceContext context) {
+    public ErpHrAttendance clockOut(@Name("employeeId") String employeeId, IServiceContext context) {
         return clockOutProcessor.clockOut(employeeId, context);
     }
 
     @Override
     @BizQuery
-    public ErpHrAttendance getTodayAttendance(@Name("employeeId") Long employeeId, IServiceContext context) {
+    public ErpHrAttendance getTodayAttendance(@Name("employeeId") String employeeId, IServiceContext context) {
         return findAttendance(employeeId, CoreMetrics.today(), context);
     }
 
     @Override
     @BizMutation
-    public ErpHrAttendance makeUpClockIn(@Name("employeeId") Long employeeId, @Name("date") LocalDate date,
+    public ErpHrAttendance makeUpClockIn(@Name("employeeId") String employeeId, @Name("date") LocalDate date,
                                          @Name("clockTime") java.sql.Timestamp clockTime,
                                          @Name("reason") String reason, IServiceContext context) {
         return doMakeUp(employeeId, date, clockTime, reason, true, context);
@@ -84,7 +84,7 @@ public class ErpHrAttendanceBizModel extends CrudBizModel<ErpHrAttendance> imple
 
     @Override
     @BizMutation
-    public ErpHrAttendance makeUpClockOut(@Name("employeeId") Long employeeId, @Name("date") LocalDate date,
+    public ErpHrAttendance makeUpClockOut(@Name("employeeId") String employeeId, @Name("date") LocalDate date,
                                           @Name("clockTime") java.sql.Timestamp clockTime,
                                           @Name("reason") String reason, IServiceContext context) {
         return doMakeUp(employeeId, date, clockTime, reason, false, context);
@@ -96,7 +96,7 @@ public class ErpHrAttendanceBizModel extends CrudBizModel<ErpHrAttendance> imple
      * 手工补卡公共编排（RC-R1.7，P1-RC-014）。守卫顺序：先 HR 角色后 reason（错误可见性）。
      * 补卡是绕过打卡时序守卫的受控通道：直接写目标时间戳 + source=MANUAL + remark=reason 审计标记。
      */
-    private ErpHrAttendance doMakeUp(Long employeeId, LocalDate date, java.sql.Timestamp clockTime,
+    private ErpHrAttendance doMakeUp(String employeeId, LocalDate date, java.sql.Timestamp clockTime,
                                      String reason, boolean clockIn, IServiceContext context) {
         checkMakeUpRole();
         if (StringHelper.isBlank(reason)) {
@@ -142,7 +142,7 @@ public class ErpHrAttendanceBizModel extends CrudBizModel<ErpHrAttendance> imple
         }
     }
 
-    ErpHrAttendance findAttendance(Long employeeId, LocalDate date, IServiceContext context) {
+    ErpHrAttendance findAttendance(String employeeId, LocalDate date, IServiceContext context) {
         QueryBean q = new QueryBean();
         q.addFilter(and(eq("employeeId", employeeId), eq("date", date)));
         q.setLimit(1);

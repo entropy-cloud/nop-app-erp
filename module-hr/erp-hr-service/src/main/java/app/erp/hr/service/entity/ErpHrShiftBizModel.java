@@ -62,7 +62,7 @@ public class ErpHrShiftBizModel extends CrudBizModel<ErpHrShift> implements IErp
 
     @Override
     @BizMutation
-    public ErpHrAttendance calcAttendance(@Name("employeeId") Long employeeId,
+    public ErpHrAttendance calcAttendance(@Name("employeeId") String employeeId,
                                           @Name("assignmentDate") LocalDate assignmentDate,
                                           IServiceContext context) {
         return calcAttendanceProcessor.calcAttendance(employeeId, assignmentDate, context);
@@ -70,7 +70,7 @@ public class ErpHrShiftBizModel extends CrudBizModel<ErpHrShift> implements IErp
 
     @Override
     @BizQuery
-    public ErpHrAttendance findAttendanceByDate(@Name("employeeId") Long employeeId,
+    public ErpHrAttendance findAttendanceByDate(@Name("employeeId") String employeeId,
                                                 @Name("date") LocalDate date,
                                                 IServiceContext context) {
         QueryBean q = new QueryBean();
@@ -81,18 +81,18 @@ public class ErpHrShiftBizModel extends CrudBizModel<ErpHrShift> implements IErp
 
     @Override
     @BizMutation
-    public void onLeaveApproved(@Name("leaveRequestId") Long leaveRequestId, IServiceContext context) {
+    public void onLeaveApproved(@Name("leaveRequestId") String leaveRequestId, IServiceContext context) {
         onLeaveApprovedProcessor.onLeaveApproved(leaveRequestId, context);
     }
 
     @Override
     @BizMutation
-    public void onLeaveCancelled(@Name("leaveRequestId") Long leaveRequestId, IServiceContext context) {
+    public void onLeaveCancelled(@Name("leaveRequestId") String leaveRequestId, IServiceContext context) {
         onLeaveCancelledProcessor.onLeaveCancelled(leaveRequestId, context);
     }
 
-    ErpHrLeaveRequest requireLeaveRequest(Long leaveRequestId, IServiceContext context) {
-        ErpHrLeaveRequest leave = leaveRequestBiz.get(String.valueOf(leaveRequestId), false, context);
+    ErpHrLeaveRequest requireLeaveRequest(String leaveRequestId, IServiceContext context) {
+        ErpHrLeaveRequest leave = leaveRequestBiz.get(leaveRequestId, false, context);
         if (leave == null) {
             throw new NopException(ErpHrErrors.ERR_LEAVE_REQUEST_NOT_FOUND)
                     .param(ErpHrErrors.ARG_LEAVE_REQUEST_ID, leaveRequestId);
@@ -102,7 +102,7 @@ public class ErpHrShiftBizModel extends CrudBizModel<ErpHrShift> implements IErp
 
     // ---------- helpers ----------
 
-    ErpHrAttendance upsertAttendanceForAbsent(ErpHrAttendance existing, Long employeeId, LocalDate date,
+    ErpHrAttendance upsertAttendanceForAbsent(ErpHrAttendance existing, String employeeId, LocalDate date,
                                               IServiceContext context) {
         if (existing == null) {
             existing = newAttendance(employeeId, date, context);
@@ -114,7 +114,7 @@ public class ErpHrShiftBizModel extends CrudBizModel<ErpHrShift> implements IErp
         return existing;
     }
 
-    ErpHrAttendance upsertAttendanceForLeave(ErpHrAttendance existing, Long employeeId, LocalDate date,
+    ErpHrAttendance upsertAttendanceForLeave(ErpHrAttendance existing, String employeeId, LocalDate date,
                                              ErpHrShiftAssignment assignment,
                                              IServiceContext context) {
         if (existing == null) {
@@ -128,7 +128,7 @@ public class ErpHrShiftBizModel extends CrudBizModel<ErpHrShift> implements IErp
         return existing;
     }
 
-    ErpHrAttendance newAttendance(Long employeeId, LocalDate date, IServiceContext context) {
+    ErpHrAttendance newAttendance(String employeeId, LocalDate date, IServiceContext context) {
         IEntityDao<ErpHrAttendance> dao = daoProvider().daoFor(ErpHrAttendance.class);
         ErpHrAttendance a = dao.newEntity();
         a.setBusinessDate(io.nop.api.core.time.CoreMetrics.today());
@@ -159,7 +159,7 @@ public class ErpHrShiftBizModel extends CrudBizModel<ErpHrShift> implements IErp
     /**
      * 内部便利方法：查询某员工日期范围内的排班（供 Phase 4 休假联动使用）。
      */
-    public List<ErpHrShiftAssignment> findAssignmentsByEmployeeRange(Long employeeId,
+    public List<ErpHrShiftAssignment> findAssignmentsByEmployeeRange(String employeeId,
                                                                      LocalDate startDate,
                                                                      LocalDate endDate,
                                                                      IServiceContext context) {

@@ -19,13 +19,13 @@
             <cols>
 
                 <!--ID-->
-                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="id" mandatory="true" sortable="true"/>
 
                 <!--员工-->
-                <col id="employeeId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="employeeId" mandatory="true" sortable="true"/>
 
                 <!--胜任力-->
-                <col id="competencyId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="competencyId" mandatory="true" sortable="true"/>
 
                 <!--要求等级-->
                 <col id="requiredLevel" ui:number="true" sortable="true"/>

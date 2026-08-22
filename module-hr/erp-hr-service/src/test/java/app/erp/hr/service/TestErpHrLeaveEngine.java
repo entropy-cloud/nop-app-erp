@@ -65,16 +65,16 @@ public class TestErpHrLeaveEngine extends JunitAutoTestCase {
     @Test
     public void testFullApprovalFlowActivatesShiftLinkage() {
         Object[] seeded = ormTemplate.runInSession(session -> {
-            Long empId = seedEmployee("EMP-FULL");
-            Long shiftId = seedShift("MORNING");
+            String empId = seedEmployee("EMP-FULL");
+            String shiftId = seedShift("MORNING");
             seedBalance(empId, "ANNUAL", 2026, new BigDecimal("10"));
             return new Object[]{empId, shiftId};
         });
-        Long empId = (Long) seeded[0];
-        Long shiftId = (Long) seeded[1];
+        String empId = (String) seeded[0];
+        String shiftId = (String) seeded[1];
 
         ormTemplate.runInSession(() -> assignmentBiz.assignSingle(empId, shiftId, LocalDate.of(2026, 7, 2), CTX));
-        Long leaveId = seedLeaveRequest(empId, "ANNUAL",
+        String leaveId = seedLeaveRequest(empId, "ANNUAL",
                 LocalDate.of(2026, 7, 2), LocalDate.of(2026, 7, 2), ErpHrConstants.LEAVE_STATUS_DRAFT);
 
         ormTemplate.runInSession(() -> leaveRequestBiz.submit(String.valueOf(leaveId), CTX));
@@ -93,17 +93,17 @@ public class TestErpHrLeaveEngine extends JunitAutoTestCase {
     @Test
     public void testInsufficientBalanceBlocksSubmit() {
         Object[] seeded = ormTemplate.runInSession(session -> {
-            Long empId = seedEmployee("EMP-BALANCE");
+            String empId = seedEmployee("EMP-BALANCE");
             seedBalance(empId, "ANNUAL", 2026, new BigDecimal("5"));
             // 已用 3 天（7-1~7-3）
             seedLeaveRequest(empId, "ANNUAL", LocalDate.of(2026, 7, 1), LocalDate.of(2026, 7, 3),
                     ErpHrConstants.LEAVE_STATUS_APPROVED);
             return new Object[]{empId};
         });
-        Long empId = (Long) seeded[0];
+        String empId = (String) seeded[0];
 
         // 新申请 4 天（余额仅剩 2 天）
-        Long leaveId = seedLeaveRequest(empId, "ANNUAL",
+        String leaveId = seedLeaveRequest(empId, "ANNUAL",
                 LocalDate.of(2026, 7, 10), LocalDate.of(2026, 7, 13), ErpHrConstants.LEAVE_STATUS_DRAFT);
 
         NopException ex = assertThrows(NopException.class,
@@ -114,17 +114,17 @@ public class TestErpHrLeaveEngine extends JunitAutoTestCase {
     @Test
     public void testDateOverlapBlocksSubmit() {
         Object[] seeded = ormTemplate.runInSession(session -> {
-            Long empId = seedEmployee("EMP-OVERLAP");
+            String empId = seedEmployee("EMP-OVERLAP");
             seedBalance(empId, "ANNUAL", 2026, new BigDecimal("30"));
             // 已有 APPROVED 1/1~1/3
             seedLeaveRequest(empId, "ANNUAL", LocalDate.of(2026, 1, 1), LocalDate.of(2026, 1, 3),
                     ErpHrConstants.LEAVE_STATUS_APPROVED);
             return new Object[]{empId};
         });
-        Long empId = (Long) seeded[0];
+        String empId = (String) seeded[0];
 
         // 新申请 1/2~1/4 与已有重叠
-        Long leaveId = seedLeaveRequest(empId, "ANNUAL",
+        String leaveId = seedLeaveRequest(empId, "ANNUAL",
                 LocalDate.of(2026, 1, 2), LocalDate.of(2026, 1, 4), ErpHrConstants.LEAVE_STATUS_DRAFT);
 
         NopException ex = assertThrows(NopException.class,
@@ -135,16 +135,16 @@ public class TestErpHrLeaveEngine extends JunitAutoTestCase {
     @Test
     public void testCancelRevertsShiftLinkage() {
         Object[] seeded = ormTemplate.runInSession(session -> {
-            Long empId = seedEmployee("EMP-CANCEL");
-            Long shiftId = seedShift("MORNING");
+            String empId = seedEmployee("EMP-CANCEL");
+            String shiftId = seedShift("MORNING");
             seedBalance(empId, "ANNUAL", 2026, new BigDecimal("10"));
             return new Object[]{empId, shiftId};
         });
-        Long empId = (Long) seeded[0];
-        Long shiftId = (Long) seeded[1];
+        String empId = (String) seeded[0];
+        String shiftId = (String) seeded[1];
 
         ormTemplate.runInSession(() -> assignmentBiz.assignSingle(empId, shiftId, LocalDate.of(2026, 7, 5), CTX));
-        Long leaveId = seedLeaveRequest(empId, "ANNUAL",
+        String leaveId = seedLeaveRequest(empId, "ANNUAL",
                 LocalDate.of(2026, 7, 5), LocalDate.of(2026, 7, 5), ErpHrConstants.LEAVE_STATUS_DRAFT);
 
         ormTemplate.runInSession(() -> leaveRequestBiz.submit(String.valueOf(leaveId), CTX));
@@ -170,13 +170,13 @@ public class TestErpHrLeaveEngine extends JunitAutoTestCase {
     @Test
     public void testDurationDaysAutoCalc() {
         Object[] seeded = ormTemplate.runInSession(session -> {
-            Long empId = seedEmployee("EMP-DURATION");
+            String empId = seedEmployee("EMP-DURATION");
             seedBalance(empId, "ANNUAL", 2026, new BigDecimal("30"));
             return new Object[]{empId};
         });
-        Long empId = (Long) seeded[0];
+        String empId = (String) seeded[0];
 
-        Long leaveId = seedLeaveRequest(empId, "ANNUAL",
+        String leaveId = seedLeaveRequest(empId, "ANNUAL",
                 LocalDate.of(2026, 7, 1), LocalDate.of(2026, 7, 5), ErpHrConstants.LEAVE_STATUS_DRAFT);
 
         ormTemplate.runInSession(() -> leaveRequestBiz.submit(String.valueOf(leaveId), CTX));
@@ -189,13 +189,13 @@ public class TestErpHrLeaveEngine extends JunitAutoTestCase {
     @Test
     public void testRejectFromSubmitted() {
         Object[] seeded = ormTemplate.runInSession(session -> {
-            Long empId = seedEmployee("EMP-REJECT");
+            String empId = seedEmployee("EMP-REJECT");
             seedBalance(empId, "ANNUAL", 2026, new BigDecimal("10"));
             return new Object[]{empId};
         });
-        Long empId = (Long) seeded[0];
+        String empId = (String) seeded[0];
 
-        Long leaveId = seedLeaveRequest(empId, "ANNUAL",
+        String leaveId = seedLeaveRequest(empId, "ANNUAL",
                 LocalDate.of(2026, 7, 1), LocalDate.of(2026, 7, 1), ErpHrConstants.LEAVE_STATUS_DRAFT);
         ormTemplate.runInSession(() -> leaveRequestBiz.submit(String.valueOf(leaveId), CTX));
         ormTemplate.runInSession(() -> leaveRequestBiz.reject(String.valueOf(leaveId), CTX));
@@ -207,13 +207,13 @@ public class TestErpHrLeaveEngine extends JunitAutoTestCase {
     @Test
     public void testIllegalTransitionApprovedToSubmit() {
         Object[] seeded = ormTemplate.runInSession(session -> {
-            Long empId = seedEmployee("EMP-ILLEGAL");
+            String empId = seedEmployee("EMP-ILLEGAL");
             seedBalance(empId, "ANNUAL", 2026, new BigDecimal("10"));
             return new Object[]{empId};
         });
-        Long empId = (Long) seeded[0];
+        String empId = (String) seeded[0];
 
-        Long leaveId = seedLeaveRequest(empId, "ANNUAL",
+        String leaveId = seedLeaveRequest(empId, "ANNUAL",
                 LocalDate.of(2026, 7, 1), LocalDate.of(2026, 7, 1), ErpHrConstants.LEAVE_STATUS_APPROVED);
 
         NopException ex = assertThrows(NopException.class,
@@ -223,7 +223,7 @@ public class TestErpHrLeaveEngine extends JunitAutoTestCase {
 
     // ---------- helpers ----------
 
-    private ErpHrShiftAssignment findAssignment(Long empId, LocalDate date) {
+    private ErpHrShiftAssignment findAssignment(String empId, LocalDate date) {
         QueryBean q = new QueryBean();
         q.addFilter(and(eq("employeeId", empId), eq("assignmentDate", date)));
         q.setLimit(1);
@@ -231,7 +231,7 @@ public class TestErpHrLeaveEngine extends JunitAutoTestCase {
         return list.isEmpty() ? null : list.get(0);
     }
 
-    private Long seedEmployee(String code) {
+    private String seedEmployee(String code) {
         IEntityDao<ErpHrEmployee> dao = daoProvider.daoFor(ErpHrEmployee.class);
         ErpHrEmployee emp = new ErpHrEmployee();
         emp.setCode(code);
@@ -246,7 +246,7 @@ public class TestErpHrLeaveEngine extends JunitAutoTestCase {
         return emp.getId();
     }
 
-    private Long seedShift(String code) {
+    private String seedShift(String code) {
         IEntityDao<ErpHrShift> dao = daoProvider.daoFor(ErpHrShift.class);
         ErpHrShift s = new ErpHrShift();
         s.setCode(code);
@@ -262,7 +262,7 @@ public class TestErpHrLeaveEngine extends JunitAutoTestCase {
         return s.getId();
     }
 
-    private void seedBalance(Long employeeId, String leaveType, int fiscalYear, BigDecimal entitledDays) {
+    private void seedBalance(String employeeId, String leaveType, int fiscalYear, BigDecimal entitledDays) {
         IEntityDao<ErpHrLeaveBalance> dao = daoProvider.daoFor(ErpHrLeaveBalance.class);
         ErpHrLeaveBalance b = new ErpHrLeaveBalance();
         b.setBusinessDate(LocalDate.of(2026, 1, 1));
@@ -274,7 +274,7 @@ public class TestErpHrLeaveEngine extends JunitAutoTestCase {
         dao.saveEntity(b);
     }
 
-    private Long seedLeaveRequest(Long employeeId, String leaveType,
+    private String seedLeaveRequest(String employeeId, String leaveType,
                                   LocalDate startDate, LocalDate endDate, String status) {
         IEntityDao<ErpHrLeaveRequest> dao = daoProvider.daoFor(ErpHrLeaveRequest.class);
         ErpHrLeaveRequest l = new ErpHrLeaveRequest();

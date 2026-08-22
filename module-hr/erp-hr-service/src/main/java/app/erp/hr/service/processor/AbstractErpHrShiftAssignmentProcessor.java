@@ -45,7 +45,7 @@ public abstract class AbstractErpHrShiftAssignmentProcessor {
         return daoProvider.daoFor(ErpHrShiftAssignment.class);
     }
 
-    protected ErpHrShiftAssignment doCreateAssignment(Long employeeId, Long shiftId, LocalDate date,
+    protected ErpHrShiftAssignment doCreateAssignment(String employeeId, String shiftId, LocalDate date,
                                                       IServiceContext context) {
         ErpHrShiftAssignment assignment = assignmentBiz.newEntity();
         assignment.setBusinessDate(io.nop.api.core.time.CoreMetrics.today());
@@ -72,7 +72,7 @@ public abstract class AbstractErpHrShiftAssignmentProcessor {
         return assignment;
     }
 
-    protected ErpHrShift requireShift(Long shiftId, IServiceContext context) {
+    protected ErpHrShift requireShift(String shiftId, IServiceContext context) {
         ErpHrShift shift = shiftBiz.get(String.valueOf(shiftId), false, context);
         if (shift == null) {
             throw new NopException(ErpHrErrors.ERR_SHIFT_ROTATION_PATTERN_INVALID)
@@ -81,7 +81,7 @@ public abstract class AbstractErpHrShiftAssignmentProcessor {
         return shift;
     }
 
-    protected void assertNoExistingAssignment(Long employeeId, LocalDate date, IServiceContext context) {
+    protected void assertNoExistingAssignment(String employeeId, LocalDate date, IServiceContext context) {
         if (existsActiveAssignment(employeeId, date, context)) {
             throw new NopException(ErpHrErrors.ERR_SHIFT_DUPLICATE_ASSIGNMENT)
                     .param(ErpHrErrors.ARG_EMPLOYEE_ID, employeeId)
@@ -89,7 +89,7 @@ public abstract class AbstractErpHrShiftAssignmentProcessor {
         }
     }
 
-    protected boolean existsActiveAssignment(Long employeeId, LocalDate date, IServiceContext context) {
+    protected boolean existsActiveAssignment(String employeeId, LocalDate date, IServiceContext context) {
         QueryBean q = new QueryBean();
         q.addFilter(and(
                 eq("employeeId", employeeId),

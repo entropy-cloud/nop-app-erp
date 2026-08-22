@@ -20,20 +20,20 @@
 
     <props>
         <prop name="id" displayName="ID" propId="1" i18n-en:displayName="ID" tagSet="seq-default" mandatory="true"
-              queryable="true" sortable="true" insertable="true" updatable="false" graphql:type="String">
-            <schema type="java.lang.Long"/>
+              queryable="true" sortable="true" insertable="true" updatable="false">
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="planId" displayName="发展计划" propId="2" i18n-en:displayName="Development Plan" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="plan">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="competencyId" displayName="目标胜任力" propId="3" i18n-en:displayName="Competency" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="competency">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="gapId" displayName="关联差距分析" propId="4" i18n-en:displayName="Gap Analysis" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="gap">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="targetLevel" displayName="目标等级" propId="5" i18n-en:displayName="Target Level" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
@@ -45,7 +45,7 @@
         </prop>
         <prop name="mentorId" displayName="导师" propId="7" i18n-en:displayName="Mentor" queryable="true" sortable="true"
               insertable="true" updatable="true" ext:relation="mentor">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="startDate" displayName="开始日期" propId="8" i18n-en:displayName="Start Date" queryable="true"
               sortable="true" insertable="true" updatable="true">

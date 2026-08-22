@@ -22,20 +22,20 @@
 
     <props>
         <prop name="id" displayName="ID" propId="1" i18n-en:displayName="ID" tagSet="seq-default" mandatory="true"
-              queryable="true" sortable="true" insertable="true" updatable="false" graphql:type="String">
-            <schema type="java.lang.Long"/>
+              queryable="true" sortable="true" insertable="true" updatable="false">
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="orgId" displayName="业务组织" propId="2" i18n-en:displayName="Organization" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="org">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="employeeId" displayName="员工" propId="3" i18n-en:displayName="Employee" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="employee">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="shiftId" displayName="班次" propId="4" i18n-en:displayName="Shift" mandatory="true" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="shift">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="assignmentDate" displayName="排班日期" propId="5" i18n-en:displayName="Assignment Date" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
@@ -59,15 +59,15 @@
         </prop>
         <prop name="leaveRequestId" displayName="关联休假" propId="10" i18n-en:displayName="Leave Request" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="leaveRequest">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="swapRequestId" displayName="关联调换" propId="11" i18n-en:displayName="Swap Request" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="swapRequest">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="replacedByAssignmentId" displayName="被替换排班" propId="12" i18n-en:displayName="Replaced By"
               queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="replacedByAssignment">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="status" displayName="状态" propId="13" i18n-en:displayName="Status" queryable="true" sortable="true"
               insertable="true" updatable="true">

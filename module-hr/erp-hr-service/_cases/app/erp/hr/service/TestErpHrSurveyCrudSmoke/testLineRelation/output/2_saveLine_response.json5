@@ -1,7 +1,7 @@
 {
   "data": {
     "id": "2",
-    "surveyId": 1,
+    "surveyId": "1",
     "questionText": "冒烟问题",
     "questionType": "RATING",
     "questionType_label": "RATING-评分题",

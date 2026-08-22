@@ -19,7 +19,7 @@
             <cols>
 
                 <!--ID-->
-                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="id" mandatory="true" sortable="true"/>
 
                 <!--编码-->
                 <col id="code" mandatory="true" sortable="true"/>
@@ -28,16 +28,16 @@
                 <col id="name" mandatory="true" sortable="true"/>
 
                 <!--上级部门-->
-                <col id="parentId" ui:number="true" sortable="true"/>
+                <col id="parentId" sortable="true"/>
 
                 <!--部门负责人-->
-                <col id="managerId" ui:number="true" sortable="true"/>
+                <col id="managerId" sortable="true"/>
 
                 <!--成本中心-->
-                <col id="costCenterId" ui:number="true" sortable="true"/>
+                <col id="costCenterId" sortable="true"/>
 
                 <!--业务组织-->
-                <col id="orgId" ui:number="true" sortable="true"/>
+                <col id="orgId" sortable="true"/>
 
                 <!--备注-->
                 <col id="remark" sortable="true"/>

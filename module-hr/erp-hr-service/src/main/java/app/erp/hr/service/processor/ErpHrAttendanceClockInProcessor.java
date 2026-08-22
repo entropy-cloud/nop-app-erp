@@ -14,7 +14,7 @@ import java.time.LocalDate;
  */
 public class ErpHrAttendanceClockInProcessor extends AbstractErpHrAttendanceProcessor {
 
-    public ErpHrAttendance clockIn(Long employeeId, IServiceContext context) {
+    public ErpHrAttendance clockIn(String employeeId, IServiceContext context) {
         LocalDate today = CoreMetrics.today();
         ErpHrAttendance attendance = findAttendance(employeeId, today);
         if (attendance == null) {

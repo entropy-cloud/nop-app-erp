@@ -154,13 +154,13 @@ public class _ErpHrTimesheetLine extends DynamicOrmEntity{
 
     
     /* ID: ID */
-    private java.lang.Long _id;
+    private java.lang.String _id;
     
     /* 工时表ID: TIMESHEET_ID */
-    private java.lang.Long _timesheetId;
+    private java.lang.String _timesheetId;
     
     /* 员工: EMPLOYEE_ID */
-    private java.lang.Long _employeeId;
+    private java.lang.String _employeeId;
     
     /* 工作日期: WORK_DATE */
     private java.time.LocalDate _workDate;
@@ -329,9 +329,9 @@ public class _ErpHrTimesheetLine extends DynamicOrmEntity{
         switch(propId){
         
             case PROP_ID_id:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_id));
                }
                setId(typedValue);
@@ -339,9 +339,9 @@ public class _ErpHrTimesheetLine extends DynamicOrmEntity{
             }
         
             case PROP_ID_timesheetId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_timesheetId));
                }
                setTimesheetId(typedValue);
@@ -349,9 +349,9 @@ public class _ErpHrTimesheetLine extends DynamicOrmEntity{
             }
         
             case PROP_ID_employeeId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_employeeId));
                }
                setEmployeeId(typedValue);
@@ -489,21 +489,21 @@ public class _ErpHrTimesheetLine extends DynamicOrmEntity{
         
             case PROP_ID_id:{
                onInitProp(propId);
-               this._id = (java.lang.Long)value;
+               this._id = (java.lang.String)value;
                orm_id(); // 如果是设置主键字段，则触发watcher
                break;
             }
         
             case PROP_ID_timesheetId:{
                onInitProp(propId);
-               this._timesheetId = (java.lang.Long)value;
+               this._timesheetId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_employeeId:{
                onInitProp(propId);
-               this._employeeId = (java.lang.Long)value;
+               this._employeeId = (java.lang.String)value;
                
                break;
             }
@@ -601,7 +601,7 @@ public class _ErpHrTimesheetLine extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final java.lang.Long getId(){
+    public final java.lang.String getId(){
          onPropGet(PROP_ID_id);
          return _id;
     }
@@ -609,7 +609,7 @@ public class _ErpHrTimesheetLine extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final void setId(java.lang.Long value){
+    public final void setId(java.lang.String value){
         if(onPropSet(PROP_ID_id,value)){
             this._id = value;
             internalClearRefs(PROP_ID_id);
@@ -620,7 +620,7 @@ public class _ErpHrTimesheetLine extends DynamicOrmEntity{
     /**
      * 工时表ID: TIMESHEET_ID
      */
-    public final java.lang.Long getTimesheetId(){
+    public final java.lang.String getTimesheetId(){
          onPropGet(PROP_ID_timesheetId);
          return _timesheetId;
     }
@@ -628,7 +628,7 @@ public class _ErpHrTimesheetLine extends DynamicOrmEntity{
     /**
      * 工时表ID: TIMESHEET_ID
      */
-    public final void setTimesheetId(java.lang.Long value){
+    public final void setTimesheetId(java.lang.String value){
         if(onPropSet(PROP_ID_timesheetId,value)){
             this._timesheetId = value;
             internalClearRefs(PROP_ID_timesheetId);
@@ -639,7 +639,7 @@ public class _ErpHrTimesheetLine extends DynamicOrmEntity{
     /**
      * 员工: EMPLOYEE_ID
      */
-    public final java.lang.Long getEmployeeId(){
+    public final java.lang.String getEmployeeId(){
          onPropGet(PROP_ID_employeeId);
          return _employeeId;
     }
@@ -647,7 +647,7 @@ public class _ErpHrTimesheetLine extends DynamicOrmEntity{
     /**
      * 员工: EMPLOYEE_ID
      */
-    public final void setEmployeeId(java.lang.Long value){
+    public final void setEmployeeId(java.lang.String value){
         if(onPropSet(PROP_ID_employeeId,value)){
             this._employeeId = value;
             internalClearRefs(PROP_ID_employeeId);
@@ -945,7 +945,8 @@ public class _ErpHrTimesheetLine extends DynamicOrmEntity{
            }else{
            internalSetRefEntity(PROP_NAME_project, refEntity,()->{
            
-                           this.setProjectId(refEntity.getId());
+                           this.orm_propValue(PROP_ID_projectId,
+                           refEntity.getId());
                        
            });
            }
@@ -968,7 +969,8 @@ public class _ErpHrTimesheetLine extends DynamicOrmEntity{
            }else{
            internalSetRefEntity(PROP_NAME_task, refEntity,()->{
            
-                           this.setTaskId(refEntity.getId());
+                           this.orm_propValue(PROP_ID_taskId,
+                           refEntity.getId());
                        
            });
            }

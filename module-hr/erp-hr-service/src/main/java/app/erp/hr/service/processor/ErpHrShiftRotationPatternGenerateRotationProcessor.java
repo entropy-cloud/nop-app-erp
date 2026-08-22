@@ -48,7 +48,7 @@ public class ErpHrShiftRotationPatternGenerateRotationProcessor {
     @Inject
     IErpHrShiftAssignmentBiz assignmentBiz;
 
-    public List<ErpHrShiftAssignment> generateRotation(Long patternId, List<Long> groupMemberIds, int staggerDays,
+    public List<ErpHrShiftAssignment> generateRotation(String patternId, List<String> groupMemberIds, int staggerDays,
                                                        LocalDate startDate, LocalDate endDate, boolean regenerate,
                                                        IServiceContext context) {
         ErpHrShiftRotationPattern pattern = requirePattern(patternId, context);
@@ -58,21 +58,21 @@ public class ErpHrShiftRotationPatternGenerateRotationProcessor {
             throw new NopException(ErpHrErrors.ERR_SHIFT_ROTATION_PATTERN_INVALID)
                     .param(ErpHrErrors.ARG_PATTERN_ID, patternId);
         }
-        Map<String, Long> shiftCodeToId = buildShiftCodeMap(sequence, context);
+        Map<String, String> shiftCodeToId = buildShiftCodeMap(sequence, context);
         if (regenerate) {
             deleteExistingAssignments(groupMemberIds, startDate, endDate, context);
         }
         IEntityDao<ErpHrShiftAssignment> assignmentDao = daoProvider.daoFor(ErpHrShiftAssignment.class);
         List<ErpHrShiftAssignment> result = new ArrayList<>();
         for (int memberIdx = 0; memberIdx < groupMemberIds.size(); memberIdx++) {
-            Long employeeId = groupMemberIds.get(memberIdx);
+            String employeeId = groupMemberIds.get(memberIdx);
             long staggerOffset = (long) staggerDays * memberIdx;
             LocalDate memberStart = startDate.plusDays(staggerOffset);
             long dayIndex = 0;
             for (LocalDate d = memberStart; !d.isAfter(endDate); d = d.plusDays(1)) {
                 String shiftCode = sequence.get((int) (dayIndex % cycleLength));
                 if (!ErpHrConstants.PATTERN_OFF_SHIFT_CODE.equals(shiftCode)) {
-                    Long shiftId = shiftCodeToId.get(shiftCode);
+                    String shiftId = shiftCodeToId.get(shiftCode);
                     if (shiftId != null && findActiveAssignment(assignmentDao, employeeId, d) == null) {
                         ErpHrShiftAssignment assignment = newAssignment(assignmentDao, employeeId, shiftId, d);
                         result.add(assignment);
@@ -84,7 +84,7 @@ public class ErpHrShiftRotationPatternGenerateRotationProcessor {
         return result;
     }
 
-    protected ErpHrShiftRotationPattern requirePattern(Long patternId, IServiceContext context) {
+    protected ErpHrShiftRotationPattern requirePattern(String patternId, IServiceContext context) {
         ErpHrShiftRotationPattern pattern = daoProvider.daoFor(ErpHrShiftRotationPattern.class).getEntityById(patternId);
         if (pattern == null) {
             throw new NopException(ErpHrErrors.ERR_SHIFT_ROTATION_PATTERN_INVALID)
@@ -93,7 +93,7 @@ public class ErpHrShiftRotationPatternGenerateRotationProcessor {
         return pattern;
     }
 
-    protected ErpHrShiftAssignment findActiveAssignment(IEntityDao<ErpHrShiftAssignment> dao, Long employeeId, LocalDate date) {
+    protected ErpHrShiftAssignment findActiveAssignment(IEntityDao<ErpHrShiftAssignment> dao, String employeeId, LocalDate date) {
         QueryBean q = new QueryBean();
         q.addFilter(and(
                 eq("employeeId", employeeId),
@@ -104,7 +104,7 @@ public class ErpHrShiftRotationPatternGenerateRotationProcessor {
         return list.isEmpty() ? null : list.get(0);
     }
 
-    protected ErpHrShiftAssignment newAssignment(IEntityDao<ErpHrShiftAssignment> dao, Long employeeId, Long shiftId, LocalDate date) {
+    protected ErpHrShiftAssignment newAssignment(IEntityDao<ErpHrShiftAssignment> dao, String employeeId, String shiftId, LocalDate date) {
         ErpHrShiftAssignment a = dao.newEntity();
         a.setBusinessDate(io.nop.api.core.time.CoreMetrics.today());
         a.setEmployeeId(employeeId);
@@ -147,7 +147,7 @@ public class ErpHrShiftRotationPatternGenerateRotationProcessor {
         return sequence;
     }
 
-    protected Map<String, Long> buildShiftCodeMap(List<String> sequence, IServiceContext context) {
+    protected Map<String, String> buildShiftCodeMap(List<String> sequence, IServiceContext context) {
         List<String> distinctCodes = new ArrayList<>();
         for (String c : sequence) {
             if (c == null || ErpHrConstants.PATTERN_OFF_SHIFT_CODE.equals(c)) {
@@ -157,7 +157,7 @@ public class ErpHrShiftRotationPatternGenerateRotationProcessor {
                 distinctCodes.add(c);
             }
         }
-        Map<String, Long> map = new HashMap<>();
+        Map<String, String> map = new HashMap<>();
         for (String code : distinctCodes) {
             QueryBean q = new QueryBean();
             q.addFilter(eq("code", code));
@@ -172,7 +172,7 @@ public class ErpHrShiftRotationPatternGenerateRotationProcessor {
         return map;
     }
 
-    protected void deleteExistingAssignments(List<Long> employeeIds, LocalDate startDate, LocalDate endDate,
+    protected void deleteExistingAssignments(List<String> employeeIds, LocalDate startDate, LocalDate endDate,
                                              IServiceContext context) {
         QueryBean q = new QueryBean();
         q.addFilter(and(

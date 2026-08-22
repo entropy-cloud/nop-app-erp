@@ -78,7 +78,7 @@ public class ErpHrRecruitmentBizModel extends CrudBizModel<ErpHrRecruitment> imp
     @Override
     @BizMutation
     public ErpHrRecruitment scheduleInterview(@Name("id") String id,
-                                              @Name("interviewerId") Long interviewerId,
+                                              @Name("interviewerId") String interviewerId,
                                               @Name("interviewDate") LocalDate interviewDate,
                                               IServiceContext context) {
         ErpHrRecruitment rec = requireEntity(id, null, context);

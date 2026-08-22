@@ -45,7 +45,7 @@ public abstract class AbstractErpHrDevelopmentPlanProcessor {
         return daoProvider.daoFor(ErpHrDevelopmentPlanItem.class);
     }
 
-    protected List<ErpHrGapAnalysis> findActionableGaps(Long employeeId, IServiceContext context) {
+    protected List<ErpHrGapAnalysis> findActionableGaps(String employeeId, IServiceContext context) {
         QueryBean q = new QueryBean();
         q.addFilter(and(
                 eq("employeeId", employeeId),
@@ -83,7 +83,7 @@ public abstract class AbstractErpHrDevelopmentPlanProcessor {
         return v != null ? v : 0;
     }
 
-    protected ErpHrDevelopmentPlanItem newPlanItem(Long planId, ErpHrGapAnalysis gap) {
+    protected ErpHrDevelopmentPlanItem newPlanItem(String planId, ErpHrGapAnalysis gap) {
         ErpHrDevelopmentPlanItem item = planItemDao().newEntity();
         item.setPlanId(planId);
         item.setCompetencyId(gap.getCompetencyId());
@@ -97,7 +97,7 @@ public abstract class AbstractErpHrDevelopmentPlanProcessor {
         return item;
     }
 
-    protected ErpHrDevelopmentPlanItem requirePlanItem(Long planItemId, IServiceContext context) {
+    protected ErpHrDevelopmentPlanItem requirePlanItem(String planItemId, IServiceContext context) {
         ErpHrDevelopmentPlanItem item = planItemBiz.get(String.valueOf(planItemId), false, context);
         if (item == null) {
             throw new NopException(ErpHrErrors.ERR_DEV_PLAN_ILLEGAL_STATUS_TRANSITION)

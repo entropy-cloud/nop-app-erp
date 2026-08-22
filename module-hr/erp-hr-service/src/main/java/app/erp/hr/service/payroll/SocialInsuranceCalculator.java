@@ -32,7 +32,7 @@ public class SocialInsuranceCalculator {
     /**
      * 计算社保（不含公积金）。返回 [0]=个人扣款合计，[1]=公司承担合计。
      */
-    public BigDecimal[] calculate(Long employeeId, int year, int month) {
+    public BigDecimal[] calculate(String employeeId, int year, int month) {
         ErpHrSocialInsuranceBase base = findBase(employeeId);
         if (base == null) {
             throw new NopException(ErpHrErrors.ERR_SOCIAL_INSURANCE_BASE_NOT_FOUND)
@@ -63,7 +63,7 @@ public class SocialInsuranceCalculator {
     /**
      * 计算公积金。返回 [0]=个人扣款，[1]=公司承担。优先用 housingFundBase，缺失回退社保基数。
      */
-    public BigDecimal[] calculateHousingFund(Long employeeId, int year, int month) {
+    public BigDecimal[] calculateHousingFund(String employeeId, int year, int month) {
         ErpHrSocialInsuranceBase base = findBase(employeeId);
         if (base == null) {
             throw new NopException(ErpHrErrors.ERR_SOCIAL_INSURANCE_BASE_NOT_FOUND)
@@ -84,7 +84,7 @@ public class SocialInsuranceCalculator {
         return new BigDecimal[]{employee, company};
     }
 
-    ErpHrSocialInsuranceBase findBase(Long employeeId) {
+    ErpHrSocialInsuranceBase findBase(String employeeId) {
         IEntityDao<ErpHrSocialInsuranceBase> dao = daoProvider.daoFor(ErpHrSocialInsuranceBase.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("employeeId", employeeId));

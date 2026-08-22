@@ -27,7 +27,7 @@ public class TestHrPostingFaultInjection {
         dispatcher.notificationBiz = FaultInjectionStubs.recordingNotificationBiz(captured);
 
         ErpHrSalary salary = new ErpHrSalary();
-        salary.setId(1001L);
+        salary.setId("1001");
         salary.setYear(2026);
         salary.setMonth(8);
         salary.setEmployeeId(null);
@@ -47,7 +47,7 @@ public class TestHrPostingFaultInjection {
         dispatcher.notificationBiz = FaultInjectionStubs.recordingNotificationBiz(captured);
 
         ErpHrSalary salary = new ErpHrSalary();
-        salary.setId(1002L);
+        salary.setId("1002");
         salary.setYear(2026);
         salary.setMonth(8);
 

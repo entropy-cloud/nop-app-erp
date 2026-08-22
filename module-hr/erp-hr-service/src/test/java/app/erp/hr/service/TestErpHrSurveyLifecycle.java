@@ -111,7 +111,7 @@ public class TestErpHrSurveyLifecycle extends JunitAutoTestCase {
 
     @Test
     public void testPublishValidationsAndTransition() {
-        Long noQuestion = ormTemplate.runInSession(session -> seedSurvey("SVY-PUB-NOQ", ErpHrConstants.SURVEY_STATUS_DRAFT,
+        String noQuestion = ormTemplate.runInSession(session -> seedSurvey("SVY-PUB-NOQ", ErpHrConstants.SURVEY_STATUS_DRAFT,
                 true, REF, REF.plusDays(7), "ANNUAL_ENGAGEMENT"));
         NopException exNoQ = assertThrows(NopException.class,
                 () -> ormTemplate.runInSession(session -> surveyBiz.publish(noQuestion, CTX)));
@@ -119,8 +119,8 @@ public class TestErpHrSurveyLifecycle extends JunitAutoTestCase {
                 "无题目 publish 应拒绝");
         assertEquals(ErpHrConstants.SURVEY_STATUS_DRAFT, reloadSurvey(noQuestion).getStatus());
 
-        Long noDate = ormTemplate.runInSession(session -> {
-            Long surveyId = seedSurvey("SVY-PUB-NOD", ErpHrConstants.SURVEY_STATUS_DRAFT, true, null, null, "PULSE");
+        String noDate = ormTemplate.runInSession(session -> {
+            String surveyId = seedSurvey("SVY-PUB-NOD", ErpHrConstants.SURVEY_STATUS_DRAFT, true, null, null, "PULSE");
             seedQuestion(surveyId, "题目A", ErpHrConstants.QUESTION_TYPE_RATING, "GROWTH", null);
             return surveyId;
         });
@@ -129,8 +129,8 @@ public class TestErpHrSurveyLifecycle extends JunitAutoTestCase {
         assertEquals(ErpHrErrors.ERR_HR_SURVEY_ILLEGAL_TRANSITION.getErrorCode(), exNoDate.getErrorCode(),
                 "起止日期缺失 publish 应拒绝");
 
-        Long ready = ormTemplate.runInSession(session -> {
-            Long surveyId = seedSurvey("SVY-PUB-OK", ErpHrConstants.SURVEY_STATUS_DRAFT, true, REF, REF.plusDays(7), "PULSE");
+        String ready = ormTemplate.runInSession(session -> {
+            String surveyId = seedSurvey("SVY-PUB-OK", ErpHrConstants.SURVEY_STATUS_DRAFT, true, REF, REF.plusDays(7), "PULSE");
             seedQuestion(surveyId, "题目A", ErpHrConstants.QUESTION_TYPE_RATING, "GROWTH", null);
             return surveyId;
         });
@@ -146,8 +146,8 @@ public class TestErpHrSurveyLifecycle extends JunitAutoTestCase {
 
     @Test
     public void testPublishedSurveyEditGuard() {
-        Long publishedId = ormTemplate.runInSession(session -> {
-            Long surveyId = seedSurvey("SVY-GUARD", ErpHrConstants.SURVEY_STATUS_DRAFT, true, REF, REF.plusDays(7), "PULSE");
+        String publishedId = ormTemplate.runInSession(session -> {
+            String surveyId = seedSurvey("SVY-GUARD", ErpHrConstants.SURVEY_STATUS_DRAFT, true, REF, REF.plusDays(7), "PULSE");
             seedQuestion(surveyId, "题目A", ErpHrConstants.QUESTION_TYPE_RATING, "GROWTH", null);
             return surveyId;
         });
@@ -168,7 +168,7 @@ public class TestErpHrSurveyLifecycle extends JunitAutoTestCase {
         ormTemplate.runInSession(session -> surveyBiz.update(remarkData, CTX));
         assertEquals("仅改备注", reloadSurvey(publishedId).getRemark(), "非配置字段 remark 应放行");
 
-        Long draftId = ormTemplate.runInSession(session -> seedSurvey("SVY-GUARD-D", ErpHrConstants.SURVEY_STATUS_DRAFT,
+        String draftId = ormTemplate.runInSession(session -> seedSurvey("SVY-GUARD-D", ErpHrConstants.SURVEY_STATUS_DRAFT,
                 true, REF, REF.plusDays(7), "PULSE"));
         Map<String, Object> draftData = new HashMap<>();
         draftData.put("id", String.valueOf(draftId));
@@ -179,19 +179,19 @@ public class TestErpHrSurveyLifecycle extends JunitAutoTestCase {
 
     @Test
     public void testAnonymousSubmitAndDuplicateRejected() {
-        Long[] seeded = ormTemplate.runInSession(session -> {
-            Long emp1 = seedEmployee("EMP-SVY-AN-1", null);
-            Long emp2 = seedEmployee("EMP-SVY-AN-2", null);
-            Long surveyId = seedSurvey("SVY-ANON", ErpHrConstants.SURVEY_STATUS_OPEN, true, REF, REF.plusDays(7), "ENPS");
-            Long q1 = seedQuestion(surveyId, "评分题", ErpHrConstants.QUESTION_TYPE_RATING, "GROWTH", null);
-            Long q2 = seedQuestion(surveyId, "eNPS题", ErpHrConstants.QUESTION_TYPE_ENPS, null, null);
-            return new Long[]{emp1, emp2, surveyId, q1, q2};
+        String[] seeded = ormTemplate.runInSession(session -> {
+            String emp1 = seedEmployee("EMP-SVY-AN-1", null);
+            String emp2 = seedEmployee("EMP-SVY-AN-2", null);
+            String surveyId = seedSurvey("SVY-ANON", ErpHrConstants.SURVEY_STATUS_OPEN, true, REF, REF.plusDays(7), "ENPS");
+            String q1 = seedQuestion(surveyId, "评分题", ErpHrConstants.QUESTION_TYPE_RATING, "GROWTH", null);
+            String q2 = seedQuestion(surveyId, "eNPS题", ErpHrConstants.QUESTION_TYPE_ENPS, null, null);
+            return new String[]{emp1, emp2, surveyId, q1, q2};
         });
-        Long emp1 = seeded[0];
-        Long emp2 = seeded[1];
-        Long surveyId = seeded[2];
-        Long q1 = seeded[3];
-        Long q2 = seeded[4];
+        String emp1 = seeded[0];
+        String emp2 = seeded[1];
+        String surveyId = seeded[2];
+        String q1 = seeded[3];
+        String q2 = seeded[4];
 
         ErpHrSurveyResponse r1 = ormTemplate.runInSession(session -> responseBiz.submitResponse(surveyId, emp1,
                 answers(Map.of("questionId", q1, "ratingValue", 4), Map.of("questionId", q2, "ratingValue", 9)),
@@ -227,15 +227,15 @@ public class TestErpHrSurveyLifecycle extends JunitAutoTestCase {
 
     @Test
     public void testNamedSubmitAndDuplicateRejected() {
-        Long[] seeded = ormTemplate.runInSession(session -> {
-            Long emp1 = seedEmployee("EMP-SVY-NA-1", null);
-            Long surveyId = seedSurvey("SVY-NAMED", ErpHrConstants.SURVEY_STATUS_OPEN, false, REF, REF.plusDays(7), "PULSE");
-            Long q1 = seedQuestion(surveyId, "评分题", ErpHrConstants.QUESTION_TYPE_RATING, null, null);
-            return new Long[]{emp1, surveyId, q1};
+        String[] seeded = ormTemplate.runInSession(session -> {
+            String emp1 = seedEmployee("EMP-SVY-NA-1", null);
+            String surveyId = seedSurvey("SVY-NAMED", ErpHrConstants.SURVEY_STATUS_OPEN, false, REF, REF.plusDays(7), "PULSE");
+            String q1 = seedQuestion(surveyId, "评分题", ErpHrConstants.QUESTION_TYPE_RATING, null, null);
+            return new String[]{emp1, surveyId, q1};
         });
-        Long emp1 = seeded[0];
-        Long surveyId = seeded[1];
-        Long q1 = seeded[2];
+        String emp1 = seeded[0];
+        String surveyId = seeded[1];
+        String q1 = seeded[2];
 
         ErpHrSurveyResponse r1 = ormTemplate.runInSession(session -> responseBiz.submitResponse(surveyId, emp1,
                 answers(Map.of("questionId", q1, "ratingValue", 5)), CTX));
@@ -251,19 +251,19 @@ public class TestErpHrSurveyLifecycle extends JunitAutoTestCase {
 
     @Test
     public void testSubmitToNonOpenSurveyRejected() {
-        Long[] seeded = ormTemplate.runInSession(session -> {
-            Long emp1 = seedEmployee("EMP-SVY-NO-1", null);
-            Long draftId = seedSurvey("SVY-NO-DRAFT", ErpHrConstants.SURVEY_STATUS_DRAFT, true, REF, REF.plusDays(7), "PULSE");
-            Long closedId = seedSurvey("SVY-NO-CLOSED", ErpHrConstants.SURVEY_STATUS_CLOSED, true, REF, REF.plusDays(7), "PULSE");
-            Long openId = seedSurvey("SVY-NO-OPEN", ErpHrConstants.SURVEY_STATUS_OPEN, true, REF, REF.plusDays(7), "PULSE");
-            Long q1 = seedQuestion(openId, "评分题", ErpHrConstants.QUESTION_TYPE_RATING, null, null);
-            return new Long[]{emp1, draftId, closedId, openId, q1};
+        String[] seeded = ormTemplate.runInSession(session -> {
+            String emp1 = seedEmployee("EMP-SVY-NO-1", null);
+            String draftId = seedSurvey("SVY-NO-DRAFT", ErpHrConstants.SURVEY_STATUS_DRAFT, true, REF, REF.plusDays(7), "PULSE");
+            String closedId = seedSurvey("SVY-NO-CLOSED", ErpHrConstants.SURVEY_STATUS_CLOSED, true, REF, REF.plusDays(7), "PULSE");
+            String openId = seedSurvey("SVY-NO-OPEN", ErpHrConstants.SURVEY_STATUS_OPEN, true, REF, REF.plusDays(7), "PULSE");
+            String q1 = seedQuestion(openId, "评分题", ErpHrConstants.QUESTION_TYPE_RATING, null, null);
+            return new String[]{emp1, draftId, closedId, openId, q1};
         });
-        Long emp1 = seeded[0];
-        Long draftId = seeded[1];
-        Long closedId = seeded[2];
-        Long openId = seeded[3];
-        Long q1 = seeded[4];
+        String emp1 = seeded[0];
+        String draftId = seeded[1];
+        String closedId = seeded[2];
+        String openId = seeded[3];
+        String q1 = seeded[4];
 
         NopException exDraft = assertThrows(NopException.class,
                 () -> ormTemplate.runInSession(session -> responseBiz.submitResponse(draftId, emp1,
@@ -286,25 +286,25 @@ public class TestErpHrSurveyLifecycle extends JunitAutoTestCase {
 
     @Test
     public void testCloseAggregatesMultiDepartmentWithEnpsBoundaries() {
-        Long[] seeded = ormTemplate.runInSession(session -> {
-            Long deptA = seedDepartment("DEPT-SVY-A", "研发部");
-            Long deptB = seedDepartment("DEPT-SVY-B", "市场部");
-            Long emp1 = seedEmployee("EMP-SVY-AG-1", deptA);
-            Long emp2 = seedEmployee("EMP-SVY-AG-2", deptB);
-            Long emp3 = seedEmployee("EMP-SVY-AG-3", deptA);
-            Long surveyId = seedSurvey("SVY-AGG", ErpHrConstants.SURVEY_STATUS_OPEN, false, REF, REF.plusDays(7), "ANNUAL_ENGAGEMENT");
-            Long qEnps = seedQuestion(surveyId, "你有多大可能推荐本公司？", ErpHrConstants.QUESTION_TYPE_ENPS, null, null);
-            Long qGrowth = seedQuestion(surveyId, "成长路径", ErpHrConstants.QUESTION_TYPE_RATING, "GROWTH", null);
-            Long qRecog = seedQuestion(surveyId, "认可激励", ErpHrConstants.QUESTION_TYPE_RATING, "RECOGNITION", null);
-            return new Long[]{deptA, deptB, emp1, emp2, emp3, surveyId, qEnps, qGrowth, qRecog};
+        String[] seeded = ormTemplate.runInSession(session -> {
+            String deptA = seedDepartment("DEPT-SVY-A", "研发部");
+            String deptB = seedDepartment("DEPT-SVY-B", "市场部");
+            String emp1 = seedEmployee("EMP-SVY-AG-1", deptA);
+            String emp2 = seedEmployee("EMP-SVY-AG-2", deptB);
+            String emp3 = seedEmployee("EMP-SVY-AG-3", deptA);
+            String surveyId = seedSurvey("SVY-AGG", ErpHrConstants.SURVEY_STATUS_OPEN, false, REF, REF.plusDays(7), "ANNUAL_ENGAGEMENT");
+            String qEnps = seedQuestion(surveyId, "你有多大可能推荐本公司？", ErpHrConstants.QUESTION_TYPE_ENPS, null, null);
+            String qGrowth = seedQuestion(surveyId, "成长路径", ErpHrConstants.QUESTION_TYPE_RATING, "GROWTH", null);
+            String qRecog = seedQuestion(surveyId, "认可激励", ErpHrConstants.QUESTION_TYPE_RATING, "RECOGNITION", null);
+            return new String[]{deptA, deptB, emp1, emp2, emp3, surveyId, qEnps, qGrowth, qRecog};
         });
-        Long emp1 = seeded[2];
-        Long emp2 = seeded[3];
-        Long emp3 = seeded[4];
-        Long surveyId = seeded[5];
-        Long qEnps = seeded[6];
-        Long qGrowth = seeded[7];
-        Long qRecog = seeded[8];
+        String emp1 = seeded[2];
+        String emp2 = seeded[3];
+        String emp3 = seeded[4];
+        String surveyId = seeded[5];
+        String qEnps = seeded[6];
+        String qGrowth = seeded[7];
+        String qRecog = seeded[8];
 
         ormTemplate.runInSession(session -> responseBiz.submitResponse(surveyId, emp1,
                 answers(Map.of("questionId", qEnps, "ratingValue", 10),
@@ -334,10 +334,10 @@ public class TestErpHrSurveyLifecycle extends JunitAutoTestCase {
 
         List<?> breakdown = (List<?>) JsonTool.parseNonStrict(overall.getQuestionBreakdown());
         assertEquals(3, breakdown.size(), "questionBreakdown 应按 3 题生成");
-        Map<Long, Double> byQuestion = new LinkedHashMap<>();
+        Map<String, Double> byQuestion = new LinkedHashMap<>();
         for (Object item : breakdown) {
             Map<?, ?> m = (Map<?, ?>) item;
-            byQuestion.put(((Number) m.get("questionId")).longValue(), ((Number) m.get("avgScore")).doubleValue());
+            byQuestion.put(String.valueOf(m.get("questionId")), ((Number) m.get("avgScore")).doubleValue());
         }
         assertEquals(7.33, byQuestion.get(qEnps), 0.001, "ENPS 题平均=(10+7+5)/3=7.33");
         assertEquals(4.0, byQuestion.get(qGrowth), 0.001, "GROWTH 题平均=(5+4+3)/3=4.0");
@@ -365,8 +365,8 @@ public class TestErpHrSurveyLifecycle extends JunitAutoTestCase {
 
     @Test
     public void testArchiveStateMachine() {
-        Long surveyId = ormTemplate.runInSession(session -> {
-            Long id = seedSurvey("SVY-ARCH", ErpHrConstants.SURVEY_STATUS_DRAFT, true, REF, REF.plusDays(7), "PULSE");
+        String surveyId = ormTemplate.runInSession(session -> {
+            String id = seedSurvey("SVY-ARCH", ErpHrConstants.SURVEY_STATUS_DRAFT, true, REF, REF.plusDays(7), "PULSE");
             seedQuestion(id, "题目A", ErpHrConstants.QUESTION_TYPE_RATING, null, null);
             return id;
         });
@@ -396,27 +396,27 @@ public class TestErpHrSurveyLifecycle extends JunitAutoTestCase {
 
     @Test
     public void testSurveyDashboardStructureAndTrend() {
-        Long[] seeded = ormTemplate.runInSession(session -> {
-            Long dept = seedDepartment("DEPT-SVY-DB", "运营部");
-            Long emp1 = seedEmployee("EMP-SVY-DB-1", dept);
-            Long historyId = seedSurveyWithScores("SVY-DB-HIST", ErpHrConstants.SURVEY_STATUS_CLOSED, "ANNUAL_ENGAGEMENT",
+        String[] seeded = ormTemplate.runInSession(session -> {
+            String dept = seedDepartment("DEPT-SVY-DB", "运营部");
+            String emp1 = seedEmployee("EMP-SVY-DB-1", dept);
+            String historyId = seedSurveyWithScores("SVY-DB-HIST", ErpHrConstants.SURVEY_STATUS_CLOSED, "ANNUAL_ENGAGEMENT",
                     new BigDecimal("4.20"), 50, REF.minusDays(30));
-            Long surveyId = seedSurvey("SVY-DB", ErpHrConstants.SURVEY_STATUS_OPEN, false, REF, REF.plusDays(7), "ANNUAL_ENGAGEMENT");
-            Long q1 = seedQuestion(surveyId, "评分题", ErpHrConstants.QUESTION_TYPE_RATING, "GROWTH", null);
-            return new Long[]{dept, emp1, historyId, surveyId, q1};
+            String surveyId = seedSurvey("SVY-DB", ErpHrConstants.SURVEY_STATUS_OPEN, false, REF, REF.plusDays(7), "ANNUAL_ENGAGEMENT");
+            String q1 = seedQuestion(surveyId, "评分题", ErpHrConstants.QUESTION_TYPE_RATING, "GROWTH", null);
+            return new String[]{dept, emp1, historyId, surveyId, q1};
         });
-        Long dept = seeded[0];
-        Long emp1 = seeded[1];
-        Long historyId = seeded[2];
-        Long surveyId = seeded[3];
-        Long q1 = seeded[4];
+        String dept = seeded[0];
+        String emp1 = seeded[1];
+        String historyId = seeded[2];
+        String surveyId = seeded[3];
+        String q1 = seeded[4];
 
         ormTemplate.runInSession(session -> responseBiz.submitResponse(surveyId, emp1,
                 answers(Map.of("questionId", q1, "ratingValue", 5)), CTX));
         ormTemplate.runInSession(session -> surveyBiz.close(surveyId, CTX));
 
         Map<String, Object> dashboard = ormTemplate.runInSession(session -> resultBiz.getSurveyDashboard(surveyId, CTX));
-        assertEquals(surveyId, ((Number) dashboard.get("surveyId")).longValue());
+        assertEquals(surveyId, dashboard.get("surveyId"));
         assertEquals(ErpHrConstants.SURVEY_STATUS_CLOSED, dashboard.get("status"));
         assertEquals(1, ((Number) dashboard.get("totalResponses")).intValue());
         assertTrue(dashboard.get("overall") != null, "仪表盘应返回整体行");
@@ -426,36 +426,36 @@ public class TestErpHrSurveyLifecycle extends JunitAutoTestCase {
         List<?> trend = (List<?>) JsonTool.parseNonStrict((String) overall.get("trendData"));
         assertEquals(1, trend.size(), "trendData 应含同 surveyType 的 1 个历史 CLOSED 问卷点");
         Map<?, ?> point = (Map<?, ?>) trend.get(0);
-        assertEquals(historyId, ((Number) point.get("surveyId")).longValue(), "趋势点应为历史问卷");
+        assertEquals(historyId, point.get("surveyId"), "趋势点应为历史问卷");
         assertEquals(4.20, ((Number) point.get("avgScore")).doubleValue(), 0.001);
         assertEquals(50, ((Number) point.get("eNpsScore")).intValue());
 
         List<?> departments = (List<?>) dashboard.get("departments");
         assertEquals(1, departments.size(), "非匿名答卷应生成部门行");
         Map<?, ?> deptRow = (Map<?, ?>) departments.get(0);
-        assertEquals(dept, ((Number) deptRow.get("departmentId")).longValue(), "部门行应指向答卷员工所在部门");
+        assertEquals(dept, deptRow.get("departmentId"), "部门行应指向答卷员工所在部门");
         assertTrue(deptRow.containsKey("departmentName"), "部门行应携带 departmentName");
     }
 
     @Test
     public void testGraphQLSmokePublishSubmitCloseDashboardArchive() {
-        Long[] seeded = ormTemplate.runInSession(session -> {
-            Long emp1 = seedEmployee("EMP-SVY-GQL-1", null);
-            Long surveyId = seedSurvey("SVY-GQL", ErpHrConstants.SURVEY_STATUS_DRAFT, true, REF, REF.plusDays(7), "PULSE");
-            Long q1 = seedQuestion(surveyId, "评分题", ErpHrConstants.QUESTION_TYPE_RATING, "GROWTH", null);
-            return new Long[]{emp1, surveyId, q1};
+        String[] seeded = ormTemplate.runInSession(session -> {
+            String emp1 = seedEmployee("EMP-SVY-GQL-1", null);
+            String surveyId = seedSurvey("SVY-GQL", ErpHrConstants.SURVEY_STATUS_DRAFT, true, REF, REF.plusDays(7), "PULSE");
+            String q1 = seedQuestion(surveyId, "评分题", ErpHrConstants.QUESTION_TYPE_RATING, "GROWTH", null);
+            return new String[]{emp1, surveyId, q1};
         });
-        Long emp1 = seeded[0];
-        Long surveyId = seeded[1];
-        Long q1 = seeded[2];
+        String emp1 = seeded[0];
+        String surveyId = seeded[1];
+        String q1 = seeded[2];
 
         ApiResponse<?> publishResp = executeRpc(GraphQLOperationType.mutation, "ErpHrSurvey__publish",
-                ApiRequest.build(Map.of("surveyId", String.valueOf(surveyId))));
+                ApiRequest.build(Map.of("surveyId", surveyId)));
         assertEquals(0, publishResp.getStatus(), "GraphQL publish 应成功");
         assertEquals(ErpHrConstants.SURVEY_STATUS_OPEN, reloadSurvey(surveyId).getStatus());
 
         ApiResponse<?> submitResp = executeRpc(GraphQLOperationType.mutation, "ErpHrSurveyResponse__submitResponse",
-                ApiRequest.build(Map.of("surveyId", String.valueOf(surveyId),
+                ApiRequest.build(Map.of("surveyId", surveyId,
                         "employeeId", String.valueOf(emp1),
                         "answers", List.of(Map.of("questionId", String.valueOf(q1), "ratingValue", 5)))));
         assertEquals(0, submitResp.getStatus(), "GraphQL submitResponse 应成功");
@@ -465,16 +465,16 @@ public class TestErpHrSurveyLifecycle extends JunitAutoTestCase {
         assertNotNull(response.getRespondentHash(), "匿名模式 GraphQL 提交应写 respondentHash");
 
         ApiResponse<?> closeResp = executeRpc(GraphQLOperationType.mutation, "ErpHrSurvey__close",
-                ApiRequest.build(Map.of("surveyId", String.valueOf(surveyId))));
+                ApiRequest.build(Map.of("surveyId", surveyId)));
         assertEquals(0, closeResp.getStatus(), "GraphQL close 应成功");
         assertEquals(ErpHrConstants.SURVEY_STATUS_CLOSED, reloadSurvey(surveyId).getStatus());
 
         ApiResponse<?> dashboardResp = executeRpc(GraphQLOperationType.query, "ErpHrSurveyResult__getSurveyDashboard",
-                ApiRequest.build(Map.of("surveyId", String.valueOf(surveyId))));
+                ApiRequest.build(Map.of("surveyId", surveyId)));
         assertEquals(0, dashboardResp.getStatus(), "GraphQL getSurveyDashboard 应成功");
 
         ApiResponse<?> archiveResp = executeRpc(GraphQLOperationType.mutation, "ErpHrSurvey__archive",
-                ApiRequest.build(Map.of("surveyId", String.valueOf(surveyId))));
+                ApiRequest.build(Map.of("surveyId", surveyId)));
         assertEquals(0, archiveResp.getStatus(), "GraphQL archive 应成功");
         assertEquals(ErpHrConstants.SURVEY_STATUS_ARCHIVED, reloadSurvey(surveyId).getStatus());
     }
@@ -498,7 +498,7 @@ public class TestErpHrSurveyLifecycle extends JunitAutoTestCase {
         return list;
     }
 
-    private Long seedDepartment(String code, String name) {
+    private String seedDepartment(String code, String name) {
         IEntityDao<ErpHrDepartment> dao = daoProvider.daoFor(ErpHrDepartment.class);
         ErpHrDepartment dept = new ErpHrDepartment();
         dept.setCode(code);
@@ -507,7 +507,7 @@ public class TestErpHrSurveyLifecycle extends JunitAutoTestCase {
         return dept.getId();
     }
 
-    private Long seedEmployee(String code, Long departmentId) {
+    private String seedEmployee(String code, String departmentId) {
         IEntityDao<ErpHrEmployee> dao = daoProvider.daoFor(ErpHrEmployee.class);
         ErpHrEmployee emp = new ErpHrEmployee();
         emp.setCode(code);
@@ -523,7 +523,7 @@ public class TestErpHrSurveyLifecycle extends JunitAutoTestCase {
         return emp.getId();
     }
 
-    private Long seedSurvey(String code, String status, boolean anonymous, LocalDate start, LocalDate end,
+    private String seedSurvey(String code, String status, boolean anonymous, LocalDate start, LocalDate end,
                             String surveyType) {
         IEntityDao<ErpHrSurvey> dao = daoProvider.daoFor(ErpHrSurvey.class);
         ErpHrSurvey survey = new ErpHrSurvey();
@@ -538,7 +538,7 @@ public class TestErpHrSurveyLifecycle extends JunitAutoTestCase {
         return survey.getId();
     }
 
-    private Long seedSurveyWithScores(String code, String status, String surveyType, BigDecimal avgScore,
+    private String seedSurveyWithScores(String code, String status, String surveyType, BigDecimal avgScore,
                                       Integer eNpsScore, LocalDate endDate) {
         IEntityDao<ErpHrSurvey> dao = daoProvider.daoFor(ErpHrSurvey.class);
         ErpHrSurvey survey = new ErpHrSurvey();
@@ -554,7 +554,7 @@ public class TestErpHrSurveyLifecycle extends JunitAutoTestCase {
         return survey.getId();
     }
 
-    private Long seedQuestion(Long surveyId, String questionText, String questionType, String driverCategory,
+    private String seedQuestion(String surveyId, String questionText, String questionType, String driverCategory,
                               Integer sortOrder) {
         IEntityDao<ErpHrSurveyQuestion> dao = daoProvider.daoFor(ErpHrSurveyQuestion.class);
         ErpHrSurveyQuestion question = new ErpHrSurveyQuestion();
@@ -567,11 +567,11 @@ public class TestErpHrSurveyLifecycle extends JunitAutoTestCase {
         return question.getId();
     }
 
-    private ErpHrSurvey reloadSurvey(Long surveyId) {
-        return ormTemplate.runInSession(session -> surveyBiz.get(String.valueOf(surveyId), false, CTX));
+    private ErpHrSurvey reloadSurvey(String surveyId) {
+        return ormTemplate.runInSession(session -> surveyBiz.get(surveyId, false, CTX));
     }
 
-    private ErpHrSurveyResponse reloadResponse(Long responseId) {
+    private ErpHrSurveyResponse reloadResponse(String responseId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("id", responseId));
         q.setLimit(1);
@@ -581,7 +581,7 @@ public class TestErpHrSurveyLifecycle extends JunitAutoTestCase {
         });
     }
 
-    private ErpHrSurveyResponse findResponseBySurvey(Long surveyId) {
+    private ErpHrSurveyResponse findResponseBySurvey(String surveyId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("surveyId", surveyId));
         q.setLimit(1);
@@ -591,7 +591,7 @@ public class TestErpHrSurveyLifecycle extends JunitAutoTestCase {
         });
     }
 
-    private ErpHrSurveyResult findResultRow(Long surveyId, Long departmentId, IServiceContext context) {
+    private ErpHrSurveyResult findResultRow(String surveyId, String departmentId, IServiceContext context) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("surveyId", surveyId));
         if (departmentId == null) {

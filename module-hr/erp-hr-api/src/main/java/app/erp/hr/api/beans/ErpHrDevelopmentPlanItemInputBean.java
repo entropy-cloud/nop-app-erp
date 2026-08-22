@@ -12,58 +12,58 @@
     public class ErpHrDevelopmentPlanItemInputBean extends CrudInputBase {
 
     
-        private Long _id;
+        private String _id;
 
     
         @PropMeta(propId=1)
     
-        public Long getId(){
+        public String getId(){
             return _id;
         }
 
-        public void setId(Long value){
+        public void setId(String value){
             this._id = value;
         }
 
 
-        private Long _planId;
+        private String _planId;
 
     
         @PropMeta(propId=2)
     
-        public Long getPlanId(){
+        public String getPlanId(){
             return _planId;
         }
 
-        public void setPlanId(Long value){
+        public void setPlanId(String value){
             this._planId = value;
         }
 
 
-        private Long _competencyId;
+        private String _competencyId;
 
     
         @PropMeta(propId=3)
     
-        public Long getCompetencyId(){
+        public String getCompetencyId(){
             return _competencyId;
         }
 
-        public void setCompetencyId(Long value){
+        public void setCompetencyId(String value){
             this._competencyId = value;
         }
 
 
-        private Long _gapId;
+        private String _gapId;
 
     
         @PropMeta(propId=4)
     
-        public Long getGapId(){
+        public String getGapId(){
             return _gapId;
         }
 
-        public void setGapId(Long value){
+        public void setGapId(String value){
             this._gapId = value;
         }
 
@@ -96,16 +96,16 @@
         }
 
 
-        private Long _mentorId;
+        private String _mentorId;
 
     
         @PropMeta(propId=7)
     
-        public Long getMentorId(){
+        public String getMentorId(){
             return _mentorId;
         }
 
-        public void setMentorId(Long value){
+        public void setMentorId(String value){
             this._mentorId = value;
         }
 

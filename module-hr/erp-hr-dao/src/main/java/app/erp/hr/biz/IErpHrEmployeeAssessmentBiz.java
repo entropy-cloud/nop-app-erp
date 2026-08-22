@@ -20,11 +20,11 @@ public interface IErpHrEmployeeAssessmentBiz extends ICrudBiz<ErpHrEmployeeAsses
 
     /** DRAFT→SUBMITTED。前提：至少一条 AssessmentDetail，否则 ERR_ASSESSMENT_NO_DETAILS。 */
     @BizMutation
-    ErpHrEmployeeAssessment submitAssessment(@Name("assessmentId") Long assessmentId,
+    ErpHrEmployeeAssessment submitAssessment(@Name("assessmentId") String assessmentId,
                                              IServiceContext context);
 
     /** SUBMITTED→COMPLETED。触发 360 聚合（写回 detail.actualLevel）+ 差距分析刷新。 */
     @BizMutation
-    ErpHrEmployeeAssessment completeAssessment(@Name("assessmentId") Long assessmentId,
+    ErpHrEmployeeAssessment completeAssessment(@Name("assessmentId") String assessmentId,
                                                IServiceContext context);
 }

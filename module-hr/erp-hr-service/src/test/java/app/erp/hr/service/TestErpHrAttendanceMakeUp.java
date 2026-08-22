@@ -97,7 +97,7 @@ public class TestErpHrAttendanceMakeUp extends JunitAutoTestCase {
 
     @Test
     public void testMakeUpClockInCreatesNewRowOnHistoricalDate() {
-        Long empId = ormTemplate.runInSession(session -> seedEmployee("EMP-MK-NEW"));
+        String empId = ormTemplate.runInSession(session -> seedEmployee("EMP-MK-NEW"));
         LocalDate date = HrFrozenClockExtension.REFERENCE_DATE.minusDays(3);
         Timestamp clockTime = Timestamp.valueOf(LocalDateTime.of(2026, 7, 14, 9, 5, 0));
 
@@ -123,8 +123,8 @@ public class TestErpHrAttendanceMakeUp extends JunitAutoTestCase {
 
     @Test
     public void testMakeUpClockInOverwritesExistingRow() {
-        Long empId = ormTemplate.runInSession(session -> {
-            Long emp = seedEmployee("EMP-MK-OVR");
+        String empId = ormTemplate.runInSession(session -> {
+            String emp = seedEmployee("EMP-MK-OVR");
             seedAttendance(emp, HrFrozenClockExtension.REFERENCE_DATE,
                     LocalDateTime.of(2026, 7, 17, 8, 30, 0), null, ErpHrConstants.ATTENDANCE_SOURCE_CARD);
             return emp;
@@ -143,8 +143,8 @@ public class TestErpHrAttendanceMakeUp extends JunitAutoTestCase {
 
     @Test
     public void testMakeUpClockOutRecomputesWorkHours() {
-        Long empId = ormTemplate.runInSession(session -> {
-            Long emp = seedEmployee("EMP-MK-OUT");
+        String empId = ormTemplate.runInSession(session -> {
+            String emp = seedEmployee("EMP-MK-OUT");
             seedAttendance(emp, HrFrozenClockExtension.REFERENCE_DATE.minusDays(1),
                     LocalDateTime.of(2026, 7, 16, 9, 0, 0), null, ErpHrConstants.ATTENDANCE_SOURCE_CARD);
             return emp;
@@ -167,7 +167,7 @@ public class TestErpHrAttendanceMakeUp extends JunitAutoTestCase {
 
     @Test
     public void testMakeUpReasonRequiredBlankRejected() {
-        Long empId = ormTemplate.runInSession(session -> seedEmployee("EMP-MK-REASON"));
+        String empId = ormTemplate.runInSession(session -> seedEmployee("EMP-MK-REASON"));
 
         NopException ex = assertThrows(NopException.class,
                 () -> ormTemplate.runInSession(session -> attendanceBiz.makeUpClockIn(empId,
@@ -180,7 +180,7 @@ public class TestErpHrAttendanceMakeUp extends JunitAutoTestCase {
 
     @Test
     public void testMakeUpRoleGuardDualSide() {
-        Long empId = ormTemplate.runInSession(session -> seedEmployee("EMP-MK-ROLE"));
+        String empId = ormTemplate.runInSession(session -> seedEmployee("EMP-MK-ROLE"));
         LocalDate date = HrFrozenClockExtension.REFERENCE_DATE;
         Timestamp clockTime = Timestamp.valueOf(LocalDateTime.of(2026, 7, 17, 10, 0, 0));
 
@@ -223,7 +223,7 @@ public class TestErpHrAttendanceMakeUp extends JunitAutoTestCase {
 
     @Test
     public void testMakeUpClockInViaGraphQL() {
-        Long empId = ormTemplate.runInSession(session -> seedEmployee("EMP-MK-GQL"));
+        String empId = ormTemplate.runInSession(session -> seedEmployee("EMP-MK-GQL"));
         LocalDate date = HrFrozenClockExtension.REFERENCE_DATE.minusDays(2);
 
         ApiResponse<?> resp = executeRpc(mutation, "ErpHrAttendance__makeUpClockIn",
@@ -250,7 +250,7 @@ public class TestErpHrAttendanceMakeUp extends JunitAutoTestCase {
         return graphQLEngine.executeRpc(ctx);
     }
 
-    private Long seedEmployee(String code) {
+    private String seedEmployee(String code) {
         IEntityDao<ErpHrEmployee> dao = daoProvider.daoFor(ErpHrEmployee.class);
         ErpHrEmployee emp = new ErpHrEmployee();
         emp.setCode(code);
@@ -265,7 +265,7 @@ public class TestErpHrAttendanceMakeUp extends JunitAutoTestCase {
         return emp.getId();
     }
 
-    private void seedAttendance(Long employeeId, LocalDate date, LocalDateTime clockIn, LocalDateTime clockOut,
+    private void seedAttendance(String employeeId, LocalDate date, LocalDateTime clockIn, LocalDateTime clockOut,
                                 String source) {
         IEntityDao<ErpHrAttendance> dao = daoProvider.daoFor(ErpHrAttendance.class);
         ErpHrAttendance row = new ErpHrAttendance();
@@ -281,7 +281,7 @@ public class TestErpHrAttendanceMakeUp extends JunitAutoTestCase {
         dao.saveEntity(row);
     }
 
-    private ErpHrAttendance findAttendanceByDate(Long employeeId, LocalDate date) {
+    private ErpHrAttendance findAttendanceByDate(String employeeId, LocalDate date) {
         QueryBean q = new QueryBean();
         q.addFilter(and(eq("employeeId", employeeId), eq("date", date)));
         q.setLimit(1);
@@ -289,7 +289,7 @@ public class TestErpHrAttendanceMakeUp extends JunitAutoTestCase {
         return list.isEmpty() ? null : list.get(0);
     }
 
-    private long countAttendance(Long employeeId) {
+    private long countAttendance(String employeeId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("employeeId", employeeId));
         return daoProvider.daoFor(ErpHrAttendance.class).findAllByQuery(q).size();

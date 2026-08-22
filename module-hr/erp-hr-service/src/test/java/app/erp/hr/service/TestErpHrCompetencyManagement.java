@@ -84,12 +84,12 @@ public class TestErpHrCompetencyManagement extends JunitAutoTestCase {
 
     @Test
     public void testSubmitWithoutDetailsRejects() {
-        Long empId = ormTemplate.runInSession(session -> {
-            Long posId = seedPosition("POS-NODETAIL");
+        String empId = ormTemplate.runInSession(session -> {
+            String posId = seedPosition("POS-NODETAIL");
             return seedEmployeeWithPosition("EMP-NODETAIL", posId);
         });
-        Long competencyId = seedCompetency("COMP-NODETAIL", null);
-        Long assessmentId = seedAssessment(empId, ErpHrConstants.ASSESSMENT_TYPE_SELF,
+        String competencyId = seedCompetency("COMP-NODETAIL", null);
+        String assessmentId = seedAssessment(empId, ErpHrConstants.ASSESSMENT_TYPE_SELF,
                 ErpHrConstants.ASSESSMENT_STATUS_DRAFT);
 
         NopException ex = assertThrows(NopException.class,
@@ -100,18 +100,18 @@ public class TestErpHrCompetencyManagement extends JunitAutoTestCase {
     @Test
     public void testCompleteAssessmentTriggersGapRefresh() {
         Object[] seeded = ormTemplate.runInSession(session -> {
-            Long posId = seedPosition("POS-GAP");
-            Long empId = seedEmployeeWithPosition("EMP-GAP", posId);
-            Long competencyId = seedCompetency("COMP-GAP", null);
+            String posId = seedPosition("POS-GAP");
+            String empId = seedEmployeeWithPosition("EMP-GAP", posId);
+            String competencyId = seedCompetency("COMP-GAP", null);
             // 岗位要求等级 4
             seedRoleCompetency(posId, competencyId, 4);
             return new Object[]{empId, competencyId};
         });
-        Long empId = (Long) seeded[0];
-        Long competencyId = (Long) seeded[1];
+        String empId = (String) seeded[0];
+        String competencyId = (String) seeded[1];
 
         // 创建评估 + 1 条 SELF detail（actual=2）→ 提交 → 完成
-        Long assessmentId = seedAssessment(empId, ErpHrConstants.ASSESSMENT_TYPE_SELF,
+        String assessmentId = seedAssessment(empId, ErpHrConstants.ASSESSMENT_TYPE_SELF,
                 ErpHrConstants.ASSESSMENT_STATUS_DRAFT);
         seedDetail(assessmentId, competencyId, 2, ErpHrConstants.ASSESSMENT_TYPE_SELF);
 
@@ -136,24 +136,24 @@ public class TestErpHrCompetencyManagement extends JunitAutoTestCase {
     @Test
     public void testGapRefreshClearsOldSnapshot() {
         Object[] seeded = ormTemplate.runInSession(session -> {
-            Long posId = seedPosition("POS-REFRESH");
-            Long empId = seedEmployeeWithPosition("EMP-REFRESH", posId);
-            Long competencyId = seedCompetency("COMP-REFRESH", null);
+            String posId = seedPosition("POS-REFRESH");
+            String empId = seedEmployeeWithPosition("EMP-REFRESH", posId);
+            String competencyId = seedCompetency("COMP-REFRESH", null);
             seedRoleCompetency(posId, competencyId, 5);
             return new Object[]{empId, competencyId};
         });
-        Long empId = (Long) seeded[0];
-        Long competencyId = (Long) seeded[1];
+        String empId = (String) seeded[0];
+        String competencyId = (String) seeded[1];
 
         // 第一次刷新：required=5, actual=0 (无 detail) → gap=5 CRITICAL
-        Long assessmentId1 = seedAssessmentOn(empId, ErpHrConstants.ASSESSMENT_TYPE_SELF,
+        String assessmentId1 = seedAssessmentOn(empId, ErpHrConstants.ASSESSMENT_TYPE_SELF,
                 ErpHrConstants.ASSESSMENT_STATUS_COMPLETED, LocalDate.of(2026, 6, 1));
         seedDetail(assessmentId1, competencyId, 0, ErpHrConstants.ASSESSMENT_TYPE_SELF);
         ormTemplate.runInSession(() -> gapAnalysisBiz.refreshGapAnalysis(empId, CTX));
         assertEquals(1, findGaps(empId).size());
 
         // 第二次刷新：删除第一次 detail，新建更晚日期的评估（actual=3）→ gap=2 MODERATE
-        Long assessmentId2 = seedAssessmentOn(empId, ErpHrConstants.ASSESSMENT_TYPE_SELF,
+        String assessmentId2 = seedAssessmentOn(empId, ErpHrConstants.ASSESSMENT_TYPE_SELF,
                 ErpHrConstants.ASSESSMENT_STATUS_COMPLETED, LocalDate.of(2026, 7, 1));
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpHrAssessmentDetail> detailDao = daoProvider.daoFor(ErpHrAssessmentDetail.class);
@@ -176,7 +176,7 @@ public class TestErpHrCompetencyManagement extends JunitAutoTestCase {
     @Test
     public void testGapRefreshNoRoleRequirementRejects() {
         // 员工无 positionId → ERR_GAP_NO_ROLE_REQUIREMENT
-        Long empId = ormTemplate.runInSession(session ->
+        String empId = ormTemplate.runInSession(session ->
                 seedEmployeeWithPosition("EMP-NOROLE", null));
         NopException ex = assertThrows(NopException.class,
                 () -> ormTemplate.runInSession(session -> gapAnalysisBiz.refreshGapAnalysis(empId, CTX)));
@@ -188,18 +188,18 @@ public class TestErpHrCompetencyManagement extends JunitAutoTestCase {
     @Test
     public void test360AggregationEndToEnd() {
         Object[] seeded = ormTemplate.runInSession(session -> {
-            Long posId = seedPosition("POS-360");
-            Long empId = seedEmployeeWithPosition("EMP-360", posId);
-            Long competencyId = seedCompetency("COMP-360", null);
+            String posId = seedPosition("POS-360");
+            String empId = seedEmployeeWithPosition("EMP-360", posId);
+            String competencyId = seedCompetency("COMP-360", null);
             seedRoleCompetency(posId, competencyId, 5);
             return new Object[]{empId, competencyId};
         });
-        Long empId = (Long) seeded[0];
-        Long competencyId = (Long) seeded[1];
+        String empId = (String) seeded[0];
+        String competencyId = (String) seeded[1];
 
         // 360 评估：4 sourceType 各一条（self=3, mgr=4, peer=5, sub=4）
         // 聚合：0.15*3 + 0.50*4 + 0.25*5 + 0.10*4 = 0.45+2.0+1.25+0.4 = 4.1 → 4
-        Long assessmentId = seedAssessment(empId, ErpHrConstants.ASSESSMENT_TYPE_360,
+        String assessmentId = seedAssessment(empId, ErpHrConstants.ASSESSMENT_TYPE_360,
                 ErpHrConstants.ASSESSMENT_STATUS_DRAFT);
         seedDetail(assessmentId, competencyId, 3, ErpHrConstants.ASSESSMENT_TYPE_SELF);
         seedDetail(assessmentId, competencyId, 4, ErpHrConstants.ASSESSMENT_TYPE_MANAGER);
@@ -227,11 +227,11 @@ public class TestErpHrCompetencyManagement extends JunitAutoTestCase {
     @Test
     public void testGenerateDevelopmentPlanForActionableGaps() {
         Object[] seeded = ormTemplate.runInSession(session -> {
-            Long posId = seedPosition("POS-PLAN");
-            Long empId = seedEmployeeWithPosition("EMP-PLAN", posId);
-            Long compCritical = seedCompetency("COMP-CRIT", null);
-            Long compModerate = seedCompetency("COMP-MOD", null);
-            Long compMinor = seedCompetency("COMP-MINOR", null);
+            String posId = seedPosition("POS-PLAN");
+            String empId = seedEmployeeWithPosition("EMP-PLAN", posId);
+            String compCritical = seedCompetency("COMP-CRIT", null);
+            String compModerate = seedCompetency("COMP-MOD", null);
+            String compMinor = seedCompetency("COMP-MINOR", null);
             // CRITICAL: required=5, actual=2 → gap=3
             seedRoleCompetency(posId, compCritical, 5);
             // MODERATE: required=4, actual=2 → gap=2
@@ -240,16 +240,16 @@ public class TestErpHrCompetencyManagement extends JunitAutoTestCase {
             seedRoleCompetency(posId, compMinor, 3);
 
             // 评估（COMPLETED）+ detail（actualLevel）
-            Long aId = seedAssessment(empId, ErpHrConstants.ASSESSMENT_TYPE_SELF,
+            String aId = seedAssessment(empId, ErpHrConstants.ASSESSMENT_TYPE_SELF,
                     ErpHrConstants.ASSESSMENT_STATUS_COMPLETED);
             seedDetail(aId, compCritical, 2, ErpHrConstants.ASSESSMENT_TYPE_SELF);
             seedDetail(aId, compModerate, 2, ErpHrConstants.ASSESSMENT_TYPE_SELF);
             seedDetail(aId, compMinor, 2, ErpHrConstants.ASSESSMENT_TYPE_SELF);
             return new Object[]{empId, compCritical, compModerate, compMinor};
         });
-        Long empId = (Long) seeded[0];
-        Long compCritical = (Long) seeded[1];
-        Long compModerate = (Long) seeded[2];
+        String empId = (String) seeded[0];
+        String compCritical = (String) seeded[1];
+        String compModerate = (String) seeded[2];
 
         // 先刷新差距
         ormTemplate.runInSession(() -> gapAnalysisBiz.refreshGapAnalysis(empId, CTX));
@@ -277,17 +277,17 @@ public class TestErpHrCompetencyManagement extends JunitAutoTestCase {
     @Test
     public void testGeneratePlanNoActionableGapReturnsNull() {
         Object[] seeded = ormTemplate.runInSession(session -> {
-            Long posId = seedPosition("POS-NOPLAN");
-            Long empId = seedEmployeeWithPosition("EMP-NOPLAN", posId);
-            Long competencyId = seedCompetency("COMP-NOPLAN", null);
+            String posId = seedPosition("POS-NOPLAN");
+            String empId = seedEmployeeWithPosition("EMP-NOPLAN", posId);
+            String competencyId = seedCompetency("COMP-NOPLAN", null);
             // required=2, actual=3 → gap=-1 NONE（无 actionable gap）
             seedRoleCompetency(posId, competencyId, 2);
-            Long aId = seedAssessment(empId, ErpHrConstants.ASSESSMENT_TYPE_SELF,
+            String aId = seedAssessment(empId, ErpHrConstants.ASSESSMENT_TYPE_SELF,
                     ErpHrConstants.ASSESSMENT_STATUS_COMPLETED);
             seedDetail(aId, competencyId, 3, ErpHrConstants.ASSESSMENT_TYPE_SELF);
             return new Object[]{empId};
         });
-        Long empId = (Long) seeded[0];
+        String empId = (String) seeded[0];
         ormTemplate.runInSession(() -> gapAnalysisBiz.refreshGapAnalysis(empId, CTX));
         ErpHrDevelopmentPlan plan = ormTemplate.runInSession(session -> developmentPlanBiz.generateDevelopmentPlan(empId, CTX));
         assertNull(plan, "无 CRITICAL/MODERATE 差距时返回 null");
@@ -297,8 +297,8 @@ public class TestErpHrCompetencyManagement extends JunitAutoTestCase {
 
     @Test
     public void testPlanItemStatusMachineValidTransitions() {
-        Long[] ids = preparePlanItemForStatusTest();
-        Long planItemId = ids[0];
+        String[] ids = preparePlanItemForStatusTest();
+        String planItemId = ids[0];
 
         ErpHrDevelopmentPlanItem started = ormTemplate.runInSession(session -> developmentPlanBiz.updatePlanItemStatus(
                 planItemId, ErpHrConstants.PLAN_ITEM_STATUS_IN_PROGRESS, CTX));
@@ -313,8 +313,8 @@ public class TestErpHrCompetencyManagement extends JunitAutoTestCase {
 
     @Test
     public void testPlanItemStatusMachineIllegalTransition() {
-        Long[] ids = preparePlanItemForStatusTest();
-        Long planItemId = ids[0];
+        String[] ids = preparePlanItemForStatusTest();
+        String planItemId = ids[0];
 
         // NOT_STARTED → ACHIEVED 跳过 IN_PROGRESS：非法
         NopException ex = assertThrows(NopException.class, () ->
@@ -325,8 +325,8 @@ public class TestErpHrCompetencyManagement extends JunitAutoTestCase {
 
     @Test
     public void testCompletePlanTransitions() {
-        Long[] ids = preparePlanItemForStatusTest();
-        Long planId = ids[1];
+        String[] ids = preparePlanItemForStatusTest();
+        String planId = ids[1];
 
         ErpHrDevelopmentPlan completed = ormTemplate.runInSession(session -> developmentPlanBiz.completePlan(planId, CTX));
         assertEquals(ErpHrConstants.DEV_PLAN_STATUS_COMPLETED, completed.getStatus());
@@ -337,23 +337,23 @@ public class TestErpHrCompetencyManagement extends JunitAutoTestCase {
         assertEquals(ErpHrErrors.ERR_DEV_PLAN_ILLEGAL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode());
     }
 
-    private Long[] preparePlanItemForStatusTest() {
+    private String[] preparePlanItemForStatusTest() {
         Object[] seeded = ormTemplate.runInSession(session -> {
-            Long posId = seedPosition("POS-STATUS");
-            Long empId = seedEmployeeWithPosition("EMP-STATUS", posId);
-            Long competencyId = seedCompetency("COMP-STATUS", null);
+            String posId = seedPosition("POS-STATUS");
+            String empId = seedEmployeeWithPosition("EMP-STATUS", posId);
+            String competencyId = seedCompetency("COMP-STATUS", null);
             seedRoleCompetency(posId, competencyId, 5);
-            Long aId = seedAssessment(empId, ErpHrConstants.ASSESSMENT_TYPE_SELF,
+            String aId = seedAssessment(empId, ErpHrConstants.ASSESSMENT_TYPE_SELF,
                     ErpHrConstants.ASSESSMENT_STATUS_COMPLETED);
             seedDetail(aId, competencyId, 1, ErpHrConstants.ASSESSMENT_TYPE_SELF);
             return new Object[]{empId};
         });
-        Long empId = (Long) seeded[0];
+        String empId = (String) seeded[0];
         ormTemplate.runInSession(() -> gapAnalysisBiz.refreshGapAnalysis(empId, CTX));
         ErpHrDevelopmentPlan plan = ormTemplate.runInSession(session -> developmentPlanBiz.generateDevelopmentPlan(empId, CTX));
         List<ErpHrDevelopmentPlanItem> items = findPlanItems(plan.getId());
         assertFalse(items.isEmpty());
-        return new Long[]{items.get(0).getId(), plan.getId()};
+        return new String[]{items.get(0).getId(), plan.getId()};
     }
 
     // ============ 字典成环 + 矩阵 requiredLevel 校验 ============
@@ -361,7 +361,7 @@ public class TestErpHrCompetencyManagement extends JunitAutoTestCase {
 
     @Test
     public void testCompetencySelfCycleRejected() {
-        Long compId = seedCompetency("COMP-SELF", null);
+        String compId = seedCompetency("COMP-SELF", null);
         java.util.Map<String, Object> data = new java.util.HashMap<>();
         data.put("id", compId);
         data.put("parentId", compId);
@@ -374,9 +374,9 @@ public class TestErpHrCompetencyManagement extends JunitAutoTestCase {
     public void testCompetencyAncestorChainCycleRejected() {
         // A → parent B → parent C；试图让 A 的 parent 指向 C（A→C→B→A 环不存在，但 A→C→B→A 形成：
         //   实际上 A→C, C→B, B→A ：从 A 出发 A→C→B→(A的旧parent应该到A自己) → 检测到 A 在祖先链）
-        Long aId = seedCompetency("COMP-A", null);
-        Long bId = seedCompetency("COMP-B", aId);
-        Long cId = seedCompetency("COMP-C", bId);
+        String aId = seedCompetency("COMP-A", null);
+        String bId = seedCompetency("COMP-B", aId);
+        String cId = seedCompetency("COMP-C", bId);
         // A 的 parent 改为 C：祖先链 A→C→B→A（A 已在 visited）→ 环
         java.util.Map<String, Object> data = new java.util.HashMap<>();
         data.put("id", aId);
@@ -388,7 +388,7 @@ public class TestErpHrCompetencyManagement extends JunitAutoTestCase {
 
     @Test
     public void testCompetencyValidHierarchyAccepted() {
-        Long parentId = seedCompetency("COMP-PARENT", null);
+        String parentId = seedCompetency("COMP-PARENT", null);
         java.util.Map<String, Object> data = new java.util.HashMap<>();
         data.put("code", "COMP-CHILD");
         data.put("name", "COMP-CHILD");
@@ -400,8 +400,8 @@ public class TestErpHrCompetencyManagement extends JunitAutoTestCase {
 
     @Test
     public void testRoleCompetencyInvalidLevelRejected() {
-        Long posId = seedPosition("POS-BADLEVEL");
-        Long compId = seedCompetency("COMP-BADLEVEL", null);
+        String posId = seedPosition("POS-BADLEVEL");
+        String compId = seedCompetency("COMP-BADLEVEL", null);
         java.util.Map<String, Object> data = new java.util.HashMap<>();
         data.put("positionId", posId);
         data.put("competencyId", compId);
@@ -413,8 +413,8 @@ public class TestErpHrCompetencyManagement extends JunitAutoTestCase {
 
     @Test
     public void testRoleCompetencyZeroLevelRejected() {
-        Long posId = seedPosition("POS-ZERO");
-        Long compId = seedCompetency("COMP-ZERO", null);
+        String posId = seedPosition("POS-ZERO");
+        String compId = seedCompetency("COMP-ZERO", null);
         java.util.Map<String, Object> data = new java.util.HashMap<>();
         data.put("positionId", posId);
         data.put("competencyId", compId);
@@ -426,8 +426,8 @@ public class TestErpHrCompetencyManagement extends JunitAutoTestCase {
 
     @Test
     public void testRoleCompetencyValidLevelAccepted() {
-        Long posId = seedPosition("POS-OKLEVEL");
-        Long compId = seedCompetency("COMP-OKLEVEL", null);
+        String posId = seedPosition("POS-OKLEVEL");
+        String compId = seedCompetency("COMP-OKLEVEL", null);
         java.util.Map<String, Object> data = new java.util.HashMap<>();
         data.put("positionId", posId);
         data.put("competencyId", compId);
@@ -439,26 +439,26 @@ public class TestErpHrCompetencyManagement extends JunitAutoTestCase {
 
     // ---------- helpers ----------
 
-    List<ErpHrGapAnalysis> findGaps(Long employeeId) {
+    List<ErpHrGapAnalysis> findGaps(String employeeId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("employeeId", employeeId));
         return ormTemplate.runInSession(session -> gapAnalysisBiz.findList(q, null, CTX));
     }
 
-    List<ErpHrDevelopmentPlanItem> findPlanItems(Long planId) {
+    List<ErpHrDevelopmentPlanItem> findPlanItems(String planId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("planId", planId));
         q.addOrderField("id", false);
         return ormTemplate.runInSession(session -> planItemBiz.findList(q, null, CTX));
     }
 
-    String lookupGapSeverity(Long gapId) {
+    String lookupGapSeverity(String gapId) {
         if (gapId == null) return null;
         ErpHrGapAnalysis g = daoProvider.daoFor(ErpHrGapAnalysis.class).getEntityById(gapId);
         return g != null ? g.getGapSeverity() : null;
     }
 
-    Long seedPosition(String code) {
+    String seedPosition(String code) {
         IEntityDao<ErpHrPosition> dao = daoProvider.daoFor(ErpHrPosition.class);
         ErpHrPosition p = new ErpHrPosition();
         p.setCode(code);
@@ -467,7 +467,7 @@ public class TestErpHrCompetencyManagement extends JunitAutoTestCase {
         return p.getId();
     }
 
-    Long seedEmployeeWithPosition(String code, Long positionId) {
+    String seedEmployeeWithPosition(String code, String positionId) {
         IEntityDao<ErpHrEmployee> dao = daoProvider.daoFor(ErpHrEmployee.class);
         ErpHrEmployee emp = new ErpHrEmployee();
         emp.setCode(code);
@@ -483,7 +483,7 @@ public class TestErpHrCompetencyManagement extends JunitAutoTestCase {
         return emp.getId();
     }
 
-    Long seedCompetency(String code, Long parentId) {
+    String seedCompetency(String code, String parentId) {
         IEntityDao<ErpHrCompetency> dao = daoProvider.daoFor(ErpHrCompetency.class);
         ErpHrCompetency c = new ErpHrCompetency();
         c.setCode(code);
@@ -494,7 +494,7 @@ public class TestErpHrCompetencyManagement extends JunitAutoTestCase {
         return c.getId();
     }
 
-    Long seedRoleCompetency(Long positionId, Long competencyId, int requiredLevel) {
+    String seedRoleCompetency(String positionId, String competencyId, int requiredLevel) {
         IEntityDao<ErpHrRoleCompetency> dao = daoProvider.daoFor(ErpHrRoleCompetency.class);
         ErpHrRoleCompetency rc = new ErpHrRoleCompetency();
         rc.setPositionId(positionId);
@@ -504,11 +504,11 @@ public class TestErpHrCompetencyManagement extends JunitAutoTestCase {
         return rc.getId();
     }
 
-    Long seedAssessment(Long employeeId, String assessmentType, String status) {
+    String seedAssessment(String employeeId, String assessmentType, String status) {
         return seedAssessmentOn(employeeId, assessmentType, status, LocalDate.of(2026, 7, 1));
     }
 
-    Long seedAssessmentOn(Long employeeId, String assessmentType, String status, LocalDate date) {
+    String seedAssessmentOn(String employeeId, String assessmentType, String status, LocalDate date) {
         IEntityDao<ErpHrEmployeeAssessment> dao = daoProvider.daoFor(ErpHrEmployeeAssessment.class);
         ErpHrEmployeeAssessment a = new ErpHrEmployeeAssessment();
         a.setBusinessDate(java.time.LocalDate.of(2026, 7, 1));
@@ -521,7 +521,7 @@ public class TestErpHrCompetencyManagement extends JunitAutoTestCase {
         return a.getId();
     }
 
-    void seedDetail(Long assessmentId, Long competencyId, int actualLevel, String sourceType) {
+    void seedDetail(String assessmentId, String competencyId, int actualLevel, String sourceType) {
         IEntityDao<ErpHrAssessmentDetail> dao = daoProvider.daoFor(ErpHrAssessmentDetail.class);
         ErpHrAssessmentDetail d = new ErpHrAssessmentDetail();
         d.setAssessmentId(assessmentId);

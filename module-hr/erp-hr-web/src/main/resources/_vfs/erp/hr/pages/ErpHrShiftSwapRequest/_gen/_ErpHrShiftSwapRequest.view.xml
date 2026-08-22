@@ -19,25 +19,25 @@
             <cols>
 
                 <!--ID-->
-                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="id" mandatory="true" sortable="true"/>
 
                 <!--编号-->
                 <col id="code" mandatory="true" sortable="true"/>
 
                 <!--业务组织-->
-                <col id="orgId" ui:number="true" sortable="true"/>
+                <col id="orgId" sortable="true"/>
 
                 <!--申请人-->
-                <col id="requesterId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="requesterId" mandatory="true" sortable="true"/>
 
                 <!--目标员工-->
-                <col id="targetEmployeeId" ui:number="true" sortable="true"/>
+                <col id="targetEmployeeId" sortable="true"/>
 
                 <!--原排班-->
-                <col id="sourceAssignmentId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="sourceAssignmentId" mandatory="true" sortable="true"/>
 
                 <!--目标排班-->
-                <col id="targetAssignmentId" ui:number="true" sortable="true"/>
+                <col id="targetAssignmentId" sortable="true"/>
 
                 <!--调换日期-->
                 <col id="swapDate" mandatory="true" sortable="true"/>

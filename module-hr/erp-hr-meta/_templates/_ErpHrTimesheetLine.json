@@ -1,7 +1,7 @@
 {
-  "id": 0,
-  "timesheetId": 0,
-  "employeeId": 0,
+  "id": "",
+  "timesheetId": "",
+  "employeeId": "",
   "workDate": "2000-01-01",
   "projectId": 0,
   "taskId": 0,

@@ -186,13 +186,13 @@ public class _ErpHrLeaveRequest extends DynamicOrmEntity{
 
     
     /* ID: ID */
-    private java.lang.Long _id;
+    private java.lang.String _id;
     
     /* 单号: CODE */
     private java.lang.String _code;
     
     /* 员工: EMPLOYEE_ID */
-    private java.lang.Long _employeeId;
+    private java.lang.String _employeeId;
     
     /* 休假类型: LEAVE_TYPE */
     private java.lang.String _leaveType;
@@ -213,13 +213,13 @@ public class _ErpHrLeaveRequest extends DynamicOrmEntity{
     private java.lang.String _status;
     
     /* 审批人: APPROVER_ID */
-    private java.lang.Long _approverId;
+    private java.lang.String _approverId;
     
     /* 审批时间: APPROVED_AT */
     private java.sql.Timestamp _approvedAt;
     
     /* 业务组织: ORG_ID */
-    private java.lang.Long _orgId;
+    private java.lang.String _orgId;
     
     /* 备注: REMARK */
     private java.lang.String _remark;
@@ -391,9 +391,9 @@ public class _ErpHrLeaveRequest extends DynamicOrmEntity{
         switch(propId){
         
             case PROP_ID_id:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_id));
                }
                setId(typedValue);
@@ -411,9 +411,9 @@ public class _ErpHrLeaveRequest extends DynamicOrmEntity{
             }
         
             case PROP_ID_employeeId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_employeeId));
                }
                setEmployeeId(typedValue);
@@ -481,9 +481,9 @@ public class _ErpHrLeaveRequest extends DynamicOrmEntity{
             }
         
             case PROP_ID_approverId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_approverId));
                }
                setApproverId(typedValue);
@@ -501,9 +501,9 @@ public class _ErpHrLeaveRequest extends DynamicOrmEntity{
             }
         
             case PROP_ID_orgId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_orgId));
                }
                setOrgId(typedValue);
@@ -601,7 +601,7 @@ public class _ErpHrLeaveRequest extends DynamicOrmEntity{
         
             case PROP_ID_id:{
                onInitProp(propId);
-               this._id = (java.lang.Long)value;
+               this._id = (java.lang.String)value;
                orm_id(); // 如果是设置主键字段，则触发watcher
                break;
             }
@@ -615,7 +615,7 @@ public class _ErpHrLeaveRequest extends DynamicOrmEntity{
         
             case PROP_ID_employeeId:{
                onInitProp(propId);
-               this._employeeId = (java.lang.Long)value;
+               this._employeeId = (java.lang.String)value;
                
                break;
             }
@@ -664,7 +664,7 @@ public class _ErpHrLeaveRequest extends DynamicOrmEntity{
         
             case PROP_ID_approverId:{
                onInitProp(propId);
-               this._approverId = (java.lang.Long)value;
+               this._approverId = (java.lang.String)value;
                
                break;
             }
@@ -678,7 +678,7 @@ public class _ErpHrLeaveRequest extends DynamicOrmEntity{
         
             case PROP_ID_orgId:{
                onInitProp(propId);
-               this._orgId = (java.lang.Long)value;
+               this._orgId = (java.lang.String)value;
                
                break;
             }
@@ -748,7 +748,7 @@ public class _ErpHrLeaveRequest extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final java.lang.Long getId(){
+    public final java.lang.String getId(){
          onPropGet(PROP_ID_id);
          return _id;
     }
@@ -756,7 +756,7 @@ public class _ErpHrLeaveRequest extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final void setId(java.lang.Long value){
+    public final void setId(java.lang.String value){
         if(onPropSet(PROP_ID_id,value)){
             this._id = value;
             internalClearRefs(PROP_ID_id);
@@ -786,7 +786,7 @@ public class _ErpHrLeaveRequest extends DynamicOrmEntity{
     /**
      * 员工: EMPLOYEE_ID
      */
-    public final java.lang.Long getEmployeeId(){
+    public final java.lang.String getEmployeeId(){
          onPropGet(PROP_ID_employeeId);
          return _employeeId;
     }
@@ -794,7 +794,7 @@ public class _ErpHrLeaveRequest extends DynamicOrmEntity{
     /**
      * 员工: EMPLOYEE_ID
      */
-    public final void setEmployeeId(java.lang.Long value){
+    public final void setEmployeeId(java.lang.String value){
         if(onPropSet(PROP_ID_employeeId,value)){
             this._employeeId = value;
             internalClearRefs(PROP_ID_employeeId);
@@ -919,7 +919,7 @@ public class _ErpHrLeaveRequest extends DynamicOrmEntity{
     /**
      * 审批人: APPROVER_ID
      */
-    public final java.lang.Long getApproverId(){
+    public final java.lang.String getApproverId(){
          onPropGet(PROP_ID_approverId);
          return _approverId;
     }
@@ -927,7 +927,7 @@ public class _ErpHrLeaveRequest extends DynamicOrmEntity{
     /**
      * 审批人: APPROVER_ID
      */
-    public final void setApproverId(java.lang.Long value){
+    public final void setApproverId(java.lang.String value){
         if(onPropSet(PROP_ID_approverId,value)){
             this._approverId = value;
             internalClearRefs(PROP_ID_approverId);
@@ -957,7 +957,7 @@ public class _ErpHrLeaveRequest extends DynamicOrmEntity{
     /**
      * 业务组织: ORG_ID
      */
-    public final java.lang.Long getOrgId(){
+    public final java.lang.String getOrgId(){
          onPropGet(PROP_ID_orgId);
          return _orgId;
     }
@@ -965,7 +965,7 @@ public class _ErpHrLeaveRequest extends DynamicOrmEntity{
     /**
      * 业务组织: ORG_ID
      */
-    public final void setOrgId(java.lang.Long value){
+    public final void setOrgId(java.lang.String value){
         if(onPropSet(PROP_ID_orgId,value)){
             this._orgId = value;
             internalClearRefs(PROP_ID_orgId);

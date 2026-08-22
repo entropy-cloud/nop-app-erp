@@ -29,7 +29,7 @@ public abstract class AbstractErpHrAttendanceProcessor {
         return daoProvider.daoFor(ErpHrAttendance.class);
     }
 
-    protected ErpHrAttendance findAttendance(Long employeeId, LocalDate date) {
+    protected ErpHrAttendance findAttendance(String employeeId, LocalDate date) {
         QueryBean q = new QueryBean();
         q.addFilter(and(eq("employeeId", employeeId), eq("date", date)));
         q.setLimit(1);

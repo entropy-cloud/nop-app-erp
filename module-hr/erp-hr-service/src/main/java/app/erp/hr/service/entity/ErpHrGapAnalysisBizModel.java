@@ -69,40 +69,39 @@ public class ErpHrGapAnalysisBizModel extends CrudBizModel<ErpHrGapAnalysis>
 
     @Override
     @BizMutation
-    public List<ErpHrGapAnalysis> refreshGapAnalysis(@Name("employeeId") Long employeeId,
+    public List<ErpHrGapAnalysis> refreshGapAnalysis(@Name("employeeId") String employeeId,
                                                       IServiceContext context) {
         return refreshGapAnalysisProcessor.refreshGapAnalysis(employeeId, context);
     }
 
     @Override
     @BizMutation
-    public List<ErpHrGapAnalysis> refreshGapAnalysisWithLevels(@Name("employeeId") Long employeeId,
-                                                                @Name("aggregatedLevels") Map<Long, Integer> aggregatedLevels,
+    public List<ErpHrGapAnalysis> refreshGapAnalysisWithLevels(@Name("employeeId") String employeeId,
+                                                                @Name("aggregatedLevels") Map<String, Integer> aggregatedLevels,
                                                                 IServiceContext context) {
         return refreshGapAnalysisWithLevelsProcessor.refreshGapAnalysisWithLevels(employeeId, aggregatedLevels, context);
     }
 
     /**
      * 规范化 aggregatedLevels 入参的键类型。GraphQL generic {@code Map} scalar 经 JSON 反序列化后键为 String，
-     * 而内部 Java 调用方（{@code completeAssessment}）传入的是 {@code Map<Long,Integer>}；GapAnalysisCalculator
-     * 按 {@code competencyId（Long）} 取值，键类型不匹配会一律回退到默认值 0。这里统一转 Long 键使两条入口行为一致。
+     * 内部 Java 调用方（{@code completeAssessment}）在 id String 化后同样传 {@code Map<String,Integer>}；
+     * GapAnalysisCalculator 按 {@code competencyId（String）} 取值，这里统一转 String 键使两条入口行为一致。
      */
-    static Map<Long, Integer> normalizeLevelMap(Map<Long, Integer> raw) {
+    static Map<String, Integer> normalizeLevelMap(Map<String, Integer> raw) {
         if (raw == null || raw.isEmpty()) {
             return raw;
         }
-        Map<Long, Integer> normalized = new HashMap<>(raw.size());
+        Map<String, Integer> normalized = new HashMap<>(raw.size());
         for (Map.Entry<?, ?> e : raw.entrySet()) {
-            normalized.put(toLongKey(e.getKey()), toIntValue(e.getValue()));
+            normalized.put(toStringKey(e.getKey()), toIntValue(e.getValue()));
         }
         return normalized;
     }
 
-    static Long toLongKey(Object key) {
+    static String toStringKey(Object key) {
         if (key == null) return null;
-        if (key instanceof Long) return (Long) key;
-        if (key instanceof Number) return ((Number) key).longValue();
-        if (key instanceof String) return Long.parseLong((String) key);
+        if (key instanceof String) return (String) key;
+        if (key instanceof Number) return key.toString();
         throw new NopException(ErpHrErrors.ERR_GAP_INVALID_LEVEL_MAP)
                 .param(ErpHrErrors.ARG_LEVEL_MAP_KEY, key);
     }
@@ -116,7 +115,7 @@ public class ErpHrGapAnalysisBizModel extends CrudBizModel<ErpHrGapAnalysis>
                 .param(ErpHrErrors.ARG_LEVEL_MAP_VALUE, value);
     }
 
-    Long loadPositionId(Long employeeId) {
+    String loadPositionId(String employeeId) {
         IEntityDao<ErpHrEmployee> dao = daoProvider().daoFor(ErpHrEmployee.class);
         ErpHrEmployee emp = dao.getEntityById(employeeId);
         if (emp == null) {
@@ -126,7 +125,7 @@ public class ErpHrGapAnalysisBizModel extends CrudBizModel<ErpHrGapAnalysis>
         return emp.getPositionId();
     }
 
-    List<ErpHrRoleCompetency> findRoleCompetencies(Long positionId, IServiceContext context) {
+    List<ErpHrRoleCompetency> findRoleCompetencies(String positionId, IServiceContext context) {
         if (positionId == null) {
             return new ArrayList<>();
         }
@@ -140,21 +139,21 @@ public class ErpHrGapAnalysisBizModel extends CrudBizModel<ErpHrGapAnalysis>
      * AssessmentDetail 在评估 COMPLETED 时已被写回聚合后 level，故这里按 competencyId 分组取均值
      * 即可（多源已聚合到 detail）；若同员工同期存在多个 detail 仍以均值表示最终级别。
      */
-    Map<Long, Integer> aggregateLatestAssessment(Long employeeId, IServiceContext context) {
+    Map<String, Integer> aggregateLatestAssessment(String employeeId, IServiceContext context) {
         ErpHrEmployeeAssessment latest = findLatestCompletedAssessment(employeeId, context);
-        Map<Long, Integer> result = new HashMap<>();
+        Map<String, Integer> result = new HashMap<>();
         if (latest == null) {
             return result;
         }
         QueryBean q = new QueryBean();
         q.addFilter(eq("assessmentId", latest.getId()));
         List<ErpHrAssessmentDetail> details = assessmentDetailBiz.findList(q, null, context);
-        Map<Long, List<ErpHrAssessmentDetail>> byCompetency = new HashMap<>();
+        Map<String, List<ErpHrAssessmentDetail>> byCompetency = new HashMap<>();
         for (ErpHrAssessmentDetail d : details) {
             if (d.getCompetencyId() == null) continue;
             byCompetency.computeIfAbsent(d.getCompetencyId(), k -> new ArrayList<>()).add(d);
         }
-        for (Map.Entry<Long, List<ErpHrAssessmentDetail>> e : byCompetency.entrySet()) {
+        for (Map.Entry<String, List<ErpHrAssessmentDetail>> e : byCompetency.entrySet()) {
             int aggregated = assessmentAggregator.aggregate(
                     e.getKey(), latest.getAssessmentType(), e.getValue());
             result.put(e.getKey(), aggregated);
@@ -162,7 +161,7 @@ public class ErpHrGapAnalysisBizModel extends CrudBizModel<ErpHrGapAnalysis>
         return result;
     }
 
-    ErpHrEmployeeAssessment findLatestCompletedAssessment(Long employeeId, IServiceContext context) {
+    ErpHrEmployeeAssessment findLatestCompletedAssessment(String employeeId, IServiceContext context) {
         QueryBean q = new QueryBean();
         q.addFilter(and(
                 eq("employeeId", employeeId),
@@ -172,12 +171,12 @@ public class ErpHrGapAnalysisBizModel extends CrudBizModel<ErpHrGapAnalysis>
         return employeeAssessmentBiz.findFirst(q, null, context);
     }
 
-    LocalDate latestAssessmentDate(Long employeeId, IServiceContext context) {
+    LocalDate latestAssessmentDate(String employeeId, IServiceContext context) {
         ErpHrEmployeeAssessment latest = findLatestCompletedAssessment(employeeId, context);
         return latest != null ? latest.getAssessmentDate() : CoreMetrics.currentDate();
     }
 
-    void deleteExistingGaps(Long employeeId, IServiceContext context) {
+    void deleteExistingGaps(String employeeId, IServiceContext context) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("employeeId", employeeId));
         List<ErpHrGapAnalysis> existing = findList(q, null, context);

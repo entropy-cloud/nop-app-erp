@@ -77,13 +77,13 @@ public class TestErpHrShiftScheduling extends JunitAutoTestCase {
 
     @Test
     public void testAssignSingleEnforcesOneEmployeeOneDayOneShift() {
-        Long[] ids = ormTemplate.runInSession(session -> {
-            Long empId = seedEmployee("EMP-UNIQUE");
-            Long shiftId = seedShift("MORNING", "08:00", "17:00", true);
-            return new Long[]{empId, shiftId};
+        String[] ids = ormTemplate.runInSession(session -> {
+            String empId = seedEmployee("EMP-UNIQUE");
+            String shiftId = seedShift("MORNING", "08:00", "17:00", true);
+            return new String[]{empId, shiftId};
         });
-        Long empId = ids[0];
-        Long shiftId = ids[1];
+        String empId = ids[0];
+        String shiftId = ids[1];
         LocalDate date = LocalDate.of(2026, 7, 1);
 
         ErpHrShiftAssignment a1 = ormTemplate.runInSession(session -> assignmentBiz.assignSingle(empId, shiftId, date, CTX));
@@ -102,13 +102,13 @@ public class TestErpHrShiftScheduling extends JunitAutoTestCase {
      */
     @Test
     public void testConcurrentAssignSameEmployeeDayNoDuplicate() throws Exception {
-        Long[] ids = ormTemplate.runInSession(session -> {
-            Long empId = seedEmployee("EMP-UK091");
-            Long shiftId = seedShift("MORNING-UK091", "08:00", "17:00", true);
-            return new Long[]{empId, shiftId};
+        String[] ids = ormTemplate.runInSession(session -> {
+            String empId = seedEmployee("EMP-UK091");
+            String shiftId = seedShift("MORNING-UK091", "08:00", "17:00", true);
+            return new String[]{empId, shiftId};
         });
-        Long empId = ids[0];
-        Long shiftId = ids[1];
+        String empId = ids[0];
+        String shiftId = ids[1];
         LocalDate date = LocalDate.of(2026, 7, 15);
 
         int threads = 2;
@@ -160,15 +160,15 @@ public class TestErpHrShiftScheduling extends JunitAutoTestCase {
 
     @Test
     public void testAssignBatchCreatesForEveryEmployeeEveryDay() {
-        Long[] ids = ormTemplate.runInSession(session -> {
-            Long empA = seedEmployee("EMP-BATCH-A");
-            Long empB = seedEmployee("EMP-BATCH-B");
-            Long shiftId = seedShift("MORNING", "08:00", "17:00", true);
-            return new Long[]{empA, empB, shiftId};
+        String[] ids = ormTemplate.runInSession(session -> {
+            String empA = seedEmployee("EMP-BATCH-A");
+            String empB = seedEmployee("EMP-BATCH-B");
+            String shiftId = seedShift("MORNING", "08:00", "17:00", true);
+            return new String[]{empA, empB, shiftId};
         });
-        Long empA = ids[0];
-        Long empB = ids[1];
-        Long shiftId = ids[2];
+        String empA = ids[0];
+        String empB = ids[1];
+        String shiftId = ids[2];
 
         List<ErpHrShiftAssignment> created = ormTemplate.runInSession(session -> assignmentBiz.assignBatch(
                 Arrays.asList(empA, empB), shiftId,
@@ -181,13 +181,13 @@ public class TestErpHrShiftScheduling extends JunitAutoTestCase {
 
     @Test
     public void testCopyFromPeriodAlignsByDayOffset() {
-        Long[] ids = ormTemplate.runInSession(session -> {
-            Long empId = seedEmployee("EMP-COPY");
-            Long shiftId = seedShift("MORNING", "08:00", "17:00", true);
-            return new Long[]{empId, shiftId};
+        String[] ids = ormTemplate.runInSession(session -> {
+            String empId = seedEmployee("EMP-COPY");
+            String shiftId = seedShift("MORNING", "08:00", "17:00", true);
+            return new String[]{empId, shiftId};
         });
-        Long empId = ids[0];
-        Long shiftId = ids[1];
+        String empId = ids[0];
+        String shiftId = ids[1];
 
         ormTemplate.runInSession(() -> assignmentBiz.assignSingle(empId, shiftId, LocalDate.of(2026, 6, 1), CTX));
         ormTemplate.runInSession(() -> assignmentBiz.assignSingle(empId, shiftId, LocalDate.of(2026, 6, 2), CTX));
@@ -203,17 +203,17 @@ public class TestErpHrShiftScheduling extends JunitAutoTestCase {
     @Test
     public void testRotationGenerateStaggerAndRegenerate() {
         Object[] seeded = ormTemplate.runInSession(session -> {
-            Long empA = seedEmployee("EMP-ROT-A");
-            Long empB = seedEmployee("EMP-ROT-B");
-            Long morningId = seedShift("MORNING", "08:00", "17:00", true);
-            Long afternoonId = seedShift("AFTERNOON", "14:00", "23:00", true);
-            Long patternId = seedRotationPattern("ROT-2CYCLE",
+            String empA = seedEmployee("EMP-ROT-A");
+            String empB = seedEmployee("EMP-ROT-B");
+            String morningId = seedShift("MORNING", "08:00", "17:00", true);
+            String afternoonId = seedShift("AFTERNOON", "14:00", "23:00", true);
+            String patternId = seedRotationPattern("ROT-2CYCLE",
                     "[\"MORNING\",\"AFTERNOON\"]");
             return new Object[]{empA, empB, morningId, afternoonId, patternId};
         });
-        Long empA = (Long) seeded[0];
-        Long empB = (Long) seeded[1];
-        Long patternId = (Long) seeded[4];
+        String empA = (String) seeded[0];
+        String empB = (String) seeded[1];
+        String patternId = (String) seeded[4];
 
         // 2 成员 × staggerDays=1 × 范围 2026-07-01~2026-07-04
         List<ErpHrShiftAssignment> generated = ormTemplate.runInSession(session -> rotationBiz.generateRotation(
@@ -241,9 +241,9 @@ public class TestErpHrShiftScheduling extends JunitAutoTestCase {
 
     @Test
     public void testRotationInvalidPatternThrows() {
-        Long empId = ormTemplate.runInSession(session ->
+        String empId = ormTemplate.runInSession(session ->
                 seedEmployee("EMP-INVALID-ROT"));
-        Long patternId = ormTemplate.runInSession(session ->
+        String patternId = ormTemplate.runInSession(session ->
                 seedRotationPattern("ROT-EMPTY", "[]"));
         NopException ex = assertThrows(NopException.class, () ->
                 ormTemplate.runInSession(session -> rotationBiz.generateRotation(patternId, Arrays.asList(empId), 0,
@@ -255,12 +255,12 @@ public class TestErpHrShiftScheduling extends JunitAutoTestCase {
     @Test
     public void testCalcAttendanceOnTimeNoLateNoEarlyLeave() {
         Object[] seeded = ormTemplate.runInSession(session -> {
-            Long empId = seedEmployee("EMP-ONTIME");
-            Long shiftId = seedShift("MORNING", "08:00", "17:00", true);
+            String empId = seedEmployee("EMP-ONTIME");
+            String shiftId = seedShift("MORNING", "08:00", "17:00", true);
             return new Object[]{empId, shiftId};
         });
-        Long empId = (Long) seeded[0];
-        Long shiftId = (Long) seeded[1];
+        String empId = (String) seeded[0];
+        String shiftId = (String) seeded[1];
         LocalDate date = LocalDate.of(2026, 7, 1);
 
         ormTemplate.runInSession(() -> assignmentBiz.assignSingle(empId, shiftId, date, CTX));
@@ -278,12 +278,12 @@ public class TestErpHrShiftScheduling extends JunitAutoTestCase {
     @Test
     public void testCalcAttendanceLateAndEarlyLeave() {
         Object[] seeded = ormTemplate.runInSession(session -> {
-            Long empId = seedEmployee("EMP-LATE");
-            Long shiftId = seedShift("MORNING", "08:00", "17:00", true);
+            String empId = seedEmployee("EMP-LATE");
+            String shiftId = seedShift("MORNING", "08:00", "17:00", true);
             return new Object[]{empId, shiftId};
         });
-        Long empId = (Long) seeded[0];
-        Long shiftId = (Long) seeded[1];
+        String empId = (String) seeded[0];
+        String shiftId = (String) seeded[1];
         LocalDate date = LocalDate.of(2026, 7, 1);
 
         ormTemplate.runInSession(() -> assignmentBiz.assignSingle(empId, shiftId, date, CTX));
@@ -301,13 +301,13 @@ public class TestErpHrShiftScheduling extends JunitAutoTestCase {
     @Test
     public void testCalcAttendanceCrossDayNightShift() {
         Object[] seeded = ormTemplate.runInSession(session -> {
-            Long empId = seedEmployee("EMP-NIGHT");
+            String empId = seedEmployee("EMP-NIGHT");
             // 夜班 23:00→08:00 跨天
-            Long shiftId = seedShift("NIGHT", "23:00", "08:00", true);
+            String shiftId = seedShift("NIGHT", "23:00", "08:00", true);
             return new Object[]{empId, shiftId};
         });
-        Long empId = (Long) seeded[0];
-        Long shiftId = (Long) seeded[1];
+        String empId = (String) seeded[0];
+        String shiftId = (String) seeded[1];
         LocalDate date = LocalDate.of(2026, 7, 1);
 
         ormTemplate.runInSession(() -> assignmentBiz.assignSingle(empId, shiftId, date, CTX));
@@ -325,12 +325,12 @@ public class TestErpHrShiftScheduling extends JunitAutoTestCase {
     @Test
     public void testCalcAttendanceCrossDayNightShiftEarlyLeave() {
         Object[] seeded = ormTemplate.runInSession(session -> {
-            Long empId = seedEmployee("EMP-NIGHT-EARLY");
-            Long shiftId = seedShift("NIGHT", "23:00", "08:00", true);
+            String empId = seedEmployee("EMP-NIGHT-EARLY");
+            String shiftId = seedShift("NIGHT", "23:00", "08:00", true);
             return new Object[]{empId, shiftId};
         });
-        Long empId = (Long) seeded[0];
-        Long shiftId = (Long) seeded[1];
+        String empId = (String) seeded[0];
+        String shiftId = (String) seeded[1];
         LocalDate date = LocalDate.of(2026, 7, 1);
 
         ormTemplate.runInSession(() -> assignmentBiz.assignSingle(empId, shiftId, date, CTX));
@@ -346,12 +346,12 @@ public class TestErpHrShiftScheduling extends JunitAutoTestCase {
     @Test
     public void testCalcAttendanceAbsentByNoClockIn() {
         Object[] seeded = ormTemplate.runInSession(session -> {
-            Long empId = seedEmployee("EMP-ABSENT");
-            Long shiftId = seedShift("MORNING", "08:00", "17:00", true);
+            String empId = seedEmployee("EMP-ABSENT");
+            String shiftId = seedShift("MORNING", "08:00", "17:00", true);
             return new Object[]{empId, shiftId};
         });
-        Long empId = (Long) seeded[0];
-        Long shiftId = (Long) seeded[1];
+        String empId = (String) seeded[0];
+        String shiftId = (String) seeded[1];
         LocalDate date = LocalDate.of(2026, 7, 1);
 
         ErpHrShiftAssignment assignment = ormTemplate.runInSession(session -> assignmentBiz.assignSingle(empId, shiftId, date, CTX));
@@ -371,16 +371,16 @@ public class TestErpHrShiftScheduling extends JunitAutoTestCase {
     @Test
     public void testSwapApproveSwapsShiftsBetweenAssignments() {
         Object[] seeded = ormTemplate.runInSession(session -> {
-            Long empA = seedEmployee("EMP-SWAP-A");
-            Long empB = seedEmployee("EMP-SWAP-B");
-            Long morningId = seedShift("MORNING", "08:00", "17:00", true);
-            Long afternoonId = seedShift("AFTERNOON", "14:00", "23:00", true);
+            String empA = seedEmployee("EMP-SWAP-A");
+            String empB = seedEmployee("EMP-SWAP-B");
+            String morningId = seedShift("MORNING", "08:00", "17:00", true);
+            String afternoonId = seedShift("AFTERNOON", "14:00", "23:00", true);
             return new Object[]{empA, empB, morningId, afternoonId};
         });
-        Long empA = (Long) seeded[0];
-        Long empB = (Long) seeded[1];
-        Long morningId = (Long) seeded[2];
-        Long afternoonId = (Long) seeded[3];
+        String empA = (String) seeded[0];
+        String empB = (String) seeded[1];
+        String morningId = (String) seeded[2];
+        String afternoonId = (String) seeded[3];
         LocalDate date = LocalDate.of(2026, 7, 1);
 
         ErpHrShiftAssignment src = ormTemplate.runInSession(session -> assignmentBiz.assignSingle(empA, morningId, date, CTX));
@@ -404,16 +404,16 @@ public class TestErpHrShiftScheduling extends JunitAutoTestCase {
     @Test
     public void testSwapIllegalTransitionRejects() {
         Object[] seeded = ormTemplate.runInSession(session -> {
-            Long empA = seedEmployee("EMP-SWAP-ILLEGAL-A");
-            Long empB = seedEmployee("EMP-SWAP-ILLEGAL-B");
-            Long morningId = seedShift("MORNING-X", "08:00", "17:00", true);
-            Long afternoonId = seedShift("AFTERNOON-X", "14:00", "23:00", true);
+            String empA = seedEmployee("EMP-SWAP-ILLEGAL-A");
+            String empB = seedEmployee("EMP-SWAP-ILLEGAL-B");
+            String morningId = seedShift("MORNING-X", "08:00", "17:00", true);
+            String afternoonId = seedShift("AFTERNOON-X", "14:00", "23:00", true);
             return new Object[]{empA, empB, morningId, afternoonId};
         });
-        Long empA = (Long) seeded[0];
-        Long empB = (Long) seeded[1];
-        Long morningId = (Long) seeded[2];
-        Long afternoonId = (Long) seeded[3];
+        String empA = (String) seeded[0];
+        String empB = (String) seeded[1];
+        String morningId = (String) seeded[2];
+        String afternoonId = (String) seeded[3];
         LocalDate date = LocalDate.of(2026, 7, 1);
 
         ErpHrShiftAssignment src = ormTemplate.runInSession(session -> assignmentBiz.assignSingle(empA, morningId, date, CTX));
@@ -429,19 +429,19 @@ public class TestErpHrShiftScheduling extends JunitAutoTestCase {
     @Test
     public void testLeaveApprovedMarksAbsentAndCancelReverts() {
         Object[] seeded = ormTemplate.runInSession(session -> {
-            Long empId = seedEmployee("EMP-LEAVE");
-            Long shiftId = seedShift("MORNING", "08:00", "17:00", true);
+            String empId = seedEmployee("EMP-LEAVE");
+            String shiftId = seedShift("MORNING", "08:00", "17:00", true);
             return new Object[]{empId, shiftId};
         });
-        Long empId = (Long) seeded[0];
-        Long shiftId = (Long) seeded[1];
+        String empId = (String) seeded[0];
+        String shiftId = (String) seeded[1];
 
         // 排班 7-1 ~ 7-3
         ormTemplate.runInSession(() -> assignmentBiz.assignSingle(empId, shiftId, LocalDate.of(2026, 7, 1), CTX));
         ormTemplate.runInSession(() -> assignmentBiz.assignSingle(empId, shiftId, LocalDate.of(2026, 7, 2), CTX));
         ormTemplate.runInSession(() -> assignmentBiz.assignSingle(empId, shiftId, LocalDate.of(2026, 7, 3), CTX));
         // 休假 7-2 ~ 7-3
-        Long leaveId = seedLeaveRequest(empId, LocalDate.of(2026, 7, 2), LocalDate.of(2026, 7, 3));
+        String leaveId = seedLeaveRequest(empId, LocalDate.of(2026, 7, 2), LocalDate.of(2026, 7, 3));
 
         ormTemplate.runInSession(() -> shiftBiz.onLeaveApproved(leaveId, CTX));
 
@@ -467,7 +467,7 @@ public class TestErpHrShiftScheduling extends JunitAutoTestCase {
 
     // ---------- helpers ----------
 
-    private io.nop.api.core.beans.query.QueryBean buildEmployeeDateQuery(Long empId, LocalDate date) {
+    private io.nop.api.core.beans.query.QueryBean buildEmployeeDateQuery(String empId, LocalDate date) {
         io.nop.api.core.beans.query.QueryBean q = new io.nop.api.core.beans.query.QueryBean();
         q.addFilter(io.nop.api.core.beans.FilterBeans.and(
                 io.nop.api.core.beans.FilterBeans.eq("employeeId", empId),
@@ -475,7 +475,7 @@ public class TestErpHrShiftScheduling extends JunitAutoTestCase {
         return q;
     }
 
-    private long countAssignments(Long empId, LocalDate from, LocalDate to) {
+    private long countAssignments(String empId, LocalDate from, LocalDate to) {
         io.nop.api.core.beans.query.QueryBean q = new io.nop.api.core.beans.query.QueryBean();
         q.addFilter(io.nop.api.core.beans.FilterBeans.and(
                 io.nop.api.core.beans.FilterBeans.eq("employeeId", empId),
@@ -487,7 +487,7 @@ public class TestErpHrShiftScheduling extends JunitAutoTestCase {
         return ormTemplate.runInSession(session -> assignmentBiz.findCount(q, CTX));
     }
 
-    private Long seedEmployee(String code) {
+    private String seedEmployee(String code) {
         IEntityDao<ErpHrEmployee> dao = daoProvider.daoFor(ErpHrEmployee.class);
         ErpHrEmployee emp = new ErpHrEmployee();
         emp.setCode(code);
@@ -502,7 +502,7 @@ public class TestErpHrShiftScheduling extends JunitAutoTestCase {
         return emp.getId();
     }
 
-    private Long seedShift(String code, String startTime, String endTime, boolean requireClockIn) {
+    private String seedShift(String code, String startTime, String endTime, boolean requireClockIn) {
         IEntityDao<ErpHrShift> dao = daoProvider.daoFor(ErpHrShift.class);
         ErpHrShift s = new ErpHrShift();
         s.setCode(code);
@@ -518,7 +518,7 @@ public class TestErpHrShiftScheduling extends JunitAutoTestCase {
         return s.getId();
     }
 
-    private Long seedRotationPattern(String code, String patternData) {
+    private String seedRotationPattern(String code, String patternData) {
         IEntityDao<ErpHrShiftRotationPattern> dao = daoProvider.daoFor(ErpHrShiftRotationPattern.class);
         ErpHrShiftRotationPattern p = new ErpHrShiftRotationPattern();
         p.setCode(code);
@@ -531,7 +531,7 @@ public class TestErpHrShiftScheduling extends JunitAutoTestCase {
         return p.getId();
     }
 
-    private void seedAttendance(Long employeeId, LocalDate date,
+    private void seedAttendance(String employeeId, LocalDate date,
                                 LocalDateTime clockIn, LocalDateTime clockOut) {
         IEntityDao<ErpHrAttendance> dao = daoProvider.daoFor(ErpHrAttendance.class);
         ErpHrAttendance a = new ErpHrAttendance();
@@ -547,7 +547,7 @@ public class TestErpHrShiftScheduling extends JunitAutoTestCase {
         dao.saveEntity(a);
     }
 
-    private Long seedLeaveRequest(Long employeeId, LocalDate startDate, LocalDate endDate) {
+    private String seedLeaveRequest(String employeeId, LocalDate startDate, LocalDate endDate) {
         IEntityDao<ErpHrLeaveRequest> dao = daoProvider.daoFor(ErpHrLeaveRequest.class);
         ErpHrLeaveRequest l = new ErpHrLeaveRequest();
         l.setBusinessDate(java.time.LocalDate.of(2026, 7, 1));

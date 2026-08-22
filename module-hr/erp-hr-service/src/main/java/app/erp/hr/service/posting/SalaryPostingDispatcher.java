@@ -91,7 +91,7 @@ public class SalaryPostingDispatcher {
         }
         try {
             PostingEvent event = buildAccrualEvent(salary);
-            Long voucherId = executor.postEvent(event);
+            String voucherId = executor.postEvent(event);
             return voucherId != null;
         } catch (Exception e) {
             if (e instanceof NopException) {
@@ -121,7 +121,7 @@ public class SalaryPostingDispatcher {
                     ErpHrConstants.SOURCE_BILL_TYPE_SOCIAL_INSURANCE_ER,
                     ErpHrConstants.BILL_DATA_SOCIAL_INSURANCE_ER,
                     recomputeSocialInsuranceER(salary));
-            Long voucherId = executor.postEvent(event);
+            String voucherId = executor.postEvent(event);
             return voucherId != null;
         } catch (Exception e) {
             if (e instanceof NopException) {
@@ -150,7 +150,7 @@ public class SalaryPostingDispatcher {
                     ErpHrConstants.SOURCE_BILL_TYPE_HOUSING_FUND_ER,
                     ErpHrConstants.BILL_DATA_HOUSING_FUND_ER,
                     recomputeHousingFundER(salary));
-            Long voucherId = executor.postEvent(event);
+            String voucherId = executor.postEvent(event);
             return voucherId != null;
         } catch (Exception e) {
             if (e instanceof NopException) {
@@ -170,7 +170,7 @@ public class SalaryPostingDispatcher {
     public boolean tryPostPayment(ErpHrSalary salary) {
         try {
             PostingEvent event = buildPaymentEvent(salary);
-            Long voucherId = executor.postEvent(event);
+            String voucherId = executor.postEvent(event);
             return voucherId != null;
         } catch (Exception e) {
             if (e instanceof NopException) {
@@ -341,14 +341,14 @@ public class SalaryPostingDispatcher {
      * 潜伏缺口随本计划统一补齐——G3 吞异常使该缺口此前不可见）。
      */
     private void applyOrgAndSchema(ErpHrSalary salary, PostingEvent event) {
-        Long orgId = salary.getOrgId() != null ? salary.getOrgId() : resolveEmployeeOrgId(salary.getEmployeeId());
+        String orgId = salary.getOrgId() != null ? salary.getOrgId() : resolveEmployeeOrgId(salary.getEmployeeId());
         event.setOrgId(orgId);
-        Long schemaId = AcctSchemaResolver.resolvePrimarySchemaId(daoProvider, orgId);
+        String schemaId = AcctSchemaResolver.resolvePrimarySchemaId(daoProvider, orgId);
         event.setAcctSchemaId(schemaId);
         event.setCurrencyId(resolveFunctionalCurrencyId(schemaId));
     }
 
-    private Long resolveFunctionalCurrencyId(Long schemaId) {
+    private String resolveFunctionalCurrencyId(String schemaId) {
         if (schemaId == null) {
             return null;
         }
@@ -357,7 +357,7 @@ public class SalaryPostingDispatcher {
         return schema != null ? schema.getFunctionalCurrencyId() : null;
     }
 
-    private Long resolveEmployeeOrgId(Long employeeId) {
+    private String resolveEmployeeOrgId(String employeeId) {
         if (employeeId == null) {
             return null;
         }
@@ -369,17 +369,17 @@ public class SalaryPostingDispatcher {
         return "SAL-" + salary.getYear() + String.format("%02d", salary.getMonth()) + "-" + salary.getId();
     }
 
-    private Long resolveDepartmentId(Long employeeId) {
+    private String resolveDepartmentId(String employeeId) {
         ErpHrEmployee emp = findEmployee(employeeId);
         return emp != null ? emp.getDepartmentId() : null;
     }
 
-    private Long resolveCostCenterId(Long employeeId) {
+    private String resolveCostCenterId(String employeeId) {
         ErpHrEmployee emp = findEmployee(employeeId);
         return emp != null ? emp.getCostCenterId() : null;
     }
 
-    private ErpHrEmployee findEmployee(Long employeeId) {
+    private ErpHrEmployee findEmployee(String employeeId) {
         if (employeeId == null) {
             return null;
         }

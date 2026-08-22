@@ -22,17 +22,17 @@ public interface IErpHrDevelopmentPlanBiz extends ICrudBiz<ErpHrDevelopmentPlan>
 
     /** 针对员工 CRITICAL/MODERATE 差距生成建议发展计划（含计划项）。无符合差距返回 null。 */
     @BizMutation
-    ErpHrDevelopmentPlan generateDevelopmentPlan(@Name("employeeId") Long employeeId,
+    ErpHrDevelopmentPlan generateDevelopmentPlan(@Name("employeeId") String employeeId,
                                                  IServiceContext context);
 
     /** 推进计划项状态（NOT_STARTED→IN_PROGRESS→ACHIEVED/OVERDUE）。非法迁移抛 ErrorCode。 */
     @BizMutation
-    ErpHrDevelopmentPlanItem updatePlanItemStatus(@Name("planItemId") Long planItemId,
+    ErpHrDevelopmentPlanItem updatePlanItemStatus(@Name("planItemId") String planItemId,
                                                   @Name("status") String status,
                                                   IServiceContext context);
 
     /** 完成发展计划（DRAFT/IN_PROGRESS→COMPLETED）。 */
     @BizMutation
-    ErpHrDevelopmentPlan completePlan(@Name("planId") Long planId,
+    ErpHrDevelopmentPlan completePlan(@Name("planId") String planId,
                                       IServiceContext context);
 }

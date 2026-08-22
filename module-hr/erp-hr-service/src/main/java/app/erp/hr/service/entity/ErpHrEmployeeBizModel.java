@@ -98,10 +98,10 @@ public class ErpHrEmployeeBizModel extends CrudBizModel<ErpHrEmployee> implement
 
     @Override
     @BizMutation
-    public ErpHrEmployee transferEmployee(@Name("employeeId") Long employeeId,
-                                          @Name("targetDepartmentId") Long targetDepartmentId,
-                                          @Name("targetPositionId") Long targetPositionId,
-                                          @Name("targetSuperiorId") Long targetSuperiorId,
+    public ErpHrEmployee transferEmployee(@Name("employeeId") String employeeId,
+                                          @Name("targetDepartmentId") String targetDepartmentId,
+                                          @Name("targetPositionId") String targetPositionId,
+                                          @Name("targetSuperiorId") String targetSuperiorId,
                                           @Name("effectiveDate") LocalDate effectiveDate,
                                           @Name("handleContract") String handleContract,
                                           IServiceContext context) {
@@ -118,7 +118,7 @@ public class ErpHrEmployeeBizModel extends CrudBizModel<ErpHrEmployee> implement
      */
     @Override
     @BizQuery
-    public Map<String, Long> countReferences(@Name("id") Long id, IServiceContext context) {
+    public Map<String, Long> countReferences(@Name("id") String id, IServiceContext context) {
         Map<String, Long> refs = new LinkedHashMap<>();
         if (id == null) {
             return refs;
@@ -132,7 +132,7 @@ public class ErpHrEmployeeBizModel extends CrudBizModel<ErpHrEmployee> implement
     }
 
     // 同域只读引用计数（对齐 ErpPartyBizModel 同域聚合范式）
-    private <T extends io.nop.dao.api.IDaoEntity> long countByEmployee(Class<T> entityClass, Long employeeId) {
+    private <T extends io.nop.dao.api.IDaoEntity> long countByEmployee(Class<T> entityClass, String employeeId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("employeeId", employeeId));
         return daoProvider().daoFor(entityClass).findAllByQuery(q).size();
@@ -140,7 +140,7 @@ public class ErpHrEmployeeBizModel extends CrudBizModel<ErpHrEmployee> implement
 
     // ---------- validation gates ----------
 
-    ErpHrEmployee requireTransferableEmployee(Long employeeId, IServiceContext context) {
+    ErpHrEmployee requireTransferableEmployee(String employeeId, IServiceContext context) {
         ErpHrEmployee employee = get(String.valueOf(employeeId), false, context);
         if (employee == null) {
             throw new NopException(ErpHrErrors.ERR_EMPLOYEE_NOT_TRANSFERABLE)
@@ -162,7 +162,7 @@ public class ErpHrEmployeeBizModel extends CrudBizModel<ErpHrEmployee> implement
         return employeeStateMachine.isTransferable(employmentStatus);
     }
 
-    ErpHrDepartment requireTargetDepartment(Long targetDepartmentId, IServiceContext context) {
+    ErpHrDepartment requireTargetDepartment(String targetDepartmentId, IServiceContext context) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("id", targetDepartmentId));
         q.setLimit(1);
@@ -174,7 +174,7 @@ public class ErpHrEmployeeBizModel extends CrudBizModel<ErpHrEmployee> implement
         return dept;
     }
 
-    ErpHrPosition requireTargetPosition(Long targetPositionId, Long expectedDepartmentId, IServiceContext context) {
+    ErpHrPosition requireTargetPosition(String targetPositionId, String expectedDepartmentId, IServiceContext context) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("id", targetPositionId));
         q.setLimit(1);
@@ -192,7 +192,7 @@ public class ErpHrEmployeeBizModel extends CrudBizModel<ErpHrEmployee> implement
 
     // ---------- leave conflict warn (config-gated, non-blocking) ----------
 
-    void warnIfLeaveConflict(Long employeeId, LocalDate effectiveDate, IServiceContext context) {
+    void warnIfLeaveConflict(String employeeId, LocalDate effectiveDate, IServiceContext context) {
         if (!ErpHrConfigs.transferLeaveConflictWarn()) {
             return;
         }
@@ -264,7 +264,7 @@ public class ErpHrEmployeeBizModel extends CrudBizModel<ErpHrEmployee> implement
         return ErpHrConstants.TRANSFER_HANDLE_CONTRACT_AUTO;
     }
 
-    ErpHrEmploymentContract findActiveContract(Long employeeId, IServiceContext context) {
+    ErpHrEmploymentContract findActiveContract(String employeeId, IServiceContext context) {
         QueryBean q = new QueryBean();
         q.addFilter(and(
                 eq("employeeId", employeeId),
@@ -351,8 +351,8 @@ public class ErpHrEmployeeBizModel extends CrudBizModel<ErpHrEmployee> implement
     }
 
     @BizLoader("bankAccountId")
-    public Long bankAccountIdMask(@ContextSource ErpHrEmployee entity) {
-        return MaskHelper.maskLong(entity.getBankAccountId(), PII_MASK_ROLES, entity, "bankAccountId");
+    public String bankAccountIdMask(@ContextSource ErpHrEmployee entity) {
+        return MaskHelper.maskString(entity.getBankAccountId(), StringMaskFormat.FULL, PII_MASK_ROLES, entity, "bankAccountId");
     }
 
     @BizLoader("socialSecurityNo")

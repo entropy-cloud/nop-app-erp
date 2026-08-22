@@ -49,7 +49,7 @@ public class ErpHrTimesheetBizModel extends CrudBizModel<ErpHrTimesheet> impleme
 
     @Override
     @BizMutation
-    public ErpHrTimesheet submit(@Name("timesheetId") Long timesheetId, IServiceContext context) {
+    public ErpHrTimesheet submit(@Name("timesheetId") String timesheetId, IServiceContext context) {
         ErpHrTimesheet timesheet = requireEntity(String.valueOf(timesheetId), null, context);
         String status = timesheet.getStatus();
         // 固定来源态/目标态判断委托 ErpHrTimesheetStateMachine（Bean 矩阵权威，契约 §4/§7）：
@@ -72,7 +72,7 @@ public class ErpHrTimesheetBizModel extends CrudBizModel<ErpHrTimesheet> impleme
 
     @Override
     @BizMutation
-    public ErpHrTimesheet approve(@Name("timesheetId") Long timesheetId, IServiceContext context) {
+    public ErpHrTimesheet approve(@Name("timesheetId") String timesheetId, IServiceContext context) {
         ErpHrTimesheet timesheet = requireEntity(String.valueOf(timesheetId), null, context);
         // 固定来源态/目标态判断委托 ErpHrTimesheetStateMachine（Bean 矩阵权威，契约 §4/§7）：
         // approve 仅 SUBMITTED 合法。Bean 抛 common 层码，此处映射领域 ERR_HR_TIMESHEET_ILLEGAL_TRANSITION
@@ -91,7 +91,7 @@ public class ErpHrTimesheetBizModel extends CrudBizModel<ErpHrTimesheet> impleme
 
     @Override
     @BizMutation
-    public ErpHrTimesheet reject(@Name("timesheetId") Long timesheetId, @Name("reason") String reason,
+    public ErpHrTimesheet reject(@Name("timesheetId") String timesheetId, @Name("reason") String reason,
                                  IServiceContext context) {
         // 动态业务校验保留原位：reason 必填守卫（非固定状态判断，归 BizModel）
         if (StringHelper.isBlank(reason)) {
@@ -118,13 +118,13 @@ public class ErpHrTimesheetBizModel extends CrudBizModel<ErpHrTimesheet> impleme
 
     // ---------- helpers ----------
 
-    private BigDecimal sumHoursByTimesheet(Long timesheetId, IServiceContext context) {
+    private BigDecimal sumHoursByTimesheet(String timesheetId, IServiceContext context) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("timesheetId", timesheetId));
         return ErpHrTimesheetLineBizModel.sumHours(timesheetLineBiz.findList(q, null, context));
     }
 
-    private void checkDailyHoursLimitForTimesheet(Long timesheetId, IServiceContext context) {
+    private void checkDailyHoursLimitForTimesheet(String timesheetId, IServiceContext context) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("timesheetId", timesheetId));
         List<ErpHrTimesheetLine> lines = timesheetLineBiz.findList(q, null, context);

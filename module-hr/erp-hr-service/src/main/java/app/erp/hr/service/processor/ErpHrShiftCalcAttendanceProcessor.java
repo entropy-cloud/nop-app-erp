@@ -21,7 +21,7 @@ import static io.nop.api.core.beans.FilterBeans.eq;
  */
 public class ErpHrShiftCalcAttendanceProcessor extends AbstractErpHrShiftProcessor {
 
-    public ErpHrAttendance calcAttendance(Long employeeId, LocalDate assignmentDate, IServiceContext context) {
+    public ErpHrAttendance calcAttendance(String employeeId, LocalDate assignmentDate, IServiceContext context) {
         ErpHrShiftAssignment assignment = assignmentBiz.findByEmployeeAndDate(employeeId, assignmentDate, context);
         if (assignment == null) {
             return null;
@@ -75,7 +75,7 @@ public class ErpHrShiftCalcAttendanceProcessor extends AbstractErpHrShiftProcess
         return attendance;
     }
 
-    protected ErpHrAttendance findAttendanceByDate(Long employeeId, LocalDate date, IServiceContext context) {
+    protected ErpHrAttendance findAttendanceByDate(String employeeId, LocalDate date, IServiceContext context) {
         QueryBean q = new QueryBean();
         q.addFilter(and(eq("employeeId", employeeId), eq("date", date)));
         q.setLimit(1);

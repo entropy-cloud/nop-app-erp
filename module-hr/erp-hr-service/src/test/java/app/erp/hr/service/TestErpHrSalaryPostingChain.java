@@ -102,10 +102,10 @@ public class TestErpHrSalaryPostingChain extends JunitAutoTestCase {
      */
     @Test
     public void testApprovePostsAccrualChainBalancedAndPaymentZeroRegression() {
-        Long employeeId = seedFullEnvironment(true);
+        String employeeId = seedFullEnvironment(true);
 
         ErpHrSalary salary = ormTemplate.runInSession(session -> salaryBiz.calculateSalary(employeeId, 2026, 4, CTX));
-        Long salaryId = salary.getId();
+        String salaryId = salary.getId();
         BigDecimal gross = salary.getGrossSalary();
         assertEquals(0, new BigDecimal("15000.00").compareTo(gross), "应发合计=合同月薪（全勤）");
 
@@ -171,10 +171,10 @@ public class TestErpHrSalaryPostingChain extends JunitAutoTestCase {
      */
     @Test
     public void testPartialFailureKeepsPostedFalseAlertsAndPaymentUnblocked() {
-        Long employeeId = seedFullEnvironment(false);
+        String employeeId = seedFullEnvironment(false);
 
         ErpHrSalary salary = ormTemplate.runInSession(session -> salaryBiz.calculateSalary(employeeId, 2026, 4, CTX));
-        Long salaryId = salary.getId();
+        String salaryId = salary.getId();
         assertEquals(0, submitSalary(salaryId).getStatus(), "提交应成功");
         assertEquals(0, approveSalary(salaryId).getStatus(), "审核应成功（部分失败不阻塞 APPROVED）");
 
@@ -213,10 +213,10 @@ public class TestErpHrSalaryPostingChain extends JunitAutoTestCase {
     /** ⑥：UNSUBMITTED 直接 approve 被守卫拒（零过账）；SUBMITTED→reject → REJECTED（零过账）。 */
     @Test
     public void testUnsubmittedAndRejectedDoNotPost() {
-        Long employeeId = seedFullEnvironment(true);
+        String employeeId = seedFullEnvironment(true);
 
         ErpHrSalary salary = ormTemplate.runInSession(session -> salaryBiz.calculateSalary(employeeId, 2026, 4, CTX));
-        Long salaryId = salary.getId();
+        String salaryId = salary.getId();
 
         ApiResponse<?> badApprove = approveSalary(salaryId);
         assertEquals(-1, badApprove.getStatus(), "⑥ UNSUBMITTED 直接 approve 被守卫拒");
@@ -237,10 +237,10 @@ public class TestErpHrSalaryPostingChain extends JunitAutoTestCase {
     /** ⑦：幂等——二次 approve 被审批轴守卫拒（SUBMITTED 单源），凭证计数不变。 */
     @Test
     public void testIdempotentSecondApproveDoesNotDuplicate() {
-        Long employeeId = seedFullEnvironment(true);
+        String employeeId = seedFullEnvironment(true);
 
         ErpHrSalary salary = ormTemplate.runInSession(session -> salaryBiz.calculateSalary(employeeId, 2026, 4, CTX));
-        Long salaryId = salary.getId();
+        String salaryId = salary.getId();
         assertEquals(0, submitSalary(salaryId).getStatus());
         assertEquals(0, approveSalary(salaryId).getStatus());
 
@@ -264,10 +264,10 @@ public class TestErpHrSalaryPostingChain extends JunitAutoTestCase {
      */
     @Test
     public void testReverseApproveReApproveDedupAndCatchUp() {
-        Long employeeId = seedFullEnvironment(false);
+        String employeeId = seedFullEnvironment(false);
 
         ErpHrSalary salary = ormTemplate.runInSession(session -> salaryBiz.calculateSalary(employeeId, 2026, 4, CTX));
-        Long salaryId = salary.getId();
+        String salaryId = salary.getId();
         assertEquals(0, submitSalary(salaryId).getStatus());
         assertEquals(0, approveSalary(salaryId).getStatus());
         String billCode = billCode(2026, 4, salaryId);
@@ -358,31 +358,31 @@ public class TestErpHrSalaryPostingChain extends JunitAutoTestCase {
         return dao.findAllByQuery(q).size();
     }
 
-    private BigDecimal recomputedSocialER(Long employeeId, int year, int month) {
+    private BigDecimal recomputedSocialER(String employeeId, int year, int month) {
         return socialInsuranceCalculator.calculate(employeeId, year, month)[1]
                 .setScale(ErpHrConfigs.salaryRoundingScale(), java.math.RoundingMode.HALF_UP);
     }
 
-    private BigDecimal recomputedHousingFundER(Long employeeId, int year, int month) {
+    private BigDecimal recomputedHousingFundER(String employeeId, int year, int month) {
         return socialInsuranceCalculator.calculateHousingFund(employeeId, year, month)[1]
                 .setScale(ErpHrConfigs.salaryRoundingScale(), java.math.RoundingMode.HALF_UP);
     }
 
     // ---------- rpc helpers ----------
 
-    private ApiResponse<?> submitSalary(Long salaryId) {
+    private ApiResponse<?> submitSalary(String salaryId) {
         return executeRpc(mutation, "ErpHrSalary__submitForApproval", ApiRequest.build(Map.of("id", String.valueOf(salaryId))));
     }
 
-    private ApiResponse<?> approveSalary(Long salaryId) {
+    private ApiResponse<?> approveSalary(String salaryId) {
         return executeRpc(mutation, "ErpHrSalary__approve", ApiRequest.build(Map.of("id", String.valueOf(salaryId))));
     }
 
-    private ApiResponse<?> rejectSalary(Long salaryId) {
+    private ApiResponse<?> rejectSalary(String salaryId) {
         return executeRpc(mutation, "ErpHrSalary__reject", ApiRequest.build(Map.of("id", String.valueOf(salaryId))));
     }
 
-    private ApiResponse<?> reverseApproveSalary(Long salaryId) {
+    private ApiResponse<?> reverseApproveSalary(String salaryId) {
         return executeRpc(mutation, "ErpHrSalary__reverseApprove", ApiRequest.build(Map.of("id", String.valueOf(salaryId))));
     }
 
@@ -399,10 +399,10 @@ public class TestErpHrSalaryPostingChain extends JunitAutoTestCase {
      * 凭证日期：计提=期间 15 日（2026-04-15 → 2026-04 OPEN 期间）；发放=paymentDate（冻结时钟
      * 2026-07-17 → 2026-07 OPEN 期间）。
      */
-    private Long seedFullEnvironment(boolean withCompanyBorneSubjects) {
+    private String seedFullEnvironment(boolean withCompanyBorneSubjects) {
         return ormTemplate.runInSession(session -> {
             seedTaxConfig(2026);
-            Long empId = seedEmployee("EMP-CHAIN");
+            String empId = seedEmployee("EMP-CHAIN");
             seedContract(empId, "15000");
             seedSocialInsuranceBase(empId, "SHENZHEN", "15000", "15000");
             seedSocialInsuranceConfig("SHENZHEN", ErpHrConstants.INSURANCE_PENSION,
@@ -418,7 +418,7 @@ public class TestErpHrSalaryPostingChain extends JunitAutoTestCase {
             }
             seedSubject("2211", "应付职工薪酬");
             seedSubject("1002", "银行存款");
-            seedAcctSchema(1L);
+            seedAcctSchema("1");
             seedPeriod(2026, 4, "OPEN");
             seedPeriod(2026, 7, "OPEN");
             seedNotifyTemplate(NOTIFY_EVENT);
@@ -427,7 +427,7 @@ public class TestErpHrSalaryPostingChain extends JunitAutoTestCase {
     }
 
     /** 种组织主账套（引擎 resolveTargetSchemas 对 null acctSchemaId 返回空集 → 静默零凭证的补齐前置）。 */
-    private void seedAcctSchema(long orgId) {
+    private void seedAcctSchema(String orgId) {
         IEntityDao<app.erp.md.dao.entity.ErpMdAcctSchema> dao =
                 daoProvider.daoFor(app.erp.md.dao.entity.ErpMdAcctSchema.class);
         app.erp.md.dao.entity.ErpMdAcctSchema schema = new app.erp.md.dao.entity.ErpMdAcctSchema();
@@ -435,7 +435,7 @@ public class TestErpHrSalaryPostingChain extends JunitAutoTestCase {
         schema.setName("账套-" + orgId);
         schema.setOrgId(orgId);
         schema.setNature("FINANCIAL");
-        schema.setFunctionalCurrencyId(1L);
+        schema.setFunctionalCurrencyId("1");
         schema.setStatus("ACTIVE");
         dao.saveEntity(schema);
     }
@@ -457,7 +457,7 @@ public class TestErpHrSalaryPostingChain extends JunitAutoTestCase {
         dao.saveEntity(cfg);
     }
 
-    private Long seedEmployee(String code) {
+    private String seedEmployee(String code) {
         IEntityDao<ErpHrEmployee> dao = daoProvider.daoFor(ErpHrEmployee.class);
         ErpHrEmployee emp = new ErpHrEmployee();
         emp.setCode(code);
@@ -469,12 +469,12 @@ public class TestErpHrSalaryPostingChain extends JunitAutoTestCase {
         emp.setEmploymentStatus(ErpHrConstants.EMPLOYMENT_ACTIVE);
         emp.setEmployeeType("FULL_TIME");
         // 业务组织（PostingEvent.orgId/账套解析回退源，对齐 assets 域过账测试范式）
-        emp.setOrgId(1L);
+        emp.setOrgId("1");
         dao.saveEntity(emp);
         return emp.getId();
     }
 
-    private void seedContract(Long employeeId, String monthlySalary) {
+    private void seedContract(String employeeId, String monthlySalary) {
         IEntityDao<ErpHrEmploymentContract> dao = daoProvider.daoFor(ErpHrEmploymentContract.class);
         ErpHrEmploymentContract c = new ErpHrEmploymentContract();
         c.setBusinessDate(LocalDate.of(2026, 7, 1));
@@ -488,7 +488,7 @@ public class TestErpHrSalaryPostingChain extends JunitAutoTestCase {
         dao.saveEntity(c);
     }
 
-    private void seedSocialInsuranceBase(Long employeeId, String cityCode,
+    private void seedSocialInsuranceBase(String employeeId, String cityCode,
                                          String socialInsuranceBase, String housingFundBase) {
         IEntityDao<ErpHrSocialInsuranceBase> dao = daoProvider.daoFor(ErpHrSocialInsuranceBase.class);
         ErpHrSocialInsuranceBase base = new ErpHrSocialInsuranceBase();
@@ -531,7 +531,7 @@ public class TestErpHrSalaryPostingChain extends JunitAutoTestCase {
         ErpFinAccountingPeriod period = new ErpFinAccountingPeriod();
         period.setCode(year + "-" + String.format("%02d", month));
         period.setName(year + "年" + month + "月");
-        period.setOrgId(1L);
+        period.setOrgId("1");
         period.setYear(year);
         period.setMonth(month);
         period.setStartDate(LocalDate.of(year, month, 1));
@@ -557,7 +557,7 @@ public class TestErpHrSalaryPostingChain extends JunitAutoTestCase {
     }
 
     /** 与 SalaryPostingDispatcher.buildBillCode 一致。 */
-    private String billCode(int year, int month, Long salaryId) {
+    private String billCode(int year, int month, String salaryId) {
         return "SAL-" + year + String.format("%02d", month) + "-" + salaryId;
     }
 }

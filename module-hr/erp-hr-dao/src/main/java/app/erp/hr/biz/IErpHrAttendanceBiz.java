@@ -20,7 +20,7 @@ public interface IErpHrAttendanceBiz extends ICrudBiz<ErpHrAttendance>{
      */
     @BizMutation
     @SingleSession
-    ErpHrAttendance clockIn(@Name("employeeId") Long employeeId, IServiceContext context);
+    ErpHrAttendance clockIn(@Name("employeeId") String employeeId, IServiceContext context);
 
     /**
      * 员工签退（UC-HR-06）。更新当日考勤 clockOut=now + 计算 workHours。
@@ -28,13 +28,13 @@ public interface IErpHrAttendanceBiz extends ICrudBiz<ErpHrAttendance>{
      */
     @BizMutation
     @SingleSession
-    ErpHrAttendance clockOut(@Name("employeeId") Long employeeId, IServiceContext context);
+    ErpHrAttendance clockOut(@Name("employeeId") String employeeId, IServiceContext context);
 
     /**
      * 查询某员工当日考勤状态。
      */
     @BizQuery
-    ErpHrAttendance getTodayAttendance(@Name("employeeId") Long employeeId, IServiceContext context);
+    ErpHrAttendance getTodayAttendance(@Name("employeeId") String employeeId, IServiceContext context);
 
     /**
      * 手工补卡签到（UC-HR-06⑮ 设备故障时支持手工补卡，RC-R1.7）。
@@ -45,7 +45,7 @@ public interface IErpHrAttendanceBiz extends ICrudBiz<ErpHrAttendance>{
      */
     @BizMutation
     @SingleSession
-    ErpHrAttendance makeUpClockIn(@Name("employeeId") Long employeeId,
+    ErpHrAttendance makeUpClockIn(@Name("employeeId") String employeeId,
                                   @Name("date") LocalDate date,
                                   @Name("clockTime") java.sql.Timestamp clockTime,
                                   @Name("reason") String reason,
@@ -57,7 +57,7 @@ public interface IErpHrAttendanceBiz extends ICrudBiz<ErpHrAttendance>{
      */
     @BizMutation
     @SingleSession
-    ErpHrAttendance makeUpClockOut(@Name("employeeId") Long employeeId,
+    ErpHrAttendance makeUpClockOut(@Name("employeeId") String employeeId,
                                    @Name("date") LocalDate date,
                                    @Name("clockTime") java.sql.Timestamp clockTime,
                                    @Name("reason") String reason,

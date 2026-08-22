@@ -44,14 +44,14 @@ public class ErpHrDepartmentBizModel extends CrudBizModel<ErpHrDepartment> imple
         empQuery.setLimit(5000);
         List<ErpHrEmployee> emps = employeeBiz.findList(empQuery, null, context);
 
-        Map<Long, Integer> empCountByDept = new HashMap<>();
+        Map<String, Integer> empCountByDept = new HashMap<>();
         for (ErpHrEmployee e : emps) {
             if (e.getDepartmentId() != null) {
                 empCountByDept.merge(e.getDepartmentId(), 1, Integer::sum);
             }
         }
 
-        Map<Long, Map<String, Object>> nodeMap = new LinkedHashMap<>();
+        Map<String, Map<String, Object>> nodeMap = new LinkedHashMap<>();
         for (ErpHrDepartment d : depts) {
             Map<String, Object> node = new LinkedHashMap<>();
             node.put("id", d.getId());
@@ -67,8 +67,8 @@ public class ErpHrDepartmentBizModel extends CrudBizModel<ErpHrDepartment> imple
         List<Map<String, Object>> roots = new ArrayList<>();
         for (ErpHrDepartment d : depts) {
             Map<String, Object> node = nodeMap.get(d.getId());
-            Long pid = d.getParentId();
-            if (pid != null && pid != 0 && nodeMap.containsKey(pid)) {
+            String pid = d.getParentId();
+            if (pid != null && !"0".equals(pid) && nodeMap.containsKey(pid)) {
                 @SuppressWarnings("unchecked")
                 List<Map<String, Object>> children = (List<Map<String, Object>>) nodeMap.get(pid).get("children");
                 children.add(node);

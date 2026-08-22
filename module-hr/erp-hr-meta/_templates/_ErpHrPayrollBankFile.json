@@ -1,5 +1,5 @@
 {
-  "id": 0,
+  "id": "",
   "batchNo": "",
   "paymentDate": "2000-01-01",
   "totalAmount": 0.0,
@@ -9,8 +9,8 @@
   "fileContent": "",
   "status": "",
   "status_label": "",
-  "bankId": 0,
-  "orgId": 0,
+  "bankId": "",
+  "orgId": "",
   "remark": "",
   "delVersion": 0,
   "version": 0,

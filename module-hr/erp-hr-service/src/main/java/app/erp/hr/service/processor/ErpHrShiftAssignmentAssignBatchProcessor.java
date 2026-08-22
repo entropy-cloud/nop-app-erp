@@ -14,7 +14,7 @@ import java.util.List;
  */
 public class ErpHrShiftAssignmentAssignBatchProcessor extends AbstractErpHrShiftAssignmentProcessor {
 
-    public List<ErpHrShiftAssignment> assignBatch(List<Long> employeeIds, Long shiftId, LocalDate startDate,
+    public List<ErpHrShiftAssignment> assignBatch(List<String> employeeIds, String shiftId, LocalDate startDate,
                                                   LocalDate endDate, IServiceContext context) {
         if (employeeIds == null || employeeIds.isEmpty()) {
             return new ArrayList<>();
@@ -22,7 +22,7 @@ public class ErpHrShiftAssignmentAssignBatchProcessor extends AbstractErpHrShift
         requireShift(shiftId, context);
         List<ErpHrShiftAssignment> result = new ArrayList<>();
         for (LocalDate d = startDate; !d.isAfter(endDate); d = d.plusDays(1)) {
-            for (Long empId : employeeIds) {
+            for (String empId : employeeIds) {
                 if (existsActiveAssignment(empId, d, context)) {
                     continue;
                 }

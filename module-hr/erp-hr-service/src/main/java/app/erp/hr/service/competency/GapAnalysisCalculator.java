@@ -41,7 +41,7 @@ public class GapAnalysisCalculator {
      * @return 待持久化的 ErpHrGapAnalysis 内存对象列表（competencyId 缺实际等级时按 0 计算）
      */
     public List<ErpHrGapAnalysis> calculate(List<ErpHrRoleCompetency> roleCompetencies,
-                                            Map<Long, Integer> aggregatedLevels,
+                                            Map<String, Integer> aggregatedLevels,
                                             LocalDate assessmentDate) {
         java.util.List<ErpHrGapAnalysis> result = new java.util.ArrayList<>();
         if (roleCompetencies == null) return result;

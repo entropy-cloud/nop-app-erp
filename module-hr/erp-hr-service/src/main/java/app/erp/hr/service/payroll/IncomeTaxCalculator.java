@@ -66,7 +66,7 @@ public class IncomeTaxCalculator {
      * @param currentMonthSpecialDeduction 当月专项扣除（社保+公积金个人部分）
      * @return [0]=当月应纳个税，[1]=写回的 cumulativeData JSON 字符串
      */
-    public Object[] calculate(Long employeeId, int year, int month,
+    public Object[] calculate(String employeeId, int year, int month,
                               BigDecimal currentMonthGross, BigDecimal currentMonthSpecialDeduction) {
         ErpHrTaxConfig taxConfig = findTaxConfig(year);
         BigDecimal threshold = ErpHrConfigs.taxThresholdMonthly();
@@ -117,7 +117,7 @@ public class IncomeTaxCalculator {
     /**
      * 查询年度历史薪酬累计（年初至上月），汇总累计值。1 月无历史返回全 0。
      */
-    java.util.Map<String, BigDecimal> findPreviousCumulative(Long employeeId, int year, int currentMonth) {
+    java.util.Map<String, BigDecimal> findPreviousCumulative(String employeeId, int year, int currentMonth) {
         java.util.Map<String, BigDecimal> result = new java.util.HashMap<>();
         if (currentMonth <= 1) {
             return result;
@@ -166,7 +166,7 @@ public class IncomeTaxCalculator {
      * ——累计损坏响亮失败，不静默重置致少预扣个税（P1-MA4-018）。
      */
     @SuppressWarnings("unchecked")
-    static java.util.Map<String, BigDecimal> parseCumulativeData(String json, Long employeeId, int year) {
+    static java.util.Map<String, BigDecimal> parseCumulativeData(String json, String employeeId, int year) {
         java.util.Map<String, BigDecimal> result = new java.util.HashMap<>();
         if (json == null || json.trim().isEmpty()) {
             return result;
@@ -203,7 +203,7 @@ public class IncomeTaxCalculator {
         return list.get(0);
     }
 
-    BigDecimal sumSpecialDeduction(Long employeeId, int year, int month) {
+    BigDecimal sumSpecialDeduction(String employeeId, int year, int month) {
         IEntityDao<ErpHrTaxSpecialDeduction> dao = daoProvider.daoFor(ErpHrTaxSpecialDeduction.class);
         QueryBean q = new QueryBean();
         q.addFilter(and(eq("employeeId", employeeId), eq("year", year), eq("month", month)));

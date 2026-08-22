@@ -189,16 +189,16 @@ public class _ErpHrSalarySimulation extends DynamicOrmEntity{
 
     
     /* ID: ID */
-    private java.lang.Long _id;
+    private java.lang.String _id;
     
     /* 编号: CODE */
     private java.lang.String _code;
     
     /* 业务组织: ORG_ID */
-    private java.lang.Long _orgId;
+    private java.lang.String _orgId;
     
     /* 源薪酬记录: SOURCE_SALARY_ID */
-    private java.lang.Long _sourceSalaryId;
+    private java.lang.String _sourceSalaryId;
     
     /* 模拟年份: SIMULATION_PERIOD_YEAR */
     private java.lang.Integer _simulationPeriodYear;
@@ -213,7 +213,7 @@ public class _ErpHrSalarySimulation extends DynamicOrmEntity{
     private java.lang.String _status;
     
     /* 审批人: REVIEWER_ID */
-    private java.lang.Long _reviewerId;
+    private java.lang.String _reviewerId;
     
     /* 审批时间: REVIEWED_AT */
     private java.sql.Timestamp _reviewedAt;
@@ -222,7 +222,7 @@ public class _ErpHrSalarySimulation extends DynamicOrmEntity{
     private java.sql.Timestamp _convertedAt;
     
     /* 转正式薪酬ID: CONVERTED_SALARY_ID */
-    private java.lang.Long _convertedSalaryId;
+    private java.lang.String _convertedSalaryId;
     
     /* 备注: NOTES */
     private java.lang.String _notes;
@@ -394,9 +394,9 @@ public class _ErpHrSalarySimulation extends DynamicOrmEntity{
         switch(propId){
         
             case PROP_ID_id:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_id));
                }
                setId(typedValue);
@@ -414,9 +414,9 @@ public class _ErpHrSalarySimulation extends DynamicOrmEntity{
             }
         
             case PROP_ID_orgId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_orgId));
                }
                setOrgId(typedValue);
@@ -424,9 +424,9 @@ public class _ErpHrSalarySimulation extends DynamicOrmEntity{
             }
         
             case PROP_ID_sourceSalaryId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_sourceSalaryId));
                }
                setSourceSalaryId(typedValue);
@@ -474,9 +474,9 @@ public class _ErpHrSalarySimulation extends DynamicOrmEntity{
             }
         
             case PROP_ID_reviewerId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_reviewerId));
                }
                setReviewerId(typedValue);
@@ -504,9 +504,9 @@ public class _ErpHrSalarySimulation extends DynamicOrmEntity{
             }
         
             case PROP_ID_convertedSalaryId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_convertedSalaryId));
                }
                setConvertedSalaryId(typedValue);
@@ -604,7 +604,7 @@ public class _ErpHrSalarySimulation extends DynamicOrmEntity{
         
             case PROP_ID_id:{
                onInitProp(propId);
-               this._id = (java.lang.Long)value;
+               this._id = (java.lang.String)value;
                orm_id(); // 如果是设置主键字段，则触发watcher
                break;
             }
@@ -618,14 +618,14 @@ public class _ErpHrSalarySimulation extends DynamicOrmEntity{
         
             case PROP_ID_orgId:{
                onInitProp(propId);
-               this._orgId = (java.lang.Long)value;
+               this._orgId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_sourceSalaryId:{
                onInitProp(propId);
-               this._sourceSalaryId = (java.lang.Long)value;
+               this._sourceSalaryId = (java.lang.String)value;
                
                break;
             }
@@ -660,7 +660,7 @@ public class _ErpHrSalarySimulation extends DynamicOrmEntity{
         
             case PROP_ID_reviewerId:{
                onInitProp(propId);
-               this._reviewerId = (java.lang.Long)value;
+               this._reviewerId = (java.lang.String)value;
                
                break;
             }
@@ -681,7 +681,7 @@ public class _ErpHrSalarySimulation extends DynamicOrmEntity{
         
             case PROP_ID_convertedSalaryId:{
                onInitProp(propId);
-               this._convertedSalaryId = (java.lang.Long)value;
+               this._convertedSalaryId = (java.lang.String)value;
                
                break;
             }
@@ -751,7 +751,7 @@ public class _ErpHrSalarySimulation extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final java.lang.Long getId(){
+    public final java.lang.String getId(){
          onPropGet(PROP_ID_id);
          return _id;
     }
@@ -759,7 +759,7 @@ public class _ErpHrSalarySimulation extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final void setId(java.lang.Long value){
+    public final void setId(java.lang.String value){
         if(onPropSet(PROP_ID_id,value)){
             this._id = value;
             internalClearRefs(PROP_ID_id);
@@ -789,7 +789,7 @@ public class _ErpHrSalarySimulation extends DynamicOrmEntity{
     /**
      * 业务组织: ORG_ID
      */
-    public final java.lang.Long getOrgId(){
+    public final java.lang.String getOrgId(){
          onPropGet(PROP_ID_orgId);
          return _orgId;
     }
@@ -797,7 +797,7 @@ public class _ErpHrSalarySimulation extends DynamicOrmEntity{
     /**
      * 业务组织: ORG_ID
      */
-    public final void setOrgId(java.lang.Long value){
+    public final void setOrgId(java.lang.String value){
         if(onPropSet(PROP_ID_orgId,value)){
             this._orgId = value;
             internalClearRefs(PROP_ID_orgId);
@@ -808,7 +808,7 @@ public class _ErpHrSalarySimulation extends DynamicOrmEntity{
     /**
      * 源薪酬记录: SOURCE_SALARY_ID
      */
-    public final java.lang.Long getSourceSalaryId(){
+    public final java.lang.String getSourceSalaryId(){
          onPropGet(PROP_ID_sourceSalaryId);
          return _sourceSalaryId;
     }
@@ -816,7 +816,7 @@ public class _ErpHrSalarySimulation extends DynamicOrmEntity{
     /**
      * 源薪酬记录: SOURCE_SALARY_ID
      */
-    public final void setSourceSalaryId(java.lang.Long value){
+    public final void setSourceSalaryId(java.lang.String value){
         if(onPropSet(PROP_ID_sourceSalaryId,value)){
             this._sourceSalaryId = value;
             internalClearRefs(PROP_ID_sourceSalaryId);
@@ -903,7 +903,7 @@ public class _ErpHrSalarySimulation extends DynamicOrmEntity{
     /**
      * 审批人: REVIEWER_ID
      */
-    public final java.lang.Long getReviewerId(){
+    public final java.lang.String getReviewerId(){
          onPropGet(PROP_ID_reviewerId);
          return _reviewerId;
     }
@@ -911,7 +911,7 @@ public class _ErpHrSalarySimulation extends DynamicOrmEntity{
     /**
      * 审批人: REVIEWER_ID
      */
-    public final void setReviewerId(java.lang.Long value){
+    public final void setReviewerId(java.lang.String value){
         if(onPropSet(PROP_ID_reviewerId,value)){
             this._reviewerId = value;
             internalClearRefs(PROP_ID_reviewerId);
@@ -960,7 +960,7 @@ public class _ErpHrSalarySimulation extends DynamicOrmEntity{
     /**
      * 转正式薪酬ID: CONVERTED_SALARY_ID
      */
-    public final java.lang.Long getConvertedSalaryId(){
+    public final java.lang.String getConvertedSalaryId(){
          onPropGet(PROP_ID_convertedSalaryId);
          return _convertedSalaryId;
     }
@@ -968,7 +968,7 @@ public class _ErpHrSalarySimulation extends DynamicOrmEntity{
     /**
      * 转正式薪酬ID: CONVERTED_SALARY_ID
      */
-    public final void setConvertedSalaryId(java.lang.Long value){
+    public final void setConvertedSalaryId(java.lang.String value){
         if(onPropSet(PROP_ID_convertedSalaryId,value)){
             this._convertedSalaryId = value;
             internalClearRefs(PROP_ID_convertedSalaryId);

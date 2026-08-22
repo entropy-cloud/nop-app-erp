@@ -1,7 +1,7 @@
 {
-  "id": 0,
-  "employeeId": 0,
-  "competencyId": 0,
+  "id": "",
+  "employeeId": "",
+  "competencyId": "",
   "requiredLevel": 0,
   "actualLevel": 0,
   "gapValue": 0,

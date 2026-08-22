@@ -20,7 +20,7 @@ import java.util.Map;
  */
 public class ErpHrSalarySimulationApplyBatchAdjustmentProcessor extends AbstractErpHrSalarySimulationProcessor {
 
-    public Map<String, Object> applyBatchAdjustment(Long simulationId,
+    public Map<String, Object> applyBatchAdjustment(String simulationId,
                                                     Map<String, Object> scope,
                                                     String adjustType,
                                                     Object value,
@@ -37,10 +37,10 @@ public class ErpHrSalarySimulationApplyBatchAdjustmentProcessor extends Abstract
                 ? toStringKeyedMap(value) : null;
         BigDecimal numericValue = levelMap == null ? toBigDecimal(value) : null;
 
-        Map<Long, EmployeeSimResult> sims = computeAllEmployeeSims(simulation, context);
-        Map<Long, String> empGrades = loadEmployeeJobGrades(sims.keySet());
+        Map<String, EmployeeSimResult> sims = computeAllEmployeeSims(simulation, context);
+        Map<String, String> empGrades = loadEmployeeJobGrades(sims.keySet());
 
-        java.util.List<Long> targetEmployeeIds = filterByScope(new ArrayList<>(sims.keySet()), scope);
+        java.util.List<String> targetEmployeeIds = filterByScope(new ArrayList<>(sims.keySet()), scope);
 
         int targetYear = simulation.getSimulationPeriodYear() != null
                 ? simulation.getSimulationPeriodYear() : 0;
@@ -49,7 +49,7 @@ public class ErpHrSalarySimulationApplyBatchAdjustmentProcessor extends Abstract
 
         BigDecimal totalGrossIncrease = BigDecimal.ZERO;
         int affectedCount = 0;
-        for (Long empId : targetEmployeeIds) {
+        for (String empId : targetEmployeeIds) {
             EmployeeSimResult r = sims.get(empId);
             BigDecimal adjustment = resolveBatchAdjustment(adjustType, r.source, numericValue,
                     levelMap, empGrades.get(empId));

@@ -42,15 +42,15 @@ public class TestErpHrReportRendering extends JunitAutoTestCase {
 
     private static final io.nop.core.context.IServiceContext CTX = new io.nop.core.context.ServiceContextImpl();
 
-    static final Long ORG_ID = 1L;
-    static final Long ACCT_SCHEMA_ID = 1L;
-    static final Long CURRENCY_ID = 1L;
-    static final Long PARTNER_EMP_1 = 5001L;
-    static final Long PARTNER_EMP_2 = 5002L;
-    static final Long DEPT_1 = 4101L;
-    static final Long EMP_SIM_1 = 9001L;
-    static final Long EMP_SIM_2 = 9002L;
-    static final Long SIMULATION_ID = 8001L;
+    static final String ORG_ID = "1";
+    static final String ACCT_SCHEMA_ID = "1";
+    static final String CURRENCY_ID = "1";
+    static final String PARTNER_EMP_1 = "5001";
+    static final String PARTNER_EMP_2 = "5002";
+    static final String DEPT_1 = "4101";
+    static final String EMP_SIM_1 = "9001";
+    static final String EMP_SIM_2 = "9002";
+    static final String SIMULATION_ID = "8001";
 
     @Inject
     ErpHrReportBizModel reportBiz;
@@ -103,7 +103,7 @@ public class TestErpHrReportRendering extends JunitAutoTestCase {
     public void testEmployeeNetBalanceDatasetEmployeeAdvanceOnly() {
         // 仅预支、无报销的员工：净额 = 预支全额
         seedPartner(PARTNER_EMP_2, "EMP-NM-2");
-        seedArApItem(6002L, PARTNER_EMP_2, bd("500"),
+        seedArApItem("6002", PARTNER_EMP_2, bd("500"),
                 ErpFinConstants.DIRECTION_RECEIVABLE, ErpFinConstants.SOURCE_BILL_EMPLOYEE_ADVANCE);
         List<Map<String, Object>> ds = reportBiz.buildEmployeeNetBalanceDataset(CTX);
         Map<String, Object> emp2 = findRowByPartner(ds, PARTNER_EMP_2);
@@ -116,7 +116,7 @@ public class TestErpHrReportRendering extends JunitAutoTestCase {
     public void testEmployeeNetBalanceExcludesNonEmployeeItems() {
         // 同方向但非员工 sourceBillType 的项不应混入（客户 AR 不计入员工净余额）
         seedPartner(PARTNER_EMP_1, "EMP-NM-1");
-        seedArApItem(7001L, PARTNER_EMP_1, bd("9999"),
+        seedArApItem("7001", PARTNER_EMP_1, bd("9999"),
                 ErpFinConstants.DIRECTION_RECEIVABLE, ErpFinConstants.SOURCE_BILL_AR_INVOICE);
         List<Map<String, Object>> ds = reportBiz.buildEmployeeNetBalanceDataset(CTX);
         assertTrue(ds.isEmpty(), "客户 AR 项不应进入员工净余额数据集");
@@ -204,7 +204,7 @@ public class TestErpHrReportRendering extends JunitAutoTestCase {
     @Test
     public void testPayrollSimulationComparisonEmptyDatasetNoError() {
         // 无调整项的模拟：不报错，返回空列表
-        List<Map<String, Object>> ds = reportBiz.buildPayrollSimulationComparisonDataset(999999L, CTX);
+        List<Map<String, Object>> ds = reportBiz.buildPayrollSimulationComparisonDataset("999999", CTX);
         assertNotNull(ds, "空数据集不报错");
         assertTrue(ds.isEmpty(), "无调整项 → 空列表");
     }
@@ -221,14 +221,14 @@ public class TestErpHrReportRendering extends JunitAutoTestCase {
     private void seedEmployeeNetBalanceBaseline() {
         seedPartner(PARTNER_EMP_1, "EMP-NM-1");
         // emp1 预支 1000（应收方向）
-        seedArApItem(6001L, PARTNER_EMP_1, bd("1000"),
+        seedArApItem("6001", PARTNER_EMP_1, bd("1000"),
                 ErpFinConstants.DIRECTION_RECEIVABLE, ErpFinConstants.SOURCE_BILL_EMPLOYEE_ADVANCE);
         // emp1 报销 300（应付方向）
-        seedArApItem(6011L, PARTNER_EMP_1, bd("300"),
+        seedArApItem("6011", PARTNER_EMP_1, bd("300"),
                 ErpFinConstants.DIRECTION_PAYABLE, ErpFinConstants.SOURCE_BILL_EXPENSE_CLAIM);
     }
 
-    private void seedPartner(long id, String name) {
+    private void seedPartner(String id, String name) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMdPartner> dao = daoProvider.daoFor(ErpMdPartner.class);
             ErpMdPartner p = dao.newEntity();
@@ -243,7 +243,7 @@ public class TestErpHrReportRendering extends JunitAutoTestCase {
         });
     }
 
-    private void seedArApItem(long id, long partnerId, BigDecimal openAmount,
+    private void seedArApItem(String id, String partnerId, BigDecimal openAmount,
                               String direction, String sourceBillType) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpFinArApItem> dao = daoProvider.daoFor(ErpFinArApItem.class);
@@ -274,12 +274,12 @@ public class TestErpHrReportRendering extends JunitAutoTestCase {
         seedEmployee(EMP_SIM_1, "SIM-EMP-1", DEPT_1);
         seedEmployee(EMP_SIM_2, "SIM-EMP-2", DEPT_1);
         // emp1 basicSalary: 10000 → 12000，差异 +2000
-        seedAdjustment(9101L, EMP_SIM_1, "basicSalary", bd("10000"), bd("12000"));
+        seedAdjustment("9101", EMP_SIM_1, "basicSalary", bd("10000"), bd("12000"));
         // emp2 performanceBonus: 3000 → 2500，差异 -500
-        seedAdjustment(9102L, EMP_SIM_2, "performanceBonus", bd("3000"), bd("2500"));
+        seedAdjustment("9102", EMP_SIM_2, "performanceBonus", bd("3000"), bd("2500"));
     }
 
-    private void seedEmployee(long id, String fullName, Long departmentId) {
+    private void seedEmployee(String id, String fullName, String departmentId) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpHrEmployee> dao = daoProvider.daoFor(ErpHrEmployee.class);
             ErpHrEmployee e = dao.newEntity();
@@ -297,7 +297,7 @@ public class TestErpHrReportRendering extends JunitAutoTestCase {
         });
     }
 
-    private void seedAdjustment(long id, long employeeId, String salaryItemCode,
+    private void seedAdjustment(String id, String employeeId, String salaryItemCode,
                                 BigDecimal original, BigDecimal adjusted) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpHrSalarySimulationItemAdjustment> dao =
@@ -315,19 +315,19 @@ public class TestErpHrReportRendering extends JunitAutoTestCase {
 
     // ---------- helpers ----------
 
-    private static Map<String, Object> findRowByPartner(List<Map<String, Object>> ds, long partnerId) {
+    private static Map<String, Object> findRowByPartner(List<Map<String, Object>> ds, String partnerId) {
         for (Map<String, Object> row : ds) {
-            if (Long.valueOf(partnerId).equals(row.get("partnerId"))) {
+            if (String.valueOf(partnerId).equals(row.get("partnerId"))) {
                 return row;
             }
         }
         return null;
     }
 
-    private static Map<String, Object> findRow(List<Map<String, Object>> ds, long employeeId, String salaryItemCode) {
+    private static Map<String, Object> findRow(List<Map<String, Object>> ds, String employeeId, String salaryItemCode) {
         for (Map<String, Object> row : ds) {
             if ("DETAIL".equals(row.get("rowType"))
-                    && Long.valueOf(employeeId).equals(row.get("employeeId"))
+                    && String.valueOf(employeeId).equals(row.get("employeeId"))
                     && salaryItemCode.equals(row.get("salaryItemCode"))) {
                 return row;
             }
@@ -335,10 +335,10 @@ public class TestErpHrReportRendering extends JunitAutoTestCase {
         return null;
     }
 
-    private static Map<String, Object> findDeptSubtotal(List<Map<String, Object>> ds, long departmentId) {
+    private static Map<String, Object> findDeptSubtotal(List<Map<String, Object>> ds, String departmentId) {
         for (Map<String, Object> row : ds) {
             if ("DEPT_SUBTOTAL".equals(row.get("rowType"))
-                    && Long.valueOf(departmentId).equals(row.get("departmentId"))) {
+                    && String.valueOf(departmentId).equals(row.get("departmentId"))) {
                 return row;
             }
         }

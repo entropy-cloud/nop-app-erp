@@ -1,7 +1,7 @@
 {
-  "id": 0,
-  "positionId": 0,
-  "competencyId": 0,
+  "id": "",
+  "positionId": "",
+  "competencyId": "",
   "requiredLevel": 0,
   "weight": 0.0,
   "isCritical": false,

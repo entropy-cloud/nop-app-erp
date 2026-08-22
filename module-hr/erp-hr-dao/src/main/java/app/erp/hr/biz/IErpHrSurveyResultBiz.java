@@ -19,12 +19,12 @@ public interface IErpHrSurveyResultBiz extends ICrudBiz<ErpHrSurveyResult>{
      * 计算 eNPS/avgScore/driverScores/questionBreakdown/trendData 并回写 ErpHrSurvey 头字段。
      */
     @BizMutation
-    ErpHrSurveyResult aggregateResult(@Name("surveyId") Long surveyId, IServiceContext context);
+    ErpHrSurveyResult aggregateResult(@Name("surveyId") String surveyId, IServiceContext context);
 
     /**
      * 结果仪表盘查询（UC-HR-11 基本流程 9，RC-R1.9 P1-RC-016）：返回问卷头信息 + 整体行 + 部门行，
      * 供 AMIS 直接渲染（评分趋势/部门对比/eNPS/驱动因子分析数据面）。
      */
     @BizQuery
-    Map<String, Object> getSurveyDashboard(@Name("surveyId") Long surveyId, IServiceContext context);
+    Map<String, Object> getSurveyDashboard(@Name("surveyId") String surveyId, IServiceContext context);
 }

@@ -59,17 +59,17 @@ public class TestErpHrEmployeeTransfer extends JunitAutoTestCase {
     @Test
     public void testTransferUpdatesDepartmentPositionSuperior() {
         Object[] ids = ormTemplate.runInSession(session -> {
-            Long empId = seedEmployee("EMP-NORMAL", ErpHrConstants.EMPLOYMENT_ACTIVE);
-            Long deptFromId = seedDepartment("DEPT-FROM");
-            Long deptToId = seedDepartment("DEPT-TO");
-            Long posId = seedPosition("POS-DEV", deptToId);
-            Long superiorId = seedEmployee("EMP-BOSS", ErpHrConstants.EMPLOYMENT_ACTIVE);
+            String empId = seedEmployee("EMP-NORMAL", ErpHrConstants.EMPLOYMENT_ACTIVE);
+            String deptFromId = seedDepartment("DEPT-FROM");
+            String deptToId = seedDepartment("DEPT-TO");
+            String posId = seedPosition("POS-DEV", deptToId);
+            String superiorId = seedEmployee("EMP-BOSS", ErpHrConstants.EMPLOYMENT_ACTIVE);
             return new Object[]{empId, deptFromId, deptToId, posId, superiorId};
         });
-        Long empId = (Long) ids[0];
-        Long deptToId = (Long) ids[2];
-        Long posId = (Long) ids[3];
-        Long superiorId = (Long) ids[4];
+        String empId = (String) ids[0];
+        String deptToId = (String) ids[2];
+        String posId = (String) ids[3];
+        String superiorId = (String) ids[4];
 
         ErpHrEmployee result = ormTemplate.runInSession(session -> employeeBiz.transferEmployee(
                 empId, deptToId, posId, superiorId,
@@ -88,12 +88,12 @@ public class TestErpHrEmployeeTransfer extends JunitAutoTestCase {
     @Test
     public void testTransferRejectsNonTransferableStatus() {
         Object[] ids = ormTemplate.runInSession(session -> {
-            Long empId = seedEmployee("EMP-RESIGNED", ErpHrConstants.EMPLOYMENT_RESIGNED);
-            Long deptId = seedDepartment("DEPT-TARGET-R");
+            String empId = seedEmployee("EMP-RESIGNED", ErpHrConstants.EMPLOYMENT_RESIGNED);
+            String deptId = seedDepartment("DEPT-TARGET-R");
             return new Object[]{empId, deptId};
         });
-        Long empId = (Long) ids[0];
-        Long deptId = (Long) ids[1];
+        String empId = (String) ids[0];
+        String deptId = (String) ids[1];
 
         NopException ex = assertThrows(NopException.class, () ->
                 ormTemplate.runInSession(session -> employeeBiz.transferEmployee(empId, deptId, null, null,
@@ -105,13 +105,13 @@ public class TestErpHrEmployeeTransfer extends JunitAutoTestCase {
     @Test
     public void testTransferRejectsUnknownTargetDepartment() {
         Object[] ids = ormTemplate.runInSession(session -> {
-            Long empId = seedEmployee("EMP-DEPT-404", ErpHrConstants.EMPLOYMENT_ACTIVE);
+            String empId = seedEmployee("EMP-DEPT-404", ErpHrConstants.EMPLOYMENT_ACTIVE);
             return new Object[]{empId};
         });
-        Long empId = (Long) ids[0];
+        String empId = (String) ids[0];
 
         NopException ex = assertThrows(NopException.class, () ->
-                ormTemplate.runInSession(session -> employeeBiz.transferEmployee(empId, 99999999L, null, null,
+                ormTemplate.runInSession(session -> employeeBiz.transferEmployee(empId, "99999999", null, null,
                         LocalDate.of(2026, 7, 8),
                         ErpHrConstants.TRANSFER_HANDLE_CONTRACT_NO, CTX)));
         assertEquals(ErpHrErrors.ERR_TRANSFER_TARGET_DEPT_NOT_FOUND.getErrorCode(), ex.getErrorCode());
@@ -120,15 +120,15 @@ public class TestErpHrEmployeeTransfer extends JunitAutoTestCase {
     @Test
     public void testTransferRejectsPositionNotInTargetDepartment() {
         Object[] ids = ormTemplate.runInSession(session -> {
-            Long empId = seedEmployee("EMP-POS-MISMATCH", ErpHrConstants.EMPLOYMENT_ACTIVE);
-            Long deptAId = seedDepartment("DEPT-A");
-            Long deptBId = seedDepartment("DEPT-B");
-            Long posInBId = seedPosition("POS-IN-B", deptBId);
+            String empId = seedEmployee("EMP-POS-MISMATCH", ErpHrConstants.EMPLOYMENT_ACTIVE);
+            String deptAId = seedDepartment("DEPT-A");
+            String deptBId = seedDepartment("DEPT-B");
+            String posInBId = seedPosition("POS-IN-B", deptBId);
             return new Object[]{empId, deptAId, posInBId};
         });
-        Long empId = (Long) ids[0];
-        Long deptAId = (Long) ids[1];
-        Long posInBId = (Long) ids[2];
+        String empId = (String) ids[0];
+        String deptAId = (String) ids[1];
+        String posInBId = (String) ids[2];
 
         NopException ex = assertThrows(NopException.class, () ->
                 ormTemplate.runInSession(session -> employeeBiz.transferEmployee(empId, deptAId, posInBId, null,
@@ -140,16 +140,16 @@ public class TestErpHrEmployeeTransfer extends JunitAutoTestCase {
     @Test
     public void testTransferContractAutoTerminatesOldAndCreatesNew() {
         Object[] ids = ormTemplate.runInSession(session -> {
-            Long empId = seedEmployee("EMP-CONTRACT-AUTO", ErpHrConstants.EMPLOYMENT_ACTIVE);
-            Long deptId = seedDepartment("DEPT-AUTO");
-            Long oldContractId = seedContract("CTC-OLD-AUTO", empId,
+            String empId = seedEmployee("EMP-CONTRACT-AUTO", ErpHrConstants.EMPLOYMENT_ACTIVE);
+            String deptId = seedDepartment("DEPT-AUTO");
+            String oldContractId = seedContract("CTC-OLD-AUTO", empId,
                     LocalDate.of(2024, 1, 1), LocalDate.of(2027, 12, 31),
                     "FIXED_TERM");
             return new Object[]{empId, deptId, oldContractId};
         });
-        Long empId = (Long) ids[0];
-        Long deptId = (Long) ids[1];
-        Long oldContractId = (Long) ids[2];
+        String empId = (String) ids[0];
+        String deptId = (String) ids[1];
+        String oldContractId = (String) ids[2];
         LocalDate effective = LocalDate.of(2026, 7, 8);
 
         ormTemplate.runInSession(() -> employeeBiz.transferEmployee(empId, deptId, null, null, effective,
@@ -171,16 +171,16 @@ public class TestErpHrEmployeeTransfer extends JunitAutoTestCase {
     @Test
     public void testTransferContractNoDoesNotTouchContracts() {
         Object[] ids = ormTemplate.runInSession(session -> {
-            Long empId = seedEmployee("EMP-CONTRACT-NO", ErpHrConstants.EMPLOYMENT_ACTIVE);
-            Long deptId = seedDepartment("DEPT-NO");
-            Long oldContractId = seedContract("CTC-OLD-NO", empId,
+            String empId = seedEmployee("EMP-CONTRACT-NO", ErpHrConstants.EMPLOYMENT_ACTIVE);
+            String deptId = seedDepartment("DEPT-NO");
+            String oldContractId = seedContract("CTC-OLD-NO", empId,
                     LocalDate.of(2024, 1, 1), LocalDate.of(2027, 12, 31),
                     "FIXED_TERM");
             return new Object[]{empId, deptId, oldContractId};
         });
-        Long empId = (Long) ids[0];
-        Long deptId = (Long) ids[1];
-        Long oldContractId = (Long) ids[2];
+        String empId = (String) ids[0];
+        String deptId = (String) ids[1];
+        String oldContractId = (String) ids[2];
 
         ormTemplate.runInSession(() -> employeeBiz.transferEmployee(empId, deptId, null, null,
                 LocalDate.of(2026, 7, 8),
@@ -195,12 +195,12 @@ public class TestErpHrEmployeeTransfer extends JunitAutoTestCase {
     @Test
     public void testTransferContractYesCreatesEvenWithoutActive() {
         Object[] ids = ormTemplate.runInSession(session -> {
-            Long empId = seedEmployee("EMP-CONTRACT-YES", ErpHrConstants.EMPLOYMENT_ACTIVE);
-            Long deptId = seedDepartment("DEPT-YES");
+            String empId = seedEmployee("EMP-CONTRACT-YES", ErpHrConstants.EMPLOYMENT_ACTIVE);
+            String deptId = seedDepartment("DEPT-YES");
             return new Object[]{empId, deptId};
         });
-        Long empId = (Long) ids[0];
-        Long deptId = (Long) ids[1];
+        String empId = (String) ids[0];
+        String deptId = (String) ids[1];
         LocalDate effective = LocalDate.of(2026, 7, 8);
 
         assertNull(findActiveContract(empId), "前置：员工无 ACTIVE 合同");
@@ -217,13 +217,13 @@ public class TestErpHrEmployeeTransfer extends JunitAutoTestCase {
     @Test
     public void testTransferLeaveConflictWarnDoesNotBlock() {
         Object[] ids = ormTemplate.runInSession(session -> {
-            Long empId = seedEmployee("EMP-LEAVE-CONFLICT", ErpHrConstants.EMPLOYMENT_ACTIVE);
-            Long deptId = seedDepartment("DEPT-LEAVE");
+            String empId = seedEmployee("EMP-LEAVE-CONFLICT", ErpHrConstants.EMPLOYMENT_ACTIVE);
+            String deptId = seedDepartment("DEPT-LEAVE");
             seedApprovedLeave(empId, LocalDate.of(2026, 7, 1), LocalDate.of(2026, 7, 15));
             return new Object[]{empId, deptId};
         });
-        Long empId = (Long) ids[0];
-        Long deptId = (Long) ids[1];
+        String empId = (String) ids[0];
+        String deptId = (String) ids[1];
 
         ErpHrEmployee result = ormTemplate.runInSession(session -> employeeBiz.transferEmployee(
                 empId, deptId, null, null,
@@ -237,12 +237,12 @@ public class TestErpHrEmployeeTransfer extends JunitAutoTestCase {
     @Test
     public void testTransferProbationEmployeeAllowed() {
         Object[] ids = ormTemplate.runInSession(session -> {
-            Long empId = seedEmployee("EMP-PROBATION", ErpHrConstants.EMPLOYMENT_PROBATION);
-            Long deptId = seedDepartment("DEPT-PROB");
+            String empId = seedEmployee("EMP-PROBATION", ErpHrConstants.EMPLOYMENT_PROBATION);
+            String deptId = seedDepartment("DEPT-PROB");
             return new Object[]{empId, deptId};
         });
-        Long empId = (Long) ids[0];
-        Long deptId = (Long) ids[1];
+        String empId = (String) ids[0];
+        String deptId = (String) ids[1];
 
         ErpHrEmployee result = ormTemplate.runInSession(session -> employeeBiz.transferEmployee(
                 empId, deptId, null, null,
@@ -280,14 +280,14 @@ public class TestErpHrEmployeeTransfer extends JunitAutoTestCase {
 
         // ===== (b) 长 active.code 端到端：不抛 22001 + 新合同 code ≤ 50 + 保留固定段 =====
         Object[] idsLong = ormTemplate.runInSession(session -> {
-            Long empId = seedEmployee("EMP-LONG-CODE-1", ErpHrConstants.EMPLOYMENT_ACTIVE);
-            Long deptId = seedDepartment("DEPT-LONG-1");
-            Long oldContractId = seedContract(longActiveCode1, empId,
+            String empId = seedEmployee("EMP-LONG-CODE-1", ErpHrConstants.EMPLOYMENT_ACTIVE);
+            String deptId = seedDepartment("DEPT-LONG-1");
+            String oldContractId = seedContract(longActiveCode1, empId,
                     LocalDate.of(2024, 1, 1), LocalDate.of(2027, 12, 31), "FIXED_TERM");
             return new Object[]{empId, deptId, oldContractId};
         });
-        Long empIdLong1 = (Long) idsLong[0];
-        Long deptIdLong1 = (Long) idsLong[1];
+        String empIdLong1 = (String) idsLong[0];
+        String deptIdLong1 = (String) idsLong[1];
         String expectedLongPrefix = "TRF-" + empIdLong1 + "-" + effective.toString();
 
         ormTemplate.runInSession(() -> employeeBiz.transferEmployee(empIdLong1, deptIdLong1, null, null, effective,
@@ -306,14 +306,14 @@ public class TestErpHrEmployeeTransfer extends JunitAutoTestCase {
         // ===== (a) 短 active.code 原路径逐字符不变 =====
         String shortActiveCode = "CTC-SHORT-001"; // 13 chars，拼接结果 = 4 + len(empId) + 1 + 10 + 1 + 13 = 29 + len(empId) ≤ 50
         Object[] idsShort = ormTemplate.runInSession(session -> {
-            Long empId = seedEmployee("EMP-SHORT-CODE", ErpHrConstants.EMPLOYMENT_ACTIVE);
-            Long deptId = seedDepartment("DEPT-SHORT");
-            Long oldContractId = seedContract(shortActiveCode, empId,
+            String empId = seedEmployee("EMP-SHORT-CODE", ErpHrConstants.EMPLOYMENT_ACTIVE);
+            String deptId = seedDepartment("DEPT-SHORT");
+            String oldContractId = seedContract(shortActiveCode, empId,
                     LocalDate.of(2024, 1, 1), LocalDate.of(2027, 12, 31), "FIXED_TERM");
             return new Object[]{empId, deptId, oldContractId};
         });
-        Long empIdShort = (Long) idsShort[0];
-        Long deptIdShort = (Long) idsShort[1];
+        String empIdShort = (String) idsShort[0];
+        String deptIdShort = (String) idsShort[1];
         String expectedShortCode = "TRF-" + empIdShort + "-" + effective.toString() + "-" + shortActiveCode;
         assertTrue(expectedShortCode.length() <= 50,
                 "(a) 前置：短码拼接结果 ≤ 50，实际=" + expectedShortCode.length());
@@ -330,14 +330,14 @@ public class TestErpHrEmployeeTransfer extends JunitAutoTestCase {
         // 注意：不同员工 empId 不同 → 固定段已不同 → successor code 必然不同。本用例锁定
         // 「不同输入不退化为同一 code」基本不变量；MD5 摘要保证同 empId 下不同 active.code 也不冲突（哈希唯一性）。
         Object[] idsLong2 = ormTemplate.runInSession(session -> {
-            Long empId = seedEmployee("EMP-LONG-CODE-2", ErpHrConstants.EMPLOYMENT_ACTIVE);
-            Long deptId = seedDepartment("DEPT-LONG-2");
-            Long oldContractId = seedContract(longActiveCode2, empId,
+            String empId = seedEmployee("EMP-LONG-CODE-2", ErpHrConstants.EMPLOYMENT_ACTIVE);
+            String deptId = seedDepartment("DEPT-LONG-2");
+            String oldContractId = seedContract(longActiveCode2, empId,
                     LocalDate.of(2024, 1, 1), LocalDate.of(2027, 12, 31), "FIXED_TERM");
             return new Object[]{empId, deptId, oldContractId};
         });
-        Long empIdLong2 = (Long) idsLong2[0];
-        Long deptIdLong2 = (Long) idsLong2[1];
+        String empIdLong2 = (String) idsLong2[0];
+        String deptIdLong2 = (String) idsLong2[1];
 
         ormTemplate.runInSession(() -> employeeBiz.transferEmployee(empIdLong2, deptIdLong2, null, null, effective,
                 ErpHrConstants.TRANSFER_HANDLE_CONTRACT_YES, CTX));
@@ -351,12 +351,12 @@ public class TestErpHrEmployeeTransfer extends JunitAutoTestCase {
 
         // ===== (d) 无源码路径走 base（active=null）：拼接 = TRF-{empId}-{effectiveDate}（无 -active.code 后缀） =====
         Object[] idsNoActive = ormTemplate.runInSession(session -> {
-            Long empId = seedEmployee("EMP-NO-ACTIVE", ErpHrConstants.EMPLOYMENT_ACTIVE);
-            Long deptId = seedDepartment("DEPT-NO-ACTIVE");
+            String empId = seedEmployee("EMP-NO-ACTIVE", ErpHrConstants.EMPLOYMENT_ACTIVE);
+            String deptId = seedDepartment("DEPT-NO-ACTIVE");
             return new Object[]{empId, deptId};
         });
-        Long empIdNoActive = (Long) idsNoActive[0];
-        Long deptIdNoActive = (Long) idsNoActive[1];
+        String empIdNoActive = (String) idsNoActive[0];
+        String deptIdNoActive = (String) idsNoActive[1];
         assertNull(findActiveContract(empIdNoActive), "(d) 前置：员工无 ACTIVE 合同");
         String expectedBaseCode = "TRF-" + empIdNoActive + "-" + effective.toString();
 
@@ -371,7 +371,7 @@ public class TestErpHrEmployeeTransfer extends JunitAutoTestCase {
 
     // ---------- helpers ----------
 
-    private ErpHrEmploymentContract findActiveContract(Long empId) {
+    private ErpHrEmploymentContract findActiveContract(String empId) {
         QueryBean q = new QueryBean();
         q.addFilter(and(
                 eq("employeeId", empId),
@@ -382,7 +382,7 @@ public class TestErpHrEmployeeTransfer extends JunitAutoTestCase {
         return list.isEmpty() ? null : list.get(0);
     }
 
-    private Long seedEmployee(String code, String employmentStatus) {
+    private String seedEmployee(String code, String employmentStatus) {
         IEntityDao<ErpHrEmployee> dao = daoProvider.daoFor(ErpHrEmployee.class);
         ErpHrEmployee emp = new ErpHrEmployee();
         emp.setCode(code);
@@ -397,7 +397,7 @@ public class TestErpHrEmployeeTransfer extends JunitAutoTestCase {
         return emp.getId();
     }
 
-    private Long seedDepartment(String code) {
+    private String seedDepartment(String code) {
         IEntityDao<ErpHrDepartment> dao = daoProvider.daoFor(ErpHrDepartment.class);
         ErpHrDepartment d = new ErpHrDepartment();
         d.setCode(code);
@@ -406,7 +406,7 @@ public class TestErpHrEmployeeTransfer extends JunitAutoTestCase {
         return d.getId();
     }
 
-    private Long seedPosition(String code, Long departmentId) {
+    private String seedPosition(String code, String departmentId) {
         IEntityDao<ErpHrPosition> dao = daoProvider.daoFor(ErpHrPosition.class);
         ErpHrPosition p = new ErpHrPosition();
         p.setCode(code);
@@ -416,7 +416,7 @@ public class TestErpHrEmployeeTransfer extends JunitAutoTestCase {
         return p.getId();
     }
 
-    private Long seedContract(String code, Long employeeId, LocalDate startDate, LocalDate endDate,
+    private String seedContract(String code, String employeeId, LocalDate startDate, LocalDate endDate,
                               String contractType) {
         IEntityDao<ErpHrEmploymentContract> dao = daoProvider.daoFor(ErpHrEmploymentContract.class);
         ErpHrEmploymentContract c = new ErpHrEmploymentContract();
@@ -433,7 +433,7 @@ public class TestErpHrEmployeeTransfer extends JunitAutoTestCase {
         return c.getId();
     }
 
-    private Long seedApprovedLeave(Long employeeId, LocalDate startDate, LocalDate endDate) {
+    private String seedApprovedLeave(String employeeId, LocalDate startDate, LocalDate endDate) {
         IEntityDao<ErpHrLeaveRequest> dao = daoProvider.daoFor(ErpHrLeaveRequest.class);
         ErpHrLeaveRequest l = new ErpHrLeaveRequest();
         l.setBusinessDate(java.time.LocalDate.of(2026, 7, 1));

@@ -13,16 +13,16 @@
     public class ErpHrSalarySimulationOutputBean {
 
     
-        private Long _id;
+        private String _id;
 
     
         @PropMeta(propId=1)
     
-        public Long getId(){
+        public String getId(){
             return _id;
         }
 
-        public void setId(Long value){
+        public void setId(String value){
             this._id = value;
         }
 
@@ -41,30 +41,30 @@
         }
 
 
-        private Long _orgId;
+        private String _orgId;
 
     
         @PropMeta(propId=3)
     
-        public Long getOrgId(){
+        public String getOrgId(){
             return _orgId;
         }
 
-        public void setOrgId(Long value){
+        public void setOrgId(String value){
             this._orgId = value;
         }
 
 
-        private Long _sourceSalaryId;
+        private String _sourceSalaryId;
 
     
         @PropMeta(propId=4)
     
-        public Long getSourceSalaryId(){
+        public String getSourceSalaryId(){
             return _sourceSalaryId;
         }
 
-        public void setSourceSalaryId(Long value){
+        public void setSourceSalaryId(String value){
             this._sourceSalaryId = value;
         }
 
@@ -137,16 +137,16 @@
         }
 
 
-        private Long _reviewerId;
+        private String _reviewerId;
 
     
         @PropMeta(propId=9)
     
-        public Long getReviewerId(){
+        public String getReviewerId(){
             return _reviewerId;
         }
 
-        public void setReviewerId(Long value){
+        public void setReviewerId(String value){
             this._reviewerId = value;
         }
 
@@ -179,16 +179,16 @@
         }
 
 
-        private Long _convertedSalaryId;
+        private String _convertedSalaryId;
 
     
         @PropMeta(propId=12)
     
-        public Long getConvertedSalaryId(){
+        public String getConvertedSalaryId(){
             return _convertedSalaryId;
         }
 
-        public void setConvertedSalaryId(Long value){
+        public void setConvertedSalaryId(String value){
             this._convertedSalaryId = value;
         }
 

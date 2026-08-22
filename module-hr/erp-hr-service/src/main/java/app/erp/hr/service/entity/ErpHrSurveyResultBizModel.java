@@ -77,11 +77,11 @@ public class ErpHrSurveyResultBizModel extends CrudBizModel<ErpHrSurveyResult> i
 
     @Override
     @BizMutation
-    public ErpHrSurveyResult aggregateResult(@Name("surveyId") Long surveyId, IServiceContext context) {
-        ErpHrSurvey survey = surveyBiz.requireEntity(String.valueOf(surveyId), null, context);
+    public ErpHrSurveyResult aggregateResult(@Name("surveyId") String surveyId, IServiceContext context) {
+        ErpHrSurvey survey = surveyBiz.requireEntity(surveyId, null, context);
 
         List<ErpHrSurveyQuestion> questions = loadQuestions(surveyId, context);
-        Map<Long, ErpHrSurveyQuestion> questionById = new HashMap<>();
+        Map<String, ErpHrSurveyQuestion> questionById = new HashMap<>();
         for (ErpHrSurveyQuestion question : questions) {
             questionById.put(question.getId(), question);
         }
@@ -90,9 +90,9 @@ public class ErpHrSurveyResultBizModel extends CrudBizModel<ErpHrSurveyResult> i
         qr.addFilter(eq("surveyId", surveyId));
         List<ErpHrSurveyResponse> responses = responseBiz.findList(qr, null, context);
 
-        Map<Long, List<ErpHrSurveyAnswer>> answersByResponse = loadAnswersByResponse(responses, context);
+        Map<String, List<ErpHrSurveyAnswer>> answersByResponse = loadAnswersByResponse(responses, context);
 
-        Map<Long, List<ErpHrSurveyResponse>> responsesByDept = new LinkedHashMap<>();
+        Map<String, List<ErpHrSurveyResponse>> responsesByDept = new LinkedHashMap<>();
         responsesByDept.put(null, responses);
         for (ErpHrSurveyResponse response : responses) {
             if (response.getEmployeeId() != null) {
@@ -104,7 +104,7 @@ public class ErpHrSurveyResultBizModel extends CrudBizModel<ErpHrSurveyResult> i
         }
 
         ErpHrSurveyResult overall = null;
-        for (Map.Entry<Long, List<ErpHrSurveyResponse>> entry : responsesByDept.entrySet()) {
+        for (Map.Entry<String, List<ErpHrSurveyResponse>> entry : responsesByDept.entrySet()) {
             ErpHrSurveyResult row = upsertResultRow(surveyId, entry.getKey(), context);
             fillRow(row, entry.getValue(), questionById, answersByResponse, survey, context);
             if (entry.getKey() == null) {
@@ -123,8 +123,8 @@ public class ErpHrSurveyResultBizModel extends CrudBizModel<ErpHrSurveyResult> i
 
     @Override
     @BizQuery
-    public Map<String, Object> getSurveyDashboard(@Name("surveyId") Long surveyId, IServiceContext context) {
-        ErpHrSurvey survey = surveyBiz.requireEntity(String.valueOf(surveyId), null, context);
+    public Map<String, Object> getSurveyDashboard(@Name("surveyId") String surveyId, IServiceContext context) {
+        ErpHrSurvey survey = surveyBiz.requireEntity(surveyId, null, context);
         QueryBean q = new QueryBean();
         q.addFilter(eq("surveyId", surveyId));
         List<ErpHrSurveyResult> rows = findList(q, null, context);
@@ -144,7 +144,7 @@ public class ErpHrSurveyResultBizModel extends CrudBizModel<ErpHrSurveyResult> i
             if (row.getDepartmentId() == null) {
                 overall = m;
             } else {
-                ErpHrDepartment department = departmentBiz.get(String.valueOf(row.getDepartmentId()), false, context);
+                ErpHrDepartment department = departmentBiz.get(row.getDepartmentId(), false, context);
                 m.put("departmentName", department == null ? null : department.getName());
                 departments.add(m);
             }
@@ -156,19 +156,19 @@ public class ErpHrSurveyResultBizModel extends CrudBizModel<ErpHrSurveyResult> i
 
     // ---------- helpers ----------
 
-    private List<ErpHrSurveyQuestion> loadQuestions(Long surveyId, IServiceContext context) {
+    private List<ErpHrSurveyQuestion> loadQuestions(String surveyId, IServiceContext context) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("surveyId", surveyId));
         return questionBiz.findList(q, null, context);
     }
 
-    private Map<Long, List<ErpHrSurveyAnswer>> loadAnswersByResponse(List<ErpHrSurveyResponse> responses,
+    private Map<String, List<ErpHrSurveyAnswer>> loadAnswersByResponse(List<ErpHrSurveyResponse> responses,
                                                                      IServiceContext context) {
-        Map<Long, List<ErpHrSurveyAnswer>> byResponse = new HashMap<>();
+        Map<String, List<ErpHrSurveyAnswer>> byResponse = new HashMap<>();
         if (responses.isEmpty()) {
             return byResponse;
         }
-        List<Long> responseIds = new ArrayList<>();
+        List<String> responseIds = new ArrayList<>();
         for (ErpHrSurveyResponse response : responses) {
             responseIds.add(response.getId());
         }
@@ -180,7 +180,7 @@ public class ErpHrSurveyResultBizModel extends CrudBizModel<ErpHrSurveyResult> i
         return byResponse;
     }
 
-    private ErpHrSurveyResult upsertResultRow(Long surveyId, Long departmentId, IServiceContext context) {
+    private ErpHrSurveyResult upsertResultRow(String surveyId, String departmentId, IServiceContext context) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("surveyId", surveyId));
         if (departmentId == null) {
@@ -200,8 +200,8 @@ public class ErpHrSurveyResultBizModel extends CrudBizModel<ErpHrSurveyResult> i
     }
 
     private void fillRow(ErpHrSurveyResult row, List<ErpHrSurveyResponse> group,
-                         Map<Long, ErpHrSurveyQuestion> questionById,
-                         Map<Long, List<ErpHrSurveyAnswer>> answersByResponse,
+                         Map<String, ErpHrSurveyQuestion> questionById,
+                         Map<String, List<ErpHrSurveyAnswer>> answersByResponse,
                          ErpHrSurvey survey, IServiceContext context) {
         List<ErpHrSurveyAnswer> allAnswers = new ArrayList<>();
         for (ErpHrSurveyResponse response : group) {
@@ -213,7 +213,7 @@ public class ErpHrSurveyResultBizModel extends CrudBizModel<ErpHrSurveyResult> i
 
         List<Integer> allRatings = new ArrayList<>();
         List<Integer> enpsRatings = new ArrayList<>();
-        Map<Long, List<Integer>> ratingsByQuestion = new HashMap<>();
+        Map<String, List<Integer>> ratingsByQuestion = new HashMap<>();
         Map<String, List<Integer>> ratingsByDriver = new HashMap<>();
         for (ErpHrSurveyAnswer answer : allAnswers) {
             ErpHrSurveyQuestion question = questionById.get(answer.getQuestionId());
@@ -291,9 +291,9 @@ public class ErpHrSurveyResultBizModel extends CrudBizModel<ErpHrSurveyResult> i
         return map;
     }
 
-    private static List<Map<String, Object>> questionBreakdownList(Map<Long, List<Integer>> ratingsByQuestion) {
+    private static List<Map<String, Object>> questionBreakdownList(Map<String, List<Integer>> ratingsByQuestion) {
         List<Map<String, Object>> list = new ArrayList<>();
-        for (Map.Entry<Long, List<Integer>> entry : ratingsByQuestion.entrySet()) {
+        for (Map.Entry<String, List<Integer>> entry : ratingsByQuestion.entrySet()) {
             Map<String, Object> item = new LinkedHashMap<>();
             item.put("questionId", entry.getKey());
             item.put("avgScore", average(entry.getValue()));

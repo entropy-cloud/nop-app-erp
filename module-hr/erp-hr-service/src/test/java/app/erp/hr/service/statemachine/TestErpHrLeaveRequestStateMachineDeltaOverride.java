@@ -37,7 +37,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @NopTestConfig(localDb = true,
         initDatabaseSchema = OptionalBoolean.TRUE,
         enableActionAuth = OptionalBoolean.FALSE)
-@NopTestProperty(name = "nop.core.vfs.delta-layer-ids", value = "test-hr-delta")
+@NopTestProperty(name = "nop.core.vfs.delta-layer-ids", value = "default,test-hr-delta")
 public class TestErpHrLeaveRequestStateMachineDeltaOverride extends JunitAutoTestCase {
 
     /**

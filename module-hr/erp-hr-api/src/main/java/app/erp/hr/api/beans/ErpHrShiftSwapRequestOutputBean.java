@@ -13,16 +13,16 @@
     public class ErpHrShiftSwapRequestOutputBean {
 
     
-        private Long _id;
+        private String _id;
 
     
         @PropMeta(propId=1)
     
-        public Long getId(){
+        public String getId(){
             return _id;
         }
 
-        public void setId(Long value){
+        public void setId(String value){
             this._id = value;
         }
 
@@ -41,72 +41,72 @@
         }
 
 
-        private Long _orgId;
+        private String _orgId;
 
     
         @PropMeta(propId=3)
     
-        public Long getOrgId(){
+        public String getOrgId(){
             return _orgId;
         }
 
-        public void setOrgId(Long value){
+        public void setOrgId(String value){
             this._orgId = value;
         }
 
 
-        private Long _requesterId;
+        private String _requesterId;
 
     
         @PropMeta(propId=4)
     
-        public Long getRequesterId(){
+        public String getRequesterId(){
             return _requesterId;
         }
 
-        public void setRequesterId(Long value){
+        public void setRequesterId(String value){
             this._requesterId = value;
         }
 
 
-        private Long _targetEmployeeId;
+        private String _targetEmployeeId;
 
     
         @PropMeta(propId=5)
     
-        public Long getTargetEmployeeId(){
+        public String getTargetEmployeeId(){
             return _targetEmployeeId;
         }
 
-        public void setTargetEmployeeId(Long value){
+        public void setTargetEmployeeId(String value){
             this._targetEmployeeId = value;
         }
 
 
-        private Long _sourceAssignmentId;
+        private String _sourceAssignmentId;
 
     
         @PropMeta(propId=6)
     
-        public Long getSourceAssignmentId(){
+        public String getSourceAssignmentId(){
             return _sourceAssignmentId;
         }
 
-        public void setSourceAssignmentId(Long value){
+        public void setSourceAssignmentId(String value){
             this._sourceAssignmentId = value;
         }
 
 
-        private Long _targetAssignmentId;
+        private String _targetAssignmentId;
 
     
         @PropMeta(propId=7)
     
-        public Long getTargetAssignmentId(){
+        public String getTargetAssignmentId(){
             return _targetAssignmentId;
         }
 
-        public void setTargetAssignmentId(Long value){
+        public void setTargetAssignmentId(String value){
             this._targetAssignmentId = value;
         }
 

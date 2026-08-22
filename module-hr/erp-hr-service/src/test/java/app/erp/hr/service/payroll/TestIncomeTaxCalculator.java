@@ -86,20 +86,20 @@ public class TestIncomeTaxCalculator {
     public void parseCumulativeData_corruptJson_throwsErrorCodeNotSilentReset() {
         // 损坏 JSON（非法格式）→ 抛 ERR_HR_CUMULATIVE_DATA_CORRUPT，非静默返回空 map
         NopException ex = assertThrows(NopException.class,
-                () -> IncomeTaxCalculator.parseCumulativeData("{not-valid-json", 100L, 2026));
+                () -> IncomeTaxCalculator.parseCumulativeData("{not-valid-json", "100", 2026));
         assertEquals(ErpHrErrors.ERR_HR_CUMULATIVE_DATA_CORRUPT.getErrorCode(), ex.getErrorCode());
-        assertEquals(100L, ex.getParam(ErpHrErrors.ARG_EMPLOYEE_ID));
+        assertEquals("100", ex.getParam(ErpHrErrors.ARG_EMPLOYEE_ID));
         assertEquals(2026, ex.getParam(ErpHrErrors.ARG_YEAR));
     }
 
     @Test
     public void parseCumulativeData_nullOrEmpty_returnsEmptyMap() {
         // null/空 json 返回空 map（1 月无历史合法路径不变）
-        assertTrue(IncomeTaxCalculator.parseCumulativeData(null, 100L, 2026).isEmpty(),
+        assertTrue(IncomeTaxCalculator.parseCumulativeData(null, "100", 2026).isEmpty(),
                 "null json 返回空 map");
-        assertTrue(IncomeTaxCalculator.parseCumulativeData("", 100L, 2026).isEmpty(),
+        assertTrue(IncomeTaxCalculator.parseCumulativeData("", "100", 2026).isEmpty(),
                 "空 json 返回空 map");
-        assertTrue(IncomeTaxCalculator.parseCumulativeData("   ", 100L, 2026).isEmpty(),
+        assertTrue(IncomeTaxCalculator.parseCumulativeData("   ", "100", 2026).isEmpty(),
                 "空白 json 返回空 map");
     }
 
@@ -107,7 +107,7 @@ public class TestIncomeTaxCalculator {
     public void parseCumulativeData_validJson_parsesNormally() {
         // 合法 JSON → 正常解析（行为不变）
         Map<String, BigDecimal> result = IncomeTaxCalculator.parseCumulativeData(
-                "{\"cumulativeGross\":60000.00,\"cumulativePrepaidTax\":870.00}", 100L, 2026);
+                "{\"cumulativeGross\":60000.00,\"cumulativePrepaidTax\":870.00}", "100", 2026);
         assertNotNull(result);
         assertEquals(0, new BigDecimal("60000.00").compareTo(result.get("cumulativeGross")));
         assertEquals(0, new BigDecimal("870.00").compareTo(result.get("cumulativePrepaidTax")));

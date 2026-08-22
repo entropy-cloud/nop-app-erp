@@ -85,9 +85,9 @@ public class TestErpHrPayrollEngine extends JunitAutoTestCase {
 
     @Test
     public void testSocialInsuranceBaseClampingAndGrossNet() {
-        Long employeeId = ormTemplate.runInSession(session -> {
+        String employeeId = ormTemplate.runInSession(session -> {
             seedTaxConfig(2026);
-            Long empId = seedEmployee("EMP-CLAMP", ErpHrConstants.EMPLOYMENT_ACTIVE);
+            String empId = seedEmployee("EMP-CLAMP", ErpHrConstants.EMPLOYMENT_ACTIVE);
             seedContract(empId, "30000");
             // 基数 50000 超上限 32694 → 钳到 32694
             seedSocialInsuranceBase(empId, "SHENZHEN", "50000", "50000");
@@ -122,9 +122,9 @@ public class TestErpHrPayrollEngine extends JunitAutoTestCase {
 
     @Test
     public void testCumulativeTaxAcrossMonths() {
-        Long employeeId = ormTemplate.runInSession(session -> {
+        String employeeId = ormTemplate.runInSession(session -> {
             seedTaxConfig(2026);
-            Long empId = seedEmployee("EMP-TAX", ErpHrConstants.EMPLOYMENT_ACTIVE);
+            String empId = seedEmployee("EMP-TAX", ErpHrConstants.EMPLOYMENT_ACTIVE);
             seedContract(empId, "20000");
             seedSocialInsuranceBase(empId, "SHENZHEN", "20000", "20000");
             seedSocialInsuranceConfig("SHENZHEN", ErpHrConstants.INSURANCE_PENSION,
@@ -149,9 +149,9 @@ public class TestErpHrPayrollEngine extends JunitAutoTestCase {
 
     @Test
     public void testRunPayrollIdempotent() {
-        Long employeeId = ormTemplate.runInSession(session -> {
+        String employeeId = ormTemplate.runInSession(session -> {
             seedTaxConfig(2026);
-            Long empId = seedEmployee("EMP-IDEMP", ErpHrConstants.EMPLOYMENT_ACTIVE);
+            String empId = seedEmployee("EMP-IDEMP", ErpHrConstants.EMPLOYMENT_ACTIVE);
             seedContract(empId, "15000");
             seedSocialInsuranceBase(empId, "SHENZHEN", "15000", "15000");
             seedSocialInsuranceConfig("SHENZHEN", ErpHrConstants.INSURANCE_PENSION,
@@ -171,9 +171,9 @@ public class TestErpHrPayrollEngine extends JunitAutoTestCase {
 
     @Test
     public void testApprovalStateMachineAndPaidLock() {
-        Long employeeId = ormTemplate.runInSession(session -> {
+        String employeeId = ormTemplate.runInSession(session -> {
             seedTaxConfig(2026);
-            Long empId = seedEmployee("EMU-APPR", ErpHrConstants.EMPLOYMENT_ACTIVE);
+            String empId = seedEmployee("EMU-APPR", ErpHrConstants.EMPLOYMENT_ACTIVE);
             seedContract(empId, "12000");
             seedSocialInsuranceBase(empId, "SHENZHEN", "12000", "12000");
             seedSocialInsuranceConfig("SHENZHEN", ErpHrConstants.INSURANCE_PENSION,
@@ -185,7 +185,7 @@ public class TestErpHrPayrollEngine extends JunitAutoTestCase {
         });
 
         ErpHrSalary salary = ormTemplate.runInSession(session -> salaryBiz.calculateSalary(employeeId, 2026, 9, CTX));
-        Long salaryId = salary.getId();
+        String salaryId = salary.getId();
 
         // 标准审批轴：UNSUBMITTED → SUBMITTED → APPROVED
         assertEquals(0, submitSalary(salaryId).getStatus(), "提交应成功");
@@ -205,9 +205,9 @@ public class TestErpHrPayrollEngine extends JunitAutoTestCase {
 
     @Test
     public void testIllegalTransitionRejects() {
-        Long employeeId = ormTemplate.runInSession(session -> {
+        String employeeId = ormTemplate.runInSession(session -> {
             seedTaxConfig(2026);
-            Long empId = seedEmployee("EMU-ILLEGAL", ErpHrConstants.EMPLOYMENT_ACTIVE);
+            String empId = seedEmployee("EMU-ILLEGAL", ErpHrConstants.EMPLOYMENT_ACTIVE);
             seedContract(empId, "10000");
             seedSocialInsuranceBase(empId, "SHENZHEN", "10000", "10000");
             seedSocialInsuranceConfig("SHENZHEN", ErpHrConstants.INSURANCE_PENSION,
@@ -219,7 +219,7 @@ public class TestErpHrPayrollEngine extends JunitAutoTestCase {
         });
 
         ErpHrSalary salary = ormTemplate.runInSession(session -> salaryBiz.calculateSalary(employeeId, 2026, 10, CTX));
-        Long salaryId = salary.getId();
+        String salaryId = salary.getId();
         // UNSUBMITTED 直接 approve（跳过 submit）→ Bean 矩阵守卫拒绝（xbiz assertCanApprove 仅 SUBMITTED 源态）
         ApiResponse<?> bad = approveSalary(salaryId);
         assertEquals(-1, bad.getStatus(),
@@ -230,9 +230,9 @@ public class TestErpHrPayrollEngine extends JunitAutoTestCase {
 
     @Test
     public void testGenerateBankFileTransfersSalariesToPaid() {
-        Long employeeId = ormTemplate.runInSession(session -> {
+        String employeeId = ormTemplate.runInSession(session -> {
             seedTaxConfig(2026);
-            Long empId = seedEmployee("EMU-BANK", ErpHrConstants.EMPLOYMENT_ACTIVE);
+            String empId = seedEmployee("EMU-BANK", ErpHrConstants.EMPLOYMENT_ACTIVE);
             seedContract(empId, "18000");
             seedSocialInsuranceBase(empId, "SHENZHEN", "18000", "18000");
             seedSocialInsuranceConfig("SHENZHEN", ErpHrConstants.INSURANCE_PENSION,
@@ -244,11 +244,11 @@ public class TestErpHrPayrollEngine extends JunitAutoTestCase {
         });
 
         ErpHrSalary salary = ormTemplate.runInSession(session -> salaryBiz.calculateSalary(employeeId, 2026, 11, CTX));
-        Long salaryId = salary.getId();
+        String salaryId = salary.getId();
         submitSalary(salaryId);
         approveSalary(salaryId);
 
-        ErpHrPayrollBankFile bankFile = ormTemplate.runInSession(session -> salaryBiz.generateBankFile(2026, 11, 1L, CTX));
+        ErpHrPayrollBankFile bankFile = ormTemplate.runInSession(session -> salaryBiz.generateBankFile(2026, 11, "1", CTX));
         assertNotNull(bankFile.getId(), "银行文件已落库");
         assertNotNull(bankFile.getFileContent(), "文件内容已生成");
         assertEquals(ErpHrConstants.BANK_FILE_STATUS_GENERATED, bankFile.getStatus());
@@ -263,9 +263,9 @@ public class TestErpHrPayrollEngine extends JunitAutoTestCase {
 
     @Test
     public void testCorruptCumulativeDataThrowsNotSilentReset() {
-        Long employeeId = ormTemplate.runInSession(session -> {
+        String employeeId = ormTemplate.runInSession(session -> {
             seedTaxConfig(2026);
-            Long empId = seedEmployee("EMP-CORRUPT", ErpHrConstants.EMPLOYMENT_ACTIVE);
+            String empId = seedEmployee("EMP-CORRUPT", ErpHrConstants.EMPLOYMENT_ACTIVE);
             seedContract(empId, "20000");
             seedSocialInsuranceBase(empId, "SHENZHEN", "20000", "20000");
             seedSocialInsuranceConfig("SHENZHEN", ErpHrConstants.INSURANCE_PENSION,
@@ -298,11 +298,11 @@ public class TestErpHrPayrollEngine extends JunitAutoTestCase {
         assertEquals(ErpHrErrors.ERR_HR_CUMULATIVE_DATA_CORRUPT.getErrorCode(), ex.getErrorCode());
     }
 
-    private ApiResponse<?> submitSalary(Long salaryId) {
+    private ApiResponse<?> submitSalary(String salaryId) {
         return executeRpc(mutation, "ErpHrSalary__submitForApproval", ApiRequest.build(Map.of("id", String.valueOf(salaryId))));
     }
 
-    private ApiResponse<?> approveSalary(Long salaryId) {
+    private ApiResponse<?> approveSalary(String salaryId) {
         return executeRpc(mutation, "ErpHrSalary__approve", ApiRequest.build(Map.of("id", String.valueOf(salaryId))));
     }
 
@@ -319,9 +319,9 @@ public class TestErpHrPayrollEngine extends JunitAutoTestCase {
      */
     @Test
     public void testHighTaxBracketIntegrationE2e() {
-        Long employeeId = ormTemplate.runInSession(session -> {
+        String employeeId = ormTemplate.runInSession(session -> {
             seedTaxConfig(2026);
-            Long empId = seedEmployee("EMP-HIGH", ErpHrConstants.EMPLOYMENT_ACTIVE);
+            String empId = seedEmployee("EMP-HIGH", ErpHrConstants.EMPLOYMENT_ACTIVE);
             seedContract(empId, "100000");
             // 基数 100000 超上限 32694 → 钳到 32694（payroll.md §2.4）
             seedSocialInsuranceBase(empId, "SHENZHEN", "100000", "100000");
@@ -366,9 +366,9 @@ public class TestErpHrPayrollEngine extends JunitAutoTestCase {
      */
     @Test
     public void testPostingSuspensionWindowPostedFalse() {
-        Long employeeId = ormTemplate.runInSession(session -> {
+        String employeeId = ormTemplate.runInSession(session -> {
             seedTaxConfig(2026);
-            Long empId = seedEmployee("EMP-SUSP", ErpHrConstants.EMPLOYMENT_ACTIVE);
+            String empId = seedEmployee("EMP-SUSP", ErpHrConstants.EMPLOYMENT_ACTIVE);
             seedContract(empId, "12000");
             seedSocialInsuranceBase(empId, "SHENZHEN", "12000", "12000");
             seedSocialInsuranceConfig("SHENZHEN", ErpHrConstants.INSURANCE_PENSION,
@@ -380,7 +380,7 @@ public class TestErpHrPayrollEngine extends JunitAutoTestCase {
         });
 
         ErpHrSalary salary = ormTemplate.runInSession(session -> salaryBiz.calculateSalary(employeeId, 2026, 3, CTX));
-        Long salaryId = salary.getId();
+        String salaryId = salary.getId();
         assertEquals(0, submitSalary(salaryId).getStatus(), "提交应成功");
         assertEquals(0, approveSalary(salaryId).getStatus(), "审核应成功");
 
@@ -415,9 +415,9 @@ public class TestErpHrPayrollEngine extends JunitAutoTestCase {
      */
     @Test
     public void testCompanyBornePostingAccrualChainPositive() {
-        Long employeeId = ormTemplate.runInSession(session -> {
+        String employeeId = ormTemplate.runInSession(session -> {
             seedTaxConfig(2026);
-            Long empId = seedEmployee("EMP-ACCRUAL", ErpHrConstants.EMPLOYMENT_ACTIVE);
+            String empId = seedEmployee("EMP-ACCRUAL", ErpHrConstants.EMPLOYMENT_ACTIVE);
             seedContract(empId, "15000");
             seedSocialInsuranceBase(empId, "SHENZHEN", "15000", "15000");
             seedSocialInsuranceConfig("SHENZHEN", ErpHrConstants.INSURANCE_PENSION,
@@ -426,16 +426,16 @@ public class TestErpHrPayrollEngine extends JunitAutoTestCase {
                     "0.12", "0.12", "2360", "32694");
             System.setProperty(ErpHrConstants.CONFIG_DEFAULT_PAYROLL_SUBJECT_ID, "2211");
             // 计提链测试员工带业务组织（PostingEvent.orgId/账套解析回退源）
-            daoProvider.daoFor(ErpHrEmployee.class).getEntityById(empId).setOrgId(1L);
+            daoProvider.daoFor(ErpHrEmployee.class).getEntityById(empId).setOrgId("1");
             seedPostingSubjects();
-            seedAcctSchema(1L);
+            seedAcctSchema("1");
             seedOpenPeriod(2026, 4);
             seedOpenPeriod(2026, 7);
             return empId;
         });
 
         ErpHrSalary salary = ormTemplate.runInSession(session -> salaryBiz.calculateSalary(employeeId, 2026, 4, CTX));
-        Long salaryId = salary.getId();
+        String salaryId = salary.getId();
         assertEquals(0, submitSalary(salaryId).getStatus(), "提交应成功");
         assertEquals(0, approveSalary(salaryId).getStatus(), "审核应成功（联动计提过账）");
         ErpHrSalary paid = ormTemplate.runInSession(session -> salaryBiz.markPaid(salaryId, CTX));
@@ -478,7 +478,7 @@ public class TestErpHrPayrollEngine extends JunitAutoTestCase {
     }
 
     /** 种组织主账套（引擎对 null acctSchemaId 返回空集静默零凭证——账套解析补齐前置）。 */
-    private void seedAcctSchema(long orgId) {
+    private void seedAcctSchema(String orgId) {
         IEntityDao<app.erp.md.dao.entity.ErpMdAcctSchema> dao =
                 daoProvider.daoFor(app.erp.md.dao.entity.ErpMdAcctSchema.class);
         app.erp.md.dao.entity.ErpMdAcctSchema schema = new app.erp.md.dao.entity.ErpMdAcctSchema();
@@ -486,7 +486,7 @@ public class TestErpHrPayrollEngine extends JunitAutoTestCase {
         schema.setName("账套-" + orgId);
         schema.setOrgId(orgId);
         schema.setNature("FINANCIAL");
-        schema.setFunctionalCurrencyId(1L);
+        schema.setFunctionalCurrencyId("1");
         schema.setStatus("ACTIVE");
         dao.saveEntity(schema);
     }
@@ -498,7 +498,7 @@ public class TestErpHrPayrollEngine extends JunitAutoTestCase {
         app.erp.fin.dao.entity.ErpFinAccountingPeriod period = new app.erp.fin.dao.entity.ErpFinAccountingPeriod();
         period.setCode(year + "-" + String.format("%02d", month));
         period.setName(year + "年" + month + "月");
-        period.setOrgId(1L);
+        period.setOrgId("1");
         period.setYear(year);
         period.setMonth(month);
         period.setStartDate(LocalDate.of(year, month, 1));
@@ -508,7 +508,7 @@ public class TestErpHrPayrollEngine extends JunitAutoTestCase {
     }
 
     /** 薪酬过账业财回链单据号（与 SalaryPostingDispatcher.buildBillCode 一致）。 */
-    private String salaryBillCode(int year, int month, Long salaryId) {
+    private String salaryBillCode(int year, int month, String salaryId) {
         return "SAL-" + year + String.format("%02d", month) + "-" + salaryId;
     }
 
@@ -552,7 +552,7 @@ public class TestErpHrPayrollEngine extends JunitAutoTestCase {
         dao.saveEntity(cfg);
     }
 
-    private Long seedEmployee(String code, String employmentStatus) {
+    private String seedEmployee(String code, String employmentStatus) {
         IEntityDao<ErpHrEmployee> dao = daoProvider.daoFor(ErpHrEmployee.class);
         ErpHrEmployee emp = new ErpHrEmployee();
         emp.setCode(code);
@@ -567,7 +567,7 @@ public class TestErpHrPayrollEngine extends JunitAutoTestCase {
         return emp.getId();
     }
 
-    private void seedContract(Long employeeId, String monthlySalary) {
+    private void seedContract(String employeeId, String monthlySalary) {
         IEntityDao<ErpHrEmploymentContract> dao = daoProvider.daoFor(ErpHrEmploymentContract.class);
         ErpHrEmploymentContract c = new ErpHrEmploymentContract();
         c.setBusinessDate(java.time.LocalDate.of(2026, 7, 1));
@@ -582,7 +582,7 @@ public class TestErpHrPayrollEngine extends JunitAutoTestCase {
         dao.saveEntity(c);
     }
 
-    private void seedSocialInsuranceBase(Long employeeId, String cityCode,
+    private void seedSocialInsuranceBase(String employeeId, String cityCode,
                                          String socialInsuranceBase, String housingFundBase) {
         IEntityDao<ErpHrSocialInsuranceBase> dao = daoProvider.daoFor(ErpHrSocialInsuranceBase.class);
         ErpHrSocialInsuranceBase base = new ErpHrSocialInsuranceBase();

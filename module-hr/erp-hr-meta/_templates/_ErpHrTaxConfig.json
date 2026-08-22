@@ -1,10 +1,10 @@
 {
-  "id": 0,
+  "id": "",
   "year": 0,
   "taxThreshold": 0.0,
   "taxBrackets": "",
   "specialDeductionItems": "",
-  "orgId": 0,
+  "orgId": "",
   "remark": "",
   "delVersion": 0,
   "version": 0,

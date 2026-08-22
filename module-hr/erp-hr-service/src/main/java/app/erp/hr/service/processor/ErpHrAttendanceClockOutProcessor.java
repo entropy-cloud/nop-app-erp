@@ -31,7 +31,7 @@ public class ErpHrAttendanceClockOutProcessor extends AbstractErpHrAttendancePro
     @Inject
     IErpHrShiftBiz shiftBiz;
 
-    public ErpHrAttendance clockOut(Long employeeId, IServiceContext context) {
+    public ErpHrAttendance clockOut(String employeeId, IServiceContext context) {
         LocalDate today = CoreMetrics.today();
         ErpHrAttendance attendance = findAttendance(employeeId, today);
         if (attendance != null && attendance.getClockIn() != null) {
@@ -56,7 +56,7 @@ public class ErpHrAttendanceClockOutProcessor extends AbstractErpHrAttendancePro
      * 回退，防 {@code isCrossDayShift(null)} NPE（对齐 {@link ErpHrShiftCalcAttendanceProcessor}
      * null shift 跳过范式）。
      */
-    protected boolean hasCrossDayAssignment(Long employeeId, LocalDate assignmentDate, IServiceContext context) {
+    protected boolean hasCrossDayAssignment(String employeeId, LocalDate assignmentDate, IServiceContext context) {
         ErpHrShiftAssignment assignment = assignmentBiz.findByEmployeeAndDate(employeeId, assignmentDate, context);
         if (assignment == null) {
             return false;

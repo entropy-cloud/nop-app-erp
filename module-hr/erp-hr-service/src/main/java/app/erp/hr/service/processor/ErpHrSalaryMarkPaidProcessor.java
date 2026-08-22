@@ -25,7 +25,7 @@ public class ErpHrSalaryMarkPaidProcessor extends AbstractErpHrSalaryProcessor {
     @Inject
     SalaryPostingDispatcher postingDispatcher;
 
-    public ErpHrSalary markPaid(Long salaryId, IServiceContext context) {
+    public ErpHrSalary markPaid(String salaryId, IServiceContext context) {
         ErpHrSalary salary = requireSalary(salaryId, context);
         try {
             approvalStateMachine.assertCanMarkPaid(salary.getApproveStatus());
@@ -45,14 +45,14 @@ public class ErpHrSalaryMarkPaidProcessor extends AbstractErpHrSalaryProcessor {
         return salary;
     }
 
-    private static NopException illegalApproveTransition(Long salaryId, String currentStatus, NopException cause) {
+    private static NopException illegalApproveTransition(String salaryId, String currentStatus, NopException cause) {
         return new NopException(ErpHrErrors.ERR_SALARY_ILLEGAL_STATUS_TRANSITION, cause)
                 .param(ErpHrErrors.ARG_SALARY_ID, salaryId)
                 .param(ErpHrErrors.ARG_CURRENT_STATUS, currentStatus)
                 .param(ErpHrErrors.ARG_EXPECTED_STATUS, cause.getParam(ErpCommonErrors.ARG_EXPECTED_STATUS));
     }
 
-    private static NopException illegalPaymentTransition(Long salaryId, String currentStatus, NopException cause) {
+    private static NopException illegalPaymentTransition(String salaryId, String currentStatus, NopException cause) {
         return new NopException(ErpHrErrors.ERR_SALARY_ILLEGAL_STATUS_TRANSITION, cause)
                 .param(ErpHrErrors.ARG_SALARY_ID, salaryId)
                 .param(ErpHrErrors.ARG_CURRENT_STATUS, currentStatus)

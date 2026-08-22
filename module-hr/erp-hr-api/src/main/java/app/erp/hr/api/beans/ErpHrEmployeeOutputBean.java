@@ -13,16 +13,16 @@
     public class ErpHrEmployeeOutputBean {
 
     
-        private Long _id;
+        private String _id;
 
     
         @PropMeta(propId=1)
     
-        public Long getId(){
+        public String getId(){
             return _id;
         }
 
-        public void setId(Long value){
+        public void setId(String value){
             this._id = value;
         }
 
@@ -247,30 +247,30 @@
         }
 
 
-        private Long _departmentId;
+        private String _departmentId;
 
     
         @PropMeta(propId=16)
     
-        public Long getDepartmentId(){
+        public String getDepartmentId(){
             return _departmentId;
         }
 
-        public void setDepartmentId(Long value){
+        public void setDepartmentId(String value){
             this._departmentId = value;
         }
 
 
-        private Long _positionId;
+        private String _positionId;
 
     
         @PropMeta(propId=17)
     
-        public Long getPositionId(){
+        public String getPositionId(){
             return _positionId;
         }
 
-        public void setPositionId(Long value){
+        public void setPositionId(String value){
             this._positionId = value;
         }
 
@@ -289,30 +289,30 @@
         }
 
 
-        private Long _superiorId;
+        private String _superiorId;
 
     
         @PropMeta(propId=19)
     
-        public Long getSuperiorId(){
+        public String getSuperiorId(){
             return _superiorId;
         }
 
-        public void setSuperiorId(Long value){
+        public void setSuperiorId(String value){
             this._superiorId = value;
         }
 
 
-        private Long _costCenterId;
+        private String _costCenterId;
 
     
         @PropMeta(propId=20)
     
-        public Long getCostCenterId(){
+        public String getCostCenterId(){
             return _costCenterId;
         }
 
-        public void setCostCenterId(Long value){
+        public void setCostCenterId(String value){
             this._costCenterId = value;
         }
 
@@ -439,16 +439,16 @@
         }
 
 
-        private Long _bankAccountId;
+        private String _bankAccountId;
 
     
         @PropMeta(propId=28)
     
-        public Long getBankAccountId(){
+        public String getBankAccountId(){
             return _bankAccountId;
         }
 
-        public void setBankAccountId(Long value){
+        public void setBankAccountId(String value){
             this._bankAccountId = value;
         }
 
@@ -481,30 +481,30 @@
         }
 
 
-        private Long _userAccountId;
+        private String _userAccountId;
 
     
         @PropMeta(propId=31)
     
-        public Long getUserAccountId(){
+        public String getUserAccountId(){
             return _userAccountId;
         }
 
-        public void setUserAccountId(Long value){
+        public void setUserAccountId(String value){
             this._userAccountId = value;
         }
 
 
-        private Long _orgId;
+        private String _orgId;
 
     
         @PropMeta(propId=32)
     
-        public Long getOrgId(){
+        public String getOrgId(){
             return _orgId;
         }
 
-        public void setOrgId(Long value){
+        public void setOrgId(String value){
             this._orgId = value;
         }
 

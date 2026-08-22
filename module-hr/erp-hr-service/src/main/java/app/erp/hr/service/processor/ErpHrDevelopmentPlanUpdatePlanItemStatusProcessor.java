@@ -12,7 +12,7 @@ import io.nop.core.context.IServiceContext;
  */
 public class ErpHrDevelopmentPlanUpdatePlanItemStatusProcessor extends AbstractErpHrDevelopmentPlanProcessor {
 
-    public ErpHrDevelopmentPlanItem updatePlanItemStatus(Long planItemId, String status, IServiceContext context) {
+    public ErpHrDevelopmentPlanItem updatePlanItemStatus(String planItemId, String status, IServiceContext context) {
         ErpHrDevelopmentPlanItem item = requirePlanItem(planItemId, context);
         String current = item.getStatus();
         assertPlanItemTransition(current, status);

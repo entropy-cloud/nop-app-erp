@@ -56,8 +56,8 @@ public class ErpHrSurveyResponseBizModel extends CrudBizModel<ErpHrSurveyRespons
 
     @Override
     @BizMutation
-    public ErpHrSurveyResponse submitResponse(@Name("surveyId") Long surveyId,
-                                              @Name("employeeId") Long employeeId,
+    public ErpHrSurveyResponse submitResponse(@Name("surveyId") String surveyId,
+                                              @Name("employeeId") String employeeId,
                                               @Name("answers") List<Map<String, Object>> answers,
                                               IServiceContext context) {
         ErpHrSurvey survey = surveyBiz.requireEntity(String.valueOf(surveyId), null, context);
@@ -78,7 +78,7 @@ public class ErpHrSurveyResponseBizModel extends CrudBizModel<ErpHrSurveyRespons
                     .param(ErpHrErrors.ARG_SURVEY_ID, surveyId);
         }
 
-        Set<Long> questionIds = loadSurveyQuestionIds(surveyId, context);
+        Set<String> questionIds = loadSurveyQuestionIds(surveyId, context);
 
         ErpHrSurveyResponse response = newEntity();
         response.setSurveyId(surveyId);
@@ -95,7 +95,7 @@ public class ErpHrSurveyResponseBizModel extends CrudBizModel<ErpHrSurveyRespons
                 if (ans == null) {
                     continue;
                 }
-                Long questionId = ConvertHelper.toLong(ans.get("questionId"), null);
+                String questionId = StringHelper.toString(ans.get("questionId"), null);
                 if (questionId == null || !questionIds.contains(questionId)) {
                     throw new NopException(ErpHrErrors.ERR_HR_SURVEY_INVALID_QUESTION)
                             .param(ErpHrErrors.ARG_SURVEY_ID, surveyId)
@@ -117,11 +117,11 @@ public class ErpHrSurveyResponseBizModel extends CrudBizModel<ErpHrSurveyRespons
         return response;
     }
 
-    private Set<Long> loadSurveyQuestionIds(Long surveyId, IServiceContext context) {
+    private Set<String> loadSurveyQuestionIds(String surveyId, IServiceContext context) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("surveyId", surveyId));
         List<ErpHrSurveyQuestion> questions = surveyQuestionBiz.findList(q, null, context);
-        Set<Long> ids = new HashSet<>();
+        Set<String> ids = new HashSet<>();
         for (ErpHrSurveyQuestion question : questions) {
             ids.add(question.getId());
         }
@@ -129,7 +129,7 @@ public class ErpHrSurveyResponseBizModel extends CrudBizModel<ErpHrSurveyRespons
     }
 
     /** 稳定可复算的匿名应答者哈希：SHA-256(employeeId + ":" + surveyId) 十六进制（Plan Decision 选项 A）。 */
-    private static String respondentHashOf(Long employeeId, Long surveyId) {
+    private static String respondentHashOf(String employeeId, String surveyId) {
         String input = employeeId + ":" + surveyId;
         byte[] hash = HashHelper.sha256(input.getBytes(StandardCharsets.UTF_8), null);
         return StringHelper.bytesToHex(hash);

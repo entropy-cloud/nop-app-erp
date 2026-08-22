@@ -15,7 +15,7 @@ import java.util.List;
  */
 public class ErpHrShiftOnLeaveApprovedProcessor extends AbstractErpHrShiftProcessor {
 
-    public void onLeaveApproved(Long leaveRequestId, IServiceContext context) {
+    public void onLeaveApproved(String leaveRequestId, IServiceContext context) {
         ErpHrLeaveRequest leave = requireLeaveRequest(leaveRequestId, context);
         List<ErpHrShiftAssignment> assignments = findAssignmentsByEmployeeRange(
                 leave.getEmployeeId(), leave.getStartDate(), leave.getEndDate(), context);

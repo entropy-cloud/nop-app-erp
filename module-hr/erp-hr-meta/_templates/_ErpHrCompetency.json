@@ -1,5 +1,5 @@
 {
-  "id": 0,
+  "id": "",
   "code": "",
   "name": "",
   "description": "",
@@ -7,8 +7,8 @@
   "category_label": "",
   "competencyGroup": "",
   "isTechnical": false,
-  "parentId": 0,
-  "orgId": 0,
+  "parentId": "",
+  "orgId": "",
   "remark": "",
   "delVersion": 0,
   "version": 0,

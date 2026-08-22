@@ -15,7 +15,7 @@ import java.util.List;
  */
 public class ErpHrShiftOnLeaveCancelledProcessor extends AbstractErpHrShiftProcessor {
 
-    public void onLeaveCancelled(Long leaveRequestId, IServiceContext context) {
+    public void onLeaveCancelled(String leaveRequestId, IServiceContext context) {
         ErpHrLeaveRequest leave = requireLeaveRequest(leaveRequestId, context);
         List<ErpHrShiftAssignment> assignments = findAssignmentsByEmployeeRange(
                 leave.getEmployeeId(), leave.getStartDate(), leave.getEndDate(), context);

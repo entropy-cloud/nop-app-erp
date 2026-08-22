@@ -42,7 +42,7 @@ public class TestErpHrResponseMasking extends BaseTestCase {
     private static final BigDecimal AMOUNT = new BigDecimal("12345.67");
     private static final String ID_CARD = "110101199001011234";
     private static final String MOBILE = "13812345678";
-    private static final Long BANK_ACCT = 6228480402564890018L;
+    private static final String BANK_ACCT = "6228480402564890018";
     private static final String SS_NO = "SOC-2026-0001";
     private static final String TAX_FILE = "TAX-2026-0001";
     private static final String CUMULATIVE = "{\"ytdTax\":5000}";
@@ -112,7 +112,7 @@ public class TestErpHrResponseMasking extends BaseTestCase {
                 employeeBiz.idCardNoMask(e), "非授权 idCardNo = 首1******末4");
         assertEquals(MOBILE.substring(0, 3) + "****" + MOBILE.substring(MOBILE.length() - 4),
                 employeeBiz.mobilePhoneMask(e), "非授权 mobilePhone = 首3****末4");
-        assertNull(employeeBiz.bankAccountIdMask(e), "非授权 bankAccountId = null（BIGINT）");
+        assertEquals("******", employeeBiz.bankAccountIdMask(e), "非授权 bankAccountId = 全打码（id String 化后 maskString FULL）");
         assertEquals("******", employeeBiz.socialSecurityNoMask(e), "非授权 socialSecurityNo = 全打码");
     }
 

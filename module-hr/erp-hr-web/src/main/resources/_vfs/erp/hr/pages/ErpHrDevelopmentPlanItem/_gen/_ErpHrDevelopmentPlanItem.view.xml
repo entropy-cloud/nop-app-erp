@@ -19,16 +19,16 @@
             <cols>
 
                 <!--ID-->
-                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="id" mandatory="true" sortable="true"/>
 
                 <!--发展计划-->
-                <col id="planId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="planId" mandatory="true" sortable="true"/>
 
                 <!--目标胜任力-->
-                <col id="competencyId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="competencyId" mandatory="true" sortable="true"/>
 
                 <!--关联差距分析-->
-                <col id="gapId" ui:number="true" sortable="true"/>
+                <col id="gapId" sortable="true"/>
 
                 <!--目标等级-->
                 <col id="targetLevel" mandatory="true" ui:number="true" sortable="true"/>
@@ -37,7 +37,7 @@
                 <col id="developmentAction" sortable="true"/>
 
                 <!--导师-->
-                <col id="mentorId" ui:number="true" sortable="true"/>
+                <col id="mentorId" sortable="true"/>
 
                 <!--开始日期-->
                 <col id="startDate" sortable="true"/>

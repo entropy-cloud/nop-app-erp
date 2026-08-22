@@ -13,8 +13,8 @@ import java.util.Map;
  */
 public class ErpHrGapAnalysisRefreshGapAnalysisProcessor extends AbstractErpHrGapAnalysisProcessor {
 
-    public List<ErpHrGapAnalysis> refreshGapAnalysis(Long employeeId, IServiceContext context) {
-        Map<Long, Integer> levels = aggregateLatestAssessment(employeeId, context);
+    public List<ErpHrGapAnalysis> refreshGapAnalysis(String employeeId, IServiceContext context) {
+        Map<String, Integer> levels = aggregateLatestAssessment(employeeId, context);
         return doRefreshWithLevels(employeeId, levels, context);
     }
 }

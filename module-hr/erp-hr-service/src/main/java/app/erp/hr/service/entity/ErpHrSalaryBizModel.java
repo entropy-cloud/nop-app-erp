@@ -89,7 +89,7 @@ public class ErpHrSalaryBizModel extends CrudBizModel<ErpHrSalary> implements IE
 
     @Override
     @BizMutation
-    public ErpHrSalary calculateSalary(@Name("employeeId") Long employeeId,
+    public ErpHrSalary calculateSalary(@Name("employeeId") String employeeId,
                                        @Name("year") int year,
                                        @Name("month") int month,
                                        IServiceContext context) {
@@ -106,13 +106,13 @@ public class ErpHrSalaryBizModel extends CrudBizModel<ErpHrSalary> implements IE
 
     @Override
     @BizMutation
-    public ErpHrSalary markPaid(@Name("salaryId") Long salaryId, IServiceContext context) {
+    public ErpHrSalary markPaid(@Name("salaryId") String salaryId, IServiceContext context) {
         return markPaidProcessor.markPaid(salaryId, context);
     }
 
     @Override
     @BizMutation
-    public ErpHrSalary voidSalary(@Name("salaryId") Long salaryId, IServiceContext context) {
+    public ErpHrSalary voidSalary(@Name("salaryId") String salaryId, IServiceContext context) {
         ErpHrSalary salary = requireSalary(salaryId, context);
         if (ErpHrConstants.PAYMENT_PAID.equals(salary.getPaymentStatus())) {
             throw new NopException(ErpHrErrors.ERR_SALARY_LOCKED_AFTER_PAID)
@@ -135,14 +135,14 @@ public class ErpHrSalaryBizModel extends CrudBizModel<ErpHrSalary> implements IE
     @BizMutation
     public ErpHrPayrollBankFile generateBankFile(@Name("year") int year,
                                                  @Name("month") int month,
-                                                 @Name("bankId") Long bankId,
+                                                 @Name("bankId") String bankId,
                                                  IServiceContext context) {
         return generateBankFileProcessor.generateBankFile(year, month, bankId, context);
     }
 
     @Override
     @BizQuery
-    public String queryCumulativeTaxData(@Name("employeeId") Long employeeId,
+    public String queryCumulativeTaxData(@Name("employeeId") String employeeId,
                                          @Name("year") int year,
                                          @Name("upToMonth") int upToMonth,
                                          IServiceContext context) {
@@ -241,11 +241,11 @@ public class ErpHrSalaryBizModel extends CrudBizModel<ErpHrSalary> implements IE
 
     // ---------- helpers ----------
 
-    ErpHrSalary requireSalary(Long salaryId, IServiceContext context) {
+    ErpHrSalary requireSalary(String salaryId, IServiceContext context) {
         return requireEntity(String.valueOf(salaryId), null, context);
     }
 
-    void assertNotDuplicated(Long employeeId, int year, int month, IServiceContext context) {
+    void assertNotDuplicated(String employeeId, int year, int month, IServiceContext context) {
         if (existsNonVoidSalary(employeeId, year, month, context)) {
             throw new NopException(ErpHrErrors.ERR_SALARY_ALREADY_EXISTS)
                     .param(ErpHrErrors.ARG_EMPLOYEE_ID, employeeId)
@@ -254,7 +254,7 @@ public class ErpHrSalaryBizModel extends CrudBizModel<ErpHrSalary> implements IE
         }
     }
 
-    boolean existsNonVoidSalary(Long employeeId, int year, int month, IServiceContext context) {
+    boolean existsNonVoidSalary(String employeeId, int year, int month, IServiceContext context) {
         QueryBean q = new QueryBean();
         q.addFilter(and(
                 eq("employeeId", employeeId),
@@ -308,14 +308,14 @@ public class ErpHrSalaryBizModel extends CrudBizModel<ErpHrSalary> implements IE
         BigDecimal totalSocial = BigDecimal.ZERO;
         BigDecimal totalTax = BigDecimal.ZERO;
         BigDecimal totalNet = BigDecimal.ZERO;
-        java.util.Map<Long, BigDecimal[]> orgMap = new java.util.LinkedHashMap<>();
-        java.util.List<Long> orgOrder = new ArrayList<>();
+        java.util.Map<String, BigDecimal[]> orgMap = new java.util.LinkedHashMap<>();
+        java.util.List<String> orgOrder = new ArrayList<>();
         for (ErpHrSalary s : rows) {
             totalGross = totalGross.add(nz(s.getGrossSalary()));
             totalSocial = totalSocial.add(nz(s.getSocialInsurance()));
             totalTax = totalTax.add(nz(s.getTaxAmount()));
             totalNet = totalNet.add(nz(s.getNetSalary()));
-            Long key = s.getOrgId() != null ? s.getOrgId() : 0L;
+            String key = s.getOrgId() != null ? s.getOrgId() : "";
             BigDecimal[] agg = orgMap.get(key);
             if (agg == null) {
                 agg = new BigDecimal[]{BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO};
@@ -329,7 +329,7 @@ public class ErpHrSalaryBizModel extends CrudBizModel<ErpHrSalary> implements IE
             agg[4] = agg[4].add(nz(s.getNetSalary()));
         }
         List<java.util.Map<String, Object>> orgGroups = new ArrayList<>();
-        for (Long key : orgOrder) {
+        for (String key : orgOrder) {
             BigDecimal[] agg = orgMap.get(key);
             java.util.Map<String, Object> g = new java.util.LinkedHashMap<>();
             g.put("orgId", key);

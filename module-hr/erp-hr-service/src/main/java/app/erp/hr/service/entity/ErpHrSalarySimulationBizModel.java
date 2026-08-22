@@ -93,8 +93,8 @@ public class ErpHrSalarySimulationBizModel extends CrudBizModel<ErpHrSalarySimul
 
     @Override
     @BizMutation
-    public ErpHrSalary adjustItem(@Name("simulationId") Long simulationId,
-                                  @Name("employeeId") Long employeeId,
+    public ErpHrSalary adjustItem(@Name("simulationId") String simulationId,
+                                  @Name("employeeId") String employeeId,
                                   @Name("salaryItemCode") String salaryItemCode,
                                   @Name("adjustedAmount") BigDecimal adjustedAmount,
                                   @Name("reason") String reason,
@@ -104,8 +104,8 @@ public class ErpHrSalarySimulationBizModel extends CrudBizModel<ErpHrSalarySimul
 
     @Override
     @BizQuery
-    public ErpHrSalary getSimulatedSalary(@Name("simulationId") Long simulationId,
-                                          @Name("employeeId") Long employeeId,
+    public ErpHrSalary getSimulatedSalary(@Name("simulationId") String simulationId,
+                                          @Name("employeeId") String employeeId,
                                           IServiceContext context) {
         ErpHrSalarySimulation simulation = requireSimulation(simulationId, context);
         ErpHrSalary base = requireSourceSalary(employeeId, simulation);
@@ -119,16 +119,16 @@ public class ErpHrSalarySimulationBizModel extends CrudBizModel<ErpHrSalarySimul
 
     @Override
     @BizQuery
-    public List<ErpHrSalarySimulationItemAdjustment> listAdjustments(@Name("simulationId") Long simulationId,
-                                                                     @Name("employeeId") Long employeeId,
+    public List<ErpHrSalarySimulationItemAdjustment> listAdjustments(@Name("simulationId") String simulationId,
+                                                                     @Name("employeeId") String employeeId,
                                                                      IServiceContext context) {
         return findAdjustmentsByEmployee(simulationId, employeeId);
     }
 
     @Override
     @BizQuery
-    public Map<String, Object> getComparison(@Name("simulationId") Long simulationId,
-                                             @Name("employeeId") Long employeeId,
+    public Map<String, Object> getComparison(@Name("simulationId") String simulationId,
+                                             @Name("employeeId") String employeeId,
                                              IServiceContext context) {
         ErpHrSalarySimulation simulation = requireSimulation(simulationId, context);
         ErpHrSalary source = requireSourceSalary(employeeId, simulation);
@@ -165,25 +165,25 @@ public class ErpHrSalarySimulationBizModel extends CrudBizModel<ErpHrSalarySimul
 
     @Override
     @BizQuery
-    public List<Map<String, Object>> getDepartmentSummary(@Name("simulationId") Long simulationId,
+    public List<Map<String, Object>> getDepartmentSummary(@Name("simulationId") String simulationId,
                                                            IServiceContext context) {
         ErpHrSalarySimulation simulation = requireSimulation(simulationId, context);
-        Map<Long, EmployeeSimResult> sims = computeAllEmployeeSims(simulation, context);
-        Map<Long, Long> empToDept = loadEmployeeDepartments(sims.keySet());
+        Map<String, EmployeeSimResult> sims = computeAllEmployeeSims(simulation, context);
+        Map<String, String> empToDept = loadEmployeeDepartments(sims.keySet());
 
-        Map<Long, SummaryAccumulator> byDept = new LinkedHashMap<>();
-        for (Map.Entry<Long, EmployeeSimResult> e : sims.entrySet()) {
-            Long deptId = empToDept.get(e.getKey());
+        Map<String, SummaryAccumulator> byDept = new LinkedHashMap<>();
+        for (Map.Entry<String, EmployeeSimResult> e : sims.entrySet()) {
+            String deptId = empToDept.get(e.getKey());
             if (deptId == null) {
                 continue;
             }
             SummaryAccumulator acc = byDept.computeIfAbsent(deptId, k -> new SummaryAccumulator());
             acc.accumulate(e.getValue());
         }
-        Map<Long, String> deptNames = loadDepartmentNames(byDept.keySet());
+        Map<String, String> deptNames = loadDepartmentNames(byDept.keySet());
 
         List<Map<String, Object>> result = new ArrayList<>();
-        for (Map.Entry<Long, SummaryAccumulator> e : byDept.entrySet()) {
+        for (Map.Entry<String, SummaryAccumulator> e : byDept.entrySet()) {
             result.add(e.getValue().toMap("departmentId", e.getKey(),
                     "departmentName", deptNames.get(e.getKey())));
         }
@@ -192,10 +192,10 @@ public class ErpHrSalarySimulationBizModel extends CrudBizModel<ErpHrSalarySimul
 
     @Override
     @BizQuery
-    public List<Map<String, Object>> getProjectSummary(@Name("simulationId") Long simulationId,
+    public List<Map<String, Object>> getProjectSummary(@Name("simulationId") String simulationId,
                                                         IServiceContext context) {
         ErpHrSalarySimulation simulation = requireSimulation(simulationId, context);
-        Map<Long, EmployeeSimResult> sims = computeAllEmployeeSims(simulation, context);
+        Map<String, EmployeeSimResult> sims = computeAllEmployeeSims(simulation, context);
 
         Map<String, SummaryAccumulator> byItem = new LinkedHashMap<>();
         for (String itemCode : SALARY_ITEM_CODES) {
@@ -220,10 +220,10 @@ public class ErpHrSalarySimulationBizModel extends CrudBizModel<ErpHrSalarySimul
 
     @Override
     @BizQuery
-    public Map<String, Object> getCompanySummary(@Name("simulationId") Long simulationId,
+    public Map<String, Object> getCompanySummary(@Name("simulationId") String simulationId,
                                                   IServiceContext context) {
         ErpHrSalarySimulation simulation = requireSimulation(simulationId, context);
-        Map<Long, EmployeeSimResult> sims = computeAllEmployeeSims(simulation, context);
+        Map<String, EmployeeSimResult> sims = computeAllEmployeeSims(simulation, context);
         SummaryAccumulator acc = new SummaryAccumulator();
         for (EmployeeSimResult r : sims.values()) {
             acc.accumulate(r);
@@ -233,7 +233,7 @@ public class ErpHrSalarySimulationBizModel extends CrudBizModel<ErpHrSalarySimul
 
     @Override
     @BizMutation
-    public Map<String, Object> applyBatchAdjustment(@Name("simulationId") Long simulationId,
+    public Map<String, Object> applyBatchAdjustment(@Name("simulationId") String simulationId,
                                                      @Name("scope") Map<String, Object> scope,
                                                      @Name("adjustType") String adjustType,
                                                      @Name("value") Object value,
@@ -243,17 +243,17 @@ public class ErpHrSalarySimulationBizModel extends CrudBizModel<ErpHrSalarySimul
 
     @Override
     @BizQuery
-    public List<Map<String, Object>> findAnomalies(@Name("simulationId") Long simulationId,
+    public List<Map<String, Object>> findAnomalies(@Name("simulationId") String simulationId,
                                                     IServiceContext context) {
         ErpHrSalarySimulation simulation = requireSimulation(simulationId, context);
-        Map<Long, EmployeeSimResult> sims = computeAllEmployeeSims(simulation, context);
+        Map<String, EmployeeSimResult> sims = computeAllEmployeeSims(simulation, context);
         BigDecimal netThreshold = ErpHrConfigs.simulationNetPayChangeThreshold();
         BigDecimal totalThreshold = ErpHrConfigs.simulationTotalChangeThreshold();
         boolean taxJumpAlert = ErpHrConfigs.simulationTaxBracketJumpAlert();
 
         List<Map<String, Object>> anomalies = new ArrayList<>();
-        for (Map.Entry<Long, EmployeeSimResult> e : sims.entrySet()) {
-            Long empId = e.getKey();
+        for (Map.Entry<String, EmployeeSimResult> e : sims.entrySet()) {
+            String empId = e.getKey();
             EmployeeSimResult r = e.getValue();
             BigDecimal srcNet = nz(r.source.getNetSalary());
             BigDecimal simNet = nz(r.simulated.getNetSalary());
@@ -284,7 +284,7 @@ public class ErpHrSalarySimulationBizModel extends CrudBizModel<ErpHrSalarySimul
 
     @Override
     @BizMutation
-    public ErpHrSalarySimulation submitForReview(@Name("simulationId") Long simulationId,
+    public ErpHrSalarySimulation submitForReview(@Name("simulationId") String simulationId,
                                                  IServiceContext context) {
         ErpHrSalarySimulation simulation = requireSimulation(simulationId, context);
         if (!ErpHrConstants.SIMULATION_STATUS_DRAFT.equals(simulation.getStatus())) {
@@ -304,8 +304,8 @@ public class ErpHrSalarySimulationBizModel extends CrudBizModel<ErpHrSalarySimul
 
     @Override
     @BizMutation
-    public ErpHrSalarySimulation approve(@Name("simulationId") Long simulationId,
-                                         @Name("reviewerId") Long reviewerId,
+    public ErpHrSalarySimulation approve(@Name("simulationId") String simulationId,
+                                         @Name("reviewerId") String reviewerId,
                                          IServiceContext context) {
         ErpHrSalarySimulation simulation = requireSimulation(simulationId, context);
         if (!ErpHrConstants.SIMULATION_STATUS_IN_REVIEW.equals(simulation.getStatus())) {
@@ -323,7 +323,7 @@ public class ErpHrSalarySimulationBizModel extends CrudBizModel<ErpHrSalarySimul
 
     @Override
     @BizMutation
-    public ErpHrSalarySimulation reject(@Name("simulationId") Long simulationId,
+    public ErpHrSalarySimulation reject(@Name("simulationId") String simulationId,
                                         @Name("reason") String reason,
                                         IServiceContext context) {
         ErpHrSalarySimulation simulation = requireSimulation(simulationId, context);
@@ -341,21 +341,21 @@ public class ErpHrSalarySimulationBizModel extends CrudBizModel<ErpHrSalarySimul
 
     @Override
     @BizMutation
-    public ErpHrSalarySimulation convertToFormal(@Name("simulationId") Long simulationId,
+    public ErpHrSalarySimulation convertToFormal(@Name("simulationId") String simulationId,
                                                  IServiceContext context) {
         return convertToFormalProcessor.convertToFormal(simulationId, context);
     }
 
     @Override
     @BizQuery
-    public List<ErpHrSalarySimulation> findSimulationsByConvertedSalary(@Name("salaryId") Long salaryId,
+    public List<ErpHrSalarySimulation> findSimulationsByConvertedSalary(@Name("salaryId") String salaryId,
                                                                         IServiceContext context) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("convertedSalaryId", salaryId));
         return findList(q, null, context);
     }
 
-    List<ErpHrSalarySimulationItemAdjustment> findAdjustmentsByEmployee(Long simulationId, Long employeeId) {
+    List<ErpHrSalarySimulationItemAdjustment> findAdjustmentsByEmployee(String simulationId, String employeeId) {
         IEntityDao<ErpHrSalarySimulationItemAdjustment> dao = daoProvider().daoFor(ErpHrSalarySimulationItemAdjustment.class);
         QueryBean q = new QueryBean();
         q.addFilter(and(
@@ -366,7 +366,7 @@ public class ErpHrSalarySimulationBizModel extends CrudBizModel<ErpHrSalarySimul
 
     // ---------- helpers ----------
 
-    ErpHrSalarySimulation requireSimulation(Long simulationId, IServiceContext context) {
+    ErpHrSalarySimulation requireSimulation(String simulationId, IServiceContext context) {
         return requireEntity(String.valueOf(simulationId), null, context);
     }
 
@@ -389,21 +389,21 @@ public class ErpHrSalarySimulationBizModel extends CrudBizModel<ErpHrSalarySimul
         Object positionId = scope.get("positionId");
         Object employeeIds = scope.get("employeeIds");
         if (employeeIds != null) {
-            List<Object> ids = toLongList(employeeIds);
+            List<Object> ids = toStringIdList(employeeIds);
             if (!ids.isEmpty()) {
                 salaryQuery.addFilter(in("employeeId", ids));
             }
             return;
         }
-        List<Long> matchedEmployeeIds = findEmployeeIdsByScope(departmentId, positionId);
+        List<String> matchedEmployeeIds = findEmployeeIdsByScope(departmentId, positionId);
         if (!matchedEmployeeIds.isEmpty()) {
             salaryQuery.addFilter(in("employeeId", matchedEmployeeIds));
         } else if (departmentId != null || positionId != null) {
-            salaryQuery.addFilter(in("employeeId", Collections.singletonList(-1L)));
+            salaryQuery.addFilter(in("employeeId", Collections.singletonList("")));
         }
     }
 
-    List<Long> findEmployeeIdsByScope(Object departmentId, Object positionId) {
+    List<String> findEmployeeIdsByScope(Object departmentId, Object positionId) {
         if (departmentId == null && positionId == null) {
             return Collections.emptyList();
         }
@@ -411,17 +411,17 @@ public class ErpHrSalarySimulationBizModel extends CrudBizModel<ErpHrSalarySimul
         QueryBean q = new QueryBean();
         List<TreeBean> filters = new ArrayList<>();
         if (departmentId != null) {
-            filters.add(eq("departmentId", toLong(departmentId)));
+            filters.add(eq("departmentId", toStringId(departmentId)));
         }
         if (positionId != null) {
-            filters.add(eq("positionId", toLong(positionId)));
+            filters.add(eq("positionId", toStringId(positionId)));
         }
         if (!filters.isEmpty()) {
             q.addFilter(and(filters.toArray(new TreeBean[0])));
         }
         q.setLimit(10000);
         List<ErpHrEmployee> employees = dao.findAllByQuery(q);
-        List<Long> ids = new ArrayList<>(employees.size());
+        List<String> ids = new ArrayList<>(employees.size());
         for (ErpHrEmployee e : employees) {
             ids.add(e.getId());
         }
@@ -429,36 +429,36 @@ public class ErpHrSalarySimulationBizModel extends CrudBizModel<ErpHrSalarySimul
     }
 
     @SuppressWarnings("unchecked")
-    List<Object> toLongList(Object raw) {
+    List<Object> toStringIdList(Object raw) {
         if (raw == null) {
             return Collections.emptyList();
         }
         List<Object> result = new ArrayList<>();
         if (raw instanceof List) {
             for (Object o : (List<Object>) raw) {
-                result.add(toLong(o));
+                result.add(toStringId(o));
             }
         } else if (raw.getClass().isArray()) {
             for (Object o : (Object[]) raw) {
-                result.add(toLong(o));
+                result.add(toStringId(o));
             }
         } else {
-            result.add(toLong(raw));
+            result.add(toStringId(raw));
         }
         return result;
     }
 
-    Long toLong(Object o) {
+    String toStringId(Object o) {
         if (o == null) {
             return null;
         }
-        if (o instanceof Number) {
-            return ((Number) o).longValue();
+        if (o instanceof String) {
+            return (String) o;
         }
-        return Long.parseLong(o.toString());
+        return o.toString();
     }
 
-    ErpHrSalary requireSourceSalary(Long employeeId, ErpHrSalarySimulation simulation) {
+    ErpHrSalary requireSourceSalary(String employeeId, ErpHrSalarySimulation simulation) {
         int sourceYear;
         int sourceMonth;
         if (simulation.getSourceSalaryId() != null) {
@@ -491,7 +491,7 @@ public class ErpHrSalarySimulationBizModel extends CrudBizModel<ErpHrSalarySimul
         return list.get(0);
     }
 
-    ErpHrSalarySimulationItemAdjustment findAdjustment(Long simulationId, Long employeeId, String salaryItemCode) {
+    ErpHrSalarySimulationItemAdjustment findAdjustment(String simulationId, String employeeId, String salaryItemCode) {
         IEntityDao<ErpHrSalarySimulationItemAdjustment> dao = daoProvider().daoFor(ErpHrSalarySimulationItemAdjustment.class);
         QueryBean q = new QueryBean();
         q.addFilter(and(
@@ -503,7 +503,7 @@ public class ErpHrSalarySimulationBizModel extends CrudBizModel<ErpHrSalarySimul
         return list.isEmpty() ? null : list.get(0);
     }
 
-    Map<String, BigDecimal> collectOverrides(Long simulationId, Long employeeId) {
+    Map<String, BigDecimal> collectOverrides(String simulationId, String employeeId) {
         List<ErpHrSalarySimulationItemAdjustment> adjList = findAdjustmentsByEmployee(simulationId, employeeId);
         Map<String, BigDecimal> overrides = new LinkedHashMap<>();
         for (ErpHrSalarySimulationItemAdjustment a : adjList) {
@@ -548,14 +548,14 @@ public class ErpHrSalarySimulationBizModel extends CrudBizModel<ErpHrSalarySimul
             "grossSalary", "socialInsurance", "housingFund", "taxAmount",
             "otherDeductions", "netSalary");
 
-    ErpHrSalary findCurrentPeriodSalary(Long employeeId, Integer year, Integer month) {
+    ErpHrSalary findCurrentPeriodSalary(String employeeId, Integer year, Integer month) {
         if (year == null || month == null) {
             return null;
         }
         return findOneSalary(employeeId, year, month);
     }
 
-    ErpHrSalary findPreviousPeriodSalary(Long employeeId, int year, int month) {
+    ErpHrSalary findPreviousPeriodSalary(String employeeId, int year, int month) {
         int prevYear = year;
         int prevMonth = month - 1;
         if (prevMonth < 1) {
@@ -565,7 +565,7 @@ public class ErpHrSalarySimulationBizModel extends CrudBizModel<ErpHrSalarySimul
         return findOneSalary(employeeId, prevYear, prevMonth);
     }
 
-    ErpHrSalary findOneSalary(Long employeeId, int year, int month) {
+    ErpHrSalary findOneSalary(String employeeId, int year, int month) {
         QueryBean q = new QueryBean();
         q.addFilter(and(
                 eq("employeeId", employeeId),
@@ -577,7 +577,7 @@ public class ErpHrSalarySimulationBizModel extends CrudBizModel<ErpHrSalarySimul
         return list.isEmpty() ? null : list.get(0);
     }
 
-    Map<Long, EmployeeSimResult> computeAllEmployeeSims(ErpHrSalarySimulation simulation, IServiceContext context) {
+    Map<String, EmployeeSimResult> computeAllEmployeeSims(ErpHrSalarySimulation simulation, IServiceContext context) {
         int sourceYear;
         int sourceMonth;
         // 内部只读访问：经 ORM 关系导航读取代表行（context 不可得；对齐 PayrollCalculator 读 master 模式）
@@ -599,13 +599,13 @@ public class ErpHrSalarySimulationBizModel extends CrudBizModel<ErpHrSalarySimul
         IEntityDao<ErpHrSalary> dao = daoProvider().daoFor(ErpHrSalary.class);
         List<ErpHrSalary> sources = dao.findAllByQuery(q);
 
-        Map<Long, EmployeeSimResult> result = new LinkedHashMap<>();
+        Map<String, EmployeeSimResult> result = new LinkedHashMap<>();
         int targetYear = simulation.getSimulationPeriodYear() != null
                 ? simulation.getSimulationPeriodYear() : sourceYear;
         int targetMonth = simulation.getSimulationPeriodMonth() != null
                 ? simulation.getSimulationPeriodMonth() : sourceMonth;
         for (ErpHrSalary src : sources) {
-            Long empId = src.getEmployeeId();
+            String empId = src.getEmployeeId();
             Map<String, BigDecimal> overrides = collectOverrides(simulation.getId(), empId);
             ErpHrSalary simulated = payrollCalculator.recalculateWithOverrides(src, overrides, targetYear, targetMonth);
             result.put(empId, new EmployeeSimResult(src, simulated));
@@ -613,17 +613,17 @@ public class ErpHrSalarySimulationBizModel extends CrudBizModel<ErpHrSalarySimul
         return result;
     }
 
-    List<Long> filterByScope(List<Long> employeeIds, Map<String, Object> scope) {
+    List<String> filterByScope(List<String> employeeIds, Map<String, Object> scope) {
         if (scope == null || scope.isEmpty()) {
             return employeeIds;
         }
         Object employeeIdsRaw = scope.get("employeeIds");
         if (employeeIdsRaw != null) {
-            List<Object> ids = toLongList(employeeIdsRaw);
-            List<Long> result = new ArrayList<>();
+            List<Object> ids = toStringIdList(employeeIdsRaw);
+            List<String> result = new ArrayList<>();
             for (Object o : ids) {
-                if (o instanceof Long && employeeIds.contains(o)) {
-                    result.add((Long) o);
+                if (o instanceof String && employeeIds.contains(o)) {
+                    result.add((String) o);
                 }
             }
             return result;
@@ -633,9 +633,9 @@ public class ErpHrSalarySimulationBizModel extends CrudBizModel<ErpHrSalarySimul
         if (departmentId == null && positionId == null) {
             return employeeIds;
         }
-        List<Long> matched = findEmployeeIdsByScope(departmentId, positionId);
-        List<Long> result = new ArrayList<>();
-        for (Long id : employeeIds) {
+        List<String> matched = findEmployeeIdsByScope(departmentId, positionId);
+        List<String> result = new ArrayList<>();
+        for (String id : employeeIds) {
             if (matched.contains(id)) {
                 result.add(id);
             }
@@ -668,7 +668,7 @@ public class ErpHrSalarySimulationBizModel extends CrudBizModel<ErpHrSalarySimul
         }
     }
 
-    void recordAdjustment(Long simulationId, Long employeeId, String salaryItemCode,
+    void recordAdjustment(String simulationId, String employeeId, String salaryItemCode,
                           BigDecimal originalAmount, BigDecimal adjustedAmount,
                           String reason, IServiceContext context) {
         ErpHrSalarySimulationItemAdjustment adj = findAdjustment(simulationId, employeeId, salaryItemCode);
@@ -692,7 +692,7 @@ public class ErpHrSalarySimulationBizModel extends CrudBizModel<ErpHrSalarySimul
         }
     }
 
-    Map<Long, Long> loadEmployeeDepartments(java.util.Set<Long> employeeIds) {
+    Map<String, String> loadEmployeeDepartments(java.util.Set<String> employeeIds) {
         if (employeeIds.isEmpty()) {
             return Collections.emptyMap();
         }
@@ -701,7 +701,7 @@ public class ErpHrSalarySimulationBizModel extends CrudBizModel<ErpHrSalarySimul
         q.addFilter(in("id", new ArrayList<>(employeeIds)));
         q.setLimit(10000);
         List<ErpHrEmployee> employees = dao.findAllByQuery(q);
-        Map<Long, Long> result = new LinkedHashMap<>();
+        Map<String, String> result = new LinkedHashMap<>();
         for (ErpHrEmployee e : employees) {
             if (e.getDepartmentId() != null) {
                 result.put(e.getId(), e.getDepartmentId());
@@ -710,7 +710,7 @@ public class ErpHrSalarySimulationBizModel extends CrudBizModel<ErpHrSalarySimul
         return result;
     }
 
-    Map<Long, String> loadEmployeeJobGrades(java.util.Set<Long> employeeIds) {
+    Map<String, String> loadEmployeeJobGrades(java.util.Set<String> employeeIds) {
         if (employeeIds.isEmpty()) {
             return Collections.emptyMap();
         }
@@ -719,7 +719,7 @@ public class ErpHrSalarySimulationBizModel extends CrudBizModel<ErpHrSalarySimul
         q.addFilter(in("id", new ArrayList<>(employeeIds)));
         q.setLimit(10000);
         List<ErpHrEmployee> employees = dao.findAllByQuery(q);
-        Map<Long, Long> empToPosition = new LinkedHashMap<>();
+        Map<String, String> empToPosition = new LinkedHashMap<>();
         for (ErpHrEmployee e : employees) {
             if (e.getPositionId() != null) {
                 empToPosition.put(e.getId(), e.getPositionId());
@@ -733,18 +733,18 @@ public class ErpHrSalarySimulationBizModel extends CrudBizModel<ErpHrSalarySimul
         pq.addFilter(in("id", new ArrayList<>(empToPosition.values())));
         pq.setLimit(10000);
         List<app.erp.hr.dao.entity.ErpHrPosition> positions = posDao.findAllByQuery(pq);
-        Map<Long, String> posToGrade = new LinkedHashMap<>();
+        Map<String, String> posToGrade = new LinkedHashMap<>();
         for (app.erp.hr.dao.entity.ErpHrPosition p : positions) {
             posToGrade.put(p.getId(), p.getJobGrade());
         }
-        Map<Long, String> result = new LinkedHashMap<>();
-        for (Map.Entry<Long, Long> e : empToPosition.entrySet()) {
+        Map<String, String> result = new LinkedHashMap<>();
+        for (Map.Entry<String, String> e : empToPosition.entrySet()) {
             result.put(e.getKey(), posToGrade.get(e.getValue()));
         }
         return result;
     }
 
-    Map<Long, String> loadDepartmentNames(java.util.Set<Long> departmentIds) {
+    Map<String, String> loadDepartmentNames(java.util.Set<String> departmentIds) {
         if (departmentIds.isEmpty()) {
             return Collections.emptyMap();
         }
@@ -753,7 +753,7 @@ public class ErpHrSalarySimulationBizModel extends CrudBizModel<ErpHrSalarySimul
         q.addFilter(in("id", new ArrayList<>(departmentIds)));
         q.setLimit(10000);
         List<app.erp.hr.dao.entity.ErpHrDepartment> depts = dao.findAllByQuery(q);
-        Map<Long, String> result = new LinkedHashMap<>();
+        Map<String, String> result = new LinkedHashMap<>();
         for (app.erp.hr.dao.entity.ErpHrDepartment d : depts) {
             result.put(d.getId(), d.getName());
         }
@@ -809,7 +809,7 @@ public class ErpHrSalarySimulationBizModel extends CrudBizModel<ErpHrSalarySimul
         return simRate.subtract(srcRate).compareTo(new BigDecimal("0.05")) > 0;
     }
 
-    Map<String, Object> anomalyEntry(Long employeeId, String anomalyType, String message,
+    Map<String, Object> anomalyEntry(String employeeId, String anomalyType, String message,
                                      String detailKey, Object detailValue) {
         Map<String, Object> entry = new LinkedHashMap<>();
         entry.put("employeeId", employeeId);
@@ -821,7 +821,7 @@ public class ErpHrSalarySimulationBizModel extends CrudBizModel<ErpHrSalarySimul
         return entry;
     }
 
-    Map<String, Object> anomalyEntry(Long employeeId, String anomalyType, String message,
+    Map<String, Object> anomalyEntry(String employeeId, String anomalyType, String message,
                                      String k1, Object v1, String k2, Object v2) {
         Map<String, Object> entry = anomalyEntry(employeeId, anomalyType, message, k1, v1);
         if (k2 != null) {
@@ -830,7 +830,7 @@ public class ErpHrSalarySimulationBizModel extends CrudBizModel<ErpHrSalarySimul
         return entry;
     }
 
-    boolean hasAnyAdjustment(Long simulationId) {
+    boolean hasAnyAdjustment(String simulationId) {
         IEntityDao<ErpHrSalarySimulationItemAdjustment> dao = daoProvider().daoFor(ErpHrSalarySimulationItemAdjustment.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("simulationId", simulationId));
@@ -838,7 +838,7 @@ public class ErpHrSalarySimulationBizModel extends CrudBizModel<ErpHrSalarySimul
         return !dao.findAllByQuery(q).isEmpty();
     }
 
-    boolean hasPaidSalary(Long employeeId, int year, int month) {
+    boolean hasPaidSalary(String employeeId, int year, int month) {
         QueryBean q = new QueryBean();
         q.addFilter(and(
                 eq("employeeId", employeeId),
@@ -850,7 +850,7 @@ public class ErpHrSalarySimulationBizModel extends CrudBizModel<ErpHrSalarySimul
         return !dao.findAllByQuery(q).isEmpty();
     }
 
-    boolean hasNonVoidSalary(Long employeeId, int year, int month) {
+    boolean hasNonVoidSalary(String employeeId, int year, int month) {
         QueryBean q = new QueryBean();
         q.addFilter(and(
                 eq("employeeId", employeeId),
@@ -864,7 +864,7 @@ public class ErpHrSalarySimulationBizModel extends CrudBizModel<ErpHrSalarySimul
         return !dao.findAllByQuery(q).isEmpty();
     }
 
-    Map<String, Object> conflictEntry(Long employeeId, String conflictType, String message) {
+    Map<String, Object> conflictEntry(String employeeId, String conflictType, String message) {
         Map<String, Object> entry = new LinkedHashMap<>();
         entry.put("employeeId", employeeId);
         entry.put("conflictType", conflictType);

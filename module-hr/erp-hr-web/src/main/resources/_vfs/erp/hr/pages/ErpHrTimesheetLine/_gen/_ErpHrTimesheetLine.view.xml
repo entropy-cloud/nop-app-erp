@@ -19,13 +19,13 @@
             <cols>
 
                 <!--ID-->
-                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="id" mandatory="true" sortable="true"/>
 
                 <!--工时表ID-->
-                <col id="timesheetId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="timesheetId" mandatory="true" sortable="true"/>
 
                 <!--员工-->
-                <col id="employeeId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="employeeId" mandatory="true" sortable="true"/>
 
                 <!--工作日期-->
                 <col id="workDate" mandatory="true" sortable="true"/>

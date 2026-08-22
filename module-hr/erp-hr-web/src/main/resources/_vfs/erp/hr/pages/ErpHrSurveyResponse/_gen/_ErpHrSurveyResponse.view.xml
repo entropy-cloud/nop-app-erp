@@ -19,13 +19,13 @@
             <cols>
 
                 <!--ID-->
-                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="id" mandatory="true" sortable="true"/>
 
                 <!--所属问卷-->
-                <col id="surveyId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="surveyId" mandatory="true" sortable="true"/>
 
                 <!--填写员工-->
-                <col id="employeeId" ui:number="true" sortable="true"/>
+                <col id="employeeId" sortable="true"/>
 
                 <!--匿名哈希-->
                 <col id="respondentHash" sortable="true"/>
@@ -40,7 +40,7 @@
                 <col id="isComplete" sortable="true"/>
 
                 <!--业务组织-->
-                <col id="orgId" ui:number="true" sortable="true"/>
+                <col id="orgId" sortable="true"/>
 
                 <!--逻辑删除版本-->
                 <col id="delVersion" mandatory="true" ui:number="true" sortable="true"/>

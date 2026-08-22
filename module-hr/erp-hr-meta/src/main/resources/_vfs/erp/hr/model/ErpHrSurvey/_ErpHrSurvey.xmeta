@@ -22,8 +22,8 @@
 
     <props>
         <prop name="id" displayName="ID" propId="1" i18n-en:displayName="ID" tagSet="seq-default" mandatory="true"
-              queryable="true" sortable="true" insertable="true" updatable="false" graphql:type="String">
-            <schema type="java.lang.Long"/>
+              queryable="true" sortable="true" insertable="true" updatable="false">
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="code" displayName="编号" propId="2" i18n-en:displayName="Code" tagSet="var" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
@@ -59,7 +59,7 @@
         </prop>
         <prop name="targetDepartmentId" displayName="目标部门" propId="10" i18n-en:displayName="Target Department"
               queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="targetDepartment">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="includeENps" displayName="包含eNPS" propId="11" i18n-en:displayName="Include eNPS" queryable="true"
               sortable="true" insertable="true" updatable="true" defaultValue="false">
@@ -95,7 +95,7 @@
         </prop>
         <prop name="orgId" displayName="业务组织" propId="19" i18n-en:displayName="Organization" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="org">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="remark" displayName="备注" propId="20" i18n-en:displayName="Remark" queryable="true" sortable="true"
               insertable="true" updatable="true">

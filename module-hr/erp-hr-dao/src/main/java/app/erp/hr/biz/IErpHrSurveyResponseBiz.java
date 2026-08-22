@@ -21,8 +21,8 @@ public interface IErpHrSurveyResponseBiz extends ICrudBiz<ErpHrSurveyResponse>{
      * answers 为回答明细列表，每项含 questionId + ratingValue/selectedOption/openText。
      */
     @BizMutation
-    ErpHrSurveyResponse submitResponse(@Name("surveyId") Long surveyId,
-                                       @Name("employeeId") Long employeeId,
+    ErpHrSurveyResponse submitResponse(@Name("surveyId") String surveyId,
+                                       @Name("employeeId") String employeeId,
                                        @Name("answers") List<Map<String, Object>> answers,
                                        IServiceContext context);
 }

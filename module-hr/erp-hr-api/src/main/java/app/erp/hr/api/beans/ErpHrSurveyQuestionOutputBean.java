@@ -13,30 +13,30 @@
     public class ErpHrSurveyQuestionOutputBean {
 
     
-        private Long _id;
+        private String _id;
 
     
         @PropMeta(propId=1)
     
-        public Long getId(){
+        public String getId(){
             return _id;
         }
 
-        public void setId(Long value){
+        public void setId(String value){
             this._id = value;
         }
 
 
-        private Long _surveyId;
+        private String _surveyId;
 
     
         @PropMeta(propId=2)
     
-        public Long getSurveyId(){
+        public String getSurveyId(){
             return _surveyId;
         }
 
-        public void setSurveyId(Long value){
+        public void setSurveyId(String value){
             this._surveyId = value;
         }
 

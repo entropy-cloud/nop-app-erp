@@ -39,10 +39,10 @@ public interface IErpHrEmployeeBiz extends ICrudBiz<ErpHrEmployee> {
      */
     @BizMutation
     @SingleSession
-    ErpHrEmployee transferEmployee(@Name("employeeId") Long employeeId,
-                                   @Name("targetDepartmentId") Long targetDepartmentId,
-                                   @Name("targetPositionId") Long targetPositionId,
-                                   @Name("targetSuperiorId") Long targetSuperiorId,
+    ErpHrEmployee transferEmployee(@Name("employeeId") String employeeId,
+                                   @Name("targetDepartmentId") String targetDepartmentId,
+                                   @Name("targetPositionId") String targetPositionId,
+                                   @Name("targetSuperiorId") String targetSuperiorId,
                                    @Name("effectiveDate") LocalDate effectiveDate,
                                    @Name("handleContract") String handleContract,
                                    IServiceContext context);
@@ -58,5 +58,5 @@ public interface IErpHrEmployeeBiz extends ICrudBiz<ErpHrEmployee> {
      * @return key=引用域名（contract/timesheet/salary/attendance/leave），value=引用行数。无引用返回空 Map
      */
     @BizQuery
-    Map<String, Long> countReferences(@Name("id") Long id, IServiceContext context);
+    Map<String, Long> countReferences(@Name("id") String id, IServiceContext context);
 }

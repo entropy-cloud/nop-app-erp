@@ -16,7 +16,7 @@ import io.nop.dao.api.IEntityDao;
  */
 public class ErpHrShiftSwapRequestApproveProcessor extends AbstractErpHrShiftSwapRequestProcessor {
 
-    public ErpHrShiftSwapRequest approve(Long swapRequestId, IServiceContext context) {
+    public ErpHrShiftSwapRequest approve(String swapRequestId, IServiceContext context) {
         ErpHrShiftSwapRequest req = requireSwapRequest(String.valueOf(swapRequestId), context);
         assertTransition(req, ErpHrConstants.SWAP_STATUS_PENDING, ErpHrConstants.SWAP_STATUS_APPROVED);
         ErpHrShiftAssignment source = assignmentBiz.requireEntity(
@@ -29,7 +29,7 @@ public class ErpHrShiftSwapRequestApproveProcessor extends AbstractErpHrShiftSwa
                     .param(ErpHrErrors.ARG_SWAP_REQUEST_ID, swapRequestId);
         }
         // 互换班次（shift-scheduling.md §5.2）
-        Long sourceShiftId = source.getShiftId();
+        String sourceShiftId = source.getShiftId();
         source.setShiftId(target.getShiftId());
         target.setShiftId(sourceShiftId);
         // 记录 swapRequestId + replacedByAssignmentId 双向追溯

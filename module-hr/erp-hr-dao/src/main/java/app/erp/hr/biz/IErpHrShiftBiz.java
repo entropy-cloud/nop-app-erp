@@ -32,7 +32,7 @@ public interface IErpHrShiftBiz extends ICrudBiz<ErpHrShift> {
      */
     @BizMutation
     @SingleSession
-    ErpHrAttendance calcAttendance(@Name("employeeId") Long employeeId,
+    ErpHrAttendance calcAttendance(@Name("employeeId") String employeeId,
                                    @Name("assignmentDate") LocalDate assignmentDate,
                                    IServiceContext context);
 
@@ -40,7 +40,7 @@ public interface IErpHrShiftBiz extends ICrudBiz<ErpHrShift> {
      * 查询某员工某日的考勤记录（可空）。
      */
     @BizQuery
-    ErpHrAttendance findAttendanceByDate(@Name("employeeId") Long employeeId,
+    ErpHrAttendance findAttendanceByDate(@Name("employeeId") String employeeId,
                                          @Name("date") LocalDate date,
                                          IServiceContext context);
 
@@ -52,7 +52,7 @@ public interface IErpHrShiftBiz extends ICrudBiz<ErpHrShift> {
      */
     @BizMutation
     @SingleSession
-    void onLeaveApproved(@Name("leaveRequestId") Long leaveRequestId, IServiceContext context);
+    void onLeaveApproved(@Name("leaveRequestId") String leaveRequestId, IServiceContext context);
 
     /**
      * 休假取消联动（shift-scheduling.md §6.2）。
@@ -62,5 +62,5 @@ public interface IErpHrShiftBiz extends ICrudBiz<ErpHrShift> {
      */
     @BizMutation
     @SingleSession
-    void onLeaveCancelled(@Name("leaveRequestId") Long leaveRequestId, IServiceContext context);
+    void onLeaveCancelled(@Name("leaveRequestId") String leaveRequestId, IServiceContext context);
 }

@@ -22,8 +22,8 @@
 
     <props>
         <prop name="id" displayName="ID" propId="1" i18n-en:displayName="ID" tagSet="seq-default" mandatory="true"
-              queryable="true" sortable="true" insertable="true" updatable="false" graphql:type="String">
-            <schema type="java.lang.Long"/>
+              queryable="true" sortable="true" insertable="true" updatable="false">
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="code" displayName="编码" propId="2" i18n-en:displayName="Code" tagSet="var" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
@@ -35,19 +35,19 @@
         </prop>
         <prop name="parentId" displayName="上级部门" propId="4" i18n-en:displayName="Parent Department" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="parent">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="managerId" displayName="部门负责人" propId="5" i18n-en:displayName="Manager" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="manager">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="costCenterId" displayName="成本中心" propId="6" i18n-en:displayName="Cost Center" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="costCenter">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="orgId" displayName="业务组织" propId="7" i18n-en:displayName="Organization" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="org">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="remark" displayName="备注" propId="8" i18n-en:displayName="Remark" queryable="true" sortable="true"
               insertable="true" updatable="true">

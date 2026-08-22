@@ -27,7 +27,7 @@ public interface IErpHrRecruitmentBiz extends ICrudBiz<ErpHrRecruitment>{
     @BizMutation
     @SingleSession
     ErpHrRecruitment scheduleInterview(@Name("id") String id,
-                                       @Name("interviewerId") Long interviewerId,
+                                       @Name("interviewerId") String interviewerId,
                                        @Name("interviewDate") LocalDate interviewDate,
                                        IServiceContext context);
 

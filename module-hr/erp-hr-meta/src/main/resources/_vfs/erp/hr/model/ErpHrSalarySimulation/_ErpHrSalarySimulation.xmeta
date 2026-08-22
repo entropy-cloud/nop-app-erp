@@ -22,8 +22,8 @@
 
     <props>
         <prop name="id" displayName="ID" propId="1" i18n-en:displayName="ID" tagSet="seq-default" mandatory="true"
-              queryable="true" sortable="true" insertable="true" updatable="false" graphql:type="String">
-            <schema type="java.lang.Long"/>
+              queryable="true" sortable="true" insertable="true" updatable="false">
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="code" displayName="编号" propId="2" i18n-en:displayName="Code" tagSet="var" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
@@ -31,11 +31,11 @@
         </prop>
         <prop name="orgId" displayName="业务组织" propId="3" i18n-en:displayName="Organization" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="org">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="sourceSalaryId" displayName="源薪酬记录" propId="4" i18n-en:displayName="Source Salary" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="sourceSalary">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="simulationPeriodYear" displayName="模拟年份" propId="5" i18n-en:displayName="Simulation Period Year"
               mandatory="true" queryable="true" sortable="true" insertable="true" updatable="true">
@@ -55,7 +55,7 @@
         </prop>
         <prop name="reviewerId" displayName="审批人" propId="9" i18n-en:displayName="Reviewer" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="reviewer">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="reviewedAt" displayName="审批时间" propId="10" i18n-en:displayName="Reviewed At" tagSet="clock"
               queryable="true" sortable="true" insertable="true" updatable="true">
@@ -67,7 +67,7 @@
         </prop>
         <prop name="convertedSalaryId" displayName="转正式薪酬ID" propId="12" i18n-en:displayName="Converted Salary"
               queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="convertedSalary">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="notes" displayName="备注" propId="13" i18n-en:displayName="Notes" queryable="true" sortable="true"
               insertable="true" updatable="true">

@@ -52,8 +52,7 @@ public abstract class AbstractErpHrLeaveRequestProcessor {
     }
 
     protected ErpHrLeaveRequest requireLeave(String id) {
-        Long pk = Long.valueOf(id);
-        ErpHrLeaveRequest leave = leaveRequestDao().getEntityById(pk);
+        ErpHrLeaveRequest leave = leaveRequestDao().getEntityById(id);
         if (leave == null) {
             throw new NopException(ErpHrErrors.ERR_LEAVE_REQUEST_NOT_FOUND)
                     .param(ErpHrErrors.ARG_LEAVE_REQUEST_ID, id);
@@ -147,7 +146,7 @@ public abstract class AbstractErpHrLeaveRequestProcessor {
         }
     }
 
-    protected ErpHrLeaveBalance findBalance(Long employeeId, String leaveType, Integer fiscalYear, IServiceContext context) {
+    protected ErpHrLeaveBalance findBalance(String employeeId, String leaveType, Integer fiscalYear, IServiceContext context) {
         QueryBean q = new QueryBean();
         q.addFilter(and(
                 eq("employeeId", employeeId),
@@ -157,7 +156,7 @@ public abstract class AbstractErpHrLeaveRequestProcessor {
         return leaveBalanceBiz.findFirst(q, null, context);
     }
 
-    protected BigDecimal sumUsedDays(Long employeeId, String leaveType, Integer fiscalYear, IServiceContext context) {
+    protected BigDecimal sumUsedDays(String employeeId, String leaveType, Integer fiscalYear, IServiceContext context) {
         LocalDate yearStart = LocalDate.of(fiscalYear, 1, 1);
         LocalDate yearEnd = LocalDate.of(fiscalYear, 12, 31);
         QueryBean q = new QueryBean();
@@ -173,7 +172,7 @@ public abstract class AbstractErpHrLeaveRequestProcessor {
         return sum;
     }
 
-    protected Long resolveApproverId(IServiceContext context) {
+    protected String resolveApproverId(IServiceContext context) {
         // 审批人取当前用户关联的员工记录（非关键——仅记录审批轨迹）
         return null;
     }

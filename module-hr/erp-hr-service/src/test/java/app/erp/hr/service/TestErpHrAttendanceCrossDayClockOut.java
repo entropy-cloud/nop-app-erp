@@ -69,9 +69,9 @@ public class TestErpHrAttendanceCrossDayClockOut extends JunitAutoTestCase {
     @Test
     public void testCrossDayClockOutHitsYesterdayNightShift() {
         LocalDate yesterday = HrFrozenClockExtension.REFERENCE_DATE.minusDays(1);
-        Long empId = ormTemplate.runInSession(session -> {
-            Long emp = seedEmployee("EMP-CROSS-HIT");
-            Long shiftId = seedNightShift();
+        String empId = ormTemplate.runInSession(session -> {
+            String emp = seedEmployee("EMP-CROSS-HIT");
+            String shiftId = seedNightShift();
             assignmentBiz.assignSingle(emp, shiftId, yesterday, CTX);
             seedAttendance(emp, yesterday, LocalDateTime.now().minusHours(9), null);
             return emp;
@@ -96,9 +96,9 @@ public class TestErpHrAttendanceCrossDayClockOut extends JunitAutoTestCase {
     public void testTodayRecordTakesPriorityOverYesterdayFallback() {
         LocalDate today = HrFrozenClockExtension.REFERENCE_DATE;
         LocalDate yesterday = today.minusDays(1);
-        Long empId = ormTemplate.runInSession(session -> {
-            Long emp = seedEmployee("EMP-CROSS-PRIO");
-            Long shiftId = seedNightShift();
+        String empId = ormTemplate.runInSession(session -> {
+            String emp = seedEmployee("EMP-CROSS-PRIO");
+            String shiftId = seedNightShift();
             assignmentBiz.assignSingle(emp, shiftId, yesterday, CTX);
             seedAttendance(emp, yesterday, LocalDateTime.now().minusHours(20), null);
             seedAttendance(emp, today, LocalDateTime.now().minusHours(3), null);
@@ -116,8 +116,8 @@ public class TestErpHrAttendanceCrossDayClockOut extends JunitAutoTestCase {
     @Test
     public void testCrossDayClockOutRejectedWithoutYesterdayShiftAssignment() {
         LocalDate yesterday = HrFrozenClockExtension.REFERENCE_DATE.minusDays(1);
-        Long empId = ormTemplate.runInSession(session -> {
-            Long emp = seedEmployee("EMP-CROSS-NOSHIFT");
+        String empId = ormTemplate.runInSession(session -> {
+            String emp = seedEmployee("EMP-CROSS-NOSHIFT");
             seedAttendance(emp, yesterday, LocalDateTime.now().minusHours(9), null);
             return emp;
         });
@@ -131,9 +131,9 @@ public class TestErpHrAttendanceCrossDayClockOut extends JunitAutoTestCase {
     @Test
     public void testCrossDayClockOutRejectedWhenYesterdayClockInNull() {
         LocalDate yesterday = HrFrozenClockExtension.REFERENCE_DATE.minusDays(1);
-        Long empId = ormTemplate.runInSession(session -> {
-            Long emp = seedEmployee("EMP-CROSS-NOIN");
-            Long shiftId = seedNightShift();
+        String empId = ormTemplate.runInSession(session -> {
+            String emp = seedEmployee("EMP-CROSS-NOIN");
+            String shiftId = seedNightShift();
             assignmentBiz.assignSingle(emp, shiftId, yesterday, CTX);
             seedAttendance(emp, yesterday, null, null);
             return emp;
@@ -148,8 +148,8 @@ public class TestErpHrAttendanceCrossDayClockOut extends JunitAutoTestCase {
     @Test
     public void testNormalClockOutUnchangedWithoutCrossDayData() {
         LocalDate today = HrFrozenClockExtension.REFERENCE_DATE;
-        Long empId = ormTemplate.runInSession(session -> {
-            Long emp = seedEmployee("EMP-CROSS-NORMAL");
+        String empId = ormTemplate.runInSession(session -> {
+            String emp = seedEmployee("EMP-CROSS-NORMAL");
             seedAttendance(emp, today, LocalDateTime.now().minusHours(2), null);
             return emp;
         });
@@ -159,7 +159,7 @@ public class TestErpHrAttendanceCrossDayClockOut extends JunitAutoTestCase {
         assertNotNull(after.getClockOut(), "常规路径：clockOut 落值");
 
         // 无任何记录（今日 + 昨日均无）→ 行为不变：拒绝
-        Long freshEmp = ormTemplate.runInSession(session -> seedEmployee("EMP-CROSS-EMPTY"));
+        String freshEmp = ormTemplate.runInSession(session -> seedEmployee("EMP-CROSS-EMPTY"));
         NopException ex = assertThrows(NopException.class,
                 () -> ormTemplate.runInSession(session -> attendanceBiz.clockOut(freshEmp, CTX)));
         assertEquals(ErpHrErrors.ERR_NOT_CLOCKED_IN.getErrorCode(), ex.getErrorCode());
@@ -167,7 +167,7 @@ public class TestErpHrAttendanceCrossDayClockOut extends JunitAutoTestCase {
 
     // ---------- helpers ----------
 
-    private Long seedNightShift() {
+    private String seedNightShift() {
         IEntityDao<ErpHrShift> dao = daoProvider.daoFor(ErpHrShift.class);
         ErpHrShift s = new ErpHrShift();
         s.setCode("NIGHT");
@@ -183,7 +183,7 @@ public class TestErpHrAttendanceCrossDayClockOut extends JunitAutoTestCase {
         return s.getId();
     }
 
-    private Long seedEmployee(String code) {
+    private String seedEmployee(String code) {
         IEntityDao<ErpHrEmployee> dao = daoProvider.daoFor(ErpHrEmployee.class);
         ErpHrEmployee emp = new ErpHrEmployee();
         emp.setCode(code);
@@ -198,7 +198,7 @@ public class TestErpHrAttendanceCrossDayClockOut extends JunitAutoTestCase {
         return emp.getId();
     }
 
-    private void seedAttendance(Long employeeId, LocalDate date, LocalDateTime clockIn, LocalDateTime clockOut) {
+    private void seedAttendance(String employeeId, LocalDate date, LocalDateTime clockIn, LocalDateTime clockOut) {
         IEntityDao<ErpHrAttendance> dao = daoProvider.daoFor(ErpHrAttendance.class);
         ErpHrAttendance row = new ErpHrAttendance();
         row.setBusinessDate(HrFrozenClockExtension.REFERENCE_DATE);
@@ -213,7 +213,7 @@ public class TestErpHrAttendanceCrossDayClockOut extends JunitAutoTestCase {
         dao.saveEntity(row);
     }
 
-    private ErpHrAttendance findAttendanceByDate(Long employeeId, LocalDate date) {
+    private ErpHrAttendance findAttendanceByDate(String employeeId, LocalDate date) {
         QueryBean q = new QueryBean();
         q.addFilter(and(eq("employeeId", employeeId), eq("date", date)));
         q.setLimit(1);

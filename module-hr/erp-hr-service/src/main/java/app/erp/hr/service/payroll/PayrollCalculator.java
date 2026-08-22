@@ -51,7 +51,7 @@ public class PayrollCalculator {
     /**
      * 计算单员工月度薪酬。返回填充完毕的内存 ErpHrSalary（approvalStatus=PENDING）。
      */
-    public ErpHrSalary calculate(Long employeeId, int year, int month) {
+    public ErpHrSalary calculate(String employeeId, int year, int month) {
         ErpHrEmploymentContract contract = findActiveContract(employeeId);
         if (contract == null) {
             throw new NopException(ErpHrErrors.ERR_EMPLOYMENT_CONTRACT_NOT_FOUND)
@@ -255,7 +255,7 @@ public class PayrollCalculator {
         BigDecimal housingFundEE = nz(sim.getHousingFund()).setScale(scale, RoundingMode.HALF_UP);
         BigDecimal specialDeduction = socialInsuranceEE.add(housingFundEE);
 
-        Long employeeId = sim.getEmployeeId();
+        String employeeId = sim.getEmployeeId();
         int year = sim.getYear() != null ? sim.getYear() : 0;
         int month = sim.getMonth() != null ? sim.getMonth() : 0;
         Object[] taxResult = incomeTaxCalculator.calculate(employeeId, year, month, grossSalary, specialDeduction);
@@ -270,7 +270,7 @@ public class PayrollCalculator {
         sim.setNetSalary(netSalary);
     }
 
-    ErpHrEmploymentContract findActiveContract(Long employeeId) {
+    ErpHrEmploymentContract findActiveContract(String employeeId) {
         IEntityDao<ErpHrEmploymentContract> dao = daoProvider.daoFor(ErpHrEmploymentContract.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("employeeId", employeeId));
@@ -279,7 +279,7 @@ public class PayrollCalculator {
         return list.isEmpty() ? null : list.get(0);
     }
 
-    AttendanceSummary summarizeAttendance(Long employeeId, LocalDate periodStart, LocalDate periodEnd) {
+    AttendanceSummary summarizeAttendance(String employeeId, LocalDate periodStart, LocalDate periodEnd) {
         IEntityDao<ErpHrAttendance> dao = daoProvider.daoFor(ErpHrAttendance.class);
         QueryBean q = new QueryBean();
         q.addFilter(and(
@@ -313,7 +313,7 @@ public class PayrollCalculator {
      * 汇总无薪假天数（UC-HR-06）：APPROVED 状态的 SICK/PERSONAL 类型休假落入核算期间的天数。
      * 视 SICK/PERSONAL 为无薪假（config-gated by erp-hr.deduct-unpaid-leave）。
      */
-    BigDecimal sumUnpaidLeaveDays(Long employeeId, LocalDate periodStart, LocalDate periodEnd) {
+    BigDecimal sumUnpaidLeaveDays(String employeeId, LocalDate periodStart, LocalDate periodEnd) {
         IEntityDao<ErpHrLeaveRequest> dao = daoProvider.daoFor(ErpHrLeaveRequest.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("employeeId", employeeId));

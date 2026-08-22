@@ -1,2 +1,2 @@
 _chgType,ID,SURVEY_ID,DEPARTMENT_ID,TOTAL_RESPONSES,AVG_SCORE,ENPS_SCORE,DRIVER_SCORES,QUESTION_BREAKDOWN,TREND_DATA,LAST_CALCULATED_AT,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
-A,12,3,,2,7.00,100,"{""GROWTH"":4.50}","[{""questionId"":4,""avgScore"":4.50},{""questionId"":5,""avgScore"":9.50}]",[],@var:ErpHrSurveyResult@lastCalculatedAt,@var:ErpHrSurveyResult@delVersion,0,autotest-ref,*,autotest-ref,*
+A,12,3,,2,7.00,100,"{""GROWTH"":4.50}","[{""questionId"":""4"",""avgScore"":4.50},{""questionId"":""5"",""avgScore"":9.50}]",[],@var:ErpHrSurveyResult@lastCalculatedAt,@var:ErpHrSurveyResult@delVersion,0,autotest-ref,*,autotest-ref,*

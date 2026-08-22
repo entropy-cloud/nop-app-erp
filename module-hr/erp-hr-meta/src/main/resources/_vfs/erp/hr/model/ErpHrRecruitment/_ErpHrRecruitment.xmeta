@@ -22,8 +22,8 @@
 
     <props>
         <prop name="id" displayName="ID" propId="1" i18n-en:displayName="ID" tagSet="seq-default" mandatory="true"
-              queryable="true" sortable="true" insertable="true" updatable="false" graphql:type="String">
-            <schema type="java.lang.Long"/>
+              queryable="true" sortable="true" insertable="true" updatable="false">
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="code" displayName="编号" propId="2" i18n-en:displayName="Code" tagSet="var" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
@@ -31,11 +31,11 @@
         </prop>
         <prop name="positionId" displayName="招聘职位" propId="3" i18n-en:displayName="Position" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="position">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="departmentId" displayName="招聘部门" propId="4" i18n-en:displayName="Department" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="department">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="headcount" displayName="招聘人数" propId="5" i18n-en:displayName="Headcount" queryable="true"
               sortable="true" insertable="true" updatable="true" defaultValue="1">
@@ -67,7 +67,7 @@
         </prop>
         <prop name="interviewerId" displayName="面试官" propId="12" i18n-en:displayName="Interviewer" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="interviewer">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="interviewDate" displayName="面试日期" propId="13" i18n-en:displayName="Interview Date" queryable="true"
               sortable="true" insertable="true" updatable="true">
@@ -83,11 +83,11 @@
         </prop>
         <prop name="employeeId" displayName="关联员工" propId="16" i18n-en:displayName="Employee" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="employee">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="orgId" displayName="业务组织" propId="17" i18n-en:displayName="Organization" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="org">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="remark" displayName="备注" propId="18" i18n-en:displayName="Remark" queryable="true" sortable="true"
               insertable="true" updatable="true">

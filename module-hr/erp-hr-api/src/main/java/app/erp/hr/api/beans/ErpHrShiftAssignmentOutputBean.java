@@ -13,58 +13,58 @@
     public class ErpHrShiftAssignmentOutputBean {
 
     
-        private Long _id;
+        private String _id;
 
     
         @PropMeta(propId=1)
     
-        public Long getId(){
+        public String getId(){
             return _id;
         }
 
-        public void setId(Long value){
+        public void setId(String value){
             this._id = value;
         }
 
 
-        private Long _orgId;
+        private String _orgId;
 
     
         @PropMeta(propId=2)
     
-        public Long getOrgId(){
+        public String getOrgId(){
             return _orgId;
         }
 
-        public void setOrgId(Long value){
+        public void setOrgId(String value){
             this._orgId = value;
         }
 
 
-        private Long _employeeId;
+        private String _employeeId;
 
     
         @PropMeta(propId=3)
     
-        public Long getEmployeeId(){
+        public String getEmployeeId(){
             return _employeeId;
         }
 
-        public void setEmployeeId(Long value){
+        public void setEmployeeId(String value){
             this._employeeId = value;
         }
 
 
-        private Long _shiftId;
+        private String _shiftId;
 
     
         @PropMeta(propId=4)
     
-        public Long getShiftId(){
+        public String getShiftId(){
             return _shiftId;
         }
 
-        public void setShiftId(Long value){
+        public void setShiftId(String value){
             this._shiftId = value;
         }
 
@@ -151,44 +151,44 @@
         }
 
 
-        private Long _leaveRequestId;
+        private String _leaveRequestId;
 
     
         @PropMeta(propId=10)
     
-        public Long getLeaveRequestId(){
+        public String getLeaveRequestId(){
             return _leaveRequestId;
         }
 
-        public void setLeaveRequestId(Long value){
+        public void setLeaveRequestId(String value){
             this._leaveRequestId = value;
         }
 
 
-        private Long _swapRequestId;
+        private String _swapRequestId;
 
     
         @PropMeta(propId=11)
     
-        public Long getSwapRequestId(){
+        public String getSwapRequestId(){
             return _swapRequestId;
         }
 
-        public void setSwapRequestId(Long value){
+        public void setSwapRequestId(String value){
             this._swapRequestId = value;
         }
 
 
-        private Long _replacedByAssignmentId;
+        private String _replacedByAssignmentId;
 
     
         @PropMeta(propId=12)
     
-        public Long getReplacedByAssignmentId(){
+        public String getReplacedByAssignmentId(){
             return _replacedByAssignmentId;
         }
 
-        public void setReplacedByAssignmentId(Long value){
+        public void setReplacedByAssignmentId(String value){
             this._replacedByAssignmentId = value;
         }
 

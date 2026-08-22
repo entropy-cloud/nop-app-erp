@@ -45,7 +45,7 @@ public interface IErpHrLeaveRequestBiz extends ICrudBiz<ErpHrLeaveRequest>{
      * @return 剩余天数 = entitledDays + carriedForwardDays − Σ approved durationDays
      */
     @BizQuery
-    java.math.BigDecimal getBalance(@Name("employeeId") Long employeeId,
+    java.math.BigDecimal getBalance(@Name("employeeId") String employeeId,
                                     @Name("leaveType") String leaveType,
                                     @Name("fiscalYear") Integer fiscalYear,
                                     IServiceContext context);

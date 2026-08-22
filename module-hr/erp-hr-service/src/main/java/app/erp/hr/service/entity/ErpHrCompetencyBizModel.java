@@ -44,14 +44,14 @@ public class ErpHrCompetencyBizModel extends CrudBizModel<ErpHrCompetency>
      */
     void validateParentCycle(ErpHrCompetency entity, IServiceContext context) {
         if (entity == null || entity.getParentId() == null) return;
-        Long selfId = entity.getId();
-        Long parentId = entity.getParentId();
+        String selfId = entity.getId();
+        String parentId = entity.getParentId();
         if (selfId != null && selfId.equals(parentId)) {
             throw cycleError(selfId, parentId);
         }
-        Set<Long> visited = new HashSet<>();
-        visited.add(selfId != null ? selfId : Long.MIN_VALUE);
-        Long cursor = parentId;
+        Set<String> visited = new HashSet<>();
+        visited.add(selfId != null ? selfId : "");
+        String cursor = parentId;
         int guard = 0;
         IEntityDao<ErpHrCompetency> dao = dao();
         while (cursor != null && guard < 1000) {
@@ -68,7 +68,7 @@ public class ErpHrCompetencyBizModel extends CrudBizModel<ErpHrCompetency>
         }
     }
 
-    private NopException cycleError(Long competencyId, Long parentId) {
+    private NopException cycleError(String competencyId, String parentId) {
         return new NopException(ErpHrErrors.ERR_COMPETENCY_PARENT_CYCLE)
                 .param(ErpHrErrors.ARG_COMPETENCY_ID, competencyId)
                 .param("parentId", parentId);

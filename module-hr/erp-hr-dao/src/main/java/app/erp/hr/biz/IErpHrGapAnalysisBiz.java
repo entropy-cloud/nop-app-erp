@@ -25,16 +25,16 @@ public interface IErpHrGapAnalysisBiz extends ICrudBiz<ErpHrGapAnalysis> {
      * 内部从最新 COMPLETED 评估聚合 actualLevel。
      */
     @BizMutation
-    List<ErpHrGapAnalysis> refreshGapAnalysis(@Name("employeeId") Long employeeId,
+    List<ErpHrGapAnalysis> refreshGapAnalysis(@Name("employeeId") String employeeId,
                                               IServiceContext context);
 
     /**
-     * 同 {@link #refreshGapAnalysis(Long, IServiceContext)} 但使用调用方预先聚合的 actualLevel 映射
+     * 同 {@link #refreshGapAnalysis(String, IServiceContext)} 但使用调用方预先聚合的 actualLevel 映射
      * （key=competencyId, value=聚合后 level）。供 {@code completeAssessment} 内部直传避免二次查询。
      */
     @BizMutation
-    List<ErpHrGapAnalysis> refreshGapAnalysisWithLevels(@Name("employeeId") Long employeeId,
-                                                        @Name("aggregatedLevels") Map<Long, Integer> aggregatedLevels,
+    List<ErpHrGapAnalysis> refreshGapAnalysisWithLevels(@Name("employeeId") String employeeId,
+                                                        @Name("aggregatedLevels") Map<String, Integer> aggregatedLevels,
                                                         IServiceContext context);
 }
 

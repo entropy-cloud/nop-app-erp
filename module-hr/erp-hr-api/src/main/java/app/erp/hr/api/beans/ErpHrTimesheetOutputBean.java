@@ -14,16 +14,16 @@
     public class ErpHrTimesheetOutputBean {
 
     
-        private Long _id;
+        private String _id;
 
     
         @PropMeta(propId=1)
     
-        public Long getId(){
+        public String getId(){
             return _id;
         }
 
-        public void setId(Long value){
+        public void setId(String value){
             this._id = value;
         }
 
@@ -42,16 +42,16 @@
         }
 
 
-        private Long _employeeId;
+        private String _employeeId;
 
     
         @PropMeta(propId=3)
     
-        public Long getEmployeeId(){
+        public String getEmployeeId(){
             return _employeeId;
         }
 
-        public void setEmployeeId(Long value){
+        public void setEmployeeId(String value){
             this._employeeId = value;
         }
 
@@ -124,16 +124,16 @@
         }
 
 
-        private Long _orgId;
+        private String _orgId;
 
     
         @PropMeta(propId=8)
     
-        public Long getOrgId(){
+        public String getOrgId(){
             return _orgId;
         }
 
-        public void setOrgId(Long value){
+        public void setOrgId(String value){
             this._orgId = value;
         }
 

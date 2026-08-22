@@ -60,13 +60,13 @@ public class TestErpHrContractExpiry extends JunitAutoTestCase {
     @Test
     public void testScanExpiringContractsHitsWithinWindow() {
         Object[] seeded = ormTemplate.runInSession(session -> {
-            Long empId = seedEmployee("EMP-EXPIRE-SOON");
+            String empId = seedEmployee("EMP-EXPIRE-SOON");
             LocalDate today = CoreMetrics.today();
-            Long contractId = seedContract("CTC-SOON", empId,
+            String contractId = seedContract("CTC-SOON", empId,
                     today.minusDays(10), today.plusDays(15), ErpHrConstants.CONTRACT_STATUS_ACTIVE);
             return new Object[]{empId, contractId};
         });
-        Long contractId = (Long) seeded[1];
+        String contractId = (String) seeded[1];
 
         List<ErpHrEmploymentContract> expiring = ormTemplate.runInSession(session -> contractBiz.scanExpiringContracts(30, CTX));
         boolean found = expiring.stream().anyMatch(c -> contractId.equals(c.getId()));
@@ -76,13 +76,13 @@ public class TestErpHrContractExpiry extends JunitAutoTestCase {
     @Test
     public void testExpireOverdueContractsAdvancesStatus() {
         Object[] seeded = ormTemplate.runInSession(session -> {
-            Long empId = seedEmployee("EMP-EXPIRE-PAST");
+            String empId = seedEmployee("EMP-EXPIRE-PAST");
             LocalDate today = CoreMetrics.today();
-            Long contractId = seedContract("CTC-PAST", empId,
+            String contractId = seedContract("CTC-PAST", empId,
                     today.minusDays(40), today.minusDays(1), ErpHrConstants.CONTRACT_STATUS_ACTIVE);
             return new Object[]{empId, contractId};
         });
-        Long contractId = (Long) seeded[1];
+        String contractId = (String) seeded[1];
 
         List<ErpHrEmploymentContract> expired = ormTemplate.runInSession(session -> contractBiz.expireOverdueContracts(CTX));
         boolean found = expired.stream().anyMatch(c -> contractId.equals(c.getId()));
@@ -95,13 +95,13 @@ public class TestErpHrContractExpiry extends JunitAutoTestCase {
     @Test
     public void testRenewFromExpiredToActive() {
         Object[] seeded = ormTemplate.runInSession(session -> {
-            Long empId = seedEmployee("EMP-RENEW");
+            String empId = seedEmployee("EMP-RENEW");
             LocalDate today = CoreMetrics.today();
-            Long contractId = seedContract("CTC-RENEW", empId,
+            String contractId = seedContract("CTC-RENEW", empId,
                     today.minusDays(40), today.minusDays(1), ErpHrConstants.CONTRACT_STATUS_EXPIRED);
             return new Object[]{empId, contractId};
         });
-        Long contractId = (Long) seeded[1];
+        String contractId = (String) seeded[1];
         LocalDate newEndDate = CoreMetrics.today().plusYears(1);
 
         ErpHrEmploymentContract renewed = ormTemplate.runInSession(session -> contractBiz.renew(String.valueOf(contractId), newEndDate, CTX));
@@ -116,13 +116,13 @@ public class TestErpHrContractExpiry extends JunitAutoTestCase {
     @Test
     public void testRenewRejectsTerminatedContract() {
         Object[] seeded = ormTemplate.runInSession(session -> {
-            Long empId = seedEmployee("EMP-RENEW-FAIL");
-            Long contractId = seedContract("CTC-TERM", empId,
+            String empId = seedEmployee("EMP-RENEW-FAIL");
+            String contractId = seedContract("CTC-TERM", empId,
                     CoreMetrics.today().minusDays(10), CoreMetrics.today().plusDays(10),
                     ErpHrConstants.CONTRACT_STATUS_TERMINATED);
             return new Object[]{empId, contractId};
         });
-        Long contractId = (Long) seeded[1];
+        String contractId = (String) seeded[1];
 
         NopException ex = assertThrows(NopException.class,
                 () -> ormTemplate.runInSession(session -> contractBiz.renew(String.valueOf(contractId), CoreMetrics.today().plusYears(1), CTX)));
@@ -157,7 +157,7 @@ public class TestErpHrContractExpiry extends JunitAutoTestCase {
 
     // ---------- helpers ----------
 
-    private Long seedEmployee(String code) {
+    private String seedEmployee(String code) {
         IEntityDao<ErpHrEmployee> dao = daoProvider.daoFor(ErpHrEmployee.class);
         ErpHrEmployee emp = new ErpHrEmployee();
         emp.setCode(code);
@@ -172,7 +172,7 @@ public class TestErpHrContractExpiry extends JunitAutoTestCase {
         return emp.getId();
     }
 
-    private Long seedContract(String code, Long employeeId, LocalDate startDate, LocalDate endDate, String status) {
+    private String seedContract(String code, String employeeId, LocalDate startDate, LocalDate endDate, String status) {
         IEntityDao<ErpHrEmploymentContract> dao = daoProvider.daoFor(ErpHrEmploymentContract.class);
         ErpHrEmploymentContract c = new ErpHrEmploymentContract();
         c.setBusinessDate(CoreMetrics.today());

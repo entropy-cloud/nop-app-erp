@@ -80,9 +80,9 @@ public class TestErpHrPayrollSimulation extends JunitAutoTestCase {
 
     @Test
     public void testCreateSimulationFreezesSourceAndAdjustItemRecalculates() {
-        Long employeeId = ormTemplate.runInSession(session -> {
+        String employeeId = ormTemplate.runInSession(session -> {
             seedTaxConfig(2026);
-            Long empId = seedEmployee("EMP-SIM-ADJ");
+            String empId = seedEmployee("EMP-SIM-ADJ");
             seedContract(empId, "10000");
             seedSocialInsuranceBase(empId, "SHENZHEN", "10000", "10000");
             seedSocialInsuranceConfig("SHENZHEN", ErpHrConstants.INSURANCE_PENSION,
@@ -156,9 +156,9 @@ public class TestErpHrPayrollSimulation extends JunitAutoTestCase {
 
     @Test
     public void testComparisonThreeColumns() {
-        Long employeeId = ormTemplate.runInSession(session -> {
+        String employeeId = ormTemplate.runInSession(session -> {
             seedTaxConfig(2026);
-            Long empId = seedEmployee("EMP-SIM-CMP");
+            String empId = seedEmployee("EMP-SIM-CMP");
             seedContract(empId, "12000");
             seedSocialInsuranceBase(empId, "SHENZHEN", "12000", "12000");
             seedSocialInsuranceConfig("SHENZHEN", ErpHrConstants.INSURANCE_PENSION,
@@ -195,9 +195,9 @@ public class TestErpHrPayrollSimulation extends JunitAutoTestCase {
 
     @Test
     public void testBatchAdjustmentFixed() {
-        Long employeeId = ormTemplate.runInSession(session -> {
+        String employeeId = ormTemplate.runInSession(session -> {
             seedTaxConfig(2026);
-            Long empId = seedEmployee("EMP-SIM-BATCH");
+            String empId = seedEmployee("EMP-SIM-BATCH");
             seedContract(empId, "10000");
             seedSocialInsuranceBase(empId, "SHENZHEN", "10000", "10000");
             seedSocialInsuranceConfig("SHENZHEN", ErpHrConstants.INSURANCE_PENSION,
@@ -228,9 +228,9 @@ public class TestErpHrPayrollSimulation extends JunitAutoTestCase {
 
     @Test
     public void testFindAnomaliesThresholdHit() {
-        Long employeeId = ormTemplate.runInSession(session -> {
+        String employeeId = ormTemplate.runInSession(session -> {
             seedTaxConfig(2026);
-            Long empId = seedEmployee("EMP-SIM-ANOM");
+            String empId = seedEmployee("EMP-SIM-ANOM");
             seedContract(empId, "10000");
             seedSocialInsuranceBase(empId, "SHENZHEN", "10000", "10000");
             seedSocialInsuranceConfig("SHENZHEN", ErpHrConstants.INSURANCE_PENSION,
@@ -258,9 +258,9 @@ public class TestErpHrPayrollSimulation extends JunitAutoTestCase {
 
     @Test
     public void testApprovalStateMachineNoAdjustmentRejected() {
-        Long employeeId = ormTemplate.runInSession(session -> {
+        String employeeId = ormTemplate.runInSession(session -> {
             seedTaxConfig(2026);
-            Long empId = seedEmployee("EMP-SIM-NOADJ");
+            String empId = seedEmployee("EMP-SIM-NOADJ");
             seedContract(empId, "10000");
             seedSocialInsuranceBase(empId, "SHENZHEN", "10000", "10000");
             seedSocialInsuranceConfig("SHENZHEN", ErpHrConstants.INSURANCE_PENSION,
@@ -283,9 +283,9 @@ public class TestErpHrPayrollSimulation extends JunitAutoTestCase {
 
     @Test
     public void testApprovalStateMachineHappyPathAndReject() {
-        Long employeeId = ormTemplate.runInSession(session -> {
+        String employeeId = ormTemplate.runInSession(session -> {
             seedTaxConfig(2026);
-            Long empId = seedEmployee("EMP-SIM-FLOW");
+            String empId = seedEmployee("EMP-SIM-FLOW");
             seedContract(empId, "10000");
             seedSocialInsuranceBase(empId, "SHENZHEN", "10000", "10000");
             seedSocialInsuranceConfig("SHENZHEN", ErpHrConstants.INSURANCE_PENSION,
@@ -299,25 +299,25 @@ public class TestErpHrPayrollSimulation extends JunitAutoTestCase {
         ormTemplate.runInSession(() -> salaryBiz.calculateSalary(employeeId, 2026, 6, CTX));
         ErpHrSalarySimulation simulation = ormTemplate.runInSession(session -> simulationBiz.createSimulation(
                 2026, 6, 2026, 8, "审批流", null, CTX));
-        final Long simId1 = simulation.getId();
+        final String simId1 = simulation.getId();
         ormTemplate.runInSession(() -> simulationBiz.adjustItem(simId1, employeeId,
                 "basicSalary", new BigDecimal("12000"),
                 ErpHrConstants.ADJUSTMENT_REASON_SALARY_CHANGE, CTX));
 
         // DRAFT → IN_REVIEW
-        final Long simId2 = simulation.getId();
+        final String simId2 = simulation.getId();
         simulation = ormTemplate.runInSession(session -> simulationBiz.submitForReview(simId2, CTX));
         assertEquals(ErpHrConstants.SIMULATION_STATUS_IN_REVIEW, simulation.getStatus());
 
         // IN_REVIEW → APPROVED
-        final Long simId3 = simulation.getId();
-        simulation = ormTemplate.runInSession(session -> simulationBiz.approve(simId3, 1L, CTX));
+        final String simId3 = simulation.getId();
+        simulation = ormTemplate.runInSession(session -> simulationBiz.approve(simId3, "1", CTX));
         assertEquals(ErpHrConstants.SIMULATION_STATUS_APPROVED, simulation.getStatus());
-        assertEquals(1L, simulation.getReviewerId());
+        assertEquals("1", simulation.getReviewerId());
         assertNotNull(simulation.getReviewedAt());
 
         // 非法迁移：APPROVED 再 submitForReview（期望 DRAFT）→ 抛错
-        Long approvedSimId = simulation.getId();
+        String approvedSimId = simulation.getId();
         NopException ex = assertThrows(NopException.class,
                 () -> ormTemplate.runInSession(session -> simulationBiz.submitForReview(approvedSimId, CTX)));
         assertEquals(ErpHrErrors.ERR_HR_SIMULATION_ILLEGAL_TRANSITION.getErrorCode(), ex.getErrorCode());
@@ -325,9 +325,9 @@ public class TestErpHrPayrollSimulation extends JunitAutoTestCase {
 
     @Test
     public void testRejectFromInReview() {
-        Long employeeId = ormTemplate.runInSession(session -> {
+        String employeeId = ormTemplate.runInSession(session -> {
             seedTaxConfig(2026);
-            Long empId = seedEmployee("EMP-SIM-REJ");
+            String empId = seedEmployee("EMP-SIM-REJ");
             seedContract(empId, "10000");
             seedSocialInsuranceBase(empId, "SHENZHEN", "10000", "10000");
             seedSocialInsuranceConfig("SHENZHEN", ErpHrConstants.INSURANCE_PENSION,
@@ -341,14 +341,14 @@ public class TestErpHrPayrollSimulation extends JunitAutoTestCase {
         ormTemplate.runInSession(() -> salaryBiz.calculateSalary(employeeId, 2026, 6, CTX));
         ErpHrSalarySimulation simulation = ormTemplate.runInSession(session -> simulationBiz.createSimulation(
                 2026, 6, 2026, 8, "驳回测试", null, CTX));
-        final Long simId1 = simulation.getId();
+        final String simId1 = simulation.getId();
         ormTemplate.runInSession(() -> simulationBiz.adjustItem(simId1, employeeId,
                 "basicSalary", new BigDecimal("11000"),
                 ErpHrConstants.ADJUSTMENT_REASON_SALARY_CHANGE, CTX));
-        final Long simId2 = simulation.getId();
+        final String simId2 = simulation.getId();
         simulation = ormTemplate.runInSession(session -> simulationBiz.submitForReview(simId2, CTX));
 
-        final Long simId3 = simulation.getId();
+        final String simId3 = simulation.getId();
         simulation = ormTemplate.runInSession(session -> simulationBiz.reject(simId3, "调薪幅度不合理", CTX));
         assertEquals(ErpHrConstants.SIMULATION_STATUS_REJECTED, simulation.getStatus());
         assertEquals("调薪幅度不合理", simulation.getNotes());
@@ -356,9 +356,9 @@ public class TestErpHrPayrollSimulation extends JunitAutoTestCase {
 
     @Test
     public void testConvertToFormalSuccess() {
-        Long employeeId = ormTemplate.runInSession(session -> {
+        String employeeId = ormTemplate.runInSession(session -> {
             seedTaxConfig(2026);
-            Long empId = seedEmployee("EMP-SIM-CONV");
+            String empId = seedEmployee("EMP-SIM-CONV");
             seedContract(empId, "10000");
             seedSocialInsuranceBase(empId, "SHENZHEN", "10000", "10000");
             seedSocialInsuranceConfig("SHENZHEN", ErpHrConstants.INSURANCE_PENSION,
@@ -372,16 +372,16 @@ public class TestErpHrPayrollSimulation extends JunitAutoTestCase {
         ormTemplate.runInSession(() -> salaryBiz.calculateSalary(employeeId, 2026, 6, CTX));
         ErpHrSalarySimulation simulation = ormTemplate.runInSession(session -> simulationBiz.createSimulation(
                 2026, 6, 2026, 12, "转正式成功", null, CTX));
-        final Long simId1 = simulation.getId();
+        final String simId1 = simulation.getId();
         ormTemplate.runInSession(() -> simulationBiz.adjustItem(simId1, employeeId,
                 "basicSalary", new BigDecimal("12000"),
                 ErpHrConstants.ADJUSTMENT_REASON_SALARY_CHANGE, CTX));
-        final Long simId2 = simulation.getId();
+        final String simId2 = simulation.getId();
         ormTemplate.runInSession(() -> simulationBiz.submitForReview(simId2, CTX));
-        final Long simId3 = simulation.getId();
-        ormTemplate.runInSession(() -> simulationBiz.approve(simId3, 1L, CTX));
+        final String simId3 = simulation.getId();
+        ormTemplate.runInSession(() -> simulationBiz.approve(simId3, "1", CTX));
 
-        final Long simId4 = simulation.getId();
+        final String simId4 = simulation.getId();
         simulation = ormTemplate.runInSession(session -> simulationBiz.convertToFormal(simId4, CTX));
         assertEquals(ErpHrConstants.SIMULATION_STATUS_CONVERTED, simulation.getStatus());
         assertNotNull(simulation.getConvertedSalaryId(), "回填 convertedSalaryId");
@@ -397,7 +397,7 @@ public class TestErpHrPayrollSimulation extends JunitAutoTestCase {
                 "正式薪酬取模拟重算值");
 
         // 反向追溯
-        final Long convertedSalaryId1 = simulation.getConvertedSalaryId();
+        final String convertedSalaryId1 = simulation.getConvertedSalaryId();
         List<ErpHrSalarySimulation> traced = ormTemplate.runInSession(session -> simulationBiz.findSimulationsByConvertedSalary(
                 convertedSalaryId1, CTX));
         assertFalse(traced.isEmpty(), "反向追溯链完整");
@@ -406,9 +406,9 @@ public class TestErpHrPayrollSimulation extends JunitAutoTestCase {
 
     @Test
     public void testConvertToFormalDuplicateConflict() {
-        Long employeeId = ormTemplate.runInSession(session -> {
+        String employeeId = ormTemplate.runInSession(session -> {
             seedTaxConfig(2026);
-            Long empId = seedEmployee("EMP-SIM-DUP");
+            String empId = seedEmployee("EMP-SIM-DUP");
             seedContract(empId, "10000");
             seedSocialInsuranceBase(empId, "SHENZHEN", "10000", "10000");
             seedSocialInsuranceConfig("SHENZHEN", ErpHrConstants.INSURANCE_PENSION,
@@ -429,7 +429,7 @@ public class TestErpHrPayrollSimulation extends JunitAutoTestCase {
                 "basicSalary", new BigDecimal("11000"),
                 ErpHrConstants.ADJUSTMENT_REASON_SALARY_CHANGE, CTX));
         ormTemplate.runInSession(() -> simulationBiz.submitForReview(simulation.getId(), CTX));
-        ormTemplate.runInSession(() -> simulationBiz.approve(simulation.getId(), 1L, CTX));
+        ormTemplate.runInSession(() -> simulationBiz.approve(simulation.getId(), "1", CTX));
 
         // 全员冲突 → 抛 EMPLOYEE_DUPLICATE
         NopException ex = assertThrows(NopException.class,
@@ -443,9 +443,9 @@ public class TestErpHrPayrollSimulation extends JunitAutoTestCase {
         // 仅作用于本方法：类内其它用例依赖 WORKFLOW + currentDateTime 推进，整体冻结会破坏 wf 步骤用户解析。
         HrFrozenClockExtension.installFrozenClock();
         try {
-            Long employeeId = ormTemplate.runInSession(session -> {
+            String employeeId = ormTemplate.runInSession(session -> {
                 seedTaxConfig(2026);
-                Long empId = seedEmployee("EMP-SIM-PAID");
+                String empId = seedEmployee("EMP-SIM-PAID");
                 seedContract(empId, "10000");
                 seedSocialInsuranceBase(empId, "SHENZHEN", "10000", "10000");
                 seedSocialInsuranceConfig("SHENZHEN", ErpHrConstants.INSURANCE_PENSION,
@@ -468,7 +468,7 @@ public class TestErpHrPayrollSimulation extends JunitAutoTestCase {
                     "basicSalary", new BigDecimal("11000"),
                     ErpHrConstants.ADJUSTMENT_REASON_SALARY_CHANGE, CTX));
             ormTemplate.runInSession(() -> simulationBiz.submitForReview(simulation.getId(), CTX));
-            ormTemplate.runInSession(() -> simulationBiz.approve(simulation.getId(), 1L, CTX));
+            ormTemplate.runInSession(() -> simulationBiz.approve(simulation.getId(), "1", CTX));
 
             NopException ex = assertThrows(NopException.class,
                     () -> ormTemplate.runInSession(session -> simulationBiz.convertToFormal(simulation.getId(), CTX)));
@@ -488,9 +488,9 @@ public class TestErpHrPayrollSimulation extends JunitAutoTestCase {
 
     @Test
     public void testGetSimulatedSalaryReadOnly() {
-        Long employeeId = ormTemplate.runInSession(session -> {
+        String employeeId = ormTemplate.runInSession(session -> {
             seedTaxConfig(2026);
-            Long empId = seedEmployee("EMP-SIM-GET");
+            String empId = seedEmployee("EMP-SIM-GET");
             seedContract(empId, "10000");
             seedSocialInsuranceBase(empId, "SHENZHEN", "10000", "10000");
             seedSocialInsuranceConfig("SHENZHEN", ErpHrConstants.INSURANCE_PENSION,
@@ -515,11 +515,11 @@ public class TestErpHrPayrollSimulation extends JunitAutoTestCase {
 
     // ---------- seed helpers ----------
 
-    private ApiResponse<?> submitSalary(Long salaryId) {
+    private ApiResponse<?> submitSalary(String salaryId) {
         return executeRpc(mutation, "ErpHrSalary__submitForApproval", ApiRequest.build(Map.of("id", String.valueOf(salaryId))));
     }
 
-    private ApiResponse<?> approveSalary(Long salaryId) {
+    private ApiResponse<?> approveSalary(String salaryId) {
         return executeRpc(mutation, "ErpHrSalary__approve", ApiRequest.build(Map.of("id", String.valueOf(salaryId))));
     }
 
@@ -545,7 +545,7 @@ public class TestErpHrPayrollSimulation extends JunitAutoTestCase {
         dao.saveEntity(cfg);
     }
 
-    private Long seedEmployee(String code) {
+    private String seedEmployee(String code) {
         IEntityDao<ErpHrEmployee> dao = daoProvider.daoFor(ErpHrEmployee.class);
         ErpHrEmployee emp = new ErpHrEmployee();
         emp.setCode(code);
@@ -560,7 +560,7 @@ public class TestErpHrPayrollSimulation extends JunitAutoTestCase {
         return emp.getId();
     }
 
-    private void seedContract(Long employeeId, String monthlySalary) {
+    private void seedContract(String employeeId, String monthlySalary) {
         IEntityDao<ErpHrEmploymentContract> dao = daoProvider.daoFor(ErpHrEmploymentContract.class);
         ErpHrEmploymentContract c = new ErpHrEmploymentContract();
         c.setBusinessDate(java.time.LocalDate.of(2026, 7, 1));
@@ -575,7 +575,7 @@ public class TestErpHrPayrollSimulation extends JunitAutoTestCase {
         dao.saveEntity(c);
     }
 
-    private void seedSocialInsuranceBase(Long employeeId, String cityCode,
+    private void seedSocialInsuranceBase(String employeeId, String cityCode,
                                           String socialInsuranceBase, String housingFundBase) {
         IEntityDao<ErpHrSocialInsuranceBase> dao = daoProvider.daoFor(ErpHrSocialInsuranceBase.class);
         ErpHrSocialInsuranceBase base = new ErpHrSocialInsuranceBase();

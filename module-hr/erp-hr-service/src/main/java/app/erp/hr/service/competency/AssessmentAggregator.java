@@ -35,7 +35,7 @@ public class AssessmentAggregator {
      * @param detailsByCompetency      该评估所有明细（已按 competencyId 过滤）—— 注入式加载函数的等价产物
      * @return 聚合后 actualLevel（1-5 量表，四舍五入到整数）
      */
-    public int aggregate(Long competencyId,
+    public int aggregate(String competencyId,
                          String assessmentType,
                          List<ErpHrAssessmentDetail> detailsByCompetency) {
         if (detailsByCompetency == null || detailsByCompetency.isEmpty()) {
@@ -107,9 +107,9 @@ public class AssessmentAggregator {
      * 提供给 BizModel 的便捷入口：给定加载函数，聚合指定 competencyId 的所有 detail。
      * 加载函数注入便于单测替换为内存 list。
      */
-    public int aggregateWithLoader(Long competencyId,
+    public int aggregateWithLoader(String competencyId,
                                    String assessmentType,
-                                   Function<Long, List<ErpHrAssessmentDetail>> detailLoader) {
+                                   Function<String, List<ErpHrAssessmentDetail>> detailLoader) {
         return aggregate(competencyId, assessmentType, detailLoader.apply(competencyId));
     }
 

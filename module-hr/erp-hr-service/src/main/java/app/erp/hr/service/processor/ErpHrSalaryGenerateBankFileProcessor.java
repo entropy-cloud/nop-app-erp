@@ -21,7 +21,7 @@ import java.util.List;
  */
 public class ErpHrSalaryGenerateBankFileProcessor extends AbstractErpHrSalaryProcessor {
 
-    public ErpHrPayrollBankFile generateBankFile(int year, int month, Long bankId, IServiceContext context) {
+    public ErpHrPayrollBankFile generateBankFile(int year, int month, String bankId, IServiceContext context) {
         List<ErpHrSalary> pending = findPayableSalaries(year, month, context);
         if (pending.isEmpty()) {
             throw new NopException(ErpHrErrors.ERR_NO_APPROVED_SALARY_FOR_BANK_FILE)

@@ -127,13 +127,13 @@ public class _ErpHrRoleCompetency extends DynamicOrmEntity{
 
     
     /* ID: ID */
-    private java.lang.Long _id;
+    private java.lang.String _id;
     
     /* 岗位: POSITION_ID */
-    private java.lang.Long _positionId;
+    private java.lang.String _positionId;
     
     /* 胜任力: COMPETENCY_ID */
-    private java.lang.Long _competencyId;
+    private java.lang.String _competencyId;
     
     /* 要求等级: REQUIRED_LEVEL */
     private java.lang.Integer _requiredLevel;
@@ -284,9 +284,9 @@ public class _ErpHrRoleCompetency extends DynamicOrmEntity{
         switch(propId){
         
             case PROP_ID_id:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_id));
                }
                setId(typedValue);
@@ -294,9 +294,9 @@ public class _ErpHrRoleCompetency extends DynamicOrmEntity{
             }
         
             case PROP_ID_positionId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_positionId));
                }
                setPositionId(typedValue);
@@ -304,9 +304,9 @@ public class _ErpHrRoleCompetency extends DynamicOrmEntity{
             }
         
             case PROP_ID_competencyId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_competencyId));
                }
                setCompetencyId(typedValue);
@@ -414,21 +414,21 @@ public class _ErpHrRoleCompetency extends DynamicOrmEntity{
         
             case PROP_ID_id:{
                onInitProp(propId);
-               this._id = (java.lang.Long)value;
+               this._id = (java.lang.String)value;
                orm_id(); // 如果是设置主键字段，则触发watcher
                break;
             }
         
             case PROP_ID_positionId:{
                onInitProp(propId);
-               this._positionId = (java.lang.Long)value;
+               this._positionId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_competencyId:{
                onInitProp(propId);
-               this._competencyId = (java.lang.Long)value;
+               this._competencyId = (java.lang.String)value;
                
                break;
             }
@@ -505,7 +505,7 @@ public class _ErpHrRoleCompetency extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final java.lang.Long getId(){
+    public final java.lang.String getId(){
          onPropGet(PROP_ID_id);
          return _id;
     }
@@ -513,7 +513,7 @@ public class _ErpHrRoleCompetency extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final void setId(java.lang.Long value){
+    public final void setId(java.lang.String value){
         if(onPropSet(PROP_ID_id,value)){
             this._id = value;
             internalClearRefs(PROP_ID_id);
@@ -524,7 +524,7 @@ public class _ErpHrRoleCompetency extends DynamicOrmEntity{
     /**
      * 岗位: POSITION_ID
      */
-    public final java.lang.Long getPositionId(){
+    public final java.lang.String getPositionId(){
          onPropGet(PROP_ID_positionId);
          return _positionId;
     }
@@ -532,7 +532,7 @@ public class _ErpHrRoleCompetency extends DynamicOrmEntity{
     /**
      * 岗位: POSITION_ID
      */
-    public final void setPositionId(java.lang.Long value){
+    public final void setPositionId(java.lang.String value){
         if(onPropSet(PROP_ID_positionId,value)){
             this._positionId = value;
             internalClearRefs(PROP_ID_positionId);
@@ -543,7 +543,7 @@ public class _ErpHrRoleCompetency extends DynamicOrmEntity{
     /**
      * 胜任力: COMPETENCY_ID
      */
-    public final java.lang.Long getCompetencyId(){
+    public final java.lang.String getCompetencyId(){
          onPropGet(PROP_ID_competencyId);
          return _competencyId;
     }
@@ -551,7 +551,7 @@ public class _ErpHrRoleCompetency extends DynamicOrmEntity{
     /**
      * 胜任力: COMPETENCY_ID
      */
-    public final void setCompetencyId(java.lang.Long value){
+    public final void setCompetencyId(java.lang.String value){
         if(onPropSet(PROP_ID_competencyId,value)){
             this._competencyId = value;
             internalClearRefs(PROP_ID_competencyId);

@@ -57,7 +57,7 @@ public class TestErpHrAttendanceEngine extends JunitAutoTestCase {
 
     @Test
     public void testClockInClockOutComputesWorkHours() {
-        Long empId = ormTemplate.runInSession(session -> seedEmployee("EMP-CLOCK"));
+        String empId = ormTemplate.runInSession(session -> seedEmployee("EMP-CLOCK"));
 
         ErpHrAttendance afterIn = ormTemplate.runInSession(session -> attendanceBiz.clockIn(empId, CTX));
         assertNotNull(afterIn.getClockIn(), "签到后 clockIn 应有值");
@@ -74,7 +74,7 @@ public class TestErpHrAttendanceEngine extends JunitAutoTestCase {
 
     @Test
     public void testDuplicateClockInLastWins() {
-        Long empId = ormTemplate.runInSession(session -> seedEmployee("EMP-DUP"));
+        String empId = ormTemplate.runInSession(session -> seedEmployee("EMP-DUP"));
 
         ErpHrAttendance first = ormTemplate.runInSession(session -> attendanceBiz.clockIn(empId, CTX));
         ErpHrAttendance second = ormTemplate.runInSession(session -> attendanceBiz.clockIn(empId, CTX));
@@ -89,7 +89,7 @@ public class TestErpHrAttendanceEngine extends JunitAutoTestCase {
 
     @Test
     public void testDuplicateClockInRecomputesWorkHours() {
-        Long empId = ormTemplate.runInSession(session -> seedEmployee("EMP-WH"));
+        String empId = ormTemplate.runInSession(session -> seedEmployee("EMP-WH"));
 
         // 确定性构造：DAO 直接 seed 旧 clockIn（过去 4 小时）+ 显式未来 clockOut（不经 clockIn/clockOut
         // mutation）；镜像公式断言与实现 computeWorkHours 逐值一致（Duration.toMinutes 截断 + /60 HALF_UP），
@@ -117,7 +117,7 @@ public class TestErpHrAttendanceEngine extends JunitAutoTestCase {
 
     @Test
     public void testClockOutWithoutClockInBlocked() {
-        Long empId = ormTemplate.runInSession(session -> seedEmployee("EMP-NOIN"));
+        String empId = ormTemplate.runInSession(session -> seedEmployee("EMP-NOIN"));
 
         NopException ex = assertThrows(NopException.class,
                 () -> ormTemplate.runInSession(session -> attendanceBiz.clockOut(empId, CTX)));
@@ -126,7 +126,7 @@ public class TestErpHrAttendanceEngine extends JunitAutoTestCase {
 
     @Test
     public void testGetTodayAttendanceReturnsNullWhenAbsent() {
-        Long empId = ormTemplate.runInSession(session -> seedEmployee("EMP-NULL"));
+        String empId = ormTemplate.runInSession(session -> seedEmployee("EMP-NULL"));
 
         ErpHrAttendance result = ormTemplate.runInSession(session -> attendanceBiz.getTodayAttendance(empId, CTX));
         assertNull(result, "无打卡记录应返回 null");
@@ -134,7 +134,7 @@ public class TestErpHrAttendanceEngine extends JunitAutoTestCase {
 
     // ---------- helpers ----------
 
-    private Long seedEmployee(String code) {
+    private String seedEmployee(String code) {
         IEntityDao<ErpHrEmployee> dao = daoProvider.daoFor(ErpHrEmployee.class);
         ErpHrEmployee emp = new ErpHrEmployee();
         emp.setCode(code);
@@ -149,7 +149,7 @@ public class TestErpHrAttendanceEngine extends JunitAutoTestCase {
         return emp.getId();
     }
 
-    private ErpHrAttendance seedAttendance(Long employeeId, LocalDateTime clockIn, LocalDateTime clockOut) {
+    private ErpHrAttendance seedAttendance(String employeeId, LocalDateTime clockIn, LocalDateTime clockOut) {
         IEntityDao<ErpHrAttendance> dao = daoProvider.daoFor(ErpHrAttendance.class);
         ErpHrAttendance row = new ErpHrAttendance();
         row.setBusinessDate(HrFrozenClockExtension.REFERENCE_DATE);

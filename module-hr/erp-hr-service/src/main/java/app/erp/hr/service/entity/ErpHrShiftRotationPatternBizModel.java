@@ -56,8 +56,8 @@ public class ErpHrShiftRotationPatternBizModel extends CrudBizModel<ErpHrShiftRo
 
     @Override
     @BizMutation
-    public List<ErpHrShiftAssignment> generateRotation(@Name("patternId") Long patternId,
-                                                       @Name("groupMemberIds") List<Long> groupMemberIds,
+    public List<ErpHrShiftAssignment> generateRotation(@Name("patternId") String patternId,
+                                                       @Name("groupMemberIds") List<String> groupMemberIds,
                                                        @Name("staggerDays") int staggerDays,
                                                        @Name("startDate") LocalDate startDate,
                                                        @Name("endDate") LocalDate endDate,
@@ -67,7 +67,7 @@ public class ErpHrShiftRotationPatternBizModel extends CrudBizModel<ErpHrShiftRo
                 startDate, endDate, regenerate, context);
     }
 
-    ErpHrShiftAssignment findActiveAssignment(IEntityDao<ErpHrShiftAssignment> dao, Long employeeId, LocalDate date) {
+    ErpHrShiftAssignment findActiveAssignment(IEntityDao<ErpHrShiftAssignment> dao, String employeeId, LocalDate date) {
         QueryBean q = new QueryBean();
         q.addFilter(and(
                 eq("employeeId", employeeId),
@@ -78,7 +78,7 @@ public class ErpHrShiftRotationPatternBizModel extends CrudBizModel<ErpHrShiftRo
         return list.isEmpty() ? null : list.get(0);
     }
 
-    ErpHrShiftAssignment newAssignment(IEntityDao<ErpHrShiftAssignment> dao, Long employeeId, Long shiftId, LocalDate date) {
+    ErpHrShiftAssignment newAssignment(IEntityDao<ErpHrShiftAssignment> dao, String employeeId, String shiftId, LocalDate date) {
         ErpHrShiftAssignment a = dao.newEntity();
         a.setBusinessDate(io.nop.api.core.time.CoreMetrics.today());
         a.setEmployeeId(employeeId);
@@ -123,7 +123,7 @@ public class ErpHrShiftRotationPatternBizModel extends CrudBizModel<ErpHrShiftRo
         return sequence;
     }
 
-    Map<String, Long> buildShiftCodeMap(List<String> sequence, IServiceContext context) {
+    Map<String, String> buildShiftCodeMap(List<String> sequence, IServiceContext context) {
         List<String> distinctCodes = new ArrayList<>();
         for (String c : sequence) {
             if (c == null || ErpHrConstants.PATTERN_OFF_SHIFT_CODE.equals(c)) {
@@ -133,7 +133,7 @@ public class ErpHrShiftRotationPatternBizModel extends CrudBizModel<ErpHrShiftRo
                 distinctCodes.add(c);
             }
         }
-        Map<String, Long> map = new HashMap<>();
+        Map<String, String> map = new HashMap<>();
         for (String code : distinctCodes) {
             QueryBean q = new QueryBean();
             q.addFilter(eq("code", code));
@@ -148,7 +148,7 @@ public class ErpHrShiftRotationPatternBizModel extends CrudBizModel<ErpHrShiftRo
         return map;
     }
 
-    void deleteExistingAssignments(List<Long> employeeIds, LocalDate startDate, LocalDate endDate,
+    void deleteExistingAssignments(List<String> employeeIds, LocalDate startDate, LocalDate endDate,
                                    IServiceContext context) {
         QueryBean q = new QueryBean();
         q.addFilter(and(

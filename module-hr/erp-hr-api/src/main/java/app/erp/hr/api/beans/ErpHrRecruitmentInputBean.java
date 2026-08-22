@@ -12,16 +12,16 @@
     public class ErpHrRecruitmentInputBean extends CrudInputBase {
 
     
-        private Long _id;
+        private String _id;
 
     
         @PropMeta(propId=1)
     
-        public Long getId(){
+        public String getId(){
             return _id;
         }
 
-        public void setId(Long value){
+        public void setId(String value){
             this._id = value;
         }
 
@@ -40,30 +40,30 @@
         }
 
 
-        private Long _positionId;
+        private String _positionId;
 
     
         @PropMeta(propId=3)
     
-        public Long getPositionId(){
+        public String getPositionId(){
             return _positionId;
         }
 
-        public void setPositionId(Long value){
+        public void setPositionId(String value){
             this._positionId = value;
         }
 
 
-        private Long _departmentId;
+        private String _departmentId;
 
     
         @PropMeta(propId=4)
     
-        public Long getDepartmentId(){
+        public String getDepartmentId(){
             return _departmentId;
         }
 
-        public void setDepartmentId(Long value){
+        public void setDepartmentId(String value){
             this._departmentId = value;
         }
 
@@ -166,16 +166,16 @@
         }
 
 
-        private Long _interviewerId;
+        private String _interviewerId;
 
     
         @PropMeta(propId=12)
     
-        public Long getInterviewerId(){
+        public String getInterviewerId(){
             return _interviewerId;
         }
 
-        public void setInterviewerId(Long value){
+        public void setInterviewerId(String value){
             this._interviewerId = value;
         }
 
@@ -222,30 +222,30 @@
         }
 
 
-        private Long _employeeId;
+        private String _employeeId;
 
     
         @PropMeta(propId=16)
     
-        public Long getEmployeeId(){
+        public String getEmployeeId(){
             return _employeeId;
         }
 
-        public void setEmployeeId(Long value){
+        public void setEmployeeId(String value){
             this._employeeId = value;
         }
 
 
-        private Long _orgId;
+        private String _orgId;
 
     
         @PropMeta(propId=17)
     
-        public Long getOrgId(){
+        public String getOrgId(){
             return _orgId;
         }
 
-        public void setOrgId(Long value){
+        public void setOrgId(String value){
             this._orgId = value;
         }
 

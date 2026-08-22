@@ -13,16 +13,16 @@
     public class ErpHrEmploymentContractOutputBean {
 
     
-        private Long _id;
+        private String _id;
 
     
         @PropMeta(propId=1)
     
-        public Long getId(){
+        public String getId(){
             return _id;
         }
 
-        public void setId(Long value){
+        public void setId(String value){
             this._id = value;
         }
 
@@ -41,16 +41,16 @@
         }
 
 
-        private Long _employeeId;
+        private String _employeeId;
 
     
         @PropMeta(propId=3)
     
-        public Long getEmployeeId(){
+        public String getEmployeeId(){
             return _employeeId;
         }
 
-        public void setEmployeeId(Long value){
+        public void setEmployeeId(String value){
             this._employeeId = value;
         }
 
@@ -179,16 +179,16 @@
         }
 
 
-        private Long _salaryCurrencyId;
+        private String _salaryCurrencyId;
 
     
         @PropMeta(propId=12)
     
-        public Long getSalaryCurrencyId(){
+        public String getSalaryCurrencyId(){
             return _salaryCurrencyId;
         }
 
-        public void setSalaryCurrencyId(Long value){
+        public void setSalaryCurrencyId(String value){
             this._salaryCurrencyId = value;
         }
 
@@ -275,16 +275,16 @@
         }
 
 
-        private Long _orgId;
+        private String _orgId;
 
     
         @PropMeta(propId=18)
     
-        public Long getOrgId(){
+        public String getOrgId(){
             return _orgId;
         }
 
-        public void setOrgId(Long value){
+        public void setOrgId(String value){
             this._orgId = value;
         }
 

@@ -19,16 +19,16 @@
             <cols>
 
                 <!--ID-->
-                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="id" mandatory="true" sortable="true"/>
 
                 <!--被评估员工-->
-                <col id="employeeId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="employeeId" mandatory="true" sortable="true"/>
 
                 <!--评估类型-->
                 <col id="assessmentType" mandatory="true" sortable="true"/>
 
                 <!--评估人-->
-                <col id="assessorId" ui:number="true" sortable="true"/>
+                <col id="assessorId" sortable="true"/>
 
                 <!--评估日期-->
                 <col id="assessmentDate" sortable="true"/>
@@ -40,7 +40,7 @@
                 <col id="overallScore" ui:number="true" sortable="true"/>
 
                 <!--业务组织-->
-                <col id="orgId" ui:number="true" sortable="true"/>
+                <col id="orgId" sortable="true"/>
 
                 <!--备注-->
                 <col id="remark" sortable="true"/>

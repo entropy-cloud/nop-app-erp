@@ -15,7 +15,7 @@ public class ErpHrSalaryCalculateSalaryProcessor extends AbstractErpHrSalaryProc
     @Inject
     PayrollCalculator payrollCalculator;
 
-    public ErpHrSalary calculateSalary(Long employeeId, int year, int month, IServiceContext context) {
+    public ErpHrSalary calculateSalary(String employeeId, int year, int month, IServiceContext context) {
         assertNotDuplicated(employeeId, year, month, context);
         ErpHrSalary salary = payrollCalculator.calculate(employeeId, year, month);
         salaryDao().saveEntity(salary);

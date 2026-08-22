@@ -19,16 +19,16 @@
             <cols>
 
                 <!--ID-->
-                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="id" mandatory="true" sortable="true"/>
 
                 <!--编号-->
                 <col id="code" mandatory="true" sortable="true"/>
 
                 <!--招聘职位-->
-                <col id="positionId" ui:number="true" sortable="true"/>
+                <col id="positionId" sortable="true"/>
 
                 <!--招聘部门-->
-                <col id="departmentId" ui:number="true" sortable="true"/>
+                <col id="departmentId" sortable="true"/>
 
                 <!--招聘人数-->
                 <col id="headcount" ui:number="true" sortable="true"/>
@@ -52,7 +52,7 @@
                 <col id="status" mandatory="true" sortable="true"/>
 
                 <!--面试官-->
-                <col id="interviewerId" ui:number="true" sortable="true"/>
+                <col id="interviewerId" sortable="true"/>
 
                 <!--面试日期-->
                 <col id="interviewDate" sortable="true"/>
@@ -64,10 +64,10 @@
                 <col id="hiredDate" sortable="true"/>
 
                 <!--关联员工-->
-                <col id="employeeId" ui:number="true" sortable="true"/>
+                <col id="employeeId" sortable="true"/>
 
                 <!--业务组织-->
-                <col id="orgId" ui:number="true" sortable="true"/>
+                <col id="orgId" sortable="true"/>
 
                 <!--备注-->
                 <col id="remark" sortable="true"/>

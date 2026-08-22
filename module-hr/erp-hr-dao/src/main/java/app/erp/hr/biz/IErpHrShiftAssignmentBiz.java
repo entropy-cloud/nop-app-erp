@@ -26,16 +26,16 @@ public interface IErpHrShiftAssignmentBiz extends ICrudBiz<ErpHrShiftAssignment>
     /** 单个排班分配（shift-scheduling.md §2.2/§九.2 唯一约束）。 */
     @BizMutation
     @SingleSession
-    ErpHrShiftAssignment assignSingle(@Name("employeeId") Long employeeId,
-                                      @Name("shiftId") Long shiftId,
+    ErpHrShiftAssignment assignSingle(@Name("employeeId") String employeeId,
+                                      @Name("shiftId") String shiftId,
                                       @Name("assignmentDate") LocalDate assignmentDate,
                                       IServiceContext context);
 
     /** 批量分配（员工组 × 日期范围 × 班次）。 */
     @BizMutation
     @SingleSession
-    List<ErpHrShiftAssignment> assignBatch(@Name("employeeIds") List<Long> employeeIds,
-                                           @Name("shiftId") Long shiftId,
+    List<ErpHrShiftAssignment> assignBatch(@Name("employeeIds") List<String> employeeIds,
+                                           @Name("shiftId") String shiftId,
                                            @Name("startDate") LocalDate startDate,
                                            @Name("endDate") LocalDate endDate,
                                            IServiceContext context);
@@ -50,7 +50,7 @@ public interface IErpHrShiftAssignmentBiz extends ICrudBiz<ErpHrShiftAssignment>
 
     /** 查询某员工某日的有效排班（一人一天一排班；可能返回 null）。 */
     @BizQuery
-    ErpHrShiftAssignment findByEmployeeAndDate(@Name("employeeId") Long employeeId,
+    ErpHrShiftAssignment findByEmployeeAndDate(@Name("employeeId") String employeeId,
                                                @Name("assignmentDate") LocalDate assignmentDate,
                                                IServiceContext context);
 }

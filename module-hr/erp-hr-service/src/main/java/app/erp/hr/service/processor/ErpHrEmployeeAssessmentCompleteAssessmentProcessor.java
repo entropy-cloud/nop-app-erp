@@ -44,7 +44,7 @@ public class ErpHrEmployeeAssessmentCompleteAssessmentProcessor {
     @Inject
     AssessmentAggregator assessmentAggregator;
 
-    public ErpHrEmployeeAssessment completeAssessment(Long assessmentId, IServiceContext context) {
+    public ErpHrEmployeeAssessment completeAssessment(String assessmentId, IServiceContext context) {
         ErpHrEmployeeAssessment assessment = requireAssessment(assessmentId, context);
         String status = assessment.getStatus();
         if (!Objects.equals(status, ErpHrConstants.ASSESSMENT_STATUS_SUBMITTED)) {
@@ -57,7 +57,7 @@ public class ErpHrEmployeeAssessmentCompleteAssessmentProcessor {
                     .param(ErpHrErrors.ARG_ASSESSMENT_ID, assessmentId);
         }
 
-        Map<Long, Integer> aggregatedLevels = aggregateAndWriteBack(assessment, details, context);
+        Map<String, Integer> aggregatedLevels = aggregateAndWriteBack(assessment, details, context);
 
         assessment.setStatus(ErpHrConstants.ASSESSMENT_STATUS_COMPLETED);
         assessmentDao().updateEntity(assessment);
@@ -73,10 +73,10 @@ public class ErpHrEmployeeAssessmentCompleteAssessmentProcessor {
      * 使其反映聚合后级别；同时把综合评分写入 assessment.overallScore（各胜任力聚合 level 的均值）。
      * 返回 competencyId → aggregatedLevel 映射，供差距刷新直接消费。
      */
-    protected Map<Long, Integer> aggregateAndWriteBack(ErpHrEmployeeAssessment assessment,
+    protected Map<String, Integer> aggregateAndWriteBack(ErpHrEmployeeAssessment assessment,
                                                        List<ErpHrAssessmentDetail> details,
                                                        IServiceContext context) {
-        Map<Long, List<ErpHrAssessmentDetail>> byCompetency = new HashMap<>();
+        Map<String, List<ErpHrAssessmentDetail>> byCompetency = new HashMap<>();
         for (ErpHrAssessmentDetail d : details) {
             if (d.getCompetencyId() == null) continue;
             byCompetency.computeIfAbsent(d.getCompetencyId(), k -> new java.util.ArrayList<>()).add(d);
@@ -84,8 +84,8 @@ public class ErpHrEmployeeAssessmentCompleteAssessmentProcessor {
 
         BigDecimal scoreSum = BigDecimal.ZERO;
         int scoreCnt = 0;
-        Map<Long, Integer> aggregatedLevels = new HashMap<>();
-        for (Map.Entry<Long, List<ErpHrAssessmentDetail>> e : byCompetency.entrySet()) {
+        Map<String, Integer> aggregatedLevels = new HashMap<>();
+        for (Map.Entry<String, List<ErpHrAssessmentDetail>> e : byCompetency.entrySet()) {
             int aggregated = assessmentAggregator.aggregate(
                     e.getKey(), assessment.getAssessmentType(), e.getValue());
             aggregatedLevels.put(e.getKey(), aggregated);
@@ -103,7 +103,7 @@ public class ErpHrEmployeeAssessmentCompleteAssessmentProcessor {
         return aggregatedLevels;
     }
 
-    protected ErpHrEmployeeAssessment requireAssessment(Long assessmentId, IServiceContext context) {
+    protected ErpHrEmployeeAssessment requireAssessment(String assessmentId, IServiceContext context) {
         ErpHrEmployeeAssessment assessment = assessmentDao().getEntityById(assessmentId);
         if (assessment == null) {
             throw new UnknownEntityException(assessmentDao().getEntityName(), assessmentId);
@@ -111,13 +111,13 @@ public class ErpHrEmployeeAssessmentCompleteAssessmentProcessor {
         return assessment;
     }
 
-    protected List<ErpHrAssessmentDetail> findDetails(Long assessmentId, IServiceContext context) {
+    protected List<ErpHrAssessmentDetail> findDetails(String assessmentId, IServiceContext context) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("assessmentId", assessmentId));
         return assessmentDetailBiz.findList(q, null, context);
     }
 
-    protected NopException illegalTransition(Long assessmentId, String current, String expected) {
+    protected NopException illegalTransition(String assessmentId, String current, String expected) {
         return new NopException(ErpHrErrors.ERR_ASSESSMENT_ILLEGAL_STATUS_TRANSITION)
                 .param(ErpHrErrors.ARG_ASSESSMENT_ID, assessmentId)
                 .param(ErpHrErrors.ARG_CURRENT_STATUS, current)

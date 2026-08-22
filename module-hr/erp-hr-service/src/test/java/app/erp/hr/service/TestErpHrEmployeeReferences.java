@@ -42,8 +42,8 @@ public class TestErpHrEmployeeReferences extends JunitAutoTestCase {
 
     @Test
     public void testCountReferencesReturnsRealData() {
-        Long empId = ormTemplate.runInSession(session -> {
-            Long id = seedEmployee("EMP-REF-HR", ErpHrConstants.EMPLOYMENT_ACTIVE);
+        String empId = ormTemplate.runInSession(session -> {
+            String id = seedEmployee("EMP-REF-HR", ErpHrConstants.EMPLOYMENT_ACTIVE);
             seedContract("CTC-REF-HR", id);
             seedLeave("LV-REF-HR", id);
             return id;
@@ -60,7 +60,7 @@ public class TestErpHrEmployeeReferences extends JunitAutoTestCase {
 
     // ---------- helpers（镜像 TestErpHrEmployeeTransfer）----------
 
-    private Long seedEmployee(String code, String employmentStatus) {
+    private String seedEmployee(String code, String employmentStatus) {
         IEntityDao<ErpHrEmployee> dao = daoProvider.daoFor(ErpHrEmployee.class);
         ErpHrEmployee emp = new ErpHrEmployee();
         emp.setCode(code);
@@ -75,7 +75,7 @@ public class TestErpHrEmployeeReferences extends JunitAutoTestCase {
         return emp.getId();
     }
 
-    private void seedContract(String code, Long employeeId) {
+    private void seedContract(String code, String employeeId) {
         IEntityDao<ErpHrEmploymentContract> dao = daoProvider.daoFor(ErpHrEmploymentContract.class);
         ErpHrEmploymentContract c = new ErpHrEmploymentContract();
         c.setBusinessDate(LocalDate.of(2026, 7, 1));
@@ -89,7 +89,7 @@ public class TestErpHrEmployeeReferences extends JunitAutoTestCase {
         dao.saveEntity(c);
     }
 
-    private void seedLeave(String code, Long employeeId) {
+    private void seedLeave(String code, String employeeId) {
         IEntityDao<ErpHrLeaveRequest> dao = daoProvider.daoFor(ErpHrLeaveRequest.class);
         ErpHrLeaveRequest l = new ErpHrLeaveRequest();
         l.setBusinessDate(LocalDate.of(2026, 7, 1));

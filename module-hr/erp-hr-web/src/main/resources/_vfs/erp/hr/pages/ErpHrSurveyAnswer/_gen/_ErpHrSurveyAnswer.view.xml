@@ -19,13 +19,13 @@
             <cols>
 
                 <!--ID-->
-                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="id" mandatory="true" sortable="true"/>
 
                 <!--答卷-->
-                <col id="responseId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="responseId" mandatory="true" sortable="true"/>
 
                 <!--题目-->
-                <col id="questionId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="questionId" mandatory="true" sortable="true"/>
 
                 <!--评分值-->
                 <col id="ratingValue" ui:number="true" sortable="true"/>

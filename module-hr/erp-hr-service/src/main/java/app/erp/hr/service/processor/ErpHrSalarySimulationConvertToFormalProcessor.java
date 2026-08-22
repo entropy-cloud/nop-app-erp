@@ -20,7 +20,7 @@ import java.util.Map;
  */
 public class ErpHrSalarySimulationConvertToFormalProcessor extends AbstractErpHrSalarySimulationProcessor {
 
-    public ErpHrSalarySimulation convertToFormal(Long simulationId, IServiceContext context) {
+    public ErpHrSalarySimulation convertToFormal(String simulationId, IServiceContext context) {
         ErpHrSalarySimulation simulation = requireSimulation(simulationId, context);
         if (!ErpHrConstants.SIMULATION_STATUS_APPROVED.equals(simulation.getStatus())) {
             throw new NopException(ErpHrErrors.ERR_HR_SIMULATION_ILLEGAL_TRANSITION)
@@ -29,16 +29,16 @@ public class ErpHrSalarySimulationConvertToFormalProcessor extends AbstractErpHr
                     .param(ErpHrErrors.ARG_EXPECTED_STATUS, ErpHrConstants.SIMULATION_STATUS_APPROVED);
         }
 
-        Map<Long, EmployeeSimResult> sims = computeAllEmployeeSims(simulation, context);
+        Map<String, EmployeeSimResult> sims = computeAllEmployeeSims(simulation, context);
         int targetYear = simulation.getSimulationPeriodYear();
         int targetMonth = simulation.getSimulationPeriodMonth();
         String targetPeriod = periodLabel(targetYear, targetMonth);
 
-        Long firstConvertedId = null;
+        String firstConvertedId = null;
         int convertedCount = 0;
         List<Map<String, Object>> conflicts = new ArrayList<>();
-        for (Map.Entry<Long, EmployeeSimResult> e : sims.entrySet()) {
-            Long empId = e.getKey();
+        for (Map.Entry<String, EmployeeSimResult> e : sims.entrySet()) {
+            String empId = e.getKey();
             ErpHrSalary simulated = e.getValue().simulated;
 
             if (hasPaidSalary(empId, targetYear, targetMonth)) {

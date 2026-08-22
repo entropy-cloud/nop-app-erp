@@ -190,7 +190,7 @@ body:
               url: /graphql
               dataType: raw
               data:
-                query: "mutation(${'$'}sid:Long){ ErpHrSalary__markPaid(salaryId:${'$'}sid){ id paymentStatus } }"
+                query: "mutation(${'$'}sid:String){ ErpHrSalary__markPaid(salaryId:${'$'}sid){ id paymentStatus } }"
                 variables:
                   sid: "${id}"
           - type: button
@@ -203,6 +203,6 @@ body:
               url: /graphql
               dataType: raw
               data:
-                query: "mutation(${'$'}sid:Long){ ErpHrSalary__voidSalary(salaryId:${'$'}sid){ id paymentStatus } }"
+                query: "mutation(${'$'}sid:String){ ErpHrSalary__voidSalary(salaryId:${'$'}sid){ id paymentStatus } }"
                 variables:
                   sid: "${id}"

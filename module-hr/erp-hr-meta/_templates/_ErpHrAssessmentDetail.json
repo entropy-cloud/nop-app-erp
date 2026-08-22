@@ -1,7 +1,7 @@
 {
-  "id": 0,
-  "assessmentId": 0,
-  "competencyId": 0,
+  "id": "",
+  "assessmentId": "",
+  "competencyId": "",
   "actualLevel": 0,
   "comment": "",
   "sourceType": "",

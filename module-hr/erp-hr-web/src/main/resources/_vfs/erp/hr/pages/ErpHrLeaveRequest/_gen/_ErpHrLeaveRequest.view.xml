@@ -19,13 +19,13 @@
             <cols>
 
                 <!--ID-->
-                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="id" mandatory="true" sortable="true"/>
 
                 <!--单号-->
                 <col id="code" mandatory="true" sortable="true"/>
 
                 <!--员工-->
-                <col id="employeeId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="employeeId" mandatory="true" sortable="true"/>
 
                 <!--休假类型-->
                 <col id="leaveType" mandatory="true" sortable="true"/>
@@ -46,13 +46,13 @@
                 <col id="status" mandatory="true" sortable="true"/>
 
                 <!--审批人-->
-                <col id="approverId" ui:number="true" sortable="true"/>
+                <col id="approverId" sortable="true"/>
 
                 <!--审批时间-->
                 <col id="approvedAt" sortable="true"/>
 
                 <!--业务组织-->
-                <col id="orgId" ui:number="true" sortable="true"/>
+                <col id="orgId" sortable="true"/>
 
                 <!--备注-->
                 <col id="remark" sortable="true"/>

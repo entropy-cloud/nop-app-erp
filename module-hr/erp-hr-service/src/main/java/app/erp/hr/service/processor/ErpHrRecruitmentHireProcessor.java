@@ -117,7 +117,7 @@ public class ErpHrRecruitmentHireProcessor {
     // ---------- validation ----------
 
     protected ErpHrRecruitment requireRecruitment(String id, IServiceContext context) {
-        ErpHrRecruitment rec = recruitmentDao().getEntityById(Long.valueOf(id));
+        ErpHrRecruitment rec = recruitmentDao().getEntityById(id);
         if (rec == null) {
             throw new UnknownEntityException(recruitmentDao().getEntityName(), id);
         }

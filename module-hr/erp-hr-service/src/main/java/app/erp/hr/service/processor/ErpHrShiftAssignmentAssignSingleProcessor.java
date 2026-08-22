@@ -12,7 +12,7 @@ import java.time.LocalDate;
  */
 public class ErpHrShiftAssignmentAssignSingleProcessor extends AbstractErpHrShiftAssignmentProcessor {
 
-    public ErpHrShiftAssignment assignSingle(Long employeeId, Long shiftId, LocalDate assignmentDate,
+    public ErpHrShiftAssignment assignSingle(String employeeId, String shiftId, LocalDate assignmentDate,
                                              IServiceContext context) {
         requireShift(shiftId, context);
         assertNoExistingAssignment(employeeId, assignmentDate, context);

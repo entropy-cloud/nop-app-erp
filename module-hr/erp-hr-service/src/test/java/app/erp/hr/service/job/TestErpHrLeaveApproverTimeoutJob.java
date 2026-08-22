@@ -107,13 +107,13 @@ public class TestErpHrLeaveApproverTimeoutJob extends JunitAutoTestCase {
     @Test
     public void testTimeoutLeaveEscalatesToSuperiorAndNotifies() {
         Object[] seeded = seedEmployeeChain("EMP-TIMEOUT-A", "SUP-TIMEOUT-A");
-        Long empId = (Long) seeded[0];
-        Long supId = (Long) seeded[1];
+        String empId = (String) seeded[0];
+        String supId = (String) seeded[1];
         seedAuthUser("sup-user-a", "SUP-TIMEOUT-A");
         seedAuthUser("emp-user-a", "EMP-TIMEOUT-A");
-        seedTemplate(7601L, ErpHrConstants.NOTIFY_EVENT_LEAVE_APPROVER_TIMEOUT,
+        seedTemplate("7601", ErpHrConstants.NOTIFY_EVENT_LEAVE_APPROVER_TIMEOUT,
                 "{\"userIds\":[\"${superiorUserId}\"]}");
-        Long leaveId = seedLeave("LV-TIMEOUT-A", empId, oldTs());
+        String leaveId = seedLeave("LV-TIMEOUT-A", empId, oldTs());
         setCron("0 0 1 * * ?");
 
         newWiredJob().execute();
@@ -134,12 +134,12 @@ public class TestErpHrLeaveApproverTimeoutJob extends JunitAutoTestCase {
     @Test
     public void testNotTimeoutLeaveUntouched() {
         Object[] seeded = seedEmployeeChain("EMP-TIMEOUT-B", "SUP-TIMEOUT-B");
-        Long empId = (Long) seeded[0];
-        Long supId = (Long) seeded[1];
+        String empId = (String) seeded[0];
+        String supId = (String) seeded[1];
         seedAuthUser("sup-user-b", "SUP-TIMEOUT-B");
-        seedTemplate(7602L, ErpHrConstants.NOTIFY_EVENT_LEAVE_APPROVER_TIMEOUT,
+        seedTemplate("7602", ErpHrConstants.NOTIFY_EVENT_LEAVE_APPROVER_TIMEOUT,
                 "{\"userIds\":[\"${superiorUserId}\"]}");
-        Long leaveId = seedLeave("LV-TIMEOUT-B", empId, recentTs());
+        String leaveId = seedLeave("LV-TIMEOUT-B", empId, recentTs());
         setCron("0 0 1 * * ?");
 
         newWiredJob().execute();
@@ -155,13 +155,13 @@ public class TestErpHrLeaveApproverTimeoutJob extends JunitAutoTestCase {
     @Test
     public void testIdempotentSkipWhenApproverAlreadyTarget() {
         Object[] seeded = seedEmployeeChain("EMP-TIMEOUT-C", "SUP-TIMEOUT-C");
-        Long empId = (Long) seeded[0];
-        Long supId = (Long) seeded[1];
+        String empId = (String) seeded[0];
+        String supId = (String) seeded[1];
         seedAuthUser("sup-user-c", "SUP-TIMEOUT-C");
-        seedTemplate(7603L, ErpHrConstants.NOTIFY_EVENT_LEAVE_APPROVER_TIMEOUT,
+        seedTemplate("7603", ErpHrConstants.NOTIFY_EVENT_LEAVE_APPROVER_TIMEOUT,
                 "{\"userIds\":[\"${superiorUserId}\"]}");
         // 直接构造守卫前置态：approverId 已 == 目标上级 + updateTime 仍早于阈值
-        Long leaveId = seedLeave("LV-TIMEOUT-C", empId, oldTs());
+        String leaveId = seedLeave("LV-TIMEOUT-C", empId, oldTs());
         backdateApprover(leaveId, supId);
         setCron("0 0 1 * * ?");
 
@@ -177,13 +177,13 @@ public class TestErpHrLeaveApproverTimeoutJob extends JunitAutoTestCase {
 
     @Test
     public void testFallbackToDepartmentManagerWhenNoSuperior() {
-        Long mngId = seedEmployee("MGR-TIMEOUT-A", null, null, null);
-        Long deptId = seedDepartment("DEPT-MGR-A", mngId);
-        Long empId = seedEmployee("EMP-TIMEOUT-D", null, deptId, null);
+        String mngId = seedEmployee("MGR-TIMEOUT-A", null, null, null);
+        String deptId = seedDepartment("DEPT-MGR-A", mngId);
+        String empId = seedEmployee("EMP-TIMEOUT-D", null, deptId, null);
         seedAuthUser("mgr-user-a", "MGR-TIMEOUT-A");
-        seedTemplate(7604L, ErpHrConstants.NOTIFY_EVENT_LEAVE_APPROVER_TIMEOUT,
+        seedTemplate("7604", ErpHrConstants.NOTIFY_EVENT_LEAVE_APPROVER_TIMEOUT,
                 "{\"userIds\":[\"${superiorUserId}\"]}");
-        Long leaveId = seedLeave("LV-TIMEOUT-D", empId, oldTs());
+        String leaveId = seedLeave("LV-TIMEOUT-D", empId, oldTs());
         setCron("0 0 1 * * ?");
 
         newWiredJob().execute();
@@ -198,9 +198,9 @@ public class TestErpHrLeaveApproverTimeoutJob extends JunitAutoTestCase {
 
     @Test
     public void testSkipWhenNoSuperiorAndNoManager() {
-        Long deptId = seedDepartment("DEPT-NOMGR-A", null);
-        Long empId = seedEmployee("EMP-TIMEOUT-E", null, deptId, null);
-        Long leaveId = seedLeave("LV-TIMEOUT-E", empId, oldTs());
+        String deptId = seedDepartment("DEPT-NOMGR-A", null);
+        String empId = seedEmployee("EMP-TIMEOUT-E", null, deptId, null);
+        String leaveId = seedLeave("LV-TIMEOUT-E", empId, oldTs());
         setCron("0 0 1 * * ?");
 
         newWiredJob().execute();
@@ -215,8 +215,8 @@ public class TestErpHrLeaveApproverTimeoutJob extends JunitAutoTestCase {
     @Test
     public void testCronEmptySkipsScan() {
         Object[] seeded = seedEmployeeChain("EMP-TIMEOUT-F", "SUP-TIMEOUT-F");
-        Long empId = (Long) seeded[0];
-        Long leaveId = seedLeave("LV-TIMEOUT-F", empId, oldTs());
+        String empId = (String) seeded[0];
+        String leaveId = seedLeave("LV-TIMEOUT-F", empId, oldTs());
         setCron("");
 
         newWiredJob().execute();
@@ -255,13 +255,13 @@ public class TestErpHrLeaveApproverTimeoutJob extends JunitAutoTestCase {
 
     private Object[] seedEmployeeChain(String empCode, String supCode) {
         return ormTemplate.runInSession(session -> {
-            Long supId = seedEmployee(supCode, null, null, null);
-            Long empId = seedEmployee(empCode, supId, null, null);
+            String supId = seedEmployee(supCode, null, null, null);
+            String empId = seedEmployee(empCode, supId, null, null);
             return new Object[]{empId, supId};
         });
     }
 
-    private Long seedEmployee(String code, Long superiorId, Long departmentId, Long ignore) {
+    private String seedEmployee(String code, String superiorId, String departmentId, String ignore) {
         IEntityDao<ErpHrEmployee> dao = daoProvider.daoFor(ErpHrEmployee.class);
         ErpHrEmployee emp = new ErpHrEmployee();
         emp.setCode(code);
@@ -282,7 +282,7 @@ public class TestErpHrLeaveApproverTimeoutJob extends JunitAutoTestCase {
         return emp.getId();
     }
 
-    private Long seedDepartment(String code, Long managerId) {
+    private String seedDepartment(String code, String managerId) {
         return ormTemplate.runInSession(session -> {
             IEntityDao<ErpHrDepartment> dao = daoProvider.daoFor(ErpHrDepartment.class);
             ErpHrDepartment d = new ErpHrDepartment();
@@ -313,7 +313,7 @@ public class TestErpHrLeaveApproverTimeoutJob extends JunitAutoTestCase {
         });
     }
 
-    private void seedTemplate(Long id, String notificationType, String recipientConfig) {
+    private void seedTemplate(String id, String notificationType, String recipientConfig) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpSysNotificationTemplate> dao = daoProvider.daoFor(ErpSysNotificationTemplate.class);
             ErpSysNotificationTemplate t = new ErpSysNotificationTemplate();
@@ -332,7 +332,7 @@ public class TestErpHrLeaveApproverTimeoutJob extends JunitAutoTestCase {
         });
     }
 
-    private Long seedLeave(String code, Long employeeId, Timestamp updateTime) {
+    private String seedLeave(String code, String employeeId, Timestamp updateTime) {
         return ormTemplate.runInSession(session -> {
             IEntityDao<ErpHrLeaveRequest> dao = daoProvider.daoFor(ErpHrLeaveRequest.class);
             ErpHrLeaveRequest l = new ErpHrLeaveRequest();
@@ -354,7 +354,7 @@ public class TestErpHrLeaveApproverTimeoutJob extends JunitAutoTestCase {
         });
     }
 
-    private void backdateApprover(Long leaveId, Long approverId) {
+    private void backdateApprover(String leaveId, String approverId) {
         ormTemplate.runInSession(session -> {
             ErpHrLeaveRequest l = daoProvider.daoFor(ErpHrLeaveRequest.class).getEntityById(leaveId);
             // 直接经 orm_propValueByName 回写 approverId + 保持旧 updateTime（updateEntity 会刷新 updateTime
@@ -365,7 +365,7 @@ public class TestErpHrLeaveApproverTimeoutJob extends JunitAutoTestCase {
         });
     }
 
-    private ErpHrLeaveRequest leaveRequest(Long leaveId) {
+    private ErpHrLeaveRequest leaveRequest(String leaveId) {
         return daoProvider.daoFor(ErpHrLeaveRequest.class).getEntityById(leaveId);
     }
 

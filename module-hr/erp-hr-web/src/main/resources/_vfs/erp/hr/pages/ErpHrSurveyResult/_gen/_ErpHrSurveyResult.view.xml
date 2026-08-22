@@ -19,13 +19,13 @@
             <cols>
 
                 <!--ID-->
-                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="id" mandatory="true" sortable="true"/>
 
                 <!--所属问卷-->
-                <col id="surveyId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="surveyId" mandatory="true" sortable="true"/>
 
                 <!--部门-->
-                <col id="departmentId" ui:number="true" sortable="true"/>
+                <col id="departmentId" sortable="true"/>
 
                 <!--答卷数-->
                 <col id="totalResponses" ui:number="true" sortable="true"/>

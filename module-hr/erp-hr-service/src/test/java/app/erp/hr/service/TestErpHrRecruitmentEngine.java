@@ -50,7 +50,7 @@ public class TestErpHrRecruitmentEngine extends JunitAutoTestCase {
 
     @Test
     public void testFullRecruitmentFlowCreatesEmployeeAndContract() {
-        Long recId = ormTemplate.runInSession(session -> seedRecruitment("CAND-FULL"));
+        String recId = ormTemplate.runInSession(session -> seedRecruitment("CAND-FULL"));
 
         ormTemplate.runInSession(() -> recruitmentBiz.moveToScreening(String.valueOf(recId), CTX));
         ormTemplate.runInSession(() -> recruitmentBiz.scheduleInterview(String.valueOf(recId), null, LocalDate.of(2026, 7, 15), CTX));
@@ -76,7 +76,7 @@ public class TestErpHrRecruitmentEngine extends JunitAutoTestCase {
 
     @Test
     public void testIllegalTransitionOpenToHire() {
-        Long recId = ormTemplate.runInSession(session -> seedRecruitment("CAND-ILLEGAL"));
+        String recId = ormTemplate.runInSession(session -> seedRecruitment("CAND-ILLEGAL"));
 
         NopException ex = assertThrows(NopException.class,
                 () -> ormTemplate.runInSession(session -> recruitmentBiz.hire(String.valueOf(recId), LocalDate.of(2026, 7, 20), CTX)));
@@ -85,7 +85,7 @@ public class TestErpHrRecruitmentEngine extends JunitAutoTestCase {
 
     @Test
     public void testRejectFromInterview() {
-        Long recId = ormTemplate.runInSession(session -> seedRecruitment("CAND-REJECT"));
+        String recId = ormTemplate.runInSession(session -> seedRecruitment("CAND-REJECT"));
 
         ormTemplate.runInSession(() -> recruitmentBiz.moveToScreening(String.valueOf(recId), CTX));
         ormTemplate.runInSession(() -> recruitmentBiz.scheduleInterview(String.valueOf(recId), null, LocalDate.of(2026, 7, 15), CTX));
@@ -97,7 +97,7 @@ public class TestErpHrRecruitmentEngine extends JunitAutoTestCase {
 
     @Test
     public void testCloseFromHired() {
-        Long recId = ormTemplate.runInSession(session -> seedRecruitment("CAND-CLOSE"));
+        String recId = ormTemplate.runInSession(session -> seedRecruitment("CAND-CLOSE"));
 
         ormTemplate.runInSession(() -> recruitmentBiz.moveToScreening(String.valueOf(recId), CTX));
         ormTemplate.runInSession(() -> recruitmentBiz.scheduleInterview(String.valueOf(recId), null, LocalDate.of(2026, 7, 15), CTX));
@@ -111,7 +111,7 @@ public class TestErpHrRecruitmentEngine extends JunitAutoTestCase {
 
     // ---------- helpers ----------
 
-    private ErpHrEmploymentContract findActiveContract(Long employeeId) {
+    private ErpHrEmploymentContract findActiveContract(String employeeId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("employeeId", employeeId));
         q.addFilter(eq("status", ErpHrConstants.CONTRACT_STATUS_ACTIVE));
@@ -120,7 +120,7 @@ public class TestErpHrRecruitmentEngine extends JunitAutoTestCase {
         return list.isEmpty() ? null : list.get(0);
     }
 
-    private Long seedRecruitment(String candidateName) {
+    private String seedRecruitment(String candidateName) {
         IEntityDao<ErpHrRecruitment> dao = daoProvider.daoFor(ErpHrRecruitment.class);
         ErpHrRecruitment r = new ErpHrRecruitment();
         r.setBusinessDate(LocalDate.of(2026, 7, 1));

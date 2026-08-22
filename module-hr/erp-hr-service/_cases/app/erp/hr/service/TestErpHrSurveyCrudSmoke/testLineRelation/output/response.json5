@@ -6,7 +6,7 @@
     "items": [
       {
         "id": "2",
-        "surveyId": 1,
+        "surveyId": "1",
         "sortOrder": null,
         "questionText": "冒烟问题",
         "questionType": "RATING",

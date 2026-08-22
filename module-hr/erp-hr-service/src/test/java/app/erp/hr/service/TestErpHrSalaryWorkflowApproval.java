@@ -37,7 +37,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpHrSalaryWorkflowApproval extends JunitAutoTestCase {
 
-    static final Long EMPLOYEE_ID = 8001L;
+    static final String EMPLOYEE_ID = "8001";
 
     @Inject
     IDaoProvider daoProvider;
@@ -146,7 +146,7 @@ public class TestErpHrSalaryWorkflowApproval extends JunitAutoTestCase {
                 + "，当前激活步骤=" + steps);
     }
 
-    private ApiResponse<?> submit(Long id) {
+    private ApiResponse<?> submit(String id) {
         return executeRpc(mutation, "ErpHrSalary__submitForApproval",
                 ApiRequest.build(Map.of("id", String.valueOf(id))));
     }

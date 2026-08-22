@@ -45,8 +45,8 @@ public class ErpHrSurveyBizModel extends CrudBizModel<ErpHrSurvey> implements IE
 
     @Override
     @BizMutation
-    public ErpHrSurvey publish(@Name("surveyId") Long surveyId, IServiceContext context) {
-        ErpHrSurvey survey = requireEntity(String.valueOf(surveyId), null, context);
+    public ErpHrSurvey publish(@Name("surveyId") String surveyId, IServiceContext context) {
+        ErpHrSurvey survey = requireEntity(surveyId, null, context);
         requireTransition(surveyId, survey.getStatus(), ErpHrConstants.SURVEY_STATUS_DRAFT, context);
         if (survey.getStartDate() == null || survey.getEndDate() == null) {
             throw new NopException(ErpHrErrors.ERR_HR_SURVEY_ILLEGAL_TRANSITION)
@@ -69,8 +69,8 @@ public class ErpHrSurveyBizModel extends CrudBizModel<ErpHrSurvey> implements IE
 
     @Override
     @BizMutation
-    public ErpHrSurvey close(@Name("surveyId") Long surveyId, IServiceContext context) {
-        ErpHrSurvey survey = requireEntity(String.valueOf(surveyId), null, context);
+    public ErpHrSurvey close(@Name("surveyId") String surveyId, IServiceContext context) {
+        ErpHrSurvey survey = requireEntity(surveyId, null, context);
         requireTransition(surveyId, survey.getStatus(), ErpHrConstants.SURVEY_STATUS_OPEN, context);
         survey.setStatus(ErpHrConstants.SURVEY_STATUS_CLOSED);
         updateEntity(survey, null, context);
@@ -80,8 +80,8 @@ public class ErpHrSurveyBizModel extends CrudBizModel<ErpHrSurvey> implements IE
 
     @Override
     @BizMutation
-    public ErpHrSurvey archive(@Name("surveyId") Long surveyId, IServiceContext context) {
-        ErpHrSurvey survey = requireEntity(String.valueOf(surveyId), null, context);
+    public ErpHrSurvey archive(@Name("surveyId") String surveyId, IServiceContext context) {
+        ErpHrSurvey survey = requireEntity(surveyId, null, context);
         requireTransition(surveyId, survey.getStatus(), ErpHrConstants.SURVEY_STATUS_CLOSED, context);
         survey.setStatus(ErpHrConstants.SURVEY_STATUS_ARCHIVED);
         updateEntity(survey, null, context);
@@ -117,7 +117,7 @@ public class ErpHrSurveyBizModel extends CrudBizModel<ErpHrSurvey> implements IE
         }
     }
 
-    private void requireTransition(Long surveyId, String currentStatus, String expectedStatus,
+    private void requireTransition(String surveyId, String currentStatus, String expectedStatus,
                                    IServiceContext context) {
         if (!Objects.equals(currentStatus, expectedStatus)) {
             throw new NopException(ErpHrErrors.ERR_HR_SURVEY_ILLEGAL_TRANSITION)

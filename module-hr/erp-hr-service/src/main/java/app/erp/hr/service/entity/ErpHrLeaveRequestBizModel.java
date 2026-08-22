@@ -121,7 +121,7 @@ public class ErpHrLeaveRequestBizModel extends CrudBizModel<ErpHrLeaveRequest> i
 
     @Override
     @BizQuery
-    public BigDecimal getBalance(@Name("employeeId") Long employeeId,
+    public BigDecimal getBalance(@Name("employeeId") String employeeId,
                                  @Name("leaveType") String leaveType,
                                  @Name("fiscalYear") Integer fiscalYear,
                                  IServiceContext context) {
@@ -178,7 +178,7 @@ public class ErpHrLeaveRequestBizModel extends CrudBizModel<ErpHrLeaveRequest> i
         }
     }
 
-    ErpHrLeaveBalance findBalance(Long employeeId, String leaveType, Integer fiscalYear, IServiceContext context) {
+    ErpHrLeaveBalance findBalance(String employeeId, String leaveType, Integer fiscalYear, IServiceContext context) {
         QueryBean q = new QueryBean();
         q.addFilter(and(
                 eq("employeeId", employeeId),
@@ -188,7 +188,7 @@ public class ErpHrLeaveRequestBizModel extends CrudBizModel<ErpHrLeaveRequest> i
         return leaveBalanceBiz.findFirst(q, null, context);
     }
 
-    BigDecimal sumUsedDays(Long employeeId, String leaveType, Integer fiscalYear, IServiceContext context) {
+    BigDecimal sumUsedDays(String employeeId, String leaveType, Integer fiscalYear, IServiceContext context) {
         LocalDate yearStart = LocalDate.of(fiscalYear, 1, 1);
         LocalDate yearEnd = LocalDate.of(fiscalYear, 12, 31);
         QueryBean q = new QueryBean();
@@ -204,7 +204,7 @@ public class ErpHrLeaveRequestBizModel extends CrudBizModel<ErpHrLeaveRequest> i
         return sum;
     }
 
-    Long resolveApproverId(IServiceContext context) {
+    String resolveApproverId(IServiceContext context) {
         // 审批人取当前用户关联的员工记录（非关键——仅记录审批轨迹）
         return null;
     }

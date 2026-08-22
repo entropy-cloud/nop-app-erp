@@ -71,10 +71,10 @@ public class ErpHrEmployeeTransferEmployeeProcessor {
     @Inject
     ErpHrEmployeeStateMachine employeeStateMachine;
 
-    public ErpHrEmployee transferEmployee(Long employeeId,
-                                          Long targetDepartmentId,
-                                          Long targetPositionId,
-                                          Long targetSuperiorId,
+    public ErpHrEmployee transferEmployee(String employeeId,
+                                          String targetDepartmentId,
+                                          String targetPositionId,
+                                          String targetSuperiorId,
                                           LocalDate effectiveDate,
                                           String handleContract,
                                           IServiceContext context) {
@@ -102,7 +102,7 @@ public class ErpHrEmployeeTransferEmployeeProcessor {
 
     // ---------- validation gates ----------
 
-    protected ErpHrEmployee requireTransferableEmployee(Long employeeId, IServiceContext context) {
+    protected ErpHrEmployee requireTransferableEmployee(String employeeId, IServiceContext context) {
         ErpHrEmployee employee = employeeDao().getEntityById(employeeId);
         if (employee == null) {
             throw new NopException(ErpHrErrors.ERR_EMPLOYEE_NOT_TRANSFERABLE)
@@ -124,7 +124,7 @@ public class ErpHrEmployeeTransferEmployeeProcessor {
         return employeeStateMachine.isTransferable(employmentStatus);
     }
 
-    protected ErpHrDepartment requireTargetDepartment(Long targetDepartmentId, IServiceContext context) {
+    protected ErpHrDepartment requireTargetDepartment(String targetDepartmentId, IServiceContext context) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("id", targetDepartmentId));
         q.setLimit(1);
@@ -136,7 +136,7 @@ public class ErpHrEmployeeTransferEmployeeProcessor {
         return dept;
     }
 
-    protected ErpHrPosition requireTargetPosition(Long targetPositionId, Long expectedDepartmentId, IServiceContext context) {
+    protected ErpHrPosition requireTargetPosition(String targetPositionId, String expectedDepartmentId, IServiceContext context) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("id", targetPositionId));
         q.setLimit(1);
@@ -154,7 +154,7 @@ public class ErpHrEmployeeTransferEmployeeProcessor {
 
     // ---------- leave conflict warn (config-gated, non-blocking) ----------
 
-    protected void warnIfLeaveConflict(Long employeeId, LocalDate effectiveDate, IServiceContext context) {
+    protected void warnIfLeaveConflict(String employeeId, LocalDate effectiveDate, IServiceContext context) {
         if (!ErpHrConfigs.transferLeaveConflictWarn()) {
             return;
         }
@@ -223,7 +223,7 @@ public class ErpHrEmployeeTransferEmployeeProcessor {
         return ErpHrConstants.TRANSFER_HANDLE_CONTRACT_AUTO;
     }
 
-    protected ErpHrEmploymentContract findActiveContract(Long employeeId, IServiceContext context) {
+    protected ErpHrEmploymentContract findActiveContract(String employeeId, IServiceContext context) {
         QueryBean q = new QueryBean();
         q.addFilter(and(
                 eq("employeeId", employeeId),

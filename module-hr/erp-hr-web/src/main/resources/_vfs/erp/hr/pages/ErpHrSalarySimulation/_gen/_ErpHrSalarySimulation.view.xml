@@ -19,16 +19,16 @@
             <cols>
 
                 <!--ID-->
-                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="id" mandatory="true" sortable="true"/>
 
                 <!--编号-->
                 <col id="code" mandatory="true" sortable="true"/>
 
                 <!--业务组织-->
-                <col id="orgId" ui:number="true" sortable="true"/>
+                <col id="orgId" sortable="true"/>
 
                 <!--源薪酬记录-->
-                <col id="sourceSalaryId" ui:number="true" sortable="true"/>
+                <col id="sourceSalaryId" sortable="true"/>
 
                 <!--模拟年份-->
                 <col id="simulationPeriodYear" mandatory="true" ui:number="true" sortable="true"/>
@@ -43,7 +43,7 @@
                 <col id="status" mandatory="true" sortable="true"/>
 
                 <!--审批人-->
-                <col id="reviewerId" ui:number="true" sortable="true"/>
+                <col id="reviewerId" sortable="true"/>
 
                 <!--审批时间-->
                 <col id="reviewedAt" sortable="true"/>
@@ -52,7 +52,7 @@
                 <col id="convertedAt" sortable="true"/>
 
                 <!--转正式薪酬ID-->
-                <col id="convertedSalaryId" ui:number="true" sortable="true"/>
+                <col id="convertedSalaryId" sortable="true"/>
 
                 <!--备注-->
                 <col id="notes" sortable="true"/>

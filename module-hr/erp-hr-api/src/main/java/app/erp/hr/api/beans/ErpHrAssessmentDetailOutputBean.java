@@ -13,44 +13,44 @@
     public class ErpHrAssessmentDetailOutputBean {
 
     
-        private Long _id;
+        private String _id;
 
     
         @PropMeta(propId=1)
     
-        public Long getId(){
+        public String getId(){
             return _id;
         }
 
-        public void setId(Long value){
+        public void setId(String value){
             this._id = value;
         }
 
 
-        private Long _assessmentId;
+        private String _assessmentId;
 
     
         @PropMeta(propId=2)
     
-        public Long getAssessmentId(){
+        public String getAssessmentId(){
             return _assessmentId;
         }
 
-        public void setAssessmentId(Long value){
+        public void setAssessmentId(String value){
             this._assessmentId = value;
         }
 
 
-        private Long _competencyId;
+        private String _competencyId;
 
     
         @PropMeta(propId=3)
     
-        public Long getCompetencyId(){
+        public String getCompetencyId(){
             return _competencyId;
         }
 
-        public void setCompetencyId(Long value){
+        public void setCompetencyId(String value){
             this._competencyId = value;
         }
 

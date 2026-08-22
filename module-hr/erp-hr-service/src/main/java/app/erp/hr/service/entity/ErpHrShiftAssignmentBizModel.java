@@ -66,8 +66,8 @@ public class ErpHrShiftAssignmentBizModel extends CrudBizModel<ErpHrShiftAssignm
 
     @Override
     @BizMutation
-    public ErpHrShiftAssignment assignSingle(@Name("employeeId") Long employeeId,
-                                             @Name("shiftId") Long shiftId,
+    public ErpHrShiftAssignment assignSingle(@Name("employeeId") String employeeId,
+                                             @Name("shiftId") String shiftId,
                                              @Name("assignmentDate") LocalDate assignmentDate,
                                              IServiceContext context) {
         return assignSingleProcessor.assignSingle(employeeId, shiftId, assignmentDate, context);
@@ -75,8 +75,8 @@ public class ErpHrShiftAssignmentBizModel extends CrudBizModel<ErpHrShiftAssignm
 
     @Override
     @BizMutation
-    public List<ErpHrShiftAssignment> assignBatch(@Name("employeeIds") List<Long> employeeIds,
-                                                   @Name("shiftId") Long shiftId,
+    public List<ErpHrShiftAssignment> assignBatch(@Name("employeeIds") List<String> employeeIds,
+                                                   @Name("shiftId") String shiftId,
                                                    @Name("startDate") LocalDate startDate,
                                                    @Name("endDate") LocalDate endDate,
                                                    IServiceContext context) {
@@ -94,7 +94,7 @@ public class ErpHrShiftAssignmentBizModel extends CrudBizModel<ErpHrShiftAssignm
 
     @Override
     @BizQuery
-    public ErpHrShiftAssignment findByEmployeeAndDate(@Name("employeeId") Long employeeId,
+    public ErpHrShiftAssignment findByEmployeeAndDate(@Name("employeeId") String employeeId,
                                                       @Name("assignmentDate") LocalDate assignmentDate,
                                                       IServiceContext context) {
         QueryBean q = new QueryBean();
@@ -108,7 +108,7 @@ public class ErpHrShiftAssignmentBizModel extends CrudBizModel<ErpHrShiftAssignm
 
     // ---------- helpers ----------
 
-    ErpHrShiftAssignment doCreateAssignment(Long employeeId, Long shiftId, LocalDate date,
+    ErpHrShiftAssignment doCreateAssignment(String employeeId, String shiftId, LocalDate date,
                                             IServiceContext context) {
         ErpHrShiftAssignment assignment = newEntity();
         assignment.setBusinessDate(io.nop.api.core.time.CoreMetrics.today());
@@ -135,7 +135,7 @@ public class ErpHrShiftAssignmentBizModel extends CrudBizModel<ErpHrShiftAssignm
         return assignment;
     }
 
-    ErpHrShift requireShift(Long shiftId, IServiceContext context) {
+    ErpHrShift requireShift(String shiftId, IServiceContext context) {
         ErpHrShift shift = shiftBiz.get(String.valueOf(shiftId), false, context);
         if (shift == null) {
             throw new NopException(ErpHrErrors.ERR_SHIFT_ROTATION_PATTERN_INVALID)
@@ -144,7 +144,7 @@ public class ErpHrShiftAssignmentBizModel extends CrudBizModel<ErpHrShiftAssignm
         return shift;
     }
 
-    void assertNoExistingAssignment(Long employeeId, LocalDate date, IServiceContext context) {
+    void assertNoExistingAssignment(String employeeId, LocalDate date, IServiceContext context) {
         if (existsActiveAssignment(employeeId, date, context)) {
             throw new NopException(ErpHrErrors.ERR_SHIFT_DUPLICATE_ASSIGNMENT)
                     .param(ErpHrErrors.ARG_EMPLOYEE_ID, employeeId)
@@ -152,7 +152,7 @@ public class ErpHrShiftAssignmentBizModel extends CrudBizModel<ErpHrShiftAssignm
         }
     }
 
-    boolean existsActiveAssignment(Long employeeId, LocalDate date, IServiceContext context) {
+    boolean existsActiveAssignment(String employeeId, LocalDate date, IServiceContext context) {
         QueryBean q = new QueryBean();
         q.addFilter(and(
                 eq("employeeId", employeeId),
@@ -173,7 +173,7 @@ public class ErpHrShiftAssignmentBizModel extends CrudBizModel<ErpHrShiftAssignm
     /**
      * 内部便利方法：按员工 + 日期范围批量查找（供 Phase 4 休假联动使用）。
      */
-    public List<ErpHrShiftAssignment> findByEmployeeAndRange(Long employeeId,
+    public List<ErpHrShiftAssignment> findByEmployeeAndRange(String employeeId,
                                                              LocalDate startDate,
                                                              LocalDate endDate,
                                                              IServiceContext context) {

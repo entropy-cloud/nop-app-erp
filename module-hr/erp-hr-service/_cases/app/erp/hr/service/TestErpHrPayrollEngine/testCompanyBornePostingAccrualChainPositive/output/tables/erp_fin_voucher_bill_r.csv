@@ -1,0 +1,5 @@
+_chgType,ID,VOUCHER_ID,BILL_TYPE,BILL_CODE,BILL_LINE_CODE,BUSINESS_TYPE,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
+A,19,16,SALARY,@var:ErpFinVoucherBillR@billCode,,SALARY,@var:ErpFinVoucherBillR@delVersion,0,autotest-ref,*,autotest-ref,*
+A,23,20,SOCIAL_INSURANCE_ER,@var:ErpFinVoucherBillR@billCode,,SOCIAL_INSURANCE_ER,@var:ErpFinVoucherBillR@delVersion,0,autotest-ref,*,autotest-ref,*
+A,27,24,HOUSING_FUND_ER,@var:ErpFinVoucherBillR@billCode,,HOUSING_FUND_ER,@var:ErpFinVoucherBillR@delVersion,0,autotest-ref,*,autotest-ref,*
+A,31,28,SALARY_PAYMENT,@var:ErpFinVoucherBillR@billCode,,SALARY_PAYMENT,@var:ErpFinVoucherBillR@delVersion,0,autotest-ref,*,autotest-ref,*

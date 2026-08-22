@@ -178,25 +178,25 @@ public class _ErpHrShiftSwapRequest extends DynamicOrmEntity{
 
     
     /* ID: ID */
-    private java.lang.Long _id;
+    private java.lang.String _id;
     
     /* 编号: CODE */
     private java.lang.String _code;
     
     /* 业务组织: ORG_ID */
-    private java.lang.Long _orgId;
+    private java.lang.String _orgId;
     
     /* 申请人: REQUESTER_ID */
-    private java.lang.Long _requesterId;
+    private java.lang.String _requesterId;
     
     /* 目标员工: TARGET_EMPLOYEE_ID */
-    private java.lang.Long _targetEmployeeId;
+    private java.lang.String _targetEmployeeId;
     
     /* 原排班: SOURCE_ASSIGNMENT_ID */
-    private java.lang.Long _sourceAssignmentId;
+    private java.lang.String _sourceAssignmentId;
     
     /* 目标排班: TARGET_ASSIGNMENT_ID */
-    private java.lang.Long _targetAssignmentId;
+    private java.lang.String _targetAssignmentId;
     
     /* 调换日期: SWAP_DATE */
     private java.time.LocalDate _swapDate;
@@ -371,9 +371,9 @@ public class _ErpHrShiftSwapRequest extends DynamicOrmEntity{
         switch(propId){
         
             case PROP_ID_id:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_id));
                }
                setId(typedValue);
@@ -391,9 +391,9 @@ public class _ErpHrShiftSwapRequest extends DynamicOrmEntity{
             }
         
             case PROP_ID_orgId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_orgId));
                }
                setOrgId(typedValue);
@@ -401,9 +401,9 @@ public class _ErpHrShiftSwapRequest extends DynamicOrmEntity{
             }
         
             case PROP_ID_requesterId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_requesterId));
                }
                setRequesterId(typedValue);
@@ -411,9 +411,9 @@ public class _ErpHrShiftSwapRequest extends DynamicOrmEntity{
             }
         
             case PROP_ID_targetEmployeeId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_targetEmployeeId));
                }
                setTargetEmployeeId(typedValue);
@@ -421,9 +421,9 @@ public class _ErpHrShiftSwapRequest extends DynamicOrmEntity{
             }
         
             case PROP_ID_sourceAssignmentId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_sourceAssignmentId));
                }
                setSourceAssignmentId(typedValue);
@@ -431,9 +431,9 @@ public class _ErpHrShiftSwapRequest extends DynamicOrmEntity{
             }
         
             case PROP_ID_targetAssignmentId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_targetAssignmentId));
                }
                setTargetAssignmentId(typedValue);
@@ -561,7 +561,7 @@ public class _ErpHrShiftSwapRequest extends DynamicOrmEntity{
         
             case PROP_ID_id:{
                onInitProp(propId);
-               this._id = (java.lang.Long)value;
+               this._id = (java.lang.String)value;
                orm_id(); // 如果是设置主键字段，则触发watcher
                break;
             }
@@ -575,35 +575,35 @@ public class _ErpHrShiftSwapRequest extends DynamicOrmEntity{
         
             case PROP_ID_orgId:{
                onInitProp(propId);
-               this._orgId = (java.lang.Long)value;
+               this._orgId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_requesterId:{
                onInitProp(propId);
-               this._requesterId = (java.lang.Long)value;
+               this._requesterId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_targetEmployeeId:{
                onInitProp(propId);
-               this._targetEmployeeId = (java.lang.Long)value;
+               this._targetEmployeeId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_sourceAssignmentId:{
                onInitProp(propId);
-               this._sourceAssignmentId = (java.lang.Long)value;
+               this._sourceAssignmentId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_targetAssignmentId:{
                onInitProp(propId);
-               this._targetAssignmentId = (java.lang.Long)value;
+               this._targetAssignmentId = (java.lang.String)value;
                
                break;
             }
@@ -694,7 +694,7 @@ public class _ErpHrShiftSwapRequest extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final java.lang.Long getId(){
+    public final java.lang.String getId(){
          onPropGet(PROP_ID_id);
          return _id;
     }
@@ -702,7 +702,7 @@ public class _ErpHrShiftSwapRequest extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final void setId(java.lang.Long value){
+    public final void setId(java.lang.String value){
         if(onPropSet(PROP_ID_id,value)){
             this._id = value;
             internalClearRefs(PROP_ID_id);
@@ -732,7 +732,7 @@ public class _ErpHrShiftSwapRequest extends DynamicOrmEntity{
     /**
      * 业务组织: ORG_ID
      */
-    public final java.lang.Long getOrgId(){
+    public final java.lang.String getOrgId(){
          onPropGet(PROP_ID_orgId);
          return _orgId;
     }
@@ -740,7 +740,7 @@ public class _ErpHrShiftSwapRequest extends DynamicOrmEntity{
     /**
      * 业务组织: ORG_ID
      */
-    public final void setOrgId(java.lang.Long value){
+    public final void setOrgId(java.lang.String value){
         if(onPropSet(PROP_ID_orgId,value)){
             this._orgId = value;
             internalClearRefs(PROP_ID_orgId);
@@ -751,7 +751,7 @@ public class _ErpHrShiftSwapRequest extends DynamicOrmEntity{
     /**
      * 申请人: REQUESTER_ID
      */
-    public final java.lang.Long getRequesterId(){
+    public final java.lang.String getRequesterId(){
          onPropGet(PROP_ID_requesterId);
          return _requesterId;
     }
@@ -759,7 +759,7 @@ public class _ErpHrShiftSwapRequest extends DynamicOrmEntity{
     /**
      * 申请人: REQUESTER_ID
      */
-    public final void setRequesterId(java.lang.Long value){
+    public final void setRequesterId(java.lang.String value){
         if(onPropSet(PROP_ID_requesterId,value)){
             this._requesterId = value;
             internalClearRefs(PROP_ID_requesterId);
@@ -770,7 +770,7 @@ public class _ErpHrShiftSwapRequest extends DynamicOrmEntity{
     /**
      * 目标员工: TARGET_EMPLOYEE_ID
      */
-    public final java.lang.Long getTargetEmployeeId(){
+    public final java.lang.String getTargetEmployeeId(){
          onPropGet(PROP_ID_targetEmployeeId);
          return _targetEmployeeId;
     }
@@ -778,7 +778,7 @@ public class _ErpHrShiftSwapRequest extends DynamicOrmEntity{
     /**
      * 目标员工: TARGET_EMPLOYEE_ID
      */
-    public final void setTargetEmployeeId(java.lang.Long value){
+    public final void setTargetEmployeeId(java.lang.String value){
         if(onPropSet(PROP_ID_targetEmployeeId,value)){
             this._targetEmployeeId = value;
             internalClearRefs(PROP_ID_targetEmployeeId);
@@ -789,7 +789,7 @@ public class _ErpHrShiftSwapRequest extends DynamicOrmEntity{
     /**
      * 原排班: SOURCE_ASSIGNMENT_ID
      */
-    public final java.lang.Long getSourceAssignmentId(){
+    public final java.lang.String getSourceAssignmentId(){
          onPropGet(PROP_ID_sourceAssignmentId);
          return _sourceAssignmentId;
     }
@@ -797,7 +797,7 @@ public class _ErpHrShiftSwapRequest extends DynamicOrmEntity{
     /**
      * 原排班: SOURCE_ASSIGNMENT_ID
      */
-    public final void setSourceAssignmentId(java.lang.Long value){
+    public final void setSourceAssignmentId(java.lang.String value){
         if(onPropSet(PROP_ID_sourceAssignmentId,value)){
             this._sourceAssignmentId = value;
             internalClearRefs(PROP_ID_sourceAssignmentId);
@@ -808,7 +808,7 @@ public class _ErpHrShiftSwapRequest extends DynamicOrmEntity{
     /**
      * 目标排班: TARGET_ASSIGNMENT_ID
      */
-    public final java.lang.Long getTargetAssignmentId(){
+    public final java.lang.String getTargetAssignmentId(){
          onPropGet(PROP_ID_targetAssignmentId);
          return _targetAssignmentId;
     }
@@ -816,7 +816,7 @@ public class _ErpHrShiftSwapRequest extends DynamicOrmEntity{
     /**
      * 目标排班: TARGET_ASSIGNMENT_ID
      */
-    public final void setTargetAssignmentId(java.lang.Long value){
+    public final void setTargetAssignmentId(java.lang.String value){
         if(onPropSet(PROP_ID_targetAssignmentId,value)){
             this._targetAssignmentId = value;
             internalClearRefs(PROP_ID_targetAssignmentId);

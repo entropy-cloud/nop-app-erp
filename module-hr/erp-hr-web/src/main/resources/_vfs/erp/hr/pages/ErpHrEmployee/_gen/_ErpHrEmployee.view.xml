@@ -19,7 +19,7 @@
             <cols>
 
                 <!--ID-->
-                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="id" mandatory="true" sortable="true"/>
 
                 <!--工号-->
                 <col id="code" mandatory="true" sortable="true"/>
@@ -64,19 +64,19 @@
                 <col id="emergencyPhone" sortable="true"/>
 
                 <!--部门-->
-                <col id="departmentId" ui:number="true" sortable="true"/>
+                <col id="departmentId" sortable="true"/>
 
                 <!--职位-->
-                <col id="positionId" ui:number="true" sortable="true"/>
+                <col id="positionId" sortable="true"/>
 
                 <!--岗位名称-->
                 <col id="jobTitle" sortable="true"/>
 
                 <!--直接上级-->
-                <col id="superiorId" ui:number="true" sortable="true"/>
+                <col id="superiorId" sortable="true"/>
 
                 <!--默认成本中心-->
-                <col id="costCenterId" ui:number="true" sortable="true"/>
+                <col id="costCenterId" sortable="true"/>
 
                 <!--入职日期-->
                 <col id="hireDate" mandatory="true" sortable="true"/>
@@ -100,7 +100,7 @@
                 <col id="employeeType" mandatory="true" sortable="true"/>
 
                 <!--工资卡账户-->
-                <col id="bankAccountId" ui:number="true" sortable="true"/>
+                <col id="bankAccountId" sortable="true"/>
 
                 <!--社保号-->
                 <col id="socialSecurityNo" sortable="true"/>
@@ -109,10 +109,10 @@
                 <col id="taxFileNo" sortable="true"/>
 
                 <!--系统用户ID-->
-                <col id="userAccountId" ui:number="true" sortable="true"/>
+                <col id="userAccountId" sortable="true"/>
 
                 <!--业务组织-->
-                <col id="orgId" ui:number="true" sortable="true"/>
+                <col id="orgId" sortable="true"/>
 
                 <!--备注-->
                 <col id="remark" sortable="true"/>

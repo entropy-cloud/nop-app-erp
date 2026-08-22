@@ -22,8 +22,8 @@
 
     <props>
         <prop name="id" displayName="ID" propId="1" i18n-en:displayName="ID" tagSet="seq-default" mandatory="true"
-              queryable="true" sortable="true" insertable="true" updatable="false" graphql:type="String">
-            <schema type="java.lang.Long"/>
+              queryable="true" sortable="true" insertable="true" updatable="false">
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="code" displayName="单号" propId="2" i18n-en:displayName="Code" tagSet="var" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
@@ -31,7 +31,7 @@
         </prop>
         <prop name="employeeId" displayName="员工" propId="3" i18n-en:displayName="Employee" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="employee">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="leaveType" displayName="休假类型" propId="4" i18n-en:displayName="Leave Type" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
@@ -59,7 +59,7 @@
         </prop>
         <prop name="approverId" displayName="审批人" propId="10" i18n-en:displayName="Approver" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="approver">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="approvedAt" displayName="审批时间" propId="11" i18n-en:displayName="Approved At" tagSet="clock"
               queryable="true" sortable="true" insertable="false" updatable="false" ui:show="R">
@@ -67,7 +67,7 @@
         </prop>
         <prop name="orgId" displayName="业务组织" propId="12" i18n-en:displayName="Organization" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="org">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="remark" displayName="备注" propId="13" i18n-en:displayName="Remark" queryable="true" sortable="true"
               insertable="true" updatable="true">

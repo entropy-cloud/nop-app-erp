@@ -20,8 +20,8 @@ import java.util.Map;
  */
 public class ErpHrSalarySimulationAdjustItemProcessor extends AbstractErpHrSalarySimulationProcessor {
 
-    public ErpHrSalary adjustItem(Long simulationId,
-                                  Long employeeId,
+    public ErpHrSalary adjustItem(String simulationId,
+                                  String employeeId,
                                   String salaryItemCode,
                                   BigDecimal adjustedAmount,
                                   String reason,

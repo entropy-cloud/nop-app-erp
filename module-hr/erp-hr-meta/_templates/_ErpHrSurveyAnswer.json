@@ -1,7 +1,7 @@
 {
-  "id": 0,
-  "responseId": 0,
-  "questionId": 0,
+  "id": "",
+  "responseId": "",
+  "questionId": "",
   "ratingValue": 0,
   "selectedOption": "",
   "openText": "",

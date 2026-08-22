@@ -19,7 +19,7 @@
             <cols>
 
                 <!--ID-->
-                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="id" mandatory="true" sortable="true"/>
 
                 <!--批次号-->
                 <col id="batchNo" mandatory="true" sortable="true"/>
@@ -43,10 +43,10 @@
                 <col id="status" mandatory="true" sortable="true"/>
 
                 <!--开户银行-->
-                <col id="bankId" ui:number="true" sortable="true"/>
+                <col id="bankId" sortable="true"/>
 
                 <!--业务组织-->
-                <col id="orgId" ui:number="true" sortable="true"/>
+                <col id="orgId" sortable="true"/>
 
                 <!--备注-->
                 <col id="remark" sortable="true"/>

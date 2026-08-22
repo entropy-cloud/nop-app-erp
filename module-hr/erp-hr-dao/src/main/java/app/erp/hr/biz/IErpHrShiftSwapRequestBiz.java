@@ -21,20 +21,20 @@ public interface IErpHrShiftSwapRequestBiz extends ICrudBiz<ErpHrShiftSwapReques
 
     @BizMutation
     @SingleSession
-    ErpHrShiftSwapRequest submit(@Name("sourceAssignmentId") Long sourceAssignmentId,
-                                 @Name("targetAssignmentId") Long targetAssignmentId,
+    ErpHrShiftSwapRequest submit(@Name("sourceAssignmentId") String sourceAssignmentId,
+                                 @Name("targetAssignmentId") String targetAssignmentId,
                                  @Name("reason") String reason,
                                  IServiceContext context);
 
     @BizMutation
     @SingleSession
-    ErpHrShiftSwapRequest approve(@Name("swapRequestId") Long swapRequestId, IServiceContext context);
+    ErpHrShiftSwapRequest approve(@Name("swapRequestId") String swapRequestId, IServiceContext context);
 
     @BizMutation
     @SingleSession
-    ErpHrShiftSwapRequest reject(@Name("swapRequestId") Long swapRequestId, IServiceContext context);
+    ErpHrShiftSwapRequest reject(@Name("swapRequestId") String swapRequestId, IServiceContext context);
 
     @BizMutation
     @SingleSession
-    ErpHrShiftSwapRequest cancel(@Name("swapRequestId") Long swapRequestId, IServiceContext context);
+    ErpHrShiftSwapRequest cancel(@Name("swapRequestId") String swapRequestId, IServiceContext context);
 }

@@ -19,13 +19,13 @@
             <cols>
 
                 <!--ID-->
-                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="id" mandatory="true" sortable="true"/>
 
                 <!--评估-->
-                <col id="assessmentId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="assessmentId" mandatory="true" sortable="true"/>
 
                 <!--胜任力-->
-                <col id="competencyId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="competencyId" mandatory="true" sortable="true"/>
 
                 <!--实际等级-->
                 <col id="actualLevel" ui:number="true" sortable="true"/>

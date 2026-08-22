@@ -58,7 +58,7 @@ public abstract class AbstractErpHrSalarySimulationProcessor {
         return daoProvider.daoFor(ErpHrSalarySimulation.class);
     }
 
-    protected ErpHrSalarySimulation requireSimulation(Long simulationId, IServiceContext context) {
+    protected ErpHrSalarySimulation requireSimulation(String simulationId, IServiceContext context) {
         ErpHrSalarySimulation simulation = simulationDao().getEntityById(simulationId);
         if (simulation == null) {
             throw new UnknownEntityException(simulationDao().getEntityName(), simulationId);
@@ -84,7 +84,7 @@ public abstract class AbstractErpHrSalarySimulationProcessor {
         return "SIM-" + year + String.format("%02d", month) + "-" + CoreMetrics.nanoTime();
     }
 
-    protected ErpHrSalary requireSourceSalary(Long employeeId, ErpHrSalarySimulation simulation) {
+    protected ErpHrSalary requireSourceSalary(String employeeId, ErpHrSalarySimulation simulation) {
         int sourceYear;
         int sourceMonth;
         if (simulation.getSourceSalaryId() != null) {
@@ -116,7 +116,7 @@ public abstract class AbstractErpHrSalarySimulationProcessor {
         return list.get(0);
     }
 
-    protected List<ErpHrSalarySimulationItemAdjustment> findAdjustmentsByEmployee(Long simulationId, Long employeeId) {
+    protected List<ErpHrSalarySimulationItemAdjustment> findAdjustmentsByEmployee(String simulationId, String employeeId) {
         IEntityDao<ErpHrSalarySimulationItemAdjustment> dao = daoProvider.daoFor(ErpHrSalarySimulationItemAdjustment.class);
         QueryBean q = new QueryBean();
         q.addFilter(and(
@@ -125,7 +125,7 @@ public abstract class AbstractErpHrSalarySimulationProcessor {
         return dao.findAllByQuery(q);
     }
 
-    protected ErpHrSalarySimulationItemAdjustment findAdjustment(Long simulationId, Long employeeId, String salaryItemCode) {
+    protected ErpHrSalarySimulationItemAdjustment findAdjustment(String simulationId, String employeeId, String salaryItemCode) {
         IEntityDao<ErpHrSalarySimulationItemAdjustment> dao = daoProvider.daoFor(ErpHrSalarySimulationItemAdjustment.class);
         QueryBean q = new QueryBean();
         q.addFilter(and(
@@ -137,7 +137,7 @@ public abstract class AbstractErpHrSalarySimulationProcessor {
         return list.isEmpty() ? null : list.get(0);
     }
 
-    protected Map<String, BigDecimal> collectOverrides(Long simulationId, Long employeeId) {
+    protected Map<String, BigDecimal> collectOverrides(String simulationId, String employeeId) {
         List<ErpHrSalarySimulationItemAdjustment> adjList = findAdjustmentsByEmployee(simulationId, employeeId);
         Map<String, BigDecimal> overrides = new LinkedHashMap<>();
         for (ErpHrSalarySimulationItemAdjustment a : adjList) {
@@ -173,7 +173,7 @@ public abstract class AbstractErpHrSalarySimulationProcessor {
     }
 
     @SuppressWarnings("unchecked")
-    protected Map<Long, EmployeeSimResult> computeAllEmployeeSims(ErpHrSalarySimulation simulation, IServiceContext context) {
+    protected Map<String, EmployeeSimResult> computeAllEmployeeSims(ErpHrSalarySimulation simulation, IServiceContext context) {
         int sourceYear;
         int sourceMonth;
         ErpHrSalary representative = simulation.getSourceSalary();
@@ -194,13 +194,13 @@ public abstract class AbstractErpHrSalarySimulationProcessor {
         IEntityDao<ErpHrSalary> dao = daoProvider.daoFor(ErpHrSalary.class);
         List<ErpHrSalary> sources = dao.findAllByQuery(q);
 
-        Map<Long, EmployeeSimResult> result = new LinkedHashMap<>();
+        Map<String, EmployeeSimResult> result = new LinkedHashMap<>();
         int targetYear = simulation.getSimulationPeriodYear() != null
                 ? simulation.getSimulationPeriodYear() : sourceYear;
         int targetMonth = simulation.getSimulationPeriodMonth() != null
                 ? simulation.getSimulationPeriodMonth() : sourceMonth;
         for (ErpHrSalary src : sources) {
-            Long empId = src.getEmployeeId();
+            String empId = src.getEmployeeId();
             Map<String, BigDecimal> overrides = collectOverrides(simulation.getId(), empId);
             ErpHrSalary simulated = payrollCalculator.recalculateWithOverrides(src, overrides, targetYear, targetMonth);
             result.put(empId, new EmployeeSimResult(src, simulated));
@@ -208,17 +208,17 @@ public abstract class AbstractErpHrSalarySimulationProcessor {
         return result;
     }
 
-    protected List<Long> filterByScope(List<Long> employeeIds, Map<String, Object> scope) {
+    protected List<String> filterByScope(List<String> employeeIds, Map<String, Object> scope) {
         if (scope == null || scope.isEmpty()) {
             return employeeIds;
         }
         Object employeeIdsRaw = scope.get("employeeIds");
         if (employeeIdsRaw != null) {
-            List<Object> ids = toLongList(employeeIdsRaw);
-            List<Long> result = new ArrayList<>();
+            List<Object> ids = toStringIdList(employeeIdsRaw);
+            List<String> result = new ArrayList<>();
             for (Object o : ids) {
-                if (o instanceof Long && employeeIds.contains(o)) {
-                    result.add((Long) o);
+                if (o instanceof String && employeeIds.contains(o)) {
+                    result.add((String) o);
                 }
             }
             return result;
@@ -228,9 +228,9 @@ public abstract class AbstractErpHrSalarySimulationProcessor {
         if (departmentId == null && positionId == null) {
             return employeeIds;
         }
-        List<Long> matched = findEmployeeIdsByScope(departmentId, positionId);
-        List<Long> result = new ArrayList<>();
-        for (Long id : employeeIds) {
+        List<String> matched = findEmployeeIdsByScope(departmentId, positionId);
+        List<String> result = new ArrayList<>();
+        for (String id : employeeIds) {
             if (matched.contains(id)) {
                 result.add(id);
             }
@@ -238,7 +238,7 @@ public abstract class AbstractErpHrSalarySimulationProcessor {
         return result;
     }
 
-    protected List<Long> findEmployeeIdsByScope(Object departmentId, Object positionId) {
+    protected List<String> findEmployeeIdsByScope(Object departmentId, Object positionId) {
         if (departmentId == null && positionId == null) {
             return Collections.emptyList();
         }
@@ -246,17 +246,17 @@ public abstract class AbstractErpHrSalarySimulationProcessor {
         QueryBean q = new QueryBean();
         List<TreeBean> filters = new ArrayList<>();
         if (departmentId != null) {
-            filters.add(eq("departmentId", toLong(departmentId)));
+            filters.add(eq("departmentId", toStringId(departmentId)));
         }
         if (positionId != null) {
-            filters.add(eq("positionId", toLong(positionId)));
+            filters.add(eq("positionId", toStringId(positionId)));
         }
         if (!filters.isEmpty()) {
             q.addFilter(and(filters.toArray(new TreeBean[0])));
         }
         q.setLimit(10000);
         List<ErpHrEmployee> employees = dao.findAllByQuery(q);
-        List<Long> ids = new ArrayList<>(employees.size());
+        List<String> ids = new ArrayList<>(employees.size());
         for (ErpHrEmployee e : employees) {
             ids.add(e.getId());
         }
@@ -268,51 +268,51 @@ public abstract class AbstractErpHrSalarySimulationProcessor {
         Object positionId = scope.get("positionId");
         Object employeeIds = scope.get("employeeIds");
         if (employeeIds != null) {
-            List<Object> ids = toLongList(employeeIds);
+            List<Object> ids = toStringIdList(employeeIds);
             if (!ids.isEmpty()) {
                 salaryQuery.addFilter(in("employeeId", ids));
             }
             return;
         }
-        List<Long> matchedEmployeeIds = findEmployeeIdsByScope(departmentId, positionId);
+        List<String> matchedEmployeeIds = findEmployeeIdsByScope(departmentId, positionId);
         if (!matchedEmployeeIds.isEmpty()) {
             salaryQuery.addFilter(in("employeeId", matchedEmployeeIds));
         } else if (departmentId != null || positionId != null) {
-            salaryQuery.addFilter(in("employeeId", Collections.singletonList(-1L)));
+            salaryQuery.addFilter(in("employeeId", Collections.singletonList("")));
         }
     }
 
     @SuppressWarnings("unchecked")
-    protected List<Object> toLongList(Object raw) {
+    protected List<Object> toStringIdList(Object raw) {
         if (raw == null) {
             return Collections.emptyList();
         }
         List<Object> result = new ArrayList<>();
         if (raw instanceof List) {
             for (Object o : (List<Object>) raw) {
-                result.add(toLong(o));
+                result.add(toStringId(o));
             }
         } else if (raw.getClass().isArray()) {
             for (Object o : (Object[]) raw) {
-                result.add(toLong(o));
+                result.add(toStringId(o));
             }
         } else {
-            result.add(toLong(raw));
+            result.add(toStringId(raw));
         }
         return result;
     }
 
-    protected Long toLong(Object o) {
+    protected String toStringId(Object o) {
         if (o == null) {
             return null;
         }
-        if (o instanceof Number) {
-            return ((Number) o).longValue();
+        if (o instanceof String) {
+            return (String) o;
         }
-        return Long.parseLong(o.toString());
+        return o.toString();
     }
 
-    protected Map<Long, String> loadEmployeeJobGrades(Set<Long> employeeIds) {
+    protected Map<String, String> loadEmployeeJobGrades(Set<String> employeeIds) {
         if (employeeIds.isEmpty()) {
             return Collections.emptyMap();
         }
@@ -321,7 +321,7 @@ public abstract class AbstractErpHrSalarySimulationProcessor {
         q.addFilter(in("id", new ArrayList<>(employeeIds)));
         q.setLimit(10000);
         List<ErpHrEmployee> employees = dao.findAllByQuery(q);
-        Map<Long, Long> empToPosition = new LinkedHashMap<>();
+        Map<String, String> empToPosition = new LinkedHashMap<>();
         for (ErpHrEmployee e : employees) {
             if (e.getPositionId() != null) {
                 empToPosition.put(e.getId(), e.getPositionId());
@@ -335,12 +335,12 @@ public abstract class AbstractErpHrSalarySimulationProcessor {
         pq.addFilter(in("id", new ArrayList<>(empToPosition.values())));
         pq.setLimit(10000);
         List<ErpHrPosition> positions = posDao.findAllByQuery(pq);
-        Map<Long, String> posToGrade = new LinkedHashMap<>();
+        Map<String, String> posToGrade = new LinkedHashMap<>();
         for (ErpHrPosition p : positions) {
             posToGrade.put(p.getId(), p.getJobGrade());
         }
-        Map<Long, String> result = new LinkedHashMap<>();
-        for (Map.Entry<Long, Long> e : empToPosition.entrySet()) {
+        Map<String, String> result = new LinkedHashMap<>();
+        for (Map.Entry<String, String> e : empToPosition.entrySet()) {
             result.put(e.getKey(), posToGrade.get(e.getValue()));
         }
         return result;
@@ -371,7 +371,7 @@ public abstract class AbstractErpHrSalarySimulationProcessor {
         }
     }
 
-    protected void recordAdjustment(Long simulationId, Long employeeId, String salaryItemCode,
+    protected void recordAdjustment(String simulationId, String employeeId, String salaryItemCode,
                                     BigDecimal originalAmount, BigDecimal adjustedAmount,
                                     String reason, IServiceContext context) {
         ErpHrSalarySimulationItemAdjustment adj = findAdjustment(simulationId, employeeId, salaryItemCode);
@@ -422,7 +422,7 @@ public abstract class AbstractErpHrSalarySimulationProcessor {
         return new BigDecimal(o.toString());
     }
 
-    protected boolean hasPaidSalary(Long employeeId, int year, int month) {
+    protected boolean hasPaidSalary(String employeeId, int year, int month) {
         QueryBean q = new QueryBean();
         q.addFilter(and(
                 eq("employeeId", employeeId),
@@ -434,7 +434,7 @@ public abstract class AbstractErpHrSalarySimulationProcessor {
         return !dao.findAllByQuery(q).isEmpty();
     }
 
-    protected boolean hasNonVoidSalary(Long employeeId, int year, int month) {
+    protected boolean hasNonVoidSalary(String employeeId, int year, int month) {
         QueryBean q = new QueryBean();
         q.addFilter(and(
                 eq("employeeId", employeeId),
@@ -448,7 +448,7 @@ public abstract class AbstractErpHrSalarySimulationProcessor {
         return !dao.findAllByQuery(q).isEmpty();
     }
 
-    protected Map<String, Object> conflictEntry(Long employeeId, String conflictType, String message) {
+    protected Map<String, Object> conflictEntry(String employeeId, String conflictType, String message) {
         Map<String, Object> entry = new LinkedHashMap<>();
         entry.put("employeeId", employeeId);
         entry.put("conflictType", conflictType);

@@ -22,8 +22,8 @@
 
     <props>
         <prop name="id" displayName="ID" propId="1" i18n-en:displayName="ID" tagSet="seq-default" mandatory="true"
-              queryable="true" sortable="true" insertable="true" updatable="false" graphql:type="String">
-            <schema type="java.lang.Long"/>
+              queryable="true" sortable="true" insertable="true" updatable="false">
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="code" displayName="工号" propId="2" i18n-en:displayName="Code" tagSet="var" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
@@ -83,11 +83,11 @@
         </prop>
         <prop name="departmentId" displayName="部门" propId="16" i18n-en:displayName="Department" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="department">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="positionId" displayName="职位" propId="17" i18n-en:displayName="Position" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="position">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="jobTitle" displayName="岗位名称" propId="18" i18n-en:displayName="Job Title" queryable="true"
               sortable="true" insertable="true" updatable="true">
@@ -95,11 +95,11 @@
         </prop>
         <prop name="superiorId" displayName="直接上级" propId="19" i18n-en:displayName="Superior" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="superior">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="costCenterId" displayName="默认成本中心" propId="20" i18n-en:displayName="Cost Center" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="costCenter">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="hireDate" displayName="入职日期" propId="21" i18n-en:displayName="Hire Date" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
@@ -131,7 +131,7 @@
         </prop>
         <prop name="bankAccountId" displayName="工资卡账户" propId="28" i18n-en:displayName="Bank Account" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="bankAccount">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="socialSecurityNo" displayName="社保号" propId="29" i18n-en:displayName="Social Security No"
               queryable="true" sortable="true" insertable="true" updatable="true">
@@ -143,11 +143,11 @@
         </prop>
         <prop name="userAccountId" displayName="系统用户ID" propId="31" i18n-en:displayName="User Account" queryable="true"
               sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="orgId" displayName="业务组织" propId="32" i18n-en:displayName="Organization" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="org">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="remark" displayName="备注" propId="33" i18n-en:displayName="Remark" queryable="true" sortable="true"
               insertable="true" updatable="true">

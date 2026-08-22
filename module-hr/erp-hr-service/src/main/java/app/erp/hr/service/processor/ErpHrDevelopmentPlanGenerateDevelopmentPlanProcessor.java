@@ -16,7 +16,7 @@ import java.util.List;
  */
 public class ErpHrDevelopmentPlanGenerateDevelopmentPlanProcessor extends AbstractErpHrDevelopmentPlanProcessor {
 
-    public ErpHrDevelopmentPlan generateDevelopmentPlan(Long employeeId, IServiceContext context) {
+    public ErpHrDevelopmentPlan generateDevelopmentPlan(String employeeId, IServiceContext context) {
         List<ErpHrGapAnalysis> gaps = findActionableGaps(employeeId, context);
         if (gaps.isEmpty()) {
             return null;

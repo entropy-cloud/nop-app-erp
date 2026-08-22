@@ -158,7 +158,7 @@ public class _ErpHrCompetency extends DynamicOrmEntity{
 
     
     /* ID: ID */
-    private java.lang.Long _id;
+    private java.lang.String _id;
     
     /* 编码: CODE */
     private java.lang.String _code;
@@ -179,10 +179,10 @@ public class _ErpHrCompetency extends DynamicOrmEntity{
     private java.lang.Boolean _isTechnical;
     
     /* 上级胜任力: PARENT_ID */
-    private java.lang.Long _parentId;
+    private java.lang.String _parentId;
     
     /* 业务组织: ORG_ID */
-    private java.lang.Long _orgId;
+    private java.lang.String _orgId;
     
     /* 备注: REMARK */
     private java.lang.String _remark;
@@ -339,9 +339,9 @@ public class _ErpHrCompetency extends DynamicOrmEntity{
         switch(propId){
         
             case PROP_ID_id:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_id));
                }
                setId(typedValue);
@@ -409,9 +409,9 @@ public class _ErpHrCompetency extends DynamicOrmEntity{
             }
         
             case PROP_ID_parentId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_parentId));
                }
                setParentId(typedValue);
@@ -419,9 +419,9 @@ public class _ErpHrCompetency extends DynamicOrmEntity{
             }
         
             case PROP_ID_orgId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_orgId));
                }
                setOrgId(typedValue);
@@ -509,7 +509,7 @@ public class _ErpHrCompetency extends DynamicOrmEntity{
         
             case PROP_ID_id:{
                onInitProp(propId);
-               this._id = (java.lang.Long)value;
+               this._id = (java.lang.String)value;
                orm_id(); // 如果是设置主键字段，则触发watcher
                break;
             }
@@ -558,14 +558,14 @@ public class _ErpHrCompetency extends DynamicOrmEntity{
         
             case PROP_ID_parentId:{
                onInitProp(propId);
-               this._parentId = (java.lang.Long)value;
+               this._parentId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_orgId:{
                onInitProp(propId);
-               this._orgId = (java.lang.Long)value;
+               this._orgId = (java.lang.String)value;
                
                break;
             }
@@ -628,7 +628,7 @@ public class _ErpHrCompetency extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final java.lang.Long getId(){
+    public final java.lang.String getId(){
          onPropGet(PROP_ID_id);
          return _id;
     }
@@ -636,7 +636,7 @@ public class _ErpHrCompetency extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final void setId(java.lang.Long value){
+    public final void setId(java.lang.String value){
         if(onPropSet(PROP_ID_id,value)){
             this._id = value;
             internalClearRefs(PROP_ID_id);
@@ -761,7 +761,7 @@ public class _ErpHrCompetency extends DynamicOrmEntity{
     /**
      * 上级胜任力: PARENT_ID
      */
-    public final java.lang.Long getParentId(){
+    public final java.lang.String getParentId(){
          onPropGet(PROP_ID_parentId);
          return _parentId;
     }
@@ -769,7 +769,7 @@ public class _ErpHrCompetency extends DynamicOrmEntity{
     /**
      * 上级胜任力: PARENT_ID
      */
-    public final void setParentId(java.lang.Long value){
+    public final void setParentId(java.lang.String value){
         if(onPropSet(PROP_ID_parentId,value)){
             this._parentId = value;
             internalClearRefs(PROP_ID_parentId);
@@ -780,7 +780,7 @@ public class _ErpHrCompetency extends DynamicOrmEntity{
     /**
      * 业务组织: ORG_ID
      */
-    public final java.lang.Long getOrgId(){
+    public final java.lang.String getOrgId(){
          onPropGet(PROP_ID_orgId);
          return _orgId;
     }
@@ -788,7 +788,7 @@ public class _ErpHrCompetency extends DynamicOrmEntity{
     /**
      * 业务组织: ORG_ID
      */
-    public final void setOrgId(java.lang.Long value){
+    public final void setOrgId(java.lang.String value){
         if(onPropSet(PROP_ID_orgId,value)){
             this._orgId = value;
             internalClearRefs(PROP_ID_orgId);

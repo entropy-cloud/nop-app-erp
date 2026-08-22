@@ -190,7 +190,7 @@ public interface ErpHrErrors {
     ErrorCode ERR_GAP_INVALID_LEVEL_MAP = ErrorCode.define(
             "erp.err.hr.gap-invalid-level-map",
             "差距刷新入参 aggregatedLevels 含非法键/值（key={levelMapKey}, value={levelMapValue}），"
-                    + "key 须为 Long/Number/String-Number，value 须为 Integer/Number/String-Number",
+                    + "key 须为 String/Number（competencyId），value 须为 Integer/Number/String-Number",
             ARG_LEVEL_MAP_KEY, ARG_LEVEL_MAP_VALUE);
     ErrorCode ERR_ROLE_COMPETENCY_INVALID_LEVEL = ErrorCode.define(
             "erp.err.hr.role-competency-invalid-level",

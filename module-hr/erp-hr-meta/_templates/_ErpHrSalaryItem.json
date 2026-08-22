@@ -1,5 +1,5 @@
 {
-  "id": 0,
+  "id": "",
   "code": "",
   "name": "",
   "itemCategory": "",
@@ -13,7 +13,7 @@
   "isSocialInsuranceBase": false,
   "isMandatory": false,
   "sortOrder": 0,
-  "orgId": 0,
+  "orgId": "",
   "remark": "",
   "delVersion": 0,
   "version": 0,

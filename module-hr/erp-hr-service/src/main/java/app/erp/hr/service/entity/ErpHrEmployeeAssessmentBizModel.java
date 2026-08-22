@@ -62,7 +62,7 @@ public class ErpHrEmployeeAssessmentBizModel extends CrudBizModel<ErpHrEmployeeA
 
     @Override
     @BizMutation
-    public ErpHrEmployeeAssessment submitAssessment(@Name("assessmentId") Long assessmentId,
+    public ErpHrEmployeeAssessment submitAssessment(@Name("assessmentId") String assessmentId,
                                                      IServiceContext context) {
         ErpHrEmployeeAssessment assessment = requireAssessment(assessmentId, context);
         String status = assessment.getStatus();
@@ -81,7 +81,7 @@ public class ErpHrEmployeeAssessmentBizModel extends CrudBizModel<ErpHrEmployeeA
 
     @Override
     @BizMutation
-    public ErpHrEmployeeAssessment completeAssessment(@Name("assessmentId") Long assessmentId,
+    public ErpHrEmployeeAssessment completeAssessment(@Name("assessmentId") String assessmentId,
                                                        IServiceContext context) {
         return completeAssessmentProcessor.completeAssessment(assessmentId, context);
     }
@@ -91,10 +91,10 @@ public class ErpHrEmployeeAssessmentBizModel extends CrudBizModel<ErpHrEmployeeA
      * 使其反映聚合后级别；同时把综合评分写入 assessment.overallScore（各胜任力聚合 level 的均值）。
      * 返回 competencyId → aggregatedLevel 映射，供差距刷新直接消费。
      */
-    java.util.Map<Long, Integer> aggregateAndWriteBack(ErpHrEmployeeAssessment assessment,
+    java.util.Map<String, Integer> aggregateAndWriteBack(ErpHrEmployeeAssessment assessment,
                                                        List<ErpHrAssessmentDetail> details,
                                                        IServiceContext context) {
-        java.util.Map<Long, List<ErpHrAssessmentDetail>> byCompetency = new java.util.HashMap<>();
+        java.util.Map<String, List<ErpHrAssessmentDetail>> byCompetency = new java.util.HashMap<>();
         for (ErpHrAssessmentDetail d : details) {
             if (d.getCompetencyId() == null) continue;
             byCompetency.computeIfAbsent(d.getCompetencyId(), k -> new java.util.ArrayList<>()).add(d);
@@ -102,8 +102,8 @@ public class ErpHrEmployeeAssessmentBizModel extends CrudBizModel<ErpHrEmployeeA
 
         BigDecimal scoreSum = BigDecimal.ZERO;
         int scoreCnt = 0;
-        java.util.Map<Long, Integer> aggregatedLevels = new java.util.HashMap<>();
-        for (java.util.Map.Entry<Long, List<ErpHrAssessmentDetail>> e : byCompetency.entrySet()) {
+        java.util.Map<String, Integer> aggregatedLevels = new java.util.HashMap<>();
+        for (java.util.Map.Entry<String, List<ErpHrAssessmentDetail>> e : byCompetency.entrySet()) {
             int aggregated = assessmentAggregator.aggregate(
                     e.getKey(), assessment.getAssessmentType(), e.getValue());
             aggregatedLevels.put(e.getKey(), aggregated);
@@ -121,17 +121,17 @@ public class ErpHrEmployeeAssessmentBizModel extends CrudBizModel<ErpHrEmployeeA
         return aggregatedLevels;
     }
 
-    ErpHrEmployeeAssessment requireAssessment(Long assessmentId, IServiceContext context) {
+    ErpHrEmployeeAssessment requireAssessment(String assessmentId, IServiceContext context) {
         return requireEntity(String.valueOf(assessmentId), null, context);
     }
 
-    List<ErpHrAssessmentDetail> findDetails(Long assessmentId, IServiceContext context) {
+    List<ErpHrAssessmentDetail> findDetails(String assessmentId, IServiceContext context) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("assessmentId", assessmentId));
         return assessmentDetailBiz.findList(q, null, context);
     }
 
-    private NopException illegalTransition(Long assessmentId, String current, String expected) {
+    private NopException illegalTransition(String assessmentId, String current, String expected) {
         return new NopException(ErpHrErrors.ERR_ASSESSMENT_ILLEGAL_STATUS_TRANSITION)
                 .param(ErpHrErrors.ARG_ASSESSMENT_ID, assessmentId)
                 .param(ErpHrErrors.ARG_CURRENT_STATUS, current)

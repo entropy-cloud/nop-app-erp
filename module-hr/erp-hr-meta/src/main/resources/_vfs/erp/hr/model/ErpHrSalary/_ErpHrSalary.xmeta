@@ -20,12 +20,12 @@
 
     <props>
         <prop name="id" displayName="ID" propId="1" i18n-en:displayName="ID" tagSet="seq-default" mandatory="true"
-              queryable="true" sortable="true" insertable="true" updatable="false" graphql:type="String">
-            <schema type="java.lang.Long"/>
+              queryable="true" sortable="true" insertable="true" updatable="false">
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="employeeId" displayName="员工" propId="2" i18n-en:displayName="Employee" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="employee">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="year" displayName="年份" propId="3" i18n-en:displayName="Year" mandatory="true" queryable="true"
               sortable="true" insertable="true" updatable="true">
@@ -133,11 +133,11 @@
         </prop>
         <prop name="bankFileId" displayName="银行文件" propId="37" i18n-en:displayName="Bank File" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="bankFile">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="orgId" displayName="业务组织" propId="38" i18n-en:displayName="Organization" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="org">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="remark" displayName="备注" propId="39" i18n-en:displayName="Remark" queryable="true" sortable="true"
               insertable="true" updatable="true">

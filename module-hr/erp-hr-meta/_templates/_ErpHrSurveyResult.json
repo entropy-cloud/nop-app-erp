@@ -1,7 +1,7 @@
 {
-  "id": 0,
-  "surveyId": 0,
-  "departmentId": 0,
+  "id": "",
+  "surveyId": "",
+  "departmentId": "",
   "totalResponses": 0,
   "avgScore": 0.0,
   "eNpsScore": 0,

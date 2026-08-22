@@ -19,7 +19,7 @@
             <cols>
 
                 <!--ID-->
-                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="id" mandatory="true" sortable="true"/>
 
                 <!--编号-->
                 <col id="code" mandatory="true" sortable="true"/>
@@ -46,7 +46,7 @@
                 <col id="endDate" sortable="true"/>
 
                 <!--目标部门-->
-                <col id="targetDepartmentId" ui:number="true" sortable="true"/>
+                <col id="targetDepartmentId" sortable="true"/>
 
                 <!--包含eNPS-->
                 <col id="includeENps" sortable="true"/>
@@ -73,7 +73,7 @@
                 <col id="eNpsScore" ui:number="true" sortable="true"/>
 
                 <!--业务组织-->
-                <col id="orgId" ui:number="true" sortable="true"/>
+                <col id="orgId" sortable="true"/>
 
                 <!--备注-->
                 <col id="remark" sortable="true"/>

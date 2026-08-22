@@ -168,16 +168,16 @@ public class _ErpHrDevelopmentPlanItem extends DynamicOrmEntity{
 
     
     /* ID: ID */
-    private java.lang.Long _id;
+    private java.lang.String _id;
     
     /* 发展计划: PLAN_ID */
-    private java.lang.Long _planId;
+    private java.lang.String _planId;
     
     /* 目标胜任力: COMPETENCY_ID */
-    private java.lang.Long _competencyId;
+    private java.lang.String _competencyId;
     
     /* 关联差距分析: GAP_ID */
-    private java.lang.Long _gapId;
+    private java.lang.String _gapId;
     
     /* 目标等级: TARGET_LEVEL */
     private java.lang.Integer _targetLevel;
@@ -186,7 +186,7 @@ public class _ErpHrDevelopmentPlanItem extends DynamicOrmEntity{
     private java.lang.String _developmentAction;
     
     /* 导师: MENTOR_ID */
-    private java.lang.Long _mentorId;
+    private java.lang.String _mentorId;
     
     /* 开始日期: START_DATE */
     private java.time.LocalDate _startDate;
@@ -355,9 +355,9 @@ public class _ErpHrDevelopmentPlanItem extends DynamicOrmEntity{
         switch(propId){
         
             case PROP_ID_id:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_id));
                }
                setId(typedValue);
@@ -365,9 +365,9 @@ public class _ErpHrDevelopmentPlanItem extends DynamicOrmEntity{
             }
         
             case PROP_ID_planId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_planId));
                }
                setPlanId(typedValue);
@@ -375,9 +375,9 @@ public class _ErpHrDevelopmentPlanItem extends DynamicOrmEntity{
             }
         
             case PROP_ID_competencyId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_competencyId));
                }
                setCompetencyId(typedValue);
@@ -385,9 +385,9 @@ public class _ErpHrDevelopmentPlanItem extends DynamicOrmEntity{
             }
         
             case PROP_ID_gapId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_gapId));
                }
                setGapId(typedValue);
@@ -415,9 +415,9 @@ public class _ErpHrDevelopmentPlanItem extends DynamicOrmEntity{
             }
         
             case PROP_ID_mentorId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_mentorId));
                }
                setMentorId(typedValue);
@@ -535,28 +535,28 @@ public class _ErpHrDevelopmentPlanItem extends DynamicOrmEntity{
         
             case PROP_ID_id:{
                onInitProp(propId);
-               this._id = (java.lang.Long)value;
+               this._id = (java.lang.String)value;
                orm_id(); // 如果是设置主键字段，则触发watcher
                break;
             }
         
             case PROP_ID_planId:{
                onInitProp(propId);
-               this._planId = (java.lang.Long)value;
+               this._planId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_competencyId:{
                onInitProp(propId);
-               this._competencyId = (java.lang.Long)value;
+               this._competencyId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_gapId:{
                onInitProp(propId);
-               this._gapId = (java.lang.Long)value;
+               this._gapId = (java.lang.String)value;
                
                break;
             }
@@ -577,7 +577,7 @@ public class _ErpHrDevelopmentPlanItem extends DynamicOrmEntity{
         
             case PROP_ID_mentorId:{
                onInitProp(propId);
-               this._mentorId = (java.lang.Long)value;
+               this._mentorId = (java.lang.String)value;
                
                break;
             }
@@ -661,7 +661,7 @@ public class _ErpHrDevelopmentPlanItem extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final java.lang.Long getId(){
+    public final java.lang.String getId(){
          onPropGet(PROP_ID_id);
          return _id;
     }
@@ -669,7 +669,7 @@ public class _ErpHrDevelopmentPlanItem extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final void setId(java.lang.Long value){
+    public final void setId(java.lang.String value){
         if(onPropSet(PROP_ID_id,value)){
             this._id = value;
             internalClearRefs(PROP_ID_id);
@@ -680,7 +680,7 @@ public class _ErpHrDevelopmentPlanItem extends DynamicOrmEntity{
     /**
      * 发展计划: PLAN_ID
      */
-    public final java.lang.Long getPlanId(){
+    public final java.lang.String getPlanId(){
          onPropGet(PROP_ID_planId);
          return _planId;
     }
@@ -688,7 +688,7 @@ public class _ErpHrDevelopmentPlanItem extends DynamicOrmEntity{
     /**
      * 发展计划: PLAN_ID
      */
-    public final void setPlanId(java.lang.Long value){
+    public final void setPlanId(java.lang.String value){
         if(onPropSet(PROP_ID_planId,value)){
             this._planId = value;
             internalClearRefs(PROP_ID_planId);
@@ -699,7 +699,7 @@ public class _ErpHrDevelopmentPlanItem extends DynamicOrmEntity{
     /**
      * 目标胜任力: COMPETENCY_ID
      */
-    public final java.lang.Long getCompetencyId(){
+    public final java.lang.String getCompetencyId(){
          onPropGet(PROP_ID_competencyId);
          return _competencyId;
     }
@@ -707,7 +707,7 @@ public class _ErpHrDevelopmentPlanItem extends DynamicOrmEntity{
     /**
      * 目标胜任力: COMPETENCY_ID
      */
-    public final void setCompetencyId(java.lang.Long value){
+    public final void setCompetencyId(java.lang.String value){
         if(onPropSet(PROP_ID_competencyId,value)){
             this._competencyId = value;
             internalClearRefs(PROP_ID_competencyId);
@@ -718,7 +718,7 @@ public class _ErpHrDevelopmentPlanItem extends DynamicOrmEntity{
     /**
      * 关联差距分析: GAP_ID
      */
-    public final java.lang.Long getGapId(){
+    public final java.lang.String getGapId(){
          onPropGet(PROP_ID_gapId);
          return _gapId;
     }
@@ -726,7 +726,7 @@ public class _ErpHrDevelopmentPlanItem extends DynamicOrmEntity{
     /**
      * 关联差距分析: GAP_ID
      */
-    public final void setGapId(java.lang.Long value){
+    public final void setGapId(java.lang.String value){
         if(onPropSet(PROP_ID_gapId,value)){
             this._gapId = value;
             internalClearRefs(PROP_ID_gapId);
@@ -775,7 +775,7 @@ public class _ErpHrDevelopmentPlanItem extends DynamicOrmEntity{
     /**
      * 导师: MENTOR_ID
      */
-    public final java.lang.Long getMentorId(){
+    public final java.lang.String getMentorId(){
          onPropGet(PROP_ID_mentorId);
          return _mentorId;
     }
@@ -783,7 +783,7 @@ public class _ErpHrDevelopmentPlanItem extends DynamicOrmEntity{
     /**
      * 导师: MENTOR_ID
      */
-    public final void setMentorId(java.lang.Long value){
+    public final void setMentorId(java.lang.String value){
         if(onPropSet(PROP_ID_mentorId,value)){
             this._mentorId = value;
             internalClearRefs(PROP_ID_mentorId);

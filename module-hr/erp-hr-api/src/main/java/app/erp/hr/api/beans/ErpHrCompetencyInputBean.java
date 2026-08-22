@@ -13,16 +13,16 @@
     public class ErpHrCompetencyInputBean extends CrudInputBase {
 
     
-        private Long _id;
+        private String _id;
 
     
         @PropMeta(propId=1)
     
-        public Long getId(){
+        public String getId(){
             return _id;
         }
 
-        public void setId(Long value){
+        public void setId(String value){
             this._id = value;
         }
 
@@ -111,30 +111,30 @@
         }
 
 
-        private Long _parentId;
+        private String _parentId;
 
     
         @PropMeta(propId=8)
     
-        public Long getParentId(){
+        public String getParentId(){
             return _parentId;
         }
 
-        public void setParentId(Long value){
+        public void setParentId(String value){
             this._parentId = value;
         }
 
 
-        private Long _orgId;
+        private String _orgId;
 
     
         @PropMeta(propId=9)
     
-        public Long getOrgId(){
+        public String getOrgId(){
             return _orgId;
         }
 
-        public void setOrgId(Long value){
+        public void setOrgId(String value){
             this._orgId = value;
         }
 

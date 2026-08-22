@@ -12,44 +12,44 @@
     public class ErpHrSurveyAnswerInputBean extends CrudInputBase {
 
     
-        private Long _id;
+        private String _id;
 
     
         @PropMeta(propId=1)
     
-        public Long getId(){
+        public String getId(){
             return _id;
         }
 
-        public void setId(Long value){
+        public void setId(String value){
             this._id = value;
         }
 
 
-        private Long _responseId;
+        private String _responseId;
 
     
         @PropMeta(propId=2)
     
-        public Long getResponseId(){
+        public String getResponseId(){
             return _responseId;
         }
 
-        public void setResponseId(Long value){
+        public void setResponseId(String value){
             this._responseId = value;
         }
 
 
-        private Long _questionId;
+        private String _questionId;
 
     
         @PropMeta(propId=3)
     
-        public Long getQuestionId(){
+        public String getQuestionId(){
             return _questionId;
         }
 
-        public void setQuestionId(Long value){
+        public void setQuestionId(String value){
             this._questionId = value;
         }
 

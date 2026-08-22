@@ -19,16 +19,16 @@
             <cols>
 
                 <!--ID-->
-                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="id" mandatory="true" sortable="true"/>
 
                 <!--业务组织-->
-                <col id="orgId" ui:number="true" sortable="true"/>
+                <col id="orgId" sortable="true"/>
 
                 <!--员工-->
-                <col id="employeeId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="employeeId" mandatory="true" sortable="true"/>
 
                 <!--班次-->
-                <col id="shiftId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="shiftId" mandatory="true" sortable="true"/>
 
                 <!--排班日期-->
                 <col id="assignmentDate" mandatory="true" sortable="true"/>
@@ -46,13 +46,13 @@
                 <col id="absenceReason" sortable="true"/>
 
                 <!--关联休假-->
-                <col id="leaveRequestId" ui:number="true" sortable="true"/>
+                <col id="leaveRequestId" sortable="true"/>
 
                 <!--关联调换-->
-                <col id="swapRequestId" ui:number="true" sortable="true"/>
+                <col id="swapRequestId" sortable="true"/>
 
                 <!--被替换排班-->
-                <col id="replacedByAssignmentId" ui:number="true" sortable="true"/>
+                <col id="replacedByAssignmentId" sortable="true"/>
 
                 <!--状态-->
                 <col id="status" sortable="true"/>
