@@ -1,0 +1,4 @@
+_chgType,ID,MATERIAL_ID,SKU_CODE,BARCODE,UOM_ID,CONVERSION_RATE,PURCHASE_PRICE,SALE_PRICE,WHOLESALE_PRICE,RETAIL_PRICE,TAX_RATE_ID,IS_DEFAULT,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME,STATUS
+A,1,9402,SKU-MFG-WO-OPEN,,9403,1,,,,,,false,@var:ErpMdMaterialSku@delVersion,0,autotest-ref,*,autotest-ref,*,
+A,4,9402,SKU-MFG-WO-CLOSED,,9403,1,,,,,,false,@var:ErpMdMaterialSku@delVersion,0,autotest-ref,*,autotest-ref,*,
+A,7,9402,SKU-MFG-WO-CANCEL,,9403,1,,,,,,false,@var:ErpMdMaterialSku@delVersion,0,autotest-ref,*,autotest-ref,*,

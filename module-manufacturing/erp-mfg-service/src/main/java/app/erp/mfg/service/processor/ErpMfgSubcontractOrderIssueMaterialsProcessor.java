@@ -20,12 +20,12 @@ public class ErpMfgSubcontractOrderIssueMaterialsProcessor {
     @Inject
     ErpMfgSubcontractOrderProcessor facade;
 
-    public ErpMfgSubcontractOrder issueMaterials(Long subcontractOrderId, IServiceContext context) {
+    public ErpMfgSubcontractOrder issueMaterials(String subcontractOrderId, IServiceContext context) {
         return issueMaterials(subcontractOrderId, null, context);
     }
 
-    public ErpMfgSubcontractOrder issueMaterials(Long subcontractOrderId, Long sourceWarehouseId, IServiceContext context) {
-        ErpMfgSubcontractOrder order = facade.requireOrder(String.valueOf(subcontractOrderId), context);
+    public ErpMfgSubcontractOrder issueMaterials(String subcontractOrderId, String sourceWarehouseId, IServiceContext context) {
+        ErpMfgSubcontractOrder order = facade.requireOrder(subcontractOrderId, context);
         facade.requireStatus(order, ErpMfgConstants.SUBCONTRACT_STATUS_APPROVED, "APPROVED");
 
         List<ErpMfgSubcontractOrderLine> lines = facade.loadLines(subcontractOrderId);

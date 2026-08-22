@@ -60,13 +60,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpMfgMaterialIssueReversal extends JunitAutoTestCase {
 
-    static final Long ORG_ID = 1851L;
-    static final Long WAREHOUSE_ID = 3851L;
-    static final Long UOM_ID = 5851L;
-    static final Long CURRENCY_ID = 6851L;
-    static final Long ACCT_SCHEMA_ID = 7851L;
-    static final Long P = 2851L;     // 产成品
-    static final Long M1 = 2852L;    // 子件
+    static final String ORG_ID = "1851";
+    static final String WAREHOUSE_ID = "3851";
+    static final String UOM_ID = "5851";
+    static final String CURRENCY_ID = "6851";
+    static final String ACCT_SCHEMA_ID = "7851";
+    static final String P = "2851";     // 产成品
+    static final String M1 = "2852";    // 子件
     static final String MOVE_TYPE_INCOMING = "INCOMING";
     static final String MOVE_TYPE_OUTGOING = "OUTGOING";
 
@@ -87,14 +87,14 @@ public class TestErpMfgMaterialIssueReversal extends JunitAutoTestCase {
         seedPeriodAndSubjects();
         seedMaterial(P, null);
         seedMaterial(M1, "MOVING_AVERAGE");
-        seedBom(9801L, P, M1, bd("2"));
+        seedBom("9801", P, M1, bd("2"));
         // 期初库存：入库 10@5 → balance M1 = 10, avgCost = 5
         generateIncoming(M1, "PR-MI-RV", bd("10"), bd("5"));
 
-        Long woId = seedWorkOrder("WO-MI-RV");
-        Long wolId = seedWorkOrderLine(woId, M1, bd("2"));
-        Long issueId = seedIssue("MI-RV-001", woId);
-        seedIssueLine(9301L, issueId, M1, bd("2"), wolId);
+        String woId = seedWorkOrder("WO-MI-RV");
+        String wolId = seedWorkOrderLine(woId, M1, bd("2"));
+        String issueId = seedIssue("MI-RV-001", woId);
+        seedIssueLine("9301", issueId, M1, bd("2"), wolId);
 
         // confirm 产 MANUFACTURING_ISSUE 凭证 + OUTGOING 移动 + posted=true
         assertEquals(0, confirm(issueId).getStatus(), "confirm 应成功");
@@ -143,13 +143,13 @@ public class TestErpMfgMaterialIssueReversal extends JunitAutoTestCase {
         seedPeriodAndSubjects();
         seedMaterial(P, null);
         seedMaterial(M1, "MOVING_AVERAGE");
-        seedBom(9802L, P, M1, bd("1"));
+        seedBom("9802", P, M1, bd("1"));
         generateIncoming(M1, "PR-MI-REJ", bd("10"), bd("5"));
 
-        Long woId = seedWorkOrder("WO-MI-REJ");
-        Long wolId = seedWorkOrderLine(woId, M1, bd("1"));
-        Long issueId = seedIssue("MI-REJ-001", woId);
-        seedIssueLine(9302L, issueId, M1, bd("1"), wolId);
+        String woId = seedWorkOrder("WO-MI-REJ");
+        String wolId = seedWorkOrderLine(woId, M1, bd("1"));
+        String issueId = seedIssue("MI-REJ-001", woId);
+        seedIssueLine("9302", issueId, M1, bd("1"), wolId);
 
         // 未 confirm 直接 reverseConfirm → 守卫拒绝
         ApiResponse<?> resp = reverseConfirm(issueId);
@@ -164,12 +164,12 @@ public class TestErpMfgMaterialIssueReversal extends JunitAutoTestCase {
 
     // ---------- rpc helpers ----------
 
-    private ApiResponse<?> confirm(Long issueId) {
+    private ApiResponse<?> confirm(String issueId) {
         return executeRpc(mutation, "ErpMfgMaterialIssue__confirm",
                 ApiRequest.build(Map.of("issueId", issueId)));
     }
 
-    private ApiResponse<?> reverseConfirm(Long issueId) {
+    private ApiResponse<?> reverseConfirm(String issueId) {
         return executeRpc(mutation, "ErpMfgMaterialIssue__reverseConfirm",
                 ApiRequest.build(Map.of("issueId", issueId)));
     }
@@ -182,7 +182,7 @@ public class TestErpMfgMaterialIssueReversal extends JunitAutoTestCase {
 
     // ---------- 移动单生成（建立余额） ----------
 
-    private void generateIncoming(Long materialId, String billCode, BigDecimal qty, BigDecimal unitCost) {
+    private void generateIncoming(String materialId, String billCode, BigDecimal qty, BigDecimal unitCost) {
         Map<String, Object> req = new LinkedHashMap<>();
         req.put("moveType", MOVE_TYPE_INCOMING);
         req.put("orgId", ORG_ID);
@@ -254,7 +254,7 @@ public class TestErpMfgMaterialIssueReversal extends JunitAutoTestCase {
         dao.saveEntity(subject);
     }
 
-    private void seedMaterial(Long id, String costMethod) {
+    private void seedMaterial(String id, String costMethod) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMdMaterial> dao = daoProvider.daoFor(ErpMdMaterial.class);
             ErpMdMaterial m = new ErpMdMaterial();
@@ -269,7 +269,7 @@ public class TestErpMfgMaterialIssueReversal extends JunitAutoTestCase {
         });
     }
 
-    private void seedBom(Long bomId, Long productId, Long componentId, BigDecimal qty) {
+    private void seedBom(String bomId, String productId, String componentId, BigDecimal qty) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMfgBom> dao = daoProvider.daoFor(ErpMfgBom.class);
             ErpMfgBom bom = new ErpMfgBom();
@@ -283,7 +283,7 @@ public class TestErpMfgMaterialIssueReversal extends JunitAutoTestCase {
             dao.saveEntity(bom);
             IEntityDao<ErpMfgBomLine> ldao = daoProvider.daoFor(ErpMfgBomLine.class);
             ErpMfgBomLine line = new ErpMfgBomLine();
-            line.orm_propValueByName("id", bomId + 50000);
+            line.orm_propValueByName("id", String.valueOf(Long.parseLong(bomId) + 50000));
             line.setBomId(bomId);
             line.setLineNo(10);
             line.setMaterialId(componentId);
@@ -293,15 +293,15 @@ public class TestErpMfgMaterialIssueReversal extends JunitAutoTestCase {
         });
     }
 
-    private Long seedWorkOrder(String code) {
-        Long id = 8810L + (long) Math.abs(code.hashCode() % 800);
+    private String seedWorkOrder(String code) {
+        String id = String.valueOf(8810L + (long) Math.abs(code.hashCode() % 800));
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMfgWorkOrder> dao = daoProvider.daoFor(ErpMfgWorkOrder.class);
             ErpMfgWorkOrder wo = new ErpMfgWorkOrder();
             wo.orm_propValueByName("id", id);
             wo.setCode(code);
             wo.setProductId(P);
-            wo.setBomId(9801L);
+            wo.setBomId("9801");
             wo.setOrgId(ORG_ID);
             wo.setCurrencyId(CURRENCY_ID);
             wo.setPlannedQuantity(bd("1"));
@@ -312,8 +312,8 @@ public class TestErpMfgMaterialIssueReversal extends JunitAutoTestCase {
         return id;
     }
 
-    private Long seedWorkOrderLine(Long woId, Long materialId, BigDecimal plannedQty) {
-        Long id = 9910L + (long) Math.abs((woId + "" + materialId).hashCode() % 800);
+    private String seedWorkOrderLine(String woId, String materialId, BigDecimal plannedQty) {
+        String id = String.valueOf(9910L + (long) Math.abs((woId + "" + materialId).hashCode() % 800));
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMfgWorkOrderLine> dao = daoProvider.daoFor(ErpMfgWorkOrderLine.class);
             ErpMfgWorkOrderLine wol = new ErpMfgWorkOrderLine();
@@ -329,8 +329,8 @@ public class TestErpMfgMaterialIssueReversal extends JunitAutoTestCase {
         return id;
     }
 
-    private Long seedIssue(String code, Long woId) {
-        Long id = 8920L + (long) Math.abs(code.hashCode() % 800);
+    private String seedIssue(String code, String woId) {
+        String id = String.valueOf(8920L + (long) Math.abs(code.hashCode() % 800));
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMfgMaterialIssue> dao = daoProvider.daoFor(ErpMfgMaterialIssue.class);
             ErpMfgMaterialIssue issue = new ErpMfgMaterialIssue();
@@ -348,7 +348,7 @@ public class TestErpMfgMaterialIssueReversal extends JunitAutoTestCase {
         return id;
     }
 
-    private void seedIssueLine(Long id, Long issueId, Long materialId, BigDecimal qty, Long wolId) {
+    private void seedIssueLine(String id, String issueId, String materialId, BigDecimal qty, String wolId) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMfgMaterialIssueLine> dao = daoProvider.daoFor(ErpMfgMaterialIssueLine.class);
             ErpMfgMaterialIssueLine line = new ErpMfgMaterialIssueLine();
@@ -366,11 +366,11 @@ public class TestErpMfgMaterialIssueReversal extends JunitAutoTestCase {
 
     // ---------- query helpers ----------
 
-    private ErpMfgMaterialIssue loadIssue(Long issueId) {
+    private ErpMfgMaterialIssue loadIssue(String issueId) {
         return daoProvider.daoFor(ErpMfgMaterialIssue.class).getEntityById(issueId);
     }
 
-    private ErpInvStockBalance findBalance(Long materialId) {
+    private ErpInvStockBalance findBalance(String materialId) {
         IEntityDao<ErpInvStockBalance> dao = daoProvider.daoFor(ErpInvStockBalance.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("materialId", materialId));

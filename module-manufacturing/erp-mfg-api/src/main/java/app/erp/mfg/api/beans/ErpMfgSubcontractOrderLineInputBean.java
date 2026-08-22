@@ -12,30 +12,30 @@
     public class ErpMfgSubcontractOrderLineInputBean extends CrudInputBase {
 
     
-        private Long _id;
+        private String _id;
 
     
         @PropMeta(propId=1)
     
-        public Long getId(){
+        public String getId(){
             return _id;
         }
 
-        public void setId(Long value){
+        public void setId(String value){
             this._id = value;
         }
 
 
-        private Long _subcontractOrderId;
+        private String _subcontractOrderId;
 
     
         @PropMeta(propId=2)
     
-        public Long getSubcontractOrderId(){
+        public String getSubcontractOrderId(){
             return _subcontractOrderId;
         }
 
-        public void setSubcontractOrderId(Long value){
+        public void setSubcontractOrderId(String value){
             this._subcontractOrderId = value;
         }
 
@@ -54,30 +54,30 @@
         }
 
 
-        private Long _materialId;
+        private String _materialId;
 
     
         @PropMeta(propId=4)
     
-        public Long getMaterialId(){
+        public String getMaterialId(){
             return _materialId;
         }
 
-        public void setMaterialId(Long value){
+        public void setMaterialId(String value){
             this._materialId = value;
         }
 
 
-        private Long _uoMId;
+        private String _uoMId;
 
     
         @PropMeta(propId=5)
     
-        public Long getUoMId(){
+        public String getUoMId(){
             return _uoMId;
         }
 
-        public void setUoMId(Long value){
+        public void setUoMId(String value){
             this._uoMId = value;
         }
 

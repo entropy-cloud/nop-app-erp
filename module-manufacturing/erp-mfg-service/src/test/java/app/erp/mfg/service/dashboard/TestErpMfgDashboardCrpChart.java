@@ -46,10 +46,10 @@ public class TestErpMfgDashboardCrpChart extends JunitAutoTestCase {
 
     private static final IServiceContext CTX = new ServiceContextImpl();
 
-    static final Long P = 8801L;
-    static final Long WC1 = 8802L;
-    static final Long WC2 = 8803L;
-    static final Long ROUTING = 8804L;
+    static final String P = "8801";
+    static final String WC1 = "8802";
+    static final String WC2 = "8803";
+    static final String ROUTING = "8804";
 
     @Inject
     IDaoProvider daoProvider;
@@ -86,7 +86,7 @@ public class TestErpMfgDashboardCrpChart extends JunitAutoTestCase {
         seedWorkcenter(WC1, "WC-DR");
         seedCalendar(WC1, "08:00", "17:00", ErpMfgConstants.WORK_DATE_PATTERN_ALL_WEEK);
         seedCapacity(WC1, P, bd("10"), bd("1.0"));
-        Long r = 8805L;
+        String r = "8805";
         seedRouting(r, "R-DR");
         seedRoutingOperation(r, WC1, bd("540"), bd("0"));  // 9h load
         seedWorkOrder("WO-DR", r, LocalDate.of(2026, 7, 1), LocalDate.of(2026, 7, 1),
@@ -114,8 +114,8 @@ public class TestErpMfgDashboardCrpChart extends JunitAutoTestCase {
         seedCalendar(WC2, "08:00", "17:00", ErpMfgConstants.WORK_DATE_PATTERN_ALL_WEEK);
         seedCapacity(WC1, P, bd("10"), bd("1.0"));
         seedCapacity(WC2, P, bd("10"), bd("1.0"));
-        Long r1 = 8806L;
-        Long r2 = 8807L;
+        String r1 = "8806";
+        String r2 = "8807";
         seedRouting(r1, "R-F1");
         seedRoutingOperation(r1, WC1, bd("480"), bd("0"));  // 8h
         seedRouting(r2, "R-F2");
@@ -162,7 +162,7 @@ public class TestErpMfgDashboardCrpChart extends JunitAutoTestCase {
         seedWorkcenter(WC2, "WC-RATE");
         seedCalendar(WC2, "08:00", "20:00", ErpMfgConstants.WORK_DATE_PATTERN_ALL_WEEK);  // 12h 出勤
         seedCapacity(WC2, P, bd("10"), bd("1.0"));
-        Long r = 8808L;
+        String r = "8808";
         seedRouting(r, "R-RATE");
         seedRoutingOperation(r, WC2, bd("360"), bd("0"));  // 6h load → loadRate=6/12=0.5
         seedWorkOrder("WO-RATE", r, LocalDate.of(2026, 7, 3), LocalDate.of(2026, 7, 3),
@@ -190,7 +190,7 @@ public class TestErpMfgDashboardCrpChart extends JunitAutoTestCase {
         ormTemplate.runInSession(() -> crpLoadBiz.calculateLoad(from, to, null, CTX));
     }
 
-    private void seedWorkcenter(Long id, String code) {
+    private void seedWorkcenter(String id, String code) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMfgWorkcenter> dao = daoProvider.daoFor(ErpMfgWorkcenter.class);
             ErpMfgWorkcenter wc = dao.newEntity();
@@ -201,11 +201,11 @@ public class TestErpMfgDashboardCrpChart extends JunitAutoTestCase {
         });
     }
 
-    private void seedCalendar(Long workcenterId, String start, String end, String pattern) {
+    private void seedCalendar(String workcenterId, String start, String end, String pattern) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMfgWorkcenterCalendar> dao = daoProvider.daoFor(ErpMfgWorkcenterCalendar.class);
             ErpMfgWorkcenterCalendar c = dao.newEntity();
-            c.orm_propValueByName("id", 60000L + workcenterId);
+            c.orm_propValueByName("id", String.valueOf(60000L + Long.parseLong(workcenterId)));
             c.setWorkcenterId(workcenterId);
             c.setCalendarName("CAL-" + workcenterId);
             c.orm_propValueByName("shiftType", ErpMfgConstants.SHIFT_TYPE_ONE_SHIFT);
@@ -217,11 +217,11 @@ public class TestErpMfgDashboardCrpChart extends JunitAutoTestCase {
         });
     }
 
-    private void seedCapacity(Long workcenterId, Long materialId, BigDecimal capPerHour, BigDecimal efficiency) {
+    private void seedCapacity(String workcenterId, String materialId, BigDecimal capPerHour, BigDecimal efficiency) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMfgWorkcenterCapacity> dao = daoProvider.daoFor(ErpMfgWorkcenterCapacity.class);
             ErpMfgWorkcenterCapacity cap = dao.newEntity();
-            cap.orm_propValueByName("id", 61000L + workcenterId);
+            cap.orm_propValueByName("id", String.valueOf(61000L + Long.parseLong(workcenterId)));
             cap.setWorkcenterId(workcenterId);
             cap.setMaterialId(materialId);
             cap.setCapacityPerHour(capPerHour);
@@ -231,7 +231,7 @@ public class TestErpMfgDashboardCrpChart extends JunitAutoTestCase {
         });
     }
 
-    private void seedRouting(Long id, String code) {
+    private void seedRouting(String id, String code) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMfgRouting> dao = daoProvider.daoFor(ErpMfgRouting.class);
             ErpMfgRouting r = dao.newEntity();
@@ -242,11 +242,11 @@ public class TestErpMfgDashboardCrpChart extends JunitAutoTestCase {
         });
     }
 
-    private void seedRoutingOperation(Long routingId, Long workcenterId, BigDecimal standardTime, BigDecimal setupTime) {
+    private void seedRoutingOperation(String routingId, String workcenterId, BigDecimal standardTime, BigDecimal setupTime) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMfgRoutingOperation> dao = daoProvider.daoFor(ErpMfgRoutingOperation.class);
             ErpMfgRoutingOperation op = dao.newEntity();
-            op.orm_propValueByName("id", 62000L + routingId + workcenterId);
+            op.orm_propValueByName("id", String.valueOf(62000L + Long.parseLong(routingId) + Long.parseLong(workcenterId)));
             op.setRoutingId(routingId);
             op.setLineNo(10);
             op.setWorkcenterId(workcenterId);
@@ -256,8 +256,8 @@ public class TestErpMfgDashboardCrpChart extends JunitAutoTestCase {
         });
     }
 
-    private void seedWorkOrder(String code, Long routingId, LocalDate start, LocalDate end, String docStatus) {
-        Long id = 8900L + (long) Math.abs(code.hashCode() % 1000);
+    private void seedWorkOrder(String code, String routingId, LocalDate start, LocalDate end, String docStatus) {
+        String id = String.valueOf(8900L + (long) Math.abs(code.hashCode() % 1000));
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMfgWorkOrder> dao = daoProvider.daoFor(ErpMfgWorkOrder.class);
             ErpMfgWorkOrder wo = dao.newEntity();

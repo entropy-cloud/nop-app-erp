@@ -60,7 +60,7 @@ public class AbstractErpMfgMaterialIssueProcessor {
 
     // ---------- 实体加载/守卫（protected，供派生复用与覆盖） ----------
 
-    protected ErpMfgMaterialIssue requireIssue(Long issueId, IServiceContext context) {
+    protected ErpMfgMaterialIssue requireIssue(String issueId, IServiceContext context) {
         ErpMfgMaterialIssue issue = issueDao().getEntityById(issueId);
         if (issue == null) {
             throw new NopException(ErpMfgErrors.ERR_ISSUE_NOT_FOUND)
@@ -97,7 +97,7 @@ public class AbstractErpMfgMaterialIssueProcessor {
     /**
      * 加载领料单行（同聚合子表，父领料单已由 requireIssue 经管道授权）。
      */
-    protected List<ErpMfgMaterialIssueLine> loadLines(Long issueId) {
+    protected List<ErpMfgMaterialIssueLine> loadLines(String issueId) {
         IEntityDao<ErpMfgMaterialIssueLine> dao = daoProvider.daoFor(ErpMfgMaterialIssueLine.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("issueId", issueId));

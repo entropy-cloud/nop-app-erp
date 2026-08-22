@@ -64,10 +64,10 @@ public class TestErpMfgProductionVariance extends JunitAutoTestCase {
     @RegisterExtension
     static MfgFrozenClockExtension frozenClock = new MfgFrozenClockExtension();
 
-    static final Long ORG_ID = 1401L;
-    static final Long UOM_ID = 5401L;
-    static final Long CURRENCY_ID = 6401L;
-    static final Long WC1 = 6201L;
+    static final String ORG_ID = "1401";
+    static final String UOM_ID = "5401";
+    static final String CURRENCY_ID = "6401";
+    static final String WC1 = "6201";
     static final String PERIOD_CODE = "2026-07";
     static final String VOUCHER_STATUS_POSTED = "POSTED";
 
@@ -80,9 +80,9 @@ public class TestErpMfgProductionVariance extends JunitAutoTestCase {
     static final String SUBJECT_SUBCONTRACT_VARIANCE = "1416";
     static final String SUBJECT_WIP_SUBCONTRACT = "1417";
 
-    static final Long P = 1201L;
-    static final Long ACCT_SCHEMA_ID = 7401L;
-    static final Long FX_FUNCTIONAL_CURRENCY_ID = 6499L; // 本位币（≠ 工单币种 6401，构造多币种场景）
+    static final String P = "1201";
+    static final String ACCT_SCHEMA_ID = "7401";
+    static final String FX_FUNCTIONAL_CURRENCY_ID = "6499"; // 本位币（≠ 工单币种 6401，构造多币种场景）
 
     @Inject
     IDaoProvider daoProvider;
@@ -97,18 +97,18 @@ public class TestErpMfgProductionVariance extends JunitAutoTestCase {
     public void testMaterialLaborOverheadVarianceHappyPath() {
         seedProduct(P);
         seedWorkcenter(WC1, bd("20"));
-        Long bomId = seedBom(9201L, P);
-        seedBomOperation(4201L, bomId, WC1, bd("60"));
+        String bomId = seedBom("9201", P);
+        seedBomOperation("4201", bomId, WC1, bd("60"));
         seedFirmedRollup(P, bd("10"), bd("10"), bd("5"), bd("25"));
         seedPeriodAndSubjects();
 
-        ErpMfgWorkOrder wo = seedCompletedWorkOrder(8201L, "WO-PV-HAPPY", bomId, P,
+        ErpMfgWorkOrder wo = seedCompletedWorkOrder("8201", "WO-PV-HAPPY", bomId, P,
                 bd("2"), bd("2"), bd("25"), bd("35"), bd("8"));
-        seedTimeLog(5601L, 8201L, bd("150"));
+        seedTimeLog("5601", "8201", bd("150"));
 
-        productionVarianceCalculator.calculateVariances(8201L);
+        productionVarianceCalculator.calculateVariances("8201");
 
-        List<ErpMfgCostVariance> lines = productionVarianceCalculator.findByWorkOrder(8201L);
+        List<ErpMfgCostVariance> lines = productionVarianceCalculator.findByWorkOrder("8201");
         assertEquals(5, lines.size(), "5 类差异行（材料/效率/费率/制造/产量）");
 
         ErpMfgCostVariance material = lineByType(lines, ErpMfgConstants.VARIANCE_TYPE_MATERIAL_USAGE);
@@ -146,19 +146,19 @@ public class TestErpMfgProductionVariance extends JunitAutoTestCase {
     public void testVolumeVarianceWhenCompletedDiffersFromPlanned() {
         seedProduct(P);
         seedWorkcenter(WC1, bd("20"));
-        Long bomId = seedBom(9202L, P);
-        seedBomOperation(4202L, bomId, WC1, bd("60"));
+        String bomId = seedBom("9202", P);
+        seedBomOperation("4202", bomId, WC1, bd("60"));
         seedFirmedRollup(P, bd("10"), bd("10"), bd("5"), bd("25"));
         seedPeriodAndSubjects();
 
         // planned=3, completed=2 → COMPLETED 手工置位（模拟手动 calculateVariances 入口）
-        ErpMfgWorkOrder wo = seedCompletedWorkOrder(8202L, "WO-PV-VOL", bomId, P,
+        ErpMfgWorkOrder wo = seedCompletedWorkOrder("8202", "WO-PV-VOL", bomId, P,
                 bd("3"), bd("2"), bd("20"), bd("20"), bd("10"));
-        seedTimeLog(5602L, 8202L, bd("120"));
+        seedTimeLog("5602", "8202", bd("120"));
 
-        productionVarianceCalculator.calculateVariances(8202L);
+        productionVarianceCalculator.calculateVariances("8202");
 
-        List<ErpMfgCostVariance> lines = productionVarianceCalculator.findByWorkOrder(8202L);
+        List<ErpMfgCostVariance> lines = productionVarianceCalculator.findByWorkOrder("8202");
         ErpMfgCostVariance vol = lineByType(lines, ErpMfgConstants.VARIANCE_TYPE_VOLUME);
         // 产量差异 = (completed - planned) × stdUnit = (2-3)×25 = -25
         assertEquals(0, bd("75").compareTo(vol.getStandardAmount()), "产量标准 = planned(3)×25 = 75");
@@ -169,13 +169,13 @@ public class TestErpMfgProductionVariance extends JunitAutoTestCase {
     @Test
     public void testNoStandardCostThrows() {
         seedProduct(P);
-        Long bomId = seedBom(9203L, P);
-        seedCompletedWorkOrder(8203L, "WO-PV-NOSTD", bomId, P,
+        String bomId = seedBom("9203", P);
+        seedCompletedWorkOrder("8203", "WO-PV-NOSTD", bomId, P,
                 bd("1"), bd("1"), bd("10"), BigDecimal.ZERO, BigDecimal.ZERO);
         // 无 FIRMED rollup
 
         NopException ex = assertThrows(NopException.class,
-                () -> productionVarianceCalculator.calculateVariances(8203L));
+                () -> productionVarianceCalculator.calculateVariances("8203"));
         assertEquals(ErpMfgErrors.ERR_VARIANCE_NO_STANDARD_COST.getErrorCode(), ex.getCode(),
                 "无 FIRMED 标准成本抛 ERR_VARIANCE_NO_STANDARD_COST");
     }
@@ -184,25 +184,25 @@ public class TestErpMfgProductionVariance extends JunitAutoTestCase {
     public void testManualCalculateVariancesIdempotent() {
         seedProduct(P);
         seedWorkcenter(WC1, bd("20"));
-        Long bomId = seedBom(9204L, P);
-        seedBomOperation(4204L, bomId, WC1, bd("60"));
+        String bomId = seedBom("9204", P);
+        seedBomOperation("4204", bomId, WC1, bd("60"));
         seedFirmedRollup(P, bd("10"), bd("10"), bd("5"), bd("25"));
         seedPeriodAndSubjects();
-        seedCompletedWorkOrder(8204L, "WO-PV-IDEM", bomId, P,
+        seedCompletedWorkOrder("8204", "WO-PV-IDEM", bomId, P,
                 bd("2"), bd("2"), bd("22"), bd("30"), bd("6"));
-        seedTimeLog(5604L, 8204L, bd("140"));
+        seedTimeLog("5604", "8204", bd("140"));
 
         // 第一次手动计算（经 GraphQL BizModel 入口）
         ApiResponse<?> r1 = executeRpc(mutation, "ErpMfgCostVariance__calculateVariances",
-                ApiRequest.build(Map.of("workOrderId", 8204L)));
+                ApiRequest.build(Map.of("workOrderId", "8204")));
         assertEquals(0, r1.getStatus(), "第一次 calculateVariances 应成功: " + r1);
-        int count1 = productionVarianceCalculator.findByWorkOrder(8204L).size();
+        int count1 = productionVarianceCalculator.findByWorkOrder("8204").size();
 
         // 第二次重算 → 旧行删除再重算，行数不变
         ApiResponse<?> r2 = executeRpc(mutation, "ErpMfgCostVariance__calculateVariances",
-                ApiRequest.build(Map.of("workOrderId", 8204L)));
+                ApiRequest.build(Map.of("workOrderId", "8204")));
         assertEquals(0, r2.getStatus(), "第二次 calculateVariances（幂等）应成功: " + r2);
-        int count2 = productionVarianceCalculator.findByWorkOrder(8204L).size();
+        int count2 = productionVarianceCalculator.findByWorkOrder("8204").size();
         assertEquals(count1, count2, "重算幂等：行数不变（先删旧再重算）");
     }
 
@@ -210,19 +210,19 @@ public class TestErpMfgProductionVariance extends JunitAutoTestCase {
     public void testPostingVoucherGeneratedAndPostedFlagSet() {
         seedProduct(P);
         seedWorkcenter(WC1, bd("20"));
-        Long bomId = seedBom(9205L, P);
-        seedBomOperation(4205L, bomId, WC1, bd("60"));
+        String bomId = seedBom("9205", P);
+        seedBomOperation("4205", bomId, WC1, bd("60"));
         seedFirmedRollup(P, bd("10"), bd("10"), bd("5"), bd("25"));
         seedPeriodAndSubjects();
 
-        seedCompletedWorkOrder(8205L, "WO-PV-POST", bomId, P,
+        seedCompletedWorkOrder("8205", "WO-PV-POST", bomId, P,
                 bd("2"), bd("2"), bd("25"), bd("35"), bd("8"));
-        seedTimeLog(5605L, 8205L, bd("150"));
+        seedTimeLog("5605", "8205", bd("150"));
 
         // 经 GraphQL BizModel 入口（calculateVariances 内部调 dispatcher 过账）
         // GraphQL @BizMutation 事务在独立 session 中执行并提交，过账凭证经 REQUIRES_NEW 也独立提交
         ApiResponse<?> resp = executeRpc(mutation, "ErpMfgCostVariance__calculateVariances",
-                ApiRequest.build(Map.of("workOrderId", 8205L)));
+                ApiRequest.build(Map.of("workOrderId", "8205")));
         assertEquals(0, resp.getStatus(), "calculateVariances（含过账）应成功: " + resp);
 
         ErpFinVoucher voucher = findVoucherByBillCode("WO-PV-POST-PV");
@@ -246,7 +246,7 @@ public class TestErpMfgProductionVariance extends JunitAutoTestCase {
         assertEquals(0, bd("2").compareTo(ohVarLine.getCreditAmount()), "制造费用差异贷方金额 = 2");
 
         // posted 标志回写
-        List<ErpMfgCostVariance> lines = productionVarianceCalculator.findByWorkOrder(8205L);
+        List<ErpMfgCostVariance> lines = productionVarianceCalculator.findByWorkOrder("8205");
         assertTrue(lines.stream().allMatch(l -> Boolean.TRUE.equals(l.getPosted())),
                 "全部差异行 posted=true");
     }
@@ -255,17 +255,17 @@ public class TestErpMfgProductionVariance extends JunitAutoTestCase {
     public void testCompletionTriggerAutoCalcConfigGated() {
         seedProduct(P);
         seedWorkcenter(WC1, bd("20"));
-        Long bomId = seedBom(9206L, P);
-        seedBomOperation(4206L, bomId, WC1, bd("60"));
+        String bomId = seedBom("9206", P);
+        seedBomOperation("4206", bomId, WC1, bd("60"));
         seedFirmedRollup(P, bd("10"), bd("10"), bd("5"), bd("25"));
         seedPeriodAndSubjects();
 
         // config 关（默认）→ 完工不自动算差异
         setVarianceAutoCalc(false);
         try {
-            Long woIdOff = seedInProcessWorkOrder(8206L, "WO-PV-OFF", bomId, P,
+            String woIdOff = seedInProcessWorkOrder("8206", "WO-PV-OFF", bomId, P,
                     bd("2"), bd("25"), bd("35"), bd("8"));
-            seedTimeLog(5606L, woIdOff, bd("150"));
+            seedTimeLog("5606", woIdOff, bd("150"));
             Map<String, Object> req = new LinkedHashMap<>();
             req.put("workOrderId", woIdOff);
             req.put("completedQty", bd("2"));
@@ -278,9 +278,9 @@ public class TestErpMfgProductionVariance extends JunitAutoTestCase {
         }
 
         // config 开 → 完工自动算差异
-        Long woIdOn = seedInProcessWorkOrder(8207L, "WO-PV-ON", bomId, P,
+        String woIdOn = seedInProcessWorkOrder("8207", "WO-PV-ON", bomId, P,
                 bd("2"), bd("25"), bd("35"), bd("8"));
-        seedTimeLog(5607L, woIdOn, bd("150"));
+        seedTimeLog("5607", woIdOn, bd("150"));
         setVarianceAutoCalc(true);
         try {
             Map<String, Object> req = new LinkedHashMap<>();
@@ -303,14 +303,14 @@ public class TestErpMfgProductionVariance extends JunitAutoTestCase {
     @Test
     public void testManualCalculateRejectsNonCompleted() {
         seedProduct(P);
-        Long bomId = seedBom(9207L, P);
+        String bomId = seedBom("9207", P);
         seedFirmedRollup(P, bd("10"), bd("10"), bd("5"), bd("25"));
         // IN_PROCESS 工单（未完工）
-        seedInProcessWorkOrder(8208L, "WO-PV-NOCOMP", bomId, P,
+        seedInProcessWorkOrder("8208", "WO-PV-NOCOMP", bomId, P,
                 bd("2"), BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO);
 
         ApiResponse<?> resp = executeRpc(mutation, "ErpMfgCostVariance__calculateVariances",
-                ApiRequest.build(Map.of("workOrderId", 8208L)));
+                ApiRequest.build(Map.of("workOrderId", "8208")));
         assertEquals(ErpMfgErrors.ERR_VARIANCE_WORKORDER_NOT_COMPLETED.getErrorCode(), resp.getCode(),
                 "非 COMPLETED 工单手动计算拒绝 ERR_VARIANCE_WORKORDER_NOT_COMPLETED");
     }
@@ -319,20 +319,20 @@ public class TestErpMfgProductionVariance extends JunitAutoTestCase {
     public void testSubcontractVarianceGeneratedWhenNonZero() {
         seedProduct(P);
         seedWorkcenter(WC1, bd("20"));
-        Long bomId = seedBom(9208L, P);
-        seedBomOperation(4208L, bomId, WC1, bd("60"));
+        String bomId = seedBom("9208", P);
+        seedBomOperation("4208", bomId, WC1, bd("60"));
         // 标准侧 subcontractCost = 3/单位
         seedFirmedRollupWithSubcontract(P, bd("10"), bd("10"), bd("5"), bd("3"), bd("25"));
         seedPeriodAndSubjects();
 
         // 实际侧 subcontractCost = 7
-        seedCompletedWorkOrderWithSubcontract(8209L, "WO-PV-SUB", bomId, P,
+        seedCompletedWorkOrderWithSubcontract("8209", "WO-PV-SUB", bomId, P,
                 bd("2"), bd("2"), bd("20"), bd("20"), bd("10"), bd("7"));
-        seedTimeLog(5608L, 8209L, bd("120"));
+        seedTimeLog("5608", "8209", bd("120"));
 
-        productionVarianceCalculator.calculateVariances(8209L);
+        productionVarianceCalculator.calculateVariances("8209");
 
-        List<ErpMfgCostVariance> lines = productionVarianceCalculator.findByWorkOrder(8209L);
+        List<ErpMfgCostVariance> lines = productionVarianceCalculator.findByWorkOrder("8209");
         assertEquals(6, lines.size(), "6 类差异行（含 SUBCONTRACT）");
 
         ErpMfgCostVariance sub = lineByType(lines, ErpMfgConstants.VARIANCE_TYPE_SUBCONTRACT);
@@ -347,19 +347,19 @@ public class TestErpMfgProductionVariance extends JunitAutoTestCase {
     public void testSubcontractLineOmittedWhenBothSidesZero() {
         seedProduct(P);
         seedWorkcenter(WC1, bd("20"));
-        Long bomId = seedBom(9209L, P);
-        seedBomOperation(4209L, bomId, WC1, bd("60"));
+        String bomId = seedBom("9209", P);
+        seedBomOperation("4209", bomId, WC1, bd("60"));
         // 标准侧/实际侧 subcontractCost 均未设（0）
         seedFirmedRollup(P, bd("10"), bd("10"), bd("5"), bd("25"));
         seedPeriodAndSubjects();
 
-        seedCompletedWorkOrder(8210L, "WO-PV-NOSUB", bomId, P,
+        seedCompletedWorkOrder("8210", "WO-PV-NOSUB", bomId, P,
                 bd("2"), bd("2"), bd("20"), bd("20"), bd("10"));
-        seedTimeLog(5609L, 8210L, bd("120"));
+        seedTimeLog("5609", "8210", bd("120"));
 
-        productionVarianceCalculator.calculateVariances(8210L);
+        productionVarianceCalculator.calculateVariances("8210");
 
-        List<ErpMfgCostVariance> lines = productionVarianceCalculator.findByWorkOrder(8210L);
+        List<ErpMfgCostVariance> lines = productionVarianceCalculator.findByWorkOrder("8210");
         assertEquals(5, lines.size(), "两侧 subcontractCost 均为 0 → 不生成 SUBCONTRACT 行（保持 5 类）");
         assertTrue(lines.stream().noneMatch(l -> ErpMfgConstants.VARIANCE_TYPE_SUBCONTRACT.equals(l.getVarianceType())),
                 "无 SUBCONTRACT 差异行");
@@ -369,18 +369,18 @@ public class TestErpMfgProductionVariance extends JunitAutoTestCase {
     public void testSubcontractVariancePosting() {
         seedProduct(P);
         seedWorkcenter(WC1, bd("20"));
-        Long bomId = seedBom(9210L, P);
-        seedBomOperation(4210L, bomId, WC1, bd("60"));
+        String bomId = seedBom("9210", P);
+        seedBomOperation("4210", bomId, WC1, bd("60"));
         seedFirmedRollupWithSubcontract(P, bd("10"), bd("10"), bd("5"), bd("3"), bd("25"));
         seedPeriodAndSubjects();
 
         // 配置使得仅 SUBCONTRACT 净差异非零：材料/制造费用/产量均为 0，人工效率+费率互抵。
-        seedCompletedWorkOrderWithSubcontract(8211L, "WO-PV-SUBPOST", bomId, P,
+        seedCompletedWorkOrderWithSubcontract("8211", "WO-PV-SUBPOST", bomId, P,
                 bd("2"), bd("2"), bd("20"), bd("20"), bd("10"), bd("7"));
-        seedTimeLog(5610L, 8211L, bd("120"));
+        seedTimeLog("5610", "8211", bd("120"));
 
         ApiResponse<?> resp = executeRpc(mutation, "ErpMfgCostVariance__calculateVariances",
-                ApiRequest.build(Map.of("workOrderId", 8211L)));
+                ApiRequest.build(Map.of("workOrderId", "8211")));
         assertEquals(0, resp.getStatus(), "calculateVariances（含过账）应成功: " + resp);
 
         ErpFinVoucher voucher = findVoucherByBillCode("WO-PV-SUBPOST-PV");
@@ -409,25 +409,25 @@ public class TestErpMfgProductionVariance extends JunitAutoTestCase {
     public void testPostingFailureLeavesVariancePostedFalse() {
         seedProduct(P);
         seedWorkcenter(WC1, bd("20"));
-        Long bomId = seedBom(9211L, P);
-        seedBomOperation(4211L, bomId, WC1, bd("60"));
+        String bomId = seedBom("9211", P);
+        seedBomOperation("4211", bomId, WC1, bd("60"));
         seedFirmedRollup(P, bd("10"), bd("10"), bd("5"), bd("25"));
         seedAcctSchemaAndSubjectsOnly();
 
-        seedCompletedWorkOrder(8212L, "WO-PV-FAIL", bomId, P,
+        seedCompletedWorkOrder("8212", "WO-PV-FAIL", bomId, P,
                 bd("2"), bd("2"), bd("25"), bd("35"), bd("8"));
-        seedTimeLog(5611L, 8212L, bd("150"));
+        seedTimeLog("5611", "8212", bd("150"));
 
         ApiResponse<?> resp = executeRpc(mutation, "ErpMfgCostVariance__calculateVariances",
-                ApiRequest.build(Map.of("workOrderId", 8212L)));
+                ApiRequest.build(Map.of("workOrderId", "8212")));
         assertEquals(0, resp.getStatus(), "calculateVariances 应成功（过账失败不阻塞差异计算）");
 
-        List<ErpMfgCostVariance> lines = productionVarianceCalculator.findByWorkOrder(8212L);
+        List<ErpMfgCostVariance> lines = productionVarianceCalculator.findByWorkOrder("8212");
         assertFalse(lines.isEmpty(), "差异行应已计算");
         assertTrue(lines.stream().noneMatch(l -> Boolean.TRUE.equals(l.getPosted())),
                 "过账失败 → 全部差异行 posted=false（业财悬挂窗口对测试可观测）");
 
-        ErpMfgWorkOrder wo = daoProvider.daoFor(ErpMfgWorkOrder.class).getEntityById(8212L);
+        ErpMfgWorkOrder wo = daoProvider.daoFor(ErpMfgWorkOrder.class).getEntityById("8212");
         assertEquals(ErpMfgConstants.WORK_ORDER_STATUS_COMPLETED, wo.getDocStatus(),
                 "过账失败不影响工单终态 COMPLETED");
         assertNull(findVoucherByBillCode("WO-PV-FAIL-PV"), "过账失败不产生 PRODUCTION_VARIANCE 凭证");
@@ -445,17 +445,17 @@ public class TestErpMfgProductionVariance extends JunitAutoTestCase {
     public void testMultiCurrencyVarianceVoucherLineBaseline() {
         seedProduct(P);
         seedWorkcenter(WC1, bd("20"));
-        Long bomId = seedBom(9212L, P);
-        seedBomOperation(4212L, bomId, WC1, bd("60"));
+        String bomId = seedBom("9212", P);
+        seedBomOperation("4212", bomId, WC1, bd("60"));
         seedFirmedRollup(P, bd("10"), bd("10"), bd("5"), bd("25"));
         seedPeriodAndSubjectsFx();
 
-        seedCompletedWorkOrder(8213L, "WO-PV-FX", bomId, P,
+        seedCompletedWorkOrder("8213", "WO-PV-FX", bomId, P,
                 bd("2"), bd("2"), bd("25"), bd("35"), bd("8"));
-        seedTimeLog(5612L, 8213L, bd("150"));
+        seedTimeLog("5612", "8213", bd("150"));
 
         ApiResponse<?> resp = executeRpc(mutation, "ErpMfgCostVariance__calculateVariances",
-                ApiRequest.build(Map.of("workOrderId", 8213L)));
+                ApiRequest.build(Map.of("workOrderId", "8213")));
         assertEquals(0, resp.getStatus(), "calculateVariances（含过账）应成功");
 
         ErpFinVoucher voucher = findVoucherByBillCode("WO-PV-FX-PV");
@@ -487,7 +487,7 @@ public class TestErpMfgProductionVariance extends JunitAutoTestCase {
         return daoProvider.daoFor(ErpFinVoucher.class).getEntityById(links.get(0).getVoucherId());
     }
 
-    private ErpFinVoucherLine findVoucherLine(Long voucherId, String subjectCode) {
+    private ErpFinVoucherLine findVoucherLine(String voucherId, String subjectCode) {
         IEntityDao<ErpFinVoucherLine> dao = daoProvider.daoFor(ErpFinVoucherLine.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("voucherId", voucherId));
@@ -503,7 +503,7 @@ public class TestErpMfgProductionVariance extends JunitAutoTestCase {
 
     // ---------- seed helpers ----------
 
-    private void seedProduct(Long id) {
+    private void seedProduct(String id) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMdMaterial> dao = daoProvider.daoFor(ErpMdMaterial.class);
             ErpMdMaterial m = new ErpMdMaterial();
@@ -517,7 +517,7 @@ public class TestErpMfgProductionVariance extends JunitAutoTestCase {
         });
     }
 
-    private void seedWorkcenter(Long id, BigDecimal hourlyRate) {
+    private void seedWorkcenter(String id, BigDecimal hourlyRate) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMfgWorkcenter> dao = daoProvider.daoFor(ErpMfgWorkcenter.class);
             ErpMfgWorkcenter wc = new ErpMfgWorkcenter();
@@ -529,7 +529,7 @@ public class TestErpMfgProductionVariance extends JunitAutoTestCase {
         });
     }
 
-    private Long seedBom(Long id, Long productId) {
+    private String seedBom(String id, String productId) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMfgBom> dao = daoProvider.daoFor(ErpMfgBom.class);
             ErpMfgBom bom = new ErpMfgBom();
@@ -545,24 +545,24 @@ public class TestErpMfgProductionVariance extends JunitAutoTestCase {
         return id;
     }
 
-    private void seedBomOperation(Long id, Long bomId, Long workcenterId, BigDecimal standardTime) {
+    private void seedBomOperation(String id, String bomId, String workcenterId, BigDecimal standardTime) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMfgBomOperation> dao = daoProvider.daoFor(ErpMfgBomOperation.class);
             ErpMfgBomOperation op = new ErpMfgBomOperation();
             op.orm_propValueByName("id", id);
             op.setBomId(bomId);
             op.setLineNo(10);
-            op.setOperationId(9000L);
+            op.setOperationId("9000");
             op.setWorkcenterId(workcenterId);
             op.setStandardTime(standardTime);
             dao.saveEntity(op);
         });
     }
 
-    private void seedFirmedRollup(Long productId, BigDecimal materialCost, BigDecimal laborCost,
+    private void seedFirmedRollup(String productId, BigDecimal materialCost, BigDecimal laborCost,
                                   BigDecimal overheadCost, BigDecimal unitCost) {
         ormTemplate.runInSession(() -> {
-            Long headerId = productId * 10000 + 1;
+            String headerId = String.valueOf(Long.parseLong(productId) * 10000 + 1);
             IEntityDao<ErpMfgCostRollup> headerDao = daoProvider.daoFor(ErpMfgCostRollup.class);
             ErpMfgCostRollup header = new ErpMfgCostRollup();
             header.orm_propValueByName("id", headerId);
@@ -574,7 +574,7 @@ public class TestErpMfgProductionVariance extends JunitAutoTestCase {
 
             IEntityDao<ErpMfgCostRollupLine> lineDao = daoProvider.daoFor(ErpMfgCostRollupLine.class);
             ErpMfgCostRollupLine line = new ErpMfgCostRollupLine();
-            line.orm_propValueByName("id", productId * 10000 + 2);
+            line.orm_propValueByName("id", String.valueOf(Long.parseLong(productId) * 10000 + 2));
             line.setCostRollupId(headerId);
             line.setLineNo(10);
             line.setMaterialId(productId);
@@ -589,11 +589,11 @@ public class TestErpMfgProductionVariance extends JunitAutoTestCase {
         });
     }
 
-    private void seedFirmedRollupWithSubcontract(Long productId, BigDecimal materialCost, BigDecimal laborCost,
+    private void seedFirmedRollupWithSubcontract(String productId, BigDecimal materialCost, BigDecimal laborCost,
                                                  BigDecimal overheadCost, BigDecimal subcontractCost,
                                                  BigDecimal unitCost) {
         ormTemplate.runInSession(() -> {
-            Long headerId = productId * 10000 + 1;
+            String headerId = String.valueOf(Long.parseLong(productId) * 10000 + 1);
             IEntityDao<ErpMfgCostRollup> headerDao = daoProvider.daoFor(ErpMfgCostRollup.class);
             ErpMfgCostRollup header = new ErpMfgCostRollup();
             header.orm_propValueByName("id", headerId);
@@ -605,7 +605,7 @@ public class TestErpMfgProductionVariance extends JunitAutoTestCase {
 
             IEntityDao<ErpMfgCostRollupLine> lineDao = daoProvider.daoFor(ErpMfgCostRollupLine.class);
             ErpMfgCostRollupLine line = new ErpMfgCostRollupLine();
-            line.orm_propValueByName("id", productId * 10000 + 2);
+            line.orm_propValueByName("id", String.valueOf(Long.parseLong(productId) * 10000 + 2));
             line.setCostRollupId(headerId);
             line.setLineNo(10);
             line.setMaterialId(productId);
@@ -621,7 +621,7 @@ public class TestErpMfgProductionVariance extends JunitAutoTestCase {
         });
     }
 
-    private ErpMfgWorkOrder seedCompletedWorkOrder(Long id, String code, Long bomId, Long productId,
+    private ErpMfgWorkOrder seedCompletedWorkOrder(String id, String code, String bomId, String productId,
                                                    BigDecimal planned, BigDecimal completed,
                                                    BigDecimal materialCost, BigDecimal laborCost,
                                                    BigDecimal overheadCost) {
@@ -646,10 +646,10 @@ public class TestErpMfgProductionVariance extends JunitAutoTestCase {
         return daoProvider.daoFor(ErpMfgWorkOrder.class).getEntityById(id);
     }
 
-    private ErpMfgWorkOrder seedCompletedWorkOrderWithSubcontract(Long id, String code, Long bomId, Long productId,
-                                                                   BigDecimal planned, BigDecimal completed,
-                                                                   BigDecimal materialCost, BigDecimal laborCost,
-                                                                   BigDecimal overheadCost, BigDecimal subcontractCost) {
+    private ErpMfgWorkOrder seedCompletedWorkOrderWithSubcontract(String id, String code, String bomId, String productId,
+                                                                  BigDecimal planned, BigDecimal completed,
+                                                                  BigDecimal materialCost, BigDecimal laborCost,
+                                                                  BigDecimal overheadCost, BigDecimal subcontractCost) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMfgWorkOrder> dao = daoProvider.daoFor(ErpMfgWorkOrder.class);
             ErpMfgWorkOrder wo = new ErpMfgWorkOrder();
@@ -672,9 +672,9 @@ public class TestErpMfgProductionVariance extends JunitAutoTestCase {
         return daoProvider.daoFor(ErpMfgWorkOrder.class).getEntityById(id);
     }
 
-    private Long seedInProcessWorkOrder(Long id, String code, Long bomId, Long productId,
-                                        BigDecimal planned, BigDecimal materialCost,
-                                        BigDecimal laborCost, BigDecimal overheadCost) {
+    private String seedInProcessWorkOrder(String id, String code, String bomId, String productId,
+                                          BigDecimal planned, BigDecimal materialCost,
+                                          BigDecimal laborCost, BigDecimal overheadCost) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMfgWorkOrder> dao = daoProvider.daoFor(ErpMfgWorkOrder.class);
             ErpMfgWorkOrder wo = new ErpMfgWorkOrder();
@@ -696,12 +696,12 @@ public class TestErpMfgProductionVariance extends JunitAutoTestCase {
         return id;
     }
 
-    private void seedTimeLog(Long id, Long workOrderId, BigDecimal durationMins) {
+    private void seedTimeLog(String id, String workOrderId, BigDecimal durationMins) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMfgJobCardTimeLog> dao = daoProvider.daoFor(ErpMfgJobCardTimeLog.class);
             ErpMfgJobCardTimeLog log = new ErpMfgJobCardTimeLog();
             log.orm_propValueByName("id", id);
-            log.setJobCardId(9001L);
+            log.setJobCardId("9001");
             log.setWorkOrderId(workOrderId);
             log.setOperatorId("OP-001");
             log.setWorkDate(LocalDate.of(2026, 7, 1));

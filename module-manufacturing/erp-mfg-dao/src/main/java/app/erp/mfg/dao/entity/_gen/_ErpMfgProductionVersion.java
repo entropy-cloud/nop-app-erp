@@ -172,19 +172,19 @@ public class _ErpMfgProductionVersion extends DynamicOrmEntity{
 
     
     /* ID: ID */
-    private java.lang.Long _id;
+    private java.lang.String _id;
     
     /* 版本编码: CODE */
     private java.lang.String _code;
     
     /* 产品: PRODUCT_ID */
-    private java.lang.Long _productId;
+    private java.lang.String _productId;
     
     /* BOM: BOM_ID */
-    private java.lang.Long _bomId;
+    private java.lang.String _bomId;
     
     /* 工艺路线: ROUTING_ID */
-    private java.lang.Long _routingId;
+    private java.lang.String _routingId;
     
     /* 生效日期: VALID_FROM */
     private java.time.LocalDate _validFrom;
@@ -365,9 +365,9 @@ public class _ErpMfgProductionVersion extends DynamicOrmEntity{
         switch(propId){
         
             case PROP_ID_id:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_id));
                }
                setId(typedValue);
@@ -385,9 +385,9 @@ public class _ErpMfgProductionVersion extends DynamicOrmEntity{
             }
         
             case PROP_ID_productId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_productId));
                }
                setProductId(typedValue);
@@ -395,9 +395,9 @@ public class _ErpMfgProductionVersion extends DynamicOrmEntity{
             }
         
             case PROP_ID_bomId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_bomId));
                }
                setBomId(typedValue);
@@ -405,9 +405,9 @@ public class _ErpMfgProductionVersion extends DynamicOrmEntity{
             }
         
             case PROP_ID_routingId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_routingId));
                }
                setRoutingId(typedValue);
@@ -555,7 +555,7 @@ public class _ErpMfgProductionVersion extends DynamicOrmEntity{
         
             case PROP_ID_id:{
                onInitProp(propId);
-               this._id = (java.lang.Long)value;
+               this._id = (java.lang.String)value;
                orm_id(); // 如果是设置主键字段，则触发watcher
                break;
             }
@@ -569,21 +569,21 @@ public class _ErpMfgProductionVersion extends DynamicOrmEntity{
         
             case PROP_ID_productId:{
                onInitProp(propId);
-               this._productId = (java.lang.Long)value;
+               this._productId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_bomId:{
                onInitProp(propId);
-               this._bomId = (java.lang.Long)value;
+               this._bomId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_routingId:{
                onInitProp(propId);
-               this._routingId = (java.lang.Long)value;
+               this._routingId = (java.lang.String)value;
                
                break;
             }
@@ -688,7 +688,7 @@ public class _ErpMfgProductionVersion extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final java.lang.Long getId(){
+    public final java.lang.String getId(){
          onPropGet(PROP_ID_id);
          return _id;
     }
@@ -696,7 +696,7 @@ public class _ErpMfgProductionVersion extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final void setId(java.lang.Long value){
+    public final void setId(java.lang.String value){
         if(onPropSet(PROP_ID_id,value)){
             this._id = value;
             internalClearRefs(PROP_ID_id);
@@ -726,7 +726,7 @@ public class _ErpMfgProductionVersion extends DynamicOrmEntity{
     /**
      * 产品: PRODUCT_ID
      */
-    public final java.lang.Long getProductId(){
+    public final java.lang.String getProductId(){
          onPropGet(PROP_ID_productId);
          return _productId;
     }
@@ -734,7 +734,7 @@ public class _ErpMfgProductionVersion extends DynamicOrmEntity{
     /**
      * 产品: PRODUCT_ID
      */
-    public final void setProductId(java.lang.Long value){
+    public final void setProductId(java.lang.String value){
         if(onPropSet(PROP_ID_productId,value)){
             this._productId = value;
             internalClearRefs(PROP_ID_productId);
@@ -745,7 +745,7 @@ public class _ErpMfgProductionVersion extends DynamicOrmEntity{
     /**
      * BOM: BOM_ID
      */
-    public final java.lang.Long getBomId(){
+    public final java.lang.String getBomId(){
          onPropGet(PROP_ID_bomId);
          return _bomId;
     }
@@ -753,7 +753,7 @@ public class _ErpMfgProductionVersion extends DynamicOrmEntity{
     /**
      * BOM: BOM_ID
      */
-    public final void setBomId(java.lang.Long value){
+    public final void setBomId(java.lang.String value){
         if(onPropSet(PROP_ID_bomId,value)){
             this._bomId = value;
             internalClearRefs(PROP_ID_bomId);
@@ -764,7 +764,7 @@ public class _ErpMfgProductionVersion extends DynamicOrmEntity{
     /**
      * 工艺路线: ROUTING_ID
      */
-    public final java.lang.Long getRoutingId(){
+    public final java.lang.String getRoutingId(){
          onPropGet(PROP_ID_routingId);
          return _routingId;
     }
@@ -772,7 +772,7 @@ public class _ErpMfgProductionVersion extends DynamicOrmEntity{
     /**
      * 工艺路线: ROUTING_ID
      */
-    public final void setRoutingId(java.lang.Long value){
+    public final void setRoutingId(java.lang.String value){
         if(onPropSet(PROP_ID_routingId,value)){
             this._routingId = value;
             internalClearRefs(PROP_ID_routingId);

@@ -26,7 +26,7 @@ public class ErpMfgMrpPlanBizModel extends CrudBizModel<ErpMfgMrpPlan> implement
 
     @Override
     @BizMutation
-    public ErpMfgMrpPlan runMrp(@Name("planId") Long planId, IServiceContext context) {
+    public ErpMfgMrpPlan runMrp(@Name("planId") String planId, IServiceContext context) {
         return runMrpProcessor.runMrp(planId, context);
     }
 }

@@ -1,0 +1,19 @@
+_chgType,ID,VOUCHER_ID,LINE_NO,SUBJECT_ID,SUBJECT_CODE,SUBJECT_NAME,DC_DIRECTION,DEBIT_AMOUNT,CREDIT_AMOUNT,CURRENCY_ID,EXCHANGE_RATE,AMOUNT_SOURCE,AMOUNT_FUNCTIONAL,ACCT_SCHEMA_ID,ORG_ID,MEMO,PARTNER_ID,DEPARTMENT_ID,PROJECT_ID,WAREHOUSE_ID,MATERIAL_ID,BUSINESS_TYPE,COST_CENTER_ID,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
+A,14,13,1,2,1410,制造差异-材料,DEBIT,5.0000,0,6451,1,5.0000,5.0000,7451,,制造差异-材料（工单 WO-RC-A）,,,,,,PRODUCTION_VARIANCE,,@var:ErpFinVoucherLine@delVersion_1,0,autotest-ref,*,autotest-ref,*
+A,15,13,2,3,1411,在制品-材料,CREDIT,0,5.0000,6451,1,5.0000,5.0000,7451,,制造差异-材料（工单 WO-RC-A）,,,,,,PRODUCTION_VARIANCE,,@var:ErpFinVoucherLine@delVersion_1,0,autotest-ref,*,autotest-ref,*
+A,16,13,3,4,1412,制造差异-人工,DEBIT,15.0000,0,6451,1,15.0000,15.0000,7451,,制造差异-人工（工单 WO-RC-A）,,,,,,PRODUCTION_VARIANCE,,@var:ErpFinVoucherLine@delVersion_1,0,autotest-ref,*,autotest-ref,*
+A,17,13,4,5,1413,在制品-人工,CREDIT,0,15.0000,6451,1,15.0000,15.0000,7451,,制造差异-人工（工单 WO-RC-A）,,,,,,PRODUCTION_VARIANCE,,@var:ErpFinVoucherLine@delVersion_1,0,autotest-ref,*,autotest-ref,*
+A,18,13,5,7,1415,在制品-制造费用,DEBIT,2.0000,0,6451,1,2.0000,2.0000,7451,,制造差异-制造费用（工单 WO-RC-A）,,,,,,PRODUCTION_VARIANCE,,@var:ErpFinVoucherLine@delVersion_1,0,autotest-ref,*,autotest-ref,*
+A,19,13,6,6,1414,制造差异-制造费用,CREDIT,0,2.0000,6451,1,2.0000,2.0000,7451,,制造差异-制造费用（工单 WO-RC-A）,,,,,,PRODUCTION_VARIANCE,,@var:ErpFinVoucherLine@delVersion_1,0,autotest-ref,*,autotest-ref,*
+A,22,21,1,2,1410,制造差异-材料,DEBIT,-5.0000,0,6451,1.00000000,-5.0000,-5.0000,7451,,制造差异-材料（工单 WO-RC-A）,,,,,,PRODUCTION_VARIANCE,,@var:ErpFinVoucherLine@delVersion_1,0,autotest-ref,*,autotest-ref,*
+A,23,21,2,3,1411,在制品-材料,CREDIT,0,-5.0000,6451,1.00000000,-5.0000,-5.0000,7451,,制造差异-材料（工单 WO-RC-A）,,,,,,PRODUCTION_VARIANCE,,@var:ErpFinVoucherLine@delVersion_1,0,autotest-ref,*,autotest-ref,*
+A,24,21,3,4,1412,制造差异-人工,DEBIT,-15.0000,0,6451,1.00000000,-15.0000,-15.0000,7451,,制造差异-人工（工单 WO-RC-A）,,,,,,PRODUCTION_VARIANCE,,@var:ErpFinVoucherLine@delVersion_1,0,autotest-ref,*,autotest-ref,*
+A,25,21,4,5,1413,在制品-人工,CREDIT,0,-15.0000,6451,1.00000000,-15.0000,-15.0000,7451,,制造差异-人工（工单 WO-RC-A）,,,,,,PRODUCTION_VARIANCE,,@var:ErpFinVoucherLine@delVersion_1,0,autotest-ref,*,autotest-ref,*
+A,26,21,5,7,1415,在制品-制造费用,DEBIT,-2.0000,0,6451,1.00000000,-2.0000,-2.0000,7451,,制造差异-制造费用（工单 WO-RC-A）,,,,,,PRODUCTION_VARIANCE,,@var:ErpFinVoucherLine@delVersion_1,0,autotest-ref,*,autotest-ref,*
+A,27,21,6,6,1414,制造差异-制造费用,CREDIT,0,-2.0000,6451,1.00000000,-2.0000,-2.0000,7451,,制造差异-制造费用（工单 WO-RC-A）,,,,,,PRODUCTION_VARIANCE,,@var:ErpFinVoucherLine@delVersion_1,0,autotest-ref,*,autotest-ref,*
+A,35,34,1,2,1410,制造差异-材料,DEBIT,5.0000,0,6451,1,5.0000,5.0000,7451,,制造差异-材料（工单 WO-RC-A）,,,,,,PRODUCTION_VARIANCE,,@var:ErpFinVoucherLine@delVersion_1,0,autotest-ref,*,autotest-ref,*
+A,36,34,2,3,1411,在制品-材料,CREDIT,0,5.0000,6451,1,5.0000,5.0000,7451,,制造差异-材料（工单 WO-RC-A）,,,,,,PRODUCTION_VARIANCE,,@var:ErpFinVoucherLine@delVersion_1,0,autotest-ref,*,autotest-ref,*
+A,37,34,3,4,1412,制造差异-人工,DEBIT,15.0000,0,6451,1,15.0000,15.0000,7451,,制造差异-人工（工单 WO-RC-A）,,,,,,PRODUCTION_VARIANCE,,@var:ErpFinVoucherLine@delVersion_1,0,autotest-ref,*,autotest-ref,*
+A,38,34,4,5,1413,在制品-人工,CREDIT,0,15.0000,6451,1,15.0000,15.0000,7451,,制造差异-人工（工单 WO-RC-A）,,,,,,PRODUCTION_VARIANCE,,@var:ErpFinVoucherLine@delVersion_1,0,autotest-ref,*,autotest-ref,*
+A,39,34,5,7,1415,在制品-制造费用,DEBIT,2.0000,0,6451,1,2.0000,2.0000,7451,,制造差异-制造费用（工单 WO-RC-A）,,,,,,PRODUCTION_VARIANCE,,@var:ErpFinVoucherLine@delVersion_1,0,autotest-ref,*,autotest-ref,*
+A,40,34,6,6,1414,制造差异-制造费用,CREDIT,0,2.0000,6451,1,2.0000,2.0000,7451,,制造差异-制造费用（工单 WO-RC-A）,,,,,,PRODUCTION_VARIANCE,,@var:ErpFinVoucherLine@delVersion_1,0,autotest-ref,*,autotest-ref,*

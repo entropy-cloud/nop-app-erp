@@ -17,7 +17,7 @@ import java.time.LocalDate;
 @DataBean
 public class JobCardWorkRecord {
 
-    private Long jobCardId;
+    private String jobCardId;
     private String operatorId;
     private LocalDate workDate;
     private BigDecimal durationMins;
@@ -28,11 +28,11 @@ public class JobCardWorkRecord {
     private BigDecimal scrappedQuantity;
     private String remark;
 
-    public Long getJobCardId() {
+    public String getJobCardId() {
         return jobCardId;
     }
 
-    public void setJobCardId(Long jobCardId) {
+    public void setJobCardId(String jobCardId) {
         this.jobCardId = jobCardId;
     }
 

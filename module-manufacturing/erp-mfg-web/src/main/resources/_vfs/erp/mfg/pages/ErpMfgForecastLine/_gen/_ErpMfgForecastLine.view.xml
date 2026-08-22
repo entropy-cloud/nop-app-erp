@@ -19,22 +19,22 @@
             <cols>
 
                 <!--ID-->
-                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="id" mandatory="true" sortable="true"/>
 
                 <!--需求预测ID-->
-                <col id="forecastId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="forecastId" mandatory="true" sortable="true"/>
 
                 <!--行号-->
                 <col id="lineNo" mandatory="true" ui:number="true" sortable="true"/>
 
                 <!--物料-->
-                <col id="materialId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="materialId" mandatory="true" sortable="true"/>
 
                 <!--仓库（可选，空=产品级 MRP 消费，填=仓级 DRP 消费）-->
-                <col id="warehouseId" ui:number="true" sortable="true"/>
+                <col id="warehouseId" sortable="true"/>
 
                 <!--计量单位-->
-                <col id="uoMId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="uoMId" mandatory="true" sortable="true"/>
 
                 <!--桶起始日期-->
                 <col id="periodStart" mandatory="true" sortable="true"/>

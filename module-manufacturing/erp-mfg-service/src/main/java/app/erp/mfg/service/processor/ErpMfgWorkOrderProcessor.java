@@ -129,8 +129,8 @@ public class ErpMfgWorkOrderProcessor {
         return reverseApproveProcessor.reverseApprove(id, context);
     }
 
-    public ErpMfgWorkOrder checkAvailability(Long workOrderId, IServiceContext context) {
-        ErpMfgWorkOrder wo = requireWorkOrder(String.valueOf(workOrderId), context);
+    public ErpMfgWorkOrder checkAvailability(String workOrderId, IServiceContext context) {
+        ErpMfgWorkOrder wo = requireWorkOrder(workOrderId, context);
         validateTransitionForCheckAvailability(wo, context);
         KitAvailabilityResult result = kitAvailabilityChecker.check(workOrderId);
         wo.setDocStatus(result.getResultingStatus());
@@ -145,8 +145,8 @@ public class ErpMfgWorkOrderProcessor {
      * 取消工单（:46 单步状态翻转豁免：require + 状态守卫 + setStatus + updateEntity，零副作用）。
      * R6.2 登记豁免保留 facade，BizModel 继续委托本方法。
      */
-    public ErpMfgWorkOrder cancel(Long workOrderId, IServiceContext context) {
-        ErpMfgWorkOrder wo = requireWorkOrder(String.valueOf(workOrderId), context);
+    public ErpMfgWorkOrder cancel(String workOrderId, IServiceContext context) {
+        ErpMfgWorkOrder wo = requireWorkOrder(workOrderId, context);
         validateTransitionForCancel(wo, context);
         wo.setDocStatus(documentStateMachine.cancelTargetStatus());
         workOrderDao().updateEntity(wo);
@@ -374,12 +374,12 @@ public class ErpMfgWorkOrderProcessor {
             return;
         }
         ErpMfgWorkOrderLine outputLine = findOutputLine(wo.getId());
-        Long destWarehouseId = outputLine != null ? outputLine.getDestWarehouseId() : null;
+        String destWarehouseId = outputLine != null ? outputLine.getDestWarehouseId() : null;
         if (destWarehouseId == null) {
             return;
         }
-        Long productId = wo.getProductId();
-        Long uomId = outputLine != null ? outputLine.getUoMId() : null;
+        String productId = wo.getProductId();
+        String uomId = outputLine != null ? outputLine.getUoMId() : null;
         if (uomId == null && productId != null) {
             ErpMdMaterial product = daoProvider.daoFor(ErpMdMaterial.class).getEntityById(productId);
             uomId = product != null ? product.getUoMId() : null;
@@ -469,7 +469,7 @@ public class ErpMfgWorkOrderProcessor {
         }
     }
 
-    protected ErpMfgWorkOrderLine findOutputLine(Long workOrderId) {
+    protected ErpMfgWorkOrderLine findOutputLine(String workOrderId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("workOrderId", workOrderId));
         q.addFilter(eq("lineType", ErpMfgConstants.WORK_ORDER_LINE_TYPE_OUTPUT));
@@ -483,7 +483,7 @@ public class ErpMfgWorkOrderProcessor {
      * 解析工单所属组织的会计账套 ID（同 {@code ProductionVarianceDispatcher.resolveAcctSchemaId} 范式）。
      * 完工入库 GL 过账要求凭证行 acctSchemaId 非空，故 generateCompletionMove 需传入。
      */
-    protected Long resolveAcctSchemaId(Long orgId) {
+    protected String resolveAcctSchemaId(String orgId) {
         return AcctSchemaResolver.resolvePrimarySchemaId(daoProvider, orgId);
     }
 
@@ -607,7 +607,7 @@ public class ErpMfgWorkOrderProcessor {
             // 已快照工单：快照感知展开（LOCK_AT_CREATION 读快照 / AUTO_UPGRADE re-resolve 默认 BOM），零异常面
             nodes = kitAvailabilityChecker.explodeRequirements(wo, plannedQty);
         } else {
-            Long bomId;
+            String bomId;
             try {
                 bomId = kitAvailabilityChecker.resolveBomId(wo);
             } catch (NopException e) {
@@ -619,13 +619,13 @@ public class ErpMfgWorkOrderProcessor {
             }
             nodes = kitAvailabilityChecker.explodeRequirements(bomId, plannedQty);
         }
-        Map<Long, BigDecimal> requiredByMaterial = kitAvailabilityChecker.aggregateRequirements(nodes);
+        Map<String, BigDecimal> requiredByMaterial = kitAvailabilityChecker.aggregateRequirements(nodes);
         if (requiredByMaterial.isEmpty()) {
             return;
         }
-        Map<Long, Long> warehouseByMaterial = new LinkedHashMap<>();
-        Map<Long, String> lineNoByMaterial = new LinkedHashMap<>();
-        Map<Long, Long> uomByMaterial = new LinkedHashMap<>();
+        Map<String, String> warehouseByMaterial = new LinkedHashMap<>();
+        Map<String, String> lineNoByMaterial = new LinkedHashMap<>();
+        Map<String, String> uomByMaterial = new LinkedHashMap<>();
         for (ErpMfgWorkOrderLine wol : wo.getLines()) {
             if (!ErpMfgConstants.WORK_ORDER_LINE_TYPE_INPUT.equals(wol.getLineType())) {
                 continue;
@@ -648,9 +648,9 @@ public class ErpMfgWorkOrderProcessor {
         request.setSourceBillType(ErpMfgConstants.SOURCE_BILL_TYPE_WORK_ORDER);
         request.setSourceBillCode(wo.getCode());
         List<ReservationLineRequest> lines = new ArrayList<>();
-        for (Map.Entry<Long, BigDecimal> e : requiredByMaterial.entrySet()) {
-            Long materialId = e.getKey();
-            Long warehouseId = warehouseByMaterial.get(materialId);
+        for (Map.Entry<String, BigDecimal> e : requiredByMaterial.entrySet()) {
+            String materialId = e.getKey();
+            String warehouseId = warehouseByMaterial.get(materialId);
             if (warehouseId == null) {
                 LOG.warn("工单 {} 子件 {} 无领料仓库（WO 行 sourceWarehouseId 缺失），跳过该行预留", wo.getCode(), materialId);
                 continue;
@@ -700,7 +700,7 @@ public class ErpMfgWorkOrderProcessor {
     /**
      * 解析预留行计量单位：WO 行 uoMId 优先，缺失回退物料主数据 uoMId（仍缺失返回 null——库存侧行创建跳过）。
      */
-    protected Long resolveReservationUom(Long materialId, Long woLineUomId) {
+    protected String resolveReservationUom(String materialId, String woLineUomId) {
         if (woLineUomId != null) {
             return woLineUomId;
         }

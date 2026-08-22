@@ -79,13 +79,13 @@ public class TestErpMfgVarianceRecomputeReversal extends JunitAutoTestCase {
     @RegisterExtension
     static MfgFrozenClockExtension frozenClock = new MfgFrozenClockExtension();
 
-    static final Long ORG_ID = 1451L;
-    static final Long UOM_ID = 5451L;
-    static final Long CURRENCY_ID = 6451L;
-    static final Long WC1 = 6251L;
+    static final String ORG_ID = "1451";
+    static final String UOM_ID = "5451";
+    static final String CURRENCY_ID = "6451";
+    static final String WC1 = "6251";
     static final String PERIOD_CODE = "2026-07-RC";
     static final String VOUCHER_STATUS_POSTED = "POSTED";
-    static final Long ACCT_SCHEMA_ID = 7451L;
+    static final String ACCT_SCHEMA_ID = "7451";
 
     static final String SUBJECT_MATERIAL_VARIANCE = "1410";
     static final String SUBJECT_WIP_MATERIAL = "1411";
@@ -95,7 +95,7 @@ public class TestErpMfgVarianceRecomputeReversal extends JunitAutoTestCase {
     static final String SUBJECT_WIP_OVERHEAD = "1415";
 
     // 测试专用 ID 段（与 TestErpMfgProductionVariance 1410/8201 段隔离）
-    static final Long P = 1251L;
+    static final String P = "1251";
 
     @Inject
     IDaoProvider daoProvider;
@@ -120,31 +120,31 @@ public class TestErpMfgVarianceRecomputeReversal extends JunitAutoTestCase {
     public void testRecomputeReversesOriginalVoucherAndRepostsNew() {
         seedProduct(P);
         seedWorkcenter(WC1, bd("20"));
-        Long bomId = seedBom(9251L, P);
-        seedBomOperation(4251L, bomId, WC1, bd("60"));
+        String bomId = seedBom("9251", P);
+        seedBomOperation("4251", bomId, WC1, bd("60"));
         seedFirmedRollup(P, bd("10"), bd("10"), bd("5"), bd("25"));
         seedPeriodAndSubjects();
 
-        seedCompletedWorkOrder(8251L, "WO-RC-A", bomId, P,
+        seedCompletedWorkOrder("8251", "WO-RC-A", bomId, P,
                 bd("2"), bd("2"), bd("25"), bd("35"), bd("8"));
-        seedTimeLog(5651L, 8251L, bd("150"));
+        seedTimeLog("5651", "8251", bd("150"));
 
         // 第一次 calculateVariances：首次 reverseIfExists 抛 SOURCE_NOT_FOUND 被吞（覆盖 (e)）→ 计算差异 → 派发凭证
         ApiResponse<?> r1 = executeRpc(mutation, "ErpMfgCostVariance__calculateVariances",
-                ApiRequest.build(Map.of("workOrderId", 8251L)));
+                ApiRequest.build(Map.of("workOrderId", "8251")));
         assertEquals(0, r1.getStatus(), "第一次 calculateVariances 应成功: " + r1);
 
         ErpFinVoucher firstNormal = findVoucher("WO-RC-A-PV", ErpFinBusinessType.PRODUCTION_VARIANCE, "NORMAL");
         assertNotNull(firstNormal, "首次计算应派发 NORMAL PRODUCTION_VARIANCE 凭证");
         assertEquals(VOUCHER_STATUS_POSTED, firstNormal.getDocStatus());
         assertFalse(Boolean.TRUE.equals(firstNormal.getIsReversed()), "首次 NORMAL 凭证未被红冲");
-        List<ErpMfgCostVariance> lines1 = productionVarianceCalculator.findByWorkOrder(8251L);
+        List<ErpMfgCostVariance> lines1 = productionVarianceCalculator.findByWorkOrder("8251");
         assertTrue(lines1.stream().allMatch(l -> Boolean.TRUE.equals(l.getPosted())),
                 "首次计算后全部差异行 posted=true");
 
         // 第二次 calculateVariances（不变成本重算）：reverseIfExists 红冲原凭证 → deleteByWorkOrder → 重算 → dispatchIfApplicable 派发新凭证
         ApiResponse<?> r2 = executeRpc(mutation, "ErpMfgCostVariance__calculateVariances",
-                ApiRequest.build(Map.of("workOrderId", 8251L)));
+                ApiRequest.build(Map.of("workOrderId", "8251")));
         assertEquals(0, r2.getStatus(), "第二次 calculateVariances（重算）应成功: " + r2);
 
         // 原NORMAL 凭证已被红冲
@@ -167,7 +167,7 @@ public class TestErpMfgVarianceRecomputeReversal extends JunitAutoTestCase {
                 "重算后应仅 1 条 isReversed=false 的 NORMAL 凭证（新派发的当前凭证）");
 
         // 数据行全 posted=true（重算后 dispatchIfApplicable 成功 markPosted）
-        List<ErpMfgCostVariance> lines2 = productionVarianceCalculator.findByWorkOrder(8251L);
+        List<ErpMfgCostVariance> lines2 = productionVarianceCalculator.findByWorkOrder("8251");
         assertTrue(lines2.stream().allMatch(l -> Boolean.TRUE.equals(l.getPosted())),
                 "重算后全部差异行 posted=true（dispatchIfApplicable 重新派发成功）");
 
@@ -189,13 +189,13 @@ public class TestErpMfgVarianceRecomputeReversal extends JunitAutoTestCase {
     public void testCompletionAutoRecomputeReversesViaCallSiteB() {
         seedProduct(P);
         seedWorkcenter(WC1, bd("20"));
-        Long bomId = seedBom(9252L, P);
-        seedBomOperation(4252L, bomId, WC1, bd("60"));
+        String bomId = seedBom("9252", P);
+        seedBomOperation("4252", bomId, WC1, bd("60"));
         seedFirmedRollup(P, bd("10"), bd("10"), bd("5"), bd("25"));
         seedPeriodAndSubjects();
 
         // 建工单（IN_PROCESS，配 OUTPUT 行）
-        Long woId = seedInProcessWorkOrderWithOutputLine(8252L, "WO-RC-B", bomId, P,
+        String woId = seedInProcessWorkOrderWithOutputLine("8252", "WO-RC-B", bomId, P,
                 bd("2"), bd("25"), bd("35"), bd("8"));
 
         setVarianceAutoCalc(true);
@@ -252,13 +252,13 @@ public class TestErpMfgVarianceRecomputeReversal extends JunitAutoTestCase {
     public void testReverseFailureDoesNotBlockRecompute() {
         seedProduct(P);
         seedWorkcenter(WC1, bd("20"));
-        Long bomId = seedBom(9253L, P);
-        seedBomOperation(4253L, bomId, WC1, bd("60"));
+        String bomId = seedBom("9253", P);
+        seedBomOperation("4253", bomId, WC1, bd("60"));
         seedFirmedRollup(P, bd("10"), bd("10"), bd("5"), bd("25"));
         seedPeriodAndSubjects();
-        seedCompletedWorkOrder(8253L, "WO-RC-D", bomId, P,
+        seedCompletedWorkOrder("8253", "WO-RC-D", bomId, P,
                 bd("2"), bd("2"), bd("25"), bd("35"), bd("8"));
-        seedTimeLog(5653L, 8253L, bd("150"));
+        seedTimeLog("5653", "8253", bd("150"));
 
         // 直接调 dispatcher.reverseIfExists，使用一个抛 RuntimeException 的执行器
         ProductionVarianceDispatcher failingDispatcher = new ProductionVarianceDispatcher();
@@ -267,11 +267,11 @@ public class TestErpMfgVarianceRecomputeReversal extends JunitAutoTestCase {
         failingDispatcher.setExecutor(new ThrowingMfgPostingExecutor());
 
         // 不阻断：reverseIfExists 调用本身应安全返回（异常被吞）
-        failingDispatcher.reverseIfExists(8253L);
+        failingDispatcher.reverseIfExists("8253");
 
         // 后续 calculateVariances 应正常完成（不因红冲失败而被阻断）—— 经直接计算路径验证
-        productionVarianceCalculator.deleteByWorkOrder(8253L);
-        List<ErpMfgCostVariance> lines = productionVarianceCalculator.calculateVariances(8253L);
+        productionVarianceCalculator.deleteByWorkOrder("8253");
+        List<ErpMfgCostVariance> lines = productionVarianceCalculator.calculateVariances("8253");
         assertFalse(lines.isEmpty(), "差异行已计算（红冲失败不阻断重算）");
         // 注：未调 dispatchIfApplicable 故数据行 posted=false，此断言聚焦红冲失败容错路径，过账另经 (a)(c) 覆盖
     }
@@ -286,17 +286,17 @@ public class TestErpMfgVarianceRecomputeReversal extends JunitAutoTestCase {
     public void testFirstCalculateVariancesToleratesNoSourceVoucher() {
         seedProduct(P);
         seedWorkcenter(WC1, bd("20"));
-        Long bomId = seedBom(9254L, P);
-        seedBomOperation(4254L, bomId, WC1, bd("60"));
+        String bomId = seedBom("9254", P);
+        seedBomOperation("4254", bomId, WC1, bd("60"));
         seedFirmedRollup(P, bd("10"), bd("10"), bd("5"), bd("25"));
         seedPeriodAndSubjects();
-        seedCompletedWorkOrder(8254L, "WO-RC-E", bomId, P,
+        seedCompletedWorkOrder("8254", "WO-RC-E", bomId, P,
                 bd("2"), bd("2"), bd("25"), bd("35"), bd("8"));
-        seedTimeLog(5654L, 8254L, bd("150"));
+        seedTimeLog("5654", "8254", bd("150"));
 
         // 首次调用：reverseIfExists 触发 ERR_REVERSE_SOURCE_NOT_FOUND → 吞异常 → 计算差异 → 派发凭证
         ApiResponse<?> resp = executeRpc(mutation, "ErpMfgCostVariance__calculateVariances",
-                ApiRequest.build(Map.of("workOrderId", 8254L)));
+                ApiRequest.build(Map.of("workOrderId", "8254")));
         assertEquals(0, resp.getStatus(),
                 "首次 calculateVariances 应成功（reverseIfExists 吞 SOURCE_NOT_FOUND 异常）: " + resp);
 
@@ -309,7 +309,7 @@ public class TestErpMfgVarianceRecomputeReversal extends JunitAutoTestCase {
         assertEquals(null, reversal, "首次计算时无 REVERSAL 凭证（无原凭证可红冲）");
 
         // 数据行全 posted=true
-        List<ErpMfgCostVariance> lines = productionVarianceCalculator.findByWorkOrder(8254L);
+        List<ErpMfgCostVariance> lines = productionVarianceCalculator.findByWorkOrder("8254");
         assertTrue(lines.stream().allMatch(l -> Boolean.TRUE.equals(l.getPosted())),
                 "首次计算后全部差异行 posted=true");
     }
@@ -364,7 +364,7 @@ public class TestErpMfgVarianceRecomputeReversal extends JunitAutoTestCase {
                 "凭证行 " + subjectCode + " 金额 = 数据行 MATERIAL 净差异绝对值（一致不变量）");
     }
 
-    private ErpFinVoucherLine findVoucherLine(Long voucherId, String subjectCode) {
+    private ErpFinVoucherLine findVoucherLine(String voucherId, String subjectCode) {
         IEntityDao<ErpFinVoucherLine> dao = daoProvider.daoFor(ErpFinVoucherLine.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("voucherId", voucherId));
@@ -380,7 +380,7 @@ public class TestErpMfgVarianceRecomputeReversal extends JunitAutoTestCase {
 
     // ---------- seed helper（与 TestErpMfgProductionVariance 范式对齐，独立 ID 段避免冲突） ----------
 
-    private void seedProduct(Long id) {
+    private void seedProduct(String id) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMdMaterial> dao = daoProvider.daoFor(ErpMdMaterial.class);
             ErpMdMaterial m = new ErpMdMaterial();
@@ -394,7 +394,7 @@ public class TestErpMfgVarianceRecomputeReversal extends JunitAutoTestCase {
         });
     }
 
-    private void seedWorkcenter(Long id, BigDecimal hourlyRate) {
+    private void seedWorkcenter(String id, BigDecimal hourlyRate) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMfgWorkcenter> dao = daoProvider.daoFor(ErpMfgWorkcenter.class);
             ErpMfgWorkcenter wc = new ErpMfgWorkcenter();
@@ -406,7 +406,7 @@ public class TestErpMfgVarianceRecomputeReversal extends JunitAutoTestCase {
         });
     }
 
-    private Long seedBom(Long id, Long productId) {
+    private String seedBom(String id, String productId) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMfgBom> dao = daoProvider.daoFor(ErpMfgBom.class);
             ErpMfgBom bom = new ErpMfgBom();
@@ -422,24 +422,24 @@ public class TestErpMfgVarianceRecomputeReversal extends JunitAutoTestCase {
         return id;
     }
 
-    private void seedBomOperation(Long id, Long bomId, Long workcenterId, BigDecimal standardTime) {
+    private void seedBomOperation(String id, String bomId, String workcenterId, BigDecimal standardTime) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMfgBomOperation> dao = daoProvider.daoFor(ErpMfgBomOperation.class);
             ErpMfgBomOperation op = new ErpMfgBomOperation();
             op.orm_propValueByName("id", id);
             op.setBomId(bomId);
             op.setLineNo(10);
-            op.setOperationId(9000L);
+            op.setOperationId("9000");
             op.setWorkcenterId(workcenterId);
             op.setStandardTime(standardTime);
             dao.saveEntity(op);
         });
     }
 
-    private void seedFirmedRollup(Long productId, BigDecimal materialCost, BigDecimal laborCost,
+    private void seedFirmedRollup(String productId, BigDecimal materialCost, BigDecimal laborCost,
                                   BigDecimal overheadCost, BigDecimal unitCost) {
         ormTemplate.runInSession(() -> {
-            Long headerId = productId * 10000 + 51;
+            String headerId = String.valueOf(Long.parseLong(productId) * 10000 + 51);
             IEntityDao<ErpMfgCostRollup> headerDao = daoProvider.daoFor(ErpMfgCostRollup.class);
             ErpMfgCostRollup header = new ErpMfgCostRollup();
             header.orm_propValueByName("id", headerId);
@@ -451,7 +451,7 @@ public class TestErpMfgVarianceRecomputeReversal extends JunitAutoTestCase {
 
             IEntityDao<ErpMfgCostRollupLine> lineDao = daoProvider.daoFor(ErpMfgCostRollupLine.class);
             ErpMfgCostRollupLine line = new ErpMfgCostRollupLine();
-            line.orm_propValueByName("id", productId * 10000 + 52);
+            line.orm_propValueByName("id", String.valueOf(Long.parseLong(productId) * 10000 + 52));
             line.setCostRollupId(headerId);
             line.setLineNo(10);
             line.setMaterialId(productId);
@@ -466,7 +466,7 @@ public class TestErpMfgVarianceRecomputeReversal extends JunitAutoTestCase {
         });
     }
 
-    private void seedCompletedWorkOrder(Long id, String code, Long bomId, Long productId,
+    private void seedCompletedWorkOrder(String id, String code, String bomId, String productId,
                                         BigDecimal planned, BigDecimal completed,
                                         BigDecimal materialCost, BigDecimal laborCost,
                                         BigDecimal overheadCost) {
@@ -490,9 +490,9 @@ public class TestErpMfgVarianceRecomputeReversal extends JunitAutoTestCase {
         });
     }
 
-    private Long seedInProcessWorkOrderWithOutputLine(Long id, String code, Long bomId, Long productId,
-                                                       BigDecimal planned, BigDecimal materialCost,
-                                                       BigDecimal laborCost, BigDecimal overheadCost) {
+    private String seedInProcessWorkOrderWithOutputLine(String id, String code, String bomId, String productId,
+                                                        BigDecimal planned, BigDecimal materialCost,
+                                                        BigDecimal laborCost, BigDecimal overheadCost) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMfgWorkOrder> dao = daoProvider.daoFor(ErpMfgWorkOrder.class);
             ErpMfgWorkOrder wo = new ErpMfgWorkOrder();
@@ -516,7 +516,7 @@ public class TestErpMfgVarianceRecomputeReversal extends JunitAutoTestCase {
             // 本测试 focus on 差异重算红冲链路，不需要实际库存通道，但完工路径会调 generateCompletionMove。
             // destWarehouseId/uomId 缺失时 generateCompletionMove 静默 return（不阻断完工主流程）。
             ErpMfgWorkOrderLine out = new ErpMfgWorkOrderLine();
-            out.orm_propValueByName("id", id * 10 + 1);
+            out.orm_propValueByName("id", String.valueOf(Long.parseLong(id) * 10 + 1));
             out.setWorkOrderId(id);
             out.setLineNo(1);
             out.orm_propValueByName("lineType", ErpMfgConstants.WORK_ORDER_LINE_TYPE_OUTPUT);
@@ -528,12 +528,12 @@ public class TestErpMfgVarianceRecomputeReversal extends JunitAutoTestCase {
         return id;
     }
 
-    private void seedTimeLog(Long id, Long workOrderId, BigDecimal durationMins) {
+    private void seedTimeLog(String id, String workOrderId, BigDecimal durationMins) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMfgJobCardTimeLog> dao = daoProvider.daoFor(ErpMfgJobCardTimeLog.class);
             ErpMfgJobCardTimeLog log = new ErpMfgJobCardTimeLog();
             log.orm_propValueByName("id", id);
-            log.setJobCardId(9001L);
+            log.setJobCardId("9001");
             log.setWorkOrderId(workOrderId);
             log.setOperatorId("OP-001");
             log.setWorkDate(LocalDate.of(2026, 7, 1));

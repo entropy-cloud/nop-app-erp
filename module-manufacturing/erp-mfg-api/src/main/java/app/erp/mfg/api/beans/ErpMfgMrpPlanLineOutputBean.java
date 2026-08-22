@@ -13,30 +13,30 @@
     public class ErpMfgMrpPlanLineOutputBean {
 
     
-        private Long _id;
+        private String _id;
 
     
         @PropMeta(propId=1)
     
-        public Long getId(){
+        public String getId(){
             return _id;
         }
 
-        public void setId(Long value){
+        public void setId(String value){
             this._id = value;
         }
 
 
-        private Long _mrpPlanId;
+        private String _mrpPlanId;
 
     
         @PropMeta(propId=2)
     
-        public Long getMrpPlanId(){
+        public String getMrpPlanId(){
             return _mrpPlanId;
         }
 
-        public void setMrpPlanId(Long value){
+        public void setMrpPlanId(String value){
             this._mrpPlanId = value;
         }
 
@@ -55,30 +55,30 @@
         }
 
 
-        private Long _materialId;
+        private String _materialId;
 
     
         @PropMeta(propId=4)
     
-        public Long getMaterialId(){
+        public String getMaterialId(){
             return _materialId;
         }
 
-        public void setMaterialId(Long value){
+        public void setMaterialId(String value){
             this._materialId = value;
         }
 
 
-        private Long _uoMId;
+        private String _uoMId;
 
     
         @PropMeta(propId=5)
     
-        public Long getUoMId(){
+        public String getUoMId(){
             return _uoMId;
         }
 
-        public void setUoMId(Long value){
+        public void setUoMId(String value){
             this._uoMId = value;
         }
 
@@ -193,16 +193,16 @@
         }
 
 
-        private Long _parentLineId;
+        private String _parentLineId;
 
     
         @PropMeta(propId=13)
     
-        public Long getParentLineId(){
+        public String getParentLineId(){
             return _parentLineId;
         }
 
-        public void setParentLineId(Long value){
+        public void setParentLineId(String value){
             this._parentLineId = value;
         }
 

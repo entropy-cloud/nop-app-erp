@@ -55,12 +55,12 @@ public class TestErpMfgWorkOrderEndToEnd extends JunitAutoTestCase {
     @RegisterExtension
     static MfgFrozenClockExtension frozenClock = new MfgFrozenClockExtension();
 
-    static final Long ORG_ID = 1401L;
-    static final Long WAREHOUSE_ID = 3401L;
-    static final Long UOM_ID = 5401L;
-    static final Long CURRENCY_ID = 6401L;
-    static final Long P = 1101L;     // 产成品
-    static final Long M1 = 1102L;    // 子件
+    static final String ORG_ID = "1401";
+    static final String WAREHOUSE_ID = "3401";
+    static final String UOM_ID = "5401";
+    static final String CURRENCY_ID = "6401";
+    static final String P = "1101";     // 产成品
+    static final String M1 = "1102";    // 子件
     static final String MOVE_TYPE_INCOMING = "INCOMING";
 
     @Inject
@@ -74,28 +74,28 @@ public class TestErpMfgWorkOrderEndToEnd extends JunitAutoTestCase {
     public void testEndToEndIssueReportCompletion() {
         seedMaterial(P, null);
         seedMaterial(M1, "MOVING_AVERAGE");
-        seedBom(9101L, P, M1, bd("2"));
+        seedBom("9101", P, M1, bd("2"));
         generateIncoming(M1, "PR-E2E-001", bd("10"), bd("5"));   // M1: 10 @ avgCost 5
 
-        Long woId = seedWorkOrder("WO-E2E", 9101L);
-        Long wolId = seedWorkOrderLine(woId, M1, bd("2"), "INPUT", null);
+        String woId = seedWorkOrder("WO-E2E", "9101");
+        String wolId = seedWorkOrderLine(woId, M1, bd("2"), "INPUT", null);
         seedWorkOrderLine(woId, P, bd("1"), "OUTPUT", WAREHOUSE_ID);
 
         // 工单流转到 IN_PROCESS
-        rpcOk(mutation, "ErpMfgWorkOrder__submitForApproval", Map.of("id", String.valueOf(woId)));
-        rpcOk(mutation, "ErpMfgWorkOrder__approve", Map.of("id", String.valueOf(woId)));
+        rpcOk(mutation, "ErpMfgWorkOrder__submitForApproval", Map.of("id", woId));
+        rpcOk(mutation, "ErpMfgWorkOrder__approve", Map.of("id", woId));
         rpcOk(mutation, "ErpMfgWorkOrder__checkAvailability", Map.of("workOrderId", woId));
         rpcOk(mutation, "ErpMfgWorkOrder__start", Map.of("workOrderId", woId));
 
         // 领料出库：领 M1×2，材料成本 = 2×5 = 10
-        Long issueId = seedIssue("MI-E2E", woId);
-        seedIssueLine(9301L, issueId, M1, bd("2"), wolId);
+        String issueId = seedIssue("MI-E2E", woId);
+        seedIssueLine("9301", issueId, M1, bd("2"), wolId);
         ApiResponse<?> issueConfirmResp = rpc(mutation, "ErpMfgMaterialIssue__confirm", Map.of("issueId", issueId));
         assertEquals(0, issueConfirmResp.getStatus(), "ErpMfgMaterialIssue__confirm 应成功: " + issueConfirmResp);
         output("1_issue_confirm_response.json5", issueConfirmResp);
 
         // 报工：JobCard 录工时 60 分钟 × 费率 30 → 人工成本 = 60/60×30 = 30
-        Long jobCardId = seedJobCard(woId);
+        String jobCardId = seedJobCard(woId);
         rpcOk(mutation, "ErpMfgJobCard__startJob", Map.of("jobCardId", jobCardId));
         ApiResponse<?> rwResp = recordWorkRequest(jobCardId, bd("60"), bd("30"), bd("1"));
         assertEquals(0, rwResp.getStatus(), "recordWork 应成功: " + rwResp);
@@ -145,16 +145,16 @@ public class TestErpMfgWorkOrderEndToEnd extends JunitAutoTestCase {
     public void testInspectionGateBlocksCompletionWhenEnabled() {
         seedMaterial(P, null);
         seedMaterial(M1, "MOVING_AVERAGE");
-        seedBom(9102L, P, M1, bd("1"));
-        seedBomInspectionRequired(9102L, true);
+        seedBom("9102", P, M1, bd("1"));
+        seedBomInspectionRequired("9102", true);
         generateIncoming(M1, "PR-E2E-GATE", bd("10"), bd("5"));
 
-        Long woId = seedWorkOrder("WO-GATE", 9102L);
+        String woId = seedWorkOrder("WO-GATE", "9102");
         seedWorkOrderLine(woId, M1, bd("1"), "INPUT", null);
         seedWorkOrderLine(woId, P, bd("1"), "OUTPUT", WAREHOUSE_ID);
 
-        rpcOk(mutation, "ErpMfgWorkOrder__submitForApproval", Map.of("id", String.valueOf(woId)));
-        rpcOk(mutation, "ErpMfgWorkOrder__approve", Map.of("id", String.valueOf(woId)));
+        rpcOk(mutation, "ErpMfgWorkOrder__submitForApproval", Map.of("id", woId));
+        rpcOk(mutation, "ErpMfgWorkOrder__approve", Map.of("id", woId));
         rpcOk(mutation, "ErpMfgWorkOrder__checkAvailability", Map.of("workOrderId", woId));
         rpcOk(mutation, "ErpMfgWorkOrder__start", Map.of("workOrderId", woId));
 
@@ -188,11 +188,11 @@ public class TestErpMfgWorkOrderEndToEnd extends JunitAutoTestCase {
     public void testJobCardStateMachine() {
         seedMaterial(P, null);
         seedMaterial(M1, "MOVING_AVERAGE");
-        seedBom(9103L, P, M1, bd("1"));
+        seedBom("9103", P, M1, bd("1"));
         generateIncoming(M1, "PR-E2E-JC", bd("10"), bd("5"));
-        Long woId = seedWorkOrder("WO-JC", 9103L);
+        String woId = seedWorkOrder("WO-JC", "9103");
         seedWorkOrderLine(woId, M1, bd("1"), "INPUT", null);
-        Long jobCardId = seedJobCard(woId);
+        String jobCardId = seedJobCard(woId);
 
         rpcOk(mutation, "ErpMfgJobCard__startJob", Map.of("jobCardId", jobCardId));
         assertEquals(ErpMfgConstants.JOB_CARD_STATUS_WORK_IN_PROGRESS, statusOf(jobCardId));
@@ -208,12 +208,12 @@ public class TestErpMfgWorkOrderEndToEnd extends JunitAutoTestCase {
 
     // ---------- helpers ----------
 
-    private String statusOf(Long jobCardId) {
+    private String statusOf(String jobCardId) {
         ErpMfgJobCard jc = daoProvider.daoFor(ErpMfgJobCard.class).getEntityById(jobCardId);
         return jc.getStatus();
     }
 
-    private ApiResponse<?> recordWorkRequest(Long jobCardId, BigDecimal durationMins, BigDecimal hourlyRate,
+    private ApiResponse<?> recordWorkRequest(String jobCardId, BigDecimal durationMins, BigDecimal hourlyRate,
                                              BigDecimal completedQty) {
         // @RequestBean 被 GraphQL 展平为独立参数（非 record 包装）
         Map<String, Object> args = new LinkedHashMap<>();
@@ -229,7 +229,7 @@ public class TestErpMfgWorkOrderEndToEnd extends JunitAutoTestCase {
         return rpc(mutation, "ErpMfgJobCard__recordWork", args);
     }
 
-    private void generateIncoming(Long materialId, String billCode, BigDecimal qty, BigDecimal unitCost) {
+    private void generateIncoming(String materialId, String billCode, BigDecimal qty, BigDecimal unitCost) {
         Map<String, Object> req = new LinkedHashMap<>();
         req.put("moveType", MOVE_TYPE_INCOMING);
         req.put("orgId", ORG_ID);
@@ -248,7 +248,7 @@ public class TestErpMfgWorkOrderEndToEnd extends JunitAutoTestCase {
         rpcOk(mutation, "ErpInvStockMove__generateMove", Map.of("request", req));
     }
 
-    private void seedMaterial(Long id, String costMethod) {
+    private void seedMaterial(String id, String costMethod) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMdMaterial> dao = daoProvider.daoFor(ErpMdMaterial.class);
             ErpMdMaterial m = new ErpMdMaterial();
@@ -263,7 +263,7 @@ public class TestErpMfgWorkOrderEndToEnd extends JunitAutoTestCase {
         });
     }
 
-    private void seedBom(Long bomId, Long productId, Long componentId, BigDecimal qty) {
+    private void seedBom(String bomId, String productId, String componentId, BigDecimal qty) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMfgBom> dao = daoProvider.daoFor(ErpMfgBom.class);
             ErpMfgBom bom = new ErpMfgBom();
@@ -277,7 +277,7 @@ public class TestErpMfgWorkOrderEndToEnd extends JunitAutoTestCase {
             dao.saveEntity(bom);
             IEntityDao<ErpMfgBomLine> ldao = daoProvider.daoFor(ErpMfgBomLine.class);
             ErpMfgBomLine line = new ErpMfgBomLine();
-            line.orm_propValueByName("id", bomId + 50000);
+            line.orm_propValueByName("id", String.valueOf(Long.parseLong(bomId) + 50000));
             line.setBomId(bomId);
             line.setLineNo(10);
             line.setMaterialId(componentId);
@@ -287,7 +287,7 @@ public class TestErpMfgWorkOrderEndToEnd extends JunitAutoTestCase {
         });
     }
 
-    private void seedBomInspectionRequired(Long bomId, boolean required) {
+    private void seedBomInspectionRequired(String bomId, boolean required) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMfgBom> dao = daoProvider.daoFor(ErpMfgBom.class);
             ErpMfgBom bom = dao.getEntityById(bomId);
@@ -296,8 +296,8 @@ public class TestErpMfgWorkOrderEndToEnd extends JunitAutoTestCase {
         });
     }
 
-    private Long seedWorkOrder(String code, Long bomId) {
-        Long id = 8300L + (long) Math.abs(code.hashCode() % 700);
+    private String seedWorkOrder(String code, String bomId) {
+        String id = String.valueOf(8300L + (long) Math.abs(code.hashCode() % 700));
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMfgWorkOrder> dao = daoProvider.daoFor(ErpMfgWorkOrder.class);
             ErpMfgWorkOrder wo = new ErpMfgWorkOrder();
@@ -315,16 +315,16 @@ public class TestErpMfgWorkOrderEndToEnd extends JunitAutoTestCase {
         return id;
     }
 
-    private Long seedWorkOrderLine(Long woId, Long materialId, BigDecimal plannedQty, String lineType,
-                                   Long destWarehouseId) {
+    private String seedWorkOrderLine(String woId, String materialId, BigDecimal plannedQty, String lineType,
+                                     String destWarehouseId) {
         long raw = (woId + "" + materialId + lineType).hashCode();
-        Long id = 9300L + (long) Math.abs(raw % 700);
+        String id = String.valueOf(9300L + (long) Math.abs(raw % 700));
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMfgWorkOrderLine> dao = daoProvider.daoFor(ErpMfgWorkOrderLine.class);
             ErpMfgWorkOrderLine wol = new ErpMfgWorkOrderLine();
             wol.orm_propValueByName("id", id);
             wol.setWorkOrderId(woId);
-            wol.setLineNo(materialId.intValue());
+            wol.setLineNo(Integer.parseInt(materialId));
             wol.orm_propValueByName("lineType", lineType);
             wol.setMaterialId(materialId);
             wol.setUoMId(UOM_ID);
@@ -335,8 +335,8 @@ public class TestErpMfgWorkOrderEndToEnd extends JunitAutoTestCase {
         return id;
     }
 
-    private Long seedIssue(String code, Long woId) {
-        Long id = 8400L + (long) Math.abs(code.hashCode() % 700);
+    private String seedIssue(String code, String woId) {
+        String id = String.valueOf(8400L + (long) Math.abs(code.hashCode() % 700));
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMfgMaterialIssue> dao = daoProvider.daoFor(ErpMfgMaterialIssue.class);
             ErpMfgMaterialIssue issue = new ErpMfgMaterialIssue();
@@ -354,7 +354,7 @@ public class TestErpMfgWorkOrderEndToEnd extends JunitAutoTestCase {
         return id;
     }
 
-    private void seedIssueLine(Long id, Long issueId, Long materialId, BigDecimal qty, Long wolId) {
+    private void seedIssueLine(String id, String issueId, String materialId, BigDecimal qty, String wolId) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMfgMaterialIssueLine> dao = daoProvider.daoFor(ErpMfgMaterialIssueLine.class);
             ErpMfgMaterialIssueLine line = new ErpMfgMaterialIssueLine();
@@ -370,8 +370,8 @@ public class TestErpMfgWorkOrderEndToEnd extends JunitAutoTestCase {
         });
     }
 
-    private Long seedJobCard(Long woId) {
-        Long id = 8500L + (long) Math.abs((woId + "jc").hashCode() % 700);
+    private String seedJobCard(String woId) {
+        String id = String.valueOf(8500L + (long) Math.abs((woId + "jc").hashCode() % 700));
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMfgJobCard> dao = daoProvider.daoFor(ErpMfgJobCard.class);
             ErpMfgJobCard jc = new ErpMfgJobCard();
@@ -388,7 +388,7 @@ public class TestErpMfgWorkOrderEndToEnd extends JunitAutoTestCase {
 
     // ---------- query helpers ----------
 
-    private ErpMfgJobCardTimeLog findTimeLog(Long jobCardId) {
+    private ErpMfgJobCardTimeLog findTimeLog(String jobCardId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("jobCardId", jobCardId));
         q.addOrderField("id", true);
@@ -404,7 +404,7 @@ public class TestErpMfgWorkOrderEndToEnd extends JunitAutoTestCase {
         return list.isEmpty() ? null : list.get(0);
     }
 
-    private ErpInvStockBalance findBalance(Long materialId) {
+    private ErpInvStockBalance findBalance(String materialId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("materialId", materialId));
         q.addFilter(eq("warehouseId", WAREHOUSE_ID));

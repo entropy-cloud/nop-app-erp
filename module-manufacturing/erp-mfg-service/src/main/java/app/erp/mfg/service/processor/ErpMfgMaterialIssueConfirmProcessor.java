@@ -45,7 +45,7 @@ public class ErpMfgMaterialIssueConfirmProcessor extends AbstractErpMfgMaterialI
     @Inject
     IErpInvReservationBiz reservationBiz;
 
-    public ErpMfgMaterialIssue confirm(Long issueId, IServiceContext context) {
+    public ErpMfgMaterialIssue confirm(String issueId, IServiceContext context) {
         ErpMfgMaterialIssue issue = requireIssue(issueId, context);
         String status = issue.getDocStatus();
         // 幂等：已 DONE（已出库）直接返回，不重复触发库存出库（state-machine §4；动态幂等守卫保留原位）
@@ -104,11 +104,11 @@ public class ErpMfgMaterialIssueConfirmProcessor extends AbstractErpMfgMaterialI
         if (!isReservationEnabled()) {
             return;
         }
-        Long workOrderId = issue.getWorkOrderId();
+        String workOrderId = issue.getWorkOrderId();
         if (workOrderId == null) {
             return;
         }
-        ErpMfgWorkOrder wo = workOrderBiz.get(String.valueOf(workOrderId), false, context);
+        ErpMfgWorkOrder wo = workOrderBiz.get(workOrderId, false, context);
         if (wo == null) {
             return;
         }
@@ -154,7 +154,7 @@ public class ErpMfgMaterialIssueConfirmProcessor extends AbstractErpMfgMaterialI
      * LOG.warn 放行（config {@code erp-mfg.over-pick-warning} 默认 true；关闭则静默放行）。
      */
     protected void warnIfOverPick(ErpMfgWorkOrder wo, List<ErpInvReservationLine> reservationLines,
-                                  Long materialId, BigDecimal issued) {
+                                   String materialId, BigDecimal issued) {
         BigDecimal remaining = BigDecimal.ZERO;
         for (ErpInvReservationLine line : reservationLines) {
             if (Objects.equals(line.getMaterialId(), materialId)) {
@@ -178,7 +178,7 @@ public class ErpMfgMaterialIssueConfirmProcessor extends AbstractErpMfgMaterialI
         return list.isEmpty() ? null : list.get(0);
     }
 
-    protected List<ErpInvReservationLine> findReservationLines(Long reservationId) {
+    protected List<ErpInvReservationLine> findReservationLines(String reservationId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("reservationId", reservationId));
         q.addOrderField("lineNo", false);
@@ -210,7 +210,7 @@ public class ErpMfgMaterialIssueConfirmProcessor extends AbstractErpMfgMaterialI
     // ---------- step：成本回写（protected，供派生复用与覆盖） ----------
 
     protected void writebackWorkOrderLineActualQty(List<ErpMfgMaterialIssueLine> lines, IServiceContext context) {
-        Map<Long, BigDecimal> byWorkOrderLine = new HashMap<>();
+        Map<String, BigDecimal> byWorkOrderLine = new HashMap<>();
         for (ErpMfgMaterialIssueLine line : lines) {
             if (line.getWorkOrderLineId() == null) {
                 continue;
@@ -221,8 +221,8 @@ public class ErpMfgMaterialIssueConfirmProcessor extends AbstractErpMfgMaterialI
         if (byWorkOrderLine.isEmpty()) {
             return;
         }
-        for (Map.Entry<Long, BigDecimal> e : byWorkOrderLine.entrySet()) {
-            ErpMfgWorkOrderLine wol = workOrderLineBiz.get(String.valueOf(e.getKey()), false, context);
+        for (Map.Entry<String, BigDecimal> e : byWorkOrderLine.entrySet()) {
+            ErpMfgWorkOrderLine wol = workOrderLineBiz.get(e.getKey(), false, context);
             if (wol == null) {
                 continue;
             }
@@ -245,11 +245,11 @@ public class ErpMfgMaterialIssueConfirmProcessor extends AbstractErpMfgMaterialI
         return sum.abs();
     }
 
-    protected void applyMaterialCostToWorkOrder(Long workOrderId, BigDecimal materialCostDelta, IServiceContext context) {
+    protected void applyMaterialCostToWorkOrder(String workOrderId, BigDecimal materialCostDelta, IServiceContext context) {
         if (workOrderId == null || materialCostDelta == null || materialCostDelta.signum() == 0) {
             return;
         }
-        var wo = workOrderBiz.get(String.valueOf(workOrderId), false, context);
+        var wo = workOrderBiz.get(workOrderId, false, context);
         if (wo == null) {
             return;
         }

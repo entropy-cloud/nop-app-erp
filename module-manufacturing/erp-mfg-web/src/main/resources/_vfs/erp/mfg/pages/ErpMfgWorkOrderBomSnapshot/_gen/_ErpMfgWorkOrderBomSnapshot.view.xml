@@ -19,16 +19,16 @@
             <cols>
 
                 <!--ID-->
-                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="id" mandatory="true" sortable="true"/>
 
                 <!--工单ID-->
-                <col id="workOrderId" ui:number="true" sortable="true"/>
+                <col id="workOrderId" sortable="true"/>
 
                 <!--BOM ID-->
-                <col id="bomId" ui:number="true" sortable="true"/>
+                <col id="bomId" sortable="true"/>
 
                 <!--产品-->
-                <col id="productId" ui:number="true" sortable="true"/>
+                <col id="productId" sortable="true"/>
 
                 <!--版本号-->
                 <col id="versionLabel" sortable="true"/>

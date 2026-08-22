@@ -18,7 +18,7 @@ public class ErpMfgMrpPlanLineReleaseSubcontractRequestProcessor {
     @Inject
     IDaoProvider daoProvider;
 
-    public ErpMfgMrpPlanLine releaseSubcontractRequest(Long planLineId, Long supplierId, Long currencyId,
+    public ErpMfgMrpPlanLine releaseSubcontractRequest(String planLineId, String supplierId, String currencyId,
                                                        IServiceContext context) {
         mrpReleaseService.releaseSubcontractRequest(planLineId, supplierId, currencyId);
         return lineDao().getEntityById(planLineId);

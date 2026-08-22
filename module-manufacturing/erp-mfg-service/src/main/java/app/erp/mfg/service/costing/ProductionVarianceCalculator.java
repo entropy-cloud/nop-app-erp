@@ -106,9 +106,9 @@ public class ProductionVarianceCalculator {
      * <p>本方法不做状态校验（COMPLETED 与否由调用方门控）；不做幂等（由调用方先删旧行）。
      * 完工数量 ≤ 0 时返回空列表（无可算产出）。
      */
-    public List<ErpMfgCostVariance> calculateVariances(Long workOrderId) {
+    public List<ErpMfgCostVariance> calculateVariances(String workOrderId) {
         ErpMfgWorkOrder wo = requireWorkOrder(workOrderId);
-        Long productId = wo.getProductId();
+        String productId = wo.getProductId();
         BigDecimal completed = nz(wo.getCompletedQuantity());
         if (completed.signum() <= 0) {
             return new ArrayList<>();
@@ -122,8 +122,8 @@ public class ProductionVarianceCalculator {
 
         BigDecimal planned = nz(wo.getPlannedQuantity());
         LocalDate bizDate = wo.getBusinessDate() != null ? wo.getBusinessDate() : CoreMetrics.today();
-        Long bomId = wo.getBomId();
-        Long workcenterId = resolvePrimaryWorkcenterId(wo, bomId);
+        String bomId = wo.getBomId();
+        String workcenterId = resolvePrimaryWorkcenterId(wo, bomId);
 
         List<ErpMfgCostVariance> lines = new ArrayList<>();
         int lineNo = 10;
@@ -283,7 +283,7 @@ public class ProductionVarianceCalculator {
     /**
      * 删除指定工单的全部差异行（手动重算幂等前置）。
      */
-    public void deleteByWorkOrder(Long workOrderId) {
+    public void deleteByWorkOrder(String workOrderId) {
         IEntityDao<ErpMfgCostVariance> dao = daoProvider.daoFor(ErpMfgCostVariance.class);
         List<ErpMfgCostVariance> existing = findByWorkOrder(workOrderId);
         if (!existing.isEmpty()) {
@@ -294,7 +294,7 @@ public class ProductionVarianceCalculator {
     /**
      * 查询指定工单的全部差异行（按行号升序）。
      */
-    public List<ErpMfgCostVariance> findByWorkOrder(Long workOrderId) {
+    public List<ErpMfgCostVariance> findByWorkOrder(String workOrderId) {
         IEntityDao<ErpMfgCostVariance> dao = daoProvider.daoFor(ErpMfgCostVariance.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("workOrderId", workOrderId));
@@ -302,8 +302,8 @@ public class ProductionVarianceCalculator {
         return dao.findAllByQuery(q);
     }
 
-    private ErpMfgCostVariance buildLine(Long workOrderId, int lineNo, String varianceType, String costElement,
-                                         Long materialId, Long workcenterId, LocalDate bizDate,
+    private ErpMfgCostVariance buildLine(String workOrderId, int lineNo, String varianceType, String costElement,
+                                         String materialId, String workcenterId, LocalDate bizDate,
                                          BigDecimal standardAmount, BigDecimal actualAmount,
                                          BigDecimal standardQty, BigDecimal actualQty,
                                          BigDecimal standardPrice, BigDecimal actualPrice) {
@@ -329,7 +329,7 @@ public class ProductionVarianceCalculator {
         return line;
     }
 
-    private ErpMfgWorkOrder requireWorkOrder(Long workOrderId) {
+    private ErpMfgWorkOrder requireWorkOrder(String workOrderId) {
         if (workOrderId == null) {
             throw new NopException(ErpMfgErrors.ERR_WORK_ORDER_NOT_FOUND)
                     .param(ErpMfgErrors.ARG_WORK_ORDER_ID, workOrderId);
@@ -342,7 +342,7 @@ public class ProductionVarianceCalculator {
         return wo;
     }
 
-    private ErpMfgCostRollupLine findFirmedRollupLine(Long productId) {
+    private ErpMfgCostRollupLine findFirmedRollupLine(String productId) {
         if (ormTemplate != null) {
             ormTemplate.flushSession();
         }
@@ -373,7 +373,7 @@ public class ProductionVarianceCalculator {
      * BOM 工艺标准工时合计（分钟）。已快照工单（LOCK_AT_CREATION）读快照工艺行（提交时点锁定，UC-MFG-10 断言⑤成本面）；
      * 无快照 / AUTO_UPGRADE 回退实时 {@code ErpMfgBomOperation}。
      */
-    private BigDecimal sumBomOperationStandardMins(ErpMfgWorkOrder wo, Long bomId) {
+    private BigDecimal sumBomOperationStandardMins(ErpMfgWorkOrder wo, String bomId) {
         List<ErpMfgWorkOrderBomOperationSnapshot> snapOps = snapshotOperationsOrNull(wo);
         if (snapOps != null) {
             BigDecimal sum = BigDecimal.ZERO;
@@ -394,7 +394,7 @@ public class ProductionVarianceCalculator {
         return sum;
     }
 
-    private BigDecimal sumJobCardActualMins(Long workOrderId) {
+    private BigDecimal sumJobCardActualMins(String workOrderId) {
         IEntityDao<ErpMfgJobCardTimeLog> dao = daoProvider.daoFor(ErpMfgJobCardTimeLog.class);
         List<ErpMfgJobCardTimeLog> logs = dao.findAllByQuery(
                 new QueryBean().addFilter(eq("workOrderId", workOrderId)));
@@ -410,14 +410,14 @@ public class ProductionVarianceCalculator {
      * 无工艺工时数据时由 rollup 标准人工成本反推（rollupLaborPerUnit / (stdMinsPerUnit/60)）。
      * 已快照工单（LOCK_AT_CREATION）以快照工艺行作数据源（工作中心费率为主数据实时读，与实时路径同口径）。
      */
-    private BigDecimal deriveStandardLaborRate(ErpMfgWorkOrder wo, Long bomId,
+    private BigDecimal deriveStandardLaborRate(ErpMfgWorkOrder wo, String bomId,
                                                BigDecimal stdLaborPerUnit, BigDecimal stdMinsPerUnit) {
         List<ErpMfgWorkOrderBomOperationSnapshot> snapOps = snapshotOperationsOrNull(wo);
         if (snapOps != null) {
             BigDecimal rateSum = BigDecimal.ZERO;
             int rateCount = 0;
             for (ErpMfgWorkOrderBomOperationSnapshot op : snapOps) {
-                Long wcId = op.getWorkcenterId();
+                String wcId = op.getWorkcenterId();
                 if (wcId == null) {
                     continue;
                 }
@@ -436,7 +436,7 @@ public class ProductionVarianceCalculator {
             BigDecimal rateSum = BigDecimal.ZERO;
             int rateCount = 0;
             for (ErpMfgBomOperation op : ops) {
-                Long wcId = op.getWorkcenterId();
+                String wcId = op.getWorkcenterId();
                 if (wcId == null) {
                     continue;
                 }
@@ -456,7 +456,7 @@ public class ProductionVarianceCalculator {
         return BigDecimal.ZERO;
     }
 
-    private Long resolvePrimaryWorkcenterId(ErpMfgWorkOrder wo, Long bomId) {
+    private String resolvePrimaryWorkcenterId(ErpMfgWorkOrder wo, String bomId) {
         List<ErpMfgWorkOrderBomOperationSnapshot> snapOps = snapshotOperationsOrNull(wo);
         if (snapOps != null) {
             return snapOps.isEmpty() ? null : snapOps.get(0).getWorkcenterId();

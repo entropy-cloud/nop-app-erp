@@ -13,30 +13,30 @@
     public class ErpMfgWorkOrderBomOperationSnapshotOutputBean {
 
     
-        private Long _id;
+        private String _id;
 
     
         @PropMeta(propId=1)
     
-        public Long getId(){
+        public String getId(){
             return _id;
         }
 
-        public void setId(Long value){
+        public void setId(String value){
             this._id = value;
         }
 
 
-        private Long _snapshotId;
+        private String _snapshotId;
 
     
         @PropMeta(propId=2)
     
-        public Long getSnapshotId(){
+        public String getSnapshotId(){
             return _snapshotId;
         }
 
-        public void setSnapshotId(Long value){
+        public void setSnapshotId(String value){
             this._snapshotId = value;
         }
 
@@ -55,30 +55,30 @@
         }
 
 
-        private Long _operationId;
+        private String _operationId;
 
     
         @PropMeta(propId=4)
     
-        public Long getOperationId(){
+        public String getOperationId(){
             return _operationId;
         }
 
-        public void setOperationId(Long value){
+        public void setOperationId(String value){
             this._operationId = value;
         }
 
 
-        private Long _workcenterId;
+        private String _workcenterId;
 
     
         @PropMeta(propId=5)
     
-        public Long getWorkcenterId(){
+        public String getWorkcenterId(){
             return _workcenterId;
         }
 
-        public void setWorkcenterId(Long value){
+        public void setWorkcenterId(String value){
             this._workcenterId = value;
         }
 

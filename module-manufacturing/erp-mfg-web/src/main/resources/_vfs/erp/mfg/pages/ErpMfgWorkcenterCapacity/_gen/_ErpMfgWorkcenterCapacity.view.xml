@@ -19,16 +19,16 @@
             <cols>
 
                 <!--ID-->
-                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="id" mandatory="true" sortable="true"/>
 
                 <!--工作中心-->
-                <col id="workcenterId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="workcenterId" mandatory="true" sortable="true"/>
 
                 <!--业务组织-->
-                <col id="orgId" ui:number="true" sortable="true"/>
+                <col id="orgId" sortable="true"/>
 
                 <!--关联物料-->
-                <col id="materialId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="materialId" mandatory="true" sortable="true"/>
 
                 <!--每小时产能-->
                 <col id="capacityPerHour" mandatory="true" ui:number="true" sortable="true"/>

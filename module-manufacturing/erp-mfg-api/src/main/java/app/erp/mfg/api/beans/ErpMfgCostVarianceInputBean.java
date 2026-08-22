@@ -12,30 +12,30 @@
     public class ErpMfgCostVarianceInputBean extends CrudInputBase {
 
     
-        private Long _id;
+        private String _id;
 
     
         @PropMeta(propId=1)
     
-        public Long getId(){
+        public String getId(){
             return _id;
         }
 
-        public void setId(Long value){
+        public void setId(String value){
             this._id = value;
         }
 
 
-        private Long _workOrderId;
+        private String _workOrderId;
 
     
         @PropMeta(propId=2)
     
-        public Long getWorkOrderId(){
+        public String getWorkOrderId(){
             return _workOrderId;
         }
 
-        public void setWorkOrderId(Long value){
+        public void setWorkOrderId(String value){
             this._workOrderId = value;
         }
 
@@ -82,30 +82,30 @@
         }
 
 
-        private Long _materialId;
+        private String _materialId;
 
     
         @PropMeta(propId=6)
     
-        public Long getMaterialId(){
+        public String getMaterialId(){
             return _materialId;
         }
 
-        public void setMaterialId(Long value){
+        public void setMaterialId(String value){
             this._materialId = value;
         }
 
 
-        private Long _operationId;
+        private String _operationId;
 
     
         @PropMeta(propId=7)
     
-        public Long getOperationId(){
+        public String getOperationId(){
             return _operationId;
         }
 
-        public void setOperationId(Long value){
+        public void setOperationId(String value){
             this._operationId = value;
         }
 
@@ -222,16 +222,16 @@
         }
 
 
-        private Long _workcenterId;
+        private String _workcenterId;
 
     
         @PropMeta(propId=16)
     
-        public Long getWorkcenterId(){
+        public String getWorkcenterId(){
             return _workcenterId;
         }
 
-        public void setWorkcenterId(Long value){
+        public void setWorkcenterId(String value){
             this._workcenterId = value;
         }
 

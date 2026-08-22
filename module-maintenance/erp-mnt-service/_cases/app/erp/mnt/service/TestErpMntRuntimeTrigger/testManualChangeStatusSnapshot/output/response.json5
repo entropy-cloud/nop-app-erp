@@ -21,7 +21,7 @@
     "createdBy": "autotest-ref",
     "createTime": "@var:ErpMntEquipment@updateTime",
     "updatedBy": "autotest-ref",
-    "updateTime": "@var:ErpMntEquipmentStatusLog@updateTime"
+    "updateTime": "*"
   },
   "status": 0
 }

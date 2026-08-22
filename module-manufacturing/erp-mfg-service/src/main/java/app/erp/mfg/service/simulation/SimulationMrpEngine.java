@@ -96,7 +96,7 @@ public class SimulationMrpEngine {
      *
      * @return 新生成的场景版本
      */
-    public ErpMfgMrpScenarioVersion runSimulation(Long scenarioId) {
+    public ErpMfgMrpScenarioVersion runSimulation(String scenarioId) {
         ErpMfgMrpScenario scenario = requireScenario(scenarioId);
         if (!Objects.equals(scenario.getStatus(), ErpMfgConstants.SIMULATION_STATUS_DRAFT)) {
             throw new NopException(ErpMfgErrors.ERR_MFG_SIMULATION_SCENARIO_NOT_DRAFT)
@@ -186,7 +186,7 @@ public class SimulationMrpEngine {
      *
      * <p>不自动释放为采购单/工单；既有单次释放路径（{@code MrpReleaseService}）不变。
      */
-    public ErpMfgMrpPlan promoteToFormalPlan(Long scenarioVersionId) {
+    public ErpMfgMrpPlan promoteToFormalPlan(String scenarioVersionId) {
         ErpMfgMrpScenarioVersion version = requireVersion(scenarioVersionId);
         if (version.getPromotedPlanId() != null) {
             throw new NopException(ErpMfgErrors.ERR_MFG_SIMULATION_VERSION_ALREADY_PROMOTED)
@@ -247,7 +247,7 @@ public class SimulationMrpEngine {
         return promoted;
     }
 
-    private List<ErpMfgMrpDemand> loadDemands(Long planId) {
+    private List<ErpMfgMrpDemand> loadDemands(String planId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("mrpPlanId", planId));
         return daoProvider.daoFor(ErpMfgMrpDemand.class).findAllByQuery(q);
@@ -303,9 +303,9 @@ public class SimulationMrpEngine {
 
     // ---------- fork MRP 算法（对齐 MrpEngine，覆盖经 paramResolver） ----------
 
-    private void processMaterial(ErpMfgMrpPlan plan, Long materialId, BigDecimal grossQty, Long uoMId,
-                                  LocalDate requirementDate, Long parentLineId, Set<Long> path,
-                                  IEntityDao<ErpMfgMrpPlanLine> lineDao, int[] lineNo, Long scenarioId) {
+    private void processMaterial(ErpMfgMrpPlan plan, String materialId, BigDecimal grossQty, String uoMId,
+                                  LocalDate requirementDate, String parentLineId, Set<String> path,
+                                  IEntityDao<ErpMfgMrpPlanLine> lineDao, int[] lineNo, String scenarioId) {
         if (materialId == null || grossQty == null || grossQty.signum() <= 0) {
             return;
         }
@@ -363,7 +363,7 @@ public class SimulationMrpEngine {
     /**
      * 仿真 lotSize：场景覆盖 LOT_SIZE → 全局配置 CONFIG_MRP_DEFAULT_LOT_SIZE → 默认 0（lot-for-lot）。
      */
-    private BigDecimal lotSize(BigDecimal net, Long scenarioId) {
+    private BigDecimal lotSize(BigDecimal net, String scenarioId) {
         if (net == null || net.signum() <= 0) {
             return BigDecimal.ZERO;
         }
@@ -383,7 +383,7 @@ public class SimulationMrpEngine {
         return multiples.multiply(lot);
     }
 
-    private long mfgLeadDays(Long bomId) {
+    private long mfgLeadDays(String bomId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("bomId", bomId));
         List<ErpMfgBomOperation> ops = daoProvider.daoFor(ErpMfgBomOperation.class).findAllByQuery(q);
@@ -404,7 +404,7 @@ public class SimulationMrpEngine {
     /**
      * 仿真 purLeadDays：场景覆盖 LEAD_TIME → 主数据 material.leadTimeDays → 0。
      */
-    private long purLeadDays(Long materialId, Long scenarioId) {
+    private long purLeadDays(String materialId, String scenarioId) {
         BigDecimal override = paramResolver.resolveLeadTimeOverride(scenarioId, materialId);
         if (override != null) {
             return Math.max(0L, override.longValue());
@@ -416,7 +416,7 @@ public class SimulationMrpEngine {
         return Math.max(0L, material.getLeadTimeDays());
     }
 
-    private Long resolveUoM(Long uoMId, Long materialId) {
+    private String resolveUoM(String uoMId, String materialId) {
         if (uoMId != null) {
             return uoMId;
         }
@@ -424,7 +424,7 @@ public class SimulationMrpEngine {
         return material != null ? material.getUoMId() : null;
     }
 
-    private BigDecimal availableQuantity(Long materialId, Long orgId) {
+    private BigDecimal availableQuantity(String materialId, String orgId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("materialId", materialId));
         if (orgId != null) {
@@ -443,7 +443,7 @@ public class SimulationMrpEngine {
     }
 
     private List<TopDemand> topDemandsByMaterial(List<ErpMfgMrpDemand> demands) {
-        java.util.Map<Long, TopDemand> byMaterial = new java.util.LinkedHashMap<>();
+        java.util.Map<String, TopDemand> byMaterial = new java.util.LinkedHashMap<>();
         for (ErpMfgMrpDemand d : demands) {
             if (d.getMaterialId() == null) {
                 continue;
@@ -462,7 +462,7 @@ public class SimulationMrpEngine {
 
     // ---------- 辅助 ----------
 
-    private String buildSnapshotSummary(Long computedPlanId) {
+    private String buildSnapshotSummary(String computedPlanId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("mrpPlanId", computedPlanId));
         List<ErpMfgMrpPlanLine> lines = daoProvider.daoFor(ErpMfgMrpPlanLine.class).findAllByQuery(q);
@@ -480,7 +480,7 @@ public class SimulationMrpEngine {
                 lines.size(), totalNet.toPlainString(), totalPlanned.toPlainString(), shortageCount);
     }
 
-    private int nextVersionNo(Long scenarioId) {
+    private int nextVersionNo(String scenarioId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("scenarioId", scenarioId));
         q.addOrderField("versionNo", false);
@@ -492,7 +492,7 @@ public class SimulationMrpEngine {
         return top.get(0).getVersionNo() + 1;
     }
 
-    private ErpMfgMrpScenario requireScenario(Long scenarioId) {
+    private ErpMfgMrpScenario requireScenario(String scenarioId) {
         if (scenarioId == null) {
             throw new NopException(ErpMfgErrors.ERR_MFG_SIMULATION_NO_BASELINE_PLAN)
                     .param(ErpMfgErrors.ARG_SCENARIO_ID, scenarioId);
@@ -505,7 +505,7 @@ public class SimulationMrpEngine {
         return scenario;
     }
 
-    private ErpMfgMrpScenarioVersion requireVersion(Long versionId) {
+    private ErpMfgMrpScenarioVersion requireVersion(String versionId) {
         ErpMfgMrpScenarioVersion version = daoProvider.daoFor(ErpMfgMrpScenarioVersion.class).getEntityById(versionId);
         if (version == null) {
             throw new NopException(ErpMfgErrors.ERR_MFG_SIMULATION_VERSION_ALREADY_PROMOTED)
@@ -519,12 +519,12 @@ public class SimulationMrpEngine {
     }
 
     private static class TopDemand {
-        final Long materialId;
+        final String materialId;
         BigDecimal gross = BigDecimal.ZERO;
-        Long uoMId;
+        String uoMId;
         LocalDate requirementDate;
 
-        TopDemand(Long materialId) {
+        TopDemand(String materialId) {
             this.materialId = materialId;
         }
     }

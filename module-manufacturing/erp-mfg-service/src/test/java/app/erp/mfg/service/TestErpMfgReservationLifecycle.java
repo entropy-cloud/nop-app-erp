@@ -57,12 +57,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpMfgReservationLifecycle extends JunitBaseTestCase {
 
-    static final Long ORG_ID = 1401L;
-    static final Long WAREHOUSE_ID = 3401L;
-    static final Long UOM_ID = 5401L;
-    static final Long CURRENCY_ID = 6401L;
-    static final Long P = 1101L;     // 产成品
-    static final Long M1 = 1102L;    // 子件
+    static final String ORG_ID = "1401";
+    static final String WAREHOUSE_ID = "3401";
+    static final String UOM_ID = "5401";
+    static final String CURRENCY_ID = "6401";
+    static final String P = "1101";     // 产成品
+    static final String M1 = "1102";    // 子件
     static final String MOVE_TYPE_INCOMING = "INCOMING";
 
     @Inject
@@ -76,15 +76,15 @@ public class TestErpMfgReservationLifecycle extends JunitBaseTestCase {
 
     @Test
     public void testApproveCreatesReservation() {
-        seedBase(9101L, "WO-RSV-APPROVE", "2");
+        seedBase("9101", "WO-RSV-APPROVE", "2");
         generateIncoming(M1, "PR-RSV-AP", bd("10"), bd("5"));
 
-        Long woId = seedWorkOrder("WO-RSV-APPROVE", 9101L);
+        String woId = seedWorkOrder("WO-RSV-APPROVE", "9101");
         seedWorkOrderLine(woId, M1, bd("2"), "INPUT", null, WAREHOUSE_ID);
         seedWorkOrderLine(woId, P, bd("1"), "OUTPUT", WAREHOUSE_ID, null);
 
-        rpcOk(mutation, "ErpMfgWorkOrder__submitForApproval", Map.of("id", String.valueOf(woId)));
-        rpcOk(mutation, "ErpMfgWorkOrder__approve", Map.of("id", String.valueOf(woId)));
+        rpcOk(mutation, "ErpMfgWorkOrder__submitForApproval", Map.of("id", woId));
+        rpcOk(mutation, "ErpMfgWorkOrder__approve", Map.of("id", woId));
 
         ErpInvReservation reservation = findReservation("WO-RSV-APPROVE");
         assertNotNull(reservation, "审核后应创建预留头");
@@ -105,15 +105,15 @@ public class TestErpMfgReservationLifecycle extends JunitBaseTestCase {
 
     @Test
     public void testApproveReservesMinOfAvailable() {
-        seedBase(9102L, "WO-RSV-MIN", "2");
+        seedBase("9102", "WO-RSV-MIN", "2");
         generateIncoming(M1, "PR-RSV-MIN", bd("3"), bd("5"));
 
-        Long woId = seedWorkOrder("WO-RSV-MIN", 9102L);
+        String woId = seedWorkOrder("WO-RSV-MIN", "9102");
         seedWorkOrderLine(woId, M1, bd("2"), "INPUT", null, WAREHOUSE_ID);
         seedWorkOrderLine(woId, P, bd("1"), "OUTPUT", WAREHOUSE_ID, null);
 
-        rpcOk(mutation, "ErpMfgWorkOrder__submitForApproval", Map.of("id", String.valueOf(woId)));
-        rpcOk(mutation, "ErpMfgWorkOrder__approve", Map.of("id", String.valueOf(woId)));
+        rpcOk(mutation, "ErpMfgWorkOrder__submitForApproval", Map.of("id", woId));
+        rpcOk(mutation, "ErpMfgWorkOrder__approve", Map.of("id", woId));
 
         ErpInvReservation reservation = findReservation("WO-RSV-MIN");
         List<ErpInvReservationLine> lines = findReservationLines(reservation.getId());
@@ -126,14 +126,14 @@ public class TestErpMfgReservationLifecycle extends JunitBaseTestCase {
 
     @Test
     public void testCancelReleasesReservation() {
-        seedBase(9103L, "WO-RSV-CANCEL", "2");
+        seedBase("9103", "WO-RSV-CANCEL", "2");
         generateIncoming(M1, "PR-RSV-CA", bd("10"), bd("5"));
-        Long woId = seedWorkOrder("WO-RSV-CANCEL", 9103L);
+        String woId = seedWorkOrder("WO-RSV-CANCEL", "9103");
         seedWorkOrderLine(woId, M1, bd("2"), "INPUT", null, WAREHOUSE_ID);
         seedWorkOrderLine(woId, P, bd("1"), "OUTPUT", WAREHOUSE_ID, null);
 
-        rpcOk(mutation, "ErpMfgWorkOrder__submitForApproval", Map.of("id", String.valueOf(woId)));
-        rpcOk(mutation, "ErpMfgWorkOrder__approve", Map.of("id", String.valueOf(woId)));
+        rpcOk(mutation, "ErpMfgWorkOrder__submitForApproval", Map.of("id", woId));
+        rpcOk(mutation, "ErpMfgWorkOrder__approve", Map.of("id", woId));
         assertEquals(0, findBalance(M1).getReservedQuantity().compareTo(bd("4")), "审核后占用 4");
 
         rpcOk(mutation, "ErpMfgWorkOrder__cancel", Map.of("workOrderId", woId));
@@ -151,20 +151,20 @@ public class TestErpMfgReservationLifecycle extends JunitBaseTestCase {
 
     @Test
     public void testIssueConfirmAndCompleteRelease() {
-        seedBase(9104L, "WO-RSV-FLOW", "2");
+        seedBase("9104", "WO-RSV-FLOW", "2");
         generateIncoming(M1, "PR-RSV-FL", bd("10"), bd("5"));
-        Long woId = seedWorkOrder("WO-RSV-FLOW", 9104L);
-        Long wolId = seedWorkOrderLine(woId, M1, bd("2"), "INPUT", null, WAREHOUSE_ID);
+        String woId = seedWorkOrder("WO-RSV-FLOW", "9104");
+        String wolId = seedWorkOrderLine(woId, M1, bd("2"), "INPUT", null, WAREHOUSE_ID);
         seedWorkOrderLine(woId, P, bd("1"), "OUTPUT", WAREHOUSE_ID, null);
 
-        rpcOk(mutation, "ErpMfgWorkOrder__submitForApproval", Map.of("id", String.valueOf(woId)));
-        rpcOk(mutation, "ErpMfgWorkOrder__approve", Map.of("id", String.valueOf(woId)));
+        rpcOk(mutation, "ErpMfgWorkOrder__submitForApproval", Map.of("id", woId));
+        rpcOk(mutation, "ErpMfgWorkOrder__approve", Map.of("id", woId));
         rpcOk(mutation, "ErpMfgWorkOrder__checkAvailability", Map.of("workOrderId", woId));
         rpcOk(mutation, "ErpMfgWorkOrder__start", Map.of("workOrderId", woId));
 
         // ④ 领料消耗：领 M1×3（预留 4 → 消耗 3，剩 1）
-        Long issueId = seedIssue("MI-RSV-FLOW", woId);
-        seedIssueLine(9301L, issueId, M1, bd("3"), wolId);
+        String issueId = seedIssue("MI-RSV-FLOW", woId);
+        seedIssueLine("9301", issueId, M1, bd("3"), wolId);
         rpcOk(mutation, "ErpMfgMaterialIssue__confirm", Map.of("issueId", issueId));
 
         ErpInvReservation reservation = findReservation("WO-RSV-FLOW");
@@ -195,19 +195,19 @@ public class TestErpMfgReservationLifecycle extends JunitBaseTestCase {
 
     @Test
     public void testIssueFullConsumptionStatusConsumed() {
-        seedBase(9105L, "WO-RSV-FULL", "2");
+        seedBase("9105", "WO-RSV-FULL", "2");
         generateIncoming(M1, "PR-RSV-FU", bd("10"), bd("5"));
-        Long woId = seedWorkOrder("WO-RSV-FULL", 9105L);
-        Long wolId = seedWorkOrderLine(woId, M1, bd("2"), "INPUT", null, WAREHOUSE_ID);
+        String woId = seedWorkOrder("WO-RSV-FULL", "9105");
+        String wolId = seedWorkOrderLine(woId, M1, bd("2"), "INPUT", null, WAREHOUSE_ID);
         seedWorkOrderLine(woId, P, bd("1"), "OUTPUT", WAREHOUSE_ID, null);
 
-        rpcOk(mutation, "ErpMfgWorkOrder__submitForApproval", Map.of("id", String.valueOf(woId)));
-        rpcOk(mutation, "ErpMfgWorkOrder__approve", Map.of("id", String.valueOf(woId)));
+        rpcOk(mutation, "ErpMfgWorkOrder__submitForApproval", Map.of("id", woId));
+        rpcOk(mutation, "ErpMfgWorkOrder__approve", Map.of("id", woId));
         rpcOk(mutation, "ErpMfgWorkOrder__checkAvailability", Map.of("workOrderId", woId));
         rpcOk(mutation, "ErpMfgWorkOrder__start", Map.of("workOrderId", woId));
 
-        Long issueId = seedIssue("MI-RSV-FULL", woId);
-        seedIssueLine(9302L, issueId, M1, bd("4"), wolId);
+        String issueId = seedIssue("MI-RSV-FULL", woId);
+        seedIssueLine("9302", issueId, M1, bd("4"), wolId);
         rpcOk(mutation, "ErpMfgMaterialIssue__confirm", Map.of("issueId", issueId));
 
         ErpInvReservation reservation = findReservation("WO-RSV-FULL");
@@ -220,20 +220,20 @@ public class TestErpMfgReservationLifecycle extends JunitBaseTestCase {
 
     @Test
     public void testOverPickWarnsAndPasses() {
-        seedBase(9106L, "WO-RSV-OVER", "2");
+        seedBase("9106", "WO-RSV-OVER", "2");
         generateIncoming(M1, "PR-RSV-OV", bd("10"), bd("5"));
-        Long woId = seedWorkOrder("WO-RSV-OVER", 9106L);
-        Long wolId = seedWorkOrderLine(woId, M1, bd("2"), "INPUT", null, WAREHOUSE_ID);
+        String woId = seedWorkOrder("WO-RSV-OVER", "9106");
+        String wolId = seedWorkOrderLine(woId, M1, bd("2"), "INPUT", null, WAREHOUSE_ID);
         seedWorkOrderLine(woId, P, bd("1"), "OUTPUT", WAREHOUSE_ID, null);
 
-        rpcOk(mutation, "ErpMfgWorkOrder__submitForApproval", Map.of("id", String.valueOf(woId)));
-        rpcOk(mutation, "ErpMfgWorkOrder__approve", Map.of("id", String.valueOf(woId)));
+        rpcOk(mutation, "ErpMfgWorkOrder__submitForApproval", Map.of("id", woId));
+        rpcOk(mutation, "ErpMfgWorkOrder__approve", Map.of("id", woId));
         rpcOk(mutation, "ErpMfgWorkOrder__checkAvailability", Map.of("workOrderId", woId));
         rpcOk(mutation, "ErpMfgWorkOrder__start", Map.of("workOrderId", woId));
 
         // 领 6 > 预留 4 → over-pick-warning=true LOG.warn 放行（不阻断领料主链）
-        Long issueId = seedIssue("MI-RSV-OVER", woId);
-        seedIssueLine(9303L, issueId, M1, bd("6"), wolId);
+        String issueId = seedIssue("MI-RSV-OVER", woId);
+        seedIssueLine("9303", issueId, M1, bd("6"), wolId);
         rpcOk(mutation, "ErpMfgMaterialIssue__confirm", Map.of("issueId", issueId),
                 "超预留 confirm 应放行（D1 warn 不阻断）");
 
@@ -251,22 +251,22 @@ public class TestErpMfgReservationLifecycle extends JunitBaseTestCase {
 
     @Test
     public void testConfigOffSkipsReservationChain() {
-        seedBase(9107L, "WO-RSV-OFF", "2");
+        seedBase("9107", "WO-RSV-OFF", "2");
         generateIncoming(M1, "PR-RSV-OF", bd("10"), bd("5"));
-        Long woId = seedWorkOrder("WO-RSV-OFF", 9107L);
-        Long wolId = seedWorkOrderLine(woId, M1, bd("2"), "INPUT", null, WAREHOUSE_ID);
+        String woId = seedWorkOrder("WO-RSV-OFF", "9107");
+        String wolId = seedWorkOrderLine(woId, M1, bd("2"), "INPUT", null, WAREHOUSE_ID);
         seedWorkOrderLine(woId, P, bd("1"), "OUTPUT", WAREHOUSE_ID, null);
 
         setConfig(ErpMfgConstants.CONFIG_RESERVATION_ENABLED, "false");
         try {
-            rpcOk(mutation, "ErpMfgWorkOrder__submitForApproval", Map.of("id", String.valueOf(woId)));
-            rpcOk(mutation, "ErpMfgWorkOrder__approve", Map.of("id", String.valueOf(woId)));
+            rpcOk(mutation, "ErpMfgWorkOrder__submitForApproval", Map.of("id", woId));
+            rpcOk(mutation, "ErpMfgWorkOrder__approve", Map.of("id", woId));
             assertNull(findReservation("WO-RSV-OFF"), "config 关闭 → 不创建预留");
 
             rpcOk(mutation, "ErpMfgWorkOrder__checkAvailability", Map.of("workOrderId", woId));
         rpcOk(mutation, "ErpMfgWorkOrder__start", Map.of("workOrderId", woId));
-            Long issueId = seedIssue("MI-RSV-OFF", woId);
-            seedIssueLine(9304L, issueId, M1, bd("4"), wolId);
+            String issueId = seedIssue("MI-RSV-OFF", woId);
+            seedIssueLine("9304", issueId, M1, bd("4"), wolId);
             rpcOk(mutation, "ErpMfgMaterialIssue__confirm", Map.of("issueId", issueId),
                     "config 关闭 → 领料消耗跳过");
             Map<String, Object> completeReq = new LinkedHashMap<>();
@@ -286,21 +286,21 @@ public class TestErpMfgReservationLifecycle extends JunitBaseTestCase {
     @Test
     public void testLegacyWorkOrderNoReservationNoOp() {
         // 工单行无 sourceWarehouseId → 审核跳过预留创建（MINOR-8），后续 cancel/confirm/complete 全部 no-op
-        seedBase(9108L, "WO-RSV-LEGACY", "2");
+        seedBase("9108", "WO-RSV-LEGACY", "2");
         generateIncoming(M1, "PR-RSV-LE", bd("10"), bd("5"));
-        Long woId = seedWorkOrder("WO-RSV-LEGACY", 9108L);
-        Long wolId = seedWorkOrderLine(woId, M1, bd("2"), "INPUT", null, null);
+        String woId = seedWorkOrder("WO-RSV-LEGACY", "9108");
+        String wolId = seedWorkOrderLine(woId, M1, bd("2"), "INPUT", null, null);
         seedWorkOrderLine(woId, P, bd("1"), "OUTPUT", WAREHOUSE_ID, null);
 
-        rpcOk(mutation, "ErpMfgWorkOrder__submitForApproval", Map.of("id", String.valueOf(woId)));
-        rpcOk(mutation, "ErpMfgWorkOrder__approve", Map.of("id", String.valueOf(woId)));
+        rpcOk(mutation, "ErpMfgWorkOrder__submitForApproval", Map.of("id", woId));
+        rpcOk(mutation, "ErpMfgWorkOrder__approve", Map.of("id", woId));
         assertNull(findReservation("WO-RSV-LEGACY"), "无领料仓库行 → 不创建预留");
         assertEquals(0, findBalance(M1).getReservedQuantity().compareTo(bd("0")), "余额零占用");
 
         rpcOk(mutation, "ErpMfgWorkOrder__checkAvailability", Map.of("workOrderId", woId));
         rpcOk(mutation, "ErpMfgWorkOrder__start", Map.of("workOrderId", woId));
-        Long issueId = seedIssue("MI-RSV-LEGACY", woId);
-        seedIssueLine(9305L, issueId, M1, bd("4"), wolId);
+        String issueId = seedIssue("MI-RSV-LEGACY", woId);
+        seedIssueLine("9305", issueId, M1, bd("4"), wolId);
         rpcOk(mutation, "ErpMfgMaterialIssue__confirm", Map.of("issueId", issueId),
                 "无预留工单 confirm 不抛异常零写入");
         Map<String, Object> completeReq = new LinkedHashMap<>();
@@ -312,12 +312,12 @@ public class TestErpMfgReservationLifecycle extends JunitBaseTestCase {
         assertEquals(0, findBalance(M1).getReservedQuantity().compareTo(bd("0")), "全程零预留写入");
 
         // cancel 路径 no-op（新工单走 cancel；物料已 seed，仅补 BOM + WO + 余额）
-        seedBom(9109L, P, M1, bd("2"));
+        seedBom("9109", P, M1, bd("2"));
         generateIncoming(M1, "PR-RSV-LE2", bd("10"), bd("5"));
-        Long wo2 = seedWorkOrder("WO-RSV-LEGACY2", 9109L);
+        String wo2 = seedWorkOrder("WO-RSV-LEGACY2", "9109");
         seedWorkOrderLine(wo2, M1, bd("2"), "INPUT", null, null);
-        rpcOk(mutation, "ErpMfgWorkOrder__submitForApproval", Map.of("id", String.valueOf(wo2)));
-        rpcOk(mutation, "ErpMfgWorkOrder__approve", Map.of("id", String.valueOf(wo2)));
+        rpcOk(mutation, "ErpMfgWorkOrder__submitForApproval", Map.of("id", wo2));
+        rpcOk(mutation, "ErpMfgWorkOrder__approve", Map.of("id", wo2));
         rpcOk(mutation, "ErpMfgWorkOrder__cancel", Map.of("workOrderId", wo2),
                 "无预留工单 cancel 不抛异常");
     }
@@ -326,7 +326,7 @@ public class TestErpMfgReservationLifecycle extends JunitBaseTestCase {
     public void testNoBomApproveNotBlocked() {
         // 无 bomId 且无默认 BOM → approve 跳过预留创建不阻断（MINOR-5）
         seedMaterial(P, null);
-        Long woId = 8300L + (long) Math.abs("WO-RSV-NOBOM".hashCode() % 700);
+        String woId = String.valueOf(8300L + (long) Math.abs("WO-RSV-NOBOM".hashCode() % 700));
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMfgWorkOrder> dao = daoProvider.daoFor(ErpMfgWorkOrder.class);
             ErpMfgWorkOrder wo = new ErpMfgWorkOrder();
@@ -341,8 +341,8 @@ public class TestErpMfgReservationLifecycle extends JunitBaseTestCase {
             dao.saveEntity(wo);
         });
 
-        rpcOk(mutation, "ErpMfgWorkOrder__submitForApproval", Map.of("id", String.valueOf(woId)));
-        rpcOk(mutation, "ErpMfgWorkOrder__approve", Map.of("id", String.valueOf(woId)),
+        rpcOk(mutation, "ErpMfgWorkOrder__submitForApproval", Map.of("id", woId));
+        rpcOk(mutation, "ErpMfgWorkOrder__approve", Map.of("id", woId),
                 "无 BOM 工单 approve 不阻断（跳过预留 LOG.warn）");
         assertNull(findReservation("WO-RSV-NOBOM"), "无 BOM → 不创建预留");
     }
@@ -361,13 +361,13 @@ public class TestErpMfgReservationLifecycle extends JunitBaseTestCase {
      */
     @Test
     public void testConcurrentCrossWorkOrderApproveNoLostUpdate() throws Exception {
-        seedBase(9111L, "WO-RSV-CONC-A", "2");
+        seedBase("9111", "WO-RSV-CONC-A", "2");
         generateIncoming(M1, "PR-RSV-CONC", bd("10"), bd("5"));
 
-        Long woA = seedWorkOrder("WO-RSV-CONC-A", 9111L);
+        String woA = seedWorkOrder("WO-RSV-CONC-A", "9111");
         seedWorkOrderLine(woA, M1, bd("2"), "INPUT", null, WAREHOUSE_ID);
         seedWorkOrderLine(woA, P, bd("1"), "OUTPUT", WAREHOUSE_ID, null);
-        Long woB = seedWorkOrder("WO-RSV-CONC-B", 9111L);
+        String woB = seedWorkOrder("WO-RSV-CONC-B", "9111");
         seedWorkOrderLine(woB, M1, bd("2"), "INPUT", null, WAREHOUSE_ID);
         seedWorkOrderLine(woB, P, bd("1"), "OUTPUT", WAREHOUSE_ID, null);
 
@@ -379,15 +379,15 @@ public class TestErpMfgReservationLifecycle extends JunitBaseTestCase {
 
         try {
             for (int i = 0; i < threadCount; i++) {
-                final Long woId = i == 0 ? woA : woB;
+                final String woId = i == 0 ? woA : woB;
                 pool.submit(() -> {
                     ContextProvider.newContext();
                     try {
                         startGate.await();
                         ApiResponse<?> submitResp = rpc(mutation, "ErpMfgWorkOrder__submitForApproval",
-                                Map.of("id", String.valueOf(woId)));
+                                Map.of("id", woId));
                         ApiResponse<?> approveResp = rpc(mutation, "ErpMfgWorkOrder__approve",
-                                Map.of("id", String.valueOf(woId)));
+                                Map.of("id", woId));
                         if (submitResp.getStatus() != 0) {
                             throw new AssertionError("工单 " + woId + " submitForApproval 失败: " + submitResp);
                         }
@@ -437,13 +437,13 @@ public class TestErpMfgReservationLifecycle extends JunitBaseTestCase {
 
     // ---------- helpers ----------
 
-    private void seedBase(Long bomId, String woCode, String bomQty) {
+    private void seedBase(String bomId, String woCode, String bomQty) {
         seedMaterial(P, null);
         seedMaterial(M1, "MOVING_AVERAGE");
         seedBom(bomId, P, M1, bd(bomQty));
     }
 
-    private void generateIncoming(Long materialId, String billCode, BigDecimal qty, BigDecimal unitCost) {
+    private void generateIncoming(String materialId, String billCode, BigDecimal qty, BigDecimal unitCost) {
         Map<String, Object> req = new LinkedHashMap<>();
         req.put("moveType", MOVE_TYPE_INCOMING);
         req.put("orgId", ORG_ID);
@@ -462,7 +462,7 @@ public class TestErpMfgReservationLifecycle extends JunitBaseTestCase {
         rpcOk(mutation, "ErpInvStockMove__generateMove", Map.of("request", req));
     }
 
-    private void seedMaterial(Long id, String costMethod) {
+    private void seedMaterial(String id, String costMethod) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMdMaterial> dao = daoProvider.daoFor(ErpMdMaterial.class);
             ErpMdMaterial m = new ErpMdMaterial();
@@ -477,7 +477,7 @@ public class TestErpMfgReservationLifecycle extends JunitBaseTestCase {
         });
     }
 
-    private void seedBom(Long bomId, Long productId, Long componentId, BigDecimal qty) {
+    private void seedBom(String bomId, String productId, String componentId, BigDecimal qty) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMfgBom> dao = daoProvider.daoFor(ErpMfgBom.class);
             ErpMfgBom bom = new ErpMfgBom();
@@ -491,7 +491,7 @@ public class TestErpMfgReservationLifecycle extends JunitBaseTestCase {
             dao.saveEntity(bom);
             IEntityDao<ErpMfgBomLine> ldao = daoProvider.daoFor(ErpMfgBomLine.class);
             ErpMfgBomLine line = new ErpMfgBomLine();
-            line.orm_propValueByName("id", bomId + 50000);
+            line.orm_propValueByName("id", String.valueOf(Long.parseLong(bomId) + 50000));
             line.setBomId(bomId);
             line.setLineNo(10);
             line.setMaterialId(componentId);
@@ -501,8 +501,8 @@ public class TestErpMfgReservationLifecycle extends JunitBaseTestCase {
         });
     }
 
-    private Long seedWorkOrder(String code, Long bomId) {
-        Long id = 8300L + (long) Math.abs(code.hashCode() % 700);
+    private String seedWorkOrder(String code, String bomId) {
+        String id = String.valueOf(8300L + (long) Math.abs(code.hashCode() % 700));
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMfgWorkOrder> dao = daoProvider.daoFor(ErpMfgWorkOrder.class);
             ErpMfgWorkOrder wo = new ErpMfgWorkOrder();
@@ -520,16 +520,16 @@ public class TestErpMfgReservationLifecycle extends JunitBaseTestCase {
         return id;
     }
 
-    private Long seedWorkOrderLine(Long woId, Long materialId, BigDecimal plannedQty, String lineType,
-                                   Long destWarehouseId, Long sourceWarehouseId) {
+    private String seedWorkOrderLine(String woId, String materialId, BigDecimal plannedQty, String lineType,
+                                     String destWarehouseId, String sourceWarehouseId) {
         long raw = (woId + "" + materialId + lineType).hashCode();
-        Long id = 9300L + (long) Math.abs(raw % 700);
+        String id = String.valueOf(9300L + (long) Math.abs(raw % 700));
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMfgWorkOrderLine> dao = daoProvider.daoFor(ErpMfgWorkOrderLine.class);
             ErpMfgWorkOrderLine wol = new ErpMfgWorkOrderLine();
             wol.orm_propValueByName("id", id);
             wol.setWorkOrderId(woId);
-            wol.setLineNo(materialId.intValue());
+            wol.setLineNo(Integer.parseInt(materialId));
             wol.orm_propValueByName("lineType", lineType);
             wol.setMaterialId(materialId);
             wol.setUoMId(UOM_ID);
@@ -541,8 +541,8 @@ public class TestErpMfgReservationLifecycle extends JunitBaseTestCase {
         return id;
     }
 
-    private Long seedIssue(String code, Long woId) {
-        Long id = 8400L + (long) Math.abs(code.hashCode() % 700);
+    private String seedIssue(String code, String woId) {
+        String id = String.valueOf(8400L + (long) Math.abs(code.hashCode() % 700));
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMfgMaterialIssue> dao = daoProvider.daoFor(ErpMfgMaterialIssue.class);
             ErpMfgMaterialIssue issue = new ErpMfgMaterialIssue();
@@ -560,7 +560,7 @@ public class TestErpMfgReservationLifecycle extends JunitBaseTestCase {
         return id;
     }
 
-    private void seedIssueLine(Long id, Long issueId, Long materialId, BigDecimal qty, Long wolId) {
+    private void seedIssueLine(String id, String issueId, String materialId, BigDecimal qty, String wolId) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMfgMaterialIssueLine> dao = daoProvider.daoFor(ErpMfgMaterialIssueLine.class);
             ErpMfgMaterialIssueLine line = new ErpMfgMaterialIssueLine();
@@ -586,14 +586,14 @@ public class TestErpMfgReservationLifecycle extends JunitBaseTestCase {
         return list.isEmpty() ? null : list.get(0);
     }
 
-    private List<ErpInvReservationLine> findReservationLines(Long reservationId) {
+    private List<ErpInvReservationLine> findReservationLines(String reservationId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("reservationId", reservationId));
         q.addOrderField("lineNo", false);
         return daoProvider.daoFor(ErpInvReservationLine.class).findAllByQuery(q);
     }
 
-    private ErpInvStockBalance findBalance(Long materialId) {
+    private ErpInvStockBalance findBalance(String materialId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("materialId", materialId));
         q.addFilter(eq("warehouseId", WAREHOUSE_ID));

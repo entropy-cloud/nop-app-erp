@@ -23,7 +23,7 @@ public class ErpMfgScheduleToJobCardGenerateJobCardsFromScheduleProcessor {
     @Inject
     ErpMfgScheduleToJobCardProcessor facade;
 
-    public ErpMfgWorkOrder generateJobCardsFromSchedule(Long workOrderId, IServiceContext context) {
+    public ErpMfgWorkOrder generateJobCardsFromSchedule(String workOrderId, IServiceContext context) {
         ErpMfgWorkOrder wo = facade.requireWorkOrder(workOrderId);
         facade.validateStatusForJobCardGen(wo);
 

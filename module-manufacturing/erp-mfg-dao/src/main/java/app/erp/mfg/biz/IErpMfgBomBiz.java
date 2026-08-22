@@ -21,7 +21,7 @@ public interface IErpMfgBomBiz extends ICrudBiz<ErpMfgBom>{
      * @throws NopException {@code ERR_DEFAULT_BOM_NOT_FOUND} 当无默认且有效的 BOM
      */
     @BizQuery
-    ErpMfgBom findDefaultBom(@Name("productId") Long productId, IServiceContext context);
+    ErpMfgBom findDefaultBom(@Name("productId") String productId, IServiceContext context);
 
     /**
      * BOM 展开。
@@ -33,7 +33,7 @@ public interface IErpMfgBomBiz extends ICrudBiz<ErpMfgBom>{
      * @throws NopException 环引用（{@code ERR_BOM_CYCLE}）/ 深度超限（{@code ERR_BOM_MAX_DEPTH_EXCEEDED}）
      */
     @BizQuery
-    List<BomExplosionNode> explode(@Name("bomId") Long bomId,
+    List<BomExplosionNode> explode(@Name("bomId") String bomId,
                                    @Name("qty") BigDecimal qty,
                                    @Name("useMultiLevel") Boolean useMultiLevel,
                                    IServiceContext context);
@@ -43,7 +43,7 @@ public interface IErpMfgBomBiz extends ICrudBiz<ErpMfgBom>{
      * 调用 {@link #explode} 获取扁平 pre-order DFS 节点，按 level 栈算法重建嵌套结构返回给 flux tree 控件。
      */
     @BizQuery
-    List<Map<String, Object>> findBomTree(@Name("bomId") Long bomId,
+    List<Map<String, Object>> findBomTree(@Name("bomId") String bomId,
                                           @Name("qty") BigDecimal qty,
                                           @Name("useMultiLevel") Boolean useMultiLevel,
                                           IServiceContext context);
@@ -57,5 +57,5 @@ public interface IErpMfgBomBiz extends ICrudBiz<ErpMfgBom>{
      * @throws NopException 采购件无默认 SKU 采购价时 {@code ERR_ROLLUP_BASE_COST_MISSING}
      */
     @BizMutation
-    CostRollupResult rollupCost(@Name("bomId") Long bomId, IServiceContext context);
+    CostRollupResult rollupCost(@Name("bomId") String bomId, IServiceContext context);
 }

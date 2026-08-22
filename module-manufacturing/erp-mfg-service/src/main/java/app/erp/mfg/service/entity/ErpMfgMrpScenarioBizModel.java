@@ -44,20 +44,20 @@ public class ErpMfgMrpScenarioBizModel extends CrudBizModel<ErpMfgMrpScenario> i
 
     @Override
     @BizMutation
-    public ErpMfgMrpScenarioVersion runSimulation(@Name("scenarioId") Long scenarioId, IServiceContext context) {
+    public ErpMfgMrpScenarioVersion runSimulation(@Name("scenarioId") String scenarioId, IServiceContext context) {
         return runSimulationProcessor.runSimulation(scenarioId, context);
     }
 
     @Override
     @BizMutation
-    public ErpMfgMrpPlan promoteToFormalPlan(@Name("scenarioVersionId") Long scenarioVersionId, IServiceContext context) {
+    public ErpMfgMrpPlan promoteToFormalPlan(@Name("scenarioVersionId") String scenarioVersionId, IServiceContext context) {
         return promoteToFormalPlanProcessor.promoteToFormalPlan(scenarioVersionId, context);
     }
 
     @Override
     @BizQuery
-    public SimulationDiffResult compareVersions(@Name("versionIdA") Long versionIdA,
-                                                 @Name("versionIdB") Long versionIdB,
+    public SimulationDiffResult compareVersions(@Name("versionIdA") String versionIdA,
+                                                 @Name("versionIdB") String versionIdB,
                                                  IServiceContext context) {
         return simulationComparator.compareMrpVersions(versionIdA, versionIdB);
     }

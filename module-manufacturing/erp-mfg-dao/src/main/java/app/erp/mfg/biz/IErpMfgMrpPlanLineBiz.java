@@ -18,9 +18,9 @@ public interface IErpMfgMrpPlanLineBiz extends ICrudBiz<ErpMfgMrpPlanLine>{
      * @param currencyId 币种（必填，ErpPurOrder.currencyId 为 ORM 必填）
      */
     @BizMutation
-    ErpMfgMrpPlanLine releasePurchaseRequest(@Name("planLineId") Long planLineId,
-                                             @Name("supplierId") Long supplierId,
-                                             @Name("currencyId") Long currencyId,
+    ErpMfgMrpPlanLine releasePurchaseRequest(@Name("planLineId") String planLineId,
+                                             @Name("supplierId") String supplierId,
+                                             @Name("currencyId") String currencyId,
                                              IServiceContext context);
 
     /**
@@ -28,7 +28,7 @@ public interface IErpMfgMrpPlanLineBiz extends ICrudBiz<ErpMfgMrpPlanLine>{
      * 全部行释放后 MrpPlan→FIRMED。幂等：已 firmed 行重复释放拒绝。
      */
     @BizMutation
-    ErpMfgMrpPlanLine releaseWorkRequest(@Name("planLineId") Long planLineId, IServiceContext context);
+    ErpMfgMrpPlanLine releaseWorkRequest(@Name("planLineId") String planLineId, IServiceContext context);
 
     /**
      * 释放委外建议行为委外加工单（{@link app.erp.mfg.dao.entity.ErpMfgSubcontractOrder}，plan 2026-07-13-0455-1 §Phase 4）。
@@ -38,8 +38,8 @@ public interface IErpMfgMrpPlanLineBiz extends ICrudBiz<ErpMfgMrpPlanLine>{
      * @param currencyId 币种（必填）
      */
     @BizMutation
-    ErpMfgMrpPlanLine releaseSubcontractRequest(@Name("planLineId") Long planLineId,
-                                                 @Name("supplierId") Long supplierId,
-                                                 @Name("currencyId") Long currencyId,
+    ErpMfgMrpPlanLine releaseSubcontractRequest(@Name("planLineId") String planLineId,
+                                                 @Name("supplierId") String supplierId,
+                                                 @Name("currencyId") String currencyId,
                                                  IServiceContext context);
 }

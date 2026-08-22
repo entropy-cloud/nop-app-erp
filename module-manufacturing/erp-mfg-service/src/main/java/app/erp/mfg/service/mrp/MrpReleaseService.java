@@ -69,7 +69,7 @@ public class MrpReleaseService {
     /**
      * 释放采购建议行为采购订单。返回生成的采购单号（回写 convertedBillCode）。
      */
-    public String releasePurchaseRequest(Long planLineId, Long supplierId, Long currencyId) {
+    public String releasePurchaseRequest(String planLineId, String supplierId, String currencyId) {
         if (supplierId == null) {
             throw new NopException(ErpMfgErrors.ERR_MRP_RELEASE_MISSING_SUPPLIER)
                     .param(ErpMfgErrors.ARG_MRP_LINE_ID, planLineId);
@@ -85,7 +85,7 @@ public class MrpReleaseService {
     /**
      * 释放工单建议行为工单。返回生成的工单号（回写 convertedBillCode）。
      */
-    public String releaseWorkRequest(Long planLineId) {
+    public String releaseWorkRequest(String planLineId) {
         ErpMfgMrpPlanLine line = requireReleasable(planLineId, ErpMfgConstants.MRP_ORDER_TYPE_WORK_ORDER_REQUEST);
         ErpMfgMrpPlan plan = line.getMrpPlan();
         String billCode = releaseToWorkOrder(line, plan, CoreMetrics.today());
@@ -100,7 +100,7 @@ public class MrpReleaseService {
      * {@code erp-mfg.subcontract-release-enabled}（默认 false 向后兼容）。生成的委外单直接置 APPROVED（跳过审批，
      * 对齐 MRP 自动释放不经人工审批管道的 O-4 架构豁免）。
      */
-    public String releaseSubcontractRequest(Long planLineId, Long supplierId, Long currencyId) {
+    public String releaseSubcontractRequest(String planLineId, String supplierId, String currencyId) {
         if (!isSubcontractReleaseEnabled()) {
             throw new NopException(ErpMfgErrors.ERR_MRP_RELEASE_UNSUPPORTED_ORDER_TYPE)
                     .param(ErpMfgErrors.ARG_MRP_LINE_ID, planLineId);
@@ -117,7 +117,7 @@ public class MrpReleaseService {
         return billCode;
     }
 
-    private ErpMfgMrpPlanLine requireReleasable(Long planLineId, String expectedOrderType) {
+    private ErpMfgMrpPlanLine requireReleasable(String planLineId, String expectedOrderType) {
         ErpMfgMrpPlanLine line = requireLine(planLineId);
         if (Boolean.TRUE.equals(line.getIsFirmed())) {
             throw new NopException(ErpMfgErrors.ERR_MRP_LINE_ALREADY_FIRMED)
@@ -137,15 +137,17 @@ public class MrpReleaseService {
         daoProvider.daoFor(ErpMfgMrpPlanLine.class).updateEntity(line);
     }
 
-    private String releaseToPurchaseOrder(ErpMfgMrpPlanLine line, ErpMfgMrpPlan plan, Long supplierId,
-                                          Long currencyId, LocalDate today) {
+    private String releaseToPurchaseOrder(ErpMfgMrpPlanLine line, ErpMfgMrpPlan plan, String supplierId,
+                                          String currencyId, LocalDate today) {
         IEntityDao<ErpPurOrder> orderDao = daoProvider.daoFor(ErpPurOrder.class);
         ErpPurOrder order = orderDao.newEntity();
         String code = ErpMfgConstants.RELEASE_PO_CODE_PREFIX + line.getId();
         order.setCode(code);
-        order.setOrgId(plan != null ? plan.getOrgId() : null);
-        order.setSupplierId(supplierId);
-        order.setCurrencyId(currencyId);
+        // A2 桥接（bridge-main-088/089，M0.2 登记册）：pur ErpPurOrder/ErpPurOrderLine id 列仍 Long（pur 位次 15 未迁移），
+        // mfg String id → ConvertHelper.toLong 桥接 setter 值，退役 owner M2.5
+        order.setOrgId(io.nop.api.core.convert.ConvertHelper.toLong(plan != null ? plan.getOrgId() : null));
+        order.setSupplierId(io.nop.api.core.convert.ConvertHelper.toLong(supplierId));
+        order.setCurrencyId(io.nop.api.core.convert.ConvertHelper.toLong(currencyId));
         order.setBusinessDate(today);
         order.setDeliveryDate(line.getPlannedDate());
         order.setDocStatus(ErpPurDocStatus.DOC_STATUS_DRAFT);
@@ -159,8 +161,8 @@ public class MrpReleaseService {
         ErpPurOrderLine poLine = lineDao.newEntity();
         poLine.setOrderId(order.getId());
         poLine.setLineNo(10);
-        poLine.setMaterialId(line.getMaterialId());
-        poLine.setUoMId(line.getUoMId());
+        poLine.setMaterialId(io.nop.api.core.convert.ConvertHelper.toLong(line.getMaterialId()));
+        poLine.setUoMId(io.nop.api.core.convert.ConvertHelper.toLong(line.getUoMId()));
         poLine.setQuantity(nz(line.getPlannedQuantity()));
         poLine.setUnitPrice(BigDecimal.ZERO);
         poLine.setAmount(BigDecimal.ZERO);
@@ -189,8 +191,8 @@ public class MrpReleaseService {
         return code;
     }
 
-    private String releaseToSubcontractOrder(ErpMfgMrpPlanLine line, ErpMfgMrpPlan plan, Long supplierId,
-                                             Long currencyId, LocalDate today) {
+    private String releaseToSubcontractOrder(ErpMfgMrpPlanLine line, ErpMfgMrpPlan plan, String supplierId,
+                                              String currencyId, LocalDate today) {
         IEntityDao<ErpMfgSubcontractOrder> orderDao = daoProvider.daoFor(ErpMfgSubcontractOrder.class);
         ErpMfgSubcontractOrder order = orderDao.newEntity();
         String code = ErpMfgConstants.RELEASE_SUBCONTRACT_CODE_PREFIX + line.getId();
@@ -250,7 +252,7 @@ public class MrpReleaseService {
         }
     }
 
-    private ErpMfgBom findDefaultBomOrNull(Long productId) {
+    private ErpMfgBom findDefaultBomOrNull(String productId) {
         if (productId == null) {
             return null;
         }
@@ -263,7 +265,7 @@ public class MrpReleaseService {
         return list.isEmpty() ? null : list.get(0);
     }
 
-    private ErpMfgMrpPlanLine requireLine(Long planLineId) {
+    private ErpMfgMrpPlanLine requireLine(String planLineId) {
         if (planLineId == null) {
             throw new NopException(ErpMfgErrors.ERR_MRP_PLAN_LINE_NOT_FOUND).param(ErpMfgErrors.ARG_MRP_LINE_ID, planLineId);
         }
@@ -286,7 +288,7 @@ public class MrpReleaseService {
      * flush 目标单头 INSERT 命中既有 (code,orgId) UK（并发释放同 plan line 生成同 code）→ 翻译为友好错误码
      * （plan 2026-07-30-0841-2 R1.28 P1-MA2-090）。前置 isFirmed 守卫见 {@link #requireReleasable}。
      */
-    private void flushReleaseOrThrow(Long planLineId) {
+    private void flushReleaseOrThrow(String planLineId) {
         try {
             orm().flushSession();
         } catch (Exception e) {

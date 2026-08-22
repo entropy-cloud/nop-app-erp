@@ -50,7 +50,7 @@ public class ErpMfgJobCardBizModel extends CrudBizModel<ErpMfgJobCard> implement
 
     @Override
     @BizMutation
-    public ErpMfgJobCard startJob(@Name("jobCardId") Long jobCardId, IServiceContext context) {
+    public ErpMfgJobCard startJob(@Name("jobCardId") String jobCardId, IServiceContext context) {
         return startJobProcessor.startJob(jobCardId, context);
     }
 
@@ -62,31 +62,31 @@ public class ErpMfgJobCardBizModel extends CrudBizModel<ErpMfgJobCard> implement
 
     @Override
     @BizMutation
-    public ErpMfgJobCard submitJob(@Name("jobCardId") Long jobCardId, IServiceContext context) {
+    public ErpMfgJobCard submitJob(@Name("jobCardId") String jobCardId, IServiceContext context) {
         return submitJobProcessor.submitJob(jobCardId, context);
     }
 
     @Override
     @BizMutation
-    public ErpMfgJobCard completeJob(@Name("jobCardId") Long jobCardId, IServiceContext context) {
+    public ErpMfgJobCard completeJob(@Name("jobCardId") String jobCardId, IServiceContext context) {
         return completeJobProcessor.completeJob(jobCardId, context);
     }
 
     @Override
     @BizMutation
-    public ErpMfgJobCard holdJob(@Name("jobCardId") Long jobCardId, IServiceContext context) {
+    public ErpMfgJobCard holdJob(@Name("jobCardId") String jobCardId, IServiceContext context) {
         return holdJobProcessor.holdJob(jobCardId, context);
     }
 
     @Override
     @BizMutation
-    public ErpMfgJobCard resumeJob(@Name("jobCardId") Long jobCardId, IServiceContext context) {
+    public ErpMfgJobCard resumeJob(@Name("jobCardId") String jobCardId, IServiceContext context) {
         return resumeJobProcessor.resumeJob(jobCardId, context);
     }
 
     @Override
     @BizMutation
-    public ErpMfgJobCard cancelJob(@Name("jobCardId") Long jobCardId, IServiceContext context) {
+    public ErpMfgJobCard cancelJob(@Name("jobCardId") String jobCardId, IServiceContext context) {
         return cancelJobProcessor.cancelJob(jobCardId, context);
     }
 

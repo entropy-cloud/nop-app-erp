@@ -7,7 +7,6 @@ import app.erp.mfg.dao.entity.ErpMfgWorkcenterCalendar;
 import app.erp.mfg.dao.entity.ErpMfgWorkcenterCapacity;
 import app.erp.mnt.dao.entity.ErpMntDowntimeEntry;
 import app.erp.mnt.dao.entity.ErpMntEquipment;
-import io.nop.api.core.convert.ConvertHelper;
 import app.erp.qa.dao.entity.ErpQaInspection;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.dao.api.IDaoProvider;
@@ -80,9 +79,7 @@ public class OeeCalculator {
     public Map<String, Object> computeOee(ErpMntEquipment equipment, LocalDate dateFrom, LocalDate dateTo) {
         Timestamp windowStart = Timestamp.valueOf(dateFrom.atStartOfDay());
         Timestamp windowEndExclusive = Timestamp.valueOf(dateTo.plusDays(1).atStartOfDay());
-        // bridge-main-080/083/084：mnt equipment.workcenterId 已 String 化（M3.2），mfg 报工卡/日历/产能列仍 Long——
-        // 转 Long 供 mfg eq 过滤（String 传 Long 列会静默空匹配），mfg 翻转时退役（owner M3.1）。
-        Long workcenterId = ConvertHelper.toLong(equipment.getWorkcenterId());
+        String workcenterId = equipment.getWorkcenterId();
 
         Map<String, Object> result = new LinkedHashMap<>();
         result.put("equipmentId", equipment.getId());
@@ -171,7 +168,7 @@ public class OeeCalculator {
     // ===================== 可用率分母 ======================
 
     /** D1：Σ 生效日历班次窗口时长（窗口内命中工作日 × 每日各班次时长；无任何命中返回 null）。 */
-    protected BigDecimal computeCalendarHours(Long workcenterId, LocalDate dateFrom, LocalDate dateTo) {
+    protected BigDecimal computeCalendarHours(String workcenterId, LocalDate dateFrom, LocalDate dateTo) {
         IEntityDao<ErpMfgWorkcenterCalendar> dao = daoProvider.daoFor(ErpMfgWorkcenterCalendar.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("workcenterId", workcenterId));
@@ -266,11 +263,11 @@ public class OeeCalculator {
     // ===================== 产量 / 产能 / 质量 ======================
 
     /** D2：窗口内该工作中心的报工聚合（经 JobCard.workcenterId 桥接 TimeLog；CANCELLED 卡排除）。 */
-    protected OutputAggregate collectOutput(Long workcenterId, LocalDate dateFrom, LocalDate dateTo) {
+    protected OutputAggregate collectOutput(String workcenterId, LocalDate dateFrom, LocalDate dateTo) {
         IEntityDao<ErpMfgJobCard> cardDao = daoProvider.daoFor(ErpMfgJobCard.class);
         QueryBean cardQuery = new QueryBean();
         cardQuery.addFilter(eq("workcenterId", workcenterId));
-        Set<Long> cardIds = new LinkedHashSet<>();
+        Set<String> cardIds = new LinkedHashSet<>();
         for (ErpMfgJobCard card : cardDao.findAllByQuery(cardQuery)) {
             if (!JOB_CARD_STATUS_CANCELLED.equals(card.getStatus())) {
                 cardIds.add(card.getId());
@@ -287,7 +284,7 @@ public class OeeCalculator {
         List<ErpMfgJobCardTimeLog> logs = logDao.findAllByQuery(logQuery);
 
         OutputAggregate aggregate = new OutputAggregate();
-        Set<Long> workOrderIds = new LinkedHashSet<>();
+        Set<String> workOrderIds = new LinkedHashSet<>();
         for (ErpMfgJobCardTimeLog log : logs) {
             aggregate.completed = aggregate.completed.add(nz(log.getCompletedQuantity()));
             aggregate.scrapped = aggregate.scrapped.add(nz(log.getScrappedQuantity()));
@@ -310,7 +307,7 @@ public class OeeCalculator {
     }
 
     /** D2：产能行选择——窗口报工产品唯一 → 该产品 active 行；否则唯一 active 行；否则 null。 */
-    protected BigDecimal resolveCapacityPerHour(Long workcenterId, Set<Long> productIds) {
+    protected BigDecimal resolveCapacityPerHour(String workcenterId, Set<String> productIds) {
         IEntityDao<ErpMfgWorkcenterCapacity> dao = daoProvider.daoFor(ErpMfgWorkcenterCapacity.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("workcenterId", workcenterId));
@@ -327,7 +324,7 @@ public class OeeCalculator {
             return active.get(0).getCapacityPerHour();
         }
         if (productIds.size() == 1) {
-            Long productId = productIds.iterator().next();
+            String productId = productIds.iterator().next();
             for (ErpMfgWorkcenterCapacity row : active) {
                 if (productId.equals(row.getMaterialId())) {
                     return row.getCapacityPerHour();
@@ -365,6 +362,6 @@ public class OeeCalculator {
         BigDecimal completed = BigDecimal.ZERO;
         BigDecimal scrapped = BigDecimal.ZERO;
         final Set<String> workOrderCodes = new LinkedHashSet<>();
-        final Set<Long> productIds = new LinkedHashSet<>();
+        final Set<String> productIds = new LinkedHashSet<>();
     }
 }

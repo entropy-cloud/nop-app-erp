@@ -90,10 +90,10 @@ public class CostRollupService {
     /**
      * 卷算指定 BOM 的产出物料（及其全部子件）的单位标准成本，并落库。
      */
-    public CostRollupResult rollup(Long bomId) {
+    public CostRollupResult rollup(String bomId) {
         ErpMfgBom bom = requireBom(bomId);
 
-        Map<Long, CostBreakdown> computed = new LinkedHashMap<>();
+        Map<String, CostBreakdown> computed = new LinkedHashMap<>();
         computeUnit(bom.getProductId(), computed, new LinkedHashSet<>());
 
         ErpMfgCostRollup head = createHead(bom);
@@ -114,10 +114,10 @@ public class CostRollupService {
         return head;
     }
 
-    private void writeLines(Long rollupId, Map<Long, CostBreakdown> computed) {
+    private void writeLines(String rollupId, Map<String, CostBreakdown> computed) {
         IEntityDao<ErpMfgCostRollupLine> dao = daoProvider.daoFor(ErpMfgCostRollupLine.class);
         int lineNo = 10;
-        for (Map.Entry<Long, CostBreakdown> e : computed.entrySet()) {
+        for (Map.Entry<String, CostBreakdown> e : computed.entrySet()) {
             CostBreakdown cb = e.getValue();
             ErpMfgCostRollupLine line = dao.newEntity();
             line.setCostRollupId(rollupId);
@@ -135,7 +135,7 @@ public class CostRollupService {
         }
     }
 
-    private CostBreakdown computeUnit(Long materialId, Map<Long, CostBreakdown> computed, Set<Long> path) {
+    private CostBreakdown computeUnit(String materialId, Map<String, CostBreakdown> computed, Set<String> path) {
         CostBreakdown cached = computed.get(materialId);
         if (cached != null) {
             return cached;
@@ -187,11 +187,11 @@ public class CostRollupService {
         return cb;
     }
 
-    private OperationCost sumOperationCost(Long bomId) {
+    private OperationCost sumOperationCost(String bomId) {
         OperationCost oc = new OperationCost();
         for (ErpMfgBomOperation op : loadOperations(bomId)) {
             BigDecimal minutes = nz(op.getStandardTime());
-            Long wcId = op.getWorkcenterId();
+            String wcId = op.getWorkcenterId();
             if (wcId == null || minutes.signum() <= 0) {
                 continue;
             }
@@ -262,7 +262,7 @@ public class CostRollupService {
      * config 关时恒 0（向后兼容）；开时按物料聚合已过账（COMPLETED）委外订单加工费，
      * 按产量（委外行 quantity 之和）分摊为单位委外成本。归集源来自 N=1（2026-07-13-0455-1）。
      */
-    BigDecimal aggregateSubcontractCost(Long materialId) {
+    BigDecimal aggregateSubcontractCost(String materialId) {
         if (!subcontractAggregationEnabled()) {
             return BigDecimal.ZERO;
         }
@@ -292,14 +292,14 @@ public class CostRollupService {
         return Boolean.TRUE.equals(flag);
     }
 
-    private List<ErpMfgSubcontractOrderLine> loadSubcontractLines(Long orderId, Long materialId) {
+    private List<ErpMfgSubcontractOrderLine> loadSubcontractLines(String orderId, String materialId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("subcontractOrderId", orderId));
         q.addFilter(eq("materialId", materialId));
         return daoProvider.daoFor(ErpMfgSubcontractOrderLine.class).findAllByQuery(q);
     }
 
-    private BigDecimal defaultSkuPurchasePrice(Long materialId) {
+    private BigDecimal defaultSkuPurchasePrice(String materialId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("materialId", materialId));
         q.addFilter(eq("isDefault", Boolean.TRUE));
@@ -311,7 +311,7 @@ public class CostRollupService {
         return list.get(0).getPurchasePrice();
     }
 
-    private ErpMfgBom requireBom(Long bomId) {
+    private ErpMfgBom requireBom(String bomId) {
         if (bomId == null) {
             throw new NopException(ErpMfgErrors.ERR_BOM_NOT_FOUND).param(ErpMfgErrors.ARG_BOM_ID, bomId);
         }
@@ -322,25 +322,25 @@ public class CostRollupService {
         return bom;
     }
 
-    private List<ErpMfgBomLine> loadLines(Long bomId) {
+    private List<ErpMfgBomLine> loadLines(String bomId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("bomId", bomId));
         q.addOrderField("lineNo", false);
         return daoProvider.daoFor(ErpMfgBomLine.class).findAllByQuery(q);
     }
 
-    private List<ErpMfgBomOperation> loadOperations(Long bomId) {
+    private List<ErpMfgBomOperation> loadOperations(String bomId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("bomId", bomId));
         q.addOrderField("lineNo", false);
         return daoProvider.daoFor(ErpMfgBomOperation.class).findAllByQuery(q);
     }
 
-    private CostRollupResult toResult(ErpMfgCostRollup head, Map<Long, CostBreakdown> computed) {
+    private CostRollupResult toResult(ErpMfgCostRollup head, Map<String, CostBreakdown> computed) {
         CostRollupResult result = new CostRollupResult();
         result.setRollupId(head.getId());
         result.setStatus(head.getStatus());
-        for (Map.Entry<Long, CostBreakdown> e : computed.entrySet()) {
+        for (Map.Entry<String, CostBreakdown> e : computed.entrySet()) {
             CostBreakdown cb = e.getValue();
             CostRollupLineView v = new CostRollupLineView();
             v.setMaterialId(e.getKey());
@@ -376,7 +376,7 @@ public class CostRollupService {
         BigDecimal overhead = BigDecimal.ZERO;
         BigDecimal subcontract = BigDecimal.ZERO;
         BigDecimal unit = BigDecimal.ZERO;
-        Long uoMId;
+        String uoMId;
     }
 
     /** 工序工时成本中间结果（labor=人工费，machineHours=机器工时，供 overhead 分配率计算）。 */

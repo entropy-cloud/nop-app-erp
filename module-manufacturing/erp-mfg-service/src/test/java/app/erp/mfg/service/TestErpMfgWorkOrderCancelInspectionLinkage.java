@@ -47,9 +47,9 @@ public class TestErpMfgWorkOrderCancelInspectionLinkage extends JunitAutoTestCas
     @RegisterExtension
     static MfgFrozenClockExtension frozenClock = new MfgFrozenClockExtension();
 
-    static final Long ORG_ID = 1401L;
-    static final Long CURRENCY_ID = 6401L;
-    static final Long PRODUCT_ID = 1101L;
+    static final String ORG_ID = "1401";
+    static final String CURRENCY_ID = "6401";
+    static final String PRODUCT_ID = "1101";
 
     @Inject
     IDaoProvider daoProvider;
@@ -67,7 +67,7 @@ public class TestErpMfgWorkOrderCancelInspectionLinkage extends JunitAutoTestCas
     // ① cancel 后关联 PENDING 质检单消失；终态 ACCEPTED 不动（历史完整）
     @Test
     public void testCancelWorkOrderCancelsPendingKeepsAccepted() {
-        Long woId = seedWorkOrder("WO-BCL-001");
+        String woId = seedWorkOrder("WO-BCL-001");
         ormTemplate.runInSession(() -> {
             seedInspection("INS-MFG-BCL-P", ErpQaConstants.INSPECTION_RESULT_PENDING,
                     ErpMfgConstants.RELATED_BILL_TYPE_MFG_WORK_ORDER, "WO-BCL-001");
@@ -91,7 +91,7 @@ public class TestErpMfgWorkOrderCancelInspectionLinkage extends JunitAutoTestCas
     public void testCancelWithConfigDisabledKeepsPending() {
         AppConfig.getConfigProvider().assignConfigValue(
                 app.erp.qa.service.ErpQaConstants.CONFIG_BUSINESS_CANCEL_LINKAGE_ENABLED, "false");
-        Long woId = seedWorkOrder("WO-BCL-002");
+        String woId = seedWorkOrder("WO-BCL-002");
         ormTemplate.runInSession(() -> seedInspection("INS-MFG-BCL-C", ErpQaConstants.INSPECTION_RESULT_PENDING,
                 ErpMfgConstants.RELATED_BILL_TYPE_MFG_WORK_ORDER, "WO-BCL-002"));
 
@@ -103,13 +103,13 @@ public class TestErpMfgWorkOrderCancelInspectionLinkage extends JunitAutoTestCas
     // ③ 无关联质检单：作废零副作用
     @Test
     public void testCancelWithNoLinkedInspection() {
-        Long woId = seedWorkOrder("WO-BCL-003");
+        String woId = seedWorkOrder("WO-BCL-003");
         assertEquals(0, cancel(woId).getStatus(), "无关联质检单作废应成功（零副作用）");
     }
 
     // ---------- helpers ----------
 
-    private ApiResponse<?> cancel(Long workOrderId) {
+    private ApiResponse<?> cancel(String workOrderId) {
         return executeRpc(mutation, "ErpMfgWorkOrder__cancel", ApiRequest.build(Map.of("workOrderId", workOrderId)));
     }
 
@@ -133,8 +133,8 @@ public class TestErpMfgWorkOrderCancelInspectionLinkage extends JunitAutoTestCas
         return graphQLEngine.executeRpc(ctx);
     }
 
-    private Long seedWorkOrder(String code) {
-        Long id = 8300L + (long) (Math.abs(code.hashCode()) % 700);
+    private String seedWorkOrder(String code) {
+        String id = String.valueOf(8300L + (long) (Math.abs(code.hashCode()) % 700));
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMfgWorkOrder> dao = daoProvider.daoFor(ErpMfgWorkOrder.class);
             ErpMfgWorkOrder wo = new ErpMfgWorkOrder();
@@ -152,7 +152,7 @@ public class TestErpMfgWorkOrderCancelInspectionLinkage extends JunitAutoTestCas
     }
 
     private void seedInspection(String code, String result, String billType, String billCode) {
-        Long id = 7800L + (long) (Math.abs(code.hashCode()) % 900);
+        String id = String.valueOf(7800L + (long) (Math.abs(code.hashCode()) % 900));
         IEntityDao<ErpQaInspection> dao = daoProvider.daoFor(ErpQaInspection.class);
         ErpQaInspection ins = new ErpQaInspection();
         ins.orm_propValueByName("id", id);

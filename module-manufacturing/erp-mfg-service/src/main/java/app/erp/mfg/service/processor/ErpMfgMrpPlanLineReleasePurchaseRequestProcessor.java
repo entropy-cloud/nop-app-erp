@@ -18,7 +18,7 @@ public class ErpMfgMrpPlanLineReleasePurchaseRequestProcessor {
     @Inject
     IDaoProvider daoProvider;
 
-    public ErpMfgMrpPlanLine releasePurchaseRequest(Long planLineId, Long supplierId, Long currencyId,
+    public ErpMfgMrpPlanLine releasePurchaseRequest(String planLineId, String supplierId, String currencyId,
                                                     IServiceContext context) {
         mrpReleaseService.releasePurchaseRequest(planLineId, supplierId, currencyId);
         return lineDao().getEntityById(planLineId);

@@ -18,7 +18,7 @@ public class ErpMfgJobCardStartJobProcessor {
     @Inject
     ErpMfgJobCardStateMachine stateMachine;
 
-    public ErpMfgJobCard startJob(Long jobCardId, IServiceContext context) {
+    public ErpMfgJobCard startJob(String jobCardId, IServiceContext context) {
         ErpMfgJobCard jc = facade.requireJobCard(jobCardId, context);
         String from = jc.getStatus();
         try {

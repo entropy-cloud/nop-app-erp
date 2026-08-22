@@ -87,12 +87,12 @@ public class ErpMfgScheduleToJobCardProcessor {
     /**
      * 开放停机工作中心集合（排产门控判定，拉取消费模型）：mnt 模块缺失 / 无开放窗口时返回空集。
      */
-    public Set<Long> findOpenDowntimeWorkcenterIds(IServiceContext context) {
+    public Set<String> findOpenDowntimeWorkcenterIds(IServiceContext context) {
         if (mntDowntimeEntryBiz == null) {
             return Collections.emptySet();
         }
         List<MntOpenDowntimeWindow> windows = mntDowntimeEntryBiz.findOpenDowntimeEquipmentWorkcenters(context);
-        Set<Long> workcenterIds = new HashSet<>();
+        Set<String> workcenterIds = new HashSet<>();
         for (MntOpenDowntimeWindow window : windows) {
             if (window.getWorkcenterId() != null) {
                 workcenterIds.add(window.getWorkcenterId());
@@ -107,7 +107,7 @@ public class ErpMfgScheduleToJobCardProcessor {
      * 下次排产执行时点（日批 job / 手动重触发）自然重试；停机 complete 后窗口关闭 → 自然恢复排产。
      */
     protected boolean isPausedByOpenDowntime(ErpMfgWorkOrder wo, List<ApsLoadSlot> slots,
-                                             Set<Long> openDowntimeWorkcenters) {
+                                              Set<String> openDowntimeWorkcenters) {
         if (openDowntimeWorkcenters.isEmpty()) {
             return false;
         }
@@ -134,11 +134,11 @@ public class ErpMfgScheduleToJobCardProcessor {
             return candidates;
         }
 
-        List<Long> ids = new ArrayList<>(candidates.size());
+        List<String> ids = new ArrayList<>(candidates.size());
         for (ErpMfgWorkOrder wo : candidates) {
             ids.add(wo.getId());
         }
-        Set<Long> scheduledIds = new HashSet<>();
+        Set<String> scheduledIds = new HashSet<>();
         for (ApsLoadSlot slot : fetchSlots(ids)) {
             if (slot.getWorkOrderId() != null) {
                 scheduledIds.add(slot.getWorkOrderId());
@@ -148,7 +148,7 @@ public class ErpMfgScheduleToJobCardProcessor {
             return Collections.emptyList();
         }
 
-        Set<Long> alreadyHasJobCards = new HashSet<>(findWorkOrderIdsWithJobCards(scheduledIds));
+        Set<String> alreadyHasJobCards = new HashSet<>(findWorkOrderIdsWithJobCards(scheduledIds));
         List<ErpMfgWorkOrder> result = new ArrayList<>(effectiveLimit);
         for (ErpMfgWorkOrder wo : candidates) {
             if (!scheduledIds.contains(wo.getId())) {
@@ -189,7 +189,7 @@ public class ErpMfgScheduleToJobCardProcessor {
                     .param(ErpMfgErrors.ARG_WORK_ORDER_CODE, wo.getCode())
                     .param(ErpMfgErrors.ARG_EXISTING_COUNT, existing.size());
         }
-        Set<Long> existingSourceIds = new HashSet<>();
+        Set<String> existingSourceIds = new HashSet<>();
         for (ErpMfgJobCard jc : existing) {
             if (jc.getSourceScheduleId() != null) {
                 existingSourceIds.add(jc.getSourceScheduleId());
@@ -197,7 +197,7 @@ public class ErpMfgScheduleToJobCardProcessor {
         }
         List<ApsLoadSlot> missing = new ArrayList<>();
         for (ApsLoadSlot slot : slots) {
-            Long srcId = slot.getOperationOrderId();
+            String srcId = slot.getOperationOrderId();
             if (srcId == null || !existingSourceIds.contains(srcId)) {
                 missing.add(slot);
             }
@@ -229,7 +229,7 @@ public class ErpMfgScheduleToJobCardProcessor {
     protected void markWorkOrderScheduled(ErpMfgWorkOrder wo, List<ApsLoadSlot> slots) {
         wo.setSourceOrderType(ErpMfgConstants.SOURCE_ORDER_TYPE_APS_SCHEDULE);
         if (wo.getSourceScheduleId() == null && !slots.isEmpty()) {
-            Long firstId = slots.get(0).getOperationOrderId();
+            String firstId = slots.get(0).getOperationOrderId();
             if (firstId != null) {
                 wo.setSourceScheduleId(firstId);
             }
@@ -244,7 +244,7 @@ public class ErpMfgScheduleToJobCardProcessor {
 
     // ---------- 查询辅助（protected，供派生复用与覆盖） ----------
 
-    protected ErpMfgWorkOrder requireWorkOrder(Long workOrderId) {
+    protected ErpMfgWorkOrder requireWorkOrder(String workOrderId) {
         ErpMfgWorkOrder wo = workOrderDao().getEntityById(workOrderId);
         if (wo == null) {
             throw new NopException(ErpMfgErrors.ERR_WORK_ORDER_NOT_FOUND)
@@ -253,7 +253,7 @@ public class ErpMfgScheduleToJobCardProcessor {
         return wo;
     }
 
-    protected List<ApsLoadSlot> fetchSlots(List<Long> workOrderIds) {
+    protected List<ApsLoadSlot> fetchSlots(List<String> workOrderIds) {
         if (apsLoadSourceProviders == null || apsLoadSourceProviders.isEmpty()) {
             return Collections.emptyList();
         }
@@ -272,14 +272,14 @@ public class ErpMfgScheduleToJobCardProcessor {
         return all;
     }
 
-    protected List<ErpMfgJobCard> findJobCardsForWorkOrder(Long workOrderId) {
+    protected List<ErpMfgJobCard> findJobCardsForWorkOrder(String workOrderId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("workOrderId", workOrderId));
         return jobCardDao().findAllByQuery(q);
     }
 
     @SuppressWarnings("unchecked")
-    protected List<Long> findWorkOrderIdsWithJobCards(Set<Long> workOrderIds) {
+    protected List<String> findWorkOrderIdsWithJobCards(Set<String> workOrderIds) {
         if (workOrderIds.isEmpty()) {
             return Collections.emptyList();
         }
@@ -288,7 +288,7 @@ public class ErpMfgScheduleToJobCardProcessor {
         q.setLimit(workOrderIds.size());
         IEntityDao<ErpMfgJobCard> dao = jobCardDao();
         List<ErpMfgJobCard> cards = dao.findAllByQuery(q);
-        Set<Long> ids = new HashSet<>();
+        Set<String> ids = new HashSet<>();
         for (ErpMfgJobCard jc : cards) {
             if (jc.getWorkOrderId() != null) {
                 ids.add(jc.getWorkOrderId());

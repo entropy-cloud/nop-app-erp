@@ -20,7 +20,7 @@ import java.time.LocalDate;
 @DataBean
 public class CrpLoadReportItem {
 
-    private Long workcenterId;
+    private String workcenterId;
     private String workcenterCode;
     private LocalDate loadDate;
     private BigDecimal loadHours;
@@ -29,11 +29,11 @@ public class CrpLoadReportItem {
     private BigDecimal loadRate;
     private Boolean overloaded;
 
-    public Long getWorkcenterId() {
+    public String getWorkcenterId() {
         return workcenterId;
     }
 
-    public void setWorkcenterId(Long workcenterId) {
+    public void setWorkcenterId(String workcenterId) {
         this.workcenterId = workcenterId;
     }
 

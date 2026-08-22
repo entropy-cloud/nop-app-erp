@@ -216,7 +216,7 @@ public class TestErpInvStandardCosting extends JunitAutoTestCase {
 
         // 发布新 FIRMED rollup（新标准 15，businessDate 晚于旧 rollup）→ StandardCostResolver 后续 resolve=15。
         // 模拟制造域 re-rollup / STANDARD_REVALUATION 发布新 FIRMED rollup 后 reverse 跨重估场景。
-        seedFirmedRollup(materialId, new BigDecimal("15"), ConvertHelper.toLong(materialId) * 10000 + 101L,
+        seedFirmedRollup(materialId, new BigDecimal("15"), String.valueOf(ConvertHelper.toLong(materialId) * 10000 + 101L),
                 LocalDate.of(2026, 6, 2));
 
         // 红冲出库：reverse 生成反向入库 8 行，line.unitCost=10（onOutgoing 刷新的旧标准，reverse 透传）
@@ -407,33 +407,32 @@ public class TestErpInvStandardCosting extends JunitAutoTestCase {
         });
     }
 
-    // A3 桥接（bridge-test-122）：mfg ErpMfgCostRollup(RollupLine) 列仍 Long（M3.1 未迁移），String 常量/参数 → toLong seed 值
     private void seedFirmedRollup(String materialId, BigDecimal unitCost) {
-        seedFirmedRollup(materialId, unitCost, ConvertHelper.toLong(materialId) * 10000 + 1, LocalDate.of(2026, 6, 1));
+        seedFirmedRollup(materialId, unitCost, String.valueOf(ConvertHelper.toLong(materialId) * 10000 + 1), LocalDate.of(2026, 6, 1));
     }
 
-    private void seedFirmedRollup(String materialId, BigDecimal unitCost, long headerId, LocalDate businessDate) {
+    private void seedFirmedRollup(String materialId, BigDecimal unitCost, String headerId, LocalDate businessDate) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMfgCostRollup> headerDao = daoProvider.daoFor(ErpMfgCostRollup.class);
             ErpMfgCostRollup header = new ErpMfgCostRollup();
             header.orm_propValueByName("id", headerId);
             header.setCode("ROLLUP-" + materialId + "-" + headerId);
-            header.setOrgId(ConvertHelper.toLong(ORG_ID));
+            header.setOrgId(ORG_ID);
             header.setBusinessDate(businessDate);
             header.orm_propValueByName("status", "FIRMED");
             headerDao.saveEntity(header);
 
             IEntityDao<ErpMfgCostRollupLine> lineDao = daoProvider.daoFor(ErpMfgCostRollupLine.class);
             ErpMfgCostRollupLine line = new ErpMfgCostRollupLine();
-            line.orm_propValueByName("id", headerId + 1);
+            line.orm_propValueByName("id", String.valueOf(ConvertHelper.toLong(headerId) + 1));
             line.setCostRollupId(headerId);
             line.setLineNo(1);
-            line.setMaterialId(ConvertHelper.toLong(materialId));
-            line.setUoMId(ConvertHelper.toLong(UOM_ID));
+            line.setMaterialId(materialId);
+            line.setUoMId(UOM_ID);
             line.setUnitCost(unitCost);
             line.setTotalCost(unitCost);
             line.setMaterialCost(unitCost);
-            line.setCurrencyId(ConvertHelper.toLong(CURRENCY_ID));
+            line.setCurrencyId(CURRENCY_ID);
             lineDao.saveEntity(line);
         });
     }

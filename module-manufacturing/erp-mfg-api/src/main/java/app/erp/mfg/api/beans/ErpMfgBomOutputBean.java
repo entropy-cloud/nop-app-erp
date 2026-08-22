@@ -14,16 +14,16 @@
     public class ErpMfgBomOutputBean {
 
     
-        private Long _id;
+        private String _id;
 
     
         @PropMeta(propId=1)
     
-        public Long getId(){
+        public String getId(){
             return _id;
         }
 
-        public void setId(Long value){
+        public void setId(String value){
             this._id = value;
         }
 
@@ -42,16 +42,16 @@
         }
 
 
-        private Long _productId;
+        private String _productId;
 
     
         @PropMeta(propId=3)
     
-        public Long getProductId(){
+        public String getProductId(){
             return _productId;
         }
 
-        public void setProductId(Long value){
+        public void setProductId(String value){
             this._productId = value;
         }
 

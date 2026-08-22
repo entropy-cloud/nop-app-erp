@@ -12,44 +12,44 @@
     public class ErpMfgJobCardInputBean extends CrudInputBase {
 
     
-        private Long _id;
+        private String _id;
 
     
         @PropMeta(propId=1)
     
-        public Long getId(){
+        public String getId(){
             return _id;
         }
 
-        public void setId(Long value){
+        public void setId(String value){
             this._id = value;
         }
 
 
-        private Long _workOrderId;
+        private String _workOrderId;
 
     
         @PropMeta(propId=2)
     
-        public Long getWorkOrderId(){
+        public String getWorkOrderId(){
             return _workOrderId;
         }
 
-        public void setWorkOrderId(Long value){
+        public void setWorkOrderId(String value){
             this._workOrderId = value;
         }
 
 
-        private Long _operationId;
+        private String _operationId;
 
     
         @PropMeta(propId=3)
     
-        public Long getOperationId(){
+        public String getOperationId(){
             return _operationId;
         }
 
-        public void setOperationId(Long value){
+        public void setOperationId(String value){
             this._operationId = value;
         }
 
@@ -124,16 +124,16 @@
         }
 
 
-        private Long _workcenterId;
+        private String _workcenterId;
 
     
         @PropMeta(propId=9)
     
-        public Long getWorkcenterId(){
+        public String getWorkcenterId(){
             return _workcenterId;
         }
 
-        public void setWorkcenterId(Long value){
+        public void setWorkcenterId(String value){
             this._workcenterId = value;
         }
 
@@ -194,16 +194,16 @@
         }
 
 
-        private Long _sourceScheduleId;
+        private String _sourceScheduleId;
 
     
         @PropMeta(propId=20)
     
-        public Long getSourceScheduleId(){
+        public String getSourceScheduleId(){
             return _sourceScheduleId;
         }
 
-        public void setSourceScheduleId(Long value){
+        public void setSourceScheduleId(String value){
             this._sourceScheduleId = value;
         }
 

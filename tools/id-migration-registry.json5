@@ -172,10 +172,10 @@
       "longParams": [],
       "refDomain": "manufacturing",
       "evidence": "module-aps/erp-aps-service/src/main/java/app/erp/aps/service/atpctp/ErpApsAtpCtpServiceImpl.java:15",
-      "note": "符号使用行含 id 语境（见 idContextLines）",
+      "note": "已退役：M3.1 mfg plan 2026-08-22-1302-3 Phase 2 兑付（mfg String 翻转后 aps 侧桥接点移除/核证 + aps 7 模块链重建绿 + aps 76/76 复跑维持）",
       "deferredUntil": "M3.1",
       "retireOwner": "M3.1",
-      "status": "active"
+      "status": "retired"
     },
     {
       "id": "bridge-main-013",
@@ -187,10 +187,10 @@
       "longParams": [],
       "refDomain": "manufacturing",
       "evidence": "module-aps/erp-aps-service/src/main/java/app/erp/aps/service/atpctp/ErpApsAtpCtpServiceImpl.java:16",
-      "note": "符号使用行含 id 语境（见 idContextLines）",
+      "note": "已退役：M3.1 mfg plan 2026-08-22-1302-3 Phase 2 兑付（mfg String 翻转后 aps 侧桥接点移除/核证 + aps 7 模块链重建绿 + aps 76/76 复跑维持）",
       "deferredUntil": "M3.1",
       "retireOwner": "M3.1",
-      "status": "active"
+      "status": "retired"
     },
     {
       "id": "bridge-main-014",
@@ -202,10 +202,10 @@
       "longParams": [],
       "refDomain": "manufacturing",
       "evidence": "module-aps/erp-aps-service/src/main/java/app/erp/aps/service/loadsource/ApsLoadSourceProvider.java:5",
-      "note": "类型级引用（id 语境经变量流转时由编译器驱动/域 plan grep 定位调用点）",
+      "note": "已退役：M3.1 mfg plan 2026-08-22-1302-3 Phase 2 兑付（mfg String 翻转后 aps 侧桥接点移除/核证 + aps 7 模块链重建绿 + aps 76/76 复跑维持）",
       "deferredUntil": "M3.1",
       "retireOwner": "M3.1",
-      "status": "active"
+      "status": "retired"
     },
     {
       "id": "bridge-main-015",
@@ -217,10 +217,10 @@
       "longParams": [],
       "refDomain": "manufacturing",
       "evidence": "module-aps/erp-aps-service/src/main/java/app/erp/aps/service/loadsource/ApsLoadSourceProvider.java:6",
-      "note": "类型级引用（id 语境经变量流转时由编译器驱动/域 plan grep 定位调用点）",
+      "note": "已退役：M3.1 mfg plan 2026-08-22-1302-3 Phase 2 兑付（mfg String 翻转后 aps 侧桥接点移除/核证 + aps 7 模块链重建绿 + aps 76/76 复跑维持）",
       "deferredUntil": "M3.1",
       "retireOwner": "M3.1",
-      "status": "active"
+      "status": "retired"
     },
     {
       "id": "bridge-main-016",
@@ -247,10 +247,10 @@
       "longParams": [],
       "refDomain": "manufacturing",
       "evidence": "module-aps/erp-aps-service/src/main/java/app/erp/aps/service/processor/ErpApsAutoDispatchProcessor.java:11",
-      "note": "类型级引用（id 语境经变量流转时由编译器驱动/域 plan grep 定位调用点）",
+      "note": "已退役：M3.1 mfg plan 2026-08-22-1302-3 Phase 2 兑付（mfg String 翻转后 aps 侧桥接点移除/核证 + aps 7 模块链重建绿 + aps 76/76 复跑维持）",
       "deferredUntil": "M3.1",
       "retireOwner": "M3.1",
-      "status": "active"
+      "status": "retired"
     },
     {
       "id": "bridge-main-018",
@@ -262,10 +262,10 @@
       "longParams": [],
       "refDomain": "manufacturing",
       "evidence": "module-aps/erp-aps-service/src/main/java/app/erp/aps/service/processor/ErpApsAutoDispatchProcessor.java:12",
-      "note": "符号使用行含 id 语境（见 idContextLines）",
+      "note": "已退役：M3.1 mfg plan 2026-08-22-1302-3 Phase 2 兑付（mfg String 翻转后 aps 侧桥接点移除/核证 + aps 7 模块链重建绿 + aps 76/76 复跑维持）",
       "deferredUntil": "M3.1",
       "retireOwner": "M3.1",
-      "status": "active"
+      "status": "retired"
     },
     {
       "id": "bridge-main-019",
@@ -277,10 +277,10 @@
       "longParams": [],
       "refDomain": "manufacturing",
       "evidence": "module-aps/erp-aps-service/src/main/java/app/erp/aps/service/processor/ErpApsAutoDispatchProcessor.java:13",
-      "note": "类型级引用（id 语境经变量流转时由编译器驱动/域 plan grep 定位调用点）",
+      "note": "已退役：M3.1 mfg plan 2026-08-22-1302-3 Phase 2 兑付（mfg String 翻转后 aps 侧桥接点移除/核证 + aps 7 模块链重建绿 + aps 76/76 复跑维持）",
       "deferredUntil": "M3.1",
       "retireOwner": "M3.1",
-      "status": "active"
+      "status": "retired"
     },
     {
       "id": "bridge-main-020",
@@ -292,10 +292,10 @@
       "longParams": [],
       "refDomain": "manufacturing",
       "evidence": "module-aps/erp-aps-service/src/main/java/app/erp/aps/service/processor/ErpApsAutoDispatchProcessor.java:14",
-      "note": "类型级引用（id 语境经变量流转时由编译器驱动/域 plan grep 定位调用点）",
+      "note": "已退役：M3.1 mfg plan 2026-08-22-1302-3 Phase 2 兑付（mfg String 翻转后 aps 侧桥接点移除/核证 + aps 7 模块链重建绿 + aps 76/76 复跑维持）",
       "deferredUntil": "M3.1",
       "retireOwner": "M3.1",
-      "status": "active"
+      "status": "retired"
     },
     {
       "id": "bridge-main-021",
@@ -307,10 +307,10 @@
       "longParams": [],
       "refDomain": "manufacturing",
       "evidence": "module-aps/erp-aps-service/src/main/java/app/erp/aps/service/processor/ErpApsWorkOrderToOperationProcessor.java:8",
-      "note": "类型级引用（id 语境经变量流转时由编译器驱动/域 plan grep 定位调用点）",
+      "note": "已退役：M3.1 mfg plan 2026-08-22-1302-3 Phase 2 兑付（mfg String 翻转后 aps 侧桥接点移除/核证 + aps 7 模块链重建绿 + aps 76/76 复跑维持）",
       "deferredUntil": "M3.1",
       "retireOwner": "M3.1",
-      "status": "active"
+      "status": "retired"
     },
     {
       "id": "bridge-main-022",
@@ -322,10 +322,10 @@
       "longParams": [],
       "refDomain": "manufacturing",
       "evidence": "module-aps/erp-aps-service/src/main/java/app/erp/aps/service/processor/ErpApsWorkOrderToOperationProcessor.java:9",
-      "note": "符号使用行含 id 语境（见 idContextLines）",
+      "note": "已退役：M3.1 mfg plan 2026-08-22-1302-3 Phase 2 兑付（mfg String 翻转后 aps 侧桥接点移除/核证 + aps 7 模块链重建绿 + aps 76/76 复跑维持）",
       "deferredUntil": "M3.1",
       "retireOwner": "M3.1",
-      "status": "active"
+      "status": "retired"
     },
     {
       "id": "bridge-main-023",
@@ -337,10 +337,10 @@
       "longParams": [],
       "refDomain": "manufacturing",
       "evidence": "module-aps/erp-aps-service/src/main/java/app/erp/aps/service/processor/ErpApsWorkOrderToOperationProcessor.java:10",
-      "note": "类型级引用（id 语境经变量流转时由编译器驱动/域 plan grep 定位调用点）",
+      "note": "已退役：M3.1 mfg plan 2026-08-22-1302-3 Phase 2 兑付（mfg String 翻转后 aps 侧桥接点移除/核证 + aps 7 模块链重建绿 + aps 76/76 复跑维持）",
       "deferredUntil": "M3.1",
       "retireOwner": "M3.1",
-      "status": "active"
+      "status": "retired"
     },
     {
       "id": "bridge-main-024",
@@ -1068,10 +1068,10 @@
       "longParams": [],
       "refDomain": "manufacturing",
       "evidence": "module-inventory/erp-inv-service/src/main/java/app/erp/inv/service/costing/CostAdjustmentService.java:13",
-      "note": "类型级引用（id 语境经变量流转时由编译器驱动/域 plan grep 定位调用点）",
+      "note": "已退役：M3.1 mfg plan 2026-08-22-1302-3 Phase 2 兑付（mfg String 翻转后 inv 侧桥接点移除/核证 + inv 7 模块链重建绿 + inv 235/235 复跑维持）",
       "deferredUntil": "M3.1",
       "retireOwner": "M3.1",
-      "status": "active"
+      "status": "retired"
     },
     {
       "id": "bridge-main-072",
@@ -1083,10 +1083,10 @@
       "longParams": [],
       "refDomain": "manufacturing",
       "evidence": "module-inventory/erp-inv-service/src/main/java/app/erp/inv/service/costing/CostAdjustmentService.java:14",
-      "note": "类型级引用（id 语境经变量流转时由编译器驱动/域 plan grep 定位调用点）",
+      "note": "已退役：M3.1 mfg plan 2026-08-22-1302-3 Phase 2 兑付（mfg String 翻转后 inv 侧桥接点移除/核证 + inv 7 模块链重建绿 + inv 235/235 复跑维持）",
       "deferredUntil": "M3.1",
       "retireOwner": "M3.1",
-      "status": "active"
+      "status": "retired"
     },
     {
       "id": "bridge-main-073",
@@ -1098,10 +1098,10 @@
       "longParams": [],
       "refDomain": "manufacturing",
       "evidence": "module-inventory/erp-inv-service/src/main/java/app/erp/inv/service/costing/StandardCostResolver.java:7",
-      "note": "类型级引用（id 语境经变量流转时由编译器驱动/域 plan grep 定位调用点）",
+      "note": "已退役：M3.1 mfg plan 2026-08-22-1302-3 Phase 2 兑付（mfg String 翻转后 inv 侧桥接点移除/核证 + inv 7 模块链重建绿 + inv 235/235 复跑维持）",
       "deferredUntil": "M3.1",
       "retireOwner": "M3.1",
-      "status": "active"
+      "status": "retired"
     },
     {
       "id": "bridge-main-074",
@@ -1113,10 +1113,10 @@
       "longParams": [],
       "refDomain": "manufacturing",
       "evidence": "module-inventory/erp-inv-service/src/main/java/app/erp/inv/service/costing/StandardCostResolver.java:8",
-      "note": "类型级引用（id 语境经变量流转时由编译器驱动/域 plan grep 定位调用点）",
+      "note": "已退役：M3.1 mfg plan 2026-08-22-1302-3 Phase 2 兑付（mfg String 翻转后 inv 侧桥接点移除/核证 + inv 7 模块链重建绿 + inv 235/235 复跑维持）",
       "deferredUntil": "M3.1",
       "retireOwner": "M3.1",
-      "status": "active"
+      "status": "retired"
     },
     {
       "id": "bridge-main-075",
@@ -1203,10 +1203,10 @@
       "longParams": [],
       "refDomain": "manufacturing",
       "evidence": "module-maintenance/erp-mnt-service/src/main/java/app/erp/mnt/service/support/OeeCalculator.java:3",
-      "note": "类型级引用（id 语境经变量流转时由编译器驱动/域 plan grep 定位调用点）",
+      "note": "已退役：M3.1 mfg plan 2026-08-22-1302-3 Phase 2 兑付（mnt 侧 OeeCalculator workcenterId 实值桥 toLong → String 直传 + 081/082 核证零转换点 + mnt 7 模块链重建绿 + mnt 156/156 复跑维持）",
       "deferredUntil": "M3.1",
       "retireOwner": "M3.1",
-      "status": "active"
+      "status": "retired"
     },
     {
       "id": "bridge-main-081",
@@ -1218,10 +1218,10 @@
       "longParams": [],
       "refDomain": "manufacturing",
       "evidence": "module-maintenance/erp-mnt-service/src/main/java/app/erp/mnt/service/support/OeeCalculator.java:4",
-      "note": "类型级引用（id 语境经变量流转时由编译器驱动/域 plan grep 定位调用点）",
+      "note": "已退役：M3.1 mfg plan 2026-08-22-1302-3 Phase 2 兑付（mnt 侧 OeeCalculator workcenterId 实值桥 toLong → String 直传 + 081/082 核证零转换点 + mnt 7 模块链重建绿 + mnt 156/156 复跑维持）",
       "deferredUntil": "M3.1",
       "retireOwner": "M3.1",
-      "status": "active"
+      "status": "retired"
     },
     {
       "id": "bridge-main-082",
@@ -1233,10 +1233,10 @@
       "longParams": [],
       "refDomain": "manufacturing",
       "evidence": "module-maintenance/erp-mnt-service/src/main/java/app/erp/mnt/service/support/OeeCalculator.java:5",
-      "note": "类型级引用（id 语境经变量流转时由编译器驱动/域 plan grep 定位调用点）",
+      "note": "已退役：M3.1 mfg plan 2026-08-22-1302-3 Phase 2 兑付（mnt 侧 OeeCalculator workcenterId 实值桥 toLong → String 直传 + 081/082 核证零转换点 + mnt 7 模块链重建绿 + mnt 156/156 复跑维持）",
       "deferredUntil": "M3.1",
       "retireOwner": "M3.1",
-      "status": "active"
+      "status": "retired"
     },
     {
       "id": "bridge-main-083",
@@ -1248,10 +1248,10 @@
       "longParams": [],
       "refDomain": "manufacturing",
       "evidence": "module-maintenance/erp-mnt-service/src/main/java/app/erp/mnt/service/support/OeeCalculator.java:6",
-      "note": "类型级引用（id 语境经变量流转时由编译器驱动/域 plan grep 定位调用点）",
+      "note": "已退役：M3.1 mfg plan 2026-08-22-1302-3 Phase 2 兑付（mnt 侧 OeeCalculator workcenterId 实值桥 toLong → String 直传 + 081/082 核证零转换点 + mnt 7 模块链重建绿 + mnt 156/156 复跑维持）",
       "deferredUntil": "M3.1",
       "retireOwner": "M3.1",
-      "status": "active"
+      "status": "retired"
     },
     {
       "id": "bridge-main-084",
@@ -1263,10 +1263,10 @@
       "longParams": [],
       "refDomain": "manufacturing",
       "evidence": "module-maintenance/erp-mnt-service/src/main/java/app/erp/mnt/service/support/OeeCalculator.java:7",
-      "note": "类型级引用（id 语境经变量流转时由编译器驱动/域 plan grep 定位调用点）",
+      "note": "已退役：M3.1 mfg plan 2026-08-22-1302-3 Phase 2 兑付（mnt 侧 OeeCalculator workcenterId 实值桥 toLong → String 直传 + 081/082 核证零转换点 + mnt 7 模块链重建绿 + mnt 156/156 复跑维持）",
       "deferredUntil": "M3.1",
       "retireOwner": "M3.1",
-      "status": "active"
+      "status": "retired"
     },
     {
       "id": "bridge-main-085",
@@ -1559,7 +1559,7 @@
       ],
       "deferredUntil": "M3.9",
       "retireOwner": "M3.9",
-      "note": "早域 test 引用晚域——早域 plan Phase 3 消费（本域测试适配）；晚域翻转时复核。已退役：M3.9 aps plan 2026-08-21-2025-1 Phase 3 兑付（String.valueOf 桥 + mfg/inv 种子保持 Long），晚域 M2.2/M3.1 翻转时移除桥接点",
+      "note": "早域 test 引用晚域——早域 plan Phase 3 消费（本域测试适配）；晚域翻转时复核。已退役：M3.9 aps plan 2026-08-21-2025-1 Phase 3 兑付（String.valueOf 桥 + mfg/inv 种子保持 Long），晚域 M2.2/M3.1 翻转时移除桥接点；mfg 半边已兑付：M3.1 mfg plan 2026-08-22-1302-3 Phase 3（mfg 种子 String 化 + String.valueOf 局部桥移除 + bridge 指针注释删除；aps 76/76 复跑维持）",
       "status": "retired"
     },
     {
@@ -1576,7 +1576,7 @@
       ],
       "deferredUntil": "M3.9",
       "retireOwner": "M3.9",
-      "note": "早域 test 引用晚域——早域 plan Phase 3 消费（本域测试适配）；晚域翻转时复核。已退役：M3.9 aps plan 2026-08-21-2025-1 Phase 3 兑付（String.valueOf 桥 + mfg/inv 种子保持 Long），晚域 M2.2/M3.1 翻转时移除桥接点",
+      "note": "早域 test 引用晚域——早域 plan Phase 3 消费（本域测试适配）；晚域翻转时复核。已退役：M3.9 aps plan 2026-08-21-2025-1 Phase 3 兑付（String.valueOf 桥 + mfg/inv 种子保持 Long），晚域 M2.2/M3.1 翻转时移除桥接点；mfg 半边已兑付：M3.1 mfg plan 2026-08-22-1302-3 Phase 3（mfg 种子 String 化 + String.valueOf 局部桥移除 + bridge 指针注释删除；aps 76/76 复跑维持）",
       "status": "retired"
     },
     {
@@ -1593,7 +1593,7 @@
       ],
       "deferredUntil": "M3.9",
       "retireOwner": "M3.9",
-      "note": "早域 test 引用晚域——早域 plan Phase 3 消费（本域测试适配）；晚域翻转时复核。已退役：M3.9 aps plan 2026-08-21-2025-1 Phase 3 兑付（String.valueOf 桥 + mfg/inv 种子保持 Long），晚域 M2.2/M3.1 翻转时移除桥接点",
+      "note": "早域 test 引用晚域——早域 plan Phase 3 消费（本域测试适配）；晚域翻转时复核。已退役：M3.9 aps plan 2026-08-21-2025-1 Phase 3 兑付（String.valueOf 桥 + mfg/inv 种子保持 Long），晚域 M2.2/M3.1 翻转时移除桥接点；mfg 半边已兑付：M3.1 mfg plan 2026-08-22-1302-3 Phase 3（mfg 种子 String 化 + String.valueOf 局部桥移除 + bridge 指针注释删除；aps 76/76 复跑维持）",
       "status": "retired"
     },
     {
@@ -1615,7 +1615,7 @@
       ],
       "deferredUntil": "M3.9",
       "retireOwner": "M3.9",
-      "note": "早域 test 引用晚域——早域 plan Phase 3 消费（本域测试适配）；晚域翻转时复核。已退役：M3.9 aps plan 2026-08-21-2025-1 Phase 3 兑付（String.valueOf 桥 + mfg/inv 种子保持 Long），晚域 M2.2/M3.1 翻转时移除桥接点",
+      "note": "早域 test 引用晚域——早域 plan Phase 3 消费（本域测试适配）；晚域翻转时复核。已退役：M3.9 aps plan 2026-08-21-2025-1 Phase 3 兑付（String.valueOf 桥 + mfg/inv 种子保持 Long），晚域 M2.2/M3.1 翻转时移除桥接点；mfg 半边已兑付：M3.1 mfg plan 2026-08-22-1302-3 Phase 3（mfg 种子 String 化 + String.valueOf 局部桥移除 + bridge 指针注释删除；aps 76/76 复跑维持）",
       "status": "retired"
     },
     {
@@ -1846,7 +1846,7 @@
       ],
       "deferredUntil": "M2.2",
       "retireOwner": "M2.2",
-      "note": "早域 test 引用晚域——早域 plan Phase 3 消费（本域测试适配）；晚域翻转时复核。已退役：M2.2 inv plan 2026-08-22-0731-2 Phase 3 兑付（inv String 化，mfg CostRollupLine.materialId 查询值 toLong 局部桥，见 TestErpInvCostAdjust.java:496 桥注释），桥接点移除归 M3.1",
+      "note": "早域 test 引用晚域——早域 plan Phase 3 消费（本域测试适配）；晚域翻转时复核。已退役：M2.2 inv plan 2026-08-22-0731-2 Phase 3 兑付（inv String 化，mfg CostRollupLine.materialId 查询值 toLong 局部桥，见 TestErpInvCostAdjust.java:496 桥注释），桥接点移除归 M3.1；mfg 半边已兑付：M3.1 mfg plan 2026-08-22-1302-3 Phase 3（mfg CostRollup 种子 String 化 + toLong 桥与指针注释移除；inv 235/235 复跑维持）",
 
       "status": "retired"
     },
@@ -1903,7 +1903,7 @@
       ],
       "deferredUntil": "M2.2",
       "retireOwner": "M2.2",
-      "note": "早域 test 引用晚域——早域 plan Phase 3 消费（本域测试适配）；晚域翻转时复核。已退役：M2.2 inv plan 2026-08-22-0731-2 Phase 3 兑付（inv String 化，mfg CostRollup(RollupLine) seed 值 toLong 局部桥，见 TestErpInvStandardCosting.java:410 桥注释），桥接点移除归 M3.1",
+      "note": "早域 test 引用晚域——早域 plan Phase 3 消费（本域测试适配）；晚域翻转时复核。已退役：M2.2 inv plan 2026-08-22-0731-2 Phase 3 兑付（inv String 化，mfg CostRollup(RollupLine) seed 值 toLong 局部桥，见 TestErpInvStandardCosting.java:410 桥注释），桥接点移除归 M3.1；mfg 半边已兑付：M3.1 mfg plan 2026-08-22-1302-3 Phase 3（mfg CostRollup 种子 String 化 + toLong 桥与指针注释移除；inv 235/235 复跑维持）",
 
       "status": "retired"
     },
@@ -1962,7 +1962,7 @@
       ],
       "deferredUntil": "M3.2",
       "retireOwner": "M3.2",
-      "note": "已退役：M3.2 mnt plan 2026-08-22-0731-3 Phase 3 兑付（mnt 种子 String 化 + mfg/qa 种子保持 Long + seedEquipment workcenterId 经 String.valueOf 局部桥接（双向指针注释在文件内，退役 owner M3.1/M2.3））；TestErpMntOee 9/9 绿。qa 半边已兑付：M2.3 qa plan 2026-08-22-1302-2 Phase 3（seedInspection String 化 + materialId String.valueOf(MATERIAL_1) 局部桥 + 注释更新；mnt 156/156 复跑维持）；mfg 半边归 M3.1",
+      "note": "已退役：M3.2 mnt plan 2026-08-22-0731-3 Phase 3 兑付（mnt 种子 String 化 + mfg/qa 种子保持 Long + seedEquipment workcenterId 经 String.valueOf 局部桥接（双向指针注释在文件内，退役 owner M3.1/M2.3））；TestErpMntOee 9/9 绿。qa 半边已兑付：M2.3 qa plan 2026-08-22-1302-2 Phase 3（seedInspection String 化 + materialId String.valueOf(MATERIAL_1) 局部桥 + 注释更新；mnt 156/156 复跑维持）；mfg 半边归 M3.1；mfg 半边已兑付：M3.1 mfg plan 2026-08-22-1302-3 Phase 3（mfg 种子 String 化 + String.valueOf(WC) 局部桥移除；mnt 156/156 复跑维持）",
       "status": "retired"
     },
     {
@@ -1982,8 +1982,8 @@
       ],
       "deferredUntil": "M3.1",
       "retireOwner": "M3.1",
-      "note": "早域 test 引用晚域——早域 plan Phase 3 消费（本域测试适配）；晚域翻转时复核",
-      "status": "active"
+      "note": "已退役：M3.1 mfg plan 2026-08-22-1302-3 Phase 3 兑付（pur/sal 局部桥形态：断言与种子 ConvertHelper.toLong 桥 + 双向指针注释；退役 owner M2.5（pur）/M2.6（sal）晚域翻转时移除）",
+      "status": "retired"
     },
     {
       "id": "bridge-test-127",
@@ -2000,8 +2000,8 @@
       ],
       "deferredUntil": "M3.1",
       "retireOwner": "M3.1",
-      "note": "早域 test 引用晚域——早域 plan Phase 3 消费（本域测试适配）；晚域翻转时复核",
-      "status": "active"
+      "note": "已退役：M3.1 mfg plan 2026-08-22-1302-3 Phase 3 兑付（pur/sal 局部桥形态：断言与种子 ConvertHelper.toLong 桥 + 双向指针注释；退役 owner M2.5（pur）/M2.6（sal）晚域翻转时移除）",
+      "status": "retired"
     },
     {
       "id": "bridge-test-128",

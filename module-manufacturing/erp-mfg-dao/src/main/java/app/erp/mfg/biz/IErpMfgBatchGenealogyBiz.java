@@ -23,14 +23,14 @@ public interface IErpMfgBatchGenealogyBiz extends ICrudBiz<ErpMfgBatchGenealogy>
      * 前向追溯：给定产出批次，查找所有直接输入批次（成品→原料单级）。
      */
     @BizQuery
-    List<ErpMfgBatchGenealogy> forwardTrace(@Name("outputLotId") Long outputLotId,
+    List<ErpMfgBatchGenealogy> forwardTrace(@Name("outputLotId") String outputLotId,
                                             IServiceContext context);
 
     /**
      * 反向追溯：给定输入批次，查找所有直接产出批次（原料→成品单级）。
      */
     @BizQuery
-    List<ErpMfgBatchGenealogy> backwardTrace(@Name("inputLotId") Long inputLotId,
+    List<ErpMfgBatchGenealogy> backwardTrace(@Name("inputLotId") String inputLotId,
                                              IServiceContext context);
 
     /**
@@ -41,7 +41,7 @@ public interface IErpMfgBatchGenealogyBiz extends ICrudBiz<ErpMfgBatchGenealogy>
      * @param maxDepth  递归深度上限（null 取配置 erp-mfg.genealogy-max-trace-depth 默认 50）
      */
     @BizQuery
-    List<ErpMfgBatchGenealogy> traceChain(@Name("lotId") Long lotId,
+    List<ErpMfgBatchGenealogy> traceChain(@Name("lotId") String lotId,
                                           @Name("direction") String direction,
                                           @Name("maxDepth") Integer maxDepth,
                                           IServiceContext context);
@@ -52,5 +52,5 @@ public interface IErpMfgBatchGenealogyBiz extends ICrudBiz<ErpMfgBatchGenealogy>
      * <p>降级说明：当前仅返回受影响成品批次集合；位置/去向查询归 inventory successor。
      */
     @BizQuery
-    RecallReport recallReport(@Name("lotId") Long lotId, IServiceContext context);
+    RecallReport recallReport(@Name("lotId") String lotId, IServiceContext context);
 }

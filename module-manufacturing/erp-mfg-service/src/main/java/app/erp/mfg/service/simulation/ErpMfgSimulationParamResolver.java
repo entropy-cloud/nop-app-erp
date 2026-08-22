@@ -27,14 +27,14 @@ public class ErpMfgSimulationParamResolver implements IErpMfgSimulationParamReso
     @Inject
     IDaoProvider daoProvider;
 
-    private final Map<Long, List<ErpMfgMrpScenarioParam>> cache = new HashMap<>();
+    private final Map<String, List<ErpMfgMrpScenarioParam>> cache = new HashMap<>();
 
     public void setDaoProvider(IDaoProvider daoProvider) {
         this.daoProvider = daoProvider;
     }
 
     @Override
-    public BigDecimal resolveOverride(Long scenarioId, Long materialId, String paramType) {
+    public BigDecimal resolveOverride(String scenarioId, String materialId, String paramType) {
         if (scenarioId == null || paramType == null) {
             return null;
         }
@@ -60,7 +60,7 @@ public class ErpMfgSimulationParamResolver implements IErpMfgSimulationParamReso
     }
 
     @Override
-    public List<ErpMfgMrpScenarioParam> loadParams(Long scenarioId) {
+    public List<ErpMfgMrpScenarioParam> loadParams(String scenarioId) {
         if (scenarioId == null) {
             return java.util.Collections.emptyList();
         }
@@ -76,7 +76,7 @@ public class ErpMfgSimulationParamResolver implements IErpMfgSimulationParamReso
         }
     }
 
-    private List<ErpMfgMrpScenarioParam> doLoadParams(Long scenarioId) {
+    private List<ErpMfgMrpScenarioParam> doLoadParams(String scenarioId) {
         IEntityDao<ErpMfgMrpScenarioParam> dao = daoProvider.daoFor(ErpMfgMrpScenarioParam.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("scenarioId", scenarioId));

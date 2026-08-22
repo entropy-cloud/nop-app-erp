@@ -186,13 +186,13 @@ public class _ErpMfgJobCard extends DynamicOrmEntity{
 
     
     /* ID: ID */
-    private java.lang.Long _id;
+    private java.lang.String _id;
     
     /* 工单ID: WORK_ORDER_ID */
-    private java.lang.Long _workOrderId;
+    private java.lang.String _workOrderId;
     
     /* 工序ID: OPERATION_ID */
-    private java.lang.Long _operationId;
+    private java.lang.String _operationId;
     
     /* 行号: LINE_NO */
     private java.lang.Integer _lineNo;
@@ -210,7 +210,7 @@ public class _ErpMfgJobCard extends DynamicOrmEntity{
     private java.lang.String _status;
     
     /* 工作中心: WORKCENTER_ID */
-    private java.lang.Long _workcenterId;
+    private java.lang.String _workcenterId;
     
     /* 实际开始时间: ACTUAL_START_TIME */
     private java.sql.Timestamp _actualStartTime;
@@ -243,7 +243,7 @@ public class _ErpMfgJobCard extends DynamicOrmEntity{
     private java.sql.Timestamp _updateTime;
     
     /* APS排程来源(弱参照): SOURCE_SCHEDULE_ID */
-    private java.lang.Long _sourceScheduleId;
+    private java.lang.String _sourceScheduleId;
     
 
     public _ErpMfgJobCard(){
@@ -391,9 +391,9 @@ public class _ErpMfgJobCard extends DynamicOrmEntity{
         switch(propId){
         
             case PROP_ID_id:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_id));
                }
                setId(typedValue);
@@ -401,9 +401,9 @@ public class _ErpMfgJobCard extends DynamicOrmEntity{
             }
         
             case PROP_ID_workOrderId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_workOrderId));
                }
                setWorkOrderId(typedValue);
@@ -411,9 +411,9 @@ public class _ErpMfgJobCard extends DynamicOrmEntity{
             }
         
             case PROP_ID_operationId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_operationId));
                }
                setOperationId(typedValue);
@@ -471,9 +471,9 @@ public class _ErpMfgJobCard extends DynamicOrmEntity{
             }
         
             case PROP_ID_workcenterId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_workcenterId));
                }
                setWorkcenterId(typedValue);
@@ -581,9 +581,9 @@ public class _ErpMfgJobCard extends DynamicOrmEntity{
             }
         
             case PROP_ID_sourceScheduleId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_sourceScheduleId));
                }
                setSourceScheduleId(typedValue);
@@ -601,21 +601,21 @@ public class _ErpMfgJobCard extends DynamicOrmEntity{
         
             case PROP_ID_id:{
                onInitProp(propId);
-               this._id = (java.lang.Long)value;
+               this._id = (java.lang.String)value;
                orm_id(); // 如果是设置主键字段，则触发watcher
                break;
             }
         
             case PROP_ID_workOrderId:{
                onInitProp(propId);
-               this._workOrderId = (java.lang.Long)value;
+               this._workOrderId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_operationId:{
                onInitProp(propId);
-               this._operationId = (java.lang.Long)value;
+               this._operationId = (java.lang.String)value;
                
                break;
             }
@@ -657,7 +657,7 @@ public class _ErpMfgJobCard extends DynamicOrmEntity{
         
             case PROP_ID_workcenterId:{
                onInitProp(propId);
-               this._workcenterId = (java.lang.Long)value;
+               this._workcenterId = (java.lang.String)value;
                
                break;
             }
@@ -734,7 +734,7 @@ public class _ErpMfgJobCard extends DynamicOrmEntity{
         
             case PROP_ID_sourceScheduleId:{
                onInitProp(propId);
-               this._sourceScheduleId = (java.lang.Long)value;
+               this._sourceScheduleId = (java.lang.String)value;
                
                break;
             }
@@ -748,7 +748,7 @@ public class _ErpMfgJobCard extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final java.lang.Long getId(){
+    public final java.lang.String getId(){
          onPropGet(PROP_ID_id);
          return _id;
     }
@@ -756,7 +756,7 @@ public class _ErpMfgJobCard extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final void setId(java.lang.Long value){
+    public final void setId(java.lang.String value){
         if(onPropSet(PROP_ID_id,value)){
             this._id = value;
             internalClearRefs(PROP_ID_id);
@@ -767,7 +767,7 @@ public class _ErpMfgJobCard extends DynamicOrmEntity{
     /**
      * 工单ID: WORK_ORDER_ID
      */
-    public final java.lang.Long getWorkOrderId(){
+    public final java.lang.String getWorkOrderId(){
          onPropGet(PROP_ID_workOrderId);
          return _workOrderId;
     }
@@ -775,7 +775,7 @@ public class _ErpMfgJobCard extends DynamicOrmEntity{
     /**
      * 工单ID: WORK_ORDER_ID
      */
-    public final void setWorkOrderId(java.lang.Long value){
+    public final void setWorkOrderId(java.lang.String value){
         if(onPropSet(PROP_ID_workOrderId,value)){
             this._workOrderId = value;
             internalClearRefs(PROP_ID_workOrderId);
@@ -786,7 +786,7 @@ public class _ErpMfgJobCard extends DynamicOrmEntity{
     /**
      * 工序ID: OPERATION_ID
      */
-    public final java.lang.Long getOperationId(){
+    public final java.lang.String getOperationId(){
          onPropGet(PROP_ID_operationId);
          return _operationId;
     }
@@ -794,7 +794,7 @@ public class _ErpMfgJobCard extends DynamicOrmEntity{
     /**
      * 工序ID: OPERATION_ID
      */
-    public final void setOperationId(java.lang.Long value){
+    public final void setOperationId(java.lang.String value){
         if(onPropSet(PROP_ID_operationId,value)){
             this._operationId = value;
             internalClearRefs(PROP_ID_operationId);
@@ -900,7 +900,7 @@ public class _ErpMfgJobCard extends DynamicOrmEntity{
     /**
      * 工作中心: WORKCENTER_ID
      */
-    public final java.lang.Long getWorkcenterId(){
+    public final java.lang.String getWorkcenterId(){
          onPropGet(PROP_ID_workcenterId);
          return _workcenterId;
     }
@@ -908,7 +908,7 @@ public class _ErpMfgJobCard extends DynamicOrmEntity{
     /**
      * 工作中心: WORKCENTER_ID
      */
-    public final void setWorkcenterId(java.lang.Long value){
+    public final void setWorkcenterId(java.lang.String value){
         if(onPropSet(PROP_ID_workcenterId,value)){
             this._workcenterId = value;
             internalClearRefs(PROP_ID_workcenterId);
@@ -1109,7 +1109,7 @@ public class _ErpMfgJobCard extends DynamicOrmEntity{
     /**
      * APS排程来源(弱参照): SOURCE_SCHEDULE_ID
      */
-    public final java.lang.Long getSourceScheduleId(){
+    public final java.lang.String getSourceScheduleId(){
          onPropGet(PROP_ID_sourceScheduleId);
          return _sourceScheduleId;
     }
@@ -1117,7 +1117,7 @@ public class _ErpMfgJobCard extends DynamicOrmEntity{
     /**
      * APS排程来源(弱参照): SOURCE_SCHEDULE_ID
      */
-    public final void setSourceScheduleId(java.lang.Long value){
+    public final void setSourceScheduleId(java.lang.String value){
         if(onPropSet(PROP_ID_sourceScheduleId,value)){
             this._sourceScheduleId = value;
             internalClearRefs(PROP_ID_sourceScheduleId);

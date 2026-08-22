@@ -19,12 +19,12 @@ public class ErpMfgMrpScenarioPromoteToFormalPlanProcessor {
     @Inject
     SimulationMrpEngine simulationMrpEngine;
 
-    public ErpMfgMrpPlan promoteToFormalPlan(@Name("scenarioVersionId") Long scenarioVersionId, IServiceContext context) {
+    public ErpMfgMrpPlan promoteToFormalPlan(@Name("scenarioVersionId") String scenarioVersionId, IServiceContext context) {
         requireSimulationEnabled(scenarioVersionId);
         return simulationMrpEngine.promoteToFormalPlan(scenarioVersionId);
     }
 
-    protected void requireSimulationEnabled(Long id) {
+    protected void requireSimulationEnabled(String id) {
         boolean enabled = AppConfig.var(ErpMfgConstants.CONFIG_MFG_SIMULATION_ENABLED,
                 ErpMfgConstants.DEFAULT_MFG_SIMULATION_ENABLED);
         if (!enabled) {

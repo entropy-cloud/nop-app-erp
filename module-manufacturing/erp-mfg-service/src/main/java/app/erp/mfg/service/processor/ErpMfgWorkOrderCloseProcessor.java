@@ -19,8 +19,8 @@ public class ErpMfgWorkOrderCloseProcessor {
     @Inject
     ErpMfgWorkOrderDocumentStateMachine documentStateMachine;
 
-    public ErpMfgWorkOrder close(Long workOrderId, IServiceContext context) {
-        ErpMfgWorkOrder wo = facade.requireWorkOrder(String.valueOf(workOrderId), context);
+    public ErpMfgWorkOrder close(String workOrderId, IServiceContext context) {
+        ErpMfgWorkOrder wo = facade.requireWorkOrder(workOrderId, context);
         validateTransitionForClose(wo);
         doClose(wo);
         return wo;

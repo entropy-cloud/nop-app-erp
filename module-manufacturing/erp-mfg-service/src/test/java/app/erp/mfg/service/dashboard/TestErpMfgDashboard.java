@@ -60,19 +60,19 @@ public class TestErpMfgDashboard extends JunitAutoTestCase {
         LocalDate today = CoreMetrics.currentDate();
         ormTemplate.runInSession(() -> {
             // 在制工单 2 个（IN_PROCESS + STOCK_RESERVED）
-            seedWorkOrder(101L, ErpMfgConstants.WORK_ORDER_STATUS_IN_PROCESS, null, null, null);
-            seedWorkOrder(102L, ErpMfgConstants.WORK_ORDER_STATUS_STOCK_RESERVED, null, null, null);
+            seedWorkOrder("101", ErpMfgConstants.WORK_ORDER_STATUS_IN_PROCESS, null, null, null);
+            seedWorkOrder("102", ErpMfgConstants.WORK_ORDER_STATUS_STOCK_RESERVED, null, null, null);
             // 齐套待产 1 个（STOCK_PARTIAL）
-            seedWorkOrder(103L, ErpMfgConstants.WORK_ORDER_STATUS_STOCK_PARTIAL, null, null, null);
+            seedWorkOrder("103", ErpMfgConstants.WORK_ORDER_STATUS_STOCK_PARTIAL, null, null, null);
             // 本期完工 2 个（COMPLETED 且 actualEndDate=今天/昨天）: 准时 100 + 延期 200
             // 准时：actualEndDate ≤ plannedEndDate → actual=今天-1, planned=今天
-            seedWorkOrder(104L, ErpMfgConstants.WORK_ORDER_STATUS_COMPLETED,
+            seedWorkOrder("104", ErpMfgConstants.WORK_ORDER_STATUS_COMPLETED,
                     new BigDecimal("100"), today.minusDays(1), today);
             // 延期：actualEndDate > plannedEndDate → actual=今天, planned=今天-5
-            seedWorkOrder(105L, ErpMfgConstants.WORK_ORDER_STATUS_COMPLETED,
+            seedWorkOrder("105", ErpMfgConstants.WORK_ORDER_STATUS_COMPLETED,
                     new BigDecimal("200"), today, today.minusDays(5));
             // actualEndDate 不在本期（不计入本期完工量）
-            seedWorkOrder(106L, ErpMfgConstants.WORK_ORDER_STATUS_COMPLETED,
+            seedWorkOrder("106", ErpMfgConstants.WORK_ORDER_STATUS_COMPLETED,
                     new BigDecimal("999"), today.minusMonths(2), today.minusMonths(3));
         });
 
@@ -93,9 +93,9 @@ public class TestErpMfgDashboard extends JunitAutoTestCase {
     @Test
     public void testWorkOrderStatusDistribution() {
         ormTemplate.runInSession(() -> {
-            seedWorkOrder(111L, ErpMfgConstants.WORK_ORDER_STATUS_IN_PROCESS, null, null, null);
-            seedWorkOrder(112L, ErpMfgConstants.WORK_ORDER_STATUS_IN_PROCESS, null, null, null);
-            seedWorkOrder(113L, ErpMfgConstants.WORK_ORDER_STATUS_COMPLETED, null, null, null);
+            seedWorkOrder("111", ErpMfgConstants.WORK_ORDER_STATUS_IN_PROCESS, null, null, null);
+            seedWorkOrder("112", ErpMfgConstants.WORK_ORDER_STATUS_IN_PROCESS, null, null, null);
+            seedWorkOrder("113", ErpMfgConstants.WORK_ORDER_STATUS_COMPLETED, null, null, null);
         });
         List<Map<String, Object>> dist = dashboardBiz.getWorkOrderStatusDistribution(CTX);
         assertEquals(2, dist.size(), "2 种状态");
@@ -107,9 +107,9 @@ public class TestErpMfgDashboard extends JunitAutoTestCase {
     public void testTrendMonthlySeries() {
         LocalDate today = CoreMetrics.currentDate();
         ormTemplate.runInSession(() -> {
-            seedWorkOrder(121L, ErpMfgConstants.WORK_ORDER_STATUS_COMPLETED,
+            seedWorkOrder("121", ErpMfgConstants.WORK_ORDER_STATUS_COMPLETED,
                     new BigDecimal("50"), today, today.minusDays(1));
-            seedWorkOrder(122L, ErpMfgConstants.WORK_ORDER_STATUS_COMPLETED,
+            seedWorkOrder("122", ErpMfgConstants.WORK_ORDER_STATUS_COMPLETED,
                     new BigDecimal("70"), today.minusMonths(1), today.minusMonths(2));
         });
         List<Map<String, Object>> trend = dashboardBiz.getDashboardTrend(2, CTX);
@@ -127,34 +127,34 @@ public class TestErpMfgDashboard extends JunitAutoTestCase {
         LocalDate future = CoreMetrics.currentDate().plusDays(10);
         ormTemplate.runInSession(() -> {
             // W1: plannedEndDate 过去, IN_PROCESS → 触发
-            seedWorkOrder(131L, ErpMfgConstants.WORK_ORDER_STATUS_IN_PROCESS, null, null, past);
+            seedWorkOrder("131", ErpMfgConstants.WORK_ORDER_STATUS_IN_PROCESS, null, null, past);
             // W2: plannedEndDate 过去, COMPLETED → 不触发（已完工）
-            seedWorkOrder(132L, ErpMfgConstants.WORK_ORDER_STATUS_COMPLETED, null, null, past);
+            seedWorkOrder("132", ErpMfgConstants.WORK_ORDER_STATUS_COMPLETED, null, null, past);
             // W3: plannedEndDate 未来, IN_PROCESS → 不触发（未到期）
-            seedWorkOrder(133L, ErpMfgConstants.WORK_ORDER_STATUS_IN_PROCESS, null, null, future);
+            seedWorkOrder("133", ErpMfgConstants.WORK_ORDER_STATUS_IN_PROCESS, null, null, future);
         });
         List<Map<String, Object>> alerts = dashboardBiz.findDelayedWorkOrderAlert(CTX);
         assertEquals(1, alerts.size(), "仅 W1 延期");
-        assertEquals(131L, alerts.get(0).get("workOrderId"));
+        assertEquals("131", alerts.get(0).get("workOrderId"));
         assertEquals(10L, alerts.get(0).get("overdueDays"));
     }
 
     // ---------- helpers ----------
 
-    private void seedWorkOrder(long id, String docStatus, BigDecimal completedQty,
+    private void seedWorkOrder(String id, String docStatus, BigDecimal completedQty,
                                LocalDate actualEndDate, LocalDate plannedEndDate) {
         IEntityDao<ErpMfgWorkOrder> dao = daoProvider.daoFor(ErpMfgWorkOrder.class);
         ErpMfgWorkOrder o = dao.newEntity();
         o.orm_propValue(1, id);
         o.setCode("WO-" + id);
-        o.setOrgId(1L);
-        o.setProductId(1L);
+        o.setOrgId("1");
+        o.setProductId("1");
         o.setPlannedQuantity(new BigDecimal("1000"));
         o.setCompletedQuantity(completedQty != null ? completedQty : BigDecimal.ZERO);
         o.setBusinessDate(LocalDate.of(2026, 1, 1));
         o.setPlannedEndDate(plannedEndDate);
         o.setActualEndDate(actualEndDate);
-        o.setCurrencyId(1L);
+        o.setCurrencyId("1");
         o.setDocStatus(docStatus);
         o.setApproveStatus(ErpMfgConstants.APPROVE_STATUS_APPROVED);
         o.setExchangeRate(BigDecimal.ONE);

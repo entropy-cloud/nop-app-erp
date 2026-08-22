@@ -15,8 +15,8 @@ public class ErpMfgSubcontractOrderPostProcessingFeeProcessor {
     @Inject
     ErpMfgSubcontractOrderProcessor facade;
 
-    public ErpMfgSubcontractOrder postProcessingFee(Long subcontractOrderId, IServiceContext context) {
-        ErpMfgSubcontractOrder order = facade.requireOrder(String.valueOf(subcontractOrderId), context);
+    public ErpMfgSubcontractOrder postProcessingFee(String subcontractOrderId, IServiceContext context) {
+        ErpMfgSubcontractOrder order = facade.requireOrder(subcontractOrderId, context);
         facade.requireStatus(order, ErpMfgConstants.SUBCONTRACT_STATUS_RECEIVED, "RECEIVED");
 
         if (facade.isSubcontractPostingEnabled()) {

@@ -64,11 +64,9 @@ public class TestErpApsAutoDispatch extends JunitAutoTestCase {
     IErpApsOperationOrderBiz operationOrderBiz;
 
     static final String WC = "4001";
-    static final Long WO = 5001L;
-    static final Long BOM = 5101L;
-    static final Long MATERIAL_CHILD = 5201L;
-    // inv 侧库存种子物料（inv M2.2 已 String 化；mfg 侧 MATERIAL_CHILD 保持 Long 归 M3.1）
-    static final String MATERIAL_CHILD_INV = "5201";
+    static final String WO = "5001";
+    static final String BOM = "5101";
+    static final String MATERIAL_CHILD = "5201";
     static final String RULE_ID = "5301";
     static final String NOTIFY_TPL = "5401";
     static final String RECIPIENT = "planner-1";
@@ -210,9 +208,9 @@ public class TestErpApsAutoDispatch extends JunitAutoTestCase {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMfgWorkOrder> dao = daoProvider.daoFor(ErpMfgWorkOrder.class);
             ErpMfgWorkOrder wo = new ErpMfgWorkOrder();
-            wo.orm_propValueByName("id", 5502L);
+            wo.orm_propValueByName("id", "5502");
             wo.setCode("WO-NOBOM");
-            wo.setProductId(9901L);
+            wo.setProductId("9901");
             wo.setPlannedQuantity(new BigDecimal("10"));
             wo.setBusinessDate(CoreMetrics.today());
             wo.setDocStatus("NOT_STARTED");
@@ -220,7 +218,7 @@ public class TestErpApsAutoDispatch extends JunitAutoTestCase {
         });
         seedRule(r -> r.orm_propValueByName("requireMaterial", Boolean.TRUE));
         String op = seedPlannedOp("AD-5", inMinutes(5));
-        seedOpWorkOrder(op, 5502L);
+        seedOpWorkOrder(op, "5502");
 
         assertEquals(1, scan());
         assertEquals("IN_PROGRESS", status(op), "无 BOM 需求（null 放行）应可派工");
@@ -429,11 +427,11 @@ public class TestErpApsAutoDispatch extends JunitAutoTestCase {
         return idOf(code);
     }
 
-    private void seedOpWorkOrder(String opId, Long workOrderId) {
+    private void seedOpWorkOrder(String opId, String workOrderId) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpApsOperationOrder> dao = daoProvider.daoFor(ErpApsOperationOrder.class);
             ErpApsOperationOrder op = dao.getEntityById(opId);
-            op.setWorkOrderId(String.valueOf(workOrderId));
+            op.setWorkOrderId(workOrderId);
             dao.updateEntity(op);
         });
     }
@@ -445,7 +443,7 @@ public class TestErpApsAutoDispatch extends JunitAutoTestCase {
             ErpMfgWorkOrder wo = new ErpMfgWorkOrder();
             wo.orm_propValueByName("id", WO);
             wo.setCode("WO-KIT");
-            wo.setProductId(9901L);
+            wo.setProductId("9901");
             wo.setPlannedQuantity(new BigDecimal(qty));
             wo.setBusinessDate(CoreMetrics.today());
             wo.setDocStatus("NOT_STARTED");
@@ -457,7 +455,7 @@ public class TestErpApsAutoDispatch extends JunitAutoTestCase {
                 ErpMfgBom bom = new ErpMfgBom();
                 bom.orm_propValueByName("id", BOM);
                 bom.setCode("BOM-KIT");
-                bom.setProductId(9901L);
+                bom.setProductId("9901");
                 bom.orm_propValueByName("bomType", "NORMAL");
                 bom.orm_propValueByName("isDefault", Boolean.TRUE);
                 bom.orm_propValueByName("isActive", Boolean.TRUE);
@@ -465,11 +463,11 @@ public class TestErpApsAutoDispatch extends JunitAutoTestCase {
 
                 IEntityDao<ErpMfgBomLine> lineDao = daoProvider.daoFor(ErpMfgBomLine.class);
                 ErpMfgBomLine line = new ErpMfgBomLine();
-                line.orm_propValueByName("id", BOM * 100 + 1);
+                line.orm_propValueByName("id", String.valueOf(Long.parseLong(BOM) * 100 + 1));
                 line.setBomId(BOM);
                 line.setLineNo(10);
                 line.setMaterialId(MATERIAL_CHILD);
-                line.setUoMId(1L);
+                line.setUoMId("1");
                 line.setQuantity(new BigDecimal("5"));
                 lineDao.saveEntity(line);
             }
@@ -478,7 +476,7 @@ public class TestErpApsAutoDispatch extends JunitAutoTestCase {
             if (balDao.getEntityById("7001") == null) {
                 ErpInvStockBalance bal = balDao.newEntity();
                 bal.orm_propValueByName("id", "7001");
-                bal.setMaterialId(MATERIAL_CHILD_INV);
+                bal.setMaterialId(MATERIAL_CHILD);
                 bal.setWarehouseId("1");
                 bal.setTotalQuantity(new BigDecimal("100"));
                 bal.setAvailableQuantity(new BigDecimal("100"));

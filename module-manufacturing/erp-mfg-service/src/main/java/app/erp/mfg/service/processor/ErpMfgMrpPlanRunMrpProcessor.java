@@ -21,7 +21,7 @@ public class ErpMfgMrpPlanRunMrpProcessor {
     @Inject
     IDaoProvider daoProvider;
 
-    public ErpMfgMrpPlan runMrp(Long planId, IServiceContext context) {
+    public ErpMfgMrpPlan runMrp(String planId, IServiceContext context) {
         mrpEngine.runMrp(planId, demandAggregator.aggregate(planId));
         return planDao().getEntityById(planId);
     }

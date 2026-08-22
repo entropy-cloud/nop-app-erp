@@ -13,30 +13,30 @@
     public class ErpMfgForecastLineOutputBean {
 
     
-        private Long _id;
+        private String _id;
 
     
         @PropMeta(propId=1)
     
-        public Long getId(){
+        public String getId(){
             return _id;
         }
 
-        public void setId(Long value){
+        public void setId(String value){
             this._id = value;
         }
 
 
-        private Long _forecastId;
+        private String _forecastId;
 
     
         @PropMeta(propId=2)
     
-        public Long getForecastId(){
+        public String getForecastId(){
             return _forecastId;
         }
 
-        public void setForecastId(Long value){
+        public void setForecastId(String value){
             this._forecastId = value;
         }
 
@@ -55,44 +55,44 @@
         }
 
 
-        private Long _materialId;
+        private String _materialId;
 
     
         @PropMeta(propId=4)
     
-        public Long getMaterialId(){
+        public String getMaterialId(){
             return _materialId;
         }
 
-        public void setMaterialId(Long value){
+        public void setMaterialId(String value){
             this._materialId = value;
         }
 
 
-        private Long _warehouseId;
+        private String _warehouseId;
 
     
         @PropMeta(propId=5)
     
-        public Long getWarehouseId(){
+        public String getWarehouseId(){
             return _warehouseId;
         }
 
-        public void setWarehouseId(Long value){
+        public void setWarehouseId(String value){
             this._warehouseId = value;
         }
 
 
-        private Long _uoMId;
+        private String _uoMId;
 
     
         @PropMeta(propId=6)
     
-        public Long getUoMId(){
+        public String getUoMId(){
             return _uoMId;
         }
 
-        public void setUoMId(Long value){
+        public void setUoMId(String value){
             this._uoMId = value;
         }
 

@@ -48,7 +48,7 @@ public class ErpMfgBomBizModel extends CrudBizModel<ErpMfgBom> implements IErpMf
 
     @Override
     @BizQuery
-    public ErpMfgBom findDefaultBom(@Name("productId") Long productId, IServiceContext context) {
+    public ErpMfgBom findDefaultBom(@Name("productId") String productId, IServiceContext context) {
         ErpMfgBom bom = bomExpander.findDefaultBomOrNull(productId);
         if (bom == null) {
             throw new NopException(ErpMfgErrors.ERR_DEFAULT_BOM_NOT_FOUND)
@@ -59,7 +59,7 @@ public class ErpMfgBomBizModel extends CrudBizModel<ErpMfgBom> implements IErpMf
 
     @Override
     @BizQuery
-    public List<BomExplosionNode> explode(@Name("bomId") Long bomId,
+    public List<BomExplosionNode> explode(@Name("bomId") String bomId,
                                           @Name("qty") BigDecimal qty,
                                           @Name("useMultiLevel") Boolean useMultiLevel,
                                           IServiceContext context) {
@@ -68,7 +68,7 @@ public class ErpMfgBomBizModel extends CrudBizModel<ErpMfgBom> implements IErpMf
 
     @Override
     @BizQuery
-    public List<Map<String, Object>> findBomTree(@Name("bomId") Long bomId,
+    public List<Map<String, Object>> findBomTree(@Name("bomId") String bomId,
                                                  @Name("qty") BigDecimal qty,
                                                  @Name("useMultiLevel") Boolean useMultiLevel,
                                                  IServiceContext context) {
@@ -108,7 +108,7 @@ public class ErpMfgBomBizModel extends CrudBizModel<ErpMfgBom> implements IErpMf
 
     @Override
     @BizMutation
-    public CostRollupResult rollupCost(@Name("bomId") Long bomId, IServiceContext context) {
+    public CostRollupResult rollupCost(@Name("bomId") String bomId, IServiceContext context) {
         return rollupCostProcessor.rollupCost(bomId, context);
     }
 

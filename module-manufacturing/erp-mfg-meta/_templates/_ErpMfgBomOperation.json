@@ -1,9 +1,9 @@
 {
-  "id": 0,
-  "bomId": 0,
+  "id": "",
+  "bomId": "",
   "lineNo": 0,
-  "operationId": 0,
-  "workcenterId": 0,
+  "operationId": "",
+  "workcenterId": "",
   "standardTime": 0.0,
   "timeUnit": "",
   "rate": 0.0,

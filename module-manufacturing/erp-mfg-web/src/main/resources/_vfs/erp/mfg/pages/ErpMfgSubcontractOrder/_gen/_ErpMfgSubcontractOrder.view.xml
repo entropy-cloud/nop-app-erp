@@ -19,37 +19,37 @@
             <cols>
 
                 <!--ID-->
-                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="id" mandatory="true" sortable="true"/>
 
                 <!--单号-->
                 <col id="code" mandatory="true" sortable="true"/>
 
                 <!--业务组织-->
-                <col id="orgId" ui:number="true" sortable="true"/>
+                <col id="orgId" sortable="true"/>
 
                 <!--来源工单-->
-                <col id="workOrderId" ui:number="true" sortable="true"/>
+                <col id="workOrderId" sortable="true"/>
 
                 <!--委外供应商-->
-                <col id="supplierId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="supplierId" mandatory="true" sortable="true"/>
 
                 <!--外协工作中心-->
-                <col id="workcenterId" ui:number="true" sortable="true"/>
+                <col id="workcenterId" sortable="true"/>
 
                 <!--工艺路线-->
-                <col id="routingId" ui:number="true" sortable="true"/>
+                <col id="routingId" sortable="true"/>
 
                 <!--生产版本-->
-                <col id="productionVersionId" ui:number="true" sortable="true"/>
+                <col id="productionVersionId" sortable="true"/>
 
                 <!--产品-->
-                <col id="productId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="productId" mandatory="true" sortable="true"/>
 
                 <!--委外日期-->
                 <col id="businessDate" mandatory="true" sortable="true"/>
 
                 <!--币种-->
-                <col id="currencyId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="currencyId" mandatory="true" sortable="true"/>
 
                 <!--汇率-->
                 <col id="exchangeRate" mandatory="true" ui:number="true" sortable="true"/>

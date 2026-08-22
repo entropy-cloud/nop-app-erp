@@ -32,5 +32,5 @@ public interface IErpApsLoadSourceProvider {
      * @param periodTo     CRP 计算窗口终点（含）
      * @return 排程时段列表（按 workOrderId 分组聚合，元素含工序序号+工作中心+排程起止时间+换模时间）
      */
-    List<ApsLoadSlot> findScheduledSlots(List<Long> workOrderIds, LocalDate periodFrom, LocalDate periodTo);
+    List<ApsLoadSlot> findScheduledSlots(List<String> workOrderIds, LocalDate periodFrom, LocalDate periodTo);
 }

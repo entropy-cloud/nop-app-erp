@@ -37,7 +37,7 @@ public class ErpMfgCostRollupBizModel extends CrudBizModel<ErpMfgCostRollup> imp
 
     @Override
     @BizQuery
-    public BigDecimal findLatestFirmedStandardCost(@Name("materialId") Long materialId, IServiceContext context) {
+    public BigDecimal findLatestFirmedStandardCost(@Name("materialId") String materialId, IServiceContext context) {
         if (materialId == null) {
             return null;
         }

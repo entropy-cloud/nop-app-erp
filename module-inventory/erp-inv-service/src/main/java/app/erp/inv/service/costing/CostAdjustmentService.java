@@ -14,7 +14,6 @@ import app.erp.mfg.dao.entity.ErpMfgCostRollup;
 import app.erp.mfg.dao.entity.ErpMfgCostRollupLine;
 import app.erp.md.dao.entity.ErpMdMaterial;
 import io.nop.api.core.beans.query.QueryBean;
-import io.nop.api.core.convert.ConvertHelper;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.api.core.time.CoreMetrics;
 import io.nop.commons.util.StringHelper;
@@ -204,8 +203,6 @@ public class CostAdjustmentService {
 
     // ---------- standard revaluation rollup ----------
 
-    // A2 桥接（bridge-main-071/072，M0.2 登记册）：mfg ErpMfgCostRollup(RollupLine) id 列仍 Long（mfg 位次 14 未迁移），
-    // inv/md String id → ConvertHelper.toLong 桥接 setter 值，退役 owner M3.1
     private void publishFirmedRollup(ErpInvCostAdjust adjust, ErpInvCostAdjustLine line, BigDecimal newUnitCost) {
         ErpMdMaterial material = line.getMaterial();
         String uomId = material != null ? material.getUoMId() : null;
@@ -213,7 +210,7 @@ public class CostAdjustmentService {
         IEntityDao<ErpMfgCostRollup> headerDao = daoProvider.daoFor(ErpMfgCostRollup.class);
         ErpMfgCostRollup header = headerDao.newEntity();
         header.setCode(buildRollupCode(adjust, line));
-        header.setOrgId(ConvertHelper.toLong(adjust.getOrgId()));
+        header.setOrgId(adjust.getOrgId());
         header.setBusinessDate(adjust.getBusinessDate() != null ? adjust.getBusinessDate() : CoreMetrics.today());
         header.orm_propValueByName("status", StandardCostResolver.STATUS_FIRMED);
         header.setRemark("由成本调整单自动发布");
@@ -223,12 +220,12 @@ public class CostAdjustmentService {
         ErpMfgCostRollupLine rollupLine = lineDao.newEntity();
         rollupLine.setCostRollupId(header.getId());
         rollupLine.setLineNo(1);
-        rollupLine.setMaterialId(ConvertHelper.toLong(line.getMaterialId()));
-        rollupLine.setUoMId(ConvertHelper.toLong(uomId));
+        rollupLine.setMaterialId(line.getMaterialId());
+        rollupLine.setUoMId(uomId);
         rollupLine.setUnitCost(ErpInvConfigs.roundCost(newUnitCost));
         rollupLine.setTotalCost(newUnitCost);
         rollupLine.setMaterialCost(newUnitCost);
-        rollupLine.setCurrencyId(ConvertHelper.toLong(line.getCurrencyId() != null ? line.getCurrencyId() : adjust.getCurrencyId()));
+        rollupLine.setCurrencyId(line.getCurrencyId() != null ? line.getCurrencyId() : adjust.getCurrencyId());
         lineDao.saveEntity(rollupLine);
     }
 

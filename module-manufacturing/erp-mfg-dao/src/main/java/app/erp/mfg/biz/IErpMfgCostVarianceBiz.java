@@ -34,13 +34,13 @@ public interface IErpMfgCostVarianceBiz extends ICrudBiz<ErpMfgCostVariance> {
      * @return 新计算写入的差异行列表
      */
     @BizMutation
-    List<ErpMfgCostVariance> calculateVariances(@Name("workOrderId") Long workOrderId, IServiceContext context);
+    List<ErpMfgCostVariance> calculateVariances(@Name("workOrderId") String workOrderId, IServiceContext context);
 
     /**
      * 查询指定工单的全部差异行（按行号升序）。
      */
     @BizQuery
-    List<ErpMfgCostVariance> findByWorkOrder(@Name("workOrderId") Long workOrderId, IServiceContext context);
+    List<ErpMfgCostVariance> findByWorkOrder(@Name("workOrderId") String workOrderId, IServiceContext context);
 
     /**
      * 按差异类型聚合指定工单的差异金额（供报表按类型下钻）。
@@ -48,7 +48,7 @@ public interface IErpMfgCostVarianceBiz extends ICrudBiz<ErpMfgCostVariance> {
      * @return 类型→{standardAmount, actualAmount, varianceAmount} 聚合
      */
     @BizQuery
-    Map<String, Map<String, Object>> aggregateByType(@Name("workOrderId") Long workOrderId,
+    Map<String, Map<String, Object>> aggregateByType(@Name("workOrderId") String workOrderId,
                                                      @Optional @Name("costElement") String costElement,
                                                      IServiceContext context);
 }

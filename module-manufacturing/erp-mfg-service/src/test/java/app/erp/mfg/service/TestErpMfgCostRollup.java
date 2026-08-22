@@ -58,13 +58,13 @@ public class TestErpMfgCostRollup extends JunitAutoTestCase {
     @RegisterExtension
     static MfgFrozenClockExtension frozenClock = new MfgFrozenClockExtension();
 
-    static final Long UOM_ID = 5101L;
-    static final Long WC1 = 6101L;     // 工作中心（费率 20/小时）
-    static final Long P = 1001L;       // 产成品
-    static final Long SA = 1002L;      // 半成品（制造）
-    static final Long M1 = 1003L;      // 采购件（采购价 10）
-    static final Long M2 = 1004L;      // 采购件（采购价 5）
-    static final Long M3 = 1009L;      // 采购件（无采购价 → 触发 ERR_ROLLUP_BASE_COST_MISSING）
+    static final String UOM_ID = "5101";
+    static final String WC1 = "6101";     // 工作中心（费率 20/小时）
+    static final String P = "1001";       // 产成品
+    static final String SA = "1002";      // 半成品（制造）
+    static final String M1 = "1003";      // 采购件（采购价 10）
+    static final String M2 = "1004";      // 采购件（采购价 5）
+    static final String M3 = "1009";      // 采购件（无采购价 → 触发 ERR_ROLLUP_BASE_COST_MISSING）
 
     @Inject
     IDaoProvider daoProvider;
@@ -79,18 +79,18 @@ public class TestErpMfgCostRollup extends JunitAutoTestCase {
     public void testRollupPurchaseAndManufacturedBottomUp() {
         seedWorkcenter(WC1, bd("20"));
         seedMaterial(M1); seedMaterial(M2); seedMaterial(SA); seedMaterial(P);
-        seedSku(7001L, M1, bd("10"), true);
-        seedSku(7002L, M2, bd("5"), true);
+        seedSku("7001", M1, bd("10"), true);
+        seedSku("7002", M2, bd("5"), true);
 
         // SA(qty1) → M1(qty3)；工序 30min@WC1
-        Long bomSA = seedBom(2202L, SA, true, true, bd("1"));
-        seedLine(3202L, bomSA, M1, bd("3"), 10);
-        seedOperation(4202L, bomSA, WC1, bd("30"), 10);
+        String bomSA = seedBom("2202", SA, true, true, bd("1"));
+        seedLine("3202", bomSA, M1, bd("3"), 10);
+        seedOperation("4202", bomSA, WC1, bd("30"), 10);
         // P(qty1) → SA(qty2), M2(qty1)；工序 60min@WC1
-        Long bomP = seedBom(2201L, P, true, true, bd("1"));
-        seedLine(3201L, bomP, SA, bd("2"), 10);
-        seedLine(3203L, bomP, M2, bd("1"), 20);
-        seedOperation(4201L, bomP, WC1, bd("60"), 10);
+        String bomP = seedBom("2201", P, true, true, bd("1"));
+        seedLine("3201", bomP, SA, bd("2"), 10);
+        seedLine("3203", bomP, M2, bd("1"), 20);
+        seedOperation("4201", bomP, WC1, bd("60"), 10);
 
         CostRollupResult result = costRollupService.rollup(bomP);
 
@@ -120,8 +120,8 @@ public class TestErpMfgCostRollup extends JunitAutoTestCase {
     public void testRollupBaseCostMissingThrows() {
         seedWorkcenter(WC1, bd("20"));
         seedMaterial(M3); // M3 无默认 SKU → 无采购价
-        Long bomP = seedBom(2601L, P, true, true, bd("1"));
-        seedLine(3601L, bomP, M3, bd("1"), 10);
+        String bomP = seedBom("2601", P, true, true, bd("1"));
+        seedLine("3601", bomP, M3, bd("1"), 10);
 
         NopException ex = assertThrows(NopException.class, () -> costRollupService.rollup(bomP));
         assertEquals(ErpMfgErrors.ERR_ROLLUP_BASE_COST_MISSING.getErrorCode(), ex.getCode(),
@@ -132,9 +132,9 @@ public class TestErpMfgCostRollup extends JunitAutoTestCase {
     public void testRollupCostViaGraphQLWiring() {
         seedWorkcenter(WC1, bd("20"));
         seedMaterial(M1); seedMaterial(P);
-        seedSku(7001L, M1, bd("10"), true);
-        Long bomP = seedBom(2701L, P, true, true, bd("1"));
-        seedLine(3701L, bomP, M1, bd("2"), 10);
+        seedSku("7001", M1, bd("10"), true);
+        String bomP = seedBom("2701", P, true, true, bd("1"));
+        seedLine("3701", bomP, M1, bd("2"), 10);
 
         ApiResponse<?> resp = executeRpc("ErpMfgBom__rollupCost", ApiRequest.build(Map.of("bomId", bomP)));
         assertEquals(0, resp.getStatus(), "rollupCost 经 GraphQL 调用应成功（BizModel→CostRollupService 装配正确）");
@@ -158,13 +158,13 @@ public class TestErpMfgCostRollup extends JunitAutoTestCase {
     public void testOverheadMachineHourMode() {
         seedWorkcenter(WC1, bd("20"));
         seedMaterial(M1); seedMaterial(SA); seedMaterial(P);
-        seedSku(7001L, M1, bd("10"), true);
-        Long bomSA = seedBom(2202L, SA, true, true, bd("1"));
-        seedLine(3202L, bomSA, M1, bd("3"), 10);
-        seedOperation(4202L, bomSA, WC1, bd("30"), 10);
-        Long bomP = seedBom(2201L, P, true, true, bd("1"));
-        seedLine(3201L, bomP, SA, bd("2"), 10);
-        seedOperation(4201L, bomP, WC1, bd("60"), 10);
+        seedSku("7001", M1, bd("10"), true);
+        String bomSA = seedBom("2202", SA, true, true, bd("1"));
+        seedLine("3202", bomSA, M1, bd("3"), 10);
+        seedOperation("4202", bomSA, WC1, bd("30"), 10);
+        String bomP = seedBom("2201", P, true, true, bd("1"));
+        seedLine("3201", bomP, SA, bd("2"), 10);
+        seedOperation("4201", bomP, WC1, bd("60"), 10);
 
         setOverheadEnabled(true);
         setOverheadMode(ErpMfgConstants.OVERHEAD_ALLOCATION_MODE_MACHINE_HOUR);
@@ -195,10 +195,10 @@ public class TestErpMfgCostRollup extends JunitAutoTestCase {
     public void testOverheadLaborRatioMode() {
         seedWorkcenter(WC1, bd("20"));
         seedMaterial(M1); seedMaterial(SA);
-        seedSku(7001L, M1, bd("10"), true);
-        Long bomSA = seedBom(2202L, SA, true, true, bd("1"));
-        seedLine(3202L, bomSA, M1, bd("3"), 10);
-        seedOperation(4202L, bomSA, WC1, bd("30"), 10);
+        seedSku("7001", M1, bd("10"), true);
+        String bomSA = seedBom("2202", SA, true, true, bd("1"));
+        seedLine("3202", bomSA, M1, bd("3"), 10);
+        seedOperation("4202", bomSA, WC1, bd("30"), 10);
 
         setOverheadEnabled(true);
         setOverheadMode(ErpMfgConstants.OVERHEAD_ALLOCATION_MODE_LABOR_RATIO);
@@ -223,12 +223,12 @@ public class TestErpMfgCostRollup extends JunitAutoTestCase {
     public void testSubcontractAggregationEnabled() {
         seedWorkcenter(WC1, bd("20"));
         seedMaterial(M1); seedMaterial(P);
-        seedSku(7001L, M1, bd("10"), true);
+        seedSku("7001", M1, bd("10"), true);
         // M1 作为委外产出（productId=M1），加工费 20 / 产量 2 → 单位委外费 10
-        Long subId = seedSubcontractOrder(8801L, "SUB-COST-1", M1, bd("20"));
-        seedSubcontractLine(9801L, subId, M1, bd("2"));
-        Long bomP = seedBom(2701L, P, true, true, bd("1"));
-        seedLine(3701L, bomP, M1, bd("2"), 10);
+        String subId = seedSubcontractOrder("8801", "SUB-COST-1", M1, bd("20"));
+        seedSubcontractLine("9801", subId, M1, bd("2"));
+        String bomP = seedBom("2701", P, true, true, bd("1"));
+        seedLine("3701", bomP, M1, bd("2"), 10);
 
         setSubcontractAggregationEnabled(true);
         try {
@@ -249,11 +249,11 @@ public class TestErpMfgCostRollup extends JunitAutoTestCase {
     public void testSubcontractAggregationDisabledIsZero() {
         seedWorkcenter(WC1, bd("20"));
         seedMaterial(M1); seedMaterial(P);
-        seedSku(7001L, M1, bd("10"), true);
-        Long subId = seedSubcontractOrder(8802L, "SUB-COST-OFF", M1, bd("20"));
-        seedSubcontractLine(9802L, subId, M1, bd("2"));
-        Long bomP = seedBom(2701L, P, true, true, bd("1"));
-        seedLine(3701L, bomP, M1, bd("2"), 10);
+        seedSku("7001", M1, bd("10"), true);
+        String subId = seedSubcontractOrder("8802", "SUB-COST-OFF", M1, bd("20"));
+        seedSubcontractLine("9802", subId, M1, bd("2"));
+        String bomP = seedBom("2701", P, true, true, bd("1"));
+        seedLine("3701", bomP, M1, bd("2"), 10);
 
         CostRollupResult result = costRollupService.rollup(bomP);
         assertEquals(0, BigDecimal.ZERO.compareTo(subcontract(result, M1)), "config 关时 M1 subcontract=0");
@@ -265,15 +265,15 @@ public class TestErpMfgCostRollup extends JunitAutoTestCase {
     public void testFourElementIntegration() {
         seedWorkcenter(WC1, bd("20"));
         seedMaterial(M1); seedMaterial(SA); seedMaterial(P);
-        seedSku(7001L, M1, bd("10"), true);
+        seedSku("7001", M1, bd("10"), true);
         // M1 含委外费：加工费 20 / 产量 2 → 单位委外 10 → M1 unit = 10+10=20
-        Long subId = seedSubcontractOrder(8803L, "SUB-INT", M1, bd("20"));
-        seedSubcontractLine(9803L, subId, M1, bd("2"));
-        Long bomSA = seedBom(2202L, SA, true, true, bd("1"));
-        seedLine(3202L, bomSA, M1, bd("3"), 10);
-        seedOperation(4202L, bomSA, WC1, bd("30"), 10);
-        Long bomP = seedBom(2201L, P, true, true, bd("1"));
-        seedLine(3201L, bomP, SA, bd("2"), 10);
+        String subId = seedSubcontractOrder("8803", "SUB-INT", M1, bd("20"));
+        seedSubcontractLine("9803", subId, M1, bd("2"));
+        String bomSA = seedBom("2202", SA, true, true, bd("1"));
+        seedLine("3202", bomSA, M1, bd("3"), 10);
+        seedOperation("4202", bomSA, WC1, bd("30"), 10);
+        String bomP = seedBom("2201", P, true, true, bd("1"));
+        seedLine("3201", bomP, SA, bd("2"), 10);
 
         setOverheadEnabled(true);
         setOverheadMode(ErpMfgConstants.OVERHEAD_ALLOCATION_MODE_MACHINE_HOUR);
@@ -298,21 +298,21 @@ public class TestErpMfgCostRollup extends JunitAutoTestCase {
     /**
      * G3（plan 2026-07-31-0744-1-r2-11）：CostRollupService.rollup 自有成环路径（不经 BomExpander.explode）。
      *
-     * <p>{@code CostRollupService.computeUnit} 使用本地 {@code LinkedHashSet<Long> path} 递归检测环引用
+     * <p>{@code CostRollupService.computeUnit} 使用本地 {@code LinkedHashSet<String> path} 递归检测环引用
      * （:135-139），与 {@code TestErpMfgBomExplosion.testCycleDetection} 覆盖的 BomExpander.explode 路径独立。
      * 构造 A→B→A 真环（A 的 BOM 含 B，B 的 BOM 含 A），断言 rollup 抛 {@code ERR_BOM_CYCLE}。
      * DAG（共享子件）因 path.remove + computed 缓存不抛——本测试仅覆盖真环。
      */
     @Test
     public void testRollupCycleDetectionThrows() {
-        Long A = 1010L;
-        Long B = 1011L;
+        String A = "1010";
+        String B = "1011";
         seedMaterial(A);
         seedMaterial(B);
-        Long bomA = seedBom(2801L, A, true, true, bd("1"));
-        seedLine(3801L, bomA, B, bd("1"), 10);
-        Long bomB = seedBom(2802L, B, true, true, bd("1"));
-        seedLine(3802L, bomB, A, bd("1"), 10);
+        String bomA = seedBom("2801", A, true, true, bd("1"));
+        seedLine("3801", bomA, B, bd("1"), 10);
+        String bomB = seedBom("2802", B, true, true, bd("1"));
+        seedLine("3802", bomB, A, bd("1"), 10);
 
         NopException ex = assertThrows(NopException.class, () -> costRollupService.rollup(bomA));
         assertEquals(ErpMfgErrors.ERR_BOM_CYCLE.getErrorCode(), ex.getCode(),
@@ -321,38 +321,38 @@ public class TestErpMfgCostRollup extends JunitAutoTestCase {
 
     // ---------- helpers ----------
 
-    private static BigDecimal unit(CostRollupResult r, Long mat) {
+    private static BigDecimal unit(CostRollupResult r, String mat) {
         return r.getLines().stream().filter(l -> l.getMaterialId().equals(mat))
                 .map(app.erp.mfg.biz.CostRollupLineView::getUnitCost).findFirst()
                 .orElseThrow(() -> new AssertionError("no line " + mat));
     }
 
-    private static BigDecimal material(CostRollupResult r, Long mat) {
+    private static BigDecimal material(CostRollupResult r, String mat) {
         return r.getLines().stream().filter(l -> l.getMaterialId().equals(mat))
                 .map(app.erp.mfg.biz.CostRollupLineView::getMaterialCost).findFirst()
                 .orElseThrow(() -> new AssertionError("no line " + mat));
     }
 
-    private static BigDecimal labor(CostRollupResult r, Long mat) {
+    private static BigDecimal labor(CostRollupResult r, String mat) {
         return r.getLines().stream().filter(l -> l.getMaterialId().equals(mat))
                 .map(app.erp.mfg.biz.CostRollupLineView::getLaborCost).findFirst()
                 .orElseThrow(() -> new AssertionError("no line " + mat));
     }
 
-    private static BigDecimal overhead(CostRollupResult r, Long mat) {
+    private static BigDecimal overhead(CostRollupResult r, String mat) {
         return r.getLines().stream().filter(l -> l.getMaterialId().equals(mat))
                 .map(app.erp.mfg.biz.CostRollupLineView::getOverheadCost).findFirst()
                 .orElseThrow(() -> new AssertionError("no line " + mat));
     }
 
-    private static BigDecimal subcontract(CostRollupResult r, Long mat) {
+    private static BigDecimal subcontract(CostRollupResult r, String mat) {
         return r.getLines().stream().filter(l -> l.getMaterialId().equals(mat))
                 .map(app.erp.mfg.biz.CostRollupLineView::getSubcontractCost).findFirst()
                 .orElseThrow(() -> new AssertionError("no line " + mat));
     }
 
     /** 断言 total/unit = material+labor+overhead+subcontract 四要素和。 */
-    private static void assertFourElementSum(CostRollupResult r, Long mat) {
+    private static void assertFourElementSum(CostRollupResult r, String mat) {
         app.erp.mfg.biz.CostRollupLineView v = r.getLines().stream()
                 .filter(l -> l.getMaterialId().equals(mat)).findFirst()
                 .orElseThrow(() -> new AssertionError("no line " + mat));
@@ -366,7 +366,7 @@ public class TestErpMfgCostRollup extends JunitAutoTestCase {
         return v != null ? v : BigDecimal.ZERO;
     }
 
-    private List<ErpMfgCostRollupLine> findLines(Long rollupId) {
+    private List<ErpMfgCostRollupLine> findLines(String rollupId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("costRollupId", rollupId));
         return daoProvider.daoFor(ErpMfgCostRollupLine.class).findAllByQuery(q);
@@ -377,7 +377,7 @@ public class TestErpMfgCostRollup extends JunitAutoTestCase {
         return graphQLEngine.executeRpc(ctx);
     }
 
-    private void seedMaterial(Long id) {
+    private void seedMaterial(String id) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMdMaterial> dao = daoProvider.daoFor(ErpMdMaterial.class);
             ErpMdMaterial m = new ErpMdMaterial();
@@ -391,7 +391,7 @@ public class TestErpMfgCostRollup extends JunitAutoTestCase {
         });
     }
 
-    private void seedSku(Long id, Long materialId, BigDecimal purchasePrice, boolean isDefault) {
+    private void seedSku(String id, String materialId, BigDecimal purchasePrice, boolean isDefault) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMdMaterialSku> dao = daoProvider.daoFor(ErpMdMaterialSku.class);
             ErpMdMaterialSku sku = new ErpMdMaterialSku();
@@ -406,7 +406,7 @@ public class TestErpMfgCostRollup extends JunitAutoTestCase {
         });
     }
 
-    private void seedWorkcenter(Long id, BigDecimal hourlyRate) {
+    private void seedWorkcenter(String id, BigDecimal hourlyRate) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMfgWorkcenter> dao = daoProvider.daoFor(ErpMfgWorkcenter.class);
             ErpMfgWorkcenter wc = new ErpMfgWorkcenter();
@@ -418,7 +418,7 @@ public class TestErpMfgCostRollup extends JunitAutoTestCase {
         });
     }
 
-    private Long seedBom(Long id, Long productId, boolean isDefault, boolean isActive, BigDecimal qty) {
+    private String seedBom(String id, String productId, boolean isDefault, boolean isActive, BigDecimal qty) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMfgBom> dao = daoProvider.daoFor(ErpMfgBom.class);
             ErpMfgBom bom = new ErpMfgBom();
@@ -434,7 +434,7 @@ public class TestErpMfgCostRollup extends JunitAutoTestCase {
         return id;
     }
 
-    private void seedLine(Long id, Long bomId, Long materialId, BigDecimal quantity, int lineNo) {
+    private void seedLine(String id, String bomId, String materialId, BigDecimal quantity, int lineNo) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMfgBomLine> dao = daoProvider.daoFor(ErpMfgBomLine.class);
             ErpMfgBomLine line = new ErpMfgBomLine();
@@ -448,14 +448,14 @@ public class TestErpMfgCostRollup extends JunitAutoTestCase {
         });
     }
 
-    private void seedOperation(Long id, Long bomId, Long workcenterId, BigDecimal standardTime, int lineNo) {
+    private void seedOperation(String id, String bomId, String workcenterId, BigDecimal standardTime, int lineNo) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMfgBomOperation> dao = daoProvider.daoFor(ErpMfgBomOperation.class);
             ErpMfgBomOperation op = new ErpMfgBomOperation();
             op.orm_propValueByName("id", id);
             op.setBomId(bomId);
             op.setLineNo(lineNo);
-            op.setOperationId(9000L); // 工序引用（测试占位，FK 不强制）
+            op.setOperationId("9000"); // 工序引用（测试占位，FK 不强制）
             op.setWorkcenterId(workcenterId);
             op.setStandardTime(standardTime);
             dao.saveEntity(op);
@@ -464,16 +464,16 @@ public class TestErpMfgCostRollup extends JunitAutoTestCase {
 
     // ---- 成本要素拆分（plan 2026-07-13-0455-2）seeds + config helpers ----
 
-    private Long seedSubcontractOrder(Long id, String code, Long productId, BigDecimal processingFee) {
+    private String seedSubcontractOrder(String id, String code, String productId, BigDecimal processingFee) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMfgSubcontractOrder> dao = daoProvider.daoFor(ErpMfgSubcontractOrder.class);
             ErpMfgSubcontractOrder order = new ErpMfgSubcontractOrder();
             order.orm_propValueByName("id", id);
             order.setCode(code);
-            order.setSupplierId(4601L);
+            order.setSupplierId("4601");
             order.setProductId(productId);
             order.setBusinessDate(LocalDate.of(2026, 7, 1));
-            order.setCurrencyId(6601L);
+            order.setCurrencyId("6601");
             order.setExchangeRate(BigDecimal.ONE);
             order.setProcessingFee(processingFee);
             order.setTotalAmount(processingFee);
@@ -485,7 +485,7 @@ public class TestErpMfgCostRollup extends JunitAutoTestCase {
         return id;
     }
 
-    private void seedSubcontractLine(Long id, Long orderId, Long materialId, BigDecimal qty) {
+    private void seedSubcontractLine(String id, String orderId, String materialId, BigDecimal qty) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMfgSubcontractOrderLine> dao = daoProvider.daoFor(ErpMfgSubcontractOrderLine.class);
             ErpMfgSubcontractOrderLine line = new ErpMfgSubcontractOrderLine();

@@ -10,7 +10,6 @@ import app.erp.mfg.dao.entity.ErpMfgWorkOrder;
 import app.erp.mfg.dao.entity.ErpMfgWorkcenter;
 import app.erp.notify.biz.IErpSysNotificationBiz;
 import io.nop.api.core.beans.query.QueryBean;
-import io.nop.api.core.convert.ConvertHelper;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.api.core.time.CoreMetrics;
 import io.nop.core.context.IServiceContext;
@@ -73,12 +72,11 @@ public class ErpApsWorkOrderToOperationProcessor {
         ErpMfgWorkOrder wo = requireWorkOrder(workOrderId);
 
         WorkOrderOperationCreationResult result = new WorkOrderOperationCreationResult();
-        // A2 桥接（bridge-main-022）：mfg Long workOrderId → aps String 回显，退役 owner M3.1
-        result.setWorkOrderId(ConvertHelper.toString(wo.getId()));
+        result.setWorkOrderId(wo.getId());
         result.setWorkOrderCode(wo.getCode());
 
         // step 1: 幂等守卫——同 WorkOrder 已有任一 OperationOrder 即跳过整单（重复触发零重复建单）
-        if (hasExistingOperationOrders(ConvertHelper.toString(wo.getId()))) {
+        if (hasExistingOperationOrders(wo.getId())) {
             result.setAlreadyCreated(true);
             return result;
         }
@@ -113,9 +111,7 @@ public class ErpApsWorkOrderToOperationProcessor {
     public Integer scanReleasedWorkOrders(IServiceContext context) {
         int created = 0;
         for (ErpMfgWorkOrder wo : findReleasedWorkOrders()) {
-            // A2 桥接（bridge-main-022）：mfg Long → aps String 入参，退役 owner M3.1
-            WorkOrderOperationCreationResult r = createOperationOrdersFromWorkOrder(
-                    ConvertHelper.toString(wo.getId()), context);
+            WorkOrderOperationCreationResult r = createOperationOrdersFromWorkOrder(wo.getId(), context);
             created += r.getCreatedCount();
         }
         return created;
@@ -124,8 +120,7 @@ public class ErpApsWorkOrderToOperationProcessor {
     // ---------- step：数据加载与校验（protected，下游可覆盖） ----------
 
     protected ErpMfgWorkOrder requireWorkOrder(String workOrderId) {
-        // A2 桥接（bridge-main-022）：aps String 入参 → mfg Long 实体 API，退役 owner M3.1
-        ErpMfgWorkOrder wo = daoProvider.daoFor(ErpMfgWorkOrder.class).getEntityById(ConvertHelper.toLong(workOrderId));
+        ErpMfgWorkOrder wo = daoProvider.daoFor(ErpMfgWorkOrder.class).getEntityById(workOrderId);
         if (wo == null) {
             throw new NopException(ErpApsErrors.ERR_APS_WORK_ORDER_NOT_FOUND)
                     .param(ErpApsErrors.ARG_WORK_ORDER_ID, workOrderId);
@@ -140,8 +135,7 @@ public class ErpApsWorkOrderToOperationProcessor {
         return !opOrderDao().findAllByQuery(q).isEmpty();
     }
 
-    /** 工艺路线工序（lineNo ASC）。routingId 缺失或无工序行返回空 map（= 工艺路线缺失语义）。
-     *  A2 桥接（bridge-main-021）：mfg ErpMfgRoutingOperation routingId Long 查询，退役 owner M3.1。 */
+    /** 工艺路线工序（lineNo ASC）。routingId 缺失或无工序行返回空 map（= 工艺路线缺失语义）。 */
     protected Map<Integer, ErpMfgRoutingOperation> loadRoutingOperations(ErpMfgWorkOrder wo) {
         Map<Integer, ErpMfgRoutingOperation> bySequence = new TreeMap<>();
         if (wo.getRoutingId() == null) {
@@ -155,7 +149,7 @@ public class ErpApsWorkOrderToOperationProcessor {
         return bySequence;
     }
 
-    protected boolean workcenterExists(Long workcenterId) {
+    protected boolean workcenterExists(String workcenterId) {
         return daoProvider.daoFor(ErpMfgWorkcenter.class).getEntityById(workcenterId) != null;
     }
 
@@ -172,18 +166,17 @@ public class ErpApsWorkOrderToOperationProcessor {
     protected ErpApsOperationOrder buildOperationOrder(ErpMfgWorkOrder wo, ErpMfgRoutingOperation rop) {
         ErpApsOperationOrder op = opOrderDao().newEntity();
         op.setCode(buildOpCode(wo, rop));
-        // A2 桥接（bridge-main-022/023）：mfg Long id/orgId → aps String 列，退役 owner M3.1
-        op.setWorkOrderId(ConvertHelper.toString(wo.getId()));
+        op.setWorkOrderId(wo.getId());
         op.setOperationName(rop.getOperationName() != null ? rop.getOperationName()
                 : (rop.getOperationCode() != null ? rop.getOperationCode() : ("OP-" + rop.getLineNo())));
         op.setSequence(rop.getLineNo());
-        op.setMachineId(ConvertHelper.toString(rop.getWorkcenterId()));
+        op.setMachineId(rop.getWorkcenterId());
         op.setSetupTime(rop.getSetupTime());
         op.setRuntimePerUnit(rop.getRunTime());
         op.setQty(wo.getPlannedQuantity());
         op.setPriority(50);
         op.setStatus(ErpApsConstants.OP_STATUS_DRAFT);
-        op.setOrgId(ConvertHelper.toString(wo.getOrgId()));
+        op.setOrgId(wo.getOrgId());
         op.setBusinessDate(CoreMetrics.today());
         op.setRemark("WorkOrder下达自动创建");
         // totalDuration = setupTime + runtimePerUnit × qty（与排产引擎同公式单一真相源，CEILING 整分钟）
@@ -199,8 +192,8 @@ public class ErpApsWorkOrderToOperationProcessor {
 
     // ---------- notify 告警（R1.4 范式：无 ACTIVE 模板 config-gated 静默跳过，失败降级不阻断） ----------
 
-    protected void notify(String eventType, ErpMfgWorkOrder wo, Long workcenterId, Integer sequence,
-                          IServiceContext context) {
+    protected void notify(String eventType, ErpMfgWorkOrder wo, String workcenterId, Integer sequence,
+                           IServiceContext context) {
         try {
             java.util.Map<String, Object> ctx = new java.util.LinkedHashMap<>();
             ctx.put("workOrderId", wo.getId());

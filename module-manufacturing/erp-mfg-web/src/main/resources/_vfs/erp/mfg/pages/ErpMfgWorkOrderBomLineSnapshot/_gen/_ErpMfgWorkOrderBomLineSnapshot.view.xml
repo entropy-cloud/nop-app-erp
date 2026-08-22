@@ -19,37 +19,37 @@
             <cols>
 
                 <!--ID-->
-                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="id" mandatory="true" sortable="true"/>
 
                 <!--快照ID-->
-                <col id="snapshotId" ui:number="true" sortable="true"/>
+                <col id="snapshotId" sortable="true"/>
 
                 <!--行号-->
                 <col id="lineNo" ui:number="true" sortable="true"/>
 
                 <!--物料-->
-                <col id="materialId" ui:number="true" sortable="true"/>
+                <col id="materialId" sortable="true"/>
 
                 <!--SKU-->
-                <col id="skuId" ui:number="true" sortable="true"/>
+                <col id="skuId" sortable="true"/>
 
                 <!--计量单位-->
-                <col id="uoMId" ui:number="true" sortable="true"/>
+                <col id="uoMId" sortable="true"/>
 
                 <!--数量-->
                 <col id="quantity" ui:number="true" sortable="true"/>
 
                 <!--工序ID-->
-                <col id="operationId" ui:number="true" sortable="true"/>
+                <col id="operationId" sortable="true"/>
 
                 <!--损耗率(%)-->
                 <col id="scrapRate" ui:number="true" sortable="true"/>
 
                 <!--发货仓库-->
-                <col id="warehouseId" ui:number="true" sortable="true"/>
+                <col id="warehouseId" sortable="true"/>
 
                 <!--替代物料-->
-                <col id="alternativeMaterialId" ui:number="true" sortable="true"/>
+                <col id="alternativeMaterialId" sortable="true"/>
 
                 <!--逻辑删除版本-->
                 <col id="delVersion" mandatory="true" ui:number="true" sortable="true"/>

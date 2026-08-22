@@ -19,25 +19,25 @@
             <cols>
 
                 <!--ID-->
-                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="id" mandatory="true" sortable="true"/>
 
                 <!--工单号-->
                 <col id="code" mandatory="true" sortable="true"/>
 
                 <!--业务组织-->
-                <col id="orgId" ui:number="true" sortable="true"/>
+                <col id="orgId" sortable="true"/>
 
                 <!--BOM-->
-                <col id="bomId" ui:number="true" sortable="true"/>
+                <col id="bomId" sortable="true"/>
 
                 <!--工艺路线-->
-                <col id="routingId" ui:number="true" sortable="true"/>
+                <col id="routingId" sortable="true"/>
 
                 <!--生产版本-->
-                <col id="productionVersionId" ui:number="true" sortable="true"/>
+                <col id="productionVersionId" sortable="true"/>
 
                 <!--来源 MRP 计划-->
-                <col id="sourceMrpPlanId" ui:number="true" sortable="true"/>
+                <col id="sourceMrpPlanId" sortable="true"/>
 
                 <!--来源单据类型-->
                 <col id="sourceOrderType" sortable="true"/>
@@ -46,7 +46,7 @@
                 <col id="sourceOrderCode" sortable="true"/>
 
                 <!--产品(主产出)-->
-                <col id="productId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="productId" mandatory="true" sortable="true"/>
 
                 <!--计划数量-->
                 <col id="plannedQuantity" mandatory="true" ui:number="true" sortable="true"/>
@@ -73,7 +73,7 @@
                 <col id="actualEndDate" sortable="true"/>
 
                 <!--币种-->
-                <col id="currencyId" ui:number="true" sortable="true"/>
+                <col id="currencyId" sortable="true"/>
 
                 <!--材料成本-->
                 <col id="materialCost" ui:number="true" sortable="true"/>
@@ -130,7 +130,7 @@
                 <col id="amountFunctional" ui:number="true" sortable="true"/>
 
                 <!--APS排程来源(弱参照)-->
-                <col id="sourceScheduleId" ui:number="true" sortable="true"/>
+                <col id="sourceScheduleId" sortable="true"/>
 
                 <!--逻辑删除版本-->
                 <col id="delVersion" mandatory="true" ui:number="true" sortable="true"/>
@@ -151,7 +151,7 @@
                 <col id="snapshotBomVersion" sortable="true"/>
 
                 <!--BOM快照ID-->
-                <col id="snapshotBomId" ui:number="true" sortable="true"/>
+                <col id="snapshotBomId" sortable="true"/>
             </cols>
         </grid>
         <grid id="pick-list" x:prototype="list" x:abstract="true"/>

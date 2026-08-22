@@ -49,11 +49,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpMfgVarianceAlert extends JunitAutoTestCase {
 
-    static final Long ORG_ID = 1401L;
-    static final Long UOM_ID = 5401L;
-    static final Long CURRENCY_ID = 6401L;
-    static final Long WC1 = 6201L;
-    static final Long P = 1201L;
+    static final String ORG_ID = "1401";
+    static final String UOM_ID = "5401";
+    static final String CURRENCY_ID = "6401";
+    static final String WC1 = "6201";
+    static final String P = "1201";
     static final String NOTIFY_EVENT = ErpMfgConstants.NOTIFY_EVENT_PRODUCTION_VARIANCE;
     static final String RECIPIENT = "mfg-variance-recipient";
 
@@ -70,19 +70,19 @@ public class TestErpMfgVarianceAlert extends JunitAutoTestCase {
         setThreshold(new BigDecimal("10"));
         seedProduct(P);
         seedWorkcenter(WC1, bd("20"));
-        Long bomId = seedBom(9211L, P);
-        seedBomOperation(4211L, bomId, WC1, bd("60"));
+        String bomId = seedBom("9211", P);
+        seedBomOperation("4211", bomId, WC1, bd("60"));
         seedFirmedRollup(P, bd("10"), bd("10"), bd("5"), bd("25"));
-        seedNotifyTemplate(7106L, RECIPIENT);
+        seedNotifyTemplate("7106", RECIPIENT);
         int before = countNotifications(NOTIFY_EVENT);
 
         // 实际材料 25 远超标准 20 → 材料用量差异 +5（绝对值 5 < 10 不触发）
         // 但人工效率差异 +30（绝对值 30 > 10 触发）
-        ErpMfgWorkOrder wo = seedCompletedWorkOrder(8211L, "WO-VAR-ALERT-001", bomId, P,
+        ErpMfgWorkOrder wo = seedCompletedWorkOrder("8211", "WO-VAR-ALERT-001", bomId, P,
                 bd("2"), bd("2"), bd("25"), bd("35"), bd("8"));
-        seedTimeLog(5611L, 8211L, bd("150"));
+        seedTimeLog("5611", "8211", bd("150"));
 
-        productionVarianceCalculator.calculateVariances(8211L);
+        productionVarianceCalculator.calculateVariances("8211");
 
         int after = countNotifications(NOTIFY_EVENT);
         assertTrue(after > before, "差异超阈值应派发 mfg.production-variance 通知");
@@ -97,16 +97,16 @@ public class TestErpMfgVarianceAlert extends JunitAutoTestCase {
         try {
             seedProduct(P);
             seedWorkcenter(WC1, bd("20"));
-            Long bomId = seedBom(9212L, P);
-            seedBomOperation(4212L, bomId, WC1, bd("60"));
+            String bomId = seedBom("9212", P);
+            seedBomOperation("4212", bomId, WC1, bd("60"));
             seedFirmedRollup(P, bd("10"), bd("10"), bd("5"), bd("25"));
-            seedNotifyTemplate(7116L, RECIPIENT);
-            seedCompletedWorkOrder(8212L, "WO-VAR-ALERT-002", bomId, P,
+            seedNotifyTemplate("7116", RECIPIENT);
+            seedCompletedWorkOrder("8212", "WO-VAR-ALERT-002", bomId, P,
                     bd("2"), bd("2"), bd("25"), bd("35"), bd("8"));
-            seedTimeLog(5612L, 8212L, bd("150"));
+            seedTimeLog("5612", "8212", bd("150"));
             int before = countNotifications(NOTIFY_EVENT);
 
-            productionVarianceCalculator.calculateVariances(8212L);
+            productionVarianceCalculator.calculateVariances("8212");
 
             int after = countNotifications(NOTIFY_EVENT);
             assertEquals(before, after, "差异未超阈值应不派发通知");
@@ -121,16 +121,16 @@ public class TestErpMfgVarianceAlert extends JunitAutoTestCase {
         try {
             seedProduct(P);
             seedWorkcenter(WC1, bd("20"));
-            Long bomId = seedBom(9213L, P);
-            seedBomOperation(4213L, bomId, WC1, bd("60"));
+            String bomId = seedBom("9213", P);
+            seedBomOperation("4213", bomId, WC1, bd("60"));
             seedFirmedRollup(P, bd("10"), bd("10"), bd("5"), bd("25"));
-            seedNotifyTemplate(7126L, RECIPIENT);
-            seedCompletedWorkOrder(8213L, "WO-VAR-ALERT-003", bomId, P,
+            seedNotifyTemplate("7126", RECIPIENT);
+            seedCompletedWorkOrder("8213", "WO-VAR-ALERT-003", bomId, P,
                     bd("2"), bd("2"), bd("25"), bd("35"), bd("8"));
-            seedTimeLog(5613L, 8213L, bd("150"));
+            seedTimeLog("5613", "8213", bd("150"));
             int before = countNotifications(NOTIFY_EVENT);
 
-            productionVarianceCalculator.calculateVariances(8213L);
+            productionVarianceCalculator.calculateVariances("8213");
 
             int after = countNotifications(NOTIFY_EVENT);
             assertEquals(before, after, "config 关闭时应静默跳过 notify 派发");
@@ -166,7 +166,7 @@ public class TestErpMfgVarianceAlert extends JunitAutoTestCase {
         return list.isEmpty() ? null : list.get(0);
     }
 
-    private void seedNotifyTemplate(Long id, String recipientUserId) {
+    private void seedNotifyTemplate(String id, String recipientUserId) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpSysNotificationTemplate> dao = daoProvider.daoFor(ErpSysNotificationTemplate.class);
             ErpSysNotificationTemplate t = new ErpSysNotificationTemplate();
@@ -185,7 +185,7 @@ public class TestErpMfgVarianceAlert extends JunitAutoTestCase {
         });
     }
 
-    private void seedProduct(Long id) {
+    private void seedProduct(String id) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMdMaterial> dao = daoProvider.daoFor(ErpMdMaterial.class);
             ErpMdMaterial m = new ErpMdMaterial();
@@ -199,7 +199,7 @@ public class TestErpMfgVarianceAlert extends JunitAutoTestCase {
         });
     }
 
-    private void seedWorkcenter(Long id, BigDecimal hourlyRate) {
+    private void seedWorkcenter(String id, BigDecimal hourlyRate) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMfgWorkcenter> dao = daoProvider.daoFor(ErpMfgWorkcenter.class);
             ErpMfgWorkcenter wc = new ErpMfgWorkcenter();
@@ -211,7 +211,7 @@ public class TestErpMfgVarianceAlert extends JunitAutoTestCase {
         });
     }
 
-    private Long seedBom(Long id, Long productId) {
+    private String seedBom(String id, String productId) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMfgBom> dao = daoProvider.daoFor(ErpMfgBom.class);
             ErpMfgBom bom = new ErpMfgBom();
@@ -227,24 +227,24 @@ public class TestErpMfgVarianceAlert extends JunitAutoTestCase {
         return id;
     }
 
-    private void seedBomOperation(Long id, Long bomId, Long workcenterId, BigDecimal standardTime) {
+    private void seedBomOperation(String id, String bomId, String workcenterId, BigDecimal standardTime) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMfgBomOperation> dao = daoProvider.daoFor(ErpMfgBomOperation.class);
             ErpMfgBomOperation op = new ErpMfgBomOperation();
             op.orm_propValueByName("id", id);
             op.setBomId(bomId);
             op.setLineNo(10);
-            op.setOperationId(9000L);
+            op.setOperationId("9000");
             op.setWorkcenterId(workcenterId);
             op.setStandardTime(standardTime);
             dao.saveEntity(op);
         });
     }
 
-    private void seedFirmedRollup(Long productId, BigDecimal materialCost, BigDecimal laborCost,
+    private void seedFirmedRollup(String productId, BigDecimal materialCost, BigDecimal laborCost,
                                   BigDecimal overheadCost, BigDecimal unitCost) {
         ormTemplate.runInSession(() -> {
-            Long headerId = productId * 10000 + 1;
+            String headerId = String.valueOf(Long.parseLong(productId) * 10000 + 1);
             IEntityDao<ErpMfgCostRollup> headerDao = daoProvider.daoFor(ErpMfgCostRollup.class);
             ErpMfgCostRollup header = new ErpMfgCostRollup();
             header.orm_propValueByName("id", headerId);
@@ -256,7 +256,7 @@ public class TestErpMfgVarianceAlert extends JunitAutoTestCase {
 
             IEntityDao<ErpMfgCostRollupLine> lineDao = daoProvider.daoFor(ErpMfgCostRollupLine.class);
             ErpMfgCostRollupLine line = new ErpMfgCostRollupLine();
-            line.orm_propValueByName("id", productId * 10000 + 2);
+            line.orm_propValueByName("id", String.valueOf(Long.parseLong(productId) * 10000 + 2));
             line.setCostRollupId(headerId);
             line.setLineNo(10);
             line.setMaterialId(productId);
@@ -271,7 +271,7 @@ public class TestErpMfgVarianceAlert extends JunitAutoTestCase {
         });
     }
 
-    private ErpMfgWorkOrder seedCompletedWorkOrder(Long id, String code, Long bomId, Long productId,
+    private ErpMfgWorkOrder seedCompletedWorkOrder(String id, String code, String bomId, String productId,
                                                    BigDecimal planned, BigDecimal completed,
                                                    BigDecimal materialCost, BigDecimal laborCost,
                                                    BigDecimal overheadCost) {
@@ -296,12 +296,12 @@ public class TestErpMfgVarianceAlert extends JunitAutoTestCase {
         return daoProvider.daoFor(ErpMfgWorkOrder.class).getEntityById(id);
     }
 
-    private void seedTimeLog(Long id, Long workOrderId, BigDecimal durationMins) {
+    private void seedTimeLog(String id, String workOrderId, BigDecimal durationMins) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMfgJobCardTimeLog> dao = daoProvider.daoFor(ErpMfgJobCardTimeLog.class);
             ErpMfgJobCardTimeLog log = new ErpMfgJobCardTimeLog();
             log.orm_propValueByName("id", id);
-            log.setJobCardId(9001L);
+            log.setJobCardId("9001");
             log.setWorkOrderId(workOrderId);
             log.setOperatorId("OP-001");
             log.setWorkDate(LocalDate.of(2026, 7, 1));

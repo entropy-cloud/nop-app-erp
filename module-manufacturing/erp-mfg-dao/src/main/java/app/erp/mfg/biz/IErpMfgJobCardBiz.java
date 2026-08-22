@@ -29,23 +29,23 @@ import app.erp.mfg.dao.entity.ErpMfgJobCard;
 public interface IErpMfgJobCardBiz extends ICrudBiz<ErpMfgJobCard> {
 
     @BizMutation
-    ErpMfgJobCard startJob(@Name("jobCardId") Long jobCardId, IServiceContext context);
+    ErpMfgJobCard startJob(@Name("jobCardId") String jobCardId, IServiceContext context);
 
     @BizMutation
     ErpMfgJobCard recordWork(@RequestBean JobCardWorkRecord record, IServiceContext context);
 
     @BizMutation
-    ErpMfgJobCard submitJob(@Name("jobCardId") Long jobCardId, IServiceContext context);
+    ErpMfgJobCard submitJob(@Name("jobCardId") String jobCardId, IServiceContext context);
 
     @BizMutation
-    ErpMfgJobCard completeJob(@Name("jobCardId") Long jobCardId, IServiceContext context);
+    ErpMfgJobCard completeJob(@Name("jobCardId") String jobCardId, IServiceContext context);
 
     @BizMutation
-    ErpMfgJobCard holdJob(@Name("jobCardId") Long jobCardId, IServiceContext context);
+    ErpMfgJobCard holdJob(@Name("jobCardId") String jobCardId, IServiceContext context);
 
     @BizMutation
-    ErpMfgJobCard resumeJob(@Name("jobCardId") Long jobCardId, IServiceContext context);
+    ErpMfgJobCard resumeJob(@Name("jobCardId") String jobCardId, IServiceContext context);
 
     @BizMutation
-    ErpMfgJobCard cancelJob(@Name("jobCardId") Long jobCardId, IServiceContext context);
+    ErpMfgJobCard cancelJob(@Name("jobCardId") String jobCardId, IServiceContext context);
 }

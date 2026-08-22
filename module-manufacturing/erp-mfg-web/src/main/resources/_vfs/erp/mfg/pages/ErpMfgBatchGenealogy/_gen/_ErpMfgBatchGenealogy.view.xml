@@ -19,40 +19,40 @@
             <cols>
 
                 <!--ID-->
-                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="id" mandatory="true" sortable="true"/>
 
                 <!--工单-->
-                <col id="workOrderId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="workOrderId" mandatory="true" sortable="true"/>
 
                 <!--作业卡-->
-                <col id="jobCardId" ui:number="true" sortable="true"/>
+                <col id="jobCardId" sortable="true"/>
 
                 <!--工序-->
-                <col id="operationId" ui:number="true" sortable="true"/>
+                <col id="operationId" sortable="true"/>
 
                 <!--输入批次-->
-                <col id="inputLotId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="inputLotId" mandatory="true" sortable="true"/>
 
                 <!--输入物料-->
-                <col id="inputMaterialId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="inputMaterialId" mandatory="true" sortable="true"/>
 
                 <!--投入数量-->
                 <col id="inputQty" mandatory="true" ui:number="true" sortable="true"/>
 
                 <!--投入计量单位-->
-                <col id="inputUoMId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="inputUoMId" mandatory="true" sortable="true"/>
 
                 <!--产出批次-->
-                <col id="outputLotId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="outputLotId" mandatory="true" sortable="true"/>
 
                 <!--产出物料-->
-                <col id="outputMaterialId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="outputMaterialId" mandatory="true" sortable="true"/>
 
                 <!--产出数量-->
                 <col id="outputQty" mandatory="true" ui:number="true" sortable="true"/>
 
                 <!--产出计量单位-->
-                <col id="outputUoMId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="outputUoMId" mandatory="true" sortable="true"/>
 
                 <!--生产日期-->
                 <col id="productionDate" mandatory="true" sortable="true"/>

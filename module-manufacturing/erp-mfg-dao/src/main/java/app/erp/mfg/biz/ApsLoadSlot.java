@@ -24,27 +24,27 @@ import java.time.LocalDateTime;
 @DataBean
 public class ApsLoadSlot {
 
-    private Long operationOrderId;
-    private Long workOrderId;
+    private String operationOrderId;
+    private String workOrderId;
     private Integer sequence;
-    private Long workcenterId;
+    private String workcenterId;
     private LocalDateTime plannedStartT;
     private LocalDateTime plannedEndT;
     private BigDecimal setupTime;
 
-    public Long getOperationOrderId() {
+    public String getOperationOrderId() {
         return operationOrderId;
     }
 
-    public void setOperationOrderId(Long operationOrderId) {
+    public void setOperationOrderId(String operationOrderId) {
         this.operationOrderId = operationOrderId;
     }
 
-    public Long getWorkOrderId() {
+    public String getWorkOrderId() {
         return workOrderId;
     }
 
-    public void setWorkOrderId(Long workOrderId) {
+    public void setWorkOrderId(String workOrderId) {
         this.workOrderId = workOrderId;
     }
 
@@ -56,11 +56,11 @@ public class ApsLoadSlot {
         this.sequence = sequence;
     }
 
-    public Long getWorkcenterId() {
+    public String getWorkcenterId() {
         return workcenterId;
     }
 
-    public void setWorkcenterId(Long workcenterId) {
+    public void setWorkcenterId(String workcenterId) {
         this.workcenterId = workcenterId;
     }
 

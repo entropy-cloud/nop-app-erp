@@ -19,13 +19,13 @@
             <cols>
 
                 <!--ID-->
-                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="id" mandatory="true" sortable="true"/>
 
                 <!--作业卡ID-->
-                <col id="jobCardId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="jobCardId" mandatory="true" sortable="true"/>
 
                 <!--工单ID-->
-                <col id="workOrderId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="workOrderId" mandatory="true" sortable="true"/>
 
                 <!--操作员(职员)-->
                 <col id="operatorId" mandatory="true" sortable="true"/>

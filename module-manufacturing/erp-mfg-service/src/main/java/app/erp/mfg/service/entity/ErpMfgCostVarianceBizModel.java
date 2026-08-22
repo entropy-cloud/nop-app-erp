@@ -46,19 +46,19 @@ public class ErpMfgCostVarianceBizModel extends CrudBizModel<ErpMfgCostVariance>
 
     @Override
     @BizMutation
-    public List<ErpMfgCostVariance> calculateVariances(@Name("workOrderId") Long workOrderId, IServiceContext context) {
+    public List<ErpMfgCostVariance> calculateVariances(@Name("workOrderId") String workOrderId, IServiceContext context) {
         return calculateVariancesProcessor.calculateVariances(workOrderId, context);
     }
 
     @Override
     @BizQuery
-    public List<ErpMfgCostVariance> findByWorkOrder(@Name("workOrderId") Long workOrderId, IServiceContext context) {
+    public List<ErpMfgCostVariance> findByWorkOrder(@Name("workOrderId") String workOrderId, IServiceContext context) {
         return productionVarianceCalculator.findByWorkOrder(workOrderId);
     }
 
     @Override
     @BizQuery
-    public Map<String, Map<String, Object>> aggregateByType(@Name("workOrderId") Long workOrderId,
+    public Map<String, Map<String, Object>> aggregateByType(@Name("workOrderId") String workOrderId,
                                                             @Optional @Name("costElement") String costElement,
                                                             IServiceContext context) {
         List<ErpMfgCostVariance> lines = productionVarianceCalculator.findByWorkOrder(workOrderId);

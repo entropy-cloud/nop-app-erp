@@ -15,5 +15,5 @@ public interface IErpMfgMrpPlanBiz extends ICrudBiz<ErpMfgMrpPlan>{
      * 计划状态 DRAFT→RUNNING→COMPLETED。权威：{@code docs/design/manufacturing/mrp.md}。
      */
     @BizMutation
-    ErpMfgMrpPlan runMrp(@Name("planId") Long planId, IServiceContext context);
+    ErpMfgMrpPlan runMrp(@Name("planId") String planId, IServiceContext context);
 }

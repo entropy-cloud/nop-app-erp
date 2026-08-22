@@ -19,28 +19,28 @@
             <cols>
 
                 <!--ID-->
-                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="id" mandatory="true" sortable="true"/>
 
                 <!--BOM ID-->
-                <col id="bomId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="bomId" mandatory="true" sortable="true"/>
 
                 <!--行号-->
                 <col id="lineNo" mandatory="true" ui:number="true" sortable="true"/>
 
                 <!--物料-->
-                <col id="materialId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="materialId" mandatory="true" sortable="true"/>
 
                 <!--SKU-->
-                <col id="skuId" ui:number="true" sortable="true"/>
+                <col id="skuId" sortable="true"/>
 
                 <!--计量单位-->
-                <col id="uoMId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="uoMId" mandatory="true" sortable="true"/>
 
                 <!--数量-->
                 <col id="quantity" mandatory="true" ui:number="true" sortable="true"/>
 
                 <!--工序ID-->
-                <col id="operationId" ui:number="true" sortable="true"/>
+                <col id="operationId" sortable="true"/>
 
                 <!--备注-->
                 <col id="remark" sortable="true"/>
@@ -49,10 +49,10 @@
                 <col id="scrapRate" ui:number="true" sortable="true"/>
 
                 <!--发货仓库-->
-                <col id="warehouseId" ui:number="true" sortable="true"/>
+                <col id="warehouseId" sortable="true"/>
 
                 <!--替代物料-->
-                <col id="alternativeMaterialId" ui:number="true" sortable="true"/>
+                <col id="alternativeMaterialId" sortable="true"/>
 
                 <!--逻辑删除版本-->
                 <col id="delVersion" mandatory="true" ui:number="true" sortable="true"/>

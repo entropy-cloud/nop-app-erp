@@ -19,16 +19,16 @@
             <cols>
 
                 <!--ID-->
-                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="id" mandatory="true" sortable="true"/>
 
                 <!--仿真场景-->
-                <col id="scenarioId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="scenarioId" mandatory="true" sortable="true"/>
 
                 <!--版本号-->
                 <col id="versionNo" mandatory="true" ui:number="true" sortable="true"/>
 
                 <!--计算结果MRP计划-->
-                <col id="computedMrpPlanId" ui:number="true" sortable="true"/>
+                <col id="computedMrpPlanId" sortable="true"/>
 
                 <!--快照摘要-->
                 <col id="snapshotSummary" sortable="true"/>
@@ -37,7 +37,7 @@
                 <col id="status" mandatory="true" sortable="true"/>
 
                 <!--转正式计划ID-->
-                <col id="promotedPlanId" ui:number="true" sortable="true"/>
+                <col id="promotedPlanId" sortable="true"/>
 
                 <!--逻辑删除版本-->
                 <col id="delVersion" mandatory="true" ui:number="true" sortable="true"/>

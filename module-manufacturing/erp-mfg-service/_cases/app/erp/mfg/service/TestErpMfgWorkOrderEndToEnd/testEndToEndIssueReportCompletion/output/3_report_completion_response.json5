@@ -2,15 +2,15 @@
   "data": {
     "id": "8977",
     "code": "@var:ErpMfgWorkOrder@code",
-    "orgId": 1401,
-    "bomId": 9101,
+    "orgId": "1401",
+    "bomId": "9101",
     "routingId": null,
     "productionVersionId": null,
     "sourceMrpPlanId": null,
     "sourceOrderType": null,
     "sourceOrderType_label": null,
     "sourceOrderCode": null,
-    "productId": 1101,
+    "productId": "1101",
     "plannedQuantity": 1.0000,
     "completedQuantity": 1.0000,
     "scrappedQuantity": 0.0000,
@@ -19,7 +19,7 @@
     "plannedEndDate": null,
     "actualStartDate": "2026-07-17",
     "actualEndDate": "2026-07-17",
-    "currencyId": 6401,
+    "currencyId": "6401",
     "materialCost": 10.0000,
     "laborCost": 30.0000,
     "overheadCost": 0.0000,
@@ -49,7 +49,7 @@
     "updatedBy": "autotest-ref",
     "updateTime": "@var:ErpMfgWorkOrder@updateTime_8",
     "snapshotBomVersion": null,
-    "snapshotBomId": 6
+    "snapshotBomId": "6"
   },
   "status": 0
 }

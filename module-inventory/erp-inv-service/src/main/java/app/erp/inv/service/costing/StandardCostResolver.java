@@ -9,7 +9,6 @@ import app.erp.mfg.dao.entity.ErpMfgCostRollupLine;
 import app.erp.md.dao.entity.ErpMdMaterial;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.config.AppConfig;
-import io.nop.api.core.convert.ConvertHelper;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
@@ -79,11 +78,8 @@ public class StandardCostResolver {
         return standard;
     }
 
-    // A2 桥接（bridge-main-073/074，M0.2 登记册）：mfg ErpMfgCostRollup(RollupLine) 列仍 Long（mfg 位次 14 未迁移），
-    // inv String materialId → ConvertHelper.toLong 桥接查询值（Long 列传 String 会静默空匹配），退役 owner M3.1
     private BigDecimal resolveFromRollup(String materialId) {
         ormTemplate.flushSession();
-        Long mfgMaterialKey = ConvertHelper.toLong(materialId);
         IEntityDao<ErpMfgCostRollup> headerDao = daoProvider.daoFor(ErpMfgCostRollup.class);
         List<ErpMfgCostRollup> firmedList = headerDao.findAllByQuery(
                 new QueryBean().addFilter(eq("status", STATUS_FIRMED)));
@@ -99,7 +95,7 @@ public class StandardCostResolver {
             List<ErpMfgCostRollupLine> lines = lineDao.findAllByQuery(
                     new QueryBean()
                             .addFilter(eq("costRollupId", header.getId()))
-                            .addFilter(eq("materialId", mfgMaterialKey)));
+                            .addFilter(eq("materialId", materialId)));
             if (!lines.isEmpty()) {
                 return lines.get(0).getUnitCost();
             }

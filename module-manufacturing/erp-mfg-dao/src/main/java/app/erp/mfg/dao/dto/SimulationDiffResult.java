@@ -15,21 +15,21 @@ public class SimulationDiffResult implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private Long versionIdA;
-    private Long versionIdB;
+    private String versionIdA;
+    private String versionIdB;
     private List<LineDiff> lineDiffs;
     private BigDecimal totalNetRequirementDelta;
     private BigDecimal totalPlannedQuantityDelta;
     private BigDecimal totalPurchaseAmountDelta;
-    private List<Long> shortageOnlyInA;
-    private List<Long> shortageOnlyInB;
-    private List<Long> shortageInBoth;
+    private List<String> shortageOnlyInA;
+    private List<String> shortageOnlyInB;
+    private List<String> shortageInBoth;
 
-    public Long getVersionIdA() { return versionIdA; }
-    public void setVersionIdA(Long v) { this.versionIdA = v; }
+    public String getVersionIdA() { return versionIdA; }
+    public void setVersionIdA(String v) { this.versionIdA = v; }
 
-    public Long getVersionIdB() { return versionIdB; }
-    public void setVersionIdB(Long v) { this.versionIdB = v; }
+    public String getVersionIdB() { return versionIdB; }
+    public void setVersionIdB(String v) { this.versionIdB = v; }
 
     public List<LineDiff> getLineDiffs() { return lineDiffs; }
     public void setLineDiffs(List<LineDiff> l) { this.lineDiffs = l; }
@@ -43,14 +43,14 @@ public class SimulationDiffResult implements Serializable {
     public BigDecimal getTotalPurchaseAmountDelta() { return totalPurchaseAmountDelta; }
     public void setTotalPurchaseAmountDelta(BigDecimal v) { this.totalPurchaseAmountDelta = v; }
 
-    public List<Long> getShortageOnlyInA() { return shortageOnlyInA; }
-    public void setShortageOnlyInA(List<Long> l) { this.shortageOnlyInA = l; }
+    public List<String> getShortageOnlyInA() { return shortageOnlyInA; }
+    public void setShortageOnlyInA(List<String> l) { this.shortageOnlyInA = l; }
 
-    public List<Long> getShortageOnlyInB() { return shortageOnlyInB; }
-    public void setShortageOnlyInB(List<Long> l) { this.shortageOnlyInB = l; }
+    public List<String> getShortageOnlyInB() { return shortageOnlyInB; }
+    public void setShortageOnlyInB(List<String> l) { this.shortageOnlyInB = l; }
 
-    public List<Long> getShortageInBoth() { return shortageInBoth; }
-    public void setShortageInBoth(List<Long> l) { this.shortageInBoth = l; }
+    public List<String> getShortageInBoth() { return shortageInBoth; }
+    public void setShortageInBoth(List<String> l) { this.shortageInBoth = l; }
 
     /**
      * 单物料维度 diff（B - A 符号约定：正值表示 B 多于 A）。
@@ -58,7 +58,7 @@ public class SimulationDiffResult implements Serializable {
     public static class LineDiff implements Serializable {
         private static final long serialVersionUID = 1L;
 
-        private Long materialId;
+        private String materialId;
         private BigDecimal netRequirementA;
         private BigDecimal netRequirementB;
         private BigDecimal netRequirementDelta;
@@ -66,8 +66,8 @@ public class SimulationDiffResult implements Serializable {
         private BigDecimal plannedQuantityB;
         private BigDecimal plannedQuantityDelta;
 
-        public Long getMaterialId() { return materialId; }
-        public void setMaterialId(Long v) { this.materialId = v; }
+        public String getMaterialId() { return materialId; }
+        public void setMaterialId(String v) { this.materialId = v; }
 
         public BigDecimal getNetRequirementA() { return netRequirementA; }
         public void setNetRequirementA(BigDecimal v) { this.netRequirementA = v; }

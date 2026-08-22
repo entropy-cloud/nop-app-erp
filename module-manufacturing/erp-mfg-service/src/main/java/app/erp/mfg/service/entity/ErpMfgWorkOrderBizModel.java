@@ -62,43 +62,43 @@ public class ErpMfgWorkOrderBizModel extends CrudBizModel<ErpMfgWorkOrder> imple
 
     @Override
     @BizMutation
-    public ErpMfgWorkOrder checkAvailability(@Name("workOrderId") Long workOrderId, IServiceContext context) {
+    public ErpMfgWorkOrder checkAvailability(@Name("workOrderId") String workOrderId, IServiceContext context) {
         return workOrderProcessor.checkAvailability(workOrderId, context);
     }
 
     @Override
     @BizMutation
-    public ErpMfgWorkOrder start(@Name("workOrderId") Long workOrderId, IServiceContext context) {
+    public ErpMfgWorkOrder start(@Name("workOrderId") String workOrderId, IServiceContext context) {
         return startProcessor.start(workOrderId, context);
     }
 
     @Override
     @BizMutation
-    public ErpMfgWorkOrder stop(@Name("workOrderId") Long workOrderId, IServiceContext context) {
+    public ErpMfgWorkOrder stop(@Name("workOrderId") String workOrderId, IServiceContext context) {
         return stopProcessor.stop(workOrderId, context);
     }
 
     @Override
     @BizMutation
-    public ErpMfgWorkOrder resume(@Name("workOrderId") Long workOrderId, IServiceContext context) {
+    public ErpMfgWorkOrder resume(@Name("workOrderId") String workOrderId, IServiceContext context) {
         return resumeProcessor.resume(workOrderId, context);
     }
 
     @Override
     @BizMutation
-    public ErpMfgWorkOrder close(@Name("workOrderId") Long workOrderId, IServiceContext context) {
+    public ErpMfgWorkOrder close(@Name("workOrderId") String workOrderId, IServiceContext context) {
         return closeProcessor.close(workOrderId, context);
     }
 
     @Override
     @BizMutation
-    public ErpMfgWorkOrder cancel(@Name("workOrderId") Long workOrderId, IServiceContext context) {
+    public ErpMfgWorkOrder cancel(@Name("workOrderId") String workOrderId, IServiceContext context) {
         return workOrderProcessor.cancel(workOrderId, context);
     }
 
     @Override
     @BizMutation
-    public ErpMfgWorkOrder reportCompletion(@Name("workOrderId") Long workOrderId,
+    public ErpMfgWorkOrder reportCompletion(@Name("workOrderId") String workOrderId,
                                             @Name("completedQty") BigDecimal completedQty,
                                             IServiceContext context) {
         return reportCompletionProcessor.reportCompletion(workOrderId, completedQty, context);
@@ -106,7 +106,7 @@ public class ErpMfgWorkOrderBizModel extends CrudBizModel<ErpMfgWorkOrder> imple
 
     @Override
     @BizMutation
-    public ErpMfgWorkOrder generateJobCardsFromSchedule(@Name("workOrderId") Long workOrderId, IServiceContext context) {
+    public ErpMfgWorkOrder generateJobCardsFromSchedule(@Name("workOrderId") String workOrderId, IServiceContext context) {
         return generateJobCardsFromScheduleProcessor.generateJobCardsFromSchedule(workOrderId, context);
     }
 

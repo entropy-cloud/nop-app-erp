@@ -12,30 +12,30 @@
     public class ErpMfgBomOperationInputBean extends CrudInputBase {
 
     
-        private Long _id;
+        private String _id;
 
     
         @PropMeta(propId=1)
     
-        public Long getId(){
+        public String getId(){
             return _id;
         }
 
-        public void setId(Long value){
+        public void setId(String value){
             this._id = value;
         }
 
 
-        private Long _bomId;
+        private String _bomId;
 
     
         @PropMeta(propId=2)
     
-        public Long getBomId(){
+        public String getBomId(){
             return _bomId;
         }
 
-        public void setBomId(Long value){
+        public void setBomId(String value){
             this._bomId = value;
         }
 
@@ -54,30 +54,30 @@
         }
 
 
-        private Long _operationId;
+        private String _operationId;
 
     
         @PropMeta(propId=4)
     
-        public Long getOperationId(){
+        public String getOperationId(){
             return _operationId;
         }
 
-        public void setOperationId(Long value){
+        public void setOperationId(String value){
             this._operationId = value;
         }
 
 
-        private Long _workcenterId;
+        private String _workcenterId;
 
     
         @PropMeta(propId=5)
     
-        public Long getWorkcenterId(){
+        public String getWorkcenterId(){
             return _workcenterId;
         }
 
-        public void setWorkcenterId(Long value){
+        public void setWorkcenterId(String value){
             this._workcenterId = value;
         }
 

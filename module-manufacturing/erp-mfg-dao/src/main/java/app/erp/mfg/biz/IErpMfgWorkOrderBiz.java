@@ -41,25 +41,25 @@ import java.util.List;
 public interface IErpMfgWorkOrderBiz extends ICrudBiz<ErpMfgWorkOrder> {
 
     @BizMutation
-    ErpMfgWorkOrder checkAvailability(@Name("workOrderId") Long workOrderId, IServiceContext context);
+    ErpMfgWorkOrder checkAvailability(@Name("workOrderId") String workOrderId, IServiceContext context);
 
     @BizMutation
-    ErpMfgWorkOrder start(@Name("workOrderId") Long workOrderId, IServiceContext context);
+    ErpMfgWorkOrder start(@Name("workOrderId") String workOrderId, IServiceContext context);
 
     @BizMutation
-    ErpMfgWorkOrder stop(@Name("workOrderId") Long workOrderId, IServiceContext context);
+    ErpMfgWorkOrder stop(@Name("workOrderId") String workOrderId, IServiceContext context);
 
     @BizMutation
-    ErpMfgWorkOrder resume(@Name("workOrderId") Long workOrderId, IServiceContext context);
+    ErpMfgWorkOrder resume(@Name("workOrderId") String workOrderId, IServiceContext context);
 
     @BizMutation
-    ErpMfgWorkOrder close(@Name("workOrderId") Long workOrderId, IServiceContext context);
+    ErpMfgWorkOrder close(@Name("workOrderId") String workOrderId, IServiceContext context);
 
     @BizMutation
-    ErpMfgWorkOrder cancel(@Name("workOrderId") Long workOrderId, IServiceContext context);
+    ErpMfgWorkOrder cancel(@Name("workOrderId") String workOrderId, IServiceContext context);
 
     @BizMutation
-    ErpMfgWorkOrder reportCompletion(@Name("workOrderId") Long workOrderId,
+    ErpMfgWorkOrder reportCompletion(@Name("workOrderId") String workOrderId,
                                      @Name("completedQty") java.math.BigDecimal completedQty,
                                      IServiceContext context);
 
@@ -75,7 +75,7 @@ public interface IErpMfgWorkOrderBiz extends ICrudBiz<ErpMfgWorkOrder> {
      * 工单状态门控：须为已审核且非终态（NOT_STARTED/STOCK_RESERVED/STOCK_PARTIAL/IN_PROCESS/STOPPED）。
      */
     @BizMutation
-    ErpMfgWorkOrder generateJobCardsFromSchedule(@Name("workOrderId") Long workOrderId, IServiceContext context);
+    ErpMfgWorkOrder generateJobCardsFromSchedule(@Name("workOrderId") String workOrderId, IServiceContext context);
 
     /**
      * 查询「已排程但未生成 JobCard」的工单列表（plan 2026-07-05-0427-3 Phase 3，config-gated 自动入口前置查询）。

@@ -62,13 +62,13 @@ public class TestErpMfgCostFlowEndToEnd extends JunitAutoTestCase {
     @RegisterExtension
     static MfgFrozenClockExtension frozenClock = new MfgFrozenClockExtension();
 
-    static final Long ORG_ID = 1701L;
-    static final Long WAREHOUSE_ID = 3701L;
-    static final Long UOM_ID = 5701L;
-    static final Long CURRENCY_ID = 6701L;
-    static final Long ACCT_SCHEMA_ID = 7701L;
-    static final Long P = 1501L;
-    static final Long M1 = 1502L;
+    static final String ORG_ID = "1701";
+    static final String WAREHOUSE_ID = "3701";
+    static final String UOM_ID = "5701";
+    static final String CURRENCY_ID = "6701";
+    static final String ACCT_SCHEMA_ID = "7701";
+    static final String P = "1501";
+    static final String M1 = "1502";
     static final String MOVE_TYPE_INCOMING = "INCOMING";
     static final String SUBJECT_INVENTORY = "1401";
     static final String SUBJECT_WIP = "1411";
@@ -87,21 +87,21 @@ public class TestErpMfgCostFlowEndToEnd extends JunitAutoTestCase {
         seedPeriodAndSubjects();
         seedMaterial(M1, "MOVING_AVERAGE");
         seedMaterial(P, null);
-        seedBom(9801L, P, M1, bd("2"));
+        seedBom("9801", P, M1, bd("2"));
         generateIncoming(M1, "PR-CF-E2E", bd("10"), bd("5"));
 
-        Long woId = seedWorkOrder("WO-CF-E2E", 9801L);
-        Long inputLineId = seedWorkOrderLine(woId, M1, bd("2"), "INPUT", null);
+        String woId = seedWorkOrder("WO-CF-E2E", "9801");
+        String inputLineId = seedWorkOrderLine(woId, M1, bd("2"), "INPUT", null);
         seedWorkOrderLine(woId, P, bd("1"), "OUTPUT", WAREHOUSE_ID);
 
-        rpcOk(mutation, "ErpMfgWorkOrder__submitForApproval", Map.of("id", String.valueOf(woId)));
-        rpcOk(mutation, "ErpMfgWorkOrder__approve", Map.of("id", String.valueOf(woId)));
+        rpcOk(mutation, "ErpMfgWorkOrder__submitForApproval", Map.of("id", woId));
+        rpcOk(mutation, "ErpMfgWorkOrder__approve", Map.of("id", woId));
         rpcOk(mutation, "ErpMfgWorkOrder__checkAvailability", Map.of("workOrderId", woId));
         rpcOk(mutation, "ErpMfgWorkOrder__start", Map.of("workOrderId", woId));
 
         // ---- 领料出库 → MANUFACTURING_ISSUE 凭证 ----
-        Long issueId = seedIssue("MI-CF-E2E", woId);
-        seedIssueLine(9801L, issueId, M1, bd("2"), inputLineId);
+        String issueId = seedIssue("MI-CF-E2E", woId);
+        seedIssueLine("9801", issueId, M1, bd("2"), inputLineId);
         rpcOk(mutation, "ErpMfgMaterialIssue__confirm", Map.of("issueId", issueId));
 
         BigDecimal materialCost = bd("10"); // 2 × avgCost 5
@@ -193,7 +193,7 @@ public class TestErpMfgCostFlowEndToEnd extends JunitAutoTestCase {
         dao.saveEntity(subject);
     }
 
-    private void seedMaterial(Long id, String costMethod) {
+    private void seedMaterial(String id, String costMethod) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMdMaterial> dao = daoProvider.daoFor(ErpMdMaterial.class);
             ErpMdMaterial m = new ErpMdMaterial();
@@ -208,7 +208,7 @@ public class TestErpMfgCostFlowEndToEnd extends JunitAutoTestCase {
         });
     }
 
-    private void seedBom(Long bomId, Long productId, Long componentId, BigDecimal qty) {
+    private void seedBom(String bomId, String productId, String componentId, BigDecimal qty) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMfgBom> dao = daoProvider.daoFor(ErpMfgBom.class);
             ErpMfgBom bom = new ErpMfgBom();
@@ -222,7 +222,7 @@ public class TestErpMfgCostFlowEndToEnd extends JunitAutoTestCase {
             dao.saveEntity(bom);
             IEntityDao<ErpMfgBomLine> ldao = daoProvider.daoFor(ErpMfgBomLine.class);
             ErpMfgBomLine line = new ErpMfgBomLine();
-            line.orm_propValueByName("id", bomId + 50000);
+            line.orm_propValueByName("id", String.valueOf(Long.parseLong(bomId) + 50000));
             line.setBomId(bomId);
             line.setLineNo(10);
             line.setMaterialId(componentId);
@@ -232,7 +232,7 @@ public class TestErpMfgCostFlowEndToEnd extends JunitAutoTestCase {
         });
     }
 
-    private void generateIncoming(Long materialId, String billCode, BigDecimal qty, BigDecimal unitCost) {
+    private void generateIncoming(String materialId, String billCode, BigDecimal qty, BigDecimal unitCost) {
         Map<String, Object> req = new LinkedHashMap<>();
         req.put("moveType", MOVE_TYPE_INCOMING);
         req.put("orgId", ORG_ID);
@@ -252,8 +252,8 @@ public class TestErpMfgCostFlowEndToEnd extends JunitAutoTestCase {
         rpcOk(mutation, "ErpInvStockMove__generateMove", Map.of("request", req));
     }
 
-    private Long seedWorkOrder(String code, Long bomId) {
-        Long id = 9100L + (long) Math.abs(code.hashCode() % 500);
+    private String seedWorkOrder(String code, String bomId) {
+        String id = String.valueOf(9100L + (long) Math.abs(code.hashCode() % 500));
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMfgWorkOrder> dao = daoProvider.daoFor(ErpMfgWorkOrder.class);
             ErpMfgWorkOrder wo = new ErpMfgWorkOrder();
@@ -271,16 +271,16 @@ public class TestErpMfgCostFlowEndToEnd extends JunitAutoTestCase {
         return id;
     }
 
-    private Long seedWorkOrderLine(Long woId, Long materialId, BigDecimal plannedQty, String lineType,
-                                   Long destWarehouseId) {
+    private String seedWorkOrderLine(String woId, String materialId, BigDecimal plannedQty, String lineType,
+                                     String destWarehouseId) {
         long raw = (woId + "" + materialId + lineType).hashCode();
-        Long id = 9900L + (long) Math.abs(raw % 500);
+        String id = String.valueOf(9900L + (long) Math.abs(raw % 500));
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMfgWorkOrderLine> dao = daoProvider.daoFor(ErpMfgWorkOrderLine.class);
             ErpMfgWorkOrderLine wol = new ErpMfgWorkOrderLine();
             wol.orm_propValueByName("id", id);
             wol.setWorkOrderId(woId);
-            wol.setLineNo(materialId.intValue());
+            wol.setLineNo(Integer.parseInt(materialId));
             wol.orm_propValueByName("lineType", lineType);
             wol.setMaterialId(materialId);
             wol.setUoMId(UOM_ID);
@@ -291,8 +291,8 @@ public class TestErpMfgCostFlowEndToEnd extends JunitAutoTestCase {
         return id;
     }
 
-    private Long seedIssue(String code, Long woId) {
-        Long id = 9200L + (long) Math.abs(code.hashCode() % 500);
+    private String seedIssue(String code, String woId) {
+        String id = String.valueOf(9200L + (long) Math.abs(code.hashCode() % 500));
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMfgMaterialIssue> dao = daoProvider.daoFor(ErpMfgMaterialIssue.class);
             ErpMfgMaterialIssue issue = new ErpMfgMaterialIssue();
@@ -310,7 +310,7 @@ public class TestErpMfgCostFlowEndToEnd extends JunitAutoTestCase {
         return id;
     }
 
-    private void seedIssueLine(Long id, Long issueId, Long materialId, BigDecimal qty, Long wolId) {
+    private void seedIssueLine(String id, String issueId, String materialId, BigDecimal qty, String wolId) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMfgMaterialIssueLine> dao = daoProvider.daoFor(ErpMfgMaterialIssueLine.class);
             ErpMfgMaterialIssueLine line = new ErpMfgMaterialIssueLine();
@@ -348,7 +348,7 @@ public class TestErpMfgCostFlowEndToEnd extends JunitAutoTestCase {
         return daoProvider.daoFor(ErpFinVoucher.class).getEntityById(links.get(0).getVoucherId());
     }
 
-    private void assertVoucherLine(Long voucherId, String subjectCode, String dcDirection, BigDecimal amount) {
+    private void assertVoucherLine(String voucherId, String subjectCode, String dcDirection, BigDecimal amount) {
         IEntityDao<ErpFinVoucherLine> dao = daoProvider.daoFor(ErpFinVoucherLine.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("voucherId", voucherId));

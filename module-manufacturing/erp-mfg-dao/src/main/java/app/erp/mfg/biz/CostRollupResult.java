@@ -15,18 +15,18 @@ import java.util.List;
 @DataBean
 public class CostRollupResult {
 
-    private Long rollupId;
+    private String rollupId;
     private String status;
     private List<CostRollupLineView> lines = new ArrayList<>();
 
     public CostRollupResult() {
     }
 
-    public Long getRollupId() {
+    public String getRollupId() {
         return rollupId;
     }
 
-    public void setRollupId(Long rollupId) {
+    public void setRollupId(String rollupId) {
         this.rollupId = rollupId;
     }
 

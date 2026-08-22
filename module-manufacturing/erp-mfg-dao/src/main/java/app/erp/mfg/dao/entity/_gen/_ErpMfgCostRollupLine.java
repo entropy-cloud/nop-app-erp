@@ -175,19 +175,19 @@ public class _ErpMfgCostRollupLine extends DynamicOrmEntity{
 
     
     /* ID: ID */
-    private java.lang.Long _id;
+    private java.lang.String _id;
     
     /* 滚算单ID: COST_ROLLUP_ID */
-    private java.lang.Long _costRollupId;
+    private java.lang.String _costRollupId;
     
     /* 行号: LINE_NO */
     private java.lang.Integer _lineNo;
     
     /* 产品: MATERIAL_ID */
-    private java.lang.Long _materialId;
+    private java.lang.String _materialId;
     
     /* 计量单位: UO_M_ID */
-    private java.lang.Long _uoMId;
+    private java.lang.String _uoMId;
     
     /* 材料成本: MATERIAL_COST */
     private java.math.BigDecimal _materialCost;
@@ -208,7 +208,7 @@ public class _ErpMfgCostRollupLine extends DynamicOrmEntity{
     private java.math.BigDecimal _unitCost;
     
     /* 币种: CURRENCY_ID */
-    private java.lang.Long _currencyId;
+    private java.lang.String _currencyId;
     
     /* 逻辑删除版本: DEL_VERSION */
     private java.lang.Long _delVersion;
@@ -368,9 +368,9 @@ public class _ErpMfgCostRollupLine extends DynamicOrmEntity{
         switch(propId){
         
             case PROP_ID_id:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_id));
                }
                setId(typedValue);
@@ -378,9 +378,9 @@ public class _ErpMfgCostRollupLine extends DynamicOrmEntity{
             }
         
             case PROP_ID_costRollupId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_costRollupId));
                }
                setCostRollupId(typedValue);
@@ -398,9 +398,9 @@ public class _ErpMfgCostRollupLine extends DynamicOrmEntity{
             }
         
             case PROP_ID_materialId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_materialId));
                }
                setMaterialId(typedValue);
@@ -408,9 +408,9 @@ public class _ErpMfgCostRollupLine extends DynamicOrmEntity{
             }
         
             case PROP_ID_uoMId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_uoMId));
                }
                setUoMId(typedValue);
@@ -478,9 +478,9 @@ public class _ErpMfgCostRollupLine extends DynamicOrmEntity{
             }
         
             case PROP_ID_currencyId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_currencyId));
                }
                setCurrencyId(typedValue);
@@ -558,14 +558,14 @@ public class _ErpMfgCostRollupLine extends DynamicOrmEntity{
         
             case PROP_ID_id:{
                onInitProp(propId);
-               this._id = (java.lang.Long)value;
+               this._id = (java.lang.String)value;
                orm_id(); // 如果是设置主键字段，则触发watcher
                break;
             }
         
             case PROP_ID_costRollupId:{
                onInitProp(propId);
-               this._costRollupId = (java.lang.Long)value;
+               this._costRollupId = (java.lang.String)value;
                
                break;
             }
@@ -579,14 +579,14 @@ public class _ErpMfgCostRollupLine extends DynamicOrmEntity{
         
             case PROP_ID_materialId:{
                onInitProp(propId);
-               this._materialId = (java.lang.Long)value;
+               this._materialId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_uoMId:{
                onInitProp(propId);
-               this._uoMId = (java.lang.Long)value;
+               this._uoMId = (java.lang.String)value;
                
                break;
             }
@@ -635,7 +635,7 @@ public class _ErpMfgCostRollupLine extends DynamicOrmEntity{
         
             case PROP_ID_currencyId:{
                onInitProp(propId);
-               this._currencyId = (java.lang.Long)value;
+               this._currencyId = (java.lang.String)value;
                
                break;
             }
@@ -691,7 +691,7 @@ public class _ErpMfgCostRollupLine extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final java.lang.Long getId(){
+    public final java.lang.String getId(){
          onPropGet(PROP_ID_id);
          return _id;
     }
@@ -699,7 +699,7 @@ public class _ErpMfgCostRollupLine extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final void setId(java.lang.Long value){
+    public final void setId(java.lang.String value){
         if(onPropSet(PROP_ID_id,value)){
             this._id = value;
             internalClearRefs(PROP_ID_id);
@@ -710,7 +710,7 @@ public class _ErpMfgCostRollupLine extends DynamicOrmEntity{
     /**
      * 滚算单ID: COST_ROLLUP_ID
      */
-    public final java.lang.Long getCostRollupId(){
+    public final java.lang.String getCostRollupId(){
          onPropGet(PROP_ID_costRollupId);
          return _costRollupId;
     }
@@ -718,7 +718,7 @@ public class _ErpMfgCostRollupLine extends DynamicOrmEntity{
     /**
      * 滚算单ID: COST_ROLLUP_ID
      */
-    public final void setCostRollupId(java.lang.Long value){
+    public final void setCostRollupId(java.lang.String value){
         if(onPropSet(PROP_ID_costRollupId,value)){
             this._costRollupId = value;
             internalClearRefs(PROP_ID_costRollupId);
@@ -748,7 +748,7 @@ public class _ErpMfgCostRollupLine extends DynamicOrmEntity{
     /**
      * 产品: MATERIAL_ID
      */
-    public final java.lang.Long getMaterialId(){
+    public final java.lang.String getMaterialId(){
          onPropGet(PROP_ID_materialId);
          return _materialId;
     }
@@ -756,7 +756,7 @@ public class _ErpMfgCostRollupLine extends DynamicOrmEntity{
     /**
      * 产品: MATERIAL_ID
      */
-    public final void setMaterialId(java.lang.Long value){
+    public final void setMaterialId(java.lang.String value){
         if(onPropSet(PROP_ID_materialId,value)){
             this._materialId = value;
             internalClearRefs(PROP_ID_materialId);
@@ -767,7 +767,7 @@ public class _ErpMfgCostRollupLine extends DynamicOrmEntity{
     /**
      * 计量单位: UO_M_ID
      */
-    public final java.lang.Long getUoMId(){
+    public final java.lang.String getUoMId(){
          onPropGet(PROP_ID_uoMId);
          return _uoMId;
     }
@@ -775,7 +775,7 @@ public class _ErpMfgCostRollupLine extends DynamicOrmEntity{
     /**
      * 计量单位: UO_M_ID
      */
-    public final void setUoMId(java.lang.Long value){
+    public final void setUoMId(java.lang.String value){
         if(onPropSet(PROP_ID_uoMId,value)){
             this._uoMId = value;
             internalClearRefs(PROP_ID_uoMId);
@@ -900,7 +900,7 @@ public class _ErpMfgCostRollupLine extends DynamicOrmEntity{
     /**
      * 币种: CURRENCY_ID
      */
-    public final java.lang.Long getCurrencyId(){
+    public final java.lang.String getCurrencyId(){
          onPropGet(PROP_ID_currencyId);
          return _currencyId;
     }
@@ -908,7 +908,7 @@ public class _ErpMfgCostRollupLine extends DynamicOrmEntity{
     /**
      * 币种: CURRENCY_ID
      */
-    public final void setCurrencyId(java.lang.Long value){
+    public final void setCurrencyId(java.lang.String value){
         if(onPropSet(PROP_ID_currencyId,value)){
             this._currencyId = value;
             internalClearRefs(PROP_ID_currencyId);

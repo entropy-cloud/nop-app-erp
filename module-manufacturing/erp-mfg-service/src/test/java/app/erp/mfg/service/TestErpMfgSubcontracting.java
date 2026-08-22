@@ -59,15 +59,15 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpMfgSubcontracting extends JunitAutoTestCase {
 
-    static final Long ORG_ID = 1601L;
-    static final Long WAREHOUSE_ID = 3601L;
-    static final Long UOM_ID = 5601L;
-    static final Long CURRENCY_ID = 6601L;
-    static final Long ACCT_SCHEMA_ID = 7601L;
-    static final Long FX_FUNCTIONAL_CURRENCY_ID = 6501L; // 本位币（≠ 委外单币种 6601，构造多币种场景）
-    static final Long SUPPLIER_ID = 4601L;
-    static final Long P = 2401L;
-    static final Long M1 = 2402L;
+    static final String ORG_ID = "1601";
+    static final String WAREHOUSE_ID = "3601";
+    static final String UOM_ID = "5601";
+    static final String CURRENCY_ID = "6601";
+    static final String ACCT_SCHEMA_ID = "7601";
+    static final String FX_FUNCTIONAL_CURRENCY_ID = "6501"; // 本位币（≠ 委外单币种 6601，构造多币种场景）
+    static final String SUPPLIER_ID = "4601";
+    static final String P = "2401";
+    static final String M1 = "2402";
     static final String MOVE_TYPE_INCOMING = "INCOMING";
     static final String SUBJECT_RAW = "1401";
     static final String SUBJECT_FINISHED = "1405";
@@ -91,15 +91,15 @@ public class TestErpMfgSubcontracting extends JunitAutoTestCase {
         seedMaterial(P, null);
         generateIncoming(M1, "PR-SC-MA", bd("10"), bd("5"));
 
-        Long orderId = seedSubcontractOrder("SUB-LC", bd("50"));
-        seedSubcontractLine(9801L, orderId, M1, bd("2"));
+        String orderId = seedSubcontractOrder("SUB-LC", bd("50"));
+        seedSubcontractLine("9801", orderId, M1, bd("2"));
 
         setConfig(ErpMfgConstants.CONFIG_SUBCONTRACT_POSTING_ENABLED, "true");
         try {
-            rpcOk(mutation, "ErpMfgSubcontractOrder__submitForApproval", Map.of("id", String.valueOf(orderId)));
+            rpcOk(mutation, "ErpMfgSubcontractOrder__submitForApproval", Map.of("id", orderId));
             assertEquals(ErpMfgConstants.SUBCONTRACT_STATUS_SUBMITTED, statusOf(orderId));
 
-            rpcOk(mutation, "ErpMfgSubcontractOrder__approve", Map.of("id", String.valueOf(orderId)));
+            rpcOk(mutation, "ErpMfgSubcontractOrder__approve", Map.of("id", orderId));
             assertEquals(ErpMfgConstants.SUBCONTRACT_STATUS_APPROVED, statusOf(orderId));
 
             Map<String, Object> issueReq = new LinkedHashMap<>();
@@ -150,7 +150,7 @@ public class TestErpMfgSubcontracting extends JunitAutoTestCase {
         seedMaterial(M1, "MOVING_AVERAGE");
         seedMaterial(P, null);
 
-        Long orderId = seedSubcontractOrder("SUB-ILL", bd("30"));
+        String orderId = seedSubcontractOrder("SUB-ILL", bd("30"));
 
         ApiResponse<?> resp = rpc(mutation, "ErpMfgSubcontractOrder__issueMaterials",
                 Map.of("subcontractOrderId", orderId, "sourceWarehouseId", WAREHOUSE_ID));
@@ -163,8 +163,8 @@ public class TestErpMfgSubcontracting extends JunitAutoTestCase {
         seedPeriodAndSubjects();
         seedMaterial(M1, null);
 
-        Long planId = seedMrpPlan("MRP-SC");
-        Long lineId = seedMrpPlanLine(planId, M1, bd("5"));
+        String planId = seedMrpPlan("MRP-SC");
+        String lineId = seedMrpPlanLine(planId, M1, bd("5"));
 
         setConfig(ErpMfgConstants.CONFIG_SUBCONTRACT_RELEASE_ENABLED, "true");
         try {
@@ -208,17 +208,17 @@ public class TestErpMfgSubcontracting extends JunitAutoTestCase {
         seedMaterial(M1, "MOVING_AVERAGE");
         seedMaterial(P, null);
 
-        Long orderId = seedSubcontractOrder("SUB-WD", bd("30"));
+        String orderId = seedSubcontractOrder("SUB-WD", bd("30"));
 
         // 负向守卫：初始 UNSUBMITTED withdrawApproval → ERR_SUBCONTRACT_ILLEGAL_STATUS_TRANSITION
-        ApiResponse<?> resp = rpc(mutation, "ErpMfgSubcontractOrder__withdrawApproval", Map.of("id", String.valueOf(orderId)));
+        ApiResponse<?> resp = rpc(mutation, "ErpMfgSubcontractOrder__withdrawApproval", Map.of("id", orderId));
         assertEquals(ErpMfgErrors.ERR_SUBCONTRACT_ILLEGAL_STATUS_TRANSITION.getErrorCode(), resp.getCode(),
                 "非 SUBMITTED withdrawApproval 应拒绝（错误码等价）");
 
         // 正向：submit → SUBMITTED → withdraw → UNSUBMITTED（验证 inline-script 提取激活 per-mutation 运行时路径）
-        rpcOk(mutation, "ErpMfgSubcontractOrder__submitForApproval", Map.of("id", String.valueOf(orderId)));
+        rpcOk(mutation, "ErpMfgSubcontractOrder__submitForApproval", Map.of("id", orderId));
         assertEquals(ErpMfgConstants.APPROVE_STATUS_SUBMITTED, approveStatusOf(orderId));
-        rpcOk(mutation, "ErpMfgSubcontractOrder__withdrawApproval", Map.of("id", String.valueOf(orderId)));
+        rpcOk(mutation, "ErpMfgSubcontractOrder__withdrawApproval", Map.of("id", orderId));
         assertEquals(ErpMfgConstants.APPROVE_STATUS_UNSUBMITTED, approveStatusOf(orderId),
                 "withdrawApproval 后 approveStatus 回到 UNSUBMITTED");
     }
@@ -239,13 +239,13 @@ public class TestErpMfgSubcontracting extends JunitAutoTestCase {
         generateIncoming(M1, "PR-SC-FAIL", bd("10"), bd("5"));
         seedNotifyTemplateForSubcontractFailure();
 
-        Long orderId = seedSubcontractOrder("SUB-FAIL", bd("50"));
-        seedSubcontractLine(9811L, orderId, M1, bd("2"));
+        String orderId = seedSubcontractOrder("SUB-FAIL", bd("50"));
+        seedSubcontractLine("9811", orderId, M1, bd("2"));
 
         setConfig(ErpMfgConstants.CONFIG_SUBCONTRACT_POSTING_ENABLED, "true");
         try {
-            rpcOk(mutation, "ErpMfgSubcontractOrder__submitForApproval", Map.of("id", String.valueOf(orderId)));
-            rpcOk(mutation, "ErpMfgSubcontractOrder__approve", Map.of("id", String.valueOf(orderId)));
+            rpcOk(mutation, "ErpMfgSubcontractOrder__submitForApproval", Map.of("id", orderId));
+            rpcOk(mutation, "ErpMfgSubcontractOrder__approve", Map.of("id", orderId));
             rpcOk(mutation, "ErpMfgSubcontractOrder__issueMaterials",
                     Map.of("subcontractOrderId", orderId, "sourceWarehouseId", WAREHOUSE_ID));
             rpcOk(mutation, "ErpMfgSubcontractOrder__receiveFinished",
@@ -283,13 +283,13 @@ public class TestErpMfgSubcontracting extends JunitAutoTestCase {
         seedMaterial(P, null);
         generateIncoming(M1, "PR-SC-FX", bd("10"), bd("5"));
 
-        Long orderId = seedSubcontractOrderWithFx("SUB-FX", bd("50"), bd("6.5"));
-        seedSubcontractLine(9812L, orderId, M1, bd("2"));
+        String orderId = seedSubcontractOrderWithFx("SUB-FX", bd("50"), bd("6.5"));
+        seedSubcontractLine("9812", orderId, M1, bd("2"));
 
         setConfig(ErpMfgConstants.CONFIG_SUBCONTRACT_POSTING_ENABLED, "true");
         try {
-            rpcOk(mutation, "ErpMfgSubcontractOrder__submitForApproval", Map.of("id", String.valueOf(orderId)));
-            rpcOk(mutation, "ErpMfgSubcontractOrder__approve", Map.of("id", String.valueOf(orderId)));
+            rpcOk(mutation, "ErpMfgSubcontractOrder__submitForApproval", Map.of("id", orderId));
+            rpcOk(mutation, "ErpMfgSubcontractOrder__approve", Map.of("id", orderId));
             rpcOk(mutation, "ErpMfgSubcontractOrder__issueMaterials",
                     Map.of("subcontractOrderId", orderId, "sourceWarehouseId", WAREHOUSE_ID));
             rpcOk(mutation, "ErpMfgSubcontractOrder__receiveFinished",
@@ -311,12 +311,12 @@ public class TestErpMfgSubcontracting extends JunitAutoTestCase {
         }
     }
 
-    private String statusOf(Long orderId) {
+    private String statusOf(String orderId) {
         ErpMfgSubcontractOrder order = daoProvider.daoFor(ErpMfgSubcontractOrder.class).getEntityById(orderId);
         return order.getDocStatus();
     }
 
-    private String approveStatusOf(Long orderId) {
+    private String approveStatusOf(String orderId) {
         ErpMfgSubcontractOrder order = daoProvider.daoFor(ErpMfgSubcontractOrder.class).getEntityById(orderId);
         return order.getApproveStatus();
     }
@@ -378,7 +378,7 @@ public class TestErpMfgSubcontracting extends JunitAutoTestCase {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpSysNotificationTemplate> dao = daoProvider.daoFor(ErpSysNotificationTemplate.class);
             ErpSysNotificationTemplate t = new ErpSysNotificationTemplate();
-            t.orm_propValueByName("id", 7661L);
+            t.orm_propValueByName("id", "7661");
             t.setNotificationType(NOTIFY_EVENT_SUBCONTRACT_FAILURE);
             t.setName("委外过账失败告警");
             t.setChannelSet("IN_APP");
@@ -433,8 +433,8 @@ public class TestErpMfgSubcontracting extends JunitAutoTestCase {
     }
 
     /** G2 多币种：委外单币种=6601（≠ functional 6501），exchangeRate=rate≠ONE。 */
-    private Long seedSubcontractOrderWithFx(String code, BigDecimal processingFee, BigDecimal rate) {
-        Long id = 8700L + (long) Math.abs(code.hashCode() % 500);
+    private String seedSubcontractOrderWithFx(String code, BigDecimal processingFee, BigDecimal rate) {
+        String id = String.valueOf(8700 + Math.abs(code.hashCode() % 500));
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMfgSubcontractOrder> dao = daoProvider.daoFor(ErpMfgSubcontractOrder.class);
             ErpMfgSubcontractOrder order = new ErpMfgSubcontractOrder();
@@ -467,7 +467,7 @@ public class TestErpMfgSubcontracting extends JunitAutoTestCase {
         dao.saveEntity(subject);
     }
 
-    private void seedMaterial(Long id, String costMethod) {
+    private void seedMaterial(String id, String costMethod) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMdMaterial> dao = daoProvider.daoFor(ErpMdMaterial.class);
             ErpMdMaterial m = new ErpMdMaterial();
@@ -482,7 +482,7 @@ public class TestErpMfgSubcontracting extends JunitAutoTestCase {
         });
     }
 
-    private void generateIncoming(Long materialId, String billCode, BigDecimal qty, BigDecimal unitCost) {
+    private void generateIncoming(String materialId, String billCode, BigDecimal qty, BigDecimal unitCost) {
         Map<String, Object> req = new LinkedHashMap<>();
         req.put("moveType", MOVE_TYPE_INCOMING);
         req.put("orgId", ORG_ID);
@@ -502,8 +502,8 @@ public class TestErpMfgSubcontracting extends JunitAutoTestCase {
         rpcOk(mutation, "ErpInvStockMove__generateMove", Map.of("request", req));
     }
 
-    private Long seedSubcontractOrder(String code, BigDecimal processingFee) {
-        Long id = 8700L + (long) Math.abs(code.hashCode() % 500);
+    private String seedSubcontractOrder(String code, BigDecimal processingFee) {
+        String id = String.valueOf(8700 + Math.abs(code.hashCode() % 500));
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMfgSubcontractOrder> dao = daoProvider.daoFor(ErpMfgSubcontractOrder.class);
             ErpMfgSubcontractOrder order = new ErpMfgSubcontractOrder();
@@ -525,7 +525,7 @@ public class TestErpMfgSubcontracting extends JunitAutoTestCase {
         return id;
     }
 
-    private void seedSubcontractLine(Long id, Long orderId, Long materialId, BigDecimal qty) {
+    private void seedSubcontractLine(String id, String orderId, String materialId, BigDecimal qty) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMfgSubcontractOrderLine> dao = daoProvider.daoFor(ErpMfgSubcontractOrderLine.class);
             ErpMfgSubcontractOrderLine line = new ErpMfgSubcontractOrderLine();
@@ -539,8 +539,8 @@ public class TestErpMfgSubcontracting extends JunitAutoTestCase {
         });
     }
 
-    private Long seedMrpPlan(String code) {
-        Long id = 7700L + (long) Math.abs(code.hashCode() % 500);
+    private String seedMrpPlan(String code) {
+        String id = String.valueOf(7700 + Math.abs(code.hashCode() % 500));
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMfgMrpPlan> dao = daoProvider.daoFor(ErpMfgMrpPlan.class);
             ErpMfgMrpPlan plan = new ErpMfgMrpPlan();
@@ -554,8 +554,8 @@ public class TestErpMfgSubcontracting extends JunitAutoTestCase {
         return id;
     }
 
-    private Long seedMrpPlanLine(Long planId, Long materialId, BigDecimal qty) {
-        Long id = 7800L + (long) (planId + materialId) % 500;
+    private String seedMrpPlanLine(String planId, String materialId, BigDecimal qty) {
+        String id = String.valueOf(7800 + (Long.parseLong(planId) + Long.parseLong(materialId)) % 500);
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMfgMrpPlanLine> dao = daoProvider.daoFor(ErpMfgMrpPlanLine.class);
             ErpMfgMrpPlanLine line = new ErpMfgMrpPlanLine();
@@ -601,7 +601,7 @@ public class TestErpMfgSubcontracting extends JunitAutoTestCase {
         return daoProvider.daoFor(ErpFinVoucher.class).getEntityById(links.get(0).getVoucherId());
     }
 
-    private ErpFinVoucherLine findVoucherLine(Long voucherId, String subjectCode) {
+    private ErpFinVoucherLine findVoucherLine(String voucherId, String subjectCode) {
         IEntityDao<ErpFinVoucherLine> dao = daoProvider.daoFor(ErpFinVoucherLine.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("voucherId", voucherId));

@@ -31,7 +31,7 @@ public interface IErpMfgCrpBiz {
     @BizMutation
     Integer calculateLoad(@Name("periodFrom") LocalDate periodFrom,
                           @Name("periodTo") LocalDate periodTo,
-                          @Optional @Name("workcenterIds") List<Long> workcenterIds,
+                          @Optional @Name("workcenterIds") List<String> workcenterIds,
                           IServiceContext context);
 
     /**
@@ -44,6 +44,6 @@ public interface IErpMfgCrpBiz {
     @BizQuery
     List<CrpLoadReportItem> getLoadReport(@Name("periodFrom") LocalDate periodFrom,
                                           @Name("periodTo") LocalDate periodTo,
-                                          @Optional @Name("workcenterIds") List<Long> workcenterIds,
+                                          @Optional @Name("workcenterIds") List<String> workcenterIds,
                                           IServiceContext context);
 }

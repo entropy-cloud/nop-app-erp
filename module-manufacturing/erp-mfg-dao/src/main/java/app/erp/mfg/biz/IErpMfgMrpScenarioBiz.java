@@ -18,21 +18,21 @@ public interface IErpMfgMrpScenarioBiz extends ICrudBiz<ErpMfgMrpScenario> {
      * config-gated：{@code erp-mfg.simulation-enabled} 默认 false。
      */
     @BizMutation
-    ErpMfgMrpScenarioVersion runSimulation(@Name("scenarioId") Long scenarioId, IServiceContext context);
+    ErpMfgMrpScenarioVersion runSimulation(@Name("scenarioId") String scenarioId, IServiceContext context);
 
     /**
      * 转正式计划：从场景版本复制为新的 DRAFT {@link ErpMfgMrpPlan}。
      * config-gated：{@code erp-mfg.simulation-enabled} 默认 false。
      */
     @BizMutation
-    ErpMfgMrpPlan promoteToFormalPlan(@Name("scenarioVersionId") Long scenarioVersionId, IServiceContext context);
+    ErpMfgMrpPlan promoteToFormalPlan(@Name("scenarioVersionId") String scenarioVersionId, IServiceContext context);
 
     /**
      * 对比两仿真版本（Decision C 4 维 diff）。{@link BizQuery} 无 config-gate（只读不修改状态）。
      */
     @BizQuery
-    SimulationDiffResult compareVersions(@Name("versionIdA") Long versionIdA,
-                                          @Name("versionIdB") Long versionIdB,
+    SimulationDiffResult compareVersions(@Name("versionIdA") String versionIdA,
+                                          @Name("versionIdB") String versionIdB,
                                           IServiceContext context);
 }
 

@@ -65,7 +65,7 @@ public class DemandAggregator {
      *
      * @return 整合后该计划的全部活跃需求行（手工 + 合成），供 {@link MrpEngine} 直接消费，避免同事务查询可见性问题
      */
-    public List<ErpMfgMrpDemand> aggregate(Long planId) {
+    public List<ErpMfgMrpDemand> aggregate(String planId) {
         ErpMfgMrpPlan plan = requirePlan(planId);
         IEntityDao<ErpMfgMrpDemand> dao = daoProvider.daoFor(ErpMfgMrpDemand.class);
 
@@ -88,8 +88,10 @@ public class DemandAggregator {
 
         QueryBean oq = new QueryBean();
         oq.addFilter(ne("docStatus", ErpMfgConstants.SAL_DOC_STATUS_CANCELLED));
+        // A2 桥接（bridge-main-086，M0.2 登记册）：sal ErpSalOrder.orgId 仍 Long（sal 位次 16 未迁移），
+        // mfg String orgId → ConvertHelper.toLong 桥接过滤值（eq 语义值桥），退役 owner M2.6
         if (plan.getOrgId() != null) {
-            oq.addFilter(eq("orgId", plan.getOrgId()));
+            oq.addFilter(eq("orgId", io.nop.api.core.convert.ConvertHelper.toLong(plan.getOrgId())));
         }
         List<ErpSalOrder> orders = orderDao.findAllByQuery(oq);
 
@@ -105,8 +107,10 @@ public class DemandAggregator {
                     continue;
                 }
                 ErpMfgMrpDemand demand = newDemand(plan, lineNo);
-                demand.setMaterialId(line.getMaterialId());
-                demand.setUoMId(line.getUoMId());
+                // A2 桥接（bridge-main-086/087，M0.2 登记册）：sal ErpSalOrderLine.materialId/uoMId 仍 Long（sal 位次 16 未迁移），
+                // sal Long → mfg String ConvertHelper.toString 桥接 setter 值，退役 owner M2.6
+                demand.setMaterialId(io.nop.api.core.convert.ConvertHelper.toString(line.getMaterialId()));
+                demand.setUoMId(io.nop.api.core.convert.ConvertHelper.toString(line.getUoMId()));
                 demand.setDemandSource(ErpMfgConstants.MRP_DEMAND_SOURCE_SALES_ORDER);
                 demand.setSourceBillType(ErpMfgConstants.SOURCE_BILL_TYPE_SAL_ORDER);
                 demand.setSourceBillCode(order.getCode());
@@ -181,7 +185,7 @@ public class DemandAggregator {
             return lineNo;
         }
 
-        List<Long> headIds = new ArrayList<>();
+        List<String> headIds = new ArrayList<>();
         for (ErpMfgForecast h : heads) {
             headIds.add(h.getId());
         }
@@ -195,8 +199,8 @@ public class DemandAggregator {
         List<ErpMfgForecastLine> lines = lineDao.findAllByQuery(lq);
 
         // 按物料聚合 forecastQty（MRP 为产品级，忽略 warehouseId 维度；同物料多桶累加）
-        java.util.Map<Long, BigDecimal> byMaterial = new java.util.LinkedHashMap<>();
-        java.util.Map<Long, Long> materialUoM = new java.util.HashMap<>();
+        java.util.Map<String, BigDecimal> byMaterial = new java.util.LinkedHashMap<>();
+        java.util.Map<String, String> materialUoM = new java.util.HashMap<>();
         for (ErpMfgForecastLine fl : lines) {
             if (fl.getMaterialId() == null) {
                 continue;
@@ -211,8 +215,8 @@ public class DemandAggregator {
             }
         }
 
-        for (java.util.Map.Entry<Long, BigDecimal> e : byMaterial.entrySet()) {
-            Long materialId = e.getKey();
+        for (java.util.Map.Entry<String, BigDecimal> e : byMaterial.entrySet()) {
+            String materialId = e.getKey();
             BigDecimal qty = e.getValue();
             ErpMfgMrpDemand demand = newDemand(plan, lineNo);
             demand.setMaterialId(materialId);
@@ -229,7 +233,7 @@ public class DemandAggregator {
         return lineNo;
     }
 
-    private BigDecimal availableQuantity(Long materialId, Long orgId) {
+    private BigDecimal availableQuantity(String materialId, String orgId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("materialId", materialId));
         if (orgId != null) {
@@ -254,7 +258,7 @@ public class DemandAggregator {
         return demand;
     }
 
-    private List<ErpMfgMrpDemand> clearSynthesized(IEntityDao<ErpMfgMrpDemand> dao, Long planId) {
+    private List<ErpMfgMrpDemand> clearSynthesized(IEntityDao<ErpMfgMrpDemand> dao, String planId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("mrpPlanId", planId));
         List<ErpMfgMrpDemand> all = dao.findAllByQuery(q);
@@ -270,7 +274,7 @@ public class DemandAggregator {
         return kept;
     }
 
-    private int nextLineNo(IEntityDao<ErpMfgMrpDemand> dao, Long planId) {
+    private int nextLineNo(IEntityDao<ErpMfgMrpDemand> dao, String planId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("mrpPlanId", planId));
         q.addOrderField("lineNo", true);
@@ -282,7 +286,7 @@ public class DemandAggregator {
         return top.get(0).getLineNo() + 10;
     }
 
-    private ErpMfgMrpPlan requirePlan(Long planId) {
+    private ErpMfgMrpPlan requirePlan(String planId) {
         if (planId == null) {
             throw new NopException(ErpMfgErrors.ERR_MRP_PLAN_NOT_FOUND).param(ErpMfgErrors.ARG_MRP_PLAN_ID, planId);
         }

@@ -196,19 +196,19 @@ public class _ErpMfgMrpPlanLine extends DynamicOrmEntity{
 
     
     /* ID: ID */
-    private java.lang.Long _id;
+    private java.lang.String _id;
     
     /* MRP计划ID: MRP_PLAN_ID */
-    private java.lang.Long _mrpPlanId;
+    private java.lang.String _mrpPlanId;
     
     /* 行号: LINE_NO */
     private java.lang.Integer _lineNo;
     
     /* 物料: MATERIAL_ID */
-    private java.lang.Long _materialId;
+    private java.lang.String _materialId;
     
     /* 计量单位: UO_M_ID */
-    private java.lang.Long _uoMId;
+    private java.lang.String _uoMId;
     
     /* 建议类型: ORDER_TYPE */
     private java.lang.String _orderType;
@@ -232,7 +232,7 @@ public class _ErpMfgMrpPlanLine extends DynamicOrmEntity{
     private java.time.LocalDate _plannedDate;
     
     /* 父需求行(多级 BOM 展开): PARENT_LINE_ID */
-    private java.lang.Long _parentLineId;
+    private java.lang.String _parentLineId;
     
     /* 是否已转正式单据: IS_FIRMED */
     private java.lang.Boolean _isFirmed;
@@ -407,9 +407,9 @@ public class _ErpMfgMrpPlanLine extends DynamicOrmEntity{
         switch(propId){
         
             case PROP_ID_id:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_id));
                }
                setId(typedValue);
@@ -417,9 +417,9 @@ public class _ErpMfgMrpPlanLine extends DynamicOrmEntity{
             }
         
             case PROP_ID_mrpPlanId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_mrpPlanId));
                }
                setMrpPlanId(typedValue);
@@ -437,9 +437,9 @@ public class _ErpMfgMrpPlanLine extends DynamicOrmEntity{
             }
         
             case PROP_ID_materialId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_materialId));
                }
                setMaterialId(typedValue);
@@ -447,9 +447,9 @@ public class _ErpMfgMrpPlanLine extends DynamicOrmEntity{
             }
         
             case PROP_ID_uoMId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_uoMId));
                }
                setUoMId(typedValue);
@@ -527,9 +527,9 @@ public class _ErpMfgMrpPlanLine extends DynamicOrmEntity{
             }
         
             case PROP_ID_parentLineId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_parentLineId));
                }
                setParentLineId(typedValue);
@@ -627,14 +627,14 @@ public class _ErpMfgMrpPlanLine extends DynamicOrmEntity{
         
             case PROP_ID_id:{
                onInitProp(propId);
-               this._id = (java.lang.Long)value;
+               this._id = (java.lang.String)value;
                orm_id(); // 如果是设置主键字段，则触发watcher
                break;
             }
         
             case PROP_ID_mrpPlanId:{
                onInitProp(propId);
-               this._mrpPlanId = (java.lang.Long)value;
+               this._mrpPlanId = (java.lang.String)value;
                
                break;
             }
@@ -648,14 +648,14 @@ public class _ErpMfgMrpPlanLine extends DynamicOrmEntity{
         
             case PROP_ID_materialId:{
                onInitProp(propId);
-               this._materialId = (java.lang.Long)value;
+               this._materialId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_uoMId:{
                onInitProp(propId);
-               this._uoMId = (java.lang.Long)value;
+               this._uoMId = (java.lang.String)value;
                
                break;
             }
@@ -711,7 +711,7 @@ public class _ErpMfgMrpPlanLine extends DynamicOrmEntity{
         
             case PROP_ID_parentLineId:{
                onInitProp(propId);
-               this._parentLineId = (java.lang.Long)value;
+               this._parentLineId = (java.lang.String)value;
                
                break;
             }
@@ -781,7 +781,7 @@ public class _ErpMfgMrpPlanLine extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final java.lang.Long getId(){
+    public final java.lang.String getId(){
          onPropGet(PROP_ID_id);
          return _id;
     }
@@ -789,7 +789,7 @@ public class _ErpMfgMrpPlanLine extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final void setId(java.lang.Long value){
+    public final void setId(java.lang.String value){
         if(onPropSet(PROP_ID_id,value)){
             this._id = value;
             internalClearRefs(PROP_ID_id);
@@ -800,7 +800,7 @@ public class _ErpMfgMrpPlanLine extends DynamicOrmEntity{
     /**
      * MRP计划ID: MRP_PLAN_ID
      */
-    public final java.lang.Long getMrpPlanId(){
+    public final java.lang.String getMrpPlanId(){
          onPropGet(PROP_ID_mrpPlanId);
          return _mrpPlanId;
     }
@@ -808,7 +808,7 @@ public class _ErpMfgMrpPlanLine extends DynamicOrmEntity{
     /**
      * MRP计划ID: MRP_PLAN_ID
      */
-    public final void setMrpPlanId(java.lang.Long value){
+    public final void setMrpPlanId(java.lang.String value){
         if(onPropSet(PROP_ID_mrpPlanId,value)){
             this._mrpPlanId = value;
             internalClearRefs(PROP_ID_mrpPlanId);
@@ -838,7 +838,7 @@ public class _ErpMfgMrpPlanLine extends DynamicOrmEntity{
     /**
      * 物料: MATERIAL_ID
      */
-    public final java.lang.Long getMaterialId(){
+    public final java.lang.String getMaterialId(){
          onPropGet(PROP_ID_materialId);
          return _materialId;
     }
@@ -846,7 +846,7 @@ public class _ErpMfgMrpPlanLine extends DynamicOrmEntity{
     /**
      * 物料: MATERIAL_ID
      */
-    public final void setMaterialId(java.lang.Long value){
+    public final void setMaterialId(java.lang.String value){
         if(onPropSet(PROP_ID_materialId,value)){
             this._materialId = value;
             internalClearRefs(PROP_ID_materialId);
@@ -857,7 +857,7 @@ public class _ErpMfgMrpPlanLine extends DynamicOrmEntity{
     /**
      * 计量单位: UO_M_ID
      */
-    public final java.lang.Long getUoMId(){
+    public final java.lang.String getUoMId(){
          onPropGet(PROP_ID_uoMId);
          return _uoMId;
     }
@@ -865,7 +865,7 @@ public class _ErpMfgMrpPlanLine extends DynamicOrmEntity{
     /**
      * 计量单位: UO_M_ID
      */
-    public final void setUoMId(java.lang.Long value){
+    public final void setUoMId(java.lang.String value){
         if(onPropSet(PROP_ID_uoMId,value)){
             this._uoMId = value;
             internalClearRefs(PROP_ID_uoMId);
@@ -1009,7 +1009,7 @@ public class _ErpMfgMrpPlanLine extends DynamicOrmEntity{
     /**
      * 父需求行(多级 BOM 展开): PARENT_LINE_ID
      */
-    public final java.lang.Long getParentLineId(){
+    public final java.lang.String getParentLineId(){
          onPropGet(PROP_ID_parentLineId);
          return _parentLineId;
     }
@@ -1017,7 +1017,7 @@ public class _ErpMfgMrpPlanLine extends DynamicOrmEntity{
     /**
      * 父需求行(多级 BOM 展开): PARENT_LINE_ID
      */
-    public final void setParentLineId(java.lang.Long value){
+    public final void setParentLineId(java.lang.String value){
         if(onPropSet(PROP_ID_parentLineId,value)){
             this._parentLineId = value;
             internalClearRefs(PROP_ID_parentLineId);

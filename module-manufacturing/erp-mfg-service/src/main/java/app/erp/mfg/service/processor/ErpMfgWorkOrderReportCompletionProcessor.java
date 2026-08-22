@@ -28,8 +28,8 @@ public class ErpMfgWorkOrderReportCompletionProcessor {
     @Inject
     ErpMfgWorkOrderProcessor facade;
 
-    public ErpMfgWorkOrder reportCompletion(Long workOrderId, BigDecimal completedQty, IServiceContext context) {
-        ErpMfgWorkOrder wo = facade.requireWorkOrder(String.valueOf(workOrderId), context);
+    public ErpMfgWorkOrder reportCompletion(String workOrderId, BigDecimal completedQty, IServiceContext context) {
+        ErpMfgWorkOrder wo = facade.requireWorkOrder(workOrderId, context);
         facade.validateTransitionForReportCompletion(wo, context);
         if (completedQty == null || completedQty.signum() < 0) {
             completedQty = BigDecimal.ZERO;

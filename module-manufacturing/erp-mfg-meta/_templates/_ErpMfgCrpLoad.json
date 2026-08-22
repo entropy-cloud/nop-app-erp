@@ -1,8 +1,8 @@
 {
-  "id": 0,
-  "workcenterId": 0,
-  "orgId": 0,
-  "workOrderId": 0,
+  "id": "",
+  "workcenterId": "",
+  "orgId": "",
+  "workOrderId": "",
   "loadDate": "2000-01-01",
   "loadHours": 0.0,
   "setupHours": 0.0,

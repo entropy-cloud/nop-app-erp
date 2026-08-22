@@ -13,8 +13,8 @@ public class ErpMfgWorkOrderStopProcessor {
     @Inject
     ErpMfgWorkOrderProcessor facade;
 
-    public ErpMfgWorkOrder stop(Long workOrderId, IServiceContext context) {
-        ErpMfgWorkOrder wo = facade.requireWorkOrder(String.valueOf(workOrderId), context);
+    public ErpMfgWorkOrder stop(String workOrderId, IServiceContext context) {
+        ErpMfgWorkOrder wo = facade.requireWorkOrder(workOrderId, context);
         facade.validateTransitionForStop(wo, context);
         doStop(wo);
         return wo;

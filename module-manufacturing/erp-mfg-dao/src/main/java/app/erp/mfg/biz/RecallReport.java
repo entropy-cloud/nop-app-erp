@@ -17,18 +17,18 @@ import java.util.List;
  */
 public class RecallReport {
 
-    private Long sourceLotId;
+    private String sourceLotId;
     private List<AffectedLot> affectedLots = new ArrayList<>();
     private boolean degraded;
 
     public RecallReport() {
     }
 
-    public Long getSourceLotId() {
+    public String getSourceLotId() {
         return sourceLotId;
     }
 
-    public void setSourceLotId(Long sourceLotId) {
+    public void setSourceLotId(String sourceLotId) {
         this.sourceLotId = sourceLotId;
     }
 
@@ -49,19 +49,19 @@ public class RecallReport {
     }
 
     public static class AffectedLot {
-        private Long lotId;
+        private String lotId;
         private String batchNo;
-        private Long materialId;
+        private String materialId;
         private String lotStatus;
 
         public AffectedLot() {
         }
 
-        public Long getLotId() {
+        public String getLotId() {
             return lotId;
         }
 
-        public void setLotId(Long lotId) {
+        public void setLotId(String lotId) {
             this.lotId = lotId;
         }
 
@@ -73,11 +73,11 @@ public class RecallReport {
             this.batchNo = batchNo;
         }
 
-        public Long getMaterialId() {
+        public String getMaterialId() {
             return materialId;
         }
 
-        public void setMaterialId(Long materialId) {
+        public void setMaterialId(String materialId) {
             this.materialId = materialId;
         }
 

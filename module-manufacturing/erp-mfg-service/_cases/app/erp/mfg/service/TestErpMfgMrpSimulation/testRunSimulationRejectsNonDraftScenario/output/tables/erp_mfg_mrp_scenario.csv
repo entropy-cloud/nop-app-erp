@@ -1,0 +1,2 @@
+_chgType,ID,CODE,ORG_ID,BASE_MRP_PLAN_ID,DESCRIPTION,STATUS,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
+A,9858,@var:ErpMfgMrpScenario@code,7401,8770,,COMPLETED,@var:ErpMfgMrpScenario@delVersion,1,autotest-ref,*,autotest-ref,*

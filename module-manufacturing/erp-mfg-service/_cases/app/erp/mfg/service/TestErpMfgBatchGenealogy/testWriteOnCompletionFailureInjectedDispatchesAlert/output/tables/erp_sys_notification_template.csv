@@ -1,0 +1,2 @@
+_chgType,ID,NOTIFICATION_TYPE,NAME,CHANNEL_SET,SUBJECT_TPL,BODY_TPL,RECIPIENT_RESOLVER,RECIPIENT_CONFIG,MERGE_WINDOW_SECONDS,MERGE_STRATEGY,STATUS,REMARK,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
+A,7130,mfg.production-genealogy-write-failure,基因链写失败告警,IN_APP,基因链写失败告警: ${workOrderCode},工单 ${workOrderCode} 完工写入批次基因链失败（best-effort，不阻断完工入库）：errorCode=${errorCode}，errorMessage=${errorMessage},USER_LIST,"{""userIds"":[""mfg-genealogy-recipient""]}",60,MERGE_BY_USER_TYPE,ACTIVE,,@var:ErpSysNotificationTemplate@delVersion,0,autotest-ref,*,autotest-ref,*

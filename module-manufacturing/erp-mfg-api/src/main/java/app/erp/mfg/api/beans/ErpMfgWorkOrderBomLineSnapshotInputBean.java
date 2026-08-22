@@ -12,30 +12,30 @@
     public class ErpMfgWorkOrderBomLineSnapshotInputBean extends CrudInputBase {
 
     
-        private Long _id;
+        private String _id;
 
     
         @PropMeta(propId=1)
     
-        public Long getId(){
+        public String getId(){
             return _id;
         }
 
-        public void setId(Long value){
+        public void setId(String value){
             this._id = value;
         }
 
 
-        private Long _snapshotId;
+        private String _snapshotId;
 
     
         @PropMeta(propId=2)
     
-        public Long getSnapshotId(){
+        public String getSnapshotId(){
             return _snapshotId;
         }
 
-        public void setSnapshotId(Long value){
+        public void setSnapshotId(String value){
             this._snapshotId = value;
         }
 
@@ -54,44 +54,44 @@
         }
 
 
-        private Long _materialId;
+        private String _materialId;
 
     
         @PropMeta(propId=4)
     
-        public Long getMaterialId(){
+        public String getMaterialId(){
             return _materialId;
         }
 
-        public void setMaterialId(Long value){
+        public void setMaterialId(String value){
             this._materialId = value;
         }
 
 
-        private Long _skuId;
+        private String _skuId;
 
     
         @PropMeta(propId=5)
     
-        public Long getSkuId(){
+        public String getSkuId(){
             return _skuId;
         }
 
-        public void setSkuId(Long value){
+        public void setSkuId(String value){
             this._skuId = value;
         }
 
 
-        private Long _uoMId;
+        private String _uoMId;
 
     
         @PropMeta(propId=6)
     
-        public Long getUoMId(){
+        public String getUoMId(){
             return _uoMId;
         }
 
-        public void setUoMId(Long value){
+        public void setUoMId(String value){
             this._uoMId = value;
         }
 
@@ -110,16 +110,16 @@
         }
 
 
-        private Long _operationId;
+        private String _operationId;
 
     
         @PropMeta(propId=8)
     
-        public Long getOperationId(){
+        public String getOperationId(){
             return _operationId;
         }
 
-        public void setOperationId(Long value){
+        public void setOperationId(String value){
             this._operationId = value;
         }
 
@@ -138,30 +138,30 @@
         }
 
 
-        private Long _warehouseId;
+        private String _warehouseId;
 
     
         @PropMeta(propId=10)
     
-        public Long getWarehouseId(){
+        public String getWarehouseId(){
             return _warehouseId;
         }
 
-        public void setWarehouseId(Long value){
+        public void setWarehouseId(String value){
             this._warehouseId = value;
         }
 
 
-        private Long _alternativeMaterialId;
+        private String _alternativeMaterialId;
 
     
         @PropMeta(propId=11)
     
-        public Long getAlternativeMaterialId(){
+        public String getAlternativeMaterialId(){
             return _alternativeMaterialId;
         }
 
-        public void setAlternativeMaterialId(Long value){
+        public void setAlternativeMaterialId(String value){
             this._alternativeMaterialId = value;
         }
 

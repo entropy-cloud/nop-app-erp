@@ -57,11 +57,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         testBeansFile = "/erp/mfg/beans/test-aps-load-source.beans.xml")
 public class TestErpMfgScheduleToJobCard extends JunitAutoTestCase {
 
-    static final Long UOM_ID = 5101L;
-    static final Long P = 7001L;          // 产成品
-    static final Long WC1 = 7002L;        // 工作中心1
-    static final Long WC2 = 7003L;        // 工作中心2
-    static final Long OP_ORDER_BASE = 7500L; // 模拟 ErpApsOperationOrder id 起点
+    static final String UOM_ID = "5101";
+    static final String P = "7001";          // 产成品
+    static final String WC1 = "7002";        // 工作中心1
+    static final String WC2 = "7003";        // 工作中心2
+    static final long OP_ORDER_BASE = 7500L; // 模拟 ErpApsOperationOrder id 起点
 
     @Inject
     IDaoProvider daoProvider;
@@ -79,7 +79,7 @@ public class TestErpMfgScheduleToJobCard extends JunitAutoTestCase {
 
     @Test
     public void testHappyPath_GeneratesOneJobCardPerOperation() {
-        Long woId = seedWorkOrder("WO-APS-HAPPY", ErpMfgConstants.WORK_ORDER_STATUS_NOT_STARTED, bd("10"));
+        String woId = seedWorkOrder("WO-APS-HAPPY", ErpMfgConstants.WORK_ORDER_STATUS_NOT_STARTED, bd("10"));
         apsStub.putSlots(woId, slots(woId, 2));
 
         rpcOk(mutation, "ErpMfgWorkOrder__generateJobCardsFromSchedule", Map.of("workOrderId", woId));
@@ -90,7 +90,7 @@ public class TestErpMfgScheduleToJobCard extends JunitAutoTestCase {
         for (ErpMfgJobCard jc : cards) {
             assertEquals(ErpMfgConstants.JOB_CARD_STATUS_OPEN, jc.getStatus(), "初始状态对齐 2237-1 入口 OPEN");
             assertEquals(0, bd("10").compareTo(jc.getPlannedQuantity()), "JobCard 计划数量 = 工单计划生产量");
-            assertTrue(jc.getSourceScheduleId() != null && jc.getSourceScheduleId() >= OP_ORDER_BASE,
+            assertTrue(jc.getSourceScheduleId() != null && Long.parseLong(jc.getSourceScheduleId()) >= OP_ORDER_BASE,
                     "sourceScheduleId 回写为对应 OperationOrder id");
             assertTrue(jc.getWorkcenterId() != null, "workcenterId 来自 APS 排程");
             assertTrue(jc.getCode() != null && jc.getCode().contains("OP"), "JobCard code 含工序序号");
@@ -104,7 +104,7 @@ public class TestErpMfgScheduleToJobCard extends JunitAutoTestCase {
 
     @Test
     public void testIdempotent_DefaultRejectsRepeatCall() {
-        Long woId = seedWorkOrder("WO-APS-IDEM", ErpMfgConstants.WORK_ORDER_STATUS_NOT_STARTED, bd("1"));
+        String woId = seedWorkOrder("WO-APS-IDEM", ErpMfgConstants.WORK_ORDER_STATUS_NOT_STARTED, bd("1"));
         apsStub.putSlots(woId, slots(woId, 1));
 
         rpcOk(mutation, "ErpMfgWorkOrder__generateJobCardsFromSchedule", Map.of("workOrderId", woId));
@@ -118,7 +118,7 @@ public class TestErpMfgScheduleToJobCard extends JunitAutoTestCase {
 
     @Test
     public void testIncrementalRebuild_OnlyBuildsMissing() {
-        Long woId = seedWorkOrder("WO-APS-INCR", ErpMfgConstants.WORK_ORDER_STATUS_NOT_STARTED, bd("5"));
+        String woId = seedWorkOrder("WO-APS-INCR", ErpMfgConstants.WORK_ORDER_STATUS_NOT_STARTED, bd("5"));
         apsStub.putSlots(woId, slots(woId, 2));
         rpcOk(mutation, "ErpMfgWorkOrder__generateJobCardsFromSchedule", Map.of("workOrderId", woId));
         assertEquals(2, findJobCards(woId).size());
@@ -141,7 +141,7 @@ public class TestErpMfgScheduleToJobCard extends JunitAutoTestCase {
 
     @Test
     public void testStateGate_DraftRejected() {
-        Long woId = seedWorkOrder("WO-APS-DRAFT", ErpMfgConstants.WORK_ORDER_STATUS_DRAFT, bd("1"));
+        String woId = seedWorkOrder("WO-APS-DRAFT", ErpMfgConstants.WORK_ORDER_STATUS_DRAFT, bd("1"));
         apsStub.putSlots(woId, slots(woId, 1));
 
         ApiResponse<?> resp = rpc(mutation, "ErpMfgWorkOrder__generateJobCardsFromSchedule", Map.of("workOrderId", woId));
@@ -152,7 +152,7 @@ public class TestErpMfgScheduleToJobCard extends JunitAutoTestCase {
 
     @Test
     public void testStateGate_TerminalRejected() {
-        Long woId = seedWorkOrder("WO-APS-DONE", ErpMfgConstants.WORK_ORDER_STATUS_COMPLETED, bd("1"));
+        String woId = seedWorkOrder("WO-APS-DONE", ErpMfgConstants.WORK_ORDER_STATUS_COMPLETED, bd("1"));
         apsStub.putSlots(woId, slots(woId, 1));
 
         ApiResponse<?> resp = rpc(mutation, "ErpMfgWorkOrder__generateJobCardsFromSchedule", Map.of("workOrderId", woId));
@@ -162,7 +162,7 @@ public class TestErpMfgScheduleToJobCard extends JunitAutoTestCase {
 
     @Test
     public void testNoSchedule_Rejected() {
-        Long woId = seedWorkOrder("WO-APS-NOSCHED", ErpMfgConstants.WORK_ORDER_STATUS_NOT_STARTED, bd("1"));
+        String woId = seedWorkOrder("WO-APS-NOSCHED", ErpMfgConstants.WORK_ORDER_STATUS_NOT_STARTED, bd("1"));
         // 不向 stub 注入任何 slot
 
         ApiResponse<?> resp = rpc(mutation, "ErpMfgWorkOrder__generateJobCardsFromSchedule", Map.of("workOrderId", woId));
@@ -173,14 +173,14 @@ public class TestErpMfgScheduleToJobCard extends JunitAutoTestCase {
 
     @Test
     public void testFindPendingAndBatchGenerate_ConfigGated() {
-        Long wo1 = seedWorkOrder("WO-APS-BATCH1", ErpMfgConstants.WORK_ORDER_STATUS_NOT_STARTED, bd("2"));
-        Long wo2 = seedWorkOrder("WO-APS-BATCH2", ErpMfgConstants.WORK_ORDER_STATUS_STOCK_RESERVED, bd("3"));
+        String wo1 = seedWorkOrder("WO-APS-BATCH1", ErpMfgConstants.WORK_ORDER_STATUS_NOT_STARTED, bd("2"));
+        String wo2 = seedWorkOrder("WO-APS-BATCH2", ErpMfgConstants.WORK_ORDER_STATUS_STOCK_RESERVED, bd("3"));
         // wo3：已有 JobCard，不应出现在 pending 列表
-        Long wo3 = seedWorkOrder("WO-APS-HASCARD", ErpMfgConstants.WORK_ORDER_STATUS_NOT_STARTED, bd("1"));
+        String wo3 = seedWorkOrder("WO-APS-HASCARD", ErpMfgConstants.WORK_ORDER_STATUS_NOT_STARTED, bd("1"));
         apsStub.putSlots(wo1, slots(wo1, 1));
         apsStub.putSlots(wo2, slots(wo2, 2));
         apsStub.putSlots(wo3, slots(wo3, 1));
-        seedJobCardDirectly(wo3, 7700L, 1);
+        seedJobCardDirectly(wo3, "7700", 1);
 
         // 总开关默认 false → 批量入口直接返回 0，不建卡
         ApiResponse<?> off = rpc(mutation, "ErpMfgWorkOrder__generatePendingJobCards", new LinkedHashMap<>());
@@ -211,18 +211,18 @@ public class TestErpMfgScheduleToJobCard extends JunitAutoTestCase {
 
     // ---------- helpers ----------
 
-    private List<ErpMfgJobCard> findJobCards(Long woId) {
+    private List<ErpMfgJobCard> findJobCards(String woId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("workOrderId", woId));
         return daoProvider.daoFor(ErpMfgJobCard.class).findAllByQuery(q);
     }
 
-    private List<ApsLoadSlot> slots(Long woId, int count) {
+    private List<ApsLoadSlot> slots(String woId, int count) {
         LocalDateTime base = LocalDateTime.of(2026, 7, 6, 8, 0);
         List<ApsLoadSlot> list = new java.util.ArrayList<>(count);
         for (int i = 0; i < count; i++) {
             ApsLoadSlot s = new ApsLoadSlot();
-            s.setOperationOrderId(OP_ORDER_BASE + i);
+            s.setOperationOrderId(String.valueOf(OP_ORDER_BASE + i));
             s.setWorkOrderId(woId);
             s.setSequence(i + 1);
             s.setWorkcenterId(i % 2 == 0 ? WC1 : WC2);
@@ -234,8 +234,8 @@ public class TestErpMfgScheduleToJobCard extends JunitAutoTestCase {
         return list;
     }
 
-    private Long seedWorkOrder(String code, String docStatus, BigDecimal plannedQty) {
-        Long id = 8000L + (long) Math.abs(code.hashCode() % 1000);
+    private String seedWorkOrder(String code, String docStatus, BigDecimal plannedQty) {
+        String id = String.valueOf(8000L + (long) Math.abs(code.hashCode() % 1000));
         ormTemplate.runInSession(() -> {
             seedMaterial(P);
             IEntityDao<ErpMfgWorkOrder> dao = daoProvider.daoFor(ErpMfgWorkOrder.class);
@@ -251,7 +251,7 @@ public class TestErpMfgScheduleToJobCard extends JunitAutoTestCase {
         return id;
     }
 
-    private void seedMaterial(Long id) {
+    private void seedMaterial(String id) {
         IEntityDao<ErpMdMaterial> dao = daoProvider.daoFor(ErpMdMaterial.class);
         if (dao.getEntityById(id) != null) {
             return;
@@ -266,7 +266,7 @@ public class TestErpMfgScheduleToJobCard extends JunitAutoTestCase {
         dao.saveEntity(m);
     }
 
-    private void seedJobCardDirectly(Long woId, Long jcId, int lineNo) {
+    private void seedJobCardDirectly(String woId, String jcId, int lineNo) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMfgJobCard> dao = daoProvider.daoFor(ErpMfgJobCard.class);
             ErpMfgJobCard jc = new ErpMfgJobCard();

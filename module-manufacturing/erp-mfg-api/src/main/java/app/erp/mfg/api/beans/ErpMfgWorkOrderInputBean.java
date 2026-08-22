@@ -13,16 +13,16 @@
     public class ErpMfgWorkOrderInputBean extends CrudInputBase {
 
     
-        private Long _id;
+        private String _id;
 
     
         @PropMeta(propId=1)
     
-        public Long getId(){
+        public String getId(){
             return _id;
         }
 
-        public void setId(Long value){
+        public void setId(String value){
             this._id = value;
         }
 
@@ -41,72 +41,72 @@
         }
 
 
-        private Long _orgId;
+        private String _orgId;
 
     
         @PropMeta(propId=3)
     
-        public Long getOrgId(){
+        public String getOrgId(){
             return _orgId;
         }
 
-        public void setOrgId(Long value){
+        public void setOrgId(String value){
             this._orgId = value;
         }
 
 
-        private Long _bomId;
+        private String _bomId;
 
     
         @PropMeta(propId=4)
     
-        public Long getBomId(){
+        public String getBomId(){
             return _bomId;
         }
 
-        public void setBomId(Long value){
+        public void setBomId(String value){
             this._bomId = value;
         }
 
 
-        private Long _routingId;
+        private String _routingId;
 
     
         @PropMeta(propId=5)
     
-        public Long getRoutingId(){
+        public String getRoutingId(){
             return _routingId;
         }
 
-        public void setRoutingId(Long value){
+        public void setRoutingId(String value){
             this._routingId = value;
         }
 
 
-        private Long _productionVersionId;
+        private String _productionVersionId;
 
     
         @PropMeta(propId=6)
     
-        public Long getProductionVersionId(){
+        public String getProductionVersionId(){
             return _productionVersionId;
         }
 
-        public void setProductionVersionId(Long value){
+        public void setProductionVersionId(String value){
             this._productionVersionId = value;
         }
 
 
-        private Long _sourceMrpPlanId;
+        private String _sourceMrpPlanId;
 
     
         @PropMeta(propId=7)
     
-        public Long getSourceMrpPlanId(){
+        public String getSourceMrpPlanId(){
             return _sourceMrpPlanId;
         }
 
-        public void setSourceMrpPlanId(Long value){
+        public void setSourceMrpPlanId(String value){
             this._sourceMrpPlanId = value;
         }
 
@@ -139,16 +139,16 @@
         }
 
 
-        private Long _productId;
+        private String _productId;
 
     
         @PropMeta(propId=10)
     
-        public Long getProductId(){
+        public String getProductId(){
             return _productId;
         }
 
-        public void setProductId(Long value){
+        public void setProductId(String value){
             this._productId = value;
         }
 
@@ -265,16 +265,16 @@
         }
 
 
-        private Long _currencyId;
+        private String _currencyId;
 
     
         @PropMeta(propId=19)
     
-        public Long getCurrencyId(){
+        public String getCurrencyId(){
             return _currencyId;
         }
 
-        public void setCurrencyId(Long value){
+        public void setCurrencyId(String value){
             this._currencyId = value;
         }
 
@@ -461,16 +461,16 @@
         }
 
 
-        private Long _sourceScheduleId;
+        private String _sourceScheduleId;
 
     
         @PropMeta(propId=38)
     
-        public Long getSourceScheduleId(){
+        public String getSourceScheduleId(){
             return _sourceScheduleId;
         }
 
-        public void setSourceScheduleId(Long value){
+        public void setSourceScheduleId(String value){
             this._sourceScheduleId = value;
         }
 
@@ -489,16 +489,16 @@
         }
 
 
-        private Long _snapshotBomId;
+        private String _snapshotBomId;
 
     
         @PropMeta(propId=46)
     
-        public Long getSnapshotBomId(){
+        public String getSnapshotBomId(){
             return _snapshotBomId;
         }
 
-        public void setSnapshotBomId(Long value){
+        public void setSnapshotBomId(String value){
             this._snapshotBomId = value;
         }
 

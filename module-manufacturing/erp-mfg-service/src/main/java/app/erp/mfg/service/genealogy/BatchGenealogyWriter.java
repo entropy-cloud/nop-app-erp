@@ -121,12 +121,12 @@ public class BatchGenealogyWriter {
         if (outputLine == null) {
             return;
         }
-        Long productId = wo.getProductId();
+        String productId = wo.getProductId();
         if (productId == null) {
             productId = outputLine.getMaterialId();
         }
-        Long uomId = outputLine.getUoMId();
-        Long warehouseId = outputLine.getDestWarehouseId();
+        String uomId = outputLine.getUoMId();
+        String warehouseId = outputLine.getDestWarehouseId();
         if (warehouseId == null) {
             return;
         }
@@ -149,7 +149,7 @@ public class BatchGenealogyWriter {
                 : BigDecimal.ONE;
 
         int lineNo = 10;
-        Set<Long> usedInputLots = new HashSet<>();
+        Set<String> usedInputLots = new HashSet<>();
         for (ErpMfgMaterialIssueLine issueLine : issueLines) {
             ErpInvBatch inputLot = resolveInputLot(issueLine, warehouseId);
             if (inputLot == null) {
@@ -185,7 +185,7 @@ public class BatchGenealogyWriter {
 
     // ---------- step：产出批次获取（自动建批） ----------
 
-    protected ErpInvBatch ensureOutputLot(ErpMfgWorkOrder wo, Long productId, Long warehouseId,
+    protected ErpInvBatch ensureOutputLot(ErpMfgWorkOrder wo, String productId, String warehouseId,
                                           BigDecimal completedQty, IServiceContext context) {
         String batchNo = ErpMfgConstants.GENEALOGY_OUTPUT_BATCH_PREFIX + "-" + wo.getCode();
         ErpInvBatch existing = findBatchByNo(batchNo, productId, warehouseId);
@@ -210,7 +210,7 @@ public class BatchGenealogyWriter {
 
     // ---------- step：输入批次解析（batchNo 字符串 → ErpInvBatch） ----------
 
-    protected ErpInvBatch resolveInputLot(ErpMfgMaterialIssueLine issueLine, Long warehouseId) {
+    protected ErpInvBatch resolveInputLot(ErpMfgMaterialIssueLine issueLine, String warehouseId) {
         String batchNo = issueLine.getBatchNo();
         if (batchNo == null || batchNo.trim().isEmpty()) {
             return null;
@@ -220,7 +220,7 @@ public class BatchGenealogyWriter {
 
     // ---------- step：查询辅助（protected，供派生复用与覆盖） ----------
 
-    protected List<ErpMfgMaterialIssueLine> findIssueLinesWithBatch(Long workOrderId) {
+    protected List<ErpMfgMaterialIssueLine> findIssueLinesWithBatch(String workOrderId) {
         IEntityDao<ErpMfgMaterialIssue> issueDao = daoProvider.daoFor(ErpMfgMaterialIssue.class);
         QueryBean iq = new QueryBean();
         iq.addFilter(eq("workOrderId", workOrderId));
@@ -253,7 +253,7 @@ public class BatchGenealogyWriter {
                 || Objects.equals(status, ErpMfgConstants.ISSUE_STATUS_DONE);
     }
 
-    protected ErpMfgWorkOrderLine findOutputLine(Long workOrderId) {
+    protected ErpMfgWorkOrderLine findOutputLine(String workOrderId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("workOrderId", workOrderId));
         q.addFilter(eq("lineType", ErpMfgConstants.WORK_ORDER_LINE_TYPE_OUTPUT));
@@ -263,7 +263,7 @@ public class BatchGenealogyWriter {
         return list.isEmpty() ? null : list.get(0);
     }
 
-    protected ErpInvBatch findBatchByNo(String batchNo, Long materialId, Long warehouseId) {
+    protected ErpInvBatch findBatchByNo(String batchNo, String materialId, String warehouseId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("batchNo", batchNo));
         q.addFilter(eq("materialId", materialId));

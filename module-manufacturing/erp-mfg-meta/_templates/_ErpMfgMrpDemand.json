@@ -1,9 +1,9 @@
 {
-  "id": 0,
-  "mrpPlanId": 0,
+  "id": "",
+  "mrpPlanId": "",
   "lineNo": 0,
-  "materialId": 0,
-  "uoMId": 0,
+  "materialId": "",
+  "uoMId": "",
   "demandSource": "",
   "demandSource_label": "",
   "sourceBillType": "",

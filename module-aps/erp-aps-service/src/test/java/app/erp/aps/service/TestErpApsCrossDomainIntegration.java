@@ -34,9 +34,9 @@ public class TestErpApsCrossDomainIntegration extends JunitAutoTestCase {
     @Inject
     ApsLoadSourceProvider loadSourceProvider;
 
-    static final Long MACHINE_A = 100L;
-    static final Long WORK_ORDER_1 = 2001L;
-    static final Long WORK_ORDER_2 = 2002L;
+    static final String MACHINE_A = "100";
+    static final String WORK_ORDER_1 = "2001";
+    static final String WORK_ORDER_2 = "2002";
     static final LocalDate PERIOD_FROM = LocalDate.of(2026, 7, 10);
     static final LocalDate PERIOD_TO = LocalDate.of(2026, 7, 20);
 
@@ -84,14 +84,14 @@ public class TestErpApsCrossDomainIntegration extends JunitAutoTestCase {
         assertEquals(WORK_ORDER_1, slots.get(0).getWorkOrderId());
     }
 
-    private String createOp(String code, Long workOrderId, int sequence, Long machineId, int priority,
-                          String setup, String perUnit, String qty, String earliestStart, String status) {
+    private String createOp(String code, String workOrderId, int sequence, String machineId, int priority,
+                           String setup, String perUnit, String qty, String earliestStart, String status) {
         Map<String, Object> d = new LinkedHashMap<>();
         d.put("code", code);
-        d.put("workOrderId", String.valueOf(workOrderId));
+        d.put("workOrderId", workOrderId);
         d.put("operationName", code);
         d.put("sequence", sequence);
-        d.put("machineId", String.valueOf(machineId));
+        d.put("machineId", machineId);
         d.put("priority", priority);
         d.put("setupTime", new BigDecimal(setup));
         d.put("runtimePerUnit", new BigDecimal(perUnit));
@@ -103,15 +103,15 @@ public class TestErpApsCrossDomainIntegration extends JunitAutoTestCase {
         return idOf(r.getData());
     }
 
-    private String createPlannedOp(String code, Long workOrderId, int sequence, Long machineId, int priority,
+    private String createPlannedOp(String code, String workOrderId, int sequence, String machineId, int priority,
                                  String setup, String perUnit, String qty,
                                  String plannedStart, String plannedEnd) {
         Map<String, Object> d = new LinkedHashMap<>();
         d.put("code", code);
-        d.put("workOrderId", String.valueOf(workOrderId));
+        d.put("workOrderId", workOrderId);
         d.put("operationName", code);
         d.put("sequence", sequence);
-        d.put("machineId", String.valueOf(machineId));
+        d.put("machineId", machineId);
         d.put("priority", priority);
         d.put("setupTime", new BigDecimal(setup));
         d.put("runtimePerUnit", new BigDecimal(perUnit));

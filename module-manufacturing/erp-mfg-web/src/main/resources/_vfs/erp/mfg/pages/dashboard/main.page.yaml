@@ -145,7 +145,7 @@ body:
       method: post
       dataType: raw
       data:
-        query: "query(${'$'}workcenterId:Long,${'$'}dateFrom:String,${'$'}dateTo:String){ ErpMfgDashboard__getCrpLoadChartData(workcenterId:${'$'}workcenterId,dateFrom:${'$'}dateFrom,dateTo:${'$'}dateTo) }"
+        query: "query(${'$'}workcenterId:String,${'$'}dateFrom:String,${'$'}dateTo:String){ ErpMfgDashboard__getCrpLoadChartData(workcenterId:${'$'}workcenterId,dateFrom:${'$'}dateFrom,dateTo:${'$'}dateTo) }"
         variables:
           workcenterId: "${workcenterId || null}"
           dateFrom: "${dateFrom || null}"

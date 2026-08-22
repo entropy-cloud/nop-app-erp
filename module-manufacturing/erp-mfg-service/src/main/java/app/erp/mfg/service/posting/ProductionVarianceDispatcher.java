@@ -67,7 +67,7 @@ public class ProductionVarianceDispatcher {
      *
      * <p>过账失败不阻塞差异计算结果：以 try/catch 吞异常告警，保持 posted=false（对齐 PPV 范式）。
      */
-    public void dispatchIfApplicable(Long workOrderId) {
+    public void dispatchIfApplicable(String workOrderId) {
         List<ErpMfgCostVariance> lines = varianceCalculator.findByWorkOrder(workOrderId);
         if (lines.isEmpty()) {
             return;
@@ -104,7 +104,7 @@ public class ProductionVarianceDispatcher {
 
         PostingEvent event = buildEvent(wo, materialNet, laborNet, overheadNet, subcontractNet);
         try {
-            Long voucherId = executor.postEvent(event);
+            String voucherId = executor.postEvent(event);
             if (voucherId != null) {
                 markPosted(lines);
             }
@@ -130,7 +130,7 @@ public class ProductionVarianceDispatcher {
      * （deleteByWorkOrder/calculateVariances/dispatchIfApplicable）。范式对齐 {@link #dispatchIfApplicable} 过账失败
      * try/catch（{@code :109-115}）。红冲失败孤儿凭证风险经 log warn 可观测，归 finance 5.1 异常工作台兜底。
      */
-    public void reverseIfExists(Long workOrderId) {
+    public void reverseIfExists(String workOrderId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("workOrderId", workOrderId));
         q.addFilter(eq("posted", true));
@@ -204,7 +204,7 @@ public class ProductionVarianceDispatcher {
      * 解析工单所属组织的会计账套 ID。工单不持有 acctSchemaId（非财务实体），经 ErpMdAcctSchema 按组织取第一条 ACTIVE 账套。
      * 对齐 PPV 范式中 ledger.acctSchemaId 的来源——库存账套来自库存域移动单，生产差异无库存通道故经组织解析。
      */
-    private Long resolveAcctSchemaId(Long orgId) {
+    private String resolveAcctSchemaId(String orgId) {
         return AcctSchemaResolver.resolvePrimarySchemaId(daoProvider, orgId);
     }
 

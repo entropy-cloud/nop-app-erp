@@ -19,25 +19,25 @@
             <cols>
 
                 <!--ID-->
-                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="id" mandatory="true" sortable="true"/>
 
                 <!--领料单ID-->
-                <col id="issueId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="issueId" mandatory="true" sortable="true"/>
 
                 <!--行号-->
                 <col id="lineNo" mandatory="true" ui:number="true" sortable="true"/>
 
                 <!--物料-->
-                <col id="materialId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="materialId" mandatory="true" sortable="true"/>
 
                 <!--SKU-->
-                <col id="skuId" ui:number="true" sortable="true"/>
+                <col id="skuId" sortable="true"/>
 
                 <!--计量单位-->
-                <col id="uoMId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="uoMId" mandatory="true" sortable="true"/>
 
                 <!--对应工单投入行-->
-                <col id="workOrderLineId" ui:number="true" sortable="true"/>
+                <col id="workOrderLineId" sortable="true"/>
 
                 <!--应领数量-->
                 <col id="requiredQuantity" mandatory="true" ui:number="true" sortable="true"/>
@@ -55,7 +55,7 @@
                 <col id="batchNo" sortable="true"/>
 
                 <!--库位-->
-                <col id="locationId" ui:number="true" sortable="true"/>
+                <col id="locationId" sortable="true"/>
 
                 <!--备注-->
                 <col id="remark" sortable="true"/>

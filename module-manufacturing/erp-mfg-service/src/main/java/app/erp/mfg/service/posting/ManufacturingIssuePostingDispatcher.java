@@ -76,7 +76,7 @@ public class ManufacturingIssuePostingDispatcher {
      *
      * <p>过账失败不阻塞领料终态：以 try/catch 吞异常告警，保持 posted=false。
      */
-    public void dispatchIfApplicable(Long materialIssueId) {
+    public void dispatchIfApplicable(String materialIssueId) {
         ErpMfgMaterialIssue issue = daoProvider.daoFor(ErpMfgMaterialIssue.class).getEntityById(materialIssueId);
         if (issue == null) {
             return;
@@ -100,7 +100,7 @@ public class ManufacturingIssuePostingDispatcher {
         List<ErpMfgMaterialIssueLine> issueLines = loadIssueLines(materialIssueId);
         PostingEvent event = buildEvent(issue, wo, move, ledgers, issueLines);
         try {
-            Long voucherId = executor.postEvent(event);
+            String voucherId = executor.postEvent(event);
             if (voucherId != null) {
                 markIssuePosted(materialIssueId);
             }
@@ -151,7 +151,7 @@ public class ManufacturingIssuePostingDispatcher {
         return event;
     }
 
-    private void markIssuePosted(Long issueId) {
+    private void markIssuePosted(String issueId) {
         ErpMfgMaterialIssue managed = daoProvider.daoFor(ErpMfgMaterialIssue.class).getEntityById(issueId);
         if (managed != null) {
             managed.setPosted(true);
@@ -169,7 +169,7 @@ public class ManufacturingIssuePostingDispatcher {
         return list.isEmpty() ? null : list.get(0);
     }
 
-    private List<ErpInvStockLedger> loadLedgers(Long moveId) {
+    private List<ErpInvStockLedger> loadLedgers(String moveId) {
         ormTemplate.flushSession();
         IEntityDao<ErpInvStockLedger> dao = daoProvider.daoFor(ErpInvStockLedger.class);
         QueryBean q = new QueryBean();
@@ -177,14 +177,14 @@ public class ManufacturingIssuePostingDispatcher {
         return dao.findAllByQuery(q);
     }
 
-    private List<ErpMfgMaterialIssueLine> loadIssueLines(Long issueId) {
+    private List<ErpMfgMaterialIssueLine> loadIssueLines(String issueId) {
         IEntityDao<ErpMfgMaterialIssueLine> dao = daoProvider.daoFor(ErpMfgMaterialIssueLine.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("issueId", issueId));
         return dao.findAllByQuery(q);
     }
 
-    private Long resolveAcctSchemaId(Long orgId) {
+    private String resolveAcctSchemaId(String orgId) {
         return AcctSchemaResolver.resolvePrimarySchemaId(daoProvider, orgId);
     }
 

@@ -18,7 +18,7 @@ public class ErpMfgMrpPlanLineReleaseWorkRequestProcessor {
     @Inject
     IDaoProvider daoProvider;
 
-    public ErpMfgMrpPlanLine releaseWorkRequest(Long planLineId, IServiceContext context) {
+    public ErpMfgMrpPlanLine releaseWorkRequest(String planLineId, IServiceContext context) {
         mrpReleaseService.releaseWorkRequest(planLineId);
         return lineDao().getEntityById(planLineId);
     }

@@ -17,7 +17,7 @@ public class ErpMfgMaterialIssueReverseConfirmProcessor extends AbstractErpMfgMa
 
     private static final Logger LOG = LoggerFactory.getLogger(ErpMfgMaterialIssueReverseConfirmProcessor.class);
 
-    public ErpMfgMaterialIssue reverseConfirm(Long issueId, IServiceContext context) {
+    public ErpMfgMaterialIssue reverseConfirm(String issueId, IServiceContext context) {
         ErpMfgMaterialIssue issue = requireIssue(issueId, context);
         validateCanReverse(issue, context);
 

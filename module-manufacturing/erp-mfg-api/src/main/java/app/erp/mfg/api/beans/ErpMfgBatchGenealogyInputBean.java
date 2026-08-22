@@ -12,86 +12,86 @@
     public class ErpMfgBatchGenealogyInputBean extends CrudInputBase {
 
     
-        private Long _id;
+        private String _id;
 
     
         @PropMeta(propId=1)
     
-        public Long getId(){
+        public String getId(){
             return _id;
         }
 
-        public void setId(Long value){
+        public void setId(String value){
             this._id = value;
         }
 
 
-        private Long _workOrderId;
+        private String _workOrderId;
 
     
         @PropMeta(propId=2)
     
-        public Long getWorkOrderId(){
+        public String getWorkOrderId(){
             return _workOrderId;
         }
 
-        public void setWorkOrderId(Long value){
+        public void setWorkOrderId(String value){
             this._workOrderId = value;
         }
 
 
-        private Long _jobCardId;
+        private String _jobCardId;
 
     
         @PropMeta(propId=3)
     
-        public Long getJobCardId(){
+        public String getJobCardId(){
             return _jobCardId;
         }
 
-        public void setJobCardId(Long value){
+        public void setJobCardId(String value){
             this._jobCardId = value;
         }
 
 
-        private Long _operationId;
+        private String _operationId;
 
     
         @PropMeta(propId=4)
     
-        public Long getOperationId(){
+        public String getOperationId(){
             return _operationId;
         }
 
-        public void setOperationId(Long value){
+        public void setOperationId(String value){
             this._operationId = value;
         }
 
 
-        private Long _inputLotId;
+        private String _inputLotId;
 
     
         @PropMeta(propId=5)
     
-        public Long getInputLotId(){
+        public String getInputLotId(){
             return _inputLotId;
         }
 
-        public void setInputLotId(Long value){
+        public void setInputLotId(String value){
             this._inputLotId = value;
         }
 
 
-        private Long _inputMaterialId;
+        private String _inputMaterialId;
 
     
         @PropMeta(propId=6)
     
-        public Long getInputMaterialId(){
+        public String getInputMaterialId(){
             return _inputMaterialId;
         }
 
-        public void setInputMaterialId(Long value){
+        public void setInputMaterialId(String value){
             this._inputMaterialId = value;
         }
 
@@ -110,44 +110,44 @@
         }
 
 
-        private Long _inputUoMId;
+        private String _inputUoMId;
 
     
         @PropMeta(propId=8)
     
-        public Long getInputUoMId(){
+        public String getInputUoMId(){
             return _inputUoMId;
         }
 
-        public void setInputUoMId(Long value){
+        public void setInputUoMId(String value){
             this._inputUoMId = value;
         }
 
 
-        private Long _outputLotId;
+        private String _outputLotId;
 
     
         @PropMeta(propId=9)
     
-        public Long getOutputLotId(){
+        public String getOutputLotId(){
             return _outputLotId;
         }
 
-        public void setOutputLotId(Long value){
+        public void setOutputLotId(String value){
             this._outputLotId = value;
         }
 
 
-        private Long _outputMaterialId;
+        private String _outputMaterialId;
 
     
         @PropMeta(propId=10)
     
-        public Long getOutputMaterialId(){
+        public String getOutputMaterialId(){
             return _outputMaterialId;
         }
 
-        public void setOutputMaterialId(Long value){
+        public void setOutputMaterialId(String value){
             this._outputMaterialId = value;
         }
 
@@ -166,16 +166,16 @@
         }
 
 
-        private Long _outputUoMId;
+        private String _outputUoMId;
 
     
         @PropMeta(propId=12)
     
-        public Long getOutputUoMId(){
+        public String getOutputUoMId(){
             return _outputUoMId;
         }
 
-        public void setOutputUoMId(Long value){
+        public void setOutputUoMId(String value){
             this._outputUoMId = value;
         }
 

@@ -59,7 +59,7 @@ public class BomExpander {
     /**
      * 取物料的默认且有效的 BOM（{@code isDefault=true && isActive=true}）。无则返回 null。
      */
-    public ErpMfgBom findDefaultBomOrNull(Long productId) {
+    public ErpMfgBom findDefaultBomOrNull(String productId) {
         if (productId == null) {
             return null;
         }
@@ -81,7 +81,7 @@ public class BomExpander {
      * @param requestedQty  期望产出量（null → {@code BOM.qty}，即一个标准批量）
      * @param useMultiLevel true=制造子件递归；false=仅直接子件
      */
-    public List<BomExplosionNode> explode(Long bomId, BigDecimal requestedQty, boolean useMultiLevel) {
+    public List<BomExplosionNode> explode(String bomId, BigDecimal requestedQty, boolean useMultiLevel) {
         ErpMfgBom bom = requireBom(bomId);
         BigDecimal qty = requestedQty != null ? requestedQty : nz(bom.getQty());
         List<BomExplosionNode> nodes = new ArrayList<>();
@@ -106,8 +106,8 @@ public class BomExpander {
     }
 
     private void expandLines(ErpMfgBom bom, BigDecimal requestedQty, int level,
-                             Set<Long> path, boolean recurseMfg, List<BomExplosionNode> nodes) {
-        Long product = bom.getProductId();
+                             Set<String> path, boolean recurseMfg, List<BomExplosionNode> nodes) {
+        String product = bom.getProductId();
         if (path.contains(product)) {
             throw new NopException(ErpMfgErrors.ERR_BOM_CYCLE)
                     .param(ErpMfgErrors.ARG_MATERIAL_ID, product)
@@ -142,8 +142,8 @@ public class BomExpander {
     }
 
     private void expandSnapshotLines(ErpMfgWorkOrderBomSnapshot snapshot, BigDecimal requestedQty, int level,
-                                     Set<Long> path, boolean recurseMfg, List<BomExplosionNode> nodes) {
-        Long product = snapshot.getProductId();
+                                     Set<String> path, boolean recurseMfg, List<BomExplosionNode> nodes) {
+        String product = snapshot.getProductId();
         if (product != null && path.contains(product)) {
             throw new NopException(ErpMfgErrors.ERR_BOM_CYCLE)
                     .param(ErpMfgErrors.ARG_MATERIAL_ID, product)
@@ -181,7 +181,7 @@ public class BomExpander {
         }
     }
 
-    private BomExplosionNode node(Long materialId, Long operationId, BigDecimal effQty, Long sourceBomId, int level,
+    private BomExplosionNode node(String materialId, String operationId, BigDecimal effQty, String sourceBomId, int level,
                                   boolean manufactured) {
         BomExplosionNode n = new BomExplosionNode();
         n.setMaterialId(materialId);
@@ -193,7 +193,7 @@ public class BomExpander {
         return n;
     }
 
-    private ErpMfgBom requireBom(Long bomId) {
+    private ErpMfgBom requireBom(String bomId) {
         if (bomId == null) {
             throw new NopException(ErpMfgErrors.ERR_BOM_NOT_FOUND).param(ErpMfgErrors.ARG_BOM_ID, bomId);
         }
@@ -205,7 +205,7 @@ public class BomExpander {
     }
 
     /** 查询 BOM 子件行（按行号升序）。public 供快照复制（submit）复用。 */
-    public List<ErpMfgBomLine> loadLines(Long bomId) {
+    public List<ErpMfgBomLine> loadLines(String bomId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("bomId", bomId));
         q.addOrderField("lineNo", false);
@@ -213,7 +213,7 @@ public class BomExpander {
     }
 
     /** 查询 BOM 工艺行（按行号升序）。public 供快照复制（submit）复用。 */
-    public List<ErpMfgBomOperation> loadOperations(Long bomId) {
+    public List<ErpMfgBomOperation> loadOperations(String bomId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("bomId", bomId));
         q.addOrderField("lineNo", false);

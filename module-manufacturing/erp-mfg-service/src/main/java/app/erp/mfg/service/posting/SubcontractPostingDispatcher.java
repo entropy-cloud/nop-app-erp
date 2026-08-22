@@ -82,7 +82,7 @@ public class SubcontractPostingDispatcher {
     /**
      * 委外发料过账：加载发料出库移动单 → 读流水材料成本 → 装配 SUBCONTRACT_ISSUE 事件 → 过账。
      */
-    public void dispatchIssuePosting(Long subcontractOrderId) {
+    public void dispatchIssuePosting(String subcontractOrderId) {
         ErpMfgSubcontractOrder order = loadOrder(subcontractOrderId);
         if (order == null) {
             return;
@@ -103,7 +103,7 @@ public class SubcontractPostingDispatcher {
     /**
      * 委外收货过账：加载成品入库移动单 → 读流水成本 → 装配 SUBCONTRACT_RECEIPT 事件 → 过账。
      */
-    public void dispatchReceiptPosting(Long subcontractOrderId) {
+    public void dispatchReceiptPosting(String subcontractOrderId) {
         ErpMfgSubcontractOrder order = loadOrder(subcontractOrderId);
         if (order == null) {
             return;
@@ -124,7 +124,7 @@ public class SubcontractPostingDispatcher {
      * 委外加工费过账：读订单头加工费 → 装配 SUBCONTRACT_FEE 事件 → 过账 → 成功回写 posted=true。
      * <p>G3 错误传播分级（plan 2026-07-30-0341-2 P1-MA4-010）：失败派发告警使 posted=false 悬挂可被感知。
      */
-    public void dispatchFeePosting(Long subcontractOrderId) {
+    public void dispatchFeePosting(String subcontractOrderId) {
         ErpMfgSubcontractOrder order = loadOrder(subcontractOrderId);
         if (order == null) {
             return;
@@ -138,7 +138,7 @@ public class SubcontractPostingDispatcher {
         }
         PostingEvent event = buildFeeEvent(order);
         try {
-            Long voucherId = executor.postEvent(event);
+            String voucherId = executor.postEvent(event);
             if (voucherId != null) {
                 markPosted(subcontractOrderId);
             }
@@ -275,7 +275,7 @@ public class SubcontractPostingDispatcher {
         return event;
     }
 
-    private void markPosted(Long orderId) {
+    private void markPosted(String orderId) {
         ErpMfgSubcontractOrder managed = daoProvider.daoFor(ErpMfgSubcontractOrder.class).getEntityById(orderId);
         if (managed != null) {
             managed.setPosted(true);
@@ -283,7 +283,7 @@ public class SubcontractPostingDispatcher {
         }
     }
 
-    private ErpMfgSubcontractOrder loadOrder(Long orderId) {
+    private ErpMfgSubcontractOrder loadOrder(String orderId) {
         return daoProvider.daoFor(ErpMfgSubcontractOrder.class).getEntityById(orderId);
     }
 
@@ -297,7 +297,7 @@ public class SubcontractPostingDispatcher {
         return list.isEmpty() ? null : list.get(0);
     }
 
-    private List<ErpInvStockLedger> loadLedgers(Long moveId) {
+    private List<ErpInvStockLedger> loadLedgers(String moveId) {
         ormTemplate.flushSession();
         IEntityDao<ErpInvStockLedger> dao = daoProvider.daoFor(ErpInvStockLedger.class);
         QueryBean q = new QueryBean();
@@ -305,14 +305,14 @@ public class SubcontractPostingDispatcher {
         return dao.findAllByQuery(q);
     }
 
-    private List<ErpMfgSubcontractOrderLine> loadLines(Long orderId) {
+    private List<ErpMfgSubcontractOrderLine> loadLines(String orderId) {
         IEntityDao<ErpMfgSubcontractOrderLine> dao = daoProvider.daoFor(ErpMfgSubcontractOrderLine.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("subcontractOrderId", orderId));
         return dao.findAllByQuery(q);
     }
 
-    private Long resolveAcctSchemaId(Long orgId) {
+    private String resolveAcctSchemaId(String orgId) {
         return AcctSchemaResolver.resolvePrimarySchemaId(daoProvider, orgId);
     }
 }

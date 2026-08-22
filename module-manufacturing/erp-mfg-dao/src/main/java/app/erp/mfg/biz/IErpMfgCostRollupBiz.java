@@ -22,5 +22,5 @@ public interface IErpMfgCostRollupBiz extends ICrudBiz<ErpMfgCostRollup>{
      * @return 标准 unitCost；无已 FIRMED 卷算行或该物料不在行中时返回 {@code null}
      */
     @BizQuery
-    BigDecimal findLatestFirmedStandardCost(@Name("materialId") Long materialId, IServiceContext context);
+    BigDecimal findLatestFirmedStandardCost(@Name("materialId") String materialId, IServiceContext context);
 }

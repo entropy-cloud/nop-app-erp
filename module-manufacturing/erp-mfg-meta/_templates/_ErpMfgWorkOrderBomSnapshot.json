@@ -1,8 +1,8 @@
 {
-  "id": 0,
-  "workOrderId": 0,
-  "bomId": 0,
-  "productId": 0,
+  "id": "",
+  "workOrderId": "",
+  "bomId": "",
+  "productId": "",
   "versionLabel": "",
   "qty": 0.0,
   "delVersion": 0,

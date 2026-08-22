@@ -13,8 +13,8 @@ public class ErpMfgWorkOrderResumeProcessor {
     @Inject
     ErpMfgWorkOrderProcessor facade;
 
-    public ErpMfgWorkOrder resume(Long workOrderId, IServiceContext context) {
-        ErpMfgWorkOrder wo = facade.requireWorkOrder(String.valueOf(workOrderId), context);
+    public ErpMfgWorkOrder resume(String workOrderId, IServiceContext context) {
+        ErpMfgWorkOrder wo = facade.requireWorkOrder(workOrderId, context);
         facade.validateTransitionForResume(wo, context);
         doResume(wo);
         return wo;

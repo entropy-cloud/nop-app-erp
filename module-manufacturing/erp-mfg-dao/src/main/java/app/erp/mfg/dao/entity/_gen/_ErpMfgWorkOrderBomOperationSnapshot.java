@@ -144,19 +144,19 @@ public class _ErpMfgWorkOrderBomOperationSnapshot extends DynamicOrmEntity{
 
     
     /* ID: ID */
-    private java.lang.Long _id;
+    private java.lang.String _id;
     
     /* 快照ID: SNAPSHOT_ID */
-    private java.lang.Long _snapshotId;
+    private java.lang.String _snapshotId;
     
     /* 行号: LINE_NO */
     private java.lang.Integer _lineNo;
     
     /* 工序ID: OPERATION_ID */
-    private java.lang.Long _operationId;
+    private java.lang.String _operationId;
     
     /* 工作中心: WORKCENTER_ID */
-    private java.lang.Long _workcenterId;
+    private java.lang.String _workcenterId;
     
     /* 标准工时: STANDARD_TIME */
     private java.math.BigDecimal _standardTime;
@@ -313,9 +313,9 @@ public class _ErpMfgWorkOrderBomOperationSnapshot extends DynamicOrmEntity{
         switch(propId){
         
             case PROP_ID_id:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_id));
                }
                setId(typedValue);
@@ -323,9 +323,9 @@ public class _ErpMfgWorkOrderBomOperationSnapshot extends DynamicOrmEntity{
             }
         
             case PROP_ID_snapshotId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_snapshotId));
                }
                setSnapshotId(typedValue);
@@ -343,9 +343,9 @@ public class _ErpMfgWorkOrderBomOperationSnapshot extends DynamicOrmEntity{
             }
         
             case PROP_ID_operationId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_operationId));
                }
                setOperationId(typedValue);
@@ -353,9 +353,9 @@ public class _ErpMfgWorkOrderBomOperationSnapshot extends DynamicOrmEntity{
             }
         
             case PROP_ID_workcenterId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_workcenterId));
                }
                setWorkcenterId(typedValue);
@@ -463,14 +463,14 @@ public class _ErpMfgWorkOrderBomOperationSnapshot extends DynamicOrmEntity{
         
             case PROP_ID_id:{
                onInitProp(propId);
-               this._id = (java.lang.Long)value;
+               this._id = (java.lang.String)value;
                orm_id(); // 如果是设置主键字段，则触发watcher
                break;
             }
         
             case PROP_ID_snapshotId:{
                onInitProp(propId);
-               this._snapshotId = (java.lang.Long)value;
+               this._snapshotId = (java.lang.String)value;
                
                break;
             }
@@ -484,14 +484,14 @@ public class _ErpMfgWorkOrderBomOperationSnapshot extends DynamicOrmEntity{
         
             case PROP_ID_operationId:{
                onInitProp(propId);
-               this._operationId = (java.lang.Long)value;
+               this._operationId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_workcenterId:{
                onInitProp(propId);
-               this._workcenterId = (java.lang.Long)value;
+               this._workcenterId = (java.lang.String)value;
                
                break;
             }
@@ -568,7 +568,7 @@ public class _ErpMfgWorkOrderBomOperationSnapshot extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final java.lang.Long getId(){
+    public final java.lang.String getId(){
          onPropGet(PROP_ID_id);
          return _id;
     }
@@ -576,7 +576,7 @@ public class _ErpMfgWorkOrderBomOperationSnapshot extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final void setId(java.lang.Long value){
+    public final void setId(java.lang.String value){
         if(onPropSet(PROP_ID_id,value)){
             this._id = value;
             internalClearRefs(PROP_ID_id);
@@ -587,7 +587,7 @@ public class _ErpMfgWorkOrderBomOperationSnapshot extends DynamicOrmEntity{
     /**
      * 快照ID: SNAPSHOT_ID
      */
-    public final java.lang.Long getSnapshotId(){
+    public final java.lang.String getSnapshotId(){
          onPropGet(PROP_ID_snapshotId);
          return _snapshotId;
     }
@@ -595,7 +595,7 @@ public class _ErpMfgWorkOrderBomOperationSnapshot extends DynamicOrmEntity{
     /**
      * 快照ID: SNAPSHOT_ID
      */
-    public final void setSnapshotId(java.lang.Long value){
+    public final void setSnapshotId(java.lang.String value){
         if(onPropSet(PROP_ID_snapshotId,value)){
             this._snapshotId = value;
             internalClearRefs(PROP_ID_snapshotId);
@@ -625,7 +625,7 @@ public class _ErpMfgWorkOrderBomOperationSnapshot extends DynamicOrmEntity{
     /**
      * 工序ID: OPERATION_ID
      */
-    public final java.lang.Long getOperationId(){
+    public final java.lang.String getOperationId(){
          onPropGet(PROP_ID_operationId);
          return _operationId;
     }
@@ -633,7 +633,7 @@ public class _ErpMfgWorkOrderBomOperationSnapshot extends DynamicOrmEntity{
     /**
      * 工序ID: OPERATION_ID
      */
-    public final void setOperationId(java.lang.Long value){
+    public final void setOperationId(java.lang.String value){
         if(onPropSet(PROP_ID_operationId,value)){
             this._operationId = value;
             internalClearRefs(PROP_ID_operationId);
@@ -644,7 +644,7 @@ public class _ErpMfgWorkOrderBomOperationSnapshot extends DynamicOrmEntity{
     /**
      * 工作中心: WORKCENTER_ID
      */
-    public final java.lang.Long getWorkcenterId(){
+    public final java.lang.String getWorkcenterId(){
          onPropGet(PROP_ID_workcenterId);
          return _workcenterId;
     }
@@ -652,7 +652,7 @@ public class _ErpMfgWorkOrderBomOperationSnapshot extends DynamicOrmEntity{
     /**
      * 工作中心: WORKCENTER_ID
      */
-    public final void setWorkcenterId(java.lang.Long value){
+    public final void setWorkcenterId(java.lang.String value){
         if(onPropSet(PROP_ID_workcenterId,value)){
             this._workcenterId = value;
             internalClearRefs(PROP_ID_workcenterId);

@@ -17,13 +17,13 @@ public class ErpMfgSubcontractOrderReceiveFinishedProcessor {
     @Inject
     ErpMfgSubcontractOrderProcessor facade;
 
-    public ErpMfgSubcontractOrder receiveFinished(Long subcontractOrderId, BigDecimal receivedQty, IServiceContext context) {
+    public ErpMfgSubcontractOrder receiveFinished(String subcontractOrderId, BigDecimal receivedQty, IServiceContext context) {
         return receiveFinished(subcontractOrderId, receivedQty, null, context);
     }
 
-    public ErpMfgSubcontractOrder receiveFinished(Long subcontractOrderId, BigDecimal receivedQty,
-                                                  Long destWarehouseId, IServiceContext context) {
-        ErpMfgSubcontractOrder order = facade.requireOrder(String.valueOf(subcontractOrderId), context);
+    public ErpMfgSubcontractOrder receiveFinished(String subcontractOrderId, BigDecimal receivedQty,
+                                                  String destWarehouseId, IServiceContext context) {
+        ErpMfgSubcontractOrder order = facade.requireOrder(subcontractOrderId, context);
         facade.requireStatus(order, ErpMfgConstants.SUBCONTRACT_STATUS_ISSUED, "ISSUED");
 
         if (receivedQty == null || receivedQty.signum() <= 0) {

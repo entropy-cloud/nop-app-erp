@@ -66,21 +66,21 @@ public class KitAvailabilityChecker {
      * @param workOrderId 工单 ID
      * @return 齐套校验结果（全齐 / 部分齐套）
      */
-    public KitAvailabilityResult check(Long workOrderId) {
+    public KitAvailabilityResult check(String workOrderId) {
         ErpMfgWorkOrder wo = requireWorkOrder(workOrderId);
         BigDecimal plannedQty = nz(wo.getPlannedQuantity());
         List<BomExplosionNode> nodes = explodeRequirements(wo, plannedQty);
 
-        Map<Long, BigDecimal> requiredByMaterial = aggregateRequirements(nodes);
+        Map<String, BigDecimal> requiredByMaterial = aggregateRequirements(nodes);
         if (requiredByMaterial.isEmpty()) {
             return KitAvailabilityResult.reserved();
         }
 
-        Map<Long, BigDecimal> availableByMaterial = loadAvailableByMaterial(requiredByMaterial.keySet());
+        Map<String, BigDecimal> availableByMaterial = loadAvailableByMaterial(requiredByMaterial.keySet());
 
         KitAvailabilityResult result = KitAvailabilityResult.reserved();
-        for (Map.Entry<Long, BigDecimal> e : requiredByMaterial.entrySet()) {
-            Long materialId = e.getKey();
+        for (Map.Entry<String, BigDecimal> e : requiredByMaterial.entrySet()) {
+            String materialId = e.getKey();
             BigDecimal required = e.getValue();
             BigDecimal available = nz(availableByMaterial.get(materialId));
             if (available.compareTo(required) < 0) {
@@ -94,8 +94,8 @@ public class KitAvailabilityChecker {
         return result;
     }
 
-    public Map<Long, BigDecimal> aggregateRequirements(List<BomExplosionNode> nodes) {
-        Map<Long, BigDecimal> requiredByMaterial = new HashMap<>();
+    public Map<String, BigDecimal> aggregateRequirements(List<BomExplosionNode> nodes) {
+        Map<String, BigDecimal> requiredByMaterial = new HashMap<>();
         for (BomExplosionNode node : nodes) {
             if (node.getMaterialId() == null) {
                 continue;
@@ -108,7 +108,7 @@ public class KitAvailabilityChecker {
     /**
      * 按 BOM 多级展开子件需求（RC-R1.48 物料预留创建复用；对齐 {@link #check} 的 explode 调用范式）。
      */
-    public List<BomExplosionNode> explodeRequirements(Long bomId, BigDecimal requestedQty) {
+    public List<BomExplosionNode> explodeRequirements(String bomId, BigDecimal requestedQty) {
         return bomExpander.explode(bomId, requestedQty, true);
     }
 
@@ -136,7 +136,7 @@ public class KitAvailabilityChecker {
                 }
             }
         }
-        Long bomId = resolveBomId(wo);
+        String bomId = resolveBomId(wo);
         return bomExpander.explode(bomId, requestedQty, true);
     }
 
@@ -152,8 +152,8 @@ public class KitAvailabilityChecker {
         return snaps == null || snaps.isEmpty() ? null : snaps.iterator().next();
     }
 
-    private Map<Long, BigDecimal> loadAvailableByMaterial(Set<Long> materialIds) {
-        Map<Long, BigDecimal> availableByMaterial = new HashMap<>();
+    private Map<String, BigDecimal> loadAvailableByMaterial(Set<String> materialIds) {
+        Map<String, BigDecimal> availableByMaterial = new HashMap<>();
         if (materialIds.isEmpty()) {
             return availableByMaterial;
         }
@@ -166,13 +166,13 @@ public class KitAvailabilityChecker {
         return availableByMaterial;
     }
 
-    private QueryBean buildBalanceQuery(Set<Long> materialIds) {
+    private QueryBean buildBalanceQuery(Set<String> materialIds) {
         QueryBean q = new QueryBean();
         q.addFilter(in("materialId", new ArrayList<>(materialIds)));
         return q;
     }
 
-    private ErpMfgWorkOrder requireWorkOrder(Long workOrderId) {
+    private ErpMfgWorkOrder requireWorkOrder(String workOrderId) {
         if (workOrderId == null) {
             throw new NopException(ErpMfgErrors.ERR_WORK_ORDER_NOT_FOUND).param(ErpMfgErrors.ARG_WORK_ORDER_ID, workOrderId);
         }
@@ -183,7 +183,7 @@ public class KitAvailabilityChecker {
         return wo;
     }
 
-    public Long resolveBomId(ErpMfgWorkOrder wo) {
+    public String resolveBomId(ErpMfgWorkOrder wo) {
         if (wo.getBomId() != null) {
             return wo.getBomId();
         }

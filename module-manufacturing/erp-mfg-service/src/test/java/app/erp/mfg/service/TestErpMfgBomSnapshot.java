@@ -69,14 +69,14 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpMfgBomSnapshot extends JunitAutoTestCase {
 
-    static final Long ORG_ID = 1401L;
-    static final Long WAREHOUSE_ID = 3401L;
-    static final Long UOM_ID = 5401L;
-    static final Long CURRENCY_ID = 6401L;
-    static final Long WC1 = 6201L;
-    static final Long P = 1151L;     // 产成品
-    static final Long P2 = 1152L;    // 无 BOM 产成品
-    static final Long M1 = 1153L;    // 子件
+    static final String ORG_ID = "1401";
+    static final String WAREHOUSE_ID = "3401";
+    static final String UOM_ID = "5401";
+    static final String CURRENCY_ID = "6401";
+    static final String WC1 = "6201";
+    static final String P = "1151";     // 产成品
+    static final String P2 = "1152";    // 无 BOM 产成品
+    static final String M1 = "1153";    // 子件
     static final String MOVE_TYPE_INCOMING = "INCOMING";
 
     @Inject
@@ -98,12 +98,12 @@ public class TestErpMfgBomSnapshot extends JunitAutoTestCase {
     public void testSnapshotCapturedOnSubmit() {
         seedProduct(P, "MOVING_AVERAGE");
         seedWorkcenter(WC1, bd("20"));
-        Long bomId = seedBom(9151L, P, "V1", bd("1"));
-        seedBomLine(6151L, bomId, M1, bd("2"), 10);
-        seedBomOperation(7151L, bomId, WC1, bd("60"));
-        Long woId = seedWorkOrder("WO-SNAP-CAP", bomId, P, bd("2"));
+        String bomId = seedBom("9151", P, "V1", bd("1"));
+        seedBomLine("6151", bomId, M1, bd("2"), 10);
+        seedBomOperation("7151", bomId, WC1, bd("60"));
+        String woId = seedWorkOrder("WO-SNAP-CAP", bomId, P, bd("2"));
 
-        rpcOk(mutation, "ErpMfgWorkOrder__submitForApproval", Map.of("id", String.valueOf(woId)));
+        rpcOk(mutation, "ErpMfgWorkOrder__submitForApproval", Map.of("id", woId));
 
         ErpMfgWorkOrder wo = daoProvider.daoFor(ErpMfgWorkOrder.class).getEntityById(woId);
         assertEquals("V1", wo.getSnapshotBomVersion(), "snapshotBomVersion = 提交时点 BOM 版本号（版本追溯 :163）");
@@ -138,9 +138,9 @@ public class TestErpMfgBomSnapshot extends JunitAutoTestCase {
     public void testBomLineEditAfterSubmitKitUnchanged() {
         seedProduct(P, "MOVING_AVERAGE");
         seedWorkcenter(WC1, bd("20"));
-        Long bomId = seedBom(9152L, P, "V1", bd("1"));
-        seedBomLine(6152L, bomId, M1, bd("2"), 10);
-        Long woId = seedWorkOrder("WO-SNAP-KIT", bomId, P, bd("2"));
+        String bomId = seedBom("9152", P, "V1", bd("1"));
+        seedBomLine("6152", bomId, M1, bd("2"), 10);
+        String woId = seedWorkOrder("WO-SNAP-KIT", bomId, P, bd("2"));
         // 可用 7：快照需求 2×2=4 ≤ 7 → 全齐；若走实时 BOM（编辑后 5×2=10）→ 部分齐套
         generateIncoming(M1, "PR-SNAP-KIT", bd("7"), bd("5"));
         seedWorkOrderLine(woId, M1, bd("2"), "INPUT", null, WAREHOUSE_ID);
@@ -148,11 +148,11 @@ public class TestErpMfgBomSnapshot extends JunitAutoTestCase {
         // 预留关闭：避免 approve 预留占用污染可用量口径（预留+快照交互由 ⑦ 专测）
         setReservationEnabled(false);
         try {
-            rpcOk(mutation, "ErpMfgWorkOrder__submitForApproval", Map.of("id", String.valueOf(woId)));
-            rpcOk(mutation, "ErpMfgWorkOrder__approve", Map.of("id", String.valueOf(woId)));
+            rpcOk(mutation, "ErpMfgWorkOrder__submitForApproval", Map.of("id", woId));
+            rpcOk(mutation, "ErpMfgWorkOrder__approve", Map.of("id", woId));
 
             // BOM 行编辑（提交后 2 → 5）
-            updateBomLineQuantity(6152L, bd("5"));
+            updateBomLineQuantity("6152", bd("5"));
 
             KitAvailabilityResult result = ormTemplate.runInSession(
                     s -> kitAvailabilityChecker.check(woId));
@@ -179,18 +179,18 @@ public class TestErpMfgBomSnapshot extends JunitAutoTestCase {
     public void testBomOperationEditAfterSubmitVarianceUnchanged() {
         seedProduct(P, "MOVING_AVERAGE");
         seedWorkcenter(WC1, bd("20"));
-        Long bomId = seedBom(9153L, P, "V1", bd("1"));
-        seedBomLine(6153L, bomId, M1, bd("2"), 10);
-        seedBomOperation(7153L, bomId, WC1, bd("60"));
+        String bomId = seedBom("9153", P, "V1", bd("1"));
+        seedBomLine("6153", bomId, M1, bd("2"), 10);
+        seedBomOperation("7153", bomId, WC1, bd("60"));
         seedFirmedRollup(P);
-        Long woId = seedWorkOrder("WO-SNAP-VAR", bomId, P, bd("2"));
+        String woId = seedWorkOrder("WO-SNAP-VAR", bomId, P, bd("2"));
         setReservationEnabled(false);
         try {
-            rpcOk(mutation, "ErpMfgWorkOrder__submitForApproval", Map.of("id", String.valueOf(woId)));
-            rpcOk(mutation, "ErpMfgWorkOrder__approve", Map.of("id", String.valueOf(woId)));
+            rpcOk(mutation, "ErpMfgWorkOrder__submitForApproval", Map.of("id", woId));
+            rpcOk(mutation, "ErpMfgWorkOrder__approve", Map.of("id", woId));
 
             // 工序标准成本编辑（提交后 60 → 600 分钟）
-            updateBomOperationStandardTime(7153L, bd("600"));
+            updateBomOperationStandardTime("7153", bd("600"));
 
             // 完工置位（手动 calculateVariances 入口语义）
             ormTemplate.runInSession(() -> {
@@ -202,7 +202,7 @@ public class TestErpMfgBomSnapshot extends JunitAutoTestCase {
                 wo.setOverheadCost(bd("8"));
                 daoProvider.daoFor(ErpMfgWorkOrder.class).updateEntity(wo);
             });
-            seedTimeLog(5653L, woId, bd("150"));
+            seedTimeLog("5653", woId, bd("150"));
 
             ormTemplate.runInSession(s -> {
                 productionVarianceCalculator.calculateVariances(woId);
@@ -226,20 +226,20 @@ public class TestErpMfgBomSnapshot extends JunitAutoTestCase {
     public void testNewWorkOrderUsesCurrentBomOnSubmit() {
         seedProduct(P, "MOVING_AVERAGE");
         seedWorkcenter(WC1, bd("20"));
-        Long bomId = seedBom(9154L, P, "V1", bd("1"));
-        seedBomLine(6154L, bomId, M1, bd("2"), 10);
-        Long wo1 = seedWorkOrder("WO-SNAP-NEW1", bomId, P, bd("1"));
+        String bomId = seedBom("9154", P, "V1", bd("1"));
+        seedBomLine("6154", bomId, M1, bd("2"), 10);
+        String wo1 = seedWorkOrder("WO-SNAP-NEW1", bomId, P, bd("1"));
         setReservationEnabled(false);
         try {
-            rpcOk(mutation, "ErpMfgWorkOrder__submitForApproval", Map.of("id", String.valueOf(wo1)));
+            rpcOk(mutation, "ErpMfgWorkOrder__submitForApproval", Map.of("id", wo1));
             ErpMfgWorkOrderBomSnapshot snap1 = findSnapshot(wo1);
             assertEquals(0, bd("2").compareTo(findSnapshotLines(snap1.getId()).get(0).getQuantity()),
                     "WO1 快照 = 提交时点 BOM（2）");
 
             // BOM 行编辑（2 → 5）后再建新工单
-            updateBomLineQuantity(6154L, bd("5"));
-            Long wo2 = seedWorkOrder("WO-SNAP-NEW2", bomId, P, bd("1"));
-            rpcOk(mutation, "ErpMfgWorkOrder__submitForApproval", Map.of("id", String.valueOf(wo2)));
+            updateBomLineQuantity("6154", bd("5"));
+            String wo2 = seedWorkOrder("WO-SNAP-NEW2", bomId, P, bd("1"));
+            rpcOk(mutation, "ErpMfgWorkOrder__submitForApproval", Map.of("id", wo2));
 
             ErpMfgWorkOrderBomSnapshot snap2 = findSnapshot(wo2);
             assertEquals(0, bd("5").compareTo(findSnapshotLines(snap2.getId()).get(0).getQuantity()),
@@ -256,9 +256,9 @@ public class TestErpMfgBomSnapshot extends JunitAutoTestCase {
     public void testAutoUpgradeReResolvesLatestBom() {
         seedProduct(P, "MOVING_AVERAGE");
         seedWorkcenter(WC1, bd("20"));
-        Long bomId = seedBom(9155L, P, "V1", bd("1"));
-        seedBomLine(6155L, bomId, M1, bd("2"), 10);
-        Long woId = seedWorkOrder("WO-SNAP-AUTO", bomId, P, bd("2"));
+        String bomId = seedBom("9155", P, "V1", bd("1"));
+        seedBomLine("6155", bomId, M1, bd("2"), 10);
+        String woId = seedWorkOrder("WO-SNAP-AUTO", bomId, P, bd("2"));
         generateIncoming(M1, "PR-SNAP-AUTO", bd("7"), bd("5"));
         seedWorkOrderLine(woId, M1, bd("2"), "INPUT", null, WAREHOUSE_ID);
         seedWorkOrderLine(woId, P, bd("1"), "OUTPUT", WAREHOUSE_ID, null);
@@ -267,11 +267,11 @@ public class TestErpMfgBomSnapshot extends JunitAutoTestCase {
         setConfig(ErpMfgConstants.CONFIG_BOM_SNAPSHOT_STRATEGY,
                 ErpMfgConstants.BOM_SNAPSHOT_STRATEGY_AUTO_UPGRADE);
         try {
-            rpcOk(mutation, "ErpMfgWorkOrder__submitForApproval", Map.of("id", String.valueOf(woId)));
-            rpcOk(mutation, "ErpMfgWorkOrder__approve", Map.of("id", String.valueOf(woId)));
+            rpcOk(mutation, "ErpMfgWorkOrder__submitForApproval", Map.of("id", woId));
+            rpcOk(mutation, "ErpMfgWorkOrder__approve", Map.of("id", woId));
             assertNotNull(findSnapshot(woId), "AUTO_UPGRADE 下提交仍落快照（写路径不变）");
 
-            updateBomLineQuantity(6155L, bd("5"));
+            updateBomLineQuantity("6155", bd("5"));
 
             // 读侧：re-resolve 默认 BOM 实时展开 → 需求 5×2=10 > 可用 7 → 部分齐套
             KitAvailabilityResult result = ormTemplate.runInSession(
@@ -303,12 +303,12 @@ public class TestErpMfgBomSnapshot extends JunitAutoTestCase {
     public void testIdempotentSubmitNoDuplicateSnapshot() {
         seedProduct(P, "MOVING_AVERAGE");
         seedWorkcenter(WC1, bd("20"));
-        Long bomId = seedBom(9156L, P, "V1", bd("1"));
-        seedBomLine(6156L, bomId, M1, bd("2"), 10);
-        Long woId = seedWorkOrder("WO-SNAP-IDEM", bomId, P, bd("1"));
+        String bomId = seedBom("9156", P, "V1", bd("1"));
+        seedBomLine("6156", bomId, M1, bd("2"), 10);
+        String woId = seedWorkOrder("WO-SNAP-IDEM", bomId, P, bd("1"));
         setReservationEnabled(false);
         try {
-            rpcOk(mutation, "ErpMfgWorkOrder__submitForApproval", Map.of("id", String.valueOf(woId)));
+            rpcOk(mutation, "ErpMfgWorkOrder__submitForApproval", Map.of("id", woId));
             assertEquals(1, countSnapshots(woId), "首次提交落 1 个快照头");
 
             // 模拟 reject→修改→resubmit：直接复位状态后再次 submit（快照已存在 → 幂等跳过不重复）
@@ -318,7 +318,7 @@ public class TestErpMfgBomSnapshot extends JunitAutoTestCase {
                 wo.setDocStatus(ErpMfgConstants.WORK_ORDER_STATUS_DRAFT);
                 daoProvider.daoFor(ErpMfgWorkOrder.class).updateEntity(wo);
             });
-            rpcOk(mutation, "ErpMfgWorkOrder__submitForApproval", Map.of("id", String.valueOf(woId)));
+            rpcOk(mutation, "ErpMfgWorkOrder__submitForApproval", Map.of("id", woId));
 
             assertEquals(1, countSnapshots(woId), "重复提交不重复快照（幂等：快照已存在跳过）");
             ErpMfgWorkOrder wo = daoProvider.daoFor(ErpMfgWorkOrder.class).getEntityById(woId);
@@ -332,10 +332,10 @@ public class TestErpMfgBomSnapshot extends JunitAutoTestCase {
     @Test
     public void testNoBomSubmitSkipsSnapshot() {
         seedProduct(P2, null);
-        Long woId = seedWorkOrder("WO-SNAP-NOBOM", null, P2, bd("1"));
+        String woId = seedWorkOrder("WO-SNAP-NOBOM", null, P2, bd("1"));
         setReservationEnabled(false);
         try {
-            rpcOk(mutation, "ErpMfgWorkOrder__submitForApproval", Map.of("id", String.valueOf(woId)),
+            rpcOk(mutation, "ErpMfgWorkOrder__submitForApproval", Map.of("id", woId),
                     "无 BOM 工单提交不阻断（空快照 + LOG.warn）");
             ErpMfgWorkOrder wo = daoProvider.daoFor(ErpMfgWorkOrder.class).getEntityById(woId);
             assertNull(wo.getSnapshotBomVersion(), "无 BOM → 无快照版本");
@@ -352,17 +352,17 @@ public class TestErpMfgBomSnapshot extends JunitAutoTestCase {
     public void testApproveReservationFromSnapshot() {
         seedProduct(P, "MOVING_AVERAGE");
         seedWorkcenter(WC1, bd("20"));
-        Long bomId = seedBom(9157L, P, "V1", bd("1"));
-        seedBomLine(6157L, bomId, M1, bd("2"), 10);
-        Long woId = seedWorkOrder("WO-SNAP-RSV", bomId, P, bd("2"));
+        String bomId = seedBom("9157", P, "V1", bd("1"));
+        seedBomLine("6157", bomId, M1, bd("2"), 10);
+        String woId = seedWorkOrder("WO-SNAP-RSV", bomId, P, bd("2"));
         generateIncoming(M1, "PR-SNAP-RSV", bd("10"), bd("5"));
         seedWorkOrderLine(woId, M1, bd("2"), "INPUT", null, WAREHOUSE_ID);
         seedWorkOrderLine(woId, P, bd("1"), "OUTPUT", WAREHOUSE_ID, null);
 
-        rpcOk(mutation, "ErpMfgWorkOrder__submitForApproval", Map.of("id", String.valueOf(woId)));
+        rpcOk(mutation, "ErpMfgWorkOrder__submitForApproval", Map.of("id", woId));
         // BOM 行编辑（2 → 5）后再审核：预留必须仍按快照需求 4（非实时 10）
-        updateBomLineQuantity(6157L, bd("5"));
-        rpcOk(mutation, "ErpMfgWorkOrder__approve", Map.of("id", String.valueOf(woId)));
+        updateBomLineQuantity("6157", bd("5"));
+        rpcOk(mutation, "ErpMfgWorkOrder__approve", Map.of("id", woId));
 
         ErpInvReservation reservation = findReservation("WO-SNAP-RSV");
         assertNotNull(reservation, "审核后创建预留（R1.48 回归）");
@@ -376,13 +376,13 @@ public class TestErpMfgBomSnapshot extends JunitAutoTestCase {
     public void testSnapshotEntitiesReachableViaGraphQL() {
         seedProduct(P, "MOVING_AVERAGE");
         seedWorkcenter(WC1, bd("20"));
-        Long bomId = seedBom(9158L, P, "V1", bd("1"));
-        seedBomLine(6158L, bomId, M1, bd("2"), 10);
-        seedBomOperation(7158L, bomId, WC1, bd("60"));
-        Long woId = seedWorkOrder("WO-SNAP-GQL", bomId, P, bd("1"));
+        String bomId = seedBom("9158", P, "V1", bd("1"));
+        seedBomLine("6158", bomId, M1, bd("2"), 10);
+        seedBomOperation("7158", bomId, WC1, bd("60"));
+        String woId = seedWorkOrder("WO-SNAP-GQL", bomId, P, bd("1"));
         setReservationEnabled(false);
         try {
-            rpcOk(mutation, "ErpMfgWorkOrder__submitForApproval", Map.of("id", String.valueOf(woId)));
+            rpcOk(mutation, "ErpMfgWorkOrder__submitForApproval", Map.of("id", woId));
 
             ApiResponse<?> snapPage = rpc(query, "ErpMfgWorkOrderBomSnapshot__findPage",
                     ApiRequest.build(Map.of("limit", 10)));
@@ -402,11 +402,11 @@ public class TestErpMfgBomSnapshot extends JunitAutoTestCase {
 
     // ---------- helpers ----------
 
-    private List<app.erp.mfg.biz.BomExplosionNode> bomExpanderExplode(Long bomId, BigDecimal qty) {
+    private List<app.erp.mfg.biz.BomExplosionNode> bomExpanderExplode(String bomId, BigDecimal qty) {
         return bomExpander.explode(bomId, qty, true);
     }
 
-    private void seedProduct(Long id, String costMethod) {
+    private void seedProduct(String id, String costMethod) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMdMaterial> dao = daoProvider.daoFor(ErpMdMaterial.class);
             ErpMdMaterial m = new ErpMdMaterial();
@@ -421,7 +421,7 @@ public class TestErpMfgBomSnapshot extends JunitAutoTestCase {
         });
     }
 
-    private void seedWorkcenter(Long id, BigDecimal hourlyRate) {
+    private void seedWorkcenter(String id, BigDecimal hourlyRate) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMfgWorkcenter> dao = daoProvider.daoFor(ErpMfgWorkcenter.class);
             ErpMfgWorkcenter wc = new ErpMfgWorkcenter();
@@ -433,7 +433,7 @@ public class TestErpMfgBomSnapshot extends JunitAutoTestCase {
         });
     }
 
-    private Long seedBom(Long id, Long productId, String versionLabel, BigDecimal qty) {
+    private String seedBom(String id, String productId, String versionLabel, BigDecimal qty) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMfgBom> dao = daoProvider.daoFor(ErpMfgBom.class);
             ErpMfgBom bom = new ErpMfgBom();
@@ -450,7 +450,7 @@ public class TestErpMfgBomSnapshot extends JunitAutoTestCase {
         return id;
     }
 
-    private void seedBomLine(Long id, Long bomId, Long materialId, BigDecimal quantity, int lineNo) {
+    private void seedBomLine(String id, String bomId, String materialId, BigDecimal quantity, int lineNo) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMfgBomLine> dao = daoProvider.daoFor(ErpMfgBomLine.class);
             ErpMfgBomLine line = new ErpMfgBomLine();
@@ -464,21 +464,21 @@ public class TestErpMfgBomSnapshot extends JunitAutoTestCase {
         });
     }
 
-    private void seedBomOperation(Long id, Long bomId, Long workcenterId, BigDecimal standardTime) {
+    private void seedBomOperation(String id, String bomId, String workcenterId, BigDecimal standardTime) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMfgBomOperation> dao = daoProvider.daoFor(ErpMfgBomOperation.class);
             ErpMfgBomOperation op = new ErpMfgBomOperation();
             op.orm_propValueByName("id", id);
             op.setBomId(bomId);
             op.setLineNo(10);
-            op.setOperationId(9000L);
+            op.setOperationId("9000");
             op.setWorkcenterId(workcenterId);
             op.setStandardTime(standardTime);
             dao.saveEntity(op);
         });
     }
 
-    private void updateBomLineQuantity(Long lineId, BigDecimal quantity) {
+    private void updateBomLineQuantity(String lineId, BigDecimal quantity) {
         ormTemplate.runInSession(() -> {
             ErpMfgBomLine line = daoProvider.daoFor(ErpMfgBomLine.class).getEntityById(lineId);
             line.setQuantity(quantity);
@@ -486,7 +486,7 @@ public class TestErpMfgBomSnapshot extends JunitAutoTestCase {
         });
     }
 
-    private void updateBomOperationStandardTime(Long opId, BigDecimal standardTime) {
+    private void updateBomOperationStandardTime(String opId, BigDecimal standardTime) {
         ormTemplate.runInSession(() -> {
             ErpMfgBomOperation op = daoProvider.daoFor(ErpMfgBomOperation.class).getEntityById(opId);
             op.setStandardTime(standardTime);
@@ -494,7 +494,7 @@ public class TestErpMfgBomSnapshot extends JunitAutoTestCase {
         });
     }
 
-    private void deactivateDefaultBom(Long bomId) {
+    private void deactivateDefaultBom(String bomId) {
         ormTemplate.runInSession(() -> {
             ErpMfgBom bom = daoProvider.daoFor(ErpMfgBom.class).getEntityById(bomId);
             bom.setIsActive(Boolean.FALSE);
@@ -502,9 +502,9 @@ public class TestErpMfgBomSnapshot extends JunitAutoTestCase {
         });
     }
 
-    private void seedFirmedRollup(Long productId) {
+    private void seedFirmedRollup(String productId) {
         ormTemplate.runInSession(() -> {
-            Long headerId = productId * 10000 + 1;
+            String headerId = String.valueOf(Long.parseLong(productId) * 10000 + 1);
             IEntityDao<ErpMfgCostRollup> headerDao = daoProvider.daoFor(ErpMfgCostRollup.class);
             ErpMfgCostRollup header = new ErpMfgCostRollup();
             header.orm_propValueByName("id", headerId);
@@ -516,7 +516,7 @@ public class TestErpMfgBomSnapshot extends JunitAutoTestCase {
 
             IEntityDao<ErpMfgCostRollupLine> lineDao = daoProvider.daoFor(ErpMfgCostRollupLine.class);
             ErpMfgCostRollupLine line = new ErpMfgCostRollupLine();
-            line.orm_propValueByName("id", productId * 10000 + 2);
+            line.orm_propValueByName("id", String.valueOf(Long.parseLong(productId) * 10000 + 2));
             line.setCostRollupId(headerId);
             line.setLineNo(10);
             line.setMaterialId(productId);
@@ -531,8 +531,8 @@ public class TestErpMfgBomSnapshot extends JunitAutoTestCase {
         });
     }
 
-    private Long seedWorkOrder(String code, Long bomId, Long productId, BigDecimal plannedQty) {
-        Long id = 8300L + (long) Math.abs(code.hashCode() % 700);
+    private String seedWorkOrder(String code, String bomId, String productId, BigDecimal plannedQty) {
+        String id = String.valueOf(8300L + (long) Math.abs(code.hashCode() % 700));
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMfgWorkOrder> dao = daoProvider.daoFor(ErpMfgWorkOrder.class);
             ErpMfgWorkOrder wo = new ErpMfgWorkOrder();
@@ -550,16 +550,16 @@ public class TestErpMfgBomSnapshot extends JunitAutoTestCase {
         return id;
     }
 
-    private Long seedWorkOrderLine(Long woId, Long materialId, BigDecimal plannedQty, String lineType,
-                                   Long destWarehouseId, Long sourceWarehouseId) {
-        long raw = (woId + "" + materialId + lineType).hashCode();
-        Long id = 9300L + (long) Math.abs(raw % 700);
+    private String seedWorkOrderLine(String woId, String materialId, BigDecimal plannedQty, String lineType,
+                                     String destWarehouseId, String sourceWarehouseId) {
+        long raw = (woId + materialId + lineType).hashCode();
+        String id = String.valueOf(9300L + (long) Math.abs(raw % 700));
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMfgWorkOrderLine> dao = daoProvider.daoFor(ErpMfgWorkOrderLine.class);
             ErpMfgWorkOrderLine wol = new ErpMfgWorkOrderLine();
             wol.orm_propValueByName("id", id);
             wol.setWorkOrderId(woId);
-            wol.setLineNo(materialId.intValue());
+            wol.setLineNo(Integer.parseInt(materialId));
             wol.orm_propValueByName("lineType", lineType);
             wol.setMaterialId(materialId);
             wol.setUoMId(UOM_ID);
@@ -571,12 +571,12 @@ public class TestErpMfgBomSnapshot extends JunitAutoTestCase {
         return id;
     }
 
-    private void seedTimeLog(Long id, Long woId, BigDecimal durationMins) {
+    private void seedTimeLog(String id, String woId, BigDecimal durationMins) {
         ormTemplate.runInSession(() -> {
             app.erp.mfg.dao.entity.ErpMfgJobCardTimeLog log = daoProvider.daoFor(
                     app.erp.mfg.dao.entity.ErpMfgJobCardTimeLog.class).newEntity();
             log.orm_propValueByName("id", id);
-            log.setJobCardId(9001L);
+            log.setJobCardId("9001");
             log.setWorkOrderId(woId);
             log.setOperatorId("OP-001");
             log.setWorkDate(LocalDate.of(2026, 7, 1));
@@ -585,7 +585,7 @@ public class TestErpMfgBomSnapshot extends JunitAutoTestCase {
         });
     }
 
-    private void generateIncoming(Long materialId, String billCode, BigDecimal qty, BigDecimal unitCost) {
+    private void generateIncoming(String materialId, String billCode, BigDecimal qty, BigDecimal unitCost) {
         Map<String, Object> req = new LinkedHashMap<>();
         req.put("moveType", MOVE_TYPE_INCOMING);
         req.put("orgId", ORG_ID);
@@ -604,7 +604,7 @@ public class TestErpMfgBomSnapshot extends JunitAutoTestCase {
         rpcOk(mutation, "ErpInvStockMove__generateMove", Map.of("request", req));
     }
 
-    private ErpMfgWorkOrderBomSnapshot findSnapshot(Long workOrderId) {
+    private ErpMfgWorkOrderBomSnapshot findSnapshot(String workOrderId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("workOrderId", workOrderId));
         List<ErpMfgWorkOrderBomSnapshot> list = daoProvider.daoFor(ErpMfgWorkOrderBomSnapshot.class)
@@ -612,20 +612,20 @@ public class TestErpMfgBomSnapshot extends JunitAutoTestCase {
         return list.isEmpty() ? null : list.get(0);
     }
 
-    private int countSnapshots(Long workOrderId) {
+    private int countSnapshots(String workOrderId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("workOrderId", workOrderId));
         return daoProvider.daoFor(ErpMfgWorkOrderBomSnapshot.class).findAllByQuery(q).size();
     }
 
-    private List<ErpMfgWorkOrderBomLineSnapshot> findSnapshotLines(Long snapshotId) {
+    private List<ErpMfgWorkOrderBomLineSnapshot> findSnapshotLines(String snapshotId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("snapshotId", snapshotId));
         q.addOrderField("lineNo", false);
         return daoProvider.daoFor(ErpMfgWorkOrderBomLineSnapshot.class).findAllByQuery(q);
     }
 
-    private List<ErpMfgWorkOrderBomOperationSnapshot> findSnapshotOperations(Long snapshotId) {
+    private List<ErpMfgWorkOrderBomOperationSnapshot> findSnapshotOperations(String snapshotId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("snapshotId", snapshotId));
         q.addOrderField("lineNo", false);
@@ -645,7 +645,7 @@ public class TestErpMfgBomSnapshot extends JunitAutoTestCase {
         return list.isEmpty() ? null : list.get(0);
     }
 
-    private List<ErpInvReservationLine> findReservationLines(Long reservationId) {
+    private List<ErpInvReservationLine> findReservationLines(String reservationId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("reservationId", reservationId));
         q.addOrderField("lineNo", false);

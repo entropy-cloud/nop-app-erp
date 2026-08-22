@@ -50,26 +50,26 @@ public class SimulationVersionComparator {
      *
      * @throws NopException 两版本须同 orgId / 同基线 plan（{@link ErpMfgErrors#ERR_MFG_SIMULATION_VERSIONS_NOT_COMPARABLE}）
      */
-    public SimulationDiffResult compareMrpVersions(Long versionIdA, Long versionIdB) {
+    public SimulationDiffResult compareMrpVersions(String versionIdA, String versionIdB) {
         ErpMfgMrpScenarioVersion va = requireVersion(versionIdA);
         ErpMfgMrpScenarioVersion vb = requireVersion(versionIdB);
         requireComparable(va, vb);
 
-        Map<Long, ErpMfgMrpPlanLine> linesA = indexLines(va.getComputedMrpPlanId());
-        Map<Long, ErpMfgMrpPlanLine> linesB = indexLines(vb.getComputedMrpPlanId());
+        Map<String, ErpMfgMrpPlanLine> linesA = indexLines(va.getComputedMrpPlanId());
+        Map<String, ErpMfgMrpPlanLine> linesB = indexLines(vb.getComputedMrpPlanId());
 
-        Set<Long> allMaterials = new LinkedHashSet<>();
+        Set<String> allMaterials = new LinkedHashSet<>();
         allMaterials.addAll(linesA.keySet());
         allMaterials.addAll(linesB.keySet());
 
         List<SimulationDiffResult.LineDiff> lineDiffs = new ArrayList<>();
-        Set<Long> shortageA = new LinkedHashSet<>();
-        Set<Long> shortageB = new LinkedHashSet<>();
+        Set<String> shortageA = new LinkedHashSet<>();
+        Set<String> shortageB = new LinkedHashSet<>();
         BigDecimal totalNetDelta = BigDecimal.ZERO;
         BigDecimal totalPlannedDelta = BigDecimal.ZERO;
         BigDecimal totalPurchaseAmountDelta = BigDecimal.ZERO;
 
-        for (Long materialId : allMaterials) {
+        for (String materialId : allMaterials) {
             ErpMfgMrpPlanLine la = linesA.get(materialId);
             ErpMfgMrpPlanLine lb = linesB.get(materialId);
 
@@ -101,11 +101,11 @@ public class SimulationVersionComparator {
             totalPurchaseAmountDelta = totalPurchaseAmountDelta.add(purchaseB.subtract(purchaseA));
         }
 
-        Set<Long> onlyInA = new LinkedHashSet<>(shortageA);
+        Set<String> onlyInA = new LinkedHashSet<>(shortageA);
         onlyInA.removeAll(shortageB);
-        Set<Long> onlyInB = new LinkedHashSet<>(shortageB);
+        Set<String> onlyInB = new LinkedHashSet<>(shortageB);
         onlyInB.removeAll(shortageA);
-        Set<Long> inBoth = new LinkedHashSet<>(shortageA);
+        Set<String> inBoth = new LinkedHashSet<>(shortageA);
         inBoth.retainAll(shortageB);
 
         SimulationDiffResult result = new SimulationDiffResult();
@@ -121,7 +121,7 @@ public class SimulationVersionComparator {
         return result;
     }
 
-    private ErpMfgMrpScenarioVersion requireVersion(Long versionId) {
+    private ErpMfgMrpScenarioVersion requireVersion(String versionId) {
         ErpMfgMrpScenarioVersion v = daoProvider.daoFor(ErpMfgMrpScenarioVersion.class).getEntityById(versionId);
         if (v == null) {
             throw new NopException(ErpMfgErrors.ERR_MFG_SIMULATION_VERSION_ALREADY_PROMOTED)
@@ -139,8 +139,8 @@ public class SimulationVersionComparator {
         }
     }
 
-    private Map<Long, ErpMfgMrpPlanLine> indexLines(Long planId) {
-        Map<Long, ErpMfgMrpPlanLine> byMaterial = new LinkedHashMap<>();
+    private Map<String, ErpMfgMrpPlanLine> indexLines(String planId) {
+        Map<String, ErpMfgMrpPlanLine> byMaterial = new LinkedHashMap<>();
         if (planId == null) {
             return byMaterial;
         }
@@ -166,7 +166,7 @@ public class SimulationVersionComparator {
         return Objects.equals(l.getOrderType(), ErpMfgConstants.MRP_ORDER_TYPE_PURCHASE_REQUEST);
     }
 
-    private BigDecimal lookupStandardCost(Long materialId) {
+    private BigDecimal lookupStandardCost(String materialId) {
         ErpMdMaterial m = daoProvider.daoFor(ErpMdMaterial.class).getEntityById(materialId);
         if (m == null) {
             return BigDecimal.ZERO;

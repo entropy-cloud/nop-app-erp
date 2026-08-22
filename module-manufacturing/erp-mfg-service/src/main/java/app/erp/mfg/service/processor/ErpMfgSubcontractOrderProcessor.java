@@ -124,8 +124,8 @@ public class ErpMfgSubcontractOrderProcessor {
         return reverseApproveProcessor.reverseApprove(id, context);
     }
 
-    public ErpMfgSubcontractOrder cancel(Long subcontractOrderId, IServiceContext context) {
-        ErpMfgSubcontractOrder order = requireOrder(String.valueOf(subcontractOrderId), context);
+    public ErpMfgSubcontractOrder cancel(String subcontractOrderId, IServiceContext context) {
+        ErpMfgSubcontractOrder order = requireOrder(subcontractOrderId, context);
         validateTransitionForCancel(order, context);
         order.setDocStatus(documentStateMachine.cancelTargetStatus());
         orderDao().updateEntity(order);
@@ -332,7 +332,7 @@ public class ErpMfgSubcontractOrderProcessor {
      * 的 StockMoveRequest 装配范式，moveType 用 OUTGOING（库存域 bookCompletion 据此扣减余额）。
      */
     protected void generateIssueMove(ErpMfgSubcontractOrder order,
-                                     List<ErpMfgSubcontractOrderLine> lines, Long sourceWarehouseId,
+                                     List<ErpMfgSubcontractOrderLine> lines, String sourceWarehouseId,
                                      IServiceContext context) {
         StockMoveRequest request = new StockMoveRequest();
         request.setMoveType(ErpMfgConstants.MOVE_TYPE_OUTGOING_ISSUE);
@@ -362,7 +362,7 @@ public class ErpMfgSubcontractOrderProcessor {
      * {@code ErpMfgWorkOrderProcessor.generateCompletionMove} 的 MANUFACTURING 入库范式。
      */
     protected void generateReceiptMove(ErpMfgSubcontractOrder order, BigDecimal receivedQty,
-                                       Long destWarehouseId, IServiceContext context) {
+                                        String destWarehouseId, IServiceContext context) {
         StockMoveRequest request = new StockMoveRequest();
         request.setMoveType(ErpMfgConstants.MOVE_TYPE_MANUFACTURING);
         request.setOrgId(order.getOrgId());
@@ -378,7 +378,7 @@ public class ErpMfgSubcontractOrderProcessor {
         List<StockMoveLineRequest> moveLines = new ArrayList<>();
         StockMoveLineRequest ml = new StockMoveLineRequest();
         ml.setMaterialId(order.getProductId());
-        Long uomId = resolveProductUomId(order.getProductId());
+        String uomId = resolveProductUomId(order.getProductId());
         ml.setUoMId(uomId);
         ml.setQuantity(receivedQty);
         ml.setUnitCost(unitCost);
@@ -434,14 +434,14 @@ public class ErpMfgSubcontractOrderProcessor {
         }
     }
 
-    protected List<ErpMfgSubcontractOrderLine> loadLines(Long subcontractOrderId) {
+    protected List<ErpMfgSubcontractOrderLine> loadLines(String subcontractOrderId) {
         IEntityDao<ErpMfgSubcontractOrderLine> dao = daoProvider.daoFor(ErpMfgSubcontractOrderLine.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("subcontractOrderId", subcontractOrderId));
         return dao.findAllByQuery(q);
     }
 
-    protected BigDecimal sumLineQuantity(Long subcontractOrderId) {
+    protected BigDecimal sumLineQuantity(String subcontractOrderId) {
         BigDecimal total = BigDecimal.ZERO;
         for (ErpMfgSubcontractOrderLine line : loadLines(subcontractOrderId)) {
             total = total.add(nz(line.getQuantity()));
@@ -449,7 +449,7 @@ public class ErpMfgSubcontractOrderProcessor {
         return total;
     }
 
-    protected Long resolveProductUomId(Long productId) {
+    protected String resolveProductUomId(String productId) {
         if (productId == null) {
             return null;
         }
@@ -457,7 +457,7 @@ public class ErpMfgSubcontractOrderProcessor {
         return product != null ? product.getUoMId() : null;
     }
 
-    protected Long resolveAcctSchemaId(Long orgId) {
+    protected String resolveAcctSchemaId(String orgId) {
         return AcctSchemaResolver.resolvePrimarySchemaId(daoProvider, orgId);
     }
 

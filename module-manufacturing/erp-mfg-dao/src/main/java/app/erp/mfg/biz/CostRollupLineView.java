@@ -11,7 +11,7 @@ import java.math.BigDecimal;
 @DataBean
 public class CostRollupLineView {
 
-    private Long materialId;
+    private String materialId;
     private BigDecimal materialCost;
     private BigDecimal laborCost;
     private BigDecimal overheadCost;
@@ -22,11 +22,11 @@ public class CostRollupLineView {
     public CostRollupLineView() {
     }
 
-    public Long getMaterialId() {
+    public String getMaterialId() {
         return materialId;
     }
 
-    public void setMaterialId(Long materialId) {
+    public void setMaterialId(String materialId) {
         this.materialId = materialId;
     }
 

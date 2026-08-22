@@ -45,36 +45,36 @@ public class ErpMfgSubcontractOrderBizModel extends CrudBizModel<ErpMfgSubcontra
 
     @Override
     @BizMutation
-    public ErpMfgSubcontractOrder cancel(@Name("subcontractOrderId") Long subcontractOrderId, IServiceContext context) {
+    public ErpMfgSubcontractOrder cancel(@Name("subcontractOrderId") String subcontractOrderId, IServiceContext context) {
         return subcontractOrderProcessor.cancel(subcontractOrderId, context);
     }
 
     @Override
     @BizMutation
-    public ErpMfgSubcontractOrder issueMaterials(@Name("subcontractOrderId") Long subcontractOrderId,
-                                                  @io.nop.api.core.annotations.core.Optional @Name("sourceWarehouseId") Long sourceWarehouseId,
+    public ErpMfgSubcontractOrder issueMaterials(@Name("subcontractOrderId") String subcontractOrderId,
+                                                  @io.nop.api.core.annotations.core.Optional @Name("sourceWarehouseId") String sourceWarehouseId,
                                                   IServiceContext context) {
         return issueMaterialsProcessor.issueMaterials(subcontractOrderId, sourceWarehouseId, context);
     }
 
     @Override
     @BizMutation
-    public ErpMfgSubcontractOrder receiveFinished(@Name("subcontractOrderId") Long subcontractOrderId,
-                                                   @Name("receivedQty") BigDecimal receivedQty,
-                                                   @io.nop.api.core.annotations.core.Optional @Name("destWarehouseId") Long destWarehouseId,
+    public ErpMfgSubcontractOrder receiveFinished(@Name("subcontractOrderId") String subcontractOrderId,
+                                                    @Name("receivedQty") BigDecimal receivedQty,
+                                                    @io.nop.api.core.annotations.core.Optional @Name("destWarehouseId") String destWarehouseId,
                                                    IServiceContext context) {
         return receiveFinishedProcessor.receiveFinished(subcontractOrderId, receivedQty, destWarehouseId, context);
     }
 
     @Override
     @BizMutation
-    public ErpMfgSubcontractOrder postProcessingFee(@Name("subcontractOrderId") Long subcontractOrderId, IServiceContext context) {
+    public ErpMfgSubcontractOrder postProcessingFee(@Name("subcontractOrderId") String subcontractOrderId, IServiceContext context) {
         return postProcessingFeeProcessor.postProcessingFee(subcontractOrderId, context);
     }
 
     @Override
     @BizMutation
-    public ErpMfgSubcontractOrder reverseCompletion(@Name("subcontractOrderId") Long subcontractOrderId, IServiceContext context) {
+    public ErpMfgSubcontractOrder reverseCompletion(@Name("subcontractOrderId") String subcontractOrderId, IServiceContext context) {
         return reverseCompletionProcessor.reverseCompletion(subcontractOrderId, context);
     }
 

@@ -20,15 +20,15 @@ import java.util.Map;
  */
 public class TestStubApsLoadSourceProvider implements IErpApsLoadSourceProvider {
 
-    private final Map<Long, List<ApsLoadSlot>> slotsByWorkOrder = new HashMap<>();
+    private final Map<String, List<ApsLoadSlot>> slotsByWorkOrder = new HashMap<>();
 
     @Override
-    public List<ApsLoadSlot> findScheduledSlots(List<Long> workOrderIds, LocalDate periodFrom, LocalDate periodTo) {
+    public List<ApsLoadSlot> findScheduledSlots(List<String> workOrderIds, LocalDate periodFrom, LocalDate periodTo) {
         if (workOrderIds == null || workOrderIds.isEmpty()) {
             return Collections.emptyList();
         }
         List<ApsLoadSlot> result = new ArrayList<>();
-        for (Long woId : workOrderIds) {
+        for (String woId : workOrderIds) {
             List<ApsLoadSlot> slots = slotsByWorkOrder.get(woId);
             if (slots != null) {
                 result.addAll(slots);
@@ -37,7 +37,7 @@ public class TestStubApsLoadSourceProvider implements IErpApsLoadSourceProvider 
         return result;
     }
 
-    public void putSlots(Long workOrderId, List<ApsLoadSlot> slots) {
+    public void putSlots(String workOrderId, List<ApsLoadSlot> slots) {
         slotsByWorkOrder.put(workOrderId, slots);
     }
 

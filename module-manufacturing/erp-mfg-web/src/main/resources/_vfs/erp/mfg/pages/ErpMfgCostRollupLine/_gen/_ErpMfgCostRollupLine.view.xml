@@ -19,19 +19,19 @@
             <cols>
 
                 <!--ID-->
-                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="id" mandatory="true" sortable="true"/>
 
                 <!--滚算单ID-->
-                <col id="costRollupId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="costRollupId" mandatory="true" sortable="true"/>
 
                 <!--行号-->
                 <col id="lineNo" mandatory="true" ui:number="true" sortable="true"/>
 
                 <!--产品-->
-                <col id="materialId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="materialId" mandatory="true" sortable="true"/>
 
                 <!--计量单位-->
-                <col id="uoMId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="uoMId" mandatory="true" sortable="true"/>
 
                 <!--总成本-->
                 <col id="totalCost" ui:number="true" sortable="true"/>
@@ -40,7 +40,7 @@
                 <col id="unitCost" ui:number="true" sortable="true"/>
 
                 <!--币种-->
-                <col id="currencyId" ui:number="true" sortable="true"/>
+                <col id="currencyId" sortable="true"/>
 
                 <!--逻辑删除版本-->
                 <col id="delVersion" mandatory="true" ui:number="true" sortable="true"/>

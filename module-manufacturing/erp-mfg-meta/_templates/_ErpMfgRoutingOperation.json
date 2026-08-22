@@ -1,10 +1,10 @@
 {
-  "id": 0,
-  "routingId": 0,
+  "id": "",
+  "routingId": "",
   "lineNo": 0,
   "operationCode": "",
   "operationName": "",
-  "workcenterId": 0,
+  "workcenterId": "",
   "standardTime": 0.0,
   "timeUnit": "",
   "setupTime": 0.0,

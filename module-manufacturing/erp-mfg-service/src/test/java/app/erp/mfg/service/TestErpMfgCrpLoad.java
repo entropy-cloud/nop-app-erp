@@ -46,10 +46,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpMfgCrpLoad extends JunitAutoTestCase {
 
-    static final Long P = 7901L;
-    static final Long WC1 = 7902L;
-    static final Long WC2 = 7903L;
-    static final Long ROUTING_1 = 7904L;
+    static final String P = "7901";
+    static final String WC1 = "7902";
+    static final String WC2 = "7903";
+    static final String ROUTING_1 = "7904";
 
     @Inject
     IDaoProvider daoProvider;
@@ -65,7 +65,7 @@ public class TestErpMfgCrpLoad extends JunitAutoTestCase {
         seedCapacity(WC1, P, bd("10"), bd("0.5"));  // efficiency=0.5
         seedRouting(ROUTING_1, "R-1");
         seedRoutingOperation(ROUTING_1, WC1, bd("540"), bd("60"));  // 9h load + 1h setup
-        Long woId = seedWorkOrder("WO-CRP-1", ROUTING_1,
+        String woId = seedWorkOrder("WO-CRP-1", ROUTING_1,
                 LocalDate.of(2026, 7, 1), LocalDate.of(2026, 7, 1),
                 ErpMfgConstants.WORK_ORDER_STATUS_NOT_STARTED);
 
@@ -95,7 +95,7 @@ public class TestErpMfgCrpLoad extends JunitAutoTestCase {
         seedWorkcenter(WC2, "WC-2");
         seedCalendar(WC2, "08:00", "20:00", ErpMfgConstants.WORK_DATE_PATTERN_ALL_WEEK, null, null);  // 12h 出勤
         seedCapacity(WC2, P, bd("10"), bd("1.0"));
-        Long r = 7905L;
+        String r = "7905";
         seedRouting(r, "R-2");
         seedRoutingOperation(r, WC2, bd("180"), bd("0"));  // 3h load each
         seedWorkOrder("WO-A", r, LocalDate.of(2026, 7, 2), LocalDate.of(2026, 7, 2),
@@ -118,7 +118,7 @@ public class TestErpMfgCrpLoad extends JunitAutoTestCase {
         seedWorkcenter(WC1, "WC-1X");
         seedCalendar(WC1, "08:00", "17:00", ErpMfgConstants.WORK_DATE_PATTERN_ALL_WEEK, null, null);
         seedCapacity(WC1, P, bd("10"), bd("1.0"));
-        Long r = 7906L;
+        String r = "7906";
         seedRouting(r, "R-3");
         seedRoutingOperation(r, WC1, bd("120"), bd("0"));  // 2h
         seedWorkOrder("WO-RECALC", r, LocalDate.of(2026, 7, 3), LocalDate.of(2026, 7, 3),
@@ -156,7 +156,7 @@ public class TestErpMfgCrpLoad extends JunitAutoTestCase {
         seedWorkcenter(WC2, "WC-GATE");
         seedCalendar(WC2, "08:00", "17:00", ErpMfgConstants.WORK_DATE_PATTERN_ALL_WEEK, null, null);  // 9h
         seedCapacity(WC2, P, bd("10"), bd("1.0"));
-        Long r = 7907L;
+        String r = "7907";
         seedRouting(r, "R-GATE");
         seedRoutingOperation(r, WC2, bd("1080"), bd("0"));  // 18h load → loadRate=2.0
         seedWorkOrder("WO-GATE", r, LocalDate.of(2026, 7, 5), LocalDate.of(2026, 7, 5),
@@ -183,7 +183,7 @@ public class TestErpMfgCrpLoad extends JunitAutoTestCase {
         seedWorkcenter(WC1, "WC-MD");
         seedCalendar(WC1, "08:00", "17:00", ErpMfgConstants.WORK_DATE_PATTERN_ALL_WEEK, null, null);
         seedCapacity(WC1, P, bd("10"), bd("1.0"));
-        Long r = 7908L;
+        String r = "7908";
         seedRouting(r, "R-MD");
         seedRoutingOperation(r, WC1, bd("480"), bd("120"));  // 8h load + 2h setup(首日)
         // 工单跨 2 天
@@ -208,7 +208,7 @@ public class TestErpMfgCrpLoad extends JunitAutoTestCase {
     public void testCancelledWorkOrderExcluded() {
         seedWorkcenter(WC1, "WC-CNL");
         seedCalendar(WC1, "08:00", "17:00", ErpMfgConstants.WORK_DATE_PATTERN_ALL_WEEK, null, null);
-        Long r = 7909L;
+        String r = "7909";
         seedRouting(r, "R-CNL");
         seedRoutingOperation(r, WC1, bd("60"), bd("0"));
         seedWorkOrder("WO-CNL", r, LocalDate.of(2026, 7, 8), LocalDate.of(2026, 7, 8),
@@ -220,7 +220,7 @@ public class TestErpMfgCrpLoad extends JunitAutoTestCase {
 
     // ---------- helpers ----------
 
-    private Integer calculateLoad(LocalDate from, LocalDate to, List<Long> workcenterIds) {
+    private Integer calculateLoad(LocalDate from, LocalDate to, List<String> workcenterIds) {
         Map<String, Object> args = new LinkedHashMap<>();
         args.put("periodFrom", from);
         args.put("periodTo", to);
@@ -233,7 +233,7 @@ public class TestErpMfgCrpLoad extends JunitAutoTestCase {
     }
 
     @SuppressWarnings("unchecked")
-    private List<Map<String, Object>> getLoadReport(LocalDate from, LocalDate to, List<Long> workcenterIds) {
+    private List<Map<String, Object>> getLoadReport(LocalDate from, LocalDate to, List<String> workcenterIds) {
         Map<String, Object> args = new LinkedHashMap<>();
         args.put("periodFrom", from);
         args.put("periodTo", to);
@@ -251,7 +251,7 @@ public class TestErpMfgCrpLoad extends JunitAutoTestCase {
         return graphQLEngine.executeRpc(ctx);
     }
 
-    private ErpMfgCrpLoad findLoad(Long workcenterId, LocalDate date) {
+    private ErpMfgCrpLoad findLoad(String workcenterId, LocalDate date) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("workcenterId", workcenterId));
         q.addFilter(eq("loadDate", date));
@@ -259,7 +259,7 @@ public class TestErpMfgCrpLoad extends JunitAutoTestCase {
         return list.isEmpty() ? null : list.get(0);
     }
 
-    private int countLoads(Long workcenterId, LocalDate date) {
+    private int countLoads(String workcenterId, LocalDate date) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("workcenterId", workcenterId));
         q.addFilter(eq("loadDate", date));
@@ -286,11 +286,11 @@ public class TestErpMfgCrpLoad extends JunitAutoTestCase {
         io.nop.api.core.config.AppConfig.getConfigProvider().assignConfigValue(key, value);
     }
 
-    private void seedExtraLoad(Long workcenterId, LocalDate date, BigDecimal hours) {
+    private void seedExtraLoad(String workcenterId, LocalDate date, BigDecimal hours) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMfgCrpLoad> dao = daoProvider.daoFor(ErpMfgCrpLoad.class);
             ErpMfgCrpLoad l = new ErpMfgCrpLoad();
-            l.orm_propValueByName("id", 55500L + workcenterId);
+            l.orm_propValueByName("id", String.valueOf(55500L + Long.parseLong(workcenterId)));
             l.setWorkcenterId(workcenterId);
             l.setLoadDate(date);
             l.setLoadHours(hours);
@@ -299,7 +299,7 @@ public class TestErpMfgCrpLoad extends JunitAutoTestCase {
         });
     }
 
-    private void seedWorkcenter(Long id, String code) {
+    private void seedWorkcenter(String id, String code) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMfgWorkcenter> dao = daoProvider.daoFor(ErpMfgWorkcenter.class);
             ErpMfgWorkcenter wc = new ErpMfgWorkcenter();
@@ -310,11 +310,11 @@ public class TestErpMfgCrpLoad extends JunitAutoTestCase {
         });
     }
 
-    private void seedCalendar(Long workcenterId, String start, String end, String pattern, LocalDate from, LocalDate to) {
+    private void seedCalendar(String workcenterId, String start, String end, String pattern, LocalDate from, LocalDate to) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMfgWorkcenterCalendar> dao = daoProvider.daoFor(ErpMfgWorkcenterCalendar.class);
             ErpMfgWorkcenterCalendar c = new ErpMfgWorkcenterCalendar();
-            c.orm_propValueByName("id", 60000L + workcenterId);
+            c.orm_propValueByName("id", String.valueOf(60000L + Long.parseLong(workcenterId)));
             c.setWorkcenterId(workcenterId);
             c.setCalendarName("CAL-" + workcenterId);
             c.orm_propValueByName("shiftType", ErpMfgConstants.SHIFT_TYPE_ONE_SHIFT);
@@ -328,11 +328,11 @@ public class TestErpMfgCrpLoad extends JunitAutoTestCase {
         });
     }
 
-    private void seedCapacity(Long workcenterId, Long materialId, BigDecimal capPerHour, BigDecimal efficiency) {
+    private void seedCapacity(String workcenterId, String materialId, BigDecimal capPerHour, BigDecimal efficiency) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMfgWorkcenterCapacity> dao = daoProvider.daoFor(ErpMfgWorkcenterCapacity.class);
             ErpMfgWorkcenterCapacity cap = new ErpMfgWorkcenterCapacity();
-            cap.orm_propValueByName("id", 61000L + workcenterId);
+            cap.orm_propValueByName("id", String.valueOf(61000L + Long.parseLong(workcenterId)));
             cap.setWorkcenterId(workcenterId);
             cap.setMaterialId(materialId);
             cap.setCapacityPerHour(capPerHour);
@@ -342,7 +342,7 @@ public class TestErpMfgCrpLoad extends JunitAutoTestCase {
         });
     }
 
-    private void seedRouting(Long id, String code) {
+    private void seedRouting(String id, String code) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMfgRouting> dao = daoProvider.daoFor(ErpMfgRouting.class);
             ErpMfgRouting r = new ErpMfgRouting();
@@ -353,11 +353,11 @@ public class TestErpMfgCrpLoad extends JunitAutoTestCase {
         });
     }
 
-    private void seedRoutingOperation(Long routingId, Long workcenterId, BigDecimal standardTime, BigDecimal setupTime) {
+    private void seedRoutingOperation(String routingId, String workcenterId, BigDecimal standardTime, BigDecimal setupTime) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMfgRoutingOperation> dao = daoProvider.daoFor(ErpMfgRoutingOperation.class);
             ErpMfgRoutingOperation op = new ErpMfgRoutingOperation();
-            op.orm_propValueByName("id", 62000L + routingId + workcenterId);
+            op.orm_propValueByName("id", String.valueOf(62000L + Long.parseLong(routingId) + Long.parseLong(workcenterId)));
             op.setRoutingId(routingId);
             op.setLineNo(10);
             op.setWorkcenterId(workcenterId);
@@ -367,8 +367,8 @@ public class TestErpMfgCrpLoad extends JunitAutoTestCase {
         });
     }
 
-    private Long seedWorkOrder(String code, Long routingId, LocalDate start, LocalDate end, String docStatus) {
-        Long id = 8000L + (long) Math.abs(code.hashCode() % 1000);
+    private String seedWorkOrder(String code, String routingId, LocalDate start, LocalDate end, String docStatus) {
+        String id = String.valueOf(8000L + (long) Math.abs(code.hashCode() % 1000));
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMfgWorkOrder> dao = daoProvider.daoFor(ErpMfgWorkOrder.class);
             ErpMfgWorkOrder wo = new ErpMfgWorkOrder();

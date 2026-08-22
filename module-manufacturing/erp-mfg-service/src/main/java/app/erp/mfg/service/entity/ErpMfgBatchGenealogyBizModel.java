@@ -43,7 +43,7 @@ public class ErpMfgBatchGenealogyBizModel extends CrudBizModel<ErpMfgBatchGeneal
 
     @Override
     @BizQuery
-    public List<ErpMfgBatchGenealogy> forwardTrace(@Name("outputLotId") Long outputLotId,
+    public List<ErpMfgBatchGenealogy> forwardTrace(@Name("outputLotId") String outputLotId,
                                                     IServiceContext context) {
         requireLot(outputLotId, context);
         return batchGenealogyTracer.forwardTrace(outputLotId);
@@ -51,7 +51,7 @@ public class ErpMfgBatchGenealogyBizModel extends CrudBizModel<ErpMfgBatchGeneal
 
     @Override
     @BizQuery
-    public List<ErpMfgBatchGenealogy> backwardTrace(@Name("inputLotId") Long inputLotId,
+    public List<ErpMfgBatchGenealogy> backwardTrace(@Name("inputLotId") String inputLotId,
                                                      IServiceContext context) {
         requireLot(inputLotId, context);
         return batchGenealogyTracer.backwardTrace(inputLotId);
@@ -59,7 +59,7 @@ public class ErpMfgBatchGenealogyBizModel extends CrudBizModel<ErpMfgBatchGeneal
 
     @Override
     @BizQuery
-    public List<ErpMfgBatchGenealogy> traceChain(@Name("lotId") Long lotId,
+    public List<ErpMfgBatchGenealogy> traceChain(@Name("lotId") String lotId,
                                                   @Name("direction") String direction,
                                                   @Name("maxDepth") Integer maxDepth,
                                                   IServiceContext context) {
@@ -69,7 +69,7 @@ public class ErpMfgBatchGenealogyBizModel extends CrudBizModel<ErpMfgBatchGeneal
 
     @Override
     @BizQuery
-    public RecallReport recallReport(@Name("lotId") Long lotId, IServiceContext context) {
+    public RecallReport recallReport(@Name("lotId") String lotId, IServiceContext context) {
         requireLot(lotId, context);
         RecallReport report = new RecallReport();
         report.setSourceLotId(lotId);
@@ -77,21 +77,21 @@ public class ErpMfgBatchGenealogyBizModel extends CrudBizModel<ErpMfgBatchGeneal
         // 仅返回受影响成品批次集合（位置/去向归 inventory successor）。
         report.setDegraded(true);
 
-        Set<Long> visited = new HashSet<>();
+        Set<String> visited = new HashSet<>();
         visited.add(lotId);
 
         // 起始批次自身可能是受影响成品批次
         collectAffectedIfFinishedGood(lotId, report);
 
         // 反向递归（lotId 作为输入或中间品）找出所有下游产出批次（成品）
-        List<Long> frontier = new ArrayList<>();
+        List<String> frontier = new ArrayList<>();
         frontier.add(lotId);
         while (!frontier.isEmpty()) {
-            List<Long> nextFrontier = new ArrayList<>();
-            for (Long currentLot : frontier) {
+            List<String> nextFrontier = new ArrayList<>();
+            for (String currentLot : frontier) {
                 List<ErpMfgBatchGenealogy> edges = batchGenealogyTracer.backwardTrace(currentLot);
                 for (ErpMfgBatchGenealogy edge : edges) {
-                    Long outputLotId = edge.getOutputLotId();
+                    String outputLotId = edge.getOutputLotId();
                     if (outputLotId == null) {
                         continue;
                     }
@@ -106,7 +106,7 @@ public class ErpMfgBatchGenealogyBizModel extends CrudBizModel<ErpMfgBatchGeneal
         return report;
     }
 
-    protected void collectAffectedIfFinishedGood(Long lotId, RecallReport report) {
+    protected void collectAffectedIfFinishedGood(String lotId, RecallReport report) {
         ErpInvBatch lot = batchDao().getEntityById(lotId);
         if (lot == null) {
             return;
@@ -127,7 +127,7 @@ public class ErpMfgBatchGenealogyBizModel extends CrudBizModel<ErpMfgBatchGeneal
         }
     }
 
-    protected void requireLot(Long lotId, IServiceContext context) {
+    protected void requireLot(String lotId, IServiceContext context) {
         if (lotId == null) {
             throw new NopException(ErpMfgErrors.ERR_MFG_GENEALOGY_LOT_NOT_FOUND)
                     .param(ErpMfgErrors.ARG_LOT_ID, null);

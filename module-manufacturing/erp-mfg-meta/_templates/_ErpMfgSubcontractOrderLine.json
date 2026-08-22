@@ -1,9 +1,9 @@
 {
-  "id": 0,
-  "subcontractOrderId": 0,
+  "id": "",
+  "subcontractOrderId": "",
   "lineNo": 0,
-  "materialId": 0,
-  "uoMId": 0,
+  "materialId": "",
+  "uoMId": "",
   "quantity": 0.0,
   "unitProcessingFee": 0.0,
   "amount": 0.0,

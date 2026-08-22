@@ -184,7 +184,7 @@ public class ErpMfgDashboardBizModel {
      * 宽容处理（对齐 1321-3 范式）。空数据返回零值结构（非 {@code null}）。
      */
     @BizQuery
-    public Map<String, Object> getCrpLoadChartData(@Optional @Name("workcenterId") Long workcenterId,
+    public Map<String, Object> getCrpLoadChartData(@Optional @Name("workcenterId") String workcenterId,
                                                     @Optional @Name("dateFrom") String dateFrom,
                                                     @Optional @Name("dateTo") String dateTo,
                                                     IServiceContext context) {
@@ -206,7 +206,7 @@ public class ErpMfgDashboardBizModel {
             to = tmp;
         }
 
-        List<Long> workcenterIds = workcenterId != null ? Collections.singletonList(workcenterId) : null;
+        List<String> workcenterIds = workcenterId != null ? Collections.singletonList(workcenterId) : null;
         List<CrpLoadReportItem> items = crpLoadCalculator.getLoadReport(from, to, workcenterIds);
 
         // 按 loadDate 聚合（多个工作中心合并为日总量）

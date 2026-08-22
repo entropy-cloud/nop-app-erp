@@ -19,12 +19,12 @@ public class ErpMfgMrpScenarioRunSimulationProcessor {
     @Inject
     SimulationMrpEngine simulationMrpEngine;
 
-    public ErpMfgMrpScenarioVersion runSimulation(@Name("scenarioId") Long scenarioId, IServiceContext context) {
+    public ErpMfgMrpScenarioVersion runSimulation(@Name("scenarioId") String scenarioId, IServiceContext context) {
         requireSimulationEnabled(scenarioId);
         return simulationMrpEngine.runSimulation(scenarioId);
     }
 
-    protected void requireSimulationEnabled(Long id) {
+    protected void requireSimulationEnabled(String id) {
         boolean enabled = AppConfig.var(ErpMfgConstants.CONFIG_MFG_SIMULATION_ENABLED,
                 ErpMfgConstants.DEFAULT_MFG_SIMULATION_ENABLED);
         if (!enabled) {

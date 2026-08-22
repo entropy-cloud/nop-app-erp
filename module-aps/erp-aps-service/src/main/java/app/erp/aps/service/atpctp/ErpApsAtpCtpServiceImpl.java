@@ -16,7 +16,6 @@ import app.erp.mfg.dao.entity.ErpMfgBom;
 import app.erp.mfg.dao.entity.ErpMfgBomOperation;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.beans.query.QueryBean;
-import io.nop.api.core.convert.ConvertHelper;
 import io.nop.api.core.config.AppConfig;
 import io.nop.api.core.time.CoreMetrics;
 import io.nop.dao.api.IDaoProvider;
@@ -72,7 +71,7 @@ public class ErpApsAtpCtpServiceImpl implements IErpApsAtpCtpService {
 
     @Override
     public List<ScheduledOperationView> simulateSchedule(String materialId, BigDecimal qty, LocalDateTime startDate) {
-        List<ErpApsOperationOrder> shadows = buildShadowOps(toMfgMaterialKey(materialId), qty);
+        List<ErpApsOperationOrder> shadows = buildShadowOps(materialId, qty);
         if (shadows.isEmpty()) {
             return new ArrayList<>();
         }
@@ -152,7 +151,7 @@ public class ErpApsAtpCtpServiceImpl implements IErpApsAtpCtpService {
     protected CtpResult simulateCtp(String materialId, BigDecimal qty, LocalDateTime startDate,
                                     LocalDateTime desiredDate) {
         CtpResult result = new CtpResult();
-        List<ErpApsOperationOrder> shadows = buildShadowOps(toMfgMaterialKey(materialId), qty);
+        List<ErpApsOperationOrder> shadows = buildShadowOps(materialId, qty);
         if (shadows.isEmpty()) {
             result.setFeasible(false);
             result.setReason("物料 " + materialId + " 无可用工艺路线（默认 BOM 缺失或无工序）");
@@ -202,7 +201,7 @@ public class ErpApsAtpCtpServiceImpl implements IErpApsAtpCtpService {
     }
 
     /** 按物料追溯默认 BOM 工艺路线，构造影子工序（{@code newEntity()}，不持久化）。 */
-    protected List<ErpApsOperationOrder> buildShadowOps(Long materialId, BigDecimal qty) {
+    protected List<ErpApsOperationOrder> buildShadowOps(String materialId, BigDecimal qty) {
         ErpMfgBom bom = findDefaultBom(materialId);
         if (bom == null) {
             return new ArrayList<>();
@@ -216,8 +215,7 @@ public class ErpApsAtpCtpServiceImpl implements IErpApsAtpCtpService {
             }
             ErpApsOperationOrder shadow = apsDao.newEntity();
             shadow.setBusinessDate(io.nop.api.core.time.CoreMetrics.today());
-            // A2 桥接（bridge-main-013）：mfg Long workcenterId → aps String 列，退役 owner M3.1
-            shadow.setMachineId(ConvertHelper.toString(bo.getWorkcenterId()));
+            shadow.setMachineId(bo.getWorkcenterId());
             shadow.setOperationName("工序-" + bo.getLineNo());
             shadow.setSequence(seq);
             shadow.setSetupTime(BigDecimal.ZERO);
@@ -233,12 +231,7 @@ public class ErpApsAtpCtpServiceImpl implements IErpApsAtpCtpService {
         return shadows;
     }
 
-    // A2 桥接（bridge-main-012）：mfg ErpMfgBom productId Long 查询（String materialId → Long mfg 键），退役 owner M3.1
-    private Long toMfgMaterialKey(String materialId) {
-        return ConvertHelper.toLong(materialId);
-    }
-
-    protected ErpMfgBom findDefaultBom(Long materialId) {
+    protected ErpMfgBom findDefaultBom(String materialId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("productId", materialId));
         q.addFilter(eq("isDefault", true));
@@ -248,7 +241,7 @@ public class ErpApsAtpCtpServiceImpl implements IErpApsAtpCtpService {
         return list.isEmpty() ? null : list.get(0);
     }
 
-    protected List<ErpMfgBomOperation> loadBomOperations(Long bomId) {
+    protected List<ErpMfgBomOperation> loadBomOperations(String bomId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("bomId", bomId));
         return bomOperationDao().findAllByQuery(q);

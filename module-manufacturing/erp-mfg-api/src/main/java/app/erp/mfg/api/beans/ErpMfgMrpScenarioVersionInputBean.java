@@ -12,30 +12,30 @@
     public class ErpMfgMrpScenarioVersionInputBean extends CrudInputBase {
 
     
-        private Long _id;
+        private String _id;
 
     
         @PropMeta(propId=1)
     
-        public Long getId(){
+        public String getId(){
             return _id;
         }
 
-        public void setId(Long value){
+        public void setId(String value){
             this._id = value;
         }
 
 
-        private Long _scenarioId;
+        private String _scenarioId;
 
     
         @PropMeta(propId=2)
     
-        public Long getScenarioId(){
+        public String getScenarioId(){
             return _scenarioId;
         }
 
-        public void setScenarioId(Long value){
+        public void setScenarioId(String value){
             this._scenarioId = value;
         }
 
@@ -54,16 +54,16 @@
         }
 
 
-        private Long _computedMrpPlanId;
+        private String _computedMrpPlanId;
 
     
         @PropMeta(propId=4)
     
-        public Long getComputedMrpPlanId(){
+        public String getComputedMrpPlanId(){
             return _computedMrpPlanId;
         }
 
-        public void setComputedMrpPlanId(Long value){
+        public void setComputedMrpPlanId(String value){
             this._computedMrpPlanId = value;
         }
 
@@ -96,16 +96,16 @@
         }
 
 
-        private Long _promotedPlanId;
+        private String _promotedPlanId;
 
     
         @PropMeta(propId=7)
     
-        public Long getPromotedPlanId(){
+        public String getPromotedPlanId(){
             return _promotedPlanId;
         }
 
-        public void setPromotedPlanId(Long value){
+        public void setPromotedPlanId(String value){
             this._promotedPlanId = value;
         }
 

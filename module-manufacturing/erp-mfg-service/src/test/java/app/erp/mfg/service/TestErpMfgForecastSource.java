@@ -46,10 +46,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         enableActionAuth = io.nop.api.core.annotations.core.OptionalBoolean.FALSE)
 public class TestErpMfgForecastSource extends JunitAutoTestCase {
 
-    static final Long ORG_ID = 9401L;
-    static final Long UOM_ID = 9501L;
-    static final Long M_FORECAST = 9101L;  // 仅预测来源的物料
-    static final Long M_NOFORECAST = 9102L; // 无预测的物料（回归用）
+    static final String ORG_ID = "9401";
+    static final String UOM_ID = "9501";
+    static final String M_FORECAST = "9101";  // 仅预测来源的物料
+    static final String M_NOFORECAST = "9102"; // 无预测的物料（回归用）
 
     @Inject
     IDaoProvider daoProvider;
@@ -60,27 +60,27 @@ public class TestErpMfgForecastSource extends JunitAutoTestCase {
 
     @Test
     public void testStateMachineApproveCancel() {
-        Long forecastId = seedForecast("FCST-SM", ErpMfgConstants.FORECAST_STATUS_DRAFT, M_FORECAST,
+        String forecastId = seedForecast("FCST-SM", ErpMfgConstants.FORECAST_STATUS_DRAFT, M_FORECAST,
                 LocalDate.of(2026, 7, 1), LocalDate.of(2026, 7, 10), bd("1"),
                 null, null, null);
 
         // approve DRAFT → APPROVED
-        assertEquals(0, rpcStatus(mutation, "ErpMfgForecast__approve", Map.of("id", String.valueOf(forecastId))));
+        assertEquals(0, rpcStatus(mutation, "ErpMfgForecast__approve", Map.of("id", forecastId)));
         assertEquals(ErpMfgConstants.FORECAST_STATUS_APPROVED,
                 daoProvider.daoFor(ErpMfgForecast.class).getEntityById(forecastId).getStatus());
 
         // approve again on APPROVED → rejected (illegal transition)
-        ApiResponse<?> again = rpc(mutation, "ErpMfgForecast__approve", Map.of("id", String.valueOf(forecastId)));
+        ApiResponse<?> again = rpc(mutation, "ErpMfgForecast__approve", Map.of("id", forecastId));
         assertTrue(again.getStatus() != 0, "APPROVED 再次 approve 应拒绝");
         assertEquals(ErpMfgErrors.ERR_FORECAST_ILLEGAL_STATUS_TRANSITION.getErrorCode(), again.getCode());
 
         // cancel APPROVED → CANCELLED
-        assertEquals(0, rpcStatus(mutation, "ErpMfgForecast__cancel", Map.of("id", String.valueOf(forecastId))));
+        assertEquals(0, rpcStatus(mutation, "ErpMfgForecast__cancel", Map.of("id", forecastId)));
         assertEquals(ErpMfgConstants.FORECAST_STATUS_CANCELLED,
                 daoProvider.daoFor(ErpMfgForecast.class).getEntityById(forecastId).getStatus());
 
         // cancel on CANCELLED → rejected (terminal)
-        ApiResponse<?> cancelAgain = rpc(mutation, "ErpMfgForecast__cancel", Map.of("id", String.valueOf(forecastId)));
+        ApiResponse<?> cancelAgain = rpc(mutation, "ErpMfgForecast__cancel", Map.of("id", forecastId));
         assertTrue(cancelAgain.getStatus() != 0, "CANCELLED 再次 cancel 应拒绝");
     }
 
@@ -88,7 +88,7 @@ public class TestErpMfgForecastSource extends JunitAutoTestCase {
     public void testForecastDemandAggregation() {
         seedMaterial(M_FORECAST);
         // APPROVED 预测：M_FORECAST 区间内 100 + 区间内 50（同物料多桶累加）
-        Long approvedHead = seedForecast("FCST-OK", ErpMfgConstants.FORECAST_STATUS_APPROVED, M_FORECAST,
+        String approvedHead = seedForecast("FCST-OK", ErpMfgConstants.FORECAST_STATUS_APPROVED, M_FORECAST,
                 LocalDate.of(2026, 7, 1), LocalDate.of(2026, 7, 10), bd("100"),
                 LocalDate.of(2026, 7, 11), LocalDate.of(2026, 7, 20), bd("50"));
         // DRAFT 预测：不应消费
@@ -100,7 +100,7 @@ public class TestErpMfgForecastSource extends JunitAutoTestCase {
                 LocalDate.of(2026, 8, 1), LocalDate.of(2026, 8, 10), bd("888"),
                 null, null, null);
 
-        Long planId = seedPlan("MRP-FCST");
+        String planId = seedPlan("MRP-FCST");
         runMrpOk(planId);
 
         // FORECAST 需求聚合 = 100 + 50 = 150
@@ -122,7 +122,7 @@ public class TestErpMfgForecastSource extends JunitAutoTestCase {
 
         setConfig(ErpMfgConstants.CONFIG_MFG_FORECAST_CONSUME_ENABLED, "false");
         try {
-            Long planId = seedPlan("MRP-OFF");
+            String planId = seedPlan("MRP-OFF");
             runMrpOk(planId);
             assertEquals(BigDecimal.ZERO, sumDemand(planId, M_FORECAST, ErpMfgConstants.MRP_DEMAND_SOURCE_FORECAST),
                     "config-gated 关闭时不消费");
@@ -134,7 +134,7 @@ public class TestErpMfgForecastSource extends JunitAutoTestCase {
     @Test
     public void testForecastConsumedByMrp() {
         seedMaterial(M_NOFORECAST);
-        Long planId = seedPlan("MRP-NOFCST");
+        String planId = seedPlan("MRP-NOFCST");
         runMrpOk(planId);
         // 无预测 → 无 FORECAST 需求行（基线一致）
         assertEquals(BigDecimal.ZERO, sumDemand(planId, M_NOFORECAST, ErpMfgConstants.MRP_DEMAND_SOURCE_FORECAST),
@@ -147,7 +147,7 @@ public class TestErpMfgForecastSource extends JunitAutoTestCase {
 
     // ---------- helpers ----------
 
-    private void runMrpOk(Long planId) {
+    private void runMrpOk(String planId) {
         ApiResponse<?> resp = rpc(mutation, "ErpMfgMrpPlan__runMrp", Map.of("planId", planId));
         assertEquals(0, resp.getStatus(), "runMrp 应成功: " + resp);
     }
@@ -161,7 +161,7 @@ public class TestErpMfgForecastSource extends JunitAutoTestCase {
         return graphQLEngine.executeRpc(ctx);
     }
 
-    private BigDecimal sumDemand(Long planId, Long materialId, String demandSource) {
+    private BigDecimal sumDemand(String planId, String materialId, String demandSource) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("mrpPlanId", planId));
         q.addFilter(eq("materialId", materialId));
@@ -173,21 +173,21 @@ public class TestErpMfgForecastSource extends JunitAutoTestCase {
         return sum;
     }
 
-    private List<ErpMfgMrpDemand> demandsOf(Long planId, Long materialId) {
+    private List<ErpMfgMrpDemand> demandsOf(String planId, String materialId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("mrpPlanId", planId));
         q.addFilter(eq("materialId", materialId));
         return daoProvider.daoFor(ErpMfgMrpDemand.class).findAllByQuery(q);
     }
 
-    private List<ErpMfgMrpPlanLine> linesOf(Long planId) {
+    private List<ErpMfgMrpPlanLine> linesOf(String planId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("mrpPlanId", planId));
         return daoProvider.daoFor(ErpMfgMrpPlanLine.class).findAllByQuery(q);
     }
 
-    private Long seedPlan(String code) {
-        Long id = 9001L + (long) Math.abs(code.hashCode() % 500);
+    private String seedPlan(String code) {
+        String id = String.valueOf(9001L + (long) Math.abs(code.hashCode() % 500));
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMfgMrpPlan> dao = daoProvider.daoFor(ErpMfgMrpPlan.class);
             ErpMfgMrpPlan plan = new ErpMfgMrpPlan();
@@ -202,7 +202,7 @@ public class TestErpMfgForecastSource extends JunitAutoTestCase {
         return id;
     }
 
-    private void seedMaterial(Long id) {
+    private void seedMaterial(String id) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMdMaterial> dao = daoProvider.daoFor(ErpMdMaterial.class);
             ErpMdMaterial m = new ErpMdMaterial();
@@ -217,10 +217,10 @@ public class TestErpMfgForecastSource extends JunitAutoTestCase {
     }
 
     /** 创建预测头 + 1 或 2 行；status=预测头状态。返回头 ID。 */
-    private Long seedForecast(String code, String status, Long materialId,
+    private String seedForecast(String code, String status, String materialId,
                               LocalDate p1Start, LocalDate p1End, BigDecimal q1,
                               LocalDate p2Start, LocalDate p2End, BigDecimal q2) {
-        Long headId = 9200L + (long) Math.abs(code.hashCode() % 400);
+        String headId = String.valueOf(9200L + (long) Math.abs(code.hashCode() % 400));
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMfgForecast> headDao = daoProvider.daoFor(ErpMfgForecast.class);
             ErpMfgForecast head = new ErpMfgForecast();
@@ -245,11 +245,11 @@ public class TestErpMfgForecastSource extends JunitAutoTestCase {
         return headId;
     }
 
-    private void saveForecastLine(Long headId, int lineNo, Long materialId,
+    private void saveForecastLine(String headId, int lineNo, String materialId,
                                   LocalDate pStart, LocalDate pEnd, BigDecimal qty) {
         IEntityDao<ErpMfgForecastLine> dao = daoProvider.daoFor(ErpMfgForecastLine.class);
         ErpMfgForecastLine line = new ErpMfgForecastLine();
-        line.orm_propValueByName("id", headId * 1000 + lineNo);
+        line.orm_propValueByName("id", String.valueOf(Long.parseLong(headId) * 1000 + lineNo));
         line.setForecastId(headId);
         line.setLineNo(lineNo);
         line.setMaterialId(materialId);

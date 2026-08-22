@@ -48,13 +48,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpMfgMrpEndToEnd extends JunitAutoTestCase {
 
-    static final Long ORG_ID = 8401L;
-    static final Long UOM_ID = 8501L;
-    static final Long CUSTOMER_ID = 8601L;
-    static final Long CURRENCY_ID = 8701L;
-    static final Long SUPPLIER_ID = 8801L;
-    static final Long P = 8101L;   // 产成品（制造件）
-    static final Long M1 = 8102L;  // 采购件（P 的子件）
+    static final String ORG_ID = "8401";
+    static final String UOM_ID = "8501";
+    static final String CUSTOMER_ID = "8601";
+    static final String CURRENCY_ID = "8701";
+    static final String SUPPLIER_ID = "8801";
+    static final String P = "8101";   // 产成品（制造件）
+    static final String M1 = "8102";  // 采购件（P 的子件）
 
     @Inject
     IDaoProvider daoProvider;
@@ -67,10 +67,10 @@ public class TestErpMfgMrpEndToEnd extends JunitAutoTestCase {
     public void testMrpRunAndReleaseEndToEnd() {
         seedMaterial(P);
         seedMaterial(M1);
-        seedBom(9101L, P, M1, bd("1"));   // P 需要 1×M1
+        seedBom("9101", P, M1, bd("1"));   // P 需要 1×M1
         seedSalesOrder("SO-E2E-MRP", P, bd("10"), LocalDate.of(2026, 7, 20));
 
-        Long planId = seedPlan("MRP-E2E");
+        String planId = seedPlan("MRP-E2E");
         runMrpOk(planId);
 
         List<ErpMfgMrpPlanLine> lines = linesOf(planId);
@@ -86,10 +86,12 @@ public class TestErpMfgMrpEndToEnd extends JunitAutoTestCase {
         assertEquals(ErpMfgConstants.RELEASE_PO_CODE_PREFIX + m1Line.getId(), poCode);
         ErpPurOrder po = findPurchaseOrder(poCode);
         assertNotNull(po, "采购订单应生成");
-        assertEquals(SUPPLIER_ID, po.getSupplierId());
+        // A3 桥接（bridge-test-126，M0.2 登记册）：pur ErpPurOrder/OrderLine id 列仍 Long（pur 位次 15 未迁移），
+        // mfg/md String id 断言经 ConvertHelper.toLong 桥，退役 owner M2.5
+        assertEquals(io.nop.api.core.convert.ConvertHelper.toLong(SUPPLIER_ID), po.getSupplierId());
         ErpPurOrderLine poLine = findPurchaseOrderLine(po.getId());
         assertNotNull(poLine, "采购订单行应生成");
-        assertEquals(M1, poLine.getMaterialId());
+        assertEquals(io.nop.api.core.convert.ConvertHelper.toLong(M1), poLine.getMaterialId());
         assertEquals(0, poLine.getQuantity().compareTo(m1Line.getPlannedQuantity()));
 
         ErpMfgMrpPlanLine m1After = daoProvider.daoFor(ErpMfgMrpPlanLine.class).getEntityById(m1Line.getId());
@@ -131,7 +133,7 @@ public class TestErpMfgMrpEndToEnd extends JunitAutoTestCase {
     @Test
     public void testConcurrentReleaseSameLineThrowsAlreadyReleased() {
         seedMaterial(M1);
-        Long planId = seedPlan("MRP-UK090");
+        String planId = seedPlan("MRP-UK090");
         seedManualDemand(planId, M1, bd("5"), LocalDate.of(2026, 7, 20));
         runMrpOk(planId);
         ErpMfgMrpPlanLine line = findLine(linesOf(planId), M1, null);
@@ -168,7 +170,7 @@ public class TestErpMfgMrpEndToEnd extends JunitAutoTestCase {
     @Test
     public void testReleasePurchaseRejectsWithoutSupplier() {
         seedMaterial(M1);
-        Long planId = seedPlan("MRP-NOSUP");
+        String planId = seedPlan("MRP-NOSUP");
         seedManualDemand(planId, M1, bd("5"), LocalDate.of(2026, 7, 20));
         runMrpOk(planId);
 
@@ -183,25 +185,25 @@ public class TestErpMfgMrpEndToEnd extends JunitAutoTestCase {
 
     // ---------- helpers ----------
 
-    private void runMrpOk(Long planId) {
+    private void runMrpOk(String planId) {
         Map<String, Object> args = new LinkedHashMap<>();
         args.put("planId", planId);
         rpcOk(mutation, "ErpMfgMrpPlan__runMrp", args);
     }
 
-    private String releasePurchaseOk(Long planLineId, Long supplierId, Long currencyId) {
+    private String releasePurchaseOk(String planLineId, String supplierId, String currencyId) {
         ApiResponse<?> resp = releasePurchase(planLineId, supplierId, currencyId);
         assertEquals(0, resp.getStatus(), "releasePurchaseRequest 应成功: " + resp);
         return ErpMfgConstants.RELEASE_PO_CODE_PREFIX + planLineId;
     }
 
-    private String releaseWorkOk(Long planLineId) {
+    private String releaseWorkOk(String planLineId) {
         ApiResponse<?> resp = releaseWork(planLineId);
         assertEquals(0, resp.getStatus(), "releaseWorkRequest 应成功: " + resp);
         return ErpMfgConstants.RELEASE_WO_CODE_PREFIX + planLineId;
     }
 
-    private ApiResponse<?> releasePurchase(Long planLineId, Long supplierId, Long currencyId) {
+    private ApiResponse<?> releasePurchase(String planLineId, String supplierId, String currencyId) {
         Map<String, Object> args = new LinkedHashMap<>();
         args.put("planLineId", planLineId);
         args.put("supplierId", supplierId);
@@ -209,20 +211,20 @@ public class TestErpMfgMrpEndToEnd extends JunitAutoTestCase {
         return rpc(mutation, "ErpMfgMrpPlanLine__releasePurchaseRequest", args);
     }
 
-    private ApiResponse<?> releaseWork(Long planLineId) {
+    private ApiResponse<?> releaseWork(String planLineId) {
         Map<String, Object> args = new LinkedHashMap<>();
         args.put("planLineId", planLineId);
         return rpc(mutation, "ErpMfgMrpPlanLine__releaseWorkRequest", args);
     }
 
-    private List<ErpMfgMrpPlanLine> linesOf(Long planId) {
+    private List<ErpMfgMrpPlanLine> linesOf(String planId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("mrpPlanId", planId));
         q.addOrderField("lineNo", false);
         return daoProvider.daoFor(ErpMfgMrpPlanLine.class).findAllByQuery(q);
     }
 
-    private ErpMfgMrpPlanLine findLine(List<ErpMfgMrpPlanLine> lines, Long materialId, Long parentLineId) {
+    private ErpMfgMrpPlanLine findLine(List<ErpMfgMrpPlanLine> lines, String materialId, String parentLineId) {
         for (ErpMfgMrpPlanLine l : lines) {
             if (materialId.equals(l.getMaterialId())) {
                 if (parentLineId == null) {
@@ -258,8 +260,8 @@ public class TestErpMfgMrpEndToEnd extends JunitAutoTestCase {
         return list.isEmpty() ? null : list.get(0);
     }
 
-    private Long seedPlan(String code) {
-        Long id = 8001L + (long) Math.abs(code.hashCode() % 600);
+    private String seedPlan(String code) {
+        String id = String.valueOf(8001L + (long) Math.abs(code.hashCode() % 600));
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMfgMrpPlan> dao = daoProvider.daoFor(ErpMfgMrpPlan.class);
             ErpMfgMrpPlan plan = new ErpMfgMrpPlan();
@@ -274,11 +276,11 @@ public class TestErpMfgMrpEndToEnd extends JunitAutoTestCase {
         return id;
     }
 
-    private void seedManualDemand(Long planId, Long materialId, BigDecimal qty, LocalDate reqDate) {
+    private void seedManualDemand(String planId, String materialId, BigDecimal qty, LocalDate reqDate) {
         ormTemplate.runInSession(() -> {
             IEntityDao<app.erp.mfg.dao.entity.ErpMfgMrpDemand> dao = daoProvider.daoFor(app.erp.mfg.dao.entity.ErpMfgMrpDemand.class);
             app.erp.mfg.dao.entity.ErpMfgMrpDemand d = new app.erp.mfg.dao.entity.ErpMfgMrpDemand();
-            d.orm_propValueByName("id", 9000L + (long) Math.abs((planId + "" + materialId).hashCode() % 500));
+            d.orm_propValueByName("id", String.valueOf(9000L + (long) Math.abs((planId + materialId).hashCode() % 500)));
             d.setMrpPlanId(planId);
             d.setLineNo(10);
             d.setMaterialId(materialId);
@@ -292,16 +294,18 @@ public class TestErpMfgMrpEndToEnd extends JunitAutoTestCase {
         });
     }
 
-    private void seedSalesOrder(String code, Long materialId, BigDecimal qty, LocalDate deliveryDate) {
+    private void seedSalesOrder(String code, String materialId, BigDecimal qty, LocalDate deliveryDate) {
         Long orderId = 8300L + (long) Math.abs(code.hashCode() % 600);
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpSalOrder> odao = daoProvider.daoFor(ErpSalOrder.class);
             ErpSalOrder o = new ErpSalOrder();
             o.orm_propValueByName("id", orderId);
             o.setCode(code);
-            o.setOrgId(ORG_ID);
-            o.setCustomerId(CUSTOMER_ID);
-            o.setCurrencyId(CURRENCY_ID);
+            // A3 桥接（bridge-test-126，M0.2 登记册）：sal ErpSalOrder/OrderLine id 列仍 Long（sal 位次 16 未迁移），
+            // md/mfg String id → ConvertHelper.toLong 种子桥，退役 owner M2.6
+            o.setOrgId(io.nop.api.core.convert.ConvertHelper.toLong(ORG_ID));
+            o.setCustomerId(io.nop.api.core.convert.ConvertHelper.toLong(CUSTOMER_ID));
+            o.setCurrencyId(io.nop.api.core.convert.ConvertHelper.toLong(CURRENCY_ID));
             o.setBusinessDate(LocalDate.of(2026, 7, 1));
             o.setDeliveryDate(deliveryDate);
             o.setDocStatus("ACTIVE");
@@ -313,8 +317,8 @@ public class TestErpMfgMrpEndToEnd extends JunitAutoTestCase {
             line.orm_propValueByName("id", orderId + 50000);
             line.setOrderId(orderId);
             line.setLineNo(10);
-            line.setMaterialId(materialId);
-            line.setUoMId(UOM_ID);
+            line.setMaterialId(io.nop.api.core.convert.ConvertHelper.toLong(materialId));
+            line.setUoMId(io.nop.api.core.convert.ConvertHelper.toLong(UOM_ID));
             line.setQuantity(qty);
             line.setUnitPrice(bd("1"));
             line.setAmount(qty);
@@ -323,7 +327,7 @@ public class TestErpMfgMrpEndToEnd extends JunitAutoTestCase {
         });
     }
 
-    private void seedMaterial(Long id) {
+    private void seedMaterial(String id) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMdMaterial> dao = daoProvider.daoFor(ErpMdMaterial.class);
             ErpMdMaterial m = new ErpMdMaterial();
@@ -337,7 +341,7 @@ public class TestErpMfgMrpEndToEnd extends JunitAutoTestCase {
         });
     }
 
-    private void seedBom(Long bomId, Long productId, Long componentId, BigDecimal qty) {
+    private void seedBom(String bomId, String productId, String componentId, BigDecimal qty) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMfgBom> dao = daoProvider.daoFor(ErpMfgBom.class);
             ErpMfgBom bom = new ErpMfgBom();
@@ -351,7 +355,7 @@ public class TestErpMfgMrpEndToEnd extends JunitAutoTestCase {
             dao.saveEntity(bom);
             IEntityDao<ErpMfgBomLine> ldao = daoProvider.daoFor(ErpMfgBomLine.class);
             ErpMfgBomLine line = new ErpMfgBomLine();
-            line.orm_propValueByName("id", bomId + 50000);
+            line.orm_propValueByName("id", String.valueOf(Long.parseLong(bomId) + 50000));
             line.setBomId(bomId);
             line.setLineNo(10);
             line.setMaterialId(componentId);

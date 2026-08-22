@@ -92,7 +92,7 @@ public class CrpLoadCalculator {
      *
      * @return 写入的 CrpLoad 行数。
      */
-    public int calculateLoad(LocalDate periodFrom, LocalDate periodTo, List<Long> workcenterIds) {
+    public int calculateLoad(LocalDate periodFrom, LocalDate periodTo, List<String> workcenterIds) {
         requirePeriod(periodFrom, periodTo);
         IEntityDao<ErpMfgCrpLoad> loadDao = daoProvider.daoFor(ErpMfgCrpLoad.class);
         clearExisting(loadDao, periodFrom, periodTo, workcenterIds);
@@ -101,10 +101,10 @@ public class CrpLoadCalculator {
         if (workOrders.isEmpty()) {
             return 0;
         }
-        Set<Long> wcFilter = workcenterIds != null && !workcenterIds.isEmpty() ? new HashSet<>(workcenterIds) : null;
+        Set<String> wcFilter = workcenterIds != null && !workcenterIds.isEmpty() ? new HashSet<>(workcenterIds) : null;
 
         boolean apsMode = isApsLoadSourceEnabled();
-        Map<Long, List<ApsLoadSlot>> apsSlotsByWo = apsMode
+        Map<String, List<ApsLoadSlot>> apsSlotsByWo = apsMode
                 ? indexApsSlotsByWorkOrder(workOrders, periodFrom, periodTo)
                 : Collections.emptyMap();
 
@@ -134,25 +134,25 @@ public class CrpLoadCalculator {
      * 负荷报表：workcenter×date 聚合 loadHours/capacityHours/loadRate/overloaded。
      * 范围内工作中心 = workcenterIds（若提供）否则 = 区间内有 CrpLoad 行或有 Calendar 的工作中心。
      */
-    public List<CrpLoadReportItem> getLoadReport(LocalDate periodFrom, LocalDate periodTo, List<Long> workcenterIds) {
+    public List<CrpLoadReportItem> getLoadReport(LocalDate periodFrom, LocalDate periodTo, List<String> workcenterIds) {
         requirePeriod(periodFrom, periodTo);
 
-        Set<Long> wcSet = resolveReportWorkcenters(periodFrom, periodTo, workcenterIds);
+        Set<String> wcSet = resolveReportWorkcenters(periodFrom, periodTo, workcenterIds);
         if (wcSet.isEmpty()) {
             return Collections.emptyList();
         }
 
         Map<WCDate, LoadBucket> buckets = indexLoads(periodFrom, periodTo, wcSet);
 
-        Map<Long, BigDecimal> efficiencyByWc = efficiencyByWorkcenter(wcSet);
-        Map<Long, List<ErpMfgWorkcenterCalendar>> calendarByWc = calendarsByWorkcenter(wcSet);
-        Map<Long, String> wcCode = workcenterCodes(wcSet);
+        Map<String, BigDecimal> efficiencyByWc = efficiencyByWorkcenter(wcSet);
+        Map<String, List<ErpMfgWorkcenterCalendar>> calendarByWc = calendarsByWorkcenter(wcSet);
+        Map<String, String> wcCode = workcenterCodes(wcSet);
 
         double threshold = AppConfig.var(ErpMfgConstants.CONFIG_CRP_OVERLOAD_THRESHOLD,
                 ErpMfgConstants.DEFAULT_CRP_OVERLOAD_THRESHOLD);
 
         List<CrpLoadReportItem> result = new ArrayList<>();
-        for (Long wcId : wcSet) {
+        for (String wcId : wcSet) {
             List<ErpMfgWorkcenterCalendar> calendars = calendarByWc.getOrDefault(wcId, Collections.emptyList());
             BigDecimal efficiency = efficiencyByWc.getOrDefault(wcId, BigDecimal.ONE);
             for (LocalDate d = periodFrom; !d.isAfter(periodTo); d = d.plusDays(1)) {
@@ -193,10 +193,10 @@ public class CrpLoadCalculator {
      */
     private int distributeByApsSlots(IEntityDao<ErpMfgCrpLoad> loadDao, ErpMfgWorkOrder wo,
                                      List<ApsLoadSlot> slots, LocalDate periodFrom, LocalDate periodTo,
-                                     Set<Long> wcFilter) {
+                                     Set<String> wcFilter) {
         int written = 0;
         for (ApsLoadSlot slot : slots) {
-            Long wcId = slot.getWorkcenterId();
+            String wcId = slot.getWorkcenterId();
             if (wcId == null) {
                 continue;
             }
@@ -254,8 +254,8 @@ public class CrpLoadCalculator {
      * 均匀分派 RoutingOperation.standardTime 到区间日，setupTime 计入首日。
      */
     private int distributeByWorkOrder(IEntityDao<ErpMfgCrpLoad> loadDao, ErpMfgWorkOrder wo,
-                                      LocalDate periodFrom, LocalDate periodTo, Set<Long> wcFilter) {
-        Long routingId = wo.getRoutingId();
+                                      LocalDate periodFrom, LocalDate periodTo, Set<String> wcFilter) {
+        String routingId = wo.getRoutingId();
         if (routingId == null) {
             return 0;
         }
@@ -277,7 +277,7 @@ public class CrpLoadCalculator {
 
         int written = 0;
         for (ErpMfgRoutingOperation op : ops) {
-            Long wcId = op.getWorkcenterId();
+            String wcId = op.getWorkcenterId();
             if (wcId == null) {
                 continue;
             }
@@ -327,18 +327,18 @@ public class CrpLoadCalculator {
     /**
      * 批量查询工单的 APS 排程时段，按 workOrderId 索引。SPI 实现可空（已 isApsLoadSourceEnabled 兜底）。
      */
-    private Map<Long, List<ApsLoadSlot>> indexApsSlotsByWorkOrder(List<ErpMfgWorkOrder> workOrders,
-                                                                  LocalDate periodFrom, LocalDate periodTo) {
+    private Map<String, List<ApsLoadSlot>> indexApsSlotsByWorkOrder(List<ErpMfgWorkOrder> workOrders,
+                                                                    LocalDate periodFrom, LocalDate periodTo) {
         if (apsLoadSourceProviders == null || apsLoadSourceProviders.isEmpty()) {
             return Collections.emptyMap();
         }
-        List<Long> woIds = new ArrayList<>(workOrders.size());
+        List<String> woIds = new ArrayList<>(workOrders.size());
         for (ErpMfgWorkOrder wo : workOrders) {
             if (wo.getId() != null) {
                 woIds.add(wo.getId());
             }
         }
-        Map<Long, List<ApsLoadSlot>> map = new HashMap<>();
+        Map<String, List<ApsLoadSlot>> map = new HashMap<>();
         for (IErpApsLoadSourceProvider provider : apsLoadSourceProviders) {
             List<ApsLoadSlot> slots = provider.findScheduledSlots(woIds, periodFrom, periodTo);
             if (slots == null || slots.isEmpty()) {
@@ -354,7 +354,7 @@ public class CrpLoadCalculator {
         return map;
     }
 
-    private List<ErpMfgRoutingOperation> findRoutingOperations(Long routingId) {
+    private List<ErpMfgRoutingOperation> findRoutingOperations(String routingId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("routingId", routingId));
         q.addOrderField("lineNo", false);
@@ -369,7 +369,7 @@ public class CrpLoadCalculator {
         return daoProvider.daoFor(ErpMfgWorkOrder.class).findAllByQuery(q);
     }
 
-    private void clearExisting(IEntityDao<ErpMfgCrpLoad> dao, LocalDate periodFrom, LocalDate periodTo, List<Long> workcenterIds) {
+    private void clearExisting(IEntityDao<ErpMfgCrpLoad> dao, LocalDate periodFrom, LocalDate periodTo, List<String> workcenterIds) {
         QueryBean q = new QueryBean();
         q.addFilter(ge("loadDate", periodFrom));
         q.addFilter(le("loadDate", periodTo));
@@ -409,11 +409,11 @@ public class CrpLoadCalculator {
 
     // ---------- getLoadReport helpers ----------
 
-    private Set<Long> resolveReportWorkcenters(LocalDate periodFrom, LocalDate periodTo, List<Long> workcenterIds) {
+    private Set<String> resolveReportWorkcenters(LocalDate periodFrom, LocalDate periodTo, List<String> workcenterIds) {
         if (workcenterIds != null && !workcenterIds.isEmpty()) {
             return new HashSet<>(workcenterIds);
         }
-        Set<Long> set = new HashSet<>();
+        Set<String> set = new HashSet<>();
         QueryBean loadQ = new QueryBean();
         loadQ.addFilter(ge("loadDate", periodFrom));
         loadQ.addFilter(le("loadDate", periodTo));
@@ -433,7 +433,7 @@ public class CrpLoadCalculator {
         return set;
     }
 
-    private Map<WCDate, LoadBucket> indexLoads(LocalDate periodFrom, LocalDate periodTo, Set<Long> wcSet) {
+    private Map<WCDate, LoadBucket> indexLoads(LocalDate periodFrom, LocalDate periodTo, Set<String> wcSet) {
         QueryBean q = new QueryBean();
         q.addFilter(ge("loadDate", periodFrom));
         q.addFilter(le("loadDate", periodTo));
@@ -448,11 +448,11 @@ public class CrpLoadCalculator {
         return buckets;
     }
 
-    private Map<Long, BigDecimal> efficiencyByWorkcenter(Set<Long> wcSet) {
+    private Map<String, BigDecimal> efficiencyByWorkcenter(Set<String> wcSet) {
         QueryBean q = new QueryBean();
         q.addFilter(in("workcenterId", new ArrayList<>(wcSet)));
         q.addFilter(eq("isActive", Boolean.TRUE));
-        Map<Long, BigDecimal> map = new HashMap<>();
+        Map<String, BigDecimal> map = new HashMap<>();
         for (ErpMfgWorkcenterCapacity c : daoProvider.daoFor(ErpMfgWorkcenterCapacity.class).findAllByQuery(q)) {
             BigDecimal eff = nz(c.getEfficiencyFactor(), BigDecimal.ONE);
             BigDecimal existing = map.get(c.getWorkcenterId());
@@ -463,19 +463,19 @@ public class CrpLoadCalculator {
         return map;
     }
 
-    private Map<Long, List<ErpMfgWorkcenterCalendar>> calendarsByWorkcenter(Set<Long> wcSet) {
+    private Map<String, List<ErpMfgWorkcenterCalendar>> calendarsByWorkcenter(Set<String> wcSet) {
         QueryBean q = new QueryBean();
         q.addFilter(in("workcenterId", new ArrayList<>(wcSet)));
         q.addFilter(eq("isActive", Boolean.TRUE));
-        Map<Long, List<ErpMfgWorkcenterCalendar>> map = new HashMap<>();
+        Map<String, List<ErpMfgWorkcenterCalendar>> map = new HashMap<>();
         for (ErpMfgWorkcenterCalendar c : daoProvider.daoFor(ErpMfgWorkcenterCalendar.class).findAllByQuery(q)) {
             map.computeIfAbsent(c.getWorkcenterId(), k -> new ArrayList<>()).add(c);
         }
         return map;
     }
 
-    private Map<Long, String> workcenterCodes(Set<Long> wcSet) {
-        Map<Long, String> map = new HashMap<>();
+    private Map<String, String> workcenterCodes(Set<String> wcSet) {
+        Map<String, String> map = new HashMap<>();
         for (ErpMfgWorkcenter wc : daoProvider.daoFor(ErpMfgWorkcenter.class).findAllByQuery(new QueryBean())) {
             if (wcSet.contains(wc.getId())) {
                 map.put(wc.getId(), wc.getCode());
@@ -573,10 +573,10 @@ public class CrpLoadCalculator {
     }
 
     private static final class WCDate {
-        final Long workcenterId;
+        final String workcenterId;
         final LocalDate date;
 
-        WCDate(Long workcenterId, LocalDate date) {
+        WCDate(String workcenterId, LocalDate date) {
             this.workcenterId = workcenterId;
             this.date = date;
         }

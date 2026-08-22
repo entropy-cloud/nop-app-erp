@@ -19,19 +19,19 @@
             <cols>
 
                 <!--ID-->
-                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="id" mandatory="true" sortable="true"/>
 
                 <!--MRP计划ID-->
-                <col id="mrpPlanId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="mrpPlanId" mandatory="true" sortable="true"/>
 
                 <!--行号-->
                 <col id="lineNo" mandatory="true" ui:number="true" sortable="true"/>
 
                 <!--物料-->
-                <col id="materialId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="materialId" mandatory="true" sortable="true"/>
 
                 <!--计量单位-->
-                <col id="uoMId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="uoMId" mandatory="true" sortable="true"/>
 
                 <!--需求来源-->
                 <col id="demandSource" mandatory="true" sortable="true"/>

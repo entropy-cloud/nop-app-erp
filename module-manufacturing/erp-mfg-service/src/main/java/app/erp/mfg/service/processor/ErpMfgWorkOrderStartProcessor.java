@@ -14,8 +14,8 @@ public class ErpMfgWorkOrderStartProcessor {
     @Inject
     ErpMfgWorkOrderProcessor facade;
 
-    public ErpMfgWorkOrder start(Long workOrderId, IServiceContext context) {
-        ErpMfgWorkOrder wo = facade.requireWorkOrder(String.valueOf(workOrderId), context);
+    public ErpMfgWorkOrder start(String workOrderId, IServiceContext context) {
+        ErpMfgWorkOrder wo = facade.requireWorkOrder(workOrderId, context);
         facade.validateTransitionForStart(wo, context);
         facade.doStart(wo, context);
         return wo;

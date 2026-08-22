@@ -28,7 +28,7 @@ public class ErpMfgJobCardProcessor {
 
     // ---------- 校验/查询辅助（protected，供 per-mutation Processor 复用与覆盖） ----------
 
-    protected ErpMfgJobCard requireJobCard(Long jobCardId, IServiceContext context) {
+    protected ErpMfgJobCard requireJobCard(String jobCardId, IServiceContext context) {
         ErpMfgJobCard jc = jobCardDao().getEntityById(jobCardId);
         if (jc == null) {
             throw new NopException(ErpMfgErrors.ERR_JOB_CARD_NOT_FOUND)
@@ -55,7 +55,7 @@ public class ErpMfgJobCardProcessor {
         return log;
     }
 
-    protected void applyLaborCostToWorkOrder(Long workOrderId, BigDecimal laborCostDelta) {
+    protected void applyLaborCostToWorkOrder(String workOrderId, BigDecimal laborCostDelta) {
         if (workOrderId == null || laborCostDelta == null || laborCostDelta.signum() == 0) {
             return;
         }

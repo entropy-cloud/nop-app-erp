@@ -281,37 +281,37 @@ public class _ErpMfgSubcontractOrder extends DynamicOrmEntity{
 
     
     /* ID: ID */
-    private java.lang.Long _id;
+    private java.lang.String _id;
     
     /* 单号: CODE */
     private java.lang.String _code;
     
     /* 业务组织: ORG_ID */
-    private java.lang.Long _orgId;
+    private java.lang.String _orgId;
     
     /* 来源工单: WORK_ORDER_ID */
-    private java.lang.Long _workOrderId;
+    private java.lang.String _workOrderId;
     
     /* 委外供应商: SUPPLIER_ID */
-    private java.lang.Long _supplierId;
+    private java.lang.String _supplierId;
     
     /* 外协工作中心: WORKCENTER_ID */
-    private java.lang.Long _workcenterId;
+    private java.lang.String _workcenterId;
     
     /* 工艺路线: ROUTING_ID */
-    private java.lang.Long _routingId;
+    private java.lang.String _routingId;
     
     /* 生产版本: PRODUCTION_VERSION_ID */
-    private java.lang.Long _productionVersionId;
+    private java.lang.String _productionVersionId;
     
     /* 产品: PRODUCT_ID */
-    private java.lang.Long _productId;
+    private java.lang.String _productId;
     
     /* 委外日期: BUSINESS_DATE */
     private java.time.LocalDate _businessDate;
     
     /* 币种: CURRENCY_ID */
-    private java.lang.Long _currencyId;
+    private java.lang.String _currencyId;
     
     /* 汇率: EXCHANGE_RATE */
     private java.math.BigDecimal _exchangeRate;
@@ -552,9 +552,9 @@ public class _ErpMfgSubcontractOrder extends DynamicOrmEntity{
         switch(propId){
         
             case PROP_ID_id:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_id));
                }
                setId(typedValue);
@@ -572,9 +572,9 @@ public class _ErpMfgSubcontractOrder extends DynamicOrmEntity{
             }
         
             case PROP_ID_orgId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_orgId));
                }
                setOrgId(typedValue);
@@ -582,9 +582,9 @@ public class _ErpMfgSubcontractOrder extends DynamicOrmEntity{
             }
         
             case PROP_ID_workOrderId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_workOrderId));
                }
                setWorkOrderId(typedValue);
@@ -592,9 +592,9 @@ public class _ErpMfgSubcontractOrder extends DynamicOrmEntity{
             }
         
             case PROP_ID_supplierId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_supplierId));
                }
                setSupplierId(typedValue);
@@ -602,9 +602,9 @@ public class _ErpMfgSubcontractOrder extends DynamicOrmEntity{
             }
         
             case PROP_ID_workcenterId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_workcenterId));
                }
                setWorkcenterId(typedValue);
@@ -612,9 +612,9 @@ public class _ErpMfgSubcontractOrder extends DynamicOrmEntity{
             }
         
             case PROP_ID_routingId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_routingId));
                }
                setRoutingId(typedValue);
@@ -622,9 +622,9 @@ public class _ErpMfgSubcontractOrder extends DynamicOrmEntity{
             }
         
             case PROP_ID_productionVersionId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_productionVersionId));
                }
                setProductionVersionId(typedValue);
@@ -632,9 +632,9 @@ public class _ErpMfgSubcontractOrder extends DynamicOrmEntity{
             }
         
             case PROP_ID_productId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_productId));
                }
                setProductId(typedValue);
@@ -652,9 +652,9 @@ public class _ErpMfgSubcontractOrder extends DynamicOrmEntity{
             }
         
             case PROP_ID_currencyId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_currencyId));
                }
                setCurrencyId(typedValue);
@@ -872,7 +872,7 @@ public class _ErpMfgSubcontractOrder extends DynamicOrmEntity{
         
             case PROP_ID_id:{
                onInitProp(propId);
-               this._id = (java.lang.Long)value;
+               this._id = (java.lang.String)value;
                orm_id(); // 如果是设置主键字段，则触发watcher
                break;
             }
@@ -886,49 +886,49 @@ public class _ErpMfgSubcontractOrder extends DynamicOrmEntity{
         
             case PROP_ID_orgId:{
                onInitProp(propId);
-               this._orgId = (java.lang.Long)value;
+               this._orgId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_workOrderId:{
                onInitProp(propId);
-               this._workOrderId = (java.lang.Long)value;
+               this._workOrderId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_supplierId:{
                onInitProp(propId);
-               this._supplierId = (java.lang.Long)value;
+               this._supplierId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_workcenterId:{
                onInitProp(propId);
-               this._workcenterId = (java.lang.Long)value;
+               this._workcenterId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_routingId:{
                onInitProp(propId);
-               this._routingId = (java.lang.Long)value;
+               this._routingId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_productionVersionId:{
                onInitProp(propId);
-               this._productionVersionId = (java.lang.Long)value;
+               this._productionVersionId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_productId:{
                onInitProp(propId);
-               this._productId = (java.lang.Long)value;
+               this._productId = (java.lang.String)value;
                
                break;
             }
@@ -942,7 +942,7 @@ public class _ErpMfgSubcontractOrder extends DynamicOrmEntity{
         
             case PROP_ID_currencyId:{
                onInitProp(propId);
-               this._currencyId = (java.lang.Long)value;
+               this._currencyId = (java.lang.String)value;
                
                break;
             }
@@ -1096,7 +1096,7 @@ public class _ErpMfgSubcontractOrder extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final java.lang.Long getId(){
+    public final java.lang.String getId(){
          onPropGet(PROP_ID_id);
          return _id;
     }
@@ -1104,7 +1104,7 @@ public class _ErpMfgSubcontractOrder extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final void setId(java.lang.Long value){
+    public final void setId(java.lang.String value){
         if(onPropSet(PROP_ID_id,value)){
             this._id = value;
             internalClearRefs(PROP_ID_id);
@@ -1134,7 +1134,7 @@ public class _ErpMfgSubcontractOrder extends DynamicOrmEntity{
     /**
      * 业务组织: ORG_ID
      */
-    public final java.lang.Long getOrgId(){
+    public final java.lang.String getOrgId(){
          onPropGet(PROP_ID_orgId);
          return _orgId;
     }
@@ -1142,7 +1142,7 @@ public class _ErpMfgSubcontractOrder extends DynamicOrmEntity{
     /**
      * 业务组织: ORG_ID
      */
-    public final void setOrgId(java.lang.Long value){
+    public final void setOrgId(java.lang.String value){
         if(onPropSet(PROP_ID_orgId,value)){
             this._orgId = value;
             internalClearRefs(PROP_ID_orgId);
@@ -1153,7 +1153,7 @@ public class _ErpMfgSubcontractOrder extends DynamicOrmEntity{
     /**
      * 来源工单: WORK_ORDER_ID
      */
-    public final java.lang.Long getWorkOrderId(){
+    public final java.lang.String getWorkOrderId(){
          onPropGet(PROP_ID_workOrderId);
          return _workOrderId;
     }
@@ -1161,7 +1161,7 @@ public class _ErpMfgSubcontractOrder extends DynamicOrmEntity{
     /**
      * 来源工单: WORK_ORDER_ID
      */
-    public final void setWorkOrderId(java.lang.Long value){
+    public final void setWorkOrderId(java.lang.String value){
         if(onPropSet(PROP_ID_workOrderId,value)){
             this._workOrderId = value;
             internalClearRefs(PROP_ID_workOrderId);
@@ -1172,7 +1172,7 @@ public class _ErpMfgSubcontractOrder extends DynamicOrmEntity{
     /**
      * 委外供应商: SUPPLIER_ID
      */
-    public final java.lang.Long getSupplierId(){
+    public final java.lang.String getSupplierId(){
          onPropGet(PROP_ID_supplierId);
          return _supplierId;
     }
@@ -1180,7 +1180,7 @@ public class _ErpMfgSubcontractOrder extends DynamicOrmEntity{
     /**
      * 委外供应商: SUPPLIER_ID
      */
-    public final void setSupplierId(java.lang.Long value){
+    public final void setSupplierId(java.lang.String value){
         if(onPropSet(PROP_ID_supplierId,value)){
             this._supplierId = value;
             internalClearRefs(PROP_ID_supplierId);
@@ -1191,7 +1191,7 @@ public class _ErpMfgSubcontractOrder extends DynamicOrmEntity{
     /**
      * 外协工作中心: WORKCENTER_ID
      */
-    public final java.lang.Long getWorkcenterId(){
+    public final java.lang.String getWorkcenterId(){
          onPropGet(PROP_ID_workcenterId);
          return _workcenterId;
     }
@@ -1199,7 +1199,7 @@ public class _ErpMfgSubcontractOrder extends DynamicOrmEntity{
     /**
      * 外协工作中心: WORKCENTER_ID
      */
-    public final void setWorkcenterId(java.lang.Long value){
+    public final void setWorkcenterId(java.lang.String value){
         if(onPropSet(PROP_ID_workcenterId,value)){
             this._workcenterId = value;
             internalClearRefs(PROP_ID_workcenterId);
@@ -1210,7 +1210,7 @@ public class _ErpMfgSubcontractOrder extends DynamicOrmEntity{
     /**
      * 工艺路线: ROUTING_ID
      */
-    public final java.lang.Long getRoutingId(){
+    public final java.lang.String getRoutingId(){
          onPropGet(PROP_ID_routingId);
          return _routingId;
     }
@@ -1218,7 +1218,7 @@ public class _ErpMfgSubcontractOrder extends DynamicOrmEntity{
     /**
      * 工艺路线: ROUTING_ID
      */
-    public final void setRoutingId(java.lang.Long value){
+    public final void setRoutingId(java.lang.String value){
         if(onPropSet(PROP_ID_routingId,value)){
             this._routingId = value;
             internalClearRefs(PROP_ID_routingId);
@@ -1229,7 +1229,7 @@ public class _ErpMfgSubcontractOrder extends DynamicOrmEntity{
     /**
      * 生产版本: PRODUCTION_VERSION_ID
      */
-    public final java.lang.Long getProductionVersionId(){
+    public final java.lang.String getProductionVersionId(){
          onPropGet(PROP_ID_productionVersionId);
          return _productionVersionId;
     }
@@ -1237,7 +1237,7 @@ public class _ErpMfgSubcontractOrder extends DynamicOrmEntity{
     /**
      * 生产版本: PRODUCTION_VERSION_ID
      */
-    public final void setProductionVersionId(java.lang.Long value){
+    public final void setProductionVersionId(java.lang.String value){
         if(onPropSet(PROP_ID_productionVersionId,value)){
             this._productionVersionId = value;
             internalClearRefs(PROP_ID_productionVersionId);
@@ -1248,7 +1248,7 @@ public class _ErpMfgSubcontractOrder extends DynamicOrmEntity{
     /**
      * 产品: PRODUCT_ID
      */
-    public final java.lang.Long getProductId(){
+    public final java.lang.String getProductId(){
          onPropGet(PROP_ID_productId);
          return _productId;
     }
@@ -1256,7 +1256,7 @@ public class _ErpMfgSubcontractOrder extends DynamicOrmEntity{
     /**
      * 产品: PRODUCT_ID
      */
-    public final void setProductId(java.lang.Long value){
+    public final void setProductId(java.lang.String value){
         if(onPropSet(PROP_ID_productId,value)){
             this._productId = value;
             internalClearRefs(PROP_ID_productId);
@@ -1286,7 +1286,7 @@ public class _ErpMfgSubcontractOrder extends DynamicOrmEntity{
     /**
      * 币种: CURRENCY_ID
      */
-    public final java.lang.Long getCurrencyId(){
+    public final java.lang.String getCurrencyId(){
          onPropGet(PROP_ID_currencyId);
          return _currencyId;
     }
@@ -1294,7 +1294,7 @@ public class _ErpMfgSubcontractOrder extends DynamicOrmEntity{
     /**
      * 币种: CURRENCY_ID
      */
-    public final void setCurrencyId(java.lang.Long value){
+    public final void setCurrencyId(java.lang.String value){
         if(onPropSet(PROP_ID_currencyId,value)){
             this._currencyId = value;
             internalClearRefs(PROP_ID_currencyId);

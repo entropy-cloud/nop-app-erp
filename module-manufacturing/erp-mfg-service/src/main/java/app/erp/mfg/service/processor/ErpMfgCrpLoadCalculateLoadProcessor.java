@@ -17,7 +17,7 @@ public class ErpMfgCrpLoadCalculateLoadProcessor {
     CrpLoadCalculator crpLoadCalculator;
 
     public Integer calculateLoad(LocalDate periodFrom, LocalDate periodTo,
-                                 List<Long> workcenterIds, IServiceContext context) {
+                                 List<String> workcenterIds, IServiceContext context) {
         return crpLoadCalculator.calculateLoad(periodFrom, periodTo, workcenterIds);
     }
 }

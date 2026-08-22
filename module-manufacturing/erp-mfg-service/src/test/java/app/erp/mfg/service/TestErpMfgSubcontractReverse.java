@@ -62,14 +62,14 @@ public class TestErpMfgSubcontractReverse extends JunitAutoTestCase {
 
     private static final IServiceContext CTX = new ServiceContextImpl();
 
-    static final Long ORG_ID = 1601L;
-    static final Long WAREHOUSE_ID = 3601L;
-    static final Long UOM_ID = 5601L;
-    static final Long CURRENCY_ID = 6601L;
-    static final Long ACCT_SCHEMA_ID = 7601L;
-    static final Long SUPPLIER_ID = 4601L;
-    static final Long P = 2401L;
-    static final Long M1 = 2402L;
+    static final String ORG_ID = "1601";
+    static final String WAREHOUSE_ID = "3601";
+    static final String UOM_ID = "5601";
+    static final String CURRENCY_ID = "6601";
+    static final String ACCT_SCHEMA_ID = "7601";
+    static final String SUPPLIER_ID = "4601";
+    static final String P = "2401";
+    static final String M1 = "2402";
     static final String MOVE_TYPE_INCOMING = "INCOMING";
     static final String SUBJECT_RAW = "1401";
     static final String SUBJECT_FINISHED = "1405";
@@ -95,13 +95,13 @@ public class TestErpMfgSubcontractReverse extends JunitAutoTestCase {
         seedMaterial(P, null);
         generateIncoming(M1, "PR-SC-RV-MA", bd("10"), bd("5"));
 
-        Long orderId = seedSubcontractOrder("SUB-RV", bd("50"));
-        seedSubcontractLine(9801L, orderId, M1, bd("2"));
+        String orderId = seedSubcontractOrder("SUB-RV", bd("50"));
+        seedSubcontractLine("9801", orderId, M1, bd("2"));
 
         setConfig(ErpMfgConstants.CONFIG_SUBCONTRACT_POSTING_ENABLED, "true");
         try {
-            rpcOk(mutation, "ErpMfgSubcontractOrder__submitForApproval", Map.of("id", String.valueOf(orderId)));
-            rpcOk(mutation, "ErpMfgSubcontractOrder__approve", Map.of("id", String.valueOf(orderId)));
+            rpcOk(mutation, "ErpMfgSubcontractOrder__submitForApproval", Map.of("id", orderId));
+            rpcOk(mutation, "ErpMfgSubcontractOrder__approve", Map.of("id", orderId));
 
             Map<String, Object> issueReq = new LinkedHashMap<>();
             issueReq.put("subcontractOrderId", orderId);
@@ -152,13 +152,13 @@ public class TestErpMfgSubcontractReverse extends JunitAutoTestCase {
         seedMaterial(P, null);
         generateIncoming(M1, "PR-SC-ILL-MA", bd("10"), bd("5"));
 
-        Long orderId = seedSubcontractOrder("SUB-ILL-RV", bd("50"));
-        seedSubcontractLine(9811L, orderId, M1, bd("2"));
+        String orderId = seedSubcontractOrder("SUB-ILL-RV", bd("50"));
+        seedSubcontractLine("9811", orderId, M1, bd("2"));
 
         setConfig(ErpMfgConstants.CONFIG_SUBCONTRACT_POSTING_ENABLED, "true");
         try {
-            rpcOk(mutation, "ErpMfgSubcontractOrder__submitForApproval", Map.of("id", String.valueOf(orderId)));
-            rpcOk(mutation, "ErpMfgSubcontractOrder__approve", Map.of("id", String.valueOf(orderId)));
+            rpcOk(mutation, "ErpMfgSubcontractOrder__submitForApproval", Map.of("id", orderId));
+            rpcOk(mutation, "ErpMfgSubcontractOrder__approve", Map.of("id", orderId));
             Map<String, Object> issueReq = new LinkedHashMap<>();
             issueReq.put("subcontractOrderId", orderId);
             issueReq.put("sourceWarehouseId", WAREHOUSE_ID);
@@ -186,7 +186,7 @@ public class TestErpMfgSubcontractReverse extends JunitAutoTestCase {
     public void testReverseCompletionIdempotentGuard() {
         seedPeriodAndSubjects();
 
-        Long orderId = seedSubcontractOrder("SUB-IDEMP", bd("50"));
+        String orderId = seedSubcontractOrder("SUB-IDEMP", bd("50"));
         ormTemplate.runInSession(() -> {
             ErpMfgSubcontractOrder order = daoProvider.daoFor(ErpMfgSubcontractOrder.class).getEntityById(orderId);
             order.setDocStatus(ErpMfgConstants.SUBCONTRACT_STATUS_CANCELLED);
@@ -208,7 +208,7 @@ public class TestErpMfgSubcontractReverse extends JunitAutoTestCase {
     public void testFinanceReverseVoucherRollsBackSubcontractOrder() {
         seedPeriodAndSubjects();
 
-        Long orderId = seedSubcontractOrder("SUB-LISTEN", bd("50"));
+        String orderId = seedSubcontractOrder("SUB-LISTEN", bd("50"));
         String feeBillHeadCode = "SUB-LISTEN-SF";
         ormTemplate.runInSession(() -> {
             ErpMfgSubcontractOrder order = daoProvider.daoFor(ErpMfgSubcontractOrder.class).getEntityById(orderId);
@@ -222,7 +222,7 @@ public class TestErpMfgSubcontractReverse extends JunitAutoTestCase {
 
         assertTrue(Boolean.TRUE.equals(reload(orderId).getPosted()), "前置：委外单 posted=true");
 
-        Long redVoucherId = ormTemplate.runInSession(session -> voucherBiz.reverse(feeBillHeadCode, ErpFinBusinessType.SUBCONTRACT_FEE, CTX));
+        String redVoucherId = ormTemplate.runInSession(session -> voucherBiz.reverse(feeBillHeadCode, ErpFinBusinessType.SUBCONTRACT_FEE, CTX));
         assertNotNull(redVoucherId, "财务侧红冲应生成红字凭证");
 
         ErpMfgSubcontractOrder rolled = reload(orderId);
@@ -234,11 +234,11 @@ public class TestErpMfgSubcontractReverse extends JunitAutoTestCase {
 
     // ---------- helpers ----------
 
-    private String statusOf(Long orderId) {
+    private String statusOf(String orderId) {
         return reload(orderId).getDocStatus();
     }
 
-    private ErpMfgSubcontractOrder reload(Long orderId) {
+    private ErpMfgSubcontractOrder reload(String orderId) {
         return daoProvider.daoFor(ErpMfgSubcontractOrder.class).getEntityById(orderId);
     }
 
@@ -285,7 +285,7 @@ public class TestErpMfgSubcontractReverse extends JunitAutoTestCase {
         dao.saveEntity(subject);
     }
 
-    private void seedMaterial(Long id, String costMethod) {
+    private void seedMaterial(String id, String costMethod) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMdMaterial> dao = daoProvider.daoFor(ErpMdMaterial.class);
             ErpMdMaterial m = new ErpMdMaterial();
@@ -300,7 +300,7 @@ public class TestErpMfgSubcontractReverse extends JunitAutoTestCase {
         });
     }
 
-    private void generateIncoming(Long materialId, String billCode, BigDecimal qty, BigDecimal unitCost) {
+    private void generateIncoming(String materialId, String billCode, BigDecimal qty, BigDecimal unitCost) {
         Map<String, Object> req = new LinkedHashMap<>();
         req.put("moveType", MOVE_TYPE_INCOMING);
         req.put("orgId", ORG_ID);
@@ -320,8 +320,8 @@ public class TestErpMfgSubcontractReverse extends JunitAutoTestCase {
         rpcOk(mutation, "ErpInvStockMove__generateMove", Map.of("request", req));
     }
 
-    private Long seedSubcontractOrder(String code, BigDecimal processingFee) {
-        Long id = 8700L + (long) Math.abs(code.hashCode() % 500);
+    private String seedSubcontractOrder(String code, BigDecimal processingFee) {
+        String id = String.valueOf(8700L + (long) Math.abs(code.hashCode() % 500));
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMfgSubcontractOrder> dao = daoProvider.daoFor(ErpMfgSubcontractOrder.class);
             ErpMfgSubcontractOrder order = new ErpMfgSubcontractOrder();
@@ -343,7 +343,7 @@ public class TestErpMfgSubcontractReverse extends JunitAutoTestCase {
         return id;
     }
 
-    private void seedSubcontractLine(Long id, Long orderId, Long materialId, BigDecimal qty) {
+    private void seedSubcontractLine(String id, String orderId, String materialId, BigDecimal qty) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMfgSubcontractOrderLine> dao = daoProvider.daoFor(ErpMfgSubcontractOrderLine.class);
             ErpMfgSubcontractOrderLine line = new ErpMfgSubcontractOrderLine();
@@ -382,7 +382,7 @@ public class TestErpMfgSubcontractReverse extends JunitAutoTestCase {
         return null;
     }
 
-    private ErpFinVoucherBillR findBillR(Long voucherId, String billHeadCode, ErpFinBusinessType type) {
+    private ErpFinVoucherBillR findBillR(String voucherId, String billHeadCode, ErpFinBusinessType type) {
         IEntityDao<ErpFinVoucherBillR> dao = daoProvider.daoFor(ErpFinVoucherBillR.class);
         QueryBean q = new QueryBean();
         q.addFilter(and(eq("voucherId", voucherId),
@@ -392,7 +392,7 @@ public class TestErpMfgSubcontractReverse extends JunitAutoTestCase {
     }
 
     /** 直接构造已过账凭证 + 业财回链（绕过过账引擎，模拟"已存在过账结果"的最小前置态）。 */
-    private Long seedPostedVoucherFor(String billHeadCode, ErpFinBusinessType businessType, BigDecimal total) {
+    private String seedPostedVoucherFor(String billHeadCode, ErpFinBusinessType businessType, BigDecimal total) {
         IEntityDao<ErpFinVoucher> vDao = daoProvider.daoFor(ErpFinVoucher.class);
         IEntityDao<ErpFinVoucherBillR> billRDao = daoProvider.daoFor(ErpFinVoucherBillR.class);
         IEntityDao<ErpFinAccountingPeriod> periodDao = daoProvider.daoFor(ErpFinAccountingPeriod.class);

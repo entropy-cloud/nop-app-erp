@@ -54,11 +54,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         testBeansFile = "/erp/mfg/beans/test-aps-load-source.beans.xml")
 public class TestErpMfgJobCardDowntimeGate extends JunitAutoTestCase {
 
-    static final Long UOM_ID = 5101L;
-    static final Long P = 7001L;          // 产成品
-    static final Long WC1 = 7002L;        // 工作中心1（停机）
-    static final Long WC2 = 7003L;        // 工作中心2（健康）
-    static final Long MNT_EQUIPMENT_ID = 7901L;
+    static final String UOM_ID = "5101";
+    static final String P = "7001";          // 产成品
+    static final String WC1 = "7002";        // 工作中心1（停机）
+    static final String WC2 = "7003";        // 工作中心2（健康）
+    static final String MNT_EQUIPMENT_ID = "7901";
     static final Long OP_ORDER_BASE = 7800L;
 
     @Inject
@@ -72,8 +72,8 @@ public class TestErpMfgJobCardDowntimeGate extends JunitAutoTestCase {
 
     private final AtomicLong idSeq = new AtomicLong(700000L);
 
-    private Long nextId() {
-        return idSeq.incrementAndGet();
+    private String nextId() {
+        return String.valueOf(idSeq.incrementAndGet());
     }
 
     @BeforeEach
@@ -85,8 +85,8 @@ public class TestErpMfgJobCardDowntimeGate extends JunitAutoTestCase {
 
     @Test
     public void testOpenDowntimePausesWorkOrderOnWorkcenter() {
-        Long woPaused = seedWorkOrder("WO-DT-PAUSED", ErpMfgConstants.WORK_ORDER_STATUS_NOT_STARTED, bd("2"));
-        Long woHealthy = seedWorkOrder("WO-DT-HEALTHY", ErpMfgConstants.WORK_ORDER_STATUS_NOT_STARTED, bd("3"));
+        String woPaused = seedWorkOrder("WO-DT-PAUSED", ErpMfgConstants.WORK_ORDER_STATUS_NOT_STARTED, bd("2"));
+        String woHealthy = seedWorkOrder("WO-DT-HEALTHY", ErpMfgConstants.WORK_ORDER_STATUS_NOT_STARTED, bd("3"));
         apsStub.putSlots(woPaused, slotsOn(woPaused, WC1, 2));
         apsStub.putSlots(woHealthy, slotsOn(woHealthy, WC2, 1));
         seedOpenDowntimeOnWorkcenter(WC1);
@@ -105,9 +105,9 @@ public class TestErpMfgJobCardDowntimeGate extends JunitAutoTestCase {
 
     @Test
     public void testDowntimeCompleteRecoversGeneration() {
-        Long woId = seedWorkOrder("WO-DT-RECOVER", ErpMfgConstants.WORK_ORDER_STATUS_NOT_STARTED, bd("1"));
+        String woId = seedWorkOrder("WO-DT-RECOVER", ErpMfgConstants.WORK_ORDER_STATUS_NOT_STARTED, bd("1"));
         apsStub.putSlots(woId, slotsOn(woId, WC1, 2));
-        Long downtimeId = seedOpenDowntimeOnWorkcenter(WC1);
+        String downtimeId = seedOpenDowntimeOnWorkcenter(WC1);
 
         rpcOk(mutation, "ErpMfgWorkOrder__generateJobCardsFromSchedule", Map.of("workOrderId", woId));
         assertEquals(0, findJobCards(woId).size(), "停机期不建卡");
@@ -136,8 +136,8 @@ public class TestErpMfgJobCardDowntimeGate extends JunitAutoTestCase {
     // ---------- helpers ----------
 
     /** 开放停机窗口：设备 DOWN + workcenterId 映射 + endTime null 停机记录。返回 downtimeId。 */
-    private Long seedOpenDowntimeOnWorkcenter(Long workcenterId) {
-        Long downtimeId = nextId();
+    private String seedOpenDowntimeOnWorkcenter(String workcenterId) {
+        String downtimeId = nextId();
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMntEquipment> equipmentDao = daoProvider.daoFor(ErpMntEquipment.class);
             ErpMntEquipment equipment = new ErpMntEquipment();
@@ -159,12 +159,12 @@ public class TestErpMfgJobCardDowntimeGate extends JunitAutoTestCase {
         return downtimeId;
     }
 
-    private List<ApsLoadSlot> slotsOn(Long woId, Long workcenterId, int count) {
+    private List<ApsLoadSlot> slotsOn(String woId, String workcenterId, int count) {
         LocalDateTime base = LocalDateTime.of(2026, 8, 19, 8, 0);
         java.util.ArrayList<ApsLoadSlot> list = new java.util.ArrayList<>(count);
         for (int i = 0; i < count; i++) {
             ApsLoadSlot s = new ApsLoadSlot();
-            s.setOperationOrderId(OP_ORDER_BASE + i);
+            s.setOperationOrderId(String.valueOf(OP_ORDER_BASE + i));
             s.setWorkOrderId(woId);
             s.setSequence(i + 1);
             s.setWorkcenterId(workcenterId);
@@ -176,14 +176,14 @@ public class TestErpMfgJobCardDowntimeGate extends JunitAutoTestCase {
         return list;
     }
 
-    private List<ErpMfgJobCard> findJobCards(Long woId) {
+    private List<ErpMfgJobCard> findJobCards(String woId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("workOrderId", woId));
         return daoProvider.daoFor(ErpMfgJobCard.class).findAllByQuery(q);
     }
 
-    private Long seedWorkOrder(String code, String docStatus, BigDecimal plannedQty) {
-        Long id = 8600L + (long) Math.abs(code.hashCode() % 500);
+    private String seedWorkOrder(String code, String docStatus, BigDecimal plannedQty) {
+        String id = String.valueOf(8600L + (long) Math.abs(code.hashCode() % 500));
         ormTemplate.runInSession(() -> {
             seedMaterial(P);
             IEntityDao<ErpMfgWorkOrder> dao = daoProvider.daoFor(ErpMfgWorkOrder.class);
@@ -199,7 +199,7 @@ public class TestErpMfgJobCardDowntimeGate extends JunitAutoTestCase {
         return id;
     }
 
-    private void seedMaterial(Long id) {
+    private void seedMaterial(String id) {
         IEntityDao<ErpMdMaterial> dao = daoProvider.daoFor(ErpMdMaterial.class);
         if (dao.getEntityById(id) != null) {
             return;

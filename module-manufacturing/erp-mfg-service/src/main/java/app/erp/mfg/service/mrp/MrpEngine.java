@@ -76,7 +76,7 @@ public class MrpEngine {
      *
      * @param demands 已整合的独立需求行（由 {@link DemandAggregator#aggregate} 产出，直接传入避免同事务查询可见性问题）
      */
-    public void runMrp(Long planId, List<ErpMfgMrpDemand> demands) {
+    public void runMrp(String planId, List<ErpMfgMrpDemand> demands) {
         ErpMfgMrpPlan plan = requirePlan(planId);
         try {
             stateMachine.assertCanRun(plan.getStatus());
@@ -103,8 +103,8 @@ public class MrpEngine {
         daoProvider.daoFor(ErpMfgMrpPlan.class).updateEntity(plan);
     }
 
-    private void processMaterial(ErpMfgMrpPlan plan, Long materialId, BigDecimal grossQty, Long uoMId,
-                                 LocalDate requirementDate, Long parentLineId, Set<Long> path,
+    private void processMaterial(ErpMfgMrpPlan plan, String materialId, BigDecimal grossQty, String uoMId,
+                                 LocalDate requirementDate, String parentLineId, Set<String> path,
                                  IEntityDao<ErpMfgMrpPlanLine> lineDao, int[] lineNo) {
         if (materialId == null || grossQty == null || grossQty.signum() <= 0) {
             return;
@@ -174,7 +174,7 @@ public class MrpEngine {
         return multiples.multiply(lot);
     }
 
-    private long mfgLeadDays(Long bomId) {
+    private long mfgLeadDays(String bomId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("bomId", bomId));
         List<ErpMfgBomOperation> ops = daoProvider.daoFor(ErpMfgBomOperation.class).findAllByQuery(q);
@@ -192,7 +192,7 @@ public class MrpEngine {
         return Math.max(0L, (long) Math.ceil(days));
     }
 
-    private long purLeadDays(Long materialId) {
+    private long purLeadDays(String materialId) {
         ErpMdMaterial material = daoProvider.daoFor(ErpMdMaterial.class).getEntityById(materialId);
         if (material == null || material.getLeadTimeDays() == null) {
             return 0L;
@@ -200,7 +200,7 @@ public class MrpEngine {
         return Math.max(0L, material.getLeadTimeDays());
     }
 
-    private Long resolveUoM(Long uoMId, Long materialId) {
+    private String resolveUoM(String uoMId, String materialId) {
         if (uoMId != null) {
             return uoMId;
         }
@@ -208,7 +208,7 @@ public class MrpEngine {
         return material != null ? material.getUoMId() : null;
     }
 
-    private BigDecimal availableQuantity(Long materialId, Long orgId) {
+    private BigDecimal availableQuantity(String materialId, String orgId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("materialId", materialId));
         if (orgId != null) {
@@ -227,7 +227,7 @@ public class MrpEngine {
     }
 
     private List<TopDemand> topDemandsByMaterial(List<ErpMfgMrpDemand> demands) {
-        java.util.Map<Long, TopDemand> byMaterial = new java.util.LinkedHashMap<>();
+        java.util.Map<String, TopDemand> byMaterial = new java.util.LinkedHashMap<>();
         for (ErpMfgMrpDemand d : demands) {
             if (d.getMaterialId() == null) {
                 continue;
@@ -244,7 +244,7 @@ public class MrpEngine {
         return new java.util.ArrayList<>(byMaterial.values());
     }
 
-    private void clearLines(IEntityDao<ErpMfgMrpPlanLine> dao, Long planId) {
+    private void clearLines(IEntityDao<ErpMfgMrpPlanLine> dao, String planId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("mrpPlanId", planId));
         List<ErpMfgMrpPlanLine> lines = dao.findAllByQuery(q);
@@ -253,7 +253,7 @@ public class MrpEngine {
         }
     }
 
-    private ErpMfgMrpPlan requirePlan(Long planId) {
+    private ErpMfgMrpPlan requirePlan(String planId) {
         if (planId == null) {
             throw new NopException(ErpMfgErrors.ERR_MRP_PLAN_NOT_FOUND).param(ErpMfgErrors.ARG_MRP_PLAN_ID, planId);
         }
@@ -269,12 +269,12 @@ public class MrpEngine {
     }
 
     private static class TopDemand {
-        final Long materialId;
+        final String materialId;
         BigDecimal gross = BigDecimal.ZERO;
-        Long uoMId;
+        String uoMId;
         LocalDate requirementDate;
 
-        TopDemand(Long materialId) {
+        TopDemand(String materialId) {
             this.materialId = materialId;
         }
     }

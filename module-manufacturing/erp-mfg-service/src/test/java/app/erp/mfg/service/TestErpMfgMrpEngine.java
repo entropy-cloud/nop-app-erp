@@ -48,20 +48,20 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpMfgMrpEngine extends JunitAutoTestCase {
 
-    static final Long ORG_ID = 7401L;
-    static final Long UOM_ID = 7501L;
-    static final Long CUSTOMER_ID = 7601L;
-    static final Long CURRENCY_ID = 7701L;
-    static final Long WAREHOUSE_ID = 7801L;
+    static final String ORG_ID = "7401";
+    static final String UOM_ID = "7501";
+    static final String CUSTOMER_ID = "7601";
+    static final String CURRENCY_ID = "7701";
+    static final String WAREHOUSE_ID = "7801";
 
-    static final Long P = 7101L;   // 产成品（制造件）
-    static final Long M1 = 7102L;  // 采购件（P 的子件）
-    static final Long M2 = 7103L;  // 采购件（安全库存补货）
-    static final Long M3 = 7104L;  // 采购件（lot sizing / 提前期）
-    static final Long M4 = 7105L;  // 采购件（负净需求归零）
-    static final Long A = 7106L;   // 制造件（多级 pegging 链顶层）
-    static final Long B = 7107L;   // 制造件（多级 pegging 中层）
-    static final Long C = 7108L;   // 采购件（多级 pegging 底层）
+    static final String P = "7101";   // 产成品（制造件）
+    static final String M1 = "7102";  // 采购件（P 的子件）
+    static final String M2 = "7103";  // 采购件（安全库存补货）
+    static final String M3 = "7104";  // 采购件（lot sizing / 提前期）
+    static final String M4 = "7105";  // 采购件（负净需求归零）
+    static final String A = "7106";   // 制造件（多级 pegging 链顶层）
+    static final String B = "7107";   // 制造件（多级 pegging 中层）
+    static final String C = "7108";   // 采购件（多级 pegging 底层）
 
     @Inject
     IDaoProvider daoProvider;
@@ -75,11 +75,11 @@ public class TestErpMfgMrpEngine extends JunitAutoTestCase {
         seedMaterial(P, null, null);
         seedMaterial(M1, 5, null);   // leadTimeDays=5
         seedMaterial(M2, null, bd("8"));  // safetyStock=8
-        seedBom(8101L, P, M1, bd("2"));   // P 需要 2×M1，无工序 → mfg 提前期 0
+        seedBom("8101", P, M1, bd("2"));   // P 需要 2×M1，无工序 → mfg 提前期 0
         seedBalance(M2, bd("3"));         // M2 可用 3 < 安全库存 8 → 补货 5
         seedSalesOrder("SO-MRP-1", P, bd("10"), LocalDate.of(2026, 7, 15));  // P 未交 10
 
-        Long planId = seedPlan("MRP-1");
+        String planId = seedPlan("MRP-1");
         seedManualDemand(planId, M1, bd("3"), LocalDate.of(2026, 7, 15));  // 手工 M1 需求 3
 
         runMrpOk(planId);
@@ -131,7 +131,7 @@ public class TestErpMfgMrpEngine extends JunitAutoTestCase {
     public void testLotSizingAndLeadTimeOffset() {
         // lot-for-lot（默认）：净需求即建议量
         seedMaterial(M3, 7, null);
-        Long planId = seedPlan("MRP-LOT");
+        String planId = seedPlan("MRP-LOT");
         seedManualDemand(planId, M3, bd("12"), LocalDate.of(2026, 7, 20));
         runMrpOk(planId);
 
@@ -142,7 +142,7 @@ public class TestErpMfgMrpEngine extends JunitAutoTestCase {
         // 固定批量取整：default-lot-size=10 → planned=ceil(12/10)*10=20
         setConfig(ErpMfgConstants.CONFIG_MRP_DEFAULT_LOT_SIZE, "10");
         try {
-            Long plan2 = seedPlan("MRP-LOT2");
+            String plan2 = seedPlan("MRP-LOT2");
             seedManualDemand(plan2, M3, bd("12"), LocalDate.of(2026, 7, 20));
             runMrpOk(plan2);
             ErpMfgMrpPlanLine line2 = findLine(linesOf(plan2), M3, null);
@@ -157,7 +157,7 @@ public class TestErpMfgMrpEngine extends JunitAutoTestCase {
     public void testNegativeNetClampedToZero() {
         seedMaterial(M4, null, null);
         seedBalance(M4, bd("10"));  // 库存 10
-        Long planId = seedPlan("MRP-ZERO");
+        String planId = seedPlan("MRP-ZERO");
         seedManualDemand(planId, M4, bd("4"), LocalDate.of(2026, 7, 20));  // 需求 4 < 库存 10
         runMrpOk(planId);
 
@@ -173,9 +173,9 @@ public class TestErpMfgMrpEngine extends JunitAutoTestCase {
         seedMaterial(A, null, null);
         seedMaterial(B, null, null);
         seedMaterial(C, null, null);
-        seedBom(8201L, A, B, bd("1"));   // A→B（1:1）
-        seedBom(8202L, B, C, bd("1"));   // B→C（1:1）
-        Long planId = seedPlan("MRP-PEG");
+        seedBom("8201", A, B, bd("1"));   // A→B（1:1）
+        seedBom("8202", B, C, bd("1"));   // B→C（1:1）
+        String planId = seedPlan("MRP-PEG");
         seedManualDemand(planId, A, bd("1"), LocalDate.of(2026, 7, 15));
         runMrpOk(planId);
 
@@ -197,7 +197,7 @@ public class TestErpMfgMrpEngine extends JunitAutoTestCase {
     @Test
     public void testRunMrpRejectsNonDraftPlan() {
         seedMaterial(M3, null, null);
-        Long planId = seedPlan("MRP-STATUS");
+        String planId = seedPlan("MRP-STATUS");
         // 先跑一次 → COMPLETED
         seedManualDemand(planId, M3, bd("1"), LocalDate.of(2026, 7, 20));
         runMrpOk(planId);
@@ -223,7 +223,7 @@ public class TestErpMfgMrpEngine extends JunitAutoTestCase {
     public void testScheduledReceiptAlwaysZeroBaseline() {
         seedMaterial(M3, null, null);
         seedBalance(M3, bd("2"));
-        Long planId = seedPlan("MRP-SCHED");
+        String planId = seedPlan("MRP-SCHED");
         seedManualDemand(planId, M3, bd("10"), LocalDate.of(2026, 7, 20));
 
         runMrpOk(planId);
@@ -240,7 +240,7 @@ public class TestErpMfgMrpEngine extends JunitAutoTestCase {
 
     // ---------- helpers ----------
 
-    private void runMrpOk(Long planId) {
+    private void runMrpOk(String planId) {
         Map<String, Object> args = new LinkedHashMap<>();
         args.put("planId", planId);
         IGraphQLExecutionContext ctx = graphQLEngine.newRpcContext(mutation, "ErpMfgMrpPlan__runMrp", ApiRequest.build(args));
@@ -248,7 +248,7 @@ public class TestErpMfgMrpEngine extends JunitAutoTestCase {
         assertEquals(0, resp.getStatus(), "runMrp 应成功: " + resp);
     }
 
-    private BigDecimal sumDemand(Long planId, Long materialId, String demandSource) {
+    private BigDecimal sumDemand(String planId, String materialId, String demandSource) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("mrpPlanId", planId));
         q.addFilter(eq("materialId", materialId));
@@ -261,14 +261,14 @@ public class TestErpMfgMrpEngine extends JunitAutoTestCase {
         return sum;
     }
 
-    private List<ErpMfgMrpPlanLine> linesOf(Long planId) {
+    private List<ErpMfgMrpPlanLine> linesOf(String planId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("mrpPlanId", planId));
         q.addOrderField("lineNo", false);
         return daoProvider.daoFor(ErpMfgMrpPlanLine.class).findAllByQuery(q);
     }
 
-    private ErpMfgMrpPlanLine findLine(List<ErpMfgMrpPlanLine> lines, Long materialId, Long parentLineId) {
+    private ErpMfgMrpPlanLine findLine(List<ErpMfgMrpPlanLine> lines, String materialId, String parentLineId) {
         ErpMfgMrpPlanLine fallback = null;
         for (ErpMfgMrpPlanLine l : lines) {
             if (materialId.equals(l.getMaterialId())) {
@@ -287,8 +287,8 @@ public class TestErpMfgMrpEngine extends JunitAutoTestCase {
         return fallback;
     }
 
-    private Long seedPlan(String code) {
-        Long id = 7001L + (long) Math.abs(code.hashCode() % 600);
+    private String seedPlan(String code) {
+        String id = String.valueOf(7001L + (long) Math.abs(code.hashCode() % 600));
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMfgMrpPlan> dao = daoProvider.daoFor(ErpMfgMrpPlan.class);
             ErpMfgMrpPlan plan = new ErpMfgMrpPlan();
@@ -303,11 +303,11 @@ public class TestErpMfgMrpEngine extends JunitAutoTestCase {
         return id;
     }
 
-    private void seedManualDemand(Long planId, Long materialId, BigDecimal qty, LocalDate reqDate) {
+    private void seedManualDemand(String planId, String materialId, BigDecimal qty, LocalDate reqDate) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMfgMrpDemand> dao = daoProvider.daoFor(ErpMfgMrpDemand.class);
             ErpMfgMrpDemand d = new ErpMfgMrpDemand();
-            d.orm_propValueByName("id", 9000L + (long) Math.abs((planId + "" + materialId).hashCode() % 500));
+            d.orm_propValueByName("id", String.valueOf(9000L + (long) Math.abs((planId + materialId).hashCode() % 500)));
             d.setMrpPlanId(planId);
             d.setLineNo(10);
             d.setMaterialId(materialId);
@@ -321,16 +321,18 @@ public class TestErpMfgMrpEngine extends JunitAutoTestCase {
         });
     }
 
-    private void seedSalesOrder(String code, Long materialId, BigDecimal qty, LocalDate deliveryDate) {
+    private void seedSalesOrder(String code, String materialId, BigDecimal qty, LocalDate deliveryDate) {
         Long orderId = 7300L + (long) Math.abs(code.hashCode() % 600);
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpSalOrder> odao = daoProvider.daoFor(ErpSalOrder.class);
             ErpSalOrder o = new ErpSalOrder();
             o.orm_propValueByName("id", orderId);
             o.setCode(code);
-            o.setOrgId(ORG_ID);
-            o.setCustomerId(CUSTOMER_ID);
-            o.setCurrencyId(CURRENCY_ID);
+            // A3 桥接（bridge-test-127，M0.2 登记册）：sal ErpSalOrder/OrderLine id 列仍 Long（sal 位次 16 未迁移），
+            // md/mfg String id → ConvertHelper.toLong 种子桥，退役 owner M2.6
+            o.setOrgId(io.nop.api.core.convert.ConvertHelper.toLong(ORG_ID));
+            o.setCustomerId(io.nop.api.core.convert.ConvertHelper.toLong(CUSTOMER_ID));
+            o.setCurrencyId(io.nop.api.core.convert.ConvertHelper.toLong(CURRENCY_ID));
             o.setBusinessDate(LocalDate.of(2026, 7, 1));
             o.setDeliveryDate(deliveryDate);
             o.setDocStatus("ACTIVE");
@@ -342,8 +344,8 @@ public class TestErpMfgMrpEngine extends JunitAutoTestCase {
             line.orm_propValueByName("id", orderId + 50000);
             line.setOrderId(orderId);
             line.setLineNo(10);
-            line.setMaterialId(materialId);
-            line.setUoMId(UOM_ID);
+            line.setMaterialId(io.nop.api.core.convert.ConvertHelper.toLong(materialId));
+            line.setUoMId(io.nop.api.core.convert.ConvertHelper.toLong(UOM_ID));
             line.setQuantity(qty);
             line.setUnitPrice(bd("1"));
             line.setAmount(qty);
@@ -352,11 +354,11 @@ public class TestErpMfgMrpEngine extends JunitAutoTestCase {
         });
     }
 
-    private void seedBalance(Long materialId, BigDecimal available) {
+    private void seedBalance(String materialId, BigDecimal available) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpInvStockBalance> dao = daoProvider.daoFor(ErpInvStockBalance.class);
             ErpInvStockBalance b = new ErpInvStockBalance();
-            b.orm_propValueByName("id", 8000L + materialId);
+            b.orm_propValueByName("id", String.valueOf(8000L + Long.parseLong(materialId)));
             b.setOrgId(ORG_ID);
             b.setMaterialId(materialId);
             b.setWarehouseId(WAREHOUSE_ID);
@@ -366,7 +368,7 @@ public class TestErpMfgMrpEngine extends JunitAutoTestCase {
         });
     }
 
-    private void seedMaterial(Long id, Integer leadTimeDays, BigDecimal safetyStock) {
+    private void seedMaterial(String id, Integer leadTimeDays, BigDecimal safetyStock) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMdMaterial> dao = daoProvider.daoFor(ErpMdMaterial.class);
             ErpMdMaterial m = new ErpMdMaterial();
@@ -386,7 +388,7 @@ public class TestErpMfgMrpEngine extends JunitAutoTestCase {
         });
     }
 
-    private void seedBom(Long bomId, Long productId, Long componentId, BigDecimal qty) {
+    private void seedBom(String bomId, String productId, String componentId, BigDecimal qty) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMfgBom> dao = daoProvider.daoFor(ErpMfgBom.class);
             ErpMfgBom bom = new ErpMfgBom();
@@ -400,7 +402,7 @@ public class TestErpMfgMrpEngine extends JunitAutoTestCase {
             dao.saveEntity(bom);
             IEntityDao<ErpMfgBomLine> ldao = daoProvider.daoFor(ErpMfgBomLine.class);
             ErpMfgBomLine line = new ErpMfgBomLine();
-            line.orm_propValueByName("id", bomId + 50000);
+            line.orm_propValueByName("id", String.valueOf(Long.parseLong(bomId) + 50000));
             line.setBomId(bomId);
             line.setLineNo(10);
             line.setMaterialId(componentId);

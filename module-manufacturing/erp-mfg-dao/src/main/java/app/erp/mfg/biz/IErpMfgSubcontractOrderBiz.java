@@ -32,7 +32,7 @@ public interface IErpMfgSubcontractOrderBiz extends ICrudBiz<ErpMfgSubcontractOr
      * 取消委外单。DRAFT/SUBMITTED/APPROVED→CANCELLED。
      */
     @BizMutation
-    ErpMfgSubcontractOrder cancel(@Name("subcontractOrderId") Long subcontractOrderId, IServiceContext context);
+    ErpMfgSubcontractOrder cancel(@Name("subcontractOrderId") String subcontractOrderId, IServiceContext context);
 
     /**
      * 发料给供应商。APPROVED→ISSUED，生成库存出库移动单（材料成本出库）。
@@ -40,8 +40,8 @@ public interface IErpMfgSubcontractOrderBiz extends ICrudBiz<ErpMfgSubcontractOr
      * @param sourceWarehouseId 发料源仓库（可选，null 时由库存域默认仓库处理）
      */
     @BizMutation
-    ErpMfgSubcontractOrder issueMaterials(@Name("subcontractOrderId") Long subcontractOrderId,
-                                          @io.nop.api.core.annotations.core.Optional @Name("sourceWarehouseId") Long sourceWarehouseId,
+    ErpMfgSubcontractOrder issueMaterials(@Name("subcontractOrderId") String subcontractOrderId,
+                                          @io.nop.api.core.annotations.core.Optional @Name("sourceWarehouseId") String sourceWarehouseId,
                                           IServiceContext context);
 
     /**
@@ -50,9 +50,9 @@ public interface IErpMfgSubcontractOrderBiz extends ICrudBiz<ErpMfgSubcontractOr
      * @param destWarehouseId 收货目标仓库（可选，null 时由库存域默认仓库处理）
      */
     @BizMutation
-    ErpMfgSubcontractOrder receiveFinished(@Name("subcontractOrderId") Long subcontractOrderId,
+    ErpMfgSubcontractOrder receiveFinished(@Name("subcontractOrderId") String subcontractOrderId,
                                            @Name("receivedQty") java.math.BigDecimal receivedQty,
-                                           @io.nop.api.core.annotations.core.Optional @Name("destWarehouseId") Long destWarehouseId,
+                                           @io.nop.api.core.annotations.core.Optional @Name("destWarehouseId") String destWarehouseId,
                                            IServiceContext context);
 
     /**
@@ -60,7 +60,7 @@ public interface IErpMfgSubcontractOrderBiz extends ICrudBiz<ErpMfgSubcontractOr
      * config-gated {@code erp-mfg.subcontract-posting-enabled}（默认 false）。
      */
     @BizMutation
-    ErpMfgSubcontractOrder postProcessingFee(@Name("subcontractOrderId") Long subcontractOrderId, IServiceContext context);
+    ErpMfgSubcontractOrder postProcessingFee(@Name("subcontractOrderId") String subcontractOrderId, IServiceContext context);
 
     /**
      * 红冲完工。COMPLETED→CANCELLED，红冲三段 GL 凭证（SI/SR/SF 经 {@code IErpFinVoucherBiz.reverse}）
@@ -68,5 +68,5 @@ public interface IErpMfgSubcontractOrderBiz extends ICrudBiz<ErpMfgSubcontractOr
      * 仅 COMPLETED 且 posted==true 的委外单可红冲。
      */
     @BizMutation
-    ErpMfgSubcontractOrder reverseCompletion(@Name("subcontractOrderId") Long subcontractOrderId, IServiceContext context);
+    ErpMfgSubcontractOrder reverseCompletion(@Name("subcontractOrderId") String subcontractOrderId, IServiceContext context);
 }

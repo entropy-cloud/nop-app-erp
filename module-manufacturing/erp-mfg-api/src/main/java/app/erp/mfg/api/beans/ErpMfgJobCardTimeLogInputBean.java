@@ -12,44 +12,44 @@
     public class ErpMfgJobCardTimeLogInputBean extends CrudInputBase {
 
     
-        private Long _id;
+        private String _id;
 
     
         @PropMeta(propId=1)
     
-        public Long getId(){
+        public String getId(){
             return _id;
         }
 
-        public void setId(Long value){
+        public void setId(String value){
             this._id = value;
         }
 
 
-        private Long _jobCardId;
+        private String _jobCardId;
 
     
         @PropMeta(propId=2)
     
-        public Long getJobCardId(){
+        public String getJobCardId(){
             return _jobCardId;
         }
 
-        public void setJobCardId(Long value){
+        public void setJobCardId(String value){
             this._jobCardId = value;
         }
 
 
-        private Long _workOrderId;
+        private String _workOrderId;
 
     
         @PropMeta(propId=3)
     
-        public Long getWorkOrderId(){
+        public String getWorkOrderId(){
             return _workOrderId;
         }
 
-        public void setWorkOrderId(Long value){
+        public void setWorkOrderId(String value){
             this._workOrderId = value;
         }
 

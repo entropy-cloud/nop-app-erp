@@ -162,10 +162,10 @@ public class _ErpMfgRoutingOperation extends DynamicOrmEntity{
 
     
     /* ID: ID */
-    private java.lang.Long _id;
+    private java.lang.String _id;
     
     /* 工艺路线ID: ROUTING_ID */
-    private java.lang.Long _routingId;
+    private java.lang.String _routingId;
     
     /* 行号: LINE_NO */
     private java.lang.Integer _lineNo;
@@ -177,7 +177,7 @@ public class _ErpMfgRoutingOperation extends DynamicOrmEntity{
     private java.lang.String _operationName;
     
     /* 工作中心: WORKCENTER_ID */
-    private java.lang.Long _workcenterId;
+    private java.lang.String _workcenterId;
     
     /* 标准工时: STANDARD_TIME */
     private java.math.BigDecimal _standardTime;
@@ -349,9 +349,9 @@ public class _ErpMfgRoutingOperation extends DynamicOrmEntity{
         switch(propId){
         
             case PROP_ID_id:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_id));
                }
                setId(typedValue);
@@ -359,9 +359,9 @@ public class _ErpMfgRoutingOperation extends DynamicOrmEntity{
             }
         
             case PROP_ID_routingId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_routingId));
                }
                setRoutingId(typedValue);
@@ -399,9 +399,9 @@ public class _ErpMfgRoutingOperation extends DynamicOrmEntity{
             }
         
             case PROP_ID_workcenterId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_workcenterId));
                }
                setWorkcenterId(typedValue);
@@ -529,14 +529,14 @@ public class _ErpMfgRoutingOperation extends DynamicOrmEntity{
         
             case PROP_ID_id:{
                onInitProp(propId);
-               this._id = (java.lang.Long)value;
+               this._id = (java.lang.String)value;
                orm_id(); // 如果是设置主键字段，则触发watcher
                break;
             }
         
             case PROP_ID_routingId:{
                onInitProp(propId);
-               this._routingId = (java.lang.Long)value;
+               this._routingId = (java.lang.String)value;
                
                break;
             }
@@ -564,7 +564,7 @@ public class _ErpMfgRoutingOperation extends DynamicOrmEntity{
         
             case PROP_ID_workcenterId:{
                onInitProp(propId);
-               this._workcenterId = (java.lang.Long)value;
+               this._workcenterId = (java.lang.String)value;
                
                break;
             }
@@ -655,7 +655,7 @@ public class _ErpMfgRoutingOperation extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final java.lang.Long getId(){
+    public final java.lang.String getId(){
          onPropGet(PROP_ID_id);
          return _id;
     }
@@ -663,7 +663,7 @@ public class _ErpMfgRoutingOperation extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final void setId(java.lang.Long value){
+    public final void setId(java.lang.String value){
         if(onPropSet(PROP_ID_id,value)){
             this._id = value;
             internalClearRefs(PROP_ID_id);
@@ -674,7 +674,7 @@ public class _ErpMfgRoutingOperation extends DynamicOrmEntity{
     /**
      * 工艺路线ID: ROUTING_ID
      */
-    public final java.lang.Long getRoutingId(){
+    public final java.lang.String getRoutingId(){
          onPropGet(PROP_ID_routingId);
          return _routingId;
     }
@@ -682,7 +682,7 @@ public class _ErpMfgRoutingOperation extends DynamicOrmEntity{
     /**
      * 工艺路线ID: ROUTING_ID
      */
-    public final void setRoutingId(java.lang.Long value){
+    public final void setRoutingId(java.lang.String value){
         if(onPropSet(PROP_ID_routingId,value)){
             this._routingId = value;
             internalClearRefs(PROP_ID_routingId);
@@ -750,7 +750,7 @@ public class _ErpMfgRoutingOperation extends DynamicOrmEntity{
     /**
      * 工作中心: WORKCENTER_ID
      */
-    public final java.lang.Long getWorkcenterId(){
+    public final java.lang.String getWorkcenterId(){
          onPropGet(PROP_ID_workcenterId);
          return _workcenterId;
     }
@@ -758,7 +758,7 @@ public class _ErpMfgRoutingOperation extends DynamicOrmEntity{
     /**
      * 工作中心: WORKCENTER_ID
      */
-    public final void setWorkcenterId(java.lang.Long value){
+    public final void setWorkcenterId(java.lang.String value){
         if(onPropSet(PROP_ID_workcenterId,value)){
             this._workcenterId = value;
             internalClearRefs(PROP_ID_workcenterId);

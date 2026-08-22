@@ -1,9 +1,9 @@
 {
-  "id": 0,
-  "snapshotId": 0,
+  "id": "",
+  "snapshotId": "",
   "lineNo": 0,
-  "operationId": 0,
-  "workcenterId": 0,
+  "operationId": "",
+  "workcenterId": "",
   "standardTime": 0.0,
   "timeUnit": "",
   "rate": 0.0,

@@ -15,6 +15,7 @@ import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.annotations.core.Optional;
 import io.nop.api.core.beans.WebContentBean;
 import io.nop.api.core.beans.query.QueryBean;
+import io.nop.api.core.convert.ConvertHelper;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.commons.concurrent.executor.GlobalExecutors;
 import io.nop.commons.util.StringHelper;
@@ -39,6 +40,7 @@ import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -171,15 +173,15 @@ public class ErpMfgReportBizModel {
         if (data.containsKey(DS_VAR)) return;
         switch (key) {
             case "crp-load-report":
-                data.put(DS_VAR, buildCrpLoadDataset(asLong(data, "workcenterId"),
+                data.put(DS_VAR, buildCrpLoadDataset(asString(data, "workcenterId"),
                         asDate(data, "startDate"), asDate(data, "endDate"), context));
                 break;
             case "production-variance-report":
-                data.put(DS_VAR, buildProductionVarianceDataset(asLong(data, "workOrderId"),
+                data.put(DS_VAR, buildProductionVarianceDataset(asString(data, "workOrderId"),
                         asDate(data, "startDate"), asDate(data, "endDate")));
                 break;
             case "forecast-variance-report":
-                data.put(DS_VAR, buildForecastVarianceDataset(asLong(data, "materialId"),
+                data.put(DS_VAR, buildForecastVarianceDataset(asString(data, "materialId"),
                         asDate(data, "periodStart"), asDate(data, "periodEnd")));
                 break;
             default:
@@ -188,13 +190,13 @@ public class ErpMfgReportBizModel {
         }
     }
 
-    private static Long asLong(Map<String, Object> data, String k) {
+    private static String asString(Map<String, Object> data, String k) {
         if (data == null) return null;
         Object v = data.get(k);
         if (v == null) return null;
         String s = v.toString();
         if (s.trim().isEmpty()) return null;
-        return Long.valueOf(s);
+        return s;
     }
 
     private static LocalDate asDate(Map<String, Object> data, String k) {
@@ -213,7 +215,7 @@ public class ErpMfgReportBizModel {
 
     /** CRP 负荷数据集：工作中心×日期负荷/产能/负荷率/超负荷。口径对齐 {@code manufacturing/crp.md §负载报表}。 */
     @BizQuery
-    public List<Map<String, Object>> crpLoadData(@Optional @Name("workcenterId") Long workcenterId,
+    public List<Map<String, Object>> crpLoadData(@Optional @Name("workcenterId") String workcenterId,
                                                   @Optional @Name("startDate") LocalDate startDate,
                                                   @Optional @Name("endDate") LocalDate endDate,
                                                   IServiceContext context) {
@@ -222,7 +224,7 @@ public class ErpMfgReportBizModel {
 
     /** 生产差异数据集：工单×差异类型/金额/标准成本/实际成本，对齐 1838-2 差异引擎输出。 */
     @BizQuery
-    public List<Map<String, Object>> productionVarianceData(@Optional @Name("workOrderId") Long workOrderId,
+    public List<Map<String, Object>> productionVarianceData(@Optional @Name("workOrderId") String workOrderId,
                                                              @Optional @Name("startDate") LocalDate startDate,
                                                              @Optional @Name("endDate") LocalDate endDate,
                                                              IServiceContext context) {
@@ -231,7 +233,7 @@ public class ErpMfgReportBizModel {
 
     /** 预测差异数据集：预测 vs 实际消耗对比，按物料聚合，对齐 {@code manufacturing/mrp.md} + 0427-1。 */
     @BizQuery
-    public List<Map<String, Object>> forecastVarianceData(@Optional @Name("materialId") Long materialId,
+    public List<Map<String, Object>> forecastVarianceData(@Optional @Name("materialId") String materialId,
                                                            @Optional @Name("periodStart") LocalDate periodStart,
                                                            @Optional @Name("periodEnd") LocalDate periodEnd,
                                                            IServiceContext context) {
@@ -244,9 +246,9 @@ public class ErpMfgReportBizModel {
      * CRP 负荷数据集：委托 {@link IErpMfgCrpLoadBiz#getLoadReport}（复用 1707-1 已审计的负荷/产能/超负荷计算），
      * 区间未指定时从既有 CrpLoad 快照推导 [min,max] loadDate。返回行字段对齐 {@code crp.md §负载报表}。
      */
-    List<Map<String, Object>> buildCrpLoadDataset(Long workcenterId, LocalDate startDate, LocalDate endDate,
+    List<Map<String, Object>> buildCrpLoadDataset(String workcenterId, LocalDate startDate, LocalDate endDate,
                                                   IServiceContext context) {
-        List<Long> wcIds = workcenterId != null ? Collections.singletonList(workcenterId) : null;
+        List<String> wcIds = workcenterId != null ? Collections.singletonList(workcenterId) : null;
         LocalDate from = startDate;
         LocalDate to = endDate;
         if (from == null || to == null) {
@@ -286,7 +288,7 @@ public class ErpMfgReportBizModel {
      * 生产差异数据集：从 {@link ErpMfgCostVariance}（1838-2 产物）按 工单×差异类型 聚合
      * standardAmount/actualAmount/varianceAmount，对齐 {@code manufacturing/state-machine.md}。
      */
-    List<Map<String, Object>> buildProductionVarianceDataset(Long workOrderId, LocalDate startDate, LocalDate endDate) {
+    List<Map<String, Object>> buildProductionVarianceDataset(String workOrderId, LocalDate startDate, LocalDate endDate) {
         return ormTemplate.runInSession(session -> {
             List<ErpMfgCostVariance> lines = loadVarianceLines(workOrderId, startDate, endDate);
             List<Map<String, Object>> rows = new ArrayList<>(lines.size());
@@ -311,16 +313,16 @@ public class ErpMfgReportBizModel {
      * vs 实际消耗（{@link ErpMfgWorkOrder} 完工数量），按物料聚合 forecastQty/actualQty/variance/varianceRatio，
      * 对齐 {@code manufacturing/mrp.md} + 0427-1。
      */
-    List<Map<String, Object>> buildForecastVarianceDataset(Long materialId, LocalDate periodStart, LocalDate periodEnd) {
+    List<Map<String, Object>> buildForecastVarianceDataset(String materialId, LocalDate periodStart, LocalDate periodEnd) {
         return ormTemplate.runInSession(session -> {
-            Map<Long, BigDecimal> forecastByMat = aggregateForecastQty(materialId, periodStart, periodEnd);
-            Map<Long, BigDecimal> actualByMat = aggregateActualQty(materialId, periodStart, periodEnd);
-            Set<Long> materials = new HashSet<>(forecastByMat.keySet());
+            Map<String, BigDecimal> forecastByMat = aggregateForecastQty(materialId, periodStart, periodEnd);
+            Map<String, BigDecimal> actualByMat = aggregateActualQty(materialId, periodStart, periodEnd);
+            Set<String> materials = new HashSet<>(forecastByMat.keySet());
             materials.addAll(actualByMat.keySet());
-            List<Long> sorted = new ArrayList<>(materials);
-            Collections.sort(sorted);
+            List<String> sorted = new ArrayList<>(materials);
+            sorted.sort(Comparator.comparing(ConvertHelper::toLong, Comparator.nullsFirst(Comparator.naturalOrder())));
             List<Map<String, Object>> rows = new ArrayList<>(sorted.size());
-            for (Long matId : sorted) {
+            for (String matId : sorted) {
                 BigDecimal forecastQty = nz(forecastByMat.get(matId));
                 BigDecimal actualQty = nz(actualByMat.get(matId));
                 BigDecimal variance = actualQty.subtract(forecastQty);
@@ -341,7 +343,7 @@ public class ErpMfgReportBizModel {
 
     // ===================== helpers =====================
 
-    private LocalDate[] deriveCrpWindow(Long workcenterId) {
+    private LocalDate[] deriveCrpWindow(String workcenterId) {
         // 类 D 裁决：CRP 负荷报表窗口推导需明细 min/max(loadDate)，带硬上限的受限扫描
         IEntityDao<ErpMfgCrpLoad> dao = daoProvider.daoFor(ErpMfgCrpLoad.class);
         QueryBean q = new QueryBean();
@@ -363,7 +365,7 @@ public class ErpMfgReportBizModel {
         return new LocalDate[]{min, max};
     }
 
-    private List<ErpMfgCostVariance> loadVarianceLines(Long workOrderId, LocalDate startDate, LocalDate endDate) {
+    private List<ErpMfgCostVariance> loadVarianceLines(String workOrderId, LocalDate startDate, LocalDate endDate) {
         IEntityDao<ErpMfgCostVariance> dao = daoProvider.daoFor(ErpMfgCostVariance.class);
         QueryBean q = new QueryBean();
         if (workOrderId != null) q.addFilter(eq("workOrderId", workOrderId));
@@ -379,16 +381,16 @@ public class ErpMfgReportBizModel {
         return wo != null ? wo.getCode() : null;
     }
 
-    private Map<Long, BigDecimal> aggregateForecastQty(Long materialId, LocalDate periodStart, LocalDate periodEnd) {
+    private Map<String, BigDecimal> aggregateForecastQty(String materialId, LocalDate periodStart, LocalDate periodEnd) {
         List<ErpMfgForecast> forecasts = loadApprovedForecasts();
         if (forecasts.isEmpty()) return Collections.emptyMap();
-        Set<Long> headIds = new HashSet<>();
+        Set<String> headIds = new HashSet<>();
         for (ErpMfgForecast f : forecasts) headIds.add(f.getId());
         QueryBean q = new QueryBean();
         q.addFilter(in("forecastId", headIds));
         if (materialId != null) q.addFilter(eq("materialId", materialId));
         List<ErpMfgForecastLine> lines = daoProvider.daoFor(ErpMfgForecastLine.class).findAllByQuery(q);
-        Map<Long, BigDecimal> map = new HashMap<>();
+        Map<String, BigDecimal> map = new HashMap<>();
         for (ErpMfgForecastLine l : lines) {
             if (!periodOverlaps(l.getPeriodStart(), l.getPeriodEnd(), periodStart, periodEnd)) continue;
             BigDecimal qty = nz(l.getForecastQty());
@@ -404,17 +406,17 @@ public class ErpMfgReportBizModel {
         return daoProvider.daoFor(ErpMfgForecast.class).findAllByQuery(q);
     }
 
-    private Map<Long, BigDecimal> aggregateActualQty(Long materialId, LocalDate periodStart, LocalDate periodEnd) {
+    private Map<String, BigDecimal> aggregateActualQty(String materialId, LocalDate periodStart, LocalDate periodEnd) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("docStatus", ErpMfgConstants.WORK_ORDER_STATUS_COMPLETED));
         if (materialId != null) q.addFilter(eq("productId", materialId));
         List<ErpMfgWorkOrder> orders = daoProvider.daoFor(ErpMfgWorkOrder.class).findAllByQuery(q);
-        Map<Long, BigDecimal> map = new HashMap<>();
+        Map<String, BigDecimal> map = new HashMap<>();
         for (ErpMfgWorkOrder wo : orders) {
             if (!periodOverlaps(wo.getPlannedStartDate(), wo.getPlannedEndDate(), periodStart, periodEnd)) continue;
             BigDecimal qty = nz(wo.getCompletedQuantity());
             if (qty.signum() == 0) continue;
-            Long prodId = wo.getProductId();
+            String prodId = wo.getProductId();
             if (prodId == null) continue;
             map.merge(prodId, qty, BigDecimal::add);
         }

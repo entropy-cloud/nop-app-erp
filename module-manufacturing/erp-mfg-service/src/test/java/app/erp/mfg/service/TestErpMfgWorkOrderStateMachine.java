@@ -49,11 +49,11 @@ public class TestErpMfgWorkOrderStateMachine extends JunitAutoTestCase {
     @RegisterExtension
     static MfgFrozenClockExtension frozenClock = new MfgFrozenClockExtension();
 
-    static final Long UOM_ID = 5101L;
-    static final Long WAREHOUSE_ID = 3001L;
-    static final Long P = 1001L;   // 产成品
-    static final Long M1 = 1002L;  // 子件
-    static final Long M2 = 1003L;  // 子件
+    static final String UOM_ID = "5101";
+    static final String WAREHOUSE_ID = "3001";
+    static final String P = "1001";   // 产成品
+    static final String M1 = "1002";  // 子件
+    static final String M2 = "1003";  // 子件
 
     @Inject
     IDaoProvider daoProvider;
@@ -65,12 +65,12 @@ public class TestErpMfgWorkOrderStateMachine extends JunitAutoTestCase {
     @Test
     public void testHappyPathFullLifecycle() {
         seedComponentBomAndStock(bd("5"), bd("5"));   // M1=5, M2=5 充足
-        Long woId = seedWorkOrder("WO-HAPPY");
+        String woId = seedWorkOrder("WO-HAPPY");
 
         assertEquals(ErpMfgConstants.WORK_ORDER_STATUS_DRAFT, statusOf(woId));
-        rpcOk(mutation, "ErpMfgWorkOrder__submitForApproval", Map.of("id", String.valueOf(woId)));
+        rpcOk(mutation, "ErpMfgWorkOrder__submitForApproval", Map.of("id", woId));
         assertEquals(ErpMfgConstants.WORK_ORDER_STATUS_SUBMITTED, statusOf(woId));
-        rpcOk(mutation, "ErpMfgWorkOrder__approve", Map.of("id", String.valueOf(woId)));
+        rpcOk(mutation, "ErpMfgWorkOrder__approve", Map.of("id", woId));
         assertEquals(ErpMfgConstants.WORK_ORDER_STATUS_NOT_STARTED, statusOf(woId));
         rpcOk(mutation, "ErpMfgWorkOrder__checkAvailability", Map.of("workOrderId", woId));
         assertEquals(ErpMfgConstants.WORK_ORDER_STATUS_STOCK_RESERVED, statusOf(woId));
@@ -88,10 +88,10 @@ public class TestErpMfgWorkOrderStateMachine extends JunitAutoTestCase {
     @Test
     public void testKitCheckFullAvailableGoesStockReserved() {
         seedComponentBomAndStock(bd("5"), bd("3"));   // 需 M1=2, M2=3，充足
-        Long woId = seedWorkOrder("WO-FULL");
+        String woId = seedWorkOrder("WO-FULL");
 
-        rpcOk(mutation, "ErpMfgWorkOrder__submitForApproval", Map.of("id", String.valueOf(woId)));
-        rpcOk(mutation, "ErpMfgWorkOrder__approve", Map.of("id", String.valueOf(woId)));
+        rpcOk(mutation, "ErpMfgWorkOrder__submitForApproval", Map.of("id", woId));
+        rpcOk(mutation, "ErpMfgWorkOrder__approve", Map.of("id", woId));
         rpcOk(mutation, "ErpMfgWorkOrder__checkAvailability", Map.of("workOrderId", woId));
         assertEquals(ErpMfgConstants.WORK_ORDER_STATUS_STOCK_RESERVED, statusOf(woId),
                 "全齐套 → STOCK_RESERVED");
@@ -100,10 +100,10 @@ public class TestErpMfgWorkOrderStateMachine extends JunitAutoTestCase {
     @Test
     public void testKitCheckPartialGoesStockPartial() {
         seedComponentBomAndStock(bd("5"), bd("1"));   // M2 仅 1 < 需 3 → 部分齐套
-        Long woId = seedWorkOrder("WO-PARTIAL");
+        String woId = seedWorkOrder("WO-PARTIAL");
 
-        rpcOk(mutation, "ErpMfgWorkOrder__submitForApproval", Map.of("id", String.valueOf(woId)));
-        rpcOk(mutation, "ErpMfgWorkOrder__approve", Map.of("id", String.valueOf(woId)));
+        rpcOk(mutation, "ErpMfgWorkOrder__submitForApproval", Map.of("id", woId));
+        rpcOk(mutation, "ErpMfgWorkOrder__approve", Map.of("id", woId));
         rpcOk(mutation, "ErpMfgWorkOrder__checkAvailability", Map.of("workOrderId", woId));
         assertEquals(ErpMfgConstants.WORK_ORDER_STATUS_STOCK_PARTIAL, statusOf(woId),
                 "M2 缺料 → STOCK_PARTIAL");
@@ -117,10 +117,10 @@ public class TestErpMfgWorkOrderStateMachine extends JunitAutoTestCase {
     @Test
     public void testPartialKitStartAllowedWhenConfigEnabled() {
         seedComponentBomAndStock(bd("5"), bd("1"));
-        Long woId = seedWorkOrder("WO-PARTIAL-START");
+        String woId = seedWorkOrder("WO-PARTIAL-START");
 
-        rpcOk(mutation, "ErpMfgWorkOrder__submitForApproval", Map.of("id", String.valueOf(woId)));
-        rpcOk(mutation, "ErpMfgWorkOrder__approve", Map.of("id", String.valueOf(woId)));
+        rpcOk(mutation, "ErpMfgWorkOrder__submitForApproval", Map.of("id", woId));
+        rpcOk(mutation, "ErpMfgWorkOrder__approve", Map.of("id", woId));
         rpcOk(mutation, "ErpMfgWorkOrder__checkAvailability", Map.of("workOrderId", woId));
         assertEquals(ErpMfgConstants.WORK_ORDER_STATUS_STOCK_PARTIAL, statusOf(woId));
 
@@ -137,7 +137,7 @@ public class TestErpMfgWorkOrderStateMachine extends JunitAutoTestCase {
     @Test
     public void testStopResumeAndClose() {
         seedComponentBomAndStock(bd("5"), bd("5"));
-        Long woId = seedWorkOrder("WO-STOP");
+        String woId = seedWorkOrder("WO-STOP");
         moveToInProcess(woId);
 
         rpcOk(mutation, "ErpMfgWorkOrder__stop", Map.of("workOrderId", woId));
@@ -152,8 +152,8 @@ public class TestErpMfgWorkOrderStateMachine extends JunitAutoTestCase {
     @Test
     public void testCancelFromSubmitted() {
         seedComponentBomAndStock(bd("5"), bd("5"));
-        Long woId = seedWorkOrder("WO-CANCEL");
-        rpcOk(mutation, "ErpMfgWorkOrder__submitForApproval", Map.of("id", String.valueOf(woId)));
+        String woId = seedWorkOrder("WO-CANCEL");
+        rpcOk(mutation, "ErpMfgWorkOrder__submitForApproval", Map.of("id", woId));
         rpcOk(mutation, "ErpMfgWorkOrder__cancel", Map.of("workOrderId", woId));
         assertEquals(ErpMfgConstants.WORK_ORDER_STATUS_CANCELLED, statusOf(woId));
     }
@@ -161,7 +161,7 @@ public class TestErpMfgWorkOrderStateMachine extends JunitAutoTestCase {
     @Test
     public void testIllegalTransitionsRejected() {
         seedComponentBomAndStock(bd("5"), bd("5"));
-        Long woId = seedWorkOrder("WO-ILLEGAL");
+        String woId = seedWorkOrder("WO-ILLEGAL");
 
         // DRAFT 直接开工（未审核/未齐套）→ 非法
         ApiResponse<?> resp = rpc(mutation, "ErpMfgWorkOrder__start", Map.of("workOrderId", woId));
@@ -169,7 +169,7 @@ public class TestErpMfgWorkOrderStateMachine extends JunitAutoTestCase {
                 "DRAFT→IN_PROCESS 非法迁移应拒绝");
 
         // 终态 COMPLETED 后再 stop → 非法
-        Long doneId = seedWorkOrder("WO-DONE");
+        String doneId = seedWorkOrder("WO-DONE");
         ormTemplate.runInSession(() -> {
             ErpMfgWorkOrder wo = daoProvider.daoFor(ErpMfgWorkOrder.class).getEntityById(doneId);
             wo.setDocStatus(ErpMfgConstants.WORK_ORDER_STATUS_COMPLETED);
@@ -183,7 +183,7 @@ public class TestErpMfgWorkOrderStateMachine extends JunitAutoTestCase {
     @Test
     public void testOverReportRejected() {
         seedComponentBomAndStock(bd("5"), bd("5"));
-        Long woId = seedWorkOrder("WO-OVER");
+        String woId = seedWorkOrder("WO-OVER");
         moveToInProcess(woId);
 
         Map<String, Object> req = new LinkedHashMap<>();
@@ -199,8 +199,8 @@ public class TestErpMfgWorkOrderStateMachine extends JunitAutoTestCase {
     @Test
     public void testSoDCreatorCannotSelfApprove() {
         seedComponentBomAndStock(bd("5"), bd("5"));
-        Long woId = seedWorkOrder("WO-SOD");
-        rpcOk(mutation, "ErpMfgWorkOrder__submitForApproval", Map.of("id", String.valueOf(woId)));
+        String woId = seedWorkOrder("WO-SOD");
+        rpcOk(mutation, "ErpMfgWorkOrder__submitForApproval", Map.of("id", woId));
         assertEquals(ErpMfgConstants.WORK_ORDER_STATUS_SUBMITTED, statusOf(woId), "提交应成功 → SUBMITTED");
 
         // 创建人尝试自审：置 IUserContext.userId = 单据 createdBy
@@ -210,7 +210,7 @@ public class TestErpMfgWorkOrderStateMachine extends JunitAutoTestCase {
         uc.setUserId(creator);
         IUserContext.set(uc);
 
-        ApiResponse<?> bad = rpc(mutation, "ErpMfgWorkOrder__approve", Map.of("id", String.valueOf(woId)));
+        ApiResponse<?> bad = rpc(mutation, "ErpMfgWorkOrder__approve", Map.of("id", woId));
         assertEquals(ErpMfgErrors.ERR_MFG_APPROVER_IS_CREATOR.getErrorCode(), bad.getCode(),
                 "创建人=审核人 → SoD 守卫应抛 ERR_MFG_APPROVER_IS_CREATOR");
     }
@@ -227,40 +227,40 @@ public class TestErpMfgWorkOrderStateMachine extends JunitAutoTestCase {
     @Test
     public void testWithdrawApprovalGuardAndExtraction() {
         seedComponentBomAndStock(bd("5"), bd("5"));
-        Long woId = seedWorkOrder("WO-WITHDRAW");
+        String woId = seedWorkOrder("WO-WITHDRAW");
 
         // 负向守卫：初始 UNSUBMITTED（null）withdrawApproval → ERR_INVALID_STATUS_TRANSITION
         // （状态守卫阻断行为等价于原 wf nop.err.wf.approve.invalid-status）
-        ApiResponse<?> resp = rpc(mutation, "ErpMfgWorkOrder__withdrawApproval", Map.of("id", String.valueOf(woId)));
+        ApiResponse<?> resp = rpc(mutation, "ErpMfgWorkOrder__withdrawApproval", Map.of("id", woId));
         assertEquals(ErpMfgErrors.ERR_INVALID_STATUS_TRANSITION.getErrorCode(), resp.getCode(),
                 "非 SUBMITTED withdrawApproval 应拒绝（错误码等价）");
 
         // 正向：submit → SUBMITTED → withdraw → 回到 UNSUBMITTED（验证 inline-script 提取激活 per-mutation 运行时路径）
-        rpcOk(mutation, "ErpMfgWorkOrder__submitForApproval", Map.of("id", String.valueOf(woId)));
+        rpcOk(mutation, "ErpMfgWorkOrder__submitForApproval", Map.of("id", woId));
         assertEquals(ErpMfgConstants.APPROVE_STATUS_SUBMITTED, approveStatusOf(woId));
-        rpcOk(mutation, "ErpMfgWorkOrder__withdrawApproval", Map.of("id", String.valueOf(woId)));
+        rpcOk(mutation, "ErpMfgWorkOrder__withdrawApproval", Map.of("id", woId));
         assertEquals(ErpMfgConstants.APPROVE_STATUS_UNSUBMITTED, approveStatusOf(woId),
                 "withdrawApproval 后 approveStatus 回到 UNSUBMITTED");
 
         // 再次负向：UNSUBMITTED withdrawApproval → 拒绝（守卫幂等）
-        ApiResponse<?> resp2 = rpc(mutation, "ErpMfgWorkOrder__withdrawApproval", Map.of("id", String.valueOf(woId)));
+        ApiResponse<?> resp2 = rpc(mutation, "ErpMfgWorkOrder__withdrawApproval", Map.of("id", woId));
         assertEquals(ErpMfgErrors.ERR_INVALID_STATUS_TRANSITION.getErrorCode(), resp2.getCode(),
                 "再次非 SUBMITTED withdrawApproval 应拒绝");
     }
 
-    private String statusOf(Long woId) {
+    private String statusOf(String woId) {
         ErpMfgWorkOrder wo = daoProvider.daoFor(ErpMfgWorkOrder.class).getEntityById(woId);
         return wo.getDocStatus();
     }
 
-    private String approveStatusOf(Long woId) {
+    private String approveStatusOf(String woId) {
         ErpMfgWorkOrder wo = daoProvider.daoFor(ErpMfgWorkOrder.class).getEntityById(woId);
         return wo.getApproveStatus();
     }
 
-    private void moveToInProcess(Long woId) {
-        rpcOk(mutation, "ErpMfgWorkOrder__submitForApproval", Map.of("id", String.valueOf(woId)));
-        rpcOk(mutation, "ErpMfgWorkOrder__approve", Map.of("id", String.valueOf(woId)));
+    private void moveToInProcess(String woId) {
+        rpcOk(mutation, "ErpMfgWorkOrder__submitForApproval", Map.of("id", woId));
+        rpcOk(mutation, "ErpMfgWorkOrder__approve", Map.of("id", woId));
         rpcOk(mutation, "ErpMfgWorkOrder__checkAvailability", Map.of("workOrderId", woId));
         rpcOk(mutation, "ErpMfgWorkOrder__start", Map.of("workOrderId", woId));
     }
@@ -283,22 +283,22 @@ public class TestErpMfgWorkOrderStateMachine extends JunitAutoTestCase {
         seedMaterial(P);
         seedMaterial(M1);
         seedMaterial(M2);
-        Long bomP = seedBom(9001L, P);
-        seedBomLine(9101L, bomP, M1, bd("2"));
-        seedBomLine(9102L, bomP, M2, bd("3"));
+        String bomP = seedBom("9001", P);
+        seedBomLine("9101", bomP, M1, bd("2"));
+        seedBomLine("9102", bomP, M2, bd("3"));
         seedBalance(M1, m1Available);
         seedBalance(M2, m2Available);
     }
 
-    private Long seedWorkOrder(String code) {
-        Long id = 8000L + (long) Math.abs(code.hashCode() % 1000);
+    private String seedWorkOrder(String code) {
+        String id = String.valueOf(8000L + (long) Math.abs(code.hashCode() % 1000));
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMfgWorkOrder> dao = daoProvider.daoFor(ErpMfgWorkOrder.class);
             ErpMfgWorkOrder wo = new ErpMfgWorkOrder();
             wo.orm_propValueByName("id", id);
             wo.setCode(code);
             wo.setProductId(P);
-            wo.setBomId(9001L);
+            wo.setBomId("9001");
             wo.setPlannedQuantity(bd("1"));
             wo.setBusinessDate(java.time.LocalDate.of(2026, 7, 1));
             wo.setDocStatus(ErpMfgConstants.WORK_ORDER_STATUS_DRAFT);
@@ -307,7 +307,7 @@ public class TestErpMfgWorkOrderStateMachine extends JunitAutoTestCase {
         return id;
     }
 
-    private void seedMaterial(Long id) {
+    private void seedMaterial(String id) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMdMaterial> dao = daoProvider.daoFor(ErpMdMaterial.class);
             ErpMdMaterial m = new ErpMdMaterial();
@@ -321,7 +321,7 @@ public class TestErpMfgWorkOrderStateMachine extends JunitAutoTestCase {
         });
     }
 
-    private Long seedBom(Long id, Long productId) {
+    private String seedBom(String id, String productId) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMfgBom> dao = daoProvider.daoFor(ErpMfgBom.class);
             ErpMfgBom bom = new ErpMfgBom();
@@ -337,13 +337,13 @@ public class TestErpMfgWorkOrderStateMachine extends JunitAutoTestCase {
         return id;
     }
 
-    private void seedBomLine(Long id, Long bomId, Long materialId, BigDecimal qty) {
+    private void seedBomLine(String id, String bomId, String materialId, BigDecimal qty) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMfgBomLine> dao = daoProvider.daoFor(ErpMfgBomLine.class);
             ErpMfgBomLine line = new ErpMfgBomLine();
             line.orm_propValueByName("id", id);
             line.setBomId(bomId);
-            line.setLineNo((int) (id % 100));
+            line.setLineNo((int) (Long.parseLong(id) % 100));
             line.setMaterialId(materialId);
             line.setUoMId(UOM_ID);
             line.setQuantity(qty);
@@ -351,8 +351,8 @@ public class TestErpMfgWorkOrderStateMachine extends JunitAutoTestCase {
         });
     }
 
-    private void seedBalance(Long materialId, BigDecimal available) {
-        Long id = 8500L + materialId;
+    private void seedBalance(String materialId, BigDecimal available) {
+        String id = String.valueOf(8500L + Long.parseLong(materialId));
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpInvStockBalance> dao = daoProvider.daoFor(ErpInvStockBalance.class);
             ErpInvStockBalance b = new ErpInvStockBalance();

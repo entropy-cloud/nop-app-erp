@@ -25,31 +25,31 @@ public interface IErpMfgSimulationParamResolver {
      * @param paramType  参数类型（LEAD_TIME / LOT_SIZE / SAFETY_STOCK）
      * @return 覆盖值；未覆盖返回 null（调用方回退全局配置/主数据）
      */
-    BigDecimal resolveOverride(Long scenarioId, Long materialId, String paramType);
+    BigDecimal resolveOverride(String scenarioId, String materialId, String paramType);
 
     /**
      * 加载场景的全部参数行（供 SimulationMrpEngine 构建 override context）。
      */
-    List<ErpMfgMrpScenarioParam> loadParams(Long scenarioId);
+    List<ErpMfgMrpScenarioParam> loadParams(String scenarioId);
 
     /**
      * 解析有效提前期（天）覆盖。未覆盖返回 null（调用方回退主数据 leadTimeDays）。
      */
-    default BigDecimal resolveLeadTimeOverride(Long scenarioId, Long materialId) {
+    default BigDecimal resolveLeadTimeOverride(String scenarioId, String materialId) {
         return resolveOverride(scenarioId, materialId, ErpMfgConstants.SIMULATION_PARAM_TYPE_LEAD_TIME);
     }
 
     /**
      * 解析有效全局 lot size 覆盖。未覆盖返回 null（调用方回退 AppConfig CONFIG_MRP_DEFAULT_LOT_SIZE）。
      */
-    default BigDecimal resolveLotSizeOverride(Long scenarioId) {
+    default BigDecimal resolveLotSizeOverride(String scenarioId) {
         return resolveOverride(scenarioId, null, ErpMfgConstants.SIMULATION_PARAM_TYPE_LOT_SIZE);
     }
 
     /**
      * 解析有效安全库存覆盖。未覆盖返回 null（调用方回退主数据 safetyStock）。
      */
-    default BigDecimal resolveSafetyStockOverride(Long scenarioId, Long materialId) {
+    default BigDecimal resolveSafetyStockOverride(String scenarioId, String materialId) {
         return resolveOverride(scenarioId, materialId, ErpMfgConstants.SIMULATION_PARAM_TYPE_SAFETY_STOCK);
     }
 }

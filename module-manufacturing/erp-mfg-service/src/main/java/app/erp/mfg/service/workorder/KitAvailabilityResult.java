@@ -51,17 +51,17 @@ public class KitAvailabilityResult {
      * 缺料明细行：物料 × 应需量 × 可用量（应需 − 可用 = 缺口）。
      */
     public static class KitShortage {
-        private final Long materialId;
+        private final String materialId;
         private final BigDecimal requiredQty;
         private final BigDecimal availableQty;
 
-        public KitShortage(Long materialId, BigDecimal requiredQty, BigDecimal availableQty) {
+        public KitShortage(String materialId, BigDecimal requiredQty, BigDecimal availableQty) {
             this.materialId = materialId;
             this.requiredQty = requiredQty;
             this.availableQty = availableQty;
         }
 
-        public Long getMaterialId() {
+        public String getMaterialId() {
             return materialId;
         }
 

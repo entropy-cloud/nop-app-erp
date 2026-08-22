@@ -13,16 +13,16 @@
     public class ErpMfgProductionVersionOutputBean {
 
     
-        private Long _id;
+        private String _id;
 
     
         @PropMeta(propId=1)
     
-        public Long getId(){
+        public String getId(){
             return _id;
         }
 
-        public void setId(Long value){
+        public void setId(String value){
             this._id = value;
         }
 
@@ -41,44 +41,44 @@
         }
 
 
-        private Long _productId;
+        private String _productId;
 
     
         @PropMeta(propId=3)
     
-        public Long getProductId(){
+        public String getProductId(){
             return _productId;
         }
 
-        public void setProductId(Long value){
+        public void setProductId(String value){
             this._productId = value;
         }
 
 
-        private Long _bomId;
+        private String _bomId;
 
     
         @PropMeta(propId=4)
     
-        public Long getBomId(){
+        public String getBomId(){
             return _bomId;
         }
 
-        public void setBomId(Long value){
+        public void setBomId(String value){
             this._bomId = value;
         }
 
 
-        private Long _routingId;
+        private String _routingId;
 
     
         @PropMeta(propId=5)
     
-        public Long getRoutingId(){
+        public String getRoutingId(){
             return _routingId;
         }
 
-        public void setRoutingId(Long value){
+        public void setRoutingId(String value){
             this._routingId = value;
         }
 

@@ -46,12 +46,12 @@ public class ErpMfgSkuReferenceChecker implements IErpMdSkuReferenceChecker {
         if (sku == null || sku.getId() == null) {
             return false;
         }
-        Long skuId = sku.getId();
+        String skuId = sku.getId();
         return existsBomLine(skuId) || existsBomByproduct(skuId)
                 || existsWorkOrderLine(skuId) || existsMaterialIssueLine(skuId);
     }
 
-    private boolean existsBomLine(Long skuId) {
+    private boolean existsBomLine(String skuId) {
         IEntityDao<ErpMfgBomLine> dao = daoProvider.daoFor(ErpMfgBomLine.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("skuId", skuId));
@@ -60,7 +60,7 @@ public class ErpMfgSkuReferenceChecker implements IErpMdSkuReferenceChecker {
         return !dao.findAllByQuery(q).isEmpty();
     }
 
-    private boolean existsBomByproduct(Long skuId) {
+    private boolean existsBomByproduct(String skuId) {
         IEntityDao<ErpMfgBomByproduct> dao = daoProvider.daoFor(ErpMfgBomByproduct.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("skuId", skuId));
@@ -69,7 +69,7 @@ public class ErpMfgSkuReferenceChecker implements IErpMdSkuReferenceChecker {
         return !dao.findAllByQuery(q).isEmpty();
     }
 
-    private boolean existsWorkOrderLine(Long skuId) {
+    private boolean existsWorkOrderLine(String skuId) {
         IEntityDao<ErpMfgWorkOrderLine> dao = daoProvider.daoFor(ErpMfgWorkOrderLine.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("skuId", skuId));
@@ -80,7 +80,7 @@ public class ErpMfgSkuReferenceChecker implements IErpMdSkuReferenceChecker {
         return !dao.findAllByQuery(q).isEmpty();
     }
 
-    private boolean existsMaterialIssueLine(Long skuId) {
+    private boolean existsMaterialIssueLine(String skuId) {
         IEntityDao<ErpMfgMaterialIssueLine> dao = daoProvider.daoFor(ErpMfgMaterialIssueLine.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("skuId", skuId));

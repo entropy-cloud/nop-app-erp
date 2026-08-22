@@ -40,7 +40,7 @@ body:
       method: post
       dataType: raw
       data:
-        query: "query(${'$'}bid:Long,${'$'}q:BigDecimal,${'$'}ml:Boolean){ ErpMfgBom__explode(bomId:${'$'}bid,qty:${'$'}q,useMultiLevel:${'$'}ml) }"
+        query: "query(${'$'}bid:String,${'$'}q:BigDecimal,${'$'}ml:Boolean){ ErpMfgBom__explode(bomId:${'$'}bid,qty:${'$'}q,useMultiLevel:${'$'}ml) }"
         variables:
           bid: "${bomId || null}"
           q: "${qty || null}"

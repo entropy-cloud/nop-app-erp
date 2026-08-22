@@ -23,9 +23,9 @@ import static io.nop.api.core.beans.FilterBeans.eq;
  * <p>权威：{@code docs/design/manufacturing/batch-genealogy.md}。
  *
  * <ul>
- *   <li>{@link #forwardTrace(Long)}：产出批次 → 所有直接输入批次（成品→原料）。</li>
- *   <li>{@link #backwardTrace(Long)}：输入批次 → 所有直接产出批次（原料→成品）。</li>
- *   <li>{@link #traceChain(Long, String, Integer)}：迭代递归多级追溯，带环路防护 + maxDepth 上限。</li>
+ *   <li>{@link #forwardTrace(String)}：产出批次 → 所有直接输入批次（成品→原料）。</li>
+ *   <li>{@link #backwardTrace(String)}：输入批次 → 所有直接产出批次（原料→成品）。</li>
+ *   <li>{@link #traceChain(String, String, Integer)}：迭代递归多级追溯，带环路防护 + maxDepth 上限。</li>
  * </ul>
  *
  * <p>递归方向（traceChain）：
@@ -43,14 +43,14 @@ public class BatchGenealogyTracer {
         this.daoProvider = daoProvider;
     }
 
-    public List<ErpMfgBatchGenealogy> forwardTrace(Long outputLotId) {
+    public List<ErpMfgBatchGenealogy> forwardTrace(String outputLotId) {
         IEntityDao<ErpMfgBatchGenealogy> dao = genealogyDao();
         QueryBean q = new QueryBean();
         q.addFilter(eq("outputLotId", outputLotId));
         return dao.findAllByQuery(q);
     }
 
-    public List<ErpMfgBatchGenealogy> backwardTrace(Long inputLotId) {
+    public List<ErpMfgBatchGenealogy> backwardTrace(String inputLotId) {
         IEntityDao<ErpMfgBatchGenealogy> dao = genealogyDao();
         QueryBean q = new QueryBean();
         q.addFilter(eq("inputLotId", inputLotId));
@@ -62,7 +62,7 @@ public class BatchGenealogyTracer {
      * direction=BACKWARD 时从 lotId 作为输入批次向下游（成品方向）递归。
      * 含已访问集合环路防护 + maxDepth 上限（超限抛 ErrorCode）。
      */
-    public List<ErpMfgBatchGenealogy> traceChain(Long lotId, String direction, Integer maxDepth) {
+    public List<ErpMfgBatchGenealogy> traceChain(String lotId, String direction, Integer maxDepth) {
         if (direction == null) {
             throw new NopException(ErpMfgErrors.ERR_MFG_GENEALOGY_INVALID_DIRECTION)
                     .param(ErpMfgErrors.ARG_DIRECTION, String.valueOf(direction));
@@ -79,8 +79,8 @@ public class BatchGenealogyTracer {
 
         int depth = resolveMaxDepth(maxDepth);
         List<ErpMfgBatchGenealogy> result = new ArrayList<>();
-        Set<Long> visited = new HashSet<>();
-        List<Long> frontier = new ArrayList<>();
+        Set<String> visited = new HashSet<>();
+        List<String> frontier = new ArrayList<>();
         frontier.add(lotId);
         visited.add(lotId);
 
@@ -90,14 +90,14 @@ public class BatchGenealogyTracer {
                 throw new NopException(ErpMfgErrors.ERR_MFG_GENEALOGY_MAX_DEPTH_EXCEEDED)
                         .param(ErpMfgErrors.ARG_DEPTH, depth);
             }
-            List<Long> nextFrontier = new ArrayList<>();
-            for (Long currentLot : frontier) {
+            List<String> nextFrontier = new ArrayList<>();
+            for (String currentLot : frontier) {
                 List<ErpMfgBatchGenealogy> edges = forward
                         ? forwardTrace(currentLot)
                         : backwardTrace(currentLot);
                 for (ErpMfgBatchGenealogy edge : edges) {
                     result.add(edge);
-                    Long nextLot = forward ? edge.getInputLotId() : edge.getOutputLotId();
+                    String nextLot = forward ? edge.getInputLotId() : edge.getOutputLotId();
                     if (nextLot != null && visited.add(nextLot)) {
                         nextFrontier.add(nextLot);
                     }

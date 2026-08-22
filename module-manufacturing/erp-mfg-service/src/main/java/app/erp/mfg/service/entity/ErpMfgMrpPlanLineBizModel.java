@@ -32,24 +32,24 @@ public class ErpMfgMrpPlanLineBizModel extends CrudBizModel<ErpMfgMrpPlanLine> i
 
     @Override
     @BizMutation
-    public ErpMfgMrpPlanLine releasePurchaseRequest(@Name("planLineId") Long planLineId,
-                                                     @Name("supplierId") Long supplierId,
-                                                     @Name("currencyId") Long currencyId,
+    public ErpMfgMrpPlanLine releasePurchaseRequest(@Name("planLineId") String planLineId,
+                                                      @Name("supplierId") String supplierId,
+                                                      @Name("currencyId") String currencyId,
                                                      IServiceContext context) {
         return releasePurchaseRequestProcessor.releasePurchaseRequest(planLineId, supplierId, currencyId, context);
     }
 
     @Override
     @BizMutation
-    public ErpMfgMrpPlanLine releaseWorkRequest(@Name("planLineId") Long planLineId, IServiceContext context) {
+    public ErpMfgMrpPlanLine releaseWorkRequest(@Name("planLineId") String planLineId, IServiceContext context) {
         return releaseWorkRequestProcessor.releaseWorkRequest(planLineId, context);
     }
 
     @Override
     @BizMutation
-    public ErpMfgMrpPlanLine releaseSubcontractRequest(@Name("planLineId") Long planLineId,
-                                                        @Name("supplierId") Long supplierId,
-                                                        @Name("currencyId") Long currencyId,
+    public ErpMfgMrpPlanLine releaseSubcontractRequest(@Name("planLineId") String planLineId,
+                                                         @Name("supplierId") String supplierId,
+                                                         @Name("currencyId") String currencyId,
                                                         IServiceContext context) {
         return releaseSubcontractRequestProcessor.releaseSubcontractRequest(planLineId, supplierId, currencyId, context);
     }

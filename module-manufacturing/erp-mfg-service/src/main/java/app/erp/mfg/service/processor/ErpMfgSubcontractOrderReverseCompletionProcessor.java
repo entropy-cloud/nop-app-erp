@@ -16,8 +16,8 @@ public class ErpMfgSubcontractOrderReverseCompletionProcessor {
     @Inject
     ErpMfgSubcontractOrderProcessor facade;
 
-    public ErpMfgSubcontractOrder reverseCompletion(Long subcontractOrderId, IServiceContext context) {
-        ErpMfgSubcontractOrder order = facade.requireOrder(String.valueOf(subcontractOrderId), context);
+    public ErpMfgSubcontractOrder reverseCompletion(String subcontractOrderId, IServiceContext context) {
+        ErpMfgSubcontractOrder order = facade.requireOrder(subcontractOrderId, context);
         facade.validateCanReverse(order, context);
         facade.reverseGlPostings(order, context);
         facade.reverseInventoryMoves(order, context);

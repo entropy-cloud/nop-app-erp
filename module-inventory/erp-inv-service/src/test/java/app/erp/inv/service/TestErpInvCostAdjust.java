@@ -179,7 +179,7 @@ public class TestErpInvCostAdjust extends JunitAutoTestCase {
     public void testStandardRevaluationPublishesFirmedRollupAndPostsVariance() {
         String materialId = "2504";
         seedMaterial(materialId, ErpInvConstants.COST_METHOD_STANDARD);
-        seedFirmedRollup(materialId, new BigDecimal("10"), 25040001L);
+        seedFirmedRollup(materialId, new BigDecimal("10"), "25040001");
         seedPeriodAndSubjects();
         generateIncoming(materialId, "PR-CA-004", new BigDecimal("10"), new BigDecimal("10"));
 
@@ -493,11 +493,10 @@ public class TestErpInvCostAdjust extends JunitAutoTestCase {
         return lineDao.findAllByQuery(lq).stream().findFirst().orElse(null);
     }
 
-    // A3 桥接（bridge-test-119）：mfg ErpMfgCostRollupLine.materialId 仍 Long（M3.1 未迁移），String materialId → toLong 查询值
     private List<ErpMfgCostRollup> findAllFirmedRollupsForMaterial(String materialId) {
         IEntityDao<ErpMfgCostRollupLine> lineDao = daoProvider.daoFor(ErpMfgCostRollupLine.class);
         QueryBean lq = new QueryBean();
-        lq.addFilter(eq("materialId", ConvertHelper.toLong(materialId)));
+        lq.addFilter(eq("materialId", materialId));
         return lineDao.findAllByQuery(lq).stream()
                 .map(l -> daoProvider.daoFor(ErpMfgCostRollup.class).getEntityById(l.getCostRollupId()))
                 .filter(h -> h != null && "FIRMED".equals(h.orm_propValueByName("status")))
@@ -515,7 +514,7 @@ public class TestErpInvCostAdjust extends JunitAutoTestCase {
             IEntityDao<ErpMfgCostRollupLine> lineDao = daoProvider.daoFor(ErpMfgCostRollupLine.class);
             QueryBean lq = new QueryBean();
             lq.addFilter(eq("costRollupId", header.getId()));
-            lq.addFilter(eq("materialId", ConvertHelper.toLong(materialId)));
+            lq.addFilter(eq("materialId", materialId));
             List<ErpMfgCostRollupLine> lines = lineDao.findAllByQuery(lq);
             if (!lines.isEmpty()) {
                 return lines.get(0).getUnitCost();
@@ -582,28 +581,28 @@ public class TestErpInvCostAdjust extends JunitAutoTestCase {
         });
     }
 
-    private void seedFirmedRollup(String materialId, BigDecimal unitCost, long rollupId) {
+    private void seedFirmedRollup(String materialId, BigDecimal unitCost, String rollupId) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMfgCostRollup> headerDao = daoProvider.daoFor(ErpMfgCostRollup.class);
             ErpMfgCostRollup header = new ErpMfgCostRollup();
             header.orm_propValueByName("id", rollupId);
             header.setCode("ROLLUP-SEED-" + materialId);
-            header.setOrgId(ConvertHelper.toLong(ORG_ID));
+            header.setOrgId(ORG_ID);
             header.setBusinessDate(LocalDate.of(2026, 6, 1));
             header.orm_propValueByName("status", "FIRMED");
             headerDao.saveEntity(header);
 
             IEntityDao<ErpMfgCostRollupLine> lineDao = daoProvider.daoFor(ErpMfgCostRollupLine.class);
             ErpMfgCostRollupLine line = new ErpMfgCostRollupLine();
-            line.orm_propValueByName("id", rollupId + 1);
+            line.orm_propValueByName("id", String.valueOf(ConvertHelper.toLong(rollupId) + 1));
             line.setCostRollupId(rollupId);
             line.setLineNo(1);
-            line.setMaterialId(ConvertHelper.toLong(materialId));
-            line.setUoMId(ConvertHelper.toLong(UOM_ID));
+            line.setMaterialId(materialId);
+            line.setUoMId(UOM_ID);
             line.setUnitCost(unitCost);
             line.setTotalCost(unitCost);
             line.setMaterialCost(unitCost);
-            line.setCurrencyId(ConvertHelper.toLong(CURRENCY_ID));
+            line.setCurrencyId(CURRENCY_ID);
             lineDao.saveEntity(line);
         });
     }

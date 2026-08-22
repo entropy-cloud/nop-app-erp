@@ -1,8 +1,8 @@
 {
-  "id": 0,
-  "workcenterId": 0,
-  "orgId": 0,
-  "materialId": 0,
+  "id": "",
+  "workcenterId": "",
+  "orgId": "",
+  "materialId": "",
   "capacityPerHour": 0.0,
   "setupTime": 0.0,
   "cleanupTime": 0.0,

@@ -65,12 +65,12 @@ public class TestErpMfgBatchGenealogy extends JunitAutoTestCase {
     @RegisterExtension
     static MfgFrozenClockExtension frozenClock = new MfgFrozenClockExtension();
 
-    static final Long ORG_ID = 1601L;
-    static final Long WAREHOUSE_ID = 3601L;
-    static final Long UOM_ID = 5601L;
-    static final Long CURRENCY_ID = 6601L;
-    static final Long P = 1201L;     // 产成品（FG）
-    static final Long M1 = 1202L;    // 原料1
+    static final String ORG_ID = "1601";
+    static final String WAREHOUSE_ID = "3601";
+    static final String UOM_ID = "5601";
+    static final String CURRENCY_ID = "6601";
+    static final String P = "1201";     // 产成品（FG）
+    static final String M1 = "1202";    // 原料1
     static final String RECIPIENT = "mfg-genealogy-recipient";
 
     @Inject
@@ -86,18 +86,18 @@ public class TestErpMfgBatchGenealogy extends JunitAutoTestCase {
     public void testWriteOnCompletionWithBatchMaterial() {
         seedMaterial(P, null);
         seedMaterial(M1, "MOVING_AVERAGE");
-        seedBom(9401L, P, M1, bd("1"));
+        seedBom("9401", P, M1, bd("1"));
 
         // 输入批次：M1 批次 BATCH-M1-001，总量 10
-        Long inputLotId = seedBatch(2001L, "BATCH-M1-001", M1, bd("10"));
+        String inputLotId = seedBatch("2001", "BATCH-M1-001", M1, bd("10"));
 
-        Long woId = seedWorkOrder("WO-BG-001", 9401L, bd("2"));
-        Long inputWolId = seedWorkOrderLine(woId, M1, bd("2"), "INPUT", null);
+        String woId = seedWorkOrder("WO-BG-001", "9401", bd("2"));
+        String inputWolId = seedWorkOrderLine(woId, M1, bd("2"), "INPUT", null);
         seedWorkOrderLine(woId, P, bd("2"), "OUTPUT", WAREHOUSE_ID);
 
         // 领料出库带 batchNo
-        Long issueId = seedIssue("MI-BG-001", woId);
-        seedIssueLineWithBatch(9402L, issueId, M1, bd("2"), inputWolId, "BATCH-M1-001");
+        String issueId = seedIssue("MI-BG-001", woId);
+        seedIssueLineWithBatch("9402", issueId, M1, bd("2"), inputWolId, "BATCH-M1-001");
 
         // 完工入库 2 件
         Map<String, Object> completeReq = new LinkedHashMap<>();
@@ -128,15 +128,15 @@ public class TestErpMfgBatchGenealogy extends JunitAutoTestCase {
     public void testWriteSkippedWhenNoBatchMaterial() {
         seedMaterial(P, null);
         seedMaterial(M1, "MOVING_AVERAGE");
-        seedBom(9403L, P, M1, bd("1"));
+        seedBom("9403", P, M1, bd("1"));
 
-        Long woId = seedWorkOrder("WO-BG-NOBATCH", 9403L, bd("1"));
-        Long inputWolId = seedWorkOrderLine(woId, M1, bd("1"), "INPUT", null);
+        String woId = seedWorkOrder("WO-BG-NOBATCH", "9403", bd("1"));
+        String inputWolId = seedWorkOrderLine(woId, M1, bd("1"), "INPUT", null);
         seedWorkOrderLine(woId, P, bd("1"), "OUTPUT", WAREHOUSE_ID);
 
         // 领料出库【无 batchNo】
-        Long issueId = seedIssue("MI-BG-NOBATCH", woId);
-        seedIssueLineWithBatch(9404L, issueId, M1, bd("1"), inputWolId, null);
+        String issueId = seedIssue("MI-BG-NOBATCH", woId);
+        seedIssueLineWithBatch("9404", issueId, M1, bd("1"), inputWolId, null);
 
         Map<String, Object> completeReq = new LinkedHashMap<>();
         completeReq.put("workOrderId", woId);
@@ -152,14 +152,14 @@ public class TestErpMfgBatchGenealogy extends JunitAutoTestCase {
     public void testForwardAndBackwardTrace() {
         seedMaterial(P, null);
         seedMaterial(M1, "MOVING_AVERAGE");
-        seedBom(9405L, P, M1, bd("1"));
+        seedBom("9405", P, M1, bd("1"));
 
-        Long inputLotId = seedBatch(2005L, "BATCH-M1-FWD", M1, bd("10"));
-        Long woId = seedWorkOrder("WO-BG-FWD", 9405L, bd("1"));
-        Long inputWolId = seedWorkOrderLine(woId, M1, bd("1"), "INPUT", null);
+        String inputLotId = seedBatch("2005", "BATCH-M1-FWD", M1, bd("10"));
+        String woId = seedWorkOrder("WO-BG-FWD", "9405", bd("1"));
+        String inputWolId = seedWorkOrderLine(woId, M1, bd("1"), "INPUT", null);
         seedWorkOrderLine(woId, P, bd("1"), "OUTPUT", WAREHOUSE_ID);
-        Long issueId = seedIssue("MI-BG-FWD", woId);
-        seedIssueLineWithBatch(9406L, issueId, M1, bd("1"), inputWolId, "BATCH-M1-FWD");
+        String issueId = seedIssue("MI-BG-FWD", woId);
+        seedIssueLineWithBatch("9406", issueId, M1, bd("1"), inputWolId, "BATCH-M1-FWD");
 
         Map<String, Object> completeReq = new LinkedHashMap<>();
         completeReq.put("workOrderId", woId);
@@ -167,7 +167,7 @@ public class TestErpMfgBatchGenealogy extends JunitAutoTestCase {
         rpcOk(mutation, "ErpMfgWorkOrder__reportCompletion", completeReq);
 
         ErpMfgBatchGenealogy row = findGenealogyByWorkOrder(woId).get(0);
-        Long outputLotId = row.getOutputLotId();
+        String outputLotId = row.getOutputLotId();
 
         // forwardTrace(outputLotId) → 找到 inputLot
         ApiResponse<?> fwdResp = rpc(query, "ErpMfgBatchGenealogy__forwardTrace",
@@ -189,14 +189,14 @@ public class TestErpMfgBatchGenealogy extends JunitAutoTestCase {
         // 手动构造两级基因链：inputLot1 → outputLot1（=inputLot2） → outputLot2
         seedMaterial(M1, "MOVING_AVERAGE");
         seedMaterial(P, null);
-        Long lotA = seedBatch(2010L, "LOT-A", M1, bd("10"));
-        Long lotB = seedBatch(2011L, "LOT-B", P, bd("5"));
-        Long lotC = seedBatch(2012L, "LOT-C", P, bd("3"));
+        String lotA = seedBatch("2010", "LOT-A", M1, bd("10"));
+        String lotB = seedBatch("2011", "LOT-B", P, bd("5"));
+        String lotC = seedBatch("2012", "LOT-C", P, bd("3"));
 
         // 基因行：lotA → lotB
-        seedGenealogyRow(9410L, 8001L, lotA, M1, bd("10"), lotB, P, bd("5"));
+        seedGenealogyRow("9410", "8001", lotA, M1, bd("10"), lotB, P, bd("5"));
         // 基因行：lotB → lotC
-        seedGenealogyRow(9411L, 8002L, lotB, P, bd("5"), lotC, P, bd("3"));
+        seedGenealogyRow("9411", "8002", lotB, P, bd("5"), lotC, P, bd("3"));
 
         // FORWARD 多级：从 lotC（产出）→ lotB → lotA
         ApiResponse<?> fwdChain = rpc(query, "ErpMfgBatchGenealogy__traceChain",
@@ -213,7 +213,7 @@ public class TestErpMfgBatchGenealogy extends JunitAutoTestCase {
         assertEquals(2, bwdEdges.size(), "多级反向应返回 2 条边");
 
         // 环路防护：构造环路 lotC → lotA（形成 lotA→lotB→lotC→lotA）
-        seedGenealogyRow(9412L, 8003L, lotC, P, bd("3"), lotA, M1, bd("10"));
+        seedGenealogyRow("9412", "8003", lotC, P, bd("3"), lotA, M1, bd("10"));
         ApiResponse<?> cycleResp = rpc(query, "ErpMfgBatchGenealogy__traceChain",
                 Map.of("lotId", lotC, "direction", ErpMfgConstants.TRACE_DIRECTION_FORWARD, "maxDepth", 50));
         assertEquals(0, cycleResp.getStatus(), "环路应被防护不无限递归: " + cycleResp);
@@ -233,17 +233,17 @@ public class TestErpMfgBatchGenealogy extends JunitAutoTestCase {
     public void testRecallReport() {
         seedMaterial(M1, "MOVING_AVERAGE");
         seedMaterial(P, null);
-        Long lotA = seedBatch(2020L, "LOT-RECALL-A", M1, bd("10"));
-        Long lotB = seedBatch(2021L, "LOT-RECALL-B", P, bd("5"));
-        Long lotC = seedBatch(2022L, "LOT-RECALL-C", P, bd("3"));
+        String lotA = seedBatch("2020", "LOT-RECALL-A", M1, bd("10"));
+        String lotB = seedBatch("2021", "LOT-RECALL-B", P, bd("5"));
+        String lotC = seedBatch("2022", "LOT-RECALL-C", P, bd("3"));
         // REJECTED 产出批次：应被 collectAffectedIfFinishedGood 排除（不出现在 affectedLots）
-        Long lotRejected = seedBatch(2023L, "LOT-RECALL-REJ", P, bd("2"),
+        String lotRejected = seedBatch("2023", "LOT-RECALL-REJ", P, bd("2"),
                 ErpMfgConstants.LOT_STATUS_REJECTED);
 
         // 问题原料批次 lotA → 影响成品 lotB、lotC（lotC → REJECTED 批次，后者应被排除）
-        seedGenealogyRow(9420L, 8010L, lotA, M1, bd("10"), lotB, P, bd("5"));
-        seedGenealogyRow(9421L, 8011L, lotB, P, bd("5"), lotC, P, bd("3"));
-        seedGenealogyRow(9422L, 8012L, lotC, P, bd("3"), lotRejected, P, bd("2"));
+        seedGenealogyRow("9420", "8010", lotA, M1, bd("10"), lotB, P, bd("5"));
+        seedGenealogyRow("9421", "8011", lotB, P, bd("5"), lotC, P, bd("3"));
+        seedGenealogyRow("9422", "8012", lotC, P, bd("3"), lotRejected, P, bd("2"));
 
         ApiResponse<?> resp = rpc(query, "ErpMfgBatchGenealogy__recallReport",
                 Map.of("lotId", lotA));
@@ -252,7 +252,7 @@ public class TestErpMfgBatchGenealogy extends JunitAutoTestCase {
 
         // 强断言（P1-RC-010 测试补充义务）：sourceLotId/degraded/affectedLots 内容
         Map<String, Object> data = (Map<String, Object>) resp.getData();
-        assertEquals(lotA, ((Number) data.get("sourceLotId")).longValue(),
+        assertEquals(lotA, String.valueOf(data.get("sourceLotId")),
                 "sourceLotId 应为入参 lotA");
         assertEquals(Boolean.TRUE, data.get("degraded"),
                 "degraded 应为 true（位置/去向归 inventory successor，结构性恒置）");
@@ -260,10 +260,10 @@ public class TestErpMfgBatchGenealogy extends JunitAutoTestCase {
         List<?> affectedLots = (List<?>) data.get("affectedLots");
         assertEquals(2, affectedLots.size(),
                 "受影响成品批次应恰为 lotB/lotC（REJECTED 批次排除）");
-        Map<Long, Map<String, Object>> byLotId = new HashMap<>();
+        Map<String, Map<String, Object>> byLotId = new HashMap<>();
         for (Object item : affectedLots) {
             Map<String, Object> row = (Map<String, Object>) item;
-            byLotId.put(((Number) row.get("lotId")).longValue(), row);
+            byLotId.put(String.valueOf(row.get("lotId")), row);
         }
         assertAffectedLot(byLotId, lotB, "LOT-RECALL-B");
         assertAffectedLot(byLotId, lotC, "LOT-RECALL-C");
@@ -273,14 +273,14 @@ public class TestErpMfgBatchGenealogy extends JunitAutoTestCase {
     public void testWriteOnCompletionFailureInjectedDispatchesAlert() {
         seedMaterial(P, null);
         seedMaterial(M1, "MOVING_AVERAGE");
-        seedBom(9430L, P, M1, bd("1"));
-        seedNotifyTemplate(7130L, RECIPIENT);
+        seedBom("9430", P, M1, bd("1"));
+        seedNotifyTemplate("7130", RECIPIENT);
 
-        Long woId = seedWorkOrder("WO-BG-FAIL", 9430L, bd("1"));
-        Long inputWolId = seedWorkOrderLine(woId, M1, bd("1"), "INPUT", null);
+        String woId = seedWorkOrder("WO-BG-FAIL", "9430", bd("1"));
+        String inputWolId = seedWorkOrderLine(woId, M1, bd("1"), "INPUT", null);
         seedWorkOrderLine(woId, P, bd("1"), "OUTPUT", WAREHOUSE_ID);
-        Long issueId = seedIssue("MI-BG-FAIL", woId);
-        seedIssueLineWithBatch(9431L, issueId, M1, bd("1"), inputWolId, "BATCH-M1-FAIL");
+        String issueId = seedIssue("MI-BG-FAIL", woId);
+        seedIssueLineWithBatch("9431", issueId, M1, bd("1"), inputWolId, "BATCH-M1-FAIL");
 
         ErpMfgWorkOrder wo = daoProvider.daoFor(ErpMfgWorkOrder.class).getEntityById(woId);
 
@@ -311,14 +311,14 @@ public class TestErpMfgBatchGenealogy extends JunitAutoTestCase {
     public void testWriteOnCompletionFailureSilentlySkipsWithoutTemplate() {
         seedMaterial(P, null);
         seedMaterial(M1, "MOVING_AVERAGE");
-        seedBom(9432L, P, M1, bd("1"));
+        seedBom("9432", P, M1, bd("1"));
         // 不 seed 通知模板 → notify config-gated 静默跳过（对齐 IErpSysNotificationBiz.notify 契约）
 
-        Long woId = seedWorkOrder("WO-BG-NOTPL", 9432L, bd("1"));
-        Long inputWolId = seedWorkOrderLine(woId, M1, bd("1"), "INPUT", null);
+        String woId = seedWorkOrder("WO-BG-NOTPL", "9432", bd("1"));
+        String inputWolId = seedWorkOrderLine(woId, M1, bd("1"), "INPUT", null);
         seedWorkOrderLine(woId, P, bd("1"), "OUTPUT", WAREHOUSE_ID);
-        Long issueId = seedIssue("MI-BG-NOTPL", woId);
-        seedIssueLineWithBatch(9433L, issueId, M1, bd("1"), inputWolId, "BATCH-M1-NOTPL");
+        String issueId = seedIssue("MI-BG-NOTPL", woId);
+        seedIssueLineWithBatch("9433", issueId, M1, bd("1"), inputWolId, "BATCH-M1-NOTPL");
 
         ErpMfgWorkOrder wo = daoProvider.daoFor(ErpMfgWorkOrder.class).getEntityById(woId);
         BatchGenealogyWriter failingWriter = new ThrowingBatchGenealogyWriter();
@@ -337,14 +337,14 @@ public class TestErpMfgBatchGenealogy extends JunitAutoTestCase {
         try {
             seedMaterial(P, null);
             seedMaterial(M1, "MOVING_AVERAGE");
-            seedBom(9434L, P, M1, bd("1"));
-            seedNotifyTemplate(7134L, RECIPIENT);
+            seedBom("9434", P, M1, bd("1"));
+            seedNotifyTemplate("7134", RECIPIENT);
 
-            Long woId = seedWorkOrder("WO-BG-DISABLED", 9434L, bd("1"));
-            Long inputWolId = seedWorkOrderLine(woId, M1, bd("1"), "INPUT", null);
+            String woId = seedWorkOrder("WO-BG-DISABLED", "9434", bd("1"));
+            String inputWolId = seedWorkOrderLine(woId, M1, bd("1"), "INPUT", null);
             seedWorkOrderLine(woId, P, bd("1"), "OUTPUT", WAREHOUSE_ID);
-            Long issueId = seedIssue("MI-BG-DISABLED", woId);
-            seedIssueLineWithBatch(9435L, issueId, M1, bd("1"), inputWolId, "BATCH-M1-DISABLED");
+            String issueId = seedIssue("MI-BG-DISABLED", woId);
+            seedIssueLineWithBatch("9435", issueId, M1, bd("1"), inputWolId, "BATCH-M1-DISABLED");
 
             ErpMfgWorkOrder wo = daoProvider.daoFor(ErpMfgWorkOrder.class).getEntityById(woId);
             BatchGenealogyWriter failingWriter = new ThrowingBatchGenealogyWriter();
@@ -362,7 +362,7 @@ public class TestErpMfgBatchGenealogy extends JunitAutoTestCase {
 
     // ---------- seed helpers ----------
 
-    private void seedMaterial(Long id, String costMethod) {
+    private void seedMaterial(String id, String costMethod) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMdMaterial> dao = daoProvider.daoFor(ErpMdMaterial.class);
             ErpMdMaterial m = new ErpMdMaterial();
@@ -377,7 +377,7 @@ public class TestErpMfgBatchGenealogy extends JunitAutoTestCase {
         });
     }
 
-    private void seedBom(Long bomId, Long productId, Long componentId, BigDecimal qty) {
+    private void seedBom(String bomId, String productId, String componentId, BigDecimal qty) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMfgBom> dao = daoProvider.daoFor(ErpMfgBom.class);
             ErpMfgBom bom = new ErpMfgBom();
@@ -391,7 +391,7 @@ public class TestErpMfgBatchGenealogy extends JunitAutoTestCase {
             dao.saveEntity(bom);
             IEntityDao<ErpMfgBomLine> ldao = daoProvider.daoFor(ErpMfgBomLine.class);
             ErpMfgBomLine line = new ErpMfgBomLine();
-            line.orm_propValueByName("id", bomId + 50000);
+            line.orm_propValueByName("id", String.valueOf(Long.parseLong(bomId) + 50000));
             line.setBomId(bomId);
             line.setLineNo(10);
             line.setMaterialId(componentId);
@@ -401,11 +401,11 @@ public class TestErpMfgBatchGenealogy extends JunitAutoTestCase {
         });
     }
 
-    private Long seedBatch(Long id, String batchNo, Long materialId, BigDecimal qty) {
+    private String seedBatch(String id, String batchNo, String materialId, BigDecimal qty) {
         return seedBatch(id, batchNo, materialId, qty, ErpMfgConstants.INV_BATCH_STATUS_OPEN);
     }
 
-    private Long seedBatch(Long id, String batchNo, Long materialId, BigDecimal qty, String status) {
+    private String seedBatch(String id, String batchNo, String materialId, BigDecimal qty, String status) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpInvBatch> dao = daoProvider.daoFor(ErpInvBatch.class);
             ErpInvBatch batch = new ErpInvBatch();
@@ -423,8 +423,8 @@ public class TestErpMfgBatchGenealogy extends JunitAutoTestCase {
         return id;
     }
 
-    private Long seedWorkOrder(String code, Long bomId, BigDecimal plannedQty) {
-        Long id = 8600L + (long) Math.abs(code.hashCode() % 800);
+    private String seedWorkOrder(String code, String bomId, BigDecimal plannedQty) {
+        String id = String.valueOf(8600L + (long) Math.abs(code.hashCode() % 800));
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMfgWorkOrder> dao = daoProvider.daoFor(ErpMfgWorkOrder.class);
             ErpMfgWorkOrder wo = new ErpMfgWorkOrder();
@@ -442,8 +442,8 @@ public class TestErpMfgBatchGenealogy extends JunitAutoTestCase {
         return id;
     }
 
-    private Long seedWorkOrderLine(Long woId, Long materialId, BigDecimal plannedQty, String lineType, Long destWh) {
-        Long id = 9600L + (long) Math.abs((woId + "" + materialId + lineType).hashCode() % 800);
+    private String seedWorkOrderLine(String woId, String materialId, BigDecimal plannedQty, String lineType, String destWh) {
+        String id = String.valueOf(9600L + (long) Math.abs((woId + materialId + lineType).hashCode() % 800));
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMfgWorkOrderLine> dao = daoProvider.daoFor(ErpMfgWorkOrderLine.class);
             ErpMfgWorkOrderLine wol = new ErpMfgWorkOrderLine();
@@ -462,8 +462,8 @@ public class TestErpMfgBatchGenealogy extends JunitAutoTestCase {
         return id;
     }
 
-    private Long seedIssue(String code, Long woId) {
-        Long id = 8700L + (long) Math.abs(code.hashCode() % 800);
+    private String seedIssue(String code, String woId) {
+        String id = String.valueOf(8700L + (long) Math.abs(code.hashCode() % 800));
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMfgMaterialIssue> dao = daoProvider.daoFor(ErpMfgMaterialIssue.class);
             ErpMfgMaterialIssue issue = new ErpMfgMaterialIssue();
@@ -482,8 +482,8 @@ public class TestErpMfgBatchGenealogy extends JunitAutoTestCase {
         return id;
     }
 
-    private void seedIssueLineWithBatch(Long id, Long issueId, Long materialId, BigDecimal qty,
-                                        Long wolId, String batchNo) {
+    private void seedIssueLineWithBatch(String id, String issueId, String materialId, BigDecimal qty,
+                                        String wolId, String batchNo) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMfgMaterialIssueLine> dao = daoProvider.daoFor(ErpMfgMaterialIssueLine.class);
             ErpMfgMaterialIssueLine line = new ErpMfgMaterialIssueLine();
@@ -502,8 +502,8 @@ public class TestErpMfgBatchGenealogy extends JunitAutoTestCase {
         });
     }
 
-    private void seedGenealogyRow(Long id, Long workOrderId, Long inputLotId, Long inputMaterialId,
-                                  BigDecimal inputQty, Long outputLotId, Long outputMaterialId,
+    private void seedGenealogyRow(String id, String workOrderId, String inputLotId, String inputMaterialId,
+                                  BigDecimal inputQty, String outputLotId, String outputMaterialId,
                                   BigDecimal outputQty) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMfgBatchGenealogy> dao = daoProvider.daoFor(ErpMfgBatchGenealogy.class);
@@ -528,15 +528,15 @@ public class TestErpMfgBatchGenealogy extends JunitAutoTestCase {
 
     // ---------- query helpers ----------
 
-    private void assertAffectedLot(Map<Long, Map<String, Object>> byLotId, Long lotId, String batchNo) {
+    private void assertAffectedLot(Map<String, Map<String, Object>> byLotId, String lotId, String batchNo) {
         Map<String, Object> row = byLotId.get(lotId);
         assertNotNull(row, "受影响批次应包含 lotId=" + lotId);
         assertEquals(batchNo, row.get("batchNo"), "batchNo 应匹配");
-        assertEquals(P, ((Number) row.get("materialId")).longValue(), "materialId 应为产成品 P");
+        assertEquals(P, String.valueOf(row.get("materialId")), "materialId 应为产成品 P");
         assertEquals(ErpMfgConstants.LOT_STATUS_RELEASED, row.get("lotStatus"), "lotStatus 应为 RELEASED");
     }
 
-    private void seedNotifyTemplate(Long id, String recipientUserId) {
+    private void seedNotifyTemplate(String id, String recipientUserId) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpSysNotificationTemplate> dao = daoProvider.daoFor(ErpSysNotificationTemplate.class);
             ErpSysNotificationTemplate t = new ErpSysNotificationTemplate();
@@ -575,7 +575,7 @@ public class TestErpMfgBatchGenealogy extends JunitAutoTestCase {
                 ErpMfgConstants.CONFIG_GENEALOGY_WRITE_ENABLED, String.valueOf(enabled));
     }
 
-    private List<ErpMfgBatchGenealogy> findGenealogyByWorkOrder(Long woId) {
+    private List<ErpMfgBatchGenealogy> findGenealogyByWorkOrder(String woId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("workOrderId", woId));
         return daoProvider.daoFor(ErpMfgBatchGenealogy.class).findAllByQuery(q);

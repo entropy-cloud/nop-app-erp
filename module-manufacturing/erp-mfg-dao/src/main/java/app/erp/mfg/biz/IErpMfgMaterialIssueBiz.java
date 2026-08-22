@@ -29,8 +29,8 @@ import app.erp.mfg.dao.entity.ErpMfgMaterialIssue;
 public interface IErpMfgMaterialIssueBiz extends ICrudBiz<ErpMfgMaterialIssue> {
 
     @BizMutation
-    ErpMfgMaterialIssue confirm(@Name("issueId") Long issueId, IServiceContext context);
+    ErpMfgMaterialIssue confirm(@Name("issueId") String issueId, IServiceContext context);
 
     @BizMutation
-    ErpMfgMaterialIssue reverseConfirm(@Name("issueId") Long issueId, IServiceContext context);
+    ErpMfgMaterialIssue reverseConfirm(@Name("issueId") String issueId, IServiceContext context);
 }

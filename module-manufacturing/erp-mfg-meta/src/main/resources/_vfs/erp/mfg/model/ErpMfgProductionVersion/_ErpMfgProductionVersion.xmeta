@@ -22,8 +22,8 @@
 
     <props>
         <prop name="id" displayName="ID" propId="1" i18n-en:displayName="ID" tagSet="seq-default" mandatory="true"
-              queryable="true" sortable="true" insertable="true" updatable="false" graphql:type="String">
-            <schema type="java.lang.Long"/>
+              queryable="true" sortable="true" insertable="true" updatable="false">
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="code" displayName="版本编码" propId="2" i18n-en:displayName="Code" tagSet="var" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
@@ -31,15 +31,15 @@
         </prop>
         <prop name="productId" displayName="产品" propId="3" i18n-en:displayName="Product" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="product">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="bomId" displayName="BOM" propId="4" i18n-en:displayName="Bom" mandatory="true" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="bom">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="routingId" displayName="工艺路线" propId="5" i18n-en:displayName="Routing" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="routing">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="validFrom" displayName="生效日期" propId="6" i18n-en:displayName="Valid From" queryable="true"
               sortable="true" insertable="true" updatable="true">

@@ -14,21 +14,21 @@ import java.math.BigDecimal;
 @DataBean
 public class BomExplosionNode {
 
-    private Long materialId;
+    private String materialId;
     private BigDecimal quantity;
-    private Long operationId;
-    private Long sourceBomId;
+    private String operationId;
+    private String sourceBomId;
     private int level;
     private boolean manufactured;
 
     public BomExplosionNode() {
     }
 
-    public Long getMaterialId() {
+    public String getMaterialId() {
         return materialId;
     }
 
-    public void setMaterialId(Long materialId) {
+    public void setMaterialId(String materialId) {
         this.materialId = materialId;
     }
 
@@ -40,19 +40,19 @@ public class BomExplosionNode {
         this.quantity = quantity;
     }
 
-    public Long getOperationId() {
+    public String getOperationId() {
         return operationId;
     }
 
-    public void setOperationId(Long operationId) {
+    public void setOperationId(String operationId) {
         this.operationId = operationId;
     }
 
-    public Long getSourceBomId() {
+    public String getSourceBomId() {
         return sourceBomId;
     }
 
-    public void setSourceBomId(Long sourceBomId) {
+    public void setSourceBomId(String sourceBomId) {
         this.sourceBomId = sourceBomId;
     }
 

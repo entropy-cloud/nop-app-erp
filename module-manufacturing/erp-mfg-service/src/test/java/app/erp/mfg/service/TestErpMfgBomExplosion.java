@@ -40,15 +40,15 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpMfgBomExplosion extends JunitAutoTestCase {
 
-    static final Long UOM_ID = 5101L;
-    static final Long P = 1001L;   // 产成品
-    static final Long SA = 1002L;  // 半成品（制造子件）
-    static final Long M1 = 1003L;  // 采购件
-    static final Long M2 = 1004L;  // 采购件
-    static final Long PH = 1005L;  // 虚拟件
-    static final Long CA = 1006L;  // 制造链 A
-    static final Long CB = 1007L;  // 制造链 B
-    static final Long CC = 1008L;  // 制造链 C
+    static final String UOM_ID = "5101";
+    static final String P = "1001";   // 产成品
+    static final String SA = "1002";  // 半成品（制造子件）
+    static final String M1 = "1003";  // 采购件
+    static final String M2 = "1004";  // 采购件
+    static final String PH = "1005";  // 虚拟件
+    static final String CA = "1006";  // 制造链 A
+    static final String CB = "1007";  // 制造链 B
+    static final String CC = "1008";  // 制造链 C
 
     @Inject
     IDaoProvider daoProvider;
@@ -61,29 +61,29 @@ public class TestErpMfgBomExplosion extends JunitAutoTestCase {
 
     @Test
     public void testFindDefaultBomPicksDefaultActive() {
-        Long bomDefault = seedBom(2001L, P, ErpMfgConstants.BOM_TYPE_MANUFACTURED, true, true, bd("1"));
-        seedBom(2002L, P, ErpMfgConstants.BOM_TYPE_MANUFACTURED, false, true, bd("1")); // 非默认
-        seedBom(2003L, P, ErpMfgConstants.BOM_TYPE_MANUFACTURED, true, false, bd("1")); // 默认但停用
+        String bomDefault = seedBom("2001", P, ErpMfgConstants.BOM_TYPE_MANUFACTURED, true, true, bd("1"));
+        seedBom("2002", P, ErpMfgConstants.BOM_TYPE_MANUFACTURED, false, true, bd("1")); // 非默认
+        seedBom("2003", P, ErpMfgConstants.BOM_TYPE_MANUFACTURED, true, false, bd("1")); // 默认但停用
 
         ApiResponse<?> resp = executeRpc("ErpMfgBom__findDefaultBom",
                 ApiRequest.build(Map.of("productId", P)));
         assertEquals(0, resp.getStatus(), "findDefaultBom 应成功");
         Map<?, ?> data = (Map<?, ?>) resp.get();
-        assertEquals(bomDefault.toString(), data.get("id").toString(), "取默认且有效的 BOM");
+        assertEquals(bomDefault, data.get("id").toString(), "取默认且有效的 BOM");
     }
 
     @Test
     public void testFindDefaultBomNotFound() {
         ApiResponse<?> resp = executeRpc("ErpMfgBom__findDefaultBom",
-                ApiRequest.build(Map.of("productId", 99999L)));
+                ApiRequest.build(Map.of("productId", "99999")));
         assertNotEquals(0, resp.getStatus(), "无默认 BOM 应返回错误");
     }
 
     @Test
     public void testSingleLevelExplosionQuantities() {
-        Long bomP = seedBom(2101L, P, ErpMfgConstants.BOM_TYPE_MANUFACTURED, true, true, bd("1"));
-        seedLine(3101L, bomP, M1, bd("2"), 10);
-        seedLine(3102L, bomP, M2, bd("3"), 20);
+        String bomP = seedBom("2101", P, ErpMfgConstants.BOM_TYPE_MANUFACTURED, true, true, bd("1"));
+        seedLine("3101", bomP, M1, bd("2"), 10);
+        seedLine("3102", bomP, M2, bd("3"), 20);
 
         List<BomExplosionNode> nodes = bomExpander.explode(bomP, bd("1"), false);
         assertEquals(2, nodes.size(), "单级展开两个直接子件");
@@ -101,10 +101,10 @@ public class TestErpMfgBomExplosion extends JunitAutoTestCase {
     @Test
     public void testMultiLevelExplosionQtyProduct() {
         // P(qty1) → SA(qty2, 制造)；SA(qty1) → M1(qty5)
-        Long bomP = seedBom(2201L, P, ErpMfgConstants.BOM_TYPE_MANUFACTURED, true, true, bd("1"));
-        seedLine(3201L, bomP, SA, bd("2"), 10);
-        Long bomSA = seedBom(2202L, SA, ErpMfgConstants.BOM_TYPE_MANUFACTURED, true, true, bd("1"));
-        seedLine(3202L, bomSA, M1, bd("5"), 10);
+        String bomP = seedBom("2201", P, ErpMfgConstants.BOM_TYPE_MANUFACTURED, true, true, bd("1"));
+        seedLine("3201", bomP, SA, bd("2"), 10);
+        String bomSA = seedBom("2202", SA, ErpMfgConstants.BOM_TYPE_MANUFACTURED, true, true, bd("1"));
+        seedLine("3202", bomSA, M1, bd("5"), 10);
 
         List<BomExplosionNode> nodes = bomExpander.explode(bomP, bd("1"), true);
         BomExplosionNode saNode = byMaterial(nodes, SA);
@@ -119,10 +119,10 @@ public class TestErpMfgBomExplosion extends JunitAutoTestCase {
     @Test
     public void testPhantomExpandsIntoParentLevel() {
         // P(qty1) → PH(qty1, phantom)；PH(qty1) → M1(qty3)
-        Long bomP = seedBom(2301L, P, ErpMfgConstants.BOM_TYPE_MANUFACTURED, true, true, bd("1"));
-        seedLine(3301L, bomP, PH, bd("1"), 10);
-        seedBom(2302L, PH, ErpMfgConstants.BOM_TYPE_PHANTOM, true, true, bd("1"));
-        seedLine(3302L, 2302L, M1, bd("3"), 10);
+        String bomP = seedBom("2301", P, ErpMfgConstants.BOM_TYPE_MANUFACTURED, true, true, bd("1"));
+        seedLine("3301", bomP, PH, bd("1"), 10);
+        seedBom("2302", PH, ErpMfgConstants.BOM_TYPE_PHANTOM, true, true, bd("1"));
+        seedLine("3302", "2302", M1, bd("3"), 10);
 
         List<BomExplosionNode> nodes = bomExpander.explode(bomP, bd("1"), true);
         assertEquals(1, nodes.size(), "phantom 不产生独立项，仅其子件");
@@ -136,10 +136,10 @@ public class TestErpMfgBomExplosion extends JunitAutoTestCase {
     @Test
     public void testCycleDetection() {
         // P → SA → P（环）
-        Long bomP = seedBom(2401L, P, ErpMfgConstants.BOM_TYPE_MANUFACTURED, true, true, bd("1"));
-        seedLine(3401L, bomP, SA, bd("1"), 10);
-        Long bomSA = seedBom(2402L, SA, ErpMfgConstants.BOM_TYPE_MANUFACTURED, true, true, bd("1"));
-        seedLine(3402L, bomSA, P, bd("1"), 10);
+        String bomP = seedBom("2401", P, ErpMfgConstants.BOM_TYPE_MANUFACTURED, true, true, bd("1"));
+        seedLine("3401", bomP, SA, bd("1"), 10);
+        String bomSA = seedBom("2402", SA, ErpMfgConstants.BOM_TYPE_MANUFACTURED, true, true, bd("1"));
+        seedLine("3402", bomSA, P, bd("1"), 10);
 
         NopException ex = assertThrows(NopException.class,
                 () -> bomExpander.explode(bomP, bd("1"), true));
@@ -149,13 +149,13 @@ public class TestErpMfgBomExplosion extends JunitAutoTestCase {
     @Test
     public void testDepthLimitTruncation() {
         // 制造链 P → CA → CB → CC（深度 4），设上限 2
-        Long bomP = seedBom(2501L, P, ErpMfgConstants.BOM_TYPE_MANUFACTURED, true, true, bd("1"));
-        seedLine(3501L, bomP, CA, bd("1"), 10);
-        Long bomA = seedBom(2502L, CA, ErpMfgConstants.BOM_TYPE_MANUFACTURED, true, true, bd("1"));
-        seedLine(3502L, bomA, CB, bd("1"), 10);
-        Long bomB = seedBom(2503L, CB, ErpMfgConstants.BOM_TYPE_MANUFACTURED, true, true, bd("1"));
-        seedLine(3503L, bomB, CC, bd("1"), 10);
-        seedBom(2504L, CC, ErpMfgConstants.BOM_TYPE_MANUFACTURED, true, true, bd("1"));
+        String bomP = seedBom("2501", P, ErpMfgConstants.BOM_TYPE_MANUFACTURED, true, true, bd("1"));
+        seedLine("3501", bomP, CA, bd("1"), 10);
+        String bomA = seedBom("2502", CA, ErpMfgConstants.BOM_TYPE_MANUFACTURED, true, true, bd("1"));
+        seedLine("3502", bomA, CB, bd("1"), 10);
+        String bomB = seedBom("2503", CB, ErpMfgConstants.BOM_TYPE_MANUFACTURED, true, true, bd("1"));
+        seedLine("3503", bomB, CC, bd("1"), 10);
+        seedBom("2504", CC, ErpMfgConstants.BOM_TYPE_MANUFACTURED, true, true, bd("1"));
 
         io.nop.api.core.config.AppConfig.getConfigProvider()
                 .assignConfigValue(ErpMfgConstants.CONFIG_BOM_MAX_DEPTH, "2");
@@ -173,9 +173,9 @@ public class TestErpMfgBomExplosion extends JunitAutoTestCase {
 
     @Test
     public void testExplodeViaGraphQLWiring() {
-        Long bomP = seedBom(2601L, P, ErpMfgConstants.BOM_TYPE_MANUFACTURED, true, true, bd("1"));
-        seedLine(3601L, bomP, M1, bd("2"), 10);
-        seedLine(3602L, bomP, M2, bd("3"), 20);
+        String bomP = seedBom("2601", P, ErpMfgConstants.BOM_TYPE_MANUFACTURED, true, true, bd("1"));
+        seedLine("3601", bomP, M1, bd("2"), 10);
+        seedLine("3602", bomP, M2, bd("3"), 20);
 
         Map<String, Object> req = new LinkedHashMap<>();
         req.put("bomId", bomP);
@@ -194,12 +194,12 @@ public class TestErpMfgBomExplosion extends JunitAutoTestCase {
         return graphQLEngine.executeRpc(ctx);
     }
 
-    private static BomExplosionNode byMaterial(List<BomExplosionNode> nodes, Long materialId) {
+    private static BomExplosionNode byMaterial(List<BomExplosionNode> nodes, String materialId) {
         return nodes.stream().filter(n -> n.getMaterialId().equals(materialId)).findFirst()
                 .orElseThrow(() -> new AssertionError("未找到物料 " + materialId));
     }
 
-    private Long seedBom(Long id, Long productId, String bomType, boolean isDefault, boolean isActive, BigDecimal qty) {
+    private String seedBom(String id, String productId, String bomType, boolean isDefault, boolean isActive, BigDecimal qty) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMfgBom> dao = daoProvider.daoFor(ErpMfgBom.class);
             ErpMfgBom bom = new ErpMfgBom();
@@ -215,7 +215,7 @@ public class TestErpMfgBomExplosion extends JunitAutoTestCase {
         return id;
     }
 
-    private void seedLine(Long id, Long bomId, Long materialId, BigDecimal quantity, int lineNo) {
+    private void seedLine(String id, String bomId, String materialId, BigDecimal quantity, int lineNo) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMfgBomLine> dao = daoProvider.daoFor(ErpMfgBomLine.class);
             ErpMfgBomLine line = new ErpMfgBomLine();

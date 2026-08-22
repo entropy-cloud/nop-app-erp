@@ -74,8 +74,8 @@ public class TestErpMfgForecastCrudSmoke extends JunitAutoTestCase {
         Map<String, Object> lineData = new LinkedHashMap<>();
         lineData.put("lineNo", 10);
         lineData.put("forecastId", headId);
-        lineData.put("materialId", 1001L);
-        lineData.put("uoMId", 1001L);
+        lineData.put("materialId", "1001");
+        lineData.put("uoMId", "1001");
         lineData.put("periodStart", LocalDate.of(2026, 7, 1));
         lineData.put("periodEnd", LocalDate.of(2026, 7, 31));
         lineData.put("forecastQty", "100");
@@ -97,17 +97,17 @@ public class TestErpMfgForecastCrudSmoke extends JunitAutoTestCase {
         ormTemplate.runInSession(() -> {
             IEntityDao<app.erp.md.dao.entity.ErpMdMaterial> matDao = daoProvider.daoFor(app.erp.md.dao.entity.ErpMdMaterial.class);
             app.erp.md.dao.entity.ErpMdMaterial mat = new app.erp.md.dao.entity.ErpMdMaterial();
-            mat.orm_propValueByName("id", 1001L);
+            mat.orm_propValueByName("id", "1001");
             mat.setCode("MAT-FCST");
             mat.setName("Forecast Material");
             mat.orm_propValueByName("materialType", "GOODS");
             mat.setStatus("ACTIVE");
-            mat.setUoMId(1001L);
+            mat.setUoMId("1001");
             matDao.saveEntity(mat);
 
             IEntityDao<app.erp.md.dao.entity.ErpMdUoM> uomDao = daoProvider.daoFor(app.erp.md.dao.entity.ErpMdUoM.class);
             app.erp.md.dao.entity.ErpMdUoM uom = new app.erp.md.dao.entity.ErpMdUoM();
-            uom.orm_propValueByName("id", 1001L);
+            uom.orm_propValueByName("id", "1001");
             uom.setCode("PCS");
             uom.setName("件");
             uomDao.saveEntity(uom);

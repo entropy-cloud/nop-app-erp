@@ -34,13 +34,13 @@ public class ErpMfgMaterialIssueBizModel extends CrudBizModel<ErpMfgMaterialIssu
 
     @Override
     @BizMutation
-    public ErpMfgMaterialIssue confirm(@Name("issueId") Long issueId, IServiceContext context) {
+    public ErpMfgMaterialIssue confirm(@Name("issueId") String issueId, IServiceContext context) {
         return confirmProcessor.confirm(issueId, context);
     }
 
     @Override
     @BizMutation
-    public ErpMfgMaterialIssue reverseConfirm(@Name("issueId") Long issueId, IServiceContext context) {
+    public ErpMfgMaterialIssue reverseConfirm(@Name("issueId") String issueId, IServiceContext context) {
         return reverseConfirmProcessor.reverseConfirm(issueId, context);
     }
 }

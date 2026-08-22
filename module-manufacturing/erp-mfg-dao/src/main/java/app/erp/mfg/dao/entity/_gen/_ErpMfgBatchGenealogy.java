@@ -232,40 +232,40 @@ public class _ErpMfgBatchGenealogy extends DynamicOrmEntity{
 
     
     /* ID: ID */
-    private java.lang.Long _id;
+    private java.lang.String _id;
     
     /* 工单: WORK_ORDER_ID */
-    private java.lang.Long _workOrderId;
+    private java.lang.String _workOrderId;
     
     /* 作业卡: JOB_CARD_ID */
-    private java.lang.Long _jobCardId;
+    private java.lang.String _jobCardId;
     
     /* 工序: OPERATION_ID */
-    private java.lang.Long _operationId;
+    private java.lang.String _operationId;
     
     /* 输入批次: INPUT_LOT_ID */
-    private java.lang.Long _inputLotId;
+    private java.lang.String _inputLotId;
     
     /* 输入物料: INPUT_MATERIAL_ID */
-    private java.lang.Long _inputMaterialId;
+    private java.lang.String _inputMaterialId;
     
     /* 投入数量: INPUT_QTY */
     private java.math.BigDecimal _inputQty;
     
     /* 投入计量单位: INPUT_UO_M_ID */
-    private java.lang.Long _inputUoMId;
+    private java.lang.String _inputUoMId;
     
     /* 产出批次: OUTPUT_LOT_ID */
-    private java.lang.Long _outputLotId;
+    private java.lang.String _outputLotId;
     
     /* 产出物料: OUTPUT_MATERIAL_ID */
-    private java.lang.Long _outputMaterialId;
+    private java.lang.String _outputMaterialId;
     
     /* 产出数量: OUTPUT_QTY */
     private java.math.BigDecimal _outputQty;
     
     /* 产出计量单位: OUTPUT_UO_M_ID */
-    private java.lang.Long _outputUoMId;
+    private java.lang.String _outputUoMId;
     
     /* 生产日期: PRODUCTION_DATE */
     private java.time.LocalDate _productionDate;
@@ -461,9 +461,9 @@ public class _ErpMfgBatchGenealogy extends DynamicOrmEntity{
         switch(propId){
         
             case PROP_ID_id:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_id));
                }
                setId(typedValue);
@@ -471,9 +471,9 @@ public class _ErpMfgBatchGenealogy extends DynamicOrmEntity{
             }
         
             case PROP_ID_workOrderId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_workOrderId));
                }
                setWorkOrderId(typedValue);
@@ -481,9 +481,9 @@ public class _ErpMfgBatchGenealogy extends DynamicOrmEntity{
             }
         
             case PROP_ID_jobCardId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_jobCardId));
                }
                setJobCardId(typedValue);
@@ -491,9 +491,9 @@ public class _ErpMfgBatchGenealogy extends DynamicOrmEntity{
             }
         
             case PROP_ID_operationId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_operationId));
                }
                setOperationId(typedValue);
@@ -501,9 +501,9 @@ public class _ErpMfgBatchGenealogy extends DynamicOrmEntity{
             }
         
             case PROP_ID_inputLotId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_inputLotId));
                }
                setInputLotId(typedValue);
@@ -511,9 +511,9 @@ public class _ErpMfgBatchGenealogy extends DynamicOrmEntity{
             }
         
             case PROP_ID_inputMaterialId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_inputMaterialId));
                }
                setInputMaterialId(typedValue);
@@ -531,9 +531,9 @@ public class _ErpMfgBatchGenealogy extends DynamicOrmEntity{
             }
         
             case PROP_ID_inputUoMId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_inputUoMId));
                }
                setInputUoMId(typedValue);
@@ -541,9 +541,9 @@ public class _ErpMfgBatchGenealogy extends DynamicOrmEntity{
             }
         
             case PROP_ID_outputLotId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_outputLotId));
                }
                setOutputLotId(typedValue);
@@ -551,9 +551,9 @@ public class _ErpMfgBatchGenealogy extends DynamicOrmEntity{
             }
         
             case PROP_ID_outputMaterialId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_outputMaterialId));
                }
                setOutputMaterialId(typedValue);
@@ -571,9 +571,9 @@ public class _ErpMfgBatchGenealogy extends DynamicOrmEntity{
             }
         
             case PROP_ID_outputUoMId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_outputUoMId));
                }
                setOutputUoMId(typedValue);
@@ -711,42 +711,42 @@ public class _ErpMfgBatchGenealogy extends DynamicOrmEntity{
         
             case PROP_ID_id:{
                onInitProp(propId);
-               this._id = (java.lang.Long)value;
+               this._id = (java.lang.String)value;
                orm_id(); // 如果是设置主键字段，则触发watcher
                break;
             }
         
             case PROP_ID_workOrderId:{
                onInitProp(propId);
-               this._workOrderId = (java.lang.Long)value;
+               this._workOrderId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_jobCardId:{
                onInitProp(propId);
-               this._jobCardId = (java.lang.Long)value;
+               this._jobCardId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_operationId:{
                onInitProp(propId);
-               this._operationId = (java.lang.Long)value;
+               this._operationId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_inputLotId:{
                onInitProp(propId);
-               this._inputLotId = (java.lang.Long)value;
+               this._inputLotId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_inputMaterialId:{
                onInitProp(propId);
-               this._inputMaterialId = (java.lang.Long)value;
+               this._inputMaterialId = (java.lang.String)value;
                
                break;
             }
@@ -760,21 +760,21 @@ public class _ErpMfgBatchGenealogy extends DynamicOrmEntity{
         
             case PROP_ID_inputUoMId:{
                onInitProp(propId);
-               this._inputUoMId = (java.lang.Long)value;
+               this._inputUoMId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_outputLotId:{
                onInitProp(propId);
-               this._outputLotId = (java.lang.Long)value;
+               this._outputLotId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_outputMaterialId:{
                onInitProp(propId);
-               this._outputMaterialId = (java.lang.Long)value;
+               this._outputMaterialId = (java.lang.String)value;
                
                break;
             }
@@ -788,7 +788,7 @@ public class _ErpMfgBatchGenealogy extends DynamicOrmEntity{
         
             case PROP_ID_outputUoMId:{
                onInitProp(propId);
-               this._outputUoMId = (java.lang.Long)value;
+               this._outputUoMId = (java.lang.String)value;
                
                break;
             }
@@ -886,7 +886,7 @@ public class _ErpMfgBatchGenealogy extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final java.lang.Long getId(){
+    public final java.lang.String getId(){
          onPropGet(PROP_ID_id);
          return _id;
     }
@@ -894,7 +894,7 @@ public class _ErpMfgBatchGenealogy extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final void setId(java.lang.Long value){
+    public final void setId(java.lang.String value){
         if(onPropSet(PROP_ID_id,value)){
             this._id = value;
             internalClearRefs(PROP_ID_id);
@@ -905,7 +905,7 @@ public class _ErpMfgBatchGenealogy extends DynamicOrmEntity{
     /**
      * 工单: WORK_ORDER_ID
      */
-    public final java.lang.Long getWorkOrderId(){
+    public final java.lang.String getWorkOrderId(){
          onPropGet(PROP_ID_workOrderId);
          return _workOrderId;
     }
@@ -913,7 +913,7 @@ public class _ErpMfgBatchGenealogy extends DynamicOrmEntity{
     /**
      * 工单: WORK_ORDER_ID
      */
-    public final void setWorkOrderId(java.lang.Long value){
+    public final void setWorkOrderId(java.lang.String value){
         if(onPropSet(PROP_ID_workOrderId,value)){
             this._workOrderId = value;
             internalClearRefs(PROP_ID_workOrderId);
@@ -924,7 +924,7 @@ public class _ErpMfgBatchGenealogy extends DynamicOrmEntity{
     /**
      * 作业卡: JOB_CARD_ID
      */
-    public final java.lang.Long getJobCardId(){
+    public final java.lang.String getJobCardId(){
          onPropGet(PROP_ID_jobCardId);
          return _jobCardId;
     }
@@ -932,7 +932,7 @@ public class _ErpMfgBatchGenealogy extends DynamicOrmEntity{
     /**
      * 作业卡: JOB_CARD_ID
      */
-    public final void setJobCardId(java.lang.Long value){
+    public final void setJobCardId(java.lang.String value){
         if(onPropSet(PROP_ID_jobCardId,value)){
             this._jobCardId = value;
             internalClearRefs(PROP_ID_jobCardId);
@@ -943,7 +943,7 @@ public class _ErpMfgBatchGenealogy extends DynamicOrmEntity{
     /**
      * 工序: OPERATION_ID
      */
-    public final java.lang.Long getOperationId(){
+    public final java.lang.String getOperationId(){
          onPropGet(PROP_ID_operationId);
          return _operationId;
     }
@@ -951,7 +951,7 @@ public class _ErpMfgBatchGenealogy extends DynamicOrmEntity{
     /**
      * 工序: OPERATION_ID
      */
-    public final void setOperationId(java.lang.Long value){
+    public final void setOperationId(java.lang.String value){
         if(onPropSet(PROP_ID_operationId,value)){
             this._operationId = value;
             internalClearRefs(PROP_ID_operationId);
@@ -962,7 +962,7 @@ public class _ErpMfgBatchGenealogy extends DynamicOrmEntity{
     /**
      * 输入批次: INPUT_LOT_ID
      */
-    public final java.lang.Long getInputLotId(){
+    public final java.lang.String getInputLotId(){
          onPropGet(PROP_ID_inputLotId);
          return _inputLotId;
     }
@@ -970,7 +970,7 @@ public class _ErpMfgBatchGenealogy extends DynamicOrmEntity{
     /**
      * 输入批次: INPUT_LOT_ID
      */
-    public final void setInputLotId(java.lang.Long value){
+    public final void setInputLotId(java.lang.String value){
         if(onPropSet(PROP_ID_inputLotId,value)){
             this._inputLotId = value;
             internalClearRefs(PROP_ID_inputLotId);
@@ -981,7 +981,7 @@ public class _ErpMfgBatchGenealogy extends DynamicOrmEntity{
     /**
      * 输入物料: INPUT_MATERIAL_ID
      */
-    public final java.lang.Long getInputMaterialId(){
+    public final java.lang.String getInputMaterialId(){
          onPropGet(PROP_ID_inputMaterialId);
          return _inputMaterialId;
     }
@@ -989,7 +989,7 @@ public class _ErpMfgBatchGenealogy extends DynamicOrmEntity{
     /**
      * 输入物料: INPUT_MATERIAL_ID
      */
-    public final void setInputMaterialId(java.lang.Long value){
+    public final void setInputMaterialId(java.lang.String value){
         if(onPropSet(PROP_ID_inputMaterialId,value)){
             this._inputMaterialId = value;
             internalClearRefs(PROP_ID_inputMaterialId);
@@ -1019,7 +1019,7 @@ public class _ErpMfgBatchGenealogy extends DynamicOrmEntity{
     /**
      * 投入计量单位: INPUT_UO_M_ID
      */
-    public final java.lang.Long getInputUoMId(){
+    public final java.lang.String getInputUoMId(){
          onPropGet(PROP_ID_inputUoMId);
          return _inputUoMId;
     }
@@ -1027,7 +1027,7 @@ public class _ErpMfgBatchGenealogy extends DynamicOrmEntity{
     /**
      * 投入计量单位: INPUT_UO_M_ID
      */
-    public final void setInputUoMId(java.lang.Long value){
+    public final void setInputUoMId(java.lang.String value){
         if(onPropSet(PROP_ID_inputUoMId,value)){
             this._inputUoMId = value;
             internalClearRefs(PROP_ID_inputUoMId);
@@ -1038,7 +1038,7 @@ public class _ErpMfgBatchGenealogy extends DynamicOrmEntity{
     /**
      * 产出批次: OUTPUT_LOT_ID
      */
-    public final java.lang.Long getOutputLotId(){
+    public final java.lang.String getOutputLotId(){
          onPropGet(PROP_ID_outputLotId);
          return _outputLotId;
     }
@@ -1046,7 +1046,7 @@ public class _ErpMfgBatchGenealogy extends DynamicOrmEntity{
     /**
      * 产出批次: OUTPUT_LOT_ID
      */
-    public final void setOutputLotId(java.lang.Long value){
+    public final void setOutputLotId(java.lang.String value){
         if(onPropSet(PROP_ID_outputLotId,value)){
             this._outputLotId = value;
             internalClearRefs(PROP_ID_outputLotId);
@@ -1057,7 +1057,7 @@ public class _ErpMfgBatchGenealogy extends DynamicOrmEntity{
     /**
      * 产出物料: OUTPUT_MATERIAL_ID
      */
-    public final java.lang.Long getOutputMaterialId(){
+    public final java.lang.String getOutputMaterialId(){
          onPropGet(PROP_ID_outputMaterialId);
          return _outputMaterialId;
     }
@@ -1065,7 +1065,7 @@ public class _ErpMfgBatchGenealogy extends DynamicOrmEntity{
     /**
      * 产出物料: OUTPUT_MATERIAL_ID
      */
-    public final void setOutputMaterialId(java.lang.Long value){
+    public final void setOutputMaterialId(java.lang.String value){
         if(onPropSet(PROP_ID_outputMaterialId,value)){
             this._outputMaterialId = value;
             internalClearRefs(PROP_ID_outputMaterialId);
@@ -1095,7 +1095,7 @@ public class _ErpMfgBatchGenealogy extends DynamicOrmEntity{
     /**
      * 产出计量单位: OUTPUT_UO_M_ID
      */
-    public final java.lang.Long getOutputUoMId(){
+    public final java.lang.String getOutputUoMId(){
          onPropGet(PROP_ID_outputUoMId);
          return _outputUoMId;
     }
@@ -1103,7 +1103,7 @@ public class _ErpMfgBatchGenealogy extends DynamicOrmEntity{
     /**
      * 产出计量单位: OUTPUT_UO_M_ID
      */
-    public final void setOutputUoMId(java.lang.Long value){
+    public final void setOutputUoMId(java.lang.String value){
         if(onPropSet(PROP_ID_outputUoMId,value)){
             this._outputUoMId = value;
             internalClearRefs(PROP_ID_outputUoMId);

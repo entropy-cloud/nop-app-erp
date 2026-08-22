@@ -42,7 +42,7 @@ public class ErpMfgCrpLoadBizModel extends CrudBizModel<ErpMfgCrpLoad> implement
     @BizMutation
     public Integer calculateLoad(@Name("periodFrom") LocalDate periodFrom,
                                  @Name("periodTo") LocalDate periodTo,
-                                 @Optional @Name("workcenterIds") List<Long> workcenterIds,
+                                 @Optional @Name("workcenterIds") List<String> workcenterIds,
                                  IServiceContext context) {
         return calculateLoadProcessor.calculateLoad(periodFrom, periodTo, workcenterIds, context);
     }
@@ -51,7 +51,7 @@ public class ErpMfgCrpLoadBizModel extends CrudBizModel<ErpMfgCrpLoad> implement
     @BizQuery
     public List<CrpLoadReportItem> getLoadReport(@Name("periodFrom") LocalDate periodFrom,
                                                  @Name("periodTo") LocalDate periodTo,
-                                                 @Optional @Name("workcenterIds") List<Long> workcenterIds,
+                                                 @Optional @Name("workcenterIds") List<String> workcenterIds,
                                                  IServiceContext context) {
         return crpLoadCalculator.getLoadReport(periodFrom, periodTo, workcenterIds);
     }

@@ -30,7 +30,7 @@ public class ErpMfgCostVarianceCalculateVariancesProcessor {
     @Inject
     ProductionVarianceDispatcher productionVarianceDispatcher;
 
-    public List<ErpMfgCostVariance> calculateVariances(Long workOrderId, IServiceContext context) {
+    public List<ErpMfgCostVariance> calculateVariances(String workOrderId, IServiceContext context) {
         ErpMfgWorkOrder wo = daoProvider.daoFor(ErpMfgWorkOrder.class).getEntityById(workOrderId);
         if (wo == null) {
             throw new NopException(ErpMfgErrors.ERR_WORK_ORDER_NOT_FOUND)

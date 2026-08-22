@@ -13,30 +13,30 @@
     public class ErpMfgRoutingOperationOutputBean {
 
     
-        private Long _id;
+        private String _id;
 
     
         @PropMeta(propId=1)
     
-        public Long getId(){
+        public String getId(){
             return _id;
         }
 
-        public void setId(Long value){
+        public void setId(String value){
             this._id = value;
         }
 
 
-        private Long _routingId;
+        private String _routingId;
 
     
         @PropMeta(propId=2)
     
-        public Long getRoutingId(){
+        public String getRoutingId(){
             return _routingId;
         }
 
-        public void setRoutingId(Long value){
+        public void setRoutingId(String value){
             this._routingId = value;
         }
 
@@ -83,16 +83,16 @@
         }
 
 
-        private Long _workcenterId;
+        private String _workcenterId;
 
     
         @PropMeta(propId=6)
     
-        public Long getWorkcenterId(){
+        public String getWorkcenterId(){
             return _workcenterId;
         }
 
-        public void setWorkcenterId(Long value){
+        public void setWorkcenterId(String value){
             this._workcenterId = value;
         }
 

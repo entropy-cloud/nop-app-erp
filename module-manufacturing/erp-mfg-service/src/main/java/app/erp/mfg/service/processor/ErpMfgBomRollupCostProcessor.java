@@ -14,7 +14,7 @@ public class ErpMfgBomRollupCostProcessor {
     @Inject
     CostRollupService costRollupService;
 
-    public CostRollupResult rollupCost(Long bomId, IServiceContext context) {
+    public CostRollupResult rollupCost(String bomId, IServiceContext context) {
         return costRollupService.rollup(bomId);
     }
 }

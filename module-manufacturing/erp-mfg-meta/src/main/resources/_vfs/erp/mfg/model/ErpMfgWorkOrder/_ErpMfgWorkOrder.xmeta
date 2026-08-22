@@ -22,8 +22,8 @@
 
     <props>
         <prop name="id" displayName="ID" propId="1" i18n-en:displayName="ID" tagSet="seq-default" mandatory="true"
-              queryable="true" sortable="true" insertable="true" updatable="false" graphql:type="String">
-            <schema type="java.lang.Long"/>
+              queryable="true" sortable="true" insertable="true" updatable="false">
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="code" displayName="工单号" propId="2" i18n-en:displayName="Code" tagSet="var" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
@@ -31,23 +31,23 @@
         </prop>
         <prop name="orgId" displayName="业务组织" propId="3" i18n-en:displayName="Organization" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="org">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="bomId" displayName="BOM" propId="4" i18n-en:displayName="Bom" queryable="true" sortable="true"
               insertable="true" updatable="true" ext:relation="bom">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="routingId" displayName="工艺路线" propId="5" i18n-en:displayName="Routing" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="routing">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="productionVersionId" displayName="生产版本" propId="6" i18n-en:displayName="Production Version"
               queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="productionVersion">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="sourceMrpPlanId" displayName="来源 MRP 计划" propId="7" i18n-en:displayName="Source Mrp Plan"
               queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="sourceMrpPlan">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="sourceOrderType" displayName="来源单据类型" propId="8" i18n-en:displayName="Source Order Type"
               queryable="true" sortable="true" insertable="true" updatable="true">
@@ -59,7 +59,7 @@
         </prop>
         <prop name="productId" displayName="产品(主产出)" propId="10" i18n-en:displayName="Product" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="product">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="plannedQuantity" displayName="计划数量" propId="11" i18n-en:displayName="Planned Quantity"
               mandatory="true" queryable="true" sortable="true" insertable="true" updatable="true">
@@ -95,7 +95,7 @@
         </prop>
         <prop name="currencyId" displayName="币种" propId="19" i18n-en:displayName="Currency" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="currency">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="materialCost" displayName="材料成本" propId="20" i18n-en:displayName="Material Cost" queryable="true"
               sortable="true" insertable="true" updatable="true" defaultValue="0">
@@ -171,7 +171,7 @@
         </prop>
         <prop name="sourceScheduleId" displayName="APS排程来源(弱参照)" propId="38" i18n-en:displayName="Source Schedule Id"
               queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="delVersion" displayName="逻辑删除版本" propId="39" i18n-en:displayName="Del Flag" mandatory="true"
               queryable="true" sortable="true" insertable="false" updatable="false" ui:show="R" defaultValue="0">
@@ -203,7 +203,7 @@
         </prop>
         <prop name="snapshotBomId" displayName="BOM快照ID" propId="46" i18n-en:displayName="Snapshot Bom" queryable="true"
               sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="bom" i18n-en:displayName="Bom" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
               ext:joinLeftProp="bomId" ext:joinRightProp="id" insertable="false" updatable="false" lazy="true">

@@ -35,11 +35,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpMfgSkuReferenceChecker extends JunitAutoTestCase {
 
-    static final Long PRODUCT_ID = 9401L;
-    static final Long MATERIAL_ID = 9402L;
-    static final Long UOM_ID = 9403L;
-    static final Long WORK_ORDER_ID = 9404L;
-    static final Long WAREHOUSE_ID = 9405L;
+    static final String PRODUCT_ID = "9401";
+    static final String MATERIAL_ID = "9402";
+    static final String UOM_ID = "9403";
+    static final String WORK_ORDER_ID = "9404";
+    static final String WAREHOUSE_ID = "9405";
 
     @Inject
     IDaoProvider daoProvider;
@@ -50,57 +50,57 @@ public class TestErpMfgSkuReferenceChecker extends JunitAutoTestCase {
 
     @Test
     public void testActiveBomLineReferencesSku() {
-        Long activeSkuId = seedSku("SKU-MFG-BOM-ACTIVE");
-        Long bomId = seedBom("BOM-REF-ACTIVE", true);
+        String activeSkuId = seedSku("SKU-MFG-BOM-ACTIVE");
+        String bomId = seedBom("BOM-REF-ACTIVE", true);
         seedBomLine(bomId, activeSkuId);
         assertTrue(checker.isReferencedByBill(loadSku(activeSkuId)), "活跃 BOM 行应构成引用");
 
-        Long inactiveSkuId = seedSku("SKU-MFG-BOM-INACTIVE");
-        Long inactiveBomId = seedBom("BOM-REF-INACTIVE", false);
+        String inactiveSkuId = seedSku("SKU-MFG-BOM-INACTIVE");
+        String inactiveBomId = seedBom("BOM-REF-INACTIVE", false);
         seedBomLine(inactiveBomId, inactiveSkuId);
         assertFalse(checker.isReferencedByBill(loadSku(inactiveSkuId)), "停用 BOM 行不阻断");
     }
 
     @Test
     public void testWorkOrderLineTerminalContrast() {
-        Long openSkuId = seedSku("SKU-MFG-WO-OPEN");
-        Long openWoId = seedWorkOrder("WO-REF-OPEN", ErpMfgDaoConstants.WORK_ORDER_STATUS_IN_PROCESS);
+        String openSkuId = seedSku("SKU-MFG-WO-OPEN");
+        String openWoId = seedWorkOrder("WO-REF-OPEN", ErpMfgDaoConstants.WORK_ORDER_STATUS_IN_PROCESS);
         seedWorkOrderLine(openWoId, openSkuId);
         assertTrue(checker.isReferencedByBill(loadSku(openSkuId)), "生产中工单行应构成引用");
 
-        Long closedSkuId = seedSku("SKU-MFG-WO-CLOSED");
-        Long closedWoId = seedWorkOrder("WO-REF-CLOSED", ErpMfgDaoConstants.WORK_ORDER_STATUS_CLOSED);
+        String closedSkuId = seedSku("SKU-MFG-WO-CLOSED");
+        String closedWoId = seedWorkOrder("WO-REF-CLOSED", ErpMfgDaoConstants.WORK_ORDER_STATUS_CLOSED);
         seedWorkOrderLine(closedWoId, closedSkuId);
         assertFalse(checker.isReferencedByBill(loadSku(closedSkuId)), "CLOSED（终态）工单行不阻断");
 
-        Long cancelledSkuId = seedSku("SKU-MFG-WO-CANCEL");
-        Long cancelledWoId = seedWorkOrder("WO-REF-CANCEL", ErpMfgDaoConstants.WORK_ORDER_STATUS_CANCELLED);
+        String cancelledSkuId = seedSku("SKU-MFG-WO-CANCEL");
+        String cancelledWoId = seedWorkOrder("WO-REF-CANCEL", ErpMfgDaoConstants.WORK_ORDER_STATUS_CANCELLED);
         seedWorkOrderLine(cancelledWoId, cancelledSkuId);
         assertFalse(checker.isReferencedByBill(loadSku(cancelledSkuId)), "CANCELLED（终态）工单行不阻断");
     }
 
     @Test
     public void testMaterialIssueLineContrast() {
-        Long openSkuId = seedSku("SKU-MFG-ISSUE-OPEN");
-        Long openIssueId = seedMaterialIssue("MI-REF-OPEN", ErpMfgDaoConstants.ISSUE_STATUS_DRAFT);
+        String openSkuId = seedSku("SKU-MFG-ISSUE-OPEN");
+        String openIssueId = seedMaterialIssue("MI-REF-OPEN", ErpMfgDaoConstants.ISSUE_STATUS_DRAFT);
         seedMaterialIssueLine(openIssueId, openSkuId);
         assertTrue(checker.isReferencedByBill(loadSku(openSkuId)), "DRAFT 领料单行应构成引用");
 
-        Long doneSkuId = seedSku("SKU-MFG-ISSUE-DONE");
-        Long doneIssueId = seedMaterialIssue("MI-REF-DONE", ErpMfgDaoConstants.ISSUE_STATUS_DONE);
+        String doneSkuId = seedSku("SKU-MFG-ISSUE-DONE");
+        String doneIssueId = seedMaterialIssue("MI-REF-DONE", ErpMfgDaoConstants.ISSUE_STATUS_DONE);
         seedMaterialIssueLine(doneIssueId, doneSkuId);
         assertFalse(checker.isReferencedByBill(loadSku(doneSkuId)), "DONE（终态）领料单行不阻断");
     }
 
     @Test
     public void testUnreferencedSkuFalse() {
-        Long skuId = seedSku("SKU-MFG-UNREF");
+        String skuId = seedSku("SKU-MFG-UNREF");
         assertFalse(checker.isReferencedByBill(loadSku(skuId)), "无 BOM/工单/领料引用应为 false");
     }
 
     // ---------- seeds ----------
 
-    private Long seedSku(String skuCode) {
+    private String seedSku(String skuCode) {
         ErpMdMaterialSku sku = new ErpMdMaterialSku();
         sku.setMaterialId(MATERIAL_ID);
         sku.setSkuCode(skuCode);
@@ -110,11 +110,11 @@ public class TestErpMfgSkuReferenceChecker extends JunitAutoTestCase {
         return sku.getId();
     }
 
-    private ErpMdMaterialSku loadSku(Long skuId) {
+    private ErpMdMaterialSku loadSku(String skuId) {
         return skuDao().getEntityById(skuId);
     }
 
-    private Long seedBom(String code, boolean isActive) {
+    private String seedBom(String code, boolean isActive) {
         ErpMfgBom bom = new ErpMfgBom();
         bom.setCode(code);
         bom.setProductId(PRODUCT_ID);
@@ -124,7 +124,7 @@ public class TestErpMfgSkuReferenceChecker extends JunitAutoTestCase {
         return bom.getId();
     }
 
-    private void seedBomLine(Long bomId, Long skuId) {
+    private void seedBomLine(String bomId, String skuId) {
         ErpMfgBomLine line = new ErpMfgBomLine();
         line.setBomId(bomId);
         line.setLineNo(1);
@@ -135,7 +135,7 @@ public class TestErpMfgSkuReferenceChecker extends JunitAutoTestCase {
         ormTemplate.runInSession(() -> daoProvider.daoFor(ErpMfgBomLine.class).saveEntity(line));
     }
 
-    private Long seedWorkOrder(String code, String docStatus) {
+    private String seedWorkOrder(String code, String docStatus) {
         ErpMfgWorkOrder wo = new ErpMfgWorkOrder();
         wo.setCode(code);
         wo.setProductId(PRODUCT_ID);
@@ -146,7 +146,7 @@ public class TestErpMfgSkuReferenceChecker extends JunitAutoTestCase {
         return wo.getId();
     }
 
-    private void seedWorkOrderLine(Long workOrderId, Long skuId) {
+    private void seedWorkOrderLine(String workOrderId, String skuId) {
         ErpMfgWorkOrderLine line = new ErpMfgWorkOrderLine();
         line.setWorkOrderId(workOrderId);
         line.setLineNo(1);
@@ -158,7 +158,7 @@ public class TestErpMfgSkuReferenceChecker extends JunitAutoTestCase {
         ormTemplate.runInSession(() -> daoProvider.daoFor(ErpMfgWorkOrderLine.class).saveEntity(line));
     }
 
-    private Long seedMaterialIssue(String code, String docStatus) {
+    private String seedMaterialIssue(String code, String docStatus) {
         ErpMfgMaterialIssue issue = new ErpMfgMaterialIssue();
         issue.setCode(code);
         issue.setWorkOrderId(WORK_ORDER_ID);
@@ -170,7 +170,7 @@ public class TestErpMfgSkuReferenceChecker extends JunitAutoTestCase {
         return issue.getId();
     }
 
-    private void seedMaterialIssueLine(Long issueId, Long skuId) {
+    private void seedMaterialIssueLine(String issueId, String skuId) {
         ErpMfgMaterialIssueLine line = new ErpMfgMaterialIssueLine();
         line.setIssueId(issueId);
         line.setLineNo(1);

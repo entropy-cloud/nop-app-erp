@@ -1,0 +1,2 @@
+_chgType,ID,CODE,ORG_ID,BUSINESS_DATE,SOURCE_BILL_TYPE,SOURCE_BILL_CODE,RESERVED_FOR_PARTNER_ID,STATUS,VALID_UNTIL,REMARK,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
+A,8,@var:ErpInvReservation@code,1401,@var:ErpInvReservation@businessDate,WORK_ORDER,@var:ErpInvReservation@sourceBillCode,,OPEN,,,@var:ErpInvReservation@delVersion,0,autotest-ref,*,autotest-ref,*

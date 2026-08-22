@@ -63,15 +63,15 @@ public class TestErpMntOee extends JunitAutoTestCase {
 
     // EQ-A @ WC-81001（完整数据链设备）
     private static final String EQ_A = "71001";
-    private static final Long WC_A = 81001L;
+    private static final String WC_A = "81001";
     // EQ-B @ WC-81002（隔离对照设备：不同日历/产能/报工，无质检走 mfg 回退）
     private static final String EQ_B = "71002";
-    private static final Long WC_B = 81002L;
+    private static final String WC_B = "81002";
     // EQ-C：无工作中心桥接（null 语义设备）
     private static final String EQ_C = "71003";
 
-    private static final Long MATERIAL_1 = 88001L;
-    private static final Long WO_A = 73001L;
+    private static final String MATERIAL_1 = "88001";
+    private static final String WO_A = "73001";
     private static final String WO_A_CODE = "WO-OEE-A";
 
     @Inject
@@ -148,10 +148,10 @@ public class TestErpMntOee extends JunitAutoTestCase {
     @Test
     public void testNoCapacityRowYieldsNullPerformance() {
         String equipmentId = "71004";
-        Long workcenterId = 81004L;
+        String workcenterId = "81004";
         ormTemplate.runInSession(s -> {
-            seedEquipment(equipmentId, "EQ-OEE-D", ErpMntDaoConstants.EQUIPMENT_STATUS_RUNNING, String.valueOf(workcenterId));
-            seedCalendar(84004L, workcenterId, "08:00", "16:00", null);
+            seedEquipment(equipmentId, "EQ-OEE-D", ErpMntDaoConstants.EQUIPMENT_STATUS_RUNNING, workcenterId);
+            seedCalendar("84004", workcenterId, "08:00", "16:00", null);
             seedStatusLog("72041", equipmentId, null, ErpMntDaoConstants.EQUIPMENT_STATUS_RUNNING,
                     ts(2026, 7, 13, 8, 0));
             seedStatusLog("72042", equipmentId, ErpMntDaoConstants.EQUIPMENT_STATUS_RUNNING,
@@ -169,10 +169,10 @@ public class TestErpMntOee extends JunitAutoTestCase {
     @Test
     public void testZeroPlannedHoursYieldsNullAvailability() {
         String equipmentId = "71005";
-        Long workcenterId = 81005L;
+        String workcenterId = "81005";
         ormTemplate.runInSession(s -> {
-            seedEquipment(equipmentId, "EQ-OEE-E", ErpMntDaoConstants.EQUIPMENT_STATUS_RUNNING, String.valueOf(workcenterId));
-            seedCalendar(84005L, workcenterId, "08:00", "16:00", null);
+            seedEquipment(equipmentId, "EQ-OEE-E", ErpMntDaoConstants.EQUIPMENT_STATUS_RUNNING, workcenterId);
+            seedCalendar("84005", workcenterId, "08:00", "16:00", null);
             // 停机覆盖全部日历时长 → 计划运行时间 0 → 可用率 null（D4 零分母）
             seedDowntime("73005", equipmentId, ts(2026, 7, 13, 0, 0), ts(2026, 7, 16, 0, 0));
             return null;
@@ -265,7 +265,7 @@ public class TestErpMntOee extends JunitAutoTestCase {
         seedFullScenarioA();
         // 7-20 追加报工（3 日窗口外，月度窗口内）
         ormTemplate.runInSession(s -> {
-            seedTimeLog(72504L, 72001L, WO_A, LocalDate.of(2026, 7, 20), "50", "0");
+            seedTimeLog("72504", "72001", WO_A, LocalDate.of(2026, 7, 20), "50", "0");
             return null;
         });
 
@@ -288,12 +288,12 @@ public class TestErpMntOee extends JunitAutoTestCase {
     /** EQ-A 完整数据链：3 日班次内 RUNNING 21h + 停机 2h + 产能 10/h + 报工 150 + 质检合格 120。 */
     private void seedFullScenarioA() {
         ormTemplate.runInSession(s -> {
-            seedEquipment(EQ_A, "EQ-OEE-A", ErpMntDaoConstants.EQUIPMENT_STATUS_RUNNING, String.valueOf(WC_A));
-            seedCalendar(84001L, WC_A, "08:00", "16:00", null);
-            seedCapacity(85001L, WC_A, MATERIAL_1, "10");
+            seedEquipment(EQ_A, "EQ-OEE-A", ErpMntDaoConstants.EQUIPMENT_STATUS_RUNNING, WC_A);
+            seedCalendar("84001", WC_A, "08:00", "16:00", null);
+            seedCapacity("85001", WC_A, MATERIAL_1, "10");
             seedDowntime("73001", EQ_A, ts(2026, 7, 14, 10, 0), ts(2026, 7, 14, 12, 0));
             seedWorkOrder(WO_A, WO_A_CODE, MATERIAL_1);
-            seedJobCard(72001L, WO_A, WC_A);
+            seedJobCard("72001", WO_A, WC_A);
             // 7-13：RUNNING 08-12(4h) / IDLE 12-13 / RUNNING 13-16(3h)
             seedStatusLog("72011", EQ_A, null, ErpMntDaoConstants.EQUIPMENT_STATUS_RUNNING, ts(2026, 7, 13, 8, 0));
             seedStatusLog("72012", EQ_A, ErpMntDaoConstants.EQUIPMENT_STATUS_RUNNING,
@@ -317,9 +317,9 @@ public class TestErpMntOee extends JunitAutoTestCase {
             seedStatusLog("72020", EQ_A, ErpMntDaoConstants.EQUIPMENT_STATUS_RUNNING,
                     ErpMntDaoConstants.EQUIPMENT_STATUS_IDLE, ts(2026, 7, 15, 16, 0));
             // 报工：60 + 50 + 40 = 150
-            seedTimeLog(72501L, 72001L, WO_A, LocalDate.of(2026, 7, 13), "60", "0");
-            seedTimeLog(72502L, 72001L, WO_A, LocalDate.of(2026, 7, 14), "50", "10");
-            seedTimeLog(72503L, 72001L, WO_A, LocalDate.of(2026, 7, 15), "40", "0");
+            seedTimeLog("72501", "72001", WO_A, LocalDate.of(2026, 7, 13), "60", "0");
+            seedTimeLog("72502", "72001", WO_A, LocalDate.of(2026, 7, 14), "50", "10");
+            seedTimeLog("72503", "72001", WO_A, LocalDate.of(2026, 7, 15), "40", "0");
             // 质检：ACCEPTED 批量 120（关联 WO-OEE-A）
             seedInspection("74001", "QA-OEE-1", WO_A_CODE, LocalDate.of(2026, 7, 15),
                     "ACCEPTED", "120");
@@ -330,29 +330,25 @@ public class TestErpMntOee extends JunitAutoTestCase {
     /** EQ-B 隔离对照：WC-81002 自有日历/产能/报工，无质检。 */
     private void seedScenarioB() {
         ormTemplate.runInSession(s -> {
-            seedEquipment(EQ_B, "EQ-OEE-B", ErpMntDaoConstants.EQUIPMENT_STATUS_RUNNING, String.valueOf(WC_B));
-            seedCalendar(84002L, WC_B, "08:00", "16:00", null);
-            seedCapacity(85002L, WC_B, 88002L, "20");
-            Long woB = 73002L;
-            seedWorkOrder(woB, "WO-OEE-B", 88002L);
-            seedJobCard(72002L, woB, WC_B);
+            seedEquipment(EQ_B, "EQ-OEE-B", ErpMntDaoConstants.EQUIPMENT_STATUS_RUNNING, WC_B);
+            seedCalendar("84002", WC_B, "08:00", "16:00", null);
+            seedCapacity("85002", WC_B, "88002", "20");
+            String woB = "73002";
+            seedWorkOrder(woB, "WO-OEE-B", "88002");
+            seedJobCard("72002", woB, WC_B);
             // 3 日各 RUNNING 4h = 12h
             for (int d = 13; d <= 15; d++) {
                 seedStatusLog(String.valueOf(72100L + d), EQ_B, null,
                         ErpMntDaoConstants.EQUIPMENT_STATUS_RUNNING, ts(2026, 7, d, 8, 0));
                 seedStatusLog(String.valueOf(72200L + d), EQ_B, ErpMntDaoConstants.EQUIPMENT_STATUS_RUNNING,
                         ErpMntDaoConstants.EQUIPMENT_STATUS_IDLE, ts(2026, 7, d, 12, 0));
-                seedTimeLog(72600L + d, 72002L, woB, LocalDate.of(2026, 7, d), "20",
+                seedTimeLog(String.valueOf(72600L + d), "72002", woB, LocalDate.of(2026, 7, d), "20",
                         d == 14 ? "20" : "0");
             }
             return null;
         });
     }
 
-    // bridge-test-125（qa 半边已兑付，M2.3）：QaInspection 种子随 qa String 化（materialId 经
-    // String.valueOf 局部桥接 mfg Long 常量 MATERIAL_1）；mfg 种子（JobCard/TimeLog/WorkOrder/
-    // WorkcenterCalendar/WorkcenterCapacity）仍 Long——mnt seedEquipment 的 workcenterId 参数经
-    // String.valueOf 局部桥接 mfg Long 常量；mfg 翻转时退役（owner M3.1）。
     private void seedEquipment(String id, String code, String status, String workcenterId) {
         IEntityDao<ErpMntEquipment> dao = daoProvider.daoFor(ErpMntEquipment.class);
         ErpMntEquipment equipment = dao.newEntity();
@@ -386,7 +382,7 @@ public class TestErpMntOee extends JunitAutoTestCase {
         dao.saveEntity(entry);
     }
 
-    private void seedCalendar(Long id, Long workcenterId, String startTime, String endTime, String pattern) {
+    private void seedCalendar(String id, String workcenterId, String startTime, String endTime, String pattern) {
         IEntityDao<ErpMfgWorkcenterCalendar> dao = daoProvider.daoFor(ErpMfgWorkcenterCalendar.class);
         ErpMfgWorkcenterCalendar calendar = dao.newEntity();
         calendar.setId(id);
@@ -400,7 +396,7 @@ public class TestErpMntOee extends JunitAutoTestCase {
         dao.saveEntity(calendar);
     }
 
-    private void seedCapacity(Long id, Long workcenterId, Long materialId, String capacityPerHour) {
+    private void seedCapacity(String id, String workcenterId, String materialId, String capacityPerHour) {
         IEntityDao<ErpMfgWorkcenterCapacity> dao = daoProvider.daoFor(ErpMfgWorkcenterCapacity.class);
         ErpMfgWorkcenterCapacity capacity = dao.newEntity();
         capacity.setId(id);
@@ -411,7 +407,7 @@ public class TestErpMntOee extends JunitAutoTestCase {
         dao.saveEntity(capacity);
     }
 
-    private void seedWorkOrder(Long id, String code, Long productId) {
+    private void seedWorkOrder(String id, String code, String productId) {
         IEntityDao<ErpMfgWorkOrder> dao = daoProvider.daoFor(ErpMfgWorkOrder.class);
         ErpMfgWorkOrder workOrder = dao.newEntity();
         workOrder.setId(id);
@@ -423,7 +419,7 @@ public class TestErpMntOee extends JunitAutoTestCase {
         dao.saveEntity(workOrder);
     }
 
-    private void seedJobCard(Long id, Long workOrderId, Long workcenterId) {
+    private void seedJobCard(String id, String workOrderId, String workcenterId) {
         IEntityDao<ErpMfgJobCard> dao = daoProvider.daoFor(ErpMfgJobCard.class);
         ErpMfgJobCard card = dao.newEntity();
         card.setId(id);
@@ -435,7 +431,7 @@ public class TestErpMntOee extends JunitAutoTestCase {
         dao.saveEntity(card);
     }
 
-    private void seedTimeLog(Long id, Long jobCardId, Long workOrderId, LocalDate workDate,
+    private void seedTimeLog(String id, String jobCardId, String workOrderId, LocalDate workDate,
                              String completed, String scrapped) {
         IEntityDao<ErpMfgJobCardTimeLog> dao = daoProvider.daoFor(ErpMfgJobCardTimeLog.class);
         ErpMfgJobCardTimeLog log = dao.newEntity();
@@ -459,7 +455,7 @@ public class TestErpMntOee extends JunitAutoTestCase {
         inspection.setInspectionType("FINAL");
         inspection.setRelatedBillType("ERP_MFG_WORK_ORDER");
         inspection.setRelatedBillCode(relatedBillCode);
-        inspection.setMaterialId(String.valueOf(MATERIAL_1));
+        inspection.setMaterialId(MATERIAL_1);
         inspection.setBusinessDate(inspectionDate);
         inspection.setInspectionDate(inspectionDate);
         inspection.setLotQuantity(new BigDecimal(lotQuantity));

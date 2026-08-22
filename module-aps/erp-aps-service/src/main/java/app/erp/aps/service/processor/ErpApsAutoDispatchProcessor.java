@@ -14,7 +14,6 @@ import app.erp.mfg.dao.entity.ErpMfgWorkOrder;
 import app.erp.mfg.dao.entity.ErpMfgWorkcenter;
 import app.erp.notify.biz.IErpSysNotificationBiz;
 import io.nop.api.core.beans.query.QueryBean;
-import io.nop.api.core.convert.ConvertHelper;
 import io.nop.api.core.auth.IUserContext;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.api.core.time.CoreMetrics;
@@ -225,9 +224,8 @@ public class ErpApsAutoDispatchProcessor {
             return rule.getMaxConcurrentOps();
         }
         // 默认 = 工作中心 capacity（auto-dispatch.md §1.2；缺省 1）
-        // A2 桥接（bridge-main-020）：aps String workcenterId ↔ mfg Long 实体 API，退役 owner M3.1
         ErpMfgWorkcenter wc = rule.getWorkcenterId() == null ? null
-                : daoProvider.daoFor(ErpMfgWorkcenter.class).getEntityById(ConvertHelper.toLong(rule.getWorkcenterId()));
+                : daoProvider.daoFor(ErpMfgWorkcenter.class).getEntityById(rule.getWorkcenterId());
         if (wc != null && wc.getCapacity() != null) {
             return Math.max(1, wc.getCapacity().setScale(0, RoundingMode.CEILING).intValueExact());
         }
@@ -260,9 +258,8 @@ public class ErpApsAutoDispatchProcessor {
      * 无工单/无 BOM/无子件行 → null（无需求视为满足，记条件结果 null）。
      */
     protected Boolean checkMaterialAvailability(ErpApsOperationOrder op) {
-        // A2 桥接（bridge-main-019）：aps String workOrderId ↔ mfg Long 实体 API，退役 owner M3.1
         ErpMfgWorkOrder wo = op.getWorkOrderId() == null ? null
-                : daoProvider.daoFor(ErpMfgWorkOrder.class).getEntityById(ConvertHelper.toLong(op.getWorkOrderId()));
+                : daoProvider.daoFor(ErpMfgWorkOrder.class).getEntityById(op.getWorkOrderId());
         if (wo == null) {
             return null;
         }
@@ -277,8 +274,7 @@ public class ErpApsAutoDispatchProcessor {
         BigDecimal bomQty = bom.getQty() == null || bom.getQty().signum() == 0 ? BigDecimal.ONE : bom.getQty();
         BigDecimal planned = wo.getPlannedQuantity() == null ? BigDecimal.ZERO : wo.getPlannedQuantity();
 
-        // A2 桥接（bridge-main-017）：键 = mfg ErpMfgBomLine.materialId（Long，mfg 未迁移），退役 owner M3.1
-        Map<Long, BigDecimal> requiredByMaterial = new LinkedHashMap<>();
+        Map<String, BigDecimal> requiredByMaterial = new LinkedHashMap<>();
         for (ErpMfgBomLine line : lines) {
             if (line.getMaterialId() == null) {
                 continue;
@@ -290,7 +286,7 @@ public class ErpApsAutoDispatchProcessor {
         if (requiredByMaterial.isEmpty()) {
             return null;
         }
-        for (Map.Entry<Long, BigDecimal> e : requiredByMaterial.entrySet()) {
+        for (Map.Entry<String, BigDecimal> e : requiredByMaterial.entrySet()) {
             if (sumAvailable(e.getKey()).compareTo(e.getValue()) < 0) {
                 return false;
             }
@@ -311,17 +307,15 @@ public class ErpApsAutoDispatchProcessor {
         return found.isEmpty() ? null : found.get(0);
     }
 
-    // A2 桥接（bridge-main-018）：mfg ErpMfgBomLine bomId Long 查询，退役 owner M3.1
-    protected List<ErpMfgBomLine> loadBomLines(Long bomId) {
+    protected List<ErpMfgBomLine> loadBomLines(String bomId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("bomId", bomId));
         return daoProvider.daoFor(ErpMfgBomLine.class).findAllByQuery(q);
     }
 
-    // inv ErpInvStockBalance materialId 已 String 化（M2.2）；mfg Long 键 → String 查询值，随 bridge-main-017 于 M3.1 退役
-    protected BigDecimal sumAvailable(Long materialId) {
+    protected BigDecimal sumAvailable(String materialId) {
         QueryBean q = new QueryBean();
-        q.addFilter(eq("materialId", ConvertHelper.toString(materialId)));
+        q.addFilter(eq("materialId", materialId));
         BigDecimal total = BigDecimal.ZERO;
         for (ErpInvStockBalance b : daoProvider.daoFor(ErpInvStockBalance.class).findAllByQuery(q)) {
             if (b.getAvailableQuantity() != null) {
