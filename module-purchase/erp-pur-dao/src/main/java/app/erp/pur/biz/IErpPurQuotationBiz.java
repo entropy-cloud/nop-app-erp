@@ -15,7 +15,7 @@ public interface IErpPurQuotationBiz extends ICrudBiz<ErpPurQuotation>{
      * 作废报价单：docStatus→CANCELLED。
      */
     @BizMutation
-    ErpPurQuotation cancel(@Name("quotationId") Long quotationId, IServiceContext context);
+    ErpPurQuotation cancel(@Name("quotationId") String quotationId, IServiceContext context);
 
     /**
      * 审批轴守卫 + 目标态（plan 2026-08-13-0945-1 Phase 3，INLINE 路径 Bean 接线）。

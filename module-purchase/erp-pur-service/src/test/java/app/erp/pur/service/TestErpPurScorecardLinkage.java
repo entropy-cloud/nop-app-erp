@@ -54,9 +54,9 @@ public class TestErpPurScorecardLinkage extends JunitAutoTestCase {
 
     @Test
     public void testScorecardRedSuspendsAvl() {
-        Long partnerId = 9001L;
+        String partnerId = "9001";
         seedApprovedApproval(partnerId);
-        Long scorecardId = seedDraftScorecard(partnerId, 50); // 50 < 60 → RED
+        String scorecardId = seedDraftScorecard(partnerId, 50); // 50 < 60 → RED
 
         ApiResponse<?> resp = finalizeScorecard(scorecardId);
         assertEquals(0, resp.getStatus(), "finalize 应成功");
@@ -68,7 +68,7 @@ public class TestErpPurScorecardLinkage extends JunitAutoTestCase {
 
     @Test
     public void testSuspendedSupplierCannotQuote() {
-        Long partnerId = 9002L;
+        String partnerId = "9002";
         seedPartner(partnerId);
         seedApproval(partnerId, ErpPurConstants.APPROVAL_STATUS_SUSPENDED); // SUSPENDED
 
@@ -79,7 +79,7 @@ public class TestErpPurScorecardLinkage extends JunitAutoTestCase {
 
     @Test
     public void testRejectedSupplierCannotQuote() {
-        Long partnerId = 9003L;
+        String partnerId = "9003";
         seedPartner(partnerId);
         seedApproval(partnerId, ErpPurConstants.APPROVAL_STATUS_REJECTED); // REJECTED
 
@@ -90,7 +90,7 @@ public class TestErpPurScorecardLinkage extends JunitAutoTestCase {
 
     @Test
     public void testNoApprovalPreventsQuote() {
-        Long partnerId = 9004L;
+        String partnerId = "9004";
         seedPartner(partnerId); // 供应商主数据存在，但无 AVL 准入资格
 
         ApiResponse<?> resp = saveQuotation(partnerId);
@@ -100,9 +100,9 @@ public class TestErpPurScorecardLinkage extends JunitAutoTestCase {
 
     @Test
     public void testYellowStandingWarnsButAllowsQuote() {
-        Long partnerId = 9005L;
+        String partnerId = "9005";
         seedApprovedApproval(partnerId);
-        Long scId = seedDraftScorecard(partnerId, 70); // 70 ∈ [60,80) → YELLOW
+        String scId = seedDraftScorecard(partnerId, 70); // 70 ∈ [60,80) → YELLOW
         assertEquals(0, finalizeScorecard(scId).getStatus());
 
         // YELLOW → warn 不阻止，报价单正常保存
@@ -112,9 +112,9 @@ public class TestErpPurScorecardLinkage extends JunitAutoTestCase {
 
     @Test
     public void testGreenStandingAllowsQuote() {
-        Long partnerId = 9006L;
+        String partnerId = "9006";
         seedApprovedApproval(partnerId);
-        Long scId = seedDraftScorecard(partnerId, 95); // 95 ≥ 80 → GREEN
+        String scId = seedDraftScorecard(partnerId, 95); // 95 ≥ 80 → GREEN
         assertEquals(0, finalizeScorecard(scId).getStatus());
 
         ApiResponse<?> resp = saveQuotation(partnerId);
@@ -123,9 +123,9 @@ public class TestErpPurScorecardLinkage extends JunitAutoTestCase {
 
     @Test
     public void testRedStandingPreventOnRedConfig() {
-        Long partnerId = 9007L;
+        String partnerId = "9007";
         seedApprovedApproval(partnerId);
-        Long scId = seedDraftScorecard(partnerId, 50); // RED
+        String scId = seedDraftScorecard(partnerId, 50); // RED
         assertEquals(0, finalizeScorecard(scId).getStatus());
 
         // 默认 prevent-on-red=true → RED 不可报价（AVL 已被联动 SUSPENDED，双重 prevent）
@@ -137,7 +137,7 @@ public class TestErpPurScorecardLinkage extends JunitAutoTestCase {
     @Test
     public void testRedStandingHoldWhenPreventOnRedFalse() {
         // 独立 partner + 独立 AVL，避免 AVL SUSPENDED 联动干扰 prevent-on-red 断言
-        Long partnerId = 9008L;
+        String partnerId = "9008";
         // finalize 前临时关闭 prevent-on-red，使 RED 不触发 prevent；
         // 但 finalize 仍会联动 AVL SUSPENDED → 报价时 AVL 已 SUSPENDED 仍 prevent。
         // 为干净验证 prevent-on-red=false 单独语义，此处不 finalize（不触发 AVL 联动），
@@ -159,16 +159,16 @@ public class TestErpPurScorecardLinkage extends JunitAutoTestCase {
 
     // ---------- helpers ----------
 
-    private ApiResponse<?> finalizeScorecard(Long id) {
+    private ApiResponse<?> finalizeScorecard(String id) {
         return executeRpc(mutation, "ErpPurSupplierScorecard__finalizeScorecard",
                 ApiRequest.build(Map.of("scorecardId", id)));
     }
 
-    private ApiResponse<?> saveQuotation(Long supplierId) {
+    private ApiResponse<?> saveQuotation(String supplierId) {
         Map<String, Object> data = new java.util.LinkedHashMap<>();
         data.put("code", "QT-LINK-" + supplierId);
         data.put("supplierId", supplierId);
-        data.put("currencyId", 6101L);
+        data.put("currencyId", "6101");
         data.put("businessDate", "2026-07-03");
         data.put("docStatus", ErpPurConstants.DOC_STATUS_DRAFT);
         data.put("approveStatus", ErpPurConstants.APPROVE_STATUS_UNSUBMITTED);
@@ -180,16 +180,16 @@ public class TestErpPurScorecardLinkage extends JunitAutoTestCase {
         return graphQLEngine.executeRpc(ctx);
     }
 
-    private void seedApprovedApproval(Long partnerId) {
+    private void seedApprovedApproval(String partnerId) {
         seedPartner(partnerId);
         seedApproval(partnerId, "APPROVED"); // APPROVED
     }
 
-    private void seedApproval(Long partnerId, String status) {
+    private void seedApproval(String partnerId, String status) {
         ErpMdSupplierApproval approval = new ErpMdSupplierApproval();
         approval.setPartnerId(partnerId);
         approval.setApprovalType("NEW");
-        approval.setMaterialCategoryId(7101L);
+        approval.setMaterialCategoryId("7101");
         approval.setValidFrom(LocalDate.of(2026, 1, 1));
         approval.setValidTo(LocalDate.of(2027, 1, 1));
         approval.setQualificationDoc("ISO9001");
@@ -197,7 +197,7 @@ public class TestErpPurScorecardLinkage extends JunitAutoTestCase {
         ormTemplate.runInSession(() -> approvalDao().saveEntity(approval));
     }
 
-    private void seedPartner(Long partnerId) {
+    private void seedPartner(String partnerId) {
         ormTemplate.runInSession(() -> {
             app.erp.md.dao.entity.ErpMdPartner partner = new app.erp.md.dao.entity.ErpMdPartner();
             partner.setId(partnerId);
@@ -210,9 +210,9 @@ public class TestErpPurScorecardLinkage extends JunitAutoTestCase {
             // 报价单 FK 校验需要 currency 存在（仅首次创建）
             IEntityDao<app.erp.md.dao.entity.ErpMdCurrency> curDao =
                     daoProvider.daoFor(app.erp.md.dao.entity.ErpMdCurrency.class);
-            if (curDao.getEntityById(6101L) == null) {
+            if (curDao.getEntityById("6101") == null) {
                 app.erp.md.dao.entity.ErpMdCurrency cur = new app.erp.md.dao.entity.ErpMdCurrency();
-                cur.setId(6101L);
+                cur.setId("6101");
                 cur.setCode("CNY");
                 cur.setName("人民币");
                 curDao.saveEntity(cur);
@@ -220,7 +220,7 @@ public class TestErpPurScorecardLinkage extends JunitAutoTestCase {
         });
     }
 
-    private ErpMdSupplierApproval findApprovalByPartner(Long partnerId) {
+    private ErpMdSupplierApproval findApprovalByPartner(String partnerId) {
         io.nop.api.core.beans.query.QueryBean q = new io.nop.api.core.beans.query.QueryBean();
         q.addFilter(io.nop.api.core.beans.FilterBeans.eq("partnerId", partnerId));
         q.setLimit(1);
@@ -228,7 +228,7 @@ public class TestErpPurScorecardLinkage extends JunitAutoTestCase {
         return list.isEmpty() ? null : list.get(0);
     }
 
-    private Long seedDraftScorecard(Long partnerId, int passRate) {
+    private String seedDraftScorecard(String partnerId, int passRate) {
         ErpPurSupplierScorecard sc = new ErpPurSupplierScorecard();
         sc.setPartnerId(partnerId);
         sc.setPeriodFrom(LocalDate.of(2026, 1, 1));
@@ -258,7 +258,7 @@ public class TestErpPurScorecardLinkage extends JunitAutoTestCase {
         return sc.getId();
     }
 
-    private void seedFinalizedScorecard(Long partnerId, int passRate) {
+    private void seedFinalizedScorecard(String partnerId, int passRate) {
         // 直接构建 FINALIZED+RED 评分卡，不经 finalize（避免触发 AVL SUSPENDED 联动干扰 config 断言）
         ErpPurSupplierScorecard sc = new ErpPurSupplierScorecard();
         sc.setPartnerId(partnerId);

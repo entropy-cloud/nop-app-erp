@@ -52,13 +52,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpPurReceiveStockMove extends JunitAutoTestCase {
 
-    static final Long ORG_ID = 1201L;
-    static final Long SUPPLIER_ID = 2201L;
-    static final Long WAREHOUSE_ID = 3201L;
-    static final Long MATERIAL_ID = 4201L;
-    static final Long UOM_ID = 5201L;
-    static final Long CURRENCY_ID = 6201L;
-    static final Long ACCT_SCHEMA_ID = 7201L;
+    static final String ORG_ID = "1201";
+    static final String SUPPLIER_ID = "2201";
+    static final String WAREHOUSE_ID = "3201";
+    static final String MATERIAL_ID = "4201";
+    static final String UOM_ID = "5201";
+    static final String CURRENCY_ID = "6201";
+    static final String ACCT_SCHEMA_ID = "7201";
     static final String VOUCHER_STATUS_POSTED = "POSTED";
 
     @Inject
@@ -71,12 +71,12 @@ public class TestErpPurReceiveStockMove extends JunitAutoTestCase {
     @Test
     public void testApproveGeneratesIncomingMoveAndPosting() {
         seedPeriodAndSubjects();
-        Long orderLineId = nextId();
-        Long receiveId = nextId();
-        Long receiveLineId = nextId();
+        String orderLineId = nextId();
+        String receiveId = nextId();
+        String receiveLineId = nextId();
         ormTemplate.runInSession(session -> {
             seedActiveSupplier();
-            Long orderId = newOrder("PO-POST-001");
+            String orderId = newOrder("PO-POST-001");
             newOrderLine(orderId, orderLineId, 1, new BigDecimal("10"));
             newReceive("PR-POST-001", receiveId, orderId);
             newReceiveLine(receiveLineId, receiveId, orderLineId, new BigDecimal("10"), new BigDecimal("5"));
@@ -115,12 +115,12 @@ public class TestErpPurReceiveStockMove extends JunitAutoTestCase {
     @Test
     public void testApproveIdempotent() {
         seedPeriodAndSubjects();
-        Long orderLineId = nextId();
-        Long receiveId = nextId();
-        Long receiveLineId = nextId();
+        String orderLineId = nextId();
+        String receiveId = nextId();
+        String receiveLineId = nextId();
         ormTemplate.runInSession(session -> {
             seedActiveSupplier();
-            Long orderId = newOrder("PO-IDEM-001");
+            String orderId = newOrder("PO-IDEM-001");
             newOrderLine(orderId, orderLineId, 1, new BigDecimal("10"));
             newReceive("PR-IDEM-001", receiveId, orderId);
             newReceiveLine(receiveLineId, receiveId, orderLineId, new BigDecimal("10"), new BigDecimal("5"));
@@ -136,13 +136,13 @@ public class TestErpPurReceiveStockMove extends JunitAutoTestCase {
     @Test
     public void testReceiveStatusRollupToOrder() {
         seedPeriodAndSubjects();
-        Long orderLine1 = nextId();
-        Long orderLine2 = nextId();
-        Long receive1 = nextId();
-        Long receiveLine1 = nextId();
+        String orderLine1 = nextId();
+        String orderLine2 = nextId();
+        String receive1 = nextId();
+        String receiveLine1 = nextId();
         ormTemplate.runInSession(session -> {
             seedActiveSupplier();
-            Long orderId = newOrder("PO-ROLL-001");
+            String orderId = newOrder("PO-ROLL-001");
             newOrderLine(orderId, orderLine1, 1, new BigDecimal("10"));
             newOrderLine(orderId, orderLine2, 2, new BigDecimal("10"));
             newReceive("PR-ROLL-001", receive1, orderId);
@@ -158,8 +158,8 @@ public class TestErpPurReceiveStockMove extends JunitAutoTestCase {
         assertEquals(ErpPurConstants.RECEIVE_STATUS_PARTIAL, order.getReceiveStatus(),
                 "订单仅 1/2 行收清 → PARTIAL");
 
-        Long receive2 = nextId();
-        Long receiveLine2 = nextId();
+        String receive2 = nextId();
+        String receiveLine2 = nextId();
         ormTemplate.runInSession(session -> {
             newReceive("PR-ROLL-002", receive2, order.getId());
             newReceiveLine(receiveLine2, receive2, orderLine2, new BigDecimal("10"), new BigDecimal("5"));
@@ -174,12 +174,12 @@ public class TestErpPurReceiveStockMove extends JunitAutoTestCase {
     @Test
     public void testReverseApproveInternallyReversesMove() {
         seedPeriodAndSubjects();
-        Long orderLineId = nextId();
-        Long receiveId = nextId();
-        Long receiveLineId = nextId();
+        String orderLineId = nextId();
+        String receiveId = nextId();
+        String receiveLineId = nextId();
         ormTemplate.runInSession(session -> {
             seedActiveSupplier();
-            Long orderId = newOrder("PO-REV-001");
+            String orderId = newOrder("PO-REV-001");
             newOrderLine(orderId, orderLineId, 1, new BigDecimal("10"));
             newReceive("PR-REV-001", receiveId, orderId);
             newReceiveLine(receiveLineId, receiveId, orderLineId, new BigDecimal("10"), new BigDecimal("5"));
@@ -215,11 +215,11 @@ public class TestErpPurReceiveStockMove extends JunitAutoTestCase {
 
     // ---------- rpc helpers ----------
 
-    private ApiResponse<?> approve(Long receiveId) {
+    private ApiResponse<?> approve(String receiveId) {
         return executeRpc(mutation, "ErpPurReceive__approve", ApiRequest.build(Map.of("id", String.valueOf(receiveId))));
     }
 
-    private ApiResponse<?> reverseApprove(Long receiveId) {
+    private ApiResponse<?> reverseApprove(String receiveId) {
         return executeRpc(mutation, "ErpPurReceive__reverseApprove", ApiRequest.build(Map.of("id", String.valueOf(receiveId))));
     }
 
@@ -290,7 +290,7 @@ public class TestErpPurReceiveStockMove extends JunitAutoTestCase {
         dao.saveEntity(subject);
     }
 
-    private Long newOrder(String code) {
+    private String newOrder(String code) {
         IEntityDao<ErpPurOrder> dao = daoProvider.daoFor(ErpPurOrder.class);
         ErpPurOrder order = new ErpPurOrder();
         order.setCode(code);
@@ -306,7 +306,7 @@ public class TestErpPurReceiveStockMove extends JunitAutoTestCase {
         return order.getId();
     }
 
-    private void newOrderLine(Long orderId, Long lineId, int lineNo, BigDecimal qty) {
+    private void newOrderLine(String orderId, String lineId, int lineNo, BigDecimal qty) {
         IEntityDao<ErpPurOrderLine> dao = daoProvider.daoFor(ErpPurOrderLine.class);
         ErpPurOrderLine line = new ErpPurOrderLine();
         line.setId(lineId);
@@ -320,7 +320,7 @@ public class TestErpPurReceiveStockMove extends JunitAutoTestCase {
         dao.saveEntity(line);
     }
 
-    private void newReceive(String code, Long receiveId, Long orderId) {
+    private void newReceive(String code, String receiveId, String orderId) {
         IEntityDao<ErpPurReceive> dao = daoProvider.daoFor(ErpPurReceive.class);
         ErpPurReceive receive = new ErpPurReceive();
         receive.setId(receiveId);
@@ -339,7 +339,7 @@ public class TestErpPurReceiveStockMove extends JunitAutoTestCase {
         dao.saveEntity(receive);
     }
 
-    private void newReceiveLine(Long lineId, Long receiveId, Long orderLineId, BigDecimal qty, BigDecimal unitPrice) {
+    private void newReceiveLine(String lineId, String receiveId, String orderLineId, BigDecimal qty, BigDecimal unitPrice) {
         IEntityDao<ErpPurReceiveLine> dao = daoProvider.daoFor(ErpPurReceiveLine.class);
         ErpPurReceiveLine line = new ErpPurReceiveLine();
         line.setId(lineId);
@@ -355,8 +355,8 @@ public class TestErpPurReceiveStockMove extends JunitAutoTestCase {
 
     private final AtomicLong idSeq = new AtomicLong(100000L);
 
-    private Long nextId() {
-        return idSeq.incrementAndGet();
+    private String nextId() {
+        return String.valueOf(idSeq.incrementAndGet());
     }
 
     // ---------- query helpers ----------

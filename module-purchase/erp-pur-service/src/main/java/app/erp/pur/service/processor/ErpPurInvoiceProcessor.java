@@ -376,11 +376,11 @@ public class ErpPurInvoiceProcessor {
         if (order == null || order.isCancelled() || !order.isApproved()) {
             return;
         }
-        Long subjectId = resolveBudgetSubjectId(ErpFinConstants.CONFIG_BUDGET_COMMITMENT_SUBJECT_CODE, context);
+        String subjectId = resolveBudgetSubjectId(ErpFinConstants.CONFIG_BUDGET_COMMITMENT_SUBJECT_CODE, context);
         if (subjectId == null) {
             return;
         }
-        Long periodId = orderProcessor.resolvePeriodId(order.getBusinessDate());
+        String periodId = orderProcessor.resolvePeriodId(order.getBusinessDate());
         BigDecimal amount = order.getTotalAmountWithTax() != null
                 ? order.getTotalAmountWithTax() : BigDecimal.ZERO;
         if (amount.signum() <= 0) {
@@ -407,7 +407,7 @@ public class ErpPurInvoiceProcessor {
     }
 
     /** 按 config 科目编码反查承付科目 id（缺失返回 null，恢复跳过）。 */
-    protected Long resolveBudgetSubjectId(String configKey, IServiceContext context) {
+    protected String resolveBudgetSubjectId(String configKey, IServiceContext context) {
         String code = AppConfig.var(configKey, null);
         if (code == null || code.isEmpty()) {
             return null;
@@ -420,7 +420,7 @@ public class ErpPurInvoiceProcessor {
     protected Set<String> resolveLinkedOrderCodes(ErpPurInvoice invoice) {
         Set<String> codes = new HashSet<>();
         List<ErpPurInvoiceLine> lines = loadLines(invoice);
-        Set<Long> receiveLineIds = new HashSet<>();
+        Set<String> receiveLineIds = new HashSet<>();
         for (ErpPurInvoiceLine il : lines) {
             if (il.getReceiveLineId() != null) {
                 receiveLineIds.add(il.getReceiveLineId());
@@ -430,7 +430,7 @@ public class ErpPurInvoiceProcessor {
             return codes;
         }
         IEntityDao<ErpPurReceiveLine> rlDao = daoProvider.daoFor(ErpPurReceiveLine.class);
-        Set<Long> receiveIds = new HashSet<>();
+        Set<String> receiveIds = new HashSet<>();
         for (ErpPurReceiveLine rl : rlDao.findAllByQuery(inQuery("id", receiveLineIds))) {
             if (rl.getReceiveId() != null) {
                 receiveIds.add(rl.getReceiveId());
@@ -440,7 +440,7 @@ public class ErpPurInvoiceProcessor {
             return codes;
         }
         IEntityDao<ErpPurReceive> rDao = daoProvider.daoFor(ErpPurReceive.class);
-        Set<Long> orderIds = new HashSet<>();
+        Set<String> orderIds = new HashSet<>();
         for (ErpPurReceive r : rDao.findAllByQuery(inQuery("id", receiveIds))) {
             if (r.getOrderId() != null) {
                 orderIds.add(r.getOrderId());
@@ -458,7 +458,7 @@ public class ErpPurInvoiceProcessor {
         return codes;
     }
 
-    private static io.nop.api.core.beans.query.QueryBean inQuery(String field, Set<Long> values) {
+    private static io.nop.api.core.beans.query.QueryBean inQuery(String field, Set<String> values) {
         io.nop.api.core.beans.query.QueryBean q = new io.nop.api.core.beans.query.QueryBean();
         q.addFilter(io.nop.api.core.beans.FilterBeans.in(field, new ArrayList<>(values)));
         return q;

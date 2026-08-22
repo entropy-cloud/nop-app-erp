@@ -77,7 +77,7 @@ public class ErpPurDashboardBizModel {
 
             List<ErpPurInvoice> invoices = loadActiveInvoicesInRange(from, to);
             BigDecimal purchaseAmount = BigDecimal.ZERO;
-            Map<Long, BigDecimal> bySupplier = new HashMap<>();
+            Map<String, BigDecimal> bySupplier = new HashMap<>();
             for (ErpPurInvoice inv : invoices) {
                 purchaseAmount = purchaseAmount.add(DashboardUtil.nz(inv.getAmountFunctional()));
                 if (inv.getSupplierId() != null) {
@@ -135,15 +135,15 @@ public class ErpPurDashboardBizModel {
         int topN = limit == null || limit <= 0 ? 10 : limit;
         return ormTemplate.runInSession(session -> {
             List<ErpPurInvoice> invoices = loadActiveInvoicesInRange(null, null);
-            Map<Long, BigDecimal> bySupplier = new LinkedHashMap<>();
+            Map<String, BigDecimal> bySupplier = new LinkedHashMap<>();
             for (ErpPurInvoice inv : invoices) {
-                Long sid = inv.getSupplierId();
+                String sid = inv.getSupplierId();
                 if (sid == null) continue;
                 bySupplier.merge(sid, DashboardUtil.nz(inv.getAmountFunctional()), BigDecimal::add);
             }
             List<Map<String, Object>> rows = new ArrayList<>();
             bySupplier.entrySet().stream()
-                    .sorted(Map.Entry.<Long, BigDecimal>comparingByValue(Comparator.reverseOrder()))
+                    .sorted(Map.Entry.<String, BigDecimal>comparingByValue(Comparator.reverseOrder()))
                     .limit(topN)
                     .forEach(e -> {
                         Map<String, Object> row = new LinkedHashMap<>();
@@ -151,10 +151,10 @@ public class ErpPurDashboardBizModel {
                         row.put("purchaseAmount", e.getValue());
                         rows.add(row);
                     });
-            Map<Long, String> nameCache = new HashMap<>();
+            Map<String, String> nameCache = new HashMap<>();
             IEntityDao<ErpMdPartner> partnerDao = daoProvider.daoFor(ErpMdPartner.class);
             for (Map<String, Object> r : rows) {
-                Long sid = (Long) r.get("supplierId");
+                String sid = (String) r.get("supplierId");
                 if (sid == null) continue;
                 String name = nameCache.get(sid);
                 if (name == null) {
@@ -274,7 +274,7 @@ public class ErpPurDashboardBizModel {
         rq.addFilter(eq("docStatus", ErpPurConstants.DOC_STATUS_ACTIVE));
         List<ErpPurReceive> receives = rDao.findAllByQuery(rq);
         if (receives.isEmpty()) return 0.0;
-        Map<Long, LocalDate> orderDeliveryMap = loadOrderDeliveryDates();
+        Map<String, LocalDate> orderDeliveryMap = loadOrderDeliveryDates();
         int onTime = 0;
         int totalWithOrder = 0;
         for (ErpPurReceive r : receives) {
@@ -291,11 +291,11 @@ public class ErpPurDashboardBizModel {
     }
 
     /** 收集订单 id → deliveryDate（类 C：单字段收集，带硬上限的受限扫描）。 */
-    private Map<Long, LocalDate> loadOrderDeliveryDates() {
+    private Map<String, LocalDate> loadOrderDeliveryDates() {
         IEntityDao<ErpPurOrder> dao = daoProvider.daoFor(ErpPurOrder.class);
         QueryBean q = new QueryBean();
         q.setLimit(5000);
-        Map<Long, LocalDate> map = new HashMap<>();
+        Map<String, LocalDate> map = new HashMap<>();
         for (ErpPurOrder o : dao.findAllByQuery(q)) {
             if (o.getDeliveryDate() != null) {
                 map.put(o.getId(), o.getDeliveryDate());
@@ -305,13 +305,13 @@ public class ErpPurDashboardBizModel {
     }
 
     /** 检测发票是否存在价格差异行（发票行 unitPrice vs 关联 order line unitPrice）。 */
-    private boolean hasPriceVariance(Long invoiceId, BigDecimal tolerance) {
+    private boolean hasPriceVariance(String invoiceId, BigDecimal tolerance) {
         IEntityDao<ErpPurInvoiceLine> ilDao = daoProvider.daoFor(ErpPurInvoiceLine.class);
         QueryBean ilq = new QueryBean();
         ilq.addFilter(eq("invoiceId", invoiceId));
         List<ErpPurInvoiceLine> invLines = ilDao.findAllByQuery(ilq);
         if (invLines.isEmpty()) return false;
-        Set<Long> receiveLineIds = new HashSet<>();
+        Set<String> receiveLineIds = new HashSet<>();
         for (ErpPurInvoiceLine il : invLines) {
             if (il.getReceiveLineId() != null) receiveLineIds.add(il.getReceiveLineId());
         }
@@ -320,7 +320,7 @@ public class ErpPurDashboardBizModel {
         QueryBean rlq = new QueryBean();
         rlq.addFilter(in("id", receiveLineIds));
         List<ErpPurReceiveLine> receiveLines = rlDao.findAllByQuery(rlq);
-        Set<Long> orderLineIds = new HashSet<>();
+        Set<String> orderLineIds = new HashSet<>();
         for (ErpPurReceiveLine rl : receiveLines) {
             if (rl.getOrderLineId() != null) orderLineIds.add(rl.getOrderLineId());
         }
@@ -328,11 +328,11 @@ public class ErpPurDashboardBizModel {
         IEntityDao<ErpPurOrderLine> olDao = daoProvider.daoFor(ErpPurOrderLine.class);
         QueryBean olq = new QueryBean();
         olq.addFilter(in("id", orderLineIds));
-        Map<Long, BigDecimal> orderLinePrice = new HashMap<>();
+        Map<String, BigDecimal> orderLinePrice = new HashMap<>();
         for (ErpPurOrderLine ol : olDao.findAllByQuery(olq)) {
             orderLinePrice.put(ol.getId(), ol.getUnitPrice());
         }
-        Map<Long, BigDecimal> receiveToOrderPrice = new HashMap<>();
+        Map<String, BigDecimal> receiveToOrderPrice = new HashMap<>();
         for (ErpPurReceiveLine rl : receiveLines) {
             receiveToOrderPrice.put(rl.getId(), orderLinePrice.get(rl.getOrderLineId()));
         }

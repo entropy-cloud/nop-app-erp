@@ -143,11 +143,9 @@ public class MrpReleaseService {
         ErpPurOrder order = orderDao.newEntity();
         String code = ErpMfgConstants.RELEASE_PO_CODE_PREFIX + line.getId();
         order.setCode(code);
-        // A2 桥接（bridge-main-088/089，M0.2 登记册）：pur ErpPurOrder/ErpPurOrderLine id 列仍 Long（pur 位次 15 未迁移），
-        // mfg String id → ConvertHelper.toLong 桥接 setter 值，退役 owner M2.5
-        order.setOrgId(io.nop.api.core.convert.ConvertHelper.toLong(plan != null ? plan.getOrgId() : null));
-        order.setSupplierId(io.nop.api.core.convert.ConvertHelper.toLong(supplierId));
-        order.setCurrencyId(io.nop.api.core.convert.ConvertHelper.toLong(currencyId));
+        order.setOrgId(plan != null ? plan.getOrgId() : null);
+        order.setSupplierId(supplierId);
+        order.setCurrencyId(currencyId);
         order.setBusinessDate(today);
         order.setDeliveryDate(line.getPlannedDate());
         order.setDocStatus(ErpPurDocStatus.DOC_STATUS_DRAFT);
@@ -161,8 +159,8 @@ public class MrpReleaseService {
         ErpPurOrderLine poLine = lineDao.newEntity();
         poLine.setOrderId(order.getId());
         poLine.setLineNo(10);
-        poLine.setMaterialId(io.nop.api.core.convert.ConvertHelper.toLong(line.getMaterialId()));
-        poLine.setUoMId(io.nop.api.core.convert.ConvertHelper.toLong(line.getUoMId()));
+        poLine.setMaterialId(line.getMaterialId());
+        poLine.setUoMId(line.getUoMId());
         poLine.setQuantity(nz(line.getPlannedQuantity()));
         poLine.setUnitPrice(BigDecimal.ZERO);
         poLine.setAmount(BigDecimal.ZERO);

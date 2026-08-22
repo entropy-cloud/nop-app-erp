@@ -52,10 +52,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpPurPaymentApprovalNotifications extends JunitAutoTestCase {
 
-    static final Long ORG_ID = 1003L;
-    static final Long SUPPLIER_ID = 2101L;
-    static final Long CURRENCY_ID = 6101L;
-    static final Long ACCT_SCHEMA_ID = 7003L;
+    static final String ORG_ID = "1003";
+    static final String SUPPLIER_ID = "2101";
+    static final String CURRENCY_ID = "6101";
+    static final String ACCT_SCHEMA_ID = "7003";
     static final String SUBMITTER = "0";
     static final String APPROVER_USER = "pur-wf-approver";
     static final String CC_USER = "pur-wf-cc";
@@ -137,11 +137,11 @@ public class TestErpPurPaymentApprovalNotifications extends JunitAutoTestCase {
         // CC + 任务到达通知使用 ROLE 接收人，需种子角色与用户映射
         seedRole("财务员", APPROVER_USER);
         seedRole("财务经理", CC_USER);
-        seedTemplate(7131L, "wf.pur-payment.cc", "付款单 ${docNo} 抄送知会",
+        seedTemplate("7131", "wf.pur-payment.cc", "付款单 ${docNo} 抄送知会",
                 "付款单 ${docNo} 已审批通过，特此抄送知会",
                 ErpNotifyConstants.RESOLVER_ROLE, "{\"roles\":[\"财务经理\"]}",
                 ErpNotifyConstants.MERGE_BY_USER_TYPE, 300);
-        seedTemplate(7121L, "wf.pur-payment.task-assigned", "付款单 ${docNo} 待您审批",
+        seedTemplate("7121", "wf.pur-payment.task-assigned", "付款单 ${docNo} 待您审批",
                 "付款单 ${docNo} 到达${stepName}步骤，请及时处理",
                 ErpNotifyConstants.RESOLVER_ROLE, "{\"roles\":[\"财务员\"]}",
                 ErpNotifyConstants.MERGE_BY_USER_TYPE, 300);
@@ -207,9 +207,9 @@ public class TestErpPurPaymentApprovalNotifications extends JunitAutoTestCase {
         throw new IllegalStateException("步骤未激活: " + stepName + "，当前激活=" + steps);
     }
 
-    private ApiResponse<?> submit(Long id) {
+    private ApiResponse<?> submit(String id) {
         IGraphQLExecutionContext ctx = graphQLEngine.newRpcContext(mutation, "ErpPurPayment__submitForApproval",
-                ApiRequest.build(java.util.Map.of("id", String.valueOf(id))));
+                ApiRequest.build(java.util.Map.of("id", id)));
         return graphQLEngine.executeRpc(ctx);
     }
 
@@ -229,14 +229,14 @@ public class TestErpPurPaymentApprovalNotifications extends JunitAutoTestCase {
     }
 
     private void seedResultTemplate() {
-        seedTemplate(7111L, "wf.pur-payment.result", "付款单 ${docNo} 审批${resultText}",
+        seedTemplate("7111", "wf.pur-payment.result", "付款单 ${docNo} 审批${resultText}",
                 "您提交的付款单 ${docNo} 审批${resultText}，审批人 ${approverUserId}",
                 ErpNotifyConstants.RESOLVER_USER_LIST,
                 "{\"userIds\":[\"${submitterUserId}\"]}",
                 ErpNotifyConstants.MERGE_BY_USER_TYPE, 300);
     }
 
-    private void seedTemplate(Long id, String notificationType, String subjectTpl, String bodyTpl,
+    private void seedTemplate(String id, String notificationType, String subjectTpl, String bodyTpl,
                               String resolver, String recipientConfig, String mergeStrategy, int mergeWindow) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpSysNotificationTemplate> dao = daoProvider.daoFor(ErpSysNotificationTemplate.class);
@@ -303,7 +303,7 @@ public class TestErpPurPaymentApprovalNotifications extends JunitAutoTestCase {
         return payment;
     }
 
-    private void seedActiveSupplier(Long id) {
+    private void seedActiveSupplier(String id) {
         IEntityDao<ErpMdPartner> dao = daoProvider.daoFor(ErpMdPartner.class);
         ErpMdPartner partner = new ErpMdPartner();
         partner.setId(id);
@@ -323,7 +323,7 @@ public class TestErpPurPaymentApprovalNotifications extends JunitAutoTestCase {
         });
     }
 
-    private void seedAcctSchema(Long id, Long orgId) {
+    private void seedAcctSchema(String id, String orgId) {
         IEntityDao<ErpMdAcctSchema> dao = daoProvider.daoFor(ErpMdAcctSchema.class);
         ErpMdAcctSchema schema = new ErpMdAcctSchema();
         schema.setId(id);

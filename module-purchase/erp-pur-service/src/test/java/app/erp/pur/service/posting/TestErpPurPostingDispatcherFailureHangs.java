@@ -35,7 +35,7 @@ public class TestErpPurPostingDispatcherFailureHangs {
     private static PurPostingExecutor throwingExecutor() {
         return new PurPostingExecutor() {
             @Override
-            public Long postEvent(PostingEvent event) {
+            public String postEvent(PostingEvent event) {
                 throw new NopException("test.pur-posting-engine-down", null, true, true);
             }
         };
@@ -84,12 +84,12 @@ public class TestErpPurPostingDispatcherFailureHangs {
         ErpPurInvoice invoice = new ErpPurInvoice();
         invoice.setCode(code);
         invoice.setBusinessDate(LocalDate.of(2026, 7, 1));
-        invoice.setCurrencyId(6101L);
+        invoice.setCurrencyId("6101");
         invoice.setExchangeRate(BigDecimal.ONE);
         invoice.setTotalAmount(new BigDecimal("100"));
         invoice.setTotalTaxAmount(new BigDecimal("13"));
         invoice.setTotalAmountWithTax(new BigDecimal("113"));
-        invoice.setSupplierId(2101L);
+        invoice.setSupplierId("2101");
         return invoice;
     }
 
@@ -97,10 +97,10 @@ public class TestErpPurPostingDispatcherFailureHangs {
         ErpPurPayment payment = new ErpPurPayment();
         payment.setCode(code);
         payment.setBusinessDate(LocalDate.of(2026, 7, 1));
-        payment.setCurrencyId(6101L);
+        payment.setCurrencyId("6101");
         payment.setExchangeRate(BigDecimal.ONE);
         payment.setTotalAmount(new BigDecimal("113"));
-        payment.setSupplierId(2101L);
+        payment.setSupplierId("2101");
         return payment;
     }
 
@@ -108,10 +108,10 @@ public class TestErpPurPostingDispatcherFailureHangs {
         ErpPurReturn returnOrder = new ErpPurReturn();
         returnOrder.setCode(code);
         returnOrder.setBusinessDate(LocalDate.of(2026, 7, 2));
-        returnOrder.setCurrencyId(6101L);
+        returnOrder.setCurrencyId("6101");
         returnOrder.setExchangeRate(BigDecimal.ONE);
         returnOrder.setTotalAmount(new BigDecimal("20"));
-        returnOrder.setSupplierId(2101L);
+        returnOrder.setSupplierId("2101");
         return returnOrder;
     }
 }

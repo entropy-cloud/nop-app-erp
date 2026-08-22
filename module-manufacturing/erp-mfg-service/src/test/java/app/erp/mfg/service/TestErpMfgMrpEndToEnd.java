@@ -86,12 +86,10 @@ public class TestErpMfgMrpEndToEnd extends JunitAutoTestCase {
         assertEquals(ErpMfgConstants.RELEASE_PO_CODE_PREFIX + m1Line.getId(), poCode);
         ErpPurOrder po = findPurchaseOrder(poCode);
         assertNotNull(po, "采购订单应生成");
-        // A3 桥接（bridge-test-126，M0.2 登记册）：pur ErpPurOrder/OrderLine id 列仍 Long（pur 位次 15 未迁移），
-        // mfg/md String id 断言经 ConvertHelper.toLong 桥，退役 owner M2.5
-        assertEquals(io.nop.api.core.convert.ConvertHelper.toLong(SUPPLIER_ID), po.getSupplierId());
+        assertEquals(SUPPLIER_ID, po.getSupplierId());
         ErpPurOrderLine poLine = findPurchaseOrderLine(po.getId());
         assertNotNull(poLine, "采购订单行应生成");
-        assertEquals(io.nop.api.core.convert.ConvertHelper.toLong(M1), poLine.getMaterialId());
+        assertEquals(M1, poLine.getMaterialId());
         assertEquals(0, poLine.getQuantity().compareTo(m1Line.getPlannedQuantity()));
 
         ErpMfgMrpPlanLine m1After = daoProvider.daoFor(ErpMfgMrpPlanLine.class).getEntityById(m1Line.getId());
@@ -246,7 +244,7 @@ public class TestErpMfgMrpEndToEnd extends JunitAutoTestCase {
         return list.isEmpty() ? null : list.get(0);
     }
 
-    private ErpPurOrderLine findPurchaseOrderLine(Long orderId) {
+    private ErpPurOrderLine findPurchaseOrderLine(String orderId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("orderId", orderId));
         List<ErpPurOrderLine> list = daoProvider.daoFor(ErpPurOrderLine.class).findAllByQuery(q);
@@ -301,8 +299,8 @@ public class TestErpMfgMrpEndToEnd extends JunitAutoTestCase {
             ErpSalOrder o = new ErpSalOrder();
             o.orm_propValueByName("id", orderId);
             o.setCode(code);
-            // A3 桥接（bridge-test-126，M0.2 登记册）：sal ErpSalOrder/OrderLine id 列仍 Long（sal 位次 16 未迁移），
-            // md/mfg String id → ConvertHelper.toLong 种子桥，退役 owner M2.6
+            // A3 桥接（bridge-test-126/127 sal 半边，退役 owner M2.6）：sal ErpSalOrder/OrderLine id 列仍 Long（sal 位次 16 未迁移），
+            // md/mfg String id → ConvertHelper.toLong 种子桥
             o.setOrgId(io.nop.api.core.convert.ConvertHelper.toLong(ORG_ID));
             o.setCustomerId(io.nop.api.core.convert.ConvertHelper.toLong(CUSTOMER_ID));
             o.setCurrencyId(io.nop.api.core.convert.ConvertHelper.toLong(CURRENCY_ID));

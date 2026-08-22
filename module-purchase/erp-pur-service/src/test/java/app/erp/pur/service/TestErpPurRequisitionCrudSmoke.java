@@ -41,7 +41,7 @@ public class TestErpPurRequisitionCrudSmoke extends JunitAutoTestCase {
         Map<String, String> pre = createPrereqs();
         Map<String, Object> headData = new LinkedHashMap<>();
         headData.put("code", "SMOKE-PUR");
-        headData.put("requesterId", 1);
+        headData.put("requesterId", "1");
         headData.put("businessDate", "2026-07-01");
         headData.put("docStatus", "DRAFT");
         headData.put("approveStatus", "UNSUBMITTED");
@@ -58,7 +58,7 @@ public class TestErpPurRequisitionCrudSmoke extends JunitAutoTestCase {
         Map<String, String> pre = createPrereqs();
         Map<String, Object> headData = new LinkedHashMap<>();
         headData.put("code", "SMOKE-PUR");
-        headData.put("requesterId", 1);
+        headData.put("requesterId", "1");
         headData.put("businessDate", "2026-07-01");
         headData.put("docStatus", "DRAFT");
         headData.put("approveStatus", "UNSUBMITTED");
@@ -78,7 +78,7 @@ public class TestErpPurRequisitionCrudSmoke extends JunitAutoTestCase {
         Map<String, String> pre = createPrereqs();
         Map<String, Object> headData = new LinkedHashMap<>();
         headData.put("code", "SMOKE-PUR");
-        headData.put("requesterId", 1);
+        headData.put("requesterId", "1");
         headData.put("businessDate", "2026-07-01");
         headData.put("docStatus", "DRAFT");
         headData.put("approveStatus", "UNSUBMITTED");
@@ -102,7 +102,7 @@ public class TestErpPurRequisitionCrudSmoke extends JunitAutoTestCase {
         Map<String, String> pre = createPrereqs();
         Map<String, Object> headData = new LinkedHashMap<>();
         headData.put("code", "SMOKE-PUR");
-        headData.put("requesterId", 1);
+        headData.put("requesterId", "1");
         headData.put("businessDate", "2026-07-01");
         headData.put("docStatus", "DRAFT");
         headData.put("approveStatus", "UNSUBMITTED");
@@ -127,7 +127,7 @@ public class TestErpPurRequisitionCrudSmoke extends JunitAutoTestCase {
         Map<String, String> pre = createPrereqs();
         Map<String, Object> headData = new LinkedHashMap<>();
         headData.put("code", "SMOKE-PUR");
-        headData.put("requesterId", 1);
+        headData.put("requesterId", "1");
         headData.put("businessDate", "2026-07-01");
         headData.put("docStatus", "DRAFT");
         headData.put("approveStatus", "UNSUBMITTED");

@@ -45,12 +45,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpPurThreeWayMatch extends JunitAutoTestCase {
 
-    static final Long ORG_ID = 1101L;
-    static final Long SUPPLIER_ID = 2101L;
-    static final Long MATERIAL_ID = 4101L;
-    static final Long UOM_ID = 5101L;
-    static final Long CURRENCY_ID = 6101L;
-    static final Long WAREHOUSE_ID = 3101L;
+    static final String ORG_ID = "1101";
+    static final String SUPPLIER_ID = "2101";
+    static final String MATERIAL_ID = "4101";
+    static final String UOM_ID = "5101";
+    static final String CURRENCY_ID = "6101";
+    static final String WAREHOUSE_ID = "3101";
 
     @Inject
     IDaoProvider daoProvider;
@@ -66,7 +66,7 @@ public class TestErpPurThreeWayMatch extends JunitAutoTestCase {
      */
     @Test
     public void testQtyOverReceiveRejectedInStrictMode() {
-        long[] chain = seedChain("PI-QTY-STRICT", new BigDecimal("10"), new BigDecimal("10"));
+        String[] chain = seedChain("PI-QTY-STRICT", new BigDecimal("10"), new BigDecimal("10"));
         ErpPurInvoiceLine line = invoiceLineRef(chain[0], new BigDecimal("12"), new BigDecimal("10"));
 
         RuntimeException caught = runMatcherCatching(line, Boolean.TRUE);
@@ -81,7 +81,7 @@ public class TestErpPurThreeWayMatch extends JunitAutoTestCase {
     @Test
     public void testPriceOverToleranceRejectedInStrictMode() {
         // 订单单价 10，发票单价 20 → 差异 100% >> 5% 容差
-        long[] chain = seedChain("PI-PRICE-STRICT", new BigDecimal("10"), new BigDecimal("10"));
+        String[] chain = seedChain("PI-PRICE-STRICT", new BigDecimal("10"), new BigDecimal("10"));
         ErpPurInvoiceLine line = invoiceLineRef(chain[0], new BigDecimal("10"), new BigDecimal("20"));
 
         RuntimeException caught = runMatcherCatching(line, Boolean.TRUE);
@@ -95,7 +95,7 @@ public class TestErpPurThreeWayMatch extends JunitAutoTestCase {
      */
     @Test
     public void testNonStrictModeAllowsOverTolerance() {
-        long[] chain = seedChain("PI-NONSTRICT", new BigDecimal("10"), new BigDecimal("10"));
+        String[] chain = seedChain("PI-NONSTRICT", new BigDecimal("10"), new BigDecimal("10"));
         ErpPurInvoiceLine line = invoiceLineRef(chain[0], new BigDecimal("12"), new BigDecimal("20"));
 
         RuntimeException caught = runMatcherCatching(line, Boolean.FALSE);
@@ -121,7 +121,7 @@ public class TestErpPurThreeWayMatch extends JunitAutoTestCase {
      */
     @Test
     public void testMatchWithinTolerancePassesStrictMode() {
-        long[] chain = seedChain("PI-OK", new BigDecimal("10"), new BigDecimal("10"));
+        String[] chain = seedChain("PI-OK", new BigDecimal("10"), new BigDecimal("10"));
         ErpPurInvoiceLine line = invoiceLineRef(chain[0], new BigDecimal("10"), new BigDecimal("10.2"));
         RuntimeException caught = runMatcherCatching(line, Boolean.TRUE);
         assertTrue(caught == null, "数量=入库且价格差异 2%<5% 应通过（caught=" + caught + "）");
@@ -132,7 +132,7 @@ public class TestErpPurThreeWayMatch extends JunitAutoTestCase {
      */
     @Test
     public void testApproveNonStrictAllowsQtyOver() {
-        long[] chain = seedChain("PI-APPROVE-NS", new BigDecimal("10"), new BigDecimal("10"));
+        String[] chain = seedChain("PI-APPROVE-NS", new BigDecimal("10"), new BigDecimal("10"));
         ErpPurInvoice invoice = invoiceOf("PI-APPROVE-NS");
         ormTemplate.runInSession(() -> {
             seedActiveSupplier(SUPPLIER_ID);
@@ -173,7 +173,7 @@ public class TestErpPurThreeWayMatch extends JunitAutoTestCase {
     /**
      * @return [0]=receiveLineId（已回链 orderLineId）
      */
-    private long[] seedChain(String tag, BigDecimal receivedQty, BigDecimal orderPrice) {
+    private String[] seedChain(String tag, BigDecimal receivedQty, BigDecimal orderPrice) {
         ErpPurOrder order = new ErpPurOrder();
         order.setCode("PO-" + tag);
         order.setOrgId(ORG_ID);
@@ -217,10 +217,10 @@ public class TestErpPurThreeWayMatch extends JunitAutoTestCase {
         receiveLine.setUoMId(UOM_ID);
         receiveLine.setQuantity(receivedQty);
         rlDao.saveEntity(receiveLine);
-        return new long[]{receiveLine.getId()};
+        return new String[]{receiveLine.getId()};
     }
 
-    private ErpPurInvoiceLine invoiceLineRef(Long receiveLineId, BigDecimal qty, BigDecimal price) {
+    private ErpPurInvoiceLine invoiceLineRef(String receiveLineId, BigDecimal qty, BigDecimal price) {
         ErpPurInvoiceLine line = new ErpPurInvoiceLine();
         line.setReceiveLineId(receiveLineId);
         line.setLineNo(1);
@@ -246,11 +246,11 @@ public class TestErpPurThreeWayMatch extends JunitAutoTestCase {
         return invoice;
     }
 
-    private ApiResponse<?> approve(Long id) {
+    private ApiResponse<?> approve(String id) {
         return executeRpc(mutation, "ErpPurInvoice__approve", ApiRequest.build(Map.of("id", String.valueOf(id))));
     }
 
-    private ApiResponse<?> submit(Long id) {
+    private ApiResponse<?> submit(String id) {
         return executeRpc(mutation, "ErpPurInvoice__submitForApproval", ApiRequest.build(Map.of("id", String.valueOf(id))));
     }
 
@@ -263,7 +263,7 @@ public class TestErpPurThreeWayMatch extends JunitAutoTestCase {
         return daoProvider.daoFor(ErpPurInvoice.class).getEntityById(invoice.getId());
     }
 
-    private void seedActiveSupplier(Long id) {
+    private void seedActiveSupplier(String id) {
         IEntityDao<ErpMdPartner> dao = daoProvider.daoFor(ErpMdPartner.class);
         ErpMdPartner partner = new ErpMdPartner();
         partner.setId(id);

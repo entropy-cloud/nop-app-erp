@@ -256,16 +256,14 @@ public class ErpInvLandedCostProcessor {
         return receive.getExchangeRate() != null ? receive.getExchangeRate() : BigDecimal.ONE;
     }
 
-    // A2 桥接（bridge-main-077/078，M0.2 登记册）：pur ErpPurReceive(ReceiveLine) 列仍 Long（pur 位次 15 未迁移），
-    // pur Long id → ConvertHelper.toString 桥接 inv String 列 setter 值，退役 owner M2.5
     protected ErpInvLandedCost createLandedCostHead(ErpPurReceive receive, BigDecimal freightAmount,
                                                       String currencyId, BigDecimal exchangeRate) {
         IEntityDao<ErpInvLandedCost> dao = landedCostDao();
         ErpInvLandedCost head = dao.newEntity();
         head.setCode("LC-FRT-" + receive.getCode() + "-" + CoreMetrics.currentTimeMillis());
-        head.setOrgId(ConvertHelper.toString(receive.getOrgId()));
-        head.setReceiveId(ConvertHelper.toString(receive.getId()));
-        head.setSupplierId(ConvertHelper.toString(receive.getSupplierId()));
+        head.setOrgId(receive.getOrgId());
+        head.setReceiveId(receive.getId());
+        head.setSupplierId(receive.getSupplierId());
         head.setCurrencyId(currencyId);
         head.setExchangeRate(exchangeRate);
         head.setTotalCostAmount(freightAmount);
@@ -322,8 +320,8 @@ public class ErpInvLandedCostProcessor {
             ErpInvCostAdjustLine line = lineDao.newEntity();
             line.setAdjustId(adjust.getId());
             line.setLineNo(lineNo++);
-            line.setMaterialId(ConvertHelper.toString(r.getMaterialId()));
-            line.setWarehouseId(ConvertHelper.toString(r.getWarehouseId() != null ? r.getWarehouseId() : receive.getWarehouseId()));
+            line.setMaterialId(r.getMaterialId());
+            line.setWarehouseId(r.getWarehouseId() != null ? r.getWarehouseId() : receive.getWarehouseId());
             BigDecimal newUnitCost = r.getNewUnitCost();
             line.setNewUnitCost(newUnitCost);
             line.setAdjustAmount(r.getAllocatedAmount());
@@ -462,18 +460,17 @@ public class ErpInvLandedCostProcessor {
         return dao.findAllByQuery(q);
     }
 
-    // A2 桥接（bridge-main-077/078）：inv String receiveId → pur Long receiveId（getEntityById / eq 过滤值），退役 owner M2.5
     protected ErpPurReceive loadReceive(String receiveId) {
         if (receiveId == null) {
             return null;
         }
-        return daoProvider.daoFor(ErpPurReceive.class).getEntityById(ConvertHelper.toLong(receiveId));
+        return daoProvider.daoFor(ErpPurReceive.class).getEntityById(receiveId);
     }
 
     protected List<ErpPurReceiveLine> loadReceiveLines(String receiveId) {
         IEntityDao<ErpPurReceiveLine> dao = daoProvider.daoFor(ErpPurReceiveLine.class);
         QueryBean q = new QueryBean();
-        q.addFilter(eq("receiveId", ConvertHelper.toLong(receiveId)));
+        q.addFilter(eq("receiveId", receiveId));
         q.addOrderField("lineNo", false);
         return dao.findAllByQuery(q);
     }

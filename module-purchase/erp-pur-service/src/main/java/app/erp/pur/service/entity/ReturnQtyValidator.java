@@ -44,9 +44,9 @@ public class ReturnQtyValidator {
      * @param lines       当前退货单行
      */
     public void validate(ErpPurReturn returnOrder, List<ErpPurReturnLine> lines) {
-        Map<Long, BigDecimal> approvedReturned = sumApprovedReturnedByReceiveLine(returnOrder);
+        Map<String, BigDecimal> approvedReturned = sumApprovedReturnedByReceiveLine(returnOrder);
         for (ErpPurReturnLine line : lines) {
-            Long receiveLineId = line.getReceiveLineId();
+            String receiveLineId = line.getReceiveLineId();
             if (receiveLineId == null) {
                 continue;
             }
@@ -69,8 +69,8 @@ public class ReturnQtyValidator {
      * 按入库行聚合「已审核退货量」，排除当前退货单（避免审核自身时把自身行算进上限）。
      * 范围限定在同一源入库单（{@code receiveId}）下，缩小查询面。
      */
-    private Map<Long, BigDecimal> sumApprovedReturnedByReceiveLine(ErpPurReturn current) {
-        Map<Long, BigDecimal> result = new HashMap<>();
+    private Map<String, BigDecimal> sumApprovedReturnedByReceiveLine(ErpPurReturn current) {
+        Map<String, BigDecimal> result = new HashMap<>();
         if (current.getReceiveId() == null) {
             return result;
         }
@@ -84,7 +84,7 @@ public class ReturnQtyValidator {
         if (approvedReturns.isEmpty()) {
             return result;
         }
-        List<Long> returnIds = approvedReturns.stream().map(ErpPurReturn::getId)
+        List<String> returnIds = approvedReturns.stream().map(ErpPurReturn::getId)
                 .collect(java.util.stream.Collectors.toList());
 
         IEntityDao<ErpPurReturnLine> lineDao = daoProvider.daoFor(ErpPurReturnLine.class);
@@ -100,7 +100,7 @@ public class ReturnQtyValidator {
         return result;
     }
 
-    private BigDecimal loadReceivedQuantity(Long receiveLineId) {
+    private BigDecimal loadReceivedQuantity(String receiveLineId) {
         IEntityDao<ErpPurReceiveLine> dao = daoProvider.daoFor(ErpPurReceiveLine.class);
         ErpPurReceiveLine receiveLine = dao.getEntityById(receiveLineId);
         if (receiveLine == null || receiveLine.getQuantity() == null) {

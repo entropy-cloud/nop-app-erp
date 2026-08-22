@@ -2,7 +2,7 @@
   "data": {
     "id": "2",
     "code": "@var:ErpPurRfq@code",
-    "requisitionId": 1,
+    "requisitionId": "1",
     "businessDate": "@var:ErpPurRfq@businessDate",
     "docStatus": "DRAFT",
     "docStatus_label": "DRAFT-草稿",

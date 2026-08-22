@@ -19,13 +19,13 @@
             <cols>
 
                 <!--ID-->
-                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="id" mandatory="true" sortable="true"/>
 
                 <!--付款单ID-->
-                <col id="paymentId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="paymentId" mandatory="true" sortable="true"/>
 
                 <!--发票ID-->
-                <col id="invoiceId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="invoiceId" mandatory="true" sortable="true"/>
 
                 <!--核销金额-->
                 <col id="amount" mandatory="true" ui:number="true" sortable="true"/>

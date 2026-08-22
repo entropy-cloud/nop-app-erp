@@ -73,10 +73,10 @@ public class TestErpInvLandedCostAllocatedGuard extends JunitAutoTestCase {
      */
     @Test
     public void testGuardSeesCommittedApprovedSibling() {
-        Long receiveId = ormTemplate.runInSession(session -> seedReceive("RCV-GUARD-1"));
-        String siblingId = ormTemplate.runInSession(session -> seedLandedCost("LC-GUARD-1-A", String.valueOf(receiveId),
+        String receiveId = ormTemplate.runInSession(session -> seedReceive("RCV-GUARD-1"));
+        String siblingId = ormTemplate.runInSession(session -> seedLandedCost("LC-GUARD-1-A", receiveId,
                 ErpInvConstants.DOC_STATUS_DRAFT, ErpInvConstants.APPROVE_STATUS_UNSUBMITTED));
-        String currentId = ormTemplate.runInSession(session -> seedLandedCost("LC-GUARD-1-B", String.valueOf(receiveId),
+        String currentId = ormTemplate.runInSession(session -> seedLandedCost("LC-GUARD-1-B", receiveId,
                 ErpInvConstants.DOC_STATUS_DRAFT, ErpInvConstants.APPROVE_STATUS_UNSUBMITTED));
 
         // 事务 A（独立事务提交）：sibling 审核通过（模拟并发方已提交的 APPROVED sibling）
@@ -89,7 +89,7 @@ public class TestErpInvLandedCostAllocatedGuard extends JunitAutoTestCase {
         NopException ex = assertThrows(NopException.class, () -> inTxnSession(() -> {
             ErpPurReceive receive = daoProvider.daoFor(ErpPurReceive.class).getEntityById(receiveId);
             landedCostProcessor.lockReceiveForAllocation(receive);
-            landedCostProcessor.validateNotAlreadyAllocated(String.valueOf(receiveId), currentId);
+            landedCostProcessor.validateNotAlreadyAllocated(receiveId, currentId);
             return null;
         }));
 
@@ -97,7 +97,7 @@ public class TestErpInvLandedCostAllocatedGuard extends JunitAutoTestCase {
                 "守卫抛 ERR_LANDED_COST_ALREADY_ALLOCATED");
         assertEquals("LC-GUARD-1-A", ex.getParam(ErpInvErrors.ARG_LANDED_COST_CODE),
                 "错误参数携带 sibling 单号");
-        assertEquals(String.valueOf(receiveId), ex.getParam(ErpInvErrors.ARG_RECEIVE_ID), "错误参数携带 receiveId");
+        assertEquals(receiveId, ex.getParam(ErpInvErrors.ARG_RECEIVE_ID), "错误参数携带 receiveId");
     }
 
     /**
@@ -109,10 +109,10 @@ public class TestErpInvLandedCostAllocatedGuard extends JunitAutoTestCase {
      */
     @Test
     public void testGuardLockReadDefeatsStaleSessionState() throws Exception {
-        Long receiveId = ormTemplate.runInSession(session -> seedReceive("RCV-GUARD-2"));
-        String siblingId = ormTemplate.runInSession(session -> seedLandedCost("LC-GUARD-2-A", String.valueOf(receiveId),
+        String receiveId = ormTemplate.runInSession(session -> seedReceive("RCV-GUARD-2"));
+        String siblingId = ormTemplate.runInSession(session -> seedLandedCost("LC-GUARD-2-A", receiveId,
                 ErpInvConstants.DOC_STATUS_DRAFT, ErpInvConstants.APPROVE_STATUS_UNSUBMITTED));
-        String currentId = ormTemplate.runInSession(session -> seedLandedCost("LC-GUARD-2-B", String.valueOf(receiveId),
+        String currentId = ormTemplate.runInSession(session -> seedLandedCost("LC-GUARD-2-B", receiveId,
                 ErpInvConstants.DOC_STATUS_DRAFT, ErpInvConstants.APPROVE_STATUS_UNSUBMITTED));
 
         CountDownLatch siblingPreloaded = new CountDownLatch(1);
@@ -133,7 +133,7 @@ public class TestErpInvLandedCostAllocatedGuard extends JunitAutoTestCase {
                                 siblingPreloaded.countDown();
                                 await(siblingCommitted);
                                 try {
-                                    landedCostProcessor.validateNotAlreadyAllocated(String.valueOf(receiveId), currentId);
+                                    landedCostProcessor.validateNotAlreadyAllocated(receiveId, currentId);
                                 } catch (NopException e) {
                                     caught.set(e);
                                     return null;
@@ -180,33 +180,33 @@ public class TestErpInvLandedCostAllocatedGuard extends JunitAutoTestCase {
      */
     @Test
     public void testGuardPassesWithoutApprovedSibling() {
-        Long receiveId = ormTemplate.runInSession(session -> seedReceive("RCV-GUARD-3"));
-        String rejectedId = ormTemplate.runInSession(session -> seedLandedCost("LC-GUARD-3-A", String.valueOf(receiveId),
+        String receiveId = ormTemplate.runInSession(session -> seedReceive("RCV-GUARD-3"));
+        String rejectedId = ormTemplate.runInSession(session -> seedLandedCost("LC-GUARD-3-A", receiveId,
                 ErpInvConstants.DOC_STATUS_CANCELLED, ErpInvConstants.APPROVE_STATUS_REJECTED));
-        String currentId = ormTemplate.runInSession(session -> seedLandedCost("LC-GUARD-3-B", String.valueOf(receiveId),
+        String currentId = ormTemplate.runInSession(session -> seedLandedCost("LC-GUARD-3-B", receiveId,
                 ErpInvConstants.DOC_STATUS_DRAFT, ErpInvConstants.APPROVE_STATUS_UNSUBMITTED));
 
         // REJECTED sibling + 自身排除：放行
         inTxnSession(() -> {
             ErpPurReceive receive = daoProvider.daoFor(ErpPurReceive.class).getEntityById(receiveId);
             landedCostProcessor.lockReceiveForAllocation(receive);
-            landedCostProcessor.validateNotAlreadyAllocated(String.valueOf(receiveId), currentId);
+            landedCostProcessor.validateNotAlreadyAllocated(receiveId, currentId);
             return null;
         });
 
         // current 自身即使持有 APPROVED 状态也排除（幂等重入由 ALREADY_APPROVED 守卫负责，此处仅证 id 排除语义）
         inTxnSession(() -> {
             markCommittedApproved(rejectedId);
-            landedCostProcessor.validateNotAlreadyAllocated(String.valueOf(receiveId), rejectedId);
+            landedCostProcessor.validateNotAlreadyAllocated(receiveId, rejectedId);
             return null;
         });
 
         // 零 sibling 场景：放行
-        Long emptyReceiveId = ormTemplate.runInSession(session -> seedReceive("RCV-GUARD-3-EMPTY"));
+        String emptyReceiveId = ormTemplate.runInSession(session -> seedReceive("RCV-GUARD-3-EMPTY"));
         inTxnSession(() -> {
             ErpPurReceive receive = daoProvider.daoFor(ErpPurReceive.class).getEntityById(emptyReceiveId);
             landedCostProcessor.lockReceiveForAllocation(receive);
-            landedCostProcessor.validateNotAlreadyAllocated(String.valueOf(emptyReceiveId), "999999");
+            landedCostProcessor.validateNotAlreadyAllocated(emptyReceiveId, "999999");
             return null;
         });
     }
@@ -234,13 +234,13 @@ public class TestErpInvLandedCostAllocatedGuard extends JunitAutoTestCase {
         dao.updateEntity(lc);
     }
 
-    private Long seedReceive(String code) {
+    private String seedReceive(String code) {
         ErpPurReceive receive = daoProvider.daoFor(ErpPurReceive.class).newEntity();
         receive.setCode(code);
-        receive.setSupplierId(5001L);
-        receive.setWarehouseId(6001L);
+        receive.setSupplierId("5001");
+        receive.setWarehouseId("6001");
         receive.setBusinessDate(LocalDate.of(2026, 8, 20));
-        receive.setCurrencyId(7001L);
+        receive.setCurrencyId("7001");
         receive.setDocStatus("CONFIRMED");
         receive.setApproveStatus("APPROVED");
         receive.setReceiveStatus("NOT_RECEIVED");
@@ -248,7 +248,6 @@ public class TestErpInvLandedCostAllocatedGuard extends JunitAutoTestCase {
         return receive.getId();
     }
 
-    // A3 桥接（bridge-test-123）：pur receiveId Long → inv ErpInvLandedCost.receiveId String（M2.5 未迁移）
     private String seedLandedCost(String code, String receiveId, String docStatus, String approveStatus) {
         ErpInvLandedCost lc = daoProvider.daoFor(ErpInvLandedCost.class).newEntity();
         lc.setCode(code);

@@ -45,10 +45,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpPurPaymentWorkflowApproval extends JunitAutoTestCase {
 
-    static final Long ORG_ID = 1003L;
-    static final Long SUPPLIER_ID = 2101L;
-    static final Long CURRENCY_ID = 6101L;
-    static final Long ACCT_SCHEMA_ID = 7003L;
+    static final String ORG_ID = "1003";
+    static final String SUPPLIER_ID = "2101";
+    static final String CURRENCY_ID = "6101";
+    static final String ACCT_SCHEMA_ID = "7003";
 
     @Inject
     IDaoProvider daoProvider;
@@ -160,9 +160,9 @@ public class TestErpPurPaymentWorkflowApproval extends JunitAutoTestCase {
         throw new IllegalStateException("步骤未激活: " + stepName + "，当前激活=" + steps);
     }
 
-    private ApiResponse<?> submit(Long id) {
+    private ApiResponse<?> submit(String id) {
         IGraphQLExecutionContext ctx = graphQLEngine.newRpcContext(mutation, "ErpPurPayment__submitForApproval",
-                ApiRequest.build(Map.of("id", String.valueOf(id))));
+                ApiRequest.build(Map.of("id", id)));
         return graphQLEngine.executeRpc(ctx);
     }
 
@@ -188,7 +188,7 @@ public class TestErpPurPaymentWorkflowApproval extends JunitAutoTestCase {
         return payment;
     }
 
-    private void seedActiveSupplier(Long id) {
+    private void seedActiveSupplier(String id) {
         IEntityDao<ErpMdPartner> dao = daoProvider.daoFor(ErpMdPartner.class);
         ErpMdPartner partner = new ErpMdPartner();
         partner.setId(id);
@@ -208,7 +208,7 @@ public class TestErpPurPaymentWorkflowApproval extends JunitAutoTestCase {
         });
     }
 
-    private void seedAcctSchema(Long id, Long orgId) {
+    private void seedAcctSchema(String id, String orgId) {
         IEntityDao<ErpMdAcctSchema> dao = daoProvider.daoFor(ErpMdAcctSchema.class);
         ErpMdAcctSchema schema = new ErpMdAcctSchema();
         schema.setId(id);

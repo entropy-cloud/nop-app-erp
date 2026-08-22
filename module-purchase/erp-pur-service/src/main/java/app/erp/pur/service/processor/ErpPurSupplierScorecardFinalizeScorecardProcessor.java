@@ -28,7 +28,7 @@ public class ErpPurSupplierScorecardFinalizeScorecardProcessor {
     @Inject
     ScorecardStandingLinker standingLinker;
 
-    public ErpPurSupplierScorecard finalizeScorecard(Long scorecardId, IServiceContext context) {
+    public ErpPurSupplierScorecard finalizeScorecard(String scorecardId, IServiceContext context) {
         ErpPurSupplierScorecard scorecard = requireScorecard(scorecardId, context);
         validateNotFinalized(scorecard, context);
         calculate(scorecard, context);
@@ -38,7 +38,7 @@ public class ErpPurSupplierScorecardFinalizeScorecardProcessor {
         return scorecard;
     }
 
-    protected ErpPurSupplierScorecard requireScorecard(Long scorecardId, IServiceContext context) {
+    protected ErpPurSupplierScorecard requireScorecard(String scorecardId, IServiceContext context) {
         ErpPurSupplierScorecard scorecard = scorecardDao().getEntityById(scorecardId);
         if (scorecard == null) {
             throw new NopException(ErpPurErrors.ERR_SCORECARD_NOT_FOUND)

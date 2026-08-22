@@ -30,8 +30,8 @@ public class ErpPurInvoiceBizModel extends CrudBizModel<ErpPurInvoice> implement
 
     @Override
     @BizMutation
-    public ErpPurInvoice cancel(@Name("invoiceId") Long invoiceId, IServiceContext context) {
-        return cancelProcessor.cancel(String.valueOf(invoiceId), context);
+    public ErpPurInvoice cancel(@Name("invoiceId") String invoiceId, IServiceContext context) {
+        return cancelProcessor.cancel(invoiceId, context);
     }
 
 }

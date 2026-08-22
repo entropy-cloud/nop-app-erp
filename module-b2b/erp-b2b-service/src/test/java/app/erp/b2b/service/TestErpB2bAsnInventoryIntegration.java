@@ -8,7 +8,6 @@ import io.nop.api.core.annotations.autotest.NopTestConfig;
 import io.nop.api.core.annotations.core.OptionalBoolean;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.config.AppConfig;
-import io.nop.api.core.convert.ConvertHelper;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.autotest.junit.JunitAutoTestCase;
 import io.nop.core.context.IServiceContext;
@@ -88,10 +87,9 @@ public class TestErpB2bAsnInventoryIntegration extends JunitAutoTestCase {
         seedPartnerProfile("PARTNER-RCV-1", partnerId, "secret-rcv-1");
         // 显式 seed Material（uoMId=1）：行级回填 uoMId 反查前置（不依赖跨模块 _init-data）
         String materialId = seedMaterial("1", "MAT-RCV-1");
-        Long poId = seedPurchaseOrder("PO-TEST-001", 7001L, 7101L);
+        String poId = seedPurchaseOrder("PO-TEST-001", "7001", "7101");
         // PO 行补齐：materialId → createReceiveFromAsn 行级回填可反查 unitPrice/taxRate/orderLineId
-        // A3' bridge（M3.8，退役 owner M2.5）：md/b2b String materialId → pur Long
-        seedPurchaseOrderLine(poId, 1, ConvertHelper.toLong(materialId), new BigDecimal("5"), new BigDecimal("10"));
+        seedPurchaseOrderLine(poId, 1, materialId, new BigDecimal("5"), new BigDecimal("10"));
 
         String payload = UBL_DESPATCH_ADVICE_XML;
         String sig = hmacSha256(payload, "secret-rcv-1");
@@ -114,8 +112,8 @@ public class TestErpB2bAsnInventoryIntegration extends JunitAutoTestCase {
         assertEquals(1, receives.size());
         app.erp.pur.dao.entity.ErpPurReceive receive = receives.get(0);
         assertEquals(poId, receive.getOrderId());
-        assertEquals(7001L, receive.getSupplierId());
-        assertEquals(7101L, receive.getWarehouseId());
+        assertEquals("7001", receive.getSupplierId());
+        assertEquals("7101", receive.getWarehouseId());
         assertNotNull(receive.getCode());
         assertTrue(receive.getCode().startsWith("RCV-FROM-ASN-"));
 
@@ -123,9 +121,8 @@ public class TestErpB2bAsnInventoryIntegration extends JunitAutoTestCase {
         List<app.erp.pur.dao.entity.ErpPurReceiveLine> lines = findReceiveLinesByReceiveId(receive.getId());
         assertEquals(1, lines.size(), "createReceiveFromAsn 行级回填应产 1 ReceiveLine");
         app.erp.pur.dao.entity.ErpPurReceiveLine line = lines.get(0);
-        // A3' bridge（M3.8，退役 owner M2.5）：pur Long materialId → String 断言
-        assertEquals(materialId, String.valueOf(line.getMaterialId()), "ReceiveLine.materialId 透传 AsnLine.materialId");
-        assertEquals(1L, line.getUoMId(), "ReceiveLine.uoMId 反查 ErpMdMaterial.uoMId");
+        assertEquals(materialId, line.getMaterialId(), "ReceiveLine.materialId 透传 AsnLine.materialId");
+        assertEquals("1", line.getUoMId(), "ReceiveLine.uoMId 反查 ErpMdMaterial.uoMId");
         assertEquals(Integer.valueOf(1), line.getLineNo(), "ReceiveLine.lineNo 透传 AsnLine.lineNo");
         assertEquals(0, new BigDecimal("100").compareTo(line.getQuantity()), "ReceiveLine.quantity=AsnLine.shippedQty");
         assertEquals(0, new BigDecimal("5").compareTo(line.getUnitPrice()), "ReceiveLine.unitPrice 反查 PO line");
@@ -140,10 +137,10 @@ public class TestErpB2bAsnInventoryIntegration extends JunitAutoTestCase {
         // 显式 seed 2 Material（行级回填 uoMId 反查前置，独立不依赖跨模块 _init-data）
         String matId1 = seedMaterial("1", "MAT-ML-1");
         String matId2 = seedMaterial("1", "MAT-ML-2");
-        Long poId = seedPurchaseOrder("PO-TEST-ML-001", 7002L, 7102L);
-        // 多行 PO：mat1 unitPrice=5 / mat2 unitPrice=12（A3' bridge：String → pur Long）
-        seedPurchaseOrderLine(poId, 1, ConvertHelper.toLong(matId1), new BigDecimal("5"), new BigDecimal("20"));
-        seedPurchaseOrderLine(poId, 2, ConvertHelper.toLong(matId2), new BigDecimal("12"), new BigDecimal("10"));
+        String poId = seedPurchaseOrder("PO-TEST-ML-001", "7002", "7102");
+        // 多行 PO：mat1 unitPrice=5 / mat2 unitPrice=12
+        seedPurchaseOrderLine(poId, 1, matId1, new BigDecimal("5"), new BigDecimal("20"));
+        seedPurchaseOrderLine(poId, 2, matId2, new BigDecimal("12"), new BigDecimal("10"));
 
         // 直接 seed ASN（绕过 webhook）+ 2 AsnLine（materialId 各异，对齐 Phase 1 Proof materialId 反查语义）
         String asnId = seedMatchedAsnDirectly("PO-TEST-ML-001", partnerId, "ASN-ML-" + System.nanoTime());
@@ -155,7 +152,7 @@ public class TestErpB2bAsnInventoryIntegration extends JunitAutoTestCase {
 
         List<app.erp.pur.dao.entity.ErpPurReceive> receives = findReceivesByOrderId(poId);
         assertEquals(1, receives.size());
-        Long receiveId = receives.get(0).getId();
+        String receiveId = receives.get(0).getId();
 
         List<app.erp.pur.dao.entity.ErpPurReceiveLine> lines = findReceiveLinesByReceiveId(receiveId);
         assertEquals(2, lines.size(), "多行 AsnLine 应产 2 ReceiveLine（行级回填完整）");
@@ -163,17 +160,16 @@ public class TestErpB2bAsnInventoryIntegration extends JunitAutoTestCase {
         // 逐行断言：lineNo 透传 + materialId 透传 + uoMId 反查 + amount 派生（plan Phase 1 Decision (a)-(f)）
         app.erp.pur.dao.entity.ErpPurReceiveLine l1 = lines.stream()
                 .filter(l -> l.getLineNo() == 1).findFirst().orElseThrow();
-        // A3' bridge（M3.8，退役 owner M2.5）：pur Long materialId → String 断言
-        assertEquals(matId1, String.valueOf(l1.getMaterialId()));
-        assertEquals(1L, l1.getUoMId(), "MAT-ML-1.uoMId=1 反查");
+        assertEquals(matId1, l1.getMaterialId());
+        assertEquals("1", l1.getUoMId(), "MAT-ML-1.uoMId=1 反查");
         assertEquals(0, new BigDecimal("15").compareTo(l1.getQuantity()));
         assertEquals(0, new BigDecimal("5").compareTo(l1.getUnitPrice()));
         assertEquals(0, new BigDecimal("75").compareTo(l1.getAmount()), "amount=5×15=75 HALF_UP scale=4");
 
         app.erp.pur.dao.entity.ErpPurReceiveLine l2 = lines.stream()
                 .filter(l -> l.getLineNo() == 2).findFirst().orElseThrow();
-        assertEquals(matId2, String.valueOf(l2.getMaterialId()));
-        assertEquals(1L, l2.getUoMId(), "MAT-ML-2.uoMId=1 反查");
+        assertEquals(matId2, l2.getMaterialId());
+        assertEquals("1", l2.getUoMId(), "MAT-ML-2.uoMId=1 反查");
         assertEquals(0, new BigDecimal("8").compareTo(l2.getQuantity()));
         assertEquals(0, new BigDecimal("12").compareTo(l2.getUnitPrice()));
         assertEquals(0, new BigDecimal("96").compareTo(l2.getAmount()), "amount=12×8=96");
@@ -183,7 +179,7 @@ public class TestErpB2bAsnInventoryIntegration extends JunitAutoTestCase {
     public void testCreateReceiveFromAsnEmptyLines() {
         String partnerId = seedPartner();
         seedPartnerProfile("PARTNER-RCV-EMPTY", partnerId, "secret-empty");
-        Long poId = seedPurchaseOrder("PO-TEST-EMPTY-001", 7003L, 7103L);
+        String poId = seedPurchaseOrder("PO-TEST-EMPTY-001", "7003", "7103");
 
         // 直接 seed ASN（无 AsnLine）+ 状态直置 MATCHED（Phase 1 Decision (e) 0 行合法边界）
         String asnId = seedMatchedAsnDirectly("PO-TEST-EMPTY-001", partnerId, "ASN-EMPTY-" + System.nanoTime());
@@ -205,7 +201,7 @@ public class TestErpB2bAsnInventoryIntegration extends JunitAutoTestCase {
         try {
             String partnerId = seedPartner();
             seedPartnerProfile("PARTNER-RCV-GATE", partnerId, "secret-gate");
-            Long poId = seedPurchaseOrder("PO-TEST-GATE-001", 7004L, 7104L);
+            String poId = seedPurchaseOrder("PO-TEST-GATE-001", "7004", "7104");
             String asnId = seedMatchedAsnDirectly("PO-TEST-GATE-001", partnerId, "ASN-GATE-" + System.nanoTime());
 
             ErpB2bAsn result = ormTemplate.runInSession(session -> asnBiz.createReceiveFromAsn(asnId, CTX));
@@ -247,7 +243,7 @@ public class TestErpB2bAsnInventoryIntegration extends JunitAutoTestCase {
     public void testFindUnmatchedAsns() {
         String partnerId = seedPartner();
         seedPartnerProfile("PARTNER-RCV-3", partnerId, "secret-rcv-3");
-        seedPurchaseOrder("PO-TEST-001", 7001L, 7101L);
+        seedPurchaseOrder("PO-TEST-001", "7001", "7101");
 
         String asnId1 = ormTemplate.runInSession(session -> asnBiz.handleInboundWebhook("UBL_DESPATCH_ADVICE", "PARTNER-RCV-3",
                 hmacSha256(UBL_DESPATCH_ADVICE_XML, "secret-rcv-3"), "EVT-FIND-001",
@@ -329,14 +325,14 @@ public class TestErpB2bAsnInventoryIntegration extends JunitAutoTestCase {
         });
     }
 
-    private Long seedPurchaseOrder(String code, Long supplierId, Long warehouseId) {
+    private String seedPurchaseOrder(String code, String supplierId, String warehouseId) {
         return ormTemplate.runInSession(session -> {
             app.erp.pur.dao.entity.ErpPurOrder po = new app.erp.pur.dao.entity.ErpPurOrder();
             po.setCode(code);
             po.setSupplierId(supplierId);
             po.setWarehouseId(warehouseId);
             po.setBusinessDate(LocalDate.of(2026, 7, 1));
-            po.setCurrencyId(6701L);
+            po.setCurrencyId("6701");
             po.setDocStatus("APPROVED");
             po.setApproveStatus("APPROVED");
             daoProvider.daoFor(app.erp.pur.dao.entity.ErpPurOrder.class).saveEntity(po);
@@ -344,14 +340,14 @@ public class TestErpB2bAsnInventoryIntegration extends JunitAutoTestCase {
         });
     }
 
-    private void seedPurchaseOrderLine(Long orderId, int lineNo, Long materialId,
+    private void seedPurchaseOrderLine(String orderId, int lineNo, String materialId,
                                        BigDecimal unitPrice, BigDecimal quantity) {
         ormTemplate.runInSession(session -> {
             app.erp.pur.dao.entity.ErpPurOrderLine line = new app.erp.pur.dao.entity.ErpPurOrderLine();
             line.setOrderId(orderId);
             line.setLineNo(lineNo);
             line.setMaterialId(materialId);
-            line.setUoMId(1L);
+            line.setUoMId("1");
             line.setQuantity(quantity);
             line.setUnitPrice(unitPrice);
             line.setAmount(unitPrice.multiply(quantity));
@@ -424,7 +420,7 @@ public class TestErpB2bAsnInventoryIntegration extends JunitAutoTestCase {
     }
 
     @SuppressWarnings("unchecked")
-    private List<app.erp.pur.dao.entity.ErpPurReceive> findReceivesByOrderId(Long orderId) {
+    private List<app.erp.pur.dao.entity.ErpPurReceive> findReceivesByOrderId(String orderId) {
         IEntityDao<app.erp.pur.dao.entity.ErpPurReceive> dao =
                 daoProvider.daoFor(app.erp.pur.dao.entity.ErpPurReceive.class);
         QueryBean q = new QueryBean();
@@ -433,7 +429,7 @@ public class TestErpB2bAsnInventoryIntegration extends JunitAutoTestCase {
     }
 
     @SuppressWarnings("unchecked")
-    private List<app.erp.pur.dao.entity.ErpPurReceiveLine> findReceiveLinesByReceiveId(Long receiveId) {
+    private List<app.erp.pur.dao.entity.ErpPurReceiveLine> findReceiveLinesByReceiveId(String receiveId) {
         IEntityDao<app.erp.pur.dao.entity.ErpPurReceiveLine> dao =
                 daoProvider.daoFor(app.erp.pur.dao.entity.ErpPurReceiveLine.class);
         QueryBean q = new QueryBean();

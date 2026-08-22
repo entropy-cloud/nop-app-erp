@@ -19,16 +19,16 @@
             <cols>
 
                 <!--ID-->
-                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="id" mandatory="true" sortable="true"/>
 
                 <!--单号-->
                 <col id="code" mandatory="true" sortable="true"/>
 
                 <!--业务组织-->
-                <col id="orgId" ui:number="true" sortable="true"/>
+                <col id="orgId" sortable="true"/>
 
                 <!--请购单-->
-                <col id="requisitionId" ui:number="true" sortable="true"/>
+                <col id="requisitionId" sortable="true"/>
 
                 <!--询价日期-->
                 <col id="businessDate" mandatory="true" sortable="true"/>

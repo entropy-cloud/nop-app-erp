@@ -1,9 +1,9 @@
 {
-  "id": 0,
-  "rfqId": 0,
+  "id": "",
+  "rfqId": "",
   "lineNo": 0,
-  "materialId": 0,
-  "uoMId": 0,
+  "materialId": "",
+  "uoMId": "",
   "quantity": 0.0,
   "remark": "",
   "delVersion": 0,

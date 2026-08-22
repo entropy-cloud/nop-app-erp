@@ -77,7 +77,7 @@ public class PaymentSettler {
         BigDecimal paymentTotal = nz(payment.getTotalAmount());
         BigDecimal paymentRemaining = paymentTotal.subtract(paymentSettled);
 
-        Map<Long, BigDecimal> touchedInvoices = new HashMap<>();
+        Map<String, BigDecimal> touchedInvoices = new HashMap<>();
         IEntityDao<ErpPurPaymentLine> lineDao = daoProvider.daoFor(ErpPurPaymentLine.class);
         for (SettlementAllocation alloc : allocations) {
             if (alloc.getInvoiceId() == null || alloc.getAmount() == null) {
@@ -87,7 +87,9 @@ public class PaymentSettler {
             if (amount.signum() <= 0) {
                 continue;
             }
-            ErpPurInvoice invoice = requireInvoiceForSettle(payment, alloc.getInvoiceId());
+            // md SettlementAllocation.invoiceId 仍为 Long（sales 域未迁移，共享 bean 暂不能翻转），此处归一为 String
+            String invoiceId = String.valueOf(alloc.getInvoiceId());
+            ErpPurInvoice invoice = requireInvoiceForSettle(payment, invoiceId);
 
             BigDecimal invoiceBalance = nz(invoice.getTotalAmountWithTax()).subtract(nz(invoice.getPaidAmount()));
             if (amount.compareTo(invoiceBalance) > 0) {
@@ -105,15 +107,15 @@ public class PaymentSettler {
 
             ErpPurPaymentLine line = lineDao.newEntity();
             line.setPaymentId(payment.getId());
-            line.setInvoiceId(alloc.getInvoiceId());
+            line.setInvoiceId(invoiceId);
             line.setAmount(amount);
             lineDao.saveEntity(line);
 
             paymentRemaining = paymentRemaining.subtract(amount);
-            touchedInvoices.merge(alloc.getInvoiceId(), amount, BigDecimal::add);
+            touchedInvoices.merge(invoiceId, amount, BigDecimal::add);
         }
 
-        for (Long invoiceId : touchedInvoices.keySet()) {
+        for (String invoiceId : touchedInvoices.keySet()) {
             recomputeInvoicePaid(invoiceId);
         }
         recomputePaymentWrittenOff(payment.getId());
@@ -123,7 +125,7 @@ public class PaymentSettler {
     /**
      * 核销冲销：对指定发票生成反向（负金额）PaymentLine，恢复余额与状态。幂等：无既有核销则空操作。
      */
-    public ErpPurPayment reverseSettlement(ErpPurPayment payment, Long invoiceId) {
+    public ErpPurPayment reverseSettlement(ErpPurPayment payment, String invoiceId) {
         List<ErpPurPaymentLine> existing = findLines(payment.getId(), invoiceId);
         BigDecimal settled = BigDecimal.ZERO;
         for (ErpPurPaymentLine l : existing) {
@@ -148,7 +150,7 @@ public class PaymentSettler {
 
     // ---------- helpers ----------
 
-    private ErpPurInvoice requireInvoiceForSettle(ErpPurPayment payment, Long invoiceId) {
+    private ErpPurInvoice requireInvoiceForSettle(ErpPurPayment payment, String invoiceId) {
         ErpPurInvoice invoice = daoProvider.daoFor(ErpPurInvoice.class).getEntityById(invoiceId);
         if (invoice == null) {
             throw new NopException(ErpPurErrors.ERR_SETTLE_INVOICE_NOT_APPROVED)
@@ -190,7 +192,7 @@ public class PaymentSettler {
         }
     }
 
-    private List<ErpPurInvoiceLine> loadInvoiceLines(Long invoiceId) {
+    private List<ErpPurInvoiceLine> loadInvoiceLines(String invoiceId) {
         ormTemplate.flushSession();
         IEntityDao<ErpPurInvoiceLine> dao = daoProvider.daoFor(ErpPurInvoiceLine.class);
         QueryBean q = new QueryBean();
@@ -198,7 +200,7 @@ public class PaymentSettler {
         return new ArrayList<>(dao.findAllByQuery(q));
     }
 
-    private void recomputeInvoicePaid(Long invoiceId) {
+    private void recomputeInvoicePaid(String invoiceId) {
         ormTemplate.flushSession();
         ErpPurInvoice invoice = daoProvider.daoFor(ErpPurInvoice.class).getEntityById(invoiceId);
         BigDecimal paid = sumInvoiceLines(invoiceId);
@@ -216,7 +218,7 @@ public class PaymentSettler {
         daoProvider.daoFor(ErpPurInvoice.class).updateEntity(invoice);
     }
 
-    private void recomputePaymentWrittenOff(Long paymentId) {
+    private void recomputePaymentWrittenOff(String paymentId) {
         ormTemplate.flushSession();
         ErpPurPayment payment = daoProvider.daoFor(ErpPurPayment.class).getEntityById(paymentId);
         BigDecimal settled = sumPaymentLines(paymentId);
@@ -233,7 +235,7 @@ public class PaymentSettler {
         daoProvider.daoFor(ErpPurPayment.class).updateEntity(payment);
     }
 
-    private BigDecimal sumInvoiceLines(Long invoiceId) {
+    private BigDecimal sumInvoiceLines(String invoiceId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("invoiceId", invoiceId));
         BigDecimal sum = BigDecimal.ZERO;
@@ -243,7 +245,7 @@ public class PaymentSettler {
         return sum;
     }
 
-    private BigDecimal sumPaymentLines(Long paymentId) {
+    private BigDecimal sumPaymentLines(String paymentId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("paymentId", paymentId));
         BigDecimal sum = BigDecimal.ZERO;
@@ -253,7 +255,7 @@ public class PaymentSettler {
         return sum;
     }
 
-    private List<ErpPurPaymentLine> findLines(Long paymentId, Long invoiceId) {
+    private List<ErpPurPaymentLine> findLines(String paymentId, String invoiceId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("paymentId", paymentId));
         q.addFilter(eq("invoiceId", invoiceId));

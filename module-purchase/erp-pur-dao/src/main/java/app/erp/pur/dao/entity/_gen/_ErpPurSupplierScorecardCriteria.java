@@ -134,10 +134,10 @@ public class _ErpPurSupplierScorecardCriteria extends DynamicOrmEntity{
 
     
     /* ID: ID */
-    private java.lang.Long _id;
+    private java.lang.String _id;
     
     /* 评分卡: SCORECARD_ID */
-    private java.lang.Long _scorecardId;
+    private java.lang.String _scorecardId;
     
     /* 维度名: CRITERIA_NAME */
     private java.lang.String _criteriaName;
@@ -297,9 +297,9 @@ public class _ErpPurSupplierScorecardCriteria extends DynamicOrmEntity{
         switch(propId){
         
             case PROP_ID_id:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_id));
                }
                setId(typedValue);
@@ -307,9 +307,9 @@ public class _ErpPurSupplierScorecardCriteria extends DynamicOrmEntity{
             }
         
             case PROP_ID_scorecardId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_scorecardId));
                }
                setScorecardId(typedValue);
@@ -437,14 +437,14 @@ public class _ErpPurSupplierScorecardCriteria extends DynamicOrmEntity{
         
             case PROP_ID_id:{
                onInitProp(propId);
-               this._id = (java.lang.Long)value;
+               this._id = (java.lang.String)value;
                orm_id(); // 如果是设置主键字段，则触发watcher
                break;
             }
         
             case PROP_ID_scorecardId:{
                onInitProp(propId);
-               this._scorecardId = (java.lang.Long)value;
+               this._scorecardId = (java.lang.String)value;
                
                break;
             }
@@ -535,7 +535,7 @@ public class _ErpPurSupplierScorecardCriteria extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final java.lang.Long getId(){
+    public final java.lang.String getId(){
          onPropGet(PROP_ID_id);
          return _id;
     }
@@ -543,7 +543,7 @@ public class _ErpPurSupplierScorecardCriteria extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final void setId(java.lang.Long value){
+    public final void setId(java.lang.String value){
         if(onPropSet(PROP_ID_id,value)){
             this._id = value;
             internalClearRefs(PROP_ID_id);
@@ -554,7 +554,7 @@ public class _ErpPurSupplierScorecardCriteria extends DynamicOrmEntity{
     /**
      * 评分卡: SCORECARD_ID
      */
-    public final java.lang.Long getScorecardId(){
+    public final java.lang.String getScorecardId(){
          onPropGet(PROP_ID_scorecardId);
          return _scorecardId;
     }
@@ -562,7 +562,7 @@ public class _ErpPurSupplierScorecardCriteria extends DynamicOrmEntity{
     /**
      * 评分卡: SCORECARD_ID
      */
-    public final void setScorecardId(java.lang.Long value){
+    public final void setScorecardId(java.lang.String value){
         if(onPropSet(PROP_ID_scorecardId,value)){
             this._scorecardId = value;
             internalClearRefs(PROP_ID_scorecardId);

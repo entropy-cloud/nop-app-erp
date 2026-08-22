@@ -15,5 +15,5 @@ import app.erp.pur.dao.entity.ErpPurReceive;
 public interface IErpPurReceiveBiz extends ICrudBiz<ErpPurReceive> {
 
     @BizMutation
-    ErpPurReceive cancel(@Name("receiveId") Long receiveId, IServiceContext context);
+    ErpPurReceive cancel(@Name("receiveId") String receiveId, IServiceContext context);
 }

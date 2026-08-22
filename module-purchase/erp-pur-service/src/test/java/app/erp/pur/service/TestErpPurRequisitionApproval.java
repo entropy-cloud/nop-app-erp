@@ -35,10 +35,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpPurRequisitionApproval extends JunitAutoTestCase {
 
-    static final Long ORG_ID = 1201L;
-    static final Long REQUESTER_ID = 2201L;
-    static final Long MATERIAL_ID = 4201L;
-    static final Long UOM_ID = 5201L;
+    static final String ORG_ID = "1201";
+    static final String REQUESTER_ID = "2201";
+    static final String MATERIAL_ID = "4201";
+    static final String UOM_ID = "5201";
 
     @Inject
     IDaoProvider daoProvider;
@@ -120,32 +120,32 @@ public class TestErpPurRequisitionApproval extends JunitAutoTestCase {
 
     // ---------- helpers ----------
 
-    private ApiResponse<?> submit(Long requisitionId) {
+    private ApiResponse<?> submit(String requisitionId) {
         return executeRpc(mutation, "ErpPurRequisition__submitForApproval",
                 ApiRequest.build(Map.of("id", String.valueOf(requisitionId))));
     }
 
-    private ApiResponse<?> withdrawSubmit(Long requisitionId) {
+    private ApiResponse<?> withdrawSubmit(String requisitionId) {
         return executeRpc(mutation, "ErpPurRequisition__withdrawApproval",
                 ApiRequest.build(Map.of("id", String.valueOf(requisitionId))));
     }
 
-    private ApiResponse<?> approve(Long requisitionId) {
+    private ApiResponse<?> approve(String requisitionId) {
         return executeRpc(mutation, "ErpPurRequisition__approve",
                 ApiRequest.build(Map.of("id", String.valueOf(requisitionId))));
     }
 
-    private ApiResponse<?> reject(Long requisitionId) {
+    private ApiResponse<?> reject(String requisitionId) {
         return executeRpc(mutation, "ErpPurRequisition__reject",
                 ApiRequest.build(Map.of("id", String.valueOf(requisitionId))));
     }
 
-    private ApiResponse<?> reverseApprove(Long requisitionId) {
+    private ApiResponse<?> reverseApprove(String requisitionId) {
         return executeRpc(mutation, "ErpPurRequisition__reverseApprove",
                 ApiRequest.build(Map.of("id", String.valueOf(requisitionId))));
     }
 
-    private ApiResponse<?> cancel(Long requisitionId) {
+    private ApiResponse<?> cancel(String requisitionId) {
         return executeRpc(mutation, "ErpPurRequisition__cancel",
                 ApiRequest.build(Map.of("requisitionId", requisitionId)));
     }

@@ -66,13 +66,13 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
         testConfigFile = "classpath:return-commitment-test.yaml")
 public class TestErpPurReturnCommitmentRestore extends JunitAutoTestCase {
 
-    static final Long ORG_ID = 11101L;
-    static final Long SUPPLIER_ID = 11201L;
-    static final Long WAREHOUSE_ID = 11301L;
-    static final Long MATERIAL_ID = 11401L;
-    static final Long UOM_ID = 11501L;
-    static final Long CURRENCY_ID = 11601L;
-    static final Long ACCT_SCHEMA_ID = 11701L;
+    static final String ORG_ID = "11101";
+    static final String SUPPLIER_ID = "11201";
+    static final String WAREHOUSE_ID = "11301";
+    static final String MATERIAL_ID = "11401";
+    static final String UOM_ID = "11501";
+    static final String CURRENCY_ID = "11601";
+    static final String ACCT_SCHEMA_ID = "11701";
     static final String COMMITMENT_BILL_TYPE = "PURCHASE_ORDER_COMMITMENT";
     static final String POSTING_TYPE_COMMITMENT = "COMMITMENT";
 
@@ -88,18 +88,18 @@ public class TestErpPurReturnCommitmentRestore extends JunitAutoTestCase {
     @Test
     public void testReturnReverseApproveRestoresCommitment() {
         seedPrereqs();
-        long orderLineId = nextId();
-        long receiveId = nextId();
-        long receiveLineId = nextId();
-        Long orderId = newOrder("PO-RTR-001", orderLineId);
-        Long receiveId2 = seedApprovedReceive("PR-RTR-001", receiveId, receiveLineId, orderId, orderLineId);
+        String orderLineId = nextId();
+        String receiveId = nextId();
+        String receiveLineId = nextId();
+        String orderId = newOrder("PO-RTR-001", orderLineId);
+        String receiveId2 = seedApprovedReceive("PR-RTR-001", receiveId, receiveLineId, orderId, orderLineId);
 
         assertEquals(0, submitOrder(orderId).getStatus());
         assertEquals(0, approveOrder(orderId).getStatus());
         assertEquals(1, countActiveCommitments("PO-RTR-001"), "PO 审核后恰 1 张活跃承付凭证");
 
         // return approve（双开关 ON）→ release-on-return（C1 红冲，生成红冲凭证）
-        Long returnId = newReturn("RT-RTR-001", receiveId2, receiveLineId);
+        String returnId = newReturn("RT-RTR-001", receiveId2, receiveLineId);
         assertEquals(0, approveReturn(returnId).getStatus(), "退货审核应成功");
         List<ErpFinVoucherBillR> links = commitmentLinks("PO-RTR-001");
         assertEquals(2, links.size(), "退货审核释放后 = 原凭证 + 红冲凭证");
@@ -119,17 +119,17 @@ public class TestErpPurReturnCommitmentRestore extends JunitAutoTestCase {
     @Test
     public void testReturnCancelRestoresCommitment() {
         seedPrereqs();
-        long orderLineId = nextId();
-        long receiveId = nextId();
-        long receiveLineId = nextId();
-        Long orderId = newOrder("PO-RTC-001", orderLineId);
-        Long receiveId2 = seedApprovedReceive("PR-RTC-001", receiveId, receiveLineId, orderId, orderLineId);
+        String orderLineId = nextId();
+        String receiveId = nextId();
+        String receiveLineId = nextId();
+        String orderId = newOrder("PO-RTC-001", orderLineId);
+        String receiveId2 = seedApprovedReceive("PR-RTC-001", receiveId, receiveLineId, orderId, orderLineId);
 
         assertEquals(0, submitOrder(orderId).getStatus());
         assertEquals(0, approveOrder(orderId).getStatus());
         assertEquals(1, countActiveCommitments("PO-RTC-001"));
 
-        Long returnId = newReturn("RT-RTC-001", receiveId2, receiveLineId);
+        String returnId = newReturn("RT-RTC-001", receiveId2, receiveLineId);
         assertEquals(0, approveReturn(returnId).getStatus());
         assertEquals(0, countActiveCommitments("PO-RTC-001"), "退货审核释放后无活跃凭证");
 
@@ -148,11 +148,11 @@ public class TestErpPurReturnCommitmentRestore extends JunitAutoTestCase {
     public void testSubSwitchOffNoRestore() {
         // 子开关 OFF（总开关 ON）：正向从未 release → 冲销恢复必须同开关门控，否则幽灵承付双占用
         seedPrereqs();
-        long orderLineId = nextId();
-        long receiveId = nextId();
-        long receiveLineId = nextId();
-        Long orderId = newOrder("PO-RTS-001", orderLineId);
-        Long receiveId2 = seedApprovedReceive("PR-RTS-001", receiveId, receiveLineId, orderId, orderLineId);
+        String orderLineId = nextId();
+        String receiveId = nextId();
+        String receiveLineId = nextId();
+        String orderId = newOrder("PO-RTS-001", orderLineId);
+        String receiveId2 = seedApprovedReceive("PR-RTS-001", receiveId, receiveLineId, orderId, orderLineId);
 
         assertEquals(0, submitOrder(orderId).getStatus());
         assertEquals(0, approveOrder(orderId).getStatus());
@@ -161,7 +161,7 @@ public class TestErpPurReturnCommitmentRestore extends JunitAutoTestCase {
         AppConfig.getConfigProvider().assignConfigValue(
                 ErpFinConstants.CONFIG_BUDGET_COMMITMENT_RELEASE_ON_RETURN, Boolean.FALSE);
         try {
-            Long returnId = newReturn("RT-RTS-001", receiveId2, receiveLineId);
+            String returnId = newReturn("RT-RTS-001", receiveId2, receiveLineId);
             assertEquals(0, approveReturn(returnId).getStatus());
             assertEquals(1, countActiveCommitments("PO-RTS-001"), "子开关 OFF 时退货审核不释放");
             assertEquals(0, reverseApproveReturn(returnId).getStatus());
@@ -180,17 +180,17 @@ public class TestErpPurReturnCommitmentRestore extends JunitAutoTestCase {
                 ErpFinConstants.CONFIG_BUDGET_COMMITMENT_ENABLED, Boolean.FALSE);
         try {
             seedPrereqs();
-            long orderLineId = nextId();
-            long receiveId = nextId();
-            long receiveLineId = nextId();
-            Long orderId = newOrder("PO-RTO-001", orderLineId);
-            Long receiveId2 = seedApprovedReceive("PR-RTO-001", receiveId, receiveLineId, orderId, orderLineId);
+            String orderLineId = nextId();
+            String receiveId = nextId();
+            String receiveLineId = nextId();
+            String orderId = newOrder("PO-RTO-001", orderLineId);
+            String receiveId2 = seedApprovedReceive("PR-RTO-001", receiveId, receiveLineId, orderId, orderLineId);
 
             assertEquals(0, submitOrder(orderId).getStatus());
             assertEquals(0, approveOrder(orderId).getStatus());
             assertEquals(0, countActiveCommitments("PO-RTO-001"), "总开关 OFF 时 PO 审核零承付凭证");
 
-            Long returnId = newReturn("RT-RTO-001", receiveId2, receiveLineId);
+            String returnId = newReturn("RT-RTO-001", receiveId2, receiveLineId);
             assertEquals(0, approveReturn(returnId).getStatus());
             assertEquals(0, reverseApproveReturn(returnId).getStatus());
             assertEquals(0, commitmentLinks("PO-RTO-001").size(), "总开关 OFF 时冲销恢复零凭证");
@@ -204,17 +204,17 @@ public class TestErpPurReturnCommitmentRestore extends JunitAutoTestCase {
     public void testCancelNeverApprovedNoRestore() {
         // 从未 APPROVED 的 return cancel → wasApproved=false → 零恢复（防幽灵承付双占用）
         seedPrereqs();
-        long orderLineId = nextId();
-        long receiveId = nextId();
-        long receiveLineId = nextId();
-        Long orderId = newOrder("PO-RTN-001", orderLineId);
-        Long receiveId2 = seedApprovedReceive("PR-RTN-001", receiveId, receiveLineId, orderId, orderLineId);
+        String orderLineId = nextId();
+        String receiveId = nextId();
+        String receiveLineId = nextId();
+        String orderId = newOrder("PO-RTN-001", orderLineId);
+        String receiveId2 = seedApprovedReceive("PR-RTN-001", receiveId, receiveLineId, orderId, orderLineId);
 
         assertEquals(0, submitOrder(orderId).getStatus());
         assertEquals(0, approveOrder(orderId).getStatus());
         assertEquals(1, countActiveCommitments("PO-RTN-001"));
 
-        Long returnId = newReturn("RT-RTN-001", receiveId2, receiveLineId);
+        String returnId = newReturn("RT-RTN-001", receiveId2, receiveLineId);
         assertEquals(0, cancelReturn(returnId).getStatus());
         assertEquals(1, commitmentLinks("PO-RTN-001").size(), "从未 APPROVED 取消不恢复（零新凭证）");
         assertEquals(1, countActiveCommitments("PO-RTN-001"), "C1 保持唯一活跃凭证");
@@ -224,18 +224,18 @@ public class TestErpPurReturnCommitmentRestore extends JunitAutoTestCase {
     public void testNoLinkedPoNoRestore() {
         // return.receive.orderId = null → resolvePurchaseOrderCode 无法解析 → 零恢复
         seedPrereqs();
-        long orderLineId = nextId();
-        long receiveId = nextId();
-        long receiveLineId = nextId();
-        Long orderId = newOrder("PO-RNL-001", orderLineId);
+        String orderLineId = nextId();
+        String receiveId = nextId();
+        String receiveLineId = nextId();
+        String orderId = newOrder("PO-RNL-001", orderLineId);
         seedApprovedReceive("PR-RNL-001", receiveId, receiveLineId, orderId, orderLineId);
         assertEquals(0, submitOrder(orderId).getStatus());
         assertEquals(0, approveOrder(orderId).getStatus());
         assertEquals(1, countActiveCommitments("PO-RNL-001"), "C1 已生成");
 
         // 无订单关联的已审核入库单（orderId=null，approveStatus 直置 APPROVED）→ 退货 approve/reverseApprove 均不动作
-        long orphanReceiveId = nextId();
-        long orphanReceiveLineId = nextId();
+        String orphanReceiveId = nextId();
+        String orphanReceiveLineId = nextId();
         ormTemplate.runInSession(session -> {
             newReceive("PR-RNL-ORPHAN", orphanReceiveId, null);
             ErpPurReceive r = daoProvider.daoFor(ErpPurReceive.class).getEntityById(orphanReceiveId);
@@ -244,7 +244,7 @@ public class TestErpPurReturnCommitmentRestore extends JunitAutoTestCase {
             newReceiveLine(orphanReceiveLineId, orphanReceiveId, null, new BigDecimal("10"), new BigDecimal("5"));
             return null;
         });
-        Long orphanReturnId = newReturn("RT-RNL-ORPHAN", orphanReceiveId, orphanReceiveLineId);
+        String orphanReturnId = newReturn("RT-RNL-ORPHAN", orphanReceiveId, orphanReceiveLineId);
         assertEquals(0, approveReturn(orphanReturnId).getStatus());
         assertEquals(0, reverseApproveReturn(orphanReturnId).getStatus());
         assertEquals(1, commitmentLinks("PO-RNL-001").size(), "无关联 PO 的退货冲销零新凭证");
@@ -256,22 +256,22 @@ public class TestErpPurReturnCommitmentRestore extends JunitAutoTestCase {
         // 跨路径交互：return approve（releaseIfPresent 已全额释放）→ invoice approve（容错跳过）→
         // invoice reverseApprove 恢复 → 恰 1 张活跃凭证（单活跃不变量）
         seedPrereqs();
-        long orderLineId = nextId();
-        long receiveId = nextId();
-        long receiveLineId = nextId();
-        Long orderId = newOrder("PO-RTI-001", orderLineId);
-        Long receiveId2 = seedApprovedReceive("PR-RTI-001", receiveId, receiveLineId, orderId, orderLineId);
+        String orderLineId = nextId();
+        String receiveId = nextId();
+        String receiveLineId = nextId();
+        String orderId = newOrder("PO-RTI-001", orderLineId);
+        String receiveId2 = seedApprovedReceive("PR-RTI-001", receiveId, receiveLineId, orderId, orderLineId);
 
         assertEquals(0, submitOrder(orderId).getStatus());
         assertEquals(0, approveOrder(orderId).getStatus());
         assertEquals(1, countActiveCommitments("PO-RTI-001"));
 
-        Long returnId = newReturn("RT-RTI-001", receiveId2, receiveLineId);
+        String returnId = newReturn("RT-RTI-001", receiveId2, receiveLineId);
         assertEquals(0, approveReturn(returnId).getStatus(), "退货审核应成功（releaseIfPresent 全额释放）");
         assertEquals(0, countActiveCommitments("PO-RTI-001"), "退货审核后无活跃凭证");
 
         // 发票审核（释放容错跳过——无活跃凭证可红冲）+ 冲销恢复
-        Long invoiceId = newInvoice("PI-RTI-001", receiveLineId);
+        String invoiceId = newInvoice("PI-RTI-001", receiveLineId);
         assertEquals(0, submitInvoice(invoiceId).getStatus());
         assertEquals(0, approveInvoice(invoiceId).getStatus());
         assertEquals(0, reverseApproveInvoice(invoiceId).getStatus());
@@ -353,7 +353,7 @@ public class TestErpPurReturnCommitmentRestore extends JunitAutoTestCase {
 
     // ---------- entity builders ----------
 
-    private Long newOrder(String code, long orderLineId) {
+    private String newOrder(String code, String orderLineId) {
         return ormTemplate.runInSession(session -> {
             IEntityDao<ErpPurOrder> dao = daoProvider.daoFor(ErpPurOrder.class);
             ErpPurOrder order = new ErpPurOrder();
@@ -395,7 +395,7 @@ public class TestErpPurReturnCommitmentRestore extends JunitAutoTestCase {
      *
      * @return receiveId
      */
-    private Long seedApprovedReceive(String code, long receiveId, long receiveLineId, Long orderId, long orderLineId) {
+    private String seedApprovedReceive(String code, String receiveId, String receiveLineId, String orderId, String orderLineId) {
         ormTemplate.runInSession(session -> {
             newReceive(code, receiveId, orderId);
             newReceiveLine(receiveLineId, receiveId, orderLineId, new BigDecimal("10"), new BigDecimal("5"));
@@ -405,7 +405,7 @@ public class TestErpPurReturnCommitmentRestore extends JunitAutoTestCase {
         return receiveId;
     }
 
-    private void newReceive(String code, Long receiveId, Long orderId) {
+    private void newReceive(String code, String receiveId, String orderId) {
         IEntityDao<ErpPurReceive> dao = daoProvider.daoFor(ErpPurReceive.class);
         ErpPurReceive receive = new ErpPurReceive();
         receive.setId(receiveId);
@@ -424,7 +424,7 @@ public class TestErpPurReturnCommitmentRestore extends JunitAutoTestCase {
         dao.saveEntity(receive);
     }
 
-    private void newReceiveLine(Long lineId, Long receiveId, Long orderLineId, BigDecimal qty, BigDecimal unitPrice) {
+    private void newReceiveLine(String lineId, String receiveId, String orderLineId, BigDecimal qty, BigDecimal unitPrice) {
         IEntityDao<ErpPurReceiveLine> dao = daoProvider.daoFor(ErpPurReceiveLine.class);
         ErpPurReceiveLine line = new ErpPurReceiveLine();
         line.setId(lineId);
@@ -438,9 +438,9 @@ public class TestErpPurReturnCommitmentRestore extends JunitAutoTestCase {
         dao.saveEntity(line);
     }
 
-    private Long newReturn(String code, Long receiveId, Long receiveLineId) {
+    private String newReturn(String code, String receiveId, String receiveLineId) {
         return ormTemplate.runInSession(session -> {
-            Long returnId = nextId();
+            String returnId = nextId();
             IEntityDao<ErpPurReturn> dao = daoProvider.daoFor(ErpPurReturn.class);
             ErpPurReturn returnOrder = new ErpPurReturn();
             returnOrder.setId(returnId);
@@ -475,7 +475,7 @@ public class TestErpPurReturnCommitmentRestore extends JunitAutoTestCase {
         });
     }
 
-    private Long newInvoice(String code, Long receiveLineId) {
+    private String newInvoice(String code, String receiveLineId) {
         return ormTemplate.runInSession(session -> {
             IEntityDao<ErpPurInvoice> dao = daoProvider.daoFor(ErpPurInvoice.class);
             ErpPurInvoice invoice = new ErpPurInvoice();
@@ -545,39 +545,39 @@ public class TestErpPurReturnCommitmentRestore extends JunitAutoTestCase {
 
     // ---------- rpc ----------
 
-    private ApiResponse<?> submitOrder(Long id) {
+    private ApiResponse<?> submitOrder(String id) {
         return executeRpc(mutation, "ErpPurOrder__submitForApproval", ApiRequest.build(Map.of("id", String.valueOf(id))));
     }
 
-    private ApiResponse<?> approveOrder(Long id) {
+    private ApiResponse<?> approveOrder(String id) {
         return executeRpc(mutation, "ErpPurOrder__approve", ApiRequest.build(Map.of("id", String.valueOf(id))));
     }
 
-    private ApiResponse<?> approveReceive(Long id) {
+    private ApiResponse<?> approveReceive(String id) {
         return executeRpc(mutation, "ErpPurReceive__approve", ApiRequest.build(Map.of("id", String.valueOf(id))));
     }
 
-    private ApiResponse<?> approveReturn(Long id) {
+    private ApiResponse<?> approveReturn(String id) {
         return executeRpc(mutation, "ErpPurReturn__approve", ApiRequest.build(Map.of("id", String.valueOf(id))));
     }
 
-    private ApiResponse<?> reverseApproveReturn(Long id) {
+    private ApiResponse<?> reverseApproveReturn(String id) {
         return executeRpc(mutation, "ErpPurReturn__reverseApprove", ApiRequest.build(Map.of("id", String.valueOf(id))));
     }
 
-    private ApiResponse<?> cancelReturn(Long id) {
+    private ApiResponse<?> cancelReturn(String id) {
         return executeRpc(mutation, "ErpPurReturn__cancel", ApiRequest.build(Map.of("returnId", id)));
     }
 
-    private ApiResponse<?> submitInvoice(Long id) {
+    private ApiResponse<?> submitInvoice(String id) {
         return executeRpc(mutation, "ErpPurInvoice__submitForApproval", ApiRequest.build(Map.of("id", String.valueOf(id))));
     }
 
-    private ApiResponse<?> approveInvoice(Long id) {
+    private ApiResponse<?> approveInvoice(String id) {
         return executeRpc(mutation, "ErpPurInvoice__approve", ApiRequest.build(Map.of("id", String.valueOf(id))));
     }
 
-    private ApiResponse<?> reverseApproveInvoice(Long id) {
+    private ApiResponse<?> reverseApproveInvoice(String id) {
         return executeRpc(mutation, "ErpPurInvoice__reverseApprove", ApiRequest.build(Map.of("id", String.valueOf(id))));
     }
 
@@ -586,7 +586,7 @@ public class TestErpPurReturnCommitmentRestore extends JunitAutoTestCase {
         return graphQLEngine.executeRpc(ctx);
     }
 
-    private Long nextId() {
-        return idSeq.incrementAndGet();
+    private String nextId() {
+        return String.valueOf(idSeq.incrementAndGet());
     }
 }

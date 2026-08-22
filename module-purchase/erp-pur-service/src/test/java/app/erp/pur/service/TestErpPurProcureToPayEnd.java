@@ -75,14 +75,14 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpPurProcureToPayEnd extends JunitAutoTestCase {
 
-    static final Long ORG_ID = 1401L;
-    static final Long SUPPLIER_ID = 2401L;
-    static final Long WAREHOUSE_ID = 3401L;
-    static final Long MATERIAL_ID = 4401L;
-    static final Long UOM_ID = 5401L;
-    static final Long CURRENCY_ID = 6401L;
-    static final Long ACCT_SCHEMA_ID = 7401L;
-    static final Long LOCATION_ID = 4402L;
+    static final String ORG_ID = "1401";
+    static final String SUPPLIER_ID = "2401";
+    static final String WAREHOUSE_ID = "3401";
+    static final String MATERIAL_ID = "4401";
+    static final String UOM_ID = "5401";
+    static final String CURRENCY_ID = "6401";
+    static final String ACCT_SCHEMA_ID = "7401";
+    static final String LOCATION_ID = "4402";
 
     @Inject
     IDaoProvider daoProvider;
@@ -108,8 +108,8 @@ public class TestErpPurProcureToPayEnd extends JunitAutoTestCase {
     @Test
     public void testProcureToPayPartialSettlement() {
         seedPrereqs();
-        long orderLineId = 8401L;
-        long[] receive = buildReceiveChain("PO-P2P-001", "PR-P2P-001", 8402L, 8403L, orderLineId,
+        String orderLineId = "8401";
+        String[] receive = buildReceiveChain("PO-P2P-001", "PR-P2P-001", "8402", "8403", orderLineId,
                 new BigDecimal("10"), new BigDecimal("5"));
 
         // 1. 入库审核：触发库存移动 DONE + PURCHASE_INPUT 暂估凭证 posted=true
@@ -121,7 +121,7 @@ public class TestErpPurProcureToPayEnd extends JunitAutoTestCase {
         assertEquals(true, approvedReceive.getPosted(), "入库 posted=true");
 
         // 2. 发票审核：三单匹配通过 + AP_INVOICE 凭证 posted=true
-        long invoiceId = buildInvoice("PI-P2P-001", receive[1], new BigDecimal("10"), new BigDecimal("5"));
+        String invoiceId = buildInvoice("PI-P2P-001", receive[1], new BigDecimal("10"), new BigDecimal("5"));
         assertEquals(0, submitInvoice(invoiceId).getStatus());
         ApiResponse<?> invoiceApproveResp = approveInvoice(invoiceId);
         output("2_invoice_approve_response.json5", invoiceApproveResp);
@@ -131,7 +131,7 @@ public class TestErpPurProcureToPayEnd extends JunitAutoTestCase {
         assertEquals(ErpPurConstants.PAID_STATUS_UNPAID, approvedInvoice.getPaidStatus(), "发票初始 UNPAID");
 
         // 3. 付款审核：PAYMENT 凭证 posted=true
-        long paymentId = buildPayment("PY-P2P-001", new BigDecimal("56.5"));
+        String paymentId = buildPayment("PY-P2P-001", new BigDecimal("56.5"));
         assertEquals(0, submitPayment(paymentId).getStatus());
         ApiResponse<?> paymentApproveResp = approvePayment(paymentId);
         output("3_payment_approve_response.json5", paymentApproveResp);
@@ -157,19 +157,19 @@ public class TestErpPurProcureToPayEnd extends JunitAutoTestCase {
     @Test
     public void testReverseScenarios() {
         seedPrereqs();
-        long orderLineId = 8411L;
-        long[] receive = buildReceiveChain("PO-REV-001", "PR-REV-001", 8412L, 8413L, orderLineId,
+        String orderLineId = "8411";
+        String[] receive = buildReceiveChain("PO-REV-001", "PR-REV-001", "8412", "8413", orderLineId,
                 new BigDecimal("10"), new BigDecimal("5"));
 
         assertEquals(0, submitReceive(receive[0]).getStatus());
         assertEquals(0, approveReceive(receive[0]).getStatus());
 
-        long invoiceId = buildInvoice("PI-REV-001", receive[1], new BigDecimal("10"), new BigDecimal("5"));
+        String invoiceId = buildInvoice("PI-REV-001", receive[1], new BigDecimal("10"), new BigDecimal("5"));
         assertEquals(0, submitInvoice(invoiceId).getStatus());
         assertEquals(0, approveInvoice(invoiceId).getStatus());
         assertTrue(Boolean.TRUE.equals(daoProvider.daoFor(ErpPurInvoice.class).getEntityById(invoiceId).getPosted()));
 
-        long paymentId = buildPayment("PY-REV-001", new BigDecimal("56.5"));
+        String paymentId = buildPayment("PY-REV-001", new BigDecimal("56.5"));
         assertEquals(0, submitPayment(paymentId).getStatus());
         assertEquals(0, approvePayment(paymentId).getStatus());
         // 先核销，再冲销核销 + 反审核付款
@@ -210,14 +210,14 @@ public class TestErpPurProcureToPayEnd extends JunitAutoTestCase {
     @Test
     public void testFinanceReconciliationLayerPayable() {
         seedPrereqs();
-        long orderLineId = 8501L;
-        long[] receive = buildReceiveChain("PO-FIN-001", "PR-FIN-001", 8502L, 8503L, orderLineId,
+        String orderLineId = "8501";
+        String[] receive = buildReceiveChain("PO-FIN-001", "PR-FIN-001", "8502", "8503", orderLineId,
                 new BigDecimal("10"), new BigDecimal("5"));
         assertEquals(0, submitReceive(receive[0]).getStatus());
         assertEquals(0, approveReceive(receive[0]).getStatus());
 
         // 发票审核 → AP_INVOICE 过账生成应付辅助账（openAmount=含税总额 56.5）
-        long invoiceId = buildInvoice("PI-FIN-001", receive[1], new BigDecimal("10"), new BigDecimal("5"));
+        String invoiceId = buildInvoice("PI-FIN-001", receive[1], new BigDecimal("10"), new BigDecimal("5"));
         assertEquals(0, submitInvoice(invoiceId).getStatus());
         assertEquals(0, approveInvoice(invoiceId).getStatus());
 
@@ -231,7 +231,7 @@ public class TestErpPurProcureToPayEnd extends JunitAutoTestCase {
                 "初始 settledAmount=0");
 
         // 付款审核 → PAYMENT 过账生成应付辅助账（openAmount=付款总额 56.5）
-        long paymentId = buildPayment("PY-FIN-001", new BigDecimal("56.5"));
+        String paymentId = buildPayment("PY-FIN-001", new BigDecimal("56.5"));
         assertEquals(0, submitPayment(paymentId).getStatus());
         assertEquals(0, approvePayment(paymentId).getStatus());
 
@@ -300,26 +300,26 @@ public class TestErpPurProcureToPayEnd extends JunitAutoTestCase {
     @Test
     public void testFinanceReconciliationLayerExceptions() {
         seedPrereqs();
-        long orderLineId = 8521L;
-        long[] receive = buildReceiveChain("PO-FEX-001", "PR-FEX-001", 8522L, 8523L, orderLineId,
+        String orderLineId = "8521";
+        String[] receive = buildReceiveChain("PO-FEX-001", "PR-FEX-001", "8522", "8523", orderLineId,
                 new BigDecimal("10"), new BigDecimal("5"));
         assertEquals(0, submitReceive(receive[0]).getStatus());
         assertEquals(0, approveReceive(receive[0]).getStatus());
 
         // (a) 仅建发票未审核 → 无 AP_INVOICE 辅助账（过账未触发）
-        long invoiceId = buildInvoice("PI-FEX-001", receive[1], new BigDecimal("10"), new BigDecimal("5"));
+        String invoiceId = buildInvoice("PI-FEX-001", receive[1], new BigDecimal("10"), new BigDecimal("5"));
         assertNull(findApItem(ErpFinConstants.SOURCE_BILL_AP_INVOICE, "PI-FEX-001"),
                 "未审核发票不应生成辅助账项");
         // 引用不存在的辅助账创建核销单 → 抛 NopException（sample 加载失败）
         assertThrows(NopException.class, () -> ormTemplate.runInSession(session -> reconciliationBiz.create(
                 ErpFinConstants.DIRECTION_PAYABLE, SUPPLIER_ID, LocalDate.of(2026, 7, 5),
-                Collections.singletonList(reconLine(999001L, 999002L, "56.5")), CTX)),
+                Collections.singletonList(reconLine("999001", "999002", "56.5")), CTX)),
                 "引用不存在的辅助账应拒绝");
 
         // (b) 审核发票 + 付款，核销金额超过 openAmount 拒绝
         assertEquals(0, submitInvoice(invoiceId).getStatus());
         assertEquals(0, approveInvoice(invoiceId).getStatus());
-        long paymentId = buildPayment("PY-FEX-001", new BigDecimal("56.5"));
+        String paymentId = buildPayment("PY-FEX-001", new BigDecimal("56.5"));
         assertEquals(0, submitPayment(paymentId).getStatus());
         assertEquals(0, approvePayment(paymentId).getStatus());
 
@@ -349,7 +349,7 @@ public class TestErpPurProcureToPayEnd extends JunitAutoTestCase {
         return dao.findAllByQuery(q).stream().findFirst().orElse(null);
     }
 
-    private ErpFinArApItem reloadItem(Long id) {
+    private ErpFinArApItem reloadItem(String id) {
         return daoProvider.daoFor(ErpFinArApItem.class).getEntityById(id);
     }
 
@@ -368,7 +368,7 @@ public class TestErpPurProcureToPayEnd extends JunitAutoTestCase {
         return sum;
     }
 
-    private ReconciliationLineInput reconLine(Long paymentItemId, Long invoiceItemId, String amount) {
+    private ReconciliationLineInput reconLine(String paymentItemId, String invoiceItemId, String amount) {
         BigDecimal amt = new BigDecimal(amount);
         ReconciliationLineInput in = new ReconciliationLineInput();
         in.setPaymentItemId(paymentItemId);
@@ -383,20 +383,20 @@ public class TestErpPurProcureToPayEnd extends JunitAutoTestCase {
     /**
      * @return [0]=receiveId, [1]=receiveLineId
      */
-    private long[] buildReceiveChain(String orderCode, String receiveCode, long receiveId, long receiveLineId,
-                                     long orderLineId, BigDecimal qty, BigDecimal price) {
+    private String[] buildReceiveChain(String orderCode, String receiveCode, String receiveId, String receiveLineId,
+                                       String orderLineId, BigDecimal qty, BigDecimal price) {
         ormTemplate.runInSession(session -> {
             seedActiveSupplier();
-            Long orderId = newOrder(orderCode);
+            String orderId = newOrder(orderCode);
             newOrderLine(orderId, orderLineId, qty, price);
             newReceive(receiveCode, receiveId, orderId);
             newReceiveLine(receiveLineId, receiveId, orderLineId, qty, price);
             return null;
         });
-        return new long[]{receiveId, receiveLineId};
+        return new String[]{receiveId, receiveLineId};
     }
 
-    private long buildInvoice(String code, long receiveLineId, BigDecimal qty, BigDecimal price) {
+    private String buildInvoice(String code, String receiveLineId, BigDecimal qty, BigDecimal price) {
         ErpPurInvoice invoice = new ErpPurInvoice();
         invoice.setCode(code);
         invoice.setOrgId(ORG_ID);
@@ -432,7 +432,7 @@ public class TestErpPurProcureToPayEnd extends JunitAutoTestCase {
         return invoice.getId();
     }
 
-    private long buildPayment(String code, BigDecimal total) {
+    private String buildPayment(String code, BigDecimal total) {
         ErpPurPayment payment = new ErpPurPayment();
         payment.setCode(code);
         payment.setOrgId(ORG_ID);
@@ -456,39 +456,39 @@ public class TestErpPurProcureToPayEnd extends JunitAutoTestCase {
 
     // ---------- rpc helpers ----------
 
-    private ApiResponse<?> submitReceive(Long id) {
-        return rpc(mutation, "ErpPurReceive__submitForApproval", Map.of("id", String.valueOf(id)));
+    private ApiResponse<?> submitReceive(String id) {
+        return rpc(mutation, "ErpPurReceive__submitForApproval", Map.of("id", id));
     }
 
-    private ApiResponse<?> approveReceive(Long id) {
-        return rpc(mutation, "ErpPurReceive__approve", Map.of("id", String.valueOf(id)));
+    private ApiResponse<?> approveReceive(String id) {
+        return rpc(mutation, "ErpPurReceive__approve", Map.of("id", id));
     }
 
-    private ApiResponse<?> submitInvoice(Long id) {
-        return rpc(mutation, "ErpPurInvoice__submitForApproval", Map.of("id", String.valueOf(id)));
+    private ApiResponse<?> submitInvoice(String id) {
+        return rpc(mutation, "ErpPurInvoice__submitForApproval", Map.of("id", id));
     }
 
-    private ApiResponse<?> approveInvoice(Long id) {
-        return rpc(mutation, "ErpPurInvoice__approve", Map.of("id", String.valueOf(id)));
+    private ApiResponse<?> approveInvoice(String id) {
+        return rpc(mutation, "ErpPurInvoice__approve", Map.of("id", id));
     }
 
-    private ApiResponse<?> reverseApproveInvoice(Long id) {
-        return rpc(mutation, "ErpPurInvoice__reverseApprove", Map.of("id", String.valueOf(id)));
+    private ApiResponse<?> reverseApproveInvoice(String id) {
+        return rpc(mutation, "ErpPurInvoice__reverseApprove", Map.of("id", id));
     }
 
-    private ApiResponse<?> submitPayment(Long id) {
-        return rpc(mutation, "ErpPurPayment__submitForApproval", Map.of("id", String.valueOf(id)));
+    private ApiResponse<?> submitPayment(String id) {
+        return rpc(mutation, "ErpPurPayment__submitForApproval", Map.of("id", id));
     }
 
-    private ApiResponse<?> approvePayment(Long id) {
-        return rpc(mutation, "ErpPurPayment__approve", Map.of("id", String.valueOf(id)));
+    private ApiResponse<?> approvePayment(String id) {
+        return rpc(mutation, "ErpPurPayment__approve", Map.of("id", id));
     }
 
-    private ApiResponse<?> reverseApprovePayment(Long id) {
-        return rpc(mutation, "ErpPurPayment__reverseApprove", Map.of("id", String.valueOf(id)));
+    private ApiResponse<?> reverseApprovePayment(String id) {
+        return rpc(mutation, "ErpPurPayment__reverseApprove", Map.of("id", id));
     }
 
-    private ApiResponse<?> settle(Long paymentId, Long invoiceId, BigDecimal amount) {
+    private ApiResponse<?> settle(String paymentId, String invoiceId, BigDecimal amount) {
         Map<String, Object> alloc = new LinkedHashMap<>();
         alloc.put("invoiceId", invoiceId);
         alloc.put("amount", amount);
@@ -498,7 +498,7 @@ public class TestErpPurProcureToPayEnd extends JunitAutoTestCase {
         return rpc(mutation, "ErpPurPayment__settle", req);
     }
 
-    private ApiResponse<?> reverseSettlement(Long paymentId, Long invoiceId) {
+    private ApiResponse<?> reverseSettlement(String paymentId, String invoiceId) {
         return rpc(mutation, "ErpPurPayment__reverseSettlement", Map.of("paymentId", paymentId, "invoiceId", invoiceId));
     }
 
@@ -572,7 +572,7 @@ public class TestErpPurProcureToPayEnd extends JunitAutoTestCase {
         dao.saveEntity(subject);
     }
 
-    private Long newOrder(String code) {
+    private String newOrder(String code) {
         IEntityDao<ErpPurOrder> dao = daoProvider.daoFor(ErpPurOrder.class);
         ErpPurOrder order = new ErpPurOrder();
         order.setCode(code);
@@ -588,7 +588,7 @@ public class TestErpPurProcureToPayEnd extends JunitAutoTestCase {
         return order.getId();
     }
 
-    private void newOrderLine(Long orderId, Long lineId, BigDecimal qty, BigDecimal price) {
+    private void newOrderLine(String orderId, String lineId, BigDecimal qty, BigDecimal price) {
         IEntityDao<ErpPurOrderLine> dao = daoProvider.daoFor(ErpPurOrderLine.class);
         ErpPurOrderLine line = new ErpPurOrderLine();
         line.setId(lineId);
@@ -602,7 +602,7 @@ public class TestErpPurProcureToPayEnd extends JunitAutoTestCase {
         dao.saveEntity(line);
     }
 
-    private void newReceive(String code, Long receiveId, Long orderId) {
+    private void newReceive(String code, String receiveId, String orderId) {
         IEntityDao<ErpPurReceive> dao = daoProvider.daoFor(ErpPurReceive.class);
         ErpPurReceive receive = new ErpPurReceive();
         receive.setId(receiveId);
@@ -621,7 +621,7 @@ public class TestErpPurProcureToPayEnd extends JunitAutoTestCase {
         dao.saveEntity(receive);
     }
 
-    private void newReceiveLine(Long lineId, Long receiveId, Long orderLineId, BigDecimal qty, BigDecimal price) {
+    private void newReceiveLine(String lineId, String receiveId, String orderLineId, BigDecimal qty, BigDecimal price) {
         IEntityDao<ErpPurReceiveLine> dao = daoProvider.daoFor(ErpPurReceiveLine.class);
         ErpPurReceiveLine line = new ErpPurReceiveLine();
         line.setId(lineId);

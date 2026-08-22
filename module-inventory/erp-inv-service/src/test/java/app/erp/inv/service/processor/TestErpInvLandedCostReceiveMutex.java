@@ -50,7 +50,7 @@ public class TestErpInvLandedCostReceiveMutex extends JunitAutoTestCase {
 
     @Test
     public void testLockFreshReceiveAcquiresWithoutError() {
-        Long receiveId = ormTemplate.runInSession(session -> seedReceive("RCV-MUTEX-FRESH"));
+        String receiveId = ormTemplate.runInSession(session -> seedReceive("RCV-MUTEX-FRESH"));
 
         // 无并发：lock（SELECT FOR UPDATE）在事务内获取成功（不抛异常），且不污染 version（仍为 0）
         transactionTemplate.runInTransaction(null, TransactionPropagation.REQUIRES_NEW, txn -> {
@@ -67,7 +67,7 @@ public class TestErpInvLandedCostReceiveMutex extends JunitAutoTestCase {
      */
     @Test
     public void testLockSerializesConcurrentAccess() throws Exception {
-        Long receiveId = ormTemplate.runInSession(session -> seedReceive("RCV-MUTEX-2T"));
+        String receiveId = ormTemplate.runInSession(session -> seedReceive("RCV-MUTEX-2T"));
 
         int threads = 2;
         ExecutorService pool = Executors.newFixedThreadPool(threads);
@@ -114,15 +114,13 @@ public class TestErpInvLandedCostReceiveMutex extends JunitAutoTestCase {
                 "SELECT FOR UPDATE 应串行化并发 lock：临界区最大并发=" + maxOverlap.get() + "（应 ≤1）");
     }
 
-    // A3 桥接（bridge-test-124）：pur ErpPurReceive 列仍 Long（M2.5 未迁移）——本测试仅实体级 pass-through
-    // （lockReceiveForAllocation(ErpPurReceive) 不跨 id 边界），pur 种子 id 保持 Long，无转换桥必需
-    private Long seedReceive(String code) {
+    private String seedReceive(String code) {
         ErpPurReceive receive = daoProvider.daoFor(ErpPurReceive.class).newEntity();
         receive.setCode(code);
-        receive.setSupplierId(5001L);
-        receive.setWarehouseId(6001L);
+        receive.setSupplierId("5001");
+        receive.setWarehouseId("6001");
         receive.setBusinessDate(LocalDate.of(2026, 7, 1));
-        receive.setCurrencyId(7001L);
+        receive.setCurrencyId("7001");
         receive.setDocStatus("CONFIRMED");
         receive.setApproveStatus("APPROVED");
         receive.setReceiveStatus("NOT_RECEIVED");

@@ -44,7 +44,7 @@ public class PurReturnPostingDispatcher {
     public boolean tryPost(ErpPurReturn returnOrder) {
         PostingEvent event = buildEvent(returnOrder);
         try {
-            Long voucherId = executor.postEvent(event);
+            String voucherId = executor.postEvent(event);
             return voucherId != null;
         } catch (Exception e) {
             if (e instanceof NopException) {
@@ -97,7 +97,7 @@ public class PurReturnPostingDispatcher {
         return v != null ? v : BigDecimal.ZERO;
     }
 
-    private Long resolveAcctSchemaId(Long orgId) {
+    private String resolveAcctSchemaId(String orgId) {
         return AcctSchemaResolver.resolvePrimarySchemaId(daoProvider, orgId);
     }
 }

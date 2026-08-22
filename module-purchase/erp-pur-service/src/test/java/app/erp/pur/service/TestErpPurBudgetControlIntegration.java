@@ -51,11 +51,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class TestErpPurBudgetControlIntegration extends JunitAutoTestCase {
 
     private static final IServiceContext CTX = new ServiceContextImpl();
-    private static final Long SUPPLIER_ID = 2101L;
-    private static final Long WAREHOUSE_ID = 3101L;
-    private static final Long MATERIAL_ID = 4101L;
-    private static final Long UOM_ID = 5101L;
-    private static final Long CURRENCY_ID = 6101L;
+    private static final String SUPPLIER_ID = "2101";
+    private static final String WAREHOUSE_ID = "3101";
+    private static final String MATERIAL_ID = "4101";
+    private static final String UOM_ID = "5101";
+    private static final String CURRENCY_ID = "6101";
 
     @Inject
     IDaoProvider daoProvider;
@@ -68,9 +68,9 @@ public class TestErpPurBudgetControlIntegration extends JunitAutoTestCase {
 
     @Test
     public void testPurchaseOrderHardBlocked() {
-        Long scenarioId = ormTemplate.runInSession(session -> {
+        String scenarioId = ormTemplate.runInSession(session -> {
             seedActiveSupplier();
-            Long periodId = seedPeriod("2026-07", 2026, 7);
+            String periodId = seedPeriod("2026-07", 2026, 7);
             ErpMdSubject expense = seedSubject("6601", "销售费用", ErpFinConstants.DC_DEBIT);
             ErpMdSubject income = seedSubject("6001", "主营业务收入", ErpFinConstants.DC_CREDIT);
             // 预算 100（HARD），订单将申请 200 → 超预算拦截
@@ -93,9 +93,9 @@ public class TestErpPurBudgetControlIntegration extends JunitAutoTestCase {
 
     @Test
     public void testPurchaseOrderWarnPassedWithLog() {
-        Long scenarioId = ormTemplate.runInSession(session -> {
+        String scenarioId = ormTemplate.runInSession(session -> {
             seedActiveSupplier();
-            Long periodId = seedPeriod("2026-08", 2026, 8);
+            String periodId = seedPeriod("2026-08", 2026, 8);
             ErpMdSubject expense = seedSubject("6601", "销售费用", ErpFinConstants.DC_DEBIT);
             ErpMdSubject income = seedSubject("6001", "主营业务收入", ErpFinConstants.DC_CREDIT);
             return seedDraftBudgetScenario("BUD-WARN", periodId, expense, income, new BigDecimal("100"),
@@ -134,17 +134,17 @@ public class TestErpPurBudgetControlIntegration extends JunitAutoTestCase {
 
     // ---------- helpers ----------
 
-    private Long seedDraftBudgetScenario(String code, Long periodId, ErpMdSubject expense,
-                                         ErpMdSubject income, BigDecimal amount, String controlLevel) {
+    private String seedDraftBudgetScenario(String code, String periodId, ErpMdSubject expense,
+                                           ErpMdSubject income, BigDecimal amount, String controlLevel) {
         IEntityDao<ErpFinBudgetScenario> sDao = daoProvider.daoFor(ErpFinBudgetScenario.class);
         ErpFinBudgetScenario s = sDao.newEntity();
         s.setCode(code);
         s.setName(code);
-        s.setOrgId(1L);
-        s.setAcctSchemaId(1L);
+        s.setOrgId("1");
+        s.setAcctSchemaId("1");
         s.setFiscalYear(2026);
         s.setScenarioType("ANNUAL");
-        s.setCurrencyId(1L);
+        s.setCurrencyId("1");
         s.setExchangeRate(BigDecimal.ONE);
         s.setControlLevel(controlLevel);
         s.setDocStatus(ErpFinConstants.BUDGET_STATUS_DRAFT);
@@ -157,29 +157,29 @@ public class TestErpPurBudgetControlIntegration extends JunitAutoTestCase {
         return s.getId();
     }
 
-    private ErpFinBudgetLine newBudgetLine(Long scenarioId, Long periodId, ErpMdSubject subject,
+    private ErpFinBudgetLine newBudgetLine(String scenarioId, String periodId, ErpMdSubject subject,
                                            BigDecimal amount, int lineNo) {
         ErpFinBudgetLine l = new ErpFinBudgetLine();
         l.setScenarioId(scenarioId);
         l.setLineNo(lineNo);
-        l.setOrgId(1L);
-        l.setAcctSchemaId(1L);
+        l.setOrgId("1");
+        l.setAcctSchemaId("1");
         l.setPeriodId(periodId);
         l.setSubjectId(subject.getId());
         l.setSubjectCode(subject.getCode());
         l.setBudgetAmountSource(amount);
         l.setBudgetAmountFunctional(amount);
-        l.setCurrencyId(1L);
+        l.setCurrencyId("1");
         l.setExchangeRate(BigDecimal.ONE);
         return l;
     }
 
-    private Long seedPeriod(String code, int year, int month) {
+    private String seedPeriod(String code, int year, int month) {
         IEntityDao<ErpFinAccountingPeriod> dao = daoProvider.daoFor(ErpFinAccountingPeriod.class);
         ErpFinAccountingPeriod p = new ErpFinAccountingPeriod();
         p.setCode(code);
         p.setName(code);
-        p.setOrgId(1L);
+        p.setOrgId("1");
         p.setYear(year);
         p.setMonth(month);
         p.setStartDate(LocalDate.of(year, month, 1));
@@ -219,7 +219,7 @@ public class TestErpPurBudgetControlIntegration extends JunitAutoTestCase {
     private ErpPurOrder newOrderWithDate(String code, BigDecimal totalWithTax, LocalDate date) {
         ErpPurOrder order = new ErpPurOrder();
         order.setCode(code);
-        order.setOrgId(1101L);
+        order.setOrgId("1101");
         order.setSupplierId(SUPPLIER_ID);
         order.setWarehouseId(WAREHOUSE_ID);
         order.setBusinessDate(date);
@@ -254,14 +254,14 @@ public class TestErpPurBudgetControlIntegration extends JunitAutoTestCase {
         return daoProvider.daoFor(ErpFinBudgetControlLog.class).findAllByQuery(q).size();
     }
 
-    private ApiResponse<?> submit(Long orderId) {
+    private ApiResponse<?> submit(String orderId) {
         return executeRpc(mutation, "ErpPurOrder__submitForApproval",
-                ApiRequest.build(Map.of("id", String.valueOf(orderId))));
+                ApiRequest.build(Map.of("id", orderId)));
     }
 
-    private ApiResponse<?> approve(Long orderId) {
+    private ApiResponse<?> approve(String orderId) {
         return executeRpc(mutation, "ErpPurOrder__approve",
-                ApiRequest.build(Map.of("id", String.valueOf(orderId))));
+                ApiRequest.build(Map.of("id", orderId)));
     }
 
     private ApiResponse<?> executeRpc(GraphQLOperationType opType, String action, ApiRequest<?> request) {

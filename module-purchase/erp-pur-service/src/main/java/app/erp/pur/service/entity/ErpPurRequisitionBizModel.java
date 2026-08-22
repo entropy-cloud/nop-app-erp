@@ -36,15 +36,15 @@ public class ErpPurRequisitionBizModel extends CrudBizModel<ErpPurRequisition> i
 
     @Override
     @BizMutation
-    public ErpPurRequisition cancel(@Name("requisitionId") Long requisitionId, IServiceContext context) {
-        return cancelProcessor.cancel(String.valueOf(requisitionId), context);
+    public ErpPurRequisition cancel(@Name("requisitionId") String requisitionId, IServiceContext context) {
+        return cancelProcessor.cancel(requisitionId, context);
     }
 
     @Override
     @BizMutation
-    public List<ErpPurOrder> convertToOrder(@Name("requisitionId") Long requisitionId,
+    public List<ErpPurOrder> convertToOrder(@Name("requisitionId") String requisitionId,
                                             @Name("request") ConvertToOrderRequest request, IServiceContext context) {
-        return requisitionProcessor.convertToOrder(String.valueOf(requisitionId), request, context);
+        return requisitionProcessor.convertToOrder(requisitionId, request, context);
     }
 
     // 经 orm().batchLoadProps 一次性批量加载 to-one 关系（DataLoader 机制），再读取名称。

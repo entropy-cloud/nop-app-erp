@@ -38,8 +38,8 @@ import static org.junit.jupiter.api.Assertions.assertNull;
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpPurQuotationRfqReverseApprove extends JunitAutoTestCase {
 
-    static final Long SUPPLIER_ID = 31201L;
-    static final Long CURRENCY_ID = 61201L;
+    static final String SUPPLIER_ID = "31201";
+    static final String CURRENCY_ID = "61201";
 
     @Inject
     IDaoProvider daoProvider;
@@ -51,13 +51,13 @@ public class TestErpPurQuotationRfqReverseApprove extends JunitAutoTestCase {
     @Test
     public void testQuotationReverseApproveSetsRejectedAndClearsApprover() {
         ormTemplate.runInSession(() -> seedActiveSupplier(SUPPLIER_ID));
-        Long id = ormTemplate.runInSession(session -> seedQuotationApproved("QT-RA-001"));
+        String id = ormTemplate.runInSession(session -> seedQuotationApproved("QT-RA-001"));
         ErpPurQuotation before = reloadQuotation(id);
         assertEquals(ErpPurConstants.APPROVE_STATUS_APPROVED, before.getApproveStatus());
         assertEquals("approver-x", before.getApprovedBy(), "前置：approve 已写入 approvedBy");
 
         assertEquals(0, rpc(mutation, "ErpPurQuotation__reverseApprove",
-                ApiRequest.build(Map.of("id", String.valueOf(id)))).getStatus());
+                ApiRequest.build(Map.of("id", id))).getStatus());
 
         ErpPurQuotation after = reloadQuotation(id);
         assertEquals(ErpPurConstants.APPROVE_STATUS_REJECTED, after.getApproveStatus(),
@@ -69,29 +69,29 @@ public class TestErpPurQuotationRfqReverseApprove extends JunitAutoTestCase {
     @Test
     public void testQuotationSubmitApproveReverseApproveHappyPath() {
         ormTemplate.runInSession(() -> seedActiveSupplier(SUPPLIER_ID));
-        Long id = ormTemplate.runInSession(session -> seedQuotation("QT-HP-001",
+        String id = ormTemplate.runInSession(session -> seedQuotation("QT-HP-001",
                 ErpPurConstants.APPROVE_STATUS_UNSUBMITTED));
 
         assertEquals(0, rpc(mutation, "ErpPurQuotation__submitForApproval",
-                ApiRequest.build(Map.of("id", String.valueOf(id)))).getStatus(), "提交 → SUBMITTED");
+                ApiRequest.build(Map.of("id", id))).getStatus(), "提交 → SUBMITTED");
         assertEquals(ErpPurConstants.APPROVE_STATUS_SUBMITTED, reloadQuotation(id).getApproveStatus());
 
         assertEquals(0, rpc(mutation, "ErpPurQuotation__approve",
-                ApiRequest.build(Map.of("id", String.valueOf(id)))).getStatus(), "审核 → APPROVED");
+                ApiRequest.build(Map.of("id", id))).getStatus(), "审核 → APPROVED");
         assertEquals(ErpPurConstants.APPROVE_STATUS_APPROVED, reloadQuotation(id).getApproveStatus());
 
         assertEquals(0, rpc(mutation, "ErpPurQuotation__reverseApprove",
-                ApiRequest.build(Map.of("id", String.valueOf(id)))).getStatus(), "反审核 → REJECTED");
+                ApiRequest.build(Map.of("id", id))).getStatus(), "反审核 → REJECTED");
         assertEquals(ErpPurConstants.APPROVE_STATUS_REJECTED, reloadQuotation(id).getApproveStatus());
     }
 
     @Test
     public void testRfqReverseApproveSetsRejectedAndClearsApprover() {
-        Long id = ormTemplate.runInSession(session -> seedRfqApproved("RFQ-RA-001"));
+        String id = ormTemplate.runInSession(session -> seedRfqApproved("RFQ-RA-001"));
         assertEquals(ErpPurConstants.APPROVE_STATUS_APPROVED, reloadRfq(id).getApproveStatus());
 
         assertEquals(0, rpc(mutation, "ErpPurRfq__reverseApprove",
-                ApiRequest.build(Map.of("id", String.valueOf(id)))).getStatus());
+                ApiRequest.build(Map.of("id", id))).getStatus());
 
         ErpPurRfq after = reloadRfq(id);
         assertEquals(ErpPurConstants.APPROVE_STATUS_REJECTED, after.getApproveStatus(),
@@ -102,19 +102,19 @@ public class TestErpPurQuotationRfqReverseApprove extends JunitAutoTestCase {
 
     @Test
     public void testRfqSubmitApproveReverseApproveHappyPath() {
-        Long id = ormTemplate.runInSession(session -> seedRfq("RFQ-HP-001",
+        String id = ormTemplate.runInSession(session -> seedRfq("RFQ-HP-001",
                 ErpPurConstants.APPROVE_STATUS_UNSUBMITTED));
 
         assertEquals(0, rpc(mutation, "ErpPurRfq__submitForApproval",
-                ApiRequest.build(Map.of("id", String.valueOf(id)))).getStatus());
+                ApiRequest.build(Map.of("id", id))).getStatus());
         assertEquals(ErpPurConstants.APPROVE_STATUS_SUBMITTED, reloadRfq(id).getApproveStatus());
 
         assertEquals(0, rpc(mutation, "ErpPurRfq__approve",
-                ApiRequest.build(Map.of("id", String.valueOf(id)))).getStatus());
+                ApiRequest.build(Map.of("id", id))).getStatus());
         assertEquals(ErpPurConstants.APPROVE_STATUS_APPROVED, reloadRfq(id).getApproveStatus());
 
         assertEquals(0, rpc(mutation, "ErpPurRfq__reverseApprove",
-                ApiRequest.build(Map.of("id", String.valueOf(id)))).getStatus(), "反审核 → REJECTED");
+                ApiRequest.build(Map.of("id", id))).getStatus(), "反审核 → REJECTED");
         assertEquals(ErpPurConstants.APPROVE_STATUS_REJECTED, reloadRfq(id).getApproveStatus());
     }
 
@@ -123,11 +123,11 @@ public class TestErpPurQuotationRfqReverseApprove extends JunitAutoTestCase {
     @Test
     public void testQuotationCancelledDocRejectBlocked() {
         ormTemplate.runInSession(() -> seedActiveSupplier(SUPPLIER_ID));
-        Long id = ormTemplate.runInSession(session -> seedQuotationCancelled("QT-CN-001",
+        String id = ormTemplate.runInSession(session -> seedQuotationCancelled("QT-CN-001",
                 ErpPurConstants.APPROVE_STATUS_SUBMITTED));
 
         assertNotEquals(0, rpc(mutation, "ErpPurQuotation__reject",
-                ApiRequest.build(Map.of("id", String.valueOf(id)))).getStatus(),
+                ApiRequest.build(Map.of("id", id))).getStatus(),
                 "CANCELLED 单据 reject 应被 isCancelled 守卫阻断");
         assertEquals(ErpPurConstants.APPROVE_STATUS_SUBMITTED, reloadQuotation(id).getApproveStatus(),
                 "阻断后 approveStatus 不变（无副轴漂移）");
@@ -136,22 +136,22 @@ public class TestErpPurQuotationRfqReverseApprove extends JunitAutoTestCase {
     @Test
     public void testQuotationCancelledDocWithdrawApprovalBlocked() {
         ormTemplate.runInSession(() -> seedActiveSupplier(SUPPLIER_ID));
-        Long id = ormTemplate.runInSession(session -> seedQuotationCancelled("QT-CN-002",
+        String id = ormTemplate.runInSession(session -> seedQuotationCancelled("QT-CN-002",
                 ErpPurConstants.APPROVE_STATUS_SUBMITTED));
 
         assertNotEquals(0, rpc(mutation, "ErpPurQuotation__withdrawApproval",
-                ApiRequest.build(Map.of("id", String.valueOf(id)))).getStatus(),
+                ApiRequest.build(Map.of("id", id))).getStatus(),
                 "CANCELLED 单据 withdrawApproval 应被 isCancelled 守卫阻断");
         assertEquals(ErpPurConstants.APPROVE_STATUS_SUBMITTED, reloadQuotation(id).getApproveStatus());
     }
 
     @Test
     public void testRfqCancelledDocReverseApproveBlocked() {
-        Long id = ormTemplate.runInSession(session -> seedRfqCancelled("RFQ-CN-001",
+        String id = ormTemplate.runInSession(session -> seedRfqCancelled("RFQ-CN-001",
                 ErpPurConstants.APPROVE_STATUS_APPROVED));
 
         assertNotEquals(0, rpc(mutation, "ErpPurRfq__reverseApprove",
-                ApiRequest.build(Map.of("id", String.valueOf(id)))).getStatus(),
+                ApiRequest.build(Map.of("id", id))).getStatus(),
                 "CANCELLED 单据 reverseApprove 应被 isCancelled 守卫阻断");
         assertEquals(ErpPurConstants.APPROVE_STATUS_APPROVED, reloadRfq(id).getApproveStatus(),
                 "阻断后 approveStatus 不变（无副轴漂移）");
@@ -164,23 +164,23 @@ public class TestErpPurQuotationRfqReverseApprove extends JunitAutoTestCase {
         return graphQLEngine.executeRpc(ctx);
     }
 
-    private ErpPurQuotation reloadQuotation(Long id) {
+    private ErpPurQuotation reloadQuotation(String id) {
         return daoProvider.daoFor(ErpPurQuotation.class).getEntityById(id);
     }
 
-    private ErpPurRfq reloadRfq(Long id) {
+    private ErpPurRfq reloadRfq(String id) {
         return daoProvider.daoFor(ErpPurRfq.class).getEntityById(id);
     }
 
-    private Long seedQuotationApproved(String code) {
+    private String seedQuotationApproved(String code) {
         return seedQuotation(code, ErpPurConstants.APPROVE_STATUS_APPROVED, true);
     }
 
-    private Long seedQuotation(String code, String approveStatus) {
+    private String seedQuotation(String code, String approveStatus) {
         return seedQuotation(code, approveStatus, false);
     }
 
-    private Long seedQuotationCancelled(String code, String approveStatus) {
+    private String seedQuotationCancelled(String code, String approveStatus) {
         IEntityDao<ErpPurQuotation> dao = daoProvider.daoFor(ErpPurQuotation.class);
         ErpPurQuotation q = new ErpPurQuotation();
         q.setCode(code);
@@ -194,7 +194,7 @@ public class TestErpPurQuotationRfqReverseApprove extends JunitAutoTestCase {
         return q.getId();
     }
 
-    private Long seedQuotation(String code, String approveStatus, boolean withApprover) {
+    private String seedQuotation(String code, String approveStatus, boolean withApprover) {
         IEntityDao<ErpPurQuotation> dao = daoProvider.daoFor(ErpPurQuotation.class);
         ErpPurQuotation q = new ErpPurQuotation();
         q.setCode(code);
@@ -212,15 +212,15 @@ public class TestErpPurQuotationRfqReverseApprove extends JunitAutoTestCase {
         return q.getId();
     }
 
-    private Long seedRfqApproved(String code) {
+    private String seedRfqApproved(String code) {
         return seedRfq(code, ErpPurConstants.APPROVE_STATUS_APPROVED, true);
     }
 
-    private Long seedRfq(String code, String approveStatus) {
+    private String seedRfq(String code, String approveStatus) {
         return seedRfq(code, approveStatus, false);
     }
 
-    private Long seedRfqCancelled(String code, String approveStatus) {
+    private String seedRfqCancelled(String code, String approveStatus) {
         IEntityDao<ErpPurRfq> dao = daoProvider.daoFor(ErpPurRfq.class);
         ErpPurRfq rfq = new ErpPurRfq();
         rfq.setCode(code);
@@ -231,7 +231,7 @@ public class TestErpPurQuotationRfqReverseApprove extends JunitAutoTestCase {
         return rfq.getId();
     }
 
-    private Long seedRfq(String code, String approveStatus, boolean withApprover) {
+    private String seedRfq(String code, String approveStatus, boolean withApprover) {
         IEntityDao<ErpPurRfq> dao = daoProvider.daoFor(ErpPurRfq.class);
         ErpPurRfq rfq = new ErpPurRfq();
         rfq.setCode(code);
@@ -246,7 +246,7 @@ public class TestErpPurQuotationRfqReverseApprove extends JunitAutoTestCase {
         return rfq.getId();
     }
 
-    private void seedActiveSupplier(Long id) {
+    private void seedActiveSupplier(String id) {
         IEntityDao<ErpMdPartner> dao = daoProvider.daoFor(ErpMdPartner.class);
         ErpMdPartner partner = new ErpMdPartner();
         partner.setId(id);

@@ -110,8 +110,7 @@ public class ErpCtRebateAgreementRunAccrualProcessor {
         q.addFilter(ge("businessDate", from));
         q.addFilter(le("businessDate", to));
         if (Objects.equals(agreement.getRebateType(), ErpCtConstants.REBATE_TYPE_PURCHASE)) {
-            // bridge-main-047: ct String partnerId → pur Long supplierId 过滤值（退役 owner M2.5）
-            q.addFilter(eq("supplierId", ConvertHelper.toLong(agreement.getPartnerId())));
+            q.addFilter(eq("supplierId", agreement.getPartnerId()));
             return daoProvider.daoFor(ErpPurInvoice.class).findAllByQuery(q);
         } else {
             // bridge-main-048: ct String partnerId → sal Long customerId 过滤值（退役 owner M2.6）

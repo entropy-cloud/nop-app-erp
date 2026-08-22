@@ -7,6 +7,7 @@ import app.erp.md.dao.entity.ErpMdAcctSchema;
 import app.erp.pur.dao.entity.ErpPurReceive;
 import app.erp.pur.dao.entity.ErpPurReceiveLine;
 import app.erp.pur.service.ErpPurConstants;
+import io.nop.api.core.convert.ConvertHelper;
 import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
 
@@ -45,11 +46,12 @@ public class ReceiveStockMoveBuilder {
     /**
      * 按组织解析核算账套 ID（账套为 master-data，orgId 匹配；经 {@link IErpMdAcctSchemaBiz} 只读查询）。
      */
-    private Long resolveAcctSchemaId(Long orgId, IServiceContext context) {
+    private String resolveAcctSchemaId(String orgId, IServiceContext context) {
         if (orgId == null) {
             return null;
         }
-        ErpMdAcctSchema schema = mdAcctSchemaBiz.findFirstByOrg(orgId, context);
+        // 桥接：md IErpMdAcctSchemaBiz.findFirstByOrg 仍为 Long 签名（md 迁移遗留），String orgId 数值桥接；md 侧签名翻转后退役
+        ErpMdAcctSchema schema = mdAcctSchemaBiz.findFirstByOrg(ConvertHelper.toLong(orgId), context);
         return schema == null ? null : schema.getId();
     }
 

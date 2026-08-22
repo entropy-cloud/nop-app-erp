@@ -201,7 +201,7 @@ public class ErpPurReceiveProcessor {
      * 聚合口径继承 {@link #rollupOrderReceiveStatus} 现状：CANCELLED 但仍 APPROVED 的入库单计入 Σ。
      */
     protected void validateOverReceiptTolerance(ErpPurReceive receive, IServiceContext context) {
-        Long orderId = receive.getOrderId();
+        String orderId = receive.getOrderId();
         if (orderId == null) {
             return;
         }
@@ -214,7 +214,7 @@ public class ErpPurReceiveProcessor {
         BigDecimal toleranceFactor = BigDecimal.ONE.add(
                 tolerance.divide(BigDecimal.valueOf(100), 4, RoundingMode.HALF_UP));
 
-        Map<Long, BigDecimal> receivedByOrderLine = new HashMap<>();
+        Map<String, BigDecimal> receivedByOrderLine = new HashMap<>();
         addLineQuantities(receivedByOrderLine, loadLines(receive));
         for (ErpPurReceive r : findApprovedReceives(orderId)) {
             if (r.getId().equals(receive.getId())) {
@@ -224,7 +224,7 @@ public class ErpPurReceiveProcessor {
         }
 
         for (ErpPurReceiveLine rl : loadLines(receive)) {
-            Long orderLineId = rl.getOrderLineId();
+            String orderLineId = rl.getOrderLineId();
             if (orderLineId == null) {
                 continue;
             }
@@ -312,7 +312,7 @@ public class ErpPurReceiveProcessor {
             if (orderCode == null) {
                 return;
             }
-            Set<Long> materialIds = new LinkedHashSet<>();
+            Set<String> materialIds = new LinkedHashSet<>();
             for (ErpPurReceiveLine line : loadLines(receive)) {
                 if (line.getMaterialId() != null) {
                     materialIds.add(line.getMaterialId());
@@ -321,8 +321,14 @@ public class ErpPurReceiveProcessor {
             if (materialIds.isEmpty()) {
                 return;
             }
-            crossDockBiz.markReceivedFromPurchase(orderCode, move != null ? move.getId() : null,
-                    new ArrayList<>(materialIds), context);
+            List<Long> drpMaterialIds = new ArrayList<>();
+            for (String mid : materialIds) {
+                drpMaterialIds.add(io.nop.api.core.convert.ConvertHelper.toLong(mid));
+            }
+            // A2 桥接（bridge-main-090，M0.2 登记册）：drp id 列仍 Long（drp 位次 18 未迁移），pur/inv String id → ConvertHelper.toLong 桥接，退役 owner M3.7
+            crossDockBiz.markReceivedFromPurchase(orderCode,
+                    io.nop.api.core.convert.ConvertHelper.toLong(move != null ? move.getId() : null),
+                    drpMaterialIds, context);
         } catch (Exception e) {
             LOG.warn("入库审批后置：越库收货标记失败（隔离不阻断）：receiveCode={}, reason={}",
                     receive.getCode(), e.getMessage());
@@ -332,7 +338,7 @@ public class ErpPurReceiveProcessor {
     /**
      * 按订单 id 解析采购单号（drp Facade 弱指针键 = CrossDock.sourceBillCode 存 PO 单号）。
      */
-    protected String resolveOrderCode(Long orderId) {
+    protected String resolveOrderCode(String orderId) {
         if (orderId == null) {
             return null;
         }
@@ -360,7 +366,7 @@ public class ErpPurReceiveProcessor {
             if (order == null || order.getBusinessDate() == null || receive.getBusinessDate() == null) {
                 return;
             }
-            Set<Long> materialIds = new LinkedHashSet<>();
+            Set<String> materialIds = new LinkedHashSet<>();
             for (ErpPurReceiveLine line : loadLines(receive)) {
                 if (line.getMaterialId() != null) {
                     materialIds.add(line.getMaterialId());
@@ -375,9 +381,15 @@ public class ErpPurReceiveProcessor {
                 expectedLeadTime = (int) java.time.temporal.ChronoUnit.DAYS
                         .between(order.getBusinessDate(), order.getDeliveryDate());
             }
-            leadTimeRecordBiz.recordFromPurchaseReceive(order.getCode(), receive.getSupplierId(),
+            List<Long> drpMaterialIds = new ArrayList<>();
+            for (String mid : materialIds) {
+                drpMaterialIds.add(io.nop.api.core.convert.ConvertHelper.toLong(mid));
+            }
+            // A2 桥接（bridge-main-091，M0.2 登记册）：drp id 列仍 Long（drp 位次 18 未迁移），pur String supplierId/materialId → ConvertHelper.toLong 桥接，退役 owner M3.7
+            leadTimeRecordBiz.recordFromPurchaseReceive(order.getCode(),
+                    io.nop.api.core.convert.ConvertHelper.toLong(receive.getSupplierId()),
                     order.getBusinessDate(), receive.getBusinessDate(), expectedLeadTime,
-                    new ArrayList<>(materialIds), context);
+                    drpMaterialIds, context);
         } catch (Exception e) {
             LOG.warn("收货审批后置：提前期记录失败（隔离不阻断）：receiveCode={}, reason={}",
                     receive.getCode(), e.getMessage());
@@ -404,7 +416,7 @@ public class ErpPurReceiveProcessor {
      */
     protected void collectProjectMaterialCost(ErpPurReceive receive, IServiceContext context) {
         for (ErpPurReceiveLine line : loadLines(receive)) {
-            Long orderLineId = line.getOrderLineId();
+            String orderLineId = line.getOrderLineId();
             if (orderLineId == null) {
                 continue;
             }
@@ -445,7 +457,7 @@ public class ErpPurReceiveProcessor {
     }
 
     protected void rollupOrderReceiveStatus(ErpPurReceive currentReceive, IServiceContext context) {
-        Long orderId = currentReceive.getOrderId();
+        String orderId = currentReceive.getOrderId();
         if (orderId == null) {
             return;
         }
@@ -454,7 +466,7 @@ public class ErpPurReceiveProcessor {
             return;
         }
 
-        Map<Long, BigDecimal> receivedByOrderLine = new HashMap<>();
+        Map<String, BigDecimal> receivedByOrderLine = new HashMap<>();
         addLineQuantities(receivedByOrderLine, loadLines(currentReceive));
         for (ErpPurReceive r : findApprovedReceives(orderId)) {
             if (r.getId().equals(currentReceive.getId())) {
@@ -553,20 +565,20 @@ public class ErpPurReceiveProcessor {
      * 按订单 id 加载采购订单行。{@code ErpPurReceive} 与 {@code ErpPurOrder} 是不同聚合，
      * 此处仅需 orderId 即可查询；保留 daoFor 形式避免仅为导航而额外加载订单头实体。
      */
-    protected List<ErpPurOrderLine> loadOrderLines(Long orderId) {
+    protected List<ErpPurOrderLine> loadOrderLines(String orderId) {
         IEntityDao<ErpPurOrderLine> dao = daoProvider.daoFor(ErpPurOrderLine.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("orderId", orderId));
         return new ArrayList<>(dao.findAllByQuery(q));
     }
 
-    protected List<ErpPurReceive> findApprovedReceives(Long orderId) {
+    protected List<ErpPurReceive> findApprovedReceives(String orderId) {
         QueryBean rq = new QueryBean();
         rq.addFilter(and(eq("orderId", orderId), eq("approveStatus", ErpPurConstants.APPROVE_STATUS_APPROVED)));
         return new ArrayList<>(receiveDao().findAllByQuery(rq));
     }
 
-    protected void addLineQuantities(Map<Long, BigDecimal> map, List<ErpPurReceiveLine> lines) {
+    protected void addLineQuantities(Map<String, BigDecimal> map, List<ErpPurReceiveLine> lines) {
         for (ErpPurReceiveLine rl : lines) {
             if (rl.getOrderLineId() == null) {
                 continue;
@@ -576,7 +588,7 @@ public class ErpPurReceiveProcessor {
         }
     }
 
-    protected ErpPurOrderLine findOrderLine(List<ErpPurOrderLine> orderLines, Long orderLineId) {
+    protected ErpPurOrderLine findOrderLine(List<ErpPurOrderLine> orderLines, String orderLineId) {
         for (ErpPurOrderLine ol : orderLines) {
             if (ol.getId().equals(orderLineId)) {
                 return ol;

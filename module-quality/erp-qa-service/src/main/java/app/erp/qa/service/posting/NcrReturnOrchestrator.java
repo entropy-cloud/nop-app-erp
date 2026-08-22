@@ -90,11 +90,9 @@ public class NcrReturnOrchestrator {
         }
         Map<String, Object> data = new LinkedHashMap<>();
         data.put("code", "PR-FROM-NCR-" + ncr.getId());
-        // bridge-main-094/096: qa ncr.supplierId 已 String、inv 余额 warehouse/currency 已 String（M2.2），
-        // pur return 各 id 列仍 Long——保存前转 Long，pur 翻转时退役（owner M2.5）
-        data.put("supplierId", ConvertHelper.toLong(ncr.getSupplierId()));
-        data.put("warehouseId", ConvertHelper.toLong(warehouseId));
-        data.put("currencyId", ConvertHelper.toLong(currencyId));
+        data.put("supplierId", ncr.getSupplierId());
+        data.put("warehouseId", warehouseId);
+        data.put("currencyId", currencyId);
         data.put("businessDate", resolveBusinessDate(ncr));
         data.put("docStatus", ErpPurDocStatus.DOC_STATUS_DRAFT);
         data.put("approveStatus", ErpPurDocStatus.APPROVE_STATUS_UNSUBMITTED);

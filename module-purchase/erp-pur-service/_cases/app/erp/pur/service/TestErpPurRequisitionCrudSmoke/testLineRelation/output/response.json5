@@ -8,7 +8,7 @@
         "id": "2",
         "code": "@var:ErpPurRfq@code",
         "orgId": null,
-        "requisitionId": 1,
+        "requisitionId": "1",
         "businessDate": "@var:ErpPurRfq@businessDate",
         "validUntil": null,
         "docStatus": "DRAFT",

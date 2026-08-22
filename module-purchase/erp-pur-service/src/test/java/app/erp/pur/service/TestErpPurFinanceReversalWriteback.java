@@ -52,12 +52,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class TestErpPurFinanceReversalWriteback extends JunitAutoTestCase {
     private static final IServiceContext CTX = new ServiceContextImpl();
 
-    static final Long ORG_ID = 1003L;
-    static final Long SUPPLIER_ID = 2101L;
-    static final Long MATERIAL_ID = 4101L;
-    static final Long UOM_ID = 5101L;
-    static final Long CURRENCY_ID = 6101L;
-    static final Long ACCT_SCHEMA_ID = 7003L;
+    static final String ORG_ID = "1003";
+    static final String SUPPLIER_ID = "2101";
+    static final String MATERIAL_ID = "4101";
+    static final String UOM_ID = "5101";
+    static final String CURRENCY_ID = "6101";
+    static final String ACCT_SCHEMA_ID = "7003";
 
     @Inject
     IDaoProvider daoProvider;
@@ -85,14 +85,14 @@ public class TestErpPurFinanceReversalWriteback extends JunitAutoTestCase {
         });
 
         // 2) 构造业财回链 + 已过账凭证（模拟正向过账的产物，供 reverse() 反查）。
-        Long originalVoucherId = seedPostedVoucherFor(invoice.getCode(),
+        String originalVoucherId = seedPostedVoucherFor(invoice.getCode(),
                 ErpFinBusinessType.AP_INVOICE, new BigDecimal("113"));
 
         assertTrue(Boolean.TRUE.equals(reload(invoice).getPosted()),
                 "前置：发票已过账 posted=true");
 
         // 3) 财务侧直接红冲凭证（方向二）—— 采购域监听者应被动回退发票状态。
-        Long redVoucherId = ormTemplate.runInSession(session -> voucherBiz.reverse(invoice.getCode(), ErpFinBusinessType.AP_INVOICE, CTX));
+        String redVoucherId = ormTemplate.runInSession(session -> voucherBiz.reverse(invoice.getCode(), ErpFinBusinessType.AP_INVOICE, CTX));
 
         assertNotNull(redVoucherId, "财务侧红冲应生成红字凭证");
         assertNotEquals(originalVoucherId, redVoucherId);
@@ -117,7 +117,7 @@ public class TestErpPurFinanceReversalWriteback extends JunitAutoTestCase {
 
         // 2) 财务侧红冲——监听者反查不到源单应静默（不抛错，因 posted 标志未翻转为 true），
         //    红字凭证照常落库，无告警记录（监听者未抛错即视为成功）。
-        Long redVoucherId = ormTemplate.runInSession(session -> voucherBiz.reverse(ghostBillCode, ErpFinBusinessType.AP_INVOICE, CTX));
+        String redVoucherId = ormTemplate.runInSession(session -> voucherBiz.reverse(ghostBillCode, ErpFinBusinessType.AP_INVOICE, CTX));
         assertNotNull(redVoucherId, "源单不存在时红字凭证仍应过账（法律效力）");
 
         // 无 ErpFinPostingException 记录（监听者 findByCode 返回 null，不抛错即静默成功）
@@ -165,7 +165,7 @@ public class TestErpPurFinanceReversalWriteback extends JunitAutoTestCase {
     }
 
     /** 直接构造已过账凭证 + 业财回链（绕过过账引擎，模拟"已存在过账结果"的最小前置态）。 */
-    private Long seedPostedVoucherFor(String billCode, ErpFinBusinessType businessType, BigDecimal total) {
+    private String seedPostedVoucherFor(String billCode, ErpFinBusinessType businessType, BigDecimal total) {
         IEntityDao<ErpFinVoucher> vDao = daoProvider.daoFor(ErpFinVoucher.class);
         IEntityDao<ErpFinVoucherBillR> billRDao = daoProvider.daoFor(ErpFinVoucherBillR.class);
         IEntityDao<ErpFinAccountingPeriod> periodDao = daoProvider.daoFor(ErpFinAccountingPeriod.class);
@@ -199,7 +199,7 @@ public class TestErpPurFinanceReversalWriteback extends JunitAutoTestCase {
         });
     }
 
-    private void seedActiveSupplier(Long id) {
+    private void seedActiveSupplier(String id) {
         IEntityDao<ErpMdPartner> dao = daoProvider.daoFor(ErpMdPartner.class);
         ErpMdPartner partner = new ErpMdPartner();
         partner.setId(id);
@@ -220,7 +220,7 @@ public class TestErpPurFinanceReversalWriteback extends JunitAutoTestCase {
         });
     }
 
-    private void seedAcctSchema(Long id, Long orgId) {
+    private void seedAcctSchema(String id, String orgId) {
         IEntityDao<app.erp.md.dao.entity.ErpMdAcctSchema> dao = daoProvider.daoFor(
                 app.erp.md.dao.entity.ErpMdAcctSchema.class);
         app.erp.md.dao.entity.ErpMdAcctSchema schema = new app.erp.md.dao.entity.ErpMdAcctSchema();

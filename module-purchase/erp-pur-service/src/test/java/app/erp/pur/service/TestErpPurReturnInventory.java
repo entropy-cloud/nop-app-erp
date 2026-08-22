@@ -50,13 +50,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpPurReturnInventory extends JunitAutoTestCase {
 
-    static final Long ORG_ID = 3201L;
-    static final Long SUPPLIER_ID = 4201L;
-    static final Long WAREHOUSE_ID = 5201L;
-    static final Long MATERIAL_ID = 6201L;
-    static final Long UOM_ID = 7201L;
-    static final Long CURRENCY_ID = 8201L;
-    static final Long ACCT_SCHEMA_ID = 9201L;
+    static final String ORG_ID = "3201";
+    static final String SUPPLIER_ID = "4201";
+    static final String WAREHOUSE_ID = "5201";
+    static final String MATERIAL_ID = "6201";
+    static final String UOM_ID = "7201";
+    static final String CURRENCY_ID = "8201";
+    static final String ACCT_SCHEMA_ID = "9201";
 
     @Inject
     IDaoProvider daoProvider;
@@ -70,12 +70,12 @@ public class TestErpPurReturnInventory extends JunitAutoTestCase {
     @Test
     public void testApproveGeneratesOutgoingMoveAndStockDecrease() {
         seedPeriodAndSubjects();
-        Long[] receiveCtx = seedApprovedReceive("PR-INV-001", new BigDecimal("10"), new BigDecimal("5"));
-        Long receiveId = receiveCtx[0];
-        Long receiveLineId = receiveCtx[1];
+        String[] receiveCtx = seedApprovedReceive("PR-INV-001", new BigDecimal("10"), new BigDecimal("5"));
+        String receiveId = receiveCtx[0];
+        String receiveLineId = receiveCtx[1];
 
-        Long returnId = nextId();
-        Long returnLineId = nextId();
+        String returnId = nextId();
+        String returnLineId = nextId();
         ormTemplate.runInSession(session -> {
             newReturn("RT-INV-001", returnId, receiveId);
             newReturnLine(returnLineId, returnId, receiveLineId, new BigDecimal("4"), new BigDecimal("5"));
@@ -101,12 +101,12 @@ public class TestErpPurReturnInventory extends JunitAutoTestCase {
     @Test
     public void testApproveIdempotent() {
         seedPeriodAndSubjects();
-        Long[] receiveCtx = seedApprovedReceive("PR-IDM-001", new BigDecimal("10"), new BigDecimal("5"));
-        Long receiveId = receiveCtx[0];
-        Long receiveLineId = receiveCtx[1];
+        String[] receiveCtx = seedApprovedReceive("PR-IDM-001", new BigDecimal("10"), new BigDecimal("5"));
+        String receiveId = receiveCtx[0];
+        String receiveLineId = receiveCtx[1];
 
-        Long returnId = nextId();
-        Long returnLineId = nextId();
+        String returnId = nextId();
+        String returnLineId = nextId();
         ormTemplate.runInSession(session -> {
             newReturn("RT-IDM-001", returnId, receiveId);
             newReturnLine(returnLineId, returnId, receiveLineId, new BigDecimal("3"), new BigDecimal("5"));
@@ -121,12 +121,12 @@ public class TestErpPurReturnInventory extends JunitAutoTestCase {
     @Test
     public void testReverseApproveRestoresStock() {
         seedPeriodAndSubjects();
-        Long[] receiveCtx = seedApprovedReceive("PR-REV-001", new BigDecimal("10"), new BigDecimal("5"));
-        Long receiveId = receiveCtx[0];
-        Long receiveLineId = receiveCtx[1];
+        String[] receiveCtx = seedApprovedReceive("PR-REV-001", new BigDecimal("10"), new BigDecimal("5"));
+        String receiveId = receiveCtx[0];
+        String receiveLineId = receiveCtx[1];
 
-        Long returnId = nextId();
-        Long returnLineId = nextId();
+        String returnId = nextId();
+        String returnLineId = nextId();
         ormTemplate.runInSession(session -> {
             newReturn("RT-REV-001", returnId, receiveId);
             newReturnLine(returnLineId, returnId, receiveLineId, new BigDecimal("4"), new BigDecimal("5"));
@@ -154,33 +154,33 @@ public class TestErpPurReturnInventory extends JunitAutoTestCase {
 
     // ---------- end-to-end seed: 审核源入库单（生成入库移动 + 库存）----------
 
-    private Long[] seedApprovedReceive(String receiveCode, BigDecimal receiveQty, BigDecimal unitPrice) {
-        Long orderLineId = nextId();
-        Long receiveId = nextId();
-        Long receiveLineId = nextId();
+    private String[] seedApprovedReceive(String receiveCode, BigDecimal receiveQty, BigDecimal unitPrice) {
+        String orderLineId = nextId();
+        String receiveId = nextId();
+        String receiveLineId = nextId();
         ormTemplate.runInSession(session -> {
             seedActiveSupplier();
-            Long orderId = newOrder("PO-" + receiveCode);
+            String orderId = newOrder("PO-" + receiveCode);
             newOrderLine(orderId, orderLineId, 1, receiveQty);
             newReceive(receiveCode, receiveId, orderId);
             newReceiveLine(receiveLineId, receiveId, orderLineId, receiveQty, unitPrice);
             return null;
         });
         assertEquals(0, approveReceive(receiveId).getStatus(), "源入库单审核应成功");
-        return new Long[]{receiveId, receiveLineId};
+        return new String[]{receiveId, receiveLineId};
     }
 
     // ---------- rpc helpers ----------
 
-    private ApiResponse<?> approveReceive(Long receiveId) {
+    private ApiResponse<?> approveReceive(String receiveId) {
         return executeRpc(mutation, "ErpPurReceive__approve", ApiRequest.build(Map.of("id", String.valueOf(receiveId))));
     }
 
-    private ApiResponse<?> approveReturn(Long returnId) {
+    private ApiResponse<?> approveReturn(String returnId) {
         return executeRpc(mutation, "ErpPurReturn__approve", ApiRequest.build(Map.of("id", String.valueOf(returnId))));
     }
 
-    private ApiResponse<?> reverseApproveReturn(Long returnId) {
+    private ApiResponse<?> reverseApproveReturn(String returnId) {
         return executeRpc(mutation, "ErpPurReturn__reverseApprove", ApiRequest.build(Map.of("id", String.valueOf(returnId))));
     }
 
@@ -250,7 +250,7 @@ public class TestErpPurReturnInventory extends JunitAutoTestCase {
         dao.saveEntity(subject);
     }
 
-    private Long newOrder(String code) {
+    private String newOrder(String code) {
         IEntityDao<ErpPurOrder> dao = daoProvider.daoFor(ErpPurOrder.class);
         ErpPurOrder order = new ErpPurOrder();
         order.setCode(code);
@@ -266,7 +266,7 @@ public class TestErpPurReturnInventory extends JunitAutoTestCase {
         return order.getId();
     }
 
-    private void newOrderLine(Long orderId, Long lineId, int lineNo, BigDecimal qty) {
+    private void newOrderLine(String orderId, String lineId, int lineNo, BigDecimal qty) {
         IEntityDao<ErpPurOrderLine> dao = daoProvider.daoFor(ErpPurOrderLine.class);
         ErpPurOrderLine line = new ErpPurOrderLine();
         line.setId(lineId);
@@ -280,7 +280,7 @@ public class TestErpPurReturnInventory extends JunitAutoTestCase {
         dao.saveEntity(line);
     }
 
-    private void newReceive(String code, Long receiveId, Long orderId) {
+    private void newReceive(String code, String receiveId, String orderId) {
         IEntityDao<ErpPurReceive> dao = daoProvider.daoFor(ErpPurReceive.class);
         ErpPurReceive receive = new ErpPurReceive();
         receive.setId(receiveId);
@@ -299,7 +299,7 @@ public class TestErpPurReturnInventory extends JunitAutoTestCase {
         dao.saveEntity(receive);
     }
 
-    private void newReceiveLine(Long lineId, Long receiveId, Long orderLineId, BigDecimal qty, BigDecimal unitPrice) {
+    private void newReceiveLine(String lineId, String receiveId, String orderLineId, BigDecimal qty, BigDecimal unitPrice) {
         IEntityDao<ErpPurReceiveLine> dao = daoProvider.daoFor(ErpPurReceiveLine.class);
         ErpPurReceiveLine line = new ErpPurReceiveLine();
         line.setId(lineId);
@@ -313,7 +313,7 @@ public class TestErpPurReturnInventory extends JunitAutoTestCase {
         dao.saveEntity(line);
     }
 
-    private void newReturn(String code, Long returnId, Long receiveId) {
+    private void newReturn(String code, String returnId, String receiveId) {
         IEntityDao<ErpPurReturn> dao = daoProvider.daoFor(ErpPurReturn.class);
         ErpPurReturn returnOrder = new ErpPurReturn();
         returnOrder.setId(returnId);
@@ -332,7 +332,7 @@ public class TestErpPurReturnInventory extends JunitAutoTestCase {
         dao.saveEntity(returnOrder);
     }
 
-    private void newReturnLine(Long lineId, Long returnId, Long receiveLineId, BigDecimal qty, BigDecimal unitPrice) {
+    private void newReturnLine(String lineId, String returnId, String receiveLineId, BigDecimal qty, BigDecimal unitPrice) {
         IEntityDao<ErpPurReturnLine> dao = daoProvider.daoFor(ErpPurReturnLine.class);
         ErpPurReturnLine line = new ErpPurReturnLine();
         line.setId(lineId);
@@ -348,8 +348,8 @@ public class TestErpPurReturnInventory extends JunitAutoTestCase {
         dao.saveEntity(line);
     }
 
-    private Long nextId() {
-        return idSeq.incrementAndGet();
+    private String nextId() {
+        return String.valueOf(idSeq.incrementAndGet());
     }
 
     // ---------- query helpers ----------

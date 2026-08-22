@@ -77,13 +77,12 @@ public class ErpCtInvoicePlanTriggerInvoiceProcessor {
         IEntityDao<ErpPurInvoice> dao = daoProvider.daoFor(ErpPurInvoice.class);
         ErpPurInvoice invoice = dao.newEntity();
         invoice.setCode(code);
-        // bridge-main-043: ct String orgId/supplierId/currencyId → pur Long（退役 owner M2.5）
         if (contract.getOrgId() != null) {
-            invoice.setOrgId(ConvertHelper.toLong(contract.getOrgId()));
+            invoice.setOrgId(contract.getOrgId());
         }
-        invoice.setSupplierId(ConvertHelper.toLong(contract.getPartnerId()));
+        invoice.setSupplierId(contract.getPartnerId());
         invoice.setBusinessDate(CoreMetrics.today());
-        invoice.setCurrencyId(ConvertHelper.toLong(contract.getCurrencyId()));
+        invoice.setCurrencyId(contract.getCurrencyId());
         invoice.setExchangeRate(BigDecimal.ONE);
         invoice.setTotalAmount(amount);
         invoice.setAmountSource(amount);
@@ -98,11 +97,10 @@ public class ErpCtInvoicePlanTriggerInvoiceProcessor {
         ErpPurInvoiceLine invLine = daoProvider.daoFor(ErpPurInvoiceLine.class).newEntity();
         invLine.setInvoiceId(invoice.getId());
         invLine.setLineNo(1);
-        // bridge-main-044: ct String materialId / md String uoMId → pur Long（退役 owner M2.5）
         if (line.getMaterialId() != null) {
-            invLine.setMaterialId(ConvertHelper.toLong(line.getMaterialId()));
+            invLine.setMaterialId(line.getMaterialId());
             if (line.getMaterial() != null) {
-                invLine.setUoMId(ConvertHelper.toLong(line.getMaterial().getUoMId()));
+                invLine.setUoMId(line.getMaterial().getUoMId());
             }
         }
         invLine.setQuantity(nz(line.getQuantity()));

@@ -19,15 +19,15 @@ import java.util.List;
 public interface IErpPurPaymentBiz extends ICrudBiz<ErpPurPayment> {
 
     @BizMutation
-    ErpPurPayment cancel(@Name("paymentId") Long paymentId, IServiceContext context);
+    ErpPurPayment cancel(@Name("paymentId") String paymentId, IServiceContext context);
 
     @BizMutation
-    ErpPurPayment settle(@Name("paymentId") Long paymentId,
+    ErpPurPayment settle(@Name("paymentId") String paymentId,
                          @Name("allocations") List<SettlementAllocation> allocations,
                          IServiceContext context);
 
     @BizMutation
-    ErpPurPayment reverseSettlement(@Name("paymentId") Long paymentId,
-                                    @Name("invoiceId") Long invoiceId,
+    ErpPurPayment reverseSettlement(@Name("paymentId") String paymentId,
+                                    @Name("invoiceId") String invoiceId,
                                     IServiceContext context);
 }

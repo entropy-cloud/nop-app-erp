@@ -13,7 +13,6 @@ import app.erp.pur.dao.entity.ErpPurReceive;
 import app.erp.pur.dao.entity.ErpPurReceiveLine;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.config.AppConfig;
-import io.nop.api.core.convert.ConvertHelper;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.api.core.time.CoreMetrics;
 import io.nop.core.context.IServiceContext;
@@ -139,10 +138,8 @@ public class ErpB2bAsnCreateReceiveFromAsnProcessor {
             ErpPurReceiveLine receiveLine = lineDao.newEntity();
             receiveLine.setReceiveId(receive.getId());
             receiveLine.setLineNo(asnLine.getLineNo());
-            // bridge-main-029: b2b String materialId → pur ErpPurReceiveLine Long materialId（退役 owner M2.5）
-            receiveLine.setMaterialId(ConvertHelper.toLong(materialId));
-            // bridge-main-029: md String uoMId → pur Long uoMId（退役 owner M2.5）
-            receiveLine.setUoMId(ConvertHelper.toLong(material.getUoMId()));
+            receiveLine.setMaterialId(materialId);
+            receiveLine.setUoMId(material.getUoMId());
 
             // quantity：shippedQty 优先（实际发货），fallback quantity
             BigDecimal qty = asnLine.getShippedQty() != null ? asnLine.getShippedQty() : asnLine.getQuantity();
@@ -218,7 +215,7 @@ public class ErpB2bAsnCreateReceiveFromAsnProcessor {
     }
 
     @SuppressWarnings("unchecked")
-    protected List<ErpPurOrderLine> findPoLines(Long orderId) {
+    protected List<ErpPurOrderLine> findPoLines(String orderId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("orderId", orderId));
         return daoProvider.daoFor(ErpPurOrderLine.class).findAllByQuery(q);
@@ -228,13 +225,8 @@ public class ErpB2bAsnCreateReceiveFromAsnProcessor {
         if (materialId == null) {
             return null;
         }
-        // bridge-main-027: b2b String materialId → pur Long materialId 对比（退役 owner M2.5）
-        Long materialKey = ConvertHelper.toLong(materialId);
-        if (materialKey == null) {
-            return null;
-        }
         for (ErpPurOrderLine line : poLines) {
-            if (materialKey.equals(line.getMaterialId())) {
+            if (materialId.equals(line.getMaterialId())) {
                 return line;
             }
         }

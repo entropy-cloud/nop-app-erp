@@ -79,8 +79,8 @@ public class ErpPurQuotationBizModel extends CrudBizModel<ErpPurQuotation> imple
 
     @Override
     @BizMutation
-    public ErpPurQuotation cancel(@Name("quotationId") Long quotationId, IServiceContext context) {
-        ErpPurQuotation quotation = requireEntity(String.valueOf(quotationId), null, context);
+    public ErpPurQuotation cancel(@Name("quotationId") String quotationId, IServiceContext context) {
+        ErpPurQuotation quotation = requireEntity(quotationId, null, context);
         try {
             stateMachine.assertCanCancel(quotation.getDocStatus());
         } catch (NopException e) {

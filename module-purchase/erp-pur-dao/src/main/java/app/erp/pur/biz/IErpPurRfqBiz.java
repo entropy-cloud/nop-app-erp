@@ -15,7 +15,7 @@ public interface IErpPurRfqBiz extends ICrudBiz<ErpPurRfq>{
      * 作废/流标询价单：docStatus→CANCELLED。
      */
     @BizMutation
-    ErpPurRfq cancel(@Name("rfqId") Long rfqId, IServiceContext context);
+    ErpPurRfq cancel(@Name("rfqId") String rfqId, IServiceContext context);
 
     /**
      * 审批轴守卫 + 目标态（plan 2026-08-13-0945-1 Phase 3，INLINE 路径 Bean 接线）。

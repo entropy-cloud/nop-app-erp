@@ -59,12 +59,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpPurPriceVariancePosting extends JunitAutoTestCase {
 
-    static final Long ORG_ID = 1303L;
-    static final Long SUPPLIER_ID = 2301L;
-    static final Long MATERIAL_ID = 4301L;
-    static final Long UOM_ID = 5301L;
-    static final Long CURRENCY_ID = 6301L;
-    static final Long ACCT_SCHEMA_ID = 7303L;
+    static final String ORG_ID = "1303";
+    static final String SUPPLIER_ID = "2301";
+    static final String MATERIAL_ID = "4301";
+    static final String UOM_ID = "5301";
+    static final String CURRENCY_ID = "6301";
+    static final String ACCT_SCHEMA_ID = "7303";
     static final String VOUCHER_STATUS_POSTED = "POSTED";
 
     @Inject
@@ -281,9 +281,9 @@ public class TestErpPurPriceVariancePosting extends JunitAutoTestCase {
 
     // ---------- rpc helpers ----------
 
-    private ApiResponse<?> approve(Long invoiceId) {
+    private ApiResponse<?> approve(String invoiceId) {
         return executeRpc(mutation, "ErpPurInvoice__approve",
-                ApiRequest.build(Map.of("id", String.valueOf(invoiceId))));
+                ApiRequest.build(Map.of("id", invoiceId)));
     }
 
     private ApiResponse<?> executeRpc(GraphQLOperationType opType, String action, ApiRequest<?> request) {
@@ -291,7 +291,7 @@ public class TestErpPurPriceVariancePosting extends JunitAutoTestCase {
         return graphQLEngine.executeRpc(ctx);
     }
 
-    private ErpPurInvoice reload(Long invoiceId) {
+    private ErpPurInvoice reload(String invoiceId) {
         return daoProvider.daoFor(ErpPurInvoice.class).getEntityById(invoiceId);
     }
 
@@ -344,12 +344,12 @@ public class TestErpPurPriceVariancePosting extends JunitAutoTestCase {
     private Chain seedChain(String orderCode, String receiveCode, String invoiceCode,
                             BigDecimal orderPrice, BigDecimal invoicePrice, BigDecimal qty,
                             BigDecimal totalAmount, BigDecimal tax, BigDecimal withTax) {
-        Long orderId;
-        Long orderLineId;
-        Long receiveId;
-        Long receiveLineId;
-        Long invoiceId;
-        Long invoiceLineId;
+        String orderId;
+        String orderLineId;
+        String receiveId;
+        String receiveLineId;
+        String invoiceId;
+        String invoiceLineId;
         synchronized (this) {
             orderId = nextId();
             orderLineId = nextId();
@@ -373,12 +373,12 @@ public class TestErpPurPriceVariancePosting extends JunitAutoTestCase {
 
     /** seed 链返回的引用（id 为 seed 内部分配，测试直接消费）。 */
     private static final class Chain {
-        final Long invoiceId;
-        final Long invoiceLineId;
-        final Long receiveLineId;
+        final String invoiceId;
+        final String invoiceLineId;
+        final String receiveLineId;
         final String invoiceCode;
 
-        Chain(Long invoiceId, Long invoiceLineId, Long receiveLineId, String invoiceCode) {
+        Chain(String invoiceId, String invoiceLineId, String receiveLineId, String invoiceCode) {
             this.invoiceId = invoiceId;
             this.invoiceLineId = invoiceLineId;
             this.receiveLineId = receiveLineId;
@@ -445,14 +445,14 @@ public class TestErpPurPriceVariancePosting extends JunitAutoTestCase {
         dao.saveEntity(subject);
     }
 
-    private Long newOrder(String code, Long orderId) {
+    private String newOrder(String code, String orderId) {
         IEntityDao<ErpPurOrder> dao = daoProvider.daoFor(ErpPurOrder.class);
         ErpPurOrder order = new ErpPurOrder();
         order.setId(orderId);
         order.setCode(code);
         order.setOrgId(ORG_ID);
         order.setSupplierId(SUPPLIER_ID);
-        order.setWarehouseId(9301L);
+        order.setWarehouseId("9301");
         order.setBusinessDate(LocalDate.of(2026, 7, 1));
         order.setCurrencyId(CURRENCY_ID);
         order.setDocStatus(ErpPurConstants.DOC_STATUS_ACTIVE);
@@ -462,7 +462,7 @@ public class TestErpPurPriceVariancePosting extends JunitAutoTestCase {
         return order.getId();
     }
 
-    private void newOrderLine(Long orderId, Long lineId, BigDecimal unitPrice, BigDecimal qty) {
+    private void newOrderLine(String orderId, String lineId, BigDecimal unitPrice, BigDecimal qty) {
         IEntityDao<ErpPurOrderLine> dao = daoProvider.daoFor(ErpPurOrderLine.class);
         ErpPurOrderLine line = new ErpPurOrderLine();
         line.setId(lineId);
@@ -476,7 +476,7 @@ public class TestErpPurPriceVariancePosting extends JunitAutoTestCase {
         dao.saveEntity(line);
     }
 
-    private void newReceive(String code, Long receiveId, Long orderId) {
+    private void newReceive(String code, String receiveId, String orderId) {
         IEntityDao<ErpPurReceive> dao = daoProvider.daoFor(ErpPurReceive.class);
         ErpPurReceive receive = new ErpPurReceive();
         receive.setId(receiveId);
@@ -484,7 +484,7 @@ public class TestErpPurPriceVariancePosting extends JunitAutoTestCase {
         receive.setOrgId(ORG_ID);
         receive.setOrderId(orderId);
         receive.setSupplierId(SUPPLIER_ID);
-        receive.setWarehouseId(9301L);
+        receive.setWarehouseId("9301");
         receive.setBusinessDate(LocalDate.of(2026, 7, 1));
         receive.setCurrencyId(CURRENCY_ID);
         receive.setExchangeRate(new BigDecimal("1"));
@@ -495,7 +495,7 @@ public class TestErpPurPriceVariancePosting extends JunitAutoTestCase {
         dao.saveEntity(receive);
     }
 
-    private void newReceiveLine(Long lineId, Long receiveId, Long orderLineId, BigDecimal unitPrice, BigDecimal qty) {
+    private void newReceiveLine(String lineId, String receiveId, String orderLineId, BigDecimal unitPrice, BigDecimal qty) {
         IEntityDao<ErpPurReceiveLine> dao = daoProvider.daoFor(ErpPurReceiveLine.class);
         ErpPurReceiveLine line = new ErpPurReceiveLine();
         line.setId(lineId);
@@ -509,7 +509,7 @@ public class TestErpPurPriceVariancePosting extends JunitAutoTestCase {
         dao.saveEntity(line);
     }
 
-    private void newInvoice(String code, Long invoiceId, BigDecimal amount, BigDecimal tax, BigDecimal withTax) {
+    private void newInvoice(String code, String invoiceId, BigDecimal amount, BigDecimal tax, BigDecimal withTax) {
         IEntityDao<ErpPurInvoice> dao = daoProvider.daoFor(ErpPurInvoice.class);
         ErpPurInvoice invoice = new ErpPurInvoice();
         invoice.setId(invoiceId);
@@ -530,7 +530,7 @@ public class TestErpPurPriceVariancePosting extends JunitAutoTestCase {
         dao.saveEntity(invoice);
     }
 
-    private void newInvoiceLine(Long lineId, Long invoiceId, Long receiveLineId, BigDecimal unitPrice, BigDecimal qty) {
+    private void newInvoiceLine(String lineId, String invoiceId, String receiveLineId, BigDecimal unitPrice, BigDecimal qty) {
         IEntityDao<ErpPurInvoiceLine> dao = daoProvider.daoFor(ErpPurInvoiceLine.class);
         ErpPurInvoiceLine line = new ErpPurInvoiceLine();
         line.setId(lineId);
@@ -547,7 +547,7 @@ public class TestErpPurPriceVariancePosting extends JunitAutoTestCase {
 
     private final AtomicLong idSeq = new AtomicLong(100000L);
 
-    private Long nextId() {
-        return idSeq.incrementAndGet();
+    private String nextId() {
+        return String.valueOf(idSeq.incrementAndGet());
     }
 }

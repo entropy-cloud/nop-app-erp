@@ -83,7 +83,7 @@ public class ScorecardCalculator {
         }
     }
 
-    protected Map<String, Object> buildInputs(Long criteriaId) {
+    protected Map<String, Object> buildInputs(String criteriaId) {
         Map<String, Object> inputs = new HashMap<>();
         for (ErpPurSupplierScorecardVariable v : loadVariables(criteriaId)) {
             inputs.put(v.getVariableName(), nvl(v.getValue()));
@@ -149,13 +149,13 @@ public class ScorecardCalculator {
         return v == null ? defaultValue : v;
     }
 
-    protected List<ErpPurSupplierScorecardCriteria> loadCriterias(Long scorecardId) {
+    protected List<ErpPurSupplierScorecardCriteria> loadCriterias(String scorecardId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("scorecardId", scorecardId));
         return new ArrayList<>(criteriaDao().findAllByQuery(q));
     }
 
-    protected List<ErpPurSupplierScorecardVariable> loadVariables(Long criteriaId) {
+    protected List<ErpPurSupplierScorecardVariable> loadVariables(String criteriaId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("criteriaId", criteriaId));
         return new ArrayList<>(variableDao().findAllByQuery(q));

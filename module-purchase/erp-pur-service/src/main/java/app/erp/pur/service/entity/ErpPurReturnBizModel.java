@@ -30,8 +30,8 @@ public class ErpPurReturnBizModel extends CrudBizModel<ErpPurReturn> implements 
 
     @Override
     @BizMutation
-    public ErpPurReturn cancel(@Name("returnId") Long returnId, IServiceContext context) {
-        return cancelProcessor.cancel(String.valueOf(returnId), context);
+    public ErpPurReturn cancel(@Name("returnId") String returnId, IServiceContext context) {
+        return cancelProcessor.cancel(returnId, context);
     }
 
     // 经 orm().batchLoadProps 一次性批量加载 to-one 关系（DataLoader 机制），再读取名称。

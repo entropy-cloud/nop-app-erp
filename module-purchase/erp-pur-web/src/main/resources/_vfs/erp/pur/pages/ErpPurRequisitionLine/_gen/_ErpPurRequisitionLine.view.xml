@@ -19,19 +19,19 @@
             <cols>
 
                 <!--ID-->
-                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="id" mandatory="true" sortable="true"/>
 
                 <!--请购单ID-->
-                <col id="requisitionId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="requisitionId" mandatory="true" sortable="true"/>
 
                 <!--行号-->
                 <col id="lineNo" mandatory="true" ui:number="true" sortable="true"/>
 
                 <!--物料-->
-                <col id="materialId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="materialId" mandatory="true" sortable="true"/>
 
                 <!--计量单位-->
-                <col id="uoMId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="uoMId" mandatory="true" sortable="true"/>
 
                 <!--请购数量-->
                 <col id="quantity" mandatory="true" ui:number="true" sortable="true"/>
@@ -40,10 +40,10 @@
                 <col id="requiredDate" sortable="true"/>
 
                 <!--建议供应商-->
-                <col id="suggestedSupplierId" ui:number="true" sortable="true"/>
+                <col id="suggestedSupplierId" sortable="true"/>
 
                 <!--项目-->
-                <col id="projectId" ui:number="true" sortable="true"/>
+                <col id="projectId" sortable="true"/>
 
                 <!--备注-->
                 <col id="remark" sortable="true"/>

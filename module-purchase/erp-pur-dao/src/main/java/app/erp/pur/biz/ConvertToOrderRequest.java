@@ -23,25 +23,25 @@ import java.util.Map;
  */
 public class ConvertToOrderRequest {
 
-    private Long warehouseId;
-    private Long currencyId;
+    private String warehouseId;
+    private String currencyId;
     private Map<Integer, String> lineUnitPrices = new LinkedHashMap<>();
     private Map<Integer, String> lineTaxRates = new LinkedHashMap<>();
     private Map<String, SupplierConversionOption> supplierOptions = new LinkedHashMap<>();
 
-    public Long getWarehouseId() {
+    public String getWarehouseId() {
         return warehouseId;
     }
 
-    public void setWarehouseId(Long warehouseId) {
+    public void setWarehouseId(String warehouseId) {
         this.warehouseId = warehouseId;
     }
 
-    public Long getCurrencyId() {
+    public String getCurrencyId() {
         return currencyId;
     }
 
-    public void setCurrencyId(Long currencyId) {
+    public void setCurrencyId(String currencyId) {
         this.currencyId = currencyId;
     }
 

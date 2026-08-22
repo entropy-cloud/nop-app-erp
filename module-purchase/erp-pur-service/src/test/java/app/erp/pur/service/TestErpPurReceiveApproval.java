@@ -35,12 +35,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpPurReceiveApproval extends JunitAutoTestCase {
 
-    static final Long ORG_ID = 1101L;
-    static final Long SUPPLIER_ID = 2101L;
-    static final Long WAREHOUSE_ID = 3101L;
-    static final Long MATERIAL_ID = 4101L;
-    static final Long UOM_ID = 5101L;
-    static final Long CURRENCY_ID = 6101L;
+    static final String ORG_ID = "1101";
+    static final String SUPPLIER_ID = "2101";
+    static final String WAREHOUSE_ID = "3101";
+    static final String MATERIAL_ID = "4101";
+    static final String UOM_ID = "5101";
+    static final String CURRENCY_ID = "6101";
 
     @Inject
     IDaoProvider daoProvider;
@@ -127,23 +127,23 @@ public class TestErpPurReceiveApproval extends JunitAutoTestCase {
 
     // ---------- helpers ----------
 
-    private ApiResponse<?> submit(Long receiveId) {
-        return executeRpc(mutation, "ErpPurReceive__submitForApproval", ApiRequest.build(Map.of("id", String.valueOf(receiveId))));
+    private ApiResponse<?> submit(String receiveId) {
+        return executeRpc(mutation, "ErpPurReceive__submitForApproval", ApiRequest.build(Map.of("id", receiveId)));
     }
 
-    private ApiResponse<?> withdrawSubmit(Long receiveId) {
-        return executeRpc(mutation, "ErpPurReceive__withdrawApproval", ApiRequest.build(Map.of("id", String.valueOf(receiveId))));
+    private ApiResponse<?> withdrawSubmit(String receiveId) {
+        return executeRpc(mutation, "ErpPurReceive__withdrawApproval", ApiRequest.build(Map.of("id", receiveId)));
     }
 
-    private ApiResponse<?> approve(Long receiveId) {
-        return executeRpc(mutation, "ErpPurReceive__approve", ApiRequest.build(Map.of("id", String.valueOf(receiveId))));
+    private ApiResponse<?> approve(String receiveId) {
+        return executeRpc(mutation, "ErpPurReceive__approve", ApiRequest.build(Map.of("id", receiveId)));
     }
 
-    private ApiResponse<?> reject(Long receiveId) {
-        return executeRpc(mutation, "ErpPurReceive__reject", ApiRequest.build(Map.of("id", String.valueOf(receiveId))));
+    private ApiResponse<?> reject(String receiveId) {
+        return executeRpc(mutation, "ErpPurReceive__reject", ApiRequest.build(Map.of("id", receiveId)));
     }
 
-    private ApiResponse<?> cancel(Long receiveId) {
+    private ApiResponse<?> cancel(String receiveId) {
         return executeRpc(mutation, "ErpPurReceive__cancel", ApiRequest.build(Map.of("receiveId", receiveId)));
     }
 
@@ -185,11 +185,11 @@ public class TestErpPurReceiveApproval extends JunitAutoTestCase {
         lineDao.saveEntity(line);
     }
 
-    private void seedActiveSupplier(Long id) {
+    private void seedActiveSupplier(String id) {
         seedSupplier(id, ErpPurConstants.PARTNER_STATUS_ACTIVE);
     }
 
-    private void seedSupplier(Long id, String status) {
+    private void seedSupplier(String id, String status) {
         IEntityDao<ErpMdPartner> dao = daoProvider.daoFor(ErpMdPartner.class);
         ErpMdPartner partner = new ErpMdPartner();
         partner.setId(id);

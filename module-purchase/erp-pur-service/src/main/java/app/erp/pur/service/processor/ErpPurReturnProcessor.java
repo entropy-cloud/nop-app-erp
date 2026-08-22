@@ -245,7 +245,7 @@ public class ErpPurReturnProcessor {
         return stockMoveBiz.generateMove(request, context);
     }
 
-    protected Long resolveSourceReceiveMoveId(ErpPurReturn returnOrder, IServiceContext context) {
+    protected String resolveSourceReceiveMoveId(ErpPurReturn returnOrder, IServiceContext context) {
         ErpPurReceive receive = returnOrder.getReceive();
         if (receive == null) {
             return null;
@@ -359,11 +359,11 @@ public class ErpPurReturnProcessor {
         if (order == null || order.isCancelled() || !order.isApproved()) {
             return;
         }
-        Long subjectId = resolveBudgetSubjectId(ErpFinConstants.CONFIG_BUDGET_COMMITMENT_SUBJECT_CODE, context);
+        String subjectId = resolveBudgetSubjectId(ErpFinConstants.CONFIG_BUDGET_COMMITMENT_SUBJECT_CODE, context);
         if (subjectId == null) {
             return;
         }
-        Long periodId = orderProcessor.resolvePeriodId(order.getBusinessDate());
+        String periodId = orderProcessor.resolvePeriodId(order.getBusinessDate());
         BigDecimal amount = order.getTotalAmountWithTax() != null
                 ? order.getTotalAmountWithTax() : BigDecimal.ZERO;
         if (amount.signum() <= 0) {
@@ -390,7 +390,7 @@ public class ErpPurReturnProcessor {
     }
 
     /** 按 config 科目编码反查承付科目 id（缺失返回 null，恢复跳过）。 */
-    protected Long resolveBudgetSubjectId(String configKey, IServiceContext context) {
+    protected String resolveBudgetSubjectId(String configKey, IServiceContext context) {
         String code = AppConfig.var(configKey, null);
         if (code == null || code.isEmpty()) {
             return null;

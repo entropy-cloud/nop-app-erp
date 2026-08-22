@@ -56,12 +56,12 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
         testConfigFile = "classpath:settle-recheck-test.yaml")
 public class TestErpPurSettleThreeWayMatchRecheck extends JunitAutoTestCase {
 
-    static final Long ORG_ID = 1601L;
-    static final Long SUPPLIER_ID = 2601L;
-    static final Long MATERIAL_ID = 4601L;
-    static final Long UOM_ID = 5601L;
-    static final Long CURRENCY_ID = 6601L;
-    static final Long WAREHOUSE_ID = 3601L;
+    static final String ORG_ID = "1601";
+    static final String SUPPLIER_ID = "2601";
+    static final String MATERIAL_ID = "4601";
+    static final String UOM_ID = "5601";
+    static final String CURRENCY_ID = "6601";
+    static final String WAREHOUSE_ID = "3601";
 
     @Inject
     IDaoProvider daoProvider;
@@ -76,10 +76,10 @@ public class TestErpPurSettleThreeWayMatchRecheck extends JunitAutoTestCase {
     @Test
     public void testSettleRejectsPriceMismatchWhenRecheckEnabled() {
         // 订单单价 10，发票单价 20（差异 100% >> 5% 容差）
-        Long receiveLineId = seedChain("RCHK-PRICE", new BigDecimal("10"), new BigDecimal("10"));
-        Long invoiceId = seedApprovedInvoiceWithLine("PI-RCHK-PRICE", receiveLineId,
+        String receiveLineId = seedChain("RCHK-PRICE", new BigDecimal("10"), new BigDecimal("10"));
+        String invoiceId = seedApprovedInvoiceWithLine("PI-RCHK-PRICE", receiveLineId,
                 new BigDecimal("10"), new BigDecimal("20"), new BigDecimal("13"));
-        Long paymentId = seedApprovedPayment("PY-RCHK-PRICE", new BigDecimal("213"));
+        String paymentId = seedApprovedPayment("PY-RCHK-PRICE", new BigDecimal("213"));
 
         ApiResponse<?> bad = settle(paymentId, invoiceId, new BigDecimal("50"));
         assertEquals(ErpPurErrors.ERR_SETTLE_INVOICE_MATCH_NOT_COMPLETED.getErrorCode(), bad.getCode(),
@@ -94,11 +94,11 @@ public class TestErpPurSettleThreeWayMatchRecheck extends JunitAutoTestCase {
      */
     @Test
     public void testSettleRejectsQtyMismatchWhenRecheckEnabled() {
-        Long receiveLineId = seedChain("RCHK-QTY", new BigDecimal("10"), new BigDecimal("10"));
+        String receiveLineId = seedChain("RCHK-QTY", new BigDecimal("10"), new BigDecimal("10"));
         // 发票数量 12 > 入库 10
-        Long invoiceId = seedApprovedInvoiceWithLine("PI-RCHK-QTY", receiveLineId,
+        String invoiceId = seedApprovedInvoiceWithLine("PI-RCHK-QTY", receiveLineId,
                 new BigDecimal("12"), new BigDecimal("10"), new BigDecimal("15.6"));
-        Long paymentId = seedApprovedPayment("PY-RCHK-QTY", new BigDecimal("213"));
+        String paymentId = seedApprovedPayment("PY-RCHK-QTY", new BigDecimal("213"));
 
         ApiResponse<?> bad = settle(paymentId, invoiceId, new BigDecimal("50"));
         assertEquals(ErpPurErrors.ERR_SETTLE_INVOICE_MATCH_NOT_COMPLETED.getErrorCode(), bad.getCode(),
@@ -110,11 +110,11 @@ public class TestErpPurSettleThreeWayMatchRecheck extends JunitAutoTestCase {
      */
     @Test
     public void testSettlePassesWhenMatchWithinTolerance() {
-        Long receiveLineId = seedChain("RCHK-OK", new BigDecimal("10"), new BigDecimal("10"));
+        String receiveLineId = seedChain("RCHK-OK", new BigDecimal("10"), new BigDecimal("10"));
         // 发票数量 10 = 入库 10；发票单价 10.2 vs 订单 10 → 差异 2% < 5%
-        Long invoiceId = seedApprovedInvoiceWithLine("PI-RCHK-OK", receiveLineId,
+        String invoiceId = seedApprovedInvoiceWithLine("PI-RCHK-OK", receiveLineId,
                 new BigDecimal("10"), new BigDecimal("10.2"), new BigDecimal("13.26"));
-        Long paymentId = seedApprovedPayment("PY-RCHK-OK", new BigDecimal("115.26"));
+        String paymentId = seedApprovedPayment("PY-RCHK-OK", new BigDecimal("115.26"));
 
         ApiResponse<?> ok = settle(paymentId, invoiceId, new BigDecimal("50"));
         assertEquals(0, ok.getStatus(), "匹配通过时 settle 应成功");
@@ -125,7 +125,7 @@ public class TestErpPurSettleThreeWayMatchRecheck extends JunitAutoTestCase {
 
     // ---------- helpers ----------
 
-    private Long seedChain(String tag, BigDecimal receivedQty, BigDecimal orderPrice) {
+    private String seedChain(String tag, BigDecimal receivedQty, BigDecimal orderPrice) {
         seedActiveSupplier(SUPPLIER_ID);
         ErpPurOrder order = new ErpPurOrder();
         order.setCode("PO-" + tag);
@@ -171,8 +171,8 @@ public class TestErpPurSettleThreeWayMatchRecheck extends JunitAutoTestCase {
         return receiveLine.getId();
     }
 
-    private Long seedApprovedInvoiceWithLine(String code, Long receiveLineId, BigDecimal qty,
-                                             BigDecimal price, BigDecimal taxAmount) {
+    private String seedApprovedInvoiceWithLine(String code, String receiveLineId, BigDecimal qty,
+                                              BigDecimal price, BigDecimal taxAmount) {
         ErpPurInvoice invoice = new ErpPurInvoice();
         invoice.setCode(code);
         invoice.setOrgId(ORG_ID);
@@ -204,7 +204,7 @@ public class TestErpPurSettleThreeWayMatchRecheck extends JunitAutoTestCase {
         return invoice.getId();
     }
 
-    private Long seedApprovedPayment(String code, BigDecimal total) {
+    private String seedApprovedPayment(String code, BigDecimal total) {
         ErpPurPayment payment = new ErpPurPayment();
         payment.setCode(code);
         payment.setOrgId(ORG_ID);
@@ -223,9 +223,10 @@ public class TestErpPurSettleThreeWayMatchRecheck extends JunitAutoTestCase {
         return payment.getId();
     }
 
-    private ApiResponse<?> settle(Long paymentId, Long invoiceId, BigDecimal amount) {
+    private ApiResponse<?> settle(String paymentId, String invoiceId, BigDecimal amount) {
         Map<String, Object> alloc = new LinkedHashMap<>();
-        alloc.put("invoiceId", invoiceId);
+        // SettlementAllocation.invoiceId 仍为 Long（值对象未迁移），数字保真传递
+        alloc.put("invoiceId", Long.parseLong(invoiceId));
         alloc.put("amount", amount);
         Map<String, Object> req = new LinkedHashMap<>();
         req.put("paymentId", paymentId);
@@ -238,7 +239,7 @@ public class TestErpPurSettleThreeWayMatchRecheck extends JunitAutoTestCase {
         return graphQLEngine.executeRpc(ctx);
     }
 
-    private void seedActiveSupplier(Long id) {
+    private void seedActiveSupplier(String id) {
         IEntityDao<ErpMdPartner> dao = daoProvider.daoFor(ErpMdPartner.class);
         ErpMdPartner partner = new ErpMdPartner();
         partner.setId(id);

@@ -18,7 +18,7 @@ import app.erp.pur.dao.entity.ErpPurRequisition;
 public interface IErpPurRequisitionBiz extends ICrudBiz<ErpPurRequisition> {
 
     @BizMutation
-    ErpPurRequisition cancel(@Name("requisitionId") Long requisitionId, IServiceContext context);
+    ErpPurRequisition cancel(@Name("requisitionId") String requisitionId, IServiceContext context);
 
     /**
      * 将 APPROVED 请购单转化为采购订单。入口在请购侧（请购 APPROVED → 派生订单）。
@@ -28,7 +28,7 @@ public interface IErpPurRequisitionBiz extends ICrudBiz<ErpPurRequisition> {
      * （仓库/币种/到货期）经 {@link ConvertToOrderRequest#getSupplierOptions()} 提供。
      */
     @BizMutation
-    List<ErpPurOrder> convertToOrder(@Name("requisitionId") Long requisitionId,
+    List<ErpPurOrder> convertToOrder(@Name("requisitionId") String requisitionId,
                                      @Name("request") ConvertToOrderRequest request,
                                      IServiceContext context);
 }

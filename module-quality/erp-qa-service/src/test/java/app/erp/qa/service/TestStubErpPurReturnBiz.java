@@ -30,9 +30,9 @@ public class TestStubErpPurReturnBiz extends CrudBizModel<ErpPurReturn> implemen
         ErpPurReturn entity = new ErpPurReturn();
         if (data != null) {
             entity.setCode(asString(data.get("code")));
-            entity.setSupplierId(asLong(data.get("supplierId")));
-            entity.setWarehouseId(asLong(data.get("warehouseId")));
-            entity.setCurrencyId(asLong(data.get("currencyId")));
+            entity.setSupplierId(asString(data.get("supplierId")));
+            entity.setWarehouseId(asString(data.get("warehouseId")));
+            entity.setCurrencyId(asString(data.get("currencyId")));
             Object bd = data.get("businessDate");
             if (bd != null) {
                 entity.setBusinessDate(bd instanceof LocalDate ? (LocalDate) bd : LocalDate.parse(String.valueOf(bd)));
@@ -53,7 +53,7 @@ public class TestStubErpPurReturnBiz extends CrudBizModel<ErpPurReturn> implemen
 
     @Override
     public ErpPurReturn get(String id, boolean ignoreUnknown, IServiceContext context) {
-        return dao().getEntityById(Long.valueOf(id));
+        return dao().getEntityById(id);
     }
     public ErpPurReturn submitForApproval(String id, IServiceContext context) {
         return get(id, false, context);
@@ -72,21 +72,11 @@ public class TestStubErpPurReturnBiz extends CrudBizModel<ErpPurReturn> implemen
     }
 
     @Override
-    public ErpPurReturn cancel(Long returnId, IServiceContext context) {
-        return get(String.valueOf(returnId), false, context);
+    public ErpPurReturn cancel(String returnId, IServiceContext context) {
+        return get(returnId, false, context);
     }
 
     private static String asString(Object value) {
         return value == null ? null : value.toString();
-    }
-
-    private static Long asLong(Object value) {
-        if (value == null) {
-            return null;
-        }
-        if (value instanceof Number) {
-            return ((Number) value).longValue();
-        }
-        return Long.valueOf(value.toString().trim());
     }
 }

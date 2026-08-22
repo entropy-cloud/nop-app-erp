@@ -30,8 +30,8 @@ public class ErpPurReceiveBizModel extends CrudBizModel<ErpPurReceive> implement
 
     @Override
     @BizMutation
-    public ErpPurReceive cancel(@Name("receiveId") Long receiveId, IServiceContext context) {
-        return cancelProcessor.cancel(String.valueOf(receiveId), context);
+    public ErpPurReceive cancel(@Name("receiveId") String receiveId, IServiceContext context) {
+        return cancelProcessor.cancel(receiveId, context);
     }
 
     // 经 orm().batchLoadProps 一次性批量加载 to-one 关系（DataLoader 机制），再读取名称。

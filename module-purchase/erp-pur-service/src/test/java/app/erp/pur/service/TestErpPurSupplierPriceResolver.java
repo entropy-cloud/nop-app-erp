@@ -56,11 +56,11 @@ public class TestErpPurSupplierPriceResolver extends JunitAutoTestCase {
 
     @Test
     public void testResolveHitActiveWithinPeriod() {
-        Long materialId = 9001L;
-        seedPriceList(100L, materialId, 1L, new BigDecimal("7.77"),
+        String materialId = "9001";
+        seedPriceList("100", materialId, "1", new BigDecimal("7.77"),
                 null, true, null, null);
 
-        BigDecimal price = resolver.resolveSupplierPrice(newSku(materialId, 1L), 100L);
+        BigDecimal price = resolver.resolveSupplierPrice(newSku(materialId, "1"), "100");
         assertNotNull(price, "supplier+material+active+效期开放应命中");
         assertEquals(0, new BigDecimal("7.77").compareTo(price), "命中应返回协议单价 unitPrice");
     }
@@ -69,40 +69,40 @@ public class TestErpPurSupplierPriceResolver extends JunitAutoTestCase {
 
     @Test
     public void testResolveNoHitSupplierMismatch() {
-        Long materialId = 9011L;
-        seedPriceList(100L, materialId, 1L, new BigDecimal("7.77"),
+        String materialId = "9011";
+        seedPriceList("100", materialId, "1", new BigDecimal("7.77"),
                 null, true, null, null);
-        assertNull(resolver.resolveSupplierPrice(newSku(materialId, 1L), 999L),
+        assertNull(resolver.resolveSupplierPrice(newSku(materialId, "1"), "999"),
                 "supplierId 不符 → null");
     }
 
     @Test
     public void testResolveNoHitMaterialMismatch() {
-        seedPriceList(100L, 9012L, 1L, new BigDecimal("7.77"), null, true, null, null);
-        assertNull(resolver.resolveSupplierPrice(newSku(9099L, 1L), 100L),
+        seedPriceList("100", "9012", "1", new BigDecimal("7.77"), null, true, null, null);
+        assertNull(resolver.resolveSupplierPrice(newSku("9099", "1"), "100"),
                 "materialId 不符 → null");
     }
 
     @Test
     public void testResolveNoHitInactive() {
-        Long materialId = 9013L;
-        seedPriceList(100L, materialId, 1L, new BigDecimal("7.77"),
+        String materialId = "9013";
+        seedPriceList("100", materialId, "1", new BigDecimal("7.77"),
                 null, false, null, null);
-        assertNull(resolver.resolveSupplierPrice(newSku(materialId, 1L), 100L),
+        assertNull(resolver.resolveSupplierPrice(newSku(materialId, "1"), "100"),
                 "isActive=false → null");
     }
 
     @Test
     public void testResolveNoHitOutsidePeriod() {
-        Long materialId = 9014L;
+        String materialId = "9014";
         LocalDate today = LocalDate.now();
-        seedPriceList(100L, materialId, 1L, new BigDecimal("7.77"),
+        seedPriceList("100", materialId, "1", new BigDecimal("7.77"),
                 null, true, today.plusDays(1), null);
-        assertNull(resolver.resolveSupplierPrice(newSku(materialId, 1L), 100L),
+        assertNull(resolver.resolveSupplierPrice(newSku(materialId, "1"), "100"),
                 "validFrom 在未来 → null");
-        seedPriceList(100L, materialId, 1L, new BigDecimal("7.77"),
+        seedPriceList("100", materialId, "1", new BigDecimal("7.77"),
                 null, true, null, today.minusDays(1));
-        assertNull(resolver.resolveSupplierPrice(newSku(materialId, 1L), 100L),
+        assertNull(resolver.resolveSupplierPrice(newSku(materialId, "1"), "100"),
                 "validTo 已过期 → null");
     }
 
@@ -110,22 +110,22 @@ public class TestErpPurSupplierPriceResolver extends JunitAutoTestCase {
 
     @Test
     public void testResolvePrioritySmallWins() {
-        Long materialId = 9021L;
-        seedPriceList(100L, materialId, 1L, new BigDecimal("9.00"), 100, true, null, null);
-        seedPriceList(100L, materialId, 1L, new BigDecimal("8.00"), 10, true, null, null);
+        String materialId = "9021";
+        seedPriceList("100", materialId, "1", new BigDecimal("9.00"), 100, true, null, null);
+        seedPriceList("100", materialId, "1", new BigDecimal("8.00"), 10, true, null, null);
 
-        BigDecimal price = resolver.resolveSupplierPrice(newSku(materialId, 1L), 100L);
+        BigDecimal price = resolver.resolveSupplierPrice(newSku(materialId, "1"), "100");
         assertEquals(0, new BigDecimal("8.00").compareTo(price),
                 "priority 数字小优先（10 < 100 → 8.00）");
     }
 
     @Test
     public void testResolveSamePriorityLowerUnitPriceWins() {
-        Long materialId = 9022L;
-        seedPriceList(100L, materialId, 1L, new BigDecimal("9.00"), 10, true, null, null);
-        seedPriceList(100L, materialId, 1L, new BigDecimal("8.50"), 10, true, null, null);
+        String materialId = "9022";
+        seedPriceList("100", materialId, "1", new BigDecimal("9.00"), 10, true, null, null);
+        seedPriceList("100", materialId, "1", new BigDecimal("8.50"), 10, true, null, null);
 
-        BigDecimal price = resolver.resolveSupplierPrice(newSku(materialId, 1L), 100L);
+        BigDecimal price = resolver.resolveSupplierPrice(newSku(materialId, "1"), "100");
         assertEquals(0, new BigDecimal("8.50").compareTo(price),
                 "同 priority 时 unitPrice 低者优先（采购保守语义）");
     }
@@ -134,37 +134,37 @@ public class TestErpPurSupplierPriceResolver extends JunitAutoTestCase {
 
     @Test
     public void testResolvePeriodBoundaries() {
-        Long materialId = 9031L;
+        String materialId = "9031";
         LocalDate today = LocalDate.now();
         // 两端开放（null/null）→ 命中
-        seedPriceList(100L, materialId, 1L, new BigDecimal("7.00"), null, true, null, null);
+        seedPriceList("100", materialId, "1", new BigDecimal("7.00"), null, true, null, null);
         // validFrom=today（当日生效）→ 命中
-        seedPriceList(100L, materialId, 1L, new BigDecimal("7.10"), null, true, today, null);
+        seedPriceList("100", materialId, "1", new BigDecimal("7.10"), null, true, today, null);
         // validTo=today（末日命中）→ 命中
-        seedPriceList(100L, materialId, 1L, new BigDecimal("7.20"), null, true, null, today);
+        seedPriceList("100", materialId, "1", new BigDecimal("7.20"), null, true, null, today);
 
         assertEquals(0, new BigDecimal("7.00").compareTo(
-                        resolver.resolveSupplierPrice(newSku(materialId, 1L), 100L)),
+                        resolver.resolveSupplierPrice(newSku(materialId, "1"), "100")),
                 "同 priority 低者优先裁决——三行均命中时取 unitPrice 低者 7.00");
     }
 
     @Test
     public void testResolveNullPeriodOpenHit() {
-        Long materialId = 9032L;
-        seedPriceList(100L, materialId, 1L, new BigDecimal("6.60"), null, true, null, null);
-        BigDecimal price = resolver.resolveSupplierPrice(newSku(materialId, 1L), 100L);
+        String materialId = "9032";
+        seedPriceList("100", materialId, "1", new BigDecimal("6.60"), null, true, null, null);
+        BigDecimal price = resolver.resolveSupplierPrice(newSku(materialId, "1"), "100");
         assertNotNull(price, "validFrom/validTo 均 null = 开放边界应命中");
         assertEquals(0, new BigDecimal("6.60").compareTo(price));
     }
 
     @Test
     public void testResolveLastDayHit() {
-        Long materialId = 9033L;
+        String materialId = "9033";
         LocalDate today = LocalDate.now();
-        seedPriceList(100L, materialId, 1L, new BigDecimal("6.70"),
+        seedPriceList("100", materialId, "1", new BigDecimal("6.70"),
                 null, true, today.minusDays(1), today);
         assertEquals(0, new BigDecimal("6.70").compareTo(
-                        resolver.resolveSupplierPrice(newSku(materialId, 1L), 100L)),
+                        resolver.resolveSupplierPrice(newSku(materialId, "1"), "100")),
                 "validTo=today 末日命中");
     }
 
@@ -172,29 +172,29 @@ public class TestErpPurSupplierPriceResolver extends JunitAutoTestCase {
 
     @Test
     public void testResolveDefensiveNulls() {
-        Long materialId = 9041L;
-        seedPriceList(100L, materialId, 1L, new BigDecimal("7.77"), null, true, null, null);
-        assertNull(resolver.resolveSupplierPrice(null, 100L), "sku null → null");
-        assertNull(resolver.resolveSupplierPrice(newSku(materialId, 1L), null), "partnerId null → null");
-        assertNull(resolver.resolveSupplierPrice(newSku(null, 1L), 100L), "sku.materialId null → null");
+        String materialId = "9041";
+        seedPriceList("100", materialId, "1", new BigDecimal("7.77"), null, true, null, null);
+        assertNull(resolver.resolveSupplierPrice(null, "100"), "sku null → null");
+        assertNull(resolver.resolveSupplierPrice(newSku(materialId, "1"), null), "partnerId null → null");
+        assertNull(resolver.resolveSupplierPrice(newSku(null, "1"), "100"), "sku.materialId null → null");
     }
 
     // ============ ⑥ 单位匹配（U1）：同 material 不同 uoMId 行，按 sku.uoMId 精确命中 ============
 
     @Test
     public void testResolveUomExactMatch() {
-        Long materialId = 9051L;
-        seedPriceList(100L, materialId, 1L, new BigDecimal("7.00"), null, true, null, null);
-        seedPriceList(100L, materialId, 2L, new BigDecimal("6.00"), null, true, null, null);
+        String materialId = "9051";
+        seedPriceList("100", materialId, "1", new BigDecimal("7.00"), null, true, null, null);
+        seedPriceList("100", materialId, "2", new BigDecimal("6.00"), null, true, null, null);
 
         assertEquals(0, new BigDecimal("7.00").compareTo(
-                        resolver.resolveSupplierPrice(newSku(materialId, 1L), 100L)),
+                        resolver.resolveSupplierPrice(newSku(materialId, "1"), "100")),
                 "uoMId=1 精确命中 7.00（而非 6.00）");
         assertEquals(0, new BigDecimal("6.00").compareTo(
-                        resolver.resolveSupplierPrice(newSku(materialId, 2L), 100L)),
+                        resolver.resolveSupplierPrice(newSku(materialId, "2"), "100")),
                 "uoMId=2 精确命中 6.00（而非 7.00）");
         assertEquals(0, new BigDecimal("6.00").compareTo(
-                        resolver.resolveSupplierPrice(newSku(materialId, null), 100L)),
+                        resolver.resolveSupplierPrice(newSku(materialId, null), "100")),
                 "sku.uoMId null 宽放（仅 materialId 匹配）→ 双行候选按 unitPrice 低者 6.00");
     }
 
@@ -202,13 +202,13 @@ public class TestErpPurSupplierPriceResolver extends JunitAutoTestCase {
 
     @Test
     public void testResolvePriceIntegrationSupplierTierWins() {
-        Long materialId = seedMaterialAndSku("SPL-INT", new BigDecimal("10.00"));
-        Long skuId = skuIdFor(materialId);
+        String materialId = seedMaterialAndSku("SPL-INT", new BigDecimal("10.00"));
+        String skuId = skuIdFor(materialId);
         // supplier 价格表层命中 7.77（低于默认档采购价 10.00）
-        seedPriceList(300L, materialId, 1L, new BigDecimal("7.77"), null, true, null, null);
+        seedPriceList("300", materialId, "1", new BigDecimal("7.77"), null, true, null, null);
 
         Object data = rpcData(query, "ErpMdMaterialSku__resolvePrice",
-                resolvePriceArgs(skuId, 300L, ErpMdConstants.BILL_TYPE_PURCHASE, null));
+                resolvePriceArgs(skuId, "300", ErpMdConstants.BILL_TYPE_PURCHASE, null));
         BigDecimal result = new BigDecimal(data.toString());
         assertEquals(0, new BigDecimal("7.77").compareTo(result),
                 "supplier 价格表层命中应返回价格表层价（非默认档 purchasePrice 10.0000）");
@@ -216,18 +216,18 @@ public class TestErpPurSupplierPriceResolver extends JunitAutoTestCase {
 
     @Test
     public void testResolvePriceIntegrationNoSupplierTierFallsBack() {
-        Long materialId = seedMaterialAndSku("SPL-DEF", new BigDecimal("10.00"));
-        Long skuId = skuIdFor(materialId);
+        String materialId = seedMaterialAndSku("SPL-DEF", new BigDecimal("10.00"));
+        String skuId = skuIdFor(materialId);
 
         Object data = rpcData(query, "ErpMdMaterialSku__resolvePrice",
-                resolvePriceArgs(skuId, 300L, ErpMdConstants.BILL_TYPE_PURCHASE, null));
+                resolvePriceArgs(skuId, "300", ErpMdConstants.BILL_TYPE_PURCHASE, null));
         assertEquals(0, new BigDecimal("10.0000").compareTo(new BigDecimal(data.toString())),
                 "无 supplier 价格表层命中 → 回退 SKU 默认档 purchasePrice");
     }
 
     // ---------- helpers ----------
 
-    private Map<String, Object> resolvePriceArgs(Long skuId, Long partnerId, String billType,
+    private Map<String, Object> resolvePriceArgs(String skuId, String partnerId, String billType,
                                                  BigDecimal manualPrice) {
         Map<String, Object> args = new java.util.HashMap<>();
         args.put("skuId", skuId);
@@ -237,20 +237,20 @@ public class TestErpPurSupplierPriceResolver extends JunitAutoTestCase {
         return args;
     }
 
-    private ErpMdMaterialSku newSku(Long materialId, Long uoMId) {
+    private ErpMdMaterialSku newSku(String materialId, String uoMId) {
         ErpMdMaterialSku sku = new ErpMdMaterialSku();
         sku.setMaterialId(materialId);
         sku.setUoMId(uoMId);
         return sku;
     }
 
-    private Long seedPriceList(Long supplierId, Long materialId, Long uoMId, BigDecimal unitPrice,
-                               Integer priority, Boolean isActive, LocalDate validFrom, LocalDate validTo) {
+    private String seedPriceList(String supplierId, String materialId, String uoMId, BigDecimal unitPrice,
+                                 Integer priority, Boolean isActive, LocalDate validFrom, LocalDate validTo) {
         ErpPurSupplierPriceList pl = new ErpPurSupplierPriceList();
         pl.setSupplierId(supplierId);
         pl.setMaterialId(materialId);
         pl.setUoMId(uoMId);
-        pl.setCurrencyId(1L);
+        pl.setCurrencyId("1");
         pl.setUnitPrice(unitPrice);
         pl.setPriority(priority);
         pl.setIsActive(isActive);
@@ -260,19 +260,19 @@ public class TestErpPurSupplierPriceResolver extends JunitAutoTestCase {
         return pl.getId();
     }
 
-    private Long seedMaterialAndSku(String codePrefix, BigDecimal purchasePrice) {
+    private String seedMaterialAndSku(String codePrefix, BigDecimal purchasePrice) {
         ErpMdMaterial material = new ErpMdMaterial();
         material.setCode("M-" + codePrefix);
         material.setName("物料-" + codePrefix);
         material.setMaterialType("GOODS");
-        material.setUoMId(1L);
+        material.setUoMId("1");
         material.setStatus(ErpMdConstants.ACTIVE_STATUS_ACTIVE);
         ormTemplate.runInSession(() -> {
             materialDao().saveEntity(material);
             ErpMdMaterialSku sku = new ErpMdMaterialSku();
             sku.setMaterialId(material.getId());
             sku.setSkuCode("SKU-" + codePrefix);
-            sku.setUoMId(1L);
+            sku.setUoMId("1");
             sku.setConversionRate(BigDecimal.ONE);
             sku.setIsDefault(true);
             sku.setPurchasePrice(purchasePrice);
@@ -281,7 +281,7 @@ public class TestErpPurSupplierPriceResolver extends JunitAutoTestCase {
         return material.getId();
     }
 
-    private Long skuIdFor(Long materialId) {
+    private String skuIdFor(String materialId) {
         io.nop.api.core.beans.query.QueryBean q = new io.nop.api.core.beans.query.QueryBean();
         q.addFilter(io.nop.api.core.beans.FilterBeans.eq("materialId", materialId));
         return skuDao().findAllByQuery(q).stream()

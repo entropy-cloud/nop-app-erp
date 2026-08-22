@@ -1,7 +1,7 @@
 {
-  "id": 0,
-  "paymentId": 0,
-  "invoiceId": 0,
+  "id": "",
+  "paymentId": "",
+  "invoiceId": "",
   "amount": 0.0,
   "remark": "",
   "delVersion": 0,

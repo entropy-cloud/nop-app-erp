@@ -43,8 +43,8 @@ public class ErpPurRfqBizModel extends CrudBizModel<ErpPurRfq> implements IErpPu
 
     @Override
     @BizMutation
-    public ErpPurRfq cancel(@Name("rfqId") Long rfqId, IServiceContext context) {
-        ErpPurRfq rfq = requireEntity(String.valueOf(rfqId), null, context);
+    public ErpPurRfq cancel(@Name("rfqId") String rfqId, IServiceContext context) {
+        ErpPurRfq rfq = requireEntity(rfqId, null, context);
         try {
             stateMachine.assertCanCancel(rfq.getDocStatus());
         } catch (NopException e) {

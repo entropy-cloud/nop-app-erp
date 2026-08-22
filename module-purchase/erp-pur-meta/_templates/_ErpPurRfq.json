@@ -1,8 +1,8 @@
 {
-  "id": 0,
+  "id": "",
   "code": "",
-  "orgId": 0,
-  "requisitionId": 0,
+  "orgId": "",
+  "requisitionId": "",
   "businessDate": "2000-01-01",
   "validUntil": "2000-01-01",
   "docStatus": "",

@@ -115,21 +115,17 @@ public class LandedCostAllocationEngine {
 
     /**
      * 入库行输入 DTO。
-     *
-     * <p>A2 桥接（bridge-main-075..079 面，M0.2 登记册）：receiveLineId/materialId/warehouseId 承载
-     * pur ErpPurReceiveLine 侧 Long id（pur 位次 15 未迁移），入参来源 {@code ErpInvLandedCostProcessor#toInputs}，
-     * 消费侧经 ConvertHelper.toString 桥接 inv String 列。退役 owner M2.5。
      */
     public static class ReceiveLineInput {
-        private final Long receiveLineId;
-        private final Long materialId;
-        private final Long warehouseId;
+        private final String receiveLineId;
+        private final String materialId;
+        private final String warehouseId;
         private final BigDecimal quantity;
         private final BigDecimal amount;
         private final BigDecimal unitPrice;
         private final BigDecimal weight;
 
-        public ReceiveLineInput(Long receiveLineId, Long materialId, Long warehouseId,
+        public ReceiveLineInput(String receiveLineId, String materialId, String warehouseId,
                                  BigDecimal quantity, BigDecimal amount, BigDecimal unitPrice,
                                  BigDecimal weight) {
             this.receiveLineId = receiveLineId;
@@ -141,9 +137,9 @@ public class LandedCostAllocationEngine {
             this.weight = weight;
         }
 
-        public Long getReceiveLineId() { return receiveLineId; }
-        public Long getMaterialId() { return materialId; }
-        public Long getWarehouseId() { return warehouseId; }
+        public String getReceiveLineId() { return receiveLineId; }
+        public String getMaterialId() { return materialId; }
+        public String getWarehouseId() { return warehouseId; }
         public BigDecimal getQuantity() { return quantity; }
         public BigDecimal getAmount() { return amount; }
         public BigDecimal getUnitPrice() { return unitPrice; }
@@ -154,13 +150,13 @@ public class LandedCostAllocationEngine {
      * 分摊结果 DTO。
      */
     public static class AllocationResult {
-        private final Long receiveLineId;
-        private final Long materialId;
-        private final Long warehouseId;
+        private final String receiveLineId;
+        private final String materialId;
+        private final String warehouseId;
         private final BigDecimal allocatedAmount;
         private final BigDecimal newUnitCost;
 
-        public AllocationResult(Long receiveLineId, Long materialId, Long warehouseId,
+        public AllocationResult(String receiveLineId, String materialId, String warehouseId,
                                  BigDecimal allocatedAmount, BigDecimal newUnitCost) {
             this.receiveLineId = receiveLineId;
             this.materialId = materialId;
@@ -169,9 +165,9 @@ public class LandedCostAllocationEngine {
             this.newUnitCost = newUnitCost;
         }
 
-        public Long getReceiveLineId() { return receiveLineId; }
-        public Long getMaterialId() { return materialId; }
-        public Long getWarehouseId() { return warehouseId; }
+        public String getReceiveLineId() { return receiveLineId; }
+        public String getMaterialId() { return materialId; }
+        public String getWarehouseId() { return warehouseId; }
         public BigDecimal getAllocatedAmount() { return allocatedAmount; }
         public BigDecimal getNewUnitCost() { return newUnitCost; }
     }

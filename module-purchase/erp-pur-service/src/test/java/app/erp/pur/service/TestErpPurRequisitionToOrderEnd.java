@@ -41,13 +41,13 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpPurRequisitionToOrderEnd extends JunitAutoTestCase {
 
-    static final Long ORG_ID = 1501L;
-    static final Long REQUESTER_ID = 2501L;
-    static final Long SUPPLIER_ID = 2511L;
-    static final Long WAREHOUSE_ID = 3501L;
-    static final Long MATERIAL_ID = 4501L;
-    static final Long UOM_ID = 5501L;
-    static final Long CURRENCY_ID = 6501L;
+    static final String ORG_ID = "1501";
+    static final String REQUESTER_ID = "2501";
+    static final String SUPPLIER_ID = "2511";
+    static final String WAREHOUSE_ID = "3501";
+    static final String MATERIAL_ID = "4501";
+    static final String UOM_ID = "5501";
+    static final String CURRENCY_ID = "6501";
 
     @Inject
     IDaoProvider daoProvider;
@@ -63,7 +63,7 @@ public class TestErpPurRequisitionToOrderEnd extends JunitAutoTestCase {
             seedRequisitionWithLine();
         });
 
-        Long reqId = 8501L;
+        String reqId = "8501";
         assertEquals(0, submit(reqId).getStatus());
         ErpPurRequisition submitted = daoProvider.daoFor(ErpPurRequisition.class).getEntityById(reqId);
         assertEquals(ErpPurConstants.APPROVE_STATUS_SUBMITTED, submitted.getApproveStatus());
@@ -74,7 +74,7 @@ public class TestErpPurRequisitionToOrderEnd extends JunitAutoTestCase {
         Map<String, Object> request = newRequest();
         ApiResponse<?> conv = convertToOrder(reqId, request);
         assertEquals(0, conv.getStatus());
-        Long orderId = firstIdOf(conv);
+        String orderId = firstIdOf(conv);
         ErpPurOrder order = daoProvider.daoFor(ErpPurOrder.class).getEntityById(orderId);
         assertEquals(ErpPurConstants.APPROVE_STATUS_UNSUBMITTED, order.getApproveStatus());
         assertEquals(reqId, order.getRequisitionId(), "回链 requisitionId");
@@ -101,30 +101,30 @@ public class TestErpPurRequisitionToOrderEnd extends JunitAutoTestCase {
 
     // ---------- rpc helpers ----------
 
-    private ApiResponse<?> submit(Long requisitionId) {
+    private ApiResponse<?> submit(String requisitionId) {
         return executeRpc(mutation, "ErpPurRequisition__submitForApproval",
                 ApiRequest.build(Map.of("id", String.valueOf(requisitionId))));
     }
 
-    private ApiResponse<?> approve(Long requisitionId) {
+    private ApiResponse<?> approve(String requisitionId) {
         return executeRpc(mutation, "ErpPurRequisition__approve",
                 ApiRequest.build(Map.of("id", String.valueOf(requisitionId))));
     }
 
-    private ApiResponse<?> convertToOrder(Long requisitionId, Map<String, Object> request) {
+    private ApiResponse<?> convertToOrder(String requisitionId, Map<String, Object> request) {
         return executeRpc(mutation, "ErpPurRequisition__convertToOrder",
                 ApiRequest.build(Map.of("requisitionId", requisitionId, "request", request)));
     }
 
-    private ApiResponse<?> orderSubmit(Long orderId) {
+    private ApiResponse<?> orderSubmit(String orderId) {
         return executeRpc(mutation, "ErpPurOrder__submitForApproval", ApiRequest.build(Map.of("id", String.valueOf(orderId))));
     }
 
-    private ApiResponse<?> orderApprove(Long orderId) {
+    private ApiResponse<?> orderApprove(String orderId) {
         return executeRpc(mutation, "ErpPurOrder__approve", ApiRequest.build(Map.of("id", String.valueOf(orderId))));
     }
 
-    private ApiResponse<?> orderCancel(Long orderId) {
+    private ApiResponse<?> orderCancel(String orderId) {
         return executeRpc(mutation, "ErpPurOrder__cancel", ApiRequest.build(Map.of("orderId", orderId)));
     }
 
@@ -134,15 +134,14 @@ public class TestErpPurRequisitionToOrderEnd extends JunitAutoTestCase {
     }
 
     @SuppressWarnings("unchecked")
-    private Long firstIdOf(ApiResponse<?> resp) {
+    private String firstIdOf(ApiResponse<?> resp) {
         List<Map<String, Object>> data = (List<Map<String, Object>>) resp.getData();
-        Object id = data.get(0).get("id");
-        return id instanceof Number ? ((Number) id).longValue() : Long.parseLong(String.valueOf(id));
+        return String.valueOf(data.get(0).get("id"));
     }
 
     // ---------- seed helpers ----------
 
-    private void seedActiveSupplier(Long id) {
+    private void seedActiveSupplier(String id) {
         IEntityDao<ErpMdPartner> dao = daoProvider.daoFor(ErpMdPartner.class);
         ErpMdPartner partner = new ErpMdPartner();
         partner.setId(id);
@@ -154,7 +153,7 @@ public class TestErpPurRequisitionToOrderEnd extends JunitAutoTestCase {
     }
 
     private void seedRequisitionWithLine() {
-        Long reqId = 8501L;
+        String reqId = "8501";
         ErpPurRequisition req = new ErpPurRequisition();
         req.setId(reqId);
         req.setCode("PR-E2E-001");

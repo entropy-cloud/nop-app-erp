@@ -32,11 +32,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpPurSkuReferenceChecker extends JunitAutoTestCase {
 
-    static final Long SUPPLIER_ID = 9101L;
-    static final Long WAREHOUSE_ID = 9102L;
-    static final Long MATERIAL_ID = 9103L;
-    static final Long UOM_ID = 9104L;
-    static final Long CURRENCY_ID = 9105L;
+    static final String SUPPLIER_ID = "9101";
+    static final String WAREHOUSE_ID = "9102";
+    static final String MATERIAL_ID = "9103";
+    static final String UOM_ID = "9104";
+    static final String CURRENCY_ID = "9105";
     static final BigDecimal QTY = new BigDecimal("10");
     static final BigDecimal PRICE = new BigDecimal("5");
 
@@ -49,47 +49,47 @@ public class TestErpPurSkuReferenceChecker extends JunitAutoTestCase {
 
     @Test
     public void testOpenOrderLineReferencesSku() {
-        Long skuId = seedSku("SKU-PUR-OPEN");
-        Long orderId = seedOrder("PO-REF-OPEN", "ACTIVE");
+        String skuId = seedSku("SKU-PUR-OPEN");
+        String orderId = seedOrder("PO-REF-OPEN", "ACTIVE");
         seedOrderLine(orderId, skuId);
         assertTrue(checker.isReferencedByBill(loadSku(skuId)), "开放订单行应构成引用");
     }
 
     @Test
     public void testCancelledOrderLineNotReference() {
-        Long skuId = seedSku("SKU-PUR-CANCEL");
-        Long orderId = seedOrder("PO-REF-CANCEL", "CANCELLED");
+        String skuId = seedSku("SKU-PUR-CANCEL");
+        String orderId = seedOrder("PO-REF-CANCEL", "CANCELLED");
         seedOrderLine(orderId, skuId);
         assertFalse(checker.isReferencedByBill(loadSku(skuId)), "取消订单行不阻断");
     }
 
     @Test
     public void testOpenReceiveAndReturnLineReference() {
-        Long receiveSkuId = seedSku("SKU-PUR-RECV");
-        Long receiveId = seedReceive("PR-REF-OPEN", "ACTIVE");
+        String receiveSkuId = seedSku("SKU-PUR-RECV");
+        String receiveId = seedReceive("PR-REF-OPEN", "ACTIVE");
         seedReceiveLine(receiveId, receiveSkuId);
         assertTrue(checker.isReferencedByBill(loadSku(receiveSkuId)), "开放入库单行应构成引用");
 
-        Long returnSkuId = seedSku("SKU-PUR-RET");
-        Long returnId = seedReturn("PT-REF-OPEN", "ACTIVE");
+        String returnSkuId = seedSku("SKU-PUR-RET");
+        String returnId = seedReturn("PT-REF-OPEN", "ACTIVE");
         seedReturnLine(returnId, returnSkuId);
         assertTrue(checker.isReferencedByBill(loadSku(returnSkuId)), "开放退货单行应构成引用");
 
-        Long cancelledReturnSkuId = seedSku("SKU-PUR-RET-CANCEL");
-        Long cancelledReturnId = seedReturn("PT-REF-CANCEL", "CANCELLED");
+        String cancelledReturnSkuId = seedSku("SKU-PUR-RET-CANCEL");
+        String cancelledReturnId = seedReturn("PT-REF-CANCEL", "CANCELLED");
         seedReturnLine(cancelledReturnId, cancelledReturnSkuId);
         assertFalse(checker.isReferencedByBill(loadSku(cancelledReturnSkuId)), "取消退货单行不阻断");
     }
 
     @Test
     public void testUnreferencedSkuFalse() {
-        Long skuId = seedSku("SKU-PUR-UNREF");
+        String skuId = seedSku("SKU-PUR-UNREF");
         assertFalse(checker.isReferencedByBill(loadSku(skuId)), "无任何单据引用应为 false");
     }
 
     // ---------- seeds ----------
 
-    private Long seedSku(String skuCode) {
+    private String seedSku(String skuCode) {
         ErpMdMaterialSku sku = new ErpMdMaterialSku();
         sku.setMaterialId(MATERIAL_ID);
         sku.setSkuCode(skuCode);
@@ -99,11 +99,11 @@ public class TestErpPurSkuReferenceChecker extends JunitAutoTestCase {
         return sku.getId();
     }
 
-    private ErpMdMaterialSku loadSku(Long skuId) {
+    private ErpMdMaterialSku loadSku(String skuId) {
         return skuDao().getEntityById(skuId);
     }
 
-    private Long seedOrder(String code, String docStatus) {
+    private String seedOrder(String code, String docStatus) {
         ErpPurOrder order = new ErpPurOrder();
         order.setCode(code);
         order.setSupplierId(SUPPLIER_ID);
@@ -116,7 +116,7 @@ public class TestErpPurSkuReferenceChecker extends JunitAutoTestCase {
         return order.getId();
     }
 
-    private void seedOrderLine(Long orderId, Long skuId) {
+    private void seedOrderLine(String orderId, String skuId) {
         ErpPurOrderLine line = new ErpPurOrderLine();
         line.setOrderId(orderId);
         line.setLineNo(1);
@@ -129,7 +129,7 @@ public class TestErpPurSkuReferenceChecker extends JunitAutoTestCase {
         ormTemplate.runInSession(() -> daoProvider.daoFor(ErpPurOrderLine.class).saveEntity(line));
     }
 
-    private Long seedReceive(String code, String docStatus) {
+    private String seedReceive(String code, String docStatus) {
         ErpPurReceive receive = new ErpPurReceive();
         receive.setCode(code);
         receive.setSupplierId(SUPPLIER_ID);
@@ -142,7 +142,7 @@ public class TestErpPurSkuReferenceChecker extends JunitAutoTestCase {
         return receive.getId();
     }
 
-    private void seedReceiveLine(Long receiveId, Long skuId) {
+    private void seedReceiveLine(String receiveId, String skuId) {
         ErpPurReceiveLine line = new ErpPurReceiveLine();
         line.setReceiveId(receiveId);
         line.setLineNo(1);
@@ -155,7 +155,7 @@ public class TestErpPurSkuReferenceChecker extends JunitAutoTestCase {
         ormTemplate.runInSession(() -> daoProvider.daoFor(ErpPurReceiveLine.class).saveEntity(line));
     }
 
-    private Long seedReturn(String code, String docStatus) {
+    private String seedReturn(String code, String docStatus) {
         ErpPurReturn ret = new ErpPurReturn();
         ret.setCode(code);
         ret.setSupplierId(SUPPLIER_ID);
@@ -168,7 +168,7 @@ public class TestErpPurSkuReferenceChecker extends JunitAutoTestCase {
         return ret.getId();
     }
 
-    private void seedReturnLine(Long returnId, Long skuId) {
+    private void seedReturnLine(String returnId, String skuId) {
         ErpPurReturnLine line = new ErpPurReturnLine();
         line.setReturnId(returnId);
         line.setLineNo(1);

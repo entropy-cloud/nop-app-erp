@@ -14,16 +14,16 @@
     public class ErpPurRfqOutputBean {
 
     
-        private Long _id;
+        private String _id;
 
     
         @PropMeta(propId=1)
     
-        public Long getId(){
+        public String getId(){
             return _id;
         }
 
-        public void setId(Long value){
+        public void setId(String value){
             this._id = value;
         }
 
@@ -42,30 +42,30 @@
         }
 
 
-        private Long _orgId;
+        private String _orgId;
 
     
         @PropMeta(propId=3)
     
-        public Long getOrgId(){
+        public String getOrgId(){
             return _orgId;
         }
 
-        public void setOrgId(Long value){
+        public void setOrgId(String value){
             this._orgId = value;
         }
 
 
-        private Long _requisitionId;
+        private String _requisitionId;
 
     
         @PropMeta(propId=4)
     
-        public Long getRequisitionId(){
+        public String getRequisitionId(){
             return _requisitionId;
         }
 
-        public void setRequisitionId(Long value){
+        public void setRequisitionId(String value){
             this._requisitionId = value;
         }
 

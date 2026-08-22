@@ -13,44 +13,44 @@
     public class ErpPurPaymentLineOutputBean {
 
     
-        private Long _id;
+        private String _id;
 
     
         @PropMeta(propId=1)
     
-        public Long getId(){
+        public String getId(){
             return _id;
         }
 
-        public void setId(Long value){
+        public void setId(String value){
             this._id = value;
         }
 
 
-        private Long _paymentId;
+        private String _paymentId;
 
     
         @PropMeta(propId=2)
     
-        public Long getPaymentId(){
+        public String getPaymentId(){
             return _paymentId;
         }
 
-        public void setPaymentId(Long value){
+        public void setPaymentId(String value){
             this._paymentId = value;
         }
 
 
-        private Long _invoiceId;
+        private String _invoiceId;
 
     
         @PropMeta(propId=3)
     
-        public Long getInvoiceId(){
+        public String getInvoiceId(){
             return _invoiceId;
         }
 
-        public void setInvoiceId(Long value){
+        public void setInvoiceId(String value){
             this._invoiceId = value;
         }
 

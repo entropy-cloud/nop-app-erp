@@ -386,10 +386,10 @@
       "longParams": [],
       "refDomain": "purchase",
       "evidence": "module-b2b/erp-b2b-service/src/main/java/app/erp/b2b/service/processor/ErpB2bAsnCreateReceiveFromAsnProcessor.java:10",
-      "note": "类型级引用（id 语境经变量流转时由编译器驱动/域 plan grep 定位调用点）",
+      "note": "已退役：M2.5 pur plan 2026-08-22-1814-1 Phase 2 B 义务兑付（pur String 翻转后早域侧桥接点移除/String 直传 + 早域 7 模块链重建绿 + grep 桥残留清零；pur 334/334 + 六早域基线复跑维持）（类型级核证零转换点 + findPoLines 签名随动 String）",
       "deferredUntil": "M2.5",
       "retireOwner": "M2.5",
-      "status": "active"
+      "status": "retired"
     },
     {
       "id": "bridge-main-027",
@@ -401,10 +401,10 @@
       "longParams": [],
       "refDomain": "purchase",
       "evidence": "module-b2b/erp-b2b-service/src/main/java/app/erp/b2b/service/processor/ErpB2bAsnCreateReceiveFromAsnProcessor.java:11",
-      "note": "符号使用行含 id 语境（见 idContextLines）",
+      "note": "已退役：M2.5 pur plan 2026-08-22-1814-1 Phase 2 B 义务兑付（pur String 翻转后早域侧桥接点移除/String 直传 + 早域 7 模块链重建绿 + grep 桥残留清零；pur 334/334 + 六早域基线复跑维持）（materialKey Long 键比较 → String.equals 直传）",
       "deferredUntil": "M2.5",
       "retireOwner": "M2.5",
-      "status": "active"
+      "status": "retired"
     },
     {
       "id": "bridge-main-028",
@@ -416,10 +416,10 @@
       "longParams": [],
       "refDomain": "purchase",
       "evidence": "module-b2b/erp-b2b-service/src/main/java/app/erp/b2b/service/processor/ErpB2bAsnCreateReceiveFromAsnProcessor.java:12",
-      "note": "类型级引用（id 语境经变量流转时由编译器驱动/域 plan grep 定位调用点）",
+      "note": "已退役：M2.5 pur plan 2026-08-22-1814-1 Phase 2 B 义务兑付（pur String 翻转后早域侧桥接点移除/String 直传 + 早域 7 模块链重建绿 + grep 桥残留清零；pur 334/334 + 六早域基线复跑维持）（类型级核证零转换点）",
       "deferredUntil": "M2.5",
       "retireOwner": "M2.5",
-      "status": "active"
+      "status": "retired"
     },
     {
       "id": "bridge-main-029",
@@ -431,10 +431,10 @@
       "longParams": [],
       "refDomain": "purchase",
       "evidence": "module-b2b/erp-b2b-service/src/main/java/app/erp/b2b/service/processor/ErpB2bAsnCreateReceiveFromAsnProcessor.java:13",
-      "note": "类型级引用（id 语境经变量流转时由编译器驱动/域 plan grep 定位调用点）",
+      "note": "已退役：M2.5 pur plan 2026-08-22-1814-1 Phase 2 B 义务兑付（pur String 翻转后早域侧桥接点移除/String 直传 + 早域 7 模块链重建绿 + grep 桥残留清零；pur 334/334 + 六早域基线复跑维持）（setMaterialId/setUoMId ×2 转换点移除 String 直传）",
       "deferredUntil": "M2.5",
       "retireOwner": "M2.5",
-      "status": "active"
+      "status": "retired"
     },
     {
       "id": "bridge-main-030",
@@ -446,10 +446,10 @@
       "longParams": [],
       "refDomain": "purchase",
       "evidence": "module-b2b/erp-b2b-service/src/main/java/app/erp/b2b/service/processor/ErpB2bAsnMatchPurchaseOrderProcessor.java:9",
-      "note": "类型级引用（id 语境经变量流转时由编译器驱动/域 plan grep 定位调用点）",
+      "note": "已退役：M2.5 pur plan 2026-08-22-1814-1 Phase 2 B 义务兑付（pur String 翻转后早域侧桥接点移除/String 直传 + 早域 7 模块链重建绿 + grep 桥残留清零；pur 334/334 + 六早域基线复跑维持）（类型级核证零转换点 + findPoLines 签名随动 String）",
       "deferredUntil": "M2.5",
       "retireOwner": "M2.5",
-      "status": "active"
+      "status": "retired"
     },
     {
       "id": "bridge-main-031",
@@ -461,10 +461,10 @@
       "longParams": [],
       "refDomain": "purchase",
       "evidence": "module-b2b/erp-b2b-service/src/main/java/app/erp/b2b/service/processor/ErpB2bAsnMatchPurchaseOrderProcessor.java:10",
-      "note": "符号使用行含 id 语境（见 idContextLines）",
+      "note": "已退役：M2.5 pur plan 2026-08-22-1814-1 Phase 2 B 义务兑付（pur String 翻转后早域侧桥接点移除/String 直传 + 早域 7 模块链重建绿 + grep 桥残留清零；pur 334/334 + 六早域基线复跑维持）（materialKey Long 键比较 → String.equals 直传）",
       "deferredUntil": "M2.5",
       "retireOwner": "M2.5",
-      "status": "active"
+      "status": "retired"
     },
     {
       "id": "bridge-main-032",
@@ -491,10 +491,10 @@
       "longParams": [],
       "refDomain": "purchase",
       "evidence": "module-contract/erp-ct-service/src/main/java/app/erp/ct/service/entity/ErpCtInvoicePlanBizModel.java:32",
-      "note": "类型级引用（id 语境经变量流转时由编译器驱动/域 plan grep 定位调用点）",
+      "note": "已退役：M2.5 pur plan 2026-08-22-1814-1 Phase 2 B 义务兑付（pur String 翻转后早域侧桥接点移除/String 直传 + 早域 7 模块链重建绿 + grep 桥残留清零；pur 334/334 + 六早域基线复跑维持）（orgId/supplierId/currencyId ×3 转换点移除）",
       "deferredUntil": "M2.5",
       "retireOwner": "M2.5",
-      "status": "active"
+      "status": "retired"
     },
     {
       "id": "bridge-main-034",
@@ -506,10 +506,10 @@
       "longParams": [],
       "refDomain": "purchase",
       "evidence": "module-contract/erp-ct-service/src/main/java/app/erp/ct/service/entity/ErpCtInvoicePlanBizModel.java:33",
-      "note": "类型级引用（id 语境经变量流转时由编译器驱动/域 plan grep 定位调用点）",
+      "note": "已退役：M2.5 pur plan 2026-08-22-1814-1 Phase 2 B 义务兑付（pur String 翻转后早域侧桥接点移除/String 直传 + 早域 7 模块链重建绿 + grep 桥残留清零；pur 334/334 + 六早域基线复跑维持）（materialId/uoMId ×2 转换点移除）",
       "deferredUntil": "M2.5",
       "retireOwner": "M2.5",
-      "status": "active"
+      "status": "retired"
     },
     {
       "id": "bridge-main-035",
@@ -551,10 +551,10 @@
       "longParams": [],
       "refDomain": "purchase",
       "evidence": "module-contract/erp-ct-service/src/main/java/app/erp/ct/service/entity/ErpCtRebateAgreementBizModel.java:23",
-      "note": "类型级引用（id 语境经变量流转时由编译器驱动/域 plan grep 定位调用点）",
+      "note": "已退役：M2.5 pur plan 2026-08-22-1814-1 Phase 2 B 义务兑付（pur String 翻转后早域侧桥接点移除/String 直传 + 早域 7 模块链重建绿 + grep 桥残留清零；pur 334/334 + 六早域基线复跑维持）（eq supplierId 过滤值 toLong 桥 → String 直传）",
       "deferredUntil": "M2.5",
       "retireOwner": "M2.5",
-      "status": "active"
+      "status": "retired"
     },
     {
       "id": "bridge-main-038",
@@ -581,10 +581,10 @@
       "longParams": [],
       "refDomain": "purchase",
       "evidence": "module-contract/erp-ct-service/src/main/java/app/erp/ct/service/entity/ErpCtRebateSettlementBizModel.java:27",
-      "note": "类型级引用（id 语境经变量流转时由编译器驱动/域 plan grep 定位调用点）",
+      "note": "已退役：M2.5 pur plan 2026-08-22-1814-1 Phase 2 B 义务兑付（pur String 翻转后早域侧桥接点移除/String 直传 + 早域 7 模块链重建绿 + grep 桥残留清零；pur 334/334 + 六早域基线复跑维持）（orgId/supplierId 转换点移除 + resolveCurrencyId pur 半边移除，sal 半边 041 保持 owner M2.6）",
       "deferredUntil": "M2.5",
       "retireOwner": "M2.5",
-      "status": "active"
+      "status": "retired"
     },
     {
       "id": "bridge-main-040",
@@ -596,10 +596,10 @@
       "longParams": [],
       "refDomain": "purchase",
       "evidence": "module-contract/erp-ct-service/src/main/java/app/erp/ct/service/entity/ErpCtRebateSettlementBizModel.java:28",
-      "note": "类型级引用（id 语境经变量流转时由编译器驱动/域 plan grep 定位调用点）",
+      "note": "已退役：M2.5 pur plan 2026-08-22-1814-1 Phase 2 B 义务兑付（pur String 翻转后早域侧桥接点移除/String 直传 + 早域 7 模块链重建绿 + grep 桥残留清零；pur 334/334 + 六早域基线复跑维持）（resolveMaterialId/resolveUoMId pur 半边移除 String 返回，sal 半边 042 保持 owner M2.6）",
       "deferredUntil": "M2.5",
       "retireOwner": "M2.5",
-      "status": "active"
+      "status": "retired"
     },
     {
       "id": "bridge-main-041",
@@ -641,10 +641,10 @@
       "longParams": [],
       "refDomain": "purchase",
       "evidence": "module-contract/erp-ct-service/src/main/java/app/erp/ct/service/processor/ErpCtInvoicePlanTriggerInvoiceProcessor.java:8",
-      "note": "类型级引用（id 语境经变量流转时由编译器驱动/域 plan grep 定位调用点）",
+      "note": "已退役：M2.5 pur plan 2026-08-22-1814-1 Phase 2 B 义务兑付（pur String 翻转后早域侧桥接点移除/String 直传 + 早域 7 模块链重建绿 + grep 桥残留清零；pur 334/334 + 六早域基线复跑维持）（orgId/supplierId/currencyId ×3 转换点移除）",
       "deferredUntil": "M2.5",
       "retireOwner": "M2.5",
-      "status": "active"
+      "status": "retired"
     },
     {
       "id": "bridge-main-044",
@@ -656,10 +656,10 @@
       "longParams": [],
       "refDomain": "purchase",
       "evidence": "module-contract/erp-ct-service/src/main/java/app/erp/ct/service/processor/ErpCtInvoicePlanTriggerInvoiceProcessor.java:9",
-      "note": "类型级引用（id 语境经变量流转时由编译器驱动/域 plan grep 定位调用点）",
+      "note": "已退役：M2.5 pur plan 2026-08-22-1814-1 Phase 2 B 义务兑付（pur String 翻转后早域侧桥接点移除/String 直传 + 早域 7 模块链重建绿 + grep 桥残留清零；pur 334/334 + 六早域基线复跑维持）（materialId/uoMId ×2 转换点移除）",
       "deferredUntil": "M2.5",
       "retireOwner": "M2.5",
-      "status": "active"
+      "status": "retired"
     },
     {
       "id": "bridge-main-045",
@@ -701,10 +701,10 @@
       "longParams": [],
       "refDomain": "purchase",
       "evidence": "module-contract/erp-ct-service/src/main/java/app/erp/ct/service/processor/ErpCtRebateAgreementRunAccrualProcessor.java:9",
-      "note": "类型级引用（id 语境经变量流转时由编译器驱动/域 plan grep 定位调用点）",
+      "note": "已退役：M2.5 pur plan 2026-08-22-1814-1 Phase 2 B 义务兑付（pur String 翻转后早域侧桥接点移除/String 直传 + 早域 7 模块链重建绿 + grep 桥残留清零；pur 334/334 + 六早域基线复跑维持）（eq supplierId 过滤值 toLong 桥 → String 直传）",
       "deferredUntil": "M2.5",
       "retireOwner": "M2.5",
-      "status": "active"
+      "status": "retired"
     },
     {
       "id": "bridge-main-048",
@@ -731,10 +731,10 @@
       "longParams": [],
       "refDomain": "purchase",
       "evidence": "module-contract/erp-ct-service/src/main/java/app/erp/ct/service/processor/ErpCtRebateSettlementPostSettlementProcessor.java:11",
-      "note": "类型级引用（id 语境经变量流转时由编译器驱动/域 plan grep 定位调用点）",
+      "note": "已退役：M2.5 pur plan 2026-08-22-1814-1 Phase 2 B 义务兑付（pur String 翻转后早域侧桥接点移除/String 直传 + 早域 7 模块链重建绿 + grep 桥残留清零；pur 334/334 + 六早域基线复跑维持）（orgId/supplierId 转换点移除 + resolveCurrencyId pur 半边移除，sal 半边 051 保持 owner M2.6）",
       "deferredUntil": "M2.5",
       "retireOwner": "M2.5",
-      "status": "active"
+      "status": "retired"
     },
     {
       "id": "bridge-main-050",
@@ -746,10 +746,10 @@
       "longParams": [],
       "refDomain": "purchase",
       "evidence": "module-contract/erp-ct-service/src/main/java/app/erp/ct/service/processor/ErpCtRebateSettlementPostSettlementProcessor.java:12",
-      "note": "类型级引用（id 语境经变量流转时由编译器驱动/域 plan grep 定位调用点）",
+      "note": "已退役：M2.5 pur plan 2026-08-22-1814-1 Phase 2 B 义务兑付（pur String 翻转后早域侧桥接点移除/String 直传 + 早域 7 模块链重建绿 + grep 桥残留清零；pur 334/334 + 六早域基线复跑维持）（resolveMaterialId/resolveUoMId pur 半边移除 + toString 往返消除，sal 半边 052 保持 owner M2.6）",
       "deferredUntil": "M2.5",
       "retireOwner": "M2.5",
-      "status": "active"
+      "status": "retired"
     },
     {
       "id": "bridge-main-051",
@@ -1038,10 +1038,10 @@
       "longParams": [],
       "refDomain": "purchase",
       "evidence": "module-finance/erp-fin-service/src/main/java/app/erp/fin/service/reconciliation/DualSideConsistencyChecker.java:8",
-      "note": "类型级引用（id 语境经变量流转时由编译器驱动/域 plan grep 定位调用点）",
+      "note": "类型级引用（id 语境经变量流转时由编译器驱动/域 plan grep 定位调用点）。已退役：M2.5 pur 翻转 String 后核证类型级零转换点（经 sourceBillCode 弱指针 code 反查，无 id 穿越），fin 侧零代码变更，fin-service 离线编译绿",
       "deferredUntil": "M2.5",
       "retireOwner": "M2.5",
-      "status": "active"
+      "status": "retired"
     },
     {
       "id": "bridge-main-070",
@@ -1128,10 +1128,10 @@
       "longParams": [],
       "refDomain": "purchase",
       "evidence": "module-inventory/erp-inv-service/src/main/java/app/erp/inv/service/processor/ErpInvLandedCostApproveProcessor.java:11",
-      "note": "类型级引用（id 语境经变量流转时由编译器驱动/域 plan grep 定位调用点）",
+      "note": "类型级引用（id 语境经变量流转时由编译器驱动/域 plan grep 定位调用点）。已退役：M2.5 pur 翻转 String 后核证零转换点（编排委托 facade helper，实值桥在 077/078 侧兑付），inv-service 离线编译绿",
       "deferredUntil": "M2.5",
       "retireOwner": "M2.5",
-      "status": "active"
+      "status": "retired"
     },
     {
       "id": "bridge-main-076",
@@ -1143,10 +1143,10 @@
       "longParams": [],
       "refDomain": "purchase",
       "evidence": "module-inventory/erp-inv-service/src/main/java/app/erp/inv/service/processor/ErpInvLandedCostApproveProcessor.java:12",
-      "note": "类型级引用（id 语境经变量流转时由编译器驱动/域 plan grep 定位调用点）",
+      "note": "类型级引用（id 语境经变量流转时由编译器驱动/域 plan grep 定位调用点）。已退役：M2.5 pur 翻转 String 后核证零转换点（编排委托 facade helper，实值桥在 077/079 侧兑付），inv-service 离线编译绿",
       "deferredUntil": "M2.5",
       "retireOwner": "M2.5",
-      "status": "active"
+      "status": "retired"
     },
     {
       "id": "bridge-main-077",
@@ -1158,10 +1158,10 @@
       "longParams": [],
       "refDomain": "purchase",
       "evidence": "module-inventory/erp-inv-service/src/main/java/app/erp/inv/service/processor/ErpInvLandedCostGenerateFreightLandedCostProcessor.java:5",
-      "note": "类型级引用（id 语境经变量流转时由编译器驱动/域 plan grep 定位调用点）",
+      "note": "类型级引用（id 语境经变量流转时由编译器驱动/域 plan grep 定位调用点）。已退役：M2.5 pur 翻转 String 后 inv 侧 ConvertHelper.toString 实值桥移除改 String 直传（generateFreight 入口 receiveId/currencyId/supplierId + createLandedCostHead orgId/receiveId/supplierId），bridge 注释/未用 import 移除，inv-service 离线编译绿",
       "deferredUntil": "M2.5",
       "retireOwner": "M2.5",
-      "status": "active"
+      "status": "retired"
     },
     {
       "id": "bridge-main-078",
@@ -1173,10 +1173,10 @@
       "longParams": [],
       "refDomain": "purchase",
       "evidence": "module-inventory/erp-inv-service/src/main/java/app/erp/inv/service/processor/ErpInvLandedCostProcessor.java:14",
-      "note": "符号使用行含 id 语境（见 idContextLines）",
+      "note": "符号使用行含 id 语境（见 idContextLines）。已退役：M2.5 pur 翻转 String 后 inv 侧 loadReceive/loadReceiveLines toLong ×2 实值桥移除改 String 直传，bridge 注释移除，inv-service 离线编译绿",
       "deferredUntil": "M2.5",
       "retireOwner": "M2.5",
-      "status": "active"
+      "status": "retired"
     },
     {
       "id": "bridge-main-079",
@@ -1188,10 +1188,10 @@
       "longParams": [],
       "refDomain": "purchase",
       "evidence": "module-inventory/erp-inv-service/src/main/java/app/erp/inv/service/processor/ErpInvLandedCostProcessor.java:15",
-      "note": "符号使用行含 id 语境（见 idContextLines）",
+      "note": "符号使用行含 id 语境（见 idContextLines）。已退役：M2.5 pur 翻转 String 后 LandedCostAllocationEngine DTO（ReceiveLineInput/AllocationResult）receiveLineId/materialId/warehouseId Long→String + 消费侧 toString ×2 实值桥移除改 String 直传，inv-service 离线编译绿",
       "deferredUntil": "M2.5",
       "retireOwner": "M2.5",
-      "status": "active"
+      "status": "retired"
     },
     {
       "id": "bridge-main-080",
@@ -1323,10 +1323,10 @@
       "longParams": [],
       "refDomain": "purchase",
       "evidence": "module-manufacturing/erp-mfg-service/src/main/java/app/erp/mfg/service/mrp/MrpReleaseService.java:13",
-      "note": "类型级引用（id 语境经变量流转时由编译器驱动/域 plan grep 定位调用点）",
+      "note": "类型级引用（id 语境经变量流转时由编译器驱动/域 plan grep 定位调用点）。已退役：M2.5 pur 翻转 String 后 mfg 侧 toLong 实值桥移除改 String 直传（MrpReleaseService orgId/supplierId/currencyId + orderLine materialId/uoMId），bridge 注释移除，mfg-service 离线编译绿",
       "deferredUntil": "M2.5",
       "retireOwner": "M2.5",
-      "status": "active"
+      "status": "retired"
     },
     {
       "id": "bridge-main-089",
@@ -1338,10 +1338,10 @@
       "longParams": [],
       "refDomain": "purchase",
       "evidence": "module-manufacturing/erp-mfg-service/src/main/java/app/erp/mfg/service/mrp/MrpReleaseService.java:14",
-      "note": "类型级引用（id 语境经变量流转时由编译器驱动/域 plan grep 定位调用点）",
+      "note": "类型级引用（id 语境经变量流转时由编译器驱动/域 plan grep 定位调用点）。已退役：M2.5 pur 翻转 String 后 mfg 侧 toLong 实值桥移除改 String 直传（同 bridge-main-088），mfg-service 离线编译绿",
       "deferredUntil": "M2.5",
       "retireOwner": "M2.5",
-      "status": "active"
+      "status": "retired"
     },
     {
       "id": "bridge-main-090",
@@ -1355,7 +1355,7 @@
       ],
       "refDomain": "drp",
       "evidence": "module-purchase/erp-pur-service/src/main/java/app/erp/pur/service/processor/ErpPurReceiveProcessor.java:20",
-      "note": "",
+      "note": "桥已落位：M2.5 pur plan 2026-08-22-1814-1 Phase 2（ErpPurReceiveProcessor ConvertHelper.toLong 桥 + 双向注释，pur 334/334 绿）；退役仍归 M3.7 drp 翻转时",
       "deferredUntil": "M3.7",
       "retireOwner": "M3.7",
       "status": "active"
@@ -1372,7 +1372,7 @@
       ],
       "refDomain": "drp",
       "evidence": "module-purchase/erp-pur-service/src/main/java/app/erp/pur/service/processor/ErpPurReceiveProcessor.java:21",
-      "note": "",
+      "note": "桥已落位：M2.5 pur plan 2026-08-22-1814-1 Phase 2（ErpPurReceiveProcessor ConvertHelper.toLong 桥 + 双向注释，pur 334/334 绿）；退役仍归 M3.7 drp 翻转时",
       "deferredUntil": "M3.7",
       "retireOwner": "M3.7",
       "status": "active"
@@ -1417,10 +1417,10 @@
       "longParams": [],
       "refDomain": "purchase",
       "evidence": "module-quality/erp-qa-service/src/main/java/app/erp/qa/service/posting/NcrReturnOrchestrator.java:6",
-      "note": "类型级引用（id 语境经变量流转时由编译器驱动/域 plan grep 定位调用点）",
+      "note": "类型级引用（id 语境经变量流转时由编译器驱动/域 plan grep 定位调用点）。已退役：M2.5 pur 翻转 String 后核证 ErpPurReturn 类型级对齐（save map 实值桥在 096 侧兑付），sal 半边（095/097）保持 Long 未动，qa-service 离线编译绿",
       "deferredUntil": "M2.5",
       "retireOwner": "M2.5",
-      "status": "active"
+      "status": "retired"
     },
     {
       "id": "bridge-main-095",
@@ -1447,10 +1447,10 @@
       "longParams": [],
       "refDomain": "purchase",
       "evidence": "module-quality/erp-qa-service/src/main/java/app/erp/qa/service/posting/NcrReturnOrchestrator.java:4",
-      "note": "方法未声明于接口文件（ICrudBiz 等继承方法）——Long 参数签名以晚域 plan 翻转时为准",
+      "note": "方法未声明于接口文件（ICrudBiz 等继承方法）——Long 参数签名以晚域 plan 翻转时为准。已退役：M2.5 pur 翻转 String 后 save map 实值桥 toLong ×3（supplierId/warehouseId/currencyId）移除改 String 直传，bridge 注释移除；sal 半边（097）toLong 保持，qa-service 离线编译绿",
       "deferredUntil": "M2.5",
       "retireOwner": "M2.5",
-      "status": "active"
+      "status": "retired"
     },
     {
       "id": "bridge-main-097",
@@ -1650,7 +1650,7 @@
       ],
       "deferredUntil": "M3.6",
       "retireOwner": "M3.6",
-      "note": "已适配退役（本域侧）：M3.6 contract plan 2026-08-21-2025-3 Phase 3 兑付（读路径核验（仅按 code String 访问 ErpPurInvoice），零 id 穿越，无需转换点）；晚域 M2.5/M2.6 翻转 pur/sal 时移除桥接点/复核读路径",
+      "note": "已适配退役（本域侧）：M3.6 contract plan 2026-08-21-2025-3 Phase 3 兑付（读路径核验（仅按 code String 访问 ErpPurInvoice），零 id 穿越，无需转换点）；晚域 M2.5/M2.6 翻转 pur/sal 时移除桥接点/复核读路径。pur 半边已兑付：M2.5 pur plan 2026-08-22-1814-1 Phase 3（读路径复核维持——仅按 code String 访问，零 id 穿越，零代码变更）",
       "status": "retired"
     },
     {
@@ -1667,7 +1667,7 @@
       ],
       "deferredUntil": "M3.6",
       "retireOwner": "M3.6",
-      "note": "已适配退役（本域侧）：M3.6 contract plan 2026-08-21-2025-3 Phase 3 兑付（读路径核验（仅按 code String 访问 ErpPurInvoice），零 id 穿越，无需转换点）；晚域 M2.5/M2.6 翻转 pur/sal 时移除桥接点/复核读路径",
+      "note": "已适配退役（本域侧）：M3.6 contract plan 2026-08-21-2025-3 Phase 3 兑付（读路径核验（仅按 code String 访问 ErpPurInvoice），零 id 穿越，无需转换点）；晚域 M2.5/M2.6 翻转 pur/sal 时移除桥接点/复核读路径。pur 半边已兑付：M2.5 pur plan 2026-08-22-1814-1 Phase 3（读路径复核维持——仅按 code String 访问，零 id 穿越，零代码变更）",
       "status": "retired"
     },
     {
@@ -1685,7 +1685,7 @@
       ],
       "deferredUntil": "M3.6",
       "retireOwner": "M3.6",
-      "note": "已适配退役（本域侧）：M3.6 contract plan 2026-08-21-2025-3 Phase 3 兑付（读路径核验（pur/sal 均仅按 code String 访问），零 id 穿越，无需转换点）；晚域 M2.5/M2.6 翻转 pur/sal 时移除桥接点/复核读路径",
+      "note": "已适配退役（本域侧）：M3.6 contract plan 2026-08-21-2025-3 Phase 3 兑付（读路径核验（pur/sal 均仅按 code String 访问），零 id 穿越，无需转换点）；晚域 M2.5/M2.6 翻转 pur/sal 时移除桥接点/复核读路径。pur 半边已兑付：M2.5 pur plan 2026-08-22-1814-1 Phase 3（读路径复核维持——仅按 code String 访问，零 id 穿越，零代码变更）；sal 半边保持 owner M2.6",
       "status": "retired"
     },
     {
@@ -1702,7 +1702,7 @@
       ],
       "deferredUntil": "M3.6",
       "retireOwner": "M3.6",
-      "note": "已适配退役（本域侧）：M3.6 contract plan 2026-08-21-2025-3 Phase 3 兑付（ConvertHelper.toLong ×2 落桥（createPostedApInvoice setSupplierId/setCurrencyId））；晚域 M2.5/M2.6 翻转 pur/sal 时移除桥接点/复核读路径",
+      "note": "已适配退役（本域侧）：M3.6 contract plan 2026-08-21-2025-3 Phase 3 兑付（ConvertHelper.toLong ×2 落桥（createPostedApInvoice setSupplierId/setCurrencyId））；晚域 M2.5/M2.6 翻转 pur/sal 时移除桥接点/复核读路径。pur 半边已兑付：M2.5 pur plan 2026-08-22-1814-1 Phase 3（createPostedApInvoice setSupplierId/setCurrencyId toLong 桥移除 String 直传；sal 半边 112 保持 owner M2.6）",
       "status": "retired"
     },
     {
@@ -1828,7 +1828,7 @@
       ],
       "deferredUntil": "M2.1",
       "retireOwner": "M2.1",
-      "note": "早域 test 引用晚域——早域 plan Phase 3 消费（本域测试适配）；晚域翻转时复核。2026-08-22 retired（M2.1 finance 迁移）：TestErpFinDualSideConsistency seed 侧 setSupplierId(Long.valueOf(partnerId)) 局部桥（fin String → pur Long，退役 owner 改挂 M2.5 pur 翻转时回收核对）",
+      "note": "早域 test 引用晚域——早域 plan Phase 3 消费（本域测试适配）；晚域翻转时复核。2026-08-22 retired（M2.1 finance 迁移）：TestErpFinDualSideConsistency seed 侧 setSupplierId(Long.valueOf(partnerId)) 局部桥（fin String → pur Long，退役 owner 改挂 M2.5 pur 翻转时回收核对）。M2.5 pur plan 2026-08-22-1814-1 Phase 3 已回收核对：seed 侧 setSupplierId(Long.valueOf(partnerId)) 局部桥移除 String 直传（fin 497/497 复跑维持）",
       "status": "retired"
     },
     {
@@ -1865,7 +1865,7 @@
       ],
       "deferredUntil": "M2.2",
       "retireOwner": "M2.2",
-      "note": "早域 test 引用晚域——早域 plan Phase 3 消费（本域测试适配）；晚域翻转时复核。已退役：M2.2 inv plan 2026-08-22-0731-2 Phase 3 兑付（inv String 化，pur Receive(ReceiveLine) seed 值 toLong 局部桥，见 TestErpInvLandedCostEndToEnd.java:290 桥注释），桥接点移除归 M2.5",
+      "note": "早域 test 引用晚域——早域 plan Phase 3 消费（本域测试适配）；晚域翻转时复核。已退役：M2.2 inv plan 2026-08-22-0731-2 Phase 3 兑付（inv String 化，pur Receive(ReceiveLine) seed 值 toLong 局部桥，见 TestErpInvLandedCostEndToEnd.java:290 桥注释），桥接点移除归 M2.5。M2.5 pur plan 2026-08-22-1814-1 Phase 3 已回收：pur Receive/ReceiveLine 种子 String 化 + toLong/String.valueOf 局部桥移除 + 桥注释删除（inv 235/235 复跑维持，含 (long) hashCode 数值保真修复）",
 
       "status": "retired"
     },
@@ -1884,7 +1884,7 @@
       ],
       "deferredUntil": "M2.2",
       "retireOwner": "M2.2",
-      "note": "早域 test 引用晚域——早域 plan Phase 3 消费（本域测试适配）；晚域翻转时复核。已退役：M2.2 inv plan 2026-08-22-0731-2 Phase 3 兑付（inv String 化，pur Receive(ReceiveLine) seed 值 toLong 局部桥，见 TestErpInvLandedCostReversal.java:192 桥注释），桥接点移除归 M2.5",
+      "note": "早域 test 引用晚域——早域 plan Phase 3 消费（本域测试适配）；晚域翻转时复核。已退役：M2.2 inv plan 2026-08-22-0731-2 Phase 3 兑付（inv String 化，pur Receive(ReceiveLine) seed 值 toLong 局部桥，见 TestErpInvLandedCostReversal.java:192 桥注释），桥接点移除归 M2.5。M2.5 pur plan 2026-08-22-1814-1 Phase 3 已回收：pur Receive/ReceiveLine 种子 String 化 + toLong/String.valueOf 局部桥移除 + 桥注释删除（inv 235/235 复跑维持，含 (long) hashCode 数值保真修复）",
 
       "status": "retired"
     },
@@ -1921,7 +1921,7 @@
       ],
       "deferredUntil": "M2.2",
       "retireOwner": "M2.2",
-      "note": "早域 test 引用晚域——早域 plan Phase 3 消费（本域测试适配）；晚域翻转时复核。已退役：M2.2 inv plan 2026-08-22-0731-2 Phase 3 兑付（inv String 化，pur receiveId Long → inv String 局部桥，见 TestErpInvLandedCostAllocatedGuard.java:251 桥注释），桥接点移除归 M2.5",
+      "note": "早域 test 引用晚域——早域 plan Phase 3 消费（本域测试适配）；晚域翻转时复核。已退役：M2.2 inv plan 2026-08-22-0731-2 Phase 3 兑付（inv String 化，pur receiveId Long → inv String 局部桥，见 TestErpInvLandedCostAllocatedGuard.java:251 桥注释），桥接点移除归 M2.5。M2.5 pur plan 2026-08-22-1814-1 Phase 3 已回收：pur receiveId Long → inv String 局部桥移除 String 直传（inv 235/235 复跑维持）",
 
       "status": "retired"
     },
@@ -1939,7 +1939,7 @@
       ],
       "deferredUntil": "M2.2",
       "retireOwner": "M2.2",
-      "note": "早域 test 引用晚域——早域 plan Phase 3 消费（本域测试适配）；晚域翻转时复核。已退役：M2.2 inv plan 2026-08-22-0731-2 Phase 3 兑付（inv String 化，实体级 pass-through（lockReceiveForAllocation 不跨 id 边界），pur 种子 id 保持 Long，无转换桥必需，见 TestErpInvLandedCostReceiveMutex.java 桥注释），桥接点移除归 M2.5",
+      "note": "早域 test 引用晚域——早域 plan Phase 3 消费（本域测试适配）；晚域翻转时复核。已退役：M2.2 inv plan 2026-08-22-0731-2 Phase 3 兑付（inv String 化，实体级 pass-through（lockReceiveForAllocation 不跨 id 边界），pur 种子 id 保持 Long，无转换桥必需，见 TestErpInvLandedCostReceiveMutex.java 桥注释），桥接点移除归 M2.5。M2.5 pur plan 2026-08-22-1814-1 Phase 3 已回收：pur 种子 id String 化 + 桥注释删除（inv 235/235 复跑维持）",
 
       "status": "retired"
     },
@@ -1982,7 +1982,7 @@
       ],
       "deferredUntil": "M3.1",
       "retireOwner": "M3.1",
-      "note": "已退役：M3.1 mfg plan 2026-08-22-1302-3 Phase 3 兑付（pur/sal 局部桥形态：断言与种子 ConvertHelper.toLong 桥 + 双向指针注释；退役 owner M2.5（pur）/M2.6（sal）晚域翻转时移除）",
+      "note": "已退役：M3.1 mfg plan 2026-08-22-1302-3 Phase 3 兑付（pur/sal 局部桥形态：断言与种子 ConvertHelper.toLong 桥 + 双向指针注释；退役 owner M2.5（pur）/M2.6（sal）晚域翻转时移除）。pur 半边已兑付：M2.5 pur plan 2026-08-22-1814-1 Phase 3（pur 断言/种子 toLong 桥移除 String 直传，sal 半边保持 owner M2.6；mfg 289/289 复跑维持）",
       "status": "retired"
     },
     {
@@ -2054,7 +2054,7 @@
       ],
       "deferredUntil": "M2.3",
       "retireOwner": "M2.3",
-      "note": "已退役：M2.3 qa plan 2026-08-22-1302-2 Phase 3 兑付（桩实现未迁移 pur IBiz——方法签名保持 Long（cs 先例：接口归属裁定），桩 asLong map 转换天然兼容 Phase 2 A2 桥（094/096）传入的 Long 值，零代码变更；qa 182/182 绿；桩随 M2.5 pur 翻转时 String 化）",
+      "note": "已退役：M2.3 qa plan 2026-08-22-1302-2 Phase 3 兑付（桩实现未迁移 pur IBiz——方法签名保持 Long（cs 先例：接口归属裁定），桩 asLong map 转换天然兼容 Phase 2 A2 桥（094/096）传入的 Long 值，零代码变更；qa 182/182 绿；桩随 M2.5 pur 翻转时 String 化）。M2.5 pur plan 2026-08-22-1814-1 Phase 3 已兑付：桩签名随 IErpPurReturnBiz String 化（cancel(String)）+ save map asLong→asString 直传（qa 182/182 复跑维持）",
       "status": "retired"
     },
     {
@@ -2108,7 +2108,7 @@
       ],
       "deferredUntil": "M3.8",
       "retireOwner": "M2.5",
-      "note": "A3' 补登条目（登记册扫描器 import 口径盲区：FQN 内联引用 20 行/22 token 不产生 import 语句，M0.2 扫描器漏扫；补登证据 = b2b plan 2026-08-21-2025-2 Phase 1 FQN 复扫）。已适配退役（本域侧）：M3.8 b2b plan 2026-08-21-2025-2 Phase 3 兑付（ConvertHelper.toLong ×3 seed 桥 + String.valueOf ×3 断言桥；poId/receiveId/pur 种子保持 Long），晚域 M2.5 翻转 pur 时移除桥接点",
+      "note": "A3' 补登条目（登记册扫描器 import 口径盲区：FQN 内联引用 20 行/22 token 不产生 import 语句，M0.2 扫描器漏扫；补登证据 = b2b plan 2026-08-21-2025-2 Phase 1 FQN 复扫）。已适配退役（本域侧）：M3.8 b2b plan 2026-08-21-2025-2 Phase 3 兑付（ConvertHelper.toLong ×3 seed 桥 + String.valueOf ×3 断言桥；poId/receiveId/pur 种子保持 Long），晚域 M2.5 翻转 pur 时移除桥接点。pur 半边已兑付：M2.5 pur plan 2026-08-22-1814-1 Phase 3（六转换点移除 + pur 种子 String 化 + Long 局部变量/断言 String 直传）",
       "status": "retired"
     },
     {

@@ -19,22 +19,22 @@
             <cols>
 
                 <!--ID-->
-                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="id" mandatory="true" sortable="true"/>
 
                 <!--单号-->
                 <col id="code" mandatory="true" sortable="true"/>
 
                 <!--业务组织-->
-                <col id="orgId" ui:number="true" sortable="true"/>
+                <col id="orgId" sortable="true"/>
 
                 <!--供应商-->
-                <col id="supplierId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="supplierId" mandatory="true" sortable="true"/>
 
                 <!--付款日期-->
                 <col id="businessDate" mandatory="true" sortable="true"/>
 
                 <!--币种-->
-                <col id="currencyId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="currencyId" mandatory="true" sortable="true"/>
 
                 <!--汇率-->
                 <col id="exchangeRate" ui:number="true" sortable="true"/>
@@ -49,16 +49,16 @@
                 <col id="totalAmount" mandatory="true" ui:number="true" sortable="true"/>
 
                 <!--结算方式-->
-                <col id="settlementMethodId" ui:number="true" sortable="true"/>
+                <col id="settlementMethodId" sortable="true"/>
 
                 <!--付款方式-->
                 <col id="paymentMethod" sortable="true"/>
 
                 <!--付款账户(资金账户)-->
-                <col id="bankAccountId" ui:number="true" sortable="true"/>
+                <col id="bankAccountId" sortable="true"/>
 
                 <!--供应商收款账户(银行账户主数据)-->
-                <col id="partnerBankAccountId" ui:number="true" sortable="true"/>
+                <col id="partnerBankAccountId" sortable="true"/>
 
                 <!--单据状态-->
                 <col id="docStatus" mandatory="true" sortable="true"/>

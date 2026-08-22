@@ -1,7 +1,7 @@
 {
-  "id": 0,
-  "partnerId": 0,
-  "orgId": 0,
+  "id": "",
+  "partnerId": "",
+  "orgId": "",
   "periodFrom": "2000-01-01",
   "periodTo": "2000-01-01",
   "totalScore": 0.0,

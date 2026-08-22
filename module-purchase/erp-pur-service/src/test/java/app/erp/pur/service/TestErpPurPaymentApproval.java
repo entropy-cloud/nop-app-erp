@@ -40,10 +40,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpPurPaymentApproval extends JunitAutoTestCase {
 
-    static final Long ORG_ID = 1003L;
-    static final Long SUPPLIER_ID = 2101L;
-    static final Long CURRENCY_ID = 6101L;
-    static final Long ACCT_SCHEMA_ID = 7003L;
+    static final String ORG_ID = "1003";
+    static final String SUPPLIER_ID = "2101";
+    static final String CURRENCY_ID = "6101";
+    static final String ACCT_SCHEMA_ID = "7003";
     static final String VOUCHER_STATUS_POSTED = "POSTED";
 
     @Inject
@@ -139,19 +139,19 @@ public class TestErpPurPaymentApproval extends JunitAutoTestCase {
 
     // ---------- helpers ----------
 
-    private ApiResponse<?> submit(Long id) {
-        return executeRpc(mutation, "ErpPurPayment__submitForApproval", ApiRequest.build(Map.of("id", String.valueOf(id))));
+    private ApiResponse<?> submit(String id) {
+        return executeRpc(mutation, "ErpPurPayment__submitForApproval", ApiRequest.build(Map.of("id", id)));
     }
 
-    private ApiResponse<?> approve(Long id) {
-        return executeRpc(mutation, "ErpPurPayment__approve", ApiRequest.build(Map.of("id", String.valueOf(id))));
+    private ApiResponse<?> approve(String id) {
+        return executeRpc(mutation, "ErpPurPayment__approve", ApiRequest.build(Map.of("id", id)));
     }
 
-    private ApiResponse<?> reverseApprove(Long id) {
-        return executeRpc(mutation, "ErpPurPayment__reverseApprove", ApiRequest.build(Map.of("id", String.valueOf(id))));
+    private ApiResponse<?> reverseApprove(String id) {
+        return executeRpc(mutation, "ErpPurPayment__reverseApprove", ApiRequest.build(Map.of("id", id)));
     }
 
-    private ApiResponse<?> cancel(Long id) {
+    private ApiResponse<?> cancel(String id) {
         return executeRpc(mutation, "ErpPurPayment__cancel", ApiRequest.build(Map.of("paymentId", id)));
     }
 
@@ -182,7 +182,7 @@ public class TestErpPurPaymentApproval extends JunitAutoTestCase {
         return payment;
     }
 
-    private void seedActiveSupplier(Long id) {
+    private void seedActiveSupplier(String id) {
         IEntityDao<ErpMdPartner> dao = daoProvider.daoFor(ErpMdPartner.class);
         ErpMdPartner partner = new ErpMdPartner();
         partner.setId(id);
@@ -202,7 +202,7 @@ public class TestErpPurPaymentApproval extends JunitAutoTestCase {
         });
     }
 
-    private void seedAcctSchema(Long id, Long orgId) {
+    private void seedAcctSchema(String id, String orgId) {
         IEntityDao<ErpMdAcctSchema> dao = daoProvider.daoFor(ErpMdAcctSchema.class);
         ErpMdAcctSchema schema = new ErpMdAcctSchema();
         schema.setId(id);
@@ -246,7 +246,7 @@ public class TestErpPurPaymentApproval extends JunitAutoTestCase {
         return links.stream().filter(l -> paymentCode.equals(l.getBillCode())).findFirst().orElse(null);
     }
 
-    private long countLines(Long voucherId) {
+    private long countLines(String voucherId) {
         IEntityDao<app.erp.fin.dao.entity.ErpFinVoucherLine> dao = daoProvider
                 .daoFor(app.erp.fin.dao.entity.ErpFinVoucherLine.class);
         io.nop.api.core.beans.query.QueryBean q = new io.nop.api.core.beans.query.QueryBean();

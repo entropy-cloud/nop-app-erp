@@ -50,14 +50,14 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpPurToInvToFinPostingEnd extends JunitAutoTestCase {
 
-    static final Long ORG_ID = 1501L;
-    static final Long SUPPLIER_ID = 2501L;
-    static final Long MATERIAL_ID = 4501L;
-    static final Long UOM_ID = 5501L;
-    static final Long CURRENCY_ID = 6501L;
-    static final Long ACCT_SCHEMA_ID = 7501L;
-    static final Long WAREHOUSE_ID = 3501L;
-    static final Long LOCATION_ID = 4502L;
+    static final String ORG_ID = "1501";
+    static final String SUPPLIER_ID = "2501";
+    static final String MATERIAL_ID = "4501";
+    static final String UOM_ID = "5501";
+    static final String CURRENCY_ID = "6501";
+    static final String ACCT_SCHEMA_ID = "7501";
+    static final String WAREHOUSE_ID = "3501";
+    static final String LOCATION_ID = "4502";
 
     @Inject
     IDaoProvider daoProvider;
@@ -200,15 +200,15 @@ public class TestErpPurToInvToFinPostingEnd extends JunitAutoTestCase {
 
     // ---------- helpers ----------
 
-    private ApiResponse<?> approve(Long id) {
+    private ApiResponse<?> approve(String id) {
         return executeRpc(mutation, "ErpPurInvoice__approve", ApiRequest.build(Map.of("id", String.valueOf(id))));
     }
 
-    private ApiResponse<?> submit(Long id) {
+    private ApiResponse<?> submit(String id) {
         return executeRpc(mutation, "ErpPurInvoice__submitForApproval", ApiRequest.build(Map.of("id", String.valueOf(id))));
     }
 
-    private ApiResponse<?> reverseApprove(Long id) {
+    private ApiResponse<?> reverseApprove(String id) {
         return executeRpc(mutation, "ErpPurInvoice__reverseApprove", ApiRequest.build(Map.of("id", String.valueOf(id))));
     }
 
@@ -278,7 +278,7 @@ public class TestErpPurToInvToFinPostingEnd extends JunitAutoTestCase {
         return line;
     }
 
-    private void seedActiveSupplier(Long id) {
+    private void seedActiveSupplier(String id) {
         IEntityDao<ErpMdPartner> dao = daoProvider.daoFor(ErpMdPartner.class);
         ErpMdPartner partner = new ErpMdPartner();
         partner.setId(id);
@@ -300,7 +300,7 @@ public class TestErpPurToInvToFinPostingEnd extends JunitAutoTestCase {
         });
     }
 
-    private void seedAcctSchema(Long id, Long orgId) {
+    private void seedAcctSchema(String id, String orgId) {
         IEntityDao<ErpMdAcctSchema> dao = daoProvider.daoFor(ErpMdAcctSchema.class);
         ErpMdAcctSchema schema = new ErpMdAcctSchema();
         schema.setId(id);
@@ -356,7 +356,7 @@ public class TestErpPurToInvToFinPostingEnd extends JunitAutoTestCase {
                 .filter(l -> billCode.equals(l.getBillCode())).count();
     }
 
-    private long countLines(Long voucherId) {
+    private long countLines(String voucherId) {
         IEntityDao<ErpFinVoucherLine> dao = daoProvider.daoFor(ErpFinVoucherLine.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("voucherId", voucherId));

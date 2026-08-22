@@ -147,10 +147,9 @@ public class TestErpFinDualSideConsistency extends JunitAutoTestCase {
             IEntityDao<ErpPurInvoice> dao = daoProvider.daoFor(ErpPurInvoice.class);
             ErpPurInvoice inv = dao.newEntity();
             inv.setCode(code);
-            // bridge-test-118: fin String partnerId → pur Long supplierId（pur 位次 15 未迁移，退役 owner M2.5）
-            inv.setSupplierId(Long.valueOf(partnerId));
+            inv.setSupplierId(partnerId);
             inv.setBusinessDate(LocalDate.of(2026, 5, 20));
-            inv.setCurrencyId(1L);
+            inv.setCurrencyId("1");
             inv.setExchangeRate(BigDecimal.ONE);
             inv.setAmountSource(amountFunctional);
             inv.setAmountFunctional(amountFunctional);

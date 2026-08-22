@@ -65,13 +65,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         testConfigFile = "classpath:budget-commitment-test.yaml")
 public class TestErpPurInvoiceCommitmentRestore extends JunitAutoTestCase {
 
-    static final Long ORG_ID = 9101L;
-    static final Long SUPPLIER_ID = 9201L;
-    static final Long WAREHOUSE_ID = 9301L;
-    static final Long MATERIAL_ID = 9401L;
-    static final Long UOM_ID = 9501L;
-    static final Long CURRENCY_ID = 9601L;
-    static final Long ACCT_SCHEMA_ID = 9701L;
+    static final String ORG_ID = "9101";
+    static final String SUPPLIER_ID = "9201";
+    static final String WAREHOUSE_ID = "9301";
+    static final String MATERIAL_ID = "9401";
+    static final String UOM_ID = "9501";
+    static final String CURRENCY_ID = "9601";
+    static final String ACCT_SCHEMA_ID = "9701";
     static final String COMMITMENT_BILL_TYPE = "PURCHASE_ORDER_COMMITMENT";
     static final String POSTING_TYPE_COMMITMENT = "COMMITMENT";
 
@@ -87,11 +87,11 @@ public class TestErpPurInvoiceCommitmentRestore extends JunitAutoTestCase {
     @Test
     public void testInvoiceReverseApproveRestoresCommitment() {
         seedPrereqs();
-        long orderLineId = nextId();
-        long receiveId = nextId();
-        long receiveLineId = nextId();
-        Long orderId = newOrder("PO-IRS-001", orderLineId);
-        Long invoiceId = buildPoReceiveInvoice("PR-IRS-001", receiveId, receiveLineId, orderId, orderLineId,
+        String orderLineId = nextId();
+        String receiveId = nextId();
+        String receiveLineId = nextId();
+        String orderId = newOrder("PO-IRS-001", orderLineId);
+        String invoiceId = buildPoReceiveInvoice("PR-IRS-001", receiveId, receiveLineId, orderId, orderLineId,
                 "PI-IRS-001", receiveLineId);
 
         // ① PO approve → COMMITMENT C1
@@ -120,11 +120,11 @@ public class TestErpPurInvoiceCommitmentRestore extends JunitAutoTestCase {
     @Test
     public void testInvoiceCancelRestoresCommitment() {
         seedPrereqs();
-        long orderLineId = nextId();
-        long receiveId = nextId();
-        long receiveLineId = nextId();
-        Long orderId = newOrder("PO-ICS-001", orderLineId);
-        Long invoiceId = buildPoReceiveInvoice("PR-ICS-001", receiveId, receiveLineId, orderId, orderLineId,
+        String orderLineId = nextId();
+        String receiveId = nextId();
+        String receiveLineId = nextId();
+        String orderId = newOrder("PO-ICS-001", orderLineId);
+        String invoiceId = buildPoReceiveInvoice("PR-ICS-001", receiveId, receiveLineId, orderId, orderLineId,
                 "PI-ICS-001", receiveLineId);
 
         assertEquals(0, submitOrder(orderId).getStatus());
@@ -149,11 +149,11 @@ public class TestErpPurInvoiceCommitmentRestore extends JunitAutoTestCase {
     @Test
     public void testConfigDisabledNoRestore() {
         seedPrereqs();
-        long orderLineId = nextId();
-        long receiveId = nextId();
-        long receiveLineId = nextId();
-        Long orderId = newOrder("PO-ICF-001", orderLineId);
-        Long invoiceId = buildPoReceiveInvoice("PR-ICF-001", receiveId, receiveLineId, orderId, orderLineId,
+        String orderLineId = nextId();
+        String receiveId = nextId();
+        String receiveLineId = nextId();
+        String orderId = newOrder("PO-ICF-001", orderLineId);
+        String invoiceId = buildPoReceiveInvoice("PR-ICF-001", receiveId, receiveLineId, orderId, orderLineId,
                 "PI-ICF-001", receiveLineId);
 
         assertEquals(0, submitOrder(orderId).getStatus());
@@ -179,10 +179,10 @@ public class TestErpPurInvoiceCommitmentRestore extends JunitAutoTestCase {
     @Test
     public void testCancelNeverApprovedNoRestore() {
         seedPrereqs();
-        long orderLineId = nextId();
-        long receiveId = nextId();
-        long receiveLineId = nextId();
-        Long orderId = newOrder("PO-INV-001", orderLineId);
+        String orderLineId = nextId();
+        String receiveId = nextId();
+        String receiveLineId = nextId();
+        String orderId = newOrder("PO-INV-001", orderLineId);
         buildPoReceiveInvoice("PR-INV-001", receiveId, receiveLineId, orderId, orderLineId,
                 "PI-INV-001", receiveLineId);
 
@@ -201,11 +201,11 @@ public class TestErpPurInvoiceCommitmentRestore extends JunitAutoTestCase {
     @Test
     public void testPoCancelledNoRestore() {
         seedPrereqs();
-        long orderLineId = nextId();
-        long receiveId = nextId();
-        long receiveLineId = nextId();
-        Long orderId = newOrder("PO-IPC-001", orderLineId);
-        Long invoiceId = buildPoReceiveInvoice("PR-IPC-001", receiveId, receiveLineId, orderId, orderLineId,
+        String orderLineId = nextId();
+        String receiveId = nextId();
+        String receiveLineId = nextId();
+        String orderId = newOrder("PO-IPC-001", orderLineId);
+        String invoiceId = buildPoReceiveInvoice("PR-IPC-001", receiveId, receiveLineId, orderId, orderLineId,
                 "PI-IPC-001", receiveLineId);
 
         assertEquals(0, submitOrder(orderId).getStatus());
@@ -226,11 +226,11 @@ public class TestErpPurInvoiceCommitmentRestore extends JunitAutoTestCase {
     public void testPoRejectedNoRestore() {
         // Seq A：PO approve→invoice approve→PO reverseApprove（PO=REJECTED）→invoice reverseApprove → 零恢复
         seedPrereqs();
-        long orderLineId = nextId();
-        long receiveId = nextId();
-        long receiveLineId = nextId();
-        Long orderId = newOrder("PO-IPR-001", orderLineId);
-        Long invoiceId = buildPoReceiveInvoice("PR-IPR-001", receiveId, receiveLineId, orderId, orderLineId,
+        String orderLineId = nextId();
+        String receiveId = nextId();
+        String receiveLineId = nextId();
+        String orderId = newOrder("PO-IPR-001", orderLineId);
+        String invoiceId = buildPoReceiveInvoice("PR-IPR-001", receiveId, receiveLineId, orderId, orderLineId,
                 "PI-IPR-001", receiveLineId);
 
         assertEquals(0, submitOrder(orderId).getStatus());
@@ -249,10 +249,10 @@ public class TestErpPurInvoiceCommitmentRestore extends JunitAutoTestCase {
     @Test
     public void testNoLinkedOrderNoRestore() {
         seedPrereqs();
-        long orderLineId = nextId();
-        long receiveId = nextId();
-        long receiveLineId = nextId();
-        Long orderId = newOrder("PO-INL-001", orderLineId);
+        String orderLineId = nextId();
+        String receiveId = nextId();
+        String receiveLineId = nextId();
+        String orderId = newOrder("PO-INL-001", orderLineId);
         buildPoReceiveInvoice("PR-INL-001", receiveId, receiveLineId, orderId, orderLineId,
                 null, null);
 
@@ -261,7 +261,7 @@ public class TestErpPurInvoiceCommitmentRestore extends JunitAutoTestCase {
         assertEquals(1, countActiveCommitments("PO-INL-001"), "C1 已生成");
 
         // 发票行零 receiveLineId 回链 → approve 不释放、reverseApprove 不恢复
-        Long invoiceId = newInvoice("PI-INL-001", null);
+        String invoiceId = newInvoice("PI-INL-001", null);
         ErpPurInvoice invoice = daoProvider.daoFor(ErpPurInvoice.class).getEntityById(invoiceId);
         assertEquals(0, submitInvoice(invoice.getId()).getStatus());
         assertEquals(0, approveInvoice(invoice.getId()).getStatus());
@@ -275,13 +275,13 @@ public class TestErpPurInvoiceCommitmentRestore extends JunitAutoTestCase {
         // Seq B：PO approve→inv#1 approve→inv#2 approve（释放均吞掉）→inv#1 reverseApprove→inv#2 reverseApprove
         // → 恰 2 张活跃凭证（全量恢复语义的已知保守边界，按比例语义归 successor）
         seedPrereqs();
-        long orderLineId = nextId();
-        long receiveId = nextId();
-        long receiveLineId = nextId();
-        Long orderId = newOrder("PO-ISB-001", orderLineId);
+        String orderLineId = nextId();
+        String receiveId = nextId();
+        String receiveLineId = nextId();
+        String orderId = newOrder("PO-ISB-001", orderLineId);
         buildPoReceiveInvoice("PR-ISB-001", receiveId, receiveLineId, orderId, orderLineId,
                 "PI-ISB-001", receiveLineId);
-        Long invoice2Id = newInvoice("PI-ISB-002", receiveLineId);
+        String invoice2Id = newInvoice("PI-ISB-002", receiveLineId);
 
         assertEquals(0, submitOrder(orderId).getStatus());
         assertEquals(0, approveOrder(orderId).getStatus());
@@ -306,11 +306,11 @@ public class TestErpPurInvoiceCommitmentRestore extends JunitAutoTestCase {
     public void testDoubleReverseApproveNoSecondRestore() {
         // 幂等守卫：第二次 reverseApprove 被迁移守卫拒绝（REJECTED 非 APPROVED），不二次恢复
         seedPrereqs();
-        long orderLineId = nextId();
-        long receiveId = nextId();
-        long receiveLineId = nextId();
-        Long orderId = newOrder("PO-IDR-001", orderLineId);
-        Long invoiceId = buildPoReceiveInvoice("PR-IDR-001", receiveId, receiveLineId, orderId, orderLineId,
+        String orderLineId = nextId();
+        String receiveId = nextId();
+        String receiveLineId = nextId();
+        String orderId = newOrder("PO-IDR-001", orderLineId);
+        String invoiceId = buildPoReceiveInvoice("PR-IDR-001", receiveId, receiveLineId, orderId, orderLineId,
                 "PI-IDR-001", receiveLineId);
 
         assertEquals(0, submitOrder(orderId).getStatus());
@@ -333,9 +333,9 @@ public class TestErpPurInvoiceCommitmentRestore extends JunitAutoTestCase {
     /**
      * @return invoiceId（invoiceCode 为 null 时不创建发票行 receiveLineId 回链——无关联 PO 场景）
      */
-    private Long buildPoReceiveInvoice(String receiveCode, long receiveId, long receiveLineId, Long orderId,
-                                       long orderLineId, String invoiceCode, Long invoiceReceiveLineId) {
-        long newReceiveId = nextId();
+    private String buildPoReceiveInvoice(String receiveCode, String receiveId, String receiveLineId, String orderId,
+                                         String orderLineId, String invoiceCode, String invoiceReceiveLineId) {
+        String newReceiveId = nextId();
         ormTemplate.runInSession(session -> {
             newReceive(receiveCode, newReceiveId, orderId);
             newReceiveLine(receiveLineId, newReceiveId, orderLineId, new BigDecimal("10"), new BigDecimal("5"));
@@ -416,7 +416,7 @@ public class TestErpPurInvoiceCommitmentRestore extends JunitAutoTestCase {
 
     // ---------- entity builders ----------
 
-    private Long newOrder(String code, long orderLineId) {
+    private String newOrder(String code, String orderLineId) {
         return ormTemplate.runInSession(session -> {
             IEntityDao<ErpPurOrder> dao = daoProvider.daoFor(ErpPurOrder.class);
             ErpPurOrder order = new ErpPurOrder();
@@ -453,7 +453,7 @@ public class TestErpPurInvoiceCommitmentRestore extends JunitAutoTestCase {
         });
     }
 
-    private void newReceive(String code, Long receiveId, Long orderId) {
+    private void newReceive(String code, String receiveId, String orderId) {
         IEntityDao<ErpPurReceive> dao = daoProvider.daoFor(ErpPurReceive.class);
         ErpPurReceive receive = new ErpPurReceive();
         receive.setId(receiveId);
@@ -472,7 +472,7 @@ public class TestErpPurInvoiceCommitmentRestore extends JunitAutoTestCase {
         dao.saveEntity(receive);
     }
 
-    private void newReceiveLine(Long lineId, Long receiveId, Long orderLineId, BigDecimal qty, BigDecimal unitPrice) {
+    private void newReceiveLine(String lineId, String receiveId, String orderLineId, BigDecimal qty, BigDecimal unitPrice) {
         IEntityDao<ErpPurReceiveLine> dao = daoProvider.daoFor(ErpPurReceiveLine.class);
         ErpPurReceiveLine line = new ErpPurReceiveLine();
         line.setId(lineId);
@@ -489,7 +489,7 @@ public class TestErpPurInvoiceCommitmentRestore extends JunitAutoTestCase {
     /**
      * @param receiveLineId 为 null 时不设置发票行 receiveLineId 回链（无关联 PO 场景）
      */
-    private Long newInvoice(String code, Long receiveLineId) {
+    private String newInvoice(String code, String receiveLineId) {
         return ormTemplate.runInSession(session -> {
             IEntityDao<ErpPurInvoice> dao = daoProvider.daoFor(ErpPurInvoice.class);
             ErpPurInvoice invoice = new ErpPurInvoice();
@@ -524,7 +524,7 @@ public class TestErpPurInvoiceCommitmentRestore extends JunitAutoTestCase {
         });
     }
 
-    private Long findInvoiceByCode(String code) {
+    private String findInvoiceByCode(String code) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("code", code));
         List<ErpPurInvoice> list = daoProvider.daoFor(ErpPurInvoice.class).findAllByQuery(q);
@@ -566,39 +566,39 @@ public class TestErpPurInvoiceCommitmentRestore extends JunitAutoTestCase {
 
     // ---------- rpc ----------
 
-    private ApiResponse<?> submitOrder(Long id) {
-        return executeRpc(mutation, "ErpPurOrder__submitForApproval", ApiRequest.build(Map.of("id", String.valueOf(id))));
+    private ApiResponse<?> submitOrder(String id) {
+        return executeRpc(mutation, "ErpPurOrder__submitForApproval", ApiRequest.build(Map.of("id", id)));
     }
 
-    private ApiResponse<?> approveOrder(Long id) {
-        return executeRpc(mutation, "ErpPurOrder__approve", ApiRequest.build(Map.of("id", String.valueOf(id))));
+    private ApiResponse<?> approveOrder(String id) {
+        return executeRpc(mutation, "ErpPurOrder__approve", ApiRequest.build(Map.of("id", id)));
     }
 
-    private ApiResponse<?> reverseApproveOrder(Long id) {
-        return executeRpc(mutation, "ErpPurOrder__reverseApprove", ApiRequest.build(Map.of("id", String.valueOf(id))));
+    private ApiResponse<?> reverseApproveOrder(String id) {
+        return executeRpc(mutation, "ErpPurOrder__reverseApprove", ApiRequest.build(Map.of("id", id)));
     }
 
-    private ApiResponse<?> cancelOrder(Long id) {
+    private ApiResponse<?> cancelOrder(String id) {
         return executeRpc(mutation, "ErpPurOrder__cancel", ApiRequest.build(Map.of("orderId", id)));
     }
 
-    private ApiResponse<?> approveReceive(Long id) {
-        return executeRpc(mutation, "ErpPurReceive__approve", ApiRequest.build(Map.of("id", String.valueOf(id))));
+    private ApiResponse<?> approveReceive(String id) {
+        return executeRpc(mutation, "ErpPurReceive__approve", ApiRequest.build(Map.of("id", id)));
     }
 
-    private ApiResponse<?> submitInvoice(Long id) {
-        return executeRpc(mutation, "ErpPurInvoice__submitForApproval", ApiRequest.build(Map.of("id", String.valueOf(id))));
+    private ApiResponse<?> submitInvoice(String id) {
+        return executeRpc(mutation, "ErpPurInvoice__submitForApproval", ApiRequest.build(Map.of("id", id)));
     }
 
-    private ApiResponse<?> approveInvoice(Long id) {
-        return executeRpc(mutation, "ErpPurInvoice__approve", ApiRequest.build(Map.of("id", String.valueOf(id))));
+    private ApiResponse<?> approveInvoice(String id) {
+        return executeRpc(mutation, "ErpPurInvoice__approve", ApiRequest.build(Map.of("id", id)));
     }
 
-    private ApiResponse<?> reverseApproveInvoice(Long id) {
-        return executeRpc(mutation, "ErpPurInvoice__reverseApprove", ApiRequest.build(Map.of("id", String.valueOf(id))));
+    private ApiResponse<?> reverseApproveInvoice(String id) {
+        return executeRpc(mutation, "ErpPurInvoice__reverseApprove", ApiRequest.build(Map.of("id", id)));
     }
 
-    private ApiResponse<?> cancelInvoice(Long id) {
+    private ApiResponse<?> cancelInvoice(String id) {
         return executeRpc(mutation, "ErpPurInvoice__cancel", ApiRequest.build(Map.of("invoiceId", id)));
     }
 
@@ -607,7 +607,7 @@ public class TestErpPurInvoiceCommitmentRestore extends JunitAutoTestCase {
         return graphQLEngine.executeRpc(ctx);
     }
 
-    private Long nextId() {
-        return idSeq.incrementAndGet();
+    private String nextId() {
+        return String.valueOf(idSeq.incrementAndGet());
     }
 }

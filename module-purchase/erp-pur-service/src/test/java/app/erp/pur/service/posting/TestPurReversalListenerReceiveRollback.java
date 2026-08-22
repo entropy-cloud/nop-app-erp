@@ -106,10 +106,10 @@ public class TestPurReversalListenerReceiveRollback extends JunitAutoTestCase {
         IEntityDao<ErpPurReceive> dao = daoProvider.daoFor(ErpPurReceive.class);
         ErpPurReceive receive = new ErpPurReceive();
         receive.setCode(code);
-        receive.setSupplierId(990101L);
-        receive.setWarehouseId(990201L);
+        receive.setSupplierId("990101");
+        receive.setWarehouseId("990201");
         receive.setBusinessDate(LocalDate.of(2026, 7, 30));
-        receive.setCurrencyId(990301L);
+        receive.setCurrencyId("990301");
         receive.setDocStatus(ErpPurConstants.DOC_STATUS_ACTIVE);
         receive.setApproveStatus(approveStatus);
         receive.setPosted(posted);

@@ -15,5 +15,5 @@ import app.erp.pur.dao.entity.ErpPurInvoice;
 public interface IErpPurInvoiceBiz extends ICrudBiz<ErpPurInvoice> {
 
     @BizMutation
-    ErpPurInvoice cancel(@Name("invoiceId") Long invoiceId, IServiceContext context);
+    ErpPurInvoice cancel(@Name("invoiceId") String invoiceId, IServiceContext context);
 }

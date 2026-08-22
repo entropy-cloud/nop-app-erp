@@ -38,7 +38,7 @@ public class SupplierEligibilityChecker {
     @Inject
     IErpMdSupplierApprovalBiz supplierApprovalBiz;
 
-    public Decision check(Long partnerId, io.nop.core.context.IServiceContext context) {
+    public Decision check(String partnerId, io.nop.core.context.IServiceContext context) {
         if (partnerId == null) {
             return Decision.ALLOW;
         }
@@ -71,7 +71,7 @@ public class SupplierEligibilityChecker {
         return AppConfig.var(ErpPurConstants.CONFIG_SCORECARD_PREVENT_ON_RED, true);
     }
 
-    protected ErpPurSupplierScorecard findLatestFinalizedScorecard(Long partnerId) {
+    protected ErpPurSupplierScorecard findLatestFinalizedScorecard(String partnerId) {
         // standing 为字典类型，xmeta 仅允许 eq/in 过滤；status=FINALIZED 用 eq。取最新周期。
         IEntityDao<ErpPurSupplierScorecard> dao = daoProvider.daoFor(ErpPurSupplierScorecard.class);
         QueryBean q = new QueryBean();

@@ -61,13 +61,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpPurReceiveMaterialCostAggregation extends JunitAutoTestCase {
 
-    static final Long ORG_ID = 1401L;
-    static final Long SUPPLIER_ID = 2401L;
-    static final Long WAREHOUSE_ID = 3401L;
-    static final Long MATERIAL_ID = 4401L;
-    static final Long UOM_ID = 5401L;
-    static final Long CURRENCY_ID = 6401L;
-    static final Long ACCT_SCHEMA_ID = 7401L;
+    static final String ORG_ID = "1401";
+    static final String SUPPLIER_ID = "2401";
+    static final String WAREHOUSE_ID = "3401";
+    static final String MATERIAL_ID = "4401";
+    static final String UOM_ID = "5401";
+    static final String CURRENCY_ID = "6401";
+    static final String ACCT_SCHEMA_ID = "7401";
 
     @Inject
     IDaoProvider daoProvider;
@@ -79,24 +79,24 @@ public class TestErpPurReceiveMaterialCostAggregation extends JunitAutoTestCase 
     @Test
     public void testApproveTriggersMaterialAggregation() {
         seedPrereqs();
-        Long[] projectHolder = new Long[1];
+        String[] projectHolder = new String[1];
         ormTemplate.runInSession(session -> {
             seedActiveSupplier();
-            Long projectId = seedProject("PRJ-PUR-001", "采购归集项目", ErpPrjConstants.PROJECT_STATUS_OPEN,
+            String projectId = seedProject("PRJ-PUR-001", "采购归集项目", ErpPrjConstants.PROJECT_STATUS_OPEN,
                     new BigDecimal("100000"));
             projectHolder[0] = projectId;
-            Long orderId = newOrder("PO-MAT-001");
-            newOrderLine(orderId, 9401L, 1, new BigDecimal("10"), new BigDecimal("5"), projectId);
-            newReceive("PR-MAT-001", 9402L, orderId);
-            newReceiveLine(9403L, 9402L, 9401L, new BigDecimal("10"), new BigDecimal("5"),
+            String orderId = newOrder("PO-MAT-001");
+            newOrderLine(orderId, "9401", 1, new BigDecimal("10"), new BigDecimal("5"), projectId);
+            newReceive("PR-MAT-001", "9402", orderId);
+            newReceiveLine("9403", "9402", "9401", new BigDecimal("10"), new BigDecimal("5"),
                     new BigDecimal("50"));
             return null;
         });
 
-        assertEquals(0, submit(9402L).getStatus());
-        ApiResponse<?> resp = approve(9402L);
+        assertEquals(0, submit("9402").getStatus());
+        ApiResponse<?> resp = approve("9402");
         assertEquals(0, resp.getStatus(), "审核通过（项目 OPEN + 预算充足）");
-        ErpPurReceive approved = daoProvider.daoFor(ErpPurReceive.class).getEntityById(9402L);
+        ErpPurReceive approved = daoProvider.daoFor(ErpPurReceive.class).getEntityById("9402");
         assertEquals(ErpPurConstants.APPROVE_STATUS_APPROVED, approved.getApproveStatus());
 
         // 归集行已生成（sourceBillCode=入库单号-行号）
@@ -117,16 +117,16 @@ public class TestErpPurReceiveMaterialCostAggregation extends JunitAutoTestCase 
         seedPrereqs();
         ormTemplate.runInSession(session -> {
             seedActiveSupplier();
-            Long orderId = newOrder("PO-MAT-NP-001");
-            newOrderLine(orderId, 9501L, 1, new BigDecimal("10"), new BigDecimal("5"), null);
-            newReceive("PR-MAT-NP-001", 9502L, orderId);
-            newReceiveLine(9503L, 9502L, 9501L, new BigDecimal("10"), new BigDecimal("5"),
+            String orderId = newOrder("PO-MAT-NP-001");
+            newOrderLine(orderId, "9501", 1, new BigDecimal("10"), new BigDecimal("5"), null);
+            newReceive("PR-MAT-NP-001", "9502", orderId);
+            newReceiveLine("9503", "9502", "9501", new BigDecimal("10"), new BigDecimal("5"),
                     new BigDecimal("50"));
             return null;
         });
 
-        assertEquals(0, submit(9502L).getStatus());
-        ApiResponse<?> resp = approve(9502L);
+        assertEquals(0, submit("9502").getStatus());
+        ApiResponse<?> resp = approve("9502");
         assertEquals(0, resp.getStatus(), "projectId null 行跳过归集，审核正常");
         assertNull(findCollectionLine(ErpPrjConstants.SOURCE_BILL_TYPE_PURCHASE_RECEIVE, "PR-MAT-NP-001-1"),
                 "projectId null 不生成归集行");
@@ -140,21 +140,21 @@ public class TestErpPurReceiveMaterialCostAggregation extends JunitAutoTestCase 
             ormTemplate.runInSession(session -> {
                 seedActiveSupplier();
                 // 总预算 30 < 入库行金额 50 → STRICT 拒绝
-                Long projectId = seedProject("PRJ-PUR-S-001", "STRICT 采购项目",
+                String projectId = seedProject("PRJ-PUR-S-001", "STRICT 采购项目",
                         ErpPrjConstants.PROJECT_STATUS_OPEN, new BigDecimal("30"));
-                Long orderId = newOrder("PO-MAT-S-001");
-                newOrderLine(orderId, 9601L, 1, new BigDecimal("10"), new BigDecimal("5"), projectId);
-                newReceive("PR-MAT-S-001", 9602L, orderId);
-                newReceiveLine(9603L, 9602L, 9601L, new BigDecimal("10"), new BigDecimal("5"),
+                String orderId = newOrder("PO-MAT-S-001");
+                newOrderLine(orderId, "9601", 1, new BigDecimal("10"), new BigDecimal("5"), projectId);
+                newReceive("PR-MAT-S-001", "9602", orderId);
+                newReceiveLine("9603", "9602", "9601", new BigDecimal("10"), new BigDecimal("5"),
                         new BigDecimal("50"));
                 return null;
             });
 
-            assertEquals(0, submit(9602L).getStatus());
-            ApiResponse<?> resp = approve(9602L);
+            assertEquals(0, submit("9602").getStatus());
+            ApiResponse<?> resp = approve("9602");
             assertEquals(ErpPrjErrors.ERR_BUDGET_EXCEEDED.getErrorCode(), resp.getCode(),
                     "STRICT 超预算 → 审核拒绝 ERR_BUDGET_EXCEEDED（L1 UC-PRJ-04）");
-            ErpPurReceive receive = daoProvider.daoFor(ErpPurReceive.class).getEntityById(9602L);
+            ErpPurReceive receive = daoProvider.daoFor(ErpPurReceive.class).getEntityById("9602");
             assertEquals(ErpPurConstants.APPROVE_STATUS_SUBMITTED, receive.getApproveStatus(),
                     "拒绝后入库单保持 SUBMITTED（未批准）");
             assertNull(findCollectionLine(ErpPrjConstants.SOURCE_BILL_TYPE_PURCHASE_RECEIVE,
@@ -171,18 +171,18 @@ public class TestErpPurReceiveMaterialCostAggregation extends JunitAutoTestCase 
             seedPrereqs();
             ormTemplate.runInSession(session -> {
                 seedActiveSupplier();
-                Long projectId = seedProject("PRJ-PUR-OFF-001", "禁用归集项目",
+                String projectId = seedProject("PRJ-PUR-OFF-001", "禁用归集项目",
                         ErpPrjConstants.PROJECT_STATUS_OPEN, new BigDecimal("100000"));
-                Long orderId = newOrder("PO-MAT-OFF-001");
-                newOrderLine(orderId, 9701L, 1, new BigDecimal("10"), new BigDecimal("5"), projectId);
-                newReceive("PR-MAT-OFF-001", 9702L, orderId);
-                newReceiveLine(9703L, 9702L, 9701L, new BigDecimal("10"), new BigDecimal("5"),
+                String orderId = newOrder("PO-MAT-OFF-001");
+                newOrderLine(orderId, "9701", 1, new BigDecimal("10"), new BigDecimal("5"), projectId);
+                newReceive("PR-MAT-OFF-001", "9702", orderId);
+                newReceiveLine("9703", "9702", "9701", new BigDecimal("10"), new BigDecimal("5"),
                         new BigDecimal("50"));
                 return null;
             });
 
-            assertEquals(0, submit(9702L).getStatus());
-            ApiResponse<?> resp = approve(9702L);
+            assertEquals(0, submit("9702").getStatus());
+            ApiResponse<?> resp = approve("9702");
             assertEquals(0, resp.getStatus(), "config-gated 关闭时审核正常（零副作用）");
             assertNull(findCollectionLine(ErpPrjConstants.SOURCE_BILL_TYPE_PURCHASE_RECEIVE,
                     "PR-MAT-OFF-001-1"), "config-gated 关闭不生成归集行");
@@ -193,14 +193,14 @@ public class TestErpPurReceiveMaterialCostAggregation extends JunitAutoTestCase 
 
     // ---------- rpc helpers ----------
 
-    private ApiResponse<?> submit(Long receiveId) {
+    private ApiResponse<?> submit(String receiveId) {
         return executeRpc(mutation, "ErpPurReceive__submitForApproval",
-                ApiRequest.build(Map.of("id", String.valueOf(receiveId))));
+                ApiRequest.build(Map.of("id", receiveId)));
     }
 
-    private ApiResponse<?> approve(Long receiveId) {
+    private ApiResponse<?> approve(String receiveId) {
         return executeRpc(mutation, "ErpPurReceive__approve",
-                ApiRequest.build(Map.of("id", String.valueOf(receiveId))));
+                ApiRequest.build(Map.of("id", receiveId)));
     }
 
     private ApiResponse<?> executeRpc(GraphQLOperationType opType, String action, ApiRequest<?> request) {
@@ -270,7 +270,7 @@ public class TestErpPurReceiveMaterialCostAggregation extends JunitAutoTestCase 
         dao.saveEntity(subject);
     }
 
-    private Long seedProject(String code, String name, String status, BigDecimal budget) {
+    private String seedProject(String code, String name, String status, BigDecimal budget) {
         IEntityDao<ErpPrjProjectType> typeDao = daoProvider.daoFor(ErpPrjProjectType.class);
         ErpPrjProjectType type = new ErpPrjProjectType();
         type.setCode("PT-PUR-" + code);
@@ -291,7 +291,7 @@ public class TestErpPurReceiveMaterialCostAggregation extends JunitAutoTestCase 
         return p.getId();
     }
 
-    private Long newOrder(String code) {
+    private String newOrder(String code) {
         IEntityDao<ErpPurOrder> dao = daoProvider.daoFor(ErpPurOrder.class);
         ErpPurOrder order = new ErpPurOrder();
         order.setCode(code);
@@ -307,8 +307,8 @@ public class TestErpPurReceiveMaterialCostAggregation extends JunitAutoTestCase 
         return order.getId();
     }
 
-    private void newOrderLine(Long orderId, Long lineId, int lineNo, BigDecimal qty, BigDecimal unitPrice,
-                              Long projectId) {
+    private void newOrderLine(String orderId, String lineId, int lineNo, BigDecimal qty, BigDecimal unitPrice,
+                              String projectId) {
         IEntityDao<ErpPurOrderLine> dao = daoProvider.daoFor(ErpPurOrderLine.class);
         ErpPurOrderLine line = new ErpPurOrderLine();
         line.setId(lineId);
@@ -323,7 +323,7 @@ public class TestErpPurReceiveMaterialCostAggregation extends JunitAutoTestCase 
         dao.saveEntity(line);
     }
 
-    private void newReceive(String code, Long receiveId, Long orderId) {
+    private void newReceive(String code, String receiveId, String orderId) {
         IEntityDao<ErpPurReceive> dao = daoProvider.daoFor(ErpPurReceive.class);
         ErpPurReceive receive = new ErpPurReceive();
         receive.setId(receiveId);
@@ -342,7 +342,7 @@ public class TestErpPurReceiveMaterialCostAggregation extends JunitAutoTestCase 
         dao.saveEntity(receive);
     }
 
-    private void newReceiveLine(Long lineId, Long receiveId, Long orderLineId, BigDecimal qty,
+    private void newReceiveLine(String lineId, String receiveId, String orderLineId, BigDecimal qty,
                                 BigDecimal unitPrice, BigDecimal amount) {
         IEntityDao<ErpPurReceiveLine> dao = daoProvider.daoFor(ErpPurReceiveLine.class);
         ErpPurReceiveLine line = new ErpPurReceiveLine();

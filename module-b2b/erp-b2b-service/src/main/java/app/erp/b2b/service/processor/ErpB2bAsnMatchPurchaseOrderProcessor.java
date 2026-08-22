@@ -9,7 +9,6 @@ import app.erp.b2b.service.statemachine.ErpB2bAsnStateMachine;
 import app.erp.pur.dao.entity.ErpPurOrder;
 import app.erp.pur.dao.entity.ErpPurOrderLine;
 import io.nop.api.core.beans.query.QueryBean;
-import io.nop.api.core.convert.ConvertHelper;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.core.context.IServiceContext;
 import io.nop.dao.api.IDaoProvider;
@@ -152,7 +151,7 @@ public class ErpB2bAsnMatchPurchaseOrderProcessor {
     }
 
     @SuppressWarnings("unchecked")
-    protected List<ErpPurOrderLine> findPoLines(Long orderId) {
+    protected List<ErpPurOrderLine> findPoLines(String orderId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("orderId", orderId));
         return daoProvider.daoFor(ErpPurOrderLine.class).findAllByQuery(q);
@@ -162,13 +161,8 @@ public class ErpB2bAsnMatchPurchaseOrderProcessor {
         if (materialId == null) {
             return null;
         }
-        // bridge-main-031: b2b String materialId → pur Long materialId 对比（退役 owner M2.5）
-        Long materialKey = ConvertHelper.toLong(materialId);
-        if (materialKey == null) {
-            return null;
-        }
         for (ErpPurOrderLine line : poLines) {
-            if (materialKey.equals(line.getMaterialId())) {
+            if (materialId.equals(line.getMaterialId())) {
                 return line;
             }
         }

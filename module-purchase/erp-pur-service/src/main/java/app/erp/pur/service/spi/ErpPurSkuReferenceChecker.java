@@ -40,7 +40,7 @@ public class ErpPurSkuReferenceChecker implements IErpMdSkuReferenceChecker {
         return existsOrderLine(sku.getId()) || existsReceiveLine(sku.getId()) || existsReturnLine(sku.getId());
     }
 
-    private boolean existsOrderLine(Long skuId) {
+    private boolean existsOrderLine(String skuId) {
         IEntityDao<ErpPurOrderLine> dao = daoProvider.daoFor(ErpPurOrderLine.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("skuId", skuId));
@@ -49,7 +49,7 @@ public class ErpPurSkuReferenceChecker implements IErpMdSkuReferenceChecker {
         return !dao.findAllByQuery(q).isEmpty();
     }
 
-    private boolean existsReceiveLine(Long skuId) {
+    private boolean existsReceiveLine(String skuId) {
         IEntityDao<ErpPurReceiveLine> dao = daoProvider.daoFor(ErpPurReceiveLine.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("skuId", skuId));
@@ -58,7 +58,7 @@ public class ErpPurSkuReferenceChecker implements IErpMdSkuReferenceChecker {
         return !dao.findAllByQuery(q).isEmpty();
     }
 
-    private boolean existsReturnLine(Long skuId) {
+    private boolean existsReturnLine(String skuId) {
         IEntityDao<ErpPurReturnLine> dao = daoProvider.daoFor(ErpPurReturnLine.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("skuId", skuId));

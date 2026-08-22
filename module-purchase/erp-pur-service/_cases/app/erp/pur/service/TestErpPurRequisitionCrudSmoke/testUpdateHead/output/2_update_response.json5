@@ -3,7 +3,7 @@
     "id": "1",
     "code": "@var:ErpPurRequisition@code",
     "orgId": null,
-    "requesterId": 1,
+    "requesterId": "1",
     "departmentId": null,
     "businessDate": "@var:ErpPurRequisition@businessDate",
     "requiredDate": null,

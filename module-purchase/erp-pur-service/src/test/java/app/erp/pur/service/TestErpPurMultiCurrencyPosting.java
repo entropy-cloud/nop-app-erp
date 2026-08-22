@@ -48,10 +48,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpPurMultiCurrencyPosting extends JunitAutoTestCase {
 
-    static final Long ORG_ID = 1601L;
-    static final Long SUPPLIER_ID = 2601L;
-    static final Long CURRENCY_FC = 6601L;
-    static final Long ACCT_SCHEMA_ID = 7601L;
+    static final String ORG_ID = "1601";
+    static final String SUPPLIER_ID = "2601";
+    static final String CURRENCY_FC = "6601";
+    static final String ACCT_SCHEMA_ID = "7601";
     static final BigDecimal RATE = new BigDecimal("7.0");
 
     private static final IServiceContext CTX = new ServiceContextImpl();
@@ -71,7 +71,7 @@ public class TestErpPurMultiCurrencyPosting extends JunitAutoTestCase {
         PostingEvent event = apInvoiceEvent("AP-MC-001", new BigDecimal("100"), new BigDecimal("13"),
                 new BigDecimal("113"), RATE);
 
-        Long voucherId = ormTemplate.runInSession(session -> voucherBiz.post(event, CTX));
+        String voucherId = ormTemplate.runInSession(session -> voucherBiz.post(event, CTX));
 
         assertNotNull(voucherId, "外币 AP_INVOICE 应生成凭证");
         ErpFinVoucher voucher = daoProvider.daoFor(ErpFinVoucher.class).requireEntityById(voucherId);
@@ -114,7 +114,7 @@ public class TestErpPurMultiCurrencyPosting extends JunitAutoTestCase {
 
         PostingEvent event = paymentEvent("AP-MC-PAY-001", new BigDecimal("113"), RATE);
 
-        Long voucherId = ormTemplate.runInSession(session -> voucherBiz.post(event, CTX));
+        String voucherId = ormTemplate.runInSession(session -> voucherBiz.post(event, CTX));
         assertNotNull(voucherId, "外币 PAYMENT 应生成凭证");
 
         List<ErpFinVoucherLine> lines = loadLines(voucherId);
@@ -179,7 +179,7 @@ public class TestErpPurMultiCurrencyPosting extends JunitAutoTestCase {
         return event;
     }
 
-    private List<ErpFinVoucherLine> loadLines(Long voucherId) {
+    private List<ErpFinVoucherLine> loadLines(String voucherId) {
         IEntityDao<ErpFinVoucherLine> dao = daoProvider.daoFor(ErpFinVoucherLine.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("voucherId", voucherId));

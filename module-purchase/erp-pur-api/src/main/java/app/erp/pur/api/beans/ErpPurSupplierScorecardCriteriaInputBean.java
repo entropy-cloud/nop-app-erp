@@ -13,30 +13,30 @@
     public class ErpPurSupplierScorecardCriteriaInputBean extends CrudInputBase {
 
     
-        private Long _id;
+        private String _id;
 
     
         @PropMeta(propId=1)
     
-        public Long getId(){
+        public String getId(){
             return _id;
         }
 
-        public void setId(Long value){
+        public void setId(String value){
             this._id = value;
         }
 
 
-        private Long _scorecardId;
+        private String _scorecardId;
 
     
         @PropMeta(propId=2)
     
-        public Long getScorecardId(){
+        public String getScorecardId(){
             return _scorecardId;
         }
 
-        public void setScorecardId(Long value){
+        public void setScorecardId(String value){
             this._scorecardId = value;
         }
 

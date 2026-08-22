@@ -15,5 +15,5 @@ import app.erp.pur.dao.entity.ErpPurReturn;
 public interface IErpPurReturnBiz extends ICrudBiz<ErpPurReturn> {
 
     @BizMutation
-    ErpPurReturn cancel(@Name("returnId") Long returnId, IServiceContext context);
+    ErpPurReturn cancel(@Name("returnId") String returnId, IServiceContext context);
 }

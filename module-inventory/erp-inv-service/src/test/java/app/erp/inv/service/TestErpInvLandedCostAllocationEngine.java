@@ -33,9 +33,9 @@ public class TestErpInvLandedCostAllocationEngine {
     @Test
     public void testAllocateByAmount() {
         List<ReceiveLineInput> inputs = Arrays.asList(
-                new ReceiveLineInput(1L, 101L, 301L, new BigDecimal("100"), new BigDecimal("1000"),
+                new ReceiveLineInput("1", "101", "301", new BigDecimal("100"), new BigDecimal("1000"),
                         new BigDecimal("10"), null),
-                new ReceiveLineInput(2L, 102L, 301L, new BigDecimal("50"), new BigDecimal("500"),
+                new ReceiveLineInput("2", "102", "301", new BigDecimal("50"), new BigDecimal("500"),
                         new BigDecimal("10"), null)
         );
 
@@ -64,9 +64,9 @@ public class TestErpInvLandedCostAllocationEngine {
     @Test
     public void testAllocateByQuantity() {
         List<ReceiveLineInput> inputs = Arrays.asList(
-                new ReceiveLineInput(1L, 101L, 301L, new BigDecimal("100"), new BigDecimal("1000"),
+                new ReceiveLineInput("1", "101", "301", new BigDecimal("100"), new BigDecimal("1000"),
                         new BigDecimal("10"), null),
-                new ReceiveLineInput(2L, 102L, 301L, new BigDecimal("50"), new BigDecimal("500"),
+                new ReceiveLineInput("2", "102", "301", new BigDecimal("50"), new BigDecimal("500"),
                         new BigDecimal("10"), null)
         );
 
@@ -87,9 +87,9 @@ public class TestErpInvLandedCostAllocationEngine {
     @Test
     public void testAllocateByWeight() {
         List<ReceiveLineInput> inputs = Arrays.asList(
-                new ReceiveLineInput(1L, 101L, 301L, new BigDecimal("100"), new BigDecimal("1000"),
+                new ReceiveLineInput("1", "101", "301", new BigDecimal("100"), new BigDecimal("1000"),
                         new BigDecimal("10"), new BigDecimal("20")),
-                new ReceiveLineInput(2L, 102L, 301L, new BigDecimal("50"), new BigDecimal("500"),
+                new ReceiveLineInput("2", "102", "301", new BigDecimal("50"), new BigDecimal("500"),
                         new BigDecimal("10"), new BigDecimal("10"))
         );
 
@@ -109,11 +109,11 @@ public class TestErpInvLandedCostAllocationEngine {
     @Test
     public void testRoundingRemainderAbsorbedByLastLine() {
         List<ReceiveLineInput> inputs = Arrays.asList(
-                new ReceiveLineInput(1L, 101L, 301L, new BigDecimal("3"), new BigDecimal("100"),
+                new ReceiveLineInput("1", "101", "301", new BigDecimal("3"), new BigDecimal("100"),
                         new BigDecimal("10"), null),
-                new ReceiveLineInput(2L, 102L, 301L, new BigDecimal("3"), new BigDecimal("100"),
+                new ReceiveLineInput("2", "102", "301", new BigDecimal("3"), new BigDecimal("100"),
                         new BigDecimal("10"), null),
-                new ReceiveLineInput(3L, 103L, 301L, new BigDecimal("4"), new BigDecimal("100"),
+                new ReceiveLineInput("3", "103", "301", new BigDecimal("4"), new BigDecimal("100"),
                         new BigDecimal("10"), null)
         );
 

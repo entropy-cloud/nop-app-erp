@@ -13,30 +13,30 @@
     public class ErpPurSupplierScorecardVariableOutputBean {
 
     
-        private Long _id;
+        private String _id;
 
     
         @PropMeta(propId=1)
     
-        public Long getId(){
+        public String getId(){
             return _id;
         }
 
-        public void setId(Long value){
+        public void setId(String value){
             this._id = value;
         }
 
 
-        private Long _criteriaId;
+        private String _criteriaId;
 
     
         @PropMeta(propId=2)
     
-        public Long getCriteriaId(){
+        public String getCriteriaId(){
             return _criteriaId;
         }
 
-        public void setCriteriaId(Long value){
+        public void setCriteriaId(String value){
             this._criteriaId = value;
         }
 

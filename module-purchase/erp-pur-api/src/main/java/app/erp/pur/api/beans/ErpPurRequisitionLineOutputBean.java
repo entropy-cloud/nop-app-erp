@@ -13,30 +13,30 @@
     public class ErpPurRequisitionLineOutputBean {
 
     
-        private Long _id;
+        private String _id;
 
     
         @PropMeta(propId=1)
     
-        public Long getId(){
+        public String getId(){
             return _id;
         }
 
-        public void setId(Long value){
+        public void setId(String value){
             this._id = value;
         }
 
 
-        private Long _requisitionId;
+        private String _requisitionId;
 
     
         @PropMeta(propId=2)
     
-        public Long getRequisitionId(){
+        public String getRequisitionId(){
             return _requisitionId;
         }
 
-        public void setRequisitionId(Long value){
+        public void setRequisitionId(String value){
             this._requisitionId = value;
         }
 
@@ -55,30 +55,30 @@
         }
 
 
-        private Long _materialId;
+        private String _materialId;
 
     
         @PropMeta(propId=4)
     
-        public Long getMaterialId(){
+        public String getMaterialId(){
             return _materialId;
         }
 
-        public void setMaterialId(Long value){
+        public void setMaterialId(String value){
             this._materialId = value;
         }
 
 
-        private Long _uoMId;
+        private String _uoMId;
 
     
         @PropMeta(propId=5)
     
-        public Long getUoMId(){
+        public String getUoMId(){
             return _uoMId;
         }
 
-        public void setUoMId(Long value){
+        public void setUoMId(String value){
             this._uoMId = value;
         }
 
@@ -111,30 +111,30 @@
         }
 
 
-        private Long _suggestedSupplierId;
+        private String _suggestedSupplierId;
 
     
         @PropMeta(propId=8)
     
-        public Long getSuggestedSupplierId(){
+        public String getSuggestedSupplierId(){
             return _suggestedSupplierId;
         }
 
-        public void setSuggestedSupplierId(Long value){
+        public void setSuggestedSupplierId(String value){
             this._suggestedSupplierId = value;
         }
 
 
-        private Long _projectId;
+        private String _projectId;
 
     
         @PropMeta(propId=9)
     
-        public Long getProjectId(){
+        public String getProjectId(){
             return _projectId;
         }
 
-        public void setProjectId(Long value){
+        public void setProjectId(String value){
             this._projectId = value;
         }
 

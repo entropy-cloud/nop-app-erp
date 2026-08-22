@@ -66,17 +66,17 @@ public class TestErpPurDashboard extends JunitAutoTestCase {
     @Test
     public void testKpiAggregationAndOnTimeRate() {
         ormTemplate.runInSession(() -> {
-            seedSupplier(501L, "S-A");
-            seedSupplier(502L, "S-B");
-            seedInvoice(601L, 501L, new BigDecimal("100"), CoreMetrics.currentDate());
-            seedInvoice(602L, 502L, new BigDecimal("200"), CoreMetrics.currentDate());
+            seedSupplier("501", "S-A");
+            seedSupplier("502", "S-B");
+            seedInvoice("601", "501", new BigDecimal("100"), CoreMetrics.currentDate());
+            seedInvoice("602", "502", new BigDecimal("200"), CoreMetrics.currentDate());
             // 订单 502 是 ACTIVE
-            seedOrder(701L, 501L, ErpPurConstants.DOC_STATUS_ACTIVE, CoreMetrics.currentDate().plusDays(7));
-            seedOrder(702L, 502L, ErpPurConstants.DOC_STATUS_ACTIVE, CoreMetrics.currentDate().plusDays(7));
+            seedOrder("701", "501", ErpPurConstants.DOC_STATUS_ACTIVE, CoreMetrics.currentDate().plusDays(7));
+            seedOrder("702", "502", ErpPurConstants.DOC_STATUS_ACTIVE, CoreMetrics.currentDate().plusDays(7));
             // 1 笔到货：onTime (receiveDate ≤ deliveryDate) / 1 total → onTimeRate=1.0
-            seedReceive(801L, 701L, 501L, CoreMetrics.currentDate().plusDays(5));
+            seedReceive("801", "701", "501", CoreMetrics.currentDate().plusDays(5));
             // 应付余额 600（PAYABLE + OPEN）
-            seedArApItem(901L, 501L, new BigDecimal("600"));
+            seedArApItem("901", "501", new BigDecimal("600"));
         });
 
         Map<String, Object> kpi = dashboardBiz.getDashboardKpi(null, null, CTX);
@@ -89,12 +89,12 @@ public class TestErpPurDashboard extends JunitAutoTestCase {
     @Test
     public void testOnTimeRateLateDelivery() {
         ormTemplate.runInSession(() -> {
-            seedSupplier(511L, "S-LATE");
-            seedOrder(711L, 511L, ErpPurConstants.DOC_STATUS_ACTIVE, CoreMetrics.currentDate().plusDays(3));
-            seedOrder(712L, 511L, ErpPurConstants.DOC_STATUS_ACTIVE, CoreMetrics.currentDate().plusDays(3));
+            seedSupplier("511", "S-LATE");
+            seedOrder("711", "511", ErpPurConstants.DOC_STATUS_ACTIVE, CoreMetrics.currentDate().plusDays(3));
+            seedOrder("712", "511", ErpPurConstants.DOC_STATUS_ACTIVE, CoreMetrics.currentDate().plusDays(3));
             // 第一笔提前（onTime），第二笔迟到（晚于 deliveryDate）→ onTimeRate=0.5
-            seedReceive(811L, 711L, 511L, CoreMetrics.currentDate().plusDays(1));
-            seedReceive(812L, 712L, 511L, CoreMetrics.currentDate().plusDays(10));
+            seedReceive("811", "711", "511", CoreMetrics.currentDate().plusDays(1));
+            seedReceive("812", "712", "511", CoreMetrics.currentDate().plusDays(10));
         });
         Map<String, Object> kpi = dashboardBiz.getDashboardKpi(null, null, CTX);
         assertEquals(0.5, (double) kpi.get("onTimeRate"), 0.001, "一早一晚 → 0.5");
@@ -103,9 +103,9 @@ public class TestErpPurDashboard extends JunitAutoTestCase {
     @Test
     public void testTrendMonthlySeries() {
         ormTemplate.runInSession(() -> {
-            seedSupplier(521L, "S-C");
-            seedInvoice(621L, 521L, new BigDecimal("150"), CoreMetrics.currentDate().minusMonths(1));
-            seedInvoice(622L, 521L, new BigDecimal("250"), CoreMetrics.currentDate());
+            seedSupplier("521", "S-C");
+            seedInvoice("621", "521", new BigDecimal("150"), CoreMetrics.currentDate().minusMonths(1));
+            seedInvoice("622", "521", new BigDecimal("250"), CoreMetrics.currentDate());
         });
         List<Map<String, Object>> trend = dashboardBiz.getDashboardTrend(2, CTX);
         assertEquals(2, trend.size());
@@ -119,15 +119,15 @@ public class TestErpPurDashboard extends JunitAutoTestCase {
     @Test
     public void testVendorTopN() {
         ormTemplate.runInSession(() -> {
-            seedSupplier(531L, "S-TOP1");
-            seedSupplier(532L, "S-TOP2");
-            seedInvoice(631L, 531L, new BigDecimal("300"), CoreMetrics.currentDate());
-            seedInvoice(632L, 532L, new BigDecimal("100"), CoreMetrics.currentDate());
-            seedInvoice(633L, 531L, new BigDecimal("50"), CoreMetrics.currentDate());
+            seedSupplier("531", "S-TOP1");
+            seedSupplier("532", "S-TOP2");
+            seedInvoice("631", "531", new BigDecimal("300"), CoreMetrics.currentDate());
+            seedInvoice("632", "532", new BigDecimal("100"), CoreMetrics.currentDate());
+            seedInvoice("633", "531", new BigDecimal("50"), CoreMetrics.currentDate());
         });
         List<Map<String, Object>> top = dashboardBiz.findVendorTopN(10, CTX);
         assertEquals(2, top.size());
-        assertEquals(531L, top.get(0).get("supplierId"));
+        assertEquals("531", top.get(0).get("supplierId"));
         assertEquals("S-TOP1", top.get(0).get("supplierName"), "供应商名称已解析");
         assertEquals(0, ((BigDecimal) top.get(0).get("purchaseAmount")).compareTo(new BigDecimal("350")));
     }
@@ -135,24 +135,24 @@ public class TestErpPurDashboard extends JunitAutoTestCase {
     @Test
     public void testThreeWayMatchPriceVariance() {
         ormTemplate.runInSession(() -> {
-            seedSupplier(541L, "S-PV");
-            seedInvoice(641L, 541L, new BigDecimal("1000"), CoreMetrics.currentDate());
+            seedSupplier("541", "S-PV");
+            seedInvoice("641", "541", new BigDecimal("1000"), CoreMetrics.currentDate());
             // 发票行单价 110，关联 receiveLine 901 → orderLine 801 单价 100 → 差异 10% > 5% 阈值
-            seedOrderLine(801L, 701L, new BigDecimal("100"));
-            seedReceiveLine(901L, 801L, 801L);
-            seedInvoiceLine(1001L, 641L, 901L, new BigDecimal("110"));
+            seedOrderLine("801", "701", new BigDecimal("100"));
+            seedReceiveLine("901", "801", "801");
+            seedInvoiceLine("1001", "641", "901", new BigDecimal("110"));
             // 第二条发票行无差异（价差 0%）— 仅作对照，hasPriceVariance 一旦命中即返回 true
         });
         List<Map<String, Object>> alerts = dashboardBiz.findThreeWayMatchDiffAlert(CTX);
         assertEquals(1, alerts.size(), "10% 价差 > 5% 容差 → 触发 1 条预警");
-        assertEquals(641L, alerts.get(0).get("invoiceId"));
+        assertEquals("641", alerts.get(0).get("invoiceId"));
     }
 
     @Test
     public void testApOverdueAlertDisabledByDefault() {
         ormTemplate.runInSession(() -> {
-            seedSupplier(551L, "S-OVD");
-            seedArApItem(951L, 551L, new BigDecimal("1000"));
+            seedSupplier("551", "S-OVD");
+            seedArApItem("951", "551", new BigDecimal("1000"));
         });
         AppConfig.getConfigProvider().assignConfigValue(
                 ErpPurConstants.CONFIG_DASH_PUR_AP_OVERDUE_DAYS,
@@ -164,8 +164,8 @@ public class TestErpPurDashboard extends JunitAutoTestCase {
     @Test
     public void testApOverdueAlertTriggers() {
         ormTemplate.runInSession(() -> {
-            seedSupplier(561L, "S-OVD2");
-            seedArApItemWithDue(961L, 561L, new BigDecimal("800"),
+            seedSupplier("561", "S-OVD2");
+            seedArApItemWithDue("961", "561", new BigDecimal("800"),
                     CoreMetrics.currentDate().minusDays(100), CoreMetrics.currentDate().minusDays(100));
         });
         AppConfig.getConfigProvider().assignConfigValue(
@@ -173,7 +173,7 @@ public class TestErpPurDashboard extends JunitAutoTestCase {
         try {
             List<Map<String, Object>> alerts = dashboardBiz.findApOverdueAlert(CTX);
             assertEquals(1, alerts.size(), "账龄 100>90 → 触发");
-            assertEquals(561L, alerts.get(0).get("partnerId"));
+            assertEquals("561", alerts.get(0).get("partnerId"));
         } finally {
             AppConfig.getConfigProvider().assignConfigValue(
                     ErpPurConstants.CONFIG_DASH_PUR_AP_OVERDUE_DAYS, "0");
@@ -182,7 +182,7 @@ public class TestErpPurDashboard extends JunitAutoTestCase {
 
     // ---------- helpers ----------
 
-    private void seedSupplier(long id, String code) {
+    private void seedSupplier(String id, String code) {
         IEntityDao<ErpMdPartner> dao = daoProvider.daoFor(ErpMdPartner.class);
         ErpMdPartner p = dao.newEntity();
         p.orm_propValue(1, id);
@@ -195,16 +195,16 @@ public class TestErpPurDashboard extends JunitAutoTestCase {
         dao.saveEntity(p);
     }
 
-    private void seedInvoice(long id, long supplierId, BigDecimal amount, LocalDate date) {
+    private void seedInvoice(String id, String supplierId, BigDecimal amount, LocalDate date) {
         IEntityDao<ErpPurInvoice> dao = daoProvider.daoFor(ErpPurInvoice.class);
         ErpPurInvoice inv = dao.newEntity();
         inv.orm_propValue(1, id);
         inv.setCode("PI-" + id);
-        inv.setOrgId(1L);
+        inv.setOrgId("1");
         inv.setSupplierId(supplierId);
         inv.setInvoiceNo("PINV-" + id);
         inv.setBusinessDate(date);
-        inv.setCurrencyId(1L);
+        inv.setCurrencyId("1");
         inv.setExchangeRate(BigDecimal.ONE);
         inv.setAmountSource(amount);
         inv.setAmountFunctional(amount);
@@ -214,100 +214,100 @@ public class TestErpPurDashboard extends JunitAutoTestCase {
         dao.saveEntity(inv);
     }
 
-    private void seedOrder(long id, long supplierId, String docStatus, LocalDate deliveryDate) {
+    private void seedOrder(String id, String supplierId, String docStatus, LocalDate deliveryDate) {
         IEntityDao<ErpPurOrder> dao = daoProvider.daoFor(ErpPurOrder.class);
         ErpPurOrder o = dao.newEntity();
         o.orm_propValue(1, id);
         o.setCode("PO-" + id);
-        o.setOrgId(1L);
+        o.setOrgId("1");
         o.setSupplierId(supplierId);
         o.setBusinessDate(CoreMetrics.currentDate());
         o.setDeliveryDate(deliveryDate);
-        o.setCurrencyId(1L);
+        o.setCurrencyId("1");
         o.setExchangeRate(BigDecimal.ONE);
         o.setDocStatus(docStatus);
         o.setApproveStatus(ErpPurConstants.APPROVE_STATUS_APPROVED);
         dao.saveEntity(o);
     }
 
-    private void seedOrderLine(long id, long orderId, BigDecimal unitPrice) {
+    private void seedOrderLine(String id, String orderId, BigDecimal unitPrice) {
         IEntityDao<ErpPurOrderLine> dao = daoProvider.daoFor(ErpPurOrderLine.class);
         ErpPurOrderLine l = dao.newEntity();
         l.orm_propValue(1, id);
         l.setOrderId(orderId);
         l.setLineNo(1);
-        l.setMaterialId(1L);
-        l.setUoMId(1L);
+        l.setMaterialId("1");
+        l.setUoMId("1");
         l.setQuantity(BigDecimal.TEN);
         l.setUnitPrice(unitPrice);
         l.setAmount(unitPrice.multiply(BigDecimal.TEN));
         dao.saveEntity(l);
     }
 
-    private void seedReceive(long id, long orderId, long supplierId, LocalDate businessDate) {
+    private void seedReceive(String id, String orderId, String supplierId, LocalDate businessDate) {
         IEntityDao<ErpPurReceive> dao = daoProvider.daoFor(ErpPurReceive.class);
         ErpPurReceive r = dao.newEntity();
         r.orm_propValue(1, id);
         r.setCode("PR-" + id);
-        r.setOrgId(1L);
+        r.setOrgId("1");
         r.setOrderId(orderId);
         r.setSupplierId(supplierId);
-        r.setWarehouseId(1L);
+        r.setWarehouseId("1");
         r.setBusinessDate(businessDate);
-        r.setCurrencyId(1L);
+        r.setCurrencyId("1");
         r.setExchangeRate(BigDecimal.ONE);
         r.setDocStatus(ErpPurConstants.DOC_STATUS_ACTIVE);
         r.setApproveStatus(ErpPurConstants.APPROVE_STATUS_APPROVED);
         dao.saveEntity(r);
     }
 
-    private void seedReceiveLine(long id, long receiveId, long orderLineId) {
+    private void seedReceiveLine(String id, String receiveId, String orderLineId) {
         IEntityDao<ErpPurReceiveLine> dao = daoProvider.daoFor(ErpPurReceiveLine.class);
         ErpPurReceiveLine l = dao.newEntity();
         l.orm_propValue(1, id);
         l.setReceiveId(receiveId);
         l.setOrderLineId(orderLineId);
         l.setLineNo(1);
-        l.setMaterialId(1L);
-        l.setUoMId(1L);
+        l.setMaterialId("1");
+        l.setUoMId("1");
         l.setQuantity(BigDecimal.TEN);
         l.setUnitPrice(new BigDecimal("100"));
         dao.saveEntity(l);
     }
 
-    private void seedInvoiceLine(long id, long invoiceId, long receiveLineId, BigDecimal unitPrice) {
+    private void seedInvoiceLine(String id, String invoiceId, String receiveLineId, BigDecimal unitPrice) {
         IEntityDao<ErpPurInvoiceLine> dao = daoProvider.daoFor(ErpPurInvoiceLine.class);
         ErpPurInvoiceLine l = dao.newEntity();
         l.orm_propValue(1, id);
         l.setInvoiceId(invoiceId);
         l.setReceiveLineId(receiveLineId);
         l.setLineNo(1);
-        l.setMaterialId(1L);
-        l.setUoMId(1L);
+        l.setMaterialId("1");
+        l.setUoMId("1");
         l.setQuantity(BigDecimal.TEN);
         l.setUnitPrice(unitPrice);
         dao.saveEntity(l);
     }
 
-    private void seedArApItem(long id, long partnerId, BigDecimal openAmount) {
+    private void seedArApItem(String id, String partnerId, BigDecimal openAmount) {
         seedArApItemWithDue(id, partnerId, openAmount, CoreMetrics.currentDate(), CoreMetrics.currentDate());
     }
 
-    private void seedArApItemWithDue(long id, long partnerId, BigDecimal openAmount,
+    private void seedArApItemWithDue(String id, String partnerId, BigDecimal openAmount,
                                      LocalDate businessDate, LocalDate dueDate) {
         IEntityDao<ErpFinArApItem> dao = daoProvider.daoFor(ErpFinArApItem.class);
         ErpFinArApItem it = dao.newEntity();
         it.orm_propValue(1, id);
         it.setCode("PUR-AP-" + id);
-        it.setOrgId(1L);
-        it.setAcctSchemaId(1L);
+        it.setOrgId("1");
+        it.setAcctSchemaId("1");
         it.setDirection(ErpFinConstants.DIRECTION_PAYABLE);
         it.setPartnerId(partnerId);
         it.setSourceBillType(ErpFinConstants.SOURCE_BILL_AP_INVOICE);
         it.setSourceBillCode("PUR-BILL-" + id);
         it.setBusinessDate(businessDate);
         it.setDueDate(dueDate);
-        it.setCurrencyId(1L);
+        it.setCurrencyId("1");
         it.setExchangeRate(BigDecimal.ONE);
         it.setAmountSource(openAmount);
         it.setAmountFunctional(openAmount);

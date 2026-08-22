@@ -76,7 +76,7 @@ body:
       method: post
       dataType: raw
       data:
-        query: "query(${'$'}f:Long,${'$'}lim:Int){ ErpPurOrder__findPage(filter_supplierId:${'$'}f,limit:${'$'}lim){ items{ id code businessDate deliveryDate totalAmount docStatus approveStatus } total } }"
+        query: "query(${'$'}f:String,${'$'}lim:Int){ ErpPurOrder__findPage(filter_supplierId:${'$'}f,limit:${'$'}lim){ items{ id code businessDate deliveryDate totalAmount docStatus approveStatus } total } }"
         variables:
           f: "${supplierId || null}"
           lim: 20
@@ -118,7 +118,7 @@ body:
       method: post
       dataType: raw
       data:
-        query: "query(${'$'}f:Long,${'$'}lim:Int){ ErpPurReceive__findPage(filter_supplierId:${'$'}f,limit:${'$'}lim){ items{ id code businessDate totalAmount docStatus approveStatus } total } }"
+        query: "query(${'$'}f:String,${'$'}lim:Int){ ErpPurReceive__findPage(filter_supplierId:${'$'}f,limit:${'$'}lim){ items{ id code businessDate totalAmount docStatus approveStatus } total } }"
         variables:
           f: "${supplierId || null}"
           lim: 20
@@ -156,7 +156,7 @@ body:
       method: post
       dataType: raw
       data:
-        query: "query(${'$'}f:Long,${'$'}lim:Int){ ErpPurInvoice__findPage(filter_supplierId:${'$'}f,limit:${'$'}lim){ items{ id code businessDate totalAmount docStatus approveStatus } total } }"
+        query: "query(${'$'}f:String,${'$'}lim:Int){ ErpPurInvoice__findPage(filter_supplierId:${'$'}f,limit:${'$'}lim){ items{ id code businessDate totalAmount docStatus approveStatus } total } }"
         variables:
           f: "${supplierId || null}"
           lim: 20

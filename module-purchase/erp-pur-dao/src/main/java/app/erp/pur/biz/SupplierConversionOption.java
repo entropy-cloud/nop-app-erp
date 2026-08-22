@@ -11,23 +11,23 @@ import java.time.LocalDate;
  */
 public class SupplierConversionOption {
 
-    private Long warehouseId;
-    private Long currencyId;
+    private String warehouseId;
+    private String currencyId;
     private LocalDate deliveryDate;
 
-    public Long getWarehouseId() {
+    public String getWarehouseId() {
         return warehouseId;
     }
 
-    public void setWarehouseId(Long warehouseId) {
+    public void setWarehouseId(String warehouseId) {
         this.warehouseId = warehouseId;
     }
 
-    public Long getCurrencyId() {
+    public String getCurrencyId() {
         return currencyId;
     }
 
-    public void setCurrencyId(Long currencyId) {
+    public void setCurrencyId(String currencyId) {
         this.currencyId = currencyId;
     }
 

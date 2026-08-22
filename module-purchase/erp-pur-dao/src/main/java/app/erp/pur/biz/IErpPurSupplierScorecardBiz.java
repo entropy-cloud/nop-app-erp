@@ -18,5 +18,5 @@ import app.erp.pur.dao.entity.ErpPurSupplierScorecard;
 public interface IErpPurSupplierScorecardBiz extends ICrudBiz<ErpPurSupplierScorecard> {
 
     @BizMutation
-    ErpPurSupplierScorecard finalizeScorecard(@Name("scorecardId") Long scorecardId, IServiceContext context);
+    ErpPurSupplierScorecard finalizeScorecard(@Name("scorecardId") String scorecardId, IServiceContext context);
 }

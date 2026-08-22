@@ -213,11 +213,11 @@ public class ErpPurOrderProcessor {
         if (!Boolean.TRUE.equals(AppConfig.var(ErpFinConstants.CONFIG_BUDGET_CHECK_ENABLED, Boolean.FALSE))) {
             return;
         }
-        Long subjectId = resolveBudgetSubjectId(ErpFinConstants.CONFIG_BUDGET_PURCHASE_EXPENSE_SUBJECT_CODE);
+        String subjectId = resolveBudgetSubjectId(ErpFinConstants.CONFIG_BUDGET_PURCHASE_EXPENSE_SUBJECT_CODE);
         if (subjectId == null) {
             return;
         }
-        Long periodId = resolvePeriodId(order.getBusinessDate());
+        String periodId = resolvePeriodId(order.getBusinessDate());
         BigDecimal amount = order.getTotalAmountWithTax() != null
                 ? order.getTotalAmountWithTax() : BigDecimal.ZERO;
         budgetControlBiz.check(subjectId, null, periodId, amount, "PURCHASE_ORDER", order.getCode(), context);
@@ -233,11 +233,11 @@ public class ErpPurOrderProcessor {
         if (!Boolean.TRUE.equals(AppConfig.var(ErpFinConstants.CONFIG_BUDGET_COMMITMENT_ENABLED, Boolean.FALSE))) {
             return;
         }
-        Long subjectId = resolveBudgetSubjectId(ErpFinConstants.CONFIG_BUDGET_COMMITMENT_SUBJECT_CODE);
+        String subjectId = resolveBudgetSubjectId(ErpFinConstants.CONFIG_BUDGET_COMMITMENT_SUBJECT_CODE);
         if (subjectId == null) {
             return;
         }
-        Long periodId = resolvePeriodId(order.getBusinessDate());
+        String periodId = resolvePeriodId(order.getBusinessDate());
         BigDecimal amount = order.getTotalAmountWithTax() != null
                 ? order.getTotalAmountWithTax() : BigDecimal.ZERO;
         budgetCommitmentBiz.commit(
@@ -303,7 +303,7 @@ public class ErpPurOrderProcessor {
         }
     }
 
-    protected Long resolveBudgetSubjectId(String configKey) {
+    protected String resolveBudgetSubjectId(String configKey) {
         String code = AppConfig.var(configKey, null);
         if (code == null || code.isEmpty()) {
             return null;
@@ -316,7 +316,7 @@ public class ErpPurOrderProcessor {
         return list.isEmpty() ? null : list.get(0).getId();
     }
 
-    protected Long resolvePeriodId(LocalDate businessDate) {
+    protected String resolvePeriodId(LocalDate businessDate) {
         if (businessDate == null) {
             return null;
         }

@@ -50,13 +50,13 @@ public class RequisitionToOrderConverter {
     IDaoProvider daoProvider;
 
     public ErpPurOrder build(ErpPurRequisition req, List<ErpPurRequisitionLine> lines,
-                             Long supplierId, ConvertToOrderRequest request) {
+                             String supplierId, ConvertToOrderRequest request) {
         ErpPurOrder order = daoProvider.daoFor(ErpPurOrder.class).newEntity();
         order.setCode(generateOrderCode(req));
         order.setOrgId(req.getOrgId());
         order.setRequisitionId(req.getId());
         order.setSupplierId(supplierId);
-        SupplierConversionOption option = request.getSupplierOptions().get(String.valueOf(supplierId));
+        SupplierConversionOption option = request.getSupplierOptions().get(supplierId);
         order.setWarehouseId(option != null && option.getWarehouseId() != null
                 ? option.getWarehouseId() : request.getWarehouseId());
         order.setBusinessDate(req.getBusinessDate());

@@ -21,7 +21,7 @@ import app.erp.pur.dao.entity.ErpPurRequisitionLine;
 public interface IErpPurOrderBiz extends ICrudBiz<ErpPurOrder> {
 
     @BizMutation
-    ErpPurOrder cancel(@Name("orderId") Long orderId, IServiceContext context);
+    ErpPurOrder cancel(@Name("orderId") String orderId, IServiceContext context);
 
     /**
      * F11 批量审批（plan 2026-07-22-0444-2 Phase 1）：循环调单条 {@code ErpPurOrderProcessor.approve}，
@@ -44,7 +44,7 @@ public interface IErpPurOrderBiz extends ICrudBiz<ErpPurOrder> {
     @BizAction
     ErpPurOrder createFromRequisition(@Name("requisition") ErpPurRequisition requisition,
                                       @Name("lines") List<ErpPurRequisitionLine> lines,
-                                      @Name("supplierId") Long supplierId,
+                                       @Name("supplierId") String supplierId,
                                       @Name("request") ConvertToOrderRequest request,
                                       IServiceContext context);
 
@@ -52,13 +52,13 @@ public interface IErpPurOrderBiz extends ICrudBiz<ErpPurOrder> {
      * 幂等键查询：是否存在 docStatus≠CANCELLED 且 {@code requisitionId} 命中的订单。
      */
     @BizAction
-    boolean existsActiveByRequisition(@Name("requisitionId") Long requisitionId, IServiceContext context);
+    boolean existsActiveByRequisition(@Name("requisitionId") String requisitionId, IServiceContext context);
 
     /**
      * 回写源订单收货进度（由入库单审核后跨聚合调用）。
      */
     @BizAction
-    void updateReceiveStatus(@Name("orderId") Long orderId,
+    void updateReceiveStatus(@Name("orderId") String orderId,
                              @Name("receiveStatus") String receiveStatus,
                              IServiceContext context);
 }

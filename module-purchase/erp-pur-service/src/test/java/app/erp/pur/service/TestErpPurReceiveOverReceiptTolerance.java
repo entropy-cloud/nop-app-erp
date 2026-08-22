@@ -46,13 +46,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpPurReceiveOverReceiptTolerance extends JunitAutoTestCase {
 
-    static final Long ORG_ID = 1801L;
-    static final Long SUPPLIER_ID = 2801L;
-    static final Long WAREHOUSE_ID = 3801L;
-    static final Long MATERIAL_ID = 4801L;
-    static final Long UOM_ID = 5801L;
-    static final Long CURRENCY_ID = 6801L;
-    static final Long ACCT_SCHEMA_ID = 7801L;
+    static final String ORG_ID = "1801";
+    static final String SUPPLIER_ID = "2801";
+    static final String WAREHOUSE_ID = "3801";
+    static final String MATERIAL_ID = "4801";
+    static final String UOM_ID = "5801";
+    static final String CURRENCY_ID = "6801";
+    static final String ACCT_SCHEMA_ID = "7801";
 
     @Inject
     IDaoProvider daoProvider;
@@ -64,9 +64,9 @@ public class TestErpPurReceiveOverReceiptTolerance extends JunitAutoTestCase {
     @Test
     public void testStrictRejectsOverReceipt() {
         // 订单 10 + 入库 20（超收 100% > 5% 容差），strict=true → ERR_RECEIVE_QTY_OVER_TOLERANCE
-        Long orderLineId = nextId();
-        Long receiveId = nextId();
-        Long receiveLineId = nextId();
+        String orderLineId = nextId();
+        String receiveId = nextId();
+        String receiveLineId = nextId();
         seedChain("PO-OVER-STRICT-001", "PR-OVER-STRICT-001", orderLineId, receiveId, receiveLineId,
                 new BigDecimal("10"), new BigDecimal("20"));
 
@@ -83,9 +83,9 @@ public class TestErpPurReceiveOverReceiptTolerance extends JunitAutoTestCase {
     @Test
     public void testNonStrictWarnsAndApproves() {
         // 同场景 strict=false（默认）→ warn 放行 APPROVED（config 默认值回归：非 strict 生效）
-        Long orderLineId = nextId();
-        Long receiveId = nextId();
-        Long receiveLineId = nextId();
+        String orderLineId = nextId();
+        String receiveId = nextId();
+        String receiveLineId = nextId();
         seedChain("PO-OVER-WARN-001", "PR-OVER-WARN-001", orderLineId, receiveId, receiveLineId,
                 new BigDecimal("10"), new BigDecimal("20"));
 
@@ -98,9 +98,9 @@ public class TestErpPurReceiveOverReceiptTolerance extends JunitAutoTestCase {
     @Test
     public void testWithinToleranceApproves() {
         // 订单 10 + 入库 10.5，5% 容差内（默认 config）→ 放行
-        Long orderLineId = nextId();
-        Long receiveId = nextId();
-        Long receiveLineId = nextId();
+        String orderLineId = nextId();
+        String receiveId = nextId();
+        String receiveLineId = nextId();
         seedChain("PO-OVER-IN-001", "PR-OVER-IN-001", orderLineId, receiveId, receiveLineId,
                 new BigDecimal("10"), new BigDecimal("10.5"));
 
@@ -113,9 +113,9 @@ public class TestErpPurReceiveOverReceiptTolerance extends JunitAutoTestCase {
     @Test
     public void testBoundaryExactlyToleranceApproves() {
         // 恰好等于容差边界 10.5（含边界放行），strict=true 同样放行
-        Long orderLineId = nextId();
-        Long receiveId = nextId();
-        Long receiveLineId = nextId();
+        String orderLineId = nextId();
+        String receiveId = nextId();
+        String receiveLineId = nextId();
         seedChain("PO-OVER-BOUND-001", "PR-OVER-BOUND-001", orderLineId, receiveId, receiveLineId,
                 new BigDecimal("10"), new BigDecimal("10.5"));
 
@@ -130,11 +130,11 @@ public class TestErpPurReceiveOverReceiptTolerance extends JunitAutoTestCase {
     @Test
     public void testAggregatedOverReceiptRejectsSecond() {
         // 订单 10 分批入库 6 + 5 = 11 > 10.5，strict → 第二张入库单拒绝、第一张保持 APPROVED
-        Long orderLineId = nextId();
-        Long receive1 = nextId();
-        Long receiveLine1 = nextId();
-        Long receive2 = nextId();
-        Long receiveLine2 = nextId();
+        String orderLineId = nextId();
+        String receive1 = nextId();
+        String receiveLine1 = nextId();
+        String receive2 = nextId();
+        String receiveLine2 = nextId();
         seedChain("PO-OVER-AGG-001", "PR-OVER-AGG-001", orderLineId, receive1, receiveLine1,
                 new BigDecimal("10"), new BigDecimal("6"));
         ormTemplate.runInSession(session -> {
@@ -159,9 +159,9 @@ public class TestErpPurReceiveOverReceiptTolerance extends JunitAutoTestCase {
     @Test
     public void testNoOrderLineSkipped() {
         // 行 orderLineId=null（无订单关联独立入库）→ 跳过校验，strict 下超量也放行
-        Long orderId = nextId();
-        Long receiveId = nextId();
-        Long receiveLineId = nextId();
+        String orderId = nextId();
+        String receiveId = nextId();
+        String receiveLineId = nextId();
         ormTemplate.runInSession(session -> {
             seedFinanceAndSupplier();
             newOrder("PO-OVER-NOLINE-001", orderId);
@@ -191,9 +191,9 @@ public class TestErpPurReceiveOverReceiptTolerance extends JunitAutoTestCase {
 
     // ---------- rpc helpers ----------
 
-    private ApiResponse<?> approve(Long receiveId) {
+    private ApiResponse<?> approve(String receiveId) {
         return executeRpc(mutation, "ErpPurReceive__approve",
-                ApiRequest.build(Map.of("id", String.valueOf(receiveId))));
+                ApiRequest.build(Map.of("id", receiveId)));
     }
 
     private ApiResponse<?> executeRpc(GraphQLOperationType opType, String action, ApiRequest<?> request) {
@@ -207,11 +207,11 @@ public class TestErpPurReceiveOverReceiptTolerance extends JunitAutoTestCase {
 
     // ---------- seed helpers ----------
 
-    private void seedChain(String orderCode, String receiveCode, Long orderLineId, Long receiveId,
-                           Long receiveLineId, BigDecimal orderQty, BigDecimal receiveQty) {
+    private void seedChain(String orderCode, String receiveCode, String orderLineId, String receiveId,
+                           String receiveLineId, BigDecimal orderQty, BigDecimal receiveQty) {
         ormTemplate.runInSession(session -> {
             seedFinanceAndSupplier();
-            Long orderId = newOrder(orderCode, nextId());
+            String orderId = newOrder(orderCode, nextId());
             newOrderLine(orderId, orderLineId, orderQty);
             newReceive(receiveCode, receiveId, orderId);
             newReceiveLine(receiveLineId, receiveId, orderLineId, receiveQty);
@@ -277,7 +277,7 @@ public class TestErpPurReceiveOverReceiptTolerance extends JunitAutoTestCase {
         dao.saveEntity(subject);
     }
 
-    private Long newOrder(String code, Long orderId) {
+    private String newOrder(String code, String orderId) {
         IEntityDao<ErpPurOrder> dao = daoProvider.daoFor(ErpPurOrder.class);
         ErpPurOrder order = new ErpPurOrder();
         order.setId(orderId);
@@ -294,13 +294,13 @@ public class TestErpPurReceiveOverReceiptTolerance extends JunitAutoTestCase {
         return order.getId();
     }
 
-    private Long findOrderId(String code) {
+    private String findOrderId(String code) {
         return daoProvider.daoFor(ErpPurOrder.class).findAllByQuery(new io.nop.api.core.beans.query.QueryBean())
                 .stream().filter(o -> code.equals(o.getCode())).findFirst()
                 .map(ErpPurOrder::getId).orElseThrow(() -> new IllegalStateException("order not found: " + code));
     }
 
-    private void newOrderLine(Long orderId, Long lineId, BigDecimal qty) {
+    private void newOrderLine(String orderId, String lineId, BigDecimal qty) {
         IEntityDao<ErpPurOrderLine> dao = daoProvider.daoFor(ErpPurOrderLine.class);
         ErpPurOrderLine line = new ErpPurOrderLine();
         line.setId(lineId);
@@ -314,7 +314,7 @@ public class TestErpPurReceiveOverReceiptTolerance extends JunitAutoTestCase {
         dao.saveEntity(line);
     }
 
-    private void newReceive(String code, Long receiveId, Long orderId) {
+    private void newReceive(String code, String receiveId, String orderId) {
         IEntityDao<ErpPurReceive> dao = daoProvider.daoFor(ErpPurReceive.class);
         ErpPurReceive receive = new ErpPurReceive();
         receive.setId(receiveId);
@@ -333,7 +333,7 @@ public class TestErpPurReceiveOverReceiptTolerance extends JunitAutoTestCase {
         dao.saveEntity(receive);
     }
 
-    private void newReceiveLine(Long lineId, Long receiveId, Long orderLineId, BigDecimal qty) {
+    private void newReceiveLine(String lineId, String receiveId, String orderLineId, BigDecimal qty) {
         IEntityDao<ErpPurReceiveLine> dao = daoProvider.daoFor(ErpPurReceiveLine.class);
         ErpPurReceiveLine line = new ErpPurReceiveLine();
         line.setId(lineId);
@@ -349,7 +349,7 @@ public class TestErpPurReceiveOverReceiptTolerance extends JunitAutoTestCase {
 
     private final AtomicLong idSeq = new AtomicLong(100000L);
 
-    private Long nextId() {
-        return idSeq.incrementAndGet();
+    private String nextId() {
+        return String.valueOf(idSeq.incrementAndGet());
     }
 }

@@ -49,12 +49,12 @@ public class TestErpPurReceiveCancelInspectionLinkage extends JunitAutoTestCase 
     @RegisterExtension
     static PurFrozenClockExtension frozenClock = new PurFrozenClockExtension();
 
-    static final Long ORG_ID = 1101L;
-    static final Long SUPPLIER_ID = 2101L;
-    static final Long WAREHOUSE_ID = 3101L;
-    static final Long MATERIAL_ID = 4101L;
-    static final Long UOM_ID = 5101L;
-    static final Long CURRENCY_ID = 6101L;
+    static final String ORG_ID = "1101";
+    static final String SUPPLIER_ID = "2101";
+    static final String WAREHOUSE_ID = "3101";
+    static final String MATERIAL_ID = "4101";
+    static final String UOM_ID = "5101";
+    static final String CURRENCY_ID = "6101";
 
     @Inject
     IDaoProvider daoProvider;
@@ -125,7 +125,7 @@ public class TestErpPurReceiveCancelInspectionLinkage extends JunitAutoTestCase 
 
     // ---------- helpers ----------
 
-    private ApiResponse<?> cancel(Long receiveId) {
+    private ApiResponse<?> cancel(String receiveId) {
         return executeRpc(mutation, "ErpPurReceive__cancel", ApiRequest.build(Map.of("receiveId", receiveId)));
     }
 
@@ -178,7 +178,7 @@ public class TestErpPurReceiveCancelInspectionLinkage extends JunitAutoTestCase 
         lineDao.saveEntity(line);
     }
 
-    private void seedActiveSupplier(Long id) {
+    private void seedActiveSupplier(String id) {
         IEntityDao<ErpMdPartner> dao = daoProvider.daoFor(ErpMdPartner.class);
         ErpMdPartner partner = new ErpMdPartner();
         partner.setId(id);
@@ -190,7 +190,7 @@ public class TestErpPurReceiveCancelInspectionLinkage extends JunitAutoTestCase 
     }
 
     private void seedInspection(String code, String result, String billType, String billCode) {
-        Long id = 7800L + (long) (Math.abs(code.hashCode()) % 900);
+        String id = String.valueOf(7800L + (long) (Math.abs(code.hashCode()) % 900));
         IEntityDao<ErpQaInspection> dao = daoProvider.daoFor(ErpQaInspection.class);
         ErpQaInspection ins = new ErpQaInspection();
         ins.orm_propValueByName("id", id);

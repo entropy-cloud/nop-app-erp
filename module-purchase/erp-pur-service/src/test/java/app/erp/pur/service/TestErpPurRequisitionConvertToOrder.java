@@ -46,16 +46,16 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpPurRequisitionConvertToOrder extends JunitAutoTestCase {
 
-    static final Long ORG_ID = 1401L;
-    static final Long REQUESTER_ID = 2401L;
-    static final Long SUPPLIER_ID = 2411L;
-    static final Long SUPPLIER_ID_2 = 2412L;
-    static final Long WAREHOUSE_ID = 3401L;
-    static final Long WAREHOUSE_ID_2 = 3402L;
-    static final Long MATERIAL_ID = 4401L;
-    static final Long UOM_ID = 5401L;
-    static final Long CURRENCY_ID = 6401L;
-    static final Long CURRENCY_ID_2 = 6402L;
+    static final String ORG_ID = "1401";
+    static final String REQUESTER_ID = "2401";
+    static final String SUPPLIER_ID = "2411";
+    static final String SUPPLIER_ID_2 = "2412";
+    static final String WAREHOUSE_ID = "3401";
+    static final String WAREHOUSE_ID_2 = "3402";
+    static final String MATERIAL_ID = "4401";
+    static final String UOM_ID = "5401";
+    static final String CURRENCY_ID = "6401";
+    static final String CURRENCY_ID_2 = "6402";
 
     @Inject
     IDaoProvider daoProvider;
@@ -160,9 +160,8 @@ public class TestErpPurRequisitionConvertToOrder extends JunitAutoTestCase {
 
         ApiResponse<?> first = convertToOrder(req.getId(), request);
         assertEquals(0, first.getStatus());
-        Long firstId = firstIdOf(first);
+        String firstId = firstIdOf(first);
         assertNotNull(firstId);
-
         ApiResponse<?> bad = convertToOrder(req.getId(), request);
         assertEquals(ErpPurErrors.ERR_REQ_ALREADY_CONVERTED.getErrorCode(), bad.getCode(),
                 "已转化请购重复转化应返回 ERR_REQ_ALREADY_CONVERTED");
@@ -184,7 +183,7 @@ public class TestErpPurRequisitionConvertToOrder extends JunitAutoTestCase {
         Map<String, Object> request = newRequest("5", null);
         ApiResponse<?> conv = convertToOrder(req.getId(), request);
         assertEquals(0, conv.getStatus());
-        Long orderId = firstIdOf(conv);
+        String orderId = firstIdOf(conv);
 
         assertEquals(0, orderSubmit(orderId).getStatus());
         ErpPurOrder submitted = daoProvider.daoFor(ErpPurOrder.class).getEntityById(orderId);
@@ -215,7 +214,7 @@ public class TestErpPurRequisitionConvertToOrder extends JunitAutoTestCase {
         assertEquals(2, data.size(), "2 供应商 → 2 订单");
         for (Map<String, Object> orderData : data) {
             assertNotNull(orderData.get("code"), "每单 code 非空");
-            assertEquals(req.getId(), numberOf(orderData.get("requisitionId")), "每单回链 requisitionId");
+            assertEquals(req.getId(), stringIdOf(orderData.get("requisitionId")), "每单回链 requisitionId");
         }
 
         ErpPurOrder order1 = daoProvider.daoFor(ErpPurOrder.class).getEntityById(idOf(data.get(0)));
@@ -258,8 +257,8 @@ public class TestErpPurRequisitionConvertToOrder extends JunitAutoTestCase {
         option2.put("currencyId", CURRENCY_ID_2);
         option2.put("deliveryDate", "2026-08-25");
         Map<Object, Object> supplierOptions = new LinkedHashMap<>();
-        supplierOptions.put(String.valueOf(SUPPLIER_ID), option1);
-        supplierOptions.put(String.valueOf(SUPPLIER_ID_2), option2);
+        supplierOptions.put(SUPPLIER_ID, option1);
+        supplierOptions.put(SUPPLIER_ID_2, option2);
         request.put("supplierOptions", supplierOptions);
 
         ApiResponse<?> resp = convertToOrder(req.getId(), request);
@@ -307,7 +306,7 @@ public class TestErpPurRequisitionConvertToOrder extends JunitAutoTestCase {
         Map<String, Object> request = newRequest("5", null);
         ApiResponse<?> first = convertToOrder(req.getId(), request);
         assertEquals(0, first.getStatus());
-        List<Long> orderIds = new java.util.ArrayList<>();
+        List<String> orderIds = new java.util.ArrayList<>();
         for (Map<String, Object> orderData : listDataOf(first)) {
             orderIds.add(idOf(orderData));
         }
@@ -317,7 +316,7 @@ public class TestErpPurRequisitionConvertToOrder extends JunitAutoTestCase {
         assertEquals(ErpPurErrors.ERR_REQ_ALREADY_CONVERTED.getErrorCode(), bad.getCode(),
                 "拆单后重复转化应返回 ERR_REQ_ALREADY_CONVERTED");
 
-        for (Long orderId : orderIds) {
+        for (String orderId : orderIds) {
             assertEquals(0, orderCancel(orderId).getStatus(), "作废订单应成功");
         }
 
@@ -328,20 +327,20 @@ public class TestErpPurRequisitionConvertToOrder extends JunitAutoTestCase {
 
     // ---------- rpc helpers ----------
 
-    private ApiResponse<?> convertToOrder(Long requisitionId, Map<String, Object> request) {
+    private ApiResponse<?> convertToOrder(String requisitionId, Map<String, Object> request) {
         return executeRpc(mutation, "ErpPurRequisition__convertToOrder",
                 ApiRequest.build(Map.of("requisitionId", requisitionId, "request", request)));
     }
 
-    private ApiResponse<?> orderSubmit(Long orderId) {
+    private ApiResponse<?> orderSubmit(String orderId) {
         return executeRpc(mutation, "ErpPurOrder__submitForApproval", ApiRequest.build(Map.of("id", String.valueOf(orderId))));
     }
 
-    private ApiResponse<?> orderApprove(Long orderId) {
+    private ApiResponse<?> orderApprove(String orderId) {
         return executeRpc(mutation, "ErpPurOrder__approve", ApiRequest.build(Map.of("id", String.valueOf(orderId))));
     }
 
-    private ApiResponse<?> orderCancel(Long orderId) {
+    private ApiResponse<?> orderCancel(String orderId) {
         return executeRpc(mutation, "ErpPurOrder__cancel", ApiRequest.build(Map.of("orderId", orderId)));
     }
 
@@ -357,16 +356,16 @@ public class TestErpPurRequisitionConvertToOrder extends JunitAutoTestCase {
         return (List<Map<String, Object>>) data;
     }
 
-    private Long firstIdOf(ApiResponse<?> resp) {
+    private String firstIdOf(ApiResponse<?> resp) {
         return idOf(listDataOf(resp).get(0));
     }
 
-    private Long idOf(Map<String, Object> orderData) {
-        return numberOf(orderData.get("id"));
+    private String idOf(Map<String, Object> orderData) {
+        return stringIdOf(orderData.get("id"));
     }
 
-    private Long numberOf(Object id) {
-        return id instanceof Number ? ((Number) id).longValue() : Long.parseLong(String.valueOf(id));
+    private String stringIdOf(Object id) {
+        return String.valueOf(id);
     }
 
     // ---------- seed helpers ----------
@@ -382,18 +381,18 @@ public class TestErpPurRequisitionConvertToOrder extends JunitAutoTestCase {
         return req;
     }
 
-    private ErpPurRequisition newApprovedRequisition(String code, Long supplierId) {
+    private ErpPurRequisition newApprovedRequisition(String code, String supplierId) {
         ErpPurRequisition req = newRequisition(code);
         req.setApproveStatus(ErpPurConstants.APPROVE_STATUS_APPROVED);
         return req;
     }
 
-    private void saveRequisitionWithLine(ErpPurRequisition req, int lineNo, Long supplierId, BigDecimal qty) {
+    private void saveRequisitionWithLine(ErpPurRequisition req, int lineNo, String supplierId, BigDecimal qty) {
         daoProvider.daoFor(ErpPurRequisition.class).saveEntity(req);
         saveRequisitionLine(req, lineNo, supplierId, qty);
     }
 
-    private void saveRequisitionLine(ErpPurRequisition req, int lineNo, Long supplierId, BigDecimal qty) {
+    private void saveRequisitionLine(ErpPurRequisition req, int lineNo, String supplierId, BigDecimal qty) {
         IEntityDao<ErpPurRequisitionLine> dao = daoProvider.daoFor(ErpPurRequisitionLine.class);
         ErpPurRequisitionLine line = new ErpPurRequisitionLine();
         line.setRequisitionId(req.getId());
@@ -424,7 +423,7 @@ public class TestErpPurRequisitionConvertToOrder extends JunitAutoTestCase {
         return request;
     }
 
-    private void seedActiveSupplier(Long id) {
+    private void seedActiveSupplier(String id) {
         app.erp.md.dao.entity.ErpMdPartner partner = new app.erp.md.dao.entity.ErpMdPartner();
         partner.setId(id);
         partner.setCode("SUP-" + id);
@@ -434,7 +433,7 @@ public class TestErpPurRequisitionConvertToOrder extends JunitAutoTestCase {
         daoProvider.daoFor(app.erp.md.dao.entity.ErpMdPartner.class).saveEntity(partner);
     }
 
-    private List<ErpPurOrderLine> loadOrderLines(Long orderId) {
+    private List<ErpPurOrderLine> loadOrderLines(String orderId) {
         IEntityDao<ErpPurOrderLine> dao = daoProvider.daoFor(ErpPurOrderLine.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("orderId", orderId));

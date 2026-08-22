@@ -17,7 +17,6 @@ import io.nop.api.core.annotations.autotest.NopTestConfig;
 import io.nop.api.core.annotations.core.OptionalBoolean;
 import io.nop.api.core.beans.ApiRequest;
 import io.nop.api.core.beans.ApiResponse;
-import io.nop.api.core.convert.ConvertHelper;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.autotest.junit.JunitAutoTestCase;
 import io.nop.dao.api.IDaoProvider;
@@ -93,7 +92,7 @@ public class TestErpInvLandedCostReversal extends JunitAutoTestCase {
 
         generateIncoming(matA, "PR-LC-RV-SEED", new BigDecimal("10"), new BigDecimal("10"));
 
-        String receiveId = String.valueOf(seedReceiveSingle("RCV-LC-RV", new BigDecimal("10"), new BigDecimal("100"), matA));
+        String receiveId = seedReceiveSingle("RCV-LC-RV", new BigDecimal("10"), new BigDecimal("100"), matA);
 
         String landedCostId = createLandedCost("LC-RV-001", receiveId,
                 new String[][]{{"FREIGHT", "50"}}, null);
@@ -153,7 +152,7 @@ public class TestErpInvLandedCostReversal extends JunitAutoTestCase {
 
         generateIncoming(matA, "PR-LC-RV-REJ", new BigDecimal("10"), new BigDecimal("10"));
 
-        String receiveId = String.valueOf(seedReceiveSingle("RCV-LC-REJ", new BigDecimal("10"), new BigDecimal("100"), matA));
+        String receiveId = seedReceiveSingle("RCV-LC-REJ", new BigDecimal("10"), new BigDecimal("100"), matA);
 
         String landedCostId = createLandedCost("LC-RV-REJ", receiveId,
                 new String[][]{{"FREIGHT", "50"}}, null);
@@ -189,18 +188,17 @@ public class TestErpInvLandedCostReversal extends JunitAutoTestCase {
 
     // ---------- 采购入库单 seed ----------
 
-    // A3 桥接（bridge-test-121）：pur ErpPurReceive(ReceiveLine) 列仍 Long（M2.5 未迁移），String 常量/参数 → toLong seed 值
-    private Long seedReceiveSingle(String code, BigDecimal qty, BigDecimal amount, String matId) {
+    private String seedReceiveSingle(String code, BigDecimal qty, BigDecimal amount, String matId) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpPurReceive> recvDao = daoProvider.daoFor(ErpPurReceive.class);
             ErpPurReceive recv = new ErpPurReceive();
-            recv.orm_propValueByName("id", (long) code.hashCode());
+            recv.orm_propValueByName("id", String.valueOf(code.hashCode()));
             recv.setCode(code);
-            recv.setOrgId(ConvertHelper.toLong(ORG_ID));
-            recv.setSupplierId(7001L);
-            recv.setWarehouseId(ConvertHelper.toLong(WAREHOUSE_ID));
+            recv.setOrgId(ORG_ID);
+            recv.setSupplierId("7001");
+            recv.setWarehouseId(WAREHOUSE_ID);
             recv.setBusinessDate(LocalDate.of(2026, 7, 1));
-            recv.setCurrencyId(ConvertHelper.toLong(CURRENCY_ID));
+            recv.setCurrencyId(CURRENCY_ID);
             recv.setExchangeRate(BigDecimal.ONE);
             recv.setApproveStatus("APPROVED");
             recv.setDocStatus(ErpInvConstants.DOC_STATUS_DONE);
@@ -209,18 +207,18 @@ public class TestErpInvLandedCostReversal extends JunitAutoTestCase {
 
             IEntityDao<ErpPurReceiveLine> lineDao = daoProvider.daoFor(ErpPurReceiveLine.class);
             ErpPurReceiveLine line1 = new ErpPurReceiveLine();
-            line1.orm_propValueByName("id", (long) code.hashCode() * 10 + 1);
-            line1.setReceiveId((long) code.hashCode());
+            line1.orm_propValueByName("id", String.valueOf((long) code.hashCode() * 10 + 1));
+            line1.setReceiveId(String.valueOf(code.hashCode()));
             line1.setLineNo(1);
-            line1.setMaterialId(ConvertHelper.toLong(matId));
-            line1.setWarehouseId(ConvertHelper.toLong(WAREHOUSE_ID));
+            line1.setMaterialId(matId);
+            line1.setWarehouseId(WAREHOUSE_ID);
             line1.setQuantity(qty);
             line1.orm_propValueByName("unitPrice", amount.divide(qty, 4, java.math.RoundingMode.HALF_UP));
             line1.orm_propValueByName("amount", amount);
-            line1.setUoMId(ConvertHelper.toLong(UOM_ID));
+            line1.setUoMId(UOM_ID);
             lineDao.saveEntity(line1);
         });
-        return (long) code.hashCode();
+        return String.valueOf(code.hashCode());
     }
 
     // ---------- 到岸成本单创建 ----------

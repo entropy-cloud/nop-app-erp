@@ -193,12 +193,12 @@ public class ThreeWayMatcher {
         }
     }
 
-    private ErpPurReceiveLine loadReceiveLine(Long id) {
+    private ErpPurReceiveLine loadReceiveLine(String id) {
         ormTemplate.flushSession();
         return daoProvider.daoFor(ErpPurReceiveLine.class).getEntityById(id);
     }
 
-    private ErpPurOrderLine loadOrderLine(Long id) {
+    private ErpPurOrderLine loadOrderLine(String id) {
         ormTemplate.flushSession();
         return daoProvider.daoFor(ErpPurOrderLine.class).getEntityById(id);
     }

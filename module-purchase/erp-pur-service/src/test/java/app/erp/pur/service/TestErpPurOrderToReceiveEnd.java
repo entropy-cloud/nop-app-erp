@@ -50,13 +50,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpPurOrderToReceiveEnd extends JunitAutoTestCase {
 
-    static final Long ORG_ID = 1301L;
-    static final Long SUPPLIER_ID = 2301L;
-    static final Long WAREHOUSE_ID = 3301L;
-    static final Long MATERIAL_ID = 4301L;
-    static final Long UOM_ID = 5301L;
-    static final Long CURRENCY_ID = 6301L;
-    static final Long ACCT_SCHEMA_ID = 7301L;
+    static final String ORG_ID = "1301";
+    static final String SUPPLIER_ID = "2301";
+    static final String WAREHOUSE_ID = "3301";
+    static final String MATERIAL_ID = "4301";
+    static final String UOM_ID = "5301";
+    static final String CURRENCY_ID = "6301";
+    static final String ACCT_SCHEMA_ID = "7301";
 
     @Inject
     IDaoProvider daoProvider;
@@ -68,12 +68,12 @@ public class TestErpPurOrderToReceiveEnd extends JunitAutoTestCase {
     @Test
     public void testOrderToReceiveToEnd() {
         seedPrereqs();
-        long orderLine = 8301L;
-        long receiveId = 8302L;
-        long receiveLineId = 8303L;
+        String orderLine = "8301";
+        String receiveId = "8302";
+        String receiveLineId = "8303";
         ormTemplate.runInSession(session -> {
             seedActiveSupplier();
-            Long orderId = newOrder("PO-E2E-001");
+            String orderId = newOrder("PO-E2E-001");
             newOrderLine(orderId, orderLine, 1, new BigDecimal("10"));
             newReceive("PR-E2E-001", receiveId, orderId);
             newReceiveLine(receiveLineId, receiveId, orderLine, new BigDecimal("10"), new BigDecimal("5"));
@@ -122,16 +122,16 @@ public class TestErpPurOrderToReceiveEnd extends JunitAutoTestCase {
 
     // ---------- rpc helpers ----------
 
-    private ApiResponse<?> submit(Long receiveId) {
-        return executeRpc(mutation, "ErpPurReceive__submitForApproval", ApiRequest.build(Map.of("id", String.valueOf(receiveId))));
+    private ApiResponse<?> submit(String receiveId) {
+        return executeRpc(mutation, "ErpPurReceive__submitForApproval", ApiRequest.build(Map.of("id", receiveId)));
     }
 
-    private ApiResponse<?> approve(Long receiveId) {
-        return executeRpc(mutation, "ErpPurReceive__approve", ApiRequest.build(Map.of("id", String.valueOf(receiveId))));
+    private ApiResponse<?> approve(String receiveId) {
+        return executeRpc(mutation, "ErpPurReceive__approve", ApiRequest.build(Map.of("id", receiveId)));
     }
 
-    private ApiResponse<?> reverseApprove(Long receiveId) {
-        return executeRpc(mutation, "ErpPurReceive__reverseApprove", ApiRequest.build(Map.of("id", String.valueOf(receiveId))));
+    private ApiResponse<?> reverseApprove(String receiveId) {
+        return executeRpc(mutation, "ErpPurReceive__reverseApprove", ApiRequest.build(Map.of("id", receiveId)));
     }
 
     private ApiResponse<?> executeRpc(GraphQLOperationType opType, String action, ApiRequest<?> request) {
@@ -201,7 +201,7 @@ public class TestErpPurOrderToReceiveEnd extends JunitAutoTestCase {
         dao.saveEntity(subject);
     }
 
-    private Long newOrder(String code) {
+    private String newOrder(String code) {
         IEntityDao<ErpPurOrder> dao = daoProvider.daoFor(ErpPurOrder.class);
         ErpPurOrder order = new ErpPurOrder();
         order.setCode(code);
@@ -217,7 +217,7 @@ public class TestErpPurOrderToReceiveEnd extends JunitAutoTestCase {
         return order.getId();
     }
 
-    private void newOrderLine(Long orderId, Long lineId, int lineNo, BigDecimal qty) {
+    private void newOrderLine(String orderId, String lineId, int lineNo, BigDecimal qty) {
         IEntityDao<ErpPurOrderLine> dao = daoProvider.daoFor(ErpPurOrderLine.class);
         ErpPurOrderLine line = new ErpPurOrderLine();
         line.setId(lineId);
@@ -231,7 +231,7 @@ public class TestErpPurOrderToReceiveEnd extends JunitAutoTestCase {
         dao.saveEntity(line);
     }
 
-    private void newReceive(String code, Long receiveId, Long orderId) {
+    private void newReceive(String code, String receiveId, String orderId) {
         IEntityDao<ErpPurReceive> dao = daoProvider.daoFor(ErpPurReceive.class);
         ErpPurReceive receive = new ErpPurReceive();
         receive.setId(receiveId);
@@ -250,7 +250,7 @@ public class TestErpPurOrderToReceiveEnd extends JunitAutoTestCase {
         dao.saveEntity(receive);
     }
 
-    private void newReceiveLine(Long lineId, Long receiveId, Long orderLineId, BigDecimal qty, BigDecimal unitPrice) {
+    private void newReceiveLine(String lineId, String receiveId, String orderLineId, BigDecimal qty, BigDecimal unitPrice) {
         IEntityDao<ErpPurReceiveLine> dao = daoProvider.daoFor(ErpPurReceiveLine.class);
         ErpPurReceiveLine line = new ErpPurReceiveLine();
         line.setId(lineId);

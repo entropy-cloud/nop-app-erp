@@ -14,16 +14,16 @@
     public class ErpPurOrderOutputBean {
 
     
-        private Long _id;
+        private String _id;
 
     
         @PropMeta(propId=1)
     
-        public Long getId(){
+        public String getId(){
             return _id;
         }
 
-        public void setId(Long value){
+        public void setId(String value){
             this._id = value;
         }
 
@@ -42,72 +42,72 @@
         }
 
 
-        private Long _orgId;
+        private String _orgId;
 
     
         @PropMeta(propId=3)
     
-        public Long getOrgId(){
+        public String getOrgId(){
             return _orgId;
         }
 
-        public void setOrgId(Long value){
+        public void setOrgId(String value){
             this._orgId = value;
         }
 
 
-        private Long _requisitionId;
+        private String _requisitionId;
 
     
         @PropMeta(propId=4)
     
-        public Long getRequisitionId(){
+        public String getRequisitionId(){
             return _requisitionId;
         }
 
-        public void setRequisitionId(Long value){
+        public void setRequisitionId(String value){
             this._requisitionId = value;
         }
 
 
-        private Long _quotationId;
+        private String _quotationId;
 
     
         @PropMeta(propId=5)
     
-        public Long getQuotationId(){
+        public String getQuotationId(){
             return _quotationId;
         }
 
-        public void setQuotationId(Long value){
+        public void setQuotationId(String value){
             this._quotationId = value;
         }
 
 
-        private Long _supplierId;
+        private String _supplierId;
 
     
         @PropMeta(propId=6)
     
-        public Long getSupplierId(){
+        public String getSupplierId(){
             return _supplierId;
         }
 
-        public void setSupplierId(Long value){
+        public void setSupplierId(String value){
             this._supplierId = value;
         }
 
 
-        private Long _warehouseId;
+        private String _warehouseId;
 
     
         @PropMeta(propId=7)
     
-        public Long getWarehouseId(){
+        public String getWarehouseId(){
             return _warehouseId;
         }
 
-        public void setWarehouseId(Long value){
+        public void setWarehouseId(String value){
             this._warehouseId = value;
         }
 
@@ -140,16 +140,16 @@
         }
 
 
-        private Long _currencyId;
+        private String _currencyId;
 
     
         @PropMeta(propId=10)
     
-        public Long getCurrencyId(){
+        public String getCurrencyId(){
             return _currencyId;
         }
 
-        public void setCurrencyId(Long value){
+        public void setCurrencyId(String value){
             this._currencyId = value;
         }
 
@@ -280,16 +280,16 @@
         }
 
 
-        private Long _settlementMethodId;
+        private String _settlementMethodId;
 
     
         @PropMeta(propId=20)
     
-        public Long getSettlementMethodId(){
+        public String getSettlementMethodId(){
             return _settlementMethodId;
         }
 
-        public void setSettlementMethodId(Long value){
+        public void setSettlementMethodId(String value){
             this._settlementMethodId = value;
         }
 

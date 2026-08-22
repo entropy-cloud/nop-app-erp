@@ -19,25 +19,25 @@
             <cols>
 
                 <!--ID-->
-                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="id" mandatory="true" sortable="true"/>
 
                 <!--入库单ID-->
-                <col id="receiveId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="receiveId" mandatory="true" sortable="true"/>
 
                 <!--订单行ID-->
-                <col id="orderLineId" ui:number="true" sortable="true"/>
+                <col id="orderLineId" sortable="true"/>
 
                 <!--行号-->
                 <col id="lineNo" mandatory="true" ui:number="true" sortable="true"/>
 
                 <!--物料-->
-                <col id="materialId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="materialId" mandatory="true" sortable="true"/>
 
                 <!--SKU-->
-                <col id="skuId" ui:number="true" sortable="true"/>
+                <col id="skuId" sortable="true"/>
 
                 <!--计量单位-->
-                <col id="uoMId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="uoMId" mandatory="true" sortable="true"/>
 
                 <!--实收数量-->
                 <col id="quantity" mandatory="true" ui:number="true" sortable="true"/>
@@ -58,7 +58,7 @@
                 <col id="amount" ui:number="true" sortable="true"/>
 
                 <!--入库库位-->
-                <col id="warehouseId" ui:number="true" sortable="true"/>
+                <col id="warehouseId" sortable="true"/>
 
                 <!--批号-->
                 <col id="batchNo" sortable="true"/>

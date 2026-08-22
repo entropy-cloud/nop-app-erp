@@ -179,17 +179,17 @@ public class ErpPurPaymentProcessor {
         if (!Boolean.TRUE.equals(AppConfig.var(ErpFinConstants.CONFIG_BUDGET_CHECK_ENABLED, Boolean.FALSE))) {
             return;
         }
-        Long subjectId = resolveBudgetSubjectId(ErpFinConstants.CONFIG_BUDGET_PURCHASE_EXPENSE_SUBJECT_CODE);
+        String subjectId = resolveBudgetSubjectId(ErpFinConstants.CONFIG_BUDGET_PURCHASE_EXPENSE_SUBJECT_CODE);
         if (subjectId == null) {
             return;
         }
-        Long periodId = resolvePeriodId(payment.getBusinessDate());
+        String periodId = resolvePeriodId(payment.getBusinessDate());
         BigDecimal amount = payment.getAmountFunctional() != null
                 ? payment.getAmountFunctional() : BigDecimal.ZERO;
         budgetControlBiz.check(subjectId, null, periodId, amount, "AP_PAYMENT", payment.getCode(), context);
     }
 
-    protected Long resolveBudgetSubjectId(String configKey) {
+    protected String resolveBudgetSubjectId(String configKey) {
         String code = AppConfig.var(configKey, null);
         if (code == null || code.isEmpty()) {
             return null;
@@ -202,7 +202,7 @@ public class ErpPurPaymentProcessor {
         return list.isEmpty() ? null : list.get(0).getId();
     }
 
-    protected Long resolvePeriodId(LocalDate businessDate) {
+    protected String resolvePeriodId(LocalDate businessDate) {
         if (businessDate == null) {
             return null;
         }

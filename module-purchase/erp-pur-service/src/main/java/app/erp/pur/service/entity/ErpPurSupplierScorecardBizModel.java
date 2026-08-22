@@ -28,7 +28,7 @@ public class ErpPurSupplierScorecardBizModel extends CrudBizModel<ErpPurSupplier
 
     @Override
     @BizMutation
-    public ErpPurSupplierScorecard finalizeScorecard(@Name("scorecardId") Long scorecardId, IServiceContext context) {
+    public ErpPurSupplierScorecard finalizeScorecard(@Name("scorecardId") String scorecardId, IServiceContext context) {
         return finalizeScorecardProcessor.finalizeScorecard(scorecardId, context);
     }
 

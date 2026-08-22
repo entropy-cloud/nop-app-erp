@@ -85,8 +85,8 @@ public class ErpPurOrderBizModel extends CrudBizModel<ErpPurOrder> implements IE
 
     @Override
     @BizMutation
-    public ErpPurOrder cancel(@Name("orderId") Long orderId, IServiceContext context) {
-        return cancelProcessor.cancel(String.valueOf(orderId), context);
+    public ErpPurOrder cancel(@Name("orderId") String orderId, IServiceContext context) {
+        return cancelProcessor.cancel(orderId, context);
     }
 
     /**
@@ -120,7 +120,7 @@ public class ErpPurOrderBizModel extends CrudBizModel<ErpPurOrder> implements IE
     @BizAction
     public ErpPurOrder createFromRequisition(@Name("requisition") ErpPurRequisition requisition,
                                              @Name("lines") List<ErpPurRequisitionLine> lines,
-                                             @Name("supplierId") Long supplierId,
+                                             @Name("supplierId") String supplierId,
                                              @Name("request") ConvertToOrderRequest request,
                                              IServiceContext context) {
         ErpPurOrder order = converter.build(requisition, lines, supplierId, request);
@@ -133,7 +133,7 @@ public class ErpPurOrderBizModel extends CrudBizModel<ErpPurOrder> implements IE
 
     @Override
     @BizAction
-    public boolean existsActiveByRequisition(@Name("requisitionId") Long requisitionId, IServiceContext context) {
+    public boolean existsActiveByRequisition(@Name("requisitionId") String requisitionId, IServiceContext context) {
         if (requisitionId == null) {
             return false;
         }
@@ -150,13 +150,13 @@ public class ErpPurOrderBizModel extends CrudBizModel<ErpPurOrder> implements IE
 
     @Override
     @BizAction
-    public void updateReceiveStatus(@Name("orderId") Long orderId,
+    public void updateReceiveStatus(@Name("orderId") String orderId,
                                     @Name("receiveStatus") String receiveStatus,
                                     IServiceContext context) {
         if (orderId == null) {
             return;
         }
-        ErpPurOrder order = get(String.valueOf(orderId), true, context);
+        ErpPurOrder order = get(orderId, true, context);
         if (order == null) {
             return;
         }

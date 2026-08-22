@@ -59,12 +59,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         testConfigFile = "classpath:budget-commitment-test.yaml")
 public class TestErpPurOrderCommitment extends JunitAutoTestCase {
 
-    static final Long ORG_ID = 1101L;
-    static final Long SUPPLIER_ID = 2101L;
-    static final Long WAREHOUSE_ID = 3101L;
-    static final Long MATERIAL_ID = 4101L;
-    static final Long UOM_ID = 5101L;
-    static final Long CURRENCY_ID = 6101L;
+    static final String ORG_ID = "1101";
+    static final String SUPPLIER_ID = "2101";
+    static final String WAREHOUSE_ID = "3101";
+    static final String MATERIAL_ID = "4101";
+    static final String UOM_ID = "5101";
+    static final String CURRENCY_ID = "6101";
     static final String COMMITMENT_BILL_TYPE = "PURCHASE_ORDER_COMMITMENT";
     static final String POSTING_TYPE_COMMITMENT = "COMMITMENT";
 
@@ -117,7 +117,7 @@ public class TestErpPurOrderCommitment extends JunitAutoTestCase {
         assertEquals(0, approve(order.getId()).getStatus());
         ErpFinVoucherBillR link = findCommitmentBillLink(order.getCode());
         assertNotNull(link, "审核时应已生成 COMMITMENT 凭证");
-        Long originalVoucherId = link.getVoucherId();
+        String originalVoucherId = link.getVoucherId();
 
         // 反审核触发 release-on-cancel hook
         assertEquals(0, reverseApprove(order.getId()).getStatus(),
@@ -142,7 +142,7 @@ public class TestErpPurOrderCommitment extends JunitAutoTestCase {
         assertEquals(0, approve(order.getId()).getStatus());
         ErpFinVoucherBillR link = findCommitmentBillLink(order.getCode());
         assertNotNull(link);
-        Long originalVoucherId = link.getVoucherId();
+        String originalVoucherId = link.getVoucherId();
 
         // 作废触发 release-on-cancel hook（cancel 路径）
         assertEquals(0, cancel(order.getId()).getStatus(),
@@ -155,22 +155,22 @@ public class TestErpPurOrderCommitment extends JunitAutoTestCase {
 
     // ---------- helpers ----------
 
-    private ApiResponse<?> submit(Long orderId) {
+    private ApiResponse<?> submit(String orderId) {
         return executeRpc(mutation, "ErpPurOrder__submitForApproval",
-                ApiRequest.build(Map.of("id", String.valueOf(orderId))));
+                ApiRequest.build(Map.of("id", orderId)));
     }
 
-    private ApiResponse<?> approve(Long orderId) {
+    private ApiResponse<?> approve(String orderId) {
         return executeRpc(mutation, "ErpPurOrder__approve",
-                ApiRequest.build(Map.of("id", String.valueOf(orderId))));
+                ApiRequest.build(Map.of("id", orderId)));
     }
 
-    private ApiResponse<?> reverseApprove(Long orderId) {
+    private ApiResponse<?> reverseApprove(String orderId) {
         return executeRpc(mutation, "ErpPurOrder__reverseApprove",
-                ApiRequest.build(Map.of("id", String.valueOf(orderId))));
+                ApiRequest.build(Map.of("id", orderId)));
     }
 
-    private ApiResponse<?> cancel(Long orderId) {
+    private ApiResponse<?> cancel(String orderId) {
         return executeRpc(mutation, "ErpPurOrder__cancel",
                 ApiRequest.build(Map.of("orderId", orderId)));
     }
@@ -215,7 +215,7 @@ public class TestErpPurOrderCommitment extends JunitAutoTestCase {
         lineDao.saveEntity(line);
     }
 
-    private void seedActiveSupplier(Long id) {
+    private void seedActiveSupplier(String id) {
         IEntityDao<ErpMdPartner> dao = daoProvider.daoFor(ErpMdPartner.class);
         ErpMdPartner partner = new ErpMdPartner();
         partner.setId(id);

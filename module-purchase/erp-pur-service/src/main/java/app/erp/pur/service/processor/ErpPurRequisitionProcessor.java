@@ -97,7 +97,7 @@ public class ErpPurRequisitionProcessor {
         validateApprovedForConversion(req, context);
         List<ErpPurRequisitionLine> lines = loadLines(req);
         validateLinesNonEmptyForConversion(req, lines, context);
-        Map<Long, List<ErpPurRequisitionLine>> groups = groupLinesBySupplier(req, lines, context);
+        Map<String, List<ErpPurRequisitionLine>> groups = groupLinesBySupplier(req, lines, context);
         validateNotAlreadyConverted(req.getId(), context);
         return doConvertToOrders(req, groups, request, context);
     }
@@ -179,12 +179,12 @@ public class ErpPurRequisitionProcessor {
      * 分组，LinkedHashMap 保留行首次出现顺序；任一行为 null 抛 {@link ErpPurErrors#ERR_REQ_MIXED_OR_MISSING_SUPPLIER}
      * （Decision A：整次转化拒绝，不做静默裁剪）。
      */
-    protected Map<Long, List<ErpPurRequisitionLine>> groupLinesBySupplier(ErpPurRequisition req,
-                                                                          List<ErpPurRequisitionLine> lines,
-                                                                          IServiceContext context) {
-        Map<Long, List<ErpPurRequisitionLine>> groups = new LinkedHashMap<>();
+    protected Map<String, List<ErpPurRequisitionLine>> groupLinesBySupplier(ErpPurRequisition req,
+                                                                           List<ErpPurRequisitionLine> lines,
+                                                                           IServiceContext context) {
+        Map<String, List<ErpPurRequisitionLine>> groups = new LinkedHashMap<>();
         for (ErpPurRequisitionLine line : lines) {
-            Long supplierId = line.getSuggestedSupplierId();
+            String supplierId = line.getSuggestedSupplierId();
             if (supplierId == null) {
                 throw new NopException(ErpPurErrors.ERR_REQ_MIXED_OR_MISSING_SUPPLIER)
                         .param(ErpPurErrors.ARG_REQUISITION_CODE, req.getCode());
@@ -194,7 +194,7 @@ public class ErpPurRequisitionProcessor {
         return groups;
     }
 
-    protected void validateNotAlreadyConverted(Long requisitionId, IServiceContext context) {
+    protected void validateNotAlreadyConverted(String requisitionId, IServiceContext context) {
         if (orderBiz.existsActiveByRequisition(requisitionId, context)) {
             throw new NopException(ErpPurErrors.ERR_REQ_ALREADY_CONVERTED)
                     .param(ErpPurErrors.ARG_REQUISITION_ID, requisitionId);
@@ -243,17 +243,17 @@ public class ErpPurRequisitionProcessor {
      * protected step——派生类可覆盖本方法改全组逻辑，或覆盖单组 {@link #doConvertToOrder} 改单组逻辑。
      */
     protected List<ErpPurOrder> doConvertToOrders(ErpPurRequisition req,
-                                                  Map<Long, List<ErpPurRequisitionLine>> groups,
+                                                  Map<String, List<ErpPurRequisitionLine>> groups,
                                                   ConvertToOrderRequest request, IServiceContext context) {
         List<ErpPurOrder> orders = new ArrayList<>(groups.size());
-        for (Map.Entry<Long, List<ErpPurRequisitionLine>> entry : groups.entrySet()) {
+        for (Map.Entry<String, List<ErpPurRequisitionLine>> entry : groups.entrySet()) {
             orders.add(doConvertToOrder(req, entry.getValue(), entry.getKey(), request, context));
         }
         return orders;
     }
 
     protected ErpPurOrder doConvertToOrder(ErpPurRequisition req, List<ErpPurRequisitionLine> lines,
-                                           Long supplierId, ConvertToOrderRequest request, IServiceContext context) {
+                                           String supplierId, ConvertToOrderRequest request, IServiceContext context) {
         return orderBiz.createFromRequisition(req, lines, supplierId, request, context);
     }
 

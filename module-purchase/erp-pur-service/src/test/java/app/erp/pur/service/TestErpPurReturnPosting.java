@@ -60,13 +60,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpPurReturnPosting extends JunitAutoTestCase {
 
-    static final Long ORG_ID = 3401L;
-    static final Long SUPPLIER_ID = 4401L;
-    static final Long WAREHOUSE_ID = 5401L;
-    static final Long MATERIAL_ID = 6401L;
-    static final Long UOM_ID = 7401L;
-    static final Long CURRENCY_ID = 8401L;
-    static final Long ACCT_SCHEMA_ID = 9401L;
+    static final String ORG_ID = "3401";
+    static final String SUPPLIER_ID = "4401";
+    static final String WAREHOUSE_ID = "5401";
+    static final String MATERIAL_ID = "6401";
+    static final String UOM_ID = "7401";
+    static final String CURRENCY_ID = "8401";
+    static final String ACCT_SCHEMA_ID = "9401";
     static final BigDecimal RETURN_AMOUNT = new BigDecimal("20"); // 4 × 5
 
     @Inject
@@ -81,8 +81,8 @@ public class TestErpPurReturnPosting extends JunitAutoTestCase {
     @Test
     public void testApproveGeneratesPurchaseReturnVoucherAndNegativeApItem() {
         seedPeriodAndSubjects();
-        Long[] receiveCtx = seedApprovedReceive("PR-POST-001", new BigDecimal("10"), new BigDecimal("5"));
-        Long returnId = nextId();
+        String[] receiveCtx = seedApprovedReceive("PR-POST-001", new BigDecimal("10"), new BigDecimal("5"));
+        String returnId = nextId();
         ormTemplate.runInSession(session -> {
             newReturn("RT-POST-001", returnId, receiveCtx[0], RETURN_AMOUNT);
             newReturnLine(nextId(), returnId, receiveCtx[1], new BigDecimal("4"), new BigDecimal("5"));
@@ -122,8 +122,8 @@ public class TestErpPurReturnPosting extends JunitAutoTestCase {
     @Test
     public void testReverseApproveCancelsApItemAndRestoresBalance() {
         seedPeriodAndSubjects();
-        Long[] receiveCtx = seedApprovedReceive("PR-REV-001", new BigDecimal("10"), new BigDecimal("5"));
-        Long returnId = nextId();
+        String[] receiveCtx = seedApprovedReceive("PR-REV-001", new BigDecimal("10"), new BigDecimal("5"));
+        String returnId = nextId();
         ormTemplate.runInSession(session -> {
             newReturn("RT-REV-001", returnId, receiveCtx[0], RETURN_AMOUNT);
             newReturnLine(nextId(), returnId, receiveCtx[1], new BigDecimal("4"), new BigDecimal("5"));
@@ -149,13 +149,13 @@ public class TestErpPurReturnPosting extends JunitAutoTestCase {
 
     // ---------- end-to-end seed ----------
 
-    private Long[] seedApprovedReceive(String receiveCode, BigDecimal receiveQty, BigDecimal unitPrice) {
-        Long orderLineId = nextId();
-        Long receiveId = nextId();
-        Long receiveLineId = nextId();
+    private String[] seedApprovedReceive(String receiveCode, BigDecimal receiveQty, BigDecimal unitPrice) {
+        String orderLineId = nextId();
+        String receiveId = nextId();
+        String receiveLineId = nextId();
         ormTemplate.runInSession(session -> {
             seedActiveSupplier();
-            Long orderId = newOrder("PO-" + receiveCode);
+            String orderId = newOrder("PO-" + receiveCode);
             newOrderLine(orderId, orderLineId, 1, receiveQty);
             newReceive(receiveCode, receiveId, orderId);
             newReceiveLine(receiveLineId, receiveId, orderLineId, receiveQty, unitPrice);
@@ -163,10 +163,10 @@ public class TestErpPurReturnPosting extends JunitAutoTestCase {
         });
         assertEquals(0, executeRpc(mutation, "ErpPurReceive__approve",
                 ApiRequest.build(Map.of("id", String.valueOf(receiveId)))).getStatus(), "源入库单审核应成功");
-        return new Long[]{receiveId, receiveLineId};
+        return new String[]{receiveId, receiveLineId};
     }
 
-    private ErpPurReturn reload(Long returnId) {
+    private ErpPurReturn reload(String returnId) {
         return daoProvider.daoFor(ErpPurReturn.class).getEntityById(returnId);
     }
 
@@ -190,11 +190,11 @@ public class TestErpPurReturnPosting extends JunitAutoTestCase {
 
     // ---------- rpc ----------
 
-    private ApiResponse<?> approveReturn(Long id) {
+    private ApiResponse<?> approveReturn(String id) {
         return executeRpc(mutation, "ErpPurReturn__approve", ApiRequest.build(Map.of("id", String.valueOf(id))));
     }
 
-    private ApiResponse<?> reverseApproveReturn(Long id) {
+    private ApiResponse<?> reverseApproveReturn(String id) {
         return executeRpc(mutation, "ErpPurReturn__reverseApprove", ApiRequest.build(Map.of("id", String.valueOf(id))));
     }
 
@@ -212,7 +212,7 @@ public class TestErpPurReturnPosting extends JunitAutoTestCase {
         return dao.findAllByQuery(q).stream().findFirst().orElse(null);
     }
 
-    private long countVoucherLines(Long voucherId) {
+    private long countVoucherLines(String voucherId) {
         IEntityDao<ErpFinVoucherLine> dao = daoProvider.daoFor(ErpFinVoucherLine.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("voucherId", voucherId));
@@ -296,7 +296,7 @@ public class TestErpPurReturnPosting extends JunitAutoTestCase {
         dao.saveEntity(subject);
     }
 
-    private Long newOrder(String code) {
+    private String newOrder(String code) {
         IEntityDao<ErpPurOrder> dao = daoProvider.daoFor(ErpPurOrder.class);
         ErpPurOrder order = new ErpPurOrder();
         order.setCode(code);
@@ -312,7 +312,7 @@ public class TestErpPurReturnPosting extends JunitAutoTestCase {
         return order.getId();
     }
 
-    private void newOrderLine(Long orderId, Long lineId, int lineNo, BigDecimal qty) {
+    private void newOrderLine(String orderId, String lineId, int lineNo, BigDecimal qty) {
         IEntityDao<ErpPurOrderLine> dao = daoProvider.daoFor(ErpPurOrderLine.class);
         ErpPurOrderLine line = new ErpPurOrderLine();
         line.setId(lineId);
@@ -326,7 +326,7 @@ public class TestErpPurReturnPosting extends JunitAutoTestCase {
         dao.saveEntity(line);
     }
 
-    private void newReceive(String code, Long receiveId, Long orderId) {
+    private void newReceive(String code, String receiveId, String orderId) {
         IEntityDao<ErpPurReceive> dao = daoProvider.daoFor(ErpPurReceive.class);
         ErpPurReceive receive = new ErpPurReceive();
         receive.setId(receiveId);
@@ -345,7 +345,7 @@ public class TestErpPurReturnPosting extends JunitAutoTestCase {
         dao.saveEntity(receive);
     }
 
-    private void newReceiveLine(Long lineId, Long receiveId, Long orderLineId, BigDecimal qty, BigDecimal unitPrice) {
+    private void newReceiveLine(String lineId, String receiveId, String orderLineId, BigDecimal qty, BigDecimal unitPrice) {
         IEntityDao<ErpPurReceiveLine> dao = daoProvider.daoFor(ErpPurReceiveLine.class);
         ErpPurReceiveLine line = new ErpPurReceiveLine();
         line.setId(lineId);
@@ -359,7 +359,7 @@ public class TestErpPurReturnPosting extends JunitAutoTestCase {
         dao.saveEntity(line);
     }
 
-    private void newReturn(String code, Long returnId, Long receiveId, BigDecimal totalAmount) {
+    private void newReturn(String code, String returnId, String receiveId, BigDecimal totalAmount) {
         IEntityDao<ErpPurReturn> dao = daoProvider.daoFor(ErpPurReturn.class);
         ErpPurReturn returnOrder = new ErpPurReturn();
         returnOrder.setId(returnId);
@@ -378,7 +378,7 @@ public class TestErpPurReturnPosting extends JunitAutoTestCase {
         dao.saveEntity(returnOrder);
     }
 
-    private void newReturnLine(Long lineId, Long returnId, Long receiveLineId, BigDecimal qty, BigDecimal unitPrice) {
+    private void newReturnLine(String lineId, String returnId, String receiveLineId, BigDecimal qty, BigDecimal unitPrice) {
         IEntityDao<ErpPurReturnLine> dao = daoProvider.daoFor(ErpPurReturnLine.class);
         ErpPurReturnLine line = new ErpPurReturnLine();
         line.setId(lineId);
@@ -394,7 +394,7 @@ public class TestErpPurReturnPosting extends JunitAutoTestCase {
         dao.saveEntity(line);
     }
 
-    private Long nextId() {
-        return idSeq.incrementAndGet();
+    private String nextId() {
+        return String.valueOf(idSeq.incrementAndGet());
     }
 }

@@ -19,7 +19,7 @@ public class ErpPurPaymentReverseSettlementProcessor {
     @Inject
     PaymentSettler paymentSettler;
 
-    public ErpPurPayment reverseSettlement(String id, Long invoiceId, IServiceContext context) {
+    public ErpPurPayment reverseSettlement(String id, String invoiceId, IServiceContext context) {
         ErpPurPayment payment = requirePayment(id, context);
         return doReverseSettlement(payment, invoiceId, context);
     }
@@ -28,7 +28,7 @@ public class ErpPurPaymentReverseSettlementProcessor {
         return facade.requirePayment(id, context);
     }
 
-    protected ErpPurPayment doReverseSettlement(ErpPurPayment payment, Long invoiceId, IServiceContext context) {
+    protected ErpPurPayment doReverseSettlement(ErpPurPayment payment, String invoiceId, IServiceContext context) {
         return paymentSettler.reverseSettlement(payment, invoiceId);
     }
 }

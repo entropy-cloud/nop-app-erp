@@ -164,19 +164,19 @@ public class _ErpPurRequisitionLine extends DynamicOrmEntity{
 
     
     /* ID: ID */
-    private java.lang.Long _id;
+    private java.lang.String _id;
     
     /* 请购单ID: REQUISITION_ID */
-    private java.lang.Long _requisitionId;
+    private java.lang.String _requisitionId;
     
     /* 行号: LINE_NO */
     private java.lang.Integer _lineNo;
     
     /* 物料: MATERIAL_ID */
-    private java.lang.Long _materialId;
+    private java.lang.String _materialId;
     
     /* 计量单位: UO_M_ID */
-    private java.lang.Long _uoMId;
+    private java.lang.String _uoMId;
     
     /* 请购数量: QUANTITY */
     private java.math.BigDecimal _quantity;
@@ -185,10 +185,10 @@ public class _ErpPurRequisitionLine extends DynamicOrmEntity{
     private java.time.LocalDate _requiredDate;
     
     /* 建议供应商: SUGGESTED_SUPPLIER_ID */
-    private java.lang.Long _suggestedSupplierId;
+    private java.lang.String _suggestedSupplierId;
     
     /* 项目: PROJECT_ID */
-    private java.lang.Long _projectId;
+    private java.lang.String _projectId;
     
     /* 备注: REMARK */
     private java.lang.String _remark;
@@ -345,9 +345,9 @@ public class _ErpPurRequisitionLine extends DynamicOrmEntity{
         switch(propId){
         
             case PROP_ID_id:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_id));
                }
                setId(typedValue);
@@ -355,9 +355,9 @@ public class _ErpPurRequisitionLine extends DynamicOrmEntity{
             }
         
             case PROP_ID_requisitionId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_requisitionId));
                }
                setRequisitionId(typedValue);
@@ -375,9 +375,9 @@ public class _ErpPurRequisitionLine extends DynamicOrmEntity{
             }
         
             case PROP_ID_materialId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_materialId));
                }
                setMaterialId(typedValue);
@@ -385,9 +385,9 @@ public class _ErpPurRequisitionLine extends DynamicOrmEntity{
             }
         
             case PROP_ID_uoMId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_uoMId));
                }
                setUoMId(typedValue);
@@ -415,9 +415,9 @@ public class _ErpPurRequisitionLine extends DynamicOrmEntity{
             }
         
             case PROP_ID_suggestedSupplierId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_suggestedSupplierId));
                }
                setSuggestedSupplierId(typedValue);
@@ -425,9 +425,9 @@ public class _ErpPurRequisitionLine extends DynamicOrmEntity{
             }
         
             case PROP_ID_projectId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_projectId));
                }
                setProjectId(typedValue);
@@ -515,14 +515,14 @@ public class _ErpPurRequisitionLine extends DynamicOrmEntity{
         
             case PROP_ID_id:{
                onInitProp(propId);
-               this._id = (java.lang.Long)value;
+               this._id = (java.lang.String)value;
                orm_id(); // 如果是设置主键字段，则触发watcher
                break;
             }
         
             case PROP_ID_requisitionId:{
                onInitProp(propId);
-               this._requisitionId = (java.lang.Long)value;
+               this._requisitionId = (java.lang.String)value;
                
                break;
             }
@@ -536,14 +536,14 @@ public class _ErpPurRequisitionLine extends DynamicOrmEntity{
         
             case PROP_ID_materialId:{
                onInitProp(propId);
-               this._materialId = (java.lang.Long)value;
+               this._materialId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_uoMId:{
                onInitProp(propId);
-               this._uoMId = (java.lang.Long)value;
+               this._uoMId = (java.lang.String)value;
                
                break;
             }
@@ -564,14 +564,14 @@ public class _ErpPurRequisitionLine extends DynamicOrmEntity{
         
             case PROP_ID_suggestedSupplierId:{
                onInitProp(propId);
-               this._suggestedSupplierId = (java.lang.Long)value;
+               this._suggestedSupplierId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_projectId:{
                onInitProp(propId);
-               this._projectId = (java.lang.Long)value;
+               this._projectId = (java.lang.String)value;
                
                break;
             }
@@ -634,7 +634,7 @@ public class _ErpPurRequisitionLine extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final java.lang.Long getId(){
+    public final java.lang.String getId(){
          onPropGet(PROP_ID_id);
          return _id;
     }
@@ -642,7 +642,7 @@ public class _ErpPurRequisitionLine extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final void setId(java.lang.Long value){
+    public final void setId(java.lang.String value){
         if(onPropSet(PROP_ID_id,value)){
             this._id = value;
             internalClearRefs(PROP_ID_id);
@@ -653,7 +653,7 @@ public class _ErpPurRequisitionLine extends DynamicOrmEntity{
     /**
      * 请购单ID: REQUISITION_ID
      */
-    public final java.lang.Long getRequisitionId(){
+    public final java.lang.String getRequisitionId(){
          onPropGet(PROP_ID_requisitionId);
          return _requisitionId;
     }
@@ -661,7 +661,7 @@ public class _ErpPurRequisitionLine extends DynamicOrmEntity{
     /**
      * 请购单ID: REQUISITION_ID
      */
-    public final void setRequisitionId(java.lang.Long value){
+    public final void setRequisitionId(java.lang.String value){
         if(onPropSet(PROP_ID_requisitionId,value)){
             this._requisitionId = value;
             internalClearRefs(PROP_ID_requisitionId);
@@ -691,7 +691,7 @@ public class _ErpPurRequisitionLine extends DynamicOrmEntity{
     /**
      * 物料: MATERIAL_ID
      */
-    public final java.lang.Long getMaterialId(){
+    public final java.lang.String getMaterialId(){
          onPropGet(PROP_ID_materialId);
          return _materialId;
     }
@@ -699,7 +699,7 @@ public class _ErpPurRequisitionLine extends DynamicOrmEntity{
     /**
      * 物料: MATERIAL_ID
      */
-    public final void setMaterialId(java.lang.Long value){
+    public final void setMaterialId(java.lang.String value){
         if(onPropSet(PROP_ID_materialId,value)){
             this._materialId = value;
             internalClearRefs(PROP_ID_materialId);
@@ -710,7 +710,7 @@ public class _ErpPurRequisitionLine extends DynamicOrmEntity{
     /**
      * 计量单位: UO_M_ID
      */
-    public final java.lang.Long getUoMId(){
+    public final java.lang.String getUoMId(){
          onPropGet(PROP_ID_uoMId);
          return _uoMId;
     }
@@ -718,7 +718,7 @@ public class _ErpPurRequisitionLine extends DynamicOrmEntity{
     /**
      * 计量单位: UO_M_ID
      */
-    public final void setUoMId(java.lang.Long value){
+    public final void setUoMId(java.lang.String value){
         if(onPropSet(PROP_ID_uoMId,value)){
             this._uoMId = value;
             internalClearRefs(PROP_ID_uoMId);
@@ -767,7 +767,7 @@ public class _ErpPurRequisitionLine extends DynamicOrmEntity{
     /**
      * 建议供应商: SUGGESTED_SUPPLIER_ID
      */
-    public final java.lang.Long getSuggestedSupplierId(){
+    public final java.lang.String getSuggestedSupplierId(){
          onPropGet(PROP_ID_suggestedSupplierId);
          return _suggestedSupplierId;
     }
@@ -775,7 +775,7 @@ public class _ErpPurRequisitionLine extends DynamicOrmEntity{
     /**
      * 建议供应商: SUGGESTED_SUPPLIER_ID
      */
-    public final void setSuggestedSupplierId(java.lang.Long value){
+    public final void setSuggestedSupplierId(java.lang.String value){
         if(onPropSet(PROP_ID_suggestedSupplierId,value)){
             this._suggestedSupplierId = value;
             internalClearRefs(PROP_ID_suggestedSupplierId);
@@ -786,7 +786,7 @@ public class _ErpPurRequisitionLine extends DynamicOrmEntity{
     /**
      * 项目: PROJECT_ID
      */
-    public final java.lang.Long getProjectId(){
+    public final java.lang.String getProjectId(){
          onPropGet(PROP_ID_projectId);
          return _projectId;
     }
@@ -794,7 +794,7 @@ public class _ErpPurRequisitionLine extends DynamicOrmEntity{
     /**
      * 项目: PROJECT_ID
      */
-    public final void setProjectId(java.lang.Long value){
+    public final void setProjectId(java.lang.String value){
         if(onPropSet(PROP_ID_projectId,value)){
             this._projectId = value;
             internalClearRefs(PROP_ID_projectId);

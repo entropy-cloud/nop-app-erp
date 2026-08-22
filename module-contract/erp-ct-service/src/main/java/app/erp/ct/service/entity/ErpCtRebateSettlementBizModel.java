@@ -81,15 +81,14 @@ public class ErpCtRebateSettlementBizModel extends CrudBizModel<ErpCtRebateSettl
     // 理由/风险/补偿见 docs/architecture/posting-exemptions.md §ErpCtRebateSettlementBizModel
 
     protected void createNegativeApInvoice(String code, ErpCtRebateAgreement agreement,
-                                           Long currencyId, Long materialId, Long uomId, BigDecimal negativeAmount) {
+                                           String currencyId, String materialId, String uomId, BigDecimal negativeAmount) {
         IEntityDao<ErpPurInvoice> dao = daoProvider().daoFor(ErpPurInvoice.class);
         ErpPurInvoice invoice = dao.newEntity();
         invoice.setCode(code);
-        // bridge-main-039: ct String orgId/partnerId → pur Long（退役 owner M2.5）
         if (agreement.getOrgId() != null) {
-            invoice.setOrgId(ConvertHelper.toLong(agreement.getOrgId()));
+            invoice.setOrgId(agreement.getOrgId());
         }
-        invoice.setSupplierId(ConvertHelper.toLong(agreement.getPartnerId()));
+        invoice.setSupplierId(agreement.getPartnerId());
         invoice.setBusinessDate(CoreMetrics.today());
         invoice.setCurrencyId(currencyId);
         invoice.setExchangeRate(BigDecimal.ONE);
@@ -115,17 +114,17 @@ public class ErpCtRebateSettlementBizModel extends CrudBizModel<ErpCtRebateSettl
     }
 
     protected void createNegativeArInvoice(String code, ErpCtRebateAgreement agreement,
-                                           Long currencyId, Long materialId, Long uomId, BigDecimal negativeAmount) {
+                                           String currencyId, String materialId, String uomId, BigDecimal negativeAmount) {
         IEntityDao<ErpSalInvoice> dao = daoProvider().daoFor(ErpSalInvoice.class);
         ErpSalInvoice invoice = dao.newEntity();
         invoice.setCode(code);
-        // bridge-main-041: ct String orgId/partnerId → sal Long（退役 owner M2.6）
+        // bridge-main-041: ct String orgId/partnerId/currencyId → sal Long（退役 owner M2.6）
         if (agreement.getOrgId() != null) {
             invoice.setOrgId(ConvertHelper.toLong(agreement.getOrgId()));
         }
         invoice.setCustomerId(ConvertHelper.toLong(agreement.getPartnerId()));
         invoice.setBusinessDate(CoreMetrics.today());
-        invoice.setCurrencyId(currencyId);
+        invoice.setCurrencyId(ConvertHelper.toLong(currencyId));
         invoice.setExchangeRate(BigDecimal.ONE);
         invoice.setTotalAmount(negativeAmount);
         invoice.setAmountSource(negativeAmount);
@@ -140,8 +139,9 @@ public class ErpCtRebateSettlementBizModel extends CrudBizModel<ErpCtRebateSettl
         ErpSalInvoiceLine line = daoProvider().daoFor(ErpSalInvoiceLine.class).newEntity();
         line.setInvoiceId(invoice.getId());
         line.setLineNo(1);
-        line.setMaterialId(materialId);
-        line.setUoMId(uomId);
+        // bridge-main-042: ct String materialId / md String uoMId → sal Long（退役 owner M2.6）
+        line.setMaterialId(ConvertHelper.toLong(materialId));
+        line.setUoMId(ConvertHelper.toLong(uomId));
         line.setQuantity(BigDecimal.ONE);
         line.setUnitPrice(negativeAmount);
         line.setAmount(negativeAmount);
@@ -170,22 +170,22 @@ public class ErpCtRebateSettlementBizModel extends CrudBizModel<ErpCtRebateSettl
      * 币种取自关联合同（协议无独立币种列；发票 CURRENCY_ID NOT NULL）。
      * 无关联合同时返回 null（由调用方确保关联存在）。
      */
-    // bridge-main-039/041: ct String currencyId → pur/sal Long（退役 owner M2.5/M2.6）
-    protected Long resolveCurrencyId(ErpCtRebateAgreement agreement) {
+    // bridge-main-041: ct String currencyId → sal Long（退役 owner M2.6）
+    protected String resolveCurrencyId(ErpCtRebateAgreement agreement) {
         if (agreement == null || agreement.getContractId() == null) {
             return null;
         }
         ErpCtContract contract = daoProvider().daoFor(ErpCtContract.class)
                 .getEntityById(agreement.getContractId());
-        return contract == null ? null : ConvertHelper.toLong(contract.getCurrencyId());
+        return contract == null ? null : contract.getCurrencyId();
     }
 
     /**
      * 贷项行 materialId 取自关联合同首行（返利为金额型，无独立物料；发票行 MATERIAL_ID NOT NULL）。
      */
     @SuppressWarnings("unchecked")
-    // bridge-main-040/042: ct String materialId → pur/sal Long（退役 owner M2.5/M2.6）
-    protected Long resolveMaterialId(ErpCtRebateAgreement agreement) {
+    // bridge-main-042: ct String materialId → sal Long（退役 owner M2.6）
+    protected String resolveMaterialId(ErpCtRebateAgreement agreement) {
         if (agreement == null || agreement.getContractId() == null) {
             return null;
         }
@@ -193,20 +193,20 @@ public class ErpCtRebateSettlementBizModel extends CrudBizModel<ErpCtRebateSettl
         q.addFilter(eq("contractId", agreement.getContractId()));
         q.setLimit(1);
         List<ErpCtContractLine> lines = daoProvider().daoFor(ErpCtContractLine.class).findAllByQuery(q);
-        return lines.isEmpty() ? null : ConvertHelper.toLong(lines.get(0).getMaterialId());
+        return lines.isEmpty() ? null : lines.get(0).getMaterialId();
     }
 
     /**
      * uoMId 取自主物料的默认计量单位（material.uoMId）。
      */
-    // bridge-main-040/042: md String uoMId → pur/sal Long（退役 owner M2.5/M2.6）
-    protected Long resolveUoMId(String materialId) {
+    // bridge-main-042: md String uoMId → sal Long（退役 owner M2.6）
+    protected String resolveUoMId(String materialId) {
         if (materialId == null) {
             return null;
         }
         app.erp.md.dao.entity.ErpMdMaterial material =
                 daoProvider().daoFor(app.erp.md.dao.entity.ErpMdMaterial.class).getEntityById(materialId);
-        return material == null ? null : ConvertHelper.toLong(material.getUoMId());
+        return material == null ? null : material.getUoMId();
     }
 
     protected String currentUserId() {

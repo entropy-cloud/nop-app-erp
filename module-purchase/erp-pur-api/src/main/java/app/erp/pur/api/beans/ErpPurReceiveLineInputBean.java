@@ -12,44 +12,44 @@
     public class ErpPurReceiveLineInputBean extends CrudInputBase {
 
     
-        private Long _id;
+        private String _id;
 
     
         @PropMeta(propId=1)
     
-        public Long getId(){
+        public String getId(){
             return _id;
         }
 
-        public void setId(Long value){
+        public void setId(String value){
             this._id = value;
         }
 
 
-        private Long _receiveId;
+        private String _receiveId;
 
     
         @PropMeta(propId=2)
     
-        public Long getReceiveId(){
+        public String getReceiveId(){
             return _receiveId;
         }
 
-        public void setReceiveId(Long value){
+        public void setReceiveId(String value){
             this._receiveId = value;
         }
 
 
-        private Long _orderLineId;
+        private String _orderLineId;
 
     
         @PropMeta(propId=3)
     
-        public Long getOrderLineId(){
+        public String getOrderLineId(){
             return _orderLineId;
         }
 
-        public void setOrderLineId(Long value){
+        public void setOrderLineId(String value){
             this._orderLineId = value;
         }
 
@@ -68,44 +68,44 @@
         }
 
 
-        private Long _materialId;
+        private String _materialId;
 
     
         @PropMeta(propId=5)
     
-        public Long getMaterialId(){
+        public String getMaterialId(){
             return _materialId;
         }
 
-        public void setMaterialId(Long value){
+        public void setMaterialId(String value){
             this._materialId = value;
         }
 
 
-        private Long _skuId;
+        private String _skuId;
 
     
         @PropMeta(propId=6)
     
-        public Long getSkuId(){
+        public String getSkuId(){
             return _skuId;
         }
 
-        public void setSkuId(Long value){
+        public void setSkuId(String value){
             this._skuId = value;
         }
 
 
-        private Long _uoMId;
+        private String _uoMId;
 
     
         @PropMeta(propId=7)
     
-        public Long getUoMId(){
+        public String getUoMId(){
             return _uoMId;
         }
 
-        public void setUoMId(Long value){
+        public void setUoMId(String value){
             this._uoMId = value;
         }
 
@@ -194,16 +194,16 @@
         }
 
 
-        private Long _warehouseId;
+        private String _warehouseId;
 
     
         @PropMeta(propId=14)
     
-        public Long getWarehouseId(){
+        public String getWarehouseId(){
             return _warehouseId;
         }
 
-        public void setWarehouseId(Long value){
+        public void setWarehouseId(String value){
             this._warehouseId = value;
         }
 

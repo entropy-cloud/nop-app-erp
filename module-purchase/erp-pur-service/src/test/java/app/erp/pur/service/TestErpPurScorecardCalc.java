@@ -36,7 +36,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpPurScorecardCalc extends JunitAutoTestCase {
 
-    static final Long PARTNER_ID = 8001L;
+    static final String PARTNER_ID = "8001";
 
     @Inject
     IDaoProvider daoProvider;
@@ -154,7 +154,7 @@ public class TestErpPurScorecardCalc extends JunitAutoTestCase {
 
     // ---------- helpers ----------
 
-    private ApiResponse<?> finalizeScorecard(Long id) {
+    private ApiResponse<?> finalizeScorecard(String id) {
         return executeRpc(mutation, "ErpPurSupplierScorecard__finalizeScorecard",
                 ApiRequest.build(Map.of("scorecardId", id)));
     }
@@ -176,7 +176,7 @@ public class TestErpPurScorecardCalc extends JunitAutoTestCase {
         return sc;
     }
 
-    private void saveCriteria(Long scId, String name1, String w1, String var1, int val1,
+    private void saveCriteria(String scId, String name1, String w1, String var1, int val1,
                               String name2, String w2, String var2, int val2) {
         ErpPurSupplierScorecardCriteria c1 = new ErpPurSupplierScorecardCriteria();
         c1.setScorecardId(scId);
@@ -198,7 +198,7 @@ public class TestErpPurScorecardCalc extends JunitAutoTestCase {
         saveVariable(c2.getId(), var2, val2);
     }
 
-    private void saveVariable(Long criteriaId, String name, int value) {
+    private void saveVariable(String criteriaId, String name, int value) {
         ErpPurSupplierScorecardVariable v = new ErpPurSupplierScorecardVariable();
         v.setCriteriaId(criteriaId);
         v.setVariableName(name);
@@ -207,7 +207,7 @@ public class TestErpPurScorecardCalc extends JunitAutoTestCase {
         variableDao().saveEntity(v);
     }
 
-    private ErpPurSupplierScorecard reload(Long id) {
+    private ErpPurSupplierScorecard reload(String id) {
         return scorecardDao().getEntityById(id);
     }
 

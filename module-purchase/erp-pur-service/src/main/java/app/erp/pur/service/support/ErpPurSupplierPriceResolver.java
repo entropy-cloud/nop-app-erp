@@ -42,7 +42,7 @@ public class ErpPurSupplierPriceResolver implements IErpMdSupplierPriceResolver 
     IDaoProvider daoProvider;
 
     @Override
-    public BigDecimal resolveSupplierPrice(ErpMdMaterialSku sku, Long partnerId) {
+    public BigDecimal resolveSupplierPrice(ErpMdMaterialSku sku, String partnerId) {
         if (sku == null || partnerId == null || sku.getMaterialId() == null) {
             return null;
         }
@@ -60,7 +60,7 @@ public class ErpPurSupplierPriceResolver implements IErpMdSupplierPriceResolver 
         return best == null ? null : best.getUnitPrice();
     }
 
-    protected List<ErpPurSupplierPriceList> findCandidates(ErpMdMaterialSku sku, Long partnerId) {
+    protected List<ErpPurSupplierPriceList> findCandidates(ErpMdMaterialSku sku, String partnerId) {
         IEntityDao<ErpPurSupplierPriceList> dao = daoProvider.daoFor(ErpPurSupplierPriceList.class);
         QueryBean query = new QueryBean();
         query.addFilter(eq("supplierId", partnerId));
