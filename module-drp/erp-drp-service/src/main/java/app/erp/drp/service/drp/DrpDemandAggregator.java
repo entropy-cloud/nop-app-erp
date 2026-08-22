@@ -72,7 +72,7 @@ public class DrpDemandAggregator {
      *
      * @return 聚合上下文列表（每条=一个待计算行），供 {@link DrpEngine} 直接消费
      */
-    public List<AggregatedDemand> aggregate(Long planId) {
+    public List<AggregatedDemand> aggregate(String planId) {
         ErpDrpPlan plan = requirePlan(planId);
 
         List<ErpDrpParameter> parameters = loadParametersInScope(plan);
@@ -132,7 +132,7 @@ public class DrpDemandAggregator {
         if (heads.isEmpty()) {
             return result;
         }
-        List<Long> headIds = new ArrayList<>();
+        List<String> headIds = new ArrayList<>();
         for (ErpMfgForecast h : heads) {
             headIds.add(h.getId());
         }
@@ -160,7 +160,7 @@ public class DrpDemandAggregator {
         return result;
     }
 
-    private static String forecastKey(Long materialId, Long warehouseId) {
+    private static String forecastKey(String materialId, String warehouseId) {
         return materialId + "#" + warehouseId;
     }
 
@@ -172,7 +172,7 @@ public class DrpDemandAggregator {
         return daoProvider.daoFor(ErpDrpParameter.class).findAllByQuery(q);
     }
 
-    private BigDecimal sumAvailable(Long materialId, Long warehouseId) {
+    private BigDecimal sumAvailable(String materialId, String warehouseId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("materialId", materialId));
         q.addFilter(eq("warehouseId", warehouseId));
@@ -187,7 +187,7 @@ public class DrpDemandAggregator {
         return total;
     }
 
-    private BigDecimal sumReserved(Long materialId, Long warehouseId) {
+    private BigDecimal sumReserved(String materialId, String warehouseId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("materialId", materialId));
         q.addFilter(eq("warehouseId", warehouseId));
@@ -198,14 +198,14 @@ public class DrpDemandAggregator {
         return total;
     }
 
-    private BigDecimal onOrderQty(Long materialId, Long warehouseId) {
+    private BigDecimal onOrderQty(String materialId, String warehouseId) {
         BigDecimal total = BigDecimal.ZERO;
         total = total.add(inboundTransferQty(materialId, warehouseId));
         total = total.add(unreceivedPurchaseQty(materialId, warehouseId));
         return total;
     }
 
-    private BigDecimal inboundTransferQty(Long materialId, Long warehouseId) {
+    private BigDecimal inboundTransferQty(String materialId, String warehouseId) {
         IEntityDao<ErpInvTransferOrder> orderDao = daoProvider.daoFor(ErpInvTransferOrder.class);
         IEntityDao<ErpInvTransferOrderLine> lineDao = daoProvider.daoFor(ErpInvTransferOrderLine.class);
 
@@ -216,8 +216,8 @@ public class DrpDemandAggregator {
         if (orders.isEmpty()) {
             return BigDecimal.ZERO;
         }
-        List<Long> orderIds = new ArrayList<>();
-        Map<Long, ErpInvTransferOrder> byId = new HashMap<>();
+        List<String> orderIds = new ArrayList<>();
+        Map<String, ErpInvTransferOrder> byId = new HashMap<>();
         for (ErpInvTransferOrder o : orders) {
             orderIds.add(o.getId());
             byId.put(o.getId(), o);
@@ -232,7 +232,7 @@ public class DrpDemandAggregator {
         return total;
     }
 
-    private BigDecimal unreceivedPurchaseQty(Long materialId, Long warehouseId) {
+    private BigDecimal unreceivedPurchaseQty(String materialId, String warehouseId) {
         IEntityDao<ErpPurOrder> orderDao = daoProvider.daoFor(ErpPurOrder.class);
         IEntityDao<ErpPurOrderLine> lineDao = daoProvider.daoFor(ErpPurOrderLine.class);
 
@@ -242,7 +242,7 @@ public class DrpDemandAggregator {
         if (orders.isEmpty()) {
             return BigDecimal.ZERO;
         }
-        List<Long> orderIds = new ArrayList<>();
+        List<String> orderIds = new ArrayList<>();
         for (ErpPurOrder o : orders) {
             orderIds.add(o.getId());
         }
@@ -259,7 +259,7 @@ public class DrpDemandAggregator {
         return total;
     }
 
-    private ErpDrpPlan requirePlan(Long planId) {
+    private ErpDrpPlan requirePlan(String planId) {
         if (planId == null) {
             throw new NopException(ErpDrpErrors.ERR_DRP_PLAN_ILLEGAL_TRANSITION)
                     .param(ErpDrpErrors.ARG_DRP_PLAN_ID, planId);

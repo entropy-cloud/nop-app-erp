@@ -142,7 +142,7 @@ public class ErpDrpCrossDockStagingTimeoutJob {
      * 对齐 ErpPurReceiveApproveProcessor triggerIncomingMove 后 reload 先例）。
      */
     protected boolean fallbackToNormalStorage(ErpInvDrpCrossDock dock, IServiceContext ctx) {
-        Long stagingWarehouseId = resolveStagingWarehouseId(dock);
+        String stagingWarehouseId = resolveStagingWarehouseId(dock);
         if (stagingWarehouseId == null) {
             LOG.warn("erp-drp-xdock-staging-timeout: 无法解析暂存仓库，跳过：crossDockId={}", dock.getId());
             return false;
@@ -175,7 +175,7 @@ public class ErpDrpCrossDockStagingTimeoutJob {
         return true;
     }
 
-    protected Long resolveStagingWarehouseId(ErpInvDrpCrossDock dock) {
+    protected String resolveStagingWarehouseId(ErpInvDrpCrossDock dock) {
         if (dock.getStagingLocationId() != null) {
             ErpMdLocation location = daoProvider.daoFor(ErpMdLocation.class).getEntityById(dock.getStagingLocationId());
             if (location != null && location.getWarehouseId() != null) {
@@ -191,7 +191,7 @@ public class ErpDrpCrossDockStagingTimeoutJob {
         return null;
     }
 
-    protected Long resolveMaterialUomId(Long materialId) {
+    protected String resolveMaterialUomId(String materialId) {
         if (materialId == null) {
             return null;
         }

@@ -192,13 +192,13 @@ public class _ErpDrpParameter extends DynamicOrmEntity{
 
     
     /* ID: ID */
-    private java.lang.Long _id;
+    private java.lang.String _id;
     
     /* 仓库: WAREHOUSE_ID */
-    private java.lang.Long _warehouseId;
+    private java.lang.String _warehouseId;
     
     /* 物料: MATERIAL_ID */
-    private java.lang.Long _materialId;
+    private java.lang.String _materialId;
     
     /* 安全库存: SAFETY_STOCK */
     private java.math.BigDecimal _safetyStock;
@@ -210,10 +210,10 @@ public class _ErpDrpParameter extends DynamicOrmEntity{
     private java.math.BigDecimal _orderMultiple;
     
     /* 首选调出仓库: PREFERRED_SOURCE_WAREHOUSE_ID */
-    private java.lang.Long _preferredSourceWarehouseId;
+    private java.lang.String _preferredSourceWarehouseId;
     
     /* 首选供应商: PREFERRED_SUPPLIER_ID */
-    private java.lang.Long _preferredSupplierId;
+    private java.lang.String _preferredSupplierId;
     
     /* 补货方法: REPLENISHMENT_METHOD */
     private java.lang.String _replenishmentMethod;
@@ -228,7 +228,7 @@ public class _ErpDrpParameter extends DynamicOrmEntity{
     private java.lang.Integer _reviewPeriodDays;
     
     /* 业务组织: ORG_ID */
-    private java.lang.Long _orgId;
+    private java.lang.String _orgId;
     
     /* 备注: REMARK */
     private java.lang.String _remark;
@@ -397,9 +397,9 @@ public class _ErpDrpParameter extends DynamicOrmEntity{
         switch(propId){
         
             case PROP_ID_id:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_id));
                }
                setId(typedValue);
@@ -407,9 +407,9 @@ public class _ErpDrpParameter extends DynamicOrmEntity{
             }
         
             case PROP_ID_warehouseId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_warehouseId));
                }
                setWarehouseId(typedValue);
@@ -417,9 +417,9 @@ public class _ErpDrpParameter extends DynamicOrmEntity{
             }
         
             case PROP_ID_materialId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_materialId));
                }
                setMaterialId(typedValue);
@@ -457,9 +457,9 @@ public class _ErpDrpParameter extends DynamicOrmEntity{
             }
         
             case PROP_ID_preferredSourceWarehouseId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_preferredSourceWarehouseId));
                }
                setPreferredSourceWarehouseId(typedValue);
@@ -467,9 +467,9 @@ public class _ErpDrpParameter extends DynamicOrmEntity{
             }
         
             case PROP_ID_preferredSupplierId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_preferredSupplierId));
                }
                setPreferredSupplierId(typedValue);
@@ -517,9 +517,9 @@ public class _ErpDrpParameter extends DynamicOrmEntity{
             }
         
             case PROP_ID_orgId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_orgId));
                }
                setOrgId(typedValue);
@@ -607,21 +607,21 @@ public class _ErpDrpParameter extends DynamicOrmEntity{
         
             case PROP_ID_id:{
                onInitProp(propId);
-               this._id = (java.lang.Long)value;
+               this._id = (java.lang.String)value;
                orm_id(); // 如果是设置主键字段，则触发watcher
                break;
             }
         
             case PROP_ID_warehouseId:{
                onInitProp(propId);
-               this._warehouseId = (java.lang.Long)value;
+               this._warehouseId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_materialId:{
                onInitProp(propId);
-               this._materialId = (java.lang.Long)value;
+               this._materialId = (java.lang.String)value;
                
                break;
             }
@@ -649,14 +649,14 @@ public class _ErpDrpParameter extends DynamicOrmEntity{
         
             case PROP_ID_preferredSourceWarehouseId:{
                onInitProp(propId);
-               this._preferredSourceWarehouseId = (java.lang.Long)value;
+               this._preferredSourceWarehouseId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_preferredSupplierId:{
                onInitProp(propId);
-               this._preferredSupplierId = (java.lang.Long)value;
+               this._preferredSupplierId = (java.lang.String)value;
                
                break;
             }
@@ -691,7 +691,7 @@ public class _ErpDrpParameter extends DynamicOrmEntity{
         
             case PROP_ID_orgId:{
                onInitProp(propId);
-               this._orgId = (java.lang.Long)value;
+               this._orgId = (java.lang.String)value;
                
                break;
             }
@@ -754,7 +754,7 @@ public class _ErpDrpParameter extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final java.lang.Long getId(){
+    public final java.lang.String getId(){
          onPropGet(PROP_ID_id);
          return _id;
     }
@@ -762,7 +762,7 @@ public class _ErpDrpParameter extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final void setId(java.lang.Long value){
+    public final void setId(java.lang.String value){
         if(onPropSet(PROP_ID_id,value)){
             this._id = value;
             internalClearRefs(PROP_ID_id);
@@ -773,7 +773,7 @@ public class _ErpDrpParameter extends DynamicOrmEntity{
     /**
      * 仓库: WAREHOUSE_ID
      */
-    public final java.lang.Long getWarehouseId(){
+    public final java.lang.String getWarehouseId(){
          onPropGet(PROP_ID_warehouseId);
          return _warehouseId;
     }
@@ -781,7 +781,7 @@ public class _ErpDrpParameter extends DynamicOrmEntity{
     /**
      * 仓库: WAREHOUSE_ID
      */
-    public final void setWarehouseId(java.lang.Long value){
+    public final void setWarehouseId(java.lang.String value){
         if(onPropSet(PROP_ID_warehouseId,value)){
             this._warehouseId = value;
             internalClearRefs(PROP_ID_warehouseId);
@@ -792,7 +792,7 @@ public class _ErpDrpParameter extends DynamicOrmEntity{
     /**
      * 物料: MATERIAL_ID
      */
-    public final java.lang.Long getMaterialId(){
+    public final java.lang.String getMaterialId(){
          onPropGet(PROP_ID_materialId);
          return _materialId;
     }
@@ -800,7 +800,7 @@ public class _ErpDrpParameter extends DynamicOrmEntity{
     /**
      * 物料: MATERIAL_ID
      */
-    public final void setMaterialId(java.lang.Long value){
+    public final void setMaterialId(java.lang.String value){
         if(onPropSet(PROP_ID_materialId,value)){
             this._materialId = value;
             internalClearRefs(PROP_ID_materialId);
@@ -868,7 +868,7 @@ public class _ErpDrpParameter extends DynamicOrmEntity{
     /**
      * 首选调出仓库: PREFERRED_SOURCE_WAREHOUSE_ID
      */
-    public final java.lang.Long getPreferredSourceWarehouseId(){
+    public final java.lang.String getPreferredSourceWarehouseId(){
          onPropGet(PROP_ID_preferredSourceWarehouseId);
          return _preferredSourceWarehouseId;
     }
@@ -876,7 +876,7 @@ public class _ErpDrpParameter extends DynamicOrmEntity{
     /**
      * 首选调出仓库: PREFERRED_SOURCE_WAREHOUSE_ID
      */
-    public final void setPreferredSourceWarehouseId(java.lang.Long value){
+    public final void setPreferredSourceWarehouseId(java.lang.String value){
         if(onPropSet(PROP_ID_preferredSourceWarehouseId,value)){
             this._preferredSourceWarehouseId = value;
             internalClearRefs(PROP_ID_preferredSourceWarehouseId);
@@ -887,7 +887,7 @@ public class _ErpDrpParameter extends DynamicOrmEntity{
     /**
      * 首选供应商: PREFERRED_SUPPLIER_ID
      */
-    public final java.lang.Long getPreferredSupplierId(){
+    public final java.lang.String getPreferredSupplierId(){
          onPropGet(PROP_ID_preferredSupplierId);
          return _preferredSupplierId;
     }
@@ -895,7 +895,7 @@ public class _ErpDrpParameter extends DynamicOrmEntity{
     /**
      * 首选供应商: PREFERRED_SUPPLIER_ID
      */
-    public final void setPreferredSupplierId(java.lang.Long value){
+    public final void setPreferredSupplierId(java.lang.String value){
         if(onPropSet(PROP_ID_preferredSupplierId,value)){
             this._preferredSupplierId = value;
             internalClearRefs(PROP_ID_preferredSupplierId);
@@ -982,7 +982,7 @@ public class _ErpDrpParameter extends DynamicOrmEntity{
     /**
      * 业务组织: ORG_ID
      */
-    public final java.lang.Long getOrgId(){
+    public final java.lang.String getOrgId(){
          onPropGet(PROP_ID_orgId);
          return _orgId;
     }
@@ -990,7 +990,7 @@ public class _ErpDrpParameter extends DynamicOrmEntity{
     /**
      * 业务组织: ORG_ID
      */
-    public final void setOrgId(java.lang.Long value){
+    public final void setOrgId(java.lang.String value){
         if(onPropSet(PROP_ID_orgId,value)){
             this._orgId = value;
             internalClearRefs(PROP_ID_orgId);

@@ -47,14 +47,14 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
         enableActionAuth = io.nop.api.core.annotations.core.OptionalBoolean.FALSE)
 public class TestErpDrpForecastSource extends JunitAutoTestCase {
 
-    static final Long ORG_ID = 6401L;
-    static final Long UOM_ID = 6501L;
-    static final Long CURRENCY_ID = 6701L;
-    static final Long SUPPLIER_ID = 6801L;
-    static final Long WH_TARGET = 6101L;
-    static final Long WH_OTHER = 6103L; // 非目标仓（仓库过滤测试）
+    static final String ORG_ID = "6401";
+    static final String UOM_ID = "6501";
+    static final String CURRENCY_ID = "6701";
+    static final String SUPPLIER_ID = "6801";
+    static final String WH_TARGET = "6101";
+    static final String WH_OTHER = "6103"; // 非目标仓（仓库过滤测试）
 
-    static final Long M = 6201L;
+    static final String M = "6201";
 
     @Inject
     IDaoProvider daoProvider;
@@ -73,7 +73,7 @@ public class TestErpDrpForecastSource extends JunitAutoTestCase {
         seedForecast("FCST-DRP-OK", "APPROVED", M, WH_TARGET,
                 LocalDate.of(2026, 7, 1), LocalDate.of(2026, 7, 10), bd("20"));
 
-        Long planId = seedPlan("DRP-FCST-OK");
+        String planId = seedPlan("DRP-FCST-OK");
         runDrpOk(planId);
 
         ErpDrpLine line = findLine(planId, M);
@@ -98,7 +98,7 @@ public class TestErpDrpForecastSource extends JunitAutoTestCase {
         seedForecastProductLevel("FCST-PROD-LEVEL", "APPROVED", M,
                 LocalDate.of(2026, 7, 1), LocalDate.of(2026, 7, 10), bd("888"));
 
-        Long planId = seedPlan("DRP-FILTER");
+        String planId = seedPlan("DRP-FILTER");
         runDrpOk(planId);
 
         ErpDrpLine line = findLine(planId, M);
@@ -117,7 +117,7 @@ public class TestErpDrpForecastSource extends JunitAutoTestCase {
 
         setConfig(ErpDrpConfigs.CONFIG_DRP_FORECAST_CONSUME_ENABLED, "false");
         try {
-            Long planId = seedPlan("DRP-OFF");
+            String planId = seedPlan("DRP-OFF");
             runDrpOk(planId);
             ErpDrpLine line = findLine(planId, M);
             assertNotNull(line);
@@ -134,7 +134,7 @@ public class TestErpDrpForecastSource extends JunitAutoTestCase {
         seedWarehouse();
         seedParameter(M, bd("0"), bd("1"), null, SUPPLIER_ID);
 
-        Long planId = seedPlan("DRP-NOFCST");
+        String planId = seedPlan("DRP-NOFCST");
         runDrpOk(planId);
         ErpDrpLine line = findLine(planId, M);
         assertNotNull(line);
@@ -144,7 +144,7 @@ public class TestErpDrpForecastSource extends JunitAutoTestCase {
 
     // ---------- helpers ----------
 
-    private void runDrpOk(Long planId) {
+    private void runDrpOk(String planId) {
         ApiResponse<?> resp = rpc(mutation, "ErpDrpPlan__runDrp", Map.of("planId", planId));
         assertEquals(0, resp.getStatus(), "runDrp 应成功: " + resp);
     }
@@ -154,7 +154,7 @@ public class TestErpDrpForecastSource extends JunitAutoTestCase {
         return graphQLEngine.executeRpc(ctx);
     }
 
-    private ErpDrpLine findLine(Long planId, Long materialId) {
+    private ErpDrpLine findLine(String planId, String materialId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("planId", planId));
         q.addFilter(eq("materialId", materialId));
@@ -162,8 +162,8 @@ public class TestErpDrpForecastSource extends JunitAutoTestCase {
         return list.isEmpty() ? null : list.get(0);
     }
 
-    private Long seedPlan(String code) {
-        Long id = 6001L + (long) Math.abs(code.hashCode() % 600);
+    private String seedPlan(String code) {
+        String id = String.valueOf(6001L + Math.abs(code.hashCode() % 600));
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpDrpPlan> dao = daoProvider.daoFor(ErpDrpPlan.class);
             ErpDrpPlan plan = new ErpDrpPlan();
@@ -181,12 +181,12 @@ public class TestErpDrpForecastSource extends JunitAutoTestCase {
         return id;
     }
 
-    private void seedParameter(Long materialId, BigDecimal safetyStock, BigDecimal orderMultiple,
-                               Long sourceWarehouseId, Long supplierId) {
+    private void seedParameter(String materialId, BigDecimal safetyStock, BigDecimal orderMultiple,
+                               String sourceWarehouseId, String supplierId) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpDrpParameter> dao = daoProvider.daoFor(ErpDrpParameter.class);
             ErpDrpParameter p = new ErpDrpParameter();
-            p.orm_propValueByName("id", 6900L + materialId);
+            p.orm_propValueByName("id", String.valueOf(6900L + Long.parseLong(materialId)));
             p.setMaterialId(materialId);
             p.setWarehouseId(WH_TARGET);
             p.setSafetyStock(safetyStock);
@@ -217,7 +217,7 @@ public class TestErpDrpForecastSource extends JunitAutoTestCase {
     private void seedWarehouse() {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMdWarehouse> dao = daoProvider.daoFor(ErpMdWarehouse.class);
-            for (Long wid : new Long[]{WH_TARGET, WH_OTHER}) {
+            for (String wid : new String[]{WH_TARGET, WH_OTHER}) {
                 ErpMdWarehouse w = new ErpMdWarehouse();
                 w.orm_propValueByName("id", wid);
                 w.setCode("WH-" + wid);
@@ -235,9 +235,9 @@ public class TestErpDrpForecastSource extends JunitAutoTestCase {
         });
     }
 
-    private Long seedForecast(String code, String status, Long materialId, Long warehouseId,
+    private String seedForecast(String code, String status, String materialId, String warehouseId,
                               LocalDate pStart, LocalDate pEnd, BigDecimal qty) {
-        Long headId = 9300L + (long) Math.abs(code.hashCode() % 400);
+        String headId = String.valueOf(9300L + Math.abs(code.hashCode() % 400));
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMfgForecast> headDao = daoProvider.daoFor(ErpMfgForecast.class);
             ErpMfgForecast head = new ErpMfgForecast();
@@ -252,7 +252,7 @@ public class TestErpDrpForecastSource extends JunitAutoTestCase {
 
             IEntityDao<ErpMfgForecastLine> lineDao = daoProvider.daoFor(ErpMfgForecastLine.class);
             ErpMfgForecastLine line = new ErpMfgForecastLine();
-            line.orm_propValueByName("id", headId * 1000 + 10);
+            line.orm_propValueByName("id", String.valueOf(Long.parseLong(headId) * 1000 + 10));
             line.setForecastId(headId);
             line.setLineNo(10);
             line.setMaterialId(materialId);
@@ -267,9 +267,9 @@ public class TestErpDrpForecastSource extends JunitAutoTestCase {
     }
 
     /** 产品级预测（warehouseId=null），不应进入 DRP 仓级消费。 */
-    private Long seedForecastProductLevel(String code, String status, Long materialId,
+    private String seedForecastProductLevel(String code, String status, String materialId,
                                           LocalDate pStart, LocalDate pEnd, BigDecimal qty) {
-        Long headId = 9350L + (long) Math.abs(code.hashCode() % 400);
+        String headId = String.valueOf(9350L + Math.abs(code.hashCode() % 400));
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMfgForecast> headDao = daoProvider.daoFor(ErpMfgForecast.class);
             ErpMfgForecast head = new ErpMfgForecast();
@@ -284,7 +284,7 @@ public class TestErpDrpForecastSource extends JunitAutoTestCase {
 
             IEntityDao<ErpMfgForecastLine> lineDao = daoProvider.daoFor(ErpMfgForecastLine.class);
             ErpMfgForecastLine line = new ErpMfgForecastLine();
-            line.orm_propValueByName("id", headId * 1000 + 10);
+            line.orm_propValueByName("id", String.valueOf(Long.parseLong(headId) * 1000 + 10));
             line.setForecastId(headId);
             line.setLineNo(10);
             line.setMaterialId(materialId);

@@ -24,21 +24,21 @@ import java.util.List;
 public interface IErpInvDrpCrossDockBiz extends ICrudBiz<ErpInvDrpCrossDock> {
 
     @BizMutation
-    ErpInvDrpCrossDock receiveMark(@Name("id") Long id, @Name("inboundMoveId") Long inboundMoveId,
+    ErpInvDrpCrossDock receiveMark(@Name("id") String id, @Name("inboundMoveId") String inboundMoveId,
                                    IServiceContext context);
 
     @BizMutation
-    ErpInvDrpCrossDock match(@Name("id") Long id, @Optional @Name("targetBillType") String targetBillType,
+    ErpInvDrpCrossDock match(@Name("id") String id, @Optional @Name("targetBillType") String targetBillType,
                              @Optional @Name("targetBillCode") String targetBillCode, IServiceContext context);
 
     @BizMutation
-    ErpInvDrpCrossDock load(@Name("id") Long id, IServiceContext context);
+    ErpInvDrpCrossDock load(@Name("id") String id, IServiceContext context);
 
     @BizMutation
-    ErpInvDrpCrossDock complete(@Name("id") Long id, IServiceContext context);
+    ErpInvDrpCrossDock complete(@Name("id") String id, IServiceContext context);
 
     @BizMutation
-    ErpInvDrpCrossDock cancel(@Name("id") Long id, IServiceContext context);
+    ErpInvDrpCrossDock cancel(@Name("id") String id, IServiceContext context);
 
     /**
      * purchase 收货审批后置：按采购单号 + 收货行物料标记 PENDING 越库记录为 STAGING 并回写 inboundMoveId。
@@ -48,6 +48,6 @@ public interface IErpInvDrpCrossDockBiz extends ICrudBiz<ErpInvDrpCrossDock> {
      */
     @BizMutation
     int markReceivedFromPurchase(@Name("purchaseOrderCode") String purchaseOrderCode,
-                                 @Name("inboundMoveId") Long inboundMoveId,
-                                 @Name("materialIds") List<Long> materialIds, IServiceContext context);
+                                 @Name("inboundMoveId") String inboundMoveId,
+                                 @Name("materialIds") List<String> materialIds, IServiceContext context);
 }

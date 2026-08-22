@@ -22,14 +22,14 @@ public class ErpDrpPlanResetToDraftProcessor {
     @Inject
     DrpEngine drpEngine;
 
-    public ErpDrpPlan resetToDraft(Long planId, IServiceContext context) {
+    public ErpDrpPlan resetToDraft(String planId, IServiceContext context) {
         drpEngine.resetToDraft(planId);
         return requirePlan(planId);
     }
 
     // ---------- 内部辅助 ----------
 
-    protected ErpDrpPlan requirePlan(Long planId) {
+    protected ErpDrpPlan requirePlan(String planId) {
         ErpDrpPlan plan = dao().getEntityById(planId);
         if (plan == null) {
             throw new NopException(ErpDrpErrors.ERR_DRP_PLAN_NOT_FOUND)

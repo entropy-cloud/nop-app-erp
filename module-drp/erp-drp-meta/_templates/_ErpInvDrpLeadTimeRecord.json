@@ -1,8 +1,8 @@
 {
-  "id": 0,
-  "orgId": 0,
-  "supplierId": 0,
-  "materialId": 0,
+  "id": "",
+  "orgId": "",
+  "supplierId": "",
+  "materialId": "",
   "orderDate": "2000-01-01",
   "receiptDate": "2000-01-01",
   "actualLeadTime": 0,

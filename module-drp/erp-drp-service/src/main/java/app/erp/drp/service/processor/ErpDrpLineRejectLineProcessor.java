@@ -24,13 +24,13 @@ public class ErpDrpLineRejectLineProcessor {
     @Inject
     ErpDrpLineStateMachine lineStateMachine;
 
-    public ErpDrpLine rejectLine(Long lineId, IServiceContext context) {
+    public ErpDrpLine rejectLine(String lineId, IServiceContext context) {
         return doCancel(lineId);
     }
 
     // ---------- 内部辅助 ----------
 
-    protected ErpDrpLine doCancel(Long lineId) {
+    protected ErpDrpLine doCancel(String lineId) {
         ErpDrpLine line = requireLine(lineId);
         // 固定来源态守卫经 Line StateMachine Bean（cancel 多源 SUGGESTED/APPROVED，对终态 ORDERED/CANCELLED 抛 common 码）；
         // 映射为既有 ERR_DRP_LINE_ILLEGAL_TRANSITION（参数 drpLineId/currentStatus 不变，common 层码作 cause）。
@@ -46,7 +46,7 @@ public class ErpDrpLineRejectLineProcessor {
         return line;
     }
 
-    protected ErpDrpLine requireLine(Long lineId) {
+    protected ErpDrpLine requireLine(String lineId) {
         ErpDrpLine line = dao().getEntityById(lineId);
         if (line == null) {
             throw new NopException(ErpDrpErrors.ERR_DRP_LINE_NOT_FOUND)

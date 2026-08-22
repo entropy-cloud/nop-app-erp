@@ -1355,10 +1355,10 @@
       ],
       "refDomain": "drp",
       "evidence": "module-purchase/erp-pur-service/src/main/java/app/erp/pur/service/processor/ErpPurReceiveProcessor.java:20",
-      "note": "桥已落位：M2.5 pur plan 2026-08-22-1814-1 Phase 2（ErpPurReceiveProcessor ConvertHelper.toLong 桥 + 双向注释，pur 334/334 绿）；退役仍归 M3.7 drp 翻转时",
+      "note": "已退役：M3.7 drp plan 2026-08-22-2311-2 Phase 2 B 义务兑付（drp String 翻转后 pur 侧 ErpPurReceiveProcessor ConvertHelper.toLong 桥 + drpMaterialIds 循环桥移除改 String 直传 + bridge 注释删除 + ConvertHelper 引用清零；pur 7 链重建绿 + 334/334 复跑维持）",
       "deferredUntil": "M3.7",
       "retireOwner": "M3.7",
-      "status": "active"
+      "status": "retired"
     },
     {
       "id": "bridge-main-091",
@@ -1372,10 +1372,10 @@
       ],
       "refDomain": "drp",
       "evidence": "module-purchase/erp-pur-service/src/main/java/app/erp/pur/service/processor/ErpPurReceiveProcessor.java:21",
-      "note": "桥已落位：M2.5 pur plan 2026-08-22-1814-1 Phase 2（ErpPurReceiveProcessor ConvertHelper.toLong 桥 + 双向注释，pur 334/334 绿）；退役仍归 M3.7 drp 翻转时",
+      "note": "已退役：M3.7 drp plan 2026-08-22-2311-2 Phase 2 B 义务兑付（drp String 翻转后 pur 侧 ErpPurReceiveProcessor supplierId toLong 桥 + drpMaterialIds 循环桥移除改 String 直传 + bridge 注释删除；pur 7 链重建绿 + 334/334 复跑维持）",
       "deferredUntil": "M3.7",
       "retireOwner": "M3.7",
-      "status": "active"
+      "status": "retired"
     },
     {
       "id": "bridge-main-092",

@@ -42,19 +42,19 @@ public class ErpDrpPlanBizModel extends CrudBizModel<ErpDrpPlan> implements IErp
 
     @Override
     @BizMutation
-    public ErpDrpPlan runDrp(@Name("planId") Long planId, IServiceContext context) {
+    public ErpDrpPlan runDrp(@Name("planId") String planId, IServiceContext context) {
         return runDrpProcessor.runDrp(planId, context);
     }
 
     @Override
     @BizMutation
-    public ErpDrpPlan resetToDraft(@Name("planId") Long planId, IServiceContext context) {
+    public ErpDrpPlan resetToDraft(@Name("planId") String planId, IServiceContext context) {
         return resetToDraftProcessor.resetToDraft(planId, context);
     }
 
     @Override
     @BizMutation
-    public ErpDrpPlan approvePlan(@Name("planId") Long planId, IServiceContext context) {
+    public ErpDrpPlan approvePlan(@Name("planId") String planId, IServiceContext context) {
         return approvePlanProcessor.approvePlan(planId, context);
     }
 }

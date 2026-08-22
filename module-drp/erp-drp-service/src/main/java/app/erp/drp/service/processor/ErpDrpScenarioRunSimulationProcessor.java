@@ -19,14 +19,14 @@ public class ErpDrpScenarioRunSimulationProcessor {
     @Inject
     SimulationDrpEngine simulationDrpEngine;
 
-    public ErpDrpScenarioVersion runSimulation(Long scenarioId, IServiceContext context) {
+    public ErpDrpScenarioVersion runSimulation(String scenarioId, IServiceContext context) {
         requireSimulationEnabled(scenarioId);
         return simulationDrpEngine.runSimulation(scenarioId);
     }
 
     // ---------- 内部辅助 ----------
 
-    protected void requireSimulationEnabled(Long id) {
+    protected void requireSimulationEnabled(String id) {
         boolean enabled = AppConfig.var(ErpDrpConstants.CONFIG_DRP_SIMULATION_ENABLED,
                 ErpDrpConstants.DEFAULT_DRP_SIMULATION_ENABLED);
         if (!enabled) {

@@ -38,15 +38,15 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpDrpInventoryIntegration extends JunitAutoTestCase {
 
-    static final Long ORG_ID = 6401L;
-    static final Long UOM_ID = 6501L;
-    static final Long CURRENCY_ID = 6701L;
-    static final Long WH_TARGET = 6101L;
-    static final Long WH_SOURCE = 6102L;
+    static final String ORG_ID = "6401";
+    static final String UOM_ID = "6501";
+    static final String CURRENCY_ID = "6701";
+    static final String WH_TARGET = "6101";
+    static final String WH_SOURCE = "6102";
 
-    static final Long M_STOCK = 6301L;
-    static final Long M_ONORDER = 6302L;
-    static final Long M_ZERO = 6303L;
+    static final String M_STOCK = "6301";
+    static final String M_ONORDER = "6302";
+    static final String M_ZERO = "6303";
 
     @Inject
     IDaoProvider daoProvider;
@@ -62,7 +62,7 @@ public class TestErpDrpInventoryIntegration extends JunitAutoTestCase {
         seedParameter(M_STOCK, bd("100"), bd("1"), WH_SOURCE, null);
         seedBalance(M_STOCK, bd("30"));
 
-        Long planId = seedPlan("DRP-STOCK");
+        String planId = seedPlan("DRP-STOCK");
         runDrpOk(planId);
 
         ErpDrpLine line = findLine(linesOf(planId), M_STOCK);
@@ -81,7 +81,7 @@ public class TestErpDrpInventoryIntegration extends JunitAutoTestCase {
         seedBalance(M_ONORDER, bd("30"));
         seedTransferOrder(M_ONORDER, bd("20"));
 
-        Long planId = seedPlan("DRP-ONORDER");
+        String planId = seedPlan("DRP-ONORDER");
         runDrpOk(planId);
 
         ErpDrpLine line = findLine(linesOf(planId), M_ONORDER);
@@ -100,7 +100,7 @@ public class TestErpDrpInventoryIntegration extends JunitAutoTestCase {
         seedParameter(M_ZERO, bd("100"), bd("1"), WH_SOURCE, null);
         seedBalance(M_ZERO, bd("0"));
 
-        Long planId = seedPlan("DRP-ZERO");
+        String planId = seedPlan("DRP-ZERO");
         runDrpOk(planId);
 
         ErpDrpLine line = findLine(linesOf(planId), M_ZERO);
@@ -111,7 +111,7 @@ public class TestErpDrpInventoryIntegration extends JunitAutoTestCase {
         assertEquals(0, line.getSuggestedQty().compareTo(bd("100")));
     }
 
-    private void seedTransferOrder(Long materialId, BigDecimal qty) {
+    private void seedTransferOrder(String materialId, BigDecimal qty) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpInvTransferOrder> dao = daoProvider.daoFor(ErpInvTransferOrder.class);
             ErpInvTransferOrder to = new ErpInvTransferOrder();
@@ -135,7 +135,7 @@ public class TestErpDrpInventoryIntegration extends JunitAutoTestCase {
         });
     }
 
-    private void runDrpOk(Long planId) {
+    private void runDrpOk(String planId) {
         ApiResponse<?> resp = rpc(mutation, "ErpDrpPlan__runDrp", Map.of("planId", planId));
         assertEquals(0, resp.getStatus(), "runDrp 应成功: " + resp);
     }
@@ -145,14 +145,14 @@ public class TestErpDrpInventoryIntegration extends JunitAutoTestCase {
         return graphQLEngine.executeRpc(ctx);
     }
 
-    private List<ErpDrpLine> linesOf(Long planId) {
+    private List<ErpDrpLine> linesOf(String planId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("planId", planId));
         q.addOrderField("lineNo", false);
         return daoProvider.daoFor(ErpDrpLine.class).findAllByQuery(q);
     }
 
-    private ErpDrpLine findLine(List<ErpDrpLine> lines, Long materialId) {
+    private ErpDrpLine findLine(List<ErpDrpLine> lines, String materialId) {
         for (ErpDrpLine l : lines) {
             if (materialId.equals(l.getMaterialId())) {
                 return l;
@@ -161,8 +161,8 @@ public class TestErpDrpInventoryIntegration extends JunitAutoTestCase {
         return null;
     }
 
-    private Long seedPlan(String code) {
-        Long id = 6001L + (long) Math.abs(code.hashCode() % 600);
+    private String seedPlan(String code) {
+        String id = String.valueOf(6001L + Math.abs(code.hashCode() % 600));
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpDrpPlan> dao = daoProvider.daoFor(ErpDrpPlan.class);
             ErpDrpPlan plan = new ErpDrpPlan();
@@ -180,12 +180,12 @@ public class TestErpDrpInventoryIntegration extends JunitAutoTestCase {
         return id;
     }
 
-    private void seedParameter(Long materialId, BigDecimal safetyStock, BigDecimal orderMultiple,
-                               Long sourceWarehouseId, Long supplierId) {
+    private void seedParameter(String materialId, BigDecimal safetyStock, BigDecimal orderMultiple,
+                               String sourceWarehouseId, String supplierId) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpDrpParameter> dao = daoProvider.daoFor(ErpDrpParameter.class);
             ErpDrpParameter p = new ErpDrpParameter();
-            p.orm_propValueByName("id", 6900L + materialId);
+            p.orm_propValueByName("id", String.valueOf(6900L + Long.parseLong(materialId)));
             p.setMaterialId(materialId);
             p.setWarehouseId(WH_TARGET);
             p.setSafetyStock(safetyStock);
@@ -199,11 +199,11 @@ public class TestErpDrpInventoryIntegration extends JunitAutoTestCase {
         });
     }
 
-    private void seedBalance(Long materialId, BigDecimal available) {
+    private void seedBalance(String materialId, BigDecimal available) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpInvStockBalance> dao = daoProvider.daoFor(ErpInvStockBalance.class);
             ErpInvStockBalance b = new ErpInvStockBalance();
-            b.orm_propValueByName("id", 8000L + materialId);
+            b.orm_propValueByName("id", String.valueOf(8000L + Long.parseLong(materialId)));
             b.setOrgId(ORG_ID);
             b.setMaterialId(materialId);
             b.setWarehouseId(WH_TARGET);
@@ -213,7 +213,7 @@ public class TestErpDrpInventoryIntegration extends JunitAutoTestCase {
         });
     }
 
-    private void seedMaterial(Long id) {
+    private void seedMaterial(String id) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMdMaterial> dao = daoProvider.daoFor(ErpMdMaterial.class);
             ErpMdMaterial m = new ErpMdMaterial();
@@ -230,7 +230,7 @@ public class TestErpDrpInventoryIntegration extends JunitAutoTestCase {
     private void seedWarehouse() {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMdWarehouse> dao = daoProvider.daoFor(ErpMdWarehouse.class);
-            for (Long wid : new Long[]{WH_TARGET, WH_SOURCE}) {
+            for (String wid : new String[]{WH_TARGET, WH_SOURCE}) {
                 ErpMdWarehouse w = new ErpMdWarehouse();
                 w.orm_propValueByName("id", wid);
                 w.setCode("WH-" + wid);

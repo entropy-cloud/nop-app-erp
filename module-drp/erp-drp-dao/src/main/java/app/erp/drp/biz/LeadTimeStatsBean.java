@@ -19,8 +19,8 @@ import java.time.LocalDate;
 @DataBean
 public class LeadTimeStatsBean {
 
-    private Long supplierId;
-    private Long materialId;
+    private String supplierId;
+    private String materialId;
     private Integer sampleCount;
     private BigDecimal avgLeadTime;
     private BigDecimal leadTimeStdDev;
@@ -34,19 +34,19 @@ public class LeadTimeStatsBean {
     private LocalDate windowFrom;
     private LocalDate windowTo;
 
-    public Long getSupplierId() {
+    public String getSupplierId() {
         return supplierId;
     }
 
-    public void setSupplierId(Long supplierId) {
+    public void setSupplierId(String supplierId) {
         this.supplierId = supplierId;
     }
 
-    public Long getMaterialId() {
+    public String getMaterialId() {
         return materialId;
     }
 
-    public void setMaterialId(Long materialId) {
+    public void setMaterialId(String materialId) {
         this.materialId = materialId;
     }
 

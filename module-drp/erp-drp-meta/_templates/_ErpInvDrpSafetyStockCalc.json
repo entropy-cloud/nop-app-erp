@@ -1,9 +1,9 @@
 {
-  "id": 0,
+  "id": "",
   "code": "",
-  "orgId": 0,
-  "materialId": 0,
-  "warehouseId": 0,
+  "orgId": "",
+  "materialId": "",
+  "warehouseId": "",
   "method": "",
   "method_label": "",
   "serviceLevel": "",

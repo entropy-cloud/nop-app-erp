@@ -35,41 +35,41 @@ public class ErpInvDrpCrossDockBizModel extends CrudBizModel<ErpInvDrpCrossDock>
 
     @Override
     @BizMutation
-    public ErpInvDrpCrossDock receiveMark(@Name("id") Long id, @Name("inboundMoveId") Long inboundMoveId,
+    public ErpInvDrpCrossDock receiveMark(@Name("id") String id, @Name("inboundMoveId") String inboundMoveId,
                                           IServiceContext context) {
         return crossDockProcessor.receiveMark(id, inboundMoveId, context);
     }
 
     @Override
     @BizMutation
-    public ErpInvDrpCrossDock match(@Name("id") Long id, @Optional @Name("targetBillType") String targetBillType,
+    public ErpInvDrpCrossDock match(@Name("id") String id, @Optional @Name("targetBillType") String targetBillType,
                                     @Optional @Name("targetBillCode") String targetBillCode, IServiceContext context) {
         return crossDockProcessor.match(id, targetBillType, targetBillCode, context);
     }
 
     @Override
     @BizMutation
-    public ErpInvDrpCrossDock load(@Name("id") Long id, IServiceContext context) {
+    public ErpInvDrpCrossDock load(@Name("id") String id, IServiceContext context) {
         return crossDockProcessor.load(id, context);
     }
 
     @Override
     @BizMutation
-    public ErpInvDrpCrossDock complete(@Name("id") Long id, IServiceContext context) {
+    public ErpInvDrpCrossDock complete(@Name("id") String id, IServiceContext context) {
         return crossDockProcessor.complete(id, context);
     }
 
     @Override
     @BizMutation
-    public ErpInvDrpCrossDock cancel(@Name("id") Long id, IServiceContext context) {
+    public ErpInvDrpCrossDock cancel(@Name("id") String id, IServiceContext context) {
         return crossDockProcessor.cancel(id, context);
     }
 
     @Override
     @BizMutation
     public int markReceivedFromPurchase(@Name("purchaseOrderCode") String purchaseOrderCode,
-                                        @Name("inboundMoveId") Long inboundMoveId,
-                                        @Name("materialIds") List<Long> materialIds, IServiceContext context) {
+                                        @Name("inboundMoveId") String inboundMoveId,
+                                        @Name("materialIds") List<String> materialIds, IServiceContext context) {
         return crossDockProcessor.markReceivedFromPurchase(purchaseOrderCode, inboundMoveId, materialIds, context);
     }
 }

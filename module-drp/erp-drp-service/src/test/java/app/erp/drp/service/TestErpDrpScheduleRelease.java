@@ -47,15 +47,15 @@ public class TestErpDrpScheduleRelease extends JunitAutoTestCase {
     @RegisterExtension
     static DrpFrozenClockExtension frozenClock = new DrpFrozenClockExtension();
 
-    static final Long ORG_ID = 6401L;
-    static final Long UOM_ID = 6501L;
-    static final Long CURRENCY_ID = 6701L;
-    static final Long SUPPLIER_ID = 6801L;
-    static final Long WH_TARGET = 6101L;
-    static final Long WH_SOURCE = 6102L;
+    static final String ORG_ID = "6401";
+    static final String UOM_ID = "6501";
+    static final String CURRENCY_ID = "6701";
+    static final String SUPPLIER_ID = "6801";
+    static final String WH_TARGET = "6101";
+    static final String WH_SOURCE = "6102";
 
-    static final Long M_TRANSFER = 6201L;
-    static final Long M_PURCHASE = 6202L;
+    static final String M_TRANSFER = "6201";
+    static final String M_PURCHASE = "6202";
 
     @Inject
     IDaoProvider daoProvider;
@@ -74,7 +74,7 @@ public class TestErpDrpScheduleRelease extends JunitAutoTestCase {
         seedParameter(M_PURCHASE, bd("50"), bd("1"), null, SUPPLIER_ID);
         seedBalance(M_PURCHASE, bd("10"));
 
-        Long planId = seedPlan("DRP-APPR");
+        String planId = seedPlan("DRP-APPR");
         runDrpOk(planId);
 
         approvePlanOk(planId);
@@ -98,7 +98,7 @@ public class TestErpDrpScheduleRelease extends JunitAutoTestCase {
         seedParameter(M_TRANSFER, bd("100"), bd("1"), WH_SOURCE, null);
         seedBalance(M_TRANSFER, bd("30"));
 
-        Long planId = seedPlan("DRP-REL-TO");
+        String planId = seedPlan("DRP-REL-TO");
         runDrpOk(planId);
         approvePlanOk(planId);
 
@@ -124,7 +124,7 @@ public class TestErpDrpScheduleRelease extends JunitAutoTestCase {
         seedParameter(M_PURCHASE, bd("50"), bd("1"), null, SUPPLIER_ID);
         seedBalance(M_PURCHASE, bd("10"));
 
-        Long planId = seedPlan("DRP-REL-PO");
+        String planId = seedPlan("DRP-REL-PO");
         runDrpOk(planId);
         approvePlanOk(planId);
 
@@ -151,7 +151,7 @@ public class TestErpDrpScheduleRelease extends JunitAutoTestCase {
         seedParameter(M_PURCHASE, bd("50"), bd("1"), null, SUPPLIER_ID);
         seedBalance(M_PURCHASE, bd("10"));
 
-        Long planId = seedPlan("DRP-EXEC");
+        String planId = seedPlan("DRP-EXEC");
         runDrpOk(planId);
         approvePlanOk(planId);
 
@@ -176,7 +176,7 @@ public class TestErpDrpScheduleRelease extends JunitAutoTestCase {
         seedParameter(M_PURCHASE, bd("0"), bd("1"), null, SUPPLIER_ID);
         seedBalance(M_PURCHASE, bd("100"));
 
-        Long planId = seedPlan("DRP-ZERO");
+        String planId = seedPlan("DRP-ZERO");
         runDrpOk(planId);
 
         List<ErpDrpLine> lines = linesOf(planId);
@@ -229,7 +229,7 @@ public class TestErpDrpScheduleRelease extends JunitAutoTestCase {
         seedParameter(M_PURCHASE, bd("50"), bd("1"), null, null);
         seedBalance(M_PURCHASE, bd("10"));
 
-        Long planId = seedPlan("DRP-BATCH-FAIL");
+        String planId = seedPlan("DRP-BATCH-FAIL");
         runDrpOk(planId);
         approvePlanOk(planId);
         assertEquals(2, linesOf(planId).size());
@@ -253,32 +253,32 @@ public class TestErpDrpScheduleRelease extends JunitAutoTestCase {
                 "计划保持 APPROVED");
     }
 
-    private void runDrpOk(Long planId) {
+    private void runDrpOk(String planId) {
         ApiResponse<?> resp = runDrp(planId);
         assertEquals(0, resp.getStatus(), "runDrp 应成功: " + resp);
     }
 
-    private ApiResponse<?> runDrp(Long planId) {
+    private ApiResponse<?> runDrp(String planId) {
         return rpc(mutation, "ErpDrpPlan__runDrp", Map.of("planId", planId));
     }
 
-    private void approvePlanOk(Long planId) {
+    private void approvePlanOk(String planId) {
         ApiResponse<?> resp = rpc(mutation, "ErpDrpPlan__approvePlan", Map.of("planId", planId));
         assertEquals(0, resp.getStatus(), "approvePlan 应成功: " + resp);
     }
 
-    private String releaseLineOk(Long lineId) {
+    private String releaseLineOk(String lineId) {
         ApiResponse<?> resp = releaseLine(lineId);
         assertEquals(0, resp.getStatus(), "releaseLine 应成功: " + resp);
         ErpDrpLine released = daoProvider.daoFor(ErpDrpLine.class).getEntityById(lineId);
         return released.getOrderBillCode();
     }
 
-    private ApiResponse<?> releaseLine(Long lineId) {
+    private ApiResponse<?> releaseLine(String lineId) {
         return rpc(mutation, "ErpDrpLine__releaseLine", Map.of("lineId", lineId));
     }
 
-    private void releaseApprovedOk(Long planId) {
+    private void releaseApprovedOk(String planId) {
         ApiResponse<?> resp = rpc(mutation, "ErpDrpLine__releaseApproved", Map.of("planId", planId));
         assertEquals(0, resp.getStatus(), "releaseApproved 应成功: " + resp);
     }
@@ -288,14 +288,14 @@ public class TestErpDrpScheduleRelease extends JunitAutoTestCase {
         return graphQLEngine.executeRpc(ctx);
     }
 
-    private List<ErpDrpLine> linesOf(Long planId) {
+    private List<ErpDrpLine> linesOf(String planId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("planId", planId));
         q.addOrderField("lineNo", false);
         return daoProvider.daoFor(ErpDrpLine.class).findAllByQuery(q);
     }
 
-    private ErpDrpLine findLine(List<ErpDrpLine> lines, Long materialId) {
+    private ErpDrpLine findLine(List<ErpDrpLine> lines, String materialId) {
         for (ErpDrpLine l : lines) {
             if (materialId.equals(l.getMaterialId())) {
                 return l;
@@ -318,21 +318,21 @@ public class TestErpDrpScheduleRelease extends JunitAutoTestCase {
         return list.isEmpty() ? null : list.get(0);
     }
 
-    private ErpInvTransferOrderLine findTransferLine(Long transferId) {
+    private ErpInvTransferOrderLine findTransferLine(String transferId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("transferId", transferId));
         List<ErpInvTransferOrderLine> list = daoProvider.daoFor(ErpInvTransferOrderLine.class).findAllByQuery(q);
         return list.isEmpty() ? null : list.get(0);
     }
 
-    private ErpPurOrderLine findPurchaseLine(Long orderId) {
+    private ErpPurOrderLine findPurchaseLine(String orderId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("orderId", orderId));
         List<ErpPurOrderLine> list = daoProvider.daoFor(ErpPurOrderLine.class).findAllByQuery(q);
         return list.isEmpty() ? null : list.get(0);
     }
 
-    private void seedActiveSupplier(Long id) {
+    private void seedActiveSupplier(String id) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMdPartner> dao = daoProvider.daoFor(ErpMdPartner.class);
             ErpMdPartner partner = new ErpMdPartner();
@@ -345,8 +345,8 @@ public class TestErpDrpScheduleRelease extends JunitAutoTestCase {
         });
     }
 
-    private Long seedPlan(String code) {
-        Long id = 6001L + (long) Math.abs(code.hashCode() % 600);
+    private String seedPlan(String code) {
+        String id = String.valueOf(6001L + Math.abs(code.hashCode() % 600));
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpDrpPlan> dao = daoProvider.daoFor(ErpDrpPlan.class);
             ErpDrpPlan plan = new ErpDrpPlan();
@@ -364,12 +364,12 @@ public class TestErpDrpScheduleRelease extends JunitAutoTestCase {
         return id;
     }
 
-    private void seedParameter(Long materialId, BigDecimal safetyStock, BigDecimal orderMultiple,
-                               Long sourceWarehouseId, Long supplierId) {
+    private void seedParameter(String materialId, BigDecimal safetyStock, BigDecimal orderMultiple,
+                               String sourceWarehouseId, String supplierId) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpDrpParameter> dao = daoProvider.daoFor(ErpDrpParameter.class);
             ErpDrpParameter p = new ErpDrpParameter();
-            p.orm_propValueByName("id", 6900L + materialId);
+            p.orm_propValueByName("id", String.valueOf(6900L + Long.parseLong(materialId)));
             p.setMaterialId(materialId);
             p.setWarehouseId(WH_TARGET);
             p.setSafetyStock(safetyStock);
@@ -383,11 +383,11 @@ public class TestErpDrpScheduleRelease extends JunitAutoTestCase {
         });
     }
 
-    private void seedBalance(Long materialId, BigDecimal available) {
+    private void seedBalance(String materialId, BigDecimal available) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpInvStockBalance> dao = daoProvider.daoFor(ErpInvStockBalance.class);
             ErpInvStockBalance b = new ErpInvStockBalance();
-            b.orm_propValueByName("id", 8000L + materialId);
+            b.orm_propValueByName("id", String.valueOf(8000L + Long.parseLong(materialId)));
             b.setOrgId(ORG_ID);
             b.setMaterialId(materialId);
             b.setWarehouseId(WH_TARGET);
@@ -397,7 +397,7 @@ public class TestErpDrpScheduleRelease extends JunitAutoTestCase {
         });
     }
 
-    private void seedMaterial(Long id) {
+    private void seedMaterial(String id) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMdMaterial> dao = daoProvider.daoFor(ErpMdMaterial.class);
             ErpMdMaterial m = new ErpMdMaterial();
@@ -414,7 +414,7 @@ public class TestErpDrpScheduleRelease extends JunitAutoTestCase {
     private void seedWarehouse() {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMdWarehouse> dao = daoProvider.daoFor(ErpMdWarehouse.class);
-            for (Long wid : new Long[]{WH_TARGET, WH_SOURCE}) {
+            for (String wid : new String[]{WH_TARGET, WH_SOURCE}) {
                 ErpMdWarehouse w = new ErpMdWarehouse();
                 w.orm_propValueByName("id", wid);
                 w.setCode("WH-" + wid);

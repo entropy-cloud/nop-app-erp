@@ -12,58 +12,58 @@
     public class ErpInvDrpSupplierScoreInputBean extends CrudInputBase {
 
     
-        private Long _id;
+        private String _id;
 
     
         @PropMeta(propId=1)
     
-        public Long getId(){
+        public String getId(){
             return _id;
         }
 
-        public void setId(Long value){
+        public void setId(String value){
             this._id = value;
         }
 
 
-        private Long _orgId;
+        private String _orgId;
 
     
         @PropMeta(propId=2)
     
-        public Long getOrgId(){
+        public String getOrgId(){
             return _orgId;
         }
 
-        public void setOrgId(Long value){
+        public void setOrgId(String value){
             this._orgId = value;
         }
 
 
-        private Long _supplierId;
+        private String _supplierId;
 
     
         @PropMeta(propId=3)
     
-        public Long getSupplierId(){
+        public String getSupplierId(){
             return _supplierId;
         }
 
-        public void setSupplierId(Long value){
+        public void setSupplierId(String value){
             this._supplierId = value;
         }
 
 
-        private Long _materialId;
+        private String _materialId;
 
     
         @PropMeta(propId=4)
     
-        public Long getMaterialId(){
+        public String getMaterialId(){
             return _materialId;
         }
 
-        public void setMaterialId(Long value){
+        public void setMaterialId(String value){
             this._materialId = value;
         }
 

@@ -13,30 +13,30 @@
     public class ErpDrpScenarioVersionOutputBean {
 
     
-        private Long _id;
+        private String _id;
 
     
         @PropMeta(propId=1)
     
-        public Long getId(){
+        public String getId(){
             return _id;
         }
 
-        public void setId(Long value){
+        public void setId(String value){
             this._id = value;
         }
 
 
-        private Long _scenarioId;
+        private String _scenarioId;
 
     
         @PropMeta(propId=2)
     
-        public Long getScenarioId(){
+        public String getScenarioId(){
             return _scenarioId;
         }
 
-        public void setScenarioId(Long value){
+        public void setScenarioId(String value){
             this._scenarioId = value;
         }
 
@@ -55,16 +55,16 @@
         }
 
 
-        private Long _computedDrpPlanId;
+        private String _computedDrpPlanId;
 
     
         @PropMeta(propId=4)
     
-        public Long getComputedDrpPlanId(){
+        public String getComputedDrpPlanId(){
             return _computedDrpPlanId;
         }
 
-        public void setComputedDrpPlanId(Long value){
+        public void setComputedDrpPlanId(String value){
             this._computedDrpPlanId = value;
         }
 
@@ -109,16 +109,16 @@
         }
 
 
-        private Long _promotedPlanId;
+        private String _promotedPlanId;
 
     
         @PropMeta(propId=7)
     
-        public Long getPromotedPlanId(){
+        public String getPromotedPlanId(){
             return _promotedPlanId;
         }
 
-        public void setPromotedPlanId(Long value){
+        public void setPromotedPlanId(String value){
             this._promotedPlanId = value;
         }
 

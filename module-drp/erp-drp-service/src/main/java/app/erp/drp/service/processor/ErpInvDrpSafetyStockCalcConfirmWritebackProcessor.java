@@ -25,7 +25,7 @@ public class ErpInvDrpSafetyStockCalcConfirmWritebackProcessor {
     @Inject
     SafetyStockEngine safetyStockEngine;
 
-    public ErpInvDrpSafetyStockCalc confirmWriteback(Long calcId, IServiceContext context) {
+    public ErpInvDrpSafetyStockCalc confirmWriteback(String calcId, IServiceContext context) {
         // 配置 erp-inv.drp-ss-auto-writeback 默认 false：必须人工显式调用此方法才回写（人工复核门）
         AppConfig.var(ErpDrpConfigs.CONFIG_DRP_SS_AUTO_WRITEBACK,
                 ErpDrpConfigs.DEFAULT_DRP_SS_AUTO_WRITEBACK);
@@ -35,7 +35,7 @@ public class ErpInvDrpSafetyStockCalcConfirmWritebackProcessor {
 
     // ---------- 内部辅助 ----------
 
-    protected ErpInvDrpSafetyStockCalc requireCalc(Long calcId) {
+    protected ErpInvDrpSafetyStockCalc requireCalc(String calcId) {
         ErpInvDrpSafetyStockCalc calc = dao().getEntityById(calcId);
         if (calc == null) {
             throw new NopException(ErpDrpErrors.ERR_DRP_SS_METHOD_UNSUPPORTED)

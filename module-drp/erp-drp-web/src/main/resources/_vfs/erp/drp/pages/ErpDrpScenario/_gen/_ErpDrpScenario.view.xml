@@ -19,16 +19,16 @@
             <cols>
 
                 <!--ID-->
-                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="id" mandatory="true" sortable="true"/>
 
                 <!--场景号-->
                 <col id="code" mandatory="true" sortable="true"/>
 
                 <!--业务组织-->
-                <col id="orgId" ui:number="true" sortable="true"/>
+                <col id="orgId" sortable="true"/>
 
                 <!--基线DRP计划-->
-                <col id="baseDrpPlanId" ui:number="true" sortable="true"/>
+                <col id="baseDrpPlanId" sortable="true"/>
 
                 <!--场景描述-->
                 <col id="description" sortable="true"/>

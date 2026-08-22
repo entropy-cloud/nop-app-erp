@@ -168,13 +168,13 @@ public class _ErpInvDrpDockAppointment extends DynamicOrmEntity{
 
     
     /* ID: ID */
-    private java.lang.Long _id;
+    private java.lang.String _id;
     
     /* 仓库: WAREHOUSE_ID */
-    private java.lang.Long _warehouseId;
+    private java.lang.String _warehouseId;
     
     /* 月台: DOCK_ID */
-    private java.lang.Long _dockId;
+    private java.lang.String _dockId;
     
     /* 预约日期: APPOINTMENT_DATE */
     private java.time.LocalDate _appointmentDate;
@@ -186,7 +186,7 @@ public class _ErpInvDrpDockAppointment extends DynamicOrmEntity{
     private java.sql.Timestamp _slotEnd;
     
     /* 关联越库: CROSS_DOCK_ID */
-    private java.lang.Long _crossDockId;
+    private java.lang.String _crossDockId;
     
     /* 承运商信息: CARRIER_INFO */
     private java.lang.String _carrierInfo;
@@ -216,7 +216,7 @@ public class _ErpInvDrpDockAppointment extends DynamicOrmEntity{
     private java.sql.Timestamp _updateTime;
     
     /* 业务组织: ORG_ID */
-    private java.lang.Long _orgId;
+    private java.lang.String _orgId;
     
 
     public _ErpInvDrpDockAppointment(){
@@ -355,9 +355,9 @@ public class _ErpInvDrpDockAppointment extends DynamicOrmEntity{
         switch(propId){
         
             case PROP_ID_id:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_id));
                }
                setId(typedValue);
@@ -365,9 +365,9 @@ public class _ErpInvDrpDockAppointment extends DynamicOrmEntity{
             }
         
             case PROP_ID_warehouseId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_warehouseId));
                }
                setWarehouseId(typedValue);
@@ -375,9 +375,9 @@ public class _ErpInvDrpDockAppointment extends DynamicOrmEntity{
             }
         
             case PROP_ID_dockId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_dockId));
                }
                setDockId(typedValue);
@@ -415,9 +415,9 @@ public class _ErpInvDrpDockAppointment extends DynamicOrmEntity{
             }
         
             case PROP_ID_crossDockId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_crossDockId));
                }
                setCrossDockId(typedValue);
@@ -515,9 +515,9 @@ public class _ErpInvDrpDockAppointment extends DynamicOrmEntity{
             }
         
             case PROP_ID_orgId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_orgId));
                }
                setOrgId(typedValue);
@@ -535,21 +535,21 @@ public class _ErpInvDrpDockAppointment extends DynamicOrmEntity{
         
             case PROP_ID_id:{
                onInitProp(propId);
-               this._id = (java.lang.Long)value;
+               this._id = (java.lang.String)value;
                orm_id(); // 如果是设置主键字段，则触发watcher
                break;
             }
         
             case PROP_ID_warehouseId:{
                onInitProp(propId);
-               this._warehouseId = (java.lang.Long)value;
+               this._warehouseId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_dockId:{
                onInitProp(propId);
-               this._dockId = (java.lang.Long)value;
+               this._dockId = (java.lang.String)value;
                
                break;
             }
@@ -577,7 +577,7 @@ public class _ErpInvDrpDockAppointment extends DynamicOrmEntity{
         
             case PROP_ID_crossDockId:{
                onInitProp(propId);
-               this._crossDockId = (java.lang.Long)value;
+               this._crossDockId = (java.lang.String)value;
                
                break;
             }
@@ -647,7 +647,7 @@ public class _ErpInvDrpDockAppointment extends DynamicOrmEntity{
         
             case PROP_ID_orgId:{
                onInitProp(propId);
-               this._orgId = (java.lang.Long)value;
+               this._orgId = (java.lang.String)value;
                
                break;
             }
@@ -661,7 +661,7 @@ public class _ErpInvDrpDockAppointment extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final java.lang.Long getId(){
+    public final java.lang.String getId(){
          onPropGet(PROP_ID_id);
          return _id;
     }
@@ -669,7 +669,7 @@ public class _ErpInvDrpDockAppointment extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final void setId(java.lang.Long value){
+    public final void setId(java.lang.String value){
         if(onPropSet(PROP_ID_id,value)){
             this._id = value;
             internalClearRefs(PROP_ID_id);
@@ -680,7 +680,7 @@ public class _ErpInvDrpDockAppointment extends DynamicOrmEntity{
     /**
      * 仓库: WAREHOUSE_ID
      */
-    public final java.lang.Long getWarehouseId(){
+    public final java.lang.String getWarehouseId(){
          onPropGet(PROP_ID_warehouseId);
          return _warehouseId;
     }
@@ -688,7 +688,7 @@ public class _ErpInvDrpDockAppointment extends DynamicOrmEntity{
     /**
      * 仓库: WAREHOUSE_ID
      */
-    public final void setWarehouseId(java.lang.Long value){
+    public final void setWarehouseId(java.lang.String value){
         if(onPropSet(PROP_ID_warehouseId,value)){
             this._warehouseId = value;
             internalClearRefs(PROP_ID_warehouseId);
@@ -699,7 +699,7 @@ public class _ErpInvDrpDockAppointment extends DynamicOrmEntity{
     /**
      * 月台: DOCK_ID
      */
-    public final java.lang.Long getDockId(){
+    public final java.lang.String getDockId(){
          onPropGet(PROP_ID_dockId);
          return _dockId;
     }
@@ -707,7 +707,7 @@ public class _ErpInvDrpDockAppointment extends DynamicOrmEntity{
     /**
      * 月台: DOCK_ID
      */
-    public final void setDockId(java.lang.Long value){
+    public final void setDockId(java.lang.String value){
         if(onPropSet(PROP_ID_dockId,value)){
             this._dockId = value;
             internalClearRefs(PROP_ID_dockId);
@@ -775,7 +775,7 @@ public class _ErpInvDrpDockAppointment extends DynamicOrmEntity{
     /**
      * 关联越库: CROSS_DOCK_ID
      */
-    public final java.lang.Long getCrossDockId(){
+    public final java.lang.String getCrossDockId(){
          onPropGet(PROP_ID_crossDockId);
          return _crossDockId;
     }
@@ -783,7 +783,7 @@ public class _ErpInvDrpDockAppointment extends DynamicOrmEntity{
     /**
      * 关联越库: CROSS_DOCK_ID
      */
-    public final void setCrossDockId(java.lang.Long value){
+    public final void setCrossDockId(java.lang.String value){
         if(onPropSet(PROP_ID_crossDockId,value)){
             this._crossDockId = value;
             internalClearRefs(PROP_ID_crossDockId);
@@ -965,7 +965,7 @@ public class _ErpInvDrpDockAppointment extends DynamicOrmEntity{
     /**
      * 业务组织: ORG_ID
      */
-    public final java.lang.Long getOrgId(){
+    public final java.lang.String getOrgId(){
          onPropGet(PROP_ID_orgId);
          return _orgId;
     }
@@ -973,7 +973,7 @@ public class _ErpInvDrpDockAppointment extends DynamicOrmEntity{
     /**
      * 业务组织: ORG_ID
      */
-    public final void setOrgId(java.lang.Long value){
+    public final void setOrgId(java.lang.String value){
         if(onPropSet(PROP_ID_orgId,value)){
             this._orgId = value;
             internalClearRefs(PROP_ID_orgId);

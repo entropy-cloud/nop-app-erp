@@ -14,17 +14,17 @@ public class DrpSimulationDiffResult implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private Long versionIdA;
-    private Long versionIdB;
+    private String versionIdA;
+    private String versionIdB;
     private List<LineDiff> lineDiffs;
     private BigDecimal totalReplenishmentQtyDelta;
     private BigDecimal totalSafetyStockDelta;
 
-    public Long getVersionIdA() { return versionIdA; }
-    public void setVersionIdA(Long v) { this.versionIdA = v; }
+    public String getVersionIdA() { return versionIdA; }
+    public void setVersionIdA(String v) { this.versionIdA = v; }
 
-    public Long getVersionIdB() { return versionIdB; }
-    public void setVersionIdB(Long v) { this.versionIdB = v; }
+    public String getVersionIdB() { return versionIdB; }
+    public void setVersionIdB(String v) { this.versionIdB = v; }
 
     public List<LineDiff> getLineDiffs() { return lineDiffs; }
     public void setLineDiffs(List<LineDiff> l) { this.lineDiffs = l; }
@@ -38,8 +38,8 @@ public class DrpSimulationDiffResult implements Serializable {
     public static class LineDiff implements Serializable {
         private static final long serialVersionUID = 1L;
 
-        private Long materialId;
-        private Long warehouseId;
+        private String materialId;
+        private String warehouseId;
         private BigDecimal suggestedQtyA;
         private BigDecimal suggestedQtyB;
         private BigDecimal replenishmentQtyDelta;
@@ -47,11 +47,11 @@ public class DrpSimulationDiffResult implements Serializable {
         private BigDecimal safetyStockB;
         private BigDecimal safetyStockDelta;
 
-        public Long getMaterialId() { return materialId; }
-        public void setMaterialId(Long v) { this.materialId = v; }
+        public String getMaterialId() { return materialId; }
+        public void setMaterialId(String v) { this.materialId = v; }
 
-        public Long getWarehouseId() { return warehouseId; }
-        public void setWarehouseId(Long v) { this.warehouseId = v; }
+        public String getWarehouseId() { return warehouseId; }
+        public void setWarehouseId(String v) { this.warehouseId = v; }
 
         public BigDecimal getSuggestedQtyA() { return suggestedQtyA; }
         public void setSuggestedQtyA(BigDecimal v) { this.suggestedQtyA = v; }

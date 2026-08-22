@@ -1,5 +1,5 @@
 {
-  "id": 0,
+  "id": "",
   "code": "",
   "planName": "",
   "periodFrom": "2000-01-01",
@@ -9,7 +9,7 @@
   "totalReplenishmentQty": 0.0,
   "runAt": "2000-01-01 14:00:00",
   "runBy": "",
-  "orgId": 0,
+  "orgId": "",
   "remark": "",
   "delVersion": 0,
   "version": 0,

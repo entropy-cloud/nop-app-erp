@@ -12,44 +12,44 @@
     public class ErpDrpParameterInputBean extends CrudInputBase {
 
     
-        private Long _id;
+        private String _id;
 
     
         @PropMeta(propId=1)
     
-        public Long getId(){
+        public String getId(){
             return _id;
         }
 
-        public void setId(Long value){
+        public void setId(String value){
             this._id = value;
         }
 
 
-        private Long _warehouseId;
+        private String _warehouseId;
 
     
         @PropMeta(propId=2)
     
-        public Long getWarehouseId(){
+        public String getWarehouseId(){
             return _warehouseId;
         }
 
-        public void setWarehouseId(Long value){
+        public void setWarehouseId(String value){
             this._warehouseId = value;
         }
 
 
-        private Long _materialId;
+        private String _materialId;
 
     
         @PropMeta(propId=3)
     
-        public Long getMaterialId(){
+        public String getMaterialId(){
             return _materialId;
         }
 
-        public void setMaterialId(Long value){
+        public void setMaterialId(String value){
             this._materialId = value;
         }
 
@@ -96,30 +96,30 @@
         }
 
 
-        private Long _preferredSourceWarehouseId;
+        private String _preferredSourceWarehouseId;
 
     
         @PropMeta(propId=7)
     
-        public Long getPreferredSourceWarehouseId(){
+        public String getPreferredSourceWarehouseId(){
             return _preferredSourceWarehouseId;
         }
 
-        public void setPreferredSourceWarehouseId(Long value){
+        public void setPreferredSourceWarehouseId(String value){
             this._preferredSourceWarehouseId = value;
         }
 
 
-        private Long _preferredSupplierId;
+        private String _preferredSupplierId;
 
     
         @PropMeta(propId=8)
     
-        public Long getPreferredSupplierId(){
+        public String getPreferredSupplierId(){
             return _preferredSupplierId;
         }
 
-        public void setPreferredSupplierId(Long value){
+        public void setPreferredSupplierId(String value){
             this._preferredSupplierId = value;
         }
 
@@ -180,16 +180,16 @@
         }
 
 
-        private Long _orgId;
+        private String _orgId;
 
     
         @PropMeta(propId=13)
     
-        public Long getOrgId(){
+        public String getOrgId(){
             return _orgId;
         }
 
-        public void setOrgId(Long value){
+        public void setOrgId(String value){
             this._orgId = value;
         }
 

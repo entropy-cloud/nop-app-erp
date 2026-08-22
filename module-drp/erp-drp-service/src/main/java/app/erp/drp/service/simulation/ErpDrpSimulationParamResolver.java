@@ -26,14 +26,14 @@ public class ErpDrpSimulationParamResolver implements IErpDrpSimulationParamReso
     @Inject
     IDaoProvider daoProvider;
 
-    private final Map<Long, List<ErpDrpScenarioParam>> cache = new HashMap<>();
+    private final Map<String, List<ErpDrpScenarioParam>> cache = new HashMap<>();
 
     public void setDaoProvider(IDaoProvider daoProvider) {
         this.daoProvider = daoProvider;
     }
 
     @Override
-    public BigDecimal resolveOverride(Long scenarioId, Long materialId, Long warehouseId, String paramType) {
+    public BigDecimal resolveOverride(String scenarioId, String materialId, String warehouseId, String paramType) {
         if (scenarioId == null || paramType == null) {
             return null;
         }
@@ -60,7 +60,7 @@ public class ErpDrpSimulationParamResolver implements IErpDrpSimulationParamReso
         return null;
     }
 
-    private BigDecimal find(List<ErpDrpScenarioParam> params, Long materialId, Long warehouseId, String paramType) {
+    private BigDecimal find(List<ErpDrpScenarioParam> params, String materialId, String warehouseId, String paramType) {
         for (ErpDrpScenarioParam p : params) {
             if (Objects.equals(materialId, p.getMaterialId())
                     && Objects.equals(warehouseId, p.getWarehouseId())
@@ -72,7 +72,7 @@ public class ErpDrpSimulationParamResolver implements IErpDrpSimulationParamReso
     }
 
     @Override
-    public List<ErpDrpScenarioParam> loadParams(Long scenarioId) {
+    public List<ErpDrpScenarioParam> loadParams(String scenarioId) {
         if (scenarioId == null) {
             return Collections.emptyList();
         }
@@ -87,7 +87,7 @@ public class ErpDrpSimulationParamResolver implements IErpDrpSimulationParamReso
         }
     }
 
-    private List<ErpDrpScenarioParam> doLoadParams(Long scenarioId) {
+    private List<ErpDrpScenarioParam> doLoadParams(String scenarioId) {
         IEntityDao<ErpDrpScenarioParam> dao = daoProvider.daoFor(ErpDrpScenarioParam.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("scenarioId", scenarioId));

@@ -58,15 +58,15 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpDrpCrossDock extends JunitAutoTestCase {
 
-    static final Long ORG_ID = 6401L;
-    static final Long UOM_ID = 6501L;
-    static final Long WH_ID = 6101L;
-    static final Long LOC_ID = 6151L;   // 越库暂存库位
-    static final Long CUST_ID = 6601L;
-    static final Long CUR_ID = 6701L;
-    static final Long M1 = 6201L;
-    static final Long M2 = 6202L;       // 无检验模板物料
-    static final Long MOVE_ID = 6301L;  // 入站移动单
+    static final String ORG_ID = "6401";
+    static final String UOM_ID = "6501";
+    static final String WH_ID = "6101";
+    static final String LOC_ID = "6151";   // 越库暂存库位
+    static final String CUST_ID = "6601";
+    static final String CUR_ID = "6701";
+    static final String M1 = "6201";
+    static final String M2 = "6202";       // 无检验模板物料
+    static final String MOVE_ID = "6301";  // 入站移动单
 
     @RegisterExtension
     static DrpFrozenClockExtension frozenClock = new DrpFrozenClockExtension();
@@ -95,7 +95,7 @@ public class TestErpDrpCrossDock extends JunitAutoTestCase {
     public void testReceiveMarkLegalTransition() {
         enableXdock();
         seedBaseData();
-        Long dockId = seedDock(6801L, "XDK-1", ErpDrpConstants.XDOCK_STATUS_PENDING, null, M1, null, null);
+        String dockId = seedDock("6801", "XDK-1", ErpDrpConstants.XDOCK_STATUS_PENDING, null, M1, null, null);
 
         rpcOk("receiveMark", args("id", dockId, "inboundMoveId", MOVE_ID));
 
@@ -110,10 +110,10 @@ public class TestErpDrpCrossDock extends JunitAutoTestCase {
     public void testIllegalTransitionsRejected() {
         enableXdock();
         seedBaseData();
-        Long pending = seedDock(6802L, "XDK-2", ErpDrpConstants.XDOCK_STATUS_PENDING, null, M1, null, null);
-        Long staging = seedDock(6803L, "XDK-3", ErpDrpConstants.XDOCK_STATUS_STAGING, null, M1, null, null);
-        Long matched = seedDock(6804L, "XDK-4", ErpDrpConstants.XDOCK_STATUS_MATCHED, null, M1, null, null);
-        Long completed = seedDock(6805L, "XDK-5", ErpDrpConstants.XDOCK_STATUS_COMPLETED, null, M1, null, null);
+        String pending = seedDock("6802", "XDK-2", ErpDrpConstants.XDOCK_STATUS_PENDING, null, M1, null, null);
+        String staging = seedDock("6803", "XDK-3", ErpDrpConstants.XDOCK_STATUS_STAGING, null, M1, null, null);
+        String matched = seedDock("6804", "XDK-4", ErpDrpConstants.XDOCK_STATUS_MATCHED, null, M1, null, null);
+        String completed = seedDock("6805", "XDK-5", ErpDrpConstants.XDOCK_STATUS_COMPLETED, null, M1, null, null);
 
         assertTrue(rpc("load", args("id", pending)).getStatus() != 0, "PENDING 不可直接 load（须先 MATCHED）");
         assertTrue(rpc("complete", args("id", matched)).getStatus() != 0, "MATCHED 不可 complete（须先 LOADED）");
@@ -133,9 +133,9 @@ public class TestErpDrpCrossDock extends JunitAutoTestCase {
     public void testPreAllocatedMatchUsesRecordTarget() {
         enableXdock();
         seedBaseData();
-        Long withTarget = seedDock(6806L, "XDK-6", ErpDrpConstants.XDOCK_STATUS_STAGING,
+        String withTarget = seedDock("6806", "XDK-6", ErpDrpConstants.XDOCK_STATUS_STAGING,
                 ErpDrpConstants.XDOCK_STRATEGY_PRE_ALLOCATED, M1, "SAL_ORDER", "SO-PRE");
-        Long noTarget = seedDock(6807L, "XDK-7", ErpDrpConstants.XDOCK_STATUS_STAGING,
+        String noTarget = seedDock("6807", "XDK-7", ErpDrpConstants.XDOCK_STATUS_STAGING,
                 ErpDrpConstants.XDOCK_STRATEGY_PRE_ALLOCATED, M1, null, null);
 
         rpcOk("match", args("id", withTarget, "targetBillType", null, "targetBillCode", null));
@@ -155,12 +155,12 @@ public class TestErpDrpCrossDock extends JunitAutoTestCase {
     public void testOnReceiptMatchPicksEarliestDeliveryDate() {
         enableXdock();
         seedBaseData();
-        seedSalOrder(7101L, "SO-EARLY", LocalDate.of(2026, 7, 10), LocalDateTime.of(2026, 7, 8, 9, 0));
-        seedSalOrder(7102L, "SO-LATE", LocalDate.of(2026, 7, 15), LocalDateTime.of(2026, 7, 1, 9, 0));
-        seedSalOrderLine(7201L, 7101L, M1, bd("100"), bd("0"));
-        seedSalOrderLine(7202L, 7102L, M1, bd("200"), bd("0"));
+        seedSalOrder("7101", "SO-EARLY", LocalDate.of(2026, 7, 10), LocalDateTime.of(2026, 7, 8, 9, 0));
+        seedSalOrder("7102", "SO-LATE", LocalDate.of(2026, 7, 15), LocalDateTime.of(2026, 7, 1, 9, 0));
+        seedSalOrderLine("7201", "7101", M1, bd("100"), bd("0"));
+        seedSalOrderLine("7202", "7102", M1, bd("200"), bd("0"));
 
-        Long dockId = seedDock(6808L, "XDK-8", ErpDrpConstants.XDOCK_STATUS_STAGING,
+        String dockId = seedDock("6808", "XDK-8", ErpDrpConstants.XDOCK_STATUS_STAGING,
                 ErpDrpConstants.XDOCK_STRATEGY_ON_RECEIPT, M1, null, null);
 
         rpcOk("match", args("id", dockId, "targetBillType", null, "targetBillCode", null));
@@ -172,7 +172,7 @@ public class TestErpDrpCrossDock extends JunitAutoTestCase {
         assertEquals("SAL_ORDER", dock.getTargetBillType());
 
         // 无候选（M2 无销售订单行）→ 拒绝
-        Long noCandidate = seedDock(6809L, "XDK-9", ErpDrpConstants.XDOCK_STATUS_STAGING,
+        String noCandidate = seedDock("6809", "XDK-9", ErpDrpConstants.XDOCK_STATUS_STAGING,
                 ErpDrpConstants.XDOCK_STRATEGY_ON_RECEIPT, M2, null, null);
         assertTrue(rpc("match", args("id", noCandidate, "targetBillType", null, "targetBillCode", null))
                 .getStatus() != 0, "无待出库销售订单候选应拒绝");
@@ -184,7 +184,7 @@ public class TestErpDrpCrossDock extends JunitAutoTestCase {
     public void testManualMatchRequiresExplicitTarget() {
         enableXdock();
         seedBaseData();
-        Long dockId = seedDock(6810L, "XDK-10", ErpDrpConstants.XDOCK_STATUS_STAGING,
+        String dockId = seedDock("6810", "XDK-10", ErpDrpConstants.XDOCK_STATUS_STAGING,
                 ErpDrpConstants.XDOCK_STRATEGY_MANUAL, M1, null, null);
 
         assertTrue(rpc("match", args("id", dockId, "targetBillType", null, "targetBillCode", null)).getStatus() != 0,
@@ -200,7 +200,7 @@ public class TestErpDrpCrossDock extends JunitAutoTestCase {
     public void testDirectPendingToMatched() {
         enableXdock();
         seedBaseData();
-        Long dockId = seedDock(6811L, "XDK-11", ErpDrpConstants.XDOCK_STATUS_PENDING,
+        String dockId = seedDock("6811", "XDK-11", ErpDrpConstants.XDOCK_STATUS_PENDING,
                 ErpDrpConstants.XDOCK_STRATEGY_MANUAL, M1, null, null);
 
         rpcOk("match", args("id", dockId, "targetBillType", "SAL_ORDER", "targetBillCode", "SO-DIRECT"));
@@ -216,7 +216,7 @@ public class TestErpDrpCrossDock extends JunitAutoTestCase {
         enableXdock();
         seedBaseData();
         seedBalance(M1, WH_ID, LOC_ID, bd("500"));
-        Long dockId = seedDock(6812L, "XDK-12", ErpDrpConstants.XDOCK_STATUS_PENDING,
+        String dockId = seedDock("6812", "XDK-12", ErpDrpConstants.XDOCK_STATUS_PENDING,
                 ErpDrpConstants.XDOCK_STRATEGY_MANUAL, M1, null, null);
 
         rpcOk("receiveMark", args("id", dockId, "inboundMoveId", MOVE_ID));
@@ -249,7 +249,7 @@ public class TestErpDrpCrossDock extends JunitAutoTestCase {
         seedBalance(M1, WH_ID, LOC_ID, bd("500"));
         // 冻结时钟 2026-07-17，超时阈值默认 24h → updateTime 早于 2026-07-16 的 STAGING 记录被扫描
         Timestamp old = Timestamp.valueOf(LocalDateTime.of(2026, 7, 15, 0, 0));
-        Long dockId = seedDockWithUpdateTime(6813L, "XDK-13", ErpDrpConstants.XDOCK_STATUS_STAGING,
+        String dockId = seedDockWithUpdateTime("6813", "XDK-13", ErpDrpConstants.XDOCK_STATUS_STAGING,
                 ErpDrpConstants.XDOCK_STRATEGY_ON_RECEIPT, M1, null, null, old);
 
         AppConfig.getConfigProvider().assignConfigValue(ErpDrpConfigs.CONFIG_DRP_XDOCK_STAGING_TIMEOUT_CRON,
@@ -277,8 +277,8 @@ public class TestErpDrpCrossDock extends JunitAutoTestCase {
         enableXdock();
         enableQualityGate();
         seedBaseData();
-        seedQaTemplate(7301L, "QA-TPL-1", M1, 1);
-        Long dockId = seedDock(6814L, "XDK-14", ErpDrpConstants.XDOCK_STATUS_STAGING,
+        seedQaTemplate("7301", "QA-TPL-1", M1, 1);
+        String dockId = seedDock("6814", "XDK-14", ErpDrpConstants.XDOCK_STATUS_STAGING,
                 ErpDrpConstants.XDOCK_STRATEGY_MANUAL, M1, null, null);
 
         assertTrue(rpc("match", args("id", dockId, "targetBillType", "SAL_ORDER", "targetBillCode", "SO-QA"))
@@ -286,7 +286,7 @@ public class TestErpDrpCrossDock extends JunitAutoTestCase {
         assertEquals(ErpDrpConstants.XDOCK_STATUS_STAGING, reload(dockId).getStatus());
 
         // 暂存区快检（关联本越库记录，结果 ACCEPTED）→ 放行
-        seedQaInspection(7401L, "QA-INS-1", ErpDrpConstants.RELATED_BILL_TYPE_DRP_XDOCK, "XDK-14", M1,
+        seedQaInspection("7401", "QA-INS-1", ErpDrpConstants.RELATED_BILL_TYPE_DRP_XDOCK, "XDK-14", M1,
                 ErpDrpConstants.QA_INSPECTION_RESULT_ACCEPTED);
 
         rpcOk("match", args("id", dockId, "targetBillType", "SAL_ORDER", "targetBillCode", "SO-QA"));
@@ -301,8 +301,8 @@ public class TestErpDrpCrossDock extends JunitAutoTestCase {
         enableXdock();
         enableQualityGate();
         seedBaseData();
-        seedQaTemplate(7302L, "QA-TPL-2", M1, 1); // 仅 M1 有模板
-        Long dockId = seedDock(6815L, "XDK-15", ErpDrpConstants.XDOCK_STATUS_STAGING,
+        seedQaTemplate("7302", "QA-TPL-2", M1, 1); // 仅 M1 有模板
+        String dockId = seedDock("6815", "XDK-15", ErpDrpConstants.XDOCK_STATUS_STAGING,
                 ErpDrpConstants.XDOCK_STRATEGY_MANUAL, M2, null, null);
 
         rpcOk("match", args("id", dockId, "targetBillType", "SAL_ORDER", "targetBillCode", "SO-NO-TPL"));
@@ -316,8 +316,8 @@ public class TestErpDrpCrossDock extends JunitAutoTestCase {
     public void testQualityGateConfigOffSkipsGuard() {
         enableXdock(); // 质检门保持默认 false
         seedBaseData();
-        seedQaTemplate(7303L, "QA-TPL-3", M1, 1); // 有模板但 config 关闭
-        Long dockId = seedDock(6816L, "XDK-16", ErpDrpConstants.XDOCK_STATUS_STAGING,
+        seedQaTemplate("7303", "QA-TPL-3", M1, 1); // 有模板但 config 关闭
+        String dockId = seedDock("6816", "XDK-16", ErpDrpConstants.XDOCK_STATUS_STAGING,
                 ErpDrpConstants.XDOCK_STRATEGY_MANUAL, M1, null, null);
 
         rpcOk("match", args("id", dockId, "targetBillType", "SAL_ORDER", "targetBillCode", "SO-GATE-OFF"));
@@ -331,7 +331,7 @@ public class TestErpDrpCrossDock extends JunitAutoTestCase {
     public void testConfigDisabledBlocksAllMutations() {
         // 保持默认 xdock-enabled=false
         seedBaseData();
-        Long dockId = seedDock(6817L, "XDK-17", ErpDrpConstants.XDOCK_STATUS_PENDING, null, M1, null, null);
+        String dockId = seedDock("6817", "XDK-17", ErpDrpConstants.XDOCK_STATUS_PENDING, null, M1, null, null);
 
         assertTrue(rpc("receiveMark", args("id", dockId, "inboundMoveId", MOVE_ID)).getStatus() != 0,
                 "功能未启用应拒绝 receiveMark");
@@ -346,7 +346,7 @@ public class TestErpDrpCrossDock extends JunitAutoTestCase {
     public void testMarkReceivedFromPurchaseIdempotent() {
         enableXdock();
         seedBaseData();
-        Long dockId = seedDock(6818L, "XDK-18", ErpDrpConstants.XDOCK_STATUS_PENDING, null, M1, null, null);
+        String dockId = seedDock("6818", "XDK-18", ErpDrpConstants.XDOCK_STATUS_PENDING, null, M1, null, null);
         // sourceBillType=PUR_ORDER + sourceBillCode=PO-1
         setSourceBill(dockId, ErpDrpConstants.XDOCK_SOURCE_BILL_TYPE_PUR_ORDER, "PO-1");
 
@@ -371,7 +371,7 @@ public class TestErpDrpCrossDock extends JunitAutoTestCase {
     public void testCancelFromStagingIsTerminal() {
         enableXdock();
         seedBaseData();
-        Long dockId = seedDock(6819L, "XDK-19", ErpDrpConstants.XDOCK_STATUS_STAGING, null, M1, null, null);
+        String dockId = seedDock("6819", "XDK-19", ErpDrpConstants.XDOCK_STATUS_STAGING, null, M1, null, null);
 
         rpcOk("cancel", args("id", dockId));
         assertEquals(ErpDrpConstants.XDOCK_STATUS_CANCELLED, reload(dockId).getStatus());
@@ -418,11 +418,11 @@ public class TestErpDrpCrossDock extends JunitAutoTestCase {
         return graphQLEngine.executeRpc(ctx);
     }
 
-    private ErpInvDrpCrossDock reload(Long id) {
+    private ErpInvDrpCrossDock reload(String id) {
         return daoProvider.daoFor(ErpInvDrpCrossDock.class).getEntityById(id);
     }
 
-    private void setSourceBill(Long dockId, String billType, String billCode) {
+    private void setSourceBill(String dockId, String billType, String billCode) {
         ormTemplate.runInSession(() -> {
             ErpInvDrpCrossDock dock = daoProvider.daoFor(ErpInvDrpCrossDock.class).getEntityById(dockId);
             dock.setSourceBillType(billType);
@@ -440,12 +440,12 @@ public class TestErpDrpCrossDock extends JunitAutoTestCase {
         seedCurrency();
     }
 
-    private Long seedDock(Long id, String code, String status, String strategy, Long materialId,
+    private String seedDock(String id, String code, String status, String strategy, String materialId,
                           String targetBillType, String targetBillCode) {
         return seedDockWithUpdateTime(id, code, status, strategy, materialId, targetBillType, targetBillCode, null);
     }
 
-    private Long seedDockWithUpdateTime(Long id, String code, String status, String strategy, Long materialId,
+    private String seedDockWithUpdateTime(String id, String code, String status, String strategy, String materialId,
                                         String targetBillType, String targetBillCode, Timestamp updateTime) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpInvDrpCrossDock> dao = daoProvider.daoFor(ErpInvDrpCrossDock.class);
@@ -478,7 +478,7 @@ public class TestErpDrpCrossDock extends JunitAutoTestCase {
         return id;
     }
 
-    private void seedSalOrder(Long id, String code, LocalDate deliveryDate, LocalDateTime createTime) {
+    private void seedSalOrder(String id, String code, LocalDate deliveryDate, LocalDateTime createTime) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpSalOrder> dao = daoProvider.daoFor(ErpSalOrder.class);
             ErpSalOrder o = dao.newEntity();
@@ -501,7 +501,7 @@ public class TestErpDrpCrossDock extends JunitAutoTestCase {
         });
     }
 
-    private void seedSalOrderLine(Long id, Long orderId, Long materialId, BigDecimal quantity,
+    private void seedSalOrderLine(String id, String orderId, String materialId, BigDecimal quantity,
                                   BigDecimal deliveredQuantity) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpSalOrderLine> dao = daoProvider.daoFor(ErpSalOrderLine.class);
@@ -520,7 +520,7 @@ public class TestErpDrpCrossDock extends JunitAutoTestCase {
         });
     }
 
-    private void seedQaTemplate(Long id, String code, Long materialId, int isActive) {
+    private void seedQaTemplate(String id, String code, String materialId, int isActive) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpQaInspectionTemplate> dao = daoProvider.daoFor(ErpQaInspectionTemplate.class);
             ErpQaInspectionTemplate t = dao.newEntity();
@@ -534,8 +534,8 @@ public class TestErpDrpCrossDock extends JunitAutoTestCase {
         });
     }
 
-    private void seedQaInspection(Long id, String code, String relatedBillType, String relatedBillCode,
-                                  Long materialId, String result) {
+    private void seedQaInspection(String id, String code, String relatedBillType, String relatedBillCode,
+                                  String materialId, String result) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpQaInspection> dao = daoProvider.daoFor(ErpQaInspection.class);
             ErpQaInspection i = dao.newEntity();
@@ -555,11 +555,11 @@ public class TestErpDrpCrossDock extends JunitAutoTestCase {
         });
     }
 
-    private void seedBalance(Long materialId, Long warehouseId, Long locationId, BigDecimal available) {
+    private void seedBalance(String materialId, String warehouseId, String locationId, BigDecimal available) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpInvStockBalance> dao = daoProvider.daoFor(ErpInvStockBalance.class);
             ErpInvStockBalance b = dao.newEntity();
-            b.orm_propValueByName("id", 6900L + materialId);
+            b.orm_propValueByName("id", String.valueOf(6900L + Long.parseLong(materialId)));
             b.setOrgId(ORG_ID);
             b.setMaterialId(materialId);
             b.setWarehouseId(warehouseId);
@@ -570,7 +570,7 @@ public class TestErpDrpCrossDock extends JunitAutoTestCase {
         });
     }
 
-    private void seedMaterial(Long id) {
+    private void seedMaterial(String id) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMdMaterial> dao = daoProvider.daoFor(ErpMdMaterial.class);
             ErpMdMaterial m = dao.newEntity();

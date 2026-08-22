@@ -41,11 +41,11 @@ public class ErpInvDrpLeadTimeRecordBizModel extends CrudBizModel<ErpInvDrpLeadT
     @Override
     @BizMutation
     public int recordFromPurchaseReceive(@Name("purchaseOrderCode") String purchaseOrderCode,
-                                         @Name("supplierId") Long supplierId,
+                                         @Name("supplierId") String supplierId,
                                          @Name("orderDate") LocalDate orderDate,
                                          @Name("receiptDate") LocalDate receiptDate,
                                          @Optional @Name("expectedLeadTime") Integer expectedLeadTime,
-                                         @Name("materialIds") List<Long> materialIds,
+                                         @Name("materialIds") List<String> materialIds,
                                          IServiceContext context) {
         return leadTimeProcessor.recordFromPurchaseReceive(purchaseOrderCode, supplierId, orderDate,
                 receiptDate, expectedLeadTime, materialIds, context);
@@ -53,16 +53,16 @@ public class ErpInvDrpLeadTimeRecordBizModel extends CrudBizModel<ErpInvDrpLeadT
 
     @Override
     @BizQuery
-    public LeadTimeStatsBean findLeadTimeStats(@Optional @Name("supplierId") Long supplierId,
-                                               @Optional @Name("materialId") Long materialId,
+    public LeadTimeStatsBean findLeadTimeStats(@Optional @Name("supplierId") String supplierId,
+                                               @Optional @Name("materialId") String materialId,
                                                IServiceContext context) {
         return leadTimeProcessor.findLeadTimeStats(supplierId, materialId, context);
     }
 
     @Override
     @BizMutation
-    public ErpInvDrpSupplierScore recalculateLeadTimeStats(@Name("supplierId") Long supplierId,
-                                                           @Name("materialId") Long materialId,
+    public ErpInvDrpSupplierScore recalculateLeadTimeStats(@Name("supplierId") String supplierId,
+                                                           @Name("materialId") String materialId,
                                                            IServiceContext context) {
         return leadTimeProcessor.recalculateLeadTimeStats(supplierId, materialId, context);
     }

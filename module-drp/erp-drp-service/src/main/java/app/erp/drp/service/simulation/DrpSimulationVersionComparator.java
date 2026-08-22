@@ -35,7 +35,7 @@ public class DrpSimulationVersionComparator {
         this.daoProvider = daoProvider;
     }
 
-    public DrpSimulationDiffResult compareDrpVersions(Long versionIdA, Long versionIdB) {
+    public DrpSimulationDiffResult compareDrpVersions(String versionIdA, String versionIdB) {
         ErpDrpScenarioVersion va = requireVersion(versionIdA);
         ErpDrpScenarioVersion vb = requireVersion(versionIdB);
         requireComparable(va, vb);
@@ -84,7 +84,7 @@ public class DrpSimulationVersionComparator {
         return result;
     }
 
-    private ErpDrpScenarioVersion requireVersion(Long versionId) {
+    private ErpDrpScenarioVersion requireVersion(String versionId) {
         ErpDrpScenarioVersion v = daoProvider.daoFor(ErpDrpScenarioVersion.class).getEntityById(versionId);
         if (v == null) {
             throw new NopException(ErpDrpErrors.ERR_DRP_SIMULATION_VERSION_ALREADY_PROMOTED)
@@ -100,7 +100,7 @@ public class DrpSimulationVersionComparator {
         }
     }
 
-    private Map<String, ErpDrpLine> indexLines(Long planId) {
+    private Map<String, ErpDrpLine> indexLines(String planId) {
         Map<String, ErpDrpLine> byKey = new LinkedHashMap<>();
         if (planId == null) return byKey;
         QueryBean q = new QueryBean();
@@ -111,7 +111,7 @@ public class DrpSimulationVersionComparator {
         return byKey;
     }
 
-    private String key(Long materialId, Long warehouseId) {
+    private String key(String materialId, String warehouseId) {
         return (materialId == null ? "_" : materialId) + ":" + (warehouseId == null ? "_" : warehouseId);
     }
 

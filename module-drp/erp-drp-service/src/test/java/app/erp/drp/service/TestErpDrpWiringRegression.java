@@ -52,13 +52,13 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpDrpWiringRegression extends JunitAutoTestCase {
 
-    static final Long ORG_ID = 7401L;
-    static final Long UOM_ID = 7501L;
-    static final Long CURRENCY_ID = 7701L;
-    static final Long SUPPLIER_ID = 7801L;
-    static final Long WH_TARGET = 7101L;
-    static final Long WH_SOURCE = 7102L;
-    static final Long M_PURCHASE = 7201L;
+    static final String ORG_ID = "7401";
+    static final String UOM_ID = "7501";
+    static final String CURRENCY_ID = "7701";
+    static final String SUPPLIER_ID = "7801";
+    static final String WH_TARGET = "7101";
+    static final String WH_SOURCE = "7102";
+    static final String M_PURCHASE = "7201";
 
     @Inject
     IDaoProvider daoProvider;
@@ -71,7 +71,7 @@ public class TestErpDrpWiringRegression extends JunitAutoTestCase {
 
     @Test
     public void testApproveLineSuggestedToApproved() {
-        Long planId = seedComputedPlanWithOneLine();
+        String planId = seedComputedPlanWithOneLine();
         ErpDrpLine line = singleLineOf(planId);
         assertEquals(ErpDrpConstants.DRP_LINE_STATUS_SUGGESTED, line.getStatus());
 
@@ -84,7 +84,7 @@ public class TestErpDrpWiringRegression extends JunitAutoTestCase {
 
     @Test
     public void testApproveLineRejectsNonSuggested() {
-        Long planId = seedComputedPlanWithOneLine();
+        String planId = seedComputedPlanWithOneLine();
         ErpDrpLine line = singleLineOf(planId);
         approveLineOk(line.getId()); // SUGGESTED→APPROVED
 
@@ -103,7 +103,7 @@ public class TestErpDrpWiringRegression extends JunitAutoTestCase {
 
     @Test
     public void testCancelLineFromSuggested() {
-        Long planId = seedComputedPlanWithOneLine();
+        String planId = seedComputedPlanWithOneLine();
         ErpDrpLine line = singleLineOf(planId);
 
         cancelLineOk(line.getId()); // SUGGESTED→CANCELLED
@@ -115,7 +115,7 @@ public class TestErpDrpWiringRegression extends JunitAutoTestCase {
     @Test
     public void testCancelLineFromApproved() {
         // 多源 cancel：APPROVED→CANCELLED（plan §Current Baseline cancel 多源 SUGGESTED|APPROVED）
-        Long planId = seedComputedPlanWithOneLine();
+        String planId = seedComputedPlanWithOneLine();
         ErpDrpLine line = singleLineOf(planId);
         approveLineOk(line.getId()); // SUGGESTED→APPROVED
 
@@ -127,7 +127,7 @@ public class TestErpDrpWiringRegression extends JunitAutoTestCase {
 
     @Test
     public void testCancelLineRejectsOrderedTerminal() {
-        Long planId = seedComputedPlanWithOneLine();
+        String planId = seedComputedPlanWithOneLine();
         // 走 canonical 路径：approvePlan 级联行 SUGGESTED→APPROVED + plan COMPUTED→APPROVED（设计文档 §场景 C 假定
         // 「计划头已批准」是 release 的前置），随后 releaseLine 使行进入 ORDERED 终态。
         approvePlanOk(planId);
@@ -145,7 +145,7 @@ public class TestErpDrpWiringRegression extends JunitAutoTestCase {
 
     @Test
     public void testCancelLineRejectsCancelledTerminal() {
-        Long planId = seedComputedPlanWithOneLine();
+        String planId = seedComputedPlanWithOneLine();
         ErpDrpLine line = singleLineOf(planId);
         cancelLineOk(line.getId()); // →CANCELLED（终态）
 
@@ -159,7 +159,7 @@ public class TestErpDrpWiringRegression extends JunitAutoTestCase {
 
     @Test
     public void testRejectLineFromSuggested() {
-        Long planId = seedComputedPlanWithOneLine();
+        String planId = seedComputedPlanWithOneLine();
         ErpDrpLine line = singleLineOf(planId);
 
         ApiResponse<?> resp = rejectLine(line.getId());
@@ -172,7 +172,7 @@ public class TestErpDrpWiringRegression extends JunitAutoTestCase {
 
     @Test
     public void testRejectLineRejectsOrderedTerminal() {
-        Long planId = seedComputedPlanWithOneLine();
+        String planId = seedComputedPlanWithOneLine();
         approvePlanOk(planId); // canonical 路径（见 testCancelLineRejectsOrderedTerminal 说明）
         ErpDrpLine line = singleLineOf(planId);
         releaseLineOk(line.getId()); // →ORDERED（终态）
@@ -188,7 +188,7 @@ public class TestErpDrpWiringRegression extends JunitAutoTestCase {
     @Test
     public void testResetToDraftFromApproved() {
         // D-DRP-1 / D-DRP-2：resetToDraft 多源含 APPROVED（owner doc §3 + 代码 DrpEngine.resetToDraft 接受 APPROVED）。
-        Long planId = seedComputedPlanWithOneLine();
+        String planId = seedComputedPlanWithOneLine();
         approvePlanOk(planId); // COMPUTED→APPROVED；行 SUGGESTED→APPROVED
         assertEquals(ErpDrpConstants.DRP_PLAN_STATUS_APPROVED,
                 daoProvider.daoFor(ErpDrpPlan.class).getEntityById(planId).getStatus());
@@ -208,64 +208,64 @@ public class TestErpDrpWiringRegression extends JunitAutoTestCase {
 
     // ---------- helpers ----------
 
-    private Long seedComputedPlanWithOneLine() {
+    private String seedComputedPlanWithOneLine() {
         seedMaterial();
         seedWarehouse();
         // safetyStock=100, stock=20 → net=80; PURCHASE 路径（preferredSupplier=SUPPLIER）
         seedParameter(bd("100"), bd("1"), null, SUPPLIER_ID);
         seedBalance(bd("20"));
 
-        Long planId = seedPlan();
+        String planId = seedPlan();
         runDrpOk(planId); // DRAFT→COMPUTED；写入 1 条 SUGGESTED 行
         assertEquals(ErpDrpConstants.DRP_PLAN_STATUS_COMPUTED,
                 daoProvider.daoFor(ErpDrpPlan.class).getEntityById(planId).getStatus());
         return planId;
     }
 
-    private ErpDrpLine singleLineOf(Long planId) {
+    private ErpDrpLine singleLineOf(String planId) {
         List<ErpDrpLine> lines = linesOf(planId);
         assertEquals(1, lines.size(), "应有且仅有 1 条 SUGGESTED 行");
         return lines.get(0);
     }
 
-    private void runDrpOk(Long planId) {
+    private void runDrpOk(String planId) {
         ApiResponse<?> resp = rpc(mutation, "ErpDrpPlan__runDrp", Map.of("planId", planId));
         assertEquals(0, resp.getStatus(), "runDrp 应成功: " + resp);
     }
 
-    private void approvePlanOk(Long planId) {
+    private void approvePlanOk(String planId) {
         ApiResponse<?> resp = rpc(mutation, "ErpDrpPlan__approvePlan", Map.of("planId", planId));
         assertEquals(0, resp.getStatus(), "approvePlan 应成功: " + resp);
     }
 
-    private void resetToDraftOk(Long planId) {
+    private void resetToDraftOk(String planId) {
         ApiResponse<?> resp = rpc(mutation, "ErpDrpPlan__resetToDraft", Map.of("planId", planId));
         assertEquals(0, resp.getStatus(), "resetToDraft 应成功: " + resp);
     }
 
-    private void approveLineOk(Long lineId) {
+    private void approveLineOk(String lineId) {
         ApiResponse<?> resp = approveLine(lineId);
         assertEquals(0, resp.getStatus(), "approveLine 应成功: " + resp);
     }
 
-    private ApiResponse<?> approveLine(Long lineId) {
+    private ApiResponse<?> approveLine(String lineId) {
         return rpc(mutation, "ErpDrpLine__approveLine", Map.of("lineId", lineId));
     }
 
-    private void cancelLineOk(Long lineId) {
+    private void cancelLineOk(String lineId) {
         ApiResponse<?> resp = cancelLine(lineId);
         assertEquals(0, resp.getStatus(), "cancelLine 应成功: " + resp);
     }
 
-    private ApiResponse<?> cancelLine(Long lineId) {
+    private ApiResponse<?> cancelLine(String lineId) {
         return rpc(mutation, "ErpDrpLine__cancelLine", Map.of("lineId", lineId));
     }
 
-    private ApiResponse<?> rejectLine(Long lineId) {
+    private ApiResponse<?> rejectLine(String lineId) {
         return rpc(mutation, "ErpDrpLine__rejectLine", Map.of("lineId", lineId));
     }
 
-    private void releaseLineOk(Long lineId) {
+    private void releaseLineOk(String lineId) {
         ApiResponse<?> resp = rpc(mutation, "ErpDrpLine__releaseLine", Map.of("lineId", lineId));
         assertEquals(0, resp.getStatus(), "releaseLine 应成功: " + resp);
     }
@@ -275,14 +275,14 @@ public class TestErpDrpWiringRegression extends JunitAutoTestCase {
         return graphQLEngine.executeRpc(ctx);
     }
 
-    private List<ErpDrpLine> linesOf(Long planId) {
+    private List<ErpDrpLine> linesOf(String planId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("planId", planId));
         return daoProvider.daoFor(ErpDrpLine.class).findAllByQuery(q);
     }
 
-    private Long seedPlan() {
-        Long id = 7001L;
+    private String seedPlan() {
+        String id = "7001";
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpDrpPlan> dao = daoProvider.daoFor(ErpDrpPlan.class);
             ErpDrpPlan plan = new ErpDrpPlan();
@@ -300,11 +300,11 @@ public class TestErpDrpWiringRegression extends JunitAutoTestCase {
     }
 
     private void seedParameter(BigDecimal safetyStock, BigDecimal orderMultiple,
-                               Long sourceWarehouseId, Long supplierId) {
+                               String sourceWarehouseId, String supplierId) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpDrpParameter> dao = daoProvider.daoFor(ErpDrpParameter.class);
             ErpDrpParameter p = new ErpDrpParameter();
-            p.orm_propValueByName("id", 7900L + M_PURCHASE);
+            p.orm_propValueByName("id", String.valueOf(7900L + Long.parseLong(M_PURCHASE)));
             p.setMaterialId(M_PURCHASE);
             p.setWarehouseId(WH_TARGET);
             p.setSafetyStock(safetyStock);
@@ -322,7 +322,7 @@ public class TestErpDrpWiringRegression extends JunitAutoTestCase {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpInvStockBalance> dao = daoProvider.daoFor(ErpInvStockBalance.class);
             ErpInvStockBalance b = new ErpInvStockBalance();
-            b.orm_propValueByName("id", 9000L + M_PURCHASE);
+            b.orm_propValueByName("id", String.valueOf(9000L + Long.parseLong(M_PURCHASE)));
             b.setOrgId(ORG_ID);
             b.setMaterialId(M_PURCHASE);
             b.setWarehouseId(WH_TARGET);
@@ -349,7 +349,7 @@ public class TestErpDrpWiringRegression extends JunitAutoTestCase {
     private void seedWarehouse() {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMdWarehouse> dao = daoProvider.daoFor(ErpMdWarehouse.class);
-            for (Long wid : new Long[]{WH_TARGET, WH_SOURCE}) {
+            for (String wid : new String[]{WH_TARGET, WH_SOURCE}) {
                 ErpMdWarehouse w = new ErpMdWarehouse();
                 w.orm_propValueByName("id", wid);
                 w.setCode("WH-" + wid);

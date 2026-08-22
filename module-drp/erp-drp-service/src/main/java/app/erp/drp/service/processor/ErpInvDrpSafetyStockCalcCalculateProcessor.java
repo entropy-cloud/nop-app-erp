@@ -15,7 +15,7 @@ public class ErpInvDrpSafetyStockCalcCalculateProcessor {
     @Inject
     SafetyStockEngine safetyStockEngine;
 
-    public ErpInvDrpSafetyStockCalc calculate(Long calcId, IServiceContext context) {
+    public ErpInvDrpSafetyStockCalc calculate(String calcId, IServiceContext context) {
         return safetyStockEngine.calculate(calcId);
     }
 }

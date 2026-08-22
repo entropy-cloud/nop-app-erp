@@ -1,0 +1,5 @@
+_chgType,ID,CODE,ORG_ID,DRP_LINE_ID,INBOUND_MOVE_ID,OUTBOUND_MOVE_ID,SOURCE_BILL_TYPE,SOURCE_BILL_CODE,TARGET_BILL_TYPE,TARGET_BILL_CODE,MATERIAL_ID,QUANTITY,STAGING_LOCATION_ID,DOCK_SLOT_TIME,STATUS,MATCHED_AT,LOADED_AT,REMARK,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME,MATCHING_STRATEGY
+A,6802,@var:ErpInvDrpCrossDock@code,6401,,,,,,,,6201,100,6151,,PENDING,,,,@var:ErpInvDrpCrossDock@delVersion_3,0,autotest-ref,*,autotest-ref,*,
+A,6803,@var:ErpInvDrpCrossDock@code_1,6401,,,,,,,,6201,100,6151,,STAGING,,,,@var:ErpInvDrpCrossDock@delVersion_3,0,autotest-ref,*,autotest-ref,*,
+A,6804,@var:ErpInvDrpCrossDock@code_2,6401,,,,,,,,6201,100,6151,,MATCHED,,,,@var:ErpInvDrpCrossDock@delVersion_3,0,autotest-ref,*,autotest-ref,*,
+A,6805,@var:ErpInvDrpCrossDock@code_3,6401,,,,,,,,6201,100,6151,,COMPLETED,,,,@var:ErpInvDrpCrossDock@delVersion_3,0,autotest-ref,*,autotest-ref,*,

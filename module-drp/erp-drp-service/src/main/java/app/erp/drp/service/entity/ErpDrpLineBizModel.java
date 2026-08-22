@@ -53,20 +53,20 @@ public class ErpDrpLineBizModel extends CrudBizModel<ErpDrpLine> implements IErp
 
     @Override
     @BizMutation
-    public ErpDrpLine releaseLine(@Name("lineId") Long lineId, IServiceContext context) {
+    public ErpDrpLine releaseLine(@Name("lineId") String lineId, IServiceContext context) {
         return releaseLineProcessor.releaseLine(lineId, context);
     }
 
     @Override
     @BizMutation
-    public app.erp.drp.dao.entity.ErpDrpPlan releaseApproved(@Name("planId") Long planId, IServiceContext context) {
+    public app.erp.drp.dao.entity.ErpDrpPlan releaseApproved(@Name("planId") String planId, IServiceContext context) {
         return releaseApprovedProcessor.releaseApproved(planId, context);
     }
 
     @Override
     @BizMutation
-    public ErpDrpLine approveLine(@Name("lineId") Long lineId, IServiceContext context) {
-        ErpDrpLine line = requireEntity(String.valueOf(lineId), null, context);
+    public ErpDrpLine approveLine(@Name("lineId") String lineId, IServiceContext context) {
+        ErpDrpLine line = requireEntity(lineId, null, context);
         // 固定来源态守卫经 Line StateMachine Bean（保持 INLINE，不提取 Processor，参照 purchase Quotation/Rfq INLINE 先例）；
         // 非 SUGGESTED 映射为既有 ERR_DRP_LINE_ILLEGAL_TRANSITION（参数 drpLineId/currentStatus 不变，common 层码作 cause）。
         try {
@@ -83,19 +83,19 @@ public class ErpDrpLineBizModel extends CrudBizModel<ErpDrpLine> implements IErp
 
     @Override
     @BizMutation
-    public ErpDrpLine rejectLine(@Name("lineId") Long lineId, IServiceContext context) {
+    public ErpDrpLine rejectLine(@Name("lineId") String lineId, IServiceContext context) {
         return rejectLineProcessor.rejectLine(lineId, context);
     }
 
     @Override
     @BizMutation
-    public ErpDrpLine cancelLine(@Name("lineId") Long lineId, IServiceContext context) {
+    public ErpDrpLine cancelLine(@Name("lineId") String lineId, IServiceContext context) {
         return cancelLineProcessor.cancelLine(lineId, context);
     }
 
     @Override
     @BizQuery
-    public Map<String, Object> findNetReqGroups(@Optional @Name("planId") Long planId, IServiceContext context) {
+    public Map<String, Object> findNetReqGroups(@Optional @Name("planId") String planId, IServiceContext context) {
         QueryBean q = new QueryBean();
         q.setLimit(5000);
         if (planId != null) {
@@ -103,10 +103,10 @@ public class ErpDrpLineBizModel extends CrudBizModel<ErpDrpLine> implements IErp
         }
         List<ErpDrpLine> lines = findList(q, null, context);
 
-        Map<Long, List<ErpDrpLine>> matMap = new LinkedHashMap<>();
-        List<Long> matOrder = new ArrayList<>();
+        Map<String, List<ErpDrpLine>> matMap = new LinkedHashMap<>();
+        List<String> matOrder = new ArrayList<>();
         for (ErpDrpLine l : lines) {
-            Long mid = l.getMaterialId();
+            String mid = l.getMaterialId();
             if (!matMap.containsKey(mid)) {
                 matMap.put(mid, new ArrayList<>());
                 matOrder.add(mid);
@@ -117,7 +117,7 @@ public class ErpDrpLineBizModel extends CrudBizModel<ErpDrpLine> implements IErp
         List<Map<String, Object>> groups = new ArrayList<>();
         BigDecimal grandNet = BigDecimal.ZERO;
         BigDecimal grandSuggested = BigDecimal.ZERO;
-        for (Long mid : matOrder) {
+        for (String mid : matOrder) {
             List<ErpDrpLine> gl = matMap.get(mid);
             BigDecimal tSafety = BigDecimal.ZERO, tForecast = BigDecimal.ZERO, tStock = BigDecimal.ZERO;
             BigDecimal tAlloc = BigDecimal.ZERO, tOnOrder = BigDecimal.ZERO, tNet = BigDecimal.ZERO, tSuggested = BigDecimal.ZERO;

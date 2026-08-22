@@ -1,0 +1,11 @@
+_chgType,ID,ORG_ID,SUPPLIER_ID,MATERIAL_ID,ORDER_DATE,RECEIPT_DATE,ACTUAL_LEAD_TIME,EXPECTED_LEAD_TIME,VARIANCE_DAYS,PURCHASE_ORDER_CODE,IS_ON_TIME,EARLY_LATE_FLAG,REMARK,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
+A,8349,,8001,8201,2026-06-10,2026-06-20,10,10,0,PO-A1,true,ON_TIME,,@var:ErpInvDrpLeadTimeRecord@delVersion_1,0,autotest-ref,*,autotest-ref,*
+A,8350,,8001,8201,2026-06-10,2026-06-20,10,10,0,PO-A2,true,ON_TIME,,@var:ErpInvDrpLeadTimeRecord@delVersion_1,0,autotest-ref,*,autotest-ref,*
+A,8351,,8001,8201,2026-06-10,2026-06-20,10,10,0,PO-A3,true,ON_TIME,,@var:ErpInvDrpLeadTimeRecord@delVersion_1,0,autotest-ref,*,autotest-ref,*
+A,8352,,8001,8201,2026-06-10,2026-06-20,10,10,0,PO-A4,true,ON_TIME,,@var:ErpInvDrpLeadTimeRecord@delVersion_1,0,autotest-ref,*,autotest-ref,*
+A,8353,,8001,8201,2026-06-10,2026-06-20,10,10,0,PO-A5,true,ON_TIME,,@var:ErpInvDrpLeadTimeRecord@delVersion_1,0,autotest-ref,*,autotest-ref,*
+A,8354,,8002,8202,2026-06-10,2026-06-20,10,10,0,PO-B1,true,ON_TIME,,@var:ErpInvDrpLeadTimeRecord@delVersion_1,0,autotest-ref,*,autotest-ref,*
+A,8355,,8002,8202,2026-06-10,2026-06-20,10,10,0,PO-B2,true,ON_TIME,,@var:ErpInvDrpLeadTimeRecord@delVersion_1,0,autotest-ref,*,autotest-ref,*
+A,8356,,8002,8202,2026-06-10,2026-06-20,10,10,0,PO-B3,true,ON_TIME,,@var:ErpInvDrpLeadTimeRecord@delVersion_1,0,autotest-ref,*,autotest-ref,*
+A,8357,,8002,8202,2026-06-10,2026-06-20,10,10,0,PO-B4,true,ON_TIME,,@var:ErpInvDrpLeadTimeRecord@delVersion_1,0,autotest-ref,*,autotest-ref,*
+A,8358,,8002,8202,2026-06-10,2026-06-20,10,10,0,PO-B5,true,ON_TIME,,@var:ErpInvDrpLeadTimeRecord@delVersion_1,0,autotest-ref,*,autotest-ref,*

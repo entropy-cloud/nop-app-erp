@@ -179,16 +179,16 @@ public class _ErpInvDrpLeadTimeRecord extends DynamicOrmEntity{
 
     
     /* ID: ID */
-    private java.lang.Long _id;
+    private java.lang.String _id;
     
     /* 业务组织: ORG_ID */
-    private java.lang.Long _orgId;
+    private java.lang.String _orgId;
     
     /* 供应商: SUPPLIER_ID */
-    private java.lang.Long _supplierId;
+    private java.lang.String _supplierId;
     
     /* 物料: MATERIAL_ID */
-    private java.lang.Long _materialId;
+    private java.lang.String _materialId;
     
     /* 订单日期: ORDER_DATE */
     private java.time.LocalDate _orderDate;
@@ -378,9 +378,9 @@ public class _ErpInvDrpLeadTimeRecord extends DynamicOrmEntity{
         switch(propId){
         
             case PROP_ID_id:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_id));
                }
                setId(typedValue);
@@ -388,9 +388,9 @@ public class _ErpInvDrpLeadTimeRecord extends DynamicOrmEntity{
             }
         
             case PROP_ID_orgId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_orgId));
                }
                setOrgId(typedValue);
@@ -398,9 +398,9 @@ public class _ErpInvDrpLeadTimeRecord extends DynamicOrmEntity{
             }
         
             case PROP_ID_supplierId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_supplierId));
                }
                setSupplierId(typedValue);
@@ -408,9 +408,9 @@ public class _ErpInvDrpLeadTimeRecord extends DynamicOrmEntity{
             }
         
             case PROP_ID_materialId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_materialId));
                }
                setMaterialId(typedValue);
@@ -578,28 +578,28 @@ public class _ErpInvDrpLeadTimeRecord extends DynamicOrmEntity{
         
             case PROP_ID_id:{
                onInitProp(propId);
-               this._id = (java.lang.Long)value;
+               this._id = (java.lang.String)value;
                orm_id(); // 如果是设置主键字段，则触发watcher
                break;
             }
         
             case PROP_ID_orgId:{
                onInitProp(propId);
-               this._orgId = (java.lang.Long)value;
+               this._orgId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_supplierId:{
                onInitProp(propId);
-               this._supplierId = (java.lang.Long)value;
+               this._supplierId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_materialId:{
                onInitProp(propId);
-               this._materialId = (java.lang.Long)value;
+               this._materialId = (java.lang.String)value;
                
                break;
             }
@@ -718,7 +718,7 @@ public class _ErpInvDrpLeadTimeRecord extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final java.lang.Long getId(){
+    public final java.lang.String getId(){
          onPropGet(PROP_ID_id);
          return _id;
     }
@@ -726,7 +726,7 @@ public class _ErpInvDrpLeadTimeRecord extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final void setId(java.lang.Long value){
+    public final void setId(java.lang.String value){
         if(onPropSet(PROP_ID_id,value)){
             this._id = value;
             internalClearRefs(PROP_ID_id);
@@ -737,7 +737,7 @@ public class _ErpInvDrpLeadTimeRecord extends DynamicOrmEntity{
     /**
      * 业务组织: ORG_ID
      */
-    public final java.lang.Long getOrgId(){
+    public final java.lang.String getOrgId(){
          onPropGet(PROP_ID_orgId);
          return _orgId;
     }
@@ -745,7 +745,7 @@ public class _ErpInvDrpLeadTimeRecord extends DynamicOrmEntity{
     /**
      * 业务组织: ORG_ID
      */
-    public final void setOrgId(java.lang.Long value){
+    public final void setOrgId(java.lang.String value){
         if(onPropSet(PROP_ID_orgId,value)){
             this._orgId = value;
             internalClearRefs(PROP_ID_orgId);
@@ -756,7 +756,7 @@ public class _ErpInvDrpLeadTimeRecord extends DynamicOrmEntity{
     /**
      * 供应商: SUPPLIER_ID
      */
-    public final java.lang.Long getSupplierId(){
+    public final java.lang.String getSupplierId(){
          onPropGet(PROP_ID_supplierId);
          return _supplierId;
     }
@@ -764,7 +764,7 @@ public class _ErpInvDrpLeadTimeRecord extends DynamicOrmEntity{
     /**
      * 供应商: SUPPLIER_ID
      */
-    public final void setSupplierId(java.lang.Long value){
+    public final void setSupplierId(java.lang.String value){
         if(onPropSet(PROP_ID_supplierId,value)){
             this._supplierId = value;
             internalClearRefs(PROP_ID_supplierId);
@@ -775,7 +775,7 @@ public class _ErpInvDrpLeadTimeRecord extends DynamicOrmEntity{
     /**
      * 物料: MATERIAL_ID
      */
-    public final java.lang.Long getMaterialId(){
+    public final java.lang.String getMaterialId(){
          onPropGet(PROP_ID_materialId);
          return _materialId;
     }
@@ -783,7 +783,7 @@ public class _ErpInvDrpLeadTimeRecord extends DynamicOrmEntity{
     /**
      * 物料: MATERIAL_ID
      */
-    public final void setMaterialId(java.lang.Long value){
+    public final void setMaterialId(java.lang.String value){
         if(onPropSet(PROP_ID_materialId,value)){
             this._materialId = value;
             internalClearRefs(PROP_ID_materialId);

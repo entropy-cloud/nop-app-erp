@@ -6,10 +6,10 @@
     "items": [
       {
         "id": "5",
-        "planId": 4,
+        "planId": "4",
         "lineNo": 1,
-        "materialId": 2,
-        "warehouseId": 3,
+        "materialId": "2",
+        "warehouseId": "3",
         "sourceWarehouseId": null,
         "replenishmentType": "TRANSFER",
         "replenishmentType_label": "TRANSFER-仓间调拨",

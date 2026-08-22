@@ -99,7 +99,7 @@
                 versionProp="version" ext:web-renderer="flux" ext:icon="git-branch" i18n-en:displayName="DRP Plan">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
-                        stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
+                        stdDataType="string" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
                 <column code="CODE" displayName="编号" domain="orderCode" mandatory="true" name="code" precision="50"
                         propId="2" stdDataType="string" stdSqlType="VARCHAR" tagSet="var" i18n-en:displayName="Code"/>
                 <column code="PLAN_NAME" displayName="计划名称" domain="name" mandatory="true" name="planName"
@@ -119,8 +119,8 @@
                         stdSqlType="TIMESTAMP" tagSet="clock" i18n-en:displayName="Run At"/>
                 <column code="RUN_BY" displayName="运行人" name="runBy" precision="50" propId="9" stdDataType="string"
                         stdSqlType="VARCHAR" i18n-en:displayName="Run By"/>
-                <column code="ORG_ID" displayName="业务组织" name="orgId" propId="10" stdDataType="long" stdSqlType="BIGINT"
-                        i18n-en:displayName="Organization"/>
+                <column code="ORG_ID" displayName="业务组织" name="orgId" propId="10" stdDataType="string"
+                        stdSqlType="BIGINT" i18n-en:displayName="Organization"/>
                 <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="11"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Remark"/>
                 <column code="DEL_VERSION" defaultValue="0" displayName="逻辑删除版本" domain="delVersion" mandatory="true"
@@ -176,17 +176,17 @@
                 versionProp="version" ext:web-renderer="flux" ext:icon="list" i18n-en:displayName="DRP Line">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
-                        stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
-                <column code="PLAN_ID" displayName="计划ID" mandatory="true" name="planId" propId="2" stdDataType="long"
+                        stdDataType="string" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
+                <column code="PLAN_ID" displayName="计划ID" mandatory="true" name="planId" propId="2" stdDataType="string"
                         stdSqlType="BIGINT" i18n-en:displayName="Plan"/>
                 <column code="LINE_NO" displayName="行号" mandatory="true" name="lineNo" propId="3" stdDataType="int"
                         stdSqlType="INTEGER" i18n-en:displayName="Line No"/>
                 <column code="MATERIAL_ID" displayName="物料" mandatory="true" name="materialId" propId="4"
-                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Material"/>
+                        stdDataType="string" stdSqlType="BIGINT" i18n-en:displayName="Material"/>
                 <column code="WAREHOUSE_ID" displayName="目标仓库" mandatory="true" name="warehouseId" propId="5"
-                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Warehouse"/>
+                        stdDataType="string" stdSqlType="BIGINT" i18n-en:displayName="Warehouse"/>
                 <column code="SOURCE_WAREHOUSE_ID" displayName="来源仓库" name="sourceWarehouseId" propId="6"
-                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Source Warehouse"/>
+                        stdDataType="string" stdSqlType="BIGINT" i18n-en:displayName="Source Warehouse"/>
                 <column code="REPLENISHMENT_TYPE" displayName="补货类型" mandatory="true" name="replenishmentType"
                         precision="20" propId="7" stdDataType="string" stdSqlType="VARCHAR"
                         ext:dict="erp-drp/drp-replenishment-type" i18n-en:displayName="Replenishment Type"/>
@@ -221,8 +221,8 @@
                 <column code="STATUS" displayName="状态" mandatory="true" name="status" precision="20" propId="18"
                         stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-drp/drp-line-status"
                         i18n-en:displayName="Status"/>
-                <column code="ORG_ID" displayName="业务组织" name="orgId" propId="19" stdDataType="long" stdSqlType="BIGINT"
-                        i18n-en:displayName="Organization"/>
+                <column code="ORG_ID" displayName="业务组织" name="orgId" propId="19" stdDataType="string"
+                        stdSqlType="BIGINT" i18n-en:displayName="Organization"/>
                 <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="20"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Remark"/>
                 <column code="DEL_VERSION" defaultValue="0" displayName="逻辑删除版本" domain="delVersion" mandatory="true"
@@ -299,11 +299,11 @@
                 versionProp="version" ext:web-renderer="flux" ext:icon="settings" i18n-en:displayName="DRP Parameter">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
-                        stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
+                        stdDataType="string" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
                 <column code="WAREHOUSE_ID" displayName="仓库" mandatory="true" name="warehouseId" propId="2"
-                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Warehouse"/>
+                        stdDataType="string" stdSqlType="BIGINT" i18n-en:displayName="Warehouse"/>
                 <column code="MATERIAL_ID" displayName="物料" mandatory="true" name="materialId" propId="3"
-                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Material"/>
+                        stdDataType="string" stdSqlType="BIGINT" i18n-en:displayName="Material"/>
                 <column code="SAFETY_STOCK" displayName="安全库存" domain="quantity" name="safetyStock" precision="20"
                         propId="4" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Safety Stock"/>
@@ -313,10 +313,10 @@
                         propId="6" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Order Multiple"/>
                 <column code="PREFERRED_SOURCE_WAREHOUSE_ID" displayName="首选调出仓库" name="preferredSourceWarehouseId"
-                        propId="7" stdDataType="long" stdSqlType="BIGINT"
+                        propId="7" stdDataType="string" stdSqlType="BIGINT"
                         i18n-en:displayName="Preferred Source Warehouse"/>
                 <column code="PREFERRED_SUPPLIER_ID" displayName="首选供应商" name="preferredSupplierId" propId="8"
-                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Preferred Supplier"/>
+                        stdDataType="string" stdSqlType="BIGINT" i18n-en:displayName="Preferred Supplier"/>
                 <column code="REPLENISHMENT_METHOD" displayName="补货方法" mandatory="true" name="replenishmentMethod"
                         precision="20" propId="9" stdDataType="string" stdSqlType="VARCHAR"
                         ext:dict="erp-drp/drp-replenishment-method" i18n-en:displayName="Replenishment Method"/>
@@ -328,8 +328,8 @@
                         i18n-en:displayName="Max Stock Level"/>
                 <column code="REVIEW_PERIOD_DAYS" displayName="审视周期(天)" name="reviewPeriodDays" propId="12"
                         stdDataType="int" stdSqlType="INTEGER" i18n-en:displayName="Review Period Days"/>
-                <column code="ORG_ID" displayName="业务组织" name="orgId" propId="13" stdDataType="long" stdSqlType="BIGINT"
-                        i18n-en:displayName="Organization"/>
+                <column code="ORG_ID" displayName="业务组织" name="orgId" propId="13" stdDataType="string"
+                        stdSqlType="BIGINT" i18n-en:displayName="Organization"/>
                 <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="14"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Remark"/>
                 <column code="DEL_VERSION" defaultValue="0" displayName="逻辑删除版本" domain="delVersion" mandatory="true"
@@ -403,14 +403,14 @@
                 ext:icon="shield" i18n-en:displayName="Safety Stock Calc">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
-                        stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
+                        stdDataType="string" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
                 <column code="CODE" displayName="编号" domain="orderCode" mandatory="true" name="code" precision="50"
                         propId="2" stdDataType="string" stdSqlType="VARCHAR" tagSet="var" i18n-en:displayName="Code"/>
-                <column code="ORG_ID" displayName="业务组织" name="orgId" propId="3" stdDataType="long" stdSqlType="BIGINT"
-                        i18n-en:displayName="Organization"/>
+                <column code="ORG_ID" displayName="业务组织" name="orgId" propId="3" stdDataType="string"
+                        stdSqlType="BIGINT" i18n-en:displayName="Organization"/>
                 <column code="MATERIAL_ID" displayName="物料" mandatory="true" name="materialId" propId="4"
-                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Material"/>
-                <column code="WAREHOUSE_ID" displayName="仓库" name="warehouseId" propId="5" stdDataType="long"
+                        stdDataType="string" stdSqlType="BIGINT" i18n-en:displayName="Material"/>
+                <column code="WAREHOUSE_ID" displayName="仓库" name="warehouseId" propId="5" stdDataType="string"
                         stdSqlType="BIGINT" i18n-en:displayName="Warehouse"/>
                 <column code="METHOD" displayName="计算方法" mandatory="true" name="method" precision="20" propId="6"
                         stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-inv/drp-ss-method"
@@ -494,17 +494,17 @@
                 ext:icon="arrow-left-right" i18n-en:displayName="Cross Dock">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
-                        stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
+                        stdDataType="string" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
                 <column code="CODE" displayName="编号" domain="orderCode" mandatory="true" name="code" precision="50"
                         propId="2" stdDataType="string" stdSqlType="VARCHAR" tagSet="var" i18n-en:displayName="Code"/>
-                <column code="ORG_ID" displayName="业务组织" name="orgId" propId="3" stdDataType="long" stdSqlType="BIGINT"
-                        i18n-en:displayName="Organization"/>
-                <column code="DRP_LINE_ID" displayName="DRP行" name="drpLineId" propId="4" stdDataType="long"
+                <column code="ORG_ID" displayName="业务组织" name="orgId" propId="3" stdDataType="string"
+                        stdSqlType="BIGINT" i18n-en:displayName="Organization"/>
+                <column code="DRP_LINE_ID" displayName="DRP行" name="drpLineId" propId="4" stdDataType="string"
                         stdSqlType="BIGINT" i18n-en:displayName="DRP Line"/>
-                <column code="INBOUND_MOVE_ID" displayName="入站移动单" name="inboundMoveId" propId="5" stdDataType="long"
+                <column code="INBOUND_MOVE_ID" displayName="入站移动单" name="inboundMoveId" propId="5" stdDataType="string"
                         stdSqlType="BIGINT" i18n-en:displayName="Inbound Move"/>
-                <column code="OUTBOUND_MOVE_ID" displayName="出站移动单" name="outboundMoveId" propId="6" stdDataType="long"
-                        stdSqlType="BIGINT" i18n-en:displayName="Outbound Move"/>
+                <column code="OUTBOUND_MOVE_ID" displayName="出站移动单" name="outboundMoveId" propId="6"
+                        stdDataType="string" stdSqlType="BIGINT" i18n-en:displayName="Outbound Move"/>
                 <column code="SOURCE_BILL_TYPE" displayName="来源单据类型" name="sourceBillType" precision="50" propId="7"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Source Bill Type"/>
                 <column code="SOURCE_BILL_CODE" displayName="来源单据号" name="sourceBillCode" precision="50" propId="8"
@@ -514,12 +514,12 @@
                 <column code="TARGET_BILL_CODE" displayName="目标单据号" name="targetBillCode" precision="50" propId="10"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Target Bill Code"/>
                 <column code="MATERIAL_ID" displayName="物料" mandatory="true" name="materialId" propId="11"
-                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Material"/>
+                        stdDataType="string" stdSqlType="BIGINT" i18n-en:displayName="Material"/>
                 <column code="QUANTITY" displayName="越库数量" domain="quantity" mandatory="true" name="quantity"
                         precision="20" propId="12" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Quantity"/>
                 <column code="STAGING_LOCATION_ID" displayName="暂存库位" name="stagingLocationId" propId="13"
-                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Staging Location"/>
+                        stdDataType="string" stdSqlType="BIGINT" i18n-en:displayName="Staging Location"/>
                 <column code="DOCK_SLOT_TIME" displayName="月台时间窗口" name="dockSlotTime" propId="14"
                         stdDataType="timestamp" stdSqlType="TIMESTAMP" tagSet="clock"
                         i18n-en:displayName="Dock Slot Time"/>
@@ -622,10 +622,10 @@
                 ext:icon="dock" i18n-en:displayName="Dock Appointment">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
-                        stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
+                        stdDataType="string" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
                 <column code="WAREHOUSE_ID" displayName="仓库" mandatory="true" name="warehouseId" propId="2"
-                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Warehouse"/>
-                <column code="DOCK_ID" displayName="月台" mandatory="true" name="dockId" propId="3" stdDataType="long"
+                        stdDataType="string" stdSqlType="BIGINT" i18n-en:displayName="Warehouse"/>
+                <column code="DOCK_ID" displayName="月台" mandatory="true" name="dockId" propId="3" stdDataType="string"
                         stdSqlType="BIGINT" i18n-en:displayName="Dock"/>
                 <column code="APPOINTMENT_DATE" displayName="预约日期" mandatory="true" name="appointmentDate" propId="4"
                         stdDataType="date" stdSqlType="DATE" i18n-en:displayName="Appointment Date"/>
@@ -633,7 +633,7 @@
                         stdDataType="timestamp" stdSqlType="TIMESTAMP" tagSet="clock" i18n-en:displayName="Slot Start"/>
                 <column code="SLOT_END" displayName="时间窗口结束" mandatory="true" name="slotEnd" propId="6"
                         stdDataType="timestamp" stdSqlType="TIMESTAMP" tagSet="clock" i18n-en:displayName="Slot End"/>
-                <column code="CROSS_DOCK_ID" displayName="关联越库" name="crossDockId" propId="7" stdDataType="long"
+                <column code="CROSS_DOCK_ID" displayName="关联越库" name="crossDockId" propId="7" stdDataType="string"
                         stdSqlType="BIGINT" i18n-en:displayName="Cross Dock"/>
                 <column code="CARRIER_INFO" displayName="承运商信息" name="carrierInfo" precision="500" propId="8"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Carrier Info"/>
@@ -656,8 +656,8 @@
                         i18n-en:displayName="Updated By"/>
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="16" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
-                <column code="ORG_ID" displayName="业务组织" name="orgId" propId="17" stdDataType="long" stdSqlType="BIGINT"
-                        i18n-en:displayName="Organization"/>
+                <column code="ORG_ID" displayName="业务组织" name="orgId" propId="17" stdDataType="string"
+                        stdSqlType="BIGINT" i18n-en:displayName="Organization"/>
             </columns>
             <indexes>
                 <index name="IDX_INV_DRP_DOCK_APPOINTMENT_ORG_STATUS" unique="false">
@@ -709,13 +709,13 @@
                 ext:icon="clock" i18n-en:displayName="Lead Time Record">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
-                        stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
-                <column code="ORG_ID" displayName="业务组织" name="orgId" propId="2" stdDataType="long" stdSqlType="BIGINT"
-                        i18n-en:displayName="Organization"/>
+                        stdDataType="string" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
+                <column code="ORG_ID" displayName="业务组织" name="orgId" propId="2" stdDataType="string"
+                        stdSqlType="BIGINT" i18n-en:displayName="Organization"/>
                 <column code="SUPPLIER_ID" displayName="供应商" mandatory="true" name="supplierId" propId="3"
-                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Supplier"/>
+                        stdDataType="string" stdSqlType="BIGINT" i18n-en:displayName="Supplier"/>
                 <column code="MATERIAL_ID" displayName="物料" mandatory="true" name="materialId" propId="4"
-                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Material"/>
+                        stdDataType="string" stdSqlType="BIGINT" i18n-en:displayName="Material"/>
                 <column code="ORDER_DATE" displayName="订单日期" mandatory="true" name="orderDate" propId="5"
                         stdDataType="date" stdSqlType="DATE" i18n-en:displayName="Order Date"/>
                 <column code="RECEIPT_DATE" displayName="入库日期" mandatory="true" name="receiptDate" propId="6"
@@ -788,13 +788,13 @@
                 ext:icon="star" i18n-en:displayName="Supplier Reliability Score">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
-                        stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
-                <column code="ORG_ID" displayName="业务组织" name="orgId" propId="2" stdDataType="long" stdSqlType="BIGINT"
-                        i18n-en:displayName="Organization"/>
+                        stdDataType="string" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
+                <column code="ORG_ID" displayName="业务组织" name="orgId" propId="2" stdDataType="string"
+                        stdSqlType="BIGINT" i18n-en:displayName="Organization"/>
                 <column code="SUPPLIER_ID" displayName="供应商" mandatory="true" name="supplierId" propId="3"
-                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Supplier"/>
+                        stdDataType="string" stdSqlType="BIGINT" i18n-en:displayName="Supplier"/>
                 <column code="MATERIAL_ID" displayName="物料" mandatory="true" name="materialId" propId="4"
-                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Material"/>
+                        stdDataType="string" stdSqlType="BIGINT" i18n-en:displayName="Material"/>
                 <column code="SAMPLE_COUNT" displayName="样本数" name="sampleCount" propId="5" stdDataType="int"
                         stdSqlType="INTEGER" i18n-en:displayName="Sample Count"/>
                 <column code="AVG_LEAD_TIME" displayName="平均提前期(天)" name="avgLeadTime" precision="20" propId="6"
@@ -889,13 +889,13 @@
                 i18n-en:displayName="DRP Simulation Scenario">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
-                        stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
+                        stdDataType="string" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
                 <column code="CODE" displayName="场景号" domain="orderCode" mandatory="true" name="code" precision="50"
                         propId="2" stdDataType="string" stdSqlType="VARCHAR" tagSet="var" i18n-en:displayName="Code"/>
-                <column code="ORG_ID" displayName="业务组织" name="orgId" propId="3" stdDataType="long" stdSqlType="BIGINT"
-                        i18n-en:displayName="Organization"/>
-                <column code="BASE_DRP_PLAN_ID" displayName="基线DRP计划" name="baseDrpPlanId" propId="4" stdDataType="long"
-                        stdSqlType="BIGINT" i18n-en:displayName="Base Drp Plan"/>
+                <column code="ORG_ID" displayName="业务组织" name="orgId" propId="3" stdDataType="string"
+                        stdSqlType="BIGINT" i18n-en:displayName="Organization"/>
+                <column code="BASE_DRP_PLAN_ID" displayName="基线DRP计划" name="baseDrpPlanId" propId="4"
+                        stdDataType="string" stdSqlType="BIGINT" i18n-en:displayName="Base Drp Plan"/>
                 <column code="DESCRIPTION" displayName="场景描述" domain="remark" name="description" precision="1000"
                         propId="5" stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Description"/>
                 <column code="STATUS" displayName="状态" mandatory="true" name="status" precision="20" propId="6"
@@ -966,13 +966,13 @@
                 ext:icon="git-branch" i18n-en:displayName="DRP Simulation Version">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
-                        stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
+                        stdDataType="string" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
                 <column code="SCENARIO_ID" displayName="仿真场景" mandatory="true" name="scenarioId" propId="2"
-                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Scenario"/>
+                        stdDataType="string" stdSqlType="BIGINT" i18n-en:displayName="Scenario"/>
                 <column code="VERSION_NO" displayName="版本号" mandatory="true" name="versionNo" propId="3"
                         stdDataType="int" stdSqlType="INTEGER" i18n-en:displayName="Version No"/>
                 <column code="COMPUTED_DRP_PLAN_ID" displayName="计算结果DRP计划" name="computedDrpPlanId" propId="4"
-                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Computed Drp Plan"/>
+                        stdDataType="string" stdSqlType="BIGINT" i18n-en:displayName="Computed Drp Plan"/>
                 <column code="SNAPSHOT_SUMMARY" displayName="快照摘要" domain="remark" name="snapshotSummary"
                         precision="1000" propId="5" stdDataType="string" stdSqlType="VARCHAR"
                         i18n-en:displayName="Snapshot Summary"/>
@@ -980,7 +980,7 @@
                         stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-drp/simulation-status"
                         i18n-en:displayName="Status"/>
                 <column code="PROMOTED_PLAN_ID" displayName="转正式计划ID" name="promotedPlanId" propId="7"
-                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Promoted Plan"/>
+                        stdDataType="string" stdSqlType="BIGINT" i18n-en:displayName="Promoted Plan"/>
                 <column code="DEL_VERSION" defaultValue="0" displayName="逻辑删除版本" domain="delVersion" mandatory="true"
                         name="delVersion" propId="8" stdDataType="long" stdSqlType="BIGINT"
                         i18n-en:displayName="Del Flag" ui:show="R"/>
@@ -1037,12 +1037,12 @@
                 ext:icon="sliders-horizontal" i18n-en:displayName="DRP Simulation Param">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
-                        stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
+                        stdDataType="string" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
                 <column code="SCENARIO_ID" displayName="仿真场景" mandatory="true" name="scenarioId" propId="2"
-                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Scenario"/>
-                <column code="MATERIAL_ID" displayName="物料(空=全局覆盖)" name="materialId" propId="3" stdDataType="long"
+                        stdDataType="string" stdSqlType="BIGINT" i18n-en:displayName="Scenario"/>
+                <column code="MATERIAL_ID" displayName="物料(空=全局覆盖)" name="materialId" propId="3" stdDataType="string"
                         stdSqlType="BIGINT" i18n-en:displayName="Material"/>
-                <column code="WAREHOUSE_ID" displayName="仓库(空=全局覆盖)" name="warehouseId" propId="4" stdDataType="long"
+                <column code="WAREHOUSE_ID" displayName="仓库(空=全局覆盖)" name="warehouseId" propId="4" stdDataType="string"
                         stdSqlType="BIGINT" i18n-en:displayName="Warehouse"/>
                 <column code="PARAM_TYPE" displayName="参数类型" mandatory="true" name="paramType" precision="20" propId="5"
                         stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-drp/simulation-param-type"
@@ -1109,7 +1109,7 @@
                 name="app.erp.md.dao.entity.ErpMdOrganization" notGenCode="true" tableName="erp_md_organization"
                 ext:web-renderer="flux" biz:moduleId="erp/md">
             <columns>
-                <column code="ID" mandatory="true" name="id" primary="true" propId="1" stdDataType="long"
+                <column code="ID" mandatory="true" name="id" primary="true" propId="1" stdDataType="string"
                         stdSqlType="BIGINT" tagSet="seq-default"/>
                 <column code="NAME" name="name" precision="200" propId="2" stdDataType="string" stdSqlType="VARCHAR"
                         tagSet="disp"/>
@@ -1119,7 +1119,7 @@
                 name="app.erp.inv.dao.entity.ErpInvStockMove" notGenCode="true" tableName="erp_inv_stock_move"
                 ext:web-renderer="flux" biz:moduleId="erp/inv">
             <columns>
-                <column code="ID" name="id" primary="true" propId="1" stdDataType="long" stdSqlType="BIGINT"
+                <column code="ID" name="id" primary="true" propId="1" stdDataType="string" stdSqlType="BIGINT"
                         i18n-en:displayName="ID"/>
                 <column code="CODE" name="code" precision="50" propId="2" stdDataType="string" stdSqlType="VARCHAR"
                         tagSet="var" i18n-en:displayName="Code"/>
@@ -1131,7 +1131,7 @@
                 name="app.erp.md.dao.entity.ErpMdLocation" notGenCode="true" tableName="erp_md_location"
                 ext:web-renderer="flux" biz:moduleId="erp/md">
             <columns>
-                <column code="ID" name="id" primary="true" propId="1" stdDataType="long" stdSqlType="BIGINT"
+                <column code="ID" name="id" primary="true" propId="1" stdDataType="string" stdSqlType="BIGINT"
                         i18n-en:displayName="ID"/>
                 <column code="CODE" name="code" precision="50" propId="2" stdDataType="string" stdSqlType="VARCHAR"
                         tagSet="var" i18n-en:displayName="Code"/>
@@ -1143,7 +1143,7 @@
                 name="app.erp.md.dao.entity.ErpMdMaterial" notGenCode="true" tableName="erp_md_material"
                 ext:web-renderer="flux" biz:moduleId="erp/md">
             <columns>
-                <column code="ID" name="id" primary="true" propId="1" stdDataType="long" stdSqlType="BIGINT"
+                <column code="ID" name="id" primary="true" propId="1" stdDataType="string" stdSqlType="BIGINT"
                         i18n-en:displayName="ID"/>
                 <column code="CODE" name="code" precision="50" propId="2" stdDataType="string" stdSqlType="VARCHAR"
                         tagSet="var" i18n-en:displayName="Code"/>
@@ -1155,7 +1155,7 @@
                 name="app.erp.md.dao.entity.ErpMdPartner" notGenCode="true" tableName="erp_md_partner"
                 ext:web-renderer="flux" biz:moduleId="erp/md">
             <columns>
-                <column code="ID" name="id" primary="true" propId="1" stdDataType="long" stdSqlType="BIGINT"
+                <column code="ID" name="id" primary="true" propId="1" stdDataType="string" stdSqlType="BIGINT"
                         i18n-en:displayName="ID"/>
                 <column code="CODE" name="code" precision="50" propId="2" stdDataType="string" stdSqlType="VARCHAR"
                         tagSet="var" i18n-en:displayName="Code"/>
@@ -1167,7 +1167,7 @@
                 name="app.erp.md.dao.entity.ErpMdWarehouse" notGenCode="true" tableName="erp_md_warehouse"
                 ext:web-renderer="flux" biz:moduleId="erp/md">
             <columns>
-                <column code="ID" name="id" primary="true" propId="1" stdDataType="long" stdSqlType="BIGINT"
+                <column code="ID" name="id" primary="true" propId="1" stdDataType="string" stdSqlType="BIGINT"
                         i18n-en:displayName="ID"/>
                 <column code="CODE" name="code" precision="50" propId="2" stdDataType="string" stdSqlType="VARCHAR"
                         tagSet="var" i18n-en:displayName="Code"/>

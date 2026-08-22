@@ -1,8 +1,8 @@
 {
-  "id": 0,
-  "scenarioId": 0,
-  "materialId": 0,
-  "warehouseId": 0,
+  "id": "",
+  "scenarioId": "",
+  "materialId": "",
+  "warehouseId": "",
   "paramType": "",
   "paramType_label": "",
   "paramValue": 0.0,

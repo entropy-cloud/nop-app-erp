@@ -22,20 +22,20 @@
 
     <props>
         <prop name="id" displayName="ID" propId="1" i18n-en:displayName="ID" tagSet="seq-default" mandatory="true"
-              queryable="true" sortable="true" insertable="true" updatable="false" graphql:type="String">
-            <schema type="java.lang.Long"/>
+              queryable="true" sortable="true" insertable="true" updatable="false">
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="scenarioId" displayName="仿真场景" propId="2" i18n-en:displayName="Scenario" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="scenario">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="materialId" displayName="物料(空=全局覆盖)" propId="3" i18n-en:displayName="Material" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="material">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="warehouseId" displayName="仓库(空=全局覆盖)" propId="4" i18n-en:displayName="Warehouse" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="warehouse">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="paramType" displayName="参数类型" propId="5" i18n-en:displayName="Param Type" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">

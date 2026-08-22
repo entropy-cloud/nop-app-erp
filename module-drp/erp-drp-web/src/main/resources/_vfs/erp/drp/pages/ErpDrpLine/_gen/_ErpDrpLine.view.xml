@@ -19,22 +19,22 @@
             <cols>
 
                 <!--ID-->
-                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="id" mandatory="true" sortable="true"/>
 
                 <!--计划ID-->
-                <col id="planId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="planId" mandatory="true" sortable="true"/>
 
                 <!--行号-->
                 <col id="lineNo" mandatory="true" ui:number="true" sortable="true"/>
 
                 <!--物料-->
-                <col id="materialId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="materialId" mandatory="true" sortable="true"/>
 
                 <!--目标仓库-->
-                <col id="warehouseId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="warehouseId" mandatory="true" sortable="true"/>
 
                 <!--来源仓库-->
-                <col id="sourceWarehouseId" ui:number="true" sortable="true"/>
+                <col id="sourceWarehouseId" sortable="true"/>
 
                 <!--补货类型-->
                 <col id="replenishmentType" mandatory="true" sortable="true"/>
@@ -73,7 +73,7 @@
                 <col id="status" mandatory="true" sortable="true"/>
 
                 <!--业务组织-->
-                <col id="orgId" ui:number="true" sortable="true"/>
+                <col id="orgId" sortable="true"/>
 
                 <!--备注-->
                 <col id="remark" sortable="true"/>

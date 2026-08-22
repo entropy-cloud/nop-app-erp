@@ -12,16 +12,16 @@
     public class ErpInvDrpCrossDockInputBean extends CrudInputBase {
 
     
-        private Long _id;
+        private String _id;
 
     
         @PropMeta(propId=1)
     
-        public Long getId(){
+        public String getId(){
             return _id;
         }
 
-        public void setId(Long value){
+        public void setId(String value){
             this._id = value;
         }
 
@@ -40,58 +40,58 @@
         }
 
 
-        private Long _orgId;
+        private String _orgId;
 
     
         @PropMeta(propId=3)
     
-        public Long getOrgId(){
+        public String getOrgId(){
             return _orgId;
         }
 
-        public void setOrgId(Long value){
+        public void setOrgId(String value){
             this._orgId = value;
         }
 
 
-        private Long _drpLineId;
+        private String _drpLineId;
 
     
         @PropMeta(propId=4)
     
-        public Long getDrpLineId(){
+        public String getDrpLineId(){
             return _drpLineId;
         }
 
-        public void setDrpLineId(Long value){
+        public void setDrpLineId(String value){
             this._drpLineId = value;
         }
 
 
-        private Long _inboundMoveId;
+        private String _inboundMoveId;
 
     
         @PropMeta(propId=5)
     
-        public Long getInboundMoveId(){
+        public String getInboundMoveId(){
             return _inboundMoveId;
         }
 
-        public void setInboundMoveId(Long value){
+        public void setInboundMoveId(String value){
             this._inboundMoveId = value;
         }
 
 
-        private Long _outboundMoveId;
+        private String _outboundMoveId;
 
     
         @PropMeta(propId=6)
     
-        public Long getOutboundMoveId(){
+        public String getOutboundMoveId(){
             return _outboundMoveId;
         }
 
-        public void setOutboundMoveId(Long value){
+        public void setOutboundMoveId(String value){
             this._outboundMoveId = value;
         }
 
@@ -152,16 +152,16 @@
         }
 
 
-        private Long _materialId;
+        private String _materialId;
 
     
         @PropMeta(propId=11)
     
-        public Long getMaterialId(){
+        public String getMaterialId(){
             return _materialId;
         }
 
-        public void setMaterialId(Long value){
+        public void setMaterialId(String value){
             this._materialId = value;
         }
 
@@ -180,16 +180,16 @@
         }
 
 
-        private Long _stagingLocationId;
+        private String _stagingLocationId;
 
     
         @PropMeta(propId=13)
     
-        public Long getStagingLocationId(){
+        public String getStagingLocationId(){
             return _stagingLocationId;
         }
 
-        public void setStagingLocationId(Long value){
+        public void setStagingLocationId(String value){
             this._stagingLocationId = value;
         }
 

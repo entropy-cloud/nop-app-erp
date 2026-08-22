@@ -22,8 +22,8 @@
 
     <props>
         <prop name="id" displayName="ID" propId="1" i18n-en:displayName="ID" tagSet="seq-default" mandatory="true"
-              queryable="true" sortable="true" insertable="true" updatable="false" graphql:type="String">
-            <schema type="java.lang.Long"/>
+              queryable="true" sortable="true" insertable="true" updatable="false">
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="code" displayName="编号" propId="2" i18n-en:displayName="Code" tagSet="var" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
@@ -31,19 +31,19 @@
         </prop>
         <prop name="orgId" displayName="业务组织" propId="3" i18n-en:displayName="Organization" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="org">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="drpLineId" displayName="DRP行" propId="4" i18n-en:displayName="DRP Line" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="drpLine">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="inboundMoveId" displayName="入站移动单" propId="5" i18n-en:displayName="Inbound Move" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="inboundMove">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="outboundMoveId" displayName="出站移动单" propId="6" i18n-en:displayName="Outbound Move" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="outboundMove">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="sourceBillType" displayName="来源单据类型" propId="7" i18n-en:displayName="Source Bill Type"
               queryable="true" sortable="true" insertable="true" updatable="true">
@@ -63,7 +63,7 @@
         </prop>
         <prop name="materialId" displayName="物料" propId="11" i18n-en:displayName="Material" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="material">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="quantity" displayName="越库数量" propId="12" i18n-en:displayName="Quantity" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
@@ -71,7 +71,7 @@
         </prop>
         <prop name="stagingLocationId" displayName="暂存库位" propId="13" i18n-en:displayName="Staging Location"
               queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="stagingLocation">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="dockSlotTime" displayName="月台时间窗口" propId="14" i18n-en:displayName="Dock Slot Time" tagSet="clock"
               queryable="true" sortable="true" insertable="true" updatable="true">

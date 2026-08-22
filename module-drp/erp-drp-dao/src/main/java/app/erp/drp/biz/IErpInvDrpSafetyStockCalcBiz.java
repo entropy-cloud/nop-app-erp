@@ -15,17 +15,17 @@ public interface IErpInvDrpSafetyStockCalcBiz extends ICrudBiz<ErpInvDrpSafetySt
      * 运行安全库存计算：按 method（STATISTICAL/SIMPLE/DDMRP）算 calculatedSafetyStock/calculatedRop。
      */
     @BizMutation
-    ErpInvDrpSafetyStockCalc calculate(@Name("calcId") Long calcId, IServiceContext context);
+    ErpInvDrpSafetyStockCalc calculate(@Name("calcId") String calcId, IServiceContext context);
 
     /**
      * 查询参数的有效安全库存：优先级 overrideSafetyStock > calculatedSafetyStock > ErpDrpParameter.safetyStock。
      */
     @BizQuery
-    BigDecimal findEffectiveSafetyStock(@Name("parameterId") Long parameterId, IServiceContext context);
+    BigDecimal findEffectiveSafetyStock(@Name("parameterId") String parameterId, IServiceContext context);
 
     /**
      * 人工确认后回写 ErpDrpParameter.safetyStock（受配置 erp-inv.drp-ss-auto-writeback 控制，默认 false 强制人工）。
      */
     @BizMutation
-    ErpInvDrpSafetyStockCalc confirmWriteback(@Name("calcId") Long calcId, IServiceContext context);
+    ErpInvDrpSafetyStockCalc confirmWriteback(@Name("calcId") String calcId, IServiceContext context);
 }

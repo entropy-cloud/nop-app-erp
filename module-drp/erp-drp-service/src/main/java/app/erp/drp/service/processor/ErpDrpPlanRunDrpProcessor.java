@@ -26,14 +26,14 @@ public class ErpDrpPlanRunDrpProcessor {
     @Inject
     DrpDemandAggregator demandAggregator;
 
-    public ErpDrpPlan runDrp(Long planId, IServiceContext context) {
+    public ErpDrpPlan runDrp(String planId, IServiceContext context) {
         drpEngine.runDrp(planId, demandAggregator.aggregate(planId));
         return requirePlan(planId);
     }
 
     // ---------- 内部辅助 ----------
 
-    protected ErpDrpPlan requirePlan(Long planId) {
+    protected ErpDrpPlan requirePlan(String planId) {
         ErpDrpPlan plan = dao().getEntityById(planId);
         if (plan == null) {
             throw new NopException(ErpDrpErrors.ERR_DRP_PLAN_NOT_FOUND)

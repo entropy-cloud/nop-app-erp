@@ -61,7 +61,7 @@ public class SimulationDrpEngine {
      * <p>步骤：校验场景 DRAFT + 基线 plan → 新建 COMPUTED plan（DRAFT→COMPUTED）→ aggregate 需求 +
      * 场景化覆盖（safetyStock/replenishmentLeadTime/orderMultiple）→ fork DRP 净需求 → 写场景版本。
      */
-    public ErpDrpScenarioVersion runSimulation(Long scenarioId) {
+    public ErpDrpScenarioVersion runSimulation(String scenarioId) {
         ErpDrpScenario scenario = requireScenario(scenarioId);
         if (!Objects.equals(scenario.getStatus(), ErpDrpConstants.SIMULATION_STATUS_DRAFT)) {
             throw new NopException(ErpDrpErrors.ERR_DRP_SIMULATION_SCENARIO_NOT_DRAFT)
@@ -165,7 +165,7 @@ public class SimulationDrpEngine {
     /**
      * 转正式计划：从场景版本复制为新的 DRAFT {@link ErpDrpPlan}（Decision D）。
      */
-    public ErpDrpPlan promoteToFormalPlan(Long scenarioVersionId) {
+    public ErpDrpPlan promoteToFormalPlan(String scenarioVersionId) {
         ErpDrpScenarioVersion version = requireVersion(scenarioVersionId);
         if (version.getPromotedPlanId() != null) {
             throw new NopException(ErpDrpErrors.ERR_DRP_SIMULATION_VERSION_ALREADY_PROMOTED)
@@ -230,12 +230,12 @@ public class SimulationDrpEngine {
 
     // ---------- fork DRP 算法（覆盖经 paramResolver） ----------
 
-    private BigDecimal resolveSafetyStock(Long scenarioId, ErpDrpParameter param) {
+    private BigDecimal resolveSafetyStock(String scenarioId, ErpDrpParameter param) {
         BigDecimal override = paramResolver.resolveSafetyStockOverride(scenarioId, param.getMaterialId(), param.getWarehouseId());
         return override != null ? override : nz(param.getSafetyStock());
     }
 
-    private BigDecimal resolveOrderMultiple(Long scenarioId, ErpDrpParameter param) {
+    private BigDecimal resolveOrderMultiple(String scenarioId, ErpDrpParameter param) {
         BigDecimal override = paramResolver.resolveReplenishmentQtyOverride(scenarioId, param.getMaterialId(), param.getWarehouseId());
         return override != null ? override : nz(param.getOrderMultiple());
     }
@@ -254,7 +254,7 @@ public class SimulationDrpEngine {
         return multiples.multiply(orderMultiple);
     }
 
-    private int nextVersionNo(Long scenarioId) {
+    private int nextVersionNo(String scenarioId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("scenarioId", scenarioId));
         q.addOrderField("versionNo", false);
@@ -264,7 +264,7 @@ public class SimulationDrpEngine {
         return top.get(0).getVersionNo() + 1;
     }
 
-    private ErpDrpScenario requireScenario(Long scenarioId) {
+    private ErpDrpScenario requireScenario(String scenarioId) {
         if (scenarioId == null) {
             throw new NopException(ErpDrpErrors.ERR_DRP_SIMULATION_NO_BASELINE_PLAN)
                     .param(ErpDrpErrors.ARG_SCENARIO_ID, scenarioId);
@@ -277,7 +277,7 @@ public class SimulationDrpEngine {
         return s;
     }
 
-    private ErpDrpScenarioVersion requireVersion(Long versionId) {
+    private ErpDrpScenarioVersion requireVersion(String versionId) {
         ErpDrpScenarioVersion v = daoProvider.daoFor(ErpDrpScenarioVersion.class).getEntityById(versionId);
         if (v == null) {
             throw new NopException(ErpDrpErrors.ERR_DRP_SIMULATION_VERSION_ALREADY_PROMOTED)

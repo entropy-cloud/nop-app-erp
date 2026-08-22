@@ -12,44 +12,44 @@
     public class ErpInvDrpDockAppointmentInputBean extends CrudInputBase {
 
     
-        private Long _id;
+        private String _id;
 
     
         @PropMeta(propId=1)
     
-        public Long getId(){
+        public String getId(){
             return _id;
         }
 
-        public void setId(Long value){
+        public void setId(String value){
             this._id = value;
         }
 
 
-        private Long _warehouseId;
+        private String _warehouseId;
 
     
         @PropMeta(propId=2)
     
-        public Long getWarehouseId(){
+        public String getWarehouseId(){
             return _warehouseId;
         }
 
-        public void setWarehouseId(Long value){
+        public void setWarehouseId(String value){
             this._warehouseId = value;
         }
 
 
-        private Long _dockId;
+        private String _dockId;
 
     
         @PropMeta(propId=3)
     
-        public Long getDockId(){
+        public String getDockId(){
             return _dockId;
         }
 
-        public void setDockId(Long value){
+        public void setDockId(String value){
             this._dockId = value;
         }
 
@@ -96,16 +96,16 @@
         }
 
 
-        private Long _crossDockId;
+        private String _crossDockId;
 
     
         @PropMeta(propId=7)
     
-        public Long getCrossDockId(){
+        public String getCrossDockId(){
             return _crossDockId;
         }
 
-        public void setCrossDockId(Long value){
+        public void setCrossDockId(String value){
             this._crossDockId = value;
         }
 
@@ -152,16 +152,16 @@
         }
 
 
-        private Long _orgId;
+        private String _orgId;
 
     
         @PropMeta(propId=17)
     
-        public Long getOrgId(){
+        public String getOrgId(){
             return _orgId;
         }
 
-        public void setOrgId(Long value){
+        public void setOrgId(String value){
             this._orgId = value;
         }
 

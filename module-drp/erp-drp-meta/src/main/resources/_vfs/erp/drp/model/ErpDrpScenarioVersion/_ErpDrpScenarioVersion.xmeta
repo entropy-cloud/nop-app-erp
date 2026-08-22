@@ -22,12 +22,12 @@
 
     <props>
         <prop name="id" displayName="ID" propId="1" i18n-en:displayName="ID" tagSet="seq-default" mandatory="true"
-              queryable="true" sortable="true" insertable="true" updatable="false" graphql:type="String">
-            <schema type="java.lang.Long"/>
+              queryable="true" sortable="true" insertable="true" updatable="false">
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="scenarioId" displayName="仿真场景" propId="2" i18n-en:displayName="Scenario" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="scenario">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="versionNo" displayName="版本号" propId="3" i18n-en:displayName="Version No" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
@@ -35,7 +35,7 @@
         </prop>
         <prop name="computedDrpPlanId" displayName="计算结果DRP计划" propId="4" i18n-en:displayName="Computed Drp Plan"
               queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="computedDrpPlan">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="snapshotSummary" displayName="快照摘要" propId="5" i18n-en:displayName="Snapshot Summary"
               queryable="true" sortable="true" insertable="true" updatable="true">
@@ -47,7 +47,7 @@
         </prop>
         <prop name="promotedPlanId" displayName="转正式计划ID" propId="7" i18n-en:displayName="Promoted Plan"
               queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="promotedPlan">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="delVersion" displayName="逻辑删除版本" propId="8" i18n-en:displayName="Del Flag" mandatory="true"
               queryable="true" sortable="true" insertable="false" updatable="false" ui:show="R" defaultValue="0">

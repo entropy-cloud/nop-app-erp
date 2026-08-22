@@ -19,13 +19,13 @@
             <cols>
 
                 <!--ID-->
-                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="id" mandatory="true" sortable="true"/>
 
                 <!--仓库-->
-                <col id="warehouseId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="warehouseId" mandatory="true" sortable="true"/>
 
                 <!--物料-->
-                <col id="materialId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="materialId" mandatory="true" sortable="true"/>
 
                 <!--安全库存-->
                 <col id="safetyStock" ui:number="true" sortable="true"/>
@@ -37,10 +37,10 @@
                 <col id="orderMultiple" ui:number="true" sortable="true"/>
 
                 <!--首选调出仓库-->
-                <col id="preferredSourceWarehouseId" ui:number="true" sortable="true"/>
+                <col id="preferredSourceWarehouseId" sortable="true"/>
 
                 <!--首选供应商-->
-                <col id="preferredSupplierId" ui:number="true" sortable="true"/>
+                <col id="preferredSupplierId" sortable="true"/>
 
                 <!--补货方法-->
                 <col id="replenishmentMethod" mandatory="true" sortable="true"/>
@@ -55,7 +55,7 @@
                 <col id="reviewPeriodDays" ui:number="true" sortable="true"/>
 
                 <!--业务组织-->
-                <col id="orgId" ui:number="true" sortable="true"/>
+                <col id="orgId" sortable="true"/>
 
                 <!--备注-->
                 <col id="remark" sortable="true"/>

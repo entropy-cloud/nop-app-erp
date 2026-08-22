@@ -19,14 +19,14 @@ public class ErpDrpScenarioPromoteToFormalPlanProcessor {
     @Inject
     SimulationDrpEngine simulationDrpEngine;
 
-    public ErpDrpPlan promoteToFormalPlan(Long scenarioVersionId, IServiceContext context) {
+    public ErpDrpPlan promoteToFormalPlan(String scenarioVersionId, IServiceContext context) {
         requireSimulationEnabled(scenarioVersionId);
         return simulationDrpEngine.promoteToFormalPlan(scenarioVersionId);
     }
 
     // ---------- 内部辅助 ----------
 
-    protected void requireSimulationEnabled(Long id) {
+    protected void requireSimulationEnabled(String id) {
         boolean enabled = AppConfig.var(ErpDrpConstants.CONFIG_DRP_SIMULATION_ENABLED,
                 ErpDrpConstants.DEFAULT_DRP_SIMULATION_ENABLED);
         if (!enabled) {

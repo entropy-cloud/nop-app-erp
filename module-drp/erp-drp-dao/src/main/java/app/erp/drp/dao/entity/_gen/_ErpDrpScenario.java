@@ -133,16 +133,16 @@ public class _ErpDrpScenario extends DynamicOrmEntity{
 
     
     /* ID: ID */
-    private java.lang.Long _id;
+    private java.lang.String _id;
     
     /* 场景号: CODE */
     private java.lang.String _code;
     
     /* 业务组织: ORG_ID */
-    private java.lang.Long _orgId;
+    private java.lang.String _orgId;
     
     /* 基线DRP计划: BASE_DRP_PLAN_ID */
-    private java.lang.Long _baseDrpPlanId;
+    private java.lang.String _baseDrpPlanId;
     
     /* 场景描述: DESCRIPTION */
     private java.lang.String _description;
@@ -290,9 +290,9 @@ public class _ErpDrpScenario extends DynamicOrmEntity{
         switch(propId){
         
             case PROP_ID_id:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_id));
                }
                setId(typedValue);
@@ -310,9 +310,9 @@ public class _ErpDrpScenario extends DynamicOrmEntity{
             }
         
             case PROP_ID_orgId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_orgId));
                }
                setOrgId(typedValue);
@@ -320,9 +320,9 @@ public class _ErpDrpScenario extends DynamicOrmEntity{
             }
         
             case PROP_ID_baseDrpPlanId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_baseDrpPlanId));
                }
                setBaseDrpPlanId(typedValue);
@@ -420,7 +420,7 @@ public class _ErpDrpScenario extends DynamicOrmEntity{
         
             case PROP_ID_id:{
                onInitProp(propId);
-               this._id = (java.lang.Long)value;
+               this._id = (java.lang.String)value;
                orm_id(); // 如果是设置主键字段，则触发watcher
                break;
             }
@@ -434,14 +434,14 @@ public class _ErpDrpScenario extends DynamicOrmEntity{
         
             case PROP_ID_orgId:{
                onInitProp(propId);
-               this._orgId = (java.lang.Long)value;
+               this._orgId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_baseDrpPlanId:{
                onInitProp(propId);
-               this._baseDrpPlanId = (java.lang.Long)value;
+               this._baseDrpPlanId = (java.lang.String)value;
                
                break;
             }
@@ -511,7 +511,7 @@ public class _ErpDrpScenario extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final java.lang.Long getId(){
+    public final java.lang.String getId(){
          onPropGet(PROP_ID_id);
          return _id;
     }
@@ -519,7 +519,7 @@ public class _ErpDrpScenario extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final void setId(java.lang.Long value){
+    public final void setId(java.lang.String value){
         if(onPropSet(PROP_ID_id,value)){
             this._id = value;
             internalClearRefs(PROP_ID_id);
@@ -549,7 +549,7 @@ public class _ErpDrpScenario extends DynamicOrmEntity{
     /**
      * 业务组织: ORG_ID
      */
-    public final java.lang.Long getOrgId(){
+    public final java.lang.String getOrgId(){
          onPropGet(PROP_ID_orgId);
          return _orgId;
     }
@@ -557,7 +557,7 @@ public class _ErpDrpScenario extends DynamicOrmEntity{
     /**
      * 业务组织: ORG_ID
      */
-    public final void setOrgId(java.lang.Long value){
+    public final void setOrgId(java.lang.String value){
         if(onPropSet(PROP_ID_orgId,value)){
             this._orgId = value;
             internalClearRefs(PROP_ID_orgId);
@@ -568,7 +568,7 @@ public class _ErpDrpScenario extends DynamicOrmEntity{
     /**
      * 基线DRP计划: BASE_DRP_PLAN_ID
      */
-    public final java.lang.Long getBaseDrpPlanId(){
+    public final java.lang.String getBaseDrpPlanId(){
          onPropGet(PROP_ID_baseDrpPlanId);
          return _baseDrpPlanId;
     }
@@ -576,7 +576,7 @@ public class _ErpDrpScenario extends DynamicOrmEntity{
     /**
      * 基线DRP计划: BASE_DRP_PLAN_ID
      */
-    public final void setBaseDrpPlanId(java.lang.Long value){
+    public final void setBaseDrpPlanId(java.lang.String value){
         if(onPropSet(PROP_ID_baseDrpPlanId,value)){
             this._baseDrpPlanId = value;
             internalClearRefs(PROP_ID_baseDrpPlanId);

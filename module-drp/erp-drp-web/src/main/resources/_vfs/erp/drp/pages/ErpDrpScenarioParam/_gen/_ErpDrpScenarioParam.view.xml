@@ -19,16 +19,16 @@
             <cols>
 
                 <!--ID-->
-                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="id" mandatory="true" sortable="true"/>
 
                 <!--仿真场景-->
-                <col id="scenarioId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="scenarioId" mandatory="true" sortable="true"/>
 
                 <!--物料(空=全局覆盖)-->
-                <col id="materialId" ui:number="true" sortable="true"/>
+                <col id="materialId" sortable="true"/>
 
                 <!--仓库(空=全局覆盖)-->
-                <col id="warehouseId" ui:number="true" sortable="true"/>
+                <col id="warehouseId" sortable="true"/>
 
                 <!--参数类型-->
                 <col id="paramType" mandatory="true" sortable="true"/>

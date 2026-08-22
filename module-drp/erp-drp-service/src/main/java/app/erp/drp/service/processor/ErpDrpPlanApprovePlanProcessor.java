@@ -34,7 +34,7 @@ public class ErpDrpPlanApprovePlanProcessor {
     @Inject
     ErpDrpLineStateMachine lineStateMachine;
 
-    public ErpDrpPlan approvePlan(Long planId, IServiceContext context) {
+    public ErpDrpPlan approvePlan(String planId, IServiceContext context) {
         ErpDrpPlan plan = requirePlan(planId);
         // 固定来源态守卫经 Plan StateMachine Bean；非法边映射为 ERR_DRP_PLAN_ILLEGAL_TRANSITION（参数不变，common 码作 cause）。
         // ARG_EXPECTED_STATUS 保留原值 COMPUTED（来源态描述，pre-existing 形状不变）。
@@ -70,7 +70,7 @@ public class ErpDrpPlanApprovePlanProcessor {
 
     // ---------- 内部辅助 ----------
 
-    protected ErpDrpPlan requirePlan(Long planId) {
+    protected ErpDrpPlan requirePlan(String planId) {
         ErpDrpPlan plan = dao().getEntityById(planId);
         if (plan == null) {
             throw new NopException(ErpDrpErrors.ERR_DRP_PLAN_NOT_FOUND)
@@ -79,7 +79,7 @@ public class ErpDrpPlanApprovePlanProcessor {
         return plan;
     }
 
-    protected List<ErpDrpLine> suggestedLinesOf(Long planId) {
+    protected List<ErpDrpLine> suggestedLinesOf(String planId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("planId", planId));
         q.addFilter(eq("status", ErpDrpConstants.DRP_LINE_STATUS_SUGGESTED));

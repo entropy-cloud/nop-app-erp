@@ -53,11 +53,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpDrpSimulation extends JunitAutoTestCase {
 
-    static final Long ORG_ID = 7401L;
-    static final Long UOM_ID = 7501L;
-    static final Long WAREHOUSE_ID = 7801L;
-    static final Long M1 = 9101L;
-    static final Long M2 = 9102L;
+    static final String ORG_ID = "7401";
+    static final String UOM_ID = "7501";
+    static final String WAREHOUSE_ID = "7801";
+    static final String M1 = "9101";
+    static final String M2 = "9102";
 
     @Inject
     IDaoProvider daoProvider;
@@ -80,7 +80,7 @@ public class TestErpDrpSimulation extends JunitAutoTestCase {
 
     @Test
     public void testConfigGateDisabledRejectsRunSimulation() {
-        Long scenarioId = seedScenario("DRP-SIM-DISABLED", null);
+        String scenarioId = seedScenario("DRP-SIM-DISABLED", null);
         ApiResponse<?> resp = runSimulationRpc(scenarioId);
         assertNotEquals(0, resp.getStatus());
         assertEquals(ErpDrpErrors.ERR_DRP_SIMULATION_DISABLED.getErrorCode(), resp.getCode());
@@ -95,13 +95,13 @@ public class TestErpDrpSimulation extends JunitAutoTestCase {
         seedParameter(M1, WAREHOUSE_ID, bd("10"), null);
         seedBalance(M1, WAREHOUSE_ID, bd("0"));
 
-        Long basePlanId = seedPlan("DRP-BASE-SS");
+        String basePlanId = seedPlan("DRP-BASE-SS");
         runDrpOnce(basePlanId);
         ErpDrpLine baseLine = findLine(basePlanId, M1, WAREHOUSE_ID);
         assertEquals(0, baseLine.getSuggestedQty().compareTo(bd("10")), "基线 SS=10 → suggested=10");
 
         enableSimulation();
-        Long scenarioId = seedScenario("DRP-SIM-SS", basePlanId);
+        String scenarioId = seedScenario("DRP-SIM-SS", basePlanId);
         seedParam(scenarioId, M1, WAREHOUSE_ID, ErpDrpConstants.SIMULATION_PARAM_TYPE_SAFETY_STOCK, bd("20"));
 
         ErpDrpScenarioVersion version = runSimulationViaRpc(scenarioId);
@@ -121,13 +121,13 @@ public class TestErpDrpSimulation extends JunitAutoTestCase {
         seedParameter(M2, WAREHOUSE_ID, bd("15"), bd("1"));
         seedBalance(M2, WAREHOUSE_ID, bd("0"));
 
-        Long basePlanId = seedPlan("DRP-BASE-RQ");
+        String basePlanId = seedPlan("DRP-BASE-RQ");
         runDrpOnce(basePlanId);
         ErpDrpLine baseLine = findLine(basePlanId, M2, WAREHOUSE_ID);
         assertEquals(0, baseLine.getSuggestedQty().compareTo(bd("15")), "基线 multiple=1 → suggested=15");
 
         enableSimulation();
-        Long scenarioId = seedScenario("DRP-SIM-RQ", basePlanId);
+        String scenarioId = seedScenario("DRP-SIM-RQ", basePlanId);
         seedParam(scenarioId, M2, WAREHOUSE_ID, ErpDrpConstants.SIMULATION_PARAM_TYPE_REPLENISHMENT_QTY, bd("10"));
 
         ErpDrpScenarioVersion version = runSimulationViaRpc(scenarioId);
@@ -143,11 +143,11 @@ public class TestErpDrpSimulation extends JunitAutoTestCase {
         seedParameter(M1, WAREHOUSE_ID, bd("10"), null);
         seedBalance(M1, WAREHOUSE_ID, bd("0"));
 
-        Long basePlanId = seedPlan("DRP-BASE-CMP");
+        String basePlanId = seedPlan("DRP-BASE-CMP");
         runDrpOnce(basePlanId);
 
         enableSimulation();
-        Long scenarioId = seedScenario("DRP-SIM-CMP", basePlanId);
+        String scenarioId = seedScenario("DRP-SIM-CMP", basePlanId);
 
         // 版本 A：SS=10 → suggested=10
         seedParam(scenarioId, M1, WAREHOUSE_ID, ErpDrpConstants.SIMULATION_PARAM_TYPE_SAFETY_STOCK, bd("10"));
@@ -176,11 +176,11 @@ public class TestErpDrpSimulation extends JunitAutoTestCase {
         seedParameter(M1, WAREHOUSE_ID, bd("10"), null);
         seedBalance(M1, WAREHOUSE_ID, bd("0"));
 
-        Long basePlanId = seedPlan("DRP-BASE-PROM");
+        String basePlanId = seedPlan("DRP-BASE-PROM");
         runDrpOnce(basePlanId);
 
         enableSimulation();
-        Long scenarioId = seedScenario("DRP-SIM-PROM", basePlanId);
+        String scenarioId = seedScenario("DRP-SIM-PROM", basePlanId);
         seedParam(scenarioId, M1, WAREHOUSE_ID, ErpDrpConstants.SIMULATION_PARAM_TYPE_SAFETY_STOCK, bd("20"));
 
         ErpDrpScenarioVersion version = runSimulationViaRpc(scenarioId);
@@ -212,7 +212,7 @@ public class TestErpDrpSimulation extends JunitAutoTestCase {
                 ErpDrpConstants.CONFIG_DRP_SIMULATION_ENABLED, "true");
     }
 
-    private void runDrpOnce(Long planId) {
+    private void runDrpOnce(String planId) {
         Map<String, Object> args = new LinkedHashMap<>();
         args.put("planId", planId);
         IGraphQLExecutionContext ctx = graphQLEngine.newRpcContext(mutation,
@@ -221,7 +221,7 @@ public class TestErpDrpSimulation extends JunitAutoTestCase {
         assertEquals(0, resp.getStatus(), "基线 runDrp 应成功: " + resp);
     }
 
-    private ErpDrpScenarioVersion runSimulationViaRpc(Long scenarioId) {
+    private ErpDrpScenarioVersion runSimulationViaRpc(String scenarioId) {
         Map<String, Object> args = new LinkedHashMap<>();
         args.put("scenarioId", scenarioId);
         IGraphQLExecutionContext ctx = graphQLEngine.newRpcContext(mutation,
@@ -230,11 +230,11 @@ public class TestErpDrpSimulation extends JunitAutoTestCase {
         assertEquals(0, resp.getStatus(), "runSimulation 应成功: " + resp);
         @SuppressWarnings("unchecked")
         Map<String, Object> data = (Map<String, Object>) resp.getData();
-        Long versionId = Long.valueOf(String.valueOf(data.get("id")));
+        String versionId = String.valueOf(String.valueOf(data.get("id")));
         return daoProvider.daoFor(ErpDrpScenarioVersion.class).getEntityById(versionId);
     }
 
-    private ApiResponse<?> runSimulationRpc(Long scenarioId) {
+    private ApiResponse<?> runSimulationRpc(String scenarioId) {
         Map<String, Object> args = new LinkedHashMap<>();
         args.put("scenarioId", scenarioId);
         IGraphQLExecutionContext ctx = graphQLEngine.newRpcContext(mutation,
@@ -242,16 +242,16 @@ public class TestErpDrpSimulation extends JunitAutoTestCase {
         return graphQLEngine.executeRpc(ctx);
     }
 
-    private ErpDrpPlan promoteToFormalPlanViaRpc(Long versionId) {
+    private ErpDrpPlan promoteToFormalPlanViaRpc(String versionId) {
         ApiResponse<?> resp = promoteToFormalPlanRpc(versionId);
         assertEquals(0, resp.getStatus(), "promoteToFormalPlan 应成功: " + resp);
         @SuppressWarnings("unchecked")
         Map<String, Object> data = (Map<String, Object>) resp.getData();
-        Long id = Long.valueOf(String.valueOf(data.get("id")));
+        String id = String.valueOf(String.valueOf(data.get("id")));
         return daoProvider.daoFor(ErpDrpPlan.class).getEntityById(id);
     }
 
-    private ApiResponse<?> promoteToFormalPlanRpc(Long versionId) {
+    private ApiResponse<?> promoteToFormalPlanRpc(String versionId) {
         Map<String, Object> args = new LinkedHashMap<>();
         args.put("scenarioVersionId", versionId);
         IGraphQLExecutionContext ctx = graphQLEngine.newRpcContext(mutation,
@@ -259,7 +259,7 @@ public class TestErpDrpSimulation extends JunitAutoTestCase {
         return graphQLEngine.executeRpc(ctx);
     }
 
-    private ErpDrpLine findLine(Long planId, Long materialId, Long warehouseId) {
+    private ErpDrpLine findLine(String planId, String materialId, String warehouseId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("planId", planId));
         q.addFilter(eq("materialId", materialId));
@@ -268,14 +268,14 @@ public class TestErpDrpSimulation extends JunitAutoTestCase {
         return list.isEmpty() ? null : list.get(0);
     }
 
-    private List<ErpDrpLine> linesOf(Long planId) {
+    private List<ErpDrpLine> linesOf(String planId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("planId", planId));
         return daoProvider.daoFor(ErpDrpLine.class).findAllByQuery(q);
     }
 
-    private Long seedPlan(String code) {
-        Long id = 8700L + (long) Math.abs(code.hashCode() % 200);
+    private String seedPlan(String code) {
+        String id = String.valueOf(8700L + Math.abs(code.hashCode() % 200));
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpDrpPlan> dao = daoProvider.daoFor(ErpDrpPlan.class);
             ErpDrpPlan p = new ErpDrpPlan();
@@ -292,8 +292,8 @@ public class TestErpDrpSimulation extends JunitAutoTestCase {
         return id;
     }
 
-    private Long seedScenario(String code, Long basePlanId) {
-        Long id = 9500L + (long) Math.abs(code.hashCode() % 100);
+    private String seedScenario(String code, String basePlanId) {
+        String id = String.valueOf(9500L + Math.abs(code.hashCode() % 100));
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpDrpScenario> dao = daoProvider.daoFor(ErpDrpScenario.class);
             ErpDrpScenario s = new ErpDrpScenario();
@@ -307,12 +307,12 @@ public class TestErpDrpSimulation extends JunitAutoTestCase {
         return id;
     }
 
-    private void seedParam(Long scenarioId, Long materialId, Long warehouseId, String paramType, BigDecimal value) {
+    private void seedParam(String scenarioId, String materialId, String warehouseId, String paramType, BigDecimal value) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpDrpScenarioParam> dao = daoProvider.daoFor(ErpDrpScenarioParam.class);
             ErpDrpScenarioParam p = new ErpDrpScenarioParam();
             p.orm_propValueByName("id",
-                    9900L + (long) Math.abs((scenarioId + "" + materialId + warehouseId + paramType).hashCode() % 80));
+                    String.valueOf(9900L + Math.abs((scenarioId + "" + materialId + warehouseId + paramType).hashCode() % 80)));
             p.setScenarioId(scenarioId);
             p.setMaterialId(materialId);
             p.setWarehouseId(warehouseId);
@@ -323,7 +323,7 @@ public class TestErpDrpSimulation extends JunitAutoTestCase {
         paramResolver.invalidateCache();
     }
 
-    private void updateSafetyStockParam(Long scenarioId, Long materialId, Long warehouseId, BigDecimal newValue) {
+    private void updateSafetyStockParam(String scenarioId, String materialId, String warehouseId, BigDecimal newValue) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpDrpScenarioParam> dao = daoProvider.daoFor(ErpDrpScenarioParam.class);
             QueryBean q = new QueryBean();
@@ -339,7 +339,7 @@ public class TestErpDrpSimulation extends JunitAutoTestCase {
         paramResolver.invalidateCache();
     }
 
-    private void resetScenarioToDraft(Long scenarioId) {
+    private void resetScenarioToDraft(String scenarioId) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpDrpScenario> dao = daoProvider.daoFor(ErpDrpScenario.class);
             ErpDrpScenario s = dao.getEntityById(scenarioId);
@@ -350,11 +350,11 @@ public class TestErpDrpSimulation extends JunitAutoTestCase {
         });
     }
 
-    private void seedParameter(Long materialId, Long warehouseId, BigDecimal safetyStock, BigDecimal orderMultiple) {
+    private void seedParameter(String materialId, String warehouseId, BigDecimal safetyStock, BigDecimal orderMultiple) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpDrpParameter> dao = daoProvider.daoFor(ErpDrpParameter.class);
             ErpDrpParameter p = new ErpDrpParameter();
-            p.orm_propValueByName("id", 9200L + materialId);
+            p.orm_propValueByName("id", String.valueOf(9200L + Long.parseLong(materialId)));
             p.setWarehouseId(warehouseId);
             p.setMaterialId(materialId);
             p.setOrgId(ORG_ID);
@@ -365,11 +365,11 @@ public class TestErpDrpSimulation extends JunitAutoTestCase {
         });
     }
 
-    private void seedBalance(Long materialId, Long warehouseId, BigDecimal available) {
+    private void seedBalance(String materialId, String warehouseId, BigDecimal available) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpInvStockBalance> dao = daoProvider.daoFor(ErpInvStockBalance.class);
             ErpInvStockBalance b = new ErpInvStockBalance();
-            b.orm_propValueByName("id", 9500L + materialId);
+            b.orm_propValueByName("id", String.valueOf(9500L + Long.parseLong(materialId)));
             b.setOrgId(ORG_ID);
             b.setMaterialId(materialId);
             b.setWarehouseId(warehouseId);
@@ -379,7 +379,7 @@ public class TestErpDrpSimulation extends JunitAutoTestCase {
         });
     }
 
-    private void seedMaterial(Long id) {
+    private void seedMaterial(String id) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMdMaterial> dao = daoProvider.daoFor(ErpMdMaterial.class);
             ErpMdMaterial m = new ErpMdMaterial();
@@ -393,7 +393,7 @@ public class TestErpDrpSimulation extends JunitAutoTestCase {
         });
     }
 
-    private void seedWarehouse(Long id) {
+    private void seedWarehouse(String id) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMdWarehouse> dao = daoProvider.daoFor(ErpMdWarehouse.class);
             ErpMdWarehouse w = new ErpMdWarehouse();

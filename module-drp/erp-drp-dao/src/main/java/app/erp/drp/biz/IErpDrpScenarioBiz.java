@@ -18,19 +18,19 @@ public interface IErpDrpScenarioBiz extends ICrudBiz<ErpDrpScenario> {
      * config-gated：{@code erp-drp.simulation-enabled} 默认 false。
      */
     @BizMutation
-    ErpDrpScenarioVersion runSimulation(@Name("scenarioId") Long scenarioId, IServiceContext context);
+    ErpDrpScenarioVersion runSimulation(@Name("scenarioId") String scenarioId, IServiceContext context);
 
     /**
      * 转正式计划：从场景版本复制为新的 DRAFT {@link ErpDrpPlan}。
      */
     @BizMutation
-    ErpDrpPlan promoteToFormalPlan(@Name("scenarioVersionId") Long scenarioVersionId, IServiceContext context);
+    ErpDrpPlan promoteToFormalPlan(@Name("scenarioVersionId") String scenarioVersionId, IServiceContext context);
 
     /**
      * 对比两仿真版本（Decision C 2 维 diff：补货量差 / 安全库存差）。
      */
     @BizQuery
-    DrpSimulationDiffResult compareVersions(@Name("versionIdA") Long versionIdA,
-                                             @Name("versionIdB") Long versionIdB,
+    DrpSimulationDiffResult compareVersions(@Name("versionIdA") String versionIdA,
+                                             @Name("versionIdB") String versionIdB,
                                              IServiceContext context);
 }

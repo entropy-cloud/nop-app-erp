@@ -1,0 +1,3 @@
+_chgType,ID,CODE,ORG_ID,MATERIAL_ID,WAREHOUSE_ID,METHOD,SERVICE_LEVEL,HISTORY_MONTHS,LEAD_TIME_DAYS,CALCULATED_SAFETY_STOCK,CALCULATED_ROP,OVERRIDE_SAFETY_STOCK,LAST_CALCULATED_AT,OVERWRITTEN_BY,REMARK,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
+A,8604,@var:ErpInvDrpSafetyStockCalc@code,8401,8201,8101,STATISTICAL,PCT95,2,20,312.12,792.12,,@var:ErpInvDrpSafetyStockCalc@lastCalculatedAt,,,@var:ErpInvDrpSafetyStockCalc@delVersion_1,1,autotest-ref,*,autotest-ref,*
+A,8605,@var:ErpInvDrpSafetyStockCalc@code_1,8401,8202,8101,STATISTICAL,PCT95,2,18,382.26,1102.26,,@var:ErpInvDrpSafetyStockCalc@lastCalculatedAt_1,,,@var:ErpInvDrpSafetyStockCalc@delVersion_1,1,autotest-ref,*,autotest-ref,*

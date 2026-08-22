@@ -321,13 +321,9 @@ public class ErpPurReceiveProcessor {
             if (materialIds.isEmpty()) {
                 return;
             }
-            List<Long> drpMaterialIds = new ArrayList<>();
-            for (String mid : materialIds) {
-                drpMaterialIds.add(io.nop.api.core.convert.ConvertHelper.toLong(mid));
-            }
-            // A2 桥接（bridge-main-090，M0.2 登记册）：drp id 列仍 Long（drp 位次 18 未迁移），pur/inv String id → ConvertHelper.toLong 桥接，退役 owner M3.7
+            List<String> drpMaterialIds = new ArrayList<>(materialIds);
             crossDockBiz.markReceivedFromPurchase(orderCode,
-                    io.nop.api.core.convert.ConvertHelper.toLong(move != null ? move.getId() : null),
+                    move != null ? move.getId() : null,
                     drpMaterialIds, context);
         } catch (Exception e) {
             LOG.warn("入库审批后置：越库收货标记失败（隔离不阻断）：receiveCode={}, reason={}",
@@ -381,13 +377,9 @@ public class ErpPurReceiveProcessor {
                 expectedLeadTime = (int) java.time.temporal.ChronoUnit.DAYS
                         .between(order.getBusinessDate(), order.getDeliveryDate());
             }
-            List<Long> drpMaterialIds = new ArrayList<>();
-            for (String mid : materialIds) {
-                drpMaterialIds.add(io.nop.api.core.convert.ConvertHelper.toLong(mid));
-            }
-            // A2 桥接（bridge-main-091，M0.2 登记册）：drp id 列仍 Long（drp 位次 18 未迁移），pur String supplierId/materialId → ConvertHelper.toLong 桥接，退役 owner M3.7
+            List<String> drpMaterialIds = new ArrayList<>(materialIds);
             leadTimeRecordBiz.recordFromPurchaseReceive(order.getCode(),
-                    io.nop.api.core.convert.ConvertHelper.toLong(receive.getSupplierId()),
+                    receive.getSupplierId(),
                     order.getBusinessDate(), receive.getBusinessDate(), expectedLeadTime,
                     drpMaterialIds, context);
         } catch (Exception e) {

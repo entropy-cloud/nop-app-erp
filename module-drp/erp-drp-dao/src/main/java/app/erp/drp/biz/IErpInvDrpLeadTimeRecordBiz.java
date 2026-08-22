@@ -37,11 +37,11 @@ public interface IErpInvDrpLeadTimeRecordBiz extends ICrudBiz<ErpInvDrpLeadTimeR
      */
     @BizMutation
     int recordFromPurchaseReceive(@Name("purchaseOrderCode") String purchaseOrderCode,
-                                  @Name("supplierId") Long supplierId,
+                                  @Name("supplierId") String supplierId,
                                   @Name("orderDate") LocalDate orderDate,
                                   @Name("receiptDate") LocalDate receiptDate,
                                   @Optional @Name("expectedLeadTime") Integer expectedLeadTime,
-                                  @Name("materialIds") List<Long> materialIds,
+                                  @Name("materialIds") List<String> materialIds,
                                   IServiceContext context);
 
     /**
@@ -51,8 +51,8 @@ public interface IErpInvDrpLeadTimeRecordBiz extends ICrudBiz<ErpInvDrpLeadTimeR
      * 仅 materialId = 物料级（跨供应商）。
      */
     @BizQuery
-    LeadTimeStatsBean findLeadTimeStats(@Optional @Name("supplierId") Long supplierId,
-                                        @Optional @Name("materialId") Long materialId,
+    LeadTimeStatsBean findLeadTimeStats(@Optional @Name("supplierId") String supplierId,
+                                        @Optional @Name("materialId") String materialId,
                                         IServiceContext context);
 
     /**
@@ -61,7 +61,7 @@ public interface IErpInvDrpLeadTimeRecordBiz extends ICrudBiz<ErpInvDrpLeadTimeR
      * 窗口内无提前期样本时抛 {@code erp.err.drp.lt.no-samples}。
      */
     @BizMutation
-    ErpInvDrpSupplierScore recalculateLeadTimeStats(@Name("supplierId") Long supplierId,
-                                                    @Name("materialId") Long materialId,
+    ErpInvDrpSupplierScore recalculateLeadTimeStats(@Name("supplierId") String supplierId,
+                                                    @Name("materialId") String materialId,
                                                     IServiceContext context);
 }

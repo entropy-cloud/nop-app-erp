@@ -15,19 +15,19 @@ import java.util.List;
  */
 public interface IErpDrpSimulationParamResolver {
 
-    BigDecimal resolveOverride(Long scenarioId, Long materialId, Long warehouseId, String paramType);
+    BigDecimal resolveOverride(String scenarioId, String materialId, String warehouseId, String paramType);
 
-    List<ErpDrpScenarioParam> loadParams(Long scenarioId);
+    List<ErpDrpScenarioParam> loadParams(String scenarioId);
 
-    default BigDecimal resolveSafetyStockOverride(Long scenarioId, Long materialId, Long warehouseId) {
+    default BigDecimal resolveSafetyStockOverride(String scenarioId, String materialId, String warehouseId) {
         return resolveOverride(scenarioId, materialId, warehouseId, ErpDrpConstants.SIMULATION_PARAM_TYPE_SAFETY_STOCK);
     }
 
-    default BigDecimal resolveLeadTimeOverride(Long scenarioId, Long materialId, Long warehouseId) {
+    default BigDecimal resolveLeadTimeOverride(String scenarioId, String materialId, String warehouseId) {
         return resolveOverride(scenarioId, materialId, warehouseId, ErpDrpConstants.SIMULATION_PARAM_TYPE_LEAD_TIME);
     }
 
-    default BigDecimal resolveReplenishmentQtyOverride(Long scenarioId, Long materialId, Long warehouseId) {
+    default BigDecimal resolveReplenishmentQtyOverride(String scenarioId, String materialId, String warehouseId) {
         return resolveOverride(scenarioId, materialId, warehouseId, ErpDrpConstants.SIMULATION_PARAM_TYPE_REPLENISHMENT_QTY);
     }
 }

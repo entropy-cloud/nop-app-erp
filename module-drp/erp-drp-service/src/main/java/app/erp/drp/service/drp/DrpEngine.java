@@ -65,7 +65,7 @@ public class DrpEngine {
      *
      * @param aggregated 由 {@link DrpDemandAggregator#aggregate} 产出的聚合上下文，直接传入避免同事务查询可见性问题
      */
-    public void runDrp(Long planId, List<DrpDemandAggregator.AggregatedDemand> aggregated) {
+    public void runDrp(String planId, List<DrpDemandAggregator.AggregatedDemand> aggregated) {
         ErpDrpPlan plan = requirePlan(planId);
         // 固定来源态守卫经 StateMachine Bean（plan 2026-08-12-1841-1 Phase 2）。
         // 原代码 `status != null && !Objects.equals(status, DRAFT)` 对 null 放行（视为 DRAFT 等价，未初始化）；
@@ -126,7 +126,7 @@ public class DrpEngine {
      * 重置计划为 DRAFT：清除该计划下所有 SUGGESTED 行（保留 APPROVED/ORDERED/CANCELLED 终态或已审批行不动），
      * 计划状态 COMPUTED→DRAFT。供调参后重算（{@code state-machine.md §场景 B}）。
      */
-    public void resetToDraft(Long planId) {
+    public void resetToDraft(String planId) {
         ErpDrpPlan plan = requirePlan(planId);
         String status = plan.getStatus();
         // 固定来源态守卫经 StateMachine Bean（plan 2026-08-12-1841-1 Phase 2）：合法来源 {COMPUTED, APPROVED}。
@@ -162,7 +162,7 @@ public class DrpEngine {
         return multiples.multiply(orderMultiple);
     }
 
-    private void clearSuggestedLines(IEntityDao<ErpDrpLine> dao, Long planId) {
+    private void clearSuggestedLines(IEntityDao<ErpDrpLine> dao, String planId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("planId", planId));
         for (ErpDrpLine l : dao.findAllByQuery(q)) {
@@ -172,7 +172,7 @@ public class DrpEngine {
         }
     }
 
-    private ErpDrpPlan requirePlan(Long planId) {
+    private ErpDrpPlan requirePlan(String planId) {
         if (planId == null) {
             throw new NopException(ErpDrpErrors.ERR_DRP_PLAN_ILLEGAL_TRANSITION)
                     .param(ErpDrpErrors.ARG_DRP_PLAN_ID, planId);

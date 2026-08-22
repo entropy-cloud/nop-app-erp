@@ -55,13 +55,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpDrpLeadTimeStats extends JunitAutoTestCase {
 
-    static final Long ORG_ID = 8401L;
-    static final Long UOM_ID = 8501L;
-    static final Long WH_ID = 8101L;
-    static final Long SUP1 = 8001L;  // 评分主供应商
-    static final Long SUP2 = 8002L;  // 粒度对照供应商
-    static final Long M1 = 8201L;    // 评分/统计主物料
-    static final Long M2 = 8202L;    // 粒度对照物料
+    static final String ORG_ID = "8401";
+    static final String UOM_ID = "8501";
+    static final String WH_ID = "8101";
+    static final String SUP1 = "8001";  // 评分主供应商
+    static final String SUP2 = "8002";  // 粒度对照供应商
+    static final String M1 = "8201";    // 评分/统计主物料
+    static final String M2 = "8202";    // 粒度对照物料
 
     // 联合变分需求数据：两月出库 [900, 1500] → μ_m=1200 σ_m=300 → μ_d=40 σ_d²=σ_m²/30=3000（精确值）
     static final LocalDate REF = LocalDate.of(2026, 7, 17);
@@ -209,9 +209,9 @@ public class TestErpDrpLeadTimeStats extends JunitAutoTestCase {
             seedRecord("PO-A" + i, SUP1, M1, 10, 10);
         }
         // A 边界 90 = 70 + 数量 15（accuracy 0.75：ordered 100 / received 75）+ 质量 5（1 合格 1 不合格）
-        seedPurOrder("PO-QA", 8901L, SUP1, M1, bd("100"), bd("75"));
-        seedQaInspection(8701L, "QA-A1", SUP1, M1, ErpDrpConstants.QA_INSPECTION_RESULT_ACCEPTED);
-        seedQaInspection(8702L, "QA-A2", SUP1, M1, "REJECTED");
+        seedPurOrder("PO-QA", "8901", SUP1, M1, bd("100"), bd("75"));
+        seedQaInspection("8701", "QA-A1", SUP1, M1, ErpDrpConstants.QA_INSPECTION_RESULT_ACCEPTED);
+        seedQaInspection("8702", "QA-A2", SUP1, M1, "REJECTED");
 
         ErpInvDrpSupplierScore score = recalcOk(SUP1, M1);
         assertEquals(0, score.getTotalScore().compareTo(bd("90.00")), "总分应精确等于 90（A 下界）");
@@ -226,8 +226,8 @@ public class TestErpDrpLeadTimeStats extends JunitAutoTestCase {
         for (int i = 1; i <= 5; i++) {
             seedRecord("PO-B" + i, SUP2, M2, 10, 10);
         }
-        seedPurOrder("PO-QB", 8902L, SUP2, M2, bd("100"), bd("25"));
-        seedQaInspection(8703L, "QA-B1", SUP2, M2, "REJECTED");
+        seedPurOrder("PO-QB", "8902", SUP2, M2, bd("100"), bd("25"));
+        seedQaInspection("8703", "QA-B1", SUP2, M2, "REJECTED");
 
         ErpInvDrpSupplierScore scoreB = recalcOk(SUP2, M2);
         assertEquals(0, scoreB.getTotalScore().compareTo(bd("75.00")), "总分应精确等于 75（B 下界）");
@@ -246,13 +246,13 @@ public class TestErpDrpLeadTimeStats extends JunitAutoTestCase {
         seedRecord("PO-C3", SUP1, M1, 10, 10);
         seedRecord("PO-C4", SUP1, M1, 10, 10);
         seedRecord("PO-C5", SUP1, M1, 20, 10);
-        seedPurOrder("PO-QC", 8903L, SUP1, M1, bd("100"), bd("25"));
+        seedPurOrder("PO-QC", "8903", SUP1, M1, bd("100"), bd("25"));
         for (int i = 1; i <= 3; i++) {
-            seedQaInspection(8710L + i, "QA-C-ACC" + i, SUP1, M1,
+            seedQaInspection(String.valueOf(8710L + i), "QA-C-ACC" + i, SUP1, M1,
                     ErpDrpConstants.QA_INSPECTION_RESULT_ACCEPTED);
         }
         for (int i = 1; i <= 7; i++) {
-            seedQaInspection(8720L + i, "QA-C-REJ" + i, SUP1, M1, "REJECTED");
+            seedQaInspection(String.valueOf(8720L + i), "QA-C-REJ" + i, SUP1, M1, "REJECTED");
         }
 
         ErpInvDrpSupplierScore scoreC = recalcOk(SUP1, M1);
@@ -321,7 +321,7 @@ public class TestErpDrpLeadTimeStats extends JunitAutoTestCase {
         }
         seedDemand(M1, "SM-L1", REF.minusMonths(2), bd("900"));
         seedDemand(M1, "SM-L2", REF.minusMonths(1), bd("1500"));
-        Long calcId = seedCalc(M1, 8601L, 20);
+        String calcId = seedCalc(M1, "8601", 20);
 
         calculateOk(calcId);
         ErpInvDrpSafetyStockCalc calc = reloadCalc(calcId);
@@ -350,7 +350,7 @@ public class TestErpDrpLeadTimeStats extends JunitAutoTestCase {
         seedRecord("PO-JM5", SUP1, M1, 20, 10);
         seedDemand(M1, "SM-M1", REF.minusMonths(2), bd("900"));
         seedDemand(M1, "SM-M2", REF.minusMonths(1), bd("1500"));
-        Long calcId = seedCalc(M1, 8602L, 20);
+        String calcId = seedCalc(M1, "8602", 20);
 
         calculateOk(calcId);
         ErpInvDrpSafetyStockCalc calc = reloadCalc(calcId);
@@ -375,7 +375,7 @@ public class TestErpDrpLeadTimeStats extends JunitAutoTestCase {
         }
         seedDemand(M1, "SM-I1", REF.minusMonths(2), bd("900"));
         seedDemand(M1, "SM-I2", REF.minusMonths(1), bd("1500"));
-        Long calcId = seedCalc(M1, 8603L, 20);
+        String calcId = seedCalc(M1, "8603", 20);
 
         calculateOk(calcId);
         ErpInvDrpSafetyStockCalc calc = reloadCalc(calcId);
@@ -396,7 +396,7 @@ public class TestErpDrpLeadTimeStats extends JunitAutoTestCase {
         }
         seedDemand(M1, "SM-W1", REF.minusMonths(2), bd("900"));
         seedDemand(M1, "SM-W2", REF.minusMonths(1), bd("1500"));
-        Long calcId = seedCalc(M1, 8604L, 20);
+        String calcId = seedCalc(M1, "8604", 20);
 
         calculateOk(calcId);
 
@@ -417,7 +417,7 @@ public class TestErpDrpLeadTimeStats extends JunitAutoTestCase {
         seedSsBase(M2);
         seedDemand(M2, "SM-W3", REF.minusMonths(2), bd("900"));
         seedDemand(M2, "SM-W4", REF.minusMonths(1), bd("1500"));
-        Long calcId2 = seedCalc(M2, 8605L, 18);
+        String calcId2 = seedCalc(M2, "8605", 18);
         calculateOk(calcId2);
         confirmWritebackOk(calcId2);
         assertEquals(Integer.valueOf(20), reloadParameter(M2).getReplenishmentLeadTime(),
@@ -426,15 +426,15 @@ public class TestErpDrpLeadTimeStats extends JunitAutoTestCase {
 
     // ---------- helpers：RPC ----------
 
-    private int recordOk(String poCode, Long supplierId, LocalDate orderDate, LocalDate receiptDate,
-                         Integer expected, List<Long> materialIds) {
+    private int recordOk(String poCode, String supplierId, LocalDate orderDate, LocalDate receiptDate,
+                         Integer expected, List<String> materialIds) {
         ApiResponse<?> resp = rpcRecord(poCode, supplierId, orderDate, receiptDate, expected, materialIds);
         assertEquals(0, resp.getStatus(), "recordFromPurchaseReceive 应成功: " + resp);
         return ((Number) resp.getData()).intValue();
     }
 
-    private ApiResponse<?> rpcRecord(String poCode, Long supplierId, LocalDate orderDate,
-                                     LocalDate receiptDate, Integer expected, List<Long> materialIds) {
+    private ApiResponse<?> rpcRecord(String poCode, String supplierId, LocalDate orderDate,
+                                     LocalDate receiptDate, Integer expected, List<String> materialIds) {
         Map<String, Object> args = new java.util.LinkedHashMap<>();
         args.put("purchaseOrderCode", poCode);
         args.put("supplierId", supplierId);
@@ -446,41 +446,41 @@ public class TestErpDrpLeadTimeStats extends JunitAutoTestCase {
     }
 
     @SuppressWarnings("unchecked")
-    private Map<String, Object> statsOk(Long supplierId, Long materialId) {
+    private Map<String, Object> statsOk(String supplierId, String materialId) {
         ApiResponse<?> resp = rpcStats(supplierId, materialId);
         assertEquals(0, resp.getStatus(), "findLeadTimeStats 应成功: " + resp);
         return (Map<String, Object>) resp.getData();
     }
 
-    private ApiResponse<?> rpcStats(Long supplierId, Long materialId) {
+    private ApiResponse<?> rpcStats(String supplierId, String materialId) {
         Map<String, Object> args = new java.util.LinkedHashMap<>();
         args.put("supplierId", supplierId);
         args.put("materialId", materialId);
         return rpc(query, "ErpInvDrpLeadTimeRecord__findLeadTimeStats", args);
     }
 
-    private ErpInvDrpSupplierScore recalcOk(Long supplierId, Long materialId) {
+    private ErpInvDrpSupplierScore recalcOk(String supplierId, String materialId) {
         ApiResponse<?> resp = rpcRecalc(supplierId, materialId);
         assertEquals(0, resp.getStatus(), "recalculateLeadTimeStats 应成功: " + resp);
-        Long id = Long.valueOf(((Map<String, Object>) resp.getData()).get("id").toString());
+        String id = String.valueOf(((Map<String, Object>) resp.getData()).get("id").toString());
         return daoProvider.daoFor(ErpInvDrpSupplierScore.class).getEntityById(id);
     }
 
-    private ApiResponse<?> rpcRecalc(Long supplierId, Long materialId) {
+    private ApiResponse<?> rpcRecalc(String supplierId, String materialId) {
         Map<String, Object> args = new java.util.LinkedHashMap<>();
         args.put("supplierId", supplierId);
         args.put("materialId", materialId);
         return rpc(mutation, "ErpInvDrpLeadTimeRecord__recalculateLeadTimeStats", args);
     }
 
-    private void calculateOk(Long calcId) {
+    private void calculateOk(String calcId) {
         Map<String, Object> args = new java.util.LinkedHashMap<>();
         args.put("calcId", calcId);
         ApiResponse<?> resp = rpc(mutation, "ErpInvDrpSafetyStockCalc__calculate", args);
         assertEquals(0, resp.getStatus(), "calculate 应成功: " + resp);
     }
 
-    private void confirmWritebackOk(Long calcId) {
+    private void confirmWritebackOk(String calcId) {
         Map<String, Object> args = new java.util.LinkedHashMap<>();
         args.put("calcId", calcId);
         ApiResponse<?> resp = rpc(mutation, "ErpInvDrpSafetyStockCalc__confirmWriteback", args);
@@ -501,16 +501,16 @@ public class TestErpDrpLeadTimeStats extends JunitAutoTestCase {
         return findRecord(poCode, M1).getEarlyLateFlag();
     }
 
-    private void seedRecord(String poCode, Long supplierId, Long materialId, int actualDays, int expected) {
+    private void seedRecord(String poCode, String supplierId, String materialId, int actualDays, int expected) {
         seedRecordWithDates(poCode, supplierId, materialId, actualDays, expected, LocalDate.of(2026, 6, 20));
     }
 
-    private void seedRecordWithDates(String poCode, Long supplierId, Long materialId, int actualDays,
+    private void seedRecordWithDates(String poCode, String supplierId, String materialId, int actualDays,
                                      int expected, LocalDate receiptDate) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpInvDrpLeadTimeRecord> dao = daoProvider.daoFor(ErpInvDrpLeadTimeRecord.class);
             ErpInvDrpLeadTimeRecord r = dao.newEntity();
-            r.orm_propValueByName("id", 8300L + SEQ.incrementAndGet());
+            r.orm_propValueByName("id", String.valueOf(8300L + SEQ.incrementAndGet()));
             r.setSupplierId(supplierId);
             r.setMaterialId(materialId);
             r.setOrderDate(receiptDate.minusDays(actualDays));
@@ -526,7 +526,7 @@ public class TestErpDrpLeadTimeStats extends JunitAutoTestCase {
         });
     }
 
-    private ErpInvDrpLeadTimeRecord findRecord(String poCode, Long materialId) {
+    private ErpInvDrpLeadTimeRecord findRecord(String poCode, String materialId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("purchaseOrderCode", poCode));
         q.addFilter(eq("materialId", materialId));
@@ -535,7 +535,7 @@ public class TestErpDrpLeadTimeStats extends JunitAutoTestCase {
         return list.isEmpty() ? null : list.get(0);
     }
 
-    private void seedPurOrder(String code, Long orderId, Long supplierId, Long materialId,
+    private void seedPurOrder(String code, String orderId, String supplierId, String materialId,
                               BigDecimal ordered, BigDecimal received) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpPurOrder> odao = daoProvider.daoFor(ErpPurOrder.class);
@@ -545,14 +545,14 @@ public class TestErpDrpLeadTimeStats extends JunitAutoTestCase {
             o.setOrgId(ORG_ID);
             o.setSupplierId(supplierId);
             o.setBusinessDate(LocalDate.of(2026, 6, 1));
-            o.setCurrencyId(8801L);
+            o.setCurrencyId("8801");
             o.orm_propValueByName("docStatus", "APPROVED");
             o.orm_propValueByName("approveStatus", ErpDrpConstants.PUR_ORDER_APPROVE_STATUS_APPROVED);
             odao.saveEntity(o);
 
             IEntityDao<ErpPurOrderLine> ldao = daoProvider.daoFor(ErpPurOrderLine.class);
             ErpPurOrderLine l = ldao.newEntity();
-            l.orm_propValueByName("id", orderId + 100L);
+            l.orm_propValueByName("id", String.valueOf(Long.parseLong(orderId) + 100L));
             l.setOrderId(orderId);
             l.setLineNo(10);
             l.setMaterialId(materialId);
@@ -565,7 +565,7 @@ public class TestErpDrpLeadTimeStats extends JunitAutoTestCase {
         });
     }
 
-    private void seedQaInspection(Long id, String code, Long supplierId, Long materialId, String result) {
+    private void seedQaInspection(String id, String code, String supplierId, String materialId, String result) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpQaInspection> dao = daoProvider.daoFor(ErpQaInspection.class);
             ErpQaInspection i = dao.newEntity();
@@ -592,14 +592,14 @@ public class TestErpDrpLeadTimeStats extends JunitAutoTestCase {
         seedPartner(SUP2);
     }
 
-    private void seedSsBase(Long materialId) {
+    private void seedSsBase(String materialId) {
         seedMaterial(materialId);
         seedWarehouse();
         // 参数：safetyStock=50 leadTime=20 preferredSupplier=SUP1（联合变分 σ_lt 供应商解析）
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpDrpParameter> dao = daoProvider.daoFor(ErpDrpParameter.class);
             ErpDrpParameter p = dao.newEntity();
-            p.orm_propValueByName("id", 8100L + materialId);
+            p.orm_propValueByName("id", String.valueOf(8100L + Long.parseLong(materialId)));
             p.setMaterialId(materialId);
             p.setWarehouseId(WH_ID);
             p.setSafetyStock(bd("50"));
@@ -612,10 +612,10 @@ public class TestErpDrpLeadTimeStats extends JunitAutoTestCase {
         });
     }
 
-    private void seedDemand(Long materialId, String code, LocalDate businessDate, BigDecimal qty) {
+    private void seedDemand(String materialId, String code, LocalDate businessDate, BigDecimal qty) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpInvStockMove> mdao = daoProvider.daoFor(ErpInvStockMove.class);
-            Long moveId = 8300L + SEQ.incrementAndGet();
+            String moveId = String.valueOf(8300L + SEQ.incrementAndGet());
             ErpInvStockMove m = mdao.newEntity();
             m.orm_propValueByName("id", moveId);
             m.setCode(code);
@@ -640,7 +640,7 @@ public class TestErpDrpLeadTimeStats extends JunitAutoTestCase {
         });
     }
 
-    private Long seedCalc(Long materialId, Long calcId, int leadTimeDays) {
+    private String seedCalc(String materialId, String calcId, int leadTimeDays) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpInvDrpSafetyStockCalc> dao = daoProvider.daoFor(ErpInvDrpSafetyStockCalc.class);
             ErpInvDrpSafetyStockCalc c = dao.newEntity();
@@ -658,11 +658,11 @@ public class TestErpDrpLeadTimeStats extends JunitAutoTestCase {
         return calcId;
     }
 
-    private ErpInvDrpSafetyStockCalc reloadCalc(Long calcId) {
+    private ErpInvDrpSafetyStockCalc reloadCalc(String calcId) {
         return daoProvider.daoFor(ErpInvDrpSafetyStockCalc.class).getEntityById(calcId);
     }
 
-    private ErpDrpParameter reloadParameter(Long materialId) {
+    private ErpDrpParameter reloadParameter(String materialId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("materialId", materialId));
         q.addFilter(eq("warehouseId", WH_ID));
@@ -671,7 +671,7 @@ public class TestErpDrpLeadTimeStats extends JunitAutoTestCase {
         return list.get(0);
     }
 
-    private void seedMaterial(Long id) {
+    private void seedMaterial(String id) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMdMaterial> dao = daoProvider.daoFor(ErpMdMaterial.class);
             if (dao.getEntityById(id) != null) {
@@ -703,7 +703,7 @@ public class TestErpDrpLeadTimeStats extends JunitAutoTestCase {
         });
     }
 
-    private void seedPartner(Long id) {
+    private void seedPartner(String id) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMdPartner> dao = daoProvider.daoFor(ErpMdPartner.class);
             if (dao.getEntityById(id) != null) {

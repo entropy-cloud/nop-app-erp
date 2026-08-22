@@ -22,14 +22,14 @@ public class ErpDrpLineReleaseLineProcessor {
     @Inject
     DrpReleaseService drpReleaseService;
 
-    public ErpDrpLine releaseLine(Long lineId, IServiceContext context) {
+    public ErpDrpLine releaseLine(String lineId, IServiceContext context) {
         drpReleaseService.releaseLine(lineId);
         return requireLine(lineId);
     }
 
     // ---------- 内部辅助 ----------
 
-    protected ErpDrpLine requireLine(Long lineId) {
+    protected ErpDrpLine requireLine(String lineId) {
         ErpDrpLine line = dao().getEntityById(lineId);
         if (line == null) {
             throw new NopException(ErpDrpErrors.ERR_DRP_LINE_NOT_FOUND)

@@ -1,0 +1,2 @@
+_chgType,ID,WAREHOUSE_ID,CODE,NAME,PARENT_ID,IS_ACTIVE,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
+A,6151,6101,@var:ErpMdLocation@code,Cross Dock Staging 6151,,true,@var:ErpMdLocation@delVersion,0,autotest-ref,*,autotest-ref,*

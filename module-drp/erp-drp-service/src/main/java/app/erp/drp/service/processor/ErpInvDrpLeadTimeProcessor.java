@@ -84,9 +84,9 @@ public class ErpInvDrpLeadTimeProcessor {
 
     // ---------- 入口 ----------
 
-    public int recordFromPurchaseReceive(String purchaseOrderCode, Long supplierId, LocalDate orderDate,
+    public int recordFromPurchaseReceive(String purchaseOrderCode, String supplierId, LocalDate orderDate,
                                          LocalDate receiptDate, Integer expectedLeadTime,
-                                         List<Long> materialIds, IServiceContext context) {
+                                         List<String> materialIds, IServiceContext context) {
         if (purchaseOrderCode == null || purchaseOrderCode.isEmpty() || supplierId == null
                 || materialIds == null || materialIds.isEmpty()) {
             return 0;
@@ -98,7 +98,7 @@ public class ErpInvDrpLeadTimeProcessor {
         long actual = ChronoUnit.DAYS.between(orderDate, receiptDate);
         Integer expected = expectedLeadTime != null && expectedLeadTime >= 0 ? expectedLeadTime : null;
         int created = 0;
-        for (Long materialId : new LinkedHashSet<>(materialIds)) {
+        for (String materialId : new LinkedHashSet<>(materialIds)) {
             if (materialId == null || existsRecord(purchaseOrderCode, materialId)) {
                 continue;
             }
@@ -108,14 +108,14 @@ public class ErpInvDrpLeadTimeProcessor {
         return created;
     }
 
-    public LeadTimeStatsBean findLeadTimeStats(Long supplierId, Long materialId, IServiceContext context) {
+    public LeadTimeStatsBean findLeadTimeStats(String supplierId, String materialId, IServiceContext context) {
         if (supplierId == null && materialId == null) {
             throw new NopException(ErpDrpErrors.ERR_DRP_LT_STATS_FILTER_REQUIRED);
         }
         return computeStats(loadRecords(supplierId, materialId), supplierId, materialId);
     }
 
-    public ErpInvDrpSupplierScore recalculateLeadTimeStats(Long supplierId, Long materialId,
+    public ErpInvDrpSupplierScore recalculateLeadTimeStats(String supplierId, String materialId,
                                                            IServiceContext context) {
         if (supplierId == null || materialId == null) {
             throw new NopException(ErpDrpErrors.ERR_DRP_LT_STATS_FILTER_REQUIRED);
@@ -132,7 +132,7 @@ public class ErpInvDrpLeadTimeProcessor {
 
     // ---------- step：记录写入 ----------
 
-    protected int createRecord(String purchaseOrderCode, Long supplierId, Long materialId,
+    protected int createRecord(String purchaseOrderCode, String supplierId, String materialId,
                                LocalDate orderDate, LocalDate receiptDate, int actual, Integer expected,
                                IServiceContext context) {
         ErpInvDrpLeadTimeRecord record = recordDao().newEntity();
@@ -174,7 +174,7 @@ public class ErpInvDrpLeadTimeProcessor {
         return ErpDrpConstants.LT_FLAG_ON_TIME;
     }
 
-    protected boolean existsRecord(String purchaseOrderCode, Long materialId) {
+    protected boolean existsRecord(String purchaseOrderCode, String materialId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("purchaseOrderCode", purchaseOrderCode));
         q.addFilter(eq("materialId", materialId));
@@ -184,7 +184,7 @@ public class ErpInvDrpLeadTimeProcessor {
 
     // ---------- step：统计 ----------
 
-    protected List<ErpInvDrpLeadTimeRecord> loadRecords(Long supplierId, Long materialId) {
+    protected List<ErpInvDrpLeadTimeRecord> loadRecords(String supplierId, String materialId) {
         QueryBean q = new QueryBean();
         if (supplierId != null) {
             q.addFilter(eq("supplierId", supplierId));
@@ -206,8 +206,8 @@ public class ErpInvDrpLeadTimeProcessor {
         return records;
     }
 
-    protected LeadTimeStatsBean computeStats(List<ErpInvDrpLeadTimeRecord> records, Long supplierId,
-                                             Long materialId) {
+    protected LeadTimeStatsBean computeStats(List<ErpInvDrpLeadTimeRecord> records, String supplierId,
+                                             String materialId) {
         LeadTimeStatsBean stats = new LeadTimeStatsBean();
         stats.setSupplierId(supplierId);
         stats.setMaterialId(materialId);
@@ -341,7 +341,7 @@ public class ErpInvDrpLeadTimeProcessor {
      * 窗口裁剪在 Java 侧执行（biz 查询管道过滤操作集不保证支持 ge，对齐 CrossDockProcessor ne 先例）。
      * 无候选订单行（或 pur 模块未部署 @Nullable）→ null（样本缺失）。
      */
-    protected BigDecimal computeQuantityAccuracy(Long supplierId, Long materialId, IServiceContext context) {
+    protected BigDecimal computeQuantityAccuracy(String supplierId, String materialId, IServiceContext context) {
         if (purOrderBiz == null || supplierId == null || materialId == null) {
             return null;
         }
@@ -379,7 +379,7 @@ public class ErpInvDrpLeadTimeProcessor {
      * 合格（ACCEPTED 或 CONDITIONAL 让步接收，与越库快检口径一致）占比。窗口裁剪同上 Java 侧执行。
      * 无候选检验单（或 qa 模块未部署 @Nullable）→ null（样本缺失）。
      */
-    protected BigDecimal computeQualityPassRate(Long supplierId, Long materialId, IServiceContext context) {
+    protected BigDecimal computeQualityPassRate(String supplierId, String materialId, IServiceContext context) {
         if (inspectionBiz == null || supplierId == null || materialId == null) {
             return null;
         }
@@ -407,7 +407,7 @@ public class ErpInvDrpLeadTimeProcessor {
         return BigDecimal.valueOf(passed).divide(BigDecimal.valueOf(total), 4, RoundingMode.HALF_UP);
     }
 
-    protected ErpInvDrpSupplierScore findScore(Long supplierId, Long materialId) {
+    protected ErpInvDrpSupplierScore findScore(String supplierId, String materialId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("supplierId", supplierId));
         q.addFilter(eq("materialId", materialId));

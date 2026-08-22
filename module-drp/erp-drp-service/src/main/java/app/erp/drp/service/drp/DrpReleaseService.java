@@ -64,7 +64,7 @@ public class DrpReleaseService {
     /**
      * 释放单条 APPROVED 明细行。返回生成的下游单据 code（回写 orderBillCode）。
      */
-    public String releaseLine(Long lineId) {
+    public String releaseLine(String lineId) {
         ErpDrpLine line = requireReleasable(lineId);
         ErpDrpParameter param = requireParameter(line);
         String billCode;
@@ -74,7 +74,7 @@ public class DrpReleaseService {
                 throw new NopException(ErpDrpErrors.ERR_DRP_NO_SOURCE_WAREHOUSE)
                         .param(ErpDrpErrors.ARG_DRP_LINE_ID, lineId);
             }
-            Long sourceWh = param.getPreferredSourceWarehouseId() != null
+            String sourceWh = param.getPreferredSourceWarehouseId() != null
                     ? param.getPreferredSourceWarehouseId() : line.getSourceWarehouseId();
             billType = ErpDrpConstants.ORDER_BILL_TYPE_TRANSFER_ORDER;
             billCode = releaseToTransferOrder(line, sourceWh, CoreMetrics.today());
@@ -102,7 +102,7 @@ public class DrpReleaseService {
      *
      * @return 释放的行数
      */
-    public int releaseApproved(Long planId) {
+    public int releaseApproved(String planId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("planId", planId));
         q.addFilter(eq("status", ErpDrpConstants.DRP_LINE_STATUS_APPROVED));
@@ -118,7 +118,7 @@ public class DrpReleaseService {
         return released;
     }
 
-    private void advancePlanToExecutedIfComplete(Long planId) {
+    private void advancePlanToExecutedIfComplete(String planId) {
         ErpDrpPlan plan = daoProvider.daoFor(ErpDrpPlan.class).getEntityById(planId);
         if (plan == null) {
             return;
@@ -143,7 +143,7 @@ public class DrpReleaseService {
         daoProvider.daoFor(ErpDrpPlan.class).updateEntity(plan);
     }
 
-    private ErpDrpLine requireReleasable(Long lineId) {
+    private ErpDrpLine requireReleasable(String lineId) {
         if (lineId == null) {
             throw new NopException(ErpDrpErrors.ERR_DRP_LINE_NOT_SUGGESTED).param(ErpDrpErrors.ARG_DRP_LINE_ID, lineId);
         }
@@ -184,7 +184,7 @@ public class DrpReleaseService {
         return list.get(0);
     }
 
-    private String releaseToTransferOrder(ErpDrpLine line, Long sourceWarehouseId, LocalDate today) {
+    private String releaseToTransferOrder(ErpDrpLine line, String sourceWarehouseId, LocalDate today) {
         IEntityDao<ErpInvTransferOrder> orderDao = daoProvider.daoFor(ErpInvTransferOrder.class);
         ErpInvTransferOrder order = orderDao.newEntity();
         String code = ErpDrpConstants.RELEASE_TO_CODE_PREFIX + "TO-" + line.getId();
@@ -208,7 +208,7 @@ public class DrpReleaseService {
         return code;
     }
 
-    private String releaseToPurchaseOrder(ErpDrpLine line, Long supplierId, LocalDate today) {
+    private String releaseToPurchaseOrder(ErpDrpLine line, String supplierId, LocalDate today) {
         IEntityDao<ErpPurOrder> orderDao = daoProvider.daoFor(ErpPurOrder.class);
         ErpPurOrder order = orderDao.newEntity();
         String code = ErpDrpConstants.RELEASE_TO_CODE_PREFIX + "PO-" + line.getId();
@@ -235,7 +235,7 @@ public class DrpReleaseService {
         return code;
     }
 
-    private Long resolveUoM(Long materialId) {
+    private String resolveUoM(String materialId) {
         if (materialId == null) {
             return null;
         }
@@ -247,7 +247,7 @@ public class DrpReleaseService {
      * 解析默认币种：ErpDrpParameter 无币种字段，生成的采购单为草稿（单价/金额=0 待采购员补录），
      * 取首个可用币种作为占位。残留风险：采购员需复核币种。
      */
-    private Long resolveDefaultCurrencyId() {
+    private String resolveDefaultCurrencyId() {
         QueryBean q = new QueryBean();
         q.addFilter(eq("isActive", Boolean.TRUE));
         q.setLimit(1);

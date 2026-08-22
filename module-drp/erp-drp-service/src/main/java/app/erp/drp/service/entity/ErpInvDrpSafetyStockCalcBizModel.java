@@ -41,19 +41,19 @@ public class ErpInvDrpSafetyStockCalcBizModel extends CrudBizModel<ErpInvDrpSafe
 
     @Override
     @BizMutation
-    public ErpInvDrpSafetyStockCalc calculate(@Name("calcId") Long calcId, IServiceContext context) {
+    public ErpInvDrpSafetyStockCalc calculate(@Name("calcId") String calcId, IServiceContext context) {
         return calculateProcessor.calculate(calcId, context);
     }
 
     @Override
     @BizQuery
-    public BigDecimal findEffectiveSafetyStock(@Name("parameterId") Long parameterId, IServiceContext context) {
+    public BigDecimal findEffectiveSafetyStock(@Name("parameterId") String parameterId, IServiceContext context) {
         return safetyStockEngine.findEffectiveSafetyStockByParameterId(parameterId);
     }
 
     @Override
     @BizMutation
-    public ErpInvDrpSafetyStockCalc confirmWriteback(@Name("calcId") Long calcId, IServiceContext context) {
+    public ErpInvDrpSafetyStockCalc confirmWriteback(@Name("calcId") String calcId, IServiceContext context) {
         return confirmWritebackProcessor.confirmWriteback(calcId, context);
     }
 }

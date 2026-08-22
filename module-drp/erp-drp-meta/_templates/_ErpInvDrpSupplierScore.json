@@ -1,8 +1,8 @@
 {
-  "id": 0,
-  "orgId": 0,
-  "supplierId": 0,
-  "materialId": 0,
+  "id": "",
+  "orgId": "",
+  "supplierId": "",
+  "materialId": "",
   "sampleCount": 0,
   "avgLeadTime": 0.0,
   "leadTimeStdDev": 0.0,

@@ -130,16 +130,16 @@ public class _ErpDrpScenarioParam extends DynamicOrmEntity{
 
     
     /* ID: ID */
-    private java.lang.Long _id;
+    private java.lang.String _id;
     
     /* 仿真场景: SCENARIO_ID */
-    private java.lang.Long _scenarioId;
+    private java.lang.String _scenarioId;
     
     /* 物料(空=全局覆盖): MATERIAL_ID */
-    private java.lang.Long _materialId;
+    private java.lang.String _materialId;
     
     /* 仓库(空=全局覆盖): WAREHOUSE_ID */
-    private java.lang.Long _warehouseId;
+    private java.lang.String _warehouseId;
     
     /* 参数类型: PARAM_TYPE */
     private java.lang.String _paramType;
@@ -287,9 +287,9 @@ public class _ErpDrpScenarioParam extends DynamicOrmEntity{
         switch(propId){
         
             case PROP_ID_id:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_id));
                }
                setId(typedValue);
@@ -297,9 +297,9 @@ public class _ErpDrpScenarioParam extends DynamicOrmEntity{
             }
         
             case PROP_ID_scenarioId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_scenarioId));
                }
                setScenarioId(typedValue);
@@ -307,9 +307,9 @@ public class _ErpDrpScenarioParam extends DynamicOrmEntity{
             }
         
             case PROP_ID_materialId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_materialId));
                }
                setMaterialId(typedValue);
@@ -317,9 +317,9 @@ public class _ErpDrpScenarioParam extends DynamicOrmEntity{
             }
         
             case PROP_ID_warehouseId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_warehouseId));
                }
                setWarehouseId(typedValue);
@@ -417,28 +417,28 @@ public class _ErpDrpScenarioParam extends DynamicOrmEntity{
         
             case PROP_ID_id:{
                onInitProp(propId);
-               this._id = (java.lang.Long)value;
+               this._id = (java.lang.String)value;
                orm_id(); // 如果是设置主键字段，则触发watcher
                break;
             }
         
             case PROP_ID_scenarioId:{
                onInitProp(propId);
-               this._scenarioId = (java.lang.Long)value;
+               this._scenarioId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_materialId:{
                onInitProp(propId);
-               this._materialId = (java.lang.Long)value;
+               this._materialId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_warehouseId:{
                onInitProp(propId);
-               this._warehouseId = (java.lang.Long)value;
+               this._warehouseId = (java.lang.String)value;
                
                break;
             }
@@ -508,7 +508,7 @@ public class _ErpDrpScenarioParam extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final java.lang.Long getId(){
+    public final java.lang.String getId(){
          onPropGet(PROP_ID_id);
          return _id;
     }
@@ -516,7 +516,7 @@ public class _ErpDrpScenarioParam extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final void setId(java.lang.Long value){
+    public final void setId(java.lang.String value){
         if(onPropSet(PROP_ID_id,value)){
             this._id = value;
             internalClearRefs(PROP_ID_id);
@@ -527,7 +527,7 @@ public class _ErpDrpScenarioParam extends DynamicOrmEntity{
     /**
      * 仿真场景: SCENARIO_ID
      */
-    public final java.lang.Long getScenarioId(){
+    public final java.lang.String getScenarioId(){
          onPropGet(PROP_ID_scenarioId);
          return _scenarioId;
     }
@@ -535,7 +535,7 @@ public class _ErpDrpScenarioParam extends DynamicOrmEntity{
     /**
      * 仿真场景: SCENARIO_ID
      */
-    public final void setScenarioId(java.lang.Long value){
+    public final void setScenarioId(java.lang.String value){
         if(onPropSet(PROP_ID_scenarioId,value)){
             this._scenarioId = value;
             internalClearRefs(PROP_ID_scenarioId);
@@ -546,7 +546,7 @@ public class _ErpDrpScenarioParam extends DynamicOrmEntity{
     /**
      * 物料(空=全局覆盖): MATERIAL_ID
      */
-    public final java.lang.Long getMaterialId(){
+    public final java.lang.String getMaterialId(){
          onPropGet(PROP_ID_materialId);
          return _materialId;
     }
@@ -554,7 +554,7 @@ public class _ErpDrpScenarioParam extends DynamicOrmEntity{
     /**
      * 物料(空=全局覆盖): MATERIAL_ID
      */
-    public final void setMaterialId(java.lang.Long value){
+    public final void setMaterialId(java.lang.String value){
         if(onPropSet(PROP_ID_materialId,value)){
             this._materialId = value;
             internalClearRefs(PROP_ID_materialId);
@@ -565,7 +565,7 @@ public class _ErpDrpScenarioParam extends DynamicOrmEntity{
     /**
      * 仓库(空=全局覆盖): WAREHOUSE_ID
      */
-    public final java.lang.Long getWarehouseId(){
+    public final java.lang.String getWarehouseId(){
          onPropGet(PROP_ID_warehouseId);
          return _warehouseId;
     }
@@ -573,7 +573,7 @@ public class _ErpDrpScenarioParam extends DynamicOrmEntity{
     /**
      * 仓库(空=全局覆盖): WAREHOUSE_ID
      */
-    public final void setWarehouseId(java.lang.Long value){
+    public final void setWarehouseId(java.lang.String value){
         if(onPropSet(PROP_ID_warehouseId,value)){
             this._warehouseId = value;
             internalClearRefs(PROP_ID_warehouseId);

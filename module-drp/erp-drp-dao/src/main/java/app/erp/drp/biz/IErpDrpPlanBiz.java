@@ -12,17 +12,17 @@ public interface IErpDrpPlanBiz extends ICrudBiz<ErpDrpPlan> {
      * 运行 DRP 净需求计算：计划状态 DRAFT→COMPUTED，生成 SUGGESTED 明细行。
      */
     @BizMutation
-    ErpDrpPlan runDrp(@Name("planId") Long planId, IServiceContext context);
+    ErpDrpPlan runDrp(@Name("planId") String planId, IServiceContext context);
 
     /**
      * 批准 DRP 计划：计划状态 COMPUTED→APPROVED，明细行 SUGGESTED→APPROVED（由计划主管审批）。
      */
     @BizMutation
-    ErpDrpPlan approvePlan(@Name("planId") Long planId, IServiceContext context);
+    ErpDrpPlan approvePlan(@Name("planId") String planId, IServiceContext context);
 
     /**
      * 重置计划为 DRAFT：清除既有 SUGGESTED 行，供调参后重新计算。
      */
     @BizMutation
-    ErpDrpPlan resetToDraft(@Name("planId") Long planId, IServiceContext context);
+    ErpDrpPlan resetToDraft(@Name("planId") String planId, IServiceContext context);
 }

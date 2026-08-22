@@ -1,0 +1,3 @@
+_chgType,ID,CODE,PLAN_NAME,PERIOD_FROM,PERIOD_TO,STATUS,TOTAL_REPLENISHMENT_QTY,RUN_AT,RUN_BY,ORG_ID,REMARK,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME,BUSINESS_DATE
+A,2,@var:ErpDrpPlan@code_1,Plan DRP-BASE-SS (SIM V1),2026-08-01,2026-08-31,COMPUTED,20.0000,@var:ErpDrpPlan@runAt_1,,7401,,@var:ErpDrpPlan@delVersion_1,0,autotest-ref,*,autotest-ref,*,@var:ErpDrpPlan@businessDate
+A,8861,@var:ErpDrpPlan@code,Plan DRP-BASE-SS,2026-08-01,2026-08-31,COMPUTED,10.0000,@var:ErpDrpPlan@runAt,,7401,,@var:ErpDrpPlan@delVersion_1,1,autotest-ref,*,autotest-ref,*,@var:ErpDrpPlan@businessDate

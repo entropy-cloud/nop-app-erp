@@ -230,22 +230,22 @@ public class _ErpInvDrpCrossDock extends DynamicOrmEntity{
 
     
     /* ID: ID */
-    private java.lang.Long _id;
+    private java.lang.String _id;
     
     /* 编号: CODE */
     private java.lang.String _code;
     
     /* 业务组织: ORG_ID */
-    private java.lang.Long _orgId;
+    private java.lang.String _orgId;
     
     /* DRP行: DRP_LINE_ID */
-    private java.lang.Long _drpLineId;
+    private java.lang.String _drpLineId;
     
     /* 入站移动单: INBOUND_MOVE_ID */
-    private java.lang.Long _inboundMoveId;
+    private java.lang.String _inboundMoveId;
     
     /* 出站移动单: OUTBOUND_MOVE_ID */
-    private java.lang.Long _outboundMoveId;
+    private java.lang.String _outboundMoveId;
     
     /* 来源单据类型: SOURCE_BILL_TYPE */
     private java.lang.String _sourceBillType;
@@ -260,13 +260,13 @@ public class _ErpInvDrpCrossDock extends DynamicOrmEntity{
     private java.lang.String _targetBillCode;
     
     /* 物料: MATERIAL_ID */
-    private java.lang.Long _materialId;
+    private java.lang.String _materialId;
     
     /* 越库数量: QUANTITY */
     private java.math.BigDecimal _quantity;
     
     /* 暂存库位: STAGING_LOCATION_ID */
-    private java.lang.Long _stagingLocationId;
+    private java.lang.String _stagingLocationId;
     
     /* 月台时间窗口: DOCK_SLOT_TIME */
     private java.sql.Timestamp _dockSlotTime;
@@ -465,9 +465,9 @@ public class _ErpInvDrpCrossDock extends DynamicOrmEntity{
         switch(propId){
         
             case PROP_ID_id:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_id));
                }
                setId(typedValue);
@@ -485,9 +485,9 @@ public class _ErpInvDrpCrossDock extends DynamicOrmEntity{
             }
         
             case PROP_ID_orgId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_orgId));
                }
                setOrgId(typedValue);
@@ -495,9 +495,9 @@ public class _ErpInvDrpCrossDock extends DynamicOrmEntity{
             }
         
             case PROP_ID_drpLineId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_drpLineId));
                }
                setDrpLineId(typedValue);
@@ -505,9 +505,9 @@ public class _ErpInvDrpCrossDock extends DynamicOrmEntity{
             }
         
             case PROP_ID_inboundMoveId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_inboundMoveId));
                }
                setInboundMoveId(typedValue);
@@ -515,9 +515,9 @@ public class _ErpInvDrpCrossDock extends DynamicOrmEntity{
             }
         
             case PROP_ID_outboundMoveId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_outboundMoveId));
                }
                setOutboundMoveId(typedValue);
@@ -565,9 +565,9 @@ public class _ErpInvDrpCrossDock extends DynamicOrmEntity{
             }
         
             case PROP_ID_materialId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_materialId));
                }
                setMaterialId(typedValue);
@@ -585,9 +585,9 @@ public class _ErpInvDrpCrossDock extends DynamicOrmEntity{
             }
         
             case PROP_ID_stagingLocationId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_stagingLocationId));
                }
                setStagingLocationId(typedValue);
@@ -725,7 +725,7 @@ public class _ErpInvDrpCrossDock extends DynamicOrmEntity{
         
             case PROP_ID_id:{
                onInitProp(propId);
-               this._id = (java.lang.Long)value;
+               this._id = (java.lang.String)value;
                orm_id(); // 如果是设置主键字段，则触发watcher
                break;
             }
@@ -739,28 +739,28 @@ public class _ErpInvDrpCrossDock extends DynamicOrmEntity{
         
             case PROP_ID_orgId:{
                onInitProp(propId);
-               this._orgId = (java.lang.Long)value;
+               this._orgId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_drpLineId:{
                onInitProp(propId);
-               this._drpLineId = (java.lang.Long)value;
+               this._drpLineId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_inboundMoveId:{
                onInitProp(propId);
-               this._inboundMoveId = (java.lang.Long)value;
+               this._inboundMoveId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_outboundMoveId:{
                onInitProp(propId);
-               this._outboundMoveId = (java.lang.Long)value;
+               this._outboundMoveId = (java.lang.String)value;
                
                break;
             }
@@ -795,7 +795,7 @@ public class _ErpInvDrpCrossDock extends DynamicOrmEntity{
         
             case PROP_ID_materialId:{
                onInitProp(propId);
-               this._materialId = (java.lang.Long)value;
+               this._materialId = (java.lang.String)value;
                
                break;
             }
@@ -809,7 +809,7 @@ public class _ErpInvDrpCrossDock extends DynamicOrmEntity{
         
             case PROP_ID_stagingLocationId:{
                onInitProp(propId);
-               this._stagingLocationId = (java.lang.Long)value;
+               this._stagingLocationId = (java.lang.String)value;
                
                break;
             }
@@ -907,7 +907,7 @@ public class _ErpInvDrpCrossDock extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final java.lang.Long getId(){
+    public final java.lang.String getId(){
          onPropGet(PROP_ID_id);
          return _id;
     }
@@ -915,7 +915,7 @@ public class _ErpInvDrpCrossDock extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final void setId(java.lang.Long value){
+    public final void setId(java.lang.String value){
         if(onPropSet(PROP_ID_id,value)){
             this._id = value;
             internalClearRefs(PROP_ID_id);
@@ -945,7 +945,7 @@ public class _ErpInvDrpCrossDock extends DynamicOrmEntity{
     /**
      * 业务组织: ORG_ID
      */
-    public final java.lang.Long getOrgId(){
+    public final java.lang.String getOrgId(){
          onPropGet(PROP_ID_orgId);
          return _orgId;
     }
@@ -953,7 +953,7 @@ public class _ErpInvDrpCrossDock extends DynamicOrmEntity{
     /**
      * 业务组织: ORG_ID
      */
-    public final void setOrgId(java.lang.Long value){
+    public final void setOrgId(java.lang.String value){
         if(onPropSet(PROP_ID_orgId,value)){
             this._orgId = value;
             internalClearRefs(PROP_ID_orgId);
@@ -964,7 +964,7 @@ public class _ErpInvDrpCrossDock extends DynamicOrmEntity{
     /**
      * DRP行: DRP_LINE_ID
      */
-    public final java.lang.Long getDrpLineId(){
+    public final java.lang.String getDrpLineId(){
          onPropGet(PROP_ID_drpLineId);
          return _drpLineId;
     }
@@ -972,7 +972,7 @@ public class _ErpInvDrpCrossDock extends DynamicOrmEntity{
     /**
      * DRP行: DRP_LINE_ID
      */
-    public final void setDrpLineId(java.lang.Long value){
+    public final void setDrpLineId(java.lang.String value){
         if(onPropSet(PROP_ID_drpLineId,value)){
             this._drpLineId = value;
             internalClearRefs(PROP_ID_drpLineId);
@@ -983,7 +983,7 @@ public class _ErpInvDrpCrossDock extends DynamicOrmEntity{
     /**
      * 入站移动单: INBOUND_MOVE_ID
      */
-    public final java.lang.Long getInboundMoveId(){
+    public final java.lang.String getInboundMoveId(){
          onPropGet(PROP_ID_inboundMoveId);
          return _inboundMoveId;
     }
@@ -991,7 +991,7 @@ public class _ErpInvDrpCrossDock extends DynamicOrmEntity{
     /**
      * 入站移动单: INBOUND_MOVE_ID
      */
-    public final void setInboundMoveId(java.lang.Long value){
+    public final void setInboundMoveId(java.lang.String value){
         if(onPropSet(PROP_ID_inboundMoveId,value)){
             this._inboundMoveId = value;
             internalClearRefs(PROP_ID_inboundMoveId);
@@ -1002,7 +1002,7 @@ public class _ErpInvDrpCrossDock extends DynamicOrmEntity{
     /**
      * 出站移动单: OUTBOUND_MOVE_ID
      */
-    public final java.lang.Long getOutboundMoveId(){
+    public final java.lang.String getOutboundMoveId(){
          onPropGet(PROP_ID_outboundMoveId);
          return _outboundMoveId;
     }
@@ -1010,7 +1010,7 @@ public class _ErpInvDrpCrossDock extends DynamicOrmEntity{
     /**
      * 出站移动单: OUTBOUND_MOVE_ID
      */
-    public final void setOutboundMoveId(java.lang.Long value){
+    public final void setOutboundMoveId(java.lang.String value){
         if(onPropSet(PROP_ID_outboundMoveId,value)){
             this._outboundMoveId = value;
             internalClearRefs(PROP_ID_outboundMoveId);
@@ -1097,7 +1097,7 @@ public class _ErpInvDrpCrossDock extends DynamicOrmEntity{
     /**
      * 物料: MATERIAL_ID
      */
-    public final java.lang.Long getMaterialId(){
+    public final java.lang.String getMaterialId(){
          onPropGet(PROP_ID_materialId);
          return _materialId;
     }
@@ -1105,7 +1105,7 @@ public class _ErpInvDrpCrossDock extends DynamicOrmEntity{
     /**
      * 物料: MATERIAL_ID
      */
-    public final void setMaterialId(java.lang.Long value){
+    public final void setMaterialId(java.lang.String value){
         if(onPropSet(PROP_ID_materialId,value)){
             this._materialId = value;
             internalClearRefs(PROP_ID_materialId);
@@ -1135,7 +1135,7 @@ public class _ErpInvDrpCrossDock extends DynamicOrmEntity{
     /**
      * 暂存库位: STAGING_LOCATION_ID
      */
-    public final java.lang.Long getStagingLocationId(){
+    public final java.lang.String getStagingLocationId(){
          onPropGet(PROP_ID_stagingLocationId);
          return _stagingLocationId;
     }
@@ -1143,7 +1143,7 @@ public class _ErpInvDrpCrossDock extends DynamicOrmEntity{
     /**
      * 暂存库位: STAGING_LOCATION_ID
      */
-    public final void setStagingLocationId(java.lang.Long value){
+    public final void setStagingLocationId(java.lang.String value){
         if(onPropSet(PROP_ID_stagingLocationId,value)){
             this._stagingLocationId = value;
             internalClearRefs(PROP_ID_stagingLocationId);

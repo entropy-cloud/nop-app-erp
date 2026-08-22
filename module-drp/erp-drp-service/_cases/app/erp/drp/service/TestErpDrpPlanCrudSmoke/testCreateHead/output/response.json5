@@ -7,18 +7,18 @@
     "periodTo": "2026-12-31",
     "status": "DRAFT",
     "status_label": "DRAFT-草稿",
-    "totalReplenishmentQty": null,
-    "runAt": null,
-    "runBy": null,
-    "orgId": null,
-    "remark": null,
     "delVersion": 0,
     "version": 0,
     "createdBy": "autotest-ref",
     "createTime": "@var:ErpDrpPlan@createTime",
     "updatedBy": "autotest-ref",
     "updateTime": "@var:ErpDrpPlan@createTime",
-    "businessDate": "@var:ErpDrpPlan@businessDate"
+    "businessDate": "@var:ErpDrpPlan@businessDate",
+    "totalReplenishmentQty": null,
+    "runAt": null,
+    "runBy": null,
+    "orgId": null,
+    "remark": null
   },
   "status": 0
 }

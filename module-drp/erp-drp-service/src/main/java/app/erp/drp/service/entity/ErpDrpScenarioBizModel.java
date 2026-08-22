@@ -39,20 +39,20 @@ public class ErpDrpScenarioBizModel extends CrudBizModel<ErpDrpScenario> impleme
 
     @Override
     @BizMutation
-    public ErpDrpScenarioVersion runSimulation(@Name("scenarioId") Long scenarioId, IServiceContext context) {
+    public ErpDrpScenarioVersion runSimulation(@Name("scenarioId") String scenarioId, IServiceContext context) {
         return runSimulationProcessor.runSimulation(scenarioId, context);
     }
 
     @Override
     @BizMutation
-    public ErpDrpPlan promoteToFormalPlan(@Name("scenarioVersionId") Long scenarioVersionId, IServiceContext context) {
+    public ErpDrpPlan promoteToFormalPlan(@Name("scenarioVersionId") String scenarioVersionId, IServiceContext context) {
         return promoteToFormalPlanProcessor.promoteToFormalPlan(scenarioVersionId, context);
     }
 
     @Override
     @BizQuery
-    public DrpSimulationDiffResult compareVersions(@Name("versionIdA") Long versionIdA,
-                                                    @Name("versionIdB") Long versionIdB,
+    public DrpSimulationDiffResult compareVersions(@Name("versionIdA") String versionIdA,
+                                                    @Name("versionIdB") String versionIdB,
                                                     IServiceContext context) {
         return simulationComparator.compareDrpVersions(versionIdA, versionIdB);
     }

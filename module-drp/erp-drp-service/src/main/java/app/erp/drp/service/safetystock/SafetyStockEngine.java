@@ -82,7 +82,7 @@ public class SafetyStockEngine {
      * @throws NopException {@link ErpDrpErrors#ERR_DRP_SS_METHOD_UNSUPPORTED} 未支持方法；
      *                      {@link ErpDrpErrors#ERR_DRP_SS_INSUFFICIENT_HISTORY} STATISTICAL 历史不足（调用方降级 SIMPLE）
      */
-    public ErpInvDrpSafetyStockCalc calculate(Long calcId) {
+    public ErpInvDrpSafetyStockCalc calculate(String calcId) {
         ErpInvDrpSafetyStockCalc calc = requireCalc(calcId);
         String method = calc.getMethod() != null ? calc.getMethod()
                 : AppConfig.var(ErpDrpConfigs.CONFIG_DRP_SS_METHOD, ErpDrpConfigs.DEFAULT_DRP_SS_METHOD);
@@ -164,7 +164,7 @@ public class SafetyStockEngine {
      * 查询参数的有效安全库存：优先级
      * {@code overrideSafetyStock > calculatedSafetyStock > ErpDrpParameter.safetyStock}。
      */
-    public BigDecimal findEffectiveSafetyStock(Long materialId, Long warehouseId, Long orgId) {
+    public BigDecimal findEffectiveSafetyStock(String materialId, String warehouseId, String orgId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("materialId", materialId));
         q.addFilter(eq("warehouseId", warehouseId));
@@ -189,7 +189,7 @@ public class SafetyStockEngine {
     /**
      * 按 ErpDrpParameter 主键查询有效安全库存（{@code IErpInvDrpSafetyStockCalcBiz.findEffectiveSafetyStock} 入口）。
      */
-    public BigDecimal findEffectiveSafetyStockByParameterId(Long parameterId) {
+    public BigDecimal findEffectiveSafetyStockByParameterId(String parameterId) {
         ErpDrpParameter param = daoProvider.daoFor(ErpDrpParameter.class).getEntityById(parameterId);
         if (param == null || param.getMaterialId() == null || param.getWarehouseId() == null) {
             return BigDecimal.ZERO;
@@ -202,7 +202,7 @@ public class SafetyStockEngine {
      * RC-R1.82：提前期统计样本 ≥5 时同步回写建议 replenishmentLeadTime←μ_lt（经既有确认回写链，
      * 不绕过人工门；D5 裁决选项 A：实时计算不留列）。
      */
-    public void confirmWriteback(Long calcId) {
+    public void confirmWriteback(String calcId) {
         ErpInvDrpSafetyStockCalc calc = requireCalc(calcId);
         BigDecimal value = calc.getOverrideSafetyStock() != null && calc.getOverrideSafetyStock().signum() >= 0
                 ? calc.getOverrideSafetyStock()
@@ -235,7 +235,7 @@ public class SafetyStockEngine {
             return null;
         }
         ErpDrpParameter param = findParameter(calc.getMaterialId(), calc.getWarehouseId(), calc.getOrgId());
-        Long supplierId = param != null ? param.getPreferredSupplierId() : null;
+        String supplierId = param != null ? param.getPreferredSupplierId() : null;
         int windowDays = AppConfig.var(ErpDrpConfigs.CONFIG_DRP_LT_STATS_WINDOW_DAYS,
                 ErpDrpConfigs.DEFAULT_DRP_LT_STATS_WINDOW_DAYS);
         LocalDate since = windowDays > 0 ? CoreMetrics.today().minusDays(windowDays) : null;
@@ -270,7 +270,7 @@ public class SafetyStockEngine {
         BigDecimal stddev;
     }
 
-    private List<BigDecimal> monthlyDemands(Long materialId, Long warehouseId, int historyMonths) {
+    private List<BigDecimal> monthlyDemands(String materialId, String warehouseId, int historyMonths) {
         IEntityDao<ErpInvStockMove> moveDao = daoProvider.daoFor(ErpInvStockMove.class);
         IEntityDao<ErpInvStockMoveLine> lineDao = daoProvider.daoFor(ErpInvStockMoveLine.class);
 
@@ -289,8 +289,8 @@ public class SafetyStockEngine {
             zero.add(BigDecimal.ZERO);
             return zero;
         }
-        List<Long> moveIds = new ArrayList<>();
-        Map<Long, ErpInvStockMove> moveById = new HashMap<>();
+        List<String> moveIds = new ArrayList<>();
+        Map<String, ErpInvStockMove> moveById = new HashMap<>();
         for (ErpInvStockMove m : moves) {
             moveIds.add(m.getId());
             moveById.put(m.getId(), m);
@@ -363,7 +363,7 @@ public class SafetyStockEngine {
         return new BigDecimal("1.645"); // PCT95 默认
     }
 
-    private ErpDrpParameter findParameter(Long materialId, Long warehouseId, Long orgId) {
+    private ErpDrpParameter findParameter(String materialId, String warehouseId, String orgId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("materialId", materialId));
         q.addFilter(eq("warehouseId", warehouseId));
@@ -375,7 +375,7 @@ public class SafetyStockEngine {
         return list.isEmpty() ? null : list.get(0);
     }
 
-    private ErpInvDrpSafetyStockCalc requireCalc(Long calcId) {
+    private ErpInvDrpSafetyStockCalc requireCalc(String calcId) {
         if (calcId == null) {
             throw new NopException(ErpDrpErrors.ERR_DRP_SS_METHOD_UNSUPPORTED)
                     .param(ErpDrpErrors.ARG_METHOD, "calcId 为空");

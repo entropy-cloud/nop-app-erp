@@ -110,7 +110,7 @@ public class ErpInvDrpCrossDockProcessor {
 
     // ---------- mutation 入口 ----------
 
-    public ErpInvDrpCrossDock receiveMark(Long id, Long inboundMoveId, IServiceContext context) {
+    public ErpInvDrpCrossDock receiveMark(String id, String inboundMoveId, IServiceContext context) {
         ErpInvDrpCrossDock dock = requireDock(id);
         assertXdockEnabled();
         validateTransition(dock, ErpDrpConstants.XDOCK_STATUS_PENDING, "PENDING");
@@ -118,7 +118,7 @@ public class ErpInvDrpCrossDockProcessor {
         return dock;
     }
 
-    public ErpInvDrpCrossDock match(Long id, String targetBillType, String targetBillCode, IServiceContext context) {
+    public ErpInvDrpCrossDock match(String id, String targetBillType, String targetBillCode, IServiceContext context) {
         ErpInvDrpCrossDock dock = requireDock(id);
         assertXdockEnabled();
         validateTransitionIn(dock, ErpDrpConstants.XDOCK_STATUS_PENDING, ErpDrpConstants.XDOCK_STATUS_STAGING);
@@ -131,7 +131,7 @@ public class ErpInvDrpCrossDockProcessor {
         return dock;
     }
 
-    public ErpInvDrpCrossDock load(Long id, IServiceContext context) {
+    public ErpInvDrpCrossDock load(String id, IServiceContext context) {
         ErpInvDrpCrossDock dock = requireDock(id);
         assertXdockEnabled();
         validateTransition(dock, ErpDrpConstants.XDOCK_STATUS_MATCHED, "MATCHED");
@@ -142,7 +142,7 @@ public class ErpInvDrpCrossDockProcessor {
         return dock;
     }
 
-    public ErpInvDrpCrossDock complete(Long id, IServiceContext context) {
+    public ErpInvDrpCrossDock complete(String id, IServiceContext context) {
         ErpInvDrpCrossDock dock = requireDock(id);
         assertXdockEnabled();
         validateTransition(dock, ErpDrpConstants.XDOCK_STATUS_LOADED, "LOADED");
@@ -150,7 +150,7 @@ public class ErpInvDrpCrossDockProcessor {
         return dock;
     }
 
-    public ErpInvDrpCrossDock cancel(Long id, IServiceContext context) {
+    public ErpInvDrpCrossDock cancel(String id, IServiceContext context) {
         ErpInvDrpCrossDock dock = requireDock(id);
         assertXdockEnabled();
         if (Objects.equals(dock.getStatus(), ErpDrpConstants.XDOCK_STATUS_COMPLETED)
@@ -165,7 +165,7 @@ public class ErpInvDrpCrossDockProcessor {
      * purchase 收货审批后置 Facade（D1 裁决选项 A）：按采购单号 + 收货行物料标记 PENDING 记录 → STAGING。
      * 仅 PENDING 可迁移 → 重复调用幂等（并发组语义：双收货同记录第二次为无操作）。
      */
-    public int markReceivedFromPurchase(String purchaseOrderCode, Long inboundMoveId, List<Long> materialIds,
+    public int markReceivedFromPurchase(String purchaseOrderCode, String inboundMoveId, List<String> materialIds,
                                         IServiceContext context) {
         if (!isXdockEnabled()) {
             return 0;
@@ -198,7 +198,7 @@ public class ErpInvDrpCrossDockProcessor {
 
     // ---------- step：执行 ----------
 
-    protected void doReceiveMark(ErpInvDrpCrossDock dock, Long inboundMoveId, IServiceContext context) {
+    protected void doReceiveMark(ErpInvDrpCrossDock dock, String inboundMoveId, IServiceContext context) {
         if (inboundMoveId != null) {
             dock.setInboundMoveId(inboundMoveId);
         }
@@ -287,7 +287,7 @@ public class ErpInvDrpCrossDockProcessor {
         QueryBean lq = new QueryBean();
         lq.addFilter(eq("materialId", dock.getMaterialId()));
         List<ErpSalOrderLine> lines = salOrderLineBiz.findList(lq, null, context);
-        Set<Long> orderIds = new LinkedHashSet<>();
+        Set<String> orderIds = new LinkedHashSet<>();
         for (ErpSalOrderLine line : lines) {
             java.math.BigDecimal remaining = nz(line.getQuantity()).subtract(nz(line.getDeliveredQuantity()));
             if (remaining.signum() > 0 && line.getOrderId() != null) {
@@ -342,7 +342,7 @@ public class ErpInvDrpCrossDockProcessor {
                 .param(ErpDrpErrors.ARG_MATERIAL_ID, dock.getMaterialId());
     }
 
-    protected boolean requiresQualityInspection(Long materialId, IServiceContext context) {
+    protected boolean requiresQualityInspection(String materialId, IServiceContext context) {
         if (materialId == null || inspectionTemplateBiz == null) {
             return false;
         }
@@ -396,7 +396,7 @@ public class ErpInvDrpCrossDockProcessor {
     /**
      * 暂存仓库解析：stagingLocationId → ErpMdLocation.warehouseId；无库位时回落入站移动单 destWarehouseId。
      */
-    protected Long resolveStagingWarehouseId(ErpInvDrpCrossDock dock) {
+    protected String resolveStagingWarehouseId(ErpInvDrpCrossDock dock) {
         if (dock.getStagingLocationId() != null) {
             ErpMdLocation location = daoProvider.daoFor(ErpMdLocation.class)
                     .getEntityById(dock.getStagingLocationId());
@@ -416,7 +416,7 @@ public class ErpInvDrpCrossDockProcessor {
                 .param(ErpDrpErrors.ARG_EXPECTED_STATUS, "暂存库位或入站移动单缺失，无法解析出站源仓库");
     }
 
-    protected Long resolveMaterialUomId(Long materialId) {
+    protected String resolveMaterialUomId(String materialId) {
         if (materialId == null) {
             return null;
         }
@@ -463,7 +463,7 @@ public class ErpInvDrpCrossDockProcessor {
                 .param(ErpDrpErrors.ARG_EXPECTED_STATUS, expected);
     }
 
-    protected ErpInvDrpCrossDock requireDock(Long id) {
+    protected ErpInvDrpCrossDock requireDock(String id) {
         if (id == null) {
             throw new NopException(ErpDrpErrors.ERR_DRP_XDOCK_ILLEGAL_TRANSITION)
                     .param(ErpDrpErrors.ARG_XDOCK_ID, id)

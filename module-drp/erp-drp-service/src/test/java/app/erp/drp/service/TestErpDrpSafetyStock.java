@@ -42,11 +42,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpDrpSafetyStock extends JunitAutoTestCase {
 
-    static final Long ORG_ID = 5401L;
-    static final Long UOM_ID = 5501L;
-    static final Long WH_ID = 5101L;
-    static final Long M_STAT = 5201L;  // STATISTICAL 路径
-    static final Long M_SIMPLE = 5202L; // 历史不足降级 SIMPLE
+    static final String ORG_ID = "5401";
+    static final String UOM_ID = "5501";
+    static final String WH_ID = "5101";
+    static final String M_STAT = "5201";  // STATISTICAL 路径
+    static final String M_SIMPLE = "5202"; // 历史不足降级 SIMPLE
 
     @Inject
     IDaoProvider daoProvider;
@@ -67,7 +67,7 @@ public class TestErpDrpSafetyStock extends JunitAutoTestCase {
         seedOutboundMove(M_STAT, "SM-2", LocalDate.now().minusMonths(1), bd("980"));
         seedOutboundMove(M_STAT, "SM-3", LocalDate.now(), bd("1500"));
 
-        Long calcId = seedCalc(M_STAT, ErpDrpConstants.SS_METHOD_STATISTICAL,
+        String calcId = seedCalc(M_STAT, ErpDrpConstants.SS_METHOD_STATISTICAL,
                 ErpDrpConstants.SERVICE_LEVEL_PCT95, 3, 15);
 
         calculateOk(calcId);
@@ -90,7 +90,7 @@ public class TestErpDrpSafetyStock extends JunitAutoTestCase {
         // 仅提供 1 个月历史（< 2 个月，STATISTICAL 不足 → 降级 SIMPLE）
         seedOutboundMove(M_SIMPLE, "SM-S1", LocalDate.now().minusMonths(1), bd("300"));
 
-        Long calcId = seedCalc(M_SIMPLE, ErpDrpConstants.SS_METHOD_STATISTICAL,
+        String calcId = seedCalc(M_SIMPLE, ErpDrpConstants.SS_METHOD_STATISTICAL,
                 ErpDrpConstants.SERVICE_LEVEL_PCT95, 3, 10);
 
         calculateOk(calcId); // 降级后应成功
@@ -109,7 +109,7 @@ public class TestErpDrpSafetyStock extends JunitAutoTestCase {
 
         seedOutboundMove(M_STAT, "SM-SIM-1", LocalDate.now().minusMonths(1), bd("600"));
 
-        Long calcId = seedCalc(M_STAT, ErpDrpConstants.SS_METHOD_SIMPLE,
+        String calcId = seedCalc(M_STAT, ErpDrpConstants.SS_METHOD_SIMPLE,
                 ErpDrpConstants.SERVICE_LEVEL_PCT95, 3, 10);
         calculateOk(calcId);
 
@@ -128,7 +128,7 @@ public class TestErpDrpSafetyStock extends JunitAutoTestCase {
 
         seedOutboundMove(M_STAT, "SM-DD-1", LocalDate.now().minusMonths(1), bd("900"));
 
-        Long calcId = seedCalc(M_STAT, ErpDrpConstants.SS_METHOD_DDMRP,
+        String calcId = seedCalc(M_STAT, ErpDrpConstants.SS_METHOD_DDMRP,
                 ErpDrpConstants.SERVICE_LEVEL_PCT95, 3, 10);
         calculateOk(calcId);
 
@@ -150,7 +150,7 @@ public class TestErpDrpSafetyStock extends JunitAutoTestCase {
         assertEquals(0, level1.compareTo(bd("50")), "无 calc 时取 parameter.safetyStock");
 
         // 有 calc，calculatedSafetyStock=80，无 override → 取 calculated = 80
-        Long calcId = seedCalc(M_STAT, ErpDrpConstants.SS_METHOD_SIMPLE,
+        String calcId = seedCalc(M_STAT, ErpDrpConstants.SS_METHOD_SIMPLE,
                 ErpDrpConstants.SERVICE_LEVEL_PCT95, 3, 15);
         setCalcResult(calcId, bd("80"), bd("100"));
 
@@ -169,7 +169,7 @@ public class TestErpDrpSafetyStock extends JunitAutoTestCase {
         seedWarehouse();
         ErpDrpParameter param = seedParameter(M_STAT, bd("50"), 15);
 
-        Long calcId = seedCalc(M_STAT, ErpDrpConstants.SS_METHOD_SIMPLE,
+        String calcId = seedCalc(M_STAT, ErpDrpConstants.SS_METHOD_SIMPLE,
                 ErpDrpConstants.SERVICE_LEVEL_PCT95, 3, 15);
         setCalcResult(calcId, bd("80"), bd("100"));
 
@@ -191,14 +191,14 @@ public class TestErpDrpSafetyStock extends JunitAutoTestCase {
 
     // ---------- helpers ----------
 
-    private void calculateOk(Long calcId) {
+    private void calculateOk(String calcId) {
         Map<String, Object> args = new java.util.LinkedHashMap<>();
         args.put("calcId", calcId);
         ApiResponse<?> resp = rpc(mutation, "ErpInvDrpSafetyStockCalc__calculate", args);
         assertEquals(0, resp.getStatus(), "calculate 应成功: " + resp);
     }
 
-    private BigDecimal findEffectiveSafetyStock(Long parameterId) {
+    private BigDecimal findEffectiveSafetyStock(String parameterId) {
         Map<String, Object> args = new java.util.LinkedHashMap<>();
         args.put("parameterId", parameterId);
         ApiResponse<?> resp = rpc(query, "ErpInvDrpSafetyStockCalc__findEffectiveSafetyStock", args);
@@ -206,7 +206,7 @@ public class TestErpDrpSafetyStock extends JunitAutoTestCase {
         return (BigDecimal) resp.getData();
     }
 
-    private void confirmWritebackOk(Long calcId) {
+    private void confirmWritebackOk(String calcId) {
         Map<String, Object> args = new java.util.LinkedHashMap<>();
         args.put("calcId", calcId);
         ApiResponse<?> resp = rpc(mutation, "ErpInvDrpSafetyStockCalc__confirmWriteback", args);
@@ -218,7 +218,7 @@ public class TestErpDrpSafetyStock extends JunitAutoTestCase {
         return graphQLEngine.executeRpc(ctx);
     }
 
-    private void setCalcResult(Long calcId, BigDecimal ss, BigDecimal rop) {
+    private void setCalcResult(String calcId, BigDecimal ss, BigDecimal rop) {
         ormTemplate.runInSession(() -> {
             ErpInvDrpSafetyStockCalc calc = daoProvider.daoFor(ErpInvDrpSafetyStockCalc.class).getEntityById(calcId);
             calc.setCalculatedSafetyStock(ss);
@@ -227,7 +227,7 @@ public class TestErpDrpSafetyStock extends JunitAutoTestCase {
         });
     }
 
-    private void setOverride(Long calcId, BigDecimal override) {
+    private void setOverride(String calcId, BigDecimal override) {
         ormTemplate.runInSession(() -> {
             ErpInvDrpSafetyStockCalc calc = daoProvider.daoFor(ErpInvDrpSafetyStockCalc.class).getEntityById(calcId);
             calc.setOverrideSafetyStock(override);
@@ -235,8 +235,8 @@ public class TestErpDrpSafetyStock extends JunitAutoTestCase {
         });
     }
 
-    private Long seedCalc(Long materialId, String method, String serviceLevel, int historyMonths, int leadTimeDays) {
-        Long id = 5700L + materialId + (long) method.hashCode() % 100;
+    private String seedCalc(String materialId, String method, String serviceLevel, int historyMonths, int leadTimeDays) {
+        String id = String.valueOf(5700L + Long.parseLong(materialId) + Math.abs(method.hashCode() % 100));
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpInvDrpSafetyStockCalc> dao = daoProvider.daoFor(ErpInvDrpSafetyStockCalc.class);
             ErpInvDrpSafetyStockCalc c = new ErpInvDrpSafetyStockCalc();
@@ -254,8 +254,8 @@ public class TestErpDrpSafetyStock extends JunitAutoTestCase {
         return id;
     }
 
-    private ErpDrpParameter seedParameter(Long materialId, BigDecimal safetyStock, int leadTimeDays) {
-        Long id = 5800L + materialId;
+    private ErpDrpParameter seedParameter(String materialId, BigDecimal safetyStock, int leadTimeDays) {
+        String id = String.valueOf(5800L + Long.parseLong(materialId));
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpDrpParameter> dao = daoProvider.daoFor(ErpDrpParameter.class);
             ErpDrpParameter p = new ErpDrpParameter();
@@ -272,10 +272,10 @@ public class TestErpDrpSafetyStock extends JunitAutoTestCase {
         return daoProvider.daoFor(ErpDrpParameter.class).getEntityById(id);
     }
 
-    private void seedOutboundMove(Long materialId, String code, LocalDate businessDate, BigDecimal qty) {
+    private void seedOutboundMove(String materialId, String code, LocalDate businessDate, BigDecimal qty) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpInvStockMove> mdao = daoProvider.daoFor(ErpInvStockMove.class);
-            Long moveId = 5300L + (long) Math.abs(code.hashCode() % 500);
+            String moveId = String.valueOf(5300L + Math.abs(code.hashCode() % 500));
             ErpInvStockMove m = new ErpInvStockMove();
             m.orm_propValueByName("id", moveId);
             m.setCode(code);
@@ -300,7 +300,7 @@ public class TestErpDrpSafetyStock extends JunitAutoTestCase {
         });
     }
 
-    private void seedMaterial(Long id) {
+    private void seedMaterial(String id) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMdMaterial> dao = daoProvider.daoFor(ErpMdMaterial.class);
             ErpMdMaterial m = new ErpMdMaterial();

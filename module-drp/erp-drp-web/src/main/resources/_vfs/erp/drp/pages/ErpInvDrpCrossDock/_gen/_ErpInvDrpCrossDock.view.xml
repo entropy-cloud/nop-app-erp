@@ -19,22 +19,22 @@
             <cols>
 
                 <!--ID-->
-                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="id" mandatory="true" sortable="true"/>
 
                 <!--编号-->
                 <col id="code" mandatory="true" sortable="true"/>
 
                 <!--业务组织-->
-                <col id="orgId" ui:number="true" sortable="true"/>
+                <col id="orgId" sortable="true"/>
 
                 <!--DRP行-->
-                <col id="drpLineId" ui:number="true" sortable="true"/>
+                <col id="drpLineId" sortable="true"/>
 
                 <!--入站移动单-->
-                <col id="inboundMoveId" ui:number="true" sortable="true"/>
+                <col id="inboundMoveId" sortable="true"/>
 
                 <!--出站移动单-->
-                <col id="outboundMoveId" ui:number="true" sortable="true"/>
+                <col id="outboundMoveId" sortable="true"/>
 
                 <!--来源单据类型-->
                 <col id="sourceBillType" sortable="true"/>
@@ -49,13 +49,13 @@
                 <col id="targetBillCode" sortable="true"/>
 
                 <!--物料-->
-                <col id="materialId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="materialId" mandatory="true" sortable="true"/>
 
                 <!--越库数量-->
                 <col id="quantity" mandatory="true" ui:number="true" sortable="true"/>
 
                 <!--暂存库位-->
-                <col id="stagingLocationId" ui:number="true" sortable="true"/>
+                <col id="stagingLocationId" sortable="true"/>
 
                 <!--月台时间窗口-->
                 <col id="dockSlotTime" sortable="true"/>

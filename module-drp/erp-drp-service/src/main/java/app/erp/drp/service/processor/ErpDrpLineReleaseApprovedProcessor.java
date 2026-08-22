@@ -16,7 +16,7 @@ public class ErpDrpLineReleaseApprovedProcessor {
     @Inject
     DrpReleaseService drpReleaseService;
 
-    public ErpDrpPlan releaseApproved(Long planId, IServiceContext context) {
+    public ErpDrpPlan releaseApproved(String planId, IServiceContext context) {
         drpReleaseService.releaseApproved(planId);
         return null;
     }
