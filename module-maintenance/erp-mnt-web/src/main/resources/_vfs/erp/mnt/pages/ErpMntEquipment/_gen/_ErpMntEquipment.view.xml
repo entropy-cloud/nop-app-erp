@@ -19,7 +19,7 @@
             <cols>
 
                 <!--ID-->
-                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="id" mandatory="true" sortable="true"/>
 
                 <!--设备编码-->
                 <col id="code" mandatory="true" sortable="true"/>
@@ -28,19 +28,19 @@
                 <col id="name" mandatory="true" sortable="true"/>
 
                 <!--所属组织-->
-                <col id="orgId" ui:number="true" sortable="true"/>
+                <col id="orgId" sortable="true"/>
 
                 <!--资产卡片(关联 assets 域)-->
-                <col id="assetId" ui:number="true" sortable="true"/>
+                <col id="assetId" sortable="true"/>
 
                 <!--关联工作中心(关联 mfg 域)-->
-                <col id="workcenterId" ui:number="true" sortable="true"/>
+                <col id="workcenterId" sortable="true"/>
 
                 <!--位置ID-->
-                <col id="locationId" ui:number="true" sortable="true"/>
+                <col id="locationId" sortable="true"/>
 
                 <!--分类ID-->
-                <col id="categoryId" ui:number="true" sortable="true"/>
+                <col id="categoryId" sortable="true"/>
 
                 <!--状态-->
                 <col id="status" mandatory="true" sortable="true"/>

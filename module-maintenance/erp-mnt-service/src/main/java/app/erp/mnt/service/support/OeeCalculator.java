@@ -7,6 +7,7 @@ import app.erp.mfg.dao.entity.ErpMfgWorkcenterCalendar;
 import app.erp.mfg.dao.entity.ErpMfgWorkcenterCapacity;
 import app.erp.mnt.dao.entity.ErpMntDowntimeEntry;
 import app.erp.mnt.dao.entity.ErpMntEquipment;
+import io.nop.api.core.convert.ConvertHelper;
 import app.erp.qa.dao.entity.ErpQaInspection;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.dao.api.IDaoProvider;
@@ -68,7 +69,7 @@ public class OeeCalculator {
     EquipmentRuntimeCalculator runtimeCalculator;
 
     /** 按设备计算 OEE 明细（设备不存在返回 null，由调用方裁决错误语义）。 */
-    public Map<String, Object> computeOee(Long equipmentId, LocalDate dateFrom, LocalDate dateTo) {
+    public Map<String, Object> computeOee(String equipmentId, LocalDate dateFrom, LocalDate dateTo) {
         ErpMntEquipment equipment = runtimeCalculator.loadEquipment(equipmentId);
         if (equipment == null) {
             return null;
@@ -79,7 +80,9 @@ public class OeeCalculator {
     public Map<String, Object> computeOee(ErpMntEquipment equipment, LocalDate dateFrom, LocalDate dateTo) {
         Timestamp windowStart = Timestamp.valueOf(dateFrom.atStartOfDay());
         Timestamp windowEndExclusive = Timestamp.valueOf(dateTo.plusDays(1).atStartOfDay());
-        Long workcenterId = equipment.getWorkcenterId();
+        // bridge-main-080/083/084：mnt equipment.workcenterId 已 String 化（M3.2），mfg 报工卡/日历/产能列仍 Long——
+        // 转 Long 供 mfg eq 过滤（String 传 Long 列会静默空匹配），mfg 翻转时退役（owner M3.1）。
+        Long workcenterId = ConvertHelper.toLong(equipment.getWorkcenterId());
 
         Map<String, Object> result = new LinkedHashMap<>();
         result.put("equipmentId", equipment.getId());
@@ -243,7 +246,7 @@ public class OeeCalculator {
     }
 
     /** D1：Σ 停机记录与窗口相交分钟数（开放段计至窗口末端）。 */
-    protected BigDecimal computeDowntimeHours(Long equipmentId, Timestamp windowStart, Timestamp windowEndExclusive) {
+    protected BigDecimal computeDowntimeHours(String equipmentId, Timestamp windowStart, Timestamp windowEndExclusive) {
         IEntityDao<ErpMntDowntimeEntry> dao = daoProvider.daoFor(ErpMntDowntimeEntry.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("equipmentId", equipmentId));

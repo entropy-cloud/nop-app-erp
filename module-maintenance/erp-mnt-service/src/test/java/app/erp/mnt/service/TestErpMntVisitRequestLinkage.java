@@ -49,10 +49,10 @@ public class TestErpMntVisitRequestLinkage extends JunitAutoTestCase {
     @RegisterExtension
     static MntFrozenClockExtension frozenClock = new MntFrozenClockExtension();
 
-    static final Long EQUIPMENT_ID = 301L;
+    static final String EQUIPMENT_ID = "301";
     static final Long ASSIGNEE_ID = 401L;
-    static final Long SNAP_EQUIPMENT_ID = 21101L;
-    static final Long SNAP_REQUEST_ID = 22101L;
+    static final String SNAP_EQUIPMENT_ID = "21101";
+    static final String SNAP_REQUEST_ID = "22101";
 
     private static final IServiceContext CTX = new ServiceContextImpl();
 
@@ -65,15 +65,15 @@ public class TestErpMntVisitRequestLinkage extends JunitAutoTestCase {
 
     private final AtomicLong idSeq = new AtomicLong(200000L);
 
-    private Long nextId() {
-        return idSeq.incrementAndGet();
+    private String nextId() {
+        return String.valueOf(idSeq.incrementAndGet());
     }
 
     // ---------- Proof ①：accept 生成侧回填（D5） ----------
 
     @Test
     public void testAcceptBackfillsRequestIdOnVisit() {
-        Long requestId = nextId();
+        String requestId = nextId();
         ormTemplate.runInSession(session -> {
             seedEquipment(EQUIPMENT_ID, ErpMntDaoConstants.EQUIPMENT_STATUS_RUNNING);
             seedRequest(requestId, EQUIPMENT_ID, ErpMntDaoConstants.REQUEST_STATUS_OPEN);
@@ -90,8 +90,8 @@ public class TestErpMntVisitRequestLinkage extends JunitAutoTestCase {
 
     @Test
     public void testVisitCompleteFromInProgressWritesBackCompleted() {
-        Long requestId = nextId();
-        Long visitId = nextId();
+        String requestId = nextId();
+        String visitId = nextId();
         ormTemplate.runInSession(session -> {
             seedEquipment(EQUIPMENT_ID, ErpMntDaoConstants.EQUIPMENT_STATUS_RUNNING);
             seedRequest(requestId, EQUIPMENT_ID, ErpMntDaoConstants.REQUEST_STATUS_IN_PROGRESS);
@@ -114,8 +114,8 @@ public class TestErpMntVisitRequestLinkage extends JunitAutoTestCase {
 
     @Test
     public void testVisitCompleteFromAcceptedSynthesizesMigration() {
-        Long requestId = nextId();
-        Long visitId = nextId();
+        String requestId = nextId();
+        String visitId = nextId();
         ormTemplate.runInSession(session -> {
             seedEquipment(EQUIPMENT_ID, ErpMntDaoConstants.EQUIPMENT_STATUS_RUNNING);
             seedRequest(requestId, EQUIPMENT_ID, ErpMntDaoConstants.REQUEST_STATUS_ACCEPTED);
@@ -136,10 +136,10 @@ public class TestErpMntVisitRequestLinkage extends JunitAutoTestCase {
 
     @Test
     public void testTerminalRequestNoOpVisitStillCompletes() {
-        Long rejectedId = nextId();
-        Long rejectedVisitId = nextId();
-        Long cancelledId = nextId();
-        Long cancelledVisitId = nextId();
+        String rejectedId = nextId();
+        String rejectedVisitId = nextId();
+        String cancelledId = nextId();
+        String cancelledVisitId = nextId();
         ormTemplate.runInSession(session -> {
             seedEquipment(EQUIPMENT_ID, ErpMntDaoConstants.EQUIPMENT_STATUS_RUNNING);
             seedRequest(rejectedId, EQUIPMENT_ID, ErpMntDaoConstants.REQUEST_STATUS_REJECTED);
@@ -149,7 +149,7 @@ public class TestErpMntVisitRequestLinkage extends JunitAutoTestCase {
             return null;
         });
 
-        for (Long visitId : new Long[]{rejectedVisitId, cancelledVisitId}) {
+        for (String visitId : new String[]{rejectedVisitId, cancelledVisitId}) {
             assertEquals(0, schedule(visitId).getStatus());
             assertEquals(0, start(visitId).getStatus());
             assertEquals(0, complete(visitId).getStatus(), "终态请求 no-op 不阻断访问完成");
@@ -165,7 +165,7 @@ public class TestErpMntVisitRequestLinkage extends JunitAutoTestCase {
 
     @Test
     public void testPlannedVisitWithoutRequestZeroImpact() {
-        Long visitId = nextId();
+        String visitId = nextId();
         ormTemplate.runInSession(session -> {
             seedEquipment(EQUIPMENT_ID, ErpMntDaoConstants.EQUIPMENT_STATUS_RUNNING);
             ErpMntVisit visit = daoProvider.daoFor(ErpMntVisit.class).newEntity();
@@ -191,8 +191,8 @@ public class TestErpMntVisitRequestLinkage extends JunitAutoTestCase {
 
     @Test
     public void testCompletedRequestNoOpIdempotent() {
-        Long requestId = nextId();
-        Long visitId = nextId();
+        String requestId = nextId();
+        String visitId = nextId();
         ormTemplate.runInSession(session -> {
             seedEquipment(EQUIPMENT_ID, ErpMntDaoConstants.EQUIPMENT_STATUS_RUNNING);
             seedRequest(requestId, EQUIPMENT_ID, ErpMntDaoConstants.REQUEST_STATUS_COMPLETED);
@@ -225,19 +225,19 @@ public class TestErpMntVisitRequestLinkage extends JunitAutoTestCase {
 
     // ---------- rpc helpers ----------
 
-    private ApiResponse<?> schedule(Long visitId) {
+    private ApiResponse<?> schedule(String visitId) {
         return executeRpc(mutation, "ErpMntVisit__schedule", ApiRequest.build(Map.of("visitId", visitId)));
     }
 
-    private ApiResponse<?> start(Long visitId) {
+    private ApiResponse<?> start(String visitId) {
         return executeRpc(mutation, "ErpMntVisit__start", ApiRequest.build(Map.of("visitId", visitId)));
     }
 
-    private ApiResponse<?> complete(Long visitId) {
+    private ApiResponse<?> complete(String visitId) {
         return executeRpc(mutation, "ErpMntVisit__complete", ApiRequest.build(Map.of("visitId", visitId)));
     }
 
-    private ApiResponse<?> accept(Long requestId) {
+    private ApiResponse<?> accept(String requestId) {
         return executeRpc(mutation, "ErpMntRequest__accept", ApiRequest.build(Map.of("requestId", requestId)));
     }
 
@@ -248,7 +248,7 @@ public class TestErpMntVisitRequestLinkage extends JunitAutoTestCase {
 
     // ---------- seed helpers ----------
 
-    private void seedEquipment(Long id, String status) {
+    private void seedEquipment(String id, String status) {
         IEntityDao<ErpMntEquipment> dao = daoProvider.daoFor(ErpMntEquipment.class);
         ErpMntEquipment equipment = dao.newEntity();
         equipment.setId(id);
@@ -258,7 +258,7 @@ public class TestErpMntVisitRequestLinkage extends JunitAutoTestCase {
         dao.saveEntity(equipment);
     }
 
-    private void seedRequest(Long id, Long equipmentId, String status) {
+    private void seedRequest(String id, String equipmentId, String status) {
         IEntityDao<ErpMntRequest> dao = daoProvider.daoFor(ErpMntRequest.class);
         ErpMntRequest request = dao.newEntity();
         request.setId(id);
@@ -273,7 +273,7 @@ public class TestErpMntVisitRequestLinkage extends JunitAutoTestCase {
         dao.saveEntity(request);
     }
 
-    private void seedLinkedVisit(Long id, Long equipmentId, Long requestId, String status) {
+    private void seedLinkedVisit(String id, String equipmentId, String requestId, String status) {
         IEntityDao<ErpMntVisit> dao = daoProvider.daoFor(ErpMntVisit.class);
         ErpMntVisit visit = dao.newEntity();
         visit.setId(id);
@@ -289,11 +289,11 @@ public class TestErpMntVisitRequestLinkage extends JunitAutoTestCase {
 
     // ---------- query helpers ----------
 
-    private ErpMntVisit loadVisit(Long visitId) {
+    private ErpMntVisit loadVisit(String visitId) {
         return daoProvider.daoFor(ErpMntVisit.class).getEntityById(visitId);
     }
 
-    private ErpMntRequest loadRequest(Long requestId) {
+    private ErpMntRequest loadRequest(String requestId) {
         return daoProvider.daoFor(ErpMntRequest.class).getEntityById(requestId);
     }
 

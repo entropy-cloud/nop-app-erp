@@ -19,28 +19,28 @@
             <cols>
 
                 <!--ID-->
-                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="id" mandatory="true" sortable="true"/>
 
                 <!--单号-->
                 <col id="code" mandatory="true" sortable="true"/>
 
                 <!--业务组织-->
-                <col id="orgId" ui:number="true" sortable="true"/>
+                <col id="orgId" sortable="true"/>
 
                 <!--维护访问ID-->
-                <col id="visitId" ui:number="true" sortable="true"/>
+                <col id="visitId" sortable="true"/>
 
                 <!--维护请求ID-->
-                <col id="requestId" ui:number="true" sortable="true"/>
+                <col id="requestId" sortable="true"/>
 
                 <!--设备ID-->
-                <col id="equipmentId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="equipmentId" mandatory="true" sortable="true"/>
 
                 <!--消耗日期-->
                 <col id="businessDate" mandatory="true" sortable="true"/>
 
                 <!--领料仓库-->
-                <col id="warehouseId" ui:number="true" sortable="true"/>
+                <col id="warehouseId" sortable="true"/>
 
                 <!--金额合计-->
                 <col id="totalAmount" ui:number="true" sortable="true"/>

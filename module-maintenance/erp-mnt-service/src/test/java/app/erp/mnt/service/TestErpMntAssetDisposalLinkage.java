@@ -42,9 +42,9 @@ import static org.junit.jupiter.api.Assertions.assertNull;
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpMntAssetDisposalLinkage extends JunitAutoTestCase {
 
-    static final Long ASSET_ID = 4001L;
-    static final Long ASSET_ID_NO_EQUIPMENT = 4999L;
-    static final Long EQUIPMENT_ID = 401L;
+    static final String ASSET_ID = "4001";
+    static final String ASSET_ID_NO_EQUIPMENT = "4999";
+    static final String EQUIPMENT_ID = "401";
     static final String DISPOSAL_CODE = "DISP-LINK-001";
 
     @Inject
@@ -152,7 +152,7 @@ public class TestErpMntAssetDisposalLinkage extends JunitAutoTestCase {
 
     // ---------- helpers ----------
 
-    private void seedEquipment(Long id, Long assetId, String status) {
+    private void seedEquipment(String id, String assetId, String status) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMntEquipment> dao = daoProvider.daoFor(ErpMntEquipment.class);
             ErpMntEquipment equipment = new ErpMntEquipment();
@@ -165,11 +165,11 @@ public class TestErpMntAssetDisposalLinkage extends JunitAutoTestCase {
         });
     }
 
-    private ErpMntEquipment loadEquipment(Long id) {
+    private ErpMntEquipment loadEquipment(String id) {
         return daoProvider.daoFor(ErpMntEquipment.class).getEntityById(id);
     }
 
-    private ErpMntEquipmentStatusLog findLatestLog(Long equipmentId) {
+    private ErpMntEquipmentStatusLog findLatestLog(String equipmentId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("equipmentId", equipmentId));
         q.addOrderField("id", true);
@@ -178,7 +178,7 @@ public class TestErpMntAssetDisposalLinkage extends JunitAutoTestCase {
         return logs.isEmpty() ? null : logs.get(0);
     }
 
-    private int countLogs(Long equipmentId) {
+    private int countLogs(String equipmentId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("equipmentId", equipmentId));
         return daoProvider.daoFor(ErpMntEquipmentStatusLog.class).findAllByQuery(q).size();

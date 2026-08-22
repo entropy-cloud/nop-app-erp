@@ -201,7 +201,7 @@ public class _ErpMntSchedule extends DynamicOrmEntity{
 
     
     /* ID: ID */
-    private java.lang.Long _id;
+    private java.lang.String _id;
     
     /* 计划编码: CODE */
     private java.lang.String _code;
@@ -210,7 +210,7 @@ public class _ErpMntSchedule extends DynamicOrmEntity{
     private java.lang.String _name;
     
     /* 设备ID: EQUIPMENT_ID */
-    private java.lang.Long _equipmentId;
+    private java.lang.String _equipmentId;
     
     /* 计划类型: SCHEDULE_TYPE */
     private java.lang.String _scheduleType;
@@ -267,7 +267,7 @@ public class _ErpMntSchedule extends DynamicOrmEntity{
     private java.math.BigDecimal _runtimeBaselineHours;
     
     /* 任务模板ID: TEMPLATE_ID */
-    private java.lang.Long _templateId;
+    private java.lang.String _templateId;
     
 
     public _ErpMntSchedule(){
@@ -424,9 +424,9 @@ public class _ErpMntSchedule extends DynamicOrmEntity{
         switch(propId){
         
             case PROP_ID_id:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_id));
                }
                setId(typedValue);
@@ -454,9 +454,9 @@ public class _ErpMntSchedule extends DynamicOrmEntity{
             }
         
             case PROP_ID_equipmentId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_equipmentId));
                }
                setEquipmentId(typedValue);
@@ -644,9 +644,9 @@ public class _ErpMntSchedule extends DynamicOrmEntity{
             }
         
             case PROP_ID_templateId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_templateId));
                }
                setTemplateId(typedValue);
@@ -664,7 +664,7 @@ public class _ErpMntSchedule extends DynamicOrmEntity{
         
             case PROP_ID_id:{
                onInitProp(propId);
-               this._id = (java.lang.Long)value;
+               this._id = (java.lang.String)value;
                orm_id(); // 如果是设置主键字段，则触发watcher
                break;
             }
@@ -685,7 +685,7 @@ public class _ErpMntSchedule extends DynamicOrmEntity{
         
             case PROP_ID_equipmentId:{
                onInitProp(propId);
-               this._equipmentId = (java.lang.Long)value;
+               this._equipmentId = (java.lang.String)value;
                
                break;
             }
@@ -818,7 +818,7 @@ public class _ErpMntSchedule extends DynamicOrmEntity{
         
             case PROP_ID_templateId:{
                onInitProp(propId);
-               this._templateId = (java.lang.Long)value;
+               this._templateId = (java.lang.String)value;
                
                break;
             }
@@ -832,7 +832,7 @@ public class _ErpMntSchedule extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final java.lang.Long getId(){
+    public final java.lang.String getId(){
          onPropGet(PROP_ID_id);
          return _id;
     }
@@ -840,7 +840,7 @@ public class _ErpMntSchedule extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final void setId(java.lang.Long value){
+    public final void setId(java.lang.String value){
         if(onPropSet(PROP_ID_id,value)){
             this._id = value;
             internalClearRefs(PROP_ID_id);
@@ -889,7 +889,7 @@ public class _ErpMntSchedule extends DynamicOrmEntity{
     /**
      * 设备ID: EQUIPMENT_ID
      */
-    public final java.lang.Long getEquipmentId(){
+    public final java.lang.String getEquipmentId(){
          onPropGet(PROP_ID_equipmentId);
          return _equipmentId;
     }
@@ -897,7 +897,7 @@ public class _ErpMntSchedule extends DynamicOrmEntity{
     /**
      * 设备ID: EQUIPMENT_ID
      */
-    public final void setEquipmentId(java.lang.Long value){
+    public final void setEquipmentId(java.lang.String value){
         if(onPropSet(PROP_ID_equipmentId,value)){
             this._equipmentId = value;
             internalClearRefs(PROP_ID_equipmentId);
@@ -1250,7 +1250,7 @@ public class _ErpMntSchedule extends DynamicOrmEntity{
     /**
      * 任务模板ID: TEMPLATE_ID
      */
-    public final java.lang.Long getTemplateId(){
+    public final java.lang.String getTemplateId(){
          onPropGet(PROP_ID_templateId);
          return _templateId;
     }
@@ -1258,7 +1258,7 @@ public class _ErpMntSchedule extends DynamicOrmEntity{
     /**
      * 任务模板ID: TEMPLATE_ID
      */
-    public final void setTemplateId(java.lang.Long value){
+    public final void setTemplateId(java.lang.String value){
         if(onPropSet(PROP_ID_templateId,value)){
             this._templateId = value;
             internalClearRefs(PROP_ID_templateId);

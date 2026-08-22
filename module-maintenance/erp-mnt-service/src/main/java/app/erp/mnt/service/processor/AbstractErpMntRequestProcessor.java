@@ -34,7 +34,7 @@ public abstract class AbstractErpMntRequestProcessor {
         return daoProvider.daoFor(ErpMntRequest.class);
     }
 
-    protected ErpMntRequest requireRequest(Long requestId, IServiceContext context) {
+    protected ErpMntRequest requireRequest(String requestId, IServiceContext context) {
         ErpMntRequest request = requestDao().getEntityById(requestId);
         if (request == null) {
             throw new NopException(ErpMntErrors.ERR_REQUEST_NOT_FOUND).param(ErpMntErrors.ARG_REQUEST_ID, requestId);

@@ -7,7 +7,6 @@ import io.nop.api.core.annotations.core.OptionalBoolean;
 import io.nop.api.core.beans.ApiRequest;
 import io.nop.api.core.beans.ApiResponse;
 import io.nop.api.core.context.ContextProvider;
-import io.nop.api.core.convert.ConvertHelper;
 import io.nop.autotest.junit.JunitAutoTestCase;
 import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
@@ -84,8 +83,7 @@ public class TestErpAstDisposalEquipmentLinkage extends JunitAutoTestCase {
         assertEquals(0, approve(disposalId).getStatus(), "处置 approve 应成功");
 
         assertNotNull(mockMnt().lastDecommissionAssetId, "应调用 mnt 处置联动 Facade");
-        // A3 bridge-test-134: ast String → mnt mock Long（退役 owner M3.2 时随 mock 一并回收）
-        assertEquals(ConvertHelper.toLong(assetId), mockMnt().lastDecommissionAssetId, "联动 assetId=处置资产");
+        assertEquals(assetId, mockMnt().lastDecommissionAssetId, "联动 assetId=处置资产");
         assertEquals(DISPOSAL_CODE, mockMnt().lastDecommissionCode, "联动 sourceBillCode=处置单编码");
         assertNull(mockMnt().lastRestoreAssetId, "approve 不触发恢复");
     }
@@ -104,8 +102,7 @@ public class TestErpAstDisposalEquipmentLinkage extends JunitAutoTestCase {
                 ApiRequest.build(Map.of("id", disposalId)));
         assertEquals(0, reverse.getStatus(), "reverseApprove 应成功: " + reverse);
 
-        // A3 bridge-test-134: ast String → mnt mock Long（退役 owner M3.2 时随 mock 一并回收）
-        assertEquals(ConvertHelper.toLong(assetId), mockMnt().lastRestoreAssetId, "posted 分支应对称调用恢复 Facade");
+        assertEquals(assetId, mockMnt().lastRestoreAssetId, "posted 分支应对称调用恢复 Facade");
         assertEquals(DISPOSAL_CODE, mockMnt().lastRestoreCode);
     }
 

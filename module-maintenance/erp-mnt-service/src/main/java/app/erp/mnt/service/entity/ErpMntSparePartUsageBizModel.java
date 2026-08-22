@@ -26,13 +26,13 @@ public class ErpMntSparePartUsageBizModel extends CrudBizModel<ErpMntSparePartUs
 
     @Override
     @BizMutation
-    public ErpMntSparePartUsage confirm(@Name("usageId") Long usageId, IServiceContext context) {
+    public ErpMntSparePartUsage confirm(@Name("usageId") String usageId, IServiceContext context) {
         return confirmProcessor.confirm(usageId, context);
     }
 
     @Override
     @BizMutation
-    public ErpMntSparePartUsage reverseConfirm(@Name("usageId") Long usageId, IServiceContext context) {
+    public ErpMntSparePartUsage reverseConfirm(@Name("usageId") String usageId, IServiceContext context) {
         return reverseConfirmProcessor.reverseConfirm(usageId, context);
     }
 }

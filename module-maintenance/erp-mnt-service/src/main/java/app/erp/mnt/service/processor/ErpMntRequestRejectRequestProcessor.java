@@ -12,7 +12,7 @@ import io.nop.core.context.IServiceContext;
  */
 public class ErpMntRequestRejectRequestProcessor extends AbstractErpMntRequestProcessor {
 
-    public ErpMntRequest rejectRequest(Long requestId, IServiceContext context) {
+    public ErpMntRequest rejectRequest(String requestId, IServiceContext context) {
         ErpMntRequest request = requireRequest(requestId, context);
         String from = request.getStatus();
         try {

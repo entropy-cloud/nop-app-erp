@@ -19,13 +19,13 @@
             <cols>
 
                 <!--ID-->
-                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="id" mandatory="true" sortable="true"/>
 
                 <!--请求编码-->
                 <col id="code" mandatory="true" sortable="true"/>
 
                 <!--设备ID-->
-                <col id="equipmentId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="equipmentId" mandatory="true" sortable="true"/>
 
                 <!--请求日期-->
                 <col id="requestDate" mandatory="true" sortable="true"/>

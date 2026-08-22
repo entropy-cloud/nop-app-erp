@@ -33,7 +33,7 @@ public class ErpMntVisitCompleteProcessor extends AbstractErpMntVisitProcessor {
     @Inject
     ErpMntRequestStateMachine requestStateMachine;
 
-    public ErpMntVisit complete(Long visitId, IServiceContext context) {
+    public ErpMntVisit complete(String visitId, IServiceContext context) {
         ErpMntVisit visit = requireVisit(visitId, context);
         String from = visit.getStatus();
         try {

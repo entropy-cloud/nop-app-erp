@@ -19,17 +19,17 @@ import app.erp.mnt.dao.entity.ErpMntRequest;
 public interface IErpMntRequestBiz extends ICrudBiz<ErpMntRequest> {
 
     @BizMutation
-    ErpMntRequest accept(@Name("requestId") Long requestId, IServiceContext context);
+    ErpMntRequest accept(@Name("requestId") String requestId, IServiceContext context);
 
     @BizMutation
-    ErpMntRequest startRepair(@Name("requestId") Long requestId, IServiceContext context);
+    ErpMntRequest startRepair(@Name("requestId") String requestId, IServiceContext context);
 
     @BizMutation
-    ErpMntRequest complete(@Name("requestId") Long requestId, IServiceContext context);
+    ErpMntRequest complete(@Name("requestId") String requestId, IServiceContext context);
 
     @BizMutation
-    ErpMntRequest rejectRequest(@Name("requestId") Long requestId, IServiceContext context);
+    ErpMntRequest rejectRequest(@Name("requestId") String requestId, IServiceContext context);
 
     @BizMutation
-    ErpMntRequest cancel(@Name("requestId") Long requestId, IServiceContext context);
+    ErpMntRequest cancel(@Name("requestId") String requestId, IServiceContext context);
 }

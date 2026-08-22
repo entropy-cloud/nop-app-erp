@@ -19,13 +19,13 @@
             <cols>
 
                 <!--ID-->
-                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="id" mandatory="true" sortable="true"/>
 
                 <!--团队ID-->
-                <col id="teamId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="teamId" mandatory="true" sortable="true"/>
 
                 <!--成员(职员)-->
-                <col id="employeeId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="employeeId" mandatory="true" sortable="true"/>
 
                 <!--角色-->
                 <col id="role" sortable="true"/>

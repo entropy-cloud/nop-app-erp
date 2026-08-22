@@ -1,9 +1,9 @@
 {
-  "id": 0,
-  "sparePartUsageId": 0,
+  "id": "",
+  "sparePartUsageId": "",
   "lineNo": 0,
-  "materialId": 0,
-  "uoMId": 0,
+  "materialId": "",
+  "uoMId": "",
   "quantity": 0.0,
   "unitCost": 0.0,
   "amount": 0.0,

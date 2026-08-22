@@ -22,8 +22,8 @@
 
     <props>
         <prop name="id" displayName="ID" propId="1" i18n-en:displayName="ID" tagSet="seq-default" mandatory="true"
-              queryable="true" sortable="true" insertable="true" updatable="false" graphql:type="String">
-            <schema type="java.lang.Long"/>
+              queryable="true" sortable="true" insertable="true" updatable="false">
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="code" displayName="模板编码" propId="2" i18n-en:displayName="Code" tagSet="var" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
@@ -36,7 +36,7 @@
         <prop name="equipmentCategoryId" displayName="适用设备分类(可空=需显式套用)" propId="4"
               i18n-en:displayName="Equipment Category" queryable="true" sortable="true" insertable="true"
               updatable="true" ext:relation="category">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="standardMinutes" displayName="标准工时(分钟)" propId="5" i18n-en:displayName="Standard Minutes"
               queryable="true" sortable="true" insertable="true" updatable="true">

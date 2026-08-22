@@ -22,17 +22,17 @@ import java.sql.Timestamp;
 @DataBean
 public class MntOpenDowntimeWindow {
 
-    private Long equipmentId;
+    private String equipmentId;
     private String equipmentCode;
-    private Long workcenterId;
+    private String workcenterId;
     private Timestamp startTime;
     private String reason;
 
-    public Long getEquipmentId() {
+    public String getEquipmentId() {
         return equipmentId;
     }
 
-    public void setEquipmentId(Long equipmentId) {
+    public void setEquipmentId(String equipmentId) {
         this.equipmentId = equipmentId;
     }
 
@@ -44,11 +44,11 @@ public class MntOpenDowntimeWindow {
         this.equipmentCode = equipmentCode;
     }
 
-    public Long getWorkcenterId() {
+    public String getWorkcenterId() {
         return workcenterId;
     }
 
-    public void setWorkcenterId(Long workcenterId) {
+    public void setWorkcenterId(String workcenterId) {
         this.workcenterId = workcenterId;
     }
 

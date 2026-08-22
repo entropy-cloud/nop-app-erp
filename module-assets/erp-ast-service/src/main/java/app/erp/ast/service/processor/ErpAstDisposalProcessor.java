@@ -14,7 +14,6 @@ import app.erp.ast.service.statemachine.ErpAstDisposalDocumentStateMachine;
 import app.erp.mnt.biz.IErpMntEquipmentBiz;
 import io.nop.api.core.auth.IUserContext;
 import io.nop.api.core.beans.query.QueryBean;
-import io.nop.api.core.convert.ConvertHelper;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.api.core.time.CoreMetrics;
 import io.nop.core.context.IServiceContext;
@@ -262,16 +261,14 @@ public class ErpAstDisposalProcessor {
         if (mntEquipmentBiz == null || asset == null || asset.getId() == null) {
             return;
         }
-        // bridge: ast String assetId → mnt Long（登记册 bridge-main-024/025，退役 owner M3.2）
-        mntEquipmentBiz.changeStatusForAssetDisposal(ConvertHelper.toLong(asset.getId()), disposal.getCode(), context);
+        mntEquipmentBiz.changeStatusForAssetDisposal(asset.getId(), disposal.getCode(), context);
     }
 
     protected void restoreLinkedEquipment(ErpAstDisposal disposal, IServiceContext context) {
         if (mntEquipmentBiz == null || disposal.getAssetId() == null) {
             return;
         }
-        // bridge: ast String assetId → mnt Long（登记册 bridge-main-024/025，退役 owner M3.2）
-        mntEquipmentBiz.restoreFromAssetDisposal(ConvertHelper.toLong(disposal.getAssetId()), disposal.getCode(), context);
+        mntEquipmentBiz.restoreFromAssetDisposal(disposal.getAssetId(), disposal.getCode(), context);
     }
 
     // ---------- 折旧计划状态联动 ----------

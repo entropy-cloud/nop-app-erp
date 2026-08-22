@@ -18,7 +18,7 @@ import java.util.List;
  */
 public class ErpMntSparePartUsageConfirmProcessor extends AbstractErpMntSparePartUsageProcessor {
 
-    public ErpMntSparePartUsage confirm(Long usageId, IServiceContext context) {
+    public ErpMntSparePartUsage confirm(String usageId, IServiceContext context) {
         ErpMntSparePartUsage usage = requireUsage(usageId, context);
         validateNotConfirmed(usage, context);
         List<ErpMntSparePartUsageLine> lines = loadLines(usageId);

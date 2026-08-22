@@ -216,28 +216,28 @@ public class _ErpMntSparePartUsage extends DynamicOrmEntity{
 
     
     /* ID: ID */
-    private java.lang.Long _id;
+    private java.lang.String _id;
     
     /* 单号: CODE */
     private java.lang.String _code;
     
     /* 业务组织: ORG_ID */
-    private java.lang.Long _orgId;
+    private java.lang.String _orgId;
     
     /* 维护访问ID: VISIT_ID */
-    private java.lang.Long _visitId;
+    private java.lang.String _visitId;
     
     /* 维护请求ID: REQUEST_ID */
-    private java.lang.Long _requestId;
+    private java.lang.String _requestId;
     
     /* 设备ID: EQUIPMENT_ID */
-    private java.lang.Long _equipmentId;
+    private java.lang.String _equipmentId;
     
     /* 消耗日期: BUSINESS_DATE */
     private java.time.LocalDate _businessDate;
     
     /* 领料仓库: WAREHOUSE_ID */
-    private java.lang.Long _warehouseId;
+    private java.lang.String _warehouseId;
     
     /* 金额合计: TOTAL_AMOUNT */
     private java.math.BigDecimal _totalAmount;
@@ -439,9 +439,9 @@ public class _ErpMntSparePartUsage extends DynamicOrmEntity{
         switch(propId){
         
             case PROP_ID_id:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_id));
                }
                setId(typedValue);
@@ -459,9 +459,9 @@ public class _ErpMntSparePartUsage extends DynamicOrmEntity{
             }
         
             case PROP_ID_orgId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_orgId));
                }
                setOrgId(typedValue);
@@ -469,9 +469,9 @@ public class _ErpMntSparePartUsage extends DynamicOrmEntity{
             }
         
             case PROP_ID_visitId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_visitId));
                }
                setVisitId(typedValue);
@@ -479,9 +479,9 @@ public class _ErpMntSparePartUsage extends DynamicOrmEntity{
             }
         
             case PROP_ID_requestId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_requestId));
                }
                setRequestId(typedValue);
@@ -489,9 +489,9 @@ public class _ErpMntSparePartUsage extends DynamicOrmEntity{
             }
         
             case PROP_ID_equipmentId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_equipmentId));
                }
                setEquipmentId(typedValue);
@@ -509,9 +509,9 @@ public class _ErpMntSparePartUsage extends DynamicOrmEntity{
             }
         
             case PROP_ID_warehouseId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_warehouseId));
                }
                setWarehouseId(typedValue);
@@ -679,7 +679,7 @@ public class _ErpMntSparePartUsage extends DynamicOrmEntity{
         
             case PROP_ID_id:{
                onInitProp(propId);
-               this._id = (java.lang.Long)value;
+               this._id = (java.lang.String)value;
                orm_id(); // 如果是设置主键字段，则触发watcher
                break;
             }
@@ -693,28 +693,28 @@ public class _ErpMntSparePartUsage extends DynamicOrmEntity{
         
             case PROP_ID_orgId:{
                onInitProp(propId);
-               this._orgId = (java.lang.Long)value;
+               this._orgId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_visitId:{
                onInitProp(propId);
-               this._visitId = (java.lang.Long)value;
+               this._visitId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_requestId:{
                onInitProp(propId);
-               this._requestId = (java.lang.Long)value;
+               this._requestId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_equipmentId:{
                onInitProp(propId);
-               this._equipmentId = (java.lang.Long)value;
+               this._equipmentId = (java.lang.String)value;
                
                break;
             }
@@ -728,7 +728,7 @@ public class _ErpMntSparePartUsage extends DynamicOrmEntity{
         
             case PROP_ID_warehouseId:{
                onInitProp(propId);
-               this._warehouseId = (java.lang.Long)value;
+               this._warehouseId = (java.lang.String)value;
                
                break;
             }
@@ -847,7 +847,7 @@ public class _ErpMntSparePartUsage extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final java.lang.Long getId(){
+    public final java.lang.String getId(){
          onPropGet(PROP_ID_id);
          return _id;
     }
@@ -855,7 +855,7 @@ public class _ErpMntSparePartUsage extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final void setId(java.lang.Long value){
+    public final void setId(java.lang.String value){
         if(onPropSet(PROP_ID_id,value)){
             this._id = value;
             internalClearRefs(PROP_ID_id);
@@ -885,7 +885,7 @@ public class _ErpMntSparePartUsage extends DynamicOrmEntity{
     /**
      * 业务组织: ORG_ID
      */
-    public final java.lang.Long getOrgId(){
+    public final java.lang.String getOrgId(){
          onPropGet(PROP_ID_orgId);
          return _orgId;
     }
@@ -893,7 +893,7 @@ public class _ErpMntSparePartUsage extends DynamicOrmEntity{
     /**
      * 业务组织: ORG_ID
      */
-    public final void setOrgId(java.lang.Long value){
+    public final void setOrgId(java.lang.String value){
         if(onPropSet(PROP_ID_orgId,value)){
             this._orgId = value;
             internalClearRefs(PROP_ID_orgId);
@@ -904,7 +904,7 @@ public class _ErpMntSparePartUsage extends DynamicOrmEntity{
     /**
      * 维护访问ID: VISIT_ID
      */
-    public final java.lang.Long getVisitId(){
+    public final java.lang.String getVisitId(){
          onPropGet(PROP_ID_visitId);
          return _visitId;
     }
@@ -912,7 +912,7 @@ public class _ErpMntSparePartUsage extends DynamicOrmEntity{
     /**
      * 维护访问ID: VISIT_ID
      */
-    public final void setVisitId(java.lang.Long value){
+    public final void setVisitId(java.lang.String value){
         if(onPropSet(PROP_ID_visitId,value)){
             this._visitId = value;
             internalClearRefs(PROP_ID_visitId);
@@ -923,7 +923,7 @@ public class _ErpMntSparePartUsage extends DynamicOrmEntity{
     /**
      * 维护请求ID: REQUEST_ID
      */
-    public final java.lang.Long getRequestId(){
+    public final java.lang.String getRequestId(){
          onPropGet(PROP_ID_requestId);
          return _requestId;
     }
@@ -931,7 +931,7 @@ public class _ErpMntSparePartUsage extends DynamicOrmEntity{
     /**
      * 维护请求ID: REQUEST_ID
      */
-    public final void setRequestId(java.lang.Long value){
+    public final void setRequestId(java.lang.String value){
         if(onPropSet(PROP_ID_requestId,value)){
             this._requestId = value;
             internalClearRefs(PROP_ID_requestId);
@@ -942,7 +942,7 @@ public class _ErpMntSparePartUsage extends DynamicOrmEntity{
     /**
      * 设备ID: EQUIPMENT_ID
      */
-    public final java.lang.Long getEquipmentId(){
+    public final java.lang.String getEquipmentId(){
          onPropGet(PROP_ID_equipmentId);
          return _equipmentId;
     }
@@ -950,7 +950,7 @@ public class _ErpMntSparePartUsage extends DynamicOrmEntity{
     /**
      * 设备ID: EQUIPMENT_ID
      */
-    public final void setEquipmentId(java.lang.Long value){
+    public final void setEquipmentId(java.lang.String value){
         if(onPropSet(PROP_ID_equipmentId,value)){
             this._equipmentId = value;
             internalClearRefs(PROP_ID_equipmentId);
@@ -980,7 +980,7 @@ public class _ErpMntSparePartUsage extends DynamicOrmEntity{
     /**
      * 领料仓库: WAREHOUSE_ID
      */
-    public final java.lang.Long getWarehouseId(){
+    public final java.lang.String getWarehouseId(){
          onPropGet(PROP_ID_warehouseId);
          return _warehouseId;
     }
@@ -988,7 +988,7 @@ public class _ErpMntSparePartUsage extends DynamicOrmEntity{
     /**
      * 领料仓库: WAREHOUSE_ID
      */
-    public final void setWarehouseId(java.lang.Long value){
+    public final void setWarehouseId(java.lang.String value){
         if(onPropSet(PROP_ID_warehouseId,value)){
             this._warehouseId = value;
             internalClearRefs(PROP_ID_warehouseId);

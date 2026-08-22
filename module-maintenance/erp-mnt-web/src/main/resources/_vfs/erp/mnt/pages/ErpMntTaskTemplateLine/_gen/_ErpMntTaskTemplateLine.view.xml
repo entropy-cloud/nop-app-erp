@@ -19,10 +19,10 @@
             <cols>
 
                 <!--ID-->
-                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="id" mandatory="true" sortable="true"/>
 
                 <!--任务模板ID-->
-                <col id="templateId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="templateId" mandatory="true" sortable="true"/>
 
                 <!--行号-->
                 <col id="lineNo" mandatory="true" ui:number="true" sortable="true"/>
@@ -34,7 +34,7 @@
                 <col id="standardMinutes" ui:number="true" sortable="true"/>
 
                 <!--标准备件(物料,提示)-->
-                <col id="materialId" ui:number="true" sortable="true"/>
+                <col id="materialId" sortable="true"/>
 
                 <!--备件数量(提示)-->
                 <col id="quantity" ui:number="true" sortable="true"/>

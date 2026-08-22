@@ -60,31 +60,31 @@ public class ErpMntVisitBizModel extends CrudBizModel<ErpMntVisit> implements IE
 
     @Override
     @BizMutation
-    public ErpMntVisit schedule(@Name("visitId") Long visitId, IServiceContext context) {
+    public ErpMntVisit schedule(@Name("visitId") String visitId, IServiceContext context) {
         return scheduleProcessor.schedule(visitId, context);
     }
 
     @Override
     @BizMutation
-    public ErpMntVisit start(@Name("visitId") Long visitId, IServiceContext context) {
+    public ErpMntVisit start(@Name("visitId") String visitId, IServiceContext context) {
         return startProcessor.start(visitId, context);
     }
 
     @Override
     @BizMutation
-    public ErpMntVisit complete(@Name("visitId") Long visitId, IServiceContext context) {
+    public ErpMntVisit complete(@Name("visitId") String visitId, IServiceContext context) {
         return completeProcessor.complete(visitId, context);
     }
 
     @Override
     @BizMutation
-    public ErpMntVisit cancel(@Name("visitId") Long visitId, IServiceContext context) {
+    public ErpMntVisit cancel(@Name("visitId") String visitId, IServiceContext context) {
         return cancelProcessor.cancel(visitId, context);
     }
 
     @Override
     @BizMutation
-    public ErpMntRequest reportAdditionalFault(@Name("visitId") Long visitId,
+    public ErpMntRequest reportAdditionalFault(@Name("visitId") String visitId,
                                                @Name("description") String description,
                                                @Name("priority") @Optional String priority,
                                                @Name("remark") @Optional String remark,

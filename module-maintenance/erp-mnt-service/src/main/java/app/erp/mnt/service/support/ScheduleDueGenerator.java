@@ -147,7 +147,7 @@ public class ScheduleDueGenerator {
         return count;
     }
 
-    protected boolean existsVisitForScheduleDate(Long scheduleId, LocalDate asOfDate) {
+    protected boolean existsVisitForScheduleDate(String scheduleId, LocalDate asOfDate) {
         IEntityDao<ErpMntVisit> dao = daoProvider.daoFor(ErpMntVisit.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("code", "VST-SCH-" + scheduleId + "-" + asOfDate));

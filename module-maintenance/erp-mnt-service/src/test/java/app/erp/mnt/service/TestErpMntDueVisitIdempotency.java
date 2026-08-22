@@ -34,8 +34,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class TestErpMntDueVisitIdempotency extends JunitAutoTestCase {
 
     private static final IServiceContext CTX = new ServiceContextImpl();
-    private static final Long EQUIPMENT_ID = 41001L;
-    private static final Long SCHEDULE_ID = 42001L;
+    private static final String EQUIPMENT_ID = "41001";
+    private static final String SCHEDULE_ID = "42001";
 
     @Inject
     IDaoProvider daoProvider;
@@ -76,7 +76,7 @@ public class TestErpMntDueVisitIdempotency extends JunitAutoTestCase {
         assertEquals(1L, count, "同 (schedule, asOfDate) 仅 1 条访问（无重复）");
     }
 
-    private void seedEquipment(Long id) {
+    private void seedEquipment(String id) {
         IEntityDao<ErpMntEquipment> dao = daoProvider.daoFor(ErpMntEquipment.class);
         ErpMntEquipment equipment = new ErpMntEquipment();
         equipment.setId(id);
@@ -86,7 +86,7 @@ public class TestErpMntDueVisitIdempotency extends JunitAutoTestCase {
         dao.saveEntity(equipment);
     }
 
-    private void seedSchedule(Long id, Long equipmentId, LocalDate nextDueDate) {
+    private void seedSchedule(String id, String equipmentId, LocalDate nextDueDate) {
         IEntityDao<ErpMntSchedule> dao = daoProvider.daoFor(ErpMntSchedule.class);
         ErpMntSchedule schedule = new ErpMntSchedule();
         schedule.setId(id);

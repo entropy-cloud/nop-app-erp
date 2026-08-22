@@ -23,8 +23,8 @@
 
     <props>
         <prop name="id" displayName="ID" propId="1" i18n-en:displayName="ID" tagSet="seq-default" mandatory="true"
-              queryable="true" sortable="true" insertable="true" updatable="false" graphql:type="String">
-            <schema type="java.lang.Long"/>
+              queryable="true" sortable="true" insertable="true" updatable="false">
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="code" displayName="设备编码" propId="2" i18n-en:displayName="Code" tagSet="var" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
@@ -36,23 +36,23 @@
         </prop>
         <prop name="orgId" displayName="所属组织" propId="4" i18n-en:displayName="Organization" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="org">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="assetId" displayName="资产卡片(关联 assets 域)" propId="5" i18n-en:displayName="Asset" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="asset">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="workcenterId" displayName="关联工作中心(关联 mfg 域)" propId="6" i18n-en:displayName="Workcenter"
               queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="locationId" displayName="位置ID" propId="7" i18n-en:displayName="Location" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="location">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="categoryId" displayName="分类ID" propId="8" i18n-en:displayName="Category" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="category">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="status" displayName="状态" propId="9" i18n-en:displayName="Status" mandatory="true" queryable="true"
               sortable="true" insertable="true" updatable="true">

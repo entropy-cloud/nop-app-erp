@@ -13,7 +13,7 @@ import app.erp.mnt.dao.entity.ErpMntEquipment;
 public interface IErpMntEquipmentBiz extends ICrudBiz<ErpMntEquipment> {
 
     @BizMutation
-    ErpMntEquipment changeStatus(@Name("equipmentId") Long equipmentId,
+    ErpMntEquipment changeStatus(@Name("equipmentId") String equipmentId,
                                  @Name("newStatus") String newStatus,
                                  IServiceContext context);
 
@@ -23,7 +23,7 @@ public interface IErpMntEquipmentBiz extends ICrudBiz<ErpMntEquipment> {
      * 失败语义 = 异常传播回滚调用方（处置 approve）事务——设备停用是 L1 硬断言。
      */
     @BizMutation
-    int changeStatusForAssetDisposal(@Name("assetId") Long assetId,
+    int changeStatusForAssetDisposal(@Name("assetId") String assetId,
                                      @Name("disposalCode") String disposalCode,
                                      IServiceContext context);
 
@@ -32,7 +32,7 @@ public interface IErpMntEquipmentBiz extends ICrudBiz<ErpMntEquipment> {
      * 设备非 DECOMMISSIONED 时幂等跳过（返回 0）。
      */
     @BizMutation
-    int restoreFromAssetDisposal(@Name("assetId") Long assetId,
+    int restoreFromAssetDisposal(@Name("assetId") String assetId,
                                  @Name("disposalCode") String disposalCode,
                                  IServiceContext context);
 }

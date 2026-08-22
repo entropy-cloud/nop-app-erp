@@ -1,0 +1,3 @@
+_chgType,ID,TEMPLATE_ID,LINE_NO,TASK_NAME,STANDARD_MINUTES,MATERIAL_ID,QUANTITY,REMARK,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
+A,65004,64004,1,模糊匹配任务A,10,,,,@var:ErpMntTaskTemplateLine@delVersion,0,autotest-ref,*,autotest-ref,*
+A,65005,64005,1,模糊匹配任务B,20,,,,@var:ErpMntTaskTemplateLine@delVersion,0,autotest-ref,*,autotest-ref,*

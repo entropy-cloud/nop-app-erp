@@ -67,7 +67,7 @@ body:
       method: post
       dataType: raw
       data:
-        query: "query(${'$'}vid:Long,${'$'}lim:Int){ visit: ErpMntVisit__get(id:${'$'}vid){ id code status visitType visitDate equipmentId assignedTo result remark startTime endTime totalMinutes completedAt completedBy } spareParts: ErpMntSparePartUsage__findPage(query:{limit:${'$'}lim}){ items{ id code warehouseId totalAmount docStatus approveStatus posted } total } }"
+        query: "query(${'$'}vid:String,${'$'}lim:Int){ visit: ErpMntVisit__get(id:${'$'}vid){ id code status visitType visitDate equipmentId assignedTo result remark startTime endTime totalMinutes completedAt completedBy } spareParts: ErpMntSparePartUsage__findPage(query:{limit:${'$'}lim}){ items{ id code warehouseId totalAmount docStatus approveStatus posted } total } }"
         variables:
           vid: "${visitId}"
           lim: 500
@@ -158,7 +158,7 @@ body:
               method: post
               dataType: raw
               data:
-                query: "mutation(${'$'}vid:Long){ ErpMntVisit__start(visitId:${'$'}vid){ id status } }"
+                query: "mutation(${'$'}vid:String){ ErpMntVisit__start(visitId:${'$'}vid){ id status } }"
                 variables:
                   vid: "${visit.id}"
               adaptor: |
@@ -267,7 +267,7 @@ body:
               method: post
               dataType: raw
               data:
-                query: "mutation(${'$'}vid:Long){ ErpMntVisit__complete(visitId:${'$'}vid){ id status } }"
+                query: "mutation(${'$'}vid:String){ ErpMntVisit__complete(visitId:${'$'}vid){ id status } }"
                 variables:
                   vid: "${visit.id}"
               adaptor: |
@@ -288,7 +288,7 @@ body:
               method: post
               dataType: raw
               data:
-                query: "mutation(${'$'}vid:Long){ ErpMntVisit__cancel(visitId:${'$'}vid){ id status } }"
+                query: "mutation(${'$'}vid:String){ ErpMntVisit__cancel(visitId:${'$'}vid){ id status } }"
                 variables:
                   vid: "${visit.id}"
               adaptor: |

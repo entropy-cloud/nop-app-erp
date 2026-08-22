@@ -35,13 +35,13 @@ public class ErpMntDowntimeEntryBizModel extends CrudBizModel<ErpMntDowntimeEntr
 
     @Override
     @BizMutation
-    public ErpMntDowntimeEntry record(@Name("downtimeId") Long downtimeId, IServiceContext context) {
+    public ErpMntDowntimeEntry record(@Name("downtimeId") String downtimeId, IServiceContext context) {
         return recordProcessor.record(downtimeId, context);
     }
 
     @Override
     @BizMutation
-    public ErpMntDowntimeEntry complete(@Name("downtimeId") Long downtimeId, IServiceContext context) {
+    public ErpMntDowntimeEntry complete(@Name("downtimeId") String downtimeId, IServiceContext context) {
         return completeProcessor.complete(downtimeId, context);
     }
 

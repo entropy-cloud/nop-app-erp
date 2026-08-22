@@ -57,11 +57,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpMntVisitCancelReversal extends JunitAutoTestCase {
 
-    static final Long ORG_ID = 2351L;
-    static final Long EQUIPMENT_ID = 351L;
+    static final String ORG_ID = "2351";
+    static final String EQUIPMENT_ID = "351";
     static final Long ASSIGNEE_ID = 2352L;
-    static final Long CURRENCY_ID = 2351L;
-    static final Long ACCT_SCHEMA_ID = 2351L;
+    static final String CURRENCY_ID = "2351";
+    static final String ACCT_SCHEMA_ID = "2351";
 
     static final String SUBJECT_EXPENSE = "6602";
     static final String SUBJECT_PAYABLE = "2211";
@@ -78,8 +78,8 @@ public class TestErpMntVisitCancelReversal extends JunitAutoTestCase {
 
     private final java.util.concurrent.atomic.AtomicLong idSeq = new java.util.concurrent.atomic.AtomicLong(300000L);
 
-    private Long nextId() {
-        return idSeq.incrementAndGet();
+    private String nextId() {
+        return String.valueOf(idSeq.incrementAndGet());
     }
 
     @AfterEach
@@ -100,7 +100,7 @@ public class TestErpMntVisitCancelReversal extends JunitAutoTestCase {
         seedPeriodAndSubjects();
         seedEquipment(EQUIPMENT_ID);
 
-        Long visitId = nextId();
+        String visitId = nextId();
         LocalDateTime start = LocalDateTime.of(2026, 7, 1, 10, 0);
         LocalDateTime end = start.plusMinutes(60);
         ormTemplate.runInSession(session -> {
@@ -157,7 +157,7 @@ public class TestErpMntVisitCancelReversal extends JunitAutoTestCase {
         seedPeriodAndSubjects();
         seedEquipment(EQUIPMENT_ID);
 
-        Long visitId = nextId();
+        String visitId = nextId();
         LocalDateTime start = LocalDateTime.of(2026, 7, 1, 10, 0);
         LocalDateTime end = start.plusMinutes(60);
         ormTemplate.runInSession(session -> {
@@ -181,7 +181,7 @@ public class TestErpMntVisitCancelReversal extends JunitAutoTestCase {
         seedPeriodAndSubjects();
         seedEquipment(EQUIPMENT_ID);
 
-        Long visitId = nextId();
+        String visitId = nextId();
         LocalDateTime start = LocalDateTime.of(2026, 7, 1, 10, 0);
         LocalDateTime end = start.plusMinutes(60);
         ormTemplate.runInSession(session -> {
@@ -200,7 +200,7 @@ public class TestErpMntVisitCancelReversal extends JunitAutoTestCase {
 
     // ---------- rpc helpers ----------
 
-    private ApiResponse<?> cancel(Long visitId) {
+    private ApiResponse<?> cancel(String visitId) {
         return executeRpc(mutation, "ErpMntVisit__cancel",
                 ApiRequest.build(java.util.Map.of("visitId", visitId)));
     }
@@ -264,7 +264,7 @@ public class TestErpMntVisitCancelReversal extends JunitAutoTestCase {
 
     // ---------- maintenance seed ----------
 
-    private void seedEquipment(Long id) {
+    private void seedEquipment(String id) {
         IEntityDao<ErpMntEquipment> dao = daoProvider.daoFor(ErpMntEquipment.class);
         ErpMntEquipment equipment = new ErpMntEquipment();
         equipment.setId(id);
@@ -274,7 +274,7 @@ public class TestErpMntVisitCancelReversal extends JunitAutoTestCase {
         dao.saveEntity(equipment);
     }
 
-    private void seedVisit(Long id, Long equipmentId, String status, String code,
+    private void seedVisit(String id, String equipmentId, String status, String code,
                            LocalDateTime startTime, LocalDateTime endTime) {
         IEntityDao<ErpMntVisit> dao = daoProvider.daoFor(ErpMntVisit.class);
         ErpMntVisit visit = new ErpMntVisit();
@@ -300,7 +300,7 @@ public class TestErpMntVisitCancelReversal extends JunitAutoTestCase {
 
     // ---------- query helpers ----------
 
-    private ErpMntVisit loadVisit(Long visitId) {
+    private ErpMntVisit loadVisit(String visitId) {
         return daoProvider.daoFor(ErpMntVisit.class).getEntityById(visitId);
     }
 
@@ -338,7 +338,7 @@ public class TestErpMntVisitCancelReversal extends JunitAutoTestCase {
         return null;
     }
 
-    private ErpFinVoucherLine findVoucherLine(Long voucherId, String subjectCode) {
+    private ErpFinVoucherLine findVoucherLine(String voucherId, String subjectCode) {
         IEntityDao<ErpFinVoucherLine> dao = daoProvider.daoFor(ErpFinVoucherLine.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("voucherId", voucherId));

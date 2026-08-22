@@ -48,9 +48,9 @@ public class EquipmentStatusLinker {
     EquipmentStatusLogWriter statusLogWriter;
 
     /** visit 路径前态缓存：linkToUnderMaintenance 仅捕获 IDLE（覆盖写），restoreToRunning 消费移除。包级可见供测试观察。 */
-    transient ConcurrentHashMap<Long, String> priorStatusCache = new ConcurrentHashMap<>();
+    transient ConcurrentHashMap<String, String> priorStatusCache = new ConcurrentHashMap<>();
 
-    public void linkToUnderMaintenance(Long equipmentId, IServiceContext context) {
+    public void linkToUnderMaintenance(String equipmentId, IServiceContext context) {
         if (!ErpMntConfigs.equipmentStatusLinkEnabled() || equipmentId == null) {
             return;
         }
@@ -59,7 +59,7 @@ public class EquipmentStatusLinker {
                 ErpMntDaoConstants.STATUS_LOG_SOURCE_VISIT, context);
     }
 
-    public void linkToDown(Long equipmentId, IServiceContext context) {
+    public void linkToDown(String equipmentId, IServiceContext context) {
         if (!ErpMntConfigs.equipmentStatusLinkEnabled() || equipmentId == null) {
             return;
         }
@@ -73,7 +73,7 @@ public class EquipmentStatusLinker {
      * 0 = config 关闭 / 无关联设备（§1.2 可选关联 no-op）/ 已 DECOMMISSIONED 幂等跳过。
      * 经 {@code erp-mnt.disposal-link-enabled} 门控（独立于 equipment-status-link-enabled）。
      */
-    public int linkToDecommissionedByDisposal(Long assetId, String disposalCode, IServiceContext context) {
+    public int linkToDecommissionedByDisposal(String assetId, String disposalCode, IServiceContext context) {
         if (!ErpMntConfigs.disposalLinkEnabled() || assetId == null) {
             return 0;
         }
@@ -91,7 +91,7 @@ public class EquipmentStatusLinker {
      * 资产处置冲销对称恢复（§1.3 资产恢复分支）：设备 DECOMMISSIONED → RUNNING（字面语义，
      * 不消费 visit 前态缓存）；非 DECOMMISSIONED 幂等跳过返回 0。
      */
-    public int restoreFromDisposal(Long assetId, String disposalCode, IServiceContext context) {
+    public int restoreFromDisposal(String assetId, String disposalCode, IServiceContext context) {
         if (!ErpMntConfigs.disposalLinkEnabled() || assetId == null) {
             return 0;
         }
@@ -105,19 +105,19 @@ public class EquipmentStatusLinker {
         return 1;
     }
 
-    protected ErpMntEquipment findEquipmentByAssetId(Long assetId, IServiceContext context) {
+    protected ErpMntEquipment findEquipmentByAssetId(String assetId, IServiceContext context) {
         QueryBean query = new QueryBean();
         query.addFilter(eq("assetId", assetId));
         query.setLimit(1);
         return equipmentBiz.findFirst(query, null, context);
     }
 
-    public void restoreToRunning(Long equipmentId, IServiceContext context) {
+    public void restoreToRunning(String equipmentId, IServiceContext context) {
         restoreToRunning(equipmentId, ErpMntDaoConstants.STATUS_LOG_SOURCE_VISIT, context);
     }
 
     /** 带日志来源的恢复：visit 路径传 VISIT，停机路径传 DOWNTIME（RC-R1.73 状态日志来源区分）。 */
-    public void restoreToRunning(Long equipmentId, String logSource, IServiceContext context) {
+    public void restoreToRunning(String equipmentId, String logSource, IServiceContext context) {
         if (!ErpMntConfigs.equipmentStatusLinkEnabled() || equipmentId == null) {
             return;
         }
@@ -132,7 +132,7 @@ public class EquipmentStatusLinker {
      * visit 开始前捕获设备前态：仅 IDLE 入缓存（覆盖写）；非 IDLE（RUNNING/DOWN 等）移除既有条目，
      * 保证非 IDLE 来源恢复目标恒 RUNNING（D2 裁决，同时清除异常路径悬挂残留）。
      */
-    protected void capturePriorStatus(Long equipmentId, IServiceContext context) {
+    protected void capturePriorStatus(String equipmentId, IServiceContext context) {
         ErpMntEquipment equipment = equipmentBiz.get(String.valueOf(equipmentId), false, context);
         if (equipment == null) {
             return; // 守卫由 changeEquipmentStatus 抛 ERR_EQUIPMENT_NOT_FOUND
@@ -146,7 +146,7 @@ public class EquipmentStatusLinker {
     }
 
     /** 消费前态：remove 在恢复前执行，防并发重复消费同一条目。 */
-    protected String consumePriorStatus(Long equipmentId) {
+    protected String consumePriorStatus(String equipmentId) {
         return priorStatusCache.remove(equipmentId);
     }
 
@@ -157,12 +157,12 @@ public class EquipmentStatusLinker {
         }
     }
 
-    protected void changeEquipmentStatus(Long equipmentId, String newStatus, String logSource,
+    protected void changeEquipmentStatus(String equipmentId, String newStatus, String logSource,
                                           IServiceContext context) {
         changeEquipmentStatus(equipmentId, newStatus, logSource, null, context);
     }
 
-    protected void changeEquipmentStatus(Long equipmentId, String newStatus, String logSource,
+    protected void changeEquipmentStatus(String equipmentId, String newStatus, String logSource,
                                           String sourceBillCode, IServiceContext context) {
         ErpMntEquipment equipment = equipmentBiz.get(String.valueOf(equipmentId), false, context);
         if (equipment == null) {

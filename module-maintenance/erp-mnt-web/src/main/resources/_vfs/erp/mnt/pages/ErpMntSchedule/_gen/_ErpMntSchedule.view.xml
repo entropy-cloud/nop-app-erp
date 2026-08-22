@@ -19,7 +19,7 @@
             <cols>
 
                 <!--ID-->
-                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="id" mandatory="true" sortable="true"/>
 
                 <!--计划编码-->
                 <col id="code" mandatory="true" sortable="true"/>
@@ -28,7 +28,7 @@
                 <col id="name" mandatory="true" sortable="true"/>
 
                 <!--设备ID-->
-                <col id="equipmentId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="equipmentId" mandatory="true" sortable="true"/>
 
                 <!--计划类型-->
                 <col id="scheduleType" mandatory="true" sortable="true"/>
@@ -82,7 +82,7 @@
                 <col id="runtimeBaselineHours" ui:number="true" sortable="true"/>
 
                 <!--任务模板ID-->
-                <col id="templateId" ui:number="true" sortable="true"/>
+                <col id="templateId" sortable="true"/>
             </cols>
         </grid>
         <grid id="pick-list" x:prototype="list" x:abstract="true"/>

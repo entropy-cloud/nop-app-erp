@@ -20,12 +20,12 @@
 
     <props>
         <prop name="id" displayName="ID" propId="1" i18n-en:displayName="ID" tagSet="seq-default" mandatory="true"
-              queryable="true" sortable="true" insertable="true" updatable="false" graphql:type="String">
-            <schema type="java.lang.Long"/>
+              queryable="true" sortable="true" insertable="true" updatable="false">
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="templateId" displayName="任务模板ID" propId="2" i18n-en:displayName="Task Template" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="template">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="lineNo" displayName="行号" propId="3" i18n-en:displayName="Line No" mandatory="true" queryable="true"
               sortable="true" insertable="true" updatable="true">
@@ -41,7 +41,7 @@
         </prop>
         <prop name="materialId" displayName="标准备件(物料,提示)" propId="6" i18n-en:displayName="Material" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="material">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="quantity" displayName="备件数量(提示)" propId="7" i18n-en:displayName="Quantity" queryable="true"
               sortable="true" insertable="true" updatable="true">

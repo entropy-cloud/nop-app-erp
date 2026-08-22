@@ -1,0 +1,3 @@
+_chgType,ID,VISIT_ID,LINE_NO,TASK_DESCRIPTION,STATUS,COMPLETED_BY,COMPLETED_AT,STANDARD_MINUTES,REMARK,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
+A,2,1,1,检查传动皮带,PENDING,,,30.00,,@var:ErpMntVisitTask@delVersion,0,autotest-ref,*,autotest-ref,*
+A,3,1,2,更换润滑油,PENDING,,,120.00,,@var:ErpMntVisitTask@delVersion,0,autotest-ref,*,autotest-ref,*

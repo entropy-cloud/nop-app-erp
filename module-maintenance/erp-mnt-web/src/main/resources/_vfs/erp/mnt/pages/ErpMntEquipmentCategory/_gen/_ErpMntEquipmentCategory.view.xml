@@ -19,7 +19,7 @@
             <cols>
 
                 <!--ID-->
-                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="id" mandatory="true" sortable="true"/>
 
                 <!--分类编码-->
                 <col id="code" mandatory="true" sortable="true"/>
@@ -28,7 +28,7 @@
                 <col id="name" mandatory="true" sortable="true"/>
 
                 <!--上级分类ID-->
-                <col id="parentId" ui:number="true" sortable="true"/>
+                <col id="parentId" sortable="true"/>
 
                 <!--备注-->
                 <col id="remark" sortable="true"/>

@@ -14,16 +14,16 @@
     public class ErpMntSparePartUsageOutputBean {
 
     
-        private Long _id;
+        private String _id;
 
     
         @PropMeta(propId=1)
     
-        public Long getId(){
+        public String getId(){
             return _id;
         }
 
-        public void setId(Long value){
+        public void setId(String value){
             this._id = value;
         }
 
@@ -42,58 +42,58 @@
         }
 
 
-        private Long _orgId;
+        private String _orgId;
 
     
         @PropMeta(propId=3)
     
-        public Long getOrgId(){
+        public String getOrgId(){
             return _orgId;
         }
 
-        public void setOrgId(Long value){
+        public void setOrgId(String value){
             this._orgId = value;
         }
 
 
-        private Long _visitId;
+        private String _visitId;
 
     
         @PropMeta(propId=4)
     
-        public Long getVisitId(){
+        public String getVisitId(){
             return _visitId;
         }
 
-        public void setVisitId(Long value){
+        public void setVisitId(String value){
             this._visitId = value;
         }
 
 
-        private Long _requestId;
+        private String _requestId;
 
     
         @PropMeta(propId=5)
     
-        public Long getRequestId(){
+        public String getRequestId(){
             return _requestId;
         }
 
-        public void setRequestId(Long value){
+        public void setRequestId(String value){
             this._requestId = value;
         }
 
 
-        private Long _equipmentId;
+        private String _equipmentId;
 
     
         @PropMeta(propId=6)
     
-        public Long getEquipmentId(){
+        public String getEquipmentId(){
             return _equipmentId;
         }
 
-        public void setEquipmentId(Long value){
+        public void setEquipmentId(String value){
             this._equipmentId = value;
         }
 
@@ -112,16 +112,16 @@
         }
 
 
-        private Long _warehouseId;
+        private String _warehouseId;
 
     
         @PropMeta(propId=8)
     
-        public Long getWarehouseId(){
+        public String getWarehouseId(){
             return _warehouseId;
         }
 
-        public void setWarehouseId(Long value){
+        public void setWarehouseId(String value){
             this._warehouseId = value;
         }
 

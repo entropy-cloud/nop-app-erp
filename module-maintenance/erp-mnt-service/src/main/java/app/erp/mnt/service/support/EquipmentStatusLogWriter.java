@@ -27,7 +27,7 @@ public class EquipmentStatusLogWriter {
      * 追加状态变更日志行（与状态迁移同一事务）。
      * daoFor 直写说明（E3）：StatusLog 为域内日志子实体，仅作聚合数据源，无业务管道/权限语义需求。
      */
-    public void append(Long equipmentId, String fromStatus, String toStatus, String source, String sourceBillCode) {
+    public void append(String equipmentId, String fromStatus, String toStatus, String source, String sourceBillCode) {
         IEntityDao<ErpMntEquipmentStatusLog> dao = daoProvider.daoFor(ErpMntEquipmentStatusLog.class);
         ErpMntEquipmentStatusLog log = dao.newEntity();
         log.setEquipmentId(equipmentId);

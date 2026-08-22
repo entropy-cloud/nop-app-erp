@@ -6,13 +6,14 @@
     "items": [
       {
         "id": "3",
-        "visitId": 2,
+        "visitId": "2",
         "lineNo": 1,
         "taskDescription": "冒烟任务",
         "status": "PENDING",
         "status_label": "PENDING-待执行",
         "completedBy": null,
         "completedAt": null,
+        "standardMinutes": null,
         "remark": null,
         "delVersion": 0,
         "version": 0,

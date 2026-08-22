@@ -39,7 +39,7 @@ public abstract class AbstractErpMntVisitProcessor {
         return daoProvider.daoFor(ErpMntVisit.class);
     }
 
-    protected ErpMntVisit requireVisit(Long visitId, IServiceContext context) {
+    protected ErpMntVisit requireVisit(String visitId, IServiceContext context) {
         ErpMntVisit visit = visitDao().getEntityById(visitId);
         if (visit == null) {
             throw new NopException(ErpMntErrors.ERR_VISIT_NOT_FOUND).param(ErpMntErrors.ARG_VISIT_ID, visitId);

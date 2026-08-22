@@ -20,12 +20,12 @@
 
     <props>
         <prop name="id" displayName="ID" propId="1" i18n-en:displayName="ID" tagSet="seq-default" mandatory="true"
-              queryable="true" sortable="true" insertable="true" updatable="false" graphql:type="String">
-            <schema type="java.lang.Long"/>
+              queryable="true" sortable="true" insertable="true" updatable="false">
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="equipmentId" displayName="设备ID" propId="2" i18n-en:displayName="Equipment" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="equipment">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="startTime" displayName="开始时间" propId="3" i18n-en:displayName="Start Time" tagSet="clock"
               mandatory="true" queryable="true" sortable="true" insertable="true" updatable="true">
@@ -45,7 +45,7 @@
         </prop>
         <prop name="relatedJobOrderId" displayName="关联生产工单ID" propId="7" i18n-en:displayName="Related Job Order"
               queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="relatedJobOrder">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="remark" displayName="备注" propId="8" i18n-en:displayName="Remark" queryable="true" sortable="true"
               insertable="true" updatable="true">

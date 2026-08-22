@@ -56,7 +56,7 @@ public abstract class AbstractErpMntSparePartUsageProcessor {
         return daoProvider.daoFor(ErpMntSparePartUsage.class);
     }
 
-    protected ErpMntSparePartUsage requireUsage(Long usageId, IServiceContext context) {
+    protected ErpMntSparePartUsage requireUsage(String usageId, IServiceContext context) {
         ErpMntSparePartUsage usage = usageDao().getEntityById(usageId);
         if (usage == null) {
             throw new NopException(ErpMntErrors.ERR_USAGE_NOT_FOUND).param(ErpMntErrors.ARG_USAGE_ID, usageId);
@@ -141,7 +141,7 @@ public abstract class AbstractErpMntSparePartUsageProcessor {
         return total;
     }
 
-    protected List<ErpMntSparePartUsageLine> loadLines(Long usageId) {
+    protected List<ErpMntSparePartUsageLine> loadLines(String usageId) {
         IEntityDao<ErpMntSparePartUsageLine> dao = daoProvider.daoFor(ErpMntSparePartUsageLine.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("sparePartUsageId", usageId));

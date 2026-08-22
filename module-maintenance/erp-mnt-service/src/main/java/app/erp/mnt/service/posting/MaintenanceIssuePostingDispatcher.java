@@ -87,7 +87,7 @@ public class MaintenanceIssuePostingDispatcher {
      * 派发指定备件消耗单的 GL 过账（config 门控）：加载关联出库移动单 → 读流水成本 →
      * 装配 PostingEvent → 过账。过账失败不阻塞备件消耗终态：以 try/catch 吞异常告警。
      */
-    public void dispatchIfApplicable(Long sparePartUsageId) {
+    public void dispatchIfApplicable(String sparePartUsageId) {
         if (!isPostingEnabled()) {
             return;
         }
@@ -156,8 +156,8 @@ public class MaintenanceIssuePostingDispatcher {
         event.setBillHeadCode(usage.getCode() + "-MI");
         event.setOrgId(usage.getOrgId());
 
-        Long acctSchemaId = null;
-        Long currencyId = null;
+        String acctSchemaId = null;
+        String currencyId = null;
         for (ErpInvStockLedger ledger : ledgers) {
             if (acctSchemaId == null) {
                 acctSchemaId = ledger.getAcctSchemaId();
@@ -226,7 +226,7 @@ public class MaintenanceIssuePostingDispatcher {
         return list.isEmpty() ? null : list.get(0);
     }
 
-    private List<ErpInvStockLedger> loadLedgers(Long moveId) {
+    private List<ErpInvStockLedger> loadLedgers(String moveId) {
         ormTemplate.flushSession();
         IEntityDao<ErpInvStockLedger> dao = daoProvider.daoFor(ErpInvStockLedger.class);
         QueryBean q = new QueryBean();
@@ -234,11 +234,11 @@ public class MaintenanceIssuePostingDispatcher {
         return dao.findAllByQuery(q);
     }
 
-    private Long resolveAcctSchemaId(Long orgId) {
+    private String resolveAcctSchemaId(String orgId) {
         return AcctSchemaResolver.resolvePrimarySchemaId(daoProvider, orgId);
     }
 
-    private Long resolveFunctionalCurrencyId(Long acctSchemaId) {
+    private String resolveFunctionalCurrencyId(String acctSchemaId) {
         ErpMdAcctSchema schema = daoProvider.daoFor(ErpMdAcctSchema.class).getEntityById(acctSchemaId);
         return schema != null ? schema.getFunctionalCurrencyId() : null;
     }

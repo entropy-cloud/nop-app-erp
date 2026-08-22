@@ -22,19 +22,19 @@ import app.erp.mnt.dao.entity.ErpMntVisit;
 public interface IErpMntVisitBiz extends ICrudBiz<ErpMntVisit> {
 
     @BizMutation
-    ErpMntVisit schedule(@Name("visitId") Long visitId, IServiceContext context);
+    ErpMntVisit schedule(@Name("visitId") String visitId, IServiceContext context);
 
     @BizMutation
-    ErpMntVisit start(@Name("visitId") Long visitId, IServiceContext context);
+    ErpMntVisit start(@Name("visitId") String visitId, IServiceContext context);
 
     @BizMutation
-    ErpMntVisit complete(@Name("visitId") Long visitId, IServiceContext context);
+    ErpMntVisit complete(@Name("visitId") String visitId, IServiceContext context);
 
     @BizMutation
-    ErpMntVisit cancel(@Name("visitId") Long visitId, IServiceContext context);
+    ErpMntVisit cancel(@Name("visitId") String visitId, IServiceContext context);
 
     @BizMutation
-    ErpMntRequest reportAdditionalFault(@Name("visitId") Long visitId,
+    ErpMntRequest reportAdditionalFault(@Name("visitId") String visitId,
                                         @Name("description") String description,
                                         @Name("priority") @Optional String priority,
                                         @Name("remark") @Optional String remark,

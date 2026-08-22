@@ -1,10 +1,10 @@
 {
-  "id": 0,
-  "templateId": 0,
+  "id": "",
+  "templateId": "",
   "lineNo": 0,
   "taskName": "",
   "standardMinutes": 0.0,
-  "materialId": 0,
+  "materialId": "",
   "quantity": 0.0,
   "remark": "",
   "delVersion": 0,

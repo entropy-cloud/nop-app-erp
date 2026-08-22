@@ -25,7 +25,7 @@ public class DecommissionedEquipmentGuard {
      * 新引用守卫：设备 status=DECOMMISSIONED 时抛 {@link ErpMntErrors#ERR_EQUIPMENT_DECOMMISSIONED}。
      * equipmentId 为 null 或设备不存在时放行（存在性归平台 FK 校验）。
      */
-    public void rejectIfDecommissioned(Long equipmentId, IServiceContext context) {
+    public void rejectIfDecommissioned(String equipmentId, IServiceContext context) {
         if (equipmentId == null) {
             return;
         }
@@ -41,7 +41,7 @@ public class DecommissionedEquipmentGuard {
     }
 
     /** 批量路径豁免判定：到期访问日批等无 per-schedule try/catch 的路径查询侧排除消费。 */
-    public boolean isDecommissioned(Long equipmentId, IServiceContext context) {
+    public boolean isDecommissioned(String equipmentId, IServiceContext context) {
         if (equipmentId == null) {
             return false;
         }

@@ -13,16 +13,16 @@
     public class ErpMntTaskTemplateInputBean extends CrudInputBase {
 
     
-        private Long _id;
+        private String _id;
 
     
         @PropMeta(propId=1)
     
-        public Long getId(){
+        public String getId(){
             return _id;
         }
 
-        public void setId(Long value){
+        public void setId(String value){
             this._id = value;
         }
 
@@ -55,16 +55,16 @@
         }
 
 
-        private Long _equipmentCategoryId;
+        private String _equipmentCategoryId;
 
     
         @PropMeta(propId=4)
     
-        public Long getEquipmentCategoryId(){
+        public String getEquipmentCategoryId(){
             return _equipmentCategoryId;
         }
 
-        public void setEquipmentCategoryId(Long value){
+        public void setEquipmentCategoryId(String value){
             this._equipmentCategoryId = value;
         }
 

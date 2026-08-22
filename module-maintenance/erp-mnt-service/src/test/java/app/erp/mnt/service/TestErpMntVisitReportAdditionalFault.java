@@ -46,7 +46,7 @@ public class TestErpMntVisitReportAdditionalFault extends JunitAutoTestCase {
     @RegisterExtension
     static MntFrozenClockExtension frozenClock = new MntFrozenClockExtension();
 
-    static final Long EQUIPMENT_ID = 101L;
+    static final String EQUIPMENT_ID = "101";
     static final Long ASSIGNEE_ID = 201L;
 
     @Inject
@@ -58,13 +58,13 @@ public class TestErpMntVisitReportAdditionalFault extends JunitAutoTestCase {
 
     private final AtomicLong idSeq = new AtomicLong(100000L);
 
-    private Long nextId() {
-        return idSeq.incrementAndGet();
+    private String nextId() {
+        return String.valueOf(idSeq.incrementAndGet());
     }
 
     @Test
     public void testReportAdditionalFaultFromInProgressVisitCreatesOpenRequest() {
-        Long visitId = nextId();
+        String visitId = nextId();
         ormTemplate.runInSession(session -> {
             seedEquipment(EQUIPMENT_ID, ErpMntDaoConstants.EQUIPMENT_STATUS_UNDER_MAINTENANCE);
             seedVisit(visitId, EQUIPMENT_ID, ErpMntDaoConstants.VISIT_STATUS_IN_PROGRESS, "VST-FAULT-001");
@@ -74,7 +74,7 @@ public class TestErpMntVisitReportAdditionalFault extends JunitAutoTestCase {
         ApiResponse<?> resp = reportAdditionalFault(visitId, "液压泵异响，需另开请求处理", null, null);
         assertEquals(0, resp.getStatus(), "IN_PROGRESS visit 上报应成功");
 
-        Long requestId = responseId(resp);
+        String requestId = responseId(resp);
         ErpMntRequest request = loadRequest(requestId);
         assertEquals(ErpMntDaoConstants.REQUEST_STATUS_OPEN, request.getStatus(), "新 request 初始 OPEN");
         assertEquals(EQUIPMENT_ID, request.getEquipmentId(), "equipmentId 同 visit");
@@ -100,8 +100,8 @@ public class TestErpMntVisitReportAdditionalFault extends JunitAutoTestCase {
                 ErpMntDaoConstants.VISIT_STATUS_CANCELLED};
         for (int i = 0; i < statuses.length; i++) {
             String status = statuses[i];
-            Long visitId = nextId();
-            Long equipmentId = EQUIPMENT_ID + i;
+            String visitId = nextId();
+            String equipmentId = String.valueOf(101 + i);
             ormTemplate.runInSession(session -> {
                 seedEquipment(equipmentId, ErpMntDaoConstants.EQUIPMENT_STATUS_RUNNING);
                 seedVisit(visitId, equipmentId, status, "VST-FAULT-REJ-" + status);
@@ -120,7 +120,7 @@ public class TestErpMntVisitReportAdditionalFault extends JunitAutoTestCase {
 
     @Test
     public void testReportAdditionalFaultAppendsVisitRemark() {
-        Long visitId = nextId();
+        String visitId = nextId();
         ormTemplate.runInSession(session -> {
             seedEquipment(EQUIPMENT_ID, ErpMntDaoConstants.EQUIPMENT_STATUS_UNDER_MAINTENANCE);
             seedVisit(visitId, EQUIPMENT_ID, ErpMntDaoConstants.VISIT_STATUS_IN_PROGRESS, "VST-FAULT-RMK-001");
@@ -141,7 +141,7 @@ public class TestErpMntVisitReportAdditionalFault extends JunitAutoTestCase {
 
     @Test
     public void testReportAdditionalFaultVisitNotFound() {
-        ApiResponse<?> resp = reportAdditionalFault(999999L, "描述", null, null);
+        ApiResponse<?> resp = reportAdditionalFault("999999", "描述", null, null);
         assertNotEquals(0, resp.getStatus());
         assertEquals(ErpMntErrors.ERR_VISIT_NOT_FOUND.getErrorCode(), resp.getCode());
         assertEquals(0, countRequests(), "visit 不存在零落库");
@@ -149,7 +149,7 @@ public class TestErpMntVisitReportAdditionalFault extends JunitAutoTestCase {
 
     @Test
     public void testRepeatReportAdditionalFaultCreatesSecondRequestWithUniqueCode() {
-        Long visitId = nextId();
+        String visitId = nextId();
         ormTemplate.runInSession(session -> {
             seedEquipment(EQUIPMENT_ID, ErpMntDaoConstants.EQUIPMENT_STATUS_UNDER_MAINTENANCE);
             seedVisit(visitId, EQUIPMENT_ID, ErpMntDaoConstants.VISIT_STATUS_IN_PROGRESS, "VST-FAULT-RPT-001");
@@ -161,8 +161,8 @@ public class TestErpMntVisitReportAdditionalFault extends JunitAutoTestCase {
         ApiResponse<?> r2 = reportAdditionalFault(visitId, "第二故障", null, null);
         assertEquals(0, r2.getStatus(), "visit 保持 IN_PROGRESS 可合法多次上报（L1 多故障语义）");
 
-        Long id1 = responseId(r1);
-        Long id2 = responseId(r2);
+        String id1 = responseId(r1);
+        String id2 = responseId(r2);
         assertNotEquals(id1, id2, "两次上报两 request");
         assertNotEquals(loadRequest(id1).getCode(), loadRequest(id2).getCode(), "code 唯一（E1 毫秒时间戳后缀零 UK 冲突）");
         assertEquals(2, countRequests(), "两次上报两 request 落库");
@@ -171,7 +171,7 @@ public class TestErpMntVisitReportAdditionalFault extends JunitAutoTestCase {
 
     @Test
     public void testReportAdditionalFaultRequestCanContinueFullChain() {
-        Long visitId = nextId();
+        String visitId = nextId();
         ormTemplate.runInSession(session -> {
             seedEquipment(EQUIPMENT_ID, ErpMntDaoConstants.EQUIPMENT_STATUS_UNDER_MAINTENANCE);
             seedVisit(visitId, EQUIPMENT_ID, ErpMntDaoConstants.VISIT_STATUS_IN_PROGRESS, "VST-FAULT-FLOW-001");
@@ -180,7 +180,7 @@ public class TestErpMntVisitReportAdditionalFault extends JunitAutoTestCase {
 
         ApiResponse<?> resp = reportAdditionalFault(visitId, "停机类额外故障", ErpMntDaoConstants.PRIORITY_HIGH, "现场已隔离");
         assertEquals(0, resp.getStatus());
-        Long requestId = responseId(resp);
+        String requestId = responseId(resp);
         ErpMntRequest request = loadRequest(requestId);
         assertEquals(ErpMntDaoConstants.PRIORITY_HIGH, request.getPriority(), "priority 按入参");
         assertEquals("现场已隔离", request.getRemark(), "remark 入参归新 request.remark（E3/E1）");
@@ -193,7 +193,7 @@ public class TestErpMntVisitReportAdditionalFault extends JunitAutoTestCase {
 
     // ---------- rpc helpers ----------
 
-    private ApiResponse<?> reportAdditionalFault(Long visitId, String description, String priority, String remark) {
+    private ApiResponse<?> reportAdditionalFault(String visitId, String description, String priority, String remark) {
         Map<String, Object> args = new java.util.LinkedHashMap<>();
         args.put("visitId", visitId);
         args.put("description", description);
@@ -202,15 +202,15 @@ public class TestErpMntVisitReportAdditionalFault extends JunitAutoTestCase {
         return executeRpc(mutation, "ErpMntVisit__reportAdditionalFault", ApiRequest.build(args));
     }
 
-    private Long responseId(ApiResponse<?> resp) {
-        return Long.parseLong(String.valueOf(((Map<?, ?>) resp.getData()).get("id")));
+    private String responseId(ApiResponse<?> resp) {
+        return String.valueOf(((Map<?, ?>) resp.getData()).get("id"));
     }
 
-    private ApiResponse<?> accept(Long requestId) {
+    private ApiResponse<?> accept(String requestId) {
         return executeRpc(mutation, "ErpMntRequest__accept", ApiRequest.build(Map.of("requestId", requestId)));
     }
 
-    private ApiResponse<?> startRepair(Long requestId) {
+    private ApiResponse<?> startRepair(String requestId) {
         return executeRpc(mutation, "ErpMntRequest__startRepair", ApiRequest.build(Map.of("requestId", requestId)));
     }
 
@@ -221,7 +221,7 @@ public class TestErpMntVisitReportAdditionalFault extends JunitAutoTestCase {
 
     // ---------- seed helpers ----------
 
-    private void seedEquipment(Long id, String status) {
+    private void seedEquipment(String id, String status) {
         IEntityDao<ErpMntEquipment> dao = daoProvider.daoFor(ErpMntEquipment.class);
         ErpMntEquipment equipment = new ErpMntEquipment();
         equipment.setId(id);
@@ -231,7 +231,7 @@ public class TestErpMntVisitReportAdditionalFault extends JunitAutoTestCase {
         dao.saveEntity(equipment);
     }
 
-    private void seedVisit(Long id, Long equipmentId, String status, String code) {
+    private void seedVisit(String id, String equipmentId, String status, String code) {
         IEntityDao<ErpMntVisit> dao = daoProvider.daoFor(ErpMntVisit.class);
         ErpMntVisit visit = new ErpMntVisit();
         visit.setId(id);
@@ -246,19 +246,19 @@ public class TestErpMntVisitReportAdditionalFault extends JunitAutoTestCase {
 
     // ---------- query helpers ----------
 
-    private ErpMntVisit loadVisit(Long visitId) {
+    private ErpMntVisit loadVisit(String visitId) {
         return daoProvider.daoFor(ErpMntVisit.class).getEntityById(visitId);
     }
 
-    private String visitStatus(Long visitId) {
+    private String visitStatus(String visitId) {
         return loadVisit(visitId).getStatus();
     }
 
-    private ErpMntRequest loadRequest(Long requestId) {
+    private ErpMntRequest loadRequest(String requestId) {
         return daoProvider.daoFor(ErpMntRequest.class).getEntityById(requestId);
     }
 
-    private String requestStatus(Long requestId) {
+    private String requestStatus(String requestId) {
         return loadRequest(requestId).getStatus();
     }
 

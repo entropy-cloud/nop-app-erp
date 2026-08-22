@@ -346,10 +346,10 @@
       ],
       "refDomain": "maintenance",
       "evidence": "module-assets/erp-ast-service/src/main/java/app/erp/ast/service/processor/ErpAstDisposalProcessor.java:14",
-      "note": "",
+      "note": "已退役：M3.2 mnt plan 2026-08-22-0731-3 Phase 2 B 义务兑付（mnt 翻转 String → ast 侧 toLong 桥移除 + String 直传 + bridge 注释/未用 import 移除；ast 7 模块链重建绿 + ast grep 桥残留清零 + ast 测试复跑 320/320 基线维持）",
       "deferredUntil": "M3.2",
       "retireOwner": "M3.2",
-      "status": "active"
+      "status": "retired"
     },
     {
       "id": "bridge-main-025",
@@ -363,10 +363,10 @@
       ],
       "refDomain": "maintenance",
       "evidence": "module-assets/erp-ast-service/src/main/java/app/erp/ast/service/processor/ErpAstDisposalProcessor.java:14",
-      "note": "",
+      "note": "已退役：M3.2 mnt plan 2026-08-22-0731-3 Phase 2 B 义务兑付（同 bridge-main-024；ast 7 模块链重建绿 + ast 测试复跑 320/320 基线维持）",
       "deferredUntil": "M3.2",
       "retireOwner": "M3.2",
-      "status": "active"
+      "status": "retired"
     },
     {
       "id": "bridge-main-026",
@@ -1954,8 +1954,8 @@
       ],
       "deferredUntil": "M3.2",
       "retireOwner": "M3.2",
-      "note": "早域 test 引用晚域——早域 plan Phase 3 消费（本域测试适配）；晚域翻转时复核",
-      "status": "active"
+      "note": "已退役：M3.2 mnt plan 2026-08-22-0731-3 Phase 3 兑付（mnt 种子 String 化 + mfg/qa 种子保持 Long + seedEquipment workcenterId 经 String.valueOf 局部桥接（双向指针注释在文件内，退役 owner M3.1/M2.3））；TestErpMntOee 9/9 绿",
+      "status": "retired"
     },
     {
       "id": "bridge-test-126",

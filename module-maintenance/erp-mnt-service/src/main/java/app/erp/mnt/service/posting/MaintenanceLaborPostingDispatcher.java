@@ -114,7 +114,7 @@ public class MaintenanceLaborPostingDispatcher {
 
         PostingEvent event = buildEvent(visit, rate, laborCost, billHeadCode);
         try {
-            Long voucherId = executor.postEvent(event);
+            String voucherId = executor.postEvent(event);
             return voucherId != null;
         } catch (Exception e) {
             if (e instanceof NopException) {
@@ -198,8 +198,8 @@ public class MaintenanceLaborPostingDispatcher {
         event.setBillHeadCode(billHeadCode);
         event.setOrgId(visit.getOrgId());
 
-        Long acctSchemaId = resolveAcctSchemaId(visit.getOrgId());
-        Long currencyId = acctSchemaId != null ? resolveFunctionalCurrencyId(acctSchemaId) : null;
+        String acctSchemaId = resolveAcctSchemaId(visit.getOrgId());
+        String currencyId = acctSchemaId != null ? resolveFunctionalCurrencyId(acctSchemaId) : null;
         event.setAcctSchemaId(acctSchemaId);
         event.setCurrencyId(currencyId);
         event.setExchangeRate(BigDecimal.ONE);
@@ -210,7 +210,7 @@ public class MaintenanceLaborPostingDispatcher {
         event.setVoucherDate(voucherDate);
 
         String equipmentCode = null;
-        Long equipmentId = visit.getEquipmentId();
+        String equipmentId = visit.getEquipmentId();
         if (equipmentId != null) {
             ErpMntEquipment equipment = daoProvider.daoFor(ErpMntEquipment.class).getEntityById(equipmentId);
             if (equipment != null) {
@@ -237,11 +237,11 @@ public class MaintenanceLaborPostingDispatcher {
         return !dao.findAllByQuery(q).isEmpty();
     }
 
-    private Long resolveAcctSchemaId(Long orgId) {
+    private String resolveAcctSchemaId(String orgId) {
         return AcctSchemaResolver.resolvePrimarySchemaId(daoProvider, orgId);
     }
 
-    private Long resolveFunctionalCurrencyId(Long acctSchemaId) {
+    private String resolveFunctionalCurrencyId(String acctSchemaId) {
         ErpMdAcctSchema schema = daoProvider.daoFor(ErpMdAcctSchema.class).getEntityById(acctSchemaId);
         return schema != null ? schema.getFunctionalCurrencyId() : null;
     }

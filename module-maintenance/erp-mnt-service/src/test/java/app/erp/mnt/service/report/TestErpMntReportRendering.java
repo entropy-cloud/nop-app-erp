@@ -44,7 +44,7 @@ public class TestErpMntReportRendering extends JunitAutoTestCase {
 
     private static final io.nop.core.context.IServiceContext CTX = new io.nop.core.context.ServiceContextImpl();
 
-    static final Long ORG_ID = 1L;
+    static final String ORG_ID = "1";
 
     @Inject
     ErpMntReportBizModel reportBiz;
@@ -162,31 +162,31 @@ public class TestErpMntReportRendering extends JunitAutoTestCase {
 
     private void seedMaintenanceHistoryBaseline() {
         ormTemplate.runInSession(() -> {
-            Long eqId = 3001L;
+            String eqId = "3001";
             seedEquipment(eqId, ErpMntDaoConstants.EQUIPMENT_STATUS_RUNNING);
-            Long visitId = 3101L;
+            String visitId = "3101";
             seedVisit(visitId, "VST-RPT-1", eqId, LocalDate.of(2026, 7, 10),
                     ErpMntDaoConstants.VISIT_TYPE_PLANNED,
                     ErpMntDaoConstants.VISIT_STATUS_COMPLETED, bd("120"));
-            seedVisitTask(3201L, visitId, 10, "检查液压系统");
-            seedVisitTask(3202L, visitId, 20, "更换滤芯");
-            seedSparePartUsage(3301L, "SPU-RPT-1", visitId, eqId);
+            seedVisitTask("3201", visitId, 10, "检查液压系统");
+            seedVisitTask("3202", visitId, 20, "更换滤芯");
+            seedSparePartUsage("3301", "SPU-RPT-1", visitId, eqId);
         });
     }
 
     private void seedDowntimeBaseline() {
         ormTemplate.runInSession(() -> {
-            Long eqId = 3002L;
+            String eqId = "3002";
             seedEquipment(eqId, ErpMntDaoConstants.EQUIPMENT_STATUS_RUNNING);
             // 同设备同原因 2 条：60 + 40
-            seedDowntime(3401L, eqId, LocalDateTime.of(2026, 7, 10, 9, 0),
+            seedDowntime("3401", eqId, LocalDateTime.of(2026, 7, 10, 9, 0),
                     "BREAKDOWN", bd("60"));
-            seedDowntime(3402L, eqId, LocalDateTime.of(2026, 7, 11, 14, 0),
+            seedDowntime("3402", eqId, LocalDateTime.of(2026, 7, 11, 14, 0),
                     "BREAKDOWN", bd("40"));
         });
     }
 
-    private void seedEquipment(Long id, String status) {
+    private void seedEquipment(String id, String status) {
         IEntityDao<ErpMntEquipment> dao = daoProvider.daoFor(ErpMntEquipment.class);
         ErpMntEquipment e = new ErpMntEquipment();
         e.orm_propValueByName("id", id);
@@ -196,7 +196,7 @@ public class TestErpMntReportRendering extends JunitAutoTestCase {
         dao.saveEntity(e);
     }
 
-    private void seedVisit(Long id, String code, Long equipmentId, LocalDate visitDate,
+    private void seedVisit(String id, String code, String equipmentId, LocalDate visitDate,
                            String visitType, String status, BigDecimal totalMinutes) {
         IEntityDao<ErpMntVisit> dao = daoProvider.daoFor(ErpMntVisit.class);
         ErpMntVisit v = new ErpMntVisit();
@@ -211,7 +211,7 @@ public class TestErpMntReportRendering extends JunitAutoTestCase {
         dao.saveEntity(v);
     }
 
-    private void seedVisitTask(Long id, Long visitId, int lineNo, String desc) {
+    private void seedVisitTask(String id, String visitId, int lineNo, String desc) {
         IEntityDao<ErpMntVisitTask> dao = daoProvider.daoFor(ErpMntVisitTask.class);
         ErpMntVisitTask t = new ErpMntVisitTask();
         t.orm_propValueByName("id", id);
@@ -222,7 +222,7 @@ public class TestErpMntReportRendering extends JunitAutoTestCase {
         dao.saveEntity(t);
     }
 
-    private void seedSparePartUsage(Long id, String code, Long visitId, Long equipmentId) {
+    private void seedSparePartUsage(String id, String code, String visitId, String equipmentId) {
         IEntityDao<ErpMntSparePartUsage> dao = daoProvider.daoFor(ErpMntSparePartUsage.class);
         ErpMntSparePartUsage u = new ErpMntSparePartUsage();
         u.orm_propValueByName("id", id);
@@ -230,14 +230,14 @@ public class TestErpMntReportRendering extends JunitAutoTestCase {
         u.setOrgId(ORG_ID);
         u.setVisitId(visitId);
         u.setEquipmentId(equipmentId);
-        u.setWarehouseId(9001L);
+        u.setWarehouseId("9001");
         u.setBusinessDate(LocalDate.of(2026, 7, 10));
         u.orm_propValueByName("docStatus", ErpMntDaoConstants.DOC_STATUS_ACTIVE);
         u.orm_propValueByName("approveStatus", ErpMntConstants.APPROVE_STATUS_APPROVED);
         dao.saveEntity(u);
     }
 
-    private void seedDowntime(Long id, Long equipmentId, LocalDateTime startTime, String reason, BigDecimal totalMinutes) {
+    private void seedDowntime(String id, String equipmentId, LocalDateTime startTime, String reason, BigDecimal totalMinutes) {
         IEntityDao<ErpMntDowntimeEntry> dao = daoProvider.daoFor(ErpMntDowntimeEntry.class);
         ErpMntDowntimeEntry d = new ErpMntDowntimeEntry();
         d.orm_propValueByName("id", id);

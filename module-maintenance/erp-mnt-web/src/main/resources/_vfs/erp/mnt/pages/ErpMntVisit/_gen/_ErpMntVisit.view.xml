@@ -19,16 +19,16 @@
             <cols>
 
                 <!--ID-->
-                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="id" mandatory="true" sortable="true"/>
 
                 <!--访问编码-->
                 <col id="code" mandatory="true" sortable="true"/>
 
                 <!--维护计划ID-->
-                <col id="scheduleId" ui:number="true" sortable="true"/>
+                <col id="scheduleId" sortable="true"/>
 
                 <!--设备ID-->
-                <col id="equipmentId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="equipmentId" mandatory="true" sortable="true"/>
 
                 <!--访问日期-->
                 <col id="visitDate" mandatory="true" sortable="true"/>
@@ -64,7 +64,7 @@
                 <col id="remark" sortable="true"/>
 
                 <!--业务组织-->
-                <col id="orgId" ui:number="true" sortable="true"/>
+                <col id="orgId" sortable="true"/>
 
                 <!--业务日期-->
                 <col id="businessDate" sortable="true"/>
@@ -94,7 +94,7 @@
                 <col id="updateTime" mandatory="true" sortable="true"/>
 
                 <!--维护请求ID-->
-                <col id="requestId" ui:number="true" sortable="true"/>
+                <col id="requestId" sortable="true"/>
             </cols>
         </grid>
         <grid id="pick-list" x:prototype="list" x:abstract="true"/>

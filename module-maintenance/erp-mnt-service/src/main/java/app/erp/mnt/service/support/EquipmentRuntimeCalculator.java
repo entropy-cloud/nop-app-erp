@@ -38,7 +38,7 @@ public class EquipmentRuntimeCalculator {
      * 计算设备截至 asOf 的累计运行小时数（scale 4）。
      * daoFor 直读说明（E3）：equipment/StatusLog 均为域内实体的只读聚合访问，无业务管道语义。
      */
-    public BigDecimal computeRunningHours(Long equipmentId, Timestamp asOf) {
+    public BigDecimal computeRunningHours(String equipmentId, Timestamp asOf) {
         ErpMntEquipment equipment = loadEquipment(equipmentId);
         if (equipment == null) {
             return BigDecimal.ZERO;
@@ -65,7 +65,7 @@ public class EquipmentRuntimeCalculator {
      * 语义与 {@link #computeRunningHours} 同源：Σ RUNNING 段与窗口求交；from=null 时不设下界。
      * 遗留无日志分支镜像既有保守语义（当前 RUNNING 从 createTime 起算，钳制到窗口内）。
      */
-    public BigDecimal computeRunningHoursInRange(Long equipmentId, Timestamp from, Timestamp to) {
+    public BigDecimal computeRunningHoursInRange(String equipmentId, Timestamp from, Timestamp to) {
         ErpMntEquipment equipment = loadEquipment(equipmentId);
         if (equipment == null) {
             return BigDecimal.ZERO;
@@ -91,7 +91,7 @@ public class EquipmentRuntimeCalculator {
         return toHours(runningSeconds);
     }
 
-    protected ErpMntEquipment loadEquipment(Long equipmentId) {
+    protected ErpMntEquipment loadEquipment(String equipmentId) {
         return daoProvider.daoFor(ErpMntEquipment.class).getEntityById(equipmentId);
     }
 
@@ -134,7 +134,7 @@ public class EquipmentRuntimeCalculator {
         return Math.max(seconds, 0L);
     }
 
-    protected List<ErpMntEquipmentStatusLog> findLogs(Long equipmentId) {
+    protected List<ErpMntEquipmentStatusLog> findLogs(String equipmentId) {
         IEntityDao<ErpMntEquipmentStatusLog> dao = daoProvider.daoFor(ErpMntEquipmentStatusLog.class);
         QueryBean q = new QueryBean();
         q.addFilter(io.nop.api.core.beans.FilterBeans.eq("equipmentId", equipmentId));

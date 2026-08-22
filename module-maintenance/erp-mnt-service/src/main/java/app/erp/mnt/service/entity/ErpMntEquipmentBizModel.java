@@ -27,7 +27,7 @@ public class ErpMntEquipmentBizModel extends CrudBizModel<ErpMntEquipment> imple
 
     @Override
     @BizMutation
-    public ErpMntEquipment changeStatus(@Name("equipmentId") Long equipmentId,
+    public ErpMntEquipment changeStatus(@Name("equipmentId") String equipmentId,
                                          @Name("newStatus") String newStatus,
                                          IServiceContext context) {
         ErpMntEquipment equipment = requireEntity(String.valueOf(equipmentId), null, context);
@@ -46,7 +46,7 @@ public class ErpMntEquipmentBizModel extends CrudBizModel<ErpMntEquipment> imple
 
     @Override
     @BizMutation
-    public int changeStatusForAssetDisposal(@Name("assetId") Long assetId,
+    public int changeStatusForAssetDisposal(@Name("assetId") String assetId,
                                              @Name("disposalCode") String disposalCode,
                                              IServiceContext context) {
         return equipmentStatusLinker.linkToDecommissionedByDisposal(assetId, disposalCode, context);
@@ -54,7 +54,7 @@ public class ErpMntEquipmentBizModel extends CrudBizModel<ErpMntEquipment> imple
 
     @Override
     @BizMutation
-    public int restoreFromAssetDisposal(@Name("assetId") Long assetId,
+    public int restoreFromAssetDisposal(@Name("assetId") String assetId,
                                          @Name("disposalCode") String disposalCode,
                                          IServiceContext context) {
         return equipmentStatusLinker.restoreFromDisposal(assetId, disposalCode, context);

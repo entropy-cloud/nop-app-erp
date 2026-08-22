@@ -59,14 +59,14 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpMntSparePartPosting extends JunitAutoTestCase {
 
-    static final Long ORG_ID = 1251L;
-    static final Long EQUIPMENT_ID = 151L;
-    static final Long WAREHOUSE_ID = 3251L;
-    static final Long UOM_ID = 5251L;
-    static final Long CURRENCY_ID = 6251L;
-    static final Long ACCT_SCHEMA_ID = 7251L;
-    static final Long M1 = 4251L;
-    static final Long M2 = 4252L;
+    static final String ORG_ID = "1251";
+    static final String EQUIPMENT_ID = "151";
+    static final String WAREHOUSE_ID = "3251";
+    static final String UOM_ID = "5251";
+    static final String CURRENCY_ID = "6251";
+    static final String ACCT_SCHEMA_ID = "7251";
+    static final String M1 = "4251";
+    static final String M2 = "4252";
 
     static final String SUBJECT_INVENTORY = "1403";
     static final String SUBJECT_EXPENSE = "6602";
@@ -85,8 +85,8 @@ public class TestErpMntSparePartPosting extends JunitAutoTestCase {
 
     private final AtomicLong idSeq = new AtomicLong(200000L);
 
-    private Long nextId() {
-        return idSeq.incrementAndGet();
+    private String nextId() {
+        return String.valueOf(idSeq.incrementAndGet());
     }
 
     @AfterEach
@@ -106,8 +106,8 @@ public class TestErpMntSparePartPosting extends JunitAutoTestCase {
         seedEquipment(EQUIPMENT_ID);
         seedStock("SEED-MNT-BASIC", M1, bd("20"), bd("5"));
 
-        Long usageId = nextId();
-        Long lineId = nextId();
+        String usageId = nextId();
+        String lineId = nextId();
         ormTemplate.runInSession(session -> {
             seedUsage(usageId, EQUIPMENT_ID, "SP-POST-BASIC");
             seedUsageLine(lineId, usageId, M1, bd("10"), bd("5"));
@@ -155,7 +155,7 @@ public class TestErpMntSparePartPosting extends JunitAutoTestCase {
         seedStock("SEED-MNT-MM1", M1, bd("10"), bd("5"));
         seedStock("SEED-MNT-MM2", M2, bd("10"), bd("8"));
 
-        Long usageId = nextId();
+        String usageId = nextId();
         ormTemplate.runInSession(session -> {
             seedUsage(usageId, EQUIPMENT_ID, "SP-POST-MM");
             seedUsageLine(nextId(), usageId, M1, bd("2"), bd("5"));
@@ -193,8 +193,8 @@ public class TestErpMntSparePartPosting extends JunitAutoTestCase {
         seedEquipment(EQUIPMENT_ID);
         seedStock("SEED-MNT-OFF", M1, bd("20"), bd("5"));
 
-        Long usageId = nextId();
-        Long lineId = nextId();
+        String usageId = nextId();
+        String lineId = nextId();
         ormTemplate.runInSession(session -> {
             seedUsage(usageId, EQUIPMENT_ID, "SP-POST-OFF");
             seedUsageLine(lineId, usageId, M1, bd("10"), bd("5"));
@@ -222,8 +222,8 @@ public class TestErpMntSparePartPosting extends JunitAutoTestCase {
         seedEquipment(EQUIPMENT_ID);
         seedStock("SEED-MNT-IDEM", M1, bd("20"), bd("5"));
 
-        Long usageId = nextId();
-        Long lineId = nextId();
+        String usageId = nextId();
+        String lineId = nextId();
         ormTemplate.runInSession(session -> {
             seedUsage(usageId, EQUIPMENT_ID, "SP-POST-IDEM");
             seedUsageLine(lineId, usageId, M1, bd("10"), bd("5"));
@@ -249,7 +249,7 @@ public class TestErpMntSparePartPosting extends JunitAutoTestCase {
 
     // ---------- rpc helpers ----------
 
-    private ApiResponse<?> confirm(Long usageId) {
+    private ApiResponse<?> confirm(String usageId) {
         ApiResponse<?> resp = executeRpc(mutation, "ErpMntSparePartUsage__confirm",
                 ApiRequest.build(Map.of("usageId", usageId)));
         return resp;
@@ -311,7 +311,7 @@ public class TestErpMntSparePartPosting extends JunitAutoTestCase {
         dao.saveEntity(subject);
     }
 
-    private void seedMaterial(Long id, String costMethod) {
+    private void seedMaterial(String id, String costMethod) {
         ormTemplate.runInSession(session -> {
             IEntityDao<ErpMdMaterial> dao = daoProvider.daoFor(ErpMdMaterial.class);
             ErpMdMaterial m = new ErpMdMaterial();
@@ -327,7 +327,7 @@ public class TestErpMntSparePartPosting extends JunitAutoTestCase {
         });
     }
 
-    private void seedStock(String billCode, Long materialId, BigDecimal qty, BigDecimal unitCost) {
+    private void seedStock(String billCode, String materialId, BigDecimal qty, BigDecimal unitCost) {
         Map<String, Object> req = new LinkedHashMap<>();
         req.put("moveType", MOVE_TYPE_INCOMING);
         req.put("orgId", ORG_ID);
@@ -353,7 +353,7 @@ public class TestErpMntSparePartPosting extends JunitAutoTestCase {
 
     // ---------- maintenance seed ----------
 
-    private void seedEquipment(Long id) {
+    private void seedEquipment(String id) {
         IEntityDao<ErpMntEquipment> dao = daoProvider.daoFor(ErpMntEquipment.class);
         ErpMntEquipment equipment = new ErpMntEquipment();
         equipment.setId(id);
@@ -363,7 +363,7 @@ public class TestErpMntSparePartPosting extends JunitAutoTestCase {
         dao.saveEntity(equipment);
     }
 
-    private void seedUsage(Long id, Long equipmentId, String code) {
+    private void seedUsage(String id, String equipmentId, String code) {
         IEntityDao<ErpMntSparePartUsage> dao = daoProvider.daoFor(ErpMntSparePartUsage.class);
         ErpMntSparePartUsage usage = new ErpMntSparePartUsage();
         usage.setId(id);
@@ -378,12 +378,12 @@ public class TestErpMntSparePartPosting extends JunitAutoTestCase {
         dao.saveEntity(usage);
     }
 
-    private void seedUsageLine(Long id, Long usageId, Long materialId, BigDecimal qty, BigDecimal unitCost) {
+    private void seedUsageLine(String id, String usageId, String materialId, BigDecimal qty, BigDecimal unitCost) {
         IEntityDao<ErpMntSparePartUsageLine> dao = daoProvider.daoFor(ErpMntSparePartUsageLine.class);
         ErpMntSparePartUsageLine line = new ErpMntSparePartUsageLine();
         line.setId(id);
         line.setSparePartUsageId(usageId);
-        line.setLineNo(materialId.intValue());
+        line.setLineNo(Integer.parseInt(materialId));
         line.setMaterialId(materialId);
         line.setUoMId(UOM_ID);
         line.setQuantity(qty);
@@ -394,7 +394,7 @@ public class TestErpMntSparePartPosting extends JunitAutoTestCase {
 
     // ---------- query helpers ----------
 
-    private ErpMntSparePartUsage loadUsage(Long usageId) {
+    private ErpMntSparePartUsage loadUsage(String usageId) {
         return daoProvider.daoFor(ErpMntSparePartUsage.class).getEntityById(usageId);
     }
 
@@ -406,7 +406,7 @@ public class TestErpMntSparePartPosting extends JunitAutoTestCase {
         return dao.findAllByQuery(q).stream().findFirst().orElse(null);
     }
 
-    private ErpInvStockBalance findBalance(Long materialId) {
+    private ErpInvStockBalance findBalance(String materialId) {
         IEntityDao<ErpInvStockBalance> dao = daoProvider.daoFor(ErpInvStockBalance.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("materialId", materialId));
@@ -434,7 +434,7 @@ public class TestErpMntSparePartPosting extends JunitAutoTestCase {
         return dao.findAllByQuery(q).size();
     }
 
-    private ErpFinVoucherLine findVoucherLine(Long voucherId, String subjectCode) {
+    private ErpFinVoucherLine findVoucherLine(String voucherId, String subjectCode) {
         IEntityDao<ErpFinVoucherLine> dao = daoProvider.daoFor(ErpFinVoucherLine.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("voucherId", voucherId));
@@ -442,7 +442,7 @@ public class TestErpMntSparePartPosting extends JunitAutoTestCase {
         return dao.findAllByQuery(q).stream().findFirst().orElse(null);
     }
 
-    private List<ErpFinVoucherLine> findVoucherLines(Long voucherId, String subjectCode, String dcDirection) {
+    private List<ErpFinVoucherLine> findVoucherLines(String voucherId, String subjectCode, String dcDirection) {
         IEntityDao<ErpFinVoucherLine> dao = daoProvider.daoFor(ErpFinVoucherLine.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("voucherId", voucherId));
@@ -451,7 +451,7 @@ public class TestErpMntSparePartPosting extends JunitAutoTestCase {
         return dao.findAllByQuery(q);
     }
 
-    private long countVoucherLines(Long voucherId) {
+    private long countVoucherLines(String voucherId) {
         IEntityDao<ErpFinVoucherLine> dao = daoProvider.daoFor(ErpFinVoucherLine.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("voucherId", voucherId));

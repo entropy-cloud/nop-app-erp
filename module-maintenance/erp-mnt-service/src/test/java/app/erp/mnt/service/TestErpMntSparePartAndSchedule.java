@@ -54,13 +54,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpMntSparePartAndSchedule extends JunitAutoTestCase {
 
-    static final Long ORG_ID = 1201L;
-    static final Long EQUIPMENT_ID = 101L;
-    static final Long WAREHOUSE_ID = 3201L;
-    static final Long MATERIAL_ID = 4201L;
-    static final Long UOM_ID = 5201L;
-    static final Long CURRENCY_ID = 6201L;
-    static final Long ACCT_SCHEMA_ID = 7201L;
+    static final String ORG_ID = "1201";
+    static final String EQUIPMENT_ID = "101";
+    static final String WAREHOUSE_ID = "3201";
+    static final String MATERIAL_ID = "4201";
+    static final String UOM_ID = "5201";
+    static final String CURRENCY_ID = "6201";
+    static final String ACCT_SCHEMA_ID = "7201";
 
     @Inject
     IDaoProvider daoProvider;
@@ -71,8 +71,8 @@ public class TestErpMntSparePartAndSchedule extends JunitAutoTestCase {
 
     private final AtomicLong idSeq = new AtomicLong(100000L);
 
-    private Long nextId() {
-        return idSeq.incrementAndGet();
+    private String nextId() {
+        return String.valueOf(idSeq.incrementAndGet());
     }
 
     // ---------- 备件消耗出库 ----------
@@ -80,8 +80,8 @@ public class TestErpMntSparePartAndSchedule extends JunitAutoTestCase {
     @Test
     public void testSparePartConfirmIssuesStockAndPosts() {
         seedPeriodAndSubjects();
-        Long usageId = nextId();
-        Long lineId = nextId();
+        String usageId = nextId();
+        String lineId = nextId();
         ormTemplate.runInSession(session -> {
             seedEquipment(EQUIPMENT_ID);
             seedUsage(usageId, EQUIPMENT_ID, "SP-POST-001");
@@ -113,8 +113,8 @@ public class TestErpMntSparePartAndSchedule extends JunitAutoTestCase {
     @Test
     public void testSparePartConfirmInsufficientRollsBack() {
         seedPeriodAndSubjects();
-        Long usageId = nextId();
-        Long lineId = nextId();
+        String usageId = nextId();
+        String lineId = nextId();
         ormTemplate.runInSession(session -> {
             seedEquipment(EQUIPMENT_ID);
             seedUsage(usageId, EQUIPMENT_ID, "SP-INSUF-001");
@@ -140,7 +140,7 @@ public class TestErpMntSparePartAndSchedule extends JunitAutoTestCase {
 
     @Test
     public void testGenerateDueVisitsCreatesPlannedVisitAndAdvancesNextDueDate() {
-        Long scheduleId = nextId();
+        String scheduleId = nextId();
         LocalDate dueDate = LocalDate.of(2026, 7, 1);
         ormTemplate.runInSession(session -> {
             seedEquipment(EQUIPMENT_ID);
@@ -165,7 +165,7 @@ public class TestErpMntSparePartAndSchedule extends JunitAutoTestCase {
 
     @Test
     public void testGenerateDueVisitsGateDisabled() {
-        Long scheduleId = nextId();
+        String scheduleId = nextId();
         ormTemplate.runInSession(session -> {
             seedEquipment(EQUIPMENT_ID);
             seedSchedule(scheduleId, EQUIPMENT_ID, LocalDate.of(2026, 7, 1),
@@ -185,7 +185,7 @@ public class TestErpMntSparePartAndSchedule extends JunitAutoTestCase {
 
     // ---------- rpc helpers ----------
 
-    private ApiResponse<?> confirm(Long usageId) {
+    private ApiResponse<?> confirm(String usageId) {
         ApiResponse<?> resp = executeRpc(mutation, "ErpMntSparePartUsage__confirm", ApiRequest.build(Map.of("usageId", usageId)));
         return resp;
     }
@@ -284,7 +284,7 @@ public class TestErpMntSparePartAndSchedule extends JunitAutoTestCase {
 
     // ---------- maintenance seed ----------
 
-    private void seedEquipment(Long id) {
+    private void seedEquipment(String id) {
         IEntityDao<ErpMntEquipment> dao = daoProvider.daoFor(ErpMntEquipment.class);
         ErpMntEquipment equipment = new ErpMntEquipment();
         equipment.setId(id);
@@ -294,7 +294,7 @@ public class TestErpMntSparePartAndSchedule extends JunitAutoTestCase {
         dao.saveEntity(equipment);
     }
 
-    private void seedUsage(Long id, Long equipmentId, String code) {
+    private void seedUsage(String id, String equipmentId, String code) {
         IEntityDao<ErpMntSparePartUsage> dao = daoProvider.daoFor(ErpMntSparePartUsage.class);
         ErpMntSparePartUsage usage = new ErpMntSparePartUsage();
         usage.setId(id);
@@ -309,7 +309,7 @@ public class TestErpMntSparePartAndSchedule extends JunitAutoTestCase {
         dao.saveEntity(usage);
     }
 
-    private void seedUsageLine(Long id, Long usageId, BigDecimal qty, BigDecimal unitCost) {
+    private void seedUsageLine(String id, String usageId, BigDecimal qty, BigDecimal unitCost) {
         IEntityDao<ErpMntSparePartUsageLine> dao = daoProvider.daoFor(ErpMntSparePartUsageLine.class);
         ErpMntSparePartUsageLine line = new ErpMntSparePartUsageLine();
         line.setId(id);
@@ -323,7 +323,7 @@ public class TestErpMntSparePartAndSchedule extends JunitAutoTestCase {
         dao.saveEntity(line);
     }
 
-    private void seedSchedule(Long id, Long equipmentId, LocalDate nextDueDate,
+    private void seedSchedule(String id, String equipmentId, LocalDate nextDueDate,
                               String recurrenceType, int frequency, String code) {
         IEntityDao<ErpMntSchedule> dao = daoProvider.daoFor(ErpMntSchedule.class);
         ErpMntSchedule schedule = new ErpMntSchedule();
@@ -342,7 +342,7 @@ public class TestErpMntSparePartAndSchedule extends JunitAutoTestCase {
 
     // ---------- query helpers ----------
 
-    private ErpMntSparePartUsage loadUsage(Long usageId) {
+    private ErpMntSparePartUsage loadUsage(String usageId) {
         return daoProvider.daoFor(ErpMntSparePartUsage.class).getEntityById(usageId);
     }
 
@@ -362,7 +362,7 @@ public class TestErpMntSparePartAndSchedule extends JunitAutoTestCase {
         return dao.findAllByQuery(q).stream().findFirst().orElse(null);
     }
 
-    private ErpMntVisit findVisitBySchedule(Long scheduleId) {
+    private ErpMntVisit findVisitBySchedule(String scheduleId) {
         IEntityDao<ErpMntVisit> dao = daoProvider.daoFor(ErpMntVisit.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("scheduleId", scheduleId));

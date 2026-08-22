@@ -1,7 +1,7 @@
 {
-  "id": 0,
-  "teamId": 0,
-  "employeeId": 0,
+  "id": "",
+  "teamId": "",
+  "employeeId": "",
   "role": "",
   "joinedAt": "2000-01-01 14:00:00",
   "leftAt": "2000-01-01 14:00:00",

@@ -27,9 +27,9 @@ public final class TestMockMntBizModels {
             implements IErpMntEquipmentBiz {
 
         public volatile boolean failLink;
-        public volatile Long lastDecommissionAssetId;
+        public volatile String lastDecommissionAssetId;
         public volatile String lastDecommissionCode;
-        public volatile Long lastRestoreAssetId;
+        public volatile String lastRestoreAssetId;
         public volatile String lastRestoreCode;
 
         public MockErpMntEquipmentBiz() {
@@ -37,12 +37,12 @@ public final class TestMockMntBizModels {
         }
 
         @Override
-        public ErpMntEquipment changeStatus(Long equipmentId, String newStatus, IServiceContext context) {
+        public ErpMntEquipment changeStatus(String equipmentId, String newStatus, IServiceContext context) {
             throw new UnsupportedOperationException("mock: changeStatus not consumed by ast tests");
         }
 
         @Override
-        public int changeStatusForAssetDisposal(Long assetId, String disposalCode, IServiceContext context) {
+        public int changeStatusForAssetDisposal(String assetId, String disposalCode, IServiceContext context) {
             if (failLink) {
                 throw new RuntimeException("simulated-mnt-disposal-linkage-failure");
             }
@@ -52,7 +52,7 @@ public final class TestMockMntBizModels {
         }
 
         @Override
-        public int restoreFromAssetDisposal(Long assetId, String disposalCode, IServiceContext context) {
+        public int restoreFromAssetDisposal(String assetId, String disposalCode, IServiceContext context) {
             if (failLink) {
                 throw new RuntimeException("simulated-mnt-disposal-linkage-failure");
             }

@@ -75,11 +75,11 @@ public class TestErpMntTaskTemplate extends JunitAutoTestCase {
     @Test
     public void testExplicitTemplateAppliedToVisit() {
         ormTemplate.runInSession(s -> {
-            seedEquipment(63001L, null);
-            seedTemplate(64001L, "TPL-EXPLICIT-001", null, "120", 1);
-            seedTemplateLine(65001L, 64001L, 1, "检查传动皮带", "30", null, null);
-            seedTemplateLine(65002L, 64001L, 2, "更换润滑油", null, null, null);
-            seedTimeSchedule(66001L, 63001L, 64001L, LocalDate.of(2026, 7, 15));
+            seedEquipment("63001", null);
+            seedTemplate("64001", "TPL-EXPLICIT-001", null, "120", 1);
+            seedTemplateLine("65001", "64001", 1, "检查传动皮带", "30", null, null);
+            seedTemplateLine("65002", "64001", 2, "更换润滑油", null, null, null);
+            seedTimeSchedule("66001", "63001", "64001", LocalDate.of(2026, 7, 15));
             return null;
         });
 
@@ -108,11 +108,11 @@ public class TestErpMntTaskTemplate extends JunitAutoTestCase {
     @Test
     public void testCategoryFallbackUniqueActiveTemplate() {
         ormTemplate.runInSession(s -> {
-            seedCategory(67001L, "CAT-FALLBACK");
-            seedEquipment(63002L, 67001L);
-            seedTemplate(64002L, "TPL-FALLBACK-001", 67001L, null, 1);
-            seedTemplateLine(65003L, 64002L, 1, "校准检查", "45", null, null);
-            seedTimeSchedule(66002L, 63002L, null, LocalDate.of(2026, 7, 15));
+            seedCategory("67001", "CAT-FALLBACK");
+            seedEquipment("63002", "67001");
+            seedTemplate("64002", "TPL-FALLBACK-001", "67001", null, 1);
+            seedTemplateLine("65003", "64002", 1, "校准检查", "45", null, null);
+            seedTimeSchedule("66002", "63002", null, LocalDate.of(2026, 7, 15));
             return null;
         });
 
@@ -132,9 +132,9 @@ public class TestErpMntTaskTemplate extends JunitAutoTestCase {
     @Test
     public void testNoCategoryMatchSkipsWithoutBlocking() {
         ormTemplate.runInSession(s -> {
-            seedCategory(67002L, "CAT-EMPTY");
-            seedEquipment(63003L, 67002L);
-            seedTimeSchedule(66003L, 63003L, null, LocalDate.of(2026, 7, 15));
+            seedCategory("67002", "CAT-EMPTY");
+            seedEquipment("63003", "67002");
+            seedTimeSchedule("66003", "63003", null, LocalDate.of(2026, 7, 15));
             return null;
         });
 
@@ -149,13 +149,13 @@ public class TestErpMntTaskTemplate extends JunitAutoTestCase {
     @Test
     public void testMultipleActiveMatchesSkipsWithoutBlocking() {
         ormTemplate.runInSession(s -> {
-            seedCategory(67003L, "CAT-AMBIG");
-            seedEquipment(63004L, 67003L);
-            seedTemplate(64004L, "TPL-AMBIG-001", 67003L, null, 1);
-            seedTemplateLine(65004L, 64004L, 1, "模糊匹配任务A", "10", null, null);
-            seedTemplate(64005L, "TPL-AMBIG-002", 67003L, null, 1);
-            seedTemplateLine(65005L, 64005L, 1, "模糊匹配任务B", "20", null, null);
-            seedTimeSchedule(66004L, 63004L, null, LocalDate.of(2026, 7, 15));
+            seedCategory("67003", "CAT-AMBIG");
+            seedEquipment("63004", "67003");
+            seedTemplate("64004", "TPL-AMBIG-001", "67003", null, 1);
+            seedTemplateLine("65004", "64004", 1, "模糊匹配任务A", "10", null, null);
+            seedTemplate("64005", "TPL-AMBIG-002", "67003", null, 1);
+            seedTemplateLine("65005", "64005", 1, "模糊匹配任务B", "20", null, null);
+            seedTimeSchedule("66004", "63004", null, LocalDate.of(2026, 7, 15));
             return null;
         });
 
@@ -171,10 +171,10 @@ public class TestErpMntTaskTemplate extends JunitAutoTestCase {
     @Test
     public void testSparePartHintDoesNotCreateUsage() {
         ormTemplate.runInSession(s -> {
-            seedEquipment(63006L, null);
-            seedTemplate(64006L, "TPL-SPARE-001", null, null, 1);
-            seedTemplateLine(65006L, 64006L, 1, "更换滤芯", "15", 8888L, "2");
-            seedTimeSchedule(66006L, 63006L, 64006L, LocalDate.of(2026, 7, 15));
+            seedEquipment("63006", null);
+            seedTemplate("64006", "TPL-SPARE-001", null, null, 1);
+            seedTemplateLine("65006", "64006", 1, "更换滤芯", "15", "8888", "2");
+            seedTimeSchedule("66006", "63006", "64006", LocalDate.of(2026, 7, 15));
             return null;
         });
 
@@ -186,7 +186,7 @@ public class TestErpMntTaskTemplate extends JunitAutoTestCase {
         assertEquals(1, tasks.size(), "备件提示行仍复制为任务行");
 
         QueryBean q = new QueryBean();
-        q.addFilter(eq("equipmentId", 63006L));
+        q.addFilter(eq("equipmentId", "63006"));
         assertEquals(0, daoProvider.daoFor(ErpMntSparePartUsage.class).findAllByQuery(q).size(),
                 "标准备件为提示字段，不自动产生 SparePartUsage（实际消耗走既有 confirm 链）");
     }
@@ -196,8 +196,8 @@ public class TestErpMntTaskTemplate extends JunitAutoTestCase {
     @Test
     public void testNoTemplateScheduleZeroRegression() {
         ormTemplate.runInSession(s -> {
-            seedEquipment(63007L, null);
-            seedTimeSchedule(66007L, 63007L, null, LocalDate.of(2026, 7, 15));
+            seedEquipment("63007", null);
+            seedTimeSchedule("66007", "63007", null, LocalDate.of(2026, 7, 15));
             return null;
         });
 
@@ -239,7 +239,7 @@ public class TestErpMntTaskTemplate extends JunitAutoTestCase {
         return graphQLEngine.executeRpc(ctx);
     }
 
-    private void seedCategory(Long id, String code) {
+    private void seedCategory(String id, String code) {
         IEntityDao<ErpMntEquipmentCategory> dao = daoProvider.daoFor(ErpMntEquipmentCategory.class);
         ErpMntEquipmentCategory category = dao.newEntity();
         category.setId(id);
@@ -248,7 +248,7 @@ public class TestErpMntTaskTemplate extends JunitAutoTestCase {
         dao.saveEntity(category);
     }
 
-    private void seedEquipment(Long id, Long categoryId) {
+    private void seedEquipment(String id, String categoryId) {
         IEntityDao<ErpMntEquipment> dao = daoProvider.daoFor(ErpMntEquipment.class);
         ErpMntEquipment equipment = dao.newEntity();
         equipment.setId(id);
@@ -259,7 +259,7 @@ public class TestErpMntTaskTemplate extends JunitAutoTestCase {
         dao.saveEntity(equipment);
     }
 
-    private void seedTemplate(Long id, String code, Long categoryId, String standardMinutes, Integer isActive) {
+    private void seedTemplate(String id, String code, String categoryId, String standardMinutes, Integer isActive) {
         IEntityDao<ErpMntTaskTemplate> dao = daoProvider.daoFor(ErpMntTaskTemplate.class);
         ErpMntTaskTemplate template = dao.newEntity();
         template.setId(id);
@@ -274,8 +274,8 @@ public class TestErpMntTaskTemplate extends JunitAutoTestCase {
         dao.saveEntity(template);
     }
 
-    private void seedTemplateLine(Long id, Long templateId, int lineNo, String taskName,
-                                  String standardMinutes, Long materialId, String quantity) {
+    private void seedTemplateLine(String id, String templateId, int lineNo, String taskName,
+                                  String standardMinutes, String materialId, String quantity) {
         IEntityDao<ErpMntTaskTemplateLine> dao = daoProvider.daoFor(ErpMntTaskTemplateLine.class);
         ErpMntTaskTemplateLine line = dao.newEntity();
         line.setId(id);
@@ -292,7 +292,7 @@ public class TestErpMntTaskTemplate extends JunitAutoTestCase {
         dao.saveEntity(line);
     }
 
-    private void seedTimeSchedule(Long id, Long equipmentId, Long templateId, LocalDate nextDueDate) {
+    private void seedTimeSchedule(String id, String equipmentId, String templateId, LocalDate nextDueDate) {
         IEntityDao<ErpMntSchedule> dao = daoProvider.daoFor(ErpMntSchedule.class);
         ErpMntSchedule schedule = dao.newEntity();
         schedule.setId(id);
@@ -315,7 +315,7 @@ public class TestErpMntTaskTemplate extends JunitAutoTestCase {
         return daoProvider.daoFor(ErpMntVisit.class).findAllByQuery(q).stream().findFirst().orElse(null);
     }
 
-    private List<ErpMntVisitTask> findTasksByVisitId(Long visitId) {
+    private List<ErpMntVisitTask> findTasksByVisitId(String visitId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("visitId", visitId));
         return daoProvider.daoFor(ErpMntVisitTask.class).findAllByQuery(q);

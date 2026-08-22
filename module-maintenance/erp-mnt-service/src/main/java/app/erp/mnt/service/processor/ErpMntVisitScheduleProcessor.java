@@ -24,7 +24,7 @@ public class ErpMntVisitScheduleProcessor extends AbstractErpMntVisitProcessor {
     @Inject
     DecommissionedEquipmentGuard decommissionedGuard;
 
-    public ErpMntVisit schedule(Long visitId, IServiceContext context) {
+    public ErpMntVisit schedule(String visitId, IServiceContext context) {
         ErpMntVisit visit = requireVisit(visitId, context);
         String from = visit.getStatus();
         try {

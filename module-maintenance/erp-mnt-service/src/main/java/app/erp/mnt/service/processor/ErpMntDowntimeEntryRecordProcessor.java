@@ -14,7 +14,7 @@ import java.sql.Timestamp;
  */
 public class ErpMntDowntimeEntryRecordProcessor extends AbstractErpMntDowntimeEntryProcessor {
 
-    public ErpMntDowntimeEntry record(Long downtimeId, IServiceContext context) {
+    public ErpMntDowntimeEntry record(String downtimeId, IServiceContext context) {
         ErpMntDowntimeEntry downtime = requireDowntime(downtimeId, context);
         validateNotCompleted(downtime, context);
         doRecord(downtime, context);

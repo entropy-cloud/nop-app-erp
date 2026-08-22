@@ -67,15 +67,15 @@ public class TestErpMntDashboard extends JunitAutoTestCase {
         LocalDate today = CoreMetrics.currentDate();
         ormTemplate.runInSession(() -> {
             // 3 设备：RUNNING + DOWN + DECOMMISSIONED（不计入总数）
-            seedEquipment(101L, "RUN-1", ErpMntDaoConstants.EQUIPMENT_STATUS_RUNNING);
-            seedEquipment(102L, "DOWN-1", ErpMntDaoConstants.EQUIPMENT_STATUS_DOWN);
-            seedEquipment(103L, "DECOM-1", ErpMntDaoConstants.EQUIPMENT_STATUS_DECOMMISSIONED);
+            seedEquipment("101", "RUN-1", ErpMntDaoConstants.EQUIPMENT_STATUS_RUNNING);
+            seedEquipment("102", "DOWN-1", ErpMntDaoConstants.EQUIPMENT_STATUS_DOWN);
+            seedEquipment("103", "DECOM-1", ErpMntDaoConstants.EQUIPMENT_STATUS_DECOMMISSIONED);
             // 2 维护请求：1 OPEN + 1 COMPLETED
-            seedRequest(201L, 101L, ErpMntDaoConstants.REQUEST_STATUS_OPEN);
-            seedRequest(202L, 102L, ErpMntDaoConstants.REQUEST_STATUS_COMPLETED);
+            seedRequest("201", "101", ErpMntDaoConstants.REQUEST_STATUS_OPEN);
+            seedRequest("202", "102", ErpMntDaoConstants.REQUEST_STATUS_COMPLETED);
             // 2 访问（COMPLETED，本期）：1 个本期 + 1 个非本期（不计入）
-            seedVisit(301L, 101L, today, ErpMntDaoConstants.VISIT_STATUS_COMPLETED);
-            seedVisit(302L, 102L, today.minusMonths(2), ErpMntDaoConstants.VISIT_STATUS_COMPLETED);
+            seedVisit("301", "101", today, ErpMntDaoConstants.VISIT_STATUS_COMPLETED);
+            seedVisit("302", "102", today.minusMonths(2), ErpMntDaoConstants.VISIT_STATUS_COMPLETED);
         });
 
         Map<String, Object> kpi = dashboardBiz.getDashboardKpi(null, null, CTX);
@@ -92,9 +92,9 @@ public class TestErpMntDashboard extends JunitAutoTestCase {
     @Test
     public void testEquipmentStatusDistribution() {
         ormTemplate.runInSession(() -> {
-            seedEquipment(111L, "R1", ErpMntDaoConstants.EQUIPMENT_STATUS_RUNNING);
-            seedEquipment(112L, "R2", ErpMntDaoConstants.EQUIPMENT_STATUS_RUNNING);
-            seedEquipment(113L, "I1", ErpMntDaoConstants.EQUIPMENT_STATUS_IDLE);
+            seedEquipment("111", "R1", ErpMntDaoConstants.EQUIPMENT_STATUS_RUNNING);
+            seedEquipment("112", "R2", ErpMntDaoConstants.EQUIPMENT_STATUS_RUNNING);
+            seedEquipment("113", "I1", ErpMntDaoConstants.EQUIPMENT_STATUS_IDLE);
         });
         List<Map<String, Object>> dist = dashboardBiz.getEquipmentStatusDistribution(CTX);
         assertEquals(2, dist.size());
@@ -106,18 +106,18 @@ public class TestErpMntDashboard extends JunitAutoTestCase {
     public void testEquipmentDowntimeAlertTriggersAndNot() {
         ormTemplate.runInSession(() -> {
             // DOWN 设备 + 未恢复停机 → 触发
-            seedEquipment(121L, "DOWN-A", ErpMntDaoConstants.EQUIPMENT_STATUS_DOWN);
-            seedDowntimeEntry(201L, 121L, null);
+            seedEquipment("121", "DOWN-A", ErpMntDaoConstants.EQUIPMENT_STATUS_DOWN);
+            seedDowntimeEntry("201", "121", null);
             // DOWN 设备 + 已恢复停机 → 不触发
-            seedEquipment(122L, "DOWN-B", ErpMntDaoConstants.EQUIPMENT_STATUS_DOWN);
-            seedDowntimeEntry(202L, 122L, CoreMetrics.currentDateTime().minusHours(1));
+            seedEquipment("122", "DOWN-B", ErpMntDaoConstants.EQUIPMENT_STATUS_DOWN);
+            seedDowntimeEntry("202", "122", CoreMetrics.currentDateTime().minusHours(1));
             // RUNNING 设备 → 不触发（非 DOWN）
-            seedEquipment(123L, "RUN-C", ErpMntDaoConstants.EQUIPMENT_STATUS_RUNNING);
-            seedDowntimeEntry(203L, 123L, null);
+            seedEquipment("123", "RUN-C", ErpMntDaoConstants.EQUIPMENT_STATUS_RUNNING);
+            seedDowntimeEntry("203", "123", null);
         });
         List<Map<String, Object>> alerts = dashboardBiz.findEquipmentDowntimeAlert(CTX);
         assertEquals(1, alerts.size(), "仅设备 121 触发");
-        assertEquals(121L, alerts.get(0).get("equipmentId"));
+        assertEquals("121", alerts.get(0).get("equipmentId"));
     }
 
     @Test
@@ -126,40 +126,40 @@ public class TestErpMntDashboard extends JunitAutoTestCase {
         LocalDate future = CoreMetrics.currentDate().plusDays(10);
         ormTemplate.runInSession(() -> {
             // 计划 A: nextDueDate 过去, active, 无 Visit → 触发
-            seedSchedule(301L, "SCH-A", 401L, past, 1);
+            seedSchedule("301", "SCH-A", "401", past, 1);
             // 计划 B: nextDueDate 过去, active, 有 Visit → 不触发
-            seedSchedule(302L, "SCH-B", 402L, past, 1);
-            seedVisitForSchedule(311L, 402L, 302L, CoreMetrics.currentDate(), ErpMntDaoConstants.VISIT_STATUS_COMPLETED);
+            seedSchedule("302", "SCH-B", "402", past, 1);
+            seedVisitForSchedule("311", "402", "302", CoreMetrics.currentDate(), ErpMntDaoConstants.VISIT_STATUS_COMPLETED);
             // 计划 C: nextDueDate 未来 → 不触发（未到期）
-            seedSchedule(303L, "SCH-C", 403L, future, 1);
+            seedSchedule("303", "SCH-C", "403", future, 1);
             // 计划 D: nextDueDate 过去, inactive → 不触发
-            seedSchedule(304L, "SCH-D", 404L, past, 0);
+            seedSchedule("304", "SCH-D", "404", past, 0);
         });
         AppConfig.getConfigProvider().assignConfigValue(
                 ErpMntConstants.CONFIG_DASH_MNT_MAINTENANCE_OVERDUE_DAYS,
                 String.valueOf(ErpMntConstants.DEFAULT_DASH_MNT_MAINTENANCE_OVERDUE_DAYS));
         List<Map<String, Object>> alerts = dashboardBiz.findMaintenanceOverdueAlert(CTX);
         assertEquals(1, alerts.size(), "仅计划 A 触发");
-        assertEquals(301L, alerts.get(0).get("scheduleId"));
+        assertEquals("301", alerts.get(0).get("scheduleId"));
         assertEquals(10L, alerts.get(0).get("overdueDays"));
     }
 
     // ---------- helpers ----------
 
-    private void seedEquipment(long id, String code, String status) {
+    private void seedEquipment(String id, String code, String status) {
         IEntityDao<ErpMntEquipment> dao = daoProvider.daoFor(ErpMntEquipment.class);
         ErpMntEquipment e = dao.newEntity();
-        e.orm_propValue(1, id);
+        e.orm_propValueByName("id", id);
         e.setCode(code);
         e.setName("设备-" + code);
         e.setStatus(status);
         dao.saveEntity(e);
     }
 
-    private void seedRequest(long id, long equipmentId, String status) {
+    private void seedRequest(String id, String equipmentId, String status) {
         IEntityDao<ErpMntRequest> dao = daoProvider.daoFor(ErpMntRequest.class);
         ErpMntRequest r = dao.newEntity();
-        r.orm_propValue(1, id);
+        r.orm_propValueByName("id", id);
         r.setCode("REQ-" + id);
         r.setEquipmentId(equipmentId);
         r.setRequestDate(CoreMetrics.currentDate());
@@ -170,15 +170,15 @@ public class TestErpMntDashboard extends JunitAutoTestCase {
         dao.saveEntity(r);
     }
 
-    private void seedVisit(long id, long equipmentId, LocalDate visitDate, String status) {
+    private void seedVisit(String id, String equipmentId, LocalDate visitDate, String status) {
         seedVisitForSchedule(id, equipmentId, null, visitDate, status);
     }
 
-    private void seedVisitForSchedule(long id, long equipmentId, Long scheduleId,
+    private void seedVisitForSchedule(String id, String equipmentId, String scheduleId,
                                       LocalDate visitDate, String status) {
         IEntityDao<ErpMntVisit> dao = daoProvider.daoFor(ErpMntVisit.class);
         ErpMntVisit v = dao.newEntity();
-        v.orm_propValue(1, id);
+        v.orm_propValueByName("id", id);
         v.setCode("VIS-" + id);
         v.setEquipmentId(equipmentId);
         if (scheduleId != null) v.setScheduleId(scheduleId);
@@ -188,20 +188,20 @@ public class TestErpMntDashboard extends JunitAutoTestCase {
         dao.saveEntity(v);
     }
 
-    private void seedDowntimeEntry(long id, long equipmentId, LocalDateTime endTime) {
+    private void seedDowntimeEntry(String id, String equipmentId, LocalDateTime endTime) {
         IEntityDao<ErpMntDowntimeEntry> dao = daoProvider.daoFor(ErpMntDowntimeEntry.class);
         ErpMntDowntimeEntry d = dao.newEntity();
-        d.orm_propValue(1, id);
+        d.orm_propValueByName("id", id);
         d.setEquipmentId(equipmentId);
         d.setStartTime(Timestamp.valueOf(CoreMetrics.currentDateTime().minusHours(2)));
         d.setEndTime(endTime != null ? Timestamp.valueOf(endTime) : null);
         dao.saveEntity(d);
     }
 
-    private void seedSchedule(long id, String code, long equipmentId, LocalDate nextDueDate, int isActive) {
+    private void seedSchedule(String id, String code, String equipmentId, LocalDate nextDueDate, int isActive) {
         IEntityDao<ErpMntSchedule> dao = daoProvider.daoFor(ErpMntSchedule.class);
         ErpMntSchedule s = dao.newEntity();
-        s.orm_propValue(1, id);
+        s.orm_propValueByName("id", id);
         s.setCode(code);
         s.setName("计划-" + code);
         s.setEquipmentId(equipmentId);

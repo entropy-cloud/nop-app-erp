@@ -173,7 +173,7 @@ public class TestErpMntEmployeeIdRowFilterIsolation extends JunitAutoTestCase {
         IEntityDao<ErpMntVisit> dao = daoProvider.daoFor(ErpMntVisit.class);
         ErpMntVisit o = dao.newEntity();
         o.setCode(code);
-        o.setEquipmentId(1L);
+        o.setEquipmentId("1");
         o.setVisitDate(LocalDate.of(2026, 8, 11));
         o.setStatus("PLANNED");
         o.setAssignedTo(assignedTo);

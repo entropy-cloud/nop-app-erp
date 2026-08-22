@@ -22,8 +22,8 @@
 
     <props>
         <prop name="id" displayName="ID" propId="1" i18n-en:displayName="ID" tagSet="seq-default" mandatory="true"
-              queryable="true" sortable="true" insertable="true" updatable="false" graphql:type="String">
-            <schema type="java.lang.Long"/>
+              queryable="true" sortable="true" insertable="true" updatable="false">
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="code" displayName="单号" propId="2" i18n-en:displayName="Code" tagSet="var" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
@@ -31,19 +31,19 @@
         </prop>
         <prop name="orgId" displayName="业务组织" propId="3" i18n-en:displayName="Organization" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="org">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="visitId" displayName="维护访问ID" propId="4" i18n-en:displayName="Visit" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="visit">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="requestId" displayName="维护请求ID" propId="5" i18n-en:displayName="Request" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="request">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="equipmentId" displayName="设备ID" propId="6" i18n-en:displayName="Equipment" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="equipment">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="businessDate" displayName="消耗日期" propId="7" i18n-en:displayName="Business Date" tagSet="clock"
               mandatory="true" queryable="true" sortable="true" insertable="true" updatable="true">
@@ -51,7 +51,7 @@
         </prop>
         <prop name="warehouseId" displayName="领料仓库" propId="8" i18n-en:displayName="Warehouse" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="warehouse">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="totalAmount" displayName="金额合计" propId="9" i18n-en:displayName="Total Amt" queryable="true"
               sortable="true" insertable="true" updatable="true" defaultValue="0">

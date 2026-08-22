@@ -13,7 +13,7 @@ import io.nop.api.core.time.CoreMetrics;
  */
 public class ErpMntRequestCompleteProcessor extends AbstractErpMntRequestProcessor {
 
-    public ErpMntRequest complete(Long requestId, IServiceContext context) {
+    public ErpMntRequest complete(String requestId, IServiceContext context) {
         ErpMntRequest request = requireRequest(requestId, context);
         String from = request.getStatus();
         try {

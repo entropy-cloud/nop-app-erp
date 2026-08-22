@@ -49,8 +49,8 @@ public class TestErpMntVisitRequestStateMachine extends JunitAutoTestCase {
     @RegisterExtension
     static MntFrozenClockExtension frozenClock = new MntFrozenClockExtension();
 
-    static final Long EQUIPMENT_ID = 101L;
-    static final Long OTHER_EQUIPMENT_ID = 102L;
+    static final String EQUIPMENT_ID = "101";
+    static final String OTHER_EQUIPMENT_ID = "102";
     static final Long ASSIGNEE_ID = 201L;
     static final Long OTHER_ASSIGNEE_ID = 202L;
 
@@ -67,13 +67,13 @@ public class TestErpMntVisitRequestStateMachine extends JunitAutoTestCase {
 
     private final AtomicLong idSeq = new AtomicLong(100000L);
 
-    private Long nextId() {
-        return idSeq.incrementAndGet();
+    private String nextId() {
+        return String.valueOf(idSeq.incrementAndGet());
     }
 
     @Test
     public void testVisitHappyPathWithEquipmentLink() {
-        Long visitId = nextId();
+        String visitId = nextId();
         ormTemplate.runInSession(session -> {
             seedEquipment(EQUIPMENT_ID, ErpMntDaoConstants.EQUIPMENT_STATUS_RUNNING);
             seedVisit(visitId, EQUIPMENT_ID, ErpMntDaoConstants.VISIT_STATUS_DRAFT, "VST-HAPPY-001");
@@ -100,7 +100,7 @@ public class TestErpMntVisitRequestStateMachine extends JunitAutoTestCase {
 
     @Test
     public void testVisitCompleteFromIdleEquipmentRestoresIdle() {
-        Long visitId = nextId();
+        String visitId = nextId();
         ormTemplate.runInSession(session -> {
             seedEquipment(EQUIPMENT_ID, ErpMntDaoConstants.EQUIPMENT_STATUS_IDLE);
             seedVisit(visitId, EQUIPMENT_ID, ErpMntDaoConstants.VISIT_STATUS_DRAFT, "VST-IDLE-001");
@@ -119,7 +119,7 @@ public class TestErpMntVisitRequestStateMachine extends JunitAutoTestCase {
 
     @Test
     public void testVisitCancelFromIdleEquipmentRestoresIdle() {
-        Long visitId = nextId();
+        String visitId = nextId();
         ormTemplate.runInSession(session -> {
             seedEquipment(EQUIPMENT_ID, ErpMntDaoConstants.EQUIPMENT_STATUS_IDLE);
             seedVisit(visitId, EQUIPMENT_ID, ErpMntDaoConstants.VISIT_STATUS_DRAFT, "VST-IDLE-CNL-001");
@@ -138,7 +138,7 @@ public class TestErpMntVisitRequestStateMachine extends JunitAutoTestCase {
 
     @Test
     public void testVisitCompleteFromDownEquipmentRestoresRunning() {
-        Long visitId = nextId();
+        String visitId = nextId();
         ormTemplate.runInSession(session -> {
             seedEquipment(EQUIPMENT_ID, ErpMntDaoConstants.EQUIPMENT_STATUS_DOWN);
             seedVisit(visitId, EQUIPMENT_ID, ErpMntDaoConstants.VISIT_STATUS_DRAFT, "VST-DOWN-001");
@@ -174,8 +174,8 @@ public class TestErpMntVisitRequestStateMachine extends JunitAutoTestCase {
 
     @Test
     public void testVisitScheduleConflict() {
-        Long existing = nextId();
-        Long conflict = nextId();
+        String existing = nextId();
+        String conflict = nextId();
         ormTemplate.runInSession(session -> {
             seedEquipment(EQUIPMENT_ID, ErpMntDaoConstants.EQUIPMENT_STATUS_RUNNING);
             seedVisit(existing, EQUIPMENT_ID, ErpMntDaoConstants.VISIT_STATUS_SCHEDULED, "VST-CONFLICT-001");
@@ -190,8 +190,8 @@ public class TestErpMntVisitRequestStateMachine extends JunitAutoTestCase {
 
     @Test
     public void testVisitScheduleConflictPersonnelDimension() {
-        Long existing = nextId();
-        Long conflict = nextId();
+        String existing = nextId();
+        String conflict = nextId();
         ormTemplate.runInSession(session -> {
             seedEquipment(EQUIPMENT_ID, ErpMntDaoConstants.EQUIPMENT_STATUS_RUNNING);
             seedEquipment(OTHER_EQUIPMENT_ID, ErpMntDaoConstants.EQUIPMENT_STATUS_RUNNING);
@@ -209,8 +209,8 @@ public class TestErpMntVisitRequestStateMachine extends JunitAutoTestCase {
 
     @Test
     public void testVisitScheduleConflictEquipmentDimensionIndependentOfPersonnel() {
-        Long existing = nextId();
-        Long conflict = nextId();
+        String existing = nextId();
+        String conflict = nextId();
         ormTemplate.runInSession(session -> {
             seedEquipment(EQUIPMENT_ID, ErpMntDaoConstants.EQUIPMENT_STATUS_RUNNING);
             seedVisit(existing, EQUIPMENT_ID, ErpMntDaoConstants.VISIT_STATUS_SCHEDULED, "VST-EQ-CONF-001", ASSIGNEE_ID);
@@ -225,8 +225,8 @@ public class TestErpMntVisitRequestStateMachine extends JunitAutoTestCase {
 
     @Test
     public void testVisitScheduleSamePersonDifferentDateAllowed() {
-        Long existing = nextId();
-        Long newVisit = nextId();
+        String existing = nextId();
+        String newVisit = nextId();
         ormTemplate.runInSession(session -> {
             seedEquipment(EQUIPMENT_ID, ErpMntDaoConstants.EQUIPMENT_STATUS_RUNNING);
             seedEquipment(OTHER_EQUIPMENT_ID, ErpMntDaoConstants.EQUIPMENT_STATUS_RUNNING);
@@ -242,8 +242,8 @@ public class TestErpMntVisitRequestStateMachine extends JunitAutoTestCase {
 
     @Test
     public void testVisitScheduleCancelledPeerDoesNotBlock() {
-        Long cancelled = nextId();
-        Long newVisit = nextId();
+        String cancelled = nextId();
+        String newVisit = nextId();
         ormTemplate.runInSession(session -> {
             seedEquipment(EQUIPMENT_ID, ErpMntDaoConstants.EQUIPMENT_STATUS_RUNNING);
             seedEquipment(OTHER_EQUIPMENT_ID, ErpMntDaoConstants.EQUIPMENT_STATUS_RUNNING);
@@ -257,8 +257,8 @@ public class TestErpMntVisitRequestStateMachine extends JunitAutoTestCase {
 
     @Test
     public void testVisitScheduleDraftPeerDoesNotBlockThenBlocksWhenScheduled() {
-        Long first = nextId();
-        Long second = nextId();
+        String first = nextId();
+        String second = nextId();
         ormTemplate.runInSession(session -> {
             seedEquipment(EQUIPMENT_ID, ErpMntDaoConstants.EQUIPMENT_STATUS_RUNNING);
             seedEquipment(OTHER_EQUIPMENT_ID, ErpMntDaoConstants.EQUIPMENT_STATUS_RUNNING);
@@ -275,7 +275,7 @@ public class TestErpMntVisitRequestStateMachine extends JunitAutoTestCase {
 
     @Test
     public void testVisitCancelRestoresEquipment() {
-        Long visitId = nextId();
+        String visitId = nextId();
         ormTemplate.runInSession(session -> {
             seedEquipment(EQUIPMENT_ID, ErpMntDaoConstants.EQUIPMENT_STATUS_RUNNING);
             seedVisit(visitId, EQUIPMENT_ID, ErpMntDaoConstants.VISIT_STATUS_SCHEDULED, "VST-CANCEL-001");
@@ -293,7 +293,7 @@ public class TestErpMntVisitRequestStateMachine extends JunitAutoTestCase {
 
     @Test
     public void testVisitTerminalCannotTransition() {
-        Long visitId = nextId();
+        String visitId = nextId();
         ormTemplate.runInSession(session -> {
             seedEquipment(EQUIPMENT_ID, ErpMntDaoConstants.EQUIPMENT_STATUS_RUNNING);
             seedVisit(visitId, EQUIPMENT_ID, ErpMntDaoConstants.VISIT_STATUS_COMPLETED, "VST-TERM-001");
@@ -310,7 +310,7 @@ public class TestErpMntVisitRequestStateMachine extends JunitAutoTestCase {
 
     @Test
     public void testVisitIllegalTransition() {
-        Long visitId = nextId();
+        String visitId = nextId();
         ormTemplate.runInSession(session -> {
             seedEquipment(EQUIPMENT_ID, ErpMntDaoConstants.EQUIPMENT_STATUS_RUNNING);
             seedVisit(visitId, EQUIPMENT_ID, ErpMntDaoConstants.VISIT_STATUS_DRAFT, "VST-ILL-001");
@@ -324,7 +324,7 @@ public class TestErpMntVisitRequestStateMachine extends JunitAutoTestCase {
 
     @Test
     public void testRequestAcceptGeneratesResponsiveVisit() {
-        Long requestId = nextId();
+        String requestId = nextId();
         ormTemplate.runInSession(session -> {
             seedEquipment(EQUIPMENT_ID, ErpMntDaoConstants.EQUIPMENT_STATUS_RUNNING);
             seedRequest(requestId, EQUIPMENT_ID, ErpMntDaoConstants.REQUEST_STATUS_OPEN, "REQ-ACCEPT-001");
@@ -343,8 +343,8 @@ public class TestErpMntVisitRequestStateMachine extends JunitAutoTestCase {
 
     @Test
     public void testRequestRejectAndCancel() {
-        Long rejectId = nextId();
-        Long cancelId = nextId();
+        String rejectId = nextId();
+        String cancelId = nextId();
         ormTemplate.runInSession(session -> {
             seedEquipment(EQUIPMENT_ID, ErpMntDaoConstants.EQUIPMENT_STATUS_RUNNING);
             seedRequest(rejectId, EQUIPMENT_ID, ErpMntDaoConstants.REQUEST_STATUS_OPEN, "REQ-REJ-001");
@@ -361,7 +361,7 @@ public class TestErpMntVisitRequestStateMachine extends JunitAutoTestCase {
 
     @Test
     public void testRequestFullFlow() {
-        Long requestId = nextId();
+        String requestId = nextId();
         ormTemplate.runInSession(session -> {
             seedEquipment(EQUIPMENT_ID, ErpMntDaoConstants.EQUIPMENT_STATUS_RUNNING);
             seedRequest(requestId, EQUIPMENT_ID, ErpMntDaoConstants.REQUEST_STATUS_OPEN, "REQ-FULL-001");
@@ -378,7 +378,7 @@ public class TestErpMntVisitRequestStateMachine extends JunitAutoTestCase {
 
     @Test
     public void testRequestIllegalTransition() {
-        Long requestId = nextId();
+        String requestId = nextId();
         ormTemplate.runInSession(session -> {
             seedEquipment(EQUIPMENT_ID, ErpMntDaoConstants.EQUIPMENT_STATUS_RUNNING);
             seedRequest(requestId, EQUIPMENT_ID, ErpMntDaoConstants.REQUEST_STATUS_OPEN, "REQ-ILL-001");
@@ -392,39 +392,39 @@ public class TestErpMntVisitRequestStateMachine extends JunitAutoTestCase {
 
     // ---------- rpc helpers ----------
 
-    private ApiResponse<?> schedule(Long visitId) {
+    private ApiResponse<?> schedule(String visitId) {
         return executeRpc(mutation, "ErpMntVisit__schedule", ApiRequest.build(Map.of("visitId", visitId)));
     }
 
-    private ApiResponse<?> start(Long visitId) {
+    private ApiResponse<?> start(String visitId) {
         return executeRpc(mutation, "ErpMntVisit__start", ApiRequest.build(Map.of("visitId", visitId)));
     }
 
-    private ApiResponse<?> complete(Long visitId) {
+    private ApiResponse<?> complete(String visitId) {
         return executeRpc(mutation, "ErpMntVisit__complete", ApiRequest.build(Map.of("visitId", visitId)));
     }
 
-    private ApiResponse<?> cancel(Long visitId) {
+    private ApiResponse<?> cancel(String visitId) {
         return executeRpc(mutation, "ErpMntVisit__cancel", ApiRequest.build(Map.of("visitId", visitId)));
     }
 
-    private ApiResponse<?> accept(Long requestId) {
+    private ApiResponse<?> accept(String requestId) {
         return executeRpc(mutation, "ErpMntRequest__accept", ApiRequest.build(Map.of("requestId", requestId)));
     }
 
-    private ApiResponse<?> startRepair(Long requestId) {
+    private ApiResponse<?> startRepair(String requestId) {
         return executeRpc(mutation, "ErpMntRequest__startRepair", ApiRequest.build(Map.of("requestId", requestId)));
     }
 
-    private ApiResponse<?> reject(Long requestId) {
+    private ApiResponse<?> reject(String requestId) {
         return executeRpc(mutation, "ErpMntRequest__rejectRequest", ApiRequest.build(Map.of("requestId", requestId)));
     }
 
-    private ApiResponse<?> completeRequest(Long requestId) {
+    private ApiResponse<?> completeRequest(String requestId) {
         return executeRpc(mutation, "ErpMntRequest__complete", ApiRequest.build(Map.of("requestId", requestId)));
     }
 
-    private ApiResponse<?> cancelRequest(Long requestId) {
+    private ApiResponse<?> cancelRequest(String requestId) {
         return executeRpc(mutation, "ErpMntRequest__cancel", ApiRequest.build(Map.of("requestId", requestId)));
     }
 
@@ -435,7 +435,7 @@ public class TestErpMntVisitRequestStateMachine extends JunitAutoTestCase {
 
     // ---------- seed helpers ----------
 
-    private void seedEquipment(Long id, String status) {
+    private void seedEquipment(String id, String status) {
         IEntityDao<ErpMntEquipment> dao = daoProvider.daoFor(ErpMntEquipment.class);
         ErpMntEquipment equipment = new ErpMntEquipment();
         equipment.setId(id);
@@ -445,15 +445,15 @@ public class TestErpMntVisitRequestStateMachine extends JunitAutoTestCase {
         dao.saveEntity(equipment);
     }
 
-    private void seedVisit(Long id, Long equipmentId, String status, String code) {
+    private void seedVisit(String id, String equipmentId, String status, String code) {
         seedVisit(id, equipmentId, status, code, ASSIGNEE_ID);
     }
 
-    private void seedVisit(Long id, Long equipmentId, String status, String code, Long assignedTo) {
+    private void seedVisit(String id, String equipmentId, String status, String code, Long assignedTo) {
         seedVisit(id, equipmentId, status, code, assignedTo, LocalDate.of(2026, 7, 1));
     }
 
-    private void seedVisit(Long id, Long equipmentId, String status, String code, Long assignedTo,
+    private void seedVisit(String id, String equipmentId, String status, String code, Long assignedTo,
                            LocalDate visitDate) {
         IEntityDao<ErpMntVisit> dao = daoProvider.daoFor(ErpMntVisit.class);
         ErpMntVisit visit = new ErpMntVisit();
@@ -467,7 +467,7 @@ public class TestErpMntVisitRequestStateMachine extends JunitAutoTestCase {
         dao.saveEntity(visit);
     }
 
-    private void seedRequest(Long id, Long equipmentId, String status, String code) {
+    private void seedRequest(String id, String equipmentId, String status, String code) {
         IEntityDao<ErpMntRequest> dao = daoProvider.daoFor(ErpMntRequest.class);
         ErpMntRequest request = new ErpMntRequest();
         request.setId(id);
@@ -484,15 +484,15 @@ public class TestErpMntVisitRequestStateMachine extends JunitAutoTestCase {
 
     // ---------- query helpers ----------
 
-    private ErpMntVisit loadVisit(Long visitId) {
+    private ErpMntVisit loadVisit(String visitId) {
         return daoProvider.daoFor(ErpMntVisit.class).getEntityById(visitId);
     }
 
-    private String visitStatus(Long visitId) {
+    private String visitStatus(String visitId) {
         return loadVisit(visitId).getStatus();
     }
 
-    private String requestStatus(Long requestId) {
+    private String requestStatus(String requestId) {
         return daoProvider.daoFor(ErpMntRequest.class).getEntityById(requestId).getStatus();
     }
 

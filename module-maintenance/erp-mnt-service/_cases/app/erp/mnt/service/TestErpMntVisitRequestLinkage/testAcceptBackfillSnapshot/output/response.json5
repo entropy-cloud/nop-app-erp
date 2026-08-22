@@ -2,7 +2,7 @@
   "data": {
     "id": "22101",
     "code": "@var:ErpMntRequest@code",
-    "equipmentId": 21101,
+    "equipmentId": "21101",
     "requestDate": "2026-07-01",
     "description": "联动测试报修22101",
     "priority": "NORMAL",

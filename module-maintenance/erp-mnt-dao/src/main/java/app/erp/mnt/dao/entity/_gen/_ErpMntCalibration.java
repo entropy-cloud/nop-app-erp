@@ -207,16 +207,16 @@ public class _ErpMntCalibration extends DynamicOrmEntity{
 
     
     /* ID: ID */
-    private java.lang.Long _id;
+    private java.lang.String _id;
     
     /* 单号: CODE */
     private java.lang.String _code;
     
     /* 业务组织: ORG_ID */
-    private java.lang.Long _orgId;
+    private java.lang.String _orgId;
     
     /* 被校设备/量具: EQUIPMENT_ID */
-    private java.lang.Long _equipmentId;
+    private java.lang.String _equipmentId;
     
     /* 校准日期: BUSINESS_DATE */
     private java.time.LocalDate _businessDate;
@@ -240,7 +240,7 @@ public class _ErpMntCalibration extends DynamicOrmEntity{
     private java.time.LocalDate _nextCalibrationDate;
     
     /* 校准人(职员): CALIBRATED_BY */
-    private java.lang.Long _calibratedBy;
+    private java.lang.String _calibratedBy;
     
     /* 单据状态: DOC_STATUS */
     private java.lang.String _docStatus;
@@ -430,9 +430,9 @@ public class _ErpMntCalibration extends DynamicOrmEntity{
         switch(propId){
         
             case PROP_ID_id:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_id));
                }
                setId(typedValue);
@@ -450,9 +450,9 @@ public class _ErpMntCalibration extends DynamicOrmEntity{
             }
         
             case PROP_ID_orgId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_orgId));
                }
                setOrgId(typedValue);
@@ -460,9 +460,9 @@ public class _ErpMntCalibration extends DynamicOrmEntity{
             }
         
             case PROP_ID_equipmentId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_equipmentId));
                }
                setEquipmentId(typedValue);
@@ -540,9 +540,9 @@ public class _ErpMntCalibration extends DynamicOrmEntity{
             }
         
             case PROP_ID_calibratedBy:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_calibratedBy));
                }
                setCalibratedBy(typedValue);
@@ -670,7 +670,7 @@ public class _ErpMntCalibration extends DynamicOrmEntity{
         
             case PROP_ID_id:{
                onInitProp(propId);
-               this._id = (java.lang.Long)value;
+               this._id = (java.lang.String)value;
                orm_id(); // 如果是设置主键字段，则触发watcher
                break;
             }
@@ -684,14 +684,14 @@ public class _ErpMntCalibration extends DynamicOrmEntity{
         
             case PROP_ID_orgId:{
                onInitProp(propId);
-               this._orgId = (java.lang.Long)value;
+               this._orgId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_equipmentId:{
                onInitProp(propId);
-               this._equipmentId = (java.lang.Long)value;
+               this._equipmentId = (java.lang.String)value;
                
                break;
             }
@@ -747,7 +747,7 @@ public class _ErpMntCalibration extends DynamicOrmEntity{
         
             case PROP_ID_calibratedBy:{
                onInitProp(propId);
-               this._calibratedBy = (java.lang.Long)value;
+               this._calibratedBy = (java.lang.String)value;
                
                break;
             }
@@ -838,7 +838,7 @@ public class _ErpMntCalibration extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final java.lang.Long getId(){
+    public final java.lang.String getId(){
          onPropGet(PROP_ID_id);
          return _id;
     }
@@ -846,7 +846,7 @@ public class _ErpMntCalibration extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final void setId(java.lang.Long value){
+    public final void setId(java.lang.String value){
         if(onPropSet(PROP_ID_id,value)){
             this._id = value;
             internalClearRefs(PROP_ID_id);
@@ -876,7 +876,7 @@ public class _ErpMntCalibration extends DynamicOrmEntity{
     /**
      * 业务组织: ORG_ID
      */
-    public final java.lang.Long getOrgId(){
+    public final java.lang.String getOrgId(){
          onPropGet(PROP_ID_orgId);
          return _orgId;
     }
@@ -884,7 +884,7 @@ public class _ErpMntCalibration extends DynamicOrmEntity{
     /**
      * 业务组织: ORG_ID
      */
-    public final void setOrgId(java.lang.Long value){
+    public final void setOrgId(java.lang.String value){
         if(onPropSet(PROP_ID_orgId,value)){
             this._orgId = value;
             internalClearRefs(PROP_ID_orgId);
@@ -895,7 +895,7 @@ public class _ErpMntCalibration extends DynamicOrmEntity{
     /**
      * 被校设备/量具: EQUIPMENT_ID
      */
-    public final java.lang.Long getEquipmentId(){
+    public final java.lang.String getEquipmentId(){
          onPropGet(PROP_ID_equipmentId);
          return _equipmentId;
     }
@@ -903,7 +903,7 @@ public class _ErpMntCalibration extends DynamicOrmEntity{
     /**
      * 被校设备/量具: EQUIPMENT_ID
      */
-    public final void setEquipmentId(java.lang.Long value){
+    public final void setEquipmentId(java.lang.String value){
         if(onPropSet(PROP_ID_equipmentId,value)){
             this._equipmentId = value;
             internalClearRefs(PROP_ID_equipmentId);
@@ -1047,7 +1047,7 @@ public class _ErpMntCalibration extends DynamicOrmEntity{
     /**
      * 校准人(职员): CALIBRATED_BY
      */
-    public final java.lang.Long getCalibratedBy(){
+    public final java.lang.String getCalibratedBy(){
          onPropGet(PROP_ID_calibratedBy);
          return _calibratedBy;
     }
@@ -1055,7 +1055,7 @@ public class _ErpMntCalibration extends DynamicOrmEntity{
     /**
      * 校准人(职员): CALIBRATED_BY
      */
-    public final void setCalibratedBy(java.lang.Long value){
+    public final void setCalibratedBy(java.lang.String value){
         if(onPropSet(PROP_ID_calibratedBy,value)){
             this._calibratedBy = value;
             internalClearRefs(PROP_ID_calibratedBy);

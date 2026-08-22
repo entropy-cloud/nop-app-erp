@@ -57,31 +57,31 @@ public class ErpMntRequestBizModel extends CrudBizModel<ErpMntRequest> implement
 
     @Override
     @BizMutation
-    public ErpMntRequest accept(@Name("requestId") Long requestId, IServiceContext context) {
+    public ErpMntRequest accept(@Name("requestId") String requestId, IServiceContext context) {
         return acceptProcessor.accept(requestId, context);
     }
 
     @Override
     @BizMutation
-    public ErpMntRequest startRepair(@Name("requestId") Long requestId, IServiceContext context) {
+    public ErpMntRequest startRepair(@Name("requestId") String requestId, IServiceContext context) {
         return startRepairProcessor.startRepair(requestId, context);
     }
 
     @Override
     @BizMutation
-    public ErpMntRequest complete(@Name("requestId") Long requestId, IServiceContext context) {
+    public ErpMntRequest complete(@Name("requestId") String requestId, IServiceContext context) {
         return completeProcessor.complete(requestId, context);
     }
 
     @Override
     @BizMutation
-    public ErpMntRequest rejectRequest(@Name("requestId") Long requestId, IServiceContext context) {
+    public ErpMntRequest rejectRequest(@Name("requestId") String requestId, IServiceContext context) {
         return rejectRequestProcessor.rejectRequest(requestId, context);
     }
 
     @Override
     @BizMutation
-    public ErpMntRequest cancel(@Name("requestId") Long requestId, IServiceContext context) {
+    public ErpMntRequest cancel(@Name("requestId") String requestId, IServiceContext context) {
         return cancelProcessor.cancel(requestId, context);
     }
 }

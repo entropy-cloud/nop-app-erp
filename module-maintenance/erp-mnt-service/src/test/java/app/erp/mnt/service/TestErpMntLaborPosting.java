@@ -59,11 +59,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpMntLaborPosting extends JunitAutoTestCase {
 
-    static final Long ORG_ID = 2251L;
-    static final Long EQUIPMENT_ID = 251L;
+    static final String ORG_ID = "2251";
+    static final String EQUIPMENT_ID = "251";
     static final Long ASSIGNEE_ID = 2252L;
-    static final Long CURRENCY_ID = 2251L;
-    static final Long ACCT_SCHEMA_ID = 2251L;
+    static final String CURRENCY_ID = "2251";
+    static final String ACCT_SCHEMA_ID = "2251";
 
     static final String SUBJECT_EXPENSE = "6602";
     static final String SUBJECT_PAYABLE = "2211";
@@ -80,8 +80,8 @@ public class TestErpMntLaborPosting extends JunitAutoTestCase {
 
     private final AtomicLong idSeq = new AtomicLong(300000L);
 
-    private Long nextId() {
-        return idSeq.incrementAndGet();
+    private String nextId() {
+        return String.valueOf(idSeq.incrementAndGet());
     }
 
     @AfterEach
@@ -102,7 +102,7 @@ public class TestErpMntLaborPosting extends JunitAutoTestCase {
         seedPeriodAndSubjects();
         seedEquipment(EQUIPMENT_ID);
 
-        Long visitId = nextId();
+        String visitId = nextId();
         LocalDateTime start = LocalDateTime.of(2026, 7, 1, 10, 0);
         LocalDateTime end = start.plusMinutes(60);
         ormTemplate.runInSession(session -> {
@@ -141,7 +141,7 @@ public class TestErpMntLaborPosting extends JunitAutoTestCase {
         seedPeriodAndSubjects();
         seedEquipment(EQUIPMENT_ID);
 
-        Long visitId = nextId();
+        String visitId = nextId();
         LocalDateTime start = LocalDateTime.of(2026, 7, 1, 10, 0);
         LocalDateTime end = start.plusMinutes(30);
         ormTemplate.runInSession(session -> {
@@ -168,7 +168,7 @@ public class TestErpMntLaborPosting extends JunitAutoTestCase {
         seedPeriodAndSubjects();
         seedEquipment(EQUIPMENT_ID);
 
-        Long visitId = nextId();
+        String visitId = nextId();
         LocalDateTime start = LocalDateTime.of(2026, 7, 1, 10, 0);
         ormTemplate.runInSession(session -> {
             // startTime=null → doComplete 不计算 totalMinutes（保持 null）→ postLabor 守卫跳过
@@ -191,7 +191,7 @@ public class TestErpMntLaborPosting extends JunitAutoTestCase {
         seedPeriodAndSubjects();
         seedEquipment(EQUIPMENT_ID);
 
-        Long visitId = nextId();
+        String visitId = nextId();
         LocalDateTime start = LocalDateTime.of(2026, 7, 1, 10, 0);
         LocalDateTime end = start.plusMinutes(60);
         ormTemplate.runInSession(session -> {
@@ -214,7 +214,7 @@ public class TestErpMntLaborPosting extends JunitAutoTestCase {
         seedPeriodAndSubjects();
         seedEquipment(EQUIPMENT_ID);
 
-        Long visitId = nextId();
+        String visitId = nextId();
         LocalDateTime start = LocalDateTime.of(2026, 7, 1, 10, 0);
         LocalDateTime end = start.plusMinutes(60);
         ormTemplate.runInSession(session -> {
@@ -263,7 +263,7 @@ public class TestErpMntLaborPosting extends JunitAutoTestCase {
 
     // ---------- rpc helpers ----------
 
-    private ApiResponse<?> complete(Long visitId) {
+    private ApiResponse<?> complete(String visitId) {
         return executeRpc(mutation, "ErpMntVisit__complete",
                 ApiRequest.build(Map.of("visitId", visitId)));
     }
@@ -327,7 +327,7 @@ public class TestErpMntLaborPosting extends JunitAutoTestCase {
 
     // ---------- maintenance seed ----------
 
-    private void seedEquipment(Long id) {
+    private void seedEquipment(String id) {
         IEntityDao<ErpMntEquipment> dao = daoProvider.daoFor(ErpMntEquipment.class);
         ErpMntEquipment equipment = new ErpMntEquipment();
         equipment.setId(id);
@@ -337,7 +337,7 @@ public class TestErpMntLaborPosting extends JunitAutoTestCase {
         dao.saveEntity(equipment);
     }
 
-    private void seedVisit(Long id, Long equipmentId, String status, String code,
+    private void seedVisit(String id, String equipmentId, String status, String code,
                            LocalDateTime startTime, LocalDateTime endTime) {
         IEntityDao<ErpMntVisit> dao = daoProvider.daoFor(ErpMntVisit.class);
         ErpMntVisit visit = new ErpMntVisit();
@@ -362,7 +362,7 @@ public class TestErpMntLaborPosting extends JunitAutoTestCase {
 
     // ---------- query helpers ----------
 
-    private ErpMntVisit loadVisit(Long visitId) {
+    private ErpMntVisit loadVisit(String visitId) {
         return daoProvider.daoFor(ErpMntVisit.class).getEntityById(visitId);
     }
 
@@ -378,7 +378,7 @@ public class TestErpMntLaborPosting extends JunitAutoTestCase {
         return daoProvider.daoFor(ErpFinVoucher.class).getEntityById(links.get(0).getVoucherId());
     }
 
-    private ErpFinVoucherLine findVoucherLine(Long voucherId, String subjectCode) {
+    private ErpFinVoucherLine findVoucherLine(String voucherId, String subjectCode) {
         IEntityDao<ErpFinVoucherLine> dao = daoProvider.daoFor(ErpFinVoucherLine.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("voucherId", voucherId));

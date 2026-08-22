@@ -20,7 +20,7 @@ public class ErpMntSparePartUsageReverseConfirmProcessor extends AbstractErpMntS
 
     private static final Logger LOG = LoggerFactory.getLogger(ErpMntSparePartUsageReverseConfirmProcessor.class);
 
-    public ErpMntSparePartUsage reverseConfirm(Long usageId, IServiceContext context) {
+    public ErpMntSparePartUsage reverseConfirm(String usageId, IServiceContext context) {
         ErpMntSparePartUsage usage = requireUsage(usageId, context);
         validateCanReverse(usage, context);
 

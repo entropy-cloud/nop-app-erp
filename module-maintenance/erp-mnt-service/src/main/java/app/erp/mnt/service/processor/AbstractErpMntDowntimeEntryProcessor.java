@@ -45,7 +45,7 @@ public abstract class AbstractErpMntDowntimeEntryProcessor {
         return daoProvider.daoFor(ErpMntDowntimeEntry.class);
     }
 
-    protected ErpMntDowntimeEntry requireDowntime(Long downtimeId, IServiceContext context) {
+    protected ErpMntDowntimeEntry requireDowntime(String downtimeId, IServiceContext context) {
         ErpMntDowntimeEntry downtime = downtimeDao().getEntityById(downtimeId);
         if (downtime == null) {
             throw new NopException(ErpMntErrors.ERR_DOWNTIME_NOT_FOUND).param(ErpMntErrors.ARG_DOWNTIME_ID, downtimeId);

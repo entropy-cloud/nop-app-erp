@@ -29,7 +29,7 @@ public class ErpMntVisitReportAdditionalFaultProcessor extends AbstractErpMntVis
     @Inject
     IErpMntRequestBiz requestBiz;
 
-    public ErpMntRequest reportAdditionalFault(Long visitId, String description, String priority,
+    public ErpMntRequest reportAdditionalFault(String visitId, String description, String priority,
                                                String remark, IServiceContext context) {
         ErpMntVisit visit = requireVisit(visitId, context);
         String from = visit.getStatus();

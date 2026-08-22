@@ -13,30 +13,30 @@
     public class ErpMntVisitTaskOutputBean {
 
     
-        private Long _id;
+        private String _id;
 
     
         @PropMeta(propId=1)
     
-        public Long getId(){
+        public String getId(){
             return _id;
         }
 
-        public void setId(Long value){
+        public void setId(String value){
             this._id = value;
         }
 
 
-        private Long _visitId;
+        private String _visitId;
 
     
         @PropMeta(propId=2)
     
-        public Long getVisitId(){
+        public String getVisitId(){
             return _visitId;
         }
 
-        public void setVisitId(Long value){
+        public void setVisitId(String value){
             this._visitId = value;
         }
 

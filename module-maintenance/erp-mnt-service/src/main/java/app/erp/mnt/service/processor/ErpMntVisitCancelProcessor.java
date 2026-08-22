@@ -19,7 +19,7 @@ public class ErpMntVisitCancelProcessor extends AbstractErpMntVisitProcessor {
 
     private static final Logger LOG = LoggerFactory.getLogger(ErpMntVisitCancelProcessor.class);
 
-    public ErpMntVisit cancel(Long visitId, IServiceContext context) {
+    public ErpMntVisit cancel(String visitId, IServiceContext context) {
         ErpMntVisit visit = requireVisit(visitId, context);
         String from = visit.getStatus();
         try {

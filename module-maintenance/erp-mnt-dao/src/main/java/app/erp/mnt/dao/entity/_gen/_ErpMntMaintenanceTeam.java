@@ -137,7 +137,7 @@ public class _ErpMntMaintenanceTeam extends DynamicOrmEntity{
 
     
     /* ID: ID */
-    private java.lang.Long _id;
+    private java.lang.String _id;
     
     /* 团队编码: CODE */
     private java.lang.String _code;
@@ -146,10 +146,10 @@ public class _ErpMntMaintenanceTeam extends DynamicOrmEntity{
     private java.lang.String _name;
     
     /* 所属组织: ORG_ID */
-    private java.lang.Long _orgId;
+    private java.lang.String _orgId;
     
     /* 负责人(职员): LEADER_ID */
-    private java.lang.Long _leaderId;
+    private java.lang.String _leaderId;
     
     /* 描述: DESCRIPTION */
     private java.lang.String _description;
@@ -300,9 +300,9 @@ public class _ErpMntMaintenanceTeam extends DynamicOrmEntity{
         switch(propId){
         
             case PROP_ID_id:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_id));
                }
                setId(typedValue);
@@ -330,9 +330,9 @@ public class _ErpMntMaintenanceTeam extends DynamicOrmEntity{
             }
         
             case PROP_ID_orgId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_orgId));
                }
                setOrgId(typedValue);
@@ -340,9 +340,9 @@ public class _ErpMntMaintenanceTeam extends DynamicOrmEntity{
             }
         
             case PROP_ID_leaderId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_leaderId));
                }
                setLeaderId(typedValue);
@@ -440,7 +440,7 @@ public class _ErpMntMaintenanceTeam extends DynamicOrmEntity{
         
             case PROP_ID_id:{
                onInitProp(propId);
-               this._id = (java.lang.Long)value;
+               this._id = (java.lang.String)value;
                orm_id(); // 如果是设置主键字段，则触发watcher
                break;
             }
@@ -461,14 +461,14 @@ public class _ErpMntMaintenanceTeam extends DynamicOrmEntity{
         
             case PROP_ID_orgId:{
                onInitProp(propId);
-               this._orgId = (java.lang.Long)value;
+               this._orgId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_leaderId:{
                onInitProp(propId);
-               this._leaderId = (java.lang.Long)value;
+               this._leaderId = (java.lang.String)value;
                
                break;
             }
@@ -538,7 +538,7 @@ public class _ErpMntMaintenanceTeam extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final java.lang.Long getId(){
+    public final java.lang.String getId(){
          onPropGet(PROP_ID_id);
          return _id;
     }
@@ -546,7 +546,7 @@ public class _ErpMntMaintenanceTeam extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final void setId(java.lang.Long value){
+    public final void setId(java.lang.String value){
         if(onPropSet(PROP_ID_id,value)){
             this._id = value;
             internalClearRefs(PROP_ID_id);
@@ -595,7 +595,7 @@ public class _ErpMntMaintenanceTeam extends DynamicOrmEntity{
     /**
      * 所属组织: ORG_ID
      */
-    public final java.lang.Long getOrgId(){
+    public final java.lang.String getOrgId(){
          onPropGet(PROP_ID_orgId);
          return _orgId;
     }
@@ -603,7 +603,7 @@ public class _ErpMntMaintenanceTeam extends DynamicOrmEntity{
     /**
      * 所属组织: ORG_ID
      */
-    public final void setOrgId(java.lang.Long value){
+    public final void setOrgId(java.lang.String value){
         if(onPropSet(PROP_ID_orgId,value)){
             this._orgId = value;
             internalClearRefs(PROP_ID_orgId);
@@ -614,7 +614,7 @@ public class _ErpMntMaintenanceTeam extends DynamicOrmEntity{
     /**
      * 负责人(职员): LEADER_ID
      */
-    public final java.lang.Long getLeaderId(){
+    public final java.lang.String getLeaderId(){
          onPropGet(PROP_ID_leaderId);
          return _leaderId;
     }
@@ -622,7 +622,7 @@ public class _ErpMntMaintenanceTeam extends DynamicOrmEntity{
     /**
      * 负责人(职员): LEADER_ID
      */
-    public final void setLeaderId(java.lang.Long value){
+    public final void setLeaderId(java.lang.String value){
         if(onPropSet(PROP_ID_leaderId,value)){
             this._leaderId = value;
             internalClearRefs(PROP_ID_leaderId);

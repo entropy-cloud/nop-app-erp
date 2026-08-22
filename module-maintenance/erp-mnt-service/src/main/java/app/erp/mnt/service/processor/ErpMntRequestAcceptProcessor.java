@@ -24,7 +24,7 @@ public class ErpMntRequestAcceptProcessor extends AbstractErpMntRequestProcessor
     @Inject
     DecommissionedEquipmentGuard decommissionedGuard;
 
-    public ErpMntRequest accept(Long requestId, IServiceContext context) {
+    public ErpMntRequest accept(String requestId, IServiceContext context) {
         ErpMntRequest request = requireRequest(requestId, context);
         String from = request.getStatus();
         try {

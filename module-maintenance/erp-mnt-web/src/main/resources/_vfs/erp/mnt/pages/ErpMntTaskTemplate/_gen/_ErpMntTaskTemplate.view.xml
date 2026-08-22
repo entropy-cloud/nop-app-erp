@@ -19,7 +19,7 @@
             <cols>
 
                 <!--ID-->
-                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="id" mandatory="true" sortable="true"/>
 
                 <!--模板编码-->
                 <col id="code" mandatory="true" sortable="true"/>
@@ -28,7 +28,7 @@
                 <col id="name" mandatory="true" sortable="true"/>
 
                 <!--适用设备分类(可空=需显式套用)-->
-                <col id="equipmentCategoryId" ui:number="true" sortable="true"/>
+                <col id="equipmentCategoryId" sortable="true"/>
 
                 <!--标准工时(分钟)-->
                 <col id="standardMinutes" ui:number="true" sortable="true"/>

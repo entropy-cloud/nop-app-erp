@@ -1,0 +1,6 @@
+_chgType,ID,EQUIPMENT_ID,FROM_STATUS,TO_STATUS,CHANGE_AT,SOURCE,SOURCE_BILL_CODE,REMARK,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
+A,61011,61001,,RUNNING,@var:ErpMntEquipmentStatusLog@changeAt,MANUAL,,,@var:ErpMntEquipmentStatusLog@delVersion,0,autotest-ref,*,autotest-ref,*
+A,61012,61001,RUNNING,DOWN,@var:ErpMntEquipmentStatusLog@changeAt_1,MANUAL,,,@var:ErpMntEquipmentStatusLog@delVersion,0,autotest-ref,*,autotest-ref,*
+A,61013,61001,DOWN,RUNNING,@var:ErpMntEquipmentStatusLog@changeAt_2,MANUAL,,,@var:ErpMntEquipmentStatusLog@delVersion,0,autotest-ref,*,autotest-ref,*
+A,61014,61001,RUNNING,IDLE,@var:ErpMntEquipmentStatusLog@changeAt_3,MANUAL,,,@var:ErpMntEquipmentStatusLog@delVersion,0,autotest-ref,*,autotest-ref,*
+A,61015,61001,IDLE,RUNNING,@var:ErpMntEquipmentStatusLog@changeAt_4,MANUAL,,,@var:ErpMntEquipmentStatusLog@delVersion,0,autotest-ref,*,autotest-ref,*

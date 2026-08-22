@@ -47,8 +47,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpMntEquipmentReferenceGuard extends JunitAutoTestCase {
 
-    static final Long EQUIPMENT_DOWN = 501L;          // DECOMMISSIONED 设备
-    static final Long EQUIPMENT_OK = 502L;            // RUNNING 设备
+    static final String EQUIPMENT_DOWN = "501";          // DECOMMISSIONED 设备
+    static final String EQUIPMENT_OK = "502";            // RUNNING 设备
     static final Long ASSIGNEE_ID = 601L;
     static final LocalDate DUE = LocalDate.of(2026, 7, 1);
 
@@ -61,14 +61,14 @@ public class TestErpMntEquipmentReferenceGuard extends JunitAutoTestCase {
 
     private final AtomicLong idSeq = new AtomicLong(500000L);
 
-    private Long nextId() {
-        return idSeq.incrementAndGet();
+    private String nextId() {
+        return String.valueOf(idSeq.incrementAndGet());
     }
 
     private void seedEquipments() {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMntEquipment> dao = daoProvider.daoFor(ErpMntEquipment.class);
-            for (Long id : new Long[]{EQUIPMENT_DOWN, EQUIPMENT_OK}) {
+            for (String id : new String[]{EQUIPMENT_DOWN, EQUIPMENT_OK}) {
                 ErpMntEquipment equipment = new ErpMntEquipment();
                 equipment.setId(id);
                 equipment.setCode("EQ-" + id);
@@ -140,7 +140,7 @@ public class TestErpMntEquipmentReferenceGuard extends JunitAutoTestCase {
     @Test
     public void testScheduleMigrationRejectedForDecommissionedEquipment() {
         seedEquipments();
-        Long visitId = nextId();
+        String visitId = nextId();
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMntVisit> dao = daoProvider.daoFor(ErpMntVisit.class);
             ErpMntVisit visit = new ErpMntVisit();
@@ -165,8 +165,8 @@ public class TestErpMntEquipmentReferenceGuard extends JunitAutoTestCase {
     @Test
     public void testDueVisitBatchSkipsDecommissionedEquipmentSchedule() {
         seedEquipments();
-        Long badScheduleId = nextId();
-        Long okScheduleId = nextId();
+        String badScheduleId = nextId();
+        String okScheduleId = nextId();
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMntSchedule> dao = daoProvider.daoFor(ErpMntSchedule.class);
             dao.saveEntity(rawSchedule(badScheduleId, "SCH-GUARD-BAD", EQUIPMENT_DOWN));
@@ -194,7 +194,7 @@ public class TestErpMntEquipmentReferenceGuard extends JunitAutoTestCase {
     @Test
     public void testAcceptRejectedForOpenRequestOnDecommissionedEquipment() {
         seedEquipments();
-        Long requestId = nextId();
+        String requestId = nextId();
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMntRequest> dao = daoProvider.daoFor(ErpMntRequest.class);
             ErpMntRequest request = new ErpMntRequest();
@@ -226,7 +226,7 @@ public class TestErpMntEquipmentReferenceGuard extends JunitAutoTestCase {
                 scenario + " 应返回 ERR_EQUIPMENT_DECOMMISSIONED: " + resp);
     }
 
-    private Map<String, Object> scheduleData(String code, Long equipmentId) {
+    private Map<String, Object> scheduleData(String code, String equipmentId) {
         Map<String, Object> data = new LinkedHashMap<>();
         data.put("code", code);
         data.put("name", "计划" + code);
@@ -240,7 +240,7 @@ public class TestErpMntEquipmentReferenceGuard extends JunitAutoTestCase {
         return data;
     }
 
-    private Map<String, Object> requestData(String code, Long equipmentId) {
+    private Map<String, Object> requestData(String code, String equipmentId) {
         Map<String, Object> data = new LinkedHashMap<>();
         data.put("code", code);
         data.put("equipmentId", equipmentId);
@@ -252,7 +252,7 @@ public class TestErpMntEquipmentReferenceGuard extends JunitAutoTestCase {
         return data;
     }
 
-    private Map<String, Object> visitData(String code, Long equipmentId) {
+    private Map<String, Object> visitData(String code, String equipmentId) {
         Map<String, Object> data = new LinkedHashMap<>();
         data.put("code", code);
         data.put("equipmentId", equipmentId);
@@ -261,7 +261,7 @@ public class TestErpMntEquipmentReferenceGuard extends JunitAutoTestCase {
         return data;
     }
 
-    private ErpMntSchedule rawSchedule(Long id, String code, Long equipmentId) {
+    private ErpMntSchedule rawSchedule(String id, String code, String equipmentId) {
         ErpMntSchedule schedule = new ErpMntSchedule();
         schedule.setId(id);
         schedule.setCode(code);

@@ -22,8 +22,8 @@
 
     <props>
         <prop name="id" displayName="ID" propId="1" i18n-en:displayName="ID" tagSet="seq-default" mandatory="true"
-              queryable="true" sortable="true" insertable="true" updatable="false" graphql:type="String">
-            <schema type="java.lang.Long"/>
+              queryable="true" sortable="true" insertable="true" updatable="false">
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="code" displayName="计划编码" propId="2" i18n-en:displayName="Code" tagSet="var" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
@@ -35,7 +35,7 @@
         </prop>
         <prop name="equipmentId" displayName="设备ID" propId="4" i18n-en:displayName="Equipment" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="equipment">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="scheduleType" displayName="计划类型" propId="5" i18n-en:displayName="Schedule Type" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
@@ -112,7 +112,7 @@
         </prop>
         <prop name="templateId" displayName="任务模板ID" propId="23" i18n-en:displayName="Task Template" queryable="true"
               sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="equipment" i18n-en:displayName="Equipment" tagSet="pub" ext:kind="to-one" internal="true"
               queryable="true" ext:joinLeftProp="equipmentId" ext:joinRightProp="id" insertable="false"

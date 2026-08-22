@@ -58,14 +58,14 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpMntDowntimeAndE2E extends JunitAutoTestCase {
 
-    static final Long ORG_ID = 1201L;
-    static final Long EQUIPMENT_ID = 101L;
+    static final String ORG_ID = "1201";
+    static final String EQUIPMENT_ID = "101";
     static final Long ASSIGNEE_ID = 201L;
-    static final Long WAREHOUSE_ID = 3201L;
-    static final Long MATERIAL_ID = 4201L;
-    static final Long UOM_ID = 5201L;
-    static final Long CURRENCY_ID = 6201L;
-    static final Long ACCT_SCHEMA_ID = 7201L;
+    static final String WAREHOUSE_ID = "3201";
+    static final String MATERIAL_ID = "4201";
+    static final String UOM_ID = "5201";
+    static final String CURRENCY_ID = "6201";
+    static final String ACCT_SCHEMA_ID = "7201";
 
     @Inject
     IDaoProvider daoProvider;
@@ -76,19 +76,19 @@ public class TestErpMntDowntimeAndE2E extends JunitAutoTestCase {
 
     private final AtomicLong idSeq = new AtomicLong(300000L);
 
-    private Long nextId() {
-        return idSeq.incrementAndGet();
+    private String nextId() {
+        return String.valueOf(idSeq.incrementAndGet());
     }
 
     // ---------- 停机记录 ----------
 
     @Test
     public void testDowntimeRecordSetsDownAndCompleteRestores() {
-        Long downtimeId = nextId();
+        String downtimeId = nextId();
         LocalDateTime startedAt = CoreMetrics.currentDateTime();
         ormTemplate.runInSession(session -> {
             seedEquipment(EQUIPMENT_ID, ErpMntDaoConstants.EQUIPMENT_STATUS_RUNNING);
-            seedDowntime(downtimeId, EQUIPMENT_ID, startedAt, 9001L, "DT-DOWN-001");
+            seedDowntime(downtimeId, EQUIPMENT_ID, startedAt, "9001", "DT-DOWN-001");
             return null;
         });
 
@@ -117,11 +117,11 @@ public class TestErpMntDowntimeAndE2E extends JunitAutoTestCase {
 
     @Test
     public void testDowntimeTotalMinutesReflectsDuration() {
-        Long downtimeId = nextId();
+        String downtimeId = nextId();
         LocalDateTime startedAt = CoreMetrics.currentDateTime().minusHours(2);
         ormTemplate.runInSession(session -> {
             seedEquipment(EQUIPMENT_ID, ErpMntDaoConstants.EQUIPMENT_STATUS_DOWN);
-            seedDowntime(downtimeId, EQUIPMENT_ID, startedAt, 9002L, "DT-DUR-001");
+            seedDowntime(downtimeId, EQUIPMENT_ID, startedAt, "9002", "DT-DUR-001");
             return null;
         });
 
@@ -138,7 +138,7 @@ public class TestErpMntDowntimeAndE2E extends JunitAutoTestCase {
     @Test
     public void testPlannedVisitFullFlowWithSparePartIssue() {
         seedPeriodAndSubjects();
-        Long scheduleId = nextId();
+        String scheduleId = nextId();
         LocalDate dueDate = LocalDate.of(2026, 7, 1);
         ormTemplate.runInSession(session -> {
             seedEquipment(EQUIPMENT_ID, ErpMntDaoConstants.EQUIPMENT_STATUS_RUNNING);
@@ -162,8 +162,8 @@ public class TestErpMntDowntimeAndE2E extends JunitAutoTestCase {
         assertEquals(ErpMntDaoConstants.EQUIPMENT_STATUS_UNDER_MAINTENANCE, equipmentStatus(),
                 "执行中设备置 UNDER_MAINTENANCE");
 
-        Long usageId = nextId();
-        Long lineId = nextId();
+        String usageId = nextId();
+        String lineId = nextId();
         ormTemplate.runInSession(session -> {
             seedUsage(usageId, EQUIPMENT_ID, visit.getId(), "SP-E2E-001");
             seedUsageLine(lineId, usageId, new BigDecimal("4"), new BigDecimal("5"));
@@ -194,7 +194,7 @@ public class TestErpMntDowntimeAndE2E extends JunitAutoTestCase {
         // currentDateTime（可冻结）与 currentTimeMillis（恒真实），类级冻结会撕裂 totalMinutes 口径。
         MntFrozenClockExtension.installFrozenClock();
         try {
-        Long requestId = nextId();
+        String requestId = nextId();
         ormTemplate.runInSession(session -> {
             seedEquipment(EQUIPMENT_ID, ErpMntDaoConstants.EQUIPMENT_STATUS_RUNNING);
             seedRequest(requestId, EQUIPMENT_ID, ErpMntDaoConstants.REQUEST_STATUS_OPEN, "REQ-E2E-001");
@@ -230,35 +230,35 @@ public class TestErpMntDowntimeAndE2E extends JunitAutoTestCase {
 
     // ---------- rpc helpers ----------
 
-    private ApiResponse<?> recordDowntime(Long downtimeId) {
+    private ApiResponse<?> recordDowntime(String downtimeId) {
         return executeRpc(mutation, "ErpMntDowntimeEntry__record", ApiRequest.build(Map.of("downtimeId", downtimeId)));
     }
 
-    private ApiResponse<?> completeDowntime(Long downtimeId) {
+    private ApiResponse<?> completeDowntime(String downtimeId) {
         return executeRpc(mutation, "ErpMntDowntimeEntry__complete", ApiRequest.build(Map.of("downtimeId", downtimeId)));
     }
 
-    private ApiResponse<?> scheduleVisit(Long visitId) {
+    private ApiResponse<?> scheduleVisit(String visitId) {
         return executeRpc(mutation, "ErpMntVisit__schedule", ApiRequest.build(Map.of("visitId", visitId)));
     }
 
-    private ApiResponse<?> startVisit(Long visitId) {
+    private ApiResponse<?> startVisit(String visitId) {
         return executeRpc(mutation, "ErpMntVisit__start", ApiRequest.build(Map.of("visitId", visitId)));
     }
 
-    private ApiResponse<?> completeVisit(Long visitId) {
+    private ApiResponse<?> completeVisit(String visitId) {
         return executeRpc(mutation, "ErpMntVisit__complete", ApiRequest.build(Map.of("visitId", visitId)));
     }
 
-    private ApiResponse<?> accept(Long requestId) {
+    private ApiResponse<?> accept(String requestId) {
         return executeRpc(mutation, "ErpMntRequest__accept", ApiRequest.build(Map.of("requestId", requestId)));
     }
 
-    private ApiResponse<?> startRepair(Long requestId) {
+    private ApiResponse<?> startRepair(String requestId) {
         return executeRpc(mutation, "ErpMntRequest__startRepair", ApiRequest.build(Map.of("requestId", requestId)));
     }
 
-    private ApiResponse<?> confirmUsage(Long usageId) {
+    private ApiResponse<?> confirmUsage(String usageId) {
         return executeRpc(mutation, "ErpMntSparePartUsage__confirm", ApiRequest.build(Map.of("usageId", usageId)));
     }
 
@@ -351,7 +351,7 @@ public class TestErpMntDowntimeAndE2E extends JunitAutoTestCase {
 
     // ---------- maintenance seed ----------
 
-    private void seedEquipment(Long id, String status) {
+    private void seedEquipment(String id, String status) {
         IEntityDao<ErpMntEquipment> dao = daoProvider.daoFor(ErpMntEquipment.class);
         ErpMntEquipment equipment = new ErpMntEquipment();
         equipment.setId(id);
@@ -361,7 +361,7 @@ public class TestErpMntDowntimeAndE2E extends JunitAutoTestCase {
         dao.saveEntity(equipment);
     }
 
-    private void seedDowntime(Long id, Long equipmentId, LocalDateTime startTime, Long relatedJobOrderId, String reason) {
+    private void seedDowntime(String id, String equipmentId, LocalDateTime startTime, String relatedJobOrderId, String reason) {
         IEntityDao<ErpMntDowntimeEntry> dao = daoProvider.daoFor(ErpMntDowntimeEntry.class);
         ErpMntDowntimeEntry downtime = new ErpMntDowntimeEntry();
         downtime.setId(id);
@@ -372,7 +372,7 @@ public class TestErpMntDowntimeAndE2E extends JunitAutoTestCase {
         dao.saveEntity(downtime);
     }
 
-    private void seedSchedule(Long id, Long equipmentId, LocalDate nextDueDate,
+    private void seedSchedule(String id, String equipmentId, LocalDate nextDueDate,
                               String recurrenceType, int frequency, String code) {
         IEntityDao<ErpMntSchedule> dao = daoProvider.daoFor(ErpMntSchedule.class);
         ErpMntSchedule schedule = new ErpMntSchedule();
@@ -389,7 +389,7 @@ public class TestErpMntDowntimeAndE2E extends JunitAutoTestCase {
         dao.saveEntity(schedule);
     }
 
-    private void seedUsage(Long id, Long equipmentId, Long visitId, String code) {
+    private void seedUsage(String id, String equipmentId, String visitId, String code) {
         IEntityDao<ErpMntSparePartUsage> dao = daoProvider.daoFor(ErpMntSparePartUsage.class);
         ErpMntSparePartUsage usage = new ErpMntSparePartUsage();
         usage.setId(id);
@@ -405,7 +405,7 @@ public class TestErpMntDowntimeAndE2E extends JunitAutoTestCase {
         dao.saveEntity(usage);
     }
 
-    private void seedUsageLine(Long id, Long usageId, BigDecimal qty, BigDecimal unitCost) {
+    private void seedUsageLine(String id, String usageId, BigDecimal qty, BigDecimal unitCost) {
         IEntityDao<ErpMntSparePartUsageLine> dao = daoProvider.daoFor(ErpMntSparePartUsageLine.class);
         ErpMntSparePartUsageLine line = new ErpMntSparePartUsageLine();
         line.setId(id);
@@ -419,7 +419,7 @@ public class TestErpMntDowntimeAndE2E extends JunitAutoTestCase {
         dao.saveEntity(line);
     }
 
-    private void seedRequest(Long id, Long equipmentId, String status, String code) {
+    private void seedRequest(String id, String equipmentId, String status, String code) {
         IEntityDao<ErpMntRequest> dao = daoProvider.daoFor(ErpMntRequest.class);
         ErpMntRequest request = new ErpMntRequest();
         request.setId(id);
@@ -434,7 +434,7 @@ public class TestErpMntDowntimeAndE2E extends JunitAutoTestCase {
         dao.saveEntity(request);
     }
 
-    private void assignVisit(Long visitId, Long assignedTo) {
+    private void assignVisit(String visitId, Long assignedTo) {
         // 访问由 generateDueVisits 在前一会话创建（MANAGED），于本会话内修改即可，flush 时持久化
         ormTemplate.runInSession(session -> {
             ErpMntVisit visit = daoProvider.daoFor(ErpMntVisit.class).getEntityById(visitId);
@@ -445,15 +445,15 @@ public class TestErpMntDowntimeAndE2E extends JunitAutoTestCase {
 
     // ---------- query helpers ----------
 
-    private ErpMntDowntimeEntry loadDowntime(Long downtimeId) {
+    private ErpMntDowntimeEntry loadDowntime(String downtimeId) {
         return daoProvider.daoFor(ErpMntDowntimeEntry.class).getEntityById(downtimeId);
     }
 
-    private String visitStatus(Long visitId) {
+    private String visitStatus(String visitId) {
         return daoProvider.daoFor(ErpMntVisit.class).getEntityById(visitId).getStatus();
     }
 
-    private String requestStatus(Long requestId) {
+    private String requestStatus(String requestId) {
         return daoProvider.daoFor(ErpMntRequest.class).getEntityById(requestId).getStatus();
     }
 
@@ -461,11 +461,11 @@ public class TestErpMntDowntimeAndE2E extends JunitAutoTestCase {
         return daoProvider.daoFor(ErpMntEquipment.class).getEntityById(EQUIPMENT_ID).getStatus();
     }
 
-    private ErpMntSparePartUsage loadUsage(Long usageId) {
+    private ErpMntSparePartUsage loadUsage(String usageId) {
         return daoProvider.daoFor(ErpMntSparePartUsage.class).getEntityById(usageId);
     }
 
-    private ErpMntVisit findVisitBySchedule(Long scheduleId) {
+    private ErpMntVisit findVisitBySchedule(String scheduleId) {
         IEntityDao<ErpMntVisit> dao = daoProvider.daoFor(ErpMntVisit.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("scheduleId", scheduleId));

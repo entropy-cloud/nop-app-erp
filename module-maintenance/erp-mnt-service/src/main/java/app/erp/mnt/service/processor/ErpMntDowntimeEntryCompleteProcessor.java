@@ -17,7 +17,7 @@ import java.time.Duration;
  */
 public class ErpMntDowntimeEntryCompleteProcessor extends AbstractErpMntDowntimeEntryProcessor {
 
-    public ErpMntDowntimeEntry complete(Long downtimeId, IServiceContext context) {
+    public ErpMntDowntimeEntry complete(String downtimeId, IServiceContext context) {
         ErpMntDowntimeEntry downtime = requireDowntime(downtimeId, context);
         validateRecorded(downtime, context);
         validateNotCompleted(downtime, context);

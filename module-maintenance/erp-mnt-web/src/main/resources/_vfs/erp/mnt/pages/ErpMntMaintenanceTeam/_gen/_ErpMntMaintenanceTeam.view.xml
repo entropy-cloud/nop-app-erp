@@ -19,7 +19,7 @@
             <cols>
 
                 <!--ID-->
-                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="id" mandatory="true" sortable="true"/>
 
                 <!--团队编码-->
                 <col id="code" mandatory="true" sortable="true"/>
@@ -28,10 +28,10 @@
                 <col id="name" mandatory="true" sortable="true"/>
 
                 <!--所属组织-->
-                <col id="orgId" ui:number="true" sortable="true"/>
+                <col id="orgId" sortable="true"/>
 
                 <!--负责人(职员)-->
-                <col id="leaderId" ui:number="true" sortable="true"/>
+                <col id="leaderId" sortable="true"/>
 
                 <!--描述-->
                 <col id="description" sortable="true"/>

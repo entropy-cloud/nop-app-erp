@@ -15,6 +15,7 @@ import io.nop.api.core.annotations.core.OptionalBoolean;
 import io.nop.api.core.beans.ApiRequest;
 import io.nop.api.core.beans.ApiResponse;
 import io.nop.api.core.beans.query.QueryBean;
+import io.nop.api.core.convert.ConvertHelper;
 import io.nop.autotest.junit.JunitAutoTestCase;
 import io.nop.core.context.IServiceContext;
 import io.nop.core.context.ServiceContextImpl;
@@ -78,19 +79,19 @@ public class TestErpMntRuntimeTrigger extends JunitAutoTestCase {
 
     @Test
     public void testRunningSegmentAggregationMath() {
-        Long equipmentId = 61001L;
+        String equipmentId = "61001";
         ormTemplate.runInSession(s -> {
             seedEquipment(equipmentId, ErpMntDaoConstants.EQUIPMENT_STATUS_RUNNING);
             // 多状态变更周期：RUNNING(4h) → DOWN(1h 不计) → RUNNING(2h) → IDLE(1h 不计) → RUNNING 开放段至 asOf(26h)
-            seedStatusLog(61011L, equipmentId, null,
+            seedStatusLog("61011", equipmentId, null,
                     ErpMntDaoConstants.EQUIPMENT_STATUS_RUNNING, ts(2026, 7, 15, 8, 0));
-            seedStatusLog(61012L, equipmentId, ErpMntDaoConstants.EQUIPMENT_STATUS_RUNNING,
+            seedStatusLog("61012", equipmentId, ErpMntDaoConstants.EQUIPMENT_STATUS_RUNNING,
                     ErpMntDaoConstants.EQUIPMENT_STATUS_DOWN, ts(2026, 7, 15, 12, 0));
-            seedStatusLog(61013L, equipmentId, ErpMntDaoConstants.EQUIPMENT_STATUS_DOWN,
+            seedStatusLog("61013", equipmentId, ErpMntDaoConstants.EQUIPMENT_STATUS_DOWN,
                     ErpMntDaoConstants.EQUIPMENT_STATUS_RUNNING, ts(2026, 7, 15, 13, 0));
-            seedStatusLog(61014L, equipmentId, ErpMntDaoConstants.EQUIPMENT_STATUS_RUNNING,
+            seedStatusLog("61014", equipmentId, ErpMntDaoConstants.EQUIPMENT_STATUS_RUNNING,
                     ErpMntDaoConstants.EQUIPMENT_STATUS_IDLE, ts(2026, 7, 15, 15, 0));
-            seedStatusLog(61015L, equipmentId, ErpMntDaoConstants.EQUIPMENT_STATUS_IDLE,
+            seedStatusLog("61015", equipmentId, ErpMntDaoConstants.EQUIPMENT_STATUS_IDLE,
                     ErpMntDaoConstants.EQUIPMENT_STATUS_RUNNING, ts(2026, 7, 15, 16, 0));
             return null;
         });
@@ -102,14 +103,14 @@ public class TestErpMntRuntimeTrigger extends JunitAutoTestCase {
 
     @Test
     public void testNonRunningOnlySegmentsCountZero() {
-        Long equipmentId = 61002L;
+        String equipmentId = "61002";
         ormTemplate.runInSession(s -> {
             seedEquipment(equipmentId, ErpMntDaoConstants.EQUIPMENT_STATUS_IDLE);
-            seedStatusLog(61021L, equipmentId, null,
+            seedStatusLog("61021", equipmentId, null,
                     ErpMntDaoConstants.EQUIPMENT_STATUS_IDLE, ts(2026, 7, 15, 8, 0));
-            seedStatusLog(61022L, equipmentId, ErpMntDaoConstants.EQUIPMENT_STATUS_IDLE,
+            seedStatusLog("61022", equipmentId, ErpMntDaoConstants.EQUIPMENT_STATUS_IDLE,
                     ErpMntDaoConstants.EQUIPMENT_STATUS_DOWN, ts(2026, 7, 15, 12, 0));
-            seedStatusLog(61023L, equipmentId, ErpMntDaoConstants.EQUIPMENT_STATUS_DOWN,
+            seedStatusLog("61023", equipmentId, ErpMntDaoConstants.EQUIPMENT_STATUS_DOWN,
                     ErpMntDaoConstants.EQUIPMENT_STATUS_UNDER_MAINTENANCE, ts(2026, 7, 15, 18, 0));
             return null;
         });
@@ -122,7 +123,7 @@ public class TestErpMntRuntimeTrigger extends JunitAutoTestCase {
 
     @Test
     public void testLegacyBaselineRunningSinceCreateTime() {
-        Long equipmentId = 61003L;
+        String equipmentId = "61003";
         ormTemplate.runInSession(s -> {
             seedEquipment(equipmentId, ErpMntDaoConstants.EQUIPMENT_STATUS_RUNNING);
             return null;
@@ -141,7 +142,7 @@ public class TestErpMntRuntimeTrigger extends JunitAutoTestCase {
 
     @Test
     public void testLegacyBaselineNonRunningZeroUntilFirstLog() {
-        Long equipmentId = 61004L;
+        String equipmentId = "61004";
         ormTemplate.runInSession(s -> {
             seedEquipment(equipmentId, ErpMntDaoConstants.EQUIPMENT_STATUS_IDLE);
             return null;
@@ -166,12 +167,12 @@ public class TestErpMntRuntimeTrigger extends JunitAutoTestCase {
 
     @Test
     public void testRuntimeThresholdTriggersVisitAndResetsBaseline() {
-        Long equipmentId = 61005L;
-        Long scheduleId = 62005L;
+        String equipmentId = "61005";
+        String scheduleId = "62005";
         ormTemplate.runInSession(s -> {
             seedEquipment(equipmentId, ErpMntDaoConstants.EQUIPMENT_STATUS_RUNNING);
             // RUNNING 自 2026-07-15 00:00 起持续 → asOf 2026-07-17 00:00 累计 48h
-            seedStatusLog(61051L, equipmentId, null,
+            seedStatusLog("61051", equipmentId, null,
                     ErpMntDaoConstants.EQUIPMENT_STATUS_RUNNING, ts(2026, 7, 15, 0, 0));
             seedRuntimeSchedule(scheduleId, equipmentId, "40", null);
             return null;
@@ -194,11 +195,11 @@ public class TestErpMntRuntimeTrigger extends JunitAutoTestCase {
 
     @Test
     public void testRuntimeBelowThresholdNoVisit() {
-        Long equipmentId = 61006L;
-        Long scheduleId = 62006L;
+        String equipmentId = "61006";
+        String scheduleId = "62006";
         ormTemplate.runInSession(s -> {
             seedEquipment(equipmentId, ErpMntDaoConstants.EQUIPMENT_STATUS_RUNNING);
-            seedStatusLog(61061L, equipmentId, null,
+            seedStatusLog("61061", equipmentId, null,
                     ErpMntDaoConstants.EQUIPMENT_STATUS_RUNNING, ts(2026, 7, 15, 0, 0));
             seedRuntimeSchedule(scheduleId, equipmentId, "60", null);
             return null;
@@ -214,11 +215,11 @@ public class TestErpMntRuntimeTrigger extends JunitAutoTestCase {
 
     @Test
     public void testRuntimeRerunSameDayIdempotent() {
-        Long equipmentId = 61007L;
-        Long scheduleId = 62007L;
+        String equipmentId = "61007";
+        String scheduleId = "62007";
         ormTemplate.runInSession(s -> {
             seedEquipment(equipmentId, ErpMntDaoConstants.EQUIPMENT_STATUS_RUNNING);
-            seedStatusLog(61071L, equipmentId, null,
+            seedStatusLog("61071", equipmentId, null,
                     ErpMntDaoConstants.EQUIPMENT_STATUS_RUNNING, ts(2026, 7, 15, 0, 0));
             seedRuntimeSchedule(scheduleId, equipmentId, "40", null);
             return null;
@@ -240,8 +241,8 @@ public class TestErpMntRuntimeTrigger extends JunitAutoTestCase {
 
     @Test
     public void testTimeScheduleNullTriggerZeroRegression() {
-        Long equipmentId = 61008L;
-        Long scheduleId = 62008L;
+        String equipmentId = "61008";
+        String scheduleId = "62008";
         ormTemplate.runInSession(s -> {
             seedEquipment(equipmentId, ErpMntDaoConstants.EQUIPMENT_STATUS_RUNNING);
             seedTimeSchedule(scheduleId, equipmentId, LocalDate.of(2026, 7, 15));
@@ -264,7 +265,7 @@ public class TestErpMntRuntimeTrigger extends JunitAutoTestCase {
 
     @Test
     public void testManualChangeStatusWritesLog() {
-        Long equipmentId = 61009L;
+        String equipmentId = "61009";
         ormTemplate.runInSession(s -> {
             seedEquipment(equipmentId, ErpMntDaoConstants.EQUIPMENT_STATUS_RUNNING);
             return null;
@@ -284,7 +285,7 @@ public class TestErpMntRuntimeTrigger extends JunitAutoTestCase {
 
     @Test
     public void testLinkerTransitionsWriteLogs() {
-        Long equipmentId = 61010L;
+        String equipmentId = "61010";
         ormTemplate.runInSession(s -> {
             seedEquipment(equipmentId, ErpMntDaoConstants.EQUIPMENT_STATUS_RUNNING);
             return null;
@@ -320,7 +321,7 @@ public class TestErpMntRuntimeTrigger extends JunitAutoTestCase {
     @EnableSnapshot
     @Test
     public void testManualChangeStatusSnapshot() {
-        Long equipmentId = 61011L;
+        String equipmentId = "61011";
         ormTemplate.runInSession(s -> {
             seedEquipment(equipmentId, ErpMntDaoConstants.EQUIPMENT_STATUS_RUNNING);
             return null;
@@ -342,7 +343,7 @@ public class TestErpMntRuntimeTrigger extends JunitAutoTestCase {
         return Timestamp.valueOf(LocalDateTime.of(year, month, day, hour, minute));
     }
 
-    private void seedEquipment(Long id, String status) {
+    private void seedEquipment(String id, String status) {
         IEntityDao<ErpMntEquipment> dao = daoProvider.daoFor(ErpMntEquipment.class);
         ErpMntEquipment equipment = dao.newEntity();
         equipment.setId(id);
@@ -353,14 +354,14 @@ public class TestErpMntRuntimeTrigger extends JunitAutoTestCase {
     }
 
     /** createTime 回拨：insert 后 update（update 路径不触碰 createTime），供遗留基线分支精确断言。 */
-    private void backdateCreateTime(Long equipmentId, Timestamp createTime) {
+    private void backdateCreateTime(String equipmentId, Timestamp createTime) {
         IEntityDao<ErpMntEquipment> dao = daoProvider.daoFor(ErpMntEquipment.class);
         ErpMntEquipment managed = dao.getEntityById(equipmentId);
         managed.setCreateTime(createTime);
         dao.updateEntity(managed);
     }
 
-    private void seedStatusLog(Long id, Long equipmentId, String fromStatus, String toStatus, Timestamp changeAt) {
+    private void seedStatusLog(String id, String equipmentId, String fromStatus, String toStatus, Timestamp changeAt) {
         IEntityDao<ErpMntEquipmentStatusLog> dao = daoProvider.daoFor(ErpMntEquipmentStatusLog.class);
         ErpMntEquipmentStatusLog log = dao.newEntity();
         log.setId(id);
@@ -372,7 +373,7 @@ public class TestErpMntRuntimeTrigger extends JunitAutoTestCase {
         dao.saveEntity(log);
     }
 
-    private void seedRuntimeSchedule(Long id, Long equipmentId, String thresholdHours, String baselineHours) {
+    private void seedRuntimeSchedule(String id, String equipmentId, String thresholdHours, String baselineHours) {
         ErpMntSchedule schedule = seedScheduleCommon(id, equipmentId);
         schedule.setTriggerType(ErpMntDaoConstants.TRIGGER_TYPE_RUNTIME);
         schedule.setThresholdHours(new BigDecimal(thresholdHours));
@@ -382,13 +383,13 @@ public class TestErpMntRuntimeTrigger extends JunitAutoTestCase {
         daoProvider.daoFor(ErpMntSchedule.class).saveEntity(schedule);
     }
 
-    private void seedTimeSchedule(Long id, Long equipmentId, LocalDate nextDueDate) {
+    private void seedTimeSchedule(String id, String equipmentId, LocalDate nextDueDate) {
         ErpMntSchedule schedule = seedScheduleCommon(id, equipmentId);
         schedule.setNextDueDate(nextDueDate);
         daoProvider.daoFor(ErpMntSchedule.class).saveEntity(schedule);
     }
 
-    private ErpMntSchedule seedScheduleCommon(Long id, Long equipmentId) {
+    private ErpMntSchedule seedScheduleCommon(String id, String equipmentId) {
         ErpMntSchedule schedule = daoProvider.daoFor(ErpMntSchedule.class).newEntity();
         schedule.setId(id);
         schedule.setCode("SCH-RT-" + id);
@@ -408,14 +409,15 @@ public class TestErpMntRuntimeTrigger extends JunitAutoTestCase {
         return daoProvider.daoFor(ErpMntVisit.class).findAllByQuery(q).stream().findFirst().orElse(null);
     }
 
-    private ErpMntEquipmentStatusLog findLatestLog(Long equipmentId) {
+    private ErpMntEquipmentStatusLog findLatestLog(String equipmentId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("equipmentId", equipmentId));
         List<ErpMntEquipmentStatusLog> logs = daoProvider.daoFor(ErpMntEquipmentStatusLog.class).findAllByQuery(q);
         return logs.stream()
                 .reduce((a, b) -> {
                     int byTime = a.getChangeAt().compareTo(b.getChangeAt());
-                    return byTime < 0 || (byTime == 0 && a.getId() < b.getId()) ? b : a;
+                    return byTime < 0 || (byTime == 0
+                            && ConvertHelper.toLong(a.getId()) < ConvertHelper.toLong(b.getId())) ? b : a;
                 })
                 .orElse(null);
     }

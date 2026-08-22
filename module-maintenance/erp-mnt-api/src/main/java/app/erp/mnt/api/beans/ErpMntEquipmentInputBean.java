@@ -13,16 +13,16 @@
     public class ErpMntEquipmentInputBean extends CrudInputBase {
 
     
-        private Long _id;
+        private String _id;
 
     
         @PropMeta(propId=1)
     
-        public Long getId(){
+        public String getId(){
             return _id;
         }
 
-        public void setId(Long value){
+        public void setId(String value){
             this._id = value;
         }
 
@@ -55,72 +55,72 @@
         }
 
 
-        private Long _orgId;
+        private String _orgId;
 
     
         @PropMeta(propId=4)
     
-        public Long getOrgId(){
+        public String getOrgId(){
             return _orgId;
         }
 
-        public void setOrgId(Long value){
+        public void setOrgId(String value){
             this._orgId = value;
         }
 
 
-        private Long _assetId;
+        private String _assetId;
 
     
         @PropMeta(propId=5)
     
-        public Long getAssetId(){
+        public String getAssetId(){
             return _assetId;
         }
 
-        public void setAssetId(Long value){
+        public void setAssetId(String value){
             this._assetId = value;
         }
 
 
-        private Long _workcenterId;
+        private String _workcenterId;
 
     
         @PropMeta(propId=6)
     
-        public Long getWorkcenterId(){
+        public String getWorkcenterId(){
             return _workcenterId;
         }
 
-        public void setWorkcenterId(Long value){
+        public void setWorkcenterId(String value){
             this._workcenterId = value;
         }
 
 
-        private Long _locationId;
+        private String _locationId;
 
     
         @PropMeta(propId=7)
     
-        public Long getLocationId(){
+        public String getLocationId(){
             return _locationId;
         }
 
-        public void setLocationId(Long value){
+        public void setLocationId(String value){
             this._locationId = value;
         }
 
 
-        private Long _categoryId;
+        private String _categoryId;
 
     
         @PropMeta(propId=8)
     
-        public Long getCategoryId(){
+        public String getCategoryId(){
             return _categoryId;
         }
 
-        public void setCategoryId(Long value){
+        public void setCategoryId(String value){
             this._categoryId = value;
         }
 

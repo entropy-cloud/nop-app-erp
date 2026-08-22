@@ -13,7 +13,7 @@ import io.nop.api.core.exceptions.NopException;
  */
 public class ErpMntVisitStartProcessor extends AbstractErpMntVisitProcessor {
 
-    public ErpMntVisit start(Long visitId, IServiceContext context) {
+    public ErpMntVisit start(String visitId, IServiceContext context) {
         ErpMntVisit visit = requireVisit(visitId, context);
         String from = visit.getStatus();
         try {

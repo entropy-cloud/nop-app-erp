@@ -96,7 +96,7 @@ public class ErpMntDashboardBizModel {
      * + 各分母分子明细；时间窗参数化（日报/月报窗口经同一入口）。空窗口/零分母分量置 null 不抛错（D4）。
      */
     @BizQuery
-    public Map<String, Object> computeOee(@Name("equipmentId") Long equipmentId,
+    public Map<String, Object> computeOee(@Name("equipmentId") String equipmentId,
                                            @Optional @Name("dateFrom") LocalDate dateFrom,
                                            @Optional @Name("dateTo") LocalDate dateTo,
                                            IServiceContext context) {
@@ -220,9 +220,9 @@ public class ErpMntDashboardBizModel {
         return ormTemplate.runInSession(session -> {
             List<ErpMntEquipment> downEquipments = loadEquipmentsByStatus(ErpMntDaoConstants.EQUIPMENT_STATUS_DOWN);
             if (downEquipments.isEmpty()) return Collections.emptyList();
-            Set<Long> equipmentIds = new HashSet<>();
+            Set<String> equipmentIds = new HashSet<>();
             for (ErpMntEquipment e : downEquipments) equipmentIds.add(e.getId());
-            Set<Long> equipmentIdsWithOngoingDowntime = loadEquipmentIdsWithOngoingDowntime(equipmentIds);
+            Set<String> equipmentIdsWithOngoingDowntime = loadEquipmentIdsWithOngoingDowntime(equipmentIds);
             List<Map<String, Object>> rows = new ArrayList<>();
             for (ErpMntEquipment e : downEquipments) {
                 if (equipmentIdsWithOngoingDowntime.contains(e.getId())) {
@@ -251,7 +251,7 @@ public class ErpMntDashboardBizModel {
         LocalDate cutoff = today.minusDays(overdueDays);
         return ormTemplate.runInSession(session -> {
             List<ErpMntSchedule> schedules = loadActiveSchedules();
-            Set<Long> scheduleIdsWithVisit = loadScheduleIdsWithVisit();
+            Set<String> scheduleIdsWithVisit = loadScheduleIdsWithVisit();
             List<Map<String, Object>> rows = new ArrayList<>();
             for (ErpMntSchedule s : schedules) {
                 LocalDate due = s.getNextDueDate();
@@ -329,13 +329,13 @@ public class ErpMntDashboardBizModel {
         return dao.countByQuery(q);
     }
 
-    private Set<Long> loadEquipmentIdsWithOngoingDowntime(Set<Long> equipmentIds) {
+    private Set<String> loadEquipmentIdsWithOngoingDowntime(Set<String> equipmentIds) {
         if (equipmentIds.isEmpty()) return Collections.emptySet();
         IEntityDao<ErpMntDowntimeEntry> dao = daoProvider.daoFor(ErpMntDowntimeEntry.class);
         QueryBean q = new QueryBean();
         q.addFilter(in("equipmentId", equipmentIds));
         q.addFilter(eq("endTime", null));
-        Set<Long> ids = new HashSet<>();
+        Set<String> ids = new HashSet<>();
         for (ErpMntDowntimeEntry d : dao.findAllByQuery(q)) {
             if (d.getEquipmentId() != null) ids.add(d.getEquipmentId());
         }
@@ -350,11 +350,11 @@ public class ErpMntDashboardBizModel {
     }
 
     /** 收集已生成 Visit 的 scheduleId 集合（类 C：单字段收集，带硬上限的受限扫描）。 */
-    private Set<Long> loadScheduleIdsWithVisit() {
+    private Set<String> loadScheduleIdsWithVisit() {
         IEntityDao<ErpMntVisit> dao = daoProvider.daoFor(ErpMntVisit.class);
         QueryBean q = new QueryBean();
         q.setLimit(5000);
-        Set<Long> ids = new HashSet<>();
+        Set<String> ids = new HashSet<>();
         for (ErpMntVisit v : dao.findAllByQuery(q)) {
             if (v.getScheduleId() != null) ids.add(v.getScheduleId());
         }

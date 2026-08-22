@@ -159,12 +159,12 @@ public class ErpMntReportBizModel {
         switch (key) {
             case "maintenance-history":
                 data.put(DS_VAR, buildMaintenanceHistoryDataset(
-                        asLong(data, "equipmentId"),
+                        asString(data, "equipmentId"),
                         asDate(data, "startDate"), asDate(data, "endDate")));
                 break;
             case "downtime-summary":
                 data.put(DS_VAR, buildDowntimeSummaryDataset(
-                        asLong(data, "equipmentId"),
+                        asString(data, "equipmentId"),
                         asDate(data, "startDate"), asDate(data, "endDate")));
                 break;
             default:
@@ -172,13 +172,12 @@ public class ErpMntReportBizModel {
         }
     }
 
-    private static Long asLong(Map<String, Object> data, String k) {
+    private static String asString(Map<String, Object> data, String k) {
         if (data == null) return null;
         Object v = data.get(k);
         if (v == null) return null;
         String s = v.toString();
-        if (s.trim().isEmpty()) return null;
-        return Long.valueOf(s);
+        return s.trim().isEmpty() ? null : s;
     }
 
     private static LocalDate asDate(Map<String, Object> data, String k) {
@@ -197,7 +196,7 @@ public class ErpMntReportBizModel {
 
     /** 维护历史数据集：访问×设备聚合任务数 + 备件消耗单数，对齐 {@code maintenance/state-machine.md}。 */
     @BizQuery
-    public List<Map<String, Object>> maintenanceHistoryData(@Optional @Name("equipmentId") Long equipmentId,
+    public List<Map<String, Object>> maintenanceHistoryData(@Optional @Name("equipmentId") String equipmentId,
                                                              @Optional @Name("startDate") LocalDate startDate,
                                                              @Optional @Name("endDate") LocalDate endDate,
                                                              IServiceContext context) {
@@ -206,7 +205,7 @@ public class ErpMntReportBizModel {
 
     /** 停机统计数据集：按设备/原因聚合停机分钟，对齐 {@code maintenance/state-machine.md}。 */
     @BizQuery
-    public List<Map<String, Object>> downtimeSummaryData(@Optional @Name("equipmentId") Long equipmentId,
+    public List<Map<String, Object>> downtimeSummaryData(@Optional @Name("equipmentId") String equipmentId,
                                                           @Optional @Name("startDate") LocalDate startDate,
                                                           @Optional @Name("endDate") LocalDate endDate,
                                                           IServiceContext context) {
@@ -220,19 +219,19 @@ public class ErpMntReportBizModel {
      * 任务数/备件消耗单数经同域聚合（{@link ErpMntVisitTask}/{@link ErpMntSparePartUsage}），对齐
      * {@code maintenance/state-machine.md}。设备编码经 {@link ErpMntVisit#getEquipment()} 关系解析。
      */
-    List<Map<String, Object>> buildMaintenanceHistoryDataset(Long equipmentId, LocalDate startDate, LocalDate endDate) {
+    List<Map<String, Object>> buildMaintenanceHistoryDataset(String equipmentId, LocalDate startDate, LocalDate endDate) {
         return ormTemplate.runInSession(session -> {
             List<ErpMntVisit> visits = loadVisits(equipmentId, startDate, endDate);
             if (visits.isEmpty()) {
                 return Collections.emptyList();
             }
-            Set<Long> visitIds = new HashSet<>();
+            Set<String> visitIds = new HashSet<>();
             for (ErpMntVisit v : visits) {
                 if (v.getId() != null) visitIds.add(v.getId());
             }
-            Map<Long, Integer> taskCountByVisit = countTasksByVisit(visitIds);
-            Map<Long, Integer> usageCountByVisit = countUsagesByVisit(visitIds);
-            Map<Long, String> equipmentNames = resolveEquipmentNames(visits);
+            Map<String, Integer> taskCountByVisit = countTasksByVisit(visitIds);
+            Map<String, Integer> usageCountByVisit = countUsagesByVisit(visitIds);
+            Map<String, String> equipmentNames = resolveEquipmentNames(visits);
             List<Map<String, Object>> rows = new ArrayList<>(visits.size());
             for (ErpMntVisit v : visits) {
                 Map<String, Object> r = new LinkedHashMap<>();
@@ -256,7 +255,7 @@ public class ErpMntReportBizModel {
      * 停机统计数据集。从 {@link ErpMntDowntimeEntry}（startTime 日期区间过滤 + 可选 equipmentId）按
      * equipmentId × reason 聚合 totalMinutes 与 entryCount，对齐 {@code maintenance/state-machine.md}。
      */
-    List<Map<String, Object>> buildDowntimeSummaryDataset(Long equipmentId, LocalDate startDate, LocalDate endDate) {
+    List<Map<String, Object>> buildDowntimeSummaryDataset(String equipmentId, LocalDate startDate, LocalDate endDate) {
         return ormTemplate.runInSession(session -> {
             List<ErpMntDowntimeEntry> entries = loadDowntimeEntries(equipmentId, startDate, endDate);
             if (entries.isEmpty()) {
@@ -264,14 +263,14 @@ public class ErpMntReportBizModel {
             }
             Map<String, DowntimeAggregator> agg = new LinkedHashMap<>();
             for (ErpMntDowntimeEntry e : entries) {
-                Long eqId = e.getEquipmentId();
+                String eqId = e.getEquipmentId();
                 String reason = e.getReason() != null ? e.getReason() : "(未指定)";
                 String key = eqId + "|" + reason;
                 DowntimeAggregator a = agg.computeIfAbsent(key, k -> new DowntimeAggregator(eqId, reason));
                 a.totalMinutes = a.totalMinutes.add(nz(e.getTotalMinutes()));
                 a.entryCount++;
             }
-            Map<Long, String> equipmentNames = resolveEquipmentNamesByIds(collectEquipmentIds(agg));
+            Map<String, String> equipmentNames = resolveEquipmentNamesByIds(collectEquipmentIds(agg));
             List<Map<String, Object>> rows = new ArrayList<>(agg.size());
             for (DowntimeAggregator a : agg.values()) {
                 Map<String, Object> r = new LinkedHashMap<>();
@@ -288,7 +287,7 @@ public class ErpMntReportBizModel {
 
     // ===================== helpers =====================
 
-    private List<ErpMntVisit> loadVisits(Long equipmentId, LocalDate startDate, LocalDate endDate) {
+    private List<ErpMntVisit> loadVisits(String equipmentId, LocalDate startDate, LocalDate endDate) {
         QueryBean q = new QueryBean();
         if (equipmentId != null) q.addFilter(eq("equipmentId", equipmentId));
         if (startDate != null) q.addFilter(ge("visitDate", startDate));
@@ -298,59 +297,59 @@ public class ErpMntReportBizModel {
         return daoProvider.daoFor(ErpMntVisit.class).findAllByQuery(q);
     }
 
-    private Map<Long, Integer> countTasksByVisit(Set<Long> visitIds) {
+    private Map<String, Integer> countTasksByVisit(Set<String> visitIds) {
         if (visitIds.isEmpty()) return Collections.emptyMap();
         QueryBean q = new QueryBean();
         q.addFilter(in("visitId", visitIds));
         List<ErpMntVisitTask> tasks = daoProvider.daoFor(ErpMntVisitTask.class).findAllByQuery(q);
-        Map<Long, Integer> counts = new HashMap<>();
+        Map<String, Integer> counts = new HashMap<>();
         for (ErpMntVisitTask t : tasks) {
             counts.merge(t.getVisitId(), 1, Integer::sum);
         }
         return counts;
     }
 
-    private Map<Long, Integer> countUsagesByVisit(Set<Long> visitIds) {
+    private Map<String, Integer> countUsagesByVisit(Set<String> visitIds) {
         if (visitIds.isEmpty()) return Collections.emptyMap();
         QueryBean q = new QueryBean();
         q.addFilter(in("visitId", visitIds));
         List<ErpMntSparePartUsage> usages = daoProvider.daoFor(ErpMntSparePartUsage.class).findAllByQuery(q);
-        Map<Long, Integer> counts = new HashMap<>();
+        Map<String, Integer> counts = new HashMap<>();
         for (ErpMntSparePartUsage u : usages) {
             counts.merge(u.getVisitId(), 1, Integer::sum);
         }
         return counts;
     }
 
-    private Map<Long, String> resolveEquipmentNames(List<ErpMntVisit> visits) {
-        Set<Long> eqIds = new HashSet<>();
+    private Map<String, String> resolveEquipmentNames(List<ErpMntVisit> visits) {
+        Set<String> eqIds = new HashSet<>();
         for (ErpMntVisit v : visits) {
             if (v.getEquipmentId() != null) eqIds.add(v.getEquipmentId());
         }
         return resolveEquipmentNamesByIds(eqIds);
     }
 
-    private Set<Long> collectEquipmentIds(Map<String, DowntimeAggregator> agg) {
-        Set<Long> ids = new HashSet<>();
+    private Set<String> collectEquipmentIds(Map<String, DowntimeAggregator> agg) {
+        Set<String> ids = new HashSet<>();
         for (DowntimeAggregator a : agg.values()) {
             if (a.equipmentId != null) ids.add(a.equipmentId);
         }
         return ids;
     }
 
-    private Map<Long, String> resolveEquipmentNamesByIds(Set<Long> eqIds) {
+    private Map<String, String> resolveEquipmentNamesByIds(Set<String> eqIds) {
         if (eqIds.isEmpty()) return Collections.emptyMap();
         QueryBean q = new QueryBean();
         q.addFilter(in("id", eqIds));
         List<ErpMntEquipment> list = daoProvider.daoFor(ErpMntEquipment.class).findAllByQuery(q);
-        Map<Long, String> names = new HashMap<>();
+        Map<String, String> names = new HashMap<>();
         for (ErpMntEquipment e : list) {
             names.put(e.getId(), e.getName());
         }
         return names;
     }
 
-    private List<ErpMntDowntimeEntry> loadDowntimeEntries(Long equipmentId, LocalDate startDate, LocalDate endDate) {
+    private List<ErpMntDowntimeEntry> loadDowntimeEntries(String equipmentId, LocalDate startDate, LocalDate endDate) {
         QueryBean q = new QueryBean();
         if (equipmentId != null) q.addFilter(eq("equipmentId", equipmentId));
         if (startDate != null) q.addFilter(ge("startTime", startDate.atStartOfDay()));
@@ -363,12 +362,12 @@ public class ErpMntReportBizModel {
     }
 
     private static class DowntimeAggregator {
-        final Long equipmentId;
+        final String equipmentId;
         final String reason;
         BigDecimal totalMinutes = BigDecimal.ZERO;
         int entryCount = 0;
 
-        DowntimeAggregator(Long equipmentId, String reason) {
+        DowntimeAggregator(String equipmentId, String reason) {
             this.equipmentId = equipmentId;
             this.reason = reason;
         }

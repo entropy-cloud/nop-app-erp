@@ -13,16 +13,16 @@
     public class ErpMntVisitInputBean extends CrudInputBase {
 
     
-        private Long _id;
+        private String _id;
 
     
         @PropMeta(propId=1)
     
-        public Long getId(){
+        public String getId(){
             return _id;
         }
 
-        public void setId(Long value){
+        public void setId(String value){
             this._id = value;
         }
 
@@ -41,30 +41,30 @@
         }
 
 
-        private Long _scheduleId;
+        private String _scheduleId;
 
     
         @PropMeta(propId=3)
     
-        public Long getScheduleId(){
+        public String getScheduleId(){
             return _scheduleId;
         }
 
-        public void setScheduleId(Long value){
+        public void setScheduleId(String value){
             this._scheduleId = value;
         }
 
 
-        private Long _equipmentId;
+        private String _equipmentId;
 
     
         @PropMeta(propId=4)
     
-        public Long getEquipmentId(){
+        public String getEquipmentId(){
             return _equipmentId;
         }
 
-        public void setEquipmentId(Long value){
+        public void setEquipmentId(String value){
             this._equipmentId = value;
         }
 
@@ -223,16 +223,16 @@
         }
 
 
-        private Long _orgId;
+        private String _orgId;
 
     
         @PropMeta(propId=16)
     
-        public Long getOrgId(){
+        public String getOrgId(){
             return _orgId;
         }
 
-        public void setOrgId(Long value){
+        public void setOrgId(String value){
             this._orgId = value;
         }
 
@@ -251,16 +251,16 @@
         }
 
 
-        private Long _requestId;
+        private String _requestId;
 
     
         @PropMeta(propId=27)
     
-        public Long getRequestId(){
+        public String getRequestId(){
             return _requestId;
         }
 
-        public void setRequestId(Long value){
+        public void setRequestId(String value){
             this._requestId = value;
         }
 

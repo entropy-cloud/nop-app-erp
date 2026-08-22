@@ -13,30 +13,30 @@
     public class ErpMntEquipmentStatusLogOutputBean {
 
     
-        private Long _id;
+        private String _id;
 
     
         @PropMeta(propId=1)
     
-        public Long getId(){
+        public String getId(){
             return _id;
         }
 
-        public void setId(Long value){
+        public void setId(String value){
             this._id = value;
         }
 
 
-        private Long _equipmentId;
+        private String _equipmentId;
 
     
         @PropMeta(propId=2)
     
-        public Long getEquipmentId(){
+        public String getEquipmentId(){
             return _equipmentId;
         }
 
-        public void setEquipmentId(Long value){
+        public void setEquipmentId(String value){
             this._equipmentId = value;
         }
 

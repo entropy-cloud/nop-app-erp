@@ -141,10 +141,10 @@ public class _ErpMntDowntimeEntry extends DynamicOrmEntity{
 
     
     /* ID: ID */
-    private java.lang.Long _id;
+    private java.lang.String _id;
     
     /* 设备ID: EQUIPMENT_ID */
-    private java.lang.Long _equipmentId;
+    private java.lang.String _equipmentId;
     
     /* 开始时间: START_TIME */
     private java.sql.Timestamp _startTime;
@@ -159,7 +159,7 @@ public class _ErpMntDowntimeEntry extends DynamicOrmEntity{
     private java.lang.String _reason;
     
     /* 关联生产工单ID: RELATED_JOB_ORDER_ID */
-    private java.lang.Long _relatedJobOrderId;
+    private java.lang.String _relatedJobOrderId;
     
     /* 备注: REMARK */
     private java.lang.String _remark;
@@ -310,9 +310,9 @@ public class _ErpMntDowntimeEntry extends DynamicOrmEntity{
         switch(propId){
         
             case PROP_ID_id:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_id));
                }
                setId(typedValue);
@@ -320,9 +320,9 @@ public class _ErpMntDowntimeEntry extends DynamicOrmEntity{
             }
         
             case PROP_ID_equipmentId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_equipmentId));
                }
                setEquipmentId(typedValue);
@@ -370,9 +370,9 @@ public class _ErpMntDowntimeEntry extends DynamicOrmEntity{
             }
         
             case PROP_ID_relatedJobOrderId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_relatedJobOrderId));
                }
                setRelatedJobOrderId(typedValue);
@@ -460,14 +460,14 @@ public class _ErpMntDowntimeEntry extends DynamicOrmEntity{
         
             case PROP_ID_id:{
                onInitProp(propId);
-               this._id = (java.lang.Long)value;
+               this._id = (java.lang.String)value;
                orm_id(); // 如果是设置主键字段，则触发watcher
                break;
             }
         
             case PROP_ID_equipmentId:{
                onInitProp(propId);
-               this._equipmentId = (java.lang.Long)value;
+               this._equipmentId = (java.lang.String)value;
                
                break;
             }
@@ -502,7 +502,7 @@ public class _ErpMntDowntimeEntry extends DynamicOrmEntity{
         
             case PROP_ID_relatedJobOrderId:{
                onInitProp(propId);
-               this._relatedJobOrderId = (java.lang.Long)value;
+               this._relatedJobOrderId = (java.lang.String)value;
                
                break;
             }
@@ -565,7 +565,7 @@ public class _ErpMntDowntimeEntry extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final java.lang.Long getId(){
+    public final java.lang.String getId(){
          onPropGet(PROP_ID_id);
          return _id;
     }
@@ -573,7 +573,7 @@ public class _ErpMntDowntimeEntry extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final void setId(java.lang.Long value){
+    public final void setId(java.lang.String value){
         if(onPropSet(PROP_ID_id,value)){
             this._id = value;
             internalClearRefs(PROP_ID_id);
@@ -584,7 +584,7 @@ public class _ErpMntDowntimeEntry extends DynamicOrmEntity{
     /**
      * 设备ID: EQUIPMENT_ID
      */
-    public final java.lang.Long getEquipmentId(){
+    public final java.lang.String getEquipmentId(){
          onPropGet(PROP_ID_equipmentId);
          return _equipmentId;
     }
@@ -592,7 +592,7 @@ public class _ErpMntDowntimeEntry extends DynamicOrmEntity{
     /**
      * 设备ID: EQUIPMENT_ID
      */
-    public final void setEquipmentId(java.lang.Long value){
+    public final void setEquipmentId(java.lang.String value){
         if(onPropSet(PROP_ID_equipmentId,value)){
             this._equipmentId = value;
             internalClearRefs(PROP_ID_equipmentId);
@@ -679,7 +679,7 @@ public class _ErpMntDowntimeEntry extends DynamicOrmEntity{
     /**
      * 关联生产工单ID: RELATED_JOB_ORDER_ID
      */
-    public final java.lang.Long getRelatedJobOrderId(){
+    public final java.lang.String getRelatedJobOrderId(){
          onPropGet(PROP_ID_relatedJobOrderId);
          return _relatedJobOrderId;
     }
@@ -687,7 +687,7 @@ public class _ErpMntDowntimeEntry extends DynamicOrmEntity{
     /**
      * 关联生产工单ID: RELATED_JOB_ORDER_ID
      */
-    public final void setRelatedJobOrderId(java.lang.Long value){
+    public final void setRelatedJobOrderId(java.lang.String value){
         if(onPropSet(PROP_ID_relatedJobOrderId,value)){
             this._relatedJobOrderId = value;
             internalClearRefs(PROP_ID_relatedJobOrderId);

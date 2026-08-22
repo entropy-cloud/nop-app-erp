@@ -48,8 +48,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpMntDowntimeSchedulingLinkage extends JunitAutoTestCase {
 
-    static final Long EQUIPMENT_ID = 701L;
-    static final Long WORKCENTER_ID = 7101L;
+    static final String EQUIPMENT_ID = "701";
+    static final String WORKCENTER_ID = "7101";
     static final String RECIPIENT = "mnt-planner-user";
 
     @Inject
@@ -61,8 +61,8 @@ public class TestErpMntDowntimeSchedulingLinkage extends JunitAutoTestCase {
 
     private final AtomicLong idSeq = new AtomicLong(600000L);
 
-    private Long nextId() {
-        return idSeq.incrementAndGet();
+    private String nextId() {
+        return String.valueOf(idSeq.incrementAndGet());
     }
 
     // ---------- ① record → DOWN + 7208 落库（USER_LIST） + ROLE 空投递 ----------
@@ -70,8 +70,8 @@ public class TestErpMntDowntimeSchedulingLinkage extends JunitAutoTestCase {
     @Test
     public void testRecordNotifiesPlannerAndSetsDown() {
         seedEquipment(EQUIPMENT_ID, WORKCENTER_ID, ErpMntDaoConstants.EQUIPMENT_STATUS_RUNNING);
-        seedNotifyTemplate(7301L, ErpMntConstants.NOTIFY_EVENT_EQUIPMENT_DOWNTIME, "USER_LIST", RECIPIENT);
-        Long downtimeId = seedDowntime(nextId(), EQUIPMENT_ID, LocalDateTime.now().minusMinutes(10));
+        seedNotifyTemplate("7301", ErpMntConstants.NOTIFY_EVENT_EQUIPMENT_DOWNTIME, "USER_LIST", RECIPIENT);
+        String downtimeId = seedDowntime(nextId(), EQUIPMENT_ID, LocalDateTime.now().minusMinutes(10));
 
         ApiResponse<?> resp = rpc(mutation, "ErpMntDowntimeEntry__record", Map.of("downtimeId", downtimeId));
         assertEquals(0, resp.getStatus(), "record 应成功: " + resp);
@@ -88,8 +88,8 @@ public class TestErpMntDowntimeSchedulingLinkage extends JunitAutoTestCase {
     public void testRecordWithRoleTemplateNoRoleDataEmptyDelivery() {
         seedEquipment(EQUIPMENT_ID, WORKCENTER_ID, ErpMntDaoConstants.EQUIPMENT_STATUS_RUNNING);
         // 部署 seed 7208 同款 ROLE 生产计划员模板；测试库无 nop_auth_role 角色数据 → config-gated 空投递
-        seedNotifyTemplate(7302L, ErpMntConstants.NOTIFY_EVENT_EQUIPMENT_DOWNTIME, "ROLE", null);
-        Long downtimeId = seedDowntime(nextId(), EQUIPMENT_ID, LocalDateTime.now().minusMinutes(10));
+        seedNotifyTemplate("7302", ErpMntConstants.NOTIFY_EVENT_EQUIPMENT_DOWNTIME, "ROLE", null);
+        String downtimeId = seedDowntime(nextId(), EQUIPMENT_ID, LocalDateTime.now().minusMinutes(10));
 
         ApiResponse<?> resp = rpc(mutation, "ErpMntDowntimeEntry__record", Map.of("downtimeId", downtimeId));
         assertEquals(0, resp.getStatus(), "record 应成功（空投递不阻断主流程）: " + resp);
@@ -102,8 +102,8 @@ public class TestErpMntDowntimeSchedulingLinkage extends JunitAutoTestCase {
     @Test
     public void testCompleteNotifiesRecoveredAndRestoresRunning() {
         seedEquipment(EQUIPMENT_ID, WORKCENTER_ID, ErpMntDaoConstants.EQUIPMENT_STATUS_RUNNING);
-        seedNotifyTemplate(7303L, ErpMntConstants.NOTIFY_EVENT_EQUIPMENT_RECOVERED, "USER_LIST", RECIPIENT);
-        Long downtimeId = seedDowntime(nextId(), EQUIPMENT_ID, LocalDateTime.now().minusHours(1));
+        seedNotifyTemplate("7303", ErpMntConstants.NOTIFY_EVENT_EQUIPMENT_RECOVERED, "USER_LIST", RECIPIENT);
+        String downtimeId = seedDowntime(nextId(), EQUIPMENT_ID, LocalDateTime.now().minusHours(1));
 
         assertEquals(0, rpc(mutation, "ErpMntDowntimeEntry__record",
                 Map.of("downtimeId", downtimeId)).getStatus());
@@ -125,8 +125,8 @@ public class TestErpMntDowntimeSchedulingLinkage extends JunitAutoTestCase {
         AppConfig.getConfigProvider().assignConfigValue(ErpMntConstants.CONFIG_DOWNTIME_NOTIFY_ENABLED, "false");
         try {
             seedEquipment(EQUIPMENT_ID, WORKCENTER_ID, ErpMntDaoConstants.EQUIPMENT_STATUS_RUNNING);
-            seedNotifyTemplate(7304L, ErpMntConstants.NOTIFY_EVENT_EQUIPMENT_DOWNTIME, "USER_LIST", RECIPIENT);
-            Long downtimeId = seedDowntime(nextId(), EQUIPMENT_ID, LocalDateTime.now().minusMinutes(10));
+            seedNotifyTemplate("7304", ErpMntConstants.NOTIFY_EVENT_EQUIPMENT_DOWNTIME, "USER_LIST", RECIPIENT);
+            String downtimeId = seedDowntime(nextId(), EQUIPMENT_ID, LocalDateTime.now().minusMinutes(10));
 
             assertEquals(0, rpc(mutation, "ErpMntDowntimeEntry__record",
                     Map.of("downtimeId", downtimeId)).getStatus());
@@ -143,16 +143,16 @@ public class TestErpMntDowntimeSchedulingLinkage extends JunitAutoTestCase {
 
     @Test
     public void testFindOpenDowntimeEquipmentWorkcenters() {
-        Long eqOpen = 801L;        // 开放：endTime null + DOWN + 工作中心映射 → 出窗
-        Long eqDone = 802L;        // 已完：endTime 已置 → 不出窗
-        Long eqNoWc = 803L;        // 无工作中心 → 不出窗
-        Long eqNotDown = 804L;     // 设备非 DOWN（RUNNING）→ 不出窗
+        String eqOpen = "801";        // 开放：endTime null + DOWN + 工作中心映射 → 出窗
+        String eqDone = "802";        // 已完：endTime 已置 → 不出窗
+        String eqNoWc = "803";        // 无工作中心 → 不出窗
+        String eqNotDown = "804";     // 设备非 DOWN（RUNNING）→ 不出窗
         seedEquipment(eqOpen, WORKCENTER_ID, ErpMntDaoConstants.EQUIPMENT_STATUS_DOWN);
         seedEquipment(eqDone, WORKCENTER_ID, ErpMntDaoConstants.EQUIPMENT_STATUS_DOWN);
         seedEquipment(eqNoWc, null, ErpMntDaoConstants.EQUIPMENT_STATUS_DOWN);
         seedEquipment(eqNotDown, WORKCENTER_ID, ErpMntDaoConstants.EQUIPMENT_STATUS_RUNNING);
         seedDowntime(nextId(), eqOpen, LocalDateTime.now().minusHours(2));
-        Long doneId = seedDowntime(nextId(), eqDone, LocalDateTime.now().minusHours(3));
+        String doneId = seedDowntime(nextId(), eqDone, LocalDateTime.now().minusHours(3));
         seedDowntime(nextId(), eqNoWc, LocalDateTime.now().minusHours(1));
         seedDowntime(nextId(), eqNotDown, LocalDateTime.now().minusHours(1));
         // eqDone 补 endTime（已完）——独立会话加载已提交种子行后回写
@@ -169,14 +169,14 @@ public class TestErpMntDowntimeSchedulingLinkage extends JunitAutoTestCase {
 
         assertEquals(1, windows.size(), "仅开放窗口出窗（已完/无工作中心/设备非 DOWN 均排除）");
         Map<String, Object> window = windows.get(0);
-        assertEquals(eqOpen, toLong(window.get("equipmentId")));
-        assertEquals(WORKCENTER_ID, toLong(window.get("workcenterId")), "经 equipment.workcenterId 桥接");
+        assertEquals(eqOpen, window.get("equipmentId"));
+        assertEquals(WORKCENTER_ID, window.get("workcenterId"), "经 equipment.workcenterId 桥接");
         assertNotNull(window.get("startTime"), "窗口含起始时间");
     }
 
     // ---------- helpers ----------
 
-    private void seedEquipment(Long id, Long workcenterId, String status) {
+    private void seedEquipment(String id, String workcenterId, String status) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMntEquipment> dao = daoProvider.daoFor(ErpMntEquipment.class);
             ErpMntEquipment equipment = new ErpMntEquipment();
@@ -190,7 +190,7 @@ public class TestErpMntDowntimeSchedulingLinkage extends JunitAutoTestCase {
     }
 
     /** startTime 为 ORM mandatory 列，种子恒带起始时间（record 不再兜底覆盖）。 */
-    private Long seedDowntime(Long id, Long equipmentId, LocalDateTime startTime) {
+    private String seedDowntime(String id, String equipmentId, LocalDateTime startTime) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMntDowntimeEntry> dao = daoProvider.daoFor(ErpMntDowntimeEntry.class);
             ErpMntDowntimeEntry downtime = new ErpMntDowntimeEntry();
@@ -203,7 +203,7 @@ public class TestErpMntDowntimeSchedulingLinkage extends JunitAutoTestCase {
         return id;
     }
 
-    private void seedNotifyTemplate(Long id, String eventType, String resolver, String recipientUserId) {
+    private void seedNotifyTemplate(String id, String eventType, String resolver, String recipientUserId) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpSysNotificationTemplate> dao = daoProvider.daoFor(ErpSysNotificationTemplate.class);
             ErpSysNotificationTemplate t = new ErpSysNotificationTemplate();
@@ -232,10 +232,6 @@ public class TestErpMntDowntimeSchedulingLinkage extends JunitAutoTestCase {
 
     private String equipmentStatus() {
         return daoProvider.daoFor(ErpMntEquipment.class).getEntityById(EQUIPMENT_ID).getStatus();
-    }
-
-    private static Long toLong(Object value) {
-        return value == null ? null : Long.valueOf(String.valueOf(value));
     }
 
     private ApiResponse<?> rpc(io.nop.graphql.core.ast.GraphQLOperationType op, String action,

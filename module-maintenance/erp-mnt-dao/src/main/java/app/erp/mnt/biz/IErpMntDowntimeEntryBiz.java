@@ -25,10 +25,10 @@ import java.util.List;
 public interface IErpMntDowntimeEntryBiz extends ICrudBiz<ErpMntDowntimeEntry> {
 
     @BizMutation
-    ErpMntDowntimeEntry record(@Name("downtimeId") Long downtimeId, IServiceContext context);
+    ErpMntDowntimeEntry record(@Name("downtimeId") String downtimeId, IServiceContext context);
 
     @BizMutation
-    ErpMntDowntimeEntry complete(@Name("downtimeId") Long downtimeId, IServiceContext context);
+    ErpMntDowntimeEntry complete(@Name("downtimeId") String downtimeId, IServiceContext context);
 
     /**
      * 开放停机窗口查询（矩阵 :109「maintenance 被 manufacturing 查」预期方向落地）：

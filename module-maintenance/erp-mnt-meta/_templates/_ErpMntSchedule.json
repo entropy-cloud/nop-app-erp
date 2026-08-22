@@ -1,8 +1,8 @@
 {
-  "id": 0,
+  "id": "",
   "code": "",
   "name": "",
-  "equipmentId": 0,
+  "equipmentId": "",
   "scheduleType": "",
   "scheduleType_label": "",
   "frequency": 0,
@@ -24,6 +24,6 @@
   "triggerType_label": "",
   "thresholdHours": 0.0,
   "runtimeBaselineHours": 0.0,
-  "templateId": 0,
+  "templateId": "",
   "equipment": null
 }

@@ -12,7 +12,7 @@ import io.nop.core.context.IServiceContext;
  */
 public class ErpMntRequestStartRepairProcessor extends AbstractErpMntRequestProcessor {
 
-    public ErpMntRequest startRepair(Long requestId, IServiceContext context) {
+    public ErpMntRequest startRepair(String requestId, IServiceContext context) {
         ErpMntRequest request = requireRequest(requestId, context);
         String from = request.getStatus();
         try {
