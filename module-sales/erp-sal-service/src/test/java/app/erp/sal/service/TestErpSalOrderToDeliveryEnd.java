@@ -51,13 +51,13 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpSalOrderToDeliveryEnd extends JunitAutoTestCase {
 
-    static final Long ORG_ID = 1301L;
-    static final Long CUSTOMER_ID = 2301L;
-    static final Long WAREHOUSE_ID = 3301L;
-    static final Long MATERIAL_ID = 4301L;
-    static final Long UOM_ID = 5301L;
-    static final Long CURRENCY_ID = 6301L;
-    static final Long ACCT_SCHEMA_ID = 7301L;
+    static final String ORG_ID = "1301";
+    static final String CUSTOMER_ID = "2301";
+    static final String WAREHOUSE_ID = "3301";
+    static final String MATERIAL_ID = "4301";
+    static final String UOM_ID = "5301";
+    static final String CURRENCY_ID = "6301";
+    static final String ACCT_SCHEMA_ID = "7301";
 
     @Inject
     IDaoProvider daoProvider;
@@ -69,12 +69,12 @@ public class TestErpSalOrderToDeliveryEnd extends JunitAutoTestCase {
     @Test
     public void testOrderToDeliveryToEnd() {
         seedPrereqs();
-        long orderLine = 8301L;
-        long deliveryId = 8302L;
-        long deliveryLineId = 8303L;
+        String orderLine = "8301";
+        String deliveryId = "8302";
+        String deliveryLineId = "8303";
         ormTemplate.runInSession(session -> {
             seedActiveCustomer();
-            Long orderId = newOrder("SO-E2E-001");
+            String orderId = newOrder("SO-E2E-001");
             newOrderLine(orderId, orderLine, 1, new BigDecimal("10"));
             newDelivery("SD-E2E-001", deliveryId, orderId);
             newDeliveryLine(deliveryLineId, deliveryId, orderLine, new BigDecimal("10"));
@@ -126,15 +126,15 @@ public class TestErpSalOrderToDeliveryEnd extends JunitAutoTestCase {
 
     // ---------- rpc helpers ----------
 
-    private ApiResponse<?> submit(Long deliveryId) {
+    private ApiResponse<?> submit(String deliveryId) {
         return executeRpc(mutation, "ErpSalDelivery__submitForApproval", ApiRequest.build(Map.of("id", String.valueOf(deliveryId))));
     }
 
-    private ApiResponse<?> approve(Long deliveryId) {
+    private ApiResponse<?> approve(String deliveryId) {
         return executeRpc(mutation, "ErpSalDelivery__approve", ApiRequest.build(Map.of("id", String.valueOf(deliveryId))));
     }
 
-    private ApiResponse<?> reverseApprove(Long deliveryId) {
+    private ApiResponse<?> reverseApprove(String deliveryId) {
         return executeRpc(mutation, "ErpSalDelivery__reverseApprove", ApiRequest.build(Map.of("id", String.valueOf(deliveryId))));
     }
 
@@ -233,7 +233,7 @@ public class TestErpSalOrderToDeliveryEnd extends JunitAutoTestCase {
         assertEquals(0, resp.getStatus(), "seedStock generateMove 应成功");
     }
 
-    private Long newOrder(String code) {
+    private String newOrder(String code) {
         IEntityDao<ErpSalOrder> dao = daoProvider.daoFor(ErpSalOrder.class);
         ErpSalOrder order = new ErpSalOrder();
         order.setCode(code);
@@ -249,7 +249,7 @@ public class TestErpSalOrderToDeliveryEnd extends JunitAutoTestCase {
         return order.getId();
     }
 
-    private void newOrderLine(Long orderId, long lineId, int lineNo, BigDecimal qty) {
+    private void newOrderLine(String orderId, String lineId, int lineNo, BigDecimal qty) {
         IEntityDao<ErpSalOrderLine> dao = daoProvider.daoFor(ErpSalOrderLine.class);
         ErpSalOrderLine line = new ErpSalOrderLine();
         line.setId(lineId);
@@ -263,7 +263,7 @@ public class TestErpSalOrderToDeliveryEnd extends JunitAutoTestCase {
         dao.saveEntity(line);
     }
 
-    private void newDelivery(String code, long deliveryId, Long orderId) {
+    private void newDelivery(String code, String deliveryId, String orderId) {
         IEntityDao<ErpSalDelivery> dao = daoProvider.daoFor(ErpSalDelivery.class);
         ErpSalDelivery delivery = new ErpSalDelivery();
         delivery.setId(deliveryId);
@@ -281,7 +281,7 @@ public class TestErpSalOrderToDeliveryEnd extends JunitAutoTestCase {
         dao.saveEntity(delivery);
     }
 
-    private void newDeliveryLine(long lineId, long deliveryId, long orderLineId, BigDecimal qty) {
+    private void newDeliveryLine(String lineId, String deliveryId, String orderLineId, BigDecimal qty) {
         IEntityDao<ErpSalDeliveryLine> dao = daoProvider.daoFor(ErpSalDeliveryLine.class);
         ErpSalDeliveryLine line = new ErpSalDeliveryLine();
         line.setId(lineId);

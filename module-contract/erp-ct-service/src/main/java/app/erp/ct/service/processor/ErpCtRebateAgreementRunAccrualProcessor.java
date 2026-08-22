@@ -9,7 +9,6 @@ import app.erp.ct.service.statemachine.ErpCtRebateAgreementStateMachine;
 import app.erp.pur.dao.entity.ErpPurInvoice;
 import app.erp.sal.dao.entity.ErpSalInvoice;
 import io.nop.api.core.beans.query.QueryBean;
-import io.nop.api.core.convert.ConvertHelper;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.api.core.time.CoreMetrics;
 import io.nop.core.context.IServiceContext;
@@ -113,8 +112,7 @@ public class ErpCtRebateAgreementRunAccrualProcessor {
             q.addFilter(eq("supplierId", agreement.getPartnerId()));
             return daoProvider.daoFor(ErpPurInvoice.class).findAllByQuery(q);
         } else {
-            // bridge-main-048: ct String partnerId → sal Long customerId 过滤值（退役 owner M2.6）
-            q.addFilter(eq("customerId", ConvertHelper.toLong(agreement.getPartnerId())));
+            q.addFilter(eq("customerId", agreement.getPartnerId()));
             return daoProvider.daoFor(ErpSalInvoice.class).findAllByQuery(q);
         }
     }

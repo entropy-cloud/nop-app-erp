@@ -21,7 +21,7 @@ import app.erp.sal.dao.entity.ErpSalQuotationLine;
 public interface IErpSalOrderBiz extends ICrudBiz<ErpSalOrder> {
 
     @BizMutation
-    ErpSalOrder cancel(@Name("orderId") Long orderId, IServiceContext context);
+    ErpSalOrder cancel(@Name("orderId") String orderId, IServiceContext context);
 
     /**
      * F11 批量审批（plan 2026-07-22-0444-2 Phase 1）：循环调单条 {@code ErpSalOrderProcessor.approve}，
@@ -42,13 +42,13 @@ public interface IErpSalOrderBiz extends ICrudBiz<ErpSalOrder> {
      * 幂等键查询：是否存在 docStatus≠CANCELLED 且 {@code quotationId} 命中的订单。
      */
     @BizAction
-    boolean existsActiveByQuotation(@Name("quotationId") Long quotationId, IServiceContext context);
+    boolean existsActiveByQuotation(@Name("quotationId") String quotationId, IServiceContext context);
 
     /**
      * 回写源订单发货进度（由出库单审核后跨聚合调用）。
      */
     @BizAction
-    void updateDeliveryStatus(@Name("orderId") Long orderId,
+    void updateDeliveryStatus(@Name("orderId") String orderId,
                               @Name("deliveryStatus") String deliveryStatus,
                               IServiceContext context);
 

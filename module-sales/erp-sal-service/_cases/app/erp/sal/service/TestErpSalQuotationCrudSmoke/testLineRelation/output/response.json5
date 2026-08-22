@@ -6,10 +6,10 @@
     "items": [
       {
         "id": "6",
-        "quotationId": 5,
+        "quotationId": "5",
         "lineNo": 1,
-        "materialId": 4,
-        "uoMId": 3,
+        "materialId": "4",
+        "uoMId": "3",
         "quantity": null,
         "unitPrice": 100.0000,
         "taxRate": null,

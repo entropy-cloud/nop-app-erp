@@ -15,5 +15,5 @@ import app.erp.sal.dao.entity.ErpSalDelivery;
 public interface IErpSalDeliveryBiz extends ICrudBiz<ErpSalDelivery> {
 
     @BizMutation
-    ErpSalDelivery cancel(@Name("deliveryId") Long deliveryId, IServiceContext context);
+    ErpSalDelivery cancel(@Name("deliveryId") String deliveryId, IServiceContext context);
 }

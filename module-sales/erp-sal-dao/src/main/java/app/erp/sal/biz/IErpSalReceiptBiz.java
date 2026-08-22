@@ -25,14 +25,14 @@ import java.util.List;
 public interface IErpSalReceiptBiz extends ICrudBiz<ErpSalReceipt> {
 
     @BizMutation
-    ErpSalReceipt cancel(@Name("receiptId") Long receiptId, IServiceContext context);
+    ErpSalReceipt cancel(@Name("receiptId") String receiptId, IServiceContext context);
 
     /**
      * 域级核销：按分配明细将收款金额核销到指定发票（多对多）。约束：同客户、双方 approveStatus=APPROVED、
      * 核销金额不超发票未收余额与收款未核销余额。核销后回写发票 receivedAmount/receivedStatus 与收款 writtenOffStatus。
      */
     @BizMutation
-    ErpSalReceipt settle(@Name("receiptId") Long receiptId,
+    ErpSalReceipt settle(@Name("receiptId") String receiptId,
                          @Name("allocations") List<SettlementAllocation> allocations,
                          IServiceContext context);
 
@@ -40,7 +40,7 @@ public interface IErpSalReceiptBiz extends ICrudBiz<ErpSalReceipt> {
      * 核销冲销：对指定发票生成反向 ReceiptLine（负金额），恢复发票/收款余额与状态。
      */
     @BizMutation
-    ErpSalReceipt reverseSettlement(@Name("receiptId") Long receiptId,
-                                    @Name("invoiceId") Long invoiceId,
+    ErpSalReceipt reverseSettlement(@Name("receiptId") String receiptId,
+                                    @Name("invoiceId") String invoiceId,
                                     IServiceContext context);
 }

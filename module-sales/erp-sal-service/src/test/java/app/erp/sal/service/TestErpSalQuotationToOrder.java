@@ -50,13 +50,13 @@ public class TestErpSalQuotationToOrder extends JunitAutoTestCase {
     @RegisterExtension
     static SalFrozenClockExtension frozenClock = new SalFrozenClockExtension();
 
-    static final Long ORG_ID = 1301L;
-    static final Long CUSTOMER_ID = 2401L;
-    static final Long CUSTOMER_ID_2 = 2402L;
-    static final Long WAREHOUSE_ID = 3401L;
-    static final Long MATERIAL_ID = 4401L;
-    static final Long UOM_ID = 5401L;
-    static final Long CURRENCY_ID = 6401L;
+    static final String ORG_ID = "1301";
+    static final String CUSTOMER_ID = "2401";
+    static final String CUSTOMER_ID_2 = "2402";
+    static final String WAREHOUSE_ID = "3401";
+    static final String MATERIAL_ID = "4401";
+    static final String UOM_ID = "5401";
+    static final String CURRENCY_ID = "6401";
 
     @Inject
     IDaoProvider daoProvider;
@@ -88,7 +88,7 @@ public class TestErpSalQuotationToOrder extends JunitAutoTestCase {
 
         ApiResponse<?> converted = convertToOrder(quotation.getId());
         assertEquals(0, converted.getStatus(), "转化应成功");
-        Long orderId = extractOrderId(converted);
+        String orderId = extractOrderId(converted);
 
         ErpSalOrder order = reloadOrder(orderId);
         assertEquals(ErpSalConstants.APPROVE_STATUS_UNSUBMITTED, order.getApproveStatus(),
@@ -170,7 +170,7 @@ public class TestErpSalQuotationToOrder extends JunitAutoTestCase {
 
         ApiResponse<?> first = convertToOrder(quotation.getId());
         assertEquals(0, first.getStatus(), "首次转化应成功");
-        Long orderId = extractOrderId(first);
+        String orderId = extractOrderId(first);
 
         ApiResponse<?> second = convertToOrder(quotation.getId());
         assertEquals(ErpSalErrors.ERR_QUOTATION_ALREADY_CONVERTED.getErrorCode(), second.getCode(),
@@ -197,7 +197,7 @@ public class TestErpSalQuotationToOrder extends JunitAutoTestCase {
         fullApproveAndConfirm(quotationSoft.getId());
 
         setCreditCheckLevel(ErpSalConstants.CREDIT_CHECK_LEVEL_SOFT_WARNING);
-        Long softOrderId = convertAndExtractId(quotationSoft.getId());
+        String softOrderId = convertAndExtractId(quotationSoft.getId());
         assertEquals(0, orderSubmit(softOrderId).getStatus());
         assertEquals(0, orderApprove(softOrderId).getStatus(), "SOFT_WARNING 超额度应放行转化产物订单");
         assertEquals(ErpSalConstants.APPROVE_STATUS_APPROVED,
@@ -212,7 +212,7 @@ public class TestErpSalQuotationToOrder extends JunitAutoTestCase {
         fullApproveAndConfirm(quotationHard.getId());
 
         setCreditCheckLevel(ErpSalConstants.CREDIT_CHECK_LEVEL_HARD_BLOCK);
-        Long hardOrderId = convertAndExtractId(quotationHard.getId());
+        String hardOrderId = convertAndExtractId(quotationHard.getId());
         assertEquals(0, orderSubmit(hardOrderId).getStatus());
         ApiResponse<?> bad = orderApprove(hardOrderId);
         assertEquals(ErpSalErrors.ERR_CREDIT_LIMIT_EXCEEDED.getErrorCode(), bad.getCode(),
@@ -233,7 +233,7 @@ public class TestErpSalQuotationToOrder extends JunitAutoTestCase {
         assertTrue(Boolean.TRUE.equals(reloadQuotation(quotation.getId()).getIsAccepted()),
                 "客户确认 → isAccepted=true");
 
-        Long orderId = convertAndExtractId(quotation.getId());
+        String orderId = convertAndExtractId(quotation.getId());
         ErpSalOrder order = reloadOrder(orderId);
         assertEquals(ErpSalConstants.APPROVE_STATUS_UNSUBMITTED, order.getApproveStatus(),
                 "转化产物订单 = UNSUBMITTED");
@@ -258,60 +258,57 @@ public class TestErpSalQuotationToOrder extends JunitAutoTestCase {
 
     // ---------- flow helpers ----------
 
-    private void fullApproveAndConfirm(Long quotationId) {
+    private void fullApproveAndConfirm(String quotationId) {
         assertEquals(0, submit(quotationId).getStatus());
         assertEquals(0, approve(quotationId).getStatus());
         assertEquals(0, confirmCustomerAccepted(quotationId).getStatus());
     }
 
-    private Long convertAndExtractId(Long quotationId) {
+    private String convertAndExtractId(String quotationId) {
         ApiResponse<?> r = convertToOrder(quotationId);
         assertEquals(0, r.getStatus(), "转化应成功");
         return extractOrderId(r);
     }
 
     /**
-     * 从转化响应提取订单 ID。GraphQL 会将 Long ID 序列化为 String（避免 JS 精度丢失），需兼容 Number/String。
+     * 从转化响应提取订单 ID（String id，平台序列化形态）。
      */
-    private Long extractOrderId(ApiResponse<?> response) {
+    private String extractOrderId(ApiResponse<?> response) {
         Object idVal = ((Map<?, ?>) response.getData()).get("id");
-        if (idVal instanceof Number) {
-            return ((Number) idVal).longValue();
-        }
-        return Long.valueOf(String.valueOf(idVal));
+        return String.valueOf(idVal);
     }
 
     // ---------- rpc helpers (quotation) ----------
 
-    private ApiResponse<?> submit(Long quotationId) {
+    private ApiResponse<?> submit(String quotationId) {
         return executeRpc(mutation, "ErpSalQuotation__submitForApproval", ApiRequest.build(Map.of("id", String.valueOf(quotationId))));
     }
 
-    private ApiResponse<?> approve(Long quotationId) {
+    private ApiResponse<?> approve(String quotationId) {
         return executeRpc(mutation, "ErpSalQuotation__approve", ApiRequest.build(Map.of("id", String.valueOf(quotationId))));
     }
 
-    private ApiResponse<?> confirmCustomerAccepted(Long quotationId) {
+    private ApiResponse<?> confirmCustomerAccepted(String quotationId) {
         return executeRpc(mutation, "ErpSalQuotation__confirmCustomerAccepted",
                 ApiRequest.build(Map.of("quotationId", quotationId)));
     }
 
-    private ApiResponse<?> convertToOrder(Long quotationId) {
+    private ApiResponse<?> convertToOrder(String quotationId) {
         return executeRpc(mutation, "ErpSalQuotation__convertToOrder",
                 ApiRequest.build(Map.of("quotationId", quotationId)));
     }
 
     // ---------- rpc helpers (order) ----------
 
-    private ApiResponse<?> orderSubmit(Long orderId) {
+    private ApiResponse<?> orderSubmit(String orderId) {
         return executeRpc(mutation, "ErpSalOrder__submitForApproval", ApiRequest.build(Map.of("id", String.valueOf(orderId))));
     }
 
-    private ApiResponse<?> orderApprove(Long orderId) {
+    private ApiResponse<?> orderApprove(String orderId) {
         return executeRpc(mutation, "ErpSalOrder__approve", ApiRequest.build(Map.of("id", String.valueOf(orderId))));
     }
 
-    private ApiResponse<?> orderCancel(Long orderId) {
+    private ApiResponse<?> orderCancel(String orderId) {
         return executeRpc(mutation, "ErpSalOrder__cancel", ApiRequest.build(Map.of("orderId", orderId)));
     }
 
@@ -322,7 +319,7 @@ public class TestErpSalQuotationToOrder extends JunitAutoTestCase {
 
     // ---------- seed helpers ----------
 
-    private ErpSalQuotation newQuotation(String code, Long customerId, String totalAmountWithTax,
+    private ErpSalQuotation newQuotation(String code, String customerId, String totalAmountWithTax,
                                          LocalDate businessDate, LocalDate validTo) {
         ErpSalQuotation quotation = new ErpSalQuotation();
         quotation.setCode(code);
@@ -356,7 +353,7 @@ public class TestErpSalQuotationToOrder extends JunitAutoTestCase {
         lineDao.saveEntity(line);
     }
 
-    private void seedActiveCustomer(Long id, BigDecimal creditLimit) {
+    private void seedActiveCustomer(String id, BigDecimal creditLimit) {
         IEntityDao<ErpMdPartner> dao = daoProvider.daoFor(ErpMdPartner.class);
         ErpMdPartner partner = new ErpMdPartner();
         partner.setId(id);
@@ -375,15 +372,15 @@ public class TestErpSalQuotationToOrder extends JunitAutoTestCase {
 
     // ---------- reload helpers ----------
 
-    private ErpSalQuotation reloadQuotation(Long quotationId) {
+    private ErpSalQuotation reloadQuotation(String quotationId) {
         return daoProvider.daoFor(ErpSalQuotation.class).getEntityById(quotationId);
     }
 
-    private ErpSalOrder reloadOrder(Long orderId) {
+    private ErpSalOrder reloadOrder(String orderId) {
         return daoProvider.daoFor(ErpSalOrder.class).getEntityById(orderId);
     }
 
-    private List<ErpSalOrderLine> loadOrderLines(Long orderId) {
+    private List<ErpSalOrderLine> loadOrderLines(String orderId) {
         IEntityDao<ErpSalOrderLine> dao = daoProvider.daoFor(ErpSalOrderLine.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("orderId", orderId));

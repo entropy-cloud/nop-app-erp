@@ -22,7 +22,7 @@ import java.util.List;
 public interface IErpSalReturnBiz extends ICrudBiz<ErpSalReturn> {
 
     @BizMutation
-    ErpSalReturn cancel(@Name("returnId") Long returnId, IServiceContext context);
+    ErpSalReturn cancel(@Name("returnId") String returnId, IServiceContext context);
 
     /**
      * 换货出库单生成（UC-SAL-06 断言②④，RC-R1.51 P1-RC-025，D1 选项 A）。
@@ -34,7 +34,7 @@ public interface IErpSalReturnBiz extends ICrudBiz<ErpSalReturn> {
      * Δ<0 退款（复用 ReturnRefundOrchestrator 既有 reverse-settlement 能力）；Δ=0 无动作。
      */
     @BizMutation
-    ErpSalReturn generateExchangeDelivery(@Name("returnId") Long returnId,
+    ErpSalReturn generateExchangeDelivery(@Name("returnId") String returnId,
                                           @Name("lines") List<ErpSalExchangeDeliveryLine> lines,
                                           IServiceContext context);
 }

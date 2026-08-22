@@ -71,7 +71,7 @@ public class SalReturnPostingDispatcher {
         }
         PostingEvent event = buildEvent(returnOrder);
         try {
-            Long voucherId = executor.postEvent(event);
+            String voucherId = executor.postEvent(event);
             return voucherId != null;
         } catch (Exception e) {
             if (e instanceof NopException) {
@@ -129,7 +129,7 @@ public class SalReturnPostingDispatcher {
      * 故以 delivery.posted 作为运营近似代理（残留风险：posted 与真实暂估应收状态存在运营近似偏差）。
      */
     private boolean isEstimatedReceivableOutstanding(ErpSalReturn returnOrder) {
-        Long deliveryId = returnOrder.getDeliveryId();
+        String deliveryId = returnOrder.getDeliveryId();
         if (deliveryId == null) {
             return false;
         }
@@ -157,14 +157,14 @@ public class SalReturnPostingDispatcher {
         return v != null ? v : BigDecimal.ZERO;
     }
 
-    private List<ErpSalReturnLine> loadLines(Long returnId) {
+    private List<ErpSalReturnLine> loadLines(String returnId) {
         IEntityDao<ErpSalReturnLine> dao = daoProvider.daoFor(ErpSalReturnLine.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("returnId", returnId));
         return dao.findAllByQuery(q);
     }
 
-    private Long resolveAcctSchemaId(Long orgId) {
+    private String resolveAcctSchemaId(String orgId) {
         return AcctSchemaResolver.resolvePrimarySchemaId(daoProvider, orgId);
     }
 }

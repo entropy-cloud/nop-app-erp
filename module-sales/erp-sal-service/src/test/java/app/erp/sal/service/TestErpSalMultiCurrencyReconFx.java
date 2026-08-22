@@ -56,10 +56,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpSalMultiCurrencyReconFx extends JunitAutoTestCase {
 
-    static final Long ORG_ID = 1701L;
-    static final Long CUSTOMER_ID = 2701L;
-    static final Long CURRENCY_FC = 6701L;
-    static final Long ACCT_SCHEMA_ID = 7701L;
+    static final String ORG_ID = "1701";
+    static final String CUSTOMER_ID = "2701";
+    static final String CURRENCY_FC = "6701";
+    static final String ACCT_SCHEMA_ID = "7701";
     static final BigDecimal RATE_INV = new BigDecimal("7.0");
     static final BigDecimal RATE_RECV = new BigDecimal("7.1");
     static final BigDecimal SOURCE_AMT = new BigDecimal("1130");
@@ -88,13 +88,13 @@ public class TestErpSalMultiCurrencyReconFx extends JunitAutoTestCase {
 
         // 1. 外币 AR_INVOICE（rate=7.0）
         PostingEvent invEvent = arInvoiceEvent("AR-MC-001", RATE_INV);
-        Long invVoucherId = ormTemplate.runInSession(s -> voucherBiz.post(invEvent, CTX));
+        String invVoucherId = ormTemplate.runInSession(s -> voucherBiz.post(invEvent, CTX));
         assertNotNull(invVoucherId, "外币 AR_INVOICE 凭证生成");
         assertLineMultiCurrency(invVoucherId, RATE_INV);
 
         // 2. 外币 RECEIPT（rate=7.1）
         PostingEvent rcvEvent = receiptEvent("RC-MC-001", RATE_RECV);
-        Long rcvVoucherId = ormTemplate.runInSession(s -> voucherBiz.post(rcvEvent, CTX));
+        String rcvVoucherId = ormTemplate.runInSession(s -> voucherBiz.post(rcvEvent, CTX));
         assertNotNull(rcvVoucherId, "外币 RECEIPT 凭证生成");
 
         // 3. 查找辅助账项
@@ -155,7 +155,7 @@ public class TestErpSalMultiCurrencyReconFx extends JunitAutoTestCase {
     }
 
     /** 断言凭证行级多币种分离：amountSource ≠ amountFunctional，functional = source × rate（按行自身 source）。 */
-    private void assertLineMultiCurrency(Long voucherId, BigDecimal rate) {
+    private void assertLineMultiCurrency(String voucherId, BigDecimal rate) {
         List<ErpFinVoucherLine> lines = loadLines(voucherId);
         for (ErpFinVoucherLine l : lines) {
             if (l.getAmountSource() != null && l.getAmountSource().compareTo(BigDecimal.ZERO) != 0) {
@@ -236,7 +236,7 @@ public class TestErpSalMultiCurrencyReconFx extends JunitAutoTestCase {
         return list.isEmpty() ? null : list.get(0);
     }
 
-    private List<ErpFinVoucherLine> loadLines(Long voucherId) {
+    private List<ErpFinVoucherLine> loadLines(String voucherId) {
         IEntityDao<ErpFinVoucherLine> dao = daoProvider.daoFor(ErpFinVoucherLine.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("voucherId", voucherId));

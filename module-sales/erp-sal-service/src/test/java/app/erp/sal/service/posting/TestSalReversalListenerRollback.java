@@ -45,8 +45,8 @@ public class TestSalReversalListenerRollback extends JunitAutoTestCase {
 
     private static final IServiceContext CTX = new ServiceContextImpl();
 
-    static final Long ORG_ID = 1203L;
-    static final Long CUSTOMER_ID = 2201L;
+    static final String ORG_ID = "1203";
+    static final String CUSTOMER_ID = "2201";
 
     @Inject
     IDaoProvider daoProvider;
@@ -140,7 +140,7 @@ public class TestSalReversalListenerRollback extends JunitAutoTestCase {
         receipt.setOrgId(ORG_ID);
         receipt.setCustomerId(CUSTOMER_ID);
         receipt.setBusinessDate(LocalDate.of(2026, 7, 1));
-        receipt.setCurrencyId(6201L);
+        receipt.setCurrencyId("6201");
         receipt.setExchangeRate(BigDecimal.ONE);
         receipt.setTotalAmount(new BigDecimal("113"));
         receipt.setAmountSource(new BigDecimal("113"));
@@ -156,11 +156,11 @@ public class TestSalReversalListenerRollback extends JunitAutoTestCase {
         ErpSalReturn returnOrder = new ErpSalReturn();
         returnOrder.setCode(code);
         returnOrder.setOrgId(ORG_ID);
-        returnOrder.setDeliveryId(8201L);
+        returnOrder.setDeliveryId("8201");
         returnOrder.setCustomerId(CUSTOMER_ID);
-        returnOrder.setWarehouseId(3201L);
+        returnOrder.setWarehouseId("3201");
         returnOrder.setBusinessDate(LocalDate.of(2026, 7, 2));
-        returnOrder.setCurrencyId(6201L);
+        returnOrder.setCurrencyId("6201");
         returnOrder.setExchangeRate(BigDecimal.ONE);
         returnOrder.setDocStatus(ErpSalConstants.DOC_STATUS_ACTIVE);
         returnOrder.setApproveStatus(ErpSalConstants.APPROVE_STATUS_APPROVED);
@@ -176,9 +176,9 @@ public class TestSalReversalListenerRollback extends JunitAutoTestCase {
         delivery.setCode(code);
         delivery.setOrgId(ORG_ID);
         delivery.setCustomerId(CUSTOMER_ID);
-        delivery.setWarehouseId(3201L);
+        delivery.setWarehouseId("3201");
         delivery.setBusinessDate(LocalDate.of(2026, 7, 1));
-        delivery.setCurrencyId(6201L);
+        delivery.setCurrencyId("6201");
         delivery.setExchangeRate(BigDecimal.ONE);
         delivery.setDocStatus(ErpSalConstants.DOC_STATUS_ACTIVE);
         delivery.setApproveStatus(ErpSalConstants.APPROVE_STATUS_APPROVED);

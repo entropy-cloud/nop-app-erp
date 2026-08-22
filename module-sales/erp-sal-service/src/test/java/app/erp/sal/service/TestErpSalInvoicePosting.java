@@ -46,12 +46,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpSalInvoicePosting extends JunitAutoTestCase {
 
-    static final Long ORG_ID = 1203L;
-    static final Long CUSTOMER_ID = 2201L;
-    static final Long MATERIAL_ID = 4201L;
-    static final Long UOM_ID = 5201L;
-    static final Long CURRENCY_ID = 6201L;
-    static final Long ACCT_SCHEMA_ID = 7103L;
+    static final String ORG_ID = "1203";
+    static final String CUSTOMER_ID = "2201";
+    static final String MATERIAL_ID = "4201";
+    static final String UOM_ID = "5201";
+    static final String CURRENCY_ID = "6201";
+    static final String ACCT_SCHEMA_ID = "7103";
     static final String VOUCHER_STATUS_POSTED = "POSTED";
 
     @Inject
@@ -120,15 +120,15 @@ public class TestErpSalInvoicePosting extends JunitAutoTestCase {
 
     // ---------- helpers ----------
 
-    private ApiResponse<?> approve(Long id) {
+    private ApiResponse<?> approve(String id) {
         return executeRpc(mutation, "ErpSalInvoice__approve", ApiRequest.build(Map.of("id", String.valueOf(id))));
     }
 
-    private ApiResponse<?> submit(Long id) {
+    private ApiResponse<?> submit(String id) {
         return executeRpc(mutation, "ErpSalInvoice__submitForApproval", ApiRequest.build(Map.of("id", String.valueOf(id))));
     }
 
-    private ApiResponse<?> reverseApprove(Long id) {
+    private ApiResponse<?> reverseApprove(String id) {
         return executeRpc(mutation, "ErpSalInvoice__reverseApprove", ApiRequest.build(Map.of("id", String.valueOf(id))));
     }
 
@@ -174,7 +174,7 @@ public class TestErpSalInvoicePosting extends JunitAutoTestCase {
         lineDao.saveEntity(line);
     }
 
-    private void seedActiveCustomer(Long id) {
+    private void seedActiveCustomer(String id) {
         IEntityDao<ErpMdPartner> dao = daoProvider.daoFor(ErpMdPartner.class);
         ErpMdPartner partner = new ErpMdPartner();
         partner.setId(id);
@@ -195,7 +195,7 @@ public class TestErpSalInvoicePosting extends JunitAutoTestCase {
         });
     }
 
-    private void seedAcctSchema(Long id, Long orgId) {
+    private void seedAcctSchema(String id, String orgId) {
         IEntityDao<app.erp.md.dao.entity.ErpMdAcctSchema> dao = daoProvider.daoFor(
                 app.erp.md.dao.entity.ErpMdAcctSchema.class);
         app.erp.md.dao.entity.ErpMdAcctSchema schema = new app.erp.md.dao.entity.ErpMdAcctSchema();
@@ -245,7 +245,7 @@ public class TestErpSalInvoicePosting extends JunitAutoTestCase {
                 .filter(l -> invoiceCode.equals(l.getBillCode())).count();
     }
 
-    private long countLines(Long voucherId) {
+    private long countLines(String voucherId) {
         IEntityDao<app.erp.fin.dao.entity.ErpFinVoucherLine> dao = daoProvider
                 .daoFor(app.erp.fin.dao.entity.ErpFinVoucherLine.class);
         QueryBean q = new QueryBean();

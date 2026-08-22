@@ -41,10 +41,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpSalReceiptApproval extends JunitAutoTestCase {
 
-    static final Long ORG_ID = 1204L;
-    static final Long CUSTOMER_ID = 2202L;
-    static final Long CURRENCY_ID = 6201L;
-    static final Long ACCT_SCHEMA_ID = 7104L;
+    static final String ORG_ID = "1204";
+    static final String CUSTOMER_ID = "2202";
+    static final String CURRENCY_ID = "6201";
+    static final String ACCT_SCHEMA_ID = "7104";
     static final String VOUCHER_STATUS_POSTED = "POSTED";
 
     @Inject
@@ -113,11 +113,11 @@ public class TestErpSalReceiptApproval extends JunitAutoTestCase {
         ContextProvider.getOrCreateContext().setUserName("SYS");
     }
 
-    private ApiResponse<?> submit(Long id) {
+    private ApiResponse<?> submit(String id) {
         return executeRpc(mutation, "ErpSalReceipt__submitForApproval", ApiRequest.build(Map.of("id", String.valueOf(id))));
     }
 
-    private ApiResponse<?> approve(Long id) {
+    private ApiResponse<?> approve(String id) {
         return executeRpc(mutation, "ErpSalReceipt__approve", ApiRequest.build(Map.of("id", String.valueOf(id))));
     }
 
@@ -148,7 +148,7 @@ public class TestErpSalReceiptApproval extends JunitAutoTestCase {
         return receipt;
     }
 
-    private void seedActiveCustomer(Long id) {
+    private void seedActiveCustomer(String id) {
         IEntityDao<ErpMdPartner> dao = daoProvider.daoFor(ErpMdPartner.class);
         ErpMdPartner partner = new ErpMdPartner();
         partner.setId(id);
@@ -168,7 +168,7 @@ public class TestErpSalReceiptApproval extends JunitAutoTestCase {
         });
     }
 
-    private void seedAcctSchema(Long id, Long orgId) {
+    private void seedAcctSchema(String id, String orgId) {
         IEntityDao<app.erp.md.dao.entity.ErpMdAcctSchema> dao = daoProvider.daoFor(
                 app.erp.md.dao.entity.ErpMdAcctSchema.class);
         app.erp.md.dao.entity.ErpMdAcctSchema schema = new app.erp.md.dao.entity.ErpMdAcctSchema();
@@ -213,7 +213,7 @@ public class TestErpSalReceiptApproval extends JunitAutoTestCase {
         return links.stream().filter(l -> receiptCode.equals(l.getBillCode())).findFirst().orElse(null);
     }
 
-    private long countLines(Long voucherId) {
+    private long countLines(String voucherId) {
         IEntityDao<app.erp.fin.dao.entity.ErpFinVoucherLine> dao = daoProvider
                 .daoFor(app.erp.fin.dao.entity.ErpFinVoucherLine.class);
         QueryBean q = new QueryBean();

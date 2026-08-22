@@ -173,9 +173,9 @@ public class TestErpRoleRowFilterIsolation extends JunitAutoTestCase {
         IEntityDao<ErpSalOrder> dao = daoProvider.daoFor(ErpSalOrder.class);
         ErpSalOrder o = dao.newEntity();
         o.setCode(code);
-        o.setCustomerId(1L);
+        o.setCustomerId("1");
         o.setBusinessDate(LocalDate.of(2026, 7, 1));
-        o.setCurrencyId(1L);
+        o.setCurrencyId("1");
         o.setDocStatus("DRAFT");
         o.setApproveStatus("UNSUBMITTED");
         dao.saveEntity(o);

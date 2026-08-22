@@ -39,7 +39,7 @@ public class SalInvoicePostingDispatcher {
     public boolean tryPost(ErpSalInvoice invoice) {
         PostingEvent event = buildEvent(invoice);
         try {
-            Long voucherId = executor.postEvent(event);
+            String voucherId = executor.postEvent(event);
             return voucherId != null;
         } catch (Exception e) {
             if (e instanceof NopException) {
@@ -97,7 +97,7 @@ public class SalInvoicePostingDispatcher {
      * 按发票业务组织解析账套（ErpMdAcctSchema.orgId）。发票实体无 acctSchemaId 字段，
      * 过账所需账套由组织推导。取第一个匹配（单组织单账套基线）。
      */
-    private Long resolveAcctSchemaId(Long orgId) {
+    private String resolveAcctSchemaId(String orgId) {
         return AcctSchemaResolver.resolvePrimarySchemaId(daoProvider, orgId);
     }
 }

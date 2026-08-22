@@ -256,7 +256,7 @@ public class ErpSalQuotationProcessor {
         }
     }
 
-    protected List<ErpSalQuotationLine> loadLines(Long quotationId) {
+    protected List<ErpSalQuotationLine> loadLines(String quotationId) {
         IEntityDao<ErpSalQuotationLine> dao = daoProvider.daoFor(ErpSalQuotationLine.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("quotationId", quotationId));

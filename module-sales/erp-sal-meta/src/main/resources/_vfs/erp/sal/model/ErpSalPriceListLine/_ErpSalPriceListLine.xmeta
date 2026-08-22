@@ -20,24 +20,24 @@
 
     <props>
         <prop name="id" displayName="ID" propId="1" i18n-en:displayName="ID" tagSet="seq-default" mandatory="true"
-              queryable="true" sortable="true" insertable="true" updatable="false" graphql:type="String">
-            <schema type="java.lang.Long"/>
+              queryable="true" sortable="true" insertable="true" updatable="false">
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="priceListId" displayName="价格清单ID" propId="2" i18n-en:displayName="Price List" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="priceList">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="materialId" displayName="物料" propId="3" i18n-en:displayName="Material" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="material">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="skuId" displayName="SKU" propId="4" i18n-en:displayName="SKU" queryable="true" sortable="true"
               insertable="true" updatable="true" ext:relation="sku">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="uoMId" displayName="计量单位" propId="5" i18n-en:displayName="UoM" queryable="true" sortable="true"
               insertable="true" updatable="true" ext:relation="uoM">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="unitPrice" displayName="单价" propId="6" i18n-en:displayName="Unit Price" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">

@@ -127,7 +127,7 @@ public class ErpSalPricingRuleEngine {
         return ts == null ? null : ts.toLocalDateTime();
     }
 
-    protected boolean ruleMatchesCustomer(ErpSalPricingRule rule, Long customerId, String customerGroupCode) {
+    protected boolean ruleMatchesCustomer(ErpSalPricingRule rule, String customerId, String customerGroupCode) {
         if (rule.getPartnerId() != null) {
             return Objects.equals(rule.getPartnerId(), customerId);
         }
@@ -137,7 +137,7 @@ public class ErpSalPricingRuleEngine {
         return true;
     }
 
-    protected boolean ruleMatchesCurrency(ErpSalPricingRule rule, Long currencyId) {
+    protected boolean ruleMatchesCurrency(ErpSalPricingRule rule, String currencyId) {
         return rule.getCurrencyId() == null || Objects.equals(rule.getCurrencyId(), currencyId);
     }
 
@@ -244,7 +244,7 @@ public class ErpSalPricingRuleEngine {
         private List<ErpSalOrderLine> modifiedLines;
         private List<ErpSalPricingRule> appliedRules;
         private BigDecimal orderDiscountAmount;
-        private final List<Long> giftRuleIds = new ArrayList<>();
+        private final List<String> giftRuleIds = new ArrayList<>();
 
         public List<ErpSalOrderLine> getModifiedLines() {
             return modifiedLines;
@@ -270,7 +270,7 @@ public class ErpSalPricingRuleEngine {
             this.orderDiscountAmount = orderDiscountAmount;
         }
 
-        public List<Long> getGiftRuleIds() {
+        public List<String> getGiftRuleIds() {
             return giftRuleIds;
         }
     }

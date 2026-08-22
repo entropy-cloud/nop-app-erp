@@ -44,9 +44,9 @@ public class ReturnQtyValidator {
      * @param lines       当前退货单行
      */
     public void validate(ErpSalReturn returnOrder, List<ErpSalReturnLine> lines) {
-        Map<Long, BigDecimal> approvedReturned = sumApprovedReturnedByDeliveryLine(returnOrder);
+        Map<String, BigDecimal> approvedReturned = sumApprovedReturnedByDeliveryLine(returnOrder);
         for (ErpSalReturnLine line : lines) {
-            Long deliveryLineId = line.getDeliveryLineId();
+            String deliveryLineId = line.getDeliveryLineId();
             if (deliveryLineId == null) {
                 continue;
             }
@@ -69,8 +69,8 @@ public class ReturnQtyValidator {
      * 按出库行聚合「已审核退货量」，排除当前退货单（避免审核自身时把自身行算进上限）。
      * 范围限定在同一源出库单（{@code deliveryId}）下，缩小查询面。
      */
-    private Map<Long, BigDecimal> sumApprovedReturnedByDeliveryLine(ErpSalReturn current) {
-        Map<Long, BigDecimal> result = new HashMap<>();
+    private Map<String, BigDecimal> sumApprovedReturnedByDeliveryLine(ErpSalReturn current) {
+        Map<String, BigDecimal> result = new HashMap<>();
         if (current.getDeliveryId() == null) {
             return result;
         }
@@ -84,7 +84,7 @@ public class ReturnQtyValidator {
         if (approvedReturns.isEmpty()) {
             return result;
         }
-        List<Long> returnIds = approvedReturns.stream().map(ErpSalReturn::getId)
+        List<String> returnIds = approvedReturns.stream().map(ErpSalReturn::getId)
                 .collect(java.util.stream.Collectors.toList());
 
         IEntityDao<ErpSalReturnLine> lineDao = daoProvider.daoFor(ErpSalReturnLine.class);
@@ -100,7 +100,7 @@ public class ReturnQtyValidator {
         return result;
     }
 
-    private BigDecimal loadDeliveredQuantity(Long deliveryLineId) {
+    private BigDecimal loadDeliveredQuantity(String deliveryLineId) {
         IEntityDao<ErpSalDeliveryLine> dao = daoProvider.daoFor(ErpSalDeliveryLine.class);
         ErpSalDeliveryLine deliveryLine = dao.getEntityById(deliveryLineId);
         if (deliveryLine == null || deliveryLine.getQuantity() == null) {

@@ -73,13 +73,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpSalOrderToCashEnd extends JunitAutoTestCase {
 
-    static final Long ORG_ID = 1401L;
-    static final Long CUSTOMER_ID = 2401L;
-    static final Long WAREHOUSE_ID = 3401L;
-    static final Long MATERIAL_ID = 4401L;
-    static final Long UOM_ID = 5401L;
-    static final Long CURRENCY_ID = 6401L;
-    static final Long ACCT_SCHEMA_ID = 7401L;
+    static final String ORG_ID = "1401";
+    static final String CUSTOMER_ID = "2401";
+    static final String WAREHOUSE_ID = "3401";
+    static final String MATERIAL_ID = "4401";
+    static final String UOM_ID = "5401";
+    static final String CURRENCY_ID = "6401";
+    static final String ACCT_SCHEMA_ID = "7401";
     static final String VOUCHER_STATUS_POSTED = "POSTED";
 
     @Inject
@@ -106,16 +106,16 @@ public class TestErpSalOrderToCashEnd extends JunitAutoTestCase {
     @Test
     public void testOrderToCashEndPartialReceipt() {
         seedPrereqs();
-        long orderLine = 9401L;
-        long deliveryId = 9402L;
-        long deliveryLineId = 9403L;
-        long invoiceId = 9404L;
-        long invoiceLineId = 9405L;
-        long receiptId = 9406L;
+        String orderLine = "9401";
+        String deliveryId = "9402";
+        String deliveryLineId = "9403";
+        String invoiceId = "9404";
+        String invoiceLineId = "9405";
+        String receiptId = "9406";
 
         ormTemplate.runInSession(session -> {
             seedActiveCustomer();
-            Long orderId = newOrder("SO-CASH-001");
+            String orderId = newOrder("SO-CASH-001");
             newOrderLine(orderId, orderLine, 1, new BigDecimal("10"));
             newDelivery("SD-CASH-001", deliveryId, orderId);
             newDeliveryLine(deliveryLineId, deliveryId, orderLine, new BigDecimal("10"));
@@ -176,16 +176,16 @@ public class TestErpSalOrderToCashEnd extends JunitAutoTestCase {
     @Test
     public void testReverseInvoiceAndReceipt() {
         seedPrereqs();
-        long orderLine = 9411L;
-        long deliveryId = 9412L;
-        long deliveryLineId = 9413L;
-        long invoiceId = 9414L;
-        long invoiceLineId = 9415L;
-        long receiptId = 9416L;
+        String orderLine = "9411";
+        String deliveryId = "9412";
+        String deliveryLineId = "9413";
+        String invoiceId = "9414";
+        String invoiceLineId = "9415";
+        String receiptId = "9416";
 
         ormTemplate.runInSession(session -> {
             seedActiveCustomer();
-            Long orderId = newOrder("SO-CASH-002");
+            String orderId = newOrder("SO-CASH-002");
             newOrderLine(orderId, orderLine, 1, new BigDecimal("10"));
             newDelivery("SD-CASH-002", deliveryId, orderId);
             newDeliveryLine(deliveryLineId, deliveryId, orderLine, new BigDecimal("10"));
@@ -243,16 +243,16 @@ public class TestErpSalOrderToCashEnd extends JunitAutoTestCase {
     @Test
     public void testFinanceReconciliationLayerReceivable() {
         seedPrereqs();
-        long orderLine = 9431L;
-        long deliveryId = 9432L;
-        long deliveryLineId = 9433L;
-        long invoiceId = 9434L;
-        long invoiceLineId = 9435L;
-        long receiptId = 9436L;
+        String orderLine = "9431";
+        String deliveryId = "9432";
+        String deliveryLineId = "9433";
+        String invoiceId = "9434";
+        String invoiceLineId = "9435";
+        String receiptId = "9436";
 
         ormTemplate.runInSession(session -> {
             seedActiveCustomer();
-            Long orderId = newOrder("SO-FIN-001");
+            String orderId = newOrder("SO-FIN-001");
             newOrderLine(orderId, orderLine, 1, new BigDecimal("10"));
             newDelivery("SD-FIN-001", deliveryId, orderId);
             newDeliveryLine(deliveryLineId, deliveryId, orderLine, new BigDecimal("10"));
@@ -342,16 +342,16 @@ public class TestErpSalOrderToCashEnd extends JunitAutoTestCase {
     @Test
     public void testFinanceReconciliationLayerExceptions() {
         seedPrereqs();
-        long orderLine = 9451L;
-        long deliveryId = 9452L;
-        long deliveryLineId = 9453L;
-        long invoiceId = 9454L;
-        long invoiceLineId = 9455L;
-        long receiptId = 9456L;
+        String orderLine = "9451";
+        String deliveryId = "9452";
+        String deliveryLineId = "9453";
+        String invoiceId = "9454";
+        String invoiceLineId = "9455";
+        String receiptId = "9456";
 
         ormTemplate.runInSession(session -> {
             seedActiveCustomer();
-            Long orderId = newOrder("SO-FEX-001");
+            String orderId = newOrder("SO-FEX-001");
             newOrderLine(orderId, orderLine, 1, new BigDecimal("10"));
             newDelivery("SD-FEX-001", deliveryId, orderId);
             newDeliveryLine(deliveryLineId, deliveryId, orderLine, new BigDecimal("10"));
@@ -412,7 +412,7 @@ public class TestErpSalOrderToCashEnd extends JunitAutoTestCase {
         return dao.findAllByQuery(q).stream().findFirst().orElse(null);
     }
 
-    private ErpFinArApItem reloadItem(Long id) {
+    private ErpFinArApItem reloadItem(String id) {
         return daoProvider.daoFor(ErpFinArApItem.class).getEntityById(id);
     }
 
@@ -431,7 +431,7 @@ public class TestErpSalOrderToCashEnd extends JunitAutoTestCase {
         return sum;
     }
 
-    private ReconciliationLineInput reconLine(Long paymentItemId, Long invoiceItemId, String amount) {
+    private ReconciliationLineInput reconLine(String paymentItemId, String invoiceItemId, String amount) {
         BigDecimal amt = new BigDecimal(amount);
         ReconciliationLineInput in = new ReconciliationLineInput();
         in.setPaymentItemId(paymentItemId);
@@ -443,39 +443,39 @@ public class TestErpSalOrderToCashEnd extends JunitAutoTestCase {
 
     // ---------- rpc helpers ----------
 
-    private ApiResponse<?> submitDelivery(Long id) {
+    private ApiResponse<?> submitDelivery(String id) {
         return executeRpc(mutation, "ErpSalDelivery__submitForApproval", ApiRequest.build(Map.of("id", String.valueOf(id))));
     }
 
-    private ApiResponse<?> approveDelivery(Long id) {
+    private ApiResponse<?> approveDelivery(String id) {
         return executeRpc(mutation, "ErpSalDelivery__approve", ApiRequest.build(Map.of("id", String.valueOf(id))));
     }
 
-    private ApiResponse<?> submitInvoice(Long id) {
+    private ApiResponse<?> submitInvoice(String id) {
         return executeRpc(mutation, "ErpSalInvoice__submitForApproval", ApiRequest.build(Map.of("id", String.valueOf(id))));
     }
 
-    private ApiResponse<?> approveInvoice(Long id) {
+    private ApiResponse<?> approveInvoice(String id) {
         return executeRpc(mutation, "ErpSalInvoice__approve", ApiRequest.build(Map.of("id", String.valueOf(id))));
     }
 
-    private ApiResponse<?> reverseApproveInvoice(Long id) {
+    private ApiResponse<?> reverseApproveInvoice(String id) {
         return executeRpc(mutation, "ErpSalInvoice__reverseApprove", ApiRequest.build(Map.of("id", String.valueOf(id))));
     }
 
-    private ApiResponse<?> submitReceipt(Long id) {
+    private ApiResponse<?> submitReceipt(String id) {
         return executeRpc(mutation, "ErpSalReceipt__submitForApproval", ApiRequest.build(Map.of("id", String.valueOf(id))));
     }
 
-    private ApiResponse<?> approveReceipt(Long id) {
+    private ApiResponse<?> approveReceipt(String id) {
         return executeRpc(mutation, "ErpSalReceipt__approve", ApiRequest.build(Map.of("id", String.valueOf(id))));
     }
 
-    private ApiResponse<?> reverseApproveReceipt(Long id) {
+    private ApiResponse<?> reverseApproveReceipt(String id) {
         return executeRpc(mutation, "ErpSalReceipt__reverseApprove", ApiRequest.build(Map.of("id", String.valueOf(id))));
     }
 
-    private ApiResponse<?> settle(Long receiptId, Long invoiceId, BigDecimal amount) {
+    private ApiResponse<?> settle(String receiptId, String invoiceId, BigDecimal amount) {
         Map<String, Object> alloc = new LinkedHashMap<>();
         alloc.put("invoiceId", invoiceId);
         alloc.put("amount", amount);
@@ -485,7 +485,7 @@ public class TestErpSalOrderToCashEnd extends JunitAutoTestCase {
         return executeRpc(mutation, "ErpSalReceipt__settle", ApiRequest.build(req));
     }
 
-    private ApiResponse<?> reverseSettlement(Long receiptId, Long invoiceId) {
+    private ApiResponse<?> reverseSettlement(String receiptId, String invoiceId) {
         return executeRpc(mutation, "ErpSalReceipt__reverseSettlement",
                 ApiRequest.build(Map.of("receiptId", receiptId, "invoiceId", invoiceId)));
     }
@@ -587,7 +587,7 @@ public class TestErpSalOrderToCashEnd extends JunitAutoTestCase {
         assertEquals(0, resp.getStatus(), "seedStock generateMove 应成功");
     }
 
-    private Long newOrder(String code) {
+    private String newOrder(String code) {
         IEntityDao<ErpSalOrder> dao = daoProvider.daoFor(ErpSalOrder.class);
         ErpSalOrder order = new ErpSalOrder();
         order.setCode(code);
@@ -603,7 +603,7 @@ public class TestErpSalOrderToCashEnd extends JunitAutoTestCase {
         return order.getId();
     }
 
-    private void newOrderLine(Long orderId, long lineId, int lineNo, BigDecimal qty) {
+    private void newOrderLine(String orderId, String lineId, int lineNo, BigDecimal qty) {
         IEntityDao<ErpSalOrderLine> dao = daoProvider.daoFor(ErpSalOrderLine.class);
         ErpSalOrderLine line = new ErpSalOrderLine();
         line.setId(lineId);
@@ -617,7 +617,7 @@ public class TestErpSalOrderToCashEnd extends JunitAutoTestCase {
         dao.saveEntity(line);
     }
 
-    private void newDelivery(String code, long deliveryId, Long orderId) {
+    private void newDelivery(String code, String deliveryId, String orderId) {
         IEntityDao<ErpSalDelivery> dao = daoProvider.daoFor(ErpSalDelivery.class);
         ErpSalDelivery delivery = new ErpSalDelivery();
         delivery.setId(deliveryId);
@@ -635,7 +635,7 @@ public class TestErpSalOrderToCashEnd extends JunitAutoTestCase {
         dao.saveEntity(delivery);
     }
 
-    private void newDeliveryLine(long lineId, long deliveryId, long orderLineId, BigDecimal qty) {
+    private void newDeliveryLine(String lineId, String deliveryId, String orderLineId, BigDecimal qty) {
         IEntityDao<ErpSalDeliveryLine> dao = daoProvider.daoFor(ErpSalDeliveryLine.class);
         ErpSalDeliveryLine line = new ErpSalDeliveryLine();
         line.setId(lineId);
@@ -649,7 +649,7 @@ public class TestErpSalOrderToCashEnd extends JunitAutoTestCase {
         dao.saveEntity(line);
     }
 
-    private void newInvoice(String code, long invoiceId) {
+    private void newInvoice(String code, String invoiceId) {
         IEntityDao<ErpSalInvoice> dao = daoProvider.daoFor(ErpSalInvoice.class);
         ErpSalInvoice invoice = new ErpSalInvoice();
         invoice.setId(invoiceId);
@@ -671,7 +671,7 @@ public class TestErpSalOrderToCashEnd extends JunitAutoTestCase {
         dao.saveEntity(invoice);
     }
 
-    private void newInvoiceLine(long lineId, long invoiceId, long deliveryLineId) {
+    private void newInvoiceLine(String lineId, String invoiceId, String deliveryLineId) {
         IEntityDao<ErpSalInvoiceLine> dao = daoProvider.daoFor(ErpSalInvoiceLine.class);
         ErpSalInvoiceLine line = new ErpSalInvoiceLine();
         line.setId(lineId);
@@ -686,7 +686,7 @@ public class TestErpSalOrderToCashEnd extends JunitAutoTestCase {
         dao.saveEntity(line);
     }
 
-    private void newReceipt(String code, long receiptId, BigDecimal total) {
+    private void newReceipt(String code, String receiptId, BigDecimal total) {
         IEntityDao<ErpSalReceipt> dao = daoProvider.daoFor(ErpSalReceipt.class);
         ErpSalReceipt receipt = new ErpSalReceipt();
         receipt.setId(receiptId);

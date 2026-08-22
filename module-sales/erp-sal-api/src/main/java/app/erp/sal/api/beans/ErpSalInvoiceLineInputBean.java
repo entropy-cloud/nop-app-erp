@@ -12,44 +12,44 @@
     public class ErpSalInvoiceLineInputBean extends CrudInputBase {
 
     
-        private Long _id;
+        private String _id;
 
     
         @PropMeta(propId=1)
     
-        public Long getId(){
+        public String getId(){
             return _id;
         }
 
-        public void setId(Long value){
+        public void setId(String value){
             this._id = value;
         }
 
 
-        private Long _invoiceId;
+        private String _invoiceId;
 
     
         @PropMeta(propId=2)
     
-        public Long getInvoiceId(){
+        public String getInvoiceId(){
             return _invoiceId;
         }
 
-        public void setInvoiceId(Long value){
+        public void setInvoiceId(String value){
             this._invoiceId = value;
         }
 
 
-        private Long _deliveryLineId;
+        private String _deliveryLineId;
 
     
         @PropMeta(propId=3)
     
-        public Long getDeliveryLineId(){
+        public String getDeliveryLineId(){
             return _deliveryLineId;
         }
 
-        public void setDeliveryLineId(Long value){
+        public void setDeliveryLineId(String value){
             this._deliveryLineId = value;
         }
 
@@ -68,30 +68,30 @@
         }
 
 
-        private Long _materialId;
+        private String _materialId;
 
     
         @PropMeta(propId=5)
     
-        public Long getMaterialId(){
+        public String getMaterialId(){
             return _materialId;
         }
 
-        public void setMaterialId(Long value){
+        public void setMaterialId(String value){
             this._materialId = value;
         }
 
 
-        private Long _uoMId;
+        private String _uoMId;
 
     
         @PropMeta(propId=6)
     
-        public Long getUoMId(){
+        public String getUoMId(){
             return _uoMId;
         }
 
-        public void setUoMId(Long value){
+        public void setUoMId(String value){
             this._uoMId = value;
         }
 

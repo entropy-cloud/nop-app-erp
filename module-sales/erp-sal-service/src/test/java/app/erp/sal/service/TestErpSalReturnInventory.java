@@ -53,13 +53,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpSalReturnInventory extends JunitAutoTestCase {
 
-    static final Long ORG_ID = 3703L;
-    static final Long CUSTOMER_ID = 4703L;
-    static final Long WAREHOUSE_ID = 5703L;
-    static final Long MATERIAL_ID = 6703L;
-    static final Long UOM_ID = 7703L;
-    static final Long CURRENCY_ID = 8703L;
-    static final Long ACCT_SCHEMA_ID = 9703L;
+    static final String ORG_ID = "3703";
+    static final String CUSTOMER_ID = "4703";
+    static final String WAREHOUSE_ID = "5703";
+    static final String MATERIAL_ID = "6703";
+    static final String UOM_ID = "7703";
+    static final String CURRENCY_ID = "8703";
+    static final String ACCT_SCHEMA_ID = "9703";
 
     @Inject
     IDaoProvider daoProvider;
@@ -73,11 +73,11 @@ public class TestErpSalReturnInventory extends JunitAutoTestCase {
     @Test
     public void testApproveGeneratesIncomingMoveAndStockIncrease() {
         seedPeriodAndSubjects();
-        Long[] deliveryCtx = seedApprovedDelivery("SD-INV-001", new BigDecimal("10"));
+        String[] deliveryCtx = seedApprovedDelivery("SD-INV-001", new BigDecimal("10"));
         seedStock("SEED-INV-001", new BigDecimal("20"), new BigDecimal("5"));
 
-        Long returnId = nextId();
-        Long returnLineId = nextId();
+        String returnId = nextId();
+        String returnLineId = nextId();
         ormTemplate.runInSession(session -> {
             newReturn("RT-INV-001", returnId, deliveryCtx[0]);
             newReturnLine(returnLineId, returnId, deliveryCtx[1], new BigDecimal("4"));
@@ -103,11 +103,11 @@ public class TestErpSalReturnInventory extends JunitAutoTestCase {
     @Test
     public void testApproveIdempotent() {
         seedPeriodAndSubjects();
-        Long[] deliveryCtx = seedApprovedDelivery("SD-IDM-001", new BigDecimal("10"));
+        String[] deliveryCtx = seedApprovedDelivery("SD-IDM-001", new BigDecimal("10"));
         seedStock("SEED-IDM-001", new BigDecimal("20"), new BigDecimal("5"));
 
-        Long returnId = nextId();
-        Long returnLineId = nextId();
+        String returnId = nextId();
+        String returnLineId = nextId();
         ormTemplate.runInSession(session -> {
             newReturn("RT-IDM-001", returnId, deliveryCtx[0]);
             newReturnLine(returnLineId, returnId, deliveryCtx[1], new BigDecimal("3"));
@@ -122,11 +122,11 @@ public class TestErpSalReturnInventory extends JunitAutoTestCase {
     @Test
     public void testReverseApproveRestoresStock() {
         seedPeriodAndSubjects();
-        Long[] deliveryCtx = seedApprovedDelivery("SD-REV-001", new BigDecimal("10"));
+        String[] deliveryCtx = seedApprovedDelivery("SD-REV-001", new BigDecimal("10"));
         seedStock("SEED-REV-001", new BigDecimal("20"), new BigDecimal("5"));
 
-        Long returnId = nextId();
-        Long returnLineId = nextId();
+        String returnId = nextId();
+        String returnLineId = nextId();
         ormTemplate.runInSession(session -> {
             newReturn("RT-REV-001", returnId, deliveryCtx[0]);
             newReturnLine(returnLineId, returnId, deliveryCtx[1], new BigDecimal("4"));
@@ -154,11 +154,11 @@ public class TestErpSalReturnInventory extends JunitAutoTestCase {
 
     // ---------- seed ----------
 
-    private Long[] seedApprovedDelivery(String deliveryCode, BigDecimal deliveryQty) {
-        Long orderId = nextId();
-        Long deliveryId = nextId();
-        Long orderLineId = nextId();
-        Long deliveryLineId = nextId();
+    private String[] seedApprovedDelivery(String deliveryCode, BigDecimal deliveryQty) {
+        String orderId = nextId();
+        String deliveryId = nextId();
+        String orderLineId = nextId();
+        String deliveryLineId = nextId();
         ormTemplate.runInSession(session -> {
             seedActiveCustomer();
             newOrderWithId("SO-" + deliveryCode, orderId);
@@ -167,7 +167,7 @@ public class TestErpSalReturnInventory extends JunitAutoTestCase {
             newDeliveryLine(deliveryLineId, deliveryId, orderLineId, deliveryQty);
             return null;
         });
-        return new Long[]{deliveryId, deliveryLineId};
+        return new String[]{deliveryId, deliveryLineId};
     }
 
     /**
@@ -200,11 +200,11 @@ public class TestErpSalReturnInventory extends JunitAutoTestCase {
 
     // ---------- rpc ----------
 
-    private ApiResponse<?> approveReturn(Long returnId) {
+    private ApiResponse<?> approveReturn(String returnId) {
         return executeRpc(mutation, "ErpSalReturn__approve", ApiRequest.build(Map.of("id", String.valueOf(returnId))));
     }
 
-    private ApiResponse<?> reverseApproveReturn(Long returnId) {
+    private ApiResponse<?> reverseApproveReturn(String returnId) {
         return executeRpc(mutation, "ErpSalReturn__reverseApprove", ApiRequest.build(Map.of("id", String.valueOf(returnId))));
     }
 
@@ -274,7 +274,7 @@ public class TestErpSalReturnInventory extends JunitAutoTestCase {
         dao.saveEntity(subject);
     }
 
-    private void newOrderWithId(String code, Long orderId) {
+    private void newOrderWithId(String code, String orderId) {
         IEntityDao<ErpSalOrder> dao = daoProvider.daoFor(ErpSalOrder.class);
         ErpSalOrder order = new ErpSalOrder();
         order.setId(orderId);
@@ -290,7 +290,7 @@ public class TestErpSalReturnInventory extends JunitAutoTestCase {
         dao.saveEntity(order);
     }
 
-    private void newOrderLine(Long orderId, Long lineId, int lineNo, BigDecimal qty) {
+    private void newOrderLine(String orderId, String lineId, int lineNo, BigDecimal qty) {
         IEntityDao<ErpSalOrderLine> dao = daoProvider.daoFor(ErpSalOrderLine.class);
         ErpSalOrderLine line = new ErpSalOrderLine();
         line.setId(lineId);
@@ -304,7 +304,7 @@ public class TestErpSalReturnInventory extends JunitAutoTestCase {
         dao.saveEntity(line);
     }
 
-    private void newDeliveryApproved(String code, Long deliveryId, Long orderId) {
+    private void newDeliveryApproved(String code, String deliveryId, String orderId) {
         IEntityDao<ErpSalDelivery> dao = daoProvider.daoFor(ErpSalDelivery.class);
         ErpSalDelivery delivery = new ErpSalDelivery();
         delivery.setId(deliveryId);
@@ -322,7 +322,7 @@ public class TestErpSalReturnInventory extends JunitAutoTestCase {
         dao.saveEntity(delivery);
     }
 
-    private void newDeliveryLine(Long lineId, Long deliveryId, Long orderLineId, BigDecimal qty) {
+    private void newDeliveryLine(String lineId, String deliveryId, String orderLineId, BigDecimal qty) {
         IEntityDao<ErpSalDeliveryLine> dao = daoProvider.daoFor(ErpSalDeliveryLine.class);
         ErpSalDeliveryLine line = new ErpSalDeliveryLine();
         line.setId(lineId);
@@ -336,7 +336,7 @@ public class TestErpSalReturnInventory extends JunitAutoTestCase {
         dao.saveEntity(line);
     }
 
-    private void newReturn(String code, Long returnId, Long deliveryId) {
+    private void newReturn(String code, String returnId, String deliveryId) {
         IEntityDao<ErpSalReturn> dao = daoProvider.daoFor(ErpSalReturn.class);
         ErpSalReturn returnOrder = new ErpSalReturn();
         returnOrder.setId(returnId);
@@ -355,7 +355,7 @@ public class TestErpSalReturnInventory extends JunitAutoTestCase {
         dao.saveEntity(returnOrder);
     }
 
-    private void newReturnLine(Long lineId, Long returnId, Long deliveryLineId, BigDecimal qty) {
+    private void newReturnLine(String lineId, String returnId, String deliveryLineId, BigDecimal qty) {
         IEntityDao<ErpSalReturnLine> dao = daoProvider.daoFor(ErpSalReturnLine.class);
         ErpSalReturnLine line = new ErpSalReturnLine();
         line.setId(lineId);
@@ -371,8 +371,8 @@ public class TestErpSalReturnInventory extends JunitAutoTestCase {
         dao.saveEntity(line);
     }
 
-    private Long nextId() {
-        return idSeq.incrementAndGet();
+    private String nextId() {
+        return String.valueOf(idSeq.incrementAndGet());
     }
 
     // ---------- query helpers ----------

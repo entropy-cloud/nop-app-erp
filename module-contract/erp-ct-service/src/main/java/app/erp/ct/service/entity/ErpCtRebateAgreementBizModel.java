@@ -7,7 +7,6 @@ import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.biz.ContextSource;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.beans.query.QueryBean;
-import io.nop.api.core.convert.ConvertHelper;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.api.core.time.CoreMetrics;
 import io.nop.biz.crud.CrudBizModel;
@@ -112,8 +111,7 @@ public class ErpCtRebateAgreementBizModel extends CrudBizModel<ErpCtRebateAgreem
             q.addFilter(eq("supplierId", agreement.getPartnerId()));
             return daoProvider().daoFor(ErpPurInvoice.class).findAllByQuery(q);
         } else {
-            // bridge-main-038: ct String partnerId → sal Long customerId 过滤值（退役 owner M2.6）
-            q.addFilter(eq("customerId", ConvertHelper.toLong(agreement.getPartnerId())));
+            q.addFilter(eq("customerId", agreement.getPartnerId()));
             return daoProvider().daoFor(ErpSalInvoice.class).findAllByQuery(q);
         }
     }

@@ -255,7 +255,7 @@ public class _ErpSalPricingRule extends DynamicOrmEntity{
 
     
     /* ID: ID */
-    private java.lang.Long _id;
+    private java.lang.String _id;
     
     /* 规则名称: RULE_NAME */
     private java.lang.String _ruleName;
@@ -270,16 +270,16 @@ public class _ErpSalPricingRule extends DynamicOrmEntity{
     private java.lang.String _targetType;
     
     /* 物料: MATERIAL_ID */
-    private java.lang.Long _materialId;
+    private java.lang.String _materialId;
     
     /* 物料分类: MATERIAL_CATEGORY_ID */
-    private java.lang.Long _materialCategoryId;
+    private java.lang.String _materialCategoryId;
     
     /* 客户组: CUSTOMER_GROUP_CODE */
     private java.lang.String _customerGroupCode;
     
     /* 指定客户: PARTNER_ID */
-    private java.lang.Long _partnerId;
+    private java.lang.String _partnerId;
     
     /* 满减门槛: MIN_ORDER_AMOUNT */
     private java.math.BigDecimal _minOrderAmount;
@@ -291,10 +291,10 @@ public class _ErpSalPricingRule extends DynamicOrmEntity{
     private java.math.BigDecimal _discountAmount;
     
     /* 赠品物料: GIFT_MATERIAL_ID */
-    private java.lang.Long _giftMaterialId;
+    private java.lang.String _giftMaterialId;
     
     /* 赠品SKU: GIFT_SKU_ID */
-    private java.lang.Long _giftSkuId;
+    private java.lang.String _giftSkuId;
     
     /* 赠品数量: GIFT_QUANTITY */
     private java.math.BigDecimal _giftQuantity;
@@ -303,7 +303,7 @@ public class _ErpSalPricingRule extends DynamicOrmEntity{
     private java.math.BigDecimal _priceOverride;
     
     /* 币种: CURRENCY_ID */
-    private java.lang.Long _currencyId;
+    private java.lang.String _currencyId;
     
     /* 优先级: PRIORITY */
     private java.lang.Integer _priority;
@@ -514,9 +514,9 @@ public class _ErpSalPricingRule extends DynamicOrmEntity{
         switch(propId){
         
             case PROP_ID_id:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_id));
                }
                setId(typedValue);
@@ -564,9 +564,9 @@ public class _ErpSalPricingRule extends DynamicOrmEntity{
             }
         
             case PROP_ID_materialId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_materialId));
                }
                setMaterialId(typedValue);
@@ -574,9 +574,9 @@ public class _ErpSalPricingRule extends DynamicOrmEntity{
             }
         
             case PROP_ID_materialCategoryId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_materialCategoryId));
                }
                setMaterialCategoryId(typedValue);
@@ -594,9 +594,9 @@ public class _ErpSalPricingRule extends DynamicOrmEntity{
             }
         
             case PROP_ID_partnerId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_partnerId));
                }
                setPartnerId(typedValue);
@@ -634,9 +634,9 @@ public class _ErpSalPricingRule extends DynamicOrmEntity{
             }
         
             case PROP_ID_giftMaterialId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_giftMaterialId));
                }
                setGiftMaterialId(typedValue);
@@ -644,9 +644,9 @@ public class _ErpSalPricingRule extends DynamicOrmEntity{
             }
         
             case PROP_ID_giftSkuId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_giftSkuId));
                }
                setGiftSkuId(typedValue);
@@ -674,9 +674,9 @@ public class _ErpSalPricingRule extends DynamicOrmEntity{
             }
         
             case PROP_ID_currencyId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_currencyId));
                }
                setCurrencyId(typedValue);
@@ -814,7 +814,7 @@ public class _ErpSalPricingRule extends DynamicOrmEntity{
         
             case PROP_ID_id:{
                onInitProp(propId);
-               this._id = (java.lang.Long)value;
+               this._id = (java.lang.String)value;
                orm_id(); // 如果是设置主键字段，则触发watcher
                break;
             }
@@ -849,14 +849,14 @@ public class _ErpSalPricingRule extends DynamicOrmEntity{
         
             case PROP_ID_materialId:{
                onInitProp(propId);
-               this._materialId = (java.lang.Long)value;
+               this._materialId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_materialCategoryId:{
                onInitProp(propId);
-               this._materialCategoryId = (java.lang.Long)value;
+               this._materialCategoryId = (java.lang.String)value;
                
                break;
             }
@@ -870,7 +870,7 @@ public class _ErpSalPricingRule extends DynamicOrmEntity{
         
             case PROP_ID_partnerId:{
                onInitProp(propId);
-               this._partnerId = (java.lang.Long)value;
+               this._partnerId = (java.lang.String)value;
                
                break;
             }
@@ -898,14 +898,14 @@ public class _ErpSalPricingRule extends DynamicOrmEntity{
         
             case PROP_ID_giftMaterialId:{
                onInitProp(propId);
-               this._giftMaterialId = (java.lang.Long)value;
+               this._giftMaterialId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_giftSkuId:{
                onInitProp(propId);
-               this._giftSkuId = (java.lang.Long)value;
+               this._giftSkuId = (java.lang.String)value;
                
                break;
             }
@@ -926,7 +926,7 @@ public class _ErpSalPricingRule extends DynamicOrmEntity{
         
             case PROP_ID_currencyId:{
                onInitProp(propId);
-               this._currencyId = (java.lang.Long)value;
+               this._currencyId = (java.lang.String)value;
                
                break;
             }
@@ -1024,7 +1024,7 @@ public class _ErpSalPricingRule extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final java.lang.Long getId(){
+    public final java.lang.String getId(){
          onPropGet(PROP_ID_id);
          return _id;
     }
@@ -1032,7 +1032,7 @@ public class _ErpSalPricingRule extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final void setId(java.lang.Long value){
+    public final void setId(java.lang.String value){
         if(onPropSet(PROP_ID_id,value)){
             this._id = value;
             internalClearRefs(PROP_ID_id);
@@ -1119,7 +1119,7 @@ public class _ErpSalPricingRule extends DynamicOrmEntity{
     /**
      * 物料: MATERIAL_ID
      */
-    public final java.lang.Long getMaterialId(){
+    public final java.lang.String getMaterialId(){
          onPropGet(PROP_ID_materialId);
          return _materialId;
     }
@@ -1127,7 +1127,7 @@ public class _ErpSalPricingRule extends DynamicOrmEntity{
     /**
      * 物料: MATERIAL_ID
      */
-    public final void setMaterialId(java.lang.Long value){
+    public final void setMaterialId(java.lang.String value){
         if(onPropSet(PROP_ID_materialId,value)){
             this._materialId = value;
             internalClearRefs(PROP_ID_materialId);
@@ -1138,7 +1138,7 @@ public class _ErpSalPricingRule extends DynamicOrmEntity{
     /**
      * 物料分类: MATERIAL_CATEGORY_ID
      */
-    public final java.lang.Long getMaterialCategoryId(){
+    public final java.lang.String getMaterialCategoryId(){
          onPropGet(PROP_ID_materialCategoryId);
          return _materialCategoryId;
     }
@@ -1146,7 +1146,7 @@ public class _ErpSalPricingRule extends DynamicOrmEntity{
     /**
      * 物料分类: MATERIAL_CATEGORY_ID
      */
-    public final void setMaterialCategoryId(java.lang.Long value){
+    public final void setMaterialCategoryId(java.lang.String value){
         if(onPropSet(PROP_ID_materialCategoryId,value)){
             this._materialCategoryId = value;
             internalClearRefs(PROP_ID_materialCategoryId);
@@ -1176,7 +1176,7 @@ public class _ErpSalPricingRule extends DynamicOrmEntity{
     /**
      * 指定客户: PARTNER_ID
      */
-    public final java.lang.Long getPartnerId(){
+    public final java.lang.String getPartnerId(){
          onPropGet(PROP_ID_partnerId);
          return _partnerId;
     }
@@ -1184,7 +1184,7 @@ public class _ErpSalPricingRule extends DynamicOrmEntity{
     /**
      * 指定客户: PARTNER_ID
      */
-    public final void setPartnerId(java.lang.Long value){
+    public final void setPartnerId(java.lang.String value){
         if(onPropSet(PROP_ID_partnerId,value)){
             this._partnerId = value;
             internalClearRefs(PROP_ID_partnerId);
@@ -1252,7 +1252,7 @@ public class _ErpSalPricingRule extends DynamicOrmEntity{
     /**
      * 赠品物料: GIFT_MATERIAL_ID
      */
-    public final java.lang.Long getGiftMaterialId(){
+    public final java.lang.String getGiftMaterialId(){
          onPropGet(PROP_ID_giftMaterialId);
          return _giftMaterialId;
     }
@@ -1260,7 +1260,7 @@ public class _ErpSalPricingRule extends DynamicOrmEntity{
     /**
      * 赠品物料: GIFT_MATERIAL_ID
      */
-    public final void setGiftMaterialId(java.lang.Long value){
+    public final void setGiftMaterialId(java.lang.String value){
         if(onPropSet(PROP_ID_giftMaterialId,value)){
             this._giftMaterialId = value;
             internalClearRefs(PROP_ID_giftMaterialId);
@@ -1271,7 +1271,7 @@ public class _ErpSalPricingRule extends DynamicOrmEntity{
     /**
      * 赠品SKU: GIFT_SKU_ID
      */
-    public final java.lang.Long getGiftSkuId(){
+    public final java.lang.String getGiftSkuId(){
          onPropGet(PROP_ID_giftSkuId);
          return _giftSkuId;
     }
@@ -1279,7 +1279,7 @@ public class _ErpSalPricingRule extends DynamicOrmEntity{
     /**
      * 赠品SKU: GIFT_SKU_ID
      */
-    public final void setGiftSkuId(java.lang.Long value){
+    public final void setGiftSkuId(java.lang.String value){
         if(onPropSet(PROP_ID_giftSkuId,value)){
             this._giftSkuId = value;
             internalClearRefs(PROP_ID_giftSkuId);
@@ -1328,7 +1328,7 @@ public class _ErpSalPricingRule extends DynamicOrmEntity{
     /**
      * 币种: CURRENCY_ID
      */
-    public final java.lang.Long getCurrencyId(){
+    public final java.lang.String getCurrencyId(){
          onPropGet(PROP_ID_currencyId);
          return _currencyId;
     }
@@ -1336,7 +1336,7 @@ public class _ErpSalPricingRule extends DynamicOrmEntity{
     /**
      * 币种: CURRENCY_ID
      */
-    public final void setCurrencyId(java.lang.Long value){
+    public final void setCurrencyId(java.lang.String value){
         if(onPropSet(PROP_ID_currencyId,value)){
             this._currencyId = value;
             internalClearRefs(PROP_ID_currencyId);

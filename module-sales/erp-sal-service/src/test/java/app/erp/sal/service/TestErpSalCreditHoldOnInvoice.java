@@ -42,12 +42,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpSalCreditHoldOnInvoice extends JunitAutoTestCase {
 
-    static final Long ORG_ID = 1701L;
-    static final Long CUSTOMER_ID = 2701L;
-    static final Long MATERIAL_ID = 4701L;
-    static final Long UOM_ID = 5701L;
-    static final Long CURRENCY_ID = 6701L;
-    static final Long ACCT_SCHEMA_ID = 7701L;
+    static final String ORG_ID = "1701";
+    static final String CUSTOMER_ID = "2701";
+    static final String MATERIAL_ID = "4701";
+    static final String UOM_ID = "5701";
+    static final String CURRENCY_ID = "6701";
+    static final String ACCT_SCHEMA_ID = "7701";
 
     @Inject
     IDaoProvider daoProvider;
@@ -126,11 +126,11 @@ public class TestErpSalCreditHoldOnInvoice extends JunitAutoTestCase {
 
     // ---------- rpc helpers ----------
 
-    private ApiResponse<?> submit(Long id) {
+    private ApiResponse<?> submit(String id) {
         return executeRpc(mutation, "ErpSalInvoice__submitForApproval", ApiRequest.build(Map.of("id", String.valueOf(id))));
     }
 
-    private ApiResponse<?> approve(Long id) {
+    private ApiResponse<?> approve(String id) {
         return executeRpc(mutation, "ErpSalInvoice__approve", ApiRequest.build(Map.of("id", String.valueOf(id))));
     }
 
@@ -141,7 +141,7 @@ public class TestErpSalCreditHoldOnInvoice extends JunitAutoTestCase {
 
     // ---------- seed helpers ----------
 
-    private void seedActiveCustomer(Long id, BigDecimal creditLimit) {
+    private void seedActiveCustomer(String id, BigDecimal creditLimit) {
         IEntityDao<ErpMdPartner> dao = daoProvider.daoFor(ErpMdPartner.class);
         ErpMdPartner partner = new ErpMdPartner();
         partner.setId(id);
@@ -153,13 +153,13 @@ public class TestErpSalCreditHoldOnInvoice extends JunitAutoTestCase {
         dao.saveEntity(partner);
     }
 
-    private void seedApprovedOrder(String code, Long customerId, BigDecimal totalAmountWithTax, BigDecimal exchangeRate) {
+    private void seedApprovedOrder(String code, String customerId, BigDecimal totalAmountWithTax, BigDecimal exchangeRate) {
         IEntityDao<ErpSalOrder> dao = daoProvider.daoFor(ErpSalOrder.class);
         ErpSalOrder order = new ErpSalOrder();
         order.setCode(code);
         order.setOrgId(ORG_ID);
         order.setCustomerId(customerId);
-        order.setWarehouseId(3601L);
+        order.setWarehouseId("3601");
         order.setBusinessDate(LocalDate.of(2026, 7, 1));
         order.setCurrencyId(CURRENCY_ID);
         order.setExchangeRate(exchangeRate);
@@ -172,7 +172,7 @@ public class TestErpSalCreditHoldOnInvoice extends JunitAutoTestCase {
         dao.saveEntity(order);
     }
 
-    private void seedArOpenItem(Long customerId, String sourceBillCode, BigDecimal openAmountSource,
+    private void seedArOpenItem(String customerId, String sourceBillCode, BigDecimal openAmountSource,
                                 BigDecimal exchangeRate) {
         IEntityDao<ErpFinArApItem> dao = daoProvider.daoFor(ErpFinArApItem.class);
         ErpFinArApItem item = dao.newEntity();

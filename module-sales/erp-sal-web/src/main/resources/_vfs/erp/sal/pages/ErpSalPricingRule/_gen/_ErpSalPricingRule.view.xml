@@ -19,7 +19,7 @@
             <cols>
 
                 <!--ID-->
-                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="id" mandatory="true" sortable="true"/>
 
                 <!--规则名称-->
                 <col id="ruleName" mandatory="true" sortable="true"/>
@@ -34,16 +34,16 @@
                 <col id="targetType" mandatory="true" sortable="true"/>
 
                 <!--物料-->
-                <col id="materialId" ui:number="true" sortable="true"/>
+                <col id="materialId" sortable="true"/>
 
                 <!--物料分类-->
-                <col id="materialCategoryId" ui:number="true" sortable="true"/>
+                <col id="materialCategoryId" sortable="true"/>
 
                 <!--客户组-->
                 <col id="customerGroupCode" sortable="true"/>
 
                 <!--指定客户-->
-                <col id="partnerId" ui:number="true" sortable="true"/>
+                <col id="partnerId" sortable="true"/>
 
                 <!--满减门槛-->
                 <col id="minOrderAmount" ui:number="true" sortable="true"/>
@@ -55,10 +55,10 @@
                 <col id="discountAmount" ui:number="true" sortable="true"/>
 
                 <!--赠品物料-->
-                <col id="giftMaterialId" ui:number="true" sortable="true"/>
+                <col id="giftMaterialId" sortable="true"/>
 
                 <!--赠品SKU-->
-                <col id="giftSkuId" ui:number="true" sortable="true"/>
+                <col id="giftSkuId" sortable="true"/>
 
                 <!--赠品数量-->
                 <col id="giftQuantity" ui:number="true" sortable="true"/>
@@ -67,7 +67,7 @@
                 <col id="priceOverride" ui:number="true" sortable="true"/>
 
                 <!--币种-->
-                <col id="currencyId" ui:number="true" sortable="true"/>
+                <col id="currencyId" sortable="true"/>
 
                 <!--优先级-->
                 <col id="priority" ui:number="true" sortable="true"/>

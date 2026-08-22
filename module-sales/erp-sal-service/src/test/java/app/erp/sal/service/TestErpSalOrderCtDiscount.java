@@ -46,12 +46,12 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpSalOrderCtDiscount extends JunitAutoTestCase {
 
-    static final Long ORG_ID = 1301L;
-    static final Long CUSTOMER_ID = 2301L;
-    static final Long WAREHOUSE_ID = 3301L;
-    static final Long MATERIAL_ID = 4301L;
-    static final Long UOM_ID = 5301L;
-    static final Long CURRENCY_ID = 6301L;
+    static final String ORG_ID = "1301";
+    static final String CUSTOMER_ID = "2301";
+    static final String WAREHOUSE_ID = "3301";
+    static final String MATERIAL_ID = "4301";
+    static final String UOM_ID = "5301";
+    static final String CURRENCY_ID = "6301";
 
     @Inject
     IDaoProvider daoProvider;
@@ -71,7 +71,7 @@ public class TestErpSalOrderCtDiscount extends JunitAutoTestCase {
             seedActiveCustomer(CUSTOMER_ID);
             seedUoM(UOM_ID);
             seedMaterial(MATERIAL_ID);
-            Long lineId = seedContractLine("CT-SAL-HIT", "100");
+            String lineId = seedContractLine("CT-SAL-HIT", "100");
             seedBand(lineId, "101", "500", "5", null);
             seedBand(lineId, "501", null, "12", null);
 
@@ -80,7 +80,7 @@ public class TestErpSalOrderCtDiscount extends JunitAutoTestCase {
             return null;
         });
 
-        Long orderId = orderIdByCode("SO-CT-HIT-001");
+        String orderId = orderIdByCode("SO-CT-HIT-001");
         assertEquals(0, submit(orderId).getStatus(), "提交应成功");
         assertEquals(0, approve(orderId).getStatus(), "审核应成功");
 
@@ -103,7 +103,7 @@ public class TestErpSalOrderCtDiscount extends JunitAutoTestCase {
             seedActiveCustomer(CUSTOMER_ID);
             seedUoM(UOM_ID);
             seedMaterial(MATERIAL_ID);
-            Long lineId = seedContractLine("CT-SAL-OVR", "100");
+            String lineId = seedContractLine("CT-SAL-OVR", "100");
             seedBand(lineId, "501", null, "12", "88");
 
             ErpSalOrder order = newOrder("SO-CT-OVR-001");
@@ -111,7 +111,7 @@ public class TestErpSalOrderCtDiscount extends JunitAutoTestCase {
             return null;
         });
 
-        Long orderId = orderIdByCode("SO-CT-OVR-001");
+        String orderId = orderIdByCode("SO-CT-OVR-001");
         assertEquals(0, submit(orderId).getStatus());
         assertEquals(0, approve(orderId).getStatus());
 
@@ -128,7 +128,7 @@ public class TestErpSalOrderCtDiscount extends JunitAutoTestCase {
             seedActiveCustomer(CUSTOMER_ID);
             seedUoM(UOM_ID);
             seedMaterial(MATERIAL_ID);
-            Long lineId = seedContractLine("CT-SAL-MISS", "100");
+            String lineId = seedContractLine("CT-SAL-MISS", "100");
             seedBand(lineId, "101", "500", "5", null);
 
             ErpSalOrder order = newOrder("SO-CT-MISS-001");
@@ -137,7 +137,7 @@ public class TestErpSalOrderCtDiscount extends JunitAutoTestCase {
             return null;
         });
 
-        Long orderId = orderIdByCode("SO-CT-MISS-001");
+        String orderId = orderIdByCode("SO-CT-MISS-001");
         assertEquals(0, submit(orderId).getStatus());
         assertEquals(0, approve(orderId).getStatus());
 
@@ -153,7 +153,7 @@ public class TestErpSalOrderCtDiscount extends JunitAutoTestCase {
             seedActiveCustomer(CUSTOMER_ID);
             seedUoM(UOM_ID);
             seedMaterial(MATERIAL_ID);
-            Long lineId = seedContractLine("CT-SAL-CROSS", "100");
+            String lineId = seedContractLine("CT-SAL-CROSS", "100");
             seedBand(lineId, "101", "500", "5", null);
 
             ErpSalOrder order = newOrder("SO-CT-CROSS-001");
@@ -163,7 +163,7 @@ public class TestErpSalOrderCtDiscount extends JunitAutoTestCase {
             return null;
         });
 
-        Long orderId = orderIdByCode("SO-CT-CROSS-001");
+        String orderId = orderIdByCode("SO-CT-CROSS-001");
         assertEquals(0, submit(orderId).getStatus());
         assertEquals(0, approve(orderId).getStatus());
 
@@ -180,7 +180,7 @@ public class TestErpSalOrderCtDiscount extends JunitAutoTestCase {
             seedActiveCustomer(CUSTOMER_ID);
             seedUoM(UOM_ID);
             seedMaterial(MATERIAL_ID);
-            Long lineId = seedContractLine("CT-SAL-OFF", "100");
+            String lineId = seedContractLine("CT-SAL-OFF", "100");
             seedBand(lineId, "101", "500", "5", null);
 
             ErpSalOrder order = newOrder("SO-CT-OFF-001");
@@ -188,7 +188,7 @@ public class TestErpSalOrderCtDiscount extends JunitAutoTestCase {
             return null;
         });
 
-        Long orderId = orderIdByCode("SO-CT-OFF-001");
+        String orderId = orderIdByCode("SO-CT-OFF-001");
         assertEquals(0, submit(orderId).getStatus());
         assertEquals(0, approve(orderId).getStatus());
 
@@ -204,15 +204,15 @@ public class TestErpSalOrderCtDiscount extends JunitAutoTestCase {
             seedActiveCustomer(CUSTOMER_ID);
             seedUoM(UOM_ID);
             seedMaterial(MATERIAL_ID);
-            Long lineId = seedContractLine("CT-SAL-GQL", "100");
+            String lineId = seedContractLine("CT-SAL-GQL", "100");
             seedBand(lineId, "101", "500", "5", null);
 
             ErpSalOrder order = newOrder("SO-CT-GQL-001");
             ErpSalOrderLine plain = newOrderLine(order.getId(), null, "10", "100");
             return new Object[]{plain.getId(), lineId};
         });
-        Long orderLineId = (Long) refs[0];
-        Long contractLineId = (Long) refs[1];
+        String orderLineId = (String) refs[0];
+        String contractLineId = (String) refs[1];
 
         // 行级 GraphQL 保存（引用合同行）——保存时解析折后价写行金额（fill-when-absent）
         Map<String, Object> data = new java.util.LinkedHashMap<>();
@@ -239,12 +239,12 @@ public class TestErpSalOrderCtDiscount extends JunitAutoTestCase {
 
     // ---------- helpers ----------
 
-    private ApiResponse<?> submit(Long orderId) {
+    private ApiResponse<?> submit(String orderId) {
         return executeRpc(mutation, "ErpSalOrder__submitForApproval",
                 ApiRequest.build(Map.of("id", String.valueOf(orderId))));
     }
 
-    private ApiResponse<?> approve(Long orderId) {
+    private ApiResponse<?> approve(String orderId) {
         return executeRpc(mutation, "ErpSalOrder__approve",
                 ApiRequest.build(Map.of("id", String.valueOf(orderId))));
     }
@@ -273,7 +273,7 @@ public class TestErpSalOrderCtDiscount extends JunitAutoTestCase {
         return order;
     }
 
-    private ErpSalOrderLine newOrderLine(Long orderId, Long ctContractLineId, String qty, String price) {
+    private ErpSalOrderLine newOrderLine(String orderId, String ctContractLineId, String qty, String price) {
         IEntityDao<ErpSalOrderLine> dao = daoProvider.daoFor(ErpSalOrderLine.class);
         ErpSalOrderLine line = new ErpSalOrderLine();
         line.setOrderId(orderId);
@@ -288,7 +288,7 @@ public class TestErpSalOrderCtDiscount extends JunitAutoTestCase {
         return line;
     }
 
-    private Long seedContractLine(String contractCode, String unitPrice) {
+    private String seedContractLine(String contractCode, String unitPrice) {
         ErpCtContract contract = new ErpCtContract();
         contract.setCode(contractCode);
         contract.setContractName("量折扣测试合同-" + contractCode);
@@ -313,7 +313,7 @@ public class TestErpSalOrderCtDiscount extends JunitAutoTestCase {
         return contractLine.getId();
     }
 
-    private void seedBand(Long contractLineId, String from, String to, String percent, String overridePrice) {
+    private void seedBand(String contractLineId, String from, String to, String percent, String overridePrice) {
         ErpCtVolumeDiscount band = new ErpCtVolumeDiscount();
         band.setContractLineId(contractLineId);
         band.setFromQty(new BigDecimal(from));
@@ -327,7 +327,7 @@ public class TestErpSalOrderCtDiscount extends JunitAutoTestCase {
         daoProvider.daoFor(ErpCtVolumeDiscount.class).saveEntity(band);
     }
 
-    private void seedActiveCustomer(Long id) {
+    private void seedActiveCustomer(String id) {
         ErpMdPartner partner = new ErpMdPartner();
         partner.setId(id);
         partner.setCode("CUS-" + id);
@@ -337,7 +337,7 @@ public class TestErpSalOrderCtDiscount extends JunitAutoTestCase {
         daoProvider.daoFor(ErpMdPartner.class).saveEntity(partner);
     }
 
-    private void seedMaterial(Long id) {
+    private void seedMaterial(String id) {
         ErpMdMaterial m = new ErpMdMaterial();
         m.setId(id);
         m.setCode("MAT-" + id);
@@ -348,7 +348,7 @@ public class TestErpSalOrderCtDiscount extends JunitAutoTestCase {
         daoProvider.daoFor(ErpMdMaterial.class).saveEntity(m);
     }
 
-    private void seedUoM(Long id) {
+    private void seedUoM(String id) {
         ErpMdUoM u = new ErpMdUoM();
         u.setId(id);
         u.setCode("PCS-CT");
@@ -356,7 +356,7 @@ public class TestErpSalOrderCtDiscount extends JunitAutoTestCase {
         daoProvider.daoFor(ErpMdUoM.class).saveEntity(u);
     }
 
-    private Long orderIdByCode(String code) {
+    private String orderIdByCode(String code) {
         return ormTemplate.runInSession(session -> {
             QueryBean q = new QueryBean();
             q.addFilter(eq("code", code));
@@ -364,7 +364,7 @@ public class TestErpSalOrderCtDiscount extends JunitAutoTestCase {
         });
     }
 
-    private ErpSalOrderLine firstLine(Long orderId) {
+    private ErpSalOrderLine firstLine(String orderId) {
         return ormTemplate.runInSession(session -> {
             QueryBean q = new QueryBean();
             q.addFilter(eq("orderId", orderId));

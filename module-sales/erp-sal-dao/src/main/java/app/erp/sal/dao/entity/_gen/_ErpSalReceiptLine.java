@@ -120,13 +120,13 @@ public class _ErpSalReceiptLine extends DynamicOrmEntity{
 
     
     /* ID: ID */
-    private java.lang.Long _id;
+    private java.lang.String _id;
     
     /* 收款单ID: RECEIPT_ID */
-    private java.lang.Long _receiptId;
+    private java.lang.String _receiptId;
     
     /* 发票ID: INVOICE_ID */
-    private java.lang.Long _invoiceId;
+    private java.lang.String _invoiceId;
     
     /* 核销金额: AMOUNT */
     private java.math.BigDecimal _amount;
@@ -271,9 +271,9 @@ public class _ErpSalReceiptLine extends DynamicOrmEntity{
         switch(propId){
         
             case PROP_ID_id:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_id));
                }
                setId(typedValue);
@@ -281,9 +281,9 @@ public class _ErpSalReceiptLine extends DynamicOrmEntity{
             }
         
             case PROP_ID_receiptId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_receiptId));
                }
                setReceiptId(typedValue);
@@ -291,9 +291,9 @@ public class _ErpSalReceiptLine extends DynamicOrmEntity{
             }
         
             case PROP_ID_invoiceId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_invoiceId));
                }
                setInvoiceId(typedValue);
@@ -391,21 +391,21 @@ public class _ErpSalReceiptLine extends DynamicOrmEntity{
         
             case PROP_ID_id:{
                onInitProp(propId);
-               this._id = (java.lang.Long)value;
+               this._id = (java.lang.String)value;
                orm_id(); // 如果是设置主键字段，则触发watcher
                break;
             }
         
             case PROP_ID_receiptId:{
                onInitProp(propId);
-               this._receiptId = (java.lang.Long)value;
+               this._receiptId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_invoiceId:{
                onInitProp(propId);
-               this._invoiceId = (java.lang.Long)value;
+               this._invoiceId = (java.lang.String)value;
                
                break;
             }
@@ -475,7 +475,7 @@ public class _ErpSalReceiptLine extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final java.lang.Long getId(){
+    public final java.lang.String getId(){
          onPropGet(PROP_ID_id);
          return _id;
     }
@@ -483,7 +483,7 @@ public class _ErpSalReceiptLine extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final void setId(java.lang.Long value){
+    public final void setId(java.lang.String value){
         if(onPropSet(PROP_ID_id,value)){
             this._id = value;
             internalClearRefs(PROP_ID_id);
@@ -494,7 +494,7 @@ public class _ErpSalReceiptLine extends DynamicOrmEntity{
     /**
      * 收款单ID: RECEIPT_ID
      */
-    public final java.lang.Long getReceiptId(){
+    public final java.lang.String getReceiptId(){
          onPropGet(PROP_ID_receiptId);
          return _receiptId;
     }
@@ -502,7 +502,7 @@ public class _ErpSalReceiptLine extends DynamicOrmEntity{
     /**
      * 收款单ID: RECEIPT_ID
      */
-    public final void setReceiptId(java.lang.Long value){
+    public final void setReceiptId(java.lang.String value){
         if(onPropSet(PROP_ID_receiptId,value)){
             this._receiptId = value;
             internalClearRefs(PROP_ID_receiptId);
@@ -513,7 +513,7 @@ public class _ErpSalReceiptLine extends DynamicOrmEntity{
     /**
      * 发票ID: INVOICE_ID
      */
-    public final java.lang.Long getInvoiceId(){
+    public final java.lang.String getInvoiceId(){
          onPropGet(PROP_ID_invoiceId);
          return _invoiceId;
     }
@@ -521,7 +521,7 @@ public class _ErpSalReceiptLine extends DynamicOrmEntity{
     /**
      * 发票ID: INVOICE_ID
      */
-    public final void setInvoiceId(java.lang.Long value){
+    public final void setInvoiceId(java.lang.String value){
         if(onPropSet(PROP_ID_invoiceId,value)){
             this._invoiceId = value;
             internalClearRefs(PROP_ID_invoiceId);

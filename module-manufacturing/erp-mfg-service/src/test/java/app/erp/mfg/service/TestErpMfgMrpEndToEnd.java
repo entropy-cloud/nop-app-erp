@@ -293,17 +293,15 @@ public class TestErpMfgMrpEndToEnd extends JunitAutoTestCase {
     }
 
     private void seedSalesOrder(String code, String materialId, BigDecimal qty, LocalDate deliveryDate) {
-        Long orderId = 8300L + (long) Math.abs(code.hashCode() % 600);
+        long orderId = 8300L + (long) Math.abs(code.hashCode() % 600);
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpSalOrder> odao = daoProvider.daoFor(ErpSalOrder.class);
             ErpSalOrder o = new ErpSalOrder();
-            o.orm_propValueByName("id", orderId);
+            o.orm_propValueByName("id", String.valueOf(orderId));
             o.setCode(code);
-            // A3 桥接（bridge-test-126/127 sal 半边，退役 owner M2.6）：sal ErpSalOrder/OrderLine id 列仍 Long（sal 位次 16 未迁移），
-            // md/mfg String id → ConvertHelper.toLong 种子桥
-            o.setOrgId(io.nop.api.core.convert.ConvertHelper.toLong(ORG_ID));
-            o.setCustomerId(io.nop.api.core.convert.ConvertHelper.toLong(CUSTOMER_ID));
-            o.setCurrencyId(io.nop.api.core.convert.ConvertHelper.toLong(CURRENCY_ID));
+            o.setOrgId(ORG_ID);
+            o.setCustomerId(CUSTOMER_ID);
+            o.setCurrencyId(CURRENCY_ID);
             o.setBusinessDate(LocalDate.of(2026, 7, 1));
             o.setDeliveryDate(deliveryDate);
             o.setDocStatus("ACTIVE");
@@ -312,11 +310,11 @@ public class TestErpMfgMrpEndToEnd extends JunitAutoTestCase {
 
             IEntityDao<ErpSalOrderLine> ldao = daoProvider.daoFor(ErpSalOrderLine.class);
             ErpSalOrderLine line = new ErpSalOrderLine();
-            line.orm_propValueByName("id", orderId + 50000);
-            line.setOrderId(orderId);
+            line.orm_propValueByName("id", String.valueOf(orderId + 50000));
+            line.setOrderId(String.valueOf(orderId));
             line.setLineNo(10);
-            line.setMaterialId(io.nop.api.core.convert.ConvertHelper.toLong(materialId));
-            line.setUoMId(io.nop.api.core.convert.ConvertHelper.toLong(UOM_ID));
+            line.setMaterialId(materialId);
+            line.setUoMId(UOM_ID);
             line.setQuantity(qty);
             line.setUnitPrice(bd("1"));
             line.setAmount(qty);

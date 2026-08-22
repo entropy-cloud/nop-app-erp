@@ -175,22 +175,22 @@ public class _ErpSalInvoiceLine extends DynamicOrmEntity{
 
     
     /* ID: ID */
-    private java.lang.Long _id;
+    private java.lang.String _id;
     
     /* 发票ID: INVOICE_ID */
-    private java.lang.Long _invoiceId;
+    private java.lang.String _invoiceId;
     
     /* 出库行ID: DELIVERY_LINE_ID */
-    private java.lang.Long _deliveryLineId;
+    private java.lang.String _deliveryLineId;
     
     /* 行号: LINE_NO */
     private java.lang.Integer _lineNo;
     
     /* 物料: MATERIAL_ID */
-    private java.lang.Long _materialId;
+    private java.lang.String _materialId;
     
     /* 计量单位: UOM_ID */
-    private java.lang.Long _uoMId;
+    private java.lang.String _uoMId;
     
     /* 数量: QUANTITY */
     private java.math.BigDecimal _quantity;
@@ -368,9 +368,9 @@ public class _ErpSalInvoiceLine extends DynamicOrmEntity{
         switch(propId){
         
             case PROP_ID_id:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_id));
                }
                setId(typedValue);
@@ -378,9 +378,9 @@ public class _ErpSalInvoiceLine extends DynamicOrmEntity{
             }
         
             case PROP_ID_invoiceId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_invoiceId));
                }
                setInvoiceId(typedValue);
@@ -388,9 +388,9 @@ public class _ErpSalInvoiceLine extends DynamicOrmEntity{
             }
         
             case PROP_ID_deliveryLineId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_deliveryLineId));
                }
                setDeliveryLineId(typedValue);
@@ -408,9 +408,9 @@ public class _ErpSalInvoiceLine extends DynamicOrmEntity{
             }
         
             case PROP_ID_materialId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_materialId));
                }
                setMaterialId(typedValue);
@@ -418,9 +418,9 @@ public class _ErpSalInvoiceLine extends DynamicOrmEntity{
             }
         
             case PROP_ID_uoMId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_uoMId));
                }
                setUoMId(typedValue);
@@ -558,21 +558,21 @@ public class _ErpSalInvoiceLine extends DynamicOrmEntity{
         
             case PROP_ID_id:{
                onInitProp(propId);
-               this._id = (java.lang.Long)value;
+               this._id = (java.lang.String)value;
                orm_id(); // 如果是设置主键字段，则触发watcher
                break;
             }
         
             case PROP_ID_invoiceId:{
                onInitProp(propId);
-               this._invoiceId = (java.lang.Long)value;
+               this._invoiceId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_deliveryLineId:{
                onInitProp(propId);
-               this._deliveryLineId = (java.lang.Long)value;
+               this._deliveryLineId = (java.lang.String)value;
                
                break;
             }
@@ -586,14 +586,14 @@ public class _ErpSalInvoiceLine extends DynamicOrmEntity{
         
             case PROP_ID_materialId:{
                onInitProp(propId);
-               this._materialId = (java.lang.Long)value;
+               this._materialId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_uoMId:{
                onInitProp(propId);
-               this._uoMId = (java.lang.Long)value;
+               this._uoMId = (java.lang.String)value;
                
                break;
             }
@@ -691,7 +691,7 @@ public class _ErpSalInvoiceLine extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final java.lang.Long getId(){
+    public final java.lang.String getId(){
          onPropGet(PROP_ID_id);
          return _id;
     }
@@ -699,7 +699,7 @@ public class _ErpSalInvoiceLine extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final void setId(java.lang.Long value){
+    public final void setId(java.lang.String value){
         if(onPropSet(PROP_ID_id,value)){
             this._id = value;
             internalClearRefs(PROP_ID_id);
@@ -710,7 +710,7 @@ public class _ErpSalInvoiceLine extends DynamicOrmEntity{
     /**
      * 发票ID: INVOICE_ID
      */
-    public final java.lang.Long getInvoiceId(){
+    public final java.lang.String getInvoiceId(){
          onPropGet(PROP_ID_invoiceId);
          return _invoiceId;
     }
@@ -718,7 +718,7 @@ public class _ErpSalInvoiceLine extends DynamicOrmEntity{
     /**
      * 发票ID: INVOICE_ID
      */
-    public final void setInvoiceId(java.lang.Long value){
+    public final void setInvoiceId(java.lang.String value){
         if(onPropSet(PROP_ID_invoiceId,value)){
             this._invoiceId = value;
             internalClearRefs(PROP_ID_invoiceId);
@@ -729,7 +729,7 @@ public class _ErpSalInvoiceLine extends DynamicOrmEntity{
     /**
      * 出库行ID: DELIVERY_LINE_ID
      */
-    public final java.lang.Long getDeliveryLineId(){
+    public final java.lang.String getDeliveryLineId(){
          onPropGet(PROP_ID_deliveryLineId);
          return _deliveryLineId;
     }
@@ -737,7 +737,7 @@ public class _ErpSalInvoiceLine extends DynamicOrmEntity{
     /**
      * 出库行ID: DELIVERY_LINE_ID
      */
-    public final void setDeliveryLineId(java.lang.Long value){
+    public final void setDeliveryLineId(java.lang.String value){
         if(onPropSet(PROP_ID_deliveryLineId,value)){
             this._deliveryLineId = value;
             internalClearRefs(PROP_ID_deliveryLineId);
@@ -767,7 +767,7 @@ public class _ErpSalInvoiceLine extends DynamicOrmEntity{
     /**
      * 物料: MATERIAL_ID
      */
-    public final java.lang.Long getMaterialId(){
+    public final java.lang.String getMaterialId(){
          onPropGet(PROP_ID_materialId);
          return _materialId;
     }
@@ -775,7 +775,7 @@ public class _ErpSalInvoiceLine extends DynamicOrmEntity{
     /**
      * 物料: MATERIAL_ID
      */
-    public final void setMaterialId(java.lang.Long value){
+    public final void setMaterialId(java.lang.String value){
         if(onPropSet(PROP_ID_materialId,value)){
             this._materialId = value;
             internalClearRefs(PROP_ID_materialId);
@@ -786,7 +786,7 @@ public class _ErpSalInvoiceLine extends DynamicOrmEntity{
     /**
      * 计量单位: UOM_ID
      */
-    public final java.lang.Long getUoMId(){
+    public final java.lang.String getUoMId(){
          onPropGet(PROP_ID_uoMId);
          return _uoMId;
     }
@@ -794,7 +794,7 @@ public class _ErpSalInvoiceLine extends DynamicOrmEntity{
     /**
      * 计量单位: UOM_ID
      */
-    public final void setUoMId(java.lang.Long value){
+    public final void setUoMId(java.lang.String value){
         if(onPropSet(PROP_ID_uoMId,value)){
             this._uoMId = value;
             internalClearRefs(PROP_ID_uoMId);

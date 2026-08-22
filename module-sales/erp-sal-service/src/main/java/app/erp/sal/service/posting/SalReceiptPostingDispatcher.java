@@ -39,7 +39,7 @@ public class SalReceiptPostingDispatcher {
     public boolean tryPost(ErpSalReceipt receipt) {
         PostingEvent event = buildEvent(receipt);
         try {
-            Long voucherId = executor.postEvent(event);
+            String voucherId = executor.postEvent(event);
             return voucherId != null;
         } catch (Exception e) {
             if (e instanceof NopException) {
@@ -86,7 +86,7 @@ public class SalReceiptPostingDispatcher {
         return event;
     }
 
-    private Long resolveAcctSchemaId(Long orgId) {
+    private String resolveAcctSchemaId(String orgId) {
         return AcctSchemaResolver.resolvePrimarySchemaId(daoProvider, orgId);
     }
 

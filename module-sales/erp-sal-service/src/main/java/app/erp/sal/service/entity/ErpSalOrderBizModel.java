@@ -106,8 +106,8 @@ public class ErpSalOrderBizModel extends CrudBizModel<ErpSalOrder> implements IE
 
     @Override
     @BizMutation
-    public ErpSalOrder cancel(@Name("orderId") Long orderId, IServiceContext context) {
-        return cancelProcessor.cancel(String.valueOf(orderId), context);
+    public ErpSalOrder cancel(@Name("orderId") String orderId, IServiceContext context) {
+        return cancelProcessor.cancel(orderId, context);
     }
 
     /**
@@ -163,7 +163,7 @@ public class ErpSalOrderBizModel extends CrudBizModel<ErpSalOrder> implements IE
         return new ArrayList<>(order.getLines());
     }
 
-    protected String resolveCustomerGroup(Long partnerId, IServiceContext context) {
+    protected String resolveCustomerGroup(String partnerId, IServiceContext context) {
         if (partnerId == null) {
             return null;
         }
@@ -273,7 +273,7 @@ public class ErpSalOrderBizModel extends CrudBizModel<ErpSalOrder> implements IE
     protected void validatePromotionPrices(ErpSalOrder order, List<ErpSalOrderLine> lines,
                                            IServiceContext context) {
         for (ErpSalOrderLine line : lines) {
-            Long skuId = line.getSkuId();
+            String skuId = line.getSkuId();
             if (skuId == null) {
                 continue;
             }
@@ -287,7 +287,7 @@ public class ErpSalOrderBizModel extends CrudBizModel<ErpSalOrder> implements IE
             }
             // finalPrice = 促销后行净单价（amount/quantity，对齐「最终售价」字面）
             BigDecimal finalPrice = line.getAmount().divide(qty, 4, RoundingMode.HALF_UP);
-            Long materialCategoryId = resolveMaterialCategoryId(line);
+            String materialCategoryId = resolveMaterialCategoryId(line);
             PriceValidationResult vr = mdMaterialSkuBiz.validatePrice(
                     skuId, finalPrice, materialCategoryId, context);
             if (vr.isWarning()) {
@@ -301,7 +301,7 @@ public class ErpSalOrderBizModel extends CrudBizModel<ErpSalOrder> implements IE
      * 经 ORM 关系 {@code ErpSalOrderLine.material} 解析物料分类 ID，
      * 供 {@code validatePrice} 按 MaterialCategory.priceValidationLevel 分派级别。
      */
-    protected Long resolveMaterialCategoryId(ErpSalOrderLine line) {
+    protected String resolveMaterialCategoryId(ErpSalOrderLine line) {
         ErpMdMaterial material = line.getMaterial();
         return material == null ? null : material.getCategoryId();
     }
@@ -328,7 +328,7 @@ public class ErpSalOrderBizModel extends CrudBizModel<ErpSalOrder> implements IE
 
     @Override
     @BizAction
-    public boolean existsActiveByQuotation(@Name("quotationId") Long quotationId, IServiceContext context) {
+    public boolean existsActiveByQuotation(@Name("quotationId") String quotationId, IServiceContext context) {
         if (quotationId == null) {
             return false;
         }
@@ -345,13 +345,13 @@ public class ErpSalOrderBizModel extends CrudBizModel<ErpSalOrder> implements IE
 
     @Override
     @BizAction
-    public void updateDeliveryStatus(@Name("orderId") Long orderId,
+    public void updateDeliveryStatus(@Name("orderId") String orderId,
                                      @Name("deliveryStatus") String deliveryStatus,
                                      IServiceContext context) {
         if (orderId == null) {
             return;
         }
-        ErpSalOrder order = get(String.valueOf(orderId), true, context);
+        ErpSalOrder order = get(orderId, true, context);
         if (order == null) {
             return;
         }

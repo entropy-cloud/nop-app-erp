@@ -58,13 +58,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpSalDeliveryStockMove extends JunitAutoTestCase {
 
-    static final Long ORG_ID = 1201L;
-    static final Long CUSTOMER_ID = 2201L;
-    static final Long WAREHOUSE_ID = 3201L;
-    static final Long MATERIAL_ID = 4201L;
-    static final Long UOM_ID = 5201L;
-    static final Long CURRENCY_ID = 6201L;
-    static final Long ACCT_SCHEMA_ID = 7201L;
+    static final String ORG_ID = "1201";
+    static final String CUSTOMER_ID = "2201";
+    static final String WAREHOUSE_ID = "3201";
+    static final String MATERIAL_ID = "4201";
+    static final String UOM_ID = "5201";
+    static final String CURRENCY_ID = "6201";
+    static final String ACCT_SCHEMA_ID = "7201";
     static final String VOUCHER_STATUS_POSTED = "POSTED";
 
     @Inject
@@ -77,12 +77,12 @@ public class TestErpSalDeliveryStockMove extends JunitAutoTestCase {
     @Test
     public void testApproveGeneratesOutgoingMoveAndPosting() {
         seedPeriodAndSubjects();
-        Long orderLineId = nextId();
-        Long deliveryId = nextId();
-        Long deliveryLineId = nextId();
+        String orderLineId = nextId();
+        String deliveryId = nextId();
+        String deliveryLineId = nextId();
         ormTemplate.runInSession(session -> {
             seedActiveCustomer();
-            Long orderId = newOrder("SO-POST-001");
+            String orderId = newOrder("SO-POST-001");
             newOrderLine(orderId, orderLineId, 1, new BigDecimal("10"));
             newDelivery("SD-POST-001", deliveryId, orderId);
             newDeliveryLine(deliveryLineId, deliveryId, orderLineId, new BigDecimal("10"));
@@ -121,12 +121,12 @@ public class TestErpSalDeliveryStockMove extends JunitAutoTestCase {
     @Test
     public void testApproveInsufficientAvailableRollsBack() {
         seedPeriodAndSubjects();
-        Long orderLineId = nextId();
-        Long deliveryId = nextId();
-        Long deliveryLineId = nextId();
+        String orderLineId = nextId();
+        String deliveryId = nextId();
+        String deliveryLineId = nextId();
         ormTemplate.runInSession(session -> {
             seedActiveCustomer();
-            Long orderId = newOrder("SO-INSUF-001");
+            String orderId = newOrder("SO-INSUF-001");
             newOrderLine(orderId, orderLineId, 1, new BigDecimal("10"));
             newDelivery("SD-INSUF-001", deliveryId, orderId);
             newDeliveryLine(deliveryLineId, deliveryId, orderLineId, new BigDecimal("10"));
@@ -157,12 +157,12 @@ public class TestErpSalDeliveryStockMove extends JunitAutoTestCase {
     @Test
     public void testApproveIdempotent() {
         seedPeriodAndSubjects();
-        Long orderLineId = nextId();
-        Long deliveryId = nextId();
-        Long deliveryLineId = nextId();
+        String orderLineId = nextId();
+        String deliveryId = nextId();
+        String deliveryLineId = nextId();
         ormTemplate.runInSession(session -> {
             seedActiveCustomer();
-            Long orderId = newOrder("SO-IDEM-001");
+            String orderId = newOrder("SO-IDEM-001");
             newOrderLine(orderId, orderLineId, 1, new BigDecimal("10"));
             newDelivery("SD-IDEM-001", deliveryId, orderId);
             newDeliveryLine(deliveryLineId, deliveryId, orderLineId, new BigDecimal("10"));
@@ -179,12 +179,12 @@ public class TestErpSalDeliveryStockMove extends JunitAutoTestCase {
     @Test
     public void testNegativeStockConfigAllowsShortage() {
         seedPeriodAndSubjects();
-        Long orderLineId = nextId();
-        Long deliveryId = nextId();
-        Long deliveryLineId = nextId();
+        String orderLineId = nextId();
+        String deliveryId = nextId();
+        String deliveryLineId = nextId();
         ormTemplate.runInSession(session -> {
             seedActiveCustomer();
-            Long orderId = newOrder("SO-NEG-001");
+            String orderId = newOrder("SO-NEG-001");
             newOrderLine(orderId, orderLineId, 1, new BigDecimal("5"));
             newDelivery("SD-NEG-001", deliveryId, orderId);
             newDeliveryLine(deliveryLineId, deliveryId, orderLineId, new BigDecimal("5"));
@@ -212,13 +212,13 @@ public class TestErpSalDeliveryStockMove extends JunitAutoTestCase {
     @Test
     public void testDeliveryStatusRollupToOrder() {
         seedPeriodAndSubjects();
-        Long orderLine1 = nextId();
-        Long orderLine2 = nextId();
-        Long delivery1 = nextId();
-        Long deliveryLine1 = nextId();
+        String orderLine1 = nextId();
+        String orderLine2 = nextId();
+        String delivery1 = nextId();
+        String deliveryLine1 = nextId();
         ormTemplate.runInSession(session -> {
             seedActiveCustomer();
-            Long orderId = newOrder("SO-ROLL-001");
+            String orderId = newOrder("SO-ROLL-001");
             newOrderLine(orderId, orderLine1, 1, new BigDecimal("10"));
             newOrderLine(orderId, orderLine2, 2, new BigDecimal("10"));
             newDelivery("SD-ROLL-001", delivery1, orderId);
@@ -233,8 +233,8 @@ public class TestErpSalDeliveryStockMove extends JunitAutoTestCase {
                 "订单仅 1/2 行发清 → PARTIAL");
 
         // 补发第 2 行 10 → 订单应 DELIVERED
-        Long delivery2 = nextId();
-        Long deliveryLine2 = nextId();
+        String delivery2 = nextId();
+        String deliveryLine2 = nextId();
         ormTemplate.runInSession(session -> {
             newDelivery("SD-ROLL-002", delivery2, order.getId());
             newDeliveryLine(deliveryLine2, delivery2, orderLine2, new BigDecimal("10"));
@@ -249,12 +249,12 @@ public class TestErpSalDeliveryStockMove extends JunitAutoTestCase {
     @Test
     public void testReverseApproveInternallyReversesMove() {
         seedPeriodAndSubjects();
-        Long orderLineId = nextId();
-        Long deliveryId = nextId();
-        Long deliveryLineId = nextId();
+        String orderLineId = nextId();
+        String deliveryId = nextId();
+        String deliveryLineId = nextId();
         ormTemplate.runInSession(session -> {
             seedActiveCustomer();
-            Long orderId = newOrder("SO-REV-001");
+            String orderId = newOrder("SO-REV-001");
             newOrderLine(orderId, orderLineId, 1, new BigDecimal("10"));
             newDelivery("SD-REV-001", deliveryId, orderId);
             newDeliveryLine(deliveryLineId, deliveryId, orderLineId, new BigDecimal("10"));
@@ -294,11 +294,11 @@ public class TestErpSalDeliveryStockMove extends JunitAutoTestCase {
 
     // ---------- rpc helpers ----------
 
-    private ApiResponse<?> approve(Long deliveryId) {
+    private ApiResponse<?> approve(String deliveryId) {
         return executeRpc(mutation, "ErpSalDelivery__approve", ApiRequest.build(Map.of("id", String.valueOf(deliveryId))));
     }
 
-    private ApiResponse<?> reverseApprove(Long deliveryId) {
+    private ApiResponse<?> reverseApprove(String deliveryId) {
         return executeRpc(mutation, "ErpSalDelivery__reverseApprove", ApiRequest.build(Map.of("id", String.valueOf(deliveryId))));
     }
 
@@ -397,7 +397,7 @@ public class TestErpSalDeliveryStockMove extends JunitAutoTestCase {
         assertEquals(0, resp.getStatus(), "seedStock generateMove 应成功");
     }
 
-    private Long newOrder(String code) {
+    private String newOrder(String code) {
         IEntityDao<ErpSalOrder> dao = daoProvider.daoFor(ErpSalOrder.class);
         ErpSalOrder order = new ErpSalOrder();
         order.setCode(code);
@@ -413,7 +413,7 @@ public class TestErpSalDeliveryStockMove extends JunitAutoTestCase {
         return order.getId();
     }
 
-    private void newOrderLine(Long orderId, Long lineId, int lineNo, BigDecimal qty) {
+    private void newOrderLine(String orderId, String lineId, int lineNo, BigDecimal qty) {
         IEntityDao<ErpSalOrderLine> dao = daoProvider.daoFor(ErpSalOrderLine.class);
         ErpSalOrderLine line = new ErpSalOrderLine();
         line.setId(lineId);
@@ -427,7 +427,7 @@ public class TestErpSalDeliveryStockMove extends JunitAutoTestCase {
         dao.saveEntity(line);
     }
 
-    private void newDelivery(String code, Long deliveryId, Long orderId) {
+    private void newDelivery(String code, String deliveryId, String orderId) {
         IEntityDao<ErpSalDelivery> dao = daoProvider.daoFor(ErpSalDelivery.class);
         ErpSalDelivery delivery = new ErpSalDelivery();
         delivery.setId(deliveryId);
@@ -445,7 +445,7 @@ public class TestErpSalDeliveryStockMove extends JunitAutoTestCase {
         dao.saveEntity(delivery);
     }
 
-    private void newDeliveryLine(Long lineId, Long deliveryId, Long orderLineId, BigDecimal qty) {
+    private void newDeliveryLine(String lineId, String deliveryId, String orderLineId, BigDecimal qty) {
         IEntityDao<ErpSalDeliveryLine> dao = daoProvider.daoFor(ErpSalDeliveryLine.class);
         ErpSalDeliveryLine line = new ErpSalDeliveryLine();
         line.setId(lineId);
@@ -461,8 +461,8 @@ public class TestErpSalDeliveryStockMove extends JunitAutoTestCase {
 
     private final AtomicLong idSeq = new AtomicLong(100000L);
 
-    private Long nextId() {
-        return idSeq.incrementAndGet();
+    private String nextId() {
+        return String.valueOf(idSeq.incrementAndGet());
     }
 
     // ---------- query helpers ----------

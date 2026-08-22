@@ -52,13 +52,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpSalReturnTrace extends JunitAutoTestCase {
 
-    static final Long ORG_ID = 3801L;
-    static final Long CUSTOMER_ID = 4801L;
-    static final Long WAREHOUSE_ID = 5801L;
-    static final Long MATERIAL_ID = 6801L;
-    static final Long UOM_ID = 7801L;
-    static final Long CURRENCY_ID = 8801L;
-    static final Long ACCT_SCHEMA_ID = 9801L;
+    static final String ORG_ID = "3801";
+    static final String CUSTOMER_ID = "4801";
+    static final String WAREHOUSE_ID = "5801";
+    static final String MATERIAL_ID = "6801";
+    static final String UOM_ID = "7801";
+    static final String CURRENCY_ID = "8801";
+    static final String ACCT_SCHEMA_ID = "9801";
 
     @Inject
     IDaoProvider daoProvider;
@@ -74,10 +74,10 @@ public class TestErpSalReturnTrace extends JunitAutoTestCase {
         seedPeriodAndSubjects();
         seedStock("SEED-TRC-001", new BigDecimal("20"), new BigDecimal("5"));
         String deliveryCode = "SD-TRC-001";
-        Long[] deliveryCtx = seedApprovedDelivery(deliveryCode, new BigDecimal("10"));
+        String[] deliveryCtx = seedApprovedDelivery(deliveryCode, new BigDecimal("10"));
 
-        Long returnId = nextId();
-        Long returnLineId = nextId();
+        String returnId = nextId();
+        String returnLineId = nextId();
         String returnCode = "RT-TRC-001";
         ormTemplate.runInSession(session -> {
             newReturn(returnCode, returnId, deliveryCtx[0]);
@@ -104,10 +104,10 @@ public class TestErpSalReturnTrace extends JunitAutoTestCase {
         seedPeriodAndSubjects();
         seedStock("SEED-TRC-002", new BigDecimal("20"), new BigDecimal("5"));
         String deliveryCode = "SD-TRC-002";
-        Long[] deliveryCtx = seedApprovedDelivery(deliveryCode, new BigDecimal("10"));
+        String[] deliveryCtx = seedApprovedDelivery(deliveryCode, new BigDecimal("10"));
 
-        Long returnId = nextId();
-        Long returnLineId = nextId();
+        String returnId = nextId();
+        String returnLineId = nextId();
         String returnCode = "RT-TRC-002";
         ormTemplate.runInSession(session -> {
             newReturn(returnCode, returnId, deliveryCtx[0]);
@@ -131,11 +131,11 @@ public class TestErpSalReturnTrace extends JunitAutoTestCase {
      * 预置库存 + 审核源出库单（经 {@code ErpSalDelivery__approve} 生成 OUTGOING 移动）。
      * 返回 {deliveryId, deliveryLineId}。
      */
-    private Long[] seedApprovedDelivery(String deliveryCode, BigDecimal deliveryQty) {
-        Long orderId = nextId();
-        Long deliveryId = nextId();
-        Long orderLineId = nextId();
-        Long deliveryLineId = nextId();
+    private String[] seedApprovedDelivery(String deliveryCode, BigDecimal deliveryQty) {
+        String orderId = nextId();
+        String deliveryId = nextId();
+        String orderLineId = nextId();
+        String deliveryLineId = nextId();
         ormTemplate.runInSession(session -> {
             seedActiveCustomer();
             newOrderWithId("SO-" + deliveryCode, orderId);
@@ -145,7 +145,7 @@ public class TestErpSalReturnTrace extends JunitAutoTestCase {
             return null;
         });
         assertEquals(0, approveDelivery(deliveryId).getStatus(), "源出库单审核应成功");
-        return new Long[]{deliveryId, deliveryLineId};
+        return new String[]{deliveryId, deliveryLineId};
     }
 
     private void seedStock(String billCode, BigDecimal qty, BigDecimal unitCost) {
@@ -174,15 +174,15 @@ public class TestErpSalReturnTrace extends JunitAutoTestCase {
 
     // ---------- rpc ----------
 
-    private ApiResponse<?> approveDelivery(Long deliveryId) {
+    private ApiResponse<?> approveDelivery(String deliveryId) {
         return executeRpc(mutation, "ErpSalDelivery__approve", ApiRequest.build(Map.of("id", String.valueOf(deliveryId))));
     }
 
-    private ApiResponse<?> approveReturn(Long returnId) {
+    private ApiResponse<?> approveReturn(String returnId) {
         return executeRpc(mutation, "ErpSalReturn__approve", ApiRequest.build(Map.of("id", String.valueOf(returnId))));
     }
 
-    private boolean returnTraceContains(Long rootMoveId, Long expectedNodeId) {
+    private boolean returnTraceContains(String rootMoveId, String expectedNodeId) {
         ApiResponse<?> resp = executeRpc(query, "ErpInvStockMove__returnTrace",
                 ApiRequest.build(Map.of("moveId", rootMoveId)));
         assertEquals(0, resp.getStatus(), "returnTrace 应成功");
@@ -192,8 +192,7 @@ public class TestErpSalReturnTrace extends JunitAutoTestCase {
         }
         for (Object node : (List<?>) nodes) {
             Object id = ((Map<?, ?>) node).get("id");
-            Long lid = id instanceof Number ? ((Number) id).longValue() : Long.parseLong(String.valueOf(id));
-            if (expectedNodeId.equals(lid)) {
+            if (expectedNodeId.equals(String.valueOf(id))) {
                 return true;
             }
         }
@@ -266,7 +265,7 @@ public class TestErpSalReturnTrace extends JunitAutoTestCase {
         dao.saveEntity(subject);
     }
 
-    private void newOrderWithId(String code, Long orderId) {
+    private void newOrderWithId(String code, String orderId) {
         IEntityDao<ErpSalOrder> dao = daoProvider.daoFor(ErpSalOrder.class);
         ErpSalOrder order = new ErpSalOrder();
         order.setId(orderId);
@@ -282,7 +281,7 @@ public class TestErpSalReturnTrace extends JunitAutoTestCase {
         dao.saveEntity(order);
     }
 
-    private void newOrderLine(Long orderId, Long lineId, int lineNo, BigDecimal qty) {
+    private void newOrderLine(String orderId, String lineId, int lineNo, BigDecimal qty) {
         IEntityDao<ErpSalOrderLine> dao = daoProvider.daoFor(ErpSalOrderLine.class);
         ErpSalOrderLine line = new ErpSalOrderLine();
         line.setId(lineId);
@@ -296,7 +295,7 @@ public class TestErpSalReturnTrace extends JunitAutoTestCase {
         dao.saveEntity(line);
     }
 
-    private void newDeliverySubmitted(String code, Long deliveryId, Long orderId) {
+    private void newDeliverySubmitted(String code, String deliveryId, String orderId) {
         IEntityDao<ErpSalDelivery> dao = daoProvider.daoFor(ErpSalDelivery.class);
         ErpSalDelivery delivery = new ErpSalDelivery();
         delivery.setId(deliveryId);
@@ -314,7 +313,7 @@ public class TestErpSalReturnTrace extends JunitAutoTestCase {
         dao.saveEntity(delivery);
     }
 
-    private void newDeliveryLine(Long lineId, Long deliveryId, Long orderLineId, BigDecimal qty) {
+    private void newDeliveryLine(String lineId, String deliveryId, String orderLineId, BigDecimal qty) {
         IEntityDao<ErpSalDeliveryLine> dao = daoProvider.daoFor(ErpSalDeliveryLine.class);
         ErpSalDeliveryLine line = new ErpSalDeliveryLine();
         line.setId(lineId);
@@ -328,7 +327,7 @@ public class TestErpSalReturnTrace extends JunitAutoTestCase {
         dao.saveEntity(line);
     }
 
-    private void newReturn(String code, Long returnId, Long deliveryId) {
+    private void newReturn(String code, String returnId, String deliveryId) {
         IEntityDao<ErpSalReturn> dao = daoProvider.daoFor(ErpSalReturn.class);
         ErpSalReturn returnOrder = new ErpSalReturn();
         returnOrder.setId(returnId);
@@ -347,7 +346,7 @@ public class TestErpSalReturnTrace extends JunitAutoTestCase {
         dao.saveEntity(returnOrder);
     }
 
-    private void newReturnLine(Long lineId, Long returnId, Long deliveryLineId, BigDecimal qty) {
+    private void newReturnLine(String lineId, String returnId, String deliveryLineId, BigDecimal qty) {
         IEntityDao<ErpSalReturnLine> dao = daoProvider.daoFor(ErpSalReturnLine.class);
         ErpSalReturnLine line = new ErpSalReturnLine();
         line.setId(lineId);
@@ -363,8 +362,8 @@ public class TestErpSalReturnTrace extends JunitAutoTestCase {
         dao.saveEntity(line);
     }
 
-    private Long nextId() {
-        return idSeq.incrementAndGet();
+    private String nextId() {
+        return String.valueOf(idSeq.incrementAndGet());
     }
 
     private ErpInvStockMove findMove(String billType, String billCode) {

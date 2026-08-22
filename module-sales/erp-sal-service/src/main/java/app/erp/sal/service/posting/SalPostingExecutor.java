@@ -22,7 +22,7 @@ public class SalPostingExecutor {
     @Inject
     IErpFinVoucherBiz voucherBiz;
 
-    public Long postEvent(PostingEvent event) {
+    public String postEvent(PostingEvent event) {
         IServiceContext context = IServiceContext.getCtx();
         if (context == null) {
             context = new ServiceContextImpl();

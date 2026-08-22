@@ -30,10 +30,10 @@ public class TestStubErpSalReturnBiz extends CrudBizModel<ErpSalReturn> implemen
         ErpSalReturn entity = new ErpSalReturn();
         if (data != null) {
             entity.setCode(asString(data.get("code")));
-            entity.setCustomerId(asLong(data.get("customerId")));
-            entity.setDeliveryId(asLong(data.get("deliveryId")));
-            entity.setWarehouseId(asLong(data.get("warehouseId")));
-            entity.setCurrencyId(asLong(data.get("currencyId")));
+            entity.setCustomerId(asString(data.get("customerId")));
+            entity.setDeliveryId(asString(data.get("deliveryId")));
+            entity.setWarehouseId(asString(data.get("warehouseId")));
+            entity.setCurrencyId(asString(data.get("currencyId")));
             Object bd = data.get("businessDate");
             if (bd != null) {
                 entity.setBusinessDate(bd instanceof LocalDate ? (LocalDate) bd : LocalDate.parse(String.valueOf(bd)));
@@ -60,7 +60,7 @@ public class TestStubErpSalReturnBiz extends CrudBizModel<ErpSalReturn> implemen
 
     @Override
     public ErpSalReturn get(String id, boolean ignoreUnknown, IServiceContext context) {
-        return dao().getEntityById(Long.valueOf(id));
+        return dao().getEntityById(id);
     }
     public ErpSalReturn submitForApproval(String id, IServiceContext context) {
         return get(id, false, context);
@@ -79,30 +79,20 @@ public class TestStubErpSalReturnBiz extends CrudBizModel<ErpSalReturn> implemen
     }
 
     @Override
-    public ErpSalReturn cancel(Long returnId, IServiceContext context) {
-        return get(String.valueOf(returnId), false, context);
+    public ErpSalReturn cancel(String returnId, IServiceContext context) {
+        return get(returnId, false, context);
     }
 
     @Override
-    public ErpSalReturn generateExchangeDelivery(Long returnId,
+    public ErpSalReturn generateExchangeDelivery(String returnId,
                                                  List<app.erp.sal.biz.ErpSalExchangeDeliveryLine> lines,
                                                  IServiceContext context) {
         // 测试桩：换货出库单生成（RC-R1.51）不在 quality-service 测试范围，占位返回当前退货单
-        return get(String.valueOf(returnId), false, context);
+        return get(returnId, false, context);
     }
 
     private static String asString(Object value) {
         return value == null ? null : value.toString();
-    }
-
-    private static Long asLong(Object value) {
-        if (value == null) {
-            return null;
-        }
-        if (value instanceof Number) {
-            return ((Number) value).longValue();
-        }
-        return Long.valueOf(value.toString().trim());
     }
 
     private static Integer asInt(Object value) {

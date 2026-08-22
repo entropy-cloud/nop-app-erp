@@ -13,7 +13,6 @@ import io.nop.api.core.annotations.core.OptionalBoolean;
 import io.nop.api.core.beans.ApiRequest;
 import io.nop.api.core.beans.ApiResponse;
 import io.nop.api.core.beans.query.QueryBean;
-import io.nop.api.core.convert.ConvertHelper;
 import io.nop.api.core.time.CoreMetrics;
 import io.nop.autotest.junit.JunitAutoTestCase;
 import io.nop.dao.api.IDaoProvider;
@@ -238,9 +237,9 @@ public class TestErpCtRebateSettlementEnd extends JunitAutoTestCase {
     private void createPostedArInvoice(String code, String customerId, String currencyId, BigDecimal amount) {
         ErpSalInvoice invoice = daoProvider.daoFor(ErpSalInvoice.class).newEntity();
         invoice.setCode(code);
-        invoice.setCustomerId(ConvertHelper.toLong(customerId));
+        invoice.setCustomerId(customerId);
         invoice.setBusinessDate(LocalDate.of(2026, 6, 15));
-        invoice.setCurrencyId(ConvertHelper.toLong(currencyId));
+        invoice.setCurrencyId(currencyId);
         invoice.setExchangeRate(BigDecimal.ONE);
         invoice.setTotalAmount(amount);
         invoice.setAmountSource(amount);

@@ -48,8 +48,8 @@ public class ErpSalCustomerPriceResolver implements IErpMdCustomerPriceResolver 
     IErpMdPartnerBiz mdPartnerBiz;
 
     @Override
-    public ResolvedPrice resolveCustomerPrice(ErpMdMaterialSku sku, Long partnerId,
-                                              BigDecimal quantity, Long currencyId,
+    public ResolvedPrice resolveCustomerPrice(ErpMdMaterialSku sku, String partnerId,
+                                              BigDecimal quantity, String currencyId,
                                               IServiceContext context) {
         if (sku == null) {
             return null;
@@ -78,7 +78,7 @@ public class ErpSalCustomerPriceResolver implements IErpMdCustomerPriceResolver 
     /**
      * 查找候选价格清单：按 partnerId 精确匹配 + 按客户组匹配，均须 isActive + 期间有效 + 币种匹配。
      */
-    protected List<ErpSalPriceList> findCandidatePriceLists(Long partnerId, Long currencyId,
+    protected List<ErpSalPriceList> findCandidatePriceLists(String partnerId, String currencyId,
                                                             LocalDate today, IServiceContext context) {
         String customerGroup = resolveCustomerGroup(partnerId, context);
 
@@ -113,7 +113,7 @@ public class ErpSalCustomerPriceResolver implements IErpMdCustomerPriceResolver 
     /**
      * 从 partner.customerGroup 解析客户组标签。
      */
-    protected String resolveCustomerGroup(Long partnerId, IServiceContext context) {
+    protected String resolveCustomerGroup(String partnerId, IServiceContext context) {
         if (partnerId == null) {
             return null;
         }
@@ -124,7 +124,7 @@ public class ErpSalCustomerPriceResolver implements IErpMdCustomerPriceResolver 
     /**
      * 在指定清单下匹配最优行：skuId 优先 > materialId + 数量阶梯 + 行级期间。
      */
-    protected ErpSalPriceListLine matchLine(Long priceListId, ErpMdMaterialSku sku,
+    protected ErpSalPriceListLine matchLine(String priceListId, ErpMdMaterialSku sku,
                                             BigDecimal qty, LocalDate today,
                                             IServiceContext context) {
         IEntityDao<ErpSalPriceListLine> dao = daoProvider.daoFor(ErpSalPriceListLine.class);

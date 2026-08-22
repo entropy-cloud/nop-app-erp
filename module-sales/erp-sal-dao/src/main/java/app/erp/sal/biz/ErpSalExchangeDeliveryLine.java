@@ -11,11 +11,11 @@ import java.math.BigDecimal;
  */
 public class ErpSalExchangeDeliveryLine {
 
-    private Long materialId;
+    private String materialId;
 
-    private Long skuId;
+    private String skuId;
 
-    private Long uoMId;
+    private String uoMId;
 
     private BigDecimal quantity;
 
@@ -23,27 +23,27 @@ public class ErpSalExchangeDeliveryLine {
 
     private BigDecimal taxRate;
 
-    public Long getMaterialId() {
+    public String getMaterialId() {
         return materialId;
     }
 
-    public void setMaterialId(Long materialId) {
+    public void setMaterialId(String materialId) {
         this.materialId = materialId;
     }
 
-    public Long getSkuId() {
+    public String getSkuId() {
         return skuId;
     }
 
-    public void setSkuId(Long skuId) {
+    public void setSkuId(String skuId) {
         this.skuId = skuId;
     }
 
-    public Long getUoMId() {
+    public String getUoMId() {
         return uoMId;
     }
 
-    public void setUoMId(Long uoMId) {
+    public void setUoMId(String uoMId) {
         this.uoMId = uoMId;
     }
 

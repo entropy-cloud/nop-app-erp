@@ -38,11 +38,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpSalInvoiceApproval extends JunitAutoTestCase {
 
-    static final Long ORG_ID = 1201L;
-    static final Long CUSTOMER_ID = 2201L;
-    static final Long MATERIAL_ID = 4201L;
-    static final Long UOM_ID = 5201L;
-    static final Long CURRENCY_ID = 6201L;
+    static final String ORG_ID = "1201";
+    static final String CUSTOMER_ID = "2201";
+    static final String MATERIAL_ID = "4201";
+    static final String UOM_ID = "5201";
+    static final String CURRENCY_ID = "6201";
 
     @Inject
     IDaoProvider daoProvider;
@@ -166,27 +166,27 @@ public class TestErpSalInvoiceApproval extends JunitAutoTestCase {
 
     // ---------- helpers ----------
 
-    private ApiResponse<?> submit(Long id) {
+    private ApiResponse<?> submit(String id) {
         return executeRpc(mutation, "ErpSalInvoice__submitForApproval", ApiRequest.build(Map.of("id", String.valueOf(id))));
     }
 
-    private ApiResponse<?> withdrawSubmit(Long id) {
+    private ApiResponse<?> withdrawSubmit(String id) {
         return executeRpc(mutation, "ErpSalInvoice__withdrawApproval", ApiRequest.build(Map.of("id", String.valueOf(id))));
     }
 
-    private ApiResponse<?> approve(Long id) {
+    private ApiResponse<?> approve(String id) {
         return executeRpc(mutation, "ErpSalInvoice__approve", ApiRequest.build(Map.of("id", String.valueOf(id))));
     }
 
-    private ApiResponse<?> reject(Long id) {
+    private ApiResponse<?> reject(String id) {
         return executeRpc(mutation, "ErpSalInvoice__reject", ApiRequest.build(Map.of("id", String.valueOf(id))));
     }
 
-    private ApiResponse<?> reverseApprove(Long id) {
+    private ApiResponse<?> reverseApprove(String id) {
         return executeRpc(mutation, "ErpSalInvoice__reverseApprove", ApiRequest.build(Map.of("id", String.valueOf(id))));
     }
 
-    private ApiResponse<?> cancel(Long id) {
+    private ApiResponse<?> cancel(String id) {
         return executeRpc(mutation, "ErpSalInvoice__cancel", ApiRequest.build(Map.of("invoiceId", id)));
     }
 
@@ -232,11 +232,11 @@ public class TestErpSalInvoiceApproval extends JunitAutoTestCase {
         lineDao.saveEntity(line);
     }
 
-    private void seedActiveCustomer(Long id) {
+    private void seedActiveCustomer(String id) {
         seedCustomer(id, ErpSalConstants.PARTNER_STATUS_ACTIVE);
     }
 
-    private void seedCustomer(Long id, String status) {
+    private void seedCustomer(String id, String status) {
         IEntityDao<ErpMdPartner> dao = daoProvider.daoFor(ErpMdPartner.class);
         ErpMdPartner partner = new ErpMdPartner();
         partner.setId(id);

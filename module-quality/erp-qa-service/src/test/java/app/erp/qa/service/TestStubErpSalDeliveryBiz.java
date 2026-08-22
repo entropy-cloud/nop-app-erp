@@ -30,7 +30,7 @@ public class TestStubErpSalDeliveryBiz extends CrudBizModel<ErpSalDelivery> impl
 
     @Override
     public ErpSalDelivery get(String id, boolean ignoreUnknown, IServiceContext context) {
-        return dao().getEntityById(Long.valueOf(id));
+        return dao().getEntityById(id);
     }
     public ErpSalDelivery submitForApproval(String id, IServiceContext context) {
         return get(id, false, context);
@@ -49,7 +49,7 @@ public class TestStubErpSalDeliveryBiz extends CrudBizModel<ErpSalDelivery> impl
     }
 
     @Override
-    public ErpSalDelivery cancel(Long deliveryId, IServiceContext context) {
-        return get(String.valueOf(deliveryId), false, context);
+    public ErpSalDelivery cancel(String deliveryId, IServiceContext context) {
+        return get(deliveryId, false, context);
     }
 }

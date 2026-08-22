@@ -13,30 +13,30 @@
     public class ErpSalOrderLineOutputBean {
 
     
-        private Long _id;
+        private String _id;
 
     
         @PropMeta(propId=1)
     
-        public Long getId(){
+        public String getId(){
             return _id;
         }
 
-        public void setId(Long value){
+        public void setId(String value){
             this._id = value;
         }
 
 
-        private Long _orderId;
+        private String _orderId;
 
     
         @PropMeta(propId=2)
     
-        public Long getOrderId(){
+        public String getOrderId(){
             return _orderId;
         }
 
-        public void setOrderId(Long value){
+        public void setOrderId(String value){
             this._orderId = value;
         }
 
@@ -55,44 +55,44 @@
         }
 
 
-        private Long _materialId;
+        private String _materialId;
 
     
         @PropMeta(propId=4)
     
-        public Long getMaterialId(){
+        public String getMaterialId(){
             return _materialId;
         }
 
-        public void setMaterialId(Long value){
+        public void setMaterialId(String value){
             this._materialId = value;
         }
 
 
-        private Long _skuId;
+        private String _skuId;
 
     
         @PropMeta(propId=5)
     
-        public Long getSkuId(){
+        public String getSkuId(){
             return _skuId;
         }
 
-        public void setSkuId(Long value){
+        public void setSkuId(String value){
             this._skuId = value;
         }
 
 
-        private Long _uoMId;
+        private String _uoMId;
 
     
         @PropMeta(propId=6)
     
-        public Long getUoMId(){
+        public String getUoMId(){
             return _uoMId;
         }
 
-        public void setUoMId(Long value){
+        public void setUoMId(String value){
             this._uoMId = value;
         }
 
@@ -139,16 +139,16 @@
         }
 
 
-        private Long _taxRateId;
+        private String _taxRateId;
 
     
         @PropMeta(propId=10)
     
-        public Long getTaxRateId(){
+        public String getTaxRateId(){
             return _taxRateId;
         }
 
-        public void setTaxRateId(Long value){
+        public void setTaxRateId(String value){
             this._taxRateId = value;
         }
 
@@ -223,30 +223,30 @@
         }
 
 
-        private Long _warehouseId;
+        private String _warehouseId;
 
     
         @PropMeta(propId=16)
     
-        public Long getWarehouseId(){
+        public String getWarehouseId(){
             return _warehouseId;
         }
 
-        public void setWarehouseId(Long value){
+        public void setWarehouseId(String value){
             this._warehouseId = value;
         }
 
 
-        private Long _projectId;
+        private String _projectId;
 
     
         @PropMeta(propId=17)
     
-        public Long getProjectId(){
+        public String getProjectId(){
             return _projectId;
         }
 
-        public void setProjectId(Long value){
+        public void setProjectId(String value){
             this._projectId = value;
         }
 
@@ -391,16 +391,16 @@
         }
 
 
-        private Long _ctContractLineId;
+        private String _ctContractLineId;
 
     
         @PropMeta(propId=103)
     
-        public Long getCtContractLineId(){
+        public String getCtContractLineId(){
             return _ctContractLineId;
         }
 
-        public void setCtContractLineId(Long value){
+        public void setCtContractLineId(String value){
             this._ctContractLineId = value;
         }
 

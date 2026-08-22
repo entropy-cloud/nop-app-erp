@@ -19,22 +19,22 @@
             <cols>
 
                 <!--ID-->
-                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="id" mandatory="true" sortable="true"/>
 
                 <!--发票ID-->
-                <col id="invoiceId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="invoiceId" mandatory="true" sortable="true"/>
 
                 <!--出库行ID-->
-                <col id="deliveryLineId" ui:number="true" sortable="true"/>
+                <col id="deliveryLineId" sortable="true"/>
 
                 <!--行号-->
                 <col id="lineNo" mandatory="true" ui:number="true" sortable="true"/>
 
                 <!--物料-->
-                <col id="materialId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="materialId" mandatory="true" sortable="true"/>
 
                 <!--计量单位-->
-                <col id="uoMId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="uoMId" mandatory="true" sortable="true"/>
 
                 <!--数量-->
                 <col id="quantity" mandatory="true" ui:number="true" sortable="true"/>

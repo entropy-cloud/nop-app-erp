@@ -37,13 +37,13 @@ public class ErpSalReturnBizModel extends CrudBizModel<ErpSalReturn> implements 
 
     @Override
     @BizMutation
-    public ErpSalReturn cancel(@Name("returnId") Long returnId, IServiceContext context) {
-        return cancelProcessor.cancel(String.valueOf(returnId), context);
+    public ErpSalReturn cancel(@Name("returnId") String returnId, IServiceContext context) {
+        return cancelProcessor.cancel(returnId, context);
     }
 
     @Override
     @BizMutation
-    public ErpSalReturn generateExchangeDelivery(@Name("returnId") Long returnId,
+    public ErpSalReturn generateExchangeDelivery(@Name("returnId") String returnId,
                                                  @Name("lines") List<ErpSalExchangeDeliveryLine> lines,
                                                  IServiceContext context) {
         return generateExchangeDeliveryProcessor.generateExchangeDelivery(returnId, lines, context);

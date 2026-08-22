@@ -19,22 +19,22 @@
             <cols>
 
                 <!--ID-->
-                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="id" mandatory="true" sortable="true"/>
 
                 <!--订单ID-->
-                <col id="orderId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="orderId" mandatory="true" sortable="true"/>
 
                 <!--行号-->
                 <col id="lineNo" mandatory="true" ui:number="true" sortable="true"/>
 
                 <!--物料-->
-                <col id="materialId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="materialId" mandatory="true" sortable="true"/>
 
                 <!--SKU-->
-                <col id="skuId" ui:number="true" sortable="true"/>
+                <col id="skuId" sortable="true"/>
 
                 <!--计量单位-->
-                <col id="uoMId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="uoMId" mandatory="true" sortable="true"/>
 
                 <!--数量-->
                 <col id="quantity" mandatory="true" ui:number="true" sortable="true"/>
@@ -46,7 +46,7 @@
                 <col id="taxRate" ui:number="true" sortable="true"/>
 
                 <!--税率主数据-->
-                <col id="taxRateId" ui:number="true" sortable="true"/>
+                <col id="taxRateId" sortable="true"/>
 
                 <!--税额-->
                 <col id="taxAmount" ui:number="true" sortable="true"/>
@@ -64,10 +64,10 @@
                 <col id="invoicedQuantity" ui:number="true" sortable="true"/>
 
                 <!--发货仓库-->
-                <col id="warehouseId" ui:number="true" sortable="true"/>
+                <col id="warehouseId" sortable="true"/>
 
                 <!--项目-->
-                <col id="projectId" ui:number="true" sortable="true"/>
+                <col id="projectId" sortable="true"/>
 
                 <!--逻辑删除版本-->
                 <col id="delVersion" mandatory="true" ui:number="true" sortable="true"/>
@@ -97,7 +97,7 @@
                 <col id="pricingSource" sortable="true"/>
 
                 <!--合同行-->
-                <col id="ctContractLineId" ui:number="true" sortable="true"/>
+                <col id="ctContractLineId" sortable="true"/>
             </cols>
         </grid>
         <grid id="pick-list" x:prototype="list" x:abstract="true"/>

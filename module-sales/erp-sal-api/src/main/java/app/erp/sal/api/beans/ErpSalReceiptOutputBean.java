@@ -14,16 +14,16 @@
     public class ErpSalReceiptOutputBean {
 
     
-        private Long _id;
+        private String _id;
 
     
         @PropMeta(propId=1)
     
-        public Long getId(){
+        public String getId(){
             return _id;
         }
 
-        public void setId(Long value){
+        public void setId(String value){
             this._id = value;
         }
 
@@ -42,30 +42,30 @@
         }
 
 
-        private Long _orgId;
+        private String _orgId;
 
     
         @PropMeta(propId=3)
     
-        public Long getOrgId(){
+        public String getOrgId(){
             return _orgId;
         }
 
-        public void setOrgId(Long value){
+        public void setOrgId(String value){
             this._orgId = value;
         }
 
 
-        private Long _customerId;
+        private String _customerId;
 
     
         @PropMeta(propId=4)
     
-        public Long getCustomerId(){
+        public String getCustomerId(){
             return _customerId;
         }
 
-        public void setCustomerId(Long value){
+        public void setCustomerId(String value){
             this._customerId = value;
         }
 
@@ -84,16 +84,16 @@
         }
 
 
-        private Long _currencyId;
+        private String _currencyId;
 
     
         @PropMeta(propId=6)
     
-        public Long getCurrencyId(){
+        public String getCurrencyId(){
             return _currencyId;
         }
 
-        public void setCurrencyId(Long value){
+        public void setCurrencyId(String value){
             this._currencyId = value;
         }
 
@@ -154,16 +154,16 @@
         }
 
 
-        private Long _settlementMethodId;
+        private String _settlementMethodId;
 
     
         @PropMeta(propId=11)
     
-        public Long getSettlementMethodId(){
+        public String getSettlementMethodId(){
             return _settlementMethodId;
         }
 
-        public void setSettlementMethodId(Long value){
+        public void setSettlementMethodId(String value){
             this._settlementMethodId = value;
         }
 
@@ -182,30 +182,30 @@
         }
 
 
-        private Long _bankAccountId;
+        private String _bankAccountId;
 
     
         @PropMeta(propId=13)
     
-        public Long getBankAccountId(){
+        public String getBankAccountId(){
             return _bankAccountId;
         }
 
-        public void setBankAccountId(Long value){
+        public void setBankAccountId(String value){
             this._bankAccountId = value;
         }
 
 
-        private Long _partnerBankAccountId;
+        private String _partnerBankAccountId;
 
     
         @PropMeta(propId=14)
     
-        public Long getPartnerBankAccountId(){
+        public String getPartnerBankAccountId(){
             return _partnerBankAccountId;
         }
 
-        public void setPartnerBankAccountId(Long value){
+        public void setPartnerBankAccountId(String value){
             this._partnerBankAccountId = value;
         }
 

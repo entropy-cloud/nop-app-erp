@@ -13,44 +13,44 @@
     public class ErpSalReceiptLineOutputBean {
 
     
-        private Long _id;
+        private String _id;
 
     
         @PropMeta(propId=1)
     
-        public Long getId(){
+        public String getId(){
             return _id;
         }
 
-        public void setId(Long value){
+        public void setId(String value){
             this._id = value;
         }
 
 
-        private Long _receiptId;
+        private String _receiptId;
 
     
         @PropMeta(propId=2)
     
-        public Long getReceiptId(){
+        public String getReceiptId(){
             return _receiptId;
         }
 
-        public void setReceiptId(Long value){
+        public void setReceiptId(String value){
             this._receiptId = value;
         }
 
 
-        private Long _invoiceId;
+        private String _invoiceId;
 
     
         @PropMeta(propId=3)
     
-        public Long getInvoiceId(){
+        public String getInvoiceId(){
             return _invoiceId;
         }
 
-        public void setInvoiceId(Long value){
+        public void setInvoiceId(String value){
             this._invoiceId = value;
         }
 

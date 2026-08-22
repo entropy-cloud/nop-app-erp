@@ -57,7 +57,7 @@ public final class ReturnCostStrategyResolver {
     }
 
     public static BigDecimal resolveUnitCost(IDaoProvider daoProvider, BigDecimal fallbackUnitPrice,
-                                             Long materialId, Long warehouseId) {
+                                             String materialId, String warehouseId) {
         BigDecimal base = nz(fallbackUnitPrice);
         if (!ErpSalConstants.RETURN_COST_METHOD_CURRENT.equals(resolveStrategy())) {
             return base;
@@ -71,7 +71,7 @@ public final class ReturnCostStrategyResolver {
         return base;
     }
 
-    private static BigDecimal findAvgCost(IDaoProvider daoProvider, Long materialId, Long warehouseId) {
+    private static BigDecimal findAvgCost(IDaoProvider daoProvider, String materialId, String warehouseId) {
         if (materialId == null || warehouseId == null) {
             return null;
         }

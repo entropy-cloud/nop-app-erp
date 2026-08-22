@@ -46,12 +46,12 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpSalCreditNotify extends JunitAutoTestCase {
 
-    static final Long ORG_ID = 1301L;
-    static final Long CUSTOMER_ID = 2311L;
-    static final Long WAREHOUSE_ID = 3311L;
-    static final Long MATERIAL_ID = 4311L;
-    static final Long UOM_ID = 5311L;
-    static final Long CURRENCY_ID = 6311L;
+    static final String ORG_ID = "1301";
+    static final String CUSTOMER_ID = "2311";
+    static final String WAREHOUSE_ID = "3311";
+    static final String MATERIAL_ID = "4311";
+    static final String UOM_ID = "5311";
+    static final String CURRENCY_ID = "6311";
     static final String NOTIFY_EVENT = ErpSalConstants.NOTIFY_EVENT_CREDIT_OVER_LIMIT;
     static final String RECIPIENT = "sal-credit-recipient";
 
@@ -65,7 +65,7 @@ public class TestErpSalCreditNotify extends JunitAutoTestCase {
     @Test
     public void testSoftWarningOverLimitTriggersNotify() {
         setCreditCheckLevel(ErpSalConstants.CREDIT_CHECK_LEVEL_SOFT_WARNING);
-        seedNotifyTemplate(7103L, RECIPIENT);
+        seedNotifyTemplate("7103", RECIPIENT);
         ErpSalOrder order = newOrder("SO-CREDIT-NOTIFY-001", "150");
         ormTemplate.runInSession(() -> {
             seedActiveCustomer(CUSTOMER_ID, new BigDecimal("100"));
@@ -89,7 +89,7 @@ public class TestErpSalCreditNotify extends JunitAutoTestCase {
         AppConfig.getConfigProvider().assignConfigValue(
                 ErpSalConstants.CONFIG_CREDIT_NOTIFY_ENABLED, "false");
         try {
-            seedNotifyTemplate(7113L, RECIPIENT);
+            seedNotifyTemplate("7113", RECIPIENT);
             ErpSalOrder order = newOrder("SO-CREDIT-NOTIFY-OFF-001", "150");
             ormTemplate.runInSession(() -> {
                 seedActiveCustomer(CUSTOMER_ID, new BigDecimal("100"));
@@ -111,7 +111,7 @@ public class TestErpSalCreditNotify extends JunitAutoTestCase {
     @Test
     public void testHardBlockRejectsNoNotify() {
         setCreditCheckLevel(ErpSalConstants.CREDIT_CHECK_LEVEL_HARD_BLOCK);
-        seedNotifyTemplate(7123L, RECIPIENT);
+        seedNotifyTemplate("7123", RECIPIENT);
         ErpSalOrder order = newOrder("SO-CREDIT-NOTIFY-HARD-001", "150");
         ormTemplate.runInSession(() -> {
             seedActiveCustomer(CUSTOMER_ID, new BigDecimal("100"));
@@ -130,12 +130,12 @@ public class TestErpSalCreditNotify extends JunitAutoTestCase {
 
     // ---------- rpc helpers ----------
 
-    private ApiResponse<?> submit(Long orderId) {
+    private ApiResponse<?> submit(String orderId) {
         return executeRpc(mutation, "ErpSalOrder__submitForApproval",
                 ApiRequest.build(Map.of("id", String.valueOf(orderId))));
     }
 
-    private ApiResponse<?> approve(Long orderId) {
+    private ApiResponse<?> approve(String orderId) {
         return executeRpc(mutation, "ErpSalOrder__approve",
                 ApiRequest.build(Map.of("id", String.valueOf(orderId))));
     }
@@ -163,7 +163,7 @@ public class TestErpSalCreditNotify extends JunitAutoTestCase {
         return list.isEmpty() ? null : list.get(0);
     }
 
-    private void seedNotifyTemplate(Long id, String recipientUserId) {
+    private void seedNotifyTemplate(String id, String recipientUserId) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpSysNotificationTemplate> dao = daoProvider.daoFor(ErpSysNotificationTemplate.class);
             ErpSysNotificationTemplate t = new ErpSysNotificationTemplate();
@@ -214,7 +214,7 @@ public class TestErpSalCreditNotify extends JunitAutoTestCase {
         lineDao.saveEntity(line);
     }
 
-    private void seedActiveCustomer(Long id, BigDecimal creditLimit) {
+    private void seedActiveCustomer(String id, BigDecimal creditLimit) {
         IEntityDao<ErpMdPartner> dao = daoProvider.daoFor(ErpMdPartner.class);
         ErpMdPartner partner = new ErpMdPartner();
         partner.setId(id);

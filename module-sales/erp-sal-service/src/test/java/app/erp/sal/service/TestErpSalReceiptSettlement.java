@@ -38,10 +38,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpSalReceiptSettlement extends JunitAutoTestCase {
 
-    static final Long ORG_ID = 1205L;
-    static final Long CUSTOMER_ID = 2203L;
-    static final Long CUSTOMER_ID_2 = 2204L;
-    static final Long CURRENCY_ID = 6201L;
+    static final String ORG_ID = "1205";
+    static final String CUSTOMER_ID = "2203";
+    static final String CUSTOMER_ID_2 = "2204";
+    static final String CURRENCY_ID = "6201";
 
     @Inject
     IDaoProvider daoProvider;
@@ -145,7 +145,7 @@ public class TestErpSalReceiptSettlement extends JunitAutoTestCase {
 
     // ---------- helpers ----------
 
-    private boolean hasNegativeLine(Long receiptId, Long invoiceId) {
+    private boolean hasNegativeLine(String receiptId, String invoiceId) {
         io.nop.api.core.beans.query.QueryBean q = new io.nop.api.core.beans.query.QueryBean();
         q.addFilter(io.nop.api.core.beans.FilterBeans.eq("receiptId", receiptId));
         q.addFilter(io.nop.api.core.beans.FilterBeans.eq("invoiceId", invoiceId));
@@ -157,7 +157,7 @@ public class TestErpSalReceiptSettlement extends JunitAutoTestCase {
         return false;
     }
 
-    private ApiResponse<?> settle(Long receiptId, Long invoiceId, BigDecimal amount) {
+    private ApiResponse<?> settle(String receiptId, String invoiceId, BigDecimal amount) {
         Map<String, Object> alloc = new LinkedHashMap<>();
         alloc.put("invoiceId", invoiceId);
         alloc.put("amount", amount);
@@ -167,7 +167,7 @@ public class TestErpSalReceiptSettlement extends JunitAutoTestCase {
         return executeRpc(mutation, "ErpSalReceipt__settle", ApiRequest.build(req));
     }
 
-    private ApiResponse<?> reverseSettlement(Long receiptId, Long invoiceId) {
+    private ApiResponse<?> reverseSettlement(String receiptId, String invoiceId) {
         return executeRpc(mutation, "ErpSalReceipt__reverseSettlement",
                 ApiRequest.build(Map.of("receiptId", receiptId, "invoiceId", invoiceId)));
     }
@@ -222,7 +222,7 @@ public class TestErpSalReceiptSettlement extends JunitAutoTestCase {
         return receipt;
     }
 
-    private void seedActiveCustomer(Long id) {
+    private void seedActiveCustomer(String id) {
         IEntityDao<ErpMdPartner> dao = daoProvider.daoFor(ErpMdPartner.class);
         ErpMdPartner partner = new ErpMdPartner();
         partner.setId(id);

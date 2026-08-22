@@ -2,9 +2,9 @@
   "data": {
     "id": "5",
     "code": "@var:ErpSalQuotation@code",
-    "customerId": 2,
+    "customerId": "2",
     "businessDate": "@var:ErpSalQuotation@businessDate",
-    "currencyId": 1,
+    "currencyId": "1",
     "exchangeRate": 1,
     "totalAmount": 0,
     "totalTaxAmount": 0,

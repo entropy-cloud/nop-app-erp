@@ -268,7 +268,7 @@ public class ErpSalDeliveryProcessor {
     }
 
     protected void rollupOrderDeliveryStatus(ErpSalDelivery currentDelivery, IServiceContext context) {
-        Long orderId = currentDelivery.getOrderId();
+        String orderId = currentDelivery.getOrderId();
         if (orderId == null) {
             return;
         }
@@ -277,7 +277,7 @@ public class ErpSalDeliveryProcessor {
             return;
         }
 
-        Map<Long, BigDecimal> deliveredByOrderLine = new HashMap<>();
+        Map<String, BigDecimal> deliveredByOrderLine = new HashMap<>();
         addLineQuantities(deliveredByOrderLine, loadLines(currentDelivery.getId()));
         for (ErpSalDelivery d : findApprovedDeliveries(orderId)) {
             if (d.getId().equals(currentDelivery.getId())) {
@@ -364,27 +364,27 @@ public class ErpSalDeliveryProcessor {
         }
     }
 
-    protected List<ErpSalDeliveryLine> loadLines(Long deliveryId) {
+    protected List<ErpSalDeliveryLine> loadLines(String deliveryId) {
         IEntityDao<ErpSalDeliveryLine> dao = daoProvider.daoFor(ErpSalDeliveryLine.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("deliveryId", deliveryId));
         return new ArrayList<>(dao.findAllByQuery(q));
     }
 
-    protected List<ErpSalOrderLine> loadOrderLines(Long orderId) {
+    protected List<ErpSalOrderLine> loadOrderLines(String orderId) {
         IEntityDao<ErpSalOrderLine> dao = daoProvider.daoFor(ErpSalOrderLine.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("orderId", orderId));
         return new ArrayList<>(dao.findAllByQuery(q));
     }
 
-    protected List<ErpSalDelivery> findApprovedDeliveries(Long orderId) {
+    protected List<ErpSalDelivery> findApprovedDeliveries(String orderId) {
         QueryBean rq = new QueryBean();
         rq.addFilter(and(eq("orderId", orderId), eq("approveStatus", ErpSalConstants.APPROVE_STATUS_APPROVED)));
         return new ArrayList<>(deliveryDao().findAllByQuery(rq));
     }
 
-    protected void addLineQuantities(Map<Long, BigDecimal> map, List<ErpSalDeliveryLine> lines) {
+    protected void addLineQuantities(Map<String, BigDecimal> map, List<ErpSalDeliveryLine> lines) {
         for (ErpSalDeliveryLine dl : lines) {
             if (dl.getOrderLineId() == null) {
                 continue;

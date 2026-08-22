@@ -46,12 +46,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class TestErpSalFinanceReversalWriteback extends JunitAutoTestCase {
     private static final IServiceContext CTX = new ServiceContextImpl();
 
-    static final Long ORG_ID = 1203L;
-    static final Long CUSTOMER_ID = 2201L;
-    static final Long MATERIAL_ID = 4201L;
-    static final Long UOM_ID = 5201L;
-    static final Long CURRENCY_ID = 6201L;
-    static final Long ACCT_SCHEMA_ID = 7103L;
+    static final String ORG_ID = "1203";
+    static final String CUSTOMER_ID = "2201";
+    static final String MATERIAL_ID = "4201";
+    static final String UOM_ID = "5201";
+    static final String CURRENCY_ID = "6201";
+    static final String ACCT_SCHEMA_ID = "7103";
 
     @Inject
     IDaoProvider daoProvider;
@@ -75,13 +75,13 @@ public class TestErpSalFinanceReversalWriteback extends JunitAutoTestCase {
             saveInvoiceWithLine(invoice);
         });
 
-        Long originalVoucherId = seedPostedVoucherFor(invoice.getCode(),
+        String originalVoucherId = seedPostedVoucherFor(invoice.getCode(),
                 ErpFinBusinessType.AR_INVOICE, new BigDecimal("113"));
 
         assertTrue(Boolean.TRUE.equals(reload(invoice).getPosted()),
                 "前置：发票已过账 posted=true");
 
-        Long redVoucherId = ormTemplate.runInSession(session -> voucherBiz.reverse(invoice.getCode(), ErpFinBusinessType.AR_INVOICE, CTX));
+        String redVoucherId = ormTemplate.runInSession(session -> voucherBiz.reverse(invoice.getCode(), ErpFinBusinessType.AR_INVOICE, CTX));
 
         assertNotNull(redVoucherId);
         assertNotEquals(originalVoucherId, redVoucherId);
@@ -132,7 +132,7 @@ public class TestErpSalFinanceReversalWriteback extends JunitAutoTestCase {
         lineDao.saveEntity(line);
     }
 
-    private Long seedPostedVoucherFor(String billCode, ErpFinBusinessType businessType, BigDecimal total) {
+    private String seedPostedVoucherFor(String billCode, ErpFinBusinessType businessType, BigDecimal total) {
         IEntityDao<ErpFinVoucher> vDao = daoProvider.daoFor(ErpFinVoucher.class);
         IEntityDao<ErpFinVoucherBillR> billRDao = daoProvider.daoFor(ErpFinVoucherBillR.class);
         IEntityDao<ErpFinAccountingPeriod> periodDao = daoProvider.daoFor(ErpFinAccountingPeriod.class);
@@ -166,7 +166,7 @@ public class TestErpSalFinanceReversalWriteback extends JunitAutoTestCase {
         });
     }
 
-    private void seedActiveCustomer(Long id) {
+    private void seedActiveCustomer(String id) {
         IEntityDao<ErpMdPartner> dao = daoProvider.daoFor(ErpMdPartner.class);
         ErpMdPartner partner = new ErpMdPartner();
         partner.setId(id);
@@ -187,7 +187,7 @@ public class TestErpSalFinanceReversalWriteback extends JunitAutoTestCase {
         });
     }
 
-    private void seedAcctSchema(Long id, Long orgId) {
+    private void seedAcctSchema(String id, String orgId) {
         IEntityDao<app.erp.md.dao.entity.ErpMdAcctSchema> dao = daoProvider.daoFor(
                 app.erp.md.dao.entity.ErpMdAcctSchema.class);
         app.erp.md.dao.entity.ErpMdAcctSchema schema = new app.erp.md.dao.entity.ErpMdAcctSchema();

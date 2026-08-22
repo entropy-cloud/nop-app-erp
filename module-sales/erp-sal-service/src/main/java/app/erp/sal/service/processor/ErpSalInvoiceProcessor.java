@@ -270,7 +270,7 @@ public class ErpSalInvoiceProcessor {
         }
     }
 
-    protected List<ErpSalInvoiceLine> loadLines(Long invoiceId) {
+    protected List<ErpSalInvoiceLine> loadLines(String invoiceId) {
         IEntityDao<ErpSalInvoiceLine> dao = daoProvider.daoFor(ErpSalInvoiceLine.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("invoiceId", invoiceId));
@@ -347,7 +347,7 @@ public class ErpSalInvoiceProcessor {
     protected Set<String> resolveLinkedOrderCodes(ErpSalInvoice invoice) {
         Set<String> codes = new HashSet<>();
         List<ErpSalInvoiceLine> lines = loadLines(invoice.getId());
-        Set<Long> deliveryLineIds = new HashSet<>();
+        Set<String> deliveryLineIds = new HashSet<>();
         for (ErpSalInvoiceLine il : lines) {
             if (il.getDeliveryLineId() != null) {
                 deliveryLineIds.add(il.getDeliveryLineId());
@@ -357,7 +357,7 @@ public class ErpSalInvoiceProcessor {
             return codes;
         }
         IEntityDao<ErpSalDeliveryLine> dlDao = daoProvider.daoFor(ErpSalDeliveryLine.class);
-        Set<Long> deliveryIds = new HashSet<>();
+        Set<String> deliveryIds = new HashSet<>();
         for (ErpSalDeliveryLine dl : dlDao.findAllByQuery(inQuery("id", deliveryLineIds))) {
             if (dl.getDeliveryId() != null) {
                 deliveryIds.add(dl.getDeliveryId());
@@ -367,7 +367,7 @@ public class ErpSalInvoiceProcessor {
             return codes;
         }
         IEntityDao<ErpSalDelivery> dDao = daoProvider.daoFor(ErpSalDelivery.class);
-        Set<Long> orderIds = new HashSet<>();
+        Set<String> orderIds = new HashSet<>();
         for (ErpSalDelivery d : dDao.findAllByQuery(inQuery("id", deliveryIds))) {
             if (d.getOrderId() != null) {
                 orderIds.add(d.getOrderId());
@@ -385,7 +385,7 @@ public class ErpSalInvoiceProcessor {
         return codes;
     }
 
-    private static QueryBean inQuery(String field, Set<Long> values) {
+    private static QueryBean inQuery(String field, Set<String> values) {
         QueryBean q = new QueryBean();
         q.addFilter(io.nop.api.core.beans.FilterBeans.in(field, new ArrayList<>(values)));
         return q;

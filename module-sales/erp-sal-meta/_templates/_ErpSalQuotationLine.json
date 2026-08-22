@@ -1,9 +1,9 @@
 {
-  "id": 0,
-  "quotationId": 0,
+  "id": "",
+  "quotationId": "",
   "lineNo": 0,
-  "materialId": 0,
-  "uoMId": 0,
+  "materialId": "",
+  "uoMId": "",
   "quantity": 0.0,
   "unitPrice": 0.0,
   "taxRate": 0.0,

@@ -175,13 +175,12 @@ public class ErpCtInvoicePlanBizModel extends CrudBizModel<ErpCtInvoicePlan> imp
         IEntityDao<ErpSalInvoice> dao = daoProvider().daoFor(ErpSalInvoice.class);
         ErpSalInvoice invoice = dao.newEntity();
         invoice.setCode(code);
-        // bridge-main-035: ct String orgId/customerId/currencyId → sal Long（退役 owner M2.6）
         if (contract.getOrgId() != null) {
-            invoice.setOrgId(ConvertHelper.toLong(contract.getOrgId()));
+            invoice.setOrgId(contract.getOrgId());
         }
-        invoice.setCustomerId(ConvertHelper.toLong(contract.getPartnerId()));
+        invoice.setCustomerId(contract.getPartnerId());
         invoice.setBusinessDate(CoreMetrics.today());
-        invoice.setCurrencyId(ConvertHelper.toLong(contract.getCurrencyId()));
+        invoice.setCurrencyId(contract.getCurrencyId());
         invoice.setExchangeRate(BigDecimal.ONE);
         invoice.setTotalAmount(amount);
         invoice.setAmountSource(amount);
@@ -196,11 +195,10 @@ public class ErpCtInvoicePlanBizModel extends CrudBizModel<ErpCtInvoicePlan> imp
         ErpSalInvoiceLine invLine = daoProvider().daoFor(ErpSalInvoiceLine.class).newEntity();
         invLine.setInvoiceId(invoice.getId());
         invLine.setLineNo(1);
-        // bridge-main-036: ct String materialId / md String uoMId → sal Long（退役 owner M2.6）
         if (line.getMaterialId() != null) {
-            invLine.setMaterialId(ConvertHelper.toLong(line.getMaterialId()));
+            invLine.setMaterialId(line.getMaterialId());
             if (line.getMaterial() != null) {
-                invLine.setUoMId(ConvertHelper.toLong(line.getMaterial().getUoMId()));
+                invLine.setUoMId(line.getMaterial().getUoMId());
             }
         }
         invLine.setQuantity(nz(line.getQuantity()));

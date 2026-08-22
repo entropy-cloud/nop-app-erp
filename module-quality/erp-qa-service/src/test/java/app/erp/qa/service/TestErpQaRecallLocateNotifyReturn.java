@@ -18,7 +18,6 @@ import io.nop.api.core.beans.ApiRequest;
 import io.nop.api.core.beans.ApiResponse;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.config.AppConfig;
-import io.nop.api.core.convert.ConvertHelper;
 import io.nop.api.core.time.CoreMetrics;
 import io.nop.autotest.junit.JunitAutoTestCase;
 import io.nop.dao.api.IDaoProvider;
@@ -65,8 +64,7 @@ public class TestErpQaRecallLocateNotifyReturn extends JunitAutoTestCase {
     static final String UOM_ID = "57101";
     static final String CURRENCY_ID = "67101";
     static final String BATCH_PK = "87101";
-    // bridge-test-129: sal delivery 仍未迁移（M2.6），qa/inv/md 侧已 String——种子经局部桥转换
-    static final Long DELIVERY_PK = 77101L;
+    static final String DELIVERY_PK = "77101";
     static final String MOVE_PK = "97101";
     static final String MOVE_LINE_PK = "971011";
     static final String BATCH_NO = "RC-BATCH-LNR";
@@ -94,7 +92,7 @@ public class TestErpQaRecallLocateNotifyReturn extends JunitAutoTestCase {
 
         ErpQaRecallTarget target = singleTargetOf(recallId);
         assertEquals(CUSTOMER_ID, target.getPartnerId(), "target 客户=出库单客户");
-        assertEquals(String.valueOf(DELIVERY_PK), target.getSalesDeliveryId(), "target 出库单=定位到的出库");
+        assertEquals(DELIVERY_PK, target.getSalesDeliveryId(), "target 出库单=定位到的出库");
         assertEquals(BATCH_NO, target.getBatchNo(), "target 批号=召回批次解析值");
         assertEquals(0, new BigDecimal("12.0000").compareTo(target.getShippedQty()), "target 发货数量=移动单行数量合计");
         assertEquals(ErpQaConstants.RECALL_TARGET_RETURN_PENDING, target.getReturnStatus());
@@ -116,7 +114,7 @@ public class TestErpQaRecallLocateNotifyReturn extends JunitAutoTestCase {
         ErpQaRecallTarget returned = reloadTarget(target.getId());
         assertEquals(ErpQaConstants.RECALL_TARGET_RETURN_RETURNED, returned.getReturnStatus(), "退货后 RETURNED");
         assertNotNull(returned.getGeneratedReturnId(), "记录生成的退货单 ID");
-        assertNotEquals(String.valueOf(DELIVERY_PK), returned.getGeneratedReturnId(), "退货单 ID 应为新生成值");
+        assertNotEquals(DELIVERY_PK, returned.getGeneratedReturnId(), "退货单 ID 应为新生成值");
 
         // close → CLOSED（门控通过）
         rpcOk(mutation, "ErpQaRecall__close", Map.of("recallId", recallId));
@@ -208,9 +206,9 @@ public class TestErpQaRecallLocateNotifyReturn extends JunitAutoTestCase {
             ErpSalDelivery delivery = new ErpSalDelivery();
             delivery.orm_propValueByName("id", DELIVERY_PK);
             delivery.setCode(DELIVERY_CODE);
-            delivery.setCustomerId(ConvertHelper.toLong(CUSTOMER_ID));
-            delivery.setWarehouseId(ConvertHelper.toLong(WAREHOUSE_ID));
-            delivery.setCurrencyId(ConvertHelper.toLong(CURRENCY_ID));
+            delivery.setCustomerId(CUSTOMER_ID);
+            delivery.setWarehouseId(WAREHOUSE_ID);
+            delivery.setCurrencyId(CURRENCY_ID);
             delivery.setBusinessDate(CoreMetrics.currentDate());
             delivery.setDocStatus("ACTIVE"); // erp-sal/doc-status ACTIVE
             delivery.setApproveStatus("APPROVED"); // wf/approve-status APPROVED
@@ -219,11 +217,11 @@ public class TestErpQaRecallLocateNotifyReturn extends JunitAutoTestCase {
 
             IEntityDao<ErpSalDeliveryLine> dlvLineDao = daoProvider.daoFor(ErpSalDeliveryLine.class);
             ErpSalDeliveryLine dlvLine = new ErpSalDeliveryLine();
-            dlvLine.orm_propValueByName("id", DELIVERY_PK * 10 + 1);
+            dlvLine.orm_propValueByName("id", String.valueOf(Long.parseLong(DELIVERY_PK) * 10 + 1));
             dlvLine.setDeliveryId(DELIVERY_PK);
             dlvLine.setLineNo(1);
-            dlvLine.setMaterialId(ConvertHelper.toLong(MATERIAL_ID));
-            dlvLine.setUoMId(ConvertHelper.toLong(UOM_ID));
+            dlvLine.setMaterialId(MATERIAL_ID);
+            dlvLine.setUoMId(UOM_ID);
             dlvLine.setQuantity(new BigDecimal("12"));
             dlvLineDao.saveEntity(dlvLine);
 

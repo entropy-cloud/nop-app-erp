@@ -13,16 +13,16 @@
     public class ErpSalPricingRuleOutputBean {
 
     
-        private Long _id;
+        private String _id;
 
     
         @PropMeta(propId=1)
     
-        public Long getId(){
+        public String getId(){
             return _id;
         }
 
-        public void setId(Long value){
+        public void setId(String value){
             this._id = value;
         }
 
@@ -107,30 +107,30 @@
         }
 
 
-        private Long _materialId;
+        private String _materialId;
 
     
         @PropMeta(propId=6)
     
-        public Long getMaterialId(){
+        public String getMaterialId(){
             return _materialId;
         }
 
-        public void setMaterialId(Long value){
+        public void setMaterialId(String value){
             this._materialId = value;
         }
 
 
-        private Long _materialCategoryId;
+        private String _materialCategoryId;
 
     
         @PropMeta(propId=7)
     
-        public Long getMaterialCategoryId(){
+        public String getMaterialCategoryId(){
             return _materialCategoryId;
         }
 
-        public void setMaterialCategoryId(Long value){
+        public void setMaterialCategoryId(String value){
             this._materialCategoryId = value;
         }
 
@@ -149,16 +149,16 @@
         }
 
 
-        private Long _partnerId;
+        private String _partnerId;
 
     
         @PropMeta(propId=9)
     
-        public Long getPartnerId(){
+        public String getPartnerId(){
             return _partnerId;
         }
 
-        public void setPartnerId(Long value){
+        public void setPartnerId(String value){
             this._partnerId = value;
         }
 
@@ -205,30 +205,30 @@
         }
 
 
-        private Long _giftMaterialId;
+        private String _giftMaterialId;
 
     
         @PropMeta(propId=13)
     
-        public Long getGiftMaterialId(){
+        public String getGiftMaterialId(){
             return _giftMaterialId;
         }
 
-        public void setGiftMaterialId(Long value){
+        public void setGiftMaterialId(String value){
             this._giftMaterialId = value;
         }
 
 
-        private Long _giftSkuId;
+        private String _giftSkuId;
 
     
         @PropMeta(propId=14)
     
-        public Long getGiftSkuId(){
+        public String getGiftSkuId(){
             return _giftSkuId;
         }
 
-        public void setGiftSkuId(Long value){
+        public void setGiftSkuId(String value){
             this._giftSkuId = value;
         }
 
@@ -261,16 +261,16 @@
         }
 
 
-        private Long _currencyId;
+        private String _currencyId;
 
     
         @PropMeta(propId=17)
     
-        public Long getCurrencyId(){
+        public String getCurrencyId(){
             return _currencyId;
         }
 
-        public void setCurrencyId(Long value){
+        public void setCurrencyId(String value){
             this._currencyId = value;
         }
 

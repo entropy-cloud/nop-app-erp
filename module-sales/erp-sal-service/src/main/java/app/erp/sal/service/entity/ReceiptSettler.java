@@ -67,7 +67,7 @@ public class ReceiptSettler {
         BigDecimal receiptTotal = nz(receipt.getTotalAmount());
         BigDecimal receiptRemaining = receiptTotal.subtract(receiptSettled);
 
-        Map<Long, BigDecimal> touchedInvoices = new HashMap<>();
+        Map<String, BigDecimal> touchedInvoices = new HashMap<>();
         IEntityDao<ErpSalReceiptLine> lineDao = daoProvider.daoFor(ErpSalReceiptLine.class);
         for (SettlementAllocation alloc : allocations) {
             if (alloc.getInvoiceId() == null || alloc.getAmount() == null) {
@@ -77,7 +77,8 @@ public class ReceiptSettler {
             if (amount.signum() <= 0) {
                 continue;
             }
-            ErpSalInvoice invoice = requireInvoiceForSettle(receipt, alloc.getInvoiceId());
+            String invoiceId = String.valueOf(alloc.getInvoiceId());
+            ErpSalInvoice invoice = requireInvoiceForSettle(receipt, invoiceId);
 
             BigDecimal invoiceBalance = nz(invoice.getTotalAmountWithTax()).subtract(nz(invoice.getReceivedAmount()));
             if (amount.compareTo(invoiceBalance) > 0) {
@@ -95,15 +96,15 @@ public class ReceiptSettler {
 
             ErpSalReceiptLine line = lineDao.newEntity();
             line.setReceiptId(receipt.getId());
-            line.setInvoiceId(alloc.getInvoiceId());
+            line.setInvoiceId(invoiceId);
             line.setAmount(amount);
             lineDao.saveEntity(line);
 
             receiptRemaining = receiptRemaining.subtract(amount);
-            touchedInvoices.merge(alloc.getInvoiceId(), amount, BigDecimal::add);
+            touchedInvoices.merge(invoiceId, amount, BigDecimal::add);
         }
 
-        for (Long invoiceId : touchedInvoices.keySet()) {
+        for (String invoiceId : touchedInvoices.keySet()) {
             recomputeInvoiceReceived(invoiceId);
         }
         recomputeReceiptWrittenOff(receipt.getId());
@@ -113,7 +114,7 @@ public class ReceiptSettler {
     /**
      * 核销冲销：对指定发票生成反向（负金额）ReceiptLine，恢复余额与状态。幂等：无既有核销则空操作。
      */
-    public ErpSalReceipt reverseSettlement(ErpSalReceipt receipt, Long invoiceId) {
+    public ErpSalReceipt reverseSettlement(ErpSalReceipt receipt, String invoiceId) {
         List<ErpSalReceiptLine> existing = findLines(receipt.getId(), invoiceId);
         BigDecimal settled = BigDecimal.ZERO;
         for (ErpSalReceiptLine l : existing) {
@@ -138,7 +139,7 @@ public class ReceiptSettler {
 
     // ---------- helpers ----------
 
-    private ErpSalInvoice requireInvoiceForSettle(ErpSalReceipt receipt, Long invoiceId) {
+    private ErpSalInvoice requireInvoiceForSettle(ErpSalReceipt receipt, String invoiceId) {
         ErpSalInvoice invoice = daoProvider.daoFor(ErpSalInvoice.class).getEntityById(invoiceId);
         if (invoice == null) {
             throw new NopException(ErpSalErrors.ERR_SETTLE_INVOICE_NOT_APPROVED)
@@ -158,7 +159,7 @@ public class ReceiptSettler {
         return invoice;
     }
 
-    private void recomputeInvoiceReceived(Long invoiceId) {
+    private void recomputeInvoiceReceived(String invoiceId) {
         ormTemplate.flushSession();
         ErpSalInvoice invoice = daoProvider.daoFor(ErpSalInvoice.class).getEntityById(invoiceId);
         BigDecimal received = sumInvoiceLines(invoiceId);
@@ -176,7 +177,7 @@ public class ReceiptSettler {
         daoProvider.daoFor(ErpSalInvoice.class).updateEntity(invoice);
     }
 
-    private void recomputeReceiptWrittenOff(Long receiptId) {
+    private void recomputeReceiptWrittenOff(String receiptId) {
         ormTemplate.flushSession();
         ErpSalReceipt receipt = daoProvider.daoFor(ErpSalReceipt.class).getEntityById(receiptId);
         BigDecimal settled = sumReceiptLines(receiptId);
@@ -193,7 +194,7 @@ public class ReceiptSettler {
         daoProvider.daoFor(ErpSalReceipt.class).updateEntity(receipt);
     }
 
-    private BigDecimal sumInvoiceLines(Long invoiceId) {
+    private BigDecimal sumInvoiceLines(String invoiceId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("invoiceId", invoiceId));
         BigDecimal sum = BigDecimal.ZERO;
@@ -203,7 +204,7 @@ public class ReceiptSettler {
         return sum;
     }
 
-    private BigDecimal sumReceiptLines(Long receiptId) {
+    private BigDecimal sumReceiptLines(String receiptId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("receiptId", receiptId));
         BigDecimal sum = BigDecimal.ZERO;
@@ -213,7 +214,7 @@ public class ReceiptSettler {
         return sum;
     }
 
-    private List<ErpSalReceiptLine> findLines(Long receiptId, Long invoiceId) {
+    private List<ErpSalReceiptLine> findLines(String receiptId, String invoiceId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("receiptId", receiptId));
         q.addFilter(eq("invoiceId", invoiceId));

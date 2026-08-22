@@ -229,13 +229,13 @@ public class ErpSalOrderProcessor {
             return;
         }
         boolean hard = ErpSalConstants.ORDER_AVAILABILITY_CHECK_LEVEL_HARD.equals(level);
-        Long orderWarehouseId = order.getWarehouseId();
+        String orderWarehouseId = order.getWarehouseId();
         for (ErpSalOrderLine line : loadLines(order.getId())) {
-            Long materialId = line.getMaterialId();
+            String materialId = line.getMaterialId();
             if (materialId == null) {
                 continue;
             }
-            Long warehouseId = line.getWarehouseId() != null ? line.getWarehouseId() : orderWarehouseId;
+            String warehouseId = line.getWarehouseId() != null ? line.getWarehouseId() : orderWarehouseId;
             if (warehouseId == null) {
                 continue;
             }
@@ -267,7 +267,7 @@ public class ErpSalOrderProcessor {
         return level == null ? ErpSalConstants.ORDER_AVAILABILITY_CHECK_LEVEL_OFF : level;
     }
 
-    protected BigDecimal resolveAvailableQuantity(Long materialId, Long warehouseId, IServiceContext context) {
+    protected BigDecimal resolveAvailableQuantity(String materialId, String warehouseId, IServiceContext context) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("materialId", materialId));
         q.addFilter(eq("warehouseId", warehouseId));
@@ -423,11 +423,11 @@ public class ErpSalOrderProcessor {
         if (!Boolean.TRUE.equals(AppConfig.var(ErpFinConstants.CONFIG_BUDGET_COMMITMENT_ENABLED, Boolean.FALSE))) {
             return;
         }
-        Long subjectId = resolveBudgetSubjectId(ErpFinConstants.CONFIG_BUDGET_COMMITMENT_SALES_SUBJECT_CODE);
+        String subjectId = resolveBudgetSubjectId(ErpFinConstants.CONFIG_BUDGET_COMMITMENT_SALES_SUBJECT_CODE);
         if (subjectId == null) {
             return;
         }
-        Long periodId = resolvePeriodId(order.getBusinessDate());
+        String periodId = resolvePeriodId(order.getBusinessDate());
         BigDecimal amount = order.getTotalAmountWithTax() != null
                 ? order.getTotalAmountWithTax() : BigDecimal.ZERO;
         budgetCommitmentBiz.commit(
@@ -453,7 +453,7 @@ public class ErpSalOrderProcessor {
         }
     }
 
-    protected Long resolveBudgetSubjectId(String configKey) {
+    protected String resolveBudgetSubjectId(String configKey) {
         String code = AppConfig.var(configKey, null);
         if (code == null || code.isEmpty()) {
             return null;
@@ -466,7 +466,7 @@ public class ErpSalOrderProcessor {
         return list.isEmpty() ? null : list.get(0).getId();
     }
 
-    protected Long resolvePeriodId(LocalDate businessDate) {
+    protected String resolvePeriodId(LocalDate businessDate) {
         if (businessDate == null) {
             return null;
         }
@@ -479,7 +479,7 @@ public class ErpSalOrderProcessor {
         return list.isEmpty() ? null : list.get(0).getId();
     }
 
-    protected List<ErpSalOrderLine> loadLines(Long orderId) {
+    protected List<ErpSalOrderLine> loadLines(String orderId) {
         IEntityDao<ErpSalOrderLine> dao = daoProvider.daoFor(ErpSalOrderLine.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("orderId", orderId));

@@ -88,10 +88,8 @@ public class DemandAggregator {
 
         QueryBean oq = new QueryBean();
         oq.addFilter(ne("docStatus", ErpMfgConstants.SAL_DOC_STATUS_CANCELLED));
-        // A2 桥接（bridge-main-086，M0.2 登记册）：sal ErpSalOrder.orgId 仍 Long（sal 位次 16 未迁移），
-        // mfg String orgId → ConvertHelper.toLong 桥接过滤值（eq 语义值桥），退役 owner M2.6
         if (plan.getOrgId() != null) {
-            oq.addFilter(eq("orgId", io.nop.api.core.convert.ConvertHelper.toLong(plan.getOrgId())));
+            oq.addFilter(eq("orgId", plan.getOrgId()));
         }
         List<ErpSalOrder> orders = orderDao.findAllByQuery(oq);
 
@@ -107,10 +105,8 @@ public class DemandAggregator {
                     continue;
                 }
                 ErpMfgMrpDemand demand = newDemand(plan, lineNo);
-                // A2 桥接（bridge-main-086/087，M0.2 登记册）：sal ErpSalOrderLine.materialId/uoMId 仍 Long（sal 位次 16 未迁移），
-                // sal Long → mfg String ConvertHelper.toString 桥接 setter 值，退役 owner M2.6
-                demand.setMaterialId(io.nop.api.core.convert.ConvertHelper.toString(line.getMaterialId()));
-                demand.setUoMId(io.nop.api.core.convert.ConvertHelper.toString(line.getUoMId()));
+                demand.setMaterialId(line.getMaterialId());
+                demand.setUoMId(line.getUoMId());
                 demand.setDemandSource(ErpMfgConstants.MRP_DEMAND_SOURCE_SALES_ORDER);
                 demand.setSourceBillType(ErpMfgConstants.SOURCE_BILL_TYPE_SAL_ORDER);
                 demand.setSourceBillCode(order.getCode());

@@ -94,7 +94,7 @@ public class CreditLimitChecker {
      * @param thisOrderExchangeRate  当前审核订单折算本位币的汇率（{@code amountFunctional = amountSource × rate}），null 视为 1
      * @param context                服务上下文（提供命令式权限检查入口）
      */
-    public void check(Long customerId, BigDecimal thisOrderAmount, BigDecimal thisOrderExchangeRate,
+    public void check(String customerId, BigDecimal thisOrderAmount, BigDecimal thisOrderExchangeRate,
                       IServiceContext context) {
         check(customerId, thisOrderAmount, thisOrderExchangeRate, null, context);
     }
@@ -106,7 +106,7 @@ public class CreditLimitChecker {
      * @param orderCode              当前审核订单的单号（用于通知上下文，可为 null）
      * @param context                服务上下文（提供命令式权限检查入口）
      */
-    public void check(Long customerId, BigDecimal thisOrderAmount, BigDecimal thisOrderExchangeRate,
+    public void check(String customerId, BigDecimal thisOrderAmount, BigDecimal thisOrderExchangeRate,
                       String orderCode, IServiceContext context) {
         if (customerId == null) {
             return;
@@ -140,7 +140,7 @@ public class CreditLimitChecker {
      * @param billType    单据类型（{@link ErpSalConstants#BILL_TYPE_DELIVERY} / {@link ErpSalConstants#BILL_TYPE_INVOICE}）
      * @param context     服务上下文（提供命令式权限检查入口）
      */
-    public void checkCreditHold(Long customerId, String billCode, String billType, IServiceContext context) {
+    public void checkCreditHold(String customerId, String billCode, String billType, IServiceContext context) {
         if (customerId == null) {
             return;
         }
@@ -200,7 +200,7 @@ public class CreditLimitChecker {
                 context);
     }
 
-    private NopException buildHardBlockException(String billType, Long customerId, String billCode,
+    private NopException buildHardBlockException(String billType, String customerId, String billCode,
                                                  BigDecimal creditLimit, BigDecimal available,
                                                  BigDecimal billAmountFunctional) {
         if (ErpSalConstants.BILL_TYPE_DELIVERY.equals(billType)) {
@@ -273,7 +273,7 @@ public class CreditLimitChecker {
         return level == null ? ErpSalConstants.CREDIT_CHECK_LEVEL_SOFT_WARNING : level;
     }
 
-    private BigDecimal sumOutstanding(Long customerId, IServiceContext context) {
+    private BigDecimal sumOutstanding(String customerId, IServiceContext context) {
         BigDecimal sum = sumOutstandingOrders(customerId);
         if (includeAr()) {
             sum = sum.add(sumArOpenFunctional(customerId, context));
@@ -282,7 +282,7 @@ public class CreditLimitChecker {
     }
 
     // sales 域内部只读聚合（plan S2 C 段保留项），不走跨域 I*Biz。
-    private BigDecimal sumOutstandingOrders(Long customerId) {
+    private BigDecimal sumOutstandingOrders(String customerId) {
         IEntityDao<ErpSalOrder> dao = daoProvider.daoFor(ErpSalOrder.class);
         QueryBean q = new QueryBean();
         q.addFilter(and(
@@ -300,7 +300,7 @@ public class CreditLimitChecker {
     }
 
     // AR 辅助账未核销余额（本位币）跨域只读聚合，经 IErpFinArApItemBiz 管道（sales→finance 单向 DAG）。
-    private BigDecimal sumArOpenFunctional(Long customerId, IServiceContext context) {
+    private BigDecimal sumArOpenFunctional(String customerId, IServiceContext context) {
         List<ErpFinArApItem> items = arApItemBiz.findOpenItemsByPartner(
                 customerId, ErpFinConstants.DIRECTION_RECEIVABLE, context);
         if (items == null || items.isEmpty()) {

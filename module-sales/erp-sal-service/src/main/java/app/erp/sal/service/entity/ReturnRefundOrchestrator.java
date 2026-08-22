@@ -66,7 +66,7 @@ public class ReturnRefundOrchestrator {
         // 属退款方式路由（treasury 面）Non-Goal，触发条件满足时再扩展。
     }
 
-    private List<ErpSalInvoice> findReceivedInvoicesOfCustomer(Long customerId) {
+    private List<ErpSalInvoice> findReceivedInvoicesOfCustomer(String customerId) {
         IEntityDao<ErpSalInvoice> dao = daoProvider.daoFor(ErpSalInvoice.class);
         QueryBean q = new QueryBean();
         q.addFilter(and(
@@ -84,7 +84,7 @@ public class ReturnRefundOrchestrator {
         if (positiveLines.isEmpty()) {
             return;
         }
-        Set<Long> touchedReceipts = new HashSet<>();
+        Set<String> touchedReceipts = new HashSet<>();
         for (ErpSalReceiptLine line : positiveLines) {
             if (touchedReceipts.contains(line.getReceiptId())) {
                 continue;

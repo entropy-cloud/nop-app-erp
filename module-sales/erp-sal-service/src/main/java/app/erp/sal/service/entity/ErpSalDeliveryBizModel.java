@@ -31,8 +31,8 @@ public class ErpSalDeliveryBizModel extends CrudBizModel<ErpSalDelivery> impleme
 
     @Override
     @BizMutation
-    public ErpSalDelivery cancel(@Name("deliveryId") Long deliveryId, IServiceContext context) {
-        return cancelProcessor.cancel(String.valueOf(deliveryId), context);
+    public ErpSalDelivery cancel(@Name("deliveryId") String deliveryId, IServiceContext context) {
+        return cancelProcessor.cancel(deliveryId, context);
     }
 
     // 经 orm().batchLoadProps 一次性批量加载 to-one 关系（DataLoader 机制），再读取名称。

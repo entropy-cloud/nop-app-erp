@@ -39,20 +39,20 @@ public class ErpSalQuotationBizModel extends CrudBizModel<ErpSalQuotation> imple
 
     @Override
     @BizMutation
-    public ErpSalQuotation cancel(@Name("quotationId") Long quotationId, IServiceContext context) {
-        return cancelProcessor.cancel(String.valueOf(quotationId), context);
+    public ErpSalQuotation cancel(@Name("quotationId") String quotationId, IServiceContext context) {
+        return cancelProcessor.cancel(quotationId, context);
     }
 
     @Override
     @BizMutation
-    public ErpSalQuotation confirmCustomerAccepted(@Name("quotationId") Long quotationId, IServiceContext context) {
-        return confirmCustomerAcceptedProcessor.confirmCustomerAccepted(String.valueOf(quotationId), context);
+    public ErpSalQuotation confirmCustomerAccepted(@Name("quotationId") String quotationId, IServiceContext context) {
+        return confirmCustomerAcceptedProcessor.confirmCustomerAccepted(quotationId, context);
     }
 
     @Override
     @BizMutation
-    public ErpSalOrder convertToOrder(@Name("quotationId") Long quotationId, IServiceContext context) {
-        return convertToOrderProcessor.convertToOrder(String.valueOf(quotationId), context);
+    public ErpSalOrder convertToOrder(@Name("quotationId") String quotationId, IServiceContext context) {
+        return convertToOrderProcessor.convertToOrder(quotationId, context);
     }
 
     // 经 orm().batchLoadProps 一次性批量加载 to-one 关系（DataLoader 机制），再读取名称。

@@ -98,7 +98,7 @@ public class ErpSalPricingRuleBizModel extends CrudBizModel<ErpSalPricingRule> i
      * 同时暴露 {@code id} + {@code stackable} 字段供 {@code enforceStackableAware} 的反射 idOf / Predicate 使用。
      */
     static final class PricingRuleDateRange implements IDateRange {
-        private final Long id;
+        private final String id;
         private final LocalDate from;
         private final LocalDate to;
         private final Boolean stackable;
@@ -120,7 +120,7 @@ public class ErpSalPricingRuleBizModel extends CrudBizModel<ErpSalPricingRule> i
             return to;
         }
 
-        public Long getId() {
+        public String getId() {
             return id;
         }
 

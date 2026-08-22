@@ -63,7 +63,7 @@ public class ErpSalReturnGenerateExchangeDeliveryProcessor {
     @Inject
     ReturnRefundOrchestrator refundOrchestrator;
 
-    public ErpSalReturn generateExchangeDelivery(Long returnId,
+    public ErpSalReturn generateExchangeDelivery(String returnId,
                                                  List<ErpSalExchangeDeliveryLine> lines,
                                                  IServiceContext context) {
         ErpSalReturn returnOrder = requireReturn(returnId, context);
@@ -85,7 +85,7 @@ public class ErpSalReturnGenerateExchangeDeliveryProcessor {
 
     // ---------- steps（protected，下游可经 Delta 覆盖） ----------
 
-    protected ErpSalReturn requireReturn(Long returnId, IServiceContext context) {
+    protected ErpSalReturn requireReturn(String returnId, IServiceContext context) {
         ErpSalReturn returnOrder = returnDao().getEntityById(returnId);
         if (returnOrder == null) {
             throw new NopException(ErpSalErrors.ERR_RETURN_NOT_FOUND)
@@ -311,7 +311,7 @@ public class ErpSalReturnGenerateExchangeDeliveryProcessor {
         return "EXDR" + returnOrder.getId();
     }
 
-    private List<ErpSalReturnLine> loadReturnLines(Long returnId) {
+    private List<ErpSalReturnLine> loadReturnLines(String returnId) {
         IEntityDao<ErpSalReturnLine> dao = daoProvider.daoFor(ErpSalReturnLine.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("returnId", returnId));

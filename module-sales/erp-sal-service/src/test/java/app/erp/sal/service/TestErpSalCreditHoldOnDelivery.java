@@ -48,13 +48,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpSalCreditHoldOnDelivery extends JunitAutoTestCase {
 
-    static final Long ORG_ID = 1601L;
-    static final Long CUSTOMER_ID = 2601L;
-    static final Long WAREHOUSE_ID = 3601L;
-    static final Long MATERIAL_ID = 4601L;
-    static final Long UOM_ID = 5601L;
-    static final Long CURRENCY_ID = 6601L;
-    static final Long ACCT_SCHEMA_ID = 7601L;
+    static final String ORG_ID = "1601";
+    static final String CUSTOMER_ID = "2601";
+    static final String WAREHOUSE_ID = "3601";
+    static final String MATERIAL_ID = "4601";
+    static final String UOM_ID = "5601";
+    static final String CURRENCY_ID = "6601";
+    static final String ACCT_SCHEMA_ID = "7601";
 
     @Inject
     IDaoProvider daoProvider;
@@ -76,7 +76,7 @@ public class TestErpSalCreditHoldOnDelivery extends JunitAutoTestCase {
             seedArOpenItem(CUSTOMER_ID, "SI-HOLD-HB-001", new BigDecimal("3000"), BigDecimal.ONE);
             return null;
         });
-        long deliveryId = newSubmittedDelivery("SD-HOLD-HB-001", "SO-HOLD-HB-001");
+        String deliveryId = newSubmittedDelivery("SD-HOLD-HB-001", "SO-HOLD-HB-001");
 
         ApiResponse<?> bad = approve(deliveryId);
         assertEquals(ErpSalErrors.ERR_CREDIT_HOLD_DELIVERY.getErrorCode(), bad.getCode(),
@@ -100,7 +100,7 @@ public class TestErpSalCreditHoldOnDelivery extends JunitAutoTestCase {
             seedArOpenItem(CUSTOMER_ID, "SI-HOLD-SW-001", new BigDecimal("3000"), BigDecimal.ONE);
             return null;
         });
-        long deliveryId = newSubmittedDelivery("SD-HOLD-SW-001", "SO-HOLD-SW-001");
+        String deliveryId = newSubmittedDelivery("SD-HOLD-SW-001", "SO-HOLD-SW-001");
 
         assertEquals(0, approve(deliveryId).getStatus(), "SOFT_WARNING 超额度放行（出库审核通过）");
         assertEquals(ErpSalConstants.APPROVE_STATUS_APPROVED, reloadDelivery(deliveryId).getApproveStatus(),
@@ -122,7 +122,7 @@ public class TestErpSalCreditHoldOnDelivery extends JunitAutoTestCase {
             seedArOpenItem(CUSTOMER_ID, "SI-HOLD-SP-001", new BigDecimal("3000"), BigDecimal.ONE);
             return null;
         });
-        long deliveryId = newSubmittedDelivery("SD-HOLD-SP-001", "SO-HOLD-SP-001");
+        String deliveryId = newSubmittedDelivery("SD-HOLD-SP-001", "SO-HOLD-SP-001");
 
         ApiResponse<?> resp = approveWithPermission(deliveryId, ErpSalConstants.PERM_CREDIT_OVER_LIMIT_APPROVE);
         assertEquals(0, resp.getStatus(), "SPECIAL_APPROVAL + 持专项权限 → 超额度放行");
@@ -145,7 +145,7 @@ public class TestErpSalCreditHoldOnDelivery extends JunitAutoTestCase {
             seedArOpenItem(CUSTOMER_ID, "SI-HOLD-OFF-001", new BigDecimal("3000"), BigDecimal.ONE);
             return null;
         });
-        long deliveryId = newSubmittedDelivery("SD-HOLD-OFF-001", "SO-HOLD-OFF-001");
+        String deliveryId = newSubmittedDelivery("SD-HOLD-OFF-001", "SO-HOLD-OFF-001");
 
         assertEquals(0, approve(deliveryId).getStatus(), "config 关闭 → 即使超额也放行（向后兼容）");
         assertEquals(ErpSalConstants.APPROVE_STATUS_APPROVED, reloadDelivery(deliveryId).getApproveStatus(),
@@ -167,7 +167,7 @@ public class TestErpSalCreditHoldOnDelivery extends JunitAutoTestCase {
             seedApprovedOrder("SO-HOLD-OK-001", CUSTOMER_ID, new BigDecimal("8000"), BigDecimal.ONE);
             return null;
         });
-        long deliveryId = newSubmittedDelivery("SD-HOLD-OK-001", "SO-HOLD-OK-001");
+        String deliveryId = newSubmittedDelivery("SD-HOLD-OK-001", "SO-HOLD-OK-001");
 
         assertEquals(0, approve(deliveryId).getStatus(), "信用正常 → 出库审核通过");
         assertEquals(ErpSalConstants.APPROVE_STATUS_APPROVED, reloadDelivery(deliveryId).getApproveStatus(),
@@ -188,7 +188,7 @@ public class TestErpSalCreditHoldOnDelivery extends JunitAutoTestCase {
             seedArOpenItem(CUSTOMER_ID, "SI-HOLD-FX-001", new BigDecimal("1500"), new BigDecimal("2"));
             return null;
         });
-        long deliveryId = newSubmittedDelivery("SD-HOLD-FX-001", "SO-HOLD-FX-001");
+        String deliveryId = newSubmittedDelivery("SD-HOLD-FX-001", "SO-HOLD-FX-001");
 
         ApiResponse<?> bad = approve(deliveryId);
         assertEquals(ErpSalErrors.ERR_CREDIT_HOLD_DELIVERY.getErrorCode(), bad.getCode(),
@@ -199,17 +199,17 @@ public class TestErpSalCreditHoldOnDelivery extends JunitAutoTestCase {
 
     // ---------- rpc helpers ----------
 
-    private ApiResponse<?> submit(Long deliveryId) {
+    private ApiResponse<?> submit(String deliveryId) {
         return executeRpc(mutation, "ErpSalDelivery__submitForApproval",
                 ApiRequest.build(Map.of("id", String.valueOf(deliveryId))));
     }
 
-    private ApiResponse<?> approve(Long deliveryId) {
+    private ApiResponse<?> approve(String deliveryId) {
         return executeRpc(mutation, "ErpSalDelivery__approve",
                 ApiRequest.build(Map.of("id", String.valueOf(deliveryId))));
     }
 
-    private ApiResponse<?> approveWithPermission(Long deliveryId, String grantedPermission) {
+    private ApiResponse<?> approveWithPermission(String deliveryId, String grantedPermission) {
         IGraphQLExecutionContext ctx = graphQLEngine.newRpcContext(mutation, "ErpSalDelivery__approve",
                 ApiRequest.build(Map.of("id", String.valueOf(deliveryId))));
         ctx.setActionAuthChecker((permission, c) -> "ErpSalDelivery:approve".equals(permission)
@@ -231,8 +231,8 @@ public class TestErpSalCreditHoldOnDelivery extends JunitAutoTestCase {
      * 建出库单（含一行，引用 orderCode 对应订单）并提交至 SUBMITTED，返回出库单 ID。
      * 订单需已存在（seedApprovedOrder）。出库单行 quantity=10，需预置库存≥10（仅放行场景）。
      */
-    private long newSubmittedDelivery(String deliveryCode, String orderCode) {
-        Long orderId = findOrderId(orderCode);
+    private String newSubmittedDelivery(String deliveryCode, String orderCode) {
+        String orderId = findOrderId(orderCode);
         ormTemplate.runInSession(session -> {
             IEntityDao<ErpSalDelivery> dao = daoProvider.daoFor(ErpSalDelivery.class);
             ErpSalDelivery delivery = new ErpSalDelivery();
@@ -260,7 +260,7 @@ public class TestErpSalCreditHoldOnDelivery extends JunitAutoTestCase {
             lineDao.saveEntity(line);
             return null;
         });
-        Long deliveryId = findDeliveryId(deliveryCode);
+        String deliveryId = findDeliveryId(deliveryCode);
         // 提交 → SUBMITTED（submit 校验客户启用 + 行非空）
         ApiResponse<?> submitResp = submit(deliveryId);
         assertTrue(submitResp.getStatus() == 0, "出库单提交应成功：" + submitResp.getCode());
@@ -269,7 +269,7 @@ public class TestErpSalCreditHoldOnDelivery extends JunitAutoTestCase {
 
     // ---------- seed helpers ----------
 
-    private void seedActiveCustomer(Long id, BigDecimal creditLimit) {
+    private void seedActiveCustomer(String id, BigDecimal creditLimit) {
         IEntityDao<ErpMdPartner> dao = daoProvider.daoFor(ErpMdPartner.class);
         ErpMdPartner partner = new ErpMdPartner();
         partner.setId(id);
@@ -281,7 +281,7 @@ public class TestErpSalCreditHoldOnDelivery extends JunitAutoTestCase {
         dao.saveEntity(partner);
     }
 
-    private void seedApprovedOrder(String code, Long customerId, BigDecimal totalAmountWithTax, BigDecimal exchangeRate) {
+    private void seedApprovedOrder(String code, String customerId, BigDecimal totalAmountWithTax, BigDecimal exchangeRate) {
         IEntityDao<ErpSalOrder> dao = daoProvider.daoFor(ErpSalOrder.class);
         ErpSalOrder order = new ErpSalOrder();
         order.setCode(code);
@@ -300,7 +300,7 @@ public class TestErpSalCreditHoldOnDelivery extends JunitAutoTestCase {
         dao.saveEntity(order);
     }
 
-    private void seedArOpenItem(Long customerId, String sourceBillCode, BigDecimal openAmountSource,
+    private void seedArOpenItem(String customerId, String sourceBillCode, BigDecimal openAmountSource,
                                 BigDecimal exchangeRate) {
         IEntityDao<ErpFinArApItem> dao = daoProvider.daoFor(ErpFinArApItem.class);
         ErpFinArApItem item = dao.newEntity();
@@ -415,16 +415,16 @@ public class TestErpSalCreditHoldOnDelivery extends JunitAutoTestCase {
 
     // ---------- query helpers ----------
 
-    private ErpSalDelivery reloadDelivery(Long deliveryId) {
+    private ErpSalDelivery reloadDelivery(String deliveryId) {
         return daoProvider.daoFor(ErpSalDelivery.class).getEntityById(deliveryId);
     }
 
-    private Long findDeliveryId(String code) {
+    private String findDeliveryId(String code) {
         return daoProvider.daoFor(ErpSalDelivery.class).findAllByQuery(new io.nop.api.core.beans.query.QueryBean())
                 .stream().filter(d -> code.equals(d.getCode())).map(ErpSalDelivery::getId).findFirst().orElse(null);
     }
 
-    private Long findOrderId(String code) {
+    private String findOrderId(String code) {
         return daoProvider.daoFor(ErpSalOrder.class).findAllByQuery(new io.nop.api.core.beans.query.QueryBean())
                 .stream().filter(o -> code.equals(o.getCode())).map(ErpSalOrder::getId).findFirst().orElse(null);
     }

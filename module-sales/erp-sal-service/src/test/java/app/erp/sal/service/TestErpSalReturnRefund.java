@@ -53,13 +53,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpSalReturnRefund extends JunitAutoTestCase {
 
-    static final Long ORG_ID = 3905L;
-    static final Long CUSTOMER_ID = 4905L;
-    static final Long WAREHOUSE_ID = 5905L;
-    static final Long MATERIAL_ID = 6905L;
-    static final Long UOM_ID = 7905L;
-    static final Long CURRENCY_ID = 8905L;
-    static final Long ACCT_SCHEMA_ID = 9905L;
+    static final String ORG_ID = "3905";
+    static final String CUSTOMER_ID = "4905";
+    static final String WAREHOUSE_ID = "5905";
+    static final String MATERIAL_ID = "6905";
+    static final String UOM_ID = "7905";
+    static final String CURRENCY_ID = "8905";
+    static final String ACCT_SCHEMA_ID = "9905";
 
     @Inject
     IDaoProvider daoProvider;
@@ -76,11 +76,11 @@ public class TestErpSalReturnRefund extends JunitAutoTestCase {
     @Test
     public void testReceivedReturnReversesSettlement() {
         seedPeriodAndSubjects();
-        Long[] deliveryCtx = seedApprovedDelivery("SD-RFD-001", new BigDecimal("10"));
+        String[] deliveryCtx = seedApprovedDelivery("SD-RFD-001", new BigDecimal("10"));
 
         // 发票 113 + 收款 113，核销 → 发票 receivedStatus=RECEIVED
-        Long invoiceId = nextId();
-        Long receiptId = nextId();
+        String invoiceId = nextId();
+        String receiptId = nextId();
         ormTemplate.runInSession(session -> {
             newApprovedInvoice("SI-RFD-001", invoiceId, new BigDecimal("113"));
             newApprovedReceipt("SR-RFD-001", receiptId, new BigDecimal("113"));
@@ -91,7 +91,7 @@ public class TestErpSalReturnRefund extends JunitAutoTestCase {
                 daoProvider.daoFor(ErpSalInvoice.class).getEntityById(invoiceId).getReceivedStatus(),
                 "发票 receivedStatus=RECEIVED");
 
-        Long returnId = nextId();
+        String returnId = nextId();
         ormTemplate.runInSession(session -> {
             newReturn("RT-RFD-001", returnId, deliveryCtx[0]);
             newReturnLine(nextId(), returnId, deliveryCtx[1], new BigDecimal("4"), new BigDecimal("5"));
@@ -117,15 +117,15 @@ public class TestErpSalReturnRefund extends JunitAutoTestCase {
     @Test
     public void testUnreceivedReturnNoSettlementReversal() {
         seedPeriodAndSubjects();
-        Long[] deliveryCtx = seedApprovedDelivery("SD-RFD-002", new BigDecimal("10"));
+        String[] deliveryCtx = seedApprovedDelivery("SD-RFD-002", new BigDecimal("10"));
         // 仅建未核销发票（receivedAmount=0），无收款
-        Long invoiceId = nextId();
+        String invoiceId = nextId();
         ormTemplate.runInSession(session -> {
             newApprovedInvoice("SI-RFD-002", invoiceId, new BigDecimal("113"));
             return null;
         });
 
-        Long returnId = nextId();
+        String returnId = nextId();
         ormTemplate.runInSession(session -> {
             newReturn("RT-RFD-002", returnId, deliveryCtx[0]);
             newReturnLine(nextId(), returnId, deliveryCtx[1], new BigDecimal("4"), new BigDecimal("5"));
@@ -139,11 +139,11 @@ public class TestErpSalReturnRefund extends JunitAutoTestCase {
 
     // ---------- seed ----------
 
-    private Long[] seedApprovedDelivery(String deliveryCode, BigDecimal deliveryQty) {
-        Long orderId = nextId();
-        Long deliveryId = nextId();
-        Long orderLineId = nextId();
-        Long deliveryLineId = nextId();
+    private String[] seedApprovedDelivery(String deliveryCode, BigDecimal deliveryQty) {
+        String orderId = nextId();
+        String deliveryId = nextId();
+        String orderLineId = nextId();
+        String deliveryLineId = nextId();
         ormTemplate.runInSession(session -> {
             seedActiveCustomer();
             newOrderWithId("SO-" + deliveryCode, orderId);
@@ -152,10 +152,10 @@ public class TestErpSalReturnRefund extends JunitAutoTestCase {
             newDeliveryLine(deliveryLineId, deliveryId, orderLineId, deliveryQty);
             return null;
         });
-        return new Long[]{deliveryId, deliveryLineId};
+        return new String[]{deliveryId, deliveryLineId};
     }
 
-    private boolean hasNegativeLine(Long receiptId, Long invoiceId) {
+    private boolean hasNegativeLine(String receiptId, String invoiceId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("receiptId", receiptId));
         q.addFilter(eq("invoiceId", invoiceId));
@@ -173,7 +173,7 @@ public class TestErpSalReturnRefund extends JunitAutoTestCase {
         return daoProvider.daoFor(ErpSalReceiptLine.class).findAllByQuery(q).size();
     }
 
-    private ApiResponse<?> settle(Long receiptId, Long invoiceId, BigDecimal amount) {
+    private ApiResponse<?> settle(String receiptId, String invoiceId, BigDecimal amount) {
         Map<String, Object> alloc = new LinkedHashMap<>();
         alloc.put("invoiceId", invoiceId);
         alloc.put("amount", amount);
@@ -183,7 +183,7 @@ public class TestErpSalReturnRefund extends JunitAutoTestCase {
         return executeRpc(mutation, "ErpSalReceipt__settle", ApiRequest.build(req));
     }
 
-    private ApiResponse<?> approveReturn(Long id) {
+    private ApiResponse<?> approveReturn(String id) {
         return executeRpc(mutation, "ErpSalReturn__approve", ApiRequest.build(Map.of("id", String.valueOf(id))));
     }
 
@@ -253,7 +253,7 @@ public class TestErpSalReturnRefund extends JunitAutoTestCase {
         dao.saveEntity(subject);
     }
 
-    private void newOrderWithId(String code, Long orderId) {
+    private void newOrderWithId(String code, String orderId) {
         IEntityDao<ErpSalOrder> dao = daoProvider.daoFor(ErpSalOrder.class);
         ErpSalOrder order = new ErpSalOrder();
         order.setId(orderId);
@@ -269,7 +269,7 @@ public class TestErpSalReturnRefund extends JunitAutoTestCase {
         dao.saveEntity(order);
     }
 
-    private void newOrderLine(Long orderId, Long lineId, int lineNo, BigDecimal qty) {
+    private void newOrderLine(String orderId, String lineId, int lineNo, BigDecimal qty) {
         IEntityDao<ErpSalOrderLine> dao = daoProvider.daoFor(ErpSalOrderLine.class);
         ErpSalOrderLine line = new ErpSalOrderLine();
         line.setId(lineId);
@@ -283,7 +283,7 @@ public class TestErpSalReturnRefund extends JunitAutoTestCase {
         dao.saveEntity(line);
     }
 
-    private void newDeliveryApproved(String code, Long deliveryId, Long orderId) {
+    private void newDeliveryApproved(String code, String deliveryId, String orderId) {
         IEntityDao<ErpSalDelivery> dao = daoProvider.daoFor(ErpSalDelivery.class);
         ErpSalDelivery delivery = new ErpSalDelivery();
         delivery.setId(deliveryId);
@@ -301,7 +301,7 @@ public class TestErpSalReturnRefund extends JunitAutoTestCase {
         dao.saveEntity(delivery);
     }
 
-    private void newDeliveryLine(Long lineId, Long deliveryId, Long orderLineId, BigDecimal qty) {
+    private void newDeliveryLine(String lineId, String deliveryId, String orderLineId, BigDecimal qty) {
         IEntityDao<ErpSalDeliveryLine> dao = daoProvider.daoFor(ErpSalDeliveryLine.class);
         ErpSalDeliveryLine line = new ErpSalDeliveryLine();
         line.setId(lineId);
@@ -315,7 +315,7 @@ public class TestErpSalReturnRefund extends JunitAutoTestCase {
         dao.saveEntity(line);
     }
 
-    private void newApprovedInvoice(String code, Long invoiceId, BigDecimal withTax) {
+    private void newApprovedInvoice(String code, String invoiceId, BigDecimal withTax) {
         IEntityDao<ErpSalInvoice> dao = daoProvider.daoFor(ErpSalInvoice.class);
         ErpSalInvoice invoice = new ErpSalInvoice();
         invoice.setId(invoiceId);
@@ -336,7 +336,7 @@ public class TestErpSalReturnRefund extends JunitAutoTestCase {
         dao.saveEntity(invoice);
     }
 
-    private void newApprovedReceipt(String code, Long receiptId, BigDecimal total) {
+    private void newApprovedReceipt(String code, String receiptId, BigDecimal total) {
         IEntityDao<ErpSalReceipt> dao = daoProvider.daoFor(ErpSalReceipt.class);
         ErpSalReceipt receipt = new ErpSalReceipt();
         receipt.setId(receiptId);
@@ -356,7 +356,7 @@ public class TestErpSalReturnRefund extends JunitAutoTestCase {
         dao.saveEntity(receipt);
     }
 
-    private void newReturn(String code, Long returnId, Long deliveryId) {
+    private void newReturn(String code, String returnId, String deliveryId) {
         IEntityDao<ErpSalReturn> dao = daoProvider.daoFor(ErpSalReturn.class);
         ErpSalReturn returnOrder = new ErpSalReturn();
         returnOrder.setId(returnId);
@@ -376,7 +376,7 @@ public class TestErpSalReturnRefund extends JunitAutoTestCase {
         dao.saveEntity(returnOrder);
     }
 
-    private void newReturnLine(Long lineId, Long returnId, Long deliveryLineId, BigDecimal qty, BigDecimal unitPrice) {
+    private void newReturnLine(String lineId, String returnId, String deliveryLineId, BigDecimal qty, BigDecimal unitPrice) {
         IEntityDao<ErpSalReturnLine> dao = daoProvider.daoFor(ErpSalReturnLine.class);
         ErpSalReturnLine line = new ErpSalReturnLine();
         line.setId(lineId);
@@ -392,7 +392,7 @@ public class TestErpSalReturnRefund extends JunitAutoTestCase {
         dao.saveEntity(line);
     }
 
-    private Long nextId() {
-        return idSeq.incrementAndGet();
+    private String nextId() {
+        return String.valueOf(idSeq.incrementAndGet());
     }
 }

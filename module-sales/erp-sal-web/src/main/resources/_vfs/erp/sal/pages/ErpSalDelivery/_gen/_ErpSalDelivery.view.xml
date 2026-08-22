@@ -19,28 +19,28 @@
             <cols>
 
                 <!--ID-->
-                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="id" mandatory="true" sortable="true"/>
 
                 <!--单号-->
                 <col id="code" mandatory="true" sortable="true"/>
 
                 <!--业务组织-->
-                <col id="orgId" ui:number="true" sortable="true"/>
+                <col id="orgId" sortable="true"/>
 
                 <!--销售订单-->
-                <col id="orderId" ui:number="true" sortable="true"/>
+                <col id="orderId" sortable="true"/>
 
                 <!--客户-->
-                <col id="customerId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="customerId" mandatory="true" sortable="true"/>
 
                 <!--出库仓库-->
-                <col id="warehouseId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="warehouseId" mandatory="true" sortable="true"/>
 
                 <!--出库日期-->
                 <col id="businessDate" mandatory="true" sortable="true"/>
 
                 <!--币种-->
-                <col id="currencyId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="currencyId" mandatory="true" sortable="true"/>
 
                 <!--汇率-->
                 <col id="exchangeRate" ui:number="true" sortable="true"/>
@@ -100,7 +100,7 @@
                 <col id="remark" sortable="true"/>
 
                 <!--换货来源退货单-->
-                <col id="exchangeReturnId" ui:number="true" sortable="true"/>
+                <col id="exchangeReturnId" sortable="true"/>
             </cols>
         </grid>
         <grid id="pick-list" x:prototype="list" x:abstract="true"/>

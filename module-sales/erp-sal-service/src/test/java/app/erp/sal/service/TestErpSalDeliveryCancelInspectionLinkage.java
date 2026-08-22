@@ -49,12 +49,12 @@ public class TestErpSalDeliveryCancelInspectionLinkage extends JunitAutoTestCase
     @RegisterExtension
     static SalFrozenClockExtension frozenClock = new SalFrozenClockExtension();
 
-    static final Long ORG_ID = 1201L;
-    static final Long CUSTOMER_ID = 2201L;
-    static final Long WAREHOUSE_ID = 3201L;
-    static final Long MATERIAL_ID = 4201L;
-    static final Long UOM_ID = 5201L;
-    static final Long CURRENCY_ID = 6201L;
+    static final String ORG_ID = "1201";
+    static final String CUSTOMER_ID = "2201";
+    static final String WAREHOUSE_ID = "3201";
+    static final String MATERIAL_ID = "4201";
+    static final String UOM_ID = "5201";
+    static final String CURRENCY_ID = "6201";
 
     @Inject
     IDaoProvider daoProvider;
@@ -125,7 +125,7 @@ public class TestErpSalDeliveryCancelInspectionLinkage extends JunitAutoTestCase
 
     // ---------- helpers ----------
 
-    private ApiResponse<?> cancel(Long deliveryId) {
+    private ApiResponse<?> cancel(String deliveryId) {
         return executeRpc(mutation, "ErpSalDelivery__cancel", ApiRequest.build(Map.of("deliveryId", deliveryId)));
     }
 
@@ -176,7 +176,7 @@ public class TestErpSalDeliveryCancelInspectionLinkage extends JunitAutoTestCase
         lineDao.saveEntity(line);
     }
 
-    private void seedActiveCustomer(Long id) {
+    private void seedActiveCustomer(String id) {
         IEntityDao<ErpMdPartner> dao = daoProvider.daoFor(ErpMdPartner.class);
         ErpMdPartner partner = new ErpMdPartner();
         partner.setId(id);

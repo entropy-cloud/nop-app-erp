@@ -12,13 +12,13 @@ import java.math.BigDecimal;
 public class ResolvedPrice {
     private BigDecimal unitPrice;
     private String source;
-    private Long priceListId;
+    private String priceListId;
     private String priceListName;
 
     public ResolvedPrice() {
     }
 
-    public ResolvedPrice(BigDecimal unitPrice, String source, Long priceListId, String priceListName) {
+    public ResolvedPrice(BigDecimal unitPrice, String source, String priceListId, String priceListName) {
         this.unitPrice = unitPrice;
         this.source = source;
         this.priceListId = priceListId;
@@ -41,11 +41,11 @@ public class ResolvedPrice {
         this.source = source;
     }
 
-    public Long getPriceListId() {
+    public String getPriceListId() {
         return priceListId;
     }
 
-    public void setPriceListId(Long priceListId) {
+    public void setPriceListId(String priceListId) {
         this.priceListId = priceListId;
     }
 

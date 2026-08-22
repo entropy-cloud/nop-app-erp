@@ -43,7 +43,7 @@ public class TestErpSalPostingDispatcherFailureHangs extends JunitAutoTestCase {
     private static SalPostingExecutor throwingExecutor() {
         return new SalPostingExecutor() {
             @Override
-            public Long postEvent(PostingEvent event) {
+            public String postEvent(PostingEvent event) {
                 throw new NopException("test.sal-posting-engine-down", null, true, true);
             }
         };
@@ -94,12 +94,12 @@ public class TestErpSalPostingDispatcherFailureHangs extends JunitAutoTestCase {
         ErpSalInvoice invoice = new ErpSalInvoice();
         invoice.setCode(code);
         invoice.setBusinessDate(LocalDate.of(2026, 7, 1));
-        invoice.setCurrencyId(6201L);
+        invoice.setCurrencyId("6201");
         invoice.setExchangeRate(BigDecimal.ONE);
         invoice.setTotalAmount(new BigDecimal("100"));
         invoice.setTotalTaxAmount(new BigDecimal("13"));
         invoice.setTotalAmountWithTax(new BigDecimal("113"));
-        invoice.setCustomerId(2201L);
+        invoice.setCustomerId("2201");
         return invoice;
     }
 
@@ -107,10 +107,10 @@ public class TestErpSalPostingDispatcherFailureHangs extends JunitAutoTestCase {
         ErpSalReceipt receipt = new ErpSalReceipt();
         receipt.setCode(code);
         receipt.setBusinessDate(LocalDate.of(2026, 7, 1));
-        receipt.setCurrencyId(6201L);
+        receipt.setCurrencyId("6201");
         receipt.setExchangeRate(BigDecimal.ONE);
         receipt.setTotalAmount(new BigDecimal("113"));
-        receipt.setCustomerId(2201L);
+        receipt.setCustomerId("2201");
         return receipt;
     }
 
@@ -118,10 +118,10 @@ public class TestErpSalPostingDispatcherFailureHangs extends JunitAutoTestCase {
         ErpSalReturn returnOrder = new ErpSalReturn();
         returnOrder.setCode(code);
         returnOrder.setBusinessDate(LocalDate.of(2026, 7, 2));
-        returnOrder.setCurrencyId(6201L);
+        returnOrder.setCurrencyId("6201");
         returnOrder.setExchangeRate(BigDecimal.ONE);
         returnOrder.setTotalAmountWithTax(new BigDecimal("20"));
-        returnOrder.setCustomerId(2201L);
+        returnOrder.setCustomerId("2201");
         return returnOrder;
     }
 }

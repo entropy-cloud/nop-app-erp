@@ -320,7 +320,7 @@ public class ErpSalReturnProcessor {
      */
     protected void validateInvoiceNotSettled(ErpSalReturn returnOrder, List<ErpSalReturnLine> lines,
                                               IServiceContext context) {
-        Set<Long> deliveryLineIds = new HashSet<>();
+        Set<String> deliveryLineIds = new HashSet<>();
         for (ErpSalReturnLine line : lines) {
             if (line.getDeliveryLineId() != null) {
                 deliveryLineIds.add(line.getDeliveryLineId());
@@ -329,7 +329,7 @@ public class ErpSalReturnProcessor {
         if (deliveryLineIds.isEmpty()) {
             return;
         }
-        Set<Long> invoiceIds = findInvoiceIdsByDeliveryLines(deliveryLineIds);
+        Set<String> invoiceIds = findInvoiceIdsByDeliveryLines(deliveryLineIds);
         if (invoiceIds.isEmpty()) {
             return;
         }
@@ -342,7 +342,7 @@ public class ErpSalReturnProcessor {
         }
     }
 
-    protected ErpFinAccountingPeriod findPeriodByDate(Long orgId, LocalDate date) {
+    protected ErpFinAccountingPeriod findPeriodByDate(String orgId, LocalDate date) {
         if (date == null) {
             return null;
         }
@@ -357,11 +357,11 @@ public class ErpSalReturnProcessor {
         return list.isEmpty() ? null : list.get(0);
     }
 
-    private Set<Long> findInvoiceIdsByDeliveryLines(Set<Long> deliveryLineIds) {
+    private Set<String> findInvoiceIdsByDeliveryLines(Set<String> deliveryLineIds) {
         IEntityDao<ErpSalInvoiceLine> dao = daoProvider.daoFor(ErpSalInvoiceLine.class);
         QueryBean q = new QueryBean();
         q.addFilter(in("deliveryLineId", deliveryLineIds));
-        Set<Long> invoiceIds = new HashSet<>();
+        Set<String> invoiceIds = new HashSet<>();
         for (ErpSalInvoiceLine il : dao.findAllByQuery(q)) {
             if (il.getInvoiceId() != null) {
                 invoiceIds.add(il.getInvoiceId());
@@ -370,7 +370,7 @@ public class ErpSalReturnProcessor {
         return invoiceIds;
     }
 
-    private List<ErpSalInvoice> findApprovedInvoices(Set<Long> invoiceIds) {
+    private List<ErpSalInvoice> findApprovedInvoices(Set<String> invoiceIds) {
         IEntityDao<ErpSalInvoice> dao = daoProvider.daoFor(ErpSalInvoice.class);
         QueryBean q = new QueryBean();
         q.addFilter(and(in("id", invoiceIds), eq("approveStatus", ErpSalConstants.APPROVE_STATUS_APPROVED)));
@@ -396,7 +396,7 @@ public class ErpSalReturnProcessor {
         return stockMoveBiz.generateMove(request, context);
     }
 
-    protected Long resolveSourceDeliveryMoveId(ErpSalReturn returnOrder, IServiceContext context) {
+    protected String resolveSourceDeliveryMoveId(ErpSalReturn returnOrder, IServiceContext context) {
         ErpSalDelivery delivery = returnOrder.getDelivery();
         if (delivery == null) {
             return null;
@@ -473,7 +473,7 @@ public class ErpSalReturnProcessor {
         }
     }
 
-    protected List<ErpSalReturnLine> loadLines(Long returnId) {
+    protected List<ErpSalReturnLine> loadLines(String returnId) {
         IEntityDao<ErpSalReturnLine> dao = daoProvider.daoFor(ErpSalReturnLine.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("returnId", returnId));
@@ -493,10 +493,10 @@ public class ErpSalReturnProcessor {
      */
     protected void updateUndeliveredQuantity(ErpSalReturn returnOrder, IServiceContext context) {
         List<ErpSalReturnLine> lines = loadLines(returnOrder.getId());
-        Set<Long> orderLineIds = new HashSet<>();
+        Set<String> orderLineIds = new HashSet<>();
         IEntityDao<ErpSalDeliveryLine> deliveryLineDao = daoProvider.daoFor(ErpSalDeliveryLine.class);
         for (ErpSalReturnLine line : lines) {
-            Long deliveryLineId = line.getDeliveryLineId();
+            String deliveryLineId = line.getDeliveryLineId();
             if (deliveryLineId == null) {
                 continue;
             }
@@ -508,9 +508,9 @@ public class ErpSalReturnProcessor {
         if (orderLineIds.isEmpty()) {
             return;
         }
-        Map<Long, BigDecimal> deliveredByOrderLine = aggregateApprovedDelivered(orderLineIds);
+        Map<String, BigDecimal> deliveredByOrderLine = aggregateApprovedDelivered(orderLineIds);
         IEntityDao<ErpSalOrderLine> orderLineDao = daoProvider.daoFor(ErpSalOrderLine.class);
-        for (Long orderLineId : orderLineIds) {
+        for (String orderLineId : orderLineIds) {
             ErpSalOrderLine orderLine = orderLineDao.getEntityById(orderLineId);
             if (orderLine != null) {
                 BigDecimal delivered = deliveredByOrderLine.getOrDefault(orderLineId, BigDecimal.ZERO);
@@ -524,7 +524,7 @@ public class ErpSalReturnProcessor {
      * 按 orderLineId 聚合 APPROVED 出库行的数量（毛口径）。对齐 ReturnQtyValidator:72-101 先例：
      * 仅统计父出库单 approveStatus=APPROVED 的出库行数量。
      */
-    private Map<Long, BigDecimal> aggregateApprovedDelivered(Set<Long> orderLineIds) {
+    private Map<String, BigDecimal> aggregateApprovedDelivered(Set<String> orderLineIds) {
         IEntityDao<ErpSalDeliveryLine> dlDao = daoProvider.daoFor(ErpSalDeliveryLine.class);
         QueryBean dlQuery = new QueryBean();
         dlQuery.addFilter(in("orderLineId", orderLineIds));
@@ -532,7 +532,7 @@ public class ErpSalReturnProcessor {
         if (deliveryLines.isEmpty()) {
             return new HashMap<>();
         }
-        Set<Long> deliveryIds = deliveryLines.stream()
+        Set<String> deliveryIds = deliveryLines.stream()
                 .map(ErpSalDeliveryLine::getDeliveryId)
                 .filter(Objects::nonNull)
                 .collect(Collectors.toSet());
@@ -541,11 +541,11 @@ public class ErpSalReturnProcessor {
         dQuery.addFilter(and(
                 in("id", deliveryIds),
                 eq("approveStatus", ErpSalConstants.APPROVE_STATUS_APPROVED)));
-        Set<Long> approvedDeliveryIds = dDao.findAllByQuery(dQuery).stream()
+        Set<String> approvedDeliveryIds = dDao.findAllByQuery(dQuery).stream()
                 .map(ErpSalDelivery::getId)
                 .collect(Collectors.toSet());
 
-        Map<Long, BigDecimal> result = new HashMap<>();
+        Map<String, BigDecimal> result = new HashMap<>();
         for (ErpSalDeliveryLine dl : deliveryLines) {
             if (dl.getDeliveryId() != null && approvedDeliveryIds.contains(dl.getDeliveryId())) {
                 BigDecimal qty = dl.getQuantity() == null ? BigDecimal.ZERO : dl.getQuantity();

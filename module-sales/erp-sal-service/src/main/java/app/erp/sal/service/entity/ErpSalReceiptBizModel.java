@@ -39,24 +39,24 @@ public class ErpSalReceiptBizModel extends CrudBizModel<ErpSalReceipt> implement
 
     @Override
     @BizMutation
-    public ErpSalReceipt cancel(@Name("receiptId") Long receiptId, IServiceContext context) {
-        return cancelProcessor.cancel(String.valueOf(receiptId), context);
+    public ErpSalReceipt cancel(@Name("receiptId") String receiptId, IServiceContext context) {
+        return cancelProcessor.cancel(receiptId, context);
     }
 
     @Override
     @BizMutation
-    public ErpSalReceipt settle(@Name("receiptId") Long receiptId,
+    public ErpSalReceipt settle(@Name("receiptId") String receiptId,
                                 @Name("allocations") List<SettlementAllocation> allocations,
                                 IServiceContext context) {
-        return settleProcessor.settle(String.valueOf(receiptId), allocations, context);
+        return settleProcessor.settle(receiptId, allocations, context);
     }
 
     @Override
     @BizMutation
-    public ErpSalReceipt reverseSettlement(@Name("receiptId") Long receiptId,
-                                           @Name("invoiceId") Long invoiceId,
+    public ErpSalReceipt reverseSettlement(@Name("receiptId") String receiptId,
+                                           @Name("invoiceId") String invoiceId,
                                            IServiceContext context) {
-        return reverseSettlementProcessor.reverseSettlement(String.valueOf(receiptId), invoiceId, context);
+        return reverseSettlementProcessor.reverseSettlement(receiptId, invoiceId, context);
     }
 
     // 经 orm().batchLoadProps 一次性批量加载 to-one 关系（DataLoader 机制），再读取名称。

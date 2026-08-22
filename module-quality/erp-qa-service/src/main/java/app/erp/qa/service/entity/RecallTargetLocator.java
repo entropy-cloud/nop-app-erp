@@ -16,7 +16,6 @@ import app.erp.qa.service.ErpQaErrors;
 import app.erp.sal.biz.IErpSalDeliveryBiz;
 import app.erp.sal.dao.entity.ErpSalDelivery;
 import io.nop.api.core.beans.query.QueryBean;
-import io.nop.api.core.convert.ConvertHelper;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.core.context.IServiceContext;
 import io.nop.orm.IOrmEntitySet;
@@ -101,10 +100,9 @@ public class RecallTargetLocator {
 
             ErpQaRecallTarget target = recallTargetBiz.newEntity();
             target.setRecallId(recall.getId());
-            // bridge-main-092/093: sal delivery.customerId/id 仍 Long（sal 未迁移），qa target 已 String——sal 翻转时退役（owner M2.6）
-            target.setPartnerId(ConvertHelper.toString(delivery.getCustomerId()));
+            target.setPartnerId(delivery.getCustomerId());
             target.setBatchNo(batchNo);
-            target.setSalesDeliveryId(ConvertHelper.toString(delivery.getId()));
+            target.setSalesDeliveryId(delivery.getId());
             target.setShippedQty(shippedQty);
             target.setReturnStatus(ErpQaConstants.RECALL_TARGET_RETURN_PENDING);
             recallTargetBiz.saveEntity(target, null, context);

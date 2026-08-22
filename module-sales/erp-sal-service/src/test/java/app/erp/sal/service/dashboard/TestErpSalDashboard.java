@@ -63,20 +63,20 @@ public class TestErpSalDashboard extends JunitAutoTestCase {
     @Test
     public void testKpiAggregationAndConversionRate() {
         ormTemplate.runInSession(() -> {
-            seedCustomer(601L, "C-A");
-            seedCustomer(602L, "C-B");
+            seedCustomer("601", "C-A");
+            seedCustomer("602", "C-B");
             // 2 张已过票：100 + 200 = 300
-            seedInvoice(701L, 601L, new BigDecimal("100"), CoreMetrics.currentDate(), true);
-            seedInvoice(702L, 602L, new BigDecimal("200"), CoreMetrics.currentDate(), true);
+            seedInvoice("701", "601", new BigDecimal("100"), CoreMetrics.currentDate(), true);
+            seedInvoice("702", "602", new BigDecimal("200"), CoreMetrics.currentDate(), true);
             // 未过票不计入
-            seedInvoice(703L, 601L, new BigDecimal("999"), CoreMetrics.currentDate(), false);
+            seedInvoice("703", "601", new BigDecimal("999"), CoreMetrics.currentDate(), false);
             // 4 张 ACTIVE 订单 → 转化率 = 2/4 = 0.5
-            seedOrder(801L, 601L, ErpSalConstants.DOC_STATUS_ACTIVE);
-            seedOrder(802L, 602L, ErpSalConstants.DOC_STATUS_ACTIVE);
-            seedOrder(803L, 601L, ErpSalConstants.DOC_STATUS_ACTIVE);
-            seedOrder(804L, 602L, ErpSalConstants.DOC_STATUS_ACTIVE);
+            seedOrder("801", "601", ErpSalConstants.DOC_STATUS_ACTIVE);
+            seedOrder("802", "602", ErpSalConstants.DOC_STATUS_ACTIVE);
+            seedOrder("803", "601", ErpSalConstants.DOC_STATUS_ACTIVE);
+            seedOrder("804", "602", ErpSalConstants.DOC_STATUS_ACTIVE);
             // AR 余额 500（RECEIVABLE + OPEN）
-            seedArApItem(901L, 601L, new BigDecimal("500"));
+            seedArApItem("901", "601", new BigDecimal("500"));
         });
 
         Map<String, Object> kpi = dashboardBiz.getDashboardKpi(null, null, CTX);
@@ -90,9 +90,9 @@ public class TestErpSalDashboard extends JunitAutoTestCase {
     @Test
     public void testTrendMonthlySeries() {
         ormTemplate.runInSession(() -> {
-            seedCustomer(611L, "C-C");
-            seedInvoice(711L, 611L, new BigDecimal("150"), CoreMetrics.currentDate().minusMonths(1), true);
-            seedInvoice(712L, 611L, new BigDecimal("250"), CoreMetrics.currentDate(), true);
+            seedCustomer("611", "C-C");
+            seedInvoice("711", "611", new BigDecimal("150"), CoreMetrics.currentDate().minusMonths(1), true);
+            seedInvoice("712", "611", new BigDecimal("250"), CoreMetrics.currentDate(), true);
         });
         List<Map<String, Object>> trend = dashboardBiz.getDashboardTrend(2, CTX);
         assertEquals(2, trend.size());
@@ -106,24 +106,24 @@ public class TestErpSalDashboard extends JunitAutoTestCase {
     @Test
     public void testCustomerTopN() {
         ormTemplate.runInSession(() -> {
-            seedCustomer(621L, "C-TOP1");
-            seedCustomer(622L, "C-TOP2");
-            seedInvoice(721L, 621L, new BigDecimal("300"), CoreMetrics.currentDate(), true);
-            seedInvoice(722L, 622L, new BigDecimal("100"), CoreMetrics.currentDate(), true);
-            seedInvoice(723L, 621L, new BigDecimal("50"), CoreMetrics.currentDate(), true);
+            seedCustomer("621", "C-TOP1");
+            seedCustomer("622", "C-TOP2");
+            seedInvoice("721", "621", new BigDecimal("300"), CoreMetrics.currentDate(), true);
+            seedInvoice("722", "622", new BigDecimal("100"), CoreMetrics.currentDate(), true);
+            seedInvoice("723", "621", new BigDecimal("50"), CoreMetrics.currentDate(), true);
         });
         List<Map<String, Object>> top = dashboardBiz.findCustomerTopN(10, CTX);
         assertEquals(2, top.size(), "2 个客户");
         // 621 累计 350 > 622 累计 100 → 621 排第一
-        assertEquals(621L, top.get(0).get("customerId"));
+        assertEquals("621", top.get(0).get("customerId"));
         assertEquals(0, ((BigDecimal) top.get(0).get("salesAmount")).compareTo(new BigDecimal("350")));
     }
 
     @Test
     public void testArOverdueAlertDisabledByDefault() {
         ormTemplate.runInSession(() -> {
-            seedCustomer(631L, "C-OVD");
-            seedArApItem(931L, 631L, new BigDecimal("1000"));
+            seedCustomer("631", "C-OVD");
+            seedArApItem("931", "631", new BigDecimal("1000"));
         });
         AppConfig.getConfigProvider().assignConfigValue(
                 ErpSalConstants.CONFIG_DASH_SAL_AR_OVERDUE_DAYS,
@@ -138,9 +138,9 @@ public class TestErpSalDashboard extends JunitAutoTestCase {
     @Test
     public void testArOverdueAlertTriggers() {
         ormTemplate.runInSession(() -> {
-            seedCustomer(641L, "C-OVD2");
+            seedCustomer("641", "C-OVD2");
             // dueDate 100 天前，openAmount 800
-            seedArApItemWithDue(941L, 641L, new BigDecimal("800"),
+            seedArApItemWithDue("941", "641", new BigDecimal("800"),
                     CoreMetrics.currentDate().minusDays(100), CoreMetrics.currentDate().minusDays(100));
         });
         AppConfig.getConfigProvider().assignConfigValue(
@@ -150,7 +150,7 @@ public class TestErpSalDashboard extends JunitAutoTestCase {
         try {
             List<Map<String, Object>> alerts = dashboardBiz.findArOverdueAlert(CTX);
             assertEquals(1, alerts.size(), "账龄 100>90 且金额 800>500 → 触发");
-            assertEquals(641L, alerts.get(0).get("partnerId"));
+            assertEquals("641", alerts.get(0).get("partnerId"));
         } finally {
             AppConfig.getConfigProvider().assignConfigValue(
                     ErpSalConstants.CONFIG_DASH_SAL_AR_OVERDUE_DAYS, "0");
@@ -161,7 +161,7 @@ public class TestErpSalDashboard extends JunitAutoTestCase {
 
     // ---------- helpers ----------
 
-    private void seedCustomer(long id, String code) {
+    private void seedCustomer(String id, String code) {
         IEntityDao<ErpMdPartner> dao = daoProvider.daoFor(ErpMdPartner.class);
         ErpMdPartner p = dao.newEntity();
         p.orm_propValue(1, id);
@@ -174,16 +174,16 @@ public class TestErpSalDashboard extends JunitAutoTestCase {
         dao.saveEntity(p);
     }
 
-    private void seedInvoice(long id, long customerId, BigDecimal amount, LocalDate date, boolean posted) {
+    private void seedInvoice(String id, String customerId, BigDecimal amount, LocalDate date, boolean posted) {
         IEntityDao<ErpSalInvoice> dao = daoProvider.daoFor(ErpSalInvoice.class);
         ErpSalInvoice inv = dao.newEntity();
         inv.orm_propValue(1, id);
         inv.setCode("SI-" + id);
-        inv.setOrgId(1L);
+        inv.setOrgId("1");
         inv.setCustomerId(customerId);
         inv.setInvoiceNo("INV-" + id);
         inv.setBusinessDate(date);
-        inv.setCurrencyId(1L);
+        inv.setCurrencyId("1");
         inv.setExchangeRate(BigDecimal.ONE);
         inv.setAmountSource(amount);
         inv.setAmountFunctional(amount);
@@ -194,40 +194,40 @@ public class TestErpSalDashboard extends JunitAutoTestCase {
         dao.saveEntity(inv);
     }
 
-    private void seedOrder(long id, long customerId, String docStatus) {
+    private void seedOrder(String id, String customerId, String docStatus) {
         IEntityDao<ErpSalOrder> dao = daoProvider.daoFor(ErpSalOrder.class);
         ErpSalOrder o = dao.newEntity();
         o.orm_propValue(1, id);
         o.setCode("SO-" + id);
-        o.setOrgId(1L);
+        o.setOrgId("1");
         o.setCustomerId(customerId);
         o.setBusinessDate(CoreMetrics.currentDate());
-        o.setCurrencyId(1L);
+        o.setCurrencyId("1");
         o.setExchangeRate(BigDecimal.ONE);
         o.setDocStatus(docStatus);
         o.setApproveStatus(ErpSalConstants.APPROVE_STATUS_APPROVED);
         dao.saveEntity(o);
     }
 
-    private void seedArApItem(long id, long partnerId, BigDecimal openAmount) {
+    private void seedArApItem(String id, String partnerId, BigDecimal openAmount) {
         seedArApItemWithDue(id, partnerId, openAmount, CoreMetrics.currentDate(), CoreMetrics.currentDate());
     }
 
-    private void seedArApItemWithDue(long id, long partnerId, BigDecimal openAmount,
+    private void seedArApItemWithDue(String id, String partnerId, BigDecimal openAmount,
                                      LocalDate businessDate, LocalDate dueDate) {
         IEntityDao<ErpFinArApItem> dao = daoProvider.daoFor(ErpFinArApItem.class);
         ErpFinArApItem it = dao.newEntity();
         it.orm_propValue(1, id);
         it.setCode("SAL-AR-" + id);
-        it.setOrgId(1L);
-        it.setAcctSchemaId(1L);
+        it.setOrgId("1");
+        it.setAcctSchemaId("1");
         it.setDirection(ErpFinConstants.DIRECTION_RECEIVABLE);
         it.setPartnerId(partnerId);
         it.setSourceBillType(ErpFinConstants.SOURCE_BILL_AR_INVOICE);
         it.setSourceBillCode("SAL-BILL-" + id);
         it.setBusinessDate(businessDate);
         it.setDueDate(dueDate);
-        it.setCurrencyId(1L);
+        it.setCurrencyId("1");
         it.setExchangeRate(BigDecimal.ONE);
         it.setAmountSource(openAmount);
         it.setAmountFunctional(openAmount);

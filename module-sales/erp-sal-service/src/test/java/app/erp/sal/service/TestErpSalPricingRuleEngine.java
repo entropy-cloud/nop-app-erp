@@ -28,9 +28,9 @@ public class TestErpSalPricingRuleEngine extends BaseTestCase {
 
     private final ErpSalPricingRuleEngine engine = new ErpSalPricingRuleEngine();
 
-    private static final Long MATERIAL_ID = 7001L;
-    private static final Long CUSTOMER_ID = 8001L;
-    private static final Long CURRENCY_ID = 6401L;
+    private static final String MATERIAL_ID = "7001";
+    private static final String CUSTOMER_ID = "8001";
+    private static final String CURRENCY_ID = "6401";
 
     @Test
     public void testPercentDiscountLine() {
@@ -244,16 +244,16 @@ public class TestErpSalPricingRuleEngine extends BaseTestCase {
 
     private ErpSalOrder newOrder() {
         ErpSalOrder order = new ErpSalOrder();
-        order.setId(1L);
+        order.setId("1");
         order.setTotalAmount(BigDecimal.ZERO);
         order.setCurrencyId(CURRENCY_ID);
         return order;
     }
 
-    private ErpSalOrderLine newLine(Long materialId, BigDecimal unitPrice, BigDecimal quantity) {
+    private ErpSalOrderLine newLine(String materialId, BigDecimal unitPrice, BigDecimal quantity) {
         ErpSalOrderLine line = new ErpSalOrderLine();
-        line.setId(System.nanoTime());
-        line.setOrderId(1L);
+        line.setId(String.valueOf(System.nanoTime()));
+        line.setOrderId("1");
         line.setLineNo(1);
         line.setMaterialId(materialId);
         line.setUnitPrice(unitPrice);
@@ -264,7 +264,7 @@ public class TestErpSalPricingRuleEngine extends BaseTestCase {
 
     private ErpSalPricingRule newRule(String ruleType, String targetType, int priority) {
         ErpSalPricingRule rule = new ErpSalPricingRule();
-        rule.setId(System.nanoTime());
+        rule.setId(String.valueOf(System.nanoTime()));
         rule.setRuleCode("RULE-" + ruleType + "-" + priority);
         rule.setRuleName("Test " + ruleType);
         rule.setRuleType(ruleType);

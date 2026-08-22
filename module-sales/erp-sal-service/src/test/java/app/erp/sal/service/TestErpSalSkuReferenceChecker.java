@@ -32,10 +32,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpSalSkuReferenceChecker extends JunitAutoTestCase {
 
-    static final Long CUSTOMER_ID = 9201L;
-    static final Long MATERIAL_ID = 9202L;
-    static final Long UOM_ID = 9203L;
-    static final Long CURRENCY_ID = 9204L;
+    static final String CUSTOMER_ID = "9201";
+    static final String MATERIAL_ID = "9202";
+    static final String UOM_ID = "9203";
+    static final String CURRENCY_ID = "9204";
     static final BigDecimal QTY = new BigDecimal("10");
     static final BigDecimal PRICE = new BigDecimal("5");
 
@@ -48,16 +48,16 @@ public class TestErpSalSkuReferenceChecker extends JunitAutoTestCase {
 
     @Test
     public void testOpenOrderLineReferencesSku() {
-        Long skuId = seedSku("SKU-SAL-OPEN");
-        Long orderId = seedOrder("SO-REF-OPEN", ErpSalDocStatus.DOC_STATUS_ACTIVE);
+        String skuId = seedSku("SKU-SAL-OPEN");
+        String orderId = seedOrder("SO-REF-OPEN", ErpSalDocStatus.DOC_STATUS_ACTIVE);
         seedOrderLine(orderId, skuId);
         assertTrue(checker.isReferencedByBill(loadSku(skuId)), "开放销售订单行应构成引用");
     }
 
     @Test
     public void testCancelledOrderLineNotReference() {
-        Long skuId = seedSku("SKU-SAL-CANCEL");
-        Long orderId = seedOrder("SO-REF-CANCEL", ErpSalDocStatus.DOC_STATUS_CANCELLED);
+        String skuId = seedSku("SKU-SAL-CANCEL");
+        String orderId = seedOrder("SO-REF-CANCEL", ErpSalDocStatus.DOC_STATUS_CANCELLED);
         seedOrderLine(orderId, skuId);
         assertFalse(checker.isReferencedByBill(loadSku(skuId)), "取消销售订单行不阻断");
     }
@@ -65,30 +65,30 @@ public class TestErpSalSkuReferenceChecker extends JunitAutoTestCase {
     @Test
     public void testActivePriceListReferencesAndExpiredNot() {
         // 活跃且未过期的价目表行 → 构成引用
-        Long activeSkuId = seedSku("SKU-SAL-PL-ACTIVE");
+        String activeSkuId = seedSku("SKU-SAL-PL-ACTIVE");
         seedPriceListLine(activeSkuId, true, LocalDate.now().plusDays(30));
         assertTrue(checker.isReferencedByBill(loadSku(activeSkuId)), "活跃未过期价目表行应构成引用");
 
         // 过期价目表行 → 不阻断（validTo < 当日）
-        Long expiredSkuId = seedSku("SKU-SAL-PL-EXPIRED");
+        String expiredSkuId = seedSku("SKU-SAL-PL-EXPIRED");
         seedPriceListLine(expiredSkuId, true, LocalDate.now().minusDays(1));
         assertFalse(checker.isReferencedByBill(loadSku(expiredSkuId)), "过期价目表行不阻断");
 
         // 停用价目表行 → 不阻断（isActive=false）
-        Long inactiveSkuId = seedSku("SKU-SAL-PL-INACTIVE");
+        String inactiveSkuId = seedSku("SKU-SAL-PL-INACTIVE");
         seedPriceListLine(inactiveSkuId, false, LocalDate.now().plusDays(30));
         assertFalse(checker.isReferencedByBill(loadSku(inactiveSkuId)), "停用价目表行不阻断");
     }
 
     @Test
     public void testUnreferencedSkuFalse() {
-        Long skuId = seedSku("SKU-SAL-UNREF");
+        String skuId = seedSku("SKU-SAL-UNREF");
         assertFalse(checker.isReferencedByBill(loadSku(skuId)), "无任何单据引用应为 false");
     }
 
     // ---------- seeds ----------
 
-    private Long seedSku(String skuCode) {
+    private String seedSku(String skuCode) {
         ErpMdMaterialSku sku = new ErpMdMaterialSku();
         sku.setMaterialId(MATERIAL_ID);
         sku.setSkuCode(skuCode);
@@ -98,11 +98,11 @@ public class TestErpSalSkuReferenceChecker extends JunitAutoTestCase {
         return sku.getId();
     }
 
-    private ErpMdMaterialSku loadSku(Long skuId) {
+    private ErpMdMaterialSku loadSku(String skuId) {
         return skuDao().getEntityById(skuId);
     }
 
-    private Long seedOrder(String code, String docStatus) {
+    private String seedOrder(String code, String docStatus) {
         ErpSalOrder order = new ErpSalOrder();
         order.setCode(code);
         order.setCustomerId(CUSTOMER_ID);
@@ -114,7 +114,7 @@ public class TestErpSalSkuReferenceChecker extends JunitAutoTestCase {
         return order.getId();
     }
 
-    private void seedOrderLine(Long orderId, Long skuId) {
+    private void seedOrderLine(String orderId, String skuId) {
         ErpSalOrderLine line = new ErpSalOrderLine();
         line.setOrderId(orderId);
         line.setLineNo(1);
@@ -127,7 +127,7 @@ public class TestErpSalSkuReferenceChecker extends JunitAutoTestCase {
         ormTemplate.runInSession(() -> daoProvider.daoFor(ErpSalOrderLine.class).saveEntity(line));
     }
 
-    private void seedPriceListLine(Long skuId, boolean isActive, LocalDate validTo) {
+    private void seedPriceListLine(String skuId, boolean isActive, LocalDate validTo) {
         ErpSalPriceList priceList = new ErpSalPriceList();
         priceList.setCode("PL-REF-" + skuId);
         priceList.setName("价目表-" + skuId);

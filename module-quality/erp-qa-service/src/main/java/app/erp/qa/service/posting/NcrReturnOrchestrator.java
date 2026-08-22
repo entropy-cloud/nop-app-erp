@@ -10,7 +10,6 @@ import app.erp.sal.biz.IErpSalReturnBiz;
 import app.erp.sal.dao.constants.ErpSalDocStatus;
 import app.erp.sal.dao.entity.ErpSalReturn;
 import io.nop.api.core.beans.query.QueryBean;
-import io.nop.api.core.convert.ConvertHelper;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.api.core.time.CoreMetrics;
 import io.nop.core.context.IServiceContext;
@@ -109,10 +108,8 @@ public class NcrReturnOrchestrator {
         }
         Map<String, Object> data = new LinkedHashMap<>();
         data.put("code", "SR-FROM-NCR-" + ncr.getId());
-        // bridge-main-095/097: inv 余额 warehouse/currency 已 String（M2.2），sal return 各 id 列仍 Long——
-        // 保存前转 Long，sal 翻转时退役（owner M2.6）
-        data.put("warehouseId", ConvertHelper.toLong(warehouseId));
-        data.put("currencyId", ConvertHelper.toLong(currencyId));
+        data.put("warehouseId", warehouseId);
+        data.put("currencyId", currencyId);
         data.put("businessDate", resolveBusinessDate(ncr));
         data.put("docStatus", ErpSalDocStatus.DOC_STATUS_DRAFT);
         data.put("approveStatus", ErpSalDocStatus.APPROVE_STATUS_UNSUBMITTED);

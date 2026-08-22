@@ -18,7 +18,6 @@ import io.nop.api.core.annotations.core.OptionalBoolean;
 import io.nop.api.core.beans.ApiRequest;
 import io.nop.api.core.beans.ApiResponse;
 import io.nop.api.core.beans.query.QueryBean;
-import io.nop.api.core.convert.ConvertHelper;
 import io.nop.api.core.time.CoreMetrics;
 import io.nop.autotest.junit.JunitAutoTestCase;
 import io.nop.dao.api.IDaoProvider;
@@ -67,8 +66,7 @@ public class TestErpQaRecallE2E extends JunitAutoTestCase {
     static final String UOM_ID = "58201";
     static final String CURRENCY_ID = "68201";
     static final String BATCH_PK = "88201";
-    // bridge-test-128: sal delivery 仍未迁移（M2.6），qa/inv/md 侧已 String——种子经局部桥转换
-    static final Long DELIVERY_PK = 78201L;
+    static final String DELIVERY_PK = "78201";
     static final String MOVE_PK = "98201";
     static final String MOVE_LINE_PK = "982011";
     static final String BATCH_NO = "RC-BATCH-E2E";
@@ -240,9 +238,9 @@ public class TestErpQaRecallE2E extends JunitAutoTestCase {
         ErpSalDelivery delivery = new ErpSalDelivery();
         delivery.orm_propValueByName("id", DELIVERY_PK);
         delivery.setCode(DELIVERY_CODE);
-        delivery.setCustomerId(ConvertHelper.toLong(CUSTOMER_ID));
-        delivery.setWarehouseId(ConvertHelper.toLong(WAREHOUSE_ID));
-        delivery.setCurrencyId(ConvertHelper.toLong(CURRENCY_ID));
+        delivery.setCustomerId(CUSTOMER_ID);
+        delivery.setWarehouseId(WAREHOUSE_ID);
+        delivery.setCurrencyId(CURRENCY_ID);
         delivery.setBusinessDate(CoreMetrics.currentDate());
         delivery.setDocStatus("ACTIVE");
         delivery.setApproveStatus("APPROVED");
@@ -251,11 +249,11 @@ public class TestErpQaRecallE2E extends JunitAutoTestCase {
 
         IEntityDao<ErpSalDeliveryLine> dlvLineDao = daoProvider.daoFor(ErpSalDeliveryLine.class);
         ErpSalDeliveryLine dlvLine = new ErpSalDeliveryLine();
-        dlvLine.orm_propValueByName("id", DELIVERY_PK * 10 + 1);
+        dlvLine.orm_propValueByName("id", String.valueOf(Long.parseLong(DELIVERY_PK) * 10 + 1));
         dlvLine.setDeliveryId(DELIVERY_PK);
         dlvLine.setLineNo(1);
-        dlvLine.setMaterialId(ConvertHelper.toLong(MATERIAL_ID));
-        dlvLine.setUoMId(ConvertHelper.toLong(UOM_ID));
+        dlvLine.setMaterialId(MATERIAL_ID);
+        dlvLine.setUoMId(UOM_ID);
         dlvLine.setQuantity(new BigDecimal("8"));
         dlvLineDao.saveEntity(dlvLine);
     }

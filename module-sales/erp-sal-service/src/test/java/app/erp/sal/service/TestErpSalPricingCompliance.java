@@ -69,9 +69,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpSalPricingCompliance extends JunitAutoTestCase {
 
-    static final Long CUSTOMER_ID = 7401L;
-    static final Long CURRENCY_ID = 7402L;
-    static final Long UOM_ID = 7403L;
+    static final String CUSTOMER_ID = "7401";
+    static final String CURRENCY_ID = "7402";
+    static final String UOM_ID = "7403";
 
     @Inject
     IDaoProvider daoProvider;
@@ -84,8 +84,8 @@ public class TestErpSalPricingCompliance extends JunitAutoTestCase {
 
     @Test
     public void testTaxSeparation_SinglePercentDiscount() {
-        Long matId = 7101L;
-        Long orderId = 7102L;
+        String matId = "7101";
+        String orderId = "7102";
         ormTemplate.runInSession(() -> {
             seedPrereqs();
             seedMaterial(matId, UOM_ID, null);
@@ -111,8 +111,8 @@ public class TestErpSalPricingCompliance extends JunitAutoTestCase {
 
     @Test
     public void testTaxSeparation_ZeroRate() {
-        Long matId = 7201L;
-        Long orderId = 7202L;
+        String matId = "7201";
+        String orderId = "7202";
         ormTemplate.runInSession(() -> {
             seedPrereqs();
             seedMaterial(matId, UOM_ID, null);
@@ -132,8 +132,8 @@ public class TestErpSalPricingCompliance extends JunitAutoTestCase {
 
     @Test
     public void testTaxSeparation_MultiRateMixedWithHeaderDiscount() {
-        Long mat1 = 7301L, mat2 = 7302L, mat3 = 7303L;
-        Long orderId = 7304L;
+        String mat1 = "7301", mat2 = "7302", mat3 = "7303";
+        String orderId = "7304";
         ormTemplate.runInSession(() -> {
             seedPrereqs();
             seedMaterial(mat1, UOM_ID, null);
@@ -173,8 +173,8 @@ public class TestErpSalPricingCompliance extends JunitAutoTestCase {
 
     @Test
     public void testTaxSeparation_PromotionReversesTaxAmount() {
-        Long matId = 7401L;
-        Long orderId = 7402L;
+        String matId = "7401";
+        String orderId = "7402";
         ormTemplate.runInSession(() -> {
             seedPrereqs();
             seedMaterial(matId, UOM_ID, null);
@@ -198,8 +198,8 @@ public class TestErpSalPricingCompliance extends JunitAutoTestCase {
 
     @Test
     public void testTaxSeparation_NoDiscountNetUnchanged() {
-        Long matId = 7501L;
-        Long orderId = 7502L;
+        String matId = "7501";
+        String orderId = "7502";
         ormTemplate.runInSession(() -> {
             seedPrereqs();
             seedMaterial(matId, UOM_ID, null);
@@ -221,20 +221,20 @@ public class TestErpSalPricingCompliance extends JunitAutoTestCase {
 
     @Test
     public void testMinPrice_OffLevelBelowMinAllows() {
-        runMinPriceScenario(7601L, 7601L, 8601L, "SO-MIN-OFF", "OFF");
+        runMinPriceScenario("7601", "7601", "8601", "SO-MIN-OFF", "OFF");
     }
 
     @Test
     public void testMinPrice_WarnLevelBelowMinAllows() {
-        runMinPriceScenario(7602L, 7602L, 8602L, "SO-MIN-WARN", "WARN");
+        runMinPriceScenario("7602", "7602", "8602", "SO-MIN-WARN", "WARN");
     }
 
     @Test
     public void testMinPrice_HardLevelBelowMinRejects() {
-        Long catId = 7603L;
-        Long matId = 8603L;
-        Long skuId = 9603L;
-        Long orderId = 7604L;
+        String catId = "7603";
+        String matId = "8603";
+        String skuId = "9603";
+        String orderId = "7604";
         ormTemplate.runInSession(() -> {
             seedPrereqs();
             seedCategory(catId, "HARD");
@@ -258,8 +258,8 @@ public class TestErpSalPricingCompliance extends JunitAutoTestCase {
 
     @Test
     public void testMinPrice_NoSkuLineSkips() {
-        Long matId = 7701L;
-        Long orderId = 7702L;
+        String matId = "7701";
+        String orderId = "7702";
         ormTemplate.runInSession(() -> {
             seedPrereqs();
             seedMaterial(matId, UOM_ID, null);
@@ -274,12 +274,12 @@ public class TestErpSalPricingCompliance extends JunitAutoTestCase {
 
     @Test
     public void testMinPrice_GiftLineSkippedUnderHard() {
-        Long catId = 7801L;
-        Long matId = 7802L;
-        Long giftMatId = 7803L;
-        Long skuId = 7804L;
-        Long giftSkuId = 7805L;
-        Long orderId = 7806L;
+        String catId = "7801";
+        String matId = "7802";
+        String giftMatId = "7803";
+        String skuId = "7804";
+        String giftSkuId = "7805";
+        String orderId = "7806";
         ormTemplate.runInSession(() -> {
             seedPrereqs();
             seedCategory(catId, "HARD");
@@ -312,8 +312,8 @@ public class TestErpSalPricingCompliance extends JunitAutoTestCase {
 
     // ==================== helpers ====================
 
-    private void runMinPriceScenario(Long catId, Long orderId, Long matId, String orderCode, String level) {
-        Long skuId = matId + 10000L;
+    private void runMinPriceScenario(String catId, String orderId, String matId, String orderCode, String level) {
+        String skuId = String.valueOf(Long.parseLong(matId) + 10000L);
         ormTemplate.runInSession(() -> {
             seedPrereqs();
             seedCategory(catId, level);
@@ -329,7 +329,7 @@ public class TestErpSalPricingCompliance extends JunitAutoTestCase {
                 level + " 级别促销后低于底线 → 放行（OFF/WARN 不阻断）");
     }
 
-    private ApiResponse<?> applyPricingRules(Long orderId) {
+    private ApiResponse<?> applyPricingRules(String orderId) {
         return executeRpc(mutation, "ErpSalOrder__applyPricingRules",
                 ApiRequest.build(Map.of("orderId", String.valueOf(orderId))));
     }
@@ -339,11 +339,11 @@ public class TestErpSalPricingCompliance extends JunitAutoTestCase {
         return graphQLEngine.executeRpc(ctx);
     }
 
-    private ErpSalOrder reloadOrder(Long orderId) {
+    private ErpSalOrder reloadOrder(String orderId) {
         return daoProvider.daoFor(ErpSalOrder.class).getEntityById(orderId);
     }
 
-    private ErpSalOrderLine reloadLine(Long orderId, int lineNo) {
+    private ErpSalOrderLine reloadLine(String orderId, int lineNo) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("orderId", orderId));
         q.addFilter(eq("lineNo", lineNo));
@@ -351,7 +351,7 @@ public class TestErpSalPricingCompliance extends JunitAutoTestCase {
         return list.isEmpty() ? null : list.get(0);
     }
 
-    private List<ErpSalOrderLine> reloadLines(Long orderId) {
+    private List<ErpSalOrderLine> reloadLines(String orderId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("orderId", orderId));
         return new ArrayList<>(daoProvider.daoFor(ErpSalOrderLine.class).findAllByQuery(q));
@@ -377,7 +377,7 @@ public class TestErpSalPricingCompliance extends JunitAutoTestCase {
         uomDao.saveEntity(uom);
     }
 
-    private void seedCategory(Long id, String priceValidationLevel) {
+    private void seedCategory(String id, String priceValidationLevel) {
         IEntityDao<ErpMdMaterialCategory> dao = daoProvider.daoFor(ErpMdMaterialCategory.class);
         ErpMdMaterialCategory cat = dao.newEntity();
         cat.setId(id);
@@ -387,7 +387,7 @@ public class TestErpSalPricingCompliance extends JunitAutoTestCase {
         dao.saveEntity(cat);
     }
 
-    private void seedMaterial(Long id, Long uomId, Long categoryId) {
+    private void seedMaterial(String id, String uomId, String categoryId) {
         IEntityDao<ErpMdMaterial> dao = daoProvider.daoFor(ErpMdMaterial.class);
         ErpMdMaterial mat = dao.newEntity();
         mat.setId(id);
@@ -400,7 +400,7 @@ public class TestErpSalPricingCompliance extends JunitAutoTestCase {
         dao.saveEntity(mat);
     }
 
-    private void seedSku(Long id, Long materialId, String salePrice) {
+    private void seedSku(String id, String materialId, String salePrice) {
         IEntityDao<ErpMdMaterialSku> dao = daoProvider.daoFor(ErpMdMaterialSku.class);
         ErpMdMaterialSku sku = dao.newEntity();
         sku.setId(id);
@@ -416,7 +416,7 @@ public class TestErpSalPricingCompliance extends JunitAutoTestCase {
         daoProvider.daoFor(ErpSalPricingRule.class).saveEntity(rule);
     }
 
-    private ErpSalPricingRule percentDiscountRule(int priority, Long materialId, String percent) {
+    private ErpSalPricingRule percentDiscountRule(int priority, String materialId, String percent) {
         ErpSalPricingRule rule = newRule(priority, "PERCENT_DISCOUNT", "LINE");
         rule.setMaterialId(materialId);
         rule.setDiscountPercent(new BigDecimal(percent));
@@ -435,7 +435,7 @@ public class TestErpSalPricingCompliance extends JunitAutoTestCase {
         return rule;
     }
 
-    private void saveOrder(Long id, String code) {
+    private void saveOrder(String id, String code) {
         IEntityDao<ErpSalOrder> dao = daoProvider.daoFor(ErpSalOrder.class);
         ErpSalOrder order = dao.newEntity();
         order.setId(id);
@@ -451,7 +451,7 @@ public class TestErpSalPricingCompliance extends JunitAutoTestCase {
         dao.saveEntity(order);
     }
 
-    private void saveLine(Long orderId, int lineNo, Long materialId, Long skuId, Long uomId,
+    private void saveLine(String orderId, int lineNo, String materialId, String skuId, String uomId,
                           String unitPrice, String qty, String taxRate) {
         IEntityDao<ErpSalOrderLine> dao = daoProvider.daoFor(ErpSalOrderLine.class);
         ErpSalOrderLine line = dao.newEntity();

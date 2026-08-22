@@ -146,10 +146,10 @@ public class ErpSalDashboardBizModel {
                     r -> (BigDecimal) r.get("salesAmount"), Comparator.reverseOrder()));
             List<Map<String, Object>> result = new ArrayList<>();
             grouped.stream().limit(topN).forEach(result::add);
-            Map<Long, String> nameCache = new HashMap<>();
+            Map<String, String> nameCache = new HashMap<>();
             IEntityDao<ErpMdPartner> partnerDao = daoProvider.daoFor(ErpMdPartner.class);
             for (Map<String, Object> r : result) {
-                Long pid = (Long) r.get("customerId");
+                String pid = (String) r.get("customerId");
                 if (pid == null) continue;
                 String name = nameCache.get(pid);
                 if (name == null) {

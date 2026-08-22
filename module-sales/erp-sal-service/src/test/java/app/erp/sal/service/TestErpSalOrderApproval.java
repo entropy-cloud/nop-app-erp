@@ -47,14 +47,14 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpSalOrderApproval extends JunitAutoTestCase {
 
-    static final Long ORG_ID = 1301L;
-    static final Long CUSTOMER_ID = 2301L;
-    static final Long CUSTOMER_ID_2 = 2302L;
-    static final Long WAREHOUSE_ID = 3301L;
-    static final Long MATERIAL_ID = 4301L;
-    static final Long UOM_ID = 5301L;
-    static final Long CURRENCY_ID = 6301L;
-    static final Long ACCT_SCHEMA_ID = 7301L;
+    static final String ORG_ID = "1301";
+    static final String CUSTOMER_ID = "2301";
+    static final String CUSTOMER_ID_2 = "2302";
+    static final String WAREHOUSE_ID = "3301";
+    static final String MATERIAL_ID = "4301";
+    static final String UOM_ID = "5301";
+    static final String CURRENCY_ID = "6301";
+    static final String ACCT_SCHEMA_ID = "7301";
 
     @Inject
     IDaoProvider daoProvider;
@@ -378,19 +378,19 @@ public class TestErpSalOrderApproval extends JunitAutoTestCase {
 
     // ---------- rpc helpers ----------
 
-    private ApiResponse<?> submit(Long orderId) {
+    private ApiResponse<?> submit(String orderId) {
         return executeRpc(mutation, "ErpSalOrder__submitForApproval", ApiRequest.build(Map.of("id", String.valueOf(orderId))));
     }
 
-    private ApiResponse<?> withdrawSubmit(Long orderId) {
+    private ApiResponse<?> withdrawSubmit(String orderId) {
         return executeRpc(mutation, "ErpSalOrder__withdrawApproval", ApiRequest.build(Map.of("id", String.valueOf(orderId))));
     }
 
-    private ApiResponse<?> approve(Long orderId) {
+    private ApiResponse<?> approve(String orderId) {
         return executeRpc(mutation, "ErpSalOrder__approve", ApiRequest.build(Map.of("id", String.valueOf(orderId))));
     }
 
-    private ApiResponse<?> reject(Long orderId) {
+    private ApiResponse<?> reject(String orderId) {
         return executeRpc(mutation, "ErpSalOrder__reject", ApiRequest.build(Map.of("id", String.valueOf(orderId))));
     }
 
@@ -399,7 +399,7 @@ public class TestErpSalOrderApproval extends JunitAutoTestCase {
         return graphQLEngine.executeRpc(ctx);
     }
 
-    private ApiResponse<?> approveWithAuthChecker(Long orderId, IActionAuthChecker checker) {
+    private ApiResponse<?> approveWithAuthChecker(String orderId, IActionAuthChecker checker) {
         IGraphQLExecutionContext ctx = graphQLEngine.newRpcContext(mutation, "ErpSalOrder__approve",
                 ApiRequest.build(Map.of("id", String.valueOf(orderId))));
         ctx.setActionAuthChecker(checker);
@@ -409,14 +409,14 @@ public class TestErpSalOrderApproval extends JunitAutoTestCase {
         return graphQLEngine.executeRpc(ctx);
     }
 
-    private ApiResponse<?> approveWithPermission(Long orderId, String grantedPermission) {
+    private ApiResponse<?> approveWithPermission(String orderId, String grantedPermission) {
         return approveWithAuthChecker(orderId, (permission, ctx) -> "ErpSalOrder:approve".equals(permission)
                 || (grantedPermission != null && grantedPermission.equals(permission)));
     }
 
     // ---------- helpers ----------
 
-    private ErpSalOrder reload(Long orderId) {
+    private ErpSalOrder reload(String orderId) {
         return daoProvider.daoFor(ErpSalOrder.class).getEntityById(orderId);
     }
 
@@ -456,11 +456,11 @@ public class TestErpSalOrderApproval extends JunitAutoTestCase {
         lineDao.saveEntity(line);
     }
 
-    private void seedActiveCustomer(Long id, BigDecimal creditLimit) {
+    private void seedActiveCustomer(String id, BigDecimal creditLimit) {
         seedCustomer(id, ErpSalConstants.PARTNER_STATUS_ACTIVE, creditLimit);
     }
 
-    private void seedCustomer(Long id, String status, BigDecimal creditLimit) {
+    private void seedCustomer(String id, String status, BigDecimal creditLimit) {
         IEntityDao<ErpMdPartner> dao = daoProvider.daoFor(ErpMdPartner.class);
         ErpMdPartner partner = new ErpMdPartner();
         partner.setId(id);
@@ -482,7 +482,7 @@ public class TestErpSalOrderApproval extends JunitAutoTestCase {
                 .assignConfigValue(ErpSalConstants.CONFIG_CREDIT_CHECK_INCLUDE_AR, enabled);
     }
 
-    private void seedArOpenItem(Long customerId, String sourceBillCode, BigDecimal openAmountSource,
+    private void seedArOpenItem(String customerId, String sourceBillCode, BigDecimal openAmountSource,
                                 BigDecimal exchangeRate) {
         IEntityDao<ErpFinArApItem> dao = daoProvider.daoFor(ErpFinArApItem.class);
         ErpFinArApItem item = dao.newEntity();

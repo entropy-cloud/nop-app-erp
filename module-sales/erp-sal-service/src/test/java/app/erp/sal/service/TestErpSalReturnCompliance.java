@@ -59,13 +59,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpSalReturnCompliance extends JunitAutoTestCase {
 
-    static final Long ORG_ID = 3901L;
-    static final Long CUSTOMER_ID = 4901L;
-    static final Long WAREHOUSE_ID = 5901L;
-    static final Long MATERIAL_ID = 6901L;
-    static final Long UOM_ID = 7901L;
-    static final Long CURRENCY_ID = 8901L;
-    static final Long ACCT_SCHEMA_ID = 9901L;
+    static final String ORG_ID = "3901";
+    static final String CUSTOMER_ID = "4901";
+    static final String WAREHOUSE_ID = "5901";
+    static final String MATERIAL_ID = "6901";
+    static final String UOM_ID = "7901";
+    static final String CURRENCY_ID = "8901";
+    static final String ACCT_SCHEMA_ID = "9901";
 
     @Inject
     IDaoProvider daoProvider;
@@ -86,9 +86,9 @@ public class TestErpSalReturnCompliance extends JunitAutoTestCase {
     @Test
     public void testUndeliveredQuantityFormulaAfterApprove() {
         seedPeriodAndSubjects();
-        Long[] ctx = seedApprovedDeliveryPosted("SD-UC05-001", new BigDecimal("10"));
-        Long orderLineId = ctx[2];
-        Long returnId = nextId();
+        String[] ctx = seedApprovedDeliveryPosted("SD-UC05-001", new BigDecimal("10"));
+        String orderLineId = ctx[2];
+        String returnId = nextId();
         ormTemplate.runInSession(session -> {
             newReturn("RT-UC05-001", returnId, ctx[0]);
             newReturnLine(nextId(), returnId, ctx[1], new BigDecimal("4"), new BigDecimal("5"));
@@ -115,9 +115,9 @@ public class TestErpSalReturnCompliance extends JunitAutoTestCase {
     @Test
     public void testReturnLineWithoutDeliveryLineIdSkipsSilently() {
         seedPeriodAndSubjects();
-        Long[] ctx = seedApprovedDeliveryPosted("SD-UC05-002", new BigDecimal("10"));
-        Long orderLineId = ctx[2];
-        Long returnId = nextId();
+        String[] ctx = seedApprovedDeliveryPosted("SD-UC05-002", new BigDecimal("10"));
+        String orderLineId = ctx[2];
+        String returnId = nextId();
         ormTemplate.runInSession(session -> {
             newReturn("RT-UC05-002", returnId, ctx[0]);
             ErpSalReturnLine line = new ErpSalReturnLine();
@@ -147,9 +147,9 @@ public class TestErpSalReturnCompliance extends JunitAutoTestCase {
     @Test
     public void testMultipleReturnLinesAggregateCorrectly() {
         seedPeriodAndSubjects();
-        Long[] ctx = seedApprovedDeliveryPosted("SD-UC05-003", new BigDecimal("10"));
-        Long orderLineId = ctx[2];
-        Long returnId = nextId();
+        String[] ctx = seedApprovedDeliveryPosted("SD-UC05-003", new BigDecimal("10"));
+        String orderLineId = ctx[2];
+        String returnId = nextId();
         ormTemplate.runInSession(session -> {
             newReturn("RT-UC05-003", returnId, ctx[0]);
             newReturnLine(nextId(), returnId, ctx[1], new BigDecimal("3"), new BigDecimal("5"));
@@ -176,10 +176,10 @@ public class TestErpSalReturnCompliance extends JunitAutoTestCase {
     @Test
     public void testIdempotentUndeliveredQuantityOnSecondReturn() {
         seedPeriodAndSubjects();
-        Long[] ctx = seedApprovedDeliveryPosted("SD-UC05-004", new BigDecimal("10"));
-        Long orderLineId = ctx[2];
+        String[] ctx = seedApprovedDeliveryPosted("SD-UC05-004", new BigDecimal("10"));
+        String orderLineId = ctx[2];
 
-        Long return1 = nextId();
+        String return1 = nextId();
         ormTemplate.runInSession(session -> {
             newReturn("RT-UC05-004A", return1, ctx[0]);
             newReturnLine(nextId(), return1, ctx[1], new BigDecimal("3"), new BigDecimal("5"));
@@ -187,7 +187,7 @@ public class TestErpSalReturnCompliance extends JunitAutoTestCase {
         });
         assertEquals(0, approveReturn(return1).getStatus(), "第一张退货审核");
 
-        Long return2 = nextId();
+        String return2 = nextId();
         ormTemplate.runInSession(session -> {
             newReturn("RT-UC05-004B", return2, ctx[0]);
             newReturnLine(nextId(), return2, ctx[1], new BigDecimal("3"), new BigDecimal("5"));
@@ -206,9 +206,9 @@ public class TestErpSalReturnCompliance extends JunitAutoTestCase {
     @Test
     public void testReverseApproveSymmetricUndeliveredQuantity() {
         seedPeriodAndSubjects();
-        Long[] ctx = seedApprovedDeliveryPosted("SD-UC05-005", new BigDecimal("10"));
-        Long orderLineId = ctx[2];
-        Long returnId = nextId();
+        String[] ctx = seedApprovedDeliveryPosted("SD-UC05-005", new BigDecimal("10"));
+        String orderLineId = ctx[2];
+        String returnId = nextId();
         ormTemplate.runInSession(session -> {
             newReturn("RT-UC05-005", returnId, ctx[0]);
             newReturnLine(nextId(), returnId, ctx[1], new BigDecimal("4"), new BigDecimal("5"));
@@ -234,8 +234,8 @@ public class TestErpSalReturnCompliance extends JunitAutoTestCase {
     @Test
     public void testEstimatedReceivableOffsetGeneratesVoucherAndArItem() {
         seedPeriodAndSubjects();
-        Long[] ctx = seedApprovedDeliveryPosted("SD-UC05-024A", new BigDecimal("10"));
-        Long returnId = nextId();
+        String[] ctx = seedApprovedDeliveryPosted("SD-UC05-024A", new BigDecimal("10"));
+        String returnId = nextId();
         ormTemplate.runInSession(session -> {
             newReturn("RT-UC05-024A", returnId, ctx[0]);
             newReturnLine(nextId(), returnId, ctx[1], new BigDecimal("4"), new BigDecimal("5"));
@@ -262,8 +262,8 @@ public class TestErpSalReturnCompliance extends JunitAutoTestCase {
     @Test
     public void testInvoicedRedLetterPathEquivalentToOffset() {
         seedPeriodAndSubjects();
-        Long[] ctx = seedApprovedDeliveryPosted("SD-UC05-024B", new BigDecimal("10"));
-        Long returnId = nextId();
+        String[] ctx = seedApprovedDeliveryPosted("SD-UC05-024B", new BigDecimal("10"));
+        String returnId = nextId();
         ormTemplate.runInSession(session -> {
             newReturn("RT-UC05-024B", returnId, ctx[0]);
             newReturnLine(nextId(), returnId, ctx[1], new BigDecimal("4"), new BigDecimal("5"));
@@ -283,8 +283,8 @@ public class TestErpSalReturnCompliance extends JunitAutoTestCase {
     @Test
     public void testUnpostedDeliverySkipsPostingEvent() {
         seedPeriodAndSubjects();
-        Long[] ctx = seedApprovedDeliveryNotPosted("SD-UC05-024C", new BigDecimal("10"));
-        Long returnId = nextId();
+        String[] ctx = seedApprovedDeliveryNotPosted("SD-UC05-024C", new BigDecimal("10"));
+        String returnId = nextId();
         ormTemplate.runInSession(session -> {
             newReturn("RT-UC05-024C", returnId, ctx[0]);
             newReturnLine(nextId(), returnId, ctx[1], new BigDecimal("4"), new BigDecimal("5"));
@@ -309,8 +309,8 @@ public class TestErpSalReturnCompliance extends JunitAutoTestCase {
     @Test
     public void testPostedFalseBoundarySkipsPosting() {
         seedPeriodAndSubjects();
-        Long[] ctx = seedApprovedDeliveryNotPosted("SD-UC05-024D", new BigDecimal("10"));
-        Long returnId = nextId();
+        String[] ctx = seedApprovedDeliveryNotPosted("SD-UC05-024D", new BigDecimal("10"));
+        String returnId = nextId();
         ormTemplate.runInSession(session -> {
             newReturn("RT-UC05-024D", returnId, ctx[0]);
             newReturnLine(nextId(), returnId, ctx[1], new BigDecimal("2"), new BigDecimal("5"));
@@ -343,19 +343,19 @@ public class TestErpSalReturnCompliance extends JunitAutoTestCase {
     /**
      * @return {deliveryId, deliveryLineId, orderLineId}
      */
-    private Long[] seedApprovedDeliveryPosted(String deliveryCode, BigDecimal deliveryQty) {
+    private String[] seedApprovedDeliveryPosted(String deliveryCode, BigDecimal deliveryQty) {
         return seedDelivery(deliveryCode, deliveryQty, true);
     }
 
-    private Long[] seedApprovedDeliveryNotPosted(String deliveryCode, BigDecimal deliveryQty) {
+    private String[] seedApprovedDeliveryNotPosted(String deliveryCode, BigDecimal deliveryQty) {
         return seedDelivery(deliveryCode, deliveryQty, false);
     }
 
-    private Long[] seedDelivery(String deliveryCode, BigDecimal deliveryQty, boolean posted) {
-        Long orderId = nextId();
-        Long deliveryId = nextId();
-        Long orderLineId = nextId();
-        Long deliveryLineId = nextId();
+    private String[] seedDelivery(String deliveryCode, BigDecimal deliveryQty, boolean posted) {
+        String orderId = nextId();
+        String deliveryId = nextId();
+        String orderLineId = nextId();
+        String deliveryLineId = nextId();
         ormTemplate.runInSession(session -> {
             newOrderWithId("SO-" + deliveryCode, orderId);
             newOrderLine(orderId, orderLineId, 1, deliveryQty);
@@ -363,7 +363,7 @@ public class TestErpSalReturnCompliance extends JunitAutoTestCase {
             newDeliveryLine(deliveryLineId, deliveryId, orderLineId, deliveryQty);
             return null;
         });
-        return new Long[]{deliveryId, deliveryLineId, orderLineId};
+        return new String[]{deliveryId, deliveryLineId, orderLineId};
     }
 
     private void seedAcctSchema() {
@@ -415,7 +415,7 @@ public class TestErpSalReturnCompliance extends JunitAutoTestCase {
         dao.saveEntity(subject);
     }
 
-    private void newOrderWithId(String code, Long orderId) {
+    private void newOrderWithId(String code, String orderId) {
         IEntityDao<ErpSalOrder> dao = daoProvider.daoFor(ErpSalOrder.class);
         ErpSalOrder order = new ErpSalOrder();
         order.setId(orderId);
@@ -431,7 +431,7 @@ public class TestErpSalReturnCompliance extends JunitAutoTestCase {
         dao.saveEntity(order);
     }
 
-    private void newOrderLine(Long orderId, Long lineId, int lineNo, BigDecimal qty) {
+    private void newOrderLine(String orderId, String lineId, int lineNo, BigDecimal qty) {
         IEntityDao<ErpSalOrderLine> dao = daoProvider.daoFor(ErpSalOrderLine.class);
         ErpSalOrderLine line = new ErpSalOrderLine();
         line.setId(lineId);
@@ -445,7 +445,7 @@ public class TestErpSalReturnCompliance extends JunitAutoTestCase {
         dao.saveEntity(line);
     }
 
-    private void newDeliveryApproved(String code, Long deliveryId, Long orderId, boolean posted) {
+    private void newDeliveryApproved(String code, String deliveryId, String orderId, boolean posted) {
         IEntityDao<ErpSalDelivery> dao = daoProvider.daoFor(ErpSalDelivery.class);
         ErpSalDelivery delivery = new ErpSalDelivery();
         delivery.setId(deliveryId);
@@ -463,7 +463,7 @@ public class TestErpSalReturnCompliance extends JunitAutoTestCase {
         dao.saveEntity(delivery);
     }
 
-    private void newDeliveryLine(Long lineId, Long deliveryId, Long orderLineId, BigDecimal qty) {
+    private void newDeliveryLine(String lineId, String deliveryId, String orderLineId, BigDecimal qty) {
         IEntityDao<ErpSalDeliveryLine> dao = daoProvider.daoFor(ErpSalDeliveryLine.class);
         ErpSalDeliveryLine line = new ErpSalDeliveryLine();
         line.setId(lineId);
@@ -477,7 +477,7 @@ public class TestErpSalReturnCompliance extends JunitAutoTestCase {
         dao.saveEntity(line);
     }
 
-    private void newReturn(String code, Long returnId, Long deliveryId) {
+    private void newReturn(String code, String returnId, String deliveryId) {
         IEntityDao<ErpSalReturn> dao = daoProvider.daoFor(ErpSalReturn.class);
         ErpSalReturn returnOrder = new ErpSalReturn();
         returnOrder.setId(returnId);
@@ -497,7 +497,7 @@ public class TestErpSalReturnCompliance extends JunitAutoTestCase {
         dao.saveEntity(returnOrder);
     }
 
-    private void newReturnLine(Long lineId, Long returnId, Long deliveryLineId, BigDecimal qty, BigDecimal unitPrice) {
+    private void newReturnLine(String lineId, String returnId, String deliveryLineId, BigDecimal qty, BigDecimal unitPrice) {
         IEntityDao<ErpSalReturnLine> dao = daoProvider.daoFor(ErpSalReturnLine.class);
         ErpSalReturnLine line = new ErpSalReturnLine();
         line.setId(lineId);
@@ -515,12 +515,12 @@ public class TestErpSalReturnCompliance extends JunitAutoTestCase {
 
     // ---------- query helpers ----------
 
-    private ErpSalReturn reload(Long returnId) {
+    private ErpSalReturn reload(String returnId) {
         return daoProvider.daoFor(ErpSalReturn.class).getEntityById(returnId);
     }
 
-    private BigDecimal sumApprovedReturnQty(Long orderLineId) {
-        List<Long> deliveryLineIds = daoProvider.daoFor(ErpSalDeliveryLine.class).findAllByQuery(
+    private BigDecimal sumApprovedReturnQty(String orderLineId) {
+        List<String> deliveryLineIds = daoProvider.daoFor(ErpSalDeliveryLine.class).findAllByQuery(
                 new QueryBean()).stream()
                 .filter(dl -> orderLineId.equals(dl.getOrderLineId()))
                 .map(ErpSalDeliveryLine::getId)
@@ -553,11 +553,11 @@ public class TestErpSalReturnCompliance extends JunitAutoTestCase {
 
     // ---------- rpc ----------
 
-    private ApiResponse<?> approveReturn(Long id) {
+    private ApiResponse<?> approveReturn(String id) {
         return executeRpc(mutation, "ErpSalReturn__approve", ApiRequest.build(Map.of("id", String.valueOf(id))));
     }
 
-    private ApiResponse<?> reverseApproveReturn(Long id) {
+    private ApiResponse<?> reverseApproveReturn(String id) {
         return executeRpc(mutation, "ErpSalReturn__reverseApprove", ApiRequest.build(Map.of("id", String.valueOf(id))));
     }
 
@@ -566,7 +566,7 @@ public class TestErpSalReturnCompliance extends JunitAutoTestCase {
         return graphQLEngine.executeRpc(ctx);
     }
 
-    private Long nextId() {
-        return idSeq.incrementAndGet();
+    private String nextId() {
+        return String.valueOf(idSeq.incrementAndGet());
     }
 }

@@ -19,7 +19,7 @@ public class ErpSalReceiptReverseSettlementProcessor {
     @Inject
     ReceiptSettler receiptSettler;
 
-    public ErpSalReceipt reverseSettlement(String receiptId, Long invoiceId, IServiceContext context) {
+    public ErpSalReceipt reverseSettlement(String receiptId, String invoiceId, IServiceContext context) {
         ErpSalReceipt receipt = requireReceipt(receiptId, context);
         return doReverseSettlement(receipt, invoiceId, context);
     }
@@ -28,7 +28,7 @@ public class ErpSalReceiptReverseSettlementProcessor {
         return facade.requireReceipt(receiptId, context);
     }
 
-    protected ErpSalReceipt doReverseSettlement(ErpSalReceipt receipt, Long invoiceId, IServiceContext context) {
+    protected ErpSalReceipt doReverseSettlement(ErpSalReceipt receipt, String invoiceId, IServiceContext context) {
         return receiptSettler.reverseSettlement(receipt, invoiceId);
     }
 }

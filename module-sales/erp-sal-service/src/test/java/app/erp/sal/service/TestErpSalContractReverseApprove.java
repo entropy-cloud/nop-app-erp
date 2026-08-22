@@ -37,8 +37,8 @@ import static org.junit.jupiter.api.Assertions.assertNull;
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpSalContractReverseApprove extends JunitAutoTestCase {
 
-    static final Long CUSTOMER_ID = 22201L;
-    static final Long CURRENCY_ID = 62201L;
+    static final String CUSTOMER_ID = "22201";
+    static final String CURRENCY_ID = "62201";
 
     @Inject
     IDaoProvider daoProvider;
@@ -50,7 +50,7 @@ public class TestErpSalContractReverseApprove extends JunitAutoTestCase {
     @Test
     public void testReverseApproveSetsRejectedAndClearsApprover() {
         ormTemplate.runInSession(() -> seedActiveCustomer(CUSTOMER_ID));
-        Long id = ormTemplate.runInSession(session -> seedContractApproved("CT-RA-001"));
+        String id = ormTemplate.runInSession(session -> seedContractApproved("CT-RA-001"));
         ErpSalContract before = reload(id);
         assertEquals(ErpSalConstants.APPROVE_STATUS_APPROVED, before.getApproveStatus());
         assertEquals("approver-x", before.getApprovedBy(), "前置：approve 已写入 approvedBy");
@@ -68,7 +68,7 @@ public class TestErpSalContractReverseApprove extends JunitAutoTestCase {
     @Test
     public void testSubmitApproveReverseApproveHappyPath() {
         ormTemplate.runInSession(() -> seedActiveCustomer(CUSTOMER_ID));
-        Long id = ormTemplate.runInSession(session -> seedContract("CT-HP-001",
+        String id = ormTemplate.runInSession(session -> seedContract("CT-HP-001",
                 ErpSalConstants.APPROVE_STATUS_UNSUBMITTED));
 
         assertEquals(0, rpc(mutation, "ErpSalContract__submitForApproval",
@@ -89,7 +89,7 @@ public class TestErpSalContractReverseApprove extends JunitAutoTestCase {
     @Test
     public void testCancelledDocReverseApproveBlocked() {
         ormTemplate.runInSession(() -> seedActiveCustomer(CUSTOMER_ID));
-        Long id = ormTemplate.runInSession(session -> seedContractCancelled("CT-CN-001",
+        String id = ormTemplate.runInSession(session -> seedContractCancelled("CT-CN-001",
                 ErpSalConstants.APPROVE_STATUS_APPROVED));
 
         assertNotEquals(0, rpc(mutation, "ErpSalContract__reverseApprove",
@@ -102,7 +102,7 @@ public class TestErpSalContractReverseApprove extends JunitAutoTestCase {
     @Test
     public void testCancelledDocWithdrawApprovalBlocked() {
         ormTemplate.runInSession(() -> seedActiveCustomer(CUSTOMER_ID));
-        Long id = ormTemplate.runInSession(session -> seedContractCancelled("CT-CN-002",
+        String id = ormTemplate.runInSession(session -> seedContractCancelled("CT-CN-002",
                 ErpSalConstants.APPROVE_STATUS_SUBMITTED));
 
         assertNotEquals(0, rpc(mutation, "ErpSalContract__withdrawApproval",
@@ -118,19 +118,19 @@ public class TestErpSalContractReverseApprove extends JunitAutoTestCase {
         return graphQLEngine.executeRpc(ctx);
     }
 
-    private ErpSalContract reload(Long id) {
+    private ErpSalContract reload(String id) {
         return daoProvider.daoFor(ErpSalContract.class).getEntityById(id);
     }
 
-    private Long seedContractApproved(String code) {
+    private String seedContractApproved(String code) {
         return seedContract(code, ErpSalConstants.APPROVE_STATUS_APPROVED, true);
     }
 
-    private Long seedContract(String code, String approveStatus) {
+    private String seedContract(String code, String approveStatus) {
         return seedContract(code, approveStatus, false);
     }
 
-    private Long seedContractCancelled(String code, String approveStatus) {
+    private String seedContractCancelled(String code, String approveStatus) {
         IEntityDao<ErpSalContract> dao = daoProvider.daoFor(ErpSalContract.class);
         ErpSalContract c = new ErpSalContract();
         c.setCode(code);
@@ -145,7 +145,7 @@ public class TestErpSalContractReverseApprove extends JunitAutoTestCase {
         return c.getId();
     }
 
-    private Long seedContract(String code, String approveStatus, boolean withApprover) {
+    private String seedContract(String code, String approveStatus, boolean withApprover) {
         IEntityDao<ErpSalContract> dao = daoProvider.daoFor(ErpSalContract.class);
         ErpSalContract c = new ErpSalContract();
         c.setCode(code);
@@ -164,7 +164,7 @@ public class TestErpSalContractReverseApprove extends JunitAutoTestCase {
         return c.getId();
     }
 
-    private void seedActiveCustomer(Long id) {
+    private void seedActiveCustomer(String id) {
         IEntityDao<ErpMdPartner> dao = daoProvider.daoFor(ErpMdPartner.class);
         ErpMdPartner partner = new ErpMdPartner();
         partner.setId(id);

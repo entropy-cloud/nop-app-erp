@@ -44,13 +44,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpSalOrderAvailabilityCheck extends JunitAutoTestCase {
 
-    static final Long ORG_ID = 1301L;
-    static final Long CUSTOMER_ID = 2301L;
-    static final Long WAREHOUSE_ID = 3301L;
-    static final Long MATERIAL_ID = 4301L;
-    static final Long MATERIAL_ID_2 = 4302L;
-    static final Long UOM_ID = 5301L;
-    static final Long CURRENCY_ID = 6301L;
+    static final String ORG_ID = "1301";
+    static final String CUSTOMER_ID = "2301";
+    static final String WAREHOUSE_ID = "3301";
+    static final String MATERIAL_ID = "4301";
+    static final String MATERIAL_ID_2 = "4302";
+    static final String UOM_ID = "5301";
+    static final String CURRENCY_ID = "6301";
 
     @Inject
     IDaoProvider daoProvider;
@@ -175,12 +175,12 @@ public class TestErpSalOrderAvailabilityCheck extends JunitAutoTestCase {
 
     // ---------- rpc helpers ----------
 
-    private ApiResponse<?> submit(Long orderId) {
+    private ApiResponse<?> submit(String orderId) {
         return executeRpc(mutation, "ErpSalOrder__submitForApproval",
                 ApiRequest.build(Map.of("id", String.valueOf(orderId))));
     }
 
-    private ApiResponse<?> approve(Long orderId) {
+    private ApiResponse<?> approve(String orderId) {
         return executeRpc(mutation, "ErpSalOrder__approve",
                 ApiRequest.build(Map.of("id", String.valueOf(orderId))));
     }
@@ -192,7 +192,7 @@ public class TestErpSalOrderAvailabilityCheck extends JunitAutoTestCase {
 
     // ---------- helpers ----------
 
-    private ErpSalOrder reload(Long orderId) {
+    private ErpSalOrder reload(String orderId) {
         return daoProvider.daoFor(ErpSalOrder.class).getEntityById(orderId);
     }
 
@@ -214,7 +214,7 @@ public class TestErpSalOrderAvailabilityCheck extends JunitAutoTestCase {
         return order;
     }
 
-    private void saveOrderWithLine(ErpSalOrder order, Long materialId, Long warehouseId, String quantity) {
+    private void saveOrderWithLine(ErpSalOrder order, String materialId, String warehouseId, String quantity) {
         daoProvider.daoFor(ErpSalOrder.class).saveEntity(order);
         IEntityDao<ErpSalOrderLine> lineDao = daoProvider.daoFor(ErpSalOrderLine.class);
         ErpSalOrderLine line = new ErpSalOrderLine();
@@ -229,7 +229,7 @@ public class TestErpSalOrderAvailabilityCheck extends JunitAutoTestCase {
         lineDao.saveEntity(line);
     }
 
-    private void saveSecondLine(ErpSalOrder order, Long materialId, Long warehouseId, String quantity) {
+    private void saveSecondLine(ErpSalOrder order, String materialId, String warehouseId, String quantity) {
         IEntityDao<ErpSalOrderLine> lineDao = daoProvider.daoFor(ErpSalOrderLine.class);
         ErpSalOrderLine line = new ErpSalOrderLine();
         line.setOrderId(order.getId());
@@ -247,7 +247,7 @@ public class TestErpSalOrderAvailabilityCheck extends JunitAutoTestCase {
      * 直接 DAO 种子库存余额行（orgId+materialId+warehouseId+availableQuantity），
      * 供订单级预校验只读查询命中（无需 generateMove 业务链路）。
      */
-    private void seedBalance(Long materialId, Long warehouseId, String qty) {
+    private void seedBalance(String materialId, String warehouseId, String qty) {
         IEntityDao<ErpInvStockBalance> dao = daoProvider.daoFor(ErpInvStockBalance.class);
         ErpInvStockBalance balance = dao.newEntity();
         balance.setOrgId(ORG_ID);
@@ -258,7 +258,7 @@ public class TestErpSalOrderAvailabilityCheck extends JunitAutoTestCase {
         dao.saveEntity(balance);
     }
 
-    private void seedActiveCustomer(Long id, BigDecimal creditLimit) {
+    private void seedActiveCustomer(String id, BigDecimal creditLimit) {
         IEntityDao<ErpMdPartner> dao = daoProvider.daoFor(ErpMdPartner.class);
         ErpMdPartner partner = new ErpMdPartner();
         partner.setId(id);

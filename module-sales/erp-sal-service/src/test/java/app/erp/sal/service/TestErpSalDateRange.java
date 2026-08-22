@@ -202,7 +202,7 @@ public class TestErpSalDateRange extends JunitAutoTestCase {
     }
 
     private Map<String, Object> priceListPayload(Map<String, String> pre, String code,
-                                                   String customerGroup, Long partnerId,
+                                                   String customerGroup, String partnerId,
                                                    int priority, String validFrom, String validTo) {
         Map<String, Object> data = new LinkedHashMap<>();
         data.put("code", code);
@@ -221,12 +221,12 @@ public class TestErpSalDateRange extends JunitAutoTestCase {
         return data;
     }
 
-    private String savePriceListOk(Map<String, String> pre, String code, String customerGroup, Long partnerId) {
+    private String savePriceListOk(Map<String, String> pre, String code, String customerGroup, String partnerId) {
         return savePriceListOk(pre, code, customerGroup, partnerId, 100,
                 "2026-01-01", "2026-12-31");
     }
 
-    private String savePriceListOk(Map<String, String> pre, String code, String customerGroup, Long partnerId,
+    private String savePriceListOk(Map<String, String> pre, String code, String customerGroup, String partnerId,
                                     int priority, String validFrom, String validTo) {
         ApiResponse<?> resp = rpc(mutation, "ErpSalPriceList__save",
                 ApiRequest.build(Map.of("data", priceListPayload(pre, code, customerGroup, partnerId,

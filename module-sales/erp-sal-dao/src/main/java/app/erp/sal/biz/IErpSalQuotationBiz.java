@@ -19,11 +19,11 @@ import app.erp.sal.dao.entity.ErpSalQuotation;
 public interface IErpSalQuotationBiz extends ICrudBiz<ErpSalQuotation> {
 
     @BizMutation
-    ErpSalQuotation cancel(@Name("quotationId") Long quotationId, IServiceContext context);
+    ErpSalQuotation cancel(@Name("quotationId") String quotationId, IServiceContext context);
 
     @BizMutation
-    ErpSalQuotation confirmCustomerAccepted(@Name("quotationId") Long quotationId, IServiceContext context);
+    ErpSalQuotation confirmCustomerAccepted(@Name("quotationId") String quotationId, IServiceContext context);
 
     @BizMutation
-    ErpSalOrder convertToOrder(@Name("quotationId") Long quotationId, IServiceContext context);
+    ErpSalOrder convertToOrder(@Name("quotationId") String quotationId, IServiceContext context);
 }

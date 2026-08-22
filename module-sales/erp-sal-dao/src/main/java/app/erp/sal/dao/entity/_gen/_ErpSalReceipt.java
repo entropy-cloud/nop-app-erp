@@ -268,22 +268,22 @@ public class _ErpSalReceipt extends DynamicOrmEntity{
 
     
     /* ID: ID */
-    private java.lang.Long _id;
+    private java.lang.String _id;
     
     /* 单号: CODE */
     private java.lang.String _code;
     
     /* 业务组织: ORG_ID */
-    private java.lang.Long _orgId;
+    private java.lang.String _orgId;
     
     /* 客户: CUSTOMER_ID */
-    private java.lang.Long _customerId;
+    private java.lang.String _customerId;
     
     /* 收款日期: BUSINESS_DATE */
     private java.time.LocalDate _businessDate;
     
     /* 币种: CURRENCY_ID */
-    private java.lang.Long _currencyId;
+    private java.lang.String _currencyId;
     
     /* 汇率: EXCHANGE_RATE */
     private java.math.BigDecimal _exchangeRate;
@@ -298,16 +298,16 @@ public class _ErpSalReceipt extends DynamicOrmEntity{
     private java.math.BigDecimal _totalAmount;
     
     /* 结算方式: SETTLEMENT_METHOD_ID */
-    private java.lang.Long _settlementMethodId;
+    private java.lang.String _settlementMethodId;
     
     /* 收款方式: RECEIPT_METHOD */
     private java.lang.String _receiptMethod;
     
     /* 收款账户(资金账户): BANK_ACCOUNT_ID */
-    private java.lang.Long _bankAccountId;
+    private java.lang.String _bankAccountId;
     
     /* 客户付款账户(银行账户主数据): PARTNER_BANK_ACCOUNT_ID */
-    private java.lang.Long _partnerBankAccountId;
+    private java.lang.String _partnerBankAccountId;
     
     /* 单据状态: DOC_STATUS */
     private java.lang.String _docStatus;
@@ -533,9 +533,9 @@ public class _ErpSalReceipt extends DynamicOrmEntity{
         switch(propId){
         
             case PROP_ID_id:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_id));
                }
                setId(typedValue);
@@ -553,9 +553,9 @@ public class _ErpSalReceipt extends DynamicOrmEntity{
             }
         
             case PROP_ID_orgId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_orgId));
                }
                setOrgId(typedValue);
@@ -563,9 +563,9 @@ public class _ErpSalReceipt extends DynamicOrmEntity{
             }
         
             case PROP_ID_customerId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_customerId));
                }
                setCustomerId(typedValue);
@@ -583,9 +583,9 @@ public class _ErpSalReceipt extends DynamicOrmEntity{
             }
         
             case PROP_ID_currencyId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_currencyId));
                }
                setCurrencyId(typedValue);
@@ -633,9 +633,9 @@ public class _ErpSalReceipt extends DynamicOrmEntity{
             }
         
             case PROP_ID_settlementMethodId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_settlementMethodId));
                }
                setSettlementMethodId(typedValue);
@@ -653,9 +653,9 @@ public class _ErpSalReceipt extends DynamicOrmEntity{
             }
         
             case PROP_ID_bankAccountId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_bankAccountId));
                }
                setBankAccountId(typedValue);
@@ -663,9 +663,9 @@ public class _ErpSalReceipt extends DynamicOrmEntity{
             }
         
             case PROP_ID_partnerBankAccountId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_partnerBankAccountId));
                }
                setPartnerBankAccountId(typedValue);
@@ -843,7 +843,7 @@ public class _ErpSalReceipt extends DynamicOrmEntity{
         
             case PROP_ID_id:{
                onInitProp(propId);
-               this._id = (java.lang.Long)value;
+               this._id = (java.lang.String)value;
                orm_id(); // 如果是设置主键字段，则触发watcher
                break;
             }
@@ -857,14 +857,14 @@ public class _ErpSalReceipt extends DynamicOrmEntity{
         
             case PROP_ID_orgId:{
                onInitProp(propId);
-               this._orgId = (java.lang.Long)value;
+               this._orgId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_customerId:{
                onInitProp(propId);
-               this._customerId = (java.lang.Long)value;
+               this._customerId = (java.lang.String)value;
                
                break;
             }
@@ -878,7 +878,7 @@ public class _ErpSalReceipt extends DynamicOrmEntity{
         
             case PROP_ID_currencyId:{
                onInitProp(propId);
-               this._currencyId = (java.lang.Long)value;
+               this._currencyId = (java.lang.String)value;
                
                break;
             }
@@ -913,7 +913,7 @@ public class _ErpSalReceipt extends DynamicOrmEntity{
         
             case PROP_ID_settlementMethodId:{
                onInitProp(propId);
-               this._settlementMethodId = (java.lang.Long)value;
+               this._settlementMethodId = (java.lang.String)value;
                
                break;
             }
@@ -927,14 +927,14 @@ public class _ErpSalReceipt extends DynamicOrmEntity{
         
             case PROP_ID_bankAccountId:{
                onInitProp(propId);
-               this._bankAccountId = (java.lang.Long)value;
+               this._bankAccountId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_partnerBankAccountId:{
                onInitProp(propId);
-               this._partnerBankAccountId = (java.lang.Long)value;
+               this._partnerBankAccountId = (java.lang.String)value;
                
                break;
             }
@@ -1060,7 +1060,7 @@ public class _ErpSalReceipt extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final java.lang.Long getId(){
+    public final java.lang.String getId(){
          onPropGet(PROP_ID_id);
          return _id;
     }
@@ -1068,7 +1068,7 @@ public class _ErpSalReceipt extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final void setId(java.lang.Long value){
+    public final void setId(java.lang.String value){
         if(onPropSet(PROP_ID_id,value)){
             this._id = value;
             internalClearRefs(PROP_ID_id);
@@ -1098,7 +1098,7 @@ public class _ErpSalReceipt extends DynamicOrmEntity{
     /**
      * 业务组织: ORG_ID
      */
-    public final java.lang.Long getOrgId(){
+    public final java.lang.String getOrgId(){
          onPropGet(PROP_ID_orgId);
          return _orgId;
     }
@@ -1106,7 +1106,7 @@ public class _ErpSalReceipt extends DynamicOrmEntity{
     /**
      * 业务组织: ORG_ID
      */
-    public final void setOrgId(java.lang.Long value){
+    public final void setOrgId(java.lang.String value){
         if(onPropSet(PROP_ID_orgId,value)){
             this._orgId = value;
             internalClearRefs(PROP_ID_orgId);
@@ -1117,7 +1117,7 @@ public class _ErpSalReceipt extends DynamicOrmEntity{
     /**
      * 客户: CUSTOMER_ID
      */
-    public final java.lang.Long getCustomerId(){
+    public final java.lang.String getCustomerId(){
          onPropGet(PROP_ID_customerId);
          return _customerId;
     }
@@ -1125,7 +1125,7 @@ public class _ErpSalReceipt extends DynamicOrmEntity{
     /**
      * 客户: CUSTOMER_ID
      */
-    public final void setCustomerId(java.lang.Long value){
+    public final void setCustomerId(java.lang.String value){
         if(onPropSet(PROP_ID_customerId,value)){
             this._customerId = value;
             internalClearRefs(PROP_ID_customerId);
@@ -1155,7 +1155,7 @@ public class _ErpSalReceipt extends DynamicOrmEntity{
     /**
      * 币种: CURRENCY_ID
      */
-    public final java.lang.Long getCurrencyId(){
+    public final java.lang.String getCurrencyId(){
          onPropGet(PROP_ID_currencyId);
          return _currencyId;
     }
@@ -1163,7 +1163,7 @@ public class _ErpSalReceipt extends DynamicOrmEntity{
     /**
      * 币种: CURRENCY_ID
      */
-    public final void setCurrencyId(java.lang.Long value){
+    public final void setCurrencyId(java.lang.String value){
         if(onPropSet(PROP_ID_currencyId,value)){
             this._currencyId = value;
             internalClearRefs(PROP_ID_currencyId);
@@ -1250,7 +1250,7 @@ public class _ErpSalReceipt extends DynamicOrmEntity{
     /**
      * 结算方式: SETTLEMENT_METHOD_ID
      */
-    public final java.lang.Long getSettlementMethodId(){
+    public final java.lang.String getSettlementMethodId(){
          onPropGet(PROP_ID_settlementMethodId);
          return _settlementMethodId;
     }
@@ -1258,7 +1258,7 @@ public class _ErpSalReceipt extends DynamicOrmEntity{
     /**
      * 结算方式: SETTLEMENT_METHOD_ID
      */
-    public final void setSettlementMethodId(java.lang.Long value){
+    public final void setSettlementMethodId(java.lang.String value){
         if(onPropSet(PROP_ID_settlementMethodId,value)){
             this._settlementMethodId = value;
             internalClearRefs(PROP_ID_settlementMethodId);
@@ -1288,7 +1288,7 @@ public class _ErpSalReceipt extends DynamicOrmEntity{
     /**
      * 收款账户(资金账户): BANK_ACCOUNT_ID
      */
-    public final java.lang.Long getBankAccountId(){
+    public final java.lang.String getBankAccountId(){
          onPropGet(PROP_ID_bankAccountId);
          return _bankAccountId;
     }
@@ -1296,7 +1296,7 @@ public class _ErpSalReceipt extends DynamicOrmEntity{
     /**
      * 收款账户(资金账户): BANK_ACCOUNT_ID
      */
-    public final void setBankAccountId(java.lang.Long value){
+    public final void setBankAccountId(java.lang.String value){
         if(onPropSet(PROP_ID_bankAccountId,value)){
             this._bankAccountId = value;
             internalClearRefs(PROP_ID_bankAccountId);
@@ -1307,7 +1307,7 @@ public class _ErpSalReceipt extends DynamicOrmEntity{
     /**
      * 客户付款账户(银行账户主数据): PARTNER_BANK_ACCOUNT_ID
      */
-    public final java.lang.Long getPartnerBankAccountId(){
+    public final java.lang.String getPartnerBankAccountId(){
          onPropGet(PROP_ID_partnerBankAccountId);
          return _partnerBankAccountId;
     }
@@ -1315,7 +1315,7 @@ public class _ErpSalReceipt extends DynamicOrmEntity{
     /**
      * 客户付款账户(银行账户主数据): PARTNER_BANK_ACCOUNT_ID
      */
-    public final void setPartnerBankAccountId(java.lang.Long value){
+    public final void setPartnerBankAccountId(java.lang.String value){
         if(onPropSet(PROP_ID_partnerBankAccountId,value)){
             this._partnerBankAccountId = value;
             internalClearRefs(PROP_ID_partnerBankAccountId);

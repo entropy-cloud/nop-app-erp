@@ -1,10 +1,10 @@
 {
-  "id": 0,
+  "id": "",
   "name": "",
   "code": "",
-  "currencyId": 0,
+  "currencyId": "",
   "customerGroupCode": "",
-  "partnerId": 0,
+  "partnerId": "",
   "validFrom": "2000-01-01",
   "validTo": "2000-01-01",
   "priority": 0,
