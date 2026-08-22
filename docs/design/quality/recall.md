@@ -85,7 +85,7 @@
 
 > **澄清（实现基线，优先于本节上方「反向追溯…正向追溯找到销售出库」字面描述）**：召回从批次起无单一源移动单，故采用 `batchTrace(batchNo)`（按批次号聚合全部移动单）为唯一入口。`backwardTrace(moveId)` 沿 `originMoveId` **上溯**至根、`forwardTrace(moveId)` 需已知单一源移动单起点，二者方向/前提均不契合召回从批次起的场景，故 rejected。
 
-> **类型桥（残留风险）**：`batchTrace` 入参为 `batchNo:String`，而 `ErpQaRecall.batchId` 为 Long FK，须经批次主数据（`ErpInvBatch`）解析为 `batchNo` 再聚合。
+> **类型桥（残留风险，已随 M2.3 消解）**：`batchTrace` 入参为 `batchNo:String`；`ErpQaRecall.batchId` 自 M2.3 主键/外键 string 化迁移（plan `2026-08-22-1302-2`）起 Java 层为 String（DB 列保持 BIGINT），与 `IErpInvBatchBiz.get(batchId:String)` 直传对齐，不再存在 Long↔String 转换桥。
 
 > **serialNo 单件追溯（本期 Non-Goal）**：`batchTrace` 按批次聚合，不覆盖单件 serialNo 维度召回定位。本期召回对象以批次为主；serialNo 维度目标定位 config-gated 降级，待 inventory 单件追溯查询能力就绪后补齐（触发条件：单件追溯查询能力 + 单件召回需求）。
 
