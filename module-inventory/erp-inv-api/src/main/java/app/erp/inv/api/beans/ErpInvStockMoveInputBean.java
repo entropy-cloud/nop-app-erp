@@ -13,16 +13,16 @@
     public class ErpInvStockMoveInputBean extends CrudInputBase {
 
     
-        private Long _id;
+        private String _id;
 
     
         @PropMeta(propId=1)
     
-        public Long getId(){
+        public String getId(){
             return _id;
         }
 
-        public void setId(Long value){
+        public void setId(String value){
             this._id = value;
         }
 
@@ -55,16 +55,16 @@
         }
 
 
-        private Long _orgId;
+        private String _orgId;
 
     
         @PropMeta(propId=4)
     
-        public Long getOrgId(){
+        public String getOrgId(){
             return _orgId;
         }
 
-        public void setOrgId(Long value){
+        public void setOrgId(String value){
             this._orgId = value;
         }
 
@@ -83,58 +83,58 @@
         }
 
 
-        private Long _sourceWarehouseId;
+        private String _sourceWarehouseId;
 
     
         @PropMeta(propId=6)
     
-        public Long getSourceWarehouseId(){
+        public String getSourceWarehouseId(){
             return _sourceWarehouseId;
         }
 
-        public void setSourceWarehouseId(Long value){
+        public void setSourceWarehouseId(String value){
             this._sourceWarehouseId = value;
         }
 
 
-        private Long _sourceLocationId;
+        private String _sourceLocationId;
 
     
         @PropMeta(propId=7)
     
-        public Long getSourceLocationId(){
+        public String getSourceLocationId(){
             return _sourceLocationId;
         }
 
-        public void setSourceLocationId(Long value){
+        public void setSourceLocationId(String value){
             this._sourceLocationId = value;
         }
 
 
-        private Long _destWarehouseId;
+        private String _destWarehouseId;
 
     
         @PropMeta(propId=8)
     
-        public Long getDestWarehouseId(){
+        public String getDestWarehouseId(){
             return _destWarehouseId;
         }
 
-        public void setDestWarehouseId(Long value){
+        public void setDestWarehouseId(String value){
             this._destWarehouseId = value;
         }
 
 
-        private Long _destLocationId;
+        private String _destLocationId;
 
     
         @PropMeta(propId=9)
     
-        public Long getDestLocationId(){
+        public String getDestLocationId(){
             return _destLocationId;
         }
 
-        public void setDestLocationId(Long value){
+        public void setDestLocationId(String value){
             this._destLocationId = value;
         }
 
@@ -209,30 +209,30 @@
         }
 
 
-        private Long _originMoveId;
+        private String _originMoveId;
 
     
         @PropMeta(propId=24)
     
-        public Long getOriginMoveId(){
+        public String getOriginMoveId(){
             return _originMoveId;
         }
 
-        public void setOriginMoveId(Long value){
+        public void setOriginMoveId(String value){
             this._originMoveId = value;
         }
 
 
-        private Long _originReturnedMoveId;
+        private String _originReturnedMoveId;
 
     
         @PropMeta(propId=25)
     
-        public Long getOriginReturnedMoveId(){
+        public String getOriginReturnedMoveId(){
             return _originReturnedMoveId;
         }
 
-        public void setOriginReturnedMoveId(Long value){
+        public void setOriginReturnedMoveId(String value){
             this._originReturnedMoveId = value;
         }
 

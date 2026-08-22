@@ -119,10 +119,10 @@
       "longParams": [],
       "refDomain": "inventory",
       "evidence": "module-aps/erp-aps-service/src/main/java/app/erp/aps/service/atpctp/ErpApsAtpCtpServiceImpl.java:12",
-      "note": "符号使用行含 id 语境（见 idContextLines）",
+      "note": "符号使用行含 id 语境（见 idContextLines）。已退役：M2.2 inv plan 2026-08-22-0731-2 Phase 2 B 义务兑付——aps 侧 toLong 转换点/bridge 注释移除改 String 直传（ErpApsAtpCtpServiceImpl/ErpApsAutoDispatchProcessor），aps 7 模块链重建绿 + aps 测试复跑 76/76",
       "deferredUntil": "M2.2",
       "retireOwner": "M2.2",
-      "status": "active"
+      "status": "retired"
     },
     {
       "id": "bridge-main-010",
@@ -134,10 +134,10 @@
       "longParams": [],
       "refDomain": "inventory",
       "evidence": "module-aps/erp-aps-service/src/main/java/app/erp/aps/service/atpctp/ErpApsAtpCtpServiceImpl.java:13",
-      "note": "类型级引用（id 语境经变量流转时由编译器驱动/域 plan grep 定位调用点）",
+      "note": "类型级引用（id 语境经变量流转时由编译器驱动/域 plan grep 定位调用点）。已退役：M2.2 inv plan 2026-08-22-0731-2 Phase 2 B 义务兑付——aps 侧 toLong 转换点/bridge 注释移除改 String 直传（ErpApsAtpCtpServiceImpl/ErpApsAutoDispatchProcessor），aps 7 模块链重建绿 + aps 测试复跑 76/76",
       "deferredUntil": "M2.2",
       "retireOwner": "M2.2",
-      "status": "active"
+      "status": "retired"
     },
     {
       "id": "bridge-main-011",
@@ -149,10 +149,10 @@
       "longParams": [],
       "refDomain": "inventory",
       "evidence": "module-aps/erp-aps-service/src/main/java/app/erp/aps/service/atpctp/ErpApsAtpCtpServiceImpl.java:14",
-      "note": "类型级引用（id 语境经变量流转时由编译器驱动/域 plan grep 定位调用点）",
+      "note": "类型级引用（id 语境经变量流转时由编译器驱动/域 plan grep 定位调用点）。已退役：M2.2 inv plan 2026-08-22-0731-2 Phase 2 B 义务兑付——aps 侧 toLong 转换点/bridge 注释移除改 String 直传（ErpApsAtpCtpServiceImpl/ErpApsAutoDispatchProcessor），aps 7 模块链重建绿 + aps 测试复跑 76/76",
       "deferredUntil": "M2.2",
       "retireOwner": "M2.2",
-      "status": "active"
+      "status": "retired"
     },
     {
       "id": "bridge-main-012",
@@ -224,10 +224,10 @@
       "longParams": [],
       "refDomain": "inventory",
       "evidence": "module-aps/erp-aps-service/src/main/java/app/erp/aps/service/processor/ErpApsAutoDispatchProcessor.java:10",
-      "note": "类型级引用（id 语境经变量流转时由编译器驱动/域 plan grep 定位调用点）",
+      "note": "类型级引用（id 语境经变量流转时由编译器驱动/域 plan grep 定位调用点）。已退役：M2.2 inv plan 2026-08-22-0731-2 Phase 2 B 义务兑付——aps 侧 toLong 转换点/bridge 注释移除改 String 直传（ErpApsAtpCtpServiceImpl/ErpApsAutoDispatchProcessor），aps 7 模块链重建绿 + aps 测试复跑 76/76",
       "deferredUntil": "M2.2",
       "retireOwner": "M2.2",
-      "status": "active"
+      "status": "retired"
     },
     {
       "id": "bridge-main-017",
@@ -919,10 +919,10 @@
       "longParams": [],
       "refDomain": "inventory",
       "evidence": "module-finance/erp-fin-service/src/main/java/app/erp/fin/service/processor/ErpFinAccountingPeriodProcessor.java:15",
-      "note": "符号使用行含 id 语境（见 idContextLines）",
+      "note": "符号使用行含 id 语境（见 idContextLines）。已退役：M2.2 inv plan 2026-08-22-0731-2 Phase 2 B 义务兑付——fin 侧 bridge 注释/toLong 转换点移除改 String 直传（ErpFinAccountingPeriodProcessor，064 语义级 :224 直传），fin 5 模块链重建绿 + fin-service 测试复跑 497/497",
       "deferredUntil": "M2.2",
       "retireOwner": "M2.2",
-      "status": "active"
+      "status": "retired"
     },
     {
       "id": "bridge-main-063",
@@ -952,10 +952,10 @@
       ],
       "refDomain": "inventory",
       "evidence": "module-finance/erp-fin-service/src/main/java/app/erp/fin/service/processor/ErpFinAccountingPeriodProcessor.java:16",
-      "note": "",
+      "note": "。已退役：M2.2 inv plan 2026-08-22-0731-2 Phase 2 B 义务兑付——fin 侧 bridge 注释/toLong 转换点移除改 String 直传（ErpFinAccountingPeriodProcessor，064 语义级 :224 直传），fin 5 模块链重建绿 + fin-service 测试复跑 497/497",
       "deferredUntil": "M2.2",
       "retireOwner": "M2.2",
-      "status": "active"
+      "status": "retired"
     },
     {
       "id": "bridge-main-065",
@@ -985,10 +985,10 @@
       "longParams": [],
       "refDomain": "inventory",
       "evidence": "module-finance/erp-fin-service/src/main/java/app/erp/fin/service/processor/ErpFinAccountingPeriodProcessor.java:536",
-      "note": "类型级引用（id 语境经变量流转时由编译器驱动/域 plan grep 定位调用点）",
+      "note": "类型级引用（id 语境经变量流转时由编译器驱动/域 plan grep 定位调用点）。已退役：M2.2 inv plan 2026-08-22-0731-2 Phase 2 B 义务兑付——fin 侧 bridge 注释/toLong 转换点移除改 String 直传（ErpFinAccountingPeriodProcessor，064 语义级 :224 直传），fin 5 模块链重建绿 + fin-service 测试复跑 497/497",
       "deferredUntil": "M2.2",
       "retireOwner": "M2.2",
-      "status": "active"
+      "status": "retired"
     },
     {
       "id": "bridge-main-067",
@@ -1000,10 +1000,10 @@
       "longParams": [],
       "refDomain": "inventory",
       "evidence": "module-finance/erp-fin-service/src/main/java/app/erp/fin/service/processor/ErpFinAccountingPeriodProcessor.java:537",
-      "note": "类型级引用（id 语境经变量流转时由编译器驱动/域 plan grep 定位调用点）",
+      "note": "类型级引用（id 语境经变量流转时由编译器驱动/域 plan grep 定位调用点）。已退役：M2.2 inv plan 2026-08-22-0731-2 Phase 2 B 义务兑付——fin 侧 bridge 注释/toLong 转换点移除改 String 直传（ErpFinAccountingPeriodProcessor，064 语义级 :224 直传），fin 5 模块链重建绿 + fin-service 测试复跑 497/497",
       "deferredUntil": "M2.2",
       "retireOwner": "M2.2",
-      "status": "active"
+      "status": "retired"
     },
     {
       "id": "bridge-main-068",
@@ -1015,10 +1015,10 @@
       "longParams": [],
       "refDomain": "inventory",
       "evidence": "module-finance/erp-fin-service/src/main/java/app/erp/fin/service/processor/ErpFinAccountingPeriodProcessor.java:544",
-      "note": "类型级引用（id 语境经变量流转时由编译器驱动/域 plan grep 定位调用点）",
+      "note": "类型级引用（id 语境经变量流转时由编译器驱动/域 plan grep 定位调用点）。已退役：M2.2 inv plan 2026-08-22-0731-2 Phase 2 B 义务兑付——fin 侧 bridge 注释/toLong 转换点移除改 String 直传（ErpFinAccountingPeriodProcessor，064 语义级 :224 直传），fin 5 模块链重建绿 + fin-service 测试复跑 497/497",
       "deferredUntil": "M2.2",
       "retireOwner": "M2.2",
-      "status": "active"
+      "status": "retired"
     },
     {
       "id": "bridge-main-069",
@@ -1838,8 +1838,9 @@
       ],
       "deferredUntil": "M2.2",
       "retireOwner": "M2.2",
-      "note": "早域 test 引用晚域——早域 plan Phase 3 消费（本域测试适配）；晚域翻转时复核",
-      "status": "active"
+      "note": "早域 test 引用晚域——早域 plan Phase 3 消费（本域测试适配）；晚域翻转时复核。已退役：M2.2 inv plan 2026-08-22-0731-2 Phase 3 兑付（inv String 化，mfg CostRollupLine.materialId 查询值 toLong 局部桥，见 TestErpInvCostAdjust.java:496 桥注释），桥接点移除归 M3.1",
+
+      "status": "retired"
     },
     {
       "id": "bridge-test-120",
@@ -1856,8 +1857,9 @@
       ],
       "deferredUntil": "M2.2",
       "retireOwner": "M2.2",
-      "note": "早域 test 引用晚域——早域 plan Phase 3 消费（本域测试适配）；晚域翻转时复核",
-      "status": "active"
+      "note": "早域 test 引用晚域——早域 plan Phase 3 消费（本域测试适配）；晚域翻转时复核。已退役：M2.2 inv plan 2026-08-22-0731-2 Phase 3 兑付（inv String 化，pur Receive(ReceiveLine) seed 值 toLong 局部桥，见 TestErpInvLandedCostEndToEnd.java:290 桥注释），桥接点移除归 M2.5",
+
+      "status": "retired"
     },
     {
       "id": "bridge-test-121",
@@ -1874,8 +1876,9 @@
       ],
       "deferredUntil": "M2.2",
       "retireOwner": "M2.2",
-      "note": "早域 test 引用晚域——早域 plan Phase 3 消费（本域测试适配）；晚域翻转时复核",
-      "status": "active"
+      "note": "早域 test 引用晚域——早域 plan Phase 3 消费（本域测试适配）；晚域翻转时复核。已退役：M2.2 inv plan 2026-08-22-0731-2 Phase 3 兑付（inv String 化，pur Receive(ReceiveLine) seed 值 toLong 局部桥，见 TestErpInvLandedCostReversal.java:192 桥注释），桥接点移除归 M2.5",
+
+      "status": "retired"
     },
     {
       "id": "bridge-test-122",
@@ -1892,8 +1895,9 @@
       ],
       "deferredUntil": "M2.2",
       "retireOwner": "M2.2",
-      "note": "早域 test 引用晚域——早域 plan Phase 3 消费（本域测试适配）；晚域翻转时复核",
-      "status": "active"
+      "note": "早域 test 引用晚域——早域 plan Phase 3 消费（本域测试适配）；晚域翻转时复核。已退役：M2.2 inv plan 2026-08-22-0731-2 Phase 3 兑付（inv String 化，mfg CostRollup(RollupLine) seed 值 toLong 局部桥，见 TestErpInvStandardCosting.java:410 桥注释），桥接点移除归 M3.1",
+
+      "status": "retired"
     },
     {
       "id": "bridge-test-123",
@@ -1909,8 +1913,9 @@
       ],
       "deferredUntil": "M2.2",
       "retireOwner": "M2.2",
-      "note": "早域 test 引用晚域——早域 plan Phase 3 消费（本域测试适配）；晚域翻转时复核",
-      "status": "active"
+      "note": "早域 test 引用晚域——早域 plan Phase 3 消费（本域测试适配）；晚域翻转时复核。已退役：M2.2 inv plan 2026-08-22-0731-2 Phase 3 兑付（inv String 化，pur receiveId Long → inv String 局部桥，见 TestErpInvLandedCostAllocatedGuard.java:251 桥注释），桥接点移除归 M2.5",
+
+      "status": "retired"
     },
     {
       "id": "bridge-test-124",
@@ -1926,8 +1931,9 @@
       ],
       "deferredUntil": "M2.2",
       "retireOwner": "M2.2",
-      "note": "早域 test 引用晚域——早域 plan Phase 3 消费（本域测试适配）；晚域翻转时复核",
-      "status": "active"
+      "note": "早域 test 引用晚域——早域 plan Phase 3 消费（本域测试适配）；晚域翻转时复核。已退役：M2.2 inv plan 2026-08-22-0731-2 Phase 3 兑付（inv String 化，实体级 pass-through（lockReceiveForAllocation 不跨 id 边界），pur 种子 id 保持 Long，无转换桥必需，见 TestErpInvLandedCostReceiveMutex.java 桥注释），桥接点移除归 M2.5",
+
+      "status": "retired"
     },
     {
       "id": "bridge-test-125",

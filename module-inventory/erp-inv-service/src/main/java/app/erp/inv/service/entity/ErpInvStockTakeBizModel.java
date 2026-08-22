@@ -38,8 +38,8 @@ public class ErpInvStockTakeBizModel extends CrudBizModel<ErpInvStockTake> imple
 
     @Override
     @BizMutation
-    public ErpInvStockTake startTake(@Name("takeId") Long takeId, IServiceContext context) {
-        ErpInvStockTake take = requireEntity(String.valueOf(takeId), null, context);
+    public ErpInvStockTake startTake(@Name("takeId") String takeId, IServiceContext context) {
+        ErpInvStockTake take = requireEntity(takeId, null, context);
         String status = take.getDocStatus();
         // 固定来源态守卫委托 StateMachine Bean（非法边 Bean 抛 common 层码，映射为领域码 + common 作 cause）
         try {
@@ -57,8 +57,8 @@ public class ErpInvStockTakeBizModel extends CrudBizModel<ErpInvStockTake> imple
 
     @Override
     @BizMutation
-    public ErpInvStockTake completeTake(@Name("takeId") Long takeId, IServiceContext context) {
-        ErpInvStockTake take = requireEntity(String.valueOf(takeId), null, context);
+    public ErpInvStockTake completeTake(@Name("takeId") String takeId, IServiceContext context) {
+        ErpInvStockTake take = requireEntity(takeId, null, context);
         // RC-R1.56 / P1-MA2-062（UC-INV-07）：完整盘点闭环委托 per-mutation Processor——
         // 行加载 + D1 差异计算回填 + 逐行盘盈/盘亏移动单生成（D2 独立移动单停 CONFIRMED，失败逐行隔离 + D4-b 告警）
         // + 置 DONE。盘点单本身不改余额（断言④），差异经移动单状态机落地（断言⑤）。
@@ -67,8 +67,8 @@ public class ErpInvStockTakeBizModel extends CrudBizModel<ErpInvStockTake> imple
 
     @Override
     @BizMutation
-    public ErpInvStockTake cancelTake(@Name("takeId") Long takeId, IServiceContext context) {
-        ErpInvStockTake take = requireEntity(String.valueOf(takeId), null, context);
+    public ErpInvStockTake cancelTake(@Name("takeId") String takeId, IServiceContext context) {
+        ErpInvStockTake take = requireEntity(takeId, null, context);
         String status = take.getDocStatus();
         // 固定来源态守卫委托 StateMachine Bean（守卫非终态 {DONE,CANCELLED}；非法边 Bean 抛 common 层码，映射为领域码 + common 作 cause）
         try {

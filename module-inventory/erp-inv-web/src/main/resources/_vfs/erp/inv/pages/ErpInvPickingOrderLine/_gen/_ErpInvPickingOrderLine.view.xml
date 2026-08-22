@@ -19,25 +19,25 @@
             <cols>
 
                 <!--ID-->
-                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="id" mandatory="true" sortable="true"/>
 
                 <!--拣货单ID-->
-                <col id="pickingId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="pickingId" mandatory="true" sortable="true"/>
 
                 <!--行号-->
                 <col id="lineNo" mandatory="true" ui:number="true" sortable="true"/>
 
                 <!--物料-->
-                <col id="materialId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="materialId" mandatory="true" sortable="true"/>
 
                 <!--SKU-->
-                <col id="skuId" ui:number="true" sortable="true"/>
+                <col id="skuId" sortable="true"/>
 
                 <!--计量单位-->
-                <col id="uoMId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="uoMId" mandatory="true" sortable="true"/>
 
                 <!--拣货库位-->
-                <col id="sourceLocationId" ui:number="true" sortable="true"/>
+                <col id="sourceLocationId" sortable="true"/>
 
                 <!--应拣数量-->
                 <col id="quantity" mandatory="true" ui:number="true" sortable="true"/>

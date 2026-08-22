@@ -63,15 +63,15 @@ public class TestErpInvDashboard extends JunitAutoTestCase {
     @Test
     public void testKpiTotalValueAndTurnover() {
         ormTemplate.runInSession(() -> {
-            seedMaterial(101L, BigDecimal.ZERO);
+            seedMaterial("101", BigDecimal.ZERO);
             // 余额 totalCost=1000
-            seedBalance(201L, 101L, 1L, new BigDecimal("100"), new BigDecimal("1000"));
+            seedBalance("201", "101", "1", new BigDecimal("100"), new BigDecimal("1000"));
             // 出库移动：DONE + OUTGOING，行 totalCost=200
-            ErpInvStockMove m = seedMove(301L, ErpInvConstants.MOVE_TYPE_OUTGOING, ErpInvConstants.DOC_STATUS_DONE, CoreMetrics.currentDate());
-            seedMoveLine(401L, 301L, 101L, new BigDecimal("-10"), new BigDecimal("200"));
+            ErpInvStockMove m = seedMove("301", ErpInvConstants.MOVE_TYPE_OUTGOING, ErpInvConstants.DOC_STATUS_DONE, CoreMetrics.currentDate());
+            seedMoveLine("401", "301", "101", new BigDecimal("-10"), new BigDecimal("200"));
             // 入库移动：DONE + INCOMING，行 quantity=50
-            ErpInvStockMove m2 = seedMove(302L, ErpInvConstants.MOVE_TYPE_INCOMING, ErpInvConstants.DOC_STATUS_DONE, CoreMetrics.currentDate());
-            seedMoveLine(402L, 302L, 101L, new BigDecimal("50"), new BigDecimal("500"));
+            ErpInvStockMove m2 = seedMove("302", ErpInvConstants.MOVE_TYPE_INCOMING, ErpInvConstants.DOC_STATUS_DONE, CoreMetrics.currentDate());
+            seedMoveLine("402", "302", "101", new BigDecimal("50"), new BigDecimal("500"));
         });
         Map<String, Object> kpi = dashboardBiz.getDashboardKpi(null, null, CTX);
         assertEquals(0, ((BigDecimal) kpi.get("totalValue")).compareTo(new BigDecimal("1000")));
@@ -84,16 +84,16 @@ public class TestErpInvDashboard extends JunitAutoTestCase {
     @Test
     public void testWarehouseDistribution() {
         ormTemplate.runInSession(() -> {
-            seedMaterial(111L, BigDecimal.ZERO);
-            seedWarehouse(1L, "中央仓");
-            seedWarehouse(2L, "华东仓");
-            seedBalance(211L, 111L, 1L, new BigDecimal("10"), new BigDecimal("100"));
-            seedBalance(212L, 111L, 2L, new BigDecimal("20"), new BigDecimal("300"));
+            seedMaterial("111", BigDecimal.ZERO);
+            seedWarehouse("1", "中央仓");
+            seedWarehouse("2", "华东仓");
+            seedBalance("211", "111", "1", new BigDecimal("10"), new BigDecimal("100"));
+            seedBalance("212", "111", "2", new BigDecimal("20"), new BigDecimal("300"));
         });
         List<Map<String, Object>> dist = dashboardBiz.findWarehouseDistribution(CTX);
         assertEquals(2, dist.size());
         // 仓库 2 (300) > 仓库 1 (100) → 排序后仓库 2 在前
-        assertEquals(2L, dist.get(0).get("warehouseId"));
+        assertEquals("2", dist.get(0).get("warehouseId"));
         assertEquals("华东仓", dist.get(0).get("warehouseName"), "仓库名称已解析");
         assertEquals("中央仓", dist.get(1).get("warehouseName"), "仓库名称已解析");
     }
@@ -102,22 +102,22 @@ public class TestErpInvDashboard extends JunitAutoTestCase {
     public void testShortageAlert() {
         ormTemplate.runInSession(() -> {
             // 物料 121 安全库存 50
-            seedMaterial(121L, new BigDecimal("50"));
+            seedMaterial("121", new BigDecimal("50"));
             // 余量 30 < 50 → 缺料
-            seedBalance(221L, 121L, 1L, new BigDecimal("30"), new BigDecimal("100"));
+            seedBalance("221", "121", "1", new BigDecimal("30"), new BigDecimal("100"));
             // 余量 60 > 50 → 不缺料
-            seedBalance(222L, 121L, 1L, new BigDecimal("60"), new BigDecimal("200"));
+            seedBalance("222", "121", "1", new BigDecimal("60"), new BigDecimal("200"));
         });
         List<Map<String, Object>> alerts = dashboardBiz.findShortageAlert(CTX);
         assertEquals(1, alerts.size(), "30 < 50 触发 1 条缺料预警");
-        assertEquals(121L, alerts.get(0).get("materialId"));
+        assertEquals("121", alerts.get(0).get("materialId"));
     }
 
     @Test
     public void testSlowMovingAlertDisabledByDefault() {
         ormTemplate.runInSession(() -> {
-            seedMaterial(131L, BigDecimal.ZERO);
-            seedBalance(231L, 131L, 1L, new BigDecimal("10"), new BigDecimal("100"));
+            seedMaterial("131", BigDecimal.ZERO);
+            seedBalance("231", "131", "1", new BigDecimal("10"), new BigDecimal("100"));
         });
         AppConfig.getConfigProvider().assignConfigValue(
                 ErpInvConstants.CONFIG_DASH_INV_SLOW_MOVING_DAYS,
@@ -129,16 +129,16 @@ public class TestErpInvDashboard extends JunitAutoTestCase {
     @Test
     public void testSlowMovingAlertTriggersWhenNoOutgoing() {
         ormTemplate.runInSession(() -> {
-            seedMaterial(141L, BigDecimal.ZERO);
+            seedMaterial("141", BigDecimal.ZERO);
             // 有库存但无任何出库记录 → 视为滞销
-            seedBalance(241L, 141L, 1L, new BigDecimal("10"), new BigDecimal("100"));
+            seedBalance("241", "141", "1", new BigDecimal("10"), new BigDecimal("100"));
         });
         AppConfig.getConfigProvider().assignConfigValue(
                 ErpInvConstants.CONFIG_DASH_INV_SLOW_MOVING_DAYS, "30");
         try {
             List<Map<String, Object>> alerts = dashboardBiz.findSlowMovingAlert(CTX);
             assertEquals(1, alerts.size(), "无出库记录 + 库存 > 0 → 滞销");
-            assertEquals(141L, alerts.get(0).get("materialId"));
+            assertEquals("141", alerts.get(0).get("materialId"));
         } finally {
             AppConfig.getConfigProvider().assignConfigValue(
                     ErpInvConstants.CONFIG_DASH_INV_SLOW_MOVING_DAYS, "0");
@@ -148,8 +148,8 @@ public class TestErpInvDashboard extends JunitAutoTestCase {
     @Test
     public void testBatchExpiryAlertDisabledByDefault() {
         ormTemplate.runInSession(() -> {
-            seedMaterial(151L, BigDecimal.ZERO);
-            seedBatch(251L, "BAT-SOON", 151L, 1L, CoreMetrics.currentDate().plusDays(5));
+            seedMaterial("151", BigDecimal.ZERO);
+            seedBatch("251", "BAT-SOON", "151", "1", CoreMetrics.currentDate().plusDays(5));
         });
         AppConfig.getConfigProvider().assignConfigValue(
                 ErpInvConstants.CONFIG_DASH_INV_BATCH_EXPIRY_DAYS,
@@ -161,11 +161,11 @@ public class TestErpInvDashboard extends JunitAutoTestCase {
     @Test
     public void testBatchExpiryAlertTriggers() {
         ormTemplate.runInSession(() -> {
-            seedMaterial(161L, BigDecimal.ZERO);
+            seedMaterial("161", BigDecimal.ZERO);
             // 7 天后过期 < 阈值 30 天 → 触发
-            seedBatch(261L, "BAT-7D", 161L, 1L, CoreMetrics.currentDate().plusDays(7));
+            seedBatch("261", "BAT-7D", "161", "1", CoreMetrics.currentDate().plusDays(7));
             // 100 天后过期 > 阈值 30 天 → 不触发
-            seedBatch(262L, "BAT-100D", 161L, 1L, CoreMetrics.currentDate().plusDays(100));
+            seedBatch("262", "BAT-100D", "161", "1", CoreMetrics.currentDate().plusDays(100));
         });
         AppConfig.getConfigProvider().assignConfigValue(
                 ErpInvConstants.CONFIG_DASH_INV_BATCH_EXPIRY_DAYS, "30");
@@ -181,20 +181,20 @@ public class TestErpInvDashboard extends JunitAutoTestCase {
 
     // ---------- helpers ----------
 
-    private void seedMaterial(long id, BigDecimal safetyStock) {
+    private void seedMaterial(String id, BigDecimal safetyStock) {
         IEntityDao<ErpMdMaterial> dao = daoProvider.daoFor(ErpMdMaterial.class);
         ErpMdMaterial m = dao.newEntity();
         m.orm_propValue(1, id);
         m.setCode("M-" + id);
         m.setName("Material " + id);
         m.setMaterialType("GOODS");
-        m.setUoMId(1L);
+        m.setUoMId("1");
         m.setStatus("ACTIVE");
         m.setSafetyStock(safetyStock);
         dao.saveEntity(m);
     }
 
-    private void seedWarehouse(long id, String name) {
+    private void seedWarehouse(String id, String name) {
         IEntityDao<ErpMdWarehouse> dao = daoProvider.daoFor(ErpMdWarehouse.class);
         ErpMdWarehouse w = dao.newEntity();
         w.orm_propValue(1, id);
@@ -204,12 +204,12 @@ public class TestErpInvDashboard extends JunitAutoTestCase {
         dao.saveEntity(w);
     }
 
-    private void seedBalance(long id, long materialId, long warehouseId,
+    private void seedBalance(String id, String materialId, String warehouseId,
                              BigDecimal qty, BigDecimal totalCost) {
         IEntityDao<ErpInvStockBalance> dao = daoProvider.daoFor(ErpInvStockBalance.class);
         ErpInvStockBalance b = dao.newEntity();
         b.orm_propValue(1, id);
-        b.setOrgId(1L);
+        b.setOrgId("1");
         b.setMaterialId(materialId);
         b.setWarehouseId(warehouseId);
         b.setTotalQuantity(qty);
@@ -219,17 +219,17 @@ public class TestErpInvDashboard extends JunitAutoTestCase {
         b.setCostMethod(ErpInvConstants.COST_METHOD_MOVING_AVERAGE);
         b.setAvgCost(BigDecimal.ONE);
         b.setTotalCost(totalCost);
-        b.setCurrencyId(1L);
+        b.setCurrencyId("1");
         dao.saveEntity(b);
     }
 
-    private ErpInvStockMove seedMove(long id, String moveType, String docStatus, LocalDate date) {
+    private ErpInvStockMove seedMove(String id, String moveType, String docStatus, LocalDate date) {
         IEntityDao<ErpInvStockMove> dao = daoProvider.daoFor(ErpInvStockMove.class);
         ErpInvStockMove m = dao.newEntity();
         m.orm_propValue(1, id);
         m.setCode("MV-" + id);
         m.setMoveType(moveType);
-        m.setOrgId(1L);
+        m.setOrgId("1");
         m.setBusinessDate(date);
         m.setDocStatus(docStatus);
         m.setApproveStatus("APPROVED");
@@ -237,7 +237,7 @@ public class TestErpInvDashboard extends JunitAutoTestCase {
         return m;
     }
 
-    private void seedMoveLine(long id, long moveId, long materialId,
+    private void seedMoveLine(String id, String moveId, String materialId,
                               BigDecimal qty, BigDecimal totalCost) {
         IEntityDao<ErpInvStockMoveLine> dao = daoProvider.daoFor(ErpInvStockMoveLine.class);
         ErpInvStockMoveLine l = dao.newEntity();
@@ -245,18 +245,18 @@ public class TestErpInvDashboard extends JunitAutoTestCase {
         l.setMoveId(moveId);
         l.setLineNo(1);
         l.setMaterialId(materialId);
-        l.setUoMId(1L);
+        l.setUoMId("1");
         l.setQuantity(qty);
         l.setUnitCost(BigDecimal.ONE);
         l.setTotalCost(totalCost);
         dao.saveEntity(l);
     }
 
-    private void seedBatch(long id, String batchNo, long materialId, long warehouseId, LocalDate expiry) {
+    private void seedBatch(String id, String batchNo, String materialId, String warehouseId, LocalDate expiry) {
         IEntityDao<ErpInvBatch> dao = daoProvider.daoFor(ErpInvBatch.class);
         ErpInvBatch b = dao.newEntity();
         b.orm_propValue(1, id);
-        b.setOrgId(1L);
+        b.setOrgId("1");
         b.setBatchNo(batchNo);
         b.setMaterialId(materialId);
         b.setWarehouseId(warehouseId);

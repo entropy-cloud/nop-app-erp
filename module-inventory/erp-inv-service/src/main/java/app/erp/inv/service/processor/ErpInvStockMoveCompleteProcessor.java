@@ -17,7 +17,7 @@ public class ErpInvStockMoveCompleteProcessor {
     @Inject
     ErpInvStockMoveProcessor facade;
 
-    public ErpInvStockMove complete(Long moveId, IServiceContext context) {
+    public ErpInvStockMove complete(String moveId, IServiceContext context) {
         ErpInvStockMove move = facade.requireMove(moveId, context);
         List<ErpInvStockMoveLine> lines = facade.loadLines(move.getId());
         facade.doComplete(move, lines, null, context);

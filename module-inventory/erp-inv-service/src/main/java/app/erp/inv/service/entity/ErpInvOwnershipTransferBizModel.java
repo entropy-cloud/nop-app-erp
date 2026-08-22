@@ -38,19 +38,19 @@ public class ErpInvOwnershipTransferBizModel extends CrudBizModel<ErpInvOwnershi
 
     @Override
     @BizMutation
-    public ErpInvOwnershipTransfer confirm(@Name("transferId") Long transferId, IServiceContext context) {
+    public ErpInvOwnershipTransfer confirm(@Name("transferId") String transferId, IServiceContext context) {
         return confirmProcessor.confirm(transferId, context);
     }
 
     @Override
     @BizMutation
-    public ErpInvOwnershipTransfer done(@Name("transferId") Long transferId, IServiceContext context) {
+    public ErpInvOwnershipTransfer done(@Name("transferId") String transferId, IServiceContext context) {
         return doneProcessor.done(transferId, context);
     }
 
     @Override
     @BizMutation
-    public ErpInvOwnershipTransfer cancel(@Name("transferId") Long transferId, IServiceContext context) {
+    public ErpInvOwnershipTransfer cancel(@Name("transferId") String transferId, IServiceContext context) {
         return ownershipTransferProcessor.cancel(transferId, context);
     }
 }

@@ -220,8 +220,7 @@ public class ErpFinAccountingPeriodProcessor {
             return;
         }
         try {
-            // bridge-main-064: fin String periodId → inv Long periodId（语义级转换，退役 owner M2.2）
-            CostingRecloseReport report = costingBiz.reclosePeriodCosts(ConvertHelper.toLong(period.getId()),
+            CostingRecloseReport report = costingBiz.reclosePeriodCosts(period.getId(),
                     period.getStartDate(), period.getEndDate(), context);
             LOG.info("期末结账：期间 {} 存货成本兜底重算完成，扫描 {} 单，补算入库层 {} / 出库 COGS {}",
                     period.getCode(), report.getScannedMoves(),

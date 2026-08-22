@@ -7,6 +7,7 @@ import app.erp.fin.service.posting.AcctDocContext;
 import app.erp.fin.service.posting.IErpFinAcctDocProvider;
 import app.erp.fin.service.posting.VoucherFact;
 import app.erp.inv.service.ErpInvConstants;
+import io.nop.api.core.convert.ConvertHelper;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -67,8 +68,8 @@ public class LandedCostAcctDocProvider implements IErpFinAcctDocProvider {
             fact.setAmount(amount);
             fact.setAccountKey(ACCOUNT_KEY_INVENTORY);
             fact.setBusinessType(event.getBusinessType().name());
-            fact.setMaterialId(toLong(alloc.get("materialId")));
-            fact.setWarehouseId(toLong(alloc.get("warehouseId")));
+            fact.setMaterialId(toStringValue(alloc.get("materialId")));
+            fact.setWarehouseId(toStringValue(alloc.get("warehouseId")));
             facts.add(fact);
         }
 
@@ -86,7 +87,7 @@ public class LandedCostAcctDocProvider implements IErpFinAcctDocProvider {
             fact.setAmount(amount);
             fact.setAccountKey(ACCOUNT_KEY_ACCOUNTS_PAYABLE);
             fact.setBusinessType(event.getBusinessType().name());
-            fact.setPartnerId(toLong(elem.get("apPartnerId")));
+            fact.setPartnerId(toStringValue(elem.get("apPartnerId")));
             facts.add(fact);
         }
 
@@ -112,13 +113,13 @@ public class LandedCostAcctDocProvider implements IErpFinAcctDocProvider {
         return new BigDecimal(value.toString().trim());
     }
 
-    private Long toLong(Object value) {
+    private String toStringValue(Object value) {
         if (value == null) {
             return null;
         }
         if (value instanceof Number) {
-            return ((Number) value).longValue();
+            return ConvertHelper.toString(value);
         }
-        return Long.parseLong(value.toString().trim());
+        return value.toString().trim();
     }
 }

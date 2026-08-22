@@ -53,7 +53,7 @@ public class OwnershipTransferPostingDispatcher {
         }
         PostingEvent event = buildEvent(transfer, lines);
         try {
-            Long voucherId = executor.postEvent(event);
+            String voucherId = executor.postEvent(event);
             if (voucherId != null) {
                 transfer.setPosted(true);
                 transfer.setPostedAt(CoreMetrics.currentTimestamp());
@@ -84,7 +84,7 @@ public class OwnershipTransferPostingDispatcher {
 
     private PostingEvent buildEvent(ErpInvOwnershipTransfer transfer, List<ErpInvOwnershipTransferLine> lines) {
         BigDecimal totalCost = BigDecimal.ZERO;
-        Long materialId = null;
+        String materialId = null;
         for (ErpInvOwnershipTransferLine line : lines) {
             BigDecimal lineCost = line.getTotalCost() != null ? line.getTotalCost() : BigDecimal.ZERO;
             totalCost = totalCost.add(lineCost.abs());
@@ -115,7 +115,7 @@ public class OwnershipTransferPostingDispatcher {
         return event;
     }
 
-    private Long resolveAcctSchemaId(Long orgId) {
+    private String resolveAcctSchemaId(String orgId) {
         return AcctSchemaResolver.resolvePrimarySchemaId(daoProvider, orgId);
     }
 }

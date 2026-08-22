@@ -18,7 +18,7 @@ import java.util.List;
  */
 public class TraceChainResult {
     private String traceType;
-    private Long rootMoveId;
+    private String rootMoveId;
     private List<ErpInvStockMove> nodes = new ArrayList<>();
     private List<TraceLink> links = new ArrayList<>();
     private boolean truncated;
@@ -38,11 +38,11 @@ public class TraceChainResult {
         this.traceType = traceType;
     }
 
-    public Long getRootMoveId() {
+    public String getRootMoveId() {
         return rootMoveId;
     }
 
-    public void setRootMoveId(Long rootMoveId) {
+    public void setRootMoveId(String rootMoveId) {
         this.rootMoveId = rootMoveId;
     }
 

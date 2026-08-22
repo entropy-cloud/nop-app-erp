@@ -52,29 +52,27 @@ public class ErpApsAtpCtpServiceImpl implements IErpApsAtpCtpService {
 
     @Override
     public LocalDateTime earliestCompletionDate(String materialId, BigDecimal qty) {
-        Long materialKey = ConvertHelper.toLong(materialId);
-        if (atpAvailable(materialKey, qty)) {
+        if (atpAvailable(materialId, qty)) {
             return CoreMetrics.currentDateTime();
         }
-        CtpResult ctp = simulateCtp(materialKey, qty, CoreMetrics.currentDateTime(), null);
+        CtpResult ctp = simulateCtp(materialId, qty, CoreMetrics.currentDateTime(), null);
         return ctp.getEarliestCompletionDate();
     }
 
     @Override
     public CtpResult checkFeasibility(String materialId, BigDecimal qty, LocalDateTime desiredDate) {
-        Long materialKey = ConvertHelper.toLong(materialId);
-        if (atpAvailable(materialKey, qty)) {
+        if (atpAvailable(materialId, qty)) {
             CtpResult ok = new CtpResult();
             ok.setFeasible(true);
             ok.setEarliestCompletionDate(CoreMetrics.currentDateTime());
             return ok;
         }
-        return simulateCtp(materialKey, qty, CoreMetrics.currentDateTime(), desiredDate);
+        return simulateCtp(materialId, qty, CoreMetrics.currentDateTime(), desiredDate);
     }
 
     @Override
     public List<ScheduledOperationView> simulateSchedule(String materialId, BigDecimal qty, LocalDateTime startDate) {
-        List<ErpApsOperationOrder> shadows = buildShadowOps(ConvertHelper.toLong(materialId), qty);
+        List<ErpApsOperationOrder> shadows = buildShadowOps(toMfgMaterialKey(materialId), qty);
         if (shadows.isEmpty()) {
             return new ArrayList<>();
         }
@@ -108,15 +106,15 @@ public class ErpApsAtpCtpServiceImpl implements IErpApsAtpCtpService {
         return views;
     }
 
-    // ---------- ATP 库存聚合（只读，IDaoProvider；materialId 为 inv/mfg 侧 Long id——A2 桥接 bridge-main-009/011，退役 owner M2.2） ----------
+    // ---------- ATP 库存聚合（只读，IDaoProvider；inv 侧 id 已 String 化，直接过滤） ----------
 
-    protected boolean atpAvailable(Long materialId, BigDecimal qty) {
+    protected boolean atpAvailable(String materialId, BigDecimal qty) {
         BigDecimal onHand = sumOnHand(materialId);
         BigDecimal reserved = sumReserved(materialId);
         return onHand.subtract(reserved).compareTo(qty) >= 0;
     }
 
-    protected BigDecimal sumOnHand(Long materialId) {
+    protected BigDecimal sumOnHand(String materialId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("materialId", materialId));
         BigDecimal total = BigDecimal.ZERO;
@@ -128,8 +126,7 @@ public class ErpApsAtpCtpServiceImpl implements IErpApsAtpCtpService {
         return total;
     }
 
-    // A2 桥接（bridge-main-010）：inv ErpInvReservationLine materialId Long 查询，退役 owner M2.2
-    protected BigDecimal sumReserved(Long materialId) {
+    protected BigDecimal sumReserved(String materialId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("materialId", materialId));
         BigDecimal total = BigDecimal.ZERO;
@@ -142,7 +139,7 @@ public class ErpApsAtpCtpServiceImpl implements IErpApsAtpCtpService {
         return total;
     }
 
-    protected boolean isReservationActive(IEntityDao<ErpInvReservation> resDao, Long reservationId) {
+    protected boolean isReservationActive(IEntityDao<ErpInvReservation> resDao, String reservationId) {
         if (reservationId == null) {
             return false;
         }
@@ -152,10 +149,10 @@ public class ErpApsAtpCtpServiceImpl implements IErpApsAtpCtpService {
 
     // ---------- CTP 影子模拟 ----------
 
-    protected CtpResult simulateCtp(Long materialId, BigDecimal qty, LocalDateTime startDate,
+    protected CtpResult simulateCtp(String materialId, BigDecimal qty, LocalDateTime startDate,
                                     LocalDateTime desiredDate) {
         CtpResult result = new CtpResult();
-        List<ErpApsOperationOrder> shadows = buildShadowOps(materialId, qty);
+        List<ErpApsOperationOrder> shadows = buildShadowOps(toMfgMaterialKey(materialId), qty);
         if (shadows.isEmpty()) {
             result.setFeasible(false);
             result.setReason("物料 " + materialId + " 无可用工艺路线（默认 BOM 缺失或无工序）");
@@ -236,7 +233,11 @@ public class ErpApsAtpCtpServiceImpl implements IErpApsAtpCtpService {
         return shadows;
     }
 
-    // A2 桥接（bridge-main-012）：mfg ErpMfgBom productId Long 查询，退役 owner M3.1
+    // A2 桥接（bridge-main-012）：mfg ErpMfgBom productId Long 查询（String materialId → Long mfg 键），退役 owner M3.1
+    private Long toMfgMaterialKey(String materialId) {
+        return ConvertHelper.toLong(materialId);
+    }
+
     protected ErpMfgBom findDefaultBom(Long materialId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("productId", materialId));

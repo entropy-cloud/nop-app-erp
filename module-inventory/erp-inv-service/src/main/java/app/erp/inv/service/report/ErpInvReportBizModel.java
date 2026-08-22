@@ -160,8 +160,8 @@ public class ErpInvReportBizModel {
         switch (key) {
             case "inventory-trace-report":
                 data.put(DS_VAR, buildInventoryTraceDataset(asString(data, "batchNo"),
-                        asLong(data, "materialId"), asLong(data, "warehouseId"),
-                        asLong(data, "moveId"), context));
+                        asString(data, "materialId"), asString(data, "warehouseId"),
+                        asString(data, "moveId"), context));
                 break;
             default:
                 // 未知报表：不自动装配，模板可经 beforeExpand 自行构造数据集
@@ -172,16 +172,10 @@ public class ErpInvReportBizModel {
     private static String asString(Map<String, Object> data, String k) {
         if (data == null) return null;
         Object v = data.get(k);
-        return v == null ? null : v.toString();
-    }
-
-    private static Long asLong(Map<String, Object> data, String k) {
-        if (data == null) return null;
-        Object v = data.get(k);
         if (v == null) return null;
         String s = v.toString();
         if (s.trim().isEmpty()) return null;
-        return Long.valueOf(s);
+        return s;
     }
 
     // ===================== 数据集构造（也作 @BizQuery 供前端取原始数据） =====================
@@ -189,9 +183,9 @@ public class ErpInvReportBizModel {
     /** 库存追溯可视化数据集：批次/物料/仓库/移动单维度的移动链路汇总，对齐 {@code trace-chain.md §追溯链查询}。 */
     @BizQuery
     public List<Map<String, Object>> inventoryTraceData(@Optional @Name("batchNo") String batchNo,
-                                                         @Optional @Name("materialId") Long materialId,
-                                                         @Optional @Name("warehouseId") Long warehouseId,
-                                                         @Optional @Name("moveId") Long moveId,
+                                                         @Optional @Name("materialId") String materialId,
+                                                         @Optional @Name("warehouseId") String warehouseId,
+                                                         @Optional @Name("moveId") String moveId,
                                                          IServiceContext context) {
         return buildInventoryTraceDataset(batchNo, materialId, warehouseId, moveId, context);
     }
@@ -206,8 +200,8 @@ public class ErpInvReportBizModel {
      * 数量 + 时间）。每行字段：moveId/code/moveType/businessDate/sourceWarehouseId/destWarehouseId/docStatus/
      * originMoveId/originReturnedMoveId/batchNos/quantity/traceType。
      */
-    List<Map<String, Object>> buildInventoryTraceDataset(String batchNo, Long materialId, Long warehouseId,
-                                                          Long moveId, IServiceContext context) {
+    List<Map<String, Object>> buildInventoryTraceDataset(String batchNo, String materialId, String warehouseId,
+                                                          String moveId, IServiceContext context) {
         List<ErpInvStockMove> moves;
         String traceType;
         if (StringHelper.isNotEmpty(batchNo)) {
@@ -228,11 +222,11 @@ public class ErpInvReportBizModel {
         return toTraceRows(moves, traceType);
     }
 
-    private List<ErpInvStockMove> findCandidateMoves(Long materialId, Long warehouseId) {
+    private List<ErpInvStockMove> findCandidateMoves(String materialId, String warehouseId) {
         if (materialId == null && warehouseId == null) {
             return Collections.emptyList();
         }
-        Set<Long> moveIdsByMaterial = null;
+        Set<String> moveIdsByMaterial = null;
         if (materialId != null) {
             moveIdsByMaterial = new LinkedHashSet<>();
             QueryBean lineQ = new QueryBean();
@@ -257,7 +251,7 @@ public class ErpInvReportBizModel {
 
     private List<ErpInvStockMove> expandForwardChain(List<ErpInvStockMove> candidates, IServiceContext context) {
         List<ErpInvStockMove> all = new ArrayList<>();
-        Set<Long> seen = new HashSet<>();
+        Set<String> seen = new HashSet<>();
         for (ErpInvStockMove m : candidates) {
             for (ErpInvStockMove node : stockMoveBiz.forwardTrace(m.getId(), context).getNodes()) {
                 if (seen.add(node.getId())) all.add(node);
@@ -277,7 +271,7 @@ public class ErpInvReportBizModel {
         return rows;
     }
 
-    private List<ErpInvStockMoveLine> loadLinesForMove(IEntityDao<ErpInvStockMoveLine> dao, Long moveId) {
+    private List<ErpInvStockMoveLine> loadLinesForMove(IEntityDao<ErpInvStockMoveLine> dao, String moveId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("moveId", moveId));
         return dao.findAllByQuery(q);
@@ -297,7 +291,7 @@ public class ErpInvReportBizModel {
         r.put("isReturn", m.getOriginReturnedMoveId() != null);
         Set<String> batchNos = new LinkedHashSet<>();
         BigDecimal qty = BigDecimal.ZERO;
-        Long materialId = null;
+        String materialId = null;
         for (ErpInvStockMoveLine line : lines) {
             if (StringHelper.isNotEmpty(line.getBatchNo())) batchNos.add(line.getBatchNo());
             if (line.getQuantity() != null) qty = qty.add(line.getQuantity());

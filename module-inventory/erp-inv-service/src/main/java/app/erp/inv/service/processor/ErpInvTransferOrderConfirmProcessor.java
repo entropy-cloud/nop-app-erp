@@ -26,7 +26,7 @@ public class ErpInvTransferOrderConfirmProcessor {
     @Inject
     ErpInvTransferOrderStateMachine stateMachine;
 
-    public ErpInvTransferOrder confirm(Long transferOrderId, IServiceContext context) {
+    public ErpInvTransferOrder confirm(String transferOrderId, IServiceContext context) {
         ErpInvTransferOrder order = transferOrderBiz.requireEntity(String.valueOf(transferOrderId), null, context);
         validateDraft(order, transferOrderId);
         order.setDocStatus(stateMachine.confirmTargetStatus());
@@ -35,7 +35,7 @@ public class ErpInvTransferOrderConfirmProcessor {
         return order;
     }
 
-    protected void validateDraft(ErpInvTransferOrder order, Long transferOrderId) {
+    protected void validateDraft(ErpInvTransferOrder order, String transferOrderId) {
         String status = order.getDocStatus();
         // 固定来源态守卫委托 StateMachine Bean（非法边 Bean 抛 common 层码，映射为领域码 + common 作 cause）
         try {

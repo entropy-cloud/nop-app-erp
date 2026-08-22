@@ -133,10 +133,6 @@ public class ErpInvCostAdjustProcessor {
 
     // ---------- 查询/加载辅助 ----------
 
-    protected ErpInvCostAdjust requireAdjustment(Long id, IServiceContext context) {
-        return requireAdjustment(String.valueOf(id), context);
-    }
-
     protected ErpInvCostAdjust requireAdjustment(String id, IServiceContext context) {
         ErpInvCostAdjust adjust = adjustDao().getEntityById(id);
         if (adjust == null) {
@@ -146,11 +142,11 @@ public class ErpInvCostAdjustProcessor {
         return adjust;
     }
 
-    protected ErpInvCostAdjust reload(Long id) {
+    protected ErpInvCostAdjust reload(String id) {
         return adjustDao().getEntityById(id);
     }
 
-    protected List<ErpInvCostAdjustLine> loadLines(Long adjustId) {
+    protected List<ErpInvCostAdjustLine> loadLines(String adjustId) {
         IEntityDao<ErpInvCostAdjustLine> dao = daoProvider.daoFor(ErpInvCostAdjustLine.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("adjustId", adjustId));

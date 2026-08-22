@@ -39,10 +39,10 @@ public class StandardCostingStrategy implements CostingStrategy {
     }
 
     @Override
-    public BigDecimal onIncoming(ErpInvStockMove move, ErpInvStockMoveLine line, Long acctSchemaId,
+    public BigDecimal onIncoming(ErpInvStockMove move, ErpInvStockMoveLine line, String acctSchemaId,
                                  BigDecimal unitCost, BookingContext ctx) {
-        Long warehouseId = move.getDestWarehouseId();
-        Long locationId = line.getDestLocationId() != null ? line.getDestLocationId() : move.getDestLocationId();
+        String warehouseId = move.getDestWarehouseId();
+        String locationId = line.getDestLocationId() != null ? line.getDestLocationId() : move.getDestLocationId();
         ErpInvStockBalance balance = ctx.upsertBalance(move, line, warehouseId, locationId);
 
         // 红冲不变量（P1-MA2-024，Choice B）：正常采购入库 line.unitCost 持「实际采购价」（PPV 经
@@ -76,10 +76,10 @@ public class StandardCostingStrategy implements CostingStrategy {
     }
 
     @Override
-    public BigDecimal onOutgoing(ErpInvStockMove move, ErpInvStockMoveLine line, Long acctSchemaId,
+    public BigDecimal onOutgoing(ErpInvStockMove move, ErpInvStockMoveLine line, String acctSchemaId,
                                  BookingContext ctx) {
-        Long warehouseId = move.getSourceWarehouseId();
-        Long locationId = line.getSourceLocationId() != null ? line.getSourceLocationId()
+        String warehouseId = move.getSourceWarehouseId();
+        String locationId = line.getSourceLocationId() != null ? line.getSourceLocationId()
                 : move.getSourceLocationId();
         ErpInvStockBalance balance = ctx.upsertBalance(move, line, warehouseId, locationId);
 

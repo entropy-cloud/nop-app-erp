@@ -45,13 +45,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpInvPosting extends JunitAutoTestCase {
 
-    static final Long ORG_ID = 1003L;
-    static final Long MATERIAL_ID = 2003L;
-    static final Long WAREHOUSE_ID = 3003L;
-    static final Long LOCATION_ID = 4003L;
-    static final Long UOM_ID = 5003L;
-    static final Long CURRENCY_ID = 6003L;
-    static final Long ACCT_SCHEMA_ID = 7003L;
+    static final String ORG_ID = "1003";
+    static final String MATERIAL_ID = "2003";
+    static final String WAREHOUSE_ID = "3003";
+    static final String LOCATION_ID = "4003";
+    static final String UOM_ID = "5003";
+    static final String CURRENCY_ID = "6003";
+    static final String ACCT_SCHEMA_ID = "7003";
     static final String VOUCHER_STATUS_POSTED = "POSTED";
 
     @Inject
@@ -218,7 +218,7 @@ public class TestErpInvPosting extends JunitAutoTestCase {
                 .filter(l -> moveCode.equals(l.getBillCode())).count();
     }
 
-    private long countLines(Long voucherId) {
+    private long countLines(String voucherId) {
         IEntityDao<app.erp.fin.dao.entity.ErpFinVoucherLine> dao = daoProvider
                 .daoFor(app.erp.fin.dao.entity.ErpFinVoucherLine.class);
         QueryBean q = new QueryBean();

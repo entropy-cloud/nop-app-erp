@@ -12,16 +12,16 @@
     public class ErpInvStockLedgerInputBean extends CrudInputBase {
 
     
-        private Long _id;
+        private String _id;
 
     
         @PropMeta(propId=1)
     
-        public Long getId(){
+        public String getId(){
             return _id;
         }
 
-        public void setId(Long value){
+        public void setId(String value){
             this._id = value;
         }
 
@@ -40,100 +40,100 @@
         }
 
 
-        private Long _orgId;
+        private String _orgId;
 
     
         @PropMeta(propId=3)
     
-        public Long getOrgId(){
+        public String getOrgId(){
             return _orgId;
         }
 
-        public void setOrgId(Long value){
+        public void setOrgId(String value){
             this._orgId = value;
         }
 
 
-        private Long _moveId;
+        private String _moveId;
 
     
         @PropMeta(propId=4)
     
-        public Long getMoveId(){
+        public String getMoveId(){
             return _moveId;
         }
 
-        public void setMoveId(Long value){
+        public void setMoveId(String value){
             this._moveId = value;
         }
 
 
-        private Long _moveLineId;
+        private String _moveLineId;
 
     
         @PropMeta(propId=5)
     
-        public Long getMoveLineId(){
+        public String getMoveLineId(){
             return _moveLineId;
         }
 
-        public void setMoveLineId(Long value){
+        public void setMoveLineId(String value){
             this._moveLineId = value;
         }
 
 
-        private Long _materialId;
+        private String _materialId;
 
     
         @PropMeta(propId=6)
     
-        public Long getMaterialId(){
+        public String getMaterialId(){
             return _materialId;
         }
 
-        public void setMaterialId(Long value){
+        public void setMaterialId(String value){
             this._materialId = value;
         }
 
 
-        private Long _skuId;
+        private String _skuId;
 
     
         @PropMeta(propId=7)
     
-        public Long getSkuId(){
+        public String getSkuId(){
             return _skuId;
         }
 
-        public void setSkuId(Long value){
+        public void setSkuId(String value){
             this._skuId = value;
         }
 
 
-        private Long _warehouseId;
+        private String _warehouseId;
 
     
         @PropMeta(propId=8)
     
-        public Long getWarehouseId(){
+        public String getWarehouseId(){
             return _warehouseId;
         }
 
-        public void setWarehouseId(Long value){
+        public void setWarehouseId(String value){
             this._warehouseId = value;
         }
 
 
-        private Long _locationId;
+        private String _locationId;
 
     
         @PropMeta(propId=9)
     
-        public Long getLocationId(){
+        public String getLocationId(){
             return _locationId;
         }
 
-        public void setLocationId(Long value){
+        public void setLocationId(String value){
             this._locationId = value;
         }
 
@@ -222,30 +222,30 @@
         }
 
 
-        private Long _acctSchemaId;
+        private String _acctSchemaId;
 
     
         @PropMeta(propId=16)
     
-        public Long getAcctSchemaId(){
+        public String getAcctSchemaId(){
             return _acctSchemaId;
         }
 
-        public void setAcctSchemaId(Long value){
+        public void setAcctSchemaId(String value){
             this._acctSchemaId = value;
         }
 
 
-        private Long _currencyId;
+        private String _currencyId;
 
     
         @PropMeta(propId=17)
     
-        public Long getCurrencyId(){
+        public String getCurrencyId(){
             return _currencyId;
         }
 
-        public void setCurrencyId(Long value){
+        public void setCurrencyId(String value){
             this._currencyId = value;
         }
 
@@ -292,16 +292,16 @@
         }
 
 
-        private Long _ownerId;
+        private String _ownerId;
 
     
         @PropMeta(propId=27)
     
-        public Long getOwnerId(){
+        public String getOwnerId(){
             return _ownerId;
         }
 
-        public void setOwnerId(Long value){
+        public void setOwnerId(String value){
             this._ownerId = value;
         }
 

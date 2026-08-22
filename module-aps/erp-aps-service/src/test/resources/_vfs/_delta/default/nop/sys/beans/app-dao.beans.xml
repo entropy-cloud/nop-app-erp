@@ -4,9 +4,13 @@
      nopOrmTemplate/nopOrmSessionFactory 循环等待（nop.err.ioc.bean-init-self-wait，
      bisect 证实为平台重装引发的顺序回归，与本域迁移无关，详见 docs/bugs/ 登记）。
      与 M1.1（master-data）、M1.2（notify）执行期发现同源。本 delta 以 XML 显式 ioc:lazy-property 恢复容器级延迟注入（镜像平台 orm-defaults.beans.xml
-     中 nopDefaultTransactionListener.ormTemplate 先例）。平台修复后移除（见 bug 登记）。 -->
+     中 nopDefaultTransactionListener.ormTemplate 先例）。平台修复后移除（见 bug 登记）。
+     2026-08-22（M2.2 inv plan Deferred 消费）：根元素补 x:extends="super"——先前缺失导致整文件替换
+     平台 app-dao.beans.xml（audit 拦截器等平台 bean 静默丢失），fin 修正版先例
+     （docs/bugs/2026-08-22-ioc-delta-missing-extends-super.md）。 -->
 <beans x:schema="/nop/schema/beans.xdef" xmlns:x="/nop/schema/xdsl.xdef"
-       xmlns="http://www.springframework.org/schema/beans" xmlns:ioc="ioc">
+       xmlns="http://www.springframework.org/schema/beans" xmlns:ioc="ioc"
+       xmlns:feature="feature" x:extends="super">
 
     <bean id="nopSequenceGenerator" class="io.nop.sys.dao.seq.SysSequenceGenerator"
           ioc:delay-method="lazyInit" x:override="replace">

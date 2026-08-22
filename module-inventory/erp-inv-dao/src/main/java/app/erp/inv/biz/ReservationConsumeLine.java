@@ -9,33 +9,33 @@ import java.math.BigDecimal;
  * 消耗量 = min({@code quantity}, 该物料预留未消耗量)。
  */
 public class ReservationConsumeLine {
-    private Long materialId;
-    private Long warehouseId;
-    private Long locationId;
+    private String materialId;
+    private String warehouseId;
+    private String locationId;
     private String batchNo;
     private BigDecimal quantity;
 
-    public Long getMaterialId() {
+    public String getMaterialId() {
         return materialId;
     }
 
-    public void setMaterialId(Long materialId) {
+    public void setMaterialId(String materialId) {
         this.materialId = materialId;
     }
 
-    public Long getWarehouseId() {
+    public String getWarehouseId() {
         return warehouseId;
     }
 
-    public void setWarehouseId(Long warehouseId) {
+    public void setWarehouseId(String warehouseId) {
         this.warehouseId = warehouseId;
     }
 
-    public Long getLocationId() {
+    public String getLocationId() {
         return locationId;
     }
 
-    public void setLocationId(Long locationId) {
+    public void setLocationId(String locationId) {
         this.locationId = locationId;
     }
 

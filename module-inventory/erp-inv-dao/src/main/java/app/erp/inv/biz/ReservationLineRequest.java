@@ -9,44 +9,44 @@ import java.math.BigDecimal;
  * = min({@code requestedQuantity}, 库存可用量) 由库存侧计算并写回行 {@code reservedQuantity}。
  */
 public class ReservationLineRequest {
-    private Long materialId;
-    private Long skuId;
-    private Long warehouseId;
-    private Long locationId;
+    private String materialId;
+    private String skuId;
+    private String warehouseId;
+    private String locationId;
     private String batchNo;
     private BigDecimal requestedQuantity;
-    private Long uomId;
+    private String uomId;
     private String sourceLineCode;
 
-    public Long getMaterialId() {
+    public String getMaterialId() {
         return materialId;
     }
 
-    public void setMaterialId(Long materialId) {
+    public void setMaterialId(String materialId) {
         this.materialId = materialId;
     }
 
-    public Long getSkuId() {
+    public String getSkuId() {
         return skuId;
     }
 
-    public void setSkuId(Long skuId) {
+    public void setSkuId(String skuId) {
         this.skuId = skuId;
     }
 
-    public Long getWarehouseId() {
+    public String getWarehouseId() {
         return warehouseId;
     }
 
-    public void setWarehouseId(Long warehouseId) {
+    public void setWarehouseId(String warehouseId) {
         this.warehouseId = warehouseId;
     }
 
-    public Long getLocationId() {
+    public String getLocationId() {
         return locationId;
     }
 
-    public void setLocationId(Long locationId) {
+    public void setLocationId(String locationId) {
         this.locationId = locationId;
     }
 
@@ -66,11 +66,11 @@ public class ReservationLineRequest {
         this.requestedQuantity = requestedQuantity;
     }
 
-    public Long getUomId() {
+    public String getUomId() {
         return uomId;
     }
 
-    public void setUomId(Long uomId) {
+    public void setUomId(String uomId) {
         this.uomId = uomId;
     }
 

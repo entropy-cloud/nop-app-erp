@@ -19,19 +19,19 @@
             <cols>
 
                 <!--ID-->
-                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="id" mandatory="true" sortable="true"/>
 
                 <!--成本调整单ID-->
-                <col id="adjustId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="adjustId" mandatory="true" sortable="true"/>
 
                 <!--行号-->
                 <col id="lineNo" mandatory="true" ui:number="true" sortable="true"/>
 
                 <!--物料-->
-                <col id="materialId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="materialId" mandatory="true" sortable="true"/>
 
                 <!--仓库-->
-                <col id="warehouseId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="warehouseId" mandatory="true" sortable="true"/>
 
                 <!--批号-->
                 <col id="batchNo" sortable="true"/>
@@ -52,7 +52,7 @@
                 <col id="adjustReason" sortable="true"/>
 
                 <!--币种-->
-                <col id="currencyId" ui:number="true" sortable="true"/>
+                <col id="currencyId" sortable="true"/>
 
                 <!--备注-->
                 <col id="remark" sortable="true"/>

@@ -48,12 +48,12 @@ public class TestErpInvFifoCosting extends JunitAutoTestCase {
     @RegisterExtension
     static InvFrozenClockExtension frozenClock = new InvFrozenClockExtension();
 
-    static final Long ORG_ID = 1201L;
-    static final Long WAREHOUSE_ID = 3201L;
-    static final Long LOCATION_ID = 4201L;
-    static final Long UOM_ID = 5201L;
-    static final Long CURRENCY_ID = 6201L;
-    static final Long ACCT_SCHEMA_ID = 7201L;
+    static final String ORG_ID = "1201";
+    static final String WAREHOUSE_ID = "3201";
+    static final String LOCATION_ID = "4201";
+    static final String UOM_ID = "5201";
+    static final String CURRENCY_ID = "6201";
+    static final String ACCT_SCHEMA_ID = "7201";
 
     @Inject
     IDaoProvider daoProvider;
@@ -64,7 +64,7 @@ public class TestErpInvFifoCosting extends JunitAutoTestCase {
 
     @Test
     public void testIncomingAppendsCostLayer() {
-        Long materialId = 2201L;
+        String materialId = "2201";
         seedFifoMaterial(materialId);
 
         generateIncoming(materialId, "PR-FIFO-001", new BigDecimal("50"), new BigDecimal("10"));
@@ -86,7 +86,7 @@ public class TestErpInvFifoCosting extends JunitAutoTestCase {
 
     @Test
     public void testOutgoingConsumesSingleLayer() {
-        Long materialId = 2202L;
+        String materialId = "2202";
         seedFifoMaterial(materialId);
 
         generateIncoming(materialId, "PR-FIFO-002", new BigDecimal("50"), new BigDecimal("10"));
@@ -110,7 +110,7 @@ public class TestErpInvFifoCosting extends JunitAutoTestCase {
 
     @Test
     public void testOutgoingSpansMultipleLayersWeightedCost() {
-        Long materialId = 2203L;
+        String materialId = "2203";
         seedFifoMaterial(materialId);
 
         generateIncoming(materialId, "PR-FIFO-003A", new BigDecimal("50"), new BigDecimal("10"));
@@ -144,7 +144,7 @@ public class TestErpInvFifoCosting extends JunitAutoTestCase {
 
     @Test
     public void testFirstOutgoingWithoutCostLayerRejected() {
-        Long materialId = 2204L;
+        String materialId = "2204";
         seedFifoMaterial(materialId);
         // 不先入库，直接出库 → ERR_COST_NOT_AVAILABLE（无 remainingQuantity>0 的层）
         // 注：预留量校验（available<0）会先于 FIFO 记账触发，故启用负库存放行预留检查后才能验证 FIFO 拒绝
@@ -162,18 +162,18 @@ public class TestErpInvFifoCosting extends JunitAutoTestCase {
 
     @Test
     public void testReverseRestoresCostInvariant() {
-        Long materialId = 2205L;
+        String materialId = "2205";
         seedFifoMaterial(materialId);
 
         // 初始入库：队列1 50@10 + 队列2 40@12 → 总 90 / 总成本 980
-        Long in1 = generateIncoming(materialId, "PR-FIFO-005A", new BigDecimal("50"), new BigDecimal("10"));
+        String in1 = generateIncoming(materialId, "PR-FIFO-005A", new BigDecimal("50"), new BigDecimal("10"));
         generateIncoming(materialId, "PR-FIFO-005B", new BigDecimal("40"), new BigDecimal("12"));
 
         BigDecimal totalCostBeforeOut = sumRemainingCost(findCostLayers(materialId));
         assertEquals(0, totalCostBeforeOut.compareTo(new BigDecimal("980")), "出库前 Σ layer cost=980");
 
         // 出库 60 → 消耗 50@10 + 10@12 = 620；剩 0@10 + 30@12=360
-        Long outMoveId = generateOutgoing(materialId, "SS-FIFO-005", new BigDecimal("60"));
+        String outMoveId = generateOutgoing(materialId, "SS-FIFO-005", new BigDecimal("60"));
 
         BigDecimal totalCostAfterOut = sumRemainingCost(findCostLayers(materialId));
         assertEquals(0, totalCostAfterOut.compareTo(new BigDecimal("360")), "出库后 Σ layer cost=360");
@@ -205,7 +205,7 @@ public class TestErpInvFifoCosting extends JunitAutoTestCase {
 
     @Test
     public void testOutgoingLedgerTotalCostFlowsToDispatcher() {
-        Long materialId = 2206L;
+        String materialId = "2206";
         seedFifoMaterial(materialId);
 
         generateIncoming(materialId, "PR-FIFO-006A", new BigDecimal("20"), new BigDecimal("10"));
@@ -221,7 +221,7 @@ public class TestErpInvFifoCosting extends JunitAutoTestCase {
 
     // ---------- helpers ----------
 
-    private Long generateIncoming(Long materialId, String billCode, BigDecimal qty, BigDecimal unitCost) {
+    private String generateIncoming(String materialId, String billCode, BigDecimal qty, BigDecimal unitCost) {
         Map<String, Object> req = baseReq(materialId, ErpInvConstants.MOVE_TYPE_INCOMING);
         req.put("destWarehouseId", WAREHOUSE_ID);
         req.put("destLocationId", LOCATION_ID);
@@ -231,7 +231,7 @@ public class TestErpInvFifoCosting extends JunitAutoTestCase {
         return idOf(genMove(req));
     }
 
-    private Long generateOutgoing(Long materialId, String billCode, BigDecimal qty) {
+    private String generateOutgoing(String materialId, String billCode, BigDecimal qty) {
         Map<String, Object> req = baseReq(materialId, ErpInvConstants.MOVE_TYPE_OUTGOING);
         req.put("sourceWarehouseId", WAREHOUSE_ID);
         req.put("sourceLocationId", LOCATION_ID);
@@ -241,7 +241,7 @@ public class TestErpInvFifoCosting extends JunitAutoTestCase {
         return idOf(genMove(req));
     }
 
-    private void reverseMove(Long moveId) {
+    private void reverseMove(String moveId) {
         ApiResponse<?> resp = executeRpc(mutation, "ErpInvStockMove__reverse",
                 ApiRequest.build(Map.of("moveId", moveId)));
         assertEquals(0, resp.getStatus(), "reverse 应成功");
@@ -251,7 +251,7 @@ public class TestErpInvFifoCosting extends JunitAutoTestCase {
         return executeRpc(mutation, "ErpInvStockMove__generateMove", ApiRequest.build(Map.of("request", req)));
     }
 
-    private Map<String, Object> outgoingReq(Long materialId, String billCode, BigDecimal qty) {
+    private Map<String, Object> outgoingReq(String materialId, String billCode, BigDecimal qty) {
         Map<String, Object> req = baseReq(materialId, ErpInvConstants.MOVE_TYPE_OUTGOING);
         req.put("sourceWarehouseId", WAREHOUSE_ID);
         req.put("sourceLocationId", LOCATION_ID);
@@ -261,7 +261,7 @@ public class TestErpInvFifoCosting extends JunitAutoTestCase {
         return req;
     }
 
-    private Map<String, Object> baseReq(Long materialId, String moveType) {
+    private Map<String, Object> baseReq(String materialId, String moveType) {
         Map<String, Object> req = new LinkedHashMap<>();
         req.put("moveType", moveType);
         req.put("orgId", ORG_ID);
@@ -271,7 +271,7 @@ public class TestErpInvFifoCosting extends JunitAutoTestCase {
         return req;
     }
 
-    private Map<String, Object> line(Long materialId, BigDecimal qty, BigDecimal unitCost) {
+    private Map<String, Object> line(String materialId, BigDecimal qty, BigDecimal unitCost) {
         Map<String, Object> line = new LinkedHashMap<>();
         line.put("materialId", materialId);
         line.put("uoMId", UOM_ID);
@@ -288,12 +288,12 @@ public class TestErpInvFifoCosting extends JunitAutoTestCase {
         return graphQLEngine.executeRpc(ctx);
     }
 
-    private Long idOf(ApiResponse<?> resp) {
+    private String idOf(ApiResponse<?> resp) {
         Object id = ((Map<?, ?>) resp.getData()).get("id");
-        return id instanceof Number ? ((Number) id).longValue() : Long.parseLong(String.valueOf(id));
+        return String.valueOf(id);
     }
 
-    private ErpInvStockBalance findBalance(Long materialId) {
+    private ErpInvStockBalance findBalance(String materialId) {
         IEntityDao<ErpInvStockBalance> dao = daoProvider.daoFor(ErpInvStockBalance.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("materialId", materialId));
@@ -302,7 +302,7 @@ public class TestErpInvFifoCosting extends JunitAutoTestCase {
         return list.isEmpty() ? null : list.get(0);
     }
 
-    private List<ErpInvCostLayer> findCostLayers(Long materialId) {
+    private List<ErpInvCostLayer> findCostLayers(String materialId) {
         IEntityDao<ErpInvCostLayer> dao = daoProvider.daoFor(ErpInvCostLayer.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("materialId", materialId));
@@ -310,7 +310,7 @@ public class TestErpInvFifoCosting extends JunitAutoTestCase {
         return dao.findAllByQuery(q);
     }
 
-    private ErpInvStockLedger findOutgoingLedger(Long materialId) {
+    private ErpInvStockLedger findOutgoingLedger(String materialId) {
         IEntityDao<ErpInvStockLedger> dao = daoProvider.daoFor(ErpInvStockLedger.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("materialId", materialId));
@@ -336,7 +336,7 @@ public class TestErpInvFifoCosting extends JunitAutoTestCase {
         return sum;
     }
 
-    private void seedFifoMaterial(Long id) {
+    private void seedFifoMaterial(String id) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMdMaterial> dao = daoProvider.daoFor(ErpMdMaterial.class);
             ErpMdMaterial material = new ErpMdMaterial();

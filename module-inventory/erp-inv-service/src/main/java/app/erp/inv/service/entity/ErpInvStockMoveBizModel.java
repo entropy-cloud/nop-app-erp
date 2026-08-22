@@ -61,25 +61,25 @@ public class ErpInvStockMoveBizModel extends CrudBizModel<ErpInvStockMove> imple
 
     @Override
     @BizMutation
-    public ErpInvStockMove confirm(@Name("moveId") Long moveId, IServiceContext context) {
+    public ErpInvStockMove confirm(@Name("moveId") String moveId, IServiceContext context) {
         return confirmProcessor.confirm(moveId, context);
     }
 
     @Override
     @BizMutation
-    public ErpInvStockMove complete(@Name("moveId") Long moveId, IServiceContext context) {
+    public ErpInvStockMove complete(@Name("moveId") String moveId, IServiceContext context) {
         return completeProcessor.complete(moveId, context);
     }
 
     @Override
     @BizMutation
-    public ErpInvStockMove cancel(@Name("moveId") Long moveId, IServiceContext context) {
+    public ErpInvStockMove cancel(@Name("moveId") String moveId, IServiceContext context) {
         return cancelProcessor.cancel(moveId, context);
     }
 
     @Override
     @BizMutation
-    public ErpInvStockMove reverse(@Name("moveId") Long moveId, IServiceContext context) {
+    public ErpInvStockMove reverse(@Name("moveId") String moveId, IServiceContext context) {
         return reverseProcessor.reverse(moveId, context);
     }
 
@@ -93,19 +93,19 @@ public class ErpInvStockMoveBizModel extends CrudBizModel<ErpInvStockMove> imple
 
     @Override
     @BizQuery
-    public TraceChainResult forwardTrace(@Name("moveId") Long moveId, IServiceContext context) {
+    public TraceChainResult forwardTrace(@Name("moveId") String moveId, IServiceContext context) {
         return stockMoveProcessor.forwardTrace(moveId, context);
     }
 
     @Override
     @BizQuery
-    public TraceChainResult backwardTrace(@Name("moveId") Long moveId, IServiceContext context) {
+    public TraceChainResult backwardTrace(@Name("moveId") String moveId, IServiceContext context) {
         return stockMoveProcessor.backwardTrace(moveId, context);
     }
 
     @Override
     @BizQuery
-    public TraceChainResult returnTrace(@Name("moveId") Long moveId, IServiceContext context) {
+    public TraceChainResult returnTrace(@Name("moveId") String moveId, IServiceContext context) {
         return stockMoveProcessor.returnTrace(moveId, context);
     }
 

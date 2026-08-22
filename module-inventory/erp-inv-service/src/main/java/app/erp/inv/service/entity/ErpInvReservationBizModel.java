@@ -196,7 +196,7 @@ public class ErpInvReservationBizModel extends CrudBizModel<ErpInvReservation> i
     }
 
     /** 余额预留量 -= 释放量（乐观锁 + 重试）。余额行不存在则跳过（防御，不阻断释放）。 */
-    protected void releaseBalance(Long orgId, ErpInvReservationLine line, BigDecimal qty) {
+    protected void releaseBalance(String orgId, ErpInvReservationLine line, BigDecimal qty) {
         ErpInvStockBalance balance = findBalance(orgId, line.getMaterialId(), line.getSkuId(),
                 line.getWarehouseId(), line.getLocationId(), line.getBatchNo());
         if (balance == null) {
@@ -262,7 +262,7 @@ public class ErpInvReservationBizModel extends CrudBizModel<ErpInvReservation> i
      *
      * @return 实际消耗量
      */
-    protected BigDecimal consumeFromLines(Long orgId, List<ErpInvReservationLine> lines,
+    protected BigDecimal consumeFromLines(String orgId, List<ErpInvReservationLine> lines,
                                           ReservationConsumeLine consume, BigDecimal requested) {
         List<ErpInvReservationLine> matched = matchLines(lines, consume);
         if (matched.isEmpty()) {
@@ -312,7 +312,7 @@ public class ErpInvReservationBizModel extends CrudBizModel<ErpInvReservation> i
     }
 
     /** 余额预留量 -= 实耗（乐观锁 + 重试）。余额行不存在则跳过（防御，不阻断消耗）。 */
-    protected void consumeBalance(Long orgId, ErpInvReservationLine line, BigDecimal qty) {
+    protected void consumeBalance(String orgId, ErpInvReservationLine line, BigDecimal qty) {
         ErpInvStockBalance balance = findBalance(orgId, line.getMaterialId(), line.getSkuId(),
                 line.getWarehouseId(), line.getLocationId(), line.getBatchNo());
         if (balance == null) {
@@ -362,7 +362,7 @@ public class ErpInvReservationBizModel extends CrudBizModel<ErpInvReservation> i
         return list.isEmpty() ? null : list.get(0);
     }
 
-    protected List<ErpInvReservationLine> loadLines(Long reservationId) {
+    protected List<ErpInvReservationLine> loadLines(String reservationId) {
         IEntityDao<ErpInvReservationLine> dao = reservationLineDao();
         QueryBean q = new QueryBean();
         q.addFilter(eq("reservationId", reservationId));
@@ -376,7 +376,7 @@ public class ErpInvReservationBizModel extends CrudBizModel<ErpInvReservation> i
      * 不存在则新建候选（TRANSIENT，交由 updateBalanceWithRetry 的 INSERT 路径 + UK 冲突重试落盘）。
      * 查询前 flush 使同事务内已 queue 的余额/预留量可见。
      */
-    protected ErpInvStockBalance findOrNewBalance(Long orgId, ReservationLineRequest lineReq) {
+    protected ErpInvStockBalance findOrNewBalance(String orgId, ReservationLineRequest lineReq) {
         ormTemplate.flushSession();
         ErpInvStockBalance balance = findBalance(orgId, lineReq.getMaterialId(), lineReq.getSkuId(),
                 lineReq.getWarehouseId(), lineReq.getLocationId(), lineReq.getBatchNo());
@@ -407,8 +407,8 @@ public class ErpInvReservationBizModel extends CrudBizModel<ErpInvReservation> i
 
     /** 按自然键查询余额（镜像 {@link StockMoveBookkeeper#findBalance} 语义：locationId/batchNo 非空才过滤，
      *  owner 维度仅 ownership-tracking-enabled 时入键——与库存移动单路径查询口径一致）。 */
-    protected ErpInvStockBalance findBalance(Long orgId, Long materialId, Long skuId, Long warehouseId,
-                                             Long locationId, String batchNo) {
+    protected ErpInvStockBalance findBalance(String orgId, String materialId, String skuId, String warehouseId,
+                                             String locationId, String batchNo) {
         IEntityDao<ErpInvStockBalance> dao = balanceDao();
         QueryBean q = new QueryBean();
         q.addFilter(eq("orgId", orgId));

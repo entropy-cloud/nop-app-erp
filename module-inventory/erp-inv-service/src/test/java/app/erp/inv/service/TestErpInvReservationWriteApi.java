@@ -58,11 +58,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpInvReservationWriteApi extends JunitBaseTestCase {
 
-    static final Long ORG_ID = 10101L;
-    static final Long MATERIAL_ID = 12002L;
-    static final Long WAREHOUSE_ID = 13002L;
-    static final Long UOM_ID = 15002L;
-    static final Long CURRENCY_ID = 16002L;
+    static final String ORG_ID = "10101";
+    static final String MATERIAL_ID = "12002";
+    static final String WAREHOUSE_ID = "13002";
+    static final String UOM_ID = "15002";
+    static final String CURRENCY_ID = "16002";
     static final String SOURCE_BILL_TYPE = "WORK_ORDER";
     static final String SOURCE_BILL_CODE = "WO-RSV-001";
 
@@ -340,7 +340,7 @@ public class TestErpInvReservationWriteApi extends JunitBaseTestCase {
         return executeRpc(mutation, "ErpInvReservation__consumeReservation", ApiRequest.build(Map.of("request", req)));
     }
 
-    private ReservationLineRequest lineReq(Long materialId, BigDecimal qty) {
+    private ReservationLineRequest lineReq(String materialId, BigDecimal qty) {
         ReservationLineRequest line = new ReservationLineRequest();
         line.setMaterialId(materialId);
         line.setWarehouseId(WAREHOUSE_ID);
@@ -371,7 +371,7 @@ public class TestErpInvReservationWriteApi extends JunitBaseTestCase {
         return dao.findAllByQuery(q).size();
     }
 
-    private List<ErpInvReservationLine> findLines(Long reservationId) {
+    private List<ErpInvReservationLine> findLines(String reservationId) {
         IEntityDao<ErpInvReservationLine> dao = daoProvider.daoFor(ErpInvReservationLine.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("reservationId", reservationId));

@@ -62,7 +62,7 @@ public class InvPostingDispatcher {
 
         PostingEvent event = buildEvent(move, lines, businessType);
         try {
-            Long voucherId = executor.postEvent(event);
+            String voucherId = executor.postEvent(event);
             if (voucherId != null) {
                 markMovePosted(move.getId());
             }
@@ -84,7 +84,7 @@ public class InvPostingDispatcher {
      * 成功返回后当前 session 的移动单实体可能被 evict（saveOrUpdateEntity 报 save-entity-not-transient），
      * 故按 ID 重新加载后再设值，确保 posted 标志在当前事务提交时持久化。
      */
-    private void markMovePosted(Long moveId) {
+    private void markMovePosted(String moveId) {
         ErpInvStockMove managed = daoProvider.daoFor(ErpInvStockMove.class).getEntityById(moveId);
         if (managed != null) {
             managed.setPosted(true);
@@ -187,8 +187,8 @@ public class InvPostingDispatcher {
                                     ErpFinBusinessType businessType) {
         List<ErpInvStockLedger> ledgers = loadLedgers(move.getId());
         BigDecimal totalCost = BigDecimal.ZERO;
-        Long acctSchemaId = null;
-        Long currencyId = null;
+        String acctSchemaId = null;
+        String currencyId = null;
         for (ErpInvStockLedger ledger : ledgers) {
             BigDecimal lineCost = ledger.getTotalCost() != null ? ledger.getTotalCost() : BigDecimal.ZERO;
             totalCost = totalCost.add(lineCost.abs());
@@ -225,7 +225,7 @@ public class InvPostingDispatcher {
         return event;
     }
 
-    private List<ErpInvStockLedger> loadLedgers(Long moveId) {
+    private List<ErpInvStockLedger> loadLedgers(String moveId) {
         ormTemplate.flushSession();
         IEntityDao<ErpInvStockLedger> dao = daoProvider.daoFor(ErpInvStockLedger.class);
         QueryBean q = new QueryBean();
@@ -233,7 +233,7 @@ public class InvPostingDispatcher {
         return dao.findAllByQuery(q);
     }
 
-    private ErpInvStockLedger findLedgerForLine(List<ErpInvStockLedger> ledgers, Long lineId) {
+    private ErpInvStockLedger findLedgerForLine(List<ErpInvStockLedger> ledgers, String lineId) {
         for (ErpInvStockLedger ledger : ledgers) {
             if (Objects.equals(ledger.getMoveLineId(), lineId)) {
                 return ledger;

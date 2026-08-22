@@ -8,39 +8,39 @@ import java.math.BigDecimal;
  * <p>跨域调用方（purchase/sales）按行传入物料/SKU、数量、批次等；单位成本可选（入库可由调用方提供采购价）。
  */
 public class StockMoveLineRequest {
-    private Long materialId;
-    private Long skuId;
-    private Long uoMId;
+    private String materialId;
+    private String skuId;
+    private String uoMId;
     private BigDecimal quantity;
     private BigDecimal unitCost;
-    private Long currencyId;
+    private String currencyId;
     private String batchNo;
     private String serialNo;
-    private Long sourceLocationId;
-    private Long destLocationId;
+    private String sourceLocationId;
+    private String destLocationId;
     private String remark;
 
-    public Long getMaterialId() {
+    public String getMaterialId() {
         return materialId;
     }
 
-    public void setMaterialId(Long materialId) {
+    public void setMaterialId(String materialId) {
         this.materialId = materialId;
     }
 
-    public Long getSkuId() {
+    public String getSkuId() {
         return skuId;
     }
 
-    public void setSkuId(Long skuId) {
+    public void setSkuId(String skuId) {
         this.skuId = skuId;
     }
 
-    public Long getUoMId() {
+    public String getUoMId() {
         return uoMId;
     }
 
-    public void setUoMId(Long uoMId) {
+    public void setUoMId(String uoMId) {
         this.uoMId = uoMId;
     }
 
@@ -60,11 +60,11 @@ public class StockMoveLineRequest {
         this.unitCost = unitCost;
     }
 
-    public Long getCurrencyId() {
+    public String getCurrencyId() {
         return currencyId;
     }
 
-    public void setCurrencyId(Long currencyId) {
+    public void setCurrencyId(String currencyId) {
         this.currencyId = currencyId;
     }
 
@@ -84,19 +84,19 @@ public class StockMoveLineRequest {
         this.serialNo = serialNo;
     }
 
-    public Long getSourceLocationId() {
+    public String getSourceLocationId() {
         return sourceLocationId;
     }
 
-    public void setSourceLocationId(Long sourceLocationId) {
+    public void setSourceLocationId(String sourceLocationId) {
         this.sourceLocationId = sourceLocationId;
     }
 
-    public Long getDestLocationId() {
+    public String getDestLocationId() {
         return destLocationId;
     }
 
-    public void setDestLocationId(Long destLocationId) {
+    public void setDestLocationId(String destLocationId) {
         this.destLocationId = destLocationId;
     }
 

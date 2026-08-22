@@ -70,7 +70,7 @@ public class ErpInvSkuReferenceChecker implements IErpMdSkuReferenceChecker {
         if (sku == null || sku.getId() == null) {
             return false;
         }
-        Long skuId = sku.getId();
+        String skuId = sku.getId();
         return existsStockBalance(skuId)
                 || existsReservationLine(skuId)
                 || existsCostLayer(skuId)
@@ -83,7 +83,7 @@ public class ErpInvSkuReferenceChecker implements IErpMdSkuReferenceChecker {
                 || existsPickingOrderLine(skuId);
     }
 
-    private boolean existsStockBalance(Long skuId) {
+    private boolean existsStockBalance(String skuId) {
         IEntityDao<ErpInvStockBalance> dao = daoProvider.daoFor(ErpInvStockBalance.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("skuId", skuId));
@@ -92,7 +92,7 @@ public class ErpInvSkuReferenceChecker implements IErpMdSkuReferenceChecker {
         return !dao.findAllByQuery(q).isEmpty();
     }
 
-    private boolean existsReservationLine(Long skuId) {
+    private boolean existsReservationLine(String skuId) {
         IEntityDao<ErpInvReservationLine> dao = daoProvider.daoFor(ErpInvReservationLine.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("skuId", skuId));
@@ -102,7 +102,7 @@ public class ErpInvSkuReferenceChecker implements IErpMdSkuReferenceChecker {
         return !dao.findAllByQuery(q).isEmpty();
     }
 
-    private boolean existsCostLayer(Long skuId) {
+    private boolean existsCostLayer(String skuId) {
         IEntityDao<ErpInvCostLayer> dao = daoProvider.daoFor(ErpInvCostLayer.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("skuId", skuId));
@@ -111,7 +111,7 @@ public class ErpInvSkuReferenceChecker implements IErpMdSkuReferenceChecker {
         return !dao.findAllByQuery(q).isEmpty();
     }
 
-    private boolean existsBatch(Long skuId) {
+    private boolean existsBatch(String skuId) {
         IEntityDao<ErpInvBatch> dao = daoProvider.daoFor(ErpInvBatch.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("skuId", skuId));
@@ -121,7 +121,7 @@ public class ErpInvSkuReferenceChecker implements IErpMdSkuReferenceChecker {
         return !dao.findAllByQuery(q).isEmpty();
     }
 
-    private boolean existsSerialNumber(Long skuId) {
+    private boolean existsSerialNumber(String skuId) {
         IEntityDao<ErpInvSerialNumber> dao = daoProvider.daoFor(ErpInvSerialNumber.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("skuId", skuId));
@@ -130,7 +130,7 @@ public class ErpInvSkuReferenceChecker implements IErpMdSkuReferenceChecker {
         return !dao.findAllByQuery(q).isEmpty();
     }
 
-    private boolean existsStockMoveLine(Long skuId) {
+    private boolean existsStockMoveLine(String skuId) {
         IEntityDao<ErpInvStockMoveLine> dao = daoProvider.daoFor(ErpInvStockMoveLine.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("skuId", skuId));
@@ -139,7 +139,7 @@ public class ErpInvSkuReferenceChecker implements IErpMdSkuReferenceChecker {
         return !dao.findAllByQuery(q).isEmpty();
     }
 
-    private boolean existsTransferOrderLine(Long skuId) {
+    private boolean existsTransferOrderLine(String skuId) {
         IEntityDao<ErpInvTransferOrderLine> dao = daoProvider.daoFor(ErpInvTransferOrderLine.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("skuId", skuId));
@@ -148,7 +148,7 @@ public class ErpInvSkuReferenceChecker implements IErpMdSkuReferenceChecker {
         return !dao.findAllByQuery(q).isEmpty();
     }
 
-    private boolean existsStockTakeLine(Long skuId) {
+    private boolean existsStockTakeLine(String skuId) {
         IEntityDao<ErpInvStockTakeLine> dao = daoProvider.daoFor(ErpInvStockTakeLine.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("skuId", skuId));
@@ -157,7 +157,7 @@ public class ErpInvSkuReferenceChecker implements IErpMdSkuReferenceChecker {
         return !dao.findAllByQuery(q).isEmpty();
     }
 
-    private boolean existsOwnershipTransferLine(Long skuId) {
+    private boolean existsOwnershipTransferLine(String skuId) {
         IEntityDao<ErpInvOwnershipTransferLine> dao = daoProvider.daoFor(ErpInvOwnershipTransferLine.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("skuId", skuId));
@@ -166,7 +166,7 @@ public class ErpInvSkuReferenceChecker implements IErpMdSkuReferenceChecker {
         return !dao.findAllByQuery(q).isEmpty();
     }
 
-    private boolean existsPickingOrderLine(Long skuId) {
+    private boolean existsPickingOrderLine(String skuId) {
         IEntityDao<ErpInvPickingOrderLine> dao = daoProvider.daoFor(ErpInvPickingOrderLine.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("skuId", skuId));

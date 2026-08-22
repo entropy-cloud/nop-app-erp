@@ -13,7 +13,7 @@ import io.nop.api.core.annotations.data.DataBean;
 @DataBean
 public class CostingRecloseReport {
 
-    private Long periodId;
+    private String periodId;
     private int scannedMoves;
     private int recomputedIncomingLayers;
     private int recomputedOutgoingLedgers;
@@ -21,11 +21,11 @@ public class CostingRecloseReport {
     public CostingRecloseReport() {
     }
 
-    public Long getPeriodId() {
+    public String getPeriodId() {
         return periodId;
     }
 
-    public void setPeriodId(Long periodId) {
+    public void setPeriodId(String periodId) {
         this.periodId = periodId;
     }
 

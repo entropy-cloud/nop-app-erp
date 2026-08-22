@@ -23,7 +23,7 @@ public class ErpInvTransferOrderBizModel extends CrudBizModel<ErpInvTransferOrde
 
     @Override
     @BizMutation
-    public ErpInvTransferOrder confirm(@Name("transferOrderId") Long transferOrderId, IServiceContext context) {
+    public ErpInvTransferOrder confirm(@Name("transferOrderId") String transferOrderId, IServiceContext context) {
         return confirmProcessor.confirm(transferOrderId, context);
     }
 }

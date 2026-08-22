@@ -134,10 +134,10 @@ public class _ErpInvLandedCostLine extends DynamicOrmEntity{
 
     
     /* ID: ID */
-    private java.lang.Long _id;
+    private java.lang.String _id;
     
     /* 到岸成本单ID: LANDED_COST_ID */
-    private java.lang.Long _landedCostId;
+    private java.lang.String _landedCostId;
     
     /* 行号: LINE_NO */
     private java.lang.Integer _lineNo;
@@ -149,7 +149,7 @@ public class _ErpInvLandedCostLine extends DynamicOrmEntity{
     private java.math.BigDecimal _amount;
     
     /* 应付对象: AP_PARTNER_ID */
-    private java.lang.Long _apPartnerId;
+    private java.lang.String _apPartnerId;
     
     /* 备注: REMARK */
     private java.lang.String _remark;
@@ -297,9 +297,9 @@ public class _ErpInvLandedCostLine extends DynamicOrmEntity{
         switch(propId){
         
             case PROP_ID_id:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_id));
                }
                setId(typedValue);
@@ -307,9 +307,9 @@ public class _ErpInvLandedCostLine extends DynamicOrmEntity{
             }
         
             case PROP_ID_landedCostId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_landedCostId));
                }
                setLandedCostId(typedValue);
@@ -347,9 +347,9 @@ public class _ErpInvLandedCostLine extends DynamicOrmEntity{
             }
         
             case PROP_ID_apPartnerId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_apPartnerId));
                }
                setApPartnerId(typedValue);
@@ -437,14 +437,14 @@ public class _ErpInvLandedCostLine extends DynamicOrmEntity{
         
             case PROP_ID_id:{
                onInitProp(propId);
-               this._id = (java.lang.Long)value;
+               this._id = (java.lang.String)value;
                orm_id(); // 如果是设置主键字段，则触发watcher
                break;
             }
         
             case PROP_ID_landedCostId:{
                onInitProp(propId);
-               this._landedCostId = (java.lang.Long)value;
+               this._landedCostId = (java.lang.String)value;
                
                break;
             }
@@ -472,7 +472,7 @@ public class _ErpInvLandedCostLine extends DynamicOrmEntity{
         
             case PROP_ID_apPartnerId:{
                onInitProp(propId);
-               this._apPartnerId = (java.lang.Long)value;
+               this._apPartnerId = (java.lang.String)value;
                
                break;
             }
@@ -535,7 +535,7 @@ public class _ErpInvLandedCostLine extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final java.lang.Long getId(){
+    public final java.lang.String getId(){
          onPropGet(PROP_ID_id);
          return _id;
     }
@@ -543,7 +543,7 @@ public class _ErpInvLandedCostLine extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final void setId(java.lang.Long value){
+    public final void setId(java.lang.String value){
         if(onPropSet(PROP_ID_id,value)){
             this._id = value;
             internalClearRefs(PROP_ID_id);
@@ -554,7 +554,7 @@ public class _ErpInvLandedCostLine extends DynamicOrmEntity{
     /**
      * 到岸成本单ID: LANDED_COST_ID
      */
-    public final java.lang.Long getLandedCostId(){
+    public final java.lang.String getLandedCostId(){
          onPropGet(PROP_ID_landedCostId);
          return _landedCostId;
     }
@@ -562,7 +562,7 @@ public class _ErpInvLandedCostLine extends DynamicOrmEntity{
     /**
      * 到岸成本单ID: LANDED_COST_ID
      */
-    public final void setLandedCostId(java.lang.Long value){
+    public final void setLandedCostId(java.lang.String value){
         if(onPropSet(PROP_ID_landedCostId,value)){
             this._landedCostId = value;
             internalClearRefs(PROP_ID_landedCostId);
@@ -630,7 +630,7 @@ public class _ErpInvLandedCostLine extends DynamicOrmEntity{
     /**
      * 应付对象: AP_PARTNER_ID
      */
-    public final java.lang.Long getApPartnerId(){
+    public final java.lang.String getApPartnerId(){
          onPropGet(PROP_ID_apPartnerId);
          return _apPartnerId;
     }
@@ -638,7 +638,7 @@ public class _ErpInvLandedCostLine extends DynamicOrmEntity{
     /**
      * 应付对象: AP_PARTNER_ID
      */
-    public final void setApPartnerId(java.lang.Long value){
+    public final void setApPartnerId(java.lang.String value){
         if(onPropSet(PROP_ID_apPartnerId,value)){
             this._apPartnerId = value;
             internalClearRefs(PROP_ID_apPartnerId);

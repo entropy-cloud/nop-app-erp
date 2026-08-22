@@ -62,18 +62,18 @@ public class TestErpInvBatchExpiryInterception extends JunitAutoTestCase {
     @RegisterExtension
     static InvFrozenClockExtension frozenClock = new InvFrozenClockExtension();
 
-    static final Long ORG_ID = 1001L;
-    static final Long WAREHOUSE_ID = 3002L;
-    static final Long LOCATION_ID = 4002L;
-    static final Long UOM_ID = 5002L;
-    static final Long CURRENCY_ID = 6002L;
-    static final Long ACCT_SCHEMA_ID = 7002L;
+    static final String ORG_ID = "1001";
+    static final String WAREHOUSE_ID = "3002";
+    static final String LOCATION_ID = "4002";
+    static final String UOM_ID = "5002";
+    static final String CURRENCY_ID = "6002";
+    static final String ACCT_SCHEMA_ID = "7002";
 
-    static final Long MATERIAL_BATCH = 2002L;          // isBatchManaged=true，批次已过期
-    static final Long MATERIAL_BATCH_NULL = 2102L;     // isBatchManaged=true，批次 expiryDate=null
-    static final Long MATERIAL_BATCH_FUTURE = 2202L;   // isBatchManaged=true，批次未来效期
-    static final Long MATERIAL_NON_BATCH = 2302L;      // isBatchManaged=false，批次已过期
-    static final Long MATERIAL_INCOMING = 2402L;       // isBatchManaged=true，批次已过期（INCOMING 边界）
+    static final String MATERIAL_BATCH = "2002";          // isBatchManaged=true，批次已过期
+    static final String MATERIAL_BATCH_NULL = "2102";     // isBatchManaged=true，批次 expiryDate=null
+    static final String MATERIAL_BATCH_FUTURE = "2202";   // isBatchManaged=true，批次未来效期
+    static final String MATERIAL_NON_BATCH = "2302";      // isBatchManaged=false，批次已过期
+    static final String MATERIAL_INCOMING = "2402";       // isBatchManaged=true，批次已过期（INCOMING 边界）
 
     static final String BATCH_EXPIRED = "BAT-EXPIRED-01";
     static final String BATCH_NULL = "BAT-NULL-01";
@@ -146,7 +146,7 @@ public class TestErpInvBatchExpiryInterception extends JunitAutoTestCase {
                 "confirm 应返回 ERR_BATCH_EXPIRED");
         output("1_confirm_rejection_code.json5", confirmResp.getCode());
 
-        ErpInvStockMove move = daoProvider.daoFor(ErpInvStockMove.class).getEntityById(Long.parseLong(moveId));
+        ErpInvStockMove move = daoProvider.daoFor(ErpInvStockMove.class).getEntityById(moveId);
         assertNotNull(move, "两步流 DRAFT 已落库，confirm 拒绝后移动单应保留");
         assertEquals(ErpInvConstants.DOC_STATUS_DRAFT, move.getDocStatus(),
                 "confirm 拒绝后移动单应保持 DRAFT（applyReservation 未执行）");
@@ -199,7 +199,7 @@ public class TestErpInvBatchExpiryInterception extends JunitAutoTestCase {
                 "错误消息应含效期参数: " + confirmResp.getMsg());
         output("1_confirm_rejection_code.json5", confirmResp.getCode());
 
-        ErpInvStockMove move = daoProvider.daoFor(ErpInvStockMove.class).getEntityById(Long.parseLong(moveId));
+        ErpInvStockMove move = daoProvider.daoFor(ErpInvStockMove.class).getEntityById(moveId);
         assertNotNull(move, "两步流 DRAFT 已落库，confirm 拒绝后移动单应保留");
         assertEquals(ErpInvConstants.DOC_STATUS_DRAFT, move.getDocStatus(),
                 "confirm 拒绝后移动单应保持 DRAFT（applyReservation 未执行）");
@@ -333,11 +333,11 @@ public class TestErpInvBatchExpiryInterception extends JunitAutoTestCase {
 
     // ---------- seed helpers ----------
 
-    private void seedBatchLedger(String batchNo, Long materialId, java.time.LocalDate expiry) {
+    private void seedBatchLedger(String batchNo, String materialId, java.time.LocalDate expiry) {
         seedBatchLedger(batchNo, materialId, expiry, true);
     }
 
-    private void seedBatchLedger(String batchNo, Long materialId, java.time.LocalDate expiry, boolean batchManaged) {
+    private void seedBatchLedger(String batchNo, String materialId, java.time.LocalDate expiry, boolean batchManaged) {
         ormTemplate.runInSession(() -> {
             seedUoM();
             seedWarehouse();
@@ -358,7 +358,7 @@ public class TestErpInvBatchExpiryInterception extends JunitAutoTestCase {
         });
     }
 
-    private void seedMaterial(Long id, boolean batchManaged) {
+    private void seedMaterial(String id, boolean batchManaged) {
         IEntityDao<ErpMdMaterial> dao = daoProvider.daoFor(ErpMdMaterial.class);
         ErpMdMaterial m = dao.newEntity();
         m.orm_propValue(1, id);
@@ -410,7 +410,7 @@ public class TestErpInvBatchExpiryInterception extends JunitAutoTestCase {
         dao.saveEntity(l);
     }
 
-    private void seedBalance(Long materialId, String batchNo) {
+    private void seedBalance(String materialId, String batchNo) {
         seedBalance(materialId, batchNo, BigDecimal.ZERO);
     }
 
@@ -418,7 +418,7 @@ public class TestErpInvBatchExpiryInterception extends JunitAutoTestCase {
      * A4.2.79 探针：seed 余额行时显式指定既有预留占用（reservedQuantity>0），
      * availableQuantity = total − reserved − locked 保持一致（reserved=3 → available=97）。
      */
-    private void seedBalance(Long materialId, String batchNo, BigDecimal reservedQuantity) {
+    private void seedBalance(String materialId, String batchNo, BigDecimal reservedQuantity) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpInvStockBalance> dao = daoProvider.daoFor(ErpInvStockBalance.class);
             ErpInvStockBalance b = dao.newEntity();
@@ -445,7 +445,7 @@ public class TestErpInvBatchExpiryInterception extends JunitAutoTestCase {
         return executeRpc(mutation, "ErpInvStockMove__generateMove", ApiRequest.build(Map.of("request", req)));
     }
 
-    private Map<String, Object> outgoingReq(String billType, String billCode, Long materialId,
+    private Map<String, Object> outgoingReq(String billType, String billCode, String materialId,
                                             BigDecimal qty, String batchNo) {
         Map<String, Object> req = baseReq(ErpInvConstants.MOVE_TYPE_OUTGOING);
         req.put("sourceWarehouseId", WAREHOUSE_ID);
@@ -456,7 +456,7 @@ public class TestErpInvBatchExpiryInterception extends JunitAutoTestCase {
         return req;
     }
 
-    private Map<String, Object> incomingReq(String billType, String billCode, Long materialId,
+    private Map<String, Object> incomingReq(String billType, String billCode, String materialId,
                                             BigDecimal qty, BigDecimal unitCost, String batchNo) {
         Map<String, Object> req = baseReq(ErpInvConstants.MOVE_TYPE_INCOMING);
         req.put("destWarehouseId", WAREHOUSE_ID);
@@ -477,7 +477,7 @@ public class TestErpInvBatchExpiryInterception extends JunitAutoTestCase {
         return req;
     }
 
-    private Map<String, Object> line(Long materialId, BigDecimal qty, BigDecimal unitCost, String batchNo) {
+    private Map<String, Object> line(String materialId, BigDecimal qty, BigDecimal unitCost, String batchNo) {
         Map<String, Object> line = new LinkedHashMap<>();
         line.put("materialId", materialId);
         line.put("uoMId", UOM_ID);
@@ -499,7 +499,7 @@ public class TestErpInvBatchExpiryInterception extends JunitAutoTestCase {
         return graphQLEngine.executeRpc(ctx);
     }
 
-    private ErpInvStockBalance findBalance(Long materialId, String batchNo) {
+    private ErpInvStockBalance findBalance(String materialId, String batchNo) {
         IEntityDao<ErpInvStockBalance> dao = daoProvider.daoFor(ErpInvStockBalance.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("materialId", materialId));

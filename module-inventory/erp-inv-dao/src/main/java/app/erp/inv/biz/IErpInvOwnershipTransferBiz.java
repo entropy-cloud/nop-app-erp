@@ -15,11 +15,11 @@ import io.nop.orm.biz.ICrudBiz;
 public interface IErpInvOwnershipTransferBiz extends ICrudBiz<ErpInvOwnershipTransfer> {
 
     @BizMutation
-    ErpInvOwnershipTransfer confirm(@Name("transferId") Long transferId, IServiceContext context);
+    ErpInvOwnershipTransfer confirm(@Name("transferId") String transferId, IServiceContext context);
 
     @BizMutation
-    ErpInvOwnershipTransfer done(@Name("transferId") Long transferId, IServiceContext context);
+    ErpInvOwnershipTransfer done(@Name("transferId") String transferId, IServiceContext context);
 
     @BizMutation
-    ErpInvOwnershipTransfer cancel(@Name("transferId") Long transferId, IServiceContext context);
+    ErpInvOwnershipTransfer cancel(@Name("transferId") String transferId, IServiceContext context);
 }

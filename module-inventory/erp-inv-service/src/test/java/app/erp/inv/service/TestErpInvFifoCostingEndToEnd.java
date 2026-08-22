@@ -49,12 +49,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpInvFifoCostingEndToEnd extends JunitAutoTestCase {
 
-    static final Long ORG_ID = 1301L;
-    static final Long WAREHOUSE_ID = 3301L;
-    static final Long LOCATION_ID = 4301L;
-    static final Long UOM_ID = 5301L;
-    static final Long CURRENCY_ID = 6301L;
-    static final Long ACCT_SCHEMA_ID = 7301L;
+    static final String ORG_ID = "1301";
+    static final String WAREHOUSE_ID = "3301";
+    static final String LOCATION_ID = "4301";
+    static final String UOM_ID = "5301";
+    static final String CURRENCY_ID = "6301";
+    static final String ACCT_SCHEMA_ID = "7301";
     static final String PERIOD_CODE = "2026-07";
     static final String VOUCHER_STATUS_POSTED = "POSTED";
 
@@ -67,20 +67,20 @@ public class TestErpInvFifoCostingEndToEnd extends JunitAutoTestCase {
 
     @Test
     public void testFifoEndToEndCostLayerCogsAndPosting() {
-        seedFifoMaterial(2301L);
+        seedFifoMaterial("2301");
         seedPeriodAndSubjects();
 
         // 入库 20@10 + 40@12 → 两个 cost layer
-        generateIncoming(2301L, "PR-E2E-001", new BigDecimal("20"), new BigDecimal("10"));
-        generateIncoming(2301L, "PR-E2E-002", new BigDecimal("40"), new BigDecimal("12"));
+        generateIncoming("2301", "PR-E2E-001", new BigDecimal("20"), new BigDecimal("10"));
+        generateIncoming("2301", "PR-E2E-002", new BigDecimal("40"), new BigDecimal("12"));
 
-        List<ErpInvCostLayer> layers = findCostLayers(2301L);
+        List<ErpInvCostLayer> layers = findCostLayers("2301");
         assertEquals(2, layers.size(), "两入库建两 cost layer");
 
         // 销售出库 60 → FIFO 跨层消耗 20@10 + 40@12 = 680
-        Long outMoveId = generateOutgoing(2301L, "SS-E2E-001", new BigDecimal("60"));
+        String outMoveId = generateOutgoing("2301", "SS-E2E-001", new BigDecimal("60"));
 
-        ErpInvStockLedger outLedger = findOutgoingLedger(2301L);
+        ErpInvStockLedger outLedger = findOutgoingLedger("2301");
         assertEquals(0, outLedger.getTotalCost().compareTo(new BigDecimal("-680")),
                 "FIFO 跨层 COGS=20×10+40×12=680（ledger.totalCost 负号，派发器 .abs() 拾取）");
         assertEquals(ErpInvConstants.COST_METHOD_FIFO, outLedger.getCostMethod(), "流水 costMethod=FIFO");
@@ -99,9 +99,9 @@ public class TestErpInvFifoCostingEndToEnd extends JunitAutoTestCase {
 
     @Test
     public void testReclosePeriodCostsNormalDataIsNoOp() {
-        seedFifoMaterial(2302L);
+        seedFifoMaterial("2302");
         seedPeriodAndSubjects();
-        generateIncoming(2302L, "PR-E2E-NOOP-001", new BigDecimal("20"), new BigDecimal("10"));
+        generateIncoming("2302", "PR-E2E-NOOP-001", new BigDecimal("20"), new BigDecimal("10"));
 
         Map<String, Object> report = reclosePeriodCosts();
 
@@ -112,14 +112,14 @@ public class TestErpInvFifoCostingEndToEnd extends JunitAutoTestCase {
 
     @Test
     public void testReclosePeriodCostsRebuildsMissingLayer() {
-        Long materialId = 2303L;
+        String materialId = "2303";
         seedFifoMaterial(materialId);
         seedPeriodAndSubjects();
 
         // 模拟异常：关闭成本核算开关期间入库（记账器退化为移动加权平均，不建 cost layer）
         setCostingEnabled(false);
         try {
-            Long inMoveId = generateIncoming(materialId, "PR-E2E-REBUILD-001",
+            String inMoveId = generateIncoming(materialId, "PR-E2E-REBUILD-001",
                     new BigDecimal("25"), new BigDecimal("8"));
             assertTrue(findCostLayers(materialId).isEmpty(), "成本核算关闭期间入库不应建 cost layer");
         } finally {
@@ -141,7 +141,7 @@ public class TestErpInvFifoCostingEndToEnd extends JunitAutoTestCase {
 
     // ---------- move generation ----------
 
-    private Long generateIncoming(Long materialId, String billCode, BigDecimal qty, BigDecimal unitCost) {
+    private String generateIncoming(String materialId, String billCode, BigDecimal qty, BigDecimal unitCost) {
         Map<String, Object> req = baseReq(materialId, ErpInvConstants.MOVE_TYPE_INCOMING);
         req.put("destWarehouseId", WAREHOUSE_ID);
         req.put("destLocationId", LOCATION_ID);
@@ -151,7 +151,7 @@ public class TestErpInvFifoCostingEndToEnd extends JunitAutoTestCase {
         return idOf(genMove(req));
     }
 
-    private Long generateOutgoing(Long materialId, String billCode, BigDecimal qty) {
+    private String generateOutgoing(String materialId, String billCode, BigDecimal qty) {
         Map<String, Object> req = baseReq(materialId, ErpInvConstants.MOVE_TYPE_OUTGOING);
         req.put("sourceWarehouseId", WAREHOUSE_ID);
         req.put("sourceLocationId", LOCATION_ID);
@@ -163,7 +163,7 @@ public class TestErpInvFifoCostingEndToEnd extends JunitAutoTestCase {
 
     @SuppressWarnings("unchecked")
     private Map<String, Object> reclosePeriodCosts() {
-        Long periodId = findPeriodId();
+        String periodId = findPeriodId();
         Map<String, Object> args = new LinkedHashMap<>();
         args.put("periodId", periodId);
         args.put("startDate", "2026-07-01");
@@ -177,7 +177,7 @@ public class TestErpInvFifoCostingEndToEnd extends JunitAutoTestCase {
         return executeRpc(mutation, "ErpInvStockMove__generateMove", ApiRequest.build(Map.of("request", req)));
     }
 
-    private Map<String, Object> baseReq(Long materialId, String moveType) {
+    private Map<String, Object> baseReq(String materialId, String moveType) {
         Map<String, Object> req = new LinkedHashMap<>();
         req.put("moveType", moveType);
         req.put("orgId", ORG_ID);
@@ -187,7 +187,7 @@ public class TestErpInvFifoCostingEndToEnd extends JunitAutoTestCase {
         return req;
     }
 
-    private Map<String, Object> line(Long materialId, BigDecimal qty, BigDecimal unitCost) {
+    private Map<String, Object> line(String materialId, BigDecimal qty, BigDecimal unitCost) {
         Map<String, Object> line = new LinkedHashMap<>();
         line.put("materialId", materialId);
         line.put("uoMId", UOM_ID);
@@ -204,14 +204,14 @@ public class TestErpInvFifoCostingEndToEnd extends JunitAutoTestCase {
         return graphQLEngine.executeRpc(ctx);
     }
 
-    private Long idOf(ApiResponse<?> resp) {
+    private String idOf(ApiResponse<?> resp) {
         Object id = ((Map<?, ?>) resp.getData()).get("id");
-        return id instanceof Number ? ((Number) id).longValue() : Long.parseLong(String.valueOf(id));
+        return String.valueOf(id);
     }
 
     // ---------- queries ----------
 
-    private List<ErpInvCostLayer> findCostLayers(Long materialId) {
+    private List<ErpInvCostLayer> findCostLayers(String materialId) {
         IEntityDao<ErpInvCostLayer> dao = daoProvider.daoFor(ErpInvCostLayer.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("materialId", materialId));
@@ -219,7 +219,7 @@ public class TestErpInvFifoCostingEndToEnd extends JunitAutoTestCase {
         return dao.findAllByQuery(q);
     }
 
-    private ErpInvStockLedger findOutgoingLedger(Long materialId) {
+    private ErpInvStockLedger findOutgoingLedger(String materialId) {
         IEntityDao<ErpInvStockLedger> dao = daoProvider.daoFor(ErpInvStockLedger.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("materialId", materialId));
@@ -238,7 +238,7 @@ public class TestErpInvFifoCostingEndToEnd extends JunitAutoTestCase {
                 .orElse(null);
     }
 
-    private Long findPeriodId() {
+    private String findPeriodId() {
         IEntityDao<ErpFinAccountingPeriod> dao = daoProvider.daoFor(ErpFinAccountingPeriod.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("code", PERIOD_CODE));
@@ -253,7 +253,7 @@ public class TestErpInvFifoCostingEndToEnd extends JunitAutoTestCase {
 
     // ---------- seed ----------
 
-    private void seedFifoMaterial(Long id) {
+    private void seedFifoMaterial(String id) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMdMaterial> dao = daoProvider.daoFor(ErpMdMaterial.class);
             ErpMdMaterial material = new ErpMdMaterial();

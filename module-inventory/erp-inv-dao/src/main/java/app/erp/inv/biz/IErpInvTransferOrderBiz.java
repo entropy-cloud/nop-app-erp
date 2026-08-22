@@ -14,6 +14,6 @@ public interface IErpInvTransferOrderBiz extends ICrudBiz<ErpInvTransferOrder>{
      * 调拨确认：DRAFT→CONFIRMED。审核后自动生成出入库移动单（如配置启用）。
      */
     @BizMutation
-    ErpInvTransferOrder confirm(@Name("transferOrderId") Long transferOrderId, IServiceContext context);
+    ErpInvTransferOrder confirm(@Name("transferOrderId") String transferOrderId, IServiceContext context);
 
 }

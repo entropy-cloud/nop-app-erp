@@ -55,7 +55,7 @@ public class LandedCostPostingDispatcher {
         this.postingExecutor = postingExecutor;
     }
 
-    public Long tryPost(ErpInvLandedCost landedCost, List<ErpInvLandedCostLine> costLines,
+    public String tryPost(ErpInvLandedCost landedCost, List<ErpInvLandedCostLine> costLines,
                           List<LandedCostAllocationEngine.AllocationResult> allocations) {
         PostingEvent event = buildEvent(landedCost, costLines, allocations);
         try {
@@ -88,7 +88,7 @@ public class LandedCostPostingDispatcher {
         postingExecutor.reverse(billHeadCode, ErpFinBusinessType.LANDED_COST);
     }
 
-    private Long postEvent(PostingEvent event) {
+    private String postEvent(PostingEvent event) {
         return voucherBiz.post(event, ctx());
     }
 
@@ -138,7 +138,7 @@ public class LandedCostPostingDispatcher {
         return context != null ? context : new ServiceContextImpl();
     }
 
-    private Long resolveAcctSchemaId(Long orgId) {
+    private String resolveAcctSchemaId(String orgId) {
         return AcctSchemaResolver.resolvePrimarySchemaId(daoProvider, orgId);
     }
 }

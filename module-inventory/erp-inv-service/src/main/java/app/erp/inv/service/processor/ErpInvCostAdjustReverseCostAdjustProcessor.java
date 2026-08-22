@@ -37,7 +37,7 @@ public class ErpInvCostAdjustReverseCostAdjustProcessor {
     @Inject
     CostAdjustmentPostingDispatcher postingDispatcher;
 
-    public ErpInvCostAdjust reverseCostAdjust(Long id, IServiceContext context) {
+    public ErpInvCostAdjust reverseCostAdjust(String id, IServiceContext context) {
         ErpInvCostAdjust adjust = requirePosted(id, context);
         List<ErpInvCostAdjustLine> lines = facade.loadLines(adjust.getId());
         reverseCostLayer(adjust, lines);
@@ -45,7 +45,7 @@ public class ErpInvCostAdjustReverseCostAdjustProcessor {
         return revertToConfirmed(id);
     }
 
-    protected ErpInvCostAdjust requirePosted(Long id, IServiceContext context) {
+    protected ErpInvCostAdjust requirePosted(String id, IServiceContext context) {
         ErpInvCostAdjust adjust = facade.requireAdjustment(id, context);
         if (!Boolean.TRUE.equals(adjust.getPosted())) {
             throw new NopException(ErpInvErrors.ERR_COST_ADJUST_NOT_APPLIED)
@@ -70,7 +70,7 @@ public class ErpInvCostAdjustReverseCostAdjustProcessor {
         ormTemplate.flushSession();
     }
 
-    protected ErpInvCostAdjust revertToConfirmed(Long id) {
+    protected ErpInvCostAdjust revertToConfirmed(String id) {
         ErpInvCostAdjust adjust = facade.reload(id);
         adjust.setPosted(false);
         adjust.setPostedAt(null);

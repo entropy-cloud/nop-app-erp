@@ -26,7 +26,7 @@ public interface CostingStrategy {
      * @param unitCost 入库单价（移动单行 {@code line.unitCost}）；内部调拨时为源仓 carriedCost
      * @return 实际记入流水的单位成本（移动加权平均=输入；FIFO=入库单价）
      */
-    BigDecimal onIncoming(ErpInvStockMove move, ErpInvStockMoveLine line, Long acctSchemaId,
+    BigDecimal onIncoming(ErpInvStockMove move, ErpInvStockMoveLine line, String acctSchemaId,
                           BigDecimal unitCost, BookingContext ctx);
 
     /**
@@ -34,5 +34,5 @@ public interface CostingStrategy {
      *
      * @return 实际记入流水的单位成本（移动加权平均=avgCost；FIFO=多层加权）
      */
-    BigDecimal onOutgoing(ErpInvStockMove move, ErpInvStockMoveLine line, Long acctSchemaId, BookingContext ctx);
+    BigDecimal onOutgoing(ErpInvStockMove move, ErpInvStockMoveLine line, String acctSchemaId, BookingContext ctx);
 }

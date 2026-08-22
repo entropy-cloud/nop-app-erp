@@ -43,12 +43,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpInvSpecificCosting extends JunitAutoTestCase {
 
-    static final Long ORG_ID = 1201L;
-    static final Long WAREHOUSE_ID = 3201L;
-    static final Long LOCATION_ID = 4201L;
-    static final Long UOM_ID = 5201L;
-    static final Long CURRENCY_ID = 6201L;
-    static final Long ACCT_SCHEMA_ID = 7201L;
+    static final String ORG_ID = "1201";
+    static final String WAREHOUSE_ID = "3201";
+    static final String LOCATION_ID = "4201";
+    static final String UOM_ID = "5201";
+    static final String CURRENCY_ID = "6201";
+    static final String ACCT_SCHEMA_ID = "7201";
 
     @Inject
     IDaoProvider daoProvider;
@@ -59,7 +59,7 @@ public class TestErpInvSpecificCosting extends JunitAutoTestCase {
 
     @Test
     public void testIncomingAppendsCostLayerByBatch() {
-        Long materialId = 2501L;
+        String materialId = "2501";
         seedSpecificMaterial(materialId);
 
         generateIncoming(materialId, "PR-SPEC-001", "S01", new BigDecimal("10"), new BigDecimal("100"));
@@ -75,7 +75,7 @@ public class TestErpInvSpecificCosting extends JunitAutoTestCase {
 
     @Test
     public void testOutgoingMatchesSpecificBatch() {
-        Long materialId = 2502L;
+        String materialId = "2502";
         seedSpecificMaterial(materialId);
 
         generateIncoming(materialId, "PR-SPEC-002", "S01", new BigDecimal("10"), new BigDecimal("100"));
@@ -97,7 +97,7 @@ public class TestErpInvSpecificCosting extends JunitAutoTestCase {
 
     @Test
     public void testOutgoingIsolatesByBatch() {
-        Long materialId = 2503L;
+        String materialId = "2503";
         seedSpecificMaterial(materialId);
 
         // 两批次各自独立单价：S01 10@100，S02 8@200
@@ -121,7 +121,7 @@ public class TestErpInvSpecificCosting extends JunitAutoTestCase {
 
     @Test
     public void testOutgoingIgnoresFutureDatedSameBatchLayer() {
-        Long materialId = 2510L;
+        String materialId = "2510";
         seedSpecificMaterial(materialId);
 
         // 历史日入库：S01 10@100（incomingDate=2026-07-01）
@@ -153,7 +153,7 @@ public class TestErpInvSpecificCosting extends JunitAutoTestCase {
 
     @Test
     public void testOutgoingWithoutBatchOrSerialRejected() {
-        Long materialId = 2504L;
+        String materialId = "2504";
         seedSpecificMaterial(materialId);
 
         generateIncoming(materialId, "PR-SPEC-004", "S01", new BigDecimal("10"), new BigDecimal("100"));
@@ -170,11 +170,11 @@ public class TestErpInvSpecificCosting extends JunitAutoTestCase {
 
     // ---------- helpers ----------
 
-    private Long generateIncoming(Long materialId, String billCode, String batchNo, BigDecimal qty, BigDecimal unitCost) {
+    private String generateIncoming(String materialId, String billCode, String batchNo, BigDecimal qty, BigDecimal unitCost) {
         return generateIncoming(materialId, billCode, batchNo, qty, unitCost, "2026-07-01");
     }
 
-    private Long generateIncoming(Long materialId, String billCode, String batchNo, BigDecimal qty,
+    private String generateIncoming(String materialId, String billCode, String batchNo, BigDecimal qty,
                                   BigDecimal unitCost, String businessDate) {
         Map<String, Object> req = baseReq(ErpInvConstants.MOVE_TYPE_INCOMING);
         req.put("businessDate", businessDate);
@@ -186,11 +186,11 @@ public class TestErpInvSpecificCosting extends JunitAutoTestCase {
         return idOf(genMove(req));
     }
 
-    private Long generateOutgoing(Long materialId, String billCode, String batchNo, BigDecimal qty) {
+    private String generateOutgoing(String materialId, String billCode, String batchNo, BigDecimal qty) {
         return generateOutgoing(materialId, billCode, batchNo, qty, "2026-07-01");
     }
 
-    private Long generateOutgoing(Long materialId, String billCode, String batchNo, BigDecimal qty,
+    private String generateOutgoing(String materialId, String billCode, String batchNo, BigDecimal qty,
                                   String businessDate) {
         Map<String, Object> req = baseReq(ErpInvConstants.MOVE_TYPE_OUTGOING);
         req.put("businessDate", businessDate);
@@ -202,7 +202,7 @@ public class TestErpInvSpecificCosting extends JunitAutoTestCase {
         return idOf(genMove(req));
     }
 
-    private Map<String, Object> outgoingReqNoBatch(Long materialId, String billCode, BigDecimal qty) {
+    private Map<String, Object> outgoingReqNoBatch(String materialId, String billCode, BigDecimal qty) {
         Map<String, Object> req = baseReq(ErpInvConstants.MOVE_TYPE_OUTGOING);
         req.put("sourceWarehouseId", WAREHOUSE_ID);
         req.put("sourceLocationId", LOCATION_ID);
@@ -212,7 +212,7 @@ public class TestErpInvSpecificCosting extends JunitAutoTestCase {
         return req;
     }
 
-    private Map<String, Object> outgoingReq(Long materialId, String billCode, String batchNo,
+    private Map<String, Object> outgoingReq(String materialId, String billCode, String batchNo,
                                             BigDecimal qty, String businessDate) {
         Map<String, Object> req = baseReq(ErpInvConstants.MOVE_TYPE_OUTGOING);
         req.put("businessDate", businessDate);
@@ -238,7 +238,7 @@ public class TestErpInvSpecificCosting extends JunitAutoTestCase {
         return req;
     }
 
-    private Map<String, Object> line(Long materialId, String batchNo, BigDecimal qty, BigDecimal unitCost) {
+    private Map<String, Object> line(String materialId, String batchNo, BigDecimal qty, BigDecimal unitCost) {
         Map<String, Object> line = new LinkedHashMap<>();
         line.put("materialId", materialId);
         line.put("uoMId", UOM_ID);
@@ -258,12 +258,12 @@ public class TestErpInvSpecificCosting extends JunitAutoTestCase {
         return graphQLEngine.executeRpc(ctx);
     }
 
-    private Long idOf(ApiResponse<?> resp) {
+    private String idOf(ApiResponse<?> resp) {
         Object id = ((Map<?, ?>) resp.getData()).get("id");
-        return id instanceof Number ? ((Number) id).longValue() : Long.parseLong(String.valueOf(id));
+        return String.valueOf(id);
     }
 
-    private List<ErpInvCostLayer> findCostLayers(Long materialId) {
+    private List<ErpInvCostLayer> findCostLayers(String materialId) {
         IEntityDao<ErpInvCostLayer> dao = daoProvider.daoFor(ErpInvCostLayer.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("materialId", materialId));
@@ -271,19 +271,19 @@ public class TestErpInvSpecificCosting extends JunitAutoTestCase {
         return dao.findAllByQuery(q);
     }
 
-    private ErpInvCostLayer findCostLayerByBatch(Long materialId, String batchNo) {
+    private ErpInvCostLayer findCostLayerByBatch(String materialId, String batchNo) {
         return findCostLayers(materialId).stream()
                 .filter(l -> batchNo.equals(l.getBatchNo())).findFirst().orElse(null);
     }
 
-    private ErpInvCostLayer findCostLayerByBatchAndCost(Long materialId, String batchNo, BigDecimal unitCost) {
+    private ErpInvCostLayer findCostLayerByBatchAndCost(String materialId, String batchNo, BigDecimal unitCost) {
         return findCostLayers(materialId).stream()
                 .filter(l -> batchNo.equals(l.getBatchNo())
                         && l.getUnitCost() != null && l.getUnitCost().compareTo(unitCost) == 0)
                 .findFirst().orElse(null);
     }
 
-    private ErpInvStockLedger findOutgoingLedger(Long materialId) {
+    private ErpInvStockLedger findOutgoingLedger(String materialId) {
         IEntityDao<ErpInvStockLedger> dao = daoProvider.daoFor(ErpInvStockLedger.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("materialId", materialId));
@@ -294,7 +294,7 @@ public class TestErpInvSpecificCosting extends JunitAutoTestCase {
                 .orElse(null);
     }
 
-    private void seedSpecificMaterial(Long id) {
+    private void seedSpecificMaterial(String id) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMdMaterial> dao = daoProvider.daoFor(ErpMdMaterial.class);
             ErpMdMaterial material = new ErpMdMaterial();

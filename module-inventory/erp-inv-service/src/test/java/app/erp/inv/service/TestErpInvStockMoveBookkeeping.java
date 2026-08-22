@@ -41,13 +41,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpInvStockMoveBookkeeping extends JunitAutoTestCase {
 
-    static final Long ORG_ID = 1001L;
-    static final Long MATERIAL_ID = 2002L;
-    static final Long WAREHOUSE_ID = 3002L;
-    static final Long LOCATION_ID = 4002L;
-    static final Long UOM_ID = 5002L;
-    static final Long CURRENCY_ID = 6002L;
-    static final Long ACCT_SCHEMA_ID = 7002L;
+    static final String ORG_ID = "1001";
+    static final String MATERIAL_ID = "2002";
+    static final String WAREHOUSE_ID = "3002";
+    static final String LOCATION_ID = "4002";
+    static final String UOM_ID = "5002";
+    static final String CURRENCY_ID = "6002";
+    static final String ACCT_SCHEMA_ID = "7002";
 
     @Inject
     IDaoProvider daoProvider;
@@ -56,7 +56,7 @@ public class TestErpInvStockMoveBookkeeping extends JunitAutoTestCase {
 
     @Test
     public void testCompleteWritesImmutableLedger() {
-        Long moveId = generateIncoming("PR-LEDG-001", new BigDecimal("10"), new BigDecimal("5"));
+        String moveId = generateIncoming("PR-LEDG-001", new BigDecimal("10"), new BigDecimal("5"));
 
         List<ErpInvStockLedger> ledgers = findLedgers(moveId);
         assertEquals(1, ledgers.size(), "应写 1 条不可变流水");
@@ -134,7 +134,7 @@ public class TestErpInvStockMoveBookkeeping extends JunitAutoTestCase {
     public void testNegativeStockConfigAllowsShortage() {
         setNegativeStock(true);
         try {
-            Long moveId = generateOutgoing("SS-NEG-001", new BigDecimal("5"));
+            String moveId = generateOutgoing("SS-NEG-001", new BigDecimal("5"));
             ErpInvStockMove move = daoProvider.daoFor(ErpInvStockMove.class).getEntityById(moveId);
             assertEquals(ErpInvConstants.DOC_STATUS_DONE, move.getDocStatus(), "负库存放行应完成");
 
@@ -225,7 +225,7 @@ public class TestErpInvStockMoveBookkeeping extends JunitAutoTestCase {
             generateIncoming("PR-RESERVE-001", new BigDecimal("10"), new BigDecimal("5"));
 
             // CONFIRMED 出库 3（不经 DONE，不设 relatedBillType → generateMove 停在 CONFIRMED）
-            Long confirmedMoveId = generateOutgoingConfirmed("SS-RESERVE-002", new BigDecimal("3"));
+            String confirmedMoveId = generateOutgoingConfirmed("SS-RESERVE-002", new BigDecimal("3"));
             ErpInvStockMove confirmedMove = daoProvider.daoFor(ErpInvStockMove.class).getEntityById(confirmedMoveId);
             assertEquals(ErpInvConstants.DOC_STATUS_CONFIRMED, confirmedMove.getDocStatus(),
                     "无 relatedBillType 的出库停在 CONFIRMED（不自动 DONE）");
@@ -300,18 +300,18 @@ public class TestErpInvStockMoveBookkeeping extends JunitAutoTestCase {
         return m;
     }
 
-    private Long generateIncoming(String billCode, BigDecimal qty, BigDecimal unitCost) {
+    private String generateIncoming(String billCode, BigDecimal qty, BigDecimal unitCost) {
         return idOf(genMove(incomingReq("PUR_RECEIPT", billCode, qty, unitCost)));
     }
 
-    private Long generateOutgoing(String billCode, BigDecimal qty) {
+    private String generateOutgoing(String billCode, BigDecimal qty) {
         return idOf(genMove(outgoingReq("SALES_SHIP", billCode, qty)));
     }
 
     /**
      * 生成无 relatedBillType 的出库移动单 → generateMove 停在 CONFIRMED（不自动 DONE），供 reserved 状态测试。
      */
-    private Long generateOutgoingConfirmed(String billCode, BigDecimal qty) {
+    private String generateOutgoingConfirmed(String billCode, BigDecimal qty) {
         Map<String, Object> req = baseReq(ErpInvConstants.MOVE_TYPE_OUTGOING);
         req.put("sourceWarehouseId", WAREHOUSE_ID);
         req.put("sourceLocationId", LOCATION_ID);
@@ -324,9 +324,8 @@ public class TestErpInvStockMoveBookkeeping extends JunitAutoTestCase {
         return executeRpc(mutation, "ErpInvStockMove__generateMove", ApiRequest.build(Map.of("request", req)));
     }
 
-    private Long idOf(ApiResponse<?> resp) {
-        Object id = ((Map<?, ?>) resp.getData()).get("id");
-        return id instanceof Number ? ((Number) id).longValue() : Long.parseLong(String.valueOf(id));
+    private String idOf(ApiResponse<?> resp) {
+        return String.valueOf(((Map<?, ?>) resp.getData()).get("id"));
     }
 
     private Map<String, Object> incomingReq(String billType, String billCode, BigDecimal qty,
@@ -390,7 +389,7 @@ public class TestErpInvStockMoveBookkeeping extends JunitAutoTestCase {
         return list.isEmpty() ? null : list.get(0);
     }
 
-    private List<ErpInvStockLedger> findLedgers(Long moveId) {
+    private List<ErpInvStockLedger> findLedgers(String moveId) {
         IEntityDao<ErpInvStockLedger> dao = daoProvider.daoFor(ErpInvStockLedger.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("moveId", moveId));

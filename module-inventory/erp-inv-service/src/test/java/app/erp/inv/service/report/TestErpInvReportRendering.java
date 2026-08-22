@@ -46,13 +46,13 @@ public class TestErpInvReportRendering extends JunitAutoTestCase {
 
     private static final io.nop.core.context.IServiceContext CTX = new io.nop.core.context.ServiceContextImpl();
 
-    static final Long ORG_ID = 1101L;
-    static final Long MATERIAL_ID = 2102L;
-    static final Long WAREHOUSE_ID = 3102L;
-    static final Long LOCATION_ID = 4102L;
-    static final Long UOM_ID = 5102L;
-    static final Long CURRENCY_ID = 6102L;
-    static final Long ACCT_SCHEMA_ID = 7102L;
+    static final String ORG_ID = "1101";
+    static final String MATERIAL_ID = "2102";
+    static final String WAREHOUSE_ID = "3102";
+    static final String LOCATION_ID = "4102";
+    static final String UOM_ID = "5102";
+    static final String CURRENCY_ID = "6102";
+    static final String ACCT_SCHEMA_ID = "7102";
 
     @Inject
     ErpInvReportBizModel reportBiz;
@@ -67,7 +67,7 @@ public class TestErpInvReportRendering extends JunitAutoTestCase {
 
     @Test
     public void testInventoryTraceReportRenderHtmlByMoveId() {
-        Long aId = genChainMove("RPT-CHN-A", null);
+        String aId = genChainMove("RPT-CHN-A", null);
         genChainMove("RPT-CHN-B", aId);
         genChainMove("RPT-CHN-C", aId);
 
@@ -93,7 +93,7 @@ public class TestErpInvReportRendering extends JunitAutoTestCase {
 
     @Test
     public void testInventoryTraceReportDownloadXlsxAndPdf() {
-        Long aId = genChainMove("RPT-DL-A", null);
+        String aId = genChainMove("RPT-DL-A", null);
         genChainMove("RPT-DL-B", aId);
 
         Map<String, Object> data = new HashMap<>();
@@ -131,8 +131,8 @@ public class TestErpInvReportRendering extends JunitAutoTestCase {
 
     @Test
     public void testInventoryTraceDatasetByMoveIdForwardChain() {
-        Long aId = genChainMove("RPT-FWD-A", null);
-        Long bId = genChainMove("RPT-FWD-B", aId);
+        String aId = genChainMove("RPT-FWD-A", null);
+        String bId = genChainMove("RPT-FWD-B", aId);
 
         List<Map<String, Object>> ds = reportBiz.buildInventoryTraceDataset(
                 null, null, null, aId, CTX);
@@ -145,8 +145,8 @@ public class TestErpInvReportRendering extends JunitAutoTestCase {
 
     @Test
     public void testInventoryTraceDatasetReturnMarked() {
-        Long originalId = genChainMove("RPT-RET-ORIG", null);
-        Long returnId = reverse(originalId);
+        String originalId = genChainMove("RPT-RET-ORIG", null);
+        String returnId = reverse(originalId);
 
         List<Map<String, Object>> ds = reportBiz.buildInventoryTraceDataset(
                 null, null, null, returnId, CTX);
@@ -181,7 +181,7 @@ public class TestErpInvReportRendering extends JunitAutoTestCase {
         assertThrows(NopException.class,
                 () -> reportBiz.renderHtml(null, null, CTX),
                 "空 reportName 抛 NopException");
-        Long aId = genChainMove("RPT-INJ-A", null);
+        String aId = genChainMove("RPT-INJ-A", null);
         Map<String, Object> data = new HashMap<>();
         data.put("moveId", aId);
         assertThrows(NopException.class,
@@ -191,7 +191,7 @@ public class TestErpInvReportRendering extends JunitAutoTestCase {
 
     // ===================== 数据准备（复用 TestErpInvTraceChain 范式） =====================
 
-    private Long genChainMove(String billCode, Long originMoveId) {
+    private String genChainMove(String billCode, String originMoveId) {
         Map<String, Object> req = baseIncomingReq("TRACE_CHAIN", billCode);
         if (originMoveId != null) {
             req.put("originMoveId", originMoveId);
@@ -199,13 +199,13 @@ public class TestErpInvReportRendering extends JunitAutoTestCase {
         return idOf(genMove(req));
     }
 
-    private Long genBatchMove(String billCode, String batchNo) {
+    private String genBatchMove(String billCode, String batchNo) {
         Map<String, Object> req = baseIncomingReq("TRACE_BATCH", billCode);
         req.put("lines", Collections.singletonList(line(BigDecimal.TEN, null, batchNo)));
         return idOf(genMove(req));
     }
 
-    private Long reverse(Long moveId) {
+    private String reverse(String moveId) {
         return idOf(executeRpc(mutation, "ErpInvStockMove__reverse",
                 ApiRequest.build(Map.of("moveId", moveId))));
     }
@@ -251,18 +251,12 @@ public class TestErpInvReportRendering extends JunitAutoTestCase {
         return graphQLEngine.executeRpc(ctx);
     }
 
-    private Long idOf(ApiResponse<?> resp) {
+    private String idOf(ApiResponse<?> resp) {
         assertEquals(0, resp.getStatus(), "generateMove/reverse 应成功，实际 code=" + resp.getCode());
         Object id = ((Map<?, ?>) resp.getData()).get("id");
-        return toLong(id);
+        return String.valueOf(id);
     }
 
-    private Long toLong(Object v) {
-        if (v instanceof Number) {
-            return ((Number) v).longValue();
-        }
-        return Long.parseLong(String.valueOf(v));
-    }
 
     private static BigDecimal bd(String v) {
         return new BigDecimal(v);

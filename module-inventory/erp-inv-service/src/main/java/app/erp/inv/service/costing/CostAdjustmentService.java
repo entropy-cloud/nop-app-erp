@@ -14,6 +14,7 @@ import app.erp.mfg.dao.entity.ErpMfgCostRollup;
 import app.erp.mfg.dao.entity.ErpMfgCostRollupLine;
 import app.erp.md.dao.entity.ErpMdMaterial;
 import io.nop.api.core.beans.query.QueryBean;
+import io.nop.api.core.convert.ConvertHelper;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.api.core.time.CoreMetrics;
 import io.nop.commons.util.StringHelper;
@@ -164,8 +165,8 @@ public class CostAdjustmentService {
         layer.setCurrencyId(line.getCurrencyId() != null ? line.getCurrencyId() : balance.getCurrencyId());
         LocalDate incomingDate = adjust.getBusinessDate() != null ? adjust.getBusinessDate() : CoreMetrics.today();
         layer.setIncomingDate(incomingDate);
-        // 负行 ID 哨兵：区别于正常移动单正 ID，reverse 据此精确删除本调整层
-        layer.setIncomingMoveId(-line.getId());
+        // 负行 ID 哨兵（M2.2 String 化后保持数值负号语义，BIGINT 列绑定）：区别于正常移动单 id，reverse 据此精确删除本调整层
+        layer.setIncomingMoveId(ErpInvConstants.negativeIdOf(line.getId()));
         layer.setAcctSchemaId(null);
         dao.saveEntity(layer);
     }
@@ -194,7 +195,7 @@ public class CostAdjustmentService {
     private void removeFifoAdjustLayer(ErpInvCostAdjustLine line) {
         IEntityDao<ErpInvCostLayer> dao = daoProvider.daoFor(ErpInvCostLayer.class);
         QueryBean q = new QueryBean();
-        q.addFilter(eq("incomingMoveId", -line.getId()));
+        q.addFilter(eq("incomingMoveId", ErpInvConstants.negativeIdOf(line.getId())));
         List<ErpInvCostLayer> layers = dao.findAllByQuery(q);
         for (ErpInvCostLayer layer : layers) {
             dao.deleteEntity(layer);
@@ -203,14 +204,16 @@ public class CostAdjustmentService {
 
     // ---------- standard revaluation rollup ----------
 
+    // A2 桥接（bridge-main-071/072，M0.2 登记册）：mfg ErpMfgCostRollup(RollupLine) id 列仍 Long（mfg 位次 14 未迁移），
+    // inv/md String id → ConvertHelper.toLong 桥接 setter 值，退役 owner M3.1
     private void publishFirmedRollup(ErpInvCostAdjust adjust, ErpInvCostAdjustLine line, BigDecimal newUnitCost) {
         ErpMdMaterial material = line.getMaterial();
-        Long uomId = material != null ? material.getUoMId() : null;
+        String uomId = material != null ? material.getUoMId() : null;
 
         IEntityDao<ErpMfgCostRollup> headerDao = daoProvider.daoFor(ErpMfgCostRollup.class);
         ErpMfgCostRollup header = headerDao.newEntity();
         header.setCode(buildRollupCode(adjust, line));
-        header.setOrgId(adjust.getOrgId());
+        header.setOrgId(ConvertHelper.toLong(adjust.getOrgId()));
         header.setBusinessDate(adjust.getBusinessDate() != null ? adjust.getBusinessDate() : CoreMetrics.today());
         header.orm_propValueByName("status", StandardCostResolver.STATUS_FIRMED);
         header.setRemark("由成本调整单自动发布");
@@ -220,12 +223,12 @@ public class CostAdjustmentService {
         ErpMfgCostRollupLine rollupLine = lineDao.newEntity();
         rollupLine.setCostRollupId(header.getId());
         rollupLine.setLineNo(1);
-        rollupLine.setMaterialId(line.getMaterialId());
-        rollupLine.setUoMId(uomId);
+        rollupLine.setMaterialId(ConvertHelper.toLong(line.getMaterialId()));
+        rollupLine.setUoMId(ConvertHelper.toLong(uomId));
         rollupLine.setUnitCost(ErpInvConfigs.roundCost(newUnitCost));
         rollupLine.setTotalCost(newUnitCost);
         rollupLine.setMaterialCost(newUnitCost);
-        rollupLine.setCurrencyId(line.getCurrencyId() != null ? line.getCurrencyId() : adjust.getCurrencyId());
+        rollupLine.setCurrencyId(ConvertHelper.toLong(line.getCurrencyId() != null ? line.getCurrencyId() : adjust.getCurrencyId()));
         lineDao.saveEntity(rollupLine);
     }
 
@@ -271,7 +274,7 @@ public class CostAdjustmentService {
 
     // ---------- helpers ----------
 
-    private ErpInvStockBalance findBalance(Long orgId, Long materialId, Long warehouseId, String batchNo) {
+    private ErpInvStockBalance findBalance(String orgId, String materialId, String warehouseId, String batchNo) {
         IEntityDao<ErpInvStockBalance> dao = daoProvider.daoFor(ErpInvStockBalance.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("orgId", orgId));
@@ -284,7 +287,7 @@ public class CostAdjustmentService {
         return list.isEmpty() ? null : list.get(0);
     }
 
-    private String resolveCostMethod(ErpInvStockBalance balance, Long materialId) {
+    private String resolveCostMethod(ErpInvStockBalance balance, String materialId) {
         if (balance.getCostMethod() != null) {
             return balance.getCostMethod();
         }

@@ -36,9 +36,9 @@ public class TestErpApsDemandPlanning extends JunitAutoTestCase {
     @Inject
     IOrmTemplate ormTemplate;
 
-    static final Long ORG_ID = 1601L;
-    static final Long MATERIAL_ID = 4601L;
-    static final Long WAREHOUSE_ID = 3601L;
+    static final String ORG_ID = "1601";
+    static final String MATERIAL_ID = "4601";
+    static final String WAREHOUSE_ID = "3601";
 
     @Test
     public void testAtpAvailableWhenStockSufficient() {
@@ -46,7 +46,7 @@ public class TestErpApsDemandPlanning extends JunitAutoTestCase {
 
         ApiResponse<?> resp = executeRpc(query, "ErpApsOperationOrder__checkFeasibility",
                 ApiRequest.build(Map.of(
-                        "materialId", String.valueOf(MATERIAL_ID),
+                        "materialId", MATERIAL_ID,
                         "qty", new BigDecimal("10"),
                         "desiredDate", "2026-07-30T00:00:00")));
 
@@ -62,7 +62,7 @@ public class TestErpApsDemandPlanning extends JunitAutoTestCase {
 
         ApiResponse<?> resp = executeRpc(query, "ErpApsOperationOrder__checkFeasibility",
                 ApiRequest.build(Map.of(
-                        "materialId", String.valueOf(MATERIAL_ID),
+                        "materialId", MATERIAL_ID,
                         "qty", new BigDecimal("10"),
                         "desiredDate", "2026-07-30T00:00:00")));
 
@@ -78,18 +78,18 @@ public class TestErpApsDemandPlanning extends JunitAutoTestCase {
 
         ApiResponse<?> resp = executeRpc(query, "ErpApsOperationOrder__earliestCompletionDate",
                 ApiRequest.build(Map.of(
-                        "materialId", String.valueOf(MATERIAL_ID),
+                        "materialId", MATERIAL_ID,
                         "qty", new BigDecimal("10"))));
 
         assertEquals(0, resp.getStatus());
         assertNotNull(resp.getData());
     }
 
-    private void seedStockBalance(Long materialId, BigDecimal available) {
+    private void seedStockBalance(String materialId, BigDecimal available) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpInvStockBalance> dao = daoProvider.daoFor(ErpInvStockBalance.class);
             ErpInvStockBalance b = new ErpInvStockBalance();
-            b.orm_propValueByName("id", 8000L + materialId);
+            b.orm_propValueByName("id", String.valueOf(8000L + Long.parseLong(materialId)));
             b.setOrgId(ORG_ID);
             b.setMaterialId(materialId);
             b.setWarehouseId(WAREHOUSE_ID);

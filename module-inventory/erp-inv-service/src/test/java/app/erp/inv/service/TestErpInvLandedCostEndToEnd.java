@@ -16,6 +16,7 @@ import io.nop.api.core.annotations.autotest.NopTestConfig;
 import io.nop.api.core.annotations.core.OptionalBoolean;
 import io.nop.api.core.beans.ApiRequest;
 import io.nop.api.core.beans.ApiResponse;
+import io.nop.api.core.convert.ConvertHelper;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.autotest.junit.JunitAutoTestCase;
 import io.nop.dao.api.IDaoProvider;
@@ -52,12 +53,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpInvLandedCostEndToEnd extends JunitAutoTestCase {
 
-    static final Long ORG_ID = 1601L;
-    static final Long WAREHOUSE_ID = 3601L;
-    static final Long LOCATION_ID = 4601L;
-    static final Long UOM_ID = 5601L;
-    static final Long CURRENCY_ID = 6601L;
-    static final Long ACCT_SCHEMA_ID = 7601L;
+    static final String ORG_ID = "1601";
+    static final String WAREHOUSE_ID = "3601";
+    static final String LOCATION_ID = "4601";
+    static final String UOM_ID = "5601";
+    static final String CURRENCY_ID = "6601";
+    static final String ACCT_SCHEMA_ID = "7601";
     static final String PERIOD_CODE = "2026-07";
     static final String VOUCHER_STATUS_POSTED = "POSTED";
 
@@ -77,8 +78,8 @@ public class TestErpInvLandedCostEndToEnd extends JunitAutoTestCase {
      */
     @Test
     public void testAllocateByAmount() {
-        Long matA = 2601L;
-        Long matB = 2602L;
+        String matA = "2601";
+        String matB = "2602";
         seedMaterial(matA, ErpInvConstants.COST_METHOD_MOVING_AVERAGE);
         seedMaterial(matB, ErpInvConstants.COST_METHOD_MOVING_AVERAGE);
         seedPeriodAndSubjects();
@@ -86,13 +87,13 @@ public class TestErpInvLandedCostEndToEnd extends JunitAutoTestCase {
         generateIncoming(matA, "PR-LC-001A", new BigDecimal("100"), new BigDecimal("10"));
         generateIncoming(matB, "PR-LC-001B", new BigDecimal("50"), new BigDecimal("10"));
 
-        Long receiveId = seedReceive("RCV-001", new BigDecimal("100"), new BigDecimal("1000"), matA,
-                new BigDecimal("50"), new BigDecimal("500"), matB);
+        String receiveId = String.valueOf(seedReceive("RCV-001", new BigDecimal("100"), new BigDecimal("1000"), matA,
+                new BigDecimal("50"), new BigDecimal("500"), matB));
 
-        Long landedCostId = createLandedCost("LC-001", receiveId, ErpInvConstants.ALLOC_METHOD_BY_AMOUNT,
+        String landedCostId = createLandedCost("LC-001", receiveId, ErpInvConstants.ALLOC_METHOD_BY_AMOUNT,
                 new String[][]{{"FREIGHT", "150"}, {"INSURANCE", "30"}}, null);
 
-        Long approvedId = approve(landedCostId);
+        String approvedId = approve(landedCostId);
         assertNotNull(approvedId);
 
         ErpInvStockBalance balA = findBalance(matA);
@@ -124,8 +125,8 @@ public class TestErpInvLandedCostEndToEnd extends JunitAutoTestCase {
      */
     @Test
     public void testAllocateByQuantity() {
-        Long matA = 2603L;
-        Long matB = 2604L;
+        String matA = "2603";
+        String matB = "2604";
         seedMaterial(matA, ErpInvConstants.COST_METHOD_MOVING_AVERAGE);
         seedMaterial(matB, ErpInvConstants.COST_METHOD_MOVING_AVERAGE);
         seedPeriodAndSubjects();
@@ -133,10 +134,10 @@ public class TestErpInvLandedCostEndToEnd extends JunitAutoTestCase {
         generateIncoming(matA, "PR-LC-002A", new BigDecimal("100"), new BigDecimal("10"));
         generateIncoming(matB, "PR-LC-002B", new BigDecimal("50"), new BigDecimal("10"));
 
-        Long receiveId = seedReceive("RCV-002", new BigDecimal("100"), new BigDecimal("1000"), matA,
-                new BigDecimal("50"), new BigDecimal("500"), matB);
+        String receiveId = String.valueOf(seedReceive("RCV-002", new BigDecimal("100"), new BigDecimal("1000"), matA,
+                new BigDecimal("50"), new BigDecimal("500"), matB));
 
-        Long landedCostId = createLandedCost("LC-002", receiveId, ErpInvConstants.ALLOC_METHOD_BY_QUANTITY,
+        String landedCostId = createLandedCost("LC-002", receiveId, ErpInvConstants.ALLOC_METHOD_BY_QUANTITY,
                 new String[][]{{"FREIGHT", "180"}}, null);
 
         approve(landedCostId);
@@ -158,18 +159,18 @@ public class TestErpInvLandedCostEndToEnd extends JunitAutoTestCase {
      */
     @Test
     public void testMultipleAPPARTNERS() {
-        Long matA = 2605L;
+        String matA = "2605";
         seedMaterial(matA, ErpInvConstants.COST_METHOD_MOVING_AVERAGE);
         seedPeriodAndSubjects();
 
         generateIncoming(matA, "PR-LC-003A", new BigDecimal("100"), new BigDecimal("10"));
 
-        Long logisticsPartnerId = 8001L;
-        Long insurancePartnerId = 8002L;
+        String logisticsPartnerId = "8001";
+        String insurancePartnerId = "8002";
 
-        Long receiveId = seedReceiveSingle("RCV-003", new BigDecimal("100"), new BigDecimal("1000"), matA);
+        String receiveId = String.valueOf(seedReceiveSingle("RCV-003", new BigDecimal("100"), new BigDecimal("1000"), matA));
 
-        Long landedCostId = createLandedCostWithPartners("LC-003", receiveId,
+        String landedCostId = createLandedCostWithPartners("LC-003", receiveId,
                 ErpInvConstants.ALLOC_METHOD_BY_AMOUNT,
                 new Object[][]{
                         {"FREIGHT", new BigDecimal("150"), logisticsPartnerId},
@@ -195,19 +196,19 @@ public class TestErpInvLandedCostEndToEnd extends JunitAutoTestCase {
      */
     @Test
     public void testDuplicateAllocationRejected() {
-        Long matA = 2606L;
+        String matA = "2606";
         seedMaterial(matA, ErpInvConstants.COST_METHOD_MOVING_AVERAGE);
         seedPeriodAndSubjects();
 
         generateIncoming(matA, "PR-LC-004A", new BigDecimal("100"), new BigDecimal("10"));
 
-        Long receiveId = seedReceiveSingle("RCV-004", new BigDecimal("100"), new BigDecimal("1000"), matA);
+        String receiveId = String.valueOf(seedReceiveSingle("RCV-004", new BigDecimal("100"), new BigDecimal("1000"), matA));
 
-        Long lc1 = createLandedCost("LC-004A", receiveId, ErpInvConstants.ALLOC_METHOD_BY_AMOUNT,
+        String lc1 = createLandedCost("LC-004A", receiveId, ErpInvConstants.ALLOC_METHOD_BY_AMOUNT,
                 new String[][]{{"FREIGHT", "100"}}, null);
         approve(lc1);
 
-        Long lc2 = createLandedCost("LC-004B", receiveId, ErpInvConstants.ALLOC_METHOD_BY_AMOUNT,
+        String lc2 = createLandedCost("LC-004B", receiveId, ErpInvConstants.ALLOC_METHOD_BY_AMOUNT,
                 new String[][]{{"INSURANCE", "50"}}, null);
         ApiResponse<?> resp = approveResp(lc2);
         assertEquals(ErpInvErrors.ERR_LANDED_COST_ALREADY_ALLOCATED.getErrorCode(), resp.getCode(),
@@ -216,8 +217,8 @@ public class TestErpInvLandedCostEndToEnd extends JunitAutoTestCase {
 
     // ---------- 到岸成本单创建 ----------
 
-    private Long createLandedCost(String code, Long receiveId, String allocationMethod,
-                                    String[][] costElements, Long apPartnerId) {
+    private String createLandedCost(String code, String receiveId, String allocationMethod,
+                                    String[][] costElements, String apPartnerId) {
         Object[][] elements = new Object[costElements.length][];
         for (int i = 0; i < costElements.length; i++) {
             elements[i] = new Object[]{
@@ -229,16 +230,16 @@ public class TestErpInvLandedCostEndToEnd extends JunitAutoTestCase {
         return createLandedCostWithPartners(code, receiveId, allocationMethod, elements);
     }
 
-    private Long createLandedCostWithPartners(String code, Long receiveId, String allocationMethod,
+    private String createLandedCostWithPartners(String code, String receiveId, String allocationMethod,
                                                 Object[][] costElements) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpInvLandedCost> headDao = daoProvider.daoFor(ErpInvLandedCost.class);
             ErpInvLandedCost head = new ErpInvLandedCost();
-            head.orm_propValueByName("id", (long) code.hashCode());
+            head.orm_propValueByName("id", String.valueOf(code.hashCode()));
             head.setCode(code);
             head.setOrgId(ORG_ID);
             head.setReceiveId(receiveId);
-            head.setSupplierId(7001L);
+            head.setSupplierId("7001");
             head.setCurrencyId(CURRENCY_ID);
             head.setExchangeRate(BigDecimal.ONE);
             BigDecimal total = BigDecimal.ZERO;
@@ -257,21 +258,21 @@ public class TestErpInvLandedCostEndToEnd extends JunitAutoTestCase {
             int lineNo = 1;
             for (Object[] e : costElements) {
                 ErpInvLandedCostLine line = new ErpInvLandedCostLine();
-                line.orm_propValueByName("id", (long) code.hashCode() * 100 + lineNo);
-                line.setLandedCostId((long) code.hashCode());
+                line.orm_propValueByName("id", String.valueOf(code.hashCode() * 100 + lineNo));
+                line.setLandedCostId(String.valueOf(code.hashCode()));
                 line.setLineNo(lineNo++);
                 line.orm_propValueByName("costElement", e[0]);
                 line.orm_propValueByName("amount", e[1]);
                 if (e[2] != null) {
-                    line.setApPartnerId((Long) e[2]);
+                    line.setApPartnerId((String) e[2]);
                 }
                 lineDao.saveEntity(line);
             }
         });
-        return (long) code.hashCode();
+        return String.valueOf(code.hashCode());
     }
 
-    private Long approve(Long id) {
+    private String approve(String id) {
         ApiResponse<?> resp = approveResp(id);
         if (resp.getData() == null) {
             throw new RuntimeException("approve failed: code=" + resp.getCode() + ", msg=" + resp.getMsg());
@@ -279,25 +280,26 @@ public class TestErpInvLandedCostEndToEnd extends JunitAutoTestCase {
         return idOf(resp);
     }
 
-    private ApiResponse<?> approveResp(Long id) {
+    private ApiResponse<?> approveResp(String id) {
         return executeRpc(mutation, "ErpInvLandedCost__approve",
                 ApiRequest.build(Map.of("id", id)));
     }
 
     // ---------- 采购入库单 seed ----------
 
-    private Long seedReceive(String code, BigDecimal qtyA, BigDecimal amountA, Long matA,
-                              BigDecimal qtyB, BigDecimal amountB, Long matB) {
+    // A3 桥接（bridge-test-120）：pur ErpPurReceive(ReceiveLine) 列仍 Long（M2.5 未迁移），String 常量/参数 → toLong seed 值
+    private Long seedReceive(String code, BigDecimal qtyA, BigDecimal amountA, String matA,
+                              BigDecimal qtyB, BigDecimal amountB, String matB) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpPurReceive> recvDao = daoProvider.daoFor(ErpPurReceive.class);
             ErpPurReceive recv = new ErpPurReceive();
             recv.orm_propValueByName("id", (long) code.hashCode());
             recv.setCode(code);
-            recv.setOrgId(ORG_ID);
+            recv.setOrgId(ConvertHelper.toLong(ORG_ID));
             recv.setSupplierId(7001L);
-            recv.setWarehouseId(WAREHOUSE_ID);
+            recv.setWarehouseId(ConvertHelper.toLong(WAREHOUSE_ID));
             recv.setBusinessDate(LocalDate.of(2026, 7, 1));
-            recv.setCurrencyId(CURRENCY_ID);
+            recv.setCurrencyId(ConvertHelper.toLong(CURRENCY_ID));
             recv.setExchangeRate(BigDecimal.ONE);
             recv.setApproveStatus("APPROVED");
             recv.setDocStatus(ErpInvConstants.DOC_STATUS_DONE);
@@ -309,40 +311,40 @@ public class TestErpInvLandedCostEndToEnd extends JunitAutoTestCase {
             line1.orm_propValueByName("id", (long) code.hashCode() * 10 + 1);
             line1.setReceiveId((long) code.hashCode());
             line1.setLineNo(1);
-            line1.setMaterialId(matA);
-            line1.setWarehouseId(WAREHOUSE_ID);
+            line1.setMaterialId(ConvertHelper.toLong(matA));
+            line1.setWarehouseId(ConvertHelper.toLong(WAREHOUSE_ID));
             line1.setQuantity(qtyA);
             line1.orm_propValueByName("unitPrice", amountA.divide(qtyA, 4, java.math.RoundingMode.HALF_UP));
             line1.orm_propValueByName("amount", amountA);
-            line1.setUoMId(UOM_ID);
+            line1.setUoMId(ConvertHelper.toLong(UOM_ID));
             lineDao.saveEntity(line1);
 
             ErpPurReceiveLine line2 = new ErpPurReceiveLine();
             line2.orm_propValueByName("id", (long) code.hashCode() * 10 + 2);
             line2.setReceiveId((long) code.hashCode());
             line2.setLineNo(2);
-            line2.setMaterialId(matB);
-            line2.setWarehouseId(WAREHOUSE_ID);
+            line2.setMaterialId(ConvertHelper.toLong(matB));
+            line2.setWarehouseId(ConvertHelper.toLong(WAREHOUSE_ID));
             line2.setQuantity(qtyB);
             line2.orm_propValueByName("unitPrice", amountB.divide(qtyB, 4, java.math.RoundingMode.HALF_UP));
             line2.orm_propValueByName("amount", amountB);
-            line2.setUoMId(UOM_ID);
+            line2.setUoMId(ConvertHelper.toLong(UOM_ID));
             lineDao.saveEntity(line2);
         });
         return (long) code.hashCode();
     }
 
-    private Long seedReceiveSingle(String code, BigDecimal qty, BigDecimal amount, Long matId) {
+    private Long seedReceiveSingle(String code, BigDecimal qty, BigDecimal amount, String matId) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpPurReceive> recvDao = daoProvider.daoFor(ErpPurReceive.class);
             ErpPurReceive recv = new ErpPurReceive();
             recv.orm_propValueByName("id", (long) code.hashCode());
             recv.setCode(code);
-            recv.setOrgId(ORG_ID);
+            recv.setOrgId(ConvertHelper.toLong(ORG_ID));
             recv.setSupplierId(7001L);
-            recv.setWarehouseId(WAREHOUSE_ID);
+            recv.setWarehouseId(ConvertHelper.toLong(WAREHOUSE_ID));
             recv.setBusinessDate(LocalDate.of(2026, 7, 1));
-            recv.setCurrencyId(CURRENCY_ID);
+            recv.setCurrencyId(ConvertHelper.toLong(CURRENCY_ID));
             recv.setExchangeRate(BigDecimal.ONE);
             recv.setApproveStatus("APPROVED");
             recv.setDocStatus(ErpInvConstants.DOC_STATUS_DONE);
@@ -354,12 +356,12 @@ public class TestErpInvLandedCostEndToEnd extends JunitAutoTestCase {
             line1.orm_propValueByName("id", (long) code.hashCode() * 10 + 1);
             line1.setReceiveId((long) code.hashCode());
             line1.setLineNo(1);
-            line1.setMaterialId(matId);
-            line1.setWarehouseId(WAREHOUSE_ID);
+            line1.setMaterialId(ConvertHelper.toLong(matId));
+            line1.setWarehouseId(ConvertHelper.toLong(WAREHOUSE_ID));
             line1.setQuantity(qty);
             line1.orm_propValueByName("unitPrice", amount.divide(qty, 4, java.math.RoundingMode.HALF_UP));
             line1.orm_propValueByName("amount", amount);
-            line1.setUoMId(UOM_ID);
+            line1.setUoMId(ConvertHelper.toLong(UOM_ID));
             lineDao.saveEntity(line1);
         });
         return (long) code.hashCode();
@@ -367,7 +369,7 @@ public class TestErpInvLandedCostEndToEnd extends JunitAutoTestCase {
 
     // ---------- 移动单生成（建立余额） ----------
 
-    private void generateIncoming(Long materialId, String billCode, BigDecimal qty, BigDecimal unitCost) {
+    private void generateIncoming(String materialId, String billCode, BigDecimal qty, BigDecimal unitCost) {
         Map<String, Object> req = baseReq(ErpInvConstants.MOVE_TYPE_INCOMING);
         req.put("destWarehouseId", WAREHOUSE_ID);
         req.put("destLocationId", LOCATION_ID);
@@ -387,7 +389,7 @@ public class TestErpInvLandedCostEndToEnd extends JunitAutoTestCase {
         return req;
     }
 
-    private Map<String, Object> line(Long materialId, BigDecimal qty, BigDecimal unitCost) {
+    private Map<String, Object> line(String materialId, BigDecimal qty, BigDecimal unitCost) {
         Map<String, Object> line = new LinkedHashMap<>();
         line.put("materialId", materialId);
         line.put("uoMId", UOM_ID);
@@ -406,14 +408,14 @@ public class TestErpInvLandedCostEndToEnd extends JunitAutoTestCase {
         return graphQLEngine.executeRpc(ctx);
     }
 
-    private Long idOf(ApiResponse<?> resp) {
+    private String idOf(ApiResponse<?> resp) {
         Object id = ((Map<?, ?>) resp.getData()).get("id");
-        return id instanceof Number ? ((Number) id).longValue() : Long.parseLong(String.valueOf(id));
+        return String.valueOf(id);
     }
 
     // ---------- 查询 ----------
 
-    private ErpInvStockBalance findBalance(Long materialId) {
+    private ErpInvStockBalance findBalance(String materialId) {
         IEntityDao<ErpInvStockBalance> dao = daoProvider.daoFor(ErpInvStockBalance.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("materialId", materialId));
@@ -433,7 +435,7 @@ public class TestErpInvLandedCostEndToEnd extends JunitAutoTestCase {
         return daoProvider.daoFor(ErpFinVoucher.class).getEntityById(links.get(0).getVoucherId());
     }
 
-    private ErpFinVoucherLine findVoucherLine(Long voucherId, String subjectCode, String dcDirection) {
+    private ErpFinVoucherLine findVoucherLine(String voucherId, String subjectCode, String dcDirection) {
         IEntityDao<ErpFinVoucherLine> dao = daoProvider.daoFor(ErpFinVoucherLine.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("voucherId", voucherId));
@@ -442,7 +444,7 @@ public class TestErpInvLandedCostEndToEnd extends JunitAutoTestCase {
         return list.stream().filter(l -> dcDirection.equals(l.getDcDirection())).findFirst().orElse(null);
     }
 
-    private List<ErpFinVoucherLine> findVoucherLines(Long voucherId, String subjectCode) {
+    private List<ErpFinVoucherLine> findVoucherLines(String voucherId, String subjectCode) {
         IEntityDao<ErpFinVoucherLine> dao = daoProvider.daoFor(ErpFinVoucherLine.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("voucherId", voucherId));
@@ -452,7 +454,7 @@ public class TestErpInvLandedCostEndToEnd extends JunitAutoTestCase {
 
     // ---------- seed ----------
 
-    private void seedMaterial(Long id, String costMethod) {
+    private void seedMaterial(String id, String costMethod) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMdMaterial> dao = daoProvider.daoFor(ErpMdMaterial.class);
             ErpMdMaterial material = new ErpMdMaterial();

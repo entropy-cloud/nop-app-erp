@@ -41,12 +41,12 @@ import static org.junit.jupiter.api.Assertions.assertNull;
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpInvCostingDispatch extends JunitAutoTestCase {
 
-    static final Long ORG_ID = 1101L;
-    static final Long WAREHOUSE_ID = 3101L;
-    static final Long LOCATION_ID = 4101L;
-    static final Long UOM_ID = 5101L;
-    static final Long CURRENCY_ID = 6101L;
-    static final Long ACCT_SCHEMA_ID = 7101L;
+    static final String ORG_ID = "1101";
+    static final String WAREHOUSE_ID = "3101";
+    static final String LOCATION_ID = "4101";
+    static final String UOM_ID = "5101";
+    static final String CURRENCY_ID = "6101";
+    static final String ACCT_SCHEMA_ID = "7101";
 
     @Inject
     IDaoProvider daoProvider;
@@ -57,7 +57,7 @@ public class TestErpInvCostingDispatch extends JunitAutoTestCase {
 
     @Test
     public void testMaterialConfiguredMovingAverageUnchangedBehavior() {
-        Long materialId = 2101L;
+        String materialId = "2101";
         seedMaterial(materialId, ErpInvConstants.COST_METHOD_MOVING_AVERAGE);
 
         generateIncoming(materialId, "PR-DISP-001", new BigDecimal("10"), new BigDecimal("6"));
@@ -75,7 +75,7 @@ public class TestErpInvCostingDispatch extends JunitAutoTestCase {
 
     @Test
     public void testMaterialCostMethodNullFallsBackToAcctSchema() {
-        Long materialId = 2102L;
+        String materialId = "2102";
         seedAcctSchema(ACCT_SCHEMA_ID, ErpInvConstants.COST_METHOD_MOVING_AVERAGE);
         seedMaterial(materialId, null);
 
@@ -87,7 +87,7 @@ public class TestErpInvCostingDispatch extends JunitAutoTestCase {
 
     @Test
     public void testCostingDisabledFallbackToMovingAverage() {
-        Long materialId = 2103L;
+        String materialId = "2103";
         seedMaterial(materialId, ErpInvConstants.COST_METHOD_MOVING_AVERAGE);
 
         AppConfigProvider.set(ErpInvConstants.CONFIG_COSTING_ENABLED, "false");
@@ -116,7 +116,7 @@ public class TestErpInvCostingDispatch extends JunitAutoTestCase {
     @Test
     public void testUnrecognizedCostMethodFallsBackToDefault() {
         // 物料配未识别码值 → resolver 不识别 → 回退默认 MOVING_AVERAGE，记账不中断
-        Long materialId = 2104L;
+        String materialId = "2104";
         seedMaterial(materialId, "UNRECOGNIZED_METHOD");
 
         generateIncoming(materialId, "PR-DISP-005", new BigDecimal("3"), new BigDecimal("2"));
@@ -127,7 +127,7 @@ public class TestErpInvCostingDispatch extends JunitAutoTestCase {
 
     @Test
     public void testInternalTransferCarriesCostAcrossWarehouses() {
-        Long materialId = 2105L;
+        String materialId = "2105";
         seedMaterial(materialId, ErpInvConstants.COST_METHOD_MOVING_AVERAGE);
 
         generateIncoming(materialId, "PR-DISP-006", new BigDecimal("10"), new BigDecimal("5"));
@@ -150,7 +150,7 @@ public class TestErpInvCostingDispatch extends JunitAutoTestCase {
 
     // ---------- helpers ----------
 
-    private void generateIncoming(Long materialId, String billCode, BigDecimal qty, BigDecimal unitCost) {
+    private void generateIncoming(String materialId, String billCode, BigDecimal qty, BigDecimal unitCost) {
         Map<String, Object> req = baseReq(materialId, ErpInvConstants.MOVE_TYPE_INCOMING);
         req.put("destWarehouseId", WAREHOUSE_ID);
         req.put("destLocationId", LOCATION_ID);
@@ -164,7 +164,7 @@ public class TestErpInvCostingDispatch extends JunitAutoTestCase {
         return executeRpc(mutation, "ErpInvStockMove__generateMove", ApiRequest.build(Map.of("request", req)));
     }
 
-    private Map<String, Object> baseReq(Long materialId, String moveType) {
+    private Map<String, Object> baseReq(String materialId, String moveType) {
         Map<String, Object> req = new LinkedHashMap<>();
         req.put("moveType", moveType);
         req.put("orgId", ORG_ID);
@@ -174,7 +174,7 @@ public class TestErpInvCostingDispatch extends JunitAutoTestCase {
         return req;
     }
 
-    private Map<String, Object> line(Long materialId, BigDecimal qty, BigDecimal unitCost) {
+    private Map<String, Object> line(String materialId, BigDecimal qty, BigDecimal unitCost) {
         Map<String, Object> line = new LinkedHashMap<>();
         line.put("materialId", materialId);
         line.put("uoMId", UOM_ID);
@@ -191,7 +191,7 @@ public class TestErpInvCostingDispatch extends JunitAutoTestCase {
         return graphQLEngine.executeRpc(ctx);
     }
 
-    private ErpInvStockBalance findBalance(Long materialId) {
+    private ErpInvStockBalance findBalance(String materialId) {
         IEntityDao<ErpInvStockBalance> dao = daoProvider.daoFor(ErpInvStockBalance.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("materialId", materialId));
@@ -200,7 +200,7 @@ public class TestErpInvCostingDispatch extends JunitAutoTestCase {
         return list.isEmpty() ? null : list.get(0);
     }
 
-    private void seedMaterial(Long id, String costMethod) {
+    private void seedMaterial(String id, String costMethod) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMdMaterial> dao = daoProvider.daoFor(ErpMdMaterial.class);
             ErpMdMaterial material = new ErpMdMaterial();
@@ -215,7 +215,7 @@ public class TestErpInvCostingDispatch extends JunitAutoTestCase {
         });
     }
 
-    private void seedAcctSchema(Long id, String costingMethod) {
+    private void seedAcctSchema(String id, String costingMethod) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMdAcctSchema> dao = daoProvider.daoFor(ErpMdAcctSchema.class);
             ErpMdAcctSchema schema = new ErpMdAcctSchema();

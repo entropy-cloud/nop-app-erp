@@ -29,7 +29,7 @@ public class CostMethodResolver {
      *
      * <p>注：accountSchemaId 优先取行级（如有），回退调用方提供的账套；二者皆无时直接走配置默认。
      */
-    public String resolve(ErpInvStockMoveLine line, Long acctSchemaId) {
+    public String resolve(ErpInvStockMoveLine line, String acctSchemaId) {
         if (!isCostingEnabled()) {
             return ErpInvConstants.COST_METHOD_MOVING_AVERAGE;
         }
@@ -54,7 +54,7 @@ public class CostMethodResolver {
                 || Objects.equals(method, ErpInvConstants.COST_METHOD_BATCH);
     }
 
-    private String readMaterialCostMethod(Long materialId) {
+    private String readMaterialCostMethod(String materialId) {
         if (materialId == null) {
             return null;
         }
@@ -63,7 +63,7 @@ public class CostMethodResolver {
         return material != null ? material.getCostMethod() : null;
     }
 
-    private String readAcctSchemaCostingMethod(Long acctSchemaId) {
+    private String readAcctSchemaCostingMethod(String acctSchemaId) {
         if (acctSchemaId == null) {
             return null;
         }

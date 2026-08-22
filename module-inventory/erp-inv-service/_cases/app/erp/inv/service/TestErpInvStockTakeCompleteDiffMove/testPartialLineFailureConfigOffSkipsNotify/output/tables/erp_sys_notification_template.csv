@@ -1,0 +1,2 @@
+_chgType,ID,NOTIFICATION_TYPE,NAME,CHANNEL_SET,SUBJECT_TPL,BODY_TPL,RECIPIENT_RESOLVER,RECIPIENT_CONFIG,MERGE_WINDOW_SECONDS,MERGE_STRATEGY,STATUS,REMARK,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
+A,7106,inv.stocktake-diff-generation-failed,盘点差异移动单生成失败告警,IN_APP,盘点差异移动单生成失败: ${takeCode},盘点单 ${takeCode} 行 ${lineNo} 差异移动单生成失败：${errorMessage},USER_LIST,"{""userIds"":[""inv-stocktake-recipient""]}",60,MERGE_BY_USER_TYPE,ACTIVE,,@var:ErpSysNotificationTemplate@delVersion,0,autotest-ref,*,autotest-ref,*

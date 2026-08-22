@@ -61,8 +61,8 @@ public class PurchasePriceVarianceAcctDocProvider implements IErpFinAcctDocProvi
     public List<VoucherFact> createFacts(PostingEvent event, AcctDocContext ctx) {
         BigDecimal amount = readAmount(event);
         String direction = readDirection(event);
-        Long materialId = (Long) event.getBillData().get(KEY_MATERIAL_ID);
-        Long warehouseId = (Long) event.getBillData().get(KEY_WAREHOUSE_ID);
+        String materialId = (String) event.getBillData().get(KEY_MATERIAL_ID);
+        String warehouseId = (String) event.getBillData().get(KEY_WAREHOUSE_ID);
 
         List<VoucherFact> facts = new ArrayList<>(2);
         if (DIRECTION_DEBIT.equals(direction)) {
@@ -80,7 +80,7 @@ public class PurchasePriceVarianceAcctDocProvider implements IErpFinAcctDocProvi
     }
 
     private VoucherFact fact(String subjectCode, String subjectName, String dcDirection, BigDecimal amount,
-                             Long materialId, Long warehouseId, PostingEvent event, String accountKey) {
+                             String materialId, String warehouseId, PostingEvent event, String accountKey) {
         VoucherFact fact = new VoucherFact();
         fact.setSubjectCode(subjectCode);
         fact.setSubjectName(subjectName);

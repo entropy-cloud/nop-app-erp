@@ -30,7 +30,7 @@ public class ErpInvStockMoveReverseProcessor {
     @Inject
     ErpInvStockMoveGenerateMoveProcessor generateMoveProcessor;
 
-    public ErpInvStockMove reverse(Long moveId, IServiceContext context) {
+    public ErpInvStockMove reverse(String moveId, IServiceContext context) {
         ErpInvStockMove original = facade.requireMove(moveId, context);
         if (original.getDocStatus() == null
                 || !Objects.equals(original.getDocStatus(), ErpInvConstants.DOC_STATUS_DONE)) {

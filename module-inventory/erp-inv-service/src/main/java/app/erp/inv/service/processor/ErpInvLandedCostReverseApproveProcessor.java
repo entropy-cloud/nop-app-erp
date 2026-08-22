@@ -24,8 +24,7 @@ import java.util.List;
  * docStatus=CANCELLED + sync CostAdjust entity) → reload.
  * Domain logic via facade protected helpers (single source of truth — accounting rules not copied).
  * Dormant until R5.8 rewire（BizModel Java 直调 facade.reverseApprove，不经 xbiz 委托链）。
- * Long signature boundary: base class public method takes String id, facade takes Long id,
- * conversion at call boundary via Long.valueOf(id).
+ * id String 边界：基类与 facade 均为 String id（M2.2 inv id String 化后无转换边界）。
  */
 public class ErpInvLandedCostReverseApproveProcessor extends AbstractReverseApproveProcessor<ErpInvLandedCost> {
 
@@ -37,8 +36,7 @@ public class ErpInvLandedCostReverseApproveProcessor extends AbstractReverseAppr
 
     @Override
     public ErpInvLandedCost reverseApprove(String id, IServiceContext context) {
-        Long lid = Long.valueOf(id);
-        ErpInvLandedCost landedCost = processor.requireLandedCost(lid, context);
+        ErpInvLandedCost landedCost = processor.requireLandedCost(id, context);
         processor.validateCanReverse(landedCost, context);
         // 固定来源态守卫委托 StateMachine Bean（非法边 Bean 抛 common 层码，映射为领域码 + common 作 cause；
         // docStatus 无专属 illegal-transition 码，映射到既有 generic ERR_ILLEGAL_STATUS_TRANSITION，
@@ -59,7 +57,7 @@ public class ErpInvLandedCostReverseApproveProcessor extends AbstractReverseAppr
 
         processor.doReverseApprove(landedCost, costAdjust, adjustLines, context);
 
-        return processor.reload(lid);
+        return processor.reload(id);
     }
 
     @Override

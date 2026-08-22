@@ -19,20 +19,20 @@ import java.util.List;
  */
 public class StockMoveRequest {
     private String moveType;
-    private Long orgId;
+    private String orgId;
     private LocalDate businessDate;
-    private Long sourceWarehouseId;
-    private Long sourceLocationId;
-    private Long destWarehouseId;
-    private Long destLocationId;
+    private String sourceWarehouseId;
+    private String sourceLocationId;
+    private String destWarehouseId;
+    private String destLocationId;
     private String relatedBillType;
     private String relatedBillCode;
-    private Long acctSchemaId;
-    private Long currencyId;
+    private String acctSchemaId;
+    private String currencyId;
     private String code;
     private String remark;
-    private Long originMoveId;
-    private Long originReturnedMoveId;
+    private String originMoveId;
+    private String originReturnedMoveId;
     private List<StockMoveLineRequest> lines;
 
     public String getMoveType() {
@@ -43,11 +43,11 @@ public class StockMoveRequest {
         this.moveType = moveType;
     }
 
-    public Long getOrgId() {
+    public String getOrgId() {
         return orgId;
     }
 
-    public void setOrgId(Long orgId) {
+    public void setOrgId(String orgId) {
         this.orgId = orgId;
     }
 
@@ -59,35 +59,35 @@ public class StockMoveRequest {
         this.businessDate = businessDate;
     }
 
-    public Long getSourceWarehouseId() {
+    public String getSourceWarehouseId() {
         return sourceWarehouseId;
     }
 
-    public void setSourceWarehouseId(Long sourceWarehouseId) {
+    public void setSourceWarehouseId(String sourceWarehouseId) {
         this.sourceWarehouseId = sourceWarehouseId;
     }
 
-    public Long getSourceLocationId() {
+    public String getSourceLocationId() {
         return sourceLocationId;
     }
 
-    public void setSourceLocationId(Long sourceLocationId) {
+    public void setSourceLocationId(String sourceLocationId) {
         this.sourceLocationId = sourceLocationId;
     }
 
-    public Long getDestWarehouseId() {
+    public String getDestWarehouseId() {
         return destWarehouseId;
     }
 
-    public void setDestWarehouseId(Long destWarehouseId) {
+    public void setDestWarehouseId(String destWarehouseId) {
         this.destWarehouseId = destWarehouseId;
     }
 
-    public Long getDestLocationId() {
+    public String getDestLocationId() {
         return destLocationId;
     }
 
-    public void setDestLocationId(Long destLocationId) {
+    public void setDestLocationId(String destLocationId) {
         this.destLocationId = destLocationId;
     }
 
@@ -107,19 +107,19 @@ public class StockMoveRequest {
         this.relatedBillCode = relatedBillCode;
     }
 
-    public Long getAcctSchemaId() {
+    public String getAcctSchemaId() {
         return acctSchemaId;
     }
 
-    public void setAcctSchemaId(Long acctSchemaId) {
+    public void setAcctSchemaId(String acctSchemaId) {
         this.acctSchemaId = acctSchemaId;
     }
 
-    public Long getCurrencyId() {
+    public String getCurrencyId() {
         return currencyId;
     }
 
-    public void setCurrencyId(Long currencyId) {
+    public void setCurrencyId(String currencyId) {
         this.currencyId = currencyId;
     }
 
@@ -139,19 +139,19 @@ public class StockMoveRequest {
         this.remark = remark;
     }
 
-    public Long getOriginMoveId() {
+    public String getOriginMoveId() {
         return originMoveId;
     }
 
-    public void setOriginMoveId(Long originMoveId) {
+    public void setOriginMoveId(String originMoveId) {
         this.originMoveId = originMoveId;
     }
 
-    public Long getOriginReturnedMoveId() {
+    public String getOriginReturnedMoveId() {
         return originReturnedMoveId;
     }
 
-    public void setOriginReturnedMoveId(Long originReturnedMoveId) {
+    public void setOriginReturnedMoveId(String originReturnedMoveId) {
         this.originReturnedMoveId = originReturnedMoveId;
     }
 

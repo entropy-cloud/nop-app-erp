@@ -19,22 +19,22 @@
             <cols>
 
                 <!--ID-->
-                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="id" mandatory="true" sortable="true"/>
 
                 <!--业务组织-->
-                <col id="orgId" ui:number="true" sortable="true"/>
+                <col id="orgId" sortable="true"/>
 
                 <!--物料-->
-                <col id="materialId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="materialId" mandatory="true" sortable="true"/>
 
                 <!--SKU-->
-                <col id="skuId" ui:number="true" sortable="true"/>
+                <col id="skuId" sortable="true"/>
 
                 <!--仓库-->
-                <col id="warehouseId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="warehouseId" mandatory="true" sortable="true"/>
 
                 <!--库位-->
-                <col id="locationId" ui:number="true" sortable="true"/>
+                <col id="locationId" sortable="true"/>
 
                 <!--批号-->
                 <col id="batchNo" sortable="true"/>
@@ -61,7 +61,7 @@
                 <col id="totalCost" ui:number="true" sortable="true"/>
 
                 <!--币种-->
-                <col id="currencyId" ui:number="true" sortable="true"/>
+                <col id="currencyId" sortable="true"/>
 
                 <!--逻辑删除版本-->
                 <col id="delVersion" mandatory="true" ui:number="true" sortable="true"/>
@@ -79,7 +79,7 @@
                 <col id="updateTime" mandatory="true" sortable="true"/>
 
                 <!--所有权往来单位-->
-                <col id="ownerId" ui:number="true" sortable="true"/>
+                <col id="ownerId" sortable="true"/>
 
                 <!--所有权类型-->
                 <col id="ownershipType" sortable="true"/>

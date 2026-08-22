@@ -10,19 +10,19 @@ import java.util.List;
  * 由库存侧计算（调用方无需预读余额）；库存余额 reservedQuantity 同步增加。
  */
 public class ReservationCreateRequest {
-    private Long orgId;
+    private String orgId;
     private LocalDate businessDate;
     private String sourceBillType;
     private String sourceBillCode;
-    private Long reservedForPartnerId;
+    private String reservedForPartnerId;
     private String remark;
     private List<ReservationLineRequest> lines;
 
-    public Long getOrgId() {
+    public String getOrgId() {
         return orgId;
     }
 
-    public void setOrgId(Long orgId) {
+    public void setOrgId(String orgId) {
         this.orgId = orgId;
     }
 
@@ -50,11 +50,11 @@ public class ReservationCreateRequest {
         this.sourceBillCode = sourceBillCode;
     }
 
-    public Long getReservedForPartnerId() {
+    public String getReservedForPartnerId() {
         return reservedForPartnerId;
     }
 
-    public void setReservedForPartnerId(Long reservedForPartnerId) {
+    public void setReservedForPartnerId(String reservedForPartnerId) {
         this.reservedForPartnerId = reservedForPartnerId;
     }
 

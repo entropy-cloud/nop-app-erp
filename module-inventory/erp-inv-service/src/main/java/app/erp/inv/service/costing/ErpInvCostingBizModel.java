@@ -35,7 +35,7 @@ public class ErpInvCostingBizModel implements IErpInvCostingBiz {
 
     @Override
     @BizMutation
-    public CostingRecloseReport reclosePeriodCosts(@Name("periodId") Long periodId,
+    public CostingRecloseReport reclosePeriodCosts(@Name("periodId") String periodId,
                                                    @Name("startDate") LocalDate startDate,
                                                    @Name("endDate") LocalDate endDate,
                                                    IServiceContext context) {

@@ -80,15 +80,15 @@ public class ErpInvStockMoveProcessor {
         return moveDao().findFirstByQuery(q);
     }
 
-    public TraceChainResult forwardTrace(Long moveId, IServiceContext context) {
+    public TraceChainResult forwardTrace(String moveId, IServiceContext context) {
         return traceChainQuery.forwardTrace(moveId, isTraceChainEnabled(), traceChainMaxDepth());
     }
 
-    public TraceChainResult backwardTrace(Long moveId, IServiceContext context) {
+    public TraceChainResult backwardTrace(String moveId, IServiceContext context) {
         return traceChainQuery.backwardTrace(moveId, isTraceChainEnabled(), traceChainMaxDepth());
     }
 
-    public TraceChainResult returnTrace(Long moveId, IServiceContext context) {
+    public TraceChainResult returnTrace(String moveId, IServiceContext context) {
         return traceChainQuery.returnTrace(moveId, isTraceChainEnabled());
     }
 
@@ -115,7 +115,7 @@ public class ErpInvStockMoveProcessor {
         moveDao().saveOrUpdateEntity(move);
     }
 
-    protected void doComplete(ErpInvStockMove move, List<ErpInvStockMoveLine> lines, Long acctSchemaId,
+    protected void doComplete(ErpInvStockMove move, List<ErpInvStockMoveLine> lines, String acctSchemaId,
                               IServiceContext context) {
         String status = move.getDocStatus();
         // 固定来源态守卫委托 StateMachine Bean（非法边 Bean 抛 common 层码，映射为领域码 + common 作 cause）
@@ -179,7 +179,7 @@ public class ErpInvStockMoveProcessor {
                 continue;
             }
             // 跨实体：物料 isBatchManaged 经 I*Biz 走权限管道；get(id,true) 容忍物料不存在（跳过守卫）
-            ErpMdMaterial material = materialBiz.get(String.valueOf(line.getMaterialId()), true, context);
+            ErpMdMaterial material = materialBiz.get(line.getMaterialId(), true, context);
             if (material == null || !Boolean.TRUE.equals(material.getIsBatchManaged())) {
                 continue;
             }
@@ -285,7 +285,7 @@ public class ErpInvStockMoveProcessor {
 
     // ---------- helpers: queries ----------
 
-    protected ErpInvStockMove requireMove(Long moveId, IServiceContext context) {
+    protected ErpInvStockMove requireMove(String moveId, IServiceContext context) {
         ErpInvStockMove move = moveDao().getEntityById(moveId);
         if (move == null) {
             throw new NopException(ErpInvErrors.ERR_MOVE_NOT_FOUND).param(ErpInvErrors.ARG_MOVE_ID, moveId);
@@ -301,7 +301,7 @@ public class ErpInvStockMoveProcessor {
         return moveDao().findFirstByQuery(q);
     }
 
-    protected List<ErpInvStockMoveLine> loadLines(Long moveId) {
+    protected List<ErpInvStockMoveLine> loadLines(String moveId) {
         // D2 边界场景：同聚合子表加载，父实体已由 requireEntity/get 经数据权限/Meta 管道授权，子行无独立权限规则。
         IEntityDao<ErpInvStockMoveLine> dao = daoProvider.daoFor(ErpInvStockMoveLine.class);
         QueryBean q = new QueryBean();
@@ -319,11 +319,11 @@ public class ErpInvStockMoveProcessor {
                 || Objects.equals(moveType, ErpInvConstants.MOVE_TYPE_INTERNAL_TRANSFER);
     }
 
-    protected Long resolveReservationWarehouseId(ErpInvStockMove move) {
+    protected String resolveReservationWarehouseId(ErpInvStockMove move) {
         return move.getSourceWarehouseId();
     }
 
-    protected Long resolveReservationLocationId(ErpInvStockMove move, ErpInvStockMoveLine line) {
+    protected String resolveReservationLocationId(ErpInvStockMove move, ErpInvStockMoveLine line) {
         return line.getSourceLocationId() != null ? line.getSourceLocationId() : move.getSourceLocationId();
     }
 

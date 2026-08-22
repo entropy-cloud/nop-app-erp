@@ -16,6 +16,7 @@ import app.erp.pur.dao.entity.ErpPurReceiveLine;
 import io.nop.api.core.auth.IUserContext;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.beans.query.QueryFieldBean;
+import io.nop.api.core.convert.ConvertHelper;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.api.core.time.CoreMetrics;
 import io.nop.core.context.IServiceContext;
@@ -89,13 +90,13 @@ public class ErpInvLandedCostProcessor {
 
     // ---------- 审核编排 ----------
 
-    public ErpInvLandedCost approve(Long id, IServiceContext context) {
-        return approveProcessor.approve(String.valueOf(id), context);
+    public ErpInvLandedCost approve(String id, IServiceContext context) {
+        return approveProcessor.approve(id, context);
     }
 
     // ---------- 分摊预览（只读，不落库） ----------
 
-    public List<Map<String, Object>> allocatePreview(Long id, IServiceContext context) {
+    public List<Map<String, Object>> allocatePreview(String id, IServiceContext context) {
         ErpInvLandedCost landedCost = requireLandedCost(id, context);
         List<ErpInvLandedCostLine> costLines = loadCostLines(landedCost.getId());
         List<ErpPurReceiveLine> receiveLines = loadReceiveLines(landedCost.getReceiveId());
@@ -139,8 +140,8 @@ public class ErpInvLandedCostProcessor {
      * <p>红冲失败语义对齐 {@link LandedCostPostingDispatcher#tryPost}：异常由调用方以 try/catch 吞掉告警，
      * 但本方法作为顶层 BizModel 入口语义更严格——异常向上抛由 GraphQL 表达，便于前端感知失败。
      */
-    public ErpInvLandedCost reverseApprove(Long id, IServiceContext context) {
-        return reverseApproveProcessor.reverseApprove(String.valueOf(id), context);
+    public ErpInvLandedCost reverseApprove(String id, IServiceContext context) {
+        return reverseApproveProcessor.reverseApprove(id, context);
     }
 
     protected void validateCanReverse(ErpInvLandedCost landedCost, IServiceContext context) {
@@ -216,7 +217,7 @@ public class ErpInvLandedCostProcessor {
         return list.isEmpty() ? null : list.get(0);
     }
 
-    protected List<ErpInvCostAdjustLine> loadAdjustLines(Long adjustId) {
+    protected List<ErpInvCostAdjustLine> loadAdjustLines(String adjustId) {
         IEntityDao<ErpInvCostAdjustLine> dao = daoProvider.daoFor(ErpInvCostAdjustLine.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("adjustId", adjustId));
@@ -232,7 +233,7 @@ public class ErpInvLandedCostProcessor {
         return dao.findFirstByQuery(q);
     }
 
-    protected void validateNoDraftExists(Long receiveId) {
+    protected void validateNoDraftExists(String receiveId) {
         IEntityDao<ErpInvLandedCost> dao = landedCostDao();
         QueryBean q = new QueryBean();
         q.addFilter(and(
@@ -247,7 +248,7 @@ public class ErpInvLandedCostProcessor {
         }
     }
 
-    protected BigDecimal resolveExchangeRate(BigDecimal freightExchangeRate, Long freightCurrencyId,
+    protected BigDecimal resolveExchangeRate(BigDecimal freightExchangeRate, String freightCurrencyId,
                                               ErpPurReceive receive) {
         if (freightExchangeRate != null) {
             return freightExchangeRate;
@@ -255,14 +256,16 @@ public class ErpInvLandedCostProcessor {
         return receive.getExchangeRate() != null ? receive.getExchangeRate() : BigDecimal.ONE;
     }
 
+    // A2 桥接（bridge-main-077/078，M0.2 登记册）：pur ErpPurReceive(ReceiveLine) 列仍 Long（pur 位次 15 未迁移），
+    // pur Long id → ConvertHelper.toString 桥接 inv String 列 setter 值，退役 owner M2.5
     protected ErpInvLandedCost createLandedCostHead(ErpPurReceive receive, BigDecimal freightAmount,
-                                                      Long currencyId, BigDecimal exchangeRate) {
+                                                      String currencyId, BigDecimal exchangeRate) {
         IEntityDao<ErpInvLandedCost> dao = landedCostDao();
         ErpInvLandedCost head = dao.newEntity();
         head.setCode("LC-FRT-" + receive.getCode() + "-" + CoreMetrics.currentTimeMillis());
-        head.setOrgId(receive.getOrgId());
-        head.setReceiveId(receive.getId());
-        head.setSupplierId(receive.getSupplierId());
+        head.setOrgId(ConvertHelper.toString(receive.getOrgId()));
+        head.setReceiveId(ConvertHelper.toString(receive.getId()));
+        head.setSupplierId(ConvertHelper.toString(receive.getSupplierId()));
         head.setCurrencyId(currencyId);
         head.setExchangeRate(exchangeRate);
         head.setTotalCostAmount(freightAmount);
@@ -275,7 +278,7 @@ public class ErpInvLandedCostProcessor {
         return head;
     }
 
-    protected void createFreightLine(ErpInvLandedCost head, BigDecimal freightAmount, Long apPartnerId) {
+    protected void createFreightLine(ErpInvLandedCost head, BigDecimal freightAmount, String apPartnerId) {
         IEntityDao<ErpInvLandedCostLine> dao = daoProvider.daoFor(ErpInvLandedCostLine.class);
         ErpInvLandedCostLine line = dao.newEntity();
         line.setLandedCostId(head.getId());
@@ -319,8 +322,8 @@ public class ErpInvLandedCostProcessor {
             ErpInvCostAdjustLine line = lineDao.newEntity();
             line.setAdjustId(adjust.getId());
             line.setLineNo(lineNo++);
-            line.setMaterialId(r.getMaterialId());
-            line.setWarehouseId(r.getWarehouseId() != null ? r.getWarehouseId() : receive.getWarehouseId());
+            line.setMaterialId(ConvertHelper.toString(r.getMaterialId()));
+            line.setWarehouseId(ConvertHelper.toString(r.getWarehouseId() != null ? r.getWarehouseId() : receive.getWarehouseId()));
             BigDecimal newUnitCost = r.getNewUnitCost();
             line.setNewUnitCost(newUnitCost);
             line.setAdjustAmount(r.getAllocatedAmount());
@@ -347,7 +350,7 @@ public class ErpInvLandedCostProcessor {
                                    List<LandedCostAllocationEngine.AllocationResult> allocations,
                                    IServiceContext context) {
         // LANDED_COST 过账（借存货/贷应付）
-        Long voucherId = postingDispatcher.tryPost(landedCost, costLines, allocations);
+        String voucherId = postingDispatcher.tryPost(landedCost, costLines, allocations);
 
         landedCost = reload(landedCost.getId());
         Timestamp now = CoreMetrics.currentTimestamp();
@@ -408,7 +411,7 @@ public class ErpInvLandedCostProcessor {
      * internalAssemble 跳过锁读值→陈旧复归）；已被本事务装载过的 sibling 先 unload 重置 PROXY（仅非 dirty；
      * dirty 交由 lock 抛 ERR_ORM_NOT_ALLOW_LOCK_DIRTY_ENTITY fail-safe）。
      */
-    protected void validateNotAlreadyAllocated(Long receiveId, Long currentLandedCostId) {
+    protected void validateNotAlreadyAllocated(String receiveId, String currentLandedCostId) {
         QueryBean siblingIdQuery = new QueryBean();
         siblingIdQuery.setSourceName(ErpInvLandedCost.class.getName());
         siblingIdQuery.setFields(List.of(QueryFieldBean.mainField("id")));
@@ -417,7 +420,7 @@ public class ErpInvLandedCostProcessor {
         siblingIdQuery.addOrderField("id", false);
         List<Map<String, Object>> siblingRows = ormTemplate.findListByQuery(siblingIdQuery);
         for (Map<String, Object> row : siblingRows) {
-            Long siblingId = ((Number) row.get("id")).longValue();
+            String siblingId = ConvertHelper.toString(row.get("id"));
             if (Objects.equals(siblingId, currentLandedCostId))
                 continue;
             ErpInvLandedCost sibling = (ErpInvLandedCost) ormTemplate.load(ErpInvLandedCost.class.getName(), siblingId);
@@ -438,7 +441,7 @@ public class ErpInvLandedCostProcessor {
 
     // ---------- 加载/查询辅助 ----------
 
-    protected ErpInvLandedCost requireLandedCost(Long id, IServiceContext context) {
+    protected ErpInvLandedCost requireLandedCost(String id, IServiceContext context) {
         ErpInvLandedCost landedCost = landedCostDao().getEntityById(id);
         if (landedCost == null) {
             throw new NopException(ErpInvErrors.ERR_LANDED_COST_NOT_FOUND)
@@ -447,11 +450,11 @@ public class ErpInvLandedCostProcessor {
         return landedCost;
     }
 
-    protected ErpInvLandedCost reload(Long id) {
+    protected ErpInvLandedCost reload(String id) {
         return landedCostDao().getEntityById(id);
     }
 
-    protected List<ErpInvLandedCostLine> loadCostLines(Long landedCostId) {
+    protected List<ErpInvLandedCostLine> loadCostLines(String landedCostId) {
         IEntityDao<ErpInvLandedCostLine> dao = daoProvider.daoFor(ErpInvLandedCostLine.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("landedCostId", landedCostId));
@@ -459,17 +462,18 @@ public class ErpInvLandedCostProcessor {
         return dao.findAllByQuery(q);
     }
 
-    protected ErpPurReceive loadReceive(Long receiveId) {
+    // A2 桥接（bridge-main-077/078）：inv String receiveId → pur Long receiveId（getEntityById / eq 过滤值），退役 owner M2.5
+    protected ErpPurReceive loadReceive(String receiveId) {
         if (receiveId == null) {
             return null;
         }
-        return daoProvider.daoFor(ErpPurReceive.class).getEntityById(receiveId);
+        return daoProvider.daoFor(ErpPurReceive.class).getEntityById(ConvertHelper.toLong(receiveId));
     }
 
-    protected List<ErpPurReceiveLine> loadReceiveLines(Long receiveId) {
+    protected List<ErpPurReceiveLine> loadReceiveLines(String receiveId) {
         IEntityDao<ErpPurReceiveLine> dao = daoProvider.daoFor(ErpPurReceiveLine.class);
         QueryBean q = new QueryBean();
-        q.addFilter(eq("receiveId", receiveId));
+        q.addFilter(eq("receiveId", ConvertHelper.toLong(receiveId)));
         q.addOrderField("lineNo", false);
         return dao.findAllByQuery(q);
     }

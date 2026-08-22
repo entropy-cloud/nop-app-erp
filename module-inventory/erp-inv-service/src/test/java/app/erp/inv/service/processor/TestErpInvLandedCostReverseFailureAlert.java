@@ -48,8 +48,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpInvLandedCostReverseFailureAlert extends JunitAutoTestCase {
 
-    static final Long ORG_ID = 1851L;
-    static final Long CURRENCY_ID = 6851L;
+    static final String ORG_ID = "1851";
+    static final String CURRENCY_ID = "6851";
 
     @Inject
     IDaoProvider daoProvider;
@@ -134,8 +134,8 @@ public class TestErpInvLandedCostReverseFailureAlert extends JunitAutoTestCase {
             ErpInvLandedCost head = new ErpInvLandedCost();
             head.setCode(code);
             head.setOrgId(ORG_ID);
-            head.setReceiveId(9001L);
-            head.setSupplierId(7001L);
+            head.setReceiveId("9001");
+            head.setSupplierId("7001");
             head.setCurrencyId(CURRENCY_ID);
             head.setExchangeRate(BigDecimal.ONE);
             head.setTotalCostAmount(new BigDecimal("50"));

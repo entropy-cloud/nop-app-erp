@@ -50,7 +50,7 @@ public class ErpInvOwnershipTransferProcessor {
     @Inject
     ErpInvOwnershipTransferStateMachine stateMachine;
 
-    public ErpInvOwnershipTransfer cancel(Long transferId, IServiceContext context) {
+    public ErpInvOwnershipTransfer cancel(String transferId, IServiceContext context) {
         ErpInvOwnershipTransfer transfer = requireTransfer(transferId, context);
         String status = transfer.getDocStatus();
         // 固定来源态守卫委托 StateMachine Bean（非法边 Bean 抛 common 层码，映射为领域码 + common 作 cause）
@@ -154,7 +154,7 @@ public class ErpInvOwnershipTransferProcessor {
         // 源余额的 ownerId 取决于源 ownershipType：
         //   VMI_SUPPLIER/CUSTOMER_PROVIDED → 外部方拥有（ownerId=partnerId）
         //   OWNED/CONSIGNMENT_OUT → 己方拥有（ownerId=null）
-        Long sourceOwner = resolveSourceOwner(transfer, ownershipType);
+        String sourceOwner = resolveSourceOwner(transfer, ownershipType);
         if (sourceOwner != null) {
             q.addFilter(eq("ownerId", sourceOwner));
         } else {
@@ -169,7 +169,7 @@ public class ErpInvOwnershipTransferProcessor {
      * VMI_SUPPLIER/CUSTOMER_PROVIDED 由外部方拥有（ownerId=partnerId）；
      * OWNED/CONSIGNMENT_OUT 由己方拥有（ownerId=null）。
      */
-    protected Long resolveSourceOwner(ErpInvOwnershipTransfer transfer, String fromOwnershipType) {
+    protected String resolveSourceOwner(ErpInvOwnershipTransfer transfer, String fromOwnershipType) {
         if (ErpInvConstants.OWNERSHIP_TYPE_VMI_SUPPLIER.equals(fromOwnershipType)
                 || ErpInvConstants.OWNERSHIP_TYPE_CUSTOMER_PROVIDED.equals(fromOwnershipType)) {
             return transfer.getPartnerId();
@@ -220,7 +220,7 @@ public class ErpInvOwnershipTransferProcessor {
      *   <li>OWNERSHIP_TO_CUSTOMER (OWNED→CUSTOMER_PROVIDED)：转客户，ownerId=partnerId。</li>
      * </ul>
      */
-    protected Long resolveTargetOwner(ErpInvOwnershipTransfer transfer, String toOwnershipType) {
+    protected String resolveTargetOwner(ErpInvOwnershipTransfer transfer, String toOwnershipType) {
         if (ErpInvConstants.OWNERSHIP_TYPE_CUSTOMER_PROVIDED.equals(toOwnershipType)
                 || ErpInvConstants.OWNERSHIP_TYPE_VMI_SUPPLIER.equals(toOwnershipType)
                 || ErpInvConstants.OWNERSHIP_TYPE_CONSIGNMENT_OUT.equals(toOwnershipType)) {
@@ -248,7 +248,7 @@ public class ErpInvOwnershipTransferProcessor {
         return false;
     }
 
-    protected ErpInvOwnershipTransfer requireTransfer(Long transferId, IServiceContext context) {
+    protected ErpInvOwnershipTransfer requireTransfer(String transferId, IServiceContext context) {
         ErpInvOwnershipTransfer transfer = transferDao().getEntityById(transferId);
         if (transfer == null) {
             throw new NopException(ErpInvErrors.ERR_OWNERSHIP_TRANSFER_NOT_FOUND)
@@ -280,7 +280,7 @@ public class ErpInvOwnershipTransferProcessor {
         }
     }
 
-    protected List<ErpInvOwnershipTransferLine> loadLines(Long transferId) {
+    protected List<ErpInvOwnershipTransferLine> loadLines(String transferId) {
         IEntityDao<ErpInvOwnershipTransferLine> dao = daoProvider.daoFor(ErpInvOwnershipTransferLine.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("transferId", transferId));

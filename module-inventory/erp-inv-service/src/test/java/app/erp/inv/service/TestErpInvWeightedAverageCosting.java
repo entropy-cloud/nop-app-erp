@@ -47,12 +47,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpInvWeightedAverageCosting extends JunitAutoTestCase {
 
-    static final Long ORG_ID = 1201L;
-    static final Long WAREHOUSE_ID = 3201L;
-    static final Long LOCATION_ID = 4201L;
-    static final Long UOM_ID = 5201L;
-    static final Long CURRENCY_ID = 6201L;
-    static final Long ACCT_SCHEMA_ID = 7201L;
+    static final String ORG_ID = "1201";
+    static final String WAREHOUSE_ID = "3201";
+    static final String LOCATION_ID = "4201";
+    static final String UOM_ID = "5201";
+    static final String CURRENCY_ID = "6201";
+    static final String ACCT_SCHEMA_ID = "7201";
 
     @Inject
     IDaoProvider daoProvider;
@@ -63,7 +63,7 @@ public class TestErpInvWeightedAverageCosting extends JunitAutoTestCase {
 
     @Test
     public void testIncomingAccumulatesButDoesNotRecomputeAvgCost() {
-        Long materialId = 2601L;
+        String materialId = "2601";
         seedWamMaterial(materialId);
 
         generateIncoming(materialId, "PR-WAM-001A", new BigDecimal("50"), new BigDecimal("10"));
@@ -83,7 +83,7 @@ public class TestErpInvWeightedAverageCosting extends JunitAutoTestCase {
 
     @Test
     public void testOutgoingUsesFrozenAvgCostZeroWhenNoOpeningBalance() {
-        Long materialId = 2602L;
+        String materialId = "2602";
         seedWamMaterial(materialId);
 
         generateIncoming(materialId, "PR-WAM-002", new BigDecimal("50"), new BigDecimal("10"));
@@ -106,7 +106,7 @@ public class TestErpInvWeightedAverageCosting extends JunitAutoTestCase {
 
     @Test
     public void testWamCreatesNoCostLayers() {
-        Long materialId = 2603L;
+        String materialId = "2603";
         seedWamMaterial(materialId);
 
         generateIncoming(materialId, "PR-WAM-003", new BigDecimal("50"), new BigDecimal("10"));
@@ -119,11 +119,11 @@ public class TestErpInvWeightedAverageCosting extends JunitAutoTestCase {
 
     @Test
     public void testReversePreservesFrozenAvgCost() {
-        Long materialId = 2604L;
+        String materialId = "2604";
         seedWamMaterial(materialId);
 
         generateIncoming(materialId, "PR-WAM-004", new BigDecimal("50"), new BigDecimal("10"));
-        Long outMoveId = generateOutgoing(materialId, "SS-WAM-004", new BigDecimal("30"));
+        String outMoveId = generateOutgoing(materialId, "SS-WAM-004", new BigDecimal("30"));
 
         // 出库后 avgCost 仍为 ZERO（WAM 期初不变式）
         assertEquals(0, findBalance(materialId).getAvgCost().compareTo(BigDecimal.ZERO),
@@ -143,7 +143,7 @@ public class TestErpInvWeightedAverageCosting extends JunitAutoTestCase {
 
     // ---------- helpers ----------
 
-    private Long generateIncoming(Long materialId, String billCode, BigDecimal qty, BigDecimal unitCost) {
+    private String generateIncoming(String materialId, String billCode, BigDecimal qty, BigDecimal unitCost) {
         Map<String, Object> req = baseReq(ErpInvConstants.MOVE_TYPE_INCOMING);
         req.put("destWarehouseId", WAREHOUSE_ID);
         req.put("destLocationId", LOCATION_ID);
@@ -153,7 +153,7 @@ public class TestErpInvWeightedAverageCosting extends JunitAutoTestCase {
         return idOf(genMove(req));
     }
 
-    private Long generateOutgoing(Long materialId, String billCode, BigDecimal qty) {
+    private String generateOutgoing(String materialId, String billCode, BigDecimal qty) {
         Map<String, Object> req = baseReq(ErpInvConstants.MOVE_TYPE_OUTGOING);
         req.put("sourceWarehouseId", WAREHOUSE_ID);
         req.put("sourceLocationId", LOCATION_ID);
@@ -163,7 +163,7 @@ public class TestErpInvWeightedAverageCosting extends JunitAutoTestCase {
         return idOf(genMove(req));
     }
 
-    private void reverseMove(Long moveId) {
+    private void reverseMove(String moveId) {
         ApiResponse<?> resp = executeRpc(mutation, "ErpInvStockMove__reverse",
                 ApiRequest.build(Map.of("moveId", moveId)));
         assertEquals(0, resp.getStatus(), "reverse 应成功");
@@ -183,7 +183,7 @@ public class TestErpInvWeightedAverageCosting extends JunitAutoTestCase {
         return req;
     }
 
-    private Map<String, Object> line(Long materialId, BigDecimal qty, BigDecimal unitCost) {
+    private Map<String, Object> line(String materialId, BigDecimal qty, BigDecimal unitCost) {
         Map<String, Object> line = new LinkedHashMap<>();
         line.put("materialId", materialId);
         line.put("uoMId", UOM_ID);
@@ -200,12 +200,12 @@ public class TestErpInvWeightedAverageCosting extends JunitAutoTestCase {
         return graphQLEngine.executeRpc(ctx);
     }
 
-    private Long idOf(ApiResponse<?> resp) {
+    private String idOf(ApiResponse<?> resp) {
         Object id = ((Map<?, ?>) resp.getData()).get("id");
-        return id instanceof Number ? ((Number) id).longValue() : Long.parseLong(String.valueOf(id));
+        return String.valueOf(id);
     }
 
-    private ErpInvStockBalance findBalance(Long materialId) {
+    private ErpInvStockBalance findBalance(String materialId) {
         IEntityDao<ErpInvStockBalance> dao = daoProvider.daoFor(ErpInvStockBalance.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("materialId", materialId));
@@ -214,7 +214,7 @@ public class TestErpInvWeightedAverageCosting extends JunitAutoTestCase {
         return list.isEmpty() ? null : list.get(0);
     }
 
-    private List<ErpInvCostLayer> findCostLayers(Long materialId) {
+    private List<ErpInvCostLayer> findCostLayers(String materialId) {
         IEntityDao<ErpInvCostLayer> dao = daoProvider.daoFor(ErpInvCostLayer.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("materialId", materialId));
@@ -222,7 +222,7 @@ public class TestErpInvWeightedAverageCosting extends JunitAutoTestCase {
         return dao.findAllByQuery(q);
     }
 
-    private ErpInvStockLedger findOutgoingLedger(Long materialId) {
+    private ErpInvStockLedger findOutgoingLedger(String materialId) {
         IEntityDao<ErpInvStockLedger> dao = daoProvider.daoFor(ErpInvStockLedger.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("materialId", materialId));
@@ -233,7 +233,7 @@ public class TestErpInvWeightedAverageCosting extends JunitAutoTestCase {
                 .orElse(null);
     }
 
-    private void seedWamMaterial(Long id) {
+    private void seedWamMaterial(String id) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMdMaterial> dao = daoProvider.daoFor(ErpMdMaterial.class);
             ErpMdMaterial material = new ErpMdMaterial();

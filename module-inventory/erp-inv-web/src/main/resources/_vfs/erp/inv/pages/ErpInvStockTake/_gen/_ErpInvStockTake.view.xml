@@ -19,13 +19,13 @@
             <cols>
 
                 <!--ID-->
-                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="id" mandatory="true" sortable="true"/>
 
                 <!--单号-->
                 <col id="code" mandatory="true" sortable="true"/>
 
                 <!--业务组织-->
-                <col id="orgId" ui:number="true" sortable="true"/>
+                <col id="orgId" sortable="true"/>
 
                 <!--盘点日期-->
                 <col id="businessDate" mandatory="true" sortable="true"/>
@@ -34,7 +34,7 @@
                 <col id="takeType" sortable="true"/>
 
                 <!--盘点仓库-->
-                <col id="warehouseId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="warehouseId" mandatory="true" sortable="true"/>
 
                 <!--单据状态-->
                 <col id="docStatus" mandatory="true" sortable="true"/>

@@ -113,7 +113,7 @@ public class StockMoveBookkeeper implements BookingContext {
      * 按行写不可变库存流水（含结存快照 balanceQuantity/balanceTotalCost）并按物料 costMethod 分派策略更新余额/成本层。
      * 入库增余额、出库扣余额、内部调拨扣源加目的。同一事务内完成（由调用方 {@code @Transactional} 保证）。
      */
-    public void bookCompletion(ErpInvStockMove move, List<ErpInvStockMoveLine> lines, Long acctSchemaId) {
+    public void bookCompletion(ErpInvStockMove move, List<ErpInvStockMoveLine> lines, String acctSchemaId) {
         for (ErpInvStockMoveLine line : lines) {
             String method = costMethodResolver.resolve(line, acctSchemaId);
             CostingStrategy strategy = resolveStrategy(method);
@@ -146,10 +146,10 @@ public class StockMoveBookkeeper implements BookingContext {
      * {@link #updateBalanceWithRetry} 的 flush 阶段——见该方法的 SAVING 分支（evict + reload 已落地行 + 转更新路径）。
      */
     public ErpInvStockBalance upsertBalance(ErpInvStockMove move, ErpInvStockMoveLine line,
-                                             Long warehouseId, Long locationId) {
+                                             String warehouseId, String locationId) {
         // 同事务内可能已新建余额但未刷盘，查询前先 flush 使待落库的预留量/余额可见
         ormTemplate.flushSession();
-        Long ownerId = resolveOwnerKey(null);
+        String ownerId = resolveOwnerKey(null);
         ErpInvStockBalance balance = findBalance(move.getOrgId(), line.getMaterialId(), line.getSkuId(),
                 warehouseId, locationId, line.getBatchNo(), ownerId);
         if (balance != null) {
@@ -162,7 +162,7 @@ public class StockMoveBookkeeper implements BookingContext {
      * 构造一条新余额行（未持久化）。仅在 INSERT 路径调用；冲突捕获由 {@link #updateBalanceWithRetry} 负责。
      */
     private ErpInvStockBalance buildNewBalanceForMove(ErpInvStockMove move, ErpInvStockMoveLine line,
-                                                       Long warehouseId, Long locationId, Long ownerId) {
+                                                       String warehouseId, String locationId, String ownerId) {
         IEntityDao<ErpInvStockBalance> dao = daoProvider.daoFor(ErpInvStockBalance.class);
         ErpInvStockBalance balance = dao.newEntity();
         balance.setOrgId(move.getOrgId());
@@ -191,8 +191,8 @@ public class StockMoveBookkeeper implements BookingContext {
     // ---------- BookingContext: shared booking primitives exposed to strategies ----------
 
     @Override
-    public void writeLedger(ErpInvStockMove move, ErpInvStockMoveLine line, Long acctSchemaId,
-                             ErpInvStockBalance balance, Long warehouseId, Long locationId,
+    public void writeLedger(ErpInvStockMove move, ErpInvStockMoveLine line, String acctSchemaId,
+                             ErpInvStockBalance balance, String warehouseId, String locationId,
                              BigDecimal signedQty, BigDecimal unitCost, BigDecimal signedTotalCost,
                              String costMethod) {
         IEntityDao<ErpInvStockLedger> dao = daoProvider.daoFor(ErpInvStockLedger.class);
@@ -297,13 +297,13 @@ public class StockMoveBookkeeper implements BookingContext {
             }
 
             // 冲突：捕获自然键，evict 失败实例，按自然键 reload
-            Long orgId = current.getOrgId();
-            Long materialId = current.getMaterialId();
-            Long skuId = current.getSkuId();
-            Long warehouseId = current.getWarehouseId();
-            Long locationId = current.getLocationId();
+            String orgId = current.getOrgId();
+            String materialId = current.getMaterialId();
+            String skuId = current.getSkuId();
+            String warehouseId = current.getWarehouseId();
+            String locationId = current.getLocationId();
             String batchNo = current.getBatchNo();
-            Long ownerId = current.getOwnerId();
+            String ownerId = current.getOwnerId();
 
             IOrmSession session = ormTemplate.currentSession();
             if (session != null) {
@@ -347,8 +347,8 @@ public class StockMoveBookkeeper implements BookingContext {
      * 按自然键精确查询余额行。与 ORM UK 列对齐：orgId/materialId/skuId/warehouseId/locationId/batchNo/ownerId。
      * nullable 列（skuId/locationId/batchNo/ownerId）使用 IS NULL 语义匹配。
      */
-    private ErpInvStockBalance findBalanceByNaturalKey(Long orgId, Long materialId, Long skuId, Long warehouseId,
-                                                        Long locationId, String batchNo, Long ownerId) {
+    private ErpInvStockBalance findBalanceByNaturalKey(String orgId, String materialId, String skuId, String warehouseId,
+                                                        String locationId, String batchNo, String ownerId) {
         IEntityDao<ErpInvStockBalance> dao = daoProvider.daoFor(ErpInvStockBalance.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("orgId", orgId));
@@ -379,8 +379,8 @@ public class StockMoveBookkeeper implements BookingContext {
     }
 
     /** 构造空白余额候选（用于极罕见的"对方事务回滚后重试 INSERT"场景）。 */
-    private ErpInvStockBalance newBlankBalance(Long orgId, Long materialId, Long skuId, Long warehouseId,
-                                                Long locationId, String batchNo, Long ownerId) {
+    private ErpInvStockBalance newBlankBalance(String orgId, String materialId, String skuId, String warehouseId,
+                                                String locationId, String batchNo, String ownerId) {
         IEntityDao<ErpInvStockBalance> dao = daoProvider.daoFor(ErpInvStockBalance.class);
         ErpInvStockBalance balance = dao.newEntity();
         balance.setOrgId(orgId);
@@ -449,8 +449,8 @@ public class StockMoveBookkeeper implements BookingContext {
         return ormTemplate;
     }
 
-    ErpInvStockBalance findBalance(Long orgId, Long materialId, Long skuId, Long warehouseId,
-                                   Long locationId, String batchNo, Long ownerId) {
+    ErpInvStockBalance findBalance(String orgId, String materialId, String skuId, String warehouseId,
+                                   String locationId, String batchNo, String ownerId) {
         IEntityDao<ErpInvStockBalance> dao = daoProvider.daoFor(ErpInvStockBalance.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("orgId", orgId));
@@ -480,7 +480,7 @@ public class StockMoveBookkeeper implements BookingContext {
      * 解析余额键中的 ownerId。disabled 时一律返回 null（不入键）；enabled 时透传调用方提供的 ownerId。
      * 标准移动单不携带 ownerId，故两态下均返回 null（写 OWNED 余额或 null-owner 子余额）。
      */
-    Long resolveOwnerKey(Long ownerId) {
+    String resolveOwnerKey(String ownerId) {
         return isOwnershipTrackingEnabled() ? ownerId : null;
     }
 

@@ -41,15 +41,15 @@ public class ErpInvCostAdjustApplyCostAdjustProcessor {
     @Inject
     CostAdjustmentPostingDispatcher postingDispatcher;
 
-    public ErpInvCostAdjust applyCostAdjust(Long id, IServiceContext context) {
+    public ErpInvCostAdjust applyCostAdjust(String id, IServiceContext context) {
         ErpInvCostAdjust adjust = requireAndValidate(id, context);
         List<ErpInvCostAdjustLine> lines = facade.loadLines(adjust.getId());
         BigDecimal totalAdjustAmount = applyCostLayer(adjust, lines);
-        Long voucherId = postingDispatcher.tryPost(adjust, lines, totalAdjustAmount);
+        String voucherId = postingDispatcher.tryPost(adjust, lines, totalAdjustAmount);
         return finalizeApplied(id, voucherId);
     }
 
-    protected ErpInvCostAdjust requireAndValidate(Long id, IServiceContext context) {
+    protected ErpInvCostAdjust requireAndValidate(String id, IServiceContext context) {
         ErpInvCostAdjust adjust = facade.requireAdjustment(id, context);
         facade.validateNotCancelled(adjust, context);
         if (Boolean.TRUE.equals(adjust.getPosted())) {
@@ -83,7 +83,7 @@ public class ErpInvCostAdjustApplyCostAdjustProcessor {
         return totalAdjustAmount;
     }
 
-    protected ErpInvCostAdjust finalizeApplied(Long id, Long voucherId) {
+    protected ErpInvCostAdjust finalizeApplied(String id, String voucherId) {
         ErpInvCostAdjust adjust = facade.reload(id);
         Timestamp now = CoreMetrics.currentTimestamp();
         adjust.setDocStatus(stateMachine.applyCostAdjustTargetStatus());

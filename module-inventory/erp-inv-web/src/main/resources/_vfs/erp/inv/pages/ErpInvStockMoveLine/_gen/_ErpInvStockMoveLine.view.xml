@@ -19,22 +19,22 @@
             <cols>
 
                 <!--ID-->
-                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="id" mandatory="true" sortable="true"/>
 
                 <!--移动单ID-->
-                <col id="moveId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="moveId" mandatory="true" sortable="true"/>
 
                 <!--行号-->
                 <col id="lineNo" mandatory="true" ui:number="true" sortable="true"/>
 
                 <!--物料-->
-                <col id="materialId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="materialId" mandatory="true" sortable="true"/>
 
                 <!--SKU-->
-                <col id="skuId" ui:number="true" sortable="true"/>
+                <col id="skuId" sortable="true"/>
 
                 <!--计量单位-->
-                <col id="uoMId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="uoMId" mandatory="true" sortable="true"/>
 
                 <!--数量-->
                 <col id="quantity" mandatory="true" ui:number="true" sortable="true"/>
@@ -46,7 +46,7 @@
                 <col id="totalCost" ui:number="true" sortable="true"/>
 
                 <!--币种-->
-                <col id="currencyId" ui:number="true" sortable="true"/>
+                <col id="currencyId" sortable="true"/>
 
                 <!--批号-->
                 <col id="batchNo" sortable="true"/>
@@ -55,10 +55,10 @@
                 <col id="serialNo" sortable="true"/>
 
                 <!--源库位-->
-                <col id="sourceLocationId" ui:number="true" sortable="true"/>
+                <col id="sourceLocationId" sortable="true"/>
 
                 <!--目标库位-->
-                <col id="destLocationId" ui:number="true" sortable="true"/>
+                <col id="destLocationId" sortable="true"/>
 
                 <!--备注-->
                 <col id="remark" sortable="true"/>

@@ -172,19 +172,19 @@ public class _ErpInvOwnershipTransferLine extends DynamicOrmEntity{
 
     
     /* ID: ID */
-    private java.lang.Long _id;
+    private java.lang.String _id;
     
     /* 转移单ID: TRANSFER_ID */
-    private java.lang.Long _transferId;
+    private java.lang.String _transferId;
     
     /* 行号: LINE_NO */
     private java.lang.Integer _lineNo;
     
     /* 物料: MATERIAL_ID */
-    private java.lang.Long _materialId;
+    private java.lang.String _materialId;
     
     /* SKU: SKU_ID */
-    private java.lang.Long _skuId;
+    private java.lang.String _skuId;
     
     /* 批号: BATCH_NO */
     private java.lang.String _batchNo;
@@ -365,9 +365,9 @@ public class _ErpInvOwnershipTransferLine extends DynamicOrmEntity{
         switch(propId){
         
             case PROP_ID_id:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_id));
                }
                setId(typedValue);
@@ -375,9 +375,9 @@ public class _ErpInvOwnershipTransferLine extends DynamicOrmEntity{
             }
         
             case PROP_ID_transferId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_transferId));
                }
                setTransferId(typedValue);
@@ -395,9 +395,9 @@ public class _ErpInvOwnershipTransferLine extends DynamicOrmEntity{
             }
         
             case PROP_ID_materialId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_materialId));
                }
                setMaterialId(typedValue);
@@ -405,9 +405,9 @@ public class _ErpInvOwnershipTransferLine extends DynamicOrmEntity{
             }
         
             case PROP_ID_skuId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_skuId));
                }
                setSkuId(typedValue);
@@ -555,14 +555,14 @@ public class _ErpInvOwnershipTransferLine extends DynamicOrmEntity{
         
             case PROP_ID_id:{
                onInitProp(propId);
-               this._id = (java.lang.Long)value;
+               this._id = (java.lang.String)value;
                orm_id(); // 如果是设置主键字段，则触发watcher
                break;
             }
         
             case PROP_ID_transferId:{
                onInitProp(propId);
-               this._transferId = (java.lang.Long)value;
+               this._transferId = (java.lang.String)value;
                
                break;
             }
@@ -576,14 +576,14 @@ public class _ErpInvOwnershipTransferLine extends DynamicOrmEntity{
         
             case PROP_ID_materialId:{
                onInitProp(propId);
-               this._materialId = (java.lang.Long)value;
+               this._materialId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_skuId:{
                onInitProp(propId);
-               this._skuId = (java.lang.Long)value;
+               this._skuId = (java.lang.String)value;
                
                break;
             }
@@ -688,7 +688,7 @@ public class _ErpInvOwnershipTransferLine extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final java.lang.Long getId(){
+    public final java.lang.String getId(){
          onPropGet(PROP_ID_id);
          return _id;
     }
@@ -696,7 +696,7 @@ public class _ErpInvOwnershipTransferLine extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final void setId(java.lang.Long value){
+    public final void setId(java.lang.String value){
         if(onPropSet(PROP_ID_id,value)){
             this._id = value;
             internalClearRefs(PROP_ID_id);
@@ -707,7 +707,7 @@ public class _ErpInvOwnershipTransferLine extends DynamicOrmEntity{
     /**
      * 转移单ID: TRANSFER_ID
      */
-    public final java.lang.Long getTransferId(){
+    public final java.lang.String getTransferId(){
          onPropGet(PROP_ID_transferId);
          return _transferId;
     }
@@ -715,7 +715,7 @@ public class _ErpInvOwnershipTransferLine extends DynamicOrmEntity{
     /**
      * 转移单ID: TRANSFER_ID
      */
-    public final void setTransferId(java.lang.Long value){
+    public final void setTransferId(java.lang.String value){
         if(onPropSet(PROP_ID_transferId,value)){
             this._transferId = value;
             internalClearRefs(PROP_ID_transferId);
@@ -745,7 +745,7 @@ public class _ErpInvOwnershipTransferLine extends DynamicOrmEntity{
     /**
      * 物料: MATERIAL_ID
      */
-    public final java.lang.Long getMaterialId(){
+    public final java.lang.String getMaterialId(){
          onPropGet(PROP_ID_materialId);
          return _materialId;
     }
@@ -753,7 +753,7 @@ public class _ErpInvOwnershipTransferLine extends DynamicOrmEntity{
     /**
      * 物料: MATERIAL_ID
      */
-    public final void setMaterialId(java.lang.Long value){
+    public final void setMaterialId(java.lang.String value){
         if(onPropSet(PROP_ID_materialId,value)){
             this._materialId = value;
             internalClearRefs(PROP_ID_materialId);
@@ -764,7 +764,7 @@ public class _ErpInvOwnershipTransferLine extends DynamicOrmEntity{
     /**
      * SKU: SKU_ID
      */
-    public final java.lang.Long getSkuId(){
+    public final java.lang.String getSkuId(){
          onPropGet(PROP_ID_skuId);
          return _skuId;
     }
@@ -772,7 +772,7 @@ public class _ErpInvOwnershipTransferLine extends DynamicOrmEntity{
     /**
      * SKU: SKU_ID
      */
-    public final void setSkuId(java.lang.Long value){
+    public final void setSkuId(java.lang.String value){
         if(onPropSet(PROP_ID_skuId,value)){
             this._skuId = value;
             internalClearRefs(PROP_ID_skuId);

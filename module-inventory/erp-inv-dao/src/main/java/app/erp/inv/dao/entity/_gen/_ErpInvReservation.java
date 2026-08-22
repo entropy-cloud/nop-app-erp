@@ -158,13 +158,13 @@ public class _ErpInvReservation extends DynamicOrmEntity{
 
     
     /* ID: ID */
-    private java.lang.Long _id;
+    private java.lang.String _id;
     
     /* 单号: CODE */
     private java.lang.String _code;
     
     /* 业务组织: ORG_ID */
-    private java.lang.Long _orgId;
+    private java.lang.String _orgId;
     
     /* 业务日期: BUSINESS_DATE */
     private java.time.LocalDate _businessDate;
@@ -176,7 +176,7 @@ public class _ErpInvReservation extends DynamicOrmEntity{
     private java.lang.String _sourceBillCode;
     
     /* 为谁预留(往来单位): RESERVED_FOR_PARTNER_ID */
-    private java.lang.Long _reservedForPartnerId;
+    private java.lang.String _reservedForPartnerId;
     
     /* 状态: STATUS */
     private java.lang.String _status;
@@ -339,9 +339,9 @@ public class _ErpInvReservation extends DynamicOrmEntity{
         switch(propId){
         
             case PROP_ID_id:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_id));
                }
                setId(typedValue);
@@ -359,9 +359,9 @@ public class _ErpInvReservation extends DynamicOrmEntity{
             }
         
             case PROP_ID_orgId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_orgId));
                }
                setOrgId(typedValue);
@@ -399,9 +399,9 @@ public class _ErpInvReservation extends DynamicOrmEntity{
             }
         
             case PROP_ID_reservedForPartnerId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_reservedForPartnerId));
                }
                setReservedForPartnerId(typedValue);
@@ -509,7 +509,7 @@ public class _ErpInvReservation extends DynamicOrmEntity{
         
             case PROP_ID_id:{
                onInitProp(propId);
-               this._id = (java.lang.Long)value;
+               this._id = (java.lang.String)value;
                orm_id(); // 如果是设置主键字段，则触发watcher
                break;
             }
@@ -523,7 +523,7 @@ public class _ErpInvReservation extends DynamicOrmEntity{
         
             case PROP_ID_orgId:{
                onInitProp(propId);
-               this._orgId = (java.lang.Long)value;
+               this._orgId = (java.lang.String)value;
                
                break;
             }
@@ -551,7 +551,7 @@ public class _ErpInvReservation extends DynamicOrmEntity{
         
             case PROP_ID_reservedForPartnerId:{
                onInitProp(propId);
-               this._reservedForPartnerId = (java.lang.Long)value;
+               this._reservedForPartnerId = (java.lang.String)value;
                
                break;
             }
@@ -628,7 +628,7 @@ public class _ErpInvReservation extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final java.lang.Long getId(){
+    public final java.lang.String getId(){
          onPropGet(PROP_ID_id);
          return _id;
     }
@@ -636,7 +636,7 @@ public class _ErpInvReservation extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final void setId(java.lang.Long value){
+    public final void setId(java.lang.String value){
         if(onPropSet(PROP_ID_id,value)){
             this._id = value;
             internalClearRefs(PROP_ID_id);
@@ -666,7 +666,7 @@ public class _ErpInvReservation extends DynamicOrmEntity{
     /**
      * 业务组织: ORG_ID
      */
-    public final java.lang.Long getOrgId(){
+    public final java.lang.String getOrgId(){
          onPropGet(PROP_ID_orgId);
          return _orgId;
     }
@@ -674,7 +674,7 @@ public class _ErpInvReservation extends DynamicOrmEntity{
     /**
      * 业务组织: ORG_ID
      */
-    public final void setOrgId(java.lang.Long value){
+    public final void setOrgId(java.lang.String value){
         if(onPropSet(PROP_ID_orgId,value)){
             this._orgId = value;
             internalClearRefs(PROP_ID_orgId);
@@ -742,7 +742,7 @@ public class _ErpInvReservation extends DynamicOrmEntity{
     /**
      * 为谁预留(往来单位): RESERVED_FOR_PARTNER_ID
      */
-    public final java.lang.Long getReservedForPartnerId(){
+    public final java.lang.String getReservedForPartnerId(){
          onPropGet(PROP_ID_reservedForPartnerId);
          return _reservedForPartnerId;
     }
@@ -750,7 +750,7 @@ public class _ErpInvReservation extends DynamicOrmEntity{
     /**
      * 为谁预留(往来单位): RESERVED_FOR_PARTNER_ID
      */
-    public final void setReservedForPartnerId(java.lang.Long value){
+    public final void setReservedForPartnerId(java.lang.String value){
         if(onPropSet(PROP_ID_reservedForPartnerId,value)){
             this._reservedForPartnerId = value;
             internalClearRefs(PROP_ID_reservedForPartnerId);

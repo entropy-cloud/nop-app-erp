@@ -34,13 +34,13 @@ public class ErpInvCostAdjustBizModel extends CrudBizModel<ErpInvCostAdjust> imp
 
     @Override
     @BizMutation
-    public ErpInvCostAdjust applyCostAdjust(@Name("id") Long id, IServiceContext context) {
+    public ErpInvCostAdjust applyCostAdjust(@Name("id") String id, IServiceContext context) {
         return applyCostAdjustProcessor.applyCostAdjust(id, context);
     }
 
     @Override
     @BizMutation
-    public ErpInvCostAdjust reverseCostAdjust(@Name("id") Long id, IServiceContext context) {
+    public ErpInvCostAdjust reverseCostAdjust(@Name("id") String id, IServiceContext context) {
         return reverseCostAdjustProcessor.reverseCostAdjust(id, context);
     }
 }

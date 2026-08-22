@@ -19,25 +19,25 @@
             <cols>
 
                 <!--ID-->
-                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="id" mandatory="true" sortable="true"/>
 
                 <!--预留单ID-->
-                <col id="reservationId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="reservationId" mandatory="true" sortable="true"/>
 
                 <!--行号-->
                 <col id="lineNo" mandatory="true" ui:number="true" sortable="true"/>
 
                 <!--物料-->
-                <col id="materialId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="materialId" mandatory="true" sortable="true"/>
 
                 <!--SKU-->
-                <col id="skuId" ui:number="true" sortable="true"/>
+                <col id="skuId" sortable="true"/>
 
                 <!--仓库-->
-                <col id="warehouseId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="warehouseId" mandatory="true" sortable="true"/>
 
                 <!--库位-->
-                <col id="locationId" ui:number="true" sortable="true"/>
+                <col id="locationId" sortable="true"/>
 
                 <!--批号-->
                 <col id="batchNo" sortable="true"/>
@@ -49,7 +49,7 @@
                 <col id="consumedQuantity" ui:number="true" sortable="true"/>
 
                 <!--计量单位-->
-                <col id="uomId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="uomId" mandatory="true" sortable="true"/>
 
                 <!--来源行号-->
                 <col id="sourceLineCode" sortable="true"/>

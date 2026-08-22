@@ -3,6 +3,7 @@ package app.erp.inv.service.processor;
 import app.erp.inv.dao.entity.ErpInvLandedCost;
 import app.erp.inv.service.ErpInvErrors;
 import app.erp.pur.dao.entity.ErpPurReceive;
+import io.nop.api.core.convert.ConvertHelper;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
@@ -20,16 +21,18 @@ public class ErpInvLandedCostGenerateFreightLandedCostProcessor {
     ErpInvLandedCostProcessor facade;
 
     public ErpInvLandedCost generateFreightLandedCost(String receiveCode, BigDecimal freightAmount,
-                                                       Long freightCurrencyId, BigDecimal freightExchangeRate,
+                                                       String freightCurrencyId, BigDecimal freightExchangeRate,
                                                        IServiceContext context) {
         ErpPurReceive receive = resolveReceive(receiveCode);
-        facade.validateNoDraftExists(receive.getId());
+        // A2 桥接（bridge-main-077）：pur Long id → inv String 列，退役 owner M2.5
+        facade.validateNoDraftExists(ConvertHelper.toString(receive.getId()));
 
-        Long currencyId = freightCurrencyId != null ? freightCurrencyId : receive.getCurrencyId();
+        String currencyId = freightCurrencyId != null ? freightCurrencyId
+                : ConvertHelper.toString(receive.getCurrencyId());
         BigDecimal exchangeRate = facade.resolveExchangeRate(freightExchangeRate, freightCurrencyId, receive);
 
         ErpInvLandedCost landedCost = facade.createLandedCostHead(receive, freightAmount, currencyId, exchangeRate);
-        facade.createFreightLine(landedCost, freightAmount, receive.getSupplierId());
+        facade.createFreightLine(landedCost, freightAmount, ConvertHelper.toString(receive.getSupplierId()));
         return landedCost;
     }
 

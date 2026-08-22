@@ -12,30 +12,30 @@
     public class ErpInvLandedCostLineInputBean extends CrudInputBase {
 
     
-        private Long _id;
+        private String _id;
 
     
         @PropMeta(propId=1)
     
-        public Long getId(){
+        public String getId(){
             return _id;
         }
 
-        public void setId(Long value){
+        public void setId(String value){
             this._id = value;
         }
 
 
-        private Long _landedCostId;
+        private String _landedCostId;
 
     
         @PropMeta(propId=2)
     
-        public Long getLandedCostId(){
+        public String getLandedCostId(){
             return _landedCostId;
         }
 
-        public void setLandedCostId(Long value){
+        public void setLandedCostId(String value){
             this._landedCostId = value;
         }
 
@@ -82,16 +82,16 @@
         }
 
 
-        private Long _apPartnerId;
+        private String _apPartnerId;
 
     
         @PropMeta(propId=6)
     
-        public Long getApPartnerId(){
+        public String getApPartnerId(){
             return _apPartnerId;
         }
 
-        public void setApPartnerId(Long value){
+        public void setApPartnerId(String value){
             this._apPartnerId = value;
         }
 

@@ -22,8 +22,8 @@
 
     <props>
         <prop name="id" displayName="ID" propId="1" i18n-en:displayName="ID" tagSet="seq-default" mandatory="true"
-              queryable="true" sortable="true" insertable="true" updatable="false" graphql:type="String">
-            <schema type="java.lang.Long"/>
+              queryable="true" sortable="true" insertable="true" updatable="false">
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="code" displayName="单号" propId="2" i18n-en:displayName="Code" tagSet="var" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
@@ -31,7 +31,7 @@
         </prop>
         <prop name="orgId" displayName="业务组织" propId="3" i18n-en:displayName="Organization" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="org">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="businessDate" displayName="业务日期" propId="4" i18n-en:displayName="Business Date" tagSet="clock"
               mandatory="true" queryable="true" sortable="true" insertable="true" updatable="true">
@@ -39,15 +39,15 @@
         </prop>
         <prop name="fromWarehouseId" displayName="调出仓库" propId="5" i18n-en:displayName="From Warehouse" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="fromWarehouse">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="toWarehouseId" displayName="调入仓库" propId="6" i18n-en:displayName="To Warehouse" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="toWarehouse">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="inTransitWarehouseId" displayName="在途仓库" propId="7" i18n-en:displayName="In Transit Warehouse"
               queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="inTransitWarehouse">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="docStatus" displayName="单据状态" propId="8" i18n-en:displayName="Doc Status" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">

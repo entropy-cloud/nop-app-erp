@@ -74,7 +74,7 @@ public class TestErpInvPostingDispatcherFailureHangs {
 
         ErpInvLandedCost landedCost = landedCostOf("LC-FAIL-001");
 
-        Long voucherId = dispatcher.tryPost(landedCost, Collections.emptyList(), Collections.emptyList());
+        String voucherId = dispatcher.tryPost(landedCost, Collections.emptyList(), Collections.emptyList());
 
         assertNull(voucherId, "到岸成本过账失败应吞异常返回 null（保持 posted=false 悬挂）");
     }
@@ -86,7 +86,7 @@ public class TestErpInvPostingDispatcherFailureHangs {
 
         ErpInvCostAdjust adjust = adjustOf("CA-FAIL-001");
 
-        Long voucherId = dispatcher.tryPost(adjust, Collections.emptyList(), new BigDecimal("10"));
+        String voucherId = dispatcher.tryPost(adjust, Collections.emptyList(), new BigDecimal("10"));
 
         assertNull(voucherId, "成本调整过账失败应吞异常返回 null（保持 posted=false 悬挂）");
     }
@@ -96,7 +96,7 @@ public class TestErpInvPostingDispatcherFailureHangs {
         OwnershipTransferPostingDispatcher dispatcher = new OwnershipTransferPostingDispatcher();
         dispatcher.executor = new InvPostingExecutor() {
             @Override
-            public Long postEvent(PostingEvent event) {
+            public String postEvent(PostingEvent event) {
                 throw new NopException("test.inv-posting-engine-down", null, true, true);
             }
         };
@@ -104,7 +104,7 @@ public class TestErpInvPostingDispatcherFailureHangs {
         ErpInvOwnershipTransfer transfer = transferOf("OT-FAIL-001");
         ErpInvOwnershipTransferLine line = new ErpInvOwnershipTransferLine();
         line.setTotalCost(new BigDecimal("100"));
-        line.setMaterialId(6001L);
+        line.setMaterialId("6001");
 
         dispatcher.dispatchIfApplicable(transfer, Collections.singletonList(line));
 
@@ -118,7 +118,7 @@ public class TestErpInvPostingDispatcherFailureHangs {
         ErpInvLandedCost head = new ErpInvLandedCost();
         head.setCode(code);
         head.setBusinessDate(LocalDate.of(2026, 7, 1));
-        head.setCurrencyId(6751L);
+        head.setCurrencyId("6751");
         head.setExchangeRate(BigDecimal.ONE);
         head.setTotalCostAmount(new BigDecimal("50"));
         head.setAllocationMethod(ErpInvConstants.ALLOC_METHOD_BY_AMOUNT);
@@ -129,7 +129,7 @@ public class TestErpInvPostingDispatcherFailureHangs {
         ErpInvCostAdjust adjust = new ErpInvCostAdjust();
         adjust.setCode(code);
         adjust.setBusinessDate(LocalDate.of(2026, 7, 1));
-        adjust.setCurrencyId(6751L);
+        adjust.setCurrencyId("6751");
         adjust.setAdjustType(ErpInvConstants.ADJUST_TYPE_LANDED_COST_SUPPLEMENT);
         return adjust;
     }
@@ -139,9 +139,9 @@ public class TestErpInvPostingDispatcherFailureHangs {
         transfer.setCode(code);
         transfer.setTransferType(ErpInvConstants.TRANSFER_TYPE_VMI_CONSUME);
         transfer.setBusinessDate(LocalDate.of(2026, 7, 1));
-        transfer.setCurrencyId(6751L);
-        transfer.setPartnerId(7001L);
-        transfer.setWarehouseId(3751L);
+        transfer.setCurrencyId("6751");
+        transfer.setPartnerId("7001");
+        transfer.setWarehouseId("3751");
         transfer.setDocStatus(ErpInvConstants.DOC_STATUS_DONE);
         return transfer;
     }

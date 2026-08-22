@@ -263,31 +263,31 @@ public class _ErpInvStockLedger extends DynamicOrmEntity{
 
     
     /* ID: ID */
-    private java.lang.Long _id;
+    private java.lang.String _id;
     
     /* 流水号: CODE */
     private java.lang.String _code;
     
     /* 业务组织: ORG_ID */
-    private java.lang.Long _orgId;
+    private java.lang.String _orgId;
     
     /* 移动单ID: MOVE_ID */
-    private java.lang.Long _moveId;
+    private java.lang.String _moveId;
     
     /* 移动单行ID: MOVE_LINE_ID */
-    private java.lang.Long _moveLineId;
+    private java.lang.String _moveLineId;
     
     /* 物料: MATERIAL_ID */
-    private java.lang.Long _materialId;
+    private java.lang.String _materialId;
     
     /* SKU: SKU_ID */
-    private java.lang.Long _skuId;
+    private java.lang.String _skuId;
     
     /* 仓库: WAREHOUSE_ID */
-    private java.lang.Long _warehouseId;
+    private java.lang.String _warehouseId;
     
     /* 库位: LOCATION_ID */
-    private java.lang.Long _locationId;
+    private java.lang.String _locationId;
     
     /* 数量: QUANTITY */
     private java.math.BigDecimal _quantity;
@@ -308,10 +308,10 @@ public class _ErpInvStockLedger extends DynamicOrmEntity{
     private java.lang.String _costMethod;
     
     /* 账套: ACCT_SCHEMA_ID */
-    private java.lang.Long _acctSchemaId;
+    private java.lang.String _acctSchemaId;
     
     /* 币种: CURRENCY_ID */
-    private java.lang.Long _currencyId;
+    private java.lang.String _currencyId;
     
     /* 业务日期: BUSINESS_DATE */
     private java.time.LocalDate _businessDate;
@@ -341,7 +341,7 @@ public class _ErpInvStockLedger extends DynamicOrmEntity{
     private java.sql.Timestamp _updateTime;
     
     /* 所有权往来单位: OWNER_ID */
-    private java.lang.Long _ownerId;
+    private java.lang.String _ownerId;
     
     /* 所有权类型: OWNERSHIP_TYPE */
     private java.lang.String _ownershipType;
@@ -516,9 +516,9 @@ public class _ErpInvStockLedger extends DynamicOrmEntity{
         switch(propId){
         
             case PROP_ID_id:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_id));
                }
                setId(typedValue);
@@ -536,9 +536,9 @@ public class _ErpInvStockLedger extends DynamicOrmEntity{
             }
         
             case PROP_ID_orgId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_orgId));
                }
                setOrgId(typedValue);
@@ -546,9 +546,9 @@ public class _ErpInvStockLedger extends DynamicOrmEntity{
             }
         
             case PROP_ID_moveId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_moveId));
                }
                setMoveId(typedValue);
@@ -556,9 +556,9 @@ public class _ErpInvStockLedger extends DynamicOrmEntity{
             }
         
             case PROP_ID_moveLineId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_moveLineId));
                }
                setMoveLineId(typedValue);
@@ -566,9 +566,9 @@ public class _ErpInvStockLedger extends DynamicOrmEntity{
             }
         
             case PROP_ID_materialId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_materialId));
                }
                setMaterialId(typedValue);
@@ -576,9 +576,9 @@ public class _ErpInvStockLedger extends DynamicOrmEntity{
             }
         
             case PROP_ID_skuId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_skuId));
                }
                setSkuId(typedValue);
@@ -586,9 +586,9 @@ public class _ErpInvStockLedger extends DynamicOrmEntity{
             }
         
             case PROP_ID_warehouseId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_warehouseId));
                }
                setWarehouseId(typedValue);
@@ -596,9 +596,9 @@ public class _ErpInvStockLedger extends DynamicOrmEntity{
             }
         
             case PROP_ID_locationId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_locationId));
                }
                setLocationId(typedValue);
@@ -666,9 +666,9 @@ public class _ErpInvStockLedger extends DynamicOrmEntity{
             }
         
             case PROP_ID_acctSchemaId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_acctSchemaId));
                }
                setAcctSchemaId(typedValue);
@@ -676,9 +676,9 @@ public class _ErpInvStockLedger extends DynamicOrmEntity{
             }
         
             case PROP_ID_currencyId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_currencyId));
                }
                setCurrencyId(typedValue);
@@ -776,9 +776,9 @@ public class _ErpInvStockLedger extends DynamicOrmEntity{
             }
         
             case PROP_ID_ownerId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_ownerId));
                }
                setOwnerId(typedValue);
@@ -806,7 +806,7 @@ public class _ErpInvStockLedger extends DynamicOrmEntity{
         
             case PROP_ID_id:{
                onInitProp(propId);
-               this._id = (java.lang.Long)value;
+               this._id = (java.lang.String)value;
                orm_id(); // 如果是设置主键字段，则触发watcher
                break;
             }
@@ -820,49 +820,49 @@ public class _ErpInvStockLedger extends DynamicOrmEntity{
         
             case PROP_ID_orgId:{
                onInitProp(propId);
-               this._orgId = (java.lang.Long)value;
+               this._orgId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_moveId:{
                onInitProp(propId);
-               this._moveId = (java.lang.Long)value;
+               this._moveId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_moveLineId:{
                onInitProp(propId);
-               this._moveLineId = (java.lang.Long)value;
+               this._moveLineId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_materialId:{
                onInitProp(propId);
-               this._materialId = (java.lang.Long)value;
+               this._materialId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_skuId:{
                onInitProp(propId);
-               this._skuId = (java.lang.Long)value;
+               this._skuId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_warehouseId:{
                onInitProp(propId);
-               this._warehouseId = (java.lang.Long)value;
+               this._warehouseId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_locationId:{
                onInitProp(propId);
-               this._locationId = (java.lang.Long)value;
+               this._locationId = (java.lang.String)value;
                
                break;
             }
@@ -911,14 +911,14 @@ public class _ErpInvStockLedger extends DynamicOrmEntity{
         
             case PROP_ID_acctSchemaId:{
                onInitProp(propId);
-               this._acctSchemaId = (java.lang.Long)value;
+               this._acctSchemaId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_currencyId:{
                onInitProp(propId);
-               this._currencyId = (java.lang.Long)value;
+               this._currencyId = (java.lang.String)value;
                
                break;
             }
@@ -988,7 +988,7 @@ public class _ErpInvStockLedger extends DynamicOrmEntity{
         
             case PROP_ID_ownerId:{
                onInitProp(propId);
-               this._ownerId = (java.lang.Long)value;
+               this._ownerId = (java.lang.String)value;
                
                break;
             }
@@ -1009,7 +1009,7 @@ public class _ErpInvStockLedger extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final java.lang.Long getId(){
+    public final java.lang.String getId(){
          onPropGet(PROP_ID_id);
          return _id;
     }
@@ -1017,7 +1017,7 @@ public class _ErpInvStockLedger extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final void setId(java.lang.Long value){
+    public final void setId(java.lang.String value){
         if(onPropSet(PROP_ID_id,value)){
             this._id = value;
             internalClearRefs(PROP_ID_id);
@@ -1047,7 +1047,7 @@ public class _ErpInvStockLedger extends DynamicOrmEntity{
     /**
      * 业务组织: ORG_ID
      */
-    public final java.lang.Long getOrgId(){
+    public final java.lang.String getOrgId(){
          onPropGet(PROP_ID_orgId);
          return _orgId;
     }
@@ -1055,7 +1055,7 @@ public class _ErpInvStockLedger extends DynamicOrmEntity{
     /**
      * 业务组织: ORG_ID
      */
-    public final void setOrgId(java.lang.Long value){
+    public final void setOrgId(java.lang.String value){
         if(onPropSet(PROP_ID_orgId,value)){
             this._orgId = value;
             internalClearRefs(PROP_ID_orgId);
@@ -1066,7 +1066,7 @@ public class _ErpInvStockLedger extends DynamicOrmEntity{
     /**
      * 移动单ID: MOVE_ID
      */
-    public final java.lang.Long getMoveId(){
+    public final java.lang.String getMoveId(){
          onPropGet(PROP_ID_moveId);
          return _moveId;
     }
@@ -1074,7 +1074,7 @@ public class _ErpInvStockLedger extends DynamicOrmEntity{
     /**
      * 移动单ID: MOVE_ID
      */
-    public final void setMoveId(java.lang.Long value){
+    public final void setMoveId(java.lang.String value){
         if(onPropSet(PROP_ID_moveId,value)){
             this._moveId = value;
             internalClearRefs(PROP_ID_moveId);
@@ -1085,7 +1085,7 @@ public class _ErpInvStockLedger extends DynamicOrmEntity{
     /**
      * 移动单行ID: MOVE_LINE_ID
      */
-    public final java.lang.Long getMoveLineId(){
+    public final java.lang.String getMoveLineId(){
          onPropGet(PROP_ID_moveLineId);
          return _moveLineId;
     }
@@ -1093,7 +1093,7 @@ public class _ErpInvStockLedger extends DynamicOrmEntity{
     /**
      * 移动单行ID: MOVE_LINE_ID
      */
-    public final void setMoveLineId(java.lang.Long value){
+    public final void setMoveLineId(java.lang.String value){
         if(onPropSet(PROP_ID_moveLineId,value)){
             this._moveLineId = value;
             internalClearRefs(PROP_ID_moveLineId);
@@ -1104,7 +1104,7 @@ public class _ErpInvStockLedger extends DynamicOrmEntity{
     /**
      * 物料: MATERIAL_ID
      */
-    public final java.lang.Long getMaterialId(){
+    public final java.lang.String getMaterialId(){
          onPropGet(PROP_ID_materialId);
          return _materialId;
     }
@@ -1112,7 +1112,7 @@ public class _ErpInvStockLedger extends DynamicOrmEntity{
     /**
      * 物料: MATERIAL_ID
      */
-    public final void setMaterialId(java.lang.Long value){
+    public final void setMaterialId(java.lang.String value){
         if(onPropSet(PROP_ID_materialId,value)){
             this._materialId = value;
             internalClearRefs(PROP_ID_materialId);
@@ -1123,7 +1123,7 @@ public class _ErpInvStockLedger extends DynamicOrmEntity{
     /**
      * SKU: SKU_ID
      */
-    public final java.lang.Long getSkuId(){
+    public final java.lang.String getSkuId(){
          onPropGet(PROP_ID_skuId);
          return _skuId;
     }
@@ -1131,7 +1131,7 @@ public class _ErpInvStockLedger extends DynamicOrmEntity{
     /**
      * SKU: SKU_ID
      */
-    public final void setSkuId(java.lang.Long value){
+    public final void setSkuId(java.lang.String value){
         if(onPropSet(PROP_ID_skuId,value)){
             this._skuId = value;
             internalClearRefs(PROP_ID_skuId);
@@ -1142,7 +1142,7 @@ public class _ErpInvStockLedger extends DynamicOrmEntity{
     /**
      * 仓库: WAREHOUSE_ID
      */
-    public final java.lang.Long getWarehouseId(){
+    public final java.lang.String getWarehouseId(){
          onPropGet(PROP_ID_warehouseId);
          return _warehouseId;
     }
@@ -1150,7 +1150,7 @@ public class _ErpInvStockLedger extends DynamicOrmEntity{
     /**
      * 仓库: WAREHOUSE_ID
      */
-    public final void setWarehouseId(java.lang.Long value){
+    public final void setWarehouseId(java.lang.String value){
         if(onPropSet(PROP_ID_warehouseId,value)){
             this._warehouseId = value;
             internalClearRefs(PROP_ID_warehouseId);
@@ -1161,7 +1161,7 @@ public class _ErpInvStockLedger extends DynamicOrmEntity{
     /**
      * 库位: LOCATION_ID
      */
-    public final java.lang.Long getLocationId(){
+    public final java.lang.String getLocationId(){
          onPropGet(PROP_ID_locationId);
          return _locationId;
     }
@@ -1169,7 +1169,7 @@ public class _ErpInvStockLedger extends DynamicOrmEntity{
     /**
      * 库位: LOCATION_ID
      */
-    public final void setLocationId(java.lang.Long value){
+    public final void setLocationId(java.lang.String value){
         if(onPropSet(PROP_ID_locationId,value)){
             this._locationId = value;
             internalClearRefs(PROP_ID_locationId);
@@ -1294,7 +1294,7 @@ public class _ErpInvStockLedger extends DynamicOrmEntity{
     /**
      * 账套: ACCT_SCHEMA_ID
      */
-    public final java.lang.Long getAcctSchemaId(){
+    public final java.lang.String getAcctSchemaId(){
          onPropGet(PROP_ID_acctSchemaId);
          return _acctSchemaId;
     }
@@ -1302,7 +1302,7 @@ public class _ErpInvStockLedger extends DynamicOrmEntity{
     /**
      * 账套: ACCT_SCHEMA_ID
      */
-    public final void setAcctSchemaId(java.lang.Long value){
+    public final void setAcctSchemaId(java.lang.String value){
         if(onPropSet(PROP_ID_acctSchemaId,value)){
             this._acctSchemaId = value;
             internalClearRefs(PROP_ID_acctSchemaId);
@@ -1313,7 +1313,7 @@ public class _ErpInvStockLedger extends DynamicOrmEntity{
     /**
      * 币种: CURRENCY_ID
      */
-    public final java.lang.Long getCurrencyId(){
+    public final java.lang.String getCurrencyId(){
          onPropGet(PROP_ID_currencyId);
          return _currencyId;
     }
@@ -1321,7 +1321,7 @@ public class _ErpInvStockLedger extends DynamicOrmEntity{
     /**
      * 币种: CURRENCY_ID
      */
-    public final void setCurrencyId(java.lang.Long value){
+    public final void setCurrencyId(java.lang.String value){
         if(onPropSet(PROP_ID_currencyId,value)){
             this._currencyId = value;
             internalClearRefs(PROP_ID_currencyId);
@@ -1503,7 +1503,7 @@ public class _ErpInvStockLedger extends DynamicOrmEntity{
     /**
      * 所有权往来单位: OWNER_ID
      */
-    public final java.lang.Long getOwnerId(){
+    public final java.lang.String getOwnerId(){
          onPropGet(PROP_ID_ownerId);
          return _ownerId;
     }
@@ -1511,7 +1511,7 @@ public class _ErpInvStockLedger extends DynamicOrmEntity{
     /**
      * 所有权往来单位: OWNER_ID
      */
-    public final void setOwnerId(java.lang.Long value){
+    public final void setOwnerId(java.lang.String value){
         if(onPropSet(PROP_ID_ownerId,value)){
             this._ownerId = value;
             internalClearRefs(PROP_ID_ownerId);

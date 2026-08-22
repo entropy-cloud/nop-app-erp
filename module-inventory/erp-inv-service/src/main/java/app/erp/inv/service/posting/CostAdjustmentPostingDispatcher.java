@@ -44,7 +44,7 @@ public class CostAdjustmentPostingDispatcher {
     @Inject
     IDaoProvider daoProvider;
 
-    public Long tryPost(ErpInvCostAdjust adjust, List<ErpInvCostAdjustLine> lines, BigDecimal totalAdjustAmount) {
+    public String tryPost(ErpInvCostAdjust adjust, List<ErpInvCostAdjustLine> lines, BigDecimal totalAdjustAmount) {
         if (totalAdjustAmount == null || totalAdjustAmount.signum() == 0) {
             return null;
         }
@@ -75,7 +75,7 @@ public class CostAdjustmentPostingDispatcher {
         }
     }
 
-    private Long postEvent(PostingEvent event) {
+    private String postEvent(PostingEvent event) {
         return voucherBiz.post(event, ctx());
     }
 
@@ -111,7 +111,7 @@ public class CostAdjustmentPostingDispatcher {
         return context != null ? context : new ServiceContextImpl();
     }
 
-    private Long resolveAcctSchemaId(Long orgId) {
+    private String resolveAcctSchemaId(String orgId) {
         return AcctSchemaResolver.resolvePrimarySchemaId(daoProvider, orgId);
     }
 }

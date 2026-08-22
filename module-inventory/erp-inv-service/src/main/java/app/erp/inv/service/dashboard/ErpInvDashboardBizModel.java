@@ -151,7 +151,7 @@ public class ErpInvDashboardBizModel {
                     r -> (BigDecimal) r.get("totalValue"), Comparator.reverseOrder()));
             IEntityDao<ErpMdWarehouse> whDao = daoProvider.daoFor(ErpMdWarehouse.class);
             for (Map<String, Object> r : result) {
-                Long wid = (Long) r.get("warehouseId");
+                String wid = (String) r.get("warehouseId");
                 String warehouseName = null;
                 if (wid != null) {
                     ErpMdWarehouse w = whDao.getEntityById(wid);
@@ -171,13 +171,13 @@ public class ErpInvDashboardBizModel {
             QueryBean q = new QueryBean();
             q.setLimit(ALERT_MAX_ROWS);
             List<ErpInvStockBalance> balances = daoProvider.daoFor(ErpInvStockBalance.class).findAllByQuery(q);
-            Set<Long> materialIds = new HashSet<>();
+            Set<String> materialIds = new HashSet<>();
             for (ErpInvStockBalance b : balances) {
                 if (b.getMaterialId() != null) materialIds.add(b.getMaterialId());
             }
-            Map<Long, BigDecimal> safetyByMaterial = loadSafetyStock(materialIds);
-            Map<Long, String> materialNames = loadMaterialNames(materialIds);
-            Map<Long, String> warehouseNames = loadWarehouseNamesForBalances(balances);
+            Map<String, BigDecimal> safetyByMaterial = loadSafetyStock(materialIds);
+            Map<String, String> materialNames = loadMaterialNames(materialIds);
+            Map<String, String> warehouseNames = loadWarehouseNamesForBalances(balances);
             List<Map<String, Object>> rows = new ArrayList<>();
             for (ErpInvStockBalance b : balances) {
                 BigDecimal safety = safetyByMaterial.get(b.getMaterialId());
@@ -214,16 +214,16 @@ public class ErpInvDashboardBizModel {
             QueryBean q = new QueryBean();
             q.setLimit(ALERT_MAX_ROWS);
             List<ErpInvStockBalance> balances = daoProvider.daoFor(ErpInvStockBalance.class).findAllByQuery(q);
-            Map<Long, LocalDate> lastOutByMaterial = loadLastOutgoingDates(cutoff);
-            Set<Long> materialIds = new HashSet<>();
-            Set<Long> warehouseIds = new HashSet<>();
+            Map<String, LocalDate> lastOutByMaterial = loadLastOutgoingDates(cutoff);
+            Set<String> materialIds = new HashSet<>();
+            Set<String> warehouseIds = new HashSet<>();
             for (ErpInvStockBalance b : balances) {
                 if (DashboardUtil.nz(b.getTotalQuantity()).signum() <= 0) continue;
                 if (b.getMaterialId() != null) materialIds.add(b.getMaterialId());
                 if (b.getWarehouseId() != null) warehouseIds.add(b.getWarehouseId());
             }
-            Map<Long, String> materialNames = loadMaterialNames(materialIds);
-            Map<Long, String> warehouseNames = loadWarehouseNames(warehouseIds);
+            Map<String, String> materialNames = loadMaterialNames(materialIds);
+            Map<String, String> warehouseNames = loadWarehouseNames(warehouseIds);
             List<Map<String, Object>> rows = new ArrayList<>();
             for (ErpInvStockBalance b : balances) {
                 if (DashboardUtil.nz(b.getTotalQuantity()).signum() <= 0) continue;
@@ -262,14 +262,14 @@ public class ErpInvDashboardBizModel {
             QueryBean q = new QueryBean();
             q.addFilter(le("expiryDate", horizon));
             List<ErpInvBatch> batches = dao.findAllByQuery(q);
-            Set<Long> materialIds = new HashSet<>();
-            Set<Long> warehouseIds = new HashSet<>();
+            Set<String> materialIds = new HashSet<>();
+            Set<String> warehouseIds = new HashSet<>();
             for (ErpInvBatch batch : batches) {
                 if (batch.getMaterialId() != null) materialIds.add(batch.getMaterialId());
                 if (batch.getWarehouseId() != null) warehouseIds.add(batch.getWarehouseId());
             }
-            Map<Long, String> materialNames = loadMaterialNames(materialIds);
-            Map<Long, String> warehouseNames = loadWarehouseNames(warehouseIds);
+            Map<String, String> materialNames = loadMaterialNames(materialIds);
+            Map<String, String> warehouseNames = loadWarehouseNames(warehouseIds);
             List<Map<String, Object>> rows = new ArrayList<>();
             for (ErpInvBatch batch : batches) {
                 LocalDate exp = batch.getExpiryDate();
@@ -296,9 +296,9 @@ public class ErpInvDashboardBizModel {
     private BigDecimal[] sumMoveQtyInRange(LocalDate from, LocalDate to) {
         List<ErpInvStockMove> moves = loadDoneMovesInRange(from, to);
         if (moves.isEmpty()) return new BigDecimal[]{BigDecimal.ZERO, BigDecimal.ZERO};
-        Set<Long> moveIds = new HashSet<>();
-        Set<Long> incomingMoveIds = new HashSet<>();
-        Set<Long> outgoingMoveIds = new HashSet<>();
+        Set<String> moveIds = new HashSet<>();
+        Set<String> incomingMoveIds = new HashSet<>();
+        Set<String> outgoingMoveIds = new HashSet<>();
         for (ErpInvStockMove m : moves) {
             moveIds.add(m.getId());
             if (ErpInvConstants.MOVE_TYPE_INCOMING.equals(m.getMoveType())) {
@@ -324,8 +324,8 @@ public class ErpInvDashboardBizModel {
     private BigDecimal sumOutgoingCostInRange(LocalDate from, LocalDate to) {
         List<ErpInvStockMove> moves = loadDoneMovesInRange(from, to);
         if (moves.isEmpty()) return BigDecimal.ZERO;
-        Set<Long> outgoingMoveIds = new HashSet<>();
-        Set<Long> allMoveIds = new HashSet<>();
+        Set<String> outgoingMoveIds = new HashSet<>();
+        Set<String> allMoveIds = new HashSet<>();
         for (ErpInvStockMove m : moves) {
             allMoveIds.add(m.getId());
             if (ErpInvConstants.MOVE_TYPE_OUTGOING.equals(m.getMoveType())) {
@@ -351,7 +351,7 @@ public class ErpInvDashboardBizModel {
         return dao.findAllByQuery(q);
     }
 
-    private List<ErpInvStockMoveLine> loadMoveLines(Set<Long> moveIds) {
+    private List<ErpInvStockMoveLine> loadMoveLines(Set<String> moveIds) {
         if (moveIds.isEmpty()) return Collections.emptyList();
         IEntityDao<ErpInvStockMoveLine> dao = daoProvider.daoFor(ErpInvStockMoveLine.class);
         QueryBean q = new QueryBean();
@@ -367,44 +367,44 @@ public class ErpInvDashboardBizModel {
         return dao.findAllByQuery(q);
     }
 
-    private Map<Long, BigDecimal> loadSafetyStock(Set<Long> materialIds) {
+    private Map<String, BigDecimal> loadSafetyStock(Set<String> materialIds) {
         if (materialIds.isEmpty()) return Collections.emptyMap();
         IEntityDao<ErpMdMaterial> dao = daoProvider.daoFor(ErpMdMaterial.class);
         QueryBean q = new QueryBean();
         q.addFilter(in("id", materialIds));
-        Map<Long, BigDecimal> map = new HashMap<>();
+        Map<String, BigDecimal> map = new HashMap<>();
         for (ErpMdMaterial m : dao.findAllByQuery(q)) {
             map.put(m.getId(), DashboardUtil.nz(m.getSafetyStock()));
         }
         return map;
     }
 
-    private Map<Long, String> loadMaterialNames(Set<Long> materialIds) {
+    private Map<String, String> loadMaterialNames(Set<String> materialIds) {
         if (materialIds.isEmpty()) return Collections.emptyMap();
         IEntityDao<ErpMdMaterial> dao = daoProvider.daoFor(ErpMdMaterial.class);
         QueryBean q = new QueryBean();
         q.addFilter(in("id", materialIds));
-        Map<Long, String> map = new HashMap<>();
+        Map<String, String> map = new HashMap<>();
         for (ErpMdMaterial m : dao.findAllByQuery(q)) {
             map.put(m.getId(), m.getName());
         }
         return map;
     }
 
-    private Map<Long, String> loadWarehouseNames(Set<Long> warehouseIds) {
+    private Map<String, String> loadWarehouseNames(Set<String> warehouseIds) {
         if (warehouseIds.isEmpty()) return Collections.emptyMap();
         IEntityDao<ErpMdWarehouse> dao = daoProvider.daoFor(ErpMdWarehouse.class);
         QueryBean q = new QueryBean();
         q.addFilter(in("id", warehouseIds));
-        Map<Long, String> map = new HashMap<>();
+        Map<String, String> map = new HashMap<>();
         for (ErpMdWarehouse w : dao.findAllByQuery(q)) {
             map.put(w.getId(), w.getName());
         }
         return map;
     }
 
-    private Map<Long, String> loadWarehouseNamesForBalances(List<ErpInvStockBalance> balances) {
-        Set<Long> warehouseIds = new HashSet<>();
+    private Map<String, String> loadWarehouseNamesForBalances(List<ErpInvStockBalance> balances) {
+        Set<String> warehouseIds = new HashSet<>();
         for (ErpInvStockBalance b : balances) {
             if (b.getWarehouseId() != null) warehouseIds.add(b.getWarehouseId());
         }
@@ -412,7 +412,7 @@ public class ErpInvDashboardBizModel {
     }
 
     /** 加载 cutoff 之后的最近出库日期，按 materialId → lastOutDate（StockMoveLine 无 warehouseId，故物料级聚合）。 */
-    private Map<Long, LocalDate> loadLastOutgoingDates(LocalDate cutoff) {
+    private Map<String, LocalDate> loadLastOutgoingDates(LocalDate cutoff) {
         IEntityDao<ErpInvStockMove> mDao = daoProvider.daoFor(ErpInvStockMove.class);
         QueryBean mq = new QueryBean();
         mq.addFilter(eq("moveType", ErpInvConstants.MOVE_TYPE_OUTGOING));
@@ -420,14 +420,14 @@ public class ErpInvDashboardBizModel {
         if (cutoff != null) mq.addFilter(ge("businessDate", cutoff));
         List<ErpInvStockMove> moves = mDao.findAllByQuery(mq);
         if (moves.isEmpty()) return Collections.emptyMap();
-        Set<Long> moveIds = new HashSet<>();
+        Set<String> moveIds = new HashSet<>();
         for (ErpInvStockMove m : moves) moveIds.add(m.getId());
         List<ErpInvStockMoveLine> lines = loadMoveLines(moveIds);
-        Map<Long, LocalDate> moveDateByMoveId = new HashMap<>();
+        Map<String, LocalDate> moveDateByMoveId = new HashMap<>();
         for (ErpInvStockMove m : moves) {
             moveDateByMoveId.put(m.getId(), m.getBusinessDate());
         }
-        Map<Long, LocalDate> result = new HashMap<>();
+        Map<String, LocalDate> result = new HashMap<>();
         for (ErpInvStockMoveLine l : lines) {
             LocalDate d = moveDateByMoveId.get(l.getMoveId());
             if (d == null || l.getMaterialId() == null) continue;

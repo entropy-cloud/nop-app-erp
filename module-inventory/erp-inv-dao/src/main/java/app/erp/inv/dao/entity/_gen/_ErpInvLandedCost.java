@@ -217,22 +217,22 @@ public class _ErpInvLandedCost extends DynamicOrmEntity{
 
     
     /* ID: ID */
-    private java.lang.Long _id;
+    private java.lang.String _id;
     
     /* 单号: CODE */
     private java.lang.String _code;
     
     /* 业务组织: ORG_ID */
-    private java.lang.Long _orgId;
+    private java.lang.String _orgId;
     
     /* 采购入库单: RECEIVE_ID */
-    private java.lang.Long _receiveId;
+    private java.lang.String _receiveId;
     
     /* 采购供应商: SUPPLIER_ID */
-    private java.lang.Long _supplierId;
+    private java.lang.String _supplierId;
     
     /* 币种: CURRENCY_ID */
-    private java.lang.Long _currencyId;
+    private java.lang.String _currencyId;
     
     /* 汇率: EXCHANGE_RATE */
     private java.math.BigDecimal _exchangeRate;
@@ -446,9 +446,9 @@ public class _ErpInvLandedCost extends DynamicOrmEntity{
         switch(propId){
         
             case PROP_ID_id:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_id));
                }
                setId(typedValue);
@@ -466,9 +466,9 @@ public class _ErpInvLandedCost extends DynamicOrmEntity{
             }
         
             case PROP_ID_orgId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_orgId));
                }
                setOrgId(typedValue);
@@ -476,9 +476,9 @@ public class _ErpInvLandedCost extends DynamicOrmEntity{
             }
         
             case PROP_ID_receiveId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_receiveId));
                }
                setReceiveId(typedValue);
@@ -486,9 +486,9 @@ public class _ErpInvLandedCost extends DynamicOrmEntity{
             }
         
             case PROP_ID_supplierId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_supplierId));
                }
                setSupplierId(typedValue);
@@ -496,9 +496,9 @@ public class _ErpInvLandedCost extends DynamicOrmEntity{
             }
         
             case PROP_ID_currencyId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_currencyId));
                }
                setCurrencyId(typedValue);
@@ -696,7 +696,7 @@ public class _ErpInvLandedCost extends DynamicOrmEntity{
         
             case PROP_ID_id:{
                onInitProp(propId);
-               this._id = (java.lang.Long)value;
+               this._id = (java.lang.String)value;
                orm_id(); // 如果是设置主键字段，则触发watcher
                break;
             }
@@ -710,28 +710,28 @@ public class _ErpInvLandedCost extends DynamicOrmEntity{
         
             case PROP_ID_orgId:{
                onInitProp(propId);
-               this._orgId = (java.lang.Long)value;
+               this._orgId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_receiveId:{
                onInitProp(propId);
-               this._receiveId = (java.lang.Long)value;
+               this._receiveId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_supplierId:{
                onInitProp(propId);
-               this._supplierId = (java.lang.Long)value;
+               this._supplierId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_currencyId:{
                onInitProp(propId);
-               this._currencyId = (java.lang.Long)value;
+               this._currencyId = (java.lang.String)value;
                
                break;
             }
@@ -871,7 +871,7 @@ public class _ErpInvLandedCost extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final java.lang.Long getId(){
+    public final java.lang.String getId(){
          onPropGet(PROP_ID_id);
          return _id;
     }
@@ -879,7 +879,7 @@ public class _ErpInvLandedCost extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final void setId(java.lang.Long value){
+    public final void setId(java.lang.String value){
         if(onPropSet(PROP_ID_id,value)){
             this._id = value;
             internalClearRefs(PROP_ID_id);
@@ -909,7 +909,7 @@ public class _ErpInvLandedCost extends DynamicOrmEntity{
     /**
      * 业务组织: ORG_ID
      */
-    public final java.lang.Long getOrgId(){
+    public final java.lang.String getOrgId(){
          onPropGet(PROP_ID_orgId);
          return _orgId;
     }
@@ -917,7 +917,7 @@ public class _ErpInvLandedCost extends DynamicOrmEntity{
     /**
      * 业务组织: ORG_ID
      */
-    public final void setOrgId(java.lang.Long value){
+    public final void setOrgId(java.lang.String value){
         if(onPropSet(PROP_ID_orgId,value)){
             this._orgId = value;
             internalClearRefs(PROP_ID_orgId);
@@ -928,7 +928,7 @@ public class _ErpInvLandedCost extends DynamicOrmEntity{
     /**
      * 采购入库单: RECEIVE_ID
      */
-    public final java.lang.Long getReceiveId(){
+    public final java.lang.String getReceiveId(){
          onPropGet(PROP_ID_receiveId);
          return _receiveId;
     }
@@ -936,7 +936,7 @@ public class _ErpInvLandedCost extends DynamicOrmEntity{
     /**
      * 采购入库单: RECEIVE_ID
      */
-    public final void setReceiveId(java.lang.Long value){
+    public final void setReceiveId(java.lang.String value){
         if(onPropSet(PROP_ID_receiveId,value)){
             this._receiveId = value;
             internalClearRefs(PROP_ID_receiveId);
@@ -947,7 +947,7 @@ public class _ErpInvLandedCost extends DynamicOrmEntity{
     /**
      * 采购供应商: SUPPLIER_ID
      */
-    public final java.lang.Long getSupplierId(){
+    public final java.lang.String getSupplierId(){
          onPropGet(PROP_ID_supplierId);
          return _supplierId;
     }
@@ -955,7 +955,7 @@ public class _ErpInvLandedCost extends DynamicOrmEntity{
     /**
      * 采购供应商: SUPPLIER_ID
      */
-    public final void setSupplierId(java.lang.Long value){
+    public final void setSupplierId(java.lang.String value){
         if(onPropSet(PROP_ID_supplierId,value)){
             this._supplierId = value;
             internalClearRefs(PROP_ID_supplierId);
@@ -966,7 +966,7 @@ public class _ErpInvLandedCost extends DynamicOrmEntity{
     /**
      * 币种: CURRENCY_ID
      */
-    public final java.lang.Long getCurrencyId(){
+    public final java.lang.String getCurrencyId(){
          onPropGet(PROP_ID_currencyId);
          return _currencyId;
     }
@@ -974,7 +974,7 @@ public class _ErpInvLandedCost extends DynamicOrmEntity{
     /**
      * 币种: CURRENCY_ID
      */
-    public final void setCurrencyId(java.lang.Long value){
+    public final void setCurrencyId(java.lang.String value){
         if(onPropSet(PROP_ID_currencyId,value)){
             this._currencyId = value;
             internalClearRefs(PROP_ID_currencyId);

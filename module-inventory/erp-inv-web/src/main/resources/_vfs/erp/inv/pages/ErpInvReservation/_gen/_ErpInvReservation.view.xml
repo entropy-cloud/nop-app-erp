@@ -19,13 +19,13 @@
             <cols>
 
                 <!--ID-->
-                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="id" mandatory="true" sortable="true"/>
 
                 <!--单号-->
                 <col id="code" mandatory="true" sortable="true"/>
 
                 <!--业务组织-->
-                <col id="orgId" ui:number="true" sortable="true"/>
+                <col id="orgId" sortable="true"/>
 
                 <!--业务日期-->
                 <col id="businessDate" mandatory="true" sortable="true"/>
@@ -37,7 +37,7 @@
                 <col id="sourceBillCode" mandatory="true" sortable="true"/>
 
                 <!--为谁预留(往来单位)-->
-                <col id="reservedForPartnerId" ui:number="true" sortable="true"/>
+                <col id="reservedForPartnerId" sortable="true"/>
 
                 <!--状态-->
                 <col id="status" mandatory="true" sortable="true"/>

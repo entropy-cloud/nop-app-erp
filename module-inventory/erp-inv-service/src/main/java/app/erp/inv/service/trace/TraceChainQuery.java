@@ -47,7 +47,7 @@ public class TraceChainQuery {
      * 正向追溯：从 {@code moveId} 出发，递归收集所有下游移动单（{@code originMoveId} 指向当前节点的移动单）。
      * 关闭（{@code enabled=false}）时仅返回根节点单节点结果。
      */
-    public TraceChainResult forwardTrace(Long moveId, boolean enabled, int maxDepth) {
+    public TraceChainResult forwardTrace(String moveId, boolean enabled, int maxDepth) {
         TraceChainResult result = new TraceChainResult("FORWARD");
         result.setRootMoveId(moveId);
         ErpInvStockMove root = findActiveMove(moveId);
@@ -58,9 +58,9 @@ public class TraceChainQuery {
         if (!enabled) {
             return result;
         }
-        Set<Long> visited = new HashSet<>();
+        Set<String> visited = new HashSet<>();
         visited.add(moveId);
-        Deque<Long> frontier = new ArrayDeque<>();
+        Deque<String> frontier = new ArrayDeque<>();
         frontier.add(moveId);
         int depth = 0;
         while (!frontier.isEmpty()) {
@@ -70,7 +70,7 @@ public class TraceChainQuery {
             }
             int levelSize = frontier.size();
             for (int i = 0; i < levelSize; i++) {
-                Long current = frontier.poll();
+                String current = frontier.poll();
                 for (ErpInvStockMove downstream : findActiveMovesByOrigin(current)) {
                     result.getLinks().add(new TraceLink(current, downstream.getId(),
                             ErpInvConstants.TRACE_LINK_FORWARD));
@@ -91,7 +91,7 @@ public class TraceChainQuery {
      * 反向追溯：从 {@code moveId} 出发，沿 {@code originMoveId} 逐层上溯至无上游的根。
      * 关闭时仅返回根节点。
      */
-    public TraceChainResult backwardTrace(Long moveId, boolean enabled, int maxDepth) {
+    public TraceChainResult backwardTrace(String moveId, boolean enabled, int maxDepth) {
         TraceChainResult result = new TraceChainResult("BACKWARD");
         result.setRootMoveId(moveId);
         ErpInvStockMove current = findActiveMove(moveId);
@@ -102,7 +102,7 @@ public class TraceChainQuery {
         if (!enabled) {
             return result;
         }
-        Set<Long> visited = new HashSet<>();
+        Set<String> visited = new HashSet<>();
         visited.add(moveId);
         int depth = 0;
         while (current.getOriginMoveId() != null) {
@@ -110,7 +110,7 @@ public class TraceChainQuery {
                 result.setTruncated(true);
                 break;
             }
-            Long parentId = current.getOriginMoveId();
+            String parentId = current.getOriginMoveId();
             if (!visited.add(parentId)) {
                 result.setTruncated(true);
                 break;
@@ -132,20 +132,20 @@ public class TraceChainQuery {
      * 退货追溯（双向）：给定退货移动单 → 返回其原出/入库移动单；给定原移动单 → 返回其全部退货移动单。
      * 锚点（原单）= 根节点的 {@code originReturnedMoveId}（若根为退货单），否则根节点本身（视为原单）。
      */
-    public TraceChainResult returnTrace(Long moveId, boolean enabled) {
+    public TraceChainResult returnTrace(String moveId, boolean enabled) {
         TraceChainResult result = new TraceChainResult("RETURN");
         result.setRootMoveId(moveId);
         ErpInvStockMove root = findActiveMove(moveId);
         if (root == null) {
             return result;
         }
-        Set<Long> nodeIds = new LinkedHashSet<>();
+        Set<String> nodeIds = new LinkedHashSet<>();
         nodeIds.add(moveId);
         result.getNodes().add(root);
         if (!enabled) {
             return result;
         }
-        Long anchorId = root.getOriginReturnedMoveId() != null
+        String anchorId = root.getOriginReturnedMoveId() != null
                 ? root.getOriginReturnedMoveId() : moveId;
         ErpInvStockMove anchor = findActiveMove(anchorId);
         if (anchor != null && nodeIds.add(anchorId)) {
@@ -170,7 +170,7 @@ public class TraceChainQuery {
         if (batchNo == null || batchNo.isEmpty() || !enabled) {
             return result;
         }
-        Set<Long> moveIds = new LinkedHashSet<>();
+        Set<String> moveIds = new LinkedHashSet<>();
         for (ErpInvStockMoveLine line : findLinesByBatch(batchNo)) {
             if (line.getMoveId() != null) {
                 moveIds.add(line.getMoveId());
@@ -181,8 +181,8 @@ public class TraceChainQuery {
                 moveIds.add(ledger.getMoveId());
             }
         }
-        Set<Long> added = new HashSet<>();
-        for (Long mid : moveIds) {
+        Set<String> added = new HashSet<>();
+        for (String mid : moveIds) {
             ErpInvStockMove move = findActiveMove(mid);
             if (move != null && added.add(mid)) {
                 result.getNodes().add(move);
@@ -193,7 +193,7 @@ public class TraceChainQuery {
 
     // ---------- query primitives ----------
 
-    private ErpInvStockMove findActiveMove(Long id) {
+    private ErpInvStockMove findActiveMove(String id) {
         if (id == null) {
             return null;
         }
@@ -203,14 +203,14 @@ public class TraceChainQuery {
         return list.isEmpty() ? null : list.get(0);
     }
 
-    private List<ErpInvStockMove> findActiveMovesByOrigin(Long originMoveId) {
+    private List<ErpInvStockMove> findActiveMovesByOrigin(String originMoveId) {
         if (originMoveId == null) {
             return new ArrayList<>();
         }
         return findActiveMovesByQuery(q -> q.addFilter(eq("originMoveId", originMoveId)));
     }
 
-    private List<ErpInvStockMove> findActiveReturnsOf(Long originReturnedMoveId) {
+    private List<ErpInvStockMove> findActiveReturnsOf(String originReturnedMoveId) {
         if (originReturnedMoveId == null) {
             return new ArrayList<>();
         }

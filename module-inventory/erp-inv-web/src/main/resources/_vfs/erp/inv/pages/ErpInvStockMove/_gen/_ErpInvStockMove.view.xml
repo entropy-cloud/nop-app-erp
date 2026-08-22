@@ -19,7 +19,7 @@
             <cols>
 
                 <!--ID-->
-                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="id" mandatory="true" sortable="true"/>
 
                 <!--单号-->
                 <col id="code" mandatory="true" sortable="true"/>
@@ -28,22 +28,22 @@
                 <col id="moveType" mandatory="true" sortable="true"/>
 
                 <!--业务组织-->
-                <col id="orgId" ui:number="true" sortable="true"/>
+                <col id="orgId" sortable="true"/>
 
                 <!--业务日期-->
                 <col id="businessDate" mandatory="true" sortable="true"/>
 
                 <!--源仓库-->
-                <col id="sourceWarehouseId" ui:number="true" sortable="true"/>
+                <col id="sourceWarehouseId" sortable="true"/>
 
                 <!--源库位-->
-                <col id="sourceLocationId" ui:number="true" sortable="true"/>
+                <col id="sourceLocationId" sortable="true"/>
 
                 <!--目标仓库-->
-                <col id="destWarehouseId" ui:number="true" sortable="true"/>
+                <col id="destWarehouseId" sortable="true"/>
 
                 <!--目标库位-->
-                <col id="destLocationId" ui:number="true" sortable="true"/>
+                <col id="destLocationId" sortable="true"/>
 
                 <!--单据状态-->
                 <col id="docStatus" mandatory="true" sortable="true"/>
@@ -85,10 +85,10 @@
                 <col id="updateTime" mandatory="true" sortable="true"/>
 
                 <!--上游移动单-->
-                <col id="originMoveId" ui:number="true" sortable="true"/>
+                <col id="originMoveId" sortable="true"/>
 
                 <!--原退货移动单-->
-                <col id="originReturnedMoveId" ui:number="true" sortable="true"/>
+                <col id="originReturnedMoveId" sortable="true"/>
             </cols>
         </grid>
         <grid id="pick-list" x:prototype="list" x:abstract="true"/>

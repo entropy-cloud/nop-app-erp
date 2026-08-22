@@ -54,7 +54,7 @@ public class ErpInvCostingReclosePeriodCostsProcessor {
     @Inject
     CostMethodResolver costMethodResolver;
 
-    public CostingRecloseReport reclosePeriodCosts(Long periodId, LocalDate startDate, LocalDate endDate,
+    public CostingRecloseReport reclosePeriodCosts(String periodId, LocalDate startDate, LocalDate endDate,
                                                     IServiceContext context) {
         CostingRecloseReport report = new CostingRecloseReport();
         report.setPeriodId(periodId);
@@ -212,14 +212,14 @@ public class ErpInvCostingReclosePeriodCostsProcessor {
         return dao.findAllByQuery(q);
     }
 
-    protected List<ErpInvStockMoveLine> loadLines(Long moveId) {
+    protected List<ErpInvStockMoveLine> loadLines(String moveId) {
         IEntityDao<ErpInvStockMoveLine> dao = daoProvider.daoFor(ErpInvStockMoveLine.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("moveId", moveId));
         return dao.findAllByQuery(q);
     }
 
-    protected List<ErpInvStockLedger> findLedgers(Long moveId, Long moveLineId) {
+    protected List<ErpInvStockLedger> findLedgers(String moveId, String moveLineId) {
         IEntityDao<ErpInvStockLedger> dao = daoProvider.daoFor(ErpInvStockLedger.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("moveId", moveId));
@@ -227,7 +227,7 @@ public class ErpInvCostingReclosePeriodCostsProcessor {
         return dao.findAllByQuery(q);
     }
 
-    protected ErpInvCostLayer findExistingLayer(Long incomingMoveId, Long materialId, Long warehouseId,
+    protected ErpInvCostLayer findExistingLayer(String incomingMoveId, String materialId, String warehouseId,
                                                 String costMethod) {
         IEntityDao<ErpInvCostLayer> dao = daoProvider.daoFor(ErpInvCostLayer.class);
         QueryBean q = new QueryBean();
@@ -242,7 +242,7 @@ public class ErpInvCostingReclosePeriodCostsProcessor {
     /**
      * 按成本方法查询可用 cost layer。FIFO/批次内升序；LIFO 降序；SPECIFIC 按 batchNo 精确匹配。
      */
-    protected List<ErpInvCostLayer> findLayersForMethod(Long materialId, Long warehouseId, String batchNo,
+    protected List<ErpInvCostLayer> findLayersForMethod(String materialId, String warehouseId, String batchNo,
                                                        LocalDate businessDate, String costMethod) {
         IEntityDao<ErpInvCostLayer> dao = daoProvider.daoFor(ErpInvCostLayer.class);
         QueryBean q = new QueryBean();
@@ -267,7 +267,7 @@ public class ErpInvCostingReclosePeriodCostsProcessor {
         return list;
     }
 
-    protected List<ErpInvStockBalance> findBalanceForLedger(Long materialId, Long warehouseId, String batchNo) {
+    protected List<ErpInvStockBalance> findBalanceForLedger(String materialId, String warehouseId, String batchNo) {
         IEntityDao<ErpInvStockBalance> dao = daoProvider.daoFor(ErpInvStockBalance.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("materialId", materialId));

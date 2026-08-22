@@ -18,8 +18,8 @@ import io.nop.orm.biz.ICrudBiz;
 public interface IErpInvCostAdjustBiz extends ICrudBiz<ErpInvCostAdjust> {
 
     @BizMutation
-    ErpInvCostAdjust applyCostAdjust(@Name("id") Long id, IServiceContext context);
+    ErpInvCostAdjust applyCostAdjust(@Name("id") String id, IServiceContext context);
 
     @BizMutation
-    ErpInvCostAdjust reverseCostAdjust(@Name("id") Long id, IServiceContext context);
+    ErpInvCostAdjust reverseCostAdjust(@Name("id") String id, IServiceContext context);
 }

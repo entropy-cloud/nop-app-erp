@@ -17,7 +17,7 @@ public class ErpInvStockMoveConfirmProcessor {
     @Inject
     ErpInvStockMoveProcessor facade;
 
-    public ErpInvStockMove confirm(Long moveId, IServiceContext context) {
+    public ErpInvStockMove confirm(String moveId, IServiceContext context) {
         ErpInvStockMove move = facade.requireMove(moveId, context);
         List<ErpInvStockMoveLine> lines = facade.loadLines(move.getId());
         facade.doConfirm(move, lines, context);

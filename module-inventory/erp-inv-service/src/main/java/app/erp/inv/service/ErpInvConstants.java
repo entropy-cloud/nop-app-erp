@@ -1,5 +1,7 @@
 package app.erp.inv.service;
 
+import io.nop.api.core.convert.ConvertHelper;
+
 import app.erp.inv.dao.constants.ErpInvDocStatus;
 
 /**
@@ -127,8 +129,14 @@ public interface ErpInvConstants extends ErpInvDocStatus {
     String SUBJECT_INVENTORY = "1401";
     String SUBJECT_COST_VARIANCE = "6603";
 
-    // 成本调整流水 moveId 哨兵：成本调整为纯成本变更（无 StockMove），流水 moveId/moveLineId 置 0 标识非移动单来源
-    long LEDGER_MOVE_ID_COST_ADJUST = 0L;
+    // 成本调整流水 moveId 哨兵：成本调整为纯成本变更（无 StockMove），流水 moveId/moveLineId 置 "0" 标识非移动单来源（M2.2 id String 化随列类型翻转）
+    String LEDGER_MOVE_ID_COST_ADJUST = "0";
+
+    // 成本调整 FIFO 层负行 ID 哨兵（M2.2 String 化后保持数值负号语义——BIGINT 列绑定要求数值字符串，
+    // reverse 据此精确删除调整层；非 "-" 前缀拼接——DB 列仍 BIGINT）
+    static String negativeIdOf(String id) {
+        return id == null ? null : String.valueOf(-ConvertHelper.toLong(id));
+    }
 
     // 到岸成本分摊方法（dict erp-inv/landed-cost-alloc-method，plan 2026-07-10-1100-3）
     String ALLOC_METHOD_BY_AMOUNT = "BY_AMOUNT";

@@ -25,8 +25,7 @@ import java.util.Objects;
  * validateReceiveApproved → lockReceiveForAllocation → validateNotAlreadyAllocated → doAllocate →
  * createAndApplyCostAdjust → doPostApprove → reload. Domain logic via facade protected helpers (single source of truth).
  * Dormant until R5.8 rewire（BizModel Java 直调 facade.approve，不经 xbiz 委托链）。
- * Long signature boundary: base class public method takes String id, facade takes Long id,
- * conversion at call boundary via Long.valueOf(id).
+ * id String 边界：基类与 facade 均为 String id（M2.2 inv id String 化后无转换边界）。
  */
 public class ErpInvLandedCostApproveProcessor extends AbstractApproveProcessor<ErpInvLandedCost> {
 
@@ -38,8 +37,7 @@ public class ErpInvLandedCostApproveProcessor extends AbstractApproveProcessor<E
 
     @Override
     public ErpInvLandedCost approve(String id, IServiceContext context) {
-        Long lid = Long.valueOf(id);
-        ErpInvLandedCost landedCost = processor.requireLandedCost(lid, context);
+        ErpInvLandedCost landedCost = processor.requireLandedCost(id, context);
 
         if (Objects.equals(landedCost.getApproveStatus(), ErpInvConstants.APPROVE_STATUS_APPROVED)) {
             throw new NopException(ErpInvErrors.ERR_LANDED_COST_ALREADY_APPROVED)
@@ -76,7 +74,7 @@ public class ErpInvLandedCostApproveProcessor extends AbstractApproveProcessor<E
 
         processor.doPostApprove(landedCost, costAdjust, costLines, allocations, context);
 
-        return processor.reload(lid);
+        return processor.reload(id);
     }
 
     @Override

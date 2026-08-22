@@ -205,19 +205,19 @@ public class _ErpInvCostLayer extends DynamicOrmEntity{
 
     
     /* ID: ID */
-    private java.lang.Long _id;
+    private java.lang.String _id;
     
     /* 业务组织: ORG_ID */
-    private java.lang.Long _orgId;
+    private java.lang.String _orgId;
     
     /* 物料: MATERIAL_ID */
-    private java.lang.Long _materialId;
+    private java.lang.String _materialId;
     
     /* SKU: SKU_ID */
-    private java.lang.Long _skuId;
+    private java.lang.String _skuId;
     
     /* 仓库: WAREHOUSE_ID */
-    private java.lang.Long _warehouseId;
+    private java.lang.String _warehouseId;
     
     /* 批号: BATCH_NO */
     private java.lang.String _batchNo;
@@ -238,16 +238,16 @@ public class _ErpInvCostLayer extends DynamicOrmEntity{
     private java.math.BigDecimal _totalCost;
     
     /* 币种: CURRENCY_ID */
-    private java.lang.Long _currencyId;
+    private java.lang.String _currencyId;
     
     /* 入库日期: INCOMING_DATE */
     private java.time.LocalDate _incomingDate;
     
     /* 入库移动单: INCOMING_MOVE_ID */
-    private java.lang.Long _incomingMoveId;
+    private java.lang.String _incomingMoveId;
     
     /* 账套: ACCT_SCHEMA_ID */
-    private java.lang.Long _acctSchemaId;
+    private java.lang.String _acctSchemaId;
     
     /* 逻辑删除版本: DEL_VERSION */
     private java.lang.Long _delVersion;
@@ -416,9 +416,9 @@ public class _ErpInvCostLayer extends DynamicOrmEntity{
         switch(propId){
         
             case PROP_ID_id:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_id));
                }
                setId(typedValue);
@@ -426,9 +426,9 @@ public class _ErpInvCostLayer extends DynamicOrmEntity{
             }
         
             case PROP_ID_orgId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_orgId));
                }
                setOrgId(typedValue);
@@ -436,9 +436,9 @@ public class _ErpInvCostLayer extends DynamicOrmEntity{
             }
         
             case PROP_ID_materialId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_materialId));
                }
                setMaterialId(typedValue);
@@ -446,9 +446,9 @@ public class _ErpInvCostLayer extends DynamicOrmEntity{
             }
         
             case PROP_ID_skuId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_skuId));
                }
                setSkuId(typedValue);
@@ -456,9 +456,9 @@ public class _ErpInvCostLayer extends DynamicOrmEntity{
             }
         
             case PROP_ID_warehouseId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_warehouseId));
                }
                setWarehouseId(typedValue);
@@ -526,9 +526,9 @@ public class _ErpInvCostLayer extends DynamicOrmEntity{
             }
         
             case PROP_ID_currencyId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_currencyId));
                }
                setCurrencyId(typedValue);
@@ -546,9 +546,9 @@ public class _ErpInvCostLayer extends DynamicOrmEntity{
             }
         
             case PROP_ID_incomingMoveId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_incomingMoveId));
                }
                setIncomingMoveId(typedValue);
@@ -556,9 +556,9 @@ public class _ErpInvCostLayer extends DynamicOrmEntity{
             }
         
             case PROP_ID_acctSchemaId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_acctSchemaId));
                }
                setAcctSchemaId(typedValue);
@@ -636,35 +636,35 @@ public class _ErpInvCostLayer extends DynamicOrmEntity{
         
             case PROP_ID_id:{
                onInitProp(propId);
-               this._id = (java.lang.Long)value;
+               this._id = (java.lang.String)value;
                orm_id(); // 如果是设置主键字段，则触发watcher
                break;
             }
         
             case PROP_ID_orgId:{
                onInitProp(propId);
-               this._orgId = (java.lang.Long)value;
+               this._orgId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_materialId:{
                onInitProp(propId);
-               this._materialId = (java.lang.Long)value;
+               this._materialId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_skuId:{
                onInitProp(propId);
-               this._skuId = (java.lang.Long)value;
+               this._skuId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_warehouseId:{
                onInitProp(propId);
-               this._warehouseId = (java.lang.Long)value;
+               this._warehouseId = (java.lang.String)value;
                
                break;
             }
@@ -713,7 +713,7 @@ public class _ErpInvCostLayer extends DynamicOrmEntity{
         
             case PROP_ID_currencyId:{
                onInitProp(propId);
-               this._currencyId = (java.lang.Long)value;
+               this._currencyId = (java.lang.String)value;
                
                break;
             }
@@ -727,14 +727,14 @@ public class _ErpInvCostLayer extends DynamicOrmEntity{
         
             case PROP_ID_incomingMoveId:{
                onInitProp(propId);
-               this._incomingMoveId = (java.lang.Long)value;
+               this._incomingMoveId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_acctSchemaId:{
                onInitProp(propId);
-               this._acctSchemaId = (java.lang.Long)value;
+               this._acctSchemaId = (java.lang.String)value;
                
                break;
             }
@@ -790,7 +790,7 @@ public class _ErpInvCostLayer extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final java.lang.Long getId(){
+    public final java.lang.String getId(){
          onPropGet(PROP_ID_id);
          return _id;
     }
@@ -798,7 +798,7 @@ public class _ErpInvCostLayer extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final void setId(java.lang.Long value){
+    public final void setId(java.lang.String value){
         if(onPropSet(PROP_ID_id,value)){
             this._id = value;
             internalClearRefs(PROP_ID_id);
@@ -809,7 +809,7 @@ public class _ErpInvCostLayer extends DynamicOrmEntity{
     /**
      * 业务组织: ORG_ID
      */
-    public final java.lang.Long getOrgId(){
+    public final java.lang.String getOrgId(){
          onPropGet(PROP_ID_orgId);
          return _orgId;
     }
@@ -817,7 +817,7 @@ public class _ErpInvCostLayer extends DynamicOrmEntity{
     /**
      * 业务组织: ORG_ID
      */
-    public final void setOrgId(java.lang.Long value){
+    public final void setOrgId(java.lang.String value){
         if(onPropSet(PROP_ID_orgId,value)){
             this._orgId = value;
             internalClearRefs(PROP_ID_orgId);
@@ -828,7 +828,7 @@ public class _ErpInvCostLayer extends DynamicOrmEntity{
     /**
      * 物料: MATERIAL_ID
      */
-    public final java.lang.Long getMaterialId(){
+    public final java.lang.String getMaterialId(){
          onPropGet(PROP_ID_materialId);
          return _materialId;
     }
@@ -836,7 +836,7 @@ public class _ErpInvCostLayer extends DynamicOrmEntity{
     /**
      * 物料: MATERIAL_ID
      */
-    public final void setMaterialId(java.lang.Long value){
+    public final void setMaterialId(java.lang.String value){
         if(onPropSet(PROP_ID_materialId,value)){
             this._materialId = value;
             internalClearRefs(PROP_ID_materialId);
@@ -847,7 +847,7 @@ public class _ErpInvCostLayer extends DynamicOrmEntity{
     /**
      * SKU: SKU_ID
      */
-    public final java.lang.Long getSkuId(){
+    public final java.lang.String getSkuId(){
          onPropGet(PROP_ID_skuId);
          return _skuId;
     }
@@ -855,7 +855,7 @@ public class _ErpInvCostLayer extends DynamicOrmEntity{
     /**
      * SKU: SKU_ID
      */
-    public final void setSkuId(java.lang.Long value){
+    public final void setSkuId(java.lang.String value){
         if(onPropSet(PROP_ID_skuId,value)){
             this._skuId = value;
             internalClearRefs(PROP_ID_skuId);
@@ -866,7 +866,7 @@ public class _ErpInvCostLayer extends DynamicOrmEntity{
     /**
      * 仓库: WAREHOUSE_ID
      */
-    public final java.lang.Long getWarehouseId(){
+    public final java.lang.String getWarehouseId(){
          onPropGet(PROP_ID_warehouseId);
          return _warehouseId;
     }
@@ -874,7 +874,7 @@ public class _ErpInvCostLayer extends DynamicOrmEntity{
     /**
      * 仓库: WAREHOUSE_ID
      */
-    public final void setWarehouseId(java.lang.Long value){
+    public final void setWarehouseId(java.lang.String value){
         if(onPropSet(PROP_ID_warehouseId,value)){
             this._warehouseId = value;
             internalClearRefs(PROP_ID_warehouseId);
@@ -999,7 +999,7 @@ public class _ErpInvCostLayer extends DynamicOrmEntity{
     /**
      * 币种: CURRENCY_ID
      */
-    public final java.lang.Long getCurrencyId(){
+    public final java.lang.String getCurrencyId(){
          onPropGet(PROP_ID_currencyId);
          return _currencyId;
     }
@@ -1007,7 +1007,7 @@ public class _ErpInvCostLayer extends DynamicOrmEntity{
     /**
      * 币种: CURRENCY_ID
      */
-    public final void setCurrencyId(java.lang.Long value){
+    public final void setCurrencyId(java.lang.String value){
         if(onPropSet(PROP_ID_currencyId,value)){
             this._currencyId = value;
             internalClearRefs(PROP_ID_currencyId);
@@ -1037,7 +1037,7 @@ public class _ErpInvCostLayer extends DynamicOrmEntity{
     /**
      * 入库移动单: INCOMING_MOVE_ID
      */
-    public final java.lang.Long getIncomingMoveId(){
+    public final java.lang.String getIncomingMoveId(){
          onPropGet(PROP_ID_incomingMoveId);
          return _incomingMoveId;
     }
@@ -1045,7 +1045,7 @@ public class _ErpInvCostLayer extends DynamicOrmEntity{
     /**
      * 入库移动单: INCOMING_MOVE_ID
      */
-    public final void setIncomingMoveId(java.lang.Long value){
+    public final void setIncomingMoveId(java.lang.String value){
         if(onPropSet(PROP_ID_incomingMoveId,value)){
             this._incomingMoveId = value;
             internalClearRefs(PROP_ID_incomingMoveId);
@@ -1056,7 +1056,7 @@ public class _ErpInvCostLayer extends DynamicOrmEntity{
     /**
      * 账套: ACCT_SCHEMA_ID
      */
-    public final java.lang.Long getAcctSchemaId(){
+    public final java.lang.String getAcctSchemaId(){
          onPropGet(PROP_ID_acctSchemaId);
          return _acctSchemaId;
     }
@@ -1064,7 +1064,7 @@ public class _ErpInvCostLayer extends DynamicOrmEntity{
     /**
      * 账套: ACCT_SCHEMA_ID
      */
-    public final void setAcctSchemaId(java.lang.Long value){
+    public final void setAcctSchemaId(java.lang.String value){
         if(onPropSet(PROP_ID_acctSchemaId,value)){
             this._acctSchemaId = value;
             internalClearRefs(PROP_ID_acctSchemaId);

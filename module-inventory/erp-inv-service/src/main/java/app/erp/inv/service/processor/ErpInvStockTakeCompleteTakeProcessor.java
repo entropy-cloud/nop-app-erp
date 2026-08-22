@@ -102,7 +102,7 @@ public class ErpInvStockTakeCompleteTakeProcessor {
 
     // ---------- step：行加载 ----------
 
-    protected List<ErpInvStockTakeLine> loadLines(Long takeId) {
+    protected List<ErpInvStockTakeLine> loadLines(String takeId) {
         // 同聚合子表加载，父实体已由 BizModel requireEntity 授权，子行无独立权限规则。
         IEntityDao<ErpInvStockTakeLine> dao = daoProvider.daoFor(ErpInvStockTakeLine.class);
         QueryBean q = new QueryBean();
@@ -243,7 +243,7 @@ public class ErpInvStockTakeCompleteTakeProcessor {
 
     // ---------- step：终态回写 ----------
 
-    protected ErpInvStockTake finalizeComplete(Long takeId) {
+    protected ErpInvStockTake finalizeComplete(String takeId) {
         ErpInvStockTake take = takeDao().getEntityById(takeId);
         take.setDocStatus(stateMachine.completeTakeTargetStatus());
         takeDao().updateEntity(take);
@@ -299,7 +299,7 @@ public class ErpInvStockTakeCompleteTakeProcessor {
         return daoProvider.daoFor(ErpInvStockMoveLine.class);
     }
 
-    protected List<ErpInvStockMoveLine> loadMoveLines(Long moveId) {
+    protected List<ErpInvStockMoveLine> loadMoveLines(String moveId) {
         IEntityDao<ErpInvStockMoveLine> dao = moveLineDao();
         QueryBean q = new QueryBean();
         q.addFilter(eq("moveId", moveId));

@@ -32,9 +32,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpInvSkuReferenceChecker extends JunitAutoTestCase {
 
-    static final Long WAREHOUSE_ID = 9301L;
-    static final Long MATERIAL_ID = 9302L;
-    static final Long UOM_ID = 9303L;
+    static final String WAREHOUSE_ID = "9301";
+    static final String MATERIAL_ID = "9302";
+    static final String UOM_ID = "9303";
 
     @Inject
     IDaoProvider daoProvider;
@@ -45,53 +45,53 @@ public class TestErpInvSkuReferenceChecker extends JunitAutoTestCase {
 
     @Test
     public void testStockBalanceOnHandReferencesSku() {
-        Long onHandSkuId = seedSku("SKU-INV-ONHAND");
+        String onHandSkuId = seedSku("SKU-INV-ONHAND");
         seedStockBalance(onHandSkuId, new BigDecimal("5"));
         assertTrue(checker.isReferencedByBill(loadSku(onHandSkuId)), "在手量 ≠ 0 应构成引用");
 
-        Long zeroSkuId = seedSku("SKU-INV-ZERO");
+        String zeroSkuId = seedSku("SKU-INV-ZERO");
         seedStockBalance(zeroSkuId, BigDecimal.ZERO);
         assertFalse(checker.isReferencedByBill(loadSku(zeroSkuId)), "零余额不阻断");
     }
 
     @Test
     public void testOpenStockMoveLineReferencesSku() {
-        Long draftSkuId = seedSku("SKU-INV-MOVE-DRAFT");
-        Long draftMoveId = seedStockMove("SM-REF-DRAFT", ErpInvDaoConstants.MOVE_STATUS_DRAFT);
+        String draftSkuId = seedSku("SKU-INV-MOVE-DRAFT");
+        String draftMoveId = seedStockMove("SM-REF-DRAFT", ErpInvDaoConstants.MOVE_STATUS_DRAFT);
         seedStockMoveLine(draftMoveId, draftSkuId);
         assertTrue(checker.isReferencedByBill(loadSku(draftSkuId)), "DRAFT 移动单行应构成引用");
 
-        Long doneSkuId = seedSku("SKU-INV-MOVE-DONE");
-        Long doneMoveId = seedStockMove("SM-REF-DONE", ErpInvDaoConstants.MOVE_STATUS_DONE);
+        String doneSkuId = seedSku("SKU-INV-MOVE-DONE");
+        String doneMoveId = seedStockMove("SM-REF-DONE", ErpInvDaoConstants.MOVE_STATUS_DONE);
         seedStockMoveLine(doneMoveId, doneSkuId);
         assertFalse(checker.isReferencedByBill(loadSku(doneSkuId)), "DONE（终态）移动单行不阻断");
 
-        Long cancelledSkuId = seedSku("SKU-INV-MOVE-CANCEL");
-        Long cancelledMoveId = seedStockMove("SM-REF-CANCEL", ErpInvDaoConstants.MOVE_STATUS_CANCELLED);
+        String cancelledSkuId = seedSku("SKU-INV-MOVE-CANCEL");
+        String cancelledMoveId = seedStockMove("SM-REF-CANCEL", ErpInvDaoConstants.MOVE_STATUS_CANCELLED);
         seedStockMoveLine(cancelledMoveId, cancelledSkuId);
         assertFalse(checker.isReferencedByBill(loadSku(cancelledSkuId)), "CANCELLED 移动单行不阻断");
     }
 
     @Test
     public void testSerialNumberStatusContrast() {
-        Long inStockSkuId = seedSku("SKU-INV-SN-IN");
+        String inStockSkuId = seedSku("SKU-INV-SN-IN");
         seedSerialNumber(inStockSkuId, "SN-REF-IN", ErpInvDaoConstants.SERIAL_STATUS_IN_STOCK);
         assertTrue(checker.isReferencedByBill(loadSku(inStockSkuId)), "在库序列号应构成引用");
 
-        Long outSkuId = seedSku("SKU-INV-SN-OUT");
+        String outSkuId = seedSku("SKU-INV-SN-OUT");
         seedSerialNumber(outSkuId, "SN-REF-OUT", ErpInvDaoConstants.SERIAL_STATUS_OUT);
         assertFalse(checker.isReferencedByBill(loadSku(outSkuId)), "已出库序列号不阻断");
     }
 
     @Test
     public void testUnreferencedSkuFalse() {
-        Long skuId = seedSku("SKU-INV-UNREF");
+        String skuId = seedSku("SKU-INV-UNREF");
         assertFalse(checker.isReferencedByBill(loadSku(skuId)), "无库存/单据引用应为 false");
     }
 
     // ---------- seeds ----------
 
-    private Long seedSku(String skuCode) {
+    private String seedSku(String skuCode) {
         ErpMdMaterialSku sku = new ErpMdMaterialSku();
         sku.setMaterialId(MATERIAL_ID);
         sku.setSkuCode(skuCode);
@@ -101,11 +101,11 @@ public class TestErpInvSkuReferenceChecker extends JunitAutoTestCase {
         return sku.getId();
     }
 
-    private ErpMdMaterialSku loadSku(Long skuId) {
+    private ErpMdMaterialSku loadSku(String skuId) {
         return skuDao().getEntityById(skuId);
     }
 
-    private void seedStockBalance(Long skuId, BigDecimal totalQuantity) {
+    private void seedStockBalance(String skuId, BigDecimal totalQuantity) {
         ErpInvStockBalance balance = new ErpInvStockBalance();
         balance.setWarehouseId(WAREHOUSE_ID);
         balance.setMaterialId(MATERIAL_ID);
@@ -115,7 +115,7 @@ public class TestErpInvSkuReferenceChecker extends JunitAutoTestCase {
         ormTemplate.runInSession(() -> daoProvider.daoFor(ErpInvStockBalance.class).saveEntity(balance));
     }
 
-    private Long seedStockMove(String code, String docStatus) {
+    private String seedStockMove(String code, String docStatus) {
         ErpInvStockMove move = new ErpInvStockMove();
         move.setCode(code);
         move.setMoveType("INTERNAL");
@@ -126,7 +126,7 @@ public class TestErpInvSkuReferenceChecker extends JunitAutoTestCase {
         return move.getId();
     }
 
-    private void seedStockMoveLine(Long moveId, Long skuId) {
+    private void seedStockMoveLine(String moveId, String skuId) {
         ErpInvStockMoveLine line = new ErpInvStockMoveLine();
         line.setMoveId(moveId);
         line.setLineNo(1);
@@ -137,7 +137,7 @@ public class TestErpInvSkuReferenceChecker extends JunitAutoTestCase {
         ormTemplate.runInSession(() -> daoProvider.daoFor(ErpInvStockMoveLine.class).saveEntity(line));
     }
 
-    private void seedSerialNumber(Long skuId, String serialNo, String status) {
+    private void seedSerialNumber(String skuId, String serialNo, String status) {
         ErpInvSerialNumber sn = new ErpInvSerialNumber();
         sn.setSerialNo(serialNo);
         sn.setMaterialId(MATERIAL_ID);

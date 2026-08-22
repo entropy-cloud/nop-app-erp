@@ -21,7 +21,7 @@ public class ErpInvOwnershipTransferConfirmProcessor {
     @Inject
     ErpInvOwnershipTransferStateMachine stateMachine;
 
-    public ErpInvOwnershipTransfer confirm(Long transferId, IServiceContext context) {
+    public ErpInvOwnershipTransfer confirm(String transferId, IServiceContext context) {
         ErpInvOwnershipTransfer transfer = facade.requireTransfer(transferId, context);
         facade.assertStatus(transfer, ErpInvConstants.OWNERSHIP_TRANSFER_STATUS_DRAFT,
                 ErpInvConstants.OWNERSHIP_TRANSFER_STATUS_CONFIRMED);

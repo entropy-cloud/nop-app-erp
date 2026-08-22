@@ -68,7 +68,7 @@ body:
           method: post
           dataType: raw
           data:
-            query: "mutation(${'$'}tid:Long){ ErpInvStockTake__startTake(takeId:${'$'}tid){ id status } }"
+            query: "mutation(${'$'}tid:String){ ErpInvStockTake__startTake(takeId:${'$'}tid){ id status } }"
             variables:
               tid: "${takeId}"
           adaptor: |
@@ -88,7 +88,7 @@ body:
           method: post
           dataType: raw
           data:
-            query: "mutation(${'$'}tid:Long){ ErpInvStockTake__completeTake(takeId:${'$'}tid){ id status } }"
+            query: "mutation(${'$'}tid:String){ ErpInvStockTake__completeTake(takeId:${'$'}tid){ id status } }"
             variables:
               tid: "${takeId}"
           adaptor: |
@@ -108,7 +108,7 @@ body:
           method: post
           dataType: raw
           data:
-            query: "mutation(${'$'}tid:Long){ ErpInvStockTake__cancelTake(takeId:${'$'}tid){ id status } }"
+            query: "mutation(${'$'}tid:String){ ErpInvStockTake__cancelTake(takeId:${'$'}tid){ id status } }"
             variables:
               tid: "${takeId}"
           adaptor: |

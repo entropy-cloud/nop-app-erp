@@ -43,10 +43,10 @@ public class WeightedAverageCostingStrategy implements CostingStrategy {
      * 供期内出库作为暂估成本。月末结账时统一调整。
      */
     @Override
-    public BigDecimal onIncoming(ErpInvStockMove move, ErpInvStockMoveLine line, Long acctSchemaId,
+    public BigDecimal onIncoming(ErpInvStockMove move, ErpInvStockMoveLine line, String acctSchemaId,
                                  BigDecimal unitCost, BookingContext ctx) {
-        Long warehouseId = move.getDestWarehouseId();
-        Long locationId = line.getDestLocationId() != null ? line.getDestLocationId() : move.getDestLocationId();
+        String warehouseId = move.getDestWarehouseId();
+        String locationId = line.getDestLocationId() != null ? line.getDestLocationId() : move.getDestLocationId();
         ErpInvStockBalance balance = ctx.upsertBalance(move, line, warehouseId, locationId);
         BigDecimal qty = nz(line.getQuantity());
         BigDecimal lineTotalCost = unitCost.multiply(qty);
@@ -68,10 +68,10 @@ public class WeightedAverageCostingStrategy implements CostingStrategy {
      * {@code ErpInvCostingBizModel} 调整为全月实际加权平均。
      */
     @Override
-    public BigDecimal onOutgoing(ErpInvStockMove move, ErpInvStockMoveLine line, Long acctSchemaId,
+    public BigDecimal onOutgoing(ErpInvStockMove move, ErpInvStockMoveLine line, String acctSchemaId,
                                  BookingContext ctx) {
-        Long warehouseId = move.getSourceWarehouseId();
-        Long locationId = line.getSourceLocationId() != null ? line.getSourceLocationId()
+        String warehouseId = move.getSourceWarehouseId();
+        String locationId = line.getSourceLocationId() != null ? line.getSourceLocationId()
                 : move.getSourceWarehouseId();
         ErpInvStockBalance balance = ctx.upsertBalance(move, line, warehouseId, locationId);
         BigDecimal qty = nz(line.getQuantity());

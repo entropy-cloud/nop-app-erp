@@ -52,13 +52,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpInvOwnershipTransfer extends JunitAutoTestCase {
 
-    static final Long ORG_ID = 1501L;
-    static final Long WAREHOUSE_ID = 3501L;
-    static final Long LOCATION_ID = 4501L;
-    static final Long PARTNER_ID = 8501L;   // 供应商往来单位
-    static final Long MATERIAL_ID = 2501L;
-    static final Long CURRENCY_ID = 6501L;
-    static final Long ACCT_SCHEMA_ID = 7501L;
+    static final String ORG_ID = "1501";
+    static final String WAREHOUSE_ID = "3501";
+    static final String LOCATION_ID = "4501";
+    static final String PARTNER_ID = "8501";   // 供应商往来单位
+    static final String MATERIAL_ID = "2501";
+    static final String CURRENCY_ID = "6501";
+    static final String ACCT_SCHEMA_ID = "7501";
 
     @Inject
     IDaoProvider daoProvider;
@@ -76,7 +76,7 @@ public class TestErpInvOwnershipTransfer extends JunitAutoTestCase {
         seedBalance(MATERIAL_ID, ErpInvConstants.OWNERSHIP_TYPE_VMI_SUPPLIER, PARTNER_ID,
                 new BigDecimal("10"), new BigDecimal("5"));
 
-        Long transferId = createTransfer(ErpInvConstants.TRANSFER_TYPE_VMI_CONSUME,
+        String transferId = createTransfer(ErpInvConstants.TRANSFER_TYPE_VMI_CONSUME,
                 ErpInvConstants.OWNERSHIP_TYPE_VMI_SUPPLIER, ErpInvConstants.OWNERSHIP_TYPE_OWNED,
                 LOCATION_ID, LOCATION_ID, new BigDecimal("4"), new BigDecimal("5"));
 
@@ -127,7 +127,7 @@ public class TestErpInvOwnershipTransfer extends JunitAutoTestCase {
         seedBalance(MATERIAL_ID, ErpInvConstants.OWNERSHIP_TYPE_OWNED, null,
                 new BigDecimal("10"), new BigDecimal("5"));
 
-        Long transferId = createTransfer(ErpInvConstants.TRANSFER_TYPE_VMI_CONSUME,
+        String transferId = createTransfer(ErpInvConstants.TRANSFER_TYPE_VMI_CONSUME,
                 ErpInvConstants.OWNERSHIP_TYPE_VMI_SUPPLIER, ErpInvConstants.OWNERSHIP_TYPE_OWNED,
                 LOCATION_ID, LOCATION_ID, new BigDecimal("4"), new BigDecimal("5"));
 
@@ -147,9 +147,9 @@ public class TestErpInvOwnershipTransfer extends JunitAutoTestCase {
         seedBalance(MATERIAL_ID, ErpInvConstants.OWNERSHIP_TYPE_VMI_SUPPLIER, PARTNER_ID,
                 new BigDecimal("10"), new BigDecimal("5"));
 
-        Long transferId = createTransfer(ErpInvConstants.TRANSFER_TYPE_VMI_CONSUME,
+        String transferId = createTransfer(ErpInvConstants.TRANSFER_TYPE_VMI_CONSUME,
                 ErpInvConstants.OWNERSHIP_TYPE_VMI_SUPPLIER, ErpInvConstants.OWNERSHIP_TYPE_OWNED,
-                LOCATION_ID, 4999L, new BigDecimal("4"), new BigDecimal("5"));
+                LOCATION_ID, "4999", new BigDecimal("4"), new BigDecimal("5"));
 
         ApiResponse<?> resp = callConfirm(transferId);
         assertTrue(resp.getStatus() != 0, "sourceLocId≠destLocId 应抛错");
@@ -167,7 +167,7 @@ public class TestErpInvOwnershipTransfer extends JunitAutoTestCase {
         seedBalance(MATERIAL_ID, ErpInvConstants.OWNERSHIP_TYPE_OWNED, null,
                 new BigDecimal("10"), new BigDecimal("5"));
 
-        Long transferId = createTransfer(ErpInvConstants.TRANSFER_TYPE_OWNERSHIP_TO_CUSTOMER,
+        String transferId = createTransfer(ErpInvConstants.TRANSFER_TYPE_OWNERSHIP_TO_CUSTOMER,
                 ErpInvConstants.OWNERSHIP_TYPE_OWNED, ErpInvConstants.OWNERSHIP_TYPE_CUSTOMER_PROVIDED,
                 LOCATION_ID, LOCATION_ID, new BigDecimal("3"), new BigDecimal("5"));
 
@@ -185,8 +185,8 @@ public class TestErpInvOwnershipTransfer extends JunitAutoTestCase {
 
     // ---------- helpers ----------
 
-    private Long createTransfer(String transferType, String fromType, String toType,
-                                Long sourceLocId, Long destLocId, BigDecimal qty, BigDecimal unitCost) {
+    private String createTransfer(String transferType, String fromType, String toType,
+                                String sourceLocId, String destLocId, BigDecimal qty, BigDecimal unitCost) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpInvOwnershipTransfer> headDao = daoProvider.daoFor(ErpInvOwnershipTransfer.class);
             ErpInvOwnershipTransfer head = new ErpInvOwnershipTransfer();
@@ -221,12 +221,12 @@ public class TestErpInvOwnershipTransfer extends JunitAutoTestCase {
         return list.get(list.size() - 1).getId();
     }
 
-    private ApiResponse<?> callConfirm(Long transferId) {
+    private ApiResponse<?> callConfirm(String transferId) {
         return executeRpc(mutation, "ErpInvOwnershipTransfer__confirm",
                 ApiRequest.build(Map.of("transferId", transferId)));
     }
 
-    private ApiResponse<?> callDone(Long transferId) {
+    private ApiResponse<?> callDone(String transferId) {
         return executeRpc(mutation, "ErpInvOwnershipTransfer__done",
                 ApiRequest.build(Map.of("transferId", transferId)));
     }
@@ -236,7 +236,7 @@ public class TestErpInvOwnershipTransfer extends JunitAutoTestCase {
         return graphQLEngine.executeRpc(ctx);
     }
 
-    private void seedBalance(Long materialId, String ownershipType, Long ownerId,
+    private void seedBalance(String materialId, String ownershipType, String ownerId,
                              BigDecimal qty, BigDecimal unitCost) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpInvStockBalance> dao = daoProvider.daoFor(ErpInvStockBalance.class);
@@ -260,7 +260,7 @@ public class TestErpInvOwnershipTransfer extends JunitAutoTestCase {
         ormTemplate.flushSession();
     }
 
-    private ErpInvStockBalance findBalance(Long materialId, String ownershipType, Long ownerId) {
+    private ErpInvStockBalance findBalance(String materialId, String ownershipType, String ownerId) {
         IEntityDao<ErpInvStockBalance> dao = daoProvider.daoFor(ErpInvStockBalance.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("orgId", ORG_ID));
@@ -300,7 +300,7 @@ public class TestErpInvOwnershipTransfer extends JunitAutoTestCase {
         });
     }
 
-    private void seedAcctSchema(Long id) {
+    private void seedAcctSchema(String id) {
         IEntityDao<ErpMdAcctSchema> dao = daoProvider.daoFor(ErpMdAcctSchema.class);
         ErpMdAcctSchema schema = new ErpMdAcctSchema();
         schema.orm_propValueByName("id", id);

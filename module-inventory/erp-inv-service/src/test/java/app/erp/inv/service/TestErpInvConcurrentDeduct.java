@@ -56,13 +56,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpInvConcurrentDeduct extends JunitBaseTestCase {
 
-    static final Long ORG_ID = 11001L;
-    static final Long MATERIAL_ID = 12002L;
-    static final Long WAREHOUSE_ID = 13002L;
-    static final Long LOCATION_ID = 14002L;
-    static final Long UOM_ID = 15002L;
-    static final Long CURRENCY_ID = 16002L;
-    static final Long ACCT_SCHEMA_ID = 17002L;
+    static final String ORG_ID = "11001";
+    static final String MATERIAL_ID = "12002";
+    static final String WAREHOUSE_ID = "13002";
+    static final String LOCATION_ID = "14002";
+    static final String UOM_ID = "15002";
+    static final String CURRENCY_ID = "16002";
+    static final String ACCT_SCHEMA_ID = "17002";
 
     @Inject
     IDaoProvider daoProvider;
@@ -85,7 +85,7 @@ public class TestErpInvConcurrentDeduct extends JunitBaseTestCase {
      */
     @Test
     public void testConcurrentDeductRetrySucceeds() {
-        Long balanceId = persistBalanceDirectly(BigDecimal.TEN, new BigDecimal("5"));
+        String balanceId = persistBalanceDirectly(BigDecimal.TEN, new BigDecimal("5"));
         BigDecimal deductQty = new BigDecimal("4");
 
         ormTemplate.runInSession(outerSession -> {
@@ -129,7 +129,7 @@ public class TestErpInvConcurrentDeduct extends JunitBaseTestCase {
      */
     @Test
     public void testConcurrentDeductRetryExhaustedThrows() {
-        Long balanceId = persistBalanceDirectly(BigDecimal.TEN, new BigDecimal("5"));
+        String balanceId = persistBalanceDirectly(BigDecimal.TEN, new BigDecimal("5"));
         BigDecimal deductQty = new BigDecimal("4");
 
         AppConfig.getConfigProvider()
@@ -207,7 +207,7 @@ public class TestErpInvConcurrentDeduct extends JunitBaseTestCase {
     @Test
     public void testConcurrentFirstMoveSameDimensionThrowsAndRetries() {
         // 隔离会话：先落地一条全键余额 → totalQty=5, version=0
-        Long balanceId = persistBalanceDirectlyAllKeys(new BigDecimal("5"), new BigDecimal("5"));
+        String balanceId = persistBalanceDirectlyAllKeys(new BigDecimal("5"), new BigDecimal("5"));
 
         ormTemplate.runInSession(testSession -> {
             // 本会话构造 SAVING 候选（模拟并发首轮 findBalance==null → 新建候选），相同自然键
@@ -306,14 +306,14 @@ public class TestErpInvConcurrentDeduct extends JunitBaseTestCase {
     }
 
     /** 全非空自然键测试常量（避免与 persistBalanceDirectly 的 NULL-key 行混入）。 */
-    static final Long SKU_ID_ALL_KEY = 99001L;
+    static final String SKU_ID_ALL_KEY = "99001";
     static final String BATCH_NO_ALL_KEY = "BATCH-CONC-001";
-    static final Long OWNER_ID_ALL_KEY = 99002L;
+    static final String OWNER_ID_ALL_KEY = "99002";
 
     /**
      * 直接持久化一条全键余额（绕过 strategy），全非空自然键。立即提交可见于其他会话。
      */
-    private Long persistBalanceDirectlyAllKeys(BigDecimal total, BigDecimal avgCost) {
+    private String persistBalanceDirectlyAllKeys(BigDecimal total, BigDecimal avgCost) {
         ErpInvStockBalance balance = balanceDao().newEntity();
         balance.setOrgId(ORG_ID);
         balance.setMaterialId(MATERIAL_ID);
@@ -420,7 +420,7 @@ public class TestErpInvConcurrentDeduct extends JunitBaseTestCase {
     private void runMultiThreadedConcurrentDeduct(BigDecimal initialTotal, BigDecimal perDeductQty,
                                                   int threadCount, boolean allowNegative,
                                                   BigDecimal expectedFinal) throws Exception {
-        Long balanceId = persistBalanceDirectly(initialTotal, new BigDecimal("5"));
+        String balanceId = persistBalanceDirectly(initialTotal, new BigDecimal("5"));
 
         boolean prevNegativeFlag = AppConfig.var(ErpInvConstants.CONFIG_ALLOW_NEGATIVE_STOCK, Boolean.FALSE);
         AppConfig.getConfigProvider()
@@ -490,7 +490,7 @@ public class TestErpInvConcurrentDeduct extends JunitBaseTestCase {
      * 直接持久化一条余额（绕过 strategy，避免触发乐观锁路径），立即提交可见于其他会话。
      * 新余额 version=0 → DB 落盘后为 version=0；首次扣减自增到 1。
      */
-    private Long persistBalanceDirectly(BigDecimal total, BigDecimal avgCost) {
+    private String persistBalanceDirectly(BigDecimal total, BigDecimal avgCost) {
         ErpInvStockBalance balance = balanceDao().newEntity();
         balance.setOrgId(ORG_ID);
         balance.setMaterialId(MATERIAL_ID);

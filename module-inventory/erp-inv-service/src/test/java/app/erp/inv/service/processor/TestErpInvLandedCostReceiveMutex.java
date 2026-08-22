@@ -114,6 +114,8 @@ public class TestErpInvLandedCostReceiveMutex extends JunitAutoTestCase {
                 "SELECT FOR UPDATE 应串行化并发 lock：临界区最大并发=" + maxOverlap.get() + "（应 ≤1）");
     }
 
+    // A3 桥接（bridge-test-124）：pur ErpPurReceive 列仍 Long（M2.5 未迁移）——本测试仅实体级 pass-through
+    // （lockReceiveForAllocation(ErpPurReceive) 不跨 id 边界），pur 种子 id 保持 Long，无转换桥必需
     private Long seedReceive(String code) {
         ErpPurReceive receive = daoProvider.daoFor(ErpPurReceive.class).newEntity();
         receive.setCode(code);

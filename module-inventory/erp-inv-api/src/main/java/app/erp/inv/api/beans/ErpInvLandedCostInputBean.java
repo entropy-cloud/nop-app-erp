@@ -13,16 +13,16 @@
     public class ErpInvLandedCostInputBean extends CrudInputBase {
 
     
-        private Long _id;
+        private String _id;
 
     
         @PropMeta(propId=1)
     
-        public Long getId(){
+        public String getId(){
             return _id;
         }
 
-        public void setId(Long value){
+        public void setId(String value){
             this._id = value;
         }
 
@@ -41,58 +41,58 @@
         }
 
 
-        private Long _orgId;
+        private String _orgId;
 
     
         @PropMeta(propId=3)
     
-        public Long getOrgId(){
+        public String getOrgId(){
             return _orgId;
         }
 
-        public void setOrgId(Long value){
+        public void setOrgId(String value){
             this._orgId = value;
         }
 
 
-        private Long _receiveId;
+        private String _receiveId;
 
     
         @PropMeta(propId=4)
     
-        public Long getReceiveId(){
+        public String getReceiveId(){
             return _receiveId;
         }
 
-        public void setReceiveId(Long value){
+        public void setReceiveId(String value){
             this._receiveId = value;
         }
 
 
-        private Long _supplierId;
+        private String _supplierId;
 
     
         @PropMeta(propId=5)
     
-        public Long getSupplierId(){
+        public String getSupplierId(){
             return _supplierId;
         }
 
-        public void setSupplierId(Long value){
+        public void setSupplierId(String value){
             this._supplierId = value;
         }
 
 
-        private Long _currencyId;
+        private String _currencyId;
 
     
         @PropMeta(propId=6)
     
-        public Long getCurrencyId(){
+        public String getCurrencyId(){
             return _currencyId;
         }
 
-        public void setCurrencyId(Long value){
+        public void setCurrencyId(String value){
             this._currencyId = value;
         }
 

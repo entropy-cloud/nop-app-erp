@@ -27,7 +27,7 @@ public interface IErpInvCostingBiz {
      * @return 补算报告（扫描单数 + 补算入库层/出库流水条数）
      */
     @BizMutation
-    CostingRecloseReport reclosePeriodCosts(@Name("periodId") Long periodId,
+    CostingRecloseReport reclosePeriodCosts(@Name("periodId") String periodId,
                                             @Name("startDate") LocalDate startDate,
                                             @Name("endDate") LocalDate endDate,
                                             IServiceContext context);

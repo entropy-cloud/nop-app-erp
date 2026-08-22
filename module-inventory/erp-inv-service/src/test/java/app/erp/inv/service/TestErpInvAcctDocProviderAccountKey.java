@@ -32,8 +32,8 @@ public class TestErpInvAcctDocProviderAccountKey extends BaseTestCase {
         InvAcctDocProvider provider = new InvAcctDocProvider();
         PostingEvent event = event(ErpFinBusinessType.PURCHASE_INPUT);
         event.getBillData().put("TOTAL_COST", new BigDecimal("100"));
-        event.getBillData().put("MATERIAL_ID", 1L);
-        event.getBillData().put("WAREHOUSE_ID", 2L);
+        event.getBillData().put("MATERIAL_ID", "1");
+        event.getBillData().put("WAREHOUSE_ID", "2");
 
         List<VoucherFact> facts = provider.createFacts(event, null);
         assertKeys(facts, "INVENTORY", "ACCOUNTS_PAYABLE");
@@ -44,8 +44,8 @@ public class TestErpInvAcctDocProviderAccountKey extends BaseTestCase {
         InvAcctDocProvider provider = new InvAcctDocProvider();
         PostingEvent event = event(ErpFinBusinessType.MANUFACTURING_RECEIPT);
         event.getBillData().put("TOTAL_COST", new BigDecimal("100"));
-        event.getBillData().put("MATERIAL_ID", 1L);
-        event.getBillData().put("WAREHOUSE_ID", 2L);
+        event.getBillData().put("MATERIAL_ID", "1");
+        event.getBillData().put("WAREHOUSE_ID", "2");
 
         List<VoucherFact> facts = provider.createFacts(event, null);
         assertKeys(facts, "INVENTORY", "MANUFACTURING_WIP");
@@ -56,8 +56,8 @@ public class TestErpInvAcctDocProviderAccountKey extends BaseTestCase {
         InvAcctDocProvider provider = new InvAcctDocProvider();
         PostingEvent event = event(ErpFinBusinessType.SALES_OUTPUT);
         event.getBillData().put("TOTAL_COST", new BigDecimal("100"));
-        event.getBillData().put("MATERIAL_ID", 1L);
-        event.getBillData().put("WAREHOUSE_ID", 2L);
+        event.getBillData().put("MATERIAL_ID", "1");
+        event.getBillData().put("WAREHOUSE_ID", "2");
 
         List<VoucherFact> facts = provider.createFacts(event, null);
         assertKeys(facts, "COGS", "INVENTORY");
@@ -69,8 +69,8 @@ public class TestErpInvAcctDocProviderAccountKey extends BaseTestCase {
         PostingEvent event = event(ErpFinBusinessType.COST_ADJUSTMENT);
         event.getBillData().put("ADJUST_AMOUNT", new BigDecimal("50"));
         event.getBillData().put("ADJUST_DIRECTION", "INCREASE");
-        event.getBillData().put("MATERIAL_ID", 1L);
-        event.getBillData().put("WAREHOUSE_ID", 2L);
+        event.getBillData().put("MATERIAL_ID", "1");
+        event.getBillData().put("WAREHOUSE_ID", "2");
 
         List<VoucherFact> facts = provider.createFacts(event, null);
         assertKeys(facts, "INVENTORY", "COST_VARIANCE");
@@ -87,8 +87,8 @@ public class TestErpInvAcctDocProviderAccountKey extends BaseTestCase {
         PostingEvent event = event(ErpFinBusinessType.PURCHASE_PRICE_VARIANCE);
         event.getBillData().put("PPV_AMOUNT", new BigDecimal("30"));
         event.getBillData().put("PPV_DIRECTION", "DEBIT");
-        event.getBillData().put("MATERIAL_ID", 1L);
-        event.getBillData().put("WAREHOUSE_ID", 2L);
+        event.getBillData().put("MATERIAL_ID", "1");
+        event.getBillData().put("WAREHOUSE_ID", "2");
 
         List<VoucherFact> facts = provider.createFacts(event, null);
         assertKeys(facts, "PURCHASE_PRICE_VARIANCE", "ACCOUNTS_PAYABLE");
@@ -100,12 +100,12 @@ public class TestErpInvAcctDocProviderAccountKey extends BaseTestCase {
         PostingEvent event = event(ErpFinBusinessType.LANDED_COST);
         Map<String, Object> alloc = new LinkedHashMap<>();
         alloc.put("allocatedAmount", new BigDecimal("100"));
-        alloc.put("materialId", 1L);
-        alloc.put("warehouseId", 2L);
+        alloc.put("materialId", "1");
+        alloc.put("warehouseId", "2");
         event.getBillData().put("ALLOCATIONS", List.of(alloc));
         Map<String, Object> elem = new LinkedHashMap<>();
         elem.put("amount", new BigDecimal("100"));
-        elem.put("apPartnerId", 3L);
+        elem.put("apPartnerId", "3");
         event.getBillData().put("COST_ELEMENTS", List.of(elem));
 
         List<VoucherFact> facts = provider.createFacts(event, null);

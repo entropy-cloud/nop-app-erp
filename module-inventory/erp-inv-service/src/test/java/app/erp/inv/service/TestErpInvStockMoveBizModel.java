@@ -39,13 +39,13 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpInvStockMoveBizModel extends JunitAutoTestCase {
 
-    static final Long ORG_ID = 1001L;
-    static final Long MATERIAL_ID = 2001L;
-    static final Long WAREHOUSE_ID = 3001L;
-    static final Long LOCATION_ID = 4001L;
-    static final Long UOM_ID = 5001L;
-    static final Long CURRENCY_ID = 6001L;
-    static final Long ACCT_SCHEMA_ID = 7001L;
+    static final String ORG_ID = "1001";
+    static final String MATERIAL_ID = "2001";
+    static final String WAREHOUSE_ID = "3001";
+    static final String LOCATION_ID = "4001";
+    static final String UOM_ID = "5001";
+    static final String CURRENCY_ID = "6001";
+    static final String ACCT_SCHEMA_ID = "7001";
 
     @Inject
     IDaoProvider daoProvider;
@@ -65,8 +65,8 @@ public class TestErpInvStockMoveBizModel extends JunitAutoTestCase {
 
     @Test
     public void testGenerateMoveIdempotent() {
-        Long first = generateIncoming("PUR_RECEIPT", "PR-IDEM-001", new BigDecimal("10"));
-        Long second = generateIncoming("PUR_RECEIPT", "PR-IDEM-001", new BigDecimal("10"));
+        String first = generateIncoming("PUR_RECEIPT", "PR-IDEM-001", new BigDecimal("10"));
+        String second = generateIncoming("PUR_RECEIPT", "PR-IDEM-001", new BigDecimal("10"));
 
         assertEquals(first, second, "同源单重复触发应返回同一移动单");
         assertEquals(1, countMovesByRelatedBill("PUR_RECEIPT", "PR-IDEM-001"),
@@ -75,7 +75,7 @@ public class TestErpInvStockMoveBizModel extends JunitAutoTestCase {
 
     @Test
     public void testManualMoveStopsAtConfirmed() {
-        Long moveId = idOf(genMove(incomingReq(null, null, new BigDecimal("10"))));
+        String moveId = idOf(genMove(incomingReq(null, null, new BigDecimal("10"))));
 
         ErpInvStockMove move = daoProvider.daoFor(ErpInvStockMove.class).getEntityById(moveId);
         assertEquals(ErpInvConstants.DOC_STATUS_CONFIRMED, move.getDocStatus(),
@@ -84,7 +84,7 @@ public class TestErpInvStockMoveBizModel extends JunitAutoTestCase {
 
     @Test
     public void testIllegalTransitionRejected() {
-        Long doneId = generateIncoming("PUR_RECEIPT", "PR-ILL-001", new BigDecimal("10"));
+        String doneId = generateIncoming("PUR_RECEIPT", "PR-ILL-001", new BigDecimal("10"));
 
         ApiResponse<?> resp = executeRpc(mutation, "ErpInvStockMove__confirm",
                 ApiRequest.build(Map.of("moveId", doneId)));
@@ -96,7 +96,7 @@ public class TestErpInvStockMoveBizModel extends JunitAutoTestCase {
     public void testCancelReleasesReservation() {
         generateIncoming("PUR_RECEIPT", "PR-CANCEL-STOCK", new BigDecimal("10"));
 
-        Long manualId = idOf(genMove(outgoingReq(null, null, new BigDecimal("5"))));
+        String manualId = idOf(genMove(outgoingReq(null, null, new BigDecimal("5"))));
         ErpInvStockBalance reserved = findBalance();
         assertEquals(0, reserved.getReservedQuantity().compareTo(new BigDecimal("5")),
                 "CONFIRMED 应占预留 5");
@@ -116,7 +116,7 @@ public class TestErpInvStockMoveBizModel extends JunitAutoTestCase {
 
     @Test
     public void testReverseCreatesReverseMove() {
-        Long originalId = generateIncoming("PUR_RECEIPT", "PR-REV-001", new BigDecimal("12"));
+        String originalId = generateIncoming("PUR_RECEIPT", "PR-REV-001", new BigDecimal("12"));
         ErpInvStockMove original = daoProvider.daoFor(ErpInvStockMove.class).getEntityById(originalId);
 
         ApiResponse<?> reverseResp = executeRpc(mutation, "ErpInvStockMove__reverse",
@@ -136,7 +136,7 @@ public class TestErpInvStockMoveBizModel extends JunitAutoTestCase {
 
     // ---------- helpers ----------
 
-    private Long generateIncoming(String billType, String billCode, BigDecimal qty) {
+    private String generateIncoming(String billType, String billCode, BigDecimal qty) {
         return idOf(genMove(incomingReq(billType, billCode, qty)));
     }
 
@@ -144,9 +144,8 @@ public class TestErpInvStockMoveBizModel extends JunitAutoTestCase {
         return executeRpc(mutation, "ErpInvStockMove__generateMove", ApiRequest.build(Map.of("request", req)));
     }
 
-    private Long idOf(ApiResponse<?> resp) {
-        Object id = ((Map<?, ?>) resp.getData()).get("id");
-        return id instanceof Number ? ((Number) id).longValue() : Long.parseLong(String.valueOf(id));
+    private String idOf(ApiResponse<?> resp) {
+        return String.valueOf(((Map<?, ?>) resp.getData()).get("id"));
     }
 
     private Map<String, Object> incomingReq(String billType, String billCode, BigDecimal qty) {
@@ -201,7 +200,7 @@ public class TestErpInvStockMoveBizModel extends JunitAutoTestCase {
         return graphQLEngine.executeRpc(ctx);
     }
 
-    private long countLines(Long moveId) {
+    private long countLines(String moveId) {
         IEntityDao<app.erp.inv.dao.entity.ErpInvStockMoveLine> dao = daoProvider
                 .daoFor(app.erp.inv.dao.entity.ErpInvStockMoveLine.class);
         QueryBean q = new QueryBean();

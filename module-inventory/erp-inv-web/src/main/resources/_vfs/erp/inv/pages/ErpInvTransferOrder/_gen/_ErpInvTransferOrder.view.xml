@@ -19,25 +19,25 @@
             <cols>
 
                 <!--ID-->
-                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="id" mandatory="true" sortable="true"/>
 
                 <!--单号-->
                 <col id="code" mandatory="true" sortable="true"/>
 
                 <!--业务组织-->
-                <col id="orgId" ui:number="true" sortable="true"/>
+                <col id="orgId" sortable="true"/>
 
                 <!--业务日期-->
                 <col id="businessDate" mandatory="true" sortable="true"/>
 
                 <!--调出仓库-->
-                <col id="fromWarehouseId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="fromWarehouseId" mandatory="true" sortable="true"/>
 
                 <!--调入仓库-->
-                <col id="toWarehouseId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="toWarehouseId" mandatory="true" sortable="true"/>
 
                 <!--在途仓库-->
-                <col id="inTransitWarehouseId" ui:number="true" sortable="true"/>
+                <col id="inTransitWarehouseId" sortable="true"/>
 
                 <!--单据状态-->
                 <col id="docStatus" mandatory="true" sortable="true"/>

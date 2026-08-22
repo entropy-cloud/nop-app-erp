@@ -46,13 +46,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpInvTraceChain extends JunitAutoTestCase {
 
-    static final Long ORG_ID = 1101L;
-    static final Long MATERIAL_ID = 2102L;
-    static final Long WAREHOUSE_ID = 3102L;
-    static final Long LOCATION_ID = 4102L;
-    static final Long UOM_ID = 5102L;
-    static final Long CURRENCY_ID = 6102L;
-    static final Long ACCT_SCHEMA_ID = 7102L;
+    static final String ORG_ID = "1101";
+    static final String MATERIAL_ID = "2102";
+    static final String WAREHOUSE_ID = "3102";
+    static final String LOCATION_ID = "4102";
+    static final String UOM_ID = "5102";
+    static final String CURRENCY_ID = "6102";
+    static final String ACCT_SCHEMA_ID = "7102";
 
     @Inject
     IDaoProvider daoProvider;
@@ -63,8 +63,8 @@ public class TestErpInvTraceChain extends JunitAutoTestCase {
 
     @Test
     public void testGenerateMovePersistsOriginLink() {
-        Long originId = genChainMove("ORG-LNK-A", null);
-        Long childId = genChainMove("ORG-LNK-B", originId);
+        String originId = genChainMove("ORG-LNK-A", null);
+        String childId = genChainMove("ORG-LNK-B", originId);
 
         ErpInvStockMove child = daoProvider.daoFor(ErpInvStockMove.class).getEntityById(childId);
         assertEquals(originId, child.getOriginMoveId(), "generateMove 应持久化 originMoveId 上链");
@@ -72,8 +72,8 @@ public class TestErpInvTraceChain extends JunitAutoTestCase {
 
     @Test
     public void testReverseSetsOriginReturnedMoveId() {
-        Long originalId = genChainMove("REV-A", null);
-        Long reversalId = reverse(originalId);
+        String originalId = genChainMove("REV-A", null);
+        String reversalId = reverse(originalId);
 
         ErpInvStockMove reversal = daoProvider.daoFor(ErpInvStockMove.class).getEntityById(reversalId);
         assertEquals(originalId, reversal.getOriginReturnedMoveId(),
@@ -82,9 +82,9 @@ public class TestErpInvTraceChain extends JunitAutoTestCase {
 
     @Test
     public void testForwardAndBackwardTraceChain() {
-        Long aId = genChainMove("CHN-A", null);
-        Long bId = genChainMove("CHN-B", aId);
-        Long cId = genChainMove("CHN-C", bId);
+        String aId = genChainMove("CHN-A", null);
+        String bId = genChainMove("CHN-B", aId);
+        String cId = genChainMove("CHN-C", bId);
 
         TraceChainResult forward = forwardTrace(aId);
         assertEquals(3, forward.getNodes().size(), "正向 A→B→C 应含 3 个节点");
@@ -100,8 +100,8 @@ public class TestErpInvTraceChain extends JunitAutoTestCase {
 
     @Test
     public void testReturnTraceBidirectional() {
-        Long originalId = genChainMove("RET-ORIG", null);
-        Long returnId = genReturnMove("RET-RM", originalId);
+        String originalId = genChainMove("RET-ORIG", null);
+        String returnId = genReturnMove("RET-RM", originalId);
 
         // 给定原移动单 → 其退货移动单
         TraceChainResult fromOriginal = returnTrace(originalId);
@@ -116,8 +116,8 @@ public class TestErpInvTraceChain extends JunitAutoTestCase {
 
     @Test
     public void testRingDetectionTruncated() {
-        Long xId = genChainMove("RING-X", null);
-        Long yId = genChainMove("RING-Y", null);
+        String xId = genChainMove("RING-X", null);
+        String yId = genChainMove("RING-Y", null);
         // 人造环：X.originMoveId=Y 且 Y.originMoveId=X
         ormTemplate.runInSession(session -> {
             ErpInvStockMove x = daoProvider.daoFor(ErpInvStockMove.class).getEntityById(xId);
@@ -138,9 +138,9 @@ public class TestErpInvTraceChain extends JunitAutoTestCase {
     public void testMaxDepthTruncation() {
         setMaxDepth(2);
         try {
-            Long aId = genChainMove("DPT-A", null);
-            Long bId = genChainMove("DPT-B", aId);
-            Long cId = genChainMove("DPT-C", bId);
+            String aId = genChainMove("DPT-A", null);
+            String bId = genChainMove("DPT-B", aId);
+            String cId = genChainMove("DPT-C", bId);
             genChainMove("DPT-D", cId);
 
             TraceChainResult forward = forwardTrace(aId);
@@ -165,8 +165,8 @@ public class TestErpInvTraceChain extends JunitAutoTestCase {
 
     @Test
     public void testDelVersionFilterExcludesDeleted() {
-        Long aId = genChainMove("DEL-A", null);
-        Long bId = genChainMove("DEL-B", aId);
+        String aId = genChainMove("DEL-A", null);
+        String bId = genChainMove("DEL-B", aId);
 
         assertEquals(2, forwardTrace(aId).getNodes().size(), "删除前链含 A、B 两个节点");
 
@@ -184,8 +184,8 @@ public class TestErpInvTraceChain extends JunitAutoTestCase {
 
     @Test
     public void testDisabledReturnsSingleNode() {
-        Long aId = genChainMove("DIS-A", null);
-        Long bId = genChainMove("DIS-B", aId);
+        String aId = genChainMove("DIS-A", null);
+        String bId = genChainMove("DIS-B", aId);
 
         setTraceEnabled(false);
         try {
@@ -200,7 +200,7 @@ public class TestErpInvTraceChain extends JunitAutoTestCase {
 
     // ---------- generation helpers ----------
 
-    private Long genChainMove(String billCode, Long originMoveId) {
+    private String genChainMove(String billCode, String originMoveId) {
         Map<String, Object> req = baseIncomingReq("TRACE_CHAIN", billCode);
         if (originMoveId != null) {
             req.put("originMoveId", originMoveId);
@@ -208,19 +208,19 @@ public class TestErpInvTraceChain extends JunitAutoTestCase {
         return idOf(genMove(req));
     }
 
-    private Long genReturnMove(String billCode, Long originReturnedMoveId) {
+    private String genReturnMove(String billCode, String originReturnedMoveId) {
         Map<String, Object> req = baseIncomingReq("TRACE_RETURN", billCode);
         req.put("originReturnedMoveId", originReturnedMoveId);
         return idOf(genMove(req));
     }
 
-    private Long genBatchMove(String billCode, String batchNo) {
+    private String genBatchMove(String billCode, String batchNo) {
         Map<String, Object> req = baseIncomingReq("TRACE_BATCH", billCode);
         req.put("lines", Collections.singletonList(line(BigDecimal.TEN, null, batchNo)));
         return idOf(genMove(req));
     }
 
-    private Long reverse(Long moveId) {
+    private String reverse(String moveId) {
         return idOf(executeRpc(mutation, "ErpInvStockMove__reverse",
                 ApiRequest.build(Map.of("moveId", moveId))));
     }
@@ -257,17 +257,17 @@ public class TestErpInvTraceChain extends JunitAutoTestCase {
 
     // ---------- trace invocation helpers ----------
 
-    private TraceChainResult forwardTrace(Long moveId) {
+    private TraceChainResult forwardTrace(String moveId) {
         return parseTrace(executeRpc(query, "ErpInvStockMove__forwardTrace",
                 ApiRequest.build(Map.of("moveId", moveId))));
     }
 
-    private TraceChainResult backwardTrace(Long moveId) {
+    private TraceChainResult backwardTrace(String moveId) {
         return parseTrace(executeRpc(query, "ErpInvStockMove__backwardTrace",
                 ApiRequest.build(Map.of("moveId", moveId))));
     }
 
-    private TraceChainResult returnTrace(Long moveId) {
+    private TraceChainResult returnTrace(String moveId) {
         return parseTrace(executeRpc(query, "ErpInvStockMove__returnTrace",
                 ApiRequest.build(Map.of("moveId", moveId))));
     }
@@ -286,7 +286,7 @@ public class TestErpInvTraceChain extends JunitAutoTestCase {
         if (nodeMaps != null) {
             for (Map<String, Object> nm : nodeMaps) {
                 ErpInvStockMove m = new ErpInvStockMove();
-                m.setId(toLong(nm.get("id")));
+                m.setId(String.valueOf(nm.get("id")));
                 result.getNodes().add(m);
             }
         }
@@ -295,7 +295,7 @@ public class TestErpInvTraceChain extends JunitAutoTestCase {
         return result;
     }
 
-    private boolean containsNode(TraceChainResult result, Long id) {
+    private boolean containsNode(TraceChainResult result, String id) {
         for (ErpInvStockMove m : result.getNodes()) {
             if (id.equals(m.getId())) {
                 return true;
@@ -315,17 +315,10 @@ public class TestErpInvTraceChain extends JunitAutoTestCase {
         return graphQLEngine.executeRpc(ctx);
     }
 
-    private Long idOf(ApiResponse<?> resp) {
+    private String idOf(ApiResponse<?> resp) {
         assertEquals(0, resp.getStatus(), "generateMove/reverse 应成功，实际 code=" + resp.getCode());
         Object id = ((Map<?, ?>) resp.getData()).get("id");
-        return toLong(id);
-    }
-
-    private Long toLong(Object v) {
-        if (v instanceof Number) {
-            return ((Number) v).longValue();
-        }
-        return Long.parseLong(String.valueOf(v));
+        return String.valueOf(id);
     }
 
     // ---------- config helpers ----------

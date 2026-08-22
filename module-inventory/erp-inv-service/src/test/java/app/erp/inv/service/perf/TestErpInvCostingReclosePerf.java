@@ -44,7 +44,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * 路径 3 性能基线测试：库存核算 reclose（成本层重算）（plan 2026-08-02-1121-2 Phase 4 / 设计文档 §4.3 + §5.2）。
  *
- * <p><b>被测链路</b>：{@link IErpInvCostingBiz#reclosePeriodCosts(Long, LocalDate, LocalDate, IServiceContext)}
+ * <p><b>被测链路</b>：{@link IErpInvCostingBiz#reclosePeriodCosts(String, LocalDate, LocalDate, IServiceContext)}
  * （R6.9 已拆 {@code ErpInvCostingReclosePeriodCostsProcessor}），扫描本期 DONE FIFO 移动单，对成本层缺失的入库
  * 补建 {@link ErpInvCostLayer}、对 COGS 异常的出库重算。
  *
@@ -86,12 +86,12 @@ public class TestErpInvCostingReclosePerf extends JunitAutoTestCase {
 
     private static final IServiceContext CTX = new ServiceContextImpl();
 
-    static final Long ORG_ID = 7301L;
-    static final Long WAREHOUSE_ID = 7302L;
-    static final Long LOCATION_ID = 7303L;
-    static final Long UOM_ID = 7304L;
-    static final Long CURRENCY_ID = 7305L;
-    static final Long ACCT_SCHEMA_ID = 7306L;
+    static final String ORG_ID = "7301";
+    static final String WAREHOUSE_ID = "7302";
+    static final String LOCATION_ID = "7303";
+    static final String UOM_ID = "7304";
+    static final String CURRENCY_ID = "7305";
+    static final String ACCT_SCHEMA_ID = "7306";
     static final String PERIOD_CODE = "2026-07";
     static final LocalDate PERIOD_START = LocalDate.of(2026, 7, 1);
     static final LocalDate PERIOD_END = LocalDate.of(2026, 7, 31);
@@ -114,7 +114,7 @@ public class TestErpInvCostingReclosePerf extends JunitAutoTestCase {
     public void testReclosePeriodCostsPerformanceBaseline() {
         seedMaterialsAndMoves();
 
-        Long periodId = findPeriodId();
+        String periodId = findPeriodId();
         assertTrue(periodId != null, "perf 测试应 seed 有效期间");
 
         long[] nanos = new long[TIMED_N];
@@ -157,14 +157,14 @@ public class TestErpInvCostingReclosePerf extends JunitAutoTestCase {
             seedSubject("6401", "主营业务成本");
         });
         for (long mid = 1; mid <= MATERIAL_COUNT; mid++) {
-            final long materialId = mid;
+            final String materialId = String.valueOf(mid);
             ormTemplate.runInSession(() -> seedFifoMaterial(materialId));
         }
         // 在 costing 关闭期间入库 → 不建 cost layer（reclose 的「补建缺失」语义触发）
         setCostingEnabled(false);
         try {
             for (long mid = 1; mid <= MATERIAL_COUNT; mid++) {
-                final long materialId = mid;
+                final String materialId = String.valueOf(mid);
                 for (int i = 0; i < MOVES_PER_MATERIAL; i++) {
                     final int idx = i;
                     ormTemplate.runInSession(() -> generateIncoming(materialId,
@@ -177,7 +177,7 @@ public class TestErpInvCostingReclosePerf extends JunitAutoTestCase {
         }
     }
 
-    private void seedFifoMaterial(Long id) {
+    private void seedFifoMaterial(String id) {
         IEntityDao<ErpMdMaterial> dao = daoProvider.daoFor(ErpMdMaterial.class);
         ErpMdMaterial material = new ErpMdMaterial();
         material.orm_propValueByName("id", id);
@@ -215,7 +215,7 @@ public class TestErpInvCostingReclosePerf extends JunitAutoTestCase {
         dao.saveEntity(subject);
     }
 
-    private void generateIncoming(Long materialId, String billCode, BigDecimal qty, BigDecimal unitCost) {
+    private void generateIncoming(String materialId, String billCode, BigDecimal qty, BigDecimal unitCost) {
         Map<String, Object> req = new LinkedHashMap<>();
         req.put("moveType", ErpInvConstants.MOVE_TYPE_INCOMING);
         req.put("orgId", ORG_ID);
@@ -240,7 +240,7 @@ public class TestErpInvCostingReclosePerf extends JunitAutoTestCase {
         assertEquals0(resp.getStatus(), "generateMove 应成功: " + billCode);
     }
 
-    private ApiResponse<?> reclose(Long periodId) {
+    private ApiResponse<?> reclose(String periodId) {
         Map<String, Object> args = new LinkedHashMap<>();
         args.put("periodId", periodId);
         args.put("startDate", PERIOD_START.toString());
@@ -262,7 +262,7 @@ public class TestErpInvCostingReclosePerf extends JunitAutoTestCase {
         return dao.findAllByQuery(new QueryBean()).size();
     }
 
-    private Long findPeriodId() {
+    private String findPeriodId() {
         IEntityDao<ErpFinAccountingPeriod> dao = daoProvider.daoFor(ErpFinAccountingPeriod.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("code", PERIOD_CODE));

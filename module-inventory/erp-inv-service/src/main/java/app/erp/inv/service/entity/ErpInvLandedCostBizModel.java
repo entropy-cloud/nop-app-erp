@@ -49,13 +49,13 @@ public class ErpInvLandedCostBizModel extends CrudBizModel<ErpInvLandedCost> imp
 
     @Override
     @BizMutation
-    public ErpInvLandedCost approve(@Name("id") Long id, IServiceContext context) {
-        return approveProcessor.approve(String.valueOf(id), context);
+    public ErpInvLandedCost approve(@Name("id") String id, IServiceContext context) {
+        return approveProcessor.approve(id, context);
     }
 
     @Override
     @BizQuery
-    public List<Map<String, Object>> allocate(@Name("id") Long id, IServiceContext context) {
+    public List<Map<String, Object>> allocate(@Name("id") String id, IServiceContext context) {
         return landedCostProcessor.allocatePreview(id, context);
     }
 
@@ -63,7 +63,7 @@ public class ErpInvLandedCostBizModel extends CrudBizModel<ErpInvLandedCost> imp
     @BizMutation
     public ErpInvLandedCost generateFreightLandedCost(@Name("receiveCode") String receiveCode,
                                                        @Name("freightAmount") BigDecimal freightAmount,
-                                                       @Name("freightCurrencyId") Long freightCurrencyId,
+                                                       @Name("freightCurrencyId") String freightCurrencyId,
                                                        @Name("freightExchangeRate") BigDecimal freightExchangeRate,
                                                        IServiceContext context) {
         return generateFreightLandedCostProcessor.generateFreightLandedCost(receiveCode, freightAmount,
@@ -72,7 +72,7 @@ public class ErpInvLandedCostBizModel extends CrudBizModel<ErpInvLandedCost> imp
 
     @Override
     @BizMutation
-    public ErpInvLandedCost reverseApprove(@Name("id") Long id, IServiceContext context) {
-        return reverseApproveProcessor.reverseApprove(String.valueOf(id), context);
+    public ErpInvLandedCost reverseApprove(@Name("id") String id, IServiceContext context) {
+        return reverseApproveProcessor.reverseApprove(id, context);
     }
 }

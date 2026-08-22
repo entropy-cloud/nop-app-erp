@@ -44,12 +44,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpInvLifoCosting extends JunitAutoTestCase {
 
-    static final Long ORG_ID = 1201L;
-    static final Long WAREHOUSE_ID = 3201L;
-    static final Long LOCATION_ID = 4201L;
-    static final Long UOM_ID = 5201L;
-    static final Long CURRENCY_ID = 6201L;
-    static final Long ACCT_SCHEMA_ID = 7201L;
+    static final String ORG_ID = "1201";
+    static final String WAREHOUSE_ID = "3201";
+    static final String LOCATION_ID = "4201";
+    static final String UOM_ID = "5201";
+    static final String CURRENCY_ID = "6201";
+    static final String ACCT_SCHEMA_ID = "7201";
 
     @Inject
     IDaoProvider daoProvider;
@@ -60,7 +60,7 @@ public class TestErpInvLifoCosting extends JunitAutoTestCase {
 
     @Test
     public void testIncomingAppendsCostLayer() {
-        Long materialId = 2301L;
+        String materialId = "2301";
         seedLifoMaterial(materialId);
 
         generateIncoming(materialId, "PR-LIFO-001", new BigDecimal("50"), new BigDecimal("10"), "2026-07-01");
@@ -81,7 +81,7 @@ public class TestErpInvLifoCosting extends JunitAutoTestCase {
 
     @Test
     public void testOutgoingConsumesSingleLayer() {
-        Long materialId = 2302L;
+        String materialId = "2302";
         seedLifoMaterial(materialId);
 
         generateIncoming(materialId, "PR-LIFO-002", new BigDecimal("50"), new BigDecimal("10"), "2026-07-01");
@@ -103,7 +103,7 @@ public class TestErpInvLifoCosting extends JunitAutoTestCase {
 
     @Test
     public void testOutgoingConsumesNewestLayerFirst() {
-        Long materialId = 2303L;
+        String materialId = "2303";
         seedLifoMaterial(materialId);
 
         // 不同日期两层：07-01 入 50@10（旧层），07-05 入 40@12（新层）
@@ -133,7 +133,7 @@ public class TestErpInvLifoCosting extends JunitAutoTestCase {
 
     @Test
     public void testFirstOutgoingWithoutCostLayerRejected() {
-        Long materialId = 2304L;
+        String materialId = "2304";
         seedLifoMaterial(materialId);
         // 不先入库，直接出库 → ERR_COST_NOT_AVAILABLE（无 remainingQuantity>0 的层）
         setNegativeStock(true);
@@ -149,7 +149,7 @@ public class TestErpInvLifoCosting extends JunitAutoTestCase {
 
     // ---------- helpers ----------
 
-    private Long generateIncoming(Long materialId, String billCode, BigDecimal qty, BigDecimal unitCost, String date) {
+    private String generateIncoming(String materialId, String billCode, BigDecimal qty, BigDecimal unitCost, String date) {
         Map<String, Object> req = baseReq(materialId, ErpInvConstants.MOVE_TYPE_INCOMING, date);
         req.put("destWarehouseId", WAREHOUSE_ID);
         req.put("destLocationId", LOCATION_ID);
@@ -159,7 +159,7 @@ public class TestErpInvLifoCosting extends JunitAutoTestCase {
         return idOf(genMove(req));
     }
 
-    private Long generateOutgoing(Long materialId, String billCode, BigDecimal qty, String date) {
+    private String generateOutgoing(String materialId, String billCode, BigDecimal qty, String date) {
         Map<String, Object> req = baseReq(materialId, ErpInvConstants.MOVE_TYPE_OUTGOING, date);
         req.put("sourceWarehouseId", WAREHOUSE_ID);
         req.put("sourceLocationId", LOCATION_ID);
@@ -169,7 +169,7 @@ public class TestErpInvLifoCosting extends JunitAutoTestCase {
         return idOf(genMove(req));
     }
 
-    private Map<String, Object> outgoingReq(Long materialId, String billCode, BigDecimal qty, String date) {
+    private Map<String, Object> outgoingReq(String materialId, String billCode, BigDecimal qty, String date) {
         Map<String, Object> req = baseReq(materialId, ErpInvConstants.MOVE_TYPE_OUTGOING, date);
         req.put("sourceWarehouseId", WAREHOUSE_ID);
         req.put("sourceLocationId", LOCATION_ID);
@@ -183,7 +183,7 @@ public class TestErpInvLifoCosting extends JunitAutoTestCase {
         return executeRpc(mutation, "ErpInvStockMove__generateMove", ApiRequest.build(Map.of("request", req)));
     }
 
-    private Map<String, Object> baseReq(Long materialId, String moveType, String date) {
+    private Map<String, Object> baseReq(String materialId, String moveType, String date) {
         Map<String, Object> req = new LinkedHashMap<>();
         req.put("moveType", moveType);
         req.put("orgId", ORG_ID);
@@ -193,7 +193,7 @@ public class TestErpInvLifoCosting extends JunitAutoTestCase {
         return req;
     }
 
-    private Map<String, Object> line(Long materialId, BigDecimal qty, BigDecimal unitCost) {
+    private Map<String, Object> line(String materialId, BigDecimal qty, BigDecimal unitCost) {
         Map<String, Object> line = new LinkedHashMap<>();
         line.put("materialId", materialId);
         line.put("uoMId", UOM_ID);
@@ -210,12 +210,12 @@ public class TestErpInvLifoCosting extends JunitAutoTestCase {
         return graphQLEngine.executeRpc(ctx);
     }
 
-    private Long idOf(ApiResponse<?> resp) {
+    private String idOf(ApiResponse<?> resp) {
         Object id = ((Map<?, ?>) resp.getData()).get("id");
-        return id instanceof Number ? ((Number) id).longValue() : Long.parseLong(String.valueOf(id));
+        return String.valueOf(id);
     }
 
-    private ErpInvStockBalance findBalance(Long materialId) {
+    private ErpInvStockBalance findBalance(String materialId) {
         IEntityDao<ErpInvStockBalance> dao = daoProvider.daoFor(ErpInvStockBalance.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("materialId", materialId));
@@ -224,7 +224,7 @@ public class TestErpInvLifoCosting extends JunitAutoTestCase {
         return list.isEmpty() ? null : list.get(0);
     }
 
-    private List<ErpInvCostLayer> findCostLayers(Long materialId) {
+    private List<ErpInvCostLayer> findCostLayers(String materialId) {
         IEntityDao<ErpInvCostLayer> dao = daoProvider.daoFor(ErpInvCostLayer.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("materialId", materialId));
@@ -232,7 +232,7 @@ public class TestErpInvLifoCosting extends JunitAutoTestCase {
         return dao.findAllByQuery(q);
     }
 
-    private ErpInvStockLedger findOutgoingLedger(Long materialId) {
+    private ErpInvStockLedger findOutgoingLedger(String materialId) {
         IEntityDao<ErpInvStockLedger> dao = daoProvider.daoFor(ErpInvStockLedger.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("materialId", materialId));
@@ -243,7 +243,7 @@ public class TestErpInvLifoCosting extends JunitAutoTestCase {
                 .orElse(null);
     }
 
-    private void seedLifoMaterial(Long id) {
+    private void seedLifoMaterial(String id) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMdMaterial> dao = daoProvider.daoFor(ErpMdMaterial.class);
             ErpMdMaterial material = new ErpMdMaterial();

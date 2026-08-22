@@ -51,10 +51,10 @@ public class SpecificCostingStrategy implements CostingStrategy {
     }
 
     @Override
-    public BigDecimal onIncoming(ErpInvStockMove move, ErpInvStockMoveLine line, Long acctSchemaId,
+    public BigDecimal onIncoming(ErpInvStockMove move, ErpInvStockMoveLine line, String acctSchemaId,
                                  BigDecimal unitCost, BookingContext ctx) {
-        Long warehouseId = move.getDestWarehouseId();
-        Long locationId = line.getDestLocationId() != null ? line.getDestLocationId() : move.getDestLocationId();
+        String warehouseId = move.getDestWarehouseId();
+        String locationId = line.getDestLocationId() != null ? line.getDestLocationId() : move.getDestLocationId();
         ErpInvStockBalance balance = ctx.upsertBalance(move, line, warehouseId, locationId);
         BigDecimal qty = nz(line.getQuantity());
         BigDecimal lineTotalCost = unitCost.multiply(qty);
@@ -75,10 +75,10 @@ public class SpecificCostingStrategy implements CostingStrategy {
     }
 
     @Override
-    public BigDecimal onOutgoing(ErpInvStockMove move, ErpInvStockMoveLine line, Long acctSchemaId,
+    public BigDecimal onOutgoing(ErpInvStockMove move, ErpInvStockMoveLine line, String acctSchemaId,
                                  BookingContext ctx) {
-        Long warehouseId = move.getSourceWarehouseId();
-        Long locationId = line.getSourceLocationId() != null ? line.getSourceLocationId()
+        String warehouseId = move.getSourceWarehouseId();
+        String locationId = line.getSourceLocationId() != null ? line.getSourceLocationId()
                 : move.getSourceWarehouseId();
         ErpInvStockBalance balance = ctx.upsertBalance(move, line, warehouseId, locationId);
         BigDecimal qty = nz(line.getQuantity());
@@ -141,8 +141,8 @@ public class SpecificCostingStrategy implements CostingStrategy {
         return weightedUnitCost;
     }
 
-    private void appendCostLayer(ErpInvStockMove move, ErpInvStockMoveLine line, Long acctSchemaId,
-                                 Long warehouseId, BigDecimal qty, BigDecimal unitCost, BigDecimal totalCost) {
+    private void appendCostLayer(ErpInvStockMove move, ErpInvStockMoveLine line, String acctSchemaId,
+                                 String warehouseId, BigDecimal qty, BigDecimal unitCost, BigDecimal totalCost) {
         IEntityDao<ErpInvCostLayer> dao = daoProvider.daoFor(ErpInvCostLayer.class);
         ErpInvCostLayer layer = dao.newEntity();
         layer.setOrgId(move.getOrgId());
@@ -169,8 +169,8 @@ public class SpecificCostingStrategy implements CostingStrategy {
      * <p>历史成本过滤契约（对齐 FIFO/LIFO/BATCH）：当 {@code businessDate != null} 时仅返回
      * {@code incomingDate <= businessDate} 的层——出库不可消耗业务日期之后的入库成本层（历史成本原则）。
      */
-    private List<ErpInvCostLayer> findSpecificLayers(Long orgId, Long materialId, Long skuId, Long warehouseId,
-                                                     String batchNo, String serialNo, Long acctSchemaId,
+    private List<ErpInvCostLayer> findSpecificLayers(String orgId, String materialId, String skuId, String warehouseId,
+                                                     String batchNo, String serialNo, String acctSchemaId,
                                                      java.time.LocalDate businessDate) {
         ormTemplate.flushSession();
         IEntityDao<ErpInvCostLayer> dao = daoProvider.daoFor(ErpInvCostLayer.class);

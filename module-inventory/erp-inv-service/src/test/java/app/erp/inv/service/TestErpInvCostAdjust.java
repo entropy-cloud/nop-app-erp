@@ -18,6 +18,7 @@ import io.nop.api.core.annotations.autotest.NopTestConfig;
 import io.nop.api.core.annotations.core.OptionalBoolean;
 import io.nop.api.core.beans.ApiRequest;
 import io.nop.api.core.beans.ApiResponse;
+import io.nop.api.core.convert.ConvertHelper;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.config.AppConfig;
 import io.nop.autotest.junit.JunitAutoTestCase;
@@ -57,12 +58,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpInvCostAdjust extends JunitAutoTestCase {
 
-    static final Long ORG_ID = 1501L;
-    static final Long WAREHOUSE_ID = 3501L;
-    static final Long LOCATION_ID = 4501L;
-    static final Long UOM_ID = 5501L;
-    static final Long CURRENCY_ID = 6501L;
-    static final Long ACCT_SCHEMA_ID = 7501L;
+    static final String ORG_ID = "1501";
+    static final String WAREHOUSE_ID = "3501";
+    static final String LOCATION_ID = "4501";
+    static final String UOM_ID = "5501";
+    static final String CURRENCY_ID = "6501";
+    static final String ACCT_SCHEMA_ID = "7501";
     static final String PERIOD_CODE = "2026-07";
     static final String VOUCHER_STATUS_POSTED = "POSTED";
     static final String POSTING_TYPE_NORMAL = "NORMAL";
@@ -79,17 +80,17 @@ public class TestErpInvCostAdjust extends JunitAutoTestCase {
 
     @Test
     public void testMovingAverageCostIncrease() {
-        Long materialId = 2501L;
+        String materialId = "2501";
         seedMaterial(materialId, ErpInvConstants.COST_METHOD_MOVING_AVERAGE);
         seedPeriodAndSubjects();
         generateIncoming(materialId, "PR-CA-001", new BigDecimal("10"), new BigDecimal("10"));
 
-        Long adjustId = createAdjust(materialId, "CA-MA-INC", ErpInvConstants.ADJUST_TYPE_COST_DIFFERENCE,
+        String adjustId = createAdjust(materialId, "CA-MA-INC", ErpInvConstants.ADJUST_TYPE_COST_DIFFERENCE,
                 new BigDecimal("12"));
 
         setApprovalRequired(false);
         try {
-            Long appliedId = applyCostAdjust(adjustId);
+            String appliedId = applyCostAdjust(adjustId);
             ErpInvCostAdjust adjust = daoProvider.daoFor(ErpInvCostAdjust.class).getEntityById(appliedId);
             assertTrue(Boolean.TRUE.equals(adjust.getPosted()), "已过账");
 
@@ -115,12 +116,12 @@ public class TestErpInvCostAdjust extends JunitAutoTestCase {
 
     @Test
     public void testMovingAverageCostDecrease() {
-        Long materialId = 2502L;
+        String materialId = "2502";
         seedMaterial(materialId, ErpInvConstants.COST_METHOD_MOVING_AVERAGE);
         seedPeriodAndSubjects();
         generateIncoming(materialId, "PR-CA-002", new BigDecimal("10"), new BigDecimal("10"));
 
-        Long adjustId = createAdjust(materialId, "CA-MA-DEC", ErpInvConstants.ADJUST_TYPE_COST_DIFFERENCE,
+        String adjustId = createAdjust(materialId, "CA-MA-DEC", ErpInvConstants.ADJUST_TYPE_COST_DIFFERENCE,
                 new BigDecimal("8"));
 
         setApprovalRequired(false);
@@ -143,21 +144,21 @@ public class TestErpInvCostAdjust extends JunitAutoTestCase {
 
     @Test
     public void testFifoAppendsAdjustLayerAndOutgoingConsumes() {
-        Long materialId = 2503L;
+        String materialId = "2503";
         seedMaterial(materialId, ErpInvConstants.COST_METHOD_FIFO);
         seedPeriodAndSubjects();
         generateIncoming(materialId, "PR-CA-003", new BigDecimal("10"), new BigDecimal("10"));
 
         setApprovalRequired(false);
         try {
-            Long adjustId = createAdjust(materialId, "CA-FIFO", ErpInvConstants.ADJUST_TYPE_COST_DIFFERENCE,
+            String adjustId = createAdjust(materialId, "CA-FIFO", ErpInvConstants.ADJUST_TYPE_COST_DIFFERENCE,
                     new BigDecimal("12"));
             applyCostAdjust(adjustId);
 
             List<ErpInvCostLayer> layers = findFifoLayers(materialId);
             assertEquals(2, layers.size(), "原入库层 + 1 个 delta 调整层");
             ErpInvCostAdjustLine line = findAdjustLine("CA-FIFO");
-            ErpInvCostLayer delta = findLayerByMarker(-line.getId());
+            ErpInvCostLayer delta = findLayerByMarker(ErpInvConstants.negativeIdOf(line.getId()));
             assertNotNull(delta, "delta 调整层存在（incomingMoveId=-行ID 哨兵）");
             assertEquals(0, delta.getUnitCost().compareTo(new BigDecimal("2")), "delta unitCost=12-10=2");
 
@@ -176,7 +177,7 @@ public class TestErpInvCostAdjust extends JunitAutoTestCase {
 
     @Test
     public void testStandardRevaluationPublishesFirmedRollupAndPostsVariance() {
-        Long materialId = 2504L;
+        String materialId = "2504";
         seedMaterial(materialId, ErpInvConstants.COST_METHOD_STANDARD);
         seedFirmedRollup(materialId, new BigDecimal("10"), 25040001L);
         seedPeriodAndSubjects();
@@ -184,7 +185,7 @@ public class TestErpInvCostAdjust extends JunitAutoTestCase {
 
         setApprovalRequired(false);
         try {
-            Long adjustId = createAdjust(materialId, "CA-STD-REV", ErpInvConstants.ADJUST_TYPE_STANDARD_REVALUATION,
+            String adjustId = createAdjust(materialId, "CA-STD-REV", ErpInvConstants.ADJUST_TYPE_STANDARD_REVALUATION,
                     new BigDecimal("15"));
             applyCostAdjust(adjustId);
 
@@ -209,12 +210,12 @@ public class TestErpInvCostAdjust extends JunitAutoTestCase {
 
     @Test
     public void testApprovalGateRejectsUnapprovedWhenRequired() {
-        Long materialId = 2505L;
+        String materialId = "2505";
         seedMaterial(materialId, ErpInvConstants.COST_METHOD_MOVING_AVERAGE);
         seedPeriodAndSubjects();
         generateIncoming(materialId, "PR-CA-005", new BigDecimal("10"), new BigDecimal("10"));
 
-        Long adjustId = createAdjust(materialId, "CA-APPR-REQ", ErpInvConstants.ADJUST_TYPE_COST_DIFFERENCE,
+        String adjustId = createAdjust(materialId, "CA-APPR-REQ", ErpInvConstants.ADJUST_TYPE_COST_DIFFERENCE,
                 new BigDecimal("12"));
 
         setApprovalRequired(true);
@@ -229,9 +230,9 @@ public class TestErpInvCostAdjust extends JunitAutoTestCase {
         // 审批门控关闭：UNSUBMITTED 可直接 apply
         setApprovalRequired(false);
         try {
-            Long adjustId2 = createAdjust(materialId, "CA-APPR-OFF", ErpInvConstants.ADJUST_TYPE_COST_DIFFERENCE,
+            String adjustId2 = createAdjust(materialId, "CA-APPR-OFF", ErpInvConstants.ADJUST_TYPE_COST_DIFFERENCE,
                     new BigDecimal("12"));
-            Long appliedId = applyCostAdjust(adjustId2);
+            String appliedId = applyCostAdjust(adjustId2);
             assertTrue(appliedId != null);
         } finally {
             setApprovalRequired(true);
@@ -240,12 +241,12 @@ public class TestErpInvCostAdjust extends JunitAutoTestCase {
 
     @Test
     public void testDuplicateApplyRejected() {
-        Long materialId = 2506L;
+        String materialId = "2506";
         seedMaterial(materialId, ErpInvConstants.COST_METHOD_MOVING_AVERAGE);
         seedPeriodAndSubjects();
         generateIncoming(materialId, "PR-CA-006", new BigDecimal("10"), new BigDecimal("10"));
 
-        Long adjustId = createAdjust(materialId, "CA-DUP", ErpInvConstants.ADJUST_TYPE_COST_DIFFERENCE,
+        String adjustId = createAdjust(materialId, "CA-DUP", ErpInvConstants.ADJUST_TYPE_COST_DIFFERENCE,
                 new BigDecimal("12"));
 
         setApprovalRequired(false);
@@ -261,12 +262,12 @@ public class TestErpInvCostAdjust extends JunitAutoTestCase {
 
     @Test
     public void testReverseRollsBackBalanceAndVoucher() {
-        Long materialId = 2507L;
+        String materialId = "2507";
         seedMaterial(materialId, ErpInvConstants.COST_METHOD_MOVING_AVERAGE);
         seedPeriodAndSubjects();
         generateIncoming(materialId, "PR-CA-007", new BigDecimal("10"), new BigDecimal("10"));
 
-        Long adjustId = createAdjust(materialId, "CA-REV", ErpInvConstants.ADJUST_TYPE_COST_DIFFERENCE,
+        String adjustId = createAdjust(materialId, "CA-REV", ErpInvConstants.ADJUST_TYPE_COST_DIFFERENCE,
                 new BigDecimal("12"));
 
         setApprovalRequired(false);
@@ -297,11 +298,11 @@ public class TestErpInvCostAdjust extends JunitAutoTestCase {
 
     @Test
     public void testNoBalanceAndNegativeCostRejected() {
-        Long materialId = 2508L;
+        String materialId = "2508";
         seedMaterial(materialId, ErpInvConstants.COST_METHOD_MOVING_AVERAGE);
         seedPeriodAndSubjects();
         // 无入库 → 无余额
-        Long adjustId = createAdjust(materialId, "CA-NOBAL", ErpInvConstants.ADJUST_TYPE_COST_DIFFERENCE,
+        String adjustId = createAdjust(materialId, "CA-NOBAL", ErpInvConstants.ADJUST_TYPE_COST_DIFFERENCE,
                 new BigDecimal("12"));
 
         setApprovalRequired(false);
@@ -314,10 +315,10 @@ public class TestErpInvCostAdjust extends JunitAutoTestCase {
         }
 
         // 负成本
-        Long materialId2 = 2509L;
+        String materialId2 = "2509";
         seedMaterial(materialId2, ErpInvConstants.COST_METHOD_MOVING_AVERAGE);
         generateIncoming(materialId2, "PR-CA-009", new BigDecimal("10"), new BigDecimal("10"));
-        Long adjustId2 = createAdjust(materialId2, "CA-NEG", ErpInvConstants.ADJUST_TYPE_COST_DIFFERENCE,
+        String adjustId2 = createAdjust(materialId2, "CA-NEG", ErpInvConstants.ADJUST_TYPE_COST_DIFFERENCE,
                 new BigDecimal("-1"));
         setApprovalRequired(false);
         try {
@@ -331,11 +332,11 @@ public class TestErpInvCostAdjust extends JunitAutoTestCase {
 
     // ---------- 调整单创建 ----------
 
-    private Long createAdjust(Long materialId, String code, String adjustType, BigDecimal newUnitCost) {
+    private String createAdjust(String materialId, String code, String adjustType, BigDecimal newUnitCost) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpInvCostAdjust> headDao = daoProvider.daoFor(ErpInvCostAdjust.class);
             ErpInvCostAdjust head = new ErpInvCostAdjust();
-            head.orm_propValueByName("id", (long) code.hashCode());
+            head.orm_propValueByName("id", String.valueOf(code.hashCode()));
             head.setCode(code);
             head.setOrgId(ORG_ID);
             head.setBusinessDate(LocalDate.of(2026, 7, 1));
@@ -348,8 +349,8 @@ public class TestErpInvCostAdjust extends JunitAutoTestCase {
 
             IEntityDao<ErpInvCostAdjustLine> lineDao = daoProvider.daoFor(ErpInvCostAdjustLine.class);
             ErpInvCostAdjustLine line = new ErpInvCostAdjustLine();
-            line.orm_propValueByName("id", (long) code.hashCode() * 10 + 1);
-            line.setAdjustId((long) code.hashCode());
+            line.orm_propValueByName("id", String.valueOf(code.hashCode() * 10 + 1));
+            line.setAdjustId(String.valueOf(code.hashCode()));
             line.setLineNo(1);
             line.setMaterialId(materialId);
             line.setWarehouseId(WAREHOUSE_ID);
@@ -357,26 +358,26 @@ public class TestErpInvCostAdjust extends JunitAutoTestCase {
             line.setCurrencyId(CURRENCY_ID);
             lineDao.saveEntity(line);
         });
-        return (long) code.hashCode();
+        return String.valueOf(code.hashCode());
     }
 
-    private Long applyCostAdjust(Long id) {
+    private String applyCostAdjust(String id) {
         return idOf(applyCostAdjustResp(id));
     }
 
-    private ApiResponse<?> applyCostAdjustResp(Long id) {
+    private ApiResponse<?> applyCostAdjustResp(String id) {
         return executeRpc(mutation, "ErpInvCostAdjust__applyCostAdjust",
                 ApiRequest.build(Map.of("id", id)));
     }
 
-    private Long reverseCostAdjust(Long id) {
+    private String reverseCostAdjust(String id) {
         return idOf(executeRpc(mutation, "ErpInvCostAdjust__reverseCostAdjust",
                 ApiRequest.build(Map.of("id", id))));
     }
 
     // ---------- 移动单生成（建立余额） ----------
 
-    private void generateIncoming(Long materialId, String billCode, BigDecimal qty, BigDecimal unitCost) {
+    private void generateIncoming(String materialId, String billCode, BigDecimal qty, BigDecimal unitCost) {
         Map<String, Object> req = baseReq(ErpInvConstants.MOVE_TYPE_INCOMING);
         req.put("destWarehouseId", WAREHOUSE_ID);
         req.put("destLocationId", LOCATION_ID);
@@ -386,7 +387,7 @@ public class TestErpInvCostAdjust extends JunitAutoTestCase {
         idOf(executeRpc(mutation, "ErpInvStockMove__generateMove", ApiRequest.build(Map.of("request", req))));
     }
 
-    private void generateOutgoing(Long materialId, String billCode, BigDecimal qty) {
+    private void generateOutgoing(String materialId, String billCode, BigDecimal qty) {
         Map<String, Object> req = baseReq(ErpInvConstants.MOVE_TYPE_OUTGOING);
         req.put("sourceWarehouseId", WAREHOUSE_ID);
         req.put("sourceLocationId", LOCATION_ID);
@@ -406,7 +407,7 @@ public class TestErpInvCostAdjust extends JunitAutoTestCase {
         return req;
     }
 
-    private Map<String, Object> line(Long materialId, BigDecimal qty, BigDecimal unitCost) {
+    private Map<String, Object> line(String materialId, BigDecimal qty, BigDecimal unitCost) {
         Map<String, Object> line = new LinkedHashMap<>();
         line.put("materialId", materialId);
         line.put("uoMId", UOM_ID);
@@ -425,14 +426,14 @@ public class TestErpInvCostAdjust extends JunitAutoTestCase {
         return graphQLEngine.executeRpc(ctx);
     }
 
-    private Long idOf(ApiResponse<?> resp) {
+    private String idOf(ApiResponse<?> resp) {
         Object id = ((Map<?, ?>) resp.getData()).get("id");
-        return id instanceof Number ? ((Number) id).longValue() : Long.parseLong(String.valueOf(id));
+        return String.valueOf(id);
     }
 
     // ---------- 查询 ----------
 
-    private ErpInvStockBalance findBalance(Long materialId) {
+    private ErpInvStockBalance findBalance(String materialId) {
         IEntityDao<ErpInvStockBalance> dao = daoProvider.daoFor(ErpInvStockBalance.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("materialId", materialId));
@@ -441,28 +442,28 @@ public class TestErpInvCostAdjust extends JunitAutoTestCase {
         return list.isEmpty() ? null : list.get(0);
     }
 
-    private ErpInvStockLedger findAdjustLedger(Long materialId) {
+    private ErpInvStockLedger findAdjustLedger(String materialId) {
         IEntityDao<ErpInvStockLedger> dao = daoProvider.daoFor(ErpInvStockLedger.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("materialId", materialId));
         q.addFilter(eq("warehouseId", WAREHOUSE_ID));
         return dao.findAllByQuery(q).stream()
-                .filter(l -> l.getMoveId() != null && l.getMoveId() == ErpInvConstants.LEDGER_MOVE_ID_COST_ADJUST)
+                .filter(l -> l.getMoveId() != null && l.getMoveId().equals(ErpInvConstants.LEDGER_MOVE_ID_COST_ADJUST))
                 .findFirst().orElse(null);
     }
 
-    private ErpInvStockLedger findOutgoingLedger(Long materialId) {
+    private ErpInvStockLedger findOutgoingLedger(String materialId) {
         IEntityDao<ErpInvStockLedger> dao = daoProvider.daoFor(ErpInvStockLedger.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("materialId", materialId));
         q.addFilter(eq("warehouseId", WAREHOUSE_ID));
         return dao.findAllByQuery(q).stream()
                 .filter(l -> l.getQuantity() != null && l.getQuantity().signum() < 0
-                        && l.getMoveId() != null && l.getMoveId() != ErpInvConstants.LEDGER_MOVE_ID_COST_ADJUST)
+                        && l.getMoveId() != null && !l.getMoveId().equals(ErpInvConstants.LEDGER_MOVE_ID_COST_ADJUST))
                 .findFirst().orElse(null);
     }
 
-    private List<ErpInvCostLayer> findFifoLayers(Long materialId) {
+    private List<ErpInvCostLayer> findFifoLayers(String materialId) {
         IEntityDao<ErpInvCostLayer> dao = daoProvider.daoFor(ErpInvCostLayer.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("materialId", materialId));
@@ -470,7 +471,7 @@ public class TestErpInvCostAdjust extends JunitAutoTestCase {
         return dao.findAllByQuery(q);
     }
 
-    private ErpInvCostLayer findLayerByMarker(Long incomingMoveId) {
+    private ErpInvCostLayer findLayerByMarker(String incomingMoveId) {
         IEntityDao<ErpInvCostLayer> dao = daoProvider.daoFor(ErpInvCostLayer.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("incomingMoveId", incomingMoveId));
@@ -492,17 +493,18 @@ public class TestErpInvCostAdjust extends JunitAutoTestCase {
         return lineDao.findAllByQuery(lq).stream().findFirst().orElse(null);
     }
 
-    private List<ErpMfgCostRollup> findAllFirmedRollupsForMaterial(Long materialId) {
+    // A3 桥接（bridge-test-119）：mfg ErpMfgCostRollupLine.materialId 仍 Long（M3.1 未迁移），String materialId → toLong 查询值
+    private List<ErpMfgCostRollup> findAllFirmedRollupsForMaterial(String materialId) {
         IEntityDao<ErpMfgCostRollupLine> lineDao = daoProvider.daoFor(ErpMfgCostRollupLine.class);
         QueryBean lq = new QueryBean();
-        lq.addFilter(eq("materialId", materialId));
+        lq.addFilter(eq("materialId", ConvertHelper.toLong(materialId)));
         return lineDao.findAllByQuery(lq).stream()
                 .map(l -> daoProvider.daoFor(ErpMfgCostRollup.class).getEntityById(l.getCostRollupId()))
                 .filter(h -> h != null && "FIRMED".equals(h.orm_propValueByName("status")))
                 .collect(java.util.stream.Collectors.toList());
     }
 
-    private BigDecimal latestFirmedUnitCost(Long materialId) {
+    private BigDecimal latestFirmedUnitCost(String materialId) {
         List<ErpMfgCostRollup> firmed = findAllFirmedRollupsForMaterial(materialId);
         firmed.sort((a, b) -> {
             LocalDate da = a.getBusinessDate() != null ? a.getBusinessDate() : LocalDate.MIN;
@@ -513,7 +515,7 @@ public class TestErpInvCostAdjust extends JunitAutoTestCase {
             IEntityDao<ErpMfgCostRollupLine> lineDao = daoProvider.daoFor(ErpMfgCostRollupLine.class);
             QueryBean lq = new QueryBean();
             lq.addFilter(eq("costRollupId", header.getId()));
-            lq.addFilter(eq("materialId", materialId));
+            lq.addFilter(eq("materialId", ConvertHelper.toLong(materialId)));
             List<ErpMfgCostRollupLine> lines = lineDao.findAllByQuery(lq);
             if (!lines.isEmpty()) {
                 return lines.get(0).getUnitCost();
@@ -549,7 +551,7 @@ public class TestErpInvCostAdjust extends JunitAutoTestCase {
         return null;
     }
 
-    private ErpFinVoucherLine findVoucherLine(Long voucherId, String subjectCode) {
+    private ErpFinVoucherLine findVoucherLine(String voucherId, String subjectCode) {
         IEntityDao<ErpFinVoucherLine> dao = daoProvider.daoFor(ErpFinVoucherLine.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("voucherId", voucherId));
@@ -565,7 +567,7 @@ public class TestErpInvCostAdjust extends JunitAutoTestCase {
 
     // ---------- seed ----------
 
-    private void seedMaterial(Long id, String costMethod) {
+    private void seedMaterial(String id, String costMethod) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMdMaterial> dao = daoProvider.daoFor(ErpMdMaterial.class);
             ErpMdMaterial material = new ErpMdMaterial();
@@ -580,13 +582,13 @@ public class TestErpInvCostAdjust extends JunitAutoTestCase {
         });
     }
 
-    private void seedFirmedRollup(Long materialId, BigDecimal unitCost, long rollupId) {
+    private void seedFirmedRollup(String materialId, BigDecimal unitCost, long rollupId) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMfgCostRollup> headerDao = daoProvider.daoFor(ErpMfgCostRollup.class);
             ErpMfgCostRollup header = new ErpMfgCostRollup();
             header.orm_propValueByName("id", rollupId);
             header.setCode("ROLLUP-SEED-" + materialId);
-            header.setOrgId(ORG_ID);
+            header.setOrgId(ConvertHelper.toLong(ORG_ID));
             header.setBusinessDate(LocalDate.of(2026, 6, 1));
             header.orm_propValueByName("status", "FIRMED");
             headerDao.saveEntity(header);
@@ -596,12 +598,12 @@ public class TestErpInvCostAdjust extends JunitAutoTestCase {
             line.orm_propValueByName("id", rollupId + 1);
             line.setCostRollupId(rollupId);
             line.setLineNo(1);
-            line.setMaterialId(materialId);
-            line.setUoMId(UOM_ID);
+            line.setMaterialId(ConvertHelper.toLong(materialId));
+            line.setUoMId(ConvertHelper.toLong(UOM_ID));
             line.setUnitCost(unitCost);
             line.setTotalCost(unitCost);
             line.setMaterialCost(unitCost);
-            line.setCurrencyId(CURRENCY_ID);
+            line.setCurrencyId(ConvertHelper.toLong(CURRENCY_ID));
             lineDao.saveEntity(line);
         });
     }

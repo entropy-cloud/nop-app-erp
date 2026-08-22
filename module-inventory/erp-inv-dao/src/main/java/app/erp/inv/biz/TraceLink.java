@@ -7,32 +7,32 @@ package app.erp.inv.biz;
  * （正向上下游，originMoveId 链）或 {@code TRACE_LINK_RETURN}（退货链，originReturnedMoveId 链）。
  */
 public class TraceLink {
-    private Long fromMoveId;
-    private Long toMoveId;
+    private String fromMoveId;
+    private String toMoveId;
     private String linkType;
 
     public TraceLink() {
     }
 
-    public TraceLink(Long fromMoveId, Long toMoveId, String linkType) {
+    public TraceLink(String fromMoveId, String toMoveId, String linkType) {
         this.fromMoveId = fromMoveId;
         this.toMoveId = toMoveId;
         this.linkType = linkType;
     }
 
-    public Long getFromMoveId() {
+    public String getFromMoveId() {
         return fromMoveId;
     }
 
-    public void setFromMoveId(Long fromMoveId) {
+    public void setFromMoveId(String fromMoveId) {
         this.fromMoveId = fromMoveId;
     }
 
-    public Long getToMoveId() {
+    public String getToMoveId() {
         return toMoveId;
     }
 
-    public void setToMoveId(Long toMoveId) {
+    public void setToMoveId(String toMoveId) {
         this.toMoveId = toMoveId;
     }
 

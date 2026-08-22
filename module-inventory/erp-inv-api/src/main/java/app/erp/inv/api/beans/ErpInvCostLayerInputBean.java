@@ -12,72 +12,72 @@
     public class ErpInvCostLayerInputBean extends CrudInputBase {
 
     
-        private Long _id;
+        private String _id;
 
     
         @PropMeta(propId=1)
     
-        public Long getId(){
+        public String getId(){
             return _id;
         }
 
-        public void setId(Long value){
+        public void setId(String value){
             this._id = value;
         }
 
 
-        private Long _orgId;
+        private String _orgId;
 
     
         @PropMeta(propId=2)
     
-        public Long getOrgId(){
+        public String getOrgId(){
             return _orgId;
         }
 
-        public void setOrgId(Long value){
+        public void setOrgId(String value){
             this._orgId = value;
         }
 
 
-        private Long _materialId;
+        private String _materialId;
 
     
         @PropMeta(propId=3)
     
-        public Long getMaterialId(){
+        public String getMaterialId(){
             return _materialId;
         }
 
-        public void setMaterialId(Long value){
+        public void setMaterialId(String value){
             this._materialId = value;
         }
 
 
-        private Long _skuId;
+        private String _skuId;
 
     
         @PropMeta(propId=4)
     
-        public Long getSkuId(){
+        public String getSkuId(){
             return _skuId;
         }
 
-        public void setSkuId(Long value){
+        public void setSkuId(String value){
             this._skuId = value;
         }
 
 
-        private Long _warehouseId;
+        private String _warehouseId;
 
     
         @PropMeta(propId=5)
     
-        public Long getWarehouseId(){
+        public String getWarehouseId(){
             return _warehouseId;
         }
 
-        public void setWarehouseId(Long value){
+        public void setWarehouseId(String value){
             this._warehouseId = value;
         }
 
@@ -166,16 +166,16 @@
         }
 
 
-        private Long _currencyId;
+        private String _currencyId;
 
     
         @PropMeta(propId=12)
     
-        public Long getCurrencyId(){
+        public String getCurrencyId(){
             return _currencyId;
         }
 
-        public void setCurrencyId(Long value){
+        public void setCurrencyId(String value){
             this._currencyId = value;
         }
 
@@ -194,30 +194,30 @@
         }
 
 
-        private Long _incomingMoveId;
+        private String _incomingMoveId;
 
     
         @PropMeta(propId=14)
     
-        public Long getIncomingMoveId(){
+        public String getIncomingMoveId(){
             return _incomingMoveId;
         }
 
-        public void setIncomingMoveId(Long value){
+        public void setIncomingMoveId(String value){
             this._incomingMoveId = value;
         }
 
 
-        private Long _acctSchemaId;
+        private String _acctSchemaId;
 
     
         @PropMeta(propId=15)
     
-        public Long getAcctSchemaId(){
+        public String getAcctSchemaId(){
             return _acctSchemaId;
         }
 
-        public void setAcctSchemaId(Long value){
+        public void setAcctSchemaId(String value){
             this._acctSchemaId = value;
         }
 

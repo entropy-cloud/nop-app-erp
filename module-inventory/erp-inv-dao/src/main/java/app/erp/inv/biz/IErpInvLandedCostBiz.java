@@ -25,18 +25,18 @@ import java.util.Map;
 public interface IErpInvLandedCostBiz extends ICrudBiz<ErpInvLandedCost> {
 
     @BizMutation
-    ErpInvLandedCost approve(@Name("id") Long id, IServiceContext context);
+    ErpInvLandedCost approve(@Name("id") String id, IServiceContext context);
 
     @BizQuery
-    List<Map<String, Object>> allocate(@Name("id") Long id, IServiceContext context);
+    List<Map<String, Object>> allocate(@Name("id") String id, IServiceContext context);
 
     @BizMutation
     ErpInvLandedCost generateFreightLandedCost(@Name("receiveCode") String receiveCode,
                                                @Name("freightAmount") BigDecimal freightAmount,
-                                               @Name("freightCurrencyId") Long freightCurrencyId,
+                                               @Name("freightCurrencyId") String freightCurrencyId,
                                                @Name("freightExchangeRate") BigDecimal freightExchangeRate,
                                                IServiceContext context);
 
     @BizMutation
-    ErpInvLandedCost reverseApprove(@Name("id") Long id, IServiceContext context);
+    ErpInvLandedCost reverseApprove(@Name("id") String id, IServiceContext context);
 }

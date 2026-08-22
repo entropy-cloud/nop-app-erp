@@ -13,16 +13,16 @@
     public class ErpInvTransferOrderInputBean extends CrudInputBase {
 
     
-        private Long _id;
+        private String _id;
 
     
         @PropMeta(propId=1)
     
-        public Long getId(){
+        public String getId(){
             return _id;
         }
 
-        public void setId(Long value){
+        public void setId(String value){
             this._id = value;
         }
 
@@ -41,16 +41,16 @@
         }
 
 
-        private Long _orgId;
+        private String _orgId;
 
     
         @PropMeta(propId=3)
     
-        public Long getOrgId(){
+        public String getOrgId(){
             return _orgId;
         }
 
-        public void setOrgId(Long value){
+        public void setOrgId(String value){
             this._orgId = value;
         }
 
@@ -69,44 +69,44 @@
         }
 
 
-        private Long _fromWarehouseId;
+        private String _fromWarehouseId;
 
     
         @PropMeta(propId=5)
     
-        public Long getFromWarehouseId(){
+        public String getFromWarehouseId(){
             return _fromWarehouseId;
         }
 
-        public void setFromWarehouseId(Long value){
+        public void setFromWarehouseId(String value){
             this._fromWarehouseId = value;
         }
 
 
-        private Long _toWarehouseId;
+        private String _toWarehouseId;
 
     
         @PropMeta(propId=6)
     
-        public Long getToWarehouseId(){
+        public String getToWarehouseId(){
             return _toWarehouseId;
         }
 
-        public void setToWarehouseId(Long value){
+        public void setToWarehouseId(String value){
             this._toWarehouseId = value;
         }
 
 
-        private Long _inTransitWarehouseId;
+        private String _inTransitWarehouseId;
 
     
         @PropMeta(propId=7)
     
-        public Long getInTransitWarehouseId(){
+        public String getInTransitWarehouseId(){
             return _inTransitWarehouseId;
         }
 
-        public void setInTransitWarehouseId(Long value){
+        public void setInTransitWarehouseId(String value){
             this._inTransitWarehouseId = value;
         }
 

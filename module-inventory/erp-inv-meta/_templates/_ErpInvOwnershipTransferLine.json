@@ -1,9 +1,9 @@
 {
-  "id": 0,
-  "transferId": 0,
+  "id": "",
+  "transferId": "",
   "lineNo": 0,
-  "materialId": 0,
-  "skuId": 0,
+  "materialId": "",
+  "skuId": "",
   "batchNo": "",
   "quantity": 0.0,
   "unitCost": 0.0,

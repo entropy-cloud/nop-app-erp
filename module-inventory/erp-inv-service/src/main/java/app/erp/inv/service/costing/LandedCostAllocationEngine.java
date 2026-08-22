@@ -115,6 +115,10 @@ public class LandedCostAllocationEngine {
 
     /**
      * 入库行输入 DTO。
+     *
+     * <p>A2 桥接（bridge-main-075..079 面，M0.2 登记册）：receiveLineId/materialId/warehouseId 承载
+     * pur ErpPurReceiveLine 侧 Long id（pur 位次 15 未迁移），入参来源 {@code ErpInvLandedCostProcessor#toInputs}，
+     * 消费侧经 ConvertHelper.toString 桥接 inv String 列。退役 owner M2.5。
      */
     public static class ReceiveLineInput {
         private final Long receiveLineId;

@@ -236,7 +236,7 @@ public class _ErpInvStockMove extends DynamicOrmEntity{
 
     
     /* ID: ID */
-    private java.lang.Long _id;
+    private java.lang.String _id;
     
     /* 单号: CODE */
     private java.lang.String _code;
@@ -245,22 +245,22 @@ public class _ErpInvStockMove extends DynamicOrmEntity{
     private java.lang.String _moveType;
     
     /* 业务组织: ORG_ID */
-    private java.lang.Long _orgId;
+    private java.lang.String _orgId;
     
     /* 业务日期: BUSINESS_DATE */
     private java.time.LocalDate _businessDate;
     
     /* 源仓库: SOURCE_WAREHOUSE_ID */
-    private java.lang.Long _sourceWarehouseId;
+    private java.lang.String _sourceWarehouseId;
     
     /* 源库位: SOURCE_LOCATION_ID */
-    private java.lang.Long _sourceLocationId;
+    private java.lang.String _sourceLocationId;
     
     /* 目标仓库: DEST_WAREHOUSE_ID */
-    private java.lang.Long _destWarehouseId;
+    private java.lang.String _destWarehouseId;
     
     /* 目标库位: DEST_LOCATION_ID */
-    private java.lang.Long _destLocationId;
+    private java.lang.String _destLocationId;
     
     /* 单据状态: DOC_STATUS */
     private java.lang.String _docStatus;
@@ -305,10 +305,10 @@ public class _ErpInvStockMove extends DynamicOrmEntity{
     private java.sql.Timestamp _updateTime;
     
     /* 上游移动单: ORIGIN_MOVE_ID */
-    private java.lang.Long _originMoveId;
+    private java.lang.String _originMoveId;
     
     /* 原退货移动单: ORIGIN_RETURNED_MOVE_ID */
-    private java.lang.Long _originReturnedMoveId;
+    private java.lang.String _originReturnedMoveId;
     
 
     public _ErpInvStockMove(){
@@ -471,9 +471,9 @@ public class _ErpInvStockMove extends DynamicOrmEntity{
         switch(propId){
         
             case PROP_ID_id:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_id));
                }
                setId(typedValue);
@@ -501,9 +501,9 @@ public class _ErpInvStockMove extends DynamicOrmEntity{
             }
         
             case PROP_ID_orgId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_orgId));
                }
                setOrgId(typedValue);
@@ -521,9 +521,9 @@ public class _ErpInvStockMove extends DynamicOrmEntity{
             }
         
             case PROP_ID_sourceWarehouseId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_sourceWarehouseId));
                }
                setSourceWarehouseId(typedValue);
@@ -531,9 +531,9 @@ public class _ErpInvStockMove extends DynamicOrmEntity{
             }
         
             case PROP_ID_sourceLocationId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_sourceLocationId));
                }
                setSourceLocationId(typedValue);
@@ -541,9 +541,9 @@ public class _ErpInvStockMove extends DynamicOrmEntity{
             }
         
             case PROP_ID_destWarehouseId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_destWarehouseId));
                }
                setDestWarehouseId(typedValue);
@@ -551,9 +551,9 @@ public class _ErpInvStockMove extends DynamicOrmEntity{
             }
         
             case PROP_ID_destLocationId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_destLocationId));
                }
                setDestLocationId(typedValue);
@@ -701,9 +701,9 @@ public class _ErpInvStockMove extends DynamicOrmEntity{
             }
         
             case PROP_ID_originMoveId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_originMoveId));
                }
                setOriginMoveId(typedValue);
@@ -711,9 +711,9 @@ public class _ErpInvStockMove extends DynamicOrmEntity{
             }
         
             case PROP_ID_originReturnedMoveId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_originReturnedMoveId));
                }
                setOriginReturnedMoveId(typedValue);
@@ -731,7 +731,7 @@ public class _ErpInvStockMove extends DynamicOrmEntity{
         
             case PROP_ID_id:{
                onInitProp(propId);
-               this._id = (java.lang.Long)value;
+               this._id = (java.lang.String)value;
                orm_id(); // 如果是设置主键字段，则触发watcher
                break;
             }
@@ -752,7 +752,7 @@ public class _ErpInvStockMove extends DynamicOrmEntity{
         
             case PROP_ID_orgId:{
                onInitProp(propId);
-               this._orgId = (java.lang.Long)value;
+               this._orgId = (java.lang.String)value;
                
                break;
             }
@@ -766,28 +766,28 @@ public class _ErpInvStockMove extends DynamicOrmEntity{
         
             case PROP_ID_sourceWarehouseId:{
                onInitProp(propId);
-               this._sourceWarehouseId = (java.lang.Long)value;
+               this._sourceWarehouseId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_sourceLocationId:{
                onInitProp(propId);
-               this._sourceLocationId = (java.lang.Long)value;
+               this._sourceLocationId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_destWarehouseId:{
                onInitProp(propId);
-               this._destWarehouseId = (java.lang.Long)value;
+               this._destWarehouseId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_destLocationId:{
                onInitProp(propId);
-               this._destLocationId = (java.lang.Long)value;
+               this._destLocationId = (java.lang.String)value;
                
                break;
             }
@@ -892,14 +892,14 @@ public class _ErpInvStockMove extends DynamicOrmEntity{
         
             case PROP_ID_originMoveId:{
                onInitProp(propId);
-               this._originMoveId = (java.lang.Long)value;
+               this._originMoveId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_originReturnedMoveId:{
                onInitProp(propId);
-               this._originReturnedMoveId = (java.lang.Long)value;
+               this._originReturnedMoveId = (java.lang.String)value;
                
                break;
             }
@@ -913,7 +913,7 @@ public class _ErpInvStockMove extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final java.lang.Long getId(){
+    public final java.lang.String getId(){
          onPropGet(PROP_ID_id);
          return _id;
     }
@@ -921,7 +921,7 @@ public class _ErpInvStockMove extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final void setId(java.lang.Long value){
+    public final void setId(java.lang.String value){
         if(onPropSet(PROP_ID_id,value)){
             this._id = value;
             internalClearRefs(PROP_ID_id);
@@ -970,7 +970,7 @@ public class _ErpInvStockMove extends DynamicOrmEntity{
     /**
      * 业务组织: ORG_ID
      */
-    public final java.lang.Long getOrgId(){
+    public final java.lang.String getOrgId(){
          onPropGet(PROP_ID_orgId);
          return _orgId;
     }
@@ -978,7 +978,7 @@ public class _ErpInvStockMove extends DynamicOrmEntity{
     /**
      * 业务组织: ORG_ID
      */
-    public final void setOrgId(java.lang.Long value){
+    public final void setOrgId(java.lang.String value){
         if(onPropSet(PROP_ID_orgId,value)){
             this._orgId = value;
             internalClearRefs(PROP_ID_orgId);
@@ -1008,7 +1008,7 @@ public class _ErpInvStockMove extends DynamicOrmEntity{
     /**
      * 源仓库: SOURCE_WAREHOUSE_ID
      */
-    public final java.lang.Long getSourceWarehouseId(){
+    public final java.lang.String getSourceWarehouseId(){
          onPropGet(PROP_ID_sourceWarehouseId);
          return _sourceWarehouseId;
     }
@@ -1016,7 +1016,7 @@ public class _ErpInvStockMove extends DynamicOrmEntity{
     /**
      * 源仓库: SOURCE_WAREHOUSE_ID
      */
-    public final void setSourceWarehouseId(java.lang.Long value){
+    public final void setSourceWarehouseId(java.lang.String value){
         if(onPropSet(PROP_ID_sourceWarehouseId,value)){
             this._sourceWarehouseId = value;
             internalClearRefs(PROP_ID_sourceWarehouseId);
@@ -1027,7 +1027,7 @@ public class _ErpInvStockMove extends DynamicOrmEntity{
     /**
      * 源库位: SOURCE_LOCATION_ID
      */
-    public final java.lang.Long getSourceLocationId(){
+    public final java.lang.String getSourceLocationId(){
          onPropGet(PROP_ID_sourceLocationId);
          return _sourceLocationId;
     }
@@ -1035,7 +1035,7 @@ public class _ErpInvStockMove extends DynamicOrmEntity{
     /**
      * 源库位: SOURCE_LOCATION_ID
      */
-    public final void setSourceLocationId(java.lang.Long value){
+    public final void setSourceLocationId(java.lang.String value){
         if(onPropSet(PROP_ID_sourceLocationId,value)){
             this._sourceLocationId = value;
             internalClearRefs(PROP_ID_sourceLocationId);
@@ -1046,7 +1046,7 @@ public class _ErpInvStockMove extends DynamicOrmEntity{
     /**
      * 目标仓库: DEST_WAREHOUSE_ID
      */
-    public final java.lang.Long getDestWarehouseId(){
+    public final java.lang.String getDestWarehouseId(){
          onPropGet(PROP_ID_destWarehouseId);
          return _destWarehouseId;
     }
@@ -1054,7 +1054,7 @@ public class _ErpInvStockMove extends DynamicOrmEntity{
     /**
      * 目标仓库: DEST_WAREHOUSE_ID
      */
-    public final void setDestWarehouseId(java.lang.Long value){
+    public final void setDestWarehouseId(java.lang.String value){
         if(onPropSet(PROP_ID_destWarehouseId,value)){
             this._destWarehouseId = value;
             internalClearRefs(PROP_ID_destWarehouseId);
@@ -1065,7 +1065,7 @@ public class _ErpInvStockMove extends DynamicOrmEntity{
     /**
      * 目标库位: DEST_LOCATION_ID
      */
-    public final java.lang.Long getDestLocationId(){
+    public final java.lang.String getDestLocationId(){
          onPropGet(PROP_ID_destLocationId);
          return _destLocationId;
     }
@@ -1073,7 +1073,7 @@ public class _ErpInvStockMove extends DynamicOrmEntity{
     /**
      * 目标库位: DEST_LOCATION_ID
      */
-    public final void setDestLocationId(java.lang.Long value){
+    public final void setDestLocationId(java.lang.String value){
         if(onPropSet(PROP_ID_destLocationId,value)){
             this._destLocationId = value;
             internalClearRefs(PROP_ID_destLocationId);
@@ -1350,7 +1350,7 @@ public class _ErpInvStockMove extends DynamicOrmEntity{
     /**
      * 上游移动单: ORIGIN_MOVE_ID
      */
-    public final java.lang.Long getOriginMoveId(){
+    public final java.lang.String getOriginMoveId(){
          onPropGet(PROP_ID_originMoveId);
          return _originMoveId;
     }
@@ -1358,7 +1358,7 @@ public class _ErpInvStockMove extends DynamicOrmEntity{
     /**
      * 上游移动单: ORIGIN_MOVE_ID
      */
-    public final void setOriginMoveId(java.lang.Long value){
+    public final void setOriginMoveId(java.lang.String value){
         if(onPropSet(PROP_ID_originMoveId,value)){
             this._originMoveId = value;
             internalClearRefs(PROP_ID_originMoveId);
@@ -1369,7 +1369,7 @@ public class _ErpInvStockMove extends DynamicOrmEntity{
     /**
      * 原退货移动单: ORIGIN_RETURNED_MOVE_ID
      */
-    public final java.lang.Long getOriginReturnedMoveId(){
+    public final java.lang.String getOriginReturnedMoveId(){
          onPropGet(PROP_ID_originReturnedMoveId);
          return _originReturnedMoveId;
     }
@@ -1377,7 +1377,7 @@ public class _ErpInvStockMove extends DynamicOrmEntity{
     /**
      * 原退货移动单: ORIGIN_RETURNED_MOVE_ID
      */
-    public final void setOriginReturnedMoveId(java.lang.Long value){
+    public final void setOriginReturnedMoveId(java.lang.String value){
         if(onPropSet(PROP_ID_originReturnedMoveId,value)){
             this._originReturnedMoveId = value;
             internalClearRefs(PROP_ID_originReturnedMoveId);

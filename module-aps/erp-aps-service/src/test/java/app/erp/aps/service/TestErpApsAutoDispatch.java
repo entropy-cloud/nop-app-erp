@@ -67,6 +67,8 @@ public class TestErpApsAutoDispatch extends JunitAutoTestCase {
     static final Long WO = 5001L;
     static final Long BOM = 5101L;
     static final Long MATERIAL_CHILD = 5201L;
+    // inv 侧库存种子物料（inv M2.2 已 String 化；mfg 侧 MATERIAL_CHILD 保持 Long 归 M3.1）
+    static final String MATERIAL_CHILD_INV = "5201";
     static final String RULE_ID = "5301";
     static final String NOTIFY_TPL = "5401";
     static final String RECIPIENT = "planner-1";
@@ -473,11 +475,11 @@ public class TestErpApsAutoDispatch extends JunitAutoTestCase {
             }
 
             IEntityDao<ErpInvStockBalance> balDao = daoProvider.daoFor(ErpInvStockBalance.class);
-            if (balDao.getEntityById(7001L) == null) {
+            if (balDao.getEntityById("7001") == null) {
                 ErpInvStockBalance bal = balDao.newEntity();
-                bal.orm_propValueByName("id", 7001L);
-                bal.setMaterialId(MATERIAL_CHILD);
-                bal.setWarehouseId(1L);
+                bal.orm_propValueByName("id", "7001");
+                bal.setMaterialId(MATERIAL_CHILD_INV);
+                bal.setWarehouseId("1");
                 bal.setTotalQuantity(new BigDecimal("100"));
                 bal.setAvailableQuantity(new BigDecimal("100"));
                 balDao.saveEntity(bal);

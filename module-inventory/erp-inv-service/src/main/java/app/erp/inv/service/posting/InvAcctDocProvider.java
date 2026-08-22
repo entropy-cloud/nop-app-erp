@@ -63,8 +63,8 @@ public class InvAcctDocProvider implements IErpFinAcctDocProvider {
     @Override
     public List<VoucherFact> createFacts(PostingEvent event, AcctDocContext ctx) {
         BigDecimal total = readTotalCost(event);
-        Long materialId = (Long) event.getBillData().get("MATERIAL_ID");
-        Long warehouseId = (Long) event.getBillData().get("WAREHOUSE_ID");
+        String materialId = (String) event.getBillData().get("MATERIAL_ID");
+        String warehouseId = (String) event.getBillData().get("WAREHOUSE_ID");
 
         List<VoucherFact> facts = new ArrayList<>(2);
         if (event.getBusinessType() == ErpFinBusinessType.PURCHASE_INPUT) {
@@ -97,7 +97,7 @@ public class InvAcctDocProvider implements IErpFinAcctDocProvider {
     }
 
     private VoucherFact fact(String subjectCode, String subjectName, String dcDirection, BigDecimal amount,
-                             Long materialId, Long warehouseId, PostingEvent event, String accountKey) {
+                             String materialId, String warehouseId, PostingEvent event, String accountKey) {
         VoucherFact fact = new VoucherFact();
         fact.setSubjectCode(subjectCode);
         fact.setSubjectName(subjectName);

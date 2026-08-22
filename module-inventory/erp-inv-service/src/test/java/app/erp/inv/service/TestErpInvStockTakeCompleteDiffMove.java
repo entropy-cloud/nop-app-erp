@@ -56,13 +56,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpInvStockTakeCompleteDiffMove extends JunitAutoTestCase {
 
-    static final Long ORG_ID = 1051L;
-    static final Long WAREHOUSE_ID = 3051L;
-    static final Long UOM_ID = 5051L;
-    static final Long CURRENCY_ID = 6051L;
-    static final Long MATERIAL_GAIN = 2051L;
-    static final Long MATERIAL_LOSS = 2052L;
-    static final Long MATERIAL_ZERO = 2053L;
+    static final String ORG_ID = "1051";
+    static final String WAREHOUSE_ID = "3051";
+    static final String UOM_ID = "5051";
+    static final String CURRENCY_ID = "6051";
+    static final String MATERIAL_GAIN = "2051";
+    static final String MATERIAL_LOSS = "2052";
+    static final String MATERIAL_ZERO = "2053";
     static final String NOTIFY_EVENT = "inv.stocktake-diff-generation-failed";
     static final String RECIPIENT = "inv-stocktake-recipient";
 
@@ -84,7 +84,7 @@ public class TestErpInvStockTakeCompleteDiffMove extends JunitAutoTestCase {
     @Test
     public void testGainGeneratesIncomingMove() {
         seedBalance(MATERIAL_GAIN, new BigDecimal("10"));
-        Long takeId = seedTake("TAKE-GAIN-001", MATERIAL_GAIN, bd("10"), bd("15"), bd("2"));
+        String takeId = seedTake("TAKE-GAIN-001", MATERIAL_GAIN, bd("10"), bd("15"), bd("2"));
 
         startTake(takeId);
         ApiResponse<?> resp = completeTake(takeId);
@@ -123,7 +123,7 @@ public class TestErpInvStockTakeCompleteDiffMove extends JunitAutoTestCase {
     @Test
     public void testLossGeneratesOutgoingMove() {
         seedBalance(MATERIAL_LOSS, new BigDecimal("10"));
-        Long takeId = seedTake("TAKE-LOSS-001", MATERIAL_LOSS, bd("10"), bd("6"), null);
+        String takeId = seedTake("TAKE-LOSS-001", MATERIAL_LOSS, bd("10"), bd("6"), null);
 
         startTake(takeId);
         assertEquals(0, completeTake(takeId).getStatus(), "completeTake 应成功");
@@ -154,7 +154,7 @@ public class TestErpInvStockTakeCompleteDiffMove extends JunitAutoTestCase {
     @Test
     public void testZeroDifferenceGeneratesNoMove() {
         seedBalance(MATERIAL_ZERO, new BigDecimal("10"));
-        Long takeId = seedTake("TAKE-ZERO-001", MATERIAL_ZERO, bd("10"), bd("10"), null);
+        String takeId = seedTake("TAKE-ZERO-001", MATERIAL_ZERO, bd("10"), bd("10"), null);
 
         startTake(takeId);
         assertEquals(0, completeTake(takeId).getStatus(), "completeTake 应成功");
@@ -171,7 +171,7 @@ public class TestErpInvStockTakeCompleteDiffMove extends JunitAutoTestCase {
     @Test
     public void testTakeItselfDoesNotChangeBalance() {
         seedBalance(MATERIAL_GAIN, new BigDecimal("10"));
-        Long takeId = seedTake("TAKE-NOBAL-001", MATERIAL_GAIN, bd("10"), bd("15"), bd("2"));
+        String takeId = seedTake("TAKE-NOBAL-001", MATERIAL_GAIN, bd("10"), bd("15"), bd("2"));
 
         startTake(takeId);
         assertEquals(0, completeTake(takeId).getStatus());
@@ -188,7 +188,7 @@ public class TestErpInvStockTakeCompleteDiffMove extends JunitAutoTestCase {
     @Test
     public void testBalanceChangesOnlyAfterMoveDone() {
         seedBalance(MATERIAL_GAIN, new BigDecimal("10"));
-        Long takeId = seedTake("TAKE-DONE-001", MATERIAL_GAIN, bd("10"), bd("15"), bd("2"));
+        String takeId = seedTake("TAKE-DONE-001", MATERIAL_GAIN, bd("10"), bd("15"), bd("2"));
 
         startTake(takeId);
         assertEquals(0, completeTake(takeId).getStatus());
@@ -213,7 +213,7 @@ public class TestErpInvStockTakeCompleteDiffMove extends JunitAutoTestCase {
     @Test
     public void testRepeatedCompleteTakeRejected() {
         seedBalance(MATERIAL_GAIN, new BigDecimal("10"));
-        Long takeId = seedTake("TAKE-REPEAT-001", MATERIAL_GAIN, bd("10"), bd("15"), bd("2"));
+        String takeId = seedTake("TAKE-REPEAT-001", MATERIAL_GAIN, bd("10"), bd("15"), bd("2"));
 
         startTake(takeId);
         assertEquals(0, completeTake(takeId).getStatus(), "首次 completeTake 成功");
@@ -229,7 +229,7 @@ public class TestErpInvStockTakeCompleteDiffMove extends JunitAutoTestCase {
 
     @Test
     public void testCompleteTakeFromDraftRejected() {
-        Long takeId = seedTake("TAKE-DRAFT-001", MATERIAL_GAIN, bd("10"), bd("15"), bd("2"));
+        String takeId = seedTake("TAKE-DRAFT-001", MATERIAL_GAIN, bd("10"), bd("15"), bd("2"));
 
         ApiResponse<?> resp = completeTake(takeId);
         assertTrue(resp.getStatus() != 0, "DRAFT 态 completeTake 应被拒绝（须先 startTake）");
@@ -247,7 +247,7 @@ public class TestErpInvStockTakeCompleteDiffMove extends JunitAutoTestCase {
         setAlertConfig(true);
         seedNotifyTemplate();
 
-        Long takeId = seedTake("TAKE-PARTIAL-001", MATERIAL_GAIN, bd("0"), bd("5"), bd("1"),
+        String takeId = seedTake("TAKE-PARTIAL-001", MATERIAL_GAIN, bd("0"), bd("5"), bd("1"),
                 MATERIAL_LOSS, bd("10"), bd("6"), null);
         startTake(takeId);
         assertEquals(0, completeTake(takeId).getStatus(), "单行失败不阻断整单，completeTake 应成功");
@@ -277,7 +277,7 @@ public class TestErpInvStockTakeCompleteDiffMove extends JunitAutoTestCase {
     public void testPartialLineFailureConfigOffSkipsNotify() {
         setAlertConfig(false);
         seedNotifyTemplate();
-        Long takeId = seedTake("TAKE-PARTIAL-002", MATERIAL_GAIN, bd("0"), bd("5"), bd("1"),
+        String takeId = seedTake("TAKE-PARTIAL-002", MATERIAL_GAIN, bd("0"), bd("5"), bd("1"),
                 MATERIAL_LOSS, bd("10"), bd("6"), null);
 
         startTake(takeId);
@@ -294,7 +294,7 @@ public class TestErpInvStockTakeCompleteDiffMove extends JunitAutoTestCase {
     @Test
     public void testBackfillPersistedAndNoVoucherPosted() {
         seedBalance(MATERIAL_GAIN, new BigDecimal("10"));
-        Long takeId = seedTake("TAKE-POST-001", MATERIAL_GAIN, bd("10"), bd("15"), bd("2"));
+        String takeId = seedTake("TAKE-POST-001", MATERIAL_GAIN, bd("10"), bd("15"), bd("2"));
 
         startTake(takeId);
         assertEquals(0, completeTake(takeId).getStatus());
@@ -344,13 +344,13 @@ public class TestErpInvStockTakeCompleteDiffMove extends JunitAutoTestCase {
         });
     }
 
-    private Long seedTake(String code, Long materialId, BigDecimal book, BigDecimal actual, BigDecimal unitCost) {
+    private String seedTake(String code, String materialId, BigDecimal book, BigDecimal actual, BigDecimal unitCost) {
         return seedTake(code, materialId, book, actual, unitCost, null, null, null, null);
     }
 
-    private Long seedTake(String code, Long materialId1, BigDecimal book1, BigDecimal actual1, BigDecimal unitCost1,
-                          Long materialId2, BigDecimal book2, BigDecimal actual2, BigDecimal unitCost2) {
-        List<Long> ids = new ArrayList<>();
+    private String seedTake(String code, String materialId1, BigDecimal book1, BigDecimal actual1, BigDecimal unitCost1,
+                          String materialId2, BigDecimal book2, BigDecimal actual2, BigDecimal unitCost2) {
+        List<String> ids = new ArrayList<>();
         ormTemplate.runInSession(session -> {
             ErpInvStockTake take = takeDao().newEntity();
             take.setCode(code);
@@ -371,7 +371,7 @@ public class TestErpInvStockTakeCompleteDiffMove extends JunitAutoTestCase {
         return ids.get(0);
     }
 
-    private void seedTakeLine(Long takeId, int lineNo, Long materialId,
+    private void seedTakeLine(String takeId, int lineNo, String materialId,
                               BigDecimal book, BigDecimal actual, BigDecimal unitCost) {
         IEntityDao<ErpInvStockTakeLine> dao = daoProvider.daoFor(ErpInvStockTakeLine.class);
         ErpInvStockTakeLine line = dao.newEntity();
@@ -386,7 +386,7 @@ public class TestErpInvStockTakeCompleteDiffMove extends JunitAutoTestCase {
         dao.saveEntity(line);
     }
 
-    private void seedBalance(Long materialId, BigDecimal total) {
+    private void seedBalance(String materialId, BigDecimal total) {
         ormTemplate.runInSession(session -> {
             IEntityDao<ErpInvStockBalance> dao = daoProvider.daoFor(ErpInvStockBalance.class);
             ErpInvStockBalance b = dao.newEntity();
@@ -406,12 +406,12 @@ public class TestErpInvStockTakeCompleteDiffMove extends JunitAutoTestCase {
         });
     }
 
-    private ApiResponse<?> startTake(Long takeId) {
+    private ApiResponse<?> startTake(String takeId) {
         return executeRpc(mutation, "ErpInvStockTake__startTake",
                 ApiRequest.build(Map.of("takeId", takeId)));
     }
 
-    private ApiResponse<?> completeTake(Long takeId) {
+    private ApiResponse<?> completeTake(String takeId) {
         return executeRpc(mutation, "ErpInvStockTake__completeTake",
                 ApiRequest.build(Map.of("takeId", takeId)));
     }
@@ -421,11 +421,11 @@ public class TestErpInvStockTakeCompleteDiffMove extends JunitAutoTestCase {
         return graphQLEngine.executeRpc(ctx);
     }
 
-    private ErpInvStockTake findTake(Long takeId) {
+    private ErpInvStockTake findTake(String takeId) {
         return takeDao().getEntityById(takeId);
     }
 
-    private ErpInvStockTakeLine findTakeLine(Long takeId, Long materialId) {
+    private ErpInvStockTakeLine findTakeLine(String takeId, String materialId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("takeId", takeId));
         q.addFilter(eq("materialId", materialId));
@@ -453,13 +453,13 @@ public class TestErpInvStockTakeCompleteDiffMove extends JunitAutoTestCase {
         return result;
     }
 
-    private List<ErpInvStockMoveLine> loadMoveLines(Long moveId) {
+    private List<ErpInvStockMoveLine> loadMoveLines(String moveId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("moveId", moveId));
         return new ArrayList<>(moveLineDao().findAllByQuery(q));
     }
 
-    private ErpInvStockBalance findBalance(Long materialId) {
+    private ErpInvStockBalance findBalance(String materialId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("materialId", materialId));
         q.addFilter(eq("warehouseId", WAREHOUSE_ID));

@@ -17,6 +17,7 @@ import io.nop.api.core.annotations.autotest.NopTestConfig;
 import io.nop.api.core.annotations.core.OptionalBoolean;
 import io.nop.api.core.beans.ApiRequest;
 import io.nop.api.core.beans.ApiResponse;
+import io.nop.api.core.convert.ConvertHelper;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.autotest.junit.JunitAutoTestCase;
 import io.nop.dao.api.IDaoProvider;
@@ -59,12 +60,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpInvLandedCostReversal extends JunitAutoTestCase {
 
-    static final Long ORG_ID = 1751L;
-    static final Long WAREHOUSE_ID = 3751L;
-    static final Long LOCATION_ID = 4751L;
-    static final Long UOM_ID = 5751L;
-    static final Long CURRENCY_ID = 6751L;
-    static final Long ACCT_SCHEMA_ID = 7751L;
+    static final String ORG_ID = "1751";
+    static final String WAREHOUSE_ID = "3751";
+    static final String LOCATION_ID = "4751";
+    static final String UOM_ID = "5751";
+    static final String CURRENCY_ID = "6751";
+    static final String ACCT_SCHEMA_ID = "7751";
 
     static final String SUBJECT_INVENTORY = "1401";
     static final String SUBJECT_AP = "2202";
@@ -86,15 +87,15 @@ public class TestErpInvLandedCostReversal extends JunitAutoTestCase {
 
     @Test
     public void testReverseApproveRedReversesVoucherAndCostLayer() {
-        Long matA = 2751L;
+        String matA = "2751";
         seedMaterial(matA, ErpInvConstants.COST_METHOD_MOVING_AVERAGE);
         seedPeriodAndSubjects();
 
         generateIncoming(matA, "PR-LC-RV-SEED", new BigDecimal("10"), new BigDecimal("10"));
 
-        Long receiveId = seedReceiveSingle("RCV-LC-RV", new BigDecimal("10"), new BigDecimal("100"), matA);
+        String receiveId = String.valueOf(seedReceiveSingle("RCV-LC-RV", new BigDecimal("10"), new BigDecimal("100"), matA));
 
-        Long landedCostId = createLandedCost("LC-RV-001", receiveId,
+        String landedCostId = createLandedCost("LC-RV-001", receiveId,
                 new String[][]{{"FREIGHT", "50"}}, null);
 
         // approve 产 LANDED_COST 凭证 + 成本层更新 + posted=true
@@ -146,15 +147,15 @@ public class TestErpInvLandedCostReversal extends JunitAutoTestCase {
 
     @Test
     public void testReverseApproveRejectsNotPosted() {
-        Long matA = 2752L;
+        String matA = "2752";
         seedMaterial(matA, ErpInvConstants.COST_METHOD_MOVING_AVERAGE);
         seedPeriodAndSubjects();
 
         generateIncoming(matA, "PR-LC-RV-REJ", new BigDecimal("10"), new BigDecimal("10"));
 
-        Long receiveId = seedReceiveSingle("RCV-LC-REJ", new BigDecimal("10"), new BigDecimal("100"), matA);
+        String receiveId = String.valueOf(seedReceiveSingle("RCV-LC-REJ", new BigDecimal("10"), new BigDecimal("100"), matA));
 
-        Long landedCostId = createLandedCost("LC-RV-REJ", receiveId,
+        String landedCostId = createLandedCost("LC-RV-REJ", receiveId,
                 new String[][]{{"FREIGHT", "50"}}, null);
 
         // 未 approve 直接 reverseApprove → 守卫拒绝
@@ -170,12 +171,12 @@ public class TestErpInvLandedCostReversal extends JunitAutoTestCase {
 
     // ---------- rpc helpers ----------
 
-    private ApiResponse<?> approve(Long id) {
+    private ApiResponse<?> approve(String id) {
         return executeRpc(mutation, "ErpInvLandedCost__approve",
                 ApiRequest.build(Map.of("id", id)));
     }
 
-    private ApiResponse<?> reverseApprove(Long id) {
+    private ApiResponse<?> reverseApprove(String id) {
         return executeRpc(mutation, "ErpInvLandedCost__reverseApprove",
                 ApiRequest.build(Map.of("id", id)));
     }
@@ -188,17 +189,18 @@ public class TestErpInvLandedCostReversal extends JunitAutoTestCase {
 
     // ---------- 采购入库单 seed ----------
 
-    private Long seedReceiveSingle(String code, BigDecimal qty, BigDecimal amount, Long matId) {
+    // A3 桥接（bridge-test-121）：pur ErpPurReceive(ReceiveLine) 列仍 Long（M2.5 未迁移），String 常量/参数 → toLong seed 值
+    private Long seedReceiveSingle(String code, BigDecimal qty, BigDecimal amount, String matId) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpPurReceive> recvDao = daoProvider.daoFor(ErpPurReceive.class);
             ErpPurReceive recv = new ErpPurReceive();
             recv.orm_propValueByName("id", (long) code.hashCode());
             recv.setCode(code);
-            recv.setOrgId(ORG_ID);
+            recv.setOrgId(ConvertHelper.toLong(ORG_ID));
             recv.setSupplierId(7001L);
-            recv.setWarehouseId(WAREHOUSE_ID);
+            recv.setWarehouseId(ConvertHelper.toLong(WAREHOUSE_ID));
             recv.setBusinessDate(LocalDate.of(2026, 7, 1));
-            recv.setCurrencyId(CURRENCY_ID);
+            recv.setCurrencyId(ConvertHelper.toLong(CURRENCY_ID));
             recv.setExchangeRate(BigDecimal.ONE);
             recv.setApproveStatus("APPROVED");
             recv.setDocStatus(ErpInvConstants.DOC_STATUS_DONE);
@@ -210,12 +212,12 @@ public class TestErpInvLandedCostReversal extends JunitAutoTestCase {
             line1.orm_propValueByName("id", (long) code.hashCode() * 10 + 1);
             line1.setReceiveId((long) code.hashCode());
             line1.setLineNo(1);
-            line1.setMaterialId(matId);
-            line1.setWarehouseId(WAREHOUSE_ID);
+            line1.setMaterialId(ConvertHelper.toLong(matId));
+            line1.setWarehouseId(ConvertHelper.toLong(WAREHOUSE_ID));
             line1.setQuantity(qty);
             line1.orm_propValueByName("unitPrice", amount.divide(qty, 4, java.math.RoundingMode.HALF_UP));
             line1.orm_propValueByName("amount", amount);
-            line1.setUoMId(UOM_ID);
+            line1.setUoMId(ConvertHelper.toLong(UOM_ID));
             lineDao.saveEntity(line1);
         });
         return (long) code.hashCode();
@@ -223,15 +225,15 @@ public class TestErpInvLandedCostReversal extends JunitAutoTestCase {
 
     // ---------- 到岸成本单创建 ----------
 
-    private Long createLandedCost(String code, Long receiveId, String[][] costElements, Long apPartnerId) {
+    private String createLandedCost(String code, String receiveId, String[][] costElements, String apPartnerId) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpInvLandedCost> headDao = daoProvider.daoFor(ErpInvLandedCost.class);
             ErpInvLandedCost head = new ErpInvLandedCost();
-            head.orm_propValueByName("id", (long) code.hashCode());
+            head.orm_propValueByName("id", String.valueOf(code.hashCode()));
             head.setCode(code);
             head.setOrgId(ORG_ID);
             head.setReceiveId(receiveId);
-            head.setSupplierId(7001L);
+            head.setSupplierId("7001");
             head.setCurrencyId(CURRENCY_ID);
             head.setExchangeRate(BigDecimal.ONE);
             BigDecimal total = BigDecimal.ZERO;
@@ -250,25 +252,25 @@ public class TestErpInvLandedCostReversal extends JunitAutoTestCase {
             int lineNo = 1;
             for (String[] e : costElements) {
                 ErpInvLandedCostLine line = new ErpInvLandedCostLine();
-                line.orm_propValueByName("id", (long) code.hashCode() * 100 + lineNo);
-                line.setLandedCostId((long) code.hashCode());
+                line.orm_propValueByName("id", String.valueOf(code.hashCode() * 100 + lineNo));
+                line.setLandedCostId(String.valueOf(code.hashCode()));
                 line.setLineNo(lineNo++);
                 line.orm_propValueByName("costElement", e[0]);
                 line.orm_propValueByName("amount", new BigDecimal(e[1]));
                 if (apPartnerId != null) {
                     line.setApPartnerId(apPartnerId);
                 } else {
-                    line.setApPartnerId(7001L);
+                    line.setApPartnerId("7001");
                 }
                 lineDao.saveEntity(line);
             }
         });
-        return (long) code.hashCode();
+        return String.valueOf(code.hashCode());
     }
 
     // ---------- 移动单生成（建立余额） ----------
 
-    private void generateIncoming(Long materialId, String billCode, BigDecimal qty, BigDecimal unitCost) {
+    private void generateIncoming(String materialId, String billCode, BigDecimal qty, BigDecimal unitCost) {
         Map<String, Object> req = new LinkedHashMap<>();
         req.put("moveType", ErpInvConstants.MOVE_TYPE_INCOMING);
         req.put("orgId", ORG_ID);
@@ -342,7 +344,7 @@ public class TestErpInvLandedCostReversal extends JunitAutoTestCase {
         dao.saveEntity(subject);
     }
 
-    private void seedMaterial(Long id, String costMethod) {
+    private void seedMaterial(String id, String costMethod) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMdMaterial> dao = daoProvider.daoFor(ErpMdMaterial.class);
             ErpMdMaterial m = new ErpMdMaterial();
@@ -359,11 +361,11 @@ public class TestErpInvLandedCostReversal extends JunitAutoTestCase {
 
     // ---------- query helpers ----------
 
-    private ErpInvLandedCost loadLandedCost(Long id) {
+    private ErpInvLandedCost loadLandedCost(String id) {
         return daoProvider.daoFor(ErpInvLandedCost.class).getEntityById(id);
     }
 
-    private ErpInvStockBalance findBalance(Long materialId) {
+    private ErpInvStockBalance findBalance(String materialId) {
         IEntityDao<ErpInvStockBalance> dao = daoProvider.daoFor(ErpInvStockBalance.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("materialId", materialId));

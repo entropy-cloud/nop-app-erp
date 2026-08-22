@@ -9,6 +9,7 @@ import app.erp.mfg.dao.entity.ErpMfgCostRollupLine;
 import app.erp.md.dao.entity.ErpMdMaterial;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.config.AppConfig;
+import io.nop.api.core.convert.ConvertHelper;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
@@ -62,7 +63,7 @@ public class StandardCostResolver {
     /**
      * 解析物料标准成本。无可用标准成本时抛 {@link ErpInvErrors#ERR_STANDARD_COST_NOT_AVAILABLE}。
      */
-    public BigDecimal resolve(Long materialId) {
+    public BigDecimal resolve(String materialId) {
         if (materialId == null) {
             throw new NopException(ErpInvErrors.ERR_STANDARD_COST_NOT_AVAILABLE)
                     .param(ErpInvErrors.ARG_MATERIAL_ID, materialId);
@@ -78,8 +79,11 @@ public class StandardCostResolver {
         return standard;
     }
 
-    private BigDecimal resolveFromRollup(Long materialId) {
+    // A2 桥接（bridge-main-073/074，M0.2 登记册）：mfg ErpMfgCostRollup(RollupLine) 列仍 Long（mfg 位次 14 未迁移），
+    // inv String materialId → ConvertHelper.toLong 桥接查询值（Long 列传 String 会静默空匹配），退役 owner M3.1
+    private BigDecimal resolveFromRollup(String materialId) {
         ormTemplate.flushSession();
+        Long mfgMaterialKey = ConvertHelper.toLong(materialId);
         IEntityDao<ErpMfgCostRollup> headerDao = daoProvider.daoFor(ErpMfgCostRollup.class);
         List<ErpMfgCostRollup> firmedList = headerDao.findAllByQuery(
                 new QueryBean().addFilter(eq("status", STATUS_FIRMED)));
@@ -95,7 +99,7 @@ public class StandardCostResolver {
             List<ErpMfgCostRollupLine> lines = lineDao.findAllByQuery(
                     new QueryBean()
                             .addFilter(eq("costRollupId", header.getId()))
-                            .addFilter(eq("materialId", materialId)));
+                            .addFilter(eq("materialId", mfgMaterialKey)));
             if (!lines.isEmpty()) {
                 return lines.get(0).getUnitCost();
             }
@@ -103,7 +107,7 @@ public class StandardCostResolver {
         return null;
     }
 
-    private BigDecimal resolveFromMaterialMaster(Long materialId) {
+    private BigDecimal resolveFromMaterialMaster(String materialId) {
         IEntityDao<ErpMdMaterial> dao = daoProvider.daoFor(ErpMdMaterial.class);
         ErpMdMaterial material = dao.getEntityById(materialId);
         if (material == null) {

@@ -297,7 +297,6 @@ public class ErpApsAutoDispatchProcessor {
         }
         return true;
     }
-
     protected ErpMfgBom resolveBom(ErpMfgWorkOrder wo) {
         IEntityDao<ErpMfgBom> dao = daoProvider.daoFor(ErpMfgBom.class);
         if (wo.getBomId() != null) {
@@ -319,10 +318,10 @@ public class ErpApsAutoDispatchProcessor {
         return daoProvider.daoFor(ErpMfgBomLine.class).findAllByQuery(q);
     }
 
-    // A2 桥接（bridge-main-016）：inv ErpInvStockBalance materialId Long 查询，退役 owner M2.2
+    // inv ErpInvStockBalance materialId 已 String 化（M2.2）；mfg Long 键 → String 查询值，随 bridge-main-017 于 M3.1 退役
     protected BigDecimal sumAvailable(Long materialId) {
         QueryBean q = new QueryBean();
-        q.addFilter(eq("materialId", materialId));
+        q.addFilter(eq("materialId", ConvertHelper.toString(materialId)));
         BigDecimal total = BigDecimal.ZERO;
         for (ErpInvStockBalance b : daoProvider.daoFor(ErpInvStockBalance.class).findAllByQuery(q)) {
             if (b.getAvailableQuantity() != null) {

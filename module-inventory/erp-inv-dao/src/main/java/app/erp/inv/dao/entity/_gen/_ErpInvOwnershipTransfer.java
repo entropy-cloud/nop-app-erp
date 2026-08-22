@@ -219,31 +219,31 @@ public class _ErpInvOwnershipTransfer extends DynamicOrmEntity{
 
     
     /* ID: ID */
-    private java.lang.Long _id;
+    private java.lang.String _id;
     
     /* 单号: CODE */
     private java.lang.String _code;
     
     /* 业务组织: ORG_ID */
-    private java.lang.Long _orgId;
+    private java.lang.String _orgId;
     
     /* 转移类型: TRANSFER_TYPE */
     private java.lang.String _transferType;
     
     /* 所有权对方(往来单位): PARTNER_ID */
-    private java.lang.Long _partnerId;
+    private java.lang.String _partnerId;
     
     /* 业务日期: BUSINESS_DATE */
     private java.time.LocalDate _businessDate;
     
     /* 仓库: WAREHOUSE_ID */
-    private java.lang.Long _warehouseId;
+    private java.lang.String _warehouseId;
     
     /* 源库位(=目的库位): SOURCE_LOC_ID */
-    private java.lang.Long _sourceLocId;
+    private java.lang.String _sourceLocId;
     
     /* 目的库位(=源库位): DEST_LOC_ID */
-    private java.lang.Long _destLocId;
+    private java.lang.String _destLocId;
     
     /* 转前所有权类型: FROM_OWNERSHIP_TYPE */
     private java.lang.String _fromOwnershipType;
@@ -252,7 +252,7 @@ public class _ErpInvOwnershipTransfer extends DynamicOrmEntity{
     private java.lang.String _toOwnershipType;
     
     /* 币种: CURRENCY_ID */
-    private java.lang.Long _currencyId;
+    private java.lang.String _currencyId;
     
     /* 单据状态: DOC_STATUS */
     private java.lang.String _docStatus;
@@ -442,9 +442,9 @@ public class _ErpInvOwnershipTransfer extends DynamicOrmEntity{
         switch(propId){
         
             case PROP_ID_id:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_id));
                }
                setId(typedValue);
@@ -462,9 +462,9 @@ public class _ErpInvOwnershipTransfer extends DynamicOrmEntity{
             }
         
             case PROP_ID_orgId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_orgId));
                }
                setOrgId(typedValue);
@@ -482,9 +482,9 @@ public class _ErpInvOwnershipTransfer extends DynamicOrmEntity{
             }
         
             case PROP_ID_partnerId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_partnerId));
                }
                setPartnerId(typedValue);
@@ -502,9 +502,9 @@ public class _ErpInvOwnershipTransfer extends DynamicOrmEntity{
             }
         
             case PROP_ID_warehouseId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_warehouseId));
                }
                setWarehouseId(typedValue);
@@ -512,9 +512,9 @@ public class _ErpInvOwnershipTransfer extends DynamicOrmEntity{
             }
         
             case PROP_ID_sourceLocId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_sourceLocId));
                }
                setSourceLocId(typedValue);
@@ -522,9 +522,9 @@ public class _ErpInvOwnershipTransfer extends DynamicOrmEntity{
             }
         
             case PROP_ID_destLocId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_destLocId));
                }
                setDestLocId(typedValue);
@@ -552,9 +552,9 @@ public class _ErpInvOwnershipTransfer extends DynamicOrmEntity{
             }
         
             case PROP_ID_currencyId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_currencyId));
                }
                setCurrencyId(typedValue);
@@ -682,7 +682,7 @@ public class _ErpInvOwnershipTransfer extends DynamicOrmEntity{
         
             case PROP_ID_id:{
                onInitProp(propId);
-               this._id = (java.lang.Long)value;
+               this._id = (java.lang.String)value;
                orm_id(); // 如果是设置主键字段，则触发watcher
                break;
             }
@@ -696,7 +696,7 @@ public class _ErpInvOwnershipTransfer extends DynamicOrmEntity{
         
             case PROP_ID_orgId:{
                onInitProp(propId);
-               this._orgId = (java.lang.Long)value;
+               this._orgId = (java.lang.String)value;
                
                break;
             }
@@ -710,7 +710,7 @@ public class _ErpInvOwnershipTransfer extends DynamicOrmEntity{
         
             case PROP_ID_partnerId:{
                onInitProp(propId);
-               this._partnerId = (java.lang.Long)value;
+               this._partnerId = (java.lang.String)value;
                
                break;
             }
@@ -724,21 +724,21 @@ public class _ErpInvOwnershipTransfer extends DynamicOrmEntity{
         
             case PROP_ID_warehouseId:{
                onInitProp(propId);
-               this._warehouseId = (java.lang.Long)value;
+               this._warehouseId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_sourceLocId:{
                onInitProp(propId);
-               this._sourceLocId = (java.lang.Long)value;
+               this._sourceLocId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_destLocId:{
                onInitProp(propId);
-               this._destLocId = (java.lang.Long)value;
+               this._destLocId = (java.lang.String)value;
                
                break;
             }
@@ -759,7 +759,7 @@ public class _ErpInvOwnershipTransfer extends DynamicOrmEntity{
         
             case PROP_ID_currencyId:{
                onInitProp(propId);
-               this._currencyId = (java.lang.Long)value;
+               this._currencyId = (java.lang.String)value;
                
                break;
             }
@@ -850,7 +850,7 @@ public class _ErpInvOwnershipTransfer extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final java.lang.Long getId(){
+    public final java.lang.String getId(){
          onPropGet(PROP_ID_id);
          return _id;
     }
@@ -858,7 +858,7 @@ public class _ErpInvOwnershipTransfer extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final void setId(java.lang.Long value){
+    public final void setId(java.lang.String value){
         if(onPropSet(PROP_ID_id,value)){
             this._id = value;
             internalClearRefs(PROP_ID_id);
@@ -888,7 +888,7 @@ public class _ErpInvOwnershipTransfer extends DynamicOrmEntity{
     /**
      * 业务组织: ORG_ID
      */
-    public final java.lang.Long getOrgId(){
+    public final java.lang.String getOrgId(){
          onPropGet(PROP_ID_orgId);
          return _orgId;
     }
@@ -896,7 +896,7 @@ public class _ErpInvOwnershipTransfer extends DynamicOrmEntity{
     /**
      * 业务组织: ORG_ID
      */
-    public final void setOrgId(java.lang.Long value){
+    public final void setOrgId(java.lang.String value){
         if(onPropSet(PROP_ID_orgId,value)){
             this._orgId = value;
             internalClearRefs(PROP_ID_orgId);
@@ -926,7 +926,7 @@ public class _ErpInvOwnershipTransfer extends DynamicOrmEntity{
     /**
      * 所有权对方(往来单位): PARTNER_ID
      */
-    public final java.lang.Long getPartnerId(){
+    public final java.lang.String getPartnerId(){
          onPropGet(PROP_ID_partnerId);
          return _partnerId;
     }
@@ -934,7 +934,7 @@ public class _ErpInvOwnershipTransfer extends DynamicOrmEntity{
     /**
      * 所有权对方(往来单位): PARTNER_ID
      */
-    public final void setPartnerId(java.lang.Long value){
+    public final void setPartnerId(java.lang.String value){
         if(onPropSet(PROP_ID_partnerId,value)){
             this._partnerId = value;
             internalClearRefs(PROP_ID_partnerId);
@@ -964,7 +964,7 @@ public class _ErpInvOwnershipTransfer extends DynamicOrmEntity{
     /**
      * 仓库: WAREHOUSE_ID
      */
-    public final java.lang.Long getWarehouseId(){
+    public final java.lang.String getWarehouseId(){
          onPropGet(PROP_ID_warehouseId);
          return _warehouseId;
     }
@@ -972,7 +972,7 @@ public class _ErpInvOwnershipTransfer extends DynamicOrmEntity{
     /**
      * 仓库: WAREHOUSE_ID
      */
-    public final void setWarehouseId(java.lang.Long value){
+    public final void setWarehouseId(java.lang.String value){
         if(onPropSet(PROP_ID_warehouseId,value)){
             this._warehouseId = value;
             internalClearRefs(PROP_ID_warehouseId);
@@ -983,7 +983,7 @@ public class _ErpInvOwnershipTransfer extends DynamicOrmEntity{
     /**
      * 源库位(=目的库位): SOURCE_LOC_ID
      */
-    public final java.lang.Long getSourceLocId(){
+    public final java.lang.String getSourceLocId(){
          onPropGet(PROP_ID_sourceLocId);
          return _sourceLocId;
     }
@@ -991,7 +991,7 @@ public class _ErpInvOwnershipTransfer extends DynamicOrmEntity{
     /**
      * 源库位(=目的库位): SOURCE_LOC_ID
      */
-    public final void setSourceLocId(java.lang.Long value){
+    public final void setSourceLocId(java.lang.String value){
         if(onPropSet(PROP_ID_sourceLocId,value)){
             this._sourceLocId = value;
             internalClearRefs(PROP_ID_sourceLocId);
@@ -1002,7 +1002,7 @@ public class _ErpInvOwnershipTransfer extends DynamicOrmEntity{
     /**
      * 目的库位(=源库位): DEST_LOC_ID
      */
-    public final java.lang.Long getDestLocId(){
+    public final java.lang.String getDestLocId(){
          onPropGet(PROP_ID_destLocId);
          return _destLocId;
     }
@@ -1010,7 +1010,7 @@ public class _ErpInvOwnershipTransfer extends DynamicOrmEntity{
     /**
      * 目的库位(=源库位): DEST_LOC_ID
      */
-    public final void setDestLocId(java.lang.Long value){
+    public final void setDestLocId(java.lang.String value){
         if(onPropSet(PROP_ID_destLocId,value)){
             this._destLocId = value;
             internalClearRefs(PROP_ID_destLocId);
@@ -1059,7 +1059,7 @@ public class _ErpInvOwnershipTransfer extends DynamicOrmEntity{
     /**
      * 币种: CURRENCY_ID
      */
-    public final java.lang.Long getCurrencyId(){
+    public final java.lang.String getCurrencyId(){
          onPropGet(PROP_ID_currencyId);
          return _currencyId;
     }
@@ -1067,7 +1067,7 @@ public class _ErpInvOwnershipTransfer extends DynamicOrmEntity{
     /**
      * 币种: CURRENCY_ID
      */
-    public final void setCurrencyId(java.lang.Long value){
+    public final void setCurrencyId(java.lang.String value){
         if(onPropSet(PROP_ID_currencyId,value)){
             this._currencyId = value;
             internalClearRefs(PROP_ID_currencyId);

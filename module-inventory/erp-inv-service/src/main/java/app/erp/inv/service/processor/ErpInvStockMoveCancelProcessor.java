@@ -25,7 +25,7 @@ public class ErpInvStockMoveCancelProcessor {
     @Inject
     ErpInvStockMoveStateMachine stateMachine;
 
-    public ErpInvStockMove cancel(Long moveId, IServiceContext context) {
+    public ErpInvStockMove cancel(String moveId, IServiceContext context) {
         ErpInvStockMove move = facade.requireMove(moveId, context);
         String status = move.getDocStatus();
         // 固定来源态守卫委托 StateMachine Bean（非法边 Bean 抛 common 层码，映射为领域码 + common 作 cause）

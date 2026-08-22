@@ -20,10 +20,10 @@ import java.util.function.Consumer;
 public interface BookingContext {
 
     ErpInvStockBalance upsertBalance(ErpInvStockMove move, ErpInvStockMoveLine line,
-                                     Long warehouseId, Long locationId);
+                                     String warehouseId, String locationId);
 
-    void writeLedger(ErpInvStockMove move, ErpInvStockMoveLine line, Long acctSchemaId,
-                     ErpInvStockBalance balance, Long warehouseId, Long locationId,
+    void writeLedger(ErpInvStockMove move, ErpInvStockMoveLine line, String acctSchemaId,
+                     ErpInvStockBalance balance, String warehouseId, String locationId,
                      BigDecimal signedQty, BigDecimal unitCost, BigDecimal signedTotalCost, String costMethod);
 
     void recomputeAvailable(ErpInvStockBalance balance);

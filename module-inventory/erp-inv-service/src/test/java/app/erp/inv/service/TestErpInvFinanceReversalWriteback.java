@@ -45,13 +45,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class TestErpInvFinanceReversalWriteback extends JunitAutoTestCase {
     private static final IServiceContext CTX = new ServiceContextImpl();
 
-    static final Long ORG_ID = 1303L;
-    static final Long PARTNER_ID = 2301L;
-    static final Long WAREHOUSE_ID = 3301L;
-    static final Long LOCATION_ID = 4301L;
-    static final Long MATERIAL_ID = 5301L;
-    static final Long ACCT_SCHEMA_ID = 7303L;
-    static final Long CURRENCY_ID = 6301L;
+    static final String ORG_ID = "1303";
+    static final String PARTNER_ID = "2301";
+    static final String WAREHOUSE_ID = "3301";
+    static final String LOCATION_ID = "4301";
+    static final String MATERIAL_ID = "5301";
+    static final String ACCT_SCHEMA_ID = "7303";
+    static final String CURRENCY_ID = "6301";
 
     @Inject
     IDaoProvider daoProvider;
@@ -82,13 +82,13 @@ public class TestErpInvFinanceReversalWriteback extends JunitAutoTestCase {
         transfer.setPostedBy("test-user");
         ormTemplate.runInSession(() -> daoProvider.daoFor(ErpInvOwnershipTransfer.class).saveEntity(transfer));
 
-        Long originalVoucherId = seedPostedVoucherFor(transfer.getCode(),
+        String originalVoucherId = seedPostedVoucherFor(transfer.getCode(),
                 ErpFinBusinessType.OWNERSHIP_TRANSFER, new BigDecimal("1000"));
 
         assertTrue(Boolean.TRUE.equals(reload(transfer).getPosted()),
                 "前置：所有权转移单已过账 posted=true");
 
-        Long redVoucherId = ormTemplate.runInSession(session -> voucherBiz.reverse(transfer.getCode(), ErpFinBusinessType.OWNERSHIP_TRANSFER, CTX));
+        String redVoucherId = ormTemplate.runInSession(session -> voucherBiz.reverse(transfer.getCode(), ErpFinBusinessType.OWNERSHIP_TRANSFER, CTX));
 
         assertNotNull(redVoucherId);
         assertNotEquals(originalVoucherId, redVoucherId);
@@ -109,7 +109,7 @@ public class TestErpInvFinanceReversalWriteback extends JunitAutoTestCase {
         return daoProvider.daoFor(ErpInvOwnershipTransfer.class).getEntityById(transfer.getId());
     }
 
-    private Long seedPostedVoucherFor(String billCode, ErpFinBusinessType businessType, BigDecimal total) {
+    private String seedPostedVoucherFor(String billCode, ErpFinBusinessType businessType, BigDecimal total) {
         IEntityDao<ErpFinVoucher> vDao = daoProvider.daoFor(ErpFinVoucher.class);
         IEntityDao<ErpFinVoucherBillR> billRDao = daoProvider.daoFor(ErpFinVoucherBillR.class);
         IEntityDao<ErpFinAccountingPeriod> periodDao = daoProvider.daoFor(ErpFinAccountingPeriod.class);
@@ -150,7 +150,7 @@ public class TestErpInvFinanceReversalWriteback extends JunitAutoTestCase {
         });
     }
 
-    private void seedAcctSchema(Long id, Long orgId) {
+    private void seedAcctSchema(String id, String orgId) {
         IEntityDao<app.erp.md.dao.entity.ErpMdAcctSchema> dao = daoProvider.daoFor(
                 app.erp.md.dao.entity.ErpMdAcctSchema.class);
         app.erp.md.dao.entity.ErpMdAcctSchema schema = new app.erp.md.dao.entity.ErpMdAcctSchema();
