@@ -1,0 +1,3 @@
+_chgType,ID,SHIPMENT_ID,WINDOW_ID,ORG_ID,BOOKED_DATE,BOOKED_TIME,STATUS,MISSED_FEE,PRIORITY_SCORE,REMARK,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
+A,5,3,1,1,2026-08-26,09:00,MISSED,88.50,10,,@var:ErpLogDeliveryBooking@delVersion,1,autotest-ref,*,autotest-ref,*
+A,6,4,1,1,2026-08-26,09:00,ARRIVED,,0,,@var:ErpLogDeliveryBooking@delVersion,1,autotest-ref,*,autotest-ref,*

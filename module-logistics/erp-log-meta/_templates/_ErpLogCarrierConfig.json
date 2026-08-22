@@ -1,7 +1,7 @@
 {
-  "id": 0,
-  "carrierId": 0,
-  "orgId": 0,
+  "id": "",
+  "carrierId": "",
+  "orgId": "",
   "configCode": "",
   "serviceType": "",
   "apiEndpoint": "",

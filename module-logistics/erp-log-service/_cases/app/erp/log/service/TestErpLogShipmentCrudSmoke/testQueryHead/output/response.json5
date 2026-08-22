@@ -8,7 +8,7 @@
         "id": "2",
         "code": "@var:ErpLogShipment@code",
         "orgId": null,
-        "carrierId": 1,
+        "carrierId": "1",
         "carrierConfigId": null,
         "relatedBillType": null,
         "relatedBillCode": null,

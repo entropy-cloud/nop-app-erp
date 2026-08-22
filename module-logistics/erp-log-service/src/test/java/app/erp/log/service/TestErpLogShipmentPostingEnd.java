@@ -60,13 +60,13 @@ public class TestErpLogShipmentPostingEnd extends JunitAutoTestCase {
 
     @Test
     public void testSalesDeliveryFullLifecycleWithFreightVoucher() {
-        long partnerId = 8901L;
+        long partnerId = 8901;
         String carrierCode = "MOCK-END-SAL";
-        Long carrierId = ormTemplate.runInSession(session -> {
+        String carrierId = ormTemplate.runInSession(session -> {
             seedFinancePrereqs();
             return seedCarrier(carrierCode, partnerId);
         });
-        Long shipmentId = ormTemplate.runInSession(session -> seedShipment("END-SAL-1", carrierId,
+        String shipmentId = ormTemplate.runInSession(session -> seedShipment("END-SAL-1", carrierId,
                 ErpLogConstants.SHIPMENT_STATUS_DRAFT,
                 ErpLogConstants.RELATED_BILL_TYPE_SALES_DELIVERY,
                 ErpLogConstants.FREIGHT_TERMS_PREPAID, new BigDecimal("150"),
@@ -91,13 +91,13 @@ public class TestErpLogShipmentPostingEnd extends JunitAutoTestCase {
 
     @Test
     public void testPurchaseReceiptFullLifecycleNoFreightVoucher() {
-        long partnerId = 8902L;
+        long partnerId = 8902;
         String carrierCode = "MOCK-END-PUR";
-        Long carrierId = ormTemplate.runInSession(session -> {
+        String carrierId = ormTemplate.runInSession(session -> {
             seedFinancePrereqs();
             return seedCarrier(carrierCode, partnerId);
         });
-        Long shipmentId = ormTemplate.runInSession(session -> seedShipment("END-PUR-1", carrierId,
+        String shipmentId = ormTemplate.runInSession(session -> seedShipment("END-PUR-1", carrierId,
                 ErpLogConstants.SHIPMENT_STATUS_DRAFT,
                 ErpLogConstants.RELATED_BILL_TYPE_PURCHASE_RECEIPT,
                 ErpLogConstants.FREIGHT_TERMS_COLLECT, new BigDecimal("300"),
@@ -122,38 +122,38 @@ public class TestErpLogShipmentPostingEnd extends JunitAutoTestCase {
 
     private void seedFinancePrereqs() {
         seedOpenPeriod("2026-07", 2026, 7, LocalDate.of(2026, 7, 1), LocalDate.of(2026, 7, 31));
-        seedAcctSchema(1L);
+        seedAcctSchema("1");
         seedSubject("6601", "销售费用", "EXPENSE", "DEBIT");
         seedSubject("1002", "银行存款", "ASSET", "DEBIT");
         seedSubject("2202", "应付账款", "LIABILITY", "CREDIT");
     }
 
-    private Long seedCarrier(String code, long partnerId) {
+    private String seedCarrier(String code, long partnerId) {
         IEntityDao<ErpLogCarrier> dao = daoProvider.daoFor(ErpLogCarrier.class);
         ErpLogCarrier carrier = new ErpLogCarrier();
         carrier.setCode(code);
         carrier.setCarrierName("Mock 承运商");
         carrier.setCarrierType("EXPRESS");
         carrier.setGatewayId(ErpLogConstants.GATEWAY_ID_MOCK);
-        carrier.setPartnerId(partnerId);
+        carrier.setPartnerId(String.valueOf(partnerId));
         carrier.setIsActive(1);
         dao.saveEntity(carrier);
         return carrier.getId();
     }
 
-    private Long seedShipment(String code, Long carrierId, String status, String relatedBillType,
+    private String seedShipment(String code, String carrierId, String status, String relatedBillType,
                               String freightTerms, BigDecimal freightAmount, String settlementStatus) {
         ErpLogShipment s = new ErpLogShipment();
         s.setBusinessDate(java.time.LocalDate.of(2026, 7, 1));
         s.setBusinessDate(java.time.LocalDate.of(2026, 7, 1));
         s.setCode(code);
-        s.setOrgId(1L);
+        s.setOrgId("1");
         s.setCarrierId(carrierId);
         s.setStatus(status);
         s.setRelatedBillType(relatedBillType);
         s.setFreightTerms(freightTerms);
         s.setFreightAmount(freightAmount);
-        s.setFreightCurrencyId(1L);
+        s.setFreightCurrencyId("1");
         s.setFreightSettlementStatus(settlementStatus);
         daoProvider.daoFor(ErpLogShipment.class).saveEntity(s);
         return s.getId();
@@ -170,14 +170,14 @@ public class TestErpLogShipmentPostingEnd extends JunitAutoTestCase {
         dao.saveEntity(subject);
     }
 
-    private void seedAcctSchema(long orgId) {
+    private void seedAcctSchema(String orgId) {
         IEntityDao<ErpMdAcctSchema> dao = daoProvider.daoFor(ErpMdAcctSchema.class);
         ErpMdAcctSchema schema = new ErpMdAcctSchema();
         schema.setCode("AS-" + orgId);
         schema.setName("账套-" + orgId);
         schema.setOrgId(orgId);
         schema.setNature("FINANCIAL");
-        schema.setFunctionalCurrencyId(1L);
+        schema.setFunctionalCurrencyId("1");
         schema.setStatus("ACTIVE");
         dao.saveEntity(schema);
     }
@@ -187,7 +187,7 @@ public class TestErpLogShipmentPostingEnd extends JunitAutoTestCase {
         ErpFinAccountingPeriod period = new ErpFinAccountingPeriod();
         period.setCode(code);
         period.setName(code);
-        period.setOrgId(1L);
+        period.setOrgId("1");
         period.setYear(year);
         period.setMonth(month);
         period.setStartDate(start);

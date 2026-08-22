@@ -19,19 +19,19 @@
             <cols>
 
                 <!--ID-->
-                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="id" mandatory="true" sortable="true"/>
 
                 <!--单号-->
                 <col id="code" mandatory="true" sortable="true"/>
 
                 <!--业务组织-->
-                <col id="orgId" ui:number="true" sortable="true"/>
+                <col id="orgId" sortable="true"/>
 
                 <!--承运商ID-->
-                <col id="carrierId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="carrierId" mandatory="true" sortable="true"/>
 
                 <!--承运商配置ID-->
-                <col id="carrierConfigId" ui:number="true" sortable="true"/>
+                <col id="carrierConfigId" sortable="true"/>
 
                 <!--关联单据类型-->
                 <col id="relatedBillType" sortable="true"/>
@@ -52,7 +52,7 @@
                 <col id="freightAmount" ui:number="true" sortable="true"/>
 
                 <!--运费币种-->
-                <col id="freightCurrencyId" ui:number="true" sortable="true"/>
+                <col id="freightCurrencyId" sortable="true"/>
 
                 <!--运费条款-->
                 <col id="freightTerms" sortable="true"/>
@@ -109,7 +109,7 @@
                 <col id="signedBy" sortable="true"/>
 
                 <!--发货员(职员)-->
-                <col id="shipperId" ui:number="true" sortable="true"/>
+                <col id="shipperId" sortable="true"/>
 
                 <!--状态-->
                 <col id="status" mandatory="true" sortable="true"/>

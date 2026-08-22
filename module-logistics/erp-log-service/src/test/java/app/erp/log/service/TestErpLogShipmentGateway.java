@@ -66,8 +66,8 @@ public class TestErpLogShipmentGateway extends JunitAutoTestCase {
 
     @Test
     public void testFullStateMachineFlow() {
-        Long carrierId = seedCarrier("MOCK-CAR");
-        Long shipmentId = ormTemplate.runInSession(session -> seedShipment("GW-FULL-1", carrierId,
+        String carrierId = seedCarrier("MOCK-CAR");
+        String shipmentId = ormTemplate.runInSession(session -> seedShipment("GW-FULL-1", carrierId,
                 ErpLogConstants.SHIPMENT_STATUS_DRAFT, ErpLogConstants.RELATED_BILL_TYPE_SALES_DELIVERY,
                 ErpLogConstants.SETTLEMENT_STATUS_PENDING));
 
@@ -100,8 +100,8 @@ public class TestErpLogShipmentGateway extends JunitAutoTestCase {
 
     @Test
     public void testGateway5xxRetryDeadLetter() {
-        Long carrierId = seedCarrier("MOCK-CAR");
-        Long shipmentId = ormTemplate.runInSession(session -> seedShipment("GW-RETRY-1", carrierId,
+        String carrierId = seedCarrier("MOCK-CAR");
+        String shipmentId = ormTemplate.runInSession(session -> seedShipment("GW-RETRY-1", carrierId,
                 ErpLogConstants.SHIPMENT_STATUS_ADVISED, ErpLogConstants.RELATED_BILL_TYPE_SALES_DELIVERY,
                 ErpLogConstants.SETTLEMENT_STATUS_PENDING));
 
@@ -120,8 +120,8 @@ public class TestErpLogShipmentGateway extends JunitAutoTestCase {
 
     @Test
     public void testGateway4xxNoRetryDeadLetter() {
-        Long carrierId = seedCarrier("MOCK-CAR");
-        Long shipmentId = ormTemplate.runInSession(session -> seedShipment("GW-RETRY-2", carrierId,
+        String carrierId = seedCarrier("MOCK-CAR");
+        String shipmentId = ormTemplate.runInSession(session -> seedShipment("GW-RETRY-2", carrierId,
                 ErpLogConstants.SHIPMENT_STATUS_ADVISED, ErpLogConstants.RELATED_BILL_TYPE_SALES_DELIVERY,
                 ErpLogConstants.SETTLEMENT_STATUS_PENDING));
 
@@ -136,8 +136,8 @@ public class TestErpLogShipmentGateway extends JunitAutoTestCase {
 
     @Test
     public void testWebhookInvalidSignatureRejected() {
-        Long carrierId = seedCarrier("MOCK-CAR");
-        Long shipmentId = ormTemplate.runInSession(session -> seedShipment("GW-WH-1", carrierId,
+        String carrierId = seedCarrier("MOCK-CAR");
+        String shipmentId = ormTemplate.runInSession(session -> seedShipment("GW-WH-1", carrierId,
                 ErpLogConstants.SHIPMENT_STATUS_DISPATCHED, ErpLogConstants.RELATED_BILL_TYPE_SALES_DELIVERY,
                 ErpLogConstants.SETTLEMENT_STATUS_PENDING));
         // 设置 trackingNo（DISPATCHED 运单应有 trackingNo）
@@ -156,8 +156,8 @@ public class TestErpLogShipmentGateway extends JunitAutoTestCase {
 
     @Test
     public void testWebhookIdempotentDuplicate() {
-        Long carrierId = seedCarrier("MOCK-CAR");
-        Long shipmentId = ormTemplate.runInSession(session -> seedShipment("GW-WH-2", carrierId,
+        String carrierId = seedCarrier("MOCK-CAR");
+        String shipmentId = ormTemplate.runInSession(session -> seedShipment("GW-WH-2", carrierId,
                 ErpLogConstants.SHIPMENT_STATUS_DISPATCHED, ErpLogConstants.RELATED_BILL_TYPE_SALES_DELIVERY,
                 ErpLogConstants.SETTLEMENT_STATUS_PENDING));
         ormTemplate.runInSession(session -> {
@@ -179,8 +179,8 @@ public class TestErpLogShipmentGateway extends JunitAutoTestCase {
 
     @Test
     public void testCancelShipment() {
-        Long carrierId = seedCarrier("MOCK-CAR");
-        Long shipmentId = ormTemplate.runInSession(session -> seedShipment("GW-CNL-1", carrierId,
+        String carrierId = seedCarrier("MOCK-CAR");
+        String shipmentId = ormTemplate.runInSession(session -> seedShipment("GW-CNL-1", carrierId,
                 ErpLogConstants.SHIPMENT_STATUS_ADVISED, ErpLogConstants.RELATED_BILL_TYPE_SALES_DELIVERY,
                 ErpLogConstants.SETTLEMENT_STATUS_PENDING));
 
@@ -190,7 +190,7 @@ public class TestErpLogShipmentGateway extends JunitAutoTestCase {
 
     // ---------- helpers ----------
 
-    private Long seedCarrier(String code) {
+    private String seedCarrier(String code) {
         return ormTemplate.runInSession(session -> {
             IEntityDao<ErpLogCarrier> dao = daoProvider.daoFor(ErpLogCarrier.class);
             ErpLogCarrier carrier = new ErpLogCarrier();
@@ -204,7 +204,7 @@ public class TestErpLogShipmentGateway extends JunitAutoTestCase {
         });
     }
 
-    private Long seedShipment(String code, Long carrierId, String status, String relatedBillType,
+    private String seedShipment(String code, String carrierId, String status, String relatedBillType,
                               String settlementStatus) {
         ErpLogShipment s = new ErpLogShipment();
         s.setBusinessDate(java.time.LocalDate.of(2026, 7, 1));
@@ -218,11 +218,11 @@ public class TestErpLogShipmentGateway extends JunitAutoTestCase {
         return s.getId();
     }
 
-    private ErpLogShipment reload(Long shipmentId) {
+    private ErpLogShipment reload(String shipmentId) {
         return daoProvider.daoFor(ErpLogShipment.class).getEntityById(shipmentId);
     }
 
-    private List<ErpLogShipmentLog> findLogs(Long shipmentId) {
+    private List<ErpLogShipmentLog> findLogs(String shipmentId) {
         IEntityDao<ErpLogShipmentLog> dao = daoProvider.daoFor(ErpLogShipmentLog.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("shipmentId", shipmentId));

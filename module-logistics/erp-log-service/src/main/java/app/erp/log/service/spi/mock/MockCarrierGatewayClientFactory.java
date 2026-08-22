@@ -56,7 +56,7 @@ public class MockCarrierGatewayClientFactory implements IErpLogCarrierGatewayCli
     }
 
     @Override
-    public IErpLogCarrierGatewayClient newClientForCarrierId(Long carrierId) {
+    public IErpLogCarrierGatewayClient newClientForCarrierId(String carrierId) {
         // mock 无需真实凭证/端点；真实 Factory 在此读 ErpLogCarrierConfig + EncryptionHelper 解密（Non-Goal，本期 stub）。
         return new MockClient();
     }

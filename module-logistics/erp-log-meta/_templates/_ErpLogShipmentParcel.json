@@ -1,6 +1,6 @@
 {
-  "id": 0,
-  "shipmentId": 0,
+  "id": "",
+  "shipmentId": "",
   "parcelNo": "",
   "trackingNo": "",
   "labelUrl": "",

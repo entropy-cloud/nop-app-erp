@@ -65,7 +65,7 @@ public class GatewayDispatcher {
     static final String NOTIFY_EVENT_GATEWAY_DEAD_LETTER = "log.gateway-dead-letter";
 
     /** DRAFT→ADVISED。幂等：已 ADVISED 直接返回。 */
-    public ErpLogShipment advise(Long shipmentId) {
+    public ErpLogShipment advise(String shipmentId) {
         ErpLogShipment shipment = loadShipment(shipmentId);
         String status = shipment.getStatus();
         // 幂等短路保留 Dispatcher（Decision B）：已 ADVISED 直接返回
@@ -91,7 +91,7 @@ public class GatewayDispatcher {
      * 幂等：已 DISPATCHED/IN_TRANSIT/DELIVERED/CANCELLED 直接返回。成功回写 trackingNo/labelUrl + 逐 parcel；
      * 失败死信保留 ADVISED + remark 错误。
      */
-    public ErpLogShipment completeShipment(Long shipmentId, IServiceContext context) {
+    public ErpLogShipment completeShipment(String shipmentId, IServiceContext context) {
         ErpLogShipment shipment = loadShipment(shipmentId);
         String status = shipment.getStatus();
         // 幂等短路保留 Dispatcher（Decision B）：已 DISPATCHED/IN_TRANSIT/DELIVERED/CANCELLED 直接返回
@@ -142,7 +142,7 @@ public class GatewayDispatcher {
     }
 
     /** ADVISED/DISPATCHED/IN_TRANSIT/DRAFT→CANCELLED；DISPATCHED 以上经承运商取消。 */
-    public ErpLogShipment cancelShipment(Long shipmentId, IServiceContext context) {
+    public ErpLogShipment cancelShipment(String shipmentId, IServiceContext context) {
         ErpLogShipment shipment = loadShipment(shipmentId);
         String status = shipment.getStatus();
         // 幂等短路保留 Dispatcher（Decision B）：已 CANCELLED/DELIVERED 直接返回
@@ -290,7 +290,7 @@ public class GatewayDispatcher {
         dao.saveEntity(log);
     }
 
-    public ErpLogShipment loadShipment(Long shipmentId) {
+    public ErpLogShipment loadShipment(String shipmentId) {
         IEntityDao<ErpLogShipment> dao = daoProvider.daoFor(ErpLogShipment.class);
         ErpLogShipment shipment = dao.getEntityById(shipmentId);
         if (shipment == null) {

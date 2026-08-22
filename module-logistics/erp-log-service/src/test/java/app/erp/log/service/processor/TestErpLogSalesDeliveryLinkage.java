@@ -76,7 +76,7 @@ public class TestErpLogSalesDeliveryLinkage extends JunitAutoTestCase {
         String deliveryCode = "SAL-DLV-LK-001";
         ormTemplate.runInSession(s -> {
             seedFinancePrereqs();
-            Long carrierId = seedCarrier(carrierCode).getId();
+            String carrierId = seedCarrier(carrierCode).getId();
             seedSalesDelivery(deliveryCode, seedSalesOrder("SAL-ORD-LK-001"));
             seedDispatchedShipment("SHP-SAL-LK-1", "TRK-SAL-LK-1", carrierId,
                     ErpLogConstants.RELATED_BILL_TYPE_SALES_DELIVERY, deliveryCode, new BigDecimal("150"));
@@ -103,7 +103,7 @@ public class TestErpLogSalesDeliveryLinkage extends JunitAutoTestCase {
         String sharedCode = "SHARED-BILL-LK-002";
         ormTemplate.runInSession(s -> {
             seedFinancePrereqs();
-            Long carrierId = seedCarrier(carrierCode).getId();
+            String carrierId = seedCarrier(carrierCode).getId();
             seedSalesDelivery(sharedCode, seedSalesOrder("SAL-ORD-LK-002"));
             seedDispatchedShipment("SHP-SAL-LK-2", "TRK-SAL-LK-2", carrierId,
                     ErpLogConstants.RELATED_BILL_TYPE_PURCHASE_RECEIPT, sharedCode, new BigDecimal("80"));
@@ -126,7 +126,7 @@ public class TestErpLogSalesDeliveryLinkage extends JunitAutoTestCase {
         String carrierCode = "MOCK-SAL-LK-CAR3";
         ormTemplate.runInSession(s -> {
             seedFinancePrereqs();
-            Long carrierId = seedCarrier(carrierCode).getId();
+            String carrierId = seedCarrier(carrierCode).getId();
             seedDispatchedShipment("SHP-SAL-LK-3", "TRK-SAL-LK-3", carrierId,
                     ErpLogConstants.RELATED_BILL_TYPE_SALES_DELIVERY, "SAL-DLV-NOT-EXIST", new BigDecimal("120"));
             return null;
@@ -174,7 +174,7 @@ public class TestErpLogSalesDeliveryLinkage extends JunitAutoTestCase {
         String deliveryCode = "SAL-DLV-LK-004";
         ormTemplate.runInSession(s -> {
             seedFinancePrereqs();
-            Long carrierId = seedCarrier(carrierCode).getId();
+            String carrierId = seedCarrier(carrierCode).getId();
             seedSalesDelivery(deliveryCode, seedSalesOrder("SAL-ORD-LK-004"));
             seedDispatchedShipment("SHP-SAL-LK-4", "TRK-SAL-LK-4", carrierId,
                     ErpLogConstants.RELATED_BILL_TYPE_SALES_DELIVERY, deliveryCode, new BigDecimal("90"));
@@ -224,13 +224,13 @@ public class TestErpLogSalesDeliveryLinkage extends JunitAutoTestCase {
         });
     }
 
-    private Long seedSalesOrder(String code) {
+    private String seedSalesOrder(String code) {
         ErpSalOrder order = new ErpSalOrder();
         order.setCode(code);
-        order.setOrgId(1L);
-        order.setCustomerId(8801L);
+        order.setOrgId("1");
+        order.setCustomerId("8801");
         order.setBusinessDate(BUSINESS_DATE);
-        order.setCurrencyId(1L);
+        order.setCurrencyId("1");
         order.setDocStatus("DRAFT");
         order.setApproveStatus("APPROVED");
         order.setDeliveryStatus("UNDELIVERED");
@@ -238,25 +238,25 @@ public class TestErpLogSalesDeliveryLinkage extends JunitAutoTestCase {
         return order.getId();
     }
 
-    private void seedSalesDelivery(String code, Long orderId) {
+    private void seedSalesDelivery(String code, String orderId) {
         ErpSalDelivery delivery = new ErpSalDelivery();
         delivery.setCode(code);
-        delivery.setOrgId(1L);
+        delivery.setOrgId("1");
         delivery.setOrderId(orderId);
-        delivery.setCustomerId(8801L);
-        delivery.setWarehouseId(1L);
+        delivery.setCustomerId("8801");
+        delivery.setWarehouseId("1");
         delivery.setBusinessDate(BUSINESS_DATE);
-        delivery.setCurrencyId(1L);
+        delivery.setCurrencyId("1");
         delivery.setDocStatus("DRAFT");
         delivery.setApproveStatus("APPROVED");
         daoProvider.daoFor(ErpSalDelivery.class).saveEntity(delivery);
     }
 
-    private void seedDispatchedShipment(String code, String trackingNo, Long carrierId,
+    private void seedDispatchedShipment(String code, String trackingNo, String carrierId,
                                         String relatedBillType, String relatedBillCode, BigDecimal freight) {
         ErpLogShipment s = new ErpLogShipment();
         s.setCode(code);
-        s.setOrgId(1L);
+        s.setOrgId("1");
         s.setCarrierId(carrierId);
         s.setStatus(ErpLogConstants.SHIPMENT_STATUS_DISPATCHED);
         s.setTrackingNo(trackingNo);
@@ -264,7 +264,7 @@ public class TestErpLogSalesDeliveryLinkage extends JunitAutoTestCase {
         s.setRelatedBillCode(relatedBillCode);
         s.setFreightTerms(ErpLogConstants.FREIGHT_TERMS_PREPAID);
         s.setFreightAmount(freight);
-        s.setFreightCurrencyId(1L);
+        s.setFreightCurrencyId("1");
         s.setFreightSettlementStatus(ErpLogConstants.SETTLEMENT_STATUS_PENDING);
         s.setBusinessDate(BUSINESS_DATE);
         daoProvider.daoFor(ErpLogShipment.class).saveEntity(s);
@@ -276,7 +276,7 @@ public class TestErpLogSalesDeliveryLinkage extends JunitAutoTestCase {
         c.setCarrierName("回写测试承运商");
         c.setCarrierType("EXPRESS");
         c.setGatewayId(ErpLogConstants.GATEWAY_ID_MOCK);
-        c.setPartnerId(8801L);
+        c.setPartnerId("8801");
         c.setIsActive(1);
         daoProvider.daoFor(ErpLogCarrier.class).saveEntity(c);
         return c;
@@ -285,9 +285,9 @@ public class TestErpLogSalesDeliveryLinkage extends JunitAutoTestCase {
     private void seedFinancePrereqs() {
         IEntityDao<app.erp.md.dao.entity.ErpMdOrganization> orgDao =
                 daoProvider.daoFor(app.erp.md.dao.entity.ErpMdOrganization.class);
-        if (orgDao.getEntityById(1L) == null) {
+        if (orgDao.getEntityById("1") == null) {
             app.erp.md.dao.entity.ErpMdOrganization org = new app.erp.md.dao.entity.ErpMdOrganization();
-            org.setId(1L);
+            org.setId("1");
             org.setCode("ORG-1");
             org.setName("测试组织");
             org.setOrgType("COMPANY");
@@ -296,15 +296,15 @@ public class TestErpLogSalesDeliveryLinkage extends JunitAutoTestCase {
         }
         IEntityDao<app.erp.md.dao.entity.ErpMdCurrency> curDao =
                 daoProvider.daoFor(app.erp.md.dao.entity.ErpMdCurrency.class);
-        if (curDao.getEntityById(1L) == null) {
+        if (curDao.getEntityById("1") == null) {
             app.erp.md.dao.entity.ErpMdCurrency cur = new app.erp.md.dao.entity.ErpMdCurrency();
-            cur.setId(1L);
+            cur.setId("1");
             cur.setCode("CNY");
             cur.setName("人民币");
             curDao.saveEntity(cur);
         }
         seedOpenPeriod("2026-07", 2026, 7, LocalDate.of(2026, 7, 1), LocalDate.of(2026, 7, 31));
-        seedAcctSchema(1L);
+        seedAcctSchema("1");
         seedSubject("6601", "销售费用", "EXPENSE", "DEBIT");
         seedSubject("1002", "银行存款", "ASSET", "DEBIT");
         seedSubject("2202", "应付账款", "LIABILITY", "CREDIT");
@@ -320,13 +320,13 @@ public class TestErpLogSalesDeliveryLinkage extends JunitAutoTestCase {
         daoProvider.daoFor(app.erp.md.dao.entity.ErpMdSubject.class).saveEntity(subject);
     }
 
-    private void seedAcctSchema(long orgId) {
+    private void seedAcctSchema(String orgId) {
         app.erp.md.dao.entity.ErpMdAcctSchema schema = new app.erp.md.dao.entity.ErpMdAcctSchema();
         schema.setCode("AS-" + orgId);
         schema.setName("账套-" + orgId);
         schema.setOrgId(orgId);
         schema.setNature("FINANCIAL");
-        schema.setFunctionalCurrencyId(1L);
+        schema.setFunctionalCurrencyId("1");
         schema.setStatus("ACTIVE");
         daoProvider.daoFor(app.erp.md.dao.entity.ErpMdAcctSchema.class).saveEntity(schema);
     }
@@ -335,7 +335,7 @@ public class TestErpLogSalesDeliveryLinkage extends JunitAutoTestCase {
         ErpFinAccountingPeriod period = new ErpFinAccountingPeriod();
         period.setCode(code);
         period.setName(code);
-        period.setOrgId(1L);
+        period.setOrgId("1");
         period.setYear(year);
         period.setMonth(month);
         period.setStartDate(start);

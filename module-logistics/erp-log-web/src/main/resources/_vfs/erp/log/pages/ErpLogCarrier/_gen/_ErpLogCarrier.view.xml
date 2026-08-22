@@ -19,13 +19,13 @@
             <cols>
 
                 <!--ID-->
-                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="id" mandatory="true" sortable="true"/>
 
                 <!--编码-->
                 <col id="code" mandatory="true" sortable="true"/>
 
                 <!--业务组织-->
-                <col id="orgId" ui:number="true" sortable="true"/>
+                <col id="orgId" sortable="true"/>
 
                 <!--承运商名称-->
                 <col id="carrierName" mandatory="true" sortable="true"/>
@@ -37,7 +37,7 @@
                 <col id="gatewayId" mandatory="true" sortable="true"/>
 
                 <!--承运商往来单位ID-->
-                <col id="partnerId" ui:number="true" sortable="true"/>
+                <col id="partnerId" sortable="true"/>
 
                 <!--是否启用-->
                 <col id="isActive" mandatory="true" ui:number="true" sortable="true"/>

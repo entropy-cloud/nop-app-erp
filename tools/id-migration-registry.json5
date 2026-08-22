@@ -2646,12 +2646,13 @@
       "scope": "main",
       "domain": "logistics",
       "refDomain": "finance",
-      "referencesFrom": 1,
+      "referencesFrom": 2,
       "evidence": [
-        "module-logistics/erp-log-service/src/main/java/app/erp/log/service/processor/AbstractErpLogShipmentDeliveredProcessor.java"
+        "module-logistics/erp-log-service/src/main/java/app/erp/log/service/processor/AbstractErpLogShipmentDeliveredProcessor.java",
+        "module-logistics/erp-log-service/src/main/java/app/erp/log/service/posting/LogisticsFreightProvider.java"
       ],
       "successor": "M3.10",
-      "note": "晚域引用早域——晚域 plan 编译器驱动修复清单",
+      "note": "晚域引用早域——晚域 plan 编译器驱动修复清单；M3.10 Phase 1 FQN 复扫补登 LogisticsFreightProvider（posting Provider setPartnerId fin id 流，M0.2 扫描器 id-flow 启发式漏报，ast backward-134 追注同类）；M3.10 已兑付（2026-08-23：编译器驱动修复 + 测试 String 化域级全绿，evidence 定位面使命终结）",
       "status": "active"
     },
     {
@@ -2665,7 +2666,7 @@
         "module-logistics/erp-log-service/src/main/java/app/erp/log/service/processor/AbstractErpLogShipmentDeliveredProcessor.java"
       ],
       "successor": "M3.10",
-      "note": "晚域引用早域——晚域 plan 编译器驱动修复清单",
+      "note": "晚域引用早域——晚域 plan 编译器驱动修复清单；M3.10 已兑付（2026-08-23：编译器驱动修复 + 测试 String 化域级全绿，evidence 定位面使命终结）",
       "status": "active"
     },
     {
@@ -2681,7 +2682,7 @@
         "module-logistics/erp-log-service/src/main/java/app/erp/log/service/processor/AbstractErpLogShipmentDeliveredProcessor.java"
       ],
       "successor": "M3.10",
-      "note": "晚域引用早域——晚域 plan 编译器驱动修复清单",
+      "note": "晚域引用早域——晚域 plan 编译器驱动修复清单；M3.10 已兑付（2026-08-23：编译器驱动修复 + 测试 String 化域级全绿，evidence 定位面使命终结）",
       "status": "active"
     },
     {
@@ -2695,7 +2696,21 @@
         "module-logistics/erp-log-service/src/main/java/app/erp/log/service/processor/AbstractErpLogShipmentDeliveredProcessor.java"
       ],
       "successor": "M3.10",
-      "note": "晚域引用早域——晚域 plan 编译器驱动修复清单",
+      "note": "晚域引用早域——晚域 plan 编译器驱动修复清单；M3.10 已兑付（2026-08-23：编译器驱动修复 + 测试 String 化域级全绿，evidence 定位面使命终结）",
+      "status": "active"
+    },
+    {
+      "id": "backward-255",
+      "kind": "backward-pointer",
+      "scope": "main",
+      "domain": "logistics",
+      "refDomain": "master-data",
+      "referencesFrom": 1,
+      "evidence": [
+        "module-logistics/erp-log-service/src/main/java/app/erp/log/service/processor/AbstractErpLogShipmentDeliveredProcessor.java"
+      ],
+      "successor": "M3.10",
+      "note": "M3.10 Phase 1 FQN 复扫补登：AcctSchemaResolver.resolvePrimarySchemaId(daoProvider, orgId) md id 流（M0.2 扫描器 id-flow 启发式漏报，方法调用口径非 .getId() 模式；ast backward-134 追注同类）；M3.10 已兑付（2026-08-23：编译器驱动修复 + 测试 String 化域级全绿，evidence 定位面使命终结）",
       "status": "active"
     },
     {
@@ -3732,7 +3747,7 @@
         "module-logistics/erp-log-service/src/test/java/app/erp/log/service/processor/TestErpLogSalesDeliveryLinkage.java"
       ],
       "successor": "M3.10",
-      "note": "晚域 test 引用早域——晚域 plan Phase 3 消费",
+      "note": "晚域 test 引用早域——晚域 plan Phase 3 消费；M3.10 已兑付（2026-08-23：编译器驱动修复 + 测试 String 化域级全绿，evidence 定位面使命终结）",
       "status": "active"
     },
     {
@@ -3746,7 +3761,7 @@
         "module-logistics/erp-log-service/src/test/java/app/erp/log/service/TestErpLogPath2LandedCost.java"
       ],
       "successor": "M3.10",
-      "note": "晚域 test 引用早域——晚域 plan Phase 3 消费",
+      "note": "晚域 test 引用早域——晚域 plan Phase 3 消费；M3.10 已兑付（2026-08-23：编译器驱动修复 + 测试 String 化域级全绿，evidence 定位面使命终结）",
       "status": "active"
     },
     {
@@ -3755,14 +3770,15 @@
       "scope": "test",
       "domain": "logistics",
       "refDomain": "master-data",
-      "referencesFrom": 3,
+      "referencesFrom": 4,
       "evidence": [
         "module-logistics/erp-log-service/src/test/java/app/erp/log/service/TestErpLogFreightPosting.java",
         "module-logistics/erp-log-service/src/test/java/app/erp/log/service/TestErpLogShipmentPostingEnd.java",
-        "module-logistics/erp-log-service/src/test/java/app/erp/log/service/TestErpLogTrackingPollJob.java"
+        "module-logistics/erp-log-service/src/test/java/app/erp/log/service/TestErpLogTrackingPollJob.java",
+        "module-logistics/erp-log-service/src/test/java/app/erp/log/service/processor/TestErpLogSalesDeliveryLinkage.java"
       ],
       "successor": "M3.10",
-      "note": "晚域 test 引用早域——晚域 plan Phase 3 消费",
+      "note": "晚域 test 引用早域——晚域 plan Phase 3 消费；M3.10 Phase 1 FQN 复扫补登 TestErpLogSalesDeliveryLinkage（内联 FQN 引用 md 种子实体 ErpMdOrganization/Currency/Subject/AcctSchema 无 import 语句，b2b A3' 盲区同类）；M3.10 已兑付（2026-08-23：编译器驱动修复 + 测试 String 化域级全绿，evidence 定位面使命终结）",
       "status": "active"
     },
     {
@@ -3776,7 +3792,7 @@
         "module-logistics/erp-log-service/src/test/java/app/erp/log/service/TestErpLogDraftEscalationJob.java"
       ],
       "successor": "M3.10",
-      "note": "晚域 test 引用早域——晚域 plan Phase 3 消费",
+      "note": "晚域 test 引用早域——晚域 plan Phase 3 消费；M3.10 已兑付（2026-08-23：编译器驱动修复 + 测试 String 化域级全绿，evidence 定位面使命终结）",
       "status": "active"
     },
     {
@@ -3790,7 +3806,7 @@
         "module-logistics/erp-log-service/src/test/java/app/erp/log/service/TestErpLogPath2LandedCost.java"
       ],
       "successor": "M3.10",
-      "note": "晚域 test 引用早域——晚域 plan Phase 3 消费",
+      "note": "晚域 test 引用早域——晚域 plan Phase 3 消费；M3.10 已兑付（2026-08-23：编译器驱动修复 + 测试 String 化域级全绿，evidence 定位面使命终结）",
       "status": "active"
     },
     {
@@ -3804,7 +3820,7 @@
         "module-logistics/erp-log-service/src/test/java/app/erp/log/service/processor/TestErpLogSalesDeliveryLinkage.java"
       ],
       "successor": "M3.10",
-      "note": "晚域 test 引用早域——晚域 plan Phase 3 消费",
+      "note": "晚域 test 引用早域——晚域 plan Phase 3 消费；M3.10 已兑付（2026-08-23：编译器驱动修复 + 测试 String 化域级全绿，evidence 定位面使命终结）",
       "status": "active"
     },
     {

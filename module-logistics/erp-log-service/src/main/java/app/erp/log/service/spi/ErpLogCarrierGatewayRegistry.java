@@ -19,7 +19,7 @@ import java.util.Map;
 /**
  * 承运商网关注册中心（第三层）。启动时收集所有 {@link IErpLogCarrierGatewayClientFactory} Bean，
  * 按 {@link IErpLogCarrierGatewayClientFactory#getGatewayId()} 建立 gatewayId→Factory 查找表，
- * {@link #getClient(Long, IServiceContext)} 按 {@link ErpLogCarrier#getGatewayId()} 派发。
+ * {@link #getClient(String, IServiceContext)} 按 {@link ErpLogCarrier#getGatewayId()} 派发。
  *
  * <p>注入范式镜像 finance {@code ErpFinAcctDocRegistry} 的 {@code List} 注入 + 内部建图
  * （避免 {@code @Inject Map<String,T>} 以 bean-name 为键的脆弱耦合）：{@code factories} 由容器按类型收集后经 setter 注入，
@@ -57,8 +57,8 @@ public class ErpLogCarrierGatewayRegistry {
      * 按 carrierId 派发：查 {@link ErpLogCarrier} 取 gatewayId → 在 factoryMap 找 Factory → newClient。
      * 未注册抛 {@link ErpLogErrors#ERR_LOG_GATEWAY_NOT_REGISTERED}。
      */
-    public IErpLogCarrierGatewayClient getClient(Long carrierId, IServiceContext context) {
-        ErpLogCarrier carrier = carrierBiz.requireEntity(String.valueOf(carrierId), null, context);
+    public IErpLogCarrierGatewayClient getClient(String carrierId, IServiceContext context) {
+        ErpLogCarrier carrier = carrierBiz.requireEntity(carrierId, null, context);
         String gatewayId = carrier.getGatewayId();
         IErpLogCarrierGatewayClientFactory factory = factoryMap.get(gatewayId);
         if (factory == null) {

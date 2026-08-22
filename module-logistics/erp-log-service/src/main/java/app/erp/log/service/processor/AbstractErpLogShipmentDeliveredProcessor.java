@@ -118,7 +118,7 @@ abstract class AbstractErpLogShipmentDeliveredProcessor {
         }
         PostingEvent event = buildFreightPostingEvent(shipment);
         try {
-            Long voucherId = voucherBiz.post(event, context);
+            String voucherId = voucherBiz.post(event, context);
             if (voucherId != null) {
                 gatewayDispatcher.saveShipment(markSettled(shipment));
             }
@@ -203,7 +203,7 @@ abstract class AbstractErpLogShipmentDeliveredProcessor {
                         shipment.getRelatedBillCode(), shipment.getCode());
                 return;
             }
-            ErpSalOrder order = salOrderBiz.get(String.valueOf(delivery.getOrderId()), true, context);
+            ErpSalOrder order = salOrderBiz.get(delivery.getOrderId(), true, context);
             if (order == null
                     || ErpLogConstants.SALES_DELIVERY_STATUS_DELIVERED.equals(order.getDeliveryStatus())) {
                 return;
@@ -262,11 +262,11 @@ abstract class AbstractErpLogShipmentDeliveredProcessor {
 
     /** 按 orgId 解析默认账套（运单不携带 acctSchemaId，由组织主数据解析）。 */
     @SuppressWarnings("unchecked")
-    protected Long resolveAcctSchemaId(Long orgId) {
+    protected String resolveAcctSchemaId(String orgId) {
         return AcctSchemaResolver.resolvePrimarySchemaId(daoProvider, orgId);
     }
 
-    protected Long resolveCarrierPartnerId(ErpLogShipment shipment) {
+    protected String resolveCarrierPartnerId(ErpLogShipment shipment) {
         if (shipment.getCarrierId() == null) {
             return null;
         }

@@ -17,6 +17,7 @@ import io.nop.api.core.annotations.biz.BizAction;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.core.Name;
+import io.nop.api.core.convert.ConvertHelper;
 import io.nop.biz.crud.CrudBizModel;
 import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
@@ -55,11 +56,11 @@ public class ErpLogDeliveryBookingBizModel extends CrudBizModel<ErpLogDeliveryBo
 
     @Override
     @BizMutation
-    public ErpLogDeliveryBooking book(@Name("shipmentId") Long shipmentId,
-                                      @Name("windowId") Long windowId,
+    public ErpLogDeliveryBooking book(@Name("shipmentId") String shipmentId,
+                                      @Name("windowId") String windowId,
                                       @Name("bookedDate") LocalDate bookedDate,
                                       IServiceContext context) {
-        ErpLogShipment shipment = shipmentBiz.requireEntity(String.valueOf(shipmentId), null, context);
+        ErpLogShipment shipment = shipmentBiz.requireEntity(shipmentId, null, context);
         if (ErpLogConstants.SHIPMENT_STATUS_CANCELLED.equals(shipment.getStatus())
                 || ErpLogConstants.SHIPMENT_STATUS_DELIVERED.equals(shipment.getStatus())) {
             throw new NopException(ErpLogErrors.ERR_LOG_SHIPMENT_ILLEGAL_TRANSITION)
@@ -73,7 +74,7 @@ public class ErpLogDeliveryBookingBizModel extends CrudBizModel<ErpLogDeliveryBo
                     .param(ErpLogErrors.ARG_SHIPMENT_ID, shipmentId);
         }
 
-        ErpLogDeliveryWindow window = deliveryWindowBiz.get(String.valueOf(windowId), false, context);
+        ErpLogDeliveryWindow window = deliveryWindowBiz.get(windowId, false, context);
         if (window == null) {
             throw new NopException(ErpLogErrors.ERR_LOG_BOOKING_WINDOW_NOT_BOOKABLE)
                     .param(ErpLogErrors.ARG_WINDOW_ID, windowId)
@@ -107,7 +108,7 @@ public class ErpLogDeliveryBookingBizModel extends CrudBizModel<ErpLogDeliveryBo
 
     @Override
     @BizMutation
-    public void releaseForShipment(@Name("shipmentId") Long shipmentId, IServiceContext context) {
+    public void releaseForShipment(@Name("shipmentId") String shipmentId, IServiceContext context) {
         ErpLogDeliveryBooking booking = findActiveByShipment(shipmentId, context);
         if (booking == null) {
             return;
@@ -115,7 +116,7 @@ public class ErpLogDeliveryBookingBizModel extends CrudBizModel<ErpLogDeliveryBo
         booking.setStatus(ErpLogConstants.BOOKING_STATUS_CANCELLED);
         updateEntity(booking, null, context);
 
-        ErpLogDeliveryWindow window = deliveryWindowBiz.get(String.valueOf(booking.getWindowId()), false, context);
+        ErpLogDeliveryWindow window = deliveryWindowBiz.get(booking.getWindowId(), false, context);
         if (window != null && window.getCurrentBooked() != null && window.getCurrentBooked() > 0) {
             window.setCurrentBooked(window.getCurrentBooked() - 1);
             deliveryWindowBiz.updateEntity(window, null, context);
@@ -124,7 +125,7 @@ public class ErpLogDeliveryBookingBizModel extends CrudBizModel<ErpLogDeliveryBo
 
     @Override
     @BizMutation
-    public ErpLogDeliveryBooking markArrived(@Name("shipmentId") Long shipmentId, IServiceContext context) {
+    public ErpLogDeliveryBooking markArrived(@Name("shipmentId") String shipmentId, IServiceContext context) {
         ErpLogDeliveryBooking booking = requireActiveBooking(shipmentId, context);
         if (!ErpLogConstants.BOOKING_STATUS_BOOKED.equals(booking.getStatus())
                 && !ErpLogConstants.BOOKING_STATUS_CONFIRMED.equals(booking.getStatus())) {
@@ -140,7 +141,7 @@ public class ErpLogDeliveryBookingBizModel extends CrudBizModel<ErpLogDeliveryBo
 
     @Override
     @BizMutation
-    public ErpLogDeliveryBooking markMissed(@Name("shipmentId") Long shipmentId, IServiceContext context) {
+    public ErpLogDeliveryBooking markMissed(@Name("shipmentId") String shipmentId, IServiceContext context) {
         ErpLogDeliveryBooking booking = requireActiveBooking(shipmentId, context);
         if (!ErpLogConstants.BOOKING_STATUS_BOOKED.equals(booking.getStatus())
                 && !ErpLogConstants.BOOKING_STATUS_CONFIRMED.equals(booking.getStatus())) {
@@ -162,7 +163,7 @@ public class ErpLogDeliveryBookingBizModel extends CrudBizModel<ErpLogDeliveryBo
 
     @Override
     @BizAction
-    public ErpLogDeliveryBooking findActiveByShipment(@Name("shipmentId") Long shipmentId, IServiceContext context) {
+    public ErpLogDeliveryBooking findActiveByShipment(@Name("shipmentId") String shipmentId, IServiceContext context) {
         if (shipmentId == null) {
             return null;
         }
@@ -175,14 +176,19 @@ public class ErpLogDeliveryBookingBizModel extends CrudBizModel<ErpLogDeliveryBo
             if (ErpLogConstants.BOOKING_STATUS_CANCELLED.equals(booking.getStatus())) {
                 continue;
             }
-            if (found == null || (booking.getId() != null && booking.getId() > found.getId())) {
+            if (found == null || idOrder(booking, found) > 0) {
                 found = booking;
             }
         }
         return found;
     }
 
-    private ErpLogDeliveryBooking requireActiveBooking(Long shipmentId, IServiceContext context) {
+    // seq-string id 数值序比较（id 为 String 后保留取 id 最大者语义，contract idOrder 同型）
+    private int idOrder(ErpLogDeliveryBooking booking, ErpLogDeliveryBooking found) {
+        return Long.compare(ConvertHelper.toLong(booking.getId()), ConvertHelper.toLong(found.getId()));
+    }
+
+    private ErpLogDeliveryBooking requireActiveBooking(String shipmentId, IServiceContext context) {
         ErpLogDeliveryBooking booking = findActiveByShipment(shipmentId, context);
         if (booking == null) {
             throw new NopException(ErpLogErrors.ERR_LOG_BOOKING_NOT_FOUND)

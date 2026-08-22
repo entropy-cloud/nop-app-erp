@@ -16,5 +16,5 @@ public interface IErpLogCarrierGatewayClientFactory {
      * 按 carrierId 创建配置化 client。
      * <p>内部行为：查 {@code ErpLogCarrierConfig}(by carrierId) → 解密 apiKey/apiSecret → 注入超时 → 返回 client。
      */
-    IErpLogCarrierGatewayClient newClientForCarrierId(Long carrierId);
+    IErpLogCarrierGatewayClient newClientForCarrierId(String carrierId);
 }

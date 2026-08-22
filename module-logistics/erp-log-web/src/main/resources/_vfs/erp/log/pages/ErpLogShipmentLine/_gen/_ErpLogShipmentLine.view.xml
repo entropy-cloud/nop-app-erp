@@ -19,16 +19,16 @@
             <cols>
 
                 <!--ID-->
-                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="id" mandatory="true" sortable="true"/>
 
                 <!--发运单ID-->
-                <col id="shipmentId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="shipmentId" mandatory="true" sortable="true"/>
 
                 <!--行号-->
                 <col id="lineNo" mandatory="true" ui:number="true" sortable="true"/>
 
                 <!--物料-->
-                <col id="materialId" ui:number="true" sortable="true"/>
+                <col id="materialId" sortable="true"/>
 
                 <!--数量-->
                 <col id="quantity" ui:number="true" sortable="true"/>

@@ -77,7 +77,7 @@ public class TestErpLogDraftEscalationJob extends JunitAutoTestCase {
 
     @Test
     public void testOverThresholdDraftEscalatesToCreator() {
-        seedTemplate(9201L, "{\"userIds\":[\"${submitterUserId}\"]}");
+        seedTemplate("9201", "{\"userIds\":[\"${submitterUserId}\"]}");
         seedShipment("DRAFT-ESC-1", SHIPPER_USER, oldTs());
         setCron("0 30 1 * * ?");
 
@@ -95,7 +95,7 @@ public class TestErpLogDraftEscalationJob extends JunitAutoTestCase {
 
     @Test
     public void testNotOverThresholdUntouched() {
-        seedTemplate(9202L, "{\"userIds\":[\"${submitterUserId}\"]}");
+        seedTemplate("9202", "{\"userIds\":[\"${submitterUserId}\"]}");
         seedShipment("DRAFT-ESC-2", SHIPPER_USER, recentTs());
         setCron("0 30 1 * * ?");
 
@@ -111,7 +111,7 @@ public class TestErpLogDraftEscalationJob extends JunitAutoTestCase {
 
     @Test
     public void testCronEmptySkipsScan() {
-        seedTemplate(9203L, "{\"userIds\":[\"${submitterUserId}\"]}");
+        seedTemplate("9203", "{\"userIds\":[\"${submitterUserId}\"]}");
         seedShipment("DRAFT-ESC-3", SHIPPER_USER, oldTs());
         setCron("");
 
@@ -124,7 +124,7 @@ public class TestErpLogDraftEscalationJob extends JunitAutoTestCase {
 
     @Test
     public void testSingleFailureIsolated() {
-        seedTemplate(9204L, "{\"userIds\":[\"${submitterUserId}\"]}");
+        seedTemplate("9204", "{\"userIds\":[\"${submitterUserId}\"]}");
         seedShipment("DRAFT-ESC-4A", SHIPPER_USER, oldTs());
         seedShipment("DRAFT-ESC-4B", SHIPPER_USER_2, oldTs());
         seedShipment("DRAFT-ESC-4C", SHIPPER_USER_3, oldTs());
@@ -199,7 +199,7 @@ public class TestErpLogDraftEscalationJob extends JunitAutoTestCase {
     }
 
     private void seedShipment(String code, String createdBy, Timestamp updateTime) {
-        Long carrierId = seedCarrier("MOCK-ESC-CAR");
+        String carrierId = seedCarrier("MOCK-ESC-CAR");
         ormTemplate.runInSession(() -> {
             ErpLogShipment s = daoProvider.daoFor(ErpLogShipment.class).newEntity();
             s.orm_disableAutoStamp(true);
@@ -215,7 +215,7 @@ public class TestErpLogDraftEscalationJob extends JunitAutoTestCase {
         });
     }
 
-    private Long seedCarrier(String code) {
+    private String seedCarrier(String code) {
         app.erp.log.dao.entity.ErpLogCarrier carrier = new app.erp.log.dao.entity.ErpLogCarrier();
         carrier.setCode(code);
         carrier.setCarrierName("Mock 承运商");
@@ -226,7 +226,7 @@ public class TestErpLogDraftEscalationJob extends JunitAutoTestCase {
         return carrier.getId();
     }
 
-    private void seedTemplate(Long id, String recipientConfig) {
+    private void seedTemplate(String id, String recipientConfig) {
         ormTemplate.runInSession(() -> {
             ErpSysNotificationTemplate t = daoProvider.daoFor(ErpSysNotificationTemplate.class).newEntity();
             t.orm_propValueByName("id", id);

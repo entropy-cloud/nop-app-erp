@@ -58,8 +58,8 @@ public class TestErpLogDeliveryBooking extends JunitAutoTestCase {
     /** 组 1：预约成功 → BOOKED + currentBooked +1。 */
     @Test
     public void testBookIncrementsCount() {
-        Long windowId = seedWindow(10);
-        Long shipmentId = seedShipment("SHP-BK-1");
+        String windowId = seedWindow(10);
+        String shipmentId = seedShipment("SHP-BK-1");
 
         LocalDate date = nextWednesday();
         ErpLogDeliveryBooking booking = ormTemplate.runInSession(s ->
@@ -75,9 +75,9 @@ public class TestErpLogDeliveryBooking extends JunitAutoTestCase {
     /** 组 2：容量满拒绝（currentBooked >= maxCapacity）。 */
     @Test
     public void testCapacityFullRejected() {
-        Long windowId = seedWindow(1);
-        Long shipment1 = seedShipment("SHP-BK-CAP-1");
-        Long shipment2 = seedShipment("SHP-BK-CAP-2");
+        String windowId = seedWindow(1);
+        String shipment1 = seedShipment("SHP-BK-CAP-1");
+        String shipment2 = seedShipment("SHP-BK-CAP-2");
 
         LocalDate date = nextWednesday();
         ormTemplate.runInSession(s -> bookingBiz.book(shipment1, windowId, date, CTX));
@@ -92,8 +92,8 @@ public class TestErpLogDeliveryBooking extends JunitAutoTestCase {
     /** 组 3：同一发运单重复预约幂等拒绝。 */
     @Test
     public void testDuplicateBookingRejected() {
-        Long windowId = seedWindow(10);
-        Long shipmentId = seedShipment("SHP-BK-DUP-1");
+        String windowId = seedWindow(10);
+        String shipmentId = seedShipment("SHP-BK-DUP-1");
         LocalDate date = nextWednesday();
 
         ormTemplate.runInSession(s -> bookingBiz.book(shipmentId, windowId, date, CTX));
@@ -107,8 +107,8 @@ public class TestErpLogDeliveryBooking extends JunitAutoTestCase {
     /** 组 4：释放 → 预约 CANCELLED + currentBooked -1；重复释放幂等 no-op 且计数不被击穿至负。 */
     @Test
     public void testReleaseDecrementsWithFloorZero() {
-        Long windowId = seedWindow(2);
-        Long shipmentId = seedShipment("SHP-BK-REL-1");
+        String windowId = seedWindow(2);
+        String shipmentId = seedShipment("SHP-BK-REL-1");
         LocalDate date = nextWednesday();
 
         ormTemplate.runInSession(s -> bookingBiz.book(shipmentId, windowId, date, CTX));
@@ -128,7 +128,7 @@ public class TestErpLogDeliveryBooking extends JunitAutoTestCase {
         assertNull(activeBooking(shipmentId), "释放后无有效预约");
 
         // CANCELLED 预约不阻断新预约（释放后可重新预约）
-        Long rebook = seedShipment("SHP-BK-REL-2");
+        String rebook = seedShipment("SHP-BK-REL-2");
         ormTemplate.runInSession(s -> bookingBiz.book(rebook, windowId, date, CTX));
         assertEquals(Integer.valueOf(1), window(windowId).getCurrentBooked(), "释放槽位可复用");
     }
@@ -138,9 +138,9 @@ public class TestErpLogDeliveryBooking extends JunitAutoTestCase {
     public void testMarkMissedFeeAndPriorityScore() {
         AppConfig.getConfigProvider().assignConfigValue(ErpLogConstants.CONFIG_BOOKING_MISSED_FEE,
                 new BigDecimal("88.50"));
-        Long windowId = seedWindow(10);
-        Long missedShipment = seedShipment("SHP-BK-MISS-1");
-        Long arrivedShipment = seedShipment("SHP-BK-ARR-1");
+        String windowId = seedWindow(10);
+        String missedShipment = seedShipment("SHP-BK-MISS-1");
+        String arrivedShipment = seedShipment("SHP-BK-ARR-1");
         LocalDate date = nextWednesday();
 
         ormTemplate.runInSession(s -> bookingBiz.book(missedShipment, windowId, date, CTX));
@@ -166,16 +166,16 @@ public class TestErpLogDeliveryBooking extends JunitAutoTestCase {
     /** 组 6：窗口过期（effectiveTo 已过）不可预约；星期不匹配拒绝。 */
     @Test
     public void testExpiredWindowAndWeekdayMismatchRejected() {
-        Long expiredWindowId = seedWindowWithEffectivity(10,
+        String expiredWindowId = seedWindowWithEffectivity(10,
                 LocalDate.now().minusDays(30), LocalDate.now().minusDays(1));
-        Long shipment1 = seedShipment("SHP-BK-EXP-1");
+        String shipment1 = seedShipment("SHP-BK-EXP-1");
         NopExceptionLike ex = catchBooking(() ->
                 ormTemplate.runInSession(s -> bookingBiz.book(shipment1, expiredWindowId, nextWednesday(), CTX)));
         assertEquals(ErpLogErrors.ERR_LOG_BOOKING_WINDOW_NOT_BOOKABLE.getErrorCode(), ex.code,
                 "窗口过期（effectiveTo 已过）不可预约");
 
-        Long windowId = seedWindow(10);
-        Long shipment2 = seedShipment("SHP-BK-WD-1");
+        String windowId = seedWindow(10);
+        String shipment2 = seedShipment("SHP-BK-WD-1");
         LocalDate notWednesday = nextWednesday().plusDays(1);
         assertTrue(notWednesday.getDayOfWeek() != DayOfWeek.WEDNESDAY, "测试前提：对照日期非周三");
         NopExceptionLike ex2 = catchBooking(() ->
@@ -187,8 +187,8 @@ public class TestErpLogDeliveryBooking extends JunitAutoTestCase {
     /** 组 7：发运单 CANCELLED 迁移点联动释放（容量 -1），主迁移不受影响。 */
     @Test
     public void testShipmentCancelReleasesBooking() {
-        Long windowId = seedWindow(5);
-        Long shipmentId = seedShipment("SHP-BK-CXL-1");
+        String windowId = seedWindow(5);
+        String shipmentId = seedShipment("SHP-BK-CXL-1");
         LocalDate date = nextWednesday();
 
         ormTemplate.runInSession(s -> bookingBiz.book(shipmentId, windowId, date, CTX));
@@ -204,13 +204,13 @@ public class TestErpLogDeliveryBooking extends JunitAutoTestCase {
     /** 组 8：发运单 DELIVERED 迁移点联动释放（webhook 路径，主迁移 + 运费过账不受预约释放影响）。 */
     @Test
     public void testShipmentDeliveredReleasesBooking() {
-        Long windowId = seedWindow(5);
+        String windowId = seedWindow(5);
         String carrierCode = "MOCK-BK-DLV-CAR";
-        Long shipmentId = ormTemplate.runInSession(s -> {
+        String shipmentId = ormTemplate.runInSession(s -> {
             seedCarrier(carrierCode);
             ErpLogShipment sh = new ErpLogShipment();
             sh.setCode("SHP-BK-DLV-1");
-            sh.setOrgId(1L);
+            sh.setOrgId("1");
             sh.setCarrierId(carrierIdCache);
             sh.setStatus(ErpLogConstants.SHIPMENT_STATUS_DISPATCHED);
             sh.setTrackingNo("TRK-BK-DLV-1");
@@ -236,11 +236,11 @@ public class TestErpLogDeliveryBooking extends JunitAutoTestCase {
      每次成功预约恰 +1（多次预约不跳变）。 */
     @Test
     public void testConcurrentCountGuardRevalidatesLatestValue() {
-        Long windowId = seedWindow(3);
+        String windowId = seedWindow(3);
         // 模拟并发竞态：绕过引擎直接将计数推至满额（另一并发预约已 +1 的等价态）
         forceWindowCount(windowId, 3);
 
-        Long shipmentId = seedShipment("SHP-BK-RACE-1");
+        String shipmentId = seedShipment("SHP-BK-RACE-1");
         NopExceptionLike ex = catchBooking(() ->
                 ormTemplate.runInSession(s -> bookingBiz.book(shipmentId, windowId, nextWednesday(), CTX)));
         assertEquals(ErpLogErrors.ERR_LOG_BOOKING_CAPACITY_FULL.getErrorCode(), ex.code,
@@ -248,13 +248,13 @@ public class TestErpLogDeliveryBooking extends JunitAutoTestCase {
 
         // 恢复容量后多次预约：计数恰按次数 +1，无跳变
         forceWindowCount(windowId, 1);
-        Long s2 = seedShipment("SHP-BK-RACE-2");
+        String s2 = seedShipment("SHP-BK-RACE-2");
         ormTemplate.runInSession(s -> bookingBiz.book(s2, windowId, nextWednesday(), CTX));
         assertEquals(Integer.valueOf(2), window(windowId).getCurrentBooked(), "每预约恰 +1");
     }
 
     /** 直接覆写窗口计数（session 内重读后写，模拟并发方提交后的最新 DB 值）。 */
-    private void forceWindowCount(Long windowId, int count) {
+    private void forceWindowCount(String windowId, int count) {
         ormTemplate.runInSession(s -> {
             ErpLogDeliveryWindow w = daoProvider.daoFor(ErpLogDeliveryWindow.class).getEntityById(windowId);
             w.setCurrentBooked(count);
@@ -271,23 +271,23 @@ public class TestErpLogDeliveryBooking extends JunitAutoTestCase {
         return d.plusDays(delta == 0 ? 7 : delta);
     }
 
-    private ErpLogDeliveryWindow window(Long windowId) {
+    private ErpLogDeliveryWindow window(String windowId) {
         return ormTemplate.runInSession(s -> daoProvider.daoFor(ErpLogDeliveryWindow.class).getEntityById(windowId));
     }
 
-    private ErpLogDeliveryBooking activeBooking(Long shipmentId) {
+    private ErpLogDeliveryBooking activeBooking(String shipmentId) {
         return ormTemplate.runInSession(s -> bookingBiz.findActiveByShipment(shipmentId, CTX));
     }
 
     /** seed 配送窗口：周三 09:00-12:00，容量 maxCapacity。 */
-    private Long seedWindow(int maxCapacity) {
+    private String seedWindow(int maxCapacity) {
         return seedWindowWithEffectivity(maxCapacity, LocalDate.now().minusDays(1), LocalDate.now().plusDays(90));
     }
 
-    private Long seedWindowWithEffectivity(int maxCapacity, LocalDate from, LocalDate to) {
+    private String seedWindowWithEffectivity(int maxCapacity, LocalDate from, LocalDate to) {
         ErpLogDeliveryWindow w = new ErpLogDeliveryWindow();
-        w.setPartnerId(9901L);
-        w.setOrgId(1L);
+        w.setPartnerId("9901");
+        w.setOrgId("1");
         w.setWeekday(3);
         w.setStartTime("09:00");
         w.setEndTime("12:00");
@@ -303,10 +303,10 @@ public class TestErpLogDeliveryBooking extends JunitAutoTestCase {
         return w.getId();
     }
 
-    private Long seedShipment(String code) {
+    private String seedShipment(String code) {
         ErpLogShipment s = new ErpLogShipment();
         s.setCode(code);
-        s.setOrgId(1L);
+        s.setOrgId("1");
         s.setCarrierId(seedCarrierId());
         s.setStatus(ErpLogConstants.SHIPMENT_STATUS_DRAFT);
         s.setBusinessDate(LocalDate.now());
@@ -317,9 +317,9 @@ public class TestErpLogDeliveryBooking extends JunitAutoTestCase {
         return s.getId();
     }
 
-    private Long carrierIdCache;
+    private String carrierIdCache;
 
-    private Long seedCarrierId() {
+    private String seedCarrierId() {
         if (carrierIdCache != null) {
             return carrierIdCache;
         }
@@ -333,7 +333,7 @@ public class TestErpLogDeliveryBooking extends JunitAutoTestCase {
         c.setCarrierName("预约测试承运商");
         c.setCarrierType("EXPRESS");
         c.setGatewayId(ErpLogConstants.GATEWAY_ID_MOCK);
-        c.setPartnerId(9901L);
+        c.setPartnerId("9901");
         c.setIsActive(1);
         daoProvider.daoFor(app.erp.log.dao.entity.ErpLogCarrier.class).saveEntity(c);
         carrierIdCache = c.getId();

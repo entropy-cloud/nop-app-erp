@@ -61,8 +61,8 @@ public class LogisticsFreightProvider implements IErpFinAcctDocProvider {
         String creditName = collect ? "应付账款" : "银行存款";
         VoucherFact credit = fact(creditSubject, creditName, DC_CREDIT, freightAmount, event);
         if (collect) {
-            // 到付挂应付账款，携带承运商往来维度（partnerId = 承运商 partnerId）
-            credit.setPartnerId(asLong(event.getBillData().get(ErpLogConstants.BILL_DATA_CARRIER_PARTNER_ID)));
+            // 到付挂应付账款，携带承运商往来维度（partnerId = 承运商 partnerId，String id 直传）
+            credit.setPartnerId(readString(event, ErpLogConstants.BILL_DATA_CARRIER_PARTNER_ID, null));
         }
         facts.add(credit);
         return facts;
@@ -97,19 +97,5 @@ public class LogisticsFreightProvider implements IErpFinAcctDocProvider {
         }
         String s = value.toString().trim();
         return s.isEmpty() ? defaultValue : s;
-    }
-
-    private Long asLong(Object value) {
-        if (value == null) {
-            return null;
-        }
-        if (value instanceof Number) {
-            return ((Number) value).longValue();
-        }
-        try {
-            return Long.valueOf(value.toString().trim());
-        } catch (NumberFormatException e) {
-            return null;
-        }
     }
 }

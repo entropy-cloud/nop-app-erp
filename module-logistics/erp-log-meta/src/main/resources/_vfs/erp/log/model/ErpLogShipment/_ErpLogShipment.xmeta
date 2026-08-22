@@ -23,8 +23,8 @@
 
     <props>
         <prop name="id" displayName="ID" propId="1" i18n-en:displayName="ID" tagSet="seq-default" mandatory="true"
-              queryable="true" sortable="true" insertable="true" updatable="false" graphql:type="String">
-            <schema type="java.lang.Long"/>
+              queryable="true" sortable="true" insertable="true" updatable="false">
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="code" displayName="单号" propId="2" i18n-en:displayName="Code" tagSet="var" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
@@ -32,15 +32,15 @@
         </prop>
         <prop name="orgId" displayName="业务组织" propId="3" i18n-en:displayName="Organization" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="org">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="carrierId" displayName="承运商ID" propId="4" i18n-en:displayName="Carrier" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="carrier">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="carrierConfigId" displayName="承运商配置ID" propId="5" i18n-en:displayName="Carrier Config"
               queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="carrierConfig">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="relatedBillType" displayName="关联单据类型" propId="6" i18n-en:displayName="Related Bill Type"
               queryable="true" sortable="true" insertable="true" updatable="true">
@@ -68,7 +68,7 @@
         </prop>
         <prop name="freightCurrencyId" displayName="运费币种" propId="12" i18n-en:displayName="Currency" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="freightCurrency">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="freightTerms" displayName="运费条款" propId="13" i18n-en:displayName="Freight Terms" queryable="true"
               sortable="true" insertable="true" updatable="true">
@@ -145,7 +145,7 @@
         </prop>
         <prop name="shipperId" displayName="发货员(职员)" propId="31" i18n-en:displayName="Shipper" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="shipper">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="status" displayName="状态" propId="32" i18n-en:displayName="Status" mandatory="true" queryable="true"
               sortable="true" insertable="true" updatable="true">

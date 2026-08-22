@@ -48,9 +48,9 @@ public class TestErpLogCarrierGatewayIntegration extends JunitAutoTestCase {
 
     @Test
     public void testPollingAdvancesMultipleShipments() {
-        Long carrierId = seedCarrier("MOCK-CAR");
-        Long sh1 = ormTemplate.runInSession(session -> seedShipmentWithTracking("GW-MULTI-1", carrierId, "MOCK-GW-MULTI-1"));
-        Long sh2 = ormTemplate.runInSession(session -> seedShipmentWithTracking("GW-MULTI-2", carrierId, "MOCK-GW-MULTI-2"));
+        String carrierId = seedCarrier("MOCK-CAR");
+        String sh1 = ormTemplate.runInSession(session -> seedShipmentWithTracking("GW-MULTI-1", carrierId, "MOCK-GW-MULTI-1"));
+        String sh2 = ormTemplate.runInSession(session -> seedShipmentWithTracking("GW-MULTI-2", carrierId, "MOCK-GW-MULTI-2"));
 
         int advanced1 = ormTemplate.runInSession(session -> shipmentBiz.scanForPolling(CTX));
         assertTrue(advanced1 >= 2);
@@ -66,8 +66,8 @@ public class TestErpLogCarrierGatewayIntegration extends JunitAutoTestCase {
 
     @Test
     public void testWebhookInTransitThenDelivered() {
-        Long carrierId = seedCarrier("MOCK-CAR");
-        Long shipmentId = ormTemplate.runInSession(session -> seedShipmentWithTracking("GW-WH-IT-1", carrierId, "MOCK-GW-WH-IT-1"));
+        String carrierId = seedCarrier("MOCK-CAR");
+        String shipmentId = ormTemplate.runInSession(session -> seedShipmentWithTracking("GW-WH-IT-1", carrierId, "MOCK-GW-WH-IT-1"));
 
         String payload1 = "{\"trackingNo\":\"MOCK-GW-WH-IT-1\",\"eventType\":\"IN_TRANSIT\"}";
         String sig1 = hmacSha256(payload1, "MOCK-CAR");
@@ -83,8 +83,8 @@ public class TestErpLogCarrierGatewayIntegration extends JunitAutoTestCase {
 
     @Test
     public void testCancelAdvisedShipment() {
-        Long carrierId = seedCarrier("MOCK-CAR");
-        Long shipmentId = ormTemplate.runInSession(session -> seedShipment("GW-CNL-ADV-1", carrierId,
+        String carrierId = seedCarrier("MOCK-CAR");
+        String shipmentId = ormTemplate.runInSession(session -> seedShipment("GW-CNL-ADV-1", carrierId,
                 ErpLogConstants.SHIPMENT_STATUS_ADVISED,
                 ErpLogConstants.RELATED_BILL_TYPE_SALES_DELIVERY,
                 ErpLogConstants.SETTLEMENT_STATUS_PENDING));
@@ -93,7 +93,7 @@ public class TestErpLogCarrierGatewayIntegration extends JunitAutoTestCase {
         assertEquals(ErpLogConstants.SHIPMENT_STATUS_CANCELLED, result.getStatus());
     }
 
-    private Long seedCarrier(String code) {
+    private String seedCarrier(String code) {
         return ormTemplate.runInSession(session -> {
             IEntityDao<ErpLogCarrier> dao = daoProvider.daoFor(ErpLogCarrier.class);
             ErpLogCarrier carrier = new ErpLogCarrier();
@@ -107,7 +107,7 @@ public class TestErpLogCarrierGatewayIntegration extends JunitAutoTestCase {
         });
     }
 
-    private Long seedShipmentWithTracking(String code, Long carrierId, String trackingNo) {
+    private String seedShipmentWithTracking(String code, String carrierId, String trackingNo) {
         ErpLogShipment s = new ErpLogShipment();
         s.setBusinessDate(java.time.LocalDate.of(2026, 7, 1));
         s.setBusinessDate(java.time.LocalDate.of(2026, 7, 1));
@@ -121,7 +121,7 @@ public class TestErpLogCarrierGatewayIntegration extends JunitAutoTestCase {
         return s.getId();
     }
 
-    private Long seedShipment(String code, Long carrierId, String status, String relatedBillType,
+    private String seedShipment(String code, String carrierId, String status, String relatedBillType,
                               String settlementStatus) {
         ErpLogShipment s = new ErpLogShipment();
         s.setBusinessDate(java.time.LocalDate.of(2026, 7, 1));
@@ -135,7 +135,7 @@ public class TestErpLogCarrierGatewayIntegration extends JunitAutoTestCase {
         return s.getId();
     }
 
-    private ErpLogShipment reload(Long shipmentId) {
+    private ErpLogShipment reload(String shipmentId) {
         return daoProvider.daoFor(ErpLogShipment.class).getEntityById(shipmentId);
     }
 

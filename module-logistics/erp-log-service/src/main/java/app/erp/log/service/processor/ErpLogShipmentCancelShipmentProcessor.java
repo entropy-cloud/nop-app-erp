@@ -17,7 +17,7 @@ public class ErpLogShipmentCancelShipmentProcessor {
     @Inject
     GatewayDispatcher gatewayDispatcher;
 
-    public ErpLogShipment cancelShipment(Long shipmentId, IServiceContext context) {
+    public ErpLogShipment cancelShipment(String shipmentId, IServiceContext context) {
         return gatewayDispatcher.cancelShipment(shipmentId, context);
     }
 }

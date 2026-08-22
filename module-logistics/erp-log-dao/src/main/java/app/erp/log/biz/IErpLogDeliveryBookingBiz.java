@@ -21,8 +21,8 @@ public interface IErpLogDeliveryBookingBiz extends ICrudBiz<ErpLogDeliveryBookin
      * {@code currentBooked += 1}；同一发运单重复预约幂等拒绝；星期不匹配/窗口过期拒绝。
      */
     @BizMutation
-    ErpLogDeliveryBooking book(@Name("shipmentId") Long shipmentId,
-                               @Name("windowId") Long windowId,
+    ErpLogDeliveryBooking book(@Name("shipmentId") String shipmentId,
+                               @Name("windowId") String windowId,
                                @Name("bookedDate") LocalDate bookedDate,
                                IServiceContext context);
 
@@ -31,17 +31,17 @@ public interface IErpLogDeliveryBookingBiz extends ICrudBiz<ErpLogDeliveryBookin
      * {@code currentBooked -= 1}（下限 0）。无有效预约时幂等 no-op。
      */
     @BizMutation
-    void releaseForShipment(@Name("shipmentId") Long shipmentId, IServiceContext context);
+    void releaseForShipment(@Name("shipmentId") String shipmentId, IServiceContext context);
 
     /** 标记预约已到达（BOOKED/CONFIRMED → ARRIVED）。 */
     @BizMutation
-    ErpLogDeliveryBooking markArrived(@Name("shipmentId") Long shipmentId, IServiceContext context);
+    ErpLogDeliveryBooking markArrived(@Name("shipmentId") String shipmentId, IServiceContext context);
 
     /** 标记爽约（BOOKED/CONFIRMED → MISSED）：记爽约费（erp-log.booking-missed-fee 配置）+ priorityScore 提升。 */
     @BizMutation
-    ErpLogDeliveryBooking markMissed(@Name("shipmentId") Long shipmentId, IServiceContext context);
+    ErpLogDeliveryBooking markMissed(@Name("shipmentId") String shipmentId, IServiceContext context);
 
     /** 按发运单查找当前有效（非 CANCELLED）预约，无则返回 null。 */
     @BizAction
-    ErpLogDeliveryBooking findActiveByShipment(@Name("shipmentId") Long shipmentId, IServiceContext context);
+    ErpLogDeliveryBooking findActiveByShipment(@Name("shipmentId") String shipmentId, IServiceContext context);
 }

@@ -1,19 +1,19 @@
 {
   "data": {
     "id": "3",
-    "shipmentId": 2,
+    "shipmentId": "2",
     "lineNo": 1,
-    "materialId": null,
-    "quantity": null,
-    "unit": null,
-    "packageDescription": null,
-    "remark": null,
     "delVersion": 0,
     "version": 0,
     "createdBy": "autotest-ref",
     "createTime": "@var:ErpLogShipmentLine@createTime",
     "updatedBy": "autotest-ref",
-    "updateTime": "@var:ErpLogShipmentLine@createTime"
+    "updateTime": "@var:ErpLogShipmentLine@createTime",
+    "materialId": null,
+    "quantity": null,
+    "unit": null,
+    "packageDescription": null,
+    "remark": null
   },
   "status": 0
 }

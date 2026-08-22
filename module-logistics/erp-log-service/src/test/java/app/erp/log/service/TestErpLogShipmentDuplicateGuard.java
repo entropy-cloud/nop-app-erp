@@ -42,7 +42,7 @@ public class TestErpLogShipmentDuplicateGuard extends JunitAutoTestCase {
     /** 组 1：同出库单二次保存拒绝（错误码 + 出库单号断言 + 仅 1 条发运单）。 */
     @Test
     public void testDuplicateRelatedBillRejected() {
-        Long carrierId = seedCarrier();
+        String carrierId = seedCarrier();
 
         Map<String, Object> d1 = shipmentData("SHP-083-1", "TRK-083-1", carrierId,
                 ErpLogConstants.RELATED_BILL_TYPE_SALES_DELIVERY, "REL-BILL-083-001");
@@ -67,7 +67,7 @@ public class TestErpLogShipmentDuplicateGuard extends JunitAutoTestCase {
     /** 组 2：既有发运单 CANCELLED 后再建放行（新 code，关联原出库单）。 */
     @Test
     public void testCancelledShipmentAllowsRecreate() {
-        Long carrierId = seedCarrier();
+        String carrierId = seedCarrier();
 
         Map<String, Object> d1 = shipmentData("SHP-083-CX-1", "TRK-083-CX-1", carrierId,
                 ErpLogConstants.RELATED_BILL_TYPE_SALES_DELIVERY, "REL-BILL-083-CX");
@@ -83,7 +83,7 @@ public class TestErpLogShipmentDuplicateGuard extends JunitAutoTestCase {
     /** 组 3：无 relatedBill（手工发运）不触发守卫，可多条创建。 */
     @Test
     public void testNoRelatedBillNotConstrained() {
-        Long carrierId = seedCarrier();
+        String carrierId = seedCarrier();
 
         Map<String, Object> d1 = shipmentData("SHP-083-MAN-1", "TRK-083-MAN-1", carrierId, null, null);
         Map<String, Object> d2 = shipmentData("SHP-083-MAN-2", "TRK-083-MAN-2", carrierId, null, null);
@@ -94,7 +94,7 @@ public class TestErpLogShipmentDuplicateGuard extends JunitAutoTestCase {
     /** 组 4：不同 relatedBillCode（或仅 type/code 其一为空）互不阻断。 */
     @Test
     public void testDifferentRelatedBillNotBlocked() {
-        Long carrierId = seedCarrier();
+        String carrierId = seedCarrier();
 
         Map<String, Object> d1 = shipmentData("SHP-083-DIFF-1", "TRK-083-DIFF-1", carrierId,
                 ErpLogConstants.RELATED_BILL_TYPE_SALES_DELIVERY, "REL-BILL-083-A");
@@ -109,7 +109,7 @@ public class TestErpLogShipmentDuplicateGuard extends JunitAutoTestCase {
 
     // ---------- seed helpers ----------
 
-    private Long seedCarrier() {
+    private String seedCarrier() {
         Map<String, Object> d = new LinkedHashMap<>();
         d.put("code", "CAR-083-" + System.nanoTime());
         d.put("carrierName", "测试承运商");
@@ -118,10 +118,10 @@ public class TestErpLogShipmentDuplicateGuard extends JunitAutoTestCase {
         d.put("isActive", 1);
         ApiResponse<?> resp = executeMutation("ErpLogCarrier__save", d);
         assertNotNull(resp.getData(), "承运商创建应成功: " + resp);
-        return Long.valueOf(String.valueOf(((Map<?, ?>) resp.getData()).get("id")));
+        return String.valueOf(((Map<?, ?>) resp.getData()).get("id"));
     }
 
-    private Map<String, Object> shipmentData(String code, String trackingNo, Long carrierId,
+    private Map<String, Object> shipmentData(String code, String trackingNo, String carrierId,
                                              String relatedBillType, String relatedBillCode) {
         Map<String, Object> d = new LinkedHashMap<>();
         d.put("code", code);

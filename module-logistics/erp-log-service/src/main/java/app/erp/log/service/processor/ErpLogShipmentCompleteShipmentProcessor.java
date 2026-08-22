@@ -17,7 +17,7 @@ public class ErpLogShipmentCompleteShipmentProcessor {
     @Inject
     GatewayDispatcher gatewayDispatcher;
 
-    public ErpLogShipment completeShipment(Long shipmentId, IServiceContext context) {
+    public ErpLogShipment completeShipment(String shipmentId, IServiceContext context) {
         return gatewayDispatcher.completeShipment(shipmentId, context);
     }
 }

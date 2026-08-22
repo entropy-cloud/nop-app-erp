@@ -348,19 +348,19 @@ public class _ErpLogShipment extends DynamicOrmEntity{
 
     
     /* ID: ID */
-    private java.lang.Long _id;
+    private java.lang.String _id;
     
     /* 单号: CODE */
     private java.lang.String _code;
     
     /* 业务组织: ORG_ID */
-    private java.lang.Long _orgId;
+    private java.lang.String _orgId;
     
     /* 承运商ID: CARRIER_ID */
-    private java.lang.Long _carrierId;
+    private java.lang.String _carrierId;
     
     /* 承运商配置ID: CARRIER_CONFIG_ID */
-    private java.lang.Long _carrierConfigId;
+    private java.lang.String _carrierConfigId;
     
     /* 关联单据类型: RELATED_BILL_TYPE */
     private java.lang.String _relatedBillType;
@@ -381,7 +381,7 @@ public class _ErpLogShipment extends DynamicOrmEntity{
     private java.math.BigDecimal _freightAmount;
     
     /* 运费币种: FREIGHT_CURRENCY_ID */
-    private java.lang.Long _freightCurrencyId;
+    private java.lang.String _freightCurrencyId;
     
     /* 运费条款: FREIGHT_TERMS */
     private java.lang.String _freightTerms;
@@ -438,7 +438,7 @@ public class _ErpLogShipment extends DynamicOrmEntity{
     private java.lang.String _signedBy;
     
     /* 发货员(职员): SHIPPER_ID */
-    private java.lang.Long _shipperId;
+    private java.lang.String _shipperId;
     
     /* 状态: STATUS */
     private java.lang.String _status;
@@ -679,9 +679,9 @@ public class _ErpLogShipment extends DynamicOrmEntity{
         switch(propId){
         
             case PROP_ID_id:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_id));
                }
                setId(typedValue);
@@ -699,9 +699,9 @@ public class _ErpLogShipment extends DynamicOrmEntity{
             }
         
             case PROP_ID_orgId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_orgId));
                }
                setOrgId(typedValue);
@@ -709,9 +709,9 @@ public class _ErpLogShipment extends DynamicOrmEntity{
             }
         
             case PROP_ID_carrierId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_carrierId));
                }
                setCarrierId(typedValue);
@@ -719,9 +719,9 @@ public class _ErpLogShipment extends DynamicOrmEntity{
             }
         
             case PROP_ID_carrierConfigId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_carrierConfigId));
                }
                setCarrierConfigId(typedValue);
@@ -789,9 +789,9 @@ public class _ErpLogShipment extends DynamicOrmEntity{
             }
         
             case PROP_ID_freightCurrencyId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_freightCurrencyId));
                }
                setFreightCurrencyId(typedValue);
@@ -979,9 +979,9 @@ public class _ErpLogShipment extends DynamicOrmEntity{
             }
         
             case PROP_ID_shipperId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_shipperId));
                }
                setShipperId(typedValue);
@@ -1099,7 +1099,7 @@ public class _ErpLogShipment extends DynamicOrmEntity{
         
             case PROP_ID_id:{
                onInitProp(propId);
-               this._id = (java.lang.Long)value;
+               this._id = (java.lang.String)value;
                orm_id(); // 如果是设置主键字段，则触发watcher
                break;
             }
@@ -1113,21 +1113,21 @@ public class _ErpLogShipment extends DynamicOrmEntity{
         
             case PROP_ID_orgId:{
                onInitProp(propId);
-               this._orgId = (java.lang.Long)value;
+               this._orgId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_carrierId:{
                onInitProp(propId);
-               this._carrierId = (java.lang.Long)value;
+               this._carrierId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_carrierConfigId:{
                onInitProp(propId);
-               this._carrierConfigId = (java.lang.Long)value;
+               this._carrierConfigId = (java.lang.String)value;
                
                break;
             }
@@ -1176,7 +1176,7 @@ public class _ErpLogShipment extends DynamicOrmEntity{
         
             case PROP_ID_freightCurrencyId:{
                onInitProp(propId);
-               this._freightCurrencyId = (java.lang.Long)value;
+               this._freightCurrencyId = (java.lang.String)value;
                
                break;
             }
@@ -1309,7 +1309,7 @@ public class _ErpLogShipment extends DynamicOrmEntity{
         
             case PROP_ID_shipperId:{
                onInitProp(propId);
-               this._shipperId = (java.lang.Long)value;
+               this._shipperId = (java.lang.String)value;
                
                break;
             }
@@ -1393,7 +1393,7 @@ public class _ErpLogShipment extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final java.lang.Long getId(){
+    public final java.lang.String getId(){
          onPropGet(PROP_ID_id);
          return _id;
     }
@@ -1401,7 +1401,7 @@ public class _ErpLogShipment extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final void setId(java.lang.Long value){
+    public final void setId(java.lang.String value){
         if(onPropSet(PROP_ID_id,value)){
             this._id = value;
             internalClearRefs(PROP_ID_id);
@@ -1431,7 +1431,7 @@ public class _ErpLogShipment extends DynamicOrmEntity{
     /**
      * 业务组织: ORG_ID
      */
-    public final java.lang.Long getOrgId(){
+    public final java.lang.String getOrgId(){
          onPropGet(PROP_ID_orgId);
          return _orgId;
     }
@@ -1439,7 +1439,7 @@ public class _ErpLogShipment extends DynamicOrmEntity{
     /**
      * 业务组织: ORG_ID
      */
-    public final void setOrgId(java.lang.Long value){
+    public final void setOrgId(java.lang.String value){
         if(onPropSet(PROP_ID_orgId,value)){
             this._orgId = value;
             internalClearRefs(PROP_ID_orgId);
@@ -1450,7 +1450,7 @@ public class _ErpLogShipment extends DynamicOrmEntity{
     /**
      * 承运商ID: CARRIER_ID
      */
-    public final java.lang.Long getCarrierId(){
+    public final java.lang.String getCarrierId(){
          onPropGet(PROP_ID_carrierId);
          return _carrierId;
     }
@@ -1458,7 +1458,7 @@ public class _ErpLogShipment extends DynamicOrmEntity{
     /**
      * 承运商ID: CARRIER_ID
      */
-    public final void setCarrierId(java.lang.Long value){
+    public final void setCarrierId(java.lang.String value){
         if(onPropSet(PROP_ID_carrierId,value)){
             this._carrierId = value;
             internalClearRefs(PROP_ID_carrierId);
@@ -1469,7 +1469,7 @@ public class _ErpLogShipment extends DynamicOrmEntity{
     /**
      * 承运商配置ID: CARRIER_CONFIG_ID
      */
-    public final java.lang.Long getCarrierConfigId(){
+    public final java.lang.String getCarrierConfigId(){
          onPropGet(PROP_ID_carrierConfigId);
          return _carrierConfigId;
     }
@@ -1477,7 +1477,7 @@ public class _ErpLogShipment extends DynamicOrmEntity{
     /**
      * 承运商配置ID: CARRIER_CONFIG_ID
      */
-    public final void setCarrierConfigId(java.lang.Long value){
+    public final void setCarrierConfigId(java.lang.String value){
         if(onPropSet(PROP_ID_carrierConfigId,value)){
             this._carrierConfigId = value;
             internalClearRefs(PROP_ID_carrierConfigId);
@@ -1602,7 +1602,7 @@ public class _ErpLogShipment extends DynamicOrmEntity{
     /**
      * 运费币种: FREIGHT_CURRENCY_ID
      */
-    public final java.lang.Long getFreightCurrencyId(){
+    public final java.lang.String getFreightCurrencyId(){
          onPropGet(PROP_ID_freightCurrencyId);
          return _freightCurrencyId;
     }
@@ -1610,7 +1610,7 @@ public class _ErpLogShipment extends DynamicOrmEntity{
     /**
      * 运费币种: FREIGHT_CURRENCY_ID
      */
-    public final void setFreightCurrencyId(java.lang.Long value){
+    public final void setFreightCurrencyId(java.lang.String value){
         if(onPropSet(PROP_ID_freightCurrencyId,value)){
             this._freightCurrencyId = value;
             internalClearRefs(PROP_ID_freightCurrencyId);
@@ -1963,7 +1963,7 @@ public class _ErpLogShipment extends DynamicOrmEntity{
     /**
      * 发货员(职员): SHIPPER_ID
      */
-    public final java.lang.Long getShipperId(){
+    public final java.lang.String getShipperId(){
          onPropGet(PROP_ID_shipperId);
          return _shipperId;
     }
@@ -1971,7 +1971,7 @@ public class _ErpLogShipment extends DynamicOrmEntity{
     /**
      * 发货员(职员): SHIPPER_ID
      */
-    public final void setShipperId(java.lang.Long value){
+    public final void setShipperId(java.lang.String value){
         if(onPropSet(PROP_ID_shipperId,value)){
             this._shipperId = value;
             internalClearRefs(PROP_ID_shipperId);

@@ -16,7 +16,7 @@ public class ErpLogShipmentAdviseProcessor {
     @Inject
     GatewayDispatcher gatewayDispatcher;
 
-    public ErpLogShipment advise(Long shipmentId, IServiceContext context) {
+    public ErpLogShipment advise(String shipmentId, IServiceContext context) {
         return gatewayDispatcher.advise(shipmentId);
     }
 }

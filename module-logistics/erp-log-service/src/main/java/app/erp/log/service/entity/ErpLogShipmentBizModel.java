@@ -117,19 +117,19 @@ public class ErpLogShipmentBizModel extends CrudBizModel<ErpLogShipment> impleme
 
     @Override
     @BizMutation
-    public ErpLogShipment advise(@Name("shipmentId") Long shipmentId, IServiceContext context) {
+    public ErpLogShipment advise(@Name("shipmentId") String shipmentId, IServiceContext context) {
         return adviseProcessor.advise(shipmentId, context);
     }
 
     @Override
     @BizMutation
-    public ErpLogShipment completeShipment(@Name("shipmentId") Long shipmentId, IServiceContext context) {
+    public ErpLogShipment completeShipment(@Name("shipmentId") String shipmentId, IServiceContext context) {
         return completeShipmentProcessor.completeShipment(shipmentId, context);
     }
 
     @Override
     @BizMutation
-    public ErpLogShipment cancelShipment(@Name("shipmentId") Long shipmentId, IServiceContext context) {
+    public ErpLogShipment cancelShipment(@Name("shipmentId") String shipmentId, IServiceContext context) {
         return cancelShipmentProcessor.cancelShipment(shipmentId, context);
     }
 

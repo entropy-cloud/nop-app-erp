@@ -13,22 +13,22 @@ import java.math.BigDecimal;
  * {@code ErpLogShipmentBizModel.onDelivered} 直接调用 {@code IErpInvLandedCostBiz.generateFreightLandedCost} 完成。
  */
 public class ShipmentDeliveredEvent {
-    private final Long shipmentId;
+    private final String shipmentId;
     private final String shipmentCode;
     private final String relatedBillType;
     private final String relatedBillCode;
-    private final Long carrierId;
+    private final String carrierId;
     private final BigDecimal freightAmount;
-    private final Long freightCurrencyId;
+    private final String freightCurrencyId;
 
-    public ShipmentDeliveredEvent(Long shipmentId, String shipmentCode, String relatedBillType,
-                                  String relatedBillCode, Long carrierId) {
+    public ShipmentDeliveredEvent(String shipmentId, String shipmentCode, String relatedBillType,
+                                  String relatedBillCode, String carrierId) {
         this(shipmentId, shipmentCode, relatedBillType, relatedBillCode, carrierId, null, null);
     }
 
-    public ShipmentDeliveredEvent(Long shipmentId, String shipmentCode, String relatedBillType,
-                                  String relatedBillCode, Long carrierId,
-                                  BigDecimal freightAmount, Long freightCurrencyId) {
+    public ShipmentDeliveredEvent(String shipmentId, String shipmentCode, String relatedBillType,
+                                  String relatedBillCode, String carrierId,
+                                  BigDecimal freightAmount, String freightCurrencyId) {
         this.shipmentId = shipmentId;
         this.shipmentCode = shipmentCode;
         this.relatedBillType = relatedBillType;
@@ -38,7 +38,7 @@ public class ShipmentDeliveredEvent {
         this.freightCurrencyId = freightCurrencyId;
     }
 
-    public Long getShipmentId() {
+    public String getShipmentId() {
         return shipmentId;
     }
 
@@ -54,7 +54,7 @@ public class ShipmentDeliveredEvent {
         return relatedBillCode;
     }
 
-    public Long getCarrierId() {
+    public String getCarrierId() {
         return carrierId;
     }
 
@@ -62,7 +62,7 @@ public class ShipmentDeliveredEvent {
         return freightAmount;
     }
 
-    public Long getFreightCurrencyId() {
+    public String getFreightCurrencyId() {
         return freightCurrencyId;
     }
 }

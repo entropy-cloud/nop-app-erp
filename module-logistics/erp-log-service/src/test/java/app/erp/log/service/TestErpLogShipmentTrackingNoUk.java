@@ -41,7 +41,7 @@ public class TestErpLogShipmentTrackingNoUk extends JunitAutoTestCase {
 
     @Test
     public void testDuplicateTrackingNoRejected() {
-        Long carrierId = seedCarrier();
+        String carrierId = seedCarrier();
 
         // 首次创建 trackingNo=TRK-092 成功
         Map<String, Object> data1 = shipmentData("SHP-092-1", "TRK-092", carrierId);
@@ -64,7 +64,7 @@ public class TestErpLogShipmentTrackingNoUk extends JunitAutoTestCase {
 
     @Test
     public void testNullTrackingNoNotConstrained() {
-        Long carrierId = seedCarrier();
+        String carrierId = seedCarrier();
         // trackingNo 为 null 的发运单不受 UK 约束（H2 NULLS DISTINCT），可创建多条
         Map<String, Object> d1 = shipmentData("SHP-092-NULL-1", null, carrierId);
         Map<String, Object> d2 = shipmentData("SHP-092-NULL-2", null, carrierId);
@@ -72,7 +72,7 @@ public class TestErpLogShipmentTrackingNoUk extends JunitAutoTestCase {
         assertEquals(0, save(d2).getStatus(), "null trackingNo 再次创建应成功（UK 不约束 null）");
     }
 
-    private Long seedCarrier() {
+    private String seedCarrier() {
         Map<String, Object> d = new LinkedHashMap<>();
         d.put("code", "CAR-092-" + System.nanoTime());
         d.put("carrierName", "测试承运商");
@@ -80,10 +80,10 @@ public class TestErpLogShipmentTrackingNoUk extends JunitAutoTestCase {
         d.put("gatewayId", "1");
         d.put("isActive", 1);
         ApiResponse<?> resp = executeMutation("ErpLogCarrier__save", d);
-        return Long.valueOf(String.valueOf(((Map<?, ?>) resp.getData()).get("id")));
+        return String.valueOf(((Map<?, ?>) resp.getData()).get("id"));
     }
 
-    private Map<String, Object> shipmentData(String code, String trackingNo, Long carrierId) {
+    private Map<String, Object> shipmentData(String code, String trackingNo, String carrierId) {
         Map<String, Object> d = new LinkedHashMap<>();
         d.put("code", code);
         d.put("carrierId", carrierId);

@@ -12,30 +12,30 @@
     public class ErpLogShipmentParcelInputBean extends CrudInputBase {
 
     
-        private Long _id;
+        private String _id;
 
     
         @PropMeta(propId=1)
     
-        public Long getId(){
+        public String getId(){
             return _id;
         }
 
-        public void setId(Long value){
+        public void setId(String value){
             this._id = value;
         }
 
 
-        private Long _shipmentId;
+        private String _shipmentId;
 
     
         @PropMeta(propId=2)
     
-        public Long getShipmentId(){
+        public String getShipmentId(){
             return _shipmentId;
         }
 
-        public void setShipmentId(Long value){
+        public void setShipmentId(String value){
             this._shipmentId = value;
         }
 

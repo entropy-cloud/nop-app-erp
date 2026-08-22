@@ -1,7 +1,7 @@
 {
-  "id": 0,
-  "shipmentId": 0,
-  "orgId": 0,
+  "id": "",
+  "shipmentId": "",
+  "orgId": "",
   "gatewayId": "",
   "actionType": "",
   "actionType_label": "",

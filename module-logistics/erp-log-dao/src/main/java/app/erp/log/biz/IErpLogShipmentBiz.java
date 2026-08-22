@@ -15,20 +15,20 @@ public interface IErpLogShipmentBiz extends ICrudBiz<ErpLogShipment>{
      * nop-job 注册为部署 follow-up）。幂等键 {@code referenceNo}=运单号。
      */
     @BizMutation
-    ErpLogShipment advise(@Name("shipmentId") Long shipmentId, IServiceContext context);
+    ErpLogShipment advise(@Name("shipmentId") String shipmentId, IServiceContext context);
 
     /**
      * 承运商网关下单（completeDeliveryOrder）：ADVISED→DISPATCHED。重试（5xx/超时指数退避，4xx 不重试），
      * 死信保留 ADVISED。供异步 worker / 手动重试 / 测试调用（幂等：已 DISPATCHED 直接返回）。
      */
     @BizMutation
-    ErpLogShipment completeShipment(@Name("shipmentId") Long shipmentId, IServiceContext context);
+    ErpLogShipment completeShipment(@Name("shipmentId") String shipmentId, IServiceContext context);
 
     /**
      * 取消发运：ADVISED/DISPATCHED→CANCELLED（经 {@code client.cancelShipment}，承运商不支持则标记本地取消）。
      */
     @BizMutation
-    ErpLogShipment cancelShipment(@Name("shipmentId") Long shipmentId, IServiceContext context);
+    ErpLogShipment cancelShipment(@Name("shipmentId") String shipmentId, IServiceContext context);
 
     /**
      * 承运商追踪回调入口（webhook）。HMAC-SHA256 校验（{@code erp-log.webhook-signature-required}）；

@@ -13,44 +13,44 @@
     public class ErpLogShipmentLogOutputBean {
 
     
-        private Long _id;
+        private String _id;
 
     
         @PropMeta(propId=1)
     
-        public Long getId(){
+        public String getId(){
             return _id;
         }
 
-        public void setId(Long value){
+        public void setId(String value){
             this._id = value;
         }
 
 
-        private Long _shipmentId;
+        private String _shipmentId;
 
     
         @PropMeta(propId=2)
     
-        public Long getShipmentId(){
+        public String getShipmentId(){
             return _shipmentId;
         }
 
-        public void setShipmentId(Long value){
+        public void setShipmentId(String value){
             this._shipmentId = value;
         }
 
 
-        private Long _orgId;
+        private String _orgId;
 
     
         @PropMeta(propId=3)
     
-        public Long getOrgId(){
+        public String getOrgId(){
             return _orgId;
         }
 
-        public void setOrgId(Long value){
+        public void setOrgId(String value){
             this._orgId = value;
         }
 

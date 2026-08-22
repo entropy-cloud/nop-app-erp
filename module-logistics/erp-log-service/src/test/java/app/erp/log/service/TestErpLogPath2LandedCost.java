@@ -76,13 +76,13 @@ public class TestErpLogPath2LandedCost extends JunitAutoTestCase {
 
     @Test
     public void testPath2AutoCreateLandedCost() {
-        long partnerId = 9901L;
+        long partnerId = 9901;
         String receiveCode = "RCV-PATH2-A";
-        Long carrierId = ormTemplate.runInSession(session -> {
+        String carrierId = ormTemplate.runInSession(session -> {
             seedPurchaseReceive(receiveCode, partnerId);
             return seedCarrier("MOCK-PATH2-A", partnerId);
         });
-        Long shipmentId = ormTemplate.runInSession(session -> seedShipment("SHP-PATH2-A", carrierId,
+        String shipmentId = ormTemplate.runInSession(session -> seedShipment("SHP-PATH2-A", carrierId,
                 ErpLogConstants.SHIPMENT_STATUS_DISPATCHED, "MOCK-PATH2-A-T",
                 ErpLogConstants.RELATED_BILL_TYPE_PURCHASE_RECEIPT,
                 ErpLogConstants.FREIGHT_TERMS_COLLECT, new BigDecimal("350"),
@@ -108,18 +108,18 @@ public class TestErpLogPath2LandedCost extends JunitAutoTestCase {
         assertNotNull(line, "FREIGHT 费用行应已创建");
         assertEquals("FREIGHT", line.getCostElement());
         assertTrue(new BigDecimal("350").compareTo(line.getAmount()) == 0, "费用行金额应匹配");
-        assertEquals(partnerId, line.getApPartnerId(), "AP partner 默认取 receive.supplierId");
+        assertEquals(String.valueOf(partnerId), line.getApPartnerId(), "AP partner 默认取 receive.supplierId");
     }
 
     @Test
     public void testPath2SkipWhenFreightAmountNull() {
-        long partnerId = 9902L;
+        long partnerId = 9902;
         String receiveCode = "RCV-PATH2-B";
-        Long carrierId = ormTemplate.runInSession(session -> {
+        String carrierId = ormTemplate.runInSession(session -> {
             seedPurchaseReceive(receiveCode, partnerId);
             return seedCarrier("MOCK-PATH2-B", partnerId);
         });
-        Long shipmentId = ormTemplate.runInSession(session -> seedShipment("SHP-PATH2-B", carrierId,
+        String shipmentId = ormTemplate.runInSession(session -> seedShipment("SHP-PATH2-B", carrierId,
                 ErpLogConstants.SHIPMENT_STATUS_DISPATCHED, "MOCK-PATH2-B-T",
                 ErpLogConstants.RELATED_BILL_TYPE_PURCHASE_RECEIPT,
                 ErpLogConstants.FREIGHT_TERMS_COLLECT, null,
@@ -137,13 +137,13 @@ public class TestErpLogPath2LandedCost extends JunitAutoTestCase {
 
     @Test
     public void testPath2IdempotentRejectsDuplicateDelivered() {
-        long partnerId = 9903L;
+        long partnerId = 9903;
         String receiveCode = "RCV-PATH2-C";
-        Long carrierId = ormTemplate.runInSession(session -> {
+        String carrierId = ormTemplate.runInSession(session -> {
             seedPurchaseReceive(receiveCode, partnerId);
             return seedCarrier("MOCK-PATH2-C", partnerId);
         });
-        Long shipmentId = ormTemplate.runInSession(session -> seedShipment("SHP-PATH2-C", carrierId,
+        String shipmentId = ormTemplate.runInSession(session -> seedShipment("SHP-PATH2-C", carrierId,
                 ErpLogConstants.SHIPMENT_STATUS_DISPATCHED, "MOCK-PATH2-C-T",
                 ErpLogConstants.RELATED_BILL_TYPE_PURCHASE_RECEIPT,
                 ErpLogConstants.FREIGHT_TERMS_COLLECT, new BigDecimal("200"),
@@ -158,14 +158,14 @@ public class TestErpLogPath2LandedCost extends JunitAutoTestCase {
 
     // ---------- seed helpers ----------
 
-    private Long seedCarrier(String code, long partnerId) {
+    private String seedCarrier(String code, long partnerId) {
         IEntityDao<ErpLogCarrier> dao = daoProvider.daoFor(ErpLogCarrier.class);
         ErpLogCarrier carrier = new ErpLogCarrier();
         carrier.setCode(code);
         carrier.setCarrierName("Mock 承运商 " + code);
         carrier.setCarrierType("EXPRESS");
         carrier.setGatewayId(ErpLogConstants.GATEWAY_ID_MOCK);
-        carrier.setPartnerId(partnerId);
+        carrier.setPartnerId(String.valueOf(partnerId));
         carrier.setIsActive(1);
         dao.saveEntity(carrier);
         return carrier.getId();
@@ -175,11 +175,11 @@ public class TestErpLogPath2LandedCost extends JunitAutoTestCase {
         IEntityDao<ErpPurReceive> dao = daoProvider.daoFor(ErpPurReceive.class);
         ErpPurReceive receive = new ErpPurReceive();
         receive.setCode(code);
-        receive.setOrgId(1L);
-        receive.setSupplierId(supplierId);
-        receive.setWarehouseId(1L);
+        receive.setOrgId("1");
+        receive.setSupplierId(String.valueOf(supplierId));
+        receive.setWarehouseId("1");
         receive.setBusinessDate(LocalDate.of(2026, 7, 1));
-        receive.setCurrencyId(1L);
+        receive.setCurrencyId("1");
         receive.setExchangeRate(BigDecimal.ONE);
         receive.setAmountSource(new BigDecimal("1000"));
         receive.setAmountFunctional(new BigDecimal("1000"));
@@ -192,13 +192,13 @@ public class TestErpLogPath2LandedCost extends JunitAutoTestCase {
         dao.saveEntity(receive);
     }
 
-    private Long seedShipment(String code, Long carrierId, String status, String trackingNo,
+    private String seedShipment(String code, String carrierId, String status, String trackingNo,
                               String relatedBillType, String freightTerms, BigDecimal freightAmount,
                               String settlementStatus, String relatedBillCode) {
         ErpLogShipment s = new ErpLogShipment();
         s.setBusinessDate(LocalDate.of(2026, 7, 1));
         s.setCode(code);
-        s.setOrgId(1L);
+        s.setOrgId("1");
         s.setCarrierId(carrierId);
         s.setStatus(status);
         s.setTrackingNo(trackingNo);
@@ -206,7 +206,7 @@ public class TestErpLogPath2LandedCost extends JunitAutoTestCase {
         s.setRelatedBillCode(relatedBillCode);
         s.setFreightTerms(freightTerms);
         s.setFreightAmount(freightAmount);
-        s.setFreightCurrencyId(1L);
+        s.setFreightCurrencyId("1");
         s.setFreightSettlementStatus(settlementStatus);
         daoProvider.daoFor(ErpLogShipment.class).saveEntity(s);
         return s.getId();
@@ -227,7 +227,7 @@ public class TestErpLogPath2LandedCost extends JunitAutoTestCase {
         return dao.findFirstByQuery(q);
     }
 
-    private ErpInvLandedCostLine findFreightLine(Long landedCostId) {
+    private ErpInvLandedCostLine findFreightLine(String landedCostId) {
         IEntityDao<ErpInvLandedCostLine> dao = daoProvider.daoFor(ErpInvLandedCostLine.class);
         QueryBean q = new QueryBean();
         q.addFilter(and(

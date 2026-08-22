@@ -86,11 +86,11 @@
                 versionProp="version" ext:web-renderer="flux" ext:icon="truck" i18n-en:displayName="Carrier">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
-                        stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
+                        stdDataType="string" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
                 <column code="CODE" displayName="编码" domain="orderCode" mandatory="true" name="code" precision="50"
                         propId="2" stdDataType="string" stdSqlType="VARCHAR" tagSet="var" i18n-en:displayName="Code"/>
-                <column code="ORG_ID" displayName="业务组织" name="orgId" propId="3" stdDataType="long" stdSqlType="BIGINT"
-                        i18n-en:displayName="Organization"/>
+                <column code="ORG_ID" displayName="业务组织" name="orgId" propId="3" stdDataType="string"
+                        stdSqlType="BIGINT" i18n-en:displayName="Organization"/>
                 <column code="CARRIER_NAME" displayName="承运商名称" mandatory="true" name="carrierName" precision="200"
                         propId="4" stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Carrier Name"/>
                 <column code="CARRIER_TYPE" displayName="承运商类型" mandatory="true" name="carrierType" precision="20"
@@ -98,7 +98,7 @@
                         i18n-en:displayName="Carrier Type"/>
                 <column code="GATEWAY_ID" displayName="网关标识" mandatory="true" name="gatewayId" precision="50" propId="6"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Gateway ID"/>
-                <column code="PARTNER_ID" displayName="承运商往来单位ID" name="partnerId" propId="7" stdDataType="long"
+                <column code="PARTNER_ID" displayName="承运商往来单位ID" name="partnerId" propId="7" stdDataType="string"
                         stdSqlType="BIGINT" i18n-en:displayName="Partner"/>
                 <column code="IS_ACTIVE" defaultValue="1" displayName="是否启用" mandatory="true" name="isActive" propId="8"
                         stdDataType="int" stdSqlType="INTEGER" i18n-en:displayName="Active"/>
@@ -168,11 +168,11 @@
                 ext:icon="settings" i18n-en:displayName="Carrier Config">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
-                        stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
+                        stdDataType="string" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
                 <column code="CARRIER_ID" displayName="承运商ID" mandatory="true" name="carrierId" propId="2"
-                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Carrier"/>
-                <column code="ORG_ID" displayName="业务组织" name="orgId" propId="3" stdDataType="long" stdSqlType="BIGINT"
-                        i18n-en:displayName="Organization"/>
+                        stdDataType="string" stdSqlType="BIGINT" i18n-en:displayName="Carrier"/>
+                <column code="ORG_ID" displayName="业务组织" name="orgId" propId="3" stdDataType="string"
+                        stdSqlType="BIGINT" i18n-en:displayName="Organization"/>
                 <column code="CONFIG_CODE" displayName="配置编码" domain="orderCode" mandatory="true" name="configCode"
                         precision="50" propId="4" stdDataType="string" stdSqlType="VARCHAR" tagSet="var"
                         i18n-en:displayName="Config Code"/>
@@ -241,15 +241,15 @@
                 versionProp="version" ext:web-renderer="flux" ext:icon="package" i18n-en:displayName="Shipment">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
-                        stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
+                        stdDataType="string" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
                 <column code="CODE" displayName="单号" domain="orderCode" mandatory="true" name="code" precision="50"
                         propId="2" stdDataType="string" stdSqlType="VARCHAR" tagSet="var" i18n-en:displayName="Code"/>
-                <column code="ORG_ID" displayName="业务组织" name="orgId" propId="3" stdDataType="long" stdSqlType="BIGINT"
-                        i18n-en:displayName="Organization"/>
+                <column code="ORG_ID" displayName="业务组织" name="orgId" propId="3" stdDataType="string"
+                        stdSqlType="BIGINT" i18n-en:displayName="Organization"/>
                 <column code="CARRIER_ID" displayName="承运商ID" mandatory="true" name="carrierId" propId="4"
-                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Carrier"/>
+                        stdDataType="string" stdSqlType="BIGINT" i18n-en:displayName="Carrier"/>
                 <column code="CARRIER_CONFIG_ID" displayName="承运商配置ID" name="carrierConfigId" propId="5"
-                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Carrier Config"/>
+                        stdDataType="string" stdSqlType="BIGINT" i18n-en:displayName="Carrier Config"/>
                 <column code="RELATED_BILL_TYPE" displayName="关联单据类型" name="relatedBillType" precision="50" propId="6"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Related Bill Type"/>
                 <column code="RELATED_BILL_CODE" displayName="关联单据号" name="relatedBillCode" precision="50" propId="7"
@@ -264,7 +264,7 @@
                         propId="11" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Freight Amount"/>
                 <column code="FREIGHT_CURRENCY_ID" displayName="运费币种" name="freightCurrencyId" propId="12"
-                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Currency"/>
+                        stdDataType="string" stdSqlType="BIGINT" i18n-en:displayName="Currency"/>
                 <column code="FREIGHT_TERMS" displayName="运费条款" name="freightTerms" precision="20" propId="13"
                         stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-log/freight-terms"
                         i18n-en:displayName="Freight Terms"/>
@@ -306,7 +306,7 @@
                         stdDataType="date" stdSqlType="DATE" i18n-en:displayName="Actual Delivery Date"/>
                 <column code="SIGNED_BY" displayName="签收人" name="signedBy" precision="100" propId="30"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Signed By"/>
-                <column code="SHIPPER_ID" displayName="发货员(职员)" name="shipperId" propId="31" stdDataType="long"
+                <column code="SHIPPER_ID" displayName="发货员(职员)" name="shipperId" propId="31" stdDataType="string"
                         stdSqlType="BIGINT" i18n-en:displayName="Shipper"/>
                 <column code="STATUS" displayName="状态" mandatory="true" name="status" precision="20" propId="32"
                         stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-log/shipment-status"
@@ -418,12 +418,12 @@
                 ext:icon="list" i18n-en:displayName="Shipment Line">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
-                        stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
+                        stdDataType="string" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
                 <column code="SHIPMENT_ID" displayName="发运单ID" mandatory="true" name="shipmentId" propId="2"
-                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Shipment"/>
+                        stdDataType="string" stdSqlType="BIGINT" i18n-en:displayName="Shipment"/>
                 <column code="LINE_NO" displayName="行号" mandatory="true" name="lineNo" propId="3" stdDataType="int"
                         stdSqlType="INTEGER" i18n-en:displayName="Line No"/>
-                <column code="MATERIAL_ID" displayName="物料" name="materialId" propId="4" stdDataType="long"
+                <column code="MATERIAL_ID" displayName="物料" name="materialId" propId="4" stdDataType="string"
                         stdSqlType="BIGINT" i18n-en:displayName="Material"/>
                 <column code="QUANTITY" displayName="数量" domain="quantity" name="quantity" precision="20" propId="5"
                         scale="4" stdDataType="decimal" stdSqlType="DECIMAL" i18n-en:displayName="Quantity"/>
@@ -480,9 +480,9 @@
                 ext:icon="package" i18n-en:displayName="Shipment Parcel">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
-                        stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
+                        stdDataType="string" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
                 <column code="SHIPMENT_ID" displayName="发运单ID" mandatory="true" name="shipmentId" propId="2"
-                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Shipment"/>
+                        stdDataType="string" stdSqlType="BIGINT" i18n-en:displayName="Shipment"/>
                 <column code="PARCEL_NO" displayName="包裹编号" mandatory="true" name="parcelNo" precision="50" propId="3"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Parcel No"/>
                 <column code="TRACKING_NO" displayName="运单号" name="trackingNo" precision="100" propId="4"
@@ -542,11 +542,11 @@
                 ext:icon="file-text" i18n-en:displayName="Shipment Log">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
-                        stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
+                        stdDataType="string" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
                 <column code="SHIPMENT_ID" displayName="发运单ID" mandatory="true" name="shipmentId" propId="2"
-                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Shipment"/>
-                <column code="ORG_ID" displayName="业务组织" name="orgId" propId="3" stdDataType="long" stdSqlType="BIGINT"
-                        i18n-en:displayName="Organization"/>
+                        stdDataType="string" stdSqlType="BIGINT" i18n-en:displayName="Shipment"/>
+                <column code="ORG_ID" displayName="业务组织" name="orgId" propId="3" stdDataType="string"
+                        stdSqlType="BIGINT" i18n-en:displayName="Organization"/>
                 <column code="GATEWAY_ID" displayName="网关标识" mandatory="true" name="gatewayId" precision="50" propId="4"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Gateway ID"/>
                 <column code="ACTION_TYPE" displayName="操作类型" mandatory="true" name="actionType" precision="20"
@@ -615,11 +615,11 @@
                 ext:icon="clock" i18n-en:displayName="Delivery Window">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
-                        stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
+                        stdDataType="string" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
                 <column code="PARTNER_ID" displayName="客户" mandatory="true" name="partnerId" propId="2"
-                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Partner"/>
-                <column code="ORG_ID" displayName="业务组织" name="orgId" propId="3" stdDataType="long" stdSqlType="BIGINT"
-                        i18n-en:displayName="Organization"/>
+                        stdDataType="string" stdSqlType="BIGINT" i18n-en:displayName="Partner"/>
+                <column code="ORG_ID" displayName="业务组织" name="orgId" propId="3" stdDataType="string"
+                        stdSqlType="BIGINT" i18n-en:displayName="Organization"/>
                 <column code="WEEKDAY" displayName="星期" mandatory="true" name="weekday" propId="4" stdDataType="int"
                         stdSqlType="INTEGER" i18n-en:displayName="Weekday"/>
                 <column code="START_TIME" displayName="开始时间" mandatory="true" name="startTime" precision="8" propId="5"
@@ -685,13 +685,13 @@
                 ext:icon="clock" i18n-en:displayName="Delivery Booking">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
-                        stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
+                        stdDataType="string" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
                 <column code="SHIPMENT_ID" displayName="发运单" mandatory="true" name="shipmentId" propId="2"
-                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Shipment"/>
+                        stdDataType="string" stdSqlType="BIGINT" i18n-en:displayName="Shipment"/>
                 <column code="WINDOW_ID" displayName="配送窗口" mandatory="true" name="windowId" propId="3"
-                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Delivery Window"/>
-                <column code="ORG_ID" displayName="业务组织" name="orgId" propId="4" stdDataType="long" stdSqlType="BIGINT"
-                        i18n-en:displayName="Organization"/>
+                        stdDataType="string" stdSqlType="BIGINT" i18n-en:displayName="Delivery Window"/>
+                <column code="ORG_ID" displayName="业务组织" name="orgId" propId="4" stdDataType="string"
+                        stdSqlType="BIGINT" i18n-en:displayName="Organization"/>
                 <column code="BOOKED_DATE" displayName="预约日期" mandatory="true" name="bookedDate" propId="5"
                         stdDataType="date" stdSqlType="DATE" i18n-en:displayName="Booked Date"/>
                 <column code="BOOKED_TIME" displayName="预约时间" name="bookedTime" precision="8" propId="6"
@@ -755,7 +755,7 @@
                 name="app.erp.md.dao.entity.ErpMdPartner" notGenCode="true" tableName="erp_md_partner"
                 ext:web-renderer="flux" biz:moduleId="erp/md">
             <columns>
-                <column code="ID" mandatory="true" name="id" primary="true" propId="1" stdDataType="long"
+                <column code="ID" mandatory="true" name="id" primary="true" propId="1" stdDataType="string"
                         stdSqlType="BIGINT" tagSet="seq-default"/>
                 <column code="NAME" name="name" precision="200" propId="2" stdDataType="string" stdSqlType="VARCHAR"
                         tagSet="disp"/>
@@ -765,7 +765,7 @@
                 name="app.erp.md.dao.entity.ErpMdOrganization" notGenCode="true" tableName="erp_md_organization"
                 ext:web-renderer="flux" biz:moduleId="erp/md">
             <columns>
-                <column code="ID" mandatory="true" name="id" primary="true" propId="1" stdDataType="long"
+                <column code="ID" mandatory="true" name="id" primary="true" propId="1" stdDataType="string"
                         stdSqlType="BIGINT" tagSet="seq-default"/>
                 <column code="NAME" name="name" precision="200" propId="2" stdDataType="string" stdSqlType="VARCHAR"
                         tagSet="disp"/>
@@ -775,7 +775,7 @@
                 name="app.erp.md.dao.entity.ErpMdEmployee" notGenCode="true" tableName="erp_md_employee"
                 ext:web-renderer="flux" biz:moduleId="erp/md">
             <columns>
-                <column code="ID" mandatory="true" name="id" primary="true" propId="1" stdDataType="long"
+                <column code="ID" mandatory="true" name="id" primary="true" propId="1" stdDataType="string"
                         stdSqlType="BIGINT" tagSet="seq-default"/>
                 <column code="NAME" name="name" precision="200" propId="2" stdDataType="string" stdSqlType="VARCHAR"
                         tagSet="disp"/>
@@ -785,7 +785,7 @@
                 name="app.erp.md.dao.entity.ErpMdMaterial" notGenCode="true" tableName="erp_md_material"
                 ext:web-renderer="flux" biz:moduleId="erp/md">
             <columns>
-                <column code="ID" mandatory="true" name="id" primary="true" propId="1" stdDataType="long"
+                <column code="ID" mandatory="true" name="id" primary="true" propId="1" stdDataType="string"
                         stdSqlType="BIGINT" tagSet="seq-default"/>
                 <column code="NAME" name="name" precision="200" propId="2" stdDataType="string" stdSqlType="VARCHAR"
                         tagSet="disp"/>
@@ -795,7 +795,7 @@
                 name="app.erp.md.dao.entity.ErpMdCurrency" notGenCode="true" tableName="erp_md_currency"
                 ext:web-renderer="flux" biz:moduleId="erp/md">
             <columns>
-                <column code="ID" name="id" primary="true" propId="1" stdDataType="long" stdSqlType="BIGINT"
+                <column code="ID" name="id" primary="true" propId="1" stdDataType="string" stdSqlType="BIGINT"
                         i18n-en:displayName="ID"/>
                 <column code="CODE" name="code" precision="50" propId="2" stdDataType="string" stdSqlType="VARCHAR"
                         tagSet="var" i18n-en:displayName="Code"/>

@@ -20,16 +20,16 @@
 
     <props>
         <prop name="id" displayName="ID" propId="1" i18n-en:displayName="ID" tagSet="seq-default" mandatory="true"
-              queryable="true" sortable="true" insertable="true" updatable="false" graphql:type="String">
-            <schema type="java.lang.Long"/>
+              queryable="true" sortable="true" insertable="true" updatable="false">
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="shipmentId" displayName="发运单ID" propId="2" i18n-en:displayName="Shipment" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="shipment">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="orgId" displayName="业务组织" propId="3" i18n-en:displayName="Organization" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="org">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="gatewayId" displayName="网关标识" propId="4" i18n-en:displayName="Gateway ID" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">

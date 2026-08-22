@@ -1,8 +1,8 @@
 {
-  "id": 0,
-  "shipmentId": 0,
+  "id": "",
+  "shipmentId": "",
   "lineNo": 0,
-  "materialId": 0,
+  "materialId": "",
   "quantity": 0.0,
   "unit": "",
   "packageDescription": "",
