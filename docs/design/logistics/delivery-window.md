@@ -34,6 +34,8 @@
 
 ## 数据模型
 
+> **列型注记（2026-08-23，plan `docs/plans/2026-08-22-2311-3-bigint-id-m310-logistics-migration.md`）**：下表 `BIGINT` 为主键/外键列的**数据库列型**（`stdSqlType` 保持 BIGINT、DDL 零变化）；Java 层经主键/外键 string 化迁移（`stdDataType="string"`）后，`id`/`partnerId`/`orgId`/`shipmentId`/`windowId` 等 PK/FK 属性在 Java/GraphQL/前端均为 `String`（`delVersion` 等非 PK/FK BIGINT 列保持 `long`）。
+
 ### ErpLogDeliveryWindow（配送时间窗口）
 
 | 字段 | 类型 | 说明 |

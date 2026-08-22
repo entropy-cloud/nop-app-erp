@@ -735,6 +735,8 @@ C2 后向 test（6 条，本域测试适配清单）：
 - backward-223 → purchase（15），引用 1 文件：`module-logistics/erp-log-service/src/test/java/app/erp/log/service/TestErpLogPath2LandedCost.java`（successor M3.10）
 - backward-224 → sales（16），引用 1 文件：`module-logistics/erp-log-service/src/test/java/app/erp/log/service/processor/TestErpLogSalesDeliveryLinkage.java`（successor M3.10）
 
+> **盲区追注（2026-08-23，M3.10 logistics plan Phase 1 FQN 复扫补登）**：三处登记册补登（ast backward-134 / b2b A3' 追注同类）：① **backward-160** 补 `LogisticsFreightProvider.java`（fin posting Provider `setPartnerId` id 流，M0.2 扫描器 id-flow 启发式漏报）；② **backward-221** 补 `TestErpLogSalesDeliveryLinkage.java`（内联 FQN 引用 md 种子实体 `ErpMdOrganization`/`ErpMdCurrency`/`ErpMdSubject`/`ErpMdAcctSchema` 无 import 语句，A3' 盲区同型）；③ 新增 **backward-255**（main，logistics→master-data）：`AbstractErpLogShipmentDeliveredProcessor:266` `AcctSchemaResolver.resolvePrimarySchemaId(daoProvider, orgId)` 方法调用口径 id 流（非 `.getId()` 模式）。修复以编译器实际清单为准，不以 C1 的 3 文件为界。
+
 ## 7. 特殊行（无登记条目的冻结序成员与共享模块）
 
 | 成员 | 位次/角色 | 工作项 | 条目 | 说明 |

@@ -1,6 +1,6 @@
 # 2026-08-22-2311-3-bigint-id-m310-logistics-migration 主键/外键 string 化 M3.10：logistics 域迁移（冻结序位次 19，末位域）
 
-> Plan Status: active（2026-08-22：独立草案审查共识达成——技术侧 + 治理侧（重试）iteration 1 双 `acceptable as-is`/`accept` + 双 `approve`，全部 MINOR 已就地修正并记录；保护区域双独立子 agent 批准已落盘 Draft Review Record）
+> Plan Status: completed（2026-08-23：四 Phase 全部执行完成 + 独立结束审计 `passes closure audit`（fresh session ses_fd4db70bdffemG16KVMBSGvPYj，13 项 live-repo 抽检全对，0 MAJOR / 0 MINOR）；**mission 里程碑：M1-M3 全部 19 域迁移完成（总待改 32→0），M4.1 为唯一剩余工作项**。批准记录见 Draft Review Record）
 > Mission: id-string-migration
 > Work Item: M3.10（logistics，冻结序位次 19）
 > Last Reviewed: 2026-08-22
@@ -54,89 +54,89 @@
 
 ### Phase 1 - 消费登记册 + orm 回写（保护区域，双批准前置）
 
-Status: planned
+Status: completed（2026-08-23：登记册全量消费与 Baseline 一致（A1=0/A2=0/A3=0/B main 0/retired-test 0/C1 160-163/C2 219-224/被引用面零）+ FQN 复扫双口径补登 ×3（backward-160 补 `LogisticsFreightProvider`（fin setPartnerId id 流，M0.2 id-flow 启发式漏报，ast 134 同类）/ backward-221 补 `TestErpLogSalesDeliveryLinkage`（内联 FQN md 种子实体，A3' 同型）/ 新增 backward-255（main logistics→md `AcctSchemaResolver.resolvePrimarySchemaId` 方法调用口径 id 流）+ §6.19 追注 + beans.xml ioc:type 双口径零跨域命中（仅 `app.erp.log.*`）+ 双独立子 agent 批准已在 Draft Review Record 落盘（治理 ses_fd5ed909bffeR7Iuyd59brvJ1x + 技术 ses_fd5f6bf75ffexiJQiz8tuCtEoN 双 approve，共识达成转 active）；orm 落源三步：dry-run 时点刷新 → 新鲜度门控 32 行 stdDataType-only/0 非法 → 落源 + git diff 64 行（32 对）100% stdDataType、stdSqlType 前后分布 IDENTICAL（全 BIGINT 保持）、非 PK/FK 零变化、md stub 5 列与权威源一致（id ×13 + FK ×19 = orgId ×6/shipmentId ×4/partnerId ×2/carrierId ×2/windowId/shipperId/materialId/freightCurrencyId/carrierConfigId 各 1）；工具重扫「实际修改 0 列」= 213 − 126 crm − 55 drp − 32 log = 总待改 0，mission 19 域 orm 全数落源）
 Targets: `module-logistics/model/app-erp-logistics.orm.xml`、`tools/id-migration-registry.json5`
 Skill: none
 
 - Item Types: `Fix | Proof`
 - Prereqs: 精确前置 M2.6 + M2.3 + M2.2 + M2.1 + M1.1 + M1.2 + M3.6 全部 done（roadmap 规则 1 readiness 口径）；批内序 3（crm/drp 按冻结总序先行，非本域编译硬前置）
 
-- [ ] Proof: 登记册全量消费——`registry §6.19 + json5` 逐条核对与 Baseline 一致（A1=0 / A2=0 / A3=0 / B main 0 / retired-test 0 / C1 160-163 / C2 219-224 / 被引用面零）；差异即补登落册。
+- [x] Proof: 登记册全量消费——`registry §6.19 + json5` 逐条核对与 Baseline 一致（A1=0 / A2=0 / A3=0 / B main 0 / retired-test 0 / C1 160-163 / C2 219-224 / 被引用面零）；差异即补登落册。
       - Skill: none
-- [ ] Proof: FQN 复扫（b2b A3' 盲区先例：java 内联 FQN 非 import 行 + `*.beans.xml` ioc:type 双口径）——log 引用面补登核对，预期仅命中已登记条目。
-      - Skill: none
-- [ ] Proof: 双独立子 agent 批准（治理 + 技术，fresh session）落盘 Draft Review Record（保护区域 `model/*.orm.xml` 要求）。
-      - Skill: none
-- [ ] Fix: orm 落源三步——① dry-run 时点刷新；② `verify-id-fix-copy-diff.mjs module-logistics` 新鲜度门控（32 行 stdDataType-only、零非 stdDataType 行）；③ 单文件落源 + `git diff` 逐行审核（stdSqlType 全保持 BIGINT、非 PK/FK 列零变化、md stub 5 列与权威源一致）。
+- [x] Proof: FQN 复扫（b2b A3' 盲区先例：java 内联 FQN 非 import 行 + `*.beans.xml` ioc:type 双口径）——log 引用面补登核对，预期仅命中已登记条目。
+      - Skill: none（实测命中 3 处未登记差异已全部补登：160/221 evidence 扩充 + 新增 backward-255，§6.19 追注落盘；其余命中全部落于已登记 C2 文件面 / `_gen` 胶水 / javadoc 注释）
+- [x] Proof: 双独立子 agent 批准（治理 + 技术，fresh session）落盘 Draft Review Record（保护区域 `model/*.orm.xml` 要求）。
+      - Skill: none（批准已于 2026-08-22 落盘本文件 Draft Review Record，双 approve + 共识达成转 active，见上）
+- [x] Fix: orm 落源三步——① dry-run 时点刷新；② `verify-id-fix-copy-diff.mjs module-logistics` 新鲜度门控（32 行 stdDataType-only、零非 stdDataType 行）；③ 单文件落源 + `git diff` 逐行审核（stdSqlType 全保持 BIGINT、非 PK/FK 列零变化、md stub 5 列与权威源一致）。
       - Skill: none
 
 Exit Criteria:
 
-- [ ] 工具重扫 log 段 0 NEEDS FIX / 0 DEFERRED（本域硬门口径 = 213 − 126 crm − 55 drp = 32 全数落源），三重证明落盘。
-- [ ] 登记册消费零未解释差异。
+- [x] 工具重扫 log 段 0 NEEDS FIX / 0 DEFERRED（本域硬门口径 = 213 − 126 crm − 55 drp = 32 全数落源），三重证明落盘。
+- [x] 登记册消费零未解释差异。
 
 ### Phase 2 - 增量重生成 + 主代码编译修复
 
-Status: planned
+Status: completed（2026-08-23：`mvn clean install -pl` 7 模块显式列表 no-am + `-Dmaven.test.skip=true` BUILD SUCCESS；首轮 13 编译错 4 手写文件（GatewayDispatcher ×4 / AbstractErpLogShipmentDeliveredProcessor ×5 / LogisticsFreightProvider ×1 / ErpLogDeliveryBookingBizModel ×3）一轮清零；手写修复面 14 文件 = dao 2 IBiz（IErpLogShipmentBiz advise/completeShipment/cancelShipment + IErpLogDeliveryBookingBiz book/releaseForShipment/markArrived/markMissed/findActiveByShipment id 参数族 String）+ service 12（ShipmentDeliveredEvent 3 id 字段 / GatewayDispatcher 4 方法 + getClient carrierId + releaseForShipment 直传 / AbstractErpLogShipmentDeliveredProcessor voucherId String + resolveAcctSchemaId String（backward-255 兑付）+ resolveCarrierPartnerId String + sal get 直传 / LogisticsFreightProvider setPartnerId String 直传 + asLong 桥移除（drp B 退役同型）/ ErpLogDeliveryBookingBizModel idOrder 数值序（contract 先例）+ String.valueOf ×3 移除 / ErpLogShipmentBizModel 3 参数 / 3 per-mutation Processor / spi Registry + Factory + MockFactory carrierId String）；变更面 67 文件中生成件全经 codegen 重生成（`_gen` 8 实体 + xmeta 8 + api beans 16 + view `_gen` 8 + `_app.orm.xml`），手写 view 零被动变更）
 Targets: `module-logistics/erp-log-{codegen,dao,meta,service,web,app,api}`
 Skill: `nop-backend-dev`
 
 - Item Types: `Fix | Proof`
 - Prereqs: Phase 1 完成
 
-- [ ] Fix: 7 模块链 no-am 重生成构建 main 绿（`-pl` 显式列表 + `-Dmaven.test.skip=true`）；编译器驱动修复手写面（log-dao IBiz/值对象 id 参数族 + service C1 全清单 3 文件为定位面：`AbstractErpLogShipmentDeliveredProcessor`（fin/inv/sal posting 族 String 值流转，mnt/qa 先例）+ `GatewayDispatcher` + `ErpLogDraftEscalationJob`（notify String API 消费））。
-      - Skill: `nop-backend-dev`
-- [ ] Proof: 继承中间态基线复核——编译错误清单 100% 为本域翻转涟漪（非继承破坏），与 M2.6 登记「log-dao + log-service main 编译全绿」一致；异常即登记并按 rule-6/D4 处置。
-      - Skill: none
+- [x] Fix: 7 模块链 no-am 重生成构建 main 绿（`-pl` 显式列表 + `-Dmaven.test.skip=true`）；编译器驱动修复手写面（log-dao IBiz/值对象 id 参数族 + service C1 全清单 3 文件为定位面：`AbstractErpLogShipmentDeliveredProcessor`（fin/inv/sal posting 族 String 值流转，mnt/qa 先例）+ `GatewayDispatcher` + `ErpLogDraftEscalationJob`（notify String API 消费））。
+      - Skill: `nop-backend-dev`（实际修复面超出 C1 3 文件定位面：+ LogisticsFreightProvider（Phase 1 补登 backward-160 兑付）+ ErpLogDeliveryBookingBizModel/ShipmentBizModel/spi 族——「以编译器实际清单为准，不以 C1 文件为界」ast 134 追注先例；ErpLogDraftEscalationJob 零 Long 修复需求（notify String API 消费签名不变，编译绿零改动））
+- [x] Proof: 继承中间态基线复核——编译错误清单 100% 为本域翻转涟漪（非继承破坏），与 M2.6 登记「log-dao + log-service main 编译全绿」一致；异常即登记并按 rule-6/D4 处置。
+      - Skill: none（**偏差如实登记**：orm 落源前实测 log-dao 13 编译错 100% `_gen` md 关系胶水（对称耦合已登记中间态，crm-dao 76/drp-dao 58 同型，随重生成自愈实证）+ log-service 2 处潜伏编译破坏（LogisticsFreightProvider setPartnerId vs fin VoucherFact String（M2.7 翻转后未再编译本域）+ AbstractErpLogShipmentDeliveredProcessor resolveAcctSchemaId vs md String（M1.1 后同因））——plan 引用的 M2.6「log-dao + log-service main 编译全绿」口径为 M2.6 时点实测，M2.7 fin 延后列兑付翻转 VoucherFact 后本域未复编；全部属已登记中间态模式或本域适配面，编译器可发现并已全数修复，不触发 rule-6 停止（D4）；冻结序末位无晚域，工具重扫 0 = 本域终态证明）
 
 Exit Criteria:
 
-- [ ] log 7 链 main 绿。
-- [ ] 零继承破坏复核落盘 + 下游破坏核证：冻结序末位无晚域，工具重扫为本域终态证明。
+- [x] log 7 链 main 绿。
+- [x] 零继承破坏复核落盘 + 下游破坏核证：冻结序末位无晚域，工具重扫为本域终态证明。
 
 ### Phase 3 - 测试修复 + 快照重录 + 域级测试
 
-Status: planned
+Status: completed（2026-08-23：测试修复 12 文件两轮 javac 清零（首轮 100 错截断实测 200 错误行 → 二轮 0：种子常量 String 字面量数字保真（`1L`→`"1"`/`8801L`→`"8801"`/`seedTemplate(9201L`→`"9201"`）+ 算术派生 id 数值保真 `String.valueOf(partnerId)` ×4 + extractId String 直返 ×2（DuplicateGuard/TrackingNoUk `Long.valueOf(String.valueOf(get("id")))` 残留移除）+ `orm_propValueByName("id", String)` 形态（DraftEscalationJob seedTemplate）+ 合法非 id Long 保留（assertEquals(1L,count) 计数 / CONFIG_DRAFT_ESCALATION_HOURS 48L/24L 配置 / Timestamp 100L*3600_000L）+ 语义陷阱 grep 零命中（id 序比较/装箱 ==/parseLong/longValue 全零）+ 运行时断言修复 ×1（TestErpLogPath2LandedCost:111 `assertEquals(partnerId, apPartnerId)` Long vs String 恒败 → `String.valueOf(partnerId)`）；快照重录 force-save-output 系统属性模式（免注解编辑 + 注解零残留实证）：66 测试全 snapshot-finished 预期错（1 真实失败即上述断言修复）→ CHECKING 复跑 **66/66 绿**；`_cases` 275 → 650 = 375 首录 + 57 diff + 0 删除，零「断言式」类误录（14 快照类全部基线既有，无新类目录首录；TestLogPostingFaultInjection/StateMachineMatrix 纯单元类零 _cases 维持）+ json5 id String 实证（`"id": "2"` 等）+ 非确定性单元格 1 处 `*` 通配（DeliveryBooking testShipmentDeliveredReleasesBooking ACTUAL_DELIVERY_DATE=CoreMetrics.today() 跨日漂移，hr/mfg 先例）；域级测试 `mvn test -pl module-logistics/erp-log-service,module-logistics/erp-log-web` 全绿（service 66/66 + web 0 tests 治理排除 `@Tag("full-app")`，successor M4.1）；平台 IoC 回归 self-wait **未复现零 delta**（mfg/sal/crm/drp 先例分支））
 Targets: `module-logistics/erp-log-service/src/test`
 Skill: `nop-testing`
 
 - Item Types: `Fix | Proof`
 - Prereqs: Phase 2 完成
 
-- [ ] Fix: 测试修复（15 个 `Test*.java` 编译器驱动清零 + 语义陷阱：id 序比较 → `ConvertHelper.toLong` 数值序（contract idOrder 先例）、装箱 `==` → `.equals()`、算术派生 id 数值保真、种子常量 String 字面量数字保真、`orm_propValueByName("id", String)` 形态；notify test 引用面 = `TestErpLogDraftEscalationJob`（backward-222）种子 String 化）。
+- [x] Fix: 测试修复（15 个 `Test*.java` 编译器驱动清零 + 语义陷阱：id 序比较 → `ConvertHelper.toLong` 数值序（contract idOrder 先例）、装箱 `==` → `.equals()`、算术派生 id 数值保真、种子常量 String 字面量数字保真、`orm_propValueByName("id", String)` 形态；notify test 引用面 = `TestErpLogDraftEscalationJob`（backward-222）种子 String 化）。
+      - Skill: `nop-testing`（实测 12 文件需改动（15 中 3 类零 Long 面零改动）；主代码 idOrder 修复落位 ErpLogDeliveryBookingBizModel（Phase 2），测试侧 id 序比较零命中）
+- [x] Proof: 快照重录 RECORDING→CHECKING（`-Dnop.autotest.force-save-output=true` 全局重录 + grep 零注解残留；`_cases/` 275 基线 → String 形态落盘；非确定性单元格 `*` 通配（hr/mfg 先例）；逐案审核 id String 实证 + 拒绝「断言式」类误录（cs 81 目录/sal 7 类超录回退先例））。
       - Skill: `nop-testing`
-- [ ] Proof: 快照重录 RECORDING→CHECKING（`-Dnop.autotest.force-save-output=true` 全局重录 + grep 零注解残留；`_cases/` 275 基线 → String 形态落盘；非确定性单元格 `*` 通配（hr/mfg 先例）；逐案审核 id String 实证 + 拒绝「断言式」类误录（cs 81 目录/sal 7 类超录回退先例））。
-      - Skill: `nop-testing`
-- [ ] Proof: 域级测试 `mvn test -pl module-logistics/erp-log-service,module-logistics/erp-log-web` 全绿（web 0 tests 治理排除 `@Tag("full-app")`，successor M4.1）；平台 IoC 回归 self-wait 处置双分支证据——未复现零 delta（mfg/sal 先例）或复现按 fin 修正版先例 delta 落位（含 hr 第二环 nopDataAuthChecker daoProvider lazy-property 变体先例）。
-      - Skill: `nop-testing`
+- [x] Proof: 域级测试 `mvn test -pl module-logistics/erp-log-service,module-logistics/erp-log-web` 全绿（web 0 tests 治理排除 `@Tag("full-app")`，successor M4.1）；平台 IoC 回归 self-wait 处置双分支证据——未复现零 delta（mfg/sal 先例）或复现按 fin 修正版先例 delta 落位（含 hr 第二环 nopDataAuthChecker daoProvider lazy-property 变体先例）。
+      - Skill: `nop-testing`（未复现零 delta 分支实证）
 
 Exit Criteria:
 
-- [ ] log 域级测试全绿。
-- [ ] 本域无 retired-test/B 义务（Phase 1 零实证复核）。
+- [x] log 域级测试全绿。
+- [x] 本域无 retired-test/B 义务（Phase 1 零实证复核）。
 
 ### Phase 4 - 语义陷阱 grep 门控 + page.yaml String 化 + 收尾登记
 
-Status: planned
+Status: completed（2026-08-23：grep 门控 main+test 全清零——`.longValue()`/`Long.parseLong`/`Map<Long`/`String.format("%d")`/id 序比较全零命中；装箱 `==` 仅 `GatewayDispatcher:315 getId() == null` null 检查合法保留；`Long` 残留 = `_gen` delVersion 规则 4 + idOrder `Long.compare(ConvertHelper.toLong)` 数值序合法；sql-lib 零存在注明（find 零命中）；page.yaml `:Long` 1 处就地 String 化（shipment-tracking:38 `$sid:String` + `sid: "${shipmentId \|\| null}"` 兜底 + adaptor 空值守卫 `!== ''`，drp net-requirement/pur three-way-match 先例形态）+ python yaml.safe_load 良构校验 PASS + log-web 重建 BUILD SUCCESS + log-web 全资源 `:Long` 复扫零命中 + 手写 view 零被动变更（git status 非 `_gen` 变更 = 恰 1 page.yaml 主动 Fix）；owner doc `docs/design/logistics/delivery-window.md` 数据模型节 BIGINT 列型注记（数据库列型 vs Java 层 String 区分 + 引用本计划；其余 5 文件 grep 复核零命中维持）；登记册 11 条 logistics backward 指针（160-163/255/219-224）核销注记 append「M3.10 已兑付」+ fail-closed 解析验证 11/11（check-bigint-id-types scan 通过 + loadRegistry 直读断言）；roadmap M3.10 → done（位次 19 证据摘要 + 头部「最后更新」mission 里程碑注记：**M1-M3 全部 19 域完成 + M4.1 唯一剩余工作项**）+ 日志 `docs/logs/2026/08-23.md` M3.10 条目（rule 8 日期口径，含验证状态 + mission 域迁移段完成里程碑））
 Targets: log-service main、log-web 手写面、`docs/design/logistics/`、登记册、路线图、日志
 Skill: `nop-backend-dev`
 
 - Item Types: `Fix | Add`
 - Prereqs: Phase 3 完成
 
-- [ ] Fix: 语义陷阱 grep 门控清零（路线图横切 §3 清单：`.longValue()`/`Long.parseLong`/`Map<Long`/`String.format("%d")`/装箱 `==`/id 序比较；合法非 id 项逐条注明；sql-lib 零存在注明）。
-      - Skill: none
-- [ ] Fix: page.yaml `:Long` 1 处就地 String 化（shipment-tracking `$sid`；BizModel 签名一致性核证，mfg CRP / sal three-way-match 先例）+ YAML 良构校验 + log-web 重建绿 + 手写 view 零被动变更核证（git status 非 `_gen` 变更 = 预期仅 page.yaml 主动 Fix）。
-      - Skill: `nop-backend-dev`
-- [ ] Fix: owner doc 注记——`docs/design/logistics/delivery-window.md` BIGINT 列型陈述就地注记引用本计划；其余文件 grep 复核零命中维持。
-      - Skill: none
-- [ ] Add: 登记册状态更新（本域零 active 条目翻转——C1/C2 backward 指针核销注记 + fail-closed 解析验证）+ 路线图 M3.10 → done（M2/M3 表位次 19 证据摘要 + 头部「最后更新」续链 + **19 域全数完成 + M4.1 唯一剩余工作项注记**）+ 日志 `docs/logs/2026/{执行当日}.md`（rule 8 日期口径，含验证状态 + mission 域迁移段完成里程碑）。
-      - Skill: none
+- [x] Fix: 语义陷阱 grep 门控清零（路线图横切 §3 清单：`.longValue()`/`Long.parseLong`/`Map<Long`/`String.format("%d")`/装箱 `==`/id 序比较；合法非 id 项逐条注明；sql-lib 零存在注明）。
+      - Skill: none（合法非 id 项：`getId() == null` null 检查 ×1 + `_gen` delVersion 规则 4 + idOrder Long.compare 数值序合法；测试侧合法：assertEquals(1L,count) 计数 / CONFIG_DRAFT_ESCALATION_HOURS 48L/24L / Timestamp 100L*3600_000L）
+- [x] Fix: page.yaml `:Long` 1 处就地 String 化（shipment-tracking `$sid`；BizModel 签名一致性核证，mfg CRP / sal three-way-match 先例）+ YAML 良构校验 + log-web 重建绿 + 手写 view 零被动变更核证（git status 非 `_gen` 变更 = 预期仅 page.yaml 主动 Fix）。
+      - Skill: `nop-backend-dev`（BizModel 签名一致性：`ErpLogShipment__get(id:String)` 平台 ICrudBiz String id + `ErpLogShipmentLog__findPage` 无 id 变量）
+- [x] Fix: owner doc 注记——`docs/design/logistics/delivery-window.md` BIGINT 列型陈述就地注记引用本计划；其余文件 grep 复核零命中维持。
+      - Skill: none（其余 5 文件 carrier-integration/README/state-machine/ui-patterns/use-cases 零命中）
+- [x] Add: 登记册状态更新（本域零 active 条目翻转——C1/C2 backward 指针核销注记 + fail-closed 解析验证）+ 路线图 M3.10 → done（M2/M3 表位次 19 证据摘要 + 头部「最后更新」续链 + **19 域全数完成 + M4.1 唯一剩余工作项注记**）+ 日志 `docs/logs/2026/{执行当日}.md`（rule 8 日期口径，含验证状态 + mission 域迁移段完成里程碑）。
+      - Skill: none（核销注记 = 11 条 backward 指针 note append「M3.10 已兑付」，status 保持 active（drp C 指针先例——定位面非义务条目）；日志落位 `docs/logs/2026/08-23.md` 顶部倒序）
 
 Exit Criteria:
 
-- [ ] grep 门控清零（登记例外除外）+ page.yaml `:Long` 清零。
-- [ ] 登记册/路线图/日志三处一致落盘 + 工具 scan 里程碑证据（「总待改 0」以批内序 1/2（crm/drp）先行完成为前提；否则如实登记 crm/drp 残留数）。
+- [x] grep 门控清零（登记例外除外）+ page.yaml `:Long` 清零。
+- [x] 登记册/路线图/日志三处一致落盘 + 工具 scan 里程碑证据（「总待改 0」以批内序 1/2（crm/drp）先行完成为前提；否则如实登记 crm/drp 残留数）。（三处一致落盘 + 工具 scan「实际修改 stdDataType 的列: 0」终态证据——crm 126/drp 55 先行完成前提成立）
 
 ## Draft Review Record
 
@@ -148,14 +148,15 @@ Exit Criteria:
 
 > 完整仓库验证定制为域级口径（路线图规则 3 D3 修订：禁止以全量构建为中间 gate；全量构建仅存在于 M4.1）。
 
-- [ ] 范围内行为完成（32 列落源 + 7 链绿 + 快照重录 + 测试绿）
-- [ ] 相关文档对齐（登记册 + 路线图 + owner doc + 日志）
-- [ ] 已运行验证：`mvn clean install -pl module-logistics/erp-log-{codegen,dao,meta,service,web,app,api} -DskipTests`（no-am）BUILD SUCCESS + `mvn test -pl module-logistics/erp-log-service,module-logistics/erp-log-web` 全绿
-- [ ] 无范围内项目降级为 deferred/follow-up
-- [ ] 独立草案审查已完成并记录（保护区域双批准落盘）
-- [ ] 文本一致性已验证：状态、阶段、门控和日志都一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成（32 列落源 + 7 链绿 + 快照重录 + 测试绿）
+- [x] 相关文档对齐（登记册 + 路线图 + owner doc + 日志）
+- [x] 已运行验证：`mvn clean install -pl module-logistics/erp-log-{codegen,dao,meta,service,web,app,api} -DskipTests`（no-am）BUILD SUCCESS + `mvn test -pl module-logistics/erp-log-service,module-logistics/erp-log-web` 全绿
+- [x] 无范围内项目降级为 deferred/follow-up
+- [x] 独立草案审查已完成并记录（保护区域双批准落盘）
+- [x] 文本一致性已验证：状态、阶段、门控和日志都一致
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
+      - 执行证据（2026-08-23）：独立结束审计子代理（fresh session ses_fd4db70bdffemG16KVMBSGvPYj，非执行者上下文）对 live repo 现场抽检 13 项全对（orm 32 列 string/BIGINT 保持 + delVersion 恰 8 处合法 / 工具 scan 实际修改 0 / 手写面 idOrder+String 直传核证 / 测试陷阱零 / 快照 650 文件 String id 实证 + 注解零残留 / page.yaml $sid:String + :Long 零 / 登记册 11 条兑付 note + fail-closed / §6.19 追注 / roadmap 位次 19 done + 里程碑注记 + M4.1 todo / owner doc 注记 / 日志条目 / 四 Phase 文本一致 / TestErpLogDeliveryBooking 9/9 复验绿），verdict **passes closure audit**，0 MAJOR / 0 MINOR。
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
@@ -179,12 +180,20 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: pending
+Status Note: 四 Phase 全部 completed，Exit Criteria / Closure Gates 全 `[x]`，独立结束审计通过（passes closure audit），M3.10 可关闭（roadmap 位次 19 done；**mission 里程碑：M1-M3 全部 19 域完成，M4.1 为唯一剩余工作项**）。
 
 Closure Audit Evidence:
 
-- Auditor / Agent: pending
-- Evidence: pending
+- Auditor / Agent: 独立结束审计子代理（fresh session ses_fd4db70bdffemG16KVMBSGvPYj，2026-08-23，非执行者上下文）；verdict **passes closure audit**（0 MAJOR / 0 MINOR），live repo 现场抽检 13 项全对：
+  - orm：`module-logistics/model/app-erp-logistics.orm.xml` PK 13（含 md stub 5）+ FK 19 全 `stdDataType="string"` + `stdSqlType="BIGINT"` 保持；`stdDataType="long"` 残余恰 8 处全部 `delVersion`（规则 4 合法）。
+  - 工具 scan：`check-bigint-id-types.mjs scan` 实际修改 0 列 / DEFERRED 0 / 告警 0（19 域终态）。
+  - 手写面：`LogisticsFreightProvider` setPartnerId String 直传 + asLong 零残留；`ErpLogDeliveryBookingBizModel:188` idOrder 数值序在位；main 手写 Long 残留 = api-bean delVersion + idOrder 合法。
+  - 测试：`Long.parseLong`/`.longValue()`/`Map<Long` 零命中；快照 `_cases` 650 文件 json5 id String 形态实证（`"id": "2"`）+ 数字形态零 + RECORDING/saveOutput 注解零残留。
+  - page.yaml：shipment-tracking `$sid:String` + `${shipmentId || null}` + adaptor `!== ''` 守卫；log-web `:Long` 复扫零。
+  - 登记册：11 条 logistics backward 指针全含「M3.10 已兑付」note（160-163/255/219-224 行号逐一核证）；retireOwner=M3.10 零条；fail-closed 解析通过。
+  - 文档链：§6.19 追注（三处补登）+ roadmap 位次 19 done + 头部 mission 里程碑注记 + M4.1 保持 todo + owner doc delivery-window.md 注记（引用本计划）+ `docs/logs/2026/08-23.md` M3.10 条目（验证状态全绿）。
+  - 文本一致性：四 Phase Status 全 completed + 全条目 `[x]`；`TestErpLogDeliveryBooking` 复验 9/9 绿。
+- Evidence: 本节上述独立抽检记录 + 执行者验证（7 链 `mvn clean install -DskipTests` BUILD SUCCESS ×2 + `mvn test -pl erp-log-service,erp-log-web` 66/66 绿 + web 0 tests 治理排除）。
 
 Follow-up:
 
