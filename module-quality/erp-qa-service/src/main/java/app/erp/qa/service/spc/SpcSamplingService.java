@@ -102,7 +102,7 @@ public class SpcSamplingService {
      * @param context 服务上下文
      * @return 本次新采集的样本（子组）数；无新数据返回 0
      */
-    public int collectSamples(Long chartId, IServiceContext context) {
+    public int collectSamples(String chartId, IServiceContext context) {
         if (chartId == null) {
             throw new NopException(ErpQaErrors.ERR_QA_SPC_CHART_NOT_FOUND)
                     .param(ErpQaErrors.ARG_CHART_ID, chartId);
@@ -113,7 +113,7 @@ public class SpcSamplingService {
             throw new NopException(ErpQaErrors.ERR_QA_SPC_CHART_NOT_FOUND)
                     .param(ErpQaErrors.ARG_CHART_ID, chartId);
         }
-        Long parameterId = chart.getParameterId();
+        String parameterId = chart.getParameterId();
         if (parameterId == null) {
             throw new NopException(ErpQaErrors.ERR_QA_SPC_PARAMETER_NOT_FOUND)
                     .param(ErpQaErrors.ARG_CHART_CODE, chart.getCode())
@@ -219,8 +219,8 @@ public class SpcSamplingService {
      * <p>子组按 APPROVED inspection 切分（chart.subgroupSize 语义改为"子组内 inspection 数"），
      * 每子组 1 ErpQaSpcSample，幂等键 = "ATTR#" + inspectionCode（避免与计量型 measuredValue 键冲突）。
      */
-    private int collectAttributesSamples(ErpQaSpcChart chart, Long parameterId, int subgroupSize) {
-        Long chartId = chart.getId();
+    private int collectAttributesSamples(ErpQaSpcChart chart, String parameterId, int subgroupSize) {
+        String chartId = chart.getId();
         // 找全部 APPROVED inspection（命中 parameterId 的 line 关联）
         List<ErpQaInspectionLine> approvedLines = findApprovedInspectionLines(parameterId);
         if (approvedLines.isEmpty()) {
@@ -228,14 +228,14 @@ public class SpcSamplingService {
             return 0;
         }
         // 按 inspectionId 分组行（一个 inspection 多个 line）
-        Map<Long, List<ErpQaInspectionLine>> linesByInspection = new LinkedHashMap<>();
+        Map<String, List<ErpQaInspectionLine>> linesByInspection = new LinkedHashMap<>();
         for (ErpQaInspectionLine line : approvedLines) {
             if (line.getInspectionId() == null) continue;
             linesByInspection.computeIfAbsent(line.getInspectionId(), k -> new ArrayList<>()).add(line);
         }
         // 收集有效 inspection（按 createTime 升序）
         List<ErpQaInspection> inspections = new ArrayList<>();
-        for (Long insId : linesByInspection.keySet()) {
+        for (String insId : linesByInspection.keySet()) {
             ErpQaInspection ins = resolveInspection(insId);
             if (ins != null) inspections.add(ins);
         }
@@ -258,7 +258,7 @@ public class SpcSamplingService {
         boolean isCU = ErpQaConstants.SPC_CHART_TYPE_C.equals(chart.getChartType())
                 || ErpQaConstants.SPC_CHART_TYPE_U.equals(chart.getChartType());
         // C/U 预加载 NCR（按 inspectionId 索引）
-        Map<Long, List<ErpQaNonConformance>> ncrsByInspection = isCU
+        Map<String, List<ErpQaNonConformance>> ncrsByInspection = isCU
                 ? loadNcrsByInspectionId(linesByInspection.keySet()) : java.util.Collections.emptyMap();
 
         int total = inspections.size();
@@ -325,7 +325,7 @@ public class SpcSamplingService {
         return created;
     }
 
-    private Map<Long, List<ErpQaNonConformance>> loadNcrsByInspectionId(java.util.Set<Long> inspectionIds) {
+    private Map<String, List<ErpQaNonConformance>> loadNcrsByInspectionId(java.util.Set<String> inspectionIds) {
         if (inspectionIds.isEmpty()) {
             return java.util.Collections.emptyMap();
         }
@@ -334,7 +334,7 @@ public class SpcSamplingService {
         q.addFilter(in("inspectionId", new ArrayList<>(inspectionIds)));
         q.addFilter(eq("sourceType", ErpQaConstants.NCR_SOURCE_TYPE_INSPECTION));
         List<ErpQaNonConformance> ncrs = dao.findAllByQuery(q);
-        Map<Long, List<ErpQaNonConformance>> result = new LinkedHashMap<>();
+        Map<String, List<ErpQaNonConformance>> result = new LinkedHashMap<>();
         for (ErpQaNonConformance ncr : ncrs) {
             if (ncr.getInspectionId() == null) continue;
             result.computeIfAbsent(ncr.getInspectionId(), k -> new ArrayList<>()).add(ncr);
@@ -356,14 +356,14 @@ public class SpcSamplingService {
         return keys;
     }
 
-    private ErpQaInspection resolveInspection(Long inspectionId) {
+    private ErpQaInspection resolveInspection(String inspectionId) {
         if (inspectionId == null) {
             return null;
         }
         return daoProvider.daoFor(ErpQaInspection.class).getEntityById(inspectionId);
     }
 
-    private List<ErpQaInspectionLine> findApprovedInspectionLines(Long parameterId) {
+    private List<ErpQaInspectionLine> findApprovedInspectionLines(String parameterId) {
         // 两步：先找 parameterId 命中的所有行；再过滤出对应 inspection 已 APPROVED 的
         IEntityDao<ErpQaInspectionLine> lineDao = daoProvider.daoFor(ErpQaInspectionLine.class);
         QueryBean lineQuery = new QueryBean();
@@ -373,7 +373,7 @@ public class SpcSamplingService {
             return Collections.emptyList();
         }
         // 取 inspectionId 集合查 APPROVED inspection
-        java.util.Set<Long> inspectionIds = new java.util.HashSet<>();
+        java.util.Set<String> inspectionIds = new java.util.HashSet<>();
         for (ErpQaInspectionLine l : all) {
             if (l.getInspectionId() != null) {
                 inspectionIds.add(l.getInspectionId());
@@ -390,7 +390,7 @@ public class SpcSamplingService {
         if (approvedIns.isEmpty()) {
             return Collections.emptyList();
         }
-        java.util.Set<Long> approvedIds = new java.util.HashSet<>();
+        java.util.Set<String> approvedIds = new java.util.HashSet<>();
         for (ErpQaInspection i : approvedIns) {
             approvedIds.add(i.getId());
         }
@@ -403,7 +403,7 @@ public class SpcSamplingService {
         return result;
     }
 
-    private List<ErpQaSpcSample> findSamples(Long chartId) {
+    private List<ErpQaSpcSample> findSamples(String chartId) {
         IEntityDao<ErpQaSpcSample> dao = daoProvider.daoFor(ErpQaSpcSample.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("chartId", chartId));
@@ -463,7 +463,7 @@ public class SpcSamplingService {
         return max + 1;
     }
 
-    private BigDecimal parseMeasuredValue(ErpQaInspectionLine line, Long chartId, Long parameterId) {
+    private BigDecimal parseMeasuredValue(ErpQaInspectionLine line, String chartId, String parameterId) {
         String raw = line.getMeasuredValue();
         if (StringHelper.isEmpty(raw)) {
             LOG.warn("spc-sampling-skip-empty-value: chartId={} parameterId={} lineId={}",

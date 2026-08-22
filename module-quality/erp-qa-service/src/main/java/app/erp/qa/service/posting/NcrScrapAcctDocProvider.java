@@ -55,8 +55,8 @@ public class NcrScrapAcctDocProvider implements IErpFinAcctDocProvider {
     @Override
     public List<VoucherFact> createFacts(PostingEvent event, AcctDocContext ctx) {
         BigDecimal amount = readAmount(event);
-        Long materialId = (Long) event.getBillData().get(KEY_MATERIAL_ID);
-        Long warehouseId = (Long) event.getBillData().get(KEY_WAREHOUSE_ID);
+        String materialId = (String) event.getBillData().get(KEY_MATERIAL_ID);
+        String warehouseId = (String) event.getBillData().get(KEY_WAREHOUSE_ID);
 
         List<VoucherFact> facts = new ArrayList<>(2);
         facts.add(fact(SUBJECT_LOSS, "营业外支出-报废损失", DC_DEBIT, amount, materialId, warehouseId, event,
@@ -67,7 +67,7 @@ public class NcrScrapAcctDocProvider implements IErpFinAcctDocProvider {
     }
 
     private VoucherFact fact(String subjectCode, String subjectName, String dcDirection, BigDecimal amount,
-                             Long materialId, Long warehouseId, PostingEvent event, String accountKey) {
+                             String materialId, String warehouseId, PostingEvent event, String accountKey) {
         VoucherFact fact = new VoucherFact();
         fact.setSubjectCode(subjectCode);
         fact.setSubjectName(subjectName);

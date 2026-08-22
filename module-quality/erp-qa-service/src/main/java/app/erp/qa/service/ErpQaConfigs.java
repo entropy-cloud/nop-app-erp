@@ -31,16 +31,12 @@ public final class ErpQaConfigs {
     }
 
     /** 全局默认质检模板 ID；空=无。 */
-    public static Long getDefaultInspectionTemplateId() {
+    public static String getDefaultInspectionTemplateId() {
         String raw = AppConfig.var(ErpQaConstants.CONFIG_DEFAULT_INSPECTION_TEMPLATE, "");
         if (raw == null || raw.trim().isEmpty()) {
             return null;
         }
-        try {
-            return Long.valueOf(raw.trim());
-        } catch (NumberFormatException e) {
-            return null;
-        }
+        return raw.trim();
     }
 
     /**
@@ -154,29 +150,21 @@ public final class ErpQaConfigs {
     }
 
     /** 看板 SPC 控制图默认 chartId（null=未配置时取最近一张 ErpQaSpcChart；plan 2026-07-17-2010-1）。 */
-    public static Long getDashQaSpcDefaultChartId() {
+    public static String getDashQaSpcDefaultChartId() {
         String raw = AppConfig.var(ErpQaConstants.CONFIG_DASH_QA_SPC_DEFAULT_CHART_ID, "");
         if (raw == null || raw.trim().isEmpty()) {
             return null;
         }
-        try {
-            return Long.valueOf(raw.trim());
-        } catch (NumberFormatException e) {
-            return null;
-        }
+        return raw.trim();
     }
 
     /** 看板 SPC 计数型（P/NP/C/U）控制图默认 chartId（null=未配置；plan 2026-07-19-0120-2 Phase 1 Decision (a)）。 */
-    public static Long getDashQaSpcDefaultAttributesChartId() {
+    public static String getDashQaSpcDefaultAttributesChartId() {
         String raw = AppConfig.var(ErpQaConstants.CONFIG_DASH_QA_SPC_DEFAULT_ATTRIBUTES_CHART_ID, "");
         if (raw == null || raw.trim().isEmpty()) {
             return null;
         }
-        try {
-            return Long.valueOf(raw.trim());
-        } catch (NumberFormatException e) {
-            return null;
-        }
+        return raw.trim();
     }
 
     private static List<String> parseCsv(String raw) {

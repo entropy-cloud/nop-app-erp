@@ -13,44 +13,44 @@
     public class ErpQaSpcCapabilityOutputBean {
 
     
-        private Long _id;
+        private String _id;
 
     
         @PropMeta(propId=1)
     
-        public Long getId(){
+        public String getId(){
             return _id;
         }
 
-        public void setId(Long value){
+        public void setId(String value){
             this._id = value;
         }
 
 
-        private Long _chartId;
+        private String _chartId;
 
     
         @PropMeta(propId=2)
     
-        public Long getChartId(){
+        public String getChartId(){
             return _chartId;
         }
 
-        public void setChartId(Long value){
+        public void setChartId(String value){
             this._chartId = value;
         }
 
 
-        private Long _orgId;
+        private String _orgId;
 
     
         @PropMeta(propId=3)
     
-        public Long getOrgId(){
+        public String getOrgId(){
             return _orgId;
         }
 
-        public void setOrgId(Long value){
+        public void setOrgId(String value){
             this._orgId = value;
         }
 

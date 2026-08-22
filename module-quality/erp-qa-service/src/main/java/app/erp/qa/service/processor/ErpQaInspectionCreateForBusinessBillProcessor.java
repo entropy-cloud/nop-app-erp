@@ -19,8 +19,8 @@ import java.math.BigDecimal;
  */
 public class ErpQaInspectionCreateForBusinessBillProcessor extends AbstractErpQaInspectionProcessor {
 
-    public ErpQaInspection createForBusinessBill(String billType, String billCode, Long materialId, String inspectionType,
-                                                 BigDecimal lotQuantity, Long supplierId, Long warehouseId,
+    public ErpQaInspection createForBusinessBill(String billType, String billCode, String materialId, String inspectionType,
+                                                 BigDecimal lotQuantity, String supplierId, String warehouseId,
                                                  String batchNo, IServiceContext context) {
         // 模板匹配：materialId × inspectionType → active 模板；无匹配走全局默认；仍无则无行（人工补录）
         TemplateMatchResult match = InspectionTemplateMatcher.match(daoProvider, materialId, inspectionType);
@@ -53,7 +53,7 @@ public class ErpQaInspectionCreateForBusinessBillProcessor extends AbstractErpQa
         return inspection;
     }
 
-    private void copyTemplateLinesToInspection(Long inspectionId, TemplateMatchResult match) {
+    private void copyTemplateLinesToInspection(String inspectionId, TemplateMatchResult match) {
         IEntityDao<ErpQaInspectionLine> lineDao = lineDao();
         int lineNo = 1;
         for (TemplateLineSpec spec : match.getLines()) {

@@ -49,7 +49,7 @@ public class ErpQaNonConformanceBizModel extends CrudBizModel<ErpQaNonConformanc
 
     @Override
     @BizMutation
-    public ErpQaNonConformance submitReview(@Name("ncrId") Long ncrId, IServiceContext context) {
+    public ErpQaNonConformance submitReview(@Name("ncrId") String ncrId, IServiceContext context) {
         ErpQaNonConformance ncr = requireNcr(ncrId, context);
         String current = ncr.getStatus();
         try {
@@ -64,7 +64,7 @@ public class ErpQaNonConformanceBizModel extends CrudBizModel<ErpQaNonConformanc
 
     @Override
     @BizMutation
-    public ErpQaNonConformance resolve(@Name("ncrId") Long ncrId,
+    public ErpQaNonConformance resolve(@Name("ncrId") String ncrId,
                                        @Name("resolution") String resolution,
                                        @Optional @Name("noCapaReason") String noCapaReason,
                                        IServiceContext context) {
@@ -73,19 +73,19 @@ public class ErpQaNonConformanceBizModel extends CrudBizModel<ErpQaNonConformanc
 
     @Override
     @BizMutation
-    public ErpQaNonConformance postNcr(@Name("ncrId") Long ncrId, IServiceContext context) {
+    public ErpQaNonConformance postNcr(@Name("ncrId") String ncrId, IServiceContext context) {
         return postNcrProcessor.postNcr(ncrId, context);
     }
 
     @Override
     @BizMutation
-    public ErpQaNonConformance reverseNcr(@Name("ncrId") Long ncrId, IServiceContext context) {
+    public ErpQaNonConformance reverseNcr(@Name("ncrId") String ncrId, IServiceContext context) {
         return reverseNcrProcessor.reverseNcr(ncrId, context);
     }
 
     @Override
     @BizMutation
-    public ErpQaNonConformance escalateToRecall(@Name("ncrId") Long ncrId, IServiceContext context) {
+    public ErpQaNonConformance escalateToRecall(@Name("ncrId") String ncrId, IServiceContext context) {
         ErpQaNonConformance ncr = requireNcr(ncrId, context);
         String current = ncr.getStatus();
         try {
@@ -101,13 +101,13 @@ public class ErpQaNonConformanceBizModel extends CrudBizModel<ErpQaNonConformanc
 
     @Override
     @BizMutation
-    public ErpQaRecall upgradeToRecall(@Name("ncrId") Long ncrId, IServiceContext context) {
+    public ErpQaRecall upgradeToRecall(@Name("ncrId") String ncrId, IServiceContext context) {
         return upgradeToRecallProcessor.upgradeToRecall(ncrId, context);
     }
 
     @Override
     @BizMutation
-    public ErpQaNonConformance cancel(@Name("ncrId") Long ncrId, IServiceContext context) {
+    public ErpQaNonConformance cancel(@Name("ncrId") String ncrId, IServiceContext context) {
         ErpQaNonConformance ncr = requireNcr(ncrId, context);
         String current = ncr.getStatus();
         try {
@@ -122,11 +122,11 @@ public class ErpQaNonConformanceBizModel extends CrudBizModel<ErpQaNonConformanc
 
     // ---------- helpers ----------
 
-    private ErpQaNonConformance requireNcr(Long ncrId, IServiceContext context) {
+    private ErpQaNonConformance requireNcr(String ncrId, IServiceContext context) {
         if (ncrId == null) {
             throw new NopException(ErpQaErrors.ERR_NCR_NOT_FOUND).param(ErpQaErrors.ARG_NCR_ID, ncrId);
         }
-        return requireEntity(String.valueOf(ncrId), null, context);
+        return requireEntity(ncrId, null, context);
     }
 
     private NopException illegalNcrTransition(ErpQaNonConformance ncr, String current, String expected) {

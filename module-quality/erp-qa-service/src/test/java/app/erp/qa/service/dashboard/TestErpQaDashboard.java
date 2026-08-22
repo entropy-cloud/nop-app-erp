@@ -61,16 +61,16 @@ public class TestErpQaDashboard extends JunitAutoTestCase {
         LocalDate today = CoreMetrics.currentDate();
         ormTemplate.runInSession(() -> {
             // 本期 4 质检：2 ACCEPTED + 1 REJECTED + 1 CONDITIONAL → 合格率 2/4=0.5
-            seedInspection(101L, today, ErpQaConstants.INSPECTION_RESULT_ACCEPTED);
-            seedInspection(102L, today, ErpQaConstants.INSPECTION_RESULT_ACCEPTED);
-            seedInspection(103L, today, ErpQaConstants.INSPECTION_RESULT_REJECTED);
-            seedInspection(104L, today, ErpQaConstants.INSPECTION_RESULT_CONDITIONAL);
+            seedInspection("101", today, ErpQaConstants.INSPECTION_RESULT_ACCEPTED);
+            seedInspection("102", today, ErpQaConstants.INSPECTION_RESULT_ACCEPTED);
+            seedInspection("103", today, ErpQaConstants.INSPECTION_RESULT_REJECTED);
+            seedInspection("104", today, ErpQaConstants.INSPECTION_RESULT_CONDITIONAL);
             // 非本期不计入
-            seedInspection(105L, today.minusMonths(2), ErpQaConstants.INSPECTION_RESULT_ACCEPTED);
+            seedInspection("105", today.minusMonths(2), ErpQaConstants.INSPECTION_RESULT_ACCEPTED);
             // NCR：2 OPEN + 1 IN_REVIEW + 1 RESOLVED → 开放 3
-            seedNcr(201L, today, ErpQaConstants.NCR_STATUS_OPEN, ErpQaConstants.DISPOSITION_TYPE_SCRAP);
-            seedNcr(202L, today, ErpQaConstants.NCR_STATUS_IN_REVIEW, ErpQaConstants.DISPOSITION_TYPE_RETURN);
-            seedNcr(203L, today, ErpQaConstants.NCR_STATUS_RESOLVED, ErpQaConstants.DISPOSITION_TYPE_SCRAP);
+            seedNcr("201", today, ErpQaConstants.NCR_STATUS_OPEN, ErpQaConstants.DISPOSITION_TYPE_SCRAP);
+            seedNcr("202", today, ErpQaConstants.NCR_STATUS_IN_REVIEW, ErpQaConstants.DISPOSITION_TYPE_RETURN);
+            seedNcr("203", today, ErpQaConstants.NCR_STATUS_RESOLVED, ErpQaConstants.DISPOSITION_TYPE_SCRAP);
         });
 
         Map<String, Object> kpi = dashboardBiz.getDashboardKpi(null, null, CTX);
@@ -85,10 +85,10 @@ public class TestErpQaDashboard extends JunitAutoTestCase {
         LocalDate today = CoreMetrics.currentDate();
         ormTemplate.runInSession(() -> {
             // 本月 2 质检：1 ACCEPTED + 1 REJECTED → 合格率 0.5
-            seedInspection(111L, today, ErpQaConstants.INSPECTION_RESULT_ACCEPTED);
-            seedInspection(112L, today, ErpQaConstants.INSPECTION_RESULT_REJECTED);
+            seedInspection("111", today, ErpQaConstants.INSPECTION_RESULT_ACCEPTED);
+            seedInspection("112", today, ErpQaConstants.INSPECTION_RESULT_REJECTED);
             // 上月 1 质检：1 ACCEPTED → 合格率 1.0
-            seedInspection(113L, today.minusMonths(1), ErpQaConstants.INSPECTION_RESULT_ACCEPTED);
+            seedInspection("113", today.minusMonths(1), ErpQaConstants.INSPECTION_RESULT_ACCEPTED);
         });
         List<Map<String, Object>> trend = dashboardBiz.getDashboardTrend(2, CTX);
         assertEquals(2, trend.size());
@@ -108,10 +108,10 @@ public class TestErpQaDashboard extends JunitAutoTestCase {
         LocalDate today = CoreMetrics.currentDate();
         ormTemplate.runInSession(() -> {
             // SCRAP 3 + RETURN 1
-            seedNcr(221L, today, ErpQaConstants.NCR_STATUS_OPEN, ErpQaConstants.DISPOSITION_TYPE_SCRAP);
-            seedNcr(222L, today, ErpQaConstants.NCR_STATUS_OPEN, ErpQaConstants.DISPOSITION_TYPE_SCRAP);
-            seedNcr(223L, today, ErpQaConstants.NCR_STATUS_OPEN, ErpQaConstants.DISPOSITION_TYPE_SCRAP);
-            seedNcr(224L, today, ErpQaConstants.NCR_STATUS_OPEN, ErpQaConstants.DISPOSITION_TYPE_RETURN);
+            seedNcr("221", today, ErpQaConstants.NCR_STATUS_OPEN, ErpQaConstants.DISPOSITION_TYPE_SCRAP);
+            seedNcr("222", today, ErpQaConstants.NCR_STATUS_OPEN, ErpQaConstants.DISPOSITION_TYPE_SCRAP);
+            seedNcr("223", today, ErpQaConstants.NCR_STATUS_OPEN, ErpQaConstants.DISPOSITION_TYPE_SCRAP);
+            seedNcr("224", today, ErpQaConstants.NCR_STATUS_OPEN, ErpQaConstants.DISPOSITION_TYPE_RETURN);
         });
         List<Map<String, Object>> top = dashboardBiz.findDefectTopN(10, CTX);
         assertEquals(2, top.size(), "2 种处置类型");
@@ -126,30 +126,30 @@ public class TestErpQaDashboard extends JunitAutoTestCase {
         LocalDate future = CoreMetrics.currentDate().plusDays(10);
         ormTemplate.runInSession(() -> {
             // Action A: dueDate 过去, PENDING → 触发
-            seedAction(301L, past, ErpQaConstants.ACTION_STATUS_PENDING);
+            seedAction("301", past, ErpQaConstants.ACTION_STATUS_PENDING);
             // Action B: dueDate 过去, COMPLETED → 不触发
-            seedAction(302L, past, ErpQaConstants.ACTION_STATUS_COMPLETED);
+            seedAction("302", past, ErpQaConstants.ACTION_STATUS_COMPLETED);
             // Action C: dueDate 未来, PENDING → 不触发
-            seedAction(303L, future, ErpQaConstants.ACTION_STATUS_PENDING);
+            seedAction("303", future, ErpQaConstants.ACTION_STATUS_PENDING);
         });
         AppConfig.getConfigProvider().assignConfigValue(
                 ErpQaConstants.CONFIG_DASH_QA_CAPA_OVERDUE_DAYS,
                 String.valueOf(ErpQaConstants.DEFAULT_DASH_QA_CAPA_OVERDUE_DAYS));
         List<Map<String, Object>> alerts = dashboardBiz.findCapaOverdueAlert(CTX);
         assertEquals(1, alerts.size(), "仅 Action A 触发");
-        assertEquals(301L, alerts.get(0).get("actionId"));
+        assertEquals("301", alerts.get(0).get("actionId"));
         assertEquals(10L, alerts.get(0).get("overdueDays"));
     }
 
     // ---------- helpers ----------
 
-    private void seedInspection(long id, LocalDate inspectionDate, String result) {
+    private void seedInspection(String id, LocalDate inspectionDate, String result) {
         IEntityDao<ErpQaInspection> dao = daoProvider.daoFor(ErpQaInspection.class);
         ErpQaInspection i = dao.newEntity();
         i.orm_propValue(1, id);
         i.setCode("INS-" + id);
         i.setInspectionType(ErpQaConstants.INSPECTION_TYPE_INCOMING);
-        i.setMaterialId(1L);
+        i.setMaterialId("1");
         i.setBusinessDate(inspectionDate);
         i.setInspectionDate(inspectionDate);
         i.setResult(result);
@@ -158,24 +158,24 @@ public class TestErpQaDashboard extends JunitAutoTestCase {
         dao.saveEntity(i);
     }
 
-    private void seedNcr(long id, LocalDate ncrDate, String status, String dispositionType) {
+    private void seedNcr(String id, LocalDate ncrDate, String status, String dispositionType) {
         IEntityDao<ErpQaNonConformance> dao = daoProvider.daoFor(ErpQaNonConformance.class);
         ErpQaNonConformance n = dao.newEntity();
         n.orm_propValue(1, id);
         n.setCode("NCR-" + id);
         n.setNcrDate(ncrDate);
-        n.setMaterialId(1L);
+        n.setMaterialId("1");
         n.setSeverity("MAJOR");
         n.setStatus(status);
         n.setDispositionType(dispositionType);
         dao.saveEntity(n);
     }
 
-    private void seedAction(long id, LocalDate dueDate, String status) {
+    private void seedAction(String id, LocalDate dueDate, String status) {
         IEntityDao<ErpQaAction> dao = daoProvider.daoFor(ErpQaAction.class);
         ErpQaAction a = dao.newEntity();
         a.orm_propValue(1, id);
-        a.setNcrId(1L);
+        a.setNcrId("1");
         a.setActionType("CORRECTIVE");
         a.setDueDate(dueDate);
         a.setStatus(status);

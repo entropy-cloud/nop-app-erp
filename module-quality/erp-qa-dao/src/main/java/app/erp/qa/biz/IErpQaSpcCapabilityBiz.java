@@ -18,7 +18,7 @@ public interface IErpQaSpcCapabilityBiz extends ICrudBiz<ErpQaSpcCapability> {
 
     /** 手动触发指定 chart 在指定周期内的过程能力计算。 */
     @BizMutation
-    ErpQaSpcCapability calculateCapability(@Name("chartId") Long chartId,
+    ErpQaSpcCapability calculateCapability(@Name("chartId") String chartId,
                                             @Optional @Name("periodFrom") LocalDate periodFrom,
                                             @Optional @Name("periodTo") LocalDate periodTo,
                                             IServiceContext context);

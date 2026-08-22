@@ -16,6 +16,7 @@ import app.erp.qa.service.ErpQaErrors;
 import app.erp.sal.biz.IErpSalDeliveryBiz;
 import app.erp.sal.dao.entity.ErpSalDelivery;
 import io.nop.api.core.beans.query.QueryBean;
+import io.nop.api.core.convert.ConvertHelper;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.core.context.IServiceContext;
 import io.nop.orm.IOrmEntitySet;
@@ -36,7 +37,7 @@ import static io.nop.api.core.beans.FilterBeans.eq;
  * <p>定位算法（{@code docs/design/quality/recall.md §目标定位算法`}，以 batchTrace 为准）：
  * <ol>
  *   <li>追溯链开关 {@code erp-inv.trace-chain-enabled=false} → 抛 {@link ErpQaErrors#ERR_TRACE_CHAIN_DISABLED}。</li>
- *   <li>类型桥：{@code recall.batchId}(Long) → 经 {@link IErpInvBatchBiz} 解析 {@code batchNo}(String)。</li>
+ *   <li>批次解析：{@code recall.batchId}(String，M2.3 起与 inv 同为 String) → 经 {@link IErpInvBatchBiz} 解析 {@code batchNo}(String)。</li>
  *   <li>{@code batchTrace(batchNo)} 聚合全部相关移动单。</li>
  *   <li>筛选销售出库移动单（{@code moveType=OUTGOING + relatedBillType=SALES_DELIVERY + docStatus=DONE}）。</li>
  *   <li>按 {@code relatedBillCode}(出库单号) 反查出库单 → 客户(partnerId)/出库ID/发货数量。</li>
@@ -100,9 +101,10 @@ public class RecallTargetLocator {
 
             ErpQaRecallTarget target = recallTargetBiz.newEntity();
             target.setRecallId(recall.getId());
-            target.setPartnerId(delivery.getCustomerId());
+            // bridge-main-092/093: sal delivery.customerId/id 仍 Long（sal 未迁移），qa target 已 String——sal 翻转时退役（owner M2.6）
+            target.setPartnerId(ConvertHelper.toString(delivery.getCustomerId()));
             target.setBatchNo(batchNo);
-            target.setSalesDeliveryId(delivery.getId());
+            target.setSalesDeliveryId(ConvertHelper.toString(delivery.getId()));
             target.setShippedQty(shippedQty);
             target.setReturnStatus(ErpQaConstants.RECALL_TARGET_RETURN_PENDING);
             recallTargetBiz.saveEntity(target, null, context);
@@ -121,12 +123,12 @@ public class RecallTargetLocator {
     }
 
     private String resolveBatchNo(ErpQaRecall recall, IServiceContext context) {
-        Long batchId = recall.getBatchId();
+        String batchId = recall.getBatchId();
         if (batchId == null) {
             throw new NopException(ErpQaErrors.ERR_RECALL_LOCATE_NO_BATCH)
                     .param(ErpQaErrors.ARG_RECALL_CODE, recall.getCode());
         }
-        ErpInvBatch batch = batchBiz.get(String.valueOf(batchId), false, context);
+        ErpInvBatch batch = batchBiz.get(batchId, false, context);
         if (batch == null || batch.getBatchNo() == null) {
             throw new NopException(ErpQaErrors.ERR_RECALL_LOCATE_NO_BATCH)
                     .param(ErpQaErrors.ARG_RECALL_CODE, recall.getCode());

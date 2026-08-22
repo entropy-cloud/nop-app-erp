@@ -19,7 +19,7 @@
             <cols>
 
                 <!--ID-->
-                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="id" mandatory="true" sortable="true"/>
 
                 <!--编码-->
                 <col id="code" mandatory="true" sortable="true"/>
@@ -40,7 +40,7 @@
                 <col id="unit" sortable="true"/>
 
                 <!--责任人-->
-                <col id="responsiblePersonId" ui:number="true" sortable="true"/>
+                <col id="responsiblePersonId" sortable="true"/>
 
                 <!--开始日期-->
                 <col id="startDate" sortable="true"/>

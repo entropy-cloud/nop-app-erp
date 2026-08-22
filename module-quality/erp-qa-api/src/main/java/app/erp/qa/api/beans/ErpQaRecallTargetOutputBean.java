@@ -13,44 +13,44 @@
     public class ErpQaRecallTargetOutputBean {
 
     
-        private Long _id;
+        private String _id;
 
     
         @PropMeta(propId=1)
     
-        public Long getId(){
+        public String getId(){
             return _id;
         }
 
-        public void setId(Long value){
+        public void setId(String value){
             this._id = value;
         }
 
 
-        private Long _recallId;
+        private String _recallId;
 
     
         @PropMeta(propId=2)
     
-        public Long getRecallId(){
+        public String getRecallId(){
             return _recallId;
         }
 
-        public void setRecallId(Long value){
+        public void setRecallId(String value){
             this._recallId = value;
         }
 
 
-        private Long _partnerId;
+        private String _partnerId;
 
     
         @PropMeta(propId=3)
     
-        public Long getPartnerId(){
+        public String getPartnerId(){
             return _partnerId;
         }
 
-        public void setPartnerId(Long value){
+        public void setPartnerId(String value){
             this._partnerId = value;
         }
 
@@ -83,16 +83,16 @@
         }
 
 
-        private Long _salesDeliveryId;
+        private String _salesDeliveryId;
 
     
         @PropMeta(propId=6)
     
-        public Long getSalesDeliveryId(){
+        public String getSalesDeliveryId(){
             return _salesDeliveryId;
         }
 
-        public void setSalesDeliveryId(Long value){
+        public void setSalesDeliveryId(String value){
             this._salesDeliveryId = value;
         }
 
@@ -165,16 +165,16 @@
         }
 
 
-        private Long _generatedReturnId;
+        private String _generatedReturnId;
 
     
         @PropMeta(propId=11)
     
-        public Long getGeneratedReturnId(){
+        public String getGeneratedReturnId(){
             return _generatedReturnId;
         }
 
-        public void setGeneratedReturnId(Long value){
+        public void setGeneratedReturnId(String value){
             this._generatedReturnId = value;
         }
 

@@ -27,7 +27,7 @@ public class ErpQaNonConformanceUpgradeToRecallProcessor extends AbstractErpQaNo
     @Inject
     IErpQaRecallBiz recallBiz;
 
-    public ErpQaRecall upgradeToRecall(Long ncrId, IServiceContext context) {
+    public ErpQaRecall upgradeToRecall(String ncrId, IServiceContext context) {
         ErpQaNonConformance ncr = requireNcr(ncrId, context);
         String current = ncr.getStatus();
         try {

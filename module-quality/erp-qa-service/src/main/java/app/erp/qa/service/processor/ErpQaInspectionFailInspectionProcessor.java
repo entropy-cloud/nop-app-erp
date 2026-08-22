@@ -19,7 +19,7 @@ public class ErpQaInspectionFailInspectionProcessor extends AbstractErpQaInspect
     @Inject
     NcrLifecycleService ncrLifecycleService;
 
-    public ErpQaInspection failInspection(Long inspectionId, IServiceContext context) {
+    public ErpQaInspection failInspection(String inspectionId, IServiceContext context) {
         ErpQaInspection inspection = requireInspection(inspectionId, context);
         String current = inspection.getResult();
         try {

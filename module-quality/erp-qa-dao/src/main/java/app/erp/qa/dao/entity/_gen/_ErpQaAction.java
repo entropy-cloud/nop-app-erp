@@ -166,10 +166,10 @@ public class _ErpQaAction extends DynamicOrmEntity{
 
     
     /* ID: ID */
-    private java.lang.Long _id;
+    private java.lang.String _id;
     
     /* 不合格品报告ID: NCR_ID */
-    private java.lang.Long _ncrId;
+    private java.lang.String _ncrId;
     
     /* 措施类型: ACTION_TYPE */
     private java.lang.String _actionType;
@@ -359,9 +359,9 @@ public class _ErpQaAction extends DynamicOrmEntity{
         switch(propId){
         
             case PROP_ID_id:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_id));
                }
                setId(typedValue);
@@ -369,9 +369,9 @@ public class _ErpQaAction extends DynamicOrmEntity{
             }
         
             case PROP_ID_ncrId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_ncrId));
                }
                setNcrId(typedValue);
@@ -549,14 +549,14 @@ public class _ErpQaAction extends DynamicOrmEntity{
         
             case PROP_ID_id:{
                onInitProp(propId);
-               this._id = (java.lang.Long)value;
+               this._id = (java.lang.String)value;
                orm_id(); // 如果是设置主键字段，则触发watcher
                break;
             }
         
             case PROP_ID_ncrId:{
                onInitProp(propId);
-               this._ncrId = (java.lang.Long)value;
+               this._ncrId = (java.lang.String)value;
                
                break;
             }
@@ -682,7 +682,7 @@ public class _ErpQaAction extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final java.lang.Long getId(){
+    public final java.lang.String getId(){
          onPropGet(PROP_ID_id);
          return _id;
     }
@@ -690,7 +690,7 @@ public class _ErpQaAction extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final void setId(java.lang.Long value){
+    public final void setId(java.lang.String value){
         if(onPropSet(PROP_ID_id,value)){
             this._id = value;
             internalClearRefs(PROP_ID_id);
@@ -701,7 +701,7 @@ public class _ErpQaAction extends DynamicOrmEntity{
     /**
      * 不合格品报告ID: NCR_ID
      */
-    public final java.lang.Long getNcrId(){
+    public final java.lang.String getNcrId(){
          onPropGet(PROP_ID_ncrId);
          return _ncrId;
     }
@@ -709,7 +709,7 @@ public class _ErpQaAction extends DynamicOrmEntity{
     /**
      * 不合格品报告ID: NCR_ID
      */
-    public final void setNcrId(java.lang.Long value){
+    public final void setNcrId(java.lang.String value){
         if(onPropSet(PROP_ID_ncrId,value)){
             this._ncrId = value;
             internalClearRefs(PROP_ID_ncrId);

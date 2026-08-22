@@ -60,7 +60,7 @@ public class ErpQaRecallBizModel extends CrudBizModel<ErpQaRecall> implements IE
 
     @Override
     @BizMutation
-    public ErpQaRecall cancel(@Name("recallId") Long recallId, IServiceContext context) {
+    public ErpQaRecall cancel(@Name("recallId") String recallId, IServiceContext context) {
         ErpQaRecall recall = requireRecall(recallId, context);
         String current = recall.getStatus();
         try {
@@ -75,35 +75,35 @@ public class ErpQaRecallBizModel extends CrudBizModel<ErpQaRecall> implements IE
 
     @Override
     @BizMutation
-    public ErpQaRecall locateTargets(@Name("recallId") Long recallId, IServiceContext context) {
+    public ErpQaRecall locateTargets(@Name("recallId") String recallId, IServiceContext context) {
         return locateTargetsProcessor.locateTargets(recallId, context);
     }
 
     @Override
     @BizMutation
-    public ErpQaRecall notifyCustomers(@Name("recallId") Long recallId, IServiceContext context) {
+    public ErpQaRecall notifyCustomers(@Name("recallId") String recallId, IServiceContext context) {
         return notifyCustomersProcessor.notifyCustomers(recallId, context);
     }
 
     @Override
     @BizMutation
-    public ErpQaRecall generateReturns(@Name("recallId") Long recallId, IServiceContext context) {
+    public ErpQaRecall generateReturns(@Name("recallId") String recallId, IServiceContext context) {
         return generateReturnsProcessor.generateReturns(recallId, context);
     }
 
     @Override
     @BizMutation
-    public ErpQaRecall close(@Name("recallId") Long recallId, IServiceContext context) {
+    public ErpQaRecall close(@Name("recallId") String recallId, IServiceContext context) {
         return closeProcessor.close(recallId, context);
     }
 
     // ---------- helpers ----------
 
-    private ErpQaRecall requireRecall(Long recallId, IServiceContext context) {
+    private ErpQaRecall requireRecall(String recallId, IServiceContext context) {
         if (recallId == null) {
             throw new NopException(ErpQaErrors.ERR_RECALL_NOT_FOUND).param(ErpQaErrors.ARG_RECALL_ID, recallId);
         }
-        return requireEntity(String.valueOf(recallId), null, context);
+        return requireEntity(recallId, null, context);
     }
 
     private NopException illegalRecallTransition(ErpQaRecall recall, String current, String expected) {

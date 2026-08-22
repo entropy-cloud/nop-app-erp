@@ -47,7 +47,7 @@ public class TestErpQaNcrCapaEndToEnd extends JunitAutoTestCase {
     @RegisterExtension
     static QaFrozenClockExtension frozenClock = new QaFrozenClockExtension();
 
-    static final Long MATERIAL_ID = 7401L;
+    static final String MATERIAL_ID = "7401";
     static final Long VERIFICATION_PERSON = 7501L;
 
     @Inject
@@ -60,7 +60,7 @@ public class TestErpQaNcrCapaEndToEnd extends JunitAutoTestCase {
     @Test
     public void testRejectedAutoCreatesNcrAndFullCapaClosure() {
         // 1. 质检 REJECTED → 自动生成 NCR(OPEN)
-        Long insId = seedPendingInspection("INS-E2E", "10", "20");
+        String insId = seedPendingInspection("INS-E2E", "10", "20");
         recordResult(insId, "5", false); // 5 < min 10 → REJECTED → 自动 NCR
 
         ErpQaInspection ins = daoProvider.daoFor(ErpQaInspection.class).getEntityById(insId);
@@ -69,7 +69,7 @@ public class TestErpQaNcrCapaEndToEnd extends JunitAutoTestCase {
         assertNotNull(ncr, "REJECTED 自动生成 NCR");
         assertEquals(ErpQaConstants.NCR_STATUS_OPEN, ncr.getStatus());
         assertEquals(ErpQaConstants.NCR_SOURCE_TYPE_INSPECTION, ncr.getSourceType());
-        Long ncrId = ncr.getId();
+        String ncrId = ncr.getId();
 
         // 2. NCR submitReview OPEN→IN_REVIEW
         rpcOk(mutation, "ErpQaNonConformance__submitReview", Map.of("ncrId", ncrId));
@@ -77,7 +77,7 @@ public class TestErpQaNcrCapaEndToEnd extends JunitAutoTestCase {
 
         // 3. 验证「有未完成 CAPA 时 resolve 被拒」：创建一个 PENDING 措施后 resolve 应拒绝
         //    （无措施 resolve 门控见 testResolveNoCapaGate）
-        Long actionId = seedAction(ncrId, ErpQaConstants.ACTION_STATUS_PENDING);
+        String actionId = seedAction(ncrId, ErpQaConstants.ACTION_STATUS_PENDING);
         ApiResponse<?> blocked = rpc(mutation, "ErpQaNonConformance__resolve",
                 Map.of("ncrId", ncrId, "resolution", "尝试解决"));
         assertEquals(ErpQaErrors.ERR_NCR_RESOLVE_CAPA_NOT_COMPLETED.getErrorCode(), blocked.getCode(),
@@ -111,10 +111,10 @@ public class TestErpQaNcrCapaEndToEnd extends JunitAutoTestCase {
 
     @Test
     public void testEscalateToRecallTerminal() {
-        Long insId = seedPendingInspection("INS-ESCAL", "10", "20");
+        String insId = seedPendingInspection("INS-ESCAL", "10", "20");
         recordResult(insId, "5", false);
         ErpQaNonConformance ncr = findNcrBySourceCode(daoProvider.daoFor(ErpQaInspection.class).getEntityById(insId).getCode());
-        Long ncrId = ncr.getId();
+        String ncrId = ncr.getId();
 
         rpcOk(mutation, "ErpQaNonConformance__submitReview", Map.of("ncrId", ncrId));
         rpcOk(mutation, "ErpQaNonConformance__escalateToRecall", Map.of("ncrId", ncrId));
@@ -130,10 +130,10 @@ public class TestErpQaNcrCapaEndToEnd extends JunitAutoTestCase {
 
     @Test
     public void testCancelFromOpenAndReview() {
-        Long insId = seedPendingInspection("INS-CANCEL", "10", "20");
+        String insId = seedPendingInspection("INS-CANCEL", "10", "20");
         recordResult(insId, "5", false);
         ErpQaNonConformance ncr = findNcrBySourceCode(daoProvider.daoFor(ErpQaInspection.class).getEntityById(insId).getCode());
-        Long ncrId = ncr.getId();
+        String ncrId = ncr.getId();
 
         // OPEN→CANCELLED
         rpcOk(mutation, "ErpQaNonConformance__cancel", Map.of("ncrId", ncrId));
@@ -142,10 +142,10 @@ public class TestErpQaNcrCapaEndToEnd extends JunitAutoTestCase {
 
     @Test
     public void testIllegalNcrTransitionsRejected() {
-        Long insId = seedPendingInspection("INS-ILLEGAL", "10", "20");
+        String insId = seedPendingInspection("INS-ILLEGAL", "10", "20");
         recordResult(insId, "5", false);
         ErpQaNonConformance ncr = findNcrBySourceCode(daoProvider.daoFor(ErpQaInspection.class).getEntityById(insId).getCode());
-        Long ncrId = ncr.getId();
+        String ncrId = ncr.getId();
 
         // OPEN 直接 resolve（未经评审）→ 非法
         ApiResponse<?> resp = rpc(mutation, "ErpQaNonConformance__resolve",
@@ -157,11 +157,11 @@ public class TestErpQaNcrCapaEndToEnd extends JunitAutoTestCase {
     @Test
     public void testResolveNoCapaGate() {
         // 无 CAPA 措施时 resolve 门控：须显式提供 noCapaReason（误开/降级场景）
-        Long insId = seedPendingInspection("INS-NOCAPA", "10", "20");
+        String insId = seedPendingInspection("INS-NOCAPA", "10", "20");
         recordResult(insId, "5", false);
         ErpQaNonConformance ncr = findNcrBySourceCode(
                 daoProvider.daoFor(ErpQaInspection.class).getEntityById(insId).getCode());
-        Long ncrId = ncr.getId();
+        String ncrId = ncr.getId();
         rpcOk(mutation, "ErpQaNonConformance__submitReview", Map.of("ncrId", ncrId));
 
         // (2) 无 CAPA + noCapaReason 空 → ERR_NCR_RESOLVE_NO_CAPA
@@ -183,11 +183,11 @@ public class TestErpQaNcrCapaEndToEnd extends JunitAutoTestCase {
 
     // ---------- helpers ----------
 
-    private ErpQaNonConformance reloadNcr(Long ncrId) {
+    private ErpQaNonConformance reloadNcr(String ncrId) {
         return daoProvider.daoFor(ErpQaNonConformance.class).getEntityById(ncrId);
     }
 
-    private ErpQaAction reloadAction(Long actionId) {
+    private ErpQaAction reloadAction(String actionId) {
         return daoProvider.daoFor(ErpQaAction.class).getEntityById(actionId);
     }
 
@@ -199,7 +199,7 @@ public class TestErpQaNcrCapaEndToEnd extends JunitAutoTestCase {
         return list.isEmpty() ? null : list.get(0);
     }
 
-    private void recordResult(Long insId, String measured, boolean allowConcession) {
+    private void recordResult(String insId, String measured, boolean allowConcession) {
         Map<String, Object> line = new LinkedHashMap<>();
         line.put("lineNo", 1);
         line.put("measuredValue", measured);
@@ -216,8 +216,9 @@ public class TestErpQaNcrCapaEndToEnd extends JunitAutoTestCase {
         return value == null ? null : new BigDecimal(value);
     }
 
-    private Long seedPendingInspection(String code, String specMin, String specMax) {
-        Long id = 6200L + (long) (Math.abs(code.hashCode()) % 1000);
+    private String seedPendingInspection(String code, String specMin, String specMax) {
+        long idNum = 6200L + (long) (Math.abs(code.hashCode()) % 1000);
+        String id = String.valueOf(idNum);
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpQaInspection> dao = daoProvider.daoFor(ErpQaInspection.class);
             ErpQaInspection ins = new ErpQaInspection();
@@ -237,7 +238,7 @@ public class TestErpQaNcrCapaEndToEnd extends JunitAutoTestCase {
 
             IEntityDao<ErpQaInspectionLine> lineDao = daoProvider.daoFor(ErpQaInspectionLine.class);
             ErpQaInspectionLine line = new ErpQaInspectionLine();
-            line.orm_propValueByName("id", id * 100 + 1);
+            line.orm_propValueByName("id", String.valueOf(idNum * 100 + 1));
             line.setInspectionId(id);
             line.setLineNo(1);
             line.setParameterName("长度");
@@ -249,8 +250,8 @@ public class TestErpQaNcrCapaEndToEnd extends JunitAutoTestCase {
         return id;
     }
 
-    private Long seedAction(Long ncrId, String status) {
-        Long id = 9700L + (long) (Math.abs(ncrId.hashCode() + status.hashCode()) % 1000);
+    private String seedAction(String ncrId, String status) {
+        String id = String.valueOf(9700L + (long) (Math.abs(ncrId.hashCode() + status.hashCode()) % 1000));
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpQaAction> dao = daoProvider.daoFor(ErpQaAction.class);
             ErpQaAction a = new ErpQaAction();

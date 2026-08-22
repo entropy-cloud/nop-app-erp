@@ -12,30 +12,30 @@
     public class ErpQaInspectionLineInputBean extends CrudInputBase {
 
     
-        private Long _id;
+        private String _id;
 
     
         @PropMeta(propId=1)
     
-        public Long getId(){
+        public String getId(){
             return _id;
         }
 
-        public void setId(Long value){
+        public void setId(String value){
             this._id = value;
         }
 
 
-        private Long _inspectionId;
+        private String _inspectionId;
 
     
         @PropMeta(propId=2)
     
-        public Long getInspectionId(){
+        public String getInspectionId(){
             return _inspectionId;
         }
 
-        public void setInspectionId(Long value){
+        public void setInspectionId(String value){
             this._inspectionId = value;
         }
 
@@ -54,16 +54,16 @@
         }
 
 
-        private Long _parameterId;
+        private String _parameterId;
 
     
         @PropMeta(propId=4)
     
-        public Long getParameterId(){
+        public String getParameterId(){
             return _parameterId;
         }
 
-        public void setParameterId(Long value){
+        public void setParameterId(String value){
             this._parameterId = value;
         }
 

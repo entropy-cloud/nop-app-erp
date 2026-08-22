@@ -169,13 +169,13 @@ public class _ErpQaRecallTarget extends DynamicOrmEntity{
 
     
     /* ID: ID */
-    private java.lang.Long _id;
+    private java.lang.String _id;
     
     /* 召回事件: RECALL_ID */
-    private java.lang.Long _recallId;
+    private java.lang.String _recallId;
     
     /* 受影响客户: PARTNER_ID */
-    private java.lang.Long _partnerId;
+    private java.lang.String _partnerId;
     
     /* 批号: BATCH_NO */
     private java.lang.String _batchNo;
@@ -184,7 +184,7 @@ public class _ErpQaRecallTarget extends DynamicOrmEntity{
     private java.lang.String _serialNo;
     
     /* 销售出库单(弱指针): SALES_DELIVERY_ID */
-    private java.lang.Long _salesDeliveryId;
+    private java.lang.String _salesDeliveryId;
     
     /* 发货数量: SHIPPED_QTY */
     private java.math.BigDecimal _shippedQty;
@@ -199,7 +199,7 @@ public class _ErpQaRecallTarget extends DynamicOrmEntity{
     private java.lang.String _returnStatus;
     
     /* 已生成退货单(弱指针): GENERATED_RETURN_ID */
-    private java.lang.Long _generatedReturnId;
+    private java.lang.String _generatedReturnId;
     
     /* 备注: REMARK */
     private java.lang.String _remark;
@@ -362,9 +362,9 @@ public class _ErpQaRecallTarget extends DynamicOrmEntity{
         switch(propId){
         
             case PROP_ID_id:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_id));
                }
                setId(typedValue);
@@ -372,9 +372,9 @@ public class _ErpQaRecallTarget extends DynamicOrmEntity{
             }
         
             case PROP_ID_recallId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_recallId));
                }
                setRecallId(typedValue);
@@ -382,9 +382,9 @@ public class _ErpQaRecallTarget extends DynamicOrmEntity{
             }
         
             case PROP_ID_partnerId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_partnerId));
                }
                setPartnerId(typedValue);
@@ -412,9 +412,9 @@ public class _ErpQaRecallTarget extends DynamicOrmEntity{
             }
         
             case PROP_ID_salesDeliveryId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_salesDeliveryId));
                }
                setSalesDeliveryId(typedValue);
@@ -462,9 +462,9 @@ public class _ErpQaRecallTarget extends DynamicOrmEntity{
             }
         
             case PROP_ID_generatedReturnId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_generatedReturnId));
                }
                setGeneratedReturnId(typedValue);
@@ -552,21 +552,21 @@ public class _ErpQaRecallTarget extends DynamicOrmEntity{
         
             case PROP_ID_id:{
                onInitProp(propId);
-               this._id = (java.lang.Long)value;
+               this._id = (java.lang.String)value;
                orm_id(); // 如果是设置主键字段，则触发watcher
                break;
             }
         
             case PROP_ID_recallId:{
                onInitProp(propId);
-               this._recallId = (java.lang.Long)value;
+               this._recallId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_partnerId:{
                onInitProp(propId);
-               this._partnerId = (java.lang.Long)value;
+               this._partnerId = (java.lang.String)value;
                
                break;
             }
@@ -587,7 +587,7 @@ public class _ErpQaRecallTarget extends DynamicOrmEntity{
         
             case PROP_ID_salesDeliveryId:{
                onInitProp(propId);
-               this._salesDeliveryId = (java.lang.Long)value;
+               this._salesDeliveryId = (java.lang.String)value;
                
                break;
             }
@@ -622,7 +622,7 @@ public class _ErpQaRecallTarget extends DynamicOrmEntity{
         
             case PROP_ID_generatedReturnId:{
                onInitProp(propId);
-               this._generatedReturnId = (java.lang.Long)value;
+               this._generatedReturnId = (java.lang.String)value;
                
                break;
             }
@@ -685,7 +685,7 @@ public class _ErpQaRecallTarget extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final java.lang.Long getId(){
+    public final java.lang.String getId(){
          onPropGet(PROP_ID_id);
          return _id;
     }
@@ -693,7 +693,7 @@ public class _ErpQaRecallTarget extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final void setId(java.lang.Long value){
+    public final void setId(java.lang.String value){
         if(onPropSet(PROP_ID_id,value)){
             this._id = value;
             internalClearRefs(PROP_ID_id);
@@ -704,7 +704,7 @@ public class _ErpQaRecallTarget extends DynamicOrmEntity{
     /**
      * 召回事件: RECALL_ID
      */
-    public final java.lang.Long getRecallId(){
+    public final java.lang.String getRecallId(){
          onPropGet(PROP_ID_recallId);
          return _recallId;
     }
@@ -712,7 +712,7 @@ public class _ErpQaRecallTarget extends DynamicOrmEntity{
     /**
      * 召回事件: RECALL_ID
      */
-    public final void setRecallId(java.lang.Long value){
+    public final void setRecallId(java.lang.String value){
         if(onPropSet(PROP_ID_recallId,value)){
             this._recallId = value;
             internalClearRefs(PROP_ID_recallId);
@@ -723,7 +723,7 @@ public class _ErpQaRecallTarget extends DynamicOrmEntity{
     /**
      * 受影响客户: PARTNER_ID
      */
-    public final java.lang.Long getPartnerId(){
+    public final java.lang.String getPartnerId(){
          onPropGet(PROP_ID_partnerId);
          return _partnerId;
     }
@@ -731,7 +731,7 @@ public class _ErpQaRecallTarget extends DynamicOrmEntity{
     /**
      * 受影响客户: PARTNER_ID
      */
-    public final void setPartnerId(java.lang.Long value){
+    public final void setPartnerId(java.lang.String value){
         if(onPropSet(PROP_ID_partnerId,value)){
             this._partnerId = value;
             internalClearRefs(PROP_ID_partnerId);
@@ -780,7 +780,7 @@ public class _ErpQaRecallTarget extends DynamicOrmEntity{
     /**
      * 销售出库单(弱指针): SALES_DELIVERY_ID
      */
-    public final java.lang.Long getSalesDeliveryId(){
+    public final java.lang.String getSalesDeliveryId(){
          onPropGet(PROP_ID_salesDeliveryId);
          return _salesDeliveryId;
     }
@@ -788,7 +788,7 @@ public class _ErpQaRecallTarget extends DynamicOrmEntity{
     /**
      * 销售出库单(弱指针): SALES_DELIVERY_ID
      */
-    public final void setSalesDeliveryId(java.lang.Long value){
+    public final void setSalesDeliveryId(java.lang.String value){
         if(onPropSet(PROP_ID_salesDeliveryId,value)){
             this._salesDeliveryId = value;
             internalClearRefs(PROP_ID_salesDeliveryId);
@@ -875,7 +875,7 @@ public class _ErpQaRecallTarget extends DynamicOrmEntity{
     /**
      * 已生成退货单(弱指针): GENERATED_RETURN_ID
      */
-    public final java.lang.Long getGeneratedReturnId(){
+    public final java.lang.String getGeneratedReturnId(){
          onPropGet(PROP_ID_generatedReturnId);
          return _generatedReturnId;
     }
@@ -883,7 +883,7 @@ public class _ErpQaRecallTarget extends DynamicOrmEntity{
     /**
      * 已生成退货单(弱指针): GENERATED_RETURN_ID
      */
-    public final void setGeneratedReturnId(java.lang.Long value){
+    public final void setGeneratedReturnId(java.lang.String value){
         if(onPropSet(PROP_ID_generatedReturnId,value)){
             this._generatedReturnId = value;
             internalClearRefs(PROP_ID_generatedReturnId);

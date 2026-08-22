@@ -14,7 +14,7 @@ import io.nop.core.context.IServiceContext;
  */
 public class ErpQaInspectionPassInspectionProcessor extends AbstractErpQaInspectionProcessor {
 
-    public ErpQaInspection passInspection(Long inspectionId, IServiceContext context) {
+    public ErpQaInspection passInspection(String inspectionId, IServiceContext context) {
         ErpQaInspection inspection = requireInspection(inspectionId, context);
         String current = inspection.getResult();
         try {

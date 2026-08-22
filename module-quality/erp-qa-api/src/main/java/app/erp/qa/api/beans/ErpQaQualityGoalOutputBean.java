@@ -13,16 +13,16 @@
     public class ErpQaQualityGoalOutputBean {
 
     
-        private Long _id;
+        private String _id;
 
     
         @PropMeta(propId=1)
     
-        public Long getId(){
+        public String getId(){
             return _id;
         }
 
-        public void setId(Long value){
+        public void setId(String value){
             this._id = value;
         }
 
@@ -111,16 +111,16 @@
         }
 
 
-        private Long _responsiblePersonId;
+        private String _responsiblePersonId;
 
     
         @PropMeta(propId=8)
     
-        public Long getResponsiblePersonId(){
+        public String getResponsiblePersonId(){
             return _responsiblePersonId;
         }
 
-        public void setResponsiblePersonId(Long value){
+        public void setResponsiblePersonId(String value){
             this._responsiblePersonId = value;
         }
 

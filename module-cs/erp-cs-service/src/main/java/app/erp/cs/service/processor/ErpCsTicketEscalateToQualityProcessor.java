@@ -7,10 +7,8 @@ import app.erp.cs.service.ErpCsConfigs;
 import app.erp.cs.service.ErpCsConstants;
 import app.erp.cs.service.ErpCsErrors;
 import app.erp.qa.biz.IErpQaNonConformanceBiz;
-// bridge-main-057: ErpQaNonConformance 为 qa 未迁移（M2.3）Long 实体，本类经弱指针/值桥交互（退役 owner M2.3）
 import app.erp.qa.dao.entity.ErpQaNonConformance;
 import io.nop.api.core.beans.query.QueryBean;
-import io.nop.api.core.convert.ConvertHelper;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.api.core.time.CoreMetrics;
 import io.nop.commons.util.StringHelper;
@@ -150,7 +148,6 @@ public class ErpCsTicketEscalateToQualityProcessor {
 
     /** 工单关联 NCR 闭环结果投影（UC-CS-06 ⑤，经 qaNcrBiz 弱指针反查）。 */
     public List<Map<String, Object>> findQualityNcrs(ErpCsTicket ticket, IServiceContext context) {
-        // bridge-main-058: findList 弱指针反查仅 sourceType/sourceCode（VARCHAR）过滤，零 id 值穿越（退役 owner M2.3）
         List<ErpQaNonConformance> ncrs = qaNcrBiz.findList(buildNcrLookupQuery(ticket.getCode()), null, context);
         return ncrs.stream().map(this::toNcrSummary).collect(java.util.stream.Collectors.toList());
     }
@@ -170,8 +167,7 @@ public class ErpCsTicketEscalateToQualityProcessor {
         data.put("ncrDate", CoreMetrics.today());
         data.put("sourceType", ErpCsConstants.NCR_SOURCE_TYPE_CS_TICKET);
         data.put("sourceCode", ticket.getCode());
-        // bridge-main-059: cs String materialId/supplierId → qa ErpQaNonConformance Long 列（退役 owner M2.3）
-        data.put("materialId", ConvertHelper.toLong(materialId));
+        data.put("materialId", materialId);
         String description = defectDescription;
         if (!StringHelper.isBlank(batchInfo)) {
             description = description + "；批次：" + batchInfo.trim();
@@ -183,15 +179,13 @@ public class ErpCsTicketEscalateToQualityProcessor {
         data.put("severity", StringHelper.isBlank(severity) ? ErpCsConstants.QUALITY_SEVERITY_NORMAL : severity);
         data.put("status", ErpCsConstants.NCR_STATUS_OPEN);
         if (supplierId != null) {
-            // bridge-main-059: cs String supplierId → qa Long supplierId（退役 owner M2.3）
-            data.put("supplierId", ConvertHelper.toLong(supplierId));
+            data.put("supplierId", supplierId);
         }
         return qaNcrBiz.save(data, context);
     }
 
     /** 弱指针反查（sourceType=CS_TICKET + sourceCode=ticket.code）。 */
     protected ErpQaNonConformance findExistingNcr(String ticketCode, IServiceContext context) {
-        // bridge-main-060: findList 弱指针反查仅 sourceType/sourceCode（VARCHAR）过滤，零 id 值穿越（退役 owner M2.3）
         List<ErpQaNonConformance> found = qaNcrBiz.findList(buildNcrLookupQuery(ticketCode), null, context);
         return found.isEmpty() ? null : found.get(0);
     }

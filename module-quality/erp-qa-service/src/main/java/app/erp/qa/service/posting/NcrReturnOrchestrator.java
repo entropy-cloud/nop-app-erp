@@ -10,6 +10,7 @@ import app.erp.sal.biz.IErpSalReturnBiz;
 import app.erp.sal.dao.constants.ErpSalDocStatus;
 import app.erp.sal.dao.entity.ErpSalReturn;
 import io.nop.api.core.beans.query.QueryBean;
+import io.nop.api.core.convert.ConvertHelper;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.api.core.time.CoreMetrics;
 import io.nop.core.context.IServiceContext;
@@ -70,8 +71,8 @@ public class NcrReturnOrchestrator {
      * 按 NCR 来源编排退货域。成功后 NCR.returnCode 登记关联退货单单号。
      */
     public void orchestrateReturn(ErpQaNonConformance ncr, IServiceContext context) {
-        Long warehouseId = resolveWarehouseId(ncr.getMaterialId());
-        Long currencyId = resolveCurrencyId(ncr.getMaterialId());
+        String warehouseId = resolveWarehouseId(ncr.getMaterialId());
+        String currencyId = resolveCurrencyId(ncr.getMaterialId());
         if (ncr.getSupplierId() != null) {
             String returnCode = createPurchaseReturn(ncr, warehouseId, currencyId, context);
             ncr.setReturnCode(returnCode);
@@ -81,7 +82,7 @@ public class NcrReturnOrchestrator {
         }
     }
 
-    private String createPurchaseReturn(ErpQaNonConformance ncr, Long warehouseId, Long currencyId, IServiceContext context) {
+    private String createPurchaseReturn(ErpQaNonConformance ncr, String warehouseId, String currencyId, IServiceContext context) {
         if (purReturnBiz == null) {
             throw new NopException(ErpQaErrors.ERR_NCR_DISPOSITION_NOT_POSTABLE)
                     .param(ErpQaErrors.ARG_NCR_CODE, ncr.getCode())
@@ -89,9 +90,11 @@ public class NcrReturnOrchestrator {
         }
         Map<String, Object> data = new LinkedHashMap<>();
         data.put("code", "PR-FROM-NCR-" + ncr.getId());
-        data.put("supplierId", ncr.getSupplierId());
-        data.put("warehouseId", warehouseId);
-        data.put("currencyId", currencyId);
+        // bridge-main-094/096: qa ncr.supplierId 已 String、inv 余额 warehouse/currency 已 String（M2.2），
+        // pur return 各 id 列仍 Long——保存前转 Long，pur 翻转时退役（owner M2.5）
+        data.put("supplierId", ConvertHelper.toLong(ncr.getSupplierId()));
+        data.put("warehouseId", ConvertHelper.toLong(warehouseId));
+        data.put("currencyId", ConvertHelper.toLong(currencyId));
         data.put("businessDate", resolveBusinessDate(ncr));
         data.put("docStatus", ErpPurDocStatus.DOC_STATUS_DRAFT);
         data.put("approveStatus", ErpPurDocStatus.APPROVE_STATUS_UNSUBMITTED);
@@ -100,7 +103,7 @@ public class NcrReturnOrchestrator {
         return purReturn != null ? purReturn.getCode() : null;
     }
 
-    private String createSalesReturn(ErpQaNonConformance ncr, Long warehouseId, Long currencyId, IServiceContext context) {
+    private String createSalesReturn(ErpQaNonConformance ncr, String warehouseId, String currencyId, IServiceContext context) {
         if (salReturnBiz == null) {
             throw new NopException(ErpQaErrors.ERR_NCR_DISPOSITION_NOT_POSTABLE)
                     .param(ErpQaErrors.ARG_NCR_CODE, ncr.getCode())
@@ -108,8 +111,10 @@ public class NcrReturnOrchestrator {
         }
         Map<String, Object> data = new LinkedHashMap<>();
         data.put("code", "SR-FROM-NCR-" + ncr.getId());
-        data.put("warehouseId", warehouseId);
-        data.put("currencyId", currencyId);
+        // bridge-main-095/097: inv 余额 warehouse/currency 已 String（M2.2），sal return 各 id 列仍 Long——
+        // 保存前转 Long，sal 翻转时退役（owner M2.6）
+        data.put("warehouseId", ConvertHelper.toLong(warehouseId));
+        data.put("currencyId", ConvertHelper.toLong(currencyId));
         data.put("businessDate", resolveBusinessDate(ncr));
         data.put("docStatus", ErpSalDocStatus.DOC_STATUS_DRAFT);
         data.put("approveStatus", ErpSalDocStatus.APPROVE_STATUS_UNSUBMITTED);
@@ -118,17 +123,17 @@ public class NcrReturnOrchestrator {
         return salReturn != null ? salReturn.getCode() : null;
     }
 
-    private Long resolveWarehouseId(Long materialId) {
+    private String resolveWarehouseId(String materialId) {
         ErpInvStockBalance balance = findStockBalance(materialId);
         return balance != null ? balance.getWarehouseId() : null;
     }
 
-    private Long resolveCurrencyId(Long materialId) {
+    private String resolveCurrencyId(String materialId) {
         ErpInvStockBalance balance = findStockBalance(materialId);
         return balance != null ? balance.getCurrencyId() : null;
     }
 
-    private ErpInvStockBalance findStockBalance(Long materialId) {
+    private ErpInvStockBalance findStockBalance(String materialId) {
         if (materialId == null) {
             return null;
         }

@@ -18,6 +18,7 @@ import io.nop.api.core.annotations.core.OptionalBoolean;
 import io.nop.api.core.beans.ApiRequest;
 import io.nop.api.core.beans.ApiResponse;
 import io.nop.api.core.beans.query.QueryBean;
+import io.nop.api.core.convert.ConvertHelper;
 import io.nop.api.core.time.CoreMetrics;
 import io.nop.autotest.junit.JunitAutoTestCase;
 import io.nop.dao.api.IDaoProvider;
@@ -60,14 +61,16 @@ public class TestErpQaRecallE2E extends JunitAutoTestCase {
     @RegisterExtension
     static QaFrozenClockExtension frozenClock = new QaFrozenClockExtension();
 
-    static final Long MATERIAL_ID = 28201L;
-    static final Long WAREHOUSE_ID = 38201L;
-    static final Long CUSTOMER_ID = 48201L;
-    static final Long UOM_ID = 58201L;
-    static final Long CURRENCY_ID = 68201L;
-    static final Long BATCH_PK = 88201L;
+    static final String MATERIAL_ID = "28201";
+    static final String WAREHOUSE_ID = "38201";
+    static final String CUSTOMER_ID = "48201";
+    static final String UOM_ID = "58201";
+    static final String CURRENCY_ID = "68201";
+    static final String BATCH_PK = "88201";
+    // bridge-test-128: sal delivery 仍未迁移（M2.6），qa/inv/md 侧已 String——种子经局部桥转换
     static final Long DELIVERY_PK = 78201L;
-    static final Long MOVE_PK = 98201L;
+    static final String MOVE_PK = "98201";
+    static final String MOVE_LINE_PK = "982011";
     static final String BATCH_NO = "RC-BATCH-E2E";
     static final String DELIVERY_CODE = "DLV-RC-E2E";
 
@@ -81,10 +84,10 @@ public class TestErpQaRecallE2E extends JunitAutoTestCase {
     @Test
     public void testNcrUpgradeToRecallFullChain() {
         seedTraceFixture();
-        Long ncrId = seedNcr("NCR-E2E-UPG", "HIGH");
+        String ncrId = seedNcr("NCR-E2E-UPG", "HIGH");
 
         // NCR 升级 → 建召回
-        Long recallId = upgradeToRecallAndGetId(ncrId);
+        String recallId = upgradeToRecallAndGetId(ncrId);
         assertEquals(ErpQaConstants.NCR_STATUS_ESCALATED_TO_RECALL,
                 daoProvider.daoFor(ErpQaNonConformance.class).getEntityById(ncrId).getStatus(),
                 "NCR 升级后状态=ESCALATED_TO_RECALL");
@@ -100,33 +103,33 @@ public class TestErpQaRecallE2E extends JunitAutoTestCase {
         // 升级生成的召回未带批次（NCR 无批次列）→ 质量组补登受影响批次后定位
         setRecallBatch(recallId, BATCH_PK);
 
-        rpcOk(mutation, "ErpQaRecall__submitForApproval", Map.of("id", String.valueOf(recallId)));
-        rpcOk(mutation, "ErpQaRecall__approve", Map.of("id", String.valueOf(recallId)));
+        rpcOk(mutation, "ErpQaRecall__submitForApproval", Map.of("id", recallId));
+        rpcOk(mutation, "ErpQaRecall__approve", Map.of("id", recallId));
         runFullChainFromApproved(recallId);
     }
 
     @Test
     public void testManualTriggerFullChain() {
         seedTraceFixture();
-        Long recallId = registerManualRecall("RC-E2E-MANUAL", ErpQaConstants.RECALL_SEVERITY_MEDIUM);
-        rpcOk(mutation, "ErpQaRecall__submitForApproval", Map.of("id", String.valueOf(recallId)));
-        rpcOk(mutation, "ErpQaRecall__approve", Map.of("id", String.valueOf(recallId)));
+        String recallId = registerManualRecall("RC-E2E-MANUAL", ErpQaConstants.RECALL_SEVERITY_MEDIUM);
+        rpcOk(mutation, "ErpQaRecall__submitForApproval", Map.of("id", recallId));
+        rpcOk(mutation, "ErpQaRecall__approve", Map.of("id", recallId));
         runFullChainFromApproved(recallId);
     }
 
     @Test
     public void testCriticalSeverityFullChain() {
         seedTraceFixture();
-        Long recallId = registerManualRecall("RC-E2E-CRIT", ErpQaConstants.RECALL_SEVERITY_CRITICAL);
+        String recallId = registerManualRecall("RC-E2E-CRIT", ErpQaConstants.RECALL_SEVERITY_CRITICAL);
         assertEquals(ErpQaConstants.RECALL_SEVERITY_CRITICAL, reloadRecall(recallId).getSeverityLevel());
-        rpcOk(mutation, "ErpQaRecall__submitForApproval", Map.of("id", String.valueOf(recallId)));
-        rpcOk(mutation, "ErpQaRecall__approve", Map.of("id", String.valueOf(recallId)));
+        rpcOk(mutation, "ErpQaRecall__submitForApproval", Map.of("id", recallId));
+        rpcOk(mutation, "ErpQaRecall__approve", Map.of("id", recallId));
         runFullChainFromApproved(recallId);
     }
 
     // ---------- shared chain (APPROVED → locate → notify → return → close) ----------
 
-    private void runFullChainFromApproved(Long recallId) {
+    private void runFullChainFromApproved(String recallId) {
         rpcOk(mutation, "ErpQaRecall__locateTargets", Map.of("recallId", recallId));
         assertEquals(ErpQaConstants.RECALL_STATUS_IN_PROGRESS, reloadRecall(recallId).getStatus());
 
@@ -178,7 +181,7 @@ public class TestErpQaRecallE2E extends JunitAutoTestCase {
 
             IEntityDao<ErpInvStockMoveLine> moveLineDao = daoProvider.daoFor(ErpInvStockMoveLine.class);
             ErpInvStockMoveLine moveLine = new ErpInvStockMoveLine();
-            moveLine.orm_propValueByName("id", MOVE_PK * 10 + 1);
+            moveLine.orm_propValueByName("id", MOVE_LINE_PK);
             moveLine.setMoveId(MOVE_PK);
             moveLine.setLineNo(1);
             moveLine.setMaterialId(MATERIAL_ID);
@@ -237,9 +240,9 @@ public class TestErpQaRecallE2E extends JunitAutoTestCase {
         ErpSalDelivery delivery = new ErpSalDelivery();
         delivery.orm_propValueByName("id", DELIVERY_PK);
         delivery.setCode(DELIVERY_CODE);
-        delivery.setCustomerId(CUSTOMER_ID);
-        delivery.setWarehouseId(WAREHOUSE_ID);
-        delivery.setCurrencyId(CURRENCY_ID);
+        delivery.setCustomerId(ConvertHelper.toLong(CUSTOMER_ID));
+        delivery.setWarehouseId(ConvertHelper.toLong(WAREHOUSE_ID));
+        delivery.setCurrencyId(ConvertHelper.toLong(CURRENCY_ID));
         delivery.setBusinessDate(CoreMetrics.currentDate());
         delivery.setDocStatus("ACTIVE");
         delivery.setApproveStatus("APPROVED");
@@ -251,14 +254,14 @@ public class TestErpQaRecallE2E extends JunitAutoTestCase {
         dlvLine.orm_propValueByName("id", DELIVERY_PK * 10 + 1);
         dlvLine.setDeliveryId(DELIVERY_PK);
         dlvLine.setLineNo(1);
-        dlvLine.setMaterialId(MATERIAL_ID);
-        dlvLine.setUoMId(UOM_ID);
+        dlvLine.setMaterialId(ConvertHelper.toLong(MATERIAL_ID));
+        dlvLine.setUoMId(ConvertHelper.toLong(UOM_ID));
         dlvLine.setQuantity(new BigDecimal("8"));
         dlvLineDao.saveEntity(dlvLine);
     }
 
-    private Long seedNcr(String code, String severity) {
-        Long id = 30200L + (long) (Math.abs(code.hashCode()) % 1000);
+    private String seedNcr(String code, String severity) {
+        String id = String.valueOf(30200L + (long) (Math.abs(code.hashCode()) % 1000));
         ormTemplate.runInSession(session -> {
             IEntityDao<ErpQaNonConformance> dao = daoProvider.daoFor(ErpQaNonConformance.class);
             ErpQaNonConformance ncr = new ErpQaNonConformance();
@@ -277,7 +280,7 @@ public class TestErpQaRecallE2E extends JunitAutoTestCase {
         return id;
     }
 
-    private void setRecallBatch(Long recallId, Long batchId) {
+    private void setRecallBatch(String recallId, String batchId) {
         ormTemplate.runInSession(session -> {
             IEntityDao<ErpQaRecall> dao = daoProvider.daoFor(ErpQaRecall.class);
             ErpQaRecall recall = dao.getEntityById(recallId);
@@ -289,7 +292,7 @@ public class TestErpQaRecallE2E extends JunitAutoTestCase {
 
     // ---------- recall helpers ----------
 
-    private Long registerManualRecall(String code, String severity) {
+    private String registerManualRecall(String code, String severity) {
         Map<String, Object> data = new LinkedHashMap<>();
         data.put("code", code);
         data.put("recallName", "召回-" + code);
@@ -302,12 +305,12 @@ public class TestErpQaRecallE2E extends JunitAutoTestCase {
         return recallIdByCode(code);
     }
 
-    private Long upgradeToRecallAndGetId(Long ncrId) {
+    private String upgradeToRecallAndGetId(String ncrId) {
         rpcOk(mutation, "ErpQaNonConformance__upgradeToRecall", Map.of("ncrId", ncrId));
         return recallIdByCode("RC-FROM-NCR-" + ncrId);
     }
 
-    private Long recallIdByCode(String code) {
+    private String recallIdByCode(String code) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("code", code));
         q.setLimit(1);
@@ -316,7 +319,7 @@ public class TestErpQaRecallE2E extends JunitAutoTestCase {
         return list.get(0).getId();
     }
 
-    private ErpQaRecall reloadRecall(Long recallId) {
+    private ErpQaRecall reloadRecall(String recallId) {
         return daoProvider.daoFor(ErpQaRecall.class).getEntityById(recallId);
     }
 

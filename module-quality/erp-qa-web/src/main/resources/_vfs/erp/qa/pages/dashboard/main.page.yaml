@@ -187,7 +187,7 @@ body:
       method: post
       dataType: raw
       data:
-        query: "query(${'$'}chartId:Long){ ErpQaDashboard__getSpcControlChartData(chartId:${'$'}chartId) }"
+        query: "query(${'$'}chartId:String){ ErpQaDashboard__getSpcControlChartData(chartId:${'$'}chartId) }"
         variables:
           chartId: "${chartId || null}"
       adaptor: |

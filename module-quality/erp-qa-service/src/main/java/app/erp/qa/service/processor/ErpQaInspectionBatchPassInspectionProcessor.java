@@ -24,12 +24,10 @@ public class ErpQaInspectionBatchPassInspectionProcessor {
         }
         for (String id : ids) {
             try {
-                passInspectionProcessor.passInspection(Long.valueOf(id), context);
+                passInspectionProcessor.passInspection(id, context);
                 result.recordSuccess();
             } catch (NopException e) {
                 result.recordFailure(id, e.getErrorCode(), e.getDescription());
-            } catch (NumberFormatException e) {
-                result.recordFailure(id, "INVALID_ID", "非数字 ID：" + id);
             }
         }
         return result;

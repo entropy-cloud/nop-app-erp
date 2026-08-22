@@ -47,9 +47,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpQaSpcSampling extends JunitAutoTestCase {
 
-    static final Long MATERIAL_ID = 7601L;
-    static final Long PARAMETER_ID = 8801L;
-    static final Long INSPECTOR_ID = 7701L;
+    static final String MATERIAL_ID = "7601";
+    static final String PARAMETER_ID = "8801";
+    static final String INSPECTOR_ID = "7701";
 
     @Inject
     IDaoProvider daoProvider;
@@ -64,7 +64,7 @@ public class TestErpQaSpcSampling extends JunitAutoTestCase {
 
     @Test
     public void collectSamplesAggregatesApprovedInspectionLines() {
-        Long chartId = seedChart("CHART-SAMPLE", 5);
+        String chartId = seedChart("CHART-SAMPLE", 5);
         for (int i = 0; i < 5; i++) {
             seedApprovedInspectionLine("INS-S" + i, chartId, BigDecimal.valueOf(10 + i * 10));
         }
@@ -88,7 +88,7 @@ public class TestErpQaSpcSampling extends JunitAutoTestCase {
 
     @Test
     public void collectSamplesIsIdempotent() {
-        Long chartId = seedChart("CHART-IDEMP", 5);
+        String chartId = seedChart("CHART-IDEMP", 5);
         for (int i = 0; i < 5; i++) {
             seedApprovedInspectionLine("INS-IDEMP" + i, chartId, BigDecimal.valueOf(10 + i));
         }
@@ -101,7 +101,7 @@ public class TestErpQaSpcSampling extends JunitAutoTestCase {
 
     @Test
     public void collectSamplesWithNoDataReturnsZero() {
-        Long chartId = seedChart("CHART-EMPTY", 5);
+        String chartId = seedChart("CHART-EMPTY", 5);
         Integer created = ormTemplate.runInSession(s -> spcSamplingService.collectSamples(chartId, null));
         assertEquals(Integer.valueOf(0), created);
         assertTrue(findSamples(chartId).isEmpty());
@@ -109,7 +109,7 @@ public class TestErpQaSpcSampling extends JunitAutoTestCase {
 
     @Test
     public void recalculateComputesControlLimitsWhen20Subgroups() {
-        Long chartId = seedChart("CHART-CL", 5);
+        String chartId = seedChart("CHART-CL", 5);
         for (int i = 0; i < 100; i++) {
             seedApprovedInspectionLine("INS-CL" + i, chartId, BigDecimal.valueOf(10 + (i % 5)));
         }
@@ -130,7 +130,7 @@ public class TestErpQaSpcSampling extends JunitAutoTestCase {
 
     @Test
     public void recalculateKeepsPendingWhenLessThan20() {
-        Long chartId = seedChart("CHART-PENDING", 5);
+        String chartId = seedChart("CHART-PENDING", 5);
         for (int i = 0; i < 10; i++) {
             seedApprovedInspectionLine("INS-P" + i, chartId, BigDecimal.TEN);
         }
@@ -147,7 +147,7 @@ public class TestErpQaSpcSampling extends JunitAutoTestCase {
 
     @Test
     public void nonNumericMeasuredValueIsSkipped() {
-        Long chartId = seedChart("CHART-NUM", 2);
+        String chartId = seedChart("CHART-NUM", 2);
         // 1 数值 + 1 非数值（"N/A"）→ 仅 1 有效，子组 size=2 不足成组
         seedApprovedInspectionLine("INS-NUM1", chartId, BigDecimal.TEN);
         seedApprovedInspectionLineRaw("INS-NUM2", chartId, "N/A");
@@ -157,8 +157,8 @@ public class TestErpQaSpcSampling extends JunitAutoTestCase {
 
     // ---------- helpers ----------
 
-    private Long seedChart(String code, int subgroupSize) {
-        Long id = 70000L + (long) Math.abs(code.hashCode() % 10000);
+    private String seedChart(String code, int subgroupSize) {
+        String id = String.valueOf(70000L + (long) Math.abs(code.hashCode() % 10000));
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpQaSpcChart> dao = daoProvider.daoFor(ErpQaSpcChart.class);
             ErpQaSpcChart chart = dao.newEntity();
@@ -180,13 +180,13 @@ public class TestErpQaSpcSampling extends JunitAutoTestCase {
         return id;
     }
 
-    private void seedApprovedInspectionLine(String code, Long chartId, BigDecimal measuredValue) {
+    private void seedApprovedInspectionLine(String code, String chartId, BigDecimal measuredValue) {
         seedApprovedInspectionLineRaw(code, chartId, measuredValue.toPlainString());
     }
 
-    private void seedApprovedInspectionLineRaw(String code, Long chartId, String measuredValue) {
-        Long insId = 80000L + (long) Math.abs(code.hashCode() % 10000);
-        Long lineId = insId * 100 + 1;
+    private void seedApprovedInspectionLineRaw(String code, String chartId, String measuredValue) {
+        String insId = String.valueOf(80000L + (long) Math.abs(code.hashCode() % 10000));
+        String lineId = String.valueOf(Long.parseLong(insId) * 100 + 1);
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpQaInspection> insDao = daoProvider.daoFor(ErpQaInspection.class);
             ErpQaInspection ins = insDao.newEntity();
@@ -216,7 +216,7 @@ public class TestErpQaSpcSampling extends JunitAutoTestCase {
         });
     }
 
-    private List<ErpQaSpcSample> findSamples(Long chartId) {
+    private List<ErpQaSpcSample> findSamples(String chartId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("chartId", chartId));
         return daoProvider.daoFor(ErpQaSpcSample.class).findAllByQuery(q);

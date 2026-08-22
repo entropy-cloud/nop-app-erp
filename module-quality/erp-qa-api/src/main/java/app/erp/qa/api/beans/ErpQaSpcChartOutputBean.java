@@ -14,16 +14,16 @@
     public class ErpQaSpcChartOutputBean {
 
     
-        private Long _id;
+        private String _id;
 
     
         @PropMeta(propId=1)
     
-        public Long getId(){
+        public String getId(){
             return _id;
         }
 
-        public void setId(Long value){
+        public void setId(String value){
             this._id = value;
         }
 
@@ -56,16 +56,16 @@
         }
 
 
-        private Long _orgId;
+        private String _orgId;
 
     
         @PropMeta(propId=4)
     
-        public Long getOrgId(){
+        public String getOrgId(){
             return _orgId;
         }
 
-        public void setOrgId(Long value){
+        public void setOrgId(String value){
             this._orgId = value;
         }
 
@@ -96,44 +96,44 @@
         }
 
 
-        private Long _materialId;
+        private String _materialId;
 
     
         @PropMeta(propId=6)
     
-        public Long getMaterialId(){
+        public String getMaterialId(){
             return _materialId;
         }
 
-        public void setMaterialId(Long value){
+        public void setMaterialId(String value){
             this._materialId = value;
         }
 
 
-        private Long _inspectionTypeId;
+        private String _inspectionTypeId;
 
     
         @PropMeta(propId=7)
     
-        public Long getInspectionTypeId(){
+        public String getInspectionTypeId(){
             return _inspectionTypeId;
         }
 
-        public void setInspectionTypeId(Long value){
+        public void setInspectionTypeId(String value){
             this._inspectionTypeId = value;
         }
 
 
-        private Long _parameterId;
+        private String _parameterId;
 
     
         @PropMeta(propId=8)
     
-        public Long getParameterId(){
+        public String getParameterId(){
             return _parameterId;
         }
 
-        public void setParameterId(Long value){
+        public void setParameterId(String value){
             this._parameterId = value;
         }
 

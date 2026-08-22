@@ -43,9 +43,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpQaSpcAttributesSampling extends JunitAutoTestCase {
 
-    static final Long MATERIAL_ID = 7701L;
-    static final Long PARAMETER_ID = 8901L;
-    static final Long INSPECTOR_ID = 7801L;
+    static final String MATERIAL_ID = "7701";
+    static final String PARAMETER_ID = "8901";
+    static final String INSPECTOR_ID = "7801";
 
     @Inject
     IDaoProvider daoProvider;
@@ -60,7 +60,7 @@ public class TestErpQaSpcAttributesSampling extends JunitAutoTestCase {
 
     @Test
     public void pChartSamplingAggregatesRejectedInspectionLines() {
-        Long chartId = seedChart("CHART-ATTR-P", ErpQaConstants.SPC_CHART_TYPE_P, 2);
+        String chartId = seedChart("CHART-ATTR-P", ErpQaConstants.SPC_CHART_TYPE_P, 2);
         // 子组 1：2 inspections，每个 inspection 含 5 lines（2 REJECTED + 3 ACCEPTED）
         seedAttributesInspection("INS-ATTR-P1", chartId, 5, 2);
         seedAttributesInspection("INS-ATTR-P2", chartId, 5, 2);
@@ -80,7 +80,7 @@ public class TestErpQaSpcAttributesSampling extends JunitAutoTestCase {
 
     @Test
     public void cChartSamplingAggregatesNcrQuantities() {
-        Long chartId = seedChart("CHART-ATTR-C", ErpQaConstants.SPC_CHART_TYPE_C, 2);
+        String chartId = seedChart("CHART-ATTR-C", ErpQaConstants.SPC_CHART_TYPE_C, 2);
         // 子组 1：2 inspections，每个挂 1 NCR（sourceType=INSPECTION, quantity=3 / 5）
         seedAttributesInspectionWithNcr("INS-ATTR-C1", chartId, 3);
         seedAttributesInspectionWithNcr("INS-ATTR-C2", chartId, 5);
@@ -97,7 +97,7 @@ public class TestErpQaSpcAttributesSampling extends JunitAutoTestCase {
 
     @Test
     public void attributesRecalculateRoutesToAttributesFormulas() {
-        Long chartId = seedChart("CHART-ATTR-RECALC", ErpQaConstants.SPC_CHART_TYPE_P, 2);
+        String chartId = seedChart("CHART-ATTR-RECALC", ErpQaConstants.SPC_CHART_TYPE_P, 2);
         // 撒 40 inspections → 20 子组（满足 ≥20 守卫）
         for (int i = 0; i < 40; i++) {
             // defect pattern: 1 rejected of 5 lines per inspection
@@ -121,7 +121,7 @@ public class TestErpQaSpcAttributesSampling extends JunitAutoTestCase {
     @Test
     public void measurementChartUnaffectedByAttributesBranch() {
         // 计量型 chart 仍走既有 measuredValues 聚合路径（0 回归守门）
-        Long chartId = seedChart("CHART-MEAS-CHECK", ErpQaConstants.SPC_CHART_TYPE_X_BAR_R, 5);
+        String chartId = seedChart("CHART-MEAS-CHECK", ErpQaConstants.SPC_CHART_TYPE_X_BAR_R, 5);
         for (int i = 0; i < 5; i++) {
             seedMeasurementInspectionLine("INS-MEAS" + i, chartId, BigDecimal.valueOf(10 + i));
         }
@@ -140,7 +140,7 @@ public class TestErpQaSpcAttributesSampling extends JunitAutoTestCase {
 
     @Test
     public void attributesSamplingIsIdempotent() {
-        Long chartId = seedChart("CHART-ATTR-IDEMP", ErpQaConstants.SPC_CHART_TYPE_P, 2);
+        String chartId = seedChart("CHART-ATTR-IDEMP", ErpQaConstants.SPC_CHART_TYPE_P, 2);
         seedAttributesInspection("INS-ATTR-IDEMP1", chartId, 5, 2);
         seedAttributesInspection("INS-ATTR-IDEMP2", chartId, 5, 2);
 
@@ -153,8 +153,8 @@ public class TestErpQaSpcAttributesSampling extends JunitAutoTestCase {
 
     // ---------- helpers ----------
 
-    private Long seedChart(String code, String chartType, int subgroupSize) {
-        Long id = 71000L + (long) Math.abs(code.hashCode() % 10000);
+    private String seedChart(String code, String chartType, int subgroupSize) {
+        String id = String.valueOf(71000L + (long) Math.abs(code.hashCode() % 10000));
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpQaSpcChart> dao = daoProvider.daoFor(ErpQaSpcChart.class);
             ErpQaSpcChart chart = dao.newEntity();
@@ -176,8 +176,8 @@ public class TestErpQaSpcAttributesSampling extends JunitAutoTestCase {
         return id;
     }
 
-    private void seedAttributesInspection(String code, Long chartId, int totalLines, int rejectedLines) {
-        Long insId = 81000L + (long) Math.abs(code.hashCode() % 10000);
+    private void seedAttributesInspection(String code, String chartId, int totalLines, int rejectedLines) {
+        String insId = String.valueOf(81000L + (long) Math.abs(code.hashCode() % 10000));
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpQaInspection> insDao = daoProvider.daoFor(ErpQaInspection.class);
             ErpQaInspection ins = insDao.newEntity();
@@ -197,7 +197,7 @@ public class TestErpQaSpcAttributesSampling extends JunitAutoTestCase {
             IEntityDao<ErpQaInspectionLine> lineDao = daoProvider.daoFor(ErpQaInspectionLine.class);
             for (int i = 1; i <= totalLines; i++) {
                 ErpQaInspectionLine line = lineDao.newEntity();
-                line.orm_propValueByName("id", insId * 100 + i);
+                line.orm_propValueByName("id", String.valueOf(Long.parseLong(insId) * 100 + i));
                 line.setInspectionId(insId);
                 line.setLineNo(i);
                 line.setParameterId(PARAMETER_ID);
@@ -211,8 +211,8 @@ public class TestErpQaSpcAttributesSampling extends JunitAutoTestCase {
         });
     }
 
-    private void seedAttributesInspectionWithNcr(String code, Long chartId, int ncrQuantity) {
-        Long insId = 82000L + (long) Math.abs(code.hashCode() % 10000);
+    private void seedAttributesInspectionWithNcr(String code, String chartId, int ncrQuantity) {
+        String insId = String.valueOf(82000L + (long) Math.abs(code.hashCode() % 10000));
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpQaInspection> insDao = daoProvider.daoFor(ErpQaInspection.class);
             ErpQaInspection ins = insDao.newEntity();
@@ -232,7 +232,7 @@ public class TestErpQaSpcAttributesSampling extends JunitAutoTestCase {
             // 1 line per inspection（满足 findApprovedInspectionLines 命中 parameterId）
             IEntityDao<ErpQaInspectionLine> lineDao = daoProvider.daoFor(ErpQaInspectionLine.class);
             ErpQaInspectionLine line = lineDao.newEntity();
-            line.orm_propValueByName("id", insId * 100 + 1);
+            line.orm_propValueByName("id", String.valueOf(Long.parseLong(insId) * 100 + 1));
             line.setInspectionId(insId);
             line.setLineNo(1);
             line.setParameterId(PARAMETER_ID);
@@ -244,7 +244,7 @@ public class TestErpQaSpcAttributesSampling extends JunitAutoTestCase {
             // 挂 NCR
             IEntityDao<ErpQaNonConformance> ncrDao = daoProvider.daoFor(ErpQaNonConformance.class);
             ErpQaNonConformance ncr = ncrDao.newEntity();
-            ncr.orm_propValueByName("id", insId + 5000000L);
+            ncr.orm_propValueByName("id", String.valueOf(Long.parseLong(insId) + 5000000L));
             ncr.setCode("NCR-" + code);
             ncr.setNcrDate(CoreMetrics.currentDate());
             ncr.setSourceType(ErpQaConstants.NCR_SOURCE_TYPE_INSPECTION);
@@ -258,9 +258,9 @@ public class TestErpQaSpcAttributesSampling extends JunitAutoTestCase {
         });
     }
 
-    private void seedMeasurementInspectionLine(String code, Long chartId, BigDecimal measuredValue) {
-        Long insId = 83000L + (long) Math.abs(code.hashCode() % 10000);
-        Long lineId = insId * 100 + 1;
+    private void seedMeasurementInspectionLine(String code, String chartId, BigDecimal measuredValue) {
+        String insId = String.valueOf(83000L + (long) Math.abs(code.hashCode() % 10000));
+        String lineId = String.valueOf(Long.parseLong(insId) * 100 + 1);
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpQaInspection> insDao = daoProvider.daoFor(ErpQaInspection.class);
             ErpQaInspection ins = insDao.newEntity();
@@ -290,7 +290,7 @@ public class TestErpQaSpcAttributesSampling extends JunitAutoTestCase {
         });
     }
 
-    private List<ErpQaSpcSample> findSamples(Long chartId) {
+    private List<ErpQaSpcSample> findSamples(String chartId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("chartId", chartId));
         return daoProvider.daoFor(ErpQaSpcSample.class).findAllByQuery(q);

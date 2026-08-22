@@ -48,25 +48,25 @@ public class ErpQaSpcChartBizModel extends CrudBizModel<ErpQaSpcChart> implement
 
     @Override
     @BizMutation
-    public Integer collectSamples(@Name("chartId") Long chartId, IServiceContext context) {
+    public Integer collectSamples(@Name("chartId") String chartId, IServiceContext context) {
         return collectSamplesProcessor.collectSamples(chartId, context);
     }
 
     @Override
     @BizMutation
-    public Boolean recalculateControlLimit(@Name("chartId") Long chartId, IServiceContext context) {
+    public Boolean recalculateControlLimit(@Name("chartId") String chartId, IServiceContext context) {
         return recalculateControlLimitProcessor.recalculateControlLimit(chartId, context);
     }
 
     @Override
     @BizMutation
-    public Integer evaluateRules(@Name("chartId") Long chartId, IServiceContext context) {
+    public Integer evaluateRules(@Name("chartId") String chartId, IServiceContext context) {
         return evaluateRulesProcessor.evaluateRules(chartId, context);
     }
 
     @Override
     @BizQuery
-    public List<ErpQaSpcSample> findOutOfControlSamples(@Name("chartId") Long chartId, IServiceContext context) {
+    public List<ErpQaSpcSample> findOutOfControlSamples(@Name("chartId") String chartId, IServiceContext context) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("chartId", chartId));
         q.addFilter(eq("isOutOfControl", Boolean.TRUE));

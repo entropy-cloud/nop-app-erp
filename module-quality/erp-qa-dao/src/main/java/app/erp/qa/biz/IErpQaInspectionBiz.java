@@ -33,7 +33,7 @@ import java.util.List;
 public interface IErpQaInspectionBiz extends ICrudBiz<ErpQaInspection> {
 
     @BizMutation
-    ErpQaInspection recordResult(@Name("inspectionId") Long inspectionId,
+    ErpQaInspection recordResult(@Name("inspectionId") String inspectionId,
                                  @Name("lineResults") List<InspectionLineResultInput> lineResults,
                                  @Name("allowConcession") Boolean allowConcession,
                                  IServiceContext context);
@@ -46,11 +46,11 @@ public interface IErpQaInspectionBiz extends ICrudBiz<ErpQaInspection> {
     @BizMutation
     ErpQaInspection createForBusinessBill(@Name("billType") String billType,
                                           @Name("billCode") String billCode,
-                                          @Name("materialId") Long materialId,
+                                          @Name("materialId") String materialId,
                                           @Name("inspectionType") String inspectionType,
                                           @Name("lotQuantity") BigDecimal lotQuantity,
-                                          @Name("supplierId") Long supplierId,
-                                          @Name("warehouseId") Long warehouseId,
+                                          @Name("supplierId") String supplierId,
+                                          @Name("warehouseId") String warehouseId,
                                           @Name("batchNo") String batchNo,
                                           IServiceContext context);
 
@@ -65,14 +65,14 @@ public interface IErpQaInspectionBiz extends ICrudBiz<ErpQaInspection> {
      * 终态直接调用抛 {@code ErpQaErrors.ERR_INVALID_INSPECTION_STATUS_TRANSITION}。
      */
     @BizMutation
-    ErpQaInspection passInspection(@Name("inspectionId") Long inspectionId, IServiceContext context);
+    ErpQaInspection passInspection(@Name("inspectionId") String inspectionId, IServiceContext context);
 
     /**
      * 简单不合格判定：PENDING→REJECTED + 设 posted=true + 触发 {@code autoCreateNcrFromInspection}（REJECTED 自动建 NCR）。
      * 守卫 {@code result==PENDING} 单一源态；终态直接调用抛 {@code ErpQaErrors.ERR_INVALID_INSPECTION_STATUS_TRANSITION}。
      */
     @BizMutation
-    ErpQaInspection failInspection(@Name("inspectionId") Long inspectionId, IServiceContext context);
+    ErpQaInspection failInspection(@Name("inspectionId") String inspectionId, IServiceContext context);
 
     /**
      * F11 批量判定合格（plan 2026-07-22-0444-2 Phase 1）：循环调单条 {@link #passInspection}，

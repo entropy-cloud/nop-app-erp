@@ -13,16 +13,16 @@
     public class ErpQaRecallInputBean extends CrudInputBase {
 
     
-        private Long _id;
+        private String _id;
 
     
         @PropMeta(propId=1)
     
-        public Long getId(){
+        public String getId(){
             return _id;
         }
 
-        public void setId(Long value){
+        public void setId(String value){
             this._id = value;
         }
 
@@ -69,44 +69,44 @@
         }
 
 
-        private Long _sourceNcrId;
+        private String _sourceNcrId;
 
     
         @PropMeta(propId=5)
     
-        public Long getSourceNcrId(){
+        public String getSourceNcrId(){
             return _sourceNcrId;
         }
 
-        public void setSourceNcrId(Long value){
+        public void setSourceNcrId(String value){
             this._sourceNcrId = value;
         }
 
 
-        private Long _materialId;
+        private String _materialId;
 
     
         @PropMeta(propId=6)
     
-        public Long getMaterialId(){
+        public String getMaterialId(){
             return _materialId;
         }
 
-        public void setMaterialId(Long value){
+        public void setMaterialId(String value){
             this._materialId = value;
         }
 
 
-        private Long _batchId;
+        private String _batchId;
 
     
         @PropMeta(propId=7)
     
-        public Long getBatchId(){
+        public String getBatchId(){
             return _batchId;
         }
 
-        public void setBatchId(Long value){
+        public void setBatchId(String value){
             this._batchId = value;
         }
 

@@ -19,7 +19,7 @@
             <cols>
 
                 <!--ID-->
-                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="id" mandatory="true" sortable="true"/>
 
                 <!--编码-->
                 <col id="code" mandatory="true" sortable="true"/>
@@ -28,19 +28,19 @@
                 <col id="name" mandatory="true" sortable="true"/>
 
                 <!--业务组织-->
-                <col id="orgId" ui:number="true" sortable="true"/>
+                <col id="orgId" sortable="true"/>
 
                 <!--图类型-->
                 <col id="chartType" mandatory="true" sortable="true"/>
 
                 <!--物料-->
-                <col id="materialId" ui:number="true" sortable="true"/>
+                <col id="materialId" sortable="true"/>
 
                 <!--质检模板-->
-                <col id="inspectionTypeId" ui:number="true" sortable="true"/>
+                <col id="inspectionTypeId" sortable="true"/>
 
                 <!--关键检验参数-->
-                <col id="parameterId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="parameterId" mandatory="true" sortable="true"/>
 
                 <!--规格下限-->
                 <col id="specMin" ui:number="true" sortable="true"/>

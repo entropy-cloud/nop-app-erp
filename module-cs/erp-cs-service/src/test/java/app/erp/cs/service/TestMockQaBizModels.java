@@ -23,7 +23,7 @@ import java.util.Map;
  * {@code failSave} 旗标驱动「quality 域服务不可用」异常路径（UC-CS-06 异常条款）。
  * 经 test resources 的 app-test-mock-qa.beans.xml 自动合并（app- 前缀约定），仅测试容器生效。
  *
- * <p>bridge-test-117: qa 未迁移（M2.3），mock 桩保持 qa Long 实体/IBiz 签名（cs 侧适配消费，退役 owner M2.3）。
+ * <p>bridge-test-117 已兑付（M2.3 qa 翻转）：mock 桩 7 方法签名随 IErpQaNonConformanceBiz String 化。
  */
 public final class TestMockQaBizModels {
 
@@ -66,38 +66,38 @@ public final class TestMockQaBizModels {
         // ---- 以下 NCR 状态机方法 cs 侧不消费（仅接口实现占位，调用即失败暴露误用） ----
 
         @Override
-        public ErpQaNonConformance submitReview(Long ncrId, IServiceContext context) {
+        public ErpQaNonConformance submitReview(String ncrId, IServiceContext context) {
             throw new UnsupportedOperationException("mock: submitReview not consumed by cs tests");
         }
 
         @Override
-        public ErpQaNonConformance resolve(Long ncrId, String resolution, String noCapaReason,
+        public ErpQaNonConformance resolve(String ncrId, String resolution, String noCapaReason,
                                            IServiceContext context) {
             throw new UnsupportedOperationException("mock: resolve not consumed by cs tests");
         }
 
         @Override
-        public ErpQaNonConformance escalateToRecall(Long ncrId, IServiceContext context) {
+        public ErpQaNonConformance escalateToRecall(String ncrId, IServiceContext context) {
             throw new UnsupportedOperationException("mock: escalateToRecall not consumed by cs tests");
         }
 
         @Override
-        public ErpQaRecall upgradeToRecall(Long ncrId, IServiceContext context) {
+        public ErpQaRecall upgradeToRecall(String ncrId, IServiceContext context) {
             throw new UnsupportedOperationException("mock: upgradeToRecall not consumed by cs tests");
         }
 
         @Override
-        public ErpQaNonConformance cancel(Long ncrId, IServiceContext context) {
+        public ErpQaNonConformance cancel(String ncrId, IServiceContext context) {
             throw new UnsupportedOperationException("mock: cancel not consumed by cs tests");
         }
 
         @Override
-        public ErpQaNonConformance postNcr(Long ncrId, IServiceContext context) {
+        public ErpQaNonConformance postNcr(String ncrId, IServiceContext context) {
             throw new UnsupportedOperationException("mock: postNcr not consumed by cs tests");
         }
 
         @Override
-        public ErpQaNonConformance reverseNcr(Long ncrId, IServiceContext context) {
+        public ErpQaNonConformance reverseNcr(String ncrId, IServiceContext context) {
             throw new UnsupportedOperationException("mock: reverseNcr not consumed by cs tests");
         }
     }

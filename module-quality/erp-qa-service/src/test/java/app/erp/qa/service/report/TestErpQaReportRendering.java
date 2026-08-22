@@ -40,7 +40,7 @@ public class TestErpQaReportRendering extends JunitAutoTestCase {
 
     private static final io.nop.core.context.IServiceContext CTX = new io.nop.core.context.ServiceContextImpl();
 
-    static final Long UOM_ID = 1L;
+    static final String UOM_ID = "1";
 
     @Inject
     ErpQaReportBizModel reportBiz;
@@ -161,26 +161,26 @@ public class TestErpQaReportRendering extends JunitAutoTestCase {
 
     private void seedInspectionBaseline() {
         ormTemplate.runInSession(() -> {
-            Long matId = 7001L;
+            String matId = "7001";
             seedMaterial(matId, "MAT-QA-RPT");
-            seedInspection(7101L, "INS-RPT-1", matId, ErpQaConstants.INSPECTION_RESULT_ACCEPTED);
-            seedInspection(7102L, "INS-RPT-2", matId, ErpQaConstants.INSPECTION_RESULT_CONDITIONAL);
-            seedInspection(7103L, "INS-RPT-3", matId, ErpQaConstants.INSPECTION_RESULT_REJECTED);
+            seedInspection("7101", "INS-RPT-1", matId, ErpQaConstants.INSPECTION_RESULT_ACCEPTED);
+            seedInspection("7102", "INS-RPT-2", matId, ErpQaConstants.INSPECTION_RESULT_CONDITIONAL);
+            seedInspection("7103", "INS-RPT-3", matId, ErpQaConstants.INSPECTION_RESULT_REJECTED);
         });
     }
 
     private void seedNcrBaseline() {
         ormTemplate.runInSession(() -> {
-            Long ncr1 = 7201L;
-            Long ncr2 = 7202L;
+            String ncr1 = "7201";
+            String ncr2 = "7202";
             seedNcr(ncr1, "NCR-RPT-1", ErpQaConstants.RECALL_SEVERITY_HIGH, ErpQaConstants.NCR_STATUS_RESOLVED);
             seedNcr(ncr2, "NCR-RPT-2", ErpQaConstants.RECALL_SEVERITY_HIGH, ErpQaConstants.NCR_STATUS_OPEN);
             // 1 CAPA 动作，COMPLETED，挂在 ncr1
-            seedAction(7301L, ncr1, ErpQaConstants.ACTION_STATUS_COMPLETED);
+            seedAction("7301", ncr1, ErpQaConstants.ACTION_STATUS_COMPLETED);
         });
     }
 
-    private void seedMaterial(Long id, String code) {
+    private void seedMaterial(String id, String code) {
         IEntityDao<ErpMdMaterial> dao = daoProvider.daoFor(ErpMdMaterial.class);
         ErpMdMaterial m = new ErpMdMaterial();
         m.orm_propValueByName("id", id);
@@ -192,7 +192,7 @@ public class TestErpQaReportRendering extends JunitAutoTestCase {
         dao.saveEntity(m);
     }
 
-    private void seedInspection(Long id, String code, Long materialId, String result) {
+    private void seedInspection(String id, String code, String materialId, String result) {
         IEntityDao<ErpQaInspection> dao = daoProvider.daoFor(ErpQaInspection.class);
         ErpQaInspection ins = new ErpQaInspection();
         ins.orm_propValueByName("id", id);
@@ -210,13 +210,13 @@ public class TestErpQaReportRendering extends JunitAutoTestCase {
         dao.saveEntity(ins);
     }
 
-    private void seedNcr(Long id, String code, String severity, String status) {
+    private void seedNcr(String id, String code, String severity, String status) {
         IEntityDao<ErpQaNonConformance> dao = daoProvider.daoFor(ErpQaNonConformance.class);
         ErpQaNonConformance ncr = new ErpQaNonConformance();
         ncr.orm_propValueByName("id", id);
         ncr.setCode(code);
         ncr.setNcrDate(LocalDate.of(2026, 7, 10));
-        ncr.setMaterialId(7001L);
+        ncr.setMaterialId("7001");
         ncr.setQuantity(bd("10"));
         ncr.orm_propValueByName("dispositionType", "REWORK");
         ncr.orm_propValueByName("status", status);
@@ -225,7 +225,7 @@ public class TestErpQaReportRendering extends JunitAutoTestCase {
         dao.saveEntity(ncr);
     }
 
-    private void seedAction(Long id, Long ncrId, String status) {
+    private void seedAction(String id, String ncrId, String status) {
         IEntityDao<ErpQaAction> dao = daoProvider.daoFor(ErpQaAction.class);
         ErpQaAction a = new ErpQaAction();
         a.orm_propValueByName("id", id);

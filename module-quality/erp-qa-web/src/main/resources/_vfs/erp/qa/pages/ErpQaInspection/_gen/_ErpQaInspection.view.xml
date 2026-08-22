@@ -19,13 +19,13 @@
             <cols>
 
                 <!--ID-->
-                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="id" mandatory="true" sortable="true"/>
 
                 <!--单号-->
                 <col id="code" mandatory="true" sortable="true"/>
 
                 <!--业务组织-->
-                <col id="orgId" ui:number="true" sortable="true"/>
+                <col id="orgId" sortable="true"/>
 
                 <!--检验类型-->
                 <col id="inspectionType" mandatory="true" sortable="true"/>
@@ -40,16 +40,16 @@
                 <col id="relatedLineCode" sortable="true"/>
 
                 <!--物料-->
-                <col id="materialId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="materialId" mandatory="true" sortable="true"/>
 
                 <!--质检模板-->
-                <col id="templateId" ui:number="true" sortable="true"/>
+                <col id="templateId" sortable="true"/>
 
                 <!--供应商-->
-                <col id="supplierId" ui:number="true" sortable="true"/>
+                <col id="supplierId" sortable="true"/>
 
                 <!--仓库-->
-                <col id="warehouseId" ui:number="true" sortable="true"/>
+                <col id="warehouseId" sortable="true"/>
 
                 <!--批号-->
                 <col id="batchNo" sortable="true"/>
@@ -67,7 +67,7 @@
                 <col id="sampleQuantity" ui:number="true" sortable="true"/>
 
                 <!--检验员(职员)-->
-                <col id="inspectorId" ui:number="true" sortable="true"/>
+                <col id="inspectorId" sortable="true"/>
 
                 <!--质检结果-->
                 <col id="result" mandatory="true" sortable="true"/>

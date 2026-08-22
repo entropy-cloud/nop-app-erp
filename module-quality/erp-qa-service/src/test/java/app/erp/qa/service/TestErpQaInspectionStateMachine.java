@@ -50,7 +50,7 @@ public class TestErpQaInspectionStateMachine extends JunitAutoTestCase {
     @RegisterExtension
     static QaFrozenClockExtension frozenClock = new QaFrozenClockExtension();
 
-    static final Long MATERIAL_ID = 7001L;
+    static final String MATERIAL_ID = "7001";
 
     @Inject
     IDaoProvider daoProvider;
@@ -61,7 +61,7 @@ public class TestErpQaInspectionStateMachine extends JunitAutoTestCase {
 
     @Test
     public void testAllAcceptedGoesAccepted() {
-        Long insId = seedInspection("INS-ACCEPT", withLine(null, "10", "20"), withLine(null, "0", "100"));
+        String insId = seedInspection("INS-ACCEPT", withLine(null, "10", "20"), withLine(null, "0", "100"));
         recordMeasured(insId, false, lineInput(1, "15"), lineInput(2, "50"));
 
         ErpQaInspection ins = loadInspection(insId);
@@ -71,7 +71,7 @@ public class TestErpQaInspectionStateMachine extends JunitAutoTestCase {
 
     @Test
     public void testPartialRejectedWithConcessionGoesConditional() {
-        Long insId = seedInspection("INS-COND", withLine("长度", "10", "20"), withLine("重量", "0", "100"));
+        String insId = seedInspection("INS-COND", withLine("长度", "10", "20"), withLine("重量", "0", "100"));
         // 第一行 15（合格），第二行 200（超 max 100，不合格）+ 让步
         recordMeasured(insId, true, lineInput(1, "15"), lineInput(2, "200"));
 
@@ -82,7 +82,7 @@ public class TestErpQaInspectionStateMachine extends JunitAutoTestCase {
 
     @Test
     public void testRejectedNoConcessionGoesRejected() {
-        Long insId = seedInspection("INS-REJ", withLine("长度", "10", "20"));
+        String insId = seedInspection("INS-REJ", withLine("长度", "10", "20"));
         // 5 < min 10 → 不合格，未让步
         recordMeasured(insId, false, lineInput(1, "5"));
 
@@ -95,7 +95,7 @@ public class TestErpQaInspectionStateMachine extends JunitAutoTestCase {
         // 实测值非数值（解析失败）→ 视为不合格。measuredValue 列域强转 BigDecimal，非数值无法落库，
         // 故直接构造内存行（不经 ORM 落库）调用评测器验证解析失败路径
         app.erp.qa.dao.entity.ErpQaInspectionLine line = new app.erp.qa.dao.entity.ErpQaInspectionLine();
-        line.orm_propValueByName("id", 99001L);
+        line.orm_propValueByName("id", "99001");
         line.setSpecMin(new BigDecimal("10"));
         line.setSpecMax(new BigDecimal("20"));
         line.setMeasuredValue("abc");
@@ -104,7 +104,7 @@ public class TestErpQaInspectionStateMachine extends JunitAutoTestCase {
 
         // 无规格上下限（外观类）+ 实测值非空 → ACCEPTED
         app.erp.qa.dao.entity.ErpQaInspectionLine appearance = new app.erp.qa.dao.entity.ErpQaInspectionLine();
-        appearance.orm_propValueByName("id", 99002L);
+        appearance.orm_propValueByName("id", "99002");
         appearance.setMeasuredValue("OK");
         assertEquals(ErpQaConstants.INSPECTION_RESULT_ACCEPTED,
                 app.erp.qa.service.entity.InspectionResultEvaluator.evaluateLine(appearance),
@@ -113,7 +113,7 @@ public class TestErpQaInspectionStateMachine extends JunitAutoTestCase {
 
     @Test
     public void testTerminalResultCannotReRecord() {
-        Long insId = seedInspection("INS-TERM", withLine("长度", "10", "20"));
+        String insId = seedInspection("INS-TERM", withLine("长度", "10", "20"));
         recordMeasured(insId, false, lineInput(1, "15")); // → ACCEPTED（终态）
         // 终态不可恢复：再次 recordResult 应拒绝
         ApiResponse<?> resp = rpc(mutation, "ErpQaInspection__recordResult", recordResultArgs(insId, new ArrayList<>(), false));
@@ -125,7 +125,7 @@ public class TestErpQaInspectionStateMachine extends JunitAutoTestCase {
 
     @Test
     public void testPassInspectionRejectsTerminalState() {
-        Long insId = seedInspection("INS-PASS-REJ", withLine("长度", "10", "20"));
+        String insId = seedInspection("INS-PASS-REJ", withLine("长度", "10", "20"));
         recordMeasured(insId, false, lineInput(1, "5")); // 5 < min 10 → REJECTED（终态）
         // silent flip REJECTED→ACCEPTED 必须被拒绝
         ApiResponse<?> resp = rpc(mutation, "ErpQaInspection__passInspection",
@@ -138,7 +138,7 @@ public class TestErpQaInspectionStateMachine extends JunitAutoTestCase {
 
     @Test
     public void testFailInspectionRejectsTerminalState() {
-        Long insId = seedInspection("INS-FAIL-ACC", withLine("长度", "10", "20"));
+        String insId = seedInspection("INS-FAIL-ACC", withLine("长度", "10", "20"));
         recordMeasured(insId, false, lineInput(1, "15")); // 15 ∈ [10,20] → ACCEPTED（终态）
         // silent flip ACCEPTED→REJECTED 必须被拒绝
         ApiResponse<?> resp = rpc(mutation, "ErpQaInspection__failInspection",
@@ -151,7 +151,7 @@ public class TestErpQaInspectionStateMachine extends JunitAutoTestCase {
 
     @Test
     public void testPassInspectionFromPendingSetsPosted() {
-        Long insId = seedInspection("INS-PASS-OK", withLine("长度", "10", "20"));
+        String insId = seedInspection("INS-PASS-OK", withLine("长度", "10", "20"));
         ApiResponse<?> resp = rpc(mutation, "ErpQaInspection__passInspection",
                 ApiRequest.build(Map.of("inspectionId", insId)));
         assertEquals(0, resp.getStatus(), "PENDING→passInspection 应成功: " + resp);
@@ -164,7 +164,7 @@ public class TestErpQaInspectionStateMachine extends JunitAutoTestCase {
 
     @Test
     public void testFailInspectionFromPendingSetsPostedAndTriggersNcr() {
-        Long insId = seedInspection("INS-FAIL-NCR", withLine("长度", "10", "20"));
+        String insId = seedInspection("INS-FAIL-NCR", withLine("长度", "10", "20"));
         ApiResponse<?> resp = rpc(mutation, "ErpQaInspection__failInspection",
                 ApiRequest.build(Map.of("inspectionId", insId)));
         assertEquals(0, resp.getStatus(), "PENDING→failInspection 应成功: " + resp);
@@ -181,7 +181,7 @@ public class TestErpQaInspectionStateMachine extends JunitAutoTestCase {
 
     @Test
     public void testReInspectActionRemoved() {
-        Long insId = seedInspection("INS-REINSPECT-GONE", withLine("长度", "10", "20"));
+        String insId = seedInspection("INS-REINSPECT-GONE", withLine("长度", "10", "20"));
         // reInspect 方法 + 接口签名已删除：GraphQL action 不再注册，引擎抛 unknown-operation
         NopException ex = assertThrows(NopException.class, () -> rpc(mutation, "ErpQaInspection__reInspect",
                 ApiRequest.build(Map.of("inspectionId", insId))));
@@ -194,11 +194,11 @@ public class TestErpQaInspectionStateMachine extends JunitAutoTestCase {
     @Test
     public void testReinspectionViaNewIndependentInspection() {
         // 复检语义（owner doc §3）：原单 REJECTED 终态保留，复检经新建独立质检单（关联同一业务单据）
-        Long originalId = seedInspection("INS-ORIG-REJ", withLine("长度", "10", "20"));
+        String originalId = seedInspection("INS-ORIG-REJ", withLine("长度", "10", "20"));
         recordMeasured(originalId, false, lineInput(1, "5")); // 原单 → REJECTED（终态）
 
         // 新建复检单（同一业务单据 ERP_PUR_RECEIPT/BILL-REINSPECT，独立 PENDING）
-        Long reinspectId = seedInspection("INS-REINSPECT-OK", withLine("长度", "10", "20"));
+        String reinspectId = seedInspection("INS-REINSPECT-OK", withLine("长度", "10", "20"));
         recordMeasured(reinspectId, false, lineInput(1, "15")); // 复检单 → ACCEPTED
 
         // 两单 result 独立：原单保持 REJECTED，复检单 ACCEPTED
@@ -210,7 +210,7 @@ public class TestErpQaInspectionStateMachine extends JunitAutoTestCase {
 
     @Test
     public void testFindByRelatedBillReturnsResult() {
-        Long insId = seedInspection("INS-FIND", withLine("长度", "10", "20"));
+        String insId = seedInspection("INS-FIND", withLine("长度", "10", "20"));
         recordMeasured(insId, false, lineInput(1, "15"));
 
         ApiResponse<?> resp = rpc(query, "ErpQaInspection__findByRelatedBill",
@@ -230,7 +230,7 @@ public class TestErpQaInspectionStateMachine extends JunitAutoTestCase {
 
     @Test
     public void testIsInspectionClearedFalseWhenPending() {
-        Long insId = seedInspection("INS-CLEAR", withLine("长度", "10", "20"));
+        String insId = seedInspection("INS-CLEAR", withLine("长度", "10", "20"));
         // 未录入结果（PENDING）→ isInspectionCleared=false
         ApiResponse<?> resp = rpc(query, "ErpQaInspection__isInspectionCleared",
                 ApiRequest.build(Map.of("billType", "ERP_PUR_RECEIPT", "billCode", "BILL-CLEAR")));
@@ -241,7 +241,7 @@ public class TestErpQaInspectionStateMachine extends JunitAutoTestCase {
 
     // ---------- helpers ----------
 
-    private ErpQaInspection loadInspection(Long insId) {
+    private ErpQaInspection loadInspection(String insId) {
         return daoProvider.daoFor(ErpQaInspection.class).getEntityById(insId);
     }
 
@@ -253,7 +253,7 @@ public class TestErpQaInspectionStateMachine extends JunitAutoTestCase {
         return list.isEmpty() ? null : list.get(0);
     }
 
-    private void recordMeasured(Long insId, boolean allowConcession, Map<String, Object>... lines) {
+    private void recordMeasured(String insId, boolean allowConcession, Map<String, Object>... lines) {
         List<Map<String, Object>> lineList = new ArrayList<>();
         for (Map<String, Object> l : lines) {
             lineList.add(l);
@@ -262,7 +262,7 @@ public class TestErpQaInspectionStateMachine extends JunitAutoTestCase {
         assertEquals(0, resp.getStatus(), "recordResult 应成功，但返回: " + resp);
     }
 
-    private void recordMeasured(Long insId, boolean allowConcession) {
+    private void recordMeasured(String insId, boolean allowConcession) {
         ApiResponse<?> resp = rpc(mutation, "ErpQaInspection__recordResult",
                 recordResultArgs(insId, new ArrayList<>(), allowConcession));
         assertEquals(0, resp.getStatus(), "recordResult 应成功，但返回: " + resp);
@@ -275,7 +275,7 @@ public class TestErpQaInspectionStateMachine extends JunitAutoTestCase {
         return m;
     }
 
-    private ApiRequest<?> recordResultArgs(Long insId, List<Map<String, Object>> lines, boolean allowConcession) {
+    private ApiRequest<?> recordResultArgs(String insId, List<Map<String, Object>> lines, boolean allowConcession) {
         Map<String, Object> args = new LinkedHashMap<>();
         args.put("inspectionId", insId);
         args.put("lineResults", lines);
@@ -288,8 +288,9 @@ public class TestErpQaInspectionStateMachine extends JunitAutoTestCase {
         return graphQLEngine.executeRpc(ctx);
     }
 
-    private Long seedInspection(String code, LineSpec... lines) {
-        Long id = 6000L + (long) (Math.abs(code.hashCode()) % 1000);
+    private String seedInspection(String code, LineSpec... lines) {
+        long idNum = 6000L + (long) (Math.abs(code.hashCode()) % 1000);
+        String id = String.valueOf(idNum);
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpQaInspection> dao = daoProvider.daoFor(ErpQaInspection.class);
             ErpQaInspection ins = new ErpQaInspection();
@@ -311,7 +312,7 @@ public class TestErpQaInspectionStateMachine extends JunitAutoTestCase {
             int lineNo = 1;
             for (LineSpec spec : lines) {
                 ErpQaInspectionLine line = new ErpQaInspectionLine();
-                line.orm_propValueByName("id", id * 100 + lineNo);
+                line.orm_propValueByName("id", String.valueOf(idNum * 100 + lineNo));
                 line.setInspectionId(id);
                 line.setLineNo(lineNo);
                 line.setParameterName(spec.parameterName == null ? "参数" + lineNo : spec.parameterName);

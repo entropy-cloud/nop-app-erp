@@ -5,15 +5,15 @@
     "name": "冒烟检验模板",
     "inspectionType": "INCOMING",
     "inspectionType_label": "INCOMING-来料检验",
-    "materialId": null,
     "isActive": 1,
-    "remark": null,
     "delVersion": 0,
     "version": 0,
     "createdBy": "autotest-ref",
     "createTime": "@var:ErpQaInspectionTemplate@updateTime",
     "updatedBy": "autotest-ref",
-    "updateTime": "@var:ErpQaInspectionTemplate@updateTime"
+    "updateTime": "@var:ErpQaInspectionTemplate@updateTime",
+    "materialId": null,
+    "remark": null
   },
   "status": 0
 }

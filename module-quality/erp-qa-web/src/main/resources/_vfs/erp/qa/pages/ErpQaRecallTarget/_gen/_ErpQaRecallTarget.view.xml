@@ -19,13 +19,13 @@
             <cols>
 
                 <!--ID-->
-                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="id" mandatory="true" sortable="true"/>
 
                 <!--召回事件-->
-                <col id="recallId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="recallId" mandatory="true" sortable="true"/>
 
                 <!--受影响客户-->
-                <col id="partnerId" ui:number="true" sortable="true"/>
+                <col id="partnerId" sortable="true"/>
 
                 <!--批号-->
                 <col id="batchNo" sortable="true"/>
@@ -34,7 +34,7 @@
                 <col id="serialNo" sortable="true"/>
 
                 <!--销售出库单(弱指针)-->
-                <col id="salesDeliveryId" ui:number="true" sortable="true"/>
+                <col id="salesDeliveryId" sortable="true"/>
 
                 <!--发货数量-->
                 <col id="shippedQty" ui:number="true" sortable="true"/>
@@ -49,7 +49,7 @@
                 <col id="returnStatus" mandatory="true" sortable="true"/>
 
                 <!--已生成退货单(弱指针)-->
-                <col id="generatedReturnId" ui:number="true" sortable="true"/>
+                <col id="generatedReturnId" sortable="true"/>
 
                 <!--备注-->
                 <col id="remark" sortable="true"/>

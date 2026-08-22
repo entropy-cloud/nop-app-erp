@@ -31,7 +31,7 @@ public abstract class AbstractErpQaNonConformanceProcessor {
         return daoProvider.daoFor(ErpQaNonConformance.class);
     }
 
-    protected ErpQaNonConformance requireNcr(Long ncrId, IServiceContext context) {
+    protected ErpQaNonConformance requireNcr(String ncrId, IServiceContext context) {
         if (ncrId == null) {
             throw new NopException(ErpQaErrors.ERR_NCR_NOT_FOUND).param(ErpQaErrors.ARG_NCR_ID, ncrId);
         }

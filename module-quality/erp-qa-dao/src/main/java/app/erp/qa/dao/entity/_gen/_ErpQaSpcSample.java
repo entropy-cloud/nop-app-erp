@@ -214,13 +214,13 @@ public class _ErpQaSpcSample extends DynamicOrmEntity{
 
     
     /* ID: ID */
-    private java.lang.Long _id;
+    private java.lang.String _id;
     
     /* 控制图ID: CHART_ID */
-    private java.lang.Long _chartId;
+    private java.lang.String _chartId;
     
     /* 业务组织: ORG_ID */
-    private java.lang.Long _orgId;
+    private java.lang.String _orgId;
     
     /* 子组序号: SUBGROUP_NO */
     private java.lang.Integer _subgroupNo;
@@ -250,7 +250,7 @@ public class _ErpQaSpcSample extends DynamicOrmEntity{
     private java.lang.String _sourceLineCode;
     
     /* 检验员: INSPECTOR_ID */
-    private java.lang.Long _inspectorId;
+    private java.lang.String _inspectorId;
     
     /* 违反的判异规则(逗号分隔): VIOLATED_RULES */
     private java.lang.String _violatedRules;
@@ -443,9 +443,9 @@ public class _ErpQaSpcSample extends DynamicOrmEntity{
         switch(propId){
         
             case PROP_ID_id:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_id));
                }
                setId(typedValue);
@@ -453,9 +453,9 @@ public class _ErpQaSpcSample extends DynamicOrmEntity{
             }
         
             case PROP_ID_chartId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_chartId));
                }
                setChartId(typedValue);
@@ -463,9 +463,9 @@ public class _ErpQaSpcSample extends DynamicOrmEntity{
             }
         
             case PROP_ID_orgId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_orgId));
                }
                setOrgId(typedValue);
@@ -563,9 +563,9 @@ public class _ErpQaSpcSample extends DynamicOrmEntity{
             }
         
             case PROP_ID_inspectorId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_inspectorId));
                }
                setInspectorId(typedValue);
@@ -693,21 +693,21 @@ public class _ErpQaSpcSample extends DynamicOrmEntity{
         
             case PROP_ID_id:{
                onInitProp(propId);
-               this._id = (java.lang.Long)value;
+               this._id = (java.lang.String)value;
                orm_id(); // 如果是设置主键字段，则触发watcher
                break;
             }
         
             case PROP_ID_chartId:{
                onInitProp(propId);
-               this._chartId = (java.lang.Long)value;
+               this._chartId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_orgId:{
                onInitProp(propId);
-               this._orgId = (java.lang.Long)value;
+               this._orgId = (java.lang.String)value;
                
                break;
             }
@@ -777,7 +777,7 @@ public class _ErpQaSpcSample extends DynamicOrmEntity{
         
             case PROP_ID_inspectorId:{
                onInitProp(propId);
-               this._inspectorId = (java.lang.Long)value;
+               this._inspectorId = (java.lang.String)value;
                
                break;
             }
@@ -868,7 +868,7 @@ public class _ErpQaSpcSample extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final java.lang.Long getId(){
+    public final java.lang.String getId(){
          onPropGet(PROP_ID_id);
          return _id;
     }
@@ -876,7 +876,7 @@ public class _ErpQaSpcSample extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final void setId(java.lang.Long value){
+    public final void setId(java.lang.String value){
         if(onPropSet(PROP_ID_id,value)){
             this._id = value;
             internalClearRefs(PROP_ID_id);
@@ -887,7 +887,7 @@ public class _ErpQaSpcSample extends DynamicOrmEntity{
     /**
      * 控制图ID: CHART_ID
      */
-    public final java.lang.Long getChartId(){
+    public final java.lang.String getChartId(){
          onPropGet(PROP_ID_chartId);
          return _chartId;
     }
@@ -895,7 +895,7 @@ public class _ErpQaSpcSample extends DynamicOrmEntity{
     /**
      * 控制图ID: CHART_ID
      */
-    public final void setChartId(java.lang.Long value){
+    public final void setChartId(java.lang.String value){
         if(onPropSet(PROP_ID_chartId,value)){
             this._chartId = value;
             internalClearRefs(PROP_ID_chartId);
@@ -906,7 +906,7 @@ public class _ErpQaSpcSample extends DynamicOrmEntity{
     /**
      * 业务组织: ORG_ID
      */
-    public final java.lang.Long getOrgId(){
+    public final java.lang.String getOrgId(){
          onPropGet(PROP_ID_orgId);
          return _orgId;
     }
@@ -914,7 +914,7 @@ public class _ErpQaSpcSample extends DynamicOrmEntity{
     /**
      * 业务组织: ORG_ID
      */
-    public final void setOrgId(java.lang.Long value){
+    public final void setOrgId(java.lang.String value){
         if(onPropSet(PROP_ID_orgId,value)){
             this._orgId = value;
             internalClearRefs(PROP_ID_orgId);
@@ -1096,7 +1096,7 @@ public class _ErpQaSpcSample extends DynamicOrmEntity{
     /**
      * 检验员: INSPECTOR_ID
      */
-    public final java.lang.Long getInspectorId(){
+    public final java.lang.String getInspectorId(){
          onPropGet(PROP_ID_inspectorId);
          return _inspectorId;
     }
@@ -1104,7 +1104,7 @@ public class _ErpQaSpcSample extends DynamicOrmEntity{
     /**
      * 检验员: INSPECTOR_ID
      */
-    public final void setInspectorId(java.lang.Long value){
+    public final void setInspectorId(java.lang.String value){
         if(onPropSet(PROP_ID_inspectorId,value)){
             this._inspectorId = value;
             internalClearRefs(PROP_ID_inspectorId);

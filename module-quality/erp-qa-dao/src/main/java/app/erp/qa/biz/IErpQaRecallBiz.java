@@ -38,17 +38,17 @@ public interface IErpQaRecallBiz extends ICrudBiz<ErpQaRecall> {
     ErpQaRecall register(@Name("data") Map<String, Object> data, IServiceContext context);
 
     @BizMutation
-    ErpQaRecall cancel(@Name("recallId") Long recallId, IServiceContext context);
+    ErpQaRecall cancel(@Name("recallId") String recallId, IServiceContext context);
 
     @BizMutation
-    ErpQaRecall locateTargets(@Name("recallId") Long recallId, IServiceContext context);
+    ErpQaRecall locateTargets(@Name("recallId") String recallId, IServiceContext context);
 
     @BizMutation
-    ErpQaRecall notifyCustomers(@Name("recallId") Long recallId, IServiceContext context);
+    ErpQaRecall notifyCustomers(@Name("recallId") String recallId, IServiceContext context);
 
     @BizMutation
-    ErpQaRecall generateReturns(@Name("recallId") Long recallId, IServiceContext context);
+    ErpQaRecall generateReturns(@Name("recallId") String recallId, IServiceContext context);
 
     @BizMutation
-    ErpQaRecall close(@Name("recallId") Long recallId, IServiceContext context);
+    ErpQaRecall close(@Name("recallId") String recallId, IServiceContext context);
 }

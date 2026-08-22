@@ -19,7 +19,7 @@ public class ErpQaRecallLocateTargetsProcessor extends AbstractErpQaRecallProces
     @Inject
     RecallTargetLocator targetLocator;
 
-    public ErpQaRecall locateTargets(Long recallId, IServiceContext context) {
+    public ErpQaRecall locateTargets(String recallId, IServiceContext context) {
         ErpQaRecall recall = requireRecall(recallId, context);
         String current = recall.getStatus();
         try {

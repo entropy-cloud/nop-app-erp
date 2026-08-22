@@ -238,10 +238,10 @@ public class ErpQaDashboardBizModel {
      * 空数据返回零值结构（非 {@code null}）。
      */
     @BizQuery
-    public Map<String, Object> getSpcControlChartData(@Optional @Name("chartId") Long chartId,
+    public Map<String, Object> getSpcControlChartData(@Optional @Name("chartId") String chartId,
                                                        IServiceContext context) {
         return ormTemplate.runInSession(session -> {
-            Long resolvedId = chartId != null ? chartId : ErpQaConfigs.getDashQaSpcDefaultChartId();
+            String resolvedId = chartId != null ? chartId : ErpQaConfigs.getDashQaSpcDefaultChartId();
             if (resolvedId == null) {
                 resolvedId = ErpQaConfigs.getDashQaSpcDefaultAttributesChartId();
             }
@@ -286,7 +286,7 @@ public class ErpQaDashboardBizModel {
         IEntityDao<ErpQaSpcSample> dao = daoProvider.daoFor(ErpQaSpcSample.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("isOutOfControl", Boolean.TRUE));
-        Set<Long> chartIds = new HashSet<>();
+        Set<String> chartIds = new HashSet<>();
         for (ErpQaSpcSample s : dao.findAllByQuery(q)) {
             if (s.getChartId() != null) chartIds.add(s.getChartId());
         }
@@ -302,7 +302,7 @@ public class ErpQaDashboardBizModel {
         return list.isEmpty() ? null : list.get(0);
     }
 
-    private List<Map<String, Object>> loadSpcSamples(Long chartId) {
+    private List<Map<String, Object>> loadSpcSamples(String chartId) {
         IEntityDao<ErpQaSpcSample> dao = daoProvider.daoFor(ErpQaSpcSample.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("chartId", chartId));
@@ -332,7 +332,7 @@ public class ErpQaDashboardBizModel {
         IEntityDao<ErpQaSpcCapability> dao = daoProvider.daoFor(ErpQaSpcCapability.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("capabilityLevel", ErpQaConstants.SPC_CAPABILITY_INADEQUATE));
-        Set<Long> chartIds = new HashSet<>();
+        Set<String> chartIds = new HashSet<>();
         for (ErpQaSpcCapability c : dao.findAllByQuery(q)) {
             if (c.getChartId() != null) chartIds.add(c.getChartId());
         }

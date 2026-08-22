@@ -7,16 +7,16 @@ import java.util.List;
  * result 为可选的人工覆盖结果码（erp-qa/inspection-result；不传则由行级评测自动判定）。
  */
 public class InspectionLineResultInput {
-    private Long lineId;
+    private String lineId;
     private Integer lineNo;
     private String measuredValue;
     private String result;
 
-    public Long getLineId() {
+    public String getLineId() {
         return lineId;
     }
 
-    public void setLineId(Long lineId) {
+    public void setLineId(String lineId) {
         this.lineId = lineId;
     }
 

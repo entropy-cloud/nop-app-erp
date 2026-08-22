@@ -55,8 +55,8 @@ public class TestErpQaSpcOutOfControl extends JunitAutoTestCase {
     @RegisterExtension
     static QaFrozenClockExtension frozenClock = new QaFrozenClockExtension();
 
-    static final Long MATERIAL_ID = 7701L;
-    static final Long PARAMETER_ID = 8901L;
+    static final String MATERIAL_ID = "7701";
+    static final String PARAMETER_ID = "8901";
 
     @Inject
     IDaoProvider daoProvider;
@@ -74,8 +74,8 @@ public class TestErpQaSpcOutOfControl extends JunitAutoTestCase {
 
     @Test
     public void outOfControlMarksSampleAndHandlerCreatesNcr() {
-        Long chartId = seedChart("CHART-OOC", new BigDecimal("10"), new BigDecimal("13"), new BigDecimal("7"));
-        Long sampleId = seedSample(chartId, 1, new BigDecimal("20"));
+        String chartId = seedChart("CHART-OOC", new BigDecimal("10"), new BigDecimal("13"), new BigDecimal("7"));
+        String sampleId = seedSample(chartId, 1, new BigDecimal("20"));
 
         // 规则评估：标记失控
         ormTemplate.runInSession(() -> spcRuleEngine.evaluate(chartId, null));
@@ -116,8 +116,8 @@ public class TestErpQaSpcOutOfControl extends JunitAutoTestCase {
     public void outOfControlAutoNcrDisabledDoesNotCreateNcr() {
         AppConfig.getConfigProvider().assignConfigValue(ErpQaConstants.CONFIG_SPC_AUTO_NCR_ENABLED, "false");
 
-        Long chartId = seedChart("CHART-OOC2", new BigDecimal("10"), new BigDecimal("13"), new BigDecimal("7"));
-        Long sampleId = seedSample(chartId, 1, new BigDecimal("20"));
+        String chartId = seedChart("CHART-OOC2", new BigDecimal("10"), new BigDecimal("13"), new BigDecimal("7"));
+        String sampleId = seedSample(chartId, 1, new BigDecimal("20"));
 
         ormTemplate.runInSession(() -> spcRuleEngine.evaluate(chartId, null));
         ErpQaSpcSample sample = daoProvider.daoFor(ErpQaSpcSample.class).getEntityById(sampleId);
@@ -143,7 +143,7 @@ public class TestErpQaSpcOutOfControl extends JunitAutoTestCase {
 
     @Test
     public void controlledSampleHasNoViolations() {
-        Long chartId = seedChart("CHART-CTL", new BigDecimal("10"), new BigDecimal("13"), new BigDecimal("7"));
+        String chartId = seedChart("CHART-CTL", new BigDecimal("10"), new BigDecimal("13"), new BigDecimal("7"));
         for (int i = 1; i <= 5; i++) {
             seedSample(chartId, i, new BigDecimal("10"));
         }
@@ -173,8 +173,8 @@ public class TestErpQaSpcOutOfControl extends JunitAutoTestCase {
         }
     }
 
-    private Long seedChart(String code, BigDecimal cl, BigDecimal ucl, BigDecimal lcl) {
-        Long id = 75000L + (long) Math.abs(code.hashCode() % 10000);
+    private String seedChart(String code, BigDecimal cl, BigDecimal ucl, BigDecimal lcl) {
+        String id = String.valueOf(75000L + (long) Math.abs(code.hashCode() % 10000));
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpQaSpcChart> dao = daoProvider.daoFor(ErpQaSpcChart.class);
             ErpQaSpcChart chart = dao.newEntity();
@@ -199,8 +199,8 @@ public class TestErpQaSpcOutOfControl extends JunitAutoTestCase {
         return id;
     }
 
-    private Long seedSample(Long chartId, int subgroupNo, BigDecimal mean) {
-        Long id = 85000L + chartId * 10 + subgroupNo;
+    private String seedSample(String chartId, int subgroupNo, BigDecimal mean) {
+        String id = String.valueOf(85000L + Long.parseLong(chartId) * 10 + subgroupNo);
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpQaSpcSample> dao = daoProvider.daoFor(ErpQaSpcSample.class);
             ErpQaSpcSample sample = dao.newEntity();

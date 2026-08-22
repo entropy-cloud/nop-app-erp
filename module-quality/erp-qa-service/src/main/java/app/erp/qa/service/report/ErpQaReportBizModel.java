@@ -160,7 +160,7 @@ public class ErpQaReportBizModel {
         switch (key) {
             case "inspection-summary":
                 data.put(DS_VAR, buildInspectionSummaryDataset(
-                        asLong(data, "materialId"),
+                        asString(data, "materialId"),
                         asDate(data, "startDate"), asDate(data, "endDate")));
                 break;
             case "ncr-capa-summary":
@@ -172,13 +172,13 @@ public class ErpQaReportBizModel {
         }
     }
 
-    private static Long asLong(Map<String, Object> data, String k) {
+    private static String asString(Map<String, Object> data, String k) {
         if (data == null) return null;
         Object v = data.get(k);
         if (v == null) return null;
         String s = v.toString();
         if (s.trim().isEmpty()) return null;
-        return Long.valueOf(s);
+        return s.trim();
     }
 
     private static LocalDate asDate(Map<String, Object> data, String k) {
@@ -197,7 +197,7 @@ public class ErpQaReportBizModel {
 
     /** 质检合格率统计数据集：按物料聚合合格率，对齐 {@code quality/state-machine.md}。 */
     @BizQuery
-    public List<Map<String, Object>> inspectionSummaryData(@Optional @Name("materialId") Long materialId,
+    public List<Map<String, Object>> inspectionSummaryData(@Optional @Name("materialId") String materialId,
                                                             @Optional @Name("startDate") LocalDate startDate,
                                                             @Optional @Name("endDate") LocalDate endDate,
                                                             IServiceContext context) {
@@ -220,15 +220,15 @@ public class ErpQaReportBizModel {
      * pendingCount（PENDING）/ passRate = acceptedCount / totalInspections，
      * 对齐 {@code quality/state-machine.md}。
      */
-    List<Map<String, Object>> buildInspectionSummaryDataset(Long materialId, LocalDate startDate, LocalDate endDate) {
+    List<Map<String, Object>> buildInspectionSummaryDataset(String materialId, LocalDate startDate, LocalDate endDate) {
         return ormTemplate.runInSession(session -> {
             List<ErpQaInspection> inspections = loadInspections(materialId, startDate, endDate);
             if (inspections.isEmpty()) {
                 return Collections.emptyList();
             }
-            Map<Long, InspectionAggregator> agg = new LinkedHashMap<>();
+            Map<String, InspectionAggregator> agg = new LinkedHashMap<>();
             for (ErpQaInspection i : inspections) {
-                Long mid = i.getMaterialId();
+                String mid = i.getMaterialId();
                 if (mid == null) continue;
                 InspectionAggregator a = agg.computeIfAbsent(mid, InspectionAggregator::new);
                 a.total++;
@@ -242,7 +242,7 @@ public class ErpQaReportBizModel {
                     a.pending++;
                 }
             }
-            Map<Long, String> materialNames = resolveMaterialNames(agg.keySet());
+            Map<String, String> materialNames = resolveMaterialNames(agg.keySet());
             List<Map<String, Object>> rows = new ArrayList<>(agg.size());
             for (InspectionAggregator a : agg.values()) {
                 BigDecimal passRate = a.total > 0
@@ -273,12 +273,12 @@ public class ErpQaReportBizModel {
             if (ncrs.isEmpty()) {
                 return Collections.emptyList();
             }
-            Set<Long> ncrIds = new HashSet<>();
+            Set<String> ncrIds = new HashSet<>();
             for (ErpQaNonConformance n : ncrs) {
                 if (n.getId() != null) ncrIds.add(n.getId());
             }
-            Map<Long, Integer> actionCountByNcr = countActionsByNcr(ncrIds);
-            Map<Long, Integer> completedActionCountByNcr = countActionsByNcr(ncrIds, ErpQaConstants.ACTION_STATUS_COMPLETED);
+            Map<String, Integer> actionCountByNcr = countActionsByNcr(ncrIds);
+            Map<String, Integer> completedActionCountByNcr = countActionsByNcr(ncrIds, ErpQaConstants.ACTION_STATUS_COMPLETED);
             Map<String, NcrAggregator> agg = new LinkedHashMap<>();
             for (ErpQaNonConformance n : ncrs) {
                 String severity = n.getSeverity() != null ? n.getSeverity() : "(未指定)";
@@ -322,7 +322,7 @@ public class ErpQaReportBizModel {
 
     // ===================== helpers =====================
 
-    private List<ErpQaInspection> loadInspections(Long materialId, LocalDate startDate, LocalDate endDate) {
+    private List<ErpQaInspection> loadInspections(String materialId, LocalDate startDate, LocalDate endDate) {
         QueryBean q = new QueryBean();
         if (materialId != null) q.addFilter(eq("materialId", materialId));
         if (startDate != null) q.addFilter(ge("inspectionDate", startDate));
@@ -337,29 +337,29 @@ public class ErpQaReportBizModel {
         return daoProvider.daoFor(ErpQaNonConformance.class).findAllByQuery(q);
     }
 
-    private Map<Long, Integer> countActionsByNcr(Set<Long> ncrIds) {
+    private Map<String, Integer> countActionsByNcr(Set<String> ncrIds) {
         return countActionsByNcr(ncrIds, null);
     }
 
-    private Map<Long, Integer> countActionsByNcr(Set<Long> ncrIds, String status) {
+    private Map<String, Integer> countActionsByNcr(Set<String> ncrIds, String status) {
         if (ncrIds.isEmpty()) return Collections.emptyMap();
         QueryBean q = new QueryBean();
         q.addFilter(in("ncrId", ncrIds));
         if (status != null) q.addFilter(eq("status", status));
         List<ErpQaAction> actions = daoProvider.daoFor(ErpQaAction.class).findAllByQuery(q);
-        Map<Long, Integer> counts = new HashMap<>();
+        Map<String, Integer> counts = new HashMap<>();
         for (ErpQaAction a : actions) {
             counts.merge(a.getNcrId(), 1, Integer::sum);
         }
         return counts;
     }
 
-    private Map<Long, String> resolveMaterialNames(Set<Long> materialIds) {
+    private Map<String, String> resolveMaterialNames(Set<String> materialIds) {
         if (materialIds.isEmpty()) return Collections.emptyMap();
         QueryBean q = new QueryBean();
         q.addFilter(in("id", materialIds));
         List<ErpMdMaterial> materials = daoProvider.daoFor(ErpMdMaterial.class).findAllByQuery(q);
-        Map<Long, String> names = new HashMap<>();
+        Map<String, String> names = new HashMap<>();
         for (ErpMdMaterial m : materials) {
             names.put(m.getId(), m.getName());
         }
@@ -367,13 +367,13 @@ public class ErpQaReportBizModel {
     }
 
     private static class InspectionAggregator {
-        final Long materialId;
+        final String materialId;
         int total = 0;
         int accepted = 0;
         int rejected = 0;
         int pending = 0;
 
-        InspectionAggregator(Long materialId) {
+        InspectionAggregator(String materialId) {
             this.materialId = materialId;
         }
     }

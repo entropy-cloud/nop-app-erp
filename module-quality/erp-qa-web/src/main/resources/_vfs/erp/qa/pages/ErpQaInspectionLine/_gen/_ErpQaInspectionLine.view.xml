@@ -19,16 +19,16 @@
             <cols>
 
                 <!--ID-->
-                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="id" mandatory="true" sortable="true"/>
 
                 <!--质检单ID-->
-                <col id="inspectionId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="inspectionId" mandatory="true" sortable="true"/>
 
                 <!--行号-->
                 <col id="lineNo" mandatory="true" ui:number="true" sortable="true"/>
 
                 <!--检验参数-->
-                <col id="parameterId" ui:number="true" sortable="true"/>
+                <col id="parameterId" sortable="true"/>
 
                 <!--检验参数名称-->
                 <col id="parameterName" sortable="true"/>

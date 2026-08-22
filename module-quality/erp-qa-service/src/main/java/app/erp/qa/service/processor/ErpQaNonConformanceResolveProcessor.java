@@ -25,7 +25,7 @@ public class ErpQaNonConformanceResolveProcessor extends AbstractErpQaNonConform
     @Inject
     NcrReturnOrchestrator ncrReturnOrchestrator;
 
-    public ErpQaNonConformance resolve(Long ncrId,
+    public ErpQaNonConformance resolve(String ncrId,
                                        String resolution,
                                        String noCapaReason,
                                        IServiceContext context) {

@@ -20,16 +20,16 @@
 
     <props>
         <prop name="id" displayName="ID" propId="1" i18n-en:displayName="ID" tagSet="seq-default" mandatory="true"
-              queryable="true" sortable="true" insertable="true" updatable="false" graphql:type="String">
-            <schema type="java.lang.Long"/>
+              queryable="true" sortable="true" insertable="true" updatable="false">
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="recallId" displayName="召回事件" propId="2" i18n-en:displayName="Recall" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="recall">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="partnerId" displayName="受影响客户" propId="3" i18n-en:displayName="Affected Customer" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="partner">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="batchNo" displayName="批号" propId="4" i18n-en:displayName="Batch No" queryable="true" sortable="true"
               insertable="true" updatable="true">
@@ -41,7 +41,7 @@
         </prop>
         <prop name="salesDeliveryId" displayName="销售出库单(弱指针)" propId="6" i18n-en:displayName="Sales Delivery"
               queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="shippedQty" displayName="发货数量" propId="7" i18n-en:displayName="Shipped Qty" queryable="true"
               sortable="true" insertable="true" updatable="true">
@@ -61,7 +61,7 @@
         </prop>
         <prop name="generatedReturnId" displayName="已生成退货单(弱指针)" propId="11" i18n-en:displayName="Generated Return"
               queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="remark" displayName="备注" propId="12" i18n-en:displayName="Remark" queryable="true" sortable="true"
               insertable="true" updatable="true">

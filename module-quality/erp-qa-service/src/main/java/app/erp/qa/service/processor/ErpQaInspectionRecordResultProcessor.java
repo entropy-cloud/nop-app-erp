@@ -37,7 +37,7 @@ public class ErpQaInspectionRecordResultProcessor extends AbstractErpQaInspectio
     @Inject
     ErpQaInspectionApprovalStateMachine approvalStateMachine;
 
-    public ErpQaInspection recordResult(Long inspectionId,
+    public ErpQaInspection recordResult(String inspectionId,
                                         List<InspectionLineResultInput> lineResults,
                                         Boolean allowConcession,
                                         IServiceContext context) {
@@ -55,7 +55,7 @@ public class ErpQaInspectionRecordResultProcessor extends AbstractErpQaInspectio
                     .param(ErpQaErrors.ARG_INSPECTION_CODE, inspection.getCode());
         }
 
-        Set<Long> explicitResultLineIds = applyLineResults(lines, lineResults);
+        Set<String> explicitResultLineIds = applyLineResults(lines, lineResults);
         for (ErpQaInspectionLine line : lines) {
             if (!explicitResultLineIds.contains(line.getId())) {
                 line.setResult(InspectionResultEvaluator.evaluateLine(line));
@@ -81,12 +81,12 @@ public class ErpQaInspectionRecordResultProcessor extends AbstractErpQaInspectio
         return inspection;
     }
 
-    private Set<Long> applyLineResults(List<ErpQaInspectionLine> lines, List<InspectionLineResultInput> inputs) {
-        Set<Long> explicitResultLineIds = new java.util.HashSet<>();
+    private Set<String> applyLineResults(List<ErpQaInspectionLine> lines, List<InspectionLineResultInput> inputs) {
+        Set<String> explicitResultLineIds = new java.util.HashSet<>();
         if (inputs == null || inputs.isEmpty()) {
             return explicitResultLineIds;
         }
-        Map<Long, InspectionLineResultInput> byId = new HashMap<>();
+        Map<String, InspectionLineResultInput> byId = new HashMap<>();
         Map<Integer, InspectionLineResultInput> byNo = new HashMap<>();
         for (InspectionLineResultInput in : inputs) {
             if (in.getLineId() != null) {

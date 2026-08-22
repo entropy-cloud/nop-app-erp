@@ -41,7 +41,7 @@ public abstract class AbstractErpQaRecallProcessor {
         return daoProvider.daoFor(ErpQaRecall.class);
     }
 
-    protected ErpQaRecall requireRecall(Long recallId, IServiceContext context) {
+    protected ErpQaRecall requireRecall(String recallId, IServiceContext context) {
         if (recallId == null) {
             throw new NopException(ErpQaErrors.ERR_RECALL_NOT_FOUND).param(ErpQaErrors.ARG_RECALL_ID, recallId);
         }
@@ -66,7 +66,7 @@ public abstract class AbstractErpQaRecallProcessor {
                 .param(ErpQaErrors.ARG_EXPECTED_STATUS, expected);
     }
 
-    protected List<ErpQaRecallTarget> loadTargets(Long recallId, Set<Long> targetIds, IServiceContext context) {
+    protected List<ErpQaRecallTarget> loadTargets(String recallId, Set<String> targetIds, IServiceContext context) {
         QueryBean q = new QueryBean();
         q.addFilter(io.nop.api.core.beans.FilterBeans.eq("recallId", recallId));
         if (targetIds != null && !targetIds.isEmpty()) {

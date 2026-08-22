@@ -63,8 +63,6 @@ public class TestErpCsQualityEscalation extends JunitAutoTestCase {
     static final String CUSTOMER_ID = "8101";
     static final String TICKET_TYPE_ID = "8201";
     static final String MATERIAL_ID = "8301";
-    // bridge-test-114/135: qa 未迁移（M2.3）Long 实体侧局部桥（cs String ↔ qa Long，退役 owner M2.3）
-    static final Long MATERIAL_ID_LONG = 8301L;
     static final String SUPPLIER_ID = "8401";
     static final String ASSIGNEE = "cs-qa-handler";
 
@@ -106,12 +104,12 @@ public class TestErpCsQualityEscalation extends JunitAutoTestCase {
         assertEquals(TODAY, data.get("ncrDate"));
         assertEquals(ErpCsConstants.NCR_SOURCE_TYPE_CS_TICKET, data.get("sourceType"));
         assertEquals("TK-QA-OK", data.get("sourceCode"));
-        assertEquals(MATERIAL_ID_LONG, data.get("materialId"));
+        assertEquals(MATERIAL_ID, data.get("materialId"));
         assertEquals("屏幕出现坏点；批次：B20260801", data.get("description"));
         assertEquals(new BigDecimal("5"), data.get("quantity"));
         assertEquals("NORMAL", data.get("severity"));
         assertEquals("OPEN", data.get("status"));
-        assertEquals(Long.valueOf(8401L), data.get("supplierId"));
+        assertEquals(SUPPLIER_ID, data.get("supplierId"));
 
         // NCR 落库 + 双弱指针
         ErpQaNonConformance ncr = findNcr("NCR-CS-TK-QA-OK");
@@ -398,7 +396,7 @@ public class TestErpCsQualityEscalation extends JunitAutoTestCase {
             n.setNcrDate(LocalDate.of(2026, 7, 17));
             n.setSourceType(ErpCsConstants.NCR_SOURCE_TYPE_CS_TICKET);
             n.setSourceCode(ticketCode);
-            n.setMaterialId(MATERIAL_ID_LONG);
+            n.setMaterialId(MATERIAL_ID);
             n.setSeverity("NORMAL");
             n.setStatus(status);
             if (resolvedAt != null) {

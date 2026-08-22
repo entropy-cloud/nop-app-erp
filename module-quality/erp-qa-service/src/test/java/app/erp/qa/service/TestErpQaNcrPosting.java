@@ -56,12 +56,12 @@ public class TestErpQaNcrPosting extends JunitAutoTestCase {
     @RegisterExtension
     static QaFrozenClockExtension frozenClock = new QaFrozenClockExtension();
 
-    static final Long ORG_ID = 1003L;
-    static final Long MATERIAL_ID = 7401L;
-    static final Long SUPPLIER_ID = 8001L;
-    static final Long WAREHOUSE_ID = 3003L;
-    static final Long CURRENCY_ID = 6003L;
-    static final Long ACCT_SCHEMA_ID = 7003L;
+    static final String ORG_ID = "1003";
+    static final String MATERIAL_ID = "7401";
+    static final String SUPPLIER_ID = "8001";
+    static final String WAREHOUSE_ID = "3003";
+    static final String CURRENCY_ID = "6003";
+    static final String ACCT_SCHEMA_ID = "7003";
     static final Long VERIFICATION_PERSON = 7501L;
 
     @Inject
@@ -73,7 +73,7 @@ public class TestErpQaNcrPosting extends JunitAutoTestCase {
 
     @BeforeEach
     void setUpPostingConfig() {
-        System.setProperty(ErpQaConstants.CONFIG_NCR_DEFAULT_ACCT_SCHEMA, String.valueOf(ACCT_SCHEMA_ID));
+        System.setProperty(ErpQaConstants.CONFIG_NCR_DEFAULT_ACCT_SCHEMA, ACCT_SCHEMA_ID);
     }
 
     @AfterEach
@@ -87,7 +87,7 @@ public class TestErpQaNcrPosting extends JunitAutoTestCase {
         seedPeriodAndSubjects();
         seedStockBalance(MATERIAL_ID, new BigDecimal("5"), new BigDecimal("10"));
 
-        Long ncrId = seedNcr("NCR-SCRAP-001", ErpQaConstants.DISPOSITION_TYPE_SCRAP, new BigDecimal("3"));
+        String ncrId = seedNcr("NCR-SCRAP-001", ErpQaConstants.DISPOSITION_TYPE_SCRAP, new BigDecimal("3"));
         submitReviewAndResolveWithCapa(ncrId);
 
         ErpQaNonConformance ncr = reloadNcr(ncrId);
@@ -111,7 +111,7 @@ public class TestErpQaNcrPosting extends JunitAutoTestCase {
     public void testReturnDispositionOrchestratesPurchaseReturn() {
         seedPeriodAndSubjects();
         seedStockBalance(MATERIAL_ID, new BigDecimal("5"), new BigDecimal("10"));
-        Long ncrId = seedNcrWithSupplier("NCR-RETURN-001", ErpQaConstants.DISPOSITION_TYPE_RETURN,
+        String ncrId = seedNcrWithSupplier("NCR-RETURN-001", ErpQaConstants.DISPOSITION_TYPE_RETURN,
                 new BigDecimal("2"), SUPPLIER_ID);
         submitReviewAndResolveWithCapa(ncrId);
 
@@ -124,7 +124,7 @@ public class TestErpQaNcrPosting extends JunitAutoTestCase {
     @Test
     public void testConcessionNotPostable() {
         seedPeriodAndSubjects();
-        Long ncrId = seedNcr("NCR-CONC-001", ErpQaConstants.DISPOSITION_TYPE_CONCESSION, new BigDecimal("1"));
+        String ncrId = seedNcr("NCR-CONC-001", ErpQaConstants.DISPOSITION_TYPE_CONCESSION, new BigDecimal("1"));
         submitReviewAndResolveWithCapa(ncrId);
 
         ApiResponse<?> resp = rpc(mutation, "ErpQaNonConformance__postNcr", Map.of("ncrId", ncrId));
@@ -137,7 +137,7 @@ public class TestErpQaNcrPosting extends JunitAutoTestCase {
         seedPeriodAndSubjects();
         seedStockBalance(MATERIAL_ID, new BigDecimal("5"), new BigDecimal("10"));
         System.setProperty(ErpQaConstants.CONFIG_NCR_POSTING_MODE, ErpQaConstants.NCR_POSTING_MODE_MANUAL);
-        Long ncrId = seedNcr("NCR-MANUAL-001", ErpQaConstants.DISPOSITION_TYPE_SCRAP, new BigDecimal("2"));
+        String ncrId = seedNcr("NCR-MANUAL-001", ErpQaConstants.DISPOSITION_TYPE_SCRAP, new BigDecimal("2"));
         submitReviewAndResolveWithCapa(ncrId);
 
         ErpQaNonConformance ncr = reloadNcr(ncrId);
@@ -152,7 +152,7 @@ public class TestErpQaNcrPosting extends JunitAutoTestCase {
     public void testDuplicatePostingRejected() {
         seedPeriodAndSubjects();
         seedStockBalance(MATERIAL_ID, new BigDecimal("5"), new BigDecimal("10"));
-        Long ncrId = seedNcr("NCR-DUP-001", ErpQaConstants.DISPOSITION_TYPE_SCRAP, new BigDecimal("1"));
+        String ncrId = seedNcr("NCR-DUP-001", ErpQaConstants.DISPOSITION_TYPE_SCRAP, new BigDecimal("1"));
         submitReviewAndResolveWithCapa(ncrId);
         assertTrue(Boolean.TRUE.equals(reloadNcr(ncrId).getPosted()), "首次过账成功");
 
@@ -165,7 +165,7 @@ public class TestErpQaNcrPosting extends JunitAutoTestCase {
     public void testReverseNcrClearsPostedAndRedOffset() {
         seedPeriodAndSubjects();
         seedStockBalance(MATERIAL_ID, new BigDecimal("5"), new BigDecimal("10"));
-        Long ncrId = seedNcr("NCR-REV-001", ErpQaConstants.DISPOSITION_TYPE_SCRAP, new BigDecimal("2"));
+        String ncrId = seedNcr("NCR-REV-001", ErpQaConstants.DISPOSITION_TYPE_SCRAP, new BigDecimal("2"));
         submitReviewAndResolveWithCapa(ncrId);
         assertTrue(Boolean.TRUE.equals(reloadNcr(ncrId).getPosted()), "过账成功");
 
@@ -178,7 +178,7 @@ public class TestErpQaNcrPosting extends JunitAutoTestCase {
     @Test
     public void testPostingBeforeResolvedRejected() {
         seedPeriodAndSubjects();
-        Long ncrId = seedNcr("NCR-NOTRES-001", ErpQaConstants.DISPOSITION_TYPE_SCRAP, new BigDecimal("1"));
+        String ncrId = seedNcr("NCR-NOTRES-001", ErpQaConstants.DISPOSITION_TYPE_SCRAP, new BigDecimal("1"));
 
         ApiResponse<?> resp = rpc(mutation, "ErpQaNonConformance__postNcr", Map.of("ncrId", ncrId));
         assertEquals(ErpQaErrors.ERR_INVALID_NCR_STATUS_TRANSITION.getErrorCode(), resp.getCode(),
@@ -187,9 +187,9 @@ public class TestErpQaNcrPosting extends JunitAutoTestCase {
 
     // ---------- helpers ----------
 
-    private void submitReviewAndResolveWithCapa(Long ncrId) {
+    private void submitReviewAndResolveWithCapa(String ncrId) {
         rpcOk(mutation, "ErpQaNonConformance__submitReview", Map.of("ncrId", ncrId));
-        Long actionId = seedAction(ncrId, ErpQaConstants.ACTION_STATUS_PENDING);
+        String actionId = seedAction(ncrId, ErpQaConstants.ACTION_STATUS_PENDING);
         rpcOk(mutation, "ErpQaAction__startAction", Map.of("actionId", actionId));
         rpcOk(mutation, "ErpQaAction__completeAction", Map.of("actionId", actionId));
         Map<String, Object> verifyArgs = new LinkedHashMap<>();
@@ -201,7 +201,7 @@ public class TestErpQaNcrPosting extends JunitAutoTestCase {
                 Map.of("ncrId", ncrId, "resolution", "CAPA 验证通过，关闭+过账"));
     }
 
-    private ErpQaNonConformance reloadNcr(Long ncrId) {
+    private ErpQaNonConformance reloadNcr(String ncrId) {
         return daoProvider.daoFor(ErpQaNonConformance.class).getEntityById(ncrId);
     }
 
@@ -213,12 +213,12 @@ public class TestErpQaNcrPosting extends JunitAutoTestCase {
         return list.isEmpty() ? null : list.get(0);
     }
 
-    private Long seedNcr(String code, String disposition, BigDecimal quantity) {
+    private String seedNcr(String code, String disposition, BigDecimal quantity) {
         return seedNcrWithSupplier(code, disposition, quantity, null);
     }
 
-    private Long seedNcrWithSupplier(String code, String disposition, BigDecimal quantity, Long supplierId) {
-        Long id = 6300L + (long) (Math.abs(code.hashCode()) % 10000);
+    private String seedNcrWithSupplier(String code, String disposition, BigDecimal quantity, String supplierId) {
+        String id = String.valueOf(6300L + (long) (Math.abs(code.hashCode()) % 10000));
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpQaNonConformance> dao = daoProvider.daoFor(ErpQaNonConformance.class);
             ErpQaNonConformance ncr = new ErpQaNonConformance();
@@ -239,8 +239,8 @@ public class TestErpQaNcrPosting extends JunitAutoTestCase {
         return id;
     }
 
-    private Long seedAction(Long ncrId, String status) {
-        Long id = 9700L + (long) (Math.abs(ncrId.hashCode() + status.hashCode()) % 1000);
+    private String seedAction(String ncrId, String status) {
+        String id = String.valueOf(9700L + (long) (Math.abs(ncrId.hashCode() + status.hashCode()) % 1000));
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpQaAction> dao = daoProvider.daoFor(ErpQaAction.class);
             ErpQaAction a = new ErpQaAction();
@@ -254,8 +254,8 @@ public class TestErpQaNcrPosting extends JunitAutoTestCase {
         return id;
     }
 
-    private void seedStockBalance(Long materialId, BigDecimal totalQty, BigDecimal avgCost) {
-        Long balanceId = 5500L + materialId;
+    private void seedStockBalance(String materialId, BigDecimal totalQty, BigDecimal avgCost) {
+        String balanceId = String.valueOf(5500L + Long.parseLong(materialId));
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpInvStockBalance> dao = daoProvider.daoFor(ErpInvStockBalance.class);
             ErpInvStockBalance bal = new ErpInvStockBalance();
@@ -310,7 +310,7 @@ public class TestErpQaNcrPosting extends JunitAutoTestCase {
         return links.stream().filter(l -> ncrCode.equals(l.getBillCode())).findFirst().orElse(null);
     }
 
-    private long countLines(Long voucherId) {
+    private long countLines(String voucherId) {
         IEntityDao<app.erp.fin.dao.entity.ErpFinVoucherLine> dao = daoProvider
                 .daoFor(app.erp.fin.dao.entity.ErpFinVoucherLine.class);
         QueryBean q = new QueryBean();

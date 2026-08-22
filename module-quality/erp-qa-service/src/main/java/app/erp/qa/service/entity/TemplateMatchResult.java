@@ -5,15 +5,15 @@ import java.util.List;
 
 /** 模板匹配结果：模板 ID + 复制到质检单行的规格列表。 */
 public final class TemplateMatchResult {
-    private final Long templateId;
+    private final String templateId;
     private final List<TemplateLineSpec> lines;
 
-    public TemplateMatchResult(Long templateId, List<TemplateLineSpec> lines) {
+    public TemplateMatchResult(String templateId, List<TemplateLineSpec> lines) {
         this.templateId = templateId;
         this.lines = lines == null ? Collections.emptyList() : lines;
     }
 
-    public Long getTemplateId() {
+    public String getTemplateId() {
         return templateId;
     }
 

@@ -1,8 +1,8 @@
 {
-  "id": 0,
-  "inspectionId": 0,
+  "id": "",
+  "inspectionId": "",
   "lineNo": 0,
-  "parameterId": 0,
+  "parameterId": "",
   "parameterName": "",
   "specMin": 0.0,
   "specMax": 0.0,

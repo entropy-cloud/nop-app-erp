@@ -87,8 +87,8 @@ public class TestErpQaEmployeeIdRowFilterIsolation extends JunitAutoTestCase {
     @Test
     public void testEmployeeIdRowFilterIsolatesByInspector() {
         // inspectorA userId=21 (== employee.id=21 种子对齐), inspectorB userId=22
-        runAs("21", Set.of(ROLE_INSPECTOR), () -> ormTemplate.runInSession(() -> seedInspection("QA-ISO-A", 21L)));
-        runAs("22", Set.of(ROLE_INSPECTOR), () -> ormTemplate.runInSession(() -> seedInspection("QA-ISO-B", 22L)));
+        runAs("21", Set.of(ROLE_INSPECTOR), () -> ormTemplate.runInSession(() -> seedInspection("QA-ISO-A", "21")));
+        runAs("22", Set.of(ROLE_INSPECTOR), () -> ormTemplate.runInSession(() -> seedInspection("QA-ISO-B", "22")));
 
         // 1. 灰度 OFF：checker 未启用，inspectorA 可见两单（零回归）
         IServiceContext ctxOff = ctxFor("21", Set.of(ROLE_INSPECTOR));
@@ -121,7 +121,7 @@ public class TestErpQaEmployeeIdRowFilterIsolation extends JunitAutoTestCase {
     /** 管理员全见——证明 admin role-auth 声明在 user 兜底之前，不被 user 兜底 shadow。 */
     @Test
     public void testAdminSeesAllAndUserFallbackNoShadow() {
-        runAs("21", Set.of(ROLE_INSPECTOR), () -> ormTemplate.runInSession(() -> seedInspection("QA-ISO-C", 21L)));
+        runAs("21", Set.of(ROLE_INSPECTOR), () -> ormTemplate.runInSession(() -> seedInspection("QA-ISO-C", "21")));
 
         ErpRoleDataAuthChecker checker = getChecker();
         AppConfig.getConfigProvider().assignConfigValue(CFG_ENABLED, "true");
@@ -169,12 +169,12 @@ public class TestErpQaEmployeeIdRowFilterIsolation extends JunitAutoTestCase {
         return qaInspectionBiz.findList(q, null, ctx);
     }
 
-    private void seedInspection(String code, Long inspectorId) {
+    private void seedInspection(String code, String inspectorId) {
         IEntityDao<ErpQaInspection> dao = daoProvider.daoFor(ErpQaInspection.class);
         ErpQaInspection o = dao.newEntity();
         o.setCode(code);
         o.setInspectionType("INCOMING");
-        o.setMaterialId(1L);
+        o.setMaterialId("1");
         o.setBusinessDate(LocalDate.of(2026, 8, 11));
         o.setInspectionDate(LocalDate.of(2026, 8, 11));
         o.setInspectorId(inspectorId);

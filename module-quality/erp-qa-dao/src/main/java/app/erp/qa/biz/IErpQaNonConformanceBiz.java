@@ -28,22 +28,22 @@ import io.nop.orm.biz.ICrudBiz;
 public interface IErpQaNonConformanceBiz extends ICrudBiz<ErpQaNonConformance> {
 
     @BizMutation
-    ErpQaNonConformance submitReview(@Name("ncrId") Long ncrId, IServiceContext context);
+    ErpQaNonConformance submitReview(@Name("ncrId") String ncrId, IServiceContext context);
 
     @BizMutation
-    ErpQaNonConformance resolve(@Name("ncrId") Long ncrId,
+    ErpQaNonConformance resolve(@Name("ncrId") String ncrId,
                                 @Name("resolution") String resolution,
                                 @Optional @Name("noCapaReason") String noCapaReason,
                                 IServiceContext context);
 
     @BizMutation
-    ErpQaNonConformance escalateToRecall(@Name("ncrId") Long ncrId, IServiceContext context);
+    ErpQaNonConformance escalateToRecall(@Name("ncrId") String ncrId, IServiceContext context);
 
     @BizMutation
-    ErpQaRecall upgradeToRecall(@Name("ncrId") Long ncrId, IServiceContext context);
+    ErpQaRecall upgradeToRecall(@Name("ncrId") String ncrId, IServiceContext context);
 
     @BizMutation
-    ErpQaNonConformance cancel(@Name("ncrId") Long ncrId, IServiceContext context);
+    ErpQaNonConformance cancel(@Name("ncrId") String ncrId, IServiceContext context);
 
     /**
      * 人工触发 NCR 过账（MANUAL_POST 模式 + 补过账）。前置：status=RESOLVED + posted=false。
@@ -51,11 +51,11 @@ public interface IErpQaNonConformanceBiz extends ICrudBiz<ErpQaNonConformance> {
      * RETURN 处置 → 编排退货域（已由 resolve 触发，postNcr 对 RETURN 拒）。
      */
     @BizMutation
-    ErpQaNonConformance postNcr(@Name("ncrId") Long ncrId, IServiceContext context);
+    ErpQaNonConformance postNcr(@Name("ncrId") String ncrId, IServiceContext context);
 
     /**
      * 红冲 NCR 已过账凭证（SCRAP 处置）。前置：posted=true。清除 posted 三件套 + 生成红字冲销凭证。
      */
     @BizMutation
-    ErpQaNonConformance reverseNcr(@Name("ncrId") Long ncrId, IServiceContext context);
+    ErpQaNonConformance reverseNcr(@Name("ncrId") String ncrId, IServiceContext context);
 }

@@ -8,6 +8,7 @@ import app.erp.sal.biz.IErpSalReturnBiz;
 import app.erp.sal.dao.entity.ErpSalDelivery;
 import app.erp.sal.dao.entity.ErpSalDeliveryLine;
 import app.erp.sal.dao.entity.ErpSalReturn;
+import io.nop.api.core.convert.ConvertHelper;
 import io.nop.api.core.time.CoreMetrics;
 import io.nop.core.context.IServiceContext;
 import io.nop.orm.IOrmEntitySet;
@@ -33,7 +34,7 @@ public class ErpQaRecallGenerateReturnsProcessor extends AbstractErpQaRecallProc
     @Inject
     IErpSalDeliveryBiz salDeliveryBiz;
 
-    public ErpQaRecall generateReturns(Long recallId, IServiceContext context) {
+    public ErpQaRecall generateReturns(String recallId, IServiceContext context) {
         ErpQaRecall recall = requireRecall(recallId, context);
         requireRecallStatus(recall, ErpQaConstants.RECALL_STATUS_IN_PROGRESS, "IN_PROGRESS");
         for (ErpQaRecallTarget target : loadTargets(recallId, null, context)) {
@@ -42,7 +43,8 @@ public class ErpQaRecallGenerateReturnsProcessor extends AbstractErpQaRecallProc
                 continue;
             }
             ErpSalReturn salReturn = createSalesReturnFor(recall, target, context);
-            target.setGeneratedReturnId(salReturn.getId());
+            // bridge-main-100/102: sal return.id 仍 Long（sal 未迁移），qa target 已 String——sal 翻转时退役（owner M2.6）
+            target.setGeneratedReturnId(ConvertHelper.toString(salReturn.getId()));
             target.setReturnStatus(ErpQaConstants.RECALL_TARGET_RETURN_RETURNED);
             recallTargetBiz.updateEntity(target, null, context);
         }
@@ -51,23 +53,27 @@ public class ErpQaRecallGenerateReturnsProcessor extends AbstractErpQaRecallProc
 
     @SuppressWarnings("unchecked")
     private ErpSalReturn createSalesReturnFor(ErpQaRecall recall, ErpQaRecallTarget target, IServiceContext context) {
+        // bridge-main-101: 平台 ICrudBiz.get(String id) 签名本身为 String，qa target.salesDeliveryId 直传
         ErpSalDelivery delivery = target.getSalesDeliveryId() == null ? null
-                : salDeliveryBiz.get(String.valueOf(target.getSalesDeliveryId()), false, context);
+                : salDeliveryBiz.get(target.getSalesDeliveryId(), false, context);
         Long warehouseId = delivery != null ? delivery.getWarehouseId() : null;
         Long currencyId = delivery != null ? delivery.getCurrencyId() : null;
-        Long uoMId = pickUoMId(delivery, recall.getMaterialId());
+        // bridge-main-099: qa recall.materialId 已 String，sal deliveryLine.materialId 仍 Long——比较前转 Long（owner M2.6）
+        Long uoMId = pickUoMId(delivery, ConvertHelper.toLong(recall.getMaterialId()));
 
         Map<String, Object> line = new LinkedHashMap<>();
         line.put("lineNo", 1);
-        line.put("materialId", recall.getMaterialId());
+        // bridge-main-099: qa String materialId → sal Long 列（owner M2.6）
+        line.put("materialId", ConvertHelper.toLong(recall.getMaterialId()));
         line.put("uoMId", uoMId);
         line.put("quantity", target.getShippedQty() != null ? target.getShippedQty() : BigDecimal.ZERO);
         line.put("reason", "recall:" + recall.getCode());
 
         Map<String, Object> data = new LinkedHashMap<>();
         data.put("code", "RMA-" + recall.getCode() + "-" + target.getId());
-        data.put("customerId", target.getPartnerId());
-        data.put("deliveryId", target.getSalesDeliveryId());
+        // bridge-main-098: qa target.partnerId/salesDeliveryId 已 String，sal customerId/deliveryId 仍 Long（owner M2.6）
+        data.put("customerId", ConvertHelper.toLong(target.getPartnerId()));
+        data.put("deliveryId", ConvertHelper.toLong(target.getSalesDeliveryId()));
         data.put("warehouseId", warehouseId);
         data.put("currencyId", currencyId);
         data.put("businessDate", CoreMetrics.today().toString());

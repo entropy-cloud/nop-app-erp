@@ -321,7 +321,7 @@ public class TestErpMntOee extends JunitAutoTestCase {
             seedTimeLog(72502L, 72001L, WO_A, LocalDate.of(2026, 7, 14), "50", "10");
             seedTimeLog(72503L, 72001L, WO_A, LocalDate.of(2026, 7, 15), "40", "0");
             // 质检：ACCEPTED 批量 120（关联 WO-OEE-A）
-            seedInspection(74001L, "QA-OEE-1", WO_A_CODE, LocalDate.of(2026, 7, 15),
+            seedInspection("74001", "QA-OEE-1", WO_A_CODE, LocalDate.of(2026, 7, 15),
                     "ACCEPTED", "120");
             return null;
         });
@@ -349,9 +349,10 @@ public class TestErpMntOee extends JunitAutoTestCase {
         });
     }
 
-    // bridge-test-125：mnt 设备/工作中心引用已 String 化（M3.2），mfg/qa 种子实体（JobCard/TimeLog/
-    // WorkOrder/WorkcenterCalendar/WorkcenterCapacity/QaInspection）仍 Long——mnt seedEquipment 的
-    // workcenterId 参数经 String.valueOf 局部桥接 mfg Long 常量；mfg/qa 翻转时退役（owner M3.1/M2.3）。
+    // bridge-test-125（qa 半边已兑付，M2.3）：QaInspection 种子随 qa String 化（materialId 经
+    // String.valueOf 局部桥接 mfg Long 常量 MATERIAL_1）；mfg 种子（JobCard/TimeLog/WorkOrder/
+    // WorkcenterCalendar/WorkcenterCapacity）仍 Long——mnt seedEquipment 的 workcenterId 参数经
+    // String.valueOf 局部桥接 mfg Long 常量；mfg 翻转时退役（owner M3.1）。
     private void seedEquipment(String id, String code, String status, String workcenterId) {
         IEntityDao<ErpMntEquipment> dao = daoProvider.daoFor(ErpMntEquipment.class);
         ErpMntEquipment equipment = dao.newEntity();
@@ -449,7 +450,7 @@ public class TestErpMntOee extends JunitAutoTestCase {
         dao.saveEntity(log);
     }
 
-    private void seedInspection(Long id, String code, String relatedBillCode, LocalDate inspectionDate,
+    private void seedInspection(String id, String code, String relatedBillCode, LocalDate inspectionDate,
                                 String result, String lotQuantity) {
         IEntityDao<ErpQaInspection> dao = daoProvider.daoFor(ErpQaInspection.class);
         ErpQaInspection inspection = dao.newEntity();
@@ -458,7 +459,7 @@ public class TestErpMntOee extends JunitAutoTestCase {
         inspection.setInspectionType("FINAL");
         inspection.setRelatedBillType("ERP_MFG_WORK_ORDER");
         inspection.setRelatedBillCode(relatedBillCode);
-        inspection.setMaterialId(MATERIAL_1);
+        inspection.setMaterialId(String.valueOf(MATERIAL_1));
         inspection.setBusinessDate(inspectionDate);
         inspection.setInspectionDate(inspectionDate);
         inspection.setLotQuantity(new BigDecimal(lotQuantity));

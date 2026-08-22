@@ -74,7 +74,7 @@ public class SpcCapabilityCalculator {
      *       capabilityLevel=null；grandMean/overallStdDev 仍按 defectRate 序列派生供参考。</li>
      * </ul>
      */
-    public ErpQaSpcCapability calculateCapability(Long chartId, LocalDate periodFrom, LocalDate periodTo,
+    public ErpQaSpcCapability calculateCapability(String chartId, LocalDate periodFrom, LocalDate periodTo,
                                                    IServiceContext context) {
         IEntityDao<ErpQaSpcChart> chartDao = daoProvider.daoFor(ErpQaSpcChart.class);
         ErpQaSpcChart chart = chartDao.getEntityById(chartId);
@@ -195,7 +195,7 @@ public class SpcCapabilityCalculator {
         return cap;
     }
 
-    private List<ErpQaSpcSample> findSamplesInRange(Long chartId, LocalDate periodFrom, LocalDate periodTo) {
+    private List<ErpQaSpcSample> findSamplesInRange(String chartId, LocalDate periodFrom, LocalDate periodTo) {
         IEntityDao<ErpQaSpcSample> dao = daoProvider.daoFor(ErpQaSpcSample.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("chartId", chartId));

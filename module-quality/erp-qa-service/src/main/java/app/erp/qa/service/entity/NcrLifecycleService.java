@@ -95,7 +95,7 @@ public class NcrLifecycleService {
         return first ? "质检不合格" : sb.toString();
     }
 
-    boolean allActionsCompletedAndVerified(Long ncrId, String noCapaReason) {
+    boolean allActionsCompletedAndVerified(String ncrId, String noCapaReason) {
         return actionsGatePassed(loadActions(ncrId), noCapaReason);
     }
 
@@ -115,7 +115,7 @@ public class NcrLifecycleService {
         return true;
     }
 
-    private List<ErpQaActionImpl> loadActions(Long ncrId) {
+    private List<ErpQaActionImpl> loadActions(String ncrId) {
         IEntityDao<app.erp.qa.dao.entity.ErpQaAction> dao = daoProvider.daoFor(app.erp.qa.dao.entity.ErpQaAction.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("ncrId", ncrId));
@@ -132,7 +132,7 @@ public class NcrLifecycleService {
     }
 
     /** 校验 NCR resolve 门控失败时抛异常：无措施缺 noCapaReason 抛 ERR_NCR_RESOLVE_NO_CAPA；有措施未完成/验证抛 ERR_NCR_RESOLVE_CAPA_NOT_COMPLETED。 */
-    public void requireResolveGate(Long ncrId, String ncrCode, String noCapaReason) {
+    public void requireResolveGate(String ncrId, String ncrCode, String noCapaReason) {
         List<ErpQaActionImpl> actions = loadActions(ncrId);
         if (actionsGatePassed(actions, noCapaReason)) {
             return;
@@ -146,12 +146,12 @@ public class NcrLifecycleService {
     }
 
     private static final class ErpQaActionImpl {
-        final Long id;
+        final String id;
         final String status;
         final Long verificationPerson;
         final LocalDate verificationDate;
 
-        ErpQaActionImpl(Long id, String status, Long verificationPerson, LocalDate verificationDate) {
+        ErpQaActionImpl(String id, String status, Long verificationPerson, LocalDate verificationDate) {
             this.id = id;
             this.status = status;
             this.verificationPerson = verificationPerson;

@@ -166,16 +166,16 @@ public class _ErpQaInspectionLine extends DynamicOrmEntity{
 
     
     /* ID: ID */
-    private java.lang.Long _id;
+    private java.lang.String _id;
     
     /* 质检单ID: INSPECTION_ID */
-    private java.lang.Long _inspectionId;
+    private java.lang.String _inspectionId;
     
     /* 行号: LINE_NO */
     private java.lang.Integer _lineNo;
     
     /* 检验参数: PARAMETER_ID */
-    private java.lang.Long _parameterId;
+    private java.lang.String _parameterId;
     
     /* 检验参数名称: PARAMETER_NAME */
     private java.lang.String _parameterName;
@@ -359,9 +359,9 @@ public class _ErpQaInspectionLine extends DynamicOrmEntity{
         switch(propId){
         
             case PROP_ID_id:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_id));
                }
                setId(typedValue);
@@ -369,9 +369,9 @@ public class _ErpQaInspectionLine extends DynamicOrmEntity{
             }
         
             case PROP_ID_inspectionId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_inspectionId));
                }
                setInspectionId(typedValue);
@@ -389,9 +389,9 @@ public class _ErpQaInspectionLine extends DynamicOrmEntity{
             }
         
             case PROP_ID_parameterId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_parameterId));
                }
                setParameterId(typedValue);
@@ -549,14 +549,14 @@ public class _ErpQaInspectionLine extends DynamicOrmEntity{
         
             case PROP_ID_id:{
                onInitProp(propId);
-               this._id = (java.lang.Long)value;
+               this._id = (java.lang.String)value;
                orm_id(); // 如果是设置主键字段，则触发watcher
                break;
             }
         
             case PROP_ID_inspectionId:{
                onInitProp(propId);
-               this._inspectionId = (java.lang.Long)value;
+               this._inspectionId = (java.lang.String)value;
                
                break;
             }
@@ -570,7 +570,7 @@ public class _ErpQaInspectionLine extends DynamicOrmEntity{
         
             case PROP_ID_parameterId:{
                onInitProp(propId);
-               this._parameterId = (java.lang.Long)value;
+               this._parameterId = (java.lang.String)value;
                
                break;
             }
@@ -682,7 +682,7 @@ public class _ErpQaInspectionLine extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final java.lang.Long getId(){
+    public final java.lang.String getId(){
          onPropGet(PROP_ID_id);
          return _id;
     }
@@ -690,7 +690,7 @@ public class _ErpQaInspectionLine extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final void setId(java.lang.Long value){
+    public final void setId(java.lang.String value){
         if(onPropSet(PROP_ID_id,value)){
             this._id = value;
             internalClearRefs(PROP_ID_id);
@@ -701,7 +701,7 @@ public class _ErpQaInspectionLine extends DynamicOrmEntity{
     /**
      * 质检单ID: INSPECTION_ID
      */
-    public final java.lang.Long getInspectionId(){
+    public final java.lang.String getInspectionId(){
          onPropGet(PROP_ID_inspectionId);
          return _inspectionId;
     }
@@ -709,7 +709,7 @@ public class _ErpQaInspectionLine extends DynamicOrmEntity{
     /**
      * 质检单ID: INSPECTION_ID
      */
-    public final void setInspectionId(java.lang.Long value){
+    public final void setInspectionId(java.lang.String value){
         if(onPropSet(PROP_ID_inspectionId,value)){
             this._inspectionId = value;
             internalClearRefs(PROP_ID_inspectionId);
@@ -739,7 +739,7 @@ public class _ErpQaInspectionLine extends DynamicOrmEntity{
     /**
      * 检验参数: PARAMETER_ID
      */
-    public final java.lang.Long getParameterId(){
+    public final java.lang.String getParameterId(){
          onPropGet(PROP_ID_parameterId);
          return _parameterId;
     }
@@ -747,7 +747,7 @@ public class _ErpQaInspectionLine extends DynamicOrmEntity{
     /**
      * 检验参数: PARAMETER_ID
      */
-    public final void setParameterId(java.lang.Long value){
+    public final void setParameterId(java.lang.String value){
         if(onPropSet(PROP_ID_parameterId,value)){
             this._parameterId = value;
             internalClearRefs(PROP_ID_parameterId);

@@ -72,11 +72,11 @@ public class TestErpQaDashboardSpc extends JunitAutoTestCase {
         LocalDate to = LocalDate.of(2026, 1, 31);
         ormTemplate.runInSession(() -> {
             // chart 601/602 INADEQUATE, chart 603 ACCEPTABLE
-            seedCapability(8601L, 601L, from, to, ErpQaConstants.SPC_CAPABILITY_INADEQUATE);
-            seedCapability(8602L, 602L, from, to, ErpQaConstants.SPC_CAPABILITY_INADEQUATE);
-            seedCapability(8603L, 603L, from, to, ErpQaConstants.SPC_CAPABILITY_ACCEPTABLE);
+            seedCapability("8601", "601", from, to, ErpQaConstants.SPC_CAPABILITY_INADEQUATE);
+            seedCapability("8602", "602", from, to, ErpQaConstants.SPC_CAPABILITY_INADEQUATE);
+            seedCapability("8603", "603", from, to, ErpQaConstants.SPC_CAPABILITY_ACCEPTABLE);
             // 同 chart 多条 INADEQUATE 记录去重为 1 图
-            seedCapability(8604L, 601L, LocalDate.of(2026, 2, 1), LocalDate.of(2026, 2, 28),
+            seedCapability("8604", "601", LocalDate.of(2026, 2, 1), LocalDate.of(2026, 2, 28),
                     ErpQaConstants.SPC_CAPABILITY_INADEQUATE);
         });
 
@@ -88,10 +88,10 @@ public class TestErpQaDashboardSpc extends JunitAutoTestCase {
     public void testOutOfControlChartCount() {
         ormTemplate.runInSession(() -> {
             // chart 701 失控（2 子组）, chart 702 失控, chart 703 受控
-            seedSample(9701L, 701L, 1, true);
-            seedSample(9702L, 701L, 2, true);
-            seedSample(9703L, 702L, 1, true);
-            seedSample(9704L, 703L, 1, false);
+            seedSample("9701", "701", 1, true);
+            seedSample("9702", "701", 2, true);
+            seedSample("9703", "702", 1, true);
+            seedSample("9704", "703", 1, false);
         });
 
         Map<String, Object> w = dashboardBiz.getSpcOutOfControlWarning(CTX);
@@ -103,12 +103,12 @@ public class TestErpQaDashboardSpc extends JunitAutoTestCase {
         LocalDate today = CoreMetrics.currentDate();
         ormTemplate.runInSession(() -> {
             // SPC 来源：2 OPEN + 1 IN_REVIEW + 1 RESOLVED → 开放 3
-            seedSpcNcr(5001L, today, ErpQaConstants.NCR_STATUS_OPEN);
-            seedSpcNcr(5002L, today, ErpQaConstants.NCR_STATUS_IN_REVIEW);
-            seedSpcNcr(5005L, today, ErpQaConstants.NCR_STATUS_OPEN);
-            seedSpcNcr(5003L, today, ErpQaConstants.NCR_STATUS_RESOLVED);
+            seedSpcNcr("5001", today, ErpQaConstants.NCR_STATUS_OPEN);
+            seedSpcNcr("5002", today, ErpQaConstants.NCR_STATUS_IN_REVIEW);
+            seedSpcNcr("5005", today, ErpQaConstants.NCR_STATUS_OPEN);
+            seedSpcNcr("5003", today, ErpQaConstants.NCR_STATUS_RESOLVED);
             // INSPECTION 来源不计入 SPC NCR
-            seedNcr(5004L, today, ErpQaConstants.NCR_STATUS_OPEN, ErpQaConstants.NCR_SOURCE_TYPE_INSPECTION);
+            seedNcr("5004", today, ErpQaConstants.NCR_STATUS_OPEN, ErpQaConstants.NCR_SOURCE_TYPE_INSPECTION);
         });
 
         Map<String, Object> w = dashboardBiz.getSpcOutOfControlWarning(CTX);
@@ -119,9 +119,9 @@ public class TestErpQaDashboardSpc extends JunitAutoTestCase {
     public void testConfigGatedClosesInclusionSegments() {
         LocalDate today = CoreMetrics.currentDate();
         ormTemplate.runInSession(() -> {
-            seedCapability(8611L, 611L, LocalDate.of(2026, 1, 1), LocalDate.of(2026, 1, 31),
+            seedCapability("8611", "611", LocalDate.of(2026, 1, 1), LocalDate.of(2026, 1, 31),
                     ErpQaConstants.SPC_CAPABILITY_INADEQUATE);
-            seedSpcNcr(5111L, today, ErpQaConstants.NCR_STATUS_OPEN);
+            seedSpcNcr("5111", today, ErpQaConstants.NCR_STATUS_OPEN);
         });
         // 关闭两段纳入
         AppConfig.getConfigProvider().assignConfigValue(ErpQaConstants.CONFIG_DASH_QA_SPC_INCLUDE_INADEQUATE, "false");
@@ -136,7 +136,7 @@ public class TestErpQaDashboardSpc extends JunitAutoTestCase {
 
     // ---------- helpers ----------
 
-    private void seedSample(long id, long chartId, int subgroupNo, boolean outOfControl) {
+    private void seedSample(String id, String chartId, int subgroupNo, boolean outOfControl) {
         IEntityDao<ErpQaSpcSample> dao = daoProvider.daoFor(ErpQaSpcSample.class);
         ErpQaSpcSample s = dao.newEntity();
         s.orm_propValueByName("id", id);
@@ -151,7 +151,7 @@ public class TestErpQaDashboardSpc extends JunitAutoTestCase {
         dao.saveEntity(s);
     }
 
-    private void seedCapability(long id, long chartId, LocalDate from, LocalDate to, String capabilityLevel) {
+    private void seedCapability(String id, String chartId, LocalDate from, LocalDate to, String capabilityLevel) {
         IEntityDao<ErpQaSpcCapability> dao = daoProvider.daoFor(ErpQaSpcCapability.class);
         ErpQaSpcCapability c = dao.newEntity();
         c.orm_propValueByName("id", id);
@@ -162,17 +162,17 @@ public class TestErpQaDashboardSpc extends JunitAutoTestCase {
         dao.saveEntity(c);
     }
 
-    private void seedSpcNcr(long id, LocalDate ncrDate, String status) {
+    private void seedSpcNcr(String id, LocalDate ncrDate, String status) {
         seedNcr(id, ncrDate, status, ErpQaConstants.NCR_SOURCE_TYPE_SPC);
     }
 
-    private void seedNcr(long id, LocalDate ncrDate, String status, String sourceType) {
+    private void seedNcr(String id, LocalDate ncrDate, String status, String sourceType) {
         IEntityDao<ErpQaNonConformance> dao = daoProvider.daoFor(ErpQaNonConformance.class);
         ErpQaNonConformance n = dao.newEntity();
         n.orm_propValue(1, id);
         n.setCode("NCR-SPC-" + id);
         n.setNcrDate(ncrDate);
-        n.setMaterialId(1L);
+        n.setMaterialId("1");
         n.setSeverity("MAJOR");
         n.setStatus(status);
         n.setSourceType(sourceType);

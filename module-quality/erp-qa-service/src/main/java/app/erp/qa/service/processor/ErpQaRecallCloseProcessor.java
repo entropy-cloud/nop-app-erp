@@ -22,7 +22,7 @@ import static io.nop.api.core.beans.FilterBeans.eq;
  */
 public class ErpQaRecallCloseProcessor extends AbstractErpQaRecallProcessor {
 
-    public ErpQaRecall close(Long recallId, IServiceContext context) {
+    public ErpQaRecall close(String recallId, IServiceContext context) {
         ErpQaRecall recall = requireRecall(recallId, context);
         String current = recall.getStatus();
         try {

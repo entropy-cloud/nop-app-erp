@@ -15,7 +15,7 @@ import java.util.List;
  */
 public class ErpQaRecallNotifyCustomersProcessor extends AbstractErpQaRecallProcessor {
 
-    public ErpQaRecall notifyCustomers(Long recallId, IServiceContext context) {
+    public ErpQaRecall notifyCustomers(String recallId, IServiceContext context) {
         ErpQaRecall recall = requireRecall(recallId, context);
         requireRecallStatus(recall, ErpQaConstants.RECALL_STATUS_IN_PROGRESS, "IN_PROGRESS");
         for (ErpQaRecallTarget target : loadTargets(recallId, null, context)) {

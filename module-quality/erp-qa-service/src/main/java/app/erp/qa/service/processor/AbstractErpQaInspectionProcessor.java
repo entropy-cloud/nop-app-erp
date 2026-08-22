@@ -40,7 +40,7 @@ public abstract class AbstractErpQaInspectionProcessor {
         return daoProvider.daoFor(ErpQaInspectionLine.class);
     }
 
-    protected ErpQaInspection requireInspection(Long inspectionId, IServiceContext context) {
+    protected ErpQaInspection requireInspection(String inspectionId, IServiceContext context) {
         if (inspectionId == null) {
             throw new NopException(ErpQaErrors.ERR_INSPECTION_NOT_FOUND)
                     .param(ErpQaErrors.ARG_INSPECTION_ID, inspectionId);
@@ -53,7 +53,7 @@ public abstract class AbstractErpQaInspectionProcessor {
         return inspection;
     }
 
-    protected List<ErpQaInspectionLine> loadLines(Long inspectionId) {
+    protected List<ErpQaInspectionLine> loadLines(String inspectionId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("inspectionId", inspectionId));
         q.addOrderField("lineNo", false);

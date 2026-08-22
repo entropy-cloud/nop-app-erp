@@ -60,7 +60,7 @@ public class NcrPostingDispatcher {
      * 分派 SCRAP 处置过账。金额 = quantity × 物料平均成本。
      * 成功置 posted 三件套并返回凭证 ID；幂等命中（已过账）返回 null。
      */
-    public Long dispatchScrap(ErpQaNonConformance ncr, IServiceContext context) {
+    public String dispatchScrap(ErpQaNonConformance ncr, IServiceContext context) {
         BigDecimal quantity = ncr.getQuantity();
         if (quantity == null || quantity.signum() <= 0) {
             throw new NopException(ErpQaErrors.ERR_NCR_NO_QUANTITY).param(ErpQaErrors.ARG_NCR_CODE, ncr.getCode());
@@ -68,12 +68,12 @@ public class NcrPostingDispatcher {
         ErpInvStockBalance balance = resolveStockBalance(ncr.getMaterialId());
         BigDecimal unitCost = balance != null && balance.getAvgCost() != null ? balance.getAvgCost() : BigDecimal.ZERO;
         BigDecimal scrapAmount = quantity.multiply(unitCost);
-        Long currencyId = balance != null ? balance.getCurrencyId() : null;
-        Long warehouseId = balance != null ? balance.getWarehouseId() : null;
-        Long orgId = balance != null ? balance.getOrgId() : null;
+        String currencyId = balance != null ? balance.getCurrencyId() : null;
+        String warehouseId = balance != null ? balance.getWarehouseId() : null;
+        String orgId = balance != null ? balance.getOrgId() : null;
 
         PostingEvent event = buildScrapEvent(ncr, scrapAmount, currencyId, warehouseId, orgId);
-        Long voucherId = executor.postEvent(event);
+        String voucherId = executor.postEvent(event);
         if (voucherId != null) {
             ncr.setPosted(Boolean.TRUE);
             ncr.setPostedAt(CoreMetrics.currentTimestamp());
@@ -96,7 +96,7 @@ public class NcrPostingDispatcher {
         ncr.setPostedBy(null);
     }
 
-    private PostingEvent buildScrapEvent(ErpQaNonConformance ncr, BigDecimal scrapAmount, Long currencyId, Long warehouseId, Long orgId) {
+    private PostingEvent buildScrapEvent(ErpQaNonConformance ncr, BigDecimal scrapAmount, String currencyId, String warehouseId, String orgId) {
         PostingEvent event = new PostingEvent();
         event.setBusinessType(ErpFinBusinessType.NCR_SCRAP);
         event.setBillHeadCode(ncr.getCode());
@@ -114,7 +114,7 @@ public class NcrPostingDispatcher {
         return event;
     }
 
-    private ErpInvStockBalance resolveStockBalance(Long materialId) {
+    private ErpInvStockBalance resolveStockBalance(String materialId) {
         if (materialId == null) {
             return null;
         }
@@ -130,16 +130,12 @@ public class NcrPostingDispatcher {
         return balances.get(0);
     }
 
-    private Long resolveAcctSchemaId() {
+    private String resolveAcctSchemaId() {
         String raw = AppConfig.var(ErpQaConstants.CONFIG_NCR_DEFAULT_ACCT_SCHEMA, "");
         if (raw == null || raw.trim().isEmpty()) {
             return null;
         }
-        try {
-            return Long.valueOf(raw.trim());
-        } catch (NumberFormatException e) {
-            return null;
-        }
+        return raw.trim();
     }
 
     private String resolveUserId(IServiceContext context) {

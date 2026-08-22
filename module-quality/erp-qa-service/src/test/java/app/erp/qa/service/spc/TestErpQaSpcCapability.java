@@ -43,8 +43,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpQaSpcCapability extends JunitAutoTestCase {
 
-    static final Long MATERIAL_ID = 7801L;
-    static final Long PARAMETER_ID = 9001L;
+    static final String MATERIAL_ID = "7801";
+    static final String PARAMETER_ID = "9001";
 
     @Inject
     IDaoProvider daoProvider;
@@ -56,7 +56,7 @@ public class TestErpQaSpcCapability extends JunitAutoTestCase {
     @Test
     public void calculateCapabilityExcellentLevel() {
         // 窄规格但稳定过程：spec 9-11，sigma≈0.1 → Cpk≈3.33 → EXCELLENT
-        Long chartId = seedChart("CHART-CAP-EXCELLENT",
+        String chartId = seedChart("CHART-CAP-EXCELLENT",
                 new BigDecimal("9"), new BigDecimal("11"));
         // 5 子组，每子组 mean=10 range=0.1
         for (int i = 1; i <= 5; i++) {
@@ -81,7 +81,7 @@ public class TestErpQaSpcCapability extends JunitAutoTestCase {
     @Test
     public void calculateCapabilityInadequateWritesBackGoalAndRegistersRisk() {
         // 宽幅值漂移但极窄规格 → Cpk 极低 → INADEQUATE
-        Long chartId = seedChart("CHART-CAP-INADEQUATE",
+        String chartId = seedChart("CHART-CAP-INADEQUATE",
                 new BigDecimal("40"), new BigDecimal("42"));
         // chart.code 关联同名 QualityGoal（用于回写）
         seedQualityGoal("CHART-CAP-INADEQUATE");
@@ -115,7 +115,7 @@ public class TestErpQaSpcCapability extends JunitAutoTestCase {
 
     @Test
     public void noSamplesReturnsNull() {
-        Long chartId = seedChart("CHART-CAP-EMPTY",
+        String chartId = seedChart("CHART-CAP-EMPTY",
                 new BigDecimal("0"), new BigDecimal("100"));
         ErpQaSpcCapability cap = ormTemplate.runInSession(s -> spcCapabilityCalculator.calculateCapability(
                 chartId, CoreMetrics.currentDate().minusDays(30), CoreMetrics.currentDate(), null));
@@ -124,8 +124,8 @@ public class TestErpQaSpcCapability extends JunitAutoTestCase {
 
     // ---------- helpers ----------
 
-    private Long seedChart(String code, BigDecimal specMin, BigDecimal specMax) {
-        Long id = 95000L + (long) Math.abs(code.hashCode() % 10000);
+    private String seedChart(String code, BigDecimal specMin, BigDecimal specMax) {
+        String id = String.valueOf(95000L + (long) Math.abs(code.hashCode() % 10000));
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpQaSpcChart> dao = daoProvider.daoFor(ErpQaSpcChart.class);
             ErpQaSpcChart chart = dao.newEntity();
@@ -149,8 +149,8 @@ public class TestErpQaSpcCapability extends JunitAutoTestCase {
         return id;
     }
 
-    private void seedSample(Long chartId, int subgroupNo, String min, String max) {
-        Long id = 105000L + chartId * 10 + subgroupNo;
+    private void seedSample(String chartId, int subgroupNo, String min, String max) {
+        String id = String.valueOf(105000L + Long.parseLong(chartId) * 10 + subgroupNo);
         BigDecimal lo = new BigDecimal(min);
         BigDecimal hi = new BigDecimal(max);
         BigDecimal mean = lo.add(hi).divide(new BigDecimal("2"));
@@ -172,7 +172,7 @@ public class TestErpQaSpcCapability extends JunitAutoTestCase {
     }
 
     private void seedQualityGoal(String code) {
-        Long id = 110000L + (long) Math.abs(code.hashCode() % 10000);
+        String id = String.valueOf(110000L + (long) Math.abs(code.hashCode() % 10000));
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpQaQualityGoal> dao = daoProvider.daoFor(ErpQaQualityGoal.class);
             ErpQaQualityGoal goal = dao.newEntity();
@@ -192,7 +192,7 @@ public class TestErpQaSpcCapability extends JunitAutoTestCase {
         return list.isEmpty() ? null : list.get(0);
     }
 
-    private List<ErpQaRiskRegister> findRiskByChart(Long chartId) {
+    private List<ErpQaRiskRegister> findRiskByChart(String chartId) {
         // 通过 RiskRegister.code 前缀反查：RISK-SPC-{chartCode}-{date}
         // 简化：查 category=SPC_PROCESS_CAPABILITY 的所有风险
         QueryBean q = new QueryBean();

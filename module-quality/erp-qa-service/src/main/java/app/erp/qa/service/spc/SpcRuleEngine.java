@@ -79,7 +79,7 @@ public class SpcRuleEngine {
      * 对指定 chart 的所有样本评估判异规则，回写每样本 violatedRules/isOutOfControl。
      * 失控样本经 post-commit 创建 NCR+CAPA（config-gated）。返回失控样本数。
      */
-    public int evaluate(Long chartId, IServiceContext context) {
+    public int evaluate(String chartId, IServiceContext context) {
         IEntityDao<ErpQaSpcChart> chartDao = daoProvider.daoFor(ErpQaSpcChart.class);
         ErpQaSpcChart chart = chartDao.getEntityById(chartId);
         if (chart == null) {
@@ -241,7 +241,7 @@ public class SpcRuleEngine {
         return result;
     }
 
-    private List<ErpQaSpcSample> findSamplesOrdered(Long chartId) {
+    private List<ErpQaSpcSample> findSamplesOrdered(String chartId) {
         IEntityDao<ErpQaSpcSample> dao = daoProvider.daoFor(ErpQaSpcSample.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("chartId", chartId));

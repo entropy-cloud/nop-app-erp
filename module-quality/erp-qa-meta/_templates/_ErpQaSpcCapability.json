@@ -1,7 +1,7 @@
 {
-  "id": 0,
-  "chartId": 0,
-  "orgId": 0,
+  "id": "",
+  "chartId": "",
+  "orgId": "",
   "periodFrom": "2000-01-01",
   "periodTo": "2000-01-01",
   "sampleCount": 0,

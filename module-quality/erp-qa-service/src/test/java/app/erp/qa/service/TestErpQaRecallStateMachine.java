@@ -37,8 +37,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpQaRecallStateMachine extends JunitAutoTestCase {
 
-    static final Long MATERIAL_ID = 7401L;
-    static final Long BATCH_ID = 8801L;
+    static final String MATERIAL_ID = "7401";
+    static final String BATCH_ID = "8801";
 
     @Inject
     IDaoProvider daoProvider;
@@ -47,16 +47,16 @@ public class TestErpQaRecallStateMachine extends JunitAutoTestCase {
 
     @Test
     public void testRegisterSubmitApproveFullFlow() {
-        Long recallId = registerRecall("RC-FLOW", ErpQaConstants.RECALL_SEVERITY_HIGH);
+        String recallId = registerRecall("RC-FLOW", ErpQaConstants.RECALL_SEVERITY_HIGH);
         ErpQaRecall recall = reload(recallId);
         assertEquals(ErpQaConstants.RECALL_STATUS_OPEN, recall.getStatus(), "register→OPEN");
         assertEquals(ErpQaConstants.APPROVE_STATUS_UNSUBMITTED, recall.getApproveStatus());
         assertEquals(Boolean.FALSE, recall.getNotifyCustomer());
 
-        rpcOk(mutation, "ErpQaRecall__submitForApproval", Map.of("id", String.valueOf(recallId)));
+        rpcOk(mutation, "ErpQaRecall__submitForApproval", Map.of("id", recallId));
         assertEquals(ErpQaConstants.APPROVE_STATUS_SUBMITTED, reload(recallId).getApproveStatus());
 
-        rpcOk(mutation, "ErpQaRecall__approve", Map.of("id", String.valueOf(recallId)));
+        rpcOk(mutation, "ErpQaRecall__approve", Map.of("id", recallId));
         ErpQaRecall approved = reload(recallId);
         assertEquals(ErpQaConstants.RECALL_STATUS_APPROVED, approved.getStatus(), "approve→APPROVED");
         assertEquals(ErpQaConstants.APPROVE_STATUS_APPROVED, approved.getApproveStatus());
@@ -66,9 +66,9 @@ public class TestErpQaRecallStateMachine extends JunitAutoTestCase {
 
     @Test
     public void testApproveWithoutSubmitBlockedByForcedApproval() {
-        Long recallId = registerRecall("RC-NOAPP", ErpQaConstants.RECALL_SEVERITY_MEDIUM);
+        String recallId = registerRecall("RC-NOAPP", ErpQaConstants.RECALL_SEVERITY_MEDIUM);
         // 强制审批（默认 true）：未经 submit 直接 approve → ERR_RECALL_APPROVAL_REQUIRED
-        ApiResponse<?> resp = rpc(mutation, "ErpQaRecall__approve", Map.of("id", String.valueOf(recallId)));
+        ApiResponse<?> resp = rpc(mutation, "ErpQaRecall__approve", Map.of("id", recallId));
         assertTrue(resp.getStatus() != 0,
                 "强制审批下未 submit 直接 approve 应拒绝");
         assertEquals(ErpQaConstants.RECALL_STATUS_OPEN, reload(recallId).getStatus());
@@ -76,9 +76,9 @@ public class TestErpQaRecallStateMachine extends JunitAutoTestCase {
 
     @Test
     public void testRejectFromSubmitted() {
-        Long recallId = registerRecall("RC-REJ", ErpQaConstants.RECALL_SEVERITY_LOW);
-        rpcOk(mutation, "ErpQaRecall__submitForApproval", Map.of("id", String.valueOf(recallId)));
-        rpcOk(mutation, "ErpQaRecall__reject", Map.of("id", String.valueOf(recallId)));
+        String recallId = registerRecall("RC-REJ", ErpQaConstants.RECALL_SEVERITY_LOW);
+        rpcOk(mutation, "ErpQaRecall__submitForApproval", Map.of("id", recallId));
+        rpcOk(mutation, "ErpQaRecall__reject", Map.of("id", recallId));
         ErpQaRecall rejected = reload(recallId);
         assertEquals(ErpQaConstants.RECALL_STATUS_CANCELLED, rejected.getStatus(), "reject→CANCELLED");
         assertEquals(ErpQaConstants.APPROVE_STATUS_REJECTED, rejected.getApproveStatus());
@@ -86,14 +86,14 @@ public class TestErpQaRecallStateMachine extends JunitAutoTestCase {
 
     @Test
     public void testCancelFromOpen() {
-        Long recallId = registerRecall("RC-CANCEL", ErpQaConstants.RECALL_SEVERITY_MEDIUM);
+        String recallId = registerRecall("RC-CANCEL", ErpQaConstants.RECALL_SEVERITY_MEDIUM);
         rpcOk(mutation, "ErpQaRecall__cancel", Map.of("recallId", recallId));
         assertEquals(ErpQaConstants.RECALL_STATUS_CANCELLED, reload(recallId).getStatus(), "cancel→CANCELLED");
     }
 
     @Test
     public void testIllegalTransitionsRejected() {
-        Long recallId = registerRecall("RC-ILLEGAL", ErpQaConstants.RECALL_SEVERITY_MEDIUM);
+        String recallId = registerRecall("RC-ILLEGAL", ErpQaConstants.RECALL_SEVERITY_MEDIUM);
 
         // close 从 OPEN → 非法（须 IN_PROGRESS）
         ApiResponse<?> closeResp = rpc(mutation, "ErpQaRecall__close", Map.of("recallId", recallId));
@@ -101,7 +101,7 @@ public class TestErpQaRecallStateMachine extends JunitAutoTestCase {
                 "OPEN→close 非法");
 
         // reject 未经 submit → 非法
-        ApiResponse<?> rejectResp = rpc(mutation, "ErpQaRecall__reject", Map.of("id", String.valueOf(recallId)));
+        ApiResponse<?> rejectResp = rpc(mutation, "ErpQaRecall__reject", Map.of("id", recallId));
         assertTrue(rejectResp.getStatus() != 0,
                 "UNSUBMITTED→reject 非法");
     }
@@ -109,10 +109,10 @@ public class TestErpQaRecallStateMachine extends JunitAutoTestCase {
     @Test
     public void testCriticalSeverityRecall() {
         // CRITICAL 严重程度召回全流程（标记需高层，本期以状态机为准）
-        Long recallId = registerRecall("RC-CRIT", ErpQaConstants.RECALL_SEVERITY_CRITICAL);
+        String recallId = registerRecall("RC-CRIT", ErpQaConstants.RECALL_SEVERITY_CRITICAL);
         assertEquals(ErpQaConstants.RECALL_SEVERITY_CRITICAL, reload(recallId).getSeverityLevel());
-        rpcOk(mutation, "ErpQaRecall__submitForApproval", Map.of("id", String.valueOf(recallId)));
-        rpcOk(mutation, "ErpQaRecall__approve", Map.of("id", String.valueOf(recallId)));
+        rpcOk(mutation, "ErpQaRecall__submitForApproval", Map.of("id", recallId));
+        rpcOk(mutation, "ErpQaRecall__approve", Map.of("id", recallId));
         assertEquals(ErpQaConstants.RECALL_STATUS_APPROVED, reload(recallId).getStatus(),
                 "CRITICAL 召回正常审批");
     }
@@ -132,32 +132,32 @@ public class TestErpQaRecallStateMachine extends JunitAutoTestCase {
      */
     @Test
     public void testWithdrawApprovalGuardAndExtraction() {
-        Long recallId = registerRecall("RC-WITHDRAW", ErpQaConstants.RECALL_SEVERITY_MEDIUM);
+        String recallId = registerRecall("RC-WITHDRAW", ErpQaConstants.RECALL_SEVERITY_MEDIUM);
 
         // 负向守卫：UNSUBMITTED → withdrawApproval 非法（须 SUBMITTED）
         ApiResponse<?> guardResp = rpc(mutation, "ErpQaRecall__withdrawApproval",
-                Map.of("id", String.valueOf(recallId)));
+                Map.of("id", recallId));
         assertEquals(ErpQaErrors.ERR_INVALID_RECALL_STATUS_TRANSITION.getErrorCode(), guardResp.getCode(),
                 "UNSUBMITTED→withdrawApproval 须抛域非法迁移错误码（替代原 wf invalid-status）");
         assertEquals(ErpQaConstants.APPROVE_STATUS_UNSUBMITTED, reload(recallId).getApproveStatus(),
                 "守卫拒绝不应改变状态");
 
         // 正向激活：submit → SUBMITTED → withdraw → UNSUBMITTED
-        rpcOk(mutation, "ErpQaRecall__submitForApproval", Map.of("id", String.valueOf(recallId)));
+        rpcOk(mutation, "ErpQaRecall__submitForApproval", Map.of("id", recallId));
         assertEquals(ErpQaConstants.APPROVE_STATUS_SUBMITTED, reload(recallId).getApproveStatus(),
                 "submit→SUBMITTED");
-        rpcOk(mutation, "ErpQaRecall__withdrawApproval", Map.of("id", String.valueOf(recallId)));
+        rpcOk(mutation, "ErpQaRecall__withdrawApproval", Map.of("id", recallId));
         assertEquals(ErpQaConstants.APPROVE_STATUS_UNSUBMITTED, reload(recallId).getApproveStatus(),
                 "withdraw→UNSUBMITTED（inline 提取激活 per-mutation 运行时路径）");
     }
 
     // ---------- helpers ----------
 
-    private ErpQaRecall reload(Long recallId) {
+    private ErpQaRecall reload(String recallId) {
         return daoProvider.daoFor(ErpQaRecall.class).getEntityById(recallId);
     }
 
-    private Long registerRecall(String code, String severity) {
+    private String registerRecall(String code, String severity) {
         Map<String, Object> data = new LinkedHashMap<>();
         data.put("code", code);
         data.put("recallName", "召回-" + code);

@@ -18,6 +18,7 @@ import io.nop.api.core.beans.ApiRequest;
 import io.nop.api.core.beans.ApiResponse;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.config.AppConfig;
+import io.nop.api.core.convert.ConvertHelper;
 import io.nop.api.core.time.CoreMetrics;
 import io.nop.autotest.junit.JunitAutoTestCase;
 import io.nop.dao.api.IDaoProvider;
@@ -58,14 +59,16 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
         testBeansFile = "/erp/qa/beans/test-mock-sales.beans.xml")
 public class TestErpQaRecallLocateNotifyReturn extends JunitAutoTestCase {
 
-    static final Long MATERIAL_ID = 27101L;
-    static final Long WAREHOUSE_ID = 37101L;
-    static final Long CUSTOMER_ID = 47101L;
-    static final Long UOM_ID = 57101L;
-    static final Long CURRENCY_ID = 67101L;
-    static final Long BATCH_PK = 87101L;
+    static final String MATERIAL_ID = "27101";
+    static final String WAREHOUSE_ID = "37101";
+    static final String CUSTOMER_ID = "47101";
+    static final String UOM_ID = "57101";
+    static final String CURRENCY_ID = "67101";
+    static final String BATCH_PK = "87101";
+    // bridge-test-129: sal delivery 仍未迁移（M2.6），qa/inv/md 侧已 String——种子经局部桥转换
     static final Long DELIVERY_PK = 77101L;
-    static final Long MOVE_PK = 97101L;
+    static final String MOVE_PK = "97101";
+    static final String MOVE_LINE_PK = "971011";
     static final String BATCH_NO = "RC-BATCH-LNR";
     static final String DELIVERY_CODE = "DLV-RC-LNR";
 
@@ -80,7 +83,7 @@ public class TestErpQaRecallLocateNotifyReturn extends JunitAutoTestCase {
     public void testLocateNotifyReturnCloseFullFlow() {
         seedTraceFixture();
 
-        Long recallId = registerRecall("RC-LNR-FULL");
+        String recallId = registerRecall("RC-LNR-FULL");
         submit(recallId);
         approve(recallId);
 
@@ -91,7 +94,7 @@ public class TestErpQaRecallLocateNotifyReturn extends JunitAutoTestCase {
 
         ErpQaRecallTarget target = singleTargetOf(recallId);
         assertEquals(CUSTOMER_ID, target.getPartnerId(), "target 客户=出库单客户");
-        assertEquals(DELIVERY_PK, target.getSalesDeliveryId(), "target 出库单=定位到的出库");
+        assertEquals(String.valueOf(DELIVERY_PK), target.getSalesDeliveryId(), "target 出库单=定位到的出库");
         assertEquals(BATCH_NO, target.getBatchNo(), "target 批号=召回批次解析值");
         assertEquals(0, new BigDecimal("12.0000").compareTo(target.getShippedQty()), "target 发货数量=移动单行数量合计");
         assertEquals(ErpQaConstants.RECALL_TARGET_RETURN_PENDING, target.getReturnStatus());
@@ -113,7 +116,7 @@ public class TestErpQaRecallLocateNotifyReturn extends JunitAutoTestCase {
         ErpQaRecallTarget returned = reloadTarget(target.getId());
         assertEquals(ErpQaConstants.RECALL_TARGET_RETURN_RETURNED, returned.getReturnStatus(), "退货后 RETURNED");
         assertNotNull(returned.getGeneratedReturnId(), "记录生成的退货单 ID");
-        assertNotEquals(DELIVERY_PK, returned.getGeneratedReturnId(), "退货单 ID 应为新生成值");
+        assertNotEquals(String.valueOf(DELIVERY_PK), returned.getGeneratedReturnId(), "退货单 ID 应为新生成值");
 
         // close → CLOSED（门控通过）
         rpcOk(mutation, "ErpQaRecall__close", Map.of("recallId", recallId));
@@ -123,7 +126,7 @@ public class TestErpQaRecallLocateNotifyReturn extends JunitAutoTestCase {
     @Test
     public void testLocateTargetsBlockedWhenTraceChainDisabled() {
         seedTraceFixture();
-        Long recallId = registerRecall("RC-LNR-DISABLED");
+        String recallId = registerRecall("RC-LNR-DISABLED");
         submit(recallId);
         approve(recallId);
 
@@ -205,9 +208,9 @@ public class TestErpQaRecallLocateNotifyReturn extends JunitAutoTestCase {
             ErpSalDelivery delivery = new ErpSalDelivery();
             delivery.orm_propValueByName("id", DELIVERY_PK);
             delivery.setCode(DELIVERY_CODE);
-            delivery.setCustomerId(CUSTOMER_ID);
-            delivery.setWarehouseId(WAREHOUSE_ID);
-            delivery.setCurrencyId(CURRENCY_ID);
+            delivery.setCustomerId(ConvertHelper.toLong(CUSTOMER_ID));
+            delivery.setWarehouseId(ConvertHelper.toLong(WAREHOUSE_ID));
+            delivery.setCurrencyId(ConvertHelper.toLong(CURRENCY_ID));
             delivery.setBusinessDate(CoreMetrics.currentDate());
             delivery.setDocStatus("ACTIVE"); // erp-sal/doc-status ACTIVE
             delivery.setApproveStatus("APPROVED"); // wf/approve-status APPROVED
@@ -219,8 +222,8 @@ public class TestErpQaRecallLocateNotifyReturn extends JunitAutoTestCase {
             dlvLine.orm_propValueByName("id", DELIVERY_PK * 10 + 1);
             dlvLine.setDeliveryId(DELIVERY_PK);
             dlvLine.setLineNo(1);
-            dlvLine.setMaterialId(MATERIAL_ID);
-            dlvLine.setUoMId(UOM_ID);
+            dlvLine.setMaterialId(ConvertHelper.toLong(MATERIAL_ID));
+            dlvLine.setUoMId(ConvertHelper.toLong(UOM_ID));
             dlvLine.setQuantity(new BigDecimal("12"));
             dlvLineDao.saveEntity(dlvLine);
 
@@ -240,7 +243,7 @@ public class TestErpQaRecallLocateNotifyReturn extends JunitAutoTestCase {
 
             IEntityDao<ErpInvStockMoveLine> moveLineDao = daoProvider.daoFor(ErpInvStockMoveLine.class);
             ErpInvStockMoveLine moveLine = new ErpInvStockMoveLine();
-            moveLine.orm_propValueByName("id", MOVE_PK * 10 + 1);
+            moveLine.orm_propValueByName("id", MOVE_LINE_PK);
             moveLine.setMoveId(MOVE_PK);
             moveLine.setLineNo(1);
             moveLine.setMaterialId(MATERIAL_ID);
@@ -254,7 +257,7 @@ public class TestErpQaRecallLocateNotifyReturn extends JunitAutoTestCase {
 
     // ---------- recall helpers ----------
 
-    private Long registerRecall(String code) {
+    private String registerRecall(String code) {
         Map<String, Object> data = new LinkedHashMap<>();
         data.put("code", code);
         data.put("recallName", "召回-" + code);
@@ -272,23 +275,23 @@ public class TestErpQaRecallLocateNotifyReturn extends JunitAutoTestCase {
         return list.get(0).getId();
     }
 
-    private void submit(Long recallId) {
-        rpcOk(mutation, "ErpQaRecall__submitForApproval", Map.of("id", String.valueOf(recallId)));
+    private void submit(String recallId) {
+        rpcOk(mutation, "ErpQaRecall__submitForApproval", Map.of("id", recallId));
     }
 
-    private void approve(Long recallId) {
-        rpcOk(mutation, "ErpQaRecall__approve", Map.of("id", String.valueOf(recallId)));
+    private void approve(String recallId) {
+        rpcOk(mutation, "ErpQaRecall__approve", Map.of("id", recallId));
     }
 
-    private ErpQaRecall reloadRecall(Long recallId) {
+    private ErpQaRecall reloadRecall(String recallId) {
         return daoProvider.daoFor(ErpQaRecall.class).getEntityById(recallId);
     }
 
-    private ErpQaRecallTarget reloadTarget(Long targetId) {
+    private ErpQaRecallTarget reloadTarget(String targetId) {
         return daoProvider.daoFor(ErpQaRecallTarget.class).getEntityById(targetId);
     }
 
-    private ErpQaRecallTarget singleTargetOf(Long recallId) {
+    private ErpQaRecallTarget singleTargetOf(String recallId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("recallId", recallId));
         List<ErpQaRecallTarget> list = daoProvider.daoFor(ErpQaRecallTarget.class).findAllByQuery(q);

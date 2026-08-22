@@ -49,13 +49,13 @@ public class ErpQaRecallRegisterProcessor extends AbstractErpQaRecallProcessor {
                     recall.setTriggerType(asString(value));
                     break;
                 case "sourceNcrId":
-                    recall.setSourceNcrId(asLong(value));
+                    recall.setSourceNcrId(asString(value));
                     break;
                 case "materialId":
-                    recall.setMaterialId(asLong(value));
+                    recall.setMaterialId(asString(value));
                     break;
                 case "batchId":
-                    recall.setBatchId(asLong(value));
+                    recall.setBatchId(asString(value));
                     break;
                 case "serialNo":
                     recall.setSerialNo(asString(value));
@@ -81,16 +81,6 @@ public class ErpQaRecallRegisterProcessor extends AbstractErpQaRecallProcessor {
 
     private static String asString(Object value) {
         return value == null ? null : value.toString();
-    }
-
-    private static Long asLong(Object value) {
-        if (value == null) {
-            return null;
-        }
-        if (value instanceof Number) {
-            return ((Number) value).longValue();
-        }
-        return Long.valueOf(value.toString().trim());
     }
 
     private static Integer asInt(Object value) {

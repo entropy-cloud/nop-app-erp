@@ -13,7 +13,7 @@ public class ErpQaSpcChartEvaluateRulesProcessor {
     @Inject
     SpcRuleEngine spcRuleEngine;
 
-    public Integer evaluateRules(Long chartId, IServiceContext context) {
+    public Integer evaluateRules(String chartId, IServiceContext context) {
         return spcRuleEngine.evaluate(chartId, context);
     }
 }

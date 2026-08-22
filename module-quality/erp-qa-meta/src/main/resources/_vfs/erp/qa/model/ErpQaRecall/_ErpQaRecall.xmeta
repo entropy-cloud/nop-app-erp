@@ -22,8 +22,8 @@
 
     <props>
         <prop name="id" displayName="ID" propId="1" i18n-en:displayName="ID" tagSet="seq-default" mandatory="true"
-              queryable="true" sortable="true" insertable="true" updatable="false" graphql:type="String">
-            <schema type="java.lang.Long"/>
+              queryable="true" sortable="true" insertable="true" updatable="false">
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="code" displayName="单号" propId="2" i18n-en:displayName="Code" tagSet="var" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
@@ -39,15 +39,15 @@
         </prop>
         <prop name="sourceNcrId" displayName="来源NCR(弱指针)" propId="5" i18n-en:displayName="Source NCR" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="sourceNcr">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="materialId" displayName="召回物料" propId="6" i18n-en:displayName="Material" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="material">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="batchId" displayName="召回批次(弱指针→ErpInvBatch)" propId="7" i18n-en:displayName="Batch" queryable="true"
               sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="serialNo" displayName="召回序列号" propId="8" i18n-en:displayName="Serial No" queryable="true"
               sortable="true" insertable="true" updatable="true">

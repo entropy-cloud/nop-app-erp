@@ -19,7 +19,7 @@
             <cols>
 
                 <!--ID-->
-                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="id" mandatory="true" sortable="true"/>
 
                 <!--编码-->
                 <col id="code" mandatory="true" sortable="true"/>
@@ -31,7 +31,7 @@
                 <col id="inspectionType" mandatory="true" sortable="true"/>
 
                 <!--适用物料-->
-                <col id="materialId" ui:number="true" sortable="true"/>
+                <col id="materialId" sortable="true"/>
 
                 <!--是否启用-->
                 <col id="isActive" mandatory="true" ui:number="true" sortable="true"/>

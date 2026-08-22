@@ -17,7 +17,7 @@ public class ErpQaNonConformanceReverseNcrProcessor extends AbstractErpQaNonConf
     @Inject
     NcrPostingDispatcher ncrPostingDispatcher;
 
-    public ErpQaNonConformance reverseNcr(Long ncrId, IServiceContext context) {
+    public ErpQaNonConformance reverseNcr(String ncrId, IServiceContext context) {
         ErpQaNonConformance ncr = requireNcr(ncrId, context);
         String current = ncr.getStatus();
         try {

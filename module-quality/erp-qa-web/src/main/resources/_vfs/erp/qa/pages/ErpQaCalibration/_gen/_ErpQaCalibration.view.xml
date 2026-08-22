@@ -19,13 +19,13 @@
             <cols>
 
                 <!--ID-->
-                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="id" mandatory="true" sortable="true"/>
 
                 <!--单号-->
                 <col id="code" mandatory="true" sortable="true"/>
 
                 <!--业务组织-->
-                <col id="orgId" ui:number="true" sortable="true"/>
+                <col id="orgId" sortable="true"/>
 
                 <!--量具/设备名称-->
                 <col id="instrumentName" mandatory="true" sortable="true"/>
@@ -55,7 +55,7 @@
                 <col id="nextCalibrationDate" sortable="true"/>
 
                 <!--校准人(职员)-->
-                <col id="calibratedBy" ui:number="true" sortable="true"/>
+                <col id="calibratedBy" sortable="true"/>
 
                 <!--单据状态-->
                 <col id="docStatus" mandatory="true" sortable="true"/>

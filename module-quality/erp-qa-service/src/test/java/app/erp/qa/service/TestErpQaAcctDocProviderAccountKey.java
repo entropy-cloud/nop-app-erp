@@ -26,8 +26,8 @@ public class TestErpQaAcctDocProviderAccountKey extends BaseTestCase {
         PostingEvent e = new PostingEvent();
         e.setBusinessType(ErpFinBusinessType.NCR_SCRAP);
         e.getBillData().put("SCRAP_AMOUNT", new BigDecimal("50"));
-        e.getBillData().put("MATERIAL_ID", 1L);
-        e.getBillData().put("WAREHOUSE_ID", 2L);
+        e.getBillData().put("MATERIAL_ID", "1");
+        e.getBillData().put("WAREHOUSE_ID", "2");
 
         List<VoucherFact> facts = provider.createFacts(e, null);
         for (VoucherFact fact : facts) {

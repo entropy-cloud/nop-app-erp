@@ -90,7 +90,7 @@ public class SpcControlLimitCalculator {
      *
      * @return true 表示已重算（calcStatus→CALCULATED）；false 表示样本不足未重算
      */
-    public boolean recalculate(Long chartId) {
+    public boolean recalculate(String chartId) {
         IEntityDao<ErpQaSpcChart> chartDao = daoProvider.daoFor(ErpQaSpcChart.class);
         ErpQaSpcChart chart = chartDao.getEntityById(chartId);
         if (chart == null) {
@@ -225,7 +225,7 @@ public class SpcControlLimitCalculator {
         return grandMean;
     }
 
-    private List<ErpQaSpcSample> findSamples(Long chartId) {
+    private List<ErpQaSpcSample> findSamples(String chartId) {
         IEntityDao<ErpQaSpcSample> dao = daoProvider.daoFor(ErpQaSpcSample.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("chartId", chartId));

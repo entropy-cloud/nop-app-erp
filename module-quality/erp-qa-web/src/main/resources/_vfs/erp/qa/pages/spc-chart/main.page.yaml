@@ -50,7 +50,7 @@ body:
       method: post
       dataType: raw
       data:
-        query: "query(${'$'}chartId:Long){ ErpQaDashboard__getSpcControlChartData(chartId:${'$'}chartId) }"
+        query: "query(${'$'}chartId:String){ ErpQaDashboard__getSpcControlChartData(chartId:${'$'}chartId) }"
         variables:
           chartId: "${chartId || null}"
       adaptor: |
@@ -99,7 +99,7 @@ body:
       method: post
       dataType: raw
       data:
-        query: "query(${'$'}chartId:Long,${'$'}lim:Int){ ErpQaSpcSample__findPage(query:{limit:${'$'}lim,filter:{eq:{chartId:${{'$'}}chartId}}}){ items{ id chartId subgroupNo sampleTime mean range stdDev defectCount inspectedCount defectRate isOutOfControl violatedRules } total } }"
+        query: "query(${'$'}chartId:String,${'$'}lim:Int){ ErpQaSpcSample__findPage(query:{limit:${'$'}lim,filter:{eq:{chartId:${{'$'}}chartId}}}){ items{ id chartId subgroupNo sampleTime mean range stdDev defectCount inspectedCount defectRate isOutOfControl violatedRules } total } }"
         variables:
           chartId: "${chartId || null}"
           lim: 200

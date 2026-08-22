@@ -33,7 +33,7 @@ public class ErpQaActionBizModel extends CrudBizModel<ErpQaAction> implements IE
 
     @Override
     @BizMutation
-    public ErpQaAction startAction(@Name("actionId") Long actionId, IServiceContext context) {
+    public ErpQaAction startAction(@Name("actionId") String actionId, IServiceContext context) {
         ErpQaAction action = requireAction(actionId, context);
         requireActionStatus(action, ErpQaConstants.ACTION_STATUS_PENDING, "PENDING");
         action.setStatus(ErpQaConstants.ACTION_STATUS_IN_PROGRESS);
@@ -43,7 +43,7 @@ public class ErpQaActionBizModel extends CrudBizModel<ErpQaAction> implements IE
 
     @Override
     @BizMutation
-    public ErpQaAction completeAction(@Name("actionId") Long actionId, IServiceContext context) {
+    public ErpQaAction completeAction(@Name("actionId") String actionId, IServiceContext context) {
         ErpQaAction action = requireAction(actionId, context);
         requireActionStatus(action, ErpQaConstants.ACTION_STATUS_IN_PROGRESS, "IN_PROGRESS");
         action.setStatus(ErpQaConstants.ACTION_STATUS_COMPLETED);
@@ -55,7 +55,7 @@ public class ErpQaActionBizModel extends CrudBizModel<ErpQaAction> implements IE
 
     @Override
     @BizMutation
-    public ErpQaAction verifyAction(@Name("actionId") Long actionId,
+    public ErpQaAction verifyAction(@Name("actionId") String actionId,
                                     @Name("verificationPerson") Long verificationPerson,
                                     @Name("verificationDate") LocalDate verificationDate,
                                     IServiceContext context) {
@@ -78,11 +78,11 @@ public class ErpQaActionBizModel extends CrudBizModel<ErpQaAction> implements IE
 
     // ---------- helpers ----------
 
-    private ErpQaAction requireAction(Long actionId, IServiceContext context) {
+    private ErpQaAction requireAction(String actionId, IServiceContext context) {
         if (actionId == null) {
             throw new NopException(ErpQaErrors.ERR_ACTION_NOT_FOUND).param(ErpQaErrors.ARG_ACTION_ID, actionId);
         }
-        return requireEntity(String.valueOf(actionId), null, context);
+        return requireEntity(actionId, null, context);
     }
 
     private void requireActionStatus(ErpQaAction action, String expected, String expectedLabel) {

@@ -47,9 +47,9 @@ public class TestErpQaInspectionTrigger extends JunitAutoTestCase {
     @RegisterExtension
     static QaFrozenClockExtension frozenClock = new QaFrozenClockExtension();
 
-    static final Long MATERIAL_ID = 7101L;
-    static final Long SUPPLIER_ID = 7201L;
-    static final Long WAREHOUSE_ID = 7301L;
+    static final String MATERIAL_ID = "7101";
+    static final String SUPPLIER_ID = "7201";
+    static final String WAREHOUSE_ID = "7301";
 
     @Inject
     IDaoProvider daoProvider;
@@ -66,10 +66,10 @@ public class TestErpQaInspectionTrigger extends JunitAutoTestCase {
 
     @Test
     public void testPurchaseReceiptTriggerGeneratesIncomingWithTemplateLines() {
-        Long templateId = seedTemplate("TPL-INCOMING", MATERIAL_ID, ErpQaConstants.INSPECTION_TYPE_INCOMING,
+        String templateId = seedTemplate("TPL-INCOMING", MATERIAL_ID, ErpQaConstants.INSPECTION_TYPE_INCOMING,
                 tplLine("长度", "10", "20"), tplLine("重量", "0", "100"));
 
-        Long insId = createForBusinessBill(ErpQaConstants.RELATED_BILL_TYPE_PUR_RECEIPT, "RCV-1",
+        String insId = createForBusinessBill(ErpQaConstants.RELATED_BILL_TYPE_PUR_RECEIPT, "RCV-1",
                 MATERIAL_ID, ErpQaConstants.INSPECTION_TYPE_INCOMING);
 
         ErpQaInspection ins = daoProvider.daoFor(ErpQaInspection.class).getEntityById(insId);
@@ -84,7 +84,7 @@ public class TestErpQaInspectionTrigger extends JunitAutoTestCase {
     public void testSalesOutgoingTrigger() {
         seedTemplate("TPL-OUT", MATERIAL_ID, ErpQaConstants.INSPECTION_TYPE_OUTGOING, tplLine("外观", null, null));
 
-        Long insId = createForBusinessBill(ErpQaConstants.RELATED_BILL_TYPE_SAL_DELIVERY, "DLV-1",
+        String insId = createForBusinessBill(ErpQaConstants.RELATED_BILL_TYPE_SAL_DELIVERY, "DLV-1",
                 MATERIAL_ID, ErpQaConstants.INSPECTION_TYPE_OUTGOING);
 
         ErpQaInspection ins = daoProvider.daoFor(ErpQaInspection.class).getEntityById(insId);
@@ -96,7 +96,7 @@ public class TestErpQaInspectionTrigger extends JunitAutoTestCase {
     public void testWorkOrderFinalTrigger() {
         seedTemplate("TPL-FINAL", MATERIAL_ID, ErpQaConstants.INSPECTION_TYPE_FINAL, tplLine("尺寸", "0", "50"));
 
-        Long insId = createForBusinessBill(ErpQaConstants.RELATED_BILL_TYPE_MFG_WORK_ORDER, "WO-1",
+        String insId = createForBusinessBill(ErpQaConstants.RELATED_BILL_TYPE_MFG_WORK_ORDER, "WO-1",
                 MATERIAL_ID, ErpQaConstants.INSPECTION_TYPE_FINAL);
 
         ErpQaInspection ins = daoProvider.daoFor(ErpQaInspection.class).getEntityById(insId);
@@ -106,12 +106,12 @@ public class TestErpQaInspectionTrigger extends JunitAutoTestCase {
     @Test
     public void testNoTemplateFallsToGlobalDefault() {
         // 无物料×类型匹配模板 → 走全局默认模板
-        Long defaultTplId = seedTemplate("TPL-DEFAULT", 9999L, ErpQaConstants.INSPECTION_TYPE_INCOMING,
+        String defaultTplId = seedTemplate("TPL-DEFAULT", "9999", ErpQaConstants.INSPECTION_TYPE_INCOMING,
                 tplLine("默认项", "0", "10"));
         AppConfig.getConfigProvider().assignConfigValue(
-                ErpQaConstants.CONFIG_DEFAULT_INSPECTION_TEMPLATE, String.valueOf(defaultTplId));
+                ErpQaConstants.CONFIG_DEFAULT_INSPECTION_TEMPLATE, defaultTplId);
 
-        Long insId = createForBusinessBill(ErpQaConstants.RELATED_BILL_TYPE_PUR_RECEIPT, "RCV-DEFAULT",
+        String insId = createForBusinessBill(ErpQaConstants.RELATED_BILL_TYPE_PUR_RECEIPT, "RCV-DEFAULT",
                 MATERIAL_ID, ErpQaConstants.INSPECTION_TYPE_INCOMING);
 
         ErpQaInspection ins = daoProvider.daoFor(ErpQaInspection.class).getEntityById(insId);
@@ -122,7 +122,7 @@ public class TestErpQaInspectionTrigger extends JunitAutoTestCase {
     @Test
     public void testNoTemplateNoLinesManualEntry() {
         // 无匹配 + 无全局默认 → 质检单无行（人工补录）
-        Long insId = createForBusinessBill(ErpQaConstants.RELATED_BILL_TYPE_PUR_RECEIPT, "RCV-NOTPL",
+        String insId = createForBusinessBill(ErpQaConstants.RELATED_BILL_TYPE_PUR_RECEIPT, "RCV-NOTPL",
                 MATERIAL_ID, ErpQaConstants.INSPECTION_TYPE_INCOMING);
         assertTrue(loadLines(insId).isEmpty(), "无模板且无默认 → 质检单无行");
     }
@@ -131,7 +131,7 @@ public class TestErpQaInspectionTrigger extends JunitAutoTestCase {
     public void testMandatoryInspectionBlockedWhenPendingClearedWhenAccepted() {
         setConfig(ErpQaConstants.CONFIG_MANDATORY_INSPECTION_BILL_TYPES,
                 ErpQaConstants.RELATED_BILL_TYPE_PUR_RECEIPT);
-        Long insId = createForBusinessBill(ErpQaConstants.RELATED_BILL_TYPE_PUR_RECEIPT, "RCV-MAND",
+        String insId = createForBusinessBill(ErpQaConstants.RELATED_BILL_TYPE_PUR_RECEIPT, "RCV-MAND",
                 MATERIAL_ID, ErpQaConstants.INSPECTION_TYPE_INCOMING);
 
         // PENDING：强制质检阻塞 → isInspectionCleared=false（业务域 confirm 应拒绝）
@@ -156,7 +156,7 @@ public class TestErpQaInspectionTrigger extends JunitAutoTestCase {
         return Boolean.TRUE.equals(resp.getData());
     }
 
-    private Long createForBusinessBill(String billType, String billCode, Long materialId, String inspectionType) {
+    private String createForBusinessBill(String billType, String billCode, String materialId, String inspectionType) {
         Map<String, Object> args = new LinkedHashMap<>();
         args.put("billType", billType);
         args.put("billCode", billCode);
@@ -169,17 +169,18 @@ public class TestErpQaInspectionTrigger extends JunitAutoTestCase {
         ApiResponse<?> resp = rpc(mutation, "ErpQaInspection__createForBusinessBill", ApiRequest.build(args));
         assertEquals(0, resp.getStatus(), "createForBusinessBill 应成功: " + resp);
         Object idVal = ((Map<?, ?>) resp.getData()).get("id");
-        return idVal instanceof Number ? ((Number) idVal).longValue() : Long.valueOf(String.valueOf(idVal));
+        return String.valueOf(idVal);
     }
 
-    private List<ErpQaInspectionLine> loadLines(Long insId) {
+    private List<ErpQaInspectionLine> loadLines(String insId) {
         io.nop.api.core.beans.query.QueryBean q = new io.nop.api.core.beans.query.QueryBean();
         q.addFilter(io.nop.api.core.beans.FilterBeans.eq("inspectionId", insId));
         return daoProvider.daoFor(ErpQaInspectionLine.class).findAllByQuery(q);
     }
 
-    private Long seedTemplate(String code, Long materialId, String inspectionType, TplLineSpec... lines) {
-        Long id = 5000L + (long) (Math.abs(code.hashCode()) % 1000);
+    private String seedTemplate(String code, String materialId, String inspectionType, TplLineSpec... lines) {
+        long idNum = 5000L + (long) (Math.abs(code.hashCode()) % 1000);
+        String id = String.valueOf(idNum);
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpQaInspectionTemplate> dao = daoProvider.daoFor(ErpQaInspectionTemplate.class);
             ErpQaInspectionTemplate t = new ErpQaInspectionTemplate();
@@ -195,7 +196,7 @@ public class TestErpQaInspectionTrigger extends JunitAutoTestCase {
             int lineNo = 1;
             for (TplLineSpec spec : lines) {
                 ErpQaInspectionTemplateLine tl = new ErpQaInspectionTemplateLine();
-                tl.orm_propValueByName("id", id * 100 + lineNo);
+                tl.orm_propValueByName("id", String.valueOf(idNum * 100 + lineNo));
                 tl.setTemplateId(id);
                 tl.setLineNo(lineNo);
                 tl.setParameterName(spec.parameterName);

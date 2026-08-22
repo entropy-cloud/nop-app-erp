@@ -13,7 +13,7 @@ public class ErpQaSpcChartRecalculateControlLimitProcessor {
     @Inject
     SpcControlLimitCalculator spcControlLimitCalculator;
 
-    public Boolean recalculateControlLimit(Long chartId, IServiceContext context) {
+    public Boolean recalculateControlLimit(String chartId, IServiceContext context) {
         return spcControlLimitCalculator.recalculate(chartId);
     }
 }

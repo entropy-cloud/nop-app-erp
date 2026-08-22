@@ -39,8 +39,8 @@ public class TestErpQaDashboardSpcChart extends JunitAutoTestCase {
 
     private static final IServiceContext CTX = new ServiceContextImpl();
 
-    static final Long PARAMETER_ID = 96001L;
-    static final Long MATERIAL_ID = 96002L;
+    static final String PARAMETER_ID = "96001";
+    static final String MATERIAL_ID = "96002";
 
     @Inject
     IDaoProvider daoProvider;
@@ -69,7 +69,7 @@ public class TestErpQaDashboardSpcChart extends JunitAutoTestCase {
 
     @Test
     public void testControlLimitsPassedFromChartEntity() {
-        Long chartId = seedChart("SPC-CL", new BigDecimal("50"), new BigDecimal("60"), new BigDecimal("40"));
+        String chartId = seedChart("SPC-CL", new BigDecimal("50"), new BigDecimal("60"), new BigDecimal("40"));
         Map<String, Object> result = dashboardBiz.getSpcControlChartData(chartId, CTX);
         assertEquals(chartId, result.get("chartId"));
         assertEquals(ErpQaConstants.SPC_CHART_TYPE_X_BAR_R, result.get("chartType"));
@@ -80,7 +80,7 @@ public class TestErpQaDashboardSpcChart extends JunitAutoTestCase {
 
     @Test
     public void testSamplesOrderedBySubgroupNoAscending() {
-        Long chartId = seedChart("SPC-ORD", new BigDecimal("10"), new BigDecimal("20"), new BigDecimal("0"));
+        String chartId = seedChart("SPC-ORD", new BigDecimal("10"), new BigDecimal("20"), new BigDecimal("0"));
         // 故意倒序塞入：3,1,2 → 应升序返回 1,2,3
         seedSample(chartId, 3, bd("3"), false, null);
         seedSample(chartId, 1, bd("1"), false, null);
@@ -96,7 +96,7 @@ public class TestErpQaDashboardSpcChart extends JunitAutoTestCase {
 
     @Test
     public void testIsOutOfControlAndViolatedRulesPassedThrough() {
-        Long chartId = seedChart("SPC-VIO", new BigDecimal("10"), new BigDecimal("20"), new BigDecimal("0"));
+        String chartId = seedChart("SPC-VIO", new BigDecimal("10"), new BigDecimal("20"), new BigDecimal("0"));
         seedSample(chartId, 1, bd("12"), false, null);
         seedSample(chartId, 2, bd("25"), true, "1");
         seedSample(chartId, 3, bd("30"), true, "1,2,3");
@@ -114,8 +114,8 @@ public class TestErpQaDashboardSpcChart extends JunitAutoTestCase {
 
     @Test
     public void testChartIdInputFilters() {
-        Long chartA = seedChart("SPC-A", new BigDecimal("10"), new BigDecimal("20"), new BigDecimal("0"));
-        Long chartB = seedChart("SPC-B", new BigDecimal("100"), new BigDecimal("200"), new BigDecimal("50"));
+        String chartA = seedChart("SPC-A", new BigDecimal("10"), new BigDecimal("20"), new BigDecimal("0"));
+        String chartB = seedChart("SPC-B", new BigDecimal("100"), new BigDecimal("200"), new BigDecimal("50"));
         seedSample(chartA, 1, bd("11"), false, null);
         seedSample(chartB, 1, bd("110"), false, null);
 
@@ -131,22 +131,23 @@ public class TestErpQaDashboardSpcChart extends JunitAutoTestCase {
 
     @Test
     public void testDefaultPicksLatestChartWhenNoChartIdAndNoConfig() {
-        Long first = seedChart("SPC-FIRST", new BigDecimal("1"), new BigDecimal("2"), new BigDecimal("0"));
-        Long second = seedChart("SPC-SECOND", new BigDecimal("5"), new BigDecimal("10"), new BigDecimal("1"));
+        String first = seedChart("SPC-FIRST", new BigDecimal("1"), new BigDecimal("2"), new BigDecimal("0"));
+        String second = seedChart("SPC-SECOND", new BigDecimal("5"), new BigDecimal("10"), new BigDecimal("1"));
 
         Map<String, Object> result = dashboardBiz.getSpcControlChartData(null, CTX);
         // id 较大者 = 最近一张
-        assertEquals(Long.max(first, second), result.get("chartId"),
+        String latest = Long.parseLong(first) > Long.parseLong(second) ? first : second;
+        assertEquals(latest, result.get("chartId"),
                 "chartId 入参空 + config 空 → 取 id 最大（最近）一张 ErpQaSpcChart");
     }
 
     @Test
     public void testConfigDefaultChartIdOverridesLatestPick() {
-        Long first = seedChart("SPC-CF1", new BigDecimal("1"), new BigDecimal("2"), new BigDecimal("0"));
-        Long second = seedChart("SPC-CF2", new BigDecimal("5"), new BigDecimal("10"), new BigDecimal("1"));
+        String first = seedChart("SPC-CF1", new BigDecimal("1"), new BigDecimal("2"), new BigDecimal("0"));
+        String second = seedChart("SPC-CF2", new BigDecimal("5"), new BigDecimal("10"), new BigDecimal("1"));
         // config 指向较小 id（first），覆盖"最近一张"默认
         AppConfig.getConfigProvider().assignConfigValue(
-                ErpQaConstants.CONFIG_DASH_QA_SPC_DEFAULT_CHART_ID, String.valueOf(first));
+                ErpQaConstants.CONFIG_DASH_QA_SPC_DEFAULT_CHART_ID, first);
 
         Map<String, Object> result = dashboardBiz.getSpcControlChartData(null, CTX);
         assertEquals(first, result.get("chartId"),
@@ -168,8 +169,8 @@ public class TestErpQaDashboardSpcChart extends JunitAutoTestCase {
         return new BigDecimal(String.valueOf(v));
     }
 
-    private Long seedChart(String code, BigDecimal cl, BigDecimal ucl, BigDecimal lcl) {
-        Long id = 97000L + (long) Math.abs(code.hashCode() % 10000);
+    private String seedChart(String code, BigDecimal cl, BigDecimal ucl, BigDecimal lcl) {
+        String id = String.valueOf(97000L + (long) Math.abs(code.hashCode() % 10000));
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpQaSpcChart> dao = daoProvider.daoFor(ErpQaSpcChart.class);
             ErpQaSpcChart chart = dao.newEntity();
@@ -194,11 +195,11 @@ public class TestErpQaDashboardSpcChart extends JunitAutoTestCase {
         return id;
     }
 
-    private void seedSample(Long chartId, int subgroupNo, BigDecimal mean, boolean outOfControl, String violatedRules) {
+    private void seedSample(String chartId, int subgroupNo, BigDecimal mean, boolean outOfControl, String violatedRules) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpQaSpcSample> dao = daoProvider.daoFor(ErpQaSpcSample.class);
             ErpQaSpcSample s = dao.newEntity();
-            s.orm_propValueByName("id", 108000L + chartId * 10 + subgroupNo);
+            s.orm_propValueByName("id", String.valueOf(108000L + Long.parseLong(chartId) * 10 + subgroupNo));
             s.setChartId(chartId);
             s.setSubgroupNo(subgroupNo);
             s.setSampleTime(CoreMetrics.currentTimestamp());

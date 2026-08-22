@@ -16,7 +16,7 @@ public class ErpQaSpcCapabilityCalculateCapabilityProcessor {
     @Inject
     SpcCapabilityCalculator spcCapabilityCalculator;
 
-    public ErpQaSpcCapability calculateCapability(Long chartId, LocalDate periodFrom, LocalDate periodTo,
+    public ErpQaSpcCapability calculateCapability(String chartId, LocalDate periodFrom, LocalDate periodTo,
                                                   IServiceContext context) {
         return spcCapabilityCalculator.calculateCapability(chartId, periodFrom, periodTo, context);
     }

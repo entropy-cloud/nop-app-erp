@@ -280,7 +280,7 @@ public class _ErpQaNonConformance extends DynamicOrmEntity{
 
     
     /* ID: ID */
-    private java.lang.Long _id;
+    private java.lang.String _id;
     
     /* 单号: CODE */
     private java.lang.String _code;
@@ -295,10 +295,10 @@ public class _ErpQaNonConformance extends DynamicOrmEntity{
     private java.lang.String _sourceCode;
     
     /* 物料: MATERIAL_ID */
-    private java.lang.Long _materialId;
+    private java.lang.String _materialId;
     
     /* 质检单ID: INSPECTION_ID */
-    private java.lang.Long _inspectionId;
+    private java.lang.String _inspectionId;
     
     /* 不合格数量: QUANTITY */
     private java.math.BigDecimal _quantity;
@@ -316,7 +316,7 @@ public class _ErpQaNonConformance extends DynamicOrmEntity{
     private java.lang.String _status;
     
     /* 供应商: SUPPLIER_ID */
-    private java.lang.Long _supplierId;
+    private java.lang.String _supplierId;
     
     /* 不合格参数: PARAMETER_NAME */
     private java.lang.String _parameterName;
@@ -563,9 +563,9 @@ public class _ErpQaNonConformance extends DynamicOrmEntity{
         switch(propId){
         
             case PROP_ID_id:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_id));
                }
                setId(typedValue);
@@ -613,9 +613,9 @@ public class _ErpQaNonConformance extends DynamicOrmEntity{
             }
         
             case PROP_ID_materialId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_materialId));
                }
                setMaterialId(typedValue);
@@ -623,9 +623,9 @@ public class _ErpQaNonConformance extends DynamicOrmEntity{
             }
         
             case PROP_ID_inspectionId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_inspectionId));
                }
                setInspectionId(typedValue);
@@ -683,9 +683,9 @@ public class _ErpQaNonConformance extends DynamicOrmEntity{
             }
         
             case PROP_ID_supplierId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_supplierId));
                }
                setSupplierId(typedValue);
@@ -903,7 +903,7 @@ public class _ErpQaNonConformance extends DynamicOrmEntity{
         
             case PROP_ID_id:{
                onInitProp(propId);
-               this._id = (java.lang.Long)value;
+               this._id = (java.lang.String)value;
                orm_id(); // 如果是设置主键字段，则触发watcher
                break;
             }
@@ -938,14 +938,14 @@ public class _ErpQaNonConformance extends DynamicOrmEntity{
         
             case PROP_ID_materialId:{
                onInitProp(propId);
-               this._materialId = (java.lang.Long)value;
+               this._materialId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_inspectionId:{
                onInitProp(propId);
-               this._inspectionId = (java.lang.Long)value;
+               this._inspectionId = (java.lang.String)value;
                
                break;
             }
@@ -987,7 +987,7 @@ public class _ErpQaNonConformance extends DynamicOrmEntity{
         
             case PROP_ID_supplierId:{
                onInitProp(propId);
-               this._supplierId = (java.lang.Long)value;
+               this._supplierId = (java.lang.String)value;
                
                break;
             }
@@ -1141,7 +1141,7 @@ public class _ErpQaNonConformance extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final java.lang.Long getId(){
+    public final java.lang.String getId(){
          onPropGet(PROP_ID_id);
          return _id;
     }
@@ -1149,7 +1149,7 @@ public class _ErpQaNonConformance extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final void setId(java.lang.Long value){
+    public final void setId(java.lang.String value){
         if(onPropSet(PROP_ID_id,value)){
             this._id = value;
             internalClearRefs(PROP_ID_id);
@@ -1236,7 +1236,7 @@ public class _ErpQaNonConformance extends DynamicOrmEntity{
     /**
      * 物料: MATERIAL_ID
      */
-    public final java.lang.Long getMaterialId(){
+    public final java.lang.String getMaterialId(){
          onPropGet(PROP_ID_materialId);
          return _materialId;
     }
@@ -1244,7 +1244,7 @@ public class _ErpQaNonConformance extends DynamicOrmEntity{
     /**
      * 物料: MATERIAL_ID
      */
-    public final void setMaterialId(java.lang.Long value){
+    public final void setMaterialId(java.lang.String value){
         if(onPropSet(PROP_ID_materialId,value)){
             this._materialId = value;
             internalClearRefs(PROP_ID_materialId);
@@ -1255,7 +1255,7 @@ public class _ErpQaNonConformance extends DynamicOrmEntity{
     /**
      * 质检单ID: INSPECTION_ID
      */
-    public final java.lang.Long getInspectionId(){
+    public final java.lang.String getInspectionId(){
          onPropGet(PROP_ID_inspectionId);
          return _inspectionId;
     }
@@ -1263,7 +1263,7 @@ public class _ErpQaNonConformance extends DynamicOrmEntity{
     /**
      * 质检单ID: INSPECTION_ID
      */
-    public final void setInspectionId(java.lang.Long value){
+    public final void setInspectionId(java.lang.String value){
         if(onPropSet(PROP_ID_inspectionId,value)){
             this._inspectionId = value;
             internalClearRefs(PROP_ID_inspectionId);
@@ -1369,7 +1369,7 @@ public class _ErpQaNonConformance extends DynamicOrmEntity{
     /**
      * 供应商: SUPPLIER_ID
      */
-    public final java.lang.Long getSupplierId(){
+    public final java.lang.String getSupplierId(){
          onPropGet(PROP_ID_supplierId);
          return _supplierId;
     }
@@ -1377,7 +1377,7 @@ public class _ErpQaNonConformance extends DynamicOrmEntity{
     /**
      * 供应商: SUPPLIER_ID
      */
-    public final void setSupplierId(java.lang.Long value){
+    public final void setSupplierId(java.lang.String value){
         if(onPropSet(PROP_ID_supplierId,value)){
             this._supplierId = value;
             internalClearRefs(PROP_ID_supplierId);

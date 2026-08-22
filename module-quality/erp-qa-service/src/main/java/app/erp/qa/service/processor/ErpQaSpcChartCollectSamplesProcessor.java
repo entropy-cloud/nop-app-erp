@@ -13,7 +13,7 @@ public class ErpQaSpcChartCollectSamplesProcessor {
     @Inject
     SpcSamplingService spcSamplingService;
 
-    public Integer collectSamples(Long chartId, IServiceContext context) {
+    public Integer collectSamples(String chartId, IServiceContext context) {
         return spcSamplingService.collectSamples(chartId, context);
     }
 }

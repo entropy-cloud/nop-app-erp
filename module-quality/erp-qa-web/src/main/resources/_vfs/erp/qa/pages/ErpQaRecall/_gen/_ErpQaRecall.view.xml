@@ -19,7 +19,7 @@
             <cols>
 
                 <!--ID-->
-                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="id" mandatory="true" sortable="true"/>
 
                 <!--单号-->
                 <col id="code" mandatory="true" sortable="true"/>
@@ -31,13 +31,13 @@
                 <col id="triggerType" mandatory="true" sortable="true"/>
 
                 <!--来源NCR(弱指针)-->
-                <col id="sourceNcrId" ui:number="true" sortable="true"/>
+                <col id="sourceNcrId" sortable="true"/>
 
                 <!--召回物料-->
-                <col id="materialId" ui:number="true" sortable="true"/>
+                <col id="materialId" sortable="true"/>
 
                 <!--召回批次(弱指针→ErpInvBatch)-->
-                <col id="batchId" ui:number="true" sortable="true"/>
+                <col id="batchId" sortable="true"/>
 
                 <!--召回序列号-->
                 <col id="serialNo" sortable="true"/>

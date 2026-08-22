@@ -58,8 +58,8 @@ public class TestErpQaSpcSamplingEvaluateBatch extends JunitAutoTestCase {
     @RegisterExtension
     static QaFrozenClockExtension frozenClock = new QaFrozenClockExtension();
 
-    static final Long MATERIAL_ID = 7851L;
-    static final Long PARAMETER_ID = 9102L;
+    static final String MATERIAL_ID = "7851";
+    static final String PARAMETER_ID = "9102";
 
     @Inject
     IDaoProvider daoProvider;
@@ -76,8 +76,8 @@ public class TestErpQaSpcSamplingEvaluateBatch extends JunitAutoTestCase {
     /** ① + ② batch 全链：失控样本（mean=20 &gt; UCL=13 → 规则 1）自动标记 + afterCommit 建 NCR/CAPA。 */
     @Test
     public void batchEvaluateMarksOutOfControlAndCreatesNcrCapa() {
-        Long chartId = seedChart("CHART-BATCH-OOC", new BigDecimal("10"), new BigDecimal("13"), new BigDecimal("7"));
-        Long outOfControlSampleId = seedSample(chartId, 1, new BigDecimal("20"));
+        String chartId = seedChart("CHART-BATCH-OOC", new BigDecimal("10"), new BigDecimal("13"), new BigDecimal("7"));
+        String outOfControlSampleId = seedSample(chartId, 1, new BigDecimal("20"));
         seedSample(chartId, 2, new BigDecimal("10"));
         seedSample(chartId, 3, new BigDecimal("10"));
 
@@ -110,7 +110,7 @@ public class TestErpQaSpcSamplingEvaluateBatch extends JunitAutoTestCase {
     /** ③ 受控样本：batch 全链零违规 → 零 NCR 零 CAPA。 */
     @Test
     public void batchEvaluateControlledSamplesNoNcr() {
-        Long chartId = seedChart("CHART-BATCH-CTL", new BigDecimal("10"), new BigDecimal("13"), new BigDecimal("7"));
+        String chartId = seedChart("CHART-BATCH-CTL", new BigDecimal("10"), new BigDecimal("13"), new BigDecimal("7"));
         seedSample(chartId, 1, new BigDecimal("10"));
         seedSample(chartId, 2, new BigDecimal("9"));
         seedSample(chartId, 3, new BigDecimal("11"));
@@ -138,8 +138,8 @@ public class TestErpQaSpcSamplingEvaluateBatch extends JunitAutoTestCase {
     public void batchEvaluateAutoNcrDisabledMarksOnly() {
         AppConfig.getConfigProvider().assignConfigValue(ErpQaConstants.CONFIG_SPC_AUTO_NCR_ENABLED, "false");
 
-        Long chartId = seedChart("CHART-BATCH-OFF", new BigDecimal("10"), new BigDecimal("13"), new BigDecimal("7"));
-        Long outOfControlSampleId = seedSample(chartId, 1, new BigDecimal("20"));
+        String chartId = seedChart("CHART-BATCH-OFF", new BigDecimal("10"), new BigDecimal("13"), new BigDecimal("7"));
+        String outOfControlSampleId = seedSample(chartId, 1, new BigDecimal("20"));
 
         batchTaskRunner.execute("/nop/batch-task/qa/spc-sampling.batch.xml");
 
@@ -155,7 +155,7 @@ public class TestErpQaSpcSamplingEvaluateBatch extends JunitAutoTestCase {
     /** ⑤ 幂等：同 chart 二次 batch 执行不重复 NCR/CAPA。 */
     @Test
     public void batchEvaluateIdempotentNoDuplicateNcr() {
-        Long chartId = seedChart("CHART-BATCH-IDEM", new BigDecimal("10"), new BigDecimal("13"), new BigDecimal("7"));
+        String chartId = seedChart("CHART-BATCH-IDEM", new BigDecimal("10"), new BigDecimal("13"), new BigDecimal("7"));
         seedSample(chartId, 1, new BigDecimal("20"));
 
         batchTaskRunner.execute("/nop/batch-task/qa/spc-sampling.batch.xml");
@@ -171,8 +171,8 @@ public class TestErpQaSpcSamplingEvaluateBatch extends JunitAutoTestCase {
 
     // ---------- helpers ----------
 
-    private Long seedChart(String code, BigDecimal cl, BigDecimal ucl, BigDecimal lcl) {
-        Long id = 91000L + (long) Math.abs(code.hashCode() % 10000);
+    private String seedChart(String code, BigDecimal cl, BigDecimal ucl, BigDecimal lcl) {
+        String id = String.valueOf(91000L + (long) Math.abs(code.hashCode() % 10000));
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpQaSpcChart> dao = daoProvider.daoFor(ErpQaSpcChart.class);
             ErpQaSpcChart chart = dao.newEntity();
@@ -197,8 +197,8 @@ public class TestErpQaSpcSamplingEvaluateBatch extends JunitAutoTestCase {
         return id;
     }
 
-    private Long seedSample(Long chartId, int subgroupNo, BigDecimal mean) {
-        Long id = 92000L + chartId * 10 + subgroupNo;
+    private String seedSample(String chartId, int subgroupNo, BigDecimal mean) {
+        String id = String.valueOf(92000L + Long.parseLong(chartId) * 10 + subgroupNo);
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpQaSpcSample> dao = daoProvider.daoFor(ErpQaSpcSample.class);
             ErpQaSpcSample sample = dao.newEntity();

@@ -58,7 +58,7 @@ public class ErpQaInspectionBizModel extends CrudBizModel<ErpQaInspection> imple
 
     @Override
     @BizMutation
-    public ErpQaInspection recordResult(@Name("inspectionId") Long inspectionId,
+    public ErpQaInspection recordResult(@Name("inspectionId") String inspectionId,
                                         @Name("lineResults") List<InspectionLineResultInput> lineResults,
                                         @Name("allowConcession") Boolean allowConcession,
                                         IServiceContext context) {
@@ -100,11 +100,11 @@ public class ErpQaInspectionBizModel extends CrudBizModel<ErpQaInspection> imple
     @BizMutation
     public ErpQaInspection createForBusinessBill(@Name("billType") String billType,
                                                  @Name("billCode") String billCode,
-                                                 @Name("materialId") Long materialId,
+                                                 @Name("materialId") String materialId,
                                                  @Name("inspectionType") String inspectionType,
                                                  @Name("lotQuantity") BigDecimal lotQuantity,
-                                                 @Name("supplierId") Long supplierId,
-                                                 @Name("warehouseId") Long warehouseId,
+                                                 @Name("supplierId") String supplierId,
+                                                 @Name("warehouseId") String warehouseId,
                                                  @Name("batchNo") String batchNo,
                                                  IServiceContext context) {
         return createForBusinessBillProcessor.createForBusinessBill(billType, billCode, materialId, inspectionType,
@@ -113,13 +113,13 @@ public class ErpQaInspectionBizModel extends CrudBizModel<ErpQaInspection> imple
 
     @Override
     @BizMutation
-    public ErpQaInspection passInspection(@Name("inspectionId") Long inspectionId, IServiceContext context) {
+    public ErpQaInspection passInspection(@Name("inspectionId") String inspectionId, IServiceContext context) {
         return passInspectionProcessor.passInspection(inspectionId, context);
     }
 
     @Override
     @BizMutation
-    public ErpQaInspection failInspection(@Name("inspectionId") Long inspectionId, IServiceContext context) {
+    public ErpQaInspection failInspection(@Name("inspectionId") String inspectionId, IServiceContext context) {
         return failInspectionProcessor.failInspection(inspectionId, context);
     }
 

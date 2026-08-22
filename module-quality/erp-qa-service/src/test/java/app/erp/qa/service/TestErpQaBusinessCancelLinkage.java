@@ -46,7 +46,7 @@ public class TestErpQaBusinessCancelLinkage extends JunitAutoTestCase {
     @RegisterExtension
     static QaFrozenClockExtension frozenClock = new QaFrozenClockExtension();
 
-    static final Long MATERIAL_ID = 7001L;
+    static final String MATERIAL_ID = "7001";
 
     @Inject
     IDaoProvider daoProvider;
@@ -63,7 +63,7 @@ public class TestErpQaBusinessCancelLinkage extends JunitAutoTestCase {
     // ① PENDING 取消 → findByRelatedBill 查无 + delVersion 置位（软删审计可追溯）
     @Test
     public void testPendingCancelledAndNoLongerVisibleByRelatedBill() {
-        Long insId = seedInspection("INS-BCL-1", ErpQaConstants.INSPECTION_RESULT_PENDING,
+        String insId = seedInspection("INS-BCL-1", ErpQaConstants.INSPECTION_RESULT_PENDING,
                 "RCV-BCL-1", ErpQaConstants.RELATED_BILL_TYPE_PUR_RECEIPT);
 
         int cancelled = cancelForBusinessBill(ErpQaConstants.RELATED_BILL_TYPE_PUR_RECEIPT, "RCV-BCL-1");
@@ -123,7 +123,7 @@ public class TestErpQaBusinessCancelLinkage extends JunitAutoTestCase {
 
     // ---------- helpers ----------
 
-    private ErpQaInspection loadInspectionIncludingDeleted(Long insId) {
+    private ErpQaInspection loadInspectionIncludingDeleted(String insId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("id", insId));
         q.setDisableLogicalDelete(true);
@@ -153,8 +153,8 @@ public class TestErpQaBusinessCancelLinkage extends JunitAutoTestCase {
         return data instanceof Number ? ((Number) data).intValue() : Integer.parseInt(String.valueOf(data));
     }
 
-    private Long seedInspection(String code, String result, String billCode, String billType) {
-        Long id = 7800L + (long) (Math.abs(code.hashCode()) % 900);
+    private String seedInspection(String code, String result, String billCode, String billType) {
+        String id = String.valueOf(7800L + (long) (Math.abs(code.hashCode()) % 900));
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpQaInspection> dao = daoProvider.daoFor(ErpQaInspection.class);
             ErpQaInspection ins = new ErpQaInspection();

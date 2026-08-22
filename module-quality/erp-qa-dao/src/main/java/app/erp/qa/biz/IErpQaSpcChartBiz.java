@@ -26,17 +26,17 @@ public interface IErpQaSpcChartBiz extends ICrudBiz<ErpQaSpcChart> {
 
     /** 手动触发样本采集。返回新增子组数。 */
     @BizMutation
-    Integer collectSamples(@Name("chartId") Long chartId, IServiceContext context);
+    Integer collectSamples(@Name("chartId") String chartId, IServiceContext context);
 
     /** 手动触发控制限重算。子组数不足 20 时返回 false（calcStatus 保持 PENDING）。 */
     @BizMutation
-    Boolean recalculateControlLimit(@Name("chartId") Long chartId, IServiceContext context);
+    Boolean recalculateControlLimit(@Name("chartId") String chartId, IServiceContext context);
 
     /** 手动触发判异规则评估，回写所有样本的 violatedRules/isOutOfControl。返回失控样本数。 */
     @BizMutation
-    Integer evaluateRules(@Name("chartId") Long chartId, IServiceContext context);
+    Integer evaluateRules(@Name("chartId") String chartId, IServiceContext context);
 
     /** 查询失控样本列表（isOutOfControl=true）。 */
     @BizQuery
-    List<ErpQaSpcSample> findOutOfControlSamples(@Name("chartId") Long chartId, IServiceContext context);
+    List<ErpQaSpcSample> findOutOfControlSamples(@Name("chartId") String chartId, IServiceContext context);
 }

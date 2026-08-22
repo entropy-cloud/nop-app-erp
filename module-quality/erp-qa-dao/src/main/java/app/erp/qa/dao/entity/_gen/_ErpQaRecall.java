@@ -207,7 +207,7 @@ public class _ErpQaRecall extends DynamicOrmEntity{
 
     
     /* ID: ID */
-    private java.lang.Long _id;
+    private java.lang.String _id;
     
     /* 单号: CODE */
     private java.lang.String _code;
@@ -219,13 +219,13 @@ public class _ErpQaRecall extends DynamicOrmEntity{
     private java.lang.String _triggerType;
     
     /* 来源NCR(弱指针): SOURCE_NCR_ID */
-    private java.lang.Long _sourceNcrId;
+    private java.lang.String _sourceNcrId;
     
     /* 召回物料: MATERIAL_ID */
-    private java.lang.Long _materialId;
+    private java.lang.String _materialId;
     
     /* 召回批次(弱指针→ErpInvBatch): BATCH_ID */
-    private java.lang.Long _batchId;
+    private java.lang.String _batchId;
     
     /* 召回序列号: SERIAL_NO */
     private java.lang.String _serialNo;
@@ -430,9 +430,9 @@ public class _ErpQaRecall extends DynamicOrmEntity{
         switch(propId){
         
             case PROP_ID_id:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_id));
                }
                setId(typedValue);
@@ -470,9 +470,9 @@ public class _ErpQaRecall extends DynamicOrmEntity{
             }
         
             case PROP_ID_sourceNcrId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_sourceNcrId));
                }
                setSourceNcrId(typedValue);
@@ -480,9 +480,9 @@ public class _ErpQaRecall extends DynamicOrmEntity{
             }
         
             case PROP_ID_materialId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_materialId));
                }
                setMaterialId(typedValue);
@@ -490,9 +490,9 @@ public class _ErpQaRecall extends DynamicOrmEntity{
             }
         
             case PROP_ID_batchId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_batchId));
                }
                setBatchId(typedValue);
@@ -670,7 +670,7 @@ public class _ErpQaRecall extends DynamicOrmEntity{
         
             case PROP_ID_id:{
                onInitProp(propId);
-               this._id = (java.lang.Long)value;
+               this._id = (java.lang.String)value;
                orm_id(); // 如果是设置主键字段，则触发watcher
                break;
             }
@@ -698,21 +698,21 @@ public class _ErpQaRecall extends DynamicOrmEntity{
         
             case PROP_ID_sourceNcrId:{
                onInitProp(propId);
-               this._sourceNcrId = (java.lang.Long)value;
+               this._sourceNcrId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_materialId:{
                onInitProp(propId);
-               this._materialId = (java.lang.Long)value;
+               this._materialId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_batchId:{
                onInitProp(propId);
-               this._batchId = (java.lang.Long)value;
+               this._batchId = (java.lang.String)value;
                
                break;
             }
@@ -838,7 +838,7 @@ public class _ErpQaRecall extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final java.lang.Long getId(){
+    public final java.lang.String getId(){
          onPropGet(PROP_ID_id);
          return _id;
     }
@@ -846,7 +846,7 @@ public class _ErpQaRecall extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final void setId(java.lang.Long value){
+    public final void setId(java.lang.String value){
         if(onPropSet(PROP_ID_id,value)){
             this._id = value;
             internalClearRefs(PROP_ID_id);
@@ -914,7 +914,7 @@ public class _ErpQaRecall extends DynamicOrmEntity{
     /**
      * 来源NCR(弱指针): SOURCE_NCR_ID
      */
-    public final java.lang.Long getSourceNcrId(){
+    public final java.lang.String getSourceNcrId(){
          onPropGet(PROP_ID_sourceNcrId);
          return _sourceNcrId;
     }
@@ -922,7 +922,7 @@ public class _ErpQaRecall extends DynamicOrmEntity{
     /**
      * 来源NCR(弱指针): SOURCE_NCR_ID
      */
-    public final void setSourceNcrId(java.lang.Long value){
+    public final void setSourceNcrId(java.lang.String value){
         if(onPropSet(PROP_ID_sourceNcrId,value)){
             this._sourceNcrId = value;
             internalClearRefs(PROP_ID_sourceNcrId);
@@ -933,7 +933,7 @@ public class _ErpQaRecall extends DynamicOrmEntity{
     /**
      * 召回物料: MATERIAL_ID
      */
-    public final java.lang.Long getMaterialId(){
+    public final java.lang.String getMaterialId(){
          onPropGet(PROP_ID_materialId);
          return _materialId;
     }
@@ -941,7 +941,7 @@ public class _ErpQaRecall extends DynamicOrmEntity{
     /**
      * 召回物料: MATERIAL_ID
      */
-    public final void setMaterialId(java.lang.Long value){
+    public final void setMaterialId(java.lang.String value){
         if(onPropSet(PROP_ID_materialId,value)){
             this._materialId = value;
             internalClearRefs(PROP_ID_materialId);
@@ -952,7 +952,7 @@ public class _ErpQaRecall extends DynamicOrmEntity{
     /**
      * 召回批次(弱指针→ErpInvBatch): BATCH_ID
      */
-    public final java.lang.Long getBatchId(){
+    public final java.lang.String getBatchId(){
          onPropGet(PROP_ID_batchId);
          return _batchId;
     }
@@ -960,7 +960,7 @@ public class _ErpQaRecall extends DynamicOrmEntity{
     /**
      * 召回批次(弱指针→ErpInvBatch): BATCH_ID
      */
-    public final void setBatchId(java.lang.Long value){
+    public final void setBatchId(java.lang.String value){
         if(onPropSet(PROP_ID_batchId,value)){
             this._batchId = value;
             internalClearRefs(PROP_ID_batchId);

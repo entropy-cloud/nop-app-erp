@@ -33,8 +33,8 @@ public final class InspectionTrigger {
      * @return {@link #CLEARED} 放行；{@link #BLOCKED} 阻塞（已创建或已有未决质检单）。
      */
     public static int enforceGate(IErpQaInspectionBiz inspectionBiz,
-                                  String billType, String billCode, Long materialId, String inspectionType,
-                                  BigDecimal lotQuantity, Long supplierId, Long warehouseId, String batchNo,
+                                  String billType, String billCode, String materialId, String inspectionType,
+                                  BigDecimal lotQuantity, String supplierId, String warehouseId, String batchNo,
                                   IServiceContext context) {
         if (!isMandatoryBillType(billType)) {
             return CLEARED;

@@ -22,13 +22,13 @@ import io.nop.orm.biz.ICrudBiz;
 public interface IErpQaActionBiz extends ICrudBiz<ErpQaAction> {
 
     @BizMutation
-    ErpQaAction startAction(@Name("actionId") Long actionId, IServiceContext context);
+    ErpQaAction startAction(@Name("actionId") String actionId, IServiceContext context);
 
     @BizMutation
-    ErpQaAction completeAction(@Name("actionId") Long actionId, IServiceContext context);
+    ErpQaAction completeAction(@Name("actionId") String actionId, IServiceContext context);
 
     @BizMutation
-    ErpQaAction verifyAction(@Name("actionId") Long actionId,
+    ErpQaAction verifyAction(@Name("actionId") String actionId,
                              @Name("verificationPerson") Long verificationPerson,
                              @Name("verificationDate") java.time.LocalDate verificationDate,
                              IServiceContext context);

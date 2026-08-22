@@ -51,9 +51,9 @@ public class TestErpQaCriticalItemVeto extends JunitAutoTestCase {
     @RegisterExtension
     static QaFrozenClockExtension frozenClock = new QaFrozenClockExtension();
 
-    static final Long MATERIAL_ID = 7001L;
-    static final Long SUPPLIER_ID = 7201L;
-    static final Long WAREHOUSE_ID = 7301L;
+    static final String MATERIAL_ID = "7001";
+    static final String SUPPLIER_ID = "7201";
+    static final String WAREHOUSE_ID = "7301";
 
     @Inject
     IDaoProvider daoProvider;
@@ -65,7 +65,7 @@ public class TestErpQaCriticalItemVeto extends JunitAutoTestCase {
     // ① 关键项 REJECTED + allowConcession=true → REJECTED（否决覆盖让步）
     @Test
     public void testCriticalRejectedWithConcessionGoesRejected() {
-        Long insId = seedInspection("INS-VETO-CR", withLine("长度", "10", "20", 1), withLine("重量", "0", "100", null));
+        String insId = seedInspection("INS-VETO-CR", withLine("长度", "10", "20", 1), withLine("重量", "0", "100", null));
         // 关键项行 5 < min 10 → REJECTED；非关键项行 50 合格；allowConcession=true 但关键项否决覆盖让步
         recordMeasured(insId, true, lineInput(1, "5"), lineInput(2, "50"));
 
@@ -81,7 +81,7 @@ public class TestErpQaCriticalItemVeto extends JunitAutoTestCase {
     // ② 关键项 ACCEPTED + 非关键项 REJECTED + 让步 → CONDITIONAL（不否决）
     @Test
     public void testCriticalAcceptedNonCriticalRejectedWithConcessionGoesConditional() {
-        Long insId = seedInspection("INS-VETO-COND", withLine("长度", "10", "20", 1), withLine("重量", "0", "100", null));
+        String insId = seedInspection("INS-VETO-COND", withLine("长度", "10", "20", 1), withLine("重量", "0", "100", null));
         // 关键项行 15 ∈ [10,20] 合格；非关键项行 200 > 100 不合格 + 让步 → CONDITIONAL
         recordMeasured(insId, true, lineInput(1, "15"), lineInput(2, "200"));
 
@@ -94,7 +94,7 @@ public class TestErpQaCriticalItemVeto extends JunitAutoTestCase {
     // ③ 关键项 REJECTED + 无让步 → REJECTED（既有语义保持）
     @Test
     public void testCriticalRejectedWithoutConcessionGoesRejected() {
-        Long insId = seedInspection("INS-VETO-NOCOND", withLine("长度", "10", "20", 1));
+        String insId = seedInspection("INS-VETO-NOCOND", withLine("长度", "10", "20", 1));
         recordMeasured(insId, false, lineInput(1, "5"));
 
         ErpQaInspection ins = loadInspection(insId);
@@ -108,7 +108,7 @@ public class TestErpQaCriticalItemVeto extends JunitAutoTestCase {
         seedTemplate("TPL-VETO", MATERIAL_ID, ErpQaConstants.INSPECTION_TYPE_INCOMING,
                 tplLine("长度", "10", "20", 1), tplLine("重量", "0", "100", null));
 
-        Long insId = createForBusinessBill(ErpQaConstants.RELATED_BILL_TYPE_PUR_RECEIPT, "RCV-VETO",
+        String insId = createForBusinessBill(ErpQaConstants.RELATED_BILL_TYPE_PUR_RECEIPT, "RCV-VETO",
                 MATERIAL_ID, ErpQaConstants.INSPECTION_TYPE_INCOMING);
 
         List<ErpQaInspectionLine> lines = loadLines(insId);
@@ -123,11 +123,11 @@ public class TestErpQaCriticalItemVeto extends JunitAutoTestCase {
     // ⑤ 手工建行 isCritical 直设 + aggregate 否决
     @Test
     public void testManualLineIsCriticalDirectSetVetoApplied() {
-        Long insId = seedInspection("INS-VETO-MANUAL", withLine("长度", "10", "20", null));
+        String insId = seedInspection("INS-VETO-MANUAL", withLine("长度", "10", "20", null));
         // 手工直设 isCritical=1（无模板路径，CRUD 直设）+ 实测 5 < min 10 不合格 + 让步
         ormTemplate.runInSession(() -> {
             ErpQaInspectionLine line = daoProvider.daoFor(ErpQaInspectionLine.class)
-                    .getEntityById(insId * 100 + 1);
+                    .getEntityById(String.valueOf(Long.parseLong(insId) * 100 + 1));
             line.setIsCritical(1);
             daoProvider.daoFor(ErpQaInspectionLine.class).updateEntity(line);
         });
@@ -143,7 +143,7 @@ public class TestErpQaCriticalItemVeto extends JunitAutoTestCase {
 
     // ---------- helpers ----------
 
-    private ErpQaInspection loadInspection(Long insId) {
+    private ErpQaInspection loadInspection(String insId) {
         return daoProvider.daoFor(ErpQaInspection.class).getEntityById(insId);
     }
 
@@ -155,7 +155,7 @@ public class TestErpQaCriticalItemVeto extends JunitAutoTestCase {
         return list.isEmpty() ? null : list.get(0);
     }
 
-    private void recordMeasured(Long insId, boolean allowConcession, Map<String, Object>... lines) {
+    private void recordMeasured(String insId, boolean allowConcession, Map<String, Object>... lines) {
         List<Map<String, Object>> lineList = new ArrayList<>();
         for (Map<String, Object> l : lines) {
             lineList.add(l);
@@ -171,7 +171,7 @@ public class TestErpQaCriticalItemVeto extends JunitAutoTestCase {
         return m;
     }
 
-    private ApiRequest<?> recordResultArgs(Long insId, List<Map<String, Object>> lines, boolean allowConcession) {
+    private ApiRequest<?> recordResultArgs(String insId, List<Map<String, Object>> lines, boolean allowConcession) {
         Map<String, Object> args = new LinkedHashMap<>();
         args.put("inspectionId", insId);
         args.put("lineResults", lines);
@@ -184,8 +184,9 @@ public class TestErpQaCriticalItemVeto extends JunitAutoTestCase {
         return graphQLEngine.executeRpc(ctx);
     }
 
-    private Long seedInspection(String code, LineSpec... lines) {
-        Long id = 6100L + (long) (Math.abs(code.hashCode()) % 900);
+    private String seedInspection(String code, LineSpec... lines) {
+        long idNum = 6100L + (long) (Math.abs(code.hashCode()) % 900);
+        String id = String.valueOf(idNum);
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpQaInspection> dao = daoProvider.daoFor(ErpQaInspection.class);
             ErpQaInspection ins = new ErpQaInspection();
@@ -207,7 +208,7 @@ public class TestErpQaCriticalItemVeto extends JunitAutoTestCase {
             int lineNo = 1;
             for (LineSpec spec : lines) {
                 ErpQaInspectionLine line = new ErpQaInspectionLine();
-                line.orm_propValueByName("id", id * 100 + lineNo);
+                line.orm_propValueByName("id", String.valueOf(idNum * 100 + lineNo));
                 line.setInspectionId(id);
                 line.setLineNo(lineNo);
                 line.setParameterName(spec.parameterName == null ? "参数" + lineNo : spec.parameterName);
@@ -222,8 +223,9 @@ public class TestErpQaCriticalItemVeto extends JunitAutoTestCase {
         return id;
     }
 
-    private Long seedTemplate(String code, Long materialId, String inspectionType, TplLineSpec... lines) {
-        Long id = 5100L + (long) (Math.abs(code.hashCode()) % 900);
+    private String seedTemplate(String code, String materialId, String inspectionType, TplLineSpec... lines) {
+        long idNum = 5100L + (long) (Math.abs(code.hashCode()) % 900);
+        String id = String.valueOf(idNum);
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpQaInspectionTemplate> dao = daoProvider.daoFor(ErpQaInspectionTemplate.class);
             ErpQaInspectionTemplate t = new ErpQaInspectionTemplate();
@@ -239,7 +241,7 @@ public class TestErpQaCriticalItemVeto extends JunitAutoTestCase {
             int lineNo = 1;
             for (TplLineSpec spec : lines) {
                 ErpQaInspectionTemplateLine tl = new ErpQaInspectionTemplateLine();
-                tl.orm_propValueByName("id", id * 100 + lineNo);
+                tl.orm_propValueByName("id", String.valueOf(idNum * 100 + lineNo));
                 tl.setTemplateId(id);
                 tl.setLineNo(lineNo);
                 tl.setParameterName(spec.parameterName);
@@ -254,7 +256,7 @@ public class TestErpQaCriticalItemVeto extends JunitAutoTestCase {
         return id;
     }
 
-    private Long createForBusinessBill(String billType, String billCode, Long materialId, String inspectionType) {
+    private String createForBusinessBill(String billType, String billCode, String materialId, String inspectionType) {
         Map<String, Object> args = new LinkedHashMap<>();
         args.put("billType", billType);
         args.put("billCode", billCode);
@@ -267,10 +269,10 @@ public class TestErpQaCriticalItemVeto extends JunitAutoTestCase {
         ApiResponse<?> resp = rpc(mutation, "ErpQaInspection__createForBusinessBill", ApiRequest.build(args));
         assertEquals(0, resp.getStatus(), "createForBusinessBill 应成功: " + resp);
         Object idVal = ((Map<?, ?>) resp.getData()).get("id");
-        return idVal instanceof Number ? ((Number) idVal).longValue() : Long.valueOf(String.valueOf(idVal));
+        return String.valueOf(idVal);
     }
 
-    private List<ErpQaInspectionLine> loadLines(Long insId) {
+    private List<ErpQaInspectionLine> loadLines(String insId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("inspectionId", insId));
         q.addOrderField("lineNo", false);

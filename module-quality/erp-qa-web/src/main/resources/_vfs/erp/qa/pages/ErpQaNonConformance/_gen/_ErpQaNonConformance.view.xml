@@ -19,7 +19,7 @@
             <cols>
 
                 <!--ID-->
-                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="id" mandatory="true" sortable="true"/>
 
                 <!--单号-->
                 <col id="code" mandatory="true" sortable="true"/>
@@ -34,10 +34,10 @@
                 <col id="sourceCode" sortable="true"/>
 
                 <!--物料-->
-                <col id="materialId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="materialId" mandatory="true" sortable="true"/>
 
                 <!--质检单ID-->
-                <col id="inspectionId" ui:number="true" sortable="true"/>
+                <col id="inspectionId" sortable="true"/>
 
                 <!--不合格数量-->
                 <col id="quantity" ui:number="true" sortable="true"/>
@@ -55,7 +55,7 @@
                 <col id="status" mandatory="true" sortable="true"/>
 
                 <!--供应商-->
-                <col id="supplierId" ui:number="true" sortable="true"/>
+                <col id="supplierId" sortable="true"/>
 
                 <!--不合格参数-->
                 <col id="parameterName" sortable="true"/>

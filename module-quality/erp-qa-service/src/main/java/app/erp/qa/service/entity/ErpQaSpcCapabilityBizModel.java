@@ -30,7 +30,7 @@ public class ErpQaSpcCapabilityBizModel extends CrudBizModel<ErpQaSpcCapability>
 
     @Override
     @BizMutation
-    public ErpQaSpcCapability calculateCapability(@Name("chartId") Long chartId,
+    public ErpQaSpcCapability calculateCapability(@Name("chartId") String chartId,
                                                     @Optional @Name("periodFrom") LocalDate periodFrom,
                                                     @Optional @Name("periodTo") LocalDate periodTo,
                                                     IServiceContext context) {
