@@ -14,5 +14,5 @@ public interface IErpMdAcctSchemaBiz extends ICrudBiz<ErpMdAcctSchema>{
      * 按组织解析核算账套（取首条），不存在返回 null。供业务域解析存货估值过账所需 acctSchemaId。
      */
     @BizAction
-    ErpMdAcctSchema findFirstByOrg(@Name("orgId") Long orgId, IServiceContext context);
+    ErpMdAcctSchema findFirstByOrg(@Name("orgId") String orgId, IServiceContext context);
 }

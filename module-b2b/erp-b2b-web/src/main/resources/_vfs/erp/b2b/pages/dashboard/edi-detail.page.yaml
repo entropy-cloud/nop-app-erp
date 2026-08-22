@@ -42,10 +42,10 @@ body:
       method: post
       dataType: raw
       data:
-        query: "query(${'$'}lim:Int,${'$'}did:Long){ logs: ErpB2bEdiLog__findPage(query:{limit:${'$'}lim}){ items{ id ediDocId direction resultCode resultMsg requestPayload responsePayload logTime } total } doc: ErpB2bEdiDoc__get(id:${'$'}did){ id code state relatedBillType relatedBillCode formatId error retryCount sentAt acknowledgedAt } }"
+        query: "query(${'$'}lim:Int,${'$'}did:String){ logs: ErpB2bEdiLog__findPage(query:{limit:${'$'}lim}){ items{ id ediDocId direction resultCode resultMsg requestPayload responsePayload logTime } total } doc: ErpB2bEdiDoc__get(id:${'$'}did){ id code state relatedBillType relatedBillCode formatId error retryCount sentAt acknowledgedAt } }"
         variables:
           lim: 5000
-          did: "${ediDocId || 0}"
+          did: "${ediDocId || null}"
       adaptor: |
         const d = payload.data || {};
         if (d.errors || !d.data) {
@@ -56,7 +56,7 @@ body:
         let logs = logsPage.items || [];
         // Client-side filter by ediDocId
         const didVal = typeof ediDocId !== 'undefined' ? ediDocId : null;
-        if (didVal != null && didVal !== 0) {
+        if (didVal != null && didVal !== '') {
           logs = logs.filter(function(r){ return r.ediDocId == didVal; });
         }
         logs.sort(function(a,b){ return String(b.logTime||'').localeCompare(String(a.logTime||'')); });

@@ -76,7 +76,7 @@ body:
                     method: post
                     dataType: raw
                     data:
-                      query: "query(${'$'}lim:Int,${'$'}aid:Long){ asn: ErpB2bAsn__get(id:${'$'}aid){ id code status partnerId shipmentDate estimatedArrivalDate trackingNo relatedBillType relatedBillCode } lines: ErpB2bAsnLine__findPage(query:{limit:${'$'}lim}){ items{ id asnId lineNo materialId supplierPartNo quantity shippedQty } total } }"
+                      query: "query(${'$'}lim:Int,${'$'}aid:String){ asn: ErpB2bAsn__get(id:${'$'}aid){ id code status partnerId shipmentDate estimatedArrivalDate trackingNo relatedBillType relatedBillCode } lines: ErpB2bAsnLine__findPage(query:{limit:${'$'}lim}){ items{ id asnId lineNo materialId supplierPartNo quantity shippedQty } total } }"
                       variables:
                         lim: 5000
                         aid: "${id}"
@@ -88,7 +88,7 @@ body:
                       let lines = linesPage.items || [];
                       // Client-side filter by asnId (from row scope)
                       const aidVal = typeof id !== 'undefined' ? id : null;
-                      if (aidVal != null) {
+                      if (aidVal != null && aidVal !== '') {
                         lines = lines.filter(function(l){ return l.asnId == aidVal; });
                       }
 

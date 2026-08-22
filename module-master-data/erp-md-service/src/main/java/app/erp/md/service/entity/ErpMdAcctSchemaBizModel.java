@@ -25,7 +25,7 @@ public class ErpMdAcctSchemaBizModel extends CrudBizModel<ErpMdAcctSchema> imple
 
     @Override
     @BizAction
-    public ErpMdAcctSchema findFirstByOrg(@Name("orgId") Long orgId, IServiceContext context) {
+    public ErpMdAcctSchema findFirstByOrg(@Name("orgId") String orgId, IServiceContext context) {
         if (orgId == null) {
             return null;
         }

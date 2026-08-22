@@ -7,7 +7,6 @@ import app.erp.md.dao.entity.ErpMdAcctSchema;
 import app.erp.sal.dao.entity.ErpSalDelivery;
 import app.erp.sal.dao.entity.ErpSalDeliveryLine;
 import app.erp.sal.service.ErpSalConstants;
-import io.nop.api.core.convert.ConvertHelper;
 import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
 
@@ -48,8 +47,7 @@ public class DeliveryStockMoveBuilder {
         if (orgId == null) {
             return null;
         }
-        // 桥接：md IErpMdAcctSchemaBiz.findFirstByOrg 仍为 Long 签名（md 迁移遗留），String orgId 数值桥接；md 侧签名翻转后退役
-        ErpMdAcctSchema schema = mdAcctSchemaBiz.findFirstByOrg(ConvertHelper.toLong(orgId), context);
+        ErpMdAcctSchema schema = mdAcctSchemaBiz.findFirstByOrg(orgId, context);
         return schema == null ? null : schema.getId();
     }
 

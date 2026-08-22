@@ -56,7 +56,7 @@ body:
       method: post
       dataType: raw
       data:
-        query: "query(${'$'}mid:Long,${'$'}st:String,${'$'}lim:Int){ ErpApsOperationOrder__findPage(filter_machineId:${'$'}mid,filter_status:${'$'}st,limit:${'$'}lim,orderBy:\"plannedStartDateT ASC\"){ items{ id code workOrderId operationName machineId priority plannedStartDateT plannedEndDateT qty totalDuration status } total } }"
+        query: "query(${'$'}mid:String,${'$'}st:String,${'$'}lim:Int){ ErpApsOperationOrder__findPage(filter_machineId:${'$'}mid,filter_status:${'$'}st,limit:${'$'}lim,orderBy:\"plannedStartDateT ASC\"){ items{ id code workOrderId operationName machineId priority plannedStartDateT plannedEndDateT qty totalDuration status } total } }"
         variables:
           mid: "${machineId || null}"
           st: "${status || null}"

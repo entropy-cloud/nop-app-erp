@@ -174,7 +174,7 @@ body:
                   method: post
                   dataType: raw
                   data:
-                    query: "mutation(${'$'}id:Long){ ErpSysNotification__markRead(notificationId:${'$'}id){ id } }"
+                    query: "mutation(${'$'}id:String){ ErpSysNotification__markRead(notificationId:${'$'}id){ id } }"
                     variables:
                       id: "${id}"
                 onEvent:
