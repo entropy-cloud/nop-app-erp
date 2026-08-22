@@ -1,6 +1,6 @@
 # 2026-08-22-0731-2-bigint-id-m22-inventory-migration 主键/外键 string 化 M2.2：inventory 域迁移（冻结序位次 10）
 
-> Plan Status: active（2026-08-22：iteration 1-2 独立草案审查收敛 + 保护区域双独立子 agent 批准，见 Draft Review Record）
+> Plan Status: completed（2026-08-22：Phase 1-4 全部完成 + 独立结束审计 CLOSURE AUDIT: PASS（ses_fd8598bf8ffeaZuRea23suUj2x，工程核证 7/7 全 PASS + 1 程序性收尾状态项由审计结论回填，见 Closure Audit Evidence）；起草期 iteration 1-2 独立草案审查收敛 + 保护区域双独立子 agent 批准，见 Draft Review Record）
 > Mission: id-string-migration
 > Work Item: M2.2（inventory，冻结序位次 10）
 > Last Reviewed: 2026-08-22
@@ -55,106 +55,106 @@
 
 ### Phase 1 - 消费登记册 + orm 回写（保护区域，双批准前置）
 
-Status: planned
+Status: completed（2026-08-22 执行：登记册逐条核对吻合——A1=0；A2 = 071..079 与本地 import 实测对账一致（mfg 4：`CostAdjustmentService.java:13/:14` + `StandardCostResolver.java:7/:8`；pur 5：`ErpInvLandedCostApproveProcessor.java:11/:12` + `ErpInvLandedCostGenerateFreightLandedCostProcessor.java:5` + `ErpInvLandedCostProcessor.java:14/:15`）；A3 = 119..124 json5 active 确认；B = 009/010/011/016（aps）+ 062/064/066/067/068（fin）定位面确认；C1 157/158/159 + C2 216/217/218 文件清单确认；FQN 盲区复扫（`rg 'app\.erp\.(mnt|prj|pur|sal|qa|crm|drp|log|mfg)\.' inv test + ioc:type`）零命中 = 零补登。dry-run 副本刷新 → 新鲜度门控（136 变更行 / 0 非法差异行 / 0 延后列）→ 单文件落源。git diff 归一化三重核证：136/136 行仅 `stdDataType="long"→"string"`（136 插入 = 136 删除，sed 归一化后逐行 IDENTICAL），`stdSqlType` 零变化、`delVersion` 零翻转。scan 重扫：inv orm 文件自身残留 = 0（仅 21 个 `delVersion` 保持 long，rule 4）；工具报告的 2 条 inv 实体名 NEEDS FIX（`ErpInvStockMove.id`/`ErpInvBatch.id` notGenCode）经定位为 **drp orm:614 / mfg orm:1881 的 inv stub 声明**——属位次 14/18 域文件自有列，successor = M3.1/M3.7 各自 plan 翻转（rule 4 只修改目标域 orm），非本计划范围）
 Targets: `module-inventory/model/app-erp-inventory.orm.xml`
 Skill: none
 
 - Item Types: `Proof | Fix`
 - Prereqs: M2.1 ✅ + M1.1 ✅ + M1.2 ✅（精确前置满足）+ 批内序 1（M3.3 hr）done（冻结序执行约束）；本计划已通过独立 plan-audit + 第二独立子 agent 复核（保护区域 `auto + dual-agent-approval`，批准记录落盘 Draft Review Record）
 
-- [ ] Proof: 消费 M0.2 登记册——读取 `tools/id-migration-registry.json5` + 登记册文档 §6.10 inv 节，逐条核对：(i) A1 = 0（136 列全翻转）；(ii) A2 = bridge-main-071..079（mfg 4 + pur 5）与本地实测 import 对账（5 文件）；(iii) A3 = bridge-test-119..124 作为 Phase 3 定位面；(iv) **B 退役义务 = bridge-main-009/010/011/016（aps）+ 062/064/066/067/068（fin）作为 Phase 2 定位面（含 retired bridge-test-103..106 inv 部分回收）**；(v) C1 = backward-157/158/159 与 C2 = backward-216/217/218 作为 Phase 2/3 定位面；(vi) 按 b2b/assets A3' 先例做 FQN 盲区复扫（`rg 'app\.erp\.(mnt|prj|pur|sal|qa|crm|drp|log|mfg)\.' module-inventory/erp-inv-service/src/test module-inventory/erp-inv-web/src/test` 排除 import 行 + test beans.xml ioc:type FQN——覆盖本域执行时点全部未迁移晚域；起草实测零命中，执行时点复扫确认）。矛盾则按路线图规则 6 停止回报。
+- [x] Proof: 消费 M0.2 登记册——读取 `tools/id-migration-registry.json5` + 登记册文档 §6.10 inv 节，逐条核对：(i) A1 = 0（136 列全翻转）；(ii) A2 = bridge-main-071..079（mfg 4 + pur 5）与本地实测 import 对账（5 文件）；(iii) A3 = bridge-test-119..124 作为 Phase 3 定位面；(iv) **B 退役义务 = bridge-main-009/010/011/016（aps）+ 062/064/066/067/068（fin）作为 Phase 2 定位面（含 retired bridge-test-103..106 inv 部分回收）**；(v) C1 = backward-157/158/159 与 C2 = backward-216/217/218 作为 Phase 2/3 定位面；(vi) 按 b2b/assets A3' 先例做 FQN 盲区复扫（`rg 'app\.erp\.(mnt|prj|pur|sal|qa|crm|drp|log|mfg)\.' module-inventory/erp-inv-service/src/test module-inventory/erp-inv-web/src/test` 排除 import 行 + test beans.xml ioc:type FQN——覆盖本域执行时点全部未迁移晚域；起草实测零命中，执行时点复扫确认）。矛盾则按路线图规则 6 停止回报。
   - Skill: none
-- [ ] Proof: 双独立子 agent 批准记录落盘（批准人指针 + 结论 + 时间），未获批不得进入回写。
+- [x] Proof: 双独立子 agent 批准记录落盘（批准人指针 + 结论 + 时间），未获批不得进入回写。
   - Skill: none
-- [ ] Fix: 回写 orm（M0.1 裁定三步机制）——① `node tools/check-bigint-id-types.mjs dry-run` 时点刷新；② `node tools/verify-id-fix-copy-diff.mjs module-inventory` 新鲜度门控（零非 stdDataType 行）；③ 门控通过后单文件落源。禁止盲 cp 静态副本、禁止 apply 模式。
+- [x] Fix: 回写 orm（M0.1 裁定三步机制）——① `node tools/check-bigint-id-types.mjs dry-run` 时点刷新；② `node tools/verify-id-fix-copy-diff.mjs module-inventory` 新鲜度门控（零非 stdDataType 行）；③ 门控通过后单文件落源。禁止盲 cp 静态副本、禁止 apply 模式。
   - Skill: none
-- [ ] Proof: `git diff module-inventory/model/app-erp-inventory.orm.xml` 逐行核对——仅 136 列 `stdDataType="long"→"string"`（自有 120 + md stub 16），`stdSqlType` 零变化、`delVersion`/标签结构零变化；scan inv 段重扫零 `NEEDS FIX`/零 `DEFERRED` 残留。
+- [x] Proof: `git diff module-inventory/model/app-erp-inventory.orm.xml` 逐行核对——仅 136 列 `stdDataType="long"→"string"`（自有 120 + md stub 16），`stdSqlType` 零变化、`delVersion`/标签结构零变化；scan inv 段重扫零 `NEEDS FIX`/零 `DEFERRED` 残留。
   - Skill: none
 
 Exit Criteria:
 
-- [ ] 登记册消费核对在案（含 FQN 盲区复扫结论 + B 义务 9 条定位面）；双批准记录在案；新鲜度门控 + git diff + 工具重扫三重证明变更面精确 = 136 列 stdDataType
+- [x] 登记册消费核对在案（含 FQN 盲区复扫结论 + B 义务 9 条定位面）；双批准记录在案；新鲜度门控 + git diff + 工具重扫三重证明变更面精确 = 136 列 stdDataType
 
 ### Phase 2 - 增量重生成 + 主代码编译修复 + A2 落桥 + B 退役兑付
 
-Status: planned
+Status: completed（2026-08-22 执行。**主代码修复清单**（编译器驱动三轮 93→99→12→0 清零 + 主动修复，inv-dao 手写层 15 文件 + inv-service 手写层约 45 文件）：dao biz IBiz/DTO 全量 String 化（`IErpInvCostingBiz/StockMoveBiz/LandedCostBiz/OwnershipTransferBiz/TransferOrderBiz/StockTakeBiz/CostAdjustBiz` 7 接口 + `StockMoveRequest/StockMoveLineRequest/ReservationCreateRequest/ReservationLineRequest/ReservationConsumeLine/CostingRecloseReport/TraceChainResult/TraceLink` 8 值对象）；service 层：costing 7 策略 + `CostingStrategy/BookingContext` 接口 + `CostAdjustmentService`（含 FIFO 负行 ID 哨兵 Long 取负 → String `"-"` 前缀语义等价改造 + `LEDGER_MOVE_ID_COST_ADJUST` 哨兵 `0L`→`"0"`）+ `ErpInvCostingReclosePeriodCostsProcessor` + `CostMethodResolver` + `StandardCostResolver` + `StockMoveBookkeeper`（自然键捕获局部变量）+ `TraceChainQuery` + `LandedCostAllocationEngine` 消费点 + landed cost 3 Processor/BizModel + stock move 6 Processor/BizModel + stock take/reservation/ownership/transfer/cost-adjust BizModel 族 + posting 族 8 文件（`InvPostingDispatcher/InvPostingExecutor/CostAdjustmentPostingDispatcher/LandedCostPostingDispatcher/OwnershipTransferPostingDispatcher` voucherId String 化 + 4 AcctDocProvider billData cast `(Long)`→`(String)`）+ dashboard/report/spi（id 键集合 `Set<Long>`→`Set<String>`）；C1 后向兑付 = fin posting 族 PostingEvent/AcctDocContext String 直传（4 文件）+ md 6 文件 String 直传 + notify 2 文件签名不变零破坏核证。**A2 桥接 9 处落桥**（例外清单见下）+ **B 退役 9 条兑付**（aps 侧 `ErpApsAtpCtpServiceImpl` :55/:65/:77 toLong 转换点移除 + :111/:131 bridge 注释移除 + inv 查询族 String 直传 + mfg 查询经 `toMfgMaterialKey` 归并 bridge-main-012 注释（M3.1）；`ErpApsAutoDispatchProcessor` bridge-main-016 注释移除 + `sumAvailable` 改 `ConvertHelper.toString(materialId)` 查询值桥（mfg Long 键 → inv String 列，随 bridge-main-017 于 M3.1 退役）；fin 侧 bridge-main-064 `:223` 注释 + `:224` toLong 移除改 String 直传 + 062/066/067/068 类型级零代码变更退役）+ **retired test 回收**（bridge-test-103 `TestErpApsAutoDispatch` inv 种子 String 化（id "7001"/materialId 拆 `MATERIAL_CHILD_INV` String 常量，mfg 侧 MATERIAL_CHILD 保持 Long）+ bridge-test-105 `TestErpApsDemandPlanning` 常量族 String 化 + `String.valueOf` 桥移除；104/106 实测零 inv 侧引用（mfg-only，M3.1 半边）+ **aps IoC delta 修复**（根元素 `x:extends="super"` + `xmlns:feature="feature"`，仅 `nopSequenceGenerator` 保持 `x:override="replace"`）+ bug doc 状态更新（五域 → 四域）。**验证**：inv 7 模块链（显式列表、no-am、`-Dmaven.test.skip=true`）BUILD SUCCESS；aps 7 模块链同口径 BUILD SUCCESS；fin 5 模块链（codegen,dao,meta,service,api）BUILD SUCCESS；fin grep 复核 `bridge-main-062|064|066|067|068|ConvertHelper.toLong` 于 `ErpFinAccountingPeriodProcessor` 零残留）
 Targets: `module-inventory/erp-inv-{dao,service}/src/main/java/**`（手写 IBiz/BizModel/Processor/SPI）；**跨域编辑面：`module-aps/erp-aps-service/src/main/**`（4 桥接点 + delta）、`module-finance/erp-fin-service/src/main/**`（5 桥接点）**
 Skill: `nop-backend-dev`
 
 - Item Types: `Fix`
 - Prereqs: Phase 1
 
-- [ ] Fix: `mvn clean install -pl module-inventory/erp-inv-codegen,module-inventory/erp-inv-dao,module-inventory/erp-inv-meta,module-inventory/erp-inv-service,module-inventory/erp-inv-web,module-inventory/erp-inv-app,module-inventory/erp-inv-api -Dmaven.test.skip=true`（D3 口径：7 模块显式列表、不带 `-am`、`-Dmaven.test.skip=true`）触发增量重生成。预期：inv-dao `_gen` md 关系胶水自愈（M1.1 登记中间态）。
+- [x] Fix: `mvn clean install -pl module-inventory/erp-inv-codegen,module-inventory/erp-inv-dao,module-inventory/erp-inv-meta,module-inventory/erp-inv-service,module-inventory/erp-inv-web,module-inventory/erp-inv-app,module-inventory/erp-inv-api -Dmaven.test.skip=true`（D3 口径：7 模块显式列表、不带 `-am`、`-Dmaven.test.skip=true`）触发增量重生成。预期：inv-dao `_gen` md 关系胶水自愈（M1.1 登记中间态）。
   - Skill: `nop-backend-dev`
-- [ ] Fix: 编译器驱动修复主代码——逐条修复 inv dao + service 手写代码类型错误（定位面：fin 4 文件（C1）+ md 6 文件（C1，String 直传按语境）+ notify 2 文件（C1，签名不变预期零破坏核验）+ 全域 IBiz/值对象 Long 签名（inv 为语义 FK Long 参数重户，M0.1 附录 C）+ `.getId()` 下游；fin posting 族 id 值流转以编译器实际清单为准），直到 7 模块链 `-Dmaven.test.skip=true` 构建全绿。修复清单落盘本计划。
+- [x] Fix: 编译器驱动修复主代码——逐条修复 inv dao + service 手写代码类型错误（定位面：fin 4 文件（C1）+ md 6 文件（C1，String 直传按语境）+ notify 2 文件（C1，签名不变预期零破坏核验）+ 全域 IBiz/值对象 Long 签名（inv 为语义 FK Long 参数重户，M0.1 附录 C）+ `.getId()` 下游；fin posting 族 id 值流转以编译器实际清单为准），直到 7 模块链 `-Dmaven.test.skip=true` 构建全绿。修复清单落盘本计划。
   - Skill: `nop-backend-dev`
-- [ ] Fix: A2 前向桥接 9 处落桥（D4 消费协议）——inv String id ↔ mfg/pur Long API 的调用点加转换桥（mfg 4：`CostAdjustmentService` + `StandardCostResolver` 的 `ErpMfgCostRollup`/`RollupLine` 引用；pur 5：`ErpInvLandedCostApproveProcessor`/`ErpInvLandedCostGenerateFreightLandedCostProcessor`/`ErpInvLandedCostProcessor` 的 `ErpPurReceive`/`ReceiveLine` 引用——**eq/filter 语义值桥主动识别**（Long 列传 String 静默空匹配，contract 037/038 + cs 059 先例）），每处登记 grep 例外清单（条目 id + file:line + 转换方向），退役 owner M3.1（mfg 4）/M2.5（pur 5）；代码内 bridge 注释双向指针。
+- [x] Fix: A2 前向桥接 9 处落桥（D4 消费协议）——inv String id ↔ mfg/pur Long API 的调用点加转换桥（mfg 4：`CostAdjustmentService` + `StandardCostResolver` 的 `ErpMfgCostRollup`/`RollupLine` 引用；pur 5：`ErpInvLandedCostApproveProcessor`/`ErpInvLandedCostGenerateFreightLandedCostProcessor`/`ErpInvLandedCostProcessor` 的 `ErpPurReceive`/`ReceiveLine` 引用——**eq/filter 语义值桥主动识别**（Long 列传 String 静默空匹配，contract 037/038 + cs 059 先例）），每处登记 grep 例外清单（条目 id + file:line + 转换方向），退役 owner M3.1（mfg 4）/M2.5（pur 5）；代码内 bridge 注释双向指针。
   - Skill: `nop-backend-dev`
-- [ ] Fix: **B 退役义务兑付（main 9 条）**——inv IBiz/实体签名翻转 String 后，早域桥接点错型（fin 传 Long 桥值 → inv String 参数）：① aps 侧 4 处（`ErpApsAtpCtpServiceImpl` :55/:65/:77 转换点 + :12/:13/:14 import 面；`ErpApsAutoDispatchProcessor` :10 + inv 语境调用点）移除 toLong 桥改 String 直传，移除 bridge 注释；② fin 侧 5 处（`ErpFinAccountingPeriodProcessor` :15/:16 + FQN 使用行 :538/:539/:546（登记册 callSite 已漂移 2 行，以执行时点 FQN 定位为准）+ 064 语义级转换点 :224 `ConvertHelper.toLong(period.getId())` → 直传 String（:223 bridge 注释行一并移除））同样移除；③ aps 7 模块链（`module-aps/erp-aps-{codegen,dao,meta,service,web,app,api}` no-am、`-Dmaven.test.skip=true`）重建绿；④ fin 5 模块链（`module-finance/erp-fin-{codegen,dao,meta,service,api}`，web/app 延后 M2.7）重建绿；⑤ fin grep 复核桥残留清零（M2.4 先例口径）。M2.4 assets 先例（mission 首例晚域退役早域桥接点）为执行范式。
+- [x] Fix: **B 退役义务兑付（main 9 条）**——inv IBiz/实体签名翻转 String 后，早域桥接点错型（fin 传 Long 桥值 → inv String 参数）：① aps 侧 4 处（`ErpApsAtpCtpServiceImpl` :55/:65/:77 转换点 + :12/:13/:14 import 面；`ErpApsAutoDispatchProcessor` :10 + inv 语境调用点）移除 toLong 桥改 String 直传，移除 bridge 注释；② fin 侧 5 处（`ErpFinAccountingPeriodProcessor` :15/:16 + FQN 使用行 :538/:539/:546（登记册 callSite 已漂移 2 行，以执行时点 FQN 定位为准）+ 064 语义级转换点 :224 `ConvertHelper.toLong(period.getId())` → 直传 String（:223 bridge 注释行一并移除））同样移除；③ aps 7 模块链（`module-aps/erp-aps-{codegen,dao,meta,service,web,app,api}` no-am、`-Dmaven.test.skip=true`）重建绿；④ fin 5 模块链（`module-finance/erp-fin-{codegen,dao,meta,service,api}`，web/app 延后 M2.7）重建绿；⑤ fin grep 复核桥残留清零（M2.4 先例口径）。M2.4 assets 先例（mission 首例晚域退役早域桥接点）为执行范式。
   - Skill: `nop-backend-dev`
-- [ ] Fix: **B 退役义务兑付（retired test bridge 回收）**——bridge-test-103..106（aps 4 测试文件）inv 侧 `String.valueOf` 桥移除 + inv 种子 Long→String（mfg 侧桥与种子保持 Long，归 M3.1；逐文件登记 mfg/inv 侧拆分）；随 Phase 3 前的 aps 测试复跑验证。
+- [x] Fix: **B 退役义务兑付（retired test bridge 回收）**——bridge-test-103..106（aps 4 测试文件）inv 侧 `String.valueOf` 桥移除 + inv 种子 Long→String（mfg 侧桥与种子保持 Long，归 M3.1；逐文件登记 mfg/inv 侧拆分）；随 Phase 3 前的 aps 测试复跑验证。
   - Skill: `nop-testing`
-- [ ] Fix: **Deferred 消费：aps IoC delta 修复**——`module-aps/erp-aps-service/src/test/resources/_vfs/_delta/default/nop/sys/beans/app-dao.beans.xml` 根元素补 `x:extends="super"` + `xmlns:feature="feature"`（仅 `nopSequenceGenerator` 保持 `x:override="replace"`——fin 修正版先例，bug doc 修复节）；bug doc 状态更新（五域 → 四域未修正）。
+- [x] Fix: **Deferred 消费：aps IoC delta 修复**——`module-aps/erp-aps-service/src/test/resources/_vfs/_delta/default/nop/sys/beans/app-dao.beans.xml` 根元素补 `x:extends="super"` + `xmlns:feature="feature"`（仅 `nopSequenceGenerator` 保持 `x:override="replace"`——fin 修正版先例，bug doc 修复节）；bug doc 状态更新（五域 → 四域未修正）。
   - Skill: none
-- [ ] Fix: 自身链破坏处置（D4 carve-out）——no-am 口径下预期零外域破坏（7 模块全绿，reactor 不含外域模块）；位次 11 起未迁移域引用 inv 的破坏为已登记中间态（登记册 backward-pointer + §6.10 被引用清单），Phase 4 登记；未登记破坏按路线图规则 6 停止回报。
+- [x] Fix: 自身链破坏处置（D4 carve-out）——no-am 口径下预期零外域破坏（7 模块全绿，reactor 不含外域模块）；位次 11 起未迁移域引用 inv 的破坏为已登记中间态（登记册 backward-pointer + §6.10 被引用清单），Phase 4 登记；未登记破坏按路线图规则 6 停止回报。
   - Skill: `nop-backend-dev`
 
 Exit Criteria:
 
-- [ ] inv 7 模块链（显式列表、no-am、`-Dmaven.test.skip=true`）构建全绿（main 代码）；主代码修复清单 + A2 桥接例外清单在案
-- [ ] **B 义务：aps 7 模块链重建绿 + fin 5 模块链重建绿 + fin grep 桥残留清零；aps delta 修复落地 + bug doc 更新**
+- [x] inv 7 模块链（显式列表、no-am、`-Dmaven.test.skip=true`）构建全绿（main 代码）；主代码修复清单 + A2 桥接例外清单在案
+- [x] **B 义务：aps 7 模块链重建绿 + fin 5 模块链重建绿 + fin grep 桥残留清零；aps delta 修复落地 + bug doc 更新**
 
 ### Phase 3 - 测试修复 + A3 桥接退役 + 快照重录 + 域级测试 + 早域测试复跑
 
-Status: planned
+Status: completed（2026-08-22 执行。**测试修复清单**：inv-service 28 测试文件 Long→String（编译器驱动：字面量断言、helper 签名、seed `orm_propValueByName("id", String.valueOf(...))`、jqwik property generator、perf 测试）；C2 后向兑付 = backward-216（fin 12 文件）+ backward-217（md 17 文件）+ backward-218（notify 2 文件）清单内适配，test-compile BUILD SUCCESS；inv-web test-scope ast-dao（String 新 jar）/prj-dao（陈旧 Long jar）零 id 穿越（test-compile 绿 = `ErpInvWebPagesTest` 参与编译零错误）。**A3 桥接 6 条适配 + 登记册退役**：119（mfg CostRollupLine.materialId toLong 查询值桥）+ 120/121（pur Receive seed toLong 桥）+ 122（mfg CostRollup seed toLong 桥）+ 123（pur receiveId Long→inv String 局部桥）各带双向桥注释；124（`TestErpInvLandedCostReceiveMutex`）判定为实体级 pass-through（`lockReceiveForAllocation(ErpPurReceive)` 不跨 id 边界，pur 种子保持 Long，无转换桥必需，桥注释补注）；6 条 json5 → retired（桥接点移除归 M3.1 mfg ×2 / M2.5 pur ×4）。**快照重录足迹**：382 内容 diff + 396 新增落盘（processor/guard/mutex/alert/reversal/sku-checker 等先前无快照方法补录）+ 20 拒绝路径 `output/tables` 回收（拒绝路径不录 DB 快照——skill 规则 + cs 超录回退先例）；注解还原 grep 零 RECORDING/forceSaveOutput 残留。**验证**：`mvn test -pl module-inventory/erp-inv-service` = **235/0/0**（36 类默认执行 + jqwik 2 property 类；perf `TestErpInvCostingReclosePerf` `@Tag("perf")` 模块治理排除默认跑——先例口径（08-02 日志「perf 测试均被 excluded」），补跑 `-Pperf` = 1/1 绿）；`mvn test -pl module-inventory/erp-inv-web` = BUILD SUCCESS（0 tests，治理排除）。**早域复跑（B 义务验证）**：`mvn test -pl module-aps/erp-aps-service,module-aps/erp-aps-web` = **76/76 + web 0/0** BUILD SUCCESS；`mvn test -pl module-finance/erp-fin-service` = **497/497** BUILD SUCCESS——基线全部维持，桥接退役后 aps/fin 零回归）
 Targets: `module-inventory/**/src/test/**`、`module-inventory/erp-inv-service/_cases/**`；早域复跑：`module-aps` 测试、`module-finance` 测试
 Skill: `nop-testing`
 
 - Item Types: `Fix | Proof`
 - Prereqs: Phase 2
 
-- [ ] Fix: 测试代码修复——37 个测试类的 Long 用法（字面量断言、helper 签名、seed `orm_propValueByName("id", id)` 形态——md/notify 先例；含 jqwik property generator 与 perf 测试），逐文件修复至测试编译通过；C2 后向 test 适配（backward-216 fin 12 + backward-217 md 17 + backward-218 notify 2 文件——M2.1/M1.1/M1.2 登记的 successor 义务兑付）；inv-web test-scope ast-dao（String 新 jar）/prj-dao（陈旧 Long jar）编译对象零 id 穿越核验（`ErpInvWebPagesTest` 治理排除但参与 test-compile）。
-  - Skill: `nop-testing`
-- [ ] Fix: A3 test 桥接适配（bridge-test-119..124，6 条）——本域测试引用 mfg/pur 实体的 id 形态桥接（String↔Long 局部转换或 mock 桩签名适配，与 Phase 2 桥接同型），适配后在登记册退役对应 test 桥接条目（owner M2.2 = 本计划）。
-  - Skill: `nop-testing`
-- [ ] Fix: 快照每域重录（用户裁决固定步骤）——`RECORDING` 模式运行 inv service 测试 → 逐案审核 `_cases/` 新形态（1910 文件基线；id 以 String 形态落盘；非确定性单元格按 aps/contract 先例 `*` 通配修正；**「断言式 + 空 autotest.yaml」范式测试不录快照——cs 81 方法目录超录回退先例**）→ 注解还原（grep 零 RECORDING/forceSaveOutput 残留）→ 切回 `CHECKING` 复跑确认全绿。重录足迹（内容 diff vs 新增落盘分列）与审核结论记录本计划。
-  - Skill: `nop-testing`
-- [ ] Proof: `mvn test -pl module-inventory/erp-inv-service,module-inventory/erp-inv-web`（D3 口径：不带 `-am`）全绿——service 37 测试类 + web BUILD SUCCESS（`ErpInvWebPagesTest` 治理排除，0 tests 预期）。若复现平台 IoC 回归，按 fin 修正版先例修复（test-scope VFS delta 带根元素 `x:extends="super"` + DeltaOverride delta-layer 补 default 层集）并登记。
-  - Skill: `nop-testing`
-- [ ] Proof: **早域测试复跑（B 义务验证）**——`mvn test -pl module-aps/erp-aps-service,module-aps/erp-aps-web` 全绿（76/76 基线，web 0 tests 治理排除；含 bridge-test-103..106 inv 侧回收后形态）+ `mvn test -pl module-finance/erp-fin-service` 全绿（497/497 基线，fin web/app 延后口径）。任一红则修复至绿（桥接退役遗留问题在本计划内闭环）。
-  - Skill: `nop-testing`
+- [x] Fix: 测试代码修复——37 个测试类的 Long 用法（字面量断言、helper 签名、seed `orm_propValueByName("id", id)` 形态——md/notify 先例；含 jqwik property generator 与 perf 测试），逐文件修复至测试编译通过；C2 后向 test 适配（backward-216 fin 12 + backward-217 md 17 + backward-218 notify 2 文件——M2.1/M1.1/M1.2 登记的 successor 义务兑付）；inv-web test-scope ast-dao（String 新 jar）/prj-dao（陈旧 Long jar）编译对象零 id 穿越核验（`ErpInvWebPagesTest` 治理排除但参与 test-compile）。
+  - Skill: nop-testing
+- [x] Fix: A3 test 桥接适配（bridge-test-119..124，6 条）——本域测试引用 mfg/pur 实体的 id 形态桥接（String↔Long 局部转换或 mock 桩签名适配，与 Phase 2 桥接同型），适配后在登记册退役对应 test 桥接条目（owner M2.2 = 本计划）。
+  - Skill: nop-testing
+- [x] Fix: 快照每域重录（用户裁决固定步骤）——`RECORDING` 模式运行 inv service 测试 → 逐案审核 `_cases/` 新形态（1910 文件基线；id 以 String 形态落盘；非确定性单元格按 aps/contract 先例 `*` 通配修正；**「断言式 + 空 autotest.yaml」范式测试不录快照——cs 81 方法目录超录回退先例**）→ 注解还原（grep 零 RECORDING/forceSaveOutput 残留）→ 切回 `CHECKING` 复跑确认全绿。重录足迹（内容 diff vs 新增落盘分列）与审核结论记录本计划。
+  - Skill: nop-testing
+- [x] Proof: `mvn test -pl module-inventory/erp-inv-service,module-inventory/erp-inv-web`（D3 口径：不带 `-am`）全绿——service 37 测试类 + web BUILD SUCCESS（`ErpInvWebPagesTest` 治理排除，0 tests 预期）。若复现平台 IoC 回归，按 fin 修正版先例修复（test-scope VFS delta 带根元素 `x:extends="super"` + DeltaOverride delta-layer 补 default 层集）并登记。
+  - Skill: nop-testing
+- [x] Proof: **早域测试复跑（B 义务验证）**——`mvn test -pl module-aps/erp-aps-service,module-aps/erp-aps-web` 全绿（76/76 基线，web 0 tests 治理排除；含 bridge-test-103..106 inv 侧回收后形态）+ `mvn test -pl module-finance/erp-fin-service` 全绿（497/497 基线，fin web/app 延后口径）。任一红则修复至绿（桥接退役遗留问题在本计划内闭环）。
+  - Skill: nop-testing
 
 Exit Criteria:
 
-- [ ] inv 域级测试全绿（service 37 类 + web 治理排除偏差登记）；快照重录完成且 `CHECKING` 复跑通过；重录清单在案
-- [ ] **早域复跑全绿（aps 76/76 + fin 497/497 基线维持）；A3 6 条退役在案**
+- [x] inv 域级测试全绿（service 37 类 + web 治理排除偏差登记）；快照重录完成且 `CHECKING` 复跑通过；重录清单在案
+- [x] **早域复跑全绿（aps 76/76 + fin 497/497 基线维持）；A3 6 条退役在案**
 
 ### Phase 4 - 语义陷阱 grep 门控 + page.yaml Fix + 收尾登记
 
-Status: planned
+Status: completed（2026-08-22 执行。**grep 门控结果逐项**：① `\.longValue\(\)`：修后 0 命中（原 2 = StockMove 2 测试类 `idOf` helper，经平台宽容 coercion 编译/断言双过漏网 → 整类 String 化修复）；② `Long\.parseLong\(`：修后 0 命中（原 4 = 同上 ×2 + StandardCosting bridge-test-122 桥值 ×2 → 统一 `ConvertHelper.toLong`）；③ `Map<Long`/④ `Set<Long`：0 命中；⑤ `String\.format\("%d`/`%d` 变体：0 命中；⑥ id 序比较专项：`getId()[<>]`/`comparing.*getId` 0 命中，同型 `Comparator.comparing(String.valueOf(orm_id))` 字典序陷阱 1 处（`TestErpInvStandardCosting.findLatestIncomingLedger`，"9">"10" ≥1000 行必错）→ `comparingLong(ConvertHelper.toLong)` 数值序（contract idOrder 先例）；⑦ 装箱 `==`/`!=`：唯一 `ErpInvSkuReferenceChecker:70` `getId() == null` null 检查合法 + `TestErpInvStockMoveBizModel:128` `assertNotEquals(Long,String)` 恒真空断言（漏网）→ 随整类 String 化修复为同型比较；⑧ 残留 `Long` 逐条核清 = api beans `delVersion` ×21 文件（规则 4 合法）+ `_gen` 生成件 ×21（规则 4）+ A2 桥接本体（`StandardCostResolver`/`ErpInvLandedCostProcessor` bridge 注释在案 + `LandedCostAllocationEngine.ReceiveLineInput/AllocationResult` pur Long DTO 补桥注释（bridge-main-075..079 面，退役 owner M2.5））+ A3 桥接本体（6 测试文件 mfg/pur seed Long 值，M3.1/M2.5）+ test Long 字面量非 id 语境零；⑨ sql-lib.xml inv 仓内零存在。**page.yaml Fix**：`stock-take-flow/main.page.yaml:71/:91/:111` `$tid:Long`→`:String` ×3（`rg ':Long'` inv-web 手写清零）；trace-report `$materialId/$warehouseId:BigDecimal` id 变量逐条判定合法（backend `ErpInvReportBizModel.asString` 强转，零静态失配路径，无 `|| 0` 兜底问题）；inv-web clean install 重建 BUILD SUCCESS。**view 零被动变更**：inv-web git status 非 `_gen` 变更仅 stock-take-flow page.yaml 主动 Fix（`_gen` ×21 codegen 随动）。**登记册**：B main 9 条（bridge-main-009/010/011/016 aps + 062/064/066/067/068 fin）→ retired（兑付 note：aps/fin 侧移除 + 链重建 + 测试复跑 76/76 + 497/497 指针）；A3 6 条已在 Phase 3 retired；A2 9 条（bridge-main-071..079）保持 active（退役 owner M3.1 mfg 4/M2.5 pur 5）；被引用面 backward-pointer 保持 active 口径（全仓一致，M4.1 兜底）；fail-closed 解析验证通过（dry-run 正常消费 0 warning/0 blocker + inv orm 自有段 0 待改列——工具报告的 2 条 inv 实体名 NEEDS FIX（`ErpInvStockMove.id`/`ErpInvBatch.id`）为 drp orm:614 / mfg orm:1635-1881 区间 inv stub 声明，位次 14/18 域自有列，successor M3.1/M3.7，Phase 1 裁定维持）。**owner doc**：grep `docs/design/inventory/` 9 文件 Long/BIGINT 陈述 = 零命中——零 Long id 陈述，零文档变更。**roadmap + 日志**：M2.2 → done（位次 10 行证据摘要 + 头部最后更新 + 位次 11 mnt 解锁）+ `docs/logs/2026/08-22.md` M2.2 条目（含验证状态全绿 + B 义务兑付 + aps delta 消费））
 Targets: `module-inventory/**`（手写代码 + inv-web 手写 page.yaml）、`docs/backlog/id-string-migration-roadmap.md`、`docs/logs/2026/{08-22 或执行日}.md`、`tools/id-migration-registry.json5`、`docs/bugs/2026-08-22-ioc-delta-missing-extends-super.md`
 Skill: none
 
 - Item Types: `Proof | Fix | Add`
 - Prereqs: Phase 3
 
-- [ ] Proof: 语义陷阱 grep 门控（路线图横切 §3，inv 手写 main+test 范围）清零——`\.longValue\(\)`、`Long\.parseLong\(`、`Map<Long`、`Set<Long`、`String\.format\("%d` 及 `%d` 变体零命中（A2 桥接转换点为登记例外，逐条列于例外清单并标注退役 owner M3.1/M2.5）；Long 装箱 `==`/`!=` 比较（id 上下文）逐条核清；id 序比较陷阱（String 字典序，contract idOrder / fin billCode 时间戳序先例）专项 grep：`getId\(\)\s*[<>]|comparing.*getId`；残留 `Long` 逐条判定合法非 id 或登记 successor；sql-lib.xml 仓内零存在（注明即可）。结果逐项记录本计划。
+- [x] Proof: 语义陷阱 grep 门控（路线图横切 §3，inv 手写 main+test 范围）清零——`\.longValue\(\)`、`Long\.parseLong\(`、`Map<Long`、`Set<Long`、`String\.format\("%d` 及 `%d` 变体零命中（A2 桥接转换点为登记例外，逐条列于例外清单并标注退役 owner M3.1/M2.5）；Long 装箱 `==`/`!=` 比较（id 上下文）逐条核清；id 序比较陷阱（String 字典序，contract idOrder / fin billCode 时间戳序先例）专项 grep：`getId\(\)\s*[<>]|comparing.*getId`；残留 `Long` 逐条判定合法非 id 或登记 successor；sql-lib.xml 仓内零存在（注明即可）。结果逐项记录本计划。
   - Skill: none
-- [ ] Fix: inv-web 手写 page.yaml raw-GraphQL `:Long` 变量 3 处就地 String 化——`stock-take-flow/main.page.yaml:71/:91/:111`（`$tid:Long` → `:String`，takeId mutation 变量）；variables 链与 options value 链一致性核证（contract version-diff 先例）；随后 `rg ':Long' module-inventory/erp-inv-web/src/main/resources/_vfs --glob '!**/_gen/**'` 清零（非 id 类型变量如 `$lim:Int` 合法保留并逐条判定）；inv-web 重建 BUILD SUCCESS 验证。
+- [x] Fix: inv-web 手写 page.yaml raw-GraphQL `:Long` 变量 3 处就地 String 化——`stock-take-flow/main.page.yaml:71/:91/:111`（`$tid:Long` → `:String`，takeId mutation 变量）；variables 链与 options value 链一致性核证（contract version-diff 先例）；随后 `rg ':Long' module-inventory/erp-inv-web/src/main/resources/_vfs --glob '!**/_gen/**'` 清零（非 id 类型变量如 `$lim:Int` 合法保留并逐条判定）；inv-web 重建 BUILD SUCCESS 验证。
   - Skill: none
-- [ ] Proof: 手写 view.xml 零改动验证——`git status module-inventory/erp-inv-web` 确认无手写 view 文件被动变更（生成 view 随 codegen 更新不在此列；page.yaml 修复 diff 为本计划主动变更）。
+- [x] Proof: 手写 view.xml 零改动验证——`git status module-inventory/erp-inv-web` 确认无手写 view 文件被动变更（生成 view 随 codegen 更新不在此列；page.yaml 修复 diff 为本计划主动变更）。
   - Skill: none
-- [ ] Add: 登记册状态更新——B main 桥接 9 条（bridge-main-009/010/011/016 + 062/064/066/067/068）→ retired（兑付 note：aps/fin 侧移除证据 + 链重建 + 测试复跑指针）；A3 test 桥接 6 条（bridge-test-119..124）→ retired（owner M2.2 兑付 note）；A2 main 桥接 9 条保持 active（退役 owner M3.1（mfg 4）/M2.5（pur 5））；被引用面确认（位次 11 起未迁移域 successor 指针已由 backward-pointer 登记）；登记册消费工具 fail-closed 解析验证通过（dry-run 正常消费 + inv 段 0 待改列）。
+- [x] Add: 登记册状态更新——B main 桥接 9 条（bridge-main-009/010/011/016 + 062/064/066/067/068）→ retired（兑付 note：aps/fin 侧移除证据 + 链重建 + 测试复跑指针）；A3 test 桥接 6 条（bridge-test-119..124）→ retired（owner M2.2 兑付 note）；A2 main 桥接 9 条保持 active（退役 owner M3.1（mfg 4）/M2.5（pur 5））；被引用面确认（位次 11 起未迁移域 successor 指针已由 backward-pointer 登记）；登记册消费工具 fail-closed 解析验证通过（dry-run 正常消费 + inv 段 0 待改列）。
   - Skill: none
-- [ ] Add: owner doc 注记——grep `docs/design/inventory/` 中关于 inv id 为 Long/数字/BIGINT 的陈述；存在则就地注记 Java 层已 String 化（引用本计划），不存在则记录「零 Long id 陈述，零文档变更」结论。
+- [x] Add: owner doc 注记——grep `docs/design/inventory/` 中关于 inv id 为 Long/数字/BIGINT 的陈述；存在则就地注记 Java 层已 String 化（引用本计划），不存在则记录「零 Long id 陈述，零文档变更」结论。
   - Skill: none
-- [ ] Add: 路线图 M2.2 → `done`（M2/M3 表位次 10 + 头部「最后更新」；位次 11 mnt 解锁）+ 日志条目（含验证状态 + B 义务兑付 + aps delta 消费）。
+- [x] Add: 路线图 M2.2 → `done`（M2/M3 表位次 10 + 头部「最后更新」；位次 11 mnt 解锁）+ 日志条目（含验证状态 + B 义务兑付 + aps delta 消费）。
   - Skill: none
 
 Exit Criteria:
 
-- [ ] grep 门控零残留（例外逐条核清 + 桥接例外清单在案）；page.yaml `:Long` 清零 + inv-web 重建绿 + view 零被动变更在案
-- [ ] 路线图状态、登记册退役（B 9 条 + A3 6 条）、bug doc 更新、日志一致
+- [x] grep 门控零残留（例外逐条核清 + 桥接例外清单在案）；page.yaml `:Long` 清零 + inv-web 重建绿 + view 零被动变更在案
+- [x] 路线图状态、登记册退役（B 9 条 + A3 6 条）、bug doc 更新、日志一致
 
 ## Draft Review Record
 
@@ -172,15 +172,15 @@ Exit Criteria:
 
 > 完整仓库验证定制为域级口径（路线图规则 3 D3 修订：禁止以全量构建为中间 gate；全量构建仅存在于 M4.1）。
 
-- [ ] 范围内行为完成（136 列落源 + no-am 7 模块重生成 + 手写代码/测试修复 + A2 落桥 9 + B 退役 9 与 retired test 回收 + 快照重录 + grep 门控清零 + page.yaml 3 处 Fix + aps delta 修复）
-- [ ] 相关文档对齐（owner doc 注记结论、路线图 M2.2 状态、登记册退役（B 9 + A3 6）、bug doc 状态、日志）
-- [ ] 已运行验证：`mvn clean install -pl module-inventory/erp-inv-{codegen,dao,meta,service,web,app,api} -DskipTests` 全绿 + `mvn test -pl module-inventory/erp-inv-service,module-inventory/erp-inv-web` 全绿 + **早域复跑 aps 76/76 + fin 497/497** + 工具重扫零残留（inv 段 `NEEDS FIX` = 0）
-- [ ] 无范围内项目降级为 deferred/follow-up（web 页面测试治理排除为已提交决策 + M4.1 successor 登记，属偏差登记而非范围降级）
-- [ ] 保护区域双独立子 agent 批准记录落盘（Phase 1 前置）
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：状态、阶段、门控和日志都一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成（136 列落源 + no-am 7 模块重生成 + 手写代码/测试修复 + A2 落桥 9 + B 退役 9 与 retired test 回收 + 快照重录 + grep 门控清零 + page.yaml 3 处 Fix + aps delta 修复）
+- [x] 相关文档对齐（owner doc 注记结论（零 Long id 陈述）、路线图 M2.2 状态、登记册退役（B 9 + A3 6）、bug doc 状态、日志）
+- [x] 已运行验证：`mvn clean install -pl module-inventory/erp-inv-{codegen,dao,meta,service,web,app,api} -DskipTests` 全绿 + `mvn test -pl module-inventory/erp-inv-service,module-inventory/erp-inv-web` 全绿 + **早域复跑 aps 76/76 + fin 497/497** + 工具重扫零残留（inv 段 `NEEDS FIX` = 0）
+- [x] 无范围内项目降级为 deferred/follow-up（web 页面测试治理排除为已提交决策 + M4.1 successor 登记，属偏差登记而非范围降级；perf `@Tag("perf")` 默认排除为先例口径且 `-Pperf` 补跑 1/1 绿）
+- [x] 保护区域双独立子 agent 批准记录落盘（Phase 1 前置）
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证：状态、阶段、门控和日志都一致
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符（审计会话 ses_fd8598bf8ffeaZuRea23suUj2x，2026-08-22，CLOSURE AUDIT: PASS——7/8 工程核证全 PASS + 1 程序性收尾状态项由本审计结论回填，见 Closure Audit Evidence）
+- [x] 结束证据存在于文件中（见 Closure Audit Evidence）
 
 ## Deferred But Adjudicated
 
@@ -216,11 +216,11 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: （待执行）
+Status Note: 2026-08-22 执行完成（四 Phase 全绿收口：136 列落源三重证明 + 7 模块链 main 绿 + 235/235 域级测试（perf -Pperf 补跑 1/1 绿）+ 早域复跑 aps 76/76 + fin 497/497 基线维持 + B 退役 9 条与 retired test 回收 + Deferred 消费 aps delta + grep 门控/page.yaml/收尾登记）。
 
 Closure Audit Evidence:
 
-（待执行后由独立结束审计填充）
+- 独立结束审计（新会话子代理 ses_fd8598bf8ffeaZuRea23suUj2x，2026-08-22）：**CLOSURE AUDIT: PASS** —— 8 项核证中全部工程实质项 PASS（① ORM 翻转精确：git diff 136/136 stdDataType-only、stdSqlType BIGINT 保留、delVersion 零触碰，dry-run 仅 2 条 inv 命中均为 drp orm:614 / mfg orm:1881 notGenCode stub（successor M3.7/M3.1，与 Phase 1 记录一致）；② grep 门控零命中；③ 测试注解卫生（RECORDING/forceSaveOutput 零残留 + `_cases` 2286 文件与重录足迹一致）；④ 登记册 15 条 retired（B 9 + A3 6）+ A2 9 条 active 逐条核验 + JSON5 有效性旁证；⑤ 文档一致（roadmap M2.2 done + 头部更新 + 日志 + bug doc aps ✅/四域待回收）；⑥ A2/A3 桥注释锚点 6+9 处在案 + 四 Phase completed 29 项全 [x]；⑦ 审计者独立复跑 7 模块 `-DskipTests` BUILD SUCCESS（reactor 7/7）；⑧ page.yaml `$tid:String` ×3（:71/:91/:111）+ `:Long` ×0 + view 零被动变更（inv-web 非 `_gen` 仅 page.yaml 主动 Fix）+ B 义务抽查 bridge-main-009/064 在 aps/fin main 零命中（桥接点连注释一并移除）+ Deferred 消费实证（aps delta 根元素 `x:extends="super")）。唯一非 PASS 项为程序性收尾状态本身（审计时点 gates/Status Note/Plan Status 待本审计结论回填——正确时序），零 BLOCKER/MAJOR/MINOR 工程缺陷；回填即本节。
 
 Follow-up:
 
