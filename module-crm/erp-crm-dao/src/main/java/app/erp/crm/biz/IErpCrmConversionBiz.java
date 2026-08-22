@@ -26,7 +26,7 @@ public interface IErpCrmConversionBiz {
      * 新建 ErpCrmLead(leadType=OPPORTUNITY, partnerId=新客户)；原 lead 弱指针回写 + CONVERTED。
      */
     @BizMutation
-    ErpMdPartner convertToCustomer(@Name("leadId") Long leadId, IServiceContext context);
+    ErpMdPartner convertToCustomer(@Name("leadId") String leadId, IServiceContext context);
 
     /**
      * 线索直接升格（UC-CRM-02「不创建客户」分支）：校验 leadType==LEAD 且 docStatus==QUALIFIED；
@@ -34,7 +34,7 @@ public interface IErpCrmConversionBiz {
      * （后续 convertToQuotation 前置（QUALIFIED + won-stage）成立）。
      */
     @BizMutation
-    ErpCrmLead convertToOpportunity(@Name("leadId") Long leadId, IServiceContext context);
+    ErpCrmLead convertToOpportunity(@Name("leadId") String leadId, IServiceContext context);
 
     /**
      * 商机转报价单：校验 leadType==OPPORTUNITY 且 partnerId 非空；经 IErpSalQuotationBiz 建报价单（跨域，核心零污染）；
@@ -43,7 +43,7 @@ public interface IErpCrmConversionBiz {
      * @param quotationData 报价单补充字段（如 currencyId/validFrom/validTo 等），可为空使用默认
      */
     @BizMutation
-    ErpSalQuotation convertToQuotation(@Name("leadId") Long leadId,
+    ErpSalQuotation convertToQuotation(@Name("leadId") String leadId,
                                        @Name("quotationData") Map<String, Object> quotationData,
                                        IServiceContext context);
 
@@ -51,5 +51,5 @@ public interface IErpCrmConversionBiz {
      * 转化后新建的商机（convertToCustomer 产物），供调用方获取新商机 lead。
      */
     @BizMutation
-    ErpCrmLead getCreatedOpportunity(@Name("leadId") Long leadId, IServiceContext context);
+    ErpCrmLead getCreatedOpportunity(@Name("leadId") String leadId, IServiceContext context);
 }

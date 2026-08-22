@@ -36,7 +36,7 @@ public class ErpCrmEventCompleteProcessor {
     @Inject
     ErpCrmEventStateMachine stateMachine;
 
-    public ErpCrmEvent complete(Long eventId, IServiceContext context) {
+    public ErpCrmEvent complete(String eventId, IServiceContext context) {
         ErpCrmEvent event = requireEvent(eventId);
         try {
             stateMachine.assertCanComplete(event.getStatus());
@@ -53,7 +53,7 @@ public class ErpCrmEventCompleteProcessor {
 
     // ---------- 内部辅助 ----------
 
-    protected ErpCrmEvent requireEvent(Long eventId) {
+    protected ErpCrmEvent requireEvent(String eventId) {
         ErpCrmEvent event = dao().getEntityById(eventId);
         if (event == null) {
             throw new NopException(ErpCrmErrors.ERR_EVENT_NOT_FOUND)
@@ -73,7 +73,7 @@ public class ErpCrmEventCompleteProcessor {
     /**
      * Event 无关联 Lead 时跳过派生（{@code relatedLeadId} 为空）。
      */
-    protected void deriveLeadFields(Long relatedLeadId) {
+    protected void deriveLeadFields(String relatedLeadId) {
         if (relatedLeadId == null) {
             return;
         }

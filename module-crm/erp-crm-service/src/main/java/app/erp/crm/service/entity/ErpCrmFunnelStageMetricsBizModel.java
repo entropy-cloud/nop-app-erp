@@ -7,6 +7,7 @@ import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizQuery;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.beans.query.QueryBean;
+import io.nop.api.core.convert.ConvertHelper;
 import io.nop.biz.crud.CrudBizModel;
 import io.nop.core.context.IServiceContext;
 
@@ -28,15 +29,15 @@ public class ErpCrmFunnelStageMetricsBizModel extends CrudBizModel<ErpCrmFunnelS
 
     @Override
     @BizQuery
-    public List<ErpCrmFunnelStageMetrics> getStageMetrics(@Name("funnelId") Long funnelId,
-                                                            IServiceContext context) {
+    public List<ErpCrmFunnelStageMetrics> getStageMetrics(@Name("funnelId") String funnelId,
+                                                          IServiceContext context) {
         QueryBean q = new QueryBean();
         q.addFilter(io.nop.api.core.beans.FilterBeans.eq("funnelId", funnelId));
         List<ErpCrmFunnelStageMetrics> list = findList(q, null, context);
         list.sort(Comparator
                 .comparingInt((ErpCrmFunnelStageMetrics s) ->
                         s.getStageOrder() != null ? s.getStageOrder() : Integer.MAX_VALUE)
-                .thenComparing(s -> s.getStageId() != null ? s.getStageId() : Long.MAX_VALUE));
+                .thenComparingLong(s -> s.getStageId() != null ? ConvertHelper.toLong(s.getStageId()) : Long.MAX_VALUE));
         return list;
     }
 

@@ -5,7 +5,7 @@
     "leadType": "LEAD",
     "leadType_label": "LEAD-线索",
     "contactName": "联系人LEAD-UTM-5",
-    "campaignId": 7004,
+    "campaignId": "7004",
     "docStatus": "NEW",
     "docStatus_label": "NEW-新建",
     "delVersion": 0,

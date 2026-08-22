@@ -57,8 +57,8 @@ public class TestErpCrmUtmAttribution extends JunitAutoTestCase {
 
     @Test
     public void testUtmCopyOnCreate() {
-        ormTemplate.runInSession(() -> seedCampaign(7001L, "CAM-UTM-1", "春季促销", "cpc", "google"));
-        ApiResponse<?> resp = save(leadData("LEAD-UTM-1", null, null, 7001L));
+        ormTemplate.runInSession(() -> seedCampaign("7001", "CAM-UTM-1", "春季促销", "cpc", "google"));
+        ApiResponse<?> resp = save(leadData("LEAD-UTM-1", null, null, "7001"));
         assertEquals(0, resp.getStatus(), "新建 Lead 应成功");
         ErpCrmLead lead = reloadByCode("LEAD-UTM-1");
         assertNotNull(lead, "Lead 已落库");
@@ -69,8 +69,8 @@ public class TestErpCrmUtmAttribution extends JunitAutoTestCase {
 
     @Test
     public void testUtmExplicitValueNotOverridden() {
-        ormTemplate.runInSession(() -> seedCampaign(7002L, "CAM-UTM-2", "邮件营销", "email", "newsletter"));
-        ApiResponse<?> resp = save(leadData("LEAD-UTM-2", "social", null, 7002L));
+        ormTemplate.runInSession(() -> seedCampaign("7002", "CAM-UTM-2", "邮件营销", "email", "newsletter"));
+        ApiResponse<?> resp = save(leadData("LEAD-UTM-2", "social", null, "7002"));
         assertEquals(0, resp.getStatus(), "新建 Lead 应成功");
         ErpCrmLead lead = reloadByCode("LEAD-UTM-2");
         assertEquals("social", lead.getUtmMedium(), "显式传入 utmMedium 不被覆盖");
@@ -82,12 +82,12 @@ public class TestErpCrmUtmAttribution extends JunitAutoTestCase {
     public void testUtmCopySkippedWhenCampaignMissingOrNullFields() {
         // campaign 不存在：平台 FK 校验（OrmEntityCopier.copyRefEntity loadEntityById）在 defaultPrepareSave 前拒绝，
         // 干净错误码不崩溃；UTM copy 分支对不存在 campaign 的防御性跳过（get(ignoreUnknown=true) → null → skip）保持。
-        ApiResponse<?> missing = save(leadData("LEAD-UTM-3", null, null, 99999L));
+        ApiResponse<?> missing = save(leadData("LEAD-UTM-3", null, null, "99999"));
         assertEquals("nop.err.dao.unknown-entity", missing.getCode(), "campaign 不存在 → 平台 FK 校验拒绝");
 
         // campaign 存在但 medium/source 为 null：复制跳过不抛，utm 字段保持 null。
-        ormTemplate.runInSession(() -> seedCampaign(7004L, "CAM-UTM-4", "无参活动", null, null));
-        ApiResponse<?> nullFields = save(leadData("LEAD-UTM-5", null, null, 7004L));
+        ormTemplate.runInSession(() -> seedCampaign("7004", "CAM-UTM-4", "无参活动", null, null));
+        ApiResponse<?> nullFields = save(leadData("LEAD-UTM-5", null, null, "7004"));
         assertEquals(0, nullFields.getStatus(), "campaign 字段 null 不抛异常");
         ErpCrmLead lead = reloadByCode("LEAD-UTM-5");
         assertNull(lead.getUtmMedium(), "campaign.medium 为 null → utmMedium 保持 null");
@@ -97,19 +97,19 @@ public class TestErpCrmUtmAttribution extends JunitAutoTestCase {
 
     @Test
     public void testUtmCopyNotTriggeredOnUpdate() {
-        ormTemplate.runInSession(() -> seedCampaign(7003L, "CAM-UTM-3", "社媒营销", "social", "wechat"));
+        ormTemplate.runInSession(() -> seedCampaign("7003", "CAM-UTM-3", "社媒营销", "social", "wechat"));
         ApiResponse<?> created = save(leadData("LEAD-UTM-4", null, null, null));
         assertEquals(0, created.getStatus(), "新建 Lead 应成功");
         String id = String.valueOf(((Map<?, ?>) created.getData()).get("id"));
 
         Map<String, Object> upd = new LinkedHashMap<>();
         upd.put("id", id);
-        upd.put("campaignId", 7003L);
+        upd.put("campaignId", "7003");
         ApiResponse<?> updated = update(upd);
         assertEquals(0, updated.getStatus(), "更新 Lead 应成功");
 
         ErpCrmLead lead = reloadByCode("LEAD-UTM-4");
-        assertEquals(7003L, lead.getCampaignId(), "campaignId 已更新");
+        assertEquals("7003", lead.getCampaignId(), "campaignId 已更新");
         assertNull(lead.getUtmMedium(), "更新路径不触发 UTM copy（仅新建）");
         assertNull(lead.getUtmSource(), "更新路径不触发 UTM copy（仅新建）");
         output("2_update_response.json5", updated);
@@ -120,23 +120,23 @@ public class TestErpCrmUtmAttribution extends JunitAutoTestCase {
     @Test
     public void testCampaignAttributionDataset() {
         ormTemplate.runInSession(() -> {
-            seedCampaign(7101L, "CAM-ATTR-1", "春季促销", "cpc", "google");
-            seedCampaign(7102L, "CAM-ATTR-2", "秋季促销", "email", "newsletter");
-            seedLead(7201L, "LEAD-ATTR-1", 7101L, bd("10000"));
-            seedLead(7202L, "LEAD-ATTR-2", 7101L, bd("5000"));
-            seedLead(7203L, "LEAD-ATTR-3", 7102L, bd("3000"));
-            seedLead(7204L, "LEAD-ATTR-4", null, bd("9999"));
+            seedCampaign("7101", "CAM-ATTR-1", "春季促销", "cpc", "google");
+            seedCampaign("7102", "CAM-ATTR-2", "秋季促销", "email", "newsletter");
+            seedLead("7201", "LEAD-ATTR-1", "7101", bd("10000"));
+            seedLead("7202", "LEAD-ATTR-2", "7101", bd("5000"));
+            seedLead("7203", "LEAD-ATTR-3", "7102", bd("3000"));
+            seedLead("7204", "LEAD-ATTR-4", null, bd("9999"));
         });
         List<Map<String, Object>> ds = reportBiz.campaignAttributionData(CTX);
         assertNotNull(ds, "数据集非空");
         assertFalse(ds.isEmpty(), "有归因数据");
         assertEquals(2, ds.size(), "仅 2 个 campaign 行（无 campaign 关联的 lead 不计入）");
-        Map<String, Object> row1 = findRow(ds, 7101L);
+        Map<String, Object> row1 = findRow(ds, "7101");
         assertNotNull(row1, "campaign 7101 行存在");
         assertEquals("春季促销", row1.get("campaignName"), "campaignName 经 to-one 解析");
         assertEquals(2, ((Number) row1.get("leadCount")).intValue(), "leadCount=2");
         assertEquals(0, bd("15000").compareTo(toBd(row1.get("expectedRevenue"))), "expectedRevenue=10000+5000");
-        Map<String, Object> row2 = findRow(ds, 7102L);
+        Map<String, Object> row2 = findRow(ds, "7102");
         assertNotNull(row2, "campaign 7102 行存在");
         assertEquals(1, ((Number) row2.get("leadCount")).intValue(), "leadCount=1");
         assertEquals(0, bd("3000").compareTo(toBd(row2.get("expectedRevenue"))), "expectedRevenue=3000");
@@ -146,8 +146,8 @@ public class TestErpCrmUtmAttribution extends JunitAutoTestCase {
     @Test
     public void testCampaignAttributionRenderHtml() {
         ormTemplate.runInSession(() -> {
-            seedCampaign(7101L, "CAM-ATTR-1", "春季促销", "cpc", "google");
-            seedLead(7201L, "LEAD-ATTR-1", 7101L, bd("10000"));
+            seedCampaign("7101", "CAM-ATTR-1", "春季促销", "cpc", "google");
+            seedLead("7201", "LEAD-ATTR-1", "7101", bd("10000"));
         });
         String html = reportBiz.renderHtml("campaign-attribution", null, CTX);
         assertNotNull(html, "renderHtml 非空");
@@ -157,7 +157,7 @@ public class TestErpCrmUtmAttribution extends JunitAutoTestCase {
 
     // ===================== helpers =====================
 
-    private Map<String, Object> leadData(String code, String utmMedium, String utmSource, Long campaignId) {
+    private Map<String, Object> leadData(String code, String utmMedium, String utmSource, String campaignId) {
         Map<String, Object> data = new LinkedHashMap<>();
         data.put("code", code);
         data.put("leadType", ErpCrmConstants.LEAD_TYPE_LEAD);
@@ -182,7 +182,7 @@ public class TestErpCrmUtmAttribution extends JunitAutoTestCase {
         return graphQLEngine.executeRpc(ctx);
     }
 
-    private void seedCampaign(Long id, String code, String name, String medium, String source) {
+    private void seedCampaign(String id, String code, String name, String medium, String source) {
         IEntityDao<ErpCrmCampaign> dao = daoProvider.daoFor(ErpCrmCampaign.class);
         ErpCrmCampaign c = new ErpCrmCampaign();
         c.setId(id);
@@ -194,7 +194,7 @@ public class TestErpCrmUtmAttribution extends JunitAutoTestCase {
         dao.saveEntity(c);
     }
 
-    private void seedLead(Long id, String code, Long campaignId, BigDecimal expectedRevenue) {
+    private void seedLead(String id, String code, String campaignId, BigDecimal expectedRevenue) {
         IEntityDao<ErpCrmLead> dao = daoProvider.daoFor(ErpCrmLead.class);
         ErpCrmLead l = new ErpCrmLead();
         l.setId(id);
@@ -215,10 +215,10 @@ public class TestErpCrmUtmAttribution extends JunitAutoTestCase {
         return dao.findAllByQuery(q).stream().findFirst().orElse(null);
     }
 
-    private static Map<String, Object> findRow(List<Map<String, Object>> ds, Long campaignId) {
+    private static Map<String, Object> findRow(List<Map<String, Object>> ds, String campaignId) {
         for (Map<String, Object> row : ds) {
             Object cid = row.get("campaignId");
-            if (campaignId == null ? cid == null : campaignId.equals(((Number) cid).longValue())) {
+            if (campaignId == null ? cid == null : campaignId.equals(String.valueOf(cid))) {
                 return row;
             }
         }

@@ -12,58 +12,58 @@
     public class ErpCrmFunnelStageMetricsInputBean extends CrudInputBase {
 
     
-        private Long _id;
+        private String _id;
 
     
         @PropMeta(propId=1)
     
-        public Long getId(){
+        public String getId(){
             return _id;
         }
 
-        public void setId(Long value){
+        public void setId(String value){
             this._id = value;
         }
 
 
-        private Long _funnelId;
+        private String _funnelId;
 
     
         @PropMeta(propId=2)
     
-        public Long getFunnelId(){
+        public String getFunnelId(){
             return _funnelId;
         }
 
-        public void setFunnelId(Long value){
+        public void setFunnelId(String value){
             this._funnelId = value;
         }
 
 
-        private Long _orgId;
+        private String _orgId;
 
     
         @PropMeta(propId=3)
     
-        public Long getOrgId(){
+        public String getOrgId(){
             return _orgId;
         }
 
-        public void setOrgId(Long value){
+        public void setOrgId(String value){
             this._orgId = value;
         }
 
 
-        private Long _stageId;
+        private String _stageId;
 
     
         @PropMeta(propId=4)
     
-        public Long getStageId(){
+        public String getStageId(){
             return _stageId;
         }
 
-        public void setStageId(Long value){
+        public void setStageId(String value){
             this._stageId = value;
         }
 

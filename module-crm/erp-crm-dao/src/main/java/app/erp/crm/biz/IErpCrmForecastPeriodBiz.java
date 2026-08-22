@@ -19,11 +19,11 @@ public interface IErpCrmForecastPeriodBiz extends ICrudBiz<ErpCrmForecastPeriod>
      * 冻结期间（OPEN → FROZEN），锁定预测数据不再重算。
      */
     @BizMutation
-    ErpCrmForecastPeriod freeze(@Name("periodId") Long periodId, IServiceContext context);
+    ErpCrmForecastPeriod freeze(@Name("periodId") String periodId, IServiceContext context);
 
     /**
      * 关闭期间（OPEN → CLOSED），触发预测准确率计算（config-gated {@code erp-crm.forecast.accuracy-auto-compute}）。
      */
     @BizMutation
-    ErpCrmForecastPeriod closePeriod(@Name("periodId") Long periodId, IServiceContext context);
+    ErpCrmForecastPeriod closePeriod(@Name("periodId") String periodId, IServiceContext context);
 }

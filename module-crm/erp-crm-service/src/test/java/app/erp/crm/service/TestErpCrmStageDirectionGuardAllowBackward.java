@@ -37,9 +37,9 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
         testConfigFile = "classpath:allow-stage-backward-test.yaml")
 public class TestErpCrmStageDirectionGuardAllowBackward extends JunitAutoTestCase {
 
-    static final Long ORG_ID = 1301L;
-    static final Long STAGE_LOW = 5201L;   // sequence=20
-    static final Long STAGE_HIGH = 5202L;  // sequence=30
+    static final String ORG_ID = "1301";
+    static final String STAGE_LOW = "5201";   // sequence=20
+    static final String STAGE_HIGH = "5202";  // sequence=30
 
     @Inject
     IDaoProvider daoProvider;
@@ -53,14 +53,14 @@ public class TestErpCrmStageDirectionGuardAllowBackward extends JunitAutoTestCas
         ormTemplate.runInSession(() -> {
             seedStage(STAGE_LOW, "STG-LOW2", "早期", 20, 10);
             seedStage(STAGE_HIGH, "STG-HIGH2", "后期", 30, 60);
-            seedLead(5301L, "LEAD-ALLOW-BACK-001", ErpCrmConstants.DOC_STATUS_QUALIFIED, STAGE_HIGH);
+            seedLead("5301", "LEAD-ALLOW-BACK-001", ErpCrmConstants.DOC_STATUS_QUALIFIED, STAGE_HIGH);
         });
         // 回退 HIGH(seq=30) → LOW(seq=20)：allow-backward=true 放行（LOG.warn）
-        assertEquals(0, moveStage(5301L, STAGE_LOW).getStatus(), "allow-backward=true 时回退应放行");
-        ErpCrmLead moved = reloadLead(5301L);
+        assertEquals(0, moveStage("5301", STAGE_LOW).getStatus(), "allow-backward=true 时回退应放行");
+        ErpCrmLead moved = reloadLead("5301");
         assertEquals(STAGE_LOW, moved.getStageId(), "stageId 回退到 LOW");
         // convLog 审计留痕（保留审计不丢）
-        List<ErpCrmLeadConvLog> logs = loadConvLogs(5301L);
+        List<ErpCrmLeadConvLog> logs = loadConvLogs("5301");
         assertFalse(logs.isEmpty(), "回退放行仍写 convLog 审计行");
         assertEquals(STAGE_HIGH, logs.get(0).getFromStageId(), "convLog fromStageId=HIGH");
         assertEquals(STAGE_LOW, logs.get(0).getToStageId(), "convLog toStageId=LOW");
@@ -68,7 +68,7 @@ public class TestErpCrmStageDirectionGuardAllowBackward extends JunitAutoTestCas
 
     // ---------- rpc helpers ----------
 
-    private ApiResponse<?> moveStage(Long leadId, Long toStageId) {
+    private ApiResponse<?> moveStage(String leadId, String toStageId) {
         return graphQLEngine.executeRpc(
                 graphQLEngine.newRpcContext(mutation, "ErpCrmLead__moveStage",
                         ApiRequest.build(Map.of("leadId", leadId, "toStageId", toStageId))));
@@ -76,7 +76,7 @@ public class TestErpCrmStageDirectionGuardAllowBackward extends JunitAutoTestCas
 
     // ---------- seed helpers ----------
 
-    private void seedStage(Long id, String code, String name, int sequence, int defaultProbability) {
+    private void seedStage(String id, String code, String name, int sequence, int defaultProbability) {
         IEntityDao<ErpCrmStage> dao = daoProvider.daoFor(ErpCrmStage.class);
         ErpCrmStage stage = new ErpCrmStage();
         stage.setId(id);
@@ -87,7 +87,7 @@ public class TestErpCrmStageDirectionGuardAllowBackward extends JunitAutoTestCas
         dao.saveEntity(stage);
     }
 
-    private void seedLead(Long id, String code, String docStatus, Long stageId) {
+    private void seedLead(String id, String code, String docStatus, String stageId) {
         ErpCrmLead lead = new ErpCrmLead();
         lead.setId(id);
         lead.setCode(code);
@@ -101,11 +101,11 @@ public class TestErpCrmStageDirectionGuardAllowBackward extends JunitAutoTestCas
 
     // ---------- reload helpers ----------
 
-    private ErpCrmLead reloadLead(Long id) {
+    private ErpCrmLead reloadLead(String id) {
         return daoProvider.daoFor(ErpCrmLead.class).getEntityById(id);
     }
 
-    private List<ErpCrmLeadConvLog> loadConvLogs(Long leadId) {
+    private List<ErpCrmLeadConvLog> loadConvLogs(String leadId) {
         IEntityDao<ErpCrmLeadConvLog> dao = daoProvider.daoFor(ErpCrmLeadConvLog.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("leadId", leadId));

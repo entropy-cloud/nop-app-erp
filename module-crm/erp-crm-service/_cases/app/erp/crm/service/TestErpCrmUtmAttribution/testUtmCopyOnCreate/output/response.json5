@@ -5,7 +5,7 @@
     "leadType": "LEAD",
     "leadType_label": "LEAD-线索",
     "contactName": "联系人LEAD-UTM-1",
-    "campaignId": 7001,
+    "campaignId": "7001",
     "utmMedium": "cpc",
     "utmSource": "google",
     "docStatus": "NEW",

@@ -5,7 +5,7 @@
     "leadType": "LEAD",
     "leadType_label": "LEAD-线索",
     "contactName": "联系人LEAD-UTM-2",
-    "campaignId": 7002,
+    "campaignId": "7002",
     "utmMedium": "social",
     "utmSource": "newsletter",
     "docStatus": "NEW",

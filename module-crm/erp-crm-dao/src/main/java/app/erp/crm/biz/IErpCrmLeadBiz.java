@@ -22,24 +22,24 @@ import java.util.Map;
 public interface IErpCrmLeadBiz extends ICrudBiz<ErpCrmLead>, IErpCrmConversionBiz {
 
     @BizMutation
-    ErpCrmLead qualify(@Name("leadId") Long leadId, IServiceContext context);
+    ErpCrmLead qualify(@Name("leadId") String leadId, IServiceContext context);
 
     /**
      * 标记丢单。{@code lostReasonId} 标记为 {@link Optional}（GraphQL 层允许为空），
      * 由业务校验在缺失时抛 {@code ERR_LOST_REASON_REQUIRED}。
      */
     @BizMutation
-    ErpCrmLead lose(@Name("leadId") Long leadId,
-                    @Optional @Name("lostReasonId") Long lostReasonId,
+    ErpCrmLead lose(@Name("leadId") String leadId,
+                    @Optional @Name("lostReasonId") String lostReasonId,
                     @Optional @Name("lostReasonDesc") String lostReasonDesc,
                     IServiceContext context);
 
     @BizMutation
-    ErpCrmLead cancel(@Name("leadId") Long leadId, IServiceContext context);
+    ErpCrmLead cancel(@Name("leadId") String leadId, IServiceContext context);
 
     @BizMutation
-    ErpCrmLead moveStage(@Name("leadId") Long leadId,
-                         @Name("toStageId") Long toStageId,
+    ErpCrmLead moveStage(@Name("leadId") String leadId,
+                         @Name("toStageId") String toStageId,
                          IServiceContext context);
 
     /**
@@ -47,7 +47,7 @@ public interface IErpCrmLeadBiz extends ICrudBiz<ErpCrmLead>, IErpCrmConversionB
      * 配置 {@code erp-crm.auto-convert-duplicate-lead=false}（默认）时仅返回候选，不阻断保存。
      */
     @BizQuery
-    List<ErpCrmLead> findDuplicates(@Name("leadId") Long leadId, IServiceContext context);
+    List<ErpCrmLead> findDuplicates(@Name("leadId") String leadId, IServiceContext context);
 
     /**
      * 触发区域分配引擎：加载 active 规则 + default 规则，按 priority 匹配 conditionType，回写 lead.territoryId/teamId/ownerId。
@@ -55,16 +55,16 @@ public interface IErpCrmLeadBiz extends ICrudBiz<ErpCrmLead>, IErpCrmConversionB
      * 此方法提供手动触发入口（重算分配）。无匹配规则返回原 lead 不修改。
      */
     @BizMutation
-    ErpCrmLead assignLead(@Name("leadId") Long leadId, IServiceContext context);
+    ErpCrmLead assignLead(@Name("leadId") String leadId, IServiceContext context);
 
     /**
      * 手动覆盖区域分配结果：直接设置 lead.territoryId/teamId/ownerId。
      * 用于管理员调整分配引擎结果或重分配。
      */
     @BizMutation
-    ErpCrmLead reassignLead(@Name("leadId") Long leadId,
-                             @Optional @Name("territoryId") Long territoryId,
-                             @Optional @Name("teamId") Long teamId,
+    ErpCrmLead reassignLead(@Name("leadId") String leadId,
+                             @Optional @Name("territoryId") String territoryId,
+                             @Optional @Name("teamId") String teamId,
                              @Optional @Name("ownerId") String ownerId,
                              IServiceContext context);
 

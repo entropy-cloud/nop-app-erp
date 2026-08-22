@@ -158,16 +158,16 @@ public class _ErpCrmForecastLine extends DynamicOrmEntity{
 
     
     /* ID: ID */
-    private java.lang.Long _id;
+    private java.lang.String _id;
     
     /* 预测数据: FORECAST_ID */
-    private java.lang.Long _forecastId;
+    private java.lang.String _forecastId;
     
     /* 业务组织: ORG_ID */
-    private java.lang.Long _orgId;
+    private java.lang.String _orgId;
     
     /* 商机: LEAD_ID */
-    private java.lang.Long _leadId;
+    private java.lang.String _leadId;
     
     /* 概率快照: PROBABILITY */
     private java.lang.Integer _probability;
@@ -339,9 +339,9 @@ public class _ErpCrmForecastLine extends DynamicOrmEntity{
         switch(propId){
         
             case PROP_ID_id:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_id));
                }
                setId(typedValue);
@@ -349,9 +349,9 @@ public class _ErpCrmForecastLine extends DynamicOrmEntity{
             }
         
             case PROP_ID_forecastId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_forecastId));
                }
                setForecastId(typedValue);
@@ -359,9 +359,9 @@ public class _ErpCrmForecastLine extends DynamicOrmEntity{
             }
         
             case PROP_ID_orgId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_orgId));
                }
                setOrgId(typedValue);
@@ -369,9 +369,9 @@ public class _ErpCrmForecastLine extends DynamicOrmEntity{
             }
         
             case PROP_ID_leadId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_leadId));
                }
                setLeadId(typedValue);
@@ -509,28 +509,28 @@ public class _ErpCrmForecastLine extends DynamicOrmEntity{
         
             case PROP_ID_id:{
                onInitProp(propId);
-               this._id = (java.lang.Long)value;
+               this._id = (java.lang.String)value;
                orm_id(); // 如果是设置主键字段，则触发watcher
                break;
             }
         
             case PROP_ID_forecastId:{
                onInitProp(propId);
-               this._forecastId = (java.lang.Long)value;
+               this._forecastId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_orgId:{
                onInitProp(propId);
-               this._orgId = (java.lang.Long)value;
+               this._orgId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_leadId:{
                onInitProp(propId);
-               this._leadId = (java.lang.Long)value;
+               this._leadId = (java.lang.String)value;
                
                break;
             }
@@ -628,7 +628,7 @@ public class _ErpCrmForecastLine extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final java.lang.Long getId(){
+    public final java.lang.String getId(){
          onPropGet(PROP_ID_id);
          return _id;
     }
@@ -636,7 +636,7 @@ public class _ErpCrmForecastLine extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final void setId(java.lang.Long value){
+    public final void setId(java.lang.String value){
         if(onPropSet(PROP_ID_id,value)){
             this._id = value;
             internalClearRefs(PROP_ID_id);
@@ -647,7 +647,7 @@ public class _ErpCrmForecastLine extends DynamicOrmEntity{
     /**
      * 预测数据: FORECAST_ID
      */
-    public final java.lang.Long getForecastId(){
+    public final java.lang.String getForecastId(){
          onPropGet(PROP_ID_forecastId);
          return _forecastId;
     }
@@ -655,7 +655,7 @@ public class _ErpCrmForecastLine extends DynamicOrmEntity{
     /**
      * 预测数据: FORECAST_ID
      */
-    public final void setForecastId(java.lang.Long value){
+    public final void setForecastId(java.lang.String value){
         if(onPropSet(PROP_ID_forecastId,value)){
             this._forecastId = value;
             internalClearRefs(PROP_ID_forecastId);
@@ -666,7 +666,7 @@ public class _ErpCrmForecastLine extends DynamicOrmEntity{
     /**
      * 业务组织: ORG_ID
      */
-    public final java.lang.Long getOrgId(){
+    public final java.lang.String getOrgId(){
          onPropGet(PROP_ID_orgId);
          return _orgId;
     }
@@ -674,7 +674,7 @@ public class _ErpCrmForecastLine extends DynamicOrmEntity{
     /**
      * 业务组织: ORG_ID
      */
-    public final void setOrgId(java.lang.Long value){
+    public final void setOrgId(java.lang.String value){
         if(onPropSet(PROP_ID_orgId,value)){
             this._orgId = value;
             internalClearRefs(PROP_ID_orgId);
@@ -685,7 +685,7 @@ public class _ErpCrmForecastLine extends DynamicOrmEntity{
     /**
      * 商机: LEAD_ID
      */
-    public final java.lang.Long getLeadId(){
+    public final java.lang.String getLeadId(){
          onPropGet(PROP_ID_leadId);
          return _leadId;
     }
@@ -693,7 +693,7 @@ public class _ErpCrmForecastLine extends DynamicOrmEntity{
     /**
      * 商机: LEAD_ID
      */
-    public final void setLeadId(java.lang.Long value){
+    public final void setLeadId(java.lang.String value){
         if(onPropSet(PROP_ID_leadId,value)){
             this._leadId = value;
             internalClearRefs(PROP_ID_leadId);

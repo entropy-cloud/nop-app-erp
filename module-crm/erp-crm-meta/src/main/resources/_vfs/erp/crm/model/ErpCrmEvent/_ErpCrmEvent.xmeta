@@ -22,8 +22,8 @@
 
     <props>
         <prop name="id" displayName="ID" propId="1" i18n-en:displayName="ID" tagSet="seq-default" mandatory="true"
-              queryable="true" sortable="true" insertable="true" updatable="false" graphql:type="String">
-            <schema type="java.lang.Long"/>
+              queryable="true" sortable="true" insertable="true" updatable="false">
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="code" displayName="编码" propId="2" i18n-en:displayName="Code" tagSet="var" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
@@ -31,7 +31,7 @@
         </prop>
         <prop name="orgId" displayName="业务组织" propId="3" i18n-en:displayName="Organization" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="org">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="eventType" displayName="事件类型" propId="4" i18n-en:displayName="Event Type" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
@@ -39,7 +39,7 @@
         </prop>
         <prop name="eventCategoryId" displayName="活动类别" propId="5" i18n-en:displayName="Event Category" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="eventCategory">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="subject" displayName="主题" propId="6" i18n-en:displayName="Subject" mandatory="true" queryable="true"
               sortable="true" insertable="true" updatable="true">
@@ -63,7 +63,7 @@
         </prop>
         <prop name="relatedLeadId" displayName="关联线索/商机" propId="11" i18n-en:displayName="Related Lead" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="relatedLead">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="relatedBillType" displayName="关联单据类型" propId="12" i18n-en:displayName="Related Bill Type"
               queryable="true" sortable="true" insertable="true" updatable="true">
@@ -75,11 +75,11 @@
         </prop>
         <prop name="partnerId" displayName="关联客户" propId="14" i18n-en:displayName="Partner" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="partner">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="contactId" displayName="联系人" propId="15" i18n-en:displayName="Contact" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="contact">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="ownerId" displayName="负责人" propId="16" i18n-en:displayName="Owner" queryable="true" sortable="true"
               insertable="true" updatable="true">
@@ -99,7 +99,7 @@
         </prop>
         <prop name="parentEventId" displayName="父事件" propId="20" i18n-en:displayName="Parent Event" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="parentEvent">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="reminderMinutesBefore" displayName="提醒提前分钟数" propId="21" i18n-en:displayName="Reminder Minutes"
               queryable="true" sortable="true" insertable="true" updatable="true">

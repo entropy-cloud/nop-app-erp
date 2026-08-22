@@ -32,10 +32,10 @@ public interface IErpCrmProductConfiguratorBiz extends ICrudBiz<ErpCrmProductCon
      * @return 创建的报价单
      */
     @BizMutation
-    ErpSalQuotation generateQuote(@Name("configuratorId") Long configuratorId,
+    ErpSalQuotation generateQuote(@Name("configuratorId") String configuratorId,
                                   @Name("selectedFeatures") Map<String, String> selectedFeatures,
-                                  @Optional @Name("bundlePricingId") Long bundlePricingId,
+                                  @Optional @Name("bundlePricingId") String bundlePricingId,
                                   @Optional @Name("priceRuleContext") Map<String, Object> priceRuleContext,
-                                  @Optional @Name("leadId") Long leadId,
+                                  @Optional @Name("leadId") String leadId,
                                   IServiceContext context);
 }

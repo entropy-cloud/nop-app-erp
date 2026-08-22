@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         testConfigFile = "classpath:event-reminder-disabled-test.yaml")
 public class TestErpCrmEventReminderDisabled extends JunitAutoTestCase {
 
-    static final Long ORG_ID = 1301L;
+    static final String ORG_ID = "1301";
 
     @Inject
     IDaoProvider daoProvider;
@@ -50,7 +50,7 @@ public class TestErpCrmEventReminderDisabled extends JunitAutoTestCase {
             // 窗口内 PLANNED 事件（若启用本应命中）
             IEntityDao<ErpCrmEvent> dao = daoProvider.daoFor(ErpCrmEvent.class);
             ErpCrmEvent event = new ErpCrmEvent();
-            event.setId(4601L);
+            event.setId("4601");
             event.setCode("EVT-DIS-001");
             event.setOrgId(ORG_ID);
             event.setEventType("CALL");

@@ -28,7 +28,7 @@ public class ErpCrmForecastBizModel extends CrudBizModel<ErpCrmForecast> impleme
 
     @Override
     @BizMutation
-    public void refreshForecast(@Name("periodId") Long periodId, IServiceContext context) {
+    public void refreshForecast(@Name("periodId") String periodId, IServiceContext context) {
         refreshForecastProcessor.refreshForecast(periodId, context);
     }
 

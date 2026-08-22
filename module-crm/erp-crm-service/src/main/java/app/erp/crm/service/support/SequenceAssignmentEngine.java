@@ -3,6 +3,7 @@ package app.erp.crm.service.support;
 import app.erp.crm.dao.entity.ErpCrmLead;
 import app.erp.crm.dao.entity.ErpCrmSequenceAssignment;
 import app.erp.crm.service.ErpCrmConstants;
+import io.nop.api.core.convert.ConvertHelper;
 import io.nop.core.lang.json.JsonTool;
 
 import java.util.ArrayList;
@@ -57,7 +58,7 @@ public class SequenceAssignmentEngine {
         sorted.sort(Comparator
                 .comparingInt((ErpCrmSequenceAssignment r) ->
                         r.getPriority() != null ? r.getPriority() : Integer.MAX_VALUE)
-                .thenComparing(r -> r.getId() != null ? r.getId() : Long.MAX_VALUE));
+                .thenComparingLong(r -> r.getId() != null ? ConvertHelper.toLong(r.getId()) : Long.MAX_VALUE));
 
         for (ErpCrmSequenceAssignment rule : sorted) {
             if (conditionMatcher.matches(rule, lead)) {
@@ -106,7 +107,7 @@ public class SequenceAssignmentEngine {
          * 匹配 lead.sourceId 是否在列表/等于。
          */
         protected boolean matchLeadSource(Map<String, Object> value, ErpCrmLead lead) {
-            Long sourceId = lead.getSourceId();
+            String sourceId = lead.getSourceId();
             if (sourceId == null) {
                 return false;
             }
@@ -118,7 +119,7 @@ public class SequenceAssignmentEngine {
          * TERRITORY：conditionValue 形如 {@code {"territoryId":[201,202]}}，匹配 lead.territoryId。
          */
         protected boolean matchTerritory(Map<String, Object> value, ErpCrmLead lead) {
-            Long territoryId = lead.getTerritoryId();
+            String territoryId = lead.getTerritoryId();
             if (territoryId == null) {
                 return false;
             }
@@ -176,34 +177,19 @@ public class SequenceAssignmentEngine {
             return false;
         }
 
-        protected boolean containsOrEquals(Object expected, Long actual) {
+        protected boolean containsOrEquals(Object expected, String actual) {
             if (expected == null) {
                 return false;
             }
             if (expected instanceof List) {
                 for (Object o : (List<?>) expected) {
-                    if (toLong(o) != null && toLong(o).equals(actual)) {
+                    if (o != null && String.valueOf(o).equals(actual)) {
                         return true;
                     }
                 }
                 return false;
             }
-            Long v = toLong(expected);
-            return v != null && v.equals(actual);
-        }
-
-        protected Long toLong(Object value) {
-            if (value == null) {
-                return null;
-            }
-            if (value instanceof Number) {
-                return ((Number) value).longValue();
-            }
-            try {
-                return Long.parseLong(String.valueOf(value));
-            } catch (NumberFormatException e) {
-                return null;
-            }
+            return String.valueOf(expected).equals(actual);
         }
 
         protected Map<String, Object> parse(String json) {
@@ -232,14 +218,14 @@ public class SequenceAssignmentEngine {
     // ---------- 结果 DTO ----------
 
     public static class AssignmentResult {
-        private Long sequenceId;
+        private String sequenceId;
         private boolean fromDefault;
 
-        public Long getSequenceId() {
+        public String getSequenceId() {
             return sequenceId;
         }
 
-        public void setSequenceId(Long sequenceId) {
+        public void setSequenceId(String sequenceId) {
             this.sequenceId = sequenceId;
         }
 

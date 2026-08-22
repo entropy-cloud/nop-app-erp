@@ -1,10 +1,10 @@
 {
-  "id": 0,
+  "id": "",
   "code": "",
-  "orgId": 0,
+  "orgId": "",
   "stageName": "",
   "sequence": 0,
-  "teamId": 0,
+  "teamId": "",
   "defaultProbability": 0,
   "isWonStage": false,
   "remark": "",

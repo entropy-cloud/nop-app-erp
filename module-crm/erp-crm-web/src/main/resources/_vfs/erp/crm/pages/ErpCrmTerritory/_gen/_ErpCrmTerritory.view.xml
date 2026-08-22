@@ -19,7 +19,7 @@
             <cols>
 
                 <!--ID-->
-                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="id" mandatory="true" sortable="true"/>
 
                 <!--编码-->
                 <col id="code" mandatory="true" sortable="true"/>
@@ -28,16 +28,16 @@
                 <col id="name" mandatory="true" sortable="true"/>
 
                 <!--业务组织-->
-                <col id="orgId" ui:number="true" sortable="true"/>
+                <col id="orgId" sortable="true"/>
 
                 <!--父区域-->
-                <col id="parentId" ui:number="true" sortable="true"/>
+                <col id="parentId" sortable="true"/>
 
                 <!--区域类型-->
                 <col id="territoryType" mandatory="true" sortable="true"/>
 
                 <!--区域负责人-->
-                <col id="managerId" ui:number="true" sortable="true"/>
+                <col id="managerId" sortable="true"/>
 
                 <!--区域描述-->
                 <col id="description" sortable="true"/>

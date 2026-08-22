@@ -72,8 +72,7 @@ public class TestErpCsTicketCreateEnrichment extends JunitAutoTestCase {
     static final String POLICY_ATTACH_ID = "6501";   // teamId NULL（可被 matcher 匹配，resolveHours=8）
     static final String POLICY_TEAM_ID = "6502";     // teamId=CS_TEAM（类型默认策略——team 解析主链载体）
     static final String POLICY_ENT_ID = "6503";      // 权益覆盖策略（teamId NULL，resolveHours=2）
-    // bridge-test-115: crm 未迁移（M3.4）Long 实体侧局部桥（crm seed 保持 Long，退役 owner M3.4）
-    static final Long CRM_TEAM_ID = 6601L;
+    static final String CRM_TEAM_ID = "6601";
     static final String USER_A = "cs-enrich-user-a";
     static final String USER_B = "cs-enrich-user-b";
     static final String USER_C = "cs-enrich-user-c";
@@ -521,13 +520,13 @@ public class TestErpCsTicketCreateEnrichment extends JunitAutoTestCase {
             teamDao.saveEntity(team);
 
             IEntityDao<ErpCrmTeamMember> memberDao = daoProvider.daoFor(ErpCrmTeamMember.class);
-            seedMemberInSession(memberDao, 6701L, CRM_TEAM_ID, USER_A);
-            seedMemberInSession(memberDao, 6702L, CRM_TEAM_ID, USER_B);
-            seedMemberInSession(memberDao, 6703L, CRM_TEAM_ID, USER_C);
+            seedMemberInSession(memberDao, "6701", CRM_TEAM_ID, USER_A);
+            seedMemberInSession(memberDao, "6702", CRM_TEAM_ID, USER_B);
+            seedMemberInSession(memberDao, "6703", CRM_TEAM_ID, USER_C);
         });
     }
 
-    private void seedMemberInSession(IEntityDao<ErpCrmTeamMember> dao, Long id, Long teamId, String userId) {
+    private void seedMemberInSession(IEntityDao<ErpCrmTeamMember> dao, String id, String teamId, String userId) {
         ErpCrmTeamMember member = new ErpCrmTeamMember();
         member.orm_propValueByName("id", id);
         member.setTeamId(teamId);

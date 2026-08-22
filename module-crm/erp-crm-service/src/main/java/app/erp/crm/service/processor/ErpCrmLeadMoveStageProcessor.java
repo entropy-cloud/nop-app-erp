@@ -15,11 +15,11 @@ public class ErpCrmLeadMoveStageProcessor {
     @Inject
     ErpCrmLeadProcessor facade;
 
-    public ErpCrmLead moveStage(Long leadId, Long toStageId, IServiceContext context) {
+    public ErpCrmLead moveStage(String leadId, String toStageId, IServiceContext context) {
         ErpCrmLead lead = facade.requireLead(leadId, context);
         facade.validateMovable(lead, context);
         ErpCrmStage toStage = facade.requireStage(toStageId, context);
-        Long fromStageId = lead.getStageId();
+        String fromStageId = lead.getStageId();
         facade.validateStageDirection(lead, fromStageId, toStage, context);
         facade.doMoveStage(lead, toStage, fromStageId, context);
         return lead;

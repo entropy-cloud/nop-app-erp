@@ -36,9 +36,9 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpCrmStageDirectionGuard extends JunitAutoTestCase {
 
-    static final Long ORG_ID = 1301L;
-    static final Long STAGE_LOW = 5101L;   // sequence=20
-    static final Long STAGE_HIGH = 5102L;  // sequence=30
+    static final String ORG_ID = "1301";
+    static final String STAGE_LOW = "5101";   // sequence=20
+    static final String STAGE_HIGH = "5102";  // sequence=30
 
     @Inject
     IDaoProvider daoProvider;
@@ -53,14 +53,14 @@ public class TestErpCrmStageDirectionGuard extends JunitAutoTestCase {
             seedStage(STAGE_LOW, "STG-LOW", "早期", 20, 10);
             seedStage(STAGE_HIGH, "STG-HIGH", "后期", 30, 60);
             // QUALIFIED 线索已处于高阶段
-            seedLead(5001L, "LEAD-BACK-001", ErpCrmConstants.DOC_STATUS_QUALIFIED, STAGE_HIGH);
+            seedLead("5001", "LEAD-BACK-001", ErpCrmConstants.DOC_STATUS_QUALIFIED, STAGE_HIGH);
         });
         // 回退 HIGH(seq=30) → LOW(seq=20)：STRICT 默认拦截
-        ApiResponse<?> bad = moveStage(5001L, STAGE_LOW);
+        ApiResponse<?> bad = moveStage("5001", STAGE_LOW);
         assertEquals(ErpCrmErrors.ERR_STAGE_BACKWARD_MOVE.getErrorCode(), bad.getCode(),
                 "STRICT 默认阶段回退 → ERR_STAGE_BACKWARD_MOVE");
         // stageId 未变
-        assertEquals(STAGE_HIGH, reloadLead(5001L).getStageId(), "拒绝后 stageId 保持 HIGH");
+        assertEquals(STAGE_HIGH, reloadLead("5001").getStageId(), "拒绝后 stageId 保持 HIGH");
     }
 
     @Test
@@ -68,13 +68,13 @@ public class TestErpCrmStageDirectionGuard extends JunitAutoTestCase {
         ormTemplate.runInSession(() -> {
             seedStage(STAGE_LOW, "STG-LOW", "早期", 20, 10);
             seedStage(STAGE_HIGH, "STG-HIGH", "后期", 30, 60);
-            seedLead(5002L, "LEAD-FWD-001", ErpCrmConstants.DOC_STATUS_QUALIFIED, STAGE_LOW);
+            seedLead("5002", "LEAD-FWD-001", ErpCrmConstants.DOC_STATUS_QUALIFIED, STAGE_LOW);
         });
         // 前移 LOW(seq=20) → HIGH(seq=30)：成功（行为不变）
-        assertEquals(0, moveStage(5002L, STAGE_HIGH).getStatus(), "前移应成功");
-        ErpCrmLead moved = reloadLead(5002L);
+        assertEquals(0, moveStage("5002", STAGE_HIGH).getStatus(), "前移应成功");
+        ErpCrmLead moved = reloadLead("5002");
         assertEquals(STAGE_HIGH, moved.getStageId(), "stageId 前移到 HIGH");
-        List<ErpCrmLeadConvLog> logs = loadConvLogs(5002L);
+        List<ErpCrmLeadConvLog> logs = loadConvLogs("5002");
         assertFalse(logs.isEmpty(), "前移写入 convLog 审计行");
         assertEquals(STAGE_LOW, logs.get(0).getFromStageId(), "convLog fromStageId=LOW");
         assertEquals(STAGE_HIGH, logs.get(0).getToStageId(), "convLog toStageId=HIGH");
@@ -85,11 +85,11 @@ public class TestErpCrmStageDirectionGuard extends JunitAutoTestCase {
         ormTemplate.runInSession(() -> {
             seedStage(STAGE_LOW, "STG-LOW", "早期", 20, 10);
             // QUALIFIED 线索 stageId=null（首次入漏斗）
-            seedLead(5003L, "LEAD-FIRST-001", ErpCrmConstants.DOC_STATUS_QUALIFIED, null);
+            seedLead("5003", "LEAD-FIRST-001", ErpCrmConstants.DOC_STATUS_QUALIFIED, null);
         });
         // fromStageId=null 跳过方向校验：无论目标阶段 sequence 如何都应成功
-        assertEquals(0, moveStage(5003L, STAGE_LOW).getStatus(), "首次入漏斗（fromStageId=null）应跳过方向校验");
-        assertEquals(STAGE_LOW, reloadLead(5003L).getStageId(), "首次入漏斗设 stageId=LOW");
+        assertEquals(0, moveStage("5003", STAGE_LOW).getStatus(), "首次入漏斗（fromStageId=null）应跳过方向校验");
+        assertEquals(STAGE_LOW, reloadLead("5003").getStageId(), "首次入漏斗设 stageId=LOW");
     }
 
     @Test
@@ -98,15 +98,15 @@ public class TestErpCrmStageDirectionGuard extends JunitAutoTestCase {
         ormTemplate.runInSession(() -> {
             seedStage(STAGE_LOW, "STG-LOW", "早期", 20, 10);
             seedStage(STAGE_HIGH, "STG-HIGH", "后期", 20, 60);
-            seedLead(5004L, "LEAD-EQ-001", ErpCrmConstants.DOC_STATUS_QUALIFIED, STAGE_LOW);
+            seedLead("5004", "LEAD-EQ-001", ErpCrmConstants.DOC_STATUS_QUALIFIED, STAGE_LOW);
         });
-        assertEquals(0, moveStage(5004L, STAGE_HIGH).getStatus(), "同 sequence 非回退应成功");
-        assertEquals(STAGE_HIGH, reloadLead(5004L).getStageId(), "stageId 移到 HIGH");
+        assertEquals(0, moveStage("5004", STAGE_HIGH).getStatus(), "同 sequence 非回退应成功");
+        assertEquals(STAGE_HIGH, reloadLead("5004").getStageId(), "stageId 移到 HIGH");
     }
 
     // ---------- rpc helpers ----------
 
-    private ApiResponse<?> moveStage(Long leadId, Long toStageId) {
+    private ApiResponse<?> moveStage(String leadId, String toStageId) {
         return rpc(mutation, "ErpCrmLead__moveStage", Map.of("leadId", leadId, "toStageId", toStageId));
     }
 
@@ -117,7 +117,7 @@ public class TestErpCrmStageDirectionGuard extends JunitAutoTestCase {
 
     // ---------- seed helpers ----------
 
-    private void seedStage(Long id, String code, String name, int sequence, int defaultProbability) {
+    private void seedStage(String id, String code, String name, int sequence, int defaultProbability) {
         IEntityDao<ErpCrmStage> dao = daoProvider.daoFor(ErpCrmStage.class);
         ErpCrmStage stage = new ErpCrmStage();
         stage.setId(id);
@@ -128,7 +128,7 @@ public class TestErpCrmStageDirectionGuard extends JunitAutoTestCase {
         dao.saveEntity(stage);
     }
 
-    private void seedLead(Long id, String code, String docStatus, Long stageId) {
+    private void seedLead(String id, String code, String docStatus, String stageId) {
         ErpCrmLead lead = new ErpCrmLead();
         lead.setId(id);
         lead.setCode(code);
@@ -142,11 +142,11 @@ public class TestErpCrmStageDirectionGuard extends JunitAutoTestCase {
 
     // ---------- reload helpers ----------
 
-    private ErpCrmLead reloadLead(Long id) {
+    private ErpCrmLead reloadLead(String id) {
         return daoProvider.daoFor(ErpCrmLead.class).getEntityById(id);
     }
 
-    private List<ErpCrmLeadConvLog> loadConvLogs(Long leadId) {
+    private List<ErpCrmLeadConvLog> loadConvLogs(String leadId) {
         IEntityDao<ErpCrmLeadConvLog> dao = daoProvider.daoFor(ErpCrmLeadConvLog.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("leadId", leadId));

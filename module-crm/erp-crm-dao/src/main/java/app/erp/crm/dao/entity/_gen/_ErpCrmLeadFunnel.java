@@ -231,10 +231,10 @@ public class _ErpCrmLeadFunnel extends DynamicOrmEntity{
 
     
     /* ID: ID */
-    private java.lang.Long _id;
+    private java.lang.String _id;
     
     /* 业务组织: ORG_ID */
-    private java.lang.Long _orgId;
+    private java.lang.String _orgId;
     
     /* 漏斗名称: FUNNEL_NAME */
     private java.lang.String _funnelName;
@@ -246,13 +246,13 @@ public class _ErpCrmLeadFunnel extends DynamicOrmEntity{
     private java.time.LocalDate _periodEnd;
     
     /* 区域维度: TERRITORY_ID */
-    private java.lang.Long _territoryId;
+    private java.lang.String _territoryId;
     
     /* 团队维度: TEAM_ID */
-    private java.lang.Long _teamId;
+    private java.lang.String _teamId;
     
     /* 来源维度: SOURCE_ID */
-    private java.lang.Long _sourceId;
+    private java.lang.String _sourceId;
     
     /* 漏斗顶部线索量: TOTAL_LEADS_AT_TOP */
     private java.lang.Integer _totalLeadsAtTop;
@@ -472,9 +472,9 @@ public class _ErpCrmLeadFunnel extends DynamicOrmEntity{
         switch(propId){
         
             case PROP_ID_id:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_id));
                }
                setId(typedValue);
@@ -482,9 +482,9 @@ public class _ErpCrmLeadFunnel extends DynamicOrmEntity{
             }
         
             case PROP_ID_orgId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_orgId));
                }
                setOrgId(typedValue);
@@ -522,9 +522,9 @@ public class _ErpCrmLeadFunnel extends DynamicOrmEntity{
             }
         
             case PROP_ID_territoryId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_territoryId));
                }
                setTerritoryId(typedValue);
@@ -532,9 +532,9 @@ public class _ErpCrmLeadFunnel extends DynamicOrmEntity{
             }
         
             case PROP_ID_teamId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_teamId));
                }
                setTeamId(typedValue);
@@ -542,9 +542,9 @@ public class _ErpCrmLeadFunnel extends DynamicOrmEntity{
             }
         
             case PROP_ID_sourceId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_sourceId));
                }
                setSourceId(typedValue);
@@ -742,14 +742,14 @@ public class _ErpCrmLeadFunnel extends DynamicOrmEntity{
         
             case PROP_ID_id:{
                onInitProp(propId);
-               this._id = (java.lang.Long)value;
+               this._id = (java.lang.String)value;
                orm_id(); // 如果是设置主键字段，则触发watcher
                break;
             }
         
             case PROP_ID_orgId:{
                onInitProp(propId);
-               this._orgId = (java.lang.Long)value;
+               this._orgId = (java.lang.String)value;
                
                break;
             }
@@ -777,21 +777,21 @@ public class _ErpCrmLeadFunnel extends DynamicOrmEntity{
         
             case PROP_ID_territoryId:{
                onInitProp(propId);
-               this._territoryId = (java.lang.Long)value;
+               this._territoryId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_teamId:{
                onInitProp(propId);
-               this._teamId = (java.lang.Long)value;
+               this._teamId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_sourceId:{
                onInitProp(propId);
-               this._sourceId = (java.lang.Long)value;
+               this._sourceId = (java.lang.String)value;
                
                break;
             }
@@ -931,7 +931,7 @@ public class _ErpCrmLeadFunnel extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final java.lang.Long getId(){
+    public final java.lang.String getId(){
          onPropGet(PROP_ID_id);
          return _id;
     }
@@ -939,7 +939,7 @@ public class _ErpCrmLeadFunnel extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final void setId(java.lang.Long value){
+    public final void setId(java.lang.String value){
         if(onPropSet(PROP_ID_id,value)){
             this._id = value;
             internalClearRefs(PROP_ID_id);
@@ -950,7 +950,7 @@ public class _ErpCrmLeadFunnel extends DynamicOrmEntity{
     /**
      * 业务组织: ORG_ID
      */
-    public final java.lang.Long getOrgId(){
+    public final java.lang.String getOrgId(){
          onPropGet(PROP_ID_orgId);
          return _orgId;
     }
@@ -958,7 +958,7 @@ public class _ErpCrmLeadFunnel extends DynamicOrmEntity{
     /**
      * 业务组织: ORG_ID
      */
-    public final void setOrgId(java.lang.Long value){
+    public final void setOrgId(java.lang.String value){
         if(onPropSet(PROP_ID_orgId,value)){
             this._orgId = value;
             internalClearRefs(PROP_ID_orgId);
@@ -1026,7 +1026,7 @@ public class _ErpCrmLeadFunnel extends DynamicOrmEntity{
     /**
      * 区域维度: TERRITORY_ID
      */
-    public final java.lang.Long getTerritoryId(){
+    public final java.lang.String getTerritoryId(){
          onPropGet(PROP_ID_territoryId);
          return _territoryId;
     }
@@ -1034,7 +1034,7 @@ public class _ErpCrmLeadFunnel extends DynamicOrmEntity{
     /**
      * 区域维度: TERRITORY_ID
      */
-    public final void setTerritoryId(java.lang.Long value){
+    public final void setTerritoryId(java.lang.String value){
         if(onPropSet(PROP_ID_territoryId,value)){
             this._territoryId = value;
             internalClearRefs(PROP_ID_territoryId);
@@ -1045,7 +1045,7 @@ public class _ErpCrmLeadFunnel extends DynamicOrmEntity{
     /**
      * 团队维度: TEAM_ID
      */
-    public final java.lang.Long getTeamId(){
+    public final java.lang.String getTeamId(){
          onPropGet(PROP_ID_teamId);
          return _teamId;
     }
@@ -1053,7 +1053,7 @@ public class _ErpCrmLeadFunnel extends DynamicOrmEntity{
     /**
      * 团队维度: TEAM_ID
      */
-    public final void setTeamId(java.lang.Long value){
+    public final void setTeamId(java.lang.String value){
         if(onPropSet(PROP_ID_teamId,value)){
             this._teamId = value;
             internalClearRefs(PROP_ID_teamId);
@@ -1064,7 +1064,7 @@ public class _ErpCrmLeadFunnel extends DynamicOrmEntity{
     /**
      * 来源维度: SOURCE_ID
      */
-    public final java.lang.Long getSourceId(){
+    public final java.lang.String getSourceId(){
          onPropGet(PROP_ID_sourceId);
          return _sourceId;
     }
@@ -1072,7 +1072,7 @@ public class _ErpCrmLeadFunnel extends DynamicOrmEntity{
     /**
      * 来源维度: SOURCE_ID
      */
-    public final void setSourceId(java.lang.Long value){
+    public final void setSourceId(java.lang.String value){
         if(onPropSet(PROP_ID_sourceId,value)){
             this._sourceId = value;
             internalClearRefs(PROP_ID_sourceId);

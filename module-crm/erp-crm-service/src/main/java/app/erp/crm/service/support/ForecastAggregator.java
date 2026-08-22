@@ -51,7 +51,7 @@ public class ForecastAggregator {
      * 刷新指定期间的预测：聚合商机 → 写 Forecast + ForecastLine → 层级 rollup。
      * 仅 OPEN 期间可刷新；FROZEN/CLOSED 抛 {@code ERR_FORECAST_PERIOD_NOT_OPEN}。
      */
-    public void refreshForecast(Long periodId, IServiceContext context) {
+    public void refreshForecast(String periodId, IServiceContext context) {
         ErpCrmForecastPeriod period = requirePeriod(periodId);
         requireOpen(period);
 
@@ -63,8 +63,8 @@ public class ForecastAggregator {
 
         // 个人预测（按 ownerId 分组）+ 区域直接归属收集（leaf-exact：不做祖先展开）
         Map<String, List<ErpCrmLead>> byOwner = new HashMap<>();
-        Map<String, Long> ownerTeam = new HashMap<>();
-        Map<Long, List<ErpCrmLead>> byTerritory = new HashMap<>();
+        Map<String, String> ownerTeam = new HashMap<>();
+        Map<String, List<ErpCrmLead>> byTerritory = new HashMap<>();
         for (ErpCrmLead opp : opportunities) {
             String owner = opp.getOwnerId();
             if (owner == null) {
@@ -79,13 +79,13 @@ public class ForecastAggregator {
             }
         }
 
-        Map<Long, ForecastTotals> teamTotals = new HashMap<>();
+        Map<String, ForecastTotals> teamTotals = new HashMap<>();
         ForecastTotals companyTotals = new ForecastTotals();
 
         for (Map.Entry<String, List<ErpCrmLead>> entry : byOwner.entrySet()) {
             String owner = entry.getKey();
             List<ErpCrmLead> ownerOpps = entry.getValue();
-            Long teamId = ownerTeam.get(owner);
+            String teamId = ownerTeam.get(owner);
 
             ForecastTotals totals = ForecastTotals.of(ownerOpps, commitThreshold, upsideThreshold);
             ErpCrmForecast forecast = buildForecast(period, owner, teamId, totals);
@@ -99,14 +99,14 @@ public class ForecastAggregator {
         }
 
         // 团队 rollup
-        for (Map.Entry<Long, ForecastTotals> entry : teamTotals.entrySet()) {
+        for (Map.Entry<String, ForecastTotals> entry : teamTotals.entrySet()) {
             ErpCrmForecast teamForecast = buildForecast(period, null, entry.getKey(), entry.getValue());
             forecastDao().saveEntity(teamForecast);
         }
 
         // 区域 rollup（leaf-exact：仅对有直接商机归属的 territory 节点生成行，行金额 = 该节点直接商机 Σ；
         // 区域子树总额由 accumulatePipeline 子树 in 查询动态聚合，不持久化重复行）
-        for (Map.Entry<Long, List<ErpCrmLead>> entry : byTerritory.entrySet()) {
+        for (Map.Entry<String, List<ErpCrmLead>> entry : byTerritory.entrySet()) {
             ForecastTotals totals = ForecastTotals.of(entry.getValue(), commitThreshold, upsideThreshold);
             ErpCrmForecast territoryForecast = buildForecast(period, null, null, entry.getKey(), totals);
             forecastDao().saveEntity(territoryForecast);
@@ -120,7 +120,7 @@ public class ForecastAggregator {
     /**
      * 计算期间关闭后的预测准确率。对比每条个人 Forecast 的 commitAmount/upsideAmount 与实际已关闭收入。
      */
-    public void computeAccuracy(Long periodId, IServiceContext context) {
+    public void computeAccuracy(String periodId, IServiceContext context) {
         ErpCrmForecastPeriod period = requirePeriod(periodId);
         List<ErpCrmForecast> personalForecasts = loadPersonalForecasts(periodId);
         for (ErpCrmForecast forecast : personalForecasts) {
@@ -132,13 +132,13 @@ public class ForecastAggregator {
 
     // ---------- 预测聚合 ----------
 
-    protected ErpCrmForecast buildForecast(ErpCrmForecastPeriod period, String ownerId, Long teamId,
-                                           ForecastTotals totals) {
+    protected ErpCrmForecast buildForecast(ErpCrmForecastPeriod period, String ownerId, String teamId,
+                                            ForecastTotals totals) {
         return buildForecast(period, ownerId, teamId, null, totals);
     }
 
-    protected ErpCrmForecast buildForecast(ErpCrmForecastPeriod period, String ownerId, Long teamId,
-                                           Long territoryId, ForecastTotals totals) {
+    protected ErpCrmForecast buildForecast(ErpCrmForecastPeriod period, String ownerId, String teamId,
+                                            String territoryId, ForecastTotals totals) {
         ErpCrmForecast forecast = forecastDao().newEntity();
         forecast.setOrgId(period.getOrgId());
         forecast.setPeriodId(period.getId());
@@ -251,7 +251,7 @@ public class ForecastAggregator {
         return leadDao().findAllByQuery(q);
     }
 
-    protected List<ErpCrmForecast> loadPersonalForecasts(Long periodId) {
+    protected List<ErpCrmForecast> loadPersonalForecasts(String periodId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("periodId", periodId));
         return forecastDao().findAllByQuery(q).stream()
@@ -279,7 +279,7 @@ public class ForecastAggregator {
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
-    protected void clearPeriodForecasts(Long periodId) {
+    protected void clearPeriodForecasts(String periodId) {
         List<ErpCrmForecast> existing = forecastDao().findAllByQuery(byPeriod(periodId));
         for (ErpCrmForecast forecast : existing) {
             List<ErpCrmForecastLine> lines = lineDao().findAllByQuery(byForecast(forecast.getId()));
@@ -292,7 +292,7 @@ public class ForecastAggregator {
 
     // ---------- 校验/辅助 ----------
 
-    protected ErpCrmForecastPeriod requirePeriod(Long periodId) {
+    protected ErpCrmForecastPeriod requirePeriod(String periodId) {
         ErpCrmForecastPeriod period = periodDao().getEntityById(periodId);
         if (period == null) {
             throw new NopException(ErpCrmErrors.ERR_FORECAST_PERIOD_NOT_FOUND)
@@ -324,13 +324,13 @@ public class ForecastAggregator {
         return value != null ? value : BigDecimal.ZERO;
     }
 
-    protected QueryBean byPeriod(Long periodId) {
+    protected QueryBean byPeriod(String periodId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("periodId", periodId));
         return q;
     }
 
-    protected QueryBean byForecast(Long forecastId) {
+    protected QueryBean byForecast(String forecastId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("forecastId", forecastId));
         return q;

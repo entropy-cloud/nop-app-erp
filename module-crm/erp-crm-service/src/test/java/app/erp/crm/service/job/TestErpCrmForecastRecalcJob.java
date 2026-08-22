@@ -78,7 +78,7 @@ public class TestErpCrmForecastRecalcJob extends JunitAutoTestCase {
         }
 
         @Override
-        protected void runRefreshForecast(Long periodId, IServiceContext ctx) {
+        protected void runRefreshForecast(String periodId, IServiceContext ctx) {
             delegateCalls++;
         }
     }

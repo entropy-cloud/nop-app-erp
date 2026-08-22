@@ -12,72 +12,72 @@
     public class ErpCrmForecastInputBean extends CrudInputBase {
 
     
-        private Long _id;
+        private String _id;
 
     
         @PropMeta(propId=1)
     
-        public Long getId(){
+        public String getId(){
             return _id;
         }
 
-        public void setId(Long value){
+        public void setId(String value){
             this._id = value;
         }
 
 
-        private Long _orgId;
+        private String _orgId;
 
     
         @PropMeta(propId=2)
     
-        public Long getOrgId(){
+        public String getOrgId(){
             return _orgId;
         }
 
-        public void setOrgId(Long value){
+        public void setOrgId(String value){
             this._orgId = value;
         }
 
 
-        private Long _periodId;
+        private String _periodId;
 
     
         @PropMeta(propId=3)
     
-        public Long getPeriodId(){
+        public String getPeriodId(){
             return _periodId;
         }
 
-        public void setPeriodId(Long value){
+        public void setPeriodId(String value){
             this._periodId = value;
         }
 
 
-        private Long _territoryId;
+        private String _territoryId;
 
     
         @PropMeta(propId=4)
     
-        public Long getTerritoryId(){
+        public String getTerritoryId(){
             return _territoryId;
         }
 
-        public void setTerritoryId(Long value){
+        public void setTerritoryId(String value){
             this._territoryId = value;
         }
 
 
-        private Long _teamId;
+        private String _teamId;
 
     
         @PropMeta(propId=5)
     
-        public Long getTeamId(){
+        public String getTeamId(){
             return _teamId;
         }
 
-        public void setTeamId(Long value){
+        public void setTeamId(String value){
             this._teamId = value;
         }
 
@@ -96,16 +96,16 @@
         }
 
 
-        private Long _currencyId;
+        private String _currencyId;
 
     
         @PropMeta(propId=7)
     
-        public Long getCurrencyId(){
+        public String getCurrencyId(){
             return _currencyId;
         }
 
-        public void setCurrencyId(Long value){
+        public void setCurrencyId(String value){
             this._currencyId = value;
         }
 

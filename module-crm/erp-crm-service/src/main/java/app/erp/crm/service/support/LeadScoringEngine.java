@@ -56,7 +56,7 @@ public class LeadScoringEngine {
     /**
      * 重算指定线索的评分。无 active config 时返回 null（triggeredAction=NONE，不阻断 Lead 正常流程）。
      */
-    public ErpCrmLeadScore recalculateScore(Long leadId, String triggerEvent, IServiceContext context) {
+    public ErpCrmLeadScore recalculateScore(String leadId, String triggerEvent, IServiceContext context) {
         ErpCrmLead lead = requireLead(leadId);
         ErpCrmLeadScoreConfig config = loadActiveConfig();
         if (config == null) {
@@ -238,7 +238,7 @@ public class LeadScoringEngine {
         return "0";
     }
 
-    protected int countCompletedEvents(Long leadId) {
+    protected int countCompletedEvents(String leadId) {
         IEntityDao<ErpCrmEvent> dao = daoProvider.daoFor(ErpCrmEvent.class);
         QueryBean q = new QueryBean();
         if (leadId != null) {
@@ -309,7 +309,7 @@ public class LeadScoringEngine {
         return active.isEmpty() ? null : active.get(0);
     }
 
-    protected List<ErpCrmLeadScoreConfigLine> loadConfigLines(Long configId) {
+    protected List<ErpCrmLeadScoreConfigLine> loadConfigLines(String configId) {
         IEntityDao<ErpCrmLeadScoreConfigLine> dao = daoProvider.daoFor(ErpCrmLeadScoreConfigLine.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("configId", configId));
@@ -319,7 +319,7 @@ public class LeadScoringEngine {
 
     // ---------- 辅助 ----------
 
-    protected ErpCrmLead requireLead(Long leadId) {
+    protected ErpCrmLead requireLead(String leadId) {
         ErpCrmLead lead = leadDao().getEntityById(leadId);
         if (lead == null) {
             throw new NopException(ErpCrmErrors.ERR_LEAD_NOT_FOUND)

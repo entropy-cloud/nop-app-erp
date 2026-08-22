@@ -12,16 +12,16 @@
     public class ErpCrmLeadInputBean extends CrudInputBase {
 
     
-        private Long _id;
+        private String _id;
 
     
         @PropMeta(propId=1)
     
-        public Long getId(){
+        public String getId(){
             return _id;
         }
 
-        public void setId(Long value){
+        public void setId(String value){
             this._id = value;
         }
 
@@ -40,16 +40,16 @@
         }
 
 
-        private Long _orgId;
+        private String _orgId;
 
     
         @PropMeta(propId=3)
     
-        public Long getOrgId(){
+        public String getOrgId(){
             return _orgId;
         }
 
-        public void setOrgId(Long value){
+        public void setOrgId(String value){
             this._orgId = value;
         }
 
@@ -68,16 +68,16 @@
         }
 
 
-        private Long _partnerId;
+        private String _partnerId;
 
     
         @PropMeta(propId=5)
     
-        public Long getPartnerId(){
+        public String getPartnerId(){
             return _partnerId;
         }
 
-        public void setPartnerId(Long value){
+        public void setPartnerId(String value){
             this._partnerId = value;
         }
 
@@ -166,44 +166,44 @@
         }
 
 
-        private Long _sourceId;
+        private String _sourceId;
 
     
         @PropMeta(propId=12)
     
-        public Long getSourceId(){
+        public String getSourceId(){
             return _sourceId;
         }
 
-        public void setSourceId(Long value){
+        public void setSourceId(String value){
             this._sourceId = value;
         }
 
 
-        private Long _leadStatusId;
+        private String _leadStatusId;
 
     
         @PropMeta(propId=13)
     
-        public Long getLeadStatusId(){
+        public String getLeadStatusId(){
             return _leadStatusId;
         }
 
-        public void setLeadStatusId(Long value){
+        public void setLeadStatusId(String value){
             this._leadStatusId = value;
         }
 
 
-        private Long _stageId;
+        private String _stageId;
 
     
         @PropMeta(propId=14)
     
-        public Long getStageId(){
+        public String getStageId(){
             return _stageId;
         }
 
-        public void setStageId(Long value){
+        public void setStageId(String value){
             this._stageId = value;
         }
 
@@ -306,16 +306,16 @@
         }
 
 
-        private Long _campaignId;
+        private String _campaignId;
 
     
         @PropMeta(propId=22)
     
-        public Long getCampaignId(){
+        public String getCampaignId(){
             return _campaignId;
         }
 
-        public void setCampaignId(Long value){
+        public void setCampaignId(String value){
             this._campaignId = value;
         }
 
@@ -362,30 +362,30 @@
         }
 
 
-        private Long _teamId;
+        private String _teamId;
 
     
         @PropMeta(propId=26)
     
-        public Long getTeamId(){
+        public String getTeamId(){
             return _teamId;
         }
 
-        public void setTeamId(Long value){
+        public void setTeamId(String value){
             this._teamId = value;
         }
 
 
-        private Long _lostReasonId;
+        private String _lostReasonId;
 
     
         @PropMeta(propId=27)
     
-        public Long getLostReasonId(){
+        public String getLostReasonId(){
             return _lostReasonId;
         }
 
-        public void setLostReasonId(Long value){
+        public void setLostReasonId(String value){
             this._lostReasonId = value;
         }
 
@@ -488,16 +488,16 @@
         }
 
 
-        private Long _territoryId;
+        private String _territoryId;
 
     
         @PropMeta(propId=41)
     
-        public Long getTerritoryId(){
+        public String getTerritoryId(){
             return _territoryId;
         }
 
-        public void setTerritoryId(Long value){
+        public void setTerritoryId(String value){
             this._territoryId = value;
         }
 

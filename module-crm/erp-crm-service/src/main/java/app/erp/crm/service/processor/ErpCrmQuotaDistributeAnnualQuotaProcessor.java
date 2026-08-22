@@ -17,7 +17,7 @@ public class ErpCrmQuotaDistributeAnnualQuotaProcessor {
     @Inject
     QuotaRollupCalculator quotaRollupCalculator;
 
-    public List<ErpCrmQuota> distributeAnnualQuota(Long quotaId, String periodType, IServiceContext context) {
+    public List<ErpCrmQuota> distributeAnnualQuota(String quotaId, String periodType, IServiceContext context) {
         return quotaRollupCalculator.distributeAnnual(quotaId, periodType);
     }
 }

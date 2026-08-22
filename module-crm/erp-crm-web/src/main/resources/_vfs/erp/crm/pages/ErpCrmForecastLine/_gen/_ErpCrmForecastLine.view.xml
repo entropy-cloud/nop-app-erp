@@ -19,16 +19,16 @@
             <cols>
 
                 <!--ID-->
-                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="id" mandatory="true" sortable="true"/>
 
                 <!--预测数据-->
-                <col id="forecastId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="forecastId" mandatory="true" sortable="true"/>
 
                 <!--业务组织-->
-                <col id="orgId" ui:number="true" sortable="true"/>
+                <col id="orgId" sortable="true"/>
 
                 <!--商机-->
-                <col id="leadId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="leadId" mandatory="true" sortable="true"/>
 
                 <!--概率快照-->
                 <col id="probability" ui:number="true" sortable="true"/>

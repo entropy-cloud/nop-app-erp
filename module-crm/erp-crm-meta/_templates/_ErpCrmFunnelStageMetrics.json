@@ -1,8 +1,8 @@
 {
-  "id": 0,
-  "funnelId": 0,
-  "orgId": 0,
-  "stageId": 0,
+  "id": "",
+  "funnelId": "",
+  "orgId": "",
+  "stageId": "",
   "stageOrder": 0,
   "stageName": "",
   "leadCountIn": 0,

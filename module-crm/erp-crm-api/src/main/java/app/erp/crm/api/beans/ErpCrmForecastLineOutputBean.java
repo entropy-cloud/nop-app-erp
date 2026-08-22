@@ -13,58 +13,58 @@
     public class ErpCrmForecastLineOutputBean {
 
     
-        private Long _id;
+        private String _id;
 
     
         @PropMeta(propId=1)
     
-        public Long getId(){
+        public String getId(){
             return _id;
         }
 
-        public void setId(Long value){
+        public void setId(String value){
             this._id = value;
         }
 
 
-        private Long _forecastId;
+        private String _forecastId;
 
     
         @PropMeta(propId=2)
     
-        public Long getForecastId(){
+        public String getForecastId(){
             return _forecastId;
         }
 
-        public void setForecastId(Long value){
+        public void setForecastId(String value){
             this._forecastId = value;
         }
 
 
-        private Long _orgId;
+        private String _orgId;
 
     
         @PropMeta(propId=3)
     
-        public Long getOrgId(){
+        public String getOrgId(){
             return _orgId;
         }
 
-        public void setOrgId(Long value){
+        public void setOrgId(String value){
             this._orgId = value;
         }
 
 
-        private Long _leadId;
+        private String _leadId;
 
     
         @PropMeta(propId=4)
     
-        public Long getLeadId(){
+        public String getLeadId(){
             return _leadId;
         }
 
-        public void setLeadId(Long value){
+        public void setLeadId(String value){
             this._leadId = value;
         }
 

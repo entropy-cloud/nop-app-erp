@@ -14,7 +14,7 @@ public class ErpCrmLeadLoseProcessor {
     @Inject
     ErpCrmLeadProcessor facade;
 
-    public ErpCrmLead lose(Long leadId, Long lostReasonId, String lostReasonDesc, IServiceContext context) {
+    public ErpCrmLead lose(String leadId, String lostReasonId, String lostReasonDesc, IServiceContext context) {
         ErpCrmLead lead = facade.requireLead(leadId, context);
         facade.validateTransitionForLose(lead, context);
         facade.requireLostReason(lead, lostReasonId, context);

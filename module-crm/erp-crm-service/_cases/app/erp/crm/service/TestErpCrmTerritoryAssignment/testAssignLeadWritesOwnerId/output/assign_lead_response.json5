@@ -2,7 +2,7 @@
   "data": {
     "id": "12002",
     "code": "@var:ErpCrmLead@code",
-    "orgId": 1301,
+    "orgId": "1301",
     "leadType": "LEAD",
     "leadType_label": "LEAD-线索",
     "partnerId": null,
@@ -26,7 +26,7 @@
     "utmMedium": null,
     "utmSource": "wechat",
     "ownerId": "userA",
-    "teamId": 11002,
+    "teamId": "11002",
     "lostReasonId": null,
     "lostReasonDesc": null,
     "lastContactDate": null,
@@ -42,7 +42,7 @@
     "createTime": "@var:ErpCrmLead@updateTime",
     "updatedBy": "autotest-ref",
     "updateTime": "@var:ErpCrmLead@updateTime_1",
-    "territoryId": 11001
+    "territoryId": "11001"
   },
   "status": 0
 }

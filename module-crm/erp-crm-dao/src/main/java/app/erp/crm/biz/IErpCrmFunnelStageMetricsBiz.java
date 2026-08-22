@@ -21,5 +21,5 @@ public interface IErpCrmFunnelStageMetricsBiz extends ICrudBiz<ErpCrmFunnelStage
      * 按 funnelId 查阶段明细列表（按 stageOrder 升序）。
      */
     @BizQuery
-    List<ErpCrmFunnelStageMetrics> getStageMetrics(@Name("funnelId") Long funnelId, IServiceContext context);
+    List<ErpCrmFunnelStageMetrics> getStageMetrics(@Name("funnelId") String funnelId, IServiceContext context);
 }

@@ -3,6 +3,7 @@ package app.erp.crm.service.support;
 import app.erp.crm.dao.entity.ErpCrmLead;
 import app.erp.crm.dao.entity.ErpCrmTerritoryAssignmentRule;
 import app.erp.crm.service.ErpCrmConstants;
+import io.nop.api.core.convert.ConvertHelper;
 import io.nop.core.context.IServiceContext;
 import io.nop.core.lang.json.JsonTool;
 
@@ -72,7 +73,7 @@ public class TerritoryAssignmentEngine {
         sorted.sort(Comparator
                 .comparingInt((ErpCrmTerritoryAssignmentRule r) ->
                         r.getPriority() != null ? r.getPriority() : Integer.MAX_VALUE)
-                .thenComparing(r -> r.getId() != null ? r.getId() : Long.MAX_VALUE));
+                .thenComparingLong(r -> r.getId() != null ? ConvertHelper.toLong(r.getId()) : Long.MAX_VALUE));
 
         for (ErpCrmTerritoryAssignmentRule rule : sorted) {
             if (conditionMatcher.matches(rule, lead)) {
@@ -103,7 +104,7 @@ public class TerritoryAssignmentEngine {
         if (teamMemberResolver == null || rule.getGroupId() == null) {
             return degradeToManual(result);
         }
-        Long teamId = rule.getGroupId();
+        String teamId = rule.getGroupId();
         List<String> members;
         try {
             members = teamMemberResolver.resolveTeamMemberUserIds(teamId, context);
@@ -133,8 +134,8 @@ public class TerritoryAssignmentEngine {
     /**
      * ROUND_ROBIN：取上次分配 owner 在成员列表中的下一位（循环）；无历史记录 → 第一位成员。
      */
-    protected String pickRoundRobin(Long teamId, List<String> members,
-                                    TeamMemberResolver teamMemberResolver, IServiceContext context) {
+    protected String pickRoundRobin(String teamId, List<String> members,
+                                     TeamMemberResolver teamMemberResolver, IServiceContext context) {
         String lastOwner = teamMemberResolver.resolveLastAssignedOwner(teamId, context);
         int index = lastOwner != null ? members.indexOf(lastOwner) : -1;
         if (index < 0) {
@@ -146,8 +147,8 @@ public class TerritoryAssignmentEngine {
     /**
      * LOAD_BALANCED：取当前活跃线索最少的成员（平手按成员列表序[id 升序]首个）；无计数成员按 0 计。
      */
-    protected String pickLoadBalanced(Long teamId, List<String> members,
-                                      TeamMemberResolver teamMemberResolver, IServiceContext context) {
+    protected String pickLoadBalanced(String teamId, List<String> members,
+                                       TeamMemberResolver teamMemberResolver, IServiceContext context) {
         Map<String, Integer> counts = teamMemberResolver.countActiveLeadsByOwner(teamId, context);
         String picked = null;
         int min = Integer.MAX_VALUE;
@@ -176,18 +177,18 @@ public class TerritoryAssignmentEngine {
         /**
          * 查 teamId 团队成员 userId 列表（按成员行 id 升序）；无成员返回空列表。
          */
-        List<String> resolveTeamMemberUserIds(Long teamId, IServiceContext context);
+        List<String> resolveTeamMemberUserIds(String teamId, IServiceContext context);
 
         /**
          * 查 teamId 上次分配记录的 owner（lead.teamId=teamId 且 ownerId 非空，按 createTime desc limit 1）；无记录返回 null。
          */
-        String resolveLastAssignedOwner(Long teamId, IServiceContext context);
+        String resolveLastAssignedOwner(String teamId, IServiceContext context);
 
         /**
          * 查 teamId 各成员当前活跃线索数（count lead.teamId=teamId 且 ownerId=member 且 docStatus 非
          * CONVERTED/LOST/CANCELLED）；无计数记录的成员视为 0。
          */
-        Map<String, Integer> countActiveLeadsByOwner(Long teamId, IServiceContext context);
+        Map<String, Integer> countActiveLeadsByOwner(String teamId, IServiceContext context);
     }
 
     // ---------- 匹配器 ----------
@@ -331,25 +332,25 @@ public class TerritoryAssignmentEngine {
     // ---------- 结果 DTO ----------
 
     public static class AssignmentResult {
-        private Long territoryId;
-        private Long teamId;
+        private String territoryId;
+        private String teamId;
         private String ownerId;
         private String assignmentMethod;
         private boolean degraded;
 
-        public Long getTerritoryId() {
+        public String getTerritoryId() {
             return territoryId;
         }
 
-        public void setTerritoryId(Long territoryId) {
+        public void setTerritoryId(String territoryId) {
             this.territoryId = territoryId;
         }
 
-        public Long getTeamId() {
+        public String getTeamId() {
             return teamId;
         }
 
-        public void setTeamId(Long teamId) {
+        public void setTeamId(String teamId) {
             this.teamId = teamId;
         }
 

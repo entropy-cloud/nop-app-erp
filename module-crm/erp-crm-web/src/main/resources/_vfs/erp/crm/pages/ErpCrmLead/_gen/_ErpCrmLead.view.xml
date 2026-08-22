@@ -19,19 +19,19 @@
             <cols>
 
                 <!--ID-->
-                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="id" mandatory="true" sortable="true"/>
 
                 <!--编码-->
                 <col id="code" mandatory="true" sortable="true"/>
 
                 <!--业务组织-->
-                <col id="orgId" ui:number="true" sortable="true"/>
+                <col id="orgId" sortable="true"/>
 
                 <!--线索/商机类型-->
                 <col id="leadType" mandatory="true" sortable="true"/>
 
                 <!--客户-->
-                <col id="partnerId" ui:number="true" sortable="true"/>
+                <col id="partnerId" sortable="true"/>
 
                 <!--联系人姓名-->
                 <col id="contactName" sortable="true"/>
@@ -52,13 +52,13 @@
                 <col id="department" sortable="true"/>
 
                 <!--线索来源-->
-                <col id="sourceId" ui:number="true" sortable="true"/>
+                <col id="sourceId" sortable="true"/>
 
                 <!--线索状态-->
-                <col id="leadStatusId" ui:number="true" sortable="true"/>
+                <col id="leadStatusId" sortable="true"/>
 
                 <!--漏斗阶段-->
-                <col id="stageId" ui:number="true" sortable="true"/>
+                <col id="stageId" sortable="true"/>
 
                 <!--预期收入-->
                 <col id="expectedRevenue" ui:number="true" sortable="true"/>
@@ -82,7 +82,7 @@
                 <col id="probability" ui:number="true" sortable="true"/>
 
                 <!--营销活动-->
-                <col id="campaignId" ui:number="true" sortable="true"/>
+                <col id="campaignId" sortable="true"/>
 
                 <!--UTM Medium-->
                 <col id="utmMedium" sortable="true"/>
@@ -94,10 +94,10 @@
                 <col id="ownerId" sortable="true"/>
 
                 <!--销售团队-->
-                <col id="teamId" ui:number="true" sortable="true"/>
+                <col id="teamId" sortable="true"/>
 
                 <!--丢单原因-->
-                <col id="lostReasonId" ui:number="true" sortable="true"/>
+                <col id="lostReasonId" sortable="true"/>
 
                 <!--丢单描述-->
                 <col id="lostReasonDesc" sortable="true"/>
@@ -136,7 +136,7 @@
                 <col id="updateTime" mandatory="true" sortable="true"/>
 
                 <!--销售区域-->
-                <col id="territoryId" ui:number="true" sortable="true"/>
+                <col id="territoryId" sortable="true"/>
             </cols>
         </grid>
         <grid id="pick-list" x:prototype="list" x:abstract="true"/>

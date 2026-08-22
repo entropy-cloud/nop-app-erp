@@ -144,7 +144,7 @@ public class TestProductConfigRuleEngine extends JunitAutoTestCase {
         assertFalse(engine.evaluate(new HashMap<>(), null).size() > 0, "rules 为 null 安全返回");
     }
 
-    private ErpCrmConfigRule newConfigRule(Long id, String ruleType, String sourceCode, String sourceValue,
+    private ErpCrmConfigRule newConfigRule(String id, String ruleType, String sourceCode, String sourceValue,
                                            String targetCode, String targetValue, int sequence) {
         ErpCrmConfigRule rule = new ErpCrmConfigRule();
         rule.setId(id);

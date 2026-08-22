@@ -34,11 +34,11 @@ public class ErpCrmProductConfiguratorBizModel extends CrudBizModel<ErpCrmProduc
 
     @Override
     @BizMutation
-    public ErpSalQuotation generateQuote(@Name("configuratorId") Long configuratorId,
+    public ErpSalQuotation generateQuote(@Name("configuratorId") String configuratorId,
                                          @Name("selectedFeatures") Map<String, String> selectedFeatures,
-                                         @Optional @Name("bundlePricingId") Long bundlePricingId,
+                                         @Optional @Name("bundlePricingId") String bundlePricingId,
                                          @Optional @Name("priceRuleContext") Map<String, Object> priceRuleContext,
-                                         @Optional @Name("leadId") Long leadId,
+                                         @Optional @Name("leadId") String leadId,
                                          IServiceContext context) {
         return generateQuoteProcessor.generateQuote(configuratorId, selectedFeatures, bundlePricingId,
                 priceRuleContext, leadId, context);

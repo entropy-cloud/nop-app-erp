@@ -41,10 +41,10 @@ import static org.junit.jupiter.api.Assertions.assertNull;
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpCrmConversionGuards extends JunitAutoTestCase {
 
-    static final Long ORG_ID = 1301L;
-    static final Long STAGE_NEW = 1101L;
-    static final Long STAGE_DEMO = 1102L;
-    static final Long STAGE_WON = 1103L;
+    static final String ORG_ID = "1301";
+    static final String STAGE_NEW = "1101";
+    static final String STAGE_DEMO = "1102";
+    static final String STAGE_WON = "1103";
 
     @Inject
     IDaoProvider daoProvider;
@@ -57,14 +57,14 @@ public class TestErpCrmConversionGuards extends JunitAutoTestCase {
 
     @Test
     public void testDirectPromoteSuccess() {
-        ormTemplate.runInSession(() -> seedLead(2001L, "LEAD-PROMOTE-001", ErpCrmConstants.LEAD_TYPE_LEAD,
+        ormTemplate.runInSession(() -> seedLead("2001", "LEAD-PROMOTE-001", ErpCrmConstants.LEAD_TYPE_LEAD,
                 ErpCrmConstants.DOC_STATUS_QUALIFIED, "Promote Corp", "promote@corp.com", null));
-        ApiResponse<?> resp = convertToOpportunity(2001L);
+        ApiResponse<?> resp = convertToOpportunity("2001");
         assertEquals(0, resp.getStatus(), "QUALIFIED+LEAD 直接升格应成功");
-        ErpCrmLead lead = reloadLead(2001L);
+        ErpCrmLead lead = reloadLead("2001");
         assertEquals(ErpCrmConstants.LEAD_TYPE_OPPORTUNITY, lead.getLeadType(), "leadType → OPPORTUNITY");
         assertEquals(ErpCrmConstants.DOC_STATUS_QUALIFIED, lead.getDocStatus(), "docStatus 保持 QUALIFIED");
-        assertEquals(2001L, lead.getId(), "原 lead id 不变");
+        assertEquals("2001", lead.getId(), "原 lead id 不变");
         assertNull(lead.getPartnerId(), "不关联 Partner");
         assertEquals(0, countAll(daoProvider.daoFor(ErpMdPartner.class)), "不新建 Partner");
         assertEquals(1, countAll(daoProvider.daoFor(ErpCrmLead.class)), "不新建 Lead（原 lead 原地升格）");
@@ -72,12 +72,12 @@ public class TestErpCrmConversionGuards extends JunitAutoTestCase {
 
     @Test
     public void testDirectPromoteNewRejected() {
-        ormTemplate.runInSession(() -> seedLead(2002L, "LEAD-PROMOTE-NEW-001", ErpCrmConstants.LEAD_TYPE_LEAD,
+        ormTemplate.runInSession(() -> seedLead("2002", "LEAD-PROMOTE-NEW-001", ErpCrmConstants.LEAD_TYPE_LEAD,
                 ErpCrmConstants.DOC_STATUS_NEW, "New Corp", null, null));
-        ApiResponse<?> resp = convertToOpportunity(2002L);
+        ApiResponse<?> resp = convertToOpportunity("2002");
         assertEquals(ErpCrmErrors.ERR_LEAD_NOT_QUALIFIED.getErrorCode(), resp.getCode(),
                 "NEW 状态直接升格 → ERR_LEAD_NOT_QUALIFIED");
-        ErpCrmLead lead = reloadLead(2002L);
+        ErpCrmLead lead = reloadLead("2002");
         assertEquals(ErpCrmConstants.LEAD_TYPE_LEAD, lead.getLeadType(), "拒绝后 leadType 不变");
         assertEquals(ErpCrmConstants.DOC_STATUS_NEW, lead.getDocStatus(), "拒绝后 docStatus 不变");
         assertEquals(0, countAll(daoProvider.daoFor(ErpMdPartner.class)), "不新建 Partner");
@@ -86,10 +86,10 @@ public class TestErpCrmConversionGuards extends JunitAutoTestCase {
 
     @Test
     public void testDirectPromoteAfterPromotedRejected() {
-        ormTemplate.runInSession(() -> seedLead(2003L, "LEAD-PROMOTE-AGAIN-001", ErpCrmConstants.LEAD_TYPE_LEAD,
+        ormTemplate.runInSession(() -> seedLead("2003", "LEAD-PROMOTE-AGAIN-001", ErpCrmConstants.LEAD_TYPE_LEAD,
                 ErpCrmConstants.DOC_STATUS_QUALIFIED, "Again Corp", null, null));
-        assertEquals(0, convertToOpportunity(2003L).getStatus(), "首次直接升格应成功");
-        ApiResponse<?> second = convertToOpportunity(2003L);
+        assertEquals(0, convertToOpportunity("2003").getStatus(), "首次直接升格应成功");
+        ApiResponse<?> second = convertToOpportunity("2003");
         assertEquals(ErpCrmErrors.ERR_LEAD_TYPE_MISMATCH.getErrorCode(), second.getCode(),
                 "已升格（leadType=OPPORTUNITY）再调 → ERR_LEAD_TYPE_MISMATCH（leadType 校验先于 docStatus）");
     }
@@ -98,9 +98,9 @@ public class TestErpCrmConversionGuards extends JunitAutoTestCase {
 
     @Test
     public void testConvertToCustomerNewRejected() {
-        ormTemplate.runInSession(() -> seedLead(2004L, "LEAD-CTC-NEW-001", ErpCrmConstants.LEAD_TYPE_LEAD,
+        ormTemplate.runInSession(() -> seedLead("2004", "LEAD-CTC-NEW-001", ErpCrmConstants.LEAD_TYPE_LEAD,
                 ErpCrmConstants.DOC_STATUS_NEW, "Ctc Corp", "ctc@corp.com", null));
-        ApiResponse<?> resp = convertToCustomer(2004L);
+        ApiResponse<?> resp = convertToCustomer("2004");
         assertEquals(ErpCrmErrors.ERR_LEAD_NOT_QUALIFIED.getErrorCode(), resp.getCode(),
                 "NEW 状态 convertToCustomer → ERR_LEAD_NOT_QUALIFIED");
         assertEquals(0, countAll(daoProvider.daoFor(ErpMdPartner.class)), "无 Partner 创建");
@@ -113,15 +113,15 @@ public class TestErpCrmConversionGuards extends JunitAutoTestCase {
     public void testConvertToQuotationNonQualifiedRejected() {
         ormTemplate.runInSession(() -> {
             seedStage(STAGE_NEW, "STG-NEW", "新线索", 10, 20);
-            seedLead(2005L, "OPP-CTQ-NEW-001", ErpCrmConstants.LEAD_TYPE_OPPORTUNITY,
+            seedLead("2005", "OPP-CTQ-NEW-001", ErpCrmConstants.LEAD_TYPE_OPPORTUNITY,
                     ErpCrmConstants.DOC_STATUS_NEW, "Ctq Corp", null, null);
-            seedLead(2006L, "OPP-CTQ-LOST-001", ErpCrmConstants.LEAD_TYPE_OPPORTUNITY,
+            seedLead("2006", "OPP-CTQ-LOST-001", ErpCrmConstants.LEAD_TYPE_OPPORTUNITY,
                     ErpCrmConstants.DOC_STATUS_LOST, "Lost Corp", null, null);
         });
-        ApiResponse<?> badNew = convertToQuotation(2005L);
+        ApiResponse<?> badNew = convertToQuotation("2005");
         assertEquals(ErpCrmErrors.ERR_LEAD_NOT_QUALIFIED.getErrorCode(), badNew.getCode(),
                 "NEW 状态 OPPORTUNITY → ERR_LEAD_NOT_QUALIFIED");
-        ApiResponse<?> badLost = convertToQuotation(2006L);
+        ApiResponse<?> badLost = convertToQuotation("2006");
         assertEquals(ErpCrmErrors.ERR_LEAD_NOT_QUALIFIED.getErrorCode(), badLost.getCode(),
                 "LOST 状态 OPPORTUNITY → ERR_LEAD_NOT_QUALIFIED");
     }
@@ -132,27 +132,27 @@ public class TestErpCrmConversionGuards extends JunitAutoTestCase {
             seedStage(STAGE_NEW, "STG-NEW", "新线索", 10, 20);
             seedStage(STAGE_DEMO, "STG-DEMO", "方案演示", 20, 40);
             // QUALIFIED OPPORTUNITY 但 stageId=非 won-stage
-            ErpCrmLead opp = newLead(2007L, "OPP-CTQ-NOWON-001", ErpCrmConstants.LEAD_TYPE_OPPORTUNITY,
+            ErpCrmLead opp = newLead("2007", "OPP-CTQ-NOWON-001", ErpCrmConstants.LEAD_TYPE_OPPORTUNITY,
                     ErpCrmConstants.DOC_STATUS_QUALIFIED);
             opp.setStageId(STAGE_DEMO);
             daoProvider.daoFor(ErpCrmLead.class).saveEntity(opp);
         });
-        ApiResponse<?> resp = convertToQuotation(2007L);
+        ApiResponse<?> resp = convertToQuotation("2007");
         assertEquals(ErpCrmErrors.ERR_LEAD_STAGE_NOT_WON.getErrorCode(), resp.getCode(),
                 "QUALIFIED 但非 won-stage → ERR_LEAD_STAGE_NOT_WON");
     }
 
     // ---------- rpc helpers ----------
 
-    private ApiResponse<?> convertToOpportunity(Long leadId) {
+    private ApiResponse<?> convertToOpportunity(String leadId) {
         return rpc(mutation, "ErpCrmLead__convertToOpportunity", Map.of("leadId", leadId));
     }
 
-    private ApiResponse<?> convertToCustomer(Long leadId) {
+    private ApiResponse<?> convertToCustomer(String leadId) {
         return rpc(mutation, "ErpCrmLead__convertToCustomer", Map.of("leadId", leadId));
     }
 
-    private ApiResponse<?> convertToQuotation(Long leadId) {
+    private ApiResponse<?> convertToQuotation(String leadId) {
         return rpc(mutation, "ErpCrmLead__convertToQuotation", Map.of("leadId", leadId));
     }
 
@@ -163,7 +163,7 @@ public class TestErpCrmConversionGuards extends JunitAutoTestCase {
 
     // ---------- seed / reload helpers ----------
 
-    private void seedLead(Long id, String code, String leadType, String docStatus,
+    private void seedLead(String id, String code, String leadType, String docStatus,
                           String companyName, String email, String phone) {
         ErpCrmLead lead = newLead(id, code, leadType, docStatus);
         lead.setCompanyName(companyName);
@@ -173,7 +173,7 @@ public class TestErpCrmConversionGuards extends JunitAutoTestCase {
         daoProvider.daoFor(ErpCrmLead.class).saveEntity(lead);
     }
 
-    private ErpCrmLead newLead(Long id, String code, String leadType, String docStatus) {
+    private ErpCrmLead newLead(String id, String code, String leadType, String docStatus) {
         ErpCrmLead lead = new ErpCrmLead();
         lead.setId(id);
         lead.setCode(code);
@@ -183,11 +183,11 @@ public class TestErpCrmConversionGuards extends JunitAutoTestCase {
         return lead;
     }
 
-    private void seedStage(Long id, String code, String name, int sequence, int defaultProbability) {
+    private void seedStage(String id, String code, String name, int sequence, int defaultProbability) {
         seedStage(id, code, name, sequence, defaultProbability, false);
     }
 
-    private void seedStage(Long id, String code, String name, int sequence, int defaultProbability,
+    private void seedStage(String id, String code, String name, int sequence, int defaultProbability,
                            boolean isWonStage) {
         IEntityDao<ErpCrmStage> dao = daoProvider.daoFor(ErpCrmStage.class);
         ErpCrmStage stage = new ErpCrmStage();
@@ -200,7 +200,7 @@ public class TestErpCrmConversionGuards extends JunitAutoTestCase {
         dao.saveEntity(stage);
     }
 
-    private ErpCrmLead reloadLead(Long id) {
+    private ErpCrmLead reloadLead(String id) {
         return daoProvider.daoFor(ErpCrmLead.class).getEntityById(id);
     }
 

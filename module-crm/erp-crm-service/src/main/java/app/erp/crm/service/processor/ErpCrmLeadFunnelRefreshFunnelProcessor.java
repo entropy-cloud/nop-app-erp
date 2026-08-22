@@ -44,9 +44,9 @@ public class ErpCrmLeadFunnelRefreshFunnelProcessor {
 
     public ErpCrmLeadFunnel refreshFunnel(LocalDate periodStart,
                                           LocalDate periodEnd,
-                                          Long territoryId,
-                                          Long teamId,
-                                          Long sourceId,
+                                          String territoryId,
+                                          String teamId,
+                                          String sourceId,
                                           IServiceContext context) {
         if (periodStart != null && periodEnd != null && periodStart.isAfter(periodEnd)) {
             throw new NopException(ErpCrmErrors.ERR_FUNNEL_PERIOD_INVALID)
@@ -59,11 +59,11 @@ public class ErpCrmLeadFunnelRefreshFunnelProcessor {
 
         // 加载原始数据
         List<ErpCrmLeadConvLog> convLogs = loadConvLogs(periodStart, periodEnd);
-        List<Long> leadIds = convLogs.stream().map(ErpCrmLeadConvLog::getLeadId)
+        List<String> leadIds = convLogs.stream().map(ErpCrmLeadConvLog::getLeadId)
                 .filter(java.util.Objects::nonNull).distinct().collect(Collectors.toList());
         List<ErpCrmLead> leads = loadLeads(leadIds, territoryId, teamId, sourceId);
         List<ErpCrmStage> stages = loadAllStages();
-        Map<Long, ErpCrmLostReason> lostReasons = loadLostReasonMap();
+        Map<String, ErpCrmLostReason> lostReasons = loadLostReasonMap();
 
         int topLostN = ErpCrmConfigs.funnelTopLostReasons();
         FunnelAggregationEngine.FunnelSnapshot snapshot = funnelAggregationEngine.aggregate(
@@ -108,7 +108,7 @@ public class ErpCrmLeadFunnelRefreshFunnelProcessor {
      * 调用方 @BizMutation 入口已校验；同域只读+级联写场景。
      */
     protected void clearExistingSnapshots(LocalDate periodStart, LocalDate periodEnd,
-                                          Long territoryId, Long teamId, Long sourceId,
+                                          String territoryId, String teamId, String sourceId,
                                           IServiceContext context) {
         QueryBean q = new QueryBean();
         if (periodStart != null) {
@@ -154,7 +154,7 @@ public class ErpCrmLeadFunnelRefreshFunnelProcessor {
         return convLogDao().findAllByQuery(q);
     }
 
-    protected List<ErpCrmLead> loadLeads(List<Long> leadIds, Long territoryId, Long teamId, Long sourceId) {
+    protected List<ErpCrmLead> loadLeads(List<String> leadIds, String territoryId, String teamId, String sourceId) {
         if (leadIds == null || leadIds.isEmpty()) {
             return java.util.Collections.emptyList();
         }
@@ -177,23 +177,23 @@ public class ErpCrmLeadFunnelRefreshFunnelProcessor {
         return stageDao().findAllByQuery(q);
     }
 
-    protected Map<Long, ErpCrmLostReason> loadLostReasonMap() {
+    protected Map<String, ErpCrmLostReason> loadLostReasonMap() {
         List<ErpCrmLostReason> all = lostReasonDao().findAllByQuery(new QueryBean());
-        Map<Long, ErpCrmLostReason> map = new HashMap<>();
+        Map<String, ErpCrmLostReason> map = new HashMap<>();
         for (ErpCrmLostReason r : all) {
             map.put(r.getId(), r);
         }
         return map;
     }
 
-    protected List<ErpCrmFunnelStageMetrics> loadStageMetrics(Long funnelId) {
+    protected List<ErpCrmFunnelStageMetrics> loadStageMetrics(String funnelId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("funnelId", funnelId));
         return stageMetricsDao().findAllByQuery(q);
     }
 
     protected String buildFunnelName(LocalDate periodStart, LocalDate periodEnd,
-                                     Long territoryId, Long teamId, Long sourceId) {
+                                     String territoryId, String teamId, String sourceId) {
         StringBuilder sb = new StringBuilder("Funnel");
         if (periodStart != null || periodEnd != null) {
             sb.append('[').append(periodStart).append('~').append(periodEnd).append(']');

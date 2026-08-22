@@ -20,5 +20,5 @@ public interface IErpCrmForecastBiz extends ICrudBiz<ErpCrmForecast> {
      * 仅 OPEN 期间可刷新；FROZEN/CLOSED 抛 {@code ERR_FORECAST_PERIOD_NOT_OPEN}。
      */
     @BizMutation
-    void refreshForecast(@Name("periodId") Long periodId, IServiceContext context);
+    void refreshForecast(@Name("periodId") String periodId, IServiceContext context);
 }

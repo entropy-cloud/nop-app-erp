@@ -46,7 +46,7 @@ body:
               method: post
               dataType: raw
               data:
-                query: "query(${'$'}sid:Long,${'$'}lim:Int){ ErpCrmLead__findPage(filter_leadType:\"OPPORTUNITY\",filter_stageId:${'$'}sid,limit:${'$'}lim){ items{ id code companyName expectedRevenue expectedCloseDate probability stageId } total } }"
+                query: "query(${'$'}sid:String,${'$'}lim:Int){ ErpCrmLead__findPage(filter_leadType:\"OPPORTUNITY\",filter_stageId:${'$'}sid,limit:${'$'}lim){ items{ id code companyName expectedRevenue expectedCloseDate probability stageId } total } }"
                 variables:
                   sid: "${id}"
                   lim: 30
@@ -94,7 +94,7 @@ body:
                           url: /graphql
                           dataType: raw
                           data:
-                            query: "mutation(${'$'}leadId:Long,${'$'}sid:Long){ ErpCrmLead__moveStage(leadId:${'$'}leadId,toStageId:${'$'}sid){ id stageId } }"
+                            query: "mutation(${'$'}leadId:String,${'$'}sid:String){ ErpCrmLead__moveStage(leadId:${'$'}leadId,toStageId:${'$'}sid){ id stageId } }"
                             variables:
                               leadId: "${id}"
                               sid: "${toStageId}"

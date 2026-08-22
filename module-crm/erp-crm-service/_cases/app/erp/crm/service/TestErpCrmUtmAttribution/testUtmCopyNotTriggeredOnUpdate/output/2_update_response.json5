@@ -22,7 +22,7 @@
     "recurringPlan": null,
     "expectedCloseDate": null,
     "probability": null,
-    "campaignId": 7003,
+    "campaignId": "7003",
     "utmMedium": null,
     "utmSource": null,
     "ownerId": null,

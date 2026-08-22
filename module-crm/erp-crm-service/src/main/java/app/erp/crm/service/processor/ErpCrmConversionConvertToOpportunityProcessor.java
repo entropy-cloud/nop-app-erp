@@ -15,7 +15,7 @@ public class ErpCrmConversionConvertToOpportunityProcessor {
     @Inject
     ErpCrmConversionProcessor facade;
 
-    public ErpCrmLead convertToOpportunity(Long leadId, IServiceContext context) {
+    public ErpCrmLead convertToOpportunity(String leadId, IServiceContext context) {
         ErpCrmLead lead = facade.requireLead(leadId, context);
         return facade.promoteToOpportunity(lead, context);
     }

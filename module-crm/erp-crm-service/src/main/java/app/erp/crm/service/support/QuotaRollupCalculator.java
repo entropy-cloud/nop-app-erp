@@ -41,7 +41,7 @@ public class QuotaRollupCalculator {
      * 返回 territoryId 子树配额聚合结果。无任何配额行时返回 null（调用方自行构造空对象）。
      * fiscalYear=0 表示不按财年过滤（管道对比入口经 periodLabel 唯一定位）。
      */
-    public ErpCrmQuota rollup(Long territoryId, String periodType, int fiscalYear, String periodLabel) {
+    public ErpCrmQuota rollup(String territoryId, String periodType, int fiscalYear, String periodLabel) {
         // 显式值优先：先查该层级的显式配额行
         QueryBean explicit = new QueryBean();
         if (territoryId == null) {
@@ -67,7 +67,7 @@ public class QuotaRollupCalculator {
         }
 
         // 聚合子节点
-        Set<Long> subtreeIds = new HashSet<>();
+        Set<String> subtreeIds = new HashSet<>();
         if (territoryId != null) {
             collectSubtreeIds(territoryId, subtreeIds);
         }
@@ -115,7 +115,7 @@ public class QuotaRollupCalculator {
     /**
      * 均分年度配额为季（4 行）或月（12 行）子期间配额行。仅 periodType=ANNUAL 可均分；目标配额须未定稿。
      */
-    public List<ErpCrmQuota> distributeAnnual(Long quotaId, String targetPeriodType) {
+    public List<ErpCrmQuota> distributeAnnual(String quotaId, String targetPeriodType) {
         ErpCrmQuota annual = quotaDao().getEntityById(quotaId);
         if (annual == null) {
             throw new NopException(ErpCrmErrors.ERR_QUOTA_NO_MATCH)
@@ -160,7 +160,7 @@ public class QuotaRollupCalculator {
     /**
      * 区域管道对比：聚合 territoryId 子树内 Quota + Forecast + 已转化 Lead 实际收入。
      */
-    public ErpCrmPipelineAccumulator accumulatePipeline(Long territoryId, String periodLabel) {
+    public ErpCrmPipelineAccumulator accumulatePipeline(String territoryId, String periodLabel) {
         ErpCrmPipelineAccumulator acc = new ErpCrmPipelineAccumulator();
 
         // 目标段：取该层级显式配额行（无则子树聚合）
@@ -178,7 +178,7 @@ public class QuotaRollupCalculator {
         }
 
         // 预测段：聚合 ErpCrmForecast 按 territoryId（子树）
-        Set<Long> subtreeIds = new HashSet<>();
+        Set<String> subtreeIds = new HashSet<>();
         if (territoryId != null) {
             collectSubtreeIds(territoryId, subtreeIds);
         }
@@ -217,7 +217,7 @@ public class QuotaRollupCalculator {
 
     // ---------- 辅助 ----------
 
-    protected void collectSubtreeIds(Long rootId, Set<Long> acc) {
+    protected void collectSubtreeIds(String rootId, Set<String> acc) {
         acc.add(rootId);
         QueryBean q = new QueryBean();
         q.addFilter(eq("parentId", rootId));

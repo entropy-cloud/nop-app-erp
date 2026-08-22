@@ -15,7 +15,7 @@ public class ErpCrmLeadScoreRecalculateScoreProcessor {
     @Inject
     LeadScoringEngine scoringEngine;
 
-    public ErpCrmLeadScore recalculateScore(Long leadId, String triggerEvent, IServiceContext context) {
+    public ErpCrmLeadScore recalculateScore(String leadId, String triggerEvent, IServiceContext context) {
         return scoringEngine.recalculateScore(leadId, triggerEvent, context);
     }
 }

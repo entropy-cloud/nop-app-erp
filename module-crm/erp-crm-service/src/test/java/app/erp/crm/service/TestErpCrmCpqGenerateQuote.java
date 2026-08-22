@@ -57,14 +57,14 @@ public class TestErpCrmCpqGenerateQuote extends JunitAutoTestCase {
     @RegisterExtension
     static CrmFrozenClockExtension frozenClock = new CrmFrozenClockExtension();
 
-    static final Long ORG_ID = 3301L;
-    static final Long CURRENCY_ID = 6401L;
-    static final Long CUSTOMER_ID = 3401L;
-    static final Long PRODUCT_ID = 3501L;
-    static final Long CONFIGURATOR_ID = 3001L;
-    static final Long INACTIVE_CONFIGURATOR_ID = 3002L;
-    static final Long BUNDLE_ID = 3601L;
-    static final Long LEAD_ID = 3701L;
+    static final String ORG_ID = "3301";
+    static final String CURRENCY_ID = "6401";
+    static final String CUSTOMER_ID = "3401";
+    static final String PRODUCT_ID = "3501";
+    static final String CONFIGURATOR_ID = "3001";
+    static final String INACTIVE_CONFIGURATOR_ID = "3002";
+    static final String BUNDLE_ID = "3601";
+    static final String LEAD_ID = "3701";
 
     @Inject
     IDaoProvider daoProvider;
@@ -77,9 +77,9 @@ public class TestErpCrmCpqGenerateQuote extends JunitAutoTestCase {
     public void testGenerateQuoteViaBundlePricing() {
         seedCommons();
         seedConfigurator(CONFIGURATOR_ID, "CFG-001", true);
-        seedConfigRule(3011L, CONFIGURATOR_ID, "REQUIRED", "CPU_TYPE", "INTEL_XEON", "HEATSINK", "HEAVY_DUTY", 10);
+        seedConfigRule("3011", CONFIGURATOR_ID, "REQUIRED", "CPU_TYPE", "INTEL_XEON", "HEATSINK", "HEAVY_DUTY", 10);
         seedBundle(BUNDLE_ID, "PERCENTAGE", BigDecimal.valueOf(15), null);
-        seedBundleLine(3611L, BUNDLE_ID, PRODUCT_ID, BigDecimal.valueOf(100000), BigDecimal.valueOf(1));
+        seedBundleLine("3611", BUNDLE_ID, PRODUCT_ID, BigDecimal.valueOf(100000), BigDecimal.valueOf(1));
         seedLead(LEAD_ID, "OPP-CPQ-001", ORG_ID, CUSTOMER_ID);
 
         Map<String, Object> features = new HashMap<>();
@@ -91,7 +91,7 @@ public class TestErpCrmCpqGenerateQuote extends JunitAutoTestCase {
         ApiResponse<?> result = generateQuote(CONFIGURATOR_ID, features, BUNDLE_ID, ctx, LEAD_ID);
         assertEquals(0, result.getStatus(), "bundlePricing 路径 generateQuote 应成功");
 
-        Long quotationId = extractId(result.getData(), "id");
+        String quotationId = extractId(result.getData(), "id");
         ErpSalQuotation quotation = daoProvider.daoFor(ErpSalQuotation.class).getEntityById(quotationId);
         assertNotNull(quotation, "报价单已创建");
         assertEquals(CUSTOMER_ID, quotation.getCustomerId(), "报价单 customerId 取自 lead.partnerId");
@@ -108,7 +108,7 @@ public class TestErpCrmCpqGenerateQuote extends JunitAutoTestCase {
     public void testGenerateQuoteViaPriceRule() {
         seedCommons();
         seedConfigurator(CONFIGURATOR_ID, "CFG-002", true);
-        seedPriceRule(3801L, "PROMOTIONAL", 1, PRODUCT_ID, null, null, null,
+        seedPriceRule("3801", "PROMOTIONAL", 1, PRODUCT_ID, null, null, null,
                 null, BigDecimal.valueOf(10.0), null, CURRENCY_ID);
         seedLead(LEAD_ID, "OPP-CPQ-002", ORG_ID, CUSTOMER_ID);
 
@@ -122,7 +122,7 @@ public class TestErpCrmCpqGenerateQuote extends JunitAutoTestCase {
         ApiResponse<?> result = generateQuote(CONFIGURATOR_ID, features, null, priceCtx, LEAD_ID);
         assertEquals(0, result.getStatus(), "priceRule 路径 generateQuote 应成功");
 
-        Long quotationId = extractId(result.getData(), "id");
+        String quotationId = extractId(result.getData(), "id");
         ErpSalQuotation quotation = daoProvider.daoFor(ErpSalQuotation.class).getEntityById(quotationId);
         assertNotNull(quotation);
         assertEquals(0, quotation.getTotalAmount().compareTo(BigDecimal.valueOf(900.0)),
@@ -228,9 +228,9 @@ public class TestErpCrmCpqGenerateQuote extends JunitAutoTestCase {
 
     // ---------- rpc helpers ----------
 
-    private ApiResponse<?> generateQuote(Long configuratorId, Map<String, Object> features,
-                                         Long bundlePricingId, Map<String, Object> priceRuleContext,
-                                         Long leadId) {
+    private ApiResponse<?> generateQuote(String configuratorId, Map<String, Object> features,
+                                         String bundlePricingId, Map<String, Object> priceRuleContext,
+                                         String leadId) {
         Map<String, Object> data = new HashMap<>();
         data.put("configuratorId", configuratorId);
         data.put("selectedFeatures", features);
@@ -248,12 +248,9 @@ public class TestErpCrmCpqGenerateQuote extends JunitAutoTestCase {
         return graphQLEngine.executeRpc(ctx);
     }
 
-    private Long extractId(Object data, String key) {
+    private String extractId(Object data, String key) {
         Object idVal = ((Map<?, ?>) data).get(key);
-        if (idVal instanceof Number) {
-            return ((Number) idVal).longValue();
-        }
-        return Long.valueOf(String.valueOf(idVal));
+        return String.valueOf(idVal);
     }
 
     // ---------- seed helpers ----------
@@ -297,7 +294,7 @@ public class TestErpCrmCpqGenerateQuote extends JunitAutoTestCase {
         dao.saveEntity(partner);
     }
 
-    private void seedConfigurator(Long id, String code, boolean active) {
+    private void seedConfigurator(String id, String code, boolean active) {
         IEntityDao<ErpCrmProductConfigurator> dao = daoProvider.daoFor(ErpCrmProductConfigurator.class);
         ErpCrmProductConfigurator cfg = new ErpCrmProductConfigurator();
         cfg.setId(id);
@@ -312,7 +309,7 @@ public class TestErpCrmCpqGenerateQuote extends JunitAutoTestCase {
         dao.saveEntity(cfg);
     }
 
-    private void seedConfigRule(Long id, Long configuratorId, String ruleType,
+    private void seedConfigRule(String id, String configuratorId, String ruleType,
                                 String sourceCode, String sourceValue,
                                 String targetCode, String targetValue, int sequence) {
         IEntityDao<ErpCrmConfigRule> dao = daoProvider.daoFor(ErpCrmConfigRule.class);
@@ -329,7 +326,7 @@ public class TestErpCrmCpqGenerateQuote extends JunitAutoTestCase {
         dao.saveEntity(rule);
     }
 
-    private void seedBundle(Long id, String discountType, BigDecimal discountValue, BigDecimal bundleAmount) {
+    private void seedBundle(String id, String discountType, BigDecimal discountValue, BigDecimal bundleAmount) {
         IEntityDao<ErpCrmBundlePricing> dao = daoProvider.daoFor(ErpCrmBundlePricing.class);
         ErpCrmBundlePricing bundle = new ErpCrmBundlePricing();
         bundle.setId(id);
@@ -346,7 +343,7 @@ public class TestErpCrmCpqGenerateQuote extends JunitAutoTestCase {
         dao.saveEntity(bundle);
     }
 
-    private void seedBundleLine(Long id, Long bundleId, Long productId,
+    private void seedBundleLine(String id, String bundleId, String productId,
                                 BigDecimal unitPrice, BigDecimal quantity) {
         IEntityDao<ErpCrmBundlePricingLine> dao = daoProvider.daoFor(ErpCrmBundlePricingLine.class);
         ErpCrmBundlePricingLine line = new ErpCrmBundlePricingLine();
@@ -360,10 +357,10 @@ public class TestErpCrmCpqGenerateQuote extends JunitAutoTestCase {
         dao.saveEntity(line);
     }
 
-    private void seedPriceRule(Long id, String ruleType, int priority, Long productId, Long customerId,
+    private void seedPriceRule(String id, String ruleType, int priority, String productId, String customerId,
                                BigDecimal minQty, BigDecimal maxQty,
                                BigDecimal priceOverride, BigDecimal discountPercent,
-                               BigDecimal discountAmount, Long currencyId) {
+                               BigDecimal discountAmount, String currencyId) {
         IEntityDao<ErpCrmPriceRule> dao = daoProvider.daoFor(ErpCrmPriceRule.class);
         ErpCrmPriceRule rule = new ErpCrmPriceRule();
         rule.setId(id);
@@ -386,7 +383,7 @@ public class TestErpCrmCpqGenerateQuote extends JunitAutoTestCase {
         dao.saveEntity(rule);
     }
 
-    private void seedLead(Long id, String code, Long orgId, Long partnerId) {
+    private void seedLead(String id, String code, String orgId, String partnerId) {
         IEntityDao<ErpCrmLead> dao = daoProvider.daoFor(ErpCrmLead.class);
         ErpCrmLead lead = new ErpCrmLead();
         lead.setId(id);

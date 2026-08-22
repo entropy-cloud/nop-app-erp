@@ -102,15 +102,15 @@ public class ErpCrmLeadBizModel extends CrudBizModel<ErpCrmLead> implements IErp
 
     @Override
     @BizMutation
-    public ErpCrmLead qualify(@Name("leadId") Long leadId, IServiceContext context) {
+    public ErpCrmLead qualify(@Name("leadId") String leadId, IServiceContext context) {
         return qualifyProcessor.qualify(leadId, context);
     }
 
     @Override
     @BizMutation
-    public ErpCrmLead lose(@Name("leadId") Long leadId,
+    public ErpCrmLead lose(@Name("leadId") String leadId,
                            @io.nop.api.core.annotations.core.Optional
-                           @Name("lostReasonId") Long lostReasonId,
+                           @Name("lostReasonId") String lostReasonId,
                            @io.nop.api.core.annotations.core.Optional
                            @Name("lostReasonDesc") String lostReasonDesc,
                            IServiceContext context) {
@@ -119,22 +119,22 @@ public class ErpCrmLeadBizModel extends CrudBizModel<ErpCrmLead> implements IErp
 
     @Override
     @BizMutation
-    public ErpCrmLead cancel(@Name("leadId") Long leadId, IServiceContext context) {
-        return cancelProcessor.cancel(String.valueOf(leadId), context);
+    public ErpCrmLead cancel(@Name("leadId") String leadId, IServiceContext context) {
+        return cancelProcessor.cancel(leadId, context);
     }
 
     @Override
     @BizMutation
-    public ErpCrmLead moveStage(@Name("leadId") Long leadId,
-                                @Name("toStageId") Long toStageId,
+    public ErpCrmLead moveStage(@Name("leadId") String leadId,
+                                @Name("toStageId") String toStageId,
                                 IServiceContext context) {
         return moveStageProcessor.moveStage(leadId, toStageId, context);
     }
 
     @Override
     @BizQuery
-    public List<ErpCrmLead> findDuplicates(@Name("leadId") Long leadId, IServiceContext context) {
-        ErpCrmLead lead = get(String.valueOf(leadId), true, context);
+    public List<ErpCrmLead> findDuplicates(@Name("leadId") String leadId, IServiceContext context) {
+        ErpCrmLead lead = get(leadId, true, context);
         return duplicateChecker.findDuplicates(lead, context);
     }
 
@@ -142,8 +142,8 @@ public class ErpCrmLeadBizModel extends CrudBizModel<ErpCrmLead> implements IErp
 
     @Override
     @BizMutation
-    public ErpCrmLead assignLead(@Name("leadId") Long leadId, IServiceContext context) {
-        ErpCrmLead lead = requireEntity(String.valueOf(leadId), null, context);
+    public ErpCrmLead assignLead(@Name("leadId") String leadId, IServiceContext context) {
+        ErpCrmLead lead = requireEntity(leadId, null, context);
         List<ErpCrmTerritoryAssignmentRule> rules = loadActiveRules(lead.getOrgId());
         ErpCrmTerritoryAssignmentRule defaultRule = loadDefaultRule(lead.getOrgId());
         TerritoryAssignmentEngine.AssignmentResult result = assignmentEngine.assign(
@@ -168,12 +168,12 @@ public class ErpCrmLeadBizModel extends CrudBizModel<ErpCrmLead> implements IErp
 
     @Override
     @BizMutation
-    public ErpCrmLead reassignLead(@Name("leadId") Long leadId,
-                                    @Optional @Name("territoryId") Long territoryId,
-                                    @Optional @Name("teamId") Long teamId,
-                                    @Optional @Name("ownerId") String ownerId,
-                                    IServiceContext context) {
-        ErpCrmLead lead = requireEntity(String.valueOf(leadId), null, context);
+    public ErpCrmLead reassignLead(@Name("leadId") String leadId,
+                                   @Optional @Name("territoryId") String territoryId,
+                                   @Optional @Name("teamId") String teamId,
+                                   @Optional @Name("ownerId") String ownerId,
+                                   IServiceContext context) {
+        ErpCrmLead lead = requireEntity(leadId, null, context);
         if (territoryId != null) {
             lead.setTerritoryId(territoryId);
         }
@@ -191,13 +191,13 @@ public class ErpCrmLeadBizModel extends CrudBizModel<ErpCrmLead> implements IErp
 
     @Override
     @BizMutation
-    public ErpMdPartner convertToCustomer(@Name("leadId") Long leadId, IServiceContext context) {
+    public ErpMdPartner convertToCustomer(@Name("leadId") String leadId, IServiceContext context) {
         return convertToCustomerProcessor.convertToCustomer(leadId, context);
     }
 
     @Override
     @BizMutation
-    public ErpSalQuotation convertToQuotation(@Name("leadId") Long leadId,
+    public ErpSalQuotation convertToQuotation(@Name("leadId") String leadId,
                                               @io.nop.api.core.annotations.core.Optional
                                               @Name("quotationData") Map<String, Object> quotationData,
                                               IServiceContext context) {
@@ -206,13 +206,13 @@ public class ErpCrmLeadBizModel extends CrudBizModel<ErpCrmLead> implements IErp
 
     @Override
     @BizMutation
-    public ErpCrmLead convertToOpportunity(@Name("leadId") Long leadId, IServiceContext context) {
+    public ErpCrmLead convertToOpportunity(@Name("leadId") String leadId, IServiceContext context) {
         return convertToOpportunityProcessor.convertToOpportunity(leadId, context);
     }
 
     @Override
     @BizMutation
-    public ErpCrmLead getCreatedOpportunity(@Name("leadId") Long leadId, IServiceContext context) {
+    public ErpCrmLead getCreatedOpportunity(@Name("leadId") String leadId, IServiceContext context) {
         return conversionProcessor.getCreatedOpportunity(leadId, context);
     }
 
@@ -251,7 +251,7 @@ public class ErpCrmLeadBizModel extends CrudBizModel<ErpCrmLead> implements IErp
         // 显式传入（非 null）不覆盖；campaign 不存在或字段为 null 跳过不抛异常。
         if (lead.getId() == null && lead.getCampaignId() != null
                 && (lead.getUtmMedium() == null || lead.getUtmSource() == null)) {
-            ErpCrmCampaign campaign = campaignBiz.get(String.valueOf(lead.getCampaignId()), true, context);
+            ErpCrmCampaign campaign = campaignBiz.get(lead.getCampaignId(), true, context);
             if (campaign != null) {
                 if (lead.getUtmMedium() == null && campaign.getMedium() != null) {
                     lead.setUtmMedium(campaign.getMedium());
@@ -281,7 +281,7 @@ public class ErpCrmLeadBizModel extends CrudBizModel<ErpCrmLead> implements IErp
 
     // ---------- 区域分配规则加载 ----------
 
-    protected List<ErpCrmTerritoryAssignmentRule> loadActiveRules(Long orgId) {
+    protected List<ErpCrmTerritoryAssignmentRule> loadActiveRules(String orgId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("isActive", Boolean.TRUE));
         if (orgId != null) {
@@ -290,7 +290,7 @@ public class ErpCrmLeadBizModel extends CrudBizModel<ErpCrmLead> implements IErp
         return assignmentRuleDao().findAllByQuery(q);
     }
 
-    protected ErpCrmTerritoryAssignmentRule loadDefaultRule(Long orgId) {
+    protected ErpCrmTerritoryAssignmentRule loadDefaultRule(String orgId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("isActive", Boolean.TRUE));
         q.addFilter(eq("isDefault", Boolean.TRUE));
@@ -315,7 +315,7 @@ public class ErpCrmLeadBizModel extends CrudBizModel<ErpCrmLead> implements IErp
         }
         return new TerritoryAssignmentEngine.TeamMemberResolver() {
             @Override
-            public List<String> resolveTeamMemberUserIds(Long teamId, IServiceContext context) {
+            public List<String> resolveTeamMemberUserIds(String teamId, IServiceContext context) {
                 if (teamId == null) {
                     return Collections.emptyList();
                 }
@@ -333,7 +333,7 @@ public class ErpCrmLeadBizModel extends CrudBizModel<ErpCrmLead> implements IErp
             }
 
             @Override
-            public String resolveLastAssignedOwner(Long teamId, IServiceContext context) {
+            public String resolveLastAssignedOwner(String teamId, IServiceContext context) {
                 if (teamId == null) {
                     return null;
                 }
@@ -347,7 +347,7 @@ public class ErpCrmLeadBizModel extends CrudBizModel<ErpCrmLead> implements IErp
             }
 
             @Override
-            public Map<String, Integer> countActiveLeadsByOwner(Long teamId, IServiceContext context) {
+            public Map<String, Integer> countActiveLeadsByOwner(String teamId, IServiceContext context) {
                 if (teamId == null) {
                     return Collections.emptyMap();
                 }

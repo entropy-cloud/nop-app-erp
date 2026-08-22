@@ -35,7 +35,7 @@ body:
       method: post
       dataType: raw
       data:
-        query: "query(${'$'}lid:Long,${'$'}lim:Int){ ErpCrmActivity__findPage(filter_leadId:${'$'}lid,limit:${'$'}lim,orderBy:\"activityDate DESC\"){ items{ id activityType activityDate summary ownerId leadId lead{ companyName } } total } }"
+        query: "query(${'$'}lid:String,${'$'}lim:Int){ ErpCrmActivity__findPage(filter_leadId:${'$'}lid,limit:${'$'}lim,orderBy:\"activityDate DESC\"){ items{ id activityType activityDate summary ownerId leadId lead{ companyName } } total } }"
         variables:
           lid: "${leadId || null}"
           lim: 100

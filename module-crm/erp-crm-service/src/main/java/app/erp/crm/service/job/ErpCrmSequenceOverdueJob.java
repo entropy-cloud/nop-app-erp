@@ -98,10 +98,10 @@ public class ErpCrmSequenceOverdueJob {
         if (notificationBiz == null) {
             return;
         }
-        Long leadId = toLong(row.get("leadId"));
+        String leadId = row.get("leadId") == null ? null : String.valueOf(row.get("leadId"));
         String ownerId = null;
         if (leadId != null) {
-            ErpCrmLead lead = leadBiz.get(String.valueOf(leadId), false, ctx);
+            ErpCrmLead lead = leadBiz.get(leadId, false, ctx);
             if (lead != null) {
                 ownerId = lead.getOwnerId();
             }
@@ -114,19 +114,5 @@ public class ErpCrmSequenceOverdueJob {
         map.put("overdueStepCount", row.get("overdueStepCount"));
         map.put("ownerUserId", ownerId);
         notificationBiz.notify(ErpCrmConstants.NOTIFY_EVENT_SEQUENCE_OVERDUE, map, ctx);
-    }
-
-    protected Long toLong(Object value) {
-        if (value == null) {
-            return null;
-        }
-        if (value instanceof Number) {
-            return ((Number) value).longValue();
-        }
-        try {
-            return Long.parseLong(String.valueOf(value));
-        } catch (NumberFormatException e) {
-            return null;
-        }
     }
 }

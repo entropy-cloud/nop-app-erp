@@ -12,58 +12,58 @@
     public class ErpCrmBundlePricingLineInputBean extends CrudInputBase {
 
     
-        private Long _id;
+        private String _id;
 
     
         @PropMeta(propId=1)
     
-        public Long getId(){
+        public String getId(){
             return _id;
         }
 
-        public void setId(Long value){
+        public void setId(String value){
             this._id = value;
         }
 
 
-        private Long _bundleId;
+        private String _bundleId;
 
     
         @PropMeta(propId=2)
     
-        public Long getBundleId(){
+        public String getBundleId(){
             return _bundleId;
         }
 
-        public void setBundleId(Long value){
+        public void setBundleId(String value){
             this._bundleId = value;
         }
 
 
-        private Long _orgId;
+        private String _orgId;
 
     
         @PropMeta(propId=3)
     
-        public Long getOrgId(){
+        public String getOrgId(){
             return _orgId;
         }
 
-        public void setOrgId(Long value){
+        public void setOrgId(String value){
             this._orgId = value;
         }
 
 
-        private Long _productId;
+        private String _productId;
 
     
         @PropMeta(propId=4)
     
-        public Long getProductId(){
+        public String getProductId(){
             return _productId;
         }
 
-        public void setProductId(Long value){
+        public void setProductId(String value){
             this._productId = value;
         }
 

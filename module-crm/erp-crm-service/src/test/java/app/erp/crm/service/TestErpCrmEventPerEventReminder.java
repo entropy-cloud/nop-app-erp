@@ -37,7 +37,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpCrmEventPerEventReminder extends JunitAutoTestCase {
 
-    static final Long ORG_ID = 1301L;
+    static final String ORG_ID = "1301";
 
     @Inject
     IDaoProvider daoProvider;
@@ -51,7 +51,7 @@ public class TestErpCrmEventPerEventReminder extends JunitAutoTestCase {
         LocalDateTime now = CoreMetrics.currentDateTime();
         ormTemplate.runInSession(() -> {
             // reminder=1440（1 天）+ startDateTime=now+1天：旧全局 60min 窗口不会命中，per-event 应命中
-            seedEvent(4501L, "EVT-PER-001", ErpCrmConstants.EVENT_STATUS_PLANNED,
+            seedEvent("4501", "EVT-PER-001", ErpCrmConstants.EVENT_STATUS_PLANNED,
                     now.plusMinutes(1440), 1440);
         });
         ApiResponse<?> resp = findDueReminders(60);
@@ -67,10 +67,10 @@ public class TestErpCrmEventPerEventReminder extends JunitAutoTestCase {
         LocalDateTime now = CoreMetrics.currentDateTime();
         ormTemplate.runInSession(() -> {
             // reminder=null + startDateTime=now+30min：fallback 全局 60min → 命中（行为不变）
-            seedEvent(4502L, "EVT-NULL-001", ErpCrmConstants.EVENT_STATUS_PLANNED,
+            seedEvent("4502", "EVT-NULL-001", ErpCrmConstants.EVENT_STATUS_PLANNED,
                     now.plusMinutes(30), null);
             // reminder=null + startDateTime=now+200min：fallback 全局 60min → 不命中
-            seedEvent(4503L, "EVT-NULL-002", ErpCrmConstants.EVENT_STATUS_PLANNED,
+            seedEvent("4503", "EVT-NULL-002", ErpCrmConstants.EVENT_STATUS_PLANNED,
                     now.plusMinutes(200), null);
         });
         ApiResponse<?> resp = findDueReminders(60);
@@ -86,10 +86,10 @@ public class TestErpCrmEventPerEventReminder extends JunitAutoTestCase {
         LocalDateTime now = CoreMetrics.currentDateTime();
         ormTemplate.runInSession(() -> {
             // reminder=15 + startDateTime=now+45min：45>15 → 不命中
-            seedEvent(4504L, "EVT-NAR-001", ErpCrmConstants.EVENT_STATUS_PLANNED,
+            seedEvent("4504", "EVT-NAR-001", ErpCrmConstants.EVENT_STATUS_PLANNED,
                     now.plusMinutes(45), 15);
             // reminder=15 + startDateTime=now+10min：10<=15 → 命中（对照组，证明不是全排除）
-            seedEvent(4505L, "EVT-NAR-002", ErpCrmConstants.EVENT_STATUS_PLANNED,
+            seedEvent("4505", "EVT-NAR-002", ErpCrmConstants.EVENT_STATUS_PLANNED,
                     now.plusMinutes(10), 15);
         });
         ApiResponse<?> resp = findDueReminders(60);
@@ -105,7 +105,7 @@ public class TestErpCrmEventPerEventReminder extends JunitAutoTestCase {
         LocalDateTime now = CoreMetrics.currentDateTime();
         ormTemplate.runInSession(() -> {
             // COMPLETED 事件即使 reminder 窗口内也不计入提醒范围
-            seedEvent(4506L, "EVT-DONE-001", ErpCrmConstants.EVENT_STATUS_COMPLETED,
+            seedEvent("4506", "EVT-DONE-001", ErpCrmConstants.EVENT_STATUS_COMPLETED,
                     now.plusMinutes(5), 60);
         });
         ApiResponse<?> resp = findDueReminders(60);
@@ -124,7 +124,7 @@ public class TestErpCrmEventPerEventReminder extends JunitAutoTestCase {
 
     // ---------- seed helpers ----------
 
-    private void seedEvent(Long id, String code, String status, LocalDateTime startDateTime,
+    private void seedEvent(String id, String code, String status, LocalDateTime startDateTime,
                            Integer reminderMinutesBefore) {
         IEntityDao<ErpCrmEvent> dao = daoProvider.daoFor(ErpCrmEvent.class);
         ErpCrmEvent event = new ErpCrmEvent();

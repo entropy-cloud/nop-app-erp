@@ -15,7 +15,7 @@ import java.util.Objects;
 /**
  * CPQ 价格规则引擎（plan 2026-07-07-1430-2 §Phase 2）。
  *
- * <p>纯函数式：{@link #resolvePrice(Long, Long, BigDecimal, Long, LocalDate, BigDecimal, List)}
+ * <p>纯函数式：{@link #resolvePrice(String, String, BigDecimal, String, LocalDate, BigDecimal, List)}
  * 输入产品/客户/数量/币种/当前日期 + 候选价格规则，返回最优价格。
  *
  * <p>对齐 {@code docs/design/crm/cpq.md §4 价格规则优先级}：
@@ -42,8 +42,8 @@ public class PriceRuleEngine {
      * @param activeRules  候选价格规则（须含 isActive=true 的，调用方负责过滤）
      * @return 最优匹配；{@code matched=false} 表示无匹配（调用方回退标准定价）
      */
-    public PriceResult resolvePrice(Long productId, Long customerId, BigDecimal quantity,
-                                    Long currencyId, LocalDate now,
+    public PriceResult resolvePrice(String productId, String customerId, BigDecimal quantity,
+                                    String currencyId, LocalDate now,
                                     BigDecimal basePrice, List<ErpCrmPriceRule> activeRules) {
         LocalDate today = now != null ? now : CoreMetrics.currentDate();
         BigDecimal qty = quantity != null ? quantity : BigDecimal.ONE;
@@ -82,12 +82,12 @@ public class PriceRuleEngine {
         return PriceResult.matched(winner, resolved);
     }
 
-    protected boolean ruleMatchesProduct(ErpCrmPriceRule rule, Long productId) {
+    protected boolean ruleMatchesProduct(ErpCrmPriceRule rule, String productId) {
         // productId 为空=全局规则；非空须精确匹配
         return rule.getProductId() == null || Objects.equals(rule.getProductId(), productId);
     }
 
-    protected boolean ruleMatchesCustomer(ErpCrmPriceRule rule, Long customerId) {
+    protected boolean ruleMatchesCustomer(ErpCrmPriceRule rule, String customerId) {
         // CUSTOMER_SPECIFIC 须 customerId 非空且匹配
         if (Objects.equals(rule.getRuleType(), ErpCrmConstants.PRICE_RULE_TYPE_CUSTOMER_SPECIFIC)) {
             return customerId != null && Objects.equals(rule.getCustomerId(), customerId);
@@ -96,7 +96,7 @@ public class PriceRuleEngine {
         return rule.getCustomerId() == null || Objects.equals(rule.getCustomerId(), customerId);
     }
 
-    protected boolean ruleMatchesCurrency(ErpCrmPriceRule rule, Long currencyId) {
+    protected boolean ruleMatchesCurrency(ErpCrmPriceRule rule, String currencyId) {
         return rule.getCurrencyId() == null || Objects.equals(rule.getCurrencyId(), currencyId);
     }
 

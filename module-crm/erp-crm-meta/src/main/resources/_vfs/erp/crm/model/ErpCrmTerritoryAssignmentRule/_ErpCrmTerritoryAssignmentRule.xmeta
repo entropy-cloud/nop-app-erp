@@ -20,12 +20,12 @@
 
     <props>
         <prop name="id" displayName="ID" propId="1" i18n-en:displayName="ID" tagSet="seq-default" mandatory="true"
-              queryable="true" sortable="true" insertable="true" updatable="false" graphql:type="String">
-            <schema type="java.lang.Long"/>
+              queryable="true" sortable="true" insertable="true" updatable="false">
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="orgId" displayName="业务组织" propId="2" i18n-en:displayName="Organization" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="org">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="ruleName" displayName="规则名称" propId="3" i18n-en:displayName="Rule Name" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
@@ -37,7 +37,7 @@
         </prop>
         <prop name="territoryId" displayName="目标区域" propId="5" i18n-en:displayName="Territory" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="territory">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="conditionType" displayName="条件类型" propId="6" i18n-en:displayName="Condition Type" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
@@ -53,7 +53,7 @@
         </prop>
         <prop name="groupId" displayName="目标团队" propId="9" i18n-en:displayName="Team" queryable="true" sortable="true"
               insertable="true" updatable="true" ext:relation="team">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="isDefault" displayName="是否默认规则" propId="10" i18n-en:displayName="Is Default" queryable="true"
               sortable="true" insertable="true" updatable="true" defaultValue="false">

@@ -16,7 +16,7 @@ public class ErpCrmConversionConvertToCustomerProcessor {
     @Inject
     ErpCrmConversionProcessor facade;
 
-    public ErpMdPartner convertToCustomer(Long leadId, IServiceContext context) {
+    public ErpMdPartner convertToCustomer(String leadId, IServiceContext context) {
         ErpCrmLead lead = facade.requireLead(leadId, context);
         facade.validateNotConverted(lead, context);
         facade.validateLeadType(lead, ErpCrmConstants.LEAD_TYPE_LEAD, context);

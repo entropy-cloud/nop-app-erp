@@ -13,16 +13,16 @@
     public class ErpCrmEventOutputBean {
 
     
-        private Long _id;
+        private String _id;
 
     
         @PropMeta(propId=1)
     
-        public Long getId(){
+        public String getId(){
             return _id;
         }
 
-        public void setId(Long value){
+        public void setId(String value){
             this._id = value;
         }
 
@@ -41,16 +41,16 @@
         }
 
 
-        private Long _orgId;
+        private String _orgId;
 
     
         @PropMeta(propId=3)
     
-        public Long getOrgId(){
+        public String getOrgId(){
             return _orgId;
         }
 
-        public void setOrgId(Long value){
+        public void setOrgId(String value){
             this._orgId = value;
         }
 
@@ -81,16 +81,16 @@
         }
 
 
-        private Long _eventCategoryId;
+        private String _eventCategoryId;
 
     
         @PropMeta(propId=5)
     
-        public Long getEventCategoryId(){
+        public String getEventCategoryId(){
             return _eventCategoryId;
         }
 
-        public void setEventCategoryId(Long value){
+        public void setEventCategoryId(String value){
             this._eventCategoryId = value;
         }
 
@@ -165,16 +165,16 @@
         }
 
 
-        private Long _relatedLeadId;
+        private String _relatedLeadId;
 
     
         @PropMeta(propId=11)
     
-        public Long getRelatedLeadId(){
+        public String getRelatedLeadId(){
             return _relatedLeadId;
         }
 
-        public void setRelatedLeadId(Long value){
+        public void setRelatedLeadId(String value){
             this._relatedLeadId = value;
         }
 
@@ -207,30 +207,30 @@
         }
 
 
-        private Long _partnerId;
+        private String _partnerId;
 
     
         @PropMeta(propId=14)
     
-        public Long getPartnerId(){
+        public String getPartnerId(){
             return _partnerId;
         }
 
-        public void setPartnerId(Long value){
+        public void setPartnerId(String value){
             this._partnerId = value;
         }
 
 
-        private Long _contactId;
+        private String _contactId;
 
     
         @PropMeta(propId=15)
     
-        public Long getContactId(){
+        public String getContactId(){
             return _contactId;
         }
 
-        public void setContactId(Long value){
+        public void setContactId(String value){
             this._contactId = value;
         }
 
@@ -315,16 +315,16 @@
         }
 
 
-        private Long _parentEventId;
+        private String _parentEventId;
 
     
         @PropMeta(propId=20)
     
-        public Long getParentEventId(){
+        public String getParentEventId(){
             return _parentEventId;
         }
 
-        public void setParentEventId(Long value){
+        public void setParentEventId(String value){
             this._parentEventId = value;
         }
 

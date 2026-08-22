@@ -22,8 +22,8 @@
 
     <props>
         <prop name="id" displayName="ID" propId="1" i18n-en:displayName="ID" tagSet="seq-default" mandatory="true"
-              queryable="true" sortable="true" insertable="true" updatable="false" graphql:type="String">
-            <schema type="java.lang.Long"/>
+              queryable="true" sortable="true" insertable="true" updatable="false">
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="code" displayName="编码" propId="2" i18n-en:displayName="Code" tagSet="var" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
@@ -31,7 +31,7 @@
         </prop>
         <prop name="orgId" displayName="业务组织" propId="3" i18n-en:displayName="Organization" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="org">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="leadType" displayName="线索/商机类型" propId="4" i18n-en:displayName="Lead Type" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
@@ -39,7 +39,7 @@
         </prop>
         <prop name="partnerId" displayName="客户" propId="5" i18n-en:displayName="Partner" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="partner">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="contactName" displayName="联系人姓名" propId="6" i18n-en:displayName="Contact Name" queryable="true"
               sortable="true" insertable="true" updatable="true">
@@ -67,15 +67,15 @@
         </prop>
         <prop name="sourceId" displayName="线索来源" propId="12" i18n-en:displayName="Source" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="source">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="leadStatusId" displayName="线索状态" propId="13" i18n-en:displayName="Lead Status" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="leadStatus">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="stageId" displayName="漏斗阶段" propId="14" i18n-en:displayName="Stage" queryable="true" sortable="true"
               insertable="true" updatable="true" ext:relation="stage">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="expectedRevenue" displayName="预期收入" propId="15" i18n-en:displayName="Expected Revenue"
               queryable="true" sortable="true" insertable="true" updatable="true">
@@ -107,7 +107,7 @@
         </prop>
         <prop name="campaignId" displayName="营销活动" propId="22" i18n-en:displayName="Campaign" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="campaign">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="utmMedium" displayName="UTM Medium" propId="23" i18n-en:displayName="UTM Medium" queryable="true"
               sortable="true" insertable="true" updatable="true">
@@ -123,11 +123,11 @@
         </prop>
         <prop name="teamId" displayName="销售团队" propId="26" i18n-en:displayName="Team" queryable="true" sortable="true"
               insertable="true" updatable="true" ext:relation="team">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="lostReasonId" displayName="丢单原因" propId="27" i18n-en:displayName="Lost Reason" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="lostReason">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="lostReasonDesc" displayName="丢单描述" propId="28" i18n-en:displayName="Lost Reason Description"
               queryable="true" sortable="true" insertable="true" updatable="true">
@@ -183,7 +183,7 @@
         </prop>
         <prop name="territoryId" displayName="销售区域" propId="41" i18n-en:displayName="Territory" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="territory">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="partner" i18n-en:displayName="Partner" tagSet="pub" ext:kind="to-one" internal="true"
               queryable="true" ext:joinLeftProp="partnerId" ext:joinRightProp="id" ext:joinRightDisplayProp="name"

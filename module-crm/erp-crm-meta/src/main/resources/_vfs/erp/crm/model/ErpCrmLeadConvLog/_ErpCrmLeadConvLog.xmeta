@@ -20,24 +20,24 @@
 
     <props>
         <prop name="id" displayName="ID" propId="1" i18n-en:displayName="ID" tagSet="seq-default" mandatory="true"
-              queryable="true" sortable="true" insertable="true" updatable="false" graphql:type="String">
-            <schema type="java.lang.Long"/>
+              queryable="true" sortable="true" insertable="true" updatable="false">
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="leadId" displayName="线索/商机" propId="2" i18n-en:displayName="Lead" mandatory="true" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="lead">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="orgId" displayName="业务组织" propId="3" i18n-en:displayName="Organization" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="org">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="fromStageId" displayName="前阶段" propId="4" i18n-en:displayName="From Stage" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="fromStage">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="toStageId" displayName="后阶段" propId="5" i18n-en:displayName="To Stage" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="toStage">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="changedAt" displayName="变更时间" propId="6" i18n-en:displayName="Changed At" tagSet="clock"
               mandatory="true" queryable="true" sortable="true" insertable="true" updatable="true">

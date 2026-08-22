@@ -791,10 +791,10 @@
       "longParams": [],
       "refDomain": "crm",
       "evidence": "module-cs/erp-cs-service/src/main/java/app/erp/cs/service/entity/TicketAssignResolver.java:5",
-      "note": "类型级引用（id 语境经变量流转时由编译器驱动/域 plan grep 定位调用点）",
+      "note": "已退役：M3.4 crm plan 2026-08-22-2311-1 Phase 2 B 义务兑付（crm String 翻转后 cs 侧 import 类型级引用自然对齐，零代码变更核证；cs 7 链重建绿 + 185/185 复跑维持）",
       "deferredUntil": "M3.4",
       "retireOwner": "M3.4",
-      "status": "active"
+      "status": "retired"
     },
     {
       "id": "bridge-main-054",
@@ -806,10 +806,10 @@
       "longParams": [],
       "refDomain": "crm",
       "evidence": "module-cs/erp-cs-service/src/main/java/app/erp/cs/service/entity/TicketAssignResolver.java:6",
-      "note": "类型级引用（id 语境经变量流转时由编译器驱动/域 plan grep 定位调用点）",
+      "note": "已退役：M3.4 crm plan 2026-08-22-2311-1 Phase 2 B 义务兑付（crm String 翻转后 cs 侧 import 类型级引用自然对齐，零代码变更核证；cs 7 链重建绿 + 185/185 复跑维持）",
       "deferredUntil": "M3.4",
       "retireOwner": "M3.4",
-      "status": "active"
+      "status": "retired"
     },
     {
       "id": "bridge-main-055",
@@ -821,10 +821,10 @@
       "longParams": [],
       "refDomain": "crm",
       "evidence": "module-cs/erp-cs-service/src/main/java/app/erp/cs/service/entity/TicketAssignResolver.java:3",
-      "note": "方法未声明于接口文件（ICrudBiz 等继承方法）——Long 参数签名以晚域 plan 翻转时为准",
+      "note": "已退役：M3.4 crm plan 2026-08-22-2311-1 Phase 2 B 义务兑付（findList 仅 eq(\"code\") VARCHAR 过滤零 id 穿越，M3.5 已核证；crm String 翻转后签名自然对齐零代码变更；cs 7 链重建绿 + 185/185 复跑维持）",
       "deferredUntil": "M3.4",
       "retireOwner": "M3.4",
-      "status": "active"
+      "status": "retired"
     },
     {
       "id": "bridge-main-056",
@@ -836,10 +836,10 @@
       "longParams": [],
       "refDomain": "crm",
       "evidence": "module-cs/erp-cs-service/src/main/java/app/erp/cs/service/entity/TicketAssignResolver.java:4",
-      "note": "方法未声明于接口文件（ICrudBiz 等继承方法）——Long 参数签名以晚域 plan 翻转时为准",
+      "note": "已退役：M3.4 crm plan 2026-08-22-2311-1 Phase 2 B 义务兑付（eq(\"teamId\", getId()) crm 域内 String↔String 自洽无跨域类型穿越；crm String 翻转后签名自然对齐零代码变更；cs 7 链重建绿 + 185/185 复跑维持）",
       "deferredUntil": "M3.4",
       "retireOwner": "M3.4",
-      "status": "active"
+      "status": "retired"
     },
     {
       "id": "bridge-main-057",
@@ -1737,7 +1737,7 @@
       ],
       "deferredUntil": "M3.5",
       "retireOwner": "M3.5",
-      "note": "早域 test 引用晚域——早域 plan Phase 3 消费（本域测试适配）；晚域翻转时复核。已退役（本域侧）：M3.5 cs plan 2026-08-22-0002-3 Phase 3 兑付（crm seed 局部桥——TestErpCsCatalogFulfillmentEngine:72 注释 + CRM_TEAM_ID Long 常量 + seedMember(Long,Long) crm Long 实体侧自洽，cs String 侧转换消费，读路径核验 = 185 测试全绿）；晚域 M3.4 翻转时移除局部桥",
+      "note": "早域 test 引用晚域——早域 plan Phase 3 消费（本域测试适配）；晚域翻转时复核。已退役（本域侧）：M3.5 cs plan 2026-08-22-0002-3 Phase 3 兑付（crm seed 局部桥——TestErpCsCatalogFulfillmentEngine:72 注释 + CRM_TEAM_ID Long 常量 + seedMember(Long,Long) crm Long 实体侧自洽，cs String 侧转换消费，读路径核验 = 185 测试全绿）；晚域 M3.4 翻转时移除局部桥。crm 半边已回收：M3.4 crm plan 2026-08-22-2311-1 Phase 3 兑付（CRM_TEAM_ID 「9405」String 化 + seedMember(String,String) String 直传 + bridge 注释移除；cs 185/185 复跑维持）",
       "status": "retired"
     },
     {
@@ -1772,7 +1772,7 @@
       ],
       "deferredUntil": "M3.5",
       "retireOwner": "M3.5",
-      "note": "早域 test 引用晚域——早域 plan Phase 3 消费（本域测试适配）；晚域翻转时复核。已退役（本域侧）：M3.5 cs plan 2026-08-22-0002-3 Phase 3 兑付（crm seed 局部桥——TestErpCsTicketCreateEnrichment:75 注释 + seedMemberInSession(Long,Long) crm Long 实体侧自洽，cs String 侧转换消费，读路径核验 = 185 测试全绿）；晚域 M3.4 翻转时移除局部桥",
+      "note": "早域 test 引用晚域——早域 plan Phase 3 消费（本域测试适配）；晚域翻转时复核。已退役（本域侧）：M3.5 cs plan 2026-08-22-0002-3 Phase 3 兑付（crm seed 局部桥——TestErpCsTicketCreateEnrichment:75 注释 + seedMemberInSession(Long,Long) crm Long 实体侧自洽，cs String 侧转换消费，读路径核验 = 185 测试全绿）；晚域 M3.4 翻转时移除局部桥。crm 半边已回收：M3.4 crm plan 2026-08-22-2311-1 Phase 3 兑付（CRM_TEAM_ID 「6601」+ seedMemberInSession 「6701..6703」String 直传 + bridge 注释移除；cs 185/185 复跑维持）",
       "status": "retired"
     },
     {
@@ -1792,7 +1792,7 @@
       ],
       "deferredUntil": "M3.5",
       "retireOwner": "M3.5",
-      "note": "早域 test 引用晚域——早域 plan Phase 3 消费（本域测试适配）；晚域翻转时复核。已退役（本域侧）：M3.5 cs plan 2026-08-22-0002-3 Phase 3 兑付（mock 桩保持 crm Long 实体/IBiz 签名（TestMockCrmBizModels:23 类注释 + app-test-mock-crm.beans.xml ioc:type），与未迁移 crm jar 签名一致，cs 侧断言局部转换消费，读路径核验 = 185 测试全绿）；晚域 M3.4 翻转时随 mock 一并回收",
+      "note": "早域 test 引用晚域——早域 plan Phase 3 消费（本域测试适配）；晚域翻转时复核。已退役（本域侧）：M3.5 cs plan 2026-08-22-0002-3 Phase 3 兑付（mock 桩保持 crm Long 实体/IBiz 签名（TestMockCrmBizModels:23 类注释 + app-test-mock-crm.beans.xml ioc:type），与未迁移 crm jar 签名一致，cs 侧断言局部转换消费，读路径核验 = 185 测试全绿）；晚域 M3.4 翻转时随 mock 一并回收。crm 半边已回收：M3.4 crm plan 2026-08-22-2311-1 Phase 3 兑付（mock 桩零方法级 id 签名 = 随 String IBiz 自然对齐 + stale bridge 注释移除）",
       "status": "retired"
     },
     {
@@ -2162,7 +2162,7 @@
       ],
       "deferredUntil": "M3.5",
       "retireOwner": "M3.5",
-      "note": "A3' 同类补登条目（登记册扫描器 import 口径盲区：beans 资源 ioc:type FQN 不产生 import 语句；补登证据 = M3.5 cs plan 2026-08-22-0002-3 Phase 1 FQN 复扫）。与 bridge-test-116 同 mock 基建，Phase 3 随批适配退役",
+      "note": "A3' 同类补登条目（登记册扫描器 import 口径盲区：beans 资源 ioc:type FQN 不产生 import 语句；补登证据 = M3.5 cs plan 2026-08-22-0002-3 Phase 1 FQN 复扫）。与 bridge-test-116 同 mock 基建，Phase 3 随批适配退役。crm 半边已核证：M3.4 crm plan 2026-08-22-2311-1 Phase 3（ioc:type FQN = 接口全限定名未随迁移变化，零变更核证）",
       "status": "retired"
     },
     {

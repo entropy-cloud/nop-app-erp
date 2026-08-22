@@ -24,7 +24,7 @@ public interface IErpCrmQuotaBiz extends ICrudBiz<ErpCrmQuota> {
      * 显式值优先（该层级已直接配置 quotaAmount 则直接返回，否则向下聚合子节点求和）。
      */
     @BizQuery
-    ErpCrmQuota getQuotaRollup(@Optional @Name("territoryId") Long territoryId,
+    ErpCrmQuota getQuotaRollup(@Optional @Name("territoryId") String territoryId,
                                 @Name("periodType") String periodType,
                                 @Name("fiscalYear") int fiscalYear,
                                 @Optional @Name("periodLabel") String periodLabel,
@@ -34,13 +34,13 @@ public interface IErpCrmQuotaBiz extends ICrudBiz<ErpCrmQuota> {
      * 定稿锁定：isFinalized=true，已定稿抛 {@code ERR_QUOTA_FINALIZED}。
      */
     @BizMutation
-    ErpCrmQuota finalizeQuota(@Name("quotaId") Long quotaId, IServiceContext context);
+    ErpCrmQuota finalizeQuota(@Name("quotaId") String quotaId, IServiceContext context);
 
     /**
      * 解冻：isFinalized=false。已定稿配额唯一允许的修改入口。
      */
     @BizMutation
-    ErpCrmQuota unfinalizeQuota(@Name("quotaId") Long quotaId, IServiceContext context);
+    ErpCrmQuota unfinalizeQuota(@Name("quotaId") String quotaId, IServiceContext context);
 
     /**
      * 年度配额按季（4 行）或月（12 行）均分生成子期间配额行。
@@ -48,7 +48,7 @@ public interface IErpCrmQuotaBiz extends ICrudBiz<ErpCrmQuota> {
      * 仅 periodType=ANNUAL 配额可均分；目标配额须未定稿。
      */
     @BizMutation
-    List<ErpCrmQuota> distributeAnnualQuota(@Name("quotaId") Long quotaId,
+    List<ErpCrmQuota> distributeAnnualQuota(@Name("quotaId") String quotaId,
                                              @Optional @Name("periodType") String periodType,
                                              IServiceContext context);
 
@@ -58,7 +58,7 @@ public interface IErpCrmQuotaBiz extends ICrudBiz<ErpCrmQuota> {
      * <p>对齐 {@code docs/design/crm/territory.md §业务规则 3}（实际/预测/目标同屏对比）。
      */
     @BizQuery
-    ErpCrmTerritoryPipeline getTerritoryPipeline(@Optional @Name("territoryId") Long territoryId,
+    ErpCrmTerritoryPipeline getTerritoryPipeline(@Optional @Name("territoryId") String territoryId,
                                                   @Name("periodLabel") String periodLabel,
                                                   IServiceContext context);
 }

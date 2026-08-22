@@ -52,8 +52,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         initDatabaseSchema = OptionalBoolean.TRUE,
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpCrmLeadScoringRecalcJob extends JunitAutoTestCase {
-    static final Long ORG_ID = 1601L;
-    static final Long SCORE_CONFIG_ID = 6201L;
+    static final String ORG_ID = "1601";
+    static final String SCORE_CONFIG_ID = "6201";
 
     private static final IServiceContext CTX = new ServiceContextImpl();
 
@@ -88,22 +88,22 @@ public class TestErpCrmLeadScoringRecalcJob extends JunitAutoTestCase {
     /** ① batch 任务级执行：active（NEW）线索经 SCHEDULED 触发生成评分记录（append-only + 行级快照）。 */
     @Test
     public void testScheduledBatchScoresActiveLeads() {
-        final Long[] leadA = new Long[1];
-        final Long[] leadB = new Long[1];
+        final String[] leadA = new String[1];
+        final String[] leadB = new String[1];
         ormTemplate.runInSession(() -> {
-            seedStage(6101L, "STG-B", "已接触", 10, 50);
+            seedStage("6101", "STG-B", "已接触", 10, 50);
             seedScoreConfig(SCORE_CONFIG_ID, "批量评分", 70, 30);
-            seedConfigLine(6211L, SCORE_CONFIG_ID, "JOB_TITLE", "职位层级", 50,
+            seedConfigLine("6211", SCORE_CONFIG_ID, "JOB_TITLE", "职位层级", 50,
                     ErpCrmConstants.SCORING_METHOD_LOOKUP, "jobTitle",
                     "[{\"value\":\"C-level\",\"label\":\"C-level\",\"score\":15},{\"value\":\"Manager\",\"label\":\"经理\",\"score\":5}]",
                     15, 10);
-            seedConfigLine(6212L, SCORE_CONFIG_ID, "COMPANY_NAME", "公司名称", 50,
+            seedConfigLine("6212", SCORE_CONFIG_ID, "COMPANY_NAME", "公司名称", 50,
                     ErpCrmConstants.SCORING_METHOD_BOOLEAN, "companyName",
                     "[{\"value\":\"Acme Corp\"}]", 10, 20);
 
-            leadA[0] = seedLead(6301L, "LEAD-BATCH-A", ErpCrmConstants.LEAD_TYPE_LEAD,
+            leadA[0] = seedLead("6301", "LEAD-BATCH-A", ErpCrmConstants.LEAD_TYPE_LEAD,
                     ErpCrmConstants.DOC_STATUS_NEW, "C-level", "Acme Corp");
-            leadB[0] = seedLead(6302L, "LEAD-BATCH-B", ErpCrmConstants.LEAD_TYPE_LEAD,
+            leadB[0] = seedLead("6302", "LEAD-BATCH-B", ErpCrmConstants.LEAD_TYPE_LEAD,
                     ErpCrmConstants.DOC_STATUS_NEW, "Manager", "Acme Corp");
         });
 
@@ -124,19 +124,19 @@ public class TestErpCrmLeadScoringRecalcJob extends JunitAutoTestCase {
     /** ② loader 过滤：终态线索（CONVERTED/LOST/CANCELLED）被排除不评分。 */
     @Test
     public void testTerminalLeadsExcludedByLoader() {
-        final Long[] converted = new Long[1];
-        final Long[] lost = new Long[1];
-        final Long[] cancelled = new Long[1];
+        final String[] converted = new String[1];
+        final String[] lost = new String[1];
+        final String[] cancelled = new String[1];
         ormTemplate.runInSession(() -> {
             seedScoreConfig(SCORE_CONFIG_ID, "批量评分-终态", 70, 30);
-            seedConfigLine(6213L, SCORE_CONFIG_ID, "JOB_TITLE", "职位层级", 50,
+            seedConfigLine("6213", SCORE_CONFIG_ID, "JOB_TITLE", "职位层级", 50,
                     ErpCrmConstants.SCORING_METHOD_LOOKUP, "jobTitle",
                     "[{\"value\":\"C-level\",\"label\":\"C-level\",\"score\":15}]", 15, 10);
-            converted[0] = seedLead(6401L, "LEAD-TERM-CONV", ErpCrmConstants.LEAD_TYPE_LEAD,
+            converted[0] = seedLead("6401", "LEAD-TERM-CONV", ErpCrmConstants.LEAD_TYPE_LEAD,
                     ErpCrmConstants.DOC_STATUS_CONVERTED, "C-level", "Acme Corp");
-            lost[0] = seedLead(6402L, "LEAD-TERM-LOST", ErpCrmConstants.LEAD_TYPE_LEAD,
+            lost[0] = seedLead("6402", "LEAD-TERM-LOST", ErpCrmConstants.LEAD_TYPE_LEAD,
                     ErpCrmConstants.DOC_STATUS_LOST, "C-level", "Acme Corp");
-            cancelled[0] = seedLead(6403L, "LEAD-TERM-CANCEL", ErpCrmConstants.LEAD_TYPE_LEAD,
+            cancelled[0] = seedLead("6403", "LEAD-TERM-CANCEL", ErpCrmConstants.LEAD_TYPE_LEAD,
                     ErpCrmConstants.DOC_STATUS_CANCELLED, "C-level", "Acme Corp");
         });
 
@@ -150,13 +150,13 @@ public class TestErpCrmLeadScoringRecalcJob extends JunitAutoTestCase {
     /** ③ cron 空值跳过语义：schedule-cron 配置为空时 helper 跳过（INFO 日志，不评分）。 */
     @Test
     public void testCronEmptySkipsHelperRecalc() {
-        final Long[] lead = new Long[1];
+        final String[] lead = new String[1];
         ormTemplate.runInSession(() -> {
             seedScoreConfig(SCORE_CONFIG_ID, "批量评分-cron空", 70, 30);
-            seedConfigLine(6214L, SCORE_CONFIG_ID, "JOB_TITLE", "职位层级", 50,
+            seedConfigLine("6214", SCORE_CONFIG_ID, "JOB_TITLE", "职位层级", 50,
                     ErpCrmConstants.SCORING_METHOD_LOOKUP, "jobTitle",
                     "[{\"value\":\"C-level\",\"label\":\"C-level\",\"score\":15}]", 15, 10);
-            lead[0] = seedLead(6501L, "LEAD-CRON-EMPTY", ErpCrmConstants.LEAD_TYPE_LEAD,
+            lead[0] = seedLead("6501", "LEAD-CRON-EMPTY", ErpCrmConstants.LEAD_TYPE_LEAD,
                     ErpCrmConstants.DOC_STATUS_NEW, "C-level", "Acme Corp");
         });
 
@@ -177,18 +177,18 @@ public class TestErpCrmLeadScoringRecalcJob extends JunitAutoTestCase {
     /** ④ 失败隔离：单条失败线索（ERR_LEAD_NOT_FOUND）WARN 记录不阻断其余线索评分。 */
     @Test
     public void testPerItemFailureIsolation() {
-        final Long[] lead = new Long[1];
+        final String[] lead = new String[1];
         ormTemplate.runInSession(() -> {
             seedScoreConfig(SCORE_CONFIG_ID, "批量评分-隔离", 70, 30);
-            seedConfigLine(6215L, SCORE_CONFIG_ID, "JOB_TITLE", "职位层级", 50,
+            seedConfigLine("6215", SCORE_CONFIG_ID, "JOB_TITLE", "职位层级", 50,
                     ErpCrmConstants.SCORING_METHOD_LOOKUP, "jobTitle",
                     "[{\"value\":\"C-level\",\"label\":\"C-level\",\"score\":15}]", 15, 10);
-            lead[0] = seedLead(6601L, "LEAD-ISOLATION", ErpCrmConstants.LEAD_TYPE_LEAD,
+            lead[0] = seedLead("6601", "LEAD-ISOLATION", ErpCrmConstants.LEAD_TYPE_LEAD,
                     ErpCrmConstants.DOC_STATUS_NEW, "C-level", "Acme Corp");
         });
 
         // 失败线索（不存在）→ REQUIRES_NEW 回滚 + WARN，不抛出
-        boolean failed = ormTemplate.runInSession(session -> recalcHelper.recalculateOne(999999L, CTX));
+        boolean failed = ormTemplate.runInSession(session -> recalcHelper.recalculateOne("999999", CTX));
         assertEquals(false, failed, "不存在的线索评分失败应返回 false（隔离）");
         ILoggingEvent warnLog = findLog("erp-crm-lead-scoring-recalc-failed");
         assertNotNull(warnLog, "失败应记录 WARN 日志（显式可观测）");
@@ -202,7 +202,7 @@ public class TestErpCrmLeadScoringRecalcJob extends JunitAutoTestCase {
 
     // ---------- helpers ----------
 
-    private Long seedLead(Long id, String code, String leadType, String docStatus,
+    private String seedLead(String id, String code, String leadType, String docStatus,
                           String jobTitle, String companyName) {
         ErpCrmLead lead = new ErpCrmLead();
         lead.setId(id);
@@ -217,7 +217,7 @@ public class TestErpCrmLeadScoringRecalcJob extends JunitAutoTestCase {
         return id;
     }
 
-    private void seedStage(Long id, String code, String name, int sequence, int defaultProbability) {
+    private void seedStage(String id, String code, String name, int sequence, int defaultProbability) {
         ErpCrmStage stage = new ErpCrmStage();
         stage.setId(id);
         stage.setCode(code);
@@ -227,7 +227,7 @@ public class TestErpCrmLeadScoringRecalcJob extends JunitAutoTestCase {
         daoProvider.daoFor(ErpCrmStage.class).saveEntity(stage);
     }
 
-    private void seedScoreConfig(Long id, String name, int autoThreshold, int minFollowUp) {
+    private void seedScoreConfig(String id, String name, int autoThreshold, int minFollowUp) {
         ErpCrmLeadScoreConfig config = new ErpCrmLeadScoreConfig();
         config.setId(id);
         config.setCode("SCORE-BATCH-" + id);
@@ -239,7 +239,7 @@ public class TestErpCrmLeadScoringRecalcJob extends JunitAutoTestCase {
         daoProvider.daoFor(ErpCrmLeadScoreConfig.class).saveEntity(config);
     }
 
-    private void seedConfigLine(Long id, Long configId, String code, String name, int weight,
+    private void seedConfigLine(String id, String configId, String code, String name, int weight,
                                 String method, String formula, String lookupTable,
                                 Integer maxScore, int sequence) {
         ErpCrmLeadScoreConfigLine line = new ErpCrmLeadScoreConfigLine();
@@ -257,7 +257,7 @@ public class TestErpCrmLeadScoringRecalcJob extends JunitAutoTestCase {
         daoProvider.daoFor(ErpCrmLeadScoreConfigLine.class).saveEntity(line);
     }
 
-    private ErpCrmLeadScore reloadScore(Long leadId) {
+    private ErpCrmLeadScore reloadScore(String leadId) {
         IEntityDao<ErpCrmLeadScore> dao = daoProvider.daoFor(ErpCrmLeadScore.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("leadId", leadId));
@@ -266,14 +266,14 @@ public class TestErpCrmLeadScoringRecalcJob extends JunitAutoTestCase {
         return dao.findAllByQuery(q).stream().findFirst().orElse(null);
     }
 
-    private List<ErpCrmLeadScore> loadScores(Long leadId) {
+    private List<ErpCrmLeadScore> loadScores(String leadId) {
         IEntityDao<ErpCrmLeadScore> dao = daoProvider.daoFor(ErpCrmLeadScore.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("leadId", leadId));
         return dao.findAllByQuery(q);
     }
 
-    private List<ErpCrmLeadScoreLine> loadScoreLines(Long scoreId) {
+    private List<ErpCrmLeadScoreLine> loadScoreLines(String scoreId) {
         IEntityDao<ErpCrmLeadScoreLine> dao = daoProvider.daoFor(ErpCrmLeadScoreLine.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("scoreId", scoreId));

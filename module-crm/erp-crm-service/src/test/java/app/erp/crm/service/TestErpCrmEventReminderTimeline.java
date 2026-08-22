@@ -46,7 +46,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpCrmEventReminderTimeline extends JunitAutoTestCase {
 
-    static final Long ORG_ID = 1301L;
+    static final String ORG_ID = "1301";
 
     @Inject
     IDaoProvider daoProvider;
@@ -57,10 +57,10 @@ public class TestErpCrmEventReminderTimeline extends JunitAutoTestCase {
 
     @Test
     public void testCompleteAndCancelAndDerivation() {
-        Long leadId = 3001L;
-        Long eventCompletedId = 3101L;
-        Long eventCancelledId = 3102L;
-        Long eventPlannedId = 3103L;
+        String leadId = "3001";
+        String eventCompletedId = "3101";
+        String eventCancelledId = "3102";
+        String eventPlannedId = "3103";
         ormTemplate.runInSession(() -> {
             seedLead(leadId, "LEAD-EVT-001");
             // 一条已完成的早期事件（completed 时间较早）→ 决定 lastContactDate
@@ -95,11 +95,11 @@ public class TestErpCrmEventReminderTimeline extends JunitAutoTestCase {
 
     @Test
     public void testIllegalTransitionRejected() {
-        Long eventId = 3201L;
+        String eventId = "3201";
         ormTemplate.runInSession(() -> {
-            seedLead(3301L, "LEAD-EVT-002");
+            seedLead("3301", "LEAD-EVT-002");
             seedEvent(eventId, "EVT-ILLEGAL-001", ErpCrmConstants.EVENT_STATUS_COMPLETED,
-                    3301L, LocalDateTime.of(2026, 7, 1, 10, 0));
+                    "3301", LocalDateTime.of(2026, 7, 1, 10, 0));
         });
         // COMPLETED 不可再次 complete
         ApiResponse<?> bad = complete(eventId);
@@ -113,7 +113,7 @@ public class TestErpCrmEventReminderTimeline extends JunitAutoTestCase {
 
     @Test
     public void testEventWithoutLeadSkipsDerivation() {
-        Long eventId = 3401L;
+        String eventId = "3401";
         ormTemplate.runInSession(() -> seedEvent(eventId, "EVT-NOLEAD-001",
                 ErpCrmConstants.EVENT_STATUS_PLANNED, null, LocalDateTime.of(2026, 7, 1, 10, 0)));
         // 无 relatedLeadId，complete 不应抛错（跳过派生）
@@ -127,13 +127,13 @@ public class TestErpCrmEventReminderTimeline extends JunitAutoTestCase {
         LocalDateTime now = CoreMetrics.currentDateTime();
         ormTemplate.runInSession(() -> {
             // 窗口内（now+10min）
-            seedEvent(3501L, "EVT-DUE-001", ErpCrmConstants.EVENT_STATUS_PLANNED,
+            seedEvent("3501", "EVT-DUE-001", ErpCrmConstants.EVENT_STATUS_PLANNED,
                     null, now.plusMinutes(10));
             // 窗口外（now+200min）
-            seedEvent(3502L, "EVT-DUE-002", ErpCrmConstants.EVENT_STATUS_PLANNED,
+            seedEvent("3502", "EVT-DUE-002", ErpCrmConstants.EVENT_STATUS_PLANNED,
                     null, now.plusMinutes(200));
             // 已完成不在提醒范围
-            seedEvent(3503L, "EVT-DUE-003", ErpCrmConstants.EVENT_STATUS_COMPLETED,
+            seedEvent("3503", "EVT-DUE-003", ErpCrmConstants.EVENT_STATUS_COMPLETED,
                     null, now.plusMinutes(5));
         });
         ApiResponse<?> resp = findDueReminders(60);
@@ -147,14 +147,14 @@ public class TestErpCrmEventReminderTimeline extends JunitAutoTestCase {
 
     @Test
     public void testGetLeadTimeline() {
-        Long leadId = 3601L;
+        String leadId = "3601";
         ormTemplate.runInSession(() -> {
             seedLead(leadId, "LEAD-TL-001");
-            seedEvent(3611L, "EVT-TL-001", ErpCrmConstants.EVENT_STATUS_COMPLETED,
+            seedEvent("3611", "EVT-TL-001", ErpCrmConstants.EVENT_STATUS_COMPLETED,
                     leadId, LocalDateTime.of(2026, 7, 2, 10, 0));
-            seedEvent(3612L, "EVT-TL-002", ErpCrmConstants.EVENT_STATUS_PLANNED,
+            seedEvent("3612", "EVT-TL-002", ErpCrmConstants.EVENT_STATUS_PLANNED,
                     leadId, LocalDateTime.of(2026, 7, 3, 10, 0));
-            seedActivity(3621L, leadId, "ACT-TL-001", LocalDateTime.of(2026, 7, 1, 10, 0));
+            seedActivity("3621", leadId, "ACT-TL-001", LocalDateTime.of(2026, 7, 1, 10, 0));
         });
         ApiResponse<?> resp = getLeadTimeline(leadId);
         assertEquals(0, resp.getStatus(), "getLeadTimeline 应成功");
@@ -172,11 +172,11 @@ public class TestErpCrmEventReminderTimeline extends JunitAutoTestCase {
 
     // ---------- rpc helpers ----------
 
-    private ApiResponse<?> complete(Long eventId) {
+    private ApiResponse<?> complete(String eventId) {
         return rpc(mutation, "ErpCrmEvent__complete", Map.of("eventId", eventId));
     }
 
-    private ApiResponse<?> cancel(Long eventId) {
+    private ApiResponse<?> cancel(String eventId) {
         return rpc(mutation, "ErpCrmEvent__cancel", Map.of("eventId", eventId));
     }
 
@@ -184,7 +184,7 @@ public class TestErpCrmEventReminderTimeline extends JunitAutoTestCase {
         return rpc(query, "ErpCrmEvent__findDueReminders", Map.of("windowMinutes", windowMinutes));
     }
 
-    private ApiResponse<?> getLeadTimeline(Long leadId) {
+    private ApiResponse<?> getLeadTimeline(String leadId) {
         return rpc(query, "ErpCrmEvent__getLeadTimeline", Map.of("leadId", leadId));
     }
 
@@ -195,7 +195,7 @@ public class TestErpCrmEventReminderTimeline extends JunitAutoTestCase {
 
     // ---------- seed helpers ----------
 
-    private void seedLead(Long id, String code) {
+    private void seedLead(String id, String code) {
         ErpCrmLead lead = new ErpCrmLead();
         lead.setId(id);
         lead.setCode(code);
@@ -206,7 +206,7 @@ public class TestErpCrmEventReminderTimeline extends JunitAutoTestCase {
         daoProvider.daoFor(ErpCrmLead.class).saveEntity(lead);
     }
 
-    private void seedEvent(Long id, String code, String status, Long relatedLeadId,
+    private void seedEvent(String id, String code, String status, String relatedLeadId,
                            LocalDateTime startDateTime) {
         ErpCrmEvent event = new ErpCrmEvent();
         event.setId(id);
@@ -222,7 +222,7 @@ public class TestErpCrmEventReminderTimeline extends JunitAutoTestCase {
         daoProvider.daoFor(ErpCrmEvent.class).saveEntity(event);
     }
 
-    private void seedActivity(Long id, Long leadId, String summary, LocalDateTime activityDate) {
+    private void seedActivity(String id, String leadId, String summary, LocalDateTime activityDate) {
         ErpCrmActivity activity = new ErpCrmActivity();
         activity.setId(id);
         activity.setLeadId(leadId);
@@ -235,11 +235,11 @@ public class TestErpCrmEventReminderTimeline extends JunitAutoTestCase {
 
     // ---------- reload helpers ----------
 
-    private ErpCrmEvent reloadEvent(Long id) {
+    private ErpCrmEvent reloadEvent(String id) {
         return daoProvider.daoFor(ErpCrmEvent.class).getEntityById(id);
     }
 
-    private ErpCrmLead reloadLead(Long id) {
+    private ErpCrmLead reloadLead(String id) {
         return daoProvider.daoFor(ErpCrmLead.class).getEntityById(id);
     }
 }

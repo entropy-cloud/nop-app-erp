@@ -200,16 +200,16 @@ public class _ErpCrmFunnelStageMetrics extends DynamicOrmEntity{
 
     
     /* ID: ID */
-    private java.lang.Long _id;
+    private java.lang.String _id;
     
     /* 所属漏斗: FUNNEL_ID */
-    private java.lang.Long _funnelId;
+    private java.lang.String _funnelId;
     
     /* 业务组织: ORG_ID */
-    private java.lang.Long _orgId;
+    private java.lang.String _orgId;
     
     /* 阶段: STAGE_ID */
-    private java.lang.Long _stageId;
+    private java.lang.String _stageId;
     
     /* 阶段排序: STAGE_ORDER */
     private java.lang.Integer _stageOrder;
@@ -417,9 +417,9 @@ public class _ErpCrmFunnelStageMetrics extends DynamicOrmEntity{
         switch(propId){
         
             case PROP_ID_id:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_id));
                }
                setId(typedValue);
@@ -427,9 +427,9 @@ public class _ErpCrmFunnelStageMetrics extends DynamicOrmEntity{
             }
         
             case PROP_ID_funnelId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_funnelId));
                }
                setFunnelId(typedValue);
@@ -437,9 +437,9 @@ public class _ErpCrmFunnelStageMetrics extends DynamicOrmEntity{
             }
         
             case PROP_ID_orgId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_orgId));
                }
                setOrgId(typedValue);
@@ -447,9 +447,9 @@ public class _ErpCrmFunnelStageMetrics extends DynamicOrmEntity{
             }
         
             case PROP_ID_stageId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_stageId));
                }
                setStageId(typedValue);
@@ -647,28 +647,28 @@ public class _ErpCrmFunnelStageMetrics extends DynamicOrmEntity{
         
             case PROP_ID_id:{
                onInitProp(propId);
-               this._id = (java.lang.Long)value;
+               this._id = (java.lang.String)value;
                orm_id(); // 如果是设置主键字段，则触发watcher
                break;
             }
         
             case PROP_ID_funnelId:{
                onInitProp(propId);
-               this._funnelId = (java.lang.Long)value;
+               this._funnelId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_orgId:{
                onInitProp(propId);
-               this._orgId = (java.lang.Long)value;
+               this._orgId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_stageId:{
                onInitProp(propId);
-               this._stageId = (java.lang.Long)value;
+               this._stageId = (java.lang.String)value;
                
                break;
             }
@@ -808,7 +808,7 @@ public class _ErpCrmFunnelStageMetrics extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final java.lang.Long getId(){
+    public final java.lang.String getId(){
          onPropGet(PROP_ID_id);
          return _id;
     }
@@ -816,7 +816,7 @@ public class _ErpCrmFunnelStageMetrics extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final void setId(java.lang.Long value){
+    public final void setId(java.lang.String value){
         if(onPropSet(PROP_ID_id,value)){
             this._id = value;
             internalClearRefs(PROP_ID_id);
@@ -827,7 +827,7 @@ public class _ErpCrmFunnelStageMetrics extends DynamicOrmEntity{
     /**
      * 所属漏斗: FUNNEL_ID
      */
-    public final java.lang.Long getFunnelId(){
+    public final java.lang.String getFunnelId(){
          onPropGet(PROP_ID_funnelId);
          return _funnelId;
     }
@@ -835,7 +835,7 @@ public class _ErpCrmFunnelStageMetrics extends DynamicOrmEntity{
     /**
      * 所属漏斗: FUNNEL_ID
      */
-    public final void setFunnelId(java.lang.Long value){
+    public final void setFunnelId(java.lang.String value){
         if(onPropSet(PROP_ID_funnelId,value)){
             this._funnelId = value;
             internalClearRefs(PROP_ID_funnelId);
@@ -846,7 +846,7 @@ public class _ErpCrmFunnelStageMetrics extends DynamicOrmEntity{
     /**
      * 业务组织: ORG_ID
      */
-    public final java.lang.Long getOrgId(){
+    public final java.lang.String getOrgId(){
          onPropGet(PROP_ID_orgId);
          return _orgId;
     }
@@ -854,7 +854,7 @@ public class _ErpCrmFunnelStageMetrics extends DynamicOrmEntity{
     /**
      * 业务组织: ORG_ID
      */
-    public final void setOrgId(java.lang.Long value){
+    public final void setOrgId(java.lang.String value){
         if(onPropSet(PROP_ID_orgId,value)){
             this._orgId = value;
             internalClearRefs(PROP_ID_orgId);
@@ -865,7 +865,7 @@ public class _ErpCrmFunnelStageMetrics extends DynamicOrmEntity{
     /**
      * 阶段: STAGE_ID
      */
-    public final java.lang.Long getStageId(){
+    public final java.lang.String getStageId(){
          onPropGet(PROP_ID_stageId);
          return _stageId;
     }
@@ -873,7 +873,7 @@ public class _ErpCrmFunnelStageMetrics extends DynamicOrmEntity{
     /**
      * 阶段: STAGE_ID
      */
-    public final void setStageId(java.lang.Long value){
+    public final void setStageId(java.lang.String value){
         if(onPropSet(PROP_ID_stageId,value)){
             this._stageId = value;
             internalClearRefs(PROP_ID_stageId);

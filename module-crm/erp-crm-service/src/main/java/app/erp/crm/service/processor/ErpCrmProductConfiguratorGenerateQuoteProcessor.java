@@ -55,11 +55,11 @@ public class ErpCrmProductConfiguratorGenerateQuoteProcessor {
     @Inject
     BundlePricingCalculator bundlePricingCalculator;
 
-    public ErpSalQuotation generateQuote(Long configuratorId,
+    public ErpSalQuotation generateQuote(String configuratorId,
                                          Map<String, String> selectedFeatures,
-                                         Long bundlePricingId,
+                                         String bundlePricingId,
                                          Map<String, Object> priceRuleContext,
-                                         Long leadId,
+                                         String leadId,
                                          IServiceContext context) {
         ErpCrmProductConfigurator configurator = requireConfiguratorActive(configuratorId);
 
@@ -70,7 +70,7 @@ public class ErpCrmProductConfiguratorGenerateQuoteProcessor {
         String configSnapshot = buildConfigSnapshot(selectedFeatures, eval);
 
         // 定价计算（currencyId 优先取 priceRuleContext.currencyId）
-        Long currencyId = readLong(priceRuleContext, "currencyId");
+        String currencyId = readString(priceRuleContext, "currencyId");
         BigDecimal totalAmount;
         String pricingSource;
         if (bundlePricingId != null) {
@@ -81,8 +81,8 @@ public class ErpCrmProductConfiguratorGenerateQuoteProcessor {
             PriceRuleEngine.PriceResult pr = computePriceRule(priceRuleContext);
             if (!pr.isMatched() && readBigDecimal(priceRuleContext, "basePrice") == null) {
                 throw new NopException(ErpCrmErrors.ERR_CPQ_NO_PRICE_MATCHED)
-                        .param(ErpCrmErrors.ARG_PRODUCT_ID, readLong(priceRuleContext, "productId"))
-                        .param(ErpCrmErrors.ARG_CUSTOMER_ID, readLong(priceRuleContext, "customerId"))
+                        .param(ErpCrmErrors.ARG_PRODUCT_ID, readString(priceRuleContext, "productId"))
+                        .param(ErpCrmErrors.ARG_CUSTOMER_ID, readString(priceRuleContext, "customerId"))
                         .param(ErpCrmErrors.ARG_QUANTITY, readBigDecimal(priceRuleContext, "quantity"));
             }
             totalAmount = pr.isMatched()
@@ -101,14 +101,14 @@ public class ErpCrmProductConfiguratorGenerateQuoteProcessor {
         if (currencyId == null) {
             // 无显式 currencyId：拒绝（report quotation save 强制 currencyId 非空）
             throw new NopException(ErpCrmErrors.ERR_CPQ_NO_PRICE_MATCHED)
-                    .param(ErpCrmErrors.ARG_PRODUCT_ID, readLong(priceRuleContext, "productId"))
-                    .param(ErpCrmErrors.ARG_CUSTOMER_ID, readLong(priceRuleContext, "customerId"))
+                    .param(ErpCrmErrors.ARG_PRODUCT_ID, readString(priceRuleContext, "productId"))
+                    .param(ErpCrmErrors.ARG_CUSTOMER_ID, readString(priceRuleContext, "customerId"))
                     .param(ErpCrmErrors.ARG_QUANTITY, readBigDecimal(priceRuleContext, "quantity"));
         }
 
         // 跨域建报价单（IErpSalQuotationBiz.save，0549-2 范式）
-        Long leadOrgId = null;
-        Long leadCustomerId = null;
+        String leadOrgId = null;
+        String leadCustomerId = null;
         ErpCrmLead lead = null;
         if (leadId != null) {
             lead = leadDao().getEntityById(leadId);
@@ -133,7 +133,7 @@ public class ErpCrmProductConfiguratorGenerateQuoteProcessor {
 
     // ---------- 校验 ----------
 
-    protected ErpCrmProductConfigurator requireConfiguratorActive(Long configuratorId) {
+    protected ErpCrmProductConfigurator requireConfiguratorActive(String configuratorId) {
         if (configuratorId == null) {
             throw new NopException(ErpCrmErrors.ERR_CPQ_CONFIGURATOR_INACTIVE)
                     .param(ErpCrmErrors.ARG_CONFIGURATOR_ID, configuratorId);
@@ -157,13 +157,13 @@ public class ErpCrmProductConfiguratorGenerateQuoteProcessor {
 
     // ---------- 加载 ----------
 
-    protected List<ErpCrmConfigRule> loadConfigRules(Long configuratorId) {
+    protected List<ErpCrmConfigRule> loadConfigRules(String configuratorId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("configuratorId", configuratorId));
         return configRuleDao().findAllByQuery(q);
     }
 
-    protected BundlePricingCalculator.BundleResult computeBundle(Long bundlePricingId) {
+    protected BundlePricingCalculator.BundleResult computeBundle(String bundlePricingId) {
         ErpCrmBundlePricing bundle = bundleDao().getEntityById(bundlePricingId);
         QueryBean q = new QueryBean();
         q.addFilter(eq("bundleId", bundlePricingId));
@@ -172,17 +172,17 @@ public class ErpCrmProductConfiguratorGenerateQuoteProcessor {
     }
 
     protected PriceRuleEngine.PriceResult computePriceRule(Map<String, Object> ctx) {
-        Long productId = readLong(ctx, "productId");
-        Long customerId = readLong(ctx, "customerId");
+        String productId = readString(ctx, "productId");
+        String customerId = readString(ctx, "customerId");
         BigDecimal quantity = readBigDecimal(ctx, "quantity");
-        Long ctxCurrency = readLong(ctx, "currencyId");
+        String ctxCurrency = readString(ctx, "currencyId");
         BigDecimal basePrice = readBigDecimal(ctx, "basePrice");
         LocalDate now = CoreMetrics.today();
         List<ErpCrmPriceRule> activeRules = loadActivePriceRules(productId, customerId, ctxCurrency);
         return priceRuleEngine.resolvePrice(productId, customerId, quantity, ctxCurrency, now, basePrice, activeRules);
     }
 
-    protected List<ErpCrmPriceRule> loadActivePriceRules(Long productId, Long customerId, Long currencyId) {
+    protected List<ErpCrmPriceRule> loadActivePriceRules(String productId, String customerId, String currencyId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("isActive", Boolean.TRUE));
         List<ErpCrmPriceRule> all = priceRuleDao().findAllByQuery(q);
@@ -217,8 +217,8 @@ public class ErpCrmProductConfiguratorGenerateQuoteProcessor {
 
     protected Map<String, Object> buildQuotationData(ErpCrmProductConfigurator configurator,
                                                      String configSnapshot,
-                                                     BigDecimal totalAmount, Long currencyId,
-                                                     Long leadOrgId, Long leadCustomerId,
+                                                     BigDecimal totalAmount, String currencyId,
+                                                     String leadOrgId, String leadCustomerId,
                                                      String pricingSource,
                                                      Map<String, Object> priceRuleContext) {
         Map<String, Object> data = new LinkedHashMap<>();
@@ -227,7 +227,7 @@ public class ErpCrmProductConfiguratorGenerateQuoteProcessor {
         if (leadCustomerId != null) {
             data.put("customerId", leadCustomerId);
         } else if (priceRuleContext != null) {
-            Long ctxCustomer = readLong(priceRuleContext, "customerId");
+            String ctxCustomer = readString(priceRuleContext, "customerId");
             if (ctxCustomer != null) {
                 data.put("customerId", ctxCustomer);
             }
@@ -256,22 +256,12 @@ public class ErpCrmProductConfiguratorGenerateQuoteProcessor {
 
     // ---------- 辅助 ----------
 
-    protected Long readLong(Map<String, Object> ctx, String key) {
+    protected String readString(Map<String, Object> ctx, String key) {
         if (ctx == null) {
             return null;
         }
         Object v = ctx.get(key);
-        if (v == null) {
-            return null;
-        }
-        if (v instanceof Number) {
-            return ((Number) v).longValue();
-        }
-        try {
-            return Long.valueOf(String.valueOf(v));
-        } catch (NumberFormatException e) {
-            return null;
-        }
+        return v != null ? String.valueOf(v) : null;
     }
 
     protected BigDecimal readBigDecimal(Map<String, Object> ctx, String key) {

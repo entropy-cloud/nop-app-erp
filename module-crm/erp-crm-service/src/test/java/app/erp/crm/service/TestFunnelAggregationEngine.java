@@ -36,11 +36,11 @@ public class TestFunnelAggregationEngine extends BaseTestCase {
 
     private final FunnelAggregationEngine engine = new FunnelAggregationEngine();
 
-    private static final Long STAGE_NEW = 3001L;
-    private static final Long STAGE_QUALIFIED = 3002L;
-    private static final Long STAGE_WON = 3003L;
-    private static final Long REASON_PRICE = 4001L;
-    private static final Long REASON_COMPETITOR = 4002L;
+    private static final String STAGE_NEW = "3001";
+    private static final String STAGE_QUALIFIED = "3002";
+    private static final String STAGE_WON = "3003";
+    private static final String REASON_PRICE = "4001";
+    private static final String REASON_COMPETITOR = "4002";
 
     @Test
     public void testEmptyDataReturnsZeroStructure() {
@@ -64,11 +64,11 @@ public class TestFunnelAggregationEngine extends BaseTestCase {
     @Test
     public void testHeaderMetricsWonLostRevenue() {
         // 3 leads：1 won（CONVERTED, revenue=1000），1 lost（LOST, revenue=500），1 active opp（QUALIFIED, prob=50, revenue=2000）
-        ErpCrmLead won = newLead(1001L, "OPP-WON", ErpCrmConstants.LEAD_TYPE_OPPORTUNITY,
+        ErpCrmLead won = newLead("1001", "OPP-WON", ErpCrmConstants.LEAD_TYPE_OPPORTUNITY,
                 ErpCrmConstants.DOC_STATUS_CONVERTED, new BigDecimal("1000"), 90, REASON_PRICE);
-        ErpCrmLead lost = newLead(1002L, "OPP-LOST", ErpCrmConstants.LEAD_TYPE_OPPORTUNITY,
+        ErpCrmLead lost = newLead("1002", "OPP-LOST", ErpCrmConstants.LEAD_TYPE_OPPORTUNITY,
                 ErpCrmConstants.DOC_STATUS_LOST, new BigDecimal("500"), 0, REASON_COMPETITOR);
-        ErpCrmLead active = newLead(1003L, "OPP-ACTIVE", ErpCrmConstants.LEAD_TYPE_OPPORTUNITY,
+        ErpCrmLead active = newLead("1003", "OPP-ACTIVE", ErpCrmConstants.LEAD_TYPE_OPPORTUNITY,
                 ErpCrmConstants.DOC_STATUS_QUALIFIED, new BigDecimal("2000"), 50, null);
 
         List<ErpCrmStage> stages = Arrays.asList(
@@ -100,28 +100,28 @@ public class TestFunnelAggregationEngine extends BaseTestCase {
     public void testStageMetricsConversionAndDropOff() {
         // 4 leads 流转：3 进入 NEW → 2 进入 QUALIFIED → 1 进入 WON；1 在 QUALIFIED 丢失
         LocalDateTime t0 = LocalDateTime.of(2026, 7, 1, 9, 0);
-        ErpCrmLead l1 = newLead(2001L, "L1", ErpCrmConstants.LEAD_TYPE_OPPORTUNITY,
+        ErpCrmLead l1 = newLead("2001", "L1", ErpCrmConstants.LEAD_TYPE_OPPORTUNITY,
                 ErpCrmConstants.DOC_STATUS_CONVERTED, new BigDecimal("1000"), 90, null);
-        ErpCrmLead l2 = newLead(2002L, "L2", ErpCrmConstants.LEAD_TYPE_OPPORTUNITY,
+        ErpCrmLead l2 = newLead("2002", "L2", ErpCrmConstants.LEAD_TYPE_OPPORTUNITY,
                 ErpCrmConstants.DOC_STATUS_QUALIFIED, new BigDecimal("800"), 50, null);
-        ErpCrmLead l3 = newLead(2003L, "L3", ErpCrmConstants.LEAD_TYPE_LEAD,
+        ErpCrmLead l3 = newLead("2003", "L3", ErpCrmConstants.LEAD_TYPE_LEAD,
                 ErpCrmConstants.DOC_STATUS_NEW, null, 0, null);
-        ErpCrmLead l4 = newLead(2004L, "L4", ErpCrmConstants.LEAD_TYPE_OPPORTUNITY,
+        ErpCrmLead l4 = newLead("2004", "L4", ErpCrmConstants.LEAD_TYPE_OPPORTUNITY,
                 ErpCrmConstants.DOC_STATUS_LOST, new BigDecimal("600"), 0, REASON_PRICE);
 
         List<ErpCrmLeadConvLog> logs = Arrays.asList(
                 // L1: NEW → QUALIFIED → WON
-                newLog(5001L, 2001L, null, STAGE_NEW, t0),
-                newLog(5002L, 2001L, STAGE_NEW, STAGE_QUALIFIED, t0.plusDays(2)),
-                newLog(5003L, 2001L, STAGE_QUALIFIED, STAGE_WON, t0.plusDays(7)),
+                newLog("5001", "2001", null, STAGE_NEW, t0),
+                newLog("5002", "2001", STAGE_NEW, STAGE_QUALIFIED, t0.plusDays(2)),
+                newLog("5003", "2001", STAGE_QUALIFIED, STAGE_WON, t0.plusDays(7)),
                 // L2: NEW → QUALIFIED
-                newLog(5004L, 2002L, null, STAGE_NEW, t0),
-                newLog(5005L, 2002L, STAGE_NEW, STAGE_QUALIFIED, t0.plusDays(3)),
+                newLog("5004", "2002", null, STAGE_NEW, t0),
+                newLog("5005", "2002", STAGE_NEW, STAGE_QUALIFIED, t0.plusDays(3)),
                 // L3: NEW
-                newLog(5006L, 2003L, null, STAGE_NEW, t0),
+                newLog("5006", "2003", null, STAGE_NEW, t0),
                 // L4: NEW → QUALIFIED（在 QUALIFIED 丢失）
-                newLog(5007L, 2004L, null, STAGE_NEW, t0),
-                newLog(5008L, 2004L, STAGE_NEW, STAGE_QUALIFIED, t0.plusDays(1)));
+                newLog("5007", "2004", null, STAGE_NEW, t0),
+                newLog("5008", "2004", STAGE_NEW, STAGE_QUALIFIED, t0.plusDays(1)));
 
         List<ErpCrmStage> stages = Arrays.asList(
                 newStage(STAGE_NEW, "新线索", 10),
@@ -170,11 +170,11 @@ public class TestFunnelAggregationEngine extends BaseTestCase {
     public void testAvgDaysInStage() {
         // L1 在 NEW 阶段停留 2 天（t0 → t0+2d）
         LocalDateTime t0 = LocalDateTime.of(2026, 7, 1, 9, 0);
-        ErpCrmLead l1 = newLead(3001L, "L1", ErpCrmConstants.LEAD_TYPE_OPPORTUNITY,
+        ErpCrmLead l1 = newLead("3001", "L1", ErpCrmConstants.LEAD_TYPE_OPPORTUNITY,
                 ErpCrmConstants.DOC_STATUS_QUALIFIED, new BigDecimal("500"), 50, null);
         List<ErpCrmLeadConvLog> logs = Arrays.asList(
-                newLog(6001L, 3001L, null, STAGE_NEW, t0),
-                newLog(6002L, 3001L, STAGE_NEW, STAGE_QUALIFIED, t0.plusDays(2)));
+                newLog("6001", "3001", null, STAGE_NEW, t0),
+                newLog("6002", "3001", STAGE_NEW, STAGE_QUALIFIED, t0.plusDays(2)));
         List<ErpCrmStage> stages = Arrays.asList(
                 newStage(STAGE_NEW, "新线索", 10),
                 newStage(STAGE_QUALIFIED, "已验证", 20));
@@ -191,14 +191,14 @@ public class TestFunnelAggregationEngine extends BaseTestCase {
     @Test
     public void testLostReasonTopNLimited() {
         // 3 个不同丢失原因（各 1 次），TOP N=2 → 仅返回 2 条
-        ErpCrmLead l1 = newLead(4001L, "L1", ErpCrmConstants.LEAD_TYPE_OPPORTUNITY,
+        ErpCrmLead l1 = newLead("4001", "L1", ErpCrmConstants.LEAD_TYPE_OPPORTUNITY,
                 ErpCrmConstants.DOC_STATUS_LOST, new BigDecimal("100"), 0, REASON_PRICE);
-        ErpCrmLead l2 = newLead(4002L, "L2", ErpCrmConstants.LEAD_TYPE_OPPORTUNITY,
+        ErpCrmLead l2 = newLead("4002", "L2", ErpCrmConstants.LEAD_TYPE_OPPORTUNITY,
                 ErpCrmConstants.DOC_STATUS_LOST, new BigDecimal("100"), 0, REASON_COMPETITOR);
         LocalDateTime t0 = LocalDateTime.of(2026, 7, 1, 9, 0);
         List<ErpCrmLeadConvLog> logs = Arrays.asList(
-                newLog(7001L, 4001L, null, STAGE_NEW, t0),
-                newLog(7002L, 4002L, null, STAGE_NEW, t0));
+                newLog("7001", "4001", null, STAGE_NEW, t0),
+                newLog("7002", "4002", null, STAGE_NEW, t0));
         List<ErpCrmStage> stages = Collections.singletonList(newStage(STAGE_NEW, "新线索", 10));
 
         FunnelAggregationEngine.FunnelSnapshot snapshot = engine.aggregate(
@@ -216,7 +216,7 @@ public class TestFunnelAggregationEngine extends BaseTestCase {
 
     @Test
     public void testNoLostReasonsReturnsNullTop() {
-        ErpCrmLead l1 = newLead(5001L, "L1", ErpCrmConstants.LEAD_TYPE_OPPORTUNITY,
+        ErpCrmLead l1 = newLead("5001", "L1", ErpCrmConstants.LEAD_TYPE_OPPORTUNITY,
                 ErpCrmConstants.DOC_STATUS_QUALIFIED, new BigDecimal("500"), 50, null);
         List<ErpCrmStage> stages = Collections.singletonList(newStage(STAGE_NEW, "新线索", 10));
         FunnelAggregationEngine.FunnelSnapshot snapshot = engine.aggregate(
@@ -251,16 +251,16 @@ public class TestFunnelAggregationEngine extends BaseTestCase {
 
     // ---------- helpers ----------
 
-    private ErpCrmFunnelStageMetrics findByStageId(List<ErpCrmFunnelStageMetrics> list, Long stageId) {
+    private ErpCrmFunnelStageMetrics findByStageId(List<ErpCrmFunnelStageMetrics> list, String stageId) {
         return list.stream().filter(m -> stageId.equals(m.getStageId())).findFirst().orElseThrow();
     }
 
-    private ErpCrmLead newLead(Long id, String code, String leadType, String docStatus,
-                                BigDecimal revenue, int probability, Long lostReasonId) {
+    private ErpCrmLead newLead(String id, String code, String leadType, String docStatus,
+                                BigDecimal revenue, int probability, String lostReasonId) {
         ErpCrmLead lead = new ErpCrmLead();
         lead.setId(id);
         lead.setCode(code);
-        lead.setOrgId(1301L);
+        lead.setOrgId("1301");
         lead.setLeadType(leadType);
         lead.setDocStatus(docStatus);
         lead.setExpectedRevenue(revenue);
@@ -269,7 +269,7 @@ public class TestFunnelAggregationEngine extends BaseTestCase {
         return lead;
     }
 
-    private ErpCrmStage newStage(Long id, String name, int sequence) {
+    private ErpCrmStage newStage(String id, String name, int sequence) {
         ErpCrmStage stage = new ErpCrmStage();
         stage.setId(id);
         stage.setStageName(name);
@@ -277,7 +277,7 @@ public class TestFunnelAggregationEngine extends BaseTestCase {
         return stage;
     }
 
-    private ErpCrmLeadConvLog newLog(Long id, Long leadId, Long fromStageId, Long toStageId, LocalDateTime changedAt) {
+    private ErpCrmLeadConvLog newLog(String id, String leadId, String fromStageId, String toStageId, LocalDateTime changedAt) {
         ErpCrmLeadConvLog log = new ErpCrmLeadConvLog();
         log.setId(id);
         log.setLeadId(leadId);
@@ -287,8 +287,8 @@ public class TestFunnelAggregationEngine extends BaseTestCase {
         return log;
     }
 
-    private Map<Long, ErpCrmLostReason> lostReasonMap() {
-        Map<Long, ErpCrmLostReason> map = new HashMap<>();
+    private Map<String, ErpCrmLostReason> lostReasonMap() {
+        Map<String, ErpCrmLostReason> map = new HashMap<>();
         ErpCrmLostReason r1 = new ErpCrmLostReason();
         r1.setId(REASON_PRICE);
         r1.setName("价格太高");

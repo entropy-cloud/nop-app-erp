@@ -6,7 +6,7 @@
     "items": [
       {
         "id": "2",
-        "bundleId": 1,
+        "bundleId": "1",
         "orgId": null,
         "productId": null,
         "quantity": null,

@@ -19,16 +19,16 @@
             <cols>
 
                 <!--ID-->
-                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="id" mandatory="true" sortable="true"/>
 
                 <!--线索/商机-->
-                <col id="leadId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="leadId" mandatory="true" sortable="true"/>
 
                 <!--业务组织-->
-                <col id="orgId" ui:number="true" sortable="true"/>
+                <col id="orgId" sortable="true"/>
 
                 <!--评分规则版本-->
-                <col id="configId" ui:number="true" sortable="true"/>
+                <col id="configId" sortable="true"/>
 
                 <!--总分-->
                 <col id="totalScore" ui:number="true" sortable="true"/>

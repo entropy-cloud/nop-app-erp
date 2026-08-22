@@ -20,24 +20,24 @@
 
     <props>
         <prop name="id" displayName="ID" propId="1" i18n-en:displayName="ID" tagSet="seq-default" mandatory="true"
-              queryable="true" sortable="true" insertable="true" updatable="false" graphql:type="String">
-            <schema type="java.lang.Long"/>
+              queryable="true" sortable="true" insertable="true" updatable="false">
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="orgId" displayName="业务组织" propId="2" i18n-en:displayName="Organization" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="org">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="periodId" displayName="预测期间" propId="3" i18n-en:displayName="Period" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="period">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="territoryId" displayName="销售区域" propId="4" i18n-en:displayName="Territory" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="territory">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="teamId" displayName="销售团队" propId="5" i18n-en:displayName="Team" queryable="true" sortable="true"
               insertable="true" updatable="true" ext:relation="team">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="ownerId" displayName="销售员" propId="6" i18n-en:displayName="Owner" queryable="true" sortable="true"
               insertable="true" updatable="true">
@@ -45,7 +45,7 @@
         </prop>
         <prop name="currencyId" displayName="币种" propId="7" i18n-en:displayName="Currency" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="currency">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="commitAmount" displayName="承诺金额" propId="8" i18n-en:displayName="Commit Amount" queryable="true"
               sortable="true" insertable="true" updatable="true">

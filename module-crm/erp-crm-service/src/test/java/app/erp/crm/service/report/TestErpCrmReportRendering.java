@@ -39,7 +39,7 @@ public class TestErpCrmReportRendering extends JunitAutoTestCase {
 
     private static final io.nop.core.context.IServiceContext CTX = new io.nop.core.context.ServiceContextImpl();
 
-    static final Long ORG_ID = 1L;
+    static final String ORG_ID = "1";
 
     @Inject
     ErpCrmReportBizModel reportBiz;
@@ -155,24 +155,24 @@ public class TestErpCrmReportRendering extends JunitAutoTestCase {
 
     private void seedFunnelBaseline() {
         ormTemplate.runInSession(() -> {
-            Long stageId = 9001L;
+            String stageId = "9001";
             seedStage(stageId, "STAGE-RPT");
-            seedLead(9101L, "LEAD-RPT-1", stageId, bd("10000"));
-            seedLead(9102L, "LEAD-RPT-2", stageId, bd("5000"));
+            seedLead("9101", "LEAD-RPT-1", stageId, bd("10000"));
+            seedLead("9102", "LEAD-RPT-2", stageId, bd("5000"));
         });
     }
 
     private void seedForecastBaseline() {
         ormTemplate.runInSession(() -> {
-            Long forecastId = 9201L;
-            Long leadId = 9401L;
+            String forecastId = "9201";
+            String leadId = "9401";
             seedForecast(forecastId, bd("10000"), bd("8000"), bd("12000"), bd("9000"), 5);
-            seedForecastLine(9301L, forecastId, leadId, bd("6000"));
-            seedForecastLine(9302L, forecastId, leadId, bd("4000"));
+            seedForecastLine("9301", forecastId, leadId, bd("6000"));
+            seedForecastLine("9302", forecastId, leadId, bd("4000"));
         });
     }
 
-    private void seedStage(Long id, String stageName) {
+    private void seedStage(String id, String stageName) {
         IEntityDao<ErpCrmStage> dao = daoProvider.daoFor(ErpCrmStage.class);
         ErpCrmStage s = new ErpCrmStage();
         s.orm_propValueByName("id", id);
@@ -183,7 +183,7 @@ public class TestErpCrmReportRendering extends JunitAutoTestCase {
         dao.saveEntity(s);
     }
 
-    private void seedLead(Long id, String code, Long stageId, BigDecimal expectedRevenue) {
+    private void seedLead(String id, String code, String stageId, BigDecimal expectedRevenue) {
         IEntityDao<ErpCrmLead> dao = daoProvider.daoFor(ErpCrmLead.class);
         ErpCrmLead l = new ErpCrmLead();
         l.orm_propValueByName("id", id);
@@ -197,13 +197,13 @@ public class TestErpCrmReportRendering extends JunitAutoTestCase {
         dao.saveEntity(l);
     }
 
-    private void seedForecast(Long id, BigDecimal commit, BigDecimal weighted,
+    private void seedForecast(String id, BigDecimal commit, BigDecimal weighted,
                               BigDecimal bestCase, BigDecimal expectedClosed, int oppCount) {
         IEntityDao<ErpCrmForecast> dao = daoProvider.daoFor(ErpCrmForecast.class);
         ErpCrmForecast f = new ErpCrmForecast();
         f.orm_propValueByName("id", id);
         f.setOrgId(ORG_ID);
-        f.setPeriodId(9901L);
+        f.setPeriodId("9901");
         f.setCommitAmount(commit);
         f.setWeightedAmount(weighted);
         f.setBestCaseAmount(bestCase);
@@ -212,7 +212,7 @@ public class TestErpCrmReportRendering extends JunitAutoTestCase {
         dao.saveEntity(f);
     }
 
-    private void seedForecastLine(Long id, Long forecastId, Long leadId, BigDecimal weightedRevenue) {
+    private void seedForecastLine(String id, String forecastId, String leadId, BigDecimal weightedRevenue) {
         IEntityDao<ErpCrmForecastLine> dao = daoProvider.daoFor(ErpCrmForecastLine.class);
         ErpCrmForecastLine l = new ErpCrmForecastLine();
         l.orm_propValueByName("id", id);

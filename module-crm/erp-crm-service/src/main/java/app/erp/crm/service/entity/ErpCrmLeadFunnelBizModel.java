@@ -13,6 +13,7 @@ import io.nop.api.core.annotations.biz.BizQuery;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.annotations.core.Optional;
 import io.nop.api.core.beans.query.QueryBean;
+import io.nop.api.core.convert.ConvertHelper;
 import io.nop.biz.crud.CrudBizModel;
 import io.nop.core.context.IServiceContext;
 import io.nop.dao.api.IEntityDao;
@@ -50,22 +51,22 @@ public class ErpCrmLeadFunnelBizModel extends CrudBizModel<ErpCrmLeadFunnel> imp
     @BizMutation
     public ErpCrmLeadFunnel refreshFunnel(@Name("periodStart") LocalDate periodStart,
                                            @Name("periodEnd") LocalDate periodEnd,
-                                           @Optional @Name("territoryId") Long territoryId,
-                                           @Optional @Name("teamId") Long teamId,
-                                           @Optional @Name("sourceId") Long sourceId,
+                                           @Optional @Name("territoryId") String territoryId,
+                                           @Optional @Name("teamId") String teamId,
+                                           @Optional @Name("sourceId") String sourceId,
                                            IServiceContext context) {
         return refreshFunnelProcessor.refreshFunnel(periodStart, periodEnd, territoryId, teamId, sourceId, context);
     }
 
     @Override
     @BizQuery
-    public Map<String, Object> getFunnelView(@Name("funnelId") Long funnelId, IServiceContext context) {
-        ErpCrmLeadFunnel funnel = requireEntity(String.valueOf(funnelId), null, context);
+    public Map<String, Object> getFunnelView(@Name("funnelId") String funnelId, IServiceContext context) {
+        ErpCrmLeadFunnel funnel = requireEntity(funnelId, null, context);
         List<ErpCrmFunnelStageMetrics> stages = loadStageMetrics(funnelId);
         stages.sort(Comparator
                 .comparingInt((ErpCrmFunnelStageMetrics s) ->
                         s.getStageOrder() != null ? s.getStageOrder() : Integer.MAX_VALUE)
-                .thenComparing(s -> s.getStageId() != null ? s.getStageId() : Long.MAX_VALUE));
+                .thenComparingLong(s -> s.getStageId() != null ? ConvertHelper.toLong(s.getStageId()) : Long.MAX_VALUE));
 
         Map<String, Object> view = new LinkedHashMap<>();
         view.put("funnelId", funnel.getId());
@@ -109,7 +110,7 @@ public class ErpCrmLeadFunnelBizModel extends CrudBizModel<ErpCrmLeadFunnel> imp
 
     // ---------- 内部辅助 ----------
 
-    protected List<ErpCrmFunnelStageMetrics> loadStageMetrics(Long funnelId) {
+    protected List<ErpCrmFunnelStageMetrics> loadStageMetrics(String funnelId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("funnelId", funnelId));
         return stageMetricsDao().findAllByQuery(q);

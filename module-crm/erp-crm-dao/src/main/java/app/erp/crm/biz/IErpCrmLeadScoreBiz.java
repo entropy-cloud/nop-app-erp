@@ -26,7 +26,7 @@ public interface IErpCrmLeadScoreBiz extends ICrudBiz<ErpCrmLeadScore> {
      * @return 评分记录；无 active config 时返回 null（triggeredAction=NONE，不阻断）
      */
     @BizMutation
-    ErpCrmLeadScore recalculateScore(@Name("leadId") Long leadId,
+    ErpCrmLeadScore recalculateScore(@Name("leadId") String leadId,
                                      @Optional @Name("triggerEvent") String triggerEvent,
                                      IServiceContext context);
 }

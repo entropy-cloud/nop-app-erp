@@ -251,19 +251,19 @@ public class _ErpCrmEvent extends DynamicOrmEntity{
 
     
     /* ID: ID */
-    private java.lang.Long _id;
+    private java.lang.String _id;
     
     /* 编码: CODE */
     private java.lang.String _code;
     
     /* 业务组织: ORG_ID */
-    private java.lang.Long _orgId;
+    private java.lang.String _orgId;
     
     /* 事件类型: EVENT_TYPE */
     private java.lang.String _eventType;
     
     /* 活动类别: EVENT_CATEGORY_ID */
-    private java.lang.Long _eventCategoryId;
+    private java.lang.String _eventCategoryId;
     
     /* 主题: SUBJECT */
     private java.lang.String _subject;
@@ -281,7 +281,7 @@ public class _ErpCrmEvent extends DynamicOrmEntity{
     private java.lang.Integer _duration;
     
     /* 关联线索/商机: RELATED_LEAD_ID */
-    private java.lang.Long _relatedLeadId;
+    private java.lang.String _relatedLeadId;
     
     /* 关联单据类型: RELATED_BILL_TYPE */
     private java.lang.String _relatedBillType;
@@ -290,10 +290,10 @@ public class _ErpCrmEvent extends DynamicOrmEntity{
     private java.lang.String _relatedBillCode;
     
     /* 关联客户: PARTNER_ID */
-    private java.lang.Long _partnerId;
+    private java.lang.String _partnerId;
     
     /* 联系人: CONTACT_ID */
-    private java.lang.Long _contactId;
+    private java.lang.String _contactId;
     
     /* 负责人: OWNER_ID */
     private java.lang.String _ownerId;
@@ -308,7 +308,7 @@ public class _ErpCrmEvent extends DynamicOrmEntity{
     private java.lang.Boolean _isRecurrent;
     
     /* 父事件: PARENT_EVENT_ID */
-    private java.lang.Long _parentEventId;
+    private java.lang.String _parentEventId;
     
     /* 提醒提前分钟数: REMINDER_MINUTES_BEFORE */
     private java.lang.Integer _reminderMinutesBefore;
@@ -504,9 +504,9 @@ public class _ErpCrmEvent extends DynamicOrmEntity{
         switch(propId){
         
             case PROP_ID_id:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_id));
                }
                setId(typedValue);
@@ -524,9 +524,9 @@ public class _ErpCrmEvent extends DynamicOrmEntity{
             }
         
             case PROP_ID_orgId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_orgId));
                }
                setOrgId(typedValue);
@@ -544,9 +544,9 @@ public class _ErpCrmEvent extends DynamicOrmEntity{
             }
         
             case PROP_ID_eventCategoryId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_eventCategoryId));
                }
                setEventCategoryId(typedValue);
@@ -604,9 +604,9 @@ public class _ErpCrmEvent extends DynamicOrmEntity{
             }
         
             case PROP_ID_relatedLeadId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_relatedLeadId));
                }
                setRelatedLeadId(typedValue);
@@ -634,9 +634,9 @@ public class _ErpCrmEvent extends DynamicOrmEntity{
             }
         
             case PROP_ID_partnerId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_partnerId));
                }
                setPartnerId(typedValue);
@@ -644,9 +644,9 @@ public class _ErpCrmEvent extends DynamicOrmEntity{
             }
         
             case PROP_ID_contactId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_contactId));
                }
                setContactId(typedValue);
@@ -694,9 +694,9 @@ public class _ErpCrmEvent extends DynamicOrmEntity{
             }
         
             case PROP_ID_parentEventId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_parentEventId));
                }
                setParentEventId(typedValue);
@@ -794,7 +794,7 @@ public class _ErpCrmEvent extends DynamicOrmEntity{
         
             case PROP_ID_id:{
                onInitProp(propId);
-               this._id = (java.lang.Long)value;
+               this._id = (java.lang.String)value;
                orm_id(); // 如果是设置主键字段，则触发watcher
                break;
             }
@@ -808,7 +808,7 @@ public class _ErpCrmEvent extends DynamicOrmEntity{
         
             case PROP_ID_orgId:{
                onInitProp(propId);
-               this._orgId = (java.lang.Long)value;
+               this._orgId = (java.lang.String)value;
                
                break;
             }
@@ -822,7 +822,7 @@ public class _ErpCrmEvent extends DynamicOrmEntity{
         
             case PROP_ID_eventCategoryId:{
                onInitProp(propId);
-               this._eventCategoryId = (java.lang.Long)value;
+               this._eventCategoryId = (java.lang.String)value;
                
                break;
             }
@@ -864,7 +864,7 @@ public class _ErpCrmEvent extends DynamicOrmEntity{
         
             case PROP_ID_relatedLeadId:{
                onInitProp(propId);
-               this._relatedLeadId = (java.lang.Long)value;
+               this._relatedLeadId = (java.lang.String)value;
                
                break;
             }
@@ -885,14 +885,14 @@ public class _ErpCrmEvent extends DynamicOrmEntity{
         
             case PROP_ID_partnerId:{
                onInitProp(propId);
-               this._partnerId = (java.lang.Long)value;
+               this._partnerId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_contactId:{
                onInitProp(propId);
-               this._contactId = (java.lang.Long)value;
+               this._contactId = (java.lang.String)value;
                
                break;
             }
@@ -927,7 +927,7 @@ public class _ErpCrmEvent extends DynamicOrmEntity{
         
             case PROP_ID_parentEventId:{
                onInitProp(propId);
-               this._parentEventId = (java.lang.Long)value;
+               this._parentEventId = (java.lang.String)value;
                
                break;
             }
@@ -997,7 +997,7 @@ public class _ErpCrmEvent extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final java.lang.Long getId(){
+    public final java.lang.String getId(){
          onPropGet(PROP_ID_id);
          return _id;
     }
@@ -1005,7 +1005,7 @@ public class _ErpCrmEvent extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final void setId(java.lang.Long value){
+    public final void setId(java.lang.String value){
         if(onPropSet(PROP_ID_id,value)){
             this._id = value;
             internalClearRefs(PROP_ID_id);
@@ -1035,7 +1035,7 @@ public class _ErpCrmEvent extends DynamicOrmEntity{
     /**
      * 业务组织: ORG_ID
      */
-    public final java.lang.Long getOrgId(){
+    public final java.lang.String getOrgId(){
          onPropGet(PROP_ID_orgId);
          return _orgId;
     }
@@ -1043,7 +1043,7 @@ public class _ErpCrmEvent extends DynamicOrmEntity{
     /**
      * 业务组织: ORG_ID
      */
-    public final void setOrgId(java.lang.Long value){
+    public final void setOrgId(java.lang.String value){
         if(onPropSet(PROP_ID_orgId,value)){
             this._orgId = value;
             internalClearRefs(PROP_ID_orgId);
@@ -1073,7 +1073,7 @@ public class _ErpCrmEvent extends DynamicOrmEntity{
     /**
      * 活动类别: EVENT_CATEGORY_ID
      */
-    public final java.lang.Long getEventCategoryId(){
+    public final java.lang.String getEventCategoryId(){
          onPropGet(PROP_ID_eventCategoryId);
          return _eventCategoryId;
     }
@@ -1081,7 +1081,7 @@ public class _ErpCrmEvent extends DynamicOrmEntity{
     /**
      * 活动类别: EVENT_CATEGORY_ID
      */
-    public final void setEventCategoryId(java.lang.Long value){
+    public final void setEventCategoryId(java.lang.String value){
         if(onPropSet(PROP_ID_eventCategoryId,value)){
             this._eventCategoryId = value;
             internalClearRefs(PROP_ID_eventCategoryId);
@@ -1187,7 +1187,7 @@ public class _ErpCrmEvent extends DynamicOrmEntity{
     /**
      * 关联线索/商机: RELATED_LEAD_ID
      */
-    public final java.lang.Long getRelatedLeadId(){
+    public final java.lang.String getRelatedLeadId(){
          onPropGet(PROP_ID_relatedLeadId);
          return _relatedLeadId;
     }
@@ -1195,7 +1195,7 @@ public class _ErpCrmEvent extends DynamicOrmEntity{
     /**
      * 关联线索/商机: RELATED_LEAD_ID
      */
-    public final void setRelatedLeadId(java.lang.Long value){
+    public final void setRelatedLeadId(java.lang.String value){
         if(onPropSet(PROP_ID_relatedLeadId,value)){
             this._relatedLeadId = value;
             internalClearRefs(PROP_ID_relatedLeadId);
@@ -1244,7 +1244,7 @@ public class _ErpCrmEvent extends DynamicOrmEntity{
     /**
      * 关联客户: PARTNER_ID
      */
-    public final java.lang.Long getPartnerId(){
+    public final java.lang.String getPartnerId(){
          onPropGet(PROP_ID_partnerId);
          return _partnerId;
     }
@@ -1252,7 +1252,7 @@ public class _ErpCrmEvent extends DynamicOrmEntity{
     /**
      * 关联客户: PARTNER_ID
      */
-    public final void setPartnerId(java.lang.Long value){
+    public final void setPartnerId(java.lang.String value){
         if(onPropSet(PROP_ID_partnerId,value)){
             this._partnerId = value;
             internalClearRefs(PROP_ID_partnerId);
@@ -1263,7 +1263,7 @@ public class _ErpCrmEvent extends DynamicOrmEntity{
     /**
      * 联系人: CONTACT_ID
      */
-    public final java.lang.Long getContactId(){
+    public final java.lang.String getContactId(){
          onPropGet(PROP_ID_contactId);
          return _contactId;
     }
@@ -1271,7 +1271,7 @@ public class _ErpCrmEvent extends DynamicOrmEntity{
     /**
      * 联系人: CONTACT_ID
      */
-    public final void setContactId(java.lang.Long value){
+    public final void setContactId(java.lang.String value){
         if(onPropSet(PROP_ID_contactId,value)){
             this._contactId = value;
             internalClearRefs(PROP_ID_contactId);
@@ -1358,7 +1358,7 @@ public class _ErpCrmEvent extends DynamicOrmEntity{
     /**
      * 父事件: PARENT_EVENT_ID
      */
-    public final java.lang.Long getParentEventId(){
+    public final java.lang.String getParentEventId(){
          onPropGet(PROP_ID_parentEventId);
          return _parentEventId;
     }
@@ -1366,7 +1366,7 @@ public class _ErpCrmEvent extends DynamicOrmEntity{
     /**
      * 父事件: PARENT_EVENT_ID
      */
-    public final void setParentEventId(java.lang.Long value){
+    public final void setParentEventId(java.lang.String value){
         if(onPropSet(PROP_ID_parentEventId,value)){
             this._parentEventId = value;
             internalClearRefs(PROP_ID_parentEventId);

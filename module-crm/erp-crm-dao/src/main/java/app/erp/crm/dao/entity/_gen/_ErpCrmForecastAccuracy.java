@@ -199,25 +199,25 @@ public class _ErpCrmForecastAccuracy extends DynamicOrmEntity{
 
     
     /* ID: ID */
-    private java.lang.Long _id;
+    private java.lang.String _id;
     
     /* 预测数据: FORECAST_ID */
-    private java.lang.Long _forecastId;
+    private java.lang.String _forecastId;
     
     /* 业务组织: ORG_ID */
-    private java.lang.Long _orgId;
+    private java.lang.String _orgId;
     
     /* 预测期间: PERIOD_ID */
-    private java.lang.Long _periodId;
+    private java.lang.String _periodId;
     
     /* 销售员: OWNER_ID */
     private java.lang.String _ownerId;
     
     /* 销售团队: TEAM_ID */
-    private java.lang.Long _teamId;
+    private java.lang.String _teamId;
     
     /* 销售区域: TERRITORY_ID */
-    private java.lang.Long _territoryId;
+    private java.lang.String _territoryId;
     
     /* 承诺金额: COMMIT_AMOUNT */
     private java.math.BigDecimal _commitAmount;
@@ -410,9 +410,9 @@ public class _ErpCrmForecastAccuracy extends DynamicOrmEntity{
         switch(propId){
         
             case PROP_ID_id:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_id));
                }
                setId(typedValue);
@@ -420,9 +420,9 @@ public class _ErpCrmForecastAccuracy extends DynamicOrmEntity{
             }
         
             case PROP_ID_forecastId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_forecastId));
                }
                setForecastId(typedValue);
@@ -430,9 +430,9 @@ public class _ErpCrmForecastAccuracy extends DynamicOrmEntity{
             }
         
             case PROP_ID_orgId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_orgId));
                }
                setOrgId(typedValue);
@@ -440,9 +440,9 @@ public class _ErpCrmForecastAccuracy extends DynamicOrmEntity{
             }
         
             case PROP_ID_periodId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_periodId));
                }
                setPeriodId(typedValue);
@@ -460,9 +460,9 @@ public class _ErpCrmForecastAccuracy extends DynamicOrmEntity{
             }
         
             case PROP_ID_teamId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_teamId));
                }
                setTeamId(typedValue);
@@ -470,9 +470,9 @@ public class _ErpCrmForecastAccuracy extends DynamicOrmEntity{
             }
         
             case PROP_ID_territoryId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_territoryId));
                }
                setTerritoryId(typedValue);
@@ -630,28 +630,28 @@ public class _ErpCrmForecastAccuracy extends DynamicOrmEntity{
         
             case PROP_ID_id:{
                onInitProp(propId);
-               this._id = (java.lang.Long)value;
+               this._id = (java.lang.String)value;
                orm_id(); // 如果是设置主键字段，则触发watcher
                break;
             }
         
             case PROP_ID_forecastId:{
                onInitProp(propId);
-               this._forecastId = (java.lang.Long)value;
+               this._forecastId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_orgId:{
                onInitProp(propId);
-               this._orgId = (java.lang.Long)value;
+               this._orgId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_periodId:{
                onInitProp(propId);
-               this._periodId = (java.lang.Long)value;
+               this._periodId = (java.lang.String)value;
                
                break;
             }
@@ -665,14 +665,14 @@ public class _ErpCrmForecastAccuracy extends DynamicOrmEntity{
         
             case PROP_ID_teamId:{
                onInitProp(propId);
-               this._teamId = (java.lang.Long)value;
+               this._teamId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_territoryId:{
                onInitProp(propId);
-               this._territoryId = (java.lang.Long)value;
+               this._territoryId = (java.lang.String)value;
                
                break;
             }
@@ -784,7 +784,7 @@ public class _ErpCrmForecastAccuracy extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final java.lang.Long getId(){
+    public final java.lang.String getId(){
          onPropGet(PROP_ID_id);
          return _id;
     }
@@ -792,7 +792,7 @@ public class _ErpCrmForecastAccuracy extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final void setId(java.lang.Long value){
+    public final void setId(java.lang.String value){
         if(onPropSet(PROP_ID_id,value)){
             this._id = value;
             internalClearRefs(PROP_ID_id);
@@ -803,7 +803,7 @@ public class _ErpCrmForecastAccuracy extends DynamicOrmEntity{
     /**
      * 预测数据: FORECAST_ID
      */
-    public final java.lang.Long getForecastId(){
+    public final java.lang.String getForecastId(){
          onPropGet(PROP_ID_forecastId);
          return _forecastId;
     }
@@ -811,7 +811,7 @@ public class _ErpCrmForecastAccuracy extends DynamicOrmEntity{
     /**
      * 预测数据: FORECAST_ID
      */
-    public final void setForecastId(java.lang.Long value){
+    public final void setForecastId(java.lang.String value){
         if(onPropSet(PROP_ID_forecastId,value)){
             this._forecastId = value;
             internalClearRefs(PROP_ID_forecastId);
@@ -822,7 +822,7 @@ public class _ErpCrmForecastAccuracy extends DynamicOrmEntity{
     /**
      * 业务组织: ORG_ID
      */
-    public final java.lang.Long getOrgId(){
+    public final java.lang.String getOrgId(){
          onPropGet(PROP_ID_orgId);
          return _orgId;
     }
@@ -830,7 +830,7 @@ public class _ErpCrmForecastAccuracy extends DynamicOrmEntity{
     /**
      * 业务组织: ORG_ID
      */
-    public final void setOrgId(java.lang.Long value){
+    public final void setOrgId(java.lang.String value){
         if(onPropSet(PROP_ID_orgId,value)){
             this._orgId = value;
             internalClearRefs(PROP_ID_orgId);
@@ -841,7 +841,7 @@ public class _ErpCrmForecastAccuracy extends DynamicOrmEntity{
     /**
      * 预测期间: PERIOD_ID
      */
-    public final java.lang.Long getPeriodId(){
+    public final java.lang.String getPeriodId(){
          onPropGet(PROP_ID_periodId);
          return _periodId;
     }
@@ -849,7 +849,7 @@ public class _ErpCrmForecastAccuracy extends DynamicOrmEntity{
     /**
      * 预测期间: PERIOD_ID
      */
-    public final void setPeriodId(java.lang.Long value){
+    public final void setPeriodId(java.lang.String value){
         if(onPropSet(PROP_ID_periodId,value)){
             this._periodId = value;
             internalClearRefs(PROP_ID_periodId);
@@ -879,7 +879,7 @@ public class _ErpCrmForecastAccuracy extends DynamicOrmEntity{
     /**
      * 销售团队: TEAM_ID
      */
-    public final java.lang.Long getTeamId(){
+    public final java.lang.String getTeamId(){
          onPropGet(PROP_ID_teamId);
          return _teamId;
     }
@@ -887,7 +887,7 @@ public class _ErpCrmForecastAccuracy extends DynamicOrmEntity{
     /**
      * 销售团队: TEAM_ID
      */
-    public final void setTeamId(java.lang.Long value){
+    public final void setTeamId(java.lang.String value){
         if(onPropSet(PROP_ID_teamId,value)){
             this._teamId = value;
             internalClearRefs(PROP_ID_teamId);
@@ -898,7 +898,7 @@ public class _ErpCrmForecastAccuracy extends DynamicOrmEntity{
     /**
      * 销售区域: TERRITORY_ID
      */
-    public final java.lang.Long getTerritoryId(){
+    public final java.lang.String getTerritoryId(){
          onPropGet(PROP_ID_territoryId);
          return _territoryId;
     }
@@ -906,7 +906,7 @@ public class _ErpCrmForecastAccuracy extends DynamicOrmEntity{
     /**
      * 销售区域: TERRITORY_ID
      */
-    public final void setTerritoryId(java.lang.Long value){
+    public final void setTerritoryId(java.lang.String value){
         if(onPropSet(PROP_ID_territoryId,value)){
             this._territoryId = value;
             internalClearRefs(PROP_ID_territoryId);

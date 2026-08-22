@@ -165,16 +165,16 @@ public class _ErpCrmLeadScoreLine extends DynamicOrmEntity{
 
     
     /* ID: ID */
-    private java.lang.Long _id;
+    private java.lang.String _id;
     
     /* 评分记录: SCORE_ID */
-    private java.lang.Long _scoreId;
+    private java.lang.String _scoreId;
     
     /* 业务组织: ORG_ID */
-    private java.lang.Long _orgId;
+    private java.lang.String _orgId;
     
     /* 对应准则行: CONFIG_LINE_ID */
-    private java.lang.Long _configLineId;
+    private java.lang.String _configLineId;
     
     /* 准则编码(快照): CRITERION_CODE */
     private java.lang.String _criterionCode;
@@ -352,9 +352,9 @@ public class _ErpCrmLeadScoreLine extends DynamicOrmEntity{
         switch(propId){
         
             case PROP_ID_id:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_id));
                }
                setId(typedValue);
@@ -362,9 +362,9 @@ public class _ErpCrmLeadScoreLine extends DynamicOrmEntity{
             }
         
             case PROP_ID_scoreId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_scoreId));
                }
                setScoreId(typedValue);
@@ -372,9 +372,9 @@ public class _ErpCrmLeadScoreLine extends DynamicOrmEntity{
             }
         
             case PROP_ID_orgId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_orgId));
                }
                setOrgId(typedValue);
@@ -382,9 +382,9 @@ public class _ErpCrmLeadScoreLine extends DynamicOrmEntity{
             }
         
             case PROP_ID_configLineId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_configLineId));
                }
                setConfigLineId(typedValue);
@@ -532,28 +532,28 @@ public class _ErpCrmLeadScoreLine extends DynamicOrmEntity{
         
             case PROP_ID_id:{
                onInitProp(propId);
-               this._id = (java.lang.Long)value;
+               this._id = (java.lang.String)value;
                orm_id(); // 如果是设置主键字段，则触发watcher
                break;
             }
         
             case PROP_ID_scoreId:{
                onInitProp(propId);
-               this._scoreId = (java.lang.Long)value;
+               this._scoreId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_orgId:{
                onInitProp(propId);
-               this._orgId = (java.lang.Long)value;
+               this._orgId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_configLineId:{
                onInitProp(propId);
-               this._configLineId = (java.lang.Long)value;
+               this._configLineId = (java.lang.String)value;
                
                break;
             }
@@ -658,7 +658,7 @@ public class _ErpCrmLeadScoreLine extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final java.lang.Long getId(){
+    public final java.lang.String getId(){
          onPropGet(PROP_ID_id);
          return _id;
     }
@@ -666,7 +666,7 @@ public class _ErpCrmLeadScoreLine extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final void setId(java.lang.Long value){
+    public final void setId(java.lang.String value){
         if(onPropSet(PROP_ID_id,value)){
             this._id = value;
             internalClearRefs(PROP_ID_id);
@@ -677,7 +677,7 @@ public class _ErpCrmLeadScoreLine extends DynamicOrmEntity{
     /**
      * 评分记录: SCORE_ID
      */
-    public final java.lang.Long getScoreId(){
+    public final java.lang.String getScoreId(){
          onPropGet(PROP_ID_scoreId);
          return _scoreId;
     }
@@ -685,7 +685,7 @@ public class _ErpCrmLeadScoreLine extends DynamicOrmEntity{
     /**
      * 评分记录: SCORE_ID
      */
-    public final void setScoreId(java.lang.Long value){
+    public final void setScoreId(java.lang.String value){
         if(onPropSet(PROP_ID_scoreId,value)){
             this._scoreId = value;
             internalClearRefs(PROP_ID_scoreId);
@@ -696,7 +696,7 @@ public class _ErpCrmLeadScoreLine extends DynamicOrmEntity{
     /**
      * 业务组织: ORG_ID
      */
-    public final java.lang.Long getOrgId(){
+    public final java.lang.String getOrgId(){
          onPropGet(PROP_ID_orgId);
          return _orgId;
     }
@@ -704,7 +704,7 @@ public class _ErpCrmLeadScoreLine extends DynamicOrmEntity{
     /**
      * 业务组织: ORG_ID
      */
-    public final void setOrgId(java.lang.Long value){
+    public final void setOrgId(java.lang.String value){
         if(onPropSet(PROP_ID_orgId,value)){
             this._orgId = value;
             internalClearRefs(PROP_ID_orgId);
@@ -715,7 +715,7 @@ public class _ErpCrmLeadScoreLine extends DynamicOrmEntity{
     /**
      * 对应准则行: CONFIG_LINE_ID
      */
-    public final java.lang.Long getConfigLineId(){
+    public final java.lang.String getConfigLineId(){
          onPropGet(PROP_ID_configLineId);
          return _configLineId;
     }
@@ -723,7 +723,7 @@ public class _ErpCrmLeadScoreLine extends DynamicOrmEntity{
     /**
      * 对应准则行: CONFIG_LINE_ID
      */
-    public final void setConfigLineId(java.lang.Long value){
+    public final void setConfigLineId(java.lang.String value){
         if(onPropSet(PROP_ID_configLineId,value)){
             this._configLineId = value;
             internalClearRefs(PROP_ID_configLineId);

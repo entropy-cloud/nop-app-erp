@@ -20,8 +20,8 @@ public class ErpCrmTerritoryCreateChildProcessor {
     @Inject
     IDaoProvider daoProvider;
 
-    public ErpCrmTerritory createChild(Long parentId, String code, String name, String territoryType,
-                                       Long managerId, IServiceContext context) {
+    public ErpCrmTerritory createChild(String parentId, String code, String name, String territoryType,
+                                       String managerId, IServiceContext context) {
         ErpCrmTerritory parent = requireTerritory(parentId);
         int maxDepth = maxDepth();
         int childLevel = (parent.getLevel() != null ? parent.getLevel() : 0) + 1;
@@ -57,7 +57,7 @@ public class ErpCrmTerritoryCreateChildProcessor {
 
     // ---------- 内部辅助 ----------
 
-    protected ErpCrmTerritory requireTerritory(Long territoryId) {
+    protected ErpCrmTerritory requireTerritory(String territoryId) {
         ErpCrmTerritory territory = dao().getEntityById(territoryId);
         if (territory == null) {
             throw new UnknownEntityException(ErpCrmTerritory.class.getName(), territoryId);

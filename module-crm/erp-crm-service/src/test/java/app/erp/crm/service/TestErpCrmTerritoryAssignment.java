@@ -53,10 +53,10 @@ public class TestErpCrmTerritoryAssignment extends JunitAutoTestCase {
 
     private static final IServiceContext CTX = new ServiceContextImpl();
 
-    static final Long ORG_ID = 1301L;
-    static final Long TERRITORY_ID = 11001L;
-    static final Long TEAM_ID = 11002L;
-    static final Long RULE_ID = 11003L;
+    static final String ORG_ID = "1301";
+    static final String TERRITORY_ID = "11001";
+    static final String TEAM_ID = "11002";
+    static final String RULE_ID = "11003";
 
     @Inject
     IDaoProvider daoProvider;
@@ -172,12 +172,12 @@ public class TestErpCrmTerritoryAssignment extends JunitAutoTestCase {
         AppConfig.getConfigProvider().assignConfigValue(
                 ErpCrmConstants.CONFIG_TERRITORY_ASSIGNMENT_METHOD_ENABLED, Boolean.FALSE);
         try {
-            Long leadId = 12001L;
+            String leadId = "12001";
             ormTemplate.runInSession(() -> {
                 seedTerritory(TERRITORY_ID, "T-ASSIGN-CFG", ORG_ID);
                 seedTeam(TEAM_ID, "TEAM-CFG");
-                seedMember(TEAM_ID, "userA", 1L);
-                seedMember(TEAM_ID, "userB", 2L);
+                seedMember(TEAM_ID, "userA", "1");
+                seedMember(TEAM_ID, "userB", "2");
                 seedRule(RULE_ID, ErpCrmConstants.ASSIGNMENT_METHOD_ROUND_ROBIN, TEAM_ID);
                 seedLead(leadId, "LEAD-CFG-1", "wechat");
             });
@@ -196,12 +196,12 @@ public class TestErpCrmTerritoryAssignment extends JunitAutoTestCase {
     @Test
     public void testAssignLeadWritesOwnerId() {
         // ⑦ assignLead 集成：ROUND_ROBIN + 成员 [userA, userB] + 无历史 → lead.ownerId=userA 回写
-        Long leadId = 12002L;
+        String leadId = "12002";
         ormTemplate.runInSession(() -> {
             seedTerritory(TERRITORY_ID, "T-ASSIGN-INT", ORG_ID);
             seedTeam(TEAM_ID, "TEAM-INT");
-            seedMember(TEAM_ID, "userA", 1L);
-            seedMember(TEAM_ID, "userB", 2L);
+            seedMember(TEAM_ID, "userA", "1");
+            seedMember(TEAM_ID, "userB", "2");
             seedRule(RULE_ID, ErpCrmConstants.ASSIGNMENT_METHOD_ROUND_ROBIN, TEAM_ID);
             seedLead(leadId, "LEAD-RR-1", "wechat");
         });
@@ -220,8 +220,8 @@ public class TestErpCrmTerritoryAssignment extends JunitAutoTestCase {
         ormTemplate.runInSession(() -> {
             seedTerritory(TERRITORY_ID, "T-ASSIGN-AUTO", ORG_ID);
             seedTeam(TEAM_ID, "TEAM-AUTO");
-            seedMember(TEAM_ID, "userA", 1L);
-            seedMember(TEAM_ID, "userB", 2L);
+            seedMember(TEAM_ID, "userA", "1");
+            seedMember(TEAM_ID, "userB", "2");
             seedRule(RULE_ID, ErpCrmConstants.ASSIGNMENT_METHOD_LOAD_BALANCED, TEAM_ID);
         });
         ApiResponse<?> resp = saveLead("LEAD-AUTO-1", "wechat");
@@ -250,17 +250,17 @@ public class TestErpCrmTerritoryAssignment extends JunitAutoTestCase {
             List<String> members, String lastOwner, Map<String, Integer> counts) {
         return new TerritoryAssignmentEngine.TeamMemberResolver() {
             @Override
-            public List<String> resolveTeamMemberUserIds(Long teamId, IServiceContext context) {
+            public List<String> resolveTeamMemberUserIds(String teamId, IServiceContext context) {
                 return members;
             }
 
             @Override
-            public String resolveLastAssignedOwner(Long teamId, IServiceContext context) {
+            public String resolveLastAssignedOwner(String teamId, IServiceContext context) {
                 return lastOwner;
             }
 
             @Override
-            public Map<String, Integer> countActiveLeadsByOwner(Long teamId, IServiceContext context) {
+            public Map<String, Integer> countActiveLeadsByOwner(String teamId, IServiceContext context) {
                 return counts;
             }
         };
@@ -274,7 +274,7 @@ public class TestErpCrmTerritoryAssignment extends JunitAutoTestCase {
         return lead;
     }
 
-    private static ErpCrmTerritoryAssignmentRule newRule(String method, Long groupId) {
+    private static ErpCrmTerritoryAssignmentRule newRule(String method, String groupId) {
         ErpCrmTerritoryAssignmentRule rule = new ErpCrmTerritoryAssignmentRule();
         rule.setPriority(1);
         rule.setTerritoryId(TERRITORY_ID);
@@ -297,7 +297,7 @@ public class TestErpCrmTerritoryAssignment extends JunitAutoTestCase {
 
     // ---------- rpc helpers ----------
 
-    private ApiResponse<?> assignLead(Long leadId) {
+    private ApiResponse<?> assignLead(String leadId) {
         return graphQLEngine.executeRpc(graphQLEngine.newRpcContext(
                 GraphQLOperationType.mutation, "ErpCrmLead__assignLead",
                 ApiRequest.build(Map.of("leadId", leadId))));
@@ -318,7 +318,7 @@ public class TestErpCrmTerritoryAssignment extends JunitAutoTestCase {
 
     // ---------- seed helpers ----------
 
-    private void seedTerritory(Long id, String code, Long orgId) {
+    private void seedTerritory(String id, String code, String orgId) {
         IEntityDao<ErpCrmTerritory> dao = daoProvider.daoFor(ErpCrmTerritory.class);
         ErpCrmTerritory t = new ErpCrmTerritory();
         t.setId(id);
@@ -334,7 +334,7 @@ public class TestErpCrmTerritoryAssignment extends JunitAutoTestCase {
         dao.saveEntity(t);
     }
 
-    private void seedTeam(Long id, String code) {
+    private void seedTeam(String id, String code) {
         IEntityDao<ErpCrmTeam> dao = daoProvider.daoFor(ErpCrmTeam.class);
         ErpCrmTeam team = new ErpCrmTeam();
         team.setId(id);
@@ -344,7 +344,7 @@ public class TestErpCrmTerritoryAssignment extends JunitAutoTestCase {
         dao.saveEntity(team);
     }
 
-    private void seedMember(Long teamId, String userId, long id) {
+    private void seedMember(String teamId, String userId, String id) {
         IEntityDao<ErpCrmTeamMember> dao = daoProvider.daoFor(ErpCrmTeamMember.class);
         ErpCrmTeamMember member = new ErpCrmTeamMember();
         member.setId(id);
@@ -353,7 +353,7 @@ public class TestErpCrmTerritoryAssignment extends JunitAutoTestCase {
         dao.saveEntity(member);
     }
 
-    private void seedRule(Long id, String method, Long groupId) {
+    private void seedRule(String id, String method, String groupId) {
         IEntityDao<ErpCrmTerritoryAssignmentRule> dao = daoProvider.daoFor(ErpCrmTerritoryAssignmentRule.class);
         ErpCrmTerritoryAssignmentRule rule = new ErpCrmTerritoryAssignmentRule();
         rule.setId(id);
@@ -370,7 +370,7 @@ public class TestErpCrmTerritoryAssignment extends JunitAutoTestCase {
         dao.saveEntity(rule);
     }
 
-    private void seedLead(Long id, String code, String utmSource) {
+    private void seedLead(String id, String code, String utmSource) {
         IEntityDao<ErpCrmLead> dao = daoProvider.daoFor(ErpCrmLead.class);
         ErpCrmLead lead = new ErpCrmLead();
         lead.setId(id);
@@ -385,7 +385,7 @@ public class TestErpCrmTerritoryAssignment extends JunitAutoTestCase {
 
     // ---------- reload helpers ----------
 
-    private ErpCrmLead reloadLead(Long id) {
+    private ErpCrmLead reloadLead(String id) {
         return daoProvider.daoFor(ErpCrmLead.class).getEntityById(id);
     }
 

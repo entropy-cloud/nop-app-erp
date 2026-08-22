@@ -25,9 +25,9 @@ public class TestPriceRuleEngine extends BaseTestCase {
 
     private final PriceRuleEngine engine = new PriceRuleEngine();
 
-    private static final Long PRODUCT_ID = 7001L;
-    private static final Long CUSTOMER_ID = 8001L;
-    private static final Long CURRENCY_ID = 6401L;
+    private static final String PRODUCT_ID = "7001";
+    private static final String CUSTOMER_ID = "8001";
+    private static final String CURRENCY_ID = "6401";
     private static final LocalDate TODAY = LocalDate.of(2026, 7, 7);
 
     @Test
@@ -129,7 +129,7 @@ public class TestPriceRuleEngine extends BaseTestCase {
         // 无任何规则匹配时，调用方根据 isMatched=false 自行回退 basePrice
         ErpCrmPriceRule r = newRule("CUSTOMER_SPECIFIC", 1);
         r.setProductId(PRODUCT_ID);
-        r.setCustomerId(9999L);
+        r.setCustomerId("9999");
         r.setPriceOverride(BigDecimal.valueOf(800));
         PriceRuleEngine.PriceResult result = engine.resolvePrice(PRODUCT_ID, CUSTOMER_ID,
                 BigDecimal.TEN, CURRENCY_ID, TODAY, BigDecimal.valueOf(1000), List.of(r));
@@ -167,7 +167,7 @@ public class TestPriceRuleEngine extends BaseTestCase {
         ErpCrmPriceRule r = newRule("PROMOTIONAL", 1);
         r.setProductId(PRODUCT_ID);
         r.setPriceOverride(BigDecimal.valueOf(900));
-        r.setCurrencyId(9999L);
+        r.setCurrencyId("9999");
         PriceRuleEngine.PriceResult result = engine.resolvePrice(PRODUCT_ID, null,
                 BigDecimal.TEN, CURRENCY_ID, TODAY, BigDecimal.valueOf(1000), List.of(r));
         assertFalse(result.isMatched(), "currencyId 不匹配 → 不命中");

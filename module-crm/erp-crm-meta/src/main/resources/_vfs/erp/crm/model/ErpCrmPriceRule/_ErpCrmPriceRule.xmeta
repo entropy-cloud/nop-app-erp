@@ -22,8 +22,8 @@
 
     <props>
         <prop name="id" displayName="ID" propId="1" i18n-en:displayName="ID" tagSet="seq-default" mandatory="true"
-              queryable="true" sortable="true" insertable="true" updatable="false" graphql:type="String">
-            <schema type="java.lang.Long"/>
+              queryable="true" sortable="true" insertable="true" updatable="false">
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="code" displayName="编码" propId="2" i18n-en:displayName="Code" tagSet="var" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
@@ -35,7 +35,7 @@
         </prop>
         <prop name="orgId" displayName="业务组织" propId="4" i18n-en:displayName="Organization" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="org">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="ruleType" displayName="规则类型" propId="5" i18n-en:displayName="Rule Type" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
@@ -47,7 +47,7 @@
         </prop>
         <prop name="productId" displayName="适用产品" propId="7" i18n-en:displayName="Product" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="product">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="productCategory" displayName="适用产品品类" propId="8" i18n-en:displayName="Product Category"
               queryable="true" sortable="true" insertable="true" updatable="true">
@@ -55,7 +55,7 @@
         </prop>
         <prop name="customerId" displayName="适用客户" propId="9" i18n-en:displayName="Customer" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="customer">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="customerCategory" displayName="适用客户类别" propId="10" i18n-en:displayName="Customer Category"
               queryable="true" sortable="true" insertable="true" updatable="true">
@@ -83,7 +83,7 @@
         </prop>
         <prop name="currencyId" displayName="币种" propId="16" i18n-en:displayName="Currency" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="currency">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="effectiveFrom" displayName="生效开始日期" propId="17" i18n-en:displayName="Effective From"
               queryable="true" sortable="true" insertable="true" updatable="true">

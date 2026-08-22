@@ -36,7 +36,7 @@ public class ErpCrmEventCancelProcessor {
     @Inject
     ErpCrmEventStateMachine stateMachine;
 
-    public ErpCrmEvent cancel(Long eventId, IServiceContext context) {
+    public ErpCrmEvent cancel(String eventId, IServiceContext context) {
         ErpCrmEvent event = requireEvent(eventId);
         try {
             stateMachine.assertCanCancel(event.getStatus());
@@ -52,7 +52,7 @@ public class ErpCrmEventCancelProcessor {
 
     // ---------- 内部辅助 ----------
 
-    protected ErpCrmEvent requireEvent(Long eventId) {
+    protected ErpCrmEvent requireEvent(String eventId) {
         ErpCrmEvent event = dao().getEntityById(eventId);
         if (event == null) {
             throw new NopException(ErpCrmErrors.ERR_EVENT_NOT_FOUND)
@@ -72,7 +72,7 @@ public class ErpCrmEventCancelProcessor {
     /**
      * Event 无关联 Lead 时跳过派生（{@code relatedLeadId} 为空）。
      */
-    protected void deriveLeadFields(Long relatedLeadId) {
+    protected void deriveLeadFields(String relatedLeadId) {
         if (relatedLeadId == null) {
             return;
         }

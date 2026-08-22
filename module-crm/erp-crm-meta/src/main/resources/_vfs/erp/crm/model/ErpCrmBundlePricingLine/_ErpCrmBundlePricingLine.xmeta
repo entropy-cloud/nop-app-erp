@@ -20,20 +20,20 @@
 
     <props>
         <prop name="id" displayName="ID" propId="1" i18n-en:displayName="ID" tagSet="seq-default" mandatory="true"
-              queryable="true" sortable="true" insertable="true" updatable="false" graphql:type="String">
-            <schema type="java.lang.Long"/>
+              queryable="true" sortable="true" insertable="true" updatable="false">
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="bundleId" displayName="所属捆绑包" propId="2" i18n-en:displayName="Bundle" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="bundle">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="orgId" displayName="业务组织" propId="3" i18n-en:displayName="Organization" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="org">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="productId" displayName="产品" propId="4" i18n-en:displayName="Product" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="product">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="quantity" displayName="数量" propId="5" i18n-en:displayName="Quantity" queryable="true"
               sortable="true" insertable="true" updatable="true">

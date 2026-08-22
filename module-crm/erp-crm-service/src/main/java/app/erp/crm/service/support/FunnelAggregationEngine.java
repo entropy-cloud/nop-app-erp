@@ -8,6 +8,7 @@ import app.erp.crm.dao.entity.ErpCrmLostReason;
 import app.erp.crm.dao.entity.ErpCrmStage;
 import app.erp.crm.service.ErpCrmConstants;
 import app.erp.crm.service.ErpCrmErrors;
+import io.nop.api.core.convert.ConvertHelper;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.api.core.time.CoreMetrics;
 import io.nop.core.lang.json.JsonTool;
@@ -57,11 +58,11 @@ public class FunnelAggregationEngine {
      * @return 聚合结果（funnel 头 + 阶段明细列表）
      */
     public FunnelSnapshot aggregate(LocalDate periodStart, LocalDate periodEnd,
-                                     Long territoryId, Long teamId, Long sourceId,
+                                     String territoryId, String teamId, String sourceId,
                                      List<ErpCrmLeadConvLog> convLogs,
                                      List<ErpCrmLead> leads,
                                      List<ErpCrmStage> stages,
-                                     Map<Long, ErpCrmLostReason> lostReasons,
+                                     Map<String, ErpCrmLostReason> lostReasons,
                                      int topLostN) {
         if (periodStart != null && periodEnd != null && periodStart.isAfter(periodEnd)) {
             throw new NopException(ErpCrmErrors.ERR_FUNNEL_PERIOD_INVALID)
@@ -69,7 +70,7 @@ public class FunnelAggregationEngine {
                     .param(ErpCrmErrors.ARG_PERIOD_END, periodEnd);
         }
 
-        Map<Long, ErpCrmLead> leadById = new HashMap<>();
+        Map<String, ErpCrmLead> leadById = new HashMap<>();
         for (ErpCrmLead l : leads) {
             leadById.put(l.getId(), l);
         }
@@ -98,7 +99,7 @@ public class FunnelAggregationEngine {
     protected void computeHeader(FunnelSnapshot snapshot,
                                   List<ErpCrmLead> leads,
                                   List<ErpCrmLeadConvLog> convLogs,
-                                  Map<Long, ErpCrmLead> leadById) {
+                                  Map<String, ErpCrmLead> leadById) {
         int totalAtTop = 0;
         int totalOpps = 0;
         int totalWon = 0;
@@ -171,7 +172,7 @@ public class FunnelAggregationEngine {
      * 计算销售周期（天）：leadId 的首条与末条 ConvLog.changedAt 间隔。
      * 无 ConvLog 或仅一条返回 -1。
      */
-    protected long computeSalesCycleDays(Long leadId, List<ErpCrmLeadConvLog> convLogs) {
+    protected long computeSalesCycleDays(String leadId, List<ErpCrmLeadConvLog> convLogs) {
         if (convLogs == null || convLogs.isEmpty() || leadId == null) {
             return -1;
         }
@@ -193,19 +194,19 @@ public class FunnelAggregationEngine {
             List<ErpCrmLeadConvLog> convLogs,
             List<ErpCrmLead> leads,
             List<ErpCrmStage> stages,
-            Map<Long, ErpCrmLostReason> lostReasons,
-            Map<Long, ErpCrmLead> leadById,
+            Map<String, ErpCrmLostReason> lostReasons,
+            Map<String, ErpCrmLead> leadById,
             int topLostN) {
 
         // 按阶段 sequence 排序
         List<ErpCrmStage> orderedStages = new ArrayList<>(stages);
         orderedStages.sort(Comparator
                 .comparingInt((ErpCrmStage s) -> s.getSequence() != null ? s.getSequence() : Integer.MAX_VALUE)
-                .thenComparing(s -> s.getId() != null ? s.getId() : Long.MAX_VALUE));
+                .thenComparingLong(s -> s.getId() != null ? ConvertHelper.toLong(s.getId()) : Long.MAX_VALUE));
 
         // 按 stageId 索引 ConvLog
-        Map<Long, List<ErpCrmLeadConvLog>> entryByStage = new HashMap<>();
-        Map<Long, List<ErpCrmLeadConvLog>> exitByStage = new HashMap<>();
+        Map<String, List<ErpCrmLeadConvLog>> entryByStage = new HashMap<>();
+        Map<String, List<ErpCrmLeadConvLog>> exitByStage = new HashMap<>();
         if (convLogs != null) {
             for (ErpCrmLeadConvLog log : convLogs) {
                 if (log.getToStageId() != null) {
@@ -218,11 +219,11 @@ public class FunnelAggregationEngine {
         }
 
         // 丢失归因：lead.lostReasonId 当前状态 → 按末次所在阶段（末条 ConvLog.toStageId）归因
-        Map<Long, List<ErpCrmLead>> lostByStage = new HashMap<>();
-        Map<Long, Long> lastStageByLead = computeLastStageByLead(convLogs);
+        Map<String, List<ErpCrmLead>> lostByStage = new HashMap<>();
+        Map<String, String> lastStageByLead = computeLastStageByLead(convLogs);
         for (ErpCrmLead lead : leads) {
             if (ErpCrmConstants.DOC_STATUS_LOST.equals(lead.getDocStatus())) {
-                Long lastStage = lastStageByLead.get(lead.getId());
+                String lastStage = lastStageByLead.get(lead.getId());
                 if (lastStage != null) {
                     lostByStage.computeIfAbsent(lastStage, k -> new ArrayList<>()).add(lead);
                 }
@@ -230,12 +231,12 @@ public class FunnelAggregationEngine {
         }
 
         // 停留时长：按 leadId 收集进入各阶段的时间戳，计算与下一条流转的间隔
-        Map<Long, Map<Long, Long>> daysInStageByLead = computeDaysInStage(convLogs);
+        Map<String, Map<String, Long>> daysInStageByLead = computeDaysInStage(convLogs);
 
         List<ErpCrmFunnelStageMetrics> result = new ArrayList<>();
         for (int i = 0; i < orderedStages.size(); i++) {
             ErpCrmStage stage = orderedStages.get(i);
-            Long stageId = stage.getId();
+            String stageId = stage.getId();
 
             List<ErpCrmLeadConvLog> entries = entryByStage.getOrDefault(stageId, java.util.Collections.emptyList());
             List<ErpCrmLeadConvLog> exits = exitByStage.getOrDefault(stageId, java.util.Collections.emptyList());
@@ -253,7 +254,7 @@ public class FunnelAggregationEngine {
             // 转化率：进入下一阶段的人数 / 本阶段进入人数
             int nextStageIn = 0;
             if (i + 1 < orderedStages.size()) {
-                Long nextStageId = orderedStages.get(i + 1).getId();
+                String nextStageId = orderedStages.get(i + 1).getId();
                 nextStageIn = (int) entryByStage.getOrDefault(nextStageId, java.util.Collections.emptyList()).stream()
                         .map(ErpCrmLeadConvLog::getLeadId).filter(java.util.Objects::nonNull).distinct().count();
             }
@@ -290,8 +291,8 @@ public class FunnelAggregationEngine {
     /**
      * 计算每个 lead 末次所在阶段（末条 ConvLog.toStageId）。用于丢失归因。
      */
-    protected Map<Long, Long> computeLastStageByLead(List<ErpCrmLeadConvLog> convLogs) {
-        Map<Long, Long> result = new HashMap<>();
+    protected Map<String, String> computeLastStageByLead(List<ErpCrmLeadConvLog> convLogs) {
+        Map<String, String> result = new HashMap<>();
         if (convLogs == null) {
             return result;
         }
@@ -311,18 +312,18 @@ public class FunnelAggregationEngine {
      * 计算每个 lead 在各阶段的停留天数。
      * key: leadId → (stageId → days)。停留 = 下一条流转的 changedAt - 本条 changedAt（同 stageId）。
      */
-    protected Map<Long, Map<Long, Long>> computeDaysInStage(List<ErpCrmLeadConvLog> convLogs) {
-        Map<Long, Map<Long, Long>> result = new HashMap<>();
+    protected Map<String, Map<String, Long>> computeDaysInStage(List<ErpCrmLeadConvLog> convLogs) {
+        Map<String, Map<String, Long>> result = new HashMap<>();
         if (convLogs == null) {
             return result;
         }
-        Map<Long, List<ErpCrmLeadConvLog>> byLead = convLogs.stream()
+        Map<String, List<ErpCrmLeadConvLog>> byLead = convLogs.stream()
                 .filter(l -> l.getLeadId() != null && l.getChangedAt() != null && l.getToStageId() != null)
                 .collect(Collectors.groupingBy(ErpCrmLeadConvLog::getLeadId));
-        for (Map.Entry<Long, List<ErpCrmLeadConvLog>> entry : byLead.entrySet()) {
+        for (Map.Entry<String, List<ErpCrmLeadConvLog>> entry : byLead.entrySet()) {
             List<ErpCrmLeadConvLog> logs = new ArrayList<>(entry.getValue());
             logs.sort(Comparator.comparing(ErpCrmLeadConvLog::getChangedAt));
-            Map<Long, Long> stageDays = new HashMap<>();
+            Map<String, Long> stageDays = new HashMap<>();
             for (int i = 0; i < logs.size() - 1; i++) {
                 ErpCrmLeadConvLog cur = logs.get(i);
                 ErpCrmLeadConvLog next = logs.get(i + 1);
@@ -334,10 +335,10 @@ public class FunnelAggregationEngine {
         return result;
     }
 
-    protected double computeAvgDaysInStage(Long stageId, Map<Long, Map<Long, Long>> daysInStageByLead) {
+    protected double computeAvgDaysInStage(String stageId, Map<String, Map<String, Long>> daysInStageByLead) {
         long sum = 0;
         int count = 0;
-        for (Map<Long, Long> stageDays : daysInStageByLead.values()) {
+        for (Map<String, Long> stageDays : daysInStageByLead.values()) {
             Long days = stageDays.get(stageId);
             if (days != null) {
                 sum += days;
@@ -351,16 +352,16 @@ public class FunnelAggregationEngine {
      * 计算丢失原因 TOP N（JSON 字符串）：[{reasonName, lostReasonId, count}, ...] 按 count 降序。
      */
     protected String computeLostReasonTop(List<ErpCrmLead> lostLeads,
-                                           Map<Long, ErpCrmLostReason> lostReasons,
+                                           Map<String, ErpCrmLostReason> lostReasons,
                                            int topN) {
         if (lostLeads == null || lostLeads.isEmpty() || topN <= 0) {
             return null;
         }
-        Map<Long, Integer> reasonCount = new HashMap<>();
-        Map<Long, String> reasonName = new HashMap<>();
+        Map<String, Integer> reasonCount = new HashMap<>();
+        Map<String, String> reasonName = new HashMap<>();
         int unknownCount = 0;
         for (ErpCrmLead l : lostLeads) {
-            Long rid = l.getLostReasonId();
+            String rid = l.getLostReasonId();
             if (rid == null) {
                 unknownCount++;
                 continue;
@@ -371,7 +372,7 @@ public class FunnelAggregationEngine {
         }
         List<Map<String, Object>> list = new ArrayList<>();
         reasonCount.entrySet().stream()
-                .sorted(Map.Entry.<Long, Integer>comparingByValue().reversed())
+                .sorted(Map.Entry.<String, Integer>comparingByValue().reversed())
                 .limit(topN)
                 .forEach(e -> {
                     Map<String, Object> row = new LinkedHashMap<>();
@@ -407,9 +408,9 @@ public class FunnelAggregationEngine {
     public static class FunnelSnapshot {
         private LocalDate periodStart;
         private LocalDate periodEnd;
-        private Long territoryId;
-        private Long teamId;
-        private Long sourceId;
+        private String territoryId;
+        private String teamId;
+        private String sourceId;
         private int totalLeadsAtTop;
         private int totalOpportunities;
         private int totalWon;
@@ -426,12 +427,12 @@ public class FunnelAggregationEngine {
         public void setPeriodStart(LocalDate periodStart) { this.periodStart = periodStart; }
         public LocalDate getPeriodEnd() { return periodEnd; }
         public void setPeriodEnd(LocalDate periodEnd) { this.periodEnd = periodEnd; }
-        public Long getTerritoryId() { return territoryId; }
-        public void setTerritoryId(Long territoryId) { this.territoryId = territoryId; }
-        public Long getTeamId() { return teamId; }
-        public void setTeamId(Long teamId) { this.teamId = teamId; }
-        public Long getSourceId() { return sourceId; }
-        public void setSourceId(Long sourceId) { this.sourceId = sourceId; }
+        public String getTerritoryId() { return territoryId; }
+        public void setTerritoryId(String territoryId) { this.territoryId = territoryId; }
+        public String getTeamId() { return teamId; }
+        public void setTeamId(String teamId) { this.teamId = teamId; }
+        public String getSourceId() { return sourceId; }
+        public void setSourceId(String sourceId) { this.sourceId = sourceId; }
         public int getTotalLeadsAtTop() { return totalLeadsAtTop; }
         public void setTotalLeadsAtTop(int totalLeadsAtTop) { this.totalLeadsAtTop = totalLeadsAtTop; }
         public int getTotalOpportunities() { return totalOpportunities; }

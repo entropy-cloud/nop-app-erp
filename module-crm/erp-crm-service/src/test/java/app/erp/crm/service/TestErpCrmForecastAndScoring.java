@@ -50,10 +50,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpCrmForecastAndScoring extends JunitAutoTestCase {
 
-    static final Long ORG_ID = 1301L;
-    static final Long PERIOD_ID = 5101L;
-    static final Long SCORE_CONFIG_ID = 5201L;
-    static final Long STAGE_QUALIFIED = 5301L;
+    static final String ORG_ID = "1301";
+    static final String PERIOD_ID = "5101";
+    static final String SCORE_CONFIG_ID = "5201";
+    static final String STAGE_QUALIFIED = "5301";
 
     @Inject
     IDaoProvider daoProvider;
@@ -64,17 +64,17 @@ public class TestErpCrmForecastAndScoring extends JunitAutoTestCase {
 
     @Test
     public void testScoringAndAutoQualify() {
-        Long leadId = 5001L;
+        String leadId = "5001";
         ormTemplate.runInSession(() -> {
             seedStage(STAGE_QUALIFIED, "STG-Q", "已验证", 10, 50);
             seedScoreConfig(SCORE_CONFIG_ID, "标准评分", 70, 30);
             // LOOKUP 准则：jobTitle 匹配 C-level 得 15 分
-            seedConfigLine(5211L, SCORE_CONFIG_ID, "JOB_TITLE", "职位层级", 50,
+            seedConfigLine("5211", SCORE_CONFIG_ID, "JOB_TITLE", "职位层级", 50,
                     ErpCrmConstants.SCORING_METHOD_LOOKUP, "jobTitle",
                     "[{\"value\":\"C-level\",\"label\":\"C-level\",\"score\":15},{\"value\":\"Manager\",\"label\":\"经理\",\"score\":5}]",
                     null, 15, 10);
             // BOOLEAN 准则：companyName 非空匹配 → maxScore
-            seedConfigLine(5212L, SCORE_CONFIG_ID, "COMPANY_NAME", "公司名称", 50,
+            seedConfigLine("5212", SCORE_CONFIG_ID, "COMPANY_NAME", "公司名称", 50,
                     ErpCrmConstants.SCORING_METHOD_BOOLEAN, "companyName",
                     "[{\"value\":\"Acme Corp\"}]", null, 10, 20);
 
@@ -117,7 +117,7 @@ public class TestErpCrmForecastAndScoring extends JunitAutoTestCase {
 
     @Test
     public void testNoActiveConfigReturnsNull() {
-        Long leadId = 5002L;
+        String leadId = "5002";
         ormTemplate.runInSession(() -> {
             ErpCrmLead lead = newLead(leadId, "LEAD-NOSCORE-001", ErpCrmConstants.LEAD_TYPE_LEAD,
                     ErpCrmConstants.DOC_STATUS_NEW);
@@ -131,22 +131,22 @@ public class TestErpCrmForecastAndScoring extends JunitAutoTestCase {
 
     @Test
     public void testRefreshForecastAndRollup() {
-        Long ownerA = 5401L;
-        Long ownerB = 5402L;
-        Long teamId = 5501L;
+        String ownerA = "5401";
+        String ownerB = "5402";
+        String teamId = "5501";
         ormTemplate.runInSession(() -> {
             seedStage(STAGE_QUALIFIED, "STG-Q", "已验证", 10, 50);
             seedPeriod(PERIOD_ID, "2026-07", LocalDate.of(2026, 7, 1), LocalDate.of(2026, 7, 31),
                     ErpCrmConstants.FORECAST_PERIOD_STATUS_OPEN);
 
             // 商机 A：probability=90（commit），expectedRevenue=1000，owner=userA，teamId
-            seedOpportunity(5411L, "OPP-FC-A", "userA", teamId, 90, new BigDecimal("1000"),
+            seedOpportunity("5411", "OPP-FC-A", "userA", teamId, 90, new BigDecimal("1000"),
                     LocalDate.of(2026, 7, 15), ErpCrmConstants.DOC_STATUS_QUALIFIED);
             // 商机 B：probability=50（upside），expectedRevenue=2000，owner=userB，teamId
-            seedOpportunity(5412L, "OPP-FC-B", "userB", teamId, 50, new BigDecimal("2000"),
+            seedOpportunity("5412", "OPP-FC-B", "userB", teamId, 50, new BigDecimal("2000"),
                     LocalDate.of(2026, 7, 20), ErpCrmConstants.DOC_STATUS_QUALIFIED);
             // 商机 C：probability=20（best_case，不计 commit/upside），owner=userA
-            seedOpportunity(5413L, "OPP-FC-C", "userA", teamId, 20, new BigDecimal("500"),
+            seedOpportunity("5413", "OPP-FC-C", "userA", teamId, 20, new BigDecimal("500"),
                     LocalDate.of(2026, 7, 25), ErpCrmConstants.DOC_STATUS_QUALIFIED);
         });
 
@@ -182,7 +182,7 @@ public class TestErpCrmForecastAndScoring extends JunitAutoTestCase {
 
     @Test
     public void testFrozenRejectsRefresh() {
-        Long periodId = 5601L;
+        String periodId = "5601";
         ormTemplate.runInSession(() -> {
             seedStage(STAGE_QUALIFIED, "STG-Q", "已验证", 10, 50);
             seedPeriod(periodId, "2026-08", LocalDate.of(2026, 8, 1), LocalDate.of(2026, 8, 31),
@@ -201,8 +201,8 @@ public class TestErpCrmForecastAndScoring extends JunitAutoTestCase {
 
     @Test
     public void testClosePeriodTriggersAccuracy() {
-        Long periodId = 5701L;
-        Long leadId = 5711L;
+        String periodId = "5701";
+        String leadId = "5711";
         ormTemplate.runInSession(() -> {
             seedStage(STAGE_QUALIFIED, "STG-Q", "已验证", 10, 50);
             seedPeriod(periodId, "2026-09", LocalDate.of(2026, 9, 1), LocalDate.of(2026, 9, 30),
@@ -237,20 +237,20 @@ public class TestErpCrmForecastAndScoring extends JunitAutoTestCase {
 
     // ---------- rpc helpers ----------
 
-    private ApiResponse<?> recalculateScore(Long leadId, String triggerEvent) {
+    private ApiResponse<?> recalculateScore(String leadId, String triggerEvent) {
         return rpc(mutation, "ErpCrmLeadScore__recalculateScore",
                 Map.of("leadId", leadId, "triggerEvent", triggerEvent));
     }
 
-    private ApiResponse<?> refreshForecast(Long periodId) {
+    private ApiResponse<?> refreshForecast(String periodId) {
         return rpc(mutation, "ErpCrmForecast__refreshForecast", Map.of("periodId", periodId));
     }
 
-    private ApiResponse<?> freeze(Long periodId) {
+    private ApiResponse<?> freeze(String periodId) {
         return rpc(mutation, "ErpCrmForecastPeriod__freeze", Map.of("periodId", periodId));
     }
 
-    private ApiResponse<?> closePeriod(Long periodId) {
+    private ApiResponse<?> closePeriod(String periodId) {
         return rpc(mutation, "ErpCrmForecastPeriod__closePeriod", Map.of("periodId", periodId));
     }
 
@@ -265,7 +265,7 @@ public class TestErpCrmForecastAndScoring extends JunitAutoTestCase {
 
     // ---------- seed helpers ----------
 
-    private void seedStage(Long id, String code, String name, int sequence, int defaultProbability) {
+    private void seedStage(String id, String code, String name, int sequence, int defaultProbability) {
         IEntityDao<ErpCrmStage> dao = daoProvider.daoFor(ErpCrmStage.class);
         ErpCrmStage stage = new ErpCrmStage();
         stage.setId(id);
@@ -276,7 +276,7 @@ public class TestErpCrmForecastAndScoring extends JunitAutoTestCase {
         dao.saveEntity(stage);
     }
 
-    private void seedScoreConfig(Long id, String name, int autoThreshold, int minFollowUp) {
+    private void seedScoreConfig(String id, String name, int autoThreshold, int minFollowUp) {
         IEntityDao<ErpCrmLeadScoreConfig> dao = daoProvider.daoFor(ErpCrmLeadScoreConfig.class);
         ErpCrmLeadScoreConfig config = new ErpCrmLeadScoreConfig();
         config.setId(id);
@@ -289,7 +289,7 @@ public class TestErpCrmForecastAndScoring extends JunitAutoTestCase {
         dao.saveEntity(config);
     }
 
-    private void seedConfigLine(Long id, Long configId, String code, String name, int weight,
+    private void seedConfigLine(String id, String configId, String code, String name, int weight,
                                 String method, String formula, String lookupTable,
                                 String formulaExpr, Integer maxScore, int sequence) {
         IEntityDao<ErpCrmLeadScoreConfigLine> dao = daoProvider.daoFor(ErpCrmLeadScoreConfigLine.class);
@@ -308,7 +308,7 @@ public class TestErpCrmForecastAndScoring extends JunitAutoTestCase {
         dao.saveEntity(line);
     }
 
-    private ErpCrmLead newLead(Long id, String code, String leadType, String docStatus) {
+    private ErpCrmLead newLead(String id, String code, String leadType, String docStatus) {
         ErpCrmLead lead = new ErpCrmLead();
         lead.setId(id);
         lead.setCode(code);
@@ -319,7 +319,7 @@ public class TestErpCrmForecastAndScoring extends JunitAutoTestCase {
         return lead;
     }
 
-    private void seedOpportunity(Long id, String code, String ownerId, Long teamId,
+    private void seedOpportunity(String id, String code, String ownerId, String teamId,
                                  int probability, BigDecimal expectedRevenue,
                                  LocalDate expectedCloseDate, String docStatus) {
         ErpCrmLead opp = new ErpCrmLead();
@@ -337,7 +337,7 @@ public class TestErpCrmForecastAndScoring extends JunitAutoTestCase {
         daoProvider.daoFor(ErpCrmLead.class).saveEntity(opp);
     }
 
-    private void seedPeriod(Long id, String label, LocalDate start, LocalDate end, String status) {
+    private void seedPeriod(String id, String label, LocalDate start, LocalDate end, String status) {
         IEntityDao<ErpCrmForecastPeriod> dao = daoProvider.daoFor(ErpCrmForecastPeriod.class);
         ErpCrmForecastPeriod period = new ErpCrmForecastPeriod();
         period.setId(id);
@@ -354,11 +354,11 @@ public class TestErpCrmForecastAndScoring extends JunitAutoTestCase {
 
     // ---------- reload helpers ----------
 
-    private ErpCrmLead reloadLead(Long id) {
+    private ErpCrmLead reloadLead(String id) {
         return daoProvider.daoFor(ErpCrmLead.class).getEntityById(id);
     }
 
-    private ErpCrmLeadScore reloadScore(Long leadId) {
+    private ErpCrmLeadScore reloadScore(String leadId) {
         IEntityDao<ErpCrmLeadScore> dao = daoProvider.daoFor(ErpCrmLeadScore.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("leadId", leadId));
@@ -367,21 +367,21 @@ public class TestErpCrmForecastAndScoring extends JunitAutoTestCase {
         return dao.findAllByQuery(q).stream().findFirst().orElse(null);
     }
 
-    private List<ErpCrmLeadScore> loadScores(Long leadId) {
+    private List<ErpCrmLeadScore> loadScores(String leadId) {
         IEntityDao<ErpCrmLeadScore> dao = daoProvider.daoFor(ErpCrmLeadScore.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("leadId", leadId));
         return dao.findAllByQuery(q);
     }
 
-    private List<ErpCrmLeadScoreLine> loadScoreLines(Long scoreId) {
+    private List<ErpCrmLeadScoreLine> loadScoreLines(String scoreId) {
         IEntityDao<ErpCrmLeadScoreLine> dao = daoProvider.daoFor(ErpCrmLeadScoreLine.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("scoreId", scoreId));
         return dao.findAllByQuery(q);
     }
 
-    private ErpCrmForecast reloadForecast(Long periodId, String ownerId) {
+    private ErpCrmForecast reloadForecast(String periodId, String ownerId) {
         IEntityDao<ErpCrmForecast> dao = daoProvider.daoFor(ErpCrmForecast.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("periodId", periodId));
@@ -390,7 +390,7 @@ public class TestErpCrmForecastAndScoring extends JunitAutoTestCase {
         return dao.findAllByQuery(q).stream().findFirst().orElse(null);
     }
 
-    private ErpCrmForecast reloadTeamForecast(Long periodId, Long teamId) {
+    private ErpCrmForecast reloadTeamForecast(String periodId, String teamId) {
         IEntityDao<ErpCrmForecast> dao = daoProvider.daoFor(ErpCrmForecast.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("periodId", periodId));
@@ -400,18 +400,18 @@ public class TestErpCrmForecastAndScoring extends JunitAutoTestCase {
         return dao.findAllByQuery(q).stream().findFirst().orElse(null);
     }
 
-    private List<ErpCrmForecastLine> loadForecastLines(Long forecastId) {
+    private List<ErpCrmForecastLine> loadForecastLines(String forecastId) {
         IEntityDao<ErpCrmForecastLine> dao = daoProvider.daoFor(ErpCrmForecastLine.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("forecastId", forecastId));
         return dao.findAllByQuery(q);
     }
 
-    private ErpCrmForecastPeriod reloadPeriod(Long id) {
+    private ErpCrmForecastPeriod reloadPeriod(String id) {
         return daoProvider.daoFor(ErpCrmForecastPeriod.class).getEntityById(id);
     }
 
-    private ErpCrmForecastAccuracy reloadAccuracy(Long periodId, String ownerId) {
+    private ErpCrmForecastAccuracy reloadAccuracy(String periodId, String ownerId) {
         IEntityDao<ErpCrmForecastAccuracy> dao = daoProvider.daoFor(ErpCrmForecastAccuracy.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("periodId", periodId));

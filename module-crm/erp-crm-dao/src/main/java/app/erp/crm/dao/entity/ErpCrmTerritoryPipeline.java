@@ -13,17 +13,17 @@ import java.math.BigDecimal;
 @DataBean
 public class ErpCrmTerritoryPipeline {
 
-    private Long territoryId;
+    private String territoryId;
     private String periodLabel;
     private QuotaSummary quota;
     private ForecastSummary forecast;
     private ActualSummary actual;
 
-    public Long getTerritoryId() {
+    public String getTerritoryId() {
         return territoryId;
     }
 
-    public void setTerritoryId(Long territoryId) {
+    public void setTerritoryId(String territoryId) {
         this.territoryId = territoryId;
     }
 

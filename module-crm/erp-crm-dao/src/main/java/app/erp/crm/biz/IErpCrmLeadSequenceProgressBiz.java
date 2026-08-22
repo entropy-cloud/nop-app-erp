@@ -25,23 +25,23 @@ public interface IErpCrmLeadSequenceProgressBiz extends ICrudBiz<ErpCrmLeadSeque
      * Lead 已有活跃 progress 抛 {@code ERR_SEQUENCE_ALREADY_ASSIGNED}。
      */
     @BizMutation
-    ErpCrmLeadSequenceProgress assignSequence(@Name("leadId") Long leadId, IServiceContext context);
+    ErpCrmLeadSequenceProgress assignSequence(@Name("leadId") String leadId, IServiceContext context);
 
     /**
      * 推进步骤：校验 Event.status=COMPLETED + 匹配 step.activityType + completionCondition 满足 → currentStepIndex+1；
      * 末步完成则 status=COMPLETED + completedAt；推进时 autoCreateEvent 步骤建下一步 ErpCrmEvent。
      */
     @BizMutation
-    ErpCrmLeadSequenceProgress advanceStep(@Name("progressId") Long progressId,
-                                           @Name("eventId") Long eventId,
+    ErpCrmLeadSequenceProgress advanceStep(@Name("progressId") String progressId,
+                                           @Name("eventId") String eventId,
                                            IServiceContext context);
 
     /**
      * 切换序列：旧活跃序列 SKIPPED 快照 + 新序列 stepIndex=0 进度。一 Lead 一活跃序列（多序列并发归 successor）。
      */
     @BizMutation
-    ErpCrmLeadSequenceProgress switchSequence(@Name("leadId") Long leadId,
-                                              @Name("newSequenceId") Long newSequenceId,
+    ErpCrmLeadSequenceProgress switchSequence(@Name("leadId") String leadId,
+                                              @Name("newSequenceId") String newSequenceId,
                                               IServiceContext context);
 
     /**

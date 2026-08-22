@@ -1,8 +1,8 @@
 {
-  "id": 0,
-  "forecastId": 0,
-  "orgId": 0,
-  "leadId": 0,
+  "id": "",
+  "forecastId": "",
+  "orgId": "",
+  "leadId": "",
   "probability": 0,
   "expectedRevenue": 0.0,
   "weightedRevenue": 0.0,

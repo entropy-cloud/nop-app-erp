@@ -19,16 +19,16 @@
             <cols>
 
                 <!--ID-->
-                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="id" mandatory="true" sortable="true"/>
 
                 <!--所属捆绑包-->
-                <col id="bundleId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="bundleId" mandatory="true" sortable="true"/>
 
                 <!--业务组织-->
-                <col id="orgId" ui:number="true" sortable="true"/>
+                <col id="orgId" sortable="true"/>
 
                 <!--产品-->
-                <col id="productId" ui:number="true" sortable="true"/>
+                <col id="productId" sortable="true"/>
 
                 <!--数量-->
                 <col id="quantity" ui:number="true" sortable="true"/>

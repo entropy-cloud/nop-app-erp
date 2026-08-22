@@ -50,11 +50,11 @@ import static org.junit.jupiter.api.Assertions.assertNull;
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpCrmForecastTerritoryRollup extends JunitAutoTestCase {
 
-    static final Long ORG_ID = 1301L;
-    static final Long PERIOD_ID = 5900L;
-    static final Long STAGE_QUALIFIED = 5301L;
-    static final Long TERRITORY_T1 = 5801L;
-    static final Long TERRITORY_T1_CHILD = 5802L;
+    static final String ORG_ID = "1301";
+    static final String PERIOD_ID = "5900";
+    static final String STAGE_QUALIFIED = "5301";
+    static final String TERRITORY_T1 = "5801";
+    static final String TERRITORY_T1_CHILD = "5802";
 
     @Inject
     IDaoProvider daoProvider;
@@ -76,13 +76,13 @@ public class TestErpCrmForecastTerritoryRollup extends JunitAutoTestCase {
                     ErpCrmConstants.TERRITORY_TYPE_AREA, 1, "/T-ROOT-FC/T-CHILD-FC", true);
 
             // 商机 A：直接归属 T1（父节点），probability=90（commit），expectedRevenue=1000
-            seedOpportunity(5911L, "OPP-T-A", "userT1", null, TERRITORY_T1, 90,
+            seedOpportunity("5911", "OPP-T-A", "userT1", null, TERRITORY_T1, 90,
                     new BigDecimal("1000"), LocalDate.of(2026, 10, 15), ErpCrmConstants.DOC_STATUS_QUALIFIED);
             // 商机 B：直接归属 T1 子节点 T1-1，probability=50（upside），expectedRevenue=2000
-            seedOpportunity(5912L, "OPP-T-B", "userT2", null, TERRITORY_T1_CHILD, 50,
+            seedOpportunity("5912", "OPP-T-B", "userT2", null, TERRITORY_T1_CHILD, 50,
                     new BigDecimal("2000"), LocalDate.of(2026, 10, 20), ErpCrmConstants.DOC_STATUS_QUALIFIED);
             // 商机 C：无 territory（territoryId=null），probability=20（best_case），expectedRevenue=500
-            seedOpportunity(5913L, "OPP-T-C", "userT1", null, null, 20,
+            seedOpportunity("5913", "OPP-T-C", "userT1", null, null, 20,
                     new BigDecimal("500"), LocalDate.of(2026, 10, 25), ErpCrmConstants.DOC_STATUS_QUALIFIED);
         });
 
@@ -137,11 +137,11 @@ public class TestErpCrmForecastTerritoryRollup extends JunitAutoTestCase {
                     ErpCrmConstants.TERRITORY_TYPE_REGION, 0, "/T-ROOT-FC", false);
             seedTerritory(TERRITORY_T1_CHILD, "T-CHILD-FC", "子区T1-1", TERRITORY_T1,
                     ErpCrmConstants.TERRITORY_TYPE_AREA, 1, "/T-ROOT-FC/T-CHILD-FC", true);
-            seedOpportunity(5911L, "OPP-T-A", "userT1", null, TERRITORY_T1, 90,
+            seedOpportunity("5911", "OPP-T-A", "userT1", null, TERRITORY_T1, 90,
                     new BigDecimal("1000"), LocalDate.of(2026, 10, 15), ErpCrmConstants.DOC_STATUS_QUALIFIED);
-            seedOpportunity(5912L, "OPP-T-B", "userT2", null, TERRITORY_T1_CHILD, 50,
+            seedOpportunity("5912", "OPP-T-B", "userT2", null, TERRITORY_T1_CHILD, 50,
                     new BigDecimal("2000"), LocalDate.of(2026, 10, 20), ErpCrmConstants.DOC_STATUS_QUALIFIED);
-            seedOpportunity(5913L, "OPP-T-C", "userT1", null, null, 20,
+            seedOpportunity("5913", "OPP-T-C", "userT1", null, null, 20,
                     new BigDecimal("500"), LocalDate.of(2026, 10, 25), ErpCrmConstants.DOC_STATUS_QUALIFIED);
         });
 
@@ -171,14 +171,14 @@ public class TestErpCrmForecastTerritoryRollup extends JunitAutoTestCase {
 
     // ---------- rpc helpers ----------
 
-    private ApiResponse<?> refreshForecast(Long periodId) {
+    private ApiResponse<?> refreshForecast(String periodId) {
         return graphQLEngine.executeRpc(graphQLEngine.newRpcContext(
                 mutation, "ErpCrmForecast__refreshForecast", ApiRequest.build(Map.of("periodId", periodId))));
     }
 
     // ---------- seed helpers ----------
 
-    private void seedStage(Long id, String code, String name, int sequence, int defaultProbability) {
+    private void seedStage(String id, String code, String name, int sequence, int defaultProbability) {
         IEntityDao<ErpCrmStage> dao = daoProvider.daoFor(ErpCrmStage.class);
         ErpCrmStage stage = new ErpCrmStage();
         stage.setId(id);
@@ -189,7 +189,7 @@ public class TestErpCrmForecastTerritoryRollup extends JunitAutoTestCase {
         dao.saveEntity(stage);
     }
 
-    private void seedTerritory(Long id, String code, String name, Long parentId,
+    private void seedTerritory(String id, String code, String name, String parentId,
                                String territoryType, int level, String fullPath, boolean isLeaf) {
         IEntityDao<ErpCrmTerritory> dao = daoProvider.daoFor(ErpCrmTerritory.class);
         ErpCrmTerritory t = new ErpCrmTerritory();
@@ -207,7 +207,7 @@ public class TestErpCrmForecastTerritoryRollup extends JunitAutoTestCase {
         dao.saveEntity(t);
     }
 
-    private void seedOpportunity(Long id, String code, String ownerId, Long teamId, Long territoryId,
+    private void seedOpportunity(String id, String code, String ownerId, String teamId, String territoryId,
                                  int probability, BigDecimal expectedRevenue,
                                  LocalDate expectedCloseDate, String docStatus) {
         ErpCrmLead opp = new ErpCrmLead();
@@ -226,7 +226,7 @@ public class TestErpCrmForecastTerritoryRollup extends JunitAutoTestCase {
         daoProvider.daoFor(ErpCrmLead.class).saveEntity(opp);
     }
 
-    private void seedPeriod(Long id, String label, LocalDate start, LocalDate end, String status) {
+    private void seedPeriod(String id, String label, LocalDate start, LocalDate end, String status) {
         IEntityDao<ErpCrmForecastPeriod> dao = daoProvider.daoFor(ErpCrmForecastPeriod.class);
         ErpCrmForecastPeriod period = new ErpCrmForecastPeriod();
         period.setId(id);
@@ -243,7 +243,7 @@ public class TestErpCrmForecastTerritoryRollup extends JunitAutoTestCase {
 
     // ---------- reload helpers ----------
 
-    private ErpCrmForecast reloadTerritoryForecast(Long periodId, Long territoryId) {
+    private ErpCrmForecast reloadTerritoryForecast(String periodId, String territoryId) {
         IEntityDao<ErpCrmForecast> dao = daoProvider.daoFor(ErpCrmForecast.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("periodId", periodId));
@@ -254,7 +254,7 @@ public class TestErpCrmForecastTerritoryRollup extends JunitAutoTestCase {
         return dao.findAllByQuery(q).stream().findFirst().orElse(null);
     }
 
-    private ErpCrmForecast reloadCompanyForecast(Long periodId) {
+    private ErpCrmForecast reloadCompanyForecast(String periodId) {
         IEntityDao<ErpCrmForecast> dao = daoProvider.daoFor(ErpCrmForecast.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("periodId", periodId));
@@ -265,7 +265,7 @@ public class TestErpCrmForecastTerritoryRollup extends JunitAutoTestCase {
         return dao.findAllByQuery(q).stream().findFirst().orElse(null);
     }
 
-    private int countTerritoryForecasts(Long periodId) {
+    private int countTerritoryForecasts(String periodId) {
         IEntityDao<ErpCrmForecast> dao = daoProvider.daoFor(ErpCrmForecast.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("periodId", periodId));

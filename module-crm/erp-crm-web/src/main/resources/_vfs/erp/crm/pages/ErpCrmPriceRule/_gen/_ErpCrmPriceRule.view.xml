@@ -19,7 +19,7 @@
             <cols>
 
                 <!--ID-->
-                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="id" mandatory="true" sortable="true"/>
 
                 <!--编码-->
                 <col id="code" mandatory="true" sortable="true"/>
@@ -28,7 +28,7 @@
                 <col id="name" mandatory="true" sortable="true"/>
 
                 <!--业务组织-->
-                <col id="orgId" ui:number="true" sortable="true"/>
+                <col id="orgId" sortable="true"/>
 
                 <!--规则类型-->
                 <col id="ruleType" mandatory="true" sortable="true"/>
@@ -37,13 +37,13 @@
                 <col id="priority" ui:number="true" sortable="true"/>
 
                 <!--适用产品-->
-                <col id="productId" ui:number="true" sortable="true"/>
+                <col id="productId" sortable="true"/>
 
                 <!--适用产品品类-->
                 <col id="productCategory" sortable="true"/>
 
                 <!--适用客户-->
-                <col id="customerId" ui:number="true" sortable="true"/>
+                <col id="customerId" sortable="true"/>
 
                 <!--适用客户类别-->
                 <col id="customerCategory" sortable="true"/>
@@ -64,7 +64,7 @@
                 <col id="discountAmount" ui:number="true" sortable="true"/>
 
                 <!--币种-->
-                <col id="currencyId" ui:number="true" sortable="true"/>
+                <col id="currencyId" sortable="true"/>
 
                 <!--生效开始日期-->
                 <col id="effectiveFrom" sortable="true"/>

@@ -25,7 +25,7 @@ public class ErpCrmForecastPeriodClosePeriodProcessor {
     @Inject
     ForecastAggregator forecastAggregator;
 
-    public ErpCrmForecastPeriod closePeriod(Long periodId, IServiceContext context) {
+    public ErpCrmForecastPeriod closePeriod(String periodId, IServiceContext context) {
         ErpCrmForecastPeriod period = requirePeriod(periodId);
         requireOpen(period);
         period.setStatus(ErpCrmConstants.FORECAST_PERIOD_STATUS_CLOSED);
@@ -41,7 +41,7 @@ public class ErpCrmForecastPeriodClosePeriodProcessor {
 
     // ---------- 内部辅助 ----------
 
-    protected ErpCrmForecastPeriod requirePeriod(Long periodId) {
+    protected ErpCrmForecastPeriod requirePeriod(String periodId) {
         ErpCrmForecastPeriod period = dao().getEntityById(periodId);
         if (period == null) {
             throw new NopException(ErpCrmErrors.ERR_FORECAST_PERIOD_NOT_FOUND)

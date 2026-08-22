@@ -19,16 +19,16 @@
             <cols>
 
                 <!--ID-->
-                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="id" mandatory="true" sortable="true"/>
 
                 <!--评分记录-->
-                <col id="scoreId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="scoreId" mandatory="true" sortable="true"/>
 
                 <!--业务组织-->
-                <col id="orgId" ui:number="true" sortable="true"/>
+                <col id="orgId" sortable="true"/>
 
                 <!--对应准则行-->
-                <col id="configLineId" ui:number="true" sortable="true"/>
+                <col id="configLineId" sortable="true"/>
 
                 <!--准则编码(快照)-->
                 <col id="criterionCode" sortable="true"/>

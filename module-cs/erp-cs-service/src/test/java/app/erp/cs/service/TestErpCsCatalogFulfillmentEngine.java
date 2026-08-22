@@ -69,8 +69,7 @@ public class TestErpCsCatalogFulfillmentEngine extends JunitAutoTestCase {
     static final String CS_TEAM_ID = "9403";
     static final String TEAM_CODE = "TEAM-FULFILL";
     static final String POLICY_TEAM_ID = "9404";
-    // bridge-test-113: crm 未迁移（M3.4）Long 实体侧局部桥（crm seed 保持 Long，退役 owner M3.4）
-    static final Long CRM_TEAM_ID = 9405L;
+    static final String CRM_TEAM_ID = "9405";
     static final String USER_A = "cs-fulfill-user-a";
     static final String USER_B = "cs-fulfill-user-b";
     static final String CS_SUPERVISOR = "cs-fulfill-supervisor";
@@ -815,12 +814,12 @@ public class TestErpCsCatalogFulfillmentEngine extends JunitAutoTestCase {
             teamDao.saveEntity(team);
 
             IEntityDao<ErpCrmTeamMember> memberDao = daoProvider.daoFor(ErpCrmTeamMember.class);
-            seedMember(memberDao, 9406L, CRM_TEAM_ID, USER_A);
-            seedMember(memberDao, 9407L, CRM_TEAM_ID, USER_B);
+            seedMember(memberDao, "9406", CRM_TEAM_ID, USER_A);
+            seedMember(memberDao, "9407", CRM_TEAM_ID, USER_B);
         });
     }
 
-    private void seedMember(IEntityDao<ErpCrmTeamMember> dao, Long id, Long teamId, String userId) {
+    private void seedMember(IEntityDao<ErpCrmTeamMember> dao, String id, String teamId, String userId) {
         ErpCrmTeamMember m = new ErpCrmTeamMember();
         m.orm_propValueByName("id", id);
         m.setTeamId(teamId);

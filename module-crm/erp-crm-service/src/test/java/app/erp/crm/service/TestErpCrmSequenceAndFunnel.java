@@ -55,14 +55,14 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpCrmSequenceAndFunnel extends JunitAutoTestCase {
 
-    static final Long ORG_ID = 1301L;
-    static final Long STAGE_NEW = 6301L;
-    static final Long STAGE_QUALIFIED = 6302L;
-    static final Long STAGE_WON = 6303L;
-    static final Long REASON_PRICE = 6401L;
-    static final Long SEQ_ID = 6501L;
-    static final Long SEQ2_ID = 6502L;
-    static final Long RULE_ID = 6511L;
+    static final String ORG_ID = "1301";
+    static final String STAGE_NEW = "6301";
+    static final String STAGE_QUALIFIED = "6302";
+    static final String STAGE_WON = "6303";
+    static final String REASON_PRICE = "6401";
+    static final String SEQ_ID = "6501";
+    static final String SEQ2_ID = "6502";
+    static final String RULE_ID = "6511";
 
     @Inject
     IDaoProvider daoProvider;
@@ -77,20 +77,20 @@ public class TestErpCrmSequenceAndFunnel extends JunitAutoTestCase {
 
     @Test
     public void testSequenceAssignAdvanceComplete() {
-        Long leadId = 6001L;
+        String leadId = "6001";
         ormTemplate.runInSession(() -> {
             seedStages();
             seedLostReasons();
             seedSequence(SEQ_ID, "SEQ-001", ErpCrmConstants.SEQUENCE_TEMPLATE_NEW_LEAD);
             // 两步序列：CALL（首步 autoCreateEvent）→ EMAIL
-            seedStep(6601L, SEQ_ID, 1, "CALL", ErpCrmConstants.STEP_COMPLETION_CALL_COMPLETED, true);
-            seedStep(6602L, SEQ_ID, 2, "EMAIL", ErpCrmConstants.STEP_COMPLETION_EMAIL_OPENED, false);
+            seedStep("6601", SEQ_ID, 1, "CALL", ErpCrmConstants.STEP_COMPLETION_CALL_COMPLETED, true);
+            seedStep("6602", SEQ_ID, 2, "EMAIL", ErpCrmConstants.STEP_COMPLETION_EMAIL_OPENED, false);
             seedAssignmentRule(RULE_ID, SEQ_ID, "LEAD_SOURCE", "{\"sourceId\":[101]}", 10);
 
             // Lead：sourceId=101 命中规则
             ErpCrmLead lead = newLead(leadId, "LEAD-SEQ-001", ErpCrmConstants.LEAD_TYPE_LEAD,
                     ErpCrmConstants.DOC_STATUS_NEW);
-            lead.setSourceId(101L);
+            lead.setSourceId("101");
             daoProvider.daoFor(ErpCrmLead.class).saveEntity(lead);
         });
 
@@ -135,19 +135,19 @@ public class TestErpCrmSequenceAndFunnel extends JunitAutoTestCase {
 
     @Test
     public void testSwitchSequenceOldSkipped() {
-        Long leadId = 6002L;
+        String leadId = "6002";
         ormTemplate.runInSession(() -> {
             seedStages();
             seedLostReasons();
             seedSequence(SEQ_ID, "SEQ-SW-1", ErpCrmConstants.SEQUENCE_TEMPLATE_NEW_LEAD);
             seedSequence(SEQ2_ID, "SEQ-SW-2", ErpCrmConstants.SEQUENCE_TEMPLATE_QUALIFICATION);
-            seedStep(6611L, SEQ_ID, 1, "CALL", ErpCrmConstants.STEP_COMPLETION_CALL_COMPLETED, false);
-            seedStep(6612L, SEQ2_ID, 1, "EMAIL", ErpCrmConstants.STEP_COMPLETION_EMAIL_OPENED, false);
+            seedStep("6611", SEQ_ID, 1, "CALL", ErpCrmConstants.STEP_COMPLETION_CALL_COMPLETED, false);
+            seedStep("6612", SEQ2_ID, 1, "EMAIL", ErpCrmConstants.STEP_COMPLETION_EMAIL_OPENED, false);
             seedAssignmentRule(RULE_ID, SEQ_ID, "LEAD_SOURCE", "{\"sourceId\":[101]}", 10);
 
             ErpCrmLead lead = newLead(leadId, "LEAD-SW-001", ErpCrmConstants.LEAD_TYPE_LEAD,
                     ErpCrmConstants.DOC_STATUS_NEW);
-            lead.setSourceId(101L);
+            lead.setSourceId("101");
             daoProvider.daoFor(ErpCrmLead.class).saveEntity(lead);
         });
 
@@ -156,7 +156,7 @@ public class TestErpCrmSequenceAndFunnel extends JunitAutoTestCase {
         ErpCrmLeadSequenceProgress oldProgress = reloadActiveProgress(leadId);
         assertNotNull(oldProgress);
         assertEquals(SEQ_ID, oldProgress.getSequenceId());
-        Long oldProgressId = oldProgress.getId();
+        String oldProgressId = oldProgress.getId();
 
         // switchSequence → 旧序列 SKIPPED + 新序列 IN_PROGRESS
         ApiResponse<?> switchResp = switchSequence(leadId, SEQ2_ID);
@@ -178,17 +178,17 @@ public class TestErpCrmSequenceAndFunnel extends JunitAutoTestCase {
 
     @Test
     public void testAssignTwiceRejects() {
-        Long leadId = 6003L;
+        String leadId = "6003";
         ormTemplate.runInSession(() -> {
             seedStages();
             seedLostReasons();
             seedSequence(SEQ_ID, "SEQ-DUP", ErpCrmConstants.SEQUENCE_TEMPLATE_NEW_LEAD);
-            seedStep(6621L, SEQ_ID, 1, "CALL", ErpCrmConstants.STEP_COMPLETION_CALL_COMPLETED, false);
+            seedStep("6621", SEQ_ID, 1, "CALL", ErpCrmConstants.STEP_COMPLETION_CALL_COMPLETED, false);
             seedAssignmentRule(RULE_ID, SEQ_ID, "LEAD_SOURCE", "{\"sourceId\":[101]}", 10);
 
             ErpCrmLead lead = newLead(leadId, "LEAD-DUP-001", ErpCrmConstants.LEAD_TYPE_LEAD,
                     ErpCrmConstants.DOC_STATUS_NEW);
-            lead.setSourceId(101L);
+            lead.setSourceId("101");
             daoProvider.daoFor(ErpCrmLead.class).saveEntity(lead);
         });
 
@@ -201,18 +201,18 @@ public class TestErpCrmSequenceAndFunnel extends JunitAutoTestCase {
 
     @Test
     public void testNoMatchRejects() {
-        Long leadId = 6004L;
+        String leadId = "6004";
         ormTemplate.runInSession(() -> {
             seedStages();
             seedLostReasons();
             seedSequence(SEQ_ID, "SEQ-NOMATCH", ErpCrmConstants.SEQUENCE_TEMPLATE_NEW_LEAD);
-            seedStep(6631L, SEQ_ID, 1, "CALL", ErpCrmConstants.STEP_COMPLETION_CALL_COMPLETED, false);
+            seedStep("6631", SEQ_ID, 1, "CALL", ErpCrmConstants.STEP_COMPLETION_CALL_COMPLETED, false);
             // 规则要求 sourceId=101，但 lead sourceId=999
             seedAssignmentRule(RULE_ID, SEQ_ID, "LEAD_SOURCE", "{\"sourceId\":[101]}", 10);
 
             ErpCrmLead lead = newLead(leadId, "LEAD-NOMATCH-001", ErpCrmConstants.LEAD_TYPE_LEAD,
                     ErpCrmConstants.DOC_STATUS_NEW);
-            lead.setSourceId(999L);
+            lead.setSourceId("999");
             daoProvider.daoFor(ErpCrmLead.class).saveEntity(lead);
         });
 
@@ -223,18 +223,18 @@ public class TestErpCrmSequenceAndFunnel extends JunitAutoTestCase {
 
     @Test
     public void testDefaultFallbackAssigns() {
-        Long leadId = 6005L;
+        String leadId = "6005";
         ormTemplate.runInSession(() -> {
             seedStages();
             seedLostReasons();
             seedSequence(SEQ_ID, "SEQ-DEF", ErpCrmConstants.SEQUENCE_TEMPLATE_NEW_LEAD);
-            seedStep(6641L, SEQ_ID, 1, "CALL", ErpCrmConstants.STEP_COMPLETION_CALL_COMPLETED, false);
+            seedStep("6641", SEQ_ID, 1, "CALL", ErpCrmConstants.STEP_COMPLETION_CALL_COMPLETED, false);
             // 仅 default 规则（sourceId=101 不匹配 lead sourceId=999）
-            seedDefaultAssignmentRule(RULE_ID + 1, SEQ_ID);
+            seedDefaultAssignmentRule(String.valueOf(Long.parseLong(RULE_ID) + 1), SEQ_ID);
 
             ErpCrmLead lead = newLead(leadId, "LEAD-DEF-001", ErpCrmConstants.LEAD_TYPE_LEAD,
                     ErpCrmConstants.DOC_STATUS_NEW);
-            lead.setSourceId(999L);
+            lead.setSourceId("999");
             daoProvider.daoFor(ErpCrmLead.class).saveEntity(lead);
         });
 
@@ -247,20 +247,20 @@ public class TestErpCrmSequenceAndFunnel extends JunitAutoTestCase {
 
     @Test
     public void testScanOverdueSteps() {
-        Long leadId = 6006L;
+        String leadId = "6006";
         ormTemplate.runInSession(() -> {
             seedStages();
             seedLostReasons();
             seedSequence(SEQ_ID, "SEQ-OVERDUE", ErpCrmConstants.SEQUENCE_TEMPLATE_NEW_LEAD);
             // 三步：每步 dueDays=1，startedAt=10天前 → 全部逾期（累计 due=3 + grace=2 = 5 < 10）
-            seedStep(6651L, SEQ_ID, 1, "CALL", ErpCrmConstants.STEP_COMPLETION_CALL_COMPLETED, false);
-            seedStep(6652L, SEQ_ID, 2, "EMAIL", ErpCrmConstants.STEP_COMPLETION_EMAIL_OPENED, false);
-            seedStep(6653L, SEQ_ID, 3, "MEETING", ErpCrmConstants.STEP_COMPLETION_MEETING_HELD, false);
+            seedStep("6651", SEQ_ID, 1, "CALL", ErpCrmConstants.STEP_COMPLETION_CALL_COMPLETED, false);
+            seedStep("6652", SEQ_ID, 2, "EMAIL", ErpCrmConstants.STEP_COMPLETION_EMAIL_OPENED, false);
+            seedStep("6653", SEQ_ID, 3, "MEETING", ErpCrmConstants.STEP_COMPLETION_MEETING_HELD, false);
             seedAssignmentRule(RULE_ID, SEQ_ID, "LEAD_SOURCE", "{\"sourceId\":[101]}", 10);
 
             ErpCrmLead lead = newLead(leadId, "LEAD-OVERDUE-001", ErpCrmConstants.LEAD_TYPE_LEAD,
                     ErpCrmConstants.DOC_STATUS_NEW);
-            lead.setSourceId(101L);
+            lead.setSourceId("101");
             daoProvider.daoFor(ErpCrmLead.class).saveEntity(lead);
         });
         assertEquals(0, assignSequence(leadId).getStatus());
@@ -278,24 +278,24 @@ public class TestErpCrmSequenceAndFunnel extends JunitAutoTestCase {
         List<Map<String, Object>> overdue = ormTemplate.runInSession(session -> progressBiz.scanOverdueSteps(new io.nop.core.context.ServiceContextImpl()));
         assertFalse(overdue.isEmpty(), "应扫描到逾期进度（连续逾期 3 步 ≥ max-overdue-steps=3）");
         Map<String, Object> first = overdue.get(0);
-        assertEquals(leadId, toLong(first.get("leadId")));
+        assertEquals(leadId, String.valueOf(first.get("leadId")));
         int overdueCount = ((Number) first.get("overdueStepCount")).intValue();
         assertTrue(overdueCount >= 3, "连续逾期步数 ≥ 3");
     }
 
     @Test
     public void testGetSequencePerformance() {
-        Long leadId = 6007L;
+        String leadId = "6007";
         ormTemplate.runInSession(() -> {
             seedStages();
             seedLostReasons();
             seedSequence(SEQ_ID, "SEQ-PERF", ErpCrmConstants.SEQUENCE_TEMPLATE_NEW_LEAD);
-            seedStep(6661L, SEQ_ID, 1, "CALL", ErpCrmConstants.STEP_COMPLETION_CALL_COMPLETED, false);
+            seedStep("6661", SEQ_ID, 1, "CALL", ErpCrmConstants.STEP_COMPLETION_CALL_COMPLETED, false);
             seedAssignmentRule(RULE_ID, SEQ_ID, "LEAD_SOURCE", "{\"sourceId\":[101]}", 10);
 
             ErpCrmLead lead = newLead(leadId, "LEAD-PERF-001", ErpCrmConstants.LEAD_TYPE_LEAD,
                     ErpCrmConstants.DOC_STATUS_NEW);
-            lead.setSourceId(101L);
+            lead.setSourceId("101");
             daoProvider.daoFor(ErpCrmLead.class).saveEntity(lead);
         });
         assertEquals(0, assignSequence(leadId).getStatus());
@@ -320,9 +320,9 @@ public class TestErpCrmSequenceAndFunnel extends JunitAutoTestCase {
 
     @Test
     public void testRefreshFunnelClearRebuildAndView() {
-        Long leadWon = 6011L;
-        Long leadLost = 6012L;
-        Long leadActive = 6013L;
+        String leadWon = "6011";
+        String leadLost = "6012";
+        String leadActive = "6013";
         ormTemplate.runInSession(() -> {
             seedStages();
             seedLostReasons();
@@ -339,15 +339,15 @@ public class TestErpCrmSequenceAndFunnel extends JunitAutoTestCase {
 
             // ConvLogs：NEW → QUALIFIED → WON（仅 won）
             LocalDateTime t0 = LocalDateTime.of(2026, 7, 5, 9, 0);
-            saveConvLog(7001L, leadWon, null, STAGE_NEW, t0);
-            saveConvLog(7002L, leadWon, STAGE_NEW, STAGE_QUALIFIED, t0.plusDays(2));
-            saveConvLog(7003L, leadWon, STAGE_QUALIFIED, STAGE_WON, t0.plusDays(7));
+            saveConvLog("7001", leadWon, null, STAGE_NEW, t0);
+            saveConvLog("7002", leadWon, STAGE_NEW, STAGE_QUALIFIED, t0.plusDays(2));
+            saveConvLog("7003", leadWon, STAGE_QUALIFIED, STAGE_WON, t0.plusDays(7));
             // lost：NEW → QUALIFIED（在 QUALIFIED 丢失）
-            saveConvLog(7004L, leadLost, null, STAGE_NEW, t0);
-            saveConvLog(7005L, leadLost, STAGE_NEW, STAGE_QUALIFIED, t0.plusDays(1));
+            saveConvLog("7004", leadLost, null, STAGE_NEW, t0);
+            saveConvLog("7005", leadLost, STAGE_NEW, STAGE_QUALIFIED, t0.plusDays(1));
             // active：NEW → QUALIFIED
-            saveConvLog(7006L, leadActive, null, STAGE_NEW, t0);
-            saveConvLog(7007L, leadActive, STAGE_NEW, STAGE_QUALIFIED, t0.plusDays(3));
+            saveConvLog("7006", leadActive, null, STAGE_NEW, t0);
+            saveConvLog("7007", leadActive, STAGE_NEW, STAGE_QUALIFIED, t0.plusDays(3));
         });
 
         LocalDate start = LocalDate.of(2026, 7, 1);
@@ -380,7 +380,7 @@ public class TestErpCrmSequenceAndFunnel extends JunitAutoTestCase {
         assertEquals(0, viewResp.getStatus(), "getFunnelView 应成功: code=" + viewResp.getCode() + " msg=" + viewResp.getMsg());
         Map<String, Object> view = (Map<String, Object>) viewResp.getData();
         assertNotNull(view);
-        assertEquals(funnelReloaded.getId(), toLong(view.get("funnelId")));
+        assertEquals(funnelReloaded.getId(), view.get("funnelId"));
         assertNotNull(view.get("stages"), "stages 数组已生成");
         assertEquals(3, ((List<?>) view.get("stages")).size(), "3 阶段可视化");
     }
@@ -395,21 +395,21 @@ public class TestErpCrmSequenceAndFunnel extends JunitAutoTestCase {
 
     // ---------- rpc helpers ----------
 
-    private ApiResponse<?> assignSequence(Long leadId) {
+    private ApiResponse<?> assignSequence(String leadId) {
         return rpc(mutation, "ErpCrmLeadSequenceProgress__assignSequence", Map.of("leadId", leadId));
     }
 
-    private ApiResponse<?> advanceStep(Long progressId, Long eventId) {
+    private ApiResponse<?> advanceStep(String progressId, String eventId) {
         return rpc(mutation, "ErpCrmLeadSequenceProgress__advanceStep",
                 Map.of("progressId", progressId, "eventId", eventId));
     }
 
-    private ApiResponse<?> switchSequence(Long leadId, Long newSequenceId) {
+    private ApiResponse<?> switchSequence(String leadId, String newSequenceId) {
         return rpc(mutation, "ErpCrmLeadSequenceProgress__switchSequence",
                 Map.of("leadId", leadId, "newSequenceId", newSequenceId));
     }
 
-    private ApiResponse<?> refreshFunnel(LocalDate start, LocalDate end, Long t, Long team, Long src) {
+    private ApiResponse<?> refreshFunnel(LocalDate start, LocalDate end, String t, String team, String src) {
         // 使用 HashMap 允许 null 值（Map.of 不允许 null）
         Map<String, Object> data = new java.util.LinkedHashMap<>();
         data.put("periodStart", start);
@@ -434,7 +434,7 @@ public class TestErpCrmSequenceAndFunnel extends JunitAutoTestCase {
         saveStage(dao, STAGE_WON, "STG-W", "赢单", 30);
     }
 
-    private void saveStage(IEntityDao<ErpCrmStage> dao, Long id, String code, String name, int seq) {
+    private void saveStage(IEntityDao<ErpCrmStage> dao, String id, String code, String name, int seq) {
         ErpCrmStage s = new ErpCrmStage();
         s.setId(id);
         s.setCode(code);
@@ -453,7 +453,7 @@ public class TestErpCrmSequenceAndFunnel extends JunitAutoTestCase {
         dao.saveEntity(r);
     }
 
-    private void seedSequence(Long id, String code, String templateType) {
+    private void seedSequence(String id, String code, String templateType) {
         ErpCrmSequence seq = new ErpCrmSequence();
         seq.setId(id);
         seq.setCode(code);
@@ -465,7 +465,7 @@ public class TestErpCrmSequenceAndFunnel extends JunitAutoTestCase {
         daoProvider.daoFor(ErpCrmSequence.class).saveEntity(seq);
     }
 
-    private void seedStep(Long id, Long sequenceId, int order, String activityType,
+    private void seedStep(String id, String sequenceId, int order, String activityType,
                            String condition, boolean autoCreateEvent) {
         ErpCrmSequenceStep step = new ErpCrmSequenceStep();
         step.setId(id);
@@ -480,7 +480,7 @@ public class TestErpCrmSequenceAndFunnel extends JunitAutoTestCase {
         daoProvider.daoFor(ErpCrmSequenceStep.class).saveEntity(step);
     }
 
-    private void seedAssignmentRule(Long id, Long sequenceId, String conditionType,
+    private void seedAssignmentRule(String id, String sequenceId, String conditionType,
                                      String conditionValue, int priority) {
         ErpCrmSequenceAssignment rule = new ErpCrmSequenceAssignment();
         rule.setId(id);
@@ -494,7 +494,7 @@ public class TestErpCrmSequenceAndFunnel extends JunitAutoTestCase {
         daoProvider.daoFor(ErpCrmSequenceAssignment.class).saveEntity(rule);
     }
 
-    private void seedDefaultAssignmentRule(Long id, Long sequenceId) {
+    private void seedDefaultAssignmentRule(String id, String sequenceId) {
         ErpCrmSequenceAssignment rule = new ErpCrmSequenceAssignment();
         rule.setId(id);
         rule.setOrgId(ORG_ID);
@@ -507,7 +507,7 @@ public class TestErpCrmSequenceAndFunnel extends JunitAutoTestCase {
         daoProvider.daoFor(ErpCrmSequenceAssignment.class).saveEntity(rule);
     }
 
-    private ErpCrmLead newLead(Long id, String code, String leadType, String docStatus) {
+    private ErpCrmLead newLead(String id, String code, String leadType, String docStatus) {
         ErpCrmLead lead = new ErpCrmLead();
         lead.setId(id);
         lead.setCode(code);
@@ -518,8 +518,8 @@ public class TestErpCrmSequenceAndFunnel extends JunitAutoTestCase {
         return lead;
     }
 
-    private ErpCrmLead newLead(Long id, String code, String leadType, String docStatus,
-                                BigDecimal revenue, int probability, Long lostReasonId) {
+    private ErpCrmLead newLead(String id, String code, String leadType, String docStatus,
+                                BigDecimal revenue, int probability, String lostReasonId) {
         ErpCrmLead lead = newLead(id, code, leadType, docStatus);
         lead.setExpectedRevenue(revenue);
         lead.setProbability(probability);
@@ -527,9 +527,9 @@ public class TestErpCrmSequenceAndFunnel extends JunitAutoTestCase {
         return lead;
     }
 
-    private ErpCrmEvent newCompletedEvent(Long leadId, String eventType, String code) {
+    private ErpCrmEvent newCompletedEvent(String leadId, String eventType, String code) {
         ErpCrmEvent event = new ErpCrmEvent();
-        event.setId(System.nanoTime());
+        event.setId("6021");
         event.setOrgId(ORG_ID);
         event.setCode(code);
         event.setEventType(eventType);
@@ -542,7 +542,7 @@ public class TestErpCrmSequenceAndFunnel extends JunitAutoTestCase {
         return event;
     }
 
-    private void saveConvLog(Long id, Long leadId, Long fromStage, Long toStage, LocalDateTime changedAt) {
+    private void saveConvLog(String id, String leadId, String fromStage, String toStage, LocalDateTime changedAt) {
         ErpCrmLeadConvLog log = new ErpCrmLeadConvLog();
         log.setId(id);
         log.setLeadId(leadId);
@@ -554,7 +554,7 @@ public class TestErpCrmSequenceAndFunnel extends JunitAutoTestCase {
 
     // ---------- reload helpers ----------
 
-    private ErpCrmLeadSequenceProgress reloadActiveProgress(Long leadId) {
+    private ErpCrmLeadSequenceProgress reloadActiveProgress(String leadId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("leadId", leadId));
         q.addFilter(eq("status", ErpCrmConstants.SEQUENCE_PROGRESS_IN_PROGRESS));
@@ -562,11 +562,11 @@ public class TestErpCrmSequenceAndFunnel extends JunitAutoTestCase {
         return progressDao().findAllByQuery(q).stream().findFirst().orElse(null);
     }
 
-    private ErpCrmLeadSequenceProgress reloadProgress(Long progressId) {
+    private ErpCrmLeadSequenceProgress reloadProgress(String progressId) {
         return progressDao().getEntityById(progressId);
     }
 
-    private ErpCrmEvent findPlannedEvent(Long leadId, String eventType) {
+    private ErpCrmEvent findPlannedEvent(String leadId, String eventType) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("relatedLeadId", leadId));
         q.addFilter(eq("eventType", eventType));
@@ -574,7 +574,7 @@ public class TestErpCrmSequenceAndFunnel extends JunitAutoTestCase {
         return eventDao().findAllByQuery(q).stream().findFirst().orElse(null);
     }
 
-    private ErpCrmLeadFunnel reloadFunnel(LocalDate start, LocalDate end, Long t, Long team, Long src) {
+    private ErpCrmLeadFunnel reloadFunnel(LocalDate start, LocalDate end, String t, String team, String src) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("periodStart", start));
         q.addFilter(eq("periodEnd", end));
@@ -582,14 +582,14 @@ public class TestErpCrmSequenceAndFunnel extends JunitAutoTestCase {
         return funnelDao().findAllByQuery(q).stream().findFirst().orElse(null);
     }
 
-    private List<ErpCrmLeadFunnel> loadAllFunnels(LocalDate start, LocalDate end, Long t, Long team, Long src) {
+    private List<ErpCrmLeadFunnel> loadAllFunnels(LocalDate start, LocalDate end, String t, String team, String src) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("periodStart", start));
         q.addFilter(eq("periodEnd", end));
         return funnelDao().findAllByQuery(q);
     }
 
-    private List<ErpCrmFunnelStageMetrics> loadStageMetrics(Long funnelId) {
+    private List<ErpCrmFunnelStageMetrics> loadStageMetrics(String funnelId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("funnelId", funnelId));
         return stageMetricsDao().findAllByQuery(q);
@@ -609,15 +609,5 @@ public class TestErpCrmSequenceAndFunnel extends JunitAutoTestCase {
 
     private IEntityDao<ErpCrmFunnelStageMetrics> stageMetricsDao() {
         return daoProvider.daoFor(ErpCrmFunnelStageMetrics.class);
-    }
-
-    private Long toLong(Object value) {
-        if (value == null) return null;
-        if (value instanceof Number) return ((Number) value).longValue();
-        try {
-            return Long.parseLong(String.valueOf(value));
-        } catch (NumberFormatException e) {
-            return null;
-        }
     }
 }

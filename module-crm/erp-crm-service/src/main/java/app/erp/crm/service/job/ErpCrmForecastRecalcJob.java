@@ -65,7 +65,7 @@ public class ErpCrmForecastRecalcJob {
         }
     }
 
-    protected void runRefreshForecast(Long periodId, IServiceContext ctx) {
+    protected void runRefreshForecast(String periodId, IServiceContext ctx) {
         forecastBiz.refreshForecast(periodId, ctx);
     }
 

@@ -1,0 +1,3 @@
+_chgType,ID,CODE,ORG_ID,STAGE_NAME,SEQUENCE,TEAM_ID,DEFAULT_PROBABILITY,IS_WON_STAGE,REMARK,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
+A,5201,@var:ErpCrmStage@code,,早期,20,,10,false,,@var:ErpCrmStage@delVersion,0,autotest-ref,*,autotest-ref,*
+A,5202,@var:ErpCrmStage@code_1,,后期,30,,60,false,,@var:ErpCrmStage@delVersion,0,autotest-ref,*,autotest-ref,*

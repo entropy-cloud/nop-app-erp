@@ -183,7 +183,7 @@ public class _ErpCrmTerritory extends DynamicOrmEntity{
 
     
     /* ID: ID */
-    private java.lang.Long _id;
+    private java.lang.String _id;
     
     /* 编码: CODE */
     private java.lang.String _code;
@@ -192,16 +192,16 @@ public class _ErpCrmTerritory extends DynamicOrmEntity{
     private java.lang.String _name;
     
     /* 业务组织: ORG_ID */
-    private java.lang.Long _orgId;
+    private java.lang.String _orgId;
     
     /* 父区域: PARENT_ID */
-    private java.lang.Long _parentId;
+    private java.lang.String _parentId;
     
     /* 区域类型: TERRITORY_TYPE */
     private java.lang.String _territoryType;
     
     /* 区域负责人: MANAGER_ID */
-    private java.lang.Long _managerId;
+    private java.lang.String _managerId;
     
     /* 区域描述: DESCRIPTION */
     private java.lang.String _description;
@@ -388,9 +388,9 @@ public class _ErpCrmTerritory extends DynamicOrmEntity{
         switch(propId){
         
             case PROP_ID_id:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_id));
                }
                setId(typedValue);
@@ -418,9 +418,9 @@ public class _ErpCrmTerritory extends DynamicOrmEntity{
             }
         
             case PROP_ID_orgId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_orgId));
                }
                setOrgId(typedValue);
@@ -428,9 +428,9 @@ public class _ErpCrmTerritory extends DynamicOrmEntity{
             }
         
             case PROP_ID_parentId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_parentId));
                }
                setParentId(typedValue);
@@ -448,9 +448,9 @@ public class _ErpCrmTerritory extends DynamicOrmEntity{
             }
         
             case PROP_ID_managerId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_managerId));
                }
                setManagerId(typedValue);
@@ -598,7 +598,7 @@ public class _ErpCrmTerritory extends DynamicOrmEntity{
         
             case PROP_ID_id:{
                onInitProp(propId);
-               this._id = (java.lang.Long)value;
+               this._id = (java.lang.String)value;
                orm_id(); // 如果是设置主键字段，则触发watcher
                break;
             }
@@ -619,14 +619,14 @@ public class _ErpCrmTerritory extends DynamicOrmEntity{
         
             case PROP_ID_orgId:{
                onInitProp(propId);
-               this._orgId = (java.lang.Long)value;
+               this._orgId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_parentId:{
                onInitProp(propId);
-               this._parentId = (java.lang.Long)value;
+               this._parentId = (java.lang.String)value;
                
                break;
             }
@@ -640,7 +640,7 @@ public class _ErpCrmTerritory extends DynamicOrmEntity{
         
             case PROP_ID_managerId:{
                onInitProp(propId);
-               this._managerId = (java.lang.Long)value;
+               this._managerId = (java.lang.String)value;
                
                break;
             }
@@ -745,7 +745,7 @@ public class _ErpCrmTerritory extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final java.lang.Long getId(){
+    public final java.lang.String getId(){
          onPropGet(PROP_ID_id);
          return _id;
     }
@@ -753,7 +753,7 @@ public class _ErpCrmTerritory extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final void setId(java.lang.Long value){
+    public final void setId(java.lang.String value){
         if(onPropSet(PROP_ID_id,value)){
             this._id = value;
             internalClearRefs(PROP_ID_id);
@@ -802,7 +802,7 @@ public class _ErpCrmTerritory extends DynamicOrmEntity{
     /**
      * 业务组织: ORG_ID
      */
-    public final java.lang.Long getOrgId(){
+    public final java.lang.String getOrgId(){
          onPropGet(PROP_ID_orgId);
          return _orgId;
     }
@@ -810,7 +810,7 @@ public class _ErpCrmTerritory extends DynamicOrmEntity{
     /**
      * 业务组织: ORG_ID
      */
-    public final void setOrgId(java.lang.Long value){
+    public final void setOrgId(java.lang.String value){
         if(onPropSet(PROP_ID_orgId,value)){
             this._orgId = value;
             internalClearRefs(PROP_ID_orgId);
@@ -821,7 +821,7 @@ public class _ErpCrmTerritory extends DynamicOrmEntity{
     /**
      * 父区域: PARENT_ID
      */
-    public final java.lang.Long getParentId(){
+    public final java.lang.String getParentId(){
          onPropGet(PROP_ID_parentId);
          return _parentId;
     }
@@ -829,7 +829,7 @@ public class _ErpCrmTerritory extends DynamicOrmEntity{
     /**
      * 父区域: PARENT_ID
      */
-    public final void setParentId(java.lang.Long value){
+    public final void setParentId(java.lang.String value){
         if(onPropSet(PROP_ID_parentId,value)){
             this._parentId = value;
             internalClearRefs(PROP_ID_parentId);
@@ -859,7 +859,7 @@ public class _ErpCrmTerritory extends DynamicOrmEntity{
     /**
      * 区域负责人: MANAGER_ID
      */
-    public final java.lang.Long getManagerId(){
+    public final java.lang.String getManagerId(){
          onPropGet(PROP_ID_managerId);
          return _managerId;
     }
@@ -867,7 +867,7 @@ public class _ErpCrmTerritory extends DynamicOrmEntity{
     /**
      * 区域负责人: MANAGER_ID
      */
-    public final void setManagerId(java.lang.Long value){
+    public final void setManagerId(java.lang.String value){
         if(onPropSet(PROP_ID_managerId,value)){
             this._managerId = value;
             internalClearRefs(PROP_ID_managerId);

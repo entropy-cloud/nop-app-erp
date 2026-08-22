@@ -12,72 +12,72 @@
     public class ErpCrmLeadConvLogInputBean extends CrudInputBase {
 
     
-        private Long _id;
+        private String _id;
 
     
         @PropMeta(propId=1)
     
-        public Long getId(){
+        public String getId(){
             return _id;
         }
 
-        public void setId(Long value){
+        public void setId(String value){
             this._id = value;
         }
 
 
-        private Long _leadId;
+        private String _leadId;
 
     
         @PropMeta(propId=2)
     
-        public Long getLeadId(){
+        public String getLeadId(){
             return _leadId;
         }
 
-        public void setLeadId(Long value){
+        public void setLeadId(String value){
             this._leadId = value;
         }
 
 
-        private Long _orgId;
+        private String _orgId;
 
     
         @PropMeta(propId=3)
     
-        public Long getOrgId(){
+        public String getOrgId(){
             return _orgId;
         }
 
-        public void setOrgId(Long value){
+        public void setOrgId(String value){
             this._orgId = value;
         }
 
 
-        private Long _fromStageId;
+        private String _fromStageId;
 
     
         @PropMeta(propId=4)
     
-        public Long getFromStageId(){
+        public String getFromStageId(){
             return _fromStageId;
         }
 
-        public void setFromStageId(Long value){
+        public void setFromStageId(String value){
             this._fromStageId = value;
         }
 
 
-        private Long _toStageId;
+        private String _toStageId;
 
     
         @PropMeta(propId=5)
     
-        public Long getToStageId(){
+        public String getToStageId(){
             return _toStageId;
         }
 
-        public void setToStageId(Long value){
+        public void setToStageId(String value){
             this._toStageId = value;
         }
 

@@ -18,7 +18,7 @@ public class ErpCrmConversionConvertToQuotationProcessor {
     @Inject
     ErpCrmConversionProcessor facade;
 
-    public ErpSalQuotation convertToQuotation(Long leadId, Map<String, Object> quotationData, IServiceContext context) {
+    public ErpSalQuotation convertToQuotation(String leadId, Map<String, Object> quotationData, IServiceContext context) {
         ErpCrmLead lead = facade.requireLead(leadId, context);
         facade.validateNotConverted(lead, context);
         facade.validateLeadType(lead, ErpCrmConstants.LEAD_TYPE_OPPORTUNITY, context);

@@ -157,7 +157,7 @@ public class ErpCrmReportBizModel {
                 data.put(DS_VAR, buildLeadConversionFunnelDataset());
                 break;
             case "forecast-accuracy":
-                data.put(DS_VAR, buildForecastAccuracyDataset(asLong(data, "forecastId")));
+                data.put(DS_VAR, buildForecastAccuracyDataset(asString(data, "forecastId")));
                 break;
             case "campaign-attribution":
                 data.put(DS_VAR, buildCampaignAttributionDataset());
@@ -167,10 +167,10 @@ public class ErpCrmReportBizModel {
         }
     }
 
-    private static Long asLong(Map<String, Object> data, String k) {
+    private static String asString(Map<String, Object> data, String k) {
         if (data == null) return null;
         Object v = data.get(k);
-        return v == null ? null : Long.valueOf(v.toString());
+        return v == null ? null : v.toString();
     }
 
     // ===================== 数据集构造（也作 @BizQuery 供前端取原始数据） =====================
@@ -183,7 +183,7 @@ public class ErpCrmReportBizModel {
 
     /** 销售预测准确率数据集：预测 commit/weighted/bestCase + 期间汇总，对齐 {@code crm/sales-forecast.md}。 */
     @BizQuery
-    public List<Map<String, Object>> forecastAccuracyData(@Optional @Name("forecastId") Long forecastId,
+    public List<Map<String, Object>> forecastAccuracyData(@Optional @Name("forecastId") String forecastId,
                                                            IServiceContext context) {
         return buildForecastAccuracyDataset(forecastId);
     }
@@ -213,19 +213,19 @@ public class ErpCrmReportBizModel {
             if (rows.isEmpty()) {
                 return Collections.emptyList();
             }
-            Map<Long, Object[]> agg = new LinkedHashMap<>();
+            Map<String, Object[]> agg = new LinkedHashMap<>();
             for (Map<String, Object> row : rows) {
                 Object sid = row.get("stageId");
                 if (sid == null) continue;
-                long stageId = ((Number) sid).longValue();
+                String stageId = sid.toString();
                 long leadCount = row.get("leadCount") == null ? 0L : ((Number) row.get("leadCount")).longValue();
                 BigDecimal expectedRevenue = toBigDecimal(row.get("expectedRevenue"));
                 agg.put(stageId, new Object[]{leadCount, expectedRevenue});
             }
-            Map<Long, String> stageNames = resolveStageNames(agg.keySet());
+            Map<String, String> stageNames = resolveStageNames(agg.keySet());
             List<Map<String, Object>> result = new ArrayList<>(agg.size());
-            for (Map.Entry<Long, Object[]> e : agg.entrySet()) {
-                long stageId = e.getKey();
+            for (Map.Entry<String, Object[]> e : agg.entrySet()) {
+                String stageId = e.getKey();
                 Object[] v = e.getValue();
                 Map<String, Object> r = new LinkedHashMap<>();
                 r.put("stageId", stageId);
@@ -264,19 +264,19 @@ public class ErpCrmReportBizModel {
             if (rows.isEmpty()) {
                 return Collections.emptyList();
             }
-            Map<Long, Object[]> agg = new LinkedHashMap<>();
+            Map<String, Object[]> agg = new LinkedHashMap<>();
             for (Map<String, Object> row : rows) {
                 Object cid = row.get("campaignId");
                 if (cid == null) continue;
-                long campaignId = ((Number) cid).longValue();
+                String campaignId = cid.toString();
                 long leadCount = row.get("leadCount") == null ? 0L : ((Number) row.get("leadCount")).longValue();
                 BigDecimal expectedRevenue = toBigDecimal(row.get("expectedRevenue"));
                 agg.put(campaignId, new Object[]{leadCount, expectedRevenue});
             }
-            Map<Long, String> campaignNames = resolveCampaignNames(agg.keySet());
+            Map<String, String> campaignNames = resolveCampaignNames(agg.keySet());
             List<Map<String, Object>> result = new ArrayList<>(agg.size());
-            for (Map.Entry<Long, Object[]> e : agg.entrySet()) {
-                long campaignId = e.getKey();
+            for (Map.Entry<String, Object[]> e : agg.entrySet()) {
+                String campaignId = e.getKey();
                 Object[] v = e.getValue();
                 Map<String, Object> r = new LinkedHashMap<>();
                 r.put("campaignId", campaignId);
@@ -289,12 +289,12 @@ public class ErpCrmReportBizModel {
         });
     }
 
-    private Map<Long, String> resolveCampaignNames(Set<Long> campaignIds) {
+    private Map<String, String> resolveCampaignNames(Set<String> campaignIds) {
         if (campaignIds.isEmpty()) return Collections.emptyMap();
         QueryBean q = new QueryBean();
         q.addFilter(in("id", campaignIds));
         List<ErpCrmCampaign> campaigns = daoProvider.daoFor(ErpCrmCampaign.class).findAllByQuery(q);
-        Map<Long, String> names = new HashMap<>();
+        Map<String, String> names = new HashMap<>();
         for (ErpCrmCampaign c : campaigns) {
             names.put(c.getId(), c.getName());
         }
@@ -306,17 +306,17 @@ public class ErpCrmReportBizModel {
      * {@link ErpCrmForecastLine}（行数/加权收入合计）合成，对齐 {@code crm/sales-forecast.md}：
      * commitAmount / weightedAmount / bestCaseAmount + 实际行数与加权收入合计。
      */
-    List<Map<String, Object>> buildForecastAccuracyDataset(Long forecastId) {
+    List<Map<String, Object>> buildForecastAccuracyDataset(String forecastId) {
         return ormTemplate.runInSession(session -> {
             List<ErpCrmForecast> forecasts = loadForecasts(forecastId);
             if (forecasts.isEmpty()) {
                 return Collections.emptyList();
             }
-            Set<Long> forecastIds = new HashSet<>();
+            Set<String> forecastIds = new HashSet<>();
             for (ErpCrmForecast f : forecasts) {
                 if (f.getId() != null) forecastIds.add(f.getId());
             }
-            Map<Long, ForecastLineAggregator> lineAgg = aggregateForecastLines(forecastIds);
+            Map<String, ForecastLineAggregator> lineAgg = aggregateForecastLines(forecastIds);
             List<Map<String, Object>> rows = new ArrayList<>(forecasts.size());
             for (ErpCrmForecast f : forecasts) {
                 ForecastLineAggregator la = lineAgg.getOrDefault(f.getId(), new ForecastLineAggregator());
@@ -338,18 +338,18 @@ public class ErpCrmReportBizModel {
 
     // ===================== helpers =====================
 
-    private List<ErpCrmForecast> loadForecasts(Long forecastId) {
+    private List<ErpCrmForecast> loadForecasts(String forecastId) {
         QueryBean q = new QueryBean();
         if (forecastId != null) q.addFilter(eq("id", forecastId));
         return daoProvider.daoFor(ErpCrmForecast.class).findAllByQuery(q);
     }
 
-    private Map<Long, ForecastLineAggregator> aggregateForecastLines(Set<Long> forecastIds) {
+    private Map<String, ForecastLineAggregator> aggregateForecastLines(Set<String> forecastIds) {
         if (forecastIds.isEmpty()) return Collections.emptyMap();
         QueryBean q = new QueryBean();
         q.addFilter(in("forecastId", forecastIds));
         List<ErpCrmForecastLine> lines = daoProvider.daoFor(ErpCrmForecastLine.class).findAllByQuery(q);
-        Map<Long, ForecastLineAggregator> map = new HashMap<>();
+        Map<String, ForecastLineAggregator> map = new HashMap<>();
         for (ErpCrmForecastLine l : lines) {
             ForecastLineAggregator a = map.computeIfAbsent(l.getForecastId(), k -> new ForecastLineAggregator());
             a.lineCount++;
@@ -358,12 +358,12 @@ public class ErpCrmReportBizModel {
         return map;
     }
 
-    private Map<Long, String> resolveStageNames(Set<Long> stageIds) {
+    private Map<String, String> resolveStageNames(Set<String> stageIds) {
         if (stageIds.isEmpty()) return Collections.emptyMap();
         QueryBean q = new QueryBean();
         q.addFilter(in("id", stageIds));
         List<ErpCrmStage> stages = daoProvider.daoFor(ErpCrmStage.class).findAllByQuery(q);
-        Map<Long, String> names = new HashMap<>();
+        Map<String, String> names = new HashMap<>();
         for (ErpCrmStage s : stages) {
             names.put(s.getId(), s.getStageName());
         }

@@ -46,11 +46,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpCrmTerritoryQuota extends JunitAutoTestCase {
 
-    static final Long ORG_ID = 1301L;
-    static final Long ROOT_TERRITORY_ID = 6001L;
-    static final Long REGION_HUADONG_ID = 6002L;
-    static final Long AREA_SHANGHAI_ID = 6003L;
-    static final Long TEAM_PUDONG_ID = 6004L;
+    static final String ORG_ID = "1301";
+    static final String ROOT_TERRITORY_ID = "6001";
+    static final String REGION_HUADONG_ID = "6002";
+    static final String AREA_SHANGHAI_ID = "6003";
+    static final String TEAM_PUDONG_ID = "6004";
 
     @Inject
     IDaoProvider daoProvider;
@@ -85,22 +85,22 @@ public class TestErpCrmTerritoryQuota extends JunitAutoTestCase {
     @Test
     public void testMoveTerritoryReroutesSubtree() {
         ormTemplate.runInSession(() -> {
-            seedTerritory(7001L, "T-ROOT", "公司", null,
+            seedTerritory("7001", "T-ROOT", "公司", null,
                     ErpCrmConstants.TERRITORY_TYPE_REGION, 0, "/", true);
-            seedTerritory(7002L, "T-HUABEI", "华北", 7001L,
+            seedTerritory("7002", "T-HUABEI", "华北", "7001",
                     ErpCrmConstants.TERRITORY_TYPE_REGION, 1, "/T-HUABEI", true);
-            seedTerritory(7003L, "T-HUADONG", "华东", 7001L,
+            seedTerritory("7003", "T-HUADONG", "华东", "7001",
                     ErpCrmConstants.TERRITORY_TYPE_REGION, 1, "/T-HUADONG", true);
-            seedTerritory(7004L, "T-SHANGHAI", "上海", 7003L,
+            seedTerritory("7004", "T-SHANGHAI", "上海", "7003",
                     ErpCrmConstants.TERRITORY_TYPE_AREA, 2, "/T-HUADONG/T-SHANGHAI", true);
         });
 
         // 移动 SHANGHAI 从 HUADONG 到 HUABEI
-        ApiResponse<?> resp = moveTerritory(7004L, 7002L);
+        ApiResponse<?> resp = moveTerritory("7004", "7002");
         assertEquals(0, resp.getStatus(), "moveTerritory 应成功");
 
-        ErpCrmTerritory moved = reloadTerritory(7004L);
-        assertEquals(7002L, moved.getParentId(), "parentId 重指向新父");
+        ErpCrmTerritory moved = reloadTerritory("7004");
+        assertEquals("7002", moved.getParentId(), "parentId 重指向新父");
         assertEquals("/T-HUABEI/T-SHANGHAI", moved.getFullPath(), "fullPath 重算");
         assertEquals(2, moved.getLevel(), "level 保持与新父对应");
     }
@@ -108,13 +108,13 @@ public class TestErpCrmTerritoryQuota extends JunitAutoTestCase {
     @Test
     public void testMoveTerritoryRejectsCycle() {
         ormTemplate.runInSession(() -> {
-            seedTerritory(7101L, "T-ROOT-B", "公司B", null,
+            seedTerritory("7101", "T-ROOT-B", "公司B", null,
                     ErpCrmConstants.TERRITORY_TYPE_REGION, 0, "/", true);
-            seedTerritory(7102L, "T-CHILD-B", "子B", 7101L,
+            seedTerritory("7102", "T-CHILD-B", "子B", "7101",
                     ErpCrmConstants.TERRITORY_TYPE_AREA, 1, "/T-ROOT-B/T-CHILD-B", true);
         });
         // 把 ROOT 移到自己的子节点下 → 成环
-        ApiResponse<?> resp = moveTerritory(7101L, 7102L);
+        ApiResponse<?> resp = moveTerritory("7101", "7102");
         assertEquals(ErpCrmErrors.ERR_TERRITORY_CYCLE.getErrorCode(), resp.getCode(),
                 "成环 → ERR_TERRITORY_CYCLE");
     }
@@ -122,20 +122,20 @@ public class TestErpCrmTerritoryQuota extends JunitAutoTestCase {
     @Test
     public void testMaxDepthExceededRejected() {
         ormTemplate.runInSession(() -> {
-            seedTerritory(7201L, "T-ROOT-C", "公司C", null,
+            seedTerritory("7201", "T-ROOT-C", "公司C", null,
                     ErpCrmConstants.TERRITORY_TYPE_REGION, 0, "/", true);
-            seedTerritory(7202L, "T-L1", "L1", 7201L,
+            seedTerritory("7202", "T-L1", "L1", "7201",
                     ErpCrmConstants.TERRITORY_TYPE_REGION, 1, "/T-ROOT-C/T-L1", true);
-            seedTerritory(7203L, "T-L2", "L2", 7202L,
+            seedTerritory("7203", "T-L2", "L2", "7202",
                     ErpCrmConstants.TERRITORY_TYPE_AREA, 2, "/T-ROOT-C/T-L1/T-L2", true);
-            seedTerritory(7204L, "T-L3", "L3", 7203L,
+            seedTerritory("7204", "T-L3", "L3", "7203",
                     ErpCrmConstants.TERRITORY_TYPE_BRANCH, 3, "/T-ROOT-C/T-L1/T-L2/T-L3", true);
         });
         // 在 level=3 节点下建子 → level=4，max-depth=4 允许；但建下一层 level=5 应拒绝
-        ApiResponse<?> ok = createChild(7204L, "T-L4-OK", "L4OK",
+        ApiResponse<?> ok = createChild("7204", "T-L4-OK", "L4OK",
                 ErpCrmConstants.TERRITORY_TYPE_TEAM, null);
         assertEquals(0, ok.getStatus(), "level=4 ≤ max-depth=4 应允许");
-        Long level4Id = findTerritoryByCode("T-L4-OK").getId();
+        String level4Id = findTerritoryByCode("T-L4-OK").getId();
         // 在 level=4 节点下建子 → level=5，超过 max-depth=4
         ApiResponse<?> bad = createChild(level4Id, "T-L5-BAD", "L5BAD",
                 ErpCrmConstants.TERRITORY_TYPE_TEAM, null);
@@ -146,14 +146,14 @@ public class TestErpCrmTerritoryQuota extends JunitAutoTestCase {
     @Test
     public void testDeleteRejectsWhenHasChildren() {
         ormTemplate.runInSession(() -> {
-            seedTerritory(7301L, "T-ROOT-D", "公司D", null,
+            seedTerritory("7301", "T-ROOT-D", "公司D", null,
                     ErpCrmConstants.TERRITORY_TYPE_REGION, 0, "/", false);
-            seedTerritory(7302L, "T-CHILD-D", "子D", 7301L,
+            seedTerritory("7302", "T-CHILD-D", "子D", "7301",
                     ErpCrmConstants.TERRITORY_TYPE_AREA, 1, "/T-ROOT-D/T-CHILD-D", true);
         });
         ApiResponse<?> resp = graphQLEngine.executeRpc(
                 graphQLEngine.newRpcContext(mutation, "ErpCrmTerritory__delete",
-                        ApiRequest.build(Map.of("id", String.valueOf(7301L)))));
+                        ApiRequest.build(Map.of("id", "7301"))));
         assertEquals(ErpCrmErrors.ERR_TERRITORY_HAS_CHILDREN.getErrorCode(), resp.getCode(),
                 "有子节点禁删 → ERR_TERRITORY_HAS_CHILDREN");
     }
@@ -162,49 +162,49 @@ public class TestErpCrmTerritoryQuota extends JunitAutoTestCase {
 
     @Test
     public void testAssignmentEngineAllConditionTypes() {
-        Long territoryIdGeo = 8001L;
-        Long territoryIdIndustry = 8002L;
-        Long territoryIdSize = 8003L;
-        Long territoryIdCustom = 8004L;
-        Long defaultTerritoryId = 8005L;
+        String territoryIdGeo = "8001";
+        String territoryIdIndustry = "8002";
+        String territoryIdSize = "8003";
+        String territoryIdCustom = "8004";
+        String defaultTerritoryId = "8005";
         ormTemplate.runInSession(() -> {
-            seedTerritory(8000L, "T-ROOT-E", "公司E", null,
+            seedTerritory("8000", "T-ROOT-E", "公司E", null,
                     ErpCrmConstants.TERRITORY_TYPE_REGION, 0, "/", true);
-            seedTerritory(territoryIdGeo, "T-GEO", "地理区", 8000L,
+            seedTerritory(territoryIdGeo, "T-GEO", "地理区", "8000",
                     ErpCrmConstants.TERRITORY_TYPE_AREA, 1, "/T-ROOT-E/T-GEO", true);
-            seedTerritory(territoryIdIndustry, "T-IND", "行业区", 8000L,
+            seedTerritory(territoryIdIndustry, "T-IND", "行业区", "8000",
                     ErpCrmConstants.TERRITORY_TYPE_AREA, 1, "/T-ROOT-E/T-IND", true);
-            seedTerritory(territoryIdSize, "T-SIZE", "规模区", 8000L,
+            seedTerritory(territoryIdSize, "T-SIZE", "规模区", "8000",
                     ErpCrmConstants.TERRITORY_TYPE_AREA, 1, "/T-ROOT-E/T-SIZE", true);
-            seedTerritory(territoryIdCustom, "T-CUST", "自定义区", 8000L,
+            seedTerritory(territoryIdCustom, "T-CUST", "自定义区", "8000",
                     ErpCrmConstants.TERRITORY_TYPE_AREA, 1, "/T-ROOT-E/T-CUST", true);
-            seedTerritory(defaultTerritoryId, "T-DEF", "默认区", 8000L,
+            seedTerritory(defaultTerritoryId, "T-DEF", "默认区", "8000",
                     ErpCrmConstants.TERRITORY_TYPE_AREA, 1, "/T-ROOT-E/T-DEF", true);
 
-            seedRule(8101L, "GEO-RULE", 10, territoryIdGeo,
+            seedRule("8101", "GEO-RULE", 10, territoryIdGeo,
                     ErpCrmConstants.ASSIGNMENT_CONDITION_GEOGRAPHY,
                     "{\"province\":[\"上海\"]}",
                     ErpCrmConstants.ASSIGNMENT_METHOD_MANUAL, null, false);
-            seedRule(8102L, "IND-RULE", 20, territoryIdIndustry,
+            seedRule("8102", "IND-RULE", 20, territoryIdIndustry,
                     ErpCrmConstants.ASSIGNMENT_CONDITION_INDUSTRY,
                     "{\"industryCode\":[\"manufacturing\"]}",
                     ErpCrmConstants.ASSIGNMENT_METHOD_MANUAL, null, false);
-            seedRule(8103L, "SIZE-RULE", 30, territoryIdSize,
+            seedRule("8103", "SIZE-RULE", 30, territoryIdSize,
                     ErpCrmConstants.ASSIGNMENT_CONDITION_CUSTOMER_SIZE,
                     "{\"minEmployees\":1000,\"maxEmployees\":100000}",
                     ErpCrmConstants.ASSIGNMENT_METHOD_MANUAL, null, false);
-            seedRule(8104L, "CUST-RULE", 40, territoryIdCustom,
+            seedRule("8104", "CUST-RULE", 40, territoryIdCustom,
                     ErpCrmConstants.ASSIGNMENT_CONDITION_CUSTOM_FIELD,
                     "{\"utmSource\":\"baidu\"}",
                     ErpCrmConstants.ASSIGNMENT_METHOD_MANUAL, null, false);
-            seedRule(8105L, "DEFAULT-RULE", 100, defaultTerritoryId,
+            seedRule("8105", "DEFAULT-RULE", 100, defaultTerritoryId,
                     ErpCrmConstants.ASSIGNMENT_CONDITION_CUSTOM_FIELD,
                     "{}",
                     ErpCrmConstants.ASSIGNMENT_METHOD_MANUAL, null, true);
         });
 
         // GEOGRAPHY 命中
-        Long geoLead = 8201L;
+        String geoLead = "8201";
         ormTemplate.runInSession(() -> seedLead(geoLead, "LEAD-GEO-001", "上海某制造", "manufacturing",
                 new BigDecimal("500"), "baidu", null));
         assertEquals(0, assignLead(geoLead).getStatus(), "GEOGRAPHY assignLead 应成功");
@@ -212,7 +212,7 @@ public class TestErpCrmTerritoryQuota extends JunitAutoTestCase {
                 "GEOGRAPHY 命中 → territoryId=geo");
 
         // INDUSTRY 命中（无 province 关键词）
-        Long indLead = 8202L;
+        String indLead = "8202";
         ormTemplate.runInSession(() -> seedLead(indLead, "LEAD-IND-001", "某公司", "manufacturing",
                 new BigDecimal("500"), null, null));
         assertEquals(0, assignLead(indLead).getStatus(), "INDUSTRY assignLead 应成功");
@@ -220,7 +220,7 @@ public class TestErpCrmTerritoryQuota extends JunitAutoTestCase {
                 "INDUSTRY 命中 → territoryId=industry");
 
         // CUSTOMER_SIZE 命中
-        Long sizeLead = 8203L;
+        String sizeLead = "8203";
         ormTemplate.runInSession(() -> seedLead(sizeLead, "LEAD-SIZE-001", "无关键地名", "其他",
                 new BigDecimal("5000"), null, null));
         assertEquals(0, assignLead(sizeLead).getStatus(), "SIZE assignLead 应成功");
@@ -228,7 +228,7 @@ public class TestErpCrmTerritoryQuota extends JunitAutoTestCase {
                 "CUSTOMER_SIZE 命中 → territoryId=size");
 
         // CUSTOM_FIELD 命中（utmSource=baidu，SIZE 不在范围）
-        Long custLead = 8204L;
+        String custLead = "8204";
         ormTemplate.runInSession(() -> seedLead(custLead, "LEAD-CUST-001", "无关键地名", "其他",
                 new BigDecimal("10"), "baidu", null));
         assertEquals(0, assignLead(custLead).getStatus(), "CUST assignLead 应成功");
@@ -238,24 +238,24 @@ public class TestErpCrmTerritoryQuota extends JunitAutoTestCase {
 
     @Test
     public void testAssignmentDefaultFallbackAndNoMatch() {
-        Long defaultTerritoryId = 8301L;
+        String defaultTerritoryId = "8301";
         ormTemplate.runInSession(() -> {
-            seedTerritory(8300L, "T-ROOT-F", "公司F", null,
+            seedTerritory("8300", "T-ROOT-F", "公司F", null,
                     ErpCrmConstants.TERRITORY_TYPE_REGION, 0, "/", true);
-            seedTerritory(defaultTerritoryId, "T-DEF-F", "默认F", 8300L,
+            seedTerritory(defaultTerritoryId, "T-DEF-F", "默认F", "8300",
                     ErpCrmConstants.TERRITORY_TYPE_AREA, 1, "/T-ROOT-F/T-DEF-F", true);
-            seedRule(8311L, "GEO-RULE-F", 10, defaultTerritoryId,
+            seedRule("8311", "GEO-RULE-F", 10, defaultTerritoryId,
                     ErpCrmConstants.ASSIGNMENT_CONDITION_GEOGRAPHY,
                     "{\"province\":[\"上海\"]}",
                     ErpCrmConstants.ASSIGNMENT_METHOD_MANUAL, null, false);
-            seedRule(8312L, "DEFAULT-RULE-F", 100, defaultTerritoryId,
+            seedRule("8312", "DEFAULT-RULE-F", 100, defaultTerritoryId,
                     ErpCrmConstants.ASSIGNMENT_CONDITION_CUSTOM_FIELD,
                     "{}",
                     ErpCrmConstants.ASSIGNMENT_METHOD_MANUAL, null, true);
         });
 
         // 无 GEOGRAPHY 命中 → 走 default
-        Long leadId = 8401L;
+        String leadId = "8401";
         ormTemplate.runInSession(() -> seedLead(leadId, "LEAD-DEF-001", "无地名", "其他",
                 new BigDecimal("10"), null, null));
         assertEquals(0, assignLead(leadId).getStatus(), "default assignLead 应成功");
@@ -265,26 +265,26 @@ public class TestErpCrmTerritoryQuota extends JunitAutoTestCase {
 
     @Test
     public void testReassignLeadOverridesEngine() {
-        Long territoryA = 8501L;
-        Long territoryB = 8502L;
-        Long teamId = 8601L;
+        String territoryA = "8501";
+        String territoryB = "8502";
+        String teamId = "8601";
         String ownerId = "userZZ";
         ormTemplate.runInSession(() -> {
-            seedTerritory(8500L, "T-ROOT-G", "公司G", null,
+            seedTerritory("8500", "T-ROOT-G", "公司G", null,
                     ErpCrmConstants.TERRITORY_TYPE_REGION, 0, "/", true);
-            seedTerritory(territoryA, "T-A", "区A", 8500L,
+            seedTerritory(territoryA, "T-A", "区A", "8500",
                     ErpCrmConstants.TERRITORY_TYPE_AREA, 1, "/T-ROOT-G/T-A", true);
-            seedTerritory(territoryB, "T-B", "区B", 8500L,
+            seedTerritory(territoryB, "T-B", "区B", "8500",
                     ErpCrmConstants.TERRITORY_TYPE_AREA, 1, "/T-ROOT-G/T-B", true);
-            seedLead(8701L, "LEAD-REASSIGN-001", "公司无配", "其他",
+            seedLead("8701", "LEAD-REASSIGN-001", "公司无配", "其他",
                     new BigDecimal("100"), null, territoryA);
         });
         ApiResponse<?> resp = graphQLEngine.executeRpc(graphQLEngine.newRpcContext(
                 mutation, "ErpCrmLead__reassignLead",
-                ApiRequest.build(Map.of("leadId", 8701L,
+                ApiRequest.build(Map.of("leadId", "8701",
                         "territoryId", territoryB, "teamId", teamId, "ownerId", ownerId))));
         assertEquals(0, resp.getStatus(), "reassignLead 应成功");
-        ErpCrmLead lead = reloadLead(8701L);
+        ErpCrmLead lead = reloadLead("8701");
         assertEquals(territoryB, lead.getTerritoryId(), "territoryId 被覆盖");
         assertEquals(teamId, lead.getTeamId(), "teamId 被设置");
         assertEquals(ownerId, lead.getOwnerId(), "ownerId 被设置");
@@ -294,9 +294,9 @@ public class TestErpCrmTerritoryQuota extends JunitAutoTestCase {
 
     @Test
     public void testQuotaRollupExplicitValuePriorityAndAggregate() {
-        Long company = 9001L;
-        Long regionId = 9002L;
-        Long teamId = 9101L;
+        String company = "9001";
+        String regionId = "9002";
+        String teamId = "9101";
         ormTemplate.runInSession(() -> {
             seedTerritory(company, "T-ROOT-Q", "公司Q", null,
                     ErpCrmConstants.TERRITORY_TYPE_REGION, 0, "/", false);
@@ -304,11 +304,11 @@ public class TestErpCrmTerritoryQuota extends JunitAutoTestCase {
                     ErpCrmConstants.TERRITORY_TYPE_REGION, 1, "/T-ROOT-Q/T-REG-Q", false);
 
             // 团队级显式配额
-            seedQuota(9201L, regionId, teamId, null,
+            seedQuota("9201", regionId, teamId, null,
                     ErpCrmConstants.QUOTA_PERIOD_QUARTERLY, 2026, "2026-Q3",
                     new BigDecimal("1000"), false);
             // 个人级配额（区域子节点）
-            seedQuota(9202L, regionId, teamId, "userQ1",
+            seedQuota("9202", regionId, teamId, "userQ1",
                     ErpCrmConstants.QUOTA_PERIOD_QUARTERLY, 2026, "2026-Q3",
                     new BigDecimal("500"), false);
         });
@@ -330,11 +330,11 @@ public class TestErpCrmTerritoryQuota extends JunitAutoTestCase {
 
     @Test
     public void testFinalizeAndUnfinalizeQuota() {
-        Long quotaId = 9301L;
+        String quotaId = "9301";
         ormTemplate.runInSession(() -> {
-            seedTerritory(9300L, "T-ROOT-Q2", "公司Q2", null,
+            seedTerritory("9300", "T-ROOT-Q2", "公司Q2", null,
                     ErpCrmConstants.TERRITORY_TYPE_REGION, 0, "/", true);
-            seedQuota(quotaId, 9300L, null, null,
+            seedQuota(quotaId, "9300", null, null,
                     ErpCrmConstants.QUOTA_PERIOD_QUARTERLY, 2026, "2026-Q3",
                     new BigDecimal("1000"), false);
         });
@@ -354,11 +354,11 @@ public class TestErpCrmTerritoryQuota extends JunitAutoTestCase {
 
     @Test
     public void testDistributeAnnualQuota() {
-        Long quotaId = 9401L;
+        String quotaId = "9401";
         ormTemplate.runInSession(() -> {
-            seedTerritory(9400L, "T-ROOT-Q3", "公司Q3", null,
+            seedTerritory("9400", "T-ROOT-Q3", "公司Q3", null,
                     ErpCrmConstants.TERRITORY_TYPE_REGION, 0, "/", true);
-            seedQuota(quotaId, 9400L, null, null,
+            seedQuota(quotaId, "9400", null, null,
                     ErpCrmConstants.QUOTA_PERIOD_ANNUAL, 2026, "2026",
                     new BigDecimal("1200"), false);
         });
@@ -369,7 +369,7 @@ public class TestErpCrmTerritoryQuota extends JunitAutoTestCase {
                         "periodType", ErpCrmConstants.QUOTA_PERIOD_QUARTERLY))));
         assertEquals(0, resp.getStatus(), "distributeAnnualQuota 应成功");
         // 验证 4 个季度配额行已生成
-        List<ErpCrmQuota> subs = listQuotasByTerritory(9400L);
+        List<ErpCrmQuota> subs = listQuotasByTerritory("9400");
         assertEquals(4 + 1, subs.size(), "原 1 行 + 新 4 季度行 = 5 行");
         BigDecimal each = new BigDecimal("300.00");
         boolean hasExpected = subs.stream().anyMatch(q ->
@@ -380,11 +380,11 @@ public class TestErpCrmTerritoryQuota extends JunitAutoTestCase {
 
     @Test
     public void testDistributeAnnualRejectsFinalized() {
-        Long quotaId = 9501L;
+        String quotaId = "9501";
         ormTemplate.runInSession(() -> {
-            seedTerritory(9500L, "T-ROOT-Q4", "公司Q4", null,
+            seedTerritory("9500", "T-ROOT-Q4", "公司Q4", null,
                     ErpCrmConstants.TERRITORY_TYPE_REGION, 0, "/", true);
-            seedQuota(quotaId, 9500L, null, null,
+            seedQuota(quotaId, "9500", null, null,
                     ErpCrmConstants.QUOTA_PERIOD_ANNUAL, 2026, "2026",
                     new BigDecimal("1200"), true);
         });
@@ -399,26 +399,26 @@ public class TestErpCrmTerritoryQuota extends JunitAutoTestCase {
 
     @Test
     public void testGetTerritoryPipelineReturnsThreeSections() {
-        Long territoryId = 9601L;
-        Long teamId = 9602L;
+        String territoryId = "9601";
+        String teamId = "9602";
         String ownerId = "userP";
         String periodLabel = "2026-Q3";
         ormTemplate.runInSession(() -> {
-            seedTerritory(9600L, "T-ROOT-P", "公司P", null,
+            seedTerritory("9600", "T-ROOT-P", "公司P", null,
                     ErpCrmConstants.TERRITORY_TYPE_REGION, 0, "/", false);
-            seedTerritory(territoryId, "T-REG-P", "区P", 9600L,
+            seedTerritory(territoryId, "T-REG-P", "区P", "9600",
                     ErpCrmConstants.TERRITORY_TYPE_REGION, 1, "/T-ROOT-P/T-REG-P", false);
 
             // Quota：目标段
-            seedQuota(9611L, territoryId, teamId, ownerId,
+            seedQuota("9611", territoryId, teamId, ownerId,
                     ErpCrmConstants.QUOTA_PERIOD_QUARTERLY, 2026, periodLabel,
                     new BigDecimal("10000"), false);
 
             // Forecast：预测段
             ErpCrmForecast forecast = new ErpCrmForecast();
-            forecast.setId(9621L);
+            forecast.setId("9621");
             forecast.setOrgId(ORG_ID);
-            forecast.setPeriodId(9999L);
+            forecast.setPeriodId("9999");
             forecast.setTerritoryId(territoryId);
             forecast.setCommitAmount(new BigDecimal("8000"));
             forecast.setUpsideAmount(new BigDecimal("1500"));
@@ -430,7 +430,7 @@ public class TestErpCrmTerritoryQuota extends JunitAutoTestCase {
 
             // Lead CONVERTED：实际段
             ErpCrmLead lead = new ErpCrmLead();
-            lead.setId(9631L);
+            lead.setId("9631");
             lead.setCode("OPP-P-001");
             lead.setOrgId(ORG_ID);
             lead.setLeadType(ErpCrmConstants.LEAD_TYPE_OPPORTUNITY);
@@ -469,8 +469,8 @@ public class TestErpCrmTerritoryQuota extends JunitAutoTestCase {
 
     // ---------- rpc helpers ----------
 
-    private ApiResponse<?> createChild(Long parentId, String code, String name,
-                                        String territoryType, Long managerId) {
+    private ApiResponse<?> createChild(String parentId, String code, String name,
+                                        String territoryType, String managerId) {
         return graphQLEngine.executeRpc(graphQLEngine.newRpcContext(
                 mutation, "ErpCrmTerritory__createChild",
                 ApiRequest.build(Map.of("parentId", parentId, "code", code, "name", name,
@@ -478,25 +478,25 @@ public class TestErpCrmTerritoryQuota extends JunitAutoTestCase {
                         "managerId", managerId == null ? "" : managerId))));
     }
 
-    private ApiResponse<?> moveTerritory(Long territoryId, Long newParentId) {
+    private ApiResponse<?> moveTerritory(String territoryId, String newParentId) {
         return graphQLEngine.executeRpc(graphQLEngine.newRpcContext(
                 mutation, "ErpCrmTerritory__moveTerritory",
                 ApiRequest.build(Map.of("territoryId", territoryId, "newParentId", newParentId))));
     }
 
-    private ApiResponse<?> assignLead(Long leadId) {
+    private ApiResponse<?> assignLead(String leadId) {
         return graphQLEngine.executeRpc(graphQLEngine.newRpcContext(
                 mutation, "ErpCrmLead__assignLead",
                 ApiRequest.build(Map.of("leadId", leadId))));
     }
 
-    private ApiResponse<?> finalizeQuota(Long quotaId) {
+    private ApiResponse<?> finalizeQuota(String quotaId) {
         return graphQLEngine.executeRpc(graphQLEngine.newRpcContext(
                 mutation, "ErpCrmQuota__finalizeQuota",
                 ApiRequest.build(Map.of("quotaId", quotaId))));
     }
 
-    private ApiResponse<?> unfinalizeQuota(Long quotaId) {
+    private ApiResponse<?> unfinalizeQuota(String quotaId) {
         return graphQLEngine.executeRpc(graphQLEngine.newRpcContext(
                 mutation, "ErpCrmQuota__unfinalizeQuota",
                 ApiRequest.build(Map.of("quotaId", quotaId))));
@@ -504,7 +504,7 @@ public class TestErpCrmTerritoryQuota extends JunitAutoTestCase {
 
     // ---------- seed helpers ----------
 
-    private void seedTerritory(Long id, String code, String name, Long parentId,
+    private void seedTerritory(String id, String code, String name, String parentId,
                                 String territoryType, int level, String fullPath, boolean isLeaf) {
         IEntityDao<ErpCrmTerritory> dao = daoProvider.daoFor(ErpCrmTerritory.class);
         ErpCrmTerritory t = new ErpCrmTerritory();
@@ -522,9 +522,9 @@ public class TestErpCrmTerritoryQuota extends JunitAutoTestCase {
         dao.saveEntity(t);
     }
 
-    private void seedRule(Long id, String name, int priority, Long territoryId,
+    private void seedRule(String id, String name, int priority, String territoryId,
                           String conditionType, String conditionValue,
-                          String assignmentMethod, Long groupId, boolean isDefault) {
+                          String assignmentMethod, String groupId, boolean isDefault) {
         IEntityDao<ErpCrmTerritoryAssignmentRule> dao = daoProvider.daoFor(ErpCrmTerritoryAssignmentRule.class);
         ErpCrmTerritoryAssignmentRule rule = new ErpCrmTerritoryAssignmentRule();
         rule.setId(id);
@@ -541,8 +541,8 @@ public class TestErpCrmTerritoryQuota extends JunitAutoTestCase {
         dao.saveEntity(rule);
     }
 
-    private void seedLead(Long id, String code, String companyName, String department,
-                          BigDecimal expectedRevenue, String utmSource, Long territoryId) {
+    private void seedLead(String id, String code, String companyName, String department,
+                          BigDecimal expectedRevenue, String utmSource, String territoryId) {
         ErpCrmLead lead = new ErpCrmLead();
         lead.setId(id);
         lead.setCode(code);
@@ -557,7 +557,7 @@ public class TestErpCrmTerritoryQuota extends JunitAutoTestCase {
         daoProvider.daoFor(ErpCrmLead.class).saveEntity(lead);
     }
 
-    private void seedQuota(Long id, Long territoryId, Long teamId, String ownerId,
+    private void seedQuota(String id, String territoryId, String teamId, String ownerId,
                             String periodType, int fiscalYear, String periodLabel,
                             BigDecimal amount, boolean finalized) {
         IEntityDao<ErpCrmQuota> dao = daoProvider.daoFor(ErpCrmQuota.class);
@@ -577,7 +577,7 @@ public class TestErpCrmTerritoryQuota extends JunitAutoTestCase {
 
     // ---------- reload helpers ----------
 
-    private ErpCrmTerritory reloadTerritory(Long id) {
+    private ErpCrmTerritory reloadTerritory(String id) {
         return daoProvider.daoFor(ErpCrmTerritory.class).getEntityById(id);
     }
 
@@ -588,15 +588,15 @@ public class TestErpCrmTerritoryQuota extends JunitAutoTestCase {
         return daoProvider.daoFor(ErpCrmTerritory.class).findAllByQuery(q).stream().findFirst().orElse(null);
     }
 
-    private ErpCrmLead reloadLead(Long id) {
+    private ErpCrmLead reloadLead(String id) {
         return daoProvider.daoFor(ErpCrmLead.class).getEntityById(id);
     }
 
-    private ErpCrmQuota reloadQuota(Long id) {
+    private ErpCrmQuota reloadQuota(String id) {
         return daoProvider.daoFor(ErpCrmQuota.class).getEntityById(id);
     }
 
-    private List<ErpCrmQuota> listQuotasByTerritory(Long territoryId) {
+    private List<ErpCrmQuota> listQuotasByTerritory(String territoryId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("territoryId", territoryId));
         return daoProvider.daoFor(ErpCrmQuota.class).findAllByQuery(q);

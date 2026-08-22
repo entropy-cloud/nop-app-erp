@@ -90,7 +90,7 @@ body:
           method: post
           dataType: raw
           data:
-            query: "mutation(${'$'}lid:Long,${'$'}sid:Long){ ErpCrmLead__moveStage(leadId:${'$'}lid,toStageId:${'$'}sid){ id code stage{ id stageName sequence } } }"
+            query: "mutation(${'$'}lid:String,${'$'}sid:String){ ErpCrmLead__moveStage(leadId:${'$'}lid,toStageId:${'$'}sid){ id code stage{ id stageName sequence } } }"
             variables:
               lid: "${leadId}"
               sid: "${toStageId}"

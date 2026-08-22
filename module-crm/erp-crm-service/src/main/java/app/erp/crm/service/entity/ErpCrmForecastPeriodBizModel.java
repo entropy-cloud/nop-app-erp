@@ -35,7 +35,7 @@ public class ErpCrmForecastPeriodBizModel extends CrudBizModel<ErpCrmForecastPer
 
     @Override
     @BizMutation
-    public ErpCrmForecastPeriod freeze(@Name("periodId") Long periodId, IServiceContext context) {
+    public ErpCrmForecastPeriod freeze(@Name("periodId") String periodId, IServiceContext context) {
         ErpCrmForecastPeriod period = requirePeriod(periodId, context);
         requireOpen(period);
         period.setStatus(ErpCrmConstants.FORECAST_PERIOD_STATUS_FROZEN);
@@ -45,14 +45,14 @@ public class ErpCrmForecastPeriodBizModel extends CrudBizModel<ErpCrmForecastPer
 
     @Override
     @BizMutation
-    public ErpCrmForecastPeriod closePeriod(@Name("periodId") Long periodId, IServiceContext context) {
+    public ErpCrmForecastPeriod closePeriod(@Name("periodId") String periodId, IServiceContext context) {
         return closePeriodProcessor.closePeriod(periodId, context);
     }
 
     // ---------- 内部辅助 ----------
 
-    protected ErpCrmForecastPeriod requirePeriod(Long periodId, IServiceContext context) {
-        ErpCrmForecastPeriod period = get(String.valueOf(periodId), false, context);
+    protected ErpCrmForecastPeriod requirePeriod(String periodId, IServiceContext context) {
+        ErpCrmForecastPeriod period = get(periodId, false, context);
         if (period == null) {
             throw new NopException(ErpCrmErrors.ERR_FORECAST_PERIOD_NOT_FOUND)
                     .param(ErpCrmErrors.ARG_PERIOD_ID, periodId);

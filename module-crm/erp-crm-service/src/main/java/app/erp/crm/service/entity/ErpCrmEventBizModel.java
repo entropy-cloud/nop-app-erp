@@ -61,13 +61,13 @@ public class ErpCrmEventBizModel extends CrudBizModel<ErpCrmEvent> implements IE
 
     @Override
     @BizMutation
-    public ErpCrmEvent complete(@Name("eventId") Long eventId, IServiceContext context) {
+    public ErpCrmEvent complete(@Name("eventId") String eventId, IServiceContext context) {
         return completeProcessor.complete(eventId, context);
     }
 
     @Override
     @BizMutation
-    public ErpCrmEvent cancel(@Name("eventId") Long eventId, IServiceContext context) {
+    public ErpCrmEvent cancel(@Name("eventId") String eventId, IServiceContext context) {
         return cancelProcessor.cancel(eventId, context);
     }
 
@@ -138,14 +138,14 @@ public class ErpCrmEventBizModel extends CrudBizModel<ErpCrmEvent> implements IE
 
     @Override
     @BizQuery
-    public List<Map<String, Object>> getLeadTimeline(@Name("leadId") Long leadId, IServiceContext context) {
+    public List<Map<String, Object>> getLeadTimeline(@Name("leadId") String leadId, IServiceContext context) {
         return timelineAggregator.buildTimeline(leadId);
     }
 
     // ---------- 内部辅助 ----------
 
-    protected ErpCrmEvent requireEvent(Long eventId, IServiceContext context) {
-        ErpCrmEvent event = get(String.valueOf(eventId), false, context);
+    protected ErpCrmEvent requireEvent(String eventId, IServiceContext context) {
+        ErpCrmEvent event = get(eventId, false, context);
         if (event == null) {
             throw new NopException(ErpCrmErrors.ERR_EVENT_NOT_FOUND)
                     .param(ErpCrmErrors.ARG_EVENT_ID, eventId);
@@ -166,7 +166,7 @@ public class ErpCrmEventBizModel extends CrudBizModel<ErpCrmEvent> implements IE
     /**
      * Event 无关联 Lead 时跳过派生（{@code relatedLeadId} 为空）。
      */
-    protected void deriveLeadFields(Long relatedLeadId) {
+    protected void deriveLeadFields(String relatedLeadId) {
         if (relatedLeadId == null) {
             return;
         }

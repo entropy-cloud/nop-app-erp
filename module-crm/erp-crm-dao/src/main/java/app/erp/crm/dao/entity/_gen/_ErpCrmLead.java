@@ -360,19 +360,19 @@ public class _ErpCrmLead extends DynamicOrmEntity{
 
     
     /* ID: ID */
-    private java.lang.Long _id;
+    private java.lang.String _id;
     
     /* 编码: CODE */
     private java.lang.String _code;
     
     /* 业务组织: ORG_ID */
-    private java.lang.Long _orgId;
+    private java.lang.String _orgId;
     
     /* 线索/商机类型: LEAD_TYPE */
     private java.lang.String _leadType;
     
     /* 客户: PARTNER_ID */
-    private java.lang.Long _partnerId;
+    private java.lang.String _partnerId;
     
     /* 联系人姓名: CONTACT_NAME */
     private java.lang.String _contactName;
@@ -393,13 +393,13 @@ public class _ErpCrmLead extends DynamicOrmEntity{
     private java.lang.String _department;
     
     /* 线索来源: SOURCE_ID */
-    private java.lang.Long _sourceId;
+    private java.lang.String _sourceId;
     
     /* 线索状态: LEAD_STATUS_ID */
-    private java.lang.Long _leadStatusId;
+    private java.lang.String _leadStatusId;
     
     /* 漏斗阶段: STAGE_ID */
-    private java.lang.Long _stageId;
+    private java.lang.String _stageId;
     
     /* 预期收入: EXPECTED_REVENUE */
     private java.math.BigDecimal _expectedRevenue;
@@ -423,7 +423,7 @@ public class _ErpCrmLead extends DynamicOrmEntity{
     private java.lang.Integer _probability;
     
     /* 营销活动: CAMPAIGN_ID */
-    private java.lang.Long _campaignId;
+    private java.lang.String _campaignId;
     
     /* UTM Medium: UTM_MEDIUM */
     private java.lang.String _utmMedium;
@@ -435,10 +435,10 @@ public class _ErpCrmLead extends DynamicOrmEntity{
     private java.lang.String _ownerId;
     
     /* 销售团队: TEAM_ID */
-    private java.lang.Long _teamId;
+    private java.lang.String _teamId;
     
     /* 丢单原因: LOST_REASON_ID */
-    private java.lang.Long _lostReasonId;
+    private java.lang.String _lostReasonId;
     
     /* 丢单描述: LOST_REASON_DESC */
     private java.lang.String _lostReasonDesc;
@@ -480,7 +480,7 @@ public class _ErpCrmLead extends DynamicOrmEntity{
     private java.sql.Timestamp _updateTime;
     
     /* 销售区域: TERRITORY_ID */
-    private java.lang.Long _territoryId;
+    private java.lang.String _territoryId;
     
 
     public _ErpCrmLead(){
@@ -691,9 +691,9 @@ public class _ErpCrmLead extends DynamicOrmEntity{
         switch(propId){
         
             case PROP_ID_id:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_id));
                }
                setId(typedValue);
@@ -711,9 +711,9 @@ public class _ErpCrmLead extends DynamicOrmEntity{
             }
         
             case PROP_ID_orgId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_orgId));
                }
                setOrgId(typedValue);
@@ -731,9 +731,9 @@ public class _ErpCrmLead extends DynamicOrmEntity{
             }
         
             case PROP_ID_partnerId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_partnerId));
                }
                setPartnerId(typedValue);
@@ -801,9 +801,9 @@ public class _ErpCrmLead extends DynamicOrmEntity{
             }
         
             case PROP_ID_sourceId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_sourceId));
                }
                setSourceId(typedValue);
@@ -811,9 +811,9 @@ public class _ErpCrmLead extends DynamicOrmEntity{
             }
         
             case PROP_ID_leadStatusId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_leadStatusId));
                }
                setLeadStatusId(typedValue);
@@ -821,9 +821,9 @@ public class _ErpCrmLead extends DynamicOrmEntity{
             }
         
             case PROP_ID_stageId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_stageId));
                }
                setStageId(typedValue);
@@ -901,9 +901,9 @@ public class _ErpCrmLead extends DynamicOrmEntity{
             }
         
             case PROP_ID_campaignId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_campaignId));
                }
                setCampaignId(typedValue);
@@ -941,9 +941,9 @@ public class _ErpCrmLead extends DynamicOrmEntity{
             }
         
             case PROP_ID_teamId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_teamId));
                }
                setTeamId(typedValue);
@@ -951,9 +951,9 @@ public class _ErpCrmLead extends DynamicOrmEntity{
             }
         
             case PROP_ID_lostReasonId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_lostReasonId));
                }
                setLostReasonId(typedValue);
@@ -1091,9 +1091,9 @@ public class _ErpCrmLead extends DynamicOrmEntity{
             }
         
             case PROP_ID_territoryId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_territoryId));
                }
                setTerritoryId(typedValue);
@@ -1111,7 +1111,7 @@ public class _ErpCrmLead extends DynamicOrmEntity{
         
             case PROP_ID_id:{
                onInitProp(propId);
-               this._id = (java.lang.Long)value;
+               this._id = (java.lang.String)value;
                orm_id(); // 如果是设置主键字段，则触发watcher
                break;
             }
@@ -1125,7 +1125,7 @@ public class _ErpCrmLead extends DynamicOrmEntity{
         
             case PROP_ID_orgId:{
                onInitProp(propId);
-               this._orgId = (java.lang.Long)value;
+               this._orgId = (java.lang.String)value;
                
                break;
             }
@@ -1139,7 +1139,7 @@ public class _ErpCrmLead extends DynamicOrmEntity{
         
             case PROP_ID_partnerId:{
                onInitProp(propId);
-               this._partnerId = (java.lang.Long)value;
+               this._partnerId = (java.lang.String)value;
                
                break;
             }
@@ -1188,21 +1188,21 @@ public class _ErpCrmLead extends DynamicOrmEntity{
         
             case PROP_ID_sourceId:{
                onInitProp(propId);
-               this._sourceId = (java.lang.Long)value;
+               this._sourceId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_leadStatusId:{
                onInitProp(propId);
-               this._leadStatusId = (java.lang.Long)value;
+               this._leadStatusId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_stageId:{
                onInitProp(propId);
-               this._stageId = (java.lang.Long)value;
+               this._stageId = (java.lang.String)value;
                
                break;
             }
@@ -1258,7 +1258,7 @@ public class _ErpCrmLead extends DynamicOrmEntity{
         
             case PROP_ID_campaignId:{
                onInitProp(propId);
-               this._campaignId = (java.lang.Long)value;
+               this._campaignId = (java.lang.String)value;
                
                break;
             }
@@ -1286,14 +1286,14 @@ public class _ErpCrmLead extends DynamicOrmEntity{
         
             case PROP_ID_teamId:{
                onInitProp(propId);
-               this._teamId = (java.lang.Long)value;
+               this._teamId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_lostReasonId:{
                onInitProp(propId);
-               this._lostReasonId = (java.lang.Long)value;
+               this._lostReasonId = (java.lang.String)value;
                
                break;
             }
@@ -1391,7 +1391,7 @@ public class _ErpCrmLead extends DynamicOrmEntity{
         
             case PROP_ID_territoryId:{
                onInitProp(propId);
-               this._territoryId = (java.lang.Long)value;
+               this._territoryId = (java.lang.String)value;
                
                break;
             }
@@ -1405,7 +1405,7 @@ public class _ErpCrmLead extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final java.lang.Long getId(){
+    public final java.lang.String getId(){
          onPropGet(PROP_ID_id);
          return _id;
     }
@@ -1413,7 +1413,7 @@ public class _ErpCrmLead extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final void setId(java.lang.Long value){
+    public final void setId(java.lang.String value){
         if(onPropSet(PROP_ID_id,value)){
             this._id = value;
             internalClearRefs(PROP_ID_id);
@@ -1443,7 +1443,7 @@ public class _ErpCrmLead extends DynamicOrmEntity{
     /**
      * 业务组织: ORG_ID
      */
-    public final java.lang.Long getOrgId(){
+    public final java.lang.String getOrgId(){
          onPropGet(PROP_ID_orgId);
          return _orgId;
     }
@@ -1451,7 +1451,7 @@ public class _ErpCrmLead extends DynamicOrmEntity{
     /**
      * 业务组织: ORG_ID
      */
-    public final void setOrgId(java.lang.Long value){
+    public final void setOrgId(java.lang.String value){
         if(onPropSet(PROP_ID_orgId,value)){
             this._orgId = value;
             internalClearRefs(PROP_ID_orgId);
@@ -1481,7 +1481,7 @@ public class _ErpCrmLead extends DynamicOrmEntity{
     /**
      * 客户: PARTNER_ID
      */
-    public final java.lang.Long getPartnerId(){
+    public final java.lang.String getPartnerId(){
          onPropGet(PROP_ID_partnerId);
          return _partnerId;
     }
@@ -1489,7 +1489,7 @@ public class _ErpCrmLead extends DynamicOrmEntity{
     /**
      * 客户: PARTNER_ID
      */
-    public final void setPartnerId(java.lang.Long value){
+    public final void setPartnerId(java.lang.String value){
         if(onPropSet(PROP_ID_partnerId,value)){
             this._partnerId = value;
             internalClearRefs(PROP_ID_partnerId);
@@ -1614,7 +1614,7 @@ public class _ErpCrmLead extends DynamicOrmEntity{
     /**
      * 线索来源: SOURCE_ID
      */
-    public final java.lang.Long getSourceId(){
+    public final java.lang.String getSourceId(){
          onPropGet(PROP_ID_sourceId);
          return _sourceId;
     }
@@ -1622,7 +1622,7 @@ public class _ErpCrmLead extends DynamicOrmEntity{
     /**
      * 线索来源: SOURCE_ID
      */
-    public final void setSourceId(java.lang.Long value){
+    public final void setSourceId(java.lang.String value){
         if(onPropSet(PROP_ID_sourceId,value)){
             this._sourceId = value;
             internalClearRefs(PROP_ID_sourceId);
@@ -1633,7 +1633,7 @@ public class _ErpCrmLead extends DynamicOrmEntity{
     /**
      * 线索状态: LEAD_STATUS_ID
      */
-    public final java.lang.Long getLeadStatusId(){
+    public final java.lang.String getLeadStatusId(){
          onPropGet(PROP_ID_leadStatusId);
          return _leadStatusId;
     }
@@ -1641,7 +1641,7 @@ public class _ErpCrmLead extends DynamicOrmEntity{
     /**
      * 线索状态: LEAD_STATUS_ID
      */
-    public final void setLeadStatusId(java.lang.Long value){
+    public final void setLeadStatusId(java.lang.String value){
         if(onPropSet(PROP_ID_leadStatusId,value)){
             this._leadStatusId = value;
             internalClearRefs(PROP_ID_leadStatusId);
@@ -1652,7 +1652,7 @@ public class _ErpCrmLead extends DynamicOrmEntity{
     /**
      * 漏斗阶段: STAGE_ID
      */
-    public final java.lang.Long getStageId(){
+    public final java.lang.String getStageId(){
          onPropGet(PROP_ID_stageId);
          return _stageId;
     }
@@ -1660,7 +1660,7 @@ public class _ErpCrmLead extends DynamicOrmEntity{
     /**
      * 漏斗阶段: STAGE_ID
      */
-    public final void setStageId(java.lang.Long value){
+    public final void setStageId(java.lang.String value){
         if(onPropSet(PROP_ID_stageId,value)){
             this._stageId = value;
             internalClearRefs(PROP_ID_stageId);
@@ -1804,7 +1804,7 @@ public class _ErpCrmLead extends DynamicOrmEntity{
     /**
      * 营销活动: CAMPAIGN_ID
      */
-    public final java.lang.Long getCampaignId(){
+    public final java.lang.String getCampaignId(){
          onPropGet(PROP_ID_campaignId);
          return _campaignId;
     }
@@ -1812,7 +1812,7 @@ public class _ErpCrmLead extends DynamicOrmEntity{
     /**
      * 营销活动: CAMPAIGN_ID
      */
-    public final void setCampaignId(java.lang.Long value){
+    public final void setCampaignId(java.lang.String value){
         if(onPropSet(PROP_ID_campaignId,value)){
             this._campaignId = value;
             internalClearRefs(PROP_ID_campaignId);
@@ -1880,7 +1880,7 @@ public class _ErpCrmLead extends DynamicOrmEntity{
     /**
      * 销售团队: TEAM_ID
      */
-    public final java.lang.Long getTeamId(){
+    public final java.lang.String getTeamId(){
          onPropGet(PROP_ID_teamId);
          return _teamId;
     }
@@ -1888,7 +1888,7 @@ public class _ErpCrmLead extends DynamicOrmEntity{
     /**
      * 销售团队: TEAM_ID
      */
-    public final void setTeamId(java.lang.Long value){
+    public final void setTeamId(java.lang.String value){
         if(onPropSet(PROP_ID_teamId,value)){
             this._teamId = value;
             internalClearRefs(PROP_ID_teamId);
@@ -1899,7 +1899,7 @@ public class _ErpCrmLead extends DynamicOrmEntity{
     /**
      * 丢单原因: LOST_REASON_ID
      */
-    public final java.lang.Long getLostReasonId(){
+    public final java.lang.String getLostReasonId(){
          onPropGet(PROP_ID_lostReasonId);
          return _lostReasonId;
     }
@@ -1907,7 +1907,7 @@ public class _ErpCrmLead extends DynamicOrmEntity{
     /**
      * 丢单原因: LOST_REASON_ID
      */
-    public final void setLostReasonId(java.lang.Long value){
+    public final void setLostReasonId(java.lang.String value){
         if(onPropSet(PROP_ID_lostReasonId,value)){
             this._lostReasonId = value;
             internalClearRefs(PROP_ID_lostReasonId);
@@ -2165,7 +2165,7 @@ public class _ErpCrmLead extends DynamicOrmEntity{
     /**
      * 销售区域: TERRITORY_ID
      */
-    public final java.lang.Long getTerritoryId(){
+    public final java.lang.String getTerritoryId(){
          onPropGet(PROP_ID_territoryId);
          return _territoryId;
     }
@@ -2173,7 +2173,7 @@ public class _ErpCrmLead extends DynamicOrmEntity{
     /**
      * 销售区域: TERRITORY_ID
      */
-    public final void setTerritoryId(java.lang.Long value){
+    public final void setTerritoryId(java.lang.String value){
         if(onPropSet(PROP_ID_territoryId,value)){
             this._territoryId = value;
             internalClearRefs(PROP_ID_territoryId);

@@ -14,7 +14,7 @@ public class ErpCrmForecastRefreshForecastProcessor {
     @Inject
     ForecastAggregator forecastAggregator;
 
-    public void refreshForecast(Long periodId, IServiceContext context) {
+    public void refreshForecast(String periodId, IServiceContext context) {
         forecastAggregator.refreshForecast(periodId, context);
     }
 }

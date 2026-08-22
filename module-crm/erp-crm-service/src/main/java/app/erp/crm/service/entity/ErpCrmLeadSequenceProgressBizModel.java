@@ -21,6 +21,7 @@ import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.biz.BizQuery;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.beans.query.QueryBean;
+import io.nop.api.core.convert.ConvertHelper;
 import io.nop.api.core.time.CoreMetrics;
 import io.nop.biz.crud.CrudBizModel;
 import io.nop.core.context.IServiceContext;
@@ -78,22 +79,22 @@ public class ErpCrmLeadSequenceProgressBizModel
 
     @Override
     @BizMutation
-    public ErpCrmLeadSequenceProgress assignSequence(@Name("leadId") Long leadId, IServiceContext context) {
+    public ErpCrmLeadSequenceProgress assignSequence(@Name("leadId") String leadId, IServiceContext context) {
         return assignSequenceProcessor.assignSequence(leadId, context);
     }
 
     @Override
     @BizMutation
-    public ErpCrmLeadSequenceProgress advanceStep(@Name("progressId") Long progressId,
-                                                   @Name("eventId") Long eventId,
+    public ErpCrmLeadSequenceProgress advanceStep(@Name("progressId") String progressId,
+                                                  @Name("eventId") String eventId,
                                                    IServiceContext context) {
         return advanceStepProcessor.advanceStep(progressId, eventId, context);
     }
 
     @Override
     @BizMutation
-    public ErpCrmLeadSequenceProgress switchSequence(@Name("leadId") Long leadId,
-                                                      @Name("newSequenceId") Long newSequenceId,
+    public ErpCrmLeadSequenceProgress switchSequence(@Name("leadId") String leadId,
+                                                     @Name("newSequenceId") String newSequenceId,
                                                       IServiceContext context) {
         return switchSequenceProcessor.switchSequence(leadId, newSequenceId, context);
     }
@@ -107,7 +108,7 @@ public class ErpCrmLeadSequenceProgressBizModel
 
         List<ErpCrmLeadSequenceProgress> inProgress = loadAllInProgress();
         // 按 sequenceId 分组以避免重复加载 steps
-        Map<Long, List<ErpCrmSequenceStep>> stepsBySequence = new HashMap<>();
+        Map<String, List<ErpCrmSequenceStep>> stepsBySequence = new HashMap<>();
         for (ErpCrmLeadSequenceProgress p : inProgress) {
             stepsBySequence.computeIfAbsent(p.getSequenceId(), this::loadSteps);
         }
@@ -147,7 +148,7 @@ public class ErpCrmLeadSequenceProgressBizModel
             return perf;
         }
 
-        List<Long> sequenceIds = sequences.stream().map(ErpCrmSequence::getId).collect(Collectors.toList());
+        List<String> sequenceIds = sequences.stream().map(ErpCrmSequence::getId).collect(Collectors.toList());
         List<ErpCrmLeadSequenceProgress> all = loadProgressBySequenceIds(sequenceIds);
 
         int totalAssigned = all.size();
@@ -189,7 +190,7 @@ public class ErpCrmLeadSequenceProgressBizModel
     //   状态查询，不走 CrudBizModel findList 管道以保留 setLimit(1) + stream 直接消费的简洁语义；
     //   数据权限在调用方 @BizMutation 入口已校验。
 
-    protected ErpCrmLeadSequenceProgress findActiveProgress(Long leadId) {
+    protected ErpCrmLeadSequenceProgress findActiveProgress(String leadId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("leadId", leadId));
         q.addFilter(eq("status", ErpCrmConstants.SEQUENCE_PROGRESS_IN_PROGRESS));
@@ -203,7 +204,7 @@ public class ErpCrmLeadSequenceProgressBizModel
         return dao().findAllByQuery(q);
     }
 
-    protected List<ErpCrmLeadSequenceProgress> loadProgressBySequenceIds(List<Long> sequenceIds) {
+    protected List<ErpCrmLeadSequenceProgress> loadProgressBySequenceIds(List<String> sequenceIds) {
         if (sequenceIds == null || sequenceIds.isEmpty()) {
             return java.util.Collections.emptyList();
         }
@@ -212,14 +213,14 @@ public class ErpCrmLeadSequenceProgressBizModel
         return dao().findAllByQuery(q);
     }
 
-    protected List<ErpCrmSequenceStep> loadSteps(Long sequenceId) {
+    protected List<ErpCrmSequenceStep> loadSteps(String sequenceId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("sequenceId", sequenceId));
         List<ErpCrmSequenceStep> steps = stepDao().findAllByQuery(q);
         steps.sort(Comparator
                 .comparingInt((ErpCrmSequenceStep s) ->
                         s.getStepOrder() != null ? s.getStepOrder() : Integer.MAX_VALUE)
-                .thenComparing(s -> s.getId() != null ? s.getId() : Long.MAX_VALUE));
+                .thenComparingLong(s -> s.getId() != null ? ConvertHelper.toLong(s.getId()) : Long.MAX_VALUE));
         return steps;
     }
 

@@ -46,8 +46,8 @@ public class ErpCrmLeadProcessor {
     @Inject
     ErpCrmLeadCancelProcessor cancelProcessor;
 
-    public ErpCrmLead cancel(Long leadId, IServiceContext context) {
-        return cancelProcessor.cancel(String.valueOf(leadId), context);
+    public ErpCrmLead cancel(String leadId, IServiceContext context) {
+        return cancelProcessor.cancel(leadId, context);
     }
 
     // ---------- step：迁移校验 ----------
@@ -98,7 +98,7 @@ public class ErpCrmLeadProcessor {
      * 模式（{@link ErpCrmConfigs#allowStageBackward()}=false，默认）抛 {@link ErpCrmErrors#ERR_STAGE_BACKWARD_MOVE}；
      * allow-backward=true 时 LOG.warn 放行（保留 convLog 审计）。fromStageId 为 null（首次入漏斗）跳过方向校验。
      */
-    protected void validateStageDirection(ErpCrmLead lead, Long fromStageId, ErpCrmStage toStage,
+    protected void validateStageDirection(ErpCrmLead lead, String fromStageId, ErpCrmStage toStage,
                                           IServiceContext context) {
         if (fromStageId == null) {
             return;
@@ -119,7 +119,7 @@ public class ErpCrmLeadProcessor {
         }
     }
 
-    protected void requireLostReason(ErpCrmLead lead, Long lostReasonId, IServiceContext context) {
+    protected void requireLostReason(ErpCrmLead lead, String lostReasonId, IServiceContext context) {
         if (lostReasonId == null) {
             throw new NopException(ErpCrmErrors.ERR_LOST_REASON_REQUIRED)
                     .param(ErpCrmErrors.ARG_LEAD_CODE, lead.getCode());
@@ -140,7 +140,7 @@ public class ErpCrmLeadProcessor {
         leadDao().updateEntity(lead);
     }
 
-    protected void doLose(ErpCrmLead lead, Long lostReasonId, String lostReasonDesc, IServiceContext context) {
+    protected void doLose(ErpCrmLead lead, String lostReasonId, String lostReasonDesc, IServiceContext context) {
         lead.setDocStatus(stateMachine.loseTargetStatus());
         lead.setLostReasonId(lostReasonId);
         if (lostReasonDesc != null) {
@@ -159,14 +159,14 @@ public class ErpCrmLeadProcessor {
      * {@code erp-crm.allow-stage-backward}=true 放行（见 {@link #validateStageDirection}）；写 convLog 全量留痕；
      * probability 为空时取目标阶段 defaultProbability。
      */
-    protected void doMoveStage(ErpCrmLead lead, ErpCrmStage toStage, Long fromStageId, IServiceContext context) {
+    protected void doMoveStage(ErpCrmLead lead, ErpCrmStage toStage, String fromStageId, IServiceContext context) {
         lead.setStageId(toStage.getId());
         applyDefaultProbability(lead, toStage);
         leadDao().updateEntity(lead);
         writeConvLog(lead, fromStageId, toStage.getId(), context);
     }
 
-    protected void writeConvLog(ErpCrmLead lead, Long fromStageId, Long toStageId, IServiceContext context) {
+    protected void writeConvLog(ErpCrmLead lead, String fromStageId, String toStageId, IServiceContext context) {
         ErpCrmLeadConvLog log = convLogDao().newEntity();
         log.setLeadId(lead.getId());
         log.setOrgId(lead.getOrgId());
@@ -185,7 +185,7 @@ public class ErpCrmLeadProcessor {
 
     // ---------- 校验/查询辅助 ----------
 
-    protected ErpCrmLead requireLead(Long leadId, IServiceContext context) {
+    protected ErpCrmLead requireLead(String leadId, IServiceContext context) {
         ErpCrmLead lead = leadDao().getEntityById(leadId);
         if (lead == null) {
             throw new NopException(ErpCrmErrors.ERR_LEAD_NOT_FOUND)
@@ -194,7 +194,7 @@ public class ErpCrmLeadProcessor {
         return lead;
     }
 
-    protected ErpCrmStage requireStage(Long stageId, IServiceContext context) {
+    protected ErpCrmStage requireStage(String stageId, IServiceContext context) {
         if (stageId == null) {
             throw new NopException(ErpCrmErrors.ERR_STAGE_NOT_FOUND)
                     .param(ErpCrmErrors.ARG_STAGE_ID, stageId);
@@ -207,7 +207,7 @@ public class ErpCrmLeadProcessor {
         return stage;
     }
 
-    protected ErpCrmStage findFirstStage(Long orgId) {
+    protected ErpCrmStage findFirstStage(String orgId) {
         // 无独立权限规则：漏斗阶段为全局配置记录，按 sequence 升序取首条作为默认入漏斗阶段。
         io.nop.api.core.beans.query.QueryBean q = new io.nop.api.core.beans.query.QueryBean();
         q.addOrderField("sequence", false);

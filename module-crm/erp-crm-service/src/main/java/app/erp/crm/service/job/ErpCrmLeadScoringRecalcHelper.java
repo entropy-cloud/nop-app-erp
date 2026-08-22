@@ -60,7 +60,7 @@ public class ErpCrmLeadScoringRecalcHelper {
      *
      * @return true=评分成功（或 config 关闭跳过）；false=评分失败（候选下次重试）
      */
-    public boolean recalculateOne(Long leadId, IServiceContext ctx) {
+    public boolean recalculateOne(String leadId, IServiceContext ctx) {
         if (!isScheduleCronConfigured()) {
             LOG.info("erp-crm-lead-scoring-recalc-skipped-by-config: leadId={}, configKey={}",
                     leadId, ErpCrmConstants.CONFIG_LEAD_SCORING_SCHEDULE_CRON);

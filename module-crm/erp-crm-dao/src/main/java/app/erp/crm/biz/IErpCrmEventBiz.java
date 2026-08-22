@@ -25,13 +25,13 @@ public interface IErpCrmEventBiz extends ICrudBiz<ErpCrmEvent> {
      * 完成事件（PLANNED→COMPLETED），并派生回写关联 Lead 的 lastContactDate/nextActivityDate。
      */
     @BizMutation
-    ErpCrmEvent complete(@Name("eventId") Long eventId, IServiceContext context);
+    ErpCrmEvent complete(@Name("eventId") String eventId, IServiceContext context);
 
     /**
      * 取消事件（PLANNED→CANCELLED），并派生回写关联 Lead 的 nextActivityDate。
      */
     @BizMutation
-    ErpCrmEvent cancel(@Name("eventId") Long eventId, IServiceContext context);
+    ErpCrmEvent cancel(@Name("eventId") String eventId, IServiceContext context);
 
     /**
      * 到期/临近事件提醒查询（供 nop-job 调用）。
@@ -49,5 +49,5 @@ public interface IErpCrmEventBiz extends ICrudBiz<ErpCrmEvent> {
      * 每条记录含 {@code sourceType}(EVENT/ACTIVITY)、{@code timestamp}、{@code subject/summary} 等字段。
      */
     @BizQuery
-    List<Map<String, Object>> getLeadTimeline(@Name("leadId") Long leadId, IServiceContext context);
+    List<Map<String, Object>> getLeadTimeline(@Name("leadId") String leadId, IServiceContext context);
 }

@@ -45,26 +45,26 @@ public class ErpCrmTerritoryBizModel extends CrudBizModel<ErpCrmTerritory> imple
 
     @Override
     @BizMutation
-    public ErpCrmTerritory createChild(@Name("parentId") Long parentId,
-                                        @Name("code") String code,
-                                        @Name("name") String name,
-                                        @Name("territoryType") String territoryType,
-                                        @Optional @Name("managerId") Long managerId,
+    public ErpCrmTerritory createChild(@Name("parentId") String parentId,
+                                       @Name("code") String code,
+                                       @Name("name") String name,
+                                       @Name("territoryType") String territoryType,
+                                       @Optional @Name("managerId") String managerId,
                                         IServiceContext context) {
         return createChildProcessor.createChild(parentId, code, name, territoryType, managerId, context);
     }
 
     @Override
     @BizMutation
-    public ErpCrmTerritory moveTerritory(@Name("territoryId") Long territoryId,
-                                          @Name("newParentId") Long newParentId,
+    public ErpCrmTerritory moveTerritory(@Name("territoryId") String territoryId,
+                                         @Name("newParentId") String newParentId,
                                           IServiceContext context) {
         return moveTerritoryProcessor.moveTerritory(territoryId, newParentId, context);
     }
 
     @Override
     @BizQuery
-    public List<ErpCrmTerritory> getTerritoryTree(@Optional @Name("parentId") Long parentId,
+    public List<ErpCrmTerritory> getTerritoryTree(@Optional @Name("parentId") String parentId,
                                                     IServiceContext context) {
         QueryBean q = new QueryBean();
         if (parentId == null) {

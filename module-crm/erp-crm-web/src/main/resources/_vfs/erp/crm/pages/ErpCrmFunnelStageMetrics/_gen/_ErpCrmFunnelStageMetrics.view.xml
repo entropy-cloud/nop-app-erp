@@ -19,16 +19,16 @@
             <cols>
 
                 <!--ID-->
-                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="id" mandatory="true" sortable="true"/>
 
                 <!--所属漏斗-->
-                <col id="funnelId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="funnelId" mandatory="true" sortable="true"/>
 
                 <!--业务组织-->
-                <col id="orgId" ui:number="true" sortable="true"/>
+                <col id="orgId" sortable="true"/>
 
                 <!--阶段-->
-                <col id="stageId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="stageId" mandatory="true" sortable="true"/>
 
                 <!--阶段排序-->
                 <col id="stageOrder" ui:number="true" sortable="true"/>

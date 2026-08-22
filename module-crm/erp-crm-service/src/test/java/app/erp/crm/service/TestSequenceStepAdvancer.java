@@ -32,7 +32,7 @@ public class TestSequenceStepAdvancer extends BaseTestCase {
 
     @Test
     public void testCallCompletedAdvances() {
-        ErpCrmLeadSequenceProgress p = newProgress(1L, 0);
+        ErpCrmLeadSequenceProgress p = newProgress("1", 0);
         ErpCrmEvent event = newCompletedEvent("CALL");
         ErpCrmSequenceStep current = newStep(1, "CALL", ErpCrmConstants.STEP_COMPLETION_CALL_COMPLETED, false);
         ErpCrmSequenceStep next = newStep(2, "MEETING", ErpCrmConstants.STEP_COMPLETION_MEETING_HELD, false);
@@ -46,7 +46,7 @@ public class TestSequenceStepAdvancer extends BaseTestCase {
 
     @Test
     public void testEventTypeMismatchRejects() {
-        ErpCrmLeadSequenceProgress p = newProgress(1L, 0);
+        ErpCrmLeadSequenceProgress p = newProgress("1", 0);
         ErpCrmEvent event = newCompletedEvent("EMAIL"); // 与步骤 CALL 不匹配
         ErpCrmSequenceStep current = newStep(1, "CALL", ErpCrmConstants.STEP_COMPLETION_CALL_COMPLETED, false);
         assertThrows(NopException.class,
@@ -56,7 +56,7 @@ public class TestSequenceStepAdvancer extends BaseTestCase {
 
     @Test
     public void testEventNotCompletedRejects() {
-        ErpCrmLeadSequenceProgress p = newProgress(1L, 0);
+        ErpCrmLeadSequenceProgress p = newProgress("1", 0);
         ErpCrmEvent event = newCompletedEvent("CALL");
         event.setStatus(ErpCrmConstants.EVENT_STATUS_PLANNED); // 未完成
         ErpCrmSequenceStep current = newStep(1, "CALL", ErpCrmConstants.STEP_COMPLETION_CALL_COMPLETED, false);
@@ -67,7 +67,7 @@ public class TestSequenceStepAdvancer extends BaseTestCase {
 
     @Test
     public void testEmailOpenedDegradesToEventTypeMatch() {
-        ErpCrmLeadSequenceProgress p = newProgress(1L, 0);
+        ErpCrmLeadSequenceProgress p = newProgress("1", 0);
         // EMAIL_OPENED 本期降级：eventType=EMAIL + status=COMPLETED 即视为满足（邮件跟踪 successor）
         ErpCrmEvent event = newCompletedEvent("EMAIL");
         ErpCrmSequenceStep current = newStep(1, "EMAIL", ErpCrmConstants.STEP_COMPLETION_EMAIL_OPENED, false);
@@ -78,7 +78,7 @@ public class TestSequenceStepAdvancer extends BaseTestCase {
 
     @Test
     public void testEmailRepliedDegradesToEventTypeMatch() {
-        ErpCrmLeadSequenceProgress p = newProgress(1L, 0);
+        ErpCrmLeadSequenceProgress p = newProgress("1", 0);
         ErpCrmEvent event = newCompletedEvent("EMAIL");
         ErpCrmSequenceStep current = newStep(1, "EMAIL", ErpCrmConstants.STEP_COMPLETION_EMAIL_REPLIED, false);
         SequenceStepAdvancer.AdvanceResult result = advancer.advance(p, event, Collections.singletonList(current));
@@ -88,7 +88,7 @@ public class TestSequenceStepAdvancer extends BaseTestCase {
     @Test
     public void testTaskDoneMapsToEventType() {
         // TASK 仅存在于 event-type 字典（Decision：不在 activity-type 字典补值）
-        ErpCrmLeadSequenceProgress p = newProgress(1L, 0);
+        ErpCrmLeadSequenceProgress p = newProgress("1", 0);
         ErpCrmEvent event = newCompletedEvent("TASK");
         ErpCrmSequenceStep current = newStep(1, "TASK", ErpCrmConstants.STEP_COMPLETION_TASK_DONE, false);
         SequenceStepAdvancer.AdvanceResult result = advancer.advance(p, event, Collections.singletonList(current));
@@ -97,7 +97,7 @@ public class TestSequenceStepAdvancer extends BaseTestCase {
 
     @Test
     public void testMeetingHeldAdvances() {
-        ErpCrmLeadSequenceProgress p = newProgress(1L, 0);
+        ErpCrmLeadSequenceProgress p = newProgress("1", 0);
         ErpCrmEvent event = newCompletedEvent("MEETING");
         ErpCrmSequenceStep current = newStep(1, "MEETING", ErpCrmConstants.STEP_COMPLETION_MEETING_HELD, false);
         ErpCrmSequenceStep next = newStep(2, "CALL", ErpCrmConstants.STEP_COMPLETION_CALL_COMPLETED, false);
@@ -107,7 +107,7 @@ public class TestSequenceStepAdvancer extends BaseTestCase {
 
     @Test
     public void testLastStepMarksCompleted() {
-        ErpCrmLeadSequenceProgress p = newProgress(1L, 1); // 已在末步
+        ErpCrmLeadSequenceProgress p = newProgress("1", 1); // 已在末步
         ErpCrmEvent event = newCompletedEvent("CALL");
         ErpCrmSequenceStep s1 = newStep(1, "CALL", ErpCrmConstants.STEP_COMPLETION_CALL_COMPLETED, false);
         ErpCrmSequenceStep s2 = newStep(2, "CALL", ErpCrmConstants.STEP_COMPLETION_CALL_COMPLETED, false);
@@ -120,7 +120,7 @@ public class TestSequenceStepAdvancer extends BaseTestCase {
 
     @Test
     public void testAutoCreateEventForNextStep() {
-        ErpCrmLeadSequenceProgress p = newProgress(1L, 0);
+        ErpCrmLeadSequenceProgress p = newProgress("1", 0);
         ErpCrmEvent event = newCompletedEvent("CALL");
         ErpCrmSequenceStep current = newStep(1, "CALL", ErpCrmConstants.STEP_COMPLETION_CALL_COMPLETED, false);
         ErpCrmSequenceStep next = newStep(2, "EMAIL", ErpCrmConstants.STEP_COMPLETION_EMAIL_OPENED, true);
@@ -131,7 +131,7 @@ public class TestSequenceStepAdvancer extends BaseTestCase {
 
     @Test
     public void testIllegalStatusRejects() {
-        ErpCrmLeadSequenceProgress p = newProgress(1L, 0);
+        ErpCrmLeadSequenceProgress p = newProgress("1", 0);
         p.setStatus(ErpCrmConstants.SEQUENCE_PROGRESS_COMPLETED);
         ErpCrmEvent event = newCompletedEvent("CALL");
         ErpCrmSequenceStep step = newStep(1, "CALL", ErpCrmConstants.STEP_COMPLETION_CALL_COMPLETED, false);
@@ -143,7 +143,7 @@ public class TestSequenceStepAdvancer extends BaseTestCase {
     @Test
     public void testStepOrderRespected() {
         // steps 乱序传入 → 按 stepOrder 排序后推进
-        ErpCrmLeadSequenceProgress p = newProgress(1L, 0);
+        ErpCrmLeadSequenceProgress p = newProgress("1", 0);
         ErpCrmEvent event = newCompletedEvent("CALL");
         ErpCrmSequenceStep s1 = newStep(1, "CALL", ErpCrmConstants.STEP_COMPLETION_CALL_COMPLETED, false);
         ErpCrmSequenceStep s2 = newStep(2, "MEETING", ErpCrmConstants.STEP_COMPLETION_MEETING_HELD, false);
@@ -155,7 +155,7 @@ public class TestSequenceStepAdvancer extends BaseTestCase {
 
     // ---------- helpers ----------
 
-    private ErpCrmLeadSequenceProgress newProgress(Long id, int stepIndex) {
+    private ErpCrmLeadSequenceProgress newProgress(String id, int stepIndex) {
         ErpCrmLeadSequenceProgress p = new ErpCrmLeadSequenceProgress();
         p.setId(id);
         p.setCurrentStepIndex(stepIndex);
@@ -165,7 +165,7 @@ public class TestSequenceStepAdvancer extends BaseTestCase {
 
     private ErpCrmEvent newCompletedEvent(String eventType) {
         ErpCrmEvent e = new ErpCrmEvent();
-        e.setId(System.nanoTime());
+        e.setId(String.valueOf(System.nanoTime()));
         e.setEventType(eventType);
         e.setStatus(ErpCrmConstants.EVENT_STATUS_COMPLETED);
         return e;
@@ -173,7 +173,7 @@ public class TestSequenceStepAdvancer extends BaseTestCase {
 
     private ErpCrmSequenceStep newStep(int order, String activityType, String condition, boolean autoCreateEvent) {
         ErpCrmSequenceStep s = new ErpCrmSequenceStep();
-        s.setId(System.nanoTime());
+        s.setId(String.valueOf(System.nanoTime()));
         s.setStepOrder(order);
         s.setActivityType(activityType);
         s.setCompletionCondition(condition);

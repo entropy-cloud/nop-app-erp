@@ -20,20 +20,20 @@
 
     <props>
         <prop name="id" displayName="ID" propId="1" i18n-en:displayName="ID" tagSet="seq-default" mandatory="true"
-              queryable="true" sortable="true" insertable="true" updatable="false" graphql:type="String">
-            <schema type="java.lang.Long"/>
+              queryable="true" sortable="true" insertable="true" updatable="false">
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="leadId" displayName="线索/商机" propId="2" i18n-en:displayName="Lead" mandatory="true" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="lead">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="sequenceId" displayName="应用序列" propId="3" i18n-en:displayName="Sequence" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="sequence">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="orgId" displayName="业务组织" propId="4" i18n-en:displayName="Organization" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="org">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="currentStepIndex" displayName="当前步骤序号" propId="5" i18n-en:displayName="Current Step Index"
               queryable="true" sortable="true" insertable="true" updatable="true" defaultValue="0">

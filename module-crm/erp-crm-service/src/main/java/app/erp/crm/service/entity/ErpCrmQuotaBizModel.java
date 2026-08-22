@@ -45,7 +45,7 @@ public class ErpCrmQuotaBizModel extends CrudBizModel<ErpCrmQuota> implements IE
 
     @Override
     @BizQuery
-    public ErpCrmQuota getQuotaRollup(@Optional @Name("territoryId") Long territoryId,
+    public ErpCrmQuota getQuotaRollup(@Optional @Name("territoryId") String territoryId,
                                        @Name("periodType") String periodType,
                                        @Name("fiscalYear") int fiscalYear,
                                        @Optional @Name("periodLabel") String periodLabel,
@@ -55,8 +55,8 @@ public class ErpCrmQuotaBizModel extends CrudBizModel<ErpCrmQuota> implements IE
 
     @Override
     @BizMutation
-    public ErpCrmQuota finalizeQuota(@Name("quotaId") Long quotaId, IServiceContext context) {
-        ErpCrmQuota quota = requireEntity(String.valueOf(quotaId), null, context);
+    public ErpCrmQuota finalizeQuota(@Name("quotaId") String quotaId, IServiceContext context) {
+        ErpCrmQuota quota = requireEntity(quotaId, null, context);
         if (Boolean.TRUE.equals(quota.getIsFinalized())) {
             throw new NopException(ErpCrmErrors.ERR_QUOTA_FINALIZED)
                     .param(ErpCrmErrors.ARG_QUOTA_ID, quotaId);
@@ -68,8 +68,8 @@ public class ErpCrmQuotaBizModel extends CrudBizModel<ErpCrmQuota> implements IE
 
     @Override
     @BizMutation
-    public ErpCrmQuota unfinalizeQuota(@Name("quotaId") Long quotaId, IServiceContext context) {
-        ErpCrmQuota quota = requireEntity(String.valueOf(quotaId), null, context);
+    public ErpCrmQuota unfinalizeQuota(@Name("quotaId") String quotaId, IServiceContext context) {
+        ErpCrmQuota quota = requireEntity(quotaId, null, context);
         quota.setIsFinalized(false);
         updateEntity(quota, null, context);
         return quota;
@@ -77,7 +77,7 @@ public class ErpCrmQuotaBizModel extends CrudBizModel<ErpCrmQuota> implements IE
 
     @Override
     @BizMutation
-    public List<ErpCrmQuota> distributeAnnualQuota(@Name("quotaId") Long quotaId,
+    public List<ErpCrmQuota> distributeAnnualQuota(@Name("quotaId") String quotaId,
                                                      @Optional @Name("periodType") String periodType,
                                                      IServiceContext context) {
         return distributeAnnualQuotaProcessor.distributeAnnualQuota(quotaId, periodType, context);
@@ -85,7 +85,7 @@ public class ErpCrmQuotaBizModel extends CrudBizModel<ErpCrmQuota> implements IE
 
     @Override
     @BizQuery
-    public ErpCrmTerritoryPipeline getTerritoryPipeline(@Optional @Name("territoryId") Long territoryId,
+    public ErpCrmTerritoryPipeline getTerritoryPipeline(@Optional @Name("territoryId") String territoryId,
                                                           @Name("periodLabel") String periodLabel,
                                                           IServiceContext context) {
         QuotaRollupCalculator.ErpCrmPipelineAccumulator acc =

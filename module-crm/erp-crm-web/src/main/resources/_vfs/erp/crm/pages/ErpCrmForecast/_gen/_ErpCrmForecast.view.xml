@@ -19,25 +19,25 @@
             <cols>
 
                 <!--ID-->
-                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="id" mandatory="true" sortable="true"/>
 
                 <!--业务组织-->
-                <col id="orgId" ui:number="true" sortable="true"/>
+                <col id="orgId" sortable="true"/>
 
                 <!--预测期间-->
-                <col id="periodId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="periodId" mandatory="true" sortable="true"/>
 
                 <!--销售区域-->
-                <col id="territoryId" ui:number="true" sortable="true"/>
+                <col id="territoryId" sortable="true"/>
 
                 <!--销售团队-->
-                <col id="teamId" ui:number="true" sortable="true"/>
+                <col id="teamId" sortable="true"/>
 
                 <!--销售员-->
                 <col id="ownerId" sortable="true"/>
 
                 <!--币种-->
-                <col id="currencyId" ui:number="true" sortable="true"/>
+                <col id="currencyId" sortable="true"/>
 
                 <!--承诺金额-->
                 <col id="commitAmount" ui:number="true" sortable="true"/>

@@ -26,14 +26,14 @@ public interface IErpCrmLeadFunnelBiz extends ICrudBiz<ErpCrmLeadFunnel> {
     @BizMutation
     ErpCrmLeadFunnel refreshFunnel(@Name("periodStart") java.time.LocalDate periodStart,
                                    @Name("periodEnd") java.time.LocalDate periodEnd,
-                                   @Optional @Name("territoryId") Long territoryId,
-                                   @Optional @Name("teamId") Long teamId,
-                                   @Optional @Name("sourceId") Long sourceId,
+                                   @Optional @Name("territoryId") String territoryId,
+                                   @Optional @Name("teamId") String teamId,
+                                   @Optional @Name("sourceId") String sourceId,
                                    IServiceContext context);
 
     /**
      * 漏斗可视化数据结构：stages 数组 + 各阶段 conversionRate/dropOffRate/lostReasonTop（对齐 lead-waterfall.md §4）。
      */
     @BizQuery
-    Map<String, Object> getFunnelView(@Name("funnelId") Long funnelId, IServiceContext context);
+    Map<String, Object> getFunnelView(@Name("funnelId") String funnelId, IServiceContext context);
 }

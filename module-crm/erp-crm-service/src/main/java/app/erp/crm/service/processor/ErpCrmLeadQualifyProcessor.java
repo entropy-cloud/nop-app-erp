@@ -14,7 +14,7 @@ public class ErpCrmLeadQualifyProcessor {
     @Inject
     ErpCrmLeadProcessor facade;
 
-    public ErpCrmLead qualify(Long leadId, IServiceContext context) {
+    public ErpCrmLead qualify(String leadId, IServiceContext context) {
         ErpCrmLead lead = facade.requireLead(leadId, context);
         facade.validateTransitionForQualify(lead, context);
         facade.doQualify(lead, context);

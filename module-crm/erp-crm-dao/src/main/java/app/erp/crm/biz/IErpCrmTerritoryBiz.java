@@ -27,11 +27,11 @@ public interface IErpCrmTerritoryBiz extends ICrudBiz<ErpCrmTerritory> {
      * </ul>
      */
     @BizMutation
-    ErpCrmTerritory createChild(@Name("parentId") Long parentId,
+    ErpCrmTerritory createChild(@Name("parentId") String parentId,
                                 @Name("code") String code,
                                 @Name("name") String name,
                                 @Name("territoryType") String territoryType,
-                                @Optional @Name("managerId") Long managerId,
+                                @Optional @Name("managerId") String managerId,
                                 IServiceContext context);
 
     /**
@@ -43,8 +43,8 @@ public interface IErpCrmTerritoryBiz extends ICrudBiz<ErpCrmTerritory> {
      * </ul>
      */
     @BizMutation
-    ErpCrmTerritory moveTerritory(@Name("territoryId") Long territoryId,
-                                  @Name("newParentId") Long newParentId,
+    ErpCrmTerritory moveTerritory(@Name("territoryId") String territoryId,
+                                  @Name("newParentId") String newParentId,
                                   IServiceContext context);
 
     /**
@@ -52,6 +52,6 @@ public interface IErpCrmTerritoryBiz extends ICrudBiz<ErpCrmTerritory> {
      * parentId=null 返回根节点列表。
      */
     @BizQuery
-    List<ErpCrmTerritory> getTerritoryTree(@Optional @Name("parentId") Long parentId,
+    List<ErpCrmTerritory> getTerritoryTree(@Optional @Name("parentId") String parentId,
                                             IServiceContext context);
 }

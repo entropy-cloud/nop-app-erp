@@ -33,7 +33,7 @@ public class LeadActivityDerivationHelper {
     /**
      * 重算并回写指定 Lead 的派生字段。无关联事件时将派生字段置 null。
      */
-    public void recalculateForLead(Long leadId) {
+    public void recalculateForLead(String leadId) {
         if (leadId == null) {
             return;
         }
@@ -51,7 +51,7 @@ public class LeadActivityDerivationHelper {
     /**
      * 取指定线索关联的最近一条 COMPLETED 事件的 startDateTime（最大值）。
      */
-    protected LocalDateTime latestCompletedStartDateTime(Long leadId) {
+    protected LocalDateTime latestCompletedStartDateTime(String leadId) {
         List<ErpCrmEvent> completed = loadEvents(leadId, ErpCrmConstants.EVENT_STATUS_COMPLETED);
         return completed.stream()
                 .map(ErpCrmEvent::getStartDateTime)
@@ -65,7 +65,7 @@ public class LeadActivityDerivationHelper {
      * 取指定线索关联的最早一条未来 PLANNED 事件的 startDateTime（最小值）。
      * "未来" 指 startDateTime >= 当前时间；过期但未完成的事件也计入 nextActivityDate（提醒补跟进）。
      */
-    protected LocalDateTime earliestPlannedStartDateTime(Long leadId) {
+    protected LocalDateTime earliestPlannedStartDateTime(String leadId) {
         List<ErpCrmEvent> planned = loadEvents(leadId, ErpCrmConstants.EVENT_STATUS_PLANNED);
         return planned.stream()
                 .map(ErpCrmEvent::getStartDateTime)
@@ -75,7 +75,7 @@ public class LeadActivityDerivationHelper {
                 .orElse(null);
     }
 
-    protected List<ErpCrmEvent> loadEvents(Long leadId, String status) {
+    protected List<ErpCrmEvent> loadEvents(String leadId, String status) {
         IEntityDao<ErpCrmEvent> dao = daoProvider.daoFor(ErpCrmEvent.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("relatedLeadId", leadId));

@@ -9,6 +9,7 @@ import app.erp.crm.dao.entity.ErpCrmSequenceStep;
 import app.erp.crm.service.ErpCrmConstants;
 import app.erp.crm.service.support.SequenceStepAdvancer;
 import io.nop.api.core.beans.query.QueryBean;
+import io.nop.api.core.convert.ConvertHelper;
 import io.nop.api.core.time.CoreMetrics;
 import io.nop.core.context.IServiceContext;
 import io.nop.dao.api.IDaoProvider;
@@ -42,9 +43,9 @@ public class ErpCrmLeadSequenceProgressAdvanceStepProcessor {
     @Inject
     IErpCrmEventBiz eventBiz;
 
-    public ErpCrmLeadSequenceProgress advanceStep(Long progressId, Long eventId, IServiceContext context) {
+    public ErpCrmLeadSequenceProgress advanceStep(String progressId, String eventId, IServiceContext context) {
         ErpCrmLeadSequenceProgress progress = requireProgress(progressId);
-        ErpCrmEvent event = eventBiz.requireEntity(String.valueOf(eventId), null, context);
+        ErpCrmEvent event = eventBiz.requireEntity(eventId, null, context);
         List<ErpCrmSequenceStep> steps = loadSteps(progress.getSequenceId());
 
         SequenceStepAdvancer.AdvanceResult result =
@@ -59,7 +60,7 @@ public class ErpCrmLeadSequenceProgressAdvanceStepProcessor {
 
         // 推进时若下一步 autoCreateEvent → 建下一步 Event
         if (!result.isSequenceCompleted() && result.isEventCreationNeeded() && result.getNextStep() != null) {
-            ErpCrmLead lead = leadBiz.requireEntity(String.valueOf(progress.getLeadId()), null, context);
+            ErpCrmLead lead = leadBiz.requireEntity(progress.getLeadId(), null, context);
             createEventForStep(result.getNextStep(), lead, progress, context);
         }
         return progress;
@@ -67,7 +68,7 @@ public class ErpCrmLeadSequenceProgressAdvanceStepProcessor {
 
     // ---------- 内部辅助 ----------
 
-    protected ErpCrmLeadSequenceProgress requireProgress(Long progressId) {
+    protected ErpCrmLeadSequenceProgress requireProgress(String progressId) {
         ErpCrmLeadSequenceProgress progress = dao().getEntityById(progressId);
         if (progress == null) {
             throw new UnknownEntityException(ErpCrmLeadSequenceProgress.class.getName(), progressId);
@@ -75,14 +76,14 @@ public class ErpCrmLeadSequenceProgressAdvanceStepProcessor {
         return progress;
     }
 
-    protected List<ErpCrmSequenceStep> loadSteps(Long sequenceId) {
+    protected List<ErpCrmSequenceStep> loadSteps(String sequenceId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("sequenceId", sequenceId));
         List<ErpCrmSequenceStep> steps = stepDao().findAllByQuery(q);
         steps.sort(Comparator
                 .comparingInt((ErpCrmSequenceStep s) ->
                         s.getStepOrder() != null ? s.getStepOrder() : Integer.MAX_VALUE)
-                .thenComparing(s -> s.getId() != null ? s.getId() : Long.MAX_VALUE));
+                .thenComparing(s -> s.getId() != null ? ConvertHelper.toLong(s.getId()) : Long.MAX_VALUE));
         return steps;
     }
 

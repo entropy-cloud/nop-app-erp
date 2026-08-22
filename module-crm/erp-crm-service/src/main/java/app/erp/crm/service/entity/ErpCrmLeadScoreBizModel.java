@@ -30,7 +30,7 @@ public class ErpCrmLeadScoreBizModel extends CrudBizModel<ErpCrmLeadScore> imple
 
     @Override
     @BizMutation
-    public ErpCrmLeadScore recalculateScore(@Name("leadId") Long leadId,
+    public ErpCrmLeadScore recalculateScore(@Name("leadId") String leadId,
                                             @Optional @Name("triggerEvent") String triggerEvent,
                                             IServiceContext context) {
         return recalculateScoreProcessor.recalculateScore(leadId, triggerEvent, context);

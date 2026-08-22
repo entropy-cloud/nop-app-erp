@@ -27,7 +27,7 @@ public class ErpCrmTerritoryMoveTerritoryProcessor {
     @Inject
     IDaoProvider daoProvider;
 
-    public ErpCrmTerritory moveTerritory(Long territoryId, Long newParentId, IServiceContext context) {
+    public ErpCrmTerritory moveTerritory(String territoryId, String newParentId, IServiceContext context) {
         ErpCrmTerritory node = requireTerritory(territoryId);
         if (newParentId == null) {
             // move to root
@@ -40,7 +40,7 @@ public class ErpCrmTerritoryMoveTerritoryProcessor {
                     .param(ErpCrmErrors.ARG_PARENT_ID, newParentId);
         }
         // Cycle check: newParentId must not be in the subtree of node
-        Set<Long> subtree = collectSubtreeIds(territoryId);
+        Set<String> subtree = collectSubtreeIds(territoryId);
         if (subtree.contains(newParentId)) {
             throw new NopException(ErpCrmErrors.ERR_TERRITORY_CYCLE)
                     .param(ErpCrmErrors.ARG_TERRITORY_ID, territoryId)
@@ -62,7 +62,7 @@ public class ErpCrmTerritoryMoveTerritoryProcessor {
 
     // ---------- 内部辅助 ----------
 
-    protected ErpCrmTerritory requireTerritory(Long territoryId) {
+    protected ErpCrmTerritory requireTerritory(String territoryId) {
         ErpCrmTerritory territory = dao().getEntityById(territoryId);
         if (territory == null) {
             throw new UnknownEntityException(ErpCrmTerritory.class.getName(), territoryId);
@@ -70,7 +70,7 @@ public class ErpCrmTerritoryMoveTerritoryProcessor {
         return territory;
     }
 
-    protected void applyMove(ErpCrmTerritory node, Long newParentId, int newLevel, String newParentFullPath,
+    protected void applyMove(ErpCrmTerritory node, String newParentId, int newLevel, String newParentFullPath,
                              IServiceContext context) {
         String oldFullPath = node.getFullPath();
         String newFullPath = buildFullPath(newParentFullPath, node.getCode());
@@ -84,7 +84,7 @@ public class ErpCrmTerritoryMoveTerritoryProcessor {
         }
     }
 
-    protected void relocateChildren(Long parentId, String oldPrefix, String newPrefix, int parentLevel,
+    protected void relocateChildren(String parentId, String oldPrefix, String newPrefix, int parentLevel,
                                     IServiceContext context) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("parentId", parentId));
@@ -101,8 +101,8 @@ public class ErpCrmTerritoryMoveTerritoryProcessor {
         }
     }
 
-    protected Set<Long> collectSubtreeIds(Long rootId) {
-        Set<Long> ids = new HashSet<>();
+    protected Set<String> collectSubtreeIds(String rootId) {
+        Set<String> ids = new HashSet<>();
         collectSubtreeIds(rootId, ids);
         return ids;
     }
@@ -111,7 +111,7 @@ public class ErpCrmTerritoryMoveTerritoryProcessor {
      * 递归收集子树 id。经 {@code dao().findAllByQuery} 直接查询绕过 findList 管道——
      * 树形结构递归遍历，每层只取直接子节点；同域只读，数据权限在调用方校验。
      */
-    protected void collectSubtreeIds(Long rootId, Set<Long> acc) {
+    protected void collectSubtreeIds(String rootId, Set<String> acc) {
         acc.add(rootId);
         QueryBean q = new QueryBean();
         q.addFilter(eq("parentId", rootId));
@@ -123,7 +123,7 @@ public class ErpCrmTerritoryMoveTerritoryProcessor {
     /**
      * 计算子树最大深度（循环深度校验用）。同 {@link #collectSubtreeIds} 的 dao() 直接查询理由。
      */
-    protected int maxSubtreeDepthFrom(Long rootId) {
+    protected int maxSubtreeDepthFrom(String rootId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("parentId", rootId));
         List<ErpCrmTerritory> children = dao().findAllByQuery(q);

@@ -4,6 +4,7 @@ import app.erp.crm.dao.entity.ErpCrmEvent;
 import app.erp.crm.dao.entity.ErpCrmLeadSequenceProgress;
 import app.erp.crm.dao.entity.ErpCrmSequenceStep;
 import app.erp.crm.service.ErpCrmConstants;
+import io.nop.api.core.convert.ConvertHelper;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.api.core.time.CoreMetrics;
 
@@ -145,7 +146,7 @@ public class SequenceStepAdvancer {
         copy.sort(Comparator
                 .comparingInt((ErpCrmSequenceStep s) ->
                         s.getStepOrder() != null ? s.getStepOrder() : Integer.MAX_VALUE)
-                .thenComparing(s -> s.getId() != null ? s.getId() : Long.MAX_VALUE));
+                .thenComparingLong(s -> s.getId() != null ? ConvertHelper.toLong(s.getId()) : Long.MAX_VALUE));
         return copy;
     }
 

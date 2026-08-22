@@ -19,13 +19,13 @@
             <cols>
 
                 <!--ID-->
-                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="id" mandatory="true" sortable="true"/>
 
                 <!--编码-->
                 <col id="code" mandatory="true" sortable="true"/>
 
                 <!--业务组织-->
-                <col id="orgId" ui:number="true" sortable="true"/>
+                <col id="orgId" sortable="true"/>
 
                 <!--阶段名称-->
                 <col id="stageName" mandatory="true" sortable="true"/>
@@ -34,7 +34,7 @@
                 <col id="sequence" mandatory="true" ui:number="true" sortable="true"/>
 
                 <!--团队作用域-->
-                <col id="teamId" ui:number="true" sortable="true"/>
+                <col id="teamId" sortable="true"/>
 
                 <!--默认成交概率%-->
                 <col id="defaultProbability" ui:number="true" sortable="true"/>

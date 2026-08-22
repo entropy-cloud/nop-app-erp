@@ -33,7 +33,7 @@ public class EventTimelineAggregator {
     /**
      * 返回指定线索的活动时间线（Event + Activity 合并，按 timestamp 倒序）。
      */
-    public List<Map<String, Object>> buildTimeline(Long leadId) {
+    public List<Map<String, Object>> buildTimeline(String leadId) {
         List<Map<String, Object>> entries = new ArrayList<>();
         if (leadId == null) {
             return entries;
@@ -79,14 +79,14 @@ public class EventTimelineAggregator {
         return m;
     }
 
-    protected List<ErpCrmEvent> loadEvents(Long leadId) {
+    protected List<ErpCrmEvent> loadEvents(String leadId) {
         IEntityDao<ErpCrmEvent> dao = daoProvider.daoFor(ErpCrmEvent.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("relatedLeadId", leadId));
         return dao.findAllByQuery(q);
     }
 
-    protected List<ErpCrmActivity> loadActivities(Long leadId) {
+    protected List<ErpCrmActivity> loadActivities(String leadId) {
         IEntityDao<ErpCrmActivity> dao = daoProvider.daoFor(ErpCrmActivity.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("leadId", leadId));

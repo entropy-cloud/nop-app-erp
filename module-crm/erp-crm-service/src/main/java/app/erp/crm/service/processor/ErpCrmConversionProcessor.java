@@ -55,7 +55,7 @@ public class ErpCrmConversionProcessor {
     @Inject
     ErpCrmLeadStateMachine stateMachine;
 
-    public ErpCrmLead getCreatedOpportunity(Long leadId, IServiceContext context) {
+    public ErpCrmLead getCreatedOpportunity(String leadId, IServiceContext context) {
         ErpCrmLead lead = requireLead(leadId, context);
         if (!Objects.equals(lead.getRelatedBillType(), ErpCrmConstants.RELATED_BILL_TYPE_CRM_LEAD)) {
             return null;
@@ -162,8 +162,8 @@ public class ErpCrmConversionProcessor {
      * {@link ErpCrmErrors#ERR_LEAD_STAGE_NOT_WON}。先 docStatus 后 won-stage，守卫顺序确定化（docStatus → won-stage → partner）。
      */
     protected void validateWonStage(ErpCrmLead lead, IServiceContext context) {
-        Long stageId = lead.getStageId();
-        ErpCrmStage stage = stageId != null ? stageBiz.get(String.valueOf(stageId), true, context) : null;
+        String stageId = lead.getStageId();
+        ErpCrmStage stage = stageId != null ? stageBiz.get(stageId, true, context) : null;
         if (stage == null || !Boolean.TRUE.equals(stage.getIsWonStage())) {
             throw new NopException(ErpCrmErrors.ERR_LEAD_STAGE_NOT_WON)
                     .param(ErpCrmErrors.ARG_LEAD_CODE, lead.getCode())
@@ -193,7 +193,7 @@ public class ErpCrmConversionProcessor {
 
     // ---------- 辅助 ----------
 
-    protected ErpCrmLead requireLead(Long leadId, IServiceContext context) {
+    protected ErpCrmLead requireLead(String leadId, IServiceContext context) {
         ErpCrmLead lead = leadDao().getEntityById(leadId);
         if (lead == null) {
             throw new NopException(ErpCrmErrors.ERR_LEAD_NOT_FOUND)
