@@ -1,0 +1,10 @@
+{
+  data: {
+    cipId: "@var:cipId",
+    costType: "PURCHASE",
+    amountFunctional: 20000,
+    sourceBillType: "COST_COLLECTION",
+    sourceBillCode: "@var:ccCode",
+    remark: "C11 采购成本归集（回链成本归集单）"
+  }
+}

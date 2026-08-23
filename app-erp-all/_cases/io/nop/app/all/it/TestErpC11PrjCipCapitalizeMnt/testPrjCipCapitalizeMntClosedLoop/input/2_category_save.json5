@@ -1,0 +1,12 @@
+{
+  data: {
+    data: {
+      code: "IT-C11-CAT-001",
+      name: "C11 自建工程类别",
+      depreciationMethod: "STRAIGHT_LINE",
+      usefulLifeMonths: 36,
+      subjectId: "27",
+      cipSubjectId: "29"
+    }
+  }
+}

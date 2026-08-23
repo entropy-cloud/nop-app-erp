@@ -15,7 +15,7 @@
     "createdBy": "autotest-ref",
     "createTime": "*",
     "updatedBy": "autotest-ref",
-    "updateTime": "@var:ErpMfgBom@updateTime",
+    "updateTime": "*",
     "consumption": null,
     "consumption_label": null,
     "remark": null,

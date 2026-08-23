@@ -1,0 +1,6 @@
+{
+  data: {
+    projectId: "1",
+    settlementType: "FINAL"
+  }
+}

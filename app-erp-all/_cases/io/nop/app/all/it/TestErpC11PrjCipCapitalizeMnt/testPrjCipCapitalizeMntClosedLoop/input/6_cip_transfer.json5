@@ -1,0 +1,7 @@
+{
+  data: {
+    cipId: "@var:cipId",
+    costItemIds: [],
+    transferDate: "2026-07-17"
+  }
+}

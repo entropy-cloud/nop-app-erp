@@ -1,0 +1,31 @@
+{
+  "data": {
+    "id": "100000",
+    "code": "@var:ErpPrjCostCollection@code",
+    "projectId": "1",
+    "orgId": "2",
+    "businessDate": "@var:ErpPrjCostCollection@businessDate",
+    "currencyId": "1",
+    "totalAmount": 20000,
+    "docStatus": "OPEN",
+    "docStatus_label": "OPEN-进行中",
+    "approveStatus": "APPROVED",
+    "approveStatus_label": "APPROVED-已通过",
+    "posted": false,
+    "remark": "C11 项目成本归集（自包含）",
+    "exchangeRate": 1,
+    "amountSource": 20000,
+    "amountFunctional": 20000,
+    "delVersion": 0,
+    "version": 0,
+    "createdBy": "autotest-ref",
+    "createTime": "*",
+    "updatedBy": "autotest-ref",
+    "updateTime": "*",
+    "approvedBy": null,
+    "approvedAt": null,
+    "postedAt": null,
+    "postedBy": null
+  },
+  "status": 0
+}

@@ -1,0 +1,16 @@
+{
+  data: {
+    data: {
+      code: "IT-C12-PRJ-001",
+      name: "C12 测试实施项目",
+      orgId: "2",
+      projectTypeId: "@var:ptId",
+      currencyId: "1",
+      startDate: "2026-07-01",
+      endDate: "2026-12-31",
+      budget: 100000,
+      status: "OPEN",
+      remark: "C12 自包含项目（工时过账载体）"
+    }
+  }
+}

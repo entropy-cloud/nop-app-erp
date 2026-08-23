@@ -45,7 +45,7 @@
     "delVersion": 0,
     "version": 1,
     "createdBy": "autotest-ref",
-    "createTime": "@var:ErpMfgWorkOrder@createTime",
+    "createTime": "*",
     "updatedBy": "autotest-ref",
     "updateTime": "*",
     "snapshotBomVersion": null,

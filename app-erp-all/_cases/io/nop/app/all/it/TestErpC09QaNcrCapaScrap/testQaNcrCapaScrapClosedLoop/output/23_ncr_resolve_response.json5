@@ -22,7 +22,7 @@
     "specMax": null,
     "assignedTo": null,
     "resolvedBy": null,
-    "resolvedAt": "@var:ErpQaNonConformance@resolvedAt",
+    "resolvedAt": "*",
     "resolution": "CAPA 已验证有效，关闭 NCR",
     "remark": null,
     "delVersion": 0,

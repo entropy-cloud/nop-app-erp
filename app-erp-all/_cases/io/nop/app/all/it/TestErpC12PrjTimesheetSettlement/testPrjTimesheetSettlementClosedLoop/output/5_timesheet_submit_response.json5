@@ -1,0 +1,31 @@
+{
+  "data": {
+    "id": "@var:tsId",
+    "code": "@var:tsCode",
+    "orgId": "2",
+    "projectId": "@var:prjId",
+    "taskId": "@var:taskId",
+    "userId": "1",
+    "workDate": "2026-07-17",
+    "hours": 8.00,
+    "activityTypeId": null,
+    "currencyId": "1",
+    "costRate": 500.0000,
+    "costAmount": 4000.0000,
+    "status": "SUBMITTED",
+    "status_label": "SUBMITTED-待审批",
+    "posted": false,
+    "postedAt": null,
+    "postedBy": null,
+    "approvedBy": null,
+    "approvedAt": null,
+    "remark": "C12 工时单（引用 seed md 员工 EMP-001）",
+    "delVersion": 0,
+    "version": 1,
+    "createdBy": "autotest-ref",
+    "createTime": "*",
+    "updatedBy": "autotest-ref",
+    "updateTime": "*"
+  },
+  "status": 0
+}

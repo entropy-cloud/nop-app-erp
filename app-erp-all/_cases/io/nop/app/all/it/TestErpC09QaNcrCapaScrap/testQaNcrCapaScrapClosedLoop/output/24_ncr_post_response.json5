@@ -22,7 +22,7 @@
     "specMax": null,
     "assignedTo": null,
     "resolvedBy": null,
-    "resolvedAt": "@var:ErpQaNonConformance@resolvedAt",
+    "resolvedAt": "*",
     "resolution": "CAPA 已验证有效，关闭 NCR",
     "remark": null,
     "delVersion": 0,
@@ -32,7 +32,7 @@
     "updatedBy": "autotest-ref",
     "updateTime": "*",
     "posted": true,
-    "postedAt": "@var:ErpQaNonConformance@postedAt",
+    "postedAt": "*",
     "postedBy": "autotest",
     "returnCode": null,
     "noCapaReason": null

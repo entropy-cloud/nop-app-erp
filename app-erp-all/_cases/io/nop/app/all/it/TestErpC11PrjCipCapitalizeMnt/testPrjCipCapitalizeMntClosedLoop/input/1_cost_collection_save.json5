@@ -1,0 +1,19 @@
+{
+  data: {
+    data: {
+      code: "IT-C11-CC-001",
+      projectId: "1",
+      orgId: "2",
+      businessDate: "2026-07-17",
+      currencyId: "1",
+      totalAmount: 20000,
+      docStatus: "OPEN",
+      approveStatus: "APPROVED",
+      posted: false,
+      exchangeRate: 1,
+      amountSource: 20000,
+      amountFunctional: 20000,
+      remark: "C11 项目成本归集（自包含）"
+    }
+  }
+}

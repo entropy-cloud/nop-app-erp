@@ -15,7 +15,7 @@
     "status_label": "SENT-已发送",
     "mergeGroupId": "qa.ncr.resolved#it-c09-user",
     "mergeCount": 1,
-    "sentAt": "@var:ErpSysNotification@sentAt",
+    "sentAt": "*",
     "errorMsg": null,
     "delVersion": 0,
     "version": 0,

@@ -33,7 +33,7 @@
     "delVersion": 0,
     "version": 1,
     "createdBy": "autotest-ref",
-    "createTime": "@var:ErpQaInspection@createTime",
+    "createTime": "*",
     "updatedBy": "autotest-ref",
     "updateTime": "*"
   },

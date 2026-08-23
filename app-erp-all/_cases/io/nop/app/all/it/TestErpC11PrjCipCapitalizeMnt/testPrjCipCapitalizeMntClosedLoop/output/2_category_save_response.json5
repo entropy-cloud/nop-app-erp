@@ -1,0 +1,23 @@
+{
+  "data": {
+    "id": "100001",
+    "code": "@var:ErpAstAssetCategory@code",
+    "name": "C11 自建工程类别",
+    "depreciationMethod": "STRAIGHT_LINE",
+    "depreciationMethod_label": "STRAIGHT_LINE-直线法",
+    "usefulLifeMonths": 36,
+    "subjectId": "27",
+    "delVersion": 0,
+    "version": 0,
+    "createdBy": "autotest-ref",
+    "createTime": "*",
+    "updatedBy": "autotest-ref",
+    "updateTime": "*",
+    "cipSubjectId": "29",
+    "depreciationSubjectId": null,
+    "expenseSubjectId": null,
+    "remark": null,
+    "disposalGainLossSubjectId": null
+  },
+  "status": 0
+}

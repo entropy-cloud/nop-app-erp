@@ -1,0 +1,10 @@
+{
+  data: {
+    data: {
+      projectId: "@var:prjId",
+      title: "C12 实施任务",
+      status: "IN_PROGRESS",
+      priority: "NORMAL"
+    }
+  }
+}

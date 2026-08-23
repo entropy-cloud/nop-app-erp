@@ -17,7 +17,7 @@
     "createdBy": "autotest-ref",
     "createTime": "*",
     "updatedBy": "autotest-ref",
-    "updateTime": "@var:ErpMdMaterial@updateTime",
+    "updateTime": "*",
     "categoryId": null,
     "defaultWarehouseId": null,
     "minStock": null,

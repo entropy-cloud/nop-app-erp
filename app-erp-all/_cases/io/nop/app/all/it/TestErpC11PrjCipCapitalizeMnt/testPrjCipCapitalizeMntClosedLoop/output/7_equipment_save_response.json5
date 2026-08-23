@@ -1,0 +1,27 @@
+{
+  "data": {
+    "id": "100046",
+    "code": "@var:ErpMntEquipment@code",
+    "name": "C11 测试设备",
+    "orgId": "2",
+    "assetId": "@var:assetId",
+    "categoryId": "1",
+    "status": "RUNNING",
+    "status_label": "RUNNING-运行中",
+    "installDate": "@var:ErpAstCip@businessDate",
+    "remark": "C11 设备卡（跨域引用资本化资产卡片）",
+    "delVersion": 0,
+    "version": 0,
+    "createdBy": "autotest-ref",
+    "createTime": "*",
+    "updatedBy": "autotest-ref",
+    "updateTime": "*",
+    "workcenterId": null,
+    "locationId": null,
+    "serialNo": null,
+    "manufacturer": null,
+    "model": null,
+    "warrantyExpiry": null
+  },
+  "status": 0
+}

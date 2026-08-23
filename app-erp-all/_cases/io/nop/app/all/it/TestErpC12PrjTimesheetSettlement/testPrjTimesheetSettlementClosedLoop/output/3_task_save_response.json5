@@ -1,0 +1,30 @@
+{
+  "data": {
+    "id": "100002",
+    "projectId": "@var:prjId",
+    "title": "C12 实施任务",
+    "status": "IN_PROGRESS",
+    "status_label": "IN_PROGRESS-进行中",
+    "priority": "NORMAL",
+    "priority_label": "NORMAL-普通",
+    "delVersion": 0,
+    "version": 0,
+    "createdBy": "autotest-ref",
+    "createTime": "*",
+    "updatedBy": "autotest-ref",
+    "updateTime": "*",
+    "parentTaskId": null,
+    "assigneeId": null,
+    "plannedStartDate": null,
+    "plannedEndDate": null,
+    "actualStartDate": null,
+    "actualEndDate": null,
+    "estimatedHours": null,
+    "actualHours": null,
+    "dependsOnId": null,
+    "blockReason": null,
+    "sortNum": null,
+    "remark": null
+  },
+  "status": 0
+}

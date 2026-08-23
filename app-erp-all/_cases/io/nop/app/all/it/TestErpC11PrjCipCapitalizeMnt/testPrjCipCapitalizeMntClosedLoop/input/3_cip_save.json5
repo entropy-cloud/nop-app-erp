@@ -1,0 +1,21 @@
+{
+  data: {
+    data: {
+      code: "IT-C11-CIP-001",
+      name: "C11 测试在建工程",
+      orgId: "2",
+      categoryId: "@var:catId",
+      currencyId: "1",
+      businessDate: "2026-07-17",
+      estimatedCompletionDate: "2026-12-31",
+      accumulatedCost: 0,
+      isCompleted: false,
+      status: "DRAFT",
+      exchangeRate: 1,
+      amountSource: 0,
+      amountFunctional: 0,
+      projectId: "1",
+      remark: "C11 CIP 在建工程（关联 seed 项目 PRJ-2026-001）"
+    }
+  }
+}

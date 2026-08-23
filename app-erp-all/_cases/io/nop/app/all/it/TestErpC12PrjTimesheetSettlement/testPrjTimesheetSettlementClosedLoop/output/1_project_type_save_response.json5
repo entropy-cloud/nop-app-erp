@@ -1,0 +1,16 @@
+{
+  "data": {
+    "id": "100000",
+    "code": "@var:ErpPrjProjectType@code",
+    "name": "C12 项目实施类型",
+    "defaultSubjectId": "32",
+    "remark": "C12 自包含项目类型（默认借方科目 5101 项目成本）",
+    "delVersion": 0,
+    "version": 0,
+    "createdBy": "autotest-ref",
+    "createTime": "*",
+    "updatedBy": "autotest-ref",
+    "updateTime": "*"
+  },
+  "status": 0
+}

@@ -1,0 +1,17 @@
+{
+  data: {
+    data: {
+      code: "IT-C12-TS-001",
+      orgId: "2",
+      projectId: "@var:prjId",
+      taskId: "@var:taskId",
+      userId: "1",
+      workDate: "2026-07-17",
+      hours: 8,
+      costRate: 500,
+      currencyId: "1",
+      status: "UNSUBMITTED",
+      remark: "C12 工时单（引用 seed md 员工 EMP-001）"
+    }
+  }
+}

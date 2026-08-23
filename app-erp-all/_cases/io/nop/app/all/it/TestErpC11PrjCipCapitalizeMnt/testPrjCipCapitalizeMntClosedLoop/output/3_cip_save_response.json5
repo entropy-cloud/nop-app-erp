@@ -1,0 +1,33 @@
+{
+  "data": {
+    "id": "100002",
+    "code": "@var:ErpAstCip@code",
+    "name": "C11 测试在建工程",
+    "orgId": "2",
+    "categoryId": "@var:catId",
+    "currencyId": "1",
+    "businessDate": "@var:ErpAstCip@businessDate",
+    "estimatedCompletionDate": "2026-12-31",
+    "accumulatedCost": 0,
+    "isCompleted": false,
+    "status": "DRAFT",
+    "status_label": "DRAFT-草稿",
+    "posted": false,
+    "exchangeRate": 1,
+    "amountSource": 0,
+    "amountFunctional": 0,
+    "projectId": "1",
+    "delVersion": 0,
+    "version": 0,
+    "createdBy": "autotest-ref",
+    "createTime": "*",
+    "updatedBy": "autotest-ref",
+    "updateTime": "*",
+    "remark": "C11 CIP 在建工程（关联 seed 项目 PRJ-2026-001）",
+    "completedAssetId": null,
+    "postedAt": null,
+    "postedBy": null,
+    "cipAssetCategorySnapshot": null
+  },
+  "status": 0
+}

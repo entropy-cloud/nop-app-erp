@@ -1,0 +1,10 @@
+{
+  data: {
+    data: {
+      code: "IT-C12-PT-001",
+      name: "C12 项目实施类型",
+      defaultSubjectId: "32",
+      remark: "C12 自包含项目类型（默认借方科目 5101 项目成本）"
+    }
+  }
+}

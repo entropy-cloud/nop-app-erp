@@ -29,7 +29,7 @@
     "delVersion": 0,
     "version": 0,
     "createdBy": "autotest-ref",
-    "createTime": "@var:ErpMfgWorkOrder@createTime",
+    "createTime": "*",
     "updatedBy": "autotest-ref",
     "updateTime": "*",
     "routingId": null,
