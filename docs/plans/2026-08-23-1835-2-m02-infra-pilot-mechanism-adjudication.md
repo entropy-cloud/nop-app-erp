@@ -1,6 +1,6 @@
 # 2026-08-23-1835-2-m02-infra-pilot-mechanism-adjudication 基建试点与机制裁决（M0.2）
 
-> Plan Status: active
+> Plan Status: completed
 > Mission: integration-test
 > Work Item: M0.2
 > Last Reviewed: 2026-08-23
@@ -52,81 +52,107 @@
 
 ### Phase 1 — surefire 串行化 + 集成测试脚手架（Add：2/2 项为 Add）
 
-Status: planned
+Status: completed
 Targets: `app-erp-all/pom.xml`（surefire 模块级覆盖）、`app-erp-all/src/test/java/`（试点用例类）
 Skill: nop-testing
 
 - Item Types: `Add`
 - Prereqs: M0.1 done（设计文档存在）
 
-- [ ] Add：app-erp-all surefire 串行化——模块级 `<forkCount>1</forkCount>` + `<parallel>none</parallel>`（或独立 surefire execution 隔离），消除并行 fork × 文件 H2 竞态（roadmap 已知约束 1）。
+- [x] Add：app-erp-all surefire 串行化——模块级 `<forkCount>1</forkCount>` + `<parallel>none</parallel>`（或独立 surefire execution 隔离），消除并行 fork × 文件 H2 竞态（roadmap 已知约束 1）。
   - Skill: nop-testing
-- [ ] Add：试点用例类脚手架（按 M0.1 选型机制的基类/装配 + 1 个试点用例 P2P 简化链测试类 + `_cases` 目录结构）。
+- [x] Add：试点用例类脚手架（按 M0.1 选型机制的基类/装配 + 1 个试点用例 P2P 简化链测试类 + `_cases` 目录结构）。
   - Skill: nop-testing
 
 Exit Criteria:
 
-- [ ] app-erp-all surefire 配置生效（`mvn test -pl app-erp-all` 单 fork 运行实证——可观测判据：surefire 测试输出显示同一 JVM 顺序执行全部测试类且无 fork 重启特征；`-Dtest=...` 全类跑完无并行 fork 日志特征）
-- [ ] 试点用例类存在且可按 M0.1 机制装配
+- [x] app-erp-all surefire 配置生效（`mvn test -pl app-erp-all` 单 fork 运行实证——可观测判据：surefire 测试输出显示同一 JVM 顺序执行全部测试类且无 fork 重启特征；`-Dtest=...` 全类跑完无并行 fork 日志特征）
+- [x] 试点用例类存在且可按 M0.1 机制装配
 
 ### Phase 2 — 试点 RECORDING→CHECKING 往返（Proof：2/2 项为 Proof）
 
-Status: planned
+Status: completed
 Targets: 试点用例 `_cases` 快照（input/output）+ 测试类
 Skill: nop-testing
 
 - Item Types: `Proof`
 - Prereqs: Phase 1
 
-- [ ] Proof：试点用例 RECORDING 录制往返——`snapshotTest=RECORDING` 首次录制生成 output/response + output/tables（确认快照构成与体积：只写变更行，非全库）。
+- [x] Proof：试点用例 RECORDING 录制往返——`snapshotTest=RECORDING` 首次录制生成 output/response + output/tables（确认快照构成与体积：只写变更行，非全库）。
   - Skill: nop-testing
-- [ ] Proof：切换 CHECKING 校验往返全绿——三层全比对（response 快照模式 + DB 状态快照 + JUnit 关键断言：成功/失败、状态翻转、金额正确性）通过。
+- [x] Proof：切换 CHECKING 校验往返全绿——三层全比对（response 快照模式 + DB 状态快照 + JUnit 关键断言：成功/失败、状态翻转、金额正确性）通过。
   - Skill: nop-testing
 
 Exit Criteria:
 
-- [ ] 试点用例录制→回放往返通过（三层全比对机制可行性证明；成功/失败模式明确记录）
-- [ ] 快照构成与体积结论记录（待证风险 ④ 初步实证）；若结论为「快照体积不可接受/构成含噪声不可比」→ 落入 Phase 3 回退路线（降级标准范式 (a) + 人工裁决）
+- [x] 试点用例录制→回放往返通过（三层全比对机制可行性证明；成功/失败模式明确记录）
+- [x] 快照构成与体积结论记录（待证风险 ④ 初步实证）；若结论为「快照体积不可接受/构成含噪声不可比」→ 落入 Phase 3 回退路线（降级标准范式 (a) + 人工裁决）
 
 ### Phase 3 — 待证风险逐项实证 + 机制裁决（混合类型：1/3 Proof + 1/3 Decision + 1/3 Add，逐项标注）
 
-Status: planned
+Status: completed
 Targets: 设计文档/裁决记录、`app-erp-all/src/test/java/`（step helper 集）、`docs/testing/e2e-runbook.md`
 Skill: nop-testing
 
 - Item Types: `Decision | Proof | Add`
 - Prereqs: Phase 2
 
-- [ ] Proof：**逐项实证 5 项待证风险**——① NopJunitExtension 共存（JunitAutoTestCase 硬编码 NopJunitExtension × 宿主模式类继承/装配矛盾是否成立，记录实证证据）；② CHECKING 态 DB 组成（回放态 DB ≠ 全量 94 seed 是否导致断言失败或需 input/tables 补齐）；③ per-method `container.restart()` × 文件 H2（重启语义与文件 DB 的兼容性）；④ 快照构成与体积（变更行非全库确认 + 体积量级）；⑤ 单用例耗时（启动 + 执行实测）——逐项记录结论。
+- [x] Proof：**逐项实证 5 项待证风险**——① NopJunitExtension 共存（JunitAutoTestCase 硬编码 NopJunitExtension × 宿主模式类继承/装配矛盾是否成立，记录实证证据）；② CHECKING 态 DB 组成（回放态 DB ≠ 全量 94 seed 是否导致断言失败或需 input/tables 补齐）；③ per-method `container.restart()` × 文件 H2（重启语义与文件 DB 的兼容性）；④ 快照构成与体积（变更行非全库确认 + 体积量级）；⑤ 单用例耗时（启动 + 执行实测）——逐项记录结论。
   - Skill: nop-testing
-- [ ] Decision：机制裁决——选型机制成立（记录结论与证据）或证伪（触发回退路线：降级标准范式 (a) + 用户裁决口径调整登记，须人工裁决）。
+- [x] Decision：机制裁决——选型机制成立（记录结论与证据）或证伪（触发回退路线：降级标准范式 (a) + 用户裁决口径调整登记，须人工裁决）。
   - Skill: nop-testing
-- [ ] Add：共享 step helper 集（跨域链步骤/过账断言 helper，供 B1-Bn 复用；对标 Playwright `_helper.ts` 先例）+ `docs/testing/e2e-runbook.md` 增「集成测试」运行注记（运行方式/基线/fresh-DB 纪律/与 E2E server 互斥纪律）。
+- [x] Add：共享 step helper 集（跨域链步骤/过账断言 helper，供 B1-Bn 复用；对标 Playwright `_helper.ts` 先例）+ `docs/testing/e2e-runbook.md` 增「集成测试」运行注记（运行方式/基线/fresh-DB 纪律/与 E2E server 互斥纪律）。
   - Skill: nop-testing
 
 Exit Criteria:
 
-- [ ] 5 项待证风险全部实证并有结论记录（每项：实证方式 + 结论 + 影响）
-- [ ] 机制裁决结论落盘（成立证据或回退登记 + 人工裁决痕迹）
-- [ ] step helper 集存在 + runbook 集成测试注记落地
+- [x] 5 项待证风险全部实证并有结论记录（每项：实证方式 + 结论 + 影响）
+- [x] 机制裁决结论落盘（成立证据或回退登记 + 人工裁决痕迹）
+- [x] step helper 集存在 + runbook 集成测试注记落地
+
+### 机制裁决记录（Phase 3 证据，2026-08-23）
+
+**Decision：机制 (c) 成立，无回退。** 试点 `TestErpP2pPilot`（P2P 简化链 PO→Receive→Invoice，12 个
+GraphQL 动作）RECORDING 录制（快照构成/体积实测）→ CHECKING 复跑 0 失败 0 错误（`mvn test -pl app-erp-all
+-Dtest=TestErpP2pPilot` BUILD SUCCESS）；三层全比对（response 快照 + output/tables 变更行 + JUnit 关键断言
+：审批状态翻转 / posted / 凭证借贷平衡 56.5/56.5 / AP 辅助账 OPEN openAmount=56.5）全部通过。回退路线未触发，
+无人工裁决登记。
+
+**五风险实证结论**（完整记录见 `docs/design/integration-testing.md §3.4`）：
+
+| 风险 | 实证 | 结论 |
+|------|------|------|
+| ① NopJunitExtension 共存 | 试点类全走通 NopJunitExtension 生命周期（ALL_LAZY 容器启动）；schema 经 force-init `DataBaseSchemaInitializer` 幂等创建；`DataInitInitializer` 为惰性 bean，基类在 restart 后显式触发其 @PostConstruct 装载 seed | **成立**——无 ALL_LAZY schema 时序问题（判据 1）；restart 后 seed 可经 DAO 访问（判据 2）；RECORDING→CHECKING 往返绿（判据 3）。设计文档「@BeforeAll 宿主式 init」字面配方不适用（NopJunitExtension.beforeAll 先启动容器），以显式触发惰性 bean 等价实现 |
+| ② CHECKING 态 DB 组成 | 回放态 = 文件 H2 全量 94 seed（部署同源 loader）；CHECKING 复跑零 `output-row-not-exists`/FK 缺失 | **结构性降级确认**：回放态 = 部署 seed 真相源，风险不再构成缺口；input/tables 无需补齐 |
+| ③ per-method restart × 文件 H2 | 试点类 + 全量 13 测试类同一 fork 顺序执行全绿 | **成立**——restart 保留文件库，seed 跨 restart 存活；fresh-DB 每类 1 次（删文件 + restart 重建 + 重灌） |
+| ④ 快照构成与体积 | 实测：output/tables 16 表 CSV（变更行 + `_chgType` 标记 + `*`/`@var:` 通配替换），response 12 文件，用例目录 252K | **变更行非全库确认**，量级 KB 级，无噪声不可比；规模担忧不成立 |
+| ⑤ 单用例耗时 | 实测 CHECKING suite 6.07s（含 fresh seed 装载 ~4s），用例体 1.09s | **远低于 §4 模型 10-60s/类**；22 用例套件总耗时模型可下调（V.1 实测登记） |
+
+**附加实证发现**（记录于设计文档 §3.4，B1-Bn 编写纪律）：
+
+- @var 自动注册对 ERP `id`（`seq-default`）不成立——仅 `var`/`clock` 标签列自动注册；多步 id 传递 =
+  响应提取 + `addVar` 供 request 文件 `@var:xxx` 引用（设计文档 §4 表述已修正）。
+- 串行化暴露两类宿主模式跨类污染（NopJunitExtension 遗留 ALL_LAZY/in-memory datasource 动态配置 +
+  `ConfigStarter.doStop` 不 unregister VFS），4 个既有测试类最小修复（reset + ALL_EAGER 回置 /
+  VFS 残留注销），全量 app-erp-all 29/0/0/1 绿。
 
 ### Phase 4 — 收尾与回归（Proof-heavy）
 
-Status: planned
+Status: completed
 Targets: `docs/backlog/integration-test-roadmap.md`（M0.2 → done）、`docs/logs/2026/08-23.md`、`docs/testing/known-good-baselines.md`（如适用）
 Skill: none
 
 - Item Types: `Proof | Fix`
 - Prereqs: Phase 3
 
-- [ ] Proof：全量 reactor `mvn clean install -DskipTests` BUILD SUCCESS + 全量 `mvn test` 零新增失败（与 3808/0/0/1 基线口径一致；surefire 串行化对既有测试无回归）。
+- [x] Proof：全量 reactor `mvn clean install -DskipTests` BUILD SUCCESS + 全量 `mvn test` 零新增失败（与 3808/0/0/1 基线口径一致；surefire 串行化对既有测试无回归）。
   - Skill: none
-- [ ] Fix：roadmap M0.2 → done + `docs/logs/2026/08-23.md` 日志条目（按日志书写指南）+ 如适用登记 known-good-baselines（试点用例新增测试计入计数）。
+- [x] Fix：roadmap M0.2 → done + `docs/logs/2026/08-23.md` 日志条目（按日志书写指南）+ 如适用登记 known-good-baselines（试点用例新增测试计入计数）。
 
 Exit Criteria:
 
-- [ ] 全量 build + test 零新增失败（基线口径核对）
-- [ ] roadmap M0.2 = done + 日志条目存在
+- [x] 全量 build + test 零新增失败（基线口径核对）
+- [x] roadmap M0.2 = done + 日志条目存在
 
 ## Draft Review Record
 
@@ -135,27 +161,28 @@ Exit Criteria:
 
 ## Closure Gates
 
-- [ ] 范围内行为完成（串行化 + 试点往返 + 5 风险实证 + 裁决 + step helper + runbook 注记）
-- [ ] 相关文档对齐（设计文档 ↔ roadmap ↔ e2e-runbook ↔ known-good-baselines 无矛盾）
-- [ ] 已运行验证（`mvn clean install -DskipTests` + 全量 `mvn test` 零新增失败；surefire 串行化生效确认）
-- [ ] 无范围内项目降级为 deferred/follow-up
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：状态、阶段、门控和日志都一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成（串行化 + 试点往返 + 5 风险实证 + 裁决 + step helper + runbook 注记）
+- [x] 相关文档对齐（设计文档 ↔ roadmap ↔ e2e-runbook ↔ known-good-baselines 无矛盾）
+- [x] 已运行验证（`mvn clean install -DskipTests` + 全量 `mvn test` 零新增失败；surefire 串行化生效确认）
+- [x] 无范围内项目降级为 deferred/follow-up
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证：状态、阶段、门控和日志都一致
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
-- （执行后按需填写；候选：试点用例覆盖不足的领域——若 P2P 链试点仅覆盖 pur/fin/inv 部分路径，其余域归 B1-Bn）
+- **试点用例覆盖不足的领域**：Classification: `out-of-scope improvement`。Why Not Blocking Closure: 试点 P2P 简化链仅覆盖 pur/inv/fin/md 部分路径（设计文档 §8 分批原则已声明其余域归 B1-Bn，M0.3 依设计文档追加分批工作项）。Successor Required: `yes`（触发条件：M0.3 追加 B1-Bn 工作项后逐批实施）。
+- **seed 变更敏感性重录耗时未测**：Classification: `watch-only residual`。Why Not Blocking Closure: 试点未修改 seed（无授权路径触发），风险 ④ 判定方法 (2) 的「追加/修改一行」重录耗时预算未测——以单用例快照量级（252K/类）登记为 V.1 前执行期预算；重录义务机制已由既有各域测试先例 + roadmap 横切关注点 1 覆盖。Successor Required: `yes`（触发条件：B1-Bn 执行期发生 seed 修正授权路径时同步测量登记）。
 
 ## Closure
 
-Status Note: （执行后填写）
+Status Note: 四 Phase 全部完成且验证全绿（156 模块 BUILD SUCCESS + 全量 3809/0/0/1 零新增失败 + app-erp-all 29/0/0/1 串行化实证 + 试点 CHECKING 往返绿）。机制 (c) 经试点实证成立（5 项待证风险逐项结论落盘设计文档 §3.4），回退路线未触发。roadmap M0.2 → done；独立结束审计 passes。
 
 Closure Audit Evidence:
 
-- Auditor / Agent: （独立子代理新会话）
-- Evidence: （任务 id / 核对记录）
+- Auditor / Agent: 独立 general 子代理（新会话）
+- Evidence: ses_fd15fdffcffestN8dw69pJD41o —— 8 项审计清单全过（阶段/门控/实仓证据/验证证据/文本一致性/范围/安全边界逐项核对），0 BLOCKER / 0 MAJOR / 0 MINOR，Verdict: PASS
 
 Follow-up:
 

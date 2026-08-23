@@ -110,12 +110,49 @@
 
 ---
 
+## 3.4 M0.2 试点机制实证结论（2026-08-23，机制裁决）
+
+> 试点载体：`app-erp-all` 新增基类 `ErpIntegrationTestCase` + 试点用例 `TestErpP2pPilot`（P2P 简化链
+> PO→Receive→Invoice，12 个 GraphQL 动作 + 三层全比对），执行 RECORDING→CHECKING 往返；逐项实证
+> §3.3 待证风险清单。详细证据（命令/文件计数/时间）见 plan `docs/plans/2026-08-23-1835-2-m02-infra-pilot-mechanism-adjudication.md` Phase 3。
+
+**机制 (c) 成立（Decision，无回退）**：试点往返全绿（RECORDING 录制 → CHECKING 复跑 0 失败），
+三层全比对（response 快照 + output/tables 变更行 + JUnit 关键断言）在文件 H2 全量部署 seed 前置态下
+完全可用。回退路线（降级标准范式 (a)）未触发。
+
+**五风险逐项结论**：
+
+| 风险 | 实证方式 | 结论 | 影响 |
+|------|---------|------|------|
+| ① NopJunitExtension 共存 | 试点类 extends 基类 + NopJunitExtension 生命周期全走通；判据 3 条全过 | **成立**。ALL_LAZY 下 schema 由 force-init `DataBaseSchemaInitializer` 幂等创建（`ioc:force-init="true"` + `ioc:after="nopOrmSessionFactory"`）；`DataInitInitializer` 为惰性 bean（无 force-init，ALL_LAZY 不自动跑），基类在 per-method `container.restart()` 后显式 `BeanContainer.getBeanByType(DataInitInitializer.class)` 触发装载 | 基类装配固定为该模式；「宿主式 @BeforeAll init」字面配方不适用（NopJunitExtension.beforeAll 先启动容器），以显式触发惰性 bean 等价实现 |
+| ② CHECKING 态 DB 组成 | 回放态 = 文件 H2 全量 94 seed（部署同源 loader）；CHECKING 复跑零 `output-row-not-exists`/FK 缺失 | **结构性降级确认**：回放态 = 部署 seed 真相源，(c) 方案下该风险不再构成缺口；input/tables 仅承载用例自包含追加（试点未用，表装载被双模抑制） | B1-Bn 用例前置一律按「seed 引用 + 自包含 GraphQL 建数」设计，无需补录 input/tables |
+| ③ per-method restart × 文件 H2 | 试点类 + 全量 13 测试类同一 fork 顺序执行全绿；restart 后 seed 仍可经 DAO 访问 | **成立**。`container.restart()` 保留文件库（JVM 级文件 H2），seed 落库后跨 restart 存活；fresh-DB 每类 1 次 = initBeans 删除 `.mv.db/.trace.db` + restart 重建 + seed 重灌（1 类 1 方法约定下每类恰 1 次） | 类内多方法时须登记 per-method fresh 清理义务（B1-Bn 默认 1 类 1 方法不触发） |
+| ④ 快照构成与体积 | 试点 4 域链实测：output/tables 16 表 CSV（全变更行，`_chgType` A/D 标记；时间戳列 `*` 通配 + 时序列 `@var:` 引用），response 12 文件，用例目录合计 252K | **构成 = 变更行非全库确认**（`erp_fin_voucher` 仅 2 行新增凭证、`erp_fin_ar_ap_item` 仅 1 行等）；体积受用例触碰数据量约束，量级 KB 级，无噪声不可比问题 | 规模担忧不成立；seed 变更敏感性收敛为 output/tables 单面重录（§3.3 风险 ④ 判定方法 (2) 执行期预算：试点无 seed 修改，未测重录耗时——V.1 前以单用例 252K/类量级登记） |
+| ⑤ 单用例耗时 | 试点 CHECKING 实测：suite 6.07s（容器启动 + fresh seed 装载 ~4s + 用例体 1.09s + 校验）；既有全量 13 测试类同一 fork 全绿 | **远低于 §4 模型**（模型 10-60s/类）：12 动作链 1.09s，含 seed 装载 6s/类量级 | 22 用例套件总耗时模型可下调（V.1 实测登记预期总耗时），串行执行上界收窄 |
+
+**附加实证发现（B1-Bn 编写纪律）**：
+
+- **@var 自动注册对 ERP 实体主键不成立**：ERP `id` 列 `tagSet="seq-default"`（非平台 `seq`），不会被快照框架
+  自动注册为 `@var:Entity@id`；仅 `var` 标签列（如 `code`）与 `clock` 列自动注册（实测 `@var:ErpPurOrder@code`
+  / `@var:ErpPurOrder@businessDate`）。多步 id 传递 = 响应提取 + `addVar` 供 request 文件 `@var:xxx` 引用
+  （对齐 `TestErpMdPartnerCrudSmoke` 先例；设计文档 §4「ORM 主键自动注册 @var」表述修正为上述口径）。
+- **request 文件静态载荷 + 动态 id 分离**：save/submit/approve 等动作的静态载荷放 `input/N_step.json5`，
+  动态 id 经 `addVar` + `@var:xxx` 引用（与 CHECKING 确定性兼容：fresh-DB + 序列推进 `zz-sequence-advance.sql`
+  使测试产物 id 每轮确定性一致）。
+- **串行化既有测试回归修复（surefire 单 fork 暴露的两类宿主模式跨类污染）**：NopJunitExtension 测试类遗留
+  动态配置（in-memory datasource URL / ALL_LAZY 容器启动模式——其 `AppConfig.getConfigProvider().reset()`
+  仅自身 beforeAll 执行）会令后续宿主模式（`TestAuthSeedLoadingProof`/`TestErpSeedDataIntegrity`）seed 不装载；
+  `ConfigStarter.doStop` 销毁 VFS 但不 unregister 会令手动初始化类（`TestAppActionAuthMerge`/`TestErpDataAuthStructure`）
+  资源缺失。4 个既有测试类已加最小修复（reset + ALL_EAGER 回置 / VFS 残留注销），串行 fork 下全量 29/0/0/1 绿。
+
+---
+
 ## 4. 用例粒度与规模约定
 
 **约定（Decision）**：
 
 - **1 用例 = 1 测试类 1 测试方法**；`@BeforeAll` 类级初始化（fresh-DB 清理 + 宿主式初始化 + 全量 seed 装载，每类 1 次）；`@AfterAll` 销毁。
-- 多步动作经 `request("N_step.json5")`/`output("N_step_response.json5")` 编号文件 + @var 变量机制（ORM 主键自动注册 `@var:Entity@id`，跨步骤自动传递，禁止手动提取 ID 作 Java 变量）。
+- 多步动作经 `request("N_step.json5")`/`output("N_step_response.json5")` 编号文件 + @var 变量机制（M0.2 实证：ERP 实体 `id` 列 `tagSet="seq-default"` 不被自动注册，仅 `var`/`clock` 标签列自动注册为 `@var:Entity@prop`——多步 id 传递 = 响应提取 id + `addVar` 供后续 request 文件 `@var:xxx` 引用，见 §3.4 附加实证发现；禁止直接内联动态 id 字面量）。
 - JUnit 关键断言层 = 显式锚点（状态翻转 / 金额与借贷平衡 / 成功失败 / 余额正确性），叠加快照两层（response + DB 状态），构成三层验证。
 
 **预计耗时模型**：

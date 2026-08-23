@@ -999,6 +999,54 @@ npx playwright show-trace test-results/<test-name>/trace.zip
 - **下载功能**：报表下载 button（XLSX/PDF）的后端 `ErpXxxReport__download` 经 `/p/{operationName}` 端点（page-query 二进制下载专路）已建立**下载产物运行时回归层**（`tests/e2e/reports/reports.download.spec.ts`，24 报表 × {xlsx,pdf} = 48 用例，断言非空 + 魔数 + 弱结构 token，见下方「报表下载产物运行时回归层」）。**page.yaml 下载按钮 URL 已修复**（plan 2026-07-12-0413-1）：全 24 报表 page.yaml 的 48 下载按钮 `api.url` 由失效的 `/graphql`（该端点对 WebContentBean 返回 JSON 序列化而非二进制流）修复为 `/p/{ErpXxxReport__download}` + REST 风格入参 map，AMIS `actionType: download`+`responseType: blob` 现真实触发浏览器文件下载。新增**报表 AMIS 下载按钮回归层**（`tests/e2e/reports/reports.amis-download.spec.ts`，5 报表抽样 × {xlsx,pdf} = 10 用例，驱动真实 AMIS 按钮 → `waitForEvent('download')` 落盘文件断言，见下方「报表 AMIS 下载按钮回归层」）。
   - ~~已知预存限制（非下载 URL 修复引入，归 successor）：日期参数报表（12 报表：crp-load/production-variance/forecast-variance/asset-depreciation/asset-disposal/downtime-summary/maintenance-history/project-cost-summary/timesheet-detail/inspection-summary/ncr-capa-summary/ar-ap-aging）的 AMIS `input-date` 将日期序列化为裸 Unix 时间戳、未填字段序列化为空串，后端 strict-parse 抛 `DateTimeParseException`——renderHtml 同样行为（visual helper 经 `page.route` 测试层归一化）。AMIS 下载回归层的 `assertAmisDownloadButton` 经 `page.route('**/p/*')` 同范式归一化（`""→null` / 10 位时间戳→ISO 日期）使测试可执行；生产用户面对空/默认日期下载仍受此 AMIS 序列化缺陷影响，触发条件：产品要求日期参数报表空/默认日期下载真实可用时（需后端宽容解析或前端 AMIS 日期格式化）。~~ **已解除**（plan 2026-07-12-1321-3）：后端 `asDate`/`asLong`/`asString` helper 宽容解析落地（8 报表 BizModel：fin/mfg/ast/mnt/prj/qa 的 `asDate`+`asLong` + inv 的 `asLong` + md 的 `asString`，空串→null / 10·13 位 Unix 时间戳→`LocalDate` / ISO→`LocalDate`）+ 12 报表 page.yaml 的 `input-date` 追加 `valueFormat: "YYYY-MM-DD"`（AMIS hygiene）+ 测试层日期归一化 workaround 移除（`reports/_helper.ts` + `visual/_helper.ts` 的 `page.route` 拦截器）。12 日期参数报表 + 12 非日期参数报表在**真实 AMIS 序列化**（无 workaround）下下载（XLSX/PDF）+ 渲染（HTML）全绿（82 passed）。
 
+## 集成测试（JUnit 层，app-erp-all，系统级黄金路径套件）
+
+> 与浏览器层 Playwright E2E 的分工边界：本套件为**服务端跨域黄金路径三层全比对**（IGraphQLEngine +
+> nop-autotest 录制回放：response 快照 + DB 状态快照 + JUnit 关键断言），不重复页面层验证。
+> 设计：`docs/design/integration-testing.md`；执行路线图：`docs/backlog/integration-test-roadmap.md`。
+
+### 运行方式
+
+```bash
+mvn test -pl app-erp-all -Dtest=TestErpP2pPilot   # 单用例（试点范本）
+mvn test -pl app-erp-all                          # 全量（含既有 12 基建类，29/0/0/1 基线）
+```
+
+- **surefire 串行化（模块级强制）**：app-erp-all pom 覆盖父 POM `forkCount=1 + parallel=none`
+  （父 POM `forkCount=4 + parallel=classes` 与共享文件型 H2 竞态——roadmap 已知约束 1）。
+- **基类**：`ErpIntegrationTestCase extends JunitAutoTestCase`（机制 (c)「抑制 tableInit 的文件 H2 双模方案」）：
+  双模强制 `localDb=false + tableInit=false`；per-method `container.restart()` 后显式触发惰性
+  `DataInitInitializer` 装载**全量 94 seed**；fresh-DB 每类 1 次（initBeans 删 `db/erp.mv.db/.trace.db`
+  + restart 重建 + seed 重灌）。共享 step helper 集（`rpcMutation`/`submitForApproval`/`approve`/
+  `requireVoucherBalanced`/`findApItem`/`findStockMove` 等）供 B1-Bn 复用。
+- **用例前置**：`@NopTestConfig(localDb=false, initDatabaseSchema=TRUE, enableActionAuth=FALSE)` +
+  `@NopTestProperty(name="nop.orm.init-database-data", value="true")`（容器启动前声明，DataInitInitializer
+  条件 bean 才会注册）；1 用例 = 1 类 1 方法；request 文件放 `_cases/<pkg>/<TestClass>/<method>/input/`。
+
+### fresh-DB 纪律
+
+- **每类 fresh 一次**：基类 initBeans 自动处理（删除 + 重建 + seed 重灌），无需手写清理。
+- **seed 只追加不修改**：用例自包含数据经 GraphQL 动作创建；`_cases` 快照种子（input/tables）只追加；
+  部署期 seed CSV（`_vfs/_init-data/`）变更须走 roadmap 横切关注点 3「seed 修正授权」流程
+  （同步快照重录 + 评估既有 E2E 数值断言影响）。
+- **动态 id**：ERP 实体主键 `seq-default` 不被 @var 自动注册——响应提取 id + `addVar` 供 request 文件
+  `@var:xxx` 引用（测试产物 id 经 `zz-sequence-advance.sql` 每轮确定性一致）。
+
+### 与 E2E live server 互斥纪律
+
+- 集成测试与 Playwright E2E live server（`_tmp-server.sh` / `java -jar`，`application.yaml`
+  `jdbc:h2:./db/erp`）**运行时互斥**：执行期不得与 live E2E server 同时运行——执行前
+  `lsof -i :8011` 确认无 live server（8080 同查）；反之跑 E2E 前结束集成测试。
+- 文件位置差异：surefire 工作目录 = `app-erp-all/`（文件库 `app-erp-all/db/erp.mv.db`）；
+  E2E live server 工作目录 = 仓库根（`db/erp.mv.db`）。两路径独立，但 seed 非幂等重灌 + 端口资源
+  竞争仍要求时序互斥（E2E 每轮 fresh-DB 重置依赖无人占用文件库）。
+
+### 基线
+
+- 当前集成测试基线：试点 `TestErpP2pPilot`（P2P 简化链）RECORDING→CHECKING 往返全绿；
+  全量 app-erp-all 29/0/0/1（唯一 skipped = `ErpAllWebPagesCollectTest` @Disabled 预存 JDK26/ANTLR H-2）。
+  权威计数源：`docs/testing/known-good-baselines.md`。
+
 ## 文件结构
 
 ```
