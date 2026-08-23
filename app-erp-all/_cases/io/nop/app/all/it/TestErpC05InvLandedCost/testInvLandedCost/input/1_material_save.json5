@@ -1,0 +1,12 @@
+{
+  data: {
+    data: {
+      code: "IT-C05-MAT-001",
+      name: "C05 到岸成本测试物料",
+      materialType: "GOODS",
+      uoMId: "1",
+      status: "ACTIVE",
+      costMethod: "FIFO"
+    }
+  }
+}

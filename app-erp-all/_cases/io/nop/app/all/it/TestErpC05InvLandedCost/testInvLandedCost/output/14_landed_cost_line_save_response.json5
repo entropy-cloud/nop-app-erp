@@ -1,0 +1,19 @@
+{
+  "data": {
+    "id": "100018",
+    "landedCostId": "@var:landedCostId",
+    "lineNo": 1,
+    "costElement": "FREIGHT",
+    "costElement_label": "FREIGHT-运费",
+    "amount": 15,
+    "delVersion": 0,
+    "version": 0,
+    "createdBy": "autotest-ref",
+    "createTime": "@var:ErpInvLandedCostLine@createTime",
+    "updatedBy": "autotest-ref",
+    "updateTime": "@var:ErpInvLandedCostLine@createTime",
+    "apPartnerId": null,
+    "remark": null
+  },
+  "status": 0
+}

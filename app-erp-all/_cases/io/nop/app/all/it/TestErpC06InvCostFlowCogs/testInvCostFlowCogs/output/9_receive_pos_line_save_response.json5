@@ -1,0 +1,27 @@
+{
+  "data": {
+    "id": "100006",
+    "receiveId": "@var:posReceiveId",
+    "lineNo": 1,
+    "materialId": "@var:materialId",
+    "uoMId": "1",
+    "quantity": 10,
+    "rejectedQuantity": 0,
+    "unitPrice": 8.5,
+    "amount": 85,
+    "delVersion": 0,
+    "version": 0,
+    "createdBy": "autotest-ref",
+    "createTime": "@var:ErpPurReceiveLine@updateTime_1",
+    "updatedBy": "autotest-ref",
+    "updateTime": "@var:ErpPurReceiveLine@updateTime_1",
+    "orderLineId": null,
+    "skuId": null,
+    "taxRate": null,
+    "taxAmount": null,
+    "warehouseId": null,
+    "batchNo": null,
+    "remark": null
+  },
+  "status": 0
+}

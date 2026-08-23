@@ -1,0 +1,18 @@
+{
+  data: {
+    data: {
+      code: "IT-C05-LC-001",
+      orgId: "2",
+      receiveId: "@var:receiveId",
+      supplierId: "3",
+      currencyId: "1",
+      exchangeRate: 1,
+      totalCostAmount: 15,
+      allocationMethod: "BY_AMOUNT",
+      docStatus: "DRAFT",
+      approveStatus: "UNSUBMITTED",
+      posted: false,
+      businessDate: "2026-07-20"
+    }
+  }
+}

@@ -1,0 +1,12 @@
+{
+  data: {
+    data: {
+      code: "IT-C06-MAT-001",
+      name: "C06 成本流转测试物料",
+      materialType: "GOODS",
+      uoMId: "1",
+      status: "ACTIVE",
+      costMethod: "FIFO"
+    }
+  }
+}

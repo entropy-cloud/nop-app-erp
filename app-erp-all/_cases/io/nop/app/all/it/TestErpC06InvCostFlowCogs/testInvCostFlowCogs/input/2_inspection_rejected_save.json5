@@ -1,0 +1,21 @@
+{
+  data: {
+    data: {
+      code: "IT-C06-INS-NEG-001",
+      orgId: "2",
+      inspectionType: "INCOMING",
+      relatedBillType: "ERP_PUR_RECEIVE",
+      relatedBillCode: "IT-C06-RCV-NEG-001",
+      materialId: "@var:materialId",
+      supplierId: "3",
+      warehouseId: "1",
+      businessDate: "2026-07-21",
+      inspectionDate: "2026-07-21",
+      lotQuantity: 10,
+      result: "REJECTED",
+      docStatus: "ACTIVE",
+      approveStatus: "APPROVED",
+      posted: false
+    }
+  }
+}

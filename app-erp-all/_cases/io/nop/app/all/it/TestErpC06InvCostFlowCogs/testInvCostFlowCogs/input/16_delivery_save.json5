@@ -1,0 +1,20 @@
+{
+  data: {
+    data: {
+      code: "IT-C06-DLV-001",
+      orgId: "2",
+      orderId: "@var:orderId",
+      customerId: "1",
+      warehouseId: "1",
+      businessDate: "2026-07-21",
+      currencyId: "1",
+      exchangeRate: 1,
+      totalAmount: 600,
+      totalTaxAmount: 78,
+      totalAmountWithTax: 678,
+      docStatus: "DRAFT",
+      approveStatus: "UNSUBMITTED",
+      posted: false
+    }
+  }
+}

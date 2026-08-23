@@ -1,0 +1,30 @@
+{
+  "data": {
+    "id": "100002",
+    "orderId": "@var:poId",
+    "lineNo": 1,
+    "materialId": "@var:materialId",
+    "uoMId": "1",
+    "quantity": 10,
+    "unitPrice": 5,
+    "taxAmount": 0,
+    "amount": 50,
+    "receivedQuantity": 0,
+    "invoicedQuantity": 0,
+    "delVersion": 0,
+    "version": 0,
+    "createdBy": "autotest-ref",
+    "createTime": "@var:ErpPurOrderLine@updateTime",
+    "updatedBy": "autotest-ref",
+    "updateTime": "@var:ErpPurOrderLine@updateTime",
+    "skuId": null,
+    "taxRate": null,
+    "taxRateId": null,
+    "amountWithTax": null,
+    "warehouseId": null,
+    "projectId": null,
+    "remark": null,
+    "ctContractLineId": null
+  },
+  "status": 0
+}

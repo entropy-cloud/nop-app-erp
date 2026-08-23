@@ -1,0 +1,13 @@
+{
+  data: {
+    data: {
+      code: "IT-C05-CARRIER-001",
+      orgId: "2",
+      carrierName: "C05 测试承运商",
+      carrierType: "FREIGHT",
+      gatewayId: "IT-C05-GW-001",
+      partnerId: "3",
+      isActive: 1
+    }
+  }
+}

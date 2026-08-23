@@ -1,0 +1,22 @@
+{
+  data: {
+    data: {
+      code: "IT-C06-SO-001",
+      orgId: "2",
+      customerId: "1",
+      warehouseId: "1",
+      businessDate: "2026-07-21",
+      currencyId: "1",
+      exchangeRate: 1,
+      totalAmount: 1000,
+      totalTaxAmount: 130,
+      totalAmountWithTax: 1130,
+      settlementMethodId: 2,
+      docStatus: "ACTIVE",
+      approveStatus: "UNSUBMITTED",
+      receivedStatus: "UNRECEIVED",
+      deliveryStatus: "UNDELIVERED",
+      posted: false
+    }
+  }
+}

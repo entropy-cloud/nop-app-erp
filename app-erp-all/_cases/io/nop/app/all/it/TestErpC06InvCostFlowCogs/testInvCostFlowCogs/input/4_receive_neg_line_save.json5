@@ -1,0 +1,13 @@
+{
+  data: {
+    data: {
+      receiveId: "@var:negReceiveId",
+      lineNo: 1,
+      materialId: "@var:materialId",
+      uoMId: "1",
+      quantity: 10,
+      unitPrice: 8.5,
+      amount: 85
+    }
+  }
+}

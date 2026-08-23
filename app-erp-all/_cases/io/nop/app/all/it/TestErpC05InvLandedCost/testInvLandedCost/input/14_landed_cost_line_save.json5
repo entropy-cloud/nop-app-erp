@@ -1,0 +1,10 @@
+{
+  data: {
+    data: {
+      landedCostId: "@var:landedCostId",
+      lineNo: 1,
+      costElement: "FREIGHT",
+      amount: 15
+    }
+  }
+}

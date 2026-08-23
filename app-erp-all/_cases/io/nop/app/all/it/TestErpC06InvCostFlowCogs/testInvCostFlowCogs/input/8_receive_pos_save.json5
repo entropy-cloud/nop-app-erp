@@ -1,0 +1,17 @@
+{
+  data: {
+    data: {
+      code: "IT-C06-RCV-POS-001",
+      orgId: "2",
+      supplierId: "3",
+      warehouseId: "1",
+      businessDate: "2026-07-21",
+      currencyId: "1",
+      exchangeRate: 1,
+      docStatus: "DRAFT",
+      approveStatus: "UNSUBMITTED",
+      receiveStatus: "UNRECEIVED",
+      posted: false
+    }
+  }
+}
