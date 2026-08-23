@@ -1,0 +1,13 @@
+{
+  data: {
+    data: {
+      orderId: "@var:poId",
+      lineNo: 2,
+      materialId: "1",
+      uoMId: "1",
+      quantity: 4,
+      unitPrice: 5,
+      amount: 20
+    }
+  }
+}

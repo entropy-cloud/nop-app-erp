@@ -1,0 +1,20 @@
+{
+  data: {
+    data: {
+      code: "IT-C01-PINV-001",
+      orgId: "2",
+      supplierId: "3",
+      businessDate: "2026-07-15",
+      currencyId: "1",
+      exchangeRate: 1,
+      totalAmount: 70,
+      totalTaxAmount: 9.1,
+      totalAmountWithTax: 79.1,
+      paidAmount: 0,
+      docStatus: "DRAFT",
+      approveStatus: "UNSUBMITTED",
+      paidStatus: "UNPAID",
+      posted: false
+    }
+  }
+}

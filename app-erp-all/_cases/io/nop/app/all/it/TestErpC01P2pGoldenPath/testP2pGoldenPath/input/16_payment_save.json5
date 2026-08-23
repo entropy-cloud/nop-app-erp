@@ -1,0 +1,19 @@
+{
+  data: {
+    data: {
+      code: "IT-C01-PAY-001",
+      orgId: "2",
+      supplierId: "3",
+      businessDate: "2026-07-15",
+      currencyId: "1",
+      exchangeRate: 1,
+      totalAmount: 79.1,
+      amountSource: 79.1,
+      amountFunctional: 79.1,
+      docStatus: "DRAFT",
+      approveStatus: "UNSUBMITTED",
+      writtenOffStatus: "UNPAID",
+      posted: false
+    }
+  }
+}

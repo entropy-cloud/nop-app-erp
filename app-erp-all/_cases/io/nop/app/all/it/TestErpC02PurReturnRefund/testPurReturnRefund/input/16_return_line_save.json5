@@ -1,0 +1,15 @@
+{
+  data: {
+    data: {
+      returnId: "@var:returnId",
+      receiveLineId: "@var:receiveLineId",
+      lineNo: 1,
+      materialId: "1",
+      uoMId: "1",
+      quantity: 4,
+      unitPrice: 5,
+      amount: 20,
+      reason: "质量不合格"
+    }
+  }
+}

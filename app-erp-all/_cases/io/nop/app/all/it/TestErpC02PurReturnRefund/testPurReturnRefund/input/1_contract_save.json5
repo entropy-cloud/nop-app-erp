@@ -1,0 +1,15 @@
+{
+  data: {
+    data: {
+      code: "IT-C02-CT-001",
+      contractName: "采购退货条款合同",
+      contractType: "PURCHASE",
+      contractDirection: "INBOUND",
+      partnerId: "3",
+      startDate: "2026-07-01",
+      endDate: "2027-06-30",
+      status: "DRAFT",
+      description: "退货条款：收货后 30 天内可申请退货，退货金额按原单价冲减"
+    }
+  }
+}

@@ -1,0 +1,11 @@
+{
+  data: {
+    paymentId: "@var:paymentId",
+    allocations: [
+      {
+        invoiceId: "@var:invoiceId",
+        amount: 79.1
+      }
+    ]
+  }
+}

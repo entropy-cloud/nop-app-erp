@@ -1,0 +1,23 @@
+{
+  "data": {
+    "id": "100018",
+    "invoiceId": "@var:invoiceId",
+    "receiveLineId": "@var:receiveLineId1",
+    "lineNo": 1,
+    "materialId": "1",
+    "uoMId": "1",
+    "quantity": 10,
+    "unitPrice": 5,
+    "taxRate": 13,
+    "delVersion": 0,
+    "version": 0,
+    "createdBy": "autotest-ref",
+    "createTime": "@var:ErpPurInvoiceLine@updateTime",
+    "updatedBy": "autotest-ref",
+    "updateTime": "@var:ErpPurInvoiceLine@updateTime",
+    "taxAmount": null,
+    "amount": null,
+    "remark": null
+  },
+  "status": 0
+}

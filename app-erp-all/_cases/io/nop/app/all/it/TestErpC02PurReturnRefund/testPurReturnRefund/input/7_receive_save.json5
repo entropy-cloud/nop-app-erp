@@ -1,0 +1,18 @@
+{
+  data: {
+    data: {
+      code: "IT-C02-RCV-001",
+      orgId: "2",
+      orderId: "@var:poId",
+      supplierId: "3",
+      warehouseId: "2",
+      businessDate: "2026-07-16",
+      currencyId: "1",
+      exchangeRate: 1,
+      docStatus: "DRAFT",
+      approveStatus: "UNSUBMITTED",
+      receiveStatus: "UNRECEIVED",
+      posted: false
+    }
+  }
+}
