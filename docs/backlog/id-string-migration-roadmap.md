@@ -174,3 +174,12 @@ graph TD
   - **修订（已落地）**：全部 9 MINOR 已处理——E2E 计数口径、368 构成措辞、M2.2 11 域、dao 跨域 import 全枚举、行号/术语、日志口径同步、快照分母 35/291、M0 小结补 M1 内部序核验。
 - **共识达成（2026-08-16）**：**第 3 轮双审查者 0 BLOCKER / 0 MAJOR 达成共识**（第 2 轮技术侧为 `needs revision`、治理侧 pass——第 2 轮明细见上；原「连续第 2、3 轮均为 passes」表述与第 2 轮明细矛盾，系登记笔误，M0.1 执行时修正），第 3 轮仅文书级 MINOR 已全部清理。**roadmap 与 mission 达成共识，可放行 M0.1 计划起草。**
 - **2026-08-16 用户裁决修订（共识后变更）**：① **快照策略改为每域固定重录**——编译错误修复完成后每域执行 RECORDING→CHECKING 重录（标准 Nop 流程），**不依赖 `JsonMatchHelper` Number 宽容**；同步更新：框架/平台复用「测试兼容」、M1-M3 标准结构 Phase 3、横切 §4、M0.1 Proof ④（删除快照兼容 Proof，快照重录不再需要 Proof 前置）、mission description。② **完成态 Java 层全覆盖确认**——全部 PK/FK 在 Java 层均为 String：PK 463 全为 id 命名 BIGINT 全覆盖；FK 1182 = BIGINT 1142（含 orgId 226 列）改造 + 非 BIGINT 40 列实测全 VARCHAR 本就 string 零误改；**数据库层面零改动**（stdSqlType 不变）；未分类 BIGINT 368 列非 PK/FK 不在范围。已在「目的」节新增「完成态 Java 层全覆盖确认」段落。
+
+## Follow-up Backlog
+
+> 2026-08-23 由 mission 驱动审计分流登记（P2 不立计划，顺带清理）。来源审计：`docs/audits/2026-08-22-0702-open-audit-id-string-migration.md`、`docs/audits/2026-08-22-0702-multi-audit-id-string-migration.md`（P1 ×3 修复义务由 plan `docs/plans/2026-08-23-1752-1-id-string-mission-closure-backfill.md` 承接）。
+
+- [ ] E2E TS 类型注解 String 化：`tests/e2e` 内 49 处 `id: number` / `xxxId: number` 陈旧注解（22 文件，如 `business-actions/f13-kanban-drag.action.spec.ts:23`、`sal-return-exchange.action.spec.ts:90,113,129`、`notify-inbox.action.spec.ts:95,119,235`，其余散布 orchestration/_helper.ts、negative、mfg/fin/pur/drp/ct/b2b/hr 等）批量改 `id: string`（保留 assignedTo 等规则 4 Long 保留列例外）。运行时被擦除零行为影响，但契约注解与 String API 实态相悖，误导后续测试作者写数值断言。触发条件：下一轮 E2E 维护批次（与 DUMMY_ID 类常量清理同批）。来源：open-audit 发现 4（multi-audit 未发现）。
+- [ ] roadmap 内部计数统一：「目的」节「未分类 BIGINT 列 368」→ 380（对齐「当前基线」节与 M0 审计 §1 及工具权威输出）。触发条件：下次编辑本文件时。来源：open-audit 发现 5 / multi-audit 发现 4。
+- [ ] roadmap 「现状」行注记 `_tmp/bigint-id-string-fix/` 已按 M4.1 计划 3 清除（live 验证目录不存在），防止检索者寻找已不存在的时点副本。触发条件：下次编辑本文件时。来源：open-audit 发现 6 / multi-audit 发现 5。
+- [ ] `missions/id-string-migration.json` description 清理：废止计数（1605/463/1142/1182/40/368）与被 M0 裁决 D3 修订超越的「域级 `-am` build verify」措辞（权威口径 = roadmap 规则 3 的 7 模块显式列表 no-am）。纯历史元数据无路由后果。触发条件：下次编辑该 JSON 时顺带。来源：open-audit 发现 7 / multi-audit 发现 6。

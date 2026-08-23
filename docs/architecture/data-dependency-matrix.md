@@ -629,13 +629,15 @@ app-erp-master-data ←（被引用，notGenCode）
 <entity displayName="会计科目" name="app.erp.md.dao.entity.ErpMdSubject"
          notGenCode="true" tableName="erp_md_subject">
     <columns>
-        <column name="id" code="ID" stdSqlType="BIGINT" primary="true" stdDataType="long"/>
+        <column name="id" code="ID" stdSqlType="BIGINT" primary="true" stdDataType="string"/>
         <column name="code" code="CODE" stdSqlType="VARCHAR" precision="50"/>
         <column name="name" code="NAME" stdSqlType="VARCHAR" precision="200"/>
         <column name="subjectClass" code="SUBJECT_CLASS" stdSqlType="INTEGER" stdDataType="int"/>
     </columns>
 </entity>
 ```
+
+> 注：id 列 Java 层 String / DB 层 BIGINT（`orm-model-design.md` §主键设计方案 B）——stub 声明必须与权威源 stdDataType 一致（String），否则新增跨域引用时 `_gen` to-one 关系胶水将产生 stub↔权威源类型错配的对称编译破坏。
 
 **(c) Maven 依赖**（codegen 后在业务域 `erp-xxx-dao/pom.xml` 配置）：
 
