@@ -1,0 +1,12 @@
+{
+  data: {
+    data: {
+      ncrId: "@var:ncrId",
+      actionType: "CAPA",
+      status: "PENDING",
+      description: "返工筛选 + 工艺参数复核",
+      responsiblePerson: 7501,
+      dueDate: "2026-07-24"
+    }
+  }
+}

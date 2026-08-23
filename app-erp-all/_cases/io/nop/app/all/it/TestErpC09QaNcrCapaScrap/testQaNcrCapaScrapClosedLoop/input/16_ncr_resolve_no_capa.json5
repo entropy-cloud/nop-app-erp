@@ -1,0 +1,6 @@
+{
+  data: {
+    ncrId: "@var:ncrId",
+    resolution: "无 CAPA 直接关闭"
+  }
+}

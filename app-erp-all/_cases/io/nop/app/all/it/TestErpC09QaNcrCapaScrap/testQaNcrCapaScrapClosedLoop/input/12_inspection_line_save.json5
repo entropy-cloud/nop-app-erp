@@ -1,0 +1,12 @@
+{
+  data: {
+    data: {
+      inspectionId: "@var:insId",
+      lineNo: 1,
+      parameterName: "关键尺寸",
+      specMin: 10,
+      specMax: 20,
+      result: "PENDING"
+    }
+  }
+}

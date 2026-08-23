@@ -1,0 +1,30 @@
+{
+  "data": {
+    "id": "@var:usageId",
+    "code": "@var:ErpMntSparePartUsage@code",
+    "orgId": "2",
+    "visitId": "@var:visitId",
+    "requestId": "@var:reqId",
+    "equipmentId": "1",
+    "businessDate": "@var:ErpFinVoucher@voucherDate",
+    "warehouseId": "2",
+    "totalAmount": 10.0000,
+    "docStatus": "ACTIVE",
+    "docStatus_label": "ACTIVE-已生效",
+    "approveStatus": "APPROVED",
+    "approveStatus_label": "APPROVED-已通过",
+    "approvedBy": null,
+    "approvedAt": null,
+    "posted": true,
+    "postedAt": "*",
+    "postedBy": null,
+    "remark": null,
+    "delVersion": 0,
+    "version": 1,
+    "createdBy": "autotest-ref",
+    "createTime": "*",
+    "updatedBy": "autotest-ref",
+    "updateTime": "*"
+  },
+  "status": 0
+}

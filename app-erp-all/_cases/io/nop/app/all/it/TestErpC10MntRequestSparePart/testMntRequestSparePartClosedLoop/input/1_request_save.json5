@@ -1,0 +1,14 @@
+{
+  data: {
+    data: {
+      code: "IT-C10-REQ-001",
+      equipmentId: "1",
+      requestDate: "2026-07-17",
+      description: "数控机床主传动异响，需检修",
+      priority: "NORMAL",
+      status: "OPEN",
+      requestedBy: 2,
+      assignedTo: 2
+    }
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "data": [
+    {
+      "id": "100016",
+      "templateId": "7109",
+      "notificationType": "qa.ncr.resolved",
+      "recipientUserId": "it-c09-user",
+      "channel": "IN_APP",
+      "channel_label": "IN_APP-站内消息",
+      "subject": "NCR处理通知: NCR-IT-C09-INS-001",
+      "body": "NCR NCR-IT-C09-INS-001 已完成 CAPA 闭包并过账，请知悉",
+      "payloadJson": "{\"materialCode\":\"IT-C09-P-001\",\"ncrCode\":\"NCR-IT-C09-INS-001\",\"quantity\":\"2\"}",
+      "status": "SENT",
+      "status_label": "SENT-已发送",
+      "mergeGroupId": "qa.ncr.resolved#it-c09-user",
+      "mergeCount": 1,
+      "sentAt": "@var:ErpSysNotification@sentAt",
+      "delVersion": 0,
+      "version": 0,
+      "createdBy": "autotest-ref",
+      "createTime": "*",
+      "updatedBy": "autotest-ref",
+      "updateTime": "*",
+      "recipientPartnerId": null,
+      "recipientDeptId": null,
+      "errorMsg": null
+    }
+  ],
+  "status": 0
+}

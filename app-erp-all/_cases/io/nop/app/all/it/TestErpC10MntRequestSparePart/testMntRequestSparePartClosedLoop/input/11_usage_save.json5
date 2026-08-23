@@ -1,0 +1,16 @@
+{
+  data: {
+    data: {
+      code: "IT-C10-SPU-001",
+      orgId: "2",
+      visitId: "@var:visitId",
+      requestId: "@var:reqId",
+      equipmentId: "1",
+      businessDate: "2026-07-17",
+      warehouseId: "2",
+      docStatus: "DRAFT",
+      approveStatus: "UNSUBMITTED",
+      posted: false
+    }
+  }
+}

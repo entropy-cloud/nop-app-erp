@@ -1,0 +1,21 @@
+{
+  data: {
+    data: {
+      code: "IT-C09-INS-001",
+      orgId: "2",
+      inspectionType: "FINAL",
+      relatedBillType: "ERP_MFG_WORK_ORDER",
+      relatedBillCode: "@var:woCode",
+      materialId: "@var:pId",
+      warehouseId: "2",
+      businessDate: "2026-07-20",
+      inspectionDate: "2026-07-20",
+      lotQuantity: 2,
+      sampleQuantity: 2,
+      result: "PENDING",
+      docStatus: "ACTIVE",
+      approveStatus: "UNSUBMITTED",
+      posted: false
+    }
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "data": {
+    "id": "100002",
+    "code": "@var:ErpInvStockMove@code",
+    "moveType": "INCOMING",
+    "moveType_label": "INCOMING-入库",
+    "orgId": "2",
+    "businessDate": "@var:ErpInvStockMove@businessDate",
+    "sourceWarehouseId": null,
+    "sourceLocationId": null,
+    "destWarehouseId": "2",
+    "destLocationId": null,
+    "docStatus": "DONE",
+    "docStatus_label": "DONE-已完成",
+    "approveStatus": "UNSUBMITTED",
+    "approveStatus_label": "UNSUBMITTED-未提交",
+    "posted": false,
+    "relatedBillType": "PUR_RECEIPT",
+    "relatedBillCode": "@var:ErpInvStockMove@relatedBillCode",
+    "remark": null,
+    "delVersion": 0,
+    "version": 1,
+    "createdBy": "autotest-ref",
+    "createTime": "@var:ErpInvStockMoveLine@createTime",
+    "updatedBy": "autotest-ref",
+    "updateTime": "*",
+    "originMoveId": null,
+    "originReturnedMoveId": null,
+    "postedAt": null,
+    "postedBy": null
+  },
+  "status": 0
+}

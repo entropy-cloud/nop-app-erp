@@ -1,0 +1,6 @@
+{
+  "bizFatal": false,
+  "code": "erp.err.qa.ncr.resolve-capa-not-completed",
+  "msg": "NCR[NCR-IT-C09-INS-001]存在未完成（含 PENDING/IN_PROGRESS）或未验证（缺验证人/验证日期）的 CAPA 措施，禁止解决",
+  "status": -1
+}

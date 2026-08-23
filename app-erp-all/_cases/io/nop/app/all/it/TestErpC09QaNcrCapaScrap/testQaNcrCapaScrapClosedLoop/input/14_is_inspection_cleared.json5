@@ -1,0 +1,6 @@
+{
+  data: {
+    billType: "ERP_MFG_WORK_ORDER",
+    billCode: "@var:woCode"
+  }
+}

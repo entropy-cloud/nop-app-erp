@@ -1,0 +1,12 @@
+{
+  data: {
+    data: {
+      code: "IT-C10-M-001",
+      name: "C10 备件测试物料",
+      materialType: "GOODS",
+      uoMId: "1",
+      status: "ACTIVE",
+      costMethod: "MOVING_AVERAGE"
+    }
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "bizFatal": false,
+  "code": "erp.err.mfg.work-order.inspection-required",
+  "msg": "工单[IT-C09-WO-001]BOM要求完工质检且erp-mfg.inspection-gate-enabled=true，完工入库暂挂等待质检结果",
+  "status": -1
+}

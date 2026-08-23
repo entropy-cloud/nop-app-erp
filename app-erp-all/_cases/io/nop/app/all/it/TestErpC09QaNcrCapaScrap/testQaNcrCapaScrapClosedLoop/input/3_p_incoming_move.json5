@@ -1,0 +1,22 @@
+{
+  data: {
+    request: {
+      moveType: "INCOMING",
+      orgId: "2",
+      businessDate: "2026-07-20",
+      currencyId: "1",
+      destWarehouseId: "2",
+      relatedBillType: "PUR_RECEIPT",
+      relatedBillCode: "IT-C09-IN-001",
+      lines: [
+        {
+          materialId: "@var:pId",
+          uoMId: "1",
+          quantity: 10,
+          unitCost: 5,
+          currencyId: "1"
+        }
+      ]
+    }
+  }
+}

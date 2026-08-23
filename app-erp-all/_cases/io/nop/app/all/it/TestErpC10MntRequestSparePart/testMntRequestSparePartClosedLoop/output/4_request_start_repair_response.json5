@@ -1,0 +1,26 @@
+{
+  "data": {
+    "id": "@var:reqId",
+    "code": "@var:reqCode",
+    "equipmentId": "1",
+    "requestDate": "2026-07-17",
+    "description": "数控机床主传动异响，需检修",
+    "priority": "NORMAL",
+    "priority_label": "NORMAL-普通",
+    "status": "IN_PROGRESS",
+    "status_label": "IN_PROGRESS-维修中",
+    "requestedBy": 2,
+    "assignedTo": 2,
+    "acceptedBy": null,
+    "completedBy": null,
+    "completedAt": null,
+    "remark": null,
+    "delVersion": 0,
+    "version": 2,
+    "createdBy": "autotest-ref",
+    "createTime": "*",
+    "updatedBy": "autotest-ref",
+    "updateTime": "*"
+  },
+  "status": 0
+}

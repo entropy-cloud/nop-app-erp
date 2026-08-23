@@ -1,0 +1,6 @@
+{
+  "bizFatal": false,
+  "code": "erp.err.qa.ncr.resolve-no-capa",
+  "msg": "NCR[NCR-IT-C09-INS-001]无 CAPA 措施时 resolve 须提供 noCapaReason（误开/降级场景显式标注），禁止无标注直接关闭",
+  "status": -1
+}

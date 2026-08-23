@@ -1,0 +1,13 @@
+{
+  data: {
+    data: {
+      code: "IT-C09-BOM-001",
+      productId: "@var:pId",
+      bomType: "NORMAL",
+      isDefault: true,
+      isActive: true,
+      qty: 1,
+      inspectionRequired: true
+    }
+  }
+}

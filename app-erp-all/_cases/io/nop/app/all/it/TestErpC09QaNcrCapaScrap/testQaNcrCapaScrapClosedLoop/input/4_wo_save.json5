@@ -1,0 +1,17 @@
+{
+  data: {
+    data: {
+      code: "IT-C09-WO-001",
+      orgId: "2",
+      productId: "@var:pId",
+      bomId: "@var:bomId",
+      plannedQuantity: 1,
+      businessDate: "2026-07-20",
+      currencyId: "1",
+      exchangeRate: 1,
+      docStatus: "DRAFT",
+      approveStatus: "UNSUBMITTED",
+      priority: "NORMAL"
+    }
+  }
+}

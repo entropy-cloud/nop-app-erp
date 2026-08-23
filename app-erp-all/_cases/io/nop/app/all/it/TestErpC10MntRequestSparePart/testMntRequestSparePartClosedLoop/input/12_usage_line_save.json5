@@ -1,0 +1,13 @@
+{
+  data: {
+    data: {
+      sparePartUsageId: "@var:usageId",
+      lineNo: 10,
+      materialId: "@var:mId",
+      uoMId: "1",
+      quantity: 2,
+      unitCost: 5,
+      amount: 10
+    }
+  }
+}

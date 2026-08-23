@@ -1,0 +1,10 @@
+{
+  data: {
+    eventType: "qa.ncr.resolved",
+    context: {
+      ncrCode: "NCR-IT-C09-INS-001",
+      materialCode: "IT-C09-P-001",
+      quantity: "2"
+    }
+  }
+}

@@ -1,0 +1,22 @@
+{
+  data: {
+    request: {
+      moveType: "INCOMING",
+      orgId: "2",
+      businessDate: "2026-07-17",
+      currencyId: "1",
+      destWarehouseId: "2",
+      relatedBillType: "SEED_STOCK",
+      relatedBillCode: "IT-C10-IN-001",
+      lines: [
+        {
+          materialId: "@var:mId",
+          uoMId: "1",
+          quantity: 10,
+          unitCost: 5,
+          currencyId: "1"
+        }
+      ]
+    }
+  }
+}

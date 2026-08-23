@@ -1,0 +1,6 @@
+{
+  "bizFatal": false,
+  "code": "erp.err.mnt.request-illegal-status-transition",
+  "msg": "维护请求 IT-C10-REQ-001 当前状态=OPEN，不允许执行该操作（期望状态=ACCEPTED）",
+  "status": -1
+}

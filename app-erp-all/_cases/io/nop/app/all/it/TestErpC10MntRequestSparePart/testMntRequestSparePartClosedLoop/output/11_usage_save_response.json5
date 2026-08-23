@@ -1,0 +1,30 @@
+{
+  "data": {
+    "id": "100009",
+    "code": "@var:ErpMntSparePartUsage@code",
+    "orgId": "2",
+    "visitId": "@var:visitId",
+    "requestId": "@var:reqId",
+    "equipmentId": "1",
+    "businessDate": "@var:ErpInvStockMove@businessDate",
+    "warehouseId": "2",
+    "totalAmount": 0,
+    "docStatus": "DRAFT",
+    "docStatus_label": "DRAFT-草稿",
+    "approveStatus": "UNSUBMITTED",
+    "approveStatus_label": "UNSUBMITTED-未提交",
+    "posted": false,
+    "delVersion": 0,
+    "version": 0,
+    "createdBy": "autotest-ref",
+    "createTime": "*",
+    "updatedBy": "autotest-ref",
+    "updateTime": "@var:ErpMntSparePartUsage@updateTime",
+    "approvedBy": null,
+    "approvedAt": null,
+    "postedAt": null,
+    "postedBy": null,
+    "remark": null
+  },
+  "status": 0
+}

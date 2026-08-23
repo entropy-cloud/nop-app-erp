@@ -1,0 +1,7 @@
+{
+  data: {
+    actionId: "@var:actionId",
+    verificationPerson: 7501,
+    verificationDate: "2026-07-17"
+  }
+}

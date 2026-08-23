@@ -1,0 +1,12 @@
+{
+  data: {
+    inspectionId: "@var:insId",
+    lineResults: [
+      {
+        lineNo: 1,
+        measuredValue: 5
+      }
+    ],
+    allowConcession: false
+  }
+}

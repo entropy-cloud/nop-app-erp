@@ -1,0 +1,25 @@
+{
+  "data": {
+    "id": "100011",
+    "ncrId": "@var:ncrId",
+    "actionType": "CAPA",
+    "actionType_label": "CAPA-纠正预防",
+    "description": "返工筛选 + 工艺参数复核",
+    "responsiblePerson": 7501,
+    "dueDate": "2026-07-24",
+    "status": "PENDING",
+    "status_label": "PENDING-待执行",
+    "delVersion": 0,
+    "version": 0,
+    "createdBy": "autotest-ref",
+    "createTime": "@var:ErpQaAction@createTime",
+    "updatedBy": "autotest-ref",
+    "updateTime": "*",
+    "completedBy": null,
+    "completedAt": null,
+    "verificationPerson": null,
+    "verificationDate": null,
+    "remark": null
+  },
+  "status": 0
+}

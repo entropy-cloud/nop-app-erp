@@ -1,0 +1,6 @@
+{
+  data: {
+    ncrId: "@var:ncrId",
+    resolution: "CAPA 完成未验证关闭"
+  }
+}
