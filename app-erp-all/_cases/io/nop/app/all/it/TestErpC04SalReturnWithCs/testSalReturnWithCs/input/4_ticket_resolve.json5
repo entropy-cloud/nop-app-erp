@@ -1,0 +1,6 @@
+{
+  data: {
+    ticketId: "@var:ticketId",
+    resolution: "已与客户协商退货退款，按原单价冲减"
+  }
+}

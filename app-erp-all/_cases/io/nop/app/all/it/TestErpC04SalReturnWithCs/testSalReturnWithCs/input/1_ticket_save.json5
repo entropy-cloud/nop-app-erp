@@ -1,0 +1,16 @@
+{
+  data: {
+    data: {
+      code: "IT-C04-TK-001",
+      orgId: "2",
+      subject: "交期延迟客户投诉（要求退货）",
+      description: "客户反馈发货延迟影响生产排程，要求退还不合格批次货款",
+      customerId: "1",
+      ticketTypeId: "1",
+      priority: "HIGH",
+      status: "NEW",
+      docStatus: "ACTIVE",
+      approveStatus: "UNSUBMITTED"
+    }
+  }
+}

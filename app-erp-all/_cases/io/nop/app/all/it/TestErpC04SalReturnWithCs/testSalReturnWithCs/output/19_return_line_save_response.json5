@@ -1,0 +1,25 @@
+{
+  "data": {
+    "id": "100026",
+    "returnId": "@var:returnId",
+    "deliveryLineId": "@var:deliveryLineId",
+    "lineNo": 1,
+    "materialId": "1",
+    "uoMId": "1",
+    "quantity": 4,
+    "unitPrice": 10,
+    "amount": 40,
+    "reason": "质量不合格（客服工单 IT-C04-TK-001）",
+    "delVersion": 0,
+    "version": 0,
+    "createdBy": "autotest-ref",
+    "createTime": "@var:ErpSalReturnLine@createTime",
+    "updatedBy": "autotest-ref",
+    "updateTime": "@var:ErpSalReturnLine@createTime",
+    "skuId": null,
+    "taxRate": null,
+    "taxAmount": null,
+    "remark": null
+  },
+  "status": 0
+}

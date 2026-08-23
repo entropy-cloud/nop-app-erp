@@ -1,0 +1,22 @@
+{
+  data: {
+    data: {
+      code: "IT-C04-SINV-001",
+      orgId: "2",
+      customerId: "1",
+      invoiceNo: "FAC-AR-2026-C04-001",
+      invoiceType: "VAT_SPECIAL",
+      businessDate: "2026-07-17",
+      currencyId: "1",
+      exchangeRate: 1,
+      totalAmount: 100,
+      totalTaxAmount: 13,
+      totalAmountWithTax: 113,
+      receivedAmount: 0,
+      docStatus: "DRAFT",
+      approveStatus: "UNSUBMITTED",
+      receivedStatus: "UNRECEIVED",
+      posted: false
+    }
+  }
+}

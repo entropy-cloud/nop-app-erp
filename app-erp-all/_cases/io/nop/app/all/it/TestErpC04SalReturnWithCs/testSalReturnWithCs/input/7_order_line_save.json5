@@ -1,0 +1,16 @@
+{
+  data: {
+    data: {
+      orderId: "@var:orderId",
+      lineNo: 1,
+      materialId: "1",
+      uoMId: "1",
+      quantity: 10,
+      unitPrice: 10,
+      taxRate: 13,
+      taxAmount: 13,
+      amount: 100,
+      amountWithTax: 113
+    }
+  }
+}

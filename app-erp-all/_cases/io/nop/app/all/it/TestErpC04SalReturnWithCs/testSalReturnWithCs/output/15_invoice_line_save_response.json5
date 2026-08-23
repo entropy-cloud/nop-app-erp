@@ -1,0 +1,23 @@
+{
+  "data": {
+    "id": "100018",
+    "invoiceId": "@var:invoiceId",
+    "deliveryLineId": "@var:deliveryLineId",
+    "lineNo": 1,
+    "materialId": "1",
+    "uoMId": "1",
+    "quantity": 10,
+    "unitPrice": 10,
+    "taxRate": 13,
+    "taxAmount": 13,
+    "amount": 100,
+    "delVersion": 0,
+    "version": 0,
+    "createdBy": "autotest-ref",
+    "createTime": "@var:ErpSalInvoiceLine@createTime",
+    "updatedBy": "autotest-ref",
+    "updateTime": "@var:ErpSalInvoiceLine@createTime",
+    "remark": null
+  },
+  "status": 0
+}

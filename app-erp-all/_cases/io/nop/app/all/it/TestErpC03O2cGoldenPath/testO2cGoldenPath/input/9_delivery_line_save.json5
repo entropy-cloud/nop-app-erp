@@ -1,0 +1,17 @@
+{
+  data: {
+    data: {
+      deliveryId: "@var:deliveryId",
+      orderLineId: "@var:orderLineId",
+      lineNo: 1,
+      materialId: "1",
+      uoMId: "1",
+      quantity: 10,
+      unitPrice: 100,
+      taxRate: 13,
+      taxAmount: 130,
+      amount: 1000,
+      warehouseId: "1"
+    }
+  }
+}

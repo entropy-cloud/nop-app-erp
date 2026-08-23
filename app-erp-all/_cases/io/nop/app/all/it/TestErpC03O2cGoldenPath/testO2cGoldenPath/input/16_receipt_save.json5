@@ -1,0 +1,22 @@
+{
+  data: {
+    data: {
+      code: "IT-C03-SREC-001",
+      orgId: "2",
+      customerId: "1",
+      businessDate: "2026-07-18",
+      currencyId: "1",
+      exchangeRate: 1,
+      amountSource: 1130,
+      amountFunctional: 1130,
+      totalAmount: 1130,
+      settlementMethodId: 2,
+      receiptMethod: "BANK_TRANSFER",
+      partnerBankAccountId: 1,
+      docStatus: "DRAFT",
+      approveStatus: "UNSUBMITTED",
+      writtenOffStatus: "UNRECEIVED",
+      posted: false
+    }
+  }
+}

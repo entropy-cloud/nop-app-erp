@@ -1,0 +1,15 @@
+{
+  data: {
+    data: {
+      returnId: "@var:returnId",
+      deliveryLineId: "@var:deliveryLineId",
+      lineNo: 1,
+      materialId: "1",
+      uoMId: "1",
+      quantity: 4,
+      unitPrice: 10,
+      amount: 40,
+      reason: "质量不合格（客服工单 IT-C04-TK-001）"
+    }
+  }
+}

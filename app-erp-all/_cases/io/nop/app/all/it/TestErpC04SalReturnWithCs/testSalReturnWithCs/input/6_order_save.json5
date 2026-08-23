@@ -1,0 +1,23 @@
+{
+  data: {
+    data: {
+      code: "IT-C04-SO-001",
+      orgId: "2",
+      customerId: "1",
+      warehouseId: "1",
+      businessDate: "2026-07-15",
+      currencyId: "1",
+      exchangeRate: 1,
+      totalAmount: 100,
+      totalTaxAmount: 13,
+      totalAmountWithTax: 113,
+      settlementMethodId: 2,
+      docStatus: "ACTIVE",
+      approveStatus: "UNSUBMITTED",
+      receivedStatus: "UNRECEIVED",
+      deliveryStatus: "UNDELIVERED",
+      posted: false,
+      remark: "客户投诉工单 IT-C04-TK-001 关联销售链"
+    }
+  }
+}

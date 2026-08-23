@@ -1,0 +1,14 @@
+{
+  data: {
+    data: {
+      code: "IT-C03-OPP-001",
+      orgId: "2",
+      leadType: "OPPORTUNITY",
+      partnerId: "1",
+      stageId: "1",
+      expectedRevenue: 1130,
+      docStatus: "NEW",
+      remark: "B2B EDI 订单转化商机（关联销售订单 IT-C03-SO-001）"
+    }
+  }
+}

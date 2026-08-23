@@ -1,0 +1,23 @@
+{
+  data: {
+    data: {
+      code: "IT-C03-SO-001",
+      orgId: "2",
+      customerId: "1",
+      warehouseId: "1",
+      businessDate: "2026-07-15",
+      currencyId: "1",
+      exchangeRate: 1,
+      totalAmount: 1000,
+      totalTaxAmount: 130,
+      totalAmountWithTax: 1130,
+      settlementMethodId: 2,
+      docStatus: "ACTIVE",
+      approveStatus: "UNSUBMITTED",
+      receivedStatus: "UNRECEIVED",
+      deliveryStatus: "UNDELIVERED",
+      posted: false,
+      remark: "B2B EDI 订单接收转化（EDI relatedBillCode=IT-C03-SO-001，CRM 商机 IT-C03-OPP-001）"
+    }
+  }
+}

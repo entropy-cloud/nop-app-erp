@@ -1,0 +1,33 @@
+{
+  "data": {
+    "id": "100004",
+    "orderId": "@var:orderId",
+    "lineNo": 1,
+    "materialId": "1",
+    "uoMId": "1",
+    "quantity": 10,
+    "unitPrice": 100,
+    "taxRate": 13,
+    "taxAmount": 130,
+    "amount": 1000,
+    "amountWithTax": 1130,
+    "deliveredQuantity": 0,
+    "invoicedQuantity": 0,
+    "delVersion": 0,
+    "version": 0,
+    "createdBy": "autotest-ref",
+    "createTime": "@var:ErpSalOrderLine@updateTime",
+    "updatedBy": "autotest-ref",
+    "updateTime": "@var:ErpSalOrderLine@updateTime",
+    "discountAmount": 0,
+    "pricingSource": "MANUAL",
+    "skuId": null,
+    "taxRateId": null,
+    "warehouseId": null,
+    "projectId": null,
+    "remark": null,
+    "discountRate": null,
+    "ctContractLineId": null
+  },
+  "status": 0
+}

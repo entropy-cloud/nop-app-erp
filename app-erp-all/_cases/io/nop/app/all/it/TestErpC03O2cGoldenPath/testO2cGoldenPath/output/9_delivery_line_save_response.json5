@@ -1,0 +1,26 @@
+{
+  "data": {
+    "id": "100006",
+    "deliveryId": "@var:deliveryId",
+    "orderLineId": "@var:orderLineId",
+    "lineNo": 1,
+    "materialId": "1",
+    "uoMId": "1",
+    "quantity": 10,
+    "unitPrice": 100,
+    "taxRate": 13,
+    "taxAmount": 130,
+    "amount": 1000,
+    "warehouseId": "1",
+    "delVersion": 0,
+    "version": 0,
+    "createdBy": "autotest-ref",
+    "createTime": "@var:ErpSalDeliveryLine@createTime",
+    "updatedBy": "autotest-ref",
+    "updateTime": "@var:ErpSalDeliveryLine@createTime",
+    "skuId": null,
+    "batchNo": null,
+    "remark": null
+  },
+  "status": 0
+}

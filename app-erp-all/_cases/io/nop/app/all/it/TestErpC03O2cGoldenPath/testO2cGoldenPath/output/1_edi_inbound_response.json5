@@ -1,0 +1,28 @@
+{
+  "data": {
+    "id": "100000",
+    "code": "@var:ErpB2bEdiDoc@code",
+    "formatId": null,
+    "relatedBillType": "SALES_ORDER",
+    "relatedBillCode": "@var:ErpB2bEdiDoc@relatedBillCode",
+    "state": "RECEIVED",
+    "state_label": "RECEIVED-已接收",
+    "blockingLevel": "INFO",
+    "blockingLevel_label": "INFO-信息",
+    "retryCount": 0,
+    "delVersion": 0,
+    "version": 0,
+    "createdBy": "autotest-ref",
+    "createTime": "@var:ErpB2bEdiDoc@createTime",
+    "updatedBy": "autotest-ref",
+    "updateTime": "@var:ErpB2bEdiDoc@createTime",
+    "businessDate": "@var:ErpB2bEdiDoc@businessDate",
+    "orgId": null,
+    "error": null,
+    "attachmentFileId": null,
+    "sentAt": null,
+    "acknowledgedAt": null,
+    "remark": null
+  },
+  "status": 0
+}

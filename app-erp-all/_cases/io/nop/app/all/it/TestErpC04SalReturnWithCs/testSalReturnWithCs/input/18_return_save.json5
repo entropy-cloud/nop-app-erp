@@ -1,0 +1,22 @@
+{
+  data: {
+    data: {
+      code: "IT-C04-SRT-001",
+      orgId: "2",
+      deliveryId: "@var:deliveryId",
+      customerId: "1",
+      warehouseId: "1",
+      businessDate: "2026-07-20",
+      currencyId: "1",
+      exchangeRate: 1,
+      totalAmount: 40,
+      totalTaxAmount: 5.2,
+      totalAmountWithTax: 45.2,
+      docStatus: "DRAFT",
+      approveStatus: "UNSUBMITTED",
+      posted: false,
+      returnType: "RETURN",
+      remark: "客户投诉工单 IT-C04-TK-001 退货退款"
+    }
+  }
+}

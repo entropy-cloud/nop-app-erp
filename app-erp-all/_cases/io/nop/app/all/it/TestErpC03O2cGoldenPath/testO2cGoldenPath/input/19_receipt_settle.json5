@@ -1,0 +1,11 @@
+{
+  data: {
+    receiptId: "@var:receiptId",
+    allocations: [
+      {
+        invoiceId: "@var:invoiceId",
+        amount: 1130
+      }
+    ]
+  }
+}
