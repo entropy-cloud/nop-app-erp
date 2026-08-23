@@ -2,7 +2,7 @@
 
 > **来源**：`docs/backlog/integration-test-roadmap.md` M0.1 工作项规格（v3）
 > **状态**：M0.1 定稿（经独立子代理审查 ≥2 轮收敛，审查记录见 `docs/plans/2026-08-23-1835-1-m01-integration-test-case-design.md` Draft Review Record 与本文件 §10）
-> **最后更新**：2026-08-24（B6 实施期勘误：§6 C11/C12 动作面/旧式码/科目 config 勘误登记）
+> **最后更新**：2026-08-24（B7 实施期勘误：§6 C13/C14 动作面/科目 config/计提口径勘误登记）
 > **适用**：M0.2 基建试点（机制裁决逐项实证）→ M0.3 分批展开（B1-Bn）→ V.1/V.2 全量验证与收尾
 
 ---
@@ -404,6 +404,8 @@
 
 #### C13 期末结账全链与反结账
 
+> **实施期勘误登记（2026-08-24，B7）**：(1) **preCheck 返回口径**——`PeriodPreCheckReport` 经 GraphQL 序列化仅含属性 getter（`hasIssues()`/`hasReminders()`/`hasAllowanceShortfall()`/`issueCount()` 派生方法不出现于响应）；未核销列表按期间 businessDate 范围 + orgId/acctSchemaId 隔离（seed OPEN 项 ARAP-EA-001/ARAP-EC-001 被列出）；seed 折旧计划（erp_ast_depreciation_schedule id=1 EXECUTED posted=false）被列为未处置悬挂键（depreciation:2#2026-07）→ `hasIssues`=true → **`erp-fin.auto-post-on-close=true` 必配**（否则 ERR_PRE_CHECK_BLOCKED）；seed 应收项计入坏账必需准备（ARAP-EA-001 1000×0.005=5 > 账面 0 → shortfall 独立硬阻断）→ **`erp-fin.bad-debt-allowance-gate-enabled=false` 必配**（对齐 TestErpFinPeriodCloseEndToEnd 先例 yaml）；`erp-fin.reverse-close-approval-required=false` 必配（默认 true 反结账被拒）。(2) **PERIOD_CLOSE 凭证不含 FX 腿**——closePeriod 同一事务内汇兑重估凭证经 CloseVoucherWriter 直接 save 未 flush，损益结转聚合（DB 直查）见不到 FX 凭证 → PERIOD_CLOSE = Dr 5001 1130/Cr 4103 1130（合计 1130，非含 FX 腿的 1280）；对比 TestErpFinProfitLossClosingIncludesFxGainLoss 先 seed 后 close 的跨 session 场景（已 flush 含 FX 腿），行为差异以实仓为准。(3) **重新结账幂等**——红字凭证自身 isReversed=true 被损益结转聚合的 isReversed 过滤天然排除 → 重新 closePeriod 生成新结转/重估凭证（billCode 链接计数 ≥2，金额与首轮一致）。(4) 科目 config 9 键 @NopTestProperty（4103/6603/1122/2202/period-end-exchange-rate=8.5 对齐 07-25 基线 E2E JVM args + fin-service 期间关账 test yaml 同型）。(5) **前置旧式码勘误**——「1445-1 seed」= 旧式码，实仓新式码 = `erp_fin_accounting_period` 行（2026-07，period id=1 OPEN，语义前置满足）。B7 实施证据：`TestErpC13FinPeriodCloseReverse`。
+
 - **业务目标**：期末结账闭环——前置检查 → 模块关账（AR/AP/INV/AST/PRJ/GL）→ 汇兑重估 → 损益结转 → 最终锁定 → 反结账 → 重新结账。复杂度判据：跨 6 域 + 过账 + 状态机 ✓。
 - **前置**：`[seed]` 会计期间 OPEN（1445-1 seed）+ 已过账业务链（P2P/O2C 凭证）+ `[seed]` 1045-1 追加的 OPEN 往来项（EMPLOYEE_ADVANCE/EXPENSE_CLAIM 两行，preCheck 期望列出的未核销项来源）+ `[自包含]` 新期间（若测试跨期）。
 - **关键路径步骤**：
@@ -417,6 +419,8 @@
 - **主导域 / 涉及域**：finance / finance, sales, purchase, inventory, assets, projects。
 
 #### C14 银行对账与坏账计提回收
+
+> **实施期勘误登记（2026-08-24，B7）**：(1) **数据来源**——seed 无 fund account/bank statement/bad debt 行（`erp_md_bank_account` 为 MD 侧静态档案，资金账户 `erp_fin_fund_account` 无 seed）→ 资金账户/对账单/OPEN AR 项全部自包含建数（bank-recon E2E 先例同型），未触发 seed 修正授权；(2) **未达调整凭证科目**——银行腿 = 资金账户 subjectId（1002 银行存款），未达对方科目 = `erp-fin.bank-recon-adj-subject-code` 缺省 2240OTHER（seed 在位，无需覆盖）；BANK_RECON_ADJ = Dr 1002/Cr 2240OTHER（银行已收未达方向）；(3) **坏账科目 config**——核销/收回凭证 = `erp-fin.ar-subject-code=1122` + `erp-fin.bad-debt-allowance-subject-code=1231`；计提追加 `erp-fin.bad-debt-expense-subject-code=6701`（三键有键无 DEFAULT_*，app-erp-all 无 fin-service test yaml → @NopTestProperty 指定，C06/C08/C10/C12 门控同型处理）；计提门控 `bad-debt-allowance-gate-enabled` 仅作用于 closePeriod 前置检查，`runBadDebtProvision` 直调不经门控；(4) **计提金额口径**——实仓 BadDebtProvisionCalculator：账龄基准 dueDate（缺省 ar-aging-base），asOf = 期间 endDate，计提范围 = 全应收未核销项（无 org/期间过滤）；自包含项 dueDate=2026-05-15 → 账龄 77 天 ∈ 61-90 档（0.05），seed ARAP-EA-001 负账龄 ∈ 0-30 档（0.005）→ 必需 = 1000×0.005 + 1000×0.05 = 55（RESERVE Dr 6701/Cr 1231）；(5) autoMatch 不调用（对账单行全 UNMATCHED 即未达项，设计文档 C14 步骤亦不含 autoMatch）。(6) **前置旧式码与动作名勘误**——「1234-1 seed」= 旧式码，实仓新式码 = `erp_md_bank_account` 行（MD 侧静态档案；资金账户 `erp_fin_fund_account` 无 seed → 自包含建数）；步骤 2/3 动作面 = `ErpFinBadDebt__writeOff/submit/approve/recover` 与 `ErpFinBadDebt__runBadDebtProvision`（实仓动作全部位于单一 `ErpFinBadDebtBizModel`，非独立 WriteOff/Provision BizModel——设计文档步骤 2/3 实体名漂移勘误）。B7 实施证据：`TestErpC14FinBankReconBadDebt`。
 
 - **业务目标**：资金闭环——银行对账单生成 → 对账 → 未达调整凭证 → 冲销；坏账核销 → 审批 → 收回 → 期末计提。复杂度判据：跨 3 域 + 状态机 + 过账 ✓。
 - **前置**：`[seed]` 银行账户（1234-1 seed）+ `[自包含]` 对账单 + 基金账户 + OPEN AR 项（自包含 partner 隔离，先例 bank-recon E2E）。
