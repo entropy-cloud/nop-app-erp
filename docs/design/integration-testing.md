@@ -290,28 +290,32 @@
 
 #### C07 制造工单全生命周期与完工过账
 
+> **实施期勘误登记（2026-08-24，B4）**：(1) **完工驱动动作漂移**——步骤 2 原述「`ErpMfgWorkOrder__close`（完工：完工入库 + 完工过账凭证）」为漂移：实仓 `ErpMfgWorkOrderBizModel` 三动作 start/close/reportCompletion 中，完工入库 + 完工过账由 `reportCompletion`（completedQty 驱动，经 `ErpMfgWorkOrderReportCompletionProcessor` → `generateCompletionMove` → MANUFACTURING_RECEIPT 过账 Dr 1401/Cr 1411）驱动；`close` 为 STOPPED/IN_PROCESS→CLOSED 结案语义（`ErpMfgWorkOrderCloseProcessor`），不驱动完工过账；(2) **领料出库归因修正**——步骤 2 原述「reportCompletion（报工，触发领料出库）」亦为漂移：领料出库由独立 `ErpMfgMaterialIssue__confirm` 步骤驱动（MANUFACTURING_ISSUE 过账 Dr 1411/Cr 1401）；(3) **数据来源**——材料/BOM/库存自包含建数（seed 物料 MAT-003 WEIGHTED_AVERAGE 余额行无 location 与出库路径 location=sourceWarehouseId 不匹配致空白余额，按 C05/C06 先例 + 自包含建数纪律，未触发 seed 修正授权）。B4 实施证据：`TestErpC07MfgWorkOrderLifecycle`（自包含 FIFO 产成品 P + MOVING_AVERAGE 原料 M1 → BOM 1P=2M1 → M1 入库 10@5 → 工单 planned=1 DIRECT 审批 → checkAvailability→start → 领料 2×M1=10 → FIRMED 标准成本 8/unit → reportCompletion(1) → MANUFACTURING_RECEIPT 10 + PRODUCTION_VARIANCE 2 + MATERIAL_USAGE 差异 +2 = actual−standard）。
+
 - **业务目标**：制造工单闭环——开工 → 领料 → 报工 → 完工 → 完工入库 + COGS/差异凭证 + 成本卷算。复杂度判据：跨 3 域 + 状态机 + 过账 ✓。
 - **前置**：`[seed]` 物料/BOM/工作中心 + `[自包含]` 工单（DIRECT 审批轴，先例 TestErpMfgWorkOrderEndToEnd）。
 - **关键路径步骤**：
   1. `ErpMfgWorkOrder__save` → `ErpMfgWorkOrder__submitForApproval` → `ErpMfgWorkOrder__approve` `[审批轴: DIRECT]`
-  2. `ErpMfgWorkOrder__start`（开工）→ `ErpMfgWorkOrder__reportCompletion`（报工，触发领料出库）→ `ErpMfgWorkOrder__close`（完工：完工入库 + 完工过账凭证）
+  2. `ErpMfgWorkOrder__checkAvailability` → `ErpMfgWorkOrder__start`（开工）→ `ErpMfgMaterialIssue__save` + `ErpMfgMaterialIssueLine__save` → `ErpMfgMaterialIssue__confirm`（领料出库独立步骤）→ `ErpMfgWorkOrder__reportCompletion`（completedQty=1 驱动完工入库 + 完工过账凭证；**以当前实现为准，非 `close`**——勘误见上）
   3. `ErpMfgCostVariance__findPage`（差异断言）
 - **三层断言**：
-  - 层 1：状态机翻转（APPROVED→IN_PROCESS→COMPLETED）；完工入库 stock_move 生成；完工过账凭证借贷平衡（COGS 借方 + 存货/差异）；cost_variance.varianceAmount = actual − standard。
+  - 层 1：状态机翻转（APPROVED→IN_PROCESS→COMPLETED）；完工入库 stock_move 生成（MANUFACTURE, posted）；完工过账凭证借贷平衡（MANUFACTURING_RECEIPT：Dr 1401 存货 / Cr 1411 WIP）；cost_variance.varianceAmount = actual − standard。
   - 层 2/层 3：每步快照 + 变更行（work_order + stock_move + voucher + cost_variance）。
 - **主导域 / 涉及域**：manufacturing / manufacturing, inventory, finance。
 
 #### C08 MRP 计划 → APS 排程 → 工单释放
 
+> **实施期勘误登记（2026-08-24，B4）**：(1) **释放动作名漂移**——步骤 2 原述「`ErpMfgMrpPlan__release`」为漂移：实仓为**行级**释放（`ErpMfgMrpPlanLineBizModel` 三个 per-mutation Processor：`releaseWorkRequest`/`releasePurchaseRequest`/`releaseSubcontractRequest`，先例 TestErpMfgMrpEndToEnd），用例按实仓落地；(2) **APS 衔接路径裁决**——MRP 释放的工单为 DRAFT 且无 routing，`scanReleasedWorkOrders` 仅扫描 NOT_STARTED..IN_PROCESS、`createOperationOrdersFromWorkOrder` 要求 WO 挂 routing，两条实仓路径均无法直接消费释放工单，故按「自包含建排程」落地（工序订单直接 save，workOrderId=释放工单保留 MRP 输出→APS 排程输入数据关联）→ scheduleForward → publish → start → complete；(3) **数据来源**——物料/BOM/库存自包含建数（seed 物料已有余额致净需求归零且 seed 无 BOM）；仿真引擎按 seed 主数据 safetyStock 补充 SAFETY_STOCK 需求行（seed 物料 MAT-001..004 均设 safetyStock），转正计划含 seed 物料需求行，仅释放本用例 P/M1 行后计划保持非 FIRMED（layer-1 不要求计划 FIRMED）。B4 实施证据：`TestErpC08MrpApsRelease`（P=制造件/M1=采购件自包含 + BOM 1:1 isDefault + M1 入库 4@5（onHand=4）→ MRP 计划 save + 手工需求 P qty 10 → 仿真场景 runSimulation（simulation-enabled 门控开启）→ promoteToFormalPlan → 行级释放 WO-MRP-xxx（planned 10）+ PO-MRP-xxx（qty 6）→ 净需求 10=10−0−0 / 6=10−4−0 → APS 排程 PUBLISHED + 工序订单 DRAFT→PLANNED→IN_PROGRESS→FINISHED）。
+
 - **业务目标**：计划域闭环——MRP 净需求计算 → 计划订单 → APS 排程 → 工单/采购建议释放。复杂度判据：跨 4 域 + 状态机 ✓。
 - **前置**：`[seed]` 物料/BOM/库存 + `[自包含]` MRP 方案（demand 数据）。
 - **关键路径步骤**：
   1. `ErpMfgMrpScenario__runSimulation` → `promoteToFormalPlan`（MRP 仿真→正式计划，config 门控 `erp-mfg.simulation-enabled=true`，先例 TestErpMfgMrpEndToEnd/TestErpMfgMrpSimulation）
-  2. `ErpMfgMrpPlan__release`（计划释放 → 工单/采购建议）`[涉及域 aps: MRP 输出进入 APS 排程输入]`
+  2. `ErpMfgMrpPlanLine__releaseWorkRequest` / `ErpMfgMrpPlanLine__releasePurchaseRequest`（行级释放 → 工单/采购建议；**以当前实现为准，非 `ErpMfgMrpPlan__release`**——勘误见上）`[涉及域 aps: MRP 输出进入 APS 排程输入]`
   3. `ErpApsSchedule__save` → `ErpApsSchedule__publish`（排程发布，先例 ErpApsScheduleBizModel `@BizMutation`）`[涉及域 aps]`
-  4. `ErpApsOperationOrder__*`（工序订单状态机推进）
+  4. `ErpApsOperationOrder__save`（自包含建排程，workOrderId=释放工单）→ `ErpApsOperationOrder__scheduleForward` → `ErpApsOperationOrder__start` → `ErpApsOperationOrder__complete`（工序订单状态机推进）
 - **三层断言**：
-  - 层 1：MRP 计划净需求 = 毛需求 − 在途 − 在手；计划释放生成工单/采购建议（下游单据存在）；APS 排程发布后状态 PUBLISHED；工序订单状态机翻转。
+  - 层 1：MRP 计划净需求 = 毛需求 − 在途 − 在手；计划释放生成工单/采购建议（下游单据存在 + isFirmed + convertedBillCode）；APS 排程发布后状态 PUBLISHED；工序订单状态机翻转。
   - 层 2/层 3：每步快照 + 变更行（mrp_plan/line + work_order/pur_order + aps_schedule + operation_order）。
 - **主导域 / 涉及域**：manufacturing / manufacturing, aps, inventory, purchase。
 
