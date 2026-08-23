@@ -637,6 +637,8 @@ NEVER_OPENED → OPEN → CLOSING → CLOSED → CLOSED_FINAL
 
 **参数约定**：5 动作统一签名 `(@Name("id") String id, IServiceContext context)`。
 
+> **一致性复核注记（2026-08-23，M4.1 收尾）**：id-string-migration mission 完成后本签名约定与实态一致——19 域全部单据头动作（含 §16A.4 历史行原登记的 13 实体）id 参数均为 `String`，全仓 `findFirstByOrg` 类 Long 语义参数桥亦已清零（批内序 1 兑付）。
+
 > 审批集**对称要求**：声明审批的单据应**完整提供 5 动作**，不允许只提供 `submit`+`approve` 子集。确需子集（如配置类单据仅审批不需反审）须在域 README 注明原因。
 
 ### 16A.2 状态迁移动词矩阵
@@ -662,7 +664,7 @@ NEVER_OPENED → OPEN → CLOSING → CLOSED → CLOSED_FINAL
 | 跨实体引用参数（如按 orderId 查询行） | `<entity>Id`（如 `orderId`） | 与被引用实体主键一致 |
 | 批量操作 | `ids` | `Collection<String>` |
 
-> **新增单据头动作统一用 `@Name("id") String id`**。存量 Long id 实体不强制改（改 Long→String 破坏 BizModel 签名 + 测试），登记在"已知偏离"。
+> **新增单据头动作统一用 `@Name("id") String id`**。（历史尾注已失效：存量 Long id 实体"不强制改"登记随 id-string-migration mission 完成——2026-08-23 起全部单据头动作 id 均为 `String`，见 §16A.4 历史行注记。）
 
 ### 16A.4 已知偏离登记（存量，不重命名）
 
@@ -672,7 +674,7 @@ NEVER_OPENED → OPEN → CLOSING → CLOSED → CLOSED_FINAL
 |---------|--------------|------|---------|
 | `submit` 而非 `submitForApproval` | ~12 实体 | 12 | 早期生成沿用；新实体须用 `submitForApproval` |
 | `submitForReview` | `ErpHrSalarySimulation` | 1 | hr 唯一变体（复核语义） |
-| `Long id` 而非 `String id`（单据头动作） | ~13 实体（purchase/sales/mfg 部分） | 13 | 早期生成；新实体须用 `String id` |
+| `Long id` 而非 `String id`（单据头动作）| ~~~13 实体（purchase/sales/mfg 部分）~~ **历史行（已清零）** | ~~13~~ → 0 | 早期生成偏离；**id-string-migration mission（2026-08-21 ~ 08-23）已全量兑付**：19 域 1662 列落源，全部单据头动作 id 翻转为 `String`（Java 层 String / DB 层 BIGINT，平台主键设计方案 B）。本行保留作审计轨迹（roadmap `docs/backlog/id-string-migration-roadmap.md` M4.1） |
 | `cancel` 参数名实体化（`orderId`/`paymentId`/`invoiceId`/...） | ~18 种实体键名 | 18 | 早期生成；新实体统一 `id` |
 | `markPaid` 而非 `post` | `IErpHrSalaryBiz.markPaid` | 1 | hr 唯一"过账/支付"动词；跨域集成（hr→finance voucher `post` Facade）语义入口与目标动词不一致，集成方须知晓 |
 | 审批集不对称（仅部分 5 动作子集） | `ErpInvLandedCost`/`ErpHrDevelopmentPlan`/`ErpHrTimesheet` 等 | 若干 | 早期生成；新审批单据须完整 5 动作集 |

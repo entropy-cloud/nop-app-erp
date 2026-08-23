@@ -20,7 +20,7 @@
 | R1d | dao().findAllByQuery (BizModel) | 🔴 高 | 14 |
 | R2a | BizModel daoFor(ErpMd*) | 🔴 高 | 34 |
 | R2b | BizModel daoFor(Erp*) 跨域 | 🔴 高 | 237 |
-| R2c | 全生产代码 daoFor() 总量 | 🔴 高 | 1507 |
+| R2c | 全生产代码 daoFor() 总量 | 🔴 高 | 1505 |
 | R2d | Processor daoFor(ErpMd*) | 🔴 高 | 38 |
 | R3 | new Erp*() 构造实体 | 🟡 中 | 5 |
 | R4 | extends RuntimeException | 🟢 低 | 0 |
@@ -443,6 +443,31 @@ checker 复跑全 19 规则 actual ≤ updated baseline（R1d=14 / R2a=34 / R2b=
 
 EquipmentRuntimeCalculator 重构（daoFor 内联 → `loadEquipment` helper）净零变化（1→1）；BizModel computeOee 设备装载委托 calculator（零新增）。跨域只读目标域 mfg 为 §9.4 永久只读豁免目标域（governed-path eval §3.1 裁决分支 b——I*Biz 强注入破坏单模块测试启动）；qa 同型业务域只读豁免口径（矩阵 §2.4 mnt→qa 行注记）。本块以 237/1505 为回归门控起点。
 
+## R2c 基线下调注记（plan 2026-08-23-0434-3，M4.1 mission 收尾 compliance 复跑裁决）
+
+`2026-08-23-0434-3`（id-string-migration M4.1 批内序 3：compliance 复跑 + 漂移裁决）在 mission 全链
+（19 域 Long→String + 批内序 1 残留资产清扫）完成后复跑 checker：**18/19 规则 actual == baseline 零漂移**
+（R1a/b/c=0/0/0、R1d=14、R2a=34、R2b=237、R2d=38、R3=5、R4/R5/R7/R8/R11=0、R6=2、R10=12、R12a/b/c=70/66/41），
+仅 **R2c actual=1505 < baseline=1507（−2，分支③命中数下降）**——CI 门控语义（actual ≤ baseline）通过。
+
+**per-site 漂移证据**（`git diff 957888ffc..HEAD -- '*.java' ':!*/src/test/*'`，锚点 = 08-20 零漂移基线
+commit `957888ffc`；daoFor 行级 diff 全量 = +1/−3，净 −2 与 checker delta 精确吻合）：
+
+- `ErpAstMergeProcessor.java` 移除 `loadCategory(Long categoryId)` 私有 helper（含 1 处
+  `daoProvider.daoFor(ErpAstAssetCategory.class).getEntityById(categoryId)`）——commit `301994a5e`
+  （M2.4 assets 域迁移，plan `2026-08-22-0002`）：签名翻转后跨类别守卫简化为 categoryId 直比
+  （`Objects.equals(firstCategory, src.getCategoryId())`），实体加载 helper 成为死代码被移除。
+- `ErpAstSplitProcessor.java` 同型 `loadCategory(Long)` 死代码移除（−1 站点，同 commit/同 plan）。
+- `ErpApsAutoDispatchProcessor.java` 1 处 daoFor 单行 → 三元续行重排版（+1/−1 净零，站点仍在，
+  R2c 计数不变——仅排版差异，无语义变化）。
+
+**裁决 = 改善回写（baseline 下调 R2c 1507 → 1505）**：−2 为 mission 迁移期死代码清扫的合规改善
+（对齐 R6.8 改善回写先例——门控方向单向收紧，下降自动 PASS，回写基线反映真实代码计数，鼓励项）。
+roadmap 横切 §6「域迁移不改 DAO 引用面形状，R2c 等计数预期不变」经此证实为近似成立——签名翻转本身
+零引用面变化，唯一下降来自迁移顺带移除的死代码 helper（改善方向，非回归）。0 处 Fix 候选
+（无 actual > baseline 规则；R2c 下降非违规）。本块以 R2c=1505 为回归门控起点；
+逐站点证据存档 `_tmp/m41-compliance/`（checker 全量输出 + anchor..HEAD daoFor diff）。
+
 ## BASELINE (machine-readable)
 
 > CI gate 解析本块。格式：`RULE=value`，每行一条。仅含可计数规则（R9 除外）。修改本块须经独立计划裁决（见上文"调高基线的唯一途径"）。
@@ -454,7 +479,7 @@ R1c: 0
 R1d: 14
 R2a: 34
 R2b: 237
-R2c: 1507
+R2c: 1505
 R2d: 38
 R3: 5
 R4: 0

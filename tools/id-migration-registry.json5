@@ -2,6 +2,7 @@
 // 生成命令: node tools/scan-id-coupling-directions.mjs --orm-graph=... --directions=... --registry-out=tools/id-migration-registry.json5
 // 消费方: tools/check-bigint-id-types.mjs（仅 orm-column-deferral 条目，active 生效）、tools/verify-id-fix-copy-diff.mjs（同）
 // 退役协议: 条目 status: active -> retired 由 retireOwner 工作项执行（M2.7 退役 orm 级 8 条；service-bridge 由晚域 plan 翻转 IBiz 参数时退役）
+// 终态（2026-08-23 M4.1 收尾）: backward-pointer 123 条由 plan 2026-08-23-0434-3 批量核销（mission 四源全绿证据链），登记册 259/259 全 retired——零 active 条目，fail-closed 工具（check-bigint-id-types.mjs）无阻断项
 // 注意: 重新生成会重置 status——退役后本文件为手工维护权威，重跑生成器仅用于对账复核
 {
   "entries": [
@@ -2177,8 +2178,8 @@
         "module-aps/erp-aps-service/src/main/java/app/erp/aps/service/processor/ErpApsWorkOrderToOperationProcessor.java"
       ],
       "successor": "M3.9",
-      "note": "晚域引用早域——晚域 plan 编译器驱动修复清单",
-      "status": "active"
+      "note": "晚域引用早域——晚域 plan 编译器驱动修复清单；M4.1 批量核销（2026-08-23 mission 收尾批内序 3：19 域 Long→String 迁移全 done（roadmap M1-M3）+ 全量构建/测试/E2E/compliance 四源全绿（M4.1），evidence 定位面使命终结，登记册终态 = 259/259 retired）",
+      "status": "retired"
     },
     {
       "id": "backward-134",
@@ -2192,8 +2193,8 @@
         "module-assets/erp-ast-service/src/main/java/app/erp/ast/service/processor/ErpAstDepreciationScheduleProcessor.java"
       ],
       "successor": "M2.4",
-      "note": "晚域引用早域——晚域 plan 编译器驱动修复清单",
-      "status": "active"
+      "note": "晚域引用早域——晚域 plan 编译器驱动修复清单；M4.1 批量核销（2026-08-23 mission 收尾批内序 3：19 域 Long→String 迁移全 done（roadmap M1-M3）+ 全量构建/测试/E2E/compliance 四源全绿（M4.1），evidence 定位面使命终结，登记册终态 = 259/259 retired）",
+      "status": "retired"
     },
     {
       "id": "backward-135",
@@ -2214,8 +2215,8 @@
         "module-assets/erp-ast-service/src/main/java/app/erp/ast/service/posting/ValueAdjustmentPostingDispatcher.java"
       ],
       "successor": "M2.4",
-      "note": "晚域引用早域——晚域 plan 编译器驱动修复清单",
-      "status": "active"
+      "note": "晚域引用早域——晚域 plan 编译器驱动修复清单；M4.1 批量核销（2026-08-23 mission 收尾批内序 3：19 域 Long→String 迁移全 done（roadmap M1-M3）+ 全量构建/测试/E2E/compliance 四源全绿（M4.1），evidence 定位面使命终结，登记册终态 = 259/259 retired）",
+      "status": "retired"
     },
     {
       "id": "backward-136",
@@ -2230,8 +2231,8 @@
         "module-assets/erp-ast-service/src/main/java/app/erp/ast/service/posting/DisposalPostingDispatcher.java"
       ],
       "successor": "M2.4",
-      "note": "晚域引用早域——晚域 plan 编译器驱动修复清单",
-      "status": "active"
+      "note": "晚域引用早域——晚域 plan 编译器驱动修复清单；M4.1 批量核销（2026-08-23 mission 收尾批内序 3：19 域 Long→String 迁移全 done（roadmap M1-M3）+ 全量构建/测试/E2E/compliance 四源全绿（M4.1），evidence 定位面使命终结，登记册终态 = 259/259 retired）",
+      "status": "retired"
     },
     {
       "id": "backward-137",
@@ -2244,8 +2245,8 @@
         "module-b2b/erp-b2b-service/src/main/java/app/erp/b2b/service/processor/ErpB2bAsnCreateReceiveFromAsnProcessor.java"
       ],
       "successor": "M3.8",
-      "note": "晚域引用早域——晚域 plan 编译器驱动修复清单",
-      "status": "active"
+      "note": "晚域引用早域——晚域 plan 编译器驱动修复清单；M4.1 批量核销（2026-08-23 mission 收尾批内序 3：19 域 Long→String 迁移全 done（roadmap M1-M3）+ 全量构建/测试/E2E/compliance 四源全绿（M4.1），evidence 定位面使命终结，登记册终态 = 259/259 retired）",
+      "status": "retired"
     },
     {
       "id": "backward-138",
@@ -2258,8 +2259,8 @@
         "module-b2b/erp-b2b-service/src/main/java/app/erp/b2b/service/job/ErpB2bOnboardingMonitorJob.java"
       ],
       "successor": "M3.8",
-      "note": "晚域引用早域——晚域 plan 编译器驱动修复清单",
-      "status": "active"
+      "note": "晚域引用早域——晚域 plan 编译器驱动修复清单；M4.1 批量核销（2026-08-23 mission 收尾批内序 3：19 域 Long→String 迁移全 done（roadmap M1-M3）+ 全量构建/测试/E2E/compliance 四源全绿（M4.1），evidence 定位面使命终结，登记册终态 = 259/259 retired）",
+      "status": "retired"
     },
     {
       "id": "backward-139",
@@ -2273,8 +2274,8 @@
         "module-contract/erp-ct-service/src/main/java/app/erp/ct/service/processor/ErpCtRebateSettlementPostSettlementProcessor.java"
       ],
       "successor": "M3.6",
-      "note": "晚域引用早域——晚域 plan 编译器驱动修复清单",
-      "status": "active"
+      "note": "晚域引用早域——晚域 plan 编译器驱动修复清单；M4.1 批量核销（2026-08-23 mission 收尾批内序 3：19 域 Long→String 迁移全 done（roadmap M1-M3）+ 全量构建/测试/E2E/compliance 四源全绿（M4.1），evidence 定位面使命终结，登记册终态 = 259/259 retired）",
+      "status": "retired"
     },
     {
       "id": "backward-140",
@@ -2292,8 +2293,8 @@
         "module-contract/erp-ct-service/src/main/java/app/erp/ct/service/processor/ErpCtConsumptionPeriodSummarizeProcessor.java"
       ],
       "successor": "M3.6",
-      "note": "晚域引用早域——晚域 plan 编译器驱动修复清单",
-      "status": "active"
+      "note": "晚域引用早域——晚域 plan 编译器驱动修复清单；M4.1 批量核销（2026-08-23 mission 收尾批内序 3：19 域 Long→String 迁移全 done（roadmap M1-M3）+ 全量构建/测试/E2E/compliance 四源全绿（M4.1），evidence 定位面使命终结，登记册终态 = 259/259 retired）",
+      "status": "retired"
     },
     {
       "id": "backward-141",
@@ -2310,8 +2311,8 @@
         "module-crm/erp-crm-service/src/main/java/app/erp/crm/service/processor/ErpCrmConversionProcessor.java"
       ],
       "successor": "M3.4",
-      "note": "晚域引用早域——晚域 plan 编译器驱动修复清单",
-      "status": "active"
+      "note": "晚域引用早域——晚域 plan 编译器驱动修复清单；M4.1 批量核销（2026-08-23 mission 收尾批内序 3：19 域 Long→String 迁移全 done（roadmap M1-M3）+ 全量构建/测试/E2E/compliance 四源全绿（M4.1），evidence 定位面使命终结，登记册终态 = 259/259 retired）",
+      "status": "retired"
     },
     {
       "id": "backward-142",
@@ -2325,8 +2326,8 @@
         "module-crm/erp-crm-service/src/main/java/app/erp/crm/service/job/ErpCrmSequenceOverdueJob.java"
       ],
       "successor": "M3.4",
-      "note": "晚域引用早域——晚域 plan 编译器驱动修复清单",
-      "status": "active"
+      "note": "晚域引用早域——晚域 plan 编译器驱动修复清单；M4.1 批量核销（2026-08-23 mission 收尾批内序 3：19 域 Long→String 迁移全 done（roadmap M1-M3）+ 全量构建/测试/E2E/compliance 四源全绿（M4.1），evidence 定位面使命终结，登记册终态 = 259/259 retired）",
+      "status": "retired"
     },
     {
       "id": "backward-143",
@@ -2346,8 +2347,8 @@
         "module-crm/erp-crm-service/src/main/java/app/erp/crm/service/processor/ErpCrmProductConfiguratorGenerateQuoteProcessor.java"
       ],
       "successor": "M3.4",
-      "note": "晚域引用早域——晚域 plan 编译器驱动修复清单",
-      "status": "active"
+      "note": "晚域引用早域——晚域 plan 编译器驱动修复清单；M4.1 批量核销（2026-08-23 mission 收尾批内序 3：19 域 Long→String 迁移全 done（roadmap M1-M3）+ 全量构建/测试/E2E/compliance 四源全绿（M4.1），evidence 定位面使命终结，登记册终态 = 259/259 retired）",
+      "status": "retired"
     },
     {
       "id": "backward-144",
@@ -2366,8 +2367,8 @@
         "module-cs/erp-cs-service/src/main/java/app/erp/cs/service/processor/ErpCsTicketScanOverdueTicketsProcessor.java"
       ],
       "successor": "M3.5",
-      "note": "晚域引用早域——晚域 plan 编译器驱动修复清单",
-      "status": "active"
+      "note": "晚域引用早域——晚域 plan 编译器驱动修复清单；M4.1 批量核销（2026-08-23 mission 收尾批内序 3：19 域 Long→String 迁移全 done（roadmap M1-M3）+ 全量构建/测试/E2E/compliance 四源全绿（M4.1），evidence 定位面使命终结，登记册终态 = 259/259 retired）",
+      "status": "retired"
     },
     {
       "id": "backward-145",
@@ -2387,8 +2388,8 @@
         "module-cs/erp-cs-service/src/main/java/app/erp/cs/service/processor/ErpCsTicketScanOverdueTicketsProcessor.java"
       ],
       "successor": "M3.5",
-      "note": "晚域引用早域——晚域 plan 编译器驱动修复清单",
-      "status": "active"
+      "note": "晚域引用早域——晚域 plan 编译器驱动修复清单；M4.1 批量核销（2026-08-23 mission 收尾批内序 3：19 域 Long→String 迁移全 done（roadmap M1-M3）+ 全量构建/测试/E2E/compliance 四源全绿（M4.1），evidence 定位面使命终结，登记册终态 = 259/259 retired）",
+      "status": "retired"
     },
     {
       "id": "backward-146",
@@ -2405,8 +2406,8 @@
         "module-drp/erp-drp-service/src/main/java/app/erp/drp/service/safetystock/SafetyStockEngine.java"
       ],
       "successor": "M3.7",
-      "note": "晚域引用早域——晚域 plan 编译器驱动修复清单",
-      "status": "active"
+      "note": "晚域引用早域——晚域 plan 编译器驱动修复清单；M4.1 批量核销（2026-08-23 mission 收尾批内序 3：19 域 Long→String 迁移全 done（roadmap M1-M3）+ 全量构建/测试/E2E/compliance 四源全绿（M4.1），evidence 定位面使命终结，登记册终态 = 259/259 retired）",
+      "status": "retired"
     },
     {
       "id": "backward-147",
@@ -2419,8 +2420,8 @@
         "module-drp/erp-drp-service/src/main/java/app/erp/drp/service/drp/DrpDemandAggregator.java"
       ],
       "successor": "M3.7",
-      "note": "晚域引用早域——晚域 plan 编译器驱动修复清单",
-      "status": "active"
+      "note": "晚域引用早域——晚域 plan 编译器驱动修复清单；M4.1 批量核销（2026-08-23 mission 收尾批内序 3：19 域 Long→String 迁移全 done（roadmap M1-M3）+ 全量构建/测试/E2E/compliance 四源全绿（M4.1），evidence 定位面使命终结，登记册终态 = 259/259 retired）",
+      "status": "retired"
     },
     {
       "id": "backward-148",
@@ -2435,8 +2436,8 @@
         "module-drp/erp-drp-service/src/main/java/app/erp/drp/service/processor/ErpInvDrpCrossDockProcessor.java"
       ],
       "successor": "M3.7",
-      "note": "晚域引用早域——晚域 plan 编译器驱动修复清单",
-      "status": "active"
+      "note": "晚域引用早域——晚域 plan 编译器驱动修复清单；M4.1 批量核销（2026-08-23 mission 收尾批内序 3：19 域 Long→String 迁移全 done（roadmap M1-M3）+ 全量构建/测试/E2E/compliance 四源全绿（M4.1），evidence 定位面使命终结，登记册终态 = 259/259 retired）",
+      "status": "retired"
     },
     {
       "id": "backward-149",
@@ -2451,8 +2452,8 @@
         "module-drp/erp-drp-service/src/main/java/app/erp/drp/service/processor/ErpInvDrpLeadTimeProcessor.java"
       ],
       "successor": "M3.7",
-      "note": "晚域引用早域——晚域 plan 编译器驱动修复清单",
-      "status": "active"
+      "note": "晚域引用早域——晚域 plan 编译器驱动修复清单；M4.1 批量核销（2026-08-23 mission 收尾批内序 3：19 域 Long→String 迁移全 done（roadmap M1-M3）+ 全量构建/测试/E2E/compliance 四源全绿（M4.1），evidence 定位面使命终结，登记册终态 = 259/259 retired）",
+      "status": "retired"
     },
     {
       "id": "backward-150",
@@ -2466,8 +2467,8 @@
         "module-drp/erp-drp-service/src/main/java/app/erp/drp/service/processor/ErpInvDrpLeadTimeProcessor.java"
       ],
       "successor": "M3.7",
-      "note": "晚域引用早域——晚域 plan 编译器驱动修复清单",
-      "status": "active"
+      "note": "晚域引用早域——晚域 plan 编译器驱动修复清单；M4.1 批量核销（2026-08-23 mission 收尾批内序 3：19 域 Long→String 迁移全 done（roadmap M1-M3）+ 全量构建/测试/E2E/compliance 四源全绿（M4.1），evidence 定位面使命终结，登记册终态 = 259/259 retired）",
+      "status": "retired"
     },
     {
       "id": "backward-151",
@@ -2480,8 +2481,8 @@
         "module-drp/erp-drp-service/src/main/java/app/erp/drp/service/processor/ErpInvDrpCrossDockProcessor.java"
       ],
       "successor": "M3.7",
-      "note": "晚域引用早域——晚域 plan 编译器驱动修复清单",
-      "status": "active"
+      "note": "晚域引用早域——晚域 plan 编译器驱动修复清单；M4.1 批量核销（2026-08-23 mission 收尾批内序 3：19 域 Long→String 迁移全 done（roadmap M1-M3）+ 全量构建/测试/E2E/compliance 四源全绿（M4.1），evidence 定位面使命终结，登记册终态 = 259/259 retired）",
+      "status": "retired"
     },
     {
       "id": "backward-152",
@@ -2522,8 +2523,8 @@
         "module-finance/erp-fin-service/src/main/java/app/erp/fin/service/treasury/CreditFacilityInterestVoucherBuilder.java"
       ],
       "successor": "M2.1",
-      "note": "晚域引用早域——晚域 plan 编译器驱动修复清单",
-      "status": "active"
+      "note": "晚域引用早域——晚域 plan 编译器驱动修复清单；M4.1 批量核销（2026-08-23 mission 收尾批内序 3：19 域 Long→String 迁移全 done（roadmap M1-M3）+ 全量构建/测试/E2E/compliance 四源全绿（M4.1），evidence 定位面使命终结，登记册终态 = 259/259 retired）",
+      "status": "retired"
     },
     {
       "id": "backward-153",
@@ -2539,8 +2540,8 @@
         "module-finance/erp-fin-service/src/main/java/app/erp/fin/service/processor/ErpFinPostingExceptionIgnoreProcessor.java"
       ],
       "successor": "M2.1",
-      "note": "晚域引用早域——晚域 plan 编译器驱动修复清单",
-      "status": "active"
+      "note": "晚域引用早域——晚域 plan 编译器驱动修复清单；M4.1 批量核销（2026-08-23 mission 收尾批内序 3：19 域 Long→String 迁移全 done（roadmap M1-M3）+ 全量构建/测试/E2E/compliance 四源全绿（M4.1），evidence 定位面使命终结，登记册终态 = 259/259 retired）",
+      "status": "retired"
     },
     {
       "id": "backward-154",
@@ -2555,8 +2556,8 @@
         "module-hr/erp-hr-service/src/main/java/app/erp/hr/service/report/ErpHrReportBizModel.java"
       ],
       "successor": "M3.3",
-      "note": "晚域引用早域——晚域 plan 编译器驱动修复清单",
-      "status": "active"
+      "note": "晚域引用早域——晚域 plan 编译器驱动修复清单；M4.1 批量核销（2026-08-23 mission 收尾批内序 3：19 域 Long→String 迁移全 done（roadmap M1-M3）+ 全量构建/测试/E2E/compliance 四源全绿（M4.1），evidence 定位面使命终结，登记册终态 = 259/259 retired）",
+      "status": "retired"
     },
     {
       "id": "backward-155",
@@ -2570,8 +2571,8 @@
         "module-hr/erp-hr-service/src/main/java/app/erp/hr/service/report/ErpHrReportBizModel.java"
       ],
       "successor": "M3.3",
-      "note": "晚域引用早域——晚域 plan 编译器驱动修复清单",
-      "status": "active"
+      "note": "晚域引用早域——晚域 plan 编译器驱动修复清单；M4.1 批量核销（2026-08-23 mission 收尾批内序 3：19 域 Long→String 迁移全 done（roadmap M1-M3）+ 全量构建/测试/E2E/compliance 四源全绿（M4.1），evidence 定位面使命终结，登记册终态 = 259/259 retired）",
+      "status": "retired"
     },
     {
       "id": "backward-156",
@@ -2586,8 +2587,8 @@
         "module-hr/erp-hr-service/src/main/java/app/erp/hr/service/posting/SalaryPostingDispatcher.java"
       ],
       "successor": "M3.3",
-      "note": "晚域引用早域——晚域 plan 编译器驱动修复清单",
-      "status": "active"
+      "note": "晚域引用早域——晚域 plan 编译器驱动修复清单；M4.1 批量核销（2026-08-23 mission 收尾批内序 3：19 域 Long→String 迁移全 done（roadmap M1-M3）+ 全量构建/测试/E2E/compliance 四源全绿（M4.1），evidence 定位面使命终结，登记册终态 = 259/259 retired）",
+      "status": "retired"
     },
     {
       "id": "backward-157",
@@ -2603,8 +2604,8 @@
         "module-inventory/erp-inv-service/src/main/java/app/erp/inv/service/processor/ErpInvTransferOrderConfirmProcessor.java"
       ],
       "successor": "M2.2",
-      "note": "晚域引用早域——晚域 plan 编译器驱动修复清单",
-      "status": "active"
+      "note": "晚域引用早域——晚域 plan 编译器驱动修复清单；M4.1 批量核销（2026-08-23 mission 收尾批内序 3：19 域 Long→String 迁移全 done（roadmap M1-M3）+ 全量构建/测试/E2E/compliance 四源全绿（M4.1），evidence 定位面使命终结，登记册终态 = 259/259 retired）",
+      "status": "retired"
     },
     {
       "id": "backward-158",
@@ -2622,8 +2623,8 @@
         "module-inventory/erp-inv-service/src/main/java/app/erp/inv/service/spi/ErpInvSkuReferenceChecker.java"
       ],
       "successor": "M2.2",
-      "note": "晚域引用早域——晚域 plan 编译器驱动修复清单",
-      "status": "active"
+      "note": "晚域引用早域——晚域 plan 编译器驱动修复清单；M4.1 批量核销（2026-08-23 mission 收尾批内序 3：19 域 Long→String 迁移全 done（roadmap M1-M3）+ 全量构建/测试/E2E/compliance 四源全绿（M4.1），evidence 定位面使命终结，登记册终态 = 259/259 retired）",
+      "status": "retired"
     },
     {
       "id": "backward-159",
@@ -2637,8 +2638,8 @@
         "module-inventory/erp-inv-service/src/main/java/app/erp/inv/service/processor/ErpInvStockTakeCompleteTakeProcessor.java"
       ],
       "successor": "M2.2",
-      "note": "晚域引用早域——晚域 plan 编译器驱动修复清单",
-      "status": "active"
+      "note": "晚域引用早域——晚域 plan 编译器驱动修复清单；M4.1 批量核销（2026-08-23 mission 收尾批内序 3：19 域 Long→String 迁移全 done（roadmap M1-M3）+ 全量构建/测试/E2E/compliance 四源全绿（M4.1），evidence 定位面使命终结，登记册终态 = 259/259 retired）",
+      "status": "retired"
     },
     {
       "id": "backward-160",
@@ -2652,8 +2653,8 @@
         "module-logistics/erp-log-service/src/main/java/app/erp/log/service/posting/LogisticsFreightProvider.java"
       ],
       "successor": "M3.10",
-      "note": "晚域引用早域——晚域 plan 编译器驱动修复清单；M3.10 Phase 1 FQN 复扫补登 LogisticsFreightProvider（posting Provider setPartnerId fin id 流，M0.2 扫描器 id-flow 启发式漏报，ast backward-134 追注同类）；M3.10 已兑付（2026-08-23：编译器驱动修复 + 测试 String 化域级全绿，evidence 定位面使命终结）",
-      "status": "active"
+      "note": "晚域引用早域——晚域 plan 编译器驱动修复清单；M3.10 Phase 1 FQN 复扫补登 LogisticsFreightProvider（posting Provider setPartnerId fin id 流，M0.2 扫描器 id-flow 启发式漏报，ast backward-134 追注同类）；M3.10 已兑付（2026-08-23：编译器驱动修复 + 测试 String 化域级全绿，evidence 定位面使命终结）；M4.1 批量核销（2026-08-23 mission 收尾批内序 3：19 域 Long→String 迁移全 done（roadmap M1-M3）+ 全量构建/测试/E2E/compliance 四源全绿（M4.1），evidence 定位面使命终结，登记册终态 = 259/259 retired）",
+      "status": "retired"
     },
     {
       "id": "backward-161",
@@ -2666,8 +2667,8 @@
         "module-logistics/erp-log-service/src/main/java/app/erp/log/service/processor/AbstractErpLogShipmentDeliveredProcessor.java"
       ],
       "successor": "M3.10",
-      "note": "晚域引用早域——晚域 plan 编译器驱动修复清单；M3.10 已兑付（2026-08-23：编译器驱动修复 + 测试 String 化域级全绿，evidence 定位面使命终结）",
-      "status": "active"
+      "note": "晚域引用早域——晚域 plan 编译器驱动修复清单；M3.10 已兑付（2026-08-23：编译器驱动修复 + 测试 String 化域级全绿，evidence 定位面使命终结）；M4.1 批量核销（2026-08-23 mission 收尾批内序 3：19 域 Long→String 迁移全 done（roadmap M1-M3）+ 全量构建/测试/E2E/compliance 四源全绿（M4.1），evidence 定位面使命终结，登记册终态 = 259/259 retired）",
+      "status": "retired"
     },
     {
       "id": "backward-162",
@@ -2682,8 +2683,8 @@
         "module-logistics/erp-log-service/src/main/java/app/erp/log/service/processor/AbstractErpLogShipmentDeliveredProcessor.java"
       ],
       "successor": "M3.10",
-      "note": "晚域引用早域——晚域 plan 编译器驱动修复清单；M3.10 已兑付（2026-08-23：编译器驱动修复 + 测试 String 化域级全绿，evidence 定位面使命终结）",
-      "status": "active"
+      "note": "晚域引用早域——晚域 plan 编译器驱动修复清单；M3.10 已兑付（2026-08-23：编译器驱动修复 + 测试 String 化域级全绿，evidence 定位面使命终结）；M4.1 批量核销（2026-08-23 mission 收尾批内序 3：19 域 Long→String 迁移全 done（roadmap M1-M3）+ 全量构建/测试/E2E/compliance 四源全绿（M4.1），evidence 定位面使命终结，登记册终态 = 259/259 retired）",
+      "status": "retired"
     },
     {
       "id": "backward-163",
@@ -2696,8 +2697,8 @@
         "module-logistics/erp-log-service/src/main/java/app/erp/log/service/processor/AbstractErpLogShipmentDeliveredProcessor.java"
       ],
       "successor": "M3.10",
-      "note": "晚域引用早域——晚域 plan 编译器驱动修复清单；M3.10 已兑付（2026-08-23：编译器驱动修复 + 测试 String 化域级全绿，evidence 定位面使命终结）",
-      "status": "active"
+      "note": "晚域引用早域——晚域 plan 编译器驱动修复清单；M3.10 已兑付（2026-08-23：编译器驱动修复 + 测试 String 化域级全绿，evidence 定位面使命终结）；M4.1 批量核销（2026-08-23 mission 收尾批内序 3：19 域 Long→String 迁移全 done（roadmap M1-M3）+ 全量构建/测试/E2E/compliance 四源全绿（M4.1），evidence 定位面使命终结，登记册终态 = 259/259 retired）",
+      "status": "retired"
     },
     {
       "id": "backward-255",
@@ -2710,8 +2711,8 @@
         "module-logistics/erp-log-service/src/main/java/app/erp/log/service/processor/AbstractErpLogShipmentDeliveredProcessor.java"
       ],
       "successor": "M3.10",
-      "note": "M3.10 Phase 1 FQN 复扫补登：AcctSchemaResolver.resolvePrimarySchemaId(daoProvider, orgId) md id 流（M0.2 扫描器 id-flow 启发式漏报，方法调用口径非 .getId() 模式；ast backward-134 追注同类）；M3.10 已兑付（2026-08-23：编译器驱动修复 + 测试 String 化域级全绿，evidence 定位面使命终结）",
-      "status": "active"
+      "note": "M3.10 Phase 1 FQN 复扫补登：AcctSchemaResolver.resolvePrimarySchemaId(daoProvider, orgId) md id 流（M0.2 扫描器 id-flow 启发式漏报，方法调用口径非 .getId() 模式；ast backward-134 追注同类）；M3.10 已兑付（2026-08-23：编译器驱动修复 + 测试 String 化域级全绿，evidence 定位面使命终结）；M4.1 批量核销（2026-08-23 mission 收尾批内序 3：19 域 Long→String 迁移全 done（roadmap M1-M3）+ 全量构建/测试/E2E/compliance 四源全绿（M4.1），evidence 定位面使命终结，登记册终态 = 259/259 retired）",
+      "status": "retired"
     },
     {
       "id": "backward-164",
@@ -2726,8 +2727,8 @@
         "module-maintenance/erp-mnt-service/src/main/java/app/erp/mnt/service/posting/MntPostingExecutor.java"
       ],
       "successor": "M3.2",
-      "note": "晚域引用早域——晚域 plan 编译器驱动修复清单",
-      "status": "active"
+      "note": "晚域引用早域——晚域 plan 编译器驱动修复清单；M4.1 批量核销（2026-08-23 mission 收尾批内序 3：19 域 Long→String 迁移全 done（roadmap M1-M3）+ 全量构建/测试/E2E/compliance 四源全绿（M4.1），evidence 定位面使命终结，登记册终态 = 259/259 retired）",
+      "status": "retired"
     },
     {
       "id": "backward-165",
@@ -2744,8 +2745,8 @@
         "module-maintenance/erp-mnt-service/src/main/java/app/erp/mnt/service/support/SparePartIssueService.java"
       ],
       "successor": "M3.2",
-      "note": "晚域引用早域——晚域 plan 编译器驱动修复清单",
-      "status": "active"
+      "note": "晚域引用早域——晚域 plan 编译器驱动修复清单；M4.1 批量核销（2026-08-23 mission 收尾批内序 3：19 域 Long→String 迁移全 done（roadmap M1-M3）+ 全量构建/测试/E2E/compliance 四源全绿（M4.1），evidence 定位面使命终结，登记册终态 = 259/259 retired）",
+      "status": "retired"
     },
     {
       "id": "backward-166",
@@ -2759,8 +2760,8 @@
         "module-maintenance/erp-mnt-service/src/main/java/app/erp/mnt/service/posting/MaintenanceLaborPostingDispatcher.java"
       ],
       "successor": "M3.2",
-      "note": "晚域引用早域——晚域 plan 编译器驱动修复清单",
-      "status": "active"
+      "note": "晚域引用早域——晚域 plan 编译器驱动修复清单；M4.1 批量核销（2026-08-23 mission 收尾批内序 3：19 域 Long→String 迁移全 done（roadmap M1-M3）+ 全量构建/测试/E2E/compliance 四源全绿（M4.1），evidence 定位面使命终结，登记册终态 = 259/259 retired）",
+      "status": "retired"
     },
     {
       "id": "backward-167",
@@ -2775,8 +2776,8 @@
         "module-maintenance/erp-mnt-service/src/main/java/app/erp/mnt/service/processor/AbstractErpMntDowntimeEntryProcessor.java"
       ],
       "successor": "M3.2",
-      "note": "晚域引用早域——晚域 plan 编译器驱动修复清单",
-      "status": "active"
+      "note": "晚域引用早域——晚域 plan 编译器驱动修复清单；M4.1 批量核销（2026-08-23 mission 收尾批内序 3：19 域 Long→String 迁移全 done（roadmap M1-M3）+ 全量构建/测试/E2E/compliance 四源全绿（M4.1），evidence 定位面使命终结，登记册终态 = 259/259 retired）",
+      "status": "retired"
     },
     {
       "id": "backward-168",
@@ -2790,8 +2791,8 @@
         "module-manufacturing/erp-mfg-service/src/main/java/app/erp/mfg/service/processor/ErpMfgSubcontractOrderProcessor.java"
       ],
       "successor": "M3.1",
-      "note": "晚域引用早域——晚域 plan 编译器驱动修复清单",
-      "status": "active"
+      "note": "晚域引用早域——晚域 plan 编译器驱动修复清单；M4.1 批量核销（2026-08-23 mission 收尾批内序 3：19 域 Long→String 迁移全 done（roadmap M1-M3）+ 全量构建/测试/E2E/compliance 四源全绿（M4.1），evidence 定位面使命终结，登记册终态 = 259/259 retired）",
+      "status": "retired"
     },
     {
       "id": "backward-169",
@@ -2817,8 +2818,8 @@
         "module-manufacturing/erp-mfg-service/src/main/java/app/erp/mfg/service/workorder/KitAvailabilityChecker.java"
       ],
       "successor": "M3.1",
-      "note": "晚域引用早域——晚域 plan 编译器驱动修复清单",
-      "status": "active"
+      "note": "晚域引用早域——晚域 plan 编译器驱动修复清单；M4.1 批量核销（2026-08-23 mission 收尾批内序 3：19 域 Long→String 迁移全 done（roadmap M1-M3）+ 全量构建/测试/E2E/compliance 四源全绿（M4.1），evidence 定位面使命终结，登记册终态 = 259/259 retired）",
+      "status": "retired"
     },
     {
       "id": "backward-170",
@@ -2831,8 +2832,8 @@
         "module-manufacturing/erp-mfg-service/src/main/java/app/erp/mfg/service/processor/ErpMfgScheduleToJobCardProcessor.java"
       ],
       "successor": "M3.1",
-      "note": "晚域引用早域——晚域 plan 编译器驱动修复清单",
-      "status": "active"
+      "note": "晚域引用早域——晚域 plan 编译器驱动修复清单；M4.1 批量核销（2026-08-23 mission 收尾批内序 3：19 域 Long→String 迁移全 done（roadmap M1-M3）+ 全量构建/测试/E2E/compliance 四源全绿（M4.1），evidence 定位面使命终结，登记册终态 = 259/259 retired）",
+      "status": "retired"
     },
     {
       "id": "backward-171",
@@ -2855,8 +2856,8 @@
         "module-manufacturing/erp-mfg-service/src/main/java/app/erp/mfg/service/spi/ErpMfgSkuReferenceChecker.java"
       ],
       "successor": "M3.1",
-      "note": "晚域引用早域——晚域 plan 编译器驱动修复清单",
-      "status": "active"
+      "note": "晚域引用早域——晚域 plan 编译器驱动修复清单；M4.1 批量核销（2026-08-23 mission 收尾批内序 3：19 域 Long→String 迁移全 done（roadmap M1-M3）+ 全量构建/测试/E2E/compliance 四源全绿（M4.1），evidence 定位面使命终结，登记册终态 = 259/259 retired）",
+      "status": "retired"
     },
     {
       "id": "backward-172",
@@ -2872,8 +2873,8 @@
         "module-manufacturing/erp-mfg-service/src/main/java/app/erp/mfg/service/processor/ErpMfgWorkOrderProcessor.java"
       ],
       "successor": "M3.1",
-      "note": "晚域引用早域——晚域 plan 编译器驱动修复清单",
-      "status": "active"
+      "note": "晚域引用早域——晚域 plan 编译器驱动修复清单；M4.1 批量核销（2026-08-23 mission 收尾批内序 3：19 域 Long→String 迁移全 done（roadmap M1-M3）+ 全量构建/测试/E2E/compliance 四源全绿（M4.1），evidence 定位面使命终结，登记册终态 = 259/259 retired）",
+      "status": "retired"
     },
     {
       "id": "backward-173",
@@ -2887,8 +2888,8 @@
         "module-manufacturing/erp-mfg-service/src/main/java/app/erp/mfg/service/processor/ErpMfgWorkOrderReportCompletionProcessor.java"
       ],
       "successor": "M3.1",
-      "note": "晚域引用早域——晚域 plan 编译器驱动修复清单",
-      "status": "active"
+      "note": "晚域引用早域——晚域 plan 编译器驱动修复清单；M4.1 批量核销（2026-08-23 mission 收尾批内序 3：19 域 Long→String 迁移全 done（roadmap M1-M3）+ 全量构建/测试/E2E/compliance 四源全绿（M4.1），evidence 定位面使命终结，登记册终态 = 259/259 retired）",
+      "status": "retired"
     },
     {
       "id": "backward-174",
@@ -2901,8 +2902,8 @@
         "module-projects/erp-prj-service/src/main/java/app/erp/prj/service/processor/ErpPrjProjectSettlementProcessor.java"
       ],
       "successor": "M2.7",
-      "note": "晚域引用早域——晚域 plan 编译器驱动修复清单",
-      "status": "active"
+      "note": "晚域引用早域——晚域 plan 编译器驱动修复清单；M4.1 批量核销（2026-08-23 mission 收尾批内序 3：19 域 Long→String 迁移全 done（roadmap M1-M3）+ 全量构建/测试/E2E/compliance 四源全绿（M4.1），evidence 定位面使命终结，登记册终态 = 259/259 retired）",
+      "status": "retired"
     },
     {
       "id": "backward-175",
@@ -2917,8 +2918,8 @@
         "module-projects/erp-prj-service/src/main/java/app/erp/prj/service/processor/ErpPrjProjectSettlementProcessor.java"
       ],
       "successor": "M2.7",
-      "note": "晚域引用早域——晚域 plan 编译器驱动修复清单",
-      "status": "active"
+      "note": "晚域引用早域——晚域 plan 编译器驱动修复清单；M4.1 批量核销（2026-08-23 mission 收尾批内序 3：19 域 Long→String 迁移全 done（roadmap M1-M3）+ 全量构建/测试/E2E/compliance 四源全绿（M4.1），evidence 定位面使命终结，登记册终态 = 259/259 retired）",
+      "status": "retired"
     },
     {
       "id": "backward-176",
@@ -2931,8 +2932,8 @@
         "module-projects/erp-prj-service/src/main/java/app/erp/prj/service/posting/TimesheetPostingDispatcher.java"
       ],
       "successor": "M2.7",
-      "note": "晚域引用早域——晚域 plan 编译器驱动修复清单",
-      "status": "active"
+      "note": "晚域引用早域——晚域 plan 编译器驱动修复清单；M4.1 批量核销（2026-08-23 mission 收尾批内序 3：19 域 Long→String 迁移全 done（roadmap M1-M3）+ 全量构建/测试/E2E/compliance 四源全绿（M4.1），evidence 定位面使命终结，登记册终态 = 259/259 retired）",
+      "status": "retired"
     },
     {
       "id": "backward-177",
@@ -2945,8 +2946,8 @@
         "module-projects/erp-prj-service/src/main/java/app/erp/prj/service/posting/TimesheetPostingDispatcher.java"
       ],
       "successor": "M2.7",
-      "note": "晚域引用早域——晚域 plan 编译器驱动修复清单",
-      "status": "active"
+      "note": "晚域引用早域——晚域 plan 编译器驱动修复清单；M4.1 批量核销（2026-08-23 mission 收尾批内序 3：19 域 Long→String 迁移全 done（roadmap M1-M3）+ 全量构建/测试/E2E/compliance 四源全绿（M4.1），evidence 定位面使命终结，登记册终态 = 259/259 retired）",
+      "status": "retired"
     },
     {
       "id": "backward-178",
@@ -2959,8 +2960,8 @@
         "module-purchase/erp-pur-service/src/main/java/app/erp/pur/service/support/ErpPurCtDiscountApplier.java"
       ],
       "successor": "M2.5",
-      "note": "晚域引用早域——晚域 plan 编译器驱动修复清单",
-      "status": "active"
+      "note": "晚域引用早域——晚域 plan 编译器驱动修复清单；M4.1 批量核销（2026-08-23 mission 收尾批内序 3：19 域 Long→String 迁移全 done（roadmap M1-M3）+ 全量构建/测试/E2E/compliance 四源全绿（M4.1），evidence 定位面使命终结，登记册终态 = 259/259 retired）",
+      "status": "retired"
     },
     {
       "id": "backward-179",
@@ -2978,8 +2979,8 @@
         "module-purchase/erp-pur-service/src/main/java/app/erp/pur/service/processor/ErpPurReturnProcessor.java"
       ],
       "successor": "M2.5",
-      "note": "晚域引用早域——晚域 plan 编译器驱动修复清单",
-      "status": "active"
+      "note": "晚域引用早域——晚域 plan 编译器驱动修复清单；M4.1 批量核销（2026-08-23 mission 收尾批内序 3：19 域 Long→String 迁移全 done（roadmap M1-M3）+ 全量构建/测试/E2E/compliance 四源全绿（M4.1），evidence 定位面使命终结，登记册终态 = 259/259 retired）",
+      "status": "retired"
     },
     {
       "id": "backward-180",
@@ -2997,8 +2998,8 @@
         "module-purchase/erp-pur-service/src/main/java/app/erp/pur/service/processor/ErpPurReturnProcessor.java"
       ],
       "successor": "M2.5",
-      "note": "晚域引用早域——晚域 plan 编译器驱动修复清单",
-      "status": "active"
+      "note": "晚域引用早域——晚域 plan 编译器驱动修复清单；M4.1 批量核销（2026-08-23 mission 收尾批内序 3：19 域 Long→String 迁移全 done（roadmap M1-M3）+ 全量构建/测试/E2E/compliance 四源全绿（M4.1），evidence 定位面使命终结，登记册终态 = 259/259 retired）",
+      "status": "retired"
     },
     {
       "id": "backward-181",
@@ -3026,8 +3027,8 @@
         "module-purchase/erp-pur-service/src/main/java/app/erp/pur/service/support/ErpPurSupplierPriceResolver.java"
       ],
       "successor": "M2.5",
-      "note": "晚域引用早域——晚域 plan 编译器驱动修复清单",
-      "status": "active"
+      "note": "晚域引用早域——晚域 plan 编译器驱动修复清单；M4.1 批量核销（2026-08-23 mission 收尾批内序 3：19 域 Long→String 迁移全 done（roadmap M1-M3）+ 全量构建/测试/E2E/compliance 四源全绿（M4.1），evidence 定位面使命终结，登记册终态 = 259/259 retired）",
+      "status": "retired"
     },
     {
       "id": "backward-182",
@@ -3040,8 +3041,8 @@
         "module-purchase/erp-pur-service/src/main/java/app/erp/pur/service/processor/ErpPurReceiveProcessor.java"
       ],
       "successor": "M2.5",
-      "note": "晚域引用早域——晚域 plan 编译器驱动修复清单",
-      "status": "active"
+      "note": "晚域引用早域——晚域 plan 编译器驱动修复清单；M4.1 批量核销（2026-08-23 mission 收尾批内序 3：19 域 Long→String 迁移全 done（roadmap M1-M3）+ 全量构建/测试/E2E/compliance 四源全绿（M4.1），evidence 定位面使命终结，登记册终态 = 259/259 retired）",
+      "status": "retired"
     },
     {
       "id": "backward-183",
@@ -3055,8 +3056,8 @@
         "module-purchase/erp-pur-service/src/main/java/app/erp/pur/service/processor/ErpPurReceiveProcessor.java"
       ],
       "successor": "M2.5",
-      "note": "晚域引用早域——晚域 plan 编译器驱动修复清单",
-      "status": "active"
+      "note": "晚域引用早域——晚域 plan 编译器驱动修复清单；M4.1 批量核销（2026-08-23 mission 收尾批内序 3：19 域 Long→String 迁移全 done（roadmap M1-M3）+ 全量构建/测试/E2E/compliance 四源全绿（M4.1），evidence 定位面使命终结，登记册终态 = 259/259 retired）",
+      "status": "retired"
     },
     {
       "id": "backward-184",
@@ -3070,8 +3071,8 @@
         "module-quality/erp-qa-service/src/main/java/app/erp/qa/service/posting/NcrPostingExecutor.java"
       ],
       "successor": "M2.3",
-      "note": "晚域引用早域——晚域 plan 编译器驱动修复清单",
-      "status": "active"
+      "note": "晚域引用早域——晚域 plan 编译器驱动修复清单；M4.1 批量核销（2026-08-23 mission 收尾批内序 3：19 域 Long→String 迁移全 done（roadmap M1-M3）+ 全量构建/测试/E2E/compliance 四源全绿（M4.1），evidence 定位面使命终结，登记册终态 = 259/259 retired）",
+      "status": "retired"
     },
     {
       "id": "backward-185",
@@ -3086,8 +3087,8 @@
         "module-quality/erp-qa-service/src/main/java/app/erp/qa/service/posting/NcrReturnOrchestrator.java"
       ],
       "successor": "M2.3",
-      "note": "晚域引用早域——晚域 plan 编译器驱动修复清单",
-      "status": "active"
+      "note": "晚域引用早域——晚域 plan 编译器驱动修复清单；M4.1 批量核销（2026-08-23 mission 收尾批内序 3：19 域 Long→String 迁移全 done（roadmap M1-M3）+ 全量构建/测试/E2E/compliance 四源全绿（M4.1），evidence 定位面使命终结，登记册终态 = 259/259 retired）",
+      "status": "retired"
     },
     {
       "id": "backward-186",
@@ -3100,8 +3101,8 @@
         "module-quality/erp-qa-service/src/main/java/app/erp/qa/service/report/ErpQaReportBizModel.java"
       ],
       "successor": "M2.3",
-      "note": "晚域引用早域——晚域 plan 编译器驱动修复清单",
-      "status": "active"
+      "note": "晚域引用早域——晚域 plan 编译器驱动修复清单；M4.1 批量核销（2026-08-23 mission 收尾批内序 3：19 域 Long→String 迁移全 done（roadmap M1-M3）+ 全量构建/测试/E2E/compliance 四源全绿（M4.1），evidence 定位面使命终结，登记册终态 = 259/259 retired）",
+      "status": "retired"
     },
     {
       "id": "backward-187",
@@ -3114,8 +3115,8 @@
         "module-sales/erp-sal-service/src/main/java/app/erp/sal/service/support/ErpSalCtDiscountApplier.java"
       ],
       "successor": "M2.6",
-      "note": "晚域引用早域——晚域 plan 编译器驱动修复清单",
-      "status": "active"
+      "note": "晚域引用早域——晚域 plan 编译器驱动修复清单；M4.1 批量核销（2026-08-23 mission 收尾批内序 3：19 域 Long→String 迁移全 done（roadmap M1-M3）+ 全量构建/测试/E2E/compliance 四源全绿（M4.1），evidence 定位面使命终结，登记册终态 = 259/259 retired）",
+      "status": "retired"
     },
     {
       "id": "backward-188",
@@ -3133,8 +3134,8 @@
         "module-sales/erp-sal-service/src/main/java/app/erp/sal/service/processor/ErpSalReturnProcessor.java"
       ],
       "successor": "M2.6",
-      "note": "晚域引用早域——晚域 plan 编译器驱动修复清单",
-      "status": "active"
+      "note": "晚域引用早域——晚域 plan 编译器驱动修复清单；M4.1 批量核销（2026-08-23 mission 收尾批内序 3：19 域 Long→String 迁移全 done（roadmap M1-M3）+ 全量构建/测试/E2E/compliance 四源全绿（M4.1），evidence 定位面使命终结，登记册终态 = 259/259 retired）",
+      "status": "retired"
     },
     {
       "id": "backward-189",
@@ -3153,8 +3154,8 @@
         "module-sales/erp-sal-service/src/main/java/app/erp/sal/service/processor/ErpSalReturnProcessor.java"
       ],
       "successor": "M2.6",
-      "note": "晚域引用早域——晚域 plan 编译器驱动修复清单",
-      "status": "active"
+      "note": "晚域引用早域——晚域 plan 编译器驱动修复清单；M4.1 批量核销（2026-08-23 mission 收尾批内序 3：19 域 Long→String 迁移全 done（roadmap M1-M3）+ 全量构建/测试/E2E/compliance 四源全绿（M4.1），evidence 定位面使命终结，登记册终态 = 259/259 retired）",
+      "status": "retired"
     },
     {
       "id": "backward-190",
@@ -3185,8 +3186,8 @@
         "module-sales/erp-sal-service/src/main/java/app/erp/sal/service/support/ErpSalCustomerPriceResolver.java"
       ],
       "successor": "M2.6",
-      "note": "晚域引用早域——晚域 plan 编译器驱动修复清单",
-      "status": "active"
+      "note": "晚域引用早域——晚域 plan 编译器驱动修复清单；M4.1 批量核销（2026-08-23 mission 收尾批内序 3：19 域 Long→String 迁移全 done（roadmap M1-M3）+ 全量构建/测试/E2E/compliance 四源全绿（M4.1），evidence 定位面使命终结，登记册终态 = 259/259 retired）",
+      "status": "retired"
     },
     {
       "id": "backward-191",
@@ -3199,8 +3200,8 @@
         "module-sales/erp-sal-service/src/main/java/app/erp/sal/service/entity/CreditLimitChecker.java"
       ],
       "successor": "M2.6",
-      "note": "晚域引用早域——晚域 plan 编译器驱动修复清单",
-      "status": "active"
+      "note": "晚域引用早域——晚域 plan 编译器驱动修复清单；M4.1 批量核销（2026-08-23 mission 收尾批内序 3：19 域 Long→String 迁移全 done（roadmap M1-M3）+ 全量构建/测试/E2E/compliance 四源全绿（M4.1），evidence 定位面使命终结，登记册终态 = 259/259 retired）",
+      "status": "retired"
     },
     {
       "id": "backward-192",
@@ -3214,8 +3215,8 @@
         "module-sales/erp-sal-service/src/main/java/app/erp/sal/service/processor/ErpSalDeliveryProcessor.java"
       ],
       "successor": "M2.6",
-      "note": "晚域引用早域——晚域 plan 编译器驱动修复清单",
-      "status": "active"
+      "note": "晚域引用早域——晚域 plan 编译器驱动修复清单；M4.1 批量核销（2026-08-23 mission 收尾批内序 3：19 域 Long→String 迁移全 done（roadmap M1-M3）+ 全量构建/测试/E2E/compliance 四源全绿（M4.1），evidence 定位面使命终结，登记册终态 = 259/259 retired）",
+      "status": "retired"
     },
     {
       "id": "backward-193",
@@ -3229,8 +3230,8 @@
         "module-aps/erp-aps-service/src/test/java/app/erp/aps/service/TestErpApsWorkOrderToOperationOrder.java"
       ],
       "successor": "M3.9",
-      "note": "晚域 test 引用早域——晚域 plan Phase 3 消费",
-      "status": "active"
+      "note": "晚域 test 引用早域——晚域 plan Phase 3 消费；M4.1 批量核销（2026-08-23 mission 收尾批内序 3：19 域 Long→String 迁移全 done（roadmap M1-M3）+ 全量构建/测试/E2E/compliance 四源全绿（M4.1），evidence 定位面使命终结，登记册终态 = 259/259 retired）",
+      "status": "retired"
     },
     {
       "id": "backward-194",
@@ -3254,8 +3255,8 @@
         "module-assets/erp-ast-service/src/test/java/app/erp/ast/service/TestErpAstValueAdjustment.java"
       ],
       "successor": "M2.4",
-      "note": "晚域 test 引用早域——晚域 plan Phase 3 消费",
-      "status": "active"
+      "note": "晚域 test 引用早域——晚域 plan Phase 3 消费；M4.1 批量核销（2026-08-23 mission 收尾批内序 3：19 域 Long→String 迁移全 done（roadmap M1-M3）+ 全量构建/测试/E2E/compliance 四源全绿（M4.1），evidence 定位面使命终结，登记册终态 = 259/259 retired）",
+      "status": "retired"
     },
     {
       "id": "backward-195",
@@ -3270,8 +3271,8 @@
         "module-assets/erp-ast-service/src/test/java/app/erp/ast/service/TestErpAstCipTransfer.java"
       ],
       "successor": "M2.4",
-      "note": "晚域 test 引用早域——晚域 plan Phase 3 消费",
-      "status": "active"
+      "note": "晚域 test 引用早域——晚域 plan Phase 3 消费；M4.1 批量核销（2026-08-23 mission 收尾批内序 3：19 域 Long→String 迁移全 done（roadmap M1-M3）+ 全量构建/测试/E2E/compliance 四源全绿（M4.1），evidence 定位面使命终结，登记册终态 = 259/259 retired）",
+      "status": "retired"
     },
     {
       "id": "backward-196",
@@ -3284,8 +3285,8 @@
         "module-assets/erp-ast-service/src/test/java/app/erp/ast/service/posting/TestDepreciationPostingFailureAlert.java"
       ],
       "successor": "M2.4",
-      "note": "晚域 test 引用早域——晚域 plan Phase 3 消费",
-      "status": "active"
+      "note": "晚域 test 引用早域——晚域 plan Phase 3 消费；M4.1 批量核销（2026-08-23 mission 收尾批内序 3：19 域 Long→String 迁移全 done（roadmap M1-M3）+ 全量构建/测试/E2E/compliance 四源全绿（M4.1），evidence 定位面使命终结，登记册终态 = 259/259 retired）",
+      "status": "retired"
     },
     {
       "id": "backward-197",
@@ -3298,8 +3299,8 @@
         "module-b2b/erp-b2b-service/src/test/java/app/erp/b2b/service/TestErpB2bPartnerOnboarding.java"
       ],
       "successor": "M3.8",
-      "note": "晚域 test 引用早域——晚域 plan Phase 3 消费",
-      "status": "active"
+      "note": "晚域 test 引用早域——晚域 plan Phase 3 消费；M4.1 批量核销（2026-08-23 mission 收尾批内序 3：19 域 Long→String 迁移全 done（roadmap M1-M3）+ 全量构建/测试/E2E/compliance 四源全绿（M4.1），evidence 定位面使命终结，登记册终态 = 259/259 retired）",
+      "status": "retired"
     },
     {
       "id": "backward-198",
@@ -3312,8 +3313,8 @@
         "module-b2b/erp-b2b-service/src/test/java/app/erp/b2b/service/TestErpB2bPartnerOnboarding.java"
       ],
       "successor": "M3.8",
-      "note": "晚域 test 引用早域——晚域 plan Phase 3 消费",
-      "status": "active"
+      "note": "晚域 test 引用早域——晚域 plan Phase 3 消费；M4.1 批量核销（2026-08-23 mission 收尾批内序 3：19 域 Long→String 迁移全 done（roadmap M1-M3）+ 全量构建/测试/E2E/compliance 四源全绿（M4.1），evidence 定位面使命终结，登记册终态 = 259/259 retired）",
+      "status": "retired"
     },
     {
       "id": "backward-199",
@@ -3338,8 +3339,8 @@
         "module-contract/erp-ct-service/src/test/java/app/erp/ct/service/TestErpCtTerminateGate.java"
       ],
       "successor": "M3.6",
-      "note": "晚域 test 引用早域——晚域 plan Phase 3 消费",
-      "status": "active"
+      "note": "晚域 test 引用早域——晚域 plan Phase 3 消费；M4.1 批量核销（2026-08-23 mission 收尾批内序 3：19 域 Long→String 迁移全 done（roadmap M1-M3）+ 全量构建/测试/E2E/compliance 四源全绿（M4.1），evidence 定位面使命终结，登记册终态 = 259/259 retired）",
+      "status": "retired"
     },
     {
       "id": "backward-200",
@@ -3356,8 +3357,8 @@
         "module-contract/erp-ct-service/src/test/java/app/erp/ct/service/TestErpCtTerminateGate.java"
       ],
       "successor": "M3.6",
-      "note": "晚域 test 引用早域——晚域 plan Phase 3 消费",
-      "status": "active"
+      "note": "晚域 test 引用早域——晚域 plan Phase 3 消费；M4.1 批量核销（2026-08-23 mission 收尾批内序 3：19 域 Long→String 迁移全 done（roadmap M1-M3）+ 全量构建/测试/E2E/compliance 四源全绿（M4.1），evidence 定位面使命终结，登记册终态 = 259/259 retired）",
+      "status": "retired"
     },
     {
       "id": "backward-201",
@@ -3372,8 +3373,8 @@
         "module-crm/erp-crm-service/src/test/java/app/erp/crm/service/TestErpCrmLeadConversion.java"
       ],
       "successor": "M3.4",
-      "note": "晚域 test 引用早域——晚域 plan Phase 3 消费",
-      "status": "active"
+      "note": "晚域 test 引用早域——晚域 plan Phase 3 消费；M4.1 批量核销（2026-08-23 mission 收尾批内序 3：19 域 Long→String 迁移全 done（roadmap M1-M3）+ 全量构建/测试/E2E/compliance 四源全绿（M4.1），evidence 定位面使命终结，登记册终态 = 259/259 retired）",
+      "status": "retired"
     },
     {
       "id": "backward-202",
@@ -3387,8 +3388,8 @@
         "module-crm/erp-crm-service/src/test/java/app/erp/crm/service/TestErpCrmLeadConversion.java"
       ],
       "successor": "M3.4",
-      "note": "晚域 test 引用早域——晚域 plan Phase 3 消费",
-      "status": "active"
+      "note": "晚域 test 引用早域——晚域 plan Phase 3 消费；M4.1 批量核销（2026-08-23 mission 收尾批内序 3：19 域 Long→String 迁移全 done（roadmap M1-M3）+ 全量构建/测试/E2E/compliance 四源全绿（M4.1），evidence 定位面使命终结，登记册终态 = 259/259 retired）",
+      "status": "retired"
     },
     {
       "id": "backward-203",
@@ -3408,8 +3409,8 @@
         "module-cs/erp-cs-service/src/test/java/app/erp/cs/service/job/TestErpCsSurveySendJob.java"
       ],
       "successor": "M3.5",
-      "note": "晚域 test 引用早域——晚域 plan Phase 3 消费",
-      "status": "active"
+      "note": "晚域 test 引用早域——晚域 plan Phase 3 消费；M4.1 批量核销（2026-08-23 mission 收尾批内序 3：19 域 Long→String 迁移全 done（roadmap M1-M3）+ 全量构建/测试/E2E/compliance 四源全绿（M4.1），evidence 定位面使命终结，登记册终态 = 259/259 retired）",
+      "status": "retired"
     },
     {
       "id": "backward-204",
@@ -3427,8 +3428,8 @@
         "module-cs/erp-cs-service/src/test/java/app/erp/cs/service/job/TestErpCsSurveySendJob.java"
       ],
       "successor": "M3.5",
-      "note": "晚域 test 引用早域——晚域 plan Phase 3 消费",
-      "status": "active"
+      "note": "晚域 test 引用早域——晚域 plan Phase 3 消费；M4.1 批量核销（2026-08-23 mission 收尾批内序 3：19 域 Long→String 迁移全 done（roadmap M1-M3）+ 全量构建/测试/E2E/compliance 四源全绿（M4.1），evidence 定位面使命终结，登记册终态 = 259/259 retired）",
+      "status": "retired"
     },
     {
       "id": "backward-205",
@@ -3449,8 +3450,8 @@
         "module-drp/erp-drp-service/src/test/java/app/erp/drp/service/TestErpDrpWiringRegression.java"
       ],
       "successor": "M3.7",
-      "note": "晚域 test 引用早域——晚域 plan Phase 3 消费",
-      "status": "active"
+      "note": "晚域 test 引用早域——晚域 plan Phase 3 消费；M4.1 批量核销（2026-08-23 mission 收尾批内序 3：19 域 Long→String 迁移全 done（roadmap M1-M3）+ 全量构建/测试/E2E/compliance 四源全绿（M4.1），evidence 定位面使命终结，登记册终态 = 259/259 retired）",
+      "status": "retired"
     },
     {
       "id": "backward-206",
@@ -3463,8 +3464,8 @@
         "module-drp/erp-drp-service/src/test/java/app/erp/drp/service/TestErpDrpForecastSource.java"
       ],
       "successor": "M3.7",
-      "note": "晚域 test 引用早域——晚域 plan Phase 3 消费",
-      "status": "active"
+      "note": "晚域 test 引用早域——晚域 plan Phase 3 消费；M4.1 批量核销（2026-08-23 mission 收尾批内序 3：19 域 Long→String 迁移全 done（roadmap M1-M3）+ 全量构建/测试/E2E/compliance 四源全绿（M4.1），evidence 定位面使命终结，登记册终态 = 259/259 retired）",
+      "status": "retired"
     },
     {
       "id": "backward-207",
@@ -3485,8 +3486,8 @@
         "module-drp/erp-drp-service/src/test/java/app/erp/drp/service/TestErpDrpWiringRegression.java"
       ],
       "successor": "M3.7",
-      "note": "晚域 test 引用早域——晚域 plan Phase 3 消费",
-      "status": "active"
+      "note": "晚域 test 引用早域——晚域 plan Phase 3 消费；M4.1 批量核销（2026-08-23 mission 收尾批内序 3：19 域 Long→String 迁移全 done（roadmap M1-M3）+ 全量构建/测试/E2E/compliance 四源全绿（M4.1），evidence 定位面使命终结，登记册终态 = 259/259 retired）",
+      "status": "retired"
     },
     {
       "id": "backward-208",
@@ -3501,8 +3502,8 @@
         "module-drp/erp-drp-service/src/test/java/app/erp/drp/service/TestErpDrpScheduleRelease.java"
       ],
       "successor": "M3.7",
-      "note": "晚域 test 引用早域——晚域 plan Phase 3 消费",
-      "status": "active"
+      "note": "晚域 test 引用早域——晚域 plan Phase 3 消费；M4.1 批量核销（2026-08-23 mission 收尾批内序 3：19 域 Long→String 迁移全 done（roadmap M1-M3）+ 全量构建/测试/E2E/compliance 四源全绿（M4.1），evidence 定位面使命终结，登记册终态 = 259/259 retired）",
+      "status": "retired"
     },
     {
       "id": "backward-209",
@@ -3516,8 +3517,8 @@
         "module-drp/erp-drp-service/src/test/java/app/erp/drp/service/TestErpDrpLeadTimeStats.java"
       ],
       "successor": "M3.7",
-      "note": "晚域 test 引用早域——晚域 plan Phase 3 消费",
-      "status": "active"
+      "note": "晚域 test 引用早域——晚域 plan Phase 3 消费；M4.1 批量核销（2026-08-23 mission 收尾批内序 3：19 域 Long→String 迁移全 done（roadmap M1-M3）+ 全量构建/测试/E2E/compliance 四源全绿（M4.1），evidence 定位面使命终结，登记册终态 = 259/259 retired）",
+      "status": "retired"
     },
     {
       "id": "backward-210",
@@ -3530,8 +3531,8 @@
         "module-drp/erp-drp-service/src/test/java/app/erp/drp/service/TestErpDrpCrossDock.java"
       ],
       "successor": "M3.7",
-      "note": "晚域 test 引用早域——晚域 plan Phase 3 消费",
-      "status": "active"
+      "note": "晚域 test 引用早域——晚域 plan Phase 3 消费；M4.1 批量核销（2026-08-23 mission 收尾批内序 3：19 域 Long→String 迁移全 done（roadmap M1-M3）+ 全量构建/测试/E2E/compliance 四源全绿（M4.1），evidence 定位面使命终结，登记册终态 = 259/259 retired）",
+      "status": "retired"
     },
     {
       "id": "backward-211",
@@ -3601,8 +3602,8 @@
         "module-finance/erp-fin-service/src/test/java/app/erp/fin/service/treasury/TestErpFinCreditFacilityInterest.java"
       ],
       "successor": "M2.1",
-      "note": "晚域 test 引用早域——晚域 plan Phase 3 消费",
-      "status": "active"
+      "note": "晚域 test 引用早域——晚域 plan Phase 3 消费；M4.1 批量核销（2026-08-23 mission 收尾批内序 3：19 域 Long→String 迁移全 done（roadmap M1-M3）+ 全量构建/测试/E2E/compliance 四源全绿（M4.1），evidence 定位面使命终结，登记册终态 = 259/259 retired）",
+      "status": "retired"
     },
     {
       "id": "backward-212",
@@ -3615,8 +3616,8 @@
         "module-finance/erp-fin-service/src/test/java/app/erp/fin/service/posting/TestErpFinPostingExceptionNotify.java"
       ],
       "successor": "M2.1",
-      "note": "晚域 test 引用早域——晚域 plan Phase 3 消费",
-      "status": "active"
+      "note": "晚域 test 引用早域——晚域 plan Phase 3 消费；M4.1 批量核销（2026-08-23 mission 收尾批内序 3：19 域 Long→String 迁移全 done（roadmap M1-M3）+ 全量构建/测试/E2E/compliance 四源全绿（M4.1），evidence 定位面使命终结，登记册终态 = 259/259 retired）",
+      "status": "retired"
     },
     {
       "id": "backward-213",
@@ -3631,8 +3632,8 @@
         "module-hr/erp-hr-service/src/test/java/app/erp/hr/service/report/TestErpHrReportRendering.java"
       ],
       "successor": "M3.3",
-      "note": "晚域 test 引用早域——晚域 plan Phase 3 消费",
-      "status": "active"
+      "note": "晚域 test 引用早域——晚域 plan Phase 3 消费；M4.1 批量核销（2026-08-23 mission 收尾批内序 3：19 域 Long→String 迁移全 done（roadmap M1-M3）+ 全量构建/测试/E2E/compliance 四源全绿（M4.1），evidence 定位面使命终结，登记册终态 = 259/259 retired）",
+      "status": "retired"
     },
     {
       "id": "backward-214",
@@ -3645,8 +3646,8 @@
         "module-hr/erp-hr-service/src/test/java/app/erp/hr/service/report/TestErpHrReportRendering.java"
       ],
       "successor": "M3.3",
-      "note": "晚域 test 引用早域——晚域 plan Phase 3 消费",
-      "status": "active"
+      "note": "晚域 test 引用早域——晚域 plan Phase 3 消费；M4.1 批量核销（2026-08-23 mission 收尾批内序 3：19 域 Long→String 迁移全 done（roadmap M1-M3）+ 全量构建/测试/E2E/compliance 四源全绿（M4.1），evidence 定位面使命终结，登记册终态 = 259/259 retired）",
+      "status": "retired"
     },
     {
       "id": "backward-215",
@@ -3660,8 +3661,8 @@
         "module-hr/erp-hr-service/src/test/java/app/erp/hr/service/job/TestErpHrLeaveApproverTimeoutJob.java"
       ],
       "successor": "M3.3",
-      "note": "晚域 test 引用早域——晚域 plan Phase 3 消费",
-      "status": "active"
+      "note": "晚域 test 引用早域——晚域 plan Phase 3 消费；M4.1 批量核销（2026-08-23 mission 收尾批内序 3：19 域 Long→String 迁移全 done（roadmap M1-M3）+ 全量构建/测试/E2E/compliance 四源全绿（M4.1），evidence 定位面使命终结，登记册终态 = 259/259 retired）",
+      "status": "retired"
     },
     {
       "id": "backward-216",
@@ -3685,8 +3686,8 @@
         "module-inventory/erp-inv-service/src/test/java/app/erp/inv/service/posting/TestErpInvPostingDispatcherFailureHangs.java"
       ],
       "successor": "M2.2",
-      "note": "晚域 test 引用早域——晚域 plan Phase 3 消费",
-      "status": "active"
+      "note": "晚域 test 引用早域——晚域 plan Phase 3 消费；M4.1 批量核销（2026-08-23 mission 收尾批内序 3：19 域 Long→String 迁移全 done（roadmap M1-M3）+ 全量构建/测试/E2E/compliance 四源全绿（M4.1），evidence 定位面使命终结，登记册终态 = 259/259 retired）",
+      "status": "retired"
     },
     {
       "id": "backward-217",
@@ -3715,8 +3716,8 @@
         "module-inventory/erp-inv-service/src/test/java/app/erp/inv/service/perf/TestErpInvCostingReclosePerf.java"
       ],
       "successor": "M2.2",
-      "note": "晚域 test 引用早域——晚域 plan Phase 3 消费",
-      "status": "active"
+      "note": "晚域 test 引用早域——晚域 plan Phase 3 消费；M4.1 批量核销（2026-08-23 mission 收尾批内序 3：19 域 Long→String 迁移全 done（roadmap M1-M3）+ 全量构建/测试/E2E/compliance 四源全绿（M4.1），evidence 定位面使命终结，登记册终态 = 259/259 retired）",
+      "status": "retired"
     },
     {
       "id": "backward-218",
@@ -3730,8 +3731,8 @@
         "module-inventory/erp-inv-service/src/test/java/app/erp/inv/service/processor/TestErpInvLandedCostReverseFailureAlert.java"
       ],
       "successor": "M2.2",
-      "note": "晚域 test 引用早域——晚域 plan Phase 3 消费",
-      "status": "active"
+      "note": "晚域 test 引用早域——晚域 plan Phase 3 消费；M4.1 批量核销（2026-08-23 mission 收尾批内序 3：19 域 Long→String 迁移全 done（roadmap M1-M3）+ 全量构建/测试/E2E/compliance 四源全绿（M4.1），evidence 定位面使命终结，登记册终态 = 259/259 retired）",
+      "status": "retired"
     },
     {
       "id": "backward-219",
@@ -3747,8 +3748,8 @@
         "module-logistics/erp-log-service/src/test/java/app/erp/log/service/processor/TestErpLogSalesDeliveryLinkage.java"
       ],
       "successor": "M3.10",
-      "note": "晚域 test 引用早域——晚域 plan Phase 3 消费；M3.10 已兑付（2026-08-23：编译器驱动修复 + 测试 String 化域级全绿，evidence 定位面使命终结）",
-      "status": "active"
+      "note": "晚域 test 引用早域——晚域 plan Phase 3 消费；M3.10 已兑付（2026-08-23：编译器驱动修复 + 测试 String 化域级全绿，evidence 定位面使命终结）；M4.1 批量核销（2026-08-23 mission 收尾批内序 3：19 域 Long→String 迁移全 done（roadmap M1-M3）+ 全量构建/测试/E2E/compliance 四源全绿（M4.1），evidence 定位面使命终结，登记册终态 = 259/259 retired）",
+      "status": "retired"
     },
     {
       "id": "backward-220",
@@ -3761,8 +3762,8 @@
         "module-logistics/erp-log-service/src/test/java/app/erp/log/service/TestErpLogPath2LandedCost.java"
       ],
       "successor": "M3.10",
-      "note": "晚域 test 引用早域——晚域 plan Phase 3 消费；M3.10 已兑付（2026-08-23：编译器驱动修复 + 测试 String 化域级全绿，evidence 定位面使命终结）",
-      "status": "active"
+      "note": "晚域 test 引用早域——晚域 plan Phase 3 消费；M3.10 已兑付（2026-08-23：编译器驱动修复 + 测试 String 化域级全绿，evidence 定位面使命终结）；M4.1 批量核销（2026-08-23 mission 收尾批内序 3：19 域 Long→String 迁移全 done（roadmap M1-M3）+ 全量构建/测试/E2E/compliance 四源全绿（M4.1），evidence 定位面使命终结，登记册终态 = 259/259 retired）",
+      "status": "retired"
     },
     {
       "id": "backward-221",
@@ -3778,8 +3779,8 @@
         "module-logistics/erp-log-service/src/test/java/app/erp/log/service/processor/TestErpLogSalesDeliveryLinkage.java"
       ],
       "successor": "M3.10",
-      "note": "晚域 test 引用早域——晚域 plan Phase 3 消费；M3.10 Phase 1 FQN 复扫补登 TestErpLogSalesDeliveryLinkage（内联 FQN 引用 md 种子实体 ErpMdOrganization/Currency/Subject/AcctSchema 无 import 语句，b2b A3' 盲区同类）；M3.10 已兑付（2026-08-23：编译器驱动修复 + 测试 String 化域级全绿，evidence 定位面使命终结）",
-      "status": "active"
+      "note": "晚域 test 引用早域——晚域 plan Phase 3 消费；M3.10 Phase 1 FQN 复扫补登 TestErpLogSalesDeliveryLinkage（内联 FQN 引用 md 种子实体 ErpMdOrganization/Currency/Subject/AcctSchema 无 import 语句，b2b A3' 盲区同类）；M3.10 已兑付（2026-08-23：编译器驱动修复 + 测试 String 化域级全绿，evidence 定位面使命终结）；M4.1 批量核销（2026-08-23 mission 收尾批内序 3：19 域 Long→String 迁移全 done（roadmap M1-M3）+ 全量构建/测试/E2E/compliance 四源全绿（M4.1），evidence 定位面使命终结，登记册终态 = 259/259 retired）",
+      "status": "retired"
     },
     {
       "id": "backward-222",
@@ -3792,8 +3793,8 @@
         "module-logistics/erp-log-service/src/test/java/app/erp/log/service/TestErpLogDraftEscalationJob.java"
       ],
       "successor": "M3.10",
-      "note": "晚域 test 引用早域——晚域 plan Phase 3 消费；M3.10 已兑付（2026-08-23：编译器驱动修复 + 测试 String 化域级全绿，evidence 定位面使命终结）",
-      "status": "active"
+      "note": "晚域 test 引用早域——晚域 plan Phase 3 消费；M3.10 已兑付（2026-08-23：编译器驱动修复 + 测试 String 化域级全绿，evidence 定位面使命终结）；M4.1 批量核销（2026-08-23 mission 收尾批内序 3：19 域 Long→String 迁移全 done（roadmap M1-M3）+ 全量构建/测试/E2E/compliance 四源全绿（M4.1），evidence 定位面使命终结，登记册终态 = 259/259 retired）",
+      "status": "retired"
     },
     {
       "id": "backward-223",
@@ -3806,8 +3807,8 @@
         "module-logistics/erp-log-service/src/test/java/app/erp/log/service/TestErpLogPath2LandedCost.java"
       ],
       "successor": "M3.10",
-      "note": "晚域 test 引用早域——晚域 plan Phase 3 消费；M3.10 已兑付（2026-08-23：编译器驱动修复 + 测试 String 化域级全绿，evidence 定位面使命终结）",
-      "status": "active"
+      "note": "晚域 test 引用早域——晚域 plan Phase 3 消费；M3.10 已兑付（2026-08-23：编译器驱动修复 + 测试 String 化域级全绿，evidence 定位面使命终结）；M4.1 批量核销（2026-08-23 mission 收尾批内序 3：19 域 Long→String 迁移全 done（roadmap M1-M3）+ 全量构建/测试/E2E/compliance 四源全绿（M4.1），evidence 定位面使命终结，登记册终态 = 259/259 retired）",
+      "status": "retired"
     },
     {
       "id": "backward-224",
@@ -3820,8 +3821,8 @@
         "module-logistics/erp-log-service/src/test/java/app/erp/log/service/processor/TestErpLogSalesDeliveryLinkage.java"
       ],
       "successor": "M3.10",
-      "note": "晚域 test 引用早域——晚域 plan Phase 3 消费；M3.10 已兑付（2026-08-23：编译器驱动修复 + 测试 String 化域级全绿，evidence 定位面使命终结）",
-      "status": "active"
+      "note": "晚域 test 引用早域——晚域 plan Phase 3 消费；M3.10 已兑付（2026-08-23：编译器驱动修复 + 测试 String 化域级全绿，evidence 定位面使命终结）；M4.1 批量核销（2026-08-23 mission 收尾批内序 3：19 域 Long→String 迁移全 done（roadmap M1-M3）+ 全量构建/测试/E2E/compliance 四源全绿（M4.1），evidence 定位面使命终结，登记册终态 = 259/259 retired）",
+      "status": "retired"
     },
     {
       "id": "backward-225",
@@ -3840,8 +3841,8 @@
         "module-maintenance/erp-mnt-service/src/test/java/app/erp/mnt/service/TestErpMntVisitCancelReversal.java"
       ],
       "successor": "M3.2",
-      "note": "晚域 test 引用早域——晚域 plan Phase 3 消费",
-      "status": "active"
+      "note": "晚域 test 引用早域——晚域 plan Phase 3 消费；M4.1 批量核销（2026-08-23 mission 收尾批内序 3：19 域 Long→String 迁移全 done（roadmap M1-M3）+ 全量构建/测试/E2E/compliance 四源全绿（M4.1），evidence 定位面使命终结，登记册终态 = 259/259 retired）",
+      "status": "retired"
     },
     {
       "id": "backward-226",
@@ -3857,8 +3858,8 @@
         "module-maintenance/erp-mnt-service/src/test/java/app/erp/mnt/service/TestErpMntSparePartUsageReversal.java"
       ],
       "successor": "M3.2",
-      "note": "晚域 test 引用早域——晚域 plan Phase 3 消费",
-      "status": "active"
+      "note": "晚域 test 引用早域——晚域 plan Phase 3 消费；M4.1 批量核销（2026-08-23 mission 收尾批内序 3：19 域 Long→String 迁移全 done（roadmap M1-M3）+ 全量构建/测试/E2E/compliance 四源全绿（M4.1），evidence 定位面使命终结，登记册终态 = 259/259 retired）",
+      "status": "retired"
     },
     {
       "id": "backward-227",
@@ -3876,8 +3877,8 @@
         "module-maintenance/erp-mnt-service/src/test/java/app/erp/mnt/service/TestErpMntVisitCancelReversal.java"
       ],
       "successor": "M3.2",
-      "note": "晚域 test 引用早域——晚域 plan Phase 3 消费",
-      "status": "active"
+      "note": "晚域 test 引用早域——晚域 plan Phase 3 消费；M4.1 批量核销（2026-08-23 mission 收尾批内序 3：19 域 Long→String 迁移全 done（roadmap M1-M3）+ 全量构建/测试/E2E/compliance 四源全绿（M4.1），evidence 定位面使命终结，登记册终态 = 259/259 retired）",
+      "status": "retired"
     },
     {
       "id": "backward-228",
@@ -3890,8 +3891,8 @@
         "module-maintenance/erp-mnt-service/src/test/java/app/erp/mnt/service/TestErpMntDowntimeSchedulingLinkage.java"
       ],
       "successor": "M3.2",
-      "note": "晚域 test 引用早域——晚域 plan Phase 3 消费",
-      "status": "active"
+      "note": "晚域 test 引用早域——晚域 plan Phase 3 消费；M4.1 批量核销（2026-08-23 mission 收尾批内序 3：19 域 Long→String 迁移全 done（roadmap M1-M3）+ 全量构建/测试/E2E/compliance 四源全绿（M4.1），evidence 定位面使命终结，登记册终态 = 259/259 retired）",
+      "status": "retired"
     },
     {
       "id": "backward-229",
@@ -3912,8 +3913,8 @@
         "module-manufacturing/erp-mfg-service/src/test/java/app/erp/mfg/service/TestErpMfgVarianceRecomputeReversal.java"
       ],
       "successor": "M3.1",
-      "note": "晚域 test 引用早域——晚域 plan Phase 3 消费",
-      "status": "active"
+      "note": "晚域 test 引用早域——晚域 plan Phase 3 消费；M4.1 批量核销（2026-08-23 mission 收尾批内序 3：19 域 Long→String 迁移全 done（roadmap M1-M3）+ 全量构建/测试/E2E/compliance 四源全绿（M4.1），evidence 定位面使命终结，登记册终态 = 259/259 retired）",
+      "status": "retired"
     },
     {
       "id": "backward-230",
@@ -3940,8 +3941,8 @@
         "module-manufacturing/erp-mfg-service/src/test/java/app/erp/mfg/service/TestErpMfgWorkOrderStateMachine.java"
       ],
       "successor": "M3.1",
-      "note": "晚域 test 引用早域——晚域 plan Phase 3 消费",
-      "status": "active"
+      "note": "晚域 test 引用早域——晚域 plan Phase 3 消费；M4.1 批量核销（2026-08-23 mission 收尾批内序 3：19 域 Long→String 迁移全 done（roadmap M1-M3）+ 全量构建/测试/E2E/compliance 四源全绿（M4.1），evidence 定位面使命终结，登记册终态 = 259/259 retired）",
+      "status": "retired"
     },
     {
       "id": "backward-231",
@@ -3954,8 +3955,8 @@
         "module-manufacturing/erp-mfg-service/src/test/java/app/erp/mfg/service/TestErpMfgJobCardDowntimeGate.java"
       ],
       "successor": "M3.1",
-      "note": "晚域 test 引用早域——晚域 plan Phase 3 消费",
-      "status": "active"
+      "note": "晚域 test 引用早域——晚域 plan Phase 3 消费；M4.1 批量核销（2026-08-23 mission 收尾批内序 3：19 域 Long→String 迁移全 done（roadmap M1-M3）+ 全量构建/测试/E2E/compliance 四源全绿（M4.1），evidence 定位面使命终结，登记册终态 = 259/259 retired）",
+      "status": "retired"
     },
     {
       "id": "backward-232",
@@ -3991,8 +3992,8 @@
         "module-manufacturing/erp-mfg-service/src/test/java/app/erp/mfg/service/report/TestErpMfgReportRendering.java"
       ],
       "successor": "M3.1",
-      "note": "晚域 test 引用早域——晚域 plan Phase 3 消费",
-      "status": "active"
+      "note": "晚域 test 引用早域——晚域 plan Phase 3 消费；M4.1 批量核销（2026-08-23 mission 收尾批内序 3：19 域 Long→String 迁移全 done（roadmap M1-M3）+ 全量构建/测试/E2E/compliance 四源全绿（M4.1），evidence 定位面使命终结，登记册终态 = 259/259 retired）",
+      "status": "retired"
     },
     {
       "id": "backward-233",
@@ -4007,8 +4008,8 @@
         "module-manufacturing/erp-mfg-service/src/test/java/app/erp/mfg/service/TestErpMfgVarianceAlert.java"
       ],
       "successor": "M3.1",
-      "note": "晚域 test 引用早域——晚域 plan Phase 3 消费",
-      "status": "active"
+      "note": "晚域 test 引用早域——晚域 plan Phase 3 消费；M4.1 批量核销（2026-08-23 mission 收尾批内序 3：19 域 Long→String 迁移全 done（roadmap M1-M3）+ 全量构建/测试/E2E/compliance 四源全绿（M4.1），evidence 定位面使命终结，登记册终态 = 259/259 retired）",
+      "status": "retired"
     },
     {
       "id": "backward-234",
@@ -4021,8 +4022,8 @@
         "module-manufacturing/erp-mfg-service/src/test/java/app/erp/mfg/service/TestErpMfgWorkOrderCancelInspectionLinkage.java"
       ],
       "successor": "M3.1",
-      "note": "晚域 test 引用早域——晚域 plan Phase 3 消费",
-      "status": "active"
+      "note": "晚域 test 引用早域——晚域 plan Phase 3 消费；M4.1 批量核销（2026-08-23 mission 收尾批内序 3：19 域 Long→String 迁移全 done（roadmap M1-M3）+ 全量构建/测试/E2E/compliance 四源全绿（M4.1），evidence 定位面使命终结，登记册终态 = 259/259 retired）",
+      "status": "retired"
     },
     {
       "id": "backward-235",
@@ -4035,8 +4036,8 @@
         "module-projects/erp-prj-service/src/test/java/app/erp/prj/service/TestErpPrjProjectSettlement.java"
       ],
       "successor": "M2.7",
-      "note": "晚域 test 引用早域——晚域 plan Phase 3 消费",
-      "status": "active"
+      "note": "晚域 test 引用早域——晚域 plan Phase 3 消费；M4.1 批量核销（2026-08-23 mission 收尾批内序 3：19 域 Long→String 迁移全 done（roadmap M1-M3）+ 全量构建/测试/E2E/compliance 四源全绿（M4.1），evidence 定位面使命终结，登记册终态 = 259/259 retired）",
+      "status": "retired"
     },
     {
       "id": "backward-236",
@@ -4058,8 +4059,8 @@
         "module-projects/erp-prj-service/src/test/java/app/erp/prj/service/TestErpPrjTimesheetMulticurrencyPosting.java"
       ],
       "successor": "M2.7",
-      "note": "晚域 test 引用早域——晚域 plan Phase 3 消费",
-      "status": "active"
+      "note": "晚域 test 引用早域——晚域 plan Phase 3 消费；M4.1 批量核销（2026-08-23 mission 收尾批内序 3：19 域 Long→String 迁移全 done（roadmap M1-M3）+ 全量构建/测试/E2E/compliance 四源全绿（M4.1），evidence 定位面使命终结，登记册终态 = 259/259 retired）",
+      "status": "retired"
     },
     {
       "id": "backward-237",
@@ -4081,8 +4082,8 @@
         "module-projects/erp-prj-service/src/test/java/app/erp/prj/service/TestErpPrjTimesheetMulticurrencyPosting.java"
       ],
       "successor": "M2.7",
-      "note": "晚域 test 引用早域——晚域 plan Phase 3 消费",
-      "status": "active"
+      "note": "晚域 test 引用早域——晚域 plan Phase 3 消费；M4.1 批量核销（2026-08-23 mission 收尾批内序 3：19 域 Long→String 迁移全 done（roadmap M1-M3）+ 全量构建/测试/E2E/compliance 四源全绿（M4.1），evidence 定位面使命终结，登记册终态 = 259/259 retired）",
+      "status": "retired"
     },
     {
       "id": "backward-238",
@@ -4095,8 +4096,8 @@
         "module-projects/erp-prj-service/src/test/java/app/erp/prj/service/posting/TestTimesheetPostingFailureAlert.java"
       ],
       "successor": "M2.7",
-      "note": "晚域 test 引用早域——晚域 plan Phase 3 消费",
-      "status": "active"
+      "note": "晚域 test 引用早域——晚域 plan Phase 3 消费；M4.1 批量核销（2026-08-23 mission 收尾批内序 3：19 域 Long→String 迁移全 done（roadmap M1-M3）+ 全量构建/测试/E2E/compliance 四源全绿（M4.1），evidence 定位面使命终结，登记册终态 = 259/259 retired）",
+      "status": "retired"
     },
     {
       "id": "backward-239",
@@ -4109,8 +4110,8 @@
         "module-purchase/erp-pur-service/src/test/java/app/erp/pur/service/TestErpPurOrderCtDiscount.java"
       ],
       "successor": "M2.5",
-      "note": "晚域 test 引用早域——晚域 plan Phase 3 消费",
-      "status": "active"
+      "note": "晚域 test 引用早域——晚域 plan Phase 3 消费；M4.1 批量核销（2026-08-23 mission 收尾批内序 3：19 域 Long→String 迁移全 done（roadmap M1-M3）+ 全量构建/测试/E2E/compliance 四源全绿（M4.1），evidence 定位面使命终结，登记册终态 = 259/259 retired）",
+      "status": "retired"
     },
     {
       "id": "backward-240",
@@ -4149,8 +4150,8 @@
         "module-purchase/erp-pur-service/src/test/java/app/erp/pur/service/posting/TestPurReversalListenerReceiveRollback.java"
       ],
       "successor": "M2.5",
-      "note": "晚域 test 引用早域——晚域 plan Phase 3 消费",
-      "status": "active"
+      "note": "晚域 test 引用早域——晚域 plan Phase 3 消费；M4.1 批量核销（2026-08-23 mission 收尾批内序 3：19 域 Long→String 迁移全 done（roadmap M1-M3）+ 全量构建/测试/E2E/compliance 四源全绿（M4.1），evidence 定位面使命终结，登记册终态 = 259/259 retired）",
+      "status": "retired"
     },
     {
       "id": "backward-241",
@@ -4170,8 +4171,8 @@
         "module-purchase/erp-pur-service/src/test/java/app/erp/pur/service/TestErpPurToInvToFinPostingEnd.java"
       ],
       "successor": "M2.5",
-      "note": "晚域 test 引用早域——晚域 plan Phase 3 消费",
-      "status": "active"
+      "note": "晚域 test 引用早域——晚域 plan Phase 3 消费；M4.1 批量核销（2026-08-23 mission 收尾批内序 3：19 域 Long→String 迁移全 done（roadmap M1-M3）+ 全量构建/测试/E2E/compliance 四源全绿（M4.1），evidence 定位面使命终结，登记册终态 = 259/259 retired）",
+      "status": "retired"
     },
     {
       "id": "backward-242",
@@ -4221,8 +4222,8 @@
         "module-purchase/erp-pur-service/src/test/java/app/erp/pur/service/dashboard/TestErpPurDashboard.java"
       ],
       "successor": "M2.5",
-      "note": "晚域 test 引用早域——晚域 plan Phase 3 消费",
-      "status": "active"
+      "note": "晚域 test 引用早域——晚域 plan Phase 3 消费；M4.1 批量核销（2026-08-23 mission 收尾批内序 3：19 域 Long→String 迁移全 done（roadmap M1-M3）+ 全量构建/测试/E2E/compliance 四源全绿（M4.1），evidence 定位面使命终结，登记册终态 = 259/259 retired）",
+      "status": "retired"
     },
     {
       "id": "backward-243",
@@ -4235,8 +4236,8 @@
         "module-purchase/erp-pur-service/src/test/java/app/erp/pur/service/TestErpPurPaymentApprovalNotifications.java"
       ],
       "successor": "M2.5",
-      "note": "晚域 test 引用早域——晚域 plan Phase 3 消费",
-      "status": "active"
+      "note": "晚域 test 引用早域——晚域 plan Phase 3 消费；M4.1 批量核销（2026-08-23 mission 收尾批内序 3：19 域 Long→String 迁移全 done（roadmap M1-M3）+ 全量构建/测试/E2E/compliance 四源全绿（M4.1），evidence 定位面使命终结，登记册终态 = 259/259 retired）",
+      "status": "retired"
     },
     {
       "id": "backward-244",
@@ -4249,8 +4250,8 @@
         "module-purchase/erp-pur-service/src/test/java/app/erp/pur/service/TestErpPurReceiveMaterialCostAggregation.java"
       ],
       "successor": "M2.5",
-      "note": "晚域 test 引用早域——晚域 plan Phase 3 消费",
-      "status": "active"
+      "note": "晚域 test 引用早域——晚域 plan Phase 3 消费；M4.1 批量核销（2026-08-23 mission 收尾批内序 3：19 域 Long→String 迁移全 done（roadmap M1-M3）+ 全量构建/测试/E2E/compliance 四源全绿（M4.1），evidence 定位面使命终结，登记册终态 = 259/259 retired）",
+      "status": "retired"
     },
     {
       "id": "backward-245",
@@ -4263,8 +4264,8 @@
         "module-purchase/erp-pur-service/src/test/java/app/erp/pur/service/TestErpPurReceiveCancelInspectionLinkage.java"
       ],
       "successor": "M2.5",
-      "note": "晚域 test 引用早域——晚域 plan Phase 3 消费",
-      "status": "active"
+      "note": "晚域 test 引用早域——晚域 plan Phase 3 消费；M4.1 批量核销（2026-08-23 mission 收尾批内序 3：19 域 Long→String 迁移全 done（roadmap M1-M3）+ 全量构建/测试/E2E/compliance 四源全绿（M4.1），evidence 定位面使命终结，登记册终态 = 259/259 retired）",
+      "status": "retired"
     },
     {
       "id": "backward-246",
@@ -4278,8 +4279,8 @@
         "module-quality/erp-qa-service/src/test/java/app/erp/qa/service/TestErpQaNcrPosting.java"
       ],
       "successor": "M2.3",
-      "note": "晚域 test 引用早域——晚域 plan Phase 3 消费",
-      "status": "active"
+      "note": "晚域 test 引用早域——晚域 plan Phase 3 消费；M4.1 批量核销（2026-08-23 mission 收尾批内序 3：19 域 Long→String 迁移全 done（roadmap M1-M3）+ 全量构建/测试/E2E/compliance 四源全绿（M4.1），evidence 定位面使命终结，登记册终态 = 259/259 retired）",
+      "status": "retired"
     },
     {
       "id": "backward-247",
@@ -4294,8 +4295,8 @@
         "module-quality/erp-qa-service/src/test/java/app/erp/qa/service/TestErpQaRecallLocateNotifyReturn.java"
       ],
       "successor": "M2.3",
-      "note": "晚域 test 引用早域——晚域 plan Phase 3 消费",
-      "status": "active"
+      "note": "晚域 test 引用早域——晚域 plan Phase 3 消费；M4.1 批量核销（2026-08-23 mission 收尾批内序 3：19 域 Long→String 迁移全 done（roadmap M1-M3）+ 全量构建/测试/E2E/compliance 四源全绿（M4.1），evidence 定位面使命终结，登记册终态 = 259/259 retired）",
+      "status": "retired"
     },
     {
       "id": "backward-248",
@@ -4311,8 +4312,8 @@
         "module-quality/erp-qa-service/src/test/java/app/erp/qa/service/report/TestErpQaReportRendering.java"
       ],
       "successor": "M2.3",
-      "note": "晚域 test 引用早域——晚域 plan Phase 3 消费",
-      "status": "active"
+      "note": "晚域 test 引用早域——晚域 plan Phase 3 消费；M4.1 批量核销（2026-08-23 mission 收尾批内序 3：19 域 Long→String 迁移全 done（roadmap M1-M3）+ 全量构建/测试/E2E/compliance 四源全绿（M4.1），evidence 定位面使命终结，登记册终态 = 259/259 retired）",
+      "status": "retired"
     },
     {
       "id": "backward-249",
@@ -4325,8 +4326,8 @@
         "module-sales/erp-sal-service/src/test/java/app/erp/sal/service/TestErpSalOrderCtDiscount.java"
       ],
       "successor": "M2.6",
-      "note": "晚域 test 引用早域——晚域 plan Phase 3 消费",
-      "status": "active"
+      "note": "晚域 test 引用早域——晚域 plan Phase 3 消费；M4.1 批量核销（2026-08-23 mission 收尾批内序 3：19 域 Long→String 迁移全 done（roadmap M1-M3）+ 全量构建/测试/E2E/compliance 四源全绿（M4.1），evidence 定位面使命终结，登记册终态 = 259/259 retired）",
+      "status": "retired"
     },
     {
       "id": "backward-250",
@@ -4364,8 +4365,8 @@
         "module-sales/erp-sal-service/src/test/java/app/erp/sal/service/posting/TestSalReversalListenerRollback.java"
       ],
       "successor": "M2.6",
-      "note": "晚域 test 引用早域——晚域 plan Phase 3 消费",
-      "status": "active"
+      "note": "晚域 test 引用早域——晚域 plan Phase 3 消费；M4.1 批量核销（2026-08-23 mission 收尾批内序 3：19 域 Long→String 迁移全 done（roadmap M1-M3）+ 全量构建/测试/E2E/compliance 四源全绿（M4.1），evidence 定位面使命终结，登记册终态 = 259/259 retired）",
+      "status": "retired"
     },
     {
       "id": "backward-251",
@@ -4387,8 +4388,8 @@
         "module-sales/erp-sal-service/src/test/java/app/erp/sal/service/TestErpSalReturnTrace.java"
       ],
       "successor": "M2.6",
-      "note": "晚域 test 引用早域——晚域 plan Phase 3 消费",
-      "status": "active"
+      "note": "晚域 test 引用早域——晚域 plan Phase 3 消费；M4.1 批量核销（2026-08-23 mission 收尾批内序 3：19 域 Long→String 迁移全 done（roadmap M1-M3）+ 全量构建/测试/E2E/compliance 四源全绿（M4.1），evidence 定位面使命终结，登记册终态 = 259/259 retired）",
+      "status": "retired"
     },
     {
       "id": "backward-252",
@@ -4434,8 +4435,8 @@
         "module-sales/erp-sal-service/src/test/java/app/erp/sal/service/dashboard/TestErpSalDashboard.java"
       ],
       "successor": "M2.6",
-      "note": "晚域 test 引用早域——晚域 plan Phase 3 消费",
-      "status": "active"
+      "note": "晚域 test 引用早域——晚域 plan Phase 3 消费；M4.1 批量核销（2026-08-23 mission 收尾批内序 3：19 域 Long→String 迁移全 done（roadmap M1-M3）+ 全量构建/测试/E2E/compliance 四源全绿（M4.1），evidence 定位面使命终结，登记册终态 = 259/259 retired）",
+      "status": "retired"
     },
     {
       "id": "backward-253",
@@ -4448,8 +4449,8 @@
         "module-sales/erp-sal-service/src/test/java/app/erp/sal/service/TestErpSalCreditNotify.java"
       ],
       "successor": "M2.6",
-      "note": "晚域 test 引用早域——晚域 plan Phase 3 消费",
-      "status": "active"
+      "note": "晚域 test 引用早域——晚域 plan Phase 3 消费；M4.1 批量核销（2026-08-23 mission 收尾批内序 3：19 域 Long→String 迁移全 done（roadmap M1-M3）+ 全量构建/测试/E2E/compliance 四源全绿（M4.1），evidence 定位面使命终结，登记册终态 = 259/259 retired）",
+      "status": "retired"
     },
     {
       "id": "backward-254",
@@ -4462,8 +4463,8 @@
         "module-sales/erp-sal-service/src/test/java/app/erp/sal/service/TestErpSalDeliveryCancelInspectionLinkage.java"
       ],
       "successor": "M2.6",
-      "note": "晚域 test 引用早域——晚域 plan Phase 3 消费",
-      "status": "active"
+      "note": "晚域 test 引用早域——晚域 plan Phase 3 消费；M4.1 批量核销（2026-08-23 mission 收尾批内序 3：19 域 Long→String 迁移全 done（roadmap M1-M3）+ 全量构建/测试/E2E/compliance 四源全绿（M4.1），evidence 定位面使命终结，登记册终态 = 259/259 retired）",
+      "status": "retired"
     }
   ],
   "counts": {
