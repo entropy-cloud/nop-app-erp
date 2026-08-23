@@ -39,7 +39,7 @@ import { cleanupVoucherByBillCode } from '../orchestration/_helper';
  *
  * 种子引用：org id=2 / acctSchema ACCT-FIN-01 id=1。测试期间用 2026-08（种子仅有 2026-07 id=1 OPEN）。
  */
-const ORG = 2;
+const ORG = '2';
 
 let _seq = 0;
 function uniq(tag: string): string {
@@ -85,9 +85,9 @@ async function cleanupPeriod(page: import('@playwright/test').Page, ctx: Cleanup
   }
   // per-module 关账状态行
   if (ctx.periodId != null) {
-    await deleteByFilter(page, 'ErpFinAccountingPeriodStatus', eqFilter('periodId', Number(ctx.periodId)));
+    await deleteByFilter(page, 'ErpFinAccountingPeriodStatus', eqFilter('periodId', ctx.periodId));
     // 试算平衡表快照（若存在）
-    await deleteByFilter(page, 'ErpFinTrialBalance', eqFilter('periodId', Number(ctx.periodId))).catch(() => {});
+    await deleteByFilter(page, 'ErpFinTrialBalance', eqFilter('periodId', ctx.periodId)).catch(() => {});
     // 期间本身
     await deleteById(page, 'ErpFinAccountingPeriod', ctx.periodId);
   }
@@ -106,7 +106,7 @@ test.describe('Finance period-close wizard action E2E', () => {
       // hasIssues/issueCount 非 GraphQL 字段（has*/非 get 方法不被 Nop bean 暴露），客户端按 PeriodPreCheckReport.hasIssues() 同语义计算。
       const gql = new GraphQLClient(page);
       const preCheckJson: any = await gql.raw(
-        `query(${'$'}pid:Long){ ErpFinAccountingPeriod__preCheck(periodId:${'$'}pid){ unpostedVoucherCodes unsettledArApCodes unresolvedPostingExceptionKeys allowanceRequired allowanceBalance allowanceShortfall allowanceExcess } }`,
+        `query(${'$'}pid:String){ ErpFinAccountingPeriod__preCheck(periodId:${'$'}pid){ unpostedVoucherCodes unsettledArApCodes unresolvedPostingExceptionKeys allowanceRequired allowanceBalance allowanceShortfall allowanceExcess } }`,
         { pid: period.id },
       );
       expect(preCheckJson?.errors, 'preCheck should not return GraphQL errors').toBeFalsy();
@@ -140,7 +140,7 @@ test.describe('Finance period-close wizard action E2E', () => {
 
       // per-module 关账结果数据源（ErpFinAccountingPeriodStatus，向导 Step 2 结果卡消费）
       const statusRow = await findFirst<any>(
-        page, 'ErpFinAccountingPeriodStatus', eqFilter('periodId', Number(period.id)),
+        page, 'ErpFinAccountingPeriodStatus', eqFilter('periodId', period.id),
         'id arStatus apStatus invStatus glStatus assetStatus',
       );
       expect(statusRow, 'closePeriod should produce ErpFinAccountingPeriodStatus row').toBeTruthy();
@@ -176,7 +176,7 @@ test.describe('Finance period-close wizard action E2E', () => {
 
       // 审计轨迹落库断言（RC-9 全程审计[操作人/原因]）：reversedBy/reverseCloseReason/reverseCloseAt 三列回读
       const reversedAudit = await findFirst<any>(
-        page, 'ErpFinAccountingPeriod', eqFilter('id', Number(period.id)),
+        page, 'ErpFinAccountingPeriod', eqFilter('id', period.id),
         'id status reversedBy reverseCloseReason reverseCloseAt',
       );
       expect(reversedAudit, 'reverseClose audit fields should be readable via __findPage').toBeTruthy();
@@ -195,7 +195,7 @@ test.describe('Finance period-close wizard action E2E', () => {
         );
         let hasReversal = false;
         for (const lnk of allLinks) {
-          const v = await findFirst<any>(page, 'ErpFinVoucher', eqFilter('id', Number(lnk.voucherId)), 'id postingType');
+          const v = await findFirst<any>(page, 'ErpFinVoucher', eqFilter('id', lnk.voucherId), 'id postingType');
           if (v && v.postingType === 'REVERSAL') { hasReversal = true; break; }
         }
         expect(hasReversal, 'reverseClose should produce a REVERSAL voucher red-reversing the close voucher').toBe(true);

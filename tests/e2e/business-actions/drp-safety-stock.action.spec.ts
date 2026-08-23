@@ -28,9 +28,9 @@ import { test, expect, loginAndNavigate, createViaSave, callMutationOk, verifySt
  * 清理：删 Calc + Parameter。
  */
 
-const MATERIAL_ID = 4; // MAT-004 包装
-const WAREHOUSE_ID = 2; // WH-RAW（区别于 drp-plan-engine 的 WH-MAIN，三元组隔离）
-const ORG_ID = 2; // 种子 ERP-CO（__save 强制 org FK 校验）
+const MATERIAL_ID = '4'; // MAT-004 包装
+const WAREHOUSE_ID = '2'; // WH-RAW（区别于 drp-plan-engine 的 WH-MAIN，三元组隔离）
+const ORG_ID = '2'; // 种子 ERP-CO（__save 强制 org FK 校验）
 
 async function seedParameter(page: import('@playwright/test').Page, tag: string): Promise<{ id: string; safetyStock: number | string }> {
   return createViaSave(

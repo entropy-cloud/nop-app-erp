@@ -39,9 +39,9 @@ import { cleanupVoucherByBillCode, findVoucherIdByBillCode, assertVoucherLines }
  * 种子引用：org id=2 / category id=1（AST-CAT-IT，STRAIGHT_LINE 36 月）/ currency id=1（CNY）/
  * period 2026-07（OPEN）/ acctSchema ACCT-FIN-01 id=1。
  */
-const ORG_ID = 2;
-const CATEGORY_ID = 1;
-const CURRENCY_ID = 1;
+const ORG_ID = '2';
+const CATEGORY_ID = '1';
+const CURRENCY_ID = '1';
 const PERIOD = '2026-07';
 
 /**
@@ -93,7 +93,7 @@ test.describe('assets ErpAstDepreciationSchedule depreciation engine lifecycle',
 
       // DEPRECIATION 正向凭证行精确数值断言（0742-1）：Dr 6602(折旧费用) / Cr 1602(累计折旧)，金额=DEP_AMOUNT
       // executed.voucherId 即 schedule.voucherId（processor tryPost 写入的 NORMAL 凭证 id），可直用。
-      await assertVoucherLines(page, Number(executed.voucherId), [
+      await assertVoucherLines(page, executed.voucherId, [
         { subjectCode: '6602', dcDirection: 'DEBIT', debitAmount: DEP_AMOUNT, creditAmount: 0 },
         { subjectCode: '1602', dcDirection: 'CREDIT', debitAmount: 0, creditAmount: DEP_AMOUNT },
       ]);
@@ -186,7 +186,7 @@ test.describe('assets ErpAstDepreciationSchedule depreciation engine lifecycle',
       // executeDepreciation 不存在资产拒绝：ERR_ASSET_NOT_FOUND
       const rej2 = await callMutation(
         page, 'ErpAstDepreciationSchedule', 'executeDepreciation',
-        { assetId: 99999999, period: PERIOD }, 'id',
+        { assetId: '99999999', period: PERIOD }, 'id',
       );
       expect(rej2.errors, 'executeDepreciation on non-existent asset should be rejected').toBeTruthy();
     } finally {

@@ -66,7 +66,7 @@ test.describe('finance ErpFinVoucherTemplate renderTemplate (F16 P1)', () => {
           dcDirection: 'DEBIT',
           amountKey: 'DOC_TOTAL',
           memoTemplate: '采购入库 ${DOC_TOTAL}',
-          templateId: Number(tpl.id),
+          templateId: tpl.id,
         },
         'id',
       );
@@ -79,7 +79,7 @@ test.describe('finance ErpFinVoucherTemplate renderTemplate (F16 P1)', () => {
           dcDirection: 'CREDIT',
           amountExpression: 'DOC_TOTAL * 0.13',
           memoTemplate: '应付 13%',
-          templateId: Number(tpl.id),
+          templateId: tpl.id,
         },
         'id',
       );

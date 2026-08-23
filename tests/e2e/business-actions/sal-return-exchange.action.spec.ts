@@ -31,8 +31,8 @@ async function cleanupMove(page: Page, move: { id?: number; code?: string }): Pr
   if (!move) return;
   if (move.code) await cleanupVoucherByBillCode(page, move.code);
   if (move.id != null) {
-    await deleteByFilter(page, 'ErpInvStockLedger', eqFilter('moveId', Number(move.id)));
-    await deleteByFilter(page, 'ErpInvStockMoveLine', eqFilter('moveId', Number(move.id)));
+    await deleteByFilter(page, 'ErpInvStockLedger', eqFilter('moveId', move.id));
+    await deleteByFilter(page, 'ErpInvStockMoveLine', eqFilter('moveId', move.id));
     await deleteById(page, 'ErpInvStockMove', move.id);
   }
 }
@@ -112,11 +112,11 @@ test.describe('sales ErpSalReturn exchange flow (returnType=EXCHANGE + generateE
       const exCode = `EX-${retCode}`;
       const exDlv = await findItems<{ id: number; code: string; exchangeReturnId: number; docStatus: string; approveStatus: string }>(
         page, 'ErpSalDelivery',
-        andFilter(eqFilter('code', exCode), eqFilter('exchangeReturnId', Number(ret.id))),
+        andFilter(eqFilter('code', exCode), eqFilter('exchangeReturnId', ret.id)),
         'id code exchangeReturnId docStatus approveStatus',
       );
       expect(exDlv.length, 'exchange delivery should exist with code EX-<returnCode>').toBe(1);
-      expect(exDlv[0].exchangeReturnId, 'delivery.exchangeReturnId = return.id（断言④ 反向）').toBe(Number(ret.id));
+      expect(exDlv[0].exchangeReturnId, 'delivery.exchangeReturnId = return.id（断言④ 反向）').toBe(ret.id);
       expect(exDlv[0].docStatus, 'exchange delivery DRAFT 待标准出库审核').toBe('DRAFT');
       expect(exDlv[0].approveStatus, 'exchange delivery UNSUBMITTED').toBe('UNSUBMITTED');
 
@@ -149,7 +149,7 @@ test.describe('sales ErpSalReturn exchange flow (returnType=EXCHANGE + generateE
         await cleanupMove(page, { id: m.id, code: m.code });
       }
       await cleanupVoucherByBillCode(page, exCode);
-      await deleteByFilter(page, 'ErpSalDeliveryLine', eqFilter('deliveryId', Number(exDlv[0].id)));
+      await deleteByFilter(page, 'ErpSalDeliveryLine', eqFilter('deliveryId', exDlv[0].id));
       await deleteById(page, 'ErpSalDelivery', exDlv[0].id);
 
       await cleanupVoucherByBillCode(page, retCode);
@@ -158,7 +158,7 @@ test.describe('sales ErpSalReturn exchange flow (returnType=EXCHANGE + generateE
         await cleanupMove(page, { id: m.id, code: m.code });
       }
       await deleteByFilter(page, 'ErpInvStockBalance', andFilter(eqFilter('materialId', SEED.MAT_1), eqFilter('warehouseId', SEED.WH_RAW)));
-      await deleteByFilter(page, 'ErpSalReturnLine', eqFilter('returnId', Number(ret.id)));
+      await deleteByFilter(page, 'ErpSalReturnLine', eqFilter('returnId', ret.id));
       await deleteById(page, 'ErpSalReturn', ret.id);
     } finally {
       await cleanupO2c(page, o2c);

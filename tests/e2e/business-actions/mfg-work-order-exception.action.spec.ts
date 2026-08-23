@@ -35,7 +35,7 @@ import {
  * 清理：异常分支无过账/库存产物（仅逻辑删除 WO+BOM）；部分完工有 MANUFACTURE 入库移动 → cleanupMfg。
  */
 
-const PRODUCT_ID = 1; // MAT-001
+const PRODUCT_ID = '1'; // MAT-001
 const BDATE = '2026-07-10';
 
 async function seedBom(page: import('@playwright/test').Page, tag: string): Promise<{ id: string }> {

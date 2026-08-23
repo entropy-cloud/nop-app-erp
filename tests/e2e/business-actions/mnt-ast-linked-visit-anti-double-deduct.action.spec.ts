@@ -64,14 +64,14 @@ import {
  *   测试 2：assets 凭证 → assets 费用行 + 维修工单。
  */
 
-const ORG = 2;
-const WH = 2;            // WH-RAW
-const UOM = 1;           // PCS
-const CURRENCY = 1;
-const ACCT_SCHEMA = 1;   // ACCT-FIN-01
-const EQUIPMENT_ID = 1;  // EQ-2026-001 种子设备 RUNNING
+const ORG = '2';
+const WH = '2';            // WH-RAW
+const UOM = '1';           // PCS
+const CURRENCY = '1';
+const ACCT_SCHEMA = '1';   // ACCT-FIN-01
+const EQUIPMENT_ID = '1';  // EQ-2026-001 种子设备 RUNNING
 const ASSIGNED_TO = 2;   // 种子员工
-const SEED_ASSET_ID = 3; // AST-2026-003 IN_SERVICE（EXPENSE 不修改资产）
+const SEED_ASSET_ID = '3'; // AST-2026-003 IN_SERVICE（EXPENSE 不修改资产）
 const BDATE = '2026-07-10';
 const VISIT_DATE = '2026-12-25';
 const MOVE_REQ_TYPE = 'i_app_erp_inv_biz_StockMoveRequest';
@@ -166,7 +166,7 @@ test.describe('maintenance × assets linked-visit anti-double-deduct (cross-doma
 
     // __get 独立核实 maintenanceVisitId 已落库（linkedVisit 判定源）
     const mntVerified = await verifyState(page, 'ErpAstMaintenance', mnt.id, 'maintenanceVisitId');
-    expect(Number(mntVerified.maintenanceVisitId), 'maintenanceVisitId should be set to visit.id').toBe(Number(visit.id));
+    expect(mntVerified.maintenanceVisitId, 'maintenanceVisitId should be set to visit.id').toBe(visit.id);
 
     const costRow = await createViaSave(
       page, 'ErpAstMaintenanceCost',
@@ -237,8 +237,8 @@ test.describe('maintenance × assets linked-visit anti-double-deduct (cross-doma
         'id code',
       );
       if (issueMove) {
-        await deleteByFilter(page, 'ErpInvStockLedger', eqFilter('moveId', Number(issueMove.id)));
-        await deleteByFilter(page, 'ErpInvStockMoveLine', eqFilter('moveId', Number(issueMove.id)));
+        await deleteByFilter(page, 'ErpInvStockLedger', eqFilter('moveId', issueMove.id));
+        await deleteByFilter(page, 'ErpInvStockMoveLine', eqFilter('moveId', issueMove.id));
         await deleteById(page, 'ErpInvStockMove', issueMove.id);
       }
       // 4. assets 费用行 + 维修工单（EXPENSE 不修改资产卡片，无回退需要）
@@ -249,11 +249,11 @@ test.describe('maintenance × assets linked-visit anti-double-deduct (cross-doma
       await deleteById(page, 'ErpMntSparePartUsage', usage.id);
       await deleteById(page, 'ErpMntVisit', visit.id);
       // 6. StockLedger 按 materialId（含 INCOMING 备货 + OUTGOING 出库行）
-      await deleteByFilter(page, 'ErpInvStockLedger', eqFilter('materialId', Number(material.id)));
+      await deleteByFilter(page, 'ErpInvStockLedger', eqFilter('materialId', material.id));
       // 7. StockBalance 按 materialId+warehouseId（测试专用物料无种子余额行，整行删除安全）
-      await deleteByFilter(page, 'ErpInvStockBalance', andFilter(eqFilter('materialId', Number(material.id)), eqFilter('warehouseId', WH)));
+      await deleteByFilter(page, 'ErpInvStockBalance', andFilter(eqFilter('materialId', material.id), eqFilter('warehouseId', WH)));
       // 8. INCOMING 备货移动（lines + move）
-      await deleteByFilter(page, 'ErpInvStockMoveLine', eqFilter('moveId', Number(setupMove.id)));
+      await deleteByFilter(page, 'ErpInvStockMoveLine', eqFilter('moveId', setupMove.id));
       await deleteById(page, 'ErpInvStockMove', setupMove.id);
       // 9. 测试物料
       await deleteById(page, 'ErpMdMaterial', material.id);

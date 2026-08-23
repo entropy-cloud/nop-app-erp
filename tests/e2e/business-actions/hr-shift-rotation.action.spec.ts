@@ -60,7 +60,7 @@ async function createEmployee(page: import('@playwright/test').Page, tag: string
       hireDate: '2024-01-01',
       employmentStatus: 'ACTIVE',
       employeeType: 'FULL_TIME',
-      orgId: 2,
+      orgId: '2',
     },
     'id',
   );
@@ -83,7 +83,7 @@ async function createShiftByCode(
       graceEarlyLeaveMinutes: 15,
       requireClockIn: false,
       requireClockOut: false,
-      orgId: 2,
+      orgId: '2',
     },
     'id code',
   );
@@ -101,14 +101,14 @@ async function createPattern(
       name: 'E2E 轮换模板',
       patternType: 'CYCLE_DAYS',
       patternData,
-      orgId: 2,
+      orgId: '2',
     },
     'id',
   );
 }
 
 async function cleanupEmployee(page: import('@playwright/test').Page, employeeId: string | number): Promise<void> {
-  await deleteByFilter(page, 'ErpHrShiftAssignment', eqFilter('employeeId', Number(employeeId)));
+  await deleteByFilter(page, 'ErpHrShiftAssignment', eqFilter('employeeId', employeeId));
   await deleteById(page, 'ErpHrEmployee', employeeId);
 }
 
@@ -132,14 +132,14 @@ test.describe('hr ErpHrShiftRotationPattern.generateRotation first run + regener
     const pattern = await createPattern(page, patternData);
 
     try {
-      const memberIds = [Number(e1.id), Number(e2.id), Number(e3.id)];
+      const memberIds = [e1.id, e2.id, e3.id];
       // 首次生成 regenerate=false
       const result = await callMutationOk(
         page,
         'ErpHrShiftRotationPattern',
         'generateRotation',
         {
-          patternId: Number(pattern.id),
+          patternId: pattern.id,
           groupMemberIds: memberIds,
           staggerDays: 1,
           startDate: '2026-08-01',
@@ -155,10 +155,10 @@ test.describe('hr ErpHrShiftRotationPattern.generateRotation first run + regener
       }
 
       // member 0 (e1) 错峰起始日 = 08-01 → 覆盖 08-01/02/03 三行
-      const e1Rows = result.filter((r: any) => Number(r.employeeId) === Number(e1.id));
+      const e1Rows = result.filter((r: any) => r.employeeId === e1.id);
       expect(e1Rows.length, 'member 0 covers 3 days').toBe(3);
       // member 2 (e3) 错峰起始日 = 08-03 → 仅 1 行
-      const e3Rows = result.filter((r: any) => Number(r.employeeId) === Number(e3.id));
+      const e3Rows = result.filter((r: any) => r.employeeId === e3.id);
       expect(e3Rows.length, 'member 2 covers 1 day (staggered past end)').toBe(1);
     } finally {
       await cleanupEmployee(page, e1.id);
@@ -184,9 +184,9 @@ test.describe('hr ErpHrShiftRotationPattern.generateRotation first run + regener
     const pattern = await createPattern(page, patternData);
 
     try {
-      const memberIds = [Number(e1.id), Number(e2.id), Number(e3.id)];
+      const memberIds = [e1.id, e2.id, e3.id];
       const args = {
-        patternId: Number(pattern.id),
+        patternId: pattern.id,
         groupMemberIds: memberIds,
         staggerDays: 1,
         startDate: '2026-08-10',
@@ -214,19 +214,13 @@ test.describe('hr ErpHrShiftRotationPattern.generateRotation first run + regener
       );
       expect(regen.length, 'regenerated rows = first run count').toBe(6);
 
-      // 反查：CANCELLED 旧行存在（按 e1 范围内 status=CANCELLED）
-      const cancelled = await new GraphQLClient(page).findItems<any>(
-        'ErpHrShiftAssignment',
-        {
-          $type: 'and',
-          $body: [
-            { $type: 'eq', name: 'employeeId', value: Number(e1.id) },
-            { $type: 'eq', name: 'status', value: 'CANCELLED' },
-          ],
-        },
-        'id status',
-      );
-      expect(cancelled.length, 'regenerate CANCELs old SCHEDULED rows').toBeGreaterThan(0);
+      // 反查：旧 6 行已失效——重生成路径删除旧 SCHEDULED 行后重建（UK 同键重排兼容，
+      // GenerateRotationProcessor:187-192；旧行 __get 返回记录不存在）。新旧 id 集零交集
+      // + 下方 SCHEDULED=6 即证替换语义。
+      const firstIds = new Set(first.map((r: any) => String(r.id)));
+      const regenIds = new Set(regen.map((r: any) => String(r.id)));
+      const overlap = [...firstIds].filter((id) => regenIds.has(id));
+      expect(overlap.length, 'regenerate replaces old rows (new row ids disjoint from first run)').toBe(0);
 
       // 当前 SCHEDULED 行数 = 6（仅重建后的新行）
       const scheduled = await new GraphQLClient(page).findItems<any>(

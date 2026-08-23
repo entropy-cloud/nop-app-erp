@@ -21,7 +21,7 @@ import { test, expect, loginAndNavigate, createViaSave, callMutationOk, callMuta
  * 清理：CAPA 先于 NCR 删（FK 依赖 ncrId）。CONCESSION 无过账/退货产物，逻辑删除两者即可。
  */
 
-const MATERIAL_ID = 1;
+const MATERIAL_ID = '1';
 const VERIFICATION_PERSON = 2;
 
 async function seedNcr(page: import('@playwright/test').Page, tag: string): Promise<{ id: string }> {
@@ -52,7 +52,7 @@ test.describe('quality ErpQaNonConformance resolve CAPA closure gate', () => {
     const capa = await createViaSave(
       page, 'ErpQaAction',
       {
-        ncrId: Number(ncr.id),
+        ncrId: ncr.id,
         actionType: 'CAPA',
         description: 'E2E corrective action for resolve gate',
         responsiblePerson: VERIFICATION_PERSON,

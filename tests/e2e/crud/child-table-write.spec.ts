@@ -19,13 +19,13 @@ import { GraphQLClient, CrudListPage, getEngine, getEngineType } from '../pages'
  */
 
 const SEED = {
-  ORG: 1,
-  SUPPLIER: 2,
-  CUSTOMER: 1,
-  WH_RAW: 2,
-  CURRENCY: 1,
-  UOM: 1,
-  MAT_1: 1,
+  ORG: '1',
+  SUPPLIER: '2',
+  CUSTOMER: '1',
+  WH_RAW: '2',
+  CURRENCY: '1',
+  UOM: '1',
+  MAT_1: '1',
 } as const;
 
 const BDATE = '2026-07-19';

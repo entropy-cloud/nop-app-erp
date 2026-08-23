@@ -62,9 +62,9 @@ async function seedShipment(page: import('@playwright/test').Page, carrierId: st
   return createViaSave(
     page, 'ErpLogShipment',
     {
-      code, orgId: 2, carrierId,
+      code, orgId: '2', carrierId,
       relatedBillType: 'SALES_DELIVERY',
-      freightAmount: FREIGHT_AMOUNT, freightCurrencyId: 1, freightTerms: 'PREPAID',
+      freightAmount: FREIGHT_AMOUNT, freightCurrencyId: '1', freightTerms: 'PREPAID',
       freightSettlementStatus: 'PENDING',
       status: 'DRAFT', businessDate: '2026-07-10',
     },

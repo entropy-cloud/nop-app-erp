@@ -40,7 +40,7 @@ function uniq(tag: string): string {
   return `${tag}-${Date.now()}-${_seq}`;
 }
 
-const MAT_1 = 1; // 种子 MAT-001（FINISHED_PRODUCT/ACTIVE），material FK 复用
+const MAT_1 = '1'; // 种子 MAT-001（FINISHED_PRODUCT/ACTIVE），material FK 复用
 
 /**
  * 经 GraphQL `__save` 原始 mutation（不经 createViaSave 的成功断言），返回完整 envelope。
@@ -173,7 +173,7 @@ test.describe('master-data 物料报关记录 3 校验钩子（正路径 + 3 守
     await loginAndNavigate(page, '/ErpMdMaterialCustoms-main');
 
     // 种子 CUSTOMER partner id=1（CUST-001，partnerType=CUSTOMER）—— 不新建（仅引用读）
-    const CUSTOMER_PARTNER_ID = 1;
+    const CUSTOMER_PARTNER_ID = '1';
     const createdIds: string[] = [];
 
     try {

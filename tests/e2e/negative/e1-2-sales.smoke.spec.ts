@@ -11,7 +11,7 @@ import {
  * E1.2 sales 域 enforcement 闭环 Proof（plan 2026-08-10-1404-1 Phase 3）。
  * sal 7 实体 × approve+reverseApprove = 14 动作。FNPT: approve=审核人 / reverseApprove=管理员。
  */
-const DUMMY_ID = 999999;
+const DUMMY_ID = '999999';
 const SAL_ENTITIES = ['ErpSalQuotation', 'ErpSalContract', 'ErpSalOrder', 'ErpSalDelivery', 'ErpSalInvoice', 'ErpSalReceipt', 'ErpSalReturn'];
 const SAL_ACTIONS = SAL_ENTITIES.flatMap((e) => [
   { entity: e, action: 'approve', authorizedRole: '审核人' },

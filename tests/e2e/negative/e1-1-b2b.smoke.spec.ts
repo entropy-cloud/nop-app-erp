@@ -22,7 +22,7 @@ import type { Page } from '@playwright/test';
  * 测试结构同 finance：restricted 单测全动作；授权角色每角色独立 test（fresh page）。
  */
 
-const DUMMY_ID = 999999;
+const DUMMY_ID = '999999';
 
 interface B2bAction {
   entity: string;

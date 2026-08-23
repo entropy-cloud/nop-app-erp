@@ -54,11 +54,11 @@ import {
  *   + BOMLine + BOM + 测试物料。
  */
 
-const ORG = 2;
-const WH = 2; // WH-RAW
-const UOM = 1; // PCS
-const CURRENCY = 1;
-const ACCT_SCHEMA = 1;
+const ORG = '2';
+const WH = '2'; // WH-RAW
+const UOM = '1'; // PCS
+const CURRENCY = '1';
+const ACCT_SCHEMA = '1';
 const BDATE = '2026-07-10';
 const MOVE_REQ_TYPE = 'i_app_erp_inv_biz_StockMoveRequest';
 
@@ -116,12 +116,12 @@ test.describe('manufacturing ErpMfgMaterialIssue reverseConfirm + MANUFACTURING_
     // 3. BOM + 行：成品 + 组件物料（用量 1/单位）
     const bom = await createViaSave(
       page, 'ErpMfgBom',
-      { code: uniq('E2E-MFG-MI-RV-BOM'), productId: Number(productMat.id), bomType: 'NORMAL', qty: 1, isActive: true },
+      { code: uniq('E2E-MFG-MI-RV-BOM'), productId: productMat.id, bomType: 'NORMAL', qty: 1, isActive: true },
       'id',
     );
     const bomLine = await createViaSave(
       page, 'ErpMfgBomLine',
-      { bomId: bom.id, lineNo: 1, materialId: Number(componentMat.id), uoMId: UOM, quantity: 1, warehouseId: WH },
+      { bomId: bom.id, lineNo: 1, materialId: componentMat.id, uoMId: UOM, quantity: 1, warehouseId: WH },
       'id',
     );
 
@@ -129,7 +129,7 @@ test.describe('manufacturing ErpMfgMaterialIssue reverseConfirm + MANUFACTURING_
     const wo = await createViaSave(
       page, 'ErpMfgWorkOrder',
       {
-        code: uniq('E2E-MFG-MI-RV-WO'), orgId: ORG, bomId: bom.id, productId: Number(productMat.id),
+        code: uniq('E2E-MFG-MI-RV-WO'), orgId: ORG, bomId: bom.id, productId: productMat.id,
         plannedQuantity: 10, businessDate: BDATE,
         currencyId: CURRENCY, exchangeRate: 1,
         docStatus: 'DRAFT', approveStatus: 'UNSUBMITTED',
@@ -140,7 +140,7 @@ test.describe('manufacturing ErpMfgMaterialIssue reverseConfirm + MANUFACTURING_
       page, 'ErpMfgWorkOrderLine',
       {
         workOrderId: wo.id, lineNo: 1, lineType: 'INPUT',
-        materialId: Number(componentMat.id), uoMId: UOM, plannedQuantity: ISSUE_QTY,
+        materialId: componentMat.id, uoMId: UOM, plannedQuantity: ISSUE_QTY,
         sourceWarehouseId: WH,
       },
       'id',
@@ -159,7 +159,7 @@ test.describe('manufacturing ErpMfgMaterialIssue reverseConfirm + MANUFACTURING_
     const issueLine = await createViaSave(
       page, 'ErpMfgMaterialIssueLine',
       {
-        issueId: issue.id, lineNo: 1, materialId: Number(componentMat.id), uoMId: UOM,
+        issueId: issue.id, lineNo: 1, materialId: componentMat.id, uoMId: UOM,
         workOrderLineId: woInputLine.id,
         requiredQuantity: ISSUE_QTY, issuedQuantity: ISSUE_QTY,
       },
@@ -201,7 +201,7 @@ test.describe('manufacturing ErpMfgMaterialIssue reverseConfirm + MANUFACTURING_
 
       // ---- 原 MANUFACTURING_ISSUE 凭证 isReversed=true ----
       const originalAfter = await findFirst<any>(
-        page, 'ErpFinVoucher', eqFilter('id', Number(originalVoucherId)), 'id isReversed postingType',
+        page, 'ErpFinVoucher', eqFilter('id', originalVoucherId), 'id isReversed postingType',
       );
       expect(originalAfter?.isReversed, '原 MANUFACTURING_ISSUE 凭证应被标记 isReversed=true').toBe(true);
 
@@ -243,12 +243,12 @@ test.describe('manufacturing ErpMfgMaterialIssue reverseConfirm + MANUFACTURING_
           'id',
         );
         if (reversalMove) {
-          await deleteByFilter(page, 'ErpInvStockLedger', eqFilter('moveId', Number(reversalMove.id)));
-          await deleteByFilter(page, 'ErpInvStockMoveLine', eqFilter('moveId', Number(reversalMove.id)));
+          await deleteByFilter(page, 'ErpInvStockLedger', eqFilter('moveId', reversalMove.id));
+          await deleteByFilter(page, 'ErpInvStockMoveLine', eqFilter('moveId', reversalMove.id));
           await deleteById(page, 'ErpInvStockMove', reversalMove.id);
         }
-        await deleteByFilter(page, 'ErpInvStockLedger', eqFilter('moveId', Number(issueMove.id)));
-        await deleteByFilter(page, 'ErpInvStockMoveLine', eqFilter('moveId', Number(issueMove.id)));
+        await deleteByFilter(page, 'ErpInvStockLedger', eqFilter('moveId', issueMove.id));
+        await deleteByFilter(page, 'ErpInvStockMoveLine', eqFilter('moveId', issueMove.id));
         await deleteById(page, 'ErpInvStockMove', issueMove.id);
       }
       // 3. MaterialIssueLine + MaterialIssue
@@ -261,10 +261,10 @@ test.describe('manufacturing ErpMfgMaterialIssue reverseConfirm + MANUFACTURING_
       await deleteById(page, 'ErpMfgBomLine', bomLine.id);
       await deleteById(page, 'ErpMfgBom', bom.id);
       // 6. StockLedger + StockBalance 按物料
-      await deleteByFilter(page, 'ErpInvStockLedger', eqFilter('materialId', Number(componentMat.id)));
-      await deleteByFilter(page, 'ErpInvStockBalance', andFilter(eqFilter('materialId', Number(componentMat.id)), eqFilter('warehouseId', WH)));
+      await deleteByFilter(page, 'ErpInvStockLedger', eqFilter('materialId', componentMat.id));
+      await deleteByFilter(page, 'ErpInvStockBalance', andFilter(eqFilter('materialId', componentMat.id), eqFilter('warehouseId', WH)));
       // 7. INCOMING 备货移动
-      await deleteByFilter(page, 'ErpInvStockMoveLine', eqFilter('moveId', Number(setupMove.id)));
+      await deleteByFilter(page, 'ErpInvStockMoveLine', eqFilter('moveId', setupMove.id));
       await deleteById(page, 'ErpInvStockMove', setupMove.id);
       // 8. 测试物料
       await deleteById(page, 'ErpMdMaterial', componentMat.id);
@@ -288,7 +288,7 @@ test.describe('manufacturing ErpMfgMaterialIssue reverseConfirm + MANUFACTURING_
     const wo = await createViaSave(
       page, 'ErpMfgWorkOrder',
       {
-        code: uniq('E2E-MFG-MI-REJ-WO'), orgId: ORG, productId: Number(productMat.id),
+        code: uniq('E2E-MFG-MI-REJ-WO'), orgId: ORG, productId: productMat.id,
         plannedQuantity: 1, businessDate: BDATE,
         currencyId: CURRENCY, exchangeRate: 1,
         docStatus: 'DRAFT', approveStatus: 'UNSUBMITTED',

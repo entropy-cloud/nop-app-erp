@@ -152,13 +152,13 @@ test.describe('manufacturing WorkOrder full chain orchestration (WorkOrder + Mat
         'OUTPUT line.plannedQuantity=10 (MFG_EXPECT.plannedQty)',
       ).toBe(MFG_EXPECT.plannedQty);
       expect(
-        Number(outputLine?.destWarehouseId),
+        outputLine?.destWarehouseId,
         'OUTPUT line.destWarehouseId should be set (completion move source)',
-      ).toBeGreaterThan(0);
+      ).toBeTruthy();
       expect(
-        Number(inputLine?.sourceWarehouseId),
+        inputLine?.sourceWarehouseId,
         'INPUT line.sourceWarehouseId should be set (issue move source)',
-      ).toBeGreaterThan(0);
+      ).toBeTruthy();
     } finally {
       await cleanupMfg(page, r);
     }

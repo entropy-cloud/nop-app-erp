@@ -30,7 +30,7 @@ import {
  * 清理：cleanupVoucherByBillCode 删 NORMAL+REVERSAL 凭证 → deleteById 删 NCR。
  */
 
-const MATERIAL_ID = 1; // MAT-001，种子余额 avgCost=120
+const MATERIAL_ID = '1'; // MAT-001，种子余额 avgCost=120
 const NCR_QTY = 1;
 const SCRAP_AMOUNT = 120; // NCR_QTY(1) × seed avgCost(120) = 120
 
@@ -86,7 +86,7 @@ test.describe('quality ErpQaNonConformance reverseNcr red-character voucher line
       expect(originalVoucherId, 'NORMAL voucher should exist for ncr.code').toBeTruthy();
 
       const origVoucher = await findFirst<any>(
-        page, 'ErpFinVoucher', eqFilter('id', Number(originalVoucherId)),
+        page, 'ErpFinVoucher', eqFilter('id', originalVoucherId),
         'id postingType isReversed',
       );
       expect(origVoucher?.postingType, 'original voucher postingType=NORMAL').toBe('NORMAL');

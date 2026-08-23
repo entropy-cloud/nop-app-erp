@@ -7,7 +7,7 @@
  * 引擎切换：E2E_ENGINE=flux npx playwright test（全局切换，测试代码无需改动）
  */
 import { test, expect } from '../fixtures';
-import { CrudListPage, FormDialog, getEngine } from '../pages';
+import { CrudListPage, FormDialog, getEngine, getEngineType } from '../pages';
 
 interface CrudSmokeExampleOptions {
   entityRoute: string;
@@ -19,11 +19,17 @@ function runCrudListSmokePageObject(opts: CrudSmokeExampleOptions): void {
   const { entityRoute, domain, addFormField } = opts;
 
   test.describe(`${domain} CRUD list/form smoke (PageObject)`, () => {
-    test('renders list DOM, add button, GraphQL 200, and add form field', async ({ page, engine }) => {
+    test('renders list DOM, add button, data 200, and add form field', async ({ page, engine }) => {
       const crud = new CrudListPage(page, engine, { entityRoute, domain });
 
+      // flux 页面数据访问一律 REST /r/（e2e-runbook「API 断言」强制节）——数据调用断言
+      // 按 engine 分流（镜像 crud/_helper.ts runCrudListSmoke 范式；2026-08-23 对齐）。
+      const rpcResponses: number[] = [];
       const graphqlResponses: number[] = [];
       page.on('response', (resp) => {
+        if (resp.url().includes('/r/')) {
+          rpcResponses.push(resp.status());
+        }
         if (resp.url().includes('/graphql')) {
           graphqlResponses.push(resp.status());
         }
@@ -34,9 +40,16 @@ function runCrudListSmokePageObject(opts: CrudSmokeExampleOptions): void {
       const addBtn = await crud.getAddButton();
       await expect(addBtn).toBeVisible();
 
-      expect(graphqlResponses.length).toBeGreaterThan(0);
-      for (const status of graphqlResponses) {
-        expect(status).toBe(200);
+      if (getEngineType() === 'flux') {
+        expect(rpcResponses.length).toBeGreaterThan(0);
+        for (const status of rpcResponses) {
+          expect(status).toBe(200);
+        }
+      } else {
+        expect(graphqlResponses.length).toBeGreaterThan(0);
+        for (const status of graphqlResponses) {
+          expect(status).toBe(200);
+        }
       }
 
       await addBtn.click({ force: true });

@@ -43,8 +43,8 @@ import type { Page } from '@playwright/test';
  * 种子引用（对齐 1218-2 范式）：org id=2 / acctSchema ACCT-FIN-01 id=1 / currency CNY id=1 / period 2026-07（OPEN）。
  * 科目引用：1221 其他应收款-员工预支 / 1002 银行存款（均种子已就绪）。
  */
-const ORG = 2;
-const CURRENCY = 1;
+const ORG = '2';
+const CURRENCY = '1';
 const BDATE = '2026-07-15';
 const ADVANCE_AMOUNT = 500;
 
@@ -111,10 +111,10 @@ async function findCashRepayVoucherId(
   for (const lnk of links) {
     if (!lnk.billCode || !lnk.billCode.startsWith(prefix)) continue;
     const v = await findFirst<any>(
-      page, 'ErpFinVoucher', eqFilter('id', Number(lnk.voucherId)), 'id postingType',
+      page, 'ErpFinVoucher', eqFilter('id', lnk.voucherId), 'id postingType',
     );
     if (v && v.postingType === postingType) {
-      return Number(v.id);
+      return v.id;
     }
   }
   return null;
@@ -132,7 +132,7 @@ async function cleanupCtx(page: Page, ctx: Ctx): Promise<void> {
     );
     const matching = cashLinks.filter((l) => l.billCode && l.billCode.startsWith(prefix));
     for (const lnk of matching) {
-      const voucherId = Number(lnk.voucherId);
+      const voucherId = lnk.voucherId;
       if (voucherId) {
         await deleteByFilter(page, 'ErpFinVoucherLine', eqFilter('voucherId', voucherId));
         await deleteById(page, 'ErpFinVoucher', voucherId);

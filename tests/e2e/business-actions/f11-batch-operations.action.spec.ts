@@ -31,13 +31,13 @@ import {
  *   MAT-001 id=1 / UOM PCS id=1 / warehouse WH-RAW id=2。
  */
 
-const ORG = 2;
-const CURRENCY = 1;
-const SUPPLIER = 3;
+const ORG = '2';
+const CURRENCY = '1';
+const SUPPLIER = '3';
 const CUSTOMER = 1;
-const MAT_1 = 1;
-const UOM = 1;
-const WH = 2;
+const MAT_1 = '1';
+const UOM = '1';
+const WH = '2';
 const BDATE = '2026-07-09';
 
 let _seq = 0;
@@ -122,14 +122,14 @@ async function createPartnerActive(page: import('@playwright/test').Page, tag: s
 
 async function cleanupPurOrders(page: import('@playwright/test').Page, ids: Array<string | number>) {
   for (const id of ids) {
-    await deleteByFilter(page, 'ErpPurOrderLine', eqFilter('orderId', Number(id)));
+    await deleteByFilter(page, 'ErpPurOrderLine', eqFilter('orderId', id));
     await deleteById(page, 'ErpPurOrder', id);
   }
 }
 
 async function cleanupSalOrders(page: import('@playwright/test').Page, ids: Array<string | number>) {
   for (const id of ids) {
-    await deleteByFilter(page, 'ErpSalOrderLine', eqFilter('orderId', Number(id)));
+    await deleteByFilter(page, 'ErpSalOrderLine', eqFilter('orderId', id));
     await deleteById(page, 'ErpSalOrder', id);
   }
 }

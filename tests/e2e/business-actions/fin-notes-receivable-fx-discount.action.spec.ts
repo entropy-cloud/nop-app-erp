@@ -80,10 +80,10 @@ import type { Page } from '@playwright/test';
  *   Provider 全链 FX 6051 产生；直驱原语 `postVoucher` / `buildNotesReceivableDiscountedEvent` 已删除。
  */
 
-const ORG_ID = 2;
-const CURRENCY_CNY = 1;
-const CURRENCY_USD = 2;
-const PARTNER_ID = 1; // CUST-001
+const ORG_ID = '2';
+const CURRENCY_CNY = '1';
+const CURRENCY_USD = '2';
+const PARTNER_ID = '1'; // CUST-001
 const BDATE = '2026-07-01';
 const DUE_DATE = '2026-07-31';
 const DISCOUNT_DATE = '2026-07-01'; // remainingDays = 30
@@ -152,7 +152,7 @@ async function createFundAccount(
       name: 'E2E FX Discount Bank Account',
       orgId: ORG_ID,
       accountType: 'BANK',
-      subjectId: 2, // 1002 银行存款（种子 id=2）
+      subjectId: '2', // 1002 银行存款（种子 id=2）
       currencyId,
       currentBalance: 0,
       status: 'ACTIVE',

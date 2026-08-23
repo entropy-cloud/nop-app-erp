@@ -83,25 +83,25 @@ async function setupAssessmentChain(
   const pos = await createViaSave(
     page,
     'ErpHrPosition',
-    { code: uniq(`E2E-POS-${tag}`), name: `pos-${tag}`, departmentId: Number(dept.id) },
+    { code: uniq(`E2E-POS-${tag}`), name: `pos-${tag}`, departmentId: dept.id },
     'id',
   );
   await createViaSave(
     page,
     'ErpHrRoleCompetency',
-    { positionId: Number(pos.id), competencyId: Number(c1.id), requiredLevel: 5 },
+    { positionId: pos.id, competencyId: c1.id, requiredLevel: 5 },
     'id',
   );
   await createViaSave(
     page,
     'ErpHrRoleCompetency',
-    { positionId: Number(pos.id), competencyId: Number(c2.id), requiredLevel: 5 },
+    { positionId: pos.id, competencyId: c2.id, requiredLevel: 5 },
     'id',
   );
   await createViaSave(
     page,
     'ErpHrRoleCompetency',
-    { positionId: Number(pos.id), competencyId: Number(c3.id), requiredLevel: 5 },
+    { positionId: pos.id, competencyId: c3.id, requiredLevel: 5 },
     'id',
   );
   const emp = await createViaSave(
@@ -116,8 +116,8 @@ async function setupAssessmentChain(
       hireDate: '2023-01-01',
       employmentStatus: 'ACTIVE',
       employeeType: 'FULL_TIME',
-      positionId: Number(pos.id),
-      orgId: 2,
+      positionId: pos.id,
+      orgId: '2',
     },
     'id',
   );
@@ -125,12 +125,12 @@ async function setupAssessmentChain(
     page,
     'ErpHrEmployeeAssessment',
     {
-      employeeId: Number(emp.id),
+      employeeId: emp.id,
       assessmentType: 'SELF',
       status: 'DRAFT',
       assessmentDate: '2026-07-18',
       businessDate: '2026-07-18',
-      orgId: 2,
+      orgId: '2',
     },
     'id',
   );
@@ -153,8 +153,8 @@ async function seedDetail(
     page,
     'ErpHrAssessmentDetail',
     {
-      assessmentId: Number(assessmentId),
-      competencyId: Number(competencyId),
+      assessmentId: assessmentId,
+      competencyId: competencyId,
       actualLevel,
       sourceType: 'SELF',
     },
@@ -169,13 +169,13 @@ async function cleanupChain(
   planId?: string,
 ): Promise<void> {
   if (planId) {
-    await deleteByFilter(page, 'ErpHrDevelopmentPlanItem', eqFilter('planId', Number(planId)));
+    await deleteByFilter(page, 'ErpHrDevelopmentPlanItem', eqFilter('planId', planId));
     await deleteById(page, 'ErpHrDevelopmentPlan', planId);
   }
-  await deleteByFilter(page, 'ErpHrGapAnalysis', eqFilter('employeeId', Number(s.employeeId)));
-  await deleteByFilter(page, 'ErpHrAssessmentDetail', eqFilter('assessmentId', Number(s.assessmentId)));
+  await deleteByFilter(page, 'ErpHrGapAnalysis', eqFilter('employeeId', s.employeeId));
+  await deleteByFilter(page, 'ErpHrAssessmentDetail', eqFilter('assessmentId', s.assessmentId));
   await deleteById(page, 'ErpHrEmployeeAssessment', s.assessmentId);
-  await deleteByFilter(page, 'ErpHrRoleCompetency', eqFilter('positionId', Number(s.positionId)));
+  await deleteByFilter(page, 'ErpHrRoleCompetency', eqFilter('positionId', s.positionId));
   await deleteById(page, 'ErpHrEmployee', s.employeeId);
   await deleteById(page, 'ErpHrPosition', s.positionId);
   await deleteById(page, 'ErpHrDepartment', s.departmentId);
@@ -199,7 +199,7 @@ test.describe('hr competency assessment → gap → development plan closed-loop
       page,
       'ErpHrEmployeeAssessment',
       'submitAssessment',
-      { assessmentId: Number(s.assessmentId) },
+      { assessmentId: s.assessmentId },
       'id',
     );
     let st = await verifyState(page, 'ErpHrEmployeeAssessment', s.assessmentId, 'status');
@@ -210,7 +210,7 @@ test.describe('hr competency assessment → gap → development plan closed-loop
       page,
       'ErpHrEmployeeAssessment',
       'completeAssessment',
-      { assessmentId: Number(s.assessmentId) },
+      { assessmentId: s.assessmentId },
       'id status overallScore',
     );
     expect(completed.status, 'after completeAssessment status=COMPLETED').toBe('COMPLETED');
@@ -223,8 +223,8 @@ test.describe('hr competency assessment → gap → development plan closed-loop
         page,
         'ErpHrGapAnalysis',
         andFilter(
-          eqFilter('employeeId', Number(s.employeeId)),
-          eqFilter('competencyId', Number(s.competencyIds[0])),
+          eqFilter('employeeId', s.employeeId),
+          eqFilter('competencyId', s.competencyIds[0]),
         ),
         'id gapSeverity gapValue requiredLevel actualLevel',
       ),
@@ -232,8 +232,8 @@ test.describe('hr competency assessment → gap → development plan closed-loop
         page,
         'ErpHrGapAnalysis',
         andFilter(
-          eqFilter('employeeId', Number(s.employeeId)),
-          eqFilter('competencyId', Number(s.competencyIds[1])),
+          eqFilter('employeeId', s.employeeId),
+          eqFilter('competencyId', s.competencyIds[1]),
         ),
         'id gapSeverity gapValue requiredLevel actualLevel',
       ),
@@ -241,8 +241,8 @@ test.describe('hr competency assessment → gap → development plan closed-loop
         page,
         'ErpHrGapAnalysis',
         andFilter(
-          eqFilter('employeeId', Number(s.employeeId)),
-          eqFilter('competencyId', Number(s.competencyIds[2])),
+          eqFilter('employeeId', s.employeeId),
+          eqFilter('competencyId', s.competencyIds[2]),
         ),
         'id gapSeverity gapValue requiredLevel actualLevel',
       ),
@@ -277,37 +277,37 @@ test.describe('hr competency assessment → gap → development plan closed-loop
 
     // 先 completeAssessment 触发首次 gap refresh（建立基线 3 行）
     await callMutationOk(page, 'ErpHrEmployeeAssessment', 'submitAssessment',
-      { assessmentId: Number(s.assessmentId) }, 'id');
+      { assessmentId: s.assessmentId }, 'id');
     await callMutationOk(page, 'ErpHrEmployeeAssessment', 'completeAssessment',
-      { assessmentId: Number(s.assessmentId) }, 'id');
+      { assessmentId: s.assessmentId }, 'id');
 
     const gapCountAfterComplete = await findPageTotal(page, 'ErpHrGapAnalysis',
-      eqFilter('employeeId', Number(s.employeeId)));
+      eqFilter('employeeId', s.employeeId));
     expect(gapCountAfterComplete, 'completeAssessment auto-refresh produces 3 gap rows').toBe(3);
 
     // refreshGapAnalysis 内部聚合入口（重新读 latest COMPLETED → 重算）：幂等覆盖，仍 3 行
     await callMutationOk(page, 'ErpHrGapAnalysis', 'refreshGapAnalysis',
-      { employeeId: Number(s.employeeId) }, 'id');
+      { employeeId: s.employeeId }, 'id');
     const gapCountAfterRefresh = await findPageTotal(page, 'ErpHrGapAnalysis',
-      eqFilter('employeeId', Number(s.employeeId)));
+      eqFilter('employeeId', s.employeeId));
     expect(gapCountAfterRefresh, 'refreshGapAnalysis idempotent: still 3 rows').toBe(3);
 
     // refreshGapAnalysisWithLevels 直传 levels 入口：Map<Long,Integer> 经 GraphQL generic Map scalar 传递
     // 重置全部 actualLevel=5 → 全部 gap=0 → NONE（清除 actionable gaps）
     const { errors: err1 } = await callMutation(page, 'ErpHrGapAnalysis', 'refreshGapAnalysisWithLevels', {
-      employeeId: Number(s.employeeId),
+      employeeId: s.employeeId,
       aggregatedLevels: input('Map', {
-        [Number(s.competencyIds[0])]: 5,
-        [Number(s.competencyIds[1])]: 5,
-        [Number(s.competencyIds[2])]: 5,
+        [s.competencyIds[0]]: 5,
+        [s.competencyIds[1]]: 5,
+        [s.competencyIds[2]]: 5,
       }),
     }, 'id');
     expect(err1, 'refreshGapAnalysisWithLevels with all-5 levels should succeed').toBeNull();
 
     const overridden = await findFirst(page, 'ErpHrGapAnalysis',
       andFilter(
-        eqFilter('employeeId', Number(s.employeeId)),
-        eqFilter('competencyId', Number(s.competencyIds[2])),
+        eqFilter('employeeId', s.employeeId),
+        eqFilter('competencyId', s.competencyIds[2]),
       ),
       'gapSeverity gapValue actualLevel');
     expect(overridden, 'overridden gap row exists').not.toBeNull();
@@ -322,10 +322,10 @@ test.describe('hr competency assessment → gap → development plan closed-loop
       firstName: '无', lastName: '岗', fullName: '无岗员工',
       gender: 'MALE', hireDate: '2023-01-01',
       employmentStatus: 'ACTIVE', employeeType: 'FULL_TIME',
-      orgId: 2,
+      orgId: '2',
     }, 'id');
     const rej = await callMutation(page, 'ErpHrGapAnalysis', 'refreshGapAnalysis',
-      { employeeId: Number(empNoPos.id) }, 'id');
+      { employeeId: empNoPos.id }, 'id');
     expect(rej.errors, 'refreshGapAnalysis on employee without position should be rejected').toBeTruthy();
     expect(JSON.stringify(rej.errors), 'reject should carry no-role-requirement token').toContain('岗位');
 
@@ -342,25 +342,25 @@ test.describe('hr competency assessment → gap → development plan closed-loop
     await seedDetail(page, s.assessmentId, s.competencyIds[2], 2); // CRITICAL — item
 
     await callMutationOk(page, 'ErpHrEmployeeAssessment', 'submitAssessment',
-      { assessmentId: Number(s.assessmentId) }, 'id');
+      { assessmentId: s.assessmentId }, 'id');
     await callMutationOk(page, 'ErpHrEmployeeAssessment', 'completeAssessment',
-      { assessmentId: Number(s.assessmentId) }, 'id');
+      { assessmentId: s.assessmentId }, 'id');
 
     // generateDevelopmentPlan：仅 CRITICAL+MODERATE → IN_PROGRESS + 2 items（MINOR 跳过）
     const plan = await callMutationOk(page, 'ErpHrDevelopmentPlan', 'generateDevelopmentPlan',
-      { employeeId: Number(s.employeeId) }, 'id status');
+      { employeeId: s.employeeId }, 'id status');
     expect(plan, 'generateDevelopmentPlan returns non-null plan').toBeTruthy();
     expect(plan.status, 'new plan status=IN_PROGRESS').toBe('IN_PROGRESS');
 
     const itemCount = await findPageTotal(page, 'ErpHrDevelopmentPlanItem',
-      eqFilter('planId', Number(plan.id)));
+      eqFilter('planId', plan.id));
     expect(itemCount, '2 plan items (CRITICAL + MODERATE; MINOR skipped)').toBe(2);
 
     // 经 findFirst 取 CRITICAL gap 对应的 plan item（按 competencyId c3）
     const itemCritical = await findFirst(page, 'ErpHrDevelopmentPlanItem',
       andFilter(
-        eqFilter('planId', Number(plan.id)),
-        eqFilter('competencyId', Number(s.competencyIds[2])),
+        eqFilter('planId', plan.id),
+        eqFilter('competencyId', s.competencyIds[2]),
       ),
       'id status startDate endDate targetLevel');
     expect(itemCritical, 'CRITICAL-gap plan item exists').not.toBeNull();
@@ -369,21 +369,21 @@ test.describe('hr competency assessment → gap → development plan closed-loop
 
     // updatePlanItemStatus: NOT_STARTED → IN_PROGRESS + startDate 写回
     const started = await callMutationOk(page, 'ErpHrDevelopmentPlan', 'updatePlanItemStatus',
-      { planItemId: Number((itemCritical as any).id), status: 'IN_PROGRESS' },
+      { planItemId: (itemCritical as any).id, status: 'IN_PROGRESS' },
       'id status startDate endDate');
     expect(started.status, 'after updatePlanItemStatus IN_PROGRESS').toBe('IN_PROGRESS');
     expect(started.startDate, 'startDate written back on IN_PROGRESS').not.toBeNull();
 
     // updatePlanItemStatus: IN_PROGRESS → ACHIEVED + endDate 写回
     const achieved = await callMutationOk(page, 'ErpHrDevelopmentPlan', 'updatePlanItemStatus',
-      { planItemId: Number((itemCritical as any).id), status: 'ACHIEVED' },
+      { planItemId: (itemCritical as any).id, status: 'ACHIEVED' },
       'id status startDate endDate');
     expect(achieved.status, 'after updatePlanItemStatus ACHIEVED').toBe('ACHIEVED');
     expect(achieved.endDate, 'endDate written back on ACHIEVED').not.toBeNull();
 
     // completePlan: IN_PROGRESS → COMPLETED
     await callMutationOk(page, 'ErpHrDevelopmentPlan', 'completePlan',
-      { planId: Number(plan.id) }, 'id');
+      { planId: plan.id }, 'id');
     const planSt = await verifyState(page, 'ErpHrDevelopmentPlan', plan.id, 'status');
     expect(planSt.status, 'after completePlan status=COMPLETED').toBe('COMPLETED');
 
@@ -396,7 +396,7 @@ test.describe('hr competency assessment → gap → development plan closed-loop
     // (a) submitAssessment 无 detail 行 → ERR_ASSESSMENT_NO_DETAILS
     const sGuard = await setupAssessmentChain(page, 'gd');
     const rej = await callMutation(page, 'ErpHrEmployeeAssessment', 'submitAssessment',
-      { assessmentId: Number(sGuard.assessmentId) }, 'id');
+      { assessmentId: sGuard.assessmentId }, 'id');
     expect(rej.errors, 'submitAssessment with no details should be rejected').toBeTruthy();
     expect(JSON.stringify(rej.errors), 'reject should carry no-details token').toContain('明细');
 
@@ -410,19 +410,19 @@ test.describe('hr competency assessment → gap → development plan closed-loop
     await seedDetail(page, sGuard.assessmentId, sGuard.competencyIds[1], 5);
     await seedDetail(page, sGuard.assessmentId, sGuard.competencyIds[2], 5);
     await callMutationOk(page, 'ErpHrEmployeeAssessment', 'submitAssessment',
-      { assessmentId: Number(sGuard.assessmentId) }, 'id');
+      { assessmentId: sGuard.assessmentId }, 'id');
     await callMutationOk(page, 'ErpHrEmployeeAssessment', 'completeAssessment',
-      { assessmentId: Number(sGuard.assessmentId) }, 'id');
+      { assessmentId: sGuard.assessmentId }, 'id');
 
     const gapsAllNone = await findPageTotal(page, 'ErpHrGapAnalysis',
       andFilter(
-        eqFilter('employeeId', Number(sGuard.employeeId)),
+        eqFilter('employeeId', sGuard.employeeId),
         eqFilter('gapSeverity', 'NONE'),
       ));
     expect(gapsAllNone, 'all 3 gaps are NONE (no actionable)').toBe(3);
 
     const genRej = await callMutation(page, 'ErpHrDevelopmentPlan', 'generateDevelopmentPlan',
-      { employeeId: Number(sGuard.employeeId) }, 'id status');
+      { employeeId: sGuard.employeeId }, 'id status');
     expect(genRej.errors, 'no actionable gaps: no errors (returns null)').toBeNull();
     expect(genRej.data, 'no actionable gaps: data null').toBeNull();
 
@@ -430,15 +430,15 @@ test.describe('hr competency assessment → gap → development plan closed-loop
     const sPlan = await setupAssessmentChain(page, 'cp');
     await seedDetail(page, sPlan.assessmentId, sPlan.competencyIds[2], 2); // CRITICAL — 1 item 足够
     await callMutationOk(page, 'ErpHrEmployeeAssessment', 'submitAssessment',
-      { assessmentId: Number(sPlan.assessmentId) }, 'id');
+      { assessmentId: sPlan.assessmentId }, 'id');
     await callMutationOk(page, 'ErpHrEmployeeAssessment', 'completeAssessment',
-      { assessmentId: Number(sPlan.assessmentId) }, 'id');
+      { assessmentId: sPlan.assessmentId }, 'id');
     const planCp = await callMutationOk(page, 'ErpHrDevelopmentPlan', 'generateDevelopmentPlan',
-      { employeeId: Number(sPlan.employeeId) }, 'id status');
+      { employeeId: sPlan.employeeId }, 'id status');
     await callMutationOk(page, 'ErpHrDevelopmentPlan', 'completePlan',
-      { planId: Number(planCp.id) }, 'id');
+      { planId: planCp.id }, 'id');
     const rej2 = await callMutation(page, 'ErpHrDevelopmentPlan', 'completePlan',
-      { planId: Number(planCp.id) }, 'id');
+      { planId: planCp.id }, 'id');
     expect(rej2.errors, 'completePlan on COMPLETED plan should be rejected').toBeTruthy();
     expect(JSON.stringify(rej2.errors), 'reject should carry illegal-transition token').toContain('不允许');
 

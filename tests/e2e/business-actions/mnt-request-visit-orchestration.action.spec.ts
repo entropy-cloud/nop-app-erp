@@ -24,7 +24,7 @@ import { test, expect, loginAndNavigate, createViaSave, callMutationOk, verifySt
  * periodVisitCount 基线 1）+ Request 自身。镜像既有 mnt-request spec 清理范式。
  */
 
-const EQ_ID = 1;
+const EQ_ID = '1';
 const REQUESTED_BY = 2;
 
 async function seedRequest(page: import('@playwright/test').Page, tag: string): Promise<{ id: string }> {
@@ -70,7 +70,7 @@ test.describe('maintenance Request→Visit side-effect orchestration', () => {
 
     // 6 字段精确断言
     expect(visit!.code, 'visit.code should exact-match VST-REQ-{requestId}').toBe(visitCode);
-    expect(Number(visit!.equipmentId), 'visit.equipmentId should match request.equipmentId').toBe(EQ_ID);
+    expect(visit!.equipmentId, 'visit.equipmentId should match request.equipmentId').toBe(EQ_ID);
     // visitDate 取自同事务服务端戳记 createTime 的日期部分（时区一致，证明 accept 副作用填充当日）
     const expectedVisitDate = String(visit!.createTime).slice(0, 10);
     expect(visit!.visitDate, 'visit.visitDate should be server today (match createTime date)').toBe(expectedVisitDate);

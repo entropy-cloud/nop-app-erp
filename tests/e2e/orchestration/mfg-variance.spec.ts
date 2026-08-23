@@ -91,7 +91,7 @@ test.describe('manufacturing production variance browser-layer E2E (config-gated
     );
 
     // (3) runMfgChain 变体：使用测试专用成品物料（与 MAT-001 链路隔离）
-    const r = await runMfgChain(page, { productId: Number(product.id), productUoMId: SEED.UOM });
+    const r = await runMfgChain(page, { productId: product.id, productUoMId: SEED.UOM });
     r.productMat = product;
 
     try {
@@ -103,7 +103,7 @@ test.describe('manufacturing production variance browser-layer E2E (config-gated
       // (5) ErpMfgCostVariance 记录非空 + varianceType 存在（5 类差异行）
       const varianceLines = await findItems(
         page, 'ErpMfgCostVariance',
-        eqFilter('workOrderId', Number(r.wo.id)),
+        eqFilter('workOrderId', r.wo.id),
         'varianceType costElement varianceAmount posted',
       );
       expect(varianceLines.length, 'ErpMfgCostVariance should have 5 lines (material/efficiency/rate/overhead/volume)').toBe(5);

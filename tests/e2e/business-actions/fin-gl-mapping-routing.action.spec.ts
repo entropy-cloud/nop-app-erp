@@ -116,7 +116,7 @@ test.describe('finance GL Mapping voucher subject routing (browser-layer E2E)', 
         {
           code: `E2E-GLMAP-ORG-MISMATCH-${ts}`,
           name: 'E2E GL Mapping orgId dimension non-matching (orgId=1)',
-          orgId: 1, // GROUP-HQ（种子 erp_md_organization.csv id=1），区别于链路 org=2
+          orgId: '1', // GROUP-HQ（种子 erp_md_organization.csv id=1），区别于链路 org=2
           businessType: 'AP_INVOICE',
           accountKey: 'PURCHASE',
           targetSubjectCode: OVERRIDE_SUBJECT_CODE,
@@ -125,7 +125,7 @@ test.describe('finance GL Mapping voucher subject routing (browser-layer E2E)', 
         },
         'id code orgId targetSubjectCode',
       );
-      expect(nonMatchingRule.orgId, 'rule __save should persist orgId=1').toBe(1);
+      expect(nonMatchingRule.orgId, 'rule __save should persist orgId=1').toBe('1');
 
       const chain = await runP2pChain(page); // 链路固定 org=SEED.ORG=2
       try {

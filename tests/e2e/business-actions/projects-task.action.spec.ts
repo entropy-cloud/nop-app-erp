@@ -20,7 +20,7 @@ import { test, expect, loginAndNavigate, createViaSave, callMutationOk, callMuta
  * 清理：task 状态机无下游产物，逻辑删除 task 自身。
  */
 
-const PROJECT_ID = 1;
+const PROJECT_ID = '1';
 
 test.describe('projects ErpPrjTask state machine actions', () => {
   test('save(TODO) → startTask(IN_PROGRESS) → completeTask(DONE) + illegal transition guard', async ({ page }) => {

@@ -17,11 +17,11 @@ import { GraphQLClient, CrudListPage, getEngine, getEngineType } from '../pages'
  */
 
 const SEED = {
-  ORG: 2,
-  PROJECT: 1,        // PRJ-2026-001 华东科技 ERP 实施项目（OPEN）
-  CURRENCY: 1,
-  SUBJECT_COST: 7,   // 6001 主营业务成本（COST, DEBIT）
-  SUBJECT_EXPENSE: 8,// 6601 销售费用（EXPENSE, DEBIT）
+  ORG: '2',
+  PROJECT: '1',        // PRJ-2026-001 华东科技 ERP 实施项目（OPEN）
+  CURRENCY: '1',
+  SUBJECT_COST: '7',   // 6001 主营业务成本（COST, DEBIT）
+  SUBJECT_EXPENSE: '8',// 6601 销售费用（EXPENSE, DEBIT）
 } as const;
 
 const BDATE = '2026-07-20';
@@ -75,7 +75,7 @@ test.describe('projects domain child-table write', () => {
         expect(line1, 'ErpPrjCostCollection: line 1 should exist').toBeTruthy();
         expect(line1?.costCategory, 'ErpPrjCostCollection: line 1 costCategory=LABOR').toBe('LABOR');
         expect(Number(line1?.amount), 'ErpPrjCostCollection: line 1 amount=1500').toBe(AMOUNT_1);
-        expect(Number(line1?.subjectId), 'ErpPrjCostCollection: line 1 subjectId=6001 main cost').toBe(SEED.SUBJECT_COST);
+        expect(line1?.subjectId, 'ErpPrjCostCollection: line 1 subjectId=6001 main cost').toBe(SEED.SUBJECT_COST);
 
         const line2 = fetchedLines.find((l: any) => l.lineNo === 2);
         expect(line2, 'ErpPrjCostCollection: line 2 should exist').toBeTruthy();

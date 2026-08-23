@@ -52,7 +52,7 @@ async function createEmployee(page: import('@playwright/test').Page, tag: string
       hireDate: '2024-01-01',
       employmentStatus: 'ACTIVE',
       employeeType: 'FULL_TIME',
-      orgId: 2,
+      orgId: '2',
     },
     'id',
   );
@@ -75,15 +75,15 @@ async function createLeave(
       startDate,
       endDate,
       status: 'DRAFT',
-      orgId: 2,
+      orgId: '2',
     },
     'id',
   );
 }
 
 async function cleanupEmployee(page: import('@playwright/test').Page, employeeId: string | number): Promise<void> {
-  await deleteByFilter(page, 'ErpHrLeaveRequest', eqFilter('employeeId', Number(employeeId)));
-  await deleteByFilter(page, 'ErpHrAttendance', eqFilter('employeeId', Number(employeeId)));
+  await deleteByFilter(page, 'ErpHrLeaveRequest', eqFilter('employeeId', employeeId));
+  await deleteByFilter(page, 'ErpHrAttendance', eqFilter('employeeId', employeeId));
   await deleteById(page, 'ErpHrEmployee', employeeId);
 }
 
@@ -162,7 +162,7 @@ test.describe('hr ErpHrAttendance clock in/out endpoints', () => {
       page,
       'ErpHrAttendance',
       'clockIn',
-      { employeeId: Number(emp.id) },
+      { employeeId: emp.id },
       'id clockIn',
     );
     expect(clockInResult.id, 'clockIn creates attendance row').not.toBeNull();
@@ -174,7 +174,7 @@ test.describe('hr ErpHrAttendance clock in/out endpoints', () => {
     expect(verified.clockOut, '__get clockOut still null before clockOut').toBeNull();
 
     // clockOut：设置 clockOut + workHours
-    await callMutationOk(page, 'ErpHrAttendance', 'clockOut', { employeeId: Number(emp.id) }, 'id');
+    await callMutationOk(page, 'ErpHrAttendance', 'clockOut', { employeeId: emp.id }, 'id');
     const afterOut = await verifyState(page, 'ErpHrAttendance', clockInResult.id, 'clockIn clockOut workHours');
     expect(afterOut.clockOut, 'clockOut timestamp set').not.toBeNull();
     expect(Number(afterOut.workHours), 'workHours derived >= 0').toBeGreaterThanOrEqual(0);
@@ -187,7 +187,7 @@ test.describe('hr ErpHrAttendance clock in/out endpoints', () => {
       page,
       'ErpHrAttendance',
       'clockIn',
-      { employeeId: Number(emp.id) },
+      { employeeId: emp.id },
       'id clockIn',
     );
     expect(secondClockIn.clockIn, 'repeat clockIn returns later timestamp').not.toBeNull();

@@ -27,7 +27,7 @@ interface ProbeSpec {
   args: Record<string, unknown>;
 }
 
-const DUMMY_ID = 999999;
+const DUMMY_ID = '999999';
 const DUMMY_STR = '999999';
 
 /**

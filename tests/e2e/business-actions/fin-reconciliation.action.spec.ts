@@ -81,14 +81,14 @@ async function createItem(page: import('@playwright/test').Page, o: ItemOpts): P
     'ErpFinArApItem',
     {
       code: uniq(`E2E-ARAP-${o.tag}`),
-      orgId: 2,
-      acctSchemaId: 1,
+      orgId: '2',
+      acctSchemaId: '1',
       direction: o.direction,
       partnerId: o.partnerId,
       sourceBillType: o.sourceBillType,
       sourceBillCode: o.sourceBillCode,
       businessDate: o.businessDate,
-      currencyId: 1,
+      currencyId: '1',
       exchangeRate: 1,
       amountSource: o.amount,
       amountFunctional: o.amount,
@@ -97,7 +97,7 @@ async function createItem(page: import('@playwright/test').Page, o: ItemOpts): P
       openAmountSource: open,
       openAmountFunctional: open,
       status,
-      periodId: 1,
+      periodId: '1',
     },
     'id',
   );
@@ -138,7 +138,7 @@ async function cleanupRecon(
   itemIds: Array<string | number>,
 ): Promise<void> {
   if (reconId != null) {
-    await deleteByFilter(page, 'ErpFinReconciliationLine', eqFilter('reconciliationId', Number(reconId)));
+    await deleteByFilter(page, 'ErpFinReconciliationLine', eqFilter('reconciliationId', reconId));
     await deleteById(page, 'ErpFinReconciliation', reconId);
   }
   for (const id of itemIds) {
@@ -234,13 +234,13 @@ test.describe('Finance ErpFinReconciliation lifecycle browser-layer E2E', () => 
       // 自包含 setup 仅建 finance 侧 OPEN 发票项（settled=0）+ 无域侧发票 → diff=0 → consistent=true。
       // 本用例仅断言查询可达 + 报告结构非空（direction/partnerId/consistent/rows 字段可观测），不断言 consistent 取值。
       const json: any = await new GraphQLClient(page).raw(
-        `query{ ErpFinReconciliation__checkDualSideConsistency(direction:"PAYABLE",partnerId:${partner.id}){ direction partnerId consistent rows{ partnerId financeSettled domainSettled diff status } } }`,
+        `query{ ErpFinReconciliation__checkDualSideConsistency(direction:"PAYABLE",partnerId:"${partner.id}"){ direction partnerId consistent rows{ partnerId financeSettled domainSettled diff status } } }`,
       );
       expect(json?.errors, `checkDualSideConsistency should not return GraphQL errors: ${JSON.stringify(json?.errors)}`).toBeFalsy();
       const report = json?.data?.ErpFinReconciliation__checkDualSideConsistency;
       expect(report, 'DualSideDiffReport should be returned').toBeTruthy();
       expect(report.direction, 'report.direction echoes query').toBe('PAYABLE');
-      expect(Number(report.partnerId), 'report.partnerId echoes query').toBe(Number(partner.id));
+      expect(report.partnerId, 'report.partnerId echoes query').toBe(partner.id);
       expect(typeof report.consistent, 'report.consistent is a boolean').toBe('boolean');
       expect(Array.isArray(report.rows), 'report.rows is an array').toBe(true);
     } finally {

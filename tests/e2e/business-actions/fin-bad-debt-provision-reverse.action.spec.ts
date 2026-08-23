@@ -40,10 +40,10 @@ import type { Page } from '@playwright/test';
  * （OPEN，code=2026-07，endDate=2026-07-31）。
  * 科目引用：1231 坏账准备 / 6701 信用减值损失（均种子已就绪，0413-2）。
  */
-const ORG = 2;
-const ACCT_SCHEMA = 1;
-const CURRENCY = 1;
-const PERIOD = 1;
+const ORG = '2';
+const ACCT_SCHEMA = '1';
+const CURRENCY = '1';
+const PERIOD = '1';
 const PERIOD_CODE = '2026-07';
 const AMOUNT = 5000;
 

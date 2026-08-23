@@ -47,7 +47,7 @@ function qaInspectionData(code: string, inspectorId: number) {
   return {
     code,
     inspectionType: 'INCOMING',
-    materialId: 1,
+    materialId: '1',
     businessDate: '2026-08-11',
     inspectionDate: '2026-08-11',
     inspectorId,
@@ -61,7 +61,7 @@ function qaInspectionData(code: string, inspectorId: number) {
 function mntVisitData(code: string, assignedTo: number) {
   return {
     code,
-    equipmentId: 1,
+    equipmentId: '1',
     visitDate: '2026-08-11',
     status: 'PLANNED',
     assignedTo,

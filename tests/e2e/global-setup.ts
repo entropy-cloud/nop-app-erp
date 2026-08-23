@@ -24,8 +24,91 @@ export default async function globalSetup(config: FullConfig) {
       }, tokenCookie.value);
     }
 
+    // E2E 运行环境预置：部署种子仅有 2026-07 一个 OPEN 会计期间，而部分业务动作的
+    // 凭证日期派生自 CoreMetrics.today()（cashRepay / laborPosting businessDate 兜底等，
+    // 均无 date 参数可覆写）。运行日期超出种子期间时过账 resolveOpenPeriod 抛
+    // erp.err.fin.posting.period-not-found（日期漂移，runbook「日期漂移防护」同源问题）。
+    // 此处幂等预置「运行月」OPEN 期间（测试层环境预置，不改产品；fresh-DB 每次重建）。
+    await ensureCurrentMonthOpenPeriod(page, context);
+
     await context.storageState({ path: AUTH_FILE });
   } finally {
     await browser.close();
+  }
+}
+
+async function ensureCurrentMonthOpenPeriod(
+  page: import('@playwright/test').Page,
+  context: import('@playwright/test').BrowserContext,
+): Promise<void> {
+  try {
+    const cookies = await context.cookies();
+    const token =
+      cookies.find((c) => c.name === '__Host-nop-token')?.value ??
+      cookies.find((c) => c.name === 'nop-token')?.value;
+    if (!token) return;
+
+    const now = new Date();
+    const y = now.getFullYear();
+    const m = now.getMonth() + 1;
+    const mm = String(m).padStart(2, '0');
+    const start = `${y}-${mm}-01`;
+    const endDay = new Date(y, m, 0).getDate();
+    const end = `${y}-${mm}-${String(endDay).padStart(2, '0')}`;
+    const today = `${y}-${mm}-${String(now.getDate()).padStart(2, '0')}`;
+    const code = `E2E-AUTO-${y}${mm}`;
+
+    const headers = { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` };
+    // filter 须走 GraphQL variable（Map）——内联对象字面量不支持带 $ 前缀的 key。
+    const findResp = await page.request.post('/graphql', {
+      headers,
+      data: {
+        query:
+          'query($f:Map){ ErpFinAccountingPeriod__findPage(query:{limit:200,filter:$f}){ items{ id code status } total } }',
+        variables: {
+          f: {
+            $type: 'and',
+            $body: [
+              { $type: 'le', name: 'startDate', value: today },
+              { $type: 'ge', name: 'endDate', value: today },
+            ],
+          },
+        },
+      },
+    });
+    const findJson: any = await findResp.json();
+    if (findJson?.errors) {
+      console.warn('[global-setup] period find failed:', JSON.stringify(findJson.errors));
+    }
+    const items = findJson?.data?.ErpFinAccountingPeriod__findPage?.items || [];
+    if (items.some((p: any) => p.status === 'OPEN')) return;
+
+    const saveResp = await page.request.post('/graphql', {
+      headers,
+      data: {
+        query:
+          'mutation($d:ErpFinAccountingPeriod__save_input){ ErpFinAccountingPeriod__save(data:$d){ id code } }',
+        variables: {
+          d: {
+            code,
+            name: `E2E auto open period ${code}`,
+            orgId: '2',
+            year: y,
+            month: m,
+            startDate: start,
+            endDate: end,
+            quarter: Math.ceil(m / 3),
+            isAdjustment: false,
+            status: 'OPEN',
+          },
+        },
+      },
+    });
+    const saveJson: any = await saveResp.json();
+    if (saveJson?.errors) {
+      console.warn('[global-setup] ensureCurrentMonthOpenPeriod save failed:', JSON.stringify(saveJson.errors));
+    }
+  } catch (e) {
+    console.warn('[global-setup] ensureCurrentMonthOpenPeriod error:', e);
   }
 }

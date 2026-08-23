@@ -55,8 +55,8 @@ import {
  *   posting 不写 gl_balance（仅 voucher/voucher_line/voucher_bill_r），不污染 finance dashboard 基线。
  */
 
-const ORG = 2;
-const EQUIPMENT_ID = 1; // EQ-2026-001 种子设备 RUNNING
+const ORG = '2';
+const EQUIPMENT_ID = '1'; // EQ-2026-001 种子设备 RUNNING
 const ASSIGNEE_ID = 1; // 种子用户
 const RATE = 80; // erp-mnt.default-labor-hourly-rate webServer JVM arg
 

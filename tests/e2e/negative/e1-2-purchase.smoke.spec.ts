@@ -18,7 +18,7 @@ import type { Page } from '@playwright/test';
  * restricted 负向全 16 动作循环（单次登录）；授权角色正向按 role 分组（审核人 / 管理员）。
  */
 
-const DUMMY_ID = 999999;
+const DUMMY_ID = '999999';
 
 interface PurAction {
   entity: string;

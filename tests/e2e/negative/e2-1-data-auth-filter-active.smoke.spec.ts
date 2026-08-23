@@ -48,11 +48,11 @@ const UNIQUE_TAG = `E21-${process.pid}-${Date.now()}`;
 function salOrderData(code: string) {
   return {
     code,
-    orgId: 2,
-    customerId: 1,
-    warehouseId: 2,
+    orgId: '2',
+    customerId: '1',
+    warehouseId: '2',
     businessDate: '2026-08-10',
-    currencyId: 1,
+    currencyId: '1',
     exchangeRate: 1,
     docStatus: 'DRAFT',
     approveStatus: 'UNSUBMITTED',
@@ -142,9 +142,9 @@ test.describe('E2.1 data-auth filter-active smoke', () => {
       {
         code: tag,
         riskName: tag,
-        orgId: 2,
+        orgId: '2',
         businessDate: '2026-08-10',
-        currencyId: 1,
+        currencyId: '1',
         exchangeRate: 1,
         docStatus: 'DRAFT',
         approveStatus: 'UNSUBMITTED',

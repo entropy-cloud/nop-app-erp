@@ -38,7 +38,7 @@ async function findTodoTask(page: import('@playwright/test').Page): Promise<Task
 async function fetchTaskStatus(page: import('@playwright/test').Page, taskId: number): Promise<string | null> {
   const gql = new GraphQLClient(page);
   const json: any = await gql.raw(
-    `query(${'$'}id:Long){ ErpPrjTask__get(id:${'$'}id){ id status } }`,
+    `query(${'$'}id:String){ ErpPrjTask__get(id:${'$'}id){ id status } }`,
     { id: taskId },
   );
   return json?.data?.ErpPrjTask__get?.status ?? null;
@@ -47,7 +47,7 @@ async function fetchTaskStatus(page: import('@playwright/test').Page, taskId: nu
 async function startTask(page: import('@playwright/test').Page, taskId: number): Promise<any> {
   const gql = new GraphQLClient(page);
   return gql.raw(
-    `mutation(${'$'}id:Long){ ErpPrjTask__startTask(taskId:${'$'}id){ id status } }`,
+    `mutation(${'$'}id:String){ ErpPrjTask__startTask(taskId:${'$'}id){ id status } }`,
     { id: taskId },
   );
 }
@@ -55,7 +55,7 @@ async function startTask(page: import('@playwright/test').Page, taskId: number):
 async function completeTask(page: import('@playwright/test').Page, taskId: number): Promise<any> {
   const gql = new GraphQLClient(page);
   return gql.raw(
-    `mutation(${'$'}id:Long){ ErpPrjTask__completeTask(taskId:${'$'}id){ id status } }`,
+    `mutation(${'$'}id:String){ ErpPrjTask__completeTask(taskId:${'$'}id){ id status } }`,
     { id: taskId },
   );
 }
@@ -63,7 +63,7 @@ async function completeTask(page: import('@playwright/test').Page, taskId: numbe
 async function blockTask(page: import('@playwright/test').Page, taskId: number, blockReason: string): Promise<any> {
   const gql = new GraphQLClient(page);
   return gql.raw(
-    `mutation(${'$'}id:Long,${'$'}r:String){ ErpPrjTask__blockTask(taskId:${'$'}id,blockReason:${'$'}r){ id status } }`,
+    `mutation(${'$'}id:String,${'$'}r:String){ ErpPrjTask__blockTask(taskId:${'$'}id,blockReason:${'$'}r){ id status } }`,
     { id: taskId, r: blockReason },
   );
 }
@@ -71,7 +71,7 @@ async function blockTask(page: import('@playwright/test').Page, taskId: number, 
 async function unblockTask(page: import('@playwright.test').Page, taskId: number): Promise<any> {
   const gql = new GraphQLClient(page);
   return gql.raw(
-    `mutation(${'$'}id:Long){ ErpPrjTask__unblockTask(taskId:${'$'}id){ id status } }`,
+    `mutation(${'$'}id:String){ ErpPrjTask__unblockTask(taskId:${'$'}id){ id status } }`,
     { id: taskId },
   );
 }

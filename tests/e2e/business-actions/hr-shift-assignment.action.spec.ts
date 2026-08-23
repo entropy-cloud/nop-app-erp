@@ -54,7 +54,7 @@ async function createEmployee(page: import('@playwright/test').Page, tag: string
       hireDate: '2024-01-01',
       employmentStatus: 'ACTIVE',
       employeeType: 'FULL_TIME',
-      orgId: 2,
+      orgId: '2',
     },
     'id',
   );
@@ -80,7 +80,7 @@ async function createShift(
       graceEarlyLeaveMinutes: 15,
       requireClockIn: true,
       requireClockOut: true,
-      orgId: 2,
+      orgId: '2',
     },
     'id code',
   );
@@ -97,7 +97,7 @@ async function createAttendance(
     page,
     'ErpHrAttendance',
     {
-      employeeId: Number(employeeId),
+      employeeId: employeeId,
       date,
       clockIn,
       clockOut,
@@ -105,16 +105,16 @@ async function createAttendance(
       lateMinutes: 0,
       earlyLeaveMinutes: 0,
       businessDate: date,
-      orgId: 2,
+      orgId: '2',
     },
     'id',
   );
 }
 
 async function cleanupEmployee(page: import('@playwright/test').Page, employeeId: string | number): Promise<void> {
-  await deleteByFilter(page, 'ErpHrShiftSwapRequest', eqFilter('requesterId', Number(employeeId)));
-  await deleteByFilter(page, 'ErpHrShiftAssignment', eqFilter('employeeId', Number(employeeId)));
-  await deleteByFilter(page, 'ErpHrAttendance', eqFilter('employeeId', Number(employeeId)));
+  await deleteByFilter(page, 'ErpHrShiftSwapRequest', eqFilter('requesterId', employeeId));
+  await deleteByFilter(page, 'ErpHrShiftAssignment', eqFilter('employeeId', employeeId));
+  await deleteByFilter(page, 'ErpHrAttendance', eqFilter('employeeId', employeeId));
   await deleteById(page, 'ErpHrEmployee', employeeId);
 }
 
@@ -136,16 +136,16 @@ test.describe('hr ErpHrShiftAssignment single/batch/period-copy', () => {
         'ErpHrShiftAssignment',
         'assignSingle',
         {
-          employeeId: Number(emp.id),
-          shiftId: Number(shift.id),
+          employeeId: emp.id,
+          shiftId: shift.id,
           assignmentDate: '2026-08-10',
         },
         'id status employeeId shiftId assignmentDate',
       );
       expect(assignment.id, 'assignment created').toBeTruthy();
       expect(assignment.status, 'status=SCHEDULED').toBe('SCHEDULED');
-      expect(Number(assignment.employeeId), 'employeeId echo').toBe(Number(emp.id));
-      expect(Number(assignment.shiftId), 'shiftId echo').toBe(Number(shift.id));
+      expect(assignment.employeeId, 'employeeId echo').toBe(emp.id);
+      expect(assignment.shiftId, 'shiftId echo').toBe(shift.id);
       expect(assignment.assignmentDate, 'assignmentDate echo').toContain('2026-08-10');
 
       // 独立 __get 断言
@@ -163,8 +163,8 @@ test.describe('hr ErpHrShiftAssignment single/batch/period-copy', () => {
         'ErpHrShiftAssignment',
         'assignSingle',
         {
-          employeeId: Number(emp.id),
-          shiftId: Number(shift.id),
+          employeeId: emp.id,
+          shiftId: shift.id,
           assignmentDate: '2026-08-10',
         },
         'id',
@@ -187,14 +187,14 @@ test.describe('hr ErpHrShiftAssignment single/batch/period-copy', () => {
 
     try {
       // assignBatch: 3 employee × 3 day 笛卡尔积 → 9 行
-      const employeeIds = [Number(empA.id), Number(empB.id), Number(empC.id)];
+      const employeeIds = [empA.id, empB.id, empC.id];
       const result = await callMutationOk(
         page,
         'ErpHrShiftAssignment',
         'assignBatch',
         {
           employeeIds,
-          shiftId: Number(shift.id),
+          shiftId: shift.id,
           startDate: '2026-09-01',
           endDate: '2026-09-03',
         },
@@ -204,7 +204,7 @@ test.describe('hr ErpHrShiftAssignment single/batch/period-copy', () => {
       expect(result.length, 'cartesian 3x3 = 9 rows').toBe(9);
       for (const row of result) {
         expect(row.status, 'each row status=SCHEDULED').toBe('SCHEDULED');
-        expect(employeeIds, 'each row employeeId is one of the input').toContain(Number(row.employeeId));
+        expect(employeeIds, 'each row employeeId is one of the input').toContain(row.employeeId);
       }
 
       // 区间内重复 assignBatch：跳过已存在 → 返回 List 仅含新增行（应为 0）
@@ -214,7 +214,7 @@ test.describe('hr ErpHrShiftAssignment single/batch/period-copy', () => {
         'assignBatch',
         {
           employeeIds,
-          shiftId: Number(shift.id),
+          shiftId: shift.id,
           startDate: '2026-09-01',
           endDate: '2026-09-03',
         },
@@ -243,8 +243,8 @@ test.describe('hr ErpHrShiftAssignment single/batch/period-copy', () => {
         'ErpHrShiftAssignment',
         'assignBatch',
         {
-          employeeIds: [Number(emp.id)],
-          shiftId: Number(shift.id),
+          employeeIds: [emp.id],
+          shiftId: shift.id,
           startDate: '2026-10-01',
           endDate: '2026-10-03',
         },
@@ -269,8 +269,8 @@ test.describe('hr ErpHrShiftAssignment single/batch/period-copy', () => {
       expect(dates[0], 'first target day = targetStart').toContain('2026-11-01');
       expect(dates[2], 'last target day = targetStart + 2').toContain('2026-11-03');
       for (const row of copied) {
-        expect(Number(row.employeeId), 'copied row employeeId echoes').toBe(Number(emp.id));
-        expect(Number(row.shiftId), 'copied row shiftId echoes').toBe(Number(shift.id));
+        expect(row.employeeId, 'copied row employeeId echoes').toBe(emp.id);
+        expect(row.shiftId, 'copied row shiftId echoes').toBe(shift.id);
         expect(row.status, 'copied row status=SCHEDULED').toBe('SCHEDULED');
       }
     } finally {
@@ -296,8 +296,8 @@ test.describe('hr ErpHrShift.calcAttendance late/on-time entry', () => {
         'ErpHrShiftAssignment',
         'assignSingle',
         {
-          employeeId: Number(emp.id),
-          shiftId: Number(shift.id),
+          employeeId: emp.id,
+          shiftId: shift.id,
           assignmentDate: date,
         },
         'id status',
@@ -309,7 +309,7 @@ test.describe('hr ErpHrShift.calcAttendance late/on-time entry', () => {
         page,
         'ErpHrShift',
         'calcAttendance',
-        { employeeId: Number(emp.id), assignmentDate: date },
+        { employeeId: emp.id, assignmentDate: date },
         'id lateMinutes earlyLeaveMinutes isAbsent',
       );
       expect(attendance.id, 'calcAttendance returns attendance').toBeTruthy();
@@ -344,8 +344,8 @@ test.describe('hr ErpHrShift.calcAttendance late/on-time entry', () => {
         'ErpHrShiftAssignment',
         'assignSingle',
         {
-          employeeId: Number(emp.id),
-          shiftId: Number(shift.id),
+          employeeId: emp.id,
+          shiftId: shift.id,
           assignmentDate: date,
         },
         'id',
@@ -357,7 +357,7 @@ test.describe('hr ErpHrShift.calcAttendance late/on-time entry', () => {
         page,
         'ErpHrShift',
         'calcAttendance',
-        { employeeId: Number(emp.id), assignmentDate: date },
+        { employeeId: emp.id, assignmentDate: date },
         'id lateMinutes earlyLeaveMinutes isAbsent',
       );
       expect(Number(attendance.lateMinutes), 'on-time clockIn → lateMinutes=0').toBe(0);

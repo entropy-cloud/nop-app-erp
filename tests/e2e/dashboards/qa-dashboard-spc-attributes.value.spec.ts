@@ -16,10 +16,10 @@ import { GraphQLClient } from '../pages';
  */
 
 const ATTRIBUTES_CHART_IDS = [
-  { chartId: 2, chartType: 'P', label: 'P chart' },
-  { chartId: 3, chartType: 'NP', label: 'NP chart' },
-  { chartId: 4, chartType: 'C', label: 'C chart' },
-  { chartId: 5, chartType: 'U', label: 'U chart' },
+  { chartId: '2', chartType: 'P', label: 'P chart' },
+  { chartId: '3', chartType: 'NP', label: 'NP chart' },
+  { chartId: '4', chartType: 'C', label: 'C chart' },
+  { chartId: '5', chartType: 'U', label: 'U chart' },
 ];
 
 for (const cfg of ATTRIBUTES_CHART_IDS) {
@@ -28,7 +28,7 @@ for (const cfg of ATTRIBUTES_CHART_IDS) {
       await loginAndNavigate(page, '/qa-dashboard-main');
 
       const json: any = await new GraphQLClient(page).raw(
-        'query($chartId:Long){ ErpQaDashboard__getSpcControlChartData(chartId:$chartId) }',
+        'query($chartId:String){ ErpQaDashboard__getSpcControlChartData(chartId:$chartId) }',
         { chartId: cfg.chartId },
       );
       const result = json?.data?.ErpQaDashboard__getSpcControlChartData;

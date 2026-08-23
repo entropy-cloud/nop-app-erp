@@ -37,9 +37,9 @@ import { cleanupVoucherByBillCode, findVoucherIdByBillCode, assertVoucherLines }
  * 种子引用：org id=2 / currency id=1（CNY）/ partner id=3（SUP-001，AP 方向）/ 科目 2202 id=5、2203 id=41、
  *   1002 id=2 经种子补齐（本 plan Phase 2）。
  */
-const ORG_ID = 2;
-const CURRENCY_ID = 1;
-const PARTNER_ID = 3; // SUP-001（AP 方向 partner 维度，-provider ISSUED dr.setPartnerId）
+const ORG_ID = '2';
+const CURRENCY_ID = '1';
+const PARTNER_ID = '3'; // SUP-001（AP 方向 partner 维度，-provider ISSUED dr.setPartnerId）
 const FACE_AMOUNT = 1000;
 const ISSUE_DATE = '2026-07-01';
 const DUE_DATE = '2026-07-31';

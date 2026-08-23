@@ -19,12 +19,12 @@ import { GraphQLClient, CrudListPage, getEngine, getEngineType } from '../pages'
  */
 
 const SEED = {
-  ORG: 2,
-  CURRENCY: 1,
-  ASSET_LAPTOP: 1,    // AST-2026-001 (bookValue snapshot 12000)
-  ASSET_MACHINE: 2,   // AST-2026-002 (bookValue snapshot 114000)
-  CATEGORY_IT: 1,     // 资产类别 IT
-  CATEGORY_MACHINERY: 2,
+  ORG: '2',
+  CURRENCY: '1',
+  ASSET_LAPTOP: '1',    // AST-2026-001 (bookValue snapshot 12000)
+  ASSET_MACHINE: '2',   // AST-2026-002 (bookValue snapshot 114000)
+  CATEGORY_IT: '1',     // 资产类别 IT
+  CATEGORY_MACHINERY: '2',
 } as const;
 
 const BDATE = '2026-07-20';
@@ -87,7 +87,7 @@ test.describe('assets domain child-table write', () => {
         expect(Number(line1?.varianceQuantity), 'ErpAstInventory: line 1 varianceQuantity = actual - book = -2').toBe(VARIANCE_QTY);
         expect(Number(line1?.varianceAmount), 'ErpAstInventory: line 1 varianceAmount = assessed - book = -2000').toBe(VARIANCE_AMT);
         expect(line1?.varianceType, 'ErpAstInventory: line 1 varianceType=SHORTAGE').toBe('SHORTAGE');
-        expect(Number(line1?.assetId), 'ErpAstInventory: line 1 assetId=AST-2026-001').toBe(SEED.ASSET_LAPTOP);
+        expect(line1?.assetId, 'ErpAstInventory: line 1 assetId=AST-2026-001').toBe(SEED.ASSET_LAPTOP);
 
         const line2 = fetchedLines.find((l: any) => l.lineNo === 2);
         expect(line2, 'ErpAstInventory: line 2 should exist').toBeTruthy();

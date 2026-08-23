@@ -36,11 +36,11 @@ import type { Page } from '@playwright/test';
  * 种子引用：org=2 / acctSchema=1 / currency=1(CNY) / AR partner=1(CUST-001) /
  * AP partner=3(SUP-001)。
  */
-const ORG_ID = 2;
-const ACCT_SCHEMA_ID = 1;
-const CURRENCY_ID = 1;
-const AR_PARTNER_ID = 1; // CUST-001
-const AP_PARTNER_ID = 3; // SUP-001
+const ORG_ID = '2';
+const ACCT_SCHEMA_ID = '1';
+const CURRENCY_ID = '1';
+const AR_PARTNER_ID = '1'; // CUST-001
+const AP_PARTNER_ID = '3'; // SUP-001
 const FROM_DATE = '2026-08-10';
 const TO_DATE = '2026-08-15';
 const OUT_OF_WINDOW_DATE = '2026-09-01';

@@ -60,7 +60,7 @@ async function createEmployee(page: import('@playwright/test').Page, tag: string
       hireDate: '2024-01-01',
       employmentStatus: 'ACTIVE',
       employeeType: 'FULL_TIME',
-      orgId: 2,
+      orgId: '2',
     },
     'id',
   );
@@ -83,7 +83,7 @@ async function createShift(
       graceEarlyLeaveMinutes: 15,
       requireClockIn: true,
       requireClockOut: true,
-      orgId: 2,
+      orgId: '2',
     },
     'id',
   );
@@ -106,7 +106,7 @@ async function createLeave(
       startDate,
       endDate,
       status: 'DRAFT',
-      orgId: 2,
+      orgId: '2',
     },
     'id',
   );
@@ -123,8 +123,8 @@ async function assignSingle(
     'ErpHrShiftAssignment',
     'assignSingle',
     {
-      employeeId: Number(employeeId),
-      shiftId: Number(shiftId),
+      employeeId: employeeId,
+      shiftId: shiftId,
       assignmentDate,
     },
     'id',
@@ -140,7 +140,7 @@ async function findAssignment(
     page,
     'ErpHrShiftAssignment',
     andFilter(
-      eqFilter('employeeId', Number(employeeId)),
+      eqFilter('employeeId', employeeId),
       eqFilter('assignmentDate', assignmentDate),
     ),
     'id isAbsent absenceReason leaveRequestId status',
@@ -152,8 +152,8 @@ async function cleanupAll(
   employeeId: string | number,
   shiftId: string | number,
 ): Promise<void> {
-  await deleteByFilter(page, 'ErpHrLeaveRequest', eqFilter('employeeId', Number(employeeId)));
-  await deleteByFilter(page, 'ErpHrShiftAssignment', eqFilter('employeeId', Number(employeeId)));
+  await deleteByFilter(page, 'ErpHrLeaveRequest', eqFilter('employeeId', employeeId));
+  await deleteByFilter(page, 'ErpHrShiftAssignment', eqFilter('employeeId', employeeId));
   await deleteById(page, 'ErpHrShift', shiftId);
   await deleteById(page, 'ErpHrEmployee', employeeId);
 }
@@ -189,7 +189,7 @@ test.describe('hr ErpHrLeaveRequest → ErpHrShiftAssignment cross-entity hook (
       expect(a1, 'in-range 08-10 assignment exists').not.toBeNull();
       expect(a1.isAbsent, '08-10 isAbsent=true').toBe(true);
       expect(a1.absenceReason, '08-10 absenceReason=LEAVE').toBe('LEAVE');
-      expect(Number(a1.leaveRequestId), '08-10 leaveRequestId=leave.id').toBe(Number(leave.id));
+      expect(a1.leaveRequestId, '08-10 leaveRequestId=leave.id').toBe(leave.id);
       expect(a1.status, '08-10 status=ABSENT').toBe('ABSENT');
 
       // 区间内 2026-08-11 行：4 字段翻转
@@ -197,7 +197,7 @@ test.describe('hr ErpHrLeaveRequest → ErpHrShiftAssignment cross-entity hook (
       expect(a2, 'in-range 08-11 assignment exists').not.toBeNull();
       expect(a2.isAbsent, '08-11 isAbsent=true').toBe(true);
       expect(a2.absenceReason, '08-11 absenceReason=LEAVE').toBe('LEAVE');
-      expect(Number(a2.leaveRequestId), '08-11 leaveRequestId=leave.id').toBe(Number(leave.id));
+      expect(a2.leaveRequestId, '08-11 leaveRequestId=leave.id').toBe(leave.id);
       expect(a2.status, '08-11 status=ABSENT').toBe('ABSENT');
 
       // 区间外 2026-08-13 行：字段不变

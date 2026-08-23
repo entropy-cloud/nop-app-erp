@@ -35,12 +35,12 @@ const REPORT_DOWNLOAD_CASES: ReportDownloadCase[] = [
   // === finance (5) ===
   {
     domain: 'fin', reportName: 'income-statement',
-    data: { periodId: 1 },
+    data: { periodId: '1' },
     expectedTokens: ['利润表', '主营业务收入', '净利润'],
   },
   {
     domain: 'fin', reportName: 'balance-sheet',
-    data: { periodId: 1 },
+    data: { periodId: '1' },
     expectedTokens: ['资产负债表', '银行存款'],
   },
   {
@@ -50,18 +50,18 @@ const REPORT_DOWNLOAD_CASES: ReportDownloadCase[] = [
   },
   {
     domain: 'fin', reportName: 'cash-flow-statement',
-    data: { periodId: 1 },
+    data: { periodId: '1' },
     expectedTokens: ['现金流量表', '活动分类', '现金净增加'],
   },
   {
     domain: 'fin', reportName: 'period-close-report',
-    data: { periodId: 1 },
+    data: { periodId: '1' },
     expectedTokens: ['期末结账报告', '分组', '项目'],
   },
   // === manufacturing (3) ===
   {
     domain: 'mfg', reportName: 'crp-load-report',
-    data: { workcenterId: 1, startDate: '2026-07-15', endDate: '2026-07-15' },
+    data: { workcenterId: '1', startDate: '2026-07-15', endDate: '2026-07-15' },
     expectedTokens: ['CRP 工作中心负荷分析表'],
   },
   {
@@ -93,7 +93,7 @@ const REPORT_DOWNLOAD_CASES: ReportDownloadCase[] = [
   },
   {
     domain: 'mnt', reportName: 'downtime-summary',
-    data: { equipmentId: 1 },
+    data: { equipmentId: '1' },
     expectedTokens: ['停机统计表', '设备名称'],
   },
   // === projects (2) ===
@@ -104,7 +104,7 @@ const REPORT_DOWNLOAD_CASES: ReportDownloadCase[] = [
   },
   {
     domain: 'prj', reportName: 'timesheet-detail',
-    data: { projectId: 1 },
+    data: { projectId: '1' },
     expectedTokens: ['工时明细表'],
   },
   // === quality (2) ===
@@ -149,7 +149,7 @@ const REPORT_DOWNLOAD_CASES: ReportDownloadCase[] = [
   },
   {
     domain: 'crm', reportName: 'forecast-accuracy',
-    data: { forecastId: 1 },
+    data: { forecastId: '1' },
     expectedTokens: ['销售预测准确率表'],
   },
   // === hr (2) ===
@@ -160,7 +160,7 @@ const REPORT_DOWNLOAD_CASES: ReportDownloadCase[] = [
   },
   {
     domain: 'hr', reportName: 'payroll-simulation-comparison',
-    data: { simulationId: 1 },
+    data: { simulationId: '1' },
     expectedTokens: ['薪酬模拟对比报表'],
   },
 ];

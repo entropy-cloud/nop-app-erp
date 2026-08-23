@@ -26,7 +26,7 @@ import type { Page } from '@playwright/test';
  * 避免单 page 角色切换导致 SPA 不重定向到 login 表单——见 Navigation.login usernameInput 等待）。
  */
 
-const DUMMY_ID = 999999;
+const DUMMY_ID = '999999';
 const DUMMY_STR = '999999';
 
 interface FinAction {

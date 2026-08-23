@@ -55,12 +55,12 @@ import {
  *   + StockLedger + StockBalance + INCOMING 备货 + LandedCost(行) + Receive(行) + 测试物料。
  */
 
-const ORG = 2;
-const WH = 2; // WH-RAW
-const UOM = 1; // PCS
-const CURRENCY = 1;
-const ACCT_SCHEMA = 1; // ACCT-FIN-01
-const SUPPLIER = 3; // SUP-001
+const ORG = '2';
+const WH = '2'; // WH-RAW
+const UOM = '1'; // PCS
+const CURRENCY = '1';
+const ACCT_SCHEMA = '1'; // ACCT-FIN-01
+const SUPPLIER = '3'; // SUP-001
 const BDATE = '2026-07-10';
 const MOVE_REQ_TYPE = 'i_app_erp_inv_biz_StockMoveRequest';
 
@@ -162,7 +162,7 @@ test.describe('inventory ErpInvLandedCost reverseApprove + LANDED_COST voucher r
       // 前置：成本层 avgCost 更新 10 → 15（+50/10）
       const balBefore = await findFirst<any>(
         page, 'ErpInvStockBalance',
-        andFilter(eqFilter('materialId', Number(material.id)), eqFilter('warehouseId', WH)),
+        andFilter(eqFilter('materialId', material.id), eqFilter('warehouseId', WH)),
         'avgCost totalCost',
       );
       expect(Number(balBefore.avgCost), '前置 approve 后 avgCost=15').toBe(SETUP_UNIT_COST + LANDED_COST_AMOUNT / SETUP_QTY);
@@ -184,7 +184,7 @@ test.describe('inventory ErpInvLandedCost reverseApprove + LANDED_COST voucher r
 
       // ---- 原 LANDED_COST 凭证 isReversed=true ----
       const originalAfter = await findFirst<any>(
-        page, 'ErpFinVoucher', eqFilter('id', Number(originalVoucherId)), 'id isReversed postingType',
+        page, 'ErpFinVoucher', eqFilter('id', originalVoucherId), 'id isReversed postingType',
       );
       expect(originalAfter?.isReversed, '原 LANDED_COST 凭证应被标记 isReversed=true').toBe(true);
 
@@ -201,7 +201,7 @@ test.describe('inventory ErpInvLandedCost reverseApprove + LANDED_COST voucher r
       // ---- 成本层反向应用：avgCost 回退至原始 10 ----
       const balAfter = await findFirst<any>(
         page, 'ErpInvStockBalance',
-        andFilter(eqFilter('materialId', Number(material.id)), eqFilter('warehouseId', WH)),
+        andFilter(eqFilter('materialId', material.id), eqFilter('warehouseId', WH)),
         'avgCost totalCost',
       );
       expect(Number(balAfter.avgCost), 'reverseApprove 后 avgCost 回退至原始 10').toBe(SETUP_UNIT_COST);
@@ -210,16 +210,16 @@ test.describe('inventory ErpInvLandedCost reverseApprove + LANDED_COST voucher r
       // 1. LANDED_COST 凭证（原+红字共用 billHeadCode=landedCost.code 无后缀，cleanupVoucherByBillCode 全量清理）
       await cleanupVoucherByBillCode(page, landedCost.code);
       // 2. CostAdjustLine + CostAdjust（按 materialId 反查 adjustId）
-      const caLines = await findItems<any>(page, 'ErpInvCostAdjustLine', eqFilter('materialId', Number(material.id)), 'id adjustId');
+      const caLines = await findItems<any>(page, 'ErpInvCostAdjustLine', eqFilter('materialId', material.id), 'id adjustId');
       const adjustIds = new Set(caLines.map((l) => l.adjustId));
       for (const l of caLines) await deleteById(page, 'ErpInvCostAdjustLine', l.id);
       for (const aid of adjustIds) await deleteById(page, 'ErpInvCostAdjust', aid);
       // 3. StockLedger 按 materialId（含 INCOMING 备货 + CostAdjust 写入的 quantity=0 行）
-      await deleteByFilter(page, 'ErpInvStockLedger', eqFilter('materialId', Number(material.id)));
+      await deleteByFilter(page, 'ErpInvStockLedger', eqFilter('materialId', material.id));
       // 4. StockBalance 按 materialId+warehouseId
-      await deleteByFilter(page, 'ErpInvStockBalance', andFilter(eqFilter('materialId', Number(material.id)), eqFilter('warehouseId', WH)));
+      await deleteByFilter(page, 'ErpInvStockBalance', andFilter(eqFilter('materialId', material.id), eqFilter('warehouseId', WH)));
       // 5. INCOMING 备货移动（lines + move）
-      await deleteByFilter(page, 'ErpInvStockMoveLine', eqFilter('moveId', Number(setupMove.id)));
+      await deleteByFilter(page, 'ErpInvStockMoveLine', eqFilter('moveId', setupMove.id));
       await deleteById(page, 'ErpInvStockMove', setupMove.id);
       // 6. LandedCostLine + LandedCost
       await deleteById(page, 'ErpInvLandedCostLine', lcLine.id);

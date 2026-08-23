@@ -41,7 +41,7 @@ function uniq(tag: string): string {
   return `${tag}-${Date.now()}-${_seq}`;
 }
 
-const MAT_1 = 1;
+const MAT_1 = '1';
 
 /**
  * 经 GraphQL `__save` 原始 mutation（不经 createViaSave 的成功断言），返回完整 envelope。
@@ -74,7 +74,7 @@ async function buildPriceList(page: Page, tag: string, extra: Record<string, unk
       code: uniq(`E2E-SAL-DR-PL-${tag}`),
       name: `E2E日期范围清单${tag}`,
       customerGroupCode: 'E2E-DR-CG',
-      partnerId: 1,
+      partnerId: '1',
       priority: 100,
       ...extra,
     },
@@ -149,7 +149,7 @@ test.describe('sales C3 日期范围有效性校验钩子（3 实体 × 3 策略
       materialId: MAT_1,
       priority: 100,
       customerGroupCode: 'E2E-DR-CG',
-      partnerId: 1,
+      partnerId: '1',
     };
 
     try {
@@ -212,7 +212,7 @@ test.describe('sales C3 日期范围有效性校验钩子（3 实体 × 3 策略
     // 3 份以真正触达 effective.size()>=2 + top==next 歧义分支（见 plan Phase 1 Execution Decisions §6）
     const common = {
       customerGroupCode: 'E2E-DR-PRI-CG',
-      partnerId: 1,
+      partnerId: '1',
       priority: 100,
       validFrom: '2026-01-01',
       validTo: '2026-12-31',

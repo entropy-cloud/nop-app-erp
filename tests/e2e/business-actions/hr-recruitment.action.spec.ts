@@ -42,14 +42,14 @@ async function seedRecruitment(page: import('@playwright/test').Page, tag: strin
       candidateName: `候选人${tag}`,
       candidateEmail: `cand-${tag}@e2e.test`,
       status: 'OPEN',
-      orgId: 2,
+      orgId: '2',
     },
     'id status',
   );
 }
 
 async function cleanupHireLinkage(page: import('@playwright/test').Page, employeeId: string | number): Promise<void> {
-  const contract = await findFirst(page, 'ErpHrEmploymentContract', eqFilter('employeeId', Number(employeeId)), 'id');
+  const contract = await findFirst(page, 'ErpHrEmploymentContract', eqFilter('employeeId', employeeId), 'id');
   if (contract) {
     await deleteById(page, 'ErpHrEmploymentContract', (contract as any).id);
   }
@@ -69,7 +69,7 @@ test.describe('hr ErpHrRecruitment funnel state machine + hire linkage', () => {
     expect(st.status, 'after moveToScreening status=SCREENING').toBe('SCREENING');
 
     // scheduleInterview: SCREENING → INTERVIEW
-    await callMutationOk(page, 'ErpHrRecruitment', 'scheduleInterview', { id: rec.id, interviewerId: 1, interviewDate: '2026-08-01' }, 'id');
+    await callMutationOk(page, 'ErpHrRecruitment', 'scheduleInterview', { id: rec.id, interviewerId: '1', interviewDate: '2026-08-01' }, 'id');
     st = await verifyState(page, 'ErpHrRecruitment', rec.id, 'status');
     expect(st.status, 'after scheduleInterview status=INTERVIEW').toBe('INTERVIEW');
 
@@ -91,7 +91,7 @@ test.describe('hr ErpHrRecruitment funnel state machine + hire linkage', () => {
     expect(emp.employmentStatus, 'new employee ACTIVE').toBe('ACTIVE');
 
     // 合同联动：ErpHrEmploymentContract 存在（ACTIVE）
-    const contract = await findFirst(page, 'ErpHrEmploymentContract', eqFilter('employeeId', Number(st.employeeId)), 'id status monthlySalary');
+    const contract = await findFirst(page, 'ErpHrEmploymentContract', eqFilter('employeeId', st.employeeId), 'id status monthlySalary');
     expect(contract, 'auto-created contract exists').not.toBeNull();
     expect((contract as any).status, 'new contract ACTIVE').toBe('ACTIVE');
 
@@ -128,7 +128,7 @@ test.describe('hr ErpHrRecruitment funnel state machine + hire linkage', () => {
     const rec = await seedRecruitment(page, 'gd');
     // 推进到 HIRED
     await callMutationOk(page, 'ErpHrRecruitment', 'moveToScreening', { id: rec.id }, 'id');
-    await callMutationOk(page, 'ErpHrRecruitment', 'scheduleInterview', { id: rec.id, interviewerId: 1, interviewDate: '2026-08-01' }, 'id');
+    await callMutationOk(page, 'ErpHrRecruitment', 'scheduleInterview', { id: rec.id, interviewerId: '1', interviewDate: '2026-08-01' }, 'id');
     await callMutationOk(page, 'ErpHrRecruitment', 'makeOffer', { id: rec.id, offerSalary: 12000 }, 'id');
     const hireResult = await callMutationOk(page, 'ErpHrRecruitment', 'hire', { id: rec.id, hiredDate: '2026-07-14' }, 'id employeeId');
 

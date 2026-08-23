@@ -54,7 +54,7 @@ export class GraphQLClient {
   }
 
   async get<T = any>(entityName: string, id: string | number, fields: string): Promise<T | null> {
-    const json = await this.post(`{ ${entityName}__get(id:${id}){ ${fields} } }`);
+    const json = await this.post(`{ ${entityName}__get(id:${JSON.stringify(String(id))}){ ${fields} } }`);
     return json?.data?.[`${entityName}__get`] ?? null;
   }
 
@@ -77,7 +77,7 @@ export class GraphQLClient {
   }
 
   async delete(entityName: string, id: string | number): Promise<boolean> {
-    const json = await this.post(`mutation{ ${entityName}__delete(id:${id}) }`);
+    const json = await this.post(`mutation{ ${entityName}__delete(id:${JSON.stringify(String(id))}) }`);
     return !!json?.data?.[`${entityName}__delete`];
   }
 

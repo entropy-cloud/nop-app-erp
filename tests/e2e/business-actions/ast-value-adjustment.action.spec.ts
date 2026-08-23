@@ -60,9 +60,9 @@ import {
  * 种子引用：org id=2 / category id=1（AST-CAT-IT，三 subject 字段 null → 默认科目码生效）/
  * currency id=1（CNY）/ acctSchema ACCT-FIN-01 id=1。
  */
-const ORG_ID = 2;
-const CATEGORY_ID = 1;
-const CURRENCY_ID = 1;
+const ORG_ID = '2';
+const CATEGORY_ID = '1';
+const CURRENCY_ID = '1';
 const BDATE = '2026-07-15';
 
 const ORIGINAL_VALUE = 12000;
@@ -135,7 +135,7 @@ async function cleanupAdjustmentChain(
     await cleanupVoucherByBillCode(page, adjustmentCode);
   }
   if (assetId) {
-    await deleteByFilter(page, 'ErpAstDepreciationSchedule', eqFilter('assetId', Number(assetId)));
+    await deleteByFilter(page, 'ErpAstDepreciationSchedule', eqFilter('assetId', assetId));
   }
   if (adjustmentId) {
     await deleteById(page, 'ErpAstValueAdjustment', adjustmentId);
@@ -331,7 +331,7 @@ test.describe('assets ErpAstValueAdjustment Phase 2 — reverseApprove + cancel 
       const originalVid = await findVoucherIdByBillCode(page, adj.code, 'NORMAL');
       expect(originalVid, 'original NORMAL voucher should exist').toBeTruthy();
       const origVoucher = await findFirst<any>(
-        page, 'ErpFinVoucher', eqFilter('id', Number(originalVid)), 'id postingType isReversed',
+        page, 'ErpFinVoucher', eqFilter('id', originalVid), 'id postingType isReversed',
       );
       expect(origVoucher?.postingType, 'original voucher postingType=NORMAL').toBe('NORMAL');
       expect(origVoucher?.isReversed, 'original voucher isReversed=true after reverseApprove').toBe(true);

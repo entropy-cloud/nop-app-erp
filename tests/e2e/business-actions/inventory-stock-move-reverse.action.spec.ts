@@ -21,11 +21,11 @@ import { cleanupVoucherByBillCode } from '../orchestration/_helper';
 
 const MOVE_REQ_TYPE = 'i_app_erp_inv_biz_StockMoveRequest';
 const MAT = 1;
-const WH = 2;
-const ORG = 2;
-const UOM = 1;
-const ACCT_SCHEMA = 1;
-const CURRENCY = 1;
+const WH = '2';
+const ORG = '2';
+const UOM = '1';
+const ACCT_SCHEMA = '1';
+const CURRENCY = '1';
 
 function incomingRequest(remark: string) {
   return input(MOVE_REQ_TYPE, {
@@ -44,8 +44,8 @@ async function cleanupMove(page: import('@playwright/test').Page, move: { id?: a
   if (!move) return;
   if (move.code) await cleanupVoucherByBillCode(page, move.code);
   if (move.id != null) {
-    await deleteByFilter(page, 'ErpInvStockLedger', eqFilter('moveId', Number(move.id)));
-    await deleteByFilter(page, 'ErpInvStockMoveLine', eqFilter('moveId', Number(move.id)));
+    await deleteByFilter(page, 'ErpInvStockLedger', eqFilter('moveId', move.id));
+    await deleteByFilter(page, 'ErpInvStockMoveLine', eqFilter('moveId', move.id));
     await deleteById(page, 'ErpInvStockMove', move.id);
   }
 }
@@ -79,15 +79,15 @@ test.describe('inventory StockMove reverse (physical reversal)', () => {
     expect(reversed.docStatus, 'business-linked reversal auto-DONE').toBe('DONE');
     expect(reversed.relatedBillType, 'reversal relatedBillType=REVERSAL').toBe('REVERSAL');
     expect(reversed.relatedBillCode, 'reversal relatedBillCode=original code').toBe(created.code);
-    expect(Number(reversed.originReturnedMoveId), 'reversal originReturnedMoveId=original id')
-      .toBe(Number(created.id));
+    expect(reversed.originReturnedMoveId, 'reversal originReturnedMoveId=original id')
+      .toBe(created.id);
 
     // ---- 断言：冲销移动单方向取反 ----
     // inverseMoveType: INCOMING → OUTGOING
     expect(reversed.moveType, 'reversal moveType=OUTGOING (inverse of INCOMING)').toBe('OUTGOING');
     // source/dest swap: original destWarehouseId(2) → reversal sourceWarehouseId(2)
-    expect(Number(reversed.sourceWarehouseId), 'reversal sourceWarehouseId=original destWarehouseId')
-      .toBe(Number(created.destWarehouseId));
+    expect(reversed.sourceWarehouseId, 'reversal sourceWarehouseId=original destWarehouseId')
+      .toBe(created.destWarehouseId);
     // original sourceWarehouseId(null) → reversal destWarehouseId(null)
     expect(reversed.destWarehouseId ?? null, 'reversal destWarehouseId=original sourceWarehouseId(null)')
       .toBe(created.sourceWarehouseId ?? null);
@@ -116,7 +116,7 @@ test.describe('inventory StockMove reverse (physical reversal)', () => {
     expect(rej.errors, 'reverse on CONFIRMED should be rejected (ERR_REVERSE_NOT_DONE)').toBeTruthy();
 
     // 清理：CONFIRMED 不写流水/余额，仅清理移动单 + 行
-    await deleteByFilter(page, 'ErpInvStockMoveLine', eqFilter('moveId', Number(created.id)));
+    await deleteByFilter(page, 'ErpInvStockMoveLine', eqFilter('moveId', created.id));
     await deleteById(page, 'ErpInvStockMove', created.id);
   });
 });

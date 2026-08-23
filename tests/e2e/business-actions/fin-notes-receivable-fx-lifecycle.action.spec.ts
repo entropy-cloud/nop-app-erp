@@ -69,10 +69,10 @@ import type { Page } from '@playwright/test';
  * - 清理：voucher 经 `cleanupVoucherByBillCode` 删凭证行+凭证+回链；note 经 `deleteById` 删主实体。
  */
 
-const ORG_ID = 2;
-const CURRENCY_CNY = 1;
-const CURRENCY_USD = 2;
-const PARTNER_ID = 1; // CUST-001（partner 维度，ENDORSED 路径凭证 partnerId 维度）
+const ORG_ID = '2';
+const CURRENCY_CNY = '1';
+const CURRENCY_USD = '2';
+const PARTNER_ID = '1'; // CUST-001（partner 维度，ENDORSED 路径凭证 partnerId 维度）
 const NOTES_TYPE = 'BANK_ACCEPTANCE';
 const ISSUE_DATE = '2026-07-01';
 const DUE_DATE = '2026-07-31';

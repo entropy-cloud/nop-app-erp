@@ -43,8 +43,8 @@ async function seedPurchaseOrder(page: import('@playwright/test').Page, tag: str
   const po = await createViaSave(
     page, 'ErpPurOrder',
     {
-      code, orgId: 2, supplierId: 3, warehouseId: 2,
-      businessDate: BDATE, currencyId: 1, exchangeRate: 1,
+      code, orgId: '2', supplierId: '3', warehouseId: '2',
+      businessDate: BDATE, currencyId: '1', exchangeRate: 1,
       docStatus: 'ACTIVE', approveStatus: 'APPROVED', receiveStatus: 'UNRECEIVED',
     },
     'id code',
@@ -55,7 +55,7 @@ async function seedPurchaseOrder(page: import('@playwright/test').Page, tag: str
 async function seedPoLine(page: import('@playwright/test').Page, orderId: string | number, tag: string): Promise<{ id: string }> {
   return createViaSave(
     page, 'ErpPurOrderLine',
-    { orderId, lineNo: 1, materialId: 1, uoMId: 1, quantity: PO_QTY, unitPrice: 5, amount: 50 },
+    { orderId, lineNo: 1, materialId: '1', uoMId: '1', quantity: PO_QTY, unitPrice: 5, amount: 50 },
     'id',
   );
 }
@@ -65,7 +65,7 @@ async function seedAsn(page: import('@playwright/test').Page, poCode: string, ta
   return createViaSave(
     page, 'ErpB2bAsn',
     {
-      code, orgId: 2, partnerId: 3,
+      code, orgId: '2', partnerId: '3',
       relatedBillType: 'PO_ORDER', relatedBillCode: poCode,
       status, shipmentDate: BDATE, businessDate: BDATE,
     },
@@ -76,7 +76,7 @@ async function seedAsn(page: import('@playwright/test').Page, poCode: string, ta
 async function seedAsnLine(page: import('@playwright/test').Page, asnId: string | number, tag: string): Promise<{ id: string }> {
   return createViaSave(
     page, 'ErpB2bAsnLine',
-    { asnId, lineNo: 1, materialId: 1, shippedQty: ASN_QTY, quantity: ASN_QTY },
+    { asnId, lineNo: 1, materialId: '1', shippedQty: ASN_QTY, quantity: ASN_QTY },
     'id',
   );
 }
@@ -87,11 +87,11 @@ async function cleanupAsnChain(page: import('@playwright/test').Page, asnCode: s
     if (rcv) await deleteById(page, 'ErpPurReceive', rcv.id);
   }
   if (asnId) {
-    await deleteByFilter(page, 'ErpB2bAsnLine', eqFilter('asnId', Number(asnId)));
+    await deleteByFilter(page, 'ErpB2bAsnLine', eqFilter('asnId', asnId));
     await deleteById(page, 'ErpB2bAsn', asnId);
   }
   if (poId) {
-    await deleteByFilter(page, 'ErpPurOrderLine', eqFilter('orderId', Number(poId)));
+    await deleteByFilter(page, 'ErpPurOrderLine', eqFilter('orderId', poId));
     await deleteById(page, 'ErpPurOrder', poId);
   }
 }

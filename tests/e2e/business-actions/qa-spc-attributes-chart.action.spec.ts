@@ -14,8 +14,8 @@ import { test, expect, loginAndNavigate, createViaSave, verifyState, deleteById,
  * 清理：删除 E2E 创建的 chart + 关联 sample（cascade-delete）。
  */
 
-const MATERIAL_ID = 1;
-const PARAMETER_ID = 1;
+const MATERIAL_ID = '1';
+const PARAMETER_ID = '1';
 const BDATE = '2026-07-19';
 
 interface SpcChartSeed {
@@ -60,7 +60,7 @@ async function seedSample(
   await createViaSave(
     page, 'ErpQaSpcSample',
     {
-      chartId: Number(chartId),
+      chartId: chartId,
       subgroupNo,
       sampleTime: `${BDATE} 10:0${subgroupNo % 10}:00`,
       defectCount,
@@ -88,7 +88,7 @@ test.describe('quality ErpQaSpcChart 计数型 recalculateControlLimit（P/NP/C/
 
     // mutation 返回 Boolean（非实体），用 raw 调用避免字段选择
     const json: any = await new GraphQLClient(page).raw(
-      `mutation{ ErpQaSpcChart__recalculateControlLimit(chartId:${chart.id}) }`,
+      `mutation{ ErpQaSpcChart__recalculateControlLimit(chartId:"${chart.id}") }`,
     );
     expect(json.errors ?? null, `recalculateControlLimit should not error: ${JSON.stringify(json.errors)}`).toBeNull();
     expect(json.data?.ErpQaSpcChart__recalculateControlLimit, 'recalculate returns true').toBe(true);
@@ -115,7 +115,7 @@ test.describe('quality ErpQaSpcChart 计数型 recalculateControlLimit（P/NP/C/
     }
 
     const json: any = await new GraphQLClient(page).raw(
-      `mutation{ ErpQaSpcChart__recalculateControlLimit(chartId:${chart.id}) }`,
+      `mutation{ ErpQaSpcChart__recalculateControlLimit(chartId:"${chart.id}") }`,
     );
     expect(json.errors ?? null).toBeNull();
     expect(json.data?.ErpQaSpcChart__recalculateControlLimit).toBe(true);
@@ -141,7 +141,7 @@ test.describe('quality ErpQaSpcChart 计数型 recalculateControlLimit（P/NP/C/
     }
 
     const json: any = await new GraphQLClient(page).raw(
-      `mutation{ ErpQaSpcChart__recalculateControlLimit(chartId:${chart.id}) }`,
+      `mutation{ ErpQaSpcChart__recalculateControlLimit(chartId:"${chart.id}") }`,
     );
     expect(json.errors ?? null).toBeNull();
     expect(json.data?.ErpQaSpcChart__recalculateControlLimit).toBe(true);
@@ -164,7 +164,7 @@ test.describe('quality ErpQaSpcChart 计数型 recalculateControlLimit（P/NP/C/
     }
 
     const json: any = await new GraphQLClient(page).raw(
-      `mutation{ ErpQaSpcChart__recalculateControlLimit(chartId:${chart.id}) }`,
+      `mutation{ ErpQaSpcChart__recalculateControlLimit(chartId:"${chart.id}") }`,
     );
     expect(json.errors ?? null).toBeNull();
     expect(json.data?.ErpQaSpcChart__recalculateControlLimit).toBe(true);

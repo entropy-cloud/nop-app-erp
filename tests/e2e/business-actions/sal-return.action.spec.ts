@@ -43,8 +43,8 @@ async function cleanupReturnDownstream(page: Page, returnCode: string, materialI
   );
   for (const m of moves) {
     await cleanupVoucherByBillCode(page, m.code);
-    await deleteByFilter(page, 'ErpInvStockLedger', eqFilter('moveId', Number(m.id)));
-    await deleteByFilter(page, 'ErpInvStockMoveLine', eqFilter('moveId', Number(m.id)));
+    await deleteByFilter(page, 'ErpInvStockLedger', eqFilter('moveId', m.id));
+    await deleteByFilter(page, 'ErpInvStockMoveLine', eqFilter('moveId', m.id));
     await deleteById(page, 'ErpInvStockMove', m.id);
   }
   await deleteByFilter(page, 'ErpInvStockBalance', andFilter(eqFilter('materialId', materialId), eqFilter('warehouseId', warehouseId)));
@@ -110,7 +110,7 @@ test.describe('sales ErpSalReturn approval axis + posted side-effect', () => {
       ]);
 
       await cleanupReturnDownstream(page, retCode, SEED.MAT_1, SEED.WH_RAW);
-      await deleteByFilter(page, 'ErpSalReturnLine', eqFilter('returnId', Number(ret.id)));
+      await deleteByFilter(page, 'ErpSalReturnLine', eqFilter('returnId', ret.id));
       await deleteById(page, 'ErpSalReturn', ret.id);
     } finally {
       await cleanupO2c(page, o2c);
@@ -153,7 +153,7 @@ test.describe('sales ErpSalReturn approval axis + posted side-effect', () => {
     const rej = await callMutation(page, 'ErpSalReturn', 'approve', { id: rj.id }, 'id');
     expect(rej.errors, 'approve from REJECTED should be rejected').toBeTruthy();
 
-    await deleteByFilter(page, 'ErpSalReturnLine', eqFilter('returnId', Number(rj.id)));
+    await deleteByFilter(page, 'ErpSalReturnLine', eqFilter('returnId', rj.id));
     await deleteById(page, 'ErpSalReturn', rj.id);
 
     // cancel path

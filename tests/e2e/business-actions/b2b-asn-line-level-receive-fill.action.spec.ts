@@ -27,17 +27,17 @@ import { test, expect, loginAndNavigate, createViaSave, callMutationOk, verifySt
  */
 
 const BDATE = '2026-07-10';
-const UOM_ID = 1;
-const MAT_A = 1; // MAT-001 种子物料，uoMId=1
-const MAT_B = 2; // MAT-002 种子物料，uoMId=1
+const UOM_ID = '1';
+const MAT_A = '1'; // MAT-001 种子物料，uoMId=1
+const MAT_B = '2'; // MAT-002 种子物料，uoMId=1
 
 async function seedPurchaseOrder(page: import('@playwright/test').Page, tag: string): Promise<{ id: string; code: string }> {
   const code = `E2E-B2B-PO-LL-${tag}-${Date.now()}`;
   const po = await createViaSave(
     page, 'ErpPurOrder',
     {
-      code, orgId: 2, supplierId: 3, warehouseId: 2,
-      businessDate: BDATE, currencyId: 1, exchangeRate: 1,
+      code, orgId: '2', supplierId: '3', warehouseId: '2',
+      businessDate: BDATE, currencyId: '1', exchangeRate: 1,
       docStatus: 'ACTIVE', approveStatus: 'APPROVED', receiveStatus: 'UNRECEIVED',
     },
     'id code',
@@ -65,7 +65,7 @@ async function seedMatchedAsn(page: import('@playwright/test').Page, poCode: str
   return createViaSave(
     page, 'ErpB2bAsn',
     {
-      code, orgId: 2, partnerId: 3,
+      code, orgId: '2', partnerId: '3',
       relatedBillType: 'PO_ORDER', relatedBillCode: poCode,
       status: 'MATCHED', shipmentDate: BDATE, businessDate: BDATE,
     },
@@ -98,11 +98,11 @@ async function cleanupChain(
     if (rcv) await deleteById(page, 'ErpPurReceive', rcv.id); // cascade-delete 自动清 ErpPurReceiveLine
   }
   if (asnId) {
-    await deleteByFilter(page, 'ErpB2bAsnLine', eqFilter('asnId', Number(asnId)));
+    await deleteByFilter(page, 'ErpB2bAsnLine', eqFilter('asnId', asnId));
     await deleteById(page, 'ErpB2bAsn', asnId);
   }
   if (poId) {
-    await deleteByFilter(page, 'ErpPurOrderLine', eqFilter('orderId', Number(poId)));
+    await deleteByFilter(page, 'ErpPurOrderLine', eqFilter('orderId', poId));
     await deleteById(page, 'ErpPurOrder', poId);
   }
 }
@@ -143,7 +143,7 @@ test.describe('b2b ErpB2bAsn createReceiveFromAsn line-level receive fill', () =
     // 行级回填断言（本 plan 核心扩展）：行数 == AsnLine 行数 + 字段精确数值断言
     const lines = await findItems<any>(
       page, 'ErpPurReceiveLine',
-      eqFilter('receiveId', Number(rcv.id)),
+      eqFilter('receiveId', rcv.id),
       'id lineNo materialId uoMId quantity unitPrice amount warehouseId orderLineId',
     );
     expect(lines.length, '2 AsnLine → 2 ReceiveLine（行级回填完整）').toBe(2);
@@ -152,18 +152,18 @@ test.describe('b2b ErpB2bAsn createReceiveFromAsn line-level receive fill', () =
     const sorted = lines.sort((a, b) => a.lineNo - b.lineNo);
     const l1 = sorted[0];
     expect(Number(l1.lineNo)).toBe(1);
-    expect(Number(l1.materialId)).toBe(MAT_A, 'ReceiveLine.materialId 透传 AsnLine.materialId');
-    expect(Number(l1.uoMId)).toBe(UOM_ID, 'ReceiveLine.uoMId 反查 ErpMdMaterial.uoMId');
+    expect(l1.materialId).toBe(MAT_A, 'ReceiveLine.materialId 透传 AsnLine.materialId');
+    expect(l1.uoMId).toBe(UOM_ID, 'ReceiveLine.uoMId 反查 ErpMdMaterial.uoMId');
     expect(Number(l1.quantity)).toBe(15, 'ReceiveLine.quantity=AsnLine.shippedQty');
     expect(Number(l1.unitPrice)).toBe(5, 'ReceiveLine.unitPrice 反查 PO line');
     expect(Number(l1.amount)).toBe(75, 'ReceiveLine.amount=unitPrice×qty=5×15=75 HALF_UP scale=4');
-    expect(Number(l1.warehouseId)).toBe(2, 'ReceiveLine.warehouseId=receive.warehouseId');
+    expect(l1.warehouseId).toBe('2', 'ReceiveLine.warehouseId=receive.warehouseId');
     expect(l1.orderLineId, 'ReceiveLine.orderLineId 反查 PO line').toBeTruthy();
 
     const l2 = sorted[1];
     expect(Number(l2.lineNo)).toBe(2);
-    expect(Number(l2.materialId)).toBe(MAT_B);
-    expect(Number(l2.uoMId)).toBe(UOM_ID, 'MAT-002.uoMId 反查');
+    expect(l2.materialId).toBe(MAT_B);
+    expect(l2.uoMId).toBe(UOM_ID, 'MAT-002.uoMId 反查');
     expect(Number(l2.quantity)).toBe(8);
     expect(Number(l2.unitPrice)).toBe(12);
     expect(Number(l2.amount)).toBe(96, 'amount=12×8=96');
@@ -195,7 +195,7 @@ test.describe('b2b ErpB2bAsn createReceiveFromAsn line-level receive fill', () =
     // 0 ReceiveLine 断言（对照 (1) 多行映射）
     const lines = await findItems<any>(
       page, 'ErpPurReceiveLine',
-      eqFilter('receiveId', Number(rcv.id)),
+      eqFilter('receiveId', rcv.id),
       'id',
     );
     expect(lines.length, '0 AsnLine → 0 ReceiveLine').toBe(0);

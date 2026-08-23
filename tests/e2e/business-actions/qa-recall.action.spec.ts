@@ -21,7 +21,7 @@ import { test, expect, loginAndNavigate, createViaSave, callMutationOk, callMuta
  * 逻辑删除 Recall 自身。
  */
 
-const MATERIAL_ID = 1;
+const MATERIAL_ID = '1';
 const BDATE = '2026-07-09';
 
 async function seedBatch(page: import('@playwright/test').Page, tag: string): Promise<{ id: string }> {
@@ -30,7 +30,7 @@ async function seedBatch(page: import('@playwright/test').Page, tag: string): Pr
     {
       batchNo: `E2E-BATCH-${tag}-${Date.now()}`,
       materialId: MATERIAL_ID,
-      warehouseId: 2,
+      warehouseId: '2',
       totalQuantity: 100,
       availableQuantity: 100,
       status: 'OPEN',

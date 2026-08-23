@@ -12,7 +12,7 @@ import {
  * ast 6 实体 × approve+reverseApprove = 12 动作。
  * FNPT: approve=资产管理员/管理员（ErpAstDisposal 既有 + 本计划补齐 5 实体）/ reverseApprove=管理员。
  */
-const DUMMY_ID = 999999;
+const DUMMY_ID = '999999';
 const AST_ENTITIES = ['ErpAstDisposal', 'ErpAstValueAdjustment', 'ErpAstSplit', 'ErpAstMerge', 'ErpAstMovement', 'ErpAstAssetCapitalization'];
 const AST_ACTIONS = AST_ENTITIES.flatMap((e) => [
   { entity: e, action: 'approve', authorizedRole: '资产管理员' },

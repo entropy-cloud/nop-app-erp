@@ -1,5 +1,4 @@
-import { test, expect, loginAndNavigate, createViaSave, callMutationOk, callMutation, verifyState, eqFilter, andFilter, findPageTotal, findFirst, deleteByFilter, deleteById } from './_helper';
-import { loginAsRole } from '../negative/_helper';
+import { test, expect, loginAndNavigate, createViaSave, callMutationOk, callMutationOkAsUser, callMutation, verifyState, eqFilter, andFilter, findPageTotal, findFirst, deleteByFilter, deleteById } from './_helper';
 
 /**
  * contract ErpCtContract 合同生命周期业务动作浏览器层 E2E（plan 2026-07-14-0215-2 Phase 1；
@@ -26,9 +25,9 @@ import { loginAsRole } from '../negative/_helper';
  * 清理：合同头 versions 关系 cascade-delete；amend 产版本经 deleteByFilter 显式清理后删合同头。
  */
 
-const PARTNER_CUSTOMER_ID = 1;
-const ORG_ID = 2;
-const CURRENCY_ID = 1;
+const PARTNER_CUSTOMER_ID = '1';
+const ORG_ID = '2';
+const CURRENCY_ID = '1';
 
 interface ContractOpts {
   status: string;
@@ -58,17 +57,25 @@ async function seedContract(page: import('@playwright/test').Page, o: ContractOp
 
 /**
  * RC-R1.34 两段化：terminate 发起 → 查 PENDING 法务记录（approvalStatus=PENDING）→
- * 切「合同审批人」账号（nop_auth_user_role.csv userId 19 绑定，D2 解析落 approverId=19）→
- * approveTermination。
+ * 以「合同审批人」账号身份 approveTermination（nop_auth_user_role.csv userId 19 绑定，
+ * D2 解析落 approverId=19）。产品侧 guardTerminationRecord 有审批人身份硬守卫
+ * （approverId 非空时须 context.userId == approverId，ERR_CT_APPROVAL_APPROVER_MISMATCH），
+ * admin skip-check 不能代审；身份切换经 /r/LoginApi__login REST token（callMutationOkAsUser），
+ * 规避 loginAsRole UI 登录表单 20s race（08-11 白名单 test-infra 类）。
  */
 async function terminateAndApprove(page: import('@playwright/test').Page, contractId: string): Promise<void> {
   await callMutationOk(page, 'ErpCtContract', 'terminate', { contractId }, 'id');
-  const record = await findFirst<{ id: string }>(page, 'ErpCtApprovalRecord', {
-    filter: andFilter(eqFilter('contractId', Number(contractId)), eqFilter('approvalStatus', 'PENDING')),
-  }, 'id');
+  // findFirst 形参即 filter 本体（_helper.findFirst(page, entity, filter, selection)）——
+  // 不可包 {filter:...} 外壳（plain-map 无 $type → nop.err.core.filter.op-is-null 静默空结果）。
+  const record = await findFirst<{ id: string }>(
+    page, 'ErpCtApprovalRecord',
+    andFilter(eqFilter('contractId', contractId), eqFilter('approvalStatus', 'PENDING')),
+    'id',
+  );
   expect(record, 'terminate 应生成 PENDING 法务审批记录').toBeTruthy();
-  await loginAsRole(page, '合同审批人');
-  await callMutationOk(page, 'ErpCtContract', 'approveTermination', { recordId: Number(record.id) }, 'id');
+  await callMutationOkAsUser(
+    page, 'role-ct-approver', 'ErpCtContract', 'approveTermination', { recordId: record.id }, 'id',
+  );
 }
 
 test.describe('contract ErpCtContract lifecycle state machine', () => {
@@ -130,11 +137,11 @@ test.describe('contract ErpCtContract lifecycle state machine', () => {
     expect(s.status, 'after amend contract status=DRAFT (back to amendment)').toBe('DRAFT');
 
     // 修订版本回链：ErpCtContractVersion 非空（amend 新建修订版）
-    const versionCount = await findPageTotal(page, 'ErpCtContractVersion', eqFilter('contractId', Number(c.id)));
+    const versionCount = await findPageTotal(page, 'ErpCtContractVersion', eqFilter('contractId', c.id));
     expect(versionCount, 'amend should create a revision version').toBeGreaterThan(0);
 
     // 清理：先删 amend 产版本，再删合同头（versions 关系 cascade-delete 兜底）
-    await deleteByFilter(page, 'ErpCtContractVersion', eqFilter('contractId', Number(c.id)));
+    await deleteByFilter(page, 'ErpCtContractVersion', eqFilter('contractId', c.id));
     await deleteById(page, 'ErpCtContract', c.id);
   });
 

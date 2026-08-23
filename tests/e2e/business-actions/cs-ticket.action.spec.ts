@@ -23,13 +23,13 @@ test.describe('CS Ticket six-state machine actions', () => {
       {
         code,
         subject: 'E2E Action Ticket',
-        customerId: 1,
-        ticketTypeId: 1,
+        customerId: '1',
+        ticketTypeId: '1',
         priority: 'HIGH',
         status: 'NEW',
         docStatus: 'ACTIVE',
         approveStatus: 'UNSUBMITTED',
-        orgId: 2,
+        orgId: '2',
       },
       'id status',
     );
@@ -69,8 +69,8 @@ test.describe('CS Ticket six-state machine actions', () => {
 
     // 清理：状态机迁移写 TicketAction 审计 + resolve 可能触发 CSAT 调查，
     // 污染 cs-ticket-sla-csat 报表数值断言。逐域删除：actions → survey → ticket
-    await deleteByFilter(page, 'ErpCsTicketAction', eqFilter('ticketId', Number(ticket.id)));
-    await deleteByFilter(page, 'ErpCsSurvey', eqFilter('ticketId', Number(ticket.id)));
+    await deleteByFilter(page, 'ErpCsTicketAction', eqFilter('ticketId', ticket.id));
+    await deleteByFilter(page, 'ErpCsSurvey', eqFilter('ticketId', ticket.id));
     await deleteById(page, 'ErpCsTicket', ticket.id);
   });
 
@@ -82,13 +82,13 @@ test.describe('CS Ticket six-state machine actions', () => {
       {
         code: `E2E-TKT-CNL-${Date.now()}`,
         subject: 'E2E Cancel Ticket',
-        customerId: 1,
-        ticketTypeId: 2,
+        customerId: '1',
+        ticketTypeId: '2',
         priority: 'NORMAL',
         status: 'NEW',
         docStatus: 'ACTIVE',
         approveStatus: 'UNSUBMITTED',
-        orgId: 2,
+        orgId: '2',
       },
       'id status',
     );
@@ -99,7 +99,7 @@ test.describe('CS Ticket six-state machine actions', () => {
     expect(cancelled.status, 'cancel should transition NEW → CANCELLED').toBe('CANCELLED');
 
     // 清理：cancel 写 TicketAction 审计
-    await deleteByFilter(page, 'ErpCsTicketAction', eqFilter('ticketId', Number(ticket.id)));
+    await deleteByFilter(page, 'ErpCsTicketAction', eqFilter('ticketId', ticket.id));
     await deleteById(page, 'ErpCsTicket', ticket.id);
   });
 });

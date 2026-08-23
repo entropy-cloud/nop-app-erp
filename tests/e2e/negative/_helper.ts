@@ -312,7 +312,12 @@ export async function loginAsRole(page: Page, roleOrUser: string): Promise<void>
   // 在 about:blank 时 localStorage 不可访问（SecurityError），try-catch 容错（fresh page 无残留）。
   await page.context().clearCookies();
   try {
-    await page.evaluate(() => localStorage.clear());
+    await page.evaluate(() => {
+      localStorage.clear();
+      // flux 前端将 access token 存于 sessionStorage（auth:tokens:v1）——不清会导致
+      // SPA 自认已登录不渲染登录表单 → username input 20s 超时（loginAsRole race 根因）。
+      sessionStorage.clear();
+    });
   } catch {
     // about:blank / cross-origin：fresh page 无 localStorage 须清，静默跳过
   }

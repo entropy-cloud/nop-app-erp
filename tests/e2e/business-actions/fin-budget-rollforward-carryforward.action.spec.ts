@@ -58,9 +58,9 @@ import type { Page } from '@playwright/test';
  * 种子引用：org id=2 / acctSchema ACCT-FIN-01 id=1 / currency CNY id=1。自包含隔离：scenario/subject/period/voucher
  * code 均唯一（E2E-RF-/E2E-CF- + ts），cleanup 按反依赖链删除 Log + 凭证 + 行 + 方案 + actual voucher + period + subject。
  */
-const ORG = 2;
-const ACCT_SCHEMA = 1;
-const CURRENCY = 1;
+const ORG = '2';
+const ACCT_SCHEMA = '1';
+const CURRENCY = '1';
 const SOURCE_AMOUNT = 1000;
 const ACTUAL_AMOUNT = 400;
 
@@ -122,6 +122,25 @@ async function createPeriod(page: Page, code: string, year: number, month: numbe
   return { id: p.id, code };
 }
 
+/**
+ * carryForward 硬前置（P1-MA2-034，2026-08-01 fb5e7d5c3 落地）：源方案年度全部会计期间须
+ * glStatus=CLOSED（经 ErpFinAccountingPeriodStatus 1:1 关联判定，无 status 行视为未结账）。
+ * 本 spec 自建源年度期间 → 须同步落 CLOSED status 行满足守卫（对齐产品契约的 spec 适配）。
+ */
+async function createClosedPeriodStatus(page: Page, periodId: string): Promise<void> {
+  await createViaSave(
+    page, 'ErpFinAccountingPeriodStatus',
+    {
+      periodId,
+      acctSchemaId: ACCT_SCHEMA,
+      totalVouchers: 0, postedVouchers: 0, unpostedVouchers: 0,
+      arStatus: 'CLOSED', apStatus: 'CLOSED', invStatus: 'CLOSED',
+      glStatus: 'CLOSED', assetStatus: 'CLOSED',
+    },
+    'id',
+  );
+}
+
 async function createScenario(
   page: Page, code: string, fiscalYear: number, docStatus: string, approveStatus: string,
 ): Promise<Scenario> {
@@ -143,8 +162,8 @@ async function addBudgetLine(
   const line = await createViaSave(
     page, 'ErpFinBudgetLine',
     {
-      scenarioId: Number(scenarioId), lineNo: 1, orgId: ORG, acctSchemaId: ACCT_SCHEMA,
-      periodId: Number(periodId), subjectId: Number(subject.id), subjectCode: subject.code,
+      scenarioId: scenarioId, lineNo: 1, orgId: ORG, acctSchemaId: ACCT_SCHEMA,
+      periodId: periodId, subjectId: subject.id, subjectCode: subject.code,
       budgetAmountSource: amount, budgetAmountFunctional: amount,
       currencyId: CURRENCY, exchangeRate: 1,
     },
@@ -161,7 +180,7 @@ async function createActualVoucher(
     page, 'ErpFinVoucher',
     {
       code, voucherType: 'TRANSFER', postingType: 'NORMAL', voucherDate: '2024-06-15',
-      orgId: ORG, acctSchemaId: ACCT_SCHEMA, periodId: Number(periodId),
+      orgId: ORG, acctSchemaId: ACCT_SCHEMA, periodId: periodId,
       totalDebit: amount, totalCredit: amount, isReversed: false, docStatus: 'POSTED',
     },
     'id',
@@ -169,7 +188,7 @@ async function createActualVoucher(
   await createViaSave(
     page, 'ErpFinVoucherLine',
     {
-      voucherId: Number(v.id), lineNo: 1, subjectId: Number(subject.id), subjectCode: subject.code,
+      voucherId: v.id, lineNo: 1, subjectId: subject.id, subjectCode: subject.code,
       subjectName: subject.code, dcDirection: 'DEBIT', debitAmount: amount, creditAmount: 0,
       currencyId: CURRENCY, exchangeRate: 1, amountSource: amount, amountFunctional: amount,
       acctSchemaId: ACCT_SCHEMA, orgId: ORG,
@@ -183,12 +202,12 @@ async function cleanupRollForward(page: Page, setup: RollForwardSetup): Promise<
   if (!setup) return;
   // 反依赖链：RollforwardLog → 目标方案行 → 目标方案 → 源行 → 源方案 → period → subject
   if (setup.source) {
-    await deleteByFilter(page, 'ErpFinBudgetRollforwardLog', eqFilter('sourceScenarioId', Number(setup.source.id)));
+    await deleteByFilter(page, 'ErpFinBudgetRollforwardLog', eqFilter('sourceScenarioId', setup.source.id));
   }
   if (setup.targetCode) {
     const tgt = await findBudgetScenarioByCode<{ id: string | number }>(page, setup.targetCode, 'id');
     if (tgt) {
-      await deleteByFilter(page, 'ErpFinBudgetLine', eqFilter('scenarioId', Number(tgt.id)));
+      await deleteByFilter(page, 'ErpFinBudgetLine', eqFilter('scenarioId', tgt.id));
       await deleteById(page, 'ErpFinBudgetScenario', tgt.id);
     }
   }
@@ -214,20 +233,20 @@ async function cleanupCarryForward(page: Page, setup: CarryForwardSetup): Promis
   // 反依赖链：CarryForwardLog → 结转凭证（billCode）→ 目标方案行（含 CARRY-FORWARD 行）→
   //           actual 凭证行+凭证 → 源行 → 源方案 + 目标方案 → period → subject
   if (setup.source) {
-    await deleteByFilter(page, 'ErpFinBudgetCarryForwardLog', eqFilter('sourceScenarioId', Number(setup.source.id)));
+    await deleteByFilter(page, 'ErpFinBudgetCarryForwardLog', eqFilter('sourceScenarioId', setup.source.id));
   }
   if (setup.carryBillCode) {
     await cleanupVoucherByBillCode(page, setup.carryBillCode);
   }
   if (setup.target) {
-    await deleteByFilter(page, 'ErpFinBudgetLine', eqFilter('scenarioId', Number(setup.target.id)));
+    await deleteByFilter(page, 'ErpFinBudgetLine', eqFilter('scenarioId', setup.target.id));
   }
   if (setup.actualVoucherCode) {
     // actual 凭证无 billR 回链，按 code 反查凭证后清行+凭证
     const { findFirst } = await import('../orchestration/_helper');
     const v = await findFirst<{ id: string | number }>(page, 'ErpFinVoucher', eqFilter('code', setup.actualVoucherCode), 'id');
     if (v) {
-      await deleteByFilter(page, 'ErpFinVoucherLine', eqFilter('voucherId', Number(v.id)));
+      await deleteByFilter(page, 'ErpFinVoucherLine', eqFilter('voucherId', v.id));
       await deleteById(page, 'ErpFinVoucher', v.id);
     }
   }
@@ -241,6 +260,7 @@ async function cleanupCarryForward(page: Page, setup: CarryForwardSetup): Promis
     await deleteById(page, 'ErpFinBudgetScenario', setup.target.id);
   }
   if (setup.period) {
+    await deleteByFilter(page, 'ErpFinAccountingPeriodStatus', eqFilter('periodId', setup.period.id));
     await deleteById(page, 'ErpFinAccountingPeriod', setup.period.id);
   }
   if (setup.subject) {
@@ -269,7 +289,7 @@ test.describe('Finance ErpFinBudgetScenario rollForward (3 strategies) + carryFo
       );
       expect(target.fiscalYear, 'target fiscalYear should be 2025').toBe(2025);
       expect(target.docStatus, 'target docStatus should be DRAFT').toBe('DRAFT');
-      expect(Number(target.parentScenarioId), 'target parentScenarioId should point to source').toBe(Number(setup.source.id));
+      expect(target.parentScenarioId, 'target parentScenarioId should point to source').toBe(setup.source.id);
       setup.targetCode = target.code;
 
       // __get 独立反查字段翻转
@@ -279,7 +299,7 @@ test.describe('Finance ErpFinBudgetScenario rollForward (3 strategies) + carryFo
       expect(after.fiscalYear, '__get should confirm fiscalYear 2025').toBe(2025);
       expect(after.docStatus, '__get should confirm DRAFT').toBe('DRAFT');
       expect(after.approveStatus, '__get should confirm approveStatus DRAFT').toBe('DRAFT');
-      expect(Number(after.parentScenarioId), '__get should confirm parentScenarioId → source').toBe(Number(setup.source.id));
+      expect(after.parentScenarioId, '__get should confirm parentScenarioId → source').toBe(setup.source.id);
 
       // 目标方案行金额 100% 复制 = 1000
       const amount = await findBudgetLineAmount(page, target.id, subjectCode);
@@ -357,6 +377,7 @@ test.describe('Finance ErpFinBudgetScenario rollForward (3 strategies) + carryFo
       const subjectCode = uniq('B');
       setup.subject = await createSubject(page, subjectCode);
       setup.period = await createPeriod(page, uniq('P'), 2024, 6);
+      await createClosedPeriodStatus(page, setup.period.id);
       setup.source = await createScenario(page, uniq('S'), 2024, 'APPROVED', 'APPROVED');
       setup.target = await createScenario(page, uniq('T'), 2024, 'DRAFT', 'UNSUBMITTED');
       const lineId = await addBudgetLine(page, setup.source.id, setup.period.id, setup.subject, SOURCE_AMOUNT);
@@ -394,6 +415,7 @@ test.describe('Finance ErpFinBudgetScenario rollForward (3 strategies) + carryFo
       const subjectCode = uniq('B');
       setup.subject = await createSubject(page, subjectCode);
       setup.period = await createPeriod(page, uniq('P'), 2024, 7);
+      await createClosedPeriodStatus(page, setup.period.id);
       setup.source = await createScenario(page, uniq('S'), 2024, 'APPROVED', 'APPROVED');
       setup.target = await createScenario(page, uniq('T'), 2024, 'DRAFT', 'UNSUBMITTED');
       const lineId = await addBudgetLine(page, setup.source.id, setup.period.id, setup.subject, SOURCE_AMOUNT);
@@ -424,6 +446,7 @@ test.describe('Finance ErpFinBudgetScenario rollForward (3 strategies) + carryFo
       const subjectCode = uniq('B');
       setup.subject = await createSubject(page, subjectCode);
       setup.period = await createPeriod(page, uniq('P'), 2024, 8);
+      await createClosedPeriodStatus(page, setup.period.id);
       setup.source = await createScenario(page, uniq('S'), 2024, 'APPROVED', 'APPROVED');
       setup.target = await createScenario(page, uniq('T'), 2024, 'DRAFT', 'UNSUBMITTED');
       const lineId = await addBudgetLine(page, setup.source.id, setup.period.id, setup.subject, SOURCE_AMOUNT);
@@ -454,6 +477,7 @@ test.describe('Finance ErpFinBudgetScenario rollForward (3 strategies) + carryFo
       const subjectCode = uniq('B');
       setup.subject = await createSubject(page, subjectCode);
       setup.period = await createPeriod(page, uniq('P'), 2024, 9);
+      await createClosedPeriodStatus(page, setup.period.id);
       setup.source = await createScenario(page, uniq('S'), 2024, 'APPROVED', 'APPROVED');
       setup.target = await createScenario(page, uniq('T'), 2024, 'DRAFT', 'UNSUBMITTED');
       const lineId = await addBudgetLine(page, setup.source.id, setup.period.id, setup.subject, SOURCE_AMOUNT);

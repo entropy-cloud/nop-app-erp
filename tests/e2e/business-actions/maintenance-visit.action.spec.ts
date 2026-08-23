@@ -23,7 +23,7 @@ import { test, expect, loginAndNavigate, createViaSave, callMutationOk, callMuta
  * helper 三原语足够，无需扩展（__get 即可断言任意实体状态字段）。
  */
 
-const EQ_ID = 1;
+const EQ_ID = '1';
 const ASSIGNED_TO = 2;
 const VISIT_DATE = '2026-12-25';
 
@@ -41,7 +41,7 @@ test.describe('maintenance ErpMntVisit business action lifecycle', () => {
         status: 'DRAFT',
         assignedTo: ASSIGNED_TO,
         visitType: 'PLANNED',
-        orgId: 2,
+        orgId: '2',
       },
       'id status',
     );
@@ -96,7 +96,7 @@ test.describe('maintenance ErpMntVisit business action lifecycle', () => {
         status: 'DRAFT',
         assignedTo: ASSIGNED_TO,
         visitType: 'PLANNED',
-        orgId: 2,
+        orgId: '2',
       },
       'id status',
     );

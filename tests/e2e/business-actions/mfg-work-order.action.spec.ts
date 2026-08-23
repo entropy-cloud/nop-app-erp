@@ -22,7 +22,7 @@ import { test, expect, loginAndNavigate, createViaSave, callMutationOk, callMuta
  * 清理：WorkOrder approve 不触发 posted（无凭证产物），逻辑删除 WO + BOM 自身。
  */
 
-const PRODUCT_ID = 1;
+const PRODUCT_ID = '1';
 const BDATE = '2026-07-09';
 
 async function seedBom(page: import('@playwright/test').Page, tag: string): Promise<{ id: string }> {

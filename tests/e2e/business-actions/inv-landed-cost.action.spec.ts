@@ -59,12 +59,12 @@ import {
  *   posting 不写 gl_balance（仅 voucher/voucher_line/voucher_bill_r），不污染 finance dashboard 基线。
  */
 
-const ORG = 2;
-const WH = 2; // WH-RAW
-const UOM = 1; // PCS
-const CURRENCY = 1;
-const ACCT_SCHEMA = 1; // ACCT-FIN-01
-const SUPPLIER = 3; // SUP-001
+const ORG = '2';
+const WH = '2'; // WH-RAW
+const UOM = '1'; // PCS
+const CURRENCY = '1';
+const ACCT_SCHEMA = '1'; // ACCT-FIN-01
+const SUPPLIER = '3'; // SUP-001
 const BDATE = '2026-07-10';
 const MOVE_REQ_TYPE = 'i_app_erp_inv_biz_StockMoveRequest';
 
@@ -159,7 +159,7 @@ test.describe('inventory ErpInvLandedCost approve lifecycle + LANDED_COST postin
       expect(Array.isArray(allocResult.data), 'allocate should return List<Map> allocation preview').toBe(true);
       expect(allocResult.data.length, 'allocate preview should have 1 allocation row for 1 receive line').toBe(1);
       expect(Number(allocResult.data[0].allocatedAmount), 'allocatedAmount should equal totalCostAmount for single line').toBe(LANDED_COST_AMOUNT);
-      expect(Number(allocResult.data[0].materialId), 'allocation materialId matches test material').toBe(Number(material.id));
+      expect(allocResult.data[0].materialId, 'allocation materialId matches test material').toBe(material.id);
 
       // 状态不改：approveStatus 仍 UNSUBMITTED
       const afterAlloc = await verifyState(page, 'ErpInvLandedCost', landedCost.id, 'approveStatus');
@@ -193,7 +193,7 @@ test.describe('inventory ErpInvLandedCost approve lifecycle + LANDED_COST postin
       // 注：MOVING_AVERAGE path 经 CostAdjustmentService.applyAverageLike 更新 StockBalance.avgCost（不写 CostLayer）。
       const balance = await findFirst<any>(
         page, 'ErpInvStockBalance',
-        eqFilter('materialId', Number(material.id)),
+        eqFilter('materialId', material.id),
         'avgCost totalCost quantity warehouseId',
       );
       // balance 可达性受 CostAdjust 内部余额查找逻辑影响（按 materialId+warehouseId+可选 batch 维度）。
@@ -211,16 +211,16 @@ test.describe('inventory ErpInvLandedCost approve lifecycle + LANDED_COST postin
       // 1. LANDED_COST 凭证（billHeadCode=landedCost.code 无后缀）
       await cleanupVoucherByBillCode(page, landedCost.code);
       // 2. CostAdjustLine + CostAdjust（按 materialId 反查 adjustId）
-      const caLines = await findItems<any>(page, 'ErpInvCostAdjustLine', eqFilter('materialId', Number(material.id)), 'id adjustId');
+      const caLines = await findItems<any>(page, 'ErpInvCostAdjustLine', eqFilter('materialId', material.id), 'id adjustId');
       const adjustIds = new Set(caLines.map((l) => l.adjustId));
       for (const l of caLines) await deleteById(page, 'ErpInvCostAdjustLine', l.id);
       for (const aid of adjustIds) await deleteById(page, 'ErpInvCostAdjust', aid);
       // 3. StockLedger 按 materialId（含 INCOMING 备货 + CostAdjust 写入的 quantity=0 行）
-      await deleteByFilter(page, 'ErpInvStockLedger', eqFilter('materialId', Number(material.id)));
+      await deleteByFilter(page, 'ErpInvStockLedger', eqFilter('materialId', material.id));
       // 4. StockBalance 按 materialId+warehouseId（INCOMING 备货建立的余额）
-      await deleteByFilter(page, 'ErpInvStockBalance', andFilter(eqFilter('materialId', Number(material.id)), eqFilter('warehouseId', WH)));
+      await deleteByFilter(page, 'ErpInvStockBalance', andFilter(eqFilter('materialId', material.id), eqFilter('warehouseId', WH)));
       // 5. INCOMING 备货移动（lines + move）
-      await deleteByFilter(page, 'ErpInvStockMoveLine', eqFilter('moveId', Number(setupMove.id)));
+      await deleteByFilter(page, 'ErpInvStockMoveLine', eqFilter('moveId', setupMove.id));
       await deleteById(page, 'ErpInvStockMove', setupMove.id);
       // 6. LandedCostLine + LandedCost
       await deleteById(page, 'ErpInvLandedCostLine', lcLine.id);

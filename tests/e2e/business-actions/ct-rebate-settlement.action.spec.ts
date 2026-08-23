@@ -38,9 +38,9 @@ import { test, expect, loginAndNavigate, createViaSave, callMutationOk, callMuta
  *   credit memo posted=false 故无 GL 凭证/AR-AP 辅助账产物。
  */
 
-const PARTNER_SUPPLIER_ID = 3; // SUP-001（PINV-2026-001 supplierId）
-const CURRENCY_ID = 1; // CNY（种子）
-const MATERIAL_ID = 1; // MAT-001（种子，供 contractLine.materialId + 发票行 NOT NULL）
+const PARTNER_SUPPLIER_ID = '3'; // SUP-001（PINV-2026-001 supplierId）
+const CURRENCY_ID = '1'; // CNY（种子）
+const MATERIAL_ID = '1'; // MAT-001（种子，供 contractLine.materialId + 发票行 NOT NULL）
 const AS_OF_DATE = '2026-07-17';
 const EXPECTED_ACCRUED_REBATE = 96.05; // 960.5 × 10%（单档开放 tier，0941-1 验证）
 
@@ -96,7 +96,7 @@ test.describe('contract ErpCtRebateSettlement postSettlement orchestration', () 
     );
     const tier = await createViaSave(
       page, 'ErpCtRebateTier',
-      { rebateAgreementId: Number(agreement.id), fromAmount: 0, rebatePercent: 10 },
+      { rebateAgreementId: agreement.id, fromAmount: 0, rebatePercent: 10 },
       'id',
     );
 
@@ -108,7 +108,7 @@ test.describe('contract ErpCtRebateSettlement postSettlement orchestration', () 
     const settlement = await createViaSave(
       page, 'ErpCtRebateSettlement',
       {
-        rebateAgreementId: Number(agreement.id),
+        rebateAgreementId: agreement.id,
         settlementDate: AS_OF_DATE,
         status: 'DRAFT',
       },
@@ -136,14 +136,14 @@ test.describe('contract ErpCtRebateSettlement postSettlement orchestration', () 
         'id code supplierId totalAmount docStatus approveStatus posted',
       );
       expect(creditMemo, 'negative AP credit memo should be created').not.toBeNull();
-      expect(Number(creditMemo!.supplierId), 'creditMemo.supplierId=agreement.partnerId').toBe(PARTNER_SUPPLIER_ID);
+      expect(creditMemo!.supplierId, 'creditMemo.supplierId=agreement.partnerId').toBe(PARTNER_SUPPLIER_ID);
       expect(Number(creditMemo!.totalAmount), 'creditMemo.totalAmount should be negative (= -96.05)').toBe(-EXPECTED_ACCRUED_REBATE);
       expect(creditMemo!.posted, 'creditMemo.posted=false (not yet posted through approval chain)').toBe(false);
 
       // 计提 isSettled 翻转断言（findFirst by agreementId）
       const accrual = await findFirst<any>(
         page, 'ErpCtRebateAccrual',
-        eqFilter('rebateAgreementId', Number(agreement.id)),
+        eqFilter('rebateAgreementId', agreement.id),
         'id isSettled',
       );
       expect(accrual, 'accrual should exist').not.toBeNull();
@@ -152,14 +152,14 @@ test.describe('contract ErpCtRebateSettlement postSettlement orchestration', () 
       // 清理：credit memo 发票 + 行 + accruals + settlement + tier + agreement + contractLine + contract
       const cm = await findFirst<any>(page, 'ErpPurInvoice', eqFilter('code', `CT-REBATE-${settlement.id}`), 'id');
       if (cm) {
-        await deleteByFilter(page, 'ErpPurInvoiceLine', eqFilter('invoiceId', Number(cm.id)));
+        await deleteByFilter(page, 'ErpPurInvoiceLine', eqFilter('invoiceId', cm.id));
         await deleteById(page, 'ErpPurInvoice', cm.id);
       }
-      await deleteByFilter(page, 'ErpCtRebateAccrual', eqFilter('rebateAgreementId', Number(agreement.id)));
+      await deleteByFilter(page, 'ErpCtRebateAccrual', eqFilter('rebateAgreementId', agreement.id));
       await deleteById(page, 'ErpCtRebateSettlement', settlement.id);
       await deleteById(page, 'ErpCtRebateTier', tier.id);
       await deleteById(page, 'ErpCtRebateAgreement', agreement.id);
-      await deleteByFilter(page, 'ErpCtContractLine', eqFilter('contractId', Number(contract.id)));
+      await deleteByFilter(page, 'ErpCtContractLine', eqFilter('contractId', contract.id));
       await deleteById(page, 'ErpCtContract', contract.id);
     }
   });
@@ -194,14 +194,14 @@ test.describe('contract ErpCtRebateSettlement postSettlement orchestration', () 
     );
     const tier = await createViaSave(
       page, 'ErpCtRebateTier',
-      { rebateAgreementId: Number(agreement.id), fromAmount: 0, rebatePercent: 10 },
+      { rebateAgreementId: agreement.id, fromAmount: 0, rebatePercent: 10 },
       'id',
     );
     await callMutationOk(page, 'ErpCtRebateAgreement', 'runAccrual',
       { agreementId: agreement.id, asOfDate: AS_OF_DATE }, 'id');
     const settlement = await createViaSave(
       page, 'ErpCtRebateSettlement',
-      { rebateAgreementId: Number(agreement.id), settlementDate: AS_OF_DATE, status: 'DRAFT' },
+      { rebateAgreementId: agreement.id, settlementDate: AS_OF_DATE, status: 'DRAFT' },
       'id',
     );
 
@@ -222,14 +222,14 @@ test.describe('contract ErpCtRebateSettlement postSettlement orchestration', () 
     } finally {
       const cm = await findFirst<any>(page, 'ErpPurInvoice', eqFilter('code', `CT-REBATE-${settlement.id}`), 'id');
       if (cm) {
-        await deleteByFilter(page, 'ErpPurInvoiceLine', eqFilter('invoiceId', Number(cm.id)));
+        await deleteByFilter(page, 'ErpPurInvoiceLine', eqFilter('invoiceId', cm.id));
         await deleteById(page, 'ErpPurInvoice', cm.id);
       }
-      await deleteByFilter(page, 'ErpCtRebateAccrual', eqFilter('rebateAgreementId', Number(agreement.id)));
+      await deleteByFilter(page, 'ErpCtRebateAccrual', eqFilter('rebateAgreementId', agreement.id));
       await deleteById(page, 'ErpCtRebateSettlement', settlement.id);
       await deleteById(page, 'ErpCtRebateTier', tier.id);
       await deleteById(page, 'ErpCtRebateAgreement', agreement.id);
-      await deleteByFilter(page, 'ErpCtContractLine', eqFilter('contractId', Number(contract.id)));
+      await deleteByFilter(page, 'ErpCtContractLine', eqFilter('contractId', contract.id));
       await deleteById(page, 'ErpCtContract', contract.id);
     }
   });

@@ -27,7 +27,10 @@ export async function login(page: Page, username = DEFAULT_USER, password = DEFA
   const usernameInput = page.locator('input[name="username"]');
   await usernameInput.waitFor({ state: 'visible', timeout: 20_000 });
 
-  if (page.url().includes('/auth/login')) {
+  // Login-form presence is decided by input visibility, not URL: the SPA hash
+  // route (`/#/auth/login`) can lag input rendering, and a URL-only check can
+  // skip the actual login → anonymous GraphQL (roles=[]) → no-permission flakes.
+  if (await usernameInput.isVisible()) {
     await usernameInput.fill(username);
     await page.locator('input[name="password"]').fill(password);
     await page.waitForTimeout(500);

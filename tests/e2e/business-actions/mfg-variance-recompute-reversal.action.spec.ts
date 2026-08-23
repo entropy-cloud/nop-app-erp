@@ -89,7 +89,7 @@ test.describe('manufacturing production variance recompute reversal browser-laye
     );
 
     // (3) runMfgChain 变体：使用测试专用成品物料（与 MAT-001 链路隔离），config 已开启 auto-calc
-    const r = await runMfgChain(page, { productId: Number(product.id), productUoMId: SEED.UOM });
+    const r = await runMfgChain(page, { productId: product.id, productUoMId: SEED.UOM });
     r.productMat = product;
 
     try {
@@ -103,7 +103,7 @@ test.describe('manufacturing production variance recompute reversal browser-laye
 
       const firstVarianceLines = await findItems(
         page, 'ErpMfgCostVariance',
-        eqFilter('workOrderId', Number(r.wo.id)),
+        eqFilter('workOrderId', r.wo.id),
         'varianceType costElement varianceAmount posted',
       );
       expect(firstVarianceLines.length, '前置：5 类差异行').toBe(5);
@@ -113,14 +113,14 @@ test.describe('manufacturing production variance recompute reversal browser-laye
       // (5) 关键驱动：再次 calculateVariances（手动入口） → reverseIfExists 红冲原凭证 + 重算 + 派发新凭证
       await callMutationOk(
         page, 'ErpMfgCostVariance', 'calculateVariances',
-        { workOrderId: Number(r.wo.id) },
+        { workOrderId: r.wo.id },
         'id',
       );
 
       // (6) 原 NORMAL 凭证已被标记 isReversed=true
       const firstNormalAfter = await findItems(
         page, 'ErpFinVoucher',
-        eqFilter('id', Number(firstNormalVid)),
+        eqFilter('id', firstNormalVid),
         'id postingType isReversed',
       );
       expect(firstNormalAfter.length, '原 NORMAL 凭证应可反查').toBe(1);
@@ -150,7 +150,7 @@ test.describe('manufacturing production variance recompute reversal browser-laye
       for (const lnk of allBillRs) {
         const v = await findItems(
           page, 'ErpFinVoucher',
-          eqFilter('id', Number(lnk.voucherId)),
+          eqFilter('id', lnk.voucherId),
           'id postingType isReversed',
         );
         if (v.length === 1 && v[0].postingType === 'NORMAL' && v[0].isReversed === false) {
@@ -162,7 +162,7 @@ test.describe('manufacturing production variance recompute reversal browser-laye
       // (9) 数据行全 posted=true（重算后 dispatchIfApplicable 成功 markPosted）
       const afterVarianceLines = await findItems(
         page, 'ErpMfgCostVariance',
-        eqFilter('workOrderId', Number(r.wo.id)),
+        eqFilter('workOrderId', r.wo.id),
         'varianceType posted',
       );
       expect(afterVarianceLines.length, '重算后仍 5 类差异行（deleteByWorkOrder 删旧+重算）').toBe(5);

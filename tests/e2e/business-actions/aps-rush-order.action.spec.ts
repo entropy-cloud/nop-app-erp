@@ -1,4 +1,4 @@
-import { test, expect, loginAndNavigate, createViaSave, callMutationOk, verifyState, deleteById } from './_helper';
+import { test, expect, loginAndNavigate, createViaSave, callMutationOk, verifyState, deleteById, deleteByFilter, eqFilter } from './_helper';
 
 /**
  * aps ErpApsOperationOrder insertRushOrder 插单区间重排业务动作浏览器层 E2E（plan 2026-07-14-0941-2 Phase 2）。
@@ -34,8 +34,8 @@ import { test, expect, loginAndNavigate, createViaSave, callMutationOk, verifySt
 
 const HORIZON_START = '2026-07-10T00:00:00';
 const HORIZON_END = '2026-07-20T00:00:00';
-const MACHINE_ID = 100;
-const WORK_ORDER_ID = 1;
+const MACHINE_ID = '100';
+const WORK_ORDER_ID = '1';
 
 async function seedSchedule(page: import('@playwright/test').Page, tag: string): Promise<{ id: string }> {
   return createViaSave(
@@ -125,6 +125,9 @@ test.describe('aps ErpApsOperationOrder insertRushOrder (rush order interval res
     expect(bgAfter.plannedStartDateT, 'bg plannedStart should be written back after reschedule').not.toBeNull();
     expect(bgAfter.plannedStartDateT, 'bg plannedStart should be pushed later (interval rescheduled)').not.toBe(bgPlannedStartBefore);
 
+    // P0-MA2-019 产能预留不随 __delete 级联（同 aps-operation-order 清理范式）
+    await deleteByFilter(page, 'ErpApsCapacityReservation', eqFilter('operationOrderId', rush.id));
+    await deleteByFilter(page, 'ErpApsCapacityReservation', eqFilter('operationOrderId', background.id));
     await deleteById(page, 'ErpApsOperationOrder', rush.id);
     await deleteById(page, 'ErpApsOperationOrder', background.id);
     await deleteById(page, 'ErpApsSchedule', schedule.id);

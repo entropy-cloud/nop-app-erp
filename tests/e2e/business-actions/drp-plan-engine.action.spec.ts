@@ -24,9 +24,9 @@ import { test, expect, loginAndNavigate, createViaSave, callMutationOk, callMuta
  * 清理：删 DrpLine（planId 隔离）+ Parameter + Plan。
  */
 
-const MATERIAL_ID = 4; // MAT-004 包装（种子无 stock_balance/PO/forecast）
-const WAREHOUSE_ID = 1; // WH-MAIN
-const ORG_ID = 2; // 种子 ERP-CO（__save 强制 org FK 校验）
+const MATERIAL_ID = '4'; // MAT-004 包装（种子无 stock_balance/PO/forecast）
+const WAREHOUSE_ID = '1'; // WH-MAIN
+const ORG_ID = '2'; // 种子 ERP-CO（__save 强制 org FK 校验）
 
 async function seedParameter(page: import('@playwright/test').Page, orgId: number, tag: string): Promise<{ id: string }> {
   return createViaSave(
@@ -71,14 +71,14 @@ test.describe('drp ErpDrpPlan net-requirement engine state machine', () => {
     let s = await verifyState(page, 'ErpDrpPlan', plan.id, 'status totalReplenishmentQty');
     expect(s.status, 'after runDrp status=COMPUTED').toBe('COMPUTED');
     expect(Number(s.totalReplenishmentQty), 'totalReplenishmentQty>0 (net=safetyStock=100)').toBeGreaterThan(0);
-    let lineTotal = await findPageTotal(page, 'ErpDrpLine', eqFilter('planId', Number(plan.id)));
+    let lineTotal = await findPageTotal(page, 'ErpDrpLine', eqFilter('planId', plan.id));
     expect(lineTotal, 'runDrp should produce SUGGESTED DrpLine rows').toBeGreaterThan(0);
 
     // resetToDraft: COMPUTED → DRAFT + SUGGESTED 行清理
     await callMutationOk(page, 'ErpDrpPlan', 'resetToDraft', { planId: plan.id }, 'id');
     s = await verifyState(page, 'ErpDrpPlan', plan.id, 'status totalReplenishmentQty');
     expect(s.status, 'after resetToDraft status=DRAFT').toBe('DRAFT');
-    lineTotal = await findPageTotal(page, 'ErpDrpLine', eqFilter('planId', Number(plan.id)));
+    lineTotal = await findPageTotal(page, 'ErpDrpLine', eqFilter('planId', plan.id));
     expect(lineTotal, 'resetToDraft should clear SUGGESTED lines').toBe(0);
 
     // 重算 runDrp: DRAFT → COMPUTED（调参后重算场景）
@@ -92,7 +92,7 @@ test.describe('drp ErpDrpPlan net-requirement engine state machine', () => {
     expect(s.status, 'after approvePlan status=APPROVED').toBe('APPROVED');
 
     // 清理：DrpLine（planId 隔离）+ Parameter + Plan
-    await deleteByFilter(page, 'ErpDrpLine', eqFilter('planId', Number(plan.id)));
+    await deleteByFilter(page, 'ErpDrpLine', eqFilter('planId', plan.id));
     await deleteById(page, 'ErpDrpParameter', param.id);
     await deleteById(page, 'ErpDrpPlan', plan.id);
   });

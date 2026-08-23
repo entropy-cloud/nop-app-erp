@@ -33,15 +33,15 @@ export { createViaSave, callMutation, callMutationOk, verifyState, findPageTotal
 
 /** 种子引用（master-data init-data，与 0814-2 inventory spec 一致）。 */
 export const SEED = {
-  ORG: 2,
-  WH_RAW: 2,        // WH-RAW 原料仓（种子中 MAT-1 无余额，备货+清理安全）
-  MAT_1: 1,         // MAT-001 ERP 标准型产品甲（FINISHED_PRODUCT, MOVING_AVERAGE, uom=1）
-  UOM: 1,           // PCS 个
-  UOM_KG: 2,        // KG 千克（制造链测试专用组件物料计量单位）
-  CURRENCY: 1,      // CNY
-  ACCT_SCHEMA: 1,   // ACCT-FIN-01
-  SUPPLIER: 3,      // SUP-001 北方钢铁供应商
-  CUSTOMER: 1,      // CUST-001 华东科技（creditLimit=500000，覆盖测试订单金额）
+  ORG: '2',
+  WH_RAW: '2',        // WH-RAW 原料仓（种子中 MAT-1 无余额，备货+清理安全）
+  MAT_1: '1',         // MAT-001 ERP 标准型产品甲（FINISHED_PRODUCT, MOVING_AVERAGE, uom=1）
+  UOM: '1',           // PCS 个
+  UOM_KG: '2',        // KG 千克（制造链测试专用组件物料计量单位）
+  CURRENCY: '1',      // CNY
+  ACCT_SCHEMA: '1',   // ACCT-FIN-01
+  SUPPLIER: '3',      // SUP-001 北方钢铁供应商
+  CUSTOMER: '1',      // CUST-001 华东科技（creditLimit=500000，覆盖测试订单金额）
 } as const;
 
 const BDATE = '2026-07-09'; // 落在种子 OPEN 期间 2026-07（posting resolveOpenPeriod 需要）
@@ -97,10 +97,10 @@ export async function findVoucherIdByBillCode(
   if (!billCode) return null;
   const links = await findItems<any>(page, 'ErpFinVoucherBillR', eqFilter('billCode', billCode), 'voucherId');
   for (const lnk of links) {
-    const v = await findFirst<any>(page, 'ErpFinVoucher', eqFilter('id', Number(lnk.voucherId)), 'id postingType');
+    const v = await findFirst<any>(page, 'ErpFinVoucher', eqFilter('id', lnk.voucherId), 'id postingType');
     if (!v) continue;
     if (!postingType || v.postingType === postingType) {
-      return Number(v.id);
+      return v.id;
     }
   }
   return null;
@@ -127,7 +127,7 @@ export async function findBudgetVoucherIdByCode(
   for (const lnk of links) {
     const v = await findFirst<any>(
       page, 'ErpFinVoucher',
-      eqFilter('id', Number(lnk.voucherId)),
+      eqFilter('id', lnk.voucherId),
       'id postingType reversalOfVoucherId',
     );
     if (!v || v.postingType !== 'BUDGET') {
@@ -135,7 +135,7 @@ export async function findBudgetVoucherIdByCode(
     }
     const isReversal = v.reversalOfVoucherId != null;
     if (isReversal === reversal) {
-      return Number(v.id);
+      return v.id;
     }
   }
   return null;
@@ -163,7 +163,7 @@ export async function findCommitmentVoucherIdByCode(
   for (const lnk of links) {
     const v = await findFirst<any>(
       page, 'ErpFinVoucher',
-      eqFilter('id', Number(lnk.voucherId)),
+      eqFilter('id', lnk.voucherId),
       'id postingType reversalOfVoucherId',
     );
     if (!v || v.postingType !== 'COMMITMENT') {
@@ -171,7 +171,7 @@ export async function findCommitmentVoucherIdByCode(
     }
     const isReversal = v.reversalOfVoucherId != null;
     if (isReversal === reversal) {
-      return Number(v.id);
+      return v.id;
     }
   }
   return null;
@@ -210,13 +210,13 @@ export async function findIntercompanyVoucherIdByBillCode(
   for (const lnk of links) {
     const v = await findFirst<any>(
       page, 'ErpFinVoucher',
-      eqFilter('id', Number(lnk.voucherId)),
+      eqFilter('id', lnk.voucherId),
       'id postingType reversalOfVoucherId',
     );
     if (!v) continue;
     const isReversal = v.reversalOfVoucherId != null;
     if (isReversal === reversal) {
-      return Number(v.id);
+      return v.id;
     }
   }
   return null;
@@ -236,7 +236,7 @@ export async function assertVoucherLines(
 ): Promise<void> {
   expect(voucherId, 'voucherId must be resolved before asserting voucher lines').toBeTruthy();
   const lines = await findItems<any>(
-    page, 'ErpFinVoucherLine', eqFilter('voucherId', Number(voucherId)),
+    page, 'ErpFinVoucherLine', eqFilter('voucherId', voucherId),
     'subjectCode dcDirection debitAmount creditAmount',
   );
   expect(lines.length, `voucher ${voucherId} should have ${expected.length} lines`).toBe(expected.length);
@@ -281,7 +281,7 @@ export async function cleanupVoucherByBillCode(page: Page, billCode: string): Pr
   const billRs = await findItems<any>(page, 'ErpFinVoucherBillR', eqFilter('billCode', billCode), 'voucherId');
   const voucherIds: any[] = billRs.map((b) => b.voucherId).filter((v) => v != null);
   for (const vid of voucherIds) {
-    await deleteByFilter(page, 'ErpFinVoucherLine', eqFilter('voucherId', Number(vid)));
+    await deleteByFilter(page, 'ErpFinVoucherLine', eqFilter('voucherId', vid));
     await deleteById(page, 'ErpFinVoucher', vid);
   }
   await deleteByFilter(page, 'ErpFinVoucherBillR', eqFilter('billCode', billCode));
@@ -306,8 +306,8 @@ async function cleanupStockMove(
   if (!move) return;
   if (move.code) await cleanupVoucherByBillCode(page, move.code);
   if (move.id != null) {
-    await deleteByFilter(page, 'ErpInvStockLedger', eqFilter('moveId', Number(move.id)));
-    await deleteByFilter(page, 'ErpInvStockMoveLine', eqFilter('moveId', Number(move.id)));
+    await deleteByFilter(page, 'ErpInvStockLedger', eqFilter('moveId', move.id));
+    await deleteByFilter(page, 'ErpInvStockMoveLine', eqFilter('moveId', move.id));
     await deleteById(page, 'ErpInvStockMove', move.id);
   }
   if (materialId != null && warehouseId != null) {
@@ -441,16 +441,16 @@ export async function cleanupP2p(page: Page, r: P2pResult): Promise<void> {
     await cleanupVoucherByBillCode(page, r.codes.po);
   }
   if (r.invoice) {
-    await deleteByFilter(page, 'ErpPurInvoiceLine', eqFilter('invoiceId', Number(r.invoice.id)));
+    await deleteByFilter(page, 'ErpPurInvoiceLine', eqFilter('invoiceId', r.invoice.id));
     await deleteById(page, 'ErpPurInvoice', r.invoice.id);
   }
   await cleanupStockMove(page, r.receiveMove, SEED.MAT_1, SEED.WH_RAW);
   if (r.receive) {
-    await deleteByFilter(page, 'ErpPurReceiveLine', eqFilter('receiveId', Number(r.receive.id)));
+    await deleteByFilter(page, 'ErpPurReceiveLine', eqFilter('receiveId', r.receive.id));
     await deleteById(page, 'ErpPurReceive', r.receive.id);
   }
   if (r.po) {
-    await deleteByFilter(page, 'ErpPurOrderLine', eqFilter('orderId', Number(r.po.id)));
+    await deleteByFilter(page, 'ErpPurOrderLine', eqFilter('orderId', r.po.id));
     await deleteById(page, 'ErpPurOrder', r.po.id);
   }
 }
@@ -491,14 +491,14 @@ export async function runP2pReverse(page: Page): Promise<P2pReverseResult> {
   const reversalVoucherId = json?.data?.ErpFinVoucher__reverse;
   expect(reversalVoucherId, 'ErpFinVoucher__reverse should return reversal voucher id').toBeTruthy();
 
-  const r: P2pReverseResult = { ...base, reversalVoucherId: Number(reversalVoucherId) };
+  const r: P2pReverseResult = { ...base, reversalVoucherId: reversalVoucherId };
 
   // 反查原正常凭证 id（经 voucher_bill_r：NORMAL 凭证，非红字）
   const links = await findItems<any>(page, 'ErpFinVoucherBillR', eqFilter('billCode', billCode), 'voucherId');
   for (const lnk of links) {
-    const v = await findFirst<any>(page, 'ErpFinVoucher', eqFilter('id', Number(lnk.voucherId)), 'id postingType');
+    const v = await findFirst<any>(page, 'ErpFinVoucher', eqFilter('id', lnk.voucherId), 'id postingType');
     if (v && v.postingType === 'NORMAL') {
-      r.originalVoucherId = Number(v.id);
+      r.originalVoucherId = v.id;
       break;
     }
   }
@@ -644,16 +644,16 @@ export async function cleanupO2c(page: Page, r: O2cResult): Promise<void> {
     await cleanupVoucherByBillCode(page, r.codes.so);
   }
   if (r.invoice) {
-    await deleteByFilter(page, 'ErpSalInvoiceLine', eqFilter('invoiceId', Number(r.invoice.id)));
+    await deleteByFilter(page, 'ErpSalInvoiceLine', eqFilter('invoiceId', r.invoice.id));
     await deleteById(page, 'ErpSalInvoice', r.invoice.id);
   }
   await cleanupStockMove(page, r.deliveryMove, SEED.MAT_1, SEED.WH_RAW);
   if (r.delivery) {
-    await deleteByFilter(page, 'ErpSalDeliveryLine', eqFilter('deliveryId', Number(r.delivery.id)));
+    await deleteByFilter(page, 'ErpSalDeliveryLine', eqFilter('deliveryId', r.delivery.id));
     await deleteById(page, 'ErpSalDelivery', r.delivery.id);
   }
   if (r.so) {
-    await deleteByFilter(page, 'ErpSalOrderLine', eqFilter('orderId', Number(r.so.id)));
+    await deleteByFilter(page, 'ErpSalOrderLine', eqFilter('orderId', r.so.id));
     await deleteById(page, 'ErpSalOrder', r.so.id);
   }
   await cleanupStockMove(page, r.setupMove, SEED.MAT_1, SEED.WH_RAW);
@@ -688,13 +688,13 @@ export async function runO2cReverse(page: Page): Promise<O2cReverseResult> {
   const reversalVoucherId = json?.data?.ErpFinVoucher__reverse;
   expect(reversalVoucherId, 'ErpFinVoucher__reverse should return reversal voucher id').toBeTruthy();
 
-  const r: O2cReverseResult = { ...base, reversalVoucherId: Number(reversalVoucherId) };
+  const r: O2cReverseResult = { ...base, reversalVoucherId: reversalVoucherId };
 
   const links = await findItems<any>(page, 'ErpFinVoucherBillR', eqFilter('billCode', billCode), 'voucherId');
   for (const lnk of links) {
-    const v = await findFirst<any>(page, 'ErpFinVoucher', eqFilter('id', Number(lnk.voucherId)), 'id postingType');
+    const v = await findFirst<any>(page, 'ErpFinVoucher', eqFilter('id', lnk.voucherId), 'id postingType');
     if (v && v.postingType === 'NORMAL') {
-      r.originalVoucherId = Number(v.id);
+      r.originalVoucherId = v.id;
       break;
     }
   }
@@ -1017,7 +1017,7 @@ export async function cleanupMfg(page: Page, r: MfgResult): Promise<void> {
   // 批次基因链产物清理（plan 2026-07-11-0730-1，withBatchTracking 完工触发 BatchGenealogyWriter 写入）：
   //   基因链行（filter workOrderId）→ 输出批次（batchNo=FG-{woCode}，ensureOutputLot 创建）→ 输入批次（测试创建）。
   if (r.wo) {
-    await deleteByFilter(page, 'ErpMfgBatchGenealogy', eqFilter('workOrderId', Number(r.wo.id)));
+    await deleteByFilter(page, 'ErpMfgBatchGenealogy', eqFilter('workOrderId', r.wo.id));
   }
   if (r.codes?.wo) {
     await deleteByFilter(page, 'ErpInvBatch', eqFilter('batchNo', `FG-${r.codes.wo}`));
@@ -1028,7 +1028,7 @@ export async function cleanupMfg(page: Page, r: MfgResult): Promise<void> {
   // 生产差异记录清理（config erp-mfg.variance-auto-calc-enabled 时 willFinish 完工触发；
   // MAT-001 链路无 FIRMED rollup → calculateVariances 抛异常被吞 → 无差异记录 → deleteByFilter 空操作安全）
   if (r.wo) {
-    await deleteByFilter(page, 'ErpMfgCostVariance', eqFilter('workOrderId', Number(r.wo.id)));
+    await deleteByFilter(page, 'ErpMfgCostVariance', eqFilter('workOrderId', r.wo.id));
   }
   // PRODUCTION_VARIANCE 凭证清理（billHeadCode = woCode + '-PV'，ProductionVarianceDispatcher 后缀）
   if (r.codes?.wo) {
@@ -1038,7 +1038,7 @@ export async function cleanupMfg(page: Page, r: MfgResult): Promise<void> {
   await cleanupStockMove(page, r.completionMove, finishedProductId, SEED.WH_RAW);
   // MaterialIssue 行 + 头
   if (r.issue) {
-    await deleteByFilter(page, 'ErpMfgMaterialIssueLine', eqFilter('issueId', Number(r.issue.id)));
+    await deleteByFilter(page, 'ErpMfgMaterialIssueLine', eqFilter('issueId', r.issue.id));
     await deleteById(page, 'ErpMfgMaterialIssue', r.issue.id);
   }
   // 领料出库移动（OUTGOING，relatedBillType=ERP_MFG_ISSUE，relatedBillCode=issue.code）+ 组件物料余额
@@ -1057,17 +1057,17 @@ export async function cleanupMfg(page: Page, r: MfgResult): Promise<void> {
   }
   // JobCard TimeLog + JobCard
   if (r.jobCard) {
-    await deleteByFilter(page, 'ErpMfgJobCardTimeLog', eqFilter('jobCardId', Number(r.jobCard.id)));
+    await deleteByFilter(page, 'ErpMfgJobCardTimeLog', eqFilter('jobCardId', r.jobCard.id));
     await deleteById(page, 'ErpMfgJobCard', r.jobCard.id);
   }
   // WorkOrderLine + WorkOrder
   if (r.wo) {
-    await deleteByFilter(page, 'ErpMfgWorkOrderLine', eqFilter('workOrderId', Number(r.wo.id)));
+    await deleteByFilter(page, 'ErpMfgWorkOrderLine', eqFilter('workOrderId', r.wo.id));
     await deleteById(page, 'ErpMfgWorkOrder', r.wo.id);
   }
   // BOMLine + BOM
   if (r.bom) {
-    await deleteByFilter(page, 'ErpMfgBomLine', eqFilter('bomId', Number(r.bom.id)));
+    await deleteByFilter(page, 'ErpMfgBomLine', eqFilter('bomId', r.bom.id));
     await deleteById(page, 'ErpMfgBom', r.bom.id);
   }
   // 前置备货移动 + 组件物料余额（测试专用物料无种子余额，整行删除安全）
@@ -1372,7 +1372,7 @@ export async function cleanupSubcontract(page: Page, r: SubcontractResult): Prom
 
   // 委外行 + 委外单头
   if (r.order) {
-    await deleteByFilter(page, 'ErpMfgSubcontractOrderLine', eqFilter('subcontractOrderId', Number(r.order.id)));
+    await deleteByFilter(page, 'ErpMfgSubcontractOrderLine', eqFilter('subcontractOrderId', r.order.id));
     await deleteById(page, 'ErpMfgSubcontractOrder', r.order.id);
   }
 
@@ -1490,7 +1490,7 @@ export async function runSubcontractMrpRelease(page: Page): Promise<SubcontractM
 export async function cleanupSubcontractMrpRelease(page: Page, r: SubcontractMrpReleaseResult): Promise<void> {
   if (!r) return;
   if (r.releasedOrder) {
-    await deleteByFilter(page, 'ErpMfgSubcontractOrderLine', eqFilter('subcontractOrderId', Number(r.releasedOrder.id)));
+    await deleteByFilter(page, 'ErpMfgSubcontractOrderLine', eqFilter('subcontractOrderId', r.releasedOrder.id));
     await deleteById(page, 'ErpMfgSubcontractOrder', r.releasedOrder.id);
   }
   if (r.mrpPlanLine) await deleteById(page, 'ErpMfgMrpPlanLine', r.mrpPlanLine.id);

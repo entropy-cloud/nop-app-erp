@@ -44,14 +44,14 @@ const POSTING_EVENT_INPUT = 'PostingEventInput';
 async function postVoucher(
   page: Page,
   event: Record<string, unknown>,
-): Promise<{ voucherId: number | null; errors: any[] | null; json: any }> {
+): Promise<{ voucherId: string | null; errors: any[] | null; json: any }> {
   const gql = new GraphQLClient(page);
   const json: any = await gql.raw(
     `mutation($e:${POSTING_EVENT_INPUT}){ ErpFinVoucher__post(event:$e) }`,
     { e: event },
   );
   const raw = json?.data?.ErpFinVoucher__post;
-  const voucherId = raw == null ? null : Number(raw);
+  const voucherId = raw == null ? null : String(raw);
   return { voucherId, errors: json?.errors ?? null, json };
 }
 
@@ -107,7 +107,7 @@ test.describe('finance ErpFinVoucher manual post (LANDED_COST)', () => {
       // 业财回链断言（billHeadCode + businessType 经 ErpFinVoucherBillR）
       const links = await findItems<any>(page, 'ErpFinVoucherBillR', eqFilter('billCode', billHeadCode), 'voucherId billCode billType businessType');
       expect(links.length, 'should have exactly one billR link for new billHeadCode').toBe(1);
-      expect(Number(links[0].voucherId), 'billR.voucherId should match returned voucherId').toBe(voucherId);
+      expect(links[0].voucherId, 'billR.voucherId should match returned voucherId').toBe(voucherId);
       expect(links[0].billCode, 'billR.billCode should match billHeadCode').toBe(billHeadCode);
       expect(links[0].businessType, 'billR.businessType should be LANDED_COST').toBe('LANDED_COST');
       expect(links[0].billType, 'billR.billType should be LANDED_COST').toBe('LANDED_COST');

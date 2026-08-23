@@ -45,6 +45,7 @@ start_server() {
     -Dnop.auth.service-public=true \
     -Dnop.auth.login.allow-create-default-user=true \
     -Dnop.orm.init-database-data=true \
+    -Dnop.web.render-mode=flux \
     -Dnop.web.validate-page-model=false \
     -Derp-qua.ncr-default-acct-schema=1 \
     -Derp-mfg.variance-auto-calc-enabled=true \
@@ -83,7 +84,13 @@ start_server() {
     -Derp-b2b.asn-auto-create-receive=true \
     -Derp-log.webhook-signature-required=false \
     -Derp-log.path2-landed-cost-auto-create=true \
+    -Derp-md.exchange-rate-api-enabled=true \
+    -Derp-md.exchange-rate-api-provider=mock \
+    -Derp-md.exchange-rate-api-key=test-key \
+    -Derp-md.exchange-rate-api-rate-limit-rps=100 \
+    -Derp-md.exchange-rate-api-cache-ttl-secs=60 \
     -Derp-mfg.simulation-enabled=true \
+    -Derp-mfg.reservation-enabled=false \
     -Derp-drp.simulation-enabled=true \
     -jar "${JAR}" > "${LOG}" 2>&1 &
   echo "waiting for server on ${PORT}"

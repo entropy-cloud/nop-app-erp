@@ -56,16 +56,16 @@ import { cleanupVoucherByBillCode } from '../orchestration/_helper';
  * 自包含隔离：每用例独立建预算方案+行（code 唯一 E2E-BUDCTL-*），cleanup 删 ControlLog + BUDGET 凭证 + 预算行 + 方案 + PO 行 + PO。
  * 向后兼容：budget-check-enabled=true 对无匹配预算行的维度（其余 e2e PO）返回 PASS，不影响既有套件。
  */
-const ORG = 2;
-const ACCT_SCHEMA = 1;
-const CURRENCY = 1;
-const PERIOD = 1;
-const SUPPLIER = 3;       // SUP-001 北方钢铁供应商（ACTIVE）
-const WAREHOUSE = 2;      // WH-RAW
-const MAT_1 = 1;          // MAT-001
-const UOM = 1;            // PCS
+const ORG = '2';
+const ACCT_SCHEMA = '1';
+const CURRENCY = '1';
+const PERIOD = '1';
+const SUPPLIER = '3';       // SUP-001 北方钢铁供应商（ACTIVE）
+const WAREHOUSE = '2';      // WH-RAW
+const MAT_1 = '1';          // MAT-001
+const UOM = '1';            // PCS
 /** 种子费用科目 6601 销售费用（id=8, EXPENSE, DEBIT）—— 预算控制采购费用科目。 */
-const PURCHASE_EXPENSE_SUBJECT_ID = 8;
+const PURCHASE_EXPENSE_SUBJECT_ID = '8';
 const PURCHASE_EXPENSE_SUBJECT_CODE = '6601';
 const BUDGET_AMOUNT = 100;   // 预算余量（小值）
 const ORDER_AMOUNT = 200;    // 订单含税合计（> 预算余量，必触发控制）
@@ -252,14 +252,14 @@ test.describe('Finance budget control hook (PO approve) + getBudgetVsActual brow
       // approve 后 BUDGET 凭证存预算额；getBudgetVsActual 按 postingType 聚合 BUDGET(预算)/NORMAL(实际)。
       // 返回 List<BudgetVsActualRow>（复杂类型，须显式 selection set；callQuery 不带 selection 故直接构造 query）。
       const json: any = await new GraphQLClient(page).raw(
-        `query{ ErpFinBudgetLine__getBudgetVsActual(acctSchemaId:${ACCT_SCHEMA},periodId:${PERIOD},subjectId:${PURCHASE_EXPENSE_SUBJECT_ID}){ subjectId subjectCode subjectName budgetAmount actualAmount availableAmount } }`,
+        `query{ ErpFinBudgetLine__getBudgetVsActual(acctSchemaId:"${ACCT_SCHEMA}",periodId:"${PERIOD}",subjectId:"${PURCHASE_EXPENSE_SUBJECT_ID}"){ subjectId subjectCode subjectName budgetAmount actualAmount availableAmount } }`,
       );
       expect(json?.errors, `getBudgetVsActual should not return GraphQL errors: ${JSON.stringify(json?.errors)}`).toBeFalsy();
       const rows: any[] = json?.data?.ErpFinBudgetLine__getBudgetVsActual ?? [];
       expect(Array.isArray(rows), 'getBudgetVsActual should return a list of BudgetVsActualRow').toBe(true);
 
       // 命中 6601 的行（按 subjectId 过滤；聚合维度 subjectId|costCenterId|projectId）
-      const row = rows.find((r) => Number(r.subjectId) === PURCHASE_EXPENSE_SUBJECT_ID);
+      const row = rows.find((r) => r.subjectId === PURCHASE_EXPENSE_SUBJECT_ID);
       expect(row, 'getBudgetVsActual should include a row for subject 6601').toBeTruthy();
       expect(Number(row.budgetAmount), 'budgetAmount should include setup BUDGET voucher (>= setup)').toBeGreaterThanOrEqual(BUDGET_AMOUNT);
       expect(Number(row.actualAmount), 'actualAmount should be a non-negative number').toBeGreaterThanOrEqual(0);

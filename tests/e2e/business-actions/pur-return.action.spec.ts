@@ -45,8 +45,8 @@ async function cleanupReturnDownstream(page: Page, returnCode: string, materialI
   );
   for (const m of moves) {
     await cleanupVoucherByBillCode(page, m.code);
-    await deleteByFilter(page, 'ErpInvStockLedger', eqFilter('moveId', Number(m.id)));
-    await deleteByFilter(page, 'ErpInvStockMoveLine', eqFilter('moveId', Number(m.id)));
+    await deleteByFilter(page, 'ErpInvStockLedger', eqFilter('moveId', m.id));
+    await deleteByFilter(page, 'ErpInvStockMoveLine', eqFilter('moveId', m.id));
     await deleteById(page, 'ErpInvStockMove', m.id);
   }
   await deleteByFilter(page, 'ErpInvStockBalance', andFilter(eqFilter('materialId', materialId), eqFilter('warehouseId', warehouseId)));
@@ -118,7 +118,7 @@ test.describe('purchase ErpPurReturn approval axis + posted side-effect', () => 
 
       // 清理退货下游 + 退货自身
       await cleanupReturnDownstream(page, retCode, SEED.MAT_1, SEED.WH_RAW);
-      await deleteByFilter(page, 'ErpPurReturnLine', eqFilter('returnId', Number(ret.id)));
+      await deleteByFilter(page, 'ErpPurReturnLine', eqFilter('returnId', ret.id));
       await deleteById(page, 'ErpPurReturn', ret.id);
     } finally {
       await cleanupP2p(page, p2p);
@@ -163,7 +163,7 @@ test.describe('purchase ErpPurReturn approval axis + posted side-effect', () => 
     const rej = await callMutation(page, 'ErpPurReturn', 'approve', { id: rj.id }, 'id');
     expect(rej.errors, 'approve from REJECTED should be rejected').toBeTruthy();
 
-    await deleteByFilter(page, 'ErpPurReturnLine', eqFilter('returnId', Number(rj.id)));
+    await deleteByFilter(page, 'ErpPurReturnLine', eqFilter('returnId', rj.id));
     await deleteById(page, 'ErpPurReturn', rj.id);
 
     // cancel 路径：save → cancel(CANCELLED)

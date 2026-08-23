@@ -46,9 +46,9 @@ import { cleanupVoucherByBillCode, findVoucherIdByBillCode, assertVoucherLines }
  *
  * 种子引用：org id=2 / currency CNY id=1 / subject 1002 银行存款 id=2。
  */
-const ORG = 2;
-const CURRENCY = 1;
-const BANK_SUBJECT_ID = 2; // 1002 银行存款
+const ORG = '2';
+const CURRENCY = '1';
+const BANK_SUBJECT_ID = '2'; // 1002 银行存款
 const BDATE = '2026-07-10';
 const BOOK_BALANCE = 1000;
 const UNRECONCILED_AMT = 100;
@@ -125,14 +125,14 @@ async function cleanupBankRecon(
   fundAccountId: string | number | null,
 ): Promise<void> {
   if (reconId != null) {
-    await deleteByFilter(page, 'ErpFinBankReconciliationLine', eqFilter('reconciliationId', Number(reconId)));
+    await deleteByFilter(page, 'ErpFinBankReconciliationLine', eqFilter('reconciliationId', reconId));
     await deleteById(page, 'ErpFinBankReconciliation', reconId);
   }
   if (reconCode) {
     await cleanupVoucherByBillCode(page, reconCode);
   }
   if (statementId != null) {
-    await deleteByFilter(page, 'ErpFinBankStatementLine', eqFilter('statementId', Number(statementId)));
+    await deleteByFilter(page, 'ErpFinBankStatementLine', eqFilter('statementId', statementId));
     await deleteById(page, 'ErpFinBankStatement', statementId);
   }
   if (fundAccountId != null) {
@@ -203,7 +203,7 @@ test.describe('Finance ErpFinBankReconciliation lifecycle browser-layer E2E', ()
       const voucherIds: any[] = linkRows.map((i) => i.voucherId).filter((v) => v != null);
       let hasReversal = false;
       for (const vid of voucherIds) {
-        const v = await findFirst<any>(page, 'ErpFinVoucher', eqFilter('id', Number(vid)), 'id postingType');
+        const v = await findFirst<any>(page, 'ErpFinVoucher', eqFilter('id', vid), 'id postingType');
         if (v && v.postingType === 'REVERSAL') {
           hasReversal = true;
           break;

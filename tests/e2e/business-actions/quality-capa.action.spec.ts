@@ -19,7 +19,7 @@ import { test, expect, loginAndNavigate, createViaSave, callMutationOk, callMuta
  * 清理：CAPA 无下游产物；NCR 仅状态迁移无 resolve/过账（本 spec 不触发财务分派），逻辑删除两者。
  */
 
-const MATERIAL_ID = 1;
+const MATERIAL_ID = '1';
 const VERIFICATION_PERSON = 2;
 
 async function seedNcr(page: import('@playwright/test').Page, tag: string): Promise<{ id: string }> {
@@ -48,7 +48,7 @@ test.describe('quality ErpQaAction (CAPA) state machine actions', () => {
     const action = await createViaSave(
       page, 'ErpQaAction',
       {
-        ncrId: Number(ncr.id),
+        ncrId: ncr.id,
         actionType: 'CAPA',
         description: 'E2E corrective action',
         responsiblePerson: VERIFICATION_PERSON,

@@ -27,7 +27,7 @@ import {
  * （计划审计 + 必需证据齐备即允许实施）。`<auth>` 已补齐，subcontract.approve 翻为 active（去 fixme）。
  */
 
-const DUMMY_ID = 999999;
+const DUMMY_ID = '999999';
 const DUMMY_STR = '999999';
 
 interface MfgAction {

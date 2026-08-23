@@ -46,11 +46,11 @@ import { cleanupVoucherByBillCode, cleanupArApByCode } from '../orchestration/_h
  * 种子引用：org id=2 / acctSchema ACCT-FIN-01 id=1 / currency CNY id=1 / period 2026-07 id=1（OPEN）。
  * 自包含隔离：建 partner+employee+budget scenario(NONE)+budget line+claim+line，cleanup 删凭证+AR-AP+行+头+预算行+方案+员工+partner。
  */
-const ORG = 2;
-const ACCT_SCHEMA = 1;
-const CURRENCY = 1;
-const PERIOD = 1;
-const SUBJECT_EXPENSE_ID = 31;
+const ORG = '2';
+const ACCT_SCHEMA = '1';
+const CURRENCY = '1';
+const PERIOD = '1';
+const SUBJECT_EXPENSE_ID = '31';
 const SUBJECT_EXPENSE_CODE = '6602';
 const SUBJECT_EXPENSE_NAME = '折旧费用';
 const BDATE = '2026-07-15';
@@ -140,14 +140,14 @@ async function setupFull(page: import('@playwright/test').Page): Promise<Ctx> {
 
 async function getBudgetVsActual(page: import('@playwright/test').Page): Promise<any[]> {
   const json: any = await new GraphQLClient(page).raw(
-    `query{ ErpFinBudgetLine__getBudgetVsActual(acctSchemaId:${ACCT_SCHEMA},periodId:${PERIOD},subjectId:${SUBJECT_EXPENSE_ID}){ subjectId subjectCode subjectName budgetAmount commitmentAmount actualAmount availableAmount } }`,
+    `query{ ErpFinBudgetLine__getBudgetVsActual(acctSchemaId:"${ACCT_SCHEMA}",periodId:"${PERIOD}",subjectId:"${SUBJECT_EXPENSE_ID}"){ subjectId subjectCode subjectName budgetAmount commitmentAmount actualAmount availableAmount } }`,
   );
   expect(json?.errors, `getBudgetVsActual should not return errors: ${JSON.stringify(json?.errors)}`).toBeFalsy();
   return json?.data?.ErpFinBudgetLine__getBudgetVsActual ?? [];
 }
 
 function findRow(rows: any[]): any | null {
-  return rows.find((r) => Number(r.subjectId) === SUBJECT_EXPENSE_ID && r.costCenterId == null) || null;
+  return rows.find((r) => r.subjectId === SUBJECT_EXPENSE_ID && r.costCenterId == null) || null;
 }
 
 /** 直置 COMMITMENT 凭证（postingType=COMMITMENT + POSTED + isReversed=false），A4.1.6 门控清单②。 */
@@ -168,7 +168,7 @@ async function seedCommitmentVoucher(
   await createViaSave(
     page, 'ErpFinVoucherLine',
     {
-      voucherId: Number(v.id), lineNo: 1, subjectId: SUBJECT_EXPENSE_ID, subjectCode: SUBJECT_EXPENSE_CODE,
+      voucherId: v.id, lineNo: 1, subjectId: SUBJECT_EXPENSE_ID, subjectCode: SUBJECT_EXPENSE_CODE,
       dcDirection: 'DEBIT', debitAmount: amount, creditAmount: 0,
       currencyId: CURRENCY, exchangeRate: 1, amountSource: amount, amountFunctional: amount,
       acctSchemaId: ACCT_SCHEMA,
@@ -184,7 +184,7 @@ async function cleanupCommitmentVoucher(
   cmt: { voucherId: string | number },
 ): Promise<void> {
   if (!cmt) return;
-  await deleteByFilter(page, 'ErpFinVoucherLine', eqFilter('voucherId', Number(cmt.voucherId)));
+  await deleteByFilter(page, 'ErpFinVoucherLine', eqFilter('voucherId', cmt.voucherId));
   await deleteById(page, 'ErpFinVoucher', cmt.voucherId);
 }
 

@@ -21,7 +21,7 @@ import {
 } from '../business-actions/_helper';
 import { cleanupVoucherByBillCode } from '../orchestration/_helper';
 
-const ORG = 2;
+const ORG = '2';
 const WIZARD_ROUTE = '/fin-period-close-wizard';
 
 let _seq = 0;
@@ -52,8 +52,8 @@ async function cleanupPeriod(page: import('@playwright/test').Page, period: { id
     await cleanupVoucherByBillCode(page, `FX-REVAL-${period.code}`);
   }
   if (period?.id) {
-    await deleteByFilter(page, 'ErpFinAccountingPeriodStatus', eqFilter('periodId', Number(period.id)));
-    await deleteByFilter(page, 'ErpFinTrialBalance', eqFilter('periodId', Number(period.id))).catch(() => {});
+    await deleteByFilter(page, 'ErpFinAccountingPeriodStatus', eqFilter('periodId', period.id));
+    await deleteByFilter(page, 'ErpFinTrialBalance', eqFilter('periodId', period.id)).catch(() => {});
     await deleteById(page, 'ErpFinAccountingPeriod', period.id);
   }
 }

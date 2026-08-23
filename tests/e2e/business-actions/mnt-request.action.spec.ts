@@ -28,7 +28,7 @@ import { test, expect, loginAndNavigate, createViaSave, callMutationOk, callMuta
  * 清理：正路径 accept 生成 visit 按 code 删除 + Request 自身删除；分支路径无 visit 副作用，仅删 Request。
  */
 
-const EQ_ID = 1;
+const EQ_ID = '1';
 const REQUESTED_BY = 2;
 
 async function seedRequest(page: import('@playwright/test').Page, tag: string): Promise<{ id: string }> {

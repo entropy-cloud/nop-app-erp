@@ -77,10 +77,10 @@ import type { Page } from '@playwright/test';
  * - 清理：voucher 经 `cleanupVoucherByBillCode` 删凭证行+凭证+回链；note 经 `deleteById` 删主实体。
  */
 
-const ORG_ID = 2;
-const CURRENCY_CNY = 1;
-const CURRENCY_USD = 2;
-const PARTNER_ID = 3; // SUP-001（AP 方向 partner 维度，ISSUED dr.setPartnerId）
+const ORG_ID = '2';
+const CURRENCY_CNY = '1';
+const CURRENCY_USD = '2';
+const PARTNER_ID = '3'; // SUP-001（AP 方向 partner 维度，ISSUED dr.setPartnerId）
 const NOTES_TYPE = 'COMMERCIAL_ACCEPTANCE'; // 主路径短路授信校验
 const ISSUE_DATE = '2026-07-01';
 const DUE_DATE = '2026-07-31';

@@ -53,7 +53,7 @@ async function createEmployee(page: import('@playwright/test').Page, tag: string
       hireDate: '2024-01-01',
       employmentStatus: 'ACTIVE',
       employeeType: 'FULL_TIME',
-      orgId: 2,
+      orgId: '2',
     },
     'id',
   );
@@ -73,7 +73,7 @@ async function createShift(page: import('@playwright/test').Page, code: string):
       graceEarlyLeaveMinutes: 15,
       requireClockIn: false,
       requireClockOut: false,
-      orgId: 2,
+      orgId: '2',
     },
     'id',
   );
@@ -92,14 +92,14 @@ async function buildSwapPair(
     page,
     'ErpHrShiftAssignment',
     'assignSingle',
-    { employeeId: Number(empA.id), shiftId: Number(shiftA.id), assignmentDate: date },
+    { employeeId: empA.id, shiftId: shiftA.id, assignmentDate: date },
     'id',
   );
   const target = await callMutationOk(
     page,
     'ErpHrShiftAssignment',
     'assignSingle',
-    { employeeId: Number(empB.id), shiftId: Number(shiftB.id), assignmentDate: date },
+    { employeeId: empB.id, shiftId: shiftB.id, assignmentDate: date },
     'id',
   );
   return { source, target };
@@ -107,8 +107,8 @@ async function buildSwapPair(
 
 async function cleanupEmployee(page: import('@playwright/test').Page, employeeId: string | number): Promise<void> {
   // 按 employeeId 反查 assignment.id，再删 swap (sourceAssignmentId/targetAssignmentId 引用)
-  await deleteByFilter(page, 'ErpHrShiftSwapRequest', eqFilter('requesterId', Number(employeeId)));
-  await deleteByFilter(page, 'ErpHrShiftAssignment', eqFilter('employeeId', Number(employeeId)));
+  await deleteByFilter(page, 'ErpHrShiftSwapRequest', eqFilter('requesterId', employeeId));
+  await deleteByFilter(page, 'ErpHrShiftAssignment', eqFilter('employeeId', employeeId));
   await deleteById(page, 'ErpHrEmployee', employeeId);
 }
 
@@ -134,8 +134,8 @@ test.describe('hr ErpHrShiftSwapRequest state machine + approve bilateral shift 
         'ErpHrShiftSwapRequest',
         'submit',
         {
-          sourceAssignmentId: Number(pair.source.id),
-          targetAssignmentId: Number(pair.target.id),
+          sourceAssignmentId: pair.source.id,
+          targetAssignmentId: pair.target.id,
           reason: 'E2E bilateral swap test',
         },
         'id status sourceAssignmentId targetAssignmentId',
@@ -148,7 +148,7 @@ test.describe('hr ErpHrShiftSwapRequest state machine + approve bilateral shift 
         page,
         'ErpHrShiftSwapRequest',
         'approve',
-        { swapRequestId: Number(swap.id) },
+        { swapRequestId: swap.id },
         'id status',
       );
       expect(approved.status, 'after approve status=APPROVED').toBe('APPROVED');
@@ -167,14 +167,14 @@ test.describe('hr ErpHrShiftSwapRequest state machine + approve bilateral shift 
         pair.target.id,
         'shiftId swapRequestId replacedByAssignmentId status',
       );
-      expect(Number(srcAfter.shiftId), 'source.shiftId flipped to original target.shiftId').toBe(Number(shiftB.id));
-      expect(Number(tgtAfter.shiftId), 'target.shiftId flipped to original source.shiftId').toBe(Number(shiftA.id));
+      expect(srcAfter.shiftId, 'source.shiftId flipped to original target.shiftId').toBe(shiftB.id);
+      expect(tgtAfter.shiftId, 'target.shiftId flipped to original source.shiftId').toBe(shiftA.id);
       // (c) 双 assignment swapRequestId = swap id
-      expect(Number(srcAfter.swapRequestId), 'source.swapRequestId = swap.id').toBe(Number(swap.id));
-      expect(Number(tgtAfter.swapRequestId), 'target.swapRequestId = swap.id').toBe(Number(swap.id));
+      expect(srcAfter.swapRequestId, 'source.swapRequestId = swap.id').toBe(swap.id);
+      expect(tgtAfter.swapRequestId, 'target.swapRequestId = swap.id').toBe(swap.id);
       // (d) 双 assignment replacedByAssignmentId 双向回链
-      expect(Number(srcAfter.replacedByAssignmentId), 'source.replacedBy = target.id').toBe(Number(pair.target.id));
-      expect(Number(tgtAfter.replacedByAssignmentId), 'target.replacedBy = source.id').toBe(Number(pair.source.id));
+      expect(srcAfter.replacedByAssignmentId, 'source.replacedBy = target.id').toBe(pair.target.id);
+      expect(tgtAfter.replacedByAssignmentId, 'target.replacedBy = source.id').toBe(pair.source.id);
       // (e) 双 assignment status=SCHEDULED（重置）
       expect(srcAfter.status, 'source status reset SCHEDULED').toBe('SCHEDULED');
       expect(tgtAfter.status, 'target status reset SCHEDULED').toBe('SCHEDULED');
@@ -202,22 +202,22 @@ test.describe('hr ErpHrShiftSwapRequest state machine + approve bilateral shift 
         'ErpHrShiftSwapRequest',
         'submit',
         {
-          sourceAssignmentId: Number(pair.source.id),
-          targetAssignmentId: Number(pair.target.id),
+          sourceAssignmentId: pair.source.id,
+          targetAssignmentId: pair.target.id,
           reason: 'reject path',
         },
         'id',
       );
 
-      await callMutationOk(page, 'ErpHrShiftSwapRequest', 'reject', { swapRequestId: Number(swap.id) }, 'id status');
+      await callMutationOk(page, 'ErpHrShiftSwapRequest', 'reject', { swapRequestId: swap.id }, 'id status');
       const st = await verifyState(page, 'ErpHrShiftSwapRequest', swap.id, 'status');
       expect(st.status, 'after reject status=REJECTED').toBe('REJECTED');
 
       // 双 assignment 不变：source.shiftId 仍 = shiftA.id，target.shiftId 仍 = shiftB.id
       const srcAfter = await verifyState(page, 'ErpHrShiftAssignment', pair.source.id, 'shiftId');
       const tgtAfter = await verifyState(page, 'ErpHrShiftAssignment', pair.target.id, 'shiftId');
-      expect(Number(srcAfter.shiftId), 'source.shiftId unchanged after reject').toBe(Number(shiftA.id));
-      expect(Number(tgtAfter.shiftId), 'target.shiftId unchanged after reject').toBe(Number(shiftB.id));
+      expect(srcAfter.shiftId, 'source.shiftId unchanged after reject').toBe(shiftA.id);
+      expect(tgtAfter.shiftId, 'target.shiftId unchanged after reject').toBe(shiftB.id);
     } finally {
       await cleanupEmployee(page, empA.id);
       await cleanupEmployee(page, empB.id);
@@ -242,22 +242,22 @@ test.describe('hr ErpHrShiftSwapRequest state machine + approve bilateral shift 
         'ErpHrShiftSwapRequest',
         'submit',
         {
-          sourceAssignmentId: Number(pair.source.id),
-          targetAssignmentId: Number(pair.target.id),
+          sourceAssignmentId: pair.source.id,
+          targetAssignmentId: pair.target.id,
           reason: 'cancel path',
         },
         'id',
       );
 
-      await callMutationOk(page, 'ErpHrShiftSwapRequest', 'cancel', { swapRequestId: Number(swap.id) }, 'id status');
+      await callMutationOk(page, 'ErpHrShiftSwapRequest', 'cancel', { swapRequestId: swap.id }, 'id status');
       const st = await verifyState(page, 'ErpHrShiftSwapRequest', swap.id, 'status');
       expect(st.status, 'after cancel status=CANCELLED').toBe('CANCELLED');
 
       // 双 assignment 不变
       const srcAfter = await verifyState(page, 'ErpHrShiftAssignment', pair.source.id, 'shiftId');
       const tgtAfter = await verifyState(page, 'ErpHrShiftAssignment', pair.target.id, 'shiftId');
-      expect(Number(srcAfter.shiftId), 'source.shiftId unchanged after cancel').toBe(Number(shiftA.id));
-      expect(Number(tgtAfter.shiftId), 'target.shiftId unchanged after cancel').toBe(Number(shiftB.id));
+      expect(srcAfter.shiftId, 'source.shiftId unchanged after cancel').toBe(shiftA.id);
+      expect(tgtAfter.shiftId, 'target.shiftId unchanged after cancel').toBe(shiftB.id);
     } finally {
       await cleanupEmployee(page, empA.id);
       await cleanupEmployee(page, empB.id);
@@ -281,21 +281,21 @@ test.describe('hr ErpHrShiftSwapRequest state machine + approve bilateral shift 
         'ErpHrShiftSwapRequest',
         'submit',
         {
-          sourceAssignmentId: Number(pair.source.id),
-          targetAssignmentId: Number(pair.target.id),
+          sourceAssignmentId: pair.source.id,
+          targetAssignmentId: pair.target.id,
           reason: 'illegal transition',
         },
         'id',
       );
       // 先 approve 走完正常路径到 APPROVED
-      await callMutationOk(page, 'ErpHrShiftSwapRequest', 'approve', { swapRequestId: Number(swap.id) }, 'id');
+      await callMutationOk(page, 'ErpHrShiftSwapRequest', 'approve', { swapRequestId: swap.id }, 'id');
 
       // 再次 approve（APPROVED → approve 期望 PENDING）→ ERR_SHIFT_SWAP_ILLEGAL_STATUS_TRANSITION
       const rej = await callMutation(
         page,
         'ErpHrShiftSwapRequest',
         'approve',
-        { swapRequestId: Number(swap.id) },
+        { swapRequestId: swap.id },
         'id',
       );
       expect(rej.errors, 'illegal transition should be rejected').toBeTruthy();
@@ -306,7 +306,7 @@ test.describe('hr ErpHrShiftSwapRequest state machine + approve bilateral shift 
         page,
         'ErpHrShiftSwapRequest',
         'reject',
-        { swapRequestId: Number(swap.id) },
+        { swapRequestId: swap.id },
         'id',
       );
       expect(rej2.errors, 'reject from APPROVED should be rejected').toBeTruthy();

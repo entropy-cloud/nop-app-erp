@@ -16,7 +16,7 @@ import { GraphQLClient } from '../pages';
  * visitDate 用未来日 2026-12-26 避开种子 visit（日期唯一，无 SCHEDULED/IN_PROGRESS 冲突）。
  */
 
-const EQ_ID = 1;
+const EQ_ID = '1';
 const ASSIGNED_TO = 2;
 const VISIT_DATE = '2026-12-26';
 
@@ -42,7 +42,7 @@ test.describe('maintenance visit-wizard action E2E (F4 tasks aggregate-save + wi
         status: 'DRAFT',
         assignedTo: ASSIGNED_TO,
         visitType: 'PLANNED',
-        orgId: 2,
+        orgId: '2',
         tasks: [
           {
             lineNo: 1,

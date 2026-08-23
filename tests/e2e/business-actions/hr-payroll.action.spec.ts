@@ -71,7 +71,7 @@ async function setupPayrollChain(
       hireDate: '2024-01-01',
       employmentStatus: 'ACTIVE',
       employeeType: 'FULL_TIME',
-      orgId: 2,
+      orgId: '2',
     },
     'id',
   );
@@ -87,7 +87,7 @@ async function setupPayrollChain(
       startDate: '2024-01-01',
       monthlySalary: 10000,
       status: 'ACTIVE',
-      orgId: 2,
+      orgId: '2',
       businessDate: '2026-07-14',
     },
     'id',
@@ -102,7 +102,7 @@ async function setupPayrollChain(
       socialInsuranceBase: 10000,
       housingFundBase: 10000,
       effectiveFrom: '2024-01-01',
-      orgId: 2,
+      orgId: '2',
     },
     'id',
   );
@@ -118,7 +118,7 @@ async function setupPayrollChain(
       baseLowerLimit: 1000,
       baseUpperLimit: 50000,
       effectiveFrom: '2024-01-01',
-      orgId: 2,
+      orgId: '2',
     },
     'id',
   );
@@ -130,7 +130,7 @@ async function setupPayrollChain(
       year,
       taxThreshold: 5000,
       taxBrackets: TAX_BRACKETS,
-      orgId: 2,
+      orgId: '2',
     },
     'id',
   );
@@ -162,33 +162,33 @@ test.describe('hr ErpHrSalary payroll engine DIRECT actions', () => {
     const MONTH = 7;
     const s = await setupPayrollChain(page, 'calc', YEAR);
 
-    // calculateSalary：DIRECT @BizMutation，触发计算引擎
+    // E3.1 响应脱敏（plan 2026-08-10-2059-2）：薪酬 13 金额字段对任意 E2E 账号均不可观察——
+    // admin 被 @BizLoader 掩码（null），薪酬审批人角色无 __get 读权限（FNPT 声明层缺口，
+    // bug 登记 docs/bugs/2026-08-23-e2e-masked-amount-observability.md）。金额计算正确性由
+    // JUnit TestErpHrSalary* 承载；E2E 断言状态机可观察面（PENDING/UNSUBMITTED/VOID）。
     const salary = await callMutationOk(
       page,
       'ErpHrSalary',
       'calculateSalary',
-      { employeeId: Number(s.employeeId), year: YEAR, month: MONTH },
-      'id grossSalary netSalary paymentStatus approveStatus basicSalary',
+      { employeeId: s.employeeId, year: YEAR, month: MONTH },
+      'id paymentStatus approveStatus',
     );
-
-    // 计算引擎触发可观测性：金额非空 + UNSUBMITTED/PENDING
-    expect(Number(salary.grossSalary), 'grossSalary should be non-zero after engine trigger').toBeGreaterThan(0);
-    expect(salary.netSalary, 'netSalary should be non-null').not.toBeNull();
-    expect(Number(salary.netSalary), 'netSalary should be a finite number').toBeGreaterThanOrEqual(0);
     expect(salary.approveStatus, 'calculateSalary sets approveStatus=UNSUBMITTED').toBe('UNSUBMITTED');
     expect(salary.paymentStatus, 'calculateSalary sets paymentStatus=PENDING').toBe('PENDING');
 
-    // 独立 __get 断言状态翻转
+    // 独立 __get 断言状态翻转（admin 读路径，非掩码字段）
     const verified = await verifyState(page, 'ErpHrSalary', salary.id, 'grossSalary paymentStatus approveStatus');
-    expect(Number(verified.grossSalary), '__get grossSalary non-zero').toBeGreaterThan(0);
     expect(verified.paymentStatus, '__get paymentStatus=PENDING').toBe('PENDING');
+    expect(verified.approveStatus, '__get approveStatus=UNSUBMITTED').toBe('UNSUBMITTED');
+    // 掩码面实证：admin 会话下 grossSalary 掩码为 null（E3.1 fail-closed 生效证明）
+    expect(verified.grossSalary == null, '__get grossSalary masked null for admin (E3.1 fail-closed live)').toBe(true);
 
     // voidSalary 作废回退：PENDING → VOID
-    await callMutationOk(page, 'ErpHrSalary', 'voidSalary', { salaryId: Number(salary.id) }, 'id');
+    await callMutationOk(page, 'ErpHrSalary', 'voidSalary', { salaryId: salary.id }, 'id');
     const voided = await verifyState(page, 'ErpHrSalary', salary.id, 'paymentStatus');
     expect(voided.paymentStatus, 'after voidSalary paymentStatus=VOID').toBe('VOID');
 
-    // 清理
+    // 清理（已回切 admin：salary/employee 等删除走 skip-check-for-admin）
     await deleteById(page, 'ErpHrSalary', salary.id);
     await cleanupSetup(page, s);
   });
@@ -205,13 +205,13 @@ test.describe('hr ErpHrSalary payroll engine DIRECT actions', () => {
       page,
       'ErpHrSalary',
       'calculateSalary',
-      { employeeId: Number(s.employeeId), year: YEAR, month: MONTH },
+      { employeeId: s.employeeId, year: YEAR, month: MONTH },
       'id approveStatus paymentStatus',
     );
     expect(salary.approveStatus, 'precondition approveStatus=UNSUBMITTED').toBe('UNSUBMITTED');
 
     // markPaid 守卫：approveStatus≠APPROVED → 抛 ERR_SALARY_ILLEGAL_STATUS_TRANSITION
-    const rej = await callMutation(page, 'ErpHrSalary', 'markPaid', { salaryId: Number(salary.id) }, 'id');
+    const rej = await callMutation(page, 'ErpHrSalary', 'markPaid', { salaryId: salary.id }, 'id');
     expect(rej.errors, 'markPaid on UNSUBMITTED should be rejected').toBeTruthy();
     expect(JSON.stringify(rej.errors), 'reject should carry illegal-transition token').toContain('不允许执行该操作');
 
@@ -232,7 +232,7 @@ test.describe('hr ErpHrSalary payroll engine DIRECT actions', () => {
       page,
       'ErpHrSalary',
       'generateBankFile',
-      { year: 2025, month: 11, bankId: 1 },
+      { year: 2025, month: 11, bankId: '1' },
       'id',
     );
     expect(rej.errors, 'generateBankFile with no APPROVED salaries should be rejected').toBeTruthy();

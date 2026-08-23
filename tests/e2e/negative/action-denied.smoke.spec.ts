@@ -66,7 +66,7 @@ async function setupMinimalChain(
       hireDate: '2024-01-01',
       employmentStatus: 'ACTIVE',
       employeeType: 'FULL_TIME',
-      orgId: 2,
+      orgId: '2',
     },
     'id',
   );
@@ -82,7 +82,7 @@ async function setupMinimalChain(
       startDate: '2024-01-01',
       monthlySalary: 10000,
       status: 'ACTIVE',
-      orgId: 2,
+      orgId: '2',
       businessDate: '2026-08-09',
     },
     'id',
@@ -98,7 +98,7 @@ async function setupMinimalChain(
       socialInsuranceBase: 10000,
       housingFundBase: 10000,
       effectiveFrom: '2024-01-01',
-      orgId: 2,
+      orgId: '2',
     },
     'id',
   );
@@ -114,7 +114,7 @@ async function setupMinimalChain(
       baseLowerLimit: 1000,
       baseUpperLimit: 50000,
       effectiveFrom: '2024-01-01',
-      orgId: 2,
+      orgId: '2',
     },
     'id',
   );
@@ -126,7 +126,7 @@ async function setupMinimalChain(
       year,
       taxThreshold: 5000,
       taxBrackets: TAX_BRACKETS,
-      orgId: 2,
+      orgId: '2',
     },
     'id',
   );
@@ -175,7 +175,7 @@ test.describe('negative isolation primitives: expectActionDenied smoke demo', ()
       page,
       'ErpHrSalary',
       'calculateSalary',
-      { employeeId: Number(s.employeeId), year: YEAR, month: MONTH },
+      { employeeId: s.employeeId, year: YEAR, month: MONTH },
       'id approveStatus paymentStatus',
     );
     expect(salary.approveStatus, 'precondition approveStatus=UNSUBMITTED').toBe('UNSUBMITTED');
@@ -185,7 +185,7 @@ test.describe('negative isolation primitives: expectActionDenied smoke demo', ()
       page,
       'ErpHrSalary',
       'markPaid',
-      { salaryId: Number(salary.id) },
+      { salaryId: salary.id },
       'id',
     );
 

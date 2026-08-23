@@ -33,11 +33,11 @@ import { test, expect, loginAndNavigate, createViaSave, callMutationOk, callMuta
  *   发票为 DRAFT 草稿（posted=false, approveStatus=UNSUBMITTED），无凭证/辅助账产物，删除安全。
  */
 
-const PARTNER_CUSTOMER_ID = 1; // CUST-001（OUTBOUND→AR 发票 customerId）
-const PARTNER_SUPPLIER_ID = 3; // SUP-001（INBOUND→AP 发票 supplierId）
-const ORG_ID = 2;
-const CURRENCY_ID = 1;
-const MATERIAL_ID = 4; // MAT-004
+const PARTNER_CUSTOMER_ID = '1'; // CUST-001（OUTBOUND→AR 发票 customerId）
+const PARTNER_SUPPLIER_ID = '3'; // SUP-001（INBOUND→AP 发票 supplierId）
+const ORG_ID = '2';
+const CURRENCY_ID = '1';
+const MATERIAL_ID = '4'; // MAT-004
 const AS_OF_DATE = '2026-07-14';
 const PLAN_AMOUNT = 1000;
 
@@ -81,7 +81,7 @@ async function seedContractLine(page: import('@playwright/test').Page, contractI
   return createViaSave(
     page, 'ErpCtContractLine',
     {
-      contractId: Number(contractId),
+      contractId: contractId,
       lineNo: 1,
       materialId: MATERIAL_ID,
       quantity: 100,
@@ -96,7 +96,7 @@ async function seedInvoicePlan(page: import('@playwright/test').Page, contractLi
   return createViaSave(
     page, 'ErpCtInvoicePlan',
     {
-      contractLineId: Number(contractLineId),
+      contractLineId: contractLineId,
       planDate: '2026-06-01',
       amount,
       invoiceTerm: 'MILESTONE',
@@ -109,7 +109,7 @@ async function seedInvoicePlan(page: import('@playwright/test').Page, contractLi
 async function deleteApInvoiceDraft(page: import('@playwright/test').Page, billCode: string): Promise<void> {
   const inv = await findFirst<any>(page, 'ErpPurInvoice', eqFilter('code', billCode), 'id');
   if (inv) {
-    await deleteByFilter(page, 'ErpPurInvoiceLine', eqFilter('invoiceId', Number(inv.id)));
+    await deleteByFilter(page, 'ErpPurInvoiceLine', eqFilter('invoiceId', inv.id));
     await deleteById(page, 'ErpPurInvoice', inv.id);
   }
 }
@@ -117,7 +117,7 @@ async function deleteApInvoiceDraft(page: import('@playwright/test').Page, billC
 async function deleteArInvoiceDraft(page: import('@playwright/test').Page, billCode: string): Promise<void> {
   const inv = await findFirst<any>(page, 'ErpSalInvoice', eqFilter('code', billCode), 'id');
   if (inv) {
-    await deleteByFilter(page, 'ErpSalInvoiceLine', eqFilter('invoiceId', Number(inv.id)));
+    await deleteByFilter(page, 'ErpSalInvoiceLine', eqFilter('invoiceId', inv.id));
     await deleteById(page, 'ErpSalInvoice', inv.id);
   }
 }
@@ -250,7 +250,7 @@ test.describe('contract ErpCtInvoicePlan triggerInvoice / triggerDuePlans orches
     try {
       // triggerDuePlans 返回触发行数（int 标量，原始 mutation 无选择集）
       const json: any = await new GraphQLClient(page).raw(
-        `mutation{ ErpCtInvoicePlan__triggerDuePlans(contractId:${contract.id},asOfDate:"${AS_OF_DATE}") }`,
+        `mutation{ ErpCtInvoicePlan__triggerDuePlans(contractId:"${contract.id}",asOfDate:"${AS_OF_DATE}") }`,
       );
       expect(json.errors, 'triggerDuePlans should not return GraphQL errors').toBeFalsy();
       const triggered = Number(json?.data?.ErpCtInvoicePlan__triggerDuePlans);

@@ -44,8 +44,8 @@ import { cleanupVoucherByBillCode, findVoucherIdByBillCode, assertVoucherLines }
  *
  * 种子引用：org id=2 / currency id=1（CNY）/ acctSchema ACCT-FIN-01 id=1。
  */
-const ORG_ID = 2;
-const CURRENCY_ID = 1;
+const ORG_ID = '2';
+const CURRENCY_ID = '1';
 const BDATE = '2026-07-10';
 
 let _seq = 0;

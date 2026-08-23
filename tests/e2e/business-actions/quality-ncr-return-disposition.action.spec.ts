@@ -81,7 +81,7 @@ test.describe('quality ErpQaNonConformance RETURN disposition cross-domain retur
         'id code supplierId docStatus approveStatus',
       );
       expect(purReturn, 'ErpPurReturn should exist for returnCode').toBeTruthy();
-      expect(Number(purReturn.supplierId), 'ErpPurReturn supplierId should match NCR').toBe(SUPPLIER_ID);
+      expect(purReturn.supplierId, 'ErpPurReturn supplierId should match NCR').toBe(SUPPLIER_ID);
       expect(purReturn.docStatus, 'ErpPurReturn docStatus=DRAFT').toBe('DRAFT');
       expect(purReturn.approveStatus, 'ErpPurReturn approveStatus=UNSUBMITTED').toBe('UNSUBMITTED');
 

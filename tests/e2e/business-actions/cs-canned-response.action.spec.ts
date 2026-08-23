@@ -30,7 +30,7 @@ test.describe('CS Canned Response actions', () => {
         title: 'E2E 测试应答',
         content: '您好 {customer_name}，工单 {ticket_id} 由 {agent_name} 处理',
         variableDefs: varDefs,
-        macroTicketTypeId: 1,
+        macroTicketTypeId: '1',
         macroPriority: 'HIGH',
         sequence: 10,
         isActive: true,
@@ -46,13 +46,13 @@ test.describe('CS Canned Response actions', () => {
       {
         code: `E2E-CR-TKT-${Date.now()}`,
         subject: 'E2E Canned Response Ticket',
-        customerId: 1,
-        ticketTypeId: 1,
+        customerId: '1',
+        ticketTypeId: '1',
         priority: 'HIGH',
         status: 'NEW',
         docStatus: 'ACTIVE',
         approveStatus: 'UNSUBMITTED',
-        orgId: 2,
+        orgId: '2',
       },
       'id',
     );
@@ -61,7 +61,7 @@ test.describe('CS Canned Response actions', () => {
     // suggestForTicket（@BizQuery，返回 List<ErpCsCannedResponse> 复杂列表，需 selection set，非 callQuery 标量原语可表达）
     // 镜像 fin-reconciliation.action.spec.ts:235-239 inline query 范式
     const suggestJson: any = await new GraphQLClient(page).raw(
-      `query{ ErpCsCannedResponse__suggestForTicket(ticketId:${Number(ticket.id)}){ id title content macroTicketTypeId macroPriority sequence usageCount } }`,
+      `query{ ErpCsCannedResponse__suggestForTicket(ticketId:"${ticket.id}"){ id title content macroTicketTypeId macroPriority sequence usageCount } }`,
     );
     expect(suggestJson?.errors, `suggestForTicket should not return GraphQL errors: ${JSON.stringify(suggestJson?.errors)}`).toBeFalsy();
     const suggestions = suggestJson?.data?.ErpCsCannedResponse__suggestForTicket;
@@ -72,8 +72,8 @@ test.describe('CS Canned Response actions', () => {
 
     // renderTemplate（@BizQuery）——系统变量 + 自定义变量替换
     const renderResp = await callQuery(page, 'ErpCsCannedResponse', 'renderTemplate', {
-      cannedResponseId: Number(canned.id),
-      ticketId: Number(ticket.id),
+      cannedResponseId: canned.id,
+      ticketId: ticket.id,
     });
     expect(renderResp.errors, 'renderTemplate should not return GraphQL errors').toBeNull();
     expect(renderResp.data, 'renderTemplate should return rendered content').toBeTruthy();
@@ -82,7 +82,7 @@ test.describe('CS Canned Response actions', () => {
     // applyCannedResponse（@BizMutation，返回 String 标量，无 selection set；标量 mutation 不能选 'id'）
     const before = canned.usageCount || 0;
     const applyJson: any = await new GraphQLClient(page).raw(
-      `mutation{ ErpCsCannedResponse__applyCannedResponse(cannedResponseId:${Number(canned.id)},ticketId:${Number(ticket.id)}) }`,
+      `mutation{ ErpCsCannedResponse__applyCannedResponse(cannedResponseId:"${canned.id}",ticketId:"${ticket.id}") }`,
     );
     expect(applyJson?.errors, `applyCannedResponse should not return GraphQL errors: ${JSON.stringify(applyJson?.errors)}`).toBeFalsy();
     const applyResp = applyJson?.data?.ErpCsCannedResponse__applyCannedResponse;
@@ -97,14 +97,14 @@ test.describe('CS Canned Response actions', () => {
     // 验证 TicketAction NOTE 写入
     const actions = await new GraphQLClient(page).findItems<any>(
       'ErpCsTicketAction',
-      { $type: 'eq', name: 'ticketId', value: Number(ticket.id) },
+      { $type: 'eq', name: 'ticketId', value: ticket.id },
       'id actionType content',
     );
     const noteActions = actions.filter((a: any) => a.actionType === 'NOTE');
     expect(noteActions.length, 'should have at least one NOTE action from applyCannedResponse').toBeGreaterThan(0);
 
     // 清理
-    await deleteByFilter(page, 'ErpCsTicketAction', { $type: 'eq', name: 'ticketId', value: Number(ticket.id) });
+    await deleteByFilter(page, 'ErpCsTicketAction', { $type: 'eq', name: 'ticketId', value: ticket.id });
     await deleteById(page, 'ErpCsTicket', ticket.id);
     await deleteById(page, 'ErpCsCannedResponse', canned.id);
   });

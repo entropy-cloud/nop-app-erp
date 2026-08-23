@@ -62,10 +62,10 @@ import {
 
 const GATEWAY_ID_MOCK = 'mock';
 const FREIGHT_AMOUNT = 100;
-const ORG = 2;
-const SUPPLIER = 3; // SUP-001
-const WH = 2;       // WH-RAW
-const CURRENCY = 1; // CNY 本位币
+const ORG = '2';
+const SUPPLIER = '3'; // SUP-001
+const WH = '2';       // WH-RAW
+const CURRENCY = '1'; // CNY 本位币
 const BDATE = '2026-07-19';
 
 let _seq = 0;
@@ -130,7 +130,7 @@ async function findLandedCostByReceiveId(
 ): Promise<{ id: string; code: string; docStatus: string; approveStatus: string; totalCostAmount: string | number; currencyId: string | number; supplierId: string | number; allocationMethod: string } | null> {
   return findFirst(
     page, 'ErpInvLandedCost',
-    eqFilter('receiveId', Number(receiveId)),
+    eqFilter('receiveId', receiveId),
     'id code docStatus approveStatus totalCostAmount currencyId supplierId allocationMethod',
   );
 }
@@ -141,7 +141,7 @@ async function findFreightLine(
 ): Promise<{ id: string; costElement: string; amount: string | number; apPartnerId: string | number } | null> {
   return findFirst(
     page, 'ErpInvLandedCostLine',
-    eqFilter('landedCostId', Number(landedCostId)),
+    eqFilter('landedCostId', landedCostId),
     'id costElement amount apPartnerId',
   );
 }
@@ -151,7 +151,7 @@ async function cleanupPath2(
   ctx: { landedCostId?: string | number; shipmentId?: string | number; carrierId?: string | number; receiveId?: string | number },
 ): Promise<void> {
   if (ctx.landedCostId != null) {
-    await findItems(page, 'ErpInvLandedCostLine', eqFilter('landedCostId', Number(ctx.landedCostId)), 'id')
+    await findItems(page, 'ErpInvLandedCostLine', eqFilter('landedCostId', ctx.landedCostId), 'id')
       .then((lines) => Promise.all(lines.map((l) => deleteById(page, 'ErpInvLandedCostLine', l.id))));
     await deleteById(page, 'ErpInvLandedCost', ctx.landedCostId);
   }
@@ -202,8 +202,8 @@ test.describe('logistics ErpLogShipment DELIVERED path-2 采购运费→到岸�
     expect(landedCost!.docStatus, 'landedCost docStatus=DRAFT').toBe('DRAFT');
     expect(landedCost!.approveStatus, 'landedCost approveStatus=UNSUBMITTED').toBe('UNSUBMITTED');
     expect(Number(landedCost!.totalCostAmount), 'landedCost totalCostAmount=freightAmount').toBe(FREIGHT_AMOUNT);
-    expect(Number(landedCost!.currencyId), 'landedCost currencyId=shipment.freightCurrencyId').toBe(CURRENCY);
-    expect(Number(landedCost!.supplierId), 'landedCost supplierId=receive.supplierId (SUP-001=3)').toBe(SUPPLIER);
+    expect(landedCost!.currencyId, 'landedCost currencyId=shipment.freightCurrencyId').toBe(CURRENCY);
+    expect(landedCost!.supplierId, 'landedCost supplierId=receive.supplierId (SUP-001=3)').toBe(SUPPLIER);
     expect(landedCost!.allocationMethod, 'landedCost allocationMethod=BY_AMOUNT (default)').toBe('BY_AMOUNT');
 
     // FREIGHT 费用行断言
@@ -211,7 +211,7 @@ test.describe('logistics ErpLogShipment DELIVERED path-2 采购运费→到岸�
     expect(line, 'FREIGHT line should be created').toBeTruthy();
     expect(line!.costElement, 'line costElement=FREIGHT').toBe('FREIGHT');
     expect(Number(line!.amount), 'line amount=freightAmount').toBe(FREIGHT_AMOUNT);
-    expect(Number(line!.apPartnerId), 'line apPartnerId=receive.supplierId').toBe(SUPPLIER);
+    expect(line!.apPartnerId, 'line apPartnerId=receive.supplierId').toBe(SUPPLIER);
 
     await cleanupPath2(page, { landedCostId: landedCost!.id, shipmentId: shipment.id, carrierId: carrier.id, receiveId: receive.id });
   });

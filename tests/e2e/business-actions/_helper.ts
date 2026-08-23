@@ -92,6 +92,47 @@ export async function callMutationOk(
 }
 
 /**
+ * 原语 2b：以指定账号身份执行一次 mutation（业务审批人守卫类动作专用）。
+ *
+ * 背景（plan 2026-08-23-0434-2）：`loginAsRole` 的 UI 登录表单存在 08-11 白名单 test-infra race
+ * （切换身份时 login form 20s 未渲染），而部分 @BizMutation 有审批人身份硬守卫（如
+ * `ErpCtContract__approveTermination` 的 ERR_CT_APPROVAL_APPROVER_MISMATCH 校验
+ * `context.userId == record.approverId`），admin skip-check 不能代审。
+ *
+ * 机制：经 `/r/LoginApi__login` REST 登录取 accessToken（纯 HTTP，无 UI 表单依赖），单次调用
+ * 显式注入 `Authorization: Bearer` header（与 GraphQLClient P2.4 修正同机制——server 对 header
+ * 与 cookie 双接受）。不触碰浏览器 cookie 会话：page 后续 GraphQLClient 调用仍为原身份。
+ */
+export async function callMutationOkAsUser(
+  page: Page,
+  username: string,
+  entityName: string,
+  action: string,
+  args: Record<string, unknown>,
+  selection = 'id',
+  password = '123',
+): Promise<any> {
+  const loginResp = await page.request.post('/r/LoginApi__login', {
+    data: { loginType: 1, principalId: username, principalSecret: password },
+  });
+  const loginJson: any = await loginResp.json();
+  const token = loginJson?.data?.accessToken ?? null;
+  expect(token, `/r/LoginApi__login(${username}) should return accessToken`).toBeTruthy();
+  const parts = Object.entries(args).map(([name, v]) => `${name}:${JSON.stringify(v)}`);
+  const query = `mutation{ ${entityName}__${action}(${parts.join(',')}){ ${selection} } }`;
+  const resp = await page.request.post('/graphql', {
+    headers: { Authorization: `Bearer ${token}` },
+    data: { query },
+  });
+  const json: any = await resp.json();
+  const errors = json?.errors ?? null;
+  const data = json?.data?.[`${entityName}__${action}`] ?? null;
+  expect(errors, `${entityName}__${action} (as ${username}) should not return GraphQL errors`).toBeNull();
+  expect(data, `${entityName}__${action} (as ${username}) should succeed`).toBeTruthy();
+  return data;
+}
+
+/**
  * 原语 3：经 __get 断言状态字段。返回 selection 指定的字段。
  */
 export async function verifyState(
@@ -101,7 +142,7 @@ export async function verifyState(
   selection: string,
 ): Promise<any> {
   const gql = gqlFor(page);
-  const json: any = await gql.raw(`{ ${entityName}__get(id:${id}){ ${selection} } }`);
+  const json: any = await gql.raw(`{ ${entityName}__get(id:${JSON.stringify(String(id))}){ ${selection} } }`);
   const errors = json?.errors ?? null;
   const data = json?.data?.[`${entityName}__get`] ?? null;
   expect(errors, `${entityName}__get should not return GraphQL errors`).toBeNull();
@@ -212,12 +253,12 @@ export async function deleteById(page: Page, entityName: string, id: string | nu
 export async function findIntercompanyMatchByPairKey<T = any>(
   page: Page,
   pairKey: string,
-  periodId: number,
+  periodId: string | number,
   selection: string,
 ): Promise<T | null> {
   return gqlFor(page).findFirst<T>(
     'ErpFinIntercompanyMatch',
-    andFilter(eqFilter('pairKey', pairKey), eqFilter('periodId', periodId)),
+    andFilter(eqFilter('pairKey', pairKey), eqFilter('periodId', String(periodId))),
     selection,
   );
 }
@@ -230,12 +271,12 @@ export async function findIntercompanyMatchByPairKey<T = any>(
  */
 export async function findEliminationCandidates<T = any>(
   page: Page,
-  periodId: number,
+  periodId: string | number,
   selection: string,
 ): Promise<T[]> {
   return gqlFor(page).findItems<T>(
     'ErpFinConsolidationElimination',
-    eqFilter('periodId', periodId),
+    eqFilter('periodId', String(periodId)),
     selection,
   );
 }
@@ -248,10 +289,10 @@ export async function findEliminationCandidates<T = any>(
  */
 export async function findEliminationVoucherId(
   page: Page,
-  candidateId: number,
-): Promise<number | null> {
+  candidateId: string | number,
+): Promise<string | null> {
   const cand = await verifyState(page, 'ErpFinConsolidationElimination', candidateId, 'draftVoucherId');
-  return cand?.draftVoucherId != null ? Number(cand.draftVoucherId) : null;
+  return cand?.draftVoucherId != null ? cand.draftVoucherId : null;
 }
 
 // ---------- 预算滚动复制 + 结转反查原语（plan 2026-07-26-1407-2） ----------
@@ -284,7 +325,7 @@ export async function findBudgetLineAmount(
 ): Promise<number> {
   const lines = await gqlFor(page).findItems<{ budgetAmountFunctional: string | number }>(
     'ErpFinBudgetLine',
-    andFilter(eqFilter('scenarioId', Number(scenarioId)), eqFilter('subjectCode', subjectCode)),
+    andFilter(eqFilter('scenarioId', String(scenarioId)), eqFilter('subjectCode', subjectCode)),
     'budgetAmountFunctional',
   );
   return lines.reduce((sum, l) => sum + Number(l.budgetAmountFunctional ?? 0), 0);
@@ -302,7 +343,7 @@ export async function countBudgetRollforwardLogs(
 ): Promise<number> {
   return gqlFor(page).findPageTotal(
     'ErpFinBudgetRollforwardLog',
-    eqFilter('sourceScenarioId', Number(sourceScenarioId)),
+    eqFilter('sourceScenarioId', String(sourceScenarioId)),
   );
 }
 
@@ -318,7 +359,7 @@ export async function countBudgetCarryForwardLogs(
 ): Promise<number> {
   return gqlFor(page).findPageTotal(
     'ErpFinBudgetCarryForwardLog',
-    eqFilter('sourceScenarioId', Number(sourceScenarioId)),
+    eqFilter('sourceScenarioId', String(sourceScenarioId)),
   );
 }
 
@@ -338,7 +379,7 @@ export async function findExchangeRatesByBase<T = any>(
 ): Promise<T[]> {
   return gqlFor(page).findItems<T>(
     'ErpMdExchangeRate',
-    eqFilter('fromCurrencyId', Number(baseCurrencyId)),
+    eqFilter('fromCurrencyId', String(baseCurrencyId)),
     selection,
   );
 }

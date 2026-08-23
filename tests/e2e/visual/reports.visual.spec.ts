@@ -201,7 +201,7 @@ assertReportRendered({
   route: '/inventory-trace-report',
   // The page.yaml form sends batchNo/materialId/warehouseId, but the backend's
   // buildInventoryTraceDataset only recognizes moveId (value-spec sends
-  // moveId:1). With unmatched params the data rows are empty, so only the
+  // moveId: '1'). With unmatched params the data rows are empty, so only the
   // always-rendering title + column headers are asserted (the AMIS render
   // pipeline itself — page form → service reload → renderHtml → DOM injection
   // — is fully exercised regardless of data extent).

@@ -42,7 +42,7 @@ import type { Page } from '@playwright/test';
  * GraphQL 入参：LocalDate ISO String quoted；返回 Long 标量（对齐 fin-cash-forecast
  * refreshForecast `gql.raw` 长标量返回范式）。
  */
-const ORG_ID = 2;
+const ORG_ID = '2';
 const FACILITY_TYPE = 'BANK_ACCEPTANCE_LINE';
 const TOTAL_AMOUNT = 1000;
 const RATE = 0.05;
@@ -82,13 +82,13 @@ async function accrueInterest(
   facilityId: string | number,
   from: string,
   to: string,
-): Promise<{ voucherId: number | null; errors: any[] | null; json: any }> {
+): Promise<{ voucherId: string | null; errors: any[] | null; json: any }> {
   const gql = new GraphQLClient(page);
   const json: any = await gql.raw(
-    `mutation{ ErpFinCreditFacility__accrueInterest(creditFacilityId:${Number(facilityId)},fromDate:${JSON.stringify(from)},toDate:${JSON.stringify(to)}) }`,
+    `mutation{ ErpFinCreditFacility__accrueInterest(creditFacilityId:"${facilityId}",fromDate:${JSON.stringify(from)},toDate:${JSON.stringify(to)}) }`,
   );
   const raw = json?.data?.ErpFinCreditFacility__accrueInterest;
-  const voucherId = raw == null ? null : Number(raw);
+  const voucherId = raw == null ? null : String(raw);
   return { voucherId, errors: json?.errors ?? null, json };
 }
 
@@ -121,7 +121,7 @@ test.describe('finance ErpFinCreditFacility accrueInterest credit-facility inter
 
       // facility 三值在计提后不变（计息非额度占用）
       const after = await findFirst<any>(
-        page, 'ErpFinCreditFacility', eqFilter('id', Number(facility.id)),
+        page, 'ErpFinCreditFacility', eqFilter('id', facility.id),
         'id usedAmount availableAmount totalAmount',
       );
       expect(Number(after.usedAmount), 'facility.usedAmount unchanged=300').toBe(300);

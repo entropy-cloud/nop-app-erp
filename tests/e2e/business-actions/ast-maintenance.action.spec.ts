@@ -45,10 +45,10 @@ import { cleanupVoucherByBillCode, findVoucherIdByBillCode, assertVoucherLines }
  * 种子引用：org id=2 / category id=1（AST-CAT-IT）/ currency id=1（CNY）/
  * acctSchema ACCT-FIN-01 id=1 / seed asset id=3（AST-2026-003 IN_SERVICE）。
  */
-const ORG_ID = 2;
-const CATEGORY_ID = 1;
-const CURRENCY_ID = 1;
-const SEED_ASSET_ID = 3; // AST-2026-003 IN_SERVICE（EXPENSE 路径，不修改资产）
+const ORG_ID = '2';
+const CATEGORY_ID = '1';
+const CURRENCY_ID = '1';
+const SEED_ASSET_ID = '3'; // AST-2026-003 IN_SERVICE（EXPENSE 路径，不修改资产）
 const BDATE = '2026-07-10';
 
 let _seq = 0;

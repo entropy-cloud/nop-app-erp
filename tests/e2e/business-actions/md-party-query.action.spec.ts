@@ -104,7 +104,7 @@ test.describe('Master-data ErpParty unified identity query (@BizQuery) browser-l
       {
         code: employeeCode,
         name: employeeName,
-        orgId: 2,
+        orgId: '2',
         status: 'ACTIVE',
         phone: '13800000098',
         email: `${keyword.toLowerCase()}-emp@e2e.example`,
@@ -229,7 +229,7 @@ test.describe('Master-data ErpParty unified identity query (@BizQuery) browser-l
 
       // ---- (5) getParty 三类型 + Organization 空字段容忍 ----
       const partnerGetJson: any = await gql.raw(
-        `query{ ErpParty__getParty(partyType:"PARTNER",partyId:${Number(partner.id)}){ ${PARTY_REF_SELECTION} } }`,
+        `query{ ErpParty__getParty(partyType:"PARTNER",partyId:"${partner.id}"){ ${PARTY_REF_SELECTION} } }`,
       );
       expect(
         partnerGetJson?.errors,
@@ -242,7 +242,7 @@ test.describe('Master-data ErpParty unified identity query (@BizQuery) browser-l
       expect(partnerGet!.name, 'getParty(PARTNER) name').toBe(partnerName);
 
       const employeeGetJson: any = await gql.raw(
-        `query{ ErpParty__getParty(partyType:"EMPLOYEE",partyId:${Number(employee.id)}){ ${PARTY_REF_SELECTION} } }`,
+        `query{ ErpParty__getParty(partyType:"EMPLOYEE",partyId:"${employee.id}"){ ${PARTY_REF_SELECTION} } }`,
       );
       expect(
         employeeGetJson?.errors,
@@ -255,7 +255,7 @@ test.describe('Master-data ErpParty unified identity query (@BizQuery) browser-l
       expect(employeeGet!.name, 'getParty(EMPLOYEE) name').toBe(employeeName);
 
       const orgGetJson: any = await gql.raw(
-        `query{ ErpParty__getParty(partyType:"ORGANIZATION",partyId:${Number(organization.id)}){ ${PARTY_REF_SELECTION} } }`,
+        `query{ ErpParty__getParty(partyType:"ORGANIZATION",partyId:"${organization.id}"){ ${PARTY_REF_SELECTION} } }`,
       );
       expect(
         orgGetJson?.errors,
@@ -273,7 +273,7 @@ test.describe('Master-data ErpParty unified identity query (@BizQuery) browser-l
       // GraphQL Map 序列化为 JSON 对象（实测 EMPLOYEE id=1 → {"employeeAdvance":0}，
       // PARTNER setup 新建 → {}），不支持 selection set。断言结果为非 null 对象。
       const refsJson: any = await gql.raw(
-        `query{ ErpParty__findReferences(partyType:"PARTNER",partyId:${Number(partner.id)}) }`,
+        `query{ ErpParty__findReferences(partyType:"PARTNER",partyId:"${partner.id}") }`,
       );
       expect(
         refsJson?.errors,

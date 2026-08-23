@@ -24,7 +24,7 @@ import { test, expect, loginAndNavigate, createViaSave, callMutationOk, callMuta
  * 清理：NCR 状态机无 CAPA/过账产物（不 resolve），逻辑删除 NCR 自身。
  */
 
-const MATERIAL_ID = 1;
+const MATERIAL_ID = '1';
 
 async function seedNcr(page: import('@playwright/test').Page, tag: string): Promise<{ id: string }> {
   return createViaSave(

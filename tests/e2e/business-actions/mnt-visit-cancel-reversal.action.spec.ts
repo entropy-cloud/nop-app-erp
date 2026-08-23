@@ -46,8 +46,8 @@ import {
  * 清理：MAINTENANCE_LABOR 凭证（billHeadCode=visit.code+"-ML"，含原+红字）+ Visit。
  */
 
-const ORG = 2;
-const EQUIPMENT_ID = 1; // EQ-2026-001 种子设备 RUNNING
+const ORG = '2';
+const EQUIPMENT_ID = '1'; // EQ-2026-001 种子设备 RUNNING
 const ASSIGNEE_ID = 1; // 种子用户
 const RATE = 80; // erp-mnt.default-labor-hourly-rate webServer JVM arg
 
@@ -115,7 +115,7 @@ test.describe('maintenance ErpMntVisit cancel + MAINTENANCE_LABOR voucher revers
 
       // 6. 原凭证 isReversed=true（ErpFinPostingProcessor.markOriginalVoucherReversed 公共流程）
       const originalAfter = await findFirst<any>(
-        page, 'ErpFinVoucher', eqFilter('id', Number(originalVoucherId)), 'id isReversed postingType',
+        page, 'ErpFinVoucher', eqFilter('id', originalVoucherId), 'id isReversed postingType',
       );
       expect(originalAfter?.isReversed, '原 MAINTENANCE_LABOR 凭证应被标记 isReversed=true').toBe(true);
 

@@ -278,8 +278,18 @@ export function assertReportDownload(cfg: ReportDownloadAssertion): void {
     test('returns non-empty binary with correct magic + structure token', async ({ page }) => {
       await loginAndNavigate(page, `/${cfg.reportName}`);
 
+      // P2.4 同源修正：`__Host-nop-token` 为 Secure cookie，Playwright APIRequestContext
+      // （Node 侧）不会在 http:// 上自动附带 → 裸请求抵达时 roles=[] → no-permission。
+      // 与 GraphQLClient.post 相同，显式注入 Authorization header（server 两者均接受）。
+      const cookies = await page.context().cookies();
+      const token =
+        cookies.find((c) => c.name === '__Host-nop-token')?.value ??
+        cookies.find((c) => c.name === 'nop-token')?.value;
       const resp = await page.request.post(`/p/${bizName}__download`, {
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
         data: {
           reportName: cfg.reportName,
           renderType: cfg.renderType,

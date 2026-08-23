@@ -27,7 +27,7 @@ import { findVoucherIdByBillCode, assertVoucherLines, cleanupVoucherByBillCode }
  * 不污染 finance dashboard / 资产负债表 / 利润表数值基线。
  */
 
-const MATERIAL_ID = 1; // MAT-001，种子余额 avgCost=120
+const MATERIAL_ID = '1'; // MAT-001，种子余额 avgCost=120
 const NCR_QTY = 1;
 const SCRAP_AMOUNT = 120; // NCR_QTY(1) × seed avgCost(120) = 120
 

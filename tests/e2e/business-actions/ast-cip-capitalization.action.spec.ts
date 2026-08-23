@@ -41,9 +41,9 @@ import { findFirst, cleanupVoucherByBillCode, findVoucherIdByBillCode, assertVou
  * 种子引用：org id=2 / category id=1（AST-CAT-IT，STRAIGHT_LINE 36 月，满足 validateForApproval）/
  * currency id=1（CNY）/ acctSchema ACCT-FIN-01 id=1。
  */
-const ORG_ID = 2;
-const CATEGORY_ID = 1;
-const CURRENCY_ID = 1;
+const ORG_ID = '2';
+const CATEGORY_ID = '1';
+const CURRENCY_ID = '1';
 const TRANSFER_DATE = '2026-07-10';
 
 test.describe('assets ErpAstCip capitalization (transfer-to-asset) lifecycle', () => {

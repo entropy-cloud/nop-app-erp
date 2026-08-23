@@ -17,7 +17,7 @@ import {
   deleteById,
 } from '../business-actions/_helper';
 
-const EQ_ID = 1;
+const EQ_ID = '1';
 const ASSIGNED_TO = 2;
 const VISIT_DATE = '2026-12-26';
 const WIZARD_ROUTE = '/mnt-visit-wizard';
@@ -75,7 +75,7 @@ test.describe('F16 — maintenance visit-wizard flux wizard DOM structure', () =
         status: 'DRAFT',
         assignedTo: ASSIGNED_TO,
         visitType: 'PLANNED',
-        orgId: 2,
+        orgId: '2',
       },
       'id status',
     );

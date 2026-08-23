@@ -103,7 +103,7 @@ async function cleanupCancellableOrder(
   order: any, componentMat: any, productMat: any,
 ) {
   if (order) {
-    await deleteByFilter(page, 'ErpMfgSubcontractOrderLine', eqFilter('subcontractOrderId', Number(order.id)));
+    await deleteByFilter(page, 'ErpMfgSubcontractOrderLine', eqFilter('subcontractOrderId', order.id));
     await deleteById(page, 'ErpMfgSubcontractOrder', order.id);
   }
   if (productMat) await deleteById(page, 'ErpMdMaterial', productMat.id);
@@ -217,7 +217,7 @@ test.describe('manufacturing SubcontractOrder full lifecycle orchestration brows
       const s = await verifyState(page, 'ErpMfgSubcontractOrder', order.id, 'docStatus');
       expect(s?.docStatus, 'docStatus unchanged after rejected issueMaterials').toBe('DRAFT');
     } finally {
-      await deleteByFilter(page, 'ErpMfgSubcontractOrderLine', eqFilter('subcontractOrderId', Number(order.id)));
+      await deleteByFilter(page, 'ErpMfgSubcontractOrderLine', eqFilter('subcontractOrderId', order.id));
       await deleteById(page, 'ErpMfgSubcontractOrder', order.id);
       await deleteById(page, 'ErpMdMaterial', productMat.id);
       await deleteById(page, 'ErpMdMaterial', componentMat.id);
@@ -245,12 +245,12 @@ test.describe('manufacturing SubcontractOrder full lifecycle orchestration brows
       expect(Number(o.processingFee), 'released processingFee=0 skeleton').toBe(0);
       expect(Number(o.totalAmount), 'released totalAmount=0 skeleton').toBe(0);
       expect(o.code, 'convertedBillCode matches released order code').toBe(billCode);
-      expect(Number(o.supplierId), 'released supplierId from release arg').toBe(SEED.SUPPLIER);
+      expect(o.supplierId, 'released supplierId from release arg').toBe(SEED.SUPPLIER);
 
       // 单行 qty=plannedQuantity
-      const lineTotal = await findPageTotal(page, 'ErpMfgSubcontractOrderLine', eqFilter('subcontractOrderId', Number(o.id)));
+      const lineTotal = await findPageTotal(page, 'ErpMfgSubcontractOrderLine', eqFilter('subcontractOrderId', o.id));
       expect(lineTotal, 'released order has exactly 1 line').toBe(1);
-      const line = await findFirst<any>(page, 'ErpMfgSubcontractOrderLine', eqFilter('subcontractOrderId', Number(o.id)), 'quantity');
+      const line = await findFirst<any>(page, 'ErpMfgSubcontractOrderLine', eqFilter('subcontractOrderId', o.id), 'quantity');
       expect(Number(line?.quantity), 'released line qty=plannedQuantity').toBe(SUBCONTRACT_MRP_EXPECT.plannedQuantity);
 
       // 计划 status→FIRMED（单行计划释放后全部 firmed）
@@ -269,7 +269,7 @@ test.describe('manufacturing SubcontractOrder full lifecycle orchestration brows
     const r = await runSubcontractChain(page, { lineCount: 3 });
     try {
       // issue OUTGOING 移动单含 3 行明细（每行独立组件物料）
-      const issueLineTotal = await findPageTotal(page, 'ErpInvStockMoveLine', eqFilter('moveId', Number(r.issueMove?.id)));
+      const issueLineTotal = await findPageTotal(page, 'ErpInvStockMoveLine', eqFilter('moveId', r.issueMove?.id));
       expect(issueLineTotal, 'issue OUTGOING move should have 3 lines').toBe(3);
 
       // 汇总 SUBCONTRACT_ISSUE 凭证：Dr 委外物资 1408 汇总（3 行 × issueCost 10 = 30）+ Cr 原材料 1401 按物料分列（3 行各 10）。
@@ -278,12 +278,12 @@ test.describe('manufacturing SubcontractOrder full lifecycle orchestration brows
       expect(issueVoucherId, 'aggregated SI voucher should exist').toBeTruthy();
       const expectedIssueCost = 3 * SUBCONTRACT_EXPECT.issueCost;
       const dr1408 = await findFirst<any>(page, 'ErpFinVoucherLine',
-        andFilter(eqFilter('voucherId', Number(issueVoucherId)), eqFilter('subjectCode', '1408')),
+        andFilter(eqFilter('voucherId', issueVoucherId), eqFilter('subjectCode', '1408')),
         'debitAmount creditAmount');
       expect(dr1408, 'SI voucher Dr 1408 line exists').toBeTruthy();
       expect(Number(dr1408?.debitAmount), 'SI Dr 1408 aggregated = 3 × issueCost').toBe(expectedIssueCost);
       const cr1401Count = await findPageTotal(page, 'ErpFinVoucherLine',
-        andFilter(eqFilter('voucherId', Number(issueVoucherId)), eqFilter('subjectCode', '1401')));
+        andFilter(eqFilter('voucherId', issueVoucherId), eqFilter('subjectCode', '1401')));
       expect(cr1401Count, 'SI Cr 1401 split per material = 3 lines').toBe(3);
 
       // 终态 COMPLETED + posted
@@ -319,7 +319,7 @@ test.describe('manufacturing SubcontractOrder full lifecycle orchestration brows
       expect(receiptMove, 'receipt MANUFACTURE move exists').toBeTruthy();
       r.receiptMove = receiptMove;
 
-      const receiptLine = await findFirst<any>(page, 'ErpInvStockMoveLine', eqFilter('moveId', Number(receiptMove.id)), 'quantity');
+      const receiptLine = await findFirst<any>(page, 'ErpInvStockMoveLine', eqFilter('moveId', receiptMove.id), 'quantity');
       expect(Number(receiptLine?.quantity), 'receipt move line quantity=receivedQty (partial)').toBe(partialQty);
     } finally {
       await cleanupSubcontract(page, r);
@@ -475,7 +475,7 @@ test.describe('manufacturing SubcontractOrder full lifecycle orchestration brows
         const origVid = await findVoucherIdByBillCode(page, r.codes.order + suffix, 'NORMAL');
         expect(origVid, `original NORMAL voucher ${suffix} should exist`).toBeTruthy();
         const orig = await findFirst<any>(
-          page, 'ErpFinVoucher', eqFilter('id', Number(origVid)), 'id postingType isReversed',
+          page, 'ErpFinVoucher', eqFilter('id', origVid), 'id postingType isReversed',
         );
         expect(orig?.postingType, `original ${suffix} postingType=NORMAL`).toBe('NORMAL');
         expect(orig?.isReversed, `original ${suffix} isReversed=true after reverseCompletion`).toBe(true);

@@ -32,10 +32,10 @@ import { cleanupVoucherByBillCode, findVoucherIdByBillCode, assertVoucherLines }
  *
  * 种子引用：org id=2 / acctSchema ACCT-FIN-01 id=1 / currency CNY id=1 / period id=1（OPEN，endDate=2026-07-31）。
  */
-const ORG = 2;
-const ACCT_SCHEMA = 1;
-const CURRENCY = 1;
-const PERIOD = 1;
+const ORG = '2';
+const ACCT_SCHEMA = '1';
+const CURRENCY = '1';
+const PERIOD = '1';
 const AMOUNT = 100;
 
 let _seq = 0;

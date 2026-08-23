@@ -17,9 +17,9 @@ import { test, expect, loginAndNavigate, createViaSave, callMutationOk, callMuta
  * 清理：合同头 versions 关系 cascade-delete；删合同头兜底删版本。
  */
 
-const PARTNER_CUSTOMER_ID = 1;
-const ORG_ID = 2;
-const CURRENCY_ID = 1;
+const PARTNER_CUSTOMER_ID = '1';
+const ORG_ID = '2';
+const CURRENCY_ID = '1';
 
 async function seedContract(page: import('@playwright/test').Page, tag: string): Promise<{ id: string }> {
   return createViaSave(

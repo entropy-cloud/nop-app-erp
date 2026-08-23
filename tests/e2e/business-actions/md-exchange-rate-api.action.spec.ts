@@ -43,8 +43,8 @@ import type { Page } from '@playwright/test';
  * 种子引用：USD id=2 / CNY id=1（erp_md_currency.csv）。种子汇率 erp_md_exchange_rate.csv id=1 USD→CNY
  * SPOT 7.25 validFrom=2026-01-01（与本 spec MIDDLE/today 行区间互斥，cleanup 按 rateType 隔离）。
  */
-const USD_ID = 2;
-const CNY_ID = 1;
+const USD_ID = '2';
+const CNY_ID = '1';
 const RATE_TYPE_MIDDLE = 'MIDDLE';
 
 interface RateRow {
@@ -102,12 +102,12 @@ test.describe('Master-data ErpMdCurrency refreshRatesFromApi (D1 exchange-rate A
       expect(cnyRow, 'return list should contain USD→CNY row').toBeTruthy();
       expect(Number(cnyRow!.rate), 'USD→CNY rate should be 7.20 (mock deterministic)').toBeCloseTo(7.20, 6);
       expect(cnyRow!.rateType, 'rateType should be MIDDLE').toBe(RATE_TYPE_MIDDLE);
-      expect(Number(cnyRow!.fromCurrencyId), 'fromCurrencyId should be USD').toBe(USD_ID);
+      expect(cnyRow!.fromCurrencyId, 'fromCurrencyId should be USD').toBe(USD_ID);
       // USD→EUR = 0.92 (mock deterministic, MockExchangeRateApiClient.java:33)
       const eurRow = byTarget.get(String(eurId));
       expect(eurRow, 'return list should contain USD→EUR row').toBeTruthy();
       expect(Number(eurRow!.rate), 'USD→EUR rate should be 0.92 (mock deterministic)').toBeCloseTo(0.92, 6);
-      expect(Number(eurRow!.fromCurrencyId), 'EUR row fromCurrencyId should be USD').toBe(USD_ID);
+      expect(eurRow!.fromCurrencyId, 'EUR row fromCurrencyId should be USD').toBe(USD_ID);
 
       // ---- (2) findPage reverse-query: persisted fields with currency code join ----
       const persisted = await findExchangeRatesByBase<RateWithCode>(

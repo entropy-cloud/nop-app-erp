@@ -34,7 +34,7 @@ import type { Page } from '@playwright/test';
  * 种子引用：org=2 / facilityType=REVOLVING（erp-fin/credit-facility-type 字典）。
  * cleanup 逐测试删 facility，保护共享 DB 数值断言基线。
  */
-const ORG_ID = 2;
+const ORG_ID = '2';
 const FACILITY_TYPE = 'BANK_ACCEPTANCE_LINE'; // erp-fin/credit-facility-type 字典仅 BANK_ACCEPTANCE_LINE / LOAN_LINE
 const TOTAL_AMOUNT = 1000;
 
@@ -75,7 +75,7 @@ test.describe('finance ErpFinCreditFacility reserve/release occupation contract'
     try {
       const r = await callMutationOk(
         page, 'ErpFinCreditFacility', 'reserveCredit',
-        { creditFacilityId: Number(facility.id), amount: 300 },
+        { creditFacilityId: facility.id, amount: 300 },
         'id usedAmount availableAmount',
       );
       expect(Number(r.usedAmount), 'reserve(300) → usedAmount=300').toBe(300);
@@ -97,7 +97,7 @@ test.describe('finance ErpFinCreditFacility reserve/release occupation contract'
       // 先 reserve(300) 使 available=700（构建可观测前置状态）
       await callMutationOk(
         page, 'ErpFinCreditFacility', 'reserveCredit',
-        { creditFacilityId: Number(facility.id), amount: 300 },
+        { creditFacilityId: facility.id, amount: 300 },
         'id usedAmount availableAmount',
       );
       const before = await verifyState(page, 'ErpFinCreditFacility', facility.id, 'usedAmount availableAmount');
@@ -107,7 +107,7 @@ test.describe('finance ErpFinCreditFacility reserve/release occupation contract'
       // reserve(2000) > available(700) → 守卫拒绝
       const rej = await callMutation(
         page, 'ErpFinCreditFacility', 'reserveCredit',
-        { creditFacilityId: Number(facility.id), amount: 2000 },
+        { creditFacilityId: facility.id, amount: 2000 },
         'id',
       );
       expect(rej.errors, 'reserve(2000>700) should return GraphQL errors').toBeTruthy();
@@ -133,7 +133,7 @@ test.describe('finance ErpFinCreditFacility reserve/release occupation contract'
       // 先 reserve(300) 构建占用状态
       await callMutationOk(
         page, 'ErpFinCreditFacility', 'reserveCredit',
-        { creditFacilityId: Number(facility.id), amount: 300 },
+        { creditFacilityId: facility.id, amount: 300 },
         'id usedAmount availableAmount',
       );
       const reserved = await verifyState(page, 'ErpFinCreditFacility', facility.id, 'usedAmount availableAmount');
@@ -143,7 +143,7 @@ test.describe('finance ErpFinCreditFacility reserve/release occupation contract'
       // release(300) → used=0/available=1000 恢复
       const r = await callMutationOk(
         page, 'ErpFinCreditFacility', 'releaseCredit',
-        { creditFacilityId: Number(facility.id), amount: 300 },
+        { creditFacilityId: facility.id, amount: 300 },
         'id usedAmount availableAmount',
       );
       expect(Number(r.usedAmount), 'release(300) → usedAmount=0').toBe(0);

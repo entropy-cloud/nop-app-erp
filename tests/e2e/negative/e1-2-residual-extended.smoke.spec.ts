@@ -15,7 +15,7 @@ import {
  *
  * FNPT roles: approve = 域主角色 / reverseApprove = 管理员（统一范式）。
  */
-const DUMMY_ID = 999999;
+const DUMMY_ID = '999999';
 
 interface DomainAction {
   entity: string;

@@ -35,10 +35,10 @@ import {
  *
  * 种子引用：org id=2 / acctSchema ACCT-FIN-01 id=1 / currency CNY id=1 / period id=1（OPEN）。
  */
-const ORG = 2;
-const ACCT_SCHEMA = 1;
-const CURRENCY = 1;
-const PERIOD = 1;
+const ORG = '2';
+const ACCT_SCHEMA = '1';
+const CURRENCY = '1';
+const PERIOD = '1';
 const AMOUNT = 100;
 
 let _seq = 0;
@@ -103,7 +103,7 @@ interface CleanupCtx {
 
 async function cleanupAutoRecon(page: import('@playwright/test').Page, ctx: CleanupCtx): Promise<void> {
   for (const reconId of ctx.reconciliationIds) {
-    await deleteByFilter(page, 'ErpFinReconciliationLine', eqFilter('reconciliationId', Number(reconId)));
+    await deleteByFilter(page, 'ErpFinReconciliationLine', eqFilter('reconciliationId', reconId));
     await deleteById(page, 'ErpFinReconciliation', reconId);
   }
   for (const id of ctx.itemIds) {
@@ -135,14 +135,14 @@ async function runAutoReconStrategy(
     // runAutoReconciliation：config 门控已启用（-Derp-fin.auto-reconcile=true），引擎匹配 OPEN 对 → create+post
     const result = await callMutationOk(
       page, 'ErpFinReconciliation', 'runAutoReconciliation',
-      { direction: 'RECEIVABLE', partnerId: Number(partner.id), strategy },
+      { direction: 'RECEIVABLE', partnerId: partner.id, strategy },
       'reconciliationIds unmatched { arApItemId unmatchedReason }',
     );
 
     // 核销单自动创建（1:1 匹配 → 1 张核销单）
     expect(result.reconciliationIds, `${strategy}: should produce at least 1 reconciliation id`).toBeDefined();
     expect(result.reconciliationIds.length, `${strategy}: should auto-create 1 reconciliation`).toBeGreaterThanOrEqual(1);
-    ctx.reconciliationIds = result.reconciliationIds.map((id: any) => Number(id));
+    ctx.reconciliationIds = result.reconciliationIds.map((id: any) => id);
 
     // 双方辅助账 openAmount→0 / status=SETTLED（经 __get 权威查库）
     const invAfter = await verifyState(page, 'ErpFinArApItem', invoice.id, 'openAmountFunctional status');

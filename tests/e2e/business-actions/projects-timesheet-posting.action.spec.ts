@@ -43,10 +43,10 @@ import { findFirst, cleanupVoucherByBillCode, findVoucherIdByBillCode, assertVou
  *
  * 种子引用：org id=2 / currency id=1（CNY）/ employee id=1（HR-EMP-001，timesheet.userId 必填 FK）。
  */
-const ORG_ID = 2;
-const CURRENCY_ID = 1;
-const EMPLOYEE_ID = 1;
-const SUBJECT_5101_ID = 32; // 项目成本（本计划新增种子行）
+const ORG_ID = '2';
+const CURRENCY_ID = '1';
+const EMPLOYEE_ID = '1';
+const SUBJECT_5101_ID = '32'; // 项目成本（本计划新增种子行）
 const WORK_DATE = '2026-07-10';
 const HOURS = 8;
 const COST_RATE = 100;

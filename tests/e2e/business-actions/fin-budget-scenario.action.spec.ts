@@ -49,15 +49,15 @@ import {
  * 自包含隔离：scenario.code 唯一（E2E-BUD-{ts}），cleanup 删 BUDGET 凭证（按 scenario.code）+ 预算行 + 方案，
  * 使 getBudgetVsActual/预算控制查询基线无漂移。
  */
-const ORG = 2;
-const ACCT_SCHEMA = 1;
-const CURRENCY = 1;
-const PERIOD = 1;
+const ORG = '2';
+const ACCT_SCHEMA = '1';
+const CURRENCY = '1';
+const PERIOD = '1';
 /** 种子费用科目 6601 销售费用（id=8, EXPENSE, DEBIT）。 */
-const SUBJECT_DEBIT_ID = 8;
+const SUBJECT_DEBIT_ID = '8';
 const SUBJECT_DEBIT_CODE = '6601';
 /** 种子收入科目 5001 主营业务收入（id=6, INCOME, CREDIT）。 */
-const SUBJECT_CREDIT_ID = 6;
+const SUBJECT_CREDIT_ID = '6';
 const SUBJECT_CREDIT_CODE = '5001';
 const AMOUNT = 100;
 

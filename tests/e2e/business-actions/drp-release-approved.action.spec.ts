@@ -27,11 +27,11 @@ import { test, expect, loginAndNavigate, createViaSave, callMutation, callMutati
  *   下游单据为 DRAFT 草稿，无凭证/库存产物，删除安全。
  */
 
-const ORG_ID = 2;
-const UOM_ID = 1; // PCS
-const WH_DEST = 2; // WH-RAW（TRANSFER 目标仓库 = line.warehouseId）
-const WH_SOURCE = 1; // WH-MAIN（TRANSFER 源仓库 = parameter.preferredSourceWarehouseId）
-const SUPPLIER_ID = 3; // SUP-001（PURCHASE preferredSupplierId）
+const ORG_ID = '2';
+const UOM_ID = '1'; // PCS
+const WH_DEST = '2'; // WH-RAW（TRANSFER 目标仓库 = line.warehouseId）
+const WH_SOURCE = '1'; // WH-MAIN（TRANSFER 源仓库 = parameter.preferredSourceWarehouseId）
+const SUPPLIER_ID = '3'; // SUP-001（PURCHASE preferredSupplierId）
 const APPROVED_QTY = 10;
 
 let _seq = 0;
@@ -83,9 +83,9 @@ async function seedLine(page: import('@playwright/test').Page, o: LineOpts): Pro
   return createViaSave(
     page, 'ErpDrpLine',
     {
-      planId: Number(o.planId),
+      planId: o.planId,
       lineNo: o.lineNo ?? 10,
-      materialId: Number(o.materialId),
+      materialId: o.materialId,
       warehouseId: WH_DEST,
       replenishmentType: o.replenishmentType,
       approvedQty: APPROVED_QTY,
@@ -107,7 +107,7 @@ async function seedParameter(page: import('@playwright/test').Page, o: ParamOpts
     page, 'ErpDrpParameter',
     {
       warehouseId: WH_DEST,
-      materialId: Number(o.materialId),
+      materialId: o.materialId,
       safetyStock: 100,
       replenishmentMethod: 'LOT_FOR_LOT',
       orgId: ORG_ID,
@@ -121,7 +121,7 @@ async function seedParameter(page: import('@playwright/test').Page, o: ParamOpts
 async function deleteTransferOrder(page: import('@playwright/test').Page, code: string): Promise<void> {
   const order = await findFirst<any>(page, 'ErpInvTransferOrder', eqFilter('code', code), 'id');
   if (order) {
-    await deleteByFilter(page, 'ErpInvTransferOrderLine', eqFilter('transferId', Number(order.id)));
+    await deleteByFilter(page, 'ErpInvTransferOrderLine', eqFilter('transferId', order.id));
     await deleteById(page, 'ErpInvTransferOrder', order.id);
   }
 }
@@ -129,7 +129,7 @@ async function deleteTransferOrder(page: import('@playwright/test').Page, code: 
 async function deletePurchaseOrder(page: import('@playwright/test').Page, code: string): Promise<void> {
   const order = await findFirst<any>(page, 'ErpPurOrder', eqFilter('code', code), 'id');
   if (order) {
-    await deleteByFilter(page, 'ErpPurOrderLine', eqFilter('orderId', Number(order.id)));
+    await deleteByFilter(page, 'ErpPurOrderLine', eqFilter('orderId', order.id));
     await deleteById(page, 'ErpPurOrder', order.id);
   }
 }
@@ -171,13 +171,13 @@ test.describe('drp ErpDrpLine releaseApproved batch release orchestration', () =
       const to = await findFirst<any>(page, 'ErpInvTransferOrder', eqFilter('code', `DRP-TO-${lineTo.id}`),
         'id code fromWarehouseId toWarehouseId docStatus');
       expect(to, 'ErpInvTransferOrder should be created for TRANSFER line').not.toBeNull();
-      expect(Number(to!.fromWarehouseId), 'transferOrder.fromWarehouseId=preferredSourceWarehouseId').toBe(WH_SOURCE);
-      expect(Number(to!.toWarehouseId), 'transferOrder.toWarehouseId=line.warehouseId').toBe(WH_DEST);
+      expect(to!.fromWarehouseId, 'transferOrder.fromWarehouseId=preferredSourceWarehouseId').toBe(WH_SOURCE);
+      expect(to!.toWarehouseId, 'transferOrder.toWarehouseId=line.warehouseId').toBe(WH_DEST);
 
       const po = await findFirst<any>(page, 'ErpPurOrder', eqFilter('code', `DRP-PO-${linePo.id}`),
         'id code supplierId docStatus');
       expect(po, 'ErpPurOrder should be created for PURCHASE line').not.toBeNull();
-      expect(Number(po!.supplierId), 'purOrder.supplierId=preferredSupplierId').toBe(SUPPLIER_ID);
+      expect(po!.supplierId, 'purOrder.supplierId=preferredSupplierId').toBe(SUPPLIER_ID);
     } finally {
       await deleteTransferOrder(page, `DRP-TO-${lineTo.id}`);
       await deletePurchaseOrder(page, `DRP-PO-${linePo.id}`);

@@ -43,7 +43,7 @@ async function traceQuery(
   lotId: number,
 ): Promise<any[]> {
   const json: any = await new GraphQLClient(page).raw(
-    `{ ErpMfgBatchGenealogy__${action}(${argName}:${lotId}){ id inputLotId outputLotId inputMaterialId outputMaterialId } }`,
+    `{ ErpMfgBatchGenealogy__${action}(${argName}:"${lotId}"){ id inputLotId outputLotId inputMaterialId outputMaterialId } }`,
   );
   expect(json?.errors, `ErpMfgBatchGenealogy__${action} should not return GraphQL errors`).toBeFalsy();
   return json?.data?.[`ErpMfgBatchGenealogy__${action}`] ?? [];
@@ -63,29 +63,29 @@ test.describe('manufacturing batch genealogy browser-layer E2E (config-gated wri
       // ---- 基因链写入：findPage 非空 + inputLot/outputLot 非空 + 物料正确 ----
       const genealogyRows = await findItems(
         page, 'ErpMfgBatchGenealogy',
-        eqFilter('workOrderId', Number(r.wo.id)),
+        eqFilter('workOrderId', r.wo.id),
         'id inputLotId outputLotId inputMaterialId outputMaterialId inputQty outputQty',
       );
       expect(genealogyRows.length, 'ErpMfgBatchGenealogy rows should be non-empty (withBatchTracking triggers writeOnCompletion)')
         .toBeGreaterThan(0);
       const row = genealogyRows[0];
-      expect(Number(row.inputLotId), 'inputLotId non-empty (input batch)').toBeTruthy();
-      expect(Number(row.outputLotId), 'outputLotId non-empty (output batch)').toBeTruthy();
-      expect(Number(row.inputMaterialId), 'inputMaterialId = component material').toBe(Number(r.componentMat.id));
-      expect(Number(row.outputMaterialId), 'outputMaterialId = finished product').toBe(SEED.MAT_1);
+      expect(row.inputLotId, 'inputLotId non-empty (input batch)').toBeTruthy();
+      expect(row.outputLotId, 'outputLotId non-empty (output batch)').toBeTruthy();
+      expect(row.inputMaterialId, 'inputMaterialId = component material').toBe(r.componentMat.id);
+      expect(row.outputMaterialId, 'outputMaterialId = finished product').toBe(SEED.MAT_1);
 
       // ---- 追溯查询可达：forwardTrace(outputLotId) 非空 ----
-      const outputLotId = Number(row.outputLotId);
-      const inputLotId = Number(row.inputLotId);
+      const outputLotId = row.outputLotId;
+      const inputLotId = row.inputLotId;
       const forward = await traceQuery(page, 'forwardTrace', 'outputLotId', outputLotId);
       expect(forward.length, 'forwardTrace(outputLotId) should return non-empty genealogy edges').toBeGreaterThan(0);
-      const forwardHasInput = forward.some((e: any) => Number(e.inputLotId) === inputLotId);
+      const forwardHasInput = forward.some((e: any) => e.inputLotId === inputLotId);
       expect(forwardHasInput, 'forwardTrace should contain the input→output consumption edge').toBe(true);
 
       // ---- 反向追溯：backwardTrace(inputLotId) 非空 + 含产出批次 ----
       const backward = await traceQuery(page, 'backwardTrace', 'inputLotId', inputLotId);
       expect(backward.length, 'backwardTrace(inputLotId) should return non-empty genealogy edges').toBeGreaterThan(0);
-      const backwardHasOutput = backward.some((e: any) => Number(e.outputLotId) === outputLotId);
+      const backwardHasOutput = backward.some((e: any) => e.outputLotId === outputLotId);
       expect(backwardHasOutput, 'backwardTrace should include the output (finished good) lot').toBe(true);
     } finally {
       await cleanupMfg(page, r);

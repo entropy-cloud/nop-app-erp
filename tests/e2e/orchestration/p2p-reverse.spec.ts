@@ -56,7 +56,7 @@ test.describe('P2P reverse voucher (finance DIRECT red-letter reversal) browser-
       expect(reversal.length, 'reversal voucher should exist').toBe(1);
       expect(reversal[0].postingType, 'reversal voucher postingType=REVERSAL').toBe('REVERSAL');
       expect(reversal[0].isReversed, 'reversal voucher isReversed=true').toBe(true);
-      expect(Number(reversal[0].reversalOfVoucherId), 'reversal reversalOfVoucherId→original')
+      expect(reversal[0].reversalOfVoucherId, 'reversal reversalOfVoucherId→original')
         .toBe(r.originalVoucherId);
 
       // ---- 红字凭证行同向取负断言（plan 2026-07-10-0704-1）----

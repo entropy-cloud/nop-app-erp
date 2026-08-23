@@ -55,7 +55,7 @@ test.describe('C1 Party Search Picker backend wiring', () => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           query: `query {
-            ErpParty__getParty(partyType: "PARTNER", partyId: 99999999) {
+            ErpParty__getParty(partyType: "PARTNER", partyId: '99999999') {
               partyType partyId code name
             }
           }`,
@@ -77,7 +77,7 @@ test.describe('C1 Party Search Picker backend wiring', () => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           query: `query {
-            ErpParty__findReferences(partyType: "EMPLOYEE", partyId: 1) { k v }
+            ErpParty__findReferences(partyType: "EMPLOYEE", partyId: '1') { k v }
           }`,
         }),
       });

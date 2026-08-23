@@ -70,7 +70,7 @@ async function setupTransferChain(
     {
       code: uniq(`E2E-FROM-POS-${tag}`),
       name: `from-pos-${tag}`,
-      departmentId: Number(sourceDept.id),
+      departmentId: sourceDept.id,
     },
     'id',
   );
@@ -80,7 +80,7 @@ async function setupTransferChain(
     {
       code: uniq(`E2E-TO-POS-${tag}`),
       name: `to-pos-${tag}`,
-      departmentId: Number(targetDept.id),
+      departmentId: targetDept.id,
     },
     'id',
   );
@@ -96,9 +96,9 @@ async function setupTransferChain(
       hireDate: '2023-01-01',
       employmentStatus,
       employeeType: 'FULL_TIME',
-      departmentId: Number(sourceDept.id),
-      positionId: Number(sourcePos.id),
-      orgId: 2,
+      departmentId: sourceDept.id,
+      positionId: sourcePos.id,
+      orgId: '2',
     },
     'id',
   );
@@ -113,14 +113,14 @@ async function setupTransferChain(
       'ErpHrEmploymentContract',
       {
         code: uniq(`C${tag}`), // 短码：C{tag}-{ms}-{seq} ≈ 20 字符 → TRF 包装 ≈ 42 字符 < 50
-        employeeId: Number(emp.id),
+        employeeId: emp.id,
         contractType: 'FIXED_TERM',
         signDate: '2024-01-01',
         startDate: '2024-01-01',
         endDate: '2027-12-31',
         status: 'ACTIVE',
         businessDate: '2024-01-01',
-        orgId: 2,
+        orgId: '2',
       },
       'id',
     );
@@ -142,7 +142,7 @@ async function cleanupTransfer(
   s: TransferSetup,
 ): Promise<void> {
   // 删调动后所有合同（含源 TERMINATED + 新建 ACTIVE）—— 按 employeeId 反查
-  await deleteByFilter(page, 'ErpHrEmploymentContract', eqFilter('employeeId', Number(s.employeeId)));
+  await deleteByFilter(page, 'ErpHrEmploymentContract', eqFilter('employeeId', s.employeeId));
   await deleteById(page, 'ErpHrEmployee', s.employeeId);
   await deleteById(page, 'ErpHrPosition', s.sourcePositionId);
   await deleteById(page, 'ErpHrPosition', s.targetPositionId);
@@ -162,10 +162,10 @@ test.describe('hr ErpHrEmployee transferEmployee DIRECT action + contract linkag
       'ErpHrEmployee',
       'transferEmployee',
       {
-        employeeId: Number(s.employeeId),
-        targetDepartmentId: Number(s.targetDeptId),
-        targetPositionId: Number(s.targetPositionId),
-        targetSuperiorId: 1, // 种子 HR-EMP-001（superiorId 字段 GraphQL 非空，需真实值）
+        employeeId: s.employeeId,
+        targetDepartmentId: s.targetDeptId,
+        targetPositionId: s.targetPositionId,
+        targetSuperiorId: '1', // 种子 HR-EMP-001（superiorId 字段 GraphQL 非空，需真实值）
         effectiveDate,
         handleContract: 'YES',
       },
@@ -179,8 +179,8 @@ test.describe('hr ErpHrEmployee transferEmployee DIRECT action + contract linkag
       s.employeeId,
       'departmentId positionId',
     );
-    expect(Number(emp.departmentId), 'emp departmentId flipped to target').toBe(Number(s.targetDeptId));
-    expect(Number(emp.positionId), 'emp positionId flipped to target').toBe(Number(s.targetPositionId));
+    expect(emp.departmentId, 'emp departmentId flipped to target').toBe(s.targetDeptId);
+    expect(emp.positionId, 'emp positionId flipped to target').toBe(s.targetPositionId);
 
     // 源合同 status → TERMINATED（ErpHrEmployeeBizModel 硬编码 CONTRACT_STATUS_TERMINATED）
     const oldContract = await verifyState(
@@ -196,14 +196,14 @@ test.describe('hr ErpHrEmployee transferEmployee DIRECT action + contract linkag
       page,
       'ErpHrEmploymentContract',
       andFilter(
-        eqFilter('employeeId', Number(s.employeeId)),
+        eqFilter('employeeId', s.employeeId),
         eqFilter('status', 'ACTIVE'),
       ),
       'id status signDate startDate',
     );
     expect(newContract, 'new ACTIVE contract created').not.toBeNull();
     expect((newContract as any).status, 'new contract status=ACTIVE').toBe('ACTIVE');
-    expect(Number((newContract as any).id), 'new contract id != source').not.toBe(Number(s.sourceContractId));
+    expect((newContract as any).id, 'new contract id != source').not.toBe(s.sourceContractId);
     expect((newContract as any).signDate, 'new contract signDate=effectiveDate').toBe(effectiveDate);
 
     await cleanupTransfer(page, s);
@@ -219,7 +219,7 @@ test.describe('hr ErpHrEmployee transferEmployee DIRECT action + contract linkag
     const beforeCount = await findPageTotal(
       page,
       'ErpHrEmploymentContract',
-      eqFilter('employeeId', Number(s.employeeId)),
+      eqFilter('employeeId', s.employeeId),
     );
     expect(beforeCount, 'precondition: 1 source contract').toBe(1);
 
@@ -228,10 +228,10 @@ test.describe('hr ErpHrEmployee transferEmployee DIRECT action + contract linkag
       'ErpHrEmployee',
       'transferEmployee',
       {
-        employeeId: Number(s.employeeId),
-        targetDepartmentId: Number(s.targetDeptId),
-        targetPositionId: Number(s.targetPositionId),
-        targetSuperiorId: 1, // 种子 HR-EMP-001（superiorId 字段 GraphQL 非空，需真实值）
+        employeeId: s.employeeId,
+        targetDepartmentId: s.targetDeptId,
+        targetPositionId: s.targetPositionId,
+        targetSuperiorId: '1', // 种子 HR-EMP-001（superiorId 字段 GraphQL 非空，需真实值）
         effectiveDate,
         handleContract: 'NO',
       },
@@ -244,8 +244,8 @@ test.describe('hr ErpHrEmployee transferEmployee DIRECT action + contract linkag
       s.employeeId,
       'departmentId positionId',
     );
-    expect(Number(emp.departmentId), 'emp departmentId flipped').toBe(Number(s.targetDeptId));
-    expect(Number(emp.positionId), 'emp positionId flipped').toBe(Number(s.targetPositionId));
+    expect(emp.departmentId, 'emp departmentId flipped').toBe(s.targetDeptId);
+    expect(emp.positionId, 'emp positionId flipped').toBe(s.targetPositionId);
 
     // 源合同 status 仍 ACTIVE
     const oldContract = await verifyState(
@@ -260,7 +260,7 @@ test.describe('hr ErpHrEmployee transferEmployee DIRECT action + contract linkag
     const afterCount = await findPageTotal(
       page,
       'ErpHrEmploymentContract',
-      eqFilter('employeeId', Number(s.employeeId)),
+      eqFilter('employeeId', s.employeeId),
     );
     expect(afterCount, 'no new contract created under NO').toBe(1);
 
@@ -280,10 +280,10 @@ test.describe('hr ErpHrEmployee transferEmployee DIRECT action + contract linkag
       'ErpHrEmployee',
       'transferEmployee',
       {
-        employeeId: Number(s.employeeId),
-        targetDepartmentId: Number(s.targetDeptId),
-        targetPositionId: Number(s.targetPositionId),
-        targetSuperiorId: 1, // 种子 HR-EMP-001（superiorId 字段 GraphQL 非空，需真实值）
+        employeeId: s.employeeId,
+        targetDepartmentId: s.targetDeptId,
+        targetPositionId: s.targetPositionId,
+        targetSuperiorId: '1', // 种子 HR-EMP-001（superiorId 字段 GraphQL 非空，需真实值）
         effectiveDate,
         handleContract: 'AUTO',
       },
@@ -296,7 +296,7 @@ test.describe('hr ErpHrEmployee transferEmployee DIRECT action + contract linkag
       s.employeeId,
       'departmentId positionId',
     );
-    expect(Number(emp.departmentId), 'emp departmentId flipped under AUTO').toBe(Number(s.targetDeptId));
+    expect(emp.departmentId, 'emp departmentId flipped under AUTO').toBe(s.targetDeptId);
 
     // AUTO 默认 = YES：源合同 TERMINATED + 新 ACTIVE 合同
     const oldContract = await verifyState(
@@ -311,7 +311,7 @@ test.describe('hr ErpHrEmployee transferEmployee DIRECT action + contract linkag
       page,
       'ErpHrEmploymentContract',
       andFilter(
-        eqFilter('employeeId', Number(s.employeeId)),
+        eqFilter('employeeId', s.employeeId),
         eqFilter('status', 'ACTIVE'),
       ),
       'id',
@@ -331,10 +331,10 @@ test.describe('hr ErpHrEmployee transferEmployee DIRECT action + contract linkag
       'ErpHrEmployee',
       'transferEmployee',
       {
-        employeeId: Number(sResigned.employeeId),
-        targetDepartmentId: Number(sResigned.targetDeptId),
-        targetPositionId: Number(sResigned.targetPositionId),
-        targetSuperiorId: 1, // 种子 HR-EMP-001（superiorId 字段 GraphQL 非空，需真实值）
+        employeeId: sResigned.employeeId,
+        targetDepartmentId: sResigned.targetDeptId,
+        targetPositionId: sResigned.targetPositionId,
+        targetSuperiorId: '1', // 种子 HR-EMP-001（superiorId 字段 GraphQL 非空，需真实值）
         effectiveDate: '2026-08-04',
         handleContract: 'NO',
       },
@@ -350,8 +350,8 @@ test.describe('hr ErpHrEmployee transferEmployee DIRECT action + contract linkag
       sResigned.employeeId,
       'departmentId',
     );
-    expect(Number(emp1.departmentId), 'dept unchanged after RESIGNED guard reject').toBe(
-      Number(sResigned.sourceDeptId),
+    expect(emp1.departmentId, 'dept unchanged after RESIGNED guard reject').toBe(
+      sResigned.sourceDeptId,
     );
 
     // (b) 目标 position 不属目标 dept → ERR_TRANSFER_TARGET_POSITION_NOT_FOUND
@@ -362,10 +362,10 @@ test.describe('hr ErpHrEmployee transferEmployee DIRECT action + contract linkag
       'ErpHrEmployee',
       'transferEmployee',
       {
-        employeeId: Number(sMismatch.employeeId),
-        targetDepartmentId: Number(sMismatch.targetDeptId),
-        targetPositionId: Number(sMismatch.sourcePositionId), // 属 source dept，不属 target dept
-        targetSuperiorId: 1, // 种子 HR-EMP-001（superiorId 字段 GraphQL 非空，需真实值）
+        employeeId: sMismatch.employeeId,
+        targetDepartmentId: sMismatch.targetDeptId,
+        targetPositionId: sMismatch.sourcePositionId, // 属 source dept，不属 target dept
+        targetSuperiorId: '1', // 种子 HR-EMP-001（superiorId 字段 GraphQL 非空，需真实值）
         effectiveDate: '2026-08-05',
         handleContract: 'NO',
       },

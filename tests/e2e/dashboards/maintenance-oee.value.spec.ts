@@ -31,12 +31,12 @@ test.describe('maintenance dashboard OEE values', () => {
     await loginAndNavigate(page, '/mnt-dashboard-main');
 
     const json: any = await new GraphQLClient(page).raw(
-      'query($equipmentId:Long,$dateFrom:String,$dateTo:String){ ErpMntDashboard__computeOee(equipmentId:$equipmentId,dateFrom:$dateFrom,dateTo:$dateTo) }',
-      { equipmentId: 1, dateFrom: '2026-07-01', dateTo: '2026-07-31' },
+      'query($equipmentId:String,$dateFrom:String,$dateTo:String){ ErpMntDashboard__computeOee(equipmentId:$equipmentId,dateFrom:$dateFrom,dateTo:$dateTo) }',
+      { equipmentId: '1', dateFrom: '2026-07-01', dateTo: '2026-07-31' },
     );
     const row = json?.data?.ErpMntDashboard__computeOee;
     expect(row, 'computeOee map should be present').toBeTruthy();
-    expect(Number(row.equipmentId)).toBe(1);
+    expect(row.equipmentId).toBe('1');
     expect(row.availability).toBe(null);
     expect(row.performance).toBe(null);
     expect(row.quality).toBe(null);

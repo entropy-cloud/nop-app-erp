@@ -38,8 +38,8 @@ async function cleanupMove(page: import('@playwright/test').Page, move: { id?: a
   if (!move) return;
   if (move.code) await cleanupVoucherByBillCode(page, move.code);
   if (move.id != null) {
-    await deleteByFilter(page, 'ErpInvStockLedger', eqFilter('moveId', Number(move.id)));
-    await deleteByFilter(page, 'ErpInvStockMoveLine', eqFilter('moveId', Number(move.id)));
+    await deleteByFilter(page, 'ErpInvStockLedger', eqFilter('moveId', move.id));
+    await deleteByFilter(page, 'ErpInvStockMoveLine', eqFilter('moveId', move.id));
     await deleteById(page, 'ErpInvStockMove', move.id);
   }
 }
@@ -163,14 +163,14 @@ test.describe('quality ErpQaRecall generateReturns cross-domain return creation'
 
       // ---- 断言：RecallTarget returnStatus=RETURNED + generatedReturnId 非空 ----
       const targets = await findItems<any>(
-        page, 'ErpQaRecallTarget', eqFilter('recallId', Number(recall.id)),
+        page, 'ErpQaRecallTarget', eqFilter('recallId', recall.id),
         'id returnStatus generatedReturnId partnerId salesDeliveryId',
       );
       expect(targets.length, 'should have at least one recall target').toBeGreaterThanOrEqual(1);
       const target = targets[0];
       expect(target.returnStatus, 'target returnStatus=RETURNED').toBe('RETURNED');
       expect(target.generatedReturnId, 'target generatedReturnId non-null').toBeTruthy();
-      expect(Number(target.partnerId), 'target partnerId=delivery.customerId').toBe(SEED.CUSTOMER);
+      expect(target.partnerId, 'target partnerId=delivery.customerId').toBe(SEED.CUSTOMER);
 
       // ---- 断言：ErpSalReturn 存在 + customerId 匹配 + docStatus=DRAFT ----
       const salReturn = await verifyState(
@@ -178,22 +178,22 @@ test.describe('quality ErpQaRecall generateReturns cross-domain return creation'
         'id code customerId docStatus approveStatus',
       );
       expect(salReturn, 'ErpSalReturn should exist').toBeTruthy();
-      expect(Number(salReturn.customerId), 'return customerId=target.partnerId').toBe(Number(target.partnerId));
+      expect(salReturn.customerId, 'return customerId=target.partnerId').toBe(target.partnerId);
       expect(salReturn.docStatus, 'return docStatus=DRAFT').toBe('DRAFT');
       expect(salReturn.approveStatus, 'return approveStatus=UNSUBMITTED').toBe('UNSUBMITTED');
 
       // ---- 清理 ----
       // ErpSalReturn + Line
-      await deleteByFilter(page, 'ErpSalReturnLine', eqFilter('returnId', Number(target.generatedReturnId)));
+      await deleteByFilter(page, 'ErpSalReturnLine', eqFilter('returnId', target.generatedReturnId));
       await deleteById(page, 'ErpSalReturn', target.generatedReturnId);
       // RecallTarget
-      await deleteByFilter(page, 'ErpQaRecallTarget', eqFilter('recallId', Number(recall.id)));
+      await deleteByFilter(page, 'ErpQaRecallTarget', eqFilter('recallId', recall.id));
     } finally {
       // Recall（try 块已清理 target；recall 自身无论成功失败都需删）
       if (recall) await deleteById(page, 'ErpQaRecall', recall.id);
       // Delivery Line + Delivery
       if (delivery) {
-        await deleteByFilter(page, 'ErpSalDeliveryLine', eqFilter('deliveryId', Number(delivery.id)));
+        await deleteByFilter(page, 'ErpSalDeliveryLine', eqFilter('deliveryId', delivery.id));
         await deleteById(page, 'ErpSalDelivery', delivery.id);
       }
       // 双移动单（OUTGOING 先于 INCOMING，因 OUTGOING 依赖 INCOMING 建立的库存）

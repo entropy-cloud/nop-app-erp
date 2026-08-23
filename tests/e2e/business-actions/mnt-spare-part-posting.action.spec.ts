@@ -61,12 +61,12 @@ import {
  *   posting 不写 gl_balance，不污染 finance dashboard 基线。
  */
 
-const ORG = 2;
-const WH = 2; // WH-RAW
-const UOM = 1; // PCS
-const CURRENCY = 1;
-const ACCT_SCHEMA = 1; // ACCT-FIN-01
-const EQUIPMENT_ID = 1; // EQ-2026-001 种子设备 RUNNING（confirm 不改变设备状态）
+const ORG = '2';
+const WH = '2'; // WH-RAW
+const UOM = '1'; // PCS
+const CURRENCY = '1';
+const ACCT_SCHEMA = '1'; // ACCT-FIN-01
+const EQUIPMENT_ID = '1'; // EQ-2026-001 种子设备 RUNNING（confirm 不改变设备状态）
 const BDATE = '2026-07-10';
 const MOVE_REQ_TYPE = 'i_app_erp_inv_biz_StockMoveRequest';
 
@@ -176,19 +176,19 @@ test.describe('maintenance ErpMntSparePartUsage confirm + MAINTENANCE_ISSUE post
         'id code',
       );
       if (issueMove) {
-        await deleteByFilter(page, 'ErpInvStockLedger', eqFilter('moveId', Number(issueMove.id)));
-        await deleteByFilter(page, 'ErpInvStockMoveLine', eqFilter('moveId', Number(issueMove.id)));
+        await deleteByFilter(page, 'ErpInvStockLedger', eqFilter('moveId', issueMove.id));
+        await deleteByFilter(page, 'ErpInvStockMoveLine', eqFilter('moveId', issueMove.id));
         await deleteById(page, 'ErpInvStockMove', issueMove.id);
       }
       // 3. UsageLine + Usage
       await deleteById(page, 'ErpMntSparePartUsageLine', usageLine.id);
       await deleteById(page, 'ErpMntSparePartUsage', usage.id);
       // 4. StockLedger 按 materialId（含 INCOMING 备货 + OUTGOING 出库行）
-      await deleteByFilter(page, 'ErpInvStockLedger', eqFilter('materialId', Number(material.id)));
+      await deleteByFilter(page, 'ErpInvStockLedger', eqFilter('materialId', material.id));
       // 5. StockBalance 按 materialId+warehouseId
-      await deleteByFilter(page, 'ErpInvStockBalance', andFilter(eqFilter('materialId', Number(material.id)), eqFilter('warehouseId', WH)));
+      await deleteByFilter(page, 'ErpInvStockBalance', andFilter(eqFilter('materialId', material.id), eqFilter('warehouseId', WH)));
       // 6. INCOMING 备货移动（lines + move）
-      await deleteByFilter(page, 'ErpInvStockMoveLine', eqFilter('moveId', Number(setupMove.id)));
+      await deleteByFilter(page, 'ErpInvStockMoveLine', eqFilter('moveId', setupMove.id));
       await deleteById(page, 'ErpInvStockMove', setupMove.id);
       // 7. 测试物料
       await deleteById(page, 'ErpMdMaterial', material.id);

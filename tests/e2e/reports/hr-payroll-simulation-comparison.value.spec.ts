@@ -3,7 +3,7 @@ import { assertReportRenderedWithValue } from './_helper';
 assertReportRenderedWithValue({
   reportLabel: 'hr-payroll-simulation-comparison',
   route: '/payroll-simulation-comparison',
-  query: 'query($reportName:String!,$simulationId:BigDecimal){ ErpHrReport__renderHtml(reportName:$reportName,data:{simulationId:$simulationId}) }',
+  query: 'query($reportName:String!,$simulationId:String){ ErpHrReport__renderHtml(reportName:$reportName,data:{simulationId:$simulationId}) }',
   variables: { reportName: 'payroll-simulation-comparison', simulationId: '1' },
   responseKey: 'ErpHrReport__renderHtml',
   expectedTokens: [

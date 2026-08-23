@@ -20,7 +20,7 @@ import {
  * 故 ReflectionBizModelBuilder 恒定附加 auth → enforcement 覆盖（与 mfg/hr 的 xbiz-approve bypass 形成对照）。
  */
 
-const DUMMY_ID = 999999;
+const DUMMY_ID = '999999';
 
 interface InvAction {
   entity: string;

@@ -36,8 +36,8 @@ import { test, expect, loginAndNavigate, createViaSave, callMutationOk, callMuta
  * test material（经 findItems 反查 + __delete）。避免 -PROMOTED- plan 污染 MRP 基线。
  */
 
-const ORG_ID = 2; // 种子 ERP-CO（__save 强制 org FK 校验）
-const UOM_ID = 1; // PCS
+const ORG_ID = '2'; // 种子 ERP-CO（__save 强制 org FK 校验）
+const UOM_ID = '1'; // PCS
 
 let _seq = 0;
 function uniq(tag: string): string {
@@ -55,7 +55,7 @@ async function seedMaterial(page: import('@playwright/test').Page, tag: string):
       uoMId: UOM_ID,
       status: 'ACTIVE',
       costMethod: 'MOVING_AVERAGE',
-      defaultWarehouseId: 1,
+      defaultWarehouseId: '1',
     },
     'id',
   );
@@ -152,10 +152,10 @@ async function findLineByMaterial(
 ): Promise<{ plannedQuantity: number; netRequirement: number; materialId: number } | null> {
   const items = await findItems(
     page, 'ErpMfgMrpPlanLine',
-    eqFilter('mrpPlanId', Number(computedPlanId)),
+    eqFilter('mrpPlanId', computedPlanId),
     'plannedQuantity netRequirement materialId',
   );
-  return items.find((it: any) => Number(it.materialId) === Number(materialId)) as any || null;
+  return items.find((it: any) => it.materialId === materialId) as any || null;
 }
 
 async function cleanupSimulation(
@@ -171,29 +171,29 @@ async function cleanupSimulation(
   // 收集所有版本 → 每个 version 的 computedMrpPlanId + promotedPlanId
   const versions = await findItems(
     page, 'ErpMfgMrpScenarioVersion',
-    eqFilter('scenarioId', Number(ctx.scenarioId)),
+    eqFilter('scenarioId', ctx.scenarioId),
     'id computedMrpPlanId promotedPlanId',
   );
   // 删 plan lines + plans（computed + promoted）
   for (const v of versions as any[]) {
     if (v.computedMrpPlanId) {
-      await deleteByFilter(page, 'ErpMfgMrpPlanLine', eqFilter('mrpPlanId', Number(v.computedMrpPlanId)));
+      await deleteByFilter(page, 'ErpMfgMrpPlanLine', eqFilter('mrpPlanId', v.computedMrpPlanId));
       await deleteById(page, 'ErpMfgMrpPlan', v.computedMrpPlanId);
     }
     if (v.promotedPlanId) {
-      await deleteByFilter(page, 'ErpMfgMrpPlanLine', eqFilter('mrpPlanId', Number(v.promotedPlanId)));
+      await deleteByFilter(page, 'ErpMfgMrpPlanLine', eqFilter('mrpPlanId', v.promotedPlanId));
       await deleteById(page, 'ErpMfgMrpPlan', v.promotedPlanId);
     }
   }
   // 删 versions
-  await deleteByFilter(page, 'ErpMfgMrpScenarioVersion', eqFilter('scenarioId', Number(ctx.scenarioId)));
+  await deleteByFilter(page, 'ErpMfgMrpScenarioVersion', eqFilter('scenarioId', ctx.scenarioId));
   // 删 params
   if (ctx.paramIds && ctx.paramIds.length > 0) {
     for (const pid of ctx.paramIds) {
       await deleteById(page, 'ErpMfgMrpScenarioParam', pid);
     }
   } else {
-    await deleteByFilter(page, 'ErpMfgMrpScenarioParam', eqFilter('scenarioId', Number(ctx.scenarioId)));
+    await deleteByFilter(page, 'ErpMfgMrpScenarioParam', eqFilter('scenarioId', ctx.scenarioId));
   }
   // 删 scenario
   await deleteById(page, 'ErpMfgMrpScenario', ctx.scenarioId);
@@ -202,7 +202,7 @@ async function cleanupSimulation(
     await deleteById(page, 'ErpMfgMrpDemand', ctx.demandId);
   }
   // 删 baseline plan lines (empty) + plan
-  await deleteByFilter(page, 'ErpMfgMrpPlanLine', eqFilter('mrpPlanId', Number(ctx.baselinePlanId)));
+  await deleteByFilter(page, 'ErpMfgMrpPlanLine', eqFilter('mrpPlanId', ctx.baselinePlanId));
   await deleteById(page, 'ErpMfgMrpPlan', ctx.baselinePlanId);
   // 删 test material
   await deleteById(page, 'ErpMdMaterial', ctx.materialId);

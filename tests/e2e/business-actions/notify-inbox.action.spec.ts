@@ -77,7 +77,7 @@ async function dispatch(
     'id recipientUserId',
   );
   const list = Array.isArray(result) ? result : [result];
-  return list.map((r: any) => Number(r.id));
+  return list.map((r: any) => r.id);
 }
 
 async function fetchUnreadIds(page: import('@playwright/test').Page, eventType: string): Promise<number[]> {
@@ -97,7 +97,7 @@ async function fetchUnreadIds(page: import('@playwright/test').Page, eventType: 
     recipientUserId: string;
     status: string;
   }>);
-  return rows.filter((r) => r.notificationType === eventType).map((r) => Number(r.id));
+  return rows.filter((r) => r.notificationType === eventType).map((r) => r.id);
 }
 
 async function fetchCountUnread(page: import('@playwright/test').Page): Promise<number> {
@@ -119,7 +119,7 @@ async function fetchReadIds(page: import('@playwright/test').Page, eventType: st
     id: number | string;
     notificationType: string;
   }>);
-  return rows.filter((r) => r.notificationType === eventType).map((r) => Number(r.id));
+  return rows.filter((r) => r.notificationType === eventType).map((r) => r.id);
 }
 
 test.describe('Notify inbox actions (findUnread/findRead/countUnread/markRead/markAllRead)', () => {
@@ -234,7 +234,7 @@ test.describe('Notify inbox actions (findUnread/findRead/countUnread/markRead/ma
           100,
         ).catch(() => [] as Array<{ id: number | string }>);
         for (const it of items) {
-          await deleteByFilter(page, 'ErpSysNotificationRead', eqFilter('notificationId', Number(it.id)));
+          await deleteByFilter(page, 'ErpSysNotificationRead', eqFilter('notificationId', it.id));
           await deleteById(page, 'ErpSysNotification', it.id);
         }
       }

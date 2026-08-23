@@ -49,9 +49,9 @@ import { cleanupVoucherByBillCode } from '../orchestration/_helper';
  * `runMatching`/`checkDualSideConsistency` 无 config gate 不受影响。
  */
 
-const ORG_GROUP = 1; // 种子 GROUP 法人根（period/voucher orgId，对齐 JUnit seedOpenPeriod orgId=1）
+const ORG_GROUP = '1'; // 种子 GROUP 法人根（period/voucher orgId，对齐 JUnit seedOpenPeriod orgId=1）
 const ORG_CO = 2; // 种子 ERP-CO COMPANY（PURCHASE 侧 voucher orgId，对齐 JUnit orgId=2）
-const ACCT_SCHEMA = 1; // 种子 ACCT-FIN-01
+const ACCT_SCHEMA = '1'; // 种子 ACCT-FIN-01
 const BDATE = '2026-07-26'; // 凭证日期（落在测试期间内）
 
 const INTERCOMPANY_SALE = 'INTERCOMPANY_SALE';
@@ -146,7 +146,7 @@ async function runMatchingRaw(
 ): Promise<{ count: number | null; errors: any[] | null; json: any }> {
   const gql = new GraphQLClient(page);
   const json: any = await gql.raw(
-    `mutation{ ErpFinIntercompanyMatch__runMatching(periodId:${Number(periodId)}) }`,
+    `mutation{ ErpFinIntercompanyMatch__runMatching(periodId:"${periodId}") }`,
   );
   return {
     count: json?.data?.ErpFinIntercompanyMatch__runMatching ?? null,
@@ -161,7 +161,7 @@ async function generateEliminationCandidatesRaw(
 ): Promise<{ count: number | null; errors: any[] | null; json: any }> {
   const gql = new GraphQLClient(page);
   const json: any = await gql.raw(
-    `mutation{ ErpFinConsolidationElimination__generateEliminationCandidates(periodId:${Number(periodId)}) }`,
+    `mutation{ ErpFinConsolidationElimination__generateEliminationCandidates(periodId:"${periodId}") }`,
   );
   return {
     count: json?.data?.ErpFinConsolidationElimination__generateEliminationCandidates ?? null,
@@ -176,11 +176,11 @@ async function postEliminationRaw(
 ): Promise<{ voucherId: number | null; errors: any[] | null; json: any }> {
   const gql = new GraphQLClient(page);
   const json: any = await gql.raw(
-    `mutation{ ErpFinConsolidationElimination__postElimination(candidateId:${Number(candidateId)}) }`,
+    `mutation{ ErpFinConsolidationElimination__postElimination(candidateId:"${candidateId}") }`,
   );
   const raw = json?.data?.ErpFinConsolidationElimination__postElimination;
   return {
-    voucherId: raw == null ? null : Number(raw),
+    voucherId: raw == null ? null : String(raw),
     errors: json?.errors ?? null,
     json,
   };
@@ -193,7 +193,7 @@ async function checkDualSideConsistencyRaw(
 ): Promise<{ report: any | null; errors: any[] | null; json: any }> {
   const gql = new GraphQLClient(page);
   const json: any = await gql.raw(
-    `query{ ErpFinIntercompanyMatch__checkDualSideConsistency(pairKey:${JSON.stringify(pairKey)},periodId:${Number(periodId)}){ direction consistent rows{ partnerId financeSettled domainSettled diff status } } }`,
+    `query{ ErpFinIntercompanyMatch__checkDualSideConsistency(pairKey:${JSON.stringify(pairKey)},periodId:"${periodId}"){ direction consistent rows{ partnerId financeSettled domainSettled diff status } } }`,
   );
   return {
     report: json?.data?.ErpFinIntercompanyMatch__checkDualSideConsistency ?? null,
@@ -230,11 +230,11 @@ async function cleanupScenario(page: import('@playwright/test').Page, ctx: Scena
   }
   // 2. ErpFinConsolidationElimination 候选（含 DRAFT_VOUCHER 状态行）
   if (ctx.periodId != null) {
-    await deleteByFilter(page, 'ErpFinConsolidationElimination', eqFilter('periodId', Number(ctx.periodId)));
+    await deleteByFilter(page, 'ErpFinConsolidationElimination', eqFilter('periodId', ctx.periodId));
   }
   // 3. ErpFinIntercompanyMatch 配对记录
   if (ctx.periodId != null) {
-    await deleteByFilter(page, 'ErpFinIntercompanyMatch', eqFilter('periodId', Number(ctx.periodId)));
+    await deleteByFilter(page, 'ErpFinIntercompanyMatch', eqFilter('periodId', ctx.periodId));
   }
   // 4. SALE/PURCHASE 配对凭证（bill_r + voucher）
   for (const v of [ctx.saleVoucher, ctx.purchaseVoucher]) {
@@ -274,7 +274,7 @@ test.describe('Finance intercompany matching + consolidation elimination browser
       expect(count, 'runMatching should return positive count for matched pair').toBeGreaterThan(0);
 
       const match = await findIntercompanyMatchByPairKey<any>(
-        page, pairKey, Number(period.periodId),
+        page, pairKey, period.periodId,
         'id pairKey periodId matchedAmount diffAmount status',
       );
       expect(match, 'ErpFinIntercompanyMatch record should exist for matched pair').toBeTruthy();
@@ -310,7 +310,7 @@ test.describe('Finance intercompany matching + consolidation elimination browser
       expect(count, 'runMatching should return positive count for diff pair').toBeGreaterThan(0);
 
       const match = await findIntercompanyMatchByPairKey<any>(
-        page, pairKey, Number(period.periodId),
+        page, pairKey, period.periodId,
         'id pairKey periodId matchedAmount diffAmount status',
       );
       expect(match, 'ErpFinIntercompanyMatch record should exist for diff pair').toBeTruthy();
@@ -381,7 +381,7 @@ test.describe('Finance intercompany matching + consolidation elimination browser
       expect(count, 'generateEliminationCandidates should return positive count').toBeGreaterThan(0);
 
       const candidates = await findEliminationCandidates<any>(
-        page, Number(period.periodId),
+        page, period.periodId,
         'id code eliminationType periodId pairKey matchId eliminationAmount status',
       );
       ctx.candidateIds = candidates.map((c) => c.id);
@@ -423,7 +423,7 @@ test.describe('Finance intercompany matching + consolidation elimination browser
       await generateEliminationCandidatesRaw(page, period.periodId);
 
       const candidates = await findEliminationCandidates<any>(
-        page, Number(period.periodId),
+        page, period.periodId,
         'id code eliminationType status',
       );
       ctx.candidateIds = candidates.map((c) => c.id);
@@ -440,7 +440,7 @@ test.describe('Finance intercompany matching + consolidation elimination browser
         'id status draftVoucherId',
       );
       expect(updated?.status, 'candidate status should flip to DRAFT_VOUCHER').toBe('DRAFT_VOUCHER');
-      expect(Number(updated?.draftVoucherId), 'draftVoucherId should be set').toBe(Number(voucherId));
+      expect(updated?.draftVoucherId, 'draftVoucherId should be set').toBe(voucherId);
 
       // DRAFT 抵消凭证：docStatus=DRAFT + voucherType=TRANSFER
       const draftVoucher = await verifyState(

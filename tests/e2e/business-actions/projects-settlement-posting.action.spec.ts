@@ -48,8 +48,8 @@ import { findFirst, cleanupVoucherByBillCode, findVoucherIdByBillCode, assertVou
  *
  * 种子引用：org id=2 / currency id=1（CNY）。config erp-prj.settlement-require-approval 默认 true（无须显式 arg）。
  */
-const ORG_ID = 2;
-const CURRENCY_ID = 1;
+const ORG_ID = '2';
+const CURRENCY_ID = '1';
 const COST_DATE = '2026-07-10';
 const PERIOD_FROM = '2026-07-01';
 const PERIOD_TO = '2026-07-31';

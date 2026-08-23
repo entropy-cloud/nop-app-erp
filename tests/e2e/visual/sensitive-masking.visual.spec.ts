@@ -37,7 +37,7 @@ const LOG_CFG_CODE = 'LOG-MASK-CFG-E2E';
 const HR_SEED = {
   idCardNo: '110101199001011234', // tpl: LEFT(.,1)+'******'+RIGHT(.,4) -> '1******1234'
   mobilePhone: '13812340000', // tpl: LEFT(.,3)+'****'+RIGHT(.,4) -> '138****0000'
-  bankAccountId: 1, // existing ErpMdBankAccount id; tpl: '****'+RIGHT(.,4) -> '****1'
+  bankAccountId: '1', // existing ErpMdBankAccount id; tpl: '****'+RIGHT(.,4) -> '****1'
   socialSecurityNo: 'SH123456789', // tpl: '******' (fully masked)
 };
 const HR_MASKS = {
@@ -126,7 +126,7 @@ test.describe('Sensitive field masking (hr + logistics)', () => {
         hireDate: '2024-01-01',
         employmentStatus: 'ACTIVE',
         employeeType: 'FULL_TIME',
-        orgId: 2,
+        orgId: '2',
         idCardNo: HR_SEED.idCardNo,
         mobilePhone: HR_SEED.mobilePhone,
         bankAccountId: HR_SEED.bankAccountId,

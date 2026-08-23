@@ -17,12 +17,12 @@ import { test, expect, loginAndNavigate, createViaSave, callMutationOk, findPage
  * 种子引用（master-data init-data）：material MAT-001 id=1 / uom id=1 / currency CNY id=1 / supplier id=1。
  */
 
-const SUPPLIER_ID = 1;
-const CUSTOMER_ID = 1;
-const MATERIAL_ID = 1;
-const UOM_ID = 1;
-const CURRENCY_ID = 1;
-const WAREHOUSE_ID = 2;
+const SUPPLIER_ID = '1';
+const CUSTOMER_ID = '1';
+const MATERIAL_ID = '1';
+const UOM_ID = '1';
+const CURRENCY_ID = '1';
+const WAREHOUSE_ID = '2';
 const BDATE = '2026-07-20';
 
 async function seedPurchaseOrder(page: import('@playwright/test').Page, tag: string): Promise<{ id: string; lineIds: string[] }> {
@@ -72,11 +72,11 @@ test.describe('F9 cross-document navigation: data reachability + copy-line persi
 
     // Simulate the drawer target query: list all receives for this PO
     // Initially 0 receives (just verifying the query path works)
-    const totalEmpty = await findPageTotal(page, 'ErpPurReceive', eqFilter('orderId', Number(po.id)));
+    const totalEmpty = await findPageTotal(page, 'ErpPurReceive', eqFilter('orderId', po.id));
     expect(totalEmpty, 'ErpPurReceive __findPage filter_orderId should be reachable (0 before receive created)').toBe(0);
 
     // cleanup
-    await deleteByFilter(page, 'ErpPurOrderLine', eqFilter('orderId', Number(po.id)));
+    await deleteByFilter(page, 'ErpPurOrderLine', eqFilter('orderId', po.id));
     await deleteById(page, 'ErpPurOrder', po.id);
   });
 
@@ -89,7 +89,7 @@ test.describe('F9 cross-document navigation: data reachability + copy-line persi
     // Fetch PO lines via __findPage (this is what the picker source does)
     const poLines = await findItems<any>(
       page, 'ErpPurOrderLine',
-      eqFilter('orderId', Number(po.id)),
+      eqFilter('orderId', po.id),
       'id lineNo materialId uoMId quantity unitPrice taxRate amount',
     );
     expect(poLines.length, 'ErpPurOrderLine picker source should return 2 rows').toBe(2);
@@ -112,7 +112,7 @@ test.describe('F9 cross-document navigation: data reachability + copy-line persi
       page, 'ErpPurReceive',
       {
         code: `E2E-F9-RCV-${Date.now()}`,
-        orderId: Number(po.id),
+        orderId: po.id,
         supplierId: SUPPLIER_ID,
         warehouseId: WAREHOUSE_ID,
         businessDate: BDATE,
@@ -127,14 +127,14 @@ test.describe('F9 cross-document navigation: data reachability + copy-line persi
     expect(receive.id, 'Receive should be created').toBeTruthy();
     expect((receive.lines ?? []).length, 'Receive should have 2 lines mapped from PO').toBe(2);
     // Verify copy-line material/quantity mapping preserved (orderLineId may be normalized by backend)
-    expect(Number(receive.lines[0].materialId), 'Receive line 1 materialId should match PO line').toBe(MATERIAL_ID);
+    expect(receive.lines[0].materialId, 'Receive line 1 materialId should match PO line').toBe(MATERIAL_ID);
     expect(Number(receive.lines[0].quantity), 'Receive line 1 quantity should match PO line 1 (10)').toBe(10);
     expect(Number(receive.lines[1].quantity), 'Receive line 2 quantity should match PO line 2 (20)').toBe(20);
 
     // Cleanup (reverse dependency order: receive lines → receive → po lines → po)
-    await deleteByFilter(page, 'ErpPurReceiveLine', eqFilter('receiveId', Number(receive.id)));
+    await deleteByFilter(page, 'ErpPurReceiveLine', eqFilter('receiveId', receive.id));
     await deleteById(page, 'ErpPurReceive', receive.id);
-    await deleteByFilter(page, 'ErpPurOrderLine', eqFilter('orderId', Number(po.id)));
+    await deleteByFilter(page, 'ErpPurOrderLine', eqFilter('orderId', po.id));
     await deleteById(page, 'ErpPurOrder', po.id);
   });
 
@@ -148,7 +148,7 @@ test.describe('F9 cross-document navigation: data reachability + copy-line persi
       page, 'ErpPurReceive',
       {
         code: `E2E-F9-RCV-INV-${Date.now()}`,
-        orderId: Number(po.id),
+        orderId: po.id,
         supplierId: SUPPLIER_ID,
         warehouseId: WAREHOUSE_ID,
         businessDate: BDATE,
@@ -165,15 +165,15 @@ test.describe('F9 cross-document navigation: data reachability + copy-line persi
     // Fetch ReceiveLines via __findPage (this is what the Invoice copy-from-receive picker source does)
     const rcvLines = await findItems<any>(
       page, 'ErpPurReceiveLine',
-      eqFilter('receiveId', Number(receive.id)),
+      eqFilter('receiveId', receive.id),
       'id lineNo materialId uoMId quantity unitPrice',
     );
     expect(rcvLines.length, 'ErpPurReceiveLine picker source should return 1 row').toBe(1);
 
     // Cleanup
-    await deleteByFilter(page, 'ErpPurReceiveLine', eqFilter('receiveId', Number(receive.id)));
+    await deleteByFilter(page, 'ErpPurReceiveLine', eqFilter('receiveId', receive.id));
     await deleteById(page, 'ErpPurReceive', receive.id);
-    await deleteByFilter(page, 'ErpPurOrderLine', eqFilter('orderId', Number(po.id)));
+    await deleteByFilter(page, 'ErpPurOrderLine', eqFilter('orderId', po.id));
     await deleteById(page, 'ErpPurOrder', po.id);
   });
 
@@ -183,11 +183,11 @@ test.describe('F9 cross-document navigation: data reachability + copy-line persi
     const so = await seedSalesOrder(page, 'drawer');
 
     // Simulate the drawer target query: list all deliveries for this SO
-    const totalEmpty = await findPageTotal(page, 'ErpSalDelivery', eqFilter('orderId', Number(so.id)));
+    const totalEmpty = await findPageTotal(page, 'ErpSalDelivery', eqFilter('orderId', so.id));
     expect(totalEmpty, 'ErpSalDelivery __findPage filter_orderId should be reachable (0 before delivery created)').toBe(0);
 
     // Cleanup
-    await deleteByFilter(page, 'ErpSalOrderLine', eqFilter('orderId', Number(so.id)));
+    await deleteByFilter(page, 'ErpSalOrderLine', eqFilter('orderId', so.id));
     await deleteById(page, 'ErpSalOrder', so.id);
   });
 
@@ -198,10 +198,10 @@ test.describe('F9 cross-document navigation: data reachability + copy-line persi
     // requires moveType dict validation + complex line cost fields). generateMove handles defaults.
     const moveReq = input('i_app_erp_inv_biz_StockMoveRequest', {
       moveType: 'INCOMING',
-      orgId: 2,
+      orgId: '2',
       businessDate: BDATE,
       destWarehouseId: WAREHOUSE_ID,
-      acctSchemaId: 1,
+      acctSchemaId: '1',
       currencyId: CURRENCY_ID,
       lines: [{ materialId: MATERIAL_ID, uoMId: UOM_ID, quantity: 10, unitCost: 5, currencyId: CURRENCY_ID }],
       remark: `E2E-F9-MV-${Date.now()}`,
@@ -215,11 +215,11 @@ test.describe('F9 cross-document navigation: data reachability + copy-line persi
 
     // The "查看流水" link target query: __findPage filter_moveId
     // generateMove → CONFIRMED (no complete) → no ledger written yet, but the query path is what we verify
-    const totalEmpty = await findPageTotal(page, 'ErpInvStockLedger', eqFilter('moveId', Number(created.id)));
+    const totalEmpty = await findPageTotal(page, 'ErpInvStockLedger', eqFilter('moveId', created.id));
     expect(totalEmpty, 'ErpInvStockLedger __findPage filter_moveId should be reachable (0 before complete)').toBe(0);
 
     // Cleanup (move lines + move; no ledger/balance written before complete)
-    await deleteByFilter(page, 'ErpInvStockMoveLine', eqFilter('moveId', Number(created.id)));
+    await deleteByFilter(page, 'ErpInvStockMoveLine', eqFilter('moveId', created.id));
     await deleteById(page, 'ErpInvStockMove', created.id);
   });
 });
@@ -236,7 +236,7 @@ test.describe('F9 cross-document navigation: data reachability + copy-line persi
 test.describe('F9 long-tail cross-document navigation: drawer fixedProps target reachable + non-empty', () => {
   test('6. CRM Lead → Activity drawer target: ErpCrmActivity __findPage filter_leadId non-empty', async ({ page }) => {
     await loginAndNavigate(page, '/ErpCrmLead-main');
-    const SEED_LEAD_ID = 1;
+    const SEED_LEAD_ID = '1';
 
     const activity = await createViaSave(
       page, 'ErpCrmActivity',
@@ -254,7 +254,7 @@ test.describe('F9 long-tail cross-document navigation: drawer fixedProps target 
 
   test('7. CS Ticket → Action drawer target: ErpCsTicketAction __findPage filter_ticketId non-empty', async ({ page }) => {
     await loginAndNavigate(page, '/ErpCsTicket-main');
-    const SEED_TICKET_ID = 1;
+    const SEED_TICKET_ID = '1';
 
     const action = await createViaSave(
       page, 'ErpCsTicketAction',
@@ -272,7 +272,7 @@ test.describe('F9 long-tail cross-document navigation: drawer fixedProps target 
 
   test('8. Project → Task drawer target: ErpPrjTask __findPage filter_projectId non-empty', async ({ page }) => {
     await loginAndNavigate(page, '/ErpPrjProject-main');
-    const SEED_PROJECT_ID = 1;
+    const SEED_PROJECT_ID = '1';
 
     const task = await createViaSave(
       page, 'ErpPrjTask',
@@ -291,7 +291,7 @@ test.describe('F9 long-tail cross-document navigation: drawer fixedProps target 
   test('9. Equipment → Request drawer target: ErpMntRequest __findPage filter_equipmentId non-empty (seed)', async ({ page }) => {
     await loginAndNavigate(page, '/ErpMntEquipment-main');
     // 种子 REQ-2026-001 引用 equipmentId=3（输送带 DOWN 故障报修）
-    const SEED_EQUIPMENT_ID = 3;
+    const SEED_EQUIPMENT_ID = '3';
 
     const items = await findItems<any>(
       page, 'ErpMntRequest', eqFilter('equipmentId', SEED_EQUIPMENT_ID), 'id equipmentId code',
@@ -302,7 +302,7 @@ test.describe('F9 long-tail cross-document navigation: drawer fixedProps target 
   test('10. NCR → CAPA Action drawer target: ErpQaAction __findPage filter_ncrId non-empty (seed)', async ({ page }) => {
     await loginAndNavigate(page, '/ErpQaNonConformance-main');
     // 种子 CAPA action 引用 ncrId=1（NCR-2026-001 纠正预防措施）
-    const SEED_NCR_ID = 1;
+    const SEED_NCR_ID = '1';
 
     const items = await findItems<any>(
       page, 'ErpQaAction', eqFilter('ncrId', SEED_NCR_ID), 'id ncrId actionType status',
@@ -320,7 +320,7 @@ test.describe('F9 long-tail cross-document navigation: drawer fixedProps target 
         contractName: `E2E contract ${Date.now()}`,
         contractType: 'SALES',
         contractDirection: 'OUTBOUND',
-        partnerId: 1,
+        partnerId: '1',
         startDate: '2026-07-01',
         endDate: '2027-06-30',
         status: 'DRAFT',
@@ -330,12 +330,12 @@ test.describe('F9 long-tail cross-document navigation: drawer fixedProps target 
 
     const line = await createViaSave(
       page, 'ErpCtContractLine',
-      { contractId: Number(contract.id), lineNo: 1 },
+      { contractId: contract.id, lineNo: 1 },
       'id',
     );
 
     const items = await findItems<any>(
-      page, 'ErpCtContractLine', eqFilter('contractId', Number(contract.id)), 'id contractId lineNo',
+      page, 'ErpCtContractLine', eqFilter('contractId', contract.id), 'id contractId lineNo',
     );
     expect(items.length, 'ErpCtContractLine filter_contractId should be reachable with 1 row').toBe(1);
 
@@ -363,7 +363,7 @@ test.describe('F9 long-tail cross-document navigation: drawer fixedProps target 
       page, 'ErpLogShipment',
       {
         code: `E2E-F9-SHP-${Date.now()}`,
-        carrierId: Number(carrier.id),
+        carrierId: carrier.id,
         status: 'DRAFT',
       },
       'id',
@@ -371,12 +371,12 @@ test.describe('F9 long-tail cross-document navigation: drawer fixedProps target 
 
     const line = await createViaSave(
       page, 'ErpLogShipmentLine',
-      { shipmentId: Number(shipment.id), lineNo: 1 },
+      { shipmentId: shipment.id, lineNo: 1 },
       'id',
     );
 
     const items = await findItems<any>(
-      page, 'ErpLogShipmentLine', eqFilter('shipmentId', Number(shipment.id)), 'id shipmentId lineNo',
+      page, 'ErpLogShipmentLine', eqFilter('shipmentId', shipment.id), 'id shipmentId lineNo',
     );
     expect(items.length, 'ErpLogShipmentLine filter_shipmentId should be reachable with 1 row').toBe(1);
 

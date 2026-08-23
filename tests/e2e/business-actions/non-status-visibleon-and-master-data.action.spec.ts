@@ -28,9 +28,9 @@ import {
  *
  * 种子引用：org id=2 / uom id=1 / asset id=3 IN_SERVICE。
  */
-const ORG_ID = 2;
-const UOM_ID = 1;
-const SEED_ASSET_ID = 3;
+const ORG_ID = '2';
+const UOM_ID = '1';
+const SEED_ASSET_ID = '3';
 
 let _seq = 0;
 function uniq(tag: string): string {
@@ -55,8 +55,8 @@ test.describe('F7 non-status visibleOn + master-data interactions', () => {
           type: stockMoveReqType,
           value: {
             moveType: 'INCOMING', orgId: ORG_ID, businessDate: '2026-07-20',
-            destWarehouseId: 2, acctSchemaId: 1, currencyId: 1,
-            lines: [{ materialId: 1, uoMId: 1, quantity: 1, unitCost: 1, currencyId: 1 }],
+            destWarehouseId: '2', acctSchemaId: '1', currencyId: '1',
+            lines: [{ materialId: '1', uoMId: '1', quantity: 1, unitCost: 1, currencyId: '1' }],
           },
         },
       },
@@ -66,7 +66,7 @@ test.describe('F7 non-status visibleOn + master-data interactions', () => {
     expect(incoming.moveType, 'moveType preserved').toBe('INCOMING');
 
     // 清理（INCOMING 在 complete 前未写流水/余额，仅删头+行）
-    await deleteByFilter(page, 'ErpInvStockMoveLine', eqFilter('moveId', Number(incoming.id)));
+    await deleteByFilter(page, 'ErpInvStockMoveLine', eqFilter('moveId', incoming.id));
     await deleteById(page, 'ErpInvStockMove', incoming.id);
   });
 
@@ -117,7 +117,7 @@ test.describe('F7 non-status visibleOn + master-data interactions', () => {
 
       // 3. excludeId 自身排除 → true（edit 模式保留原 code 不应误判）
       const self = await callQuery(page, 'ErpMdMaterial', 'isCodeUnique', {
-        code, excludeId: Number(material.id),
+        code, excludeId: material.id,
       });
       expect(self.data, 'self code with excludeId should return true').toBe(true);
     } finally {
@@ -142,7 +142,7 @@ test.describe('F7 non-status visibleOn + master-data interactions', () => {
 
     try {
       // 默认运行时无 SPI 实现（master-data 不反向依赖下游域），返回空 Map
-      const refs = await callQuery(page, 'ErpMdMaterial', 'countReferences', { id: Number(material.id) });
+      const refs = await callQuery(page, 'ErpMdMaterial', 'countReferences', { id: material.id });
       expect(refs.errors, 'countReferences should not error').toBeFalsy();
       // data 是 Map（JSON 对象），无引用时为空对象 {} 或 null（实现可空）
       const data = refs.data || {};
@@ -166,7 +166,7 @@ test.describe('F7 non-status visibleOn + master-data interactions', () => {
     );
 
     // 先查引用（应为空），再 __delete（应成功——0 引用不阻断）
-    const refs = await callQuery(page, 'ErpMdMaterial', 'countReferences', { id: Number(material.id) });
+    const refs = await callQuery(page, 'ErpMdMaterial', 'countReferences', { id: material.id });
     expect(refs.errors, 'countReferences should not error').toBeFalsy();
     const refMap = refs.data || {};
     expect(Object.keys(refMap).length, '0 references → empty Map').toBe(0);
@@ -175,7 +175,7 @@ test.describe('F7 non-status visibleOn + master-data interactions', () => {
     await deleteById(page, 'ErpMdMaterial', material.id);
 
     // 二次 __get 应返回错误（记录不存在）
-    const after = await callQuery(page, 'ErpMdMaterial', '__get', { id: Number(material.id) });
+    const after = await callQuery(page, 'ErpMdMaterial', '__get', { id: material.id });
     expect(after.errors, 'after delete, __get should error with not-found').toBeTruthy();
     expect(after.data, 'after delete, __get data should be null').toBeNull();
   });
@@ -203,7 +203,7 @@ test.describe('F7 non-status visibleOn + master-data interactions', () => {
       const gql = new GraphQLClient(page);
       const json: any = await gql.raw(
         `mutation($d:ErpMdMaterial__update_input){ ErpMdMaterial__update(data:$d){ id status } }`,
-        { d: { id: Number(material.id), status: 'INACTIVE' } },
+        { d: { id: material.id, status: 'INACTIVE' } },
       );
       expect(json?.errors, 'update to INACTIVE should not error').toBeFalsy();
       expect(json?.data?.ErpMdMaterial__update?.status, 'after update status INACTIVE').toBe('INACTIVE');

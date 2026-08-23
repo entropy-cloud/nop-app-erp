@@ -49,10 +49,10 @@ import { cleanupVoucherByBillCode, findVoucherIdByBillCode, assertVoucherLines }
  *
  * 种子引用：org id=2 / acctSchema ACCT-FIN-01 id=1 / currency CNY id=1 / period id=1（OPEN，endDate=2026-07-31）。
  */
-const ORG = 2;
-const ACCT_SCHEMA = 1;
-const CURRENCY = 1;
-const PERIOD = 1;
+const ORG = '2';
+const ACCT_SCHEMA = '1';
+const CURRENCY = '1';
+const PERIOD = '1';
 const AMOUNT = 100;
 
 let _seq = 0;
@@ -124,7 +124,7 @@ async function cleanupBadDebt(page: import('@playwright/test').Page, ctx: Cleanu
     await deleteById(page, 'ErpFinBadDebt', id);
   }
   if (ctx.provisionVoucherId != null) {
-    const vid = Number(ctx.provisionVoucherId);
+    const vid = ctx.provisionVoucherId;
     await deleteByFilter(page, 'ErpFinVoucherLine', eqFilter('voucherId', vid));
     await deleteByFilter(page, 'ErpFinVoucherBillR', eqFilter('voucherId', vid));
     await deleteById(page, 'ErpFinVoucher', vid);
@@ -300,7 +300,7 @@ test.describe('Finance ErpFinBadDebt lifecycle browser-layer E2E', () => {
     }
 
     // cleanup 计提凭证（按 voucherId 直接删 lines + voucher + bill_r，使 Allowance 账面恢复，不污染后续/基线）
-    const ctx: CleanupCtx = { provisionVoucherId: result.voucherId ? Number(result.voucherId) : null };
+    const ctx: CleanupCtx = { provisionVoucherId: result.voucherId ? result.voucherId : null };
     await cleanupBadDebt(page, ctx);
   });
 });

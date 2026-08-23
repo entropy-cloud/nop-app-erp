@@ -53,9 +53,9 @@ import { findFirst, cleanupVoucherByBillCode, findVoucherIdByBillCode, assertVou
  * 种子引用：org id=2 / currency id=1（CNY）/ customer id=1（CUST-001，Billing.customerId）。
  * 科目 6001 id=7 + 5101 id=32 + 4103 id=34 经种子齐备（0742-2）。
  */
-const ORG_ID = 2;
-const CURRENCY_ID = 1;
-const CUSTOMER_ID = 1; // CUST-001（Billing.customerId NOT NULL）
+const ORG_ID = '2';
+const CURRENCY_ID = '1';
+const CUSTOMER_ID = '1'; // CUST-001（Billing.customerId NOT NULL）
 const BILL_DATE = '2026-07-10';
 const PERIOD_FROM = '2026-07-01';
 const PERIOD_TO = '2026-07-31';

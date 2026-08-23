@@ -20,12 +20,12 @@ const MOVE_REQ_TYPE = 'i_app_erp_inv_biz_StockMoveRequest';
 function incomingRequest(unique: string) {
   return input(MOVE_REQ_TYPE, {
     moveType: 'INCOMING',
-    orgId: 2,
+    orgId: '2',
     businessDate: '2026-07-09',
-    destWarehouseId: 2,
-    acctSchemaId: 1,
-    currencyId: 1,
-    lines: [{ materialId: 1, uoMId: 1, quantity: 10, unitCost: 5, currencyId: 1 }],
+    destWarehouseId: '2',
+    acctSchemaId: '1',
+    currencyId: '1',
+    lines: [{ materialId: '1', uoMId: '1', quantity: 10, unitCost: 5, currencyId: '1' }],
     remark: `E2E-business-action-${unique}`,
   });
 }
@@ -60,15 +60,15 @@ test.describe('inventory StockMove business action lifecycle', () => {
     expect(typeof verified.posted, 'posted should be a boolean (cross-domain posting flag)').toBe('boolean');
 
     // 过账产物存在性：不可变流水 ErpInvStockLedger 按 moveId 非空（complete 同事务写入，可靠）
-    const ledgerTotal = await findPageTotal(page, 'ErpInvStockLedger', eqFilter('moveId', Number(created.id)));
+    const ledgerTotal = await findPageTotal(page, 'ErpInvStockLedger', eqFilter('moveId', created.id));
     expect(ledgerTotal, 'StockMove DONE should write at least one immutable ledger line').toBeGreaterThan(0);
 
     // 清理：complete 写入的不可逆下游产物（流水/余额）会污染共享 DB 的下游数值断言
     // （inventory dashboard KPI 聚合 stock_balance/ledger 的 totalValue/incomingQty）。
     // MAT-1/WH-2 组合在种子中无余额（种子为 MAT-3/WH-2 + MAT-1/WH-1），故按此组合删除安全。
-    await deleteByFilter(page, 'ErpInvStockLedger', eqFilter('moveId', Number(created.id)));
-    await deleteByFilter(page, 'ErpInvStockBalance', andFilter(eqFilter('materialId', 1), eqFilter('warehouseId', 2)));
-    await deleteByFilter(page, 'ErpInvStockMoveLine', eqFilter('moveId', Number(created.id)));
+    await deleteByFilter(page, 'ErpInvStockLedger', eqFilter('moveId', created.id));
+    await deleteByFilter(page, 'ErpInvStockBalance', andFilter(eqFilter('materialId', '1'), eqFilter('warehouseId', '2')));
+    await deleteByFilter(page, 'ErpInvStockMoveLine', eqFilter('moveId', created.id));
     await deleteById(page, 'ErpInvStockMove', created.id);
   });
 
@@ -91,7 +91,7 @@ test.describe('inventory StockMove business action lifecycle', () => {
     expect(verified.docStatus, '__get should confirm CANCELLED').toBe('CANCELLED');
 
     // 清理：cancel 路径不写流水/余额（INCOMING confirm 不预留），仅清理移动单 + 行
-    await deleteByFilter(page, 'ErpInvStockMoveLine', eqFilter('moveId', Number(created.id)));
+    await deleteByFilter(page, 'ErpInvStockMoveLine', eqFilter('moveId', created.id));
     await deleteById(page, 'ErpInvStockMove', created.id);
   });
 });

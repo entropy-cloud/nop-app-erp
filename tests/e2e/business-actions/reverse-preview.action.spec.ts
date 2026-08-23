@@ -22,9 +22,9 @@ import type { Page } from '@playwright/test';
  * 自定义 @BizQuery/@BizMutation。需要 8011 端口运行 app（BASE_URL + SKIP_WEBSERVER=1）。
  */
 
-const ORG_ID = 1;
-const ACCT_SCHEMA_ID = 1;
-const PERIOD_ID = 1;
+const ORG_ID = '1';
+const ACCT_SCHEMA_ID = '1';
+const PERIOD_ID = '1';
 
 async function createPostedVoucher(page: Page, code: string, amount: number): Promise<string> {
     const saved = await createViaSave(page, 'ErpFinVoucher', {
@@ -55,7 +55,7 @@ test.describe('Reverse preview action (plan 2026-07-23-1145-2)', () => {
         // 1. 预览：只读 @BizQuery，返回结构化冲销信息
         const gql = new GraphQLClient(page);
         const previewJson: any = await gql.raw(
-            `query(${'$'}vid:Long){ ErpFinVoucher__previewReverseVoucher(voucherId:${'$'}vid){ voucherCode totalDebit totalCredit reversedDebit reversedCredit willSetReversed } }`,
+            `query(${'$'}vid:String){ ErpFinVoucher__previewReverseVoucher(voucherId:${'$'}vid){ voucherCode totalDebit totalCredit reversedDebit reversedCredit willSetReversed } }`,
             { vid: voucherId },
         );
         expect(previewJson?.errors, 'previewReverseVoucher should not return GraphQL errors').toBeFalsy();

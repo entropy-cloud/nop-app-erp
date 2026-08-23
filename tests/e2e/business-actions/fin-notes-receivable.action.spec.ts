@@ -41,9 +41,9 @@ import { cleanupVoucherByBillCode, findVoucherIdByBillCode, assertVoucherLines }
  * 种子引用：org id=2 / currency id=1（CNY）/ partner id=1（CUST-001，AR 方向）/ 科目 1121 id=40、1122 id=3、
  *   1002 id=2、2202 id=5、6603 id=42 经种子补齐（本 plan Phase 2）。
  */
-const ORG_ID = 2;
-const CURRENCY_ID = 1;
-const PARTNER_ID = 1; // CUST-001（AR 方向 partner 维度）
+const ORG_ID = '2';
+const CURRENCY_ID = '1';
+const PARTNER_ID = '1'; // CUST-001（AR 方向 partner 维度）
 const NOTES_TYPE = 'BANK_ACCEPTANCE';
 const FACE_AMOUNT = 1000;
 const ISSUE_DATE = '2026-07-01';
@@ -96,7 +96,7 @@ async function createFundAccount(page: import('@playwright/test').Page): Promise
       name: 'E2E NR Discount Bank Account',
       orgId: ORG_ID,
       accountType: 'BANK',
-      subjectId: 2, // 1002 银行存款（种子 id=2）
+      subjectId: '2', // 1002 银行存款（种子 id=2）
       currencyId: CURRENCY_ID,
       currentBalance: 0,
       status: 'ACTIVE',
@@ -301,7 +301,7 @@ test.describe('finance ErpFinNotesReceivable lifecycle + voucher-line assertions
     try {
       const rejDiscount = await callMutation(
         page, 'ErpFinNotesReceivable', 'discount',
-        { notesId: discounted.id, discountDate: DISCOUNT_DATE, bankId: 1, discountRate: DISCOUNT_RATE },
+        { notesId: discounted.id, discountDate: DISCOUNT_DATE, bankId: '1', discountRate: DISCOUNT_RATE },
         'id',
       );
       expect(rejDiscount.errors, 'discount from DISCOUNTED should be rejected').toBeTruthy();

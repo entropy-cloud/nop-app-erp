@@ -44,12 +44,12 @@ import { cleanupVoucherByBillCode, cleanupArApByCode } from '../orchestration/_h
  * 自包含隔离：每用例独立建 partner+employee+budget scenario+budget line+claim+line（code 唯一），
  * cleanup 删 ControlLog+凭证+AR-AP+行+头+预算行+方案+员工+partner。
  */
-const ORG = 2;
-const ACCT_SCHEMA = 1;
-const CURRENCY = 1;
-const PERIOD = 1;
+const ORG = '2';
+const ACCT_SCHEMA = '1';
+const CURRENCY = '1';
+const PERIOD = '1';
 /** 种子费用科目 6602 折旧费用（id=31, EXPENSE, DEBIT）。 */
-const SUBJECT_EXPENSE_ID = 31;
+const SUBJECT_EXPENSE_ID = '31';
 const SUBJECT_EXPENSE_CODE = '6602';
 const BDATE = '2026-07-15';
 const BUDGET_AMOUNT = 50;

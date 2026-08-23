@@ -1,4 +1,4 @@
-import { test, expect, loginAndNavigate, createViaSave, callMutationOk, verifyState, deleteById } from './_helper';
+import { test, expect, loginAndNavigate, createViaSave, callMutationOk, verifyState, deleteById, deleteByFilter, eqFilter } from './_helper';
 
 /**
  * aps ErpApsOperationOrder 工序排产引擎业务动作浏览器层 E2E（plan 2026-07-14-0508-1 Phase 1）。
@@ -32,8 +32,8 @@ import { test, expect, loginAndNavigate, createViaSave, callMutationOk, verifySt
 
 const HORIZON_START = '2026-07-10T00:00:00';
 const HORIZON_END = '2026-07-20T00:00:00';
-const MACHINE_ID = 100; // 无 FK 约束，与 Java 测试 MACHINE_A=100L 一致
-const WORK_ORDER_ID = 1; // 无 FK 约束
+const MACHINE_ID = '100'; // 无 FK 约束，与 Java 测试 MACHINE_A=100L 一致
+const WORK_ORDER_ID = '1'; // 无 FK 约束
 
 async function seedSchedule(page: import('@playwright/test').Page, tag: string): Promise<{ id: string; status: string }> {
   return createViaSave(
@@ -95,6 +95,9 @@ test.describe('aps ErpApsOperationOrder scheduling engine (scheduleForward/sched
     expect(v.plannedStartDateT, 'plannedStartDateT should be written back').not.toBeNull();
     expect(v.plannedEndDateT, 'plannedEndDateT should be written back').not.toBeNull();
 
+    // P0-MA2-019 产能预留不随 __delete 级联（释放仅业务重排路径，P1-MA2-077 Deferred）——
+    // 测试层先清预留再删工序，避免跨 spec 机器/时段泄漏阻塞后续排产（capacity-conflict）。
+    await deleteByFilter(page, 'ErpApsCapacityReservation', eqFilter('operationOrderId', op.id));
     await deleteById(page, 'ErpApsOperationOrder', op.id);
     await deleteById(page, 'ErpApsSchedule', schedule.id);
   });
@@ -120,6 +123,9 @@ test.describe('aps ErpApsOperationOrder scheduling engine (scheduleForward/sched
     expect(v.plannedStartDateT, 'plannedStartDateT should be written back').not.toBeNull();
     expect(v.plannedEndDateT, 'plannedEndDateT should be written back').not.toBeNull();
 
+    // P0-MA2-019 产能预留不随 __delete 级联（释放仅业务重排路径，P1-MA2-077 Deferred）——
+    // 测试层先清预留再删工序，避免跨 spec 机器/时段泄漏阻塞后续排产（capacity-conflict）。
+    await deleteByFilter(page, 'ErpApsCapacityReservation', eqFilter('operationOrderId', op.id));
     await deleteById(page, 'ErpApsOperationOrder', op.id);
     await deleteById(page, 'ErpApsSchedule', schedule.id);
   });

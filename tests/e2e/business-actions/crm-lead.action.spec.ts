@@ -18,7 +18,7 @@ test.describe('CRM Lead state machine actions', () => {
     const code = `E2E-LEAD-${Date.now()}`;
     const lead = await createViaSave(
       page, 'ErpCrmLead',
-      { code, leadType: 'OPPORTUNITY', docStatus: 'NEW', orgId: 2 },
+      { code, leadType: 'OPPORTUNITY', docStatus: 'NEW', orgId: '2' },
       'id docStatus stageId',
     );
     expect(lead.id, '__save should create a NEW lead').toBeTruthy();
@@ -34,7 +34,7 @@ test.describe('CRM Lead state machine actions', () => {
     // moveStage: stageId 1 → 2（允许前移/回退；仅断言 stageId 翻转，convLog 留痕归 Deferred）
     const moved = await callMutationOk(
       page, 'ErpCrmLead', 'moveStage',
-      { leadId: lead.id, toStageId: 2 }, 'id stageId',
+      { leadId: lead.id, toStageId: '2' }, 'id stageId',
     );
     expect(String(moved.stageId), 'moveStage should flip stageId to target (2)').toBe('2');
 
@@ -48,7 +48,7 @@ test.describe('CRM Lead state machine actions', () => {
     expect(verified.docStatus, '__get should confirm CANCELLED').toBe('CANCELLED');
 
     // 清理：moveStage 写 convLog 留痕 + lead 本身，避免污染 CRM 报表数值断言
-    await deleteByFilter(page, 'ErpCrmLeadConvLog', eqFilter('leadId', Number(lead.id)));
+    await deleteByFilter(page, 'ErpCrmLeadConvLog', eqFilter('leadId', lead.id));
     await deleteById(page, 'ErpCrmLead', lead.id);
   });
 
@@ -57,7 +57,7 @@ test.describe('CRM Lead state machine actions', () => {
 
     const lead = await createViaSave(
       page, 'ErpCrmLead',
-      { code: `E2E-LEAD-CNL-${Date.now()}`, leadType: 'OPPORTUNITY', docStatus: 'NEW', orgId: 2 },
+      { code: `E2E-LEAD-CNL-${Date.now()}`, leadType: 'OPPORTUNITY', docStatus: 'NEW', orgId: '2' },
       'id docStatus',
     );
 

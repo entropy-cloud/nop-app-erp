@@ -50,11 +50,11 @@ const UNIQUE_TAG = `E23-${process.pid}-${Date.now()}`;
 function salOrderData(code: string) {
   return {
     code,
-    orgId: 2,
-    customerId: 1,
-    warehouseId: 2,
+    orgId: '2',
+    customerId: '1',
+    warehouseId: '2',
     businessDate: '2026-08-11',
-    currencyId: 1,
+    currencyId: '1',
     exchangeRate: 1,
     docStatus: 'DRAFT',
     approveStatus: 'UNSUBMITTED',
@@ -66,7 +66,7 @@ function qaInspectionData(code: string, inspectorId: number) {
   return {
     code,
     inspectionType: 'INCOMING',
-    materialId: 1,
+    materialId: '1',
     businessDate: '2026-08-11',
     inspectionDate: '2026-08-11',
     inspectorId,
@@ -80,7 +80,7 @@ function qaInspectionData(code: string, inspectorId: number) {
 function mntVisitData(code: string, assignedTo: number) {
   return {
     code,
-    equipmentId: 1,
+    equipmentId: '1',
     visitDate: '2026-08-11',
     status: 'PLANNED',
     assignedTo,

@@ -4,7 +4,7 @@ assertReportRenderedWithValue({
   reportLabel: 'mfg-crp-load',
   route: '/crp-load-report',
   query:
-    'query($reportName:String!,$workcenterId:BigDecimal,$startDate:String,$endDate:String){ ErpMfgReport__renderHtml(reportName:$reportName,data:{workcenterId:$workcenterId,startDate:$startDate,endDate:$endDate}) }',
+    'query($reportName:String!,$workcenterId:String,$startDate:String,$endDate:String){ ErpMfgReport__renderHtml(reportName:$reportName,data:{workcenterId:$workcenterId,startDate:$startDate,endDate:$endDate}) }',
   variables: {
     reportName: 'crp-load-report',
     workcenterId: '1',

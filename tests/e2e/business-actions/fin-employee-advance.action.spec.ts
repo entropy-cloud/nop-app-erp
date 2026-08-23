@@ -54,10 +54,10 @@ import {
  * 种子引用：org id=2 / acctSchema ACCT-FIN-01 id=1 / currency CNY id=1 / period 2026-07 id=1（OPEN）。
  * 自包含隔离：每用例独立建 partner+employee+advance(+claim+line)，cleanup 删凭证+AR-AP+行+头+员工+partner。
  */
-const ORG = 2;
-const ACCT_SCHEMA = 1;
-const CURRENCY = 1;
-const SUBJECT_EXPENSE_ID = 31;
+const ORG = '2';
+const ACCT_SCHEMA = '1';
+const CURRENCY = '1';
+const SUBJECT_EXPENSE_ID = '31';
 const SUBJECT_EXPENSE_CODE = '6602';
 const BDATE = '2026-07-15';
 const ADVANCE_AMOUNT = 500;
@@ -149,7 +149,7 @@ async function findVoucherIdByBillCodeAndType(
     andFilter(eqFilter('billCode', billCode), eqFilter('billType', billType)),
     'voucherId',
   );
-  return links.length > 0 ? Number(links[0].voucherId) : null;
+  return links.length > 0 ? links[0].voucherId : null;
 }
 
 async function cleanupCtx(page: import('@playwright/test').Page, ctx: Ctx): Promise<void> {

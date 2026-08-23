@@ -40,7 +40,7 @@ import { test, expect, loginAndNavigate, createViaSave, callMutationOk, callMuta
  *   无凭证/辅助账/库存产物（runAccrual 只读发票聚合，写 accrual 行 + 更新协议累计字段）。
  */
 
-const PARTNER_SUPPLIER_ID = 3; // SUP-001（PINV-2026-001 supplierId）
+const PARTNER_SUPPLIER_ID = '3'; // SUP-001（PINV-2026-001 supplierId）
 const SEED_POSTED_AP_INVOICE_CODE = 'PINV-2026-001';
 const SEED_POSTED_AP_INVOICE_AMOUNT = 960.5;
 const EXPECTED_ACCRUED_REBATE = 96.05; // 960.5 × 10%（单档开放 tier）
@@ -73,7 +73,7 @@ async function seedTier(page: import('@playwright/test').Page, agreementId: stri
   return createViaSave(
     page, 'ErpCtRebateTier',
     {
-      rebateAgreementId: Number(agreementId),
+      rebateAgreementId: agreementId,
       fromAmount: 0,
       rebatePercent: percent,
     },
@@ -89,31 +89,34 @@ test.describe('contract ErpCtRebateAgreement runAccrual engine', () => {
     const tier = await seedTier(page, agreement.id, 10);
 
     try {
-      // runAccrual(agreementId, asOfDate)：PROGRESSIVE 逐张计提 posted 发票
+      // E3.1 响应脱敏：accruedRebate/协议累计金额对任意 E2E 账号不可观察（admin 掩码 null /
+      // CT 角色无读权限，bug 登记 docs/bugs/2026-08-23-e2e-masked-amount-observability.md）。
+      // 金额计算正确性由 JUnit TestErpCtRebate* 承载；E2E 断言计提行可观察面（存在性 + 链路字段）。
       await callMutationOk(page, 'ErpCtRebateAgreement', 'runAccrual',
         { agreementId: agreement.id, asOfDate: AS_OF_DATE }, 'id');
 
       // 断言 ErpCtRebateAccrual 行写入：sourceBillCode 匹配种子发票 code + accruedRebate=96.05（10% × 960.5）
       const accrual = await findFirst<any>(
         page, 'ErpCtRebateAccrual',
-        andFilter(eqFilter('rebateAgreementId', Number(agreement.id)),
+        andFilter(eqFilter('rebateAgreementId', agreement.id),
                   eqFilter('sourceBillCode', SEED_POSTED_AP_INVOICE_CODE)),
         'id sourceBillType sourceBillCode billAmountSource accruedRebate accrualDate',
       );
       expect(accrual, 'runAccrual should produce ErpCtRebateAccrual row').not.toBeNull();
       expect(accrual!.sourceBillCode, 'accrual.sourceBillCode matches seed posted AP invoice code').toBe(SEED_POSTED_AP_INVOICE_CODE);
       expect(accrual!.sourceBillType, 'accrual.sourceBillType=AP_INVOICE (PURCHASE rebate)').toBe('AP_INVOICE');
-      expect(Number(accrual!.accruedRebate), 'accrual.accruedRebate=96.05 (960.5 × 10% delta, no prior accrual)').toBe(EXPECTED_ACCRUED_REBATE);
-      expect(Number(accrual!.billAmountSource), 'accrual.billAmountSource=invoice totalAmountWithTax').toBe(SEED_POSTED_AP_INVOICE_AMOUNT);
+      // 掩码面实证：accruedRebate/billAmountSource 对 admin 掩码为 null（E3.1 fail-closed 生效证明；
+      // 明文数值断言归 JUnit TestErpCtRebate*）
+      expect(accrual!.accruedRebate == null, 'accruedRebate masked null for admin (E3.1 fail-closed live)').toBe(true);
 
-      // 协议累计/预估字段回写（RebateEngine.accrue:77-79）
+      // 协议累计/预估字段回写（RebateEngine.accrue:77-79）——掩码面同上，字段存在性 + null 掩码实证
       const agState = await verifyState(page, 'ErpCtRebateAgreement', agreement.id,
         'totalAccumulatedAmount estimatedRebateAmount');
-      expect(Number(agState.totalAccumulatedAmount), 'agreement.totalAccumulatedAmount=960.5 after accrual').toBe(SEED_POSTED_AP_INVOICE_AMOUNT);
-      expect(Number(agState.estimatedRebateAmount), 'agreement.estimatedRebateAmount=96.05 after accrual').toBe(EXPECTED_ACCRUED_REBATE);
+      expect(agState.totalAccumulatedAmount == null, 'agreement.totalAccumulatedAmount masked null (E3.1 live)').toBe(true);
+      expect(agState.estimatedRebateAmount == null, 'agreement.estimatedRebateAmount masked null (E3.1 live)').toBe(true);
     } finally {
-      // 清理：accrual 行 + tier + agreement（不删种子发票）
-      await deleteByFilter(page, 'ErpCtRebateAccrual', eqFilter('rebateAgreementId', Number(agreement.id)));
+      // 清理（admin 全程；不删种子发票）
+      await deleteByFilter(page, 'ErpCtRebateAccrual', eqFilter('rebateAgreementId', agreement.id));
       await deleteById(page, 'ErpCtRebateTier', tier.id);
       await deleteById(page, 'ErpCtRebateAgreement', agreement.id);
     }
@@ -134,7 +137,7 @@ test.describe('contract ErpCtRebateAgreement runAccrual engine', () => {
       // 无 accrual 行写入（事务回滚）
       const accrual = await findFirst<any>(
         page, 'ErpCtRebateAccrual',
-        eqFilter('rebateAgreementId', Number(agreement.id)),
+        eqFilter('rebateAgreementId', agreement.id),
         'id',
       );
       expect(accrual, 'no ErpCtRebateAccrual row should be created for DRAFT agreement').toBeNull();
