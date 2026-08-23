@@ -240,8 +240,10 @@
 
 #### C04 销售退货与客服联动
 
+> **前置勘误登记（2026-08-23，B2 实施期）**：本用例前置原述「[seed] 既有已过账销售链（erp_sal_invoice posted + AR 项 OPEN）」为 **stale 表述**——实仓核验 `erp_fin_ar_ap_item` 全部 SETTLED（OPEN 仅 HR 行 EMPLOYEE_ADVANCE/EXPENSE_CLAIM），部署 seed 无 OPEN AR 项。§3.4 风险②「自包含建数」纪律覆盖该前置：用例以**自包含 GraphQL 建数**实现（先建 posted 销售链得 OPEN AR 项再退货），保证 closure 门控「设计文档 ↔ 用例实现无矛盾」可满足。B2 实施证据：`TestErpC04SalReturnWithCs`。
+
 - **业务目标**：客户投诉 → 客服工单 → 销售退货 → 反向入库 + 红字凭证 + 负 AR，退款核销。复杂度判据：跨 4 域 + 审批 + 过账 + 状态机 ✓。
-- **前置**：`[seed]` 既有已过账销售链（erp_sal_invoice posted + AR 项 OPEN）+ `[自包含]` 客服工单（关联客户）+ 退货单。
+- **前置**：`[seed]` 主数据（CUST-001 客户、MAT-001 物料、WH-MAIN 仓库、TT-COMPLAINT 工单类型）+ `[自包含]` 已过账销售链（Delivery→Invoice posted，得 OPEN AR 项——**勘误见上，实仓无 seed OPEN AR 项**）+ 客服工单（关联客户）+ 退货单。
 - **关键路径步骤**：
   1. `ErpCsTicket__save`（客户投诉工单）→ 六态状态机推进（`assign`/`respond`…）`[涉及域 cs]`
   2. `ErpSalReturn__save`（引用原发票/工单）→ `ErpSalReturn__submitForApproval` → `ErpSalReturn__approve` `[审批轴: DIRECT]`（反向入库 + SALES_RETURN 凭证 + 负 AR）
