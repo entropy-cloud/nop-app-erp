@@ -116,13 +116,16 @@ public class TestErpHrShiftScheduling extends JunitAutoTestCase {
         CountDownLatch startGate = new CountDownLatch(1);
         CountDownLatch doneLatch = new CountDownLatch(threads);
         AtomicReference<Throwable> firstError = new AtomicReference<>();
+        AtomicReference<ErpHrShiftAssignment> survivor = new AtomicReference<>();
         try {
             for (int i = 0; i < threads; i++) {
                 pool.submit(() -> {
                     ContextProvider.newContext();
                     try {
                         startGate.await();
-                        ormTemplate.runInSession(s -> assignmentBiz.assignSingle(empId, shiftId, date, CTX));
+                        ErpHrShiftAssignment a = ormTemplate.runInSession(
+                                s -> assignmentBiz.assignSingle(empId, shiftId, date, CTX));
+                        survivor.compareAndSet(null, a);
                     } catch (Throwable t) {
                         firstError.compareAndSet(null, t);
                     } finally {
@@ -136,6 +139,11 @@ public class TestErpHrShiftScheduling extends JunitAutoTestCase {
         } finally {
             pool.shutdownNow();
         }
+
+        // 存活行 id 非确定（两线程均于 save 时消费 seq，flush 竞争决定存亡；M3.3 seq-default 后语义），
+        // 快照按 @var 引用存活行 id（data 校验按 id 取行）
+        assertNotNull(survivor.get(), "并发排班应恰有 1 条成功（存活行）");
+        setVar("ErpHrShiftAssignment@id", survivor.get().getId());
 
         // 数据完整性：UK 兜底保证仅 1 条 active 排班（无重复实体行）
         QueryBean q = new QueryBean();
