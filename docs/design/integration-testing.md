@@ -2,7 +2,7 @@
 
 > **来源**：`docs/backlog/integration-test-roadmap.md` M0.1 工作项规格（v3）
 > **状态**：M0.1 定稿（经独立子代理审查 ≥2 轮收敛，审查记录见 `docs/plans/2026-08-23-1835-1-m01-integration-test-case-design.md` Draft Review Record 与本文件 §10）
-> **最后更新**：2026-08-23
+> **最后更新**：2026-08-24（B6 实施期勘误：§6 C11/C12 动作面/旧式码/科目 config 勘误登记）
 > **适用**：M0.2 基建试点（机制裁决逐项实证）→ M0.3 分批展开（B1-Bn）→ V.1/V.2 全量验证与收尾
 
 ---
@@ -371,6 +371,8 @@
 
 #### C11 项目成本归集 → CIP → 资产资本化 → 维护设备
 
+> **实施期勘误登记（2026-08-24，B6）**：(1) **CIP→资本化动作面漂移**——步骤 2/3 原述「`ErpAstCip__save` → 完工审批」与「`ErpAstAssetCapitalization__save` → submit → approve」为漂移：实仓 `ErpAstCipBizModel` 无「完工审批」动作（实仓 = `startConstruction`/`addCostItem`/`addProgressBilling`/`transferToAsset`/`reverseTransfer`），`transferToAsset` 内部经 `ErpAstCipTransferToAssetProcessor → ErpAstCipProcessor.doTransfer` 复用既有资本化审批链（submit → approve 立即建卡 + 出 CAPITALIZATION 凭证），用例按实仓动作面落地（CIP `transferToAsset` 直建资产卡片 + 凭证，无独立 Capitalization save/submit/approve 步骤）；(2) **资本化科目口径**——CAPITALIZATION 凭证借贷科目 = 资产类别 `subjectId`/`cipSubjectId`（未配置类别科目时回退标准码 1601/1603），折旧计划随建卡生成（类别折旧方法/使用年限）；CIP 成本 = Σ CostItem amountFunctional = 资产原值断言锚点成立；(3) **前置旧式码勘误**——「2210-1 seed」= 旧式码，实仓新式码 = PRJ-2026-001（语义前置满足）；seed 资产类别无 subjectId/cipSubjectId 且无 seed CIP → CIP 转固链路前置自包含建数（类别 + CIP），未触发 seed 修正授权。B6 实施证据：`TestErpC11PrjCipCapitalizeMnt`。
+
 - **业务目标**：项目转资闭环——项目成本归集 → CIP 在建工程 → 资本化转固建卡 → 设备维护计划挂接。复杂度判据：跨 5 域 + 审批 + 过账 ✓。
 - **前置**：`[seed]` 项目（OPEN，2210-1 seed）+ `[自包含]` 成本归集单 + CIP + 资本化单。
 - **关键路径步骤**：
@@ -384,6 +386,8 @@
 - **主导域 / 涉及域**：projects / projects, assets, finance, master-data, maintenance。
 
 #### C12 项目工时过账与结算损益
+
+> **实施期勘误登记（2026-08-24，B6）**：(1) **工时科目 config**——`erp-prj.default-payroll-subject-id` 默认空串（实仓 `ErpPrjConfigs`，`TimesheetPostingDispatcher` 空科目报 `ERR_PAYROLL_SUBJECT_NOT_CONFIGURED`）→ 用例类级 `@NopTestProperty(name="erp-prj.default-payroll-subject-id", value="2211")`（对齐 C06/C08/C10 门控同型处理）；(2) **工时借记科目与员工引用漂移**——借方科目 = 项目类型 `defaultSubjectId`（缺失抛 `ERR_PROJECT_DEBIT_SUBJECT_NOT_RESOLVED`），seed 项目类型 PRJ-TYPE-IT 无 defaultSubjectId → 工时单落于自包含项目（项目类型 defaultSubjectId=5101，B4/B5 自包含建数先例，未触发 seed 修正授权）；「seed 员工 HR-EMP-001/002」为漂移——工时单 `userId` 实仓关系 = `ErpMdEmployee`（md 域 seed EMP-001/002），非 hr 域员工；(3) **结算/损益结转动作面漂移**——步骤 2 原述「`ErpPrjSettlement__createSettlement`」与「无 GraphQL submitForApproval」勘误：实仓动作 = `ErpPrjProjectSettlement__createSettlement` → `submit`（内部委托 submitForApprovalProcessor）→ `approve`；CLOSE 结算 approve 转固建卡 + PROJECT_SETTLEMENT 凭证（Dr 1601/Cr 1603）；损益结转非独立动作 = FINAL 结算 approve 驱动（Dr 5101/Dr 4103/Cr 6001，`ProjectSettlementAcctDocProvider`）；(4) **seed PNL 行交互裁决**——用例不调用 `ErpPrjProjectPnl__refreshPnl` → seed 行 PRJ-PNL-2026-001（CALCULATED，revenue 50000/cost 30000/profit 20000）零改写零消费；`createSettlement` 以该 seed 快照行为快照源，断言锚点 = 结算单 finalRevenue/finalCost/finalProfit 派生一致 + 凭证金额 + seed 行 reload 原值不变；(5) **前置旧式码勘误**——「1234-1 seed」= 旧式码，实仓新式码 = md 员工 EMP-001/002（语义前置满足）。B6 实施证据：`TestErpC12PrjTimesheetSettlement`。
 
 - **业务目标**：项目业财闭环——员工工时 → 审批 → PROJECT_COST_COLLECTION 凭证 → 项目结算 CLOSE → 损益结转。复杂度判据：跨 3 域 + 审批 + 过账 ✓。
 - **前置**：`[seed]` 员工（1234-1 seed）+ `[自包含]` 工时单 + 项目结算单。
