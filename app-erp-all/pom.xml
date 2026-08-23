@@ -231,6 +231,11 @@
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
+                    <!-- 模块级串行化（集成测试路线图已知约束 1）：覆盖父 POM forkCount=4+parallel=classes，
+                         消除并行 fork × 共享文件型 H2（db/erp.mv.db）删除/初始化/写库竞态。 -->
+                    <forkCount>1</forkCount>
+                    <reuseForks>true</reuseForks>
+                    <parallel>none</parallel>
                     <systemPropertyVariables>
                         <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
                         <maven.home>${maven.home}</maven.home>

@@ -46,6 +46,12 @@ public class TestAppActionAuthMerge {
 
     @BeforeAll
     static void initCore() {
+        // 同 JVM 前序测试类（宿主模式 CoreInitialization.destroy 路径）可能遗留已销毁的 VFS 实例
+        // （ConfigStarter.doStop 销毁 vfs 但不 unregister，VirtualFileSystem.isInitialized() 仍为 true，
+        // 致本类 VirtualFileSystemInitializer 跳过重建 → 资源全部缺失）。先注销残留实例恢复 fresh 态。
+        if (VirtualFileSystem.isInitialized()) {
+            VirtualFileSystem.unregisterInstance(VirtualFileSystem.instance());
+        }
         INITIALIZERS.add(new ReflectionHelperMethodInitializer());
         INITIALIZERS.add(new XLangCoreInitializer());
         INITIALIZERS.add(new VirtualFileSystemInitializer());

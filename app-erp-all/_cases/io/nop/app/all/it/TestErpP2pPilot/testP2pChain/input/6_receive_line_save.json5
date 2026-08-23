@@ -1,0 +1,13 @@
+{
+  data: {
+    data: {
+      receiveId: "@var:receiveId",
+      orderLineId: "@var:poLineId",
+      lineNo: 1,
+      materialId: "1",
+      uoMId: "1",
+      quantity: 10,
+      unitPrice: 5
+    }
+  }
+}

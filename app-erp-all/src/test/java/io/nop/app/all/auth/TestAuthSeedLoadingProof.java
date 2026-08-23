@@ -44,6 +44,14 @@ public class TestAuthSeedLoadingProof extends BaseTestCase {
         for (String suffix : new String[]{".mv.db", ".trace.db"}) {
             new java.io.File("db/erp" + suffix).delete();
         }
+        // 同 JVM 前序 NopJunitExtension 测试类（JunitAutoTestCase/JunitBaseTestCase）会遗留
+        // 动态配置（in-memory datasource URL / ALL_LAZY 容器启动模式等），其 reset() 仅在其自身
+        // beforeAll 时执行。宿主模式依赖 DEFAULT 启动下 DataInitInitializer 等非 lazy bean 的
+        // @PostConstruct 先于 DB 访问运行 + application.yaml 文件 H2。先 reset 清遗留，再显式回置
+        // ALL_EAGER，保证串行 fork（app-erp-all surefire forkCount=1）下 seed 仍被装载。
+        io.nop.api.core.config.AppConfig.getConfigProvider().reset();
+        setTestConfig(io.nop.ioc.IocConfigs.CFG_IOC_APP_BEANS_CONTAINER_START_MODE,
+                io.nop.api.core.ioc.BeanContainerStartMode.ALL_EAGER.name());
         setTestConfig("nop.orm.init-database-schema", true);
         setTestConfig("nop.orm.init-database-data", true);
         setTestConfig("nop.orm.init-database-data-location", "/_init-data/");
