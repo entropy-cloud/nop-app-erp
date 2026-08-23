@@ -30,6 +30,7 @@ import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -97,7 +98,12 @@ public class TestErpApsAutoDispatch extends JunitAutoTestCase {
 
         seedRule(r -> {
             r.orm_propValueByName("enableAuto", Boolean.TRUE);
-            r.setEnabledHours("[{\"start\":\"01:00\",\"end\":\"02:00\"}]"); // 当前时刻必然窗外（宽 1h）
+            // 当前时刻必然窗外：取 now+2h ~ now+3h 的一小时窗口（分秒级精确，任意运行时刻均不落入；
+            // 原硬编码 01:00-02:00 在 01:00-02:00 时段运行会误命中 → 预存时间窗 flake，
+            // 2026-08-24 01:22 全量回归暴露，处置：动态窗口 + ENABLED_HOURS 快照 `*` 通配，
+            // 对齐 B2 drp/logistics 日期漂移先例）
+            r.setEnabledHours("[{\"start\":\"" + inMinutes(120).toLocalTime() + "\",\"end\":\""
+                    + inMinutes(180).toLocalTime() + "\"}]");
         });
         String opHours = seedPlannedOp("AD-1C", inMinutes(5));
         scan();
