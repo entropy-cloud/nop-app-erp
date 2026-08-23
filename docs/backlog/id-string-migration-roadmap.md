@@ -73,7 +73,7 @@
 
 | Work Item | 描述 | 状态 | 依赖 |
 | --- | --- | --- | --- |
-| M4.1 | 全量构建恢复 + 全量测试 + E2E 套件修复 + compliance + baseline + 文档 + mission 级手写 page.yaml raw-GraphQL `:Long` 变量全量清扫（M3.6 结束审计发现的模式盲区：notify inbox.page.yaml:177 / aps schedule-gantt:59 / b2b edi-detail:45、asn-flow:79 存量实例；contract version-diff 已于 M3.6 就地 Fix） | `todo` | 全部 M1-M3（含 M2.1 延后的 finance web/app 重生成补做核验） |
+| M4.1 | 全量构建恢复 + 全量测试 + E2E 套件修复 + compliance + baseline + 文档 + mission 级手写 page.yaml raw-GraphQL `:Long` 变量全量清扫（M3.6 结束审计发现的模式盲区：notify inbox.page.yaml:177 / aps schedule-gantt:59 / b2b edi-detail:45、asn-flow:79 存量实例；contract version-diff 已于 M3.6 就地 Fix） | `todo`（批内序 3 终态更新载体；**进度**：批内序 1 ✅ JVM 层全量恢复（plan `2026-08-23-0434-1`，156 模块构建 + 3808/0/0/1 全量测试 + page.yaml `:Long` 四处清扫 + delta/桥收尾，08-23 基线行）；批内序 2 ✅ E2E 套件修复 + flux 全量回归（plan `2026-08-23-0434-2`，id 断言/传参修复 880 处/151 文件 + 主门 564/30/8 全数裁决 + examples 16/2/0 + 4 bug doc + 08-11 基线 reports 计数勘误，08-23 E2E 基线行）；余批内序 3：compliance checker + 文档/登记册/roadmap 终态收尾（plan `2026-08-23-0434-3`）） | 全部 M1-M3（含 M2.1 延后的 finance web/app 重生成补做核验） |
 
 ## 框架/平台复用
 

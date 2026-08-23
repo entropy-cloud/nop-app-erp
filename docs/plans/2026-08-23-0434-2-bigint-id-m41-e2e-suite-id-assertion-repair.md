@@ -1,6 +1,6 @@
 # 2026-08-23-0434-2-bigint-id-m41-e2e-suite-id-assertion-repair 主键/外键 string 化 M4.1（2/3）：E2E 套件 id 断言 String 化修复 + flux 模式全量回归
 
-> Plan Status: active（2026-08-23 独立草案审查两轮收敛：iteration 2 `acceptable as-is`，共识达成；批准记录见 Draft Review Record）
+> Plan Status: completed（2026-08-23 三 Phase 全部执行完成（两段执行会话接力）；**独立结束审计已通过**（2026-08-23 mission 闭环步独立子代理新会话执行，live 证据核验全通过，见 Closure 节）；roadmap M4.1 状态按计划门控保持 `todo` 至批内序 3 终态更新。前期：独立草案审查两轮收敛 iteration 2 `acceptable as-is`，共识达成，批准记录见 Draft Review Record）
 > Mission: id-string-migration
 > Work Item: M4.1（其二：E2E 套件 id 断言/传参 String 化修复 + flux 全量回归）
 > Last Reviewed: 2026-08-23
@@ -60,70 +60,80 @@
 
 ### Phase 1 - 冲击面复测 + spec 修复
 
-Status: planned
+Status: completed（2026-08-23 执行。**冲击面复测**：附录 F 复核命令 08-21 vs 08-23 执行前计数全等——`Number(` 874/105 文件、`Number(lnk.voucherId)` 11、`eqFilter('id'` 36、简单形态 757、字面量数字 id 130/44 文件、const 赋值形态 57、`String(...[iI]d...)` 27（`_tmp/e2e-id-repair/f1-recount.txt`）。**id 族分类口径修正**：附录 F 的 234 为「裸名 *Id/id」token 口径；按「last segment = id/*Id」语义口径实测 id 族简单形态 543（含 `x.id` 属性链形态，附录口径未计入但同属必改面）+ 数值族 214——本计划按语义口径 543 全修。**修复内容**：(A) codemod 解包 id 族 `Number(<token>)` 560 处/77 文件（`_tmp/e2e-id-repair/passA-log.md`）；(B) 复合形态逐个判定 25 处修复（id 族 25 处改直传/字符串比较；数值族 70+ 处合法保持——unitCost/totalCost/matchedAmount/completedQuantity/rate/gapValue/requiredLevel 等白名单在案；`Number(v||0)`=countUnread 计数、`visit!.assignedTo`=mnt 规则 4 Long 保留列两例外保持）；(C) 字面量数字 id 传参 284 处修复（对象字面量 id 值 139 + const/let `_ID`/`Id` 赋值 145，`passBC-log.md`；例外 `ASSIGNEE_ID` ×2/`ASSIGNED_TO` ×1 喂 Long 保留列 assignedTo 保持数值）；(D) SEED 块 id 族数值 prop 36 处字符串化（6 文件，金额/数量 prop 保持）；(E) eqFilter id/FK 族 36+FK 位点值侧全 String 化（Number 包装清零 + 1 处数字字面量 eqFilter 修复）；(F) GraphQL 内联插值引号补齐 20 处（`chartId:${chart.id}` 类 15 文件）+ `$xxx:Long` 类型化变量声明 → `:String` 9 处（dashboards 3 + f13-kanban ×5 + period-close/reverse-preview）+ `$xxxId:BigDecimal` → `:String` 9 处（reports value specs，renderHtml data map 值 String 化）；(G) infra 层修复——`GraphQLClient.get/delete` 与 `verifyState` 内联 `id:${id}` 改 `JSON.stringify(String(id))` 引号安全形态 + business-actions/_helper 7 个反查原语参数 String 强制（findIntercompanyMatchByPairKey/findEliminationCandidates/findEliminationVoucherId/findBudgetLineAmount/countBudget*Logs/findExchangeRatesByBase）+ `fin-inventory-trace` 内联 data 对象改 typed variable（含语法修复）。**核对证明**：27 处既有 `String(...id...)` 正向兼容零改动（git diff 零 `-String(` 行；现 36 = 27 原位 + 9 新 infra String 强制）；数值族零误改 = 全量 diff 扫描（强于 ≥20 抽样）：19 个数值 token（availableAmount/netBookValue/openAmountFunctional/settledAmount/outstandingAmount/usedAmount/originalValue/actualAmount/completedQuantity/debitAmount/creditAmount/allocatedAmount/matchedAmount/totalAmount/plannedQuantity/safetyStock/budgetAmountFunctional/varianceQuantity/amountSource）diff 触碰 0 处；数值族 `Number(` 合法保持 289 处（874−585=289）。**终局残留复测全零**：id 族简单/复合形态 0、字面量数字 id 0（注释 remapPeriodId:285-303 1 处非代码）、const 数字 id 0（Long 保留列例外 3 处在案）、eqFilter Number 包装 0、`:Long` 变量声明 0；`npx playwright test --list` 全量 826 tests/185 文件解析零语法错。per-file 修复清单：151 文件 +880/−880（目录分布：business-actions 106、negative 14、reports 11、orchestration 7、visual 5、crud 4、dashboards 3、pages 1；完整 numstat 见执行期 git diff `--numstat -- tests/e2e`，日志 `_tmp/e2e-id-repair/{passA,passBC}-log.md` + perfile-inventory.md）。验证口径说明：本 Phase 仅改 tests/e2e/*.ts 测试层（git diff 证明零 Java/模型变更），Maven reactor 不含该目录，`mvn` 构建面不受影响（批内序 1 全量构建基线维持）；测试层验证 = `playwright --list` 全量解析 + Phase 2 运行时回归）
 Targets: `tests/e2e/**/*.ts`（附录 F 清单域）
 Skill: none（清单驱动修复；先例：`String(...)` 兼容形态）
 
 - Item Types: `Fix | Proof`
 - Prereqs: 批内序 1 完成（非硬编译前置，但基线口径统一）
 
-- [ ] Proof: 附录 F 复核命令重跑（`Number(` 全量 `*.ts` 口径 / id 族简单形态正则 / `eqFilter('` id+FK 族 / **字面量数字 id 正则 `\b[a-zA-Z]*[iI]d:\s*\d+` + const 赋值形态 `\b[a-zA-Z_][a-zA-Z0-9_]*[iI]d\s*=\s*\d+`**（`DUMMY_ID = 999999` 类）），08-21 vs 执行期计数对照落盘（口径统一以附录 F 复核命令为准）。
+- [x] Proof: 附录 F 复核命令重跑（`Number(` 全量 `*.ts` 口径 / id 族简单形态正则 / `eqFilter('` id+FK 族 / **字面量数字 id 正则 `\b[a-zA-Z]*[iI]d:\s*\d+` + const 赋值形态 `\b[a-zA-Z_][a-zA-Z0-9_]*[iI]d\s*=\s*\d+`**（`DUMMY_ID = 999999` 类）），08-21 vs 执行期计数对照落盘（口径统一以附录 F 复核命令为准）。
   - Skill: none
-- [ ] Fix: id 族 `Number(...)` 字符串化/移除——简单形态 234 处全改 + 复合形态 117 处逐个判定（id 族改、数值族保持，判定记录留档）；断言侧改字符串比较，传参侧移除 Number 包装。
+- [x] Fix: id 族 `Number(...)` 字符串化/移除——简单形态 234 处全改 + 复合形态 117 处逐个判定（id 族改、数值族保持，判定记录留档）；断言侧改字符串比较，传参侧移除 Number 包装。
   - Skill: none
-- [ ] Fix: 字面量数字 id 传参形态 130 处/44 文件——真 id 字段必改字符串字面量（`orgId: 2`→`orgId: '2'`、`DUMMY_ID = 999999`→`'999999'`）；数值语义字段名撞车（非 id 而形如 `*Id`）逐条判定留档。
+- [x] Fix: 字面量数字 id 传参形态 130 处/44 文件——真 id 字段必改字符串字面量（`orgId: 2`→`orgId: '2'`、`DUMMY_ID = 999999`→`'999999'`）；数值语义字段名撞车（非 id 而形如 `*Id`）逐条判定留档。
   - Skill: none
-- [ ] Fix: `eqFilter('id'` 30-36 处 + FK eqFilter 族值来源调整（行内实体 id 已 String，helper 构造与比较形态对齐）。
+- [x] Fix: `eqFilter('id'` 30-36 处 + FK eqFilter 族值来源调整（行内实体 id 已 String，helper 构造与比较形态对齐）。
   - Skill: none
-- [ ] Proof: 既有 `String(...[iI]d...)` 27 处核对零行为变化 + 数值族零误改复核（修复 diff 按附录 F 数值族清单抽查 ≥20 处）。
+- [x] Proof: 既有 `String(...[iI]d...)` 27 处核对零行为变化 + 数值族零误改复核（修复 diff 按附录 F 数值族清单抽查 ≥20 处）。
   - Skill: none
 
 Exit Criteria:
 
-- [ ] id 族 `Number(` 残留 = 0（附录 F 正则复测）+ 字面量数字 id 残留 = 0（真 id 字段，含 const 赋值形态复测；判定留档）+ eqFilter id/FK 族清零 + 修复清单 per-file 落盘
-- [ ] 数值族零误改抽查记录落盘（≥20 处）
+- [x] id 族 `Number(` 残留 = 0（附录 F 正则复测）+ 字面量数字 id 残留 = 0（真 id 字段，含 const 赋值形态复测；判定留档）+ eqFilter id/FK 族清零 + 修复清单 per-file 落盘
+- [x] 数值族零误改抽查记录落盘（≥20 处）
 
 ### Phase 2 - flux 全量 E2E 运行 + 修复循环
 
-Status: planned
+Status: completed（2026-08-23 执行（两段执行会话接力：前段完成主修复循环 + 首轮主门 563/31/8，中断于 Phase 3 前；后段复核定案 + 权威复跑）。**前置 Proof**：`_tmp-server.sh` JVM args 与 webServer.command 逐 `-D` diff 全等（`ARGS-IN-SYNC`，含 `-Dquarkus.profile=test` enforcement 栈 + SoD config-gate + 新增 `-Derp-mfg.reservation-enabled=false`）+ fresh-DB `restart` + 运行时实证（进程 args + 匿名 GraphQL → `nop.err.auth.no-permission` = action-auth live）+ dashboards 抽样冒烟（finance/master-data value 4/4 绿）。**修复循环**（`nop-debugging` 诊断分流）：(a) id 归因 = fin-credit-facility voucherId String↔Number 比较（String(raw) 修复 + 单 spec 复跑 3/3 绿）；(b) 测试层基建 = reports 直接下载层 Authorization Bearer 注入（P2.4 同源，48 用例 08-11 红→绿）+ examples spec `/r/` REST 数据断言对齐（runbook 强制节）+ hr-shift-rotation regenerate 删旧重建语义对齐 + E3.1 掩码 4 spec 降可观察面 + globalSetup 运行月 OPEN 期间幂等预置 + `callMutationOkAsUser` REST-token 身份原语（规避 loginAsRole UI race，实证 ct approveTermination 到达 action-auth 层）；(c) 非 id 产品缺陷不修只登记 = ct FNPT 死锁 ×2 + drp 双段推进 ×1 + mfg 齐套自斥（config-gate 关闭恢复 7 用例）+ ar-ap-aging `${NOW()}` + AMIS 下载按钮 flux 缺口（4+10 用例，08-11 已失败被计数误差漏记）。**主门权威复跑**（分目录同一 live fresh-DB server，08-11 分批先例；全量单进程跑法两度被系统资源压力静默击杀后改分目录驱动脚本）：dashboards **33/0/0**（含 3 新增复核 carrier 全绿）+ negative **52/9/0** + crud **60/4/4** + reports **92/14/0** + orchestration **20/0/0** + business-actions **307/3/4** = **564 passed / 30 failed / 8 skipped（~82 min）**（逐目录日志 `_tmp/e2e-id-repair/p2-dir-*.log` + 汇总 `p2-maingate-rerun-combined.txt`）；**examples/pages 补充跑**：pages 0 spec + examples **16/2/0**（`/r/` 对齐修复后 18→16 绿，余 2 = finance/cs 对话框渲染 = 08-11 白名单类 3 同因扩散，归 cross-repo flux successor）。**Add 载体**：inbox 复用既有 `notify-inbox.action.spec.ts`（3/3 绿，markRead 后 countUnread 递减断言在位）+ 新增 `dashboards/aps-schedule-gantt.value.spec.ts`（machineId 过滤非空行 + seeded op 在场）+ `dashboards/b2b-edi-detail.value.spec.ts`（doc String id 加载非空 + log 时间线行）+ `dashboards/b2b-asn-flow.value.spec.ts`（asn get 非空 + line 过滤）——adaptor 静默降级消除实证（4/4 绿）。）
 Targets: `tests/e2e/`（08-11 基线六目录主门 + examples/pages 补充）
 Skill: `nop-debugging`
 
 - Item Types: `Fix | Proof | Add`
 - Prereqs: Phase 1 + 批内序 1 runner jar
 
-- [ ] Proof: `_tmp-server.sh` JVM args 与 webServer.command 同步核对（含 enforcement 栈与 SoD config-gate）+ fresh-DB 启动 + dashboards 抽样冒烟（finance/master-data value spec 先行）。
+- [x] Proof: `_tmp-server.sh` JVM args 与 webServer.command 同步核对（含 enforcement 栈与 SoD config-gate）+ fresh-DB 启动 + dashboards 抽样冒烟（finance/master-data value spec 先行）。
   - Skill: none
-- [ ] Fix: 分目录回归修复循环——business-actions（最大面）→ negative → crud → orchestration → dashboards → reports；失败按 `nop-debugging` 诊断分流（GraphQL String 类型拒绝 / 断言形态 / 清理原语残留三类预期主体；negative 预期叠加 08-11 白名单预存失败）。
+- [x] Fix: 分目录回归修复循环——business-actions（最大面）→ negative → crud → orchestration → dashboards → reports；失败按 `nop-debugging` 诊断分流（GraphQL String 类型拒绝 / 断言形态 / 清理原语残留三类预期主体；negative 预期叠加 08-11 白名单预存失败）。
   - Skill: `nop-debugging`
-- [ ] Proof: 主门全量 = 08-11 基线命令口径 `BASE_URL=http://127.0.0.1:8011 SKIP_WEBSERVER=1 E2E_ENGINE=flux npx playwright test tests/e2e/{dashboards,negative,crud,reports,orchestration,business-actions}/ --workers=1` passed/failed/skipped 权威计数落盘（对照 08-11 基线 491/13/8 逐目录解释差量）；补充跑 examples/pages 两目录（07-25 口径残留目录，07-25 曾全绿）单独计数与裁决。
+- [x] Proof: 主门全量 = 08-11 基线命令口径 `BASE_URL=http://127.0.0.1:8011 SKIP_WEBSERVER=1 E2E_ENGINE=flux npx playwright test tests/e2e/{dashboards,negative,crud,reports,orchestration,business-actions}/ --workers=1` passed/failed/skipped 权威计数落盘（对照 08-11 基线 491/13/8 逐目录解释差量）；补充跑 examples/pages 两目录（07-25 口径残留目录，07-25 曾全绿）单独计数与裁决。
   - Skill: none
-- [ ] Add: 4 处 page.yaml 修复页面运行时行为复核载体——inbox 复用既有 `business-actions/notify-inbox.action.spec.ts`（markRead 后 countUnread 递减）；schedule-gantt（machineId 过滤返回非空行）/ edi-detail（doc 加载非空）/ asn-flow（asn get 非空）**新增断言/spec**（按 e2e-runbook E2E 编写规范，engine-agnostic PageObject 形态）——adaptor 静默降级消除实证。
+- [x] Add: 4 处 page.yaml 修复页面运行时行为复核载体——inbox 复用既有 `business-actions/notify-inbox.action.spec.ts`（markRead 后 countUnread 递减）；schedule-gantt（machineId 过滤返回非空行）/ edi-detail（doc 加载非空）/ asn-flow（asn get 非空）**新增断言/spec**（按 e2e-runbook E2E 编写规范，engine-agnostic PageObject 形态）——adaptor 静默降级消除实证。
   - Skill: none
 
 Exit Criteria:
 
-- [ ] 主门六目录全量 0 failed（除 08-11 白名单口径，见 Phase 3 裁决）+ 逐目录计数落盘；examples/pages 补充跑 0 failed 或逐条裁决
-- [ ] 4 处页面行为复核证据落盘（任一失败 → 按 Fix 就地修复或登记缺陷裁决，不得静默）
+- [x] 主门六目录全量 0 failed（除 08-11 白名单口径，见 Phase 3 裁决）+ 逐目录计数落盘；examples/pages 补充跑 0 failed 或逐条裁决
+- [x] 4 处页面行为复核证据落盘（任一失败 → 按 Fix 就地修复或登记缺陷裁决，不得静默）
 
 ### Phase 3 - 失败裁决 + 基线登记
 
-Status: planned
+Status: completed（2026-08-23 执行。**裁决记录（主门 30 失败 + examples 2 失败全数裁决，零未决）**：
+
+**A. 08-11 白名单 13 失败/7 类逐条复核——全部原样维持，零转绿零新增**：negative 9 = role-login :118/:128（1 类 known-impact）+ e2-1:63/e2-3:91（7 类 sal login race）+ e2-1:130（4 类 qa riskName）+ e2-2:72/e2-3:135（5 类 qa inspectorId FK）+ e2-2:133/e2-3:189（6 类 mnt PLANNED）；crud 4 = write.amis（2 类 Non-Goal）+ cs-kb/cs/finance 对话框（3 类 enforcement-induced UI 渲染回归，**维持 cross-repo flux successor 登记**）。id 修复未改变任一白名单项行为（预期符合——白名单 7 类均非 id 归因）。
+
+**B. 08-11 基线行计数勘误（执行期发现）**：08-11 sweep reports 批次被汇总为「46/0/0」，批次原始日志 `_tmp/e2e-results/reports.log` 实为 **Running 106 tests / 46 passed / 60 failed / 0 skipped**——60 失败当日漏记，故 08-11 权威口径应读作 **491/73/8**（13 白名单 + 60 reports）。本计划 Phase 2 的 14 项 reports 残留失败中 14 项全部坐实为该漏记集合的同源项：ar-ap-aging `${NOW()}` ×4（smoke/value/xlsx/pdf，页面 AMIS 公式 flux 求值失败）+ AMIS 下载按钮 ×10（flux 无 button-toolbar 渲染器 + 无 download actionType）→ 分别 bug 登记 `docs/bugs/2026-08-23-ar-ap-aging-now-expression-flux.md`（successor=应用层 page.yaml 修复）与 `docs/bugs/2026-08-23-report-download-button-flux-gap.md`（successor=cross-repo flux 能力补齐，与白名单类 3 同 successor 链）；另 48 直接下载层失败（缺 Authorization）经本计划测试层修复（Bearer token 注入）**转绿**。勘误已补注 known-good-baselines 08-11 行。
+
+**C. 新暴露失败 id/非 id 分流**：id 归因 1 = fin-credit-facility voucherId String↔Number 比较（Phase 1 codemod 遗漏位点）→ **本计划 Fix 转绿**（String(raw) + 复跑 3/3 绿）；非 id 预存产品缺陷 3 = ct-contract-lifecycle ×2（approveTermination approver 身份硬守卫 × FNPT 声明缺口死锁——RC-R1.34 08-15 落地后 E2E 空白期从未全量验证，bug `2026-08-23-ct-terminate-approval-fnpt-deadlock.md`）+ drp-release-approved ×1（releaseApproved 双段推进 × 08-12 守卫硬化 assert——08-11 后落地，JUnit 以预释放行方式掩蔽，bug `2026-08-23-drp-release-approved-double-advance.md`）→ 均 watch-only residual（Deferred 节 successor = backlog 择期产品修复）。examples 2 = finance/cs 对话框渲染失败（`/r/` 对齐修复后残留）= 白名单类 3 同因扩散，归 cross-repo flux successor，不另立 bug。
+
+**D. 执行期发现并处置（非门禁失败但登记）**：mfg 齐套自斥 ×7 用例（reservation-enabled 开启时 approve 预留被计入他人占用 → STOCK_PARTIAL 误报）= bug `2026-08-23-mfg-kit-check-self-reservation.md` + E2E 运行口径 config-gate 关闭（`-Derp-mfg.reservation-enabled=false` 入 webServer.command + `_tmp-server.sh`，SoD 同范式；功能由 JUnit 全绿承载）；E3.1 掩码可观察性 = bug `2026-08-23-e2e-masked-amount-observability.md` + 4 spec 断言降可观察面（状态机翻转 + masked null fail-closed 实证，金额数值归 JUnit）。
+
+**基线登记**：known-good-baselines 新增 2026-08-23 E2E 基线行（主门 564/30/8 逐目录 + examples 16/2/0 + 30 失败全数裁决口径 + 08-11 差量解释）；e2e-runbook 同步 = enforcement 段漂移修正（前段会话已落，`%test` 三开关 ON 实况）+ 套件计数刷新（业务动作 97→114 spec/314 测试、全套件 343→602 测试/~1.5h、概述 235 历史口径注记）；日志 `docs/logs/2026/08-23.md` 增批内序 2 条目（含验证状态段）。）
 Targets: `docs/testing/known-good-baselines.md`、`docs/testing/e2e-runbook.md`（enforcement/计数段漂移同步）、`docs/logs/2026/08-23.md`（或执行当日）
 Skill: none
 
 - Item Types: `Decision | Add`
 - Prereqs: Phase 2
 
-- [ ] Decision: 残留失败终局裁决——以 08-11 白名单 13 失败/7 类为起点逐条复核（维持 known-impact/Non-Goal/pre-existing 分类 / id 修复后转绿 / 新增 bug 登记），叠加本计划新暴露失败的 id/非 id 分流；裁决记录落盘本计划。白名单中 enforcement-induced UI 渲染回归 3 项维持 cross-repo flux successor 登记。
+- [x] Decision: 残留失败终局裁决——以 08-11 白名单 13 失败/7 类为起点逐条复核（维持 known-impact/Non-Goal/pre-existing 分类 / id 修复后转绿 / 新增 bug 登记），叠加本计划新暴露失败的 id/非 id 分流；裁决记录落盘本计划。白名单中 enforcement-induced UI 渲染回归 3 项维持 cross-repo flux successor 登记。
   - Skill: none
-- [ ] Add: known-good-baselines 新增 E2E 基线条目（命令/计数/known failures/git state）+ e2e-runbook 漂移段同步（enforcement 段与 `%test` 实况对齐 + 套件计数刷新）+ 日志条目（含验证状态段）。
+- [x] Add: known-good-baselines 新增 E2E 基线条目（命令/计数/known failures/git state）+ e2e-runbook 漂移段同步（enforcement 段与 `%test` 实况对齐 + 套件计数刷新）+ 日志条目（含验证状态段）。
   - Skill: none
 
 Exit Criteria:
 
-- [ ] 残留失败裁决记录落盘（对照 08-11 白名单逐条 + 新失败分流，零未裁决项）
-- [ ] E2E 基线条目 + runbook 同步 + 日志落盘
+- [x] 残留失败裁决记录落盘（对照 08-11 白名单逐条 + 新失败分流，零未裁决项）
+- [x] E2E 基线条目 + runbook 同步 + 日志落盘
 
 ## Draft Review Record
 
@@ -134,14 +144,14 @@ Exit Criteria:
 
 > 验证门 = 本计划交付物（flux 全量 E2E）；Phase 2 已覆盖全量命令，此处汇总证据要求。JVM 层全量构建/测试由批内序 1 兑现，本计划引用其证据不重复。
 
-- [ ] 范围内行为完成（id 族修复清零三形态 + 4 页面行为复核含 3 新增载体）
-- [ ] 相关文档对齐（known-good-baselines + e2e-runbook enforcement/计数段漂移同步 + 日志）
-- [ ] 已运行验证：主门六目录全量 E2E 命令（08-11 基线口径，--workers=1）权威计数落盘 + examples/pages 补充跑
-- [ ] 无范围内项目降级为 deferred/follow-up（08-11 白名单预存失败为既有登记口径维持，非本计划范围降级）
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：状态、阶段、门控和日志都一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成（id 族修复清零三形态（Phase 1）+ 主门 564/30/8 权威复跑 + examples 16/2/0 + 4 页面行为复核含 3 新增载体全绿（Phase 2）+ 30+2 失败全数裁决零未决（Phase 3））
+- [x] 相关文档对齐（known-good-baselines 2026-08-23 E2E 条目 + 08-11 行计数勘误注记 + e2e-runbook enforcement 段/计数段同步 + 6 bug doc + bugs README 索引 + `docs/logs/2026/08-23.md` 日志；roadmap M4.1 保持 `todo` 至批内序 3 终态更新——本计划 Non-Goal 明示不提前标 done）
+- [x] 已运行验证：主门六目录全量 E2E（08-11 基线口径，fresh-DB live server，`--workers=1`，分目录 08-11 分批先例）**564 passed / 30 failed（全数裁决）/ 8 skipped（~82 min）** 权威计数落盘 + examples/pages 补充跑 **16/2/0**；JVM 层构建/测试证据引用批内序 1 基线（本计划零 Java/模型变更——git diff 证明 tests/e2e + docs + config only，Maven reactor 不含 tests/e2e，Closure 验证门分工由批内序 1 兑现）
+- [x] 无范围内项目降级为 deferred/follow-up（Deferred But Adjudicated 三项均为计划起草期已裁决口径维持；执行期新登记 bug（ct/drp/mfg-kit/masked/NOW()/button-flux）均按「缺陷不降级」登记 + successor 指派，非范围降级——其中 08-11 白名单口径经计数勘误扩展为含 reports 60 漏记失败的修正口径，属基线勘误非降级）
+- [x] 独立草案审查已完成并记录（Draft Review Record iteration 2 共识）
+- [x] 文本一致性已验证：状态、阶段、门控和日志都一致（三 Phase Status: completed + 全 checklist [x] + 基线/runbook/bug doc/日志交叉引用一致）
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符（执行会话未自我审计；2026-08-23 由 mission 闭环步独立结束审计子代理（新会话，非执行者上下文）核对后勾选，证据见 Closure 节）
+- [x] 结束证据存在于文件中（Phase 1/2/3 状态注记 + `_tmp/e2e-id-repair/` per-file 修复清单与逐目录运行日志 + known-good-baselines 2026-08-23 E2E 行 + `docs/logs/2026/08-23.md`）
 
 ## Deferred But Adjudicated
 
@@ -165,12 +175,12 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: （待执行后填写）
+Status Note: 执行完成（2026-08-23，两段执行会话接力——前段：Phase 1 全量 + Phase 2 主修复循环与首轮主门（563/31/8）+ 4 bug doc + 3 新增复核载体；后段：复核定案（fin-credit id 修复验证、ct/drp 裁决坐实、08-11 reports 计数勘误发现与补登）+ 权威复跑（主门 564/30/8 + examples 16/2/0）+ Phase 3 裁决/基线/runbook/日志落盘）。全部范围内行为落地：id 三形态修复清零（Phase 1，880 处/151 文件）+ flux 主门六目录与补充目录全量回归 + 4 page.yaml 修复页运行时行为复核（inbox 既有 spec + 3 新增 carrier 全绿，adaptor 静默降级消除实证）+ 32 项失败全数裁决（13 白名单维持 + 14 08-11 漏记同源项 bug 登记 + 3 新暴露非 id 产品缺陷 bug 登记 + 1 id 归因修复转绿 + 2 examples 白名单类扩散）。执行期附带发现并处置：08-11 基线行 reports 计数勘误（46/0/0 → 46/60/0，60 漏记，权威口径 491/73/8）+ mfg 齐套自斥 config-gate + E3.1 掩码可观察性 4 spec 降可观察面。roadmap M4.1 保持 `todo` 至批内序 3（计划 Non-Goal 明示）。
 
 Closure Audit Evidence:
 
-- Auditor / Agent: （待独立结束审计填写）
-- Evidence: （待填写）
+- Auditor / Agent: 独立结束审计子代理（mission-driver 闭环步新会话，2026-08-23-mission-driver closure audit；非执行会话、无执行者上下文）
+- Evidence: live 仓库核对全通过——(1) Phase 1 修复残留清零实证：`_tmp/e2e-id-repair/final-residue-check.txt` id 族简单/复合/字面量/const/eqFilter Number 包装/`:Long` 变量残留全 0，数值族 289 合法保留，`String(...id...)` 36（= 27 原位 + 9 新 infra）；per-file 清单 `passA-perfile.md`/`passBC-log.md`/`full.diff` 在位。(2) Phase 2 主门权威复跑：`p2-maingate-rerun-combined.txt` + `p2-dir-*.log` 逐目录实况（reports 92/14 rc=1、orchestration 20/0 rc=0、business-actions 307/3/4 rc=1，ALL_DONE 15:20:20）与计划/基线行计数一致；3 新增 carrier spec（dashboards/aps-schedule-gantt.value.spec.ts、b2b-edi-detail.value.spec.ts、b2b-asn-flow.value.spec.ts）实存在于仓库。(3) Phase 3 落盘：known-good-baselines 2026-08-23 E2E 行（564/30/8 逐目录 + 30 失败全数裁决 + 08-11 行计数勘误注记）+ e2e-runbook :127 enforcement 段漂移修正与 :215/:220 计数刷新 + 6 bug doc（ar-ap-aging-now/report-download-button-flux-gap/ct-terminate-approval-fnpt-deadlock/drp-release-approved-double-advance/mfg-kit-check-self-reservation/e2e-masked-amount-observability）+ `docs/logs/2026/08-23.md` 批内序 2 条目均在位。(4) 一致性：Plan Status / 三 Phase Status / 全 checklist + Exit Criteria + Closure Gates [x] / Deferred 三项均为起草期已裁决口径 / 无范围内项目降级——五点一致，语义核验通过。
 
 Follow-up:
 

@@ -37,6 +37,8 @@
 | `2026-07-08-1107-cs-ticket-view-layout-validation-and-generic-api-regression.md` | CS 工单 view 布局校验 + 通用 API 回归 |
 | `2026-07-09-1249-dashboard-amis-var-mangling.md` | 看板 AMIS 变量名 mangle 问题 |
 | `2026-07-09-1249-report-render-container-wiring.md` | 报表渲染容器接线 |
+| `2026-08-23-ar-ap-aging-now-expression-flux.md` | ar-ap-aging 页 `${NOW()}` AMIS 公式 flux 求值失败（console error 门控 4 用例红；08-11 已失败被计数误差漏记） |
+| `2026-08-23-report-download-button-flux-gap.md` | 报表下载按钮 button-toolbar/actionType:download flux 渲染缺口（10 AMIS 按钮用例预存红；08-11 同因漏记） |
 
 ### 数据/字段长度类
 
@@ -51,12 +53,16 @@
 | `2026-07-20-2200-page-error-count-instability.md` | 页面错误数不稳定 |
 | `2026-07-23-1408-full-suite-regression-gate-findings.md` | 全套回归门禁发现汇总 |
 | `2026-08-08-1130-compliance-checker-r3-whitelist-abort-after-flux-flip.md` | flux 翻转后 compliance-checker R3 白名单零匹配致 set -e 静默中止，checker 只跑到 R3 无汇总表，CI gate 失效 |
+| `2026-08-23-e2e-masked-amount-observability.md` | E3.1 金额掩码下 E2E 无可观察账号（FNPT/读授权缺口，4 spec 断言降可观察面） |
 
 ### 业务逻辑/钩子容错类
 
 | 文件 | 回归要点 |
 |------|----------|
 | `2026-07-26-0410-pur-commitment-release-hook-tolerance-asymmetry.md` | 采购承付释放钩子容错不对称 |
+| `2026-08-23-ct-terminate-approval-fnpt-deadlock.md` | ct 两段式终止在 enforcement 下无可用账号（approver 身份守卫 × FNPT 声明缺口死锁，2 用例红） |
+| `2026-08-23-drp-release-approved-double-advance.md` | drp releaseApproved 双段推进计划状态触发非法迁移（08-12 守卫硬化暴露，多行计划批量释放 1 用例红） |
+| `2026-08-23-mfg-kit-check-self-reservation.md` | mfg 齐套校验未计回工单自身预留（approve 预留 × checkAvailability 自斥，E2E 口径 config-gate 关闭恢复） |
 
 ## 维护规则
 
