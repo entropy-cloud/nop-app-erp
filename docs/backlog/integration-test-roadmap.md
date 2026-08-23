@@ -1,6 +1,6 @@
 # 集成测试路线图（系统级黄金路径回归套件）
 
-> 最后更新：2026-08-15（v3 — 经 3 路独立子 agent 审查（规范合规/可执行性/覆盖面）后修订：删除 B1-Bn 占位工作项行（对齐 entity-state-machine 范本「不预注册」纪律）；M0.2 升级为「机制裁决点 + 待证风险清单 + 失败回退」（JunitAutoTestCase 硬编码 NopJunitExtension 与手动初始化模式矛盾、CHECKING 态 DB 组成、surefire 并行 fork × 文件型 H2 竞态）；新增产品缺陷修复路径横切关注点；V.1 改全量 reactor `mvn test` + 零回归边界定义；README 登记入 V.2 义务；seed 计数修正 94 CSV + 1 SQL；RC-R1.43+ 表述修正为 RC-R1.44+；其余 12 项 MINOR 全部采纳；复审 1 残留 MAJOR + 3 MINOR 全部修订，Draft Review Record 持久化）
+> 最后更新：2026-08-23（**M0.1 done——集成测试用例设计文档定稿**：plan `docs/plans/2026-08-23-1835-1-m01-integration-test-case-design.md` 三 Phase 完成 + 两轮独立子代理审查收敛（0 BLOCKER 全程，末轮 0 MAJOR）+ 独立结束审计 passes（设计文档 §10 持久化审查记录 + 计划 Closure 段审计证据）。产出 `docs/design/integration-testing.md`：**22 用例**（六要素全量设计 + 复杂度判据）、覆盖矩阵 19/19 域 ≥2 次（Σ=88 显式算术核验）、机制选型 **(c) 抑制 tableInit 的文件 H2 双模方案** 选定 + 四风险判定方法（M0.2 试点 1-4 可逐项实证）、粒度约定（1 用例 = 1 类 1 方法）+ 耗时模型（22 类 ≈ 8-26 分钟）、xwf 规避清单、M0.3 分批建议（10 批 B1-B10）。下一步 M0.2（基建试点 + 机制裁决）依赖本设计文档）
 > 来源：用户需求（2026-08-15）+ 需求澄清（两轮 question 全部裁决）+ 3 路独立子 agent 审查记录（2026-08-15 v1→v2）
 > 规范：`docs/backlog/00-roadmap-authoring-guide.md`
 > 执行：mission driver（`./tools/mission-driver.sh run integration-test`）；roadmap 状态块为唯一动态状态真相源
@@ -20,7 +20,7 @@
 
 | # | Work Item | Status | Owner Doc | Deps | Skill |
 |---|---|---|---|---|---|
-| M0.1 | 集成测试用例设计文档（`docs/design/integration-testing.md`）：15-25 用例全量设计（每用例含业务目标/前置 seed/关键路径步骤/三层断言/主导域/涉及域），覆盖全 19 子系统每域至少 1 次；**含用例覆盖矩阵（每域出现次数，目标每域 ≥2 次）验收表**；**含测试机制选型论证与可行性判据（见下方 M0.1 规格）**；独立子代理审查收敛 | todo | `docs/design/integration-testing.md` | — | `nop-testing` |
+| M0.1 | 集成测试用例设计文档（`docs/design/integration-testing.md`）：15-25 用例全量设计（每用例含业务目标/前置 seed/关键路径步骤/三层断言/主导域/涉及域），覆盖全 19 子系统每域至少 1 次；**含用例覆盖矩阵（每域出现次数，目标每域 ≥2 次）验收表**；**含测试机制选型论证与可行性判据（见下方 M0.1 规格）**；独立子代理审查收敛 | done（2026-08-23：plan `docs/plans/2026-08-23-1835-1-m01-integration-test-case-design.md` 三 Phase 完成——设计文档 22 用例/19 域 ≥2 次/机制选型 (c) 选定 + 四风险判定方法/粒度约定 + 耗时模型/xwf 规避清单，两轮独立子代理审查收敛（0 BLOCKER 全程，末轮 0 MAJOR），设计文档 §10 持久化审查记录；roadmap 头「最后更新」注记；独立结束审计证据见该计划 Closure 段） | `docs/design/integration-testing.md` | — | `nop-testing` |
 | M0.2 | 基建试点与**机制裁决**：app-erp-all 集成测试脚手架 + 1 个试点用例证明三层全比对机制可行（录制→校验往返）；**逐项实证 M0.1 选型机制的待证风险清单并记录结论**；试点失败时按回退路线降级（见下方 M0.2 规格） | todo | `docs/testing/e2e-runbook.md`（注记） | M0.1 | `nop-testing` |
 | M0.3 | 依 M0.1 设计文档向 M1-Bn 里程碑追加 B1-Bn 分批工作项（按主导域分组 8-12 批，每批 1 工作项 2-3 用例，优先 18-22 用例校准），行内含用例编号/涉及域/Skill | todo | `docs/design/integration-testing.md` | M0.1 + M0.2 | none |
 
