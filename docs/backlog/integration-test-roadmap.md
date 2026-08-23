@@ -1,6 +1,6 @@
 # 集成测试路线图（系统级黄金路径回归套件）
 
-> 最后更新：2026-08-23（**M0.3 done——依设计文档向 M1-Bn 追加 B1-B10 分批工作项**：plan `docs/plans/2026-08-23-1835-3-m03-batch-work-item-expansion.md` 完成——依 `docs/design/integration-testing.md` §8 分批建议向 M1-Bn 表追加 10 批 22 用例（B1-B10，每批 2-3 用例，主导域分组，行含用例编号集/涉及域/依赖/Skill `nop-testing`），用例编号集 = 设计文档用例全集（C01-C21 含 C20a/C20b）一一对应无发明无遗漏；分批核对通过（10 批 ∈ 8-12、每批 2-3 用例、覆盖矩阵 19/19 域 ≥2 次 Σ88 无回落）；独立子代理审查收敛；roadmap 头「最后更新」注记 + 日志。下一步 B1-Bn 分批执行（每批一个 plan：独立 plan-audit → 执行 → 独立 closure audit → 写回 `done`））
+> 最后更新：2026-08-23（**B1 done——plan `docs/plans/2026-08-23-2133-1-b1-c01-c02-purchase-p2p-return.md` 三 Phase 完成**：C01 `TestErpC01P2pGoldenPath`（P2P 采购到付款黄金路径：PO 2 行→Receive→Invoice→Payment xwf setUserId("0") 复核成立→settle→reconciliation 核销，GL 应付余额 VoucherLine 聚合双裁决） + C02 `TestErpC02PurReturnRefund`（采购退货闭环：自包含合同+已过账链→退货红字凭证+负 AP+余额回减）RECORDING→CHECKING 往返全绿；全量回归 3811/0/0/1（+2 全额归因 B1，零新增失败）+ app-erp-all 31/0/0/1 + `mvn clean install -DskipTests` BUILD SUCCESS；roadmap B1 → done。下一步 B2 分批执行（plan `docs/plans/2026-08-23-2133-2-b2-c03-c04-sales-o2c-return.md`））
 > 来源：用户需求（2026-08-15）+ 需求澄清（两轮 question 全部裁决）+ 3 路独立子 agent 审查记录（2026-08-15 v1→v2）
 > 规范：`docs/backlog/00-roadmap-authoring-guide.md`
 > 执行：mission driver（`./tools/mission-driver.sh run integration-test`）；roadmap 状态块为唯一动态状态真相源
@@ -31,7 +31,7 @@
 
 | # | Work Item | Status | Owner Doc | Deps | Skill |
 |---|---|---|---|---|---|
-| B1 | C01, C02（P2P 采购到付款黄金路径 / 采购退货与退款闭环；主导域 purchase；涉及 pur, inv, fin, md, ct） | todo | `docs/design/integration-testing.md` §6 | M0.1 + M0.2 | `nop-testing` |
+| B1 | C01, C02（P2P 采购到付款黄金路径 / 采购退货与退款闭环；主导域 purchase；涉及 pur, inv, fin, md, ct） | done（2026-08-23：plan `docs/plans/2026-08-23-2133-1-b1-c01-c02-purchase-p2p-return.md` 三 Phase 完成——C01 `TestErpC01P2pGoldenPath`（PO 2 行物料→Receive→Invoice→**Payment 全链（xwf setUserId("0") 复核成立，app-erp-all 装配实证）→ `ErpPurPayment__settle` 域级核销 → `ErpFinReconciliation` 辅助账核销**，AP 项 SETTLED openAmount=0 + GL 应付余额 VoucherLine 聚合双裁决（正式应付口径 AP_INVOICE/PAYMENT credit−debit 净额，gl_balance 表不作断言源）+ 19 步 input/20 response 快照 + 26 表变更行）+ C02 `TestErpC02PurReturnRefund`（自包含合同 ErpCtContract__save+get 退货条款前置核对（Phase 2 合同数据来源裁决 = 自包含建数，未触发 seed 修正授权）→ 自包含已过账链 → 退货红字凭证 2202借/1401贷 + 反向 OUTGOING 移动 + PUR_RETURN 负项 −20 + 余额回减 36.5 + findOpenItemsByPartner 反查 + 18 步快照 + 19 表变更行）两用例 RECORDING→CHECKING 往返全绿；全量回归 3811/0/0/1（对照 3809/0/0/1 差量 +2 tests 全额归因 B1 两用例类，零新增失败）+ `mvn test -pl app-erp-all` 31/0/0/1（29 基线 + 2）+ `mvn clean install -DskipTests` BUILD SUCCESS；日志 `docs/logs/2026/08-23.md` + 基线差量登记 known-good-baselines.md） | `docs/design/integration-testing.md` §6 | M0.1 + M0.2 | `nop-testing` |
 | B2 | C03, C04（O2C 销售到收款黄金路径 / 销售退货与客服联动；主导域 sales；涉及 sal, inv, fin, md, b2b, crm, cs） | todo | `docs/design/integration-testing.md` §6 | M0.1 + M0.2 | `nop-testing` |
 | B3 | C05, C06（库存到岸成本分摊过账 / 库存成本流转与 COGS 核算；主导域 inventory；涉及 inv, pur, fin, log, sal, mfg, qa） | todo | `docs/design/integration-testing.md` §6 | M0.1 + M0.2 | `nop-testing` |
 | B4 | C07, C08, C21（制造工单全生命周期与完工过账 / MRP→APS→工单释放 / APS 排程发布与产能负荷；主导域 manufacturing + aps；涉及 mfg, aps, inv, pur, fin） | todo | `docs/design/integration-testing.md` §6 | M0.1 + M0.2 | `nop-testing` |
