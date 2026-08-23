@@ -257,28 +257,32 @@
 
 #### C05 库存到岸成本分摊过账
 
+> **实施期勘误登记（2026-08-23，B3）**：(1) **审批轴动作名漂移**——原述「save → submitForApproval → approve」为漂移，实仓 `ErpInvLandedCostBizModel` 无 `submitForApproval`（仅 approve/reverseApprove/allocate/generateFreightLandedCost），用例按 **approve-only** 落地；(2) **数据来源**——收货链 + 物流运费（`ErpLogCarrier`/`ErpLogShipment`，无 erp_log_* seed）全部自包含建数，未触发 seed 修正授权；(3) **BY_AMOUNT 分摊基数**——`LandedCostAllocationEngine` 基数 = 入库行 `amount`（0 即抛 NO_LINES），收货行须显式置 amount（C01/C02 收货行无 amount 不影响其断言）；(4) **成本层语义**——MOVING_AVERAGE 成本调整只更新 balance 不动 cost_layer（`CostAdjustmentService.applyAverageLike`），C05 物料取 **FIFO**（分摊 delta 调整层追加，Σ cost_layer totalCost = 原成本 + 分摊运费成立）。B3 实施证据：`TestErpC05InvLandedCost`。
+
 - **业务目标**：到岸成本闭环——采购运费（logistics）归集 → 到岸成本单审批 → LANDED_COST 凭证 + 成本层更新。复杂度判据：跨 4 域 + 审批 + 过账 ✓。
-- **前置**：`[seed]` 已收货采购链（erp_pur_receive）+ `[seed]` 物流运费（erp_log_*）+ `[自包含]` 到岸成本单（FREIGHT 费用行）。
+- **前置**：`[seed]` 主数据（组织 2 / SUP-001 供应商 3 / WH-RAW 仓库 2 / CNY 币种 1 / 2026-07 OPEN 期间）+ `[自包含]` 已收货采购链（PO→Receive approve posted，FIFO 物料 + 原成本层 10@5=50）+ `[自包含]` 承运商/物流运费（`ErpLogCarrier__save` + `ErpLogShipment__save`，来源核对 `ErpLogShipment__get` freightAmount=15）+ `[自包含]` 到岸成本单（FREIGHT 费用行 15）。
 - **关键路径步骤**：
   1. `ErpLogShipment__get`（运费来源核对）`[涉及域 logistics]`
-  2. `ErpInvLandedCost__save`（自包含，引用收货单 + 运费行）→ `ErpInvLandedCost__submitForApproval` → `ErpInvLandedCost__approve` `[审批轴: DIRECT]`（LANDED_COST 凭证 + cost_layer 更新，先例 TestErpInvLandedCostEndToEnd）
+  2. `ErpInvLandedCost__save`（自包含，引用收货单 + 运费行）→ **`ErpInvLandedCost__approve`（approve-only——实仓无 submitForApproval，勘误见上）** `[审批轴: DIRECT]`（LANDED_COST 凭证 + cost_layer Σ 更新，先例 TestErpInvLandedCostEndToEnd）
   3. `ErpInvStockBalance__findPage`（总成本断言）
 - **三层断言**：
-  - 层 1：LandedCost `approveStatus=APPROVED` + `posted=true`；LANDED_COST 凭证借贷平衡；cost_layer totalCost = 原成本 + 分摊运费；stock_balance.totalCost 联动。
-  - 层 2/层 3：每步快照 + 变更行（landed_cost + voucher + cost_layer + stock_balance）。
+  - 层 1：LandedCost `approveStatus=APPROVED` + `posted=true`；LANDED_COST 凭证借贷平衡（1401 借 15 / 2202 贷 15）；Σ cost_layer totalCost = 原成本 50 + 分摊运费 15 = 65（FIFO delta 层 unitCost=Δ 追加）；stock_balance.totalCost 联动（65）。
+  - 层 2/层 3：每步快照 + 变更行（landed_cost + voucher + cost_adjust + cost_layer + stock_balance + log_carrier/shipment）。
 - **主导域 / 涉及域**：inventory / inventory, purchase, finance, logistics。
 
 #### C06 库存成本流转与 COGS 核算（含质检门控）
 
+> **实施期勘误登记（2026-08-23，B3）**：(1) **门控配置值修正**——计划原文 `@NopTestProperty(name="erp-qua.mandatory-inspection-bill-types", value="PUR_RECEIPT")` 中 `PUR_RECEIPT` 为 QA 域自引用常量（`ErpQaConstants.RELATED_BILL_TYPE_PUR_RECEIPT`），而门控点 `ErpPurReceiveProcessor.enforceInspectionGate` 使用 `ErpPurConstants.RELATED_BILL_TYPE_PUR_RECEIVE = "ERP_PUR_RECEIVE"` → 用例配置值落地为 **`ERP_PUR_RECEIVE`**；(2) 负路径 = REJECTED 检验先行保存 → 审批阻断（`erp.err.pur.receive-inspection-blocked`）→ 单据保持 SUBMITTED 且无移动单；(3) 正路径 = ACCEPTED 检验先行保存 → 审批放行 + 内建 DONE 入库移动 + FIFO cost_layer（无显式 generateMove/confirm，见计划 Baseline）。B3 实施证据：`TestErpC06InvCostFlowCogs`。
+
 - **业务目标**：库存成本流转闭环——来料质检 → 入库 → 销售出库 COGS 核算（FIFO/MovingAverage），验证成本层与账本一致性。复杂度判据：跨 5 域 + 状态机 + 过账 ✓。
-- **前置**：`[seed]` 物料/仓库/币种 + `[自包含]` 采购入库（质检通过）+ 销售出库。
+- **前置**：`[seed]` 主数据（组织 2 / CUST-001 客户 1 / WH-MAIN 仓库 1 / CNY 币种 1 / 2026-07 OPEN 期间）+ `[自包含]` FIFO 物料 + `[自包含]` QA 来料检验（ACCEPTED 正路径 / REJECTED 负路径）+ `[自包含]` 采购入库 + 销售出库。
 - **关键路径步骤**：
-  1. `ErpQaInspection__save`（来料检验 ACCEPTED）→ 门控通过 `[涉及域 quality]`
-  2. `ErpInvStockMove__generateMove`（采购入库，from purchase receive）→ `confirm`（入库 + cost_layer 创建，先例 TestErpInvFifoCostingEndToEnd）
+  1. `ErpQaInspection__save`（来料检验 ACCEPTED/REJECTED，relatedBillType=ERP_PUR_RECEIVE）→ 门控通过/阻断 `[涉及域 quality]`
+  2. `ErpPurReceive__save` → `ErpPurReceive__approve`（门控放行后内建触发 DONE 入库移动 + FIFO cost_layer 创建，先例 TestErpInvFifoCostingEndToEnd；**无显式 generateMove/confirm**——显式 confirm 对 DONE 移动单非法 ERR_ILLEGAL_STATUS_TRANSITION）
   3. `ErpSalDelivery__approve`（出库，引用 C03 同型链）→ COGS 凭证
   4. `ErpInvStockBalance__findPage` + `ErpInvCostLayer__findPage`（余额/层断言）
 - **三层断言**：
-  - 层 1：入库后 stock_balance.totalQty/totalCost 正确；出库 COGS = 层成本（FIFO 先入先出口径，先例 TestErpInvFifoCostingEndToEnd）；质检 ACCEPTED 门控通过后方可入库（REJECTED 阻断断言——负路径）；账本（ledger）与余额一致。
+  - 层 1：入库后 stock_balance.totalQty/totalCost 正确（10/85）；出库 COGS = 层成本（FIFO 先入先出口径 6×8.5=51，先例 TestErpInvFifoCostingEndToEnd）；质检 ACCEPTED 门控通过后方可入库（REJECTED 阻断断言——负路径，错误码 `erp.err.pur.receive-inspection-blocked`）；账本（ledger.totalCost=-51）与余额一致（出库后 4/34）。
   - 层 2/层 3：每步快照 + 变更行（inspection + stock_move/line + stock_balance + cost_layer + voucher）。
 - **主导域 / 涉及域**：inventory / inventory, sales, finance, manufacturing（成品出库），quality。
 
