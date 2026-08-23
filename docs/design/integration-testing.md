@@ -337,6 +337,8 @@
 
 #### C09 质检门控与 NCR/CAPA/SCRAP 闭环
 
+> **实施期勘误登记（2026-08-24，B5）**：(1) **完工门控阻断点漂移**——步骤 1 原述「`ErpMfgWorkOrder__close` 被拒」为漂移：实仓唯一抛点 = `ErpMfgWorkOrderReportCompletionProcessor`（reportCompletion 达计划量且 `isInspectionGated`（config `erp-mfg.inspection-gate-enabled` + BOM `inspectionRequired=true`）抛 `erp.err.mfg.work-order.inspection-required`）；close 为 STOPPED/IN_PROCESS→CLOSED 结案动作放行（B4 C07 同型裁决）。(2) **NCR 生成路径**——步骤 2 原述「`ErpQaNonConformance__save`（从检验生成 NCR）」按实仓落地为 `recordResult` REJECTED 自动生成（sourceType=INSPECTION / sourceCode=质检单号 / quantity=lotQuantity）。(3) **通知动作面未实现**——步骤 4 原述「NCR 状态变更触发 `ErpSysNotification` 生成」实仓无此机制（QA 主代码无 NCR→notification 直连/订阅）→ 以 notify 域既有机制作可达断言路径（自包含模板 + `ErpSysNotification__notify` → markRead → countUnread 归零）。(4) **SCRAP 库存扣减不成立**——`NcrPostingDispatcher` 明确不扣物理库存（存货出库仅经凭证贷方 1401 表达，物理扣减属 inventory 域 successor 避免与 SALES_OUTPUT 双计）→ 断言替换为凭证借贷平衡 + 金额 = quantity × avgCost。(5) **BOM 门控正路径**——BOM 门控与检验结论无关（isInspectionGated 无条件阻断），`isInspectionCleared` 仅作 REJECTED=false 负路径断言（区别于 C06 PurReceive 门控的 ACCEPTED 放行语义）。B5 实施证据：`TestErpC09QaNcrCapaScrap`。
+
 - **业务目标**：质量闭环——完工质检 REJECTED 阻断完工 → NCR → CAPA 处置 → SCRAP 过账 + 通知派发。复杂度判据：跨 5 域 + 状态机 + 过账 ✓。
 - **前置**：`[seed]` 工单（IN_PROCESS，0930-1 seed）+ `[自包含]` 检验单（REJECTED）+ NCR + CAPA 动作。
 - **关键路径步骤**：
@@ -350,6 +352,8 @@
 - **主导域 / 涉及域**：quality / quality, manufacturing, inventory, finance, notify。
 
 #### C10 维护工单与备件消耗过账
+
+> **实施期勘误登记（2026-08-24，B5）**：(1) **状态机 5 态 → 六态**——步骤 1 原述「状态机 5 态」为漂移：实仓 `ErpMntRequestStateMachine` 为六态（OPEN/ACCEPTED/IN_PROGRESS/COMPLETED/REJECTED/CANCELLED，7 迁移边）。(2) **visit_task 不成立**——步骤 2 原述「访问完成 + visit_task」：`ErpMntVisitTask` 仅由 `ScheduleDueGenerator` 对 PLANNED 访问（计划到期生成）套用任务模板创建，accept 生成的 RESPONSIVE 访问明确不套任务模板（`ErpMntRequestAcceptProcessor` javadoc）→ 断言替换为访问终态 COMPLETED + 设备状态恢复 RUNNING + 关联请求终态 COMPLETED 写回 no-op（D6 联动）。(3) **备件库存数据来源**——seed MAT-003（WEIGHTED_AVERAGE）余额行无 location 与出库路径 location=sourceWarehouseId 不匹配（B4 C07 同型裁决）→ 备件物料/库存自包含建数（MOVING_AVERAGE + generateMove 入库，TestErpMntSparePartPosting 同型）。(4) **门控配置**——`erp-mnt.spare-part-posting-enabled` 默认 false，用例类级 `@NopTestProperty` 开启断言 MAINTENANCE_ISSUE 凭证（对齐 C08 simulation 门控同型处理）。B5 实施证据：`TestErpC10MntRequestSparePart`。
 
 - **业务目标**：维护闭环——设备维护请求 → 受理 → 访问 → 备件消耗 → MAINTENANCE_ISSUE 过账 + 设备状态联动。复杂度判据：跨 4 域 + 状态机 + 过账 ✓。
 - **前置**：`[seed]` 设备（0930-2 seed：RUNNING/DOWN）+ `[自包含]` 维护请求 + 访问 + 备件消耗。

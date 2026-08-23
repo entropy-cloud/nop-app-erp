@@ -1,6 +1,6 @@
 # 2026-08-24-0159-2-b5-c09-c10-quality-maintenance 批次 B5 用例实施：C09 质检门控与 NCR/CAPA/SCRAP 闭环 + C10 维护工单与备件消耗过账
 
-> Plan Status: active
+> Plan Status: completed
 > Mission: integration-test
 > Work Item: B5（C09, C10；主导域 quality + maintenance）
 > Last Reviewed: 2026-08-24
@@ -56,64 +56,64 @@
 
 ### Phase 1 — C09 质检门控与 NCR/CAPA/SCRAP 闭环（混合类型：1/3 Add + 1/3 Proof + 1/3 Decision，逐项标注）
 
-Status: planned
+Status: completed
 Targets: `app-erp-all/src/test/java/io/nop/app/all/it/TestErpC09QaNcrCapaScrap.java`、`app-erp-all/_cases/io/nop/app/all/it/TestErpC09QaNcrCapaScrap/`
 Skill: nop-testing
 
 - Item Types: `Add | Proof | Decision`
 - Prereqs: M0.1 + M0.2 + B1-B3 done
 
-- [ ] Add：**C09 测试类** `TestErpC09QaNcrCapaScrap`（1 类 1 方法）——按设计文档 §6 C09 规格 + `TestErpQaInspectionTrigger`/`TestErpQaNcrCapaEndToEnd`/`TestErpQaNcrPosting` 业务参照：自包含检验单（REJECTED）→ 完工门控阻断（错误码断言：**`erp.mfg.inspection-required`（mfg 实仓唯一抛点，`ErpMfgWorkOrderReportCompletionProcessor`）**）→ NCR save → submitReview → resolve（CAPA 三步或 noCapaReason 门控）→ `ErpQaNonConformance__postNcr`（SCRAP 处置过账：凭证借贷平衡 + 库存扣减）→ 通知断言（按下方裁决落地）；静态载荷走 `input/N_step.json5` + `addVar`/`@var:` 动态 id。
+- [x] Add：**C09 测试类** `TestErpC09QaNcrCapaScrap`（1 类 1 方法）——按设计文档 §6 C09 规格 + `TestErpQaInspectionTrigger`/`TestErpQaNcrCapaEndToEnd`/`TestErpQaNcrPosting` 业务参照：自包含检验单（REJECTED）→ 完工门控阻断（错误码断言：**`erp.mfg.inspection-required`（mfg 实仓唯一抛点，`ErpMfgWorkOrderReportCompletionProcessor`）**）→ NCR save → submitReview → resolve（CAPA 三步或 noCapaReason 门控）→ `ErpQaNonConformance__postNcr`（SCRAP 处置过账：凭证借贷平衡 + 库存扣减）→ 通知断言（按下方裁决落地）；静态载荷走 `input/N_step.json5` + `addVar`/`@var:` 动态 id。
   - Skill: nop-testing
-- [ ] Decision：**NCR 通知断言路径裁决**——核实实仓 NCR 状态变更是否触发 `ErpSysNotification` 生成（qa 域主代码未见直连调用；通知触发可能在 notify 域订阅机制或尚未实现）。选择 = 可达断言路径（如经 `IErpSysNotificationBiz.findUnread`/`markRead` 或 notify 域既有机制），备选 = 设计文档 §6 C09 步骤 4 勘误登记 + 改以可达替代断言；残留风险记录。同时裁决完工门控负路径的确切阻断点（close vs reportCompletion，对齐 B4 C07 完工驱动动作结论）。
+- [x] Decision：**NCR 通知断言路径裁决**——核实实仓 NCR 状态变更是否触发 `ErpSysNotification` 生成（qa 域主代码未见直连调用；通知触发可能在 notify 域订阅机制或尚未实现）。选择 = 可达断言路径（如经 `IErpSysNotificationBiz.findUnread`/`markRead` 或 notify 域既有机制），备选 = 设计文档 §6 C09 步骤 4 勘误登记 + 改以可达替代断言；残留风险记录。同时裁决完工门控负路径的确切阻断点（close vs reportCompletion，对齐 B4 C07 完工驱动动作结论）。
   - Skill: nop-testing
-- [ ] Proof：**C09 RECORDING→CHECKING 往返**——RECORDING 录制 → CHECKING 复跑全绿；层 1 锚点：REJECTED 检验阻断完工（错误码断言）、NCR 门控（未闭 CAPA 被拒）、SCRAP 凭证借贷平衡、库存扣减数量正确、通知记录存在且可标记已读（按裁决路径）。
+- [x] Proof：**C09 RECORDING→CHECKING 往返**——RECORDING 录制 → CHECKING 复跑全绿；层 1 锚点：REJECTED 检验阻断完工（错误码断言）、NCR 门控（未闭 CAPA 被拒）、SCRAP 凭证借贷平衡、库存扣减数量正确、通知记录存在且可标记已读（按裁决路径）。
   - Skill: nop-testing
 
 Exit Criteria:
 
-- [ ] C09 类存在且 RECORDING→CHECKING 往返绿（失败模式 = 任一断言/快照 diff 不通过）
-- [ ] 通知断言路径裁决落盘（含设计文档 §6 C09 勘误登记，若实仓无 NCR→notification 机制）
+- [x] C09 类存在且 RECORDING→CHECKING 往返绿（失败模式 = 任一断言/快照 diff 不通过）
+- [x] 通知断言路径裁决落盘（含设计文档 §6 C09 勘误登记，若实仓无 NCR→notification 机制）
 
 ### Phase 2 — C10 维护工单与备件消耗过账（混合类型：1/3 Add + 1/3 Proof + 1/3 Decision，逐项标注）
 
-Status: planned
+Status: completed
 Targets: `app-erp-all/src/test/java/io/nop/app/all/it/TestErpC10MntRequestSparePart.java`、`app-erp-all/_cases/io/nop/app/all/it/TestErpC10MntRequestSparePart/`
 Skill: nop-testing
 
 - Item Types: `Add | Proof | Decision`
 - Prereqs: Phase 1（同基类同装配，先例链打通后无新机制风险）
 
-- [ ] Add：**C10 测试类** `TestErpC10MntRequestSparePart`（1 类 1 方法）——按设计文档 §6 C10 规格 + `TestErpMntDowntimeAndE2E`/`TestErpMntSparePartPosting` 业务参照：自包含维护请求 save（OPEN，引用 seed 设备 EQ-2026-001）→ accept（生成 DRAFT Visit）→ startRepair → complete（六态终态）→ `ErpMntVisit__complete`（访问完成 + visit_task）→ 备件消耗 `ErpMntSparePartUsage__confirm`（@NopTestProperty 开启 `erp-mnt.spare-part-posting-enabled`）→ MAINTENANCE_ISSUE 过账（凭证借贷平衡 + 备件库存扣减）→ `ErpAstAsset__get`（设备关联资产 AST-2026-002 核对）+ 非法迁移守卫断言；静态载荷走 `input/N_step.json5` + `addVar`/`@var:` 动态 id。
+- [x] Add：**C10 测试类** `TestErpC10MntRequestSparePart`（1 类 1 方法）——按设计文档 §6 C10 规格 + `TestErpMntDowntimeAndE2E`/`TestErpMntSparePartPosting` 业务参照：自包含维护请求 save（OPEN，引用 seed 设备 EQ-2026-001）→ accept（生成 DRAFT Visit）→ startRepair → complete（六态终态）→ `ErpMntVisit__complete`（访问完成 + visit_task）→ 备件消耗 `ErpMntSparePartUsage__confirm`（@NopTestProperty 开启 `erp-mnt.spare-part-posting-enabled`）→ MAINTENANCE_ISSUE 过账（凭证借贷平衡 + 备件库存扣减）→ `ErpAstAsset__get`（设备关联资产 AST-2026-002 核对）+ 非法迁移守卫断言；静态载荷走 `input/N_step.json5` + `addVar`/`@var:` 动态 id。
   - Skill: nop-testing
-- [ ] Decision：**过账门控配置裁决**——`erp-mnt.spare-part-posting-enabled` 默认 false（实仓 `DEFAULT_SPARE_PART_POSTING_ENABLED=false`）→ 采用 `@NopTestProperty` 开启断言 MAINTENANCE_ISSUE 凭证（对齐 C08 simulation 门控同型）；记录备选（seed/配置层开启）与残留风险（门控默认关闭态下凭证不存在，不作断言源）。
+- [x] Decision：**过账门控配置裁决**——`erp-mnt.spare-part-posting-enabled` 默认 false（实仓 `DEFAULT_SPARE_PART_POSTING_ENABLED=false`）→ 采用 `@NopTestProperty` 开启断言 MAINTENANCE_ISSUE 凭证（对齐 C08 simulation 门控同型）；记录备选（seed/配置层开启）与残留风险（门控默认关闭态下凭证不存在，不作断言源）。
   - Skill: nop-testing
-- [ ] Proof：**C10 RECORDING→CHECKING 往返**——RECORDING 录制 → CHECKING 复跑全绿；层 1 锚点：Request 状态机终态 COMPLETED、MAINTENANCE_ISSUE 凭证借贷平衡、备件库存扣减、设备状态/资产字段联动、非法迁移被拒（守卫断言）。
+- [x] Proof：**C10 RECORDING→CHECKING 往返**——RECORDING 录制 → CHECKING 复跑全绿；层 1 锚点：Request 状态机终态 COMPLETED、MAINTENANCE_ISSUE 凭证借贷平衡、备件库存扣减、设备状态/资产字段联动、非法迁移被拒（守卫断言）。
   - Skill: nop-testing
 
 Exit Criteria:
 
-- [ ] C10 类存在且 RECORDING→CHECKING 往返绿（失败模式 = 任一断言/快照 diff 不通过）
-- [ ] 过账门控配置裁决落盘（含设计文档 §6 C10 勘误登记，若与实仓门控键不一致）
+- [x] C10 类存在且 RECORDING→CHECKING 往返绿（失败模式 = 任一断言/快照 diff 不通过）
+- [x] 过账门控配置裁决落盘（含设计文档 §6 C10 勘误登记，若与实仓门控键不一致）
 
 ### Phase 3 — 收尾与回归（Proof-heavy）
 
-Status: planned
+Status: completed
 Targets: `docs/backlog/integration-test-roadmap.md`（B5 → done + 头「最后更新」注记）、`docs/logs/2026/08-24.md`、`docs/testing/known-good-baselines.md`（差量登记）、`docs/design/integration-testing.md`（§6 C09/C10 勘误登记，若 Phase 1/2 触发）
 Skill: none
 
 - Item Types: `Proof | Add`
 - Prereqs: Phase 2
 
-- [ ] Proof：**局部回归** `mvn test -pl app-erp-all` 全绿（含 2 个新用例类，串行 fork 单 JVM 顺序执行）+ **全量回归** `mvn test`（全 reactor）零新增失败 + `mvn clean install -DskipTests` BUILD SUCCESS——对照 known-good-baselines（B4 后基线）口径，+2 tests / +2 报告文件全额归因 B5，零新增失败；**clean 前先拷贝 surefire 计数/XML 证据**（B3 closure MINOR-2 流程改进兑现）。
+- [x] Proof：**局部回归** `mvn test -pl app-erp-all` 全绿（含 2 个新用例类，串行 fork 单 JVM 顺序执行）+ **全量回归** `mvn test`（全 reactor）零新增失败 + `mvn clean install -DskipTests` BUILD SUCCESS——对照 known-good-baselines（B4 后基线）口径，+2 tests / +2 报告文件全额归因 B5，零新增失败；**clean 前先拷贝 surefire 计数/XML 证据**（B3 closure MINOR-2 流程改进兑现）。
   - Skill: none
-- [ ] Add：roadmap B5 `todo` → `done` + 头「最后更新」注记 + `docs/logs/2026/08-24.md` 日志条目（按日志书写指南）+ known-good-baselines 差量登记 + 设计文档 §6 勘误登记（若触发，含 C10「状态机 5 态」→六态漂移点）。
+- [x] Add：roadmap B5 `todo` → `done` + 头「最后更新」注记 + `docs/logs/2026/08-24.md` 日志条目（按日志书写指南）+ known-good-baselines 差量登记 + 设计文档 §6 勘误登记（若触发，含 C10「状态机 5 态」→六态漂移点）。
   - Skill: none
 
 Exit Criteria:
 
-- [ ] 局部 + 全量回归零新增失败（与已知基线口径一致）
-- [ ] roadmap B5 = done + 日志条目存在 + 基线差量登记 + 勘误登记（若触发）
+- [x] 局部 + 全量回归零新增失败（与已知基线口径一致）
+- [x] roadmap B5 = done + 日志条目存在 + 基线差量登记 + 勘误登记（若触发）
 
 ## Draft Review Record
 
@@ -125,14 +125,14 @@ Exit Criteria:
 
 > 仅在所有项目和每个阶段的退出标准都勾选 `[x]` 后关闭。完整仓库验证在此处：结束时运行 `typecheck`/`build`/`lint`/`test` 一次。
 
-- [ ] 范围内行为完成（C09/C10 两用例三层全比对全绿 + 门控/通知裁决）
-- [ ] 相关文档对齐（设计文档 §6 ↔ 用例实现 ↔ roadmap B5 ↔ e2e-runbook ↔ known-good-baselines 无矛盾）
-- [ ] 已运行验证（`mvn test -pl app-erp-all` 全绿 + 全量 `mvn test` 零新增失败 + `mvn clean install -DskipTests` BUILD SUCCESS）
-- [ ] 无范围内项目降级为 deferred/follow-up
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：状态、阶段、门控和日志都一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成（C09/C10 两用例三层全比对全绿 + 门控/通知裁决）
+- [x] 相关文档对齐（设计文档 §6 ↔ 用例实现 ↔ roadmap B5 ↔ e2e-runbook ↔ known-good-baselines 无矛盾）
+- [x] 已运行验证（`mvn test -pl app-erp-all` 全绿 + 全量 `mvn test` 零新增失败 + `mvn clean install -DskipTests` BUILD SUCCESS）
+- [x] 无范围内项目降级为 deferred/follow-up
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证：状态、阶段、门控和日志都一致
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
@@ -140,13 +140,13 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: <why the plan can close>
+Status Note: C09/C10 两用例 RECORDING→CHECKING 往返全绿 + 局部回归 app-erp-all 40/0/0/1 + 全量回归 3820/0/0/1（+2 tests / +2 报告文件全额归因 B5，零新增失败；surefire 证据已拷贝 `_tmp/b5-surefire-evidence/`）+ `mvn clean install -DskipTests` 156 模块 BUILD SUCCESS；执行期裁决（完工门控阻断点 = reportCompletion、NCR 通知可达断言路径、SCRAP 不扣物理库存、C10 六态状态机、visit_task 仅 PLANNED 访问、备件库存自包含建数）落盘测试类 javadoc + 设计文档 §6 C09/C10 勘误登记；roadmap B5 done + 日志 + known-good-baselines 差量登记均完成。
 
 Closure Audit Evidence:
 
-- Auditor / Agent: <independent auditor or independent subagent>
-- Evidence: <task id / log link / walkthrough record>
+- Auditor / Agent: 独立 general 子代理（新会话 `ses_fcf81ed3fffeIYIfSFd1QqKhR9`，fresh 会话无执行者上下文）
+- Evidence: 独立审计逐项核验 5 域（计划一致性 / 测试代码合规 / 验证证据（实跑 `mvn test -pl app-erp-all -Dtest=TestErpC09QaNcrCapaScrap,TestErpC10MntRequestSparePart` BUILD SUCCESS 2/0/0，surefire 两用例各 1/0/0 + 证据目录 `_tmp/b5-surefire-evidence/` 在位）/ 文档一致性（roadmap B5 done + known-good-baselines 3820/0/0/1/629 + app-erp-all 40/0/0/1 + 设计文档 §6 C09/C10 勘误 + 日志）/ 无范围内降级（git status 零 module-*/model/src/main/seed 变更））——功能证据 5/5 PASS，唯一 MAJOR-1 = 审计时点 Closure Gates 未勾选 + Closure 段占位（本段即其兑现）；总评 0 BLOCKER，**接受**。
 
 Follow-up:
 
-- <仅非阻塞跟进项目；已确认的缺陷不得出现在此处>
+- 无（非阻塞跟进项：C09/C10 响应快照跨 run 时间戳 @var 索引/millis 合并不稳定 → `*` 通配处置已随本计划落地；B6 分批（C11/C12）已由 roadmap B6 行承接）
