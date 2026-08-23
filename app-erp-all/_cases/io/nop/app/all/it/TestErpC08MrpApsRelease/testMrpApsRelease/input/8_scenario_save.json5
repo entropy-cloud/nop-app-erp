@@ -1,0 +1,10 @@
+{
+  data: {
+    data: {
+      code: "IT-C08-SCN-001",
+      orgId: "2",
+      baseMrpPlanId: "@var:planId",
+      status: "DRAFT"
+    }
+  }
+}

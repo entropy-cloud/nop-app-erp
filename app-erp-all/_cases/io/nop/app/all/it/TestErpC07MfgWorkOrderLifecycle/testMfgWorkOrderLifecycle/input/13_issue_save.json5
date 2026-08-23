@@ -1,0 +1,15 @@
+{
+  data: {
+    data: {
+      code: "IT-C07-MI-001",
+      orgId: "2",
+      workOrderId: "@var:woId",
+      warehouseId: "2",
+      businessDate: "2026-07-20",
+      currencyId: "1",
+      exchangeRate: 1,
+      docStatus: "DRAFT",
+      approveStatus: "UNSUBMITTED"
+    }
+  }
+}

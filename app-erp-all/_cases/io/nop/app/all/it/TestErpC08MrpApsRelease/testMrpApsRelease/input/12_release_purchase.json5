@@ -1,0 +1,7 @@
+{
+  data: {
+    planLineId: "@var:purPlanLineId",
+    supplierId: "3",
+    currencyId: "1"
+  }
+}

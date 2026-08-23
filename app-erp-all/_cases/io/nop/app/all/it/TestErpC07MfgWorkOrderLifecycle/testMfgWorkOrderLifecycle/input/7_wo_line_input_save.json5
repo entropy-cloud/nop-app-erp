@@ -1,0 +1,13 @@
+{
+  data: {
+    data: {
+      workOrderId: "@var:woId",
+      lineNo: 10,
+      lineType: "INPUT",
+      materialId: "@var:m1Id",
+      uoMId: "2",
+      plannedQuantity: 2,
+      sourceWarehouseId: "2"
+    }
+  }
+}

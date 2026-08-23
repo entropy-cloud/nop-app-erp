@@ -1,0 +1,11 @@
+{
+  data: {
+    data: {
+      code: "IT-C08-MRP-001",
+      orgId: "2",
+      businessDate: "2026-07-20",
+      planningHorizonDays: 30,
+      status: "DRAFT"
+    }
+  }
+}

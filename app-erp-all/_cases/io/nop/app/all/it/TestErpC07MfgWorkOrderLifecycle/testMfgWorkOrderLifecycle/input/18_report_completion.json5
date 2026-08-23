@@ -1,0 +1,6 @@
+{
+  data: {
+    workOrderId: "@var:woId",
+    completedQty: 1
+  }
+}

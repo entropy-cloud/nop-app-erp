@@ -1,0 +1,16 @@
+{
+  data: {
+    data: {
+      costRollupId: "@var:rollupId",
+      lineNo: 10,
+      materialId: "@var:pId",
+      uoMId: "1",
+      materialCost: 8,
+      laborCost: 0,
+      overheadCost: 0,
+      unitCost: 8,
+      totalCost: 8,
+      currencyId: "1"
+    }
+  }
+}

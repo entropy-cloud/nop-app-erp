@@ -1,0 +1,22 @@
+{
+  "data": {
+    "id": "100009",
+    "mrpPlanId": "@var:planId",
+    "lineNo": 10,
+    "materialId": "@var:pId",
+    "uoMId": "1",
+    "demandSource": "MANUAL",
+    "demandSource_label": "MANUAL-手工录入",
+    "sourceBillType": "ERP_MFG_MRP_DEMAND",
+    "sourceBillCode": "@var:ErpMfgMrpDemand@sourceBillCode",
+    "quantity": 10,
+    "requirementDate": "2026-07-25",
+    "delVersion": 0,
+    "version": 0,
+    "createdBy": "autotest-ref",
+    "createTime": "*",
+    "updatedBy": "autotest-ref",
+    "updateTime": "*"
+  },
+  "status": 0
+}

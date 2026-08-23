@@ -1,0 +1,24 @@
+{
+  "data": {
+    "id": "@var:scheduleId",
+    "code": "@var:ErpApsSchedule@code",
+    "name": "C08 排程方案",
+    "scheduleDate": "@var:ErpApsSchedule@businessDate",
+    "schedulingMode": "FORWARD",
+    "schedulingMode_label": "FORWARD-前向排产",
+    "horizonStart": "@var:ErpApsSchedule@horizonStart",
+    "horizonEnd": "@var:ErpApsSchedule@horizonEnd",
+    "status": "PUBLISHED",
+    "status_label": "PUBLISHED-已发布",
+    "orgId": "2",
+    "remark": null,
+    "delVersion": 0,
+    "version": 1,
+    "createdBy": "autotest-ref",
+    "createTime": "*",
+    "updatedBy": "autotest-ref",
+    "updateTime": "*",
+    "businessDate": "@var:ErpApsSchedule@businessDate"
+  },
+  "status": 0
+}

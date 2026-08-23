@@ -1,0 +1,32 @@
+{
+  "data": {
+    "id": "@var:issueId",
+    "code": "@var:ErpInvStockMove@relatedBillCode_1",
+    "orgId": "2",
+    "workOrderId": "@var:woId",
+    "jobCardId": null,
+    "warehouseId": "2",
+    "businessDate": "@var:ErpFinVoucher@voucherDate",
+    "docStatus": "DONE",
+    "docStatus_label": "DONE-已出库",
+    "approveStatus": "UNSUBMITTED",
+    "approveStatus_label": "UNSUBMITTED-未提交",
+    "approvedBy": null,
+    "approvedAt": null,
+    "posted": true,
+    "postedAt": "*",
+    "postedBy": null,
+    "remark": null,
+    "currencyId": "1",
+    "exchangeRate": 1.00000000,
+    "amountSource": 0.0000,
+    "amountFunctional": 0.0000,
+    "delVersion": 0,
+    "version": 3,
+    "createdBy": "autotest-ref",
+    "createTime": "*",
+    "updatedBy": "autotest-ref",
+    "updateTime": "*"
+  },
+  "status": 0
+}

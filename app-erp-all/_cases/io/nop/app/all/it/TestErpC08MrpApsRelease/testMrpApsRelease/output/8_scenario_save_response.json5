@@ -1,0 +1,18 @@
+{
+  "data": {
+    "id": "100010",
+    "code": "@var:ErpMfgMrpScenario@code",
+    "orgId": "2",
+    "baseMrpPlanId": "@var:planId",
+    "status": "DRAFT",
+    "status_label": "DRAFT-草稿",
+    "delVersion": 0,
+    "version": 0,
+    "createdBy": "autotest-ref",
+    "createTime": "*",
+    "updatedBy": "autotest-ref",
+    "updateTime": "*",
+    "description": null
+  },
+  "status": 0
+}

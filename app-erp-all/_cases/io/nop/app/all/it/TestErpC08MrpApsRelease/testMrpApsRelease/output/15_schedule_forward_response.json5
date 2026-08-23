@@ -1,0 +1,10 @@
+{
+  "data": {
+    "conflicts": [],
+    "feasible": true,
+    "scheduledOperationIds": [
+      "@var:opOrderId"
+    ]
+  },
+  "status": 0
+}

@@ -1,0 +1,12 @@
+{
+  data: {
+    data: {
+      code: "IT-C07-P-001",
+      name: "C07 产成品测试物料",
+      materialType: "FINISHED_PRODUCT",
+      uoMId: "1",
+      status: "ACTIVE",
+      costMethod: "FIFO"
+    }
+  }
+}

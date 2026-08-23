@@ -1,0 +1,27 @@
+{
+  "data": {
+    "id": "@var:purPlanLineId",
+    "mrpPlanId": "@var:promotedPlanId",
+    "lineNo": 20,
+    "materialId": "@var:m1Id",
+    "uoMId": "2",
+    "orderType": "PURCHASE_REQUEST",
+    "orderType_label": "PURCHASE_REQUEST-请购建议",
+    "grossRequirement": 10.0000,
+    "scheduledReceipt": 0.0000,
+    "onHand": 4.0000,
+    "netRequirement": 6.0000,
+    "plannedQuantity": 6.0000,
+    "plannedDate": "2026-07-25",
+    "parentLineId": null,
+    "isFirmed": true,
+    "convertedBillCode": "@var:ErpPurOrder@code",
+    "delVersion": 0,
+    "version": 1,
+    "createdBy": "autotest-ref",
+    "createTime": "*",
+    "updatedBy": "autotest-ref",
+    "updateTime": "*"
+  },
+  "status": 0
+}

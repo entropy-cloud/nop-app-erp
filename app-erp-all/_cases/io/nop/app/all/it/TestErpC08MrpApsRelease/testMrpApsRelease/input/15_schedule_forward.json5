@@ -1,0 +1,5 @@
+{
+  data: {
+    scheduleId: "@var:scheduleId"
+  }
+}

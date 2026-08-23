@@ -1,0 +1,12 @@
+{
+  data: {
+    data: {
+      code: "IT-C08-M1-001",
+      name: "C08 采购件测试物料",
+      materialType: "RAW_MATERIAL",
+      uoMId: "2",
+      status: "ACTIVE",
+      costMethod: "MOVING_AVERAGE"
+    }
+  }
+}

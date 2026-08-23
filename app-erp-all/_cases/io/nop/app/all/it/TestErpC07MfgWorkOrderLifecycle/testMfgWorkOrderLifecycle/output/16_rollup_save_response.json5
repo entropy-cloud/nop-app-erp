@@ -1,0 +1,19 @@
+{
+  "data": {
+    "id": "100024",
+    "code": "@var:ErpMfgCostRollup@code",
+    "orgId": "2",
+    "businessDate": "@var:ErpMfgCostRollup@businessDate",
+    "status": "FIRMED",
+    "status_label": "FIRMED-已发布",
+    "delVersion": 0,
+    "version": 0,
+    "createdBy": "autotest-ref",
+    "createTime": "*",
+    "updatedBy": "autotest-ref",
+    "updateTime": "*",
+    "costingVersion": null,
+    "remark": null
+  },
+  "status": 0
+}

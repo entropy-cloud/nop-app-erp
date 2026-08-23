@@ -1,0 +1,25 @@
+{
+  "data": {
+    "id": "100016",
+    "issueId": "@var:issueId",
+    "lineNo": 10,
+    "materialId": "@var:m1Id",
+    "uoMId": "2",
+    "workOrderLineId": "@var:woLineId",
+    "requiredQuantity": 2,
+    "issuedQuantity": 2,
+    "delVersion": 0,
+    "version": 0,
+    "createdBy": "autotest-ref",
+    "createTime": "*",
+    "updatedBy": "autotest-ref",
+    "updateTime": "*",
+    "skuId": null,
+    "unitCost": null,
+    "totalCost": null,
+    "batchNo": null,
+    "locationId": null,
+    "remark": null
+  },
+  "status": 0
+}

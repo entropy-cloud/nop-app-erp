@@ -1,0 +1,18 @@
+{
+  data: {
+    query: {
+      filter: {
+        "$type": "eq",
+        name: "workOrderId",
+        value: "@var:woId"
+      },
+      limit: 20,
+      orderBy: [
+        {
+          name: "lineNo",
+          desc: false
+        }
+      ]
+    }
+  }
+}

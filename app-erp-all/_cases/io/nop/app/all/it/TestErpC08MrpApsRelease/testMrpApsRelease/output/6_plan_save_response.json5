@@ -1,0 +1,19 @@
+{
+  "data": {
+    "id": "100008",
+    "code": "@var:ErpMfgMrpPlan@code",
+    "orgId": "2",
+    "businessDate": "*",
+    "planningHorizonDays": 30,
+    "status": "DRAFT",
+    "status_label": "DRAFT-草稿",
+    "delVersion": 0,
+    "version": 0,
+    "createdBy": "autotest-ref",
+    "createTime": "*",
+    "updatedBy": "autotest-ref",
+    "updateTime": "*",
+    "remark": null
+  },
+  "status": 0
+}

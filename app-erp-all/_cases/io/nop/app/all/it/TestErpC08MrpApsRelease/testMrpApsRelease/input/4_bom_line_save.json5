@@ -1,0 +1,11 @@
+{
+  data: {
+    data: {
+      bomId: "@var:bomId",
+      lineNo: 10,
+      materialId: "@var:m1Id",
+      uoMId: "2",
+      quantity: 1
+    }
+  }
+}

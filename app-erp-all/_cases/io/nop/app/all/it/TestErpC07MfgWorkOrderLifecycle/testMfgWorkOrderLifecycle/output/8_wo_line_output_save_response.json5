@@ -1,0 +1,24 @@
+{
+  "data": {
+    "id": "100010",
+    "workOrderId": "@var:woId",
+    "lineNo": 20,
+    "lineType": "OUTPUT",
+    "materialId": "@var:pId",
+    "uoMId": "1",
+    "plannedQuantity": 1,
+    "actualQuantity": 0,
+    "scrappedQuantity": 0,
+    "destWarehouseId": "1",
+    "delVersion": 0,
+    "version": 0,
+    "createdBy": "autotest-ref",
+    "createTime": "*",
+    "updatedBy": "autotest-ref",
+    "updateTime": "*",
+    "skuId": null,
+    "sourceWarehouseId": null,
+    "remark": null
+  },
+  "status": 0
+}

@@ -1,0 +1,13 @@
+{
+  data: {
+    data: {
+      issueId: "@var:issueId",
+      lineNo: 10,
+      materialId: "@var:m1Id",
+      uoMId: "2",
+      requiredQuantity: 2,
+      issuedQuantity: 2,
+      workOrderLineId: "@var:woLineId"
+    }
+  }
+}

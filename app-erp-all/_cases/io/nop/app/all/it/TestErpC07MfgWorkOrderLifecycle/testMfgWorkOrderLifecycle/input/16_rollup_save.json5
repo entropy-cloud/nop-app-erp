@@ -1,0 +1,10 @@
+{
+  data: {
+    data: {
+      code: "IT-C07-RU-001",
+      orgId: "2",
+      businessDate: "2026-07-01",
+      status: "FIRMED"
+    }
+  }
+}

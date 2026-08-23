@@ -1,0 +1,19 @@
+{
+  "data": {
+    "id": "100019",
+    "code": "@var:ErpMfgMrpPlan@code_2",
+    "orgId": "2",
+    "businessDate": "*",
+    "planningHorizonDays": 30,
+    "status": "DRAFT",
+    "status_label": "DRAFT-草稿",
+    "remark": "仿真版本 v1 转正式计划",
+    "delVersion": 0,
+    "version": 0,
+    "createdBy": "autotest-ref",
+    "createTime": "*",
+    "updatedBy": "autotest-ref",
+    "updateTime": "*"
+  },
+  "status": 0
+}

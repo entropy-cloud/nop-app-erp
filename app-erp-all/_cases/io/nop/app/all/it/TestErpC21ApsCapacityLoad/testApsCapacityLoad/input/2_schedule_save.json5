@@ -1,0 +1,15 @@
+{
+  data: {
+    data: {
+      code: "IT-C21-SCH-001",
+      name: "C21 排程方案",
+      scheduleDate: "2026-07-15",
+      schedulingMode: "FORWARD",
+      horizonStart: "2026-07-10T00:00:00",
+      horizonEnd: "2026-07-20T00:00:00",
+      status: "DRAFT",
+      orgId: "2",
+      businessDate: "2026-07-15"
+    }
+  }
+}

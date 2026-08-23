@@ -1,0 +1,27 @@
+{
+  "data": {
+    "id": "@var:workPlanLineId",
+    "mrpPlanId": "@var:promotedPlanId",
+    "lineNo": 10,
+    "materialId": "@var:pId",
+    "uoMId": "1",
+    "orderType": "WORK_ORDER_REQUEST",
+    "orderType_label": "WORK_ORDER_REQUEST-工单建议",
+    "grossRequirement": 10.0000,
+    "scheduledReceipt": 0.0000,
+    "onHand": 0.0000,
+    "netRequirement": 10.0000,
+    "plannedQuantity": 10.0000,
+    "plannedDate": "2026-07-25",
+    "parentLineId": null,
+    "isFirmed": true,
+    "convertedBillCode": "@var:ErpMfgWorkOrder@code",
+    "delVersion": 0,
+    "version": 1,
+    "createdBy": "autotest-ref",
+    "createTime": "*",
+    "updatedBy": "autotest-ref",
+    "updateTime": "*"
+  },
+  "status": 0
+}

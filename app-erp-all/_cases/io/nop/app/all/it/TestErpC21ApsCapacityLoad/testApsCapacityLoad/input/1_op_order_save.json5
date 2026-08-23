@@ -1,0 +1,17 @@
+{
+  data: {
+    data: {
+      code: "IT-C21-OP-001",
+      workOrderId: "1",
+      operationName: "C21 装配工序",
+      sequence: 10,
+      machineId: "1",
+      qty: 10,
+      setupTime: 5,
+      runtimePerUnit: 2,
+      status: "DRAFT",
+      orgId: "2",
+      businessDate: "2026-07-15"
+    }
+  }
+}

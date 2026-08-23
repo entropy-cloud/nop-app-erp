@@ -1,0 +1,15 @@
+{
+  data: {
+    data: {
+      mrpPlanId: "@var:planId",
+      lineNo: 10,
+      materialId: "@var:pId",
+      uoMId: "1",
+      demandSource: "MANUAL",
+      sourceBillType: "ERP_MFG_MRP_DEMAND",
+      sourceBillCode: "IT-C08-DEM-001",
+      quantity: 10,
+      requirementDate: "2026-07-25"
+    }
+  }
+}

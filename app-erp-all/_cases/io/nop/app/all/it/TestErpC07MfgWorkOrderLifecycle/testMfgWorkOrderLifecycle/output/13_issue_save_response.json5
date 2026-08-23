@@ -1,0 +1,32 @@
+{
+  "data": {
+    "id": "100015",
+    "code": "@var:ErpMfgMaterialIssue@code",
+    "orgId": "2",
+    "workOrderId": "@var:woId",
+    "warehouseId": "2",
+    "businessDate": "@var:ErpMfgMaterialIssue@businessDate",
+    "docStatus": "DRAFT",
+    "docStatus_label": "DRAFT-草稿",
+    "approveStatus": "UNSUBMITTED",
+    "approveStatus_label": "UNSUBMITTED-未提交",
+    "posted": false,
+    "currencyId": "1",
+    "exchangeRate": 1,
+    "amountSource": 0,
+    "amountFunctional": 0,
+    "delVersion": 0,
+    "version": 0,
+    "createdBy": "autotest-ref",
+    "createTime": "*",
+    "updatedBy": "autotest-ref",
+    "updateTime": "*",
+    "jobCardId": null,
+    "approvedBy": null,
+    "approvedAt": null,
+    "postedAt": null,
+    "postedBy": null,
+    "remark": null
+  },
+  "status": 0
+}

@@ -1,0 +1,25 @@
+{
+  "data": {
+    "id": "100002",
+    "code": "@var:ErpMfgBom@code",
+    "productId": "@var:pId",
+    "bomType": "NORMAL",
+    "bomType_label": "NORMAL-制造",
+    "isActive": true,
+    "isDefault": true,
+    "useMultiLevelBom": false,
+    "inspectionRequired": false,
+    "qty": 1,
+    "delVersion": 0,
+    "version": 0,
+    "createdBy": "autotest-ref",
+    "createTime": "*",
+    "updatedBy": "autotest-ref",
+    "updateTime": "*",
+    "consumption": null,
+    "consumption_label": null,
+    "remark": null,
+    "versionLabel": null
+  },
+  "status": 0
+}

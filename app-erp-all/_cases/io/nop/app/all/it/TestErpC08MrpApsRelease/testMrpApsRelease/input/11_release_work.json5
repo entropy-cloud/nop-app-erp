@@ -1,0 +1,5 @@
+{
+  data: {
+    planLineId: "@var:workPlanLineId"
+  }
+}

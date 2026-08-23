@@ -1,0 +1,12 @@
+{
+  data: {
+    data: {
+      code: "IT-C08-P-001",
+      name: "C08 制造件测试物料",
+      materialType: "FINISHED_PRODUCT",
+      uoMId: "1",
+      status: "ACTIVE",
+      costMethod: "FIFO"
+    }
+  }
+}

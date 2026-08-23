@@ -1,0 +1,9 @@
+{
+  data: {
+    reportName: "crp-load-report",
+    data: {
+      startDate: "2026-07-15",
+      endDate: "2026-07-15"
+    }
+  }
+}

@@ -1,0 +1,15 @@
+{
+  data: {
+    data: {
+      code: "IT-C08-SCH-001",
+      name: "C08 排程方案",
+      scheduleDate: "2026-07-10",
+      schedulingMode: "FORWARD",
+      horizonStart: "2026-07-10T00:00:00",
+      horizonEnd: "2026-07-20T00:00:00",
+      status: "DRAFT",
+      orgId: "2",
+      businessDate: "2026-07-10"
+    }
+  }
+}
