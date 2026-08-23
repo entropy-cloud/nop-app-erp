@@ -55,11 +55,12 @@ body:
       url: /graphql
       method: post
       dataType: raw
+      # findPage 快捷参数（filter_xxx/裸 limit）经 schema 实测均不存在——须 query:{} Map 形态
+      # （orderBy 为 OrderFieldBean 数组 {name,desc}；2026-08-23 E2E 实证）。
+      # machineId/status 改客户端过滤（drp net-requirement / b2b edi-detail 同范式）。
       data:
-        query: "query(${'$'}mid:String,${'$'}st:String,${'$'}lim:Int){ ErpApsOperationOrder__findPage(filter_machineId:${'$'}mid,filter_status:${'$'}st,limit:${'$'}lim,orderBy:\"plannedStartDateT ASC\"){ items{ id code workOrderId operationName machineId priority plannedStartDateT plannedEndDateT qty totalDuration status } total } }"
+        query: "query(${'$'}lim:Int){ ErpApsOperationOrder__findPage(query:{limit:${'$'}lim,orderBy:[{name:\"plannedStartDateT\",desc:false}]}){ items{ id code workOrderId operationName machineId priority plannedStartDateT plannedEndDateT qty totalDuration status } total } }"
         variables:
-          mid: "${machineId || null}"
-          st: "${status || null}"
           lim: 500
       adaptor: |
         const d = payload.data || {};
@@ -67,10 +68,14 @@ body:
         const page = gql.ErpApsOperationOrder__findPage || { items: [] };
         let rows = page.items || [];
 
-        // 客户端按日期区间过滤（input-date 返回 Unix 毫秒时间戳）
+        // 客户端按筛选条件过滤（machineId/status 表单字段 + input-date 返回 Unix 毫秒时间戳）
+        const midF = (typeof machineId !== 'undefined' && machineId !== null && machineId !== '') ? String(machineId) : null;
+        const stF = (typeof status !== 'undefined' && status !== null && status !== '') ? String(status) : null;
         const sMs = (typeof startDate === 'number') ? startDate : null;
         const eMs = (typeof endDate === 'number') ? endDate + 86400000 : null;
         rows = rows.filter(function(r){
+          if (midF != null && String(r.machineId == null ? '' : r.machineId) !== midF) return false;
+          if (stF != null && r.status !== stF) return false;
           if (!r.plannedStartDateT) return false;
           const t = new Date(String(r.plannedStartDateT).replace(' ', 'T')).getTime();
           if (isNaN(t)) return false;
