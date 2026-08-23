@@ -1,6 +1,6 @@
 # 2026-08-23-1835-3-m03-batch-work-item-expansion 依设计文档追加 M1-Bn 分批工作项（M0.3）
 
-> Plan Status: active
+> Plan Status: completed
 > Mission: integration-test
 > Work Item: M0.3
 > Last Reviewed: 2026-08-23
@@ -41,43 +41,43 @@
 
 ### Phase 1 — 追加 B1-Bn 分批工作项（混合类型：1/2 Add + 1/2 Proof，低于 80% 统一类型阈值，逐项标注）
 
-Status: planned
+Status: completed
 Targets: `docs/backlog/integration-test-roadmap.md`（M1-Bn 里程碑表）
 Skill: none
 
 - Item Types: `Add | Proof`
 - Prereqs: M0.1 + M0.2 done（设计文档 + 基建就绪）
 
-- [ ] Add：依设计文档用例清单按主导域分组（8-12 批，每批 1 工作项 2-3 用例，优先 18-22 用例校准），向 M1-Bn 表追加工作项行——每行含用例编号集/涉及域/依赖/Skill（`nop-testing`），初始 `todo`。
+- [x] Add：依设计文档用例清单按主导域分组（8-12 批，每批 1 工作项 2-3 用例，优先 18-22 用例校准），向 M1-Bn 表追加工作项行——每行含用例编号集/涉及域/依赖/Skill（`nop-testing`），初始 `todo`。
   - Skill: none
-- [ ] Proof：分批核对——设计文档全部用例均被某批引用且仅一次；批次总数 8-12；每批 2-3 用例；覆盖矩阵每域 ≥2 次口径在分批后仍成立。
+- [x] Proof：分批核对——设计文档全部用例均被某批引用且仅一次；批次总数 8-12；每批 2-3 用例；覆盖矩阵每域 ≥2 次口径在分批后仍成立。
   - Skill: none
 
 Exit Criteria:
 
-- [ ] M1-Bn 表含 B1-Bn 行（8-12 批，每批 2-3 用例，初始 `todo`），用例引用与设计文档一一对应
-- [ ] 无发明范围（用例编号集 = 设计文档用例全集）；无遗漏（每用例恰属一批）
-- [ ] 分批后覆盖矩阵口径仍成立（设计文档覆盖矩阵每域 ≥2 次经分批核对后无回落；失败模式：分批后任域出现次数 < 设计文档覆盖矩阵声明 = 失败）
+- [x] M1-Bn 表含 B1-Bn 行（8-12 批，每批 2-3 用例，初始 `todo`），用例引用与设计文档一一对应
+- [x] 无发明范围（用例编号集 = 设计文档用例全集）；无遗漏（每用例恰属一批）
+- [x] 分批后覆盖矩阵口径仍成立（设计文档覆盖矩阵每域 ≥2 次经分批核对后无回落；失败模式：分批后任域出现次数 < 设计文档覆盖矩阵声明 = 失败）
 
 ### Phase 2 — 校验与收尾（Proof-heavy）
 
-Status: planned
+Status: completed
 Targets: `docs/backlog/integration-test-roadmap.md`（M0.3 → done）、`docs/logs/2026/08-23.md`
 Skill: none
 
 - Item Types: `Proof | Fix`
 - Prereqs: Phase 1
 
-- [ ] Proof：独立子代理审查分批合理性（批次粒度/依赖链/与设计文档一致性）。
+- [x] Proof：独立子代理审查分批合理性（批次粒度/依赖链/与设计文档一致性）。
   - Skill: none
-- [ ] Fix：审查发现修订。
+- [x] Fix：审查发现修订。
   - Skill: none
-- [ ] Proof：roadmap M0.3 状态 `todo` → `done` + `docs/logs/2026/08-23.md` 日志条目（按日志书写指南）。
+- [x] Proof：roadmap M0.3 状态 `todo` → `done` + `docs/logs/2026/08-23.md` 日志条目（按日志书写指南）。
 
 Exit Criteria:
 
-- [ ] 独立审查收敛记录在案（无未决 BLOCKER/MAJOR）
-- [ ] roadmap M0.3 = done + 日志条目存在
+- [x] 独立审查收敛记录在案（无未决 BLOCKER/MAJOR）
+- [x] roadmap M0.3 = done + 日志条目存在
 
 ## Draft Review Record
 
@@ -88,28 +88,28 @@ Exit Criteria:
 
 > 本计划为 docs-only（零生产代码/契约/模型/测试代码变更），按计划指南模板规范删除 typecheck/build/lint/test 验证命令门控，以 Phase 1 的分批核对 + Phase 2 审查收敛记录替代。
 
-- [ ] 范围内行为完成（B1-Bn 分批工作项追加完整）
-- [ ] 相关文档对齐（roadmap M1-Bn 表 ↔ 设计文档用例清单 ↔ 覆盖矩阵一致）
-- [ ] 已运行验证（docs-only：用例编号集双向核对 + 批次计数核对）
-- [ ] 无范围内项目降级为 deferred/follow-up
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：状态、阶段、门控和日志都一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成（B1-Bn 分批工作项追加完整）
+- [x] 相关文档对齐（roadmap M1-Bn 表 ↔ 设计文档用例清单 ↔ 覆盖矩阵一致）
+- [x] 已运行验证（docs-only：用例编号集双向核对 + 批次计数核对）
+- [x] 无范围内项目降级为 deferred/follow-up
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证：状态、阶段、门控和日志都一致
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
-- （执行后按需填写）
+- （执行后按需填写——无范围内降级项，留空）
 
 ## Closure
 
-Status Note: （执行后填写）
+Status Note: 两 Phase 全部完成——M1-Bn 表追加 B1-B10 共 10 批 22 用例工作项行（初始 `todo`，行含用例编号集/涉及域/依赖/Skill，用例全集与设计文档 §6/§8 一一对应零遗漏）；分批核对通过（10 批 ∈ 8-12、每批 2-3 用例、覆盖矩阵 19/19 域 ≥2 次 Σ88 分批后无回落）；独立子代理审查收敛（8/8 核验 PASS，唯一 MAJOR 属时序一致性、以完成 Phase 2 交付方式收敛，零行级修订）；roadmap M0.3 `todo` → `done` + 头部「最后更新」注记 + 日志条目落盘；独立结束审计 PASS，计划可关闭。
 
 Closure Audit Evidence:
 
-- Auditor / Agent: （独立子代理新会话）
-- Evidence: （任务 id / 核对记录）
+- Auditor / Agent: 独立 general 子代理（新会话，无执行者上下文）`ses_fd144ab12ffecHV0dZamEK0NDs`
+- Evidence: 审计清单 A-F 六项全 PASS（Phase 1/Phase 2 完成度实仓复核、覆盖矩阵独立重算 = §7 Σ88、M0.3 done 翻转与日志条目在位、文本一致性、Closure Gates 逐项、docs-only git diff 仅 3 .md 文件）；MINOR ×3 全部收尾（本 Closure 段填写 + Plan Status 翻转、日志「git diff 仅 1 .md」计数勘误 → 3、roadmap 前向引用随 Closure 段落盘满足）；审计裁决原文：「Audit verdict: PASS — plan may close」
 
 Follow-up:
 
-- （仅非阻塞跟进；已确认缺陷不得出现于此）
+- （无——B1-Bn 分批执行为 roadmap 后续工作项，非本计划范围内跟进）

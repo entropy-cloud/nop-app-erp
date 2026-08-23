@@ -1,6 +1,6 @@
 # 集成测试路线图（系统级黄金路径回归套件）
 
-> 最后更新：2026-08-23（**M0.2 done——基建试点与机制裁决完成**：plan `docs/plans/2026-08-23-1835-2-m02-infra-pilot-mechanism-adjudication.md` 四 Phase 完成——surefire 串行化（app-erp-all 模块级 forkCount=1/parallel=none）+ `ErpIntegrationTestCase` 基类（机制 (c) 文件 H2 双模）+ 试点 `TestErpP2pPilot`（P2P 简化链 RECORDING→CHECKING 往返全绿）→ **机制 (c) 成立无回退**（5 项待证风险实证结论落盘设计文档 §3.4）+ 共享 step helper 集 + e2e-runbook 集成测试注记；串行化暴露的 4 个既有宿主模式测试跨类污染最小修复；全量 156 模块 BUILD SUCCESS + 3809/0/0/1（+1 试点，零新增失败）。下一步 M0.3（依设计文档向 M1-Bn 追加分批工作项））
+> 最后更新：2026-08-23（**M0.3 done——依设计文档向 M1-Bn 追加 B1-B10 分批工作项**：plan `docs/plans/2026-08-23-1835-3-m03-batch-work-item-expansion.md` 完成——依 `docs/design/integration-testing.md` §8 分批建议向 M1-Bn 表追加 10 批 22 用例（B1-B10，每批 2-3 用例，主导域分组，行含用例编号集/涉及域/依赖/Skill `nop-testing`），用例编号集 = 设计文档用例全集（C01-C21 含 C20a/C20b）一一对应无发明无遗漏；分批核对通过（10 批 ∈ 8-12、每批 2-3 用例、覆盖矩阵 19/19 域 ≥2 次 Σ88 无回落）；独立子代理审查收敛；roadmap 头「最后更新」注记 + 日志。下一步 B1-Bn 分批执行（每批一个 plan：独立 plan-audit → 执行 → 独立 closure audit → 写回 `done`））
 > 来源：用户需求（2026-08-15）+ 需求澄清（两轮 question 全部裁决）+ 3 路独立子 agent 审查记录（2026-08-15 v1→v2）
 > 规范：`docs/backlog/00-roadmap-authoring-guide.md`
 > 执行：mission driver（`./tools/mission-driver.sh run integration-test`）；roadmap 状态块为唯一动态状态真相源
@@ -22,13 +22,25 @@
 |---|---|---|---|---|---|
 | M0.1 | 集成测试用例设计文档（`docs/design/integration-testing.md`）：15-25 用例全量设计（每用例含业务目标/前置 seed/关键路径步骤/三层断言/主导域/涉及域），覆盖全 19 子系统每域至少 1 次；**含用例覆盖矩阵（每域出现次数，目标每域 ≥2 次）验收表**；**含测试机制选型论证与可行性判据（见下方 M0.1 规格）**；独立子代理审查收敛 | done（2026-08-23：plan `docs/plans/2026-08-23-1835-1-m01-integration-test-case-design.md` 三 Phase 完成——设计文档 22 用例/19 域 ≥2 次/机制选型 (c) 选定 + 四风险判定方法/粒度约定 + 耗时模型/xwf 规避清单，两轮独立子代理审查收敛（0 BLOCKER 全程，末轮 0 MAJOR），设计文档 §10 持久化审查记录；roadmap 头「最后更新」注记；独立结束审计证据见该计划 Closure 段） | `docs/design/integration-testing.md` | — | `nop-testing` |
 | M0.2 | 基建试点与**机制裁决**：app-erp-all 集成测试脚手架 + 1 个试点用例证明三层全比对机制可行（录制→校验往返）；**逐项实证 M0.1 选型机制的待证风险清单并记录结论**；试点失败时按回退路线降级（见下方 M0.2 规格） | done（2026-08-23：plan `docs/plans/2026-08-23-1835-2-m02-infra-pilot-mechanism-adjudication.md` 四 Phase 完成——surefire 串行化落地（app-erp-all 模块级 forkCount=1/parallel=none，覆盖父 POM 并行竞态）+ 基类 `ErpIntegrationTestCase`（机制 (c) 文件 H2 双模）+ 试点用例 `TestErpP2pPilot`（P2P 简化链 RECORDING→CHECKING 往返全绿，三层全比对验证）；**机制 (c) 成立无回退**，5 项待证风险全部实证（结论落盘设计文档 §3.4：NopJunitExtension 共存成立/CHECKING 态 = 部署 seed 结构性降级/restart × 文件 H2 成立/快照变更行 252K 量级/单用例 6s 低于模型）；共享 step helper 集（基类 10 helper）+ e2e-runbook「集成测试」注记；串行化暴露的 4 个既有宿主模式测试跨类污染已最小修复（ALL_LAZY 泄漏 + ConfigStarter 残留 VFS）；全量验证 156 模块 BUILD SUCCESS + 3809/0/0/1（+1 试点用例，零新增失败）） | `docs/design/integration-testing.md` | M0.1 | `nop-testing` |
-| M0.3 | 依 M0.1 设计文档向 M1-Bn 里程碑追加 B1-Bn 分批工作项（按主导域分组 8-12 批，每批 1 工作项 2-3 用例，优先 18-22 用例校准），行内含用例编号/涉及域/Skill | todo | `docs/design/integration-testing.md` | M0.1 + M0.2 | none |
+| M0.3 | 依 M0.1 设计文档向 M1-Bn 里程碑追加 B1-Bn 分批工作项（按主导域分组 8-12 批，每批 1 工作项 2-3 用例，优先 18-22 用例校准），行内含用例编号/涉及域/Skill | done（2026-08-23：plan `docs/plans/2026-08-23-1835-3-m03-batch-work-item-expansion.md` 完成——依设计文档 §8 分批建议追加 B1-B10 共 10 批 22 用例（每批 2-3 用例，主导域分组，行含用例编号集/涉及域/依赖/Skill `nop-testing`），用例编号集 = 设计文档用例全集（C01-C21 含 C20a/C20b）一一对应零遗漏；分批核对通过（10 批 ∈ 8-12、每批 2-3、覆盖矩阵 19/19 域 ≥2 次 Σ88 分批后无回落）；独立子代理审查收敛（8/8 核验 PASS）；roadmap 头「最后更新」注记 + 日志；独立结束审计证据见该计划 Closure 段） | `docs/design/integration-testing.md` | M0.1 + M0.2 | none |
 
 ### Milestone M1-Bn — 分批用例执行（M0.3 依设计文档展开，不预注册）
 
-> 本里程碑在 M0.3 追加前无工作项行。追加行初始 `todo`，每批一个 plan：独立 plan-audit → 执行 → 独立 closure audit → 写回 `done`。
+> 追加行初始 `todo`，每批一个 plan：独立 plan-audit → 执行 → 独立 closure audit → 写回 `done`。
+> M0.3 已依 `docs/design/integration-testing.md` §8 追加 B1-B10 行（2026-08-23，10 批 22 用例，与设计文档用例全集一一对应，无发明无遗漏）。
 
-（无预注册行）
+| # | Work Item | Status | Owner Doc | Deps | Skill |
+|---|---|---|---|---|---|
+| B1 | C01, C02（P2P 采购到付款黄金路径 / 采购退货与退款闭环；主导域 purchase；涉及 pur, inv, fin, md, ct） | todo | `docs/design/integration-testing.md` §6 | M0.1 + M0.2 | `nop-testing` |
+| B2 | C03, C04（O2C 销售到收款黄金路径 / 销售退货与客服联动；主导域 sales；涉及 sal, inv, fin, md, b2b, crm, cs） | todo | `docs/design/integration-testing.md` §6 | M0.1 + M0.2 | `nop-testing` |
+| B3 | C05, C06（库存到岸成本分摊过账 / 库存成本流转与 COGS 核算；主导域 inventory；涉及 inv, pur, fin, log, sal, mfg, qa） | todo | `docs/design/integration-testing.md` §6 | M0.1 + M0.2 | `nop-testing` |
+| B4 | C07, C08, C21（制造工单全生命周期与完工过账 / MRP→APS→工单释放 / APS 排程发布与产能负荷；主导域 manufacturing + aps；涉及 mfg, aps, inv, pur, fin） | todo | `docs/design/integration-testing.md` §6 | M0.1 + M0.2 | `nop-testing` |
+| B5 | C09, C10（质检门控与 NCR/CAPA/SCRAP 闭环 / 维护工单与备件消耗过账；主导域 quality + maintenance；涉及 qa, mnt, mfg, inv, fin, notify, ast） | todo | `docs/design/integration-testing.md` §6 | M0.1 + M0.2 | `nop-testing` |
+| B6 | C11, C12（项目成本归集→CIP→资产资本化→维护设备 / 项目工时过账与结算损益；主导域 projects + assets；涉及 prj, ast, fin, md, mnt, hr） | todo | `docs/design/integration-testing.md` §6 | M0.1 + M0.2 | `nop-testing` |
+| B7 | C13, C14（期末结账全链与反结账 / 银行对账与坏账计提回收；主导域 finance；涉及 fin, sal, pur, inv, ast, prj, md） | todo | `docs/design/integration-testing.md` §6 | M0.1 + M0.2 | `nop-testing` |
+| B8 | C15, C16, C17（CRM 线索转化与销售预测 / CS 工单 SLA 与通知派发 / HR 薪酬发放闭环；主导域 crm + cs + hr；涉及 crm, cs, hr, sal, md, fin, notify） | todo | `docs/design/integration-testing.md` §6 | M0.1 + M0.2 | `nop-testing` |
+| B9 | C18, C19（合同生命周期与返利计提结算 / B2B ASN 自动收货与物流到岸成本；主导域 contract + b2b；涉及 ct, b2b, sal, fin, pur, inv, log） | todo | `docs/design/integration-testing.md` §6 | M0.1 + M0.2 | `nop-testing` |
+| B10 | C20a, C20b（DRP 净需求与补货释放 / DRP 仿真与正式计划提升；主导域 drp；涉及 drp, pur, inv） | todo | `docs/design/integration-testing.md` §6 | M0.1 + M0.2 | `nop-testing` |
 
 ### Milestone MV — 全量验证与收尾
 
