@@ -1,0 +1,15 @@
+{
+  "unsettledArApCodes": [
+    "ARAP-EA-001",
+    "ARAP-EC-001",
+    "@var:ErpFinArApItem@code"
+  ],
+  "unresolvedPostingExceptionKeys": [
+    "depreciation:2#2026-07"
+  ],
+  "unpostedVoucherCodes": [],
+  "allowanceRequired": 0,
+  "allowanceBalance": 0,
+  "allowanceShortfall": 0,
+  "allowanceExcess": 0
+}

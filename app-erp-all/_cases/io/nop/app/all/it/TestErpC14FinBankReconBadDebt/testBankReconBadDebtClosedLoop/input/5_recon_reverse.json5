@@ -1,0 +1,5 @@
+{
+  data: {
+    reconciliationId: "@var:reconId"
+  }
+}

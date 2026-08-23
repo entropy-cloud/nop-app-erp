@@ -1,0 +1,15 @@
+{
+  "data": {
+    "action": "RESERVE",
+    "allowanceBalance": 0.0000,
+    "bucket030": 1000.0000,
+    "bucket180Plus": 0,
+    "bucket3160": 0,
+    "bucket6190": 1000.0000,
+    "bucket91180": 0,
+    "requiredProvision": 55.0000000,
+    "totalConsidered": 2000.0000,
+    "voucherId": "100028"
+  },
+  "status": 0
+}

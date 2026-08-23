@@ -1,0 +1,28 @@
+{
+  "data": {
+    "id": "1",
+    "code": "2026-07",
+    "name": "2026年7月",
+    "orgId": "2",
+    "year": 2026,
+    "month": 7,
+    "startDate": "2026-07-01",
+    "endDate": "*",
+    "quarter": 3,
+    "isAdjustment": false,
+    "status": "OPEN",
+    "status_label": "OPEN-开启",
+    "closedBy": null,
+    "closedAt": "*",
+    "delVersion": 0,
+    "version": 3,
+    "createdBy": "sys",
+    "createTime": "*",
+    "updatedBy": "autotest-ref",
+    "updateTime": "*",
+    "reversedBy": null,
+    "reverseCloseReason": "C13 端到端反结账：验证期末凭证红冲与模块状态回开",
+    "reverseCloseAt": "*"
+  },
+  "status": 0
+}

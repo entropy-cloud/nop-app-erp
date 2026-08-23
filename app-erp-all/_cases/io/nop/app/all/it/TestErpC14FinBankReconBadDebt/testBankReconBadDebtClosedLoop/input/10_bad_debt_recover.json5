@@ -1,0 +1,6 @@
+{
+  data: {
+    arApItemId: "@var:arItemId",
+    reason: "C14 坏账收回：部分回款"
+  }
+}

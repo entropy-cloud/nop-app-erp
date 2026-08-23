@@ -1,0 +1,26 @@
+{
+  "data": {
+    "id": "@var:reconId",
+    "code": "@var:reconCode",
+    "orgId": "2",
+    "fundAccountId": "@var:faId",
+    "statementId": "@var:stmtId",
+    "reconciliationDate": "@var:ErpFinVoucher@voucherDate",
+    "bookBalance": 1000.0000,
+    "statementBalance": 1600.0000,
+    "unreconciledDiff": 0.0000,
+    "isBalanced": true,
+    "reconciledAt": "@var:ErpFinBankReconciliation@reconciledAt",
+    "reconciledBy": null,
+    "docStatus": "POSTED",
+    "docStatus_label": "POSTED-已过账",
+    "remark": null,
+    "delVersion": 0,
+    "version": 1,
+    "createdBy": "autotest-ref",
+    "createTime": "@var:ErpFinBankReconciliation@updateTime",
+    "updatedBy": "autotest-ref",
+    "updateTime": "*"
+  },
+  "status": 0
+}

@@ -1,0 +1,4 @@
+_chgType,ID,STATEMENT_ID,LINE_NO,TRANSACTION_DATE,DESCRIPTION,REF_NO,DC_DIRECTION,AMOUNT,CURRENCY_ID,BALANCE_AFTER,MATCH_STATUS,MATCHED_LINE_ID,REMARK,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME,COUNTERPARTY_ACCOUNT,COUNTERPARTY_NAME,COUNTERPARTY_BANK
+A,100002,100001,1,2026-07-10,C14 银行已收-1（企业未记）,@var:ErpFinBankStatementLine@refNo,CREDIT,300,1,1300,UNMATCHED,,,@var:ErpFinBankStatementLine@delVersion_1,0,autotest-ref,*,autotest-ref,*,,,
+A,100003,100001,2,2026-07-12,C14 银行已收-2（企业未记）,@var:ErpFinBankStatementLine@refNo_1,CREDIT,200,1,1500,UNMATCHED,,,@var:ErpFinBankStatementLine@delVersion_1,0,autotest-ref,*,autotest-ref,*,,,
+A,100004,100001,3,2026-07-15,C14 银行已收-3（企业未记）,@var:ErpFinBankStatementLine@refNo_2,CREDIT,100,1,1600,UNMATCHED,,,@var:ErpFinBankStatementLine@delVersion_1,0,autotest-ref,*,autotest-ref,*,,,

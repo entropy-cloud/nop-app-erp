@@ -1,0 +1,18 @@
+{
+  data: {
+    data: {
+      code: "IT-C14-FA-001",
+      name: "C14 对账测试资金账户",
+      orgId: "2",
+      accountType: "BANK",
+      subjectId: "2",
+      bankName: "中国工商银行",
+      bankAccount: "6222000000000000C14",
+      currencyId: "1",
+      openingBalance: 1000,
+      currentBalance: 1000,
+      status: "ACTIVE",
+      remark: "C14 银行对账自包含资金账户（科目 1002 银行存款）"
+    }
+  }
+}

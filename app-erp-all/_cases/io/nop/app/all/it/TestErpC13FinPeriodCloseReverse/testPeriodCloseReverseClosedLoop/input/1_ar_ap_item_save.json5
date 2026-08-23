@@ -1,0 +1,26 @@
+{
+  data: {
+    data: {
+      code: "IT-C13-FX-001",
+      orgId: "2",
+      acctSchemaId: "1",
+      direction: "RECEIVABLE",
+      partnerId: "1",
+      sourceBillType: "AR_INVOICE",
+      sourceBillCode: "IT-C13-FX-001",
+      businessDate: "2026-07-10",
+      dueDate: "2026-07-15",
+      currencyId: "2",
+      exchangeRate: 10,
+      amountSource: 100,
+      amountFunctional: 1000,
+      settledAmountSource: 0,
+      settledAmountFunctional: 0,
+      openAmountSource: 100,
+      openAmountFunctional: 1000,
+      status: "OPEN",
+      periodId: "1",
+      remark: "C13 外币应收项（USD 100 @ 隐含汇率 10，驱动期末汇兑重估）"
+    }
+  }
+}

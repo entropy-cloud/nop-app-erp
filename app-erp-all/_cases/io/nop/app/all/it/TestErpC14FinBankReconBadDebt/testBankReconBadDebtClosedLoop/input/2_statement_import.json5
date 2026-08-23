@@ -1,0 +1,32 @@
+{
+  data: {
+    fundAccountId: "@var:faId",
+    statementDate: "2026-07-31",
+    lines: [
+      {
+        transactionDate: "2026-07-10",
+        description: "C14 银行已收-1（企业未记）",
+        refNo: "REF-C14-1",
+        dcDirection: "CREDIT",
+        amount: 300,
+        balanceAfter: 1300
+      },
+      {
+        transactionDate: "2026-07-12",
+        description: "C14 银行已收-2（企业未记）",
+        refNo: "REF-C14-2",
+        dcDirection: "CREDIT",
+        amount: 200,
+        balanceAfter: 1500
+      },
+      {
+        transactionDate: "2026-07-15",
+        description: "C14 银行已收-3（企业未记）",
+        refNo: "REF-C14-3",
+        dcDirection: "CREDIT",
+        amount: 100,
+        balanceAfter: 1600
+      }
+    ]
+  }
+}

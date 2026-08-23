@@ -1,0 +1,26 @@
+{
+  "data": {
+    "id": "100000",
+    "code": "@var:ErpFinFundAccount@code",
+    "name": "C14 对账测试资金账户",
+    "orgId": "2",
+    "accountType": "BANK",
+    "accountType_label": "BANK-银行",
+    "subjectId": "2",
+    "bankName": "中国工商银行",
+    "bankAccount": "6222000000000000C14",
+    "currencyId": "1",
+    "openingBalance": 1000,
+    "currentBalance": 1000,
+    "status": "ACTIVE",
+    "status_label": "ACTIVE-启用",
+    "remark": "C14 银行对账自包含资金账户（科目 1002 银行存款）",
+    "delVersion": 0,
+    "version": 0,
+    "createdBy": "autotest-ref",
+    "createTime": "@var:ErpFinFundAccount@createTime",
+    "updatedBy": "autotest-ref",
+    "updateTime": "@var:ErpFinFundAccount@createTime"
+  },
+  "status": 0
+}

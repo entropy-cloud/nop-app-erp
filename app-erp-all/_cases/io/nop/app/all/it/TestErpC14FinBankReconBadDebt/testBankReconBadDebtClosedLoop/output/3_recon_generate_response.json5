@@ -1,0 +1,26 @@
+{
+  "data": {
+    "id": "100005",
+    "code": "@var:ErpFinBankReconciliation@code",
+    "orgId": "2",
+    "fundAccountId": "@var:faId",
+    "statementId": "@var:stmtId",
+    "reconciliationDate": "2026-07-31",
+    "bookBalance": 1000.0000,
+    "statementBalance": 1600.0000,
+    "unreconciledDiff": 0,
+    "isBalanced": true,
+    "reconciledAt": "@var:ErpFinBankReconciliation@reconciledAt",
+    "docStatus": "DRAFT",
+    "docStatus_label": "DRAFT-草稿",
+    "delVersion": 0,
+    "version": 0,
+    "createdBy": "autotest-ref",
+    "createTime": "@var:ErpFinBankReconciliation@updateTime",
+    "updatedBy": "autotest-ref",
+    "updateTime": "@var:ErpFinBankReconciliation@updateTime",
+    "reconciledBy": null,
+    "remark": null
+  },
+  "status": 0
+}

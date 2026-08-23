@@ -1,0 +1,29 @@
+{
+  "data": {
+    "id": "@var:rcId",
+    "code": "*",
+    "orgId": "2",
+    "acctSchemaId": "1",
+    "docType": "RECOVERY",
+    "docType_label": "RECOVERY-坏账收回恢复",
+    "partnerId": "1",
+    "sourceArApItemId": "@var:arItemId",
+    "amount": 1000.0000,
+    "currencyId": "1",
+    "exchangeRate": 1.00000000,
+    "businessDate": "@var:ErpFinBadDebt@businessDate",
+    "reason": "C14 坏账收回：部分回款",
+    "approvalStatus": "APPROVED",
+    "approvalStatus_label": "APPROVED-已通过",
+    "periodId": "1",
+    "voucherId": "100024",
+    "remark": null,
+    "delVersion": 0,
+    "version": 2,
+    "createdBy": "autotest-ref",
+    "createTime": "*",
+    "updatedBy": "autotest-ref",
+    "updateTime": "*"
+  },
+  "status": 0
+}

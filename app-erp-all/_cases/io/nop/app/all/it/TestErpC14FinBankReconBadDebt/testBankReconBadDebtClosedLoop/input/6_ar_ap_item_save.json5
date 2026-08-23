@@ -1,0 +1,26 @@
+{
+  data: {
+    data: {
+      code: "IT-C14-AR-001",
+      orgId: "2",
+      acctSchemaId: "1",
+      direction: "RECEIVABLE",
+      partnerId: "1",
+      sourceBillType: "AR_INVOICE",
+      sourceBillCode: "IT-C14-AR-001",
+      businessDate: "2026-07-05",
+      dueDate: "2026-05-15",
+      currencyId: "1",
+      exchangeRate: 1,
+      amountSource: 1000,
+      amountFunctional: 1000,
+      settledAmountSource: 0,
+      settledAmountFunctional: 0,
+      openAmountSource: 1000,
+      openAmountFunctional: 1000,
+      status: "OPEN",
+      periodId: "1",
+      remark: "C14 自包含 OPEN 应收项（dueDate 61-90 账龄档，计提率 0.05）"
+    }
+  }
+}

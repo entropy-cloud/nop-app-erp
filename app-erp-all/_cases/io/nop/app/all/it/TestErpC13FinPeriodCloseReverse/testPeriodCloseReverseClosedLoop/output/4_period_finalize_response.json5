@@ -1,0 +1,28 @@
+{
+  "data": {
+    "id": "1",
+    "code": "2026-07",
+    "name": "2026年7月",
+    "orgId": "2",
+    "year": 2026,
+    "month": 7,
+    "startDate": "2026-07-01",
+    "endDate": "*",
+    "quarter": 3,
+    "isAdjustment": false,
+    "status": "CLOSED_FINAL",
+    "status_label": "CLOSED_FINAL-已复核",
+    "closedBy": null,
+    "closedAt": "*",
+    "delVersion": 0,
+    "version": 2,
+    "createdBy": "sys",
+    "createTime": "*",
+    "updatedBy": "autotest-ref",
+    "updateTime": "*",
+    "reversedBy": null,
+    "reverseCloseReason": null,
+    "reverseCloseAt": "*"
+  },
+  "status": 0
+}

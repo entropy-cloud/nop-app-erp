@@ -1,0 +1,6 @@
+{
+  data: {
+    arApItemId: "@var:arItemId",
+    reason: "C14 坏账核销：客户经营异常"
+  }
+}

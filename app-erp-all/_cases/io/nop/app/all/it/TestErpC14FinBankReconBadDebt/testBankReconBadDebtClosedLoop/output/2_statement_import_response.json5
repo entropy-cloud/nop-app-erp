@@ -1,0 +1,24 @@
+{
+  "data": {
+    "id": "100001",
+    "code": "@var:ErpFinBankStatement@code",
+    "orgId": "2",
+    "fundAccountId": "@var:faId",
+    "statementDate": "2026-07-31",
+    "beginningBalance": 1000.0000,
+    "endingBalance": 1600,
+    "totalDebit": 0,
+    "totalCredit": 600,
+    "importTime": "@var:ErpFinBankStatement@importTime",
+    "docStatus": "DRAFT",
+    "docStatus_label": "DRAFT-草稿",
+    "delVersion": 0,
+    "version": 0,
+    "createdBy": "autotest-ref",
+    "createTime": "*",
+    "updatedBy": "autotest-ref",
+    "updateTime": "*",
+    "remark": null
+  },
+  "status": 0
+}
