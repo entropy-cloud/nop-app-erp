@@ -200,12 +200,15 @@
                                             type: 'picker',
                                             name: 'selectedReceiveLines',
                                             label: '选择入库行',
-                                            source: '/erp/pur/pages/ErpPurReceiveLine/picker.page.yaml',
+                                            pickerDialog: { title: '@i18n:control.picker.receiveLineSelect|选择入库行', size: 'lg' },
                                             multiple: true,
-                                            valueField: 'id',
-                                            labelField: 'lineNo',
-                                            joinValues: false,
-                                            extractValue: false,
+                                            valueKey: 'id',
+                                            labelKey: 'lineNo',
+                                            loadAction: { action: 'ajax', args: { url: '@query:ErpPurReceiveLine__findPage', 'gql:selection': '{@pageSelection}' } },
+                                            columns: [
+                                                { name: 'id', label: 'ID', hidden: true },
+                                                { name: 'lineNo', label: '@i18n:common.lineNo|行号' }
+                                            ],
                                             required: true
                                         }
                                     ]

@@ -27,38 +27,8 @@
         <grid id="sub-grid-edit" x:prototype="list" editMode="list-edit">
             <cols x:override="bounded-merge">
                 <col id="lineNo" mandatory="true" ui:number="true"/>
-                <col id="assetId">
-                    <gen-control>
-                        <c:script><![CDATA[
-                            return {
-                                type: 'picker',
-                                name: 'assetId',
-                                label: '账面资产',
-                                source: '/erp/ast/pages/ErpAstAsset/picker.page.yaml',
-                                valueField: 'id',
-                                labelField: 'name',
-                                joinValues: false,
-                                extractValue: true
-                            };
-                        ]]></c:script>
-                    </gen-control>
-                </col>
-                <col id="categoryId">
-                    <gen-control>
-                        <c:script><![CDATA[
-                            return {
-                                type: 'picker',
-                                name: 'categoryId',
-                                label: '资产类别',
-                                source: '/erp/ast/pages/ErpAstAssetCategory/picker.page.yaml',
-                                valueField: 'id',
-                                labelField: 'name',
-                                joinValues: false,
-                                extractValue: true
-                            };
-                        ]]></c:script>
-                    </gen-control>
-                </col>
+                <col id="assetId"/>
+                <col id="categoryId"/>
                 <col id="bookQuantity">
                     <gen-control>
                         <c:script><![CDATA[

@@ -24,23 +24,7 @@
             <cols x:override="bounded-merge">
                 <col id="lineNo" mandatory="true" ui:number="true"/>
                 <col id="lineType" mandatory="true"/>
-                <col id="materialId" mandatory="true">
-                    <gen-control>
-                        <c:script><![CDATA[
-                            return {
-                                type: 'picker',
-                                name: 'materialId',
-                                label: '物料',
-                                required: true,
-                                source: '/erp/md/pages/ErpMdMaterial/picker.page.yaml',
-                                valueField: 'id',
-                                labelField: 'name',
-                                joinValues: false,
-                                extractValue: true
-                            };
-                        ]]></c:script>
-                    </gen-control>
-                </col>
+                <col id="materialId" mandatory="true"/>
                 <col id="uoMId" mandatory="true"/>
                 <col id="plannedQuantity" mandatory="true">
                     <gen-control>
@@ -82,38 +66,8 @@
                         ]]></c:script>
                     </gen-control>
                 </col>
-                <col id="sourceWarehouseId">
-                    <gen-control>
-                        <c:script><![CDATA[
-                            return {
-                                type: 'picker',
-                                name: 'sourceWarehouseId',
-                                label: '领料仓库',
-                                source: '/erp/md/pages/ErpMdWarehouse/picker.page.yaml',
-                                valueField: 'id',
-                                labelField: 'name',
-                                joinValues: false,
-                                extractValue: true
-                            };
-                        ]]></c:script>
-                    </gen-control>
-                </col>
-                <col id="destWarehouseId">
-                    <gen-control>
-                        <c:script><![CDATA[
-                            return {
-                                type: 'picker',
-                                name: 'destWarehouseId',
-                                label: '入库仓库',
-                                source: '/erp/md/pages/ErpMdWarehouse/picker.page.yaml',
-                                valueField: 'id',
-                                labelField: 'name',
-                                joinValues: false,
-                                extractValue: true
-                            };
-                        ]]></c:script>
-                    </gen-control>
-                </col>
+                <col id="sourceWarehouseId"/>
+                <col id="destWarehouseId"/>
                 <col id="remark"/>
             </cols>
         </grid>

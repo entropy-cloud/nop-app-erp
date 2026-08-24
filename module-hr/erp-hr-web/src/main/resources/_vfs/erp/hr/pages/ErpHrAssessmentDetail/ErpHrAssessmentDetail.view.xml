@@ -18,23 +18,7 @@
 
         <grid id="sub-grid-edit" x:prototype="list" editMode="list-edit">
             <cols x:override="bounded-merge">
-                <col id="competencyId" mandatory="true">
-                    <gen-control>
-                        <c:script><![CDATA[
-                            return {
-                                type: 'picker',
-                                name: 'competencyId',
-                                label: '胜任力',
-                                required: true,
-                                source: '/erp/hr/pages/ErpHrCompetency/picker.page.yaml',
-                                valueField: 'id',
-                                labelField: 'name',
-                                joinValues: false,
-                                extractValue: true
-                            };
-                        ]]></c:script>
-                    </gen-control>
-                </col>
+                <col id="competencyId" mandatory="true"/>
                 <col id="actualLevel" mandatory="true">
                     <gen-control>
                         <c:script><![CDATA[

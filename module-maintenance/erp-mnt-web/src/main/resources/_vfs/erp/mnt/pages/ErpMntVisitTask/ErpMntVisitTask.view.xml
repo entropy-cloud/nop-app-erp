@@ -67,22 +67,7 @@
                     </gen-control>
                 </col>
                 <col id="status" mandatory="true"/>
-                <col id="completedBy">
-                    <gen-control>
-                        <c:script><![CDATA[
-                            return {
-                                type: 'picker',
-                                name: 'completedBy',
-                                label: '完成人',
-                                source: '/erp/md/pages/ErpMdEmployee/picker.page.yaml',
-                                valueField: 'id',
-                                labelField: 'name',
-                                joinValues: false,
-                                extractValue: true
-                            };
-                        ]]></c:script>
-                    </gen-control>
-                </col>
+                <col id="completedBy"/>
                 <col id="completedAt">
                     <gen-control>
                         <c:script><![CDATA[

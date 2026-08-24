@@ -68,11 +68,15 @@
                                 name: 'subjectId',
                                 label: '科目',
                                 required: true,
-                                source: '/erp/md/pages/ErpMdSubject/picker.page.yaml',
-                                valueField: 'id',
-                                labelField: 'name',
-                                joinValues: false,
-                                extractValue: true,
+                                pickerDialog: { title: '@i18n:control.picker.subjectSelect|科目选择', size: 'lg' },
+                                valueKey: 'id',
+                                labelKey: 'name',
+                                loadAction: { action: 'ajax', args: { url: '@query:ErpMdSubject__findPage', 'gql:selection': '{@pageSelection}' } },
+                                columns: [
+                                    { name: 'id', label: 'ID', hidden: true },
+                                    { name: 'code', label: '@i18n:common.code' },
+                                    { name: 'name', label: '@i18n:common.name' }
+                                ],
                                 onEvent: {
                                     change: {
                                         actions: [
@@ -194,23 +198,7 @@
                         ]]></c:script>
                     </gen-control>
                 </col>
-                <col id="currencyId" mandatory="true">
-                    <gen-control>
-                        <c:script><![CDATA[
-                            return {
-                                type: 'picker',
-                                name: 'currencyId',
-                                label: '币种',
-                                required: true,
-                                source: '/erp/md/pages/ErpMdCurrency/picker.page.yaml',
-                                valueField: 'id',
-                                labelField: 'code',
-                                joinValues: false,
-                                extractValue: true
-                            };
-                        ]]></c:script>
-                    </gen-control>
-                </col>
+                <col id="currencyId" mandatory="true"/>
                 <!--
                   多币种自动推算（P0 §5 乘法变体新应用场景）：
                   amountFunctional = ROUND(amountSource × exchangeRate, 4)

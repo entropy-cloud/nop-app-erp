@@ -25,22 +25,7 @@
                         ]]></c:script>
                     </gen-control>
                 </col>
-                <col id="apPartnerId">
-                    <gen-control>
-                        <c:script><![CDATA[
-                            return {
-                                type: 'picker',
-                                name: 'apPartnerId',
-                                label: '应付往来',
-                                source: '/erp/md/pages/ErpMdPartner/picker.page.yaml',
-                                valueField: 'id',
-                                labelField: 'name',
-                                joinValues: false,
-                                extractValue: true
-                            };
-                        ]]></c:script>
-                    </gen-control>
-                </col>
+                <col id="apPartnerId"/>
                 <col id="remark"/>
             </cols>
         </grid>

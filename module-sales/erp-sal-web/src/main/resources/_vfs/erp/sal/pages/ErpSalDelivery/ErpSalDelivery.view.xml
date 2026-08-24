@@ -140,12 +140,15 @@
                                             type: 'picker',
                                             name: 'selectedOrderLines',
                                             label: '选择销售订单行',
-                                            source: '/erp/sal/pages/ErpSalOrderLine/picker.page.yaml',
+                                            pickerDialog: { title: '@i18n:control.picker.salOrderLineSelect|选择销售订单行', size: 'lg' },
                                             multiple: true,
-                                            valueField: 'id',
-                                            labelField: 'lineNo',
-                                            joinValues: false,
-                                            extractValue: false,
+                                            valueKey: 'id',
+                                            labelKey: 'lineNo',
+                                            loadAction: { action: 'ajax', args: { url: '@query:ErpSalOrderLine__findPage', 'gql:selection': '{@pageSelection}' } },
+                                            columns: [
+                                                { name: 'id', label: 'ID', hidden: true },
+                                                { name: 'lineNo', label: '@i18n:common.lineNo|行号' }
+                                            ],
                                             required: true
                                         }
                                     ]

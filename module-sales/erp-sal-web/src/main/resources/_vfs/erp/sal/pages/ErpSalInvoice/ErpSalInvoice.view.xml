@@ -186,12 +186,15 @@
                                             type: 'picker',
                                             name: 'selectedDeliveryLines',
                                             label: '选择出库行',
-                                            source: '/erp/sal/pages/ErpSalDeliveryLine/picker.page.yaml',
+                                            pickerDialog: { title: '@i18n:control.picker.deliveryLineSelect|选择出库行', size: 'lg' },
                                             multiple: true,
-                                            valueField: 'id',
-                                            labelField: 'lineNo',
-                                            joinValues: false,
-                                            extractValue: false,
+                                            valueKey: 'id',
+                                            labelKey: 'lineNo',
+                                            loadAction: { action: 'ajax', args: { url: '@query:ErpSalDeliveryLine__findPage', 'gql:selection': '{@pageSelection}' } },
+                                            columns: [
+                                                { name: 'id', label: 'ID', hidden: true },
+                                                { name: 'lineNo', label: '@i18n:common.lineNo|行号' }
+                                            ],
                                             required: true
                                         }
                                     ]

@@ -25,23 +25,7 @@
         <grid id="sub-grid-edit" x:prototype="list" editMode="list-edit">
             <cols x:override="bounded-merge">
                 <col id="lineNo" mandatory="true" ui:number="true"/>
-                <col id="materialId" mandatory="true">
-                    <gen-control>
-                        <c:script><![CDATA[
-                            return {
-                                type: 'picker',
-                                name: 'materialId',
-                                label: '物料',
-                                required: true,
-                                source: '/erp/md/pages/ErpMdMaterial/picker.page.yaml',
-                                valueField: 'id',
-                                labelField: 'name',
-                                joinValues: false,
-                                extractValue: true
-                            };
-                        ]]></c:script>
-                    </gen-control>
-                </col>
+                <col id="materialId" mandatory="true"/>
                 <col id="supplierPartNo"/>
                 <col id="quantity" mandatory="true">
                     <gen-control>

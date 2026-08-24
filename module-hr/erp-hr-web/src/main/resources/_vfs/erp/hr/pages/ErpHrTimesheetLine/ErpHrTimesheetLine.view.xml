@@ -27,21 +27,7 @@
                         ]]></c:script>
                     </gen-control>
                 </col>
-                <col id="projectId">
-                    <gen-control>
-                        <c:script><![CDATA[
-                            return {
-                                type: 'picker',
-                                name: 'projectId',
-                                source: '/erp/prj/pages/ErpPrjProject/picker.page.yaml',
-                                valueField: 'id',
-                                labelField: 'name',
-                                joinValues: false,
-                                extractValue: true
-                            };
-                        ]]></c:script>
-                    </gen-control>
-                </col>
+                <col id="projectId"/>
                 <col id="taskId"/>
                 <col id="activityType"/>
                 <col id="hours" mandatory="true">
