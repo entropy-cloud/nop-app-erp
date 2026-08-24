@@ -21,10 +21,11 @@
 > **部署期序列推进修复已落地**（2026-07-09，plan `2026-07-09-0814-1`）——新增 `_vfs/_init-data/zz-sequence-advance.sql`（唯一 `.sql`，按文件名排序在所有 CSV 加载后执行）。经平台 `DataInitInitializer.executeSqlFiles()`（`jdbcTemplate.executeMultiSql` 原始 SQL）在种子 CSV 加载后 `MERGE INTO NOP_SYS_SEQUENCE ... KEY(SEQ_NAME)` 创建 default 序列行（`NEXT_VALUE=100000`，远超种子显式 id 上限 8）。**关键时序**：`DataInitInitializer` 是常规 bean（`@PostConstruct init()`，bean 启动期跑 CSV 加载 → SQL 执行）；`SysSequenceGenerator.lazyInit()` 经 `ioc:delay-method="lazyInit"`（`app-dao.beans.xml:11`）仅在**所有 bean 启动完成后**才运行——故 `.sql` 执行时 `nop_sys_sequence` 表为空（default 行尚未插入），必须 `MERGE`/`INSERT` 创建行（`UPDATE` 是 no-op 不可用）。随后 `addDefaultSequence()` 的 `if(!exists)` 守卫发现行已存在而跳过，advanced 值 `100000` 保留。效果：消除 GraphQL/AMIS 表单 create 首次主键碰撞（首 save id=100000），解除 0628-2 Deferred「AMIS 表单写路径」（触发条件即本修复）；写路径 helper 的 30 次 warm-up 重试简化为单次容错。不改 nop-entropy 平台代码，纯 app 层 `_init-data/*.sql` 解决。MERGE 满足全部 10 mandatory 列（SEQ_NAME/IS_UUID/NEXT_VALUE/STEP_SIZE/DEL_FLAG/VERSION/CREATED_BY/CREATE_TIME/UPDATED_BY/UPDATE_TIME）+ SEQ_TYPE/CACHE_SIZE。
 >
 > **通用引用完整性校验已落地**（2026-08-15，plan `2026-08-15-2000-1`）——新增通用测试类 `app-erp-all/src/test/java/io/nop/app/all/seed/TestErpSeedDataIntegrity.java`，对 `_init-data/` 全量种子建立**两层通用校验**（宿主 `TestAuthSeedLoadingProof` 初始化模式：BaseTestCase + 手动 `CoreInitialization.initialize()` + fresh-DB）：
->   1. **全表可加载**：枚举 `IDaoProvider.getEntityNames()`（**全量 418 实体 = app.erp.\* 352 + 平台 66**，含 `NopAuthUser`/`NopSysDict` 等），逐实体 `findAll()` 零异常；存在 seed CSV 的表行数 > 0（CSV 查找镜像 `DataInitInitializer.loadCsvData` 逻辑，95 CSV 全覆盖）。
+>   1. **全表可加载**：枚举 `IDaoProvider.getEntityNames()`（**全量 418 实体 = app.erp.\* 352 + 平台 66**，含 `NopAuthUser`/`NopSysDict` 等），逐实体 `findAll()` 零异常；存在 seed CSV 的表行数 > 0（CSV 查找镜像 `DataInitInitializer.loadCsvData` 逻辑，96 CSV 全覆盖）。
 >   2. **非空关联键指向合法数据**：逐实体经 `getEntityModel().getRelations()` 取全部 **to-one** 关系，逐行校验 join leftProp 非空值存在于 refEntity（主键 join 用 refEntity 主键集 Set 内存比对；非主键 join 按 refProp 值 `existsByQuery` 语义精确查询——实证当前全仓 0 命中）。
 > - **覆盖范围与实证结论**：418 实体、全量 to-one 关系（app 1057 + 平台）、722 个非空 FK 值**零悬空引用**；`spc_chart.parameterId=0` 无 `<to-one>` 天然跳过；`crp_load.workOrderId=1`→`WO-2026-001`、`workcenterId=1`→`WC-001`、`erp_mnt_*.csv` equipmentId 跨域引用全部合法。白名单豁免机制（`WHITELIST_KEYS` 三元组）当前为空，供未来 seed 追加登记。
 > - **后续 seed 追加义务**：任何 `_init-data/*.csv` 新增/修改必须保持引用完整性（本测试为门禁）；确需弱指针/占位引用时在 `WHITELIST_KEYS` 登记并注明证据来源（seed CSV 注释 / 本文档注记 / bug 记录）。
+> - **notify/cs 种子聚合已落地**（2026-08-25，plan `2026-08-25-0330-1`）——新增 **2 张部署配置表 CSV**（聚合前少 2 张，现共 **96 CSV**）：`erp_sys_notification_template.csv`（27 行模板族，转制自 `module-notify/deploy/sql/{三方言}/_seed_erp-notify.sql`，CSV 列头按既有约定省略审计列；三方言 diff 零差异）+ `nop_sys_code_rule.csv`（1 行 `cs-ticket-code` TK 编号规则，转制自 `module-cs/deploy/sql/{三方言}/_seed_erp-cs.sql`；String PK CSV 先例 = `nop_auth_role.csv`）。效果：聚合 app fresh-DB 启动后通知子系统与 CS TK 编号在无手工导入下即工作（修复 OA-01 产品级种子契约漂移——此前模板驱动通知静默丢弃 + TK 编号缺失回退）。联动：面 2 集成用例快照重录（C01/C04/C16/C17，见「快照重录义务」节）+ owner-doc 勘误修正（`integration-testing.md` §C16 勘误(4) 根因改「种子未聚合」）。
 > - **执行期先决修复**（本计划 Phase 3 绿化必要，均已在 `docs/bugs/` 登记）：nop-entropy `OrmTransactionListener` NPE（`e5ee02b40` lazy-property 回归，null-guard 修复，双独立子代理批准见计划文件「Cross-Repo Fix Approvals」）；mfg `ErpMfgCostRollupLine.view.xml` 档位 cells `custom="true"`（E4.1 代理字段 cell-not-prop 回归，bug `2026-08-14-0930-mfg-...` 方案 A）。
 
 ## 目的
@@ -68,16 +69,16 @@ app-erp-seed/
 
 > 2026-08-25 登记（roadmap V.2，plan `docs/plans/2026-08-25-0232-1-v2-closure-alignment-docs-registration.md` Phase 1；roadmap 横切关注点 1「快照重录义务」的强制规则落点）。
 
-部署期 seed 资产（`app-erp-all/src/main/resources/_vfs/_init-data/`，**94 CSV + 1 SQL**（`zz-sequence-advance.sql`），`DataInitInitializer` 拓扑序加载）是下述**双面测试快照的输入源**：三层全比对（response 快照 + DB 状态快照 + JUnit 关键断言）下，任何 seed CSV/SQL 变更（含未来计划追加种子）都会破坏受影响快照的录制口径。
+部署期 seed 资产（`app-erp-all/src/main/resources/_vfs/_init-data/`，**96 CSV + 1 SQL**（`zz-sequence-advance.sql`），`DataInitInitializer` 拓扑序加载）是下述**双面测试快照的输入源**：三层全比对（response 快照 + DB 状态快照 + JUnit 关键断言）下，任何 seed CSV/SQL 变更（含未来计划追加种子）都会破坏受影响快照的录制口径。
 
 ### 双面资产盘点
 
 - **面 1 — 既有各域测试快照**：各域 `module-<domain>/erp-*-service/_cases/`（19 域全在位，录制回放范式，391 测试类先例；快照种子 input/tables + 比对 output/response + output/tables）。
-- **面 2 — app-erp-all 集成用例快照**：`app-erp-all/_cases/io/nop/app/all/it/`（22 用例类（C01-C21 含 C20a/C20b）+ 试点 `TestErpP2pPilot` 共 **23 类**；CHECKING 态 = 全量 94 seed 装载后三层全比对）。
+- **面 2 — app-erp-all 集成用例快照**：`app-erp-all/_cases/io/nop/app/all/it/`（22 用例类（C01-C21 含 C20a/C20b）+ 试点 `TestErpP2pPilot` 共 **23 类**；CHECKING 态 = 全量 96 seed 装载后三层全比对）。**2026-08-25 履行先例**：notify/cs 种子聚合（plan `2026-08-25-0330-1`）触发面 2 重录 C01/C04/C16/C17 四用例（新激活通知行落 `output/tables/erp_sys_notification.csv` + 全局序列 ID 漂移），面 1 零影响（域模块测试不声明 `nop.orm.init-database-data`）、E2E 零影响（notify-inbox spec 全相对断言自包含）。
 
 ### 义务规则（强制）
 
-1. **触发条件**：任何部署期 seed 资产（94 CSV + `zz-sequence-advance.sql`）新增/修改/删除。
+1. **触发条件**：任何部署期 seed 资产（96 CSV + `zz-sequence-advance.sql`）新增/修改/删除。
 2. **重录义务（双面）**：变更方**同步重录受影响快照**——
    - 面 1：受影响各域 `_cases` 快照（force-save 重录；delVersion 列语义与响应快照 `*` 通配恢复口径见 e2e-runbook「JUnit 快照 delVersion 列语义」节）；
    - 面 2：`app-erp-all` 集成用例快照（基类 fresh-DB 重灌全量 seed 后按用例重录）。
@@ -89,6 +90,22 @@ app-erp-seed/
 - `docs/backlog/integration-test-roadmap.md`：横切关注点 1（快照重录义务）/ 横切关注点 3（seed 修正授权 + E2E 数值断言期望值联动评估）/ 规则 6（seed 修正纪律）。
 - `docs/testing/e2e-runbook.md`「集成测试」节 fresh-DB 纪律（seed 只追加不修改 + 部署期 seed 变更走修正授权流程——与本文节**双向互指**）。
 - 同一资产的引用完整性门禁义务见上方「通用引用完整性校验」段「后续 seed 追加义务」（本文节为快照重录面，二者互补）。
+
+## 模块 deploy 种子 ↔ 聚合 `_init-data` 种子同步义务（强制）
+
+> 2026-08-25 立法（plan `2026-08-25-0330-1`，开放审计 OA-01 修复；此前 module-notify 27 模板行 + module-cs 1 编号规则行只存在于 deploy SQL、从未聚合进聚合 app，导致 fresh-DB 通知子系统静默失活 + CS TK 编号缺失——产品级种子契约漂移六天无人发现）。
+
+**规则**：任何模块新增/修改 `deploy/sql/{mysql,oracle,postgresql}/_seed_*.sql`（模块级业务种子 deploy SQL）时，**必须**同步聚合进 `app-erp-all/src/main/resources/_vfs/_init-data/`（转制为 `<table>.csv`，列头对齐既有约定——省略审计列；`DataInitInitializer.loadCsvData` 按表名.csv + 列 CODE 装载、拓扑序自动排序、参与 `TestErpSeedDataIntegrity` 引用完整性门禁），**或**在本节显式登记 Non-Goal 裁决（含理由与触发条件）。
+
+**登记处**：
+
+| 模块 deploy 种子 | 聚合状态 | 裁决 |
+| --- | --- | --- |
+| `module-notify/deploy/sql/{三方言}/_seed_erp-notify.sql`（27 模板行） | ✅ 已聚合（2026-08-25，`erp_sys_notification_template.csv`） | 三方言 diff 零差异；CSV 省略审计列（对齐既有 96 CSV 约定） |
+| `module-cs/deploy/sql/{三方言}/_seed_erp-cs.sql`（`cs-ticket-code` 1 行） | ✅ 已聚合（2026-08-25，`nop_sys_code_rule.csv`） | String PK CSV 先例 = `nop_auth_role.csv` |
+| 其余模块 | — | 全仓无其他 `_seed_*.sql` deploy SQL（grep 实证）；新增时按本节规则同步聚合或登记 Non-Goal |
+
+**联动义务**：聚合/修改聚合种子时，同步履行「快照重录义务」节（面 2 受影响用例重录 + 面 1/E2E 评估落盘）与「通用引用完整性校验」段「后续 seed 追加义务」（`TestErpSeedDataIntegrity` 门禁全绿），并在提交说明登记重录范围（义务规则 3）。
 
 ## 交易单据种子（P2P+O2C，已落地）
 

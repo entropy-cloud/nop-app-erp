@@ -1017,7 +1017,7 @@ mvn test -pl app-erp-all                                # 全量（含既有 12 
   （父 POM `forkCount=4 + parallel=classes` 与共享文件型 H2 竞态——roadmap 已知约束 1）。
 - **基类**：`ErpIntegrationTestCase extends JunitAutoTestCase`（机制 (c)「抑制 tableInit 的文件 H2 双模方案」）：
   双模强制 `localDb=false + tableInit=false`；per-method `container.restart()` 后显式触发惰性
-  `DataInitInitializer` 装载**全量 94 seed**；fresh-DB 每类 1 次（initBeans 删 `db/erp.mv.db/.trace.db`
+  `DataInitInitializer` 装载**全量 96 seed**；fresh-DB 每类 1 次（initBeans 删 `db/erp.mv.db/.trace.db`
   + restart 重建 + seed 重灌）。共享 step helper 集（`rpcMutation`/`submitForApproval`/`approve`/
   `requireVoucherBalanced`/`findApItem`/`findStockMove` 等）供 B1-Bn 复用。
 - **用例前置**：`@NopTestConfig(localDb=false, initDatabaseSchema=TRUE, enableActionAuth=FALSE)` +

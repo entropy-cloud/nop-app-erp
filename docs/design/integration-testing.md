@@ -32,7 +32,7 @@
 | # | 事实 | 实证 | 证据 |
 |---|------|------|------|
 | B1 | app-erp-all 单模块 **12 个测试类**全为基建类（auth 4 / web 5 / seed 1 / meta 1 / job 1），**零业务集成测试** | `app-erp-all/src/test/java/` 文件清单（2026-08-23 实仓 find） | roadmap 计数「11 个」为漂移，本设计以实仓为准 |
-| B2 | 部署期 seed：`app-erp-all/src/main/resources/_vfs/_init-data/` **94 CSV + 1 SQL**（`zz-sequence-advance.sql`） | 2026-08-23 实仓计数 95 文件 = 94 csv + 1 sql | seed-data.md |
+| B2 | 部署期 seed：`app-erp-all/src/main/resources/_vfs/_init-data/` **96 CSV + 1 SQL**（`zz-sequence-advance.sql`） | 2026-08-25 实仓计数 97 文件 = 96 csv + 1 sql（聚合 notify 模板 + cs 编号规则前少 2 csv，plan `2026-08-25-0330-1`） | seed-data.md |
 | B3 | 既有业务参照：**12 个 `*EndToEnd` 集成测试类**（fin 3 / inv 2 / mfg 3 / pur 1 / qa 1 / sal 2） | 实仓 grep `extends JunitAutoTestCase` 类名 `TestErp*EndToEnd` | 单用例步骤与断言的业务参照，不重复实现其内部细节 |
 | B4 | `JunitAutoTestCase` 硬编码 `@ExtendWith({NopJunitExtension.class, NopJunitParameterResolver.class})` | `../nop-entropy/nop-autotest/nop-autotest-junit/src/main/java/io/nop/autotest/junit/JunitAutoTestCase.java:29` | 机制风险 ① 的源码锚点 |
 | B5 | 缺 `@NopTestConfig` 抛 `IllegalArgumentException`（"Classes inheriting from JunitAutoTestCase must be annotated with @NopTestConfig"） | 同上 `:83-85` | JunitAutoTestCase 类级注解强制 |
@@ -40,11 +40,11 @@
 | B7 | RECORDING 分支 `setLocalDb(testConfig.localDb())` + `setTableInit(false)`（不自动装载 input/tables） | 同上 `:110-116` | 录制态 DB 由注解 `localDb` 决定 |
 | B8 | `configLocalDb()`：`localDb=true` → 强制 in-memory H2（`jdbc:h2:mem:` + 随机 UUID） | `../nop-entropy/nop-autotest/nop-autotest-core/src/main/java/io/nop/autotest/core/AutoTestCase.java:190-197` | per-method 独立内存库 |
 | B9 | 每测试方法 `container.restart()`（"每个单元测试函数都要使用单独的数据库和bean环境"） | 同上 `:211-225`（initBeans） | per-method 隔离（风险 ③）源码锚点 |
-| B10 | `AutoTestCaseDataBaseInitializer.createTables()` **只建 input/output 文件涉及的表**（"输入和输出所涉及到的表都需要新建"） | `../nop-entropy/nop-autotest/nop-autotest-core/src/main/java/io/nop/autotest/core/execute/AutoTestCaseDataBaseInitializer.java:90-109` | 回放态 DB ≠ 全量 94 seed（风险 ② 核心机制） |
+| B10 | `AutoTestCaseDataBaseInitializer.createTables()` **只建 input/output 文件涉及的表**（"输入和输出所涉及到的表都需要新建"） | `../nop-entropy/nop-autotest/nop-autotest-core/src/main/java/io/nop/autotest/core/execute/AutoTestCaseDataBaseInitializer.java:90-109` | 回放态 DB ≠ 全量 96 seed（风险 ② 核心机制） |
 | B11 | 快照规模澄清：`output/tables` 只写**变更行**（非全库）；`input/tables` 只写 **ORM 装载行** | `AutoTestCaseDataSaver` / `OrmModelHelper` / `TagVarCollector`（nop-autotest-core，同目录源码）；testing.md「快照测试的默认工作流」 | 「三层全比对快照巨大」担忧不成立，规模受用例触碰数据量约束 |
 | B12 | 父 POM surefire：`forkCount=4 + reuseForks=true + parallel=classes + threadCount=1` | `../nop-entropy/pom.xml` surefire 段（2026-08-23 实仓） | 文件型 H2 并行 fork 竞态（BLOCKER 级，M0.2 必须解决） |
 | B13 | app-erp-all 无模块级 surefire 覆盖（pom 仅 `systemPropertyVariables`） | `app-erp-all/pom.xml` build 段 surefire 插件配置 | 父 POM 并行配置对 app-erp-all 生效 |
-| B14 | 宿主模式先例：`TestAuthSeedLoadingProof`（BaseTestCase + 手动 `CoreInitialization.initialize()` + 文件 H2 fresh 清理 + `setTestConfig` schema/data 开关） | `app-erp-all/src/test/java/io/nop/app/all/auth/TestAuthSeedLoadingProof.java:37-56` | 全量 94 seed 装载的宿主模式机制（绕开 NopJunitExtension ALL_LAZY 时序） |
+| B14 | 宿主模式先例：`TestAuthSeedLoadingProof`（BaseTestCase + 手动 `CoreInitialization.initialize()` + 文件 H2 fresh 清理 + `setTestConfig` schema/data 开关） | `app-erp-all/src/test/java/io/nop/app/all/auth/TestAuthSeedLoadingProof.java:37-56` | 全量 96 seed 装载的宿主模式机制（绕开 NopJunitExtension ALL_LAZY 时序） |
 | B15 | xwf 审批流限制：Payment/Receipt `submitForApproval` 被 wf 步骤参与者 `user:$0`（SYS id=0）拒绝 | `docs/plans/2026-07-09-2330-1-xwf-approval-browser-e2e-feasibility.md`（权威裁决 NOT FEASIBLE，浏览器层） | 用例设计必须以当前实现为准，只选用已验证可执行的审批流（见 §5） |
 | B16 | 全仓测试基线：3808 tests / 0 failures / 0 errors / 1 skipped（唯一 skipped = `ErpAllWebPagesCollectTest` `@Disabled` 预存 JDK26/ANTLR H-2）；156 reactor 模块 BUILD SUCCESS | `docs/testing/known-good-baselines.md` 2026-08-23 全量基线条目 | 权威计数源（不在本文复制内联计数，引用指针） |
 | B17 | 后端 xwf 链可用 `setUserId("0")` 绕过 user:$0 拦截（既有后端测试实证） | `TestErpHrSalaryWorkflowApproval`（submit→3 级 agree→APPROVED）；`TestErpPurPaymentWorkflowApproval`（pur-service） | xwf 规避清单的判定依据（§5） |
@@ -57,20 +57,20 @@
 
 **选项 (a) 标准 input/tables 范式** —— 完全沿用 `JunitAutoTestCase` 标准生命周期：
 
-- 录制期：`@NopTestConfig(localDb=true, snapshotTest=RECORDING)` → in-memory H2（per-method UUID 库，B8/B9）；94 seed 在**测试方法内**经 DataInitInitializer 镜像装载器（拓扑序，镜像 `DataInitInitializer.loadCsvData` 逻辑，先例 `TestErpSeedDataIntegrity`）装载入内存库作**录制期富集**；录制产物 = `input/tables`（ORM 装载行）+ `output/tables`（变更行）+ `response.json5`。
+- 录制期：`@NopTestConfig(localDb=true, snapshotTest=RECORDING)` → in-memory H2（per-method UUID 库，B8/B9）；96 seed 在**测试方法内**经 DataInitInitializer 镜像装载器（拓扑序，镜像 `DataInitInitializer.loadCsvData` 逻辑，先例 `TestErpSeedDataIntegrity`）装载入内存库作**录制期富集**；录制产物 = `input/tables`（ORM 装载行）+ `output/tables`（变更行）+ `response.json5`。
 - 回放态（CHECKING）：in-memory H2 + 只建 input/output 涉及表（B10）+ `input/tables` 快照恢复（B6）。
 - 优点：零平台对抗；391 测试类既有先例；per-method 天然隔离（B8/B9）；快照机制/tooling（force-save-output、@var、diff）全复用。
-- 缺点：**回放态 DB ≠ 全量 94 seed**（风险 ② 常态化）——用例依赖的部署 seed 行若未被 ORM 装载则不会进入 `input/tables`，回放可能缺行；缺口须逐用例补录 `input/tables`（自包含追加），形成「部署 seed ↔ 用例快照」双份数据源，seed 变更时双面漂移（风险 ④ 放大）。
+- 缺点：**回放态 DB ≠ 全量 96 seed**（风险 ② 常态化）——用例依赖的部署 seed 行若未被 ORM 装载则不会进入 `input/tables`，回放可能缺行；缺口须逐用例补录 `input/tables`（自包含追加），形成「部署 seed ↔ 用例快照」双份数据源，seed 变更时双面漂移（风险 ④ 放大）。
 
 **选项 (b) 自研基类** —— 宿主模式（B14）+ 自实现 AutoTestOrmHook 级 DB 采集 + 自实现三层比对：
 
-- 优点：完全控制（全量 94 seed 文件 H2 前置态；无 NopJunitExtension；无 CHECKING DB 组成问题）。
+- 优点：完全控制（全量 96 seed 文件 H2 前置态；无 NopJunitExtension；无 CHECKING DB 组成问题）。
 - 缺点：重复实现平台机制（OrmHook 采集 / @var 替换 / force-save-output / diff 比对），数百行自研代码 + 长期维护；与平台快照语义分歧风险高；丢失既有 391 先例的工具链与心智模型。**成本与风险不成比例于收益（收益被选项 (c) 以更低成本获得）→ 被拒。**
 
 **选项 (c) 抑制 tableInit 的文件 H2 双模方案** —— app-erp-all 新增测试基类 `ErpIntegrationTestCase extends JunitAutoTestCase`：
 
 - **DB 恒为文件 H2**（application.yaml `jdbc:h2:./db/erp`）：子类 override `configExecutionMode`（protected，B5/B6 所在类的同文件方法）强制两模式均 `setLocalDb(false)` + `setTableInit(false)`——CHECKING 不再强制 in-memory（B6 被覆盖），RECORDING 不再走内存库（B7 被覆盖）。
-- **前置态**：`@BeforeAll` 宿主式初始化（B14 先例）：fresh-DB 清理（`rm db/erp.mv.db` + `.trace.db`）+ `setTestConfig("nop.orm.init-database-schema", true)` + `setTestConfig("nop.orm.init-database-data", true)` + `CoreInitialization.initialize()` → **全量 94 seed 为两种模式的统一前置态**。
+- **前置态**：`@BeforeAll` 宿主式初始化（B14 先例）：fresh-DB 清理（`rm db/erp.mv.db` + `.trace.db`）+ `setTestConfig("nop.orm.init-database-schema", true)` + `setTestConfig("nop.orm.init-database-data", true)` + `CoreInitialization.initialize()` → **全量 96 seed 为两种模式的统一前置态**。
 - **录制/校验机制保持平台原生**：response.json5 + output/tables + @var 替换 + force-save-output 全复用；`input/tables` 仅承载**用例自包含追加行**（用例新建的数据，非部署 seed 复制）。
 - **每类 1 测试方法约定**（§4）：`container.restart()` 每类恰 1 次（B9），文件 H2 每类 fresh 重建，类间零污染。
 - **surefire 串行化**（M0.2 承诺）：app-erp-all 模块级 `forkCount=1`/`parallel=none`，消除并行 fork 对共享文件 H2 的竞态（B12/B13）。
@@ -95,7 +95,7 @@
 **风险 ② CHECKING 态 DB 组成**（回放态 ≠ 全量 seed）：
 
 - 判定方法（M0.2 试点 2）：RECORDING 完成后检查录制产物——逐用例核验「依赖的部署 seed 行是否全部在位」：(1) 对每个用例的 FK 依赖图（from 用例前置规格），在回放态（文件 H2 全量 seed，(c) 方案下天然成立）或 input/tables（(a) 方案下须核验）中确认目标行存在；(2) CHECKING 回放跑绿 = 组成自洽证明；`output-row-not-exists`/FK 缺失失败 = 组成缺口，逐表补录（(a) 方案下走 input/tables 自包含追加，不动部署 seed——种子只能追加纪律）。
-- (c) 方案下的附带判据：回放态 = 部署 seed 全量（DataInitInitializer 装载），**该风险结构性降级**，仅需验证 seed 装载在测试上下文（非 Quarkus 启动上下文）下与部署启动等价（同 loader、同拓扑序、同 94 CSV + 1 SQL）。
+- (c) 方案下的附带判据：回放态 = 部署 seed 全量（DataInitInitializer 装载），**该风险结构性降级**，仅需验证 seed 装载在测试上下文（非 Quarkus 启动上下文）下与部署启动等价（同 loader、同拓扑序、同 96 CSV + 1 SQL）。
 - 快照规模判据（两方案通用）：`output/tables` 只写变更行 + `input/tables` 只写 ORM 装载行（B11）——试点 2 实测 1 个 3+ 域用例的快照体积与文件数，登记「单用例快照规模参考值」。
 
 **风险 ③ per-method `container.restart()` × 文件 H2**：
@@ -125,7 +125,7 @@
 | 风险 | 实证方式 | 结论 | 影响 |
 |------|---------|------|------|
 | ① NopJunitExtension 共存 | 试点类 extends 基类 + NopJunitExtension 生命周期全走通；判据 3 条全过 | **成立**。ALL_LAZY 下 schema 由 force-init `DataBaseSchemaInitializer` 幂等创建（`ioc:force-init="true"` + `ioc:after="nopOrmSessionFactory"`）；`DataInitInitializer` 为惰性 bean（无 force-init，ALL_LAZY 不自动跑），基类在 per-method `container.restart()` 后显式 `BeanContainer.getBeanByType(DataInitInitializer.class)` 触发装载 | 基类装配固定为该模式；「宿主式 @BeforeAll init」字面配方不适用（NopJunitExtension.beforeAll 先启动容器），以显式触发惰性 bean 等价实现 |
-| ② CHECKING 态 DB 组成 | 回放态 = 文件 H2 全量 94 seed（部署同源 loader）；CHECKING 复跑零 `output-row-not-exists`/FK 缺失 | **结构性降级确认**：回放态 = 部署 seed 真相源，(c) 方案下该风险不再构成缺口；input/tables 仅承载用例自包含追加（试点未用，表装载被双模抑制） | B1-Bn 用例前置一律按「seed 引用 + 自包含 GraphQL 建数」设计，无需补录 input/tables |
+| ② CHECKING 态 DB 组成 | 回放态 = 文件 H2 全量 96 seed（部署同源 loader）；CHECKING 复跑零 `output-row-not-exists`/FK 缺失 | **结构性降级确认**：回放态 = 部署 seed 真相源，(c) 方案下该风险不再构成缺口；input/tables 仅承载用例自包含追加（试点未用，表装载被双模抑制） | B1-Bn 用例前置一律按「seed 引用 + 自包含 GraphQL 建数」设计，无需补录 input/tables |
 | ③ per-method restart × 文件 H2 | 试点类 + 全量 13 测试类同一 fork 顺序执行全绿；restart 后 seed 仍可经 DAO 访问 | **成立**。`container.restart()` 保留文件库（JVM 级文件 H2），seed 落库后跨 restart 存活；fresh-DB 每类 1 次 = initBeans 删除 `.mv.db/.trace.db` + restart 重建 + seed 重灌（1 类 1 方法约定下每类恰 1 次） | 类内多方法时须登记 per-method fresh 清理义务（B1-Bn 默认 1 类 1 方法不触发） |
 | ④ 快照构成与体积 | 试点 4 域链实测：output/tables 16 表 CSV（全变更行，`_chgType` A/D 标记；时间戳列 `*` 通配 + 时序列 `@var:` 引用），response 12 文件，用例目录合计 252K | **构成 = 变更行非全库确认**（`erp_fin_voucher` 仅 2 行新增凭证、`erp_fin_ar_ap_item` 仅 1 行等）；体积受用例触碰数据量约束，量级 KB 级，无噪声不可比问题 | 规模担忧不成立；seed 变更敏感性收敛为 output/tables 单面重录（§3.3 风险 ④ 判定方法 (2) 执行期预算：试点无 seed 修改，未测重录耗时——V.1 前以单用例 252K/类量级登记） |
 | ⑤ 单用例耗时 | 试点 CHECKING 实测：suite 6.07s（容器启动 + fresh seed 装载 ~4s + 用例体 1.09s + 校验）；既有全量 13 测试类同一 fork 全绿 | **远低于 §4 模型**（模型 10-60s/类）：12 动作链 1.09s，含 seed 装载 6s/类量级 | 22 用例套件总耗时模型可下调（V.1 实测登记预期总耗时），串行执行上界收窄 |
@@ -189,7 +189,7 @@
 ## 6. 用例全量设计（22 用例）
 
 > **用例编号**：C01-C22（C20 拆分为 C20a/C20b 两独立用例；C21 为批 B4 的 aps 用例，编号置于 C09 之后由批序决定，非严格单调递增）。每用例六要素：**业务目标 / 前置 seed 或自包含数据 / 关键路径步骤（GraphQL 动作序列）/ 三层断言 / 主导域（批次归属）/ 涉及域**。复杂度判据（跨 3+ 域 + 审批/过账/状态机至少其一）逐用例标注。
-> **图例**：`[审批轴: DIRECT]` = 平台 approval-support 直接审批；`[xwf 规避依据: …]` = xwf 实体步骤的规避说明（§5）；`[自包含]` = 用例自建数据（input/tables 承载）；`[seed]` = 依赖部署 94 seed 前置态。
+> **图例**：`[审批轴: DIRECT]` = 平台 approval-support 直接审批；`[xwf 规避依据: …]` = xwf 实体步骤的规避说明（§5）；`[自包含]` = 用例自建数据（input/tables 承载）；`[seed]` = 依赖部署 96 seed 前置态。
 > **动作名以当前实现为准**：步骤中动作名均经实仓 BizModel `@BizMutation`/E2E 先例核实（如 `ErpPurOrder__submitForApproval`、`ErpFinAccountingPeriod__closePeriod`、`ErpB2bAsn__createReceiveFromAsn`、`ErpDrpPlan__runDrp` 等）；实施时以 M0.2 试点 GraphQL schema 校验为准。
 
 ### 批 B1（主导域 purchase）
@@ -455,7 +455,7 @@
 
 #### C16 CS 工单 SLA 与通知派发
 
-> **实施期勘误登记（2026-08-24，B8）**：(1) **六态推进动作序列**——实仓无 `respond` 动作（B2 C04 已裁决「以当前实现为准」），步骤 1 为动作名漂移；实仓序列 = `assign`（NEW→ASSIGNED）→ `start`（→IN_PROGRESS，记 startDateTime）→ `resolve`（→RESOLVED，置 isSlaCompleted = resolvedAt ≤ deadlineDateTime）→ `close`（→CLOSED；仅超时工单 isSlaCompleted=false 须 remark）。(2) **SLA 装配路径**——`ErpCsTicket__save` 后置自动挂载（D1 守卫：slaPolicyId/deadline 均空才触发；无匹配策略留空不阻断）+ 显式 `matchAndAttachSla` 幂等重挂双证；seed 无 `erp_cs_sla_policy` 行 → 自包含策略（类型精确匹配 + resolveHours=8 日历小时模式）。(3) **调研动作面**——步骤 3 旧动作名 `ErpCsSurvey__save` 为漂移：实仓 = resolve 自动创建调研（config-gated trigger=RESOLVED，token 随机生成经 DB 反查传递）+ `ErpCsSurvey__submitSurvey`（surveyToken 入参，CSAT 1-5 校验 config-gated）；自包含回填取 CSAT=5/NPS=9 与 seed 调研同值，报表均值稳定 5.00/9.00。(4) **通知派发路径**——实仓工单链 notify（创建确认/SLA 预警/知识库建议）均模板缺失静默降级不落库，步骤 4「工单事件触发 ErpSysNotification 生成」为未实现动作面 → 改 C09 自包含模板先例（`ErpSysNotification__notify` → markRead → countUnread 归零可达断言）。B8 实施证据：`TestErpC16CsSlaNotification`。
+> **实施期勘误登记（2026-08-24，B8）**：(1) **六态推进动作序列**——实仓无 `respond` 动作（B2 C04 已裁决「以当前实现为准」），步骤 1 为动作名漂移；实仓序列 = `assign`（NEW→ASSIGNED）→ `start`（→IN_PROGRESS，记 startDateTime）→ `resolve`（→RESOLVED，置 isSlaCompleted = resolvedAt ≤ deadlineDateTime）→ `close`（→CLOSED；仅超时工单 isSlaCompleted=false 须 remark）。(2) **SLA 装配路径**——`ErpCsTicket__save` 后置自动挂载（D1 守卫：slaPolicyId/deadline 均空才触发；无匹配策略留空不阻断）+ 显式 `matchAndAttachSla` 幂等重挂双证；seed 无 `erp_cs_sla_policy` 行 → 自包含策略（类型精确匹配 + resolveHours=8 日历小时模式）。(3) **调研动作面**——步骤 3 旧动作名 `ErpCsSurvey__save` 为漂移：实仓 = resolve 自动创建调研（config-gated trigger=RESOLVED，token 随机生成经 DB 反查传递）+ `ErpCsSurvey__submitSurvey`（surveyToken 入参，CSAT 1-5 校验 config-gated）；自包含回填取 CSAT=5/NPS=9 与 seed 调研同值，报表均值稳定 5.00/9.00。(4) **通知派发路径**——~~实仓工单链 notify（创建确认/SLA 预警/知识库建议）均模板缺失静默降级不落库，步骤 4「工单事件触发 ErpSysNotification 生成」为未实现动作面~~ **根因修正（2026-08-25，plan `2026-08-25-0330-1`）**：module-cs/notify 派发实现与模板种子自 2026-08-18 起即存在，B8 时真实根因 = **模块 deploy 种子（`_seed_erp-notify.sql` 27 模板 + `_seed_erp-cs.sql` TK 编号规则）未聚合进 app `_init-data` 装配**，fresh-DB 模板查找落空才静默降级；2026-08-25 已聚合修复（`erp_sys_notification_template.csv` 27 行 + `nop_sys_code_rule.csv` 落 `_init-data`）。聚合后 C16 链 notify 真实落库：7202 创建确认→提单人 + 7204 知识库建议→处理人（resolve 路径，`output/tables/erp_sys_notification.csv` 变更行）；7101 SLA 预警仍仅 overdue 升级路径触发（C16 resolve 达标场景实证不触发）。通知已读断言路径保持 C09 自包含模板先例（`ErpSysNotification__notify` → markRead → countUnread 归零，接收人与工单链通知隔离）。B8 实施证据：`TestErpC16CsSlaNotification`。
 
 - **业务目标**：客服闭环——工单六态状态机 → SLA 达标计算 → 宏响应 → 满意度调研 → 通知派发。复杂度判据：跨 3 域 + 状态机 ✓。
 - **前置**：`[seed]` 工单类型（1045-1 seed）+ `[自包含]` 工单 + 调研。
@@ -471,7 +471,7 @@
 
 #### C17 HR 薪酬发放闭环
 
-> **实施期勘误登记（2026-08-24，B8）**：(1) **SALARY_PAYMENT 凭证口径**——280 = Dr **2211 应付职工薪酬** / Cr **1002 银行存款**，金额 = **实发净额**（银行实付口径，`buildPaymentEvent` 传 netSalary）；设计原文「Dr 费用/Cr 2211 + 金额 = 薪资合计」为 270 计提口径误植（270 = Dr 6601 费用 / Cr 2211 = gross）。approve（wf 回调）联动计提链 270/290/300 三凭证 + posted=true（三路全成）为同期可观测产物。(2) **员工往来断言不成立**——HR 过账 Provider（SalaryPostingProvider）纯 GL 无 AR/AP 辅助账生成，层 1「员工往来（ar_ap_item EMPLOYEE_ADVANCE 口径）核对」勘误删除（EMPLOYEE_ADVANCE 辅助账归 finance 域员工借款链路，非薪资发放）。(3) **通知触发路径**——实仓 markPaid 无自动员工通知（notify 仅计提失败告警路径），步骤 4「发放完成触发员工通知」为未实现动作面 → 改 C09 自包含模板先例。(4) **payroll 科目 config**——`erp-hr.default-payroll-subject-id` 缺省空 → 270/280 抛 ERR_PAYROLL_SUBJECT_NOT_CONFIGURED（G3 吞异常零凭证），@NopTestProperty 指定 2211（值=科目编码）。(5) 前置「1234-1 seed 员工」= 旧式码，实仓新式码 = `erp_hr_employee` 行（HR-EMP-001/002，org 2）；核算环境（税档/合同/社保基数与比例/6601.01/6601.02 科目）无 seed → 自包含建数（TestErpHrSalaryPostingChain.seedFullEnvironment 同型）；runPayroll 为全员批量（活跃员工遍历，已有非作废薪资幂等跳过），emp2 须同步建合同/社保前置。B8 实施证据：`TestErpC17HrSalaryPayment`。
+> **实施期勘误登记（2026-08-24，B8）**：(1) **SALARY_PAYMENT 凭证口径**——280 = Dr **2211 应付职工薪酬** / Cr **1002 银行存款**，金额 = **实发净额**（银行实付口径，`buildPaymentEvent` 传 netSalary）；设计原文「Dr 费用/Cr 2211 + 金额 = 薪资合计」为 270 计提口径误植（270 = Dr 6601 费用 / Cr 2211 = gross）。approve（wf 回调）联动计提链 270/290/300 三凭证 + posted=true（三路全成）为同期可观测产物。(2) **员工往来断言不成立**——HR 过账 Provider（SalaryPostingProvider）纯 GL 无 AR/AP 辅助账生成，层 1「员工往来（ar_ap_item EMPLOYEE_ADVANCE 口径）核对」勘误删除（EMPLOYEE_ADVANCE 辅助账归 finance 域员工借款链路，非薪资发放）。(3) **通知触发路径**——实仓 markPaid 无自动员工通知（notify 仅计提失败告警路径），步骤 4「发放完成触发员工通知」为未实现动作面 → 改 C09 自包含模板先例（**2026-08-25 补注**：种子聚合修复后 xwf end-listener 的 `wf.hr-salary.result`(7114) 结果通知已真实落库→提单人，C17 快照含该变更行；markPaid 本身仍无自动员工通知，勘误结论不变）。(4) **payroll 科目 config**——`erp-hr.default-payroll-subject-id` 缺省空 → 270/280 抛 ERR_PAYROLL_SUBJECT_NOT_CONFIGURED（G3 吞异常零凭证），@NopTestProperty 指定 2211（值=科目编码）。(5) 前置「1234-1 seed 员工」= 旧式码，实仓新式码 = `erp_hr_employee` 行（HR-EMP-001/002，org 2）；核算环境（税档/合同/社保基数与比例/6601.01/6601.02 科目）无 seed → 自包含建数（TestErpHrSalaryPostingChain.seedFullEnvironment 同型）；runPayroll 为全员批量（活跃员工遍历，已有非作废薪资幂等跳过），emp2 须同步建合同/社保前置。B8 实施证据：`TestErpC17HrSalaryPayment`。
 
 - **业务目标**：薪酬闭环——薪资计算 → xwf 三级审批 → 发放 → SALARY_PAYMENT 凭证 + 员工往来 + 发放通知。复杂度判据：跨 3 域 + 审批（xwf）+ 过账 ✓。
 - **前置**：`[seed]` 员工（1234-1 seed）+ `[自包含]` 薪资单（薪酬项/模拟）。
@@ -663,4 +663,4 @@
 | app-erp-all 无模块级 surefire 覆盖 | `app-erp-all/pom.xml` build 段 | 2026-08-23 实仓 |
 | xwf user:$0 被拒（浏览器层 NOT FEASIBLE） | `docs/plans/2026-07-09-2330-1-xwf-approval-browser-e2e-feasibility.md` | 权威裁决 |
 | 后端 setUserId("0") xwf 链实证 | `TestErpHrSalaryWorkflowApproval` / `TestErpPurPaymentWorkflowApproval` | 2026-08-23 实仓 |
-| 部署 seed 94 CSV + 1 SQL | `app-erp-all/src/main/resources/_vfs/_init-data/` | 2026-08-23 实仓计数 |
+| 部署 seed 96 CSV + 1 SQL | `app-erp-all/src/main/resources/_vfs/_init-data/` | 2026-08-23 实仓计数 |
