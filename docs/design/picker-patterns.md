@@ -4,7 +4,11 @@
 > Owner docs: `docs/backlog/frontend-ui-roadmap.md` §F4 Phase 1、`docs/architecture/view-and-page-strategy.md` §文件层次结构 / §picker.page.yaml 范式
 > 平台参考: `../nop-entropy/docs-for-ai/02-core-guides/view-and-page-customization.md`、`../nop-entropy/docs-for-ai/03-runbooks/customize-view.md`、`../nop-entropy/docs-for-ai/04-reference/safe-api-reference.md`（`__findList` / `__findPage` 端点）
 
-> **Flux 控件映射**（2026-08-03 全量迁移后）：表单字段级 picker 经 flux-control.xlib 输出 flux `picker`（`pickerPage` 引用 + `name`/`pickerDialog`）。**页面级 picker**：后端 `page_picker.xpl` 在 flux 模式 100% 输出合法 JSON（352 picker.page.yaml 0 错误），但 nop-chaos-flux 前端**无页面级 picker 渲染器**（缺口归跨仓库 successor，混合期表单字段级 picker + AMIS 兜底覆盖，`2026-08-03-1232-1` P1 Phase 0 方案 B/C 裁决）。下文 picker.page.yaml delta 写法作为**view.xml/模型层语义**仍权威，AMIS 专属输出降级为历史注记。
+> **Flux 控件映射**（2026-08-03 全量迁移后；2026-08-24 修复 picker 字段级契约）：
+> - **表单字段级 picker 经 `_vfs/_delta/default/nop/web/xlib/flux-control.xlib`**（delta 覆盖 nop-entropy `flux-control.xlib` 同名基线文件，仅重写 `edit-relation` / `edit-roleId` / `edit-userId` / `edit-ref-id` / `edit-ref-ids` 五个 picker tag 的 `<source>` 输出）输出 flux `picker`（`pickerDialog` + `loadAction` + `columns` + `valueKey` + `labelKey` + `multiple`——注意 flux PickerSchema 契约是 valueKey/labelKey 非 AMIS 的 valueField/labelField，见 picker-renderer.tsx:56-57），匹配 nop-chaos-flux `PickerSchema` 契约（`composite-schemas.ts:168-181`）。**修复机制**：依赖平台 `view-gen.xlib:DefaultViewPostExtends` 在 flux 模式下自动重写 `<controlLib>` 子节点为 `flux-control.xlib`（`docs-for-ai/02-core-guides/flux-rendering.md §自动切换机制`）。
+> - **grid 列 picker 通过 `DefaultControl` 自动接管**——27 个 view.xml 的手写 `<gen-control>` AMIS picker schema 块已全部删除（2026-08-24，2026-08-24-1147-1 Phase 3），由 `DefaultControl` 自动调用 delta flux-control.xlib 的 `edit-relation` tag 输出正确 picker schema。仅保留含 `onEvent` 跨字段联动等自定义逻辑的 `<gen-control>` 块（如 `quantity` 列计算 `totalCost`）。
+> - **页面级 picker**：后端 `page_picker.xpl` 在 flux 模式 100% 输出合法 JSON（364 picker.page.yaml 0 错误），但 nop-chaos-flux 前端**无页面级 picker 渲染器**（缺口归跨仓库 successor，混合期表单字段级 picker + AMIS 兜底覆盖，`2026-08-03-1232-1` P1 Phase 0 方案 B/C 裁决）。
+> 下文 picker.page.yaml delta 写法作为**view.xml/模型层语义**仍权威，AMIS 专属输出降级为历史注记。
 
 ## 1. 范式目标
 

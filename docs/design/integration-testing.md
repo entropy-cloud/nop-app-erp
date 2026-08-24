@@ -487,6 +487,8 @@
 
 #### C18 合同生命周期与返利计提结算
 
+> **实施期勘误登记（2026-08-24，B9）**：(1) **返利动作宿主漂移**——runAccrual/postSettlement 宿主 = `ErpCtRebateAgreement__runAccrual`/`ErpCtRebateSettlement__postSettlement`（设计原文写 ErpCtContract__runAccrual/postSettlement；合同实体无此两动作）。(2) **terminate 两阶段**——terminate 不改合同状态（生成 PENDING 法务记录，RC-R1.34），TERMINATED 由 `approveTermination(recordId)` 达成；recordId 须按 `TestErpCtContractRebate.pendingTerminationRecordId` 先例查询（approvalMatrixId=null + PENDING 判别）；法务守卫 approverId = seed `role-ct-approver`（nop_auth_user id 19 / role 合同审批人），须以该身份驱动。(3) **六动作连续序列不可执行**——amend（ACTIVE→DRAFT）后 suspend 守卫要求 ACTIVE，实施期以 `rejectAmend`（DRAFT→ACTIVE 恢复，v1 SIGNED 重挂 current）补全 amend 回路后再 suspend/resume/terminate；设计「submit→activate→amend→suspend/resume/terminate」为无回路单序列假设勘误。(4) **结算 credit memo 口径**——postSettlement 生成跨域负额 AR 发票（`CT-REBATE-{settlementId}`，totalAmount=-2000、DRAFT/UNSUBMITTED，O-4 豁免直接持久化不经审批管道）**非已过账凭证**；计提翻转 = 未结算计提行标记 isSettled=true + settledDate，**无红字反向分录**——设计「负额发票/凭证生成 + 计提行翻转红字同向取负」以实仓行为为准勘误。(5) **config 门控**——`ErpCtConfigs` 的 erp-ct.rebate-enabled/auto-settle/accrual-method/settlement-mode 四键在 runAccrual/postSettlement 路径零消费（声明未接线），运行门控 = 协议实体 status=ACTIVE，用例无需 @NopTestProperty。(6) **计提金额口径**——PERIOD_END 聚合协议期间（startDate..asOfDate）已过账 AR 发票 totalAmountWithTax（含税口径）只读求和，按累计命中阶梯整额 × rebatePercent（RebateEngine scale=2 HALF_UP）；seed 客户 1 已含过账发票 SINV-2026-001（2026-07-06，1130）——用例协议 startDate 取 2026-07-07 隔离聚合窗口（自包含）。B9 实施证据：`TestErpC18CtLifecycleRebate`。
+
 - **业务目标**：合同闭环——合同生命周期 6 动作 → 版本/签署 → 返利计提 → 返利结算（跨域负额 credit memo + 计提翻转）。复杂度判据：跨 3 域 + 状态机 + 过账 ✓。
 - **前置**：`[seed]` 客户/物料 + `[自包含]` 合同（含返利条款）+ 销售发票。
 - **关键路径步骤**：
@@ -499,6 +501,8 @@
 - **主导域 / 涉及域**：contract / contract, sales, finance。
 
 #### C19 B2B ASN 自动收货与物流到岸成本
+
+> **实施期勘误登记（2026-08-24，B9）**：(1) **ASN 状态机推进序列**——设计「save → 状态机推进（RECEIVED 等）」实仓落地 = {@code ErpB2bAsn__save} 直建 status=RECEIVED（非 webhook 解析路径——webhook 建 ASN 行仅置 supplierPartNo 不落 materialId，行级回填守卫将拒绝；save 直建 + AsnLine 显式 materialId 规避，`TestErpB2bAsnInventoryIntegration.seedMatchedAsnDirectly` 先例），后 `matchPurchaseOrder`（RECEIVED→MATCHED）与 `createReceiveFromAsn`（前置 MATCHED→RECEIVED_TO_STOCK）两跳推进。(2) **收货草稿→过账路径**——approve 内建过账（triggerIncomingMove → stock move DONE → PURCHASE_INPUT 凭证 → posted=true），无显式过账动作；**ASN 创建链不落收货头 orgId**（exchangeRate 由列 defaultValue=1 兜底；orgId=null 时账套解析为 null → 过账零凭证 posted 悬挂 false）——用例以 DAO fixture 补全 orgId（GraphQL save-with-id 走建新路径不可用，fixAsnLineMaterialId 同型先例）。(3) **path-2 到岸成本口径**——触发条件 = relatedBillType=PURCHASE_RECEIPT + DELIVERED 事件 + config 开 + freightAmount>0；自动创建单 = DRAFT/UNSUBMITTED、totalCostAmount=freightAmount、BY_AMOUNT、code=`LC-FRT-{receiveCode}-{millis}`、receiveId 引用收货单；FREIGHT 行 apPartnerId=receive.supplierId——**无发运单强引用列**（「引用运费」经 shipment.relatedBillCode 语义链达成，非 landed_cost 列引用）。(4) **webhook 签名参数**——{@code ErpLogShipment__handleTrackingWebhook} 的 signature 参数 GraphQL 层非空强制（field-null-arg/field-empty-arg）——config 关闭校验时仍须传占位非空值；键名 {@code erp-log.webhook-signature-required}（ErpLogConfigs，缺省 true）正确无漂移，{@code erp-b2b.webhook-signature-required} 为 ASN 入站独立键不经 C19 流程（复认）。B9 实施证据：`TestErpC19B2bAsnAutoReceiveLandedCost`。
 
 - **业务目标**：B2B 供应链闭环——ASN 状态机 → 自动创建收货 → 收货过账 → 物流送达 → 运费到岸成本自动创建。复杂度判据：跨 5 域 + 状态机 + 过账 ✓。
 - **前置**：`[seed]` 供应商/物料/仓库 + `[自包含]` ASN（含行）+ 物流发货单。
