@@ -1047,6 +1047,18 @@ mvn test -pl app-erp-all                          # 全量（含既有 12 基建
   全量 app-erp-all 29/0/0/1（唯一 skipped = `ErpAllWebPagesCollectTest` @Disabled 预存 JDK26/ANTLR H-2）。
   权威计数源：`docs/testing/known-good-baselines.md`。
 
+### JUnit 快照 delVersion 列语义（2026-08-24 平台回退后）
+
+- **delVersion 列自 2026-08-24 起记录字面值而非变量**（nop-entropy 回退 commit `b7d7010a19` 的
+  `AutoTestHelper.isVarCol` deleteVersionPropId 判断，来源本仓 plan `2026-08-24-0900-1`）：活行录制为字面值
+  `0`，**逻辑删除递增值恢复快照强校验**——经平台 `TagVarCollector` 条件掩码修正案，逻辑删除时间戳
+  （`Number && longValue()!=0`）录制为 `*` 通配（逐次时间戳属预期录制噪声，检查恒真），`0` 保持字面断言。
+- 录制/比对认知差消除：旧快照中 `@var:X@delVersion(_N)?` 形式变量已全仓清零（20 模块 force-save 重录）；
+  新录制不再产生 delVersion 变量别名（`delVersion`/`delVersion_1` 下标漂移伪 diff 根除）。
+- 重录副作用口径（后续会话重录快照时参照，plan Phase 3 审计协议）：force-save 会同步重写 input 侧
+  seed 表（CREATE_TIME/UPDATE_TIME 字面时间戳刷新 + 表头列追赶，语义惰性）；响应快照（response.json5）
+  中手工维护的 `*` 通配（不稳定时间戳族）会被覆写为原始 `@var` 引用，重录后须按 B4-B10 先例恢复。
+
 ## 文件结构
 
 ```
