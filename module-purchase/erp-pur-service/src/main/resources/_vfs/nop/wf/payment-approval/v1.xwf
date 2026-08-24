@@ -9,7 +9,7 @@
         付款单多级审批（approval-framework.md §按单据类型配置 WORKFLOW）：submit → finance-approval → cc-finance。
         审批人在 wf 内 agree/disagree，wf 结束经 listener 回调业务 approve/reject action（Processor 实现）。
         bootstrap actor 用 actorType="all"；精确角色路由待角色基础设施落地（Deferred）。
-        submit 起始步骤无 assignment（由 ApprovalFlowHelper.start 自动 complete，sysUser 兜底）。
+        submit 起始步骤 assignment=wf-actor:Starter（owner=提单人本人；ApprovalFlowHelper.start 自动 complete 时校验通过，浏览器层真实用户可提交）。
         listener 幂等：*end 在 before-end/after-end 双触发，已终态时跳过。
         cc-finance 步骤（specialType="cc"）：审批通过后抄送财务知会，需 confirm 确认后 wf 结束（plan 2026-07-06-0642-2 Phase 2）。
         on-enter 通知：finance-approval 到达→任务到达通知（Phase 3）；cc-finance 到达→抄送通知（Phase 2）。
@@ -22,6 +22,11 @@
 
     <steps>
         <step name="submit" displayName="提交">
+            <assignment>
+                <actors>
+                    <actor actorModelId="starter" actorType="wf-actor:Starter"/>
+                </actors>
+            </assignment>
             <transition onAppStates="complete">
                 <to-step stepName="finance-approval"/>
             </transition>

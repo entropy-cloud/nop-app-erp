@@ -7,7 +7,7 @@
 
     <description>
         收款单多级审批（approval-framework.md §按单据类型配置 WORKFLOW）：submit → manager-approval → cc-sales。
-        其余约定同 payment-approval/v1.xwf（actor=all bootstrap 默认、submit 无 assignment、listener 幂等）。
+        其余约定同 payment-approval/v1.xwf（actor=all bootstrap 默认、submit assignment=Starter、listener 幂等）。
         cc-sales 步骤（specialType="cc"）：审批通过后抄送销售/财务知会（plan 2026-07-06-0642-2 Phase 2）。
         on-enter 通知：manager-approval 到达→任务到达通知（Phase 3）；cc-sales 到达→抄送通知（Phase 2）。
         listener 内结果通知提单人（Phase 1）。notify 内部 catch 所有异常，通知失败不阻断 wf。
@@ -18,6 +18,11 @@
 
     <steps>
         <step name="submit" displayName="提交">
+            <assignment>
+                <actors>
+                    <actor actorModelId="starter" actorType="wf-actor:Starter"/>
+                </actors>
+            </assignment>
             <transition onAppStates="complete">
                 <to-step stepName="manager-approval"/>
             </transition>
