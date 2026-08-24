@@ -1,2 +1,2 @@
 _chgType,ID,CODE,EQUIPMENT_ID,REQUEST_DATE,DESCRIPTION,PRIORITY,STATUS,REQUESTED_BY,ASSIGNED_TO,ACCEPTED_BY,COMPLETED_BY,COMPLETED_AT,REMARK,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
-A,100000,@var:ErpMntRequest@code,1,2026-07-17,数控机床主传动异响，需检修,NORMAL,COMPLETED,2,2,,,@var:ErpMntRequest@completedAt,,@var:ErpMntRequest@delVersion,3,autotest-ref,*,autotest-ref,*
+A,100000,@var:ErpMntRequest@code,1,2026-07-17,数控机床主传动异响，需检修,NORMAL,COMPLETED,2,2,,,@var:ErpMntRequest@completedAt,,0,3,autotest-ref,*,autotest-ref,*

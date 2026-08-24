@@ -1,2 +1,2 @@
 _chgType,ID,CODE,ORG_ID,TITLE,CONTENT,CATEGORY_ID,VARIABLE_DEFS,MACRO_TICKET_TYPE_ID,MACRO_PRIORITY,SEQUENCE,IS_ACTIVE,USAGE_COUNT,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
-A,9101,@var:ErpCsCannedResponse@code,2,C16 关闭致谢模板,您好 {customer_name}，工单 {ticket_id} 已处理完毕，感谢您的支持。,,,,,0,true,1,@var:ErpCsCannedResponse@delVersion,1,autotest-ref,*,autotest-ref,*
+A,9101,@var:ErpCsCannedResponse@code,2,C16 关闭致谢模板,您好 {customer_name}，工单 {ticket_id} 已处理完毕，感谢您的支持。,,,,,0,true,1,0,1,autotest-ref,*,autotest-ref,*

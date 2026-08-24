@@ -1,3 +1,3 @@
 _chgType,ID,CODE,PRODUCT_ID,BOM_TYPE,CONSUMPTION,IS_ACTIVE,IS_DEFAULT,USE_MULTI_LEVEL_BOM,INSPECTION_REQUIRED,REMARK,VERSION_LABEL,QTY,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
-A,2,@var:ErpMfgBom@code,9401,NORMAL,,true,false,false,false,,,1,@var:ErpMfgBom@delVersion_1,0,autotest-ref,*,autotest-ref,*
-A,5,@var:ErpMfgBom@code_1,9401,NORMAL,,false,false,false,false,,,1,@var:ErpMfgBom@delVersion_1,0,autotest-ref,*,autotest-ref,*
+A,2,@var:ErpMfgBom@code,9401,NORMAL,,true,false,false,false,,,1,0,0,autotest-ref,*,autotest-ref,*
+A,5,@var:ErpMfgBom@code_1,9401,NORMAL,,false,false,false,false,,,1,0,0,autotest-ref,*,autotest-ref,*

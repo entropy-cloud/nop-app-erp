@@ -1,2 +1,2 @@
 _chgType,ID,CODE,ORG_ID,CONTRACT_NAME,CONTRACT_TYPE,CONTRACT_DIRECTION,PARTNER_ID,CURRENCY_ID,TOTAL_AMOUNT,START_DATE,END_DATE,SIGN_DATE,STATUS,TEMPLATE_ID,PARENT_CONTRACT_ID,DESCRIPTION,ATTACHMENT_FILE_ID,REMARK,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME,BUSINESS_DATE
-A,100000,@var:ErpCtContract@code,,采购退货条款合同,PURCHASE,INBOUND,3,,,2026-07-01,2027-06-30,,DRAFT,,,退货条款：收货后 30 天内可申请退货，退货金额按原单价冲减,,,@var:ErpCtContract@delVersion,0,autotest-ref,*,autotest-ref,*,@var:ErpCtContract@businessDate
+A,100000,@var:ErpCtContract@code,,采购退货条款合同,PURCHASE,INBOUND,3,,,2026-07-01,2027-06-30,,DRAFT,,,退货条款：收货后 30 天内可申请退货，退货金额按原单价冲减,,,0,0,autotest-ref,*,autotest-ref,*,@var:ErpCtContract@businessDate

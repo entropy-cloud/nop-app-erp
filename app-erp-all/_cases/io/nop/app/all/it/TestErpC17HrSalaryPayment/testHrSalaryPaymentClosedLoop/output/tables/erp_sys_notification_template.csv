@@ -1,2 +1,2 @@
 _chgType,ID,NOTIFICATION_TYPE,NAME,CHANNEL_SET,SUBJECT_TPL,BODY_TPL,RECIPIENT_RESOLVER,RECIPIENT_CONFIG,MERGE_WINDOW_SECONDS,MERGE_STRATEGY,STATUS,REMARK,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
-A,7109,hr.salary-paid,TPL-hr.salary-paid,IN_APP,薪酬发放通知: ${salaryId},薪酬单 ${billCode} 已发放完成，请知悉,USER_LIST,"{""userIds"":[""it-c17-user""]}",0,NONE,ACTIVE,,@var:ErpSysNotificationTemplate@delVersion,0,autotest-ref,*,autotest-ref,*
+A,7109,hr.salary-paid,TPL-hr.salary-paid,IN_APP,薪酬发放通知: ${salaryId},薪酬单 ${billCode} 已发放完成，请知悉,USER_LIST,"{""userIds"":[""it-c17-user""]}",0,NONE,ACTIVE,,0,0,autotest-ref,*,autotest-ref,*

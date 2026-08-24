@@ -1,0 +1,2 @@
+_chgType,ID,CODE,NAME,COST_RATE,REMARK,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
+A,6,@var:ErpPrjRole@code,高级工程师,400,,0,0,autotest-ref,*,autotest-ref,*

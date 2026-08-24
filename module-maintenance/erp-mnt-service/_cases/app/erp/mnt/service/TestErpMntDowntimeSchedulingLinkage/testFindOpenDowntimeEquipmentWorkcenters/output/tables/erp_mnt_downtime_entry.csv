@@ -1,0 +1,5 @@
+_chgType,ID,EQUIPMENT_ID,START_TIME,END_TIME,TOTAL_MINUTES,REASON,RELATED_JOB_ORDER_ID,REMARK,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
+A,600001,801,@var:ErpMntDowntimeEntry@startTime,,,DT-LINK,,,0,0,autotest-ref,*,autotest-ref,*
+A,600002,802,@var:ErpMntDowntimeEntry@startTime_1,@var:ErpMntDowntimeEntry@endTime,,DT-LINK,,,0,1,autotest-ref,*,autotest-ref,*
+A,600003,803,@var:ErpMntDowntimeEntry@startTime_2,,,DT-LINK,,,0,0,autotest-ref,*,autotest-ref,*
+A,600004,804,@var:ErpMntDowntimeEntry@startTime_3,,,DT-LINK,,,0,0,autotest-ref,*,autotest-ref,*

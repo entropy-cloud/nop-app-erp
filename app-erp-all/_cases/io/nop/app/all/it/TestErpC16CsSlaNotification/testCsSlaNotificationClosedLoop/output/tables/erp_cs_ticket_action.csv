@@ -1,6 +1,6 @@
 _chgType,ID,TICKET_ID,ACTION_TYPE,FROM_STATUS,TO_STATUS,OPERATOR_ID,CONTENT,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
-A,100001,100000,ASSIGN,NEW,ASSIGNED,autotest,分派处理人: it-c16-agent,@var:ErpCsTicketAction@delVersion_1,0,autotest-ref,*,autotest-ref,*
-A,100002,100000,NOTE,ASSIGNED,IN_PROGRESS,autotest,开始处理,@var:ErpCsTicketAction@delVersion_1,0,autotest-ref,*,autotest-ref,*
-A,100003,100000,NOTE,,,autotest,您好 华东科技有限公司，工单 IT-C16-TKT-001 已处理完毕，感谢您的支持。,@var:ErpCsTicketAction@delVersion_1,0,autotest-ref,*,autotest-ref,*
-A,100004,100000,NOTE,IN_PROGRESS,RESOLVED,autotest,标记解决: C16 处理完成（SLA 达标路径）,@var:ErpCsTicketAction@delVersion_1,0,autotest-ref,*,autotest-ref,*
-A,100006,100000,CLOSE,RESOLVED,CLOSED,autotest,关闭工单,@var:ErpCsTicketAction@delVersion_1,0,autotest-ref,*,autotest-ref,*
+A,100001,100000,ASSIGN,NEW,ASSIGNED,autotest,分派处理人: it-c16-agent,0,0,autotest-ref,*,autotest-ref,*
+A,100002,100000,NOTE,ASSIGNED,IN_PROGRESS,autotest,开始处理,0,0,autotest-ref,*,autotest-ref,*
+A,100003,100000,NOTE,,,autotest,您好 华东科技有限公司，工单 IT-C16-TKT-001 已处理完毕，感谢您的支持。,0,0,autotest-ref,*,autotest-ref,*
+A,100004,100000,NOTE,IN_PROGRESS,RESOLVED,autotest,标记解决: C16 处理完成（SLA 达标路径）,0,0,autotest-ref,*,autotest-ref,*
+A,100006,100000,CLOSE,RESOLVED,CLOSED,autotest,关闭工单,0,0,autotest-ref,*,autotest-ref,*

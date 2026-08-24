@@ -1,4 +1,4 @@
 _chgType,ID,ORG_ID,SUPPLIER_ID,MATERIAL_ID,ORDER_DATE,RECEIPT_DATE,ACTUAL_LEAD_TIME,EXPECTED_LEAD_TIME,VARIANCE_DAYS,PURCHASE_ORDER_CODE,IS_ON_TIME,EARLY_LATE_FLAG,REMARK,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
-A,8344,,8001,8201,2026-06-10,2026-06-20,10,10,0,PO-R1,true,ON_TIME,,@var:ErpInvDrpLeadTimeRecord@delVersion_1,0,autotest-ref,*,autotest-ref,*
-A,8345,,8001,8201,2026-06-10,2026-06-20,10,10,0,PO-R2,true,ON_TIME,,@var:ErpInvDrpLeadTimeRecord@delVersion_1,0,autotest-ref,*,autotest-ref,*
-A,8346,,8001,8201,2026-06-10,2026-06-20,10,10,0,PO-R3,true,ON_TIME,,@var:ErpInvDrpLeadTimeRecord@delVersion_1,0,autotest-ref,*,autotest-ref,*
+A,8344,,8001,8201,2026-06-10,2026-06-20,10,10,0,PO-R1,true,ON_TIME,,0,0,autotest-ref,*,autotest-ref,*
+A,8345,,8001,8201,2026-06-10,2026-06-20,10,10,0,PO-R2,true,ON_TIME,,0,0,autotest-ref,*,autotest-ref,*
+A,8346,,8001,8201,2026-06-10,2026-06-20,10,10,0,PO-R3,true,ON_TIME,,0,0,autotest-ref,*,autotest-ref,*

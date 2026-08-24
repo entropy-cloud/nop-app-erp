@@ -1,0 +1,5 @@
+_chgType,ID,COST_COLLECTION_ID,LINE_NO,COST_CATEGORY,SOURCE_BILL_TYPE,SOURCE_BILL_CODE,SUBJECT_ID,TASK_ID,AMOUNT,REMARK,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
+A,11,10,1,SUBCONTRACT,SUBCONTRACT,@var:ErpPrjCostCollectionLine@sourceBillCode_2,,,1500,,0,0,autotest-ref,*,autotest-ref,*
+A,12,10,2,MATERIAL,PURCHASE_RECEIVE,@var:ErpPrjCostCollectionLine@sourceBillCode_3,3,,1500,,0,0,autotest-ref,*,autotest-ref,*
+A,7,6,1,LABOR,LABOR,@var:ErpPrjCostCollectionLine@sourceBillCode,,,2000,,0,0,autotest-ref,*,autotest-ref,*
+A,9,8,1,EXPENSE,EXPENSE,@var:ErpPrjCostCollectionLine@sourceBillCode_1,,,1000,,0,0,autotest-ref,*,autotest-ref,*

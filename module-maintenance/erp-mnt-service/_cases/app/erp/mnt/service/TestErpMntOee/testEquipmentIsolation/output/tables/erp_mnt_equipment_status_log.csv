@@ -1,0 +1,17 @@
+_chgType,ID,EQUIPMENT_ID,FROM_STATUS,TO_STATUS,CHANGE_AT,SOURCE,SOURCE_BILL_CODE,REMARK,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
+A,72011,71001,,RUNNING,@var:ErpMntEquipmentStatusLog@changeAt,MANUAL,,,0,0,autotest-ref,*,autotest-ref,*
+A,72012,71001,RUNNING,IDLE,@var:ErpMntEquipmentStatusLog@changeAt_11,MANUAL,,,0,0,autotest-ref,*,autotest-ref,*
+A,72013,71001,IDLE,RUNNING,@var:ErpMntEquipmentStatusLog@changeAt_2,MANUAL,,,0,0,autotest-ref,*,autotest-ref,*
+A,72014,71001,RUNNING,IDLE,@var:ErpMntEquipmentStatusLog@changeAt_3,MANUAL,,,0,0,autotest-ref,*,autotest-ref,*
+A,72015,71001,IDLE,RUNNING,@var:ErpMntEquipmentStatusLog@changeAt_12,MANUAL,,,0,0,autotest-ref,*,autotest-ref,*
+A,72016,71001,RUNNING,DOWN,@var:ErpMntEquipmentStatusLog@changeAt_5,MANUAL,,,0,0,autotest-ref,*,autotest-ref,*
+A,72017,71001,DOWN,RUNNING,@var:ErpMntEquipmentStatusLog@changeAt_13,MANUAL,,,0,0,autotest-ref,*,autotest-ref,*
+A,72018,71001,RUNNING,IDLE,@var:ErpMntEquipmentStatusLog@changeAt_7,MANUAL,,,0,0,autotest-ref,*,autotest-ref,*
+A,72019,71001,IDLE,RUNNING,@var:ErpMntEquipmentStatusLog@changeAt_14,MANUAL,,,0,0,autotest-ref,*,autotest-ref,*
+A,72020,71001,RUNNING,IDLE,@var:ErpMntEquipmentStatusLog@changeAt_9,MANUAL,,,0,0,autotest-ref,*,autotest-ref,*
+A,72113,71002,,RUNNING,@var:ErpMntEquipmentStatusLog@changeAt,MANUAL,,,0,0,autotest-ref,*,autotest-ref,*
+A,72114,71002,,RUNNING,@var:ErpMntEquipmentStatusLog@changeAt_12,MANUAL,,,0,0,autotest-ref,*,autotest-ref,*
+A,72115,71002,,RUNNING,@var:ErpMntEquipmentStatusLog@changeAt_14,MANUAL,,,0,0,autotest-ref,*,autotest-ref,*
+A,72213,71002,RUNNING,IDLE,@var:ErpMntEquipmentStatusLog@changeAt_11,MANUAL,,,0,0,autotest-ref,*,autotest-ref,*
+A,72214,71002,RUNNING,IDLE,@var:ErpMntEquipmentStatusLog@changeAt_13,MANUAL,,,0,0,autotest-ref,*,autotest-ref,*
+A,72215,71002,RUNNING,IDLE,@var:ErpMntEquipmentStatusLog@changeAt_15,MANUAL,,,0,0,autotest-ref,*,autotest-ref,*

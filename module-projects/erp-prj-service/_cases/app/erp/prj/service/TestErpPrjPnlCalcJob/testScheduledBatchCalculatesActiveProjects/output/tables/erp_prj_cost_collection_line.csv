@@ -1,0 +1,5 @@
+_chgType,ID,COST_COLLECTION_ID,LINE_NO,COST_CATEGORY,SOURCE_BILL_TYPE,SOURCE_BILL_CODE,SUBJECT_ID,TASK_ID,AMOUNT,REMARK,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
+A,10,9,1,LABOR,,,,,2000,,0,0,autotest-ref,*,autotest-ref,*
+A,11,9,1,MATERIAL,,,,,1500,,0,0,autotest-ref,*,autotest-ref,*
+A,12,9,1,EXPENSE,,,,,1000,,0,0,autotest-ref,*,autotest-ref,*
+A,13,9,1,SUBCONTRACT,,,,,1500,,0,0,autotest-ref,*,autotest-ref,*

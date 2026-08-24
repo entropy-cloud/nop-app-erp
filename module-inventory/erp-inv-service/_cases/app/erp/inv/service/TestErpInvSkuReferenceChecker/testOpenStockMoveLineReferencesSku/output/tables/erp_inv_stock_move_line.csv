@@ -1,4 +1,4 @@
 _chgType,ID,MOVE_ID,LINE_NO,MATERIAL_ID,SKU_ID,UO_M_ID,QUANTITY,UNIT_COST,TOTAL_COST,CURRENCY_ID,BATCH_NO,SERIAL_NO,SOURCE_LOCATION_ID,DEST_LOCATION_ID,REMARK,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
-A,3,2,1,9302,1,9303,10,,,,,,,,,@var:ErpInvStockMoveLine@delVersion_1,0,autotest-ref,*,autotest-ref,*
-A,6,5,1,9302,4,9303,10,,,,,,,,,@var:ErpInvStockMoveLine@delVersion_1,0,autotest-ref,*,autotest-ref,*
-A,9,8,1,9302,7,9303,10,,,,,,,,,@var:ErpInvStockMoveLine@delVersion_1,0,autotest-ref,*,autotest-ref,*
+A,3,2,1,9302,1,9303,10,,,,,,,,,0,0,autotest-ref,*,autotest-ref,*
+A,6,5,1,9302,4,9303,10,,,,,,,,,0,0,autotest-ref,*,autotest-ref,*
+A,9,8,1,9302,7,9303,10,,,,,,,,,0,0,autotest-ref,*,autotest-ref,*

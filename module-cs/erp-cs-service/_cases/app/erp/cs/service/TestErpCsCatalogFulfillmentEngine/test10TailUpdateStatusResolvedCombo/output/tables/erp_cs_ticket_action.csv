@@ -1,0 +1,4 @@
+_chgType,ID,TICKET_ID,ACTION_TYPE,FROM_STATUS,TO_STATUS,OPERATOR_ID,CONTENT,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
+A,3,9462,ASSIGN_TEAM,NEW,ASSIGNED,autotest,DONE: 履行步骤分配处理人 cs-fulfill-user-a（mode=ROUND_ROBIN）,0,0,autotest-ref,*,autotest-ref,*
+A,4,9462,NOTE,ASSIGNED,IN_PROGRESS,autotest,履行链推进开始处理,0,0,autotest-ref,*,autotest-ref,*
+A,5,9462,UPDATE_STATUS,IN_PROGRESS,RESOLVED,autotest,DONE: 状态迁移 IN_PROGRESS → RESOLVED（resolve 边）,0,0,autotest-ref,*,autotest-ref,*

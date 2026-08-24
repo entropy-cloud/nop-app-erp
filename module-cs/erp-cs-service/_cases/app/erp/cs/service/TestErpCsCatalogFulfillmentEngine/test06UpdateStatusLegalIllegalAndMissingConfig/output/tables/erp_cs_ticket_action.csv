@@ -1,0 +1,8 @@
+_chgType,ID,TICKET_ID,ACTION_TYPE,FROM_STATUS,TO_STATUS,OPERATOR_ID,CONTENT,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
+A,10,9458,ASSIGN,NEW,ASSIGNED,autotest,履行链自动指派: autotest,0,0,autotest-ref,*,autotest-ref,*
+A,11,9458,NOTE,ASSIGNED,IN_PROGRESS,autotest,履行链推进开始处理,0,0,autotest-ref,*,autotest-ref,*
+A,12,9458,UPDATE_STATUS,,,autotest,FAILED: 配置错误：UPDATE_STATUS 缺少 actionConfig（须含 status）,0,0,autotest-ref,*,autotest-ref,*
+A,3,9456,UPDATE_STATUS,NEW,ASSIGNED,autotest,DONE: 状态迁移 NEW → ASSIGNED（assign 边）,0,0,autotest-ref,*,autotest-ref,*
+A,4,9456,NOTE,ASSIGNED,IN_PROGRESS,autotest,履行链推进开始处理,0,0,autotest-ref,*,autotest-ref,*
+A,5,9456,NOTIFY_CUSTOMER,,,autotest,DONE: 客户通知已派发,0,0,autotest-ref,*,autotest-ref,*
+A,8,9457,UPDATE_STATUS,,,autotest,FAILED: 非法状态迁移: NEW → CLOSED,0,0,autotest-ref,*,autotest-ref,*

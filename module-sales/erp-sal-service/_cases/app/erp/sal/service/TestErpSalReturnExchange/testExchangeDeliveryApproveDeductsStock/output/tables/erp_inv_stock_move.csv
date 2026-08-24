@@ -1,0 +1,4 @@
+_chgType,ID,CODE,MOVE_TYPE,ORG_ID,BUSINESS_DATE,SOURCE_WAREHOUSE_ID,SOURCE_LOCATION_ID,DEST_WAREHOUSE_ID,DEST_LOCATION_ID,DOC_STATUS,APPROVE_STATUS,POSTED,POSTED_AT,POSTED_BY,RELATED_BILL_TYPE,RELATED_BILL_CODE,REMARK,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME,ORIGIN_MOVE_ID,ORIGIN_RETURNED_MOVE_ID
+A,19,@var:ErpInvStockMove@code_2,OUTGOING,6201,@var:ErpInvStockMove@businessDate_1,8201,,,,DONE,UNSUBMITTED,true,@var:ErpInvStockMove@postedAt,,ERP_SAL_DELIVERY,@var:ErpInvStockMove@relatedBillCode_2,,0,3,autotest-ref,*,autotest-ref,*,,
+A,4,@var:ErpInvStockMove@code,INCOMING,6201,@var:ErpInvStockMove@businessDate,,,8201,,DONE,UNSUBMITTED,false,,,SEED_STOCK,@var:ErpInvStockMove@relatedBillCode,,0,1,autotest-ref,*,autotest-ref,*,,
+A,9,@var:ErpInvStockMove@code_1,INCOMING,6201,@var:ErpInvStockMove@businessDate_1,,,8201,,DONE,UNSUBMITTED,false,,,ERP_SAL_RETURN,@var:ErpInvStockMove@relatedBillCode_1,,0,1,autotest-ref,*,autotest-ref,*,,

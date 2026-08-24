@@ -1,0 +1,2 @@
+_chgType,ID,NOTIFICATION_TYPE,NAME,CHANNEL_SET,SUBJECT_TPL,BODY_TPL,RECIPIENT_RESOLVER,RECIPIENT_CONFIG,MERGE_WINDOW_SECONDS,MERGE_STRATEGY,STATUS,REMARK,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
+A,7905,cs.survey-invitation,满意度调查邀请,IN_APP,满意度调查邀请: ${ticketCode},工单 ${ticketCode} 的满意度调查已就绪（渠道 ${channel}，token ${surveyToken}），请转达客户 ${customerName} 填写,USER_LIST,"{""userIds"":[""cs-survey-recipient""]}",0,NONE,ACTIVE,,0,0,autotest-ref,*,autotest-ref,*

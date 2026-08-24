@@ -1,0 +1,2 @@
+_chgType,ID,NOTIFICATION_TYPE,NAME,CHANNEL_SET,SUBJECT_TPL,BODY_TPL,RECIPIENT_RESOLVER,RECIPIENT_CONFIG,MERGE_WINDOW_SECONDS,MERGE_STRATEGY,STATUS,REMARK,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
+A,9303,cs.fulfillment-step-failed,履行测试-cs.fulfillment-step-failed,IN_APP,履行通知: ${ticketCode},工单 ${ticketCode} 履行事件 ${notificationType},ROLE,"{""roles"":[""客服主管""]}",0,NONE,ACTIVE,,0,0,autotest-ref,*,autotest-ref,*

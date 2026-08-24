@@ -1,2 +1,2 @@
 _chgType,ID,CODE,PLAN_NAME,PERIOD_FROM,PERIOD_TO,STATUS,TOTAL_REPLENISHMENT_QTY,RUN_AT,RUN_BY,ORG_ID,REMARK,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME,BUSINESS_DATE
-A,7001,@var:ErpDrpPlan@code,DRP Wiring Regression,2026-08-01,2026-08-31,EXECUTED,80.0000,@var:ErpDrpPlan@runAt,,7401,,@var:ErpDrpPlan@delVersion,3,autotest-ref,*,autotest-ref,*,@var:ErpDrpPlan@businessDate
+A,7001,@var:ErpDrpPlan@code,DRP Wiring Regression,*,*,EXECUTED,80.0000,@var:ErpDrpPlan@runAt,,7401,,0,3,autotest-ref,*,autotest-ref,*,@var:ErpDrpPlan@businessDate

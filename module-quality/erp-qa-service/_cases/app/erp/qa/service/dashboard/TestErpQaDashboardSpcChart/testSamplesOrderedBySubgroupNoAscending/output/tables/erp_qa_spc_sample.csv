@@ -1,0 +1,4 @@
+_chgType,ID,CHART_ID,ORG_ID,SUBGROUP_NO,SAMPLE_TIME,MEASURED_VALUES,MEAN,RANGE,STD_DEV,SOURCE_BILL_TYPE,SOURCE_CODE,SOURCE_LINE_CODE,INSPECTOR_ID,VIOLATED_RULES,IS_OUT_OF_CONTROL,REMARK,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME,DEFECT_COUNT,INSPECTED_COUNT
+A,1164941,105694,,1,@var:ErpQaSpcSample@sampleTime_1,[1],1,0,0,,,,,,false,,0,0,autotest-ref,*,autotest-ref,*,,
+A,1164942,105694,,2,@var:ErpQaSpcSample@sampleTime_2,[2],2,0,0,,,,,"1,2",true,,0,0,autotest-ref,*,autotest-ref,*,,
+A,1164943,105694,,3,@var:ErpQaSpcSample@sampleTime,[3],3,0,0,,,,,,false,,0,0,autotest-ref,*,autotest-ref,*,,

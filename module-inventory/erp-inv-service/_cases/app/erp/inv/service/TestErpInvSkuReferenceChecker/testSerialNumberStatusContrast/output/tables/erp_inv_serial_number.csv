@@ -1,3 +1,3 @@
 _chgType,ID,ORG_ID,SERIAL_NO,MATERIAL_ID,SKU_ID,WAREHOUSE_ID,LOCATION_ID,STATUS,IN_BILL_TYPE,IN_BILL_CODE,OUT_BILL_TYPE,OUT_BILL_CODE,REMARK,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
-A,2,,SN-REF-IN,9302,1,,,IN_STOCK,,,,,,@var:ErpInvSerialNumber@delVersion,0,autotest-ref,*,autotest-ref,*
-A,4,,SN-REF-OUT,9302,3,,,OUT,,,,,,@var:ErpInvSerialNumber@delVersion,0,autotest-ref,*,autotest-ref,*
+A,2,,SN-REF-IN,9302,1,,,IN_STOCK,,,,,,0,0,autotest-ref,*,autotest-ref,*
+A,4,,SN-REF-OUT,9302,3,,,OUT,,,,,,0,0,autotest-ref,*,autotest-ref,*

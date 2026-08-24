@@ -1,0 +1,4 @@
+_chgType,ID,CODE,NAME,ORG_ID,CATEGORY_ID,PARENT_ID,SHORT_DESCRIPTION,FULL_DESCRIPTION,TICKET_TYPE_ID,SLA_POLICY_ID,FULFILLMENT_PROCESS_ID,REQUEST_FORM_CONFIG,IS_ACTIVE,IS_PUBLIC,SEQUENCE,ESTIMATED_RESOLUTION,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
+A,9410,@var:ErpCsServiceCatalogItem@code,履行测试目录项-9410,,,,,,9402,,,,true,true,0,,0,0,autotest-ref,*,autotest-ref,*
+A,9411,@var:ErpCsServiceCatalogItem@code_1,履行测试目录项-9411,,,,,,9402,,,,true,true,0,,0,0,autotest-ref,*,autotest-ref,*
+A,9412,@var:ErpCsServiceCatalogItem@code_2,履行测试目录项-9412,,,,,,9402,,,,true,true,0,,0,0,autotest-ref,*,autotest-ref,*

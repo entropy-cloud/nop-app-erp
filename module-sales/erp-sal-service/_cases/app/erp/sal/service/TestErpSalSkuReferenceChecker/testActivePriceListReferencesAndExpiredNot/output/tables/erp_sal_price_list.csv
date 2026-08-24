@@ -1,0 +1,4 @@
+_chgType,ID,NAME,CODE,CURRENCY_ID,CUSTOMER_GROUP_CODE,PARTNER_ID,VALID_FROM,VALID_TO,PRIORITY,IS_ACTIVE,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME,REMARK
+A,2,价目表-1,@var:ErpSalPriceList@code,,,,,*,100,true,0,0,autotest-ref,*,autotest-ref,*,
+A,5,价目表-4,@var:ErpSalPriceList@code_1,,,,,*,100,true,0,0,autotest-ref,*,autotest-ref,*,
+A,8,价目表-7,@var:ErpSalPriceList@code_2,,,,,*,100,false,0,0,autotest-ref,*,autotest-ref,*,

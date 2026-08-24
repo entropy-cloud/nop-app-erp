@@ -1,2 +1,2 @@
 _chgType,ID,CODE,ORG_ID,RECEIVE_ID,SUPPLIER_ID,CURRENCY_ID,EXCHANGE_RATE,TOTAL_COST_AMOUNT,ALLOCATION_METHOD,DOC_STATUS,APPROVE_STATUS,POSTED,POSTED_AT,POSTED_BY,APPROVED_BY,APPROVED_AT,BUSINESS_DATE,REMARK,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
-A,100017,@var:ErpInvLandedCost@code,2,100003,3,1,1.000000,15.0000,BY_AMOUNT,DONE,APPROVED,true,@var:ErpInvLandedCost@postedAt,,,@var:ErpInvLandedCost@approvedAt,@var:ErpInvLandedCost@businessDate,,@var:ErpInvLandedCost@delVersion,1,autotest-ref,*,autotest-ref,*
+A,100017,@var:ErpInvLandedCost@code,2,100003,3,1,1.000000,15.0000,BY_AMOUNT,DONE,APPROVED,true,@var:ErpInvLandedCost@postedAt,,,@var:ErpInvLandedCost@approvedAt,@var:ErpInvLandedCost@businessDate,,0,1,autotest-ref,*,autotest-ref,*

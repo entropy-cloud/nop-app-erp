@@ -1,0 +1,7 @@
+_chgType,ID,ORG_ID,TICKET_ID,FULFILLMENT_ID,CATALOG_ITEM_ID,SEQUENCE,ACTION_TYPE,ACTION_CONFIG,STATUS,RETRY_COUNT,LAST_ERROR,EXECUTED_AT,EXECUTED_BY,REMARK,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
+A,1,,9466,9421,9410,1,REQUEST_APPROVAL,"{""timeoutHours"":1}",DONE,0,,@var:ErpCsTicketFulfillmentStep@executedAt_6,autotest,,0,2,autotest-ref,*,autotest-ref,*
+A,11,,9469,9428,9415,1,REQUEST_APPROVAL,,FAILED,3,审批驳回: 方案否决,@var:ErpCsTicketFulfillmentStep@executedAt_5,autotest,,0,1,autotest-ref,*,autotest-ref,*
+A,2,,9466,9422,9410,2,NOTIFY_CUSTOMER,,DONE,0,,,,,0,1,autotest-ref,*,autotest-ref,*
+A,4,,9467,9425,9413,1,REQUEST_APPROVAL,"{""timeoutHours"":1}",IN_PROGRESS,0,,@var:ErpCsTicketFulfillmentStep@executedAt_2,autotest,,0,0,autotest-ref,*,autotest-ref,*
+A,8,,9468,9426,9414,1,UPDATE_STATUS,"{""status"":""ASSIGNED""}",DONE,1,非法状态迁移: NEW → CLOSED,@var:ErpCsTicketFulfillmentStep@executedAt_7,autotest,,0,1,autotest-ref,*,autotest-ref,*
+A,9,,9468,9427,9414,2,NOTIFY_CUSTOMER,,DONE,0,,,,,0,1,autotest-ref,*,autotest-ref,*

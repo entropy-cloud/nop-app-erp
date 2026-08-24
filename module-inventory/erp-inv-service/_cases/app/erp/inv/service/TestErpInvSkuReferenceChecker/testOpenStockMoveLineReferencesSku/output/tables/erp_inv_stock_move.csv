@@ -1,4 +1,4 @@
 _chgType,ID,CODE,MOVE_TYPE,ORG_ID,BUSINESS_DATE,SOURCE_WAREHOUSE_ID,SOURCE_LOCATION_ID,DEST_WAREHOUSE_ID,DEST_LOCATION_ID,DOC_STATUS,APPROVE_STATUS,POSTED,POSTED_AT,POSTED_BY,RELATED_BILL_TYPE,RELATED_BILL_CODE,REMARK,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME,ORIGIN_MOVE_ID,ORIGIN_RETURNED_MOVE_ID
-A,2,@var:ErpInvStockMove@code,INTERNAL,,@var:ErpInvStockMove@businessDate,,,,,DRAFT,APPROVED,false,,,,,,@var:ErpInvStockMove@delVersion,0,autotest-ref,*,autotest-ref,*,,
-A,5,@var:ErpInvStockMove@code_1,INTERNAL,,@var:ErpInvStockMove@businessDate,,,,,DONE,APPROVED,false,,,,,,@var:ErpInvStockMove@delVersion,0,autotest-ref,*,autotest-ref,*,,
-A,8,@var:ErpInvStockMove@code_2,INTERNAL,,@var:ErpInvStockMove@businessDate,,,,,CANCELLED,APPROVED,false,,,,,,@var:ErpInvStockMove@delVersion,0,autotest-ref,*,autotest-ref,*,,
+A,2,@var:ErpInvStockMove@code,INTERNAL,,@var:ErpInvStockMove@businessDate,,,,,DRAFT,APPROVED,false,,,,,,0,0,autotest-ref,*,autotest-ref,*,,
+A,5,@var:ErpInvStockMove@code_1,INTERNAL,,@var:ErpInvStockMove@businessDate,,,,,DONE,APPROVED,false,,,,,,0,0,autotest-ref,*,autotest-ref,*,,
+A,8,@var:ErpInvStockMove@code_2,INTERNAL,,@var:ErpInvStockMove@businessDate,,,,,CANCELLED,APPROVED,false,,,,,,0,0,autotest-ref,*,autotest-ref,*,,

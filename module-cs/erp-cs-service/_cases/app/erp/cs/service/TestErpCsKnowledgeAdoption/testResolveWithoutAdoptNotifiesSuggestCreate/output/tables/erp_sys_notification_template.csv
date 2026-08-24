@@ -1,0 +1,2 @@
+_chgType,ID,NOTIFICATION_TYPE,NAME,CHANNEL_SET,SUBJECT_TPL,BODY_TPL,RECIPIENT_RESOLVER,RECIPIENT_CONFIG,MERGE_WINDOW_SECONDS,MERGE_STRATEGY,STATUS,REMARK,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
+A,8811,cs.knowledge-suggest-create,建议创建知识库条目,IN_APP,工单无知识库匹配: ${ticketCode},工单 ${ticketCode} 解决时未采纳知识库文章，建议创建新条目,USER_LIST,"{""userIds"":[""${handlerUserId}""]}",0,NONE,ACTIVE,,0,0,autotest-ref,*,autotest-ref,*

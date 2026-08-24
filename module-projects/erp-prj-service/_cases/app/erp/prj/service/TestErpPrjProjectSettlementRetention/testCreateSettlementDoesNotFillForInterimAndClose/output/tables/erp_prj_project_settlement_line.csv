@@ -1,0 +1,5 @@
+_chgType,ID,SETTLEMENT_ID,LINE_NO,LINE_TYPE,SOURCE_BILL_TYPE,SOURCE_BILL_CODE,SUBJECT_ID,AMOUNT,REMARK,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
+A,31,30,1,INCOME,BILLING,@var:ErpPrjProjectSettlementLine@sourceBillCode,,10000.0000,,0,0,autotest-ref,*,autotest-ref,*
+A,32,30,2,COST,COST_COLLECTION,@var:ErpPrjProjectSettlementLine@sourceBillCode_1,,0.0000,,0,0,autotest-ref,*,autotest-ref,*
+A,34,33,1,INCOME,BILLING,@var:ErpPrjProjectSettlementLine@sourceBillCode_2,,10000.0000,,0,0,autotest-ref,*,autotest-ref,*
+A,35,33,2,COST,COST_COLLECTION,@var:ErpPrjProjectSettlementLine@sourceBillCode_3,,0.0000,,0,0,autotest-ref,*,autotest-ref,*

@@ -1,0 +1,11 @@
+_chgType,ID,INSPECTION_ID,LINE_NO,PARAMETER_ID,PARAMETER_NAME,SPEC_MIN,SPEC_MAX,MEASURED_VALUE,UNIT,RESULT,REMARK,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME,IS_CRITICAL
+A,8535001,85350,1,8901,尺寸,,,1,,REJECTED,,0,0,autotest-ref,*,autotest-ref,*,
+A,8535002,85350,2,8901,尺寸,,,1,,REJECTED,,0,0,autotest-ref,*,autotest-ref,*,
+A,8535003,85350,3,8901,尺寸,,,1,,ACCEPTED,,0,0,autotest-ref,*,autotest-ref,*,
+A,8535004,85350,4,8901,尺寸,,,1,,ACCEPTED,,0,0,autotest-ref,*,autotest-ref,*,
+A,8535005,85350,5,8901,尺寸,,,1,,ACCEPTED,,0,0,autotest-ref,*,autotest-ref,*,
+A,8535101,85351,1,8901,尺寸,,,1,,REJECTED,,0,0,autotest-ref,*,autotest-ref,*,
+A,8535102,85351,2,8901,尺寸,,,1,,REJECTED,,0,0,autotest-ref,*,autotest-ref,*,
+A,8535103,85351,3,8901,尺寸,,,1,,ACCEPTED,,0,0,autotest-ref,*,autotest-ref,*,
+A,8535104,85351,4,8901,尺寸,,,1,,ACCEPTED,,0,0,autotest-ref,*,autotest-ref,*,
+A,8535105,85351,5,8901,尺寸,,,1,,ACCEPTED,,0,0,autotest-ref,*,autotest-ref,*,

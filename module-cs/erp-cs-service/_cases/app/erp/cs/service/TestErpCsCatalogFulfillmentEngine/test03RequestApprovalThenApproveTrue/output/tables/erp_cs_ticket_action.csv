@@ -1,0 +1,6 @@
+_chgType,ID,TICKET_ID,ACTION_TYPE,FROM_STATUS,TO_STATUS,OPERATOR_ID,CONTENT,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
+A,3,9453,REQUEST_APPROVAL,,,autotest,IN_PROGRESS: 审批请求已发起（审批人角色: 客服主管）,0,0,autotest-ref,*,autotest-ref,*
+A,5,9453,REQUEST_APPROVAL,,,autotest,DONE: 审批通过: 同意方案,0,0,autotest-ref,*,autotest-ref,*
+A,6,9453,ASSIGN,NEW,ASSIGNED,autotest,履行链自动指派: autotest,0,0,autotest-ref,*,autotest-ref,*
+A,7,9453,NOTE,ASSIGNED,IN_PROGRESS,autotest,履行链推进开始处理,0,0,autotest-ref,*,autotest-ref,*
+A,8,9453,NOTIFY_CUSTOMER,,,autotest,DONE: 客户通知已派发,0,0,autotest-ref,*,autotest-ref,*

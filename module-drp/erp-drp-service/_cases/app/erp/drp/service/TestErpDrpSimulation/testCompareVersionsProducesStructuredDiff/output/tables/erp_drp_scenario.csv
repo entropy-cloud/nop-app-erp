@@ -1,2 +1,2 @@
 _chgType,ID,CODE,ORG_ID,BASE_DRP_PLAN_ID,DESCRIPTION,STATUS,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
-A,9505,@var:ErpDrpScenario@code,7401,8831,,COMPLETED,@var:ErpDrpScenario@delVersion,3,autotest-ref,*,autotest-ref,*
+A,9505,@var:ErpDrpScenario@code,7401,8831,,COMPLETED,0,3,autotest-ref,*,autotest-ref,*

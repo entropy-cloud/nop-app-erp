@@ -1,2 +1,2 @@
 _chgType,ID,CODE,ORG_ID,BUSINESS_DATE,TAKE_TYPE,WAREHOUSE_ID,DOC_STATUS,APPROVE_STATUS,POSTED,POSTED_AT,POSTED_BY,REMARK,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
-A,2,@var:ErpInvStockTake@code,1051,@var:ErpInvStockTake@businessDate,,3051,DONE,UNSUBMITTED,false,,,,@var:ErpInvStockTake@delVersion,2,autotest-ref,*,autotest-ref,*
+A,2,@var:ErpInvStockTake@code,1051,@var:ErpInvStockTake@businessDate,,3051,DONE,UNSUBMITTED,false,,,,0,2,autotest-ref,*,autotest-ref,*

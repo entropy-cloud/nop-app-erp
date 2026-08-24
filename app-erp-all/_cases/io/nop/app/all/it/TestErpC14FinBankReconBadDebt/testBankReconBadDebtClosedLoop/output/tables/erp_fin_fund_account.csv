@@ -1,2 +1,2 @@
 _chgType,ID,CODE,NAME,ORG_ID,ACCOUNT_TYPE,SUBJECT_ID,BANK_NAME,BANK_ACCOUNT,CURRENCY_ID,OPENING_BALANCE,CURRENT_BALANCE,STATUS,REMARK,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
-A,100000,@var:ErpFinFundAccount@code,C14 对账测试资金账户,2,BANK,2,中国工商银行,6222000000000000C14,1,1000,1000,ACTIVE,C14 银行对账自包含资金账户（科目 1002 银行存款）,@var:ErpFinFundAccount@delVersion,0,autotest-ref,*,autotest-ref,*
+A,100000,@var:ErpFinFundAccount@code,C14 对账测试资金账户,2,BANK,2,中国工商银行,6222000000000000C14,1,1000,1000,ACTIVE,C14 银行对账自包含资金账户（科目 1002 银行存款）,0,0,autotest-ref,*,autotest-ref,*

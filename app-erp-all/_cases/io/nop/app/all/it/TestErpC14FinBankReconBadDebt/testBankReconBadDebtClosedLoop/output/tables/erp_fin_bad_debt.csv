@@ -1,3 +1,3 @@
 _chgType,ID,CODE,ORG_ID,ACCT_SCHEMA_ID,DOC_TYPE,PARTNER_ID,SOURCE_AR_AP_ITEM_ID,AMOUNT,CURRENCY_ID,EXCHANGE_RATE,BUSINESS_DATE,REASON,APPROVAL_STATUS,PERIOD_ID,VOUCHER_ID,REMARK,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
-A,100018,@var:ErpFinBadDebt@code,2,1,WRITE_OFF,1,100017,1000.0000,1,1.00000000,@var:ErpFinBadDebt@businessDate,C14 坏账核销：客户经营异常,APPROVED,1,100019,,@var:ErpFinBadDebt@delVersion,2,autotest-ref,*,autotest-ref,*
-A,100023,@var:ErpFinBadDebt@code_1,2,1,RECOVERY,1,100017,1000.0000,1,1.00000000,@var:ErpFinBadDebt@businessDate,C14 坏账收回：部分回款,APPROVED,1,100024,,@var:ErpFinBadDebt@delVersion,2,autotest-ref,*,autotest-ref,*
+A,100018,@var:ErpFinBadDebt@code,2,1,WRITE_OFF,1,100017,1000.0000,1,1.00000000,@var:ErpFinBadDebt@businessDate,C14 坏账核销：客户经营异常,APPROVED,1,100019,,0,2,autotest-ref,*,autotest-ref,*
+A,100023,@var:ErpFinBadDebt@code_1,2,1,RECOVERY,1,100017,1000.0000,1,1.00000000,@var:ErpFinBadDebt@businessDate,C14 坏账收回：部分回款,APPROVED,1,100024,,0,2,autotest-ref,*,autotest-ref,*

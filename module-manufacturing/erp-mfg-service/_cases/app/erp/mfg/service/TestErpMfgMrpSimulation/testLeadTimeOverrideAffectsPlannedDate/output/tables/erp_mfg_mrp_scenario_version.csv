@@ -1,2 +1,2 @@
 _chgType,ID,SCENARIO_ID,VERSION_NO,COMPUTED_MRP_PLAN_ID,SNAPSHOT_SUMMARY,STATUS,PROMOTED_PLAN_ID,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
-A,4,9838,1,2,"lines=0,totalNet=0,totalPlanned=0,shortageMaterials=0",COMPLETED,,@var:ErpMfgMrpScenarioVersion@delVersion,0,autotest-ref,*,autotest-ref,*
+A,4,9838,1,2,"lines=0,totalNet=0,totalPlanned=0,shortageMaterials=0",COMPLETED,,0,0,autotest-ref,*,autotest-ref,*

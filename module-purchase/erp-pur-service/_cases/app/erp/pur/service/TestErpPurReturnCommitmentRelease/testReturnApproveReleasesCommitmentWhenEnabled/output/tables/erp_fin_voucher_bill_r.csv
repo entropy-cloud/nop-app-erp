@@ -1,0 +1,5 @@
+_chgType,ID,VOUCHER_ID,BILL_TYPE,BILL_CODE,BILL_LINE_CODE,BUSINESS_TYPE,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
+A,13,10,PURCHASE_INPUT,@var:ErpFinVoucherBillR@billCode,,PURCHASE_INPUT,0,0,autotest-ref,*,autotest-ref,*
+A,16,14,PURCHASE_ORDER_COMMITMENT,@var:ErpFinVoucherBillR@billCode_3,,PURCHASE_ORDER_COMMITMENT,0,0,autotest-ref,*,autotest-ref,*
+A,23,20,PURCHASE_RETURN,@var:ErpFinVoucherBillR@billCode_2,,PURCHASE_RETURN,0,0,autotest-ref,*,autotest-ref,*
+A,27,25,PURCHASE_ORDER_COMMITMENT,@var:ErpFinVoucherBillR@billCode_3,,PURCHASE_ORDER_COMMITMENT,0,0,autotest-ref,*,autotest-ref,*

@@ -1,0 +1,2 @@
+_chgType,ID,NOTIFICATION_TYPE,NAME,CHANNEL_SET,SUBJECT_TPL,BODY_TPL,RECIPIENT_RESOLVER,RECIPIENT_CONFIG,MERGE_WINDOW_SECONDS,MERGE_STRATEGY,STATUS,REMARK,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
+A,7302,cs.ticket-assign-no-match,富化测试-cs.ticket-assign-no-match,IN_APP,工单通知: ${ticketCode},工单 ${ticketCode}（ID ${ticketId}）,ROLE,"{""roles"":[""客服主管""]}",0,NONE,ACTIVE,,0,0,autotest-ref,*,autotest-ref,*

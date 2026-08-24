@@ -1,6 +1,6 @@
 _chgType,ID,VOUCHER_ID,BILL_TYPE,BILL_CODE,BILL_LINE_CODE,BUSINESS_TYPE,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
-A,100012,100009,BANK_RECON_ADJ,@var:ErpFinVoucherBillR@billCode,,BANK_RECON_ADJ,@var:ErpFinVoucherBillR@delVersion,0,autotest-ref,*,autotest-ref,*
-A,100016,100013,BANK_RECON_ADJ,@var:ErpFinVoucherBillR@billCode,,BANK_RECON_ADJ,@var:ErpFinVoucherBillR@delVersion,0,autotest-ref,*,autotest-ref,*
-A,100022,100019,BAD_DEBT_WRITE_OFF,@var:ErpFinVoucherBillR@billCode_2,,BAD_DEBT_WRITE_OFF,@var:ErpFinVoucherBillR@delVersion,0,autotest-ref,*,autotest-ref,*
-A,100027,100024,BAD_DEBT_RECOVERY,@var:ErpFinVoucherBillR@billCode_3,,BAD_DEBT_RECOVERY,@var:ErpFinVoucherBillR@delVersion,0,autotest-ref,*,autotest-ref,*
-A,100031,100028,BAD_DEBT_RESERVE,@var:ErpFinVoucherBillR@billCode_4,,BAD_DEBT_RESERVE,@var:ErpFinVoucherBillR@delVersion,0,autotest-ref,*,autotest-ref,*
+A,100012,100009,BANK_RECON_ADJ,@var:ErpFinVoucherBillR@billCode,,BANK_RECON_ADJ,0,0,autotest-ref,*,autotest-ref,*
+A,100016,100013,BANK_RECON_ADJ,@var:ErpFinVoucherBillR@billCode,,BANK_RECON_ADJ,0,0,autotest-ref,*,autotest-ref,*
+A,100022,100019,BAD_DEBT_WRITE_OFF,@var:ErpFinVoucherBillR@billCode_2,,BAD_DEBT_WRITE_OFF,0,0,autotest-ref,*,autotest-ref,*
+A,100027,100024,BAD_DEBT_RECOVERY,@var:ErpFinVoucherBillR@billCode_3,,BAD_DEBT_RECOVERY,0,0,autotest-ref,*,autotest-ref,*
+A,100031,100028,BAD_DEBT_RESERVE,@var:ErpFinVoucherBillR@billCode_4,,BAD_DEBT_RESERVE,0,0,autotest-ref,*,autotest-ref,*

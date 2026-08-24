@@ -1,0 +1,2 @@
+_chgType,ID,NOTIFICATION_TYPE,NAME,CHANNEL_SET,SUBJECT_TPL,BODY_TPL,RECIPIENT_RESOLVER,RECIPIENT_CONFIG,MERGE_WINDOW_SECONDS,MERGE_STRATEGY,STATUS,REMARK,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
+A,7302,mnt.equipment-downtime,停机排产通知,IN_APP,设备停机: ${equipmentCode},设备 ${equipmentCode}（工作中心 ${workcenterId}）停机，原因 ${reason},ROLE,"{""roles"":[""生产计划员""]}",300,MERGE_BY_USER_TYPE,ACTIVE,,0,0,autotest-ref,*,autotest-ref,*

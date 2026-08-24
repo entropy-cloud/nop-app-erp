@@ -1,0 +1,3 @@
+_chgType,ID,EQUIPMENT_ID,FROM_STATUS,TO_STATUS,CHANGE_AT,SOURCE,SOURCE_BILL_CODE,REMARK,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
+A,72041,71004,,RUNNING,@var:ErpMntEquipmentStatusLog@changeAt,MANUAL,,,0,0,autotest-ref,*,autotest-ref,*
+A,72042,71004,RUNNING,IDLE,@var:ErpMntEquipmentStatusLog@changeAt_1,MANUAL,,,0,0,autotest-ref,*,autotest-ref,*

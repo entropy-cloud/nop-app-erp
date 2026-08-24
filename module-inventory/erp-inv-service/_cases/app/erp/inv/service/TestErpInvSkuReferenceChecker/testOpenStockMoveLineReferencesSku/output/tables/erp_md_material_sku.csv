@@ -1,4 +1,4 @@
 _chgType,ID,MATERIAL_ID,SKU_CODE,BARCODE,UOM_ID,CONVERSION_RATE,PURCHASE_PRICE,SALE_PRICE,WHOLESALE_PRICE,RETAIL_PRICE,TAX_RATE_ID,IS_DEFAULT,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME,STATUS
-A,1,9302,SKU-INV-MOVE-DRAFT,,9303,1,,,,,,false,@var:ErpMdMaterialSku@delVersion_2,0,autotest-ref,*,autotest-ref,*,
-A,4,9302,SKU-INV-MOVE-DONE,,9303,1,,,,,,false,@var:ErpMdMaterialSku@delVersion_2,0,autotest-ref,*,autotest-ref,*,
-A,7,9302,SKU-INV-MOVE-CANCEL,,9303,1,,,,,,false,@var:ErpMdMaterialSku@delVersion_2,0,autotest-ref,*,autotest-ref,*,
+A,1,9302,SKU-INV-MOVE-DRAFT,,9303,1,,,,,,false,0,0,autotest-ref,*,autotest-ref,*,
+A,4,9302,SKU-INV-MOVE-DONE,,9303,1,,,,,,false,0,0,autotest-ref,*,autotest-ref,*,
+A,7,9302,SKU-INV-MOVE-CANCEL,,9303,1,,,,,,false,0,0,autotest-ref,*,autotest-ref,*,

@@ -1,3 +1,3 @@
 _chgType,ID,CODE,MOVE_TYPE,ORG_ID,BUSINESS_DATE,SOURCE_WAREHOUSE_ID,SOURCE_LOCATION_ID,DEST_WAREHOUSE_ID,DEST_LOCATION_ID,DOC_STATUS,APPROVE_STATUS,POSTED,POSTED_AT,POSTED_BY,RELATED_BILL_TYPE,RELATED_BILL_CODE,REMARK,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME,ORIGIN_MOVE_ID,ORIGIN_RETURNED_MOVE_ID
-A,5,@var:ErpInvStockMove@code,INCOMING,1051,@var:ErpInvStockMove@businessDate_1,,,3051,,CONFIRMED,UNSUBMITTED,false,,,ERP_INV_STOCK_TAKE,,盘点差异 TAKE-PARTIAL-001 盘盈,@var:ErpInvStockMove@delVersion,0,autotest-ref,*,autotest-ref,*,,
-A,7,@var:ErpInvStockMove@code_1,OUTGOING,1051,@var:ErpInvStockMove@businessDate_1,3051,,,,DRAFT,UNSUBMITTED,false,,,ERP_INV_STOCK_TAKE,,盘点差异 TAKE-PARTIAL-001 盘亏,@var:ErpInvStockMove@delVersion_2,1,autotest-ref,*,autotest-ref,*,,
+A,5,@var:ErpInvStockMove@code,INCOMING,1051,@var:ErpInvStockMove@businessDate_1,,,3051,,CONFIRMED,UNSUBMITTED,false,,,ERP_INV_STOCK_TAKE,,盘点差异 TAKE-PARTIAL-001 盘盈,0,0,autotest-ref,*,autotest-ref,*,,
+A,7,@var:ErpInvStockMove@code_1,OUTGOING,1051,@var:ErpInvStockMove@businessDate_1,3051,,,,DRAFT,UNSUBMITTED,false,,,ERP_INV_STOCK_TAKE,,盘点差异 TAKE-PARTIAL-001 盘亏,*,1,autotest-ref,*,autotest-ref,*,,

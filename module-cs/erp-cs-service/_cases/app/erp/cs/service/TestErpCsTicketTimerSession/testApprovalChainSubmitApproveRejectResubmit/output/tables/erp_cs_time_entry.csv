@@ -1,0 +1,5 @@
+_chgType,ID,ORG_ID,TICKET_ID,AGENT_ID,START_TIME,END_TIME,DURATION,IS_BILLABLE,BILLING_RATE,BILLABLE_AMOUNT,DESCRIPTION,APPROVAL_STATUS,APPROVED_BY_ID,APPROVED_AT,PROJECT_ID,TASK_ID,SOURCE,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
+A,7351,,7101,1001,@var:ErpCsTimeEntry@startTime_3,@var:ErpCsTimeEntry@endTime_3,60,true,,,远程排查故障,APPROVED,1001,@var:ErpCsTimeEntry@approvedAt,,,MANUAL,0,2,autotest-ref,*,autotest-ref,*
+A,7352,,7101,1001,@var:ErpCsTimeEntry@startTime_1,@var:ErpCsTimeEntry@endTime_3,90,true,,,现场支持（修订：60 分钟）,PENDING,1001,@var:ErpCsTimeEntry@approvedAt,,,MANUAL,0,4,autotest-ref,*,autotest-ref,*
+A,7353,,7101,1001,@var:ErpCsTimeEntry@startTime_2,@var:ErpCsTimeEntry@endTime_3,500,false,,,大工单处理,PENDING,,,,,MANUAL,0,1,autotest-ref,*,autotest-ref,*
+A,7354,,7101,1001,@var:ErpCsTimeEntry@startTime_3,@var:ErpCsTimeEntry@endTime_3,60,true,,,自动审批路径,APPROVED,1001,@var:ErpCsTimeEntry@approvedAt,,,MANUAL,0,1,autotest-ref,*,autotest-ref,*

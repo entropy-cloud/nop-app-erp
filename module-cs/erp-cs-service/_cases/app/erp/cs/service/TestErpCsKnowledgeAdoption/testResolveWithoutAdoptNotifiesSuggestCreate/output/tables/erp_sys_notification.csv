@@ -1,0 +1,2 @@
+_chgType,ID,TEMPLATE_ID,NOTIFICATION_TYPE,RECIPIENT_USER_ID,RECIPIENT_PARTNER_ID,RECIPIENT_DEPT_ID,CHANNEL,SUBJECT,BODY,PAYLOAD_JSON,STATUS,MERGE_GROUP_ID,MERGE_COUNT,SENT_AT,ERROR_MSG,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
+A,3,8811,cs.knowledge-suggest-create,cs-kb-handler,,,IN_APP,工单无知识库匹配: TK-KB-SG,*,"{""handlerUserId"":""cs-kb-handler"",""ticketCode"":""TK-KB-SG"",""ticketId"":""8910""}",SENT,cs.knowledge-suggest-create#cs-kb-handler,1,@var:ErpSysNotification@sentAt,,0,0,autotest-ref,*,autotest-ref,*

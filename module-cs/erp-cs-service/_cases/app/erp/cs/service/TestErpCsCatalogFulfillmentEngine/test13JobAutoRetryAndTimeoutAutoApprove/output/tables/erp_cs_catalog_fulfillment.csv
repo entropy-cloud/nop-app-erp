@@ -1,0 +1,7 @@
+_chgType,ID,CODE,ORG_ID,CATALOG_ITEM_ID,SEQUENCE,ACTION_TYPE,ACTION_CONFIG,ASSIGN_TO_ROLE,ESTIMATED_DURATION,IS_MANDATORY,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
+A,9421,@var:ErpCsCatalogFulfillment@code,,9410,1,REQUEST_APPROVAL,"{""timeoutHours"":1}",,,false,0,0,autotest-ref,*,autotest-ref,*
+A,9422,@var:ErpCsCatalogFulfillment@code_1,,9410,2,NOTIFY_CUSTOMER,,,,false,0,0,autotest-ref,*,autotest-ref,*
+A,9425,@var:ErpCsCatalogFulfillment@code_2,,9413,1,REQUEST_APPROVAL,"{""timeoutHours"":1}",,,false,0,0,autotest-ref,*,autotest-ref,*
+A,9426,@var:ErpCsCatalogFulfillment@code_3,,9414,1,UPDATE_STATUS,"{""status"":""ASSIGNED""}",,,false,0,1,autotest-ref,*,autotest-ref,*
+A,9427,@var:ErpCsCatalogFulfillment@code_4,,9414,2,NOTIFY_CUSTOMER,,,,false,0,0,autotest-ref,*,autotest-ref,*
+A,9428,@var:ErpCsCatalogFulfillment@code_5,,9415,1,REQUEST_APPROVAL,,,,false,0,0,autotest-ref,*,autotest-ref,*

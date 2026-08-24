@@ -1,5 +1,5 @@
 _chgType,ID,TICKET_ID,ACTION_TYPE,FROM_STATUS,TO_STATUS,OPERATOR_ID,CONTENT,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
-A,100001,100000,ASSIGN,NEW,ASSIGNED,0,分派处理人: cs-agent-01,@var:ErpCsTicketAction@delVersion_1,0,autotest-ref,*,autotest-ref,*
-A,100002,100000,NOTE,ASSIGNED,IN_PROGRESS,0,开始处理,@var:ErpCsTicketAction@delVersion_1,0,autotest-ref,*,autotest-ref,*
-A,100003,100000,NOTE,IN_PROGRESS,RESOLVED,0,标记解决: 已与客户协商退货退款，按原单价冲减,@var:ErpCsTicketAction@delVersion_1,0,autotest-ref,*,autotest-ref,*
-A,100005,100000,CLOSE,RESOLVED,CLOSED,0,关闭工单,@var:ErpCsTicketAction@delVersion_1,0,autotest-ref,*,autotest-ref,*
+A,100001,100000,ASSIGN,NEW,ASSIGNED,0,分派处理人: cs-agent-01,0,0,autotest-ref,*,autotest-ref,*
+A,100002,100000,NOTE,ASSIGNED,IN_PROGRESS,0,开始处理,0,0,autotest-ref,*,autotest-ref,*
+A,100003,100000,NOTE,IN_PROGRESS,RESOLVED,0,标记解决: 已与客户协商退货退款，按原单价冲减,0,0,autotest-ref,*,autotest-ref,*
+A,100005,100000,CLOSE,RESOLVED,CLOSED,0,关闭工单,0,0,autotest-ref,*,autotest-ref,*

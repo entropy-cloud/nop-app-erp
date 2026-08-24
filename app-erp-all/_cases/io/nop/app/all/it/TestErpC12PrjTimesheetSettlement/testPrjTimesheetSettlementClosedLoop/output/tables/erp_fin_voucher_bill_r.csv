@@ -1,4 +1,4 @@
 _chgType,ID,VOUCHER_ID,BILL_TYPE,BILL_CODE,BILL_LINE_CODE,BUSINESS_TYPE,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
-A,100007,100004,PROJECT_COST_COLLECTION,@var:ErpFinVoucherBillR@billCode,,PROJECT_COST_COLLECTION,@var:ErpFinVoucherBillR@delVersion,0,autotest-ref,*,autotest-ref,*
-A,100016,100013,PROJECT_SETTLEMENT,@var:ErpFinVoucherBillR@billCode_1,,PROJECT_SETTLEMENT,@var:ErpFinVoucherBillR@delVersion,0,autotest-ref,*,autotest-ref,*
-A,100023,100019,PROJECT_SETTLEMENT,@var:ErpFinVoucherBillR@billCode_2,,PROJECT_SETTLEMENT,@var:ErpFinVoucherBillR@delVersion,0,autotest-ref,*,autotest-ref,*
+A,100007,100004,PROJECT_COST_COLLECTION,@var:ErpFinVoucherBillR@billCode,,PROJECT_COST_COLLECTION,0,0,autotest-ref,*,autotest-ref,*
+A,100016,100013,PROJECT_SETTLEMENT,@var:ErpFinVoucherBillR@billCode_1,,PROJECT_SETTLEMENT,0,0,autotest-ref,*,autotest-ref,*
+A,100023,100019,PROJECT_SETTLEMENT,@var:ErpFinVoucherBillR@billCode_2,,PROJECT_SETTLEMENT,0,0,autotest-ref,*,autotest-ref,*

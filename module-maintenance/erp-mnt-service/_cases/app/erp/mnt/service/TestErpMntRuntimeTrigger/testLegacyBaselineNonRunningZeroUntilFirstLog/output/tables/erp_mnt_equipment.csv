@@ -1,2 +1,2 @@
 _chgType,ID,CODE,NAME,ORG_ID,ASSET_ID,WORKCENTER_ID,LOCATION_ID,CATEGORY_ID,STATUS,SERIAL_NO,MANUFACTURER,MODEL,INSTALL_DATE,WARRANTY_EXPIRY,REMARK,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
-A,61004,@var:ErpMntEquipment@code,运行时长测试设备61004,,,,,,IDLE,,,,,,,@var:ErpMntEquipment@delVersion,0,autotest-ref,*,autotest-ref,*
+A,61004,@var:ErpMntEquipment@code,运行时长测试设备61004,,,,,,IDLE,,,,,,,0,0,autotest-ref,*,autotest-ref,*

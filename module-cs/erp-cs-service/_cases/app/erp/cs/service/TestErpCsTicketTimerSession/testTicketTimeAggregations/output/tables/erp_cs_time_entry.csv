@@ -1,0 +1,7 @@
+_chgType,ID,ORG_ID,TICKET_ID,AGENT_ID,START_TIME,END_TIME,DURATION,IS_BILLABLE,BILLING_RATE,BILLABLE_AMOUNT,DESCRIPTION,APPROVAL_STATUS,APPROVED_BY_ID,APPROVED_AT,PROJECT_ID,TASK_ID,SOURCE,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
+A,7361,,7101,1001,@var:ErpCsTimeEntry@startTime,@var:ErpCsTimeEntry@endTime_5,100,true,,50.00,聚合口径条目-7361,APPROVED,,,,,MANUAL,0,0,autotest-ref,*,autotest-ref,*
+A,7362,,7101,1001,@var:ErpCsTimeEntry@startTime_1,@var:ErpCsTimeEntry@endTime_5,60,true,,30.00,聚合口径条目-7362,PENDING,,,,,MANUAL,0,0,autotest-ref,*,autotest-ref,*
+A,7363,,7101,1001,@var:ErpCsTimeEntry@startTime_2,@var:ErpCsTimeEntry@endTime_5,40,false,,999.00,聚合口径条目-7363,APPROVED,,,,,MANUAL,0,0,autotest-ref,*,autotest-ref,*
+A,7364,,7101,1001,@var:ErpCsTimeEntry@startTime_3,@var:ErpCsTimeEntry@endTime_5,25,true,,12.50,聚合口径条目-7364,REJECTED,,,,,MANUAL,0,0,autotest-ref,*,autotest-ref,*
+A,7365,,7101,1001,@var:ErpCsTimeEntry@startTime_4,@var:ErpCsTimeEntry@endTime_5,10,true,,5.00,聚合口径条目-7365,,,,,,MANUAL,0,0,autotest-ref,*,autotest-ref,*
+A,7366,,7102,1001,@var:ErpCsTimeEntry@startTime_5,@var:ErpCsTimeEntry@endTime_5,999,true,,1.00,聚合口径条目-7366,APPROVED,,,,,MANUAL,0,0,autotest-ref,*,autotest-ref,*

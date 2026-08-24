@@ -1,4 +1,4 @@
 _chgType,ID,CODE,PLAN_NAME,PERIOD_FROM,PERIOD_TO,STATUS,TOTAL_REPLENISHMENT_QTY,RUN_AT,RUN_BY,ORG_ID,REMARK,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME,BUSINESS_DATE
-A,2,@var:ErpDrpPlan@code_1,Plan DRP-BASE-CMP (SIM V1),2026-08-01,2026-08-31,COMPUTED,10.0000,@var:ErpDrpPlan@runAt_1,,7401,,@var:ErpDrpPlan@delVersion_1,0,autotest-ref,*,autotest-ref,*,@var:ErpDrpPlan@businessDate
-A,5,@var:ErpDrpPlan@code_2,Plan DRP-BASE-CMP (SIM V2),2026-08-01,2026-08-31,COMPUTED,30.0000,@var:ErpDrpPlan@runAt_2,,7401,,@var:ErpDrpPlan@delVersion_1,0,autotest-ref,*,autotest-ref,*,@var:ErpDrpPlan@businessDate
-A,8831,@var:ErpDrpPlan@code,Plan DRP-BASE-CMP,2026-08-01,2026-08-31,COMPUTED,10.0000,@var:ErpDrpPlan@runAt,,7401,,@var:ErpDrpPlan@delVersion_1,1,autotest-ref,*,autotest-ref,*,@var:ErpDrpPlan@businessDate
+A,2,@var:ErpDrpPlan@code_1,Plan DRP-BASE-CMP (SIM V1),*,*,COMPUTED,10.0000,@var:ErpDrpPlan@runAt_1,,7401,,0,0,autotest-ref,*,autotest-ref,*,@var:ErpDrpPlan@businessDate
+A,5,@var:ErpDrpPlan@code_2,Plan DRP-BASE-CMP (SIM V2),*,*,COMPUTED,30.0000,@var:ErpDrpPlan@runAt_2,,7401,,0,0,autotest-ref,*,autotest-ref,*,@var:ErpDrpPlan@businessDate
+A,8831,@var:ErpDrpPlan@code,Plan DRP-BASE-CMP,*,*,COMPUTED,10.0000,@var:ErpDrpPlan@runAt,,7401,,0,1,autotest-ref,*,autotest-ref,*,@var:ErpDrpPlan@businessDate

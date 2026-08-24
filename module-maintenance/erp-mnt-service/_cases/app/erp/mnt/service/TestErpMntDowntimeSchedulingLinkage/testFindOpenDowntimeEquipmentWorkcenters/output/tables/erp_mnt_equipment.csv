@@ -1,0 +1,5 @@
+_chgType,ID,CODE,NAME,ORG_ID,ASSET_ID,WORKCENTER_ID,LOCATION_ID,CATEGORY_ID,STATUS,SERIAL_NO,MANUFACTURER,MODEL,INSTALL_DATE,WARRANTY_EXPIRY,REMARK,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
+A,801,@var:ErpMntEquipment@code,设备801,,,7101,,,DOWN,,,,,,,0,0,autotest-ref,*,autotest-ref,*
+A,802,@var:ErpMntEquipment@code_1,设备802,,,7101,,,DOWN,,,,,,,0,0,autotest-ref,*,autotest-ref,*
+A,803,@var:ErpMntEquipment@code_2,设备803,,,,,,DOWN,,,,,,,0,0,autotest-ref,*,autotest-ref,*
+A,804,@var:ErpMntEquipment@code_3,设备804,,,7101,,,RUNNING,,,,,,,0,0,autotest-ref,*,autotest-ref,*
