@@ -64,6 +64,32 @@ app-erp-seed/
 - 升级时增量导入（新增数据）
 - 不覆盖用户已修改的数据
 
+## 快照重录义务（seed 变更联动，强制）
+
+> 2026-08-25 登记（roadmap V.2，plan `docs/plans/2026-08-25-0232-1-v2-closure-alignment-docs-registration.md` Phase 1；roadmap 横切关注点 1「快照重录义务」的强制规则落点）。
+
+部署期 seed 资产（`app-erp-all/src/main/resources/_vfs/_init-data/`，**94 CSV + 1 SQL**（`zz-sequence-advance.sql`），`DataInitInitializer` 拓扑序加载）是下述**双面测试快照的输入源**：三层全比对（response 快照 + DB 状态快照 + JUnit 关键断言）下，任何 seed CSV/SQL 变更（含未来计划追加种子）都会破坏受影响快照的录制口径。
+
+### 双面资产盘点
+
+- **面 1 — 既有各域测试快照**：各域 `module-<domain>/erp-*-service/_cases/`（19 域全在位，录制回放范式，391 测试类先例；快照种子 input/tables + 比对 output/response + output/tables）。
+- **面 2 — app-erp-all 集成用例快照**：`app-erp-all/_cases/io/nop/app/all/it/`（22 用例类（C01-C21 含 C20a/C20b）+ 试点 `TestErpP2pPilot` 共 **23 类**；CHECKING 态 = 全量 94 seed 装载后三层全比对）。
+
+### 义务规则（强制）
+
+1. **触发条件**：任何部署期 seed 资产（94 CSV + `zz-sequence-advance.sql`）新增/修改/删除。
+2. **重录义务（双面）**：变更方**同步重录受影响快照**——
+   - 面 1：受影响各域 `_cases` 快照（force-save 重录；delVersion 列语义与响应快照 `*` 通配恢复口径见 e2e-runbook「JUnit 快照 delVersion 列语义」节）；
+   - 面 2：`app-erp-all` 集成用例快照（基类 fresh-DB 重灌全量 seed 后按用例重录）。
+3. **提交说明义务**：在变更提交说明中**登记重录范围**（哪些 seed 文件变更 → 双面中哪些用例/域快照重录；roadmap V.2 行文「含变更 PR 说明」口径）。
+4. **E2E 数值断言联动**：同步评估既有 E2E 数值断言/期望值基线影响并同步（先例：SPC 追加 NCR 行曾联动更新 `quality.value.spec.ts` 的 openNcrCount）。
+
+### 交叉引用
+
+- `docs/backlog/integration-test-roadmap.md`：横切关注点 1（快照重录义务）/ 横切关注点 3（seed 修正授权 + E2E 数值断言期望值联动评估）/ 规则 6（seed 修正纪律）。
+- `docs/testing/e2e-runbook.md`「集成测试」节 fresh-DB 纪律（seed 只追加不修改 + 部署期 seed 变更走修正授权流程——与本文节**双向互指**）。
+- 同一资产的引用完整性门禁义务见上方「通用引用完整性校验」段「后续 seed 追加义务」（本文节为快照重录面，二者互补）。
+
 ## 交易单据种子（P2P+O2C，已落地）
 
 ### 核心范式：源单据 + 下游财务产物「直 seed」

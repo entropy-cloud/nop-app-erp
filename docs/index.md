@@ -50,6 +50,8 @@
 | 复制现成的日期文档骨架 | `docs/examples/README.md` | 重命名最接近的 `.example.md` 文件 |
 | 查看一个真实的小型功能演练 | `docs/examples/complete-small-app-walkthrough.md` | 然后从 `docs/examples/` 复制最接近的骨架 |
 | 诊断端到端测试失败（Playwright） | `docs/references/playwright-e2e-guide.md` | `playwright.config.ts` |
+| 了解系统级黄金路径集成测试设计（JUnit 层：22 用例/覆盖矩阵/机制选型） | `docs/design/integration-testing.md` | `docs/backlog/integration-test-roadmap.md`、`docs/testing/e2e-runbook.md`「集成测试」节 |
+| 运行 app-erp-all 集成测试（运行方式/基线/与 E2E live server 互斥纪律） | `docs/testing/e2e-runbook.md`「集成测试」节 | `docs/architecture/seed-data.md`「快照重录义务」节、`docs/testing/known-good-baselines.md` |
 | 检查更改后必须更新哪些文档 | `docs/references/maintenance-checklist.md` | `docs/design/` 或 `docs/architecture/` 中最相关的文件 |
 | 查看最近的实现历史 | `docs/logs/index.md` | 最新的日期日志文件 |
 | 查找过去的微妙回归 | `docs/bugs/00-bug-fix-note-writing-guide.md` | `docs/bugs/` 中的相关文件 |

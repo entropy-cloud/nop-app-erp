@@ -1008,8 +1008,9 @@ npx playwright show-trace test-results/<test-name>/trace.zip
 ### 运行方式
 
 ```bash
-mvn test -pl app-erp-all -Dtest=TestErpP2pPilot   # 单用例（试点范本）
-mvn test -pl app-erp-all                          # 全量（含既有 12 基建类，29/0/0/1 基线）
+mvn test -pl app-erp-all -Dtest=TestErpP2pPilot          # 单用例（试点范本）
+mvn test -pl app-erp-all -Dtest=TestErpC01P2pGoldenPath  # 单用例（B1-B10 用例类范本，22 用例类同式）
+mvn test -pl app-erp-all                                # 全量（含既有 12 基建类，54/0/0/1 基线）
 ```
 
 - **surefire 串行化（模块级强制）**：app-erp-all pom 覆盖父 POM `forkCount=1 + parallel=none`
@@ -1028,7 +1029,8 @@ mvn test -pl app-erp-all                          # 全量（含既有 12 基建
 - **每类 fresh 一次**：基类 initBeans 自动处理（删除 + 重建 + seed 重灌），无需手写清理。
 - **seed 只追加不修改**：用例自包含数据经 GraphQL 动作创建；`_cases` 快照种子（input/tables）只追加；
   部署期 seed CSV（`_vfs/_init-data/`）变更须走 roadmap 横切关注点 3「seed 修正授权」流程
-  （同步快照重录 + 评估既有 E2E 数值断言影响）。
+  （同步快照重录——双面义务登记见 `docs/architecture/seed-data.md`「快照重录义务（seed 变更联动，强制）」
+  节，双向互指——+ 评估既有 E2E 数值断言影响）。
 - **动态 id**：ERP 实体主键 `seq-default` 不被 @var 自动注册——响应提取 id + `addVar` 供 request 文件
   `@var:xxx` 引用（测试产物 id 经 `zz-sequence-advance.sql` 每轮确定性一致）。
 
@@ -1043,9 +1045,11 @@ mvn test -pl app-erp-all                          # 全量（含既有 12 基建
 
 ### 基线
 
-- 当前集成测试基线：试点 `TestErpP2pPilot`（P2P 简化链）RECORDING→CHECKING 往返全绿；
-  全量 app-erp-all 29/0/0/1（唯一 skipped = `ErpAllWebPagesCollectTest` @Disabled 预存 JDK26/ANTLR H-2）。
-  权威计数源：`docs/testing/known-good-baselines.md`。
+- 当前集成测试基线（2026-08-25 V.1 全量回归）：22 用例 + 试点 `TestErpP2pPilot` 共 **23 集成类**三层全比对全绿；
+  `mvn test -pl app-erp-all` = **54/0/0/1（套件墙钟 104s）**（唯一 skipped = `ErpAllWebPagesCollectTest`
+  @Disabled 预存 JDK26/ANTLR H-2）。
+  权威计数源：`docs/testing/known-good-baselines.md` **2026-08-25 V.1 行**（含全 reactor `mvn test`
+  3834/0/0/1/642 + `mvn clean install -DskipTests` 156 模块 BUILD SUCCESS，此处不内联复制为第二真相源）。
 
 ### JUnit 快照 delVersion 列语义（2026-08-24 平台回退后）
 
