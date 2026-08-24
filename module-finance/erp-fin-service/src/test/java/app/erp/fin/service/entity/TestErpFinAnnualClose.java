@@ -114,9 +114,12 @@ public class TestErpFinAnnualClose extends PeriodCloseTestSupport {
             subjects.put("1001", seedSubject("1001", "库存现金", "ASSET", ErpFinConstants.DC_DEBIT));
             subjects.put("1002", seedSubject("1002", "银行存款", "ASSET", ErpFinConstants.DC_DEBIT));
             subjects.put("6603", seedSubject("6603", "汇兑损益", ErpFinConstants.SUBJECT_CLASS_EXPENSE, ErpFinConstants.DC_DEBIT));
+            // 本年利润科目：银行 FX 收益腿（费用类贷方净额）经损益结转转出所需（flush 修复后同事务可见，
+            // 语义对齐 TestErpFinProfitLossClosing.testProfitLossClosingIncludesFxGainLoss）。
+            subjects.put("4103", seedSubject("4103", "本年利润", "EQUITY", ErpFinConstants.DC_CREDIT));
             seedCurrency("1", "CNY", true);
             seedCurrency("2", "EUR", false);
-            // 建立账面：借银行存款 800 / 贷库存现金 800（非损益类，不触发 P&L 结转需要 CYP 科目）。
+            // 建立账面：借银行存款 800 / 贷库存现金 800（非损益类；FX 重估收益腿另行触发 P&L 结转）。
             seedPostedVoucher("V-BANK-1", pid, LocalDate.of(2025, 8, 10), subjects,
                     new Object[]{"1002", "银行存款", ErpFinConstants.DC_DEBIT, new BigDecimal("800")},
                     new Object[]{"1001", "库存现金", ErpFinConstants.DC_CREDIT, new BigDecimal("800")});
@@ -130,6 +133,10 @@ public class TestErpFinAnnualClose extends PeriodCloseTestSupport {
         // 银行存款外币重估凭证（与 AR/AP 共用 FX-REVAL 前缀，业务类型 EXCHANGE_GAIN_LOSS）。
         assertTrue(countVouchersByBillCode("FX-REVAL-2025-08",
                 ErpFinBusinessType.EXCHANGE_GAIN_LOSS.name()) >= 1, "银行存款外币重估凭证已生成");
+
+        // FX 收益腿（费用类贷方净额）经损益结转转出——汇兑损益科目结账后净额归零（含 FX 语义）。
+        assertEquals(0, netCredit("6603", periodId).compareTo(BigDecimal.ZERO),
+                "银行存款汇兑损益科目结转后净额为 0（含 EXCHANGE_GAIN_LOSS 分录）");
     }
 
     /** 本位币银行账户不重估（无外币账户时银行重估无凭证）。 */

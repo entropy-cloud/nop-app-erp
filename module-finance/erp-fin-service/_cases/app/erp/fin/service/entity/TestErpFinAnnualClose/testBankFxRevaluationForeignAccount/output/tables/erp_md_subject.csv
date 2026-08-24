@@ -2,3 +2,4 @@ _chgType,ID,CODE,NAME,PARENT_ID,SUBJECT_CLASS,DIRECTION,BALANCE_TYPE,CURRENCY_ID
 A,2,@var:ErpMdSubject@code,库存现金,,ASSET,DEBIT,,,false,false,false,false,false,false,false,true,ACTIVE,0,0,autotest-ref,*,autotest-ref,*,,
 A,3,@var:ErpMdSubject@code_1,银行存款,,ASSET,DEBIT,,,false,false,false,false,false,false,false,true,ACTIVE,0,0,autotest-ref,*,autotest-ref,*,,
 A,4,@var:ErpMdSubject@code_2,汇兑损益,,EXPENSE,DEBIT,,,false,false,false,false,false,false,false,true,ACTIVE,0,0,autotest-ref,*,autotest-ref,*,,
+A,5,@var:ErpMdSubject@code_3,本年利润,,EQUITY,CREDIT,,,false,false,false,false,false,false,false,true,ACTIVE,0,0,autotest-ref,*,autotest-ref,*,,

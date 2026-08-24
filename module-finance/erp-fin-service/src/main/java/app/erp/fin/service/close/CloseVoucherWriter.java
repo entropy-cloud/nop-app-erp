@@ -9,6 +9,8 @@ import io.nop.api.core.time.CoreMetrics;
 import io.nop.commons.util.StringHelper;
 import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
+import io.nop.orm.dao.IOrmEntityDao;
+import io.nop.orm.IOrmTemplate;
 import java.util.Objects;
 
 import java.math.BigDecimal;
@@ -135,6 +137,15 @@ public final class CloseVoucherWriter {
         billR.setBusinessType(businessTypeCode);
         billRDao.saveEntity(billR);
 
+        // flush 边界（period-close.md 裁决）：期末凭证写入后立即 flush，保证同事务后续 DB 直查聚合
+        // （损益结转/试算平衡/年度结转）可见——修复 closePeriod 永缺 FX 腿缺陷（bugs 2026-08-25）。
+        flushSession(voucherDao);
+
         return voucherId;
+    }
+
+    private static void flushSession(IEntityDao<ErpFinVoucher> voucherDao) {
+        IOrmTemplate orm = ((IOrmEntityDao<?>) voucherDao).getOrmTemplate();
+        orm.flushSession();
     }
 }

@@ -7,12 +7,14 @@ import app.erp.fin.dao.entity.ErpFinVoucher;
 import app.erp.fin.dao.entity.ErpFinVoucherBillR;
 import app.erp.fin.dao.entity.ErpFinVoucherLine;
 import app.erp.fin.service.ErpFinConstants;
+import app.erp.md.dao.entity.ErpMdSubject;
 import io.nop.api.core.annotations.autotest.NopTestConfig;
 import io.nop.api.core.annotations.autotest.NopTestProperty;
 import io.nop.api.core.annotations.core.OptionalBoolean;
 import io.nop.api.core.beans.ApiResponse;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.dao.api.IDaoProvider;
+import io.nop.dao.api.IEntityDao;
 import io.nop.graphql.core.ast.GraphQLOperationType;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
@@ -37,7 +39,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * → {@code ErpFinAccountingPeriod__preCheck}(periodId=1)（未核销 AR/AP 列表 = seed OPEN 往来项
  * EMPLOYEE_ADVANCE/EXPENSE_CLAIM + 自包含外币项）→ {@code ErpFinAccountingPeriod__closePeriod}
  * （模块关账 AR→AP→INV→AST→GL → CLOSED；汇兑重估 FX-REVAL-2026-07 凭证 Dr 6603 150/Cr 1122 150 +
- * 损益结转 PERIOD-CLOSE-2026-07 凭证 Dr 5001 1130/Cr 4103 1130，
+ * 损益结转 PERIOD-CLOSE-2026-07 凭证 Dr 5001 1130 + Dr 4103 150 ↔ Cr 4103 1130 + Cr 6603 150（合计 1280，含 FX 腿），
  * billCode 反查）→ {@code ErpFinAccountingPeriod__finalizePeriod}（CLOSED_FINAL）→
  * {@code ErpFinAccountingPeriod__reverseClose}（reason 必填 → OPEN + 模块状态回开 + 期末凭证红冲
  * 原凭证 isReversed）→ {@code ErpFinAccountingPeriod__closePeriod} 重新结账（新结转凭证生成 = 幂等断言）。
@@ -56,11 +58,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  *       （businessType EXCHANGE_GAIN_LOSS）；损益结转 = {@code PERIOD-CLOSE-2026-07}
  *       （businessType PERIOD_CLOSE）。无外币暴露时实仓不生成 FX 凭证（干净期间不重估），
  *       本用例自包含 USD 应收项（100 USD / 期末汇率 8.5 → 重估 diff=1000−850=150 损失
- *       → Dr 6603/Cr 1122）驱动 FX 凭证生成。<b>实施期勘误</b>：PERIOD_CLOSE 凭证 =
- *       Dr 5001 1130 / Cr 4103 1130（合计 1130，<b>不含 FX 损失结转腿</b>）——closePeriod 同一事务内
- *       汇兑重估凭证经 {@code CloseVoucherWriter} 直接 save 未 flush，损益结转聚合（DB 直查）
- *       见不到 FX 凭证（对比 {@code TestErpFinProfitLossClosing.testProfitLossClosingIncludesFxGainLoss}
- *       先 seed 后 close 的跨 session 已 flush 场景，行为差异以实仓为准登记）。科目 config 经
+ *       → Dr 6603/Cr 1122）驱动 FX 凭证生成。<b>flush 边界缺陷已修复（2026-08-25，plan
+ *       2026-08-25-0330-2）</b>：原「PERIOD_CLOSE = Dr 5001 1130 / Cr 4103 1130（不含 FX 损失结转腿）」为
+ *       {@code CloseVoucherWriter} 直接 save 未 flush、损益结转聚合（DB 直查）见不到同事务 FX 凭证所致——
+ *       修复后写侧统一 flush，PERIOD_CLOSE 含 FX 腿（1280 = Dr 5001 1130 + Dr 4103 150 ↔
+ *       Cr 4103 1130 + Cr 6603 150），与 {@code TestErpFinProfitLossClosing.testProfitLossClosingIncludesFxGainLoss}
+ *       语义统一为「含 FX」。科目 config 经
  *       {@code @NopTestProperty} 指定（erp-fin.current-year-profit-subject-code=4103 /
  *       ar-subject-code=1122 / ap-subject-code=2202 / exchange-gain-loss-subject-code=6603 /
  *       period-end-exchange-rate=8.5，对齐 07-25 基线 E2E JVM args 已知键 + fin-service 期间关账
@@ -69,7 +72,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  *       {@code voucherBiz.reverse} 红冲（原凭证 isReversed=true + 红字凭证 REV-* 回链 reversalOfVoucherId；
  *       红字凭证自身 isReversed=true → 重新结账的损益结转聚合按 isReversed 过滤天然排除红字行，
  *       故重新 closePeriod 生成<b>新</b>结转/重估凭证，billCode 反查链接计数 ≥2 且金额与首轮一致
- *       （FX 150 + PL 1130）——对齐 {@code TestErpFinPeriodCloseEndToEnd} 先例断言，
+ *       （FX 150 + PL 1280）——对齐 {@code TestErpFinPeriodCloseEndToEnd} 先例断言，
  *       不做「复用原凭证」语义）。{@code erp-fin.reverse-close-approval-required=false} 必配
  *       （默认 true 反结账被拒）。</li>
  *   <li><b>冻结时钟</b>：本用例经 {@code C13C14FrozenClockExtension}（2026-07-17 ∈ 2026-07 期间）
@@ -115,8 +118,9 @@ public class TestErpC13FinPeriodCloseReverse extends ErpIntegrationTestCase {
     static final String FX_BILL_CODE = "FX-REVAL-" + SEED_PERIOD_CODE;
     static final String PL_BILL_CODE = "PERIOD-CLOSE-" + SEED_PERIOD_CODE;
     static final BigDecimal FX_AMOUNT = new BigDecimal("150");      // 重估 diff = 1000 − 100×8.5
-    static final BigDecimal PL_TOTAL = new BigDecimal("1130");      // 5001 收入结转（FX 腿未结转，见 Decision ② 勘误）
+    static final BigDecimal PL_TOTAL = new BigDecimal("1280");      // Dr 5001 1130 + Dr 4103 150 ↔ Cr 4103 1130 + Cr 6603 150（含 FX 结转腿，plan 2026-08-25-0330-2 修复后语义）
     static final BigDecimal PL_INCOME = new BigDecimal("1130");     // seed 5001 收入
+    static final BigDecimal PL_FX = new BigDecimal("150");          // FX 损失结转腿（Cr 6603，费用类贷方结转）
 
     @RegisterExtension
     static C13C14FrozenClockExtension frozenClock = new C13C14FrozenClockExtension();
@@ -178,19 +182,29 @@ public class TestErpC13FinPeriodCloseReverse extends ErpIntegrationTestCase {
         assertEquals(ErpFinConstants.DC_CREDIT, fxCr.getDcDirection(), "应收贷方方向");
         assertEquals(0, FX_AMOUNT.compareTo(fxCr.getCreditAmount()), "应收贷方=150");
 
-        // 层 1 锚点：损益结转凭证（PERIOD-CLOSE-2026-07：Dr 5001 1130 / Cr 4103 1130——FX 腿未结转勘误见 Decision ②）
+        // 层 1 锚点：损益结转凭证（PERIOD-CLOSE-2026-07：Dr 5001 1130 + Dr 4103 150 ↔ Cr 4103 1130 + Cr 6603 150，
+        // 合计 1280 含 FX 结转腿——flush 边界修复后两套件语义统一为「含 FX」，plan 2026-08-25-0330-2）。
+        // 4103 本年利润有借贷两腿（Cr 收入 1130 + Dr 费用 150），断言按借贷方向分别锚定，不能单腿匹配。
         ErpFinVoucher plVoucher = requireVoucherBalanced(
                 findBillLink(PL_BILL_CODE, ErpFinBusinessTypeName.PERIOD_CLOSE), PL_TOTAL, "损益结转凭证");
         assertEquals(ErpFinConstants.VOUCHER_STATUS_POSTED, plVoucher.getDocStatus(), "损益结转凭证已过账");
         List<ErpFinVoucherLine> plLines = findVoucherLines(plVoucher.getId());
-        ErpFinVoucherLine plIncome = findLineBySubject(plLines, SUBJECT_INCOME_CODE);
-        ErpFinVoucherLine plCyp = findLineBySubject(plLines, SUBJECT_CYP_CODE);
-        assertNotNull(plIncome, "结转凭证应含 5001 收入");
-        assertNotNull(plCyp, "结转凭证应含 4103 本年利润");
-        assertEquals(ErpFinConstants.DC_DEBIT, plIncome.getDcDirection(), "收入借方方向");
+        ErpFinVoucherLine plIncome = findLineBySubjectAndDirection(plLines, SUBJECT_INCOME_CODE, ErpFinConstants.DC_DEBIT);
+        ErpFinVoucherLine plCypIncome = findLineBySubjectAndDirection(plLines, SUBJECT_CYP_CODE, ErpFinConstants.DC_CREDIT);
+        ErpFinVoucherLine plCypExpense = findLineBySubjectAndDirection(plLines, SUBJECT_CYP_CODE, ErpFinConstants.DC_DEBIT);
+        ErpFinVoucherLine plFx = findLineBySubjectAndDirection(plLines, SUBJECT_FX_CODE, ErpFinConstants.DC_CREDIT);
+        assertNotNull(plIncome, "结转凭证应含 Dr 5001 收入结转腿");
+        assertNotNull(plCypIncome, "结转凭证应含 Cr 4103 本年利润（收入侧）");
+        assertNotNull(plCypExpense, "结转凭证应含 Dr 4103 本年利润（费用侧）");
+        assertNotNull(plFx, "结转凭证应含 Cr 6603 汇兑损益结转腿（费用类贷方结转）");
         assertEquals(0, PL_INCOME.compareTo(plIncome.getDebitAmount()), "收入借方=1130");
-        assertEquals(ErpFinConstants.DC_CREDIT, plCyp.getDcDirection(), "本年利润贷方方向");
-        assertEquals(0, PL_INCOME.compareTo(plCyp.getCreditAmount()), "本年利润贷方=1130");
+        assertEquals(0, PL_INCOME.compareTo(plCypIncome.getCreditAmount()), "本年利润贷方（收入侧）=1130");
+        assertEquals(0, FX_AMOUNT.compareTo(plCypExpense.getDebitAmount()), "本年利润借方（费用侧）=150");
+        assertEquals(0, PL_FX.compareTo(plFx.getCreditAmount()), "汇兑损益贷方结转=150");
+
+        // 汇兑损益科目结账后净额归零（FX 凭证 Dr 150 + 结转凭证 Cr 150）——对齐 fin-service FX 语义。
+        assertEquals(0, subjectNetAmount(SUBJECT_FX_CODE).compareTo(BigDecimal.ZERO),
+                "汇兑损益科目结账后净额归零（含 FX 语义）");
 
         // ---------- 4. finalizePeriod → CLOSED_FINAL ----------
         ApiResponse<?> finalizeResp = rpcMutation("ErpFinAccountingPeriod__finalizePeriod",
@@ -306,6 +320,50 @@ public class TestErpC13FinPeriodCloseReverse extends ErpIntegrationTestCase {
             }
         }
         return null;
+    }
+
+    /** 按科目 + 借贷方向锚定分录（4103 本年利润有借贷两腿，单腿匹配会命中歧义）。 */
+    private ErpFinVoucherLine findLineBySubjectAndDirection(List<ErpFinVoucherLine> lines, String subjectCode,
+                                                            String dcDirection) {
+        for (ErpFinVoucherLine l : lines) {
+            if (subjectCode.equals(l.getSubjectCode()) && dcDirection.equals(l.getDcDirection())) {
+                return l;
+            }
+        }
+        return null;
+    }
+
+    /** 科目本期净额（Σdebit − Σcredit，本期已过账凭证分录全量——结账后损益类科目应归零）。 */
+    private BigDecimal subjectNetAmount(String subjectCode) {
+        ErpMdSubject subject = findSubjectByCode(subjectCode);
+        IEntityDao<ErpFinVoucher> vDao = daoProvider.daoFor(ErpFinVoucher.class);
+        QueryBean vq = new QueryBean();
+        vq.addFilter(eq("periodId", SEED_PERIOD_ID));
+        vq.addFilter(eq("docStatus", ErpFinConstants.VOUCHER_STATUS_POSTED));
+        List<String> voucherIds = vDao.findAllByQuery(vq).stream()
+                .map(ErpFinVoucher::getId).collect(java.util.stream.Collectors.toList());
+        if (voucherIds.isEmpty()) {
+            return BigDecimal.ZERO;
+        }
+        IEntityDao<ErpFinVoucherLine> lDao = daoProvider.daoFor(ErpFinVoucherLine.class);
+        QueryBean lq = new QueryBean();
+        lq.addFilter(eq("subjectId", subject.getId()));
+        lq.addFilter(io.nop.api.core.beans.FilterBeans.in("voucherId", voucherIds));
+        BigDecimal net = BigDecimal.ZERO;
+        for (ErpFinVoucherLine l : lDao.findAllByQuery(lq)) {
+            net = net.add(l.getDebitAmount() == null ? BigDecimal.ZERO : l.getDebitAmount())
+                    .subtract(l.getCreditAmount() == null ? BigDecimal.ZERO : l.getCreditAmount());
+        }
+        return net;
+    }
+
+    private ErpMdSubject findSubjectByCode(String code) {
+        IEntityDao<ErpMdSubject> dao = daoProvider.daoFor(ErpMdSubject.class);
+        QueryBean q = new QueryBean();
+        q.addFilter(eq("code", code));
+        q.setLimit(1);
+        List<ErpMdSubject> list = dao.findAllByQuery(q);
+        return list.isEmpty() ? null : list.get(0);
     }
 
     /** preCheck 响应归一化快照：列表排序保证跨 run 确定性（参考 TestErpFinPeriodCloseEndToEnd 过滤输出先例）。 */
