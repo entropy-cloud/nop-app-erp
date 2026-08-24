@@ -33,7 +33,7 @@
       "createTime": "*",
       "updatedBy": "autotest-ref",
       "updateTime": "*",
-      "businessDate": "@var:ErpHrSalary@businessDate",
+      "businessDate": "@var:ErpHrSalary@businessDate_1",
       "posted": false,
       "paymentDate": null,
       "performanceFactor": null,

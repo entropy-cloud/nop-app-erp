@@ -1,10 +1,10 @@
 {
   "data": {
     "id": "@var:paymentId",
-    "code": "@var:ErpFinArApItem@sourceBillCode_1",
+    "code": "@var:paymentCode",
     "orgId": "2",
     "supplierId": "3",
-    "businessDate": "@var:ErpPurInvoice@businessDate",
+    "businessDate": "@var:ErpFinVoucher@voucherDate",
     "currencyId": "1",
     "exchangeRate": 1.00000000,
     "amountSource": 79.1000,

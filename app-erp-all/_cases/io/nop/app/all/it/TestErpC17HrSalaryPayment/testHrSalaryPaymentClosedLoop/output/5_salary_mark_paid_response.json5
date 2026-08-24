@@ -43,7 +43,7 @@
     "approvedAt": "@var:ErpHrSalary@approvedAt",
     "businessDate": "@var:ErpHrSalary@businessDate_1",
     "posted": true,
-    "nopFlowId": "@var:ErpHrSalary@nopFlowId"
+    "nopFlowId": "@var:NopWfInstance@wfId"
   },
   "status": 0
 }

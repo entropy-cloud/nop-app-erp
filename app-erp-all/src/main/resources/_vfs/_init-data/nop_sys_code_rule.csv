@@ -1,0 +1,2 @@
+SID,NAME,DISPLAY_NAME,CODE_PATTERN,SEQ_NAME,DEL_FLAG,REMARK
+cs-ticket-code-rule,cs-ticket-code,客服工单TK编号规则,TK{@year}{@month}{@csTicketMonthSeq:4},default,0,RC-R1.65 UC-CS-01 ⑥ TK{YYYYMM}{SEQ4} 按月序列编号
