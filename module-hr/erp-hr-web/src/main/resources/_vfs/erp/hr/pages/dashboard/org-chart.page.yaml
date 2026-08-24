@@ -131,7 +131,8 @@ body:
           - name: name
             label: "部门名称"
             type: tpl
-            tpl: '${indent}${hasChildren ? "▸ " : "• "}${name}'
+            # name 用 ?? 兜底为空字符串，避免后端返回 null 时显示 "undefined"
+            tpl: '${indent}${hasChildren ? "▸ " : "• "}${name ?? "未命名部门"}'
           - { name: code, label: "编码" }
           - { name: empCount, label: "员工数" }
           - name: managerId

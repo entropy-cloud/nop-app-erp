@@ -6,18 +6,26 @@ body:
     title: ""
     mode: inline
     wrapWithPanel: false
-    className: m-3
+    className: m-3 erp-dashboard-filter
     body:
       - type: input-number
         name: periodId
         label: "会计期间ID"
         placeholder: "留空=全部期间"
         clearable: true
+        size: sm
+        # 限制期间ID输入框宽度，避免刷新按钮被挤到右侧超出可视区
+        style:
+          maxWidth: 240px
       - type: button
         label: "刷新"
         icon: "refresh-cw"
+        level: primary
+        size: sm
         actionType: reload
         target: "kpiService,trendChart,cashFlowCrud"
+        style:
+          marginLeft: 8px
 
   - type: service
     name: kpiService
@@ -40,51 +48,57 @@ body:
         gap: 'sm'
         columns:
           - type: wrapper
-            className: "border rounded p-3"
+            className: "bg-white border rounded shadow-sm p-3 erp-kpi-card"
             body:
               - type: tpl
-                tpl: "<div class='text-muted'>本期收入</div>"
+                className: text-muted
+                tpl: "<div>本期收入</div>"
               - type: tpl
-                tpl: "<span class='h3 text-success'>¥${revenue | round:2}</span>"
+                tpl: "<div class='h3 m-t-xs m-b-0 text-success'>¥${revenue | round:2}</div>"
           - type: wrapper
-            className: "border rounded p-3"
+            className: "bg-white border rounded shadow-sm p-3 erp-kpi-card"
             body:
               - type: tpl
-                tpl: "<div class='text-muted'>本期支出</div>"
+                className: text-muted
+                tpl: "<div>本期支出</div>"
               - type: tpl
-                tpl: "<span class='h3 text-danger'>¥${expense | round:2}</span>"
+                tpl: "<div class='h3 m-t-xs m-b-0 text-danger'>¥${expense | round:2}</div>"
           - type: wrapper
-            className: "border rounded p-3"
+            className: "bg-white border rounded shadow-sm p-3 erp-kpi-card"
             body:
               - type: tpl
-                tpl: "<div class='text-muted'>本期净利润</div>"
+                className: text-muted
+                tpl: "<div>本期净利润</div>"
               - type: tpl
-                tpl: "<span class='h3 font-bold'>¥${netProfit | round:2}</span>"
+                tpl: "<div class='h3 m-t-xs m-b-0 font-bold'>¥${netProfit | round:2}</div>"
           - type: wrapper
-            className: "border rounded p-3"
+            className: "bg-white border rounded shadow-sm p-3 erp-kpi-card"
             body:
               - type: tpl
-                tpl: "<div class='text-muted'>银行存款余额</div>"
+                className: text-muted
+                tpl: "<div>银行存款余额</div>"
               - type: tpl
-                tpl: "<span class='h3'>¥${bankBalance | round:2}</span>"
+                tpl: "<div class='h3 m-t-xs m-b-0'>¥${bankBalance | round:2}</div>"
           - type: wrapper
-            className: "border rounded p-3"
+            className: "bg-white border rounded shadow-sm p-3 erp-kpi-card"
             body:
               - type: tpl
-                tpl: "<div class='text-muted'>应收余额</div>"
+                className: text-muted
+                tpl: "<div>应收余额</div>"
               - type: tpl
-                tpl: "<span class='h3 text-primary'>¥${arBalance | round:2}</span>"
+                tpl: "<div class='h3 m-t-xs m-b-0 text-primary'>¥${arBalance | round:2}</div>"
           - type: wrapper
-            className: "border rounded p-3"
+            className: "bg-white border rounded shadow-sm p-3 erp-kpi-card"
             body:
               - type: tpl
-                tpl: "<div class='text-muted'>应付余额</div>"
+                className: text-muted
+                tpl: "<div>应付余额</div>"
               - type: tpl
-                tpl: "<span class='h3 text-warning'>¥${apBalance | round:2}</span>"
+                tpl: "<div class='h3 m-t-xs m-b-0 text-warning'>¥${apBalance | round:2}</div>"
 
   - type: chart
     name: trendChart
-    className: m-3
+    className: m-3 bg-white border rounded shadow-sm p-3 erp-chart-card
     api:
       url: /graphql
       method: post
@@ -116,7 +130,7 @@ body:
 
   - type: crud
     name: cashFlowCrud
-    className: m-3
+    className: m-3 erp-alert-card"
     title: "现金流预警"
     syncLocation: false
     headerToolbar: []

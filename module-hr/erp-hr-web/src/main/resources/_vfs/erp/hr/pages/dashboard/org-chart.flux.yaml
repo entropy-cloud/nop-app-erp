@@ -39,21 +39,30 @@ body:
           data:
             keyword: ${keyword ?? null}
         target: deptTree
-- type: tree
-  data: ${deptTree}
-  labelField: name
-  keyField: id
-  childrenKey: children
-  searchable: true
-  initiallyExpanded: 2
-  showGuideLine: true
-  node:
-  - type: text
-    text: ${node?.name + " (" + (node?.empCount ?? 0) + "人)"}
-    className: font-medium
-  - type: text
-    text: '${node?.code ? " · " + node?.code : ""}'
-    className: text-xs text-gray-500
-  - type: text
-    text: '${node?.managerId ? " · 负责人#" + node?.managerId : ""}'
-    className: text-xs text-gray-500
+- type: wrapper
+  className: bg-white p-3 rounded shadow-sm
+  body:
+  - type: tpl
+    visibleOn: '${deptTree && deptTree.length === 0}'
+    className: text-muted text-center p-5
+    tpl: '<i class="fa fa-info-circle"></i> 未找到匹配的部门。请清空关键字后刷新，或确认部门主数据已录入。'
+  - type: tree
+    visibleOn: '${deptTree && deptTree.length > 0}'
+    data: ${deptTree}
+    labelField: name
+    keyField: id
+    childrenKey: children
+    searchable: true
+    initiallyExpanded: 2
+    showGuideLine: true
+    node:
+    # 节点模板：用 ?? 提供空值兜底，避免"name 字段缺失 → 显示 undefined"的视觉问题
+    - type: text
+      text: ${(node?.name ?? '未命名部门') + " (" + (node?.empCount ?? 0) + "人)"}
+      className: font-medium
+    - type: text
+      text: '${node?.code ? " · " + node.code : ""}'
+      className: text-xs text-gray-500
+    - type: text
+      text: '${node?.managerId ? " · 负责人#" + node.managerId : ""}'
+      className: text-xs text-gray-500
