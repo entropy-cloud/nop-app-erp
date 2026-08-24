@@ -437,6 +437,8 @@
 
 #### C15 CRM 线索转化与销售预测
 
+> **实施期勘误登记（2026-08-24，B8）**：(1) **机会转化动作面**——实仓无 `ErpCrmOpportunity` 独立实体（B2 C03 已裁决商机 = `ErpCrmLead` leadType=OPPORTUNITY），步骤 2 旧动作名 `ErpCrmOpportunity__save` 为漂移；实施锚定 `ErpCrmLead__convertToOpportunity`（原地升格 LEAD→OPPORTUNITY，docStatus 保持 QUALIFIED，UC-CRM-02「不创建客户」分支），且转化前置须 `qualify`（NEW→QUALIFIED 入漏斗）+ moveStage（阶段前移）先行。(2) **报价单生成动作**——落地 `ErpCrmLead__convertToQuotation`（TestErpCrmLeadConversion 先例，轻量无 CPQ 配置依赖）；`ErpCrmProductConfigurator__generateQuote` 需配置器/定价规则全套建数，语义同为生成 ErpSalQuotation，本用例不采用；convertToQuotation 前置 = OPPORTUNITY + QUALIFIED + **won-stage**（P1-RC-034 守卫）+ partnerId——seed 阶段仅验证/报价两档无 isWonStage=true 行 → 自包含赢单阶段（sequence 30）补前置；报价→订单转化经 `ErpSalOrder.quotationId` 回链断言。(3) **forecast-accuracy 期望值口径**——期望 50000/45000/80000/63000 中 63000 = forecast_line 行加权收入合计（15000 COMMIT + 48000 BEST_CASE，`buildForecastAccuracyDataset` 聚合），lineCount=2；自包含线索不写 forecast 表，期望值不受用例数据影响；报表单元格 numberFormat `#,##0.00` → 断言 token 形如 "50,000.00"。(4) 前置「1045-1 seed」= 旧式码，实仓新式码 = `erp_crm_stage/lead/forecast/forecast_line/forecast_period` 部署 seed 行（语义前置满足）。B8 实施证据：`TestErpC15CrmLeadForecast`。
+
 - **业务目标**：CRM 闭环——线索阶段迁移 → 机会 → 报价 → 订单转化 + 销售预测准确率聚合。复杂度判据：跨 4 域 + 状态机 ✓。
 - **前置**：`[seed]` CRM 阶段（1045-1 seed：stage/lead/forecast）+ `[自包含]` 新线索 + 机会。
 - **关键路径步骤**：
@@ -451,6 +453,8 @@
 
 #### C16 CS 工单 SLA 与通知派发
 
+> **实施期勘误登记（2026-08-24，B8）**：(1) **六态推进动作序列**——实仓无 `respond` 动作（B2 C04 已裁决「以当前实现为准」），步骤 1 为动作名漂移；实仓序列 = `assign`（NEW→ASSIGNED）→ `start`（→IN_PROGRESS，记 startDateTime）→ `resolve`（→RESOLVED，置 isSlaCompleted = resolvedAt ≤ deadlineDateTime）→ `close`（→CLOSED；仅超时工单 isSlaCompleted=false 须 remark）。(2) **SLA 装配路径**——`ErpCsTicket__save` 后置自动挂载（D1 守卫：slaPolicyId/deadline 均空才触发；无匹配策略留空不阻断）+ 显式 `matchAndAttachSla` 幂等重挂双证；seed 无 `erp_cs_sla_policy` 行 → 自包含策略（类型精确匹配 + resolveHours=8 日历小时模式）。(3) **调研动作面**——步骤 3 旧动作名 `ErpCsSurvey__save` 为漂移：实仓 = resolve 自动创建调研（config-gated trigger=RESOLVED，token 随机生成经 DB 反查传递）+ `ErpCsSurvey__submitSurvey`（surveyToken 入参，CSAT 1-5 校验 config-gated）；自包含回填取 CSAT=5/NPS=9 与 seed 调研同值，报表均值稳定 5.00/9.00。(4) **通知派发路径**——实仓工单链 notify（创建确认/SLA 预警/知识库建议）均模板缺失静默降级不落库，步骤 4「工单事件触发 ErpSysNotification 生成」为未实现动作面 → 改 C09 自包含模板先例（`ErpSysNotification__notify` → markRead → countUnread 归零可达断言）。B8 实施证据：`TestErpC16CsSlaNotification`。
+
 - **业务目标**：客服闭环——工单六态状态机 → SLA 达标计算 → 宏响应 → 满意度调研 → 通知派发。复杂度判据：跨 3 域 + 状态机 ✓。
 - **前置**：`[seed]` 工单类型（1045-1 seed）+ `[自包含]` 工单 + 调研。
 - **关键路径步骤**：
@@ -464,6 +468,8 @@
 - **主导域 / 涉及域**：cs / cs, notify, master-data。
 
 #### C17 HR 薪酬发放闭环
+
+> **实施期勘误登记（2026-08-24，B8）**：(1) **SALARY_PAYMENT 凭证口径**——280 = Dr **2211 应付职工薪酬** / Cr **1002 银行存款**，金额 = **实发净额**（银行实付口径，`buildPaymentEvent` 传 netSalary）；设计原文「Dr 费用/Cr 2211 + 金额 = 薪资合计」为 270 计提口径误植（270 = Dr 6601 费用 / Cr 2211 = gross）。approve（wf 回调）联动计提链 270/290/300 三凭证 + posted=true（三路全成）为同期可观测产物。(2) **员工往来断言不成立**——HR 过账 Provider（SalaryPostingProvider）纯 GL 无 AR/AP 辅助账生成，层 1「员工往来（ar_ap_item EMPLOYEE_ADVANCE 口径）核对」勘误删除（EMPLOYEE_ADVANCE 辅助账归 finance 域员工借款链路，非薪资发放）。(3) **通知触发路径**——实仓 markPaid 无自动员工通知（notify 仅计提失败告警路径），步骤 4「发放完成触发员工通知」为未实现动作面 → 改 C09 自包含模板先例。(4) **payroll 科目 config**——`erp-hr.default-payroll-subject-id` 缺省空 → 270/280 抛 ERR_PAYROLL_SUBJECT_NOT_CONFIGURED（G3 吞异常零凭证），@NopTestProperty 指定 2211（值=科目编码）。(5) 前置「1234-1 seed 员工」= 旧式码，实仓新式码 = `erp_hr_employee` 行（HR-EMP-001/002，org 2）；核算环境（税档/合同/社保基数与比例/6601.01/6601.02 科目）无 seed → 自包含建数（TestErpHrSalaryPostingChain.seedFullEnvironment 同型）；runPayroll 为全员批量（活跃员工遍历，已有非作废薪资幂等跳过），emp2 须同步建合同/社保前置。B8 实施证据：`TestErpC17HrSalaryPayment`。
 
 - **业务目标**：薪酬闭环——薪资计算 → xwf 三级审批 → 发放 → SALARY_PAYMENT 凭证 + 员工往来 + 发放通知。复杂度判据：跨 3 域 + 审批（xwf）+ 过账 ✓。
 - **前置**：`[seed]` 员工（1234-1 seed）+ `[自包含]` 薪资单（薪酬项/模拟）。
