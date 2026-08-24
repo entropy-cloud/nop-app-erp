@@ -438,6 +438,8 @@ public Map<String, Long> countReferences(@Name("id") Long id, IServiceContext co
 
 #### 8.4.2 科目 picker onEvent.setValue 8 字段快照
 
+> **Flux 更新注记（2026-08-24，plan `2026-08-24-1147-1`）**：实仓 `ErpFinVoucherLine.view.xml` 的 subjectId picker schema 已转换为 flux 格式（`pickerDialog` + `loadAction` + `valueKey`/`labelKey`）；`onEvent.change` 8 字段快照逻辑原样保留，本节 visibleOn 表达式机制不受影响。下文代码块为模型层语义历史注记。
+
 `subjectId` col gen-control 返回 AMIS picker，onEvent.change 经 setValue 将 8 字段（subjectCode + subjectName + 6 个 isAuxiliary* flag）批量写入 input-table row scope：
 
 ```xml

@@ -470,6 +470,8 @@ per §8.3 裁决：**禁止**额外 onEvent.change.setValue 清空对侧金额�
 
 ### 16.3 科目 picker onEvent.setValue 8 字段快照（P0 物料快照扩展）
 
+> **Flux 更新注记（2026-08-24，plan `2026-08-24-1147-1`）**：下文示例中的 picker schema 已在实仓 `ErpFinVoucherLine.view.xml` 转换为 flux 格式（`pickerDialog` + `loadAction` + `columns` + `valueKey`/`labelKey`，移除 AMIS 的 `source`/`joinValues`/`extractValue`）；`onEvent.change.actions.setValue` 8 字段快照逻辑**原样保留**。下文代码块保留 AMIS 形态作为模型层语义历史注记，flux 实际形态以实仓 view.xml 为准。
+
 `subjectId` col gen-control 返回 AMIS picker + onEvent.change.actions.setValue，将所选 `ErpMdSubject` 的 8 字段（`subjectCode` + `subjectName` + 6 个 `isAuxiliary*` flag）批量快照进 input-table row scope：
 
 ```xml

@@ -520,6 +520,8 @@
 
 #### C20a DRP 净需求与补货释放
 
+> **实施期勘误登记（2026-08-24，B10）**：(1) **净需求公式符号**——实仓 `DrpEngine`/`SimulationDrpEngine` 口径 = `max(0, safetyStock + forecastDemand − currentStock + allocatedQty − onOrderQty)`，**allocatedQty（已分配量）为加项**（预留库存增加净需求）；设计层 1「净需求 = 毛需求 − 在途 − 在手 − 已分配」对已分配量符号相反，以实仓为准勘误（实施锚点：SS 100 + forecast 0 − stock 30 + allocated 20 − onOrder 0 = **90**）。forecastDemand 消费仅限仓级预测行（warehouseId 非空；seed erp_mfg_forecast_line 行 warehouseId 皆空 → 用例 forecast 恒 0）。(2) **释放动作面**——行级 `ErpDrpLine__releaseLine` 为主体（TRANSFER 行 → `ErpInvTransferOrder`（code `DRP-TO-{lineId}`，fromWarehouse=参数首选调出仓）+ PURCHASE 行 → `ErpPurOrder`（code `DRP-PO-{lineId}`，supplier=参数首选供应商，行 unitPrice/amount=0 待补录），均 DRAFT/UNSUBMITTED，回写 orderBillType/orderBillCode，行 → ORDERED）；计划级 `ErpDrpLine__releaseApproved`（planId 入参）为批量编排非独立单据面——全行 ORDERED 后计划 APPROVED→**EXECUTED 隐式自动推进**（`DrpReleaseService.advancePlanToExecutedIfComplete`），无需显式调用。(3) **下游单据审批/过账形态**——生成的采购单走 DIRECT 审批（`submitForApproval`→`approve` → approveStatus=APPROVED）但 **posted=false**（PO 过账悬挂至收货环节，非审批即过账）；调拨单无审批轴，生命周期动作 = `ErpInvTransferOrder__confirm`（DRAFT→CONFIRMED，无 posted 语义）——设计层 1「下游审批后过账（posted）」以实仓行为为准勘误。B10 实施证据：`TestErpC20aDrpNetRequirementRelease`。
+
 - **业务目标**：分销补货闭环——DRP 运行 → 净需求计算 → 计划审批 → 释放生成采购/调拨建议。复杂度判据：跨 4 域 + 状态机 ✓。
 - **前置**：`[seed]` 物料/仓库/往来 + `[自包含]` DRP 计划（需求数据）。
 - **关键路径步骤**：
@@ -533,6 +535,8 @@
 - **主导域 / 涉及域**：drp / drp, purchase, inventory。
 
 #### C20b DRP 仿真与正式计划提升
+
+> **实施期勘误登记（2026-08-24，B10）**：(1) **仿真版本生成形态**——`runSimulation` 返回 `ErpDrpScenarioVersion`（versionNo 递增、status=COMPLETED、computedDrpPlanId 回链**新建 COMPUTED 计划** `{baseCode}-SIM-V{n}`）；场景状态 DRAFT→COMPLETED，二次运行须重置场景 DRAFT（无重置动作，DAO fixture + `paramResolver.invalidateCache()`——进程内 ParamResolver 缓存 computeIfAbsent 不刷新，TestErpDrpSimulation 先例）。(2) **compareVersions 断言粒度**——JUnit 层可精确 delta 断言（B−A 符号约定：totalReplenishmentQtyDelta/totalSafetyStockDelta/lineDiffs；实施锚点 SS 20→30 → **+10/+10/1 行**）；ParamResolver 缓存约束仅浏览器层（webServer 单实例无 invalidate mutation 可达）降级为结构非空，JUnit 层不受限（设计原文复认）。(3) **promote 后正式计划状态与 runDrp 口径**——promoted 计划 = **DRAFT**（非 COMPUTED 直通），复制仿真行为 SUGGESTED（保留仿真口径 SS）；后续 `runDrp` 守卫 DRAFT 通过 → DRAFT→COMPUTED 重算，但净需求口径**回落基线 ErpDrpParameter**（SS=10/suggested=10）——仿真覆盖仅经 SimulationDrpEngine 生效不写回参数表，「提升后可直接运行」成立而重算值非仿真覆盖值。B10 实施证据：`TestErpC20bDrpSimulationPromote`。
 
 - **业务目标**：DRP 仿真闭环——仿真运行 → 版本对比 → 提升为正式计划。复杂度判据：跨 3 域 + 状态机 ✓。
 - **前置**：`[seed]` 物料/仓库 + `[自包含]` 仿真场景（参数，自包含隔离，先例 TestErpDrpSimulation）。

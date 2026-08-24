@@ -26,6 +26,7 @@ When a bug, retrospective, or audit reveals a repeatable pattern, consider promo
 - `13-requirement-baseline-staleness.md` — **需求基线陈旧**：真相源计数/结构与 owner doc 事实性表述随实现演进被动漂移，被下游审计/修复当前提消费致伪事实传播——0.2 三修正（product-scope 计数 / logistics heading / UC 标题重复）+ RC-R1.89「hr 模块零 xbiz」审计快照过时 BLOCKER 实录。含断言类型决策树（计数型指向权威源 / 快照型引用前 grep 实仓）。
 - `14-config-gate-deployment-contract-adjudication.md` — **config-gate 认定范式**：「功能默认关闭」≠「功能缺失」，反之硬契约禁 config 化稀释。A4.1.4 首立三源核对法（真相源部署契约声明 / module-meta optionalFeatures / 生产 yaml 普查），跨 ≥10 切片复用 + MR1 修复 config 化裁决反向应用。含对称误判（假阳性/假阴性）自检清单。
 - `15-xbiz-xscript-no-trycatch-sink-to-java-bean.md` — **xbiz XScript 无法 try/catch**：XLang 引擎不支持 TryStatement，多步编排/失败隔离/复杂守卫必须下沉 Java Bean（Guard/StateMachine/编排 Processor 范式），xbiz source 只做薄委托（状态写回 + 一行 inject）。M4.64 机制注记 + RC-R1.89 D2 薪酬三路计提编排两案定稿。
+- `16-cross-repo-schema-contract-consumer-source-verification.md` — **跨仓库 schema 契约须对照消费端渲染器源码验证**：松耦合契约失效是静默降级非抛错——生成侧输出 `valueField`、消费侧读 `valueKey`，运行时退化 fallback 无任何报错；结构性契约测试（键存在性）146 全绿但功能全坏。plan 2026-08-24-1147-1 三轮 plan-audit 全过、closure-audit 捕获 2 项 P0 实录。含四步强制清单（读消费端解析点 / 契约对照表进文档 / 深度断言 / 抽样落盘统计分布）。
 
 > **2026-07-31 提升裁决（plan `2026-07-31-1330-2` G.2）**：候选 6 模式中 5 个提升为 `07`–`11`；`@Inject private` **排除**——已被 `docs/skills/README.md §已知失败模式 #6` 收录为速查项（单一规则无 case 复杂度，不另建 lesson）。
 
