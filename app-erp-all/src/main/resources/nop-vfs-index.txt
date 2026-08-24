@@ -92,9 +92,11 @@
 /_init-data/erp_sal_order_line.csv
 /_init-data/erp_sal_receipt.csv
 /_init-data/erp_sal_receipt_line.csv
+/_init-data/erp_sys_notification_template.csv
 /_init-data/nop_auth_role.csv
 /_init-data/nop_auth_user.csv
 /_init-data/nop_auth_user_role.csv
+/_init-data/nop_sys_code_rule.csv
 /_init-data/zz-sequence-advance.sql
 /app/all/_module
 /app/all/beans/app-service.beans.xml
