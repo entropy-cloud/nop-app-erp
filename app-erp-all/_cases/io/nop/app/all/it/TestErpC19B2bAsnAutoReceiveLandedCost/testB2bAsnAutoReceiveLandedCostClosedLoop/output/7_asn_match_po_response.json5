@@ -1,0 +1,25 @@
+{
+  "data": {
+    "id": "@var:asnId",
+    "code": "@var:ErpB2bAsn@code",
+    "orgId": "2",
+    "sourceEdiDocId": null,
+    "partnerId": "3",
+    "shipmentDate": "@var:ErpPurOrder@businessDate",
+    "estimatedArrivalDate": null,
+    "trackingNo": "IT-C19-TRK-001",
+    "relatedBillType": "PO_ORDER",
+    "relatedBillCode": "@var:ErpPurOrder@code",
+    "status": "MATCHED",
+    "status_label": "MATCHED-已匹配",
+    "remark": null,
+    "delVersion": 0,
+    "version": 1,
+    "createdBy": "autotest-ref",
+    "createTime": "*",
+    "updatedBy": "autotest-ref",
+    "updateTime": "*",
+    "businessDate": "@var:ErpPurOrder@businessDate"
+  },
+  "status": 0
+}

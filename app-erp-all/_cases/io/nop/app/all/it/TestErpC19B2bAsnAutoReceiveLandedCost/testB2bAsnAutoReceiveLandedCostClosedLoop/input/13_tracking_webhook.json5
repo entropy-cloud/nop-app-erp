@@ -1,0 +1,7 @@
+{
+  data: {
+    carrierCode: "IT-C19-CARRIER-001",
+    signature: "not-required",
+    payload: "{\"trackingNo\":\"IT-C19-TRK-001\",\"eventType\":\"DELIVERED\",\"signedBy\":\"李四\"}"
+  }
+}

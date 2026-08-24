@@ -1,0 +1,23 @@
+{
+  "data": {
+    "id": "@var:versionId",
+    "contractId": "@var:contractId",
+    "versionNo": 1,
+    "versionDate": "@var:ErpCtContract@businessDate",
+    "content": null,
+    "attachmentFileId": null,
+    "isCurrent": true,
+    "status": "FINALIZED",
+    "status_label": "FINALIZED-定稿",
+    "approvedBy": null,
+    "approvedAt": null,
+    "remark": null,
+    "delVersion": 0,
+    "version": 1,
+    "createdBy": "autotest-ref",
+    "createTime": "*",
+    "updatedBy": "autotest-ref",
+    "updateTime": "*"
+  },
+  "status": 0
+}

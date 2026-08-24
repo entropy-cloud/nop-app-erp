@@ -1,0 +1,15 @@
+{
+  data: {
+    data: {
+      code: "IT-C18-REB-AG-001",
+      orgId: "2",
+      contractId: "@var:contractId",
+      partnerId: "1",
+      rebateType: "SALES",
+      startDate: "2026-07-07",
+      endDate: "2027-12-31",
+      accrualMethod: "PERIOD_END",
+      status: "ACTIVE"
+    }
+  }
+}

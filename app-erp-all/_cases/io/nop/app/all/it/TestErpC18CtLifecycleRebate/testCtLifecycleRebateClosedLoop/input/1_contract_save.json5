@@ -1,0 +1,17 @@
+{
+  data: {
+    data: {
+      code: "IT-C18-CT-001",
+      orgId: "2",
+      contractName: "C18 返利测试销售合同",
+      contractType: "SALES",
+      contractDirection: "OUTBOUND",
+      partnerId: "1",
+      currencyId: "1",
+      startDate: "2026-01-01",
+      endDate: "2027-12-31",
+      totalAmount: 1000,
+      status: "DRAFT"
+    }
+  }
+}

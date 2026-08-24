@@ -1,0 +1,33 @@
+{
+  "data": {
+    "id": "@var:contractId",
+    "code": "@var:ErpCtContract@code",
+    "orgId": "2",
+    "contractName": "C18 返利测试销售合同",
+    "contractType": "SALES",
+    "contractType_label": "SALES-销售合同",
+    "contractDirection": "OUTBOUND",
+    "contractDirection_label": "OUTBOUND-出向(客户付款)",
+    "partnerId": "1",
+    "currencyId": "1",
+    "totalAmount": null,
+    "startDate": "2026-01-01",
+    "endDate": "2027-12-31",
+    "signDate": "@var:ErpCtContract@businessDate",
+    "status": "SUSPENDED",
+    "status_label": "SUSPENDED-已中止",
+    "templateId": null,
+    "parentContractId": null,
+    "description": null,
+    "attachmentFileId": null,
+    "remark": null,
+    "delVersion": 0,
+    "version": 3,
+    "createdBy": "autotest-ref",
+    "createTime": "*",
+    "updatedBy": "autotest-ref",
+    "updateTime": "*",
+    "businessDate": "@var:ErpCtContract@businessDate"
+  },
+  "status": 0
+}

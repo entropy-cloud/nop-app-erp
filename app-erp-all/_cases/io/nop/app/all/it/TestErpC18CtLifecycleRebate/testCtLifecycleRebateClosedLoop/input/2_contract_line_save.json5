@@ -1,0 +1,12 @@
+{
+  data: {
+    data: {
+      contractId: "@var:contractId",
+      lineNo: 1,
+      materialId: "1",
+      quantity: 100,
+      unitPrice: 10,
+      amount: 1000
+    }
+  }
+}

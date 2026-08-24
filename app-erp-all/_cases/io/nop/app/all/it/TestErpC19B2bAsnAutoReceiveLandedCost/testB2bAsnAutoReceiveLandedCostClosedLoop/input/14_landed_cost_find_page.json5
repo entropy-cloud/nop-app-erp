@@ -1,0 +1,12 @@
+{
+  data: {
+    query: {
+      filter: {
+        "$type": "eq",
+        name: "receiveId",
+        value: "@var:receiveId"
+      },
+      limit: 20
+    }
+  }
+}

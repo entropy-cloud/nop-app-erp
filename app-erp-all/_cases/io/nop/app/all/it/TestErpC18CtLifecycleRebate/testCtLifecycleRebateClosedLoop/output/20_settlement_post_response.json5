@@ -1,0 +1,25 @@
+{
+  "data": {
+    "id": "@var:settlementId",
+    "rebateAgreementId": "@var:agreementId",
+    "orgId": "2",
+    "settlementDate": "@var:ErpFinVoucher@voucherDate",
+    "totalRebateAmount": null,
+    "creditMemoBillType": "AR_INVOICE",
+    "creditMemoBillCode": "@var:ErpSalInvoice@code_1",
+    "status": "POSTED",
+    "status_label": "POSTED-已过账",
+    "postedAt": "*",
+    "postedBy": null,
+    "remark": null,
+    "delVersion": 0,
+    "version": 1,
+    "createdBy": "autotest-ref",
+    "createTime": "*",
+    "updatedBy": "autotest-ref",
+    "updateTime": "*",
+    "businessDate": "@var:ErpFinVoucher@voucherDate",
+    "posted": false
+  },
+  "status": 0
+}

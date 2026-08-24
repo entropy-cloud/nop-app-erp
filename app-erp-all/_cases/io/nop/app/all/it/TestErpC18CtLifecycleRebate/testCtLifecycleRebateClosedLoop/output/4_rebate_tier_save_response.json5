@@ -1,0 +1,18 @@
+{
+  "data": {
+    "id": "100003",
+    "rebateAgreementId": "@var:agreementId",
+    "fromAmount": 0,
+    "rebatePercent": 2,
+    "delVersion": 0,
+    "version": 0,
+    "createdBy": "autotest-ref",
+    "createTime": "*",
+    "updatedBy": "autotest-ref",
+    "updateTime": "*",
+    "toAmount": null,
+    "rebateAmount": null,
+    "remark": null
+  },
+  "status": 0
+}

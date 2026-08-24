@@ -1,0 +1,25 @@
+{
+  "data": {
+    "id": "100016",
+    "rebateAgreementId": "@var:agreementId",
+    "orgId": "2",
+    "settlementDate": "@var:ErpCtContract@businessDate",
+    "totalRebateAmount": null,
+    "status": "DRAFT",
+    "status_label": "DRAFT-草稿",
+    "delVersion": 0,
+    "version": 0,
+    "createdBy": "autotest-ref",
+    "createTime": "*",
+    "updatedBy": "autotest-ref",
+    "updateTime": "*",
+    "businessDate": "@var:ErpCtContract@businessDate",
+    "posted": false,
+    "creditMemoBillType": null,
+    "creditMemoBillCode": null,
+    "postedAt": null,
+    "postedBy": null,
+    "remark": null
+  },
+  "status": 0
+}

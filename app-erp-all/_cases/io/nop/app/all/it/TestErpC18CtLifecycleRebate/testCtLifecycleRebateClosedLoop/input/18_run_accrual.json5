@@ -1,0 +1,6 @@
+{
+  data: {
+    agreementId: "@var:agreementId",
+    asOfDate: "2026-12-31"
+  }
+}

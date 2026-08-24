@@ -1,0 +1,25 @@
+{
+  "data": {
+    "id": "@var:asnId",
+    "code": "@var:ErpB2bAsn@code",
+    "orgId": "2",
+    "sourceEdiDocId": null,
+    "partnerId": "3",
+    "shipmentDate": "@var:ErpPurReceive@businessDate",
+    "estimatedArrivalDate": null,
+    "trackingNo": "IT-C19-TRK-001",
+    "relatedBillType": "PO_ORDER",
+    "relatedBillCode": "@var:ErpPurOrder@code",
+    "status": "RECEIVED_TO_STOCK",
+    "status_label": "RECEIVED_TO_STOCK-已入库",
+    "remark": null,
+    "delVersion": 0,
+    "version": 2,
+    "createdBy": "autotest-ref",
+    "createTime": "*",
+    "updatedBy": "autotest-ref",
+    "updateTime": "*",
+    "businessDate": "@var:ErpPurReceive@businessDate"
+  },
+  "status": 0
+}

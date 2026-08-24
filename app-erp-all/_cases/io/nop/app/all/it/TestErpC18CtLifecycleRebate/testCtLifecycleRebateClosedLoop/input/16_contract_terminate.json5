@@ -1,0 +1,6 @@
+{
+  data: {
+    contractId: "@var:contractId",
+    reason: "C18 集成测试：合同终止"
+  }
+}

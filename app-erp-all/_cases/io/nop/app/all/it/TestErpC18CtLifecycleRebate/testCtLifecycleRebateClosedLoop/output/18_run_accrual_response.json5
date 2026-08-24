@@ -1,0 +1,29 @@
+{
+  "data": {
+    "id": "@var:agreementId",
+    "code": "@var:ErpCtRebateAgreement@code",
+    "orgId": "2",
+    "contractId": "@var:contractId",
+    "partnerId": "1",
+    "rebateType": "SALES",
+    "rebateType_label": "SALES-销售返利",
+    "agreementDate": null,
+    "startDate": "2026-07-07",
+    "endDate": "2027-12-31",
+    "accrualMethod": "PERIOD_END",
+    "accrualMethod_label": "PERIOD_END-期末一次性",
+    "status": "ACTIVE",
+    "status_label": "ACTIVE-生效中",
+    "totalAccumulatedAmount": null,
+    "estimatedRebateAmount": null,
+    "remark": null,
+    "delVersion": 0,
+    "version": 1,
+    "createdBy": "autotest-ref",
+    "createTime": "*",
+    "updatedBy": "autotest-ref",
+    "updateTime": "*",
+    "businessDate": "@var:ErpCtContract@businessDate"
+  },
+  "status": 0
+}

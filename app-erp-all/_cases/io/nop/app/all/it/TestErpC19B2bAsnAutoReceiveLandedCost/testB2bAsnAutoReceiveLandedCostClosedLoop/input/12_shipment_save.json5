@@ -1,0 +1,18 @@
+{
+  data: {
+    data: {
+      code: "IT-C19-SHP-001",
+      orgId: "2",
+      carrierId: "@var:carrierId",
+      status: "DISPATCHED",
+      trackingNo: "IT-C19-TRK-001",
+      relatedBillType: "PURCHASE_RECEIPT",
+      relatedBillCode: "@var:receiveCode",
+      freightTerms: "COLLECT",
+      freightAmount: 120,
+      freightCurrencyId: "1",
+      freightSettlementStatus: "PENDING",
+      businessDate: "2026-07-17"
+    }
+  }
+}

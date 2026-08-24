@@ -1,0 +1,9 @@
+{
+  data: {
+    data: {
+      rebateAgreementId: "@var:agreementId",
+      fromAmount: 0,
+      rebatePercent: 2
+    }
+  }
+}

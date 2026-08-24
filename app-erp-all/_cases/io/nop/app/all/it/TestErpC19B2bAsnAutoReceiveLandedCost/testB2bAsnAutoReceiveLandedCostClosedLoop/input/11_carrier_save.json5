@@ -1,0 +1,13 @@
+{
+  data: {
+    data: {
+      code: "IT-C19-CARRIER-001",
+      orgId: "2",
+      carrierName: "C19 测试承运商",
+      carrierType: "FREIGHT",
+      gatewayId: "mock",
+      partnerId: "3",
+      isActive: 1
+    }
+  }
+}

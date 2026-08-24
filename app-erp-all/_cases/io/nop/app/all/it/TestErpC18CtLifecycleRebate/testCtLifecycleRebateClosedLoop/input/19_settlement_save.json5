@@ -1,0 +1,10 @@
+{
+  data: {
+    data: {
+      orgId: "2",
+      rebateAgreementId: "@var:agreementId",
+      settlementDate: "2026-07-17",
+      status: "DRAFT"
+    }
+  }
+}

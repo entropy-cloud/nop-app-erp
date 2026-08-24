@@ -1,0 +1,5 @@
+{
+  data: {
+    settlementId: "@var:settlementId"
+  }
+}

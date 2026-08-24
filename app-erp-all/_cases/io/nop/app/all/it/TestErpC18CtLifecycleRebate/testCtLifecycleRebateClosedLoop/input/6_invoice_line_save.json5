@@ -1,0 +1,15 @@
+{
+  data: {
+    data: {
+      invoiceId: "@var:invoiceId",
+      lineNo: 1,
+      materialId: "1",
+      uoMId: "1",
+      quantity: 100,
+      unitPrice: 1000,
+      taxRate: 0,
+      taxAmount: 0,
+      amount: 100000
+    }
+  }
+}

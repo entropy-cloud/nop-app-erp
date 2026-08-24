@@ -1,0 +1,15 @@
+{
+  data: {
+    data: {
+      code: "IT-C19-ASN-001",
+      orgId: "2",
+      partnerId: "3",
+      status: "RECEIVED",
+      relatedBillType: "PO_ORDER",
+      relatedBillCode: "IT-C19-PO-001",
+      businessDate: "2026-07-17",
+      shipmentDate: "2026-07-17",
+      trackingNo: "IT-C19-TRK-001"
+    }
+  }
+}

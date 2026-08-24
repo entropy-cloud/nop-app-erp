@@ -1,0 +1,19 @@
+{
+  data: {
+    data: {
+      code: "IT-C19-PO-001",
+      orgId: "2",
+      supplierId: "3",
+      warehouseId: "2",
+      businessDate: "2026-07-17",
+      currencyId: "1",
+      exchangeRate: 1,
+      totalAmount: 500,
+      totalTaxAmount: 0,
+      totalAmountWithTax: 500,
+      docStatus: "ACTIVE",
+      approveStatus: "UNSUBMITTED",
+      receiveStatus: "UNRECEIVED"
+    }
+  }
+}

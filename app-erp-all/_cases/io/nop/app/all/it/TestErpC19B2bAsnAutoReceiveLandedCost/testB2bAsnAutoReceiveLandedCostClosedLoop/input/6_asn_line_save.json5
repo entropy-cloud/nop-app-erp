@@ -1,0 +1,11 @@
+{
+  data: {
+    data: {
+      asnId: "@var:asnId",
+      lineNo: 1,
+      materialId: "1",
+      shippedQty: 100,
+      quantity: 100
+    }
+  }
+}
