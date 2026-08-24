@@ -1,6 +1,6 @@
 # 2026-08-24-1943-1-v1-full-regression-green-baseline V.1 全量回归与全绿基线登记
 
-> Plan Status: active（2026-08-24 独立草案审查 3 轮收敛，见 Draft Review Record）
+> Plan Status: completed（2026-08-24 独立草案审查 3 轮收敛，见 Draft Review Record；2026-08-25 四 Phase 执行完成 + 独立结束审计 PASS，见 Closure）
 > Mission: integration-test
 > Work Item: V.1
 > Last Reviewed: 2026-08-24
@@ -54,83 +54,99 @@
 
 ### Phase 1 - 边界锚定与执行前裁决
 
-Status: planned
+Status: completed
 Targets: `docs/testing/known-good-baselines.md`（只读取锚点）、本计划（Decision 落盘）、`docs/design/integration-testing.md` §7（只读核验）
 Skill: `nop-testing`
 
 - Item Types: `Decision | Proof`
 - Prereqs: 无
 
-- [ ] Proof: 实仓盘点——23 个集成测试类（22 用例 + 试点）+ 基类 + 6 FrozenClockExtension 存在于 `app-erp-all/src/test/java/io/nop/app/all/it/`；设计文档 §7 覆盖矩阵的 22 用例与实仓类 1:1 对应、无矩阵外类/类外矩阵行（roadmap 规则 5 核验，结果记入本计划）。
+- [x] Proof: 实仓盘点——23 个集成测试类（22 用例 + 试点）+ 基类 + 6 FrozenClockExtension 存在于 `app-erp-all/src/test/java/io/nop/app/all/it/`；设计文档 §7 覆盖矩阵的 22 用例与实仓类 1:1 对应、无矩阵外类/类外矩阵行（roadmap 规则 5 核验，结果记入本计划）。
       - Skill: `nop-testing`
-- [ ] Proof: 锚定零回归边界——读取执行时点 `known-good-baselines.md` **最新含全 reactor 计数的基线行**（当前 = B10 行，亦为文件首行；flux-picker 行为 scoped-only 无全量计数，不作锚点），记录权威对照计数（当前预期 = B10 行 3834/0/0/1/642 + 156 模块 + app-erp-all 54/0/0/1）与已登记预存失败口径（当前 = none + 1 skipped）；后续差量以此为准。
+      - **执行结果（2026-08-25）**：`app-erp-all/src/test/java/io/nop/app/all/it/` 共 30 文件 = 22 用例类（`TestErpC01P2pGoldenPath` … `TestErpC21ApsCapacityLoad`，含 `TestErpC20a…`/`TestErpC20b…`）+ 试点 `TestErpP2pPilot`（M0.2 基建，非矩阵用例）+ 基类 `ErpIntegrationTestCase` + 6 FrozenClockExtension（B10/B9/C07/C11C12/C13C14/C15C16C17）——与 Current Baseline 盘点一致。§7 矩阵 22 用例 ID ↔ 实仓 22 个 `TestErpC*` 类**1:1 对应零遗漏零多余**；逐域计数 19/19 域 ≥2（md 6 / inv 15 / pur 8 / sal 7 / fin 18 / ast 3 / prj 3 / mfg 5 / qa 2 / mnt 2 / notify 3 / crm 2 / cs 2 / hr 2 / aps 2 / log 2 / b2b 2 / ct 2 / drp 2，Σ=88 与 §7 显式算术核验一致）。
+- [x] Proof: 锚定零回归边界——读取执行时点 `known-good-baselines.md` **最新含全 reactor 计数的基线行**（当前 = B10 行，亦为文件首行；flux-picker 行为 scoped-only 无全量计数，不作锚点），记录权威对照计数（当前预期 = B10 行 3834/0/0/1/642 + 156 模块 + app-erp-all 54/0/0/1）与已登记预存失败口径（当前 = none + 1 skipped）；后续差量以此为准。
       - Skill: `none`
-- [ ] Decision: **E2E 层零回归边界的执行方式**。背景：roadmap V.1 的 E2E 子句（「seed 修正引起的既有 value spec/JUnit 快照更新视为已裁决变更逐条登记」）的触发前提是 seed 修正，而 B1-B10 零 seed 变更、本 mission 各计划（M0.x + B1-B10，按计划来源枚举）提交面纯测试/文档（两枚生产面例外已在 Current Baseline 预先裁决归属他计划/他会话）。选项：(a) 全量 E2E 重跑（~82 分钟，重复他 mission 闭包门控，且本 mission 变更面无从传导 E2E 回归）；(b) **构造性满足裁定（推荐）**——按 `Related:` 列举的 M0.x + B1-B10 计划清单逐提交 `git show --stat` 审计，证明枚举计划提交仅触及测试/`_cases`/docs/测试 pom 配置/mission 元数据（`missions/*.json` driver 状态文件免审计；Current Baseline 已预先裁决的 `750577323`/`63781668c` 两枚例外按其裁决归属处理、不计入推翻证据），E2E 层「零意外回归」由本 mission 变更面为零传导成立，审计证据落盘本计划；**审计范围 = 计划来源枚举，非 commit message 前缀**（前缀/footer 均不可靠先例：`63781668c` 前缀误标、`750577323` footer 误挂，均已预先裁决）；(c) 有界 E2E 冒烟（dashboards value 抽样，先例 4/4）。残留风险：枚举遗漏混合提交 → 以逐提交 `git show --stat` 全列而非抽样规避；审计若发现枚举计划内存在**未预先裁决的**生产/seed 变更提交，裁定不成立，按升级路径处理（seed → 横切关注点 1/3 联动重录义务；生产 → 该变更归属计划的闭包门控补证）。
+      - **执行结果（2026-08-25）**：执行时点文件首行已更新为 **2026-08-25 delVersion 回退行**（plan `2026-08-24-0900-1` 闭包登记，B10 之后由他 mission 落盘）——按本 Proof 的锚定规则（执行时点最新含全 reactor 计数行），**锚点 = 2026-08-25 行**：`mvn clean install -DskipTests` = 156 模块 BUILD SUCCESS；全 reactor `mvn test` = **3834 tests / 0 failures / 0 errors / 1 skipped / 642 报告文件**；app-erp-all = 54/0/0/1；Known Failures = none（唯一 skipped = `ErpAllWebPagesCollectTest` `@Disabled` 预存 JDK26/ANTLR H-2）。计数与 B10 行**逐项一致零漂移**，锚点切换不改变对照口径。
+- [x] Decision: **E2E 层零回归边界的执行方式**。背景：roadmap V.1 的 E2E 子句（「seed 修正引起的既有 value spec/JUnit 快照更新视为已裁决变更逐条登记」）的触发前提是 seed 修正，而 B1-B10 零 seed 变更、本 mission 各计划（M0.x + B1-B10，按计划来源枚举）提交面纯测试/文档（两枚生产面例外已在 Current Baseline 预先裁决归属他计划/他会话）。选项：(a) 全量 E2E 重跑（~82 分钟，重复他 mission 闭包门控，且本 mission 变更面无从传导 E2E 回归）；(b) **构造性满足裁定（推荐）**——按 `Related:` 列举的 M0.x + B1-B10 计划清单逐提交 `git show --stat` 审计，证明枚举计划提交仅触及测试/`_cases`/docs/测试 pom 配置/mission 元数据（`missions/*.json` driver 状态文件免审计；Current Baseline 已预先裁决的 `750577323`/`63781668c` 两枚例外按其裁决归属处理、不计入推翻证据），E2E 层「零意外回归」由本 mission 变更面为零传导成立，审计证据落盘本计划；**审计范围 = 计划来源枚举，非 commit message 前缀**（前缀/footer 均不可靠先例：`63781668c` 前缀误标、`750577323` footer 误挂，均已预先裁决）；(c) 有界 E2E 冒烟（dashboards value 抽样，先例 4/4）。残留风险：枚举遗漏混合提交 → 以逐提交 `git show --stat` 全列而非抽样规避；审计若发现枚举计划内存在**未预先裁决的**生产/seed 变更提交，裁定不成立，按升级路径处理（seed → 横切关注点 1/3 联动重录义务；生产 → 该变更归属计划的闭包门控补证）。
       - Skill: `none`
-- [ ] Proof: 互斥与串行化前置——`lsof` 确认无 live server；`mvn help:effective-pom -pl app-erp-all` 实证模块级 `forkCount=1`/`parallel=none` 生效（M0.2 先例）。
+      - **裁决（2026-08-25）：采 (b) 构造性满足裁定。审计证据（逐提交 `git show --name-only` 全列，范围 = 计划来源枚举 M0.x + B1-B10，共 27 枚枚举提交）**：
+        - **枚举提交 27 枚全部通过**（允许面 = 测试 Java（`/src/test/`）+ `_cases/` 快照 + `docs/` + `missions/` + `app-erp-all/pom.xml`）：M0.x 4 枚（`c4c326c4c`/`20a86303d`/`4c6f2c948`/`8aee3fae5`）+ B1-B3 9 枚（`86f3ea036`/`c29f081d5`/`c6a4abdff`/`e0885544a`/`4a2276ee1`/`880025337`/`0c90c1f3e`/`f6e2c0f9e`/`351cbe187`）+ B4-B5 4 枚（`57927b22e`/`9ef16c923`/`74338d64b`/`f47bc5ec1`）+ B6-B7 4 枚（`9f8c2850f`/`9be5b01b4`/`36f990958`/`727850ed6`）+ B8-B10 6 枚（`345da147c`/`90dc7fc09`/`743fa3a24`/`90f3e561c`/`76f2055ec`/`5ce72c64d`）——逐枚核验触及文件 100% 落在允许面内，**零生产代码、零 seed CSV**（seed 位于 `app-erp-all/src/main/resources/_vfs/_init-data/`，无一枚触及）。
+        - **预先裁决例外 2 枚复核确认**：`750577323`（117 文件，含生产 `_vfs/nop/wf/*/v1.xwf` 4 处 + 四域 `_cases` 快照迁移收尾——按 Current Baseline 预裁决归属并发 xwf 会话自身收口，其影响已计入 JUnit 锚点）；`63781668c`（34 文件，delta flux-control.xlib + 27 view.xml 生产面——归属独立计划 `2026-08-24-1147-1` 自身闭包门控）。两枚均与预裁决描述一致，不构成推翻证据。
+        - **枚举外提交（他 mission/他会话，非本 mission 变更面）**：`88a573297`（frontend-ui 视觉 spec 9 文件，无 Java 测试）、`b2396d59d`+`9df4862cc`+`10c7190d9`（delVersion 回退 mission `2026-08-24-0900-1`：20 模块 `_cases` 快照全量重录 15188 文件 + nop-entropy `f7240c6dba` + 构建产物追赶 + 闭包 docs——纯快照/docs 面，其全量验证已由 2026-08-25 基线行登记 3834/0/0/1/642 全绿）、`c9ec9181e`（frontend-ui mission 生产 view 修复 13 文件，E2E 验证义务归其自身 mission）。按审计范围（计划来源枚举）均不属本 mission 变更面，其验证义务各归其 owning mission/计划闭包门控。
+        - **结论**：本 mission（M0.x + B1-B10）变更面 = 纯测试/快照/docs（除两枚预先裁决例外），E2E 层回归无从由本 mission 变更面传导，「零意外回归」构造性成立；升级路径未触发。
+- [x] Proof: 互斥与串行化前置——`lsof` 确认无 live server；`mvn help:effective-pom -pl app-erp-all` 实证模块级 `forkCount=1`/`parallel=none` 生效（M0.2 先例）。
       - Skill: `none`
+      - **执行结果（2026-08-25）**：`lsof -i :8011` / `lsof -i :8080` 均无进程占用（exit 1）；`mvn help:effective-pom -pl app-erp-all` 输出（execution 级 + plugin 级双处）含 `<forkCount>1</forkCount>` + `<reuseForks>true</reuseForks>` + `<parallel>none</parallel>`——模块级串行化覆盖父 POM `forkCount=4 + parallel=classes` 生效（M0.2 落地配置持续在位）。
 
 Exit Criteria:
 
-- [ ] 覆盖矩阵核验结果（1:1 对应 + 逐域 ≥2 结论）已记录于本计划。
-- [ ] 零回归对照锚点（计数 + 预存口径）与 E2E 边界 Decision（含 git 审计证据）已落盘本计划。
-- [ ] 无 live server 占用；effective-pom 输出含模块级串行化配置。
+- [x] 覆盖矩阵核验结果（1:1 对应 + 逐域 ≥2 结论）已记录于本计划。
+- [x] 零回归对照锚点（计数 + 预存口径）与 E2E 边界 Decision（含 git 审计证据）已落盘本计划。
+- [x] 无 live server 占用；effective-pom 输出含模块级串行化配置。
 
 ### Phase 2 - 集成套件模块级全绿门（快速隔离门）
 
-Status: planned
+Status: completed
 Targets: `app-erp-all`（测试执行，零代码变更预期）
 Skill: `nop-testing`
 
 - Item Types: `Proof`
 - Prereqs: Phase 1
 
-- [ ] Proof: `mvn test -pl app-erp-all` 全绿——全部 23 集成测试类（含 22 用例 CHECKING 三层全比对）+ 既有基建类通过；计数对照锚点（当前预期 ≥54/0/0/1，差量全额归因执行时点 git log 新增测试，若有）。失败处置分叉：归因本 mission 测试资产 → 范围内 Fix 后复跑；发现**真实产品缺陷** → 横切关注点 4 保护区域门禁（会计/过账 = plan-first + owner doc + tests；ORM/API/数据删除/外部仓库 = auto + dual-agent-approval），**不得在 V.1 内直接改生产代码**，登记显式 successor；归因他 mission/环境 → 按预案处置并记录，不改归因结论。
+- [x] Proof: `mvn test -pl app-erp-all` 全绿——全部 23 集成测试类（含 22 用例 CHECKING 三层全比对）+ 既有基建类通过；计数对照锚点（当前预期 ≥54/0/0/1，差量全额归因执行时点 git log 新增测试，若有）。失败处置分叉：归因本 mission 测试资产 → 范围内 Fix 后复跑；发现**真实产品缺陷** → 横切关注点 4 保护区域门禁（会计/过账 = plan-first + owner doc + tests；ORM/API/数据删除/外部仓库 = auto + dual-agent-approval），**不得在 V.1 内直接改生产代码**，登记显式 successor；归因他 mission/环境 → 按预案处置并记录，不改归因结论。
       - Skill: `nop-testing`
-- [ ] Proof: 实测登记套件墙钟时间（对照设计文档 §4 模型 8-26 分钟，结论回写 Phase 4）。
+      - **执行结果（2026-08-25 01:19-01:21）**：`mvn test -pl app-erp-all` = **BUILD SUCCESS，54 tests / 0 failures / 0 errors / 1 skipped**——与锚点 54/0/0/1 **逐项一致零差量**（执行时点无新增 Java 测试，B10 后提交 = delVersion 快照重录/docs/frontend-ui spec，均不改 Java 测试计数，与 Phase 1 归因预判一致）；23 个 `io.nop.app.all.it.*` 测试类全部执行（22 用例 CHECKING 三层全比对 + 试点）；唯一 skipped = `ErpAllWebPagesCollectTest` `@Disabled` 预存 JDK26/ANTLR H-2 维持。失败处置分叉未触发。
+- [x] Proof: 实测登记套件墙钟时间（对照设计文档 §4 模型 8-26 分钟，结论回写 Phase 4）。
       - Skill: `none`
+      - **执行结果（2026-08-25）**：`mvn test -pl app-erp-all` 墙钟 **104s（01:19:41 → 01:21:25，≈1 分 44 秒）**——含 23 集成类（fresh-DB 每类重建 + seed 重灌）+ 基建类。对照设计文档 §4 模型「22 用例套件 ≈ 8-26 分钟」：**实测远低于模型下界**（M0.2 试点先例「单用例 6s 低于模型」的规模化复认；模型高估主因 = 启动/seed 装载假设 ~12s/类，实测摊薄后 ~3-4s/类）。结论回写 Phase 4（设计文档 §4 增耗时实测注记）。
 
 Exit Criteria:
 
-- [ ] app-erp-all 模块级全绿（0 failures / 0 errors），计数与差量归因记录于本计划。
-- [ ] 套件墙钟时间已实测记录。
+- [x] app-erp-all 模块级全绿（0 failures / 0 errors），计数与差量归因记录于本计划。
+- [x] 套件墙钟时间已实测记录。
 
 ### Phase 3 - 全 reactor 全量回归与构建验证
 
-Status: planned
+Status: completed
 Targets: 全仓（测试执行，零代码变更预期）
 Skill: `nop-testing`
 
 - Item Types: `Proof`
 - Prereqs: Phase 2
 
-- [ ] Proof: `mvn clean install -DskipTests` = 156 reactor 模块 BUILD SUCCESS（模块数零漂移；非 156 须归因登记）。
+- [x] Proof: `mvn clean install -DskipTests` = 156 reactor 模块 BUILD SUCCESS（模块数零漂移；非 156 须归因登记）。
       - Skill: `none`
-- [ ] Proof: 全 reactor `mvn test` 单轮运行——surefire XML 权威计数聚合（tests/failures/errors/skipped/报告文件数），对照 Phase 1 锚点差量裁决：**零新增失败**；新增 tests（若有）以 git log 全额归因。并发竞态中断（ClassNotFound/target 清扫类）按 B9 先例隔离副本复跑并桥接登记，不视为代码回归。证据拷贝 `_tmp/v1-surefire-evidence/`（clean 前拷贝）。
+      - **执行结果（2026-08-25 01:22-01:24）**：`mvn clean install -DskipTests` = **BUILD SUCCESS，156 reactor 模块（Reactor Summary 156 SUCCESS / 0 FAILURE），Total time 01:47**——模块数与锚点（156）零漂移。
+- [x] Proof: 全 reactor `mvn test` 单轮运行——surefire XML 权威计数聚合（tests/failures/errors/skipped/报告文件数），对照 Phase 1 锚点差量裁决：**零新增失败**；新增 tests（若有）以 git log 全额归因。并发竞态中断（ClassNotFound/target 清扫类）按 B9 先例隔离副本复跑并桥接登记，不视为代码回归。证据拷贝 `_tmp/v1-surefire-evidence/`（clean 前拷贝）。
       - Skill: `none`
-- [ ] Proof: 全量回归墙钟时间实测登记。
+      - **执行结果（2026-08-25 01:24-01:38）**：全 reactor `mvn test` 单轮 = **BUILD SUCCESS，Total time 13:58**；surefire XML 权威计数聚合（排除 `_tmp/` 既有证据目录后 642 报告文件）= **3834 tests / 0 failures / 0 errors / 1 skipped / 642 报告文件**——与 Phase 1 锚点（2026-08-25 行 = B10 行口径 3834/0/0/1/642）**逐项一致零差量**：零新增失败、零新增 tests（B10 后提交均不改 Java 测试计数，Phase 1 归因预判成立）、模块数零漂移，差量归因义务为空集。唯一 skipped = `ErpAllWebPagesCollectTest` `@Disabled` 预存 JDK26/ANTLR H-2 维持。并发竞态中断未发生（in-repo 单轮全绿，无需 B9 隔离副本预案）。证据拷贝 `_tmp/v1-surefire-evidence/`（642 XML，clean 前拷贝）。
+- [x] Proof: 全量回归墙钟时间实测登记。
       - Skill: `none`
+      - **执行结果（2026-08-25）**：全量回归墙钟 = install 01:47 + 全 reactor test 13:58，合计 ≈ **15:45**（对照 B10 批 15:26 同量级；含 156 模块编译 + 3834 测试 + 23 集成类 fresh-DB 循环）。
 
 Exit Criteria:
 
-- [ ] install 156 模块 BUILD SUCCESS（或漂移全额归因）。
-- [ ] 全 reactor 单轮计数落盘：零新增失败 + 差量全额归因 + 证据目录存在。
+- [x] install 156 模块 BUILD SUCCESS（或漂移全额归因）。
+- [x] 全 reactor 单轮计数落盘：零新增失败 + 差量全额归因 + 证据目录存在。
 
 ### Phase 4 - 基线登记与文档对齐
 
-Status: planned
+Status: completed
 Targets: `docs/testing/known-good-baselines.md`、`docs/backlog/integration-test-roadmap.md`、`docs/design/integration-testing.md` §4、`docs/logs/2026/08-24.md`（或执行日）
 Skill: `none`
 
 - Item Types: `Add`
 - Prereqs: Phase 3
 
-- [ ] Add: `known-good-baselines.md` 新增 V.1 全绿基线行（命令、计数、Known Failures = 预存口径项数不增、Git State、证据路径 `_tmp/v1-surefire-evidence/`）。
-- [ ] Add: roadmap V.1 → done（引用本计划与基线行）+ V.1 details 增一行口径漂移注记（2026-08-15 行文列举的预存失败已修复清零，零回归锚点 = known-good-baselines 执行时点最新行口径，防止陈旧列举误导后继）；设计文档 §4 增耗时实测注记（实测 vs 模型结论）；日志条目（含验证状态）。
+- [x] Add: `known-good-baselines.md` 新增 V.1 全绿基线行（命令、计数、Known Failures = 预存口径项数不增、Git State、证据路径 `_tmp/v1-surefire-evidence/`）。
+      - **执行结果（2026-08-25）**：已登记 2026-08-25 V.1 基线行（表首行）——156 模块 BUILD SUCCESS（01:47）/ app-erp-all 54/0/0/1（套件墙钟 104s）/ 全量 3834/0/0/1/642（13:58）/ Known Failures = none + 1 skipped（预存口径项数不增）/ 证据 `_tmp/v1-surefire-evidence/`（642 XML）。
+- [x] Add: roadmap V.1 → done（引用本计划与基线行）+ V.1 details 增一行口径漂移注记（2026-08-15 行文列举的预存失败已修复清零，零回归锚点 = known-good-baselines 执行时点最新行口径，防止陈旧列举误导后继）；设计文档 §4 增耗时实测注记（实测 vs 模型结论）；日志条目（含验证状态）。
+      - **执行结果（2026-08-25）**：roadmap V.1 → done（引用本计划 + 计数摘要）+ 头部「最后更新」V.1 注记（V.2 解锁）；V.1 details 口径漂移注记已增；设计文档 §4 增「V.1 耗时实测注记」（104s 套件 vs 8-26 分钟模型、全量 ≈15:45，模型保留上界参考）+ 头部最后更新行同步；`docs/logs/2026/08-25.md` 增 V.1 条目（含全绿验证状态）。
 
 Exit Criteria:
 
-- [ ] 基线行、roadmap 状态、设计文档注记、日志四处的计数与结论互相一致（文本一致性检查）。
+- [x] 基线行、roadmap 状态、设计文档注记、日志四处的计数与结论互相一致（文本一致性检查）。
+      - **核验结果（2026-08-25）**：四处关键计数互相一致——3834/0/0/1/642（基线行/roadmap/日志/本计划）、54/0/0/1 + 104s（基线行/roadmap/设计文档 §4/日志）、156 模块 + 01:47 + 13:58 + ≈15:45（同四处）；roadmap V.1 状态 = done；设计文档 §4 仅承载耗时注记不内联 reactor 计数（口径归属 known-good-baselines，无冲突）。
 
 ## Draft Review Record
 
@@ -142,18 +158,18 @@ Exit Criteria:
 
 > 验证型计划：验证命令即交付物本体，完整仓库验证已在 Phase 2/3 交付，此处汇总门控。
 
-- [ ] 范围内行为完成：Phase 1-4 全部退出标准 `[x]`
-- [ ] 零回归边界达成：JUnit 层零新增失败（锚定执行时点基线行口径）+ E2E 层边界裁定成立（git 审计证据在案）
-- [ ] surefire 串行化生效确认（effective-pom 证据）
-- [ ] 覆盖矩阵 V.1 核验完成（roadmap 规则 5）
-- [ ] 耗时实测登记（套件 + 全量墙钟）
-- [ ] 基线行登记 + 证据目录在盘
-- [ ] 相关文档对齐（known-good-baselines / roadmap / 设计文档 §4 / 日志一致）
-- [ ] 无范围内项目降级为 deferred/follow-up（他 mission 归因失败以「显式 successor 归属」登记，非降级）
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：状态、阶段、门控和日志都一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成：Phase 1-4 全部退出标准 `[x]`
+- [x] 零回归边界达成：JUnit 层零新增失败（锚定执行时点基线行口径）+ E2E 层边界裁定成立（git 审计证据在案）
+- [x] surefire 串行化生效确认（effective-pom 证据）
+- [x] 覆盖矩阵 V.1 核验完成（roadmap 规则 5）
+- [x] 耗时实测登记（套件 + 全量墙钟）
+- [x] 基线行登记 + 证据目录在盘
+- [x] 相关文档对齐（known-good-baselines / roadmap / 设计文档 §4 / 日志一致）
+- [x] 无范围内项目降级为 deferred/follow-up（他 mission 归因失败以「显式 successor 归属」登记，非降级）
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证：状态、阶段、门控和日志都一致
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
@@ -162,12 +178,12 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: pending
+Status Note: 四 Phase 全部完成且退出标准全 `[x]`：Phase 1 边界锚定（覆盖矩阵 1:1 + 锚点落盘 + E2E 构造性满足裁定 + 串行化复证）、Phase 2 模块级 54/0/0/1 全绿（104s）、Phase 3 全量 156 模块 + 3834/0/0/1/642 零漂移（13:58，证据 642 XML 在盘）、Phase 4 四处文档对齐一致；独立结束审计 PASS 后关闭。
 
 Closure Audit Evidence:
 
-- Auditor / Agent: pending
-- Evidence: pending
+- Auditor / Agent: 独立 general 子代理（新会话，无执行者上下文）`ses_fcb20c770ffeP09uAybY6a2BSA`（2026-08-25）
+- Evidence: 审计报告 10/10 检查全 PASS——①清单完整性（Phase 1-4 全部条目/退出标准 `[x]` + Deferred 两项均预裁决 watch-only 非范围内降级）②零回归边界（锚点行/新基线行/Phase 2/3 计数逐项一致）③E2E Decision (b) 独立复核（27 枚举提交**全量** `git show --name-only` 负面过滤零生产零 seed；两例外确认触及生产面且按预裁决排除）④证据目录 642 `TEST-*.xml` 在盘 ⑤roadmap V.1 done + 漂移注记 + 头部注记 ⑥设计文档 §4 注记 ⑦日志全绿条目 ⑧五处文本计数一致 ⑨覆盖矩阵 22 类 1:1 + 19/19 ≥2 Σ=88 独立复算 ⑩草案审查 3 轮收敛记录完整。残留观察均非阻塞（含 §6 编号表述 "C01-C22" 属 M0.1 审查期既有措辞、对 §7 核验无影响）。
 
 Follow-up:
 
