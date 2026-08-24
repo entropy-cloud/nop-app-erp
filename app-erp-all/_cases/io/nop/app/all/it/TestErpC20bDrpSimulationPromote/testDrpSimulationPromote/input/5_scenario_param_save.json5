@@ -1,0 +1,11 @@
+{
+  data: {
+    data: {
+      scenarioId: "@var:scenarioId",
+      materialId: "4",
+      warehouseId: "1",
+      paramType: "SAFETY_STOCK",
+      paramValue: 20
+    }
+  }
+}

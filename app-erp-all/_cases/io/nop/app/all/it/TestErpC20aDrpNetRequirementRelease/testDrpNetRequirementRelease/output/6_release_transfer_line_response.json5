@@ -1,0 +1,33 @@
+{
+  "data": {
+    "id": "@var:transferLineId",
+    "planId": "@var:planId",
+    "lineNo": 10,
+    "materialId": "1",
+    "warehouseId": "2",
+    "sourceWarehouseId": "1",
+    "replenishmentType": "TRANSFER",
+    "replenishmentType_label": "TRANSFER-仓间调拨",
+    "currentStock": 30.0000,
+    "allocatedQty": 20.0000,
+    "onOrderQty": 0.0000,
+    "forecastDemand": 0.0000,
+    "safetyStock": 100.0000,
+    "netRequirement": 90.0000,
+    "suggestedQty": 90.0000,
+    "approvedQty": 90.0000,
+    "orderBillType": "ERP_INV_TRANSFER_ORDER",
+    "orderBillCode": "@var:ErpInvTransferOrder@code",
+    "status": "ORDERED",
+    "status_label": "ORDERED-已下单",
+    "orgId": "2",
+    "remark": null,
+    "delVersion": 0,
+    "version": 2,
+    "createdBy": "autotest-ref",
+    "createTime": "*",
+    "updatedBy": "autotest-ref",
+    "updateTime": "*"
+  },
+  "status": 0
+}

@@ -1,0 +1,11 @@
+{
+  data: {
+    data: {
+      code: "IT-C20B-SIM-001",
+      orgId: "2",
+      baseDrpPlanId: "@var:basePlanId",
+      description: "C20b DRP 仿真场景",
+      status: "DRAFT"
+    }
+  }
+}

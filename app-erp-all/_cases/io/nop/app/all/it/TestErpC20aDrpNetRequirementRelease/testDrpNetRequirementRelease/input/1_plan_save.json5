@@ -1,0 +1,13 @@
+{
+  data: {
+    data: {
+      code: "IT-C20A-PLAN-001",
+      planName: "C20a DRP 净需求与补货释放",
+      orgId: "2",
+      businessDate: "2026-07-17",
+      periodFrom: "2026-07-01",
+      periodTo: "2026-07-31",
+      status: "DRAFT"
+    }
+  }
+}

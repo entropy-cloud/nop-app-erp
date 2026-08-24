@@ -1,0 +1,11 @@
+{
+  data: {
+    data: {
+      warehouseId: "1",
+      materialId: "4",
+      orgId: "2",
+      safetyStock: 10,
+      replenishmentMethod: "LOT_FOR_LOT"
+    }
+  }
+}

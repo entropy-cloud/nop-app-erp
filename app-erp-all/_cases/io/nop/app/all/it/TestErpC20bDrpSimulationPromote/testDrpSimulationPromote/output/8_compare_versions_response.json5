@@ -1,0 +1,21 @@
+{
+  "data": {
+    "lineDiffs": [
+      {
+        "materialId": "4",
+        "replenishmentQtyDelta": 10.0000,
+        "safetyStockA": 20.0000,
+        "safetyStockB": 30.0000,
+        "safetyStockDelta": 10.0000,
+        "suggestedQtyA": 20.0000,
+        "suggestedQtyB": 30.0000,
+        "warehouseId": "1"
+      }
+    ],
+    "totalReplenishmentQtyDelta": 10.0000,
+    "totalSafetyStockDelta": 10.0000,
+    "versionIdA": "@var:versionAId",
+    "versionIdB": "@var:versionBId"
+  },
+  "status": 0
+}

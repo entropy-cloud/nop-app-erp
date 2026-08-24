@@ -1,0 +1,18 @@
+{
+  "data": {
+    "id": "100003",
+    "code": "@var:ErpDrpScenario@code",
+    "orgId": "2",
+    "baseDrpPlanId": "@var:basePlanId",
+    "description": "C20b DRP 仿真场景",
+    "status": "DRAFT",
+    "status_label": "DRAFT-草稿",
+    "delVersion": 0,
+    "version": 0,
+    "createdBy": "autotest-ref",
+    "createTime": "*",
+    "updatedBy": "autotest-ref",
+    "updateTime": "*"
+  },
+  "status": 0
+}

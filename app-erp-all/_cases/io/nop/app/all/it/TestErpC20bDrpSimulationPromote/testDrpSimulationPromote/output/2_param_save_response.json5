@@ -1,0 +1,26 @@
+{
+  "data": {
+    "id": "100001",
+    "warehouseId": "1",
+    "materialId": "4",
+    "safetyStock": 10,
+    "replenishmentMethod": "LOT_FOR_LOT",
+    "replenishmentMethod_label": "LOT_FOR_LOT-按需",
+    "orgId": "2",
+    "delVersion": 0,
+    "version": 0,
+    "createdBy": "autotest-ref",
+    "createTime": "*",
+    "updatedBy": "autotest-ref",
+    "updateTime": "*",
+    "replenishmentLeadTime": null,
+    "orderMultiple": null,
+    "preferredSourceWarehouseId": null,
+    "preferredSupplierId": null,
+    "minStockLevel": null,
+    "maxStockLevel": null,
+    "reviewPeriodDays": null,
+    "remark": null
+  },
+  "status": 0
+}

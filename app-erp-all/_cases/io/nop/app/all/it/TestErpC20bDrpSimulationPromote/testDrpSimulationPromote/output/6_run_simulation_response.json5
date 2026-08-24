@@ -1,0 +1,19 @@
+{
+  "data": {
+    "id": "100007",
+    "scenarioId": "@var:scenarioId",
+    "versionNo": 1,
+    "computedDrpPlanId": "100005",
+    "snapshotSummary": "lines=1,totalReplenishment=20.0000",
+    "status": "COMPLETED",
+    "status_label": "COMPLETED-运算完成",
+    "delVersion": 0,
+    "version": 0,
+    "createdBy": "autotest-ref",
+    "createTime": "*",
+    "updatedBy": "autotest-ref",
+    "updateTime": "*",
+    "promotedPlanId": null
+  },
+  "status": 0
+}

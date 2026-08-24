@@ -1,0 +1,28 @@
+{
+  "data": {
+    "id": "@var:toId",
+    "code": "@var:ErpInvTransferOrder@code",
+    "orgId": "2",
+    "businessDate": "@var:ErpDrpPlan@businessDate",
+    "fromWarehouseId": "1",
+    "toWarehouseId": "2",
+    "inTransitWarehouseId": null,
+    "docStatus": "CONFIRMED",
+    "docStatus_label": "CONFIRMED-已确认",
+    "approveStatus": "UNSUBMITTED",
+    "approveStatus_label": "UNSUBMITTED-未提交",
+    "posted": false,
+    "postedAt": null,
+    "postedBy": null,
+    "approvedBy": null,
+    "approvedAt": null,
+    "remark": null,
+    "delVersion": 0,
+    "version": 1,
+    "createdBy": "autotest-ref",
+    "createTime": "*",
+    "updatedBy": "autotest-ref",
+    "updateTime": "*"
+  },
+  "status": 0
+}

@@ -1,0 +1,26 @@
+{
+  "data": {
+    "id": "100001",
+    "warehouseId": "2",
+    "materialId": "1",
+    "safetyStock": 100,
+    "replenishmentLeadTime": 7,
+    "orderMultiple": 10,
+    "preferredSourceWarehouseId": "1",
+    "replenishmentMethod": "MIN_MAX",
+    "replenishmentMethod_label": "MIN_MAX-最小-最大",
+    "orgId": "2",
+    "delVersion": 0,
+    "version": 0,
+    "createdBy": "autotest-ref",
+    "createTime": "*",
+    "updatedBy": "autotest-ref",
+    "updateTime": "*",
+    "preferredSupplierId": null,
+    "minStockLevel": null,
+    "maxStockLevel": null,
+    "reviewPeriodDays": null,
+    "remark": null
+  },
+  "status": 0
+}

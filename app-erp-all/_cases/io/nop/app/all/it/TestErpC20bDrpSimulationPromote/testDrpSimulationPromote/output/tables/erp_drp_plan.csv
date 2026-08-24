@@ -1,0 +1,5 @@
+_chgType,ID,CODE,PLAN_NAME,PERIOD_FROM,PERIOD_TO,STATUS,TOTAL_REPLENISHMENT_QTY,RUN_AT,RUN_BY,ORG_ID,REMARK,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME,BUSINESS_DATE
+A,100000,@var:ErpDrpPlan@code,C20b DRP 仿真与正式计划提升（基线）,2026-07-01,2026-07-31,COMPUTED,10.0000,@var:ErpDrpPlan@runAt,,2,,@var:ErpDrpPlan@delVersion_1,1,autotest-ref,*,autotest-ref,*,@var:ErpDrpPlan@businessDate
+A,100005,@var:ErpDrpPlan@code_1,C20b DRP 仿真与正式计划提升（基线） (SIM V1),2026-07-01,2026-07-31,COMPUTED,20.0000,@var:ErpDrpPlan@runAt_1,,2,,@var:ErpDrpPlan@delVersion_1,0,autotest-ref,*,autotest-ref,*,@var:ErpDrpPlan@businessDate
+A,100008,@var:ErpDrpPlan@code_2,C20b DRP 仿真与正式计划提升（基线） (SIM V2),2026-07-01,2026-07-31,COMPUTED,30.0000,@var:ErpDrpPlan@runAt_2,,2,,@var:ErpDrpPlan@delVersion_1,0,autotest-ref,*,autotest-ref,*,@var:ErpDrpPlan@businessDate
+A,100011,@var:ErpDrpPlan@code_3,C20b DRP 仿真与正式计划提升（基线） (SIM V2) (PROMOTED),2026-07-01,2026-07-31,COMPUTED,10.0000,@var:ErpDrpPlan@runAt_3,,2,,@var:ErpDrpPlan@delVersion_1,1,autotest-ref,*,autotest-ref,*,@var:ErpDrpPlan@businessDate

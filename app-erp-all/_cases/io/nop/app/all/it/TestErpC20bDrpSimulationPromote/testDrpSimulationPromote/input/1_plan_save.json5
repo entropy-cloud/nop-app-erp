@@ -1,0 +1,13 @@
+{
+  data: {
+    data: {
+      code: "IT-C20B-BASE-001",
+      planName: "C20b DRP 仿真与正式计划提升（基线）",
+      orgId: "2",
+      businessDate: "2026-07-17",
+      periodFrom: "2026-07-01",
+      periodTo: "2026-07-31",
+      status: "DRAFT"
+    }
+  }
+}

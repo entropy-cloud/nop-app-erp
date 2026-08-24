@@ -1,0 +1,6 @@
+{
+  data: {
+    versionIdA: "@var:versionAId",
+    versionIdB: "@var:versionBId"
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "data": {
+    "id": "100004",
+    "scenarioId": "@var:scenarioId",
+    "materialId": "4",
+    "warehouseId": "1",
+    "paramType": "SAFETY_STOCK",
+    "paramType_label": "SAFETY_STOCK-安全库存",
+    "paramValue": 20,
+    "delVersion": 0,
+    "version": 0,
+    "createdBy": "autotest-ref",
+    "createTime": "*",
+    "updatedBy": "autotest-ref",
+    "updateTime": "*"
+  },
+  "status": 0
+}

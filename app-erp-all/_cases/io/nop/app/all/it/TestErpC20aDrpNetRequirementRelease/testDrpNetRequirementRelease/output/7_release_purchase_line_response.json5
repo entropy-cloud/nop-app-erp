@@ -1,0 +1,33 @@
+{
+  "data": {
+    "id": "@var:purchaseLineId",
+    "planId": "@var:planId",
+    "lineNo": 20,
+    "materialId": "2",
+    "warehouseId": "1",
+    "sourceWarehouseId": null,
+    "replenishmentType": "PURCHASE",
+    "replenishmentType_label": "PURCHASE-向供应商采购",
+    "currentStock": 0.0000,
+    "allocatedQty": 0.0000,
+    "onOrderQty": 0.0000,
+    "forecastDemand": 0.0000,
+    "safetyStock": 50.0000,
+    "netRequirement": 50.0000,
+    "suggestedQty": 50.0000,
+    "approvedQty": 50.0000,
+    "orderBillType": "ERP_PUR_ORDER",
+    "orderBillCode": "@var:ErpPurOrder@code",
+    "status": "ORDERED",
+    "status_label": "ORDERED-已下单",
+    "orgId": "2",
+    "remark": null,
+    "delVersion": 0,
+    "version": 2,
+    "createdBy": "autotest-ref",
+    "createTime": "*",
+    "updatedBy": "autotest-ref",
+    "updateTime": "*"
+  },
+  "status": 0
+}

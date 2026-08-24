@@ -1,0 +1,13 @@
+{
+  data: {
+    data: {
+      warehouseId: "1",
+      materialId: "2",
+      orgId: "2",
+      safetyStock: 50,
+      orderMultiple: 1,
+      preferredSupplierId: "3",
+      replenishmentMethod: "MIN_MAX"
+    }
+  }
+}
