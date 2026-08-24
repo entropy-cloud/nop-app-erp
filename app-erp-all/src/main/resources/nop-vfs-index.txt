@@ -1,5 +1,6 @@
 /_delta/default/nop/auth/pages/NopAuthOpLog/NopAuthOpLog.view.xml
 /_delta/default/nop/auth/pages/NopAuthSession/NopAuthSession.view.xml
+/_delta/default/nop/web/xlib/flux-control.xlib
 /_init-data/erp_ast_asset.csv
 /_init-data/erp_ast_asset_category.csv
 /_init-data/erp_ast_depreciation_schedule.csv
