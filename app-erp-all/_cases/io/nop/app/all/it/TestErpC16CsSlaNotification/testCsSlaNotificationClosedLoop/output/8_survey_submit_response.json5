@@ -1,0 +1,26 @@
+{
+  "data": {
+    "id": "100005",
+    "orgId": null,
+    "ticketId": "@var:ticketId",
+    "surveyToken": "*",
+    "csatScore": 5,
+    "npsScore": 9,
+    "cesScore": null,
+    "comment": "C16 满意度回填（与 seed 同值保持报表均值稳定）",
+    "respondedAt": "*",
+    "surveySentAt": "*",
+    "surveyChannel": "PORTAL",
+    "surveyChannel_label": "PORTAL-门户",
+    "delVersion": 0,
+    "version": 1,
+    "createdBy": "autotest-ref",
+    "createTime": "*",
+    "updatedBy": "autotest-ref",
+    "updateTime": "*",
+    "status": "COMPLETED",
+    "status_label": "COMPLETED-已完成",
+    "failureCount": null
+  },
+  "status": 0
+}

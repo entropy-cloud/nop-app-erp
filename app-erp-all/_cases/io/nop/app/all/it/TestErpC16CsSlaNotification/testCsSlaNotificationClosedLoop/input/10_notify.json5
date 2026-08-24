@@ -1,0 +1,9 @@
+{
+  data: {
+    eventType: "cs.ticket-closed",
+    context: {
+      ticketCode: "IT-C16-TKT-001",
+      customerName: "华东科技"
+    }
+  }
+}

@@ -1,0 +1,2 @@
+_chgType,ID,TEMPLATE_ID,NOTIFICATION_TYPE,RECIPIENT_USER_ID,RECIPIENT_PARTNER_ID,RECIPIENT_DEPT_ID,CHANNEL,SUBJECT,BODY,PAYLOAD_JSON,STATUS,MERGE_GROUP_ID,MERGE_COUNT,SENT_AT,ERROR_MSG,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
+A,100007,7109,cs.ticket-closed,it-c16-user,,,IN_APP,工单关闭通知: IT-C16-TKT-001,工单 IT-C16-TKT-001 已关闭，请知悉,"{""customerName"":""华东科技"",""ticketCode"":""IT-C16-TKT-001""}",SENT,cs.ticket-closed#it-c16-user,1,@var:ErpSysNotification@sentAt,,@var:ErpSysNotification@delVersion,0,autotest-ref,*,autotest-ref,*

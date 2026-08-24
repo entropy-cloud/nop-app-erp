@@ -1,0 +1,6 @@
+{
+  data: {
+    cannedResponseId: "9101",
+    ticketId: "@var:ticketId"
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "data": {
+    "id": "@var:notifId",
+    "templateId": "7109",
+    "notificationType": "cs.ticket-closed",
+    "recipientUserId": "it-c16-user",
+    "recipientPartnerId": null,
+    "recipientDeptId": null,
+    "channel": "IN_APP",
+    "channel_label": "IN_APP-站内消息",
+    "subject": "工单关闭通知: IT-C16-TKT-001",
+    "body": "工单 IT-C16-TKT-001 已关闭，请知悉",
+    "payloadJson": "{\"customerName\":\"华东科技\",\"ticketCode\":\"IT-C16-TKT-001\"}",
+    "status": "SENT",
+    "status_label": "SENT-已发送",
+    "mergeGroupId": "cs.ticket-closed#it-c16-user",
+    "mergeCount": 1,
+    "sentAt": "*",
+    "errorMsg": null,
+    "delVersion": 0,
+    "version": 0,
+    "createdBy": "autotest-ref",
+    "createTime": "*",
+    "updatedBy": "autotest-ref",
+    "updateTime": "*",
+  },
+  "status": 0
+}

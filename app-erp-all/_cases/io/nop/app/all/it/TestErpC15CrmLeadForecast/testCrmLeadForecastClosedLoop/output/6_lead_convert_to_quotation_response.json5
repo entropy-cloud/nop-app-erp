@@ -1,0 +1,31 @@
+{
+  "data": {
+    "id": "100003",
+    "code": "@var:ErpSalQuotation@code",
+    "orgId": "2",
+    "customerId": "1",
+    "businessDate": "@var:ErpSalQuotation@businessDate",
+    "validFrom": "@var:ErpSalQuotation@businessDate",
+    "validTo": "2026-12-31",
+    "currencyId": "1",
+    "exchangeRate": 1,
+    "totalAmount": 5000,
+    "totalTaxAmount": 650,
+    "totalAmountWithTax": 5650,
+    "isAccepted": false,
+    "docStatus": "DRAFT",
+    "docStatus_label": "DRAFT-草稿",
+    "approveStatus": "UNSUBMITTED",
+    "approveStatus_label": "UNSUBMITTED-未提交",
+    "delVersion": 0,
+    "version": 0,
+    "createdBy": "autotest-ref",
+    "createTime": "*",
+    "updatedBy": "autotest-ref",
+    "updateTime": "*",
+    "remark": "C15 商机转化报价单",
+    "approvedBy": null,
+    "approvedAt": null
+  },
+  "status": 0
+}

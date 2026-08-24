@@ -1,0 +1,18 @@
+{
+  data: {
+    leadId: "@var:leadId",
+    quotationData: {
+      businessDate: "2026-07-15",
+      validFrom: "2026-07-15",
+      validTo: "2026-12-31",
+      currencyId: "1",
+      exchangeRate: 1,
+      totalAmount: 5000,
+      totalTaxAmount: 650,
+      totalAmountWithTax: 5650,
+      docStatus: "DRAFT",
+      approveStatus: "UNSUBMITTED",
+      remark: "C15 商机转化报价单"
+    }
+  }
+}

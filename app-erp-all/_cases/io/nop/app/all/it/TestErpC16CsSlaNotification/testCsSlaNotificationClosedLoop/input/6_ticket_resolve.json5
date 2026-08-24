@@ -1,0 +1,6 @@
+{
+  data: {
+    ticketId: "@var:ticketId",
+    resolution: "C16 处理完成（SLA 达标路径）"
+  }
+}

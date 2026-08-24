@@ -1,0 +1,6 @@
+{
+  "id": "@var:salaryId",
+  "approveStatus": "APPROVED",
+  "paymentStatus": "PENDING",
+  "posted": true
+}

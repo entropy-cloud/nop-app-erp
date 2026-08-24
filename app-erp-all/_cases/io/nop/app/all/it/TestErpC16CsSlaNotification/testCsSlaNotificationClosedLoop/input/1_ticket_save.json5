@@ -1,0 +1,18 @@
+{
+  data: {
+    data: {
+      code: "IT-C16-TKT-001",
+      orgId: "2",
+      subject: "C16 投诉工单 SLA 闭环",
+      description: "C16 自包含投诉工单（类型 TT-COMPLAINT，驱动 SLA 装配与达标判定）",
+      customerId: "1",
+      ticketTypeId: "1",
+      priority: "HIGH",
+      status: "NEW",
+      docStatus: "ACTIVE",
+      approveStatus: "UNSUBMITTED",
+      businessDate: "2026-07-17",
+      remark: "C16 自包含建数"
+    }
+  }
+}

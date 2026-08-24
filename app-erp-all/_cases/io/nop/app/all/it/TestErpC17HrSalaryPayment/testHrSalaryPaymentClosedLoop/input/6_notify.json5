@@ -1,0 +1,9 @@
+{
+  data: {
+    eventType: "hr.salary-paid",
+    context: {
+      salaryId: "@var:salaryId",
+      billCode: "@var:billCode"
+    }
+  }
+}

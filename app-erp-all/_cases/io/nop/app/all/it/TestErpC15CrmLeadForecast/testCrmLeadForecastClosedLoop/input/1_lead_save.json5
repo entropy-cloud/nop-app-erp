@@ -1,0 +1,16 @@
+{
+  data: {
+    data: {
+      code: "IT-C15-LEAD-001",
+      orgId: "2",
+      leadType: "LEAD",
+      partnerId: "1",
+      contactName: "IT-C15联系人",
+      contactEmail: "it-c15@example.com",
+      companyName: "IT-C15示例科技",
+      expectedRevenue: 5000,
+      docStatus: "NEW",
+      remark: "C15 线索转化链自包含线索（目标客户 CUST-001）"
+    }
+  }
+}

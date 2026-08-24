@@ -1,0 +1,24 @@
+{
+  data: {
+    data: {
+      code: "IT-C15-SO-001",
+      orgId: "2",
+      quotationId: "@var:quotationId",
+      customerId: "1",
+      warehouseId: "1",
+      businessDate: "2026-07-15",
+      currencyId: "1",
+      exchangeRate: 1,
+      totalAmount: 5000,
+      totalTaxAmount: 650,
+      totalAmountWithTax: 5650,
+      settlementMethodId: 2,
+      docStatus: "ACTIVE",
+      approveStatus: "UNSUBMITTED",
+      receivedStatus: "UNRECEIVED",
+      deliveryStatus: "UNDELIVERED",
+      posted: false,
+      remark: "C15 报价单转化订单（quotationId 回链 SQ 商机报价）"
+    }
+  }
+}

@@ -1,0 +1,6 @@
+{
+  data: {
+    ticketId: "@var:ticketId",
+    assignedToId: "it-c16-agent"
+  }
+}

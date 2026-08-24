@@ -1,0 +1,6 @@
+{
+  data: {
+    leadId: "@var:leadId",
+    toStageId: "9001"
+  }
+}
