@@ -13,7 +13,6 @@ import io.nop.api.core.annotations.core.OptionalBoolean;
 import io.nop.api.core.beans.ApiResponse;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.dao.api.IDaoProvider;
-import io.nop.orm.IOrmTemplate;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
@@ -37,8 +36,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * （RECEIVED→MATCHED，PO code 匹配 + 行物料/超量校验）→ {@code createReceiveFromAsn}
  * （@NopTestProperty 开 {@code erp-b2b.asn-auto-create-receive}；MATCHED→RECEIVED_TO_STOCK + 采购收货
  * 草稿 {@code RCV-FROM-ASN-{asnCode}} + 行级回填（materialId 透传 / uoMId 反查 / unitPrice·orderLineId
- * 反查 PO 行 / amount=5×100））→ 收货草稿 orgId 补全（ASN 创建链不落 orgId → 过账账套不可解析，
- * fixture 补全先例）→ {@code ErpPurReceive__submitForApproval} → {@code approve} [DIRECT]（APPROVED +
+ * 反查 PO 行 / amount=5×100）→ 收货头 orgId 由 Processor 透传 PO（OA-03 修复，裁决 B——平台无 orgId
+ * 回填，见 {@code docs/bugs/2026-08-25-asn-receive-orgid-missing-writer-posting-dangling.md}）→
+ * {@code ErpPurReceive__submitForApproval} → {@code approve} [DIRECT]（APPROVED +
  * posted=true + INCOMING 移动 DONE，B1/B3 先例）→ 自包含物流（承运商 + 发运单 DISPATCHED /
  * relatedBillType=PURCHASE_RECEIPT / freightAmount=120 / freightSettlementStatus=PENDING）→
  * {@code ErpLogShipment__handleTrackingWebhook}（@NopTestProperty 关 {@code erp-log.webhook-signature-required}，
@@ -53,9 +53,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  *       createReceiveFromAsn→RECEIVED_TO_STOCK 两跳推进）；createReceiveFromAsn 前置状态 = MATCHED
  *       （非 MATCHED 抛 ERR_B2B_ASN_ILLEGAL_TRANSITION）。</li>
  *   <li><b>收货草稿→过账路径</b>：approve 内建过账（triggerIncomingMove → stock move DONE →
- *       PURCHASE_INPUT 过账 → posted=true 回写），无显式过账动作（B1/B3 先例口径复认）；ASN 创建链
- *       不落收货头 orgId/exchangeRate（exchangeRate 列 defaultValue=1 兜底；orgId 须 fixture 补全——
- *       null 时账套解析为 null、过账零凭证 posted 悬挂，{@code fixAsnLineMaterialId} 同型补全先例）。</li>
+ *       PURCHASE_INPUT 过账 → posted=true 回写），无显式过账动作（B1/B3 先例口径复认）；收货头
+ *       orgId 由 Processor 透传 PO（OA-03 修复后口径；勘误(2) 原记录的「orgId 须 fixture 补全 +
+ *       null 时过账悬挂」为修复前生产真相，裁决 B 证据见 bugs 登记——exchangeRate 列
+ *       defaultValue=1 兜底语义不变）。</li>
  *   <li><b>path-2 到岸成本口径</b>：触发条件 = relatedBillType=PURCHASE_RECEIPT + DELIVERED 事件 +
  *       config 开 + freightAmount&gt;0；单据内容 = DRAFT/UNSUBMITTED、totalCostAmount=freightAmount、
  *       BY_AMOUNT、code=LC-FRT-{receiveCode}-{millis}、receiveId 引用收货单；FREIGHT 行
@@ -96,8 +97,6 @@ public class TestErpC19B2bAsnAutoReceiveLandedCost extends ErpIntegrationTestCas
 
     @Inject
     IDaoProvider daoProvider;
-    @Inject
-    IOrmTemplate ormTemplate;
 
     @Test
     public void testB2bAsnAutoReceiveLandedCostClosedLoop() {
@@ -164,13 +163,8 @@ public class TestErpC19B2bAsnAutoReceiveLandedCost extends ErpIntegrationTestCas
         assertEquals(0, new BigDecimal("5").compareTo(draftLine.getUnitPrice()), "行单价反查 PO 行");
         assertEquals(0, PO_AMOUNT.compareTo(draftLine.getAmount()), "行金额=5×100=500");
 
-        // ASN 创建链不落收货头 orgId（null 时过账账套不可解析 → PURCHASE_INPUT 零凭证 posted 悬挂 false）——
-        // fixture 补全（fixAsnLineMaterialId 同型先例；GraphQL save-with-id 走建新路径不可用）
-        ormTemplate.runInSession(() -> {
-            ErpPurReceive r = daoProvider.daoFor(ErpPurReceive.class).getEntityById(draft.getId());
-            r.setOrgId("2");
-            daoProvider.daoFor(ErpPurReceive.class).saveOrUpdateEntity(r);
-        });
+        // OA-03 修复实证（2026-08-25 裁决 B）：Processor orgId 透传 writer 在位（receive.orgId ← PO.orgId）
+        assertEquals("2", draft.getOrgId(), "收货草稿 orgId 应透传 PO（过账账集可解析，无 fixture 遮蔽）");
 
         // ---------- 5. 收货审批（DIRECT 轴：submit → approve 内建过账，posted=true） ----------
         ApiResponse<?> rcvSubmit = rpcMutation("ErpPurReceive__submitForApproval",

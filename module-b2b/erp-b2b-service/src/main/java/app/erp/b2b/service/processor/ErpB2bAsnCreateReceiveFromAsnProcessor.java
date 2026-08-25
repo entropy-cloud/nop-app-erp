@@ -68,6 +68,7 @@ public class ErpB2bAsnCreateReceiveFromAsnProcessor {
         ErpPurReceive receive = daoProvider.daoFor(ErpPurReceive.class).newEntity();
         receive.setCode("RCV-FROM-ASN-" + asn.getCode());
         receive.setOrderId(po.getId());
+        receive.setOrgId(po.getOrgId());
         receive.setSupplierId(po.getSupplierId());
         receive.setWarehouseId(po.getWarehouseId());
         receive.setCurrencyId(po.getCurrencyId());

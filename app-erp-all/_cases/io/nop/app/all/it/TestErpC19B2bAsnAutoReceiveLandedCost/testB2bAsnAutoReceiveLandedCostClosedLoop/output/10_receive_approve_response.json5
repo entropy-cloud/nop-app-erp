@@ -29,7 +29,7 @@
     "approvedAt": "*",
     "remark": "由 ASN 自动创建（B2B_ASN 弱指针）",
     "delVersion": 0,
-    "version": 3,
+    "version": 2,
     "createdBy": "autotest-ref",
     "createTime": "*",
     "updatedBy": "autotest-ref",
