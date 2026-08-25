@@ -1,5 +1,6 @@
 package app.erp.hr.service.report;
 
+import app.erp.common.service.MaskHelper;
 import app.erp.fin.biz.IErpFinArApItemBiz;
 import app.erp.fin.dao.entity.ErpFinArApItem;
 import app.erp.fin.service.ErpFinConstants;
@@ -35,6 +36,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -69,6 +71,11 @@ public class ErpHrReportBizModel {
     static final String DS_VAR = "ds";
 
     private static final Set<String> ALLOWED_RENDER_TYPES = new HashSet<>(Arrays.asList("html", "xlsx", "pdf"));
+
+    // ---------- E3.1 读取面脱敏（报表数据集 + @BizQuery，plan 2026-08-25-1956-1）----------
+    // 授权 = 薪酬审批人（与 ErpHrSalarySimulationItemAdjustment 实体面 loader masking 同源）；
+    // 非授权 = null；无用户上下文 fail-closed。审计载体 = 源 ORM 实体 adj。
+    private static final Set<String> SALARY_MASK_ROLES = Set.of(MaskHelper.ROLE_SALARY_APPROVER);
 
     @Inject
     IReportEngine reportEngine;
@@ -278,6 +285,11 @@ public class ErpHrReportBizModel {
      * 薪酬模拟对比数据集。从同域 {@link ErpHrSalarySimulationItemAdjustment}（2208-3 落地）聚合：
      * 每行 = 员工 × 薪酬项目（employeeId/employeeName/departmentId/salaryItemCode/originalAmount/adjustedAmount/difference），
      * 末尾追加按部门小计行（对齐 {@code payroll-simulation.md} {@code getComparison}/{@code getDepartmentSummary} 口径）。
+     *
+     * <p><b>读取面脱敏（plan 2026-08-25-1956-1）</b>：三金额列（originalAmount/adjustedAmount/明细 difference）
+     * 经 {@link MaskHelper#maskDecimal(BigDecimal, Set, Object, String)} 审计重载出值——授权（薪酬审批人）见明文并写
+     * E4.2 披露审计（审计 fieldName = 明细字段名），非授权/无上下文见 null（fail-closed）。部门小计行 difference =
+     * 已 mask 差异的聚合口径（仅聚合非 null 明细差异，非授权见 null；聚合行不重复记审计，仅 mask）。
      */
     List<Map<String, Object>> buildPayrollSimulationComparisonDataset(String simulationId, IServiceContext context) {
         if (simulationId == null) {
@@ -289,6 +301,7 @@ public class ErpHrReportBizModel {
         }
         Map<String, ErpHrEmployee> employees = loadEmployees(adjustments);
         Map<String, BigDecimal> deptDiff = new HashMap<>();
+        Set<String> deptOrder = new LinkedHashSet<>();
         List<Map<String, Object>> rows = new ArrayList<>(adjustments.size());
         for (ErpHrSalarySimulationItemAdjustment adj : adjustments) {
             BigDecimal original = nz(adj.getOriginalAmount());
@@ -302,21 +315,25 @@ public class ErpHrReportBizModel {
             r.put("employeeName", emp != null ? emp.getFullName() : null);
             r.put("departmentId", departmentId);
             r.put("salaryItemCode", adj.getSalaryItemCode());
-            r.put("originalAmount", original);
-            r.put("adjustedAmount", adjusted);
-            r.put("difference", diff);
+            r.put("originalAmount", MaskHelper.maskDecimal(original, SALARY_MASK_ROLES, adj, "originalAmount"));
+            r.put("adjustedAmount", MaskHelper.maskDecimal(adjusted, SALARY_MASK_ROLES, adj, "adjustedAmount"));
+            BigDecimal maskedDiff = MaskHelper.maskDecimal(diff, SALARY_MASK_ROLES, adj, "difference");
+            r.put("difference", maskedDiff);
             r.put("rowType", "DETAIL");
             rows.add(r);
             if (departmentId != null) {
-                deptDiff.merge(departmentId, diff, BigDecimal::add);
+                deptOrder.add(departmentId);
+                if (maskedDiff != null) {
+                    deptDiff.merge(departmentId, maskedDiff, BigDecimal::add);
+                }
             }
         }
-        // 部门小计行（对齐 getDepartmentSummary 口径）
-        for (Map.Entry<String, BigDecimal> e : deptDiff.entrySet()) {
+        // 部门小计行（对齐 getDepartmentSummary 口径）：difference = 已 mask 差异聚合（非授权见 null）
+        for (String departmentId : deptOrder) {
             Map<String, Object> r = new LinkedHashMap<>();
-            r.put("departmentId", e.getKey());
+            r.put("departmentId", departmentId);
             r.put("employeeName", "部门小计");
-            r.put("difference", e.getValue());
+            r.put("difference", deptDiff.get(departmentId));
             r.put("rowType", "DEPT_SUBTOTAL");
             rows.add(r);
         }

@@ -1,5 +1,6 @@
 package app.erp.hr.service.report;
 
+import app.erp.common.service.MaskHelper;
 import app.erp.fin.dao.entity.ErpFinArApItem;
 import app.erp.fin.service.ErpFinConstants;
 import app.erp.hr.dao.entity.ErpHrEmployee;
@@ -7,8 +8,10 @@ import app.erp.hr.dao.entity.ErpHrSalarySimulationItemAdjustment;
 import app.erp.md.dao.entity.ErpMdPartner;
 import io.nop.api.core.annotations.autotest.NopTestConfig;
 import io.nop.api.core.annotations.core.OptionalBoolean;
+import io.nop.api.core.auth.IUserContext;
 import io.nop.api.core.beans.WebContentBean;
 import io.nop.api.core.exceptions.NopException;
+import io.nop.auth.core.login.UserContextImpl;
 import io.nop.autotest.junit.JunitAutoTestCase;
 import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
@@ -21,10 +24,12 @@ import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -58,6 +63,18 @@ public class TestErpHrReportRendering extends JunitAutoTestCase {
     IDaoProvider daoProvider;
     @Inject
     IOrmTemplate ormTemplate;
+
+    private IUserContext prevCtx;
+
+    @org.junit.jupiter.api.BeforeEach
+    void saveContext() {
+        prevCtx = IUserContext.get();
+    }
+
+    @org.junit.jupiter.api.AfterEach
+    void restoreContext() {
+        IUserContext.set(prevCtx);
+    }
 
     // ===================== Phase 2: 员工净余额报表 =====================
 
@@ -179,6 +196,8 @@ public class TestErpHrReportRendering extends JunitAutoTestCase {
     @Test
     public void testPayrollSimulationComparisonDataset() {
         seedPayrollSimulationBaseline();
+        // 读取面脱敏（plan 2026-08-25-1956-1）：明文断言改在授权角色（薪酬审批人，SALARY_MASK_ROLES 同源）上下文运行（兼作正向 Proof）
+        loginAs(MaskHelper.ROLE_SALARY_APPROVER);
         List<Map<String, Object>> ds = reportBiz.buildPayrollSimulationComparisonDataset(SIMULATION_ID, CTX);
         assertFalse(ds.isEmpty(), "模拟对比数据集非空");
         // emp1 basicSalary: 原 10000 → 调整 12000，差异 +2000
@@ -188,17 +207,33 @@ public class TestErpHrReportRendering extends JunitAutoTestCase {
         assertEquals(0, bd("10000").compareTo(toBd(basicRow.get("originalAmount"))), "原值=10000");
         assertEquals(0, bd("12000").compareTo(toBd(basicRow.get("adjustedAmount"))), "调整值=12000");
         assertEquals(0, bd("2000").compareTo(toBd(basicRow.get("difference"))), "差异=+2000");
+        // 无用户上下文 fail-closed：三金额列 null（数值零泄漏）
+        IUserContext.set(null);
+        List<Map<String, Object>> masked = reportBiz.buildPayrollSimulationComparisonDataset(SIMULATION_ID, CTX);
+        assertFalse(masked.isEmpty(), "fail-closed 数据集仍非空（行结构保持）");
+        Map<String, Object> maskedRow = findRow(masked, EMP_SIM_1, "basicSalary");
+        assertNotNull(maskedRow, "fail-closed 数据集含 emp1 basicSalary 行");
+        assertNull(maskedRow.get("originalAmount"), "无上下文原值=null");
+        assertNull(maskedRow.get("adjustedAmount"), "无上下文调整值=null");
+        assertNull(maskedRow.get("difference"), "无上下文差异=null");
     }
 
     @Test
     public void testPayrollSimulationComparisonDeptSubtotal() {
         seedPayrollSimulationBaseline();
+        loginAs(MaskHelper.ROLE_SALARY_APPROVER);
         List<Map<String, Object>> ds = reportBiz.buildPayrollSimulationComparisonDataset(SIMULATION_ID, CTX);
         // DEPT_1 含 emp1(+2000) + emp2(-500) → 部门小计差异 +1500
         Map<String, Object> subtotal = findDeptSubtotal(ds, DEPT_1);
         assertNotNull(subtotal, "数据集含部门小计行");
         assertEquals("DEPT_SUBTOTAL", subtotal.get("rowType"), "小计行 rowType=DEPT_SUBTOTAL");
         assertEquals(0, bd("1500").compareTo(toBd(subtotal.get("difference"))), "DEPT_1 小计差异=+1500");
+        // 无用户上下文 fail-closed：小计 = 已 mask 差异聚合口径 → null
+        IUserContext.set(null);
+        List<Map<String, Object>> masked = reportBiz.buildPayrollSimulationComparisonDataset(SIMULATION_ID, CTX);
+        Map<String, Object> maskedSubtotal = findDeptSubtotal(masked, DEPT_1);
+        assertNotNull(maskedSubtotal, "fail-closed 小计行仍在（行结构保持）");
+        assertNull(maskedSubtotal.get("difference"), "无上下文小计差异=null");
     }
 
     @Test
@@ -314,6 +349,14 @@ public class TestErpHrReportRendering extends JunitAutoTestCase {
     }
 
     // ---------- helpers ----------
+
+    private void loginAs(String... roles) {
+        UserContextImpl ctx = new UserContextImpl();
+        ctx.setUserId("hr-rpt-render-test");
+        ctx.setUserName("hr-rpt-render-test");
+        ctx.setRoles(Set.of(roles));
+        IUserContext.set(ctx);
+    }
 
     private static Map<String, Object> findRowByPartner(List<Map<String, Object>> ds, String partnerId) {
         for (Map<String, Object> row : ds) {

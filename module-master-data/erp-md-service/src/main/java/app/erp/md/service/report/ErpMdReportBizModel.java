@@ -1,5 +1,6 @@
 package app.erp.md.service.report;
 
+import app.erp.common.service.MaskHelper;
 import app.erp.md.dao.entity.ErpMdMaterial;
 import app.erp.md.dao.entity.ErpMdMaterialSku;
 import app.erp.md.dao.entity.ErpMdPartner;
@@ -62,6 +63,12 @@ public class ErpMdReportBizModel {
     static final String DS_VAR = "ds";
 
     private static final Set<String> ALLOWED_RENDER_TYPES = new HashSet<>(Arrays.asList("html", "xlsx", "pdf"));
+
+    // ---------- E3.1 读取面脱敏（报表数据集 + @BizQuery，plan 2026-08-25-1956-1）----------
+    // 授权 = 采购员/管理员（与 ErpMdMaterialSku 实体面 loader masking 同源，ErpMdMaterialSkuBizModel PRICE_ROLES）；
+    // 非授权 = null；无用户上下文 fail-closed。审计载体 = 源 ORM 实体 sku；无默认 SKU 行价格列保持 null 直通
+    // （源实体缺席，不进审计重载，避免 entity=null 伪披露记录）。
+    private static final Set<String> PRICE_ROLES = Set.of(MaskHelper.ROLE_PURCHASER, MaskHelper.ROLE_BIZ_ADMIN);
 
     @Inject
     IReportEngine reportEngine;
@@ -191,6 +198,10 @@ public class ErpMdReportBizModel {
      * 物料价格清单数据集。从 {@link ErpMdMaterial}（可选 code 模糊过滤，这里精确过滤简化）+ 关联默认
      * {@link ErpMdMaterialSku}（{@code isDefault=true}）四档价格合成，对齐 {@code master-data/README.md}。
      * 无默认 SKU 时价格列留空。
+     *
+     * <p><b>读取面脱敏（plan 2026-08-25-1956-1）</b>：四价格列（purchasePrice/salePrice/wholesalePrice/
+     * retailPrice）经 {@link MaskHelper#maskDecimal(BigDecimal, Set, Object, String)} 审计重载出值——授权
+     * （采购员/管理员）见明文并写 E4.2 披露审计（审计载体 = 默认 SKU 实体），非授权/无上下文见 null（fail-closed）。
      */
     List<Map<String, Object>> buildMaterialPriceListDataset(String materialCode) {
         return ormTemplate.runInSession(session -> {
@@ -213,14 +224,22 @@ public class ErpMdReportBizModel {
                 r.put("materialType", m.orm_propValueByName("materialType"));
                 r.put("status", m.getStatus());
                 r.put("skuCode", sku != null ? sku.getSkuCode() : null);
-                r.put("purchasePrice", sku != null ? nz(sku.getPurchasePrice()) : null);
-                r.put("salePrice", sku != null ? nz(sku.getSalePrice()) : null);
-                r.put("wholesalePrice", sku != null ? nz(sku.getWholesalePrice()) : null);
-                r.put("retailPrice", sku != null ? nz(sku.getRetailPrice()) : null);
+                r.put("purchasePrice", maskPrice(sku, sku != null ? nz(sku.getPurchasePrice()) : null, "purchasePrice"));
+                r.put("salePrice", maskPrice(sku, sku != null ? nz(sku.getSalePrice()) : null, "salePrice"));
+                r.put("wholesalePrice", maskPrice(sku, sku != null ? nz(sku.getWholesalePrice()) : null, "wholesalePrice"));
+                r.put("retailPrice", maskPrice(sku, sku != null ? nz(sku.getRetailPrice()) : null, "retailPrice"));
                 rows.add(r);
             }
             return rows;
         });
+    }
+
+    /** 价格列读取面脱敏：无默认 SKU（源实体缺席）时 null 直通不进审计；有 SKU 时经审计重载出值。 */
+    private static BigDecimal maskPrice(ErpMdMaterialSku sku, BigDecimal value, String fieldName) {
+        if (sku == null) {
+            return null;
+        }
+        return MaskHelper.maskDecimal(value, PRICE_ROLES, sku, fieldName);
     }
 
     /**

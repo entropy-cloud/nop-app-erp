@@ -1,12 +1,15 @@
 package app.erp.md.service.report;
 
+import app.erp.common.service.MaskHelper;
 import app.erp.md.dao.entity.ErpMdMaterial;
 import app.erp.md.dao.entity.ErpMdMaterialSku;
 import app.erp.md.dao.entity.ErpMdPartner;
 import io.nop.api.core.annotations.autotest.NopTestConfig;
 import io.nop.api.core.annotations.core.OptionalBoolean;
+import io.nop.api.core.auth.IUserContext;
 import io.nop.api.core.beans.WebContentBean;
 import io.nop.api.core.exceptions.NopException;
+import io.nop.auth.core.login.UserContextImpl;
 import io.nop.autotest.junit.JunitAutoTestCase;
 import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
@@ -17,10 +20,12 @@ import org.junit.jupiter.api.Test;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -43,6 +48,18 @@ public class TestErpMdReportRendering extends JunitAutoTestCase {
     IDaoProvider daoProvider;
     @Inject
     IOrmTemplate ormTemplate;
+
+    private IUserContext prevCtx;
+
+    @org.junit.jupiter.api.BeforeEach
+    void saveContext() {
+        prevCtx = IUserContext.get();
+    }
+
+    @org.junit.jupiter.api.AfterEach
+    void restoreContext() {
+        IUserContext.set(prevCtx);
+    }
 
     // ===================== Phase 3: 物料价格清单报表 =====================
 
@@ -73,6 +90,8 @@ public class TestErpMdReportRendering extends JunitAutoTestCase {
     @Test
     public void testMaterialPriceListDataset() {
         seedMaterialBaseline();
+        // 读取面脱敏（plan 2026-08-25-1956-1）：明文断言改在授权角色（采购员，PRICE_ROLES 同源）上下文运行（兼作正向 Proof）
+        loginAs(MaskHelper.ROLE_PURCHASER);
         List<Map<String, Object>> ds = reportBiz.buildMaterialPriceListDataset(null);
         assertFalse(ds.isEmpty(), "物料价格清单数据集非空");
         Map<String, Object> row = ds.get(0);
@@ -81,6 +100,15 @@ public class TestErpMdReportRendering extends JunitAutoTestCase {
         assertEquals(0, bd("200").compareTo(toBd(row.get("salePrice"))), "salePrice=200");
         assertEquals(0, bd("180").compareTo(toBd(row.get("wholesalePrice"))), "wholesalePrice=180");
         assertEquals(0, bd("220").compareTo(toBd(row.get("retailPrice"))), "retailPrice=220");
+        // 无用户上下文 fail-closed：四价格列 null（数值零泄漏）
+        IUserContext.set(null);
+        List<Map<String, Object>> masked = reportBiz.buildMaterialPriceListDataset(null);
+        assertFalse(masked.isEmpty(), "fail-closed 数据集仍非空（行结构保持）");
+        Map<String, Object> maskedRow = masked.get(0);
+        assertNull(maskedRow.get("purchasePrice"), "无上下文 purchasePrice=null");
+        assertNull(maskedRow.get("salePrice"), "无上下文 salePrice=null");
+        assertNull(maskedRow.get("wholesalePrice"), "无上下文 wholesalePrice=null");
+        assertNull(maskedRow.get("retailPrice"), "无上下文 retailPrice=null");
     }
 
     @Test
@@ -213,6 +241,14 @@ public class TestErpMdReportRendering extends JunitAutoTestCase {
     }
 
     // ===================== helpers =====================
+
+    private void loginAs(String... roles) {
+        UserContextImpl ctx = new UserContextImpl();
+        ctx.setUserId("md-rpt-render-test");
+        ctx.setUserName("md-rpt-render-test");
+        ctx.setRoles(Set.of(roles));
+        IUserContext.set(ctx);
+    }
 
     private static BigDecimal bd(String v) {
         return new BigDecimal(v);
