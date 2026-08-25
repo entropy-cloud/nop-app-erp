@@ -133,6 +133,10 @@ public class TestErpPrjPnlCalcJob extends JunitAutoTestCase {
             // 真实 nop-batch 执行路径：batchChunkCtx.serviceContext 为 null → helper 兜底 ServiceContextImpl（R1.23 缺陷回归）
             batchTaskRunner.execute("/nop/batch-task/prj/pnl-calc.batch.xml");
 
+            // nop-batch 未显式设 executor 时 chunk 循环走 cachedThreadPool（nop-entropy a592946e67），池线程
+            // 线程本地冻结钟不可达 → PERIOD_TO 为运行期系统日期，经变量断言（镜像 qa SPC 批测试同款适配）
+            setVar("pnlPeriodTo", LocalDate.now().toString());
+
             ErpPrjProjectPnl pnl = reloadPnl(openProject[0]);
             assertNotNull(pnl, "OPEN 项目经调度路径应生成损益汇总");
             assertEquals(ErpPrjConstants.PNL_CALC_STATUS_CALCULATED, pnl.getCalcStatus());

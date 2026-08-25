@@ -22,6 +22,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 
 import static io.nop.api.core.beans.FilterBeans.eq;
@@ -82,6 +83,10 @@ public class TestErpQaSpcSamplingEvaluateBatch extends JunitAutoTestCase {
         seedSample(chartId, 3, new BigDecimal("10"));
 
         batchTaskRunner.execute("/nop/batch-task/qa/spc-sampling.batch.xml");
+
+        // nop-batch getExecutor 未显式设 executor 时 chunk 循环统一走 cachedThreadPool（nop-entropy a592946e67），
+        // afterCommit 建 NCR 落在池线程，线程本地冻结钟不可达 → NCR_DATE 为运行期系统日期，经变量断言
+        setVar("ncrDate", LocalDate.now().toString());
 
         ErpQaSpcSample sample = daoProvider.daoFor(ErpQaSpcSample.class).getEntityById(outOfControlSampleId);
         assertEquals(Boolean.TRUE, sample.getIsOutOfControl(), "batch evaluate 后失控样本自动标记");
@@ -160,6 +165,8 @@ public class TestErpQaSpcSamplingEvaluateBatch extends JunitAutoTestCase {
 
         batchTaskRunner.execute("/nop/batch-task/qa/spc-sampling.batch.xml");
         batchTaskRunner.execute("/nop/batch-task/qa/spc-sampling.batch.xml");
+
+        setVar("ncrDate", LocalDate.now().toString());
 
         QueryBean q = new QueryBean();
         q.addFilter(eq("sourceType", ErpQaConstants.NCR_SOURCE_TYPE_SPC));
