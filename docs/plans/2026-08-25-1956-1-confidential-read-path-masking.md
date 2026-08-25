@@ -88,4 +88,7 @@ Targets: `module-hr/erp-hr-service/src/test/`、`module-master-data/erp-md-servi
 
 ## Verification
 
+- pass test 2026-08-26-0208-verify basisHash=bf4b49840985bbe284c7a081ed5d641e5cd2e65c147ddf19d4fba133b753bcdf exit=0
+- pass compliance 2026-08-26-0208-verify basisHash=bf4b49840985bbe284c7a081ed5d641e5cd2e65c147ddf19d4fba133b753bcdf exit=0
+
 ## Closure
