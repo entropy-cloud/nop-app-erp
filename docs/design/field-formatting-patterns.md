@@ -388,6 +388,8 @@ view.xml <col> + <gen-control>
 > **E4.1 实现注记**（plan `2026-08-11-0915-3`，已落地）：字段级可见性经双层分工落地：(1) **schema 级隐藏**——`ErpMfgCostRollupLine.xmeta` 翻 4 要素成本（materialCost/laborCost/overheadCost/subcontractCost）`published="false" queryable="false" sortable="false"`（参照 logistics `ErpLogCarrierConfig.xmeta` 先例），精确要素值从 GraphQL schema 移除；(2) **代理视图**——`ErpMfgCostRollupLineBizModel` 经 `@BizLoader(autoCreateField=true)` 新增 `materialBand`/`laborBand`/`overheadBand`/`subcontractBand`（high/mid/low 档位映射，经 `CostBandClassifier.classify`，全局固定阈值 low<100/mid 100-1000/high≥1000），档位对所有角色可见（精确值不可达）。totalCost/unitCost 聚合保持 E3.1 masking（授权管理员/财务员见明文）。平台机制实证：`ObjMetaToGraphQLDefinition` 跳过 `published=false` 字段，`@BizLoader(autoCreateField=true)` 经 `GraphQLObjectDefinition.mergeField` bypass objMeta 检查重新引入代理字段（autoCreate=true）。E3.2 不变量复跑绿（`CostRollupService` 经 DAO 写入 / `StandardCostResolver` 经 DAO 读 unitCost，均不遍历 BizModel 边界）。Phase 1 Decision (a) 裁决：隐藏 + passthrough 代理 = masking（功能等价），故 totalCost/unitCost + md/pur 供应商价保持 masking（避免契约面振荡 + 零保密增益）；仅要素成本因 Q1 (d) 要求档位映射而 HIDE + band 代理。
 >
 > **E4.2 读访问审计交叉引用**（plan `2026-08-11-1030-1`，已落地）：E3.1 masking 的 authorized-clear-text 分支（授权角色见明文）经扩展的 `MaskHelper` 重载委托 `MaskAuditRecorder` 写读访问披露审计——覆盖全 5 域 15 BizModel 38 字段披露点（与 E3.1 masking 面 1:1 对齐）；存储复用平台 `IAuditService.saveAudit()` → `NopAuthOpLog`（无 ORM 新实体，无平台代码改动）；config-gate `erp.audit.field-read.enabled`（%test=ON / %dev=%prod=OFF）；按 (userId, entity, objId, field) 去重。权威：`roles-and-permissions.md §审批与审计要求 / 保密字段读访问审计`。非审计对象：E4.1 schema 隐藏字段（不可读，无披露事件）+ 非授权路径（masking 后见 null/打码）+ E3.2 服务端取值（DAO 直读不经 BizModel 边界）。
+>
+> **读取面覆盖补齐**（plan `2026-08-25-1956-1`，2026-08-25）：E4.2 chokepoint 覆盖面在实体 `@BizLoader` 面之外扩展到**读取面**——3 站点（hr 薪酬模拟对比报表数据集 / md 物料价格清单数据集 / mfg `findLatestFirmedStandardCost` @BizQuery）经同一 `MaskHelper` 审计重载出值（授权明文 + 披露审计 / 非授权 null / fail-closed）。站点登记 + 立法规则见 §9.7.11「读取面登记」。
 
 ### 9.5 反模式自检表（脱敏补充）
 
@@ -577,3 +579,22 @@ gen-control `{type:'tpl', tpl:'${LEFT(field,N)}****${RIGHT(field,M)}'}` 经 `flu
 3. **保密五面 E3.1 后端响应层 masking 已落地**：43 字段经 @BizLoader + 共享 MaskHelper 实现授权/非授权分视（数值 null / VARCHAR 打码串），不改 schema（published/queryable 不动）。**E4.1 字段级可见性 + 代理视图已落地**（plan `2026-08-11-0915-3`）：mfg `ErpMfgCostRollupLine` 4 要素成本翻 `published=false` 隐藏 + band 代理视图；totalCost/unitCost + md/pur 供应商价 + hr/ct 金额保持 masking（Phase 1 Decision (a) 裁决：隐藏+passthrough=masking，无保密增益）；纯 E4.1 配置字段保持 visible。
 4. **E3.2 取值豁免不变量保持**：服务端成本卷算经 DAO 直读不经 BizModel 边界，E3.1 masking 不阻断跨域取值（守卫测试复跑绿）。
 5. **清单可被 E4.1 直接消费**：每字段七元组齐全，含 `propId`、`stdSqlType`、`published/queryable` 现值、GraphQL schema 影响标记、拟落地层。
+
+### 9.7.11 读取面登记（报表数据集 / 自定义 @BizQuery，plan `2026-08-25-1956-1`，2026-08-25）
+
+> Owner: 本节（§9.7 子节，读取面单一真相源）
+> 背景：E3.1 masking 仅落在实体 `@BizLoader` 面；报表数据集聚合与自定义 `@BizQuery` 读取路径可整面绕过 MaskHelper 直出保密字段原始值（roadmap `permissions-enforcement-roadmap.md` R2 深审发现）。本节登记已落地的读取面脱敏站点，并立法新读取面的登记义务。
+
+**已登记读取面站点**（三站点均已落地 = 数据集构造层 + @BizQuery 边界经 `MaskHelper.maskDecimal(value, authorizedRoles, entity, fieldName)` 审计重载出值；授权见明文 + E4.2 披露审计，非授权/无上下文 fail-closed null）：
+
+| 站点 | 入口（文件 + @BizQuery/构造器） | 保密字段（审计 fieldName） | 授权角色（与实体面同源） | 审计载体 |
+| --- | --- | --- | --- | --- |
+| hr 薪酬模拟对比报表 | `ErpHrReportBizModel.payrollSimulationComparisonData` / `buildPayrollSimulationComparisonDataset`（`module-hr/erp-hr-service/.../report/ErpHrReportBizModel.java`） | originalAmount / adjustedAmount / difference（派生列按明细字段名记；部门小计行 = 已 mask 差异聚合口径，不重复记审计） | `{薪酬审批人}`（= `ErpHrSalarySimulationItemAdjustmentBizModel.SALARY_MASK_ROLES`） | `ErpHrSalarySimulationItemAdjustment` |
+| md 物料价格清单报表 | `ErpMdReportBizModel.materialPriceListData` / `buildMaterialPriceListDataset`（`module-master-data/erp-md-service/.../report/ErpMdReportBizModel.java`） | purchasePrice / salePrice / wholesalePrice / retailPrice | `{采购员, 管理员}`（= `ErpMdMaterialSkuBizModel.PRICE_ROLES`） | `ErpMdMaterialSku`（无默认 SKU 行价格列 null 直通，无披露行为，不进审计重载） |
+| mfg 成本卷算标准成本查询 | `ErpMfgCostRollupBizModel.findLatestFirmedStandardCost`（`module-manufacturing/erp-mfg-service/.../entity/ErpMfgCostRollupBizModel.java`，就地 masking，GraphQL 面无前端调用方仍暴露） | unitCost | `{管理员, 财务员}`（= `ErpMfgCostRollupLineBizModel.COST_ROLES`） | 命中 `ErpMfgCostRollupLine` |
+
+**E3.2 豁免保径（不变量）**：inv `StandardCostResolver` 服务端取值走自有 DAO 直读路径（不经上述 @BizQuery），继续取原始 FIRMED 成本——读取面 masking 落地后仍保持（守卫：`TestErpMfgCostRollupValueExemptionInvariant` + `TestErpInvStandardCostResolverValueExemptionInvariant` + 行为守卫 `TestErpInvResolverRawValueAfterReadPathMasking`）。**立法**：服务端原始取值需求一律走 DAO 直读（resolver 既有范式），禁止改调 GraphQL 暴露的 masking 查询。
+
+**读取面登记立法（closure 审计按此核对）**：新增报表数据集 / 看板聚合 API / 自定义 `@BizQuery` 触及 §9.7 保密面字段时，**必须**：(1) 在本节登记读取面站点（文件 + 入口 + 字段 + 角色 + 审计载体）；(2) 数据集构造层（行装配处）经 MaskHelper 审计重载出值（授权明文 + E4.2 披露审计 / 非授权 null / 无上下文 fail-closed）——仅渲染层脱敏不合格（查询面仍泄露原始值）；(3) 角色集字面与同面实体 loader masking 同源，不新造角色字面。
+
+**Proof 基线**：`TestErpHrPayrollReportReadPathMasking` / `TestErpMdReportReadPathMasking` / `TestErpMfgCostRollupReadPathMasking`（三态：授权明文 + 审计写入 / 非授权 null / 无上下文 fail-closed null）；渲染测试 `TestErpHrReportRendering` / `TestErpMdReportRendering` 明文断言在授权角色上下文运行并补无上下文 fail-closed null 断言。

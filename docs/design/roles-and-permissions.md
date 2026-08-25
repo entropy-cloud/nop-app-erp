@@ -107,7 +107,7 @@
 > **范围**：授权用户读取保密字段**明文**事件 = 敏感数据披露 → 留审计记录。与 §审批与审计要求既有「写操作审计」（反审核/作废等的 action-auth + 变更跟踪）**语义正交但互补**：本节补的是**读访问**审计（敏感数据披露追溯）。
 
 **机制**（Phase 1 Decision 落地）：
-- **挂钩点**（Decision (a)）：扩展 `MaskHelper`（`module-common-service/.../MaskHelper.java`）的 authorized-clear-text 分支为单一 chokepoint。授权用户经 masking loader 拿明文时，委托 `MaskAuditRecorder`（`module-common-service/.../MaskAuditRecorder.java`）写审计记录。覆盖全 5 域 15 BizModel 38 字段披露点（与 E3.1 masking 面 1:1 对齐）。
+- **挂钩点**（Decision (a)）：扩展 `MaskHelper`（`module-common-service/.../MaskHelper.java`）的 authorized-clear-text 分支为单一 chokepoint。授权用户经 masking loader 拿明文时，委托 `MaskAuditRecorder`（`module-common-service/.../MaskAuditRecorder.java`）写审计记录。覆盖全 5 域 15 BizModel 38 字段披露点（与 E3.1 masking 面 1:1 对齐）。**读取面覆盖补齐**（plan `2026-08-25-1956-1`，2026-08-25）：chokepoint 覆盖面扩展到实体 `@BizLoader` 面之外——3 个读取面站点（hr 薪酬模拟对比报表数据集 / md 物料价格清单数据集 / mfg `findLatestFirmedStandardCost` @BizQuery）经同一审计重载出值（授权明文 + 披露审计 / 非授权 null / 无上下文 fail-closed）；站点登记与「新读取面触及保密面必须登记并接 MaskHelper」立法见 `field-formatting-patterns.md §9.7.11`。
 - **存储**（Decision (b)）：复用平台 `IAuditService.saveAudit(AuditRequest)` → 写 `NopAuthOpLog`（平台批处理异步，零阻塞主请求）。**无 ORM 新实体，无平台代码改动**（保护区域 ask-first 未触发）。审计记录字段：`operation="FIELD_READ_DISCLOSURE"`、`entityId={entityName}:{objId}`、`userId`、`sessionId`、`tenantId`、`actionTime`、`opRequest`=JSON（含 `entity`/`field`/`objId`/`authorizedRole`/`disclosedAt`）。
 - **粒度**（Decision (c)）：按实体去重窗口——同一 `userId × entityName × objId × fieldName` 在同一请求线程内仅记一次（ThreadLocal `LinkedHashSet`，上限 500 防泄漏）。典型 list 请求（100 行 × 13 字段）去重后 = 13 条审计。
 - **config-gate**（Decision (d)）：`erp.audit.field-read.enabled` 默认 false；`%test`=true / `%dev`/`%prod`=OFF。fail-safe：OFF 时 `recordDisclosure` 首行 return 零开销；无 `IUserContext`/无 IoC（单元测试）= 不审计。

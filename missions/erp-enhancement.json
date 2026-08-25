@@ -1,0 +1,20 @@
+{
+  "name": "erp-enhancement",
+  "description": "nop-app-erp 增强路线图（2026-08-12 erp-survey 批次，14 项目调研 + 创新趋势）：设计先行，先补充设计（Milestone E1，7 份设计文档已产出 done），再零代码对照确认（E2：记账内核审计性 / 低代码平台边界 / 扩展机制三方对照），最后实现（E3：看板 KPI 度量目录与行级安全核实 / 库存审计快照查询 / 资产 ext 字段集与审计轨迹 / APS 求解器分离试点 / 文档驱动 AP 摄取管道 / AI 原生接口层；E3.7 跨域流程编排暂缓，触发条件驱动）。执行纪律（roadmap §9）：E3 以单一整体计划实施（含独立草案审查 + 独立结束审计），不逐项起草独立计划，不允许从设计文档直接跳到编码。ORM 变更已获人工批准（roadmap §8.1 授权记录：E3.5 文档管道字段 / E3.6 actorType / E3.8 审计实体 / E3.2 物化快照表），实施时在整体计划中显式列出变更清单，按 dual-agent-approval 双独立子 agent 批准；E3.3 首选 ext 字段规避 ORM。AI 接口裁决（用户 2026-08-12）：应用与平台均不使用 MCP，API 由 GraphQL 类型定义描述，经 REST + GraphQL 双通道调用。平台优先：先核实 nop-ai/nop-wf/nop-file/nop-job/nop-metadata/nop-datav 平台能力，不重建；nop-datav 完整链在 feat 分支，应用层不得依赖分支 API。验证标准：全量 mvn test 零回归 + 全量构建 BUILD SUCCESS + compliance checker 零漂移 + 涉及前端的项 E2E 全绿。",
+  "roadmapPath": "docs/backlog/erp-enhancement-roadmap.md",
+  "plansDir": "docs/plans",
+  "planGuide": "docs/plans/00-plan-authoring-and-execution-guide.md",
+  "auditsDir": "docs/audits",
+  "contextDir": "docs/context",
+  "moduleDir": ".",
+  "commands": {
+    "test": "mvn test",
+    "build": "mvn clean install -DskipTests",
+    "compliance": "bash docs/audits/nop-compliance-checker.sh"
+  },
+  "prompts": {
+    "multiAudit": "docs/skills/multi-dimensional-audit-prompt.md",
+    "openAudit": "docs/skills/open-ended-audit-prompt.md"
+  },
+  "commitFormat": "<type>: <description>"
+}
