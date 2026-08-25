@@ -448,3 +448,21 @@ per-fork 注册载体（M2 时序约束）
 - **修订**：`ThreadLocalFrozenClock.ensureRegistered()` 改为**每次调用均重新注册**（移除 `INSTALLED` 标志守卫）。安全依据：delegating clock 在 `REF_DATE` 未 set 时委托 `CoreMetrics.defaultClock()`（系统真实时钟），对非冻结测试无行为影响；`REF_DATE` 为静态 ThreadLocal，所有实例共享冻结值。各冻结扩展 `beforeAll` 调 `ensureRegistered()` 重新挂载后，`NopJunitExtension.afterAll` 的重置被下一类 beforeAll 覆盖。
 - **与 §3.4 裁决的关系**：路径 C 选型与范围不变（应用层 thread-local delegating clock，零平台改动）。仅「幂等机制」由 volatile 标志改为「无条件注册」（后者在效果上亦幂等——每次调用后 s_clock 必为 delegating clock）。设计文档 §1.1 已核验「平台无 `s_clock` 内省 API」，故无条件注册是无从内省时的最稳健选择。
 - **验证**：修订后 `mvn test` 全 reactor 1920 tests / 0 failures / 0 errors；finance 307 / hr 125 / assets 104 三域跨类边界均绿。
+
+### 2026-08-25 升级：锚定仿真毫秒线（autotest TestClock 顶替交互 + 日期/毫秒双源不一致根治）
+
+> 来源 bug：`docs/bugs/2026-08-25-frozen-clock-millis-testclock-displacement.md`（集成测试 C16 快照跨实体 @var 合并回放 1ms 漂移实证）。
+
+- **新发现缺陷**：(1) 本机制的全局槽注册会顶掉 autotest 默认注入的 `TestClock`（`useTestClock=true`，
+  严格单调永不重复）——冻结扩展 `beforeAll` 晚于 `NopJunitExtension.beforeAll`，注册顺序决定顶替；
+  旧实现 millis 裸委托墙钟，「永不重复」在冻结类中丢失 → 快照录制期跨实体同毫秒被自动合并为同一
+  @var、回放期 tick 劈开即 flake。(2) 「只冻 Date」语义下同一行数据 createTime（真实八月）与业务
+  日期（冻结七月）双纪元不一致。
+- **修订**：`ThreadLocalFrozenClock` 升级锚定仿真语义——`install(d)` 记录
+  `(simBase=d@00:00, realBase=安装时墙钟)`，`currentTimeMillis = max(simBase+(real−realBase), lastReturned+1)`；
+  `currentDate/currentDateTime` 改由同一条仿真毫秒线派生。并行安全形态不变（锚点仍 ThreadLocal，
+  lastReturned 为实例字段 synchronized——全局序防重）。elapsed ≪ 24h 保证派生日期恒等于参考日，
+  存量快照零重录。
+- **验证**：新增证明测试 `TestThreadLocalFrozenClockAnchoredSim`（3 用例）；app-erp-all 集成套件
+  54/0/0/1；fin 冻结消费方三绿桥接复跑；全 reactor 回归除两处已归因并发会话 clean 竞态
+  （md 类文件竞态 / fin 报告覆写，均隔离复跑全绿，B9 先例）外零失败。

@@ -314,6 +314,26 @@ Exit Criteria:
 - [x] 既有 surefire 计数（2026-08-24 B10 基线：54/0/0/1）零回归 — `mvn test -pl app-erp-all` = Tests run: 54, Failures: 0, Errors: 0, Skipped: 1，逐项一致零漂移（Closure Audit Record §7）
 - [x] 若有变动需明确登记 — 无变动，登记义务为空集
 
+#### Phase 3.4 - nop-chaos-next TypeScript 终极修复（2026-08-25 用户导向二次优化：去重两套类型）
+
+**背景**：Phase 3.1.a 用 `return resp as unknown as never;` 临时绕过；Phase 3.4 第一次正式修复（fetcher 泛型化 + 显式构造 `ApiResponse<T>` 22 行 diff）虽然类型正确但**仍有冗余——本地 `NopRpcResponse<T>` 与 flux `ApiResponse<T>` 两套类型在维护**。用户提出：「有必要 NopRpcResponse<T> 和 ApiResponse<T> 这两种吗？感觉统一一种？」
+
+**最终方案**：
+- **去重两套类型**：`NopRpcResponse<T>` 改为 `ApiResponse<T>` 的 type alias（`type NopRpcResponse<T> = ApiResponse<T>`）
+- **删除 `NopRpcResponse` 接口定义**（10 行）
+- **`data: null` → `data: {} as T`**：错误路径占位（`ok === false` 时下游不读 data；flux-core `normalizeCrudSourceValue` 已处理 `if (!data || typeof data !== 'object')`）
+- **fetcher 简化为 `return resp`**：无需显式构造 `ApiResponse<T>` 对象
+
+**Exit Criteria**:
+- [x] `pnpm build` 全绿零 TS 错误
+- [x] `git diff` 总计 +15/-17 行（比 Phase 3.4 第一次的 +22/-0 更少），净减少 2 行
+- [x] `apps/main/src/flux/adapter.ts` 8 行变更（签名泛型化 + `data: {} as T` 注释 + `return resp`）
+- [x] `apps/main/src/services/http.ts` 24 行变更（删 10 行 NopRpcResponse + 加 4 行 alias 注释 + 4 处 `data: null` → `data: {} as T`）
+- [x] 视觉验证：ERP 启动 + `verify-fixes.ts` 7 张 PNG 全部正常加载数据（凭证号 PZ-2026-001/002/003/004 等可见）
+
+**Closure Audit Record**（追加 §9）:
+9. **Phase 3.4 终极** — 类型去重：`NopRpcResponse<T> = ApiResponse<T>` alias + `data: null` → `data: {} as T` + fetcher 简化为 `return resp`；总 +15/-17 行；`pnpm build` 0 errors；视觉回归 7 PNG 正常。
+
 ---
 
 ## Closure Gates
