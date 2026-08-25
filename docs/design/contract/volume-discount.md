@@ -171,6 +171,13 @@
 > `rebateType=PURCHASE`→AP 负额发票（冲减应付），`rebateType=SALES`→AR 负额发票（冲减应收）。
 > 经负额走标准 AP_INVOICE/AR_INVOICE 过账产生红字凭证 + 负 openAmount 辅助账
 >（与退货红字模式、PaymentSettler negate 模式一致）。
+>
+> **时点语义注记（2026-08-25，plan 0330-3 分诊确认）**：`postSettlement` 时点**不产凭证**——
+> 负额发票以 DRAFT/UNSUBMITTED 生成（O-4 架构豁免 `architecture/posting-exemptions.md`
+> §ErpCtRebateSettlementBizModel：须人工审核后提交审批，successor 收敛条件 = purchase/sales
+> 提供 purpose-built `createCreditMemo`），红字凭证在贷项发票**后续**经标准审批过账时产生；
+> 计提翻转 = `isSettled=true + settledDate` 标记（不在计提行上取负金额）；结算单状态机
+> DRAFT→POSTED 与本节流程一致。
 
 ```
 返利协议到期或手动触发结算

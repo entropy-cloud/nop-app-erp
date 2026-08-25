@@ -3,7 +3,7 @@
 > Audit Status: planned
 > Audit Type: open-ended
 > Mission: integration-test
-> Remediation: P1 发现 OA-01/OA-02/OA-03 已路由至计划 `docs/plans/2026-08-25-0330-1-aggregate-notify-cs-seeds-into-app-init-data.md`（OA-01）、`docs/plans/2026-08-25-0330-2-fix-closeperiod-fx-flush-profit-loss.md`（OA-02）、`docs/plans/2026-08-25-0330-3-adjudicate-integration-test-defect-routing.md`（OA-03，含 C18/C20b 分诊与勘误→缺陷路由通道立法），三计划均 `Plan Status: active`、独立草案审查证据（fresh session task 指针）在盘、未执行。P2 发现 OA-04/05/06/07 + P2-IT-01..04 均已入 `docs/backlog/integration-test-roadmap.md` § Follow-up Backlog（工作树未提交变更；OA-07 已于 mission-driver 起草门步骤补登）。
+> Remediation: P1 发现 OA-01/OA-02/OA-03 已路由至计划 `docs/plans/2026-08-25-0330-1-aggregate-notify-cs-seeds-into-app-init-data.md`（OA-01）、`docs/plans/2026-08-25-0330-2-fix-closeperiod-fx-flush-profit-loss.md`（OA-02）、`docs/plans/2026-08-25-0330-3-adjudicate-integration-test-defect-routing.md`（OA-03，含 C18/C20b 分诊与勘误→缺陷路由通道立法）——**三计划均已执行完毕（Plan Status: completed，2026-08-25；各自 Closure 段含独立结束审计证据与验证基线）**，修复产物回链 arm-index P1 汇总区 :728 行（OA-01/OA-02/OA-03 分项已修复注记 + bugs 登记路径）。P2 发现 OA-04/05/06/07 + P2-IT-01..04 均已入 `docs/backlog/integration-test-roadmap.md` § Follow-up Backlog（OA-07 已于 mission-driver 起草门步骤补登）。
 
 - **审计对象**：`integration-test` mission 整件工作的**项目级完整上下文**——M0.1-M0.3 + B1-B10（22 用例）+ V.1/V.2 收口 + 窗口内同前缀关联计划（0900-1/1147-1/2115-1），对照 AGENTS.md、owner docs（integration-testing.md / seed-data.md / e2e-runbook.md / drp/README.md / period-close.md）、arm-index、已知失败模式 9-13 与实仓代码/配置/快照的交集。非单一计划核实（反窄化自检见文末）。
 - **审计者**：独立开放审计子代理（fresh session，无执行者上下文；mission-driver 2026-08-24-223318 派发，2026-08-25 当前 HEAD 重执行）。

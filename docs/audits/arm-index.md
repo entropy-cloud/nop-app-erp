@@ -725,7 +725,7 @@ UC-CRM-06 = **接受 on ①②③⑤⑥⑦ + P2 on ④**（**复用 P1-MA2-075 r
 
 ### 开放式审计（集成测试黄金路径）新增项（2026-08-24）
 
-**开放式审计 `docs/audits/2026-08-24-2233-open-audit-integration-test.md`（2026-08-24/25 两轮）P1 发现 OA-01/OA-02/OA-03**：OA-02 closePeriod 同事务 FX 凭证未 flush → 损益结转凭证永缺 FX 腿 + 试算平衡快照缺期末凭证腿（两套件钉死相反 FX 结转语义）——**已修复**（bug 登记 `docs/bugs/2026-08-25-closeperiod-fx-flush-profit-loss-missing-leg.md`，修复 plan `docs/plans/2026-08-25-0330-2-fix-closeperiod-fx-flush-profit-loss.md`：CloseVoucherWriter 写侧 flushSession 单点 + C13 断言/快照翻转 1280 + period-close.md flush 边界裁决）；OA-01（种子聚合）/OA-03（ASN orgId）归同批 plan 0330-1/0330-3。P2 发现 OA-04..07 归 `docs/backlog/integration-test-roadmap.md` § Follow-up Backlog。
+**开放式审计 `docs/audits/2026-08-24-2233-open-audit-integration-test.md`（2026-08-24/25 两轮）P1 发现 OA-01/OA-02/OA-03**：OA-02 closePeriod 同事务 FX 凭证未 flush → 损益结转凭证永缺 FX 腿 + 试算平衡快照缺期末凭证腿（两套件钉死相反 FX 结转语义）——**已修复**（bug 登记 `docs/bugs/2026-08-25-closeperiod-fx-flush-profit-loss-missing-leg.md`，修复 plan `docs/plans/2026-08-25-0330-2-fix-closeperiod-fx-flush-profit-loss.md`：CloseVoucherWriter 写侧 flushSession 单点 + C13 断言/快照翻转 1280 + period-close.md flush 边界裁决）；OA-03 **控制点：B2B ASN→收货链 orgId 缺 writer → 过账账集解析 null → PURCHASE_INPUT 零凭证 posted 永久悬挂**（已知失败模式 #11「缺 writer」新站点，区别于 R1.16/P1-MA2-074 catch 吞异常站点；C19 DAO fixture 补 orgId 遮蔽 + 平台无 orgId 回填经双取向裁决证实）——**已修复**（bug 登记 `docs/bugs/2026-08-25-asn-receive-orgid-missing-writer-posting-dangling.md`，修复 plan `docs/plans/2026-08-25-0330-3-adjudicate-integration-test-defect-routing.md`：Processor `receive.setOrgId(po.getOrgId())` 透传 writer + C19 去 fixture 遮蔽 + 快照 version 级联重录；源审计见上链 open-audit OA-03）；OA-01（种子聚合）归同批 plan 0330-1。P2 发现 OA-04..07 归 `docs/backlog/integration-test-roadmap.md` § Follow-up Backlog。
 
 ## P2 发现汇总（watch-only / 待 MR 顺手收敛）
 

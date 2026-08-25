@@ -7,6 +7,7 @@
 > **实现约定**：
 > - ASN 入站 webhook 为**主路径**（`@BizMutation handleInboundWebhook`），SFTP 轮询为备用路径（本期提供可调用方法 + cron 表达式，注册归部署 follow-up）。
 > - ASN→采购入库为 **config-gated**（`erp-b2b.asn-auto-create-receive`，默认关）。**核心零污染**：不在 `ErpPurReceive` 加 asnId 列，仅弱指针 orderId。
+> - 自动创建的收货头 **orgId 由 Processor 透传 PO（`receive.orgId = po.orgId`）**——平台对 orgId 无自动回填（ORM 列无 defaultValue + nop-entropy 无 orgId 概念，2026-08-25 双取向裁决，bug 登记 `docs/bugs/2026-08-25-asn-receive-orgid-missing-writer-posting-dangling.md`）；orgId 缺失时过账账集解析为 null → 零凭证 posted 悬挂。
 > - `error-blocks-flow=true` 回写源业务单强一致联动为 Non-Goal（本期 ERROR 仅落 EdiDoc.blockingLevel + 日志，不回写阻断源单）。
 > - ASN 未匹配 PO 的自动定时重试 + 超时升级为 Non-Goal（本期提供 `findUnmatchedAsns` 查询入口 + 手动 `retryMatch`）。
 
