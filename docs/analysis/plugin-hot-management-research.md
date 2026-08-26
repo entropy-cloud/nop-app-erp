@@ -430,6 +430,34 @@ Nop GraphQL schema 在启动期定型，运行时**无动态增删 action 的标
 
 ---
 
+## §11. 三方对照复核（InvenTree plugin registry / Fleetbase extensions vs 本裁决，E2.3）
+
+> E2.3 交付物（roadmap §5 Milestone E2，零代码，2026-08-26，plan `docs/plans/2026-08-26-0735-1-e2-survey-cross-confirmation.md`）：以 08-12 批次两份实测报告为输入（`docs/analysis/erp-survey/2026-08-12-0000-inventree.md` §2/§3、`2026-08-12-0000-fleetbase.md` §2/§3），与本文 §4 NocoBase 应用层插件管理器（路径 3）、§5 对比矩阵、§6 Decision R1 裁决三方对照，复核两开源形态是否动摇既有裁决。**结论：佐证，无分歧。**
+
+### 11.1 机制要点提取（以两报告 §2/§3 实测内容为准）
+
+| 形态 | 机制要点（报告证据） | 维度定位（对照分析） |
+|------|--------------------|---------------------|
+| InvenTree plugin registry | 应用级插件系统：registry + 生命周期 + 钩子（报告 §2 域表「plugin / plugins：插件系统（registry + 钩子）」，证据路径 `src/backend/InvenTree/plugin/`；§3 #1「插件注册模型：plugin registry + 生命周期」） | 进程内应用级注册/钩子，无类卸载语义 → **D-Switch 族**（与路径 3 同族） |
+| Fleetbase extensions | 分包注册 + **extensions indexer**：第三方扩展可安装/升级/停用（报告 §2.1，证据路径 `packages/extensions`、`packages/core-api`）；另有动态订单配置 rules/flows/automation（§2.1） | 安装/升级 = 部署期选择（composer 分包形态）→ **D-Select**；停用 ≈ 运行时入口开关 → **D-Switch**；报告未声明运行时类卸载能力（PHP/Laravel 进程模型亦无此概念）→ **混合形态，无 D-Load** |
+| NocoBase plugin manager（本文 §4） | npm 插件 + 运行时启用/禁用管理器，不卸载类（§4.1） | **D-Switch**（路径 3） |
+
+> 报告原文仅提供上表「机制要点」列事实；「维度定位」列是本研究 §1.2 Decision R0 三维度（D-Load/D-Select/D-Switch）下的对照分析，非报告断言。
+
+### 11.2 与 Decision R1（§6）的对照结论
+
+1. **佐证「路径 1（OSGi/D-Load）不采用」**：两开源形态均未采用运行时类卸载——InvenTree 为进程内应用级 registry/钩子，Fleetbase 扩展经 indexer 安装/停用、无类卸载语义。行业实践与本文 §2.2.5「类卸载的现实约束」判断一致。
+2. **佐证「路径 2 默认 + 路径 3 补充」的组合覆盖**：Fleetbase 的能力谱系恰好横跨 D-Select（安装/升级=部署期裁剪，对应路径 2 的 Maven 依赖集合控制）+ D-Switch（停用=入口开关，对应路径 3）；InvenTree registry 为纯 D-Switch。两形态均落在 §1.2 已拆定的 D-Select/D-Switch 两维度内，无 D-Load 刚需场景——§6.2 推荐理由 1（需求维度匹配）获外部佐证。
+3. **与 Delta+SPI 既有扩展范式非互斥**：本项目既有扩展范式（Delta 定制 + SPI 注入，roadmap §4.1 行缩写「Delta+SPI」即指此，裁决见本文 §6.1：**路径 2（Maven module isolation）为默认采用路径；路径 3（NocoBase-style）为运行时启停需求的补充；路径 1（OSGi）不采用；当前阶段不实施任何路径、维持 `app-erp-all` 全量聚合**）覆盖「同一部署内的行为定制」；InvenTree/Fleetbase/NocoBase 的「插件管理」覆盖「域/特性的装载与开关」——两者正交，互不替代，也互不排斥。§6.1「当前阶段维持全量聚合」不受对照影响。
+4. **签名分发能力对齐既有归类**：Fleetbase 经 extensions indexer 分发第三方扩展的形态，对齐 roadmap §4.1「模块注册表/ed25519 签名｜erpclaw：Maven 模块制 + `module-meta.json`（D2）已覆盖；签名机制触发条件=插件分发需求」行——插件签名/分发能力已有触发条件登记，无需新增工作项。
+5. **钩子形态在既有范式中已有充分表达**：InvenTree「registry + 钩子」与本项目既有 SPI 聚合范式同型——`IErpFinAcctDocProvider`（注册中心按 businessType O(1) 路由）、`IErpFinFactsValidator`（`@Inject List` 聚合 + `getOrder()` 排序）、`IErpFinVoucherReversedListener`（启动期收集 + `ErpFinReversalListenerRegistry` 派发，`module-finance/erp-fin-service/.../posting/ErpFinReversalListenerRegistry.java`）。佐证 roadmap §4.1「插件注册/生命周期｜inventree：D4 已裁决 Delta+SPI，不立项」。
+
+### 11.3 分歧登记
+
+**无实质分歧**——两开源形态均佐证 §6 裁决，结论与 §5 对比矩阵、§10 Follow-up 及 roadmap §4.1 对应行一致，无需触发 §10 Follow-up 机制新增条目、不修改 §6 裁决。若未来出现「插件市场/签名分发」真实需求，按 §6.5 路径 2/3 触发条件 + roadmap §4.1 签名分发行既有登记走 successor plan。
+
+---
+
 ## 参考
 
 - `docs/backlog/deepening-roadmap.md` §5 Milestone D / D4（line 76/92 — D4 范围与 ORM 变更=否）

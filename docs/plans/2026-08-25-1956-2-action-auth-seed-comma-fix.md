@@ -43,8 +43,8 @@ Targets: `module-{master-data,contract,b2b,manufacturing,quality,hr,maintenance}
 
 - Item Types: `Fix | Proof`
 
-- [ ] Fix: 7 文件 35 处 `roles="A/B/C"` → `roles="A,B,C"`（仅分隔符，角色成员逐一 diff 核对零增删；md 12 / ct 6 / b2b 4 / mfg 4 / qa 3 / hr 3 / mnt 3 计数对账）。
-- [ ] Proof: 修正后 grep 斜杠分隔 `roles="[^"]*/` 在 7 文件归零；xmllint well-formed 校验 7 文件通过（本地化验证，Phase 2 依赖）。
+- [x] Fix: 7 文件 35 处 `roles="A/B/C"` → `roles="A,B,C"`（仅分隔符，角色成员逐一 diff 核对零增删；md 12 / ct 6 / b2b 4 / mfg 4 / qa 3 / hr 3 / mnt 3 计数对账）。（2026-08-26 执行：capture-safe 单斜杠迭代替换（首轮 `/e` 嵌套替换 clobber 捕获组致属性被删，git checkout 还原后重做）；验证 = `git diff -U0` 逐文件 +roles 行计数 12/6/4/4/3/3/3 恰好 35 行变更 + 修正前后 `roles=` 值多重集 diff 全 7 文件 IDENTICAL（零增删零改写，仅分隔符）；jar 内 `_vfs/erp/md/auth/erp-md.action-auth.xml` 复核 12 逗号 0 斜杠）
+- [x] Proof: 修正后 grep 斜杠分隔 `roles="[^"]*/` 在 7 文件归零；xmllint well-formed 校验 7 文件通过（本地化验证，Phase 2 依赖）。（7 文件斜杠 grep = 0；`xmllint --noout` ×7 全通过；`mvn clean install -DskipTests` 156 模块 BUILD SUCCESS（runner jar 02:34 含逗号种子）；全 reactor `mvn test` **3847 tests / 0 failures / 0 errors / 1 skipped / 646 报告文件**——对照 2026-08-25 基线 3834/642 差量 +13 tests/+4 文件全额归因前置计划 1（masking，11 个 *Masking* 测试类，已 12/12 ticked）；compliance checker 全规则 actual==baseline 零漂移（R1d=14/R2a=34/R2b=237/R2c=1505/R2d=38/R3=5/R6=2/R10=12/R12a/b/c=70/66/41，R7=1 与 R10 同为预存合理偏离））
 
 ## Phase 2 — 正向菜单可见性 Proof + 负向回归 + owner doc 对齐
 

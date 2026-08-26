@@ -1,6 +1,6 @@
 # ERP 增强路线图（ERP Enhancement Roadmap）
 
-> **最后更新**: 2026-08-12
+> **最后更新**: 2026-08-26
 > **来源**: `docs/analysis/erp-survey/2026-08-12-0000-innovation-trends.md`（创新趋势总览）+ 同批次 14 份项目调研报告（erpclaw/twenty/frappe/baserow/frepple/openboxes/fleetbase/inventree/beancount/paperless-ngx/n8n/superset/snipe-it/medusa）
 > **前置条件**: `deepening-roadmap.md` ✅ done（11/11，07-20 批次缺口已闭环）；`core-business-roadmap.md` ✅ done；`extended-roadmap.md` ✅ done
 
@@ -20,9 +20,9 @@
 
 | State | Count |
 |-------|-------|
-| todo | 12 |
+| todo | 9 |
 | ready | 0 |
-| done | 7 |
+| done | 10 |
 
 ## 3. 框架/平台复用
 
@@ -70,6 +70,7 @@
 | 部件参数体系（part 参数/替代件） | inventree | 触发条件驱动：替代料/多参数主数据需求出现时评估（与 C1 Party 抽象/C2 跨境扩展同类主数据扩展，ORM 授权范围外须单独授权），不立项 |
 | 扩展索引器/订单规则自动化引擎 | fleetbase | 对照确认：Delta 定制 + 规则设计已覆盖；自动化配置层触发条件=复杂物流自动化需求 |
 | 查询引擎（类 SQL 账本查询） | beancount | 对照确认：Nop EQL/BizQuery 已具备，不立项 |
+| 金额非零校验（parser 约束清单项） | beancount | 对照确认（E2.1，部分覆盖）：借贷平衡/科目存在校验已覆盖；零金额分录无引擎级显式拒绝（免税单据 TAX_AMOUNT=0 模板行为合法来源）。触发条件=零金额分录造成 GL 噪声/报表失真时经 `IErpFinFactsValidator` 补非零校验，不立项（注记见 `docs/design/finance/posting.md §记账内核审计性对照` #3） |
 | 标签打印/导入工具 | snipe-it | 对照确认：nop-report 打印能力，不立项 |
 | 模块注册表/ed25519 签名 | erpclaw | 对照确认：Maven 模块制 + `module-meta.json`（D2）已覆盖；签名机制触发条件=插件分发需求 |
 | AI 工具注册/可观测性 | n8n | 并入 E1.1（AI 接口层）与既有运行监控（`posting-log.md`），不立项 |
@@ -83,7 +84,7 @@
 | 批次/序列全链路 | openboxes | 对照确认：`trace-chain.md` 已覆盖，不立项 |
 | WMS 特征服务（补货/拣货/上架闭环） | openboxes | 对照确认（部分具备）：预留量 + DRP 建议已覆盖补货面；拣货/上架为 WMS 特征非本期（`audit-snapshot-cycle-count.md` 对照表已声明） |
 | 跨系统计划同步 SPI（erpconnection 形态） | frepple | 触发条件驱动：跨系统计划同步需求出现时评估（`constraint-based-planning.md` §对照表差距行），并入 E3.4 深化清单候选 |
-| 工具链对照（bench vs build.sh/nop-cli） | frappe | 对照确认：E2.2 交付物补「工具链对照」注记 |
+| 工具链对照（bench vs build.sh/nop-cli） | frappe | 对照确认：工具链对照注记已产出（E2.2 done，`docs/analysis/erp-survey/2026-08-26-0000-lowcode-boundary-and-toolchain-notes.md` §2），不立项 |
 
 ## 5. Milestones
 
@@ -103,9 +104,9 @@
 
 | Work Item | 状态 | Owner Doc | 依赖 | 复用 |
 |-----------|------|-----------|------|------|
-| E2.1: 记账内核审计性对照确认（Beancount 平衡校验清单 vs 既有凭证引擎） | todo | `docs/design/finance/posting.md`（补对照段） | E1 批次报告 | 既有凭证引擎 |
-| E2.2: 低代码平台边界对照（Frappe/Baserow vs Nop 模型驱动；含工具链对照 bench vs build.sh/nop-cli） | todo | `docs/analysis/erp-survey/`（对照注记） | E1 批次报告 | — |
-| E2.3: 扩展机制三方对照（InvenTree/Fleetbase vs NocoBase vs Delta+SPI） | todo | `docs/analysis/plugin-hot-management-research.md`（补对照段） | D4 研究 | — |
+| E2.1: 记账内核审计性对照确认（Beancount 平衡校验清单 vs 既有凭证引擎） | done | `docs/design/finance/posting.md`（补对照段 ✅ §记账内核审计性对照） | E1 批次报告 | 既有凭证引擎 |
+| E2.2: 低代码平台边界对照（Frappe/Baserow vs Nop 模型驱动；含工具链对照 bench vs build.sh/nop-cli） | done | `docs/analysis/erp-survey/2026-08-26-0000-lowcode-boundary-and-toolchain-notes.md`（对照注记 ✅） | E1 批次报告 | — |
+| E2.3: 扩展机制三方对照（InvenTree/Fleetbase vs NocoBase vs Delta+SPI） | done | `docs/analysis/plugin-hot-management-research.md`（补对照段 ✅ §11） | D4 研究 | — |
 
 ### Milestone E3 — 实现（单一整体计划实施，plan-first）
 
@@ -132,9 +133,9 @@
 | E1.5 | `audit-trail-and-custom-fieldsets.md`（Actionlog 式审计事件类型 + 型号级字段集 + SCIM 触发）✅ 已产出 |
 | E1.6 | `dashboard-semantic-layer.md`（KPI 度量目录 + 嵌入式 API-first + 行级安全核实项）✅ 已产出 |
 | E1.7 | `cross-domain-flow-orchestration.md`（必要性判定矩阵 N1-N6 + 补充 wf 关联形态 + 全局协调器 + 反模式）✅ 已产出 |
-| E2.1 | posting.md 补「记账内核审计性对照」段（平衡校验约束清单核对 + 结论登记） |
-| E2.2 | erp-survey 对照注记（Frappe/Baserow 与 Nop 模型驱动路径差异结论，引用既有报告） |
-| E2.3 | plugin-hot-management-research.md 补三方对照段（InvenTree registry / Fleetbase extensions 与既有裁决） |
+| E2.1 | posting.md 补「记账内核审计性对照」段（平衡校验约束清单核对 + 结论登记）✅ 已产出（9 项清单：7 覆盖 / 1 不适用 / 1 部分覆盖登记触发条件） |
+| E2.2 | erp-survey 对照注记（Frappe/Baserow 与 Nop 模型驱动路径差异结论，引用既有报告）✅ 已产出（`2026-08-26-0000-lowcode-boundary-and-toolchain-notes.md`，含工具链对照 §2） |
+| E2.3 | plugin-hot-management-research.md 补三方对照段（InvenTree registry / Fleetbase extensions 与既有裁决）✅ 已产出（§11，结论：佐证无分歧） |
 | E3.1 | dashboards.md 增 KPI 度量目录章节（10 域 KPI 口径/数据来源/单位登记，口径=数据驱动数值断言覆盖域）；目录作为未来 nop-metadata 语义层（Measure/Dimension）映射输入 |
 | E3.1b | 核实 enforcement 数据权限（role-row-filter）对 `getDashboardKpi`/报表查询的覆盖 + nop-datav DataAuth/RbacAuth 边界（feat 分支），缺口登记（实施属 enforcement 栈扩展） |
 | E3.2 | `getInventorySnapshot` BizQuery + 期末对账一致性校验项（零 ORM） |

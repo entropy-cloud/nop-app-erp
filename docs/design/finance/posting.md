@@ -563,3 +563,27 @@ VoucherBillR（业财回链）
 **跨法人判定**（全在 finance 域，AP-7 合规）：执行方法人根 = finance SPI 解析 `order.orgId`；对手方法人根 = 转移定价规则表反向查找（PO 查 toOrgId=执行方、SO 查 fromOrgId=执行方）。同法人 skip；钩子非阻塞 try-catch（对齐 inventory confirm 范式）。
 
 **receive/delivery 联级**：归 Deferred successor（订单级已表达跨法人交易，联级为增强，避免重复计量）。
+
+## 记账内核审计性对照（Beancount，E2.1）
+
+> E2.1 对照确认交付（roadmap §5 Milestone E2，零代码，2026-08-26）：以 `docs/analysis/erp-survey/2026-08-12-0000-beancount.md` §2/§3 **实际内容为清单权威源**，逐项核对既有凭证引擎的实时仓库证据并登记结论。对照不触发任何实现变更。
+
+### 对照清单（逐项核对）
+
+| # | Beancount 约束（报告素材） | 结论 | 既有凭证引擎证据（实时仓库锚点） |
+|---|---------------------------|------|--------------------------------|
+| 1 | 借贷平衡 invariant（§2「严格校验：语法、借贷平衡」+ §3 #1 约束清单「借=贷」） | **已覆盖** | 引擎写库前强制校验：`ErpFinPostingProcessor.balanceTotals`（`module-finance/erp-fin-service/.../posting/ErpFinPostingProcessor.java:758`，按 `dcDirection` 累加、null 金额按 ZERO）+ `assertBalanced`（`:772`，Σdebit ≠ Σcredit 抛 `ERR_UNBALANCED`）；正向编排 `process()` 在 `persistVoucher` 前调用（`:161-163`）。属性测试 `PropertyErpFinDebitCreditBalance`（P1 属性 1-3 + 路由翻转变异 tautology 自检）与 `PropertyErpFinMultiCurrencyBalance`（P6：source 平衡但功能币不平衡的场景被拒——以本位币为准，见 §多币种处理 实现契约，比 Beancount 单币种更严）。 |
+| 2 | 账户必须存在于科目树（§3 #1 约束清单；§2 账户树 Assets/…/Equity + 每交易引用账户） | **已覆盖** | `resolveSubjects`（`ErpFinPostingProcessor.java:615-671`）按 `subjectCode` 经 `IErpMdSubjectBiz.findByCode` 解析，code 缺失或科目不存在抛 `ERR_SUBJECT_NOT_FOUND`（`ErpFinPostingErrors.java:32`）；科目树载体 = master-data 域 `ErpMdSubject` 科目体系（见 #6）。 |
+| 3 | 金额非零（§3 #1 约束清单「金额非零」） | **部分覆盖（差距登记）** | 引擎无金额非零显式校验：零金额分录在 `assertBalanced` 下天然平衡放行（null 按 ZERO，`PropertyErpFinDebitCreditBalance` P1 属性 3 仅断言 null 语义）。差距说明：ERP 语境下零金额行有合法来源（如免税单据模板行 `TAX_AMOUNT=0`），与 Beancount「文本账本零分录=噪声」语义不同，非缺陷但与对照项不等价。**登记去向**：触发条件驱动——零金额分录造成 GL 噪声/报表失真时，经 `IErpFinFactsValidator` 扩展点（`posting/IErpFinFactsValidator.java:11`）补非零校验（零改动财务核心）；roadmap §4.1 已登记对应行，不立项。 |
+| 4 | GL 不可变 + 冲销语义（§3 #2：文本即不可变账本，更正=新交易） | **已覆盖** | 红字冲销同向取负：`buildReversalDraft`（`ErpFinPostingProcessor.java:780-810`）对原凭证行 `debit/credit.negate()` 且保持原 `dcDirection`；原凭证不修改金额，仅在 POSTED 上置 `isReversed=true`（O-8 `markOriginalVoucherReversed` 公共流程，`:963-965`；「非 docStatus 迁移边」契约见 `ErpFinVoucherDocumentStateMachine.java:19-30`）；`reversalOfVoucherId` 双向回链。测试锚点：`TestErpFinPostingService:200-205`（红字凭证+原凭证均 `isReversed=true`）、`TestErpFinBadDebtReversal:45-47`、`TestErpFinBadDebtProvisionReversal:47-50`（红字凭证行同向取负 Dr 6701=-X / Cr 1231=-X）。与 §冲销机制「红字凭证走正常流程（平衡校验、期间门控、科目反查）」一致。 |
+| 5 | 期初/期末一致性（§2 parser 严格校验项） | **已覆盖（载体不同）** | 非 parser 校验，由期末结账 + 年度结转流程承载（roadmap M4 全 done）：`ErpFinAccountingPeriodProcessor`（试算平衡 closing 聚合 `:380`，已冲销凭证过滤 `isReversed=false` `:392`）、`AnnualCloseService`（年度 Opening 结转 `:118/:182`、AR/AP 辅助账净额入 GL `:210-218`）；跨期写入由期间门控拒绝（`ERR_PERIOD_CLOSED`，`ErpFinPostingErrors.java:41`，见 §异步过账与失败处理 失败处理策略表「期间已结账」行）。 |
+| 6 | 账户树显式定义（§3 #3：科目树 + 每交易引用账户） | **已覆盖** | `ErpMdSubject` 科目体系（master-data 域 ORM）+ 凭证模板机制（§凭证模板机制）+ 多套科目表并行（§多套科目表并行；跨账套科目转换 `translateFactsForSchema` `ErpFinPostingProcessor.java:701-756`）。 |
+| 7 | 查询引擎（§2 core 的类 SQL 账本查询；§3 #4） | **不适用（已归类）** | Nop EQL/BizQuery 平台能力已覆盖；roadmap §4.1「查询引擎（类 SQL 账本查询）｜beancount」行已裁决「对照确认不立项」，本节仅引用，不重复裁决。 |
+| 8 | 插件系统（§2 plugins：自动转账识别、汇率补全） | **已覆盖（形态不同）** | 扩展点为写库前校验/改写/拒绝管线 `IErpFinFactsValidator` + Provider SPI（§过账引擎）；「汇率补全」在本项目为有意裁决的**拒绝**语义——外币过账汇率缺失抛 `ERR_EXCHANGE_RATE_REQUIRED` 拒绝而非静默补默认值（RC-R1.42 守卫，见 §多币种处理），审计性强于自动补全。 |
+| 9 | 可审计性（§2 全文即账本；「GL 不可变 + 强制借贷平衡 + 全文即账本」定位） | **已覆盖（载体不同）** | 数据库账本 + 全程留痕：凭证 + 业财回链 `ErpFinVoucherBillR`（`erp-fin-dao/.../entity/ErpFinVoucherBillR.java`）+ posted 翻转（§稳定约束 vs 可配置策略「可审计」行，不可配）；过账/红冲失败经 `ErpFinPostingExceptionRecorder`（`posting/ErpFinPostingExceptionRecorder.java:43`）落异常工作台（owner doc `posting-log.md §过账异常处置`）；监听者派发失败 try/catch 隔离并记录（`dispatchReversalEvent`/`recordListenerFailures`，`ErpFinPostingProcessor.java:379-434`）；traceId 端到端追踪 + `timeStage` 各阶段结构化日志（`posting-log.md §运行监控指标`）。 |
+
+### 对照结论
+
+- 9 项中 7 项已覆盖（其中 #5/#8/#9 为「载体不同」——数据库 ERP 与纯文本 DSL 的实现路径差异，审计语义等价或更强）、1 项不适用（#7 查询引擎，roadmap §4.1 已归类）、1 项部分覆盖（#3 金额非零，差距已按触发条件登记，不在本计划实施）。
+- 报告 §3 #2 结论「与 nop 红字冲销设计理念一致；印证『冲销而非修改』是行业正解」经实时仓库证据复核成立（#4）。
+- 本节与 §稳定约束 vs 可配置策略、§冲销机制、§反写契约、§多币种处理等既有章节无事实矛盾，对照未发现需修正的旧表述。
