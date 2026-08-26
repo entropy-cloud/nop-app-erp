@@ -77,24 +77,24 @@
 | Work Item | Status | Owner Doc | Dependencies | Skill |
 | --- | --- | --- | --- | --- |
 | C6.1 hr 检查 — 组织与员工（org/employee/合同/招聘） | done | `docs/design/human-resource/` | C1.2 | 同 C1.1 |
-| C6.2 hr 检查 — 考勤与薪酬（attendance/leave/payroll） | ready | `docs/design/human-resource/` | C1.2 | 同 C1.1 |
-| C6.3 crm 检查 — 线索与商机（lead-waterfall/lead-scoring/territory） | ready | `docs/design/crm/lead-waterfall.md` 等 | C1.2 | 同 C1.1 |
-| C6.4 crm 检查 — CPQ 与营销预测（cpq/marketing/sales-forecast/sales-sequence） | todo | `docs/design/crm/cpq.md` 等 | C1.2 | 同 C1.1 |
+| C6.2 hr 检查 — 考勤与薪酬（attendance/leave/payroll） | done | `docs/design/human-resource/` | C1.2 | 同 C1.1 |
+| C6.3 crm 检查 — 线索与商机（lead-waterfall/lead-scoring/territory） | done | `docs/design/crm/lead-waterfall.md` 等 | C1.2 | 同 C1.1 |
+| C6.4 crm 检查 — CPQ 与营销预测（cpq/marketing/sales-forecast/sales-sequence） | done | `docs/design/crm/cpq.md` 等 | C1.2 | 同 C1.1 |
 
 ### M7 — 扩展域检查第二批
 
 | Work Item | Status | Owner Doc | Dependencies | Skill |
 | --- | --- | --- | --- | --- |
-| C7.1 cs 实现代码检查 | todo | `docs/design/customer-service/` | C1.2 | 同 C1.1 |
-| C7.2 contract 实现代码检查 | todo | `docs/design/contract/` | C1.2 | 同 C1.1 |
-| C7.3 b2b 实现代码检查 | todo | `docs/design/b2b/` | C1.2 | 同 C1.1 |
-| C7.4 drp 实现代码检查 | todo | `docs/design/drp/` | C1.2 | 同 C1.1 |
+| C7.1 cs 实现代码检查 | done | `docs/design/customer-service/` | C1.2 | 同 C1.1 |
+| C7.2 contract 实现代码检查 | done | `docs/design/contract/` | C1.2 | 同 C1.1 |
+| C7.3 b2b 实现代码检查 | done | `docs/design/b2b/` | C1.2 | 同 C1.1 |
+| C7.4 drp 实现代码检查 | ready | `docs/design/drp/` | C1.2 | 同 C1.1 |
 
 ### M8 — 低复杂度域与共享模块检查
 
 | Work Item | Status | Owner Doc | Dependencies | Skill |
 | --- | --- | --- | --- | --- |
-| C8.1 logistics + aps + notify 合并检查（C 级域；产出**三份薄报告** `ck-logistics.md` / `ck-aps.md` / `ck-notify.md`，finding 按各自域短码前缀编排，保持索引与 ID 语义一致） | todo | `docs/design/logistics/`、`docs/design/aps/`、`docs/design/notify/` | C1.2 | 同 C1.1 |
+| C8.1 logistics + aps + notify 合并检查（C 级域；产出**三份薄报告** `ck-logistics.md` / `ck-aps.md` / `ck-notify.md`，finding 按各自域短码前缀编排，保持索引与 ID 语义一致） | ready | `docs/design/logistics/`、`docs/design/aps/`、`docs/design/notify/` | C1.2 | 同 C1.1 |
 | C8.2 共享模块与聚合工程检查（module-common-service / module-common-test / app-erp-all 聚合与 auth 合并 / app-erp-test-data 种子） | todo | `docs/architecture/`（module-boundaries 等） | C1.2 | 同 C1.1 |
 | C8.3 检查阶段收官：校验 ai-check-index 完整性（全域有报告、finding 全登记、无代码改动——`git status` 干净或仅 docs 变更） | todo | 本路线图 | C2.1-C8.2 全部 done | `closure-audit-prompt`（独立子代理） |
 

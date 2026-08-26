@@ -49,12 +49,12 @@
 | `ck-quality.md` | C5.2 | quality | 0 | 5 | 9 | 11 | done |
 | `ck-maintenance.md` | C5.3 | maintenance | 0 | 3 | 6 | 10 | done |
 | `ck-hr-org.md` | C6.1 | hr（组织与员工） | 0 | 1 | 4 | 12 | done |
-| `ck-hr-attendance-payroll.md` | C6.2 | hr（考勤与薪酬） | - | - | - | - | planned |
-| `ck-crm-lead.md` | C6.3 | crm（线索与商机） | - | - | - | - | planned |
-| `ck-crm-cpq-forecast.md` | C6.4 | crm（CPQ 与预测） | - | - | - | - | planned |
-| `ck-cs.md` | C7.1 | cs | - | - | - | - | planned |
-| `ck-contract.md` | C7.2 | contract | - | - | - | - | planned |
-| `ck-b2b.md` | C7.3 | b2b | - | - | - | - | planned |
+| `ck-hr-attendance-payroll.md` | C6.2 | hr（考勤与薪酬） | 0 | 5 | 9 | 12 | done |
+| `ck-crm-lead.md` | C6.3 | crm（线索与商机） | 0 | 2 | 6 | 11 | done |
+| `ck-crm-cpq-forecast.md` | C6.4 | crm（CPQ 与预测） | 0 | 2 | 10 | 8 | done |
+| `ck-cs.md` | C7.1 | cs | 0 | 3 | 11 | 8 | done |
+| `ck-contract.md` | C7.2 | contract | 0 | 4 | 13 | 7 | done |
+| `ck-b2b.md` | C7.3 | b2b | 0 | 1 | 8 | 7 | done |
 | `ck-drp.md` | C7.4 | drp | - | - | - | - | planned |
 | `ck-logistics.md` | C8.1 | logistics | - | - | - | - | planned |
 | `ck-aps.md` | C8.1 | aps | - | - | - | - | planned |
@@ -413,7 +413,134 @@
 | P3-CK-mnt-017 | P3 | D9 | ck-maintenance.md | 报表/看板无界加载 + `setLimit(5000)` 截断致逾期误报 | 新增 | open |  |
 | P3-CK-mnt-018 | P3 | D8 | ck-maintenance.md | visit cancel 对已确认备件消耗零动作 + 报修-访问一对一硬绑定——作废语义未裁决的两组残留 | 新增 | open |  |
 | P3-CK-mnt-019 | P3 | D7，复用注记 P1-MA2-086 | ck-maintenance.md | 并发幂等的 UK 兜底因 orgId=null 失效——`(code, orgId)` UK 对 NULL orgId 不去重（多数 DB NULL≠NULL） | 新增 | open |  |
+| P1-CK-hr2-001 | P1 | D6 | ck-hr-attendance-payroll.md | 出勤折算分母恒为硬编码 22 且有薪假按缺勤扣薪——不足 22 个打卡日的月份全员基本工资被折减、带薪年假双路径扣款 | 新增 | open |  |
+| P1-CK-hr2-002 | P1 | D8 | ck-hr-attendance-payroll.md | generateBankFile 批量发放翻 PAID 不触发 SALARY_PAYMENT(280) 凭证——银行文件路径发放的薪酬应付职工薪酬永不冲减 | 新增 | open |  |
+| P1-CK-hr2-003 | P1 | D6/D10 | ck-hr-attendance-payroll.md | runPayroll 无逐员工失败隔离——任一员工缺合同/社保基数/税务配置即整批回滚，与 UC-HR-04「跳过并告警」明确分歧 | 新增 | open |  |
+| P1-CK-hr2-004 | P1 | D6 | ck-hr-attendance-payroll.md | SocialInsuranceCalculator 完全忽略 effectiveFrom/effectiveTo 有效期——年调后同城同险种多行配置重复计扣、基数历史行任取 | 新增 | open |  |
+| P1-CK-hr2-005 | P1 | D6 | ck-hr-attendance-payroll.md | getComparison 对比视图的合计/扣款五行恒返回 0——SALARY_ITEM_CODES 含 5 个派生字段 readSalaryField 不处理 | 新增 | open |  |
+| P2-CK-hr2-006 | P2 | D7/D8 | ck-hr-attendance-payroll.md | tryPostPayment 无去重守卫叠加凭证 REQUIRES_NEW 先行提交——markPaid 外层回滚后重试产生重复 280 发放凭证 | 新增 | open |  |
+| P2-CK-hr2-007 | P2 | D5，同型 P1-CK-pur-003 族——并入 P2-CK-hr-004 家族 hr2 站点 | ck-hr-attendance-payroll.md | salary/attendance/leave/simulation 全实体通用 CRUD 无守卫——ErpHrSalary__update_ 可直写 approveStatus=APPROVED 绕过整条计提链、直写 paymentStatus=PAID 绕过 280 凭证 | 同型 P1-CK-pur-003 族 | open |  |
+| P2-CK-hr2-008 | P2 | D5 | ck-hr-attendance-payroll.md | 休假余额守卫对「无余额记录」静默跳过——与 getBalance 同数据相反结论（守卫放行 vs 余额显示负数） | 新增 | open |  |
+| P2-CK-hr2-009 | P2 | D5/D8 | ck-hr-attendance-payroll.md | 日期重叠守卫仅同假别——跨假别同期休假可双双 APPROVED 且排班 leaveRequestId 互相覆盖致先批休假的取消联动失效 | 新增 | open |  |
+| P2-CK-hr2-010 | P2 | D7 | ck-hr-attendance-payroll.md | ErpHrSalary 无 (employeeId, year, month) UK + existsNonVoidSalary 前置检查 TOCTOU——并发核算产生同员工同月重复薪酬行 | 新增 | open |  |
+| P2-CK-hr2-011 | P2 | D6 | ck-hr-attendance-payroll.md | findActiveContract 名不副实——无 status 过滤无排序，多合同员工（调动旧约+新约/历史合同）任取一行作核算基数 | 新增 | open |  |
+| P2-CK-hr2-012 | P2 | D6 | ck-hr-attendance-payroll.md | applyBatchAdjustment 四类调整全部写入 basicSalary——ALLOWANCE（津贴调整）语义错置，调津贴实际调了基本工资 | 新增 | open |  |
+| P2-CK-hr2-013 | P2 | D9 | ck-hr-attendance-payroll.md | computeAllEmployeeSims 每员工 5+ 查询全量重算——四个汇总/异常 @BizQuery 每次打开 N×6 次查询；runPayroll 同型 N+1 | 新增 | open |  |
+| P2-CK-hr2-014 | P2 | D5 | ck-hr-attendance-payroll.md | generateRotation 活跃排班口径仅 SCHEDULED 且新建无 UK flush-catch——PRESENT/ABSENT 日被视为空位，插入命中 UK 抛未翻译原始异常 | 新增 | open |  |
+| P3-CK-hr2-015 | P3 | D3 | ck-hr-attendance-payroll.md | shift-assignment-status dict CANCELLED 无 writer（死状态）+ 旧 6 值 salary-approval-status dict 成孤儿声明 | 新增 | open |  |
+| P3-CK-hr2-016 | P3 | D4/D2，同型 P3-CK-hr-012/013 家族 | ck-hr-attendance-payroll.md | LeaveApproverTimeoutJob cron 三层键漂移 + 顶层失败仅 LOG.error 无告警通道 | 新增 | open |  |
+| P3-CK-hr2-017 | P3 | D10 | ck-hr-attendance-payroll.md | TaxBracketParser 空/畸形税率表致 resolveBracket 裸 IOOBE、坏 rate 值致 NPE——配置数据错误未翻译为业务错误码；latest 月 cumulativeData null 时累计静默重置 | 新增 | open |  |
+| P3-CK-hr2-018 | P3 | D6/D8 | ck-hr-attendance-payroll.md | 加班费率/加班阈值/月工作日硬编码——README 声明的三个配置点无 accessor 无消费 | 新增 | open |  |
+| P3-CK-hr2-019 | P3 | D1，同型 P3-CK-hr-011 | ck-hr-attendance-payroll.md | 五个 BizModel 保留 processor 化前完整 legacy dup 死代码副本——双源漂移风险面扩大 | 新增 | open |  |
+| P3-CK-hr2-020 | P3 | D3，需求分歧只登记不裁决 | ck-hr-attendance-payroll.md | leave REJECTED 无重新提交边——「修改后重新提交」只能新建申请，与 salary 审批轴 REJECTED→SUBMITTED 处理不对称 | 新增 | open |  |
+| P3-CK-hr2-021 | P3 | D5/D10 | ck-hr-attendance-payroll.md | computeWorkHours 无负值守卫 + 手工补卡无未来时间校验——负工时可落库并进入加班/出勤聚合 | 新增 | open |  |
+| P3-CK-hr2-022 | P3 | D8 | ck-hr-attendance-payroll.md | leave 联动三处小漂移：onLeaveCancelled 无条件置 SCHEDULED、approve 清空转派 approverId、resolveApproverId 恒 null | 新增 | open |  |
+| P3-CK-hr2-023 | P3 | D6/D10 | ck-hr-attendance-payroll.md | 休假期间边界三处：跨月休假整单漏算无薪扣减、跨年休假全额计入起始年余额、endDate<startDate 得 0 天可提交 | 新增 | open |  |
+| P3-CK-hr2-024 | P3 | D5/D7 | ck-hr-attendance-payroll.md | 排班调换 submit/approve 边界：无同日期校验（跨日交换语义未定义）+ 同 assignment 多 PENDING 双批准无守卫 | 新增 | open |  |
+| P3-CK-hr2-025 | P3 | D7 | ck-hr-attendance-payroll.md | 休假余额并发扣减竞态——approve 读派生 used 无锁，两笔并发 approve 均过校验超额审批 | 新增 | open |  |
+| P3-CK-hr2-026 | P3 | D6/D8 | ck-hr-attendance-payroll.md | convertToFormal 部分冲突清单静默丢弃 + 个税跳档告警为有效税率近似且仅检升档 | 新增 | open |  |
+| P1-CK-crm-001 | P1 | D6/D8 | ck-crm-lead.md | getTerritoryPipeline 管道三段聚合口径混乱——公司级实际/预测段只计 territoryId IS NULL 的记录 + 实际段无 leadType 过滤（convertToCustomer 链同笔生意双计）+ 实际/预测段无期间过滤 | 新增 | open |  |
+| P1-CK-crm-002 | P1 | D6/D8 | ck-crm-lead.md | 漏斗聚合 won/lost 期间口径系统性失真——doLose/markLeadConverted 不写 ConvLog，期间内唯一动作是丢失/转化的线索从该期漏斗中消失；totalWon/totalRevenue 无 leadType 过滤双计 | 新增 | open |  |
+| P2-CK-crm-003 | P2 | D8 | ck-crm-lead.md | convertToCustomer 新建商机不透传 territoryId/campaignId——转化后商机在区域管道/区域预测中失明 | 新增 | open |  |
+| P2-CK-crm-004 | P2 | D6 | ck-crm-lead.md | QuotaRollupCalculator.rollup 层级覆盖语义按平面求和——中间层显式覆盖值与其子明细行并存时上级聚合双计 | 新增 | open |  |
+| P2-CK-crm-005 | P2 | D5/D6 | ck-crm-lead.md | distributeAnnualQuota 无重复分配幂等守卫 + 均分尾差不守恒——重复调用生成重复子行使聚合翻倍，Σ子行≠年度总额且无末行吸收 | 新增 | open |  |
+| P2-CK-crm-006 | P2 | D9/D8 | ck-crm-lead.md | LeadDuplicateChecker 每次 lead save 全表加载全部非终态线索实体到内存逐一匹配 + 无 orgId 隔离 | 新增 | open |  |
+| P2-CK-crm-007 | P2 | D5/D3，同型 P1-CK-pur-003 族 | ck-crm-lead.md | CRUD update 无已审守卫——Lead docStatus/leadType/stageId 可经 update_ 直改绕过状态机与阶段方向守卫；负 expectedRevenue/越界 probability 无校验 | 同型 P1-CK-pur-003 族 | open |  |
+| P2-CK-crm-008 | P2 | D8 | ck-crm-lead.md | Territory 删除仅查子节点守卫——不查 Lead/AssignmentRule/Quota 引用，删叶子区域后悬挂引用静默产生 | 新增 | open |  |
+| P3-CK-crm-009 | P3 | D8 | ck-crm-lead.md | moveTerritory 不维护 isLeaf 冗余字段——新父节点仍标叶子、原子树移空后旧父节点仍标非叶 | 新增 | open |  |
+| P3-CK-crm-010 | P3 | D9/D8 | ck-crm-lead.md | findOpportunityBoardData 商机硬编码 limit 200 静默截断 + 双查询均无 orgId 过滤 | 新增 | open |  |
+| P3-CK-crm-011 | P3 | D6 | ck-crm-lead.md | loadConvLogs 期间上界 off-by-one——le(periodEnd+1day 00:00) 把次日零点整的流转计入本期（跨期毫秒级双计） | 新增 | open |  |
+| P3-CK-crm-012 | P3 | D10 | ck-crm-lead.md | AssignmentRule conditionValue 坏 JSON 时异常冒泡——一条配置损坏阻塞此后全部线索创建（auto-assign 默认开启） | 新增 | open |  |
+| P3-CK-crm-013 | P3 | D6 | ck-crm-lead.md | computeDaysInStage 忽略仍停留中的线索——avgDaysInStage 只统计已离开阶段的记录，在停 lead 的「分析期末截断」时长缺失，停留均值系统性偏低 | 新增 | open |  |
+| P3-CK-crm-014 | P3 | D4，同型 cron 键漂移家族 | ck-crm-lead.md | FunnelAggregationJob 内外层 cron 键不一致——启用需同时配 3 个键，job.yaml description 声明的门控键与 trigger 实际消费键不同 | 新增 | open |  |
+| P3-CK-crm-015 | P3 | D2/D4/D7 | ck-crm-lead.md | FunnelAggregationJob 顶层失败仅 LOG.error 无告警通道 + retention-period-months 死配置 + job 直调路径 refreshFunnel 无事务原子性 | 新增 | open |  |
+| P3-CK-crm-016 | P3 | D5 | ck-crm-lead.md | assignLead/reassignLead 无终态守卫 + reassignLead 三 ID 无存在性校验 | 新增 | open |  |
+| P3-CK-crm-017 | P3 | D1 | ck-crm-lead.md | getCreatedOpportunity 只读查询标注 @BizMutation——查询走写事务路径 | 新增 | open |  |
+| P3-CK-crm-018 | P3 | D10/D9 | ck-crm-lead.md | countCompletedEvents leadId=null 退化为全系统事件计数 + findAllByQuery().size() 计数模式 | 新增 | open |  |
+| P3-CK-crm-019 | P3 | D10/D5 | ck-crm-lead.md | 查重「默认仅提示」实际零提示——checkAndNotify 返回的候选列表被调用方丢弃，无日志无事件 | 新增 | open |  |
+| P1-CK-crm2-001 | P1 | D6 | ck-crm-cpq-forecast.md | countConsecutiveOverdueSteps 前向扫描把已按期完成的步骤计为逾期——按期推进到第 3 步以后的序列进度系统性误报逾期并派发提醒 | 新增 | open |  |
+| P1-CK-crm2-002 | P1 | D6/D5 | ck-crm-cpq-forecast.md | PriceRuleEngine 完全忽略 productCategory/customerCategory 维度——类别限定规则退化为全局规则，对所有产品/客户错误匹配定价 | 新增 | open |  |
+| P2-CK-crm2-003 | P2 | D6/D8，关联 P1-CK-crm-001/002 | ck-crm-cpq-forecast.md | 预测准确率局部实现——实际关闭段按 expectedCloseDate 代理口径而非转化时间、closePeriod 不做期末终刷、team/territory/company 维度准确率行永不生成 | 新增 | open |  |
+| P2-CK-crm2-004 | P2 | D4/D6 | ck-crm-cpq-forecast.md | ForecastRecalcJob 每次运行只重算一个 OPEN 期间（setLimit(1) 无排序）——设计要求「重算所有 OPEN 期间」，月度+季度并行期间下部分期间永不被刷新 | 新增 | open |  |
+| P2-CK-crm2-005 | P2 | D5/D8 | ck-crm-cpq-forecast.md | advanceStep 不校验事件与进度的线索归属——任一其他线索的已完成事件可推进本线索序列步骤 | 新增 | open |  |
+| P2-CK-crm2-006 | P2 | D5/D8 | ck-crm-cpq-forecast.md | generateQuote 无 lead 类型/状态守卫且无条件覆盖弱指针——可作用于任意状态线索并破坏原 lead 的 CRM_LEAD 反查指针；raw dao 更新绕过 Lead BizModel 更新钩子 | 新增 | open |  |
+| P2-CK-crm2-007 | P2 | D3/D4/D8 | ck-crm-cpq-forecast.md | 营销活动状态机与 ROI 计算零实现——ORM 无 status/campaignType/revenue 列、无任何迁移 mutation、无 endDate 自动结束 job、无 ROI 公式（设计-实现分歧登记不裁决） | 新增 | open |  |
+| P2-CK-crm2-008 | P2 | D4/D8 | ck-crm-cpq-forecast.md | 序列自动分配流程未接线——auto-assign-on-qualify 死配置（默认 true 零消费）+ assignSequence 无匹配时抛错与设计「不分配序列」语义相悖 | 新增 | open |  |
+| P2-CK-crm2-009 | P2 | D8，同型 orgId 隔离族 | ck-crm-cpq-forecast.md | 切片全部聚合/规则加载查询无 orgId 过滤——跨组织数据混入预测、序列分配、CPQ 定价与三张报表 | 新增 | open |  |
+| P2-CK-crm2-010 | P2 | D7 | ck-crm-cpq-forecast.md | LeadSequenceProgress 无 (leadId, status) 唯一键——并发 assign/switch 产生双活跃进度行；Forecast 缺设计声明的 period×维度 UK（并发重复面本体复用 P2-MA4-013(a)） | 新增 | open |  |
+| P2-CK-crm2-011 | P2 | D2/D7/D4，同型 P3-CK-crm-015 族 | ck-crm-cpq-forecast.md | ForecastRecalcJob 直调 biz 无事务包装（清旧+重建非原子）+ 顶层失败仅 LOG.error 无告警通道 | 新增 | open |  |
+| P2-CK-crm2-012 | P2 | D5/D3，同型 P1-CK-pur-003/P2-CK-crm-007 族 | ck-crm-cpq-forecast.md | 切片实体 CRUD update 无已审守卫——ForecastPeriod 状态/期间可经 update_ 直改绕过 closePeriod/freeze 语义 | 同型 P1-CK-pur-003 族 | open |  |
+| P3-CK-crm2-013 | P3 | D6 | ck-crm-cpq-forecast.md | ownerTeam putIfAbsent 首见优先 + loadOpportunities 无排序——owner 商机跨团队时团队归属不确定，团队 rollup 口径漂移 | 新增 | open |  |
+| P3-CK-crm2-014 | P3 | D8 | ck-crm-cpq-forecast.md | 声明字段/死配置族——Forecast.currencyId/expectedClosedRevenue、Accuracy.calculatedBy、Period.isCurrent、Sequence.isDefault、Step.isMandatory 永不写入/消费；3 个 CPQ/序列 config 键零消费 | 新增 | open |  |
+| P3-CK-crm2-015 | P3 | D4，同型 cron 键漂移家族 | ck-crm-cpq-forecast.md | forecast-recalc + sequence-overdue 两个 job.yaml 内外层 cron 键不一致——启用需同时配 3 键，description 声明的门控键与 trigger 实际消费键不同 | 新增 | open |  |
+| P3-CK-crm2-016 | P3 | D9 | ck-crm-cpq-forecast.md | clearPeriodForecasts 逐 forecast 查行删 N+1 + loadActivePriceRules 全表 active 规则加载后内存过滤 | 新增 | open |  |
+| P3-CK-crm2-017 | P3 | D10，同型 P3-CK-crm-012 族 | ck-crm-cpq-forecast.md | 坏配置冒泡——SequenceAssignmentEngine 坏 JSON 与 ProductConfigRuleEngine 坏表达式无隔离，单条损坏配置阻塞整个 assign/报价生成操作 | 新增 | open |  |
+| P3-CK-crm2-018 | P3 | D6 | ck-crm-cpq-forecast.md | getSequencePerformance 度量语义漂移——stepDropOffRate 实为序列级跳过率（非设计步骤级流失率）；avgCompletionDays 整天截断 | 新增 | open |  |
+| P3-CK-crm2-019 | P3 | D5 | ck-crm-cpq-forecast.md | 序列 mutation 无 lead 终态守卫 + 空步骤序列可分配但永不可完成 + switchSequence 错误码语义漂移 + loadDefaultRule 无排序任取 | 新增 | open |  |
+| P3-CK-crm2-020 | P3 | D6 | ck-crm-cpq-forecast.md | quotation code 毫秒时间戳并发碰撞 + currencyId 缺失误用 ERR_CPQ_NO_PRICE_MATCHED 错误码 | 新增 | open |  |
+| P1-CK-cs-001 | P1 | D6/D8 | ck-cs.md | matchAndAttachSla 权益级 SLA 覆盖被策略匹配无条件覆写 + deadline 与 slaPolicyId 来源错配 + 无 hours/days 策略 NPE | 新增 | open |  |
+| P1-CK-cs-002 | P1 | D6 | ck-cs.md | CSAT/NPS 聚合分母包含未响应调查（评分 null 按 0 填充）——看板与报表双站点均分系统性偏低，E2E 数值断言无法捕获 | 新增 | open |  |
+| P1-CK-cs-003 | P1 | D8/D6 | ck-cs.md | 目录建单（createFromCatalog）永不计算 SLA deadline——目录工单全链路无 SLA 计时/超时升级/违约统计；权益扣减在特定配置下双计；编号绕过 TK 月序列且毫秒碰撞 | 新增 | open |  |
+| P2-CK-cs-004 | P2 | D3/D8 | ck-cs.md | 重开（reopen）后 SLA 升级链断裂——isSlaCompleted 不重置，超时扫描把重开工单永久排除 | 新增 | open |  |
+| P2-CK-cs-005 | P2 | D5 | ck-cs.md | matchAndAttachSla 手动 mutation 无幂等守卫——重复调用重复匹配并重复扣减权益 | 新增 | open |  |
+| P2-CK-cs-006 | P2 | D4/D2 | ck-cs.md | cs.entitlement-expiry / cs.fulfillment-approval-request 通知模板种子缺失——生产种子下权益到期提醒与履行审批请求 notify 全部静默丢弃 | 新增 | open |  |
+| P2-CK-cs-007 | P2 | D2/D4 | ck-cs.md | CSAT 提醒 job 无去重无终态——「一次提醒」「7 天后不再提醒」双违背 + 同一调查 REMINDER/EXPIRED 双发 + 扫描集合无界 | 新增 | open |  |
+| P2-CK-cs-008 | P2 | D7/D8 | ck-cs.md | ErpCsSurvey 无 DB 唯一键 + reopen 清理 limit(1)——并发/重复调查时误发问卷且清理不全 | 新增 | open |  |
+| P2-CK-cs-009 | P2 | D3/D6 | ck-cs.md | 履行链 UPDATE_STATUS 直改 setStatus 绕过 resolve/close 副作用与守卫——无 duration/isSlaCompleted/endDateTime/survey，close 超时原因守卫被旁路 | 新增 | open |  |
+| P2-CK-cs-010 | P2 | D5/D3 | ck-cs.md | 重新分派路径缺失——assign 仅 NEW 守卫，ASSIGNED 态改派无 mutation 载体；assignedToId 无存在性校验 | 新增 | open |  |
+| P2-CK-cs-011 | P2 | D8/D9，同型 orgId 隔离族 | ck-cs.md | cs 站点 orgId 过滤缺失 + 聚合查询无界全量加载 | 新增 | open |  |
+| P2-CK-cs-012 | P2 | D5，同型 P1-CK-pur-003 族 | ck-cs.md | CRUD update 无已审守卫——ticket status/deadline/isSlaCompleted、survey respondedAt/score、timer session status、entitlement usedTickets 等可经 update_ 直改 | 同型 P1-CK-pur-003 族 | open |  |
+| P2-CK-cs-013 | P2 | D6 | ck-cs.md | SLA 聚合口径三处污染——deadline null → isSlaCompleted=true 计入达标分子；null → breached 桶；报表 totalTickets 不过滤 CLOSED | 新增 | open |  |
+| P2-CK-cs-014 | P2 | D4，同型 cron 键漂移家族 | ck-cs.md | 6 个 cs job 内外层 cron 键不一致——启用需同时配 3 个键，description 声明的门控键与 trigger 实际消费键不同 | 新增 | open |  |
+| P3-CK-cs-015 | P3 | D5 | ck-cs.md | close 超时原因守卫被 remark 复用稀释——resolve 的 resolution 文本即可满足「注明超时原因」 | 新增 | open |  |
+| P3-CK-cs-016 | P3 | D10 | ck-cs.md | CsatReminderJob 通知上下文 customerName 错填 ticket.getSubject()——提醒通知渲染数据错位 | 新增 | open |  |
+| P3-CK-cs-017 | P3 | D4/D9 | ck-cs.md | 质量升级重试 PENDING 行扫描窗饿死——updateTime desc + limit 200 + Java 前缀过滤，老 PENDING 行被新成功行永久挤出 | 新增 | open |  |
+| P3-CK-cs-018 | P3 | D5 | ck-cs.md | 计时器 pause/resume/stop 无属主校验——任意登录用户可操作他人会话 | 新增 | open |  |
+| P3-CK-cs-019 | P3 | D6 | ck-cs.md | {agent_name} 系统变量填充 userId 而非 displayName——预设应答渲染口径与 owner doc 漂移 | 新增 | open |  |
+| P3-CK-cs-020 | P3 | D5/D6 | ck-cs.md | submitSurvey 全空评分仍标记 COMPLETED + 调查链接有效期（30 天/expire-days）不校验 | 新增 | open |  |
+| P3-CK-cs-021 | P3 | D10 | ck-cs.md | SurveyTokenGenerator 令牌前缀误用类名字面量——"ErpCsConstants-" 前缀无业务语义且长度贴边 | 新增 | open |  |
+| P3-CK-cs-022 | P3 | D1/D4 | ck-cs.md | findSlaWarnings 在 @BizQuery 内派发通知副作用且无 warningSentAt 去重 | 新增 | open |  |
+| P1-CK-ct-001 | P1 | D6/D8 | ck-contract.md | PERIOD_END runAccrual 非幂等——重复运行把期间发票全额重复累加进返利基数并重复计提 | 新增 | open |  |
+| P1-CK-ct-002 | P1 | D8 | ck-contract.md | 返利贷项发票被后续 runAccrual 当作负数发票重复计入——已结算返利反噬累计基数（双重扣减） | 新增 | open |  |
+| P1-CK-ct-003 | P1 | D6 | ck-contract.md | tier 区间上界排他 vs 设计「截止数量/金额（含）」——边界命中落空：返利整档归零、量折扣静默回退原价 | 新增 | open |  |
+| P1-CK-ct-004 | P1 | D10/D5 | ck-contract.md | 发票生成路径对 nullable 合同数据无守卫——独立协议结算/无物料合同行触发时撞 NOT NULL 列裸崩 | 新增 | open |  |
+| P2-CK-ct-005 | P2 | D3 | ck-contract.md | approveTermination 无合同状态再守卫——PENDING 期间合同经 amend/expire 漂移后，法务批准可把任意状态（含 EXPIRED 终态）改成 TERMINATED | 新增 | open |  |
+| P2-CK-ct-006 | P2 | D3 | ck-contract.md | rejectAmend 无「amend 来源」判别——全新 DRAFT 合同可直接一键 ACTIVE，绕过审批链/签署/法务全部门控 | 新增 | open |  |
+| P2-CK-ct-007 | P2 | D3/D5 | ck-contract.md | 手工 expire 无 endDate 到达守卫——未到期合同可提前 EXPIRED，成为绕过 terminate 法务门控的捷径 | 新增 | open |  |
+| P2-CK-ct-008 | P2 | D2/D4 | ck-contract.md | doc-auto-purge 批量销毁路径必死——job 上下文无用户，purgeOverdueDocuments 逐条撞 admin 角色守卫全部隔离跳过 | 新增 | open |  |
+| P2-CK-ct-009 | P2 | D7/D8 | ck-contract.md | webhook eventId 幂等只记最后一个且复用 remark 列——旧事件重放穿透 + completed 重放 500 | 新增 | open |  |
+| P2-CK-ct-010 | P2 | D5 | ck-contract.md | RebateTier 零边界/零重叠校验（裸 stub）——负返利率、>100% 返利、倒挂带、重叠带全部静默入账；协议日期倒序无校验 | 新增 | open |  |
+| P2-CK-ct-011 | P2 | D9 | ck-contract.md | 查询面三处全量加载 + N+1——triggerDuePlans 全表扫后 Java 过滤；PROGRESSIVE 计提 O(N²) 重载；搜索/到期查询无界 | 新增 | open |  |
+| P2-CK-ct-012 | P2 | D8，同型 orgId 隔离族 | ck-contract.md | 计提明细/签章请求 orgId 不透传 + 返利发票聚合无 orgId 过滤 + orgId=null 削弱发票 UK 并发兜底 | 新增 | open |  |
+| P2-CK-ct-013 | P2 | D5/D3，同型 P1-CK-pur-003 族 | ck-contract.md | CRUD update 无已审守卫——全实体裸面：合同终态复活、审批记录直改 APPROVED、计提 isSettled/金额直改、协议 status 直改 | 同型 P1-CK-pur-003 族 | open |  |
+| P2-CK-ct-014 | P2 | D4，同型 cron 键漂移家族 | ck-contract.md | erp-ct-approval-timeout job 双键漂移——启用需配外层 cron-expr + enabled + 内层 bean-cron 三键；另 1 死配置常量 | 新增 | open |  |
+| P2-CK-ct-015 | P2 | D4/D2 | ck-contract.md | 到期分级提醒与审批超时升级无去重载体——同档窗口内每日重复派发 | 新增 | open |  |
+| P2-CK-ct-016 | P2 | D6/D8 | ck-contract.md | 返利链多币种零折算——exchangeRate 硬编码 ONE，源币种金额直接混合累加，owner doc 业务规则 3 未实现 | 新增 | open |  |
+| P2-CK-ct-017 | P2 | D6 | ck-contract.md | runAccrual 期间上界不钳制 agreement.endDate——协议期外发票计入本期，连续协议同一发票双计提 | 新增 | open |  |
+| P3-CK-ct-018 | P3 | D1 代码质量 | ck-contract.md | BizModel 层大块死代码复制——R6.7 Processor 迁移后遗留双份实现，漂移风险 | 新增 | open |  |
+| P3-CK-ct-019 | P3 | D5 | ck-contract.md | not-found 复用错误码族——实体不存在抛「非法迁移/已开票/未激活」语义错误码 | 新增 | open |  |
+| P3-CK-ct-020 | P3 | D5/D7 | ck-contract.md | generateInvoicePlansByTerm 幂等查重 check-then-insert 无 UK 兜底 + amount 无非负校验 | 新增 | open |  |
+| P3-CK-ct-021 | P3 | D10/D8 | ck-contract.md | settlement 空集/负净额边界——0 额贷项照开、负 total 生成正向「贷项」、悬挂 agreement 无发票却 POSTED | 新增 | open |  |
+| P3-CK-ct-022 | P3 | D5 安全 | ck-contract.md | webhook HMAC 密钥硬编码仓库常量且不可配置——签章链（可触发合同 signVersion 生效）鉴别基础弱 | 新增 | open |  |
+| P3-CK-ct-023 | P3 | D4/D9 | ck-contract.md | approval-timeout 扫描窗无排序饿死——SCAN_LIMIT 200 无 addOrderField，超量 PENDING 时子集不确定 | 新增 | open |  |
+| P3-CK-ct-024 | P3 | D4 | ck-contract.md | 5 个死配置键——rebate-enabled/rebate-auto-settle（owner doc 承诺默认 true 自动结算）/rebate-accrual-method/settlement-mode/progressive-retro-topup 零消费 | 新增 | open |  |
+| P1-CK-b2b-001 | P1 | D8，跨 D6 | ck-b2b.md | AsnLine.materialId 全链零 writer——webhook 入站把代码映射结果写入 remark 而非 materialId：逐行物料匹配与超量校验对 webhook 路径为死代码 + createReceiveFromAsn 对 webhook 路径必抛守卫错（自动收货链末端断裂），集成测试经直 seed 遮蔽 | 新增 | open |  |
+| P2-CK-b2b-002 | P2 | D2 | ck-b2b.md | 解析失败错误路径的 EdiDoc 防重键塌缩为 (formatId, ASN_INBOUND, NULL)——同格式第二次解析失败被误判 ALREADY_PROCESSED：真实解析错误被掩蔽 + 后续失败报文 rawPayload 审计永久丢失 | 新增 | open |  |
+| P2-CK-b2b-003 | P2 | D8，orgId 隔离族写侧形态 | ck-b2b.md | EdiDoc/Asn/EdiLog 全链 orgId 零 writer——R1.28 webhook 并发幂等的 UK 兜底因 NULL 不去重而失效 + 24h 上线监控 org 锚点与 Doc orgId 永不相交（有 orgId 的伙伴监控恒盲区） | 新增 | open |  |
+| P2-CK-b2b-004 | P2 | D4 | ck-b2b.md | `erp-b2b.enabled` 主开关定义后全域零消费——owner doc 以「config-gated OFF 默认」作为 EDI 出站自动化整体 Deferred 的首要论据，代码层不存在该门 | 新增 | open |  |
+| P2-CK-b2b-005 | P2 | D3 | ck-b2b.md | retry 无方向守卫——入站 ERROR Doc 经 retry 进入 TO_SEND（出站生命周期），state machine 提供的 retryInboundTargetStatus() 零调用 | 新增 | open |  |
+| P2-CK-b2b-006 | P2 | D5 | ck-b2b.md | 入站数量零边界校验——负数/零/非数值数量全程穿透：匹配不设防 → 收货草稿可落负数量行（任务点名「负数量 ASN 行」核查确认缺失） | 新增 | open |  |
+| P2-CK-b2b-007 | P2 | D3，跨 D6 | ck-b2b.md | ASN 部分收货（1:N 入库）未实现——首次建库即终态 + 行级已收计数器零载体 + partial-receipt-enabled config 零消费（plan 勾选与实现不符） | 新增 | open |  |
+| P2-CK-b2b-008 | P2 | D6，跨 D3 | ck-b2b.md | matchPurchaseOrder 数量校验粒度缺陷——同物料多 ASN 行不聚合剩余量 + 超额仅写 remark 文本「blockingLevel=WARN」而无一实体落 WARN | 同型 P1-CK-pur-003 族 | open |  |
+| P2-CK-b2b-009 | P2 | D5，同型 P1-CK-pur-003 族 | ck-b2b.md | CRUD update 无已审守卫——EdiDoc state/retryCount/error、Asn status、PartnerProfile status 可经 update_ 直改，9 个 stub BizModel 无任何守卫 | 新增 | open |  |
+| P3-CK-b2b-010 | P3 | D1 | ck-b2b.md | `LocalDateTime.now()` 直读系统时钟——CoreMetrics 时间可控约定违例（checker R7 盲区变体，冻结钟测试失效点） | 新增 | open |  |
+| P3-CK-b2b-011 | P3 | D5 | ck-b2b.md | action-auth 注册面不一致——createOutbound/createInbound/promoteToTesting/promoteToCertified 4 个 mutation 无 FNPT 注册（同 BizModel 兄弟 mutation 均注册） | 新增 | open |  |
+| P3-CK-b2b-012 | P3 | D10 | ck-b2b.md | not-found 误用非法迁移错误码 + markError 日志方向启发式错标入站为出站 | 新增 | open |  |
+| P3-CK-b2b-013 | P3 | D3 | ck-b2b.md | blockingLevel ORM defaultValue="10" 与 dict INFO/WARN/ERROR 不符——CRUD 直存路径落无效字典值 | 新增 | open |  |
+| P3-CK-b2b-014 | P3 | D5 | ck-b2b.md | webhook 不校验伙伴档案状态与生效性——SUSPENDED/TERMINATED 伙伴仍可推送建 ASN；payload 无大小上限（错误码已定义未用） | 新增 | open |  |
+| P3-CK-b2b-015 | P3 | D6 | ck-b2b.md | matchPurchaseOrder 缺日期校验与通知链 + createReceiveFromAsn vendorId 来源与 owner doc 漂移 | 新增 | open |  |
+| P3-CK-b2b-016 | P3 | D9 | ck-b2b.md | createOutbound 仅取首个适用 Provider + parseToAsn 逐行查映射表 N+1 | 新增 | open |  |
 
 ## 阶段状态
 
-- 检查阶段（M0-M8）：进行中——done：M0 全部、M1（md 14）、M2（pur 14/sal 30/inv 21）、M3 财务四切片（19/17/16/21）、M4 制造与资产五切片（21+23+18+27+23）、**M5 全 done**（prj 21/qa 25/mnt 19）、C6.1（hr-org 17）。累计 346 findings（P0×1 / P1×69 / P2×132 / P3×144）。剩余：C6.2-C6.4（hr 考勤薪酬 + crm×2）→ M7（cs/ct/b2b/drp）→ M8（log/aps/notify/common/app）→ C8.3 收官审计 → 修复阶段。
+- 检查阶段（M0-M8）：进行中——done：M0 全部、M1-M2（md/pur/sal/inv）、M3 财务四切片、M4 制造与资产五切片、M5（prj/qa/mnt）、M6（hr×2/crm×2）、C7.1（cs 22）、C7.2（ct 24，P1×4——PERIOD_END 计提非幂等翻倍/贷项发票双重扣减/tier 边界排他漂移）、C7.3（b2b 16，P1×1——AsnLine.materialId webhook 链零 writer；OA-03 修复在位验证 ✓）。累计 473 findings（P0×1 / P1×86 / P2×189 / P3×197）。剩余：C7.4 drp → C8.1（log/aps/notify）→ C8.2（common/app）→ C8.3 收官审计 → 修复阶段。
