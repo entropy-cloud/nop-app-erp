@@ -10,6 +10,8 @@ import type { Page } from '@playwright/test';
  *   (b) 角色域按角色过滤 → 采购员仅见 erp-pur + 授权只读域，不见 fin/sal/ct 等
  *   (c) notify inbox roles="user" → 所有登录用户可见
  *   (d) sys / l10n-cn roles="admin" → role-restricted 不可见
+ *   (e) md 域正向可见性 → 授权业务角色（采购员）见 erp-md TOPM/SUBM（逗号种子修正 Proof，
+ *       plan 2026-08-25-1956-2）
  *
  * 机制：调用 `/r/SiteMapApi__getSiteMap` REST RPC（与 flux 前端同源），server 经
  * `filterAllowedMenu` 按当前用户角色过滤后返回可见菜单树。断言 = 检查 TOPM 资源 ID
@@ -106,6 +108,36 @@ test.describe('E1.2 menu filter: deny-by-default role filtering', () => {
 
     // notify inbox visible (roles="user" always allowed)
     const notifyPresent = Array.from(ids).some((id) => id.includes('notify'));
-    expect(notifyPresent, 'notify TOPM should be visible for 采购员').toBe(true);
+    expect(notifyPresent, 'notify TOPM should be visible for 采购员 (roles="user")').toBe(true);
   });
 });
+
+/**
+ * md 域正向菜单可见性 Proof（plan 2026-08-25-1956-2，permissions-enforcement mission）。
+ *
+ * 7 域 TOPM/SUBM `roles=` 斜杠分隔种子曾使 csv-set 解析器（仅识别逗号）把整串解析为单一无效
+ * roleId → 菜单组种子语义性失效，enforcement ON（%test）下目标业务角色菜单被 deny-by-default
+ * 隐藏（erp-md 全域仅斜杠种子、无 FNPT cascade-up 补救 → 13 业务角色全部不可见主数据菜单）。
+ * 2026-08 逗号修正后，授权业务角色应能**正向**看见 md TOPM + SUBM——本断言使套件对该类
+ * 分隔符缺陷不再不可见（此前套件仅断言负向，斜杠失效不触发任何红）。
+ */
+test.describe('E1.2 menu filter: md-domain positive visibility (roles seed comma-fix proof)', () => {
+  test('(e) 采购员 sees /erp-md TOPM + md SUBM, still denied unauthorized domains', async ({ page }) => {
+    await loginAsRole(page, '采购员');
+    await page.goto('/', { waitUntil: 'domcontentloaded' });
+    await page.waitForTimeout(1500);
+
+    const ids = await getSiteMapIds(page);
+
+    // 正向：采购员 ∈ erp-md TOPM 13 角色种子 → md 菜单组可见（斜杠失效时此断言红）
+    expect(ids.has('erp-md'), 'erp-md TOPM should be VISIBLE for 采购员 (roles seed comma-separated)').toBe(true);
+    // 正向：至少一个 SUBM 菜单资源可见（md-material 物料组，采购员 ∈ 其 13 角色种子）
+    expect(ids.has('md-material'), 'md-material SUBM should be VISIBLE for 采购员').toBe(true);
+
+    // 负向并存：同一角色对未授权域菜单仍不可见（deny-by-default 不因种子修复放宽）
+    expect(ids.has('erp-ct'), 'erp-ct should stay hidden for 采购员 (not in ct roles seed)').toBe(false);
+    expect(ids.has('erp-b2b'), 'erp-b2b should stay hidden for 采购员 (not in b2b roles seed)').toBe(false);
+    expect(ids.has('erp-fin'), 'erp-fin should stay hidden for 采购员').toBe(false);
+  });
+});
+

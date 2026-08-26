@@ -9,7 +9,7 @@
         <!-- 设备维护:maintenance域一级菜单 -->
         <resource id="erp-mnt" displayName="设备维护" i18n-en:displayName="Maintenance"
                   icon="wrench" resourceType="TOPM" orderNo="900"
-                  routePath="/erp-mnt" component="layouts/default/index" roles="维护主管/维护人员">
+                  routePath="/erp-mnt" component="layouts/default/index" roles="维护主管,维护人员">
             <children>
                 <!-- 设备主数据 -->
                 <resource id="mnt-equipment" displayName="设备主数据" i18n-en:displayName="Equipment"
@@ -51,7 +51,7 @@
                 </resource>
                 <!-- 维护工单 -->
                 <resource id="mnt-work" displayName="维护工单" i18n-en:displayName="Work Order"
-                          icon="life-buoy" resourceType="SUBM" orderNo="300" roles="维护主管/维护人员">
+                          icon="life-buoy" resourceType="SUBM" orderNo="300" roles="维护主管,维护人员">
                     <children>
                         <resource id="ErpMntVisit-main" app:useCases="UC-MAIN-03,UC-MAIN-04,UC-MAIN-07,UC-MAIN-09" displayName="维护访问"
                                   i18n-en:displayName="Maintenance Visit" icon="clipboard-check"
@@ -94,7 +94,7 @@
                 </resource>
                 <!-- 备件 -->
                 <resource id="mnt-spare" displayName="备件" i18n-en:displayName="Spare Part"
-                          icon="package-minus" resourceType="SUBM" orderNo="500" roles="维护主管/维护人员">
+                          icon="package-minus" resourceType="SUBM" orderNo="500" roles="维护主管,维护人员">
                     <children>
                         <resource id="ErpMntSparePartUsage-main" app:useCases="UC-MAIN-04" displayName="备件消耗"
                                   i18n-en:displayName="Spare Part Usage" icon="package-minus"

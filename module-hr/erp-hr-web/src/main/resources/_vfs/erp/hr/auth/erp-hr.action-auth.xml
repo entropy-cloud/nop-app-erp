@@ -4,7 +4,7 @@
     <site id="main">
         <resource id="erp-hr" displayName="人力资源管理" i18n-en:displayName="Human Resources"
                   icon="users" resourceType="TOPM" orderNo="1200"
-                  routePath="/erp-hr" component="layouts/default/index" roles="HR 专员/薪酬审批人">
+                  routePath="/erp-hr" component="layouts/default/index" roles="HR 专员,薪酬审批人">
             <children>
                 <resource id="hr-org" displayName="组织管理" i18n-en:displayName="Organization"
                           icon="building-2" resourceType="SUBM" orderNo="100" roles="HR 专员">
@@ -91,7 +91,7 @@
                     </children>
                 </resource>
                 <resource id="hr-salary" displayName="薪酬管理" i18n-en:displayName="Payroll"
-                          icon="dollar-sign" resourceType="SUBM" orderNo="500" roles="HR 专员/薪酬审批人">
+                          icon="dollar-sign" resourceType="SUBM" orderNo="500" roles="HR 专员,薪酬审批人">
                     <children>
                         <resource id="ErpHrSalary-main" app:useCases="UC-HR-04,UC-HR-10"
                                   displayName="薪酬记录" i18n-en:displayName="Salary Record" icon="dollar-sign"
@@ -208,7 +208,7 @@
                     </children>
                 </resource>
                 <resource id="hr-report" displayName="人力资源报表" i18n-en:displayName="HR Reports"
-                          icon="bar-chart-3" resourceType="SUBM" orderNo="800" roles="HR 专员/薪酬审批人">
+                          icon="bar-chart-3" resourceType="SUBM" orderNo="800" roles="HR 专员,薪酬审批人">
                     <children>
                         <resource id="employee-net-balance" app:useCases="UC-HR-04,UC-FIN-16" displayName="员工净余额"
                                   i18n-en:displayName="Employee Net Balance" icon="scale"

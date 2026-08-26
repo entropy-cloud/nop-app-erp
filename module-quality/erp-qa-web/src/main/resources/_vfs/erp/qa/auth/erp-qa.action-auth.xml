@@ -9,11 +9,11 @@
         <!-- 质量管理:quality域一级菜单 -->
         <resource id="erp-qa" displayName="质量管理" i18n-en:displayName="Quality"
                   icon="shield-check" resourceType="TOPM" orderNo="1000"
-                  routePath="/erp-qa" component="layouts/default/index" roles="质检员/质量主管">
+                  routePath="/erp-qa" component="layouts/default/index" roles="质检员,质量主管">
             <children>
                 <!-- 检验执行 -->
                 <resource id="qa-inspection" displayName="检验执行" i18n-en:displayName="Inspection"
-                          icon="clipboard-check" resourceType="SUBM" orderNo="100" roles="质检员/质量主管">
+                          icon="clipboard-check" resourceType="SUBM" orderNo="100" roles="质检员,质量主管">
                     <children>
                         <resource id="ErpQaInspection-main" app:useCases="UC-QA-01,UC-QA-02,UC-QA-03,UC-QA-04,UC-QA-06,UC-QA-08,UC-QA-11" displayName="质检单"
                                   i18n-en:displayName="Inspection" icon="clipboard-check"
@@ -47,7 +47,7 @@
                 </resource>
                 <!-- 不合格品 -->
                 <resource id="qa-ncr" displayName="不合格品" i18n-en:displayName="Non-Conformance"
-                          icon="x-circle" resourceType="SUBM" orderNo="300" roles="质检员/质量主管">
+                          icon="x-circle" resourceType="SUBM" orderNo="300" roles="质检员,质量主管">
                     <children>
                         <resource id="ErpQaNonConformance-main" app:useCases="UC-QA-02,UC-QA-05,UC-QA-09" displayName="不合格品报告"
                                   i18n-en:displayName="Non-Conformance Report" icon="x-circle"
