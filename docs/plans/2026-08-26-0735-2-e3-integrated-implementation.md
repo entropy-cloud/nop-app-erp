@@ -63,24 +63,56 @@
 
 ### Phase 1 — 前置调研与变更清单定稿（Explore | Decision，零代码，解锁 Phase 4/6/7）
 
-Status: planned
+Status: completed
 Targets: `docs/design/finance/document-driven-ap-automation.md`、`docs/design/ai-native-interface.md`、`docs/design/assets/audit-trail-and-custom-fieldsets.md`、`docs/design/inventory/audit-snapshot-cycle-count.md`（调研结论注记落点）
 Skill: none（调研/裁决；平台文档阅读按需）
 
 - Item Types: `Decision | Explore`
 - Prereqs: 无
 
-- [ ] Explore: E3.5 OCR 选型调研——本地 OCR 引擎候选（Tesseract/tess4j 等）可用性、Java 集成、中文发票要素支持、License；`nop-file` 能力核实（上传/存储/引用方式，读 `../nop-entropy` 源码 + docs-for-ai）。结论 + 选型裁决落 owner doc「落地策略」表。
-- [ ] Explore: E3.6 GraphQL schema AI 工具发现可用性调研——introspection 完整性、action 类型/描述元数据、schema 规模、REST+GraphQL 双通道一致性；`business-module-metadata.md` 雏形关系。结论落 owner doc（含「最小落地集」清单定稿）。
-- [ ] Explore: E3.3 平台 ext 字段/JsonOrmComponent 用法核实——`../nop-entropy/docs-for-ai/02-core-guides/orm-model-design.md` + 平台既有用例；确认「型号级字段集」承载形态（orm.xml ext 字段声明 vs meta 层声明，零 ORM 首选）。结论落 owner doc。
-- [ ] Decision: E3.8 审计承载裁决——复用会计日志同型扩展 vs 独立实体 `ErpAstAssetActionLog`（授权已备）。记录选择、替代方案、残留风险（触发实物面全生命周期视角的事件类型覆盖对比）。
-- [ ] Decision: E3.2 实现路径确认——派生视图零 ORM（预期默认）vs 物化表（触发条件未满足则显式记录不启用）。
-- [ ] Decision: ORM 变更清单定稿（如触发）——逐项列出实体/字段/授权依据（§8.1 对应行），提交 dual-agent-approval（双独立子 agent 批准）并记录；零 ORM 结论亦显式记录。
+- [x] Explore: E3.5 OCR 选型调研——本地 OCR 引擎候选（Tesseract/tess4j 等）可用性、Java 集成、中文发票要素支持、License；`nop-file` 能力核实（上传/存储/引用方式，读 `../nop-entropy` 源码 + docs-for-ai）。结论 + 选型裁决落 owner doc「落地策略」表。
+      → 已完成（2026-08-26）：nop-file 全链可用（nopFileStore/NopFileRecord//f/upload//f/download，erp-fin-service 已依赖 nop-biz-file-core）；tesseract 本机不可用；选定 `IErpFinOcrEngine` SPI + 默认纯 Java 文本抽取引擎（PDFBox，零新增依赖——已随 nop-report-pdf 在依赖树）；扫描件低置信挂人工门；tess4j 适配器为可插拔项（触发=环境具备二进制）。结论落 `document-driven-ap-automation.md` §前置调研结论。
+- [x] Explore: E3.6 GraphQL schema AI 工具发现可用性调研——introspection 完整性、action 类型/描述元数据、schema 规模、REST+GraphQL 双通道一致性；`business-module-metadata.md` 雏形关系。结论落 owner doc（含「最小落地集」清单定稿）。
+      → 已完成（2026-08-26）：introspection 平台支持但默认关闭（应用显式 false）；804 应用 action 零 @Description（主要缺口）；双通道共享 IGraphQLEngine；平台 GraphQLToolProvider 已存在（登记不重建）；最小落地集 6 项冻结（见 `ai-native-interface.md` §前置调研结论）。actorType 裁决不落地（触发条件登记）。
+- [x] Explore: E3.3 平台 ext 字段/JsonOrmComponent 用法核实——`../nop-entropy/docs-for-ai/02-core-guides/orm-model-design.md` + 平台既有用例；确认「型号级字段集」承载形态（orm.xml ext 字段声明 vs meta 层声明，零 ORM 首选）。结论落 owner doc。
+      → 已完成（2026-08-26）：stdDomain=json 自动生成 JsonOrmComponent（规范在 model-first-development.md，用例 NopJobSchedule.jobParams）；meta 层无持久化 ext 机制 → 字段集+实例值持久化必须 ORM；基线更正：`ErpAstAssetModel` 实体不存在（原「已就位」表述失实，活仓核实 18 实体无型号实体）。结论落 `audit-trail-and-custom-fieldsets.md` §前置调研结论。
+- [x] Decision: E3.8 审计承载裁决——复用会计日志同型扩展 vs 独立实体 `ErpAstAssetActionLog`（授权已备）。记录选择、替代方案、残留风险（触发实物面全生命周期视角的事件类型覆盖对比）。
+      → 裁决：**独立实体 `ErpAstAssetActionLog`**。理由：会计日志建模财务面（过账事件），资产生命周期事件（suspend/resume/移动/维护等）多数无凭证关联，复用需为非财务事件在 finance 域扩类型（语义错位 + 越授权范围）。事件类型对齐 owner doc §1 清单。残留风险：审计插入行会进入既有快照测试 output/tables → 受影响测试需重录基线（Phase 4 处理）。
+- [x] Decision: E3.2 实现路径确认——派生视图零 ORM（预期默认）vs 物化表（触发条件未满足则显式记录不启用）。
+      → 裁决：**派生视图零 ORM**（对不可变 StockLedger 按 businessDate <= asOfDate 聚合；等价期初+流水汇总）。物化表触发条件未满足，不启用（§8.1 E3.2 行未使用）。对账挂点：deferred 作业 `erp-inv-stock-check`（job-scheduling.md §3.3 REGISTERED 待实现）落地为校验项载体（nop-batch 范式，默认关闭）。结论落 `audit-snapshot-cycle-count.md` §实现路径确认。
+- [x] Decision: ORM 变更清单定稿（如触发）——逐项列出实体/字段/授权依据（§8.1 对应行），提交 dual-agent-approval（双独立子 agent 批准）并记录；零 ORM 结论亦显式记录。
+      → 清单见下「ORM 变更清单与 dual-agent-approval 记录」；E3.2 零 ORM、E3.6 actorType 不落地已显式记录。
 
 Exit Criteria:
 
-- [ ] 四份 owner doc 落地策略表更新（调研结论 + 裁决记录）；ORM 变更清单（或零 ORM 结论）经 dual-agent-approval 记录在案——Phase 4/6/7 依赖此结论解锁。
-- [ ] E3.6「最小落地集」清单随调研结论落 owner doc 后**即为 Phase 7 的冻结验收基准**（Phase 7 Exit 按该清单逐项核对，不得执行期自行增删）。
+- [x] 四份 owner doc 落地策略表更新（调研结论 + 裁决记录）；ORM 变更清单（或零 ORM 结论）经 dual-agent-approval 记录在案——Phase 4/6/7 依赖此结论解锁。
+- [x] E3.6「最小落地集」清单随调研结论落 owner doc 后**即为 Phase 7 的冻结验收基准**（Phase 7 Exit 按该清单逐项核对，不得执行期自行增删）。
+
+### ORM 变更清单与 dual-agent-approval 记录（Phase 1 产出）
+
+**清单**（全部为加性变更；不手改生成代码，模型变更后 `mvn clean install -DskipTests` 增量重生成；Quarkus dev ddl-auto=update 自动加列/建表，无迁移脚本；回滚 = git revert + 重生成）：
+
+| # | 域 | 变更 | 授权依据 |
+|---|----|------|---------|
+| 0 | assets+finance | 两域 `<domains>` 各补本地 `json-4000` 预定义域（`<domain name="json-4000" precision="4000" stdDomain="json" stdSqlType="VARCHAR"/>`，对齐 nop-job.orm.xml 模式；活仓核实两域现无该声明） | 随 #2/#3/#4/#5（json 列声明前置） |
+| 1 | assets | 新增实体 `ErpAstAssetModel`（资产型号：id(BIGINT/seq-default)/code(UK)/name/categoryId(BIGINT stdDataType=string，FK→ErpAstAssetCategory，nullable)/extFieldDefs(json-4000)/remark + 标准审计列） | 保护区域 `model/*.orm.xml` auto + dual-agent-approval（无 §8.1 行；owner doc `audit-trail-and-custom-fieldsets.md` §2 设计以型号实体为承载，本计划 Phase 1 基线更正后裁决补建） |
+| 2 | assets | `ErpAstAsset` 加列 `modelId`（**BIGINT stdDataType=string**（Java String），FK→ErpAstAssetModel，nullable，索引；对齐 id-string 迁移后全仓 FK 约定）+ `extFieldValues`（json-4000，nullable）。**已知影响**：既有实体加列会扰动 assets 域既有快照测试 output/tables 基线（同 E3.8 审计行影响），Phase 4 统一重录 | 同上（E3.3 实例值承载） |
+| 3 | assets | 新增实体 `ErpAstAssetActionLog`（资产操作审计：id/assetId(BIGINT string，索引)/eventType(dict erp-ast/audit-event-type)/fromStatus/toStatus/fromDepartmentId/toDepartmentId/fromLocationId/toLocationId/fromStaffId/toStaffId(BIGINT string)/refEntityName(.String 50)/refEntityId(BIGINT string)/summary(String 1000) + 标准审计列；索引(assetId,createTime)）+ 字典 `erp-ast/audit-event-type`（CREATE/UPDATE/STATUS_CHANGE/TRANSFER/MAINTENANCE/VALUATION/DISPOSAL） | §8.1 E3.8 授权行（独立审计实体）+ dual-agent-approval |
+| 4 | finance | 新增实体 `ErpFinApDocument`（AP 摄取文档：id/orgId(BIGINT string)/fileName(String 200)/fileExt(String 20)/mimeType(String 100)/fileLength(bigint)/fileId(**VARCHAR 200 stdDomain=file**，nop-file 引用，对齐 attachmentFileId 先例)/sourceType(dict)/status(dict)/docType(dict)/partnerId(BIGINT string，供应商匹配→ErpMdPartner 约定名)/confidence(DECIMAL 5,4)/parseResult(json-4000)/invoiceId(BIGINT string，草稿回链，普通列+索引，不声明跨模块 FK)/errorMsg(String 1000)/retryCount(int 默认 0) + 标准审计列）+ 字典 `erp-fin/ap-doc-source-type`（UPLOAD；EMAIL 预留）、`erp-fin/ap-doc-status`（RECEIVED/PARSED/CLASSIFIED/DRAFTED/MANUAL_REVIEW/FAILED/ARCHIVED）、`erp-fin/ap-doc-type`（VAT_INVOICE/GENERAL_INVOICE/RECEIPT/OTHER） | §8.1 E3.5 授权行（文档引用/解析字段）+ dual-agent-approval |
+| 5 | finance | 新增实体 `ErpFinApDocumentLog`（处理轨迹：id/documentId(BIGINT string，索引，同模块 FK)/step(dict erp-fin/ap-doc-log-step: RECEIVE/PARSE/CLASSIFY/DRAFT/MANUAL_REVIEW/RETRY/FAIL)/success(Boolean)/detail(String 1000) + 标准审计列） | §8.1 E3.5 授权行（文档处理日志）+ dual-agent-approval |
+| 6 | （不触发）E3.2 | 物化快照表——触发条件未满足，**不启用** | §8.1 E3.2 行未使用（显式记录） |
+| 7 | （不触发）E3.6 | `actorType=AI` 字段——**不落地**（触发条件 = 首个 AI 服务账号投产或差异化护栏需求，见 ai-native-interface.md 前置调研结论） | §8.1 E3.6 行未使用（显式记录） |
+
+> 措辞更正（批准代理 1 finding 8）：计划基线「18 域零 JsonOrmComponent/ext-json 用法」的精确表述 = **零 `stdDomain="json"`/JsonOrmComponent 机制用法**（项目自有 `domain="json*"` 纯 VARCHAR 列存在于 cs/crm/logistics，非本机制）。
+
+**dual-agent-approval 记录**：
+
+- 迭代 1：子代理 1（fresh session）**APPROVE**（2 MINOR：modelId 类型精度、措辞）；子代理 2（fresh session）**REJECT**（1 BLOCKER：modelId 须 BIGINT/stdDataType=string（id-string 全仓 FK 约定 + 多方言兼容）；3 MINOR：json-4000 本地域声明、fileId/invoiceId/partyId 显式类型、快照重录范围含 ErpAstAsset 加列）。清单已按双方要求修订（row 0 新增、类型显式化、快照影响扩记）。
+- 迭代 2（对修订后清单）：子代理 1'（fresh session `ses_fc46ea5e7ffeI3rHuEGtF0q1Pn`）**APPROVE**（迭代 1 BLOCKER + 3 MINOR 全核验解决；2 新 MINOR：`partyId` 应更名 `partnerId`（全仓约定，ErpMdPartner）——已采纳更名；`fileId` 是否带 `tagSet="var"` 由实现期定（先例混合））
+- 迭代 2（对修订后清单）：子代理 2'（fresh session `ses_fc46e91f5ffeVrQBLhR0cuX7IE`）**APPROVE**（迭代 1 五项发现逐一活仓核验解决，无新 BLOCKER/MINOR）
+- **结论：双独立批准达成**（迭代 2 双 APPROVE）。`partyId` 已按 finding 更名为 `partnerId`（本行即更名记录，授权与类型不变）。ORM 清单锁定，Phase 4/6 按此实施。
+
+
 
 ### Phase 2 — E3.1 KPI 度量目录 + E3.1b 行级安全核实（零代码/核实）
 

@@ -60,13 +60,28 @@
 - Twenty 将 Agents/Workflows 作为 CRM 一等公民；ERPClaw 以 AI 助手为主交互界面。
 - **裁决**：nop-app-erp 采用「外挂化但接口友好」——AI 助手作为独立消费者走统一 action 层（不变更业务模型），优先保证 action 元数据完整（工具描述、参数 schema 的可生成性调研归 E3.6 前置；`business-module-metadata.md` 现有 version/businessDependencies/optionalFeatures 模块元数据为雏形）。理由：不破坏 18 域既有架构；AI 界面形态演进快，不宜固化进业务域。
 
+## 前置调研结论（2026-08-26，E3 整体计划 Phase 1）——「最小落地集」冻结
+
+- **introspection 可用性（活仓核验）**：平台自研 GraphQL 引擎支持完整 introspection（`__Schema/__Type/__Field` 等 spec 类型 + 字段/参数/枚举值级 description），经 config `nop.graphql.schema-introspection.enabled` 门控，**默认 false**（应用当前显式关闭）。描述元数据来源：实体字段从 orm/xmeta displayName/description 富覆盖（中文），Java action 从 `@Description` 注解，xbiz 从 displayName，读时经 i18n 解析。另：`nop.debug=true` 时启动即 dump 完整 schema（`/_dump/nop/main/graphql/schema.graphql`），应用已开启——离线发现通道现成。
+- **schema 规模与质量缺口**：应用侧声明操作 804 个（260 @BizQuery + 546 @BizMutation，另有 CRUD 内建），实体类型描述完整，但**应用自定义 action 零 `@Description`**（grep 0 命中）——action 级发现描述是主要缺口。
+- **双通道一致性（静态核实）**：REST 通道 `/r/{bizObj__action}`（GET/POST，`QuarkusGraphQLWebService`）与 GraphQL `/graphql` 经同一 `IGraphQLEngine`（`initRpcContext + executeRpc`）分发——通道一致性由共享引擎保证，行为级验证以 E2E 断言落地。
+- **平台桥登记（平台优先，不重建）**：平台 `nop-ai-tools` 自带 `GraphQLToolProvider`（任意 `bizObj__action` 包装为 AI function tool：description + JSON Schema 输入 + 引擎执行）——平台级 GraphQL→AI 工具桥已存在，应用层不重复实现、不强制启用。
+- **actorType=AI 裁决（不落地）**：最小落地集不含 AI 主动发起的写操作路径；AI 服务账号以独立 userId 进入 `IServiceContext`，既有审计（会计日志/审批记录/保密字段读审计）已记录操作者身份，足以区分调用者。`actorType` 差异化仅在需要按「AI vs 人」差异化护栏策略时有意义——触发条件（重新打开 §8.1 E3.6 授权行）= 首个 AI 服务账号投产或差异化限流/审批策略需求出现。
+- **「最小落地集」清单（Phase 7 冻结验收基准，执行期不得增删）**：
+  1. introspection config-gate 验证：JUnit 证明开启后 IntrospectionQuery 可用且含 description（默认保持关闭）。
+  2. action 描述补全（代表性覆盖）：11 个 `getDashboardKpi` action 补 `@Description`（IBiz 同步）——AI 只读消费面范本；「新增对外 action 应带 @Description」约定登记。
+  3. REST/GraphQL 双通道一致性：E2E 同一 operation（`getDashboardKpi`）经 `/graphql` 与 `/r/` 两通道数值一致断言。
+  4. 护栏：高影响 action 门径复用验证——无权限角色经 `/r/` 通道调用高影响 mutation 被拒（负路径 E2E，复用 permissions 账号池范式）；限流护栏复用 `IRateLimiter` 的接线落点 = E3.5 管道入口（自动化批量面，防 AI/自动化批量误操作），人类用户面默认无限流；审批门对 AI 通道复用既有审批流（AI 无法静默绕过，既有审批测试为证）。
+  5. 审计标识断言落为「调用方身份（userId）落账断言」（actorType 不落地，见上）。
+  6. 平台能力登记：`GraphQLToolProvider` 存在性与复用边界登记（本文档 + `business-module-metadata.md` 雏形关系）。
+
 ## 落地策略（分阶段）
 
 | 阶段 | 内容 | 状态 |
 |------|------|------|
 | 设计 | 本文档（GraphQL 类型定义即 API + REST/GraphQL 双通道 + 护栏 + 门 + 原语化裁决；**否决 MCP**） | ✅ 已完成（本批次） |
-| 前置调研 | GraphQL schema 对 AI 工具发现的可用性（introspection/类型描述完整性）；action 元数据生成可行性 | todo（roadmap E3.6 前置） |
-| 实现 | 全部推迟至调研结论后，随 E3 整体计划实施（plan-first）；ORM 变更（actorType 字段）已获授权（`erp-enhancement-roadmap.md` §8.1） | **暂不编码** |
+| 前置调研 | GraphQL schema 对 AI 工具发现的可用性（introspection/类型描述完整性）；action 元数据生成可行性 | ✅ 已完成（2026-08-26，结论与最小落地集见上节） |
+| 实现 | 最小落地集 6 项随 E3 整体计划实施（`2026-08-26-0735-2` Phase 7，按冻结清单逐项验收）；actorType 字段不落地（触发条件见上） | in progress |
 
 ## 反模式自检表
 

@@ -43,12 +43,18 @@
 
 - 每日对账（既有 §6.3 对账机制）增加「账面余额 = 快照派生值」一致性校验项；期末与 finance 期间关闭联动（`period-close.md`）。
 
+## 实现路径确认（2026-08-26，E3 整体计划 Phase 1）
+
+- **派生视图零 ORM（确认）**：`getInventorySnapshot` = 对不可变 `ErpInvStockLedger`（有符号数量/成本 + `businessDate`）按 `businessDate <= asOfDate` 聚合派生（维度 orgId/warehouseId/locationId/materialId/skuId/batchNo/ownerId），等价于「期初 + 截至时点流水汇总」（流水全史即期初）；物化表触发条件（大库存量 + 查询 P95 超标）未满足，**不启用**（§8.1 E3.2 授权行未使用，保持待触发）。
+- **asOfDate 语义**：对齐 `businessDate`（AP-5）——`businessDate <= asOfDate` 的流水全部计入；时点后流水裁剪。
+- **对账校验项挂点（核实）**：inventory 域当前无已实现的对账 Job——`erp-inv-stock-check`（库存余额对账）在 `docs/architecture/job-scheduling.md` §3.3 登记为 REGISTERED（待实现）、归类 nop-batch 候选。本计划将该 deferred 作业落地为「账面余额（`ErpInvStockBalance`）= 快照派生值（当日流水汇总）」一致性校验项的载体（job.yaml 默认关闭 + `_vfs/nop/batch-task/inv/stock-check.batch.xml` + BizQuery 校验入口，对齐 finance 作业范式），对应 `domain-design-guidelines.md` §8.3「库存余额 vs 流水汇总」对账项。
+
 ## 落地策略（分阶段）
 
 | 阶段 | 内容 | 状态 |
 |------|------|------|
 | 设计 | 本文档（快照语义 + 周期盘点 + 对账整合） | ✅ 已完成（本批次） |
-| 实现（快照查询） | `getInventorySnapshot` BizQuery + 对账校验项 | todo（roadmap E3.2，plan-first；零 ORM 变更） |
+| 实现（快照查询） | `getInventorySnapshot` BizQuery + 对账校验项（含 `erp-inv-stock-check` 作业落地） | in progress（`2026-08-26-0735-2` Phase 3；零 ORM 变更） |
 | 实现（周期盘点） | CycleCountTask 视图/状态机（复用 StockTake 链） | todo（触发条件驱动；ORM 变更已获授权，`erp-enhancement-roadmap.md` §8.1） |
 
 ## 反模式自检表

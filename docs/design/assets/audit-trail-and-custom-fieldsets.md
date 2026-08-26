@@ -43,13 +43,21 @@
 - 对照 Snipe-IT laravel-scim-server：企业身份目录（LDAP/SSO）接入 ERP 用户/员工。
 - **设计仅记录触发条件**：出现企业级身份目录需求时评估（平台安全层 + `docs/architecture/multi-company.md` org 维度配合）；当前不立项。
 
+## 前置调研结论（2026-08-26，E3 整体计划 Phase 1）
+
+- **平台 ext 字段用法核实（活仓核验）**：`stdDomain="json"`（或预定义 domain `json-1000/json-4000`）在 orm.xml 声明后自动生成 `JsonOrmComponent`（实体懒加载组件，GraphQL 序列化为 JSON 值，meta 自动带 `{prop}Component` 属性）——规范文档在 `../nop-entropy/docs-for-ai/02-core-guides/model-first-development.md` §「stdDomain=json 自动生成 JsonOrmComponent」，平台生产级用例 = `NopJobSchedule.jobParams`（`nop-job.orm.xml`）。**meta 层无持久化 ext 机制**（`@BizLoader(autoCreateField)` 只加非持久化计算字段；kv-table 关系型扩展表本身也是 ORM 声明）——「字段集定义 + 实例值持久化」无法零 ORM 落地，E3.3 须 ORM 加性变更（按保护区域 dual-agent-approval 执行，见下）。
+- **基线更正**：计划基线中「承载实体 `ErpAstAssetModel` 已就位」**不准确**——assets 域 18 实体无型号实体（活仓核实；最接近的是 `ErpAstAssetCategory` 类别实体）。本计划按 owner doc §2 设计补建 `ErpAstAssetModel` 型号实体作为字段集声明载体。
+- **E3.3 承载裁决**：`ErpAstAssetModel.extFieldDefs`（json，字段集键声明：`[{key,label,type,required}]`）+ `ErpAstAsset.modelId`（FK）+ `ErpAstAsset.extFieldValues`（json，实例值）；实例保存时按型号声明校验（非法键/类型拒绝，ErrorCode 范式）。替代方案（否决）：① 类别级承载（语义漂移，类别≠型号）；② kv-table 关系型扩展表（ORM 变更更大、超出试点需要）。残留风险：extFieldDefs JSON 结构无 schema 级约束（由 BizModel 校验兜底）。
+- **E3.8 审计承载裁决**：**独立实体 `ErpAstAssetActionLog`**（§8.1 E3.8 授权行）。理由：会计日志建模财务面（过账事件），而资产生命周期事件（suspend/resume/移动/维护/盘点等）多数无凭证关联，复用需在 finance 域为非财务事件扩类型——语义错位。替代方案（否决）：会计日志同型追加业务审计类型（跨域语义污染 + 授权范围不含 finance 侧变更）。事件类型对齐 §1 清单（CREATE/UPDATE/STATUS_CHANGE/MAINTENANCE/VALUATION/DISPOSAL/TRANSFER）。
+- **ORM 变更清单**（已随计划 dual-agent-approval）：assets 域新增 `ErpAstAssetModel`、`ErpAstAssetActionLog` 两实体 + `ErpAstAsset` 加 `modelId`/`extFieldValues` 两列 + `erp-ast/audit-event-type` 字典。
+
 ## 落地策略（分阶段）
 
 | 阶段 | 内容 | 状态 |
 |------|------|------|
 | 设计 | 本文档（审计轨迹 + 字段集 + 身份集成触发条件） | ✅ 已完成（本批次） |
-| 实现（字段集） | 型号级 ext 字段声明 + 管理界面（零 ORM 变更） | todo（roadmap E3.3，plan-first） |
-| 实现（审计轨迹） | `getAssetAuditTrail` + 资产状态/归属变化记录 | todo（roadmap E3.8，独立审计实体 ORM 已授权） |
+| 实现（字段集） | 型号级 ext 字段声明 + 管理界面（`ErpAstAssetModel` 新实体 + json 列，经 dual-agent-approval） | in progress（`2026-08-26-0735-2` Phase 4） |
+| 实现（审计轨迹） | `getAssetAuditTrail` + 资产状态/归属变化记录（独立审计实体） | in progress（`2026-08-26-0735-2` Phase 4） |
 | 身份集成 | SCIM/LDAP | todo（触发条件驱动） |
 
 ## 反模式自检表

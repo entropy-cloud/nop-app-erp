@@ -419,6 +419,29 @@ VoucherBillR（业财回链）
 - ASYNC（可选）：post-commit 派发 `PostingEvent`，域调用方在异步过账成功回调中置位 `posted`；`posted=false` + 兜底扫描保证最终一致。
 - 不强制异步（与"必须异步事件通知"的通用文章主张不同；ERPNext/赤龙亦用 SYNC）。
 
+### 悬挂补写：`VoucherPostedEvent` 契约（F2.1，P1-CK-fin-001）
+
+> 悬挂场景：REQUIRES_NEW 凭证已提交 + 域调用方主事务回滚（乐观锁/SoD 后置守卫等）→ 源单 `posted=false` + 凭证存在 + `ErpFinPostingException` PENDING——重试时**域调用方不在场**，「正常过账成功 → 域置位」的反写约定失效，形成无人承担的回写空档。本节为该空档的补写契约（镜像方向二 `VoucherReversedEvent` 的对偶设计）。
+
+#### `VoucherPostedEvent` 契约
+
+| 字段 | 类型 | 说明 |
+|------|------|------|
+| `voucherId` | String | 已过账凭证 ID |
+| `billHeadCode` | String | 关联的业务单据号（重试通道自异常记录透传） |
+| `businessType` | String | 业务类型（路由回写逻辑用，对应 `ErpFinBusinessType` 枚举名） |
+| `billType` | String | 源单类型（同 businessType，留作域监听器分流） |
+| `traceId` | String | 端到端追踪 ID（见 `posting-log.md`） |
+
+#### 派发通道裁决：仅「调用方不在场」的两重试通道，引擎 `process()` 路径不派发
+
+- **派发点（仅两处）**：`ErpFinDeferredPostingRetryHelper#doRetry`（deferred-posting sweep 批任务）与 `ErpFinPostingExceptionRetryProcessor#retry`（异常工作台手动重试）——两者均在 `post()` 返回非 null（含 F1.1 幂等命中返回既有凭证 id）后构造事件经 `ErpFinPostedListenerRegistry`（镜像 `ErpFinReversalListenerRegistry` 的 IoC collect-beans by-type 聚合）派发给全部 `IErpFinVoucherPostedListener`。
+- **引擎 `process()` 不派发的依据**：①域自治——「正常过账成功 → 域调用方置 `posted=true`」由在场调用方承担，引擎不持源实体（DAG 顶约束）；②原子性——引擎内派发使 `posted=true` 随 REQUIRES_NEW 内层事务**提前提交逃逸主事务回滚**（外层后置失败 → `posted=true` 与未审批回滚的原子性破坏）；③F1.1 幂等收敛已覆盖 SYNC 重审悬挂（幂等命中返回 id → 调用方置位）。
+- **REVERSAL 分支不派发**：红冲重试的反写语义由方向二 `VoucherReversedEvent` 独立通道承载。
+- **监听者职责**：按 `(businessType, billHeadCode)` 定位源单（各域 findByCode / 后缀解码，如 inv 的 `-PPV`、mfg 的 `-SI/-SR/-SF/-MI/-PV` strip），回写 `posted=true + postedAt/postedBy`；已 true 跳过（防 version 无谓递增）；定位 miss no-op（分期部署优雅降级）。
+- **失败隔离（镜像方向二裁决 3）**：派发循环对每个监听者 try/catch 包裹——单个失败不中断其他监听者、不回滚 RETRIED（凭证法律效力）；失败经 `ErpFinPostingExceptionRecorder` 落异常工作台（errorCode=`erp.err.fin.posting.posted-listener-failed`，failedStage=`notify-posted-listener`，eventData 透传）——下轮 sweep 幂等命中再派发形成**自愈闭环**。
+- **一期覆盖域（5 核心域）**：purchase/sales/inventory/manufacturing 扩展既有 ReversalListener 类实现 dual 接口；finance 本域新建 `FinPostedListener`（EXPENSE_CLAIM/EMPLOYEE_ADVANCE/NOTES_*）。二期 5 域（assets/hr/projects/maintenance/quality）分期部署下 findByCode miss 容忍，归各域簇 F2.x 收口。
+
 ### 部分核销回写：由辅助账项承载
 
 - AR/AP 的"部分核销反写"由 `ErpFinArApItem` 辅助账项机制承载，**不是引擎反写**——核销回写辅助账项的 `settledAmount/openAmount/status` 是领域模型事实（见 `ar-ap-reconciliation.md`）。
@@ -428,7 +451,7 @@ VoucherBillR（业财回链）
 
 | 场景 | 驱动方 | 反写动作 | 载体 |
 |------|--------|----------|------|
-| 正常过账成功 | 域调用方调 `post()` | 域置源单 `posted=true` | `posted` 字段 + 业财回链 |
+| 正常过账成功 | 域调用方调 `post()` | 域置源单 `posted=true`；**调用方不在场的两重试通道（sweep `doRetry` / 异常工作台手动 `retry`）在凭证落账（含幂等命中返回既有 id）后派发 `VoucherPostedEvent`，域监听者补写 `posted` 三字段（见 §悬挂补写）** | `posted` 字段 + 业财回链 |
 | 业务单据作废 | 业务域 | 域先回退自身状态，再调 `reverse()` 红冲凭证 | 域状态机 + 业财回链 |
 | 凭证红冲（财务侧） | 财务员调 `reverse()` | 引擎发 `VoucherReversedEvent`，域监听回退自身状态 | 事件 + 业财回链 |
 | AR/AP 部分核销 | finance 核销动作 | 核销回写辅助账项 `settledAmount/openAmount/status` | `ErpFinArApItem` 辅助账项 |

@@ -49,7 +49,7 @@
 
 | Work Item | Status | Owner Doc | Dependencies | Skill |
 | --- | --- | --- | --- | --- |
-| C3.1 finance 检查 — 过账与凭证（posting/voucher/冲销反写） | todo | `docs/design/finance/posting.md`、`docs/architecture/processor-extension-pattern.md` | C1.2 | 同 C1.1 |
+| C3.1 finance 检查 — 过账与凭证（posting/voucher/冲销反写） | done | `docs/design/finance/posting.md`、`docs/architecture/processor-extension-pattern.md` | C1.2 | 同 C1.1 |
 | C3.2 finance 检查 — AR/AP 与核销（应收应付/核销/坏账） | done | `docs/design/finance/ar-ap-reconciliation.md`、`bad-debt.md` | C1.2 | 同 C1.1 |
 | C3.3 finance 检查 — 预算与成本（budget/costing/cost-center） | done | `docs/design/finance/budget.md`、`costing-methods.md` | C1.2 | 同 C1.1 |
 | C3.4 finance 检查 — 期间结账与其他（period-close/expense/bank-reconciliation/opening-balance/intercompany 等） | done | `docs/design/finance/period-close.md` 等 | C1.2 | 同 C1.1 |
@@ -88,23 +88,54 @@
 | C7.1 cs 实现代码检查 | done | `docs/design/customer-service/` | C1.2 | 同 C1.1 |
 | C7.2 contract 实现代码检查 | done | `docs/design/contract/` | C1.2 | 同 C1.1 |
 | C7.3 b2b 实现代码检查 | done | `docs/design/b2b/` | C1.2 | 同 C1.1 |
-| C7.4 drp 实现代码检查 | ready | `docs/design/drp/` | C1.2 | 同 C1.1 |
+| C7.4 drp 实现代码检查 | done | `docs/design/drp/` | C1.2 | 同 C1.1 |
 
 ### M8 — 低复杂度域与共享模块检查
 
 | Work Item | Status | Owner Doc | Dependencies | Skill |
 | --- | --- | --- | --- | --- |
-| C8.1 logistics + aps + notify 合并检查（C 级域；产出**三份薄报告** `ck-logistics.md` / `ck-aps.md` / `ck-notify.md`，finding 按各自域短码前缀编排，保持索引与 ID 语义一致） | ready | `docs/design/logistics/`、`docs/design/aps/`、`docs/design/notify/` | C1.2 | 同 C1.1 |
-| C8.2 共享模块与聚合工程检查（module-common-service / module-common-test / app-erp-all 聚合与 auth 合并 / app-erp-test-data 种子） | todo | `docs/architecture/`（module-boundaries 等） | C1.2 | 同 C1.1 |
-| C8.3 检查阶段收官：校验 ai-check-index 完整性（全域有报告、finding 全登记、无代码改动——`git status` 干净或仅 docs 变更） | todo | 本路线图 | C2.1-C8.2 全部 done | `closure-audit-prompt`（独立子代理） |
+| C8.1 logistics + aps + notify 合并检查（C 级域；产出**三份薄报告** `ck-logistics.md` / `ck-aps.md` / `ck-notify.md`，finding 按各自域短码前缀编排，保持索引与 ID 语义一致） | done | `docs/design/logistics/`、`docs/design/aps/`、`docs/design/notify/` | C1.2 | 同 C1.1 |
+| C8.2 共享模块与聚合工程检查（module-common-service / module-common-test / app-erp-all 聚合与 auth 合并 / app-erp-test-data 种子） | done | `docs/architecture/`（module-boundaries 等） | C1.2 | 同 C1.1 |
+| C8.3 检查阶段收官：校验 ai-check-index 完整性（全域有报告、finding 全登记、无代码改动——`git status` 干净或仅 docs 变更） | done | 本路线图 | C2.1-C8.2 全部 done | `closure-audit-prompt`（独立子代理） |
 
-### MF — 验证与修复（依赖：检查阶段全部完成）
+### MF — 验证与修复（检查阶段已于 2026-08-26 闭合，修复阶段解锁）
+
+> F0.2 修复方法基线（每 finding 强制流程）：
+> 1. 读报告 finding（控制点/证据/建议修复方向）→ 2. **先写失败测试**（复现缺陷；域级 erp-*-service test 或 app-erp-test-data 种子）→ 3. 复现 → 修复 → 测试绿 + 既有测试零回归；证伪 → 书面 not-a-problem 说明（理由 + 证据）→ 4. 回填 ai-check-index 状态（fixed + 测试与提交指针 / not-a-problem + 说明）。
+> 保护区域路由：ORM/api.xml 变更项走 auto + dual-agent-approval（两个独立子 agent 批准落盘 plan）；过账引擎/auth 代码走 plan-first（owner doc + tests + 独立 plan 审计）。每个 F 工作项执行前建 plan（`docs/plans/{ts}-ai-check-fix-{id}.md`），批次完成经独立结束审计；修复后 compliance checker 不得高于 C0.2 快照（合法新增须 baseline-raise 登记）。
 
 | Work Item | Status | Owner Doc | Dependencies | Skill |
 | --- | --- | --- | --- | --- |
-| F0.1 修复展开器：按索引中 open finding 清单向本路线图追加具体修复工作项行（F<域>.<seq>），按 P0→P1→P2→P3 分级排序 | todo | `docs/audits/check/ai-check-index.md` | C8.3 done | none |
-| F0.2 修复方法基线：确定每 finding 的验证测试落点（对应域 erp-*-service test 或 app-erp-test-data）、保护区域路由（dual-agent / plan-first）与批量裁决格式 | todo | `docs/plans/00-plan-authoring-and-execution-guide.md` | C8.3 done | none |
-| F<域>.<seq> 具体修复工作项（由 F0.1 展开追加；每项 = 编写验证测试 → 复现/证伪 → 修复或书面 not-a-problem 裁决 → 回填索引状态） | todo | 各域 owner doc | F0.1, F0.2 | 按域匹配 |
+| F0.1 修复展开器（本表即展开产物，2026-08-26 由 C8.3 审计建议驱动展开） | done | `ai-check-index.md` | C8.3 done | none |
+| F0.2 修复方法基线（见上方引用块） | done | plan guide | C8.3 done | none |
+| **第一批：P0 + 横切高危簇** | | | | |
+| F1.1 P0-CK-mfg-001 完工入库幂等键吞增量报工 + P1-CK-fin-003 post() 幂等 null 语义三态化（同链传导站点 sal-003/qa-013/prj-006/log-001/mfg2 族回写 posted） | done | `docs/design/manufacturing/state-machine.md`、`docs/architecture/processor-extension-pattern.md` | F0.2 | `bug-diagnosis-prompt` |
+| F1.2 REQUIRES_NEW 孤儿凭证族统一修复（守卫前置/副作用后置模式，9+ 站点：pur-002/inv-012/mfg-011/ast-015/ast2-021/mnt-007/qa-012/prj-006/hr2-006） | done | `processor-extension-pattern.md` | F0.2 | none |
+| F1.3 CRUD 无状态守卫族统一修复（AbstractErpCrudBizModel 基类方案 + 全域接入，锚 P1-CK-pur-003/sal-004/inv-005 + 15+ 同型站点） | done | `processor-extension-pattern.md`、C8.2 报告修复挂点专节 | F0.2 | none |
+| F1.4 P1-CK-fin-005 AcctSchemaResolver null 静默成功 fail-closed（含 6 dispatcher 传导面 ast/sal/pur/prj/mfg） | done | `docs/design/finance/multiple-accounting-schemas.md` | F0.2 | none |
+| **第二批：P1 域簇** | | | | |
+| F2.1 finance-过账 P1 余项（fin-001 源单 posted 回写通道/fin-002 凭证平衡校验/fin-004） | done | finance owner docs | F0.2 | none |
+| F2.2 finance-ARAP P1 簇（fin2-001 尾差守卫/002 FX 不对称/003 聚合超核销/004/005） | todo | ar-ap-reconciliation.md | F0.2 | none |
+| F2.3 finance-预算成本 P1 簇（fin3-001 carryForward 科目错链/002/003 方向敏感/004 TOCTOU/005 账套硬编码） | todo | budget.md、costing-methods.md | F0.2 | none |
+| F2.4 finance-期间 P1 簇（fin4-001 FX 重估口径/002 多账套 N 倍/003 跨法人单价入账） | todo | period-close.md | F0.2 | none |
+| F2.5 mfg-工单 P1 簇（mfg-002 驳回死锁/003 红冲不回退成本/004/005；Deferred：F2.1 二期 posted listener 域内收口） | todo | manufacturing owner docs | F0.2 | none |
+| F2.6 mfg-BOM/MRP P1 簇（mfg2-001 安全库存双扣/002 低阶码/003 版本号 ASC 撞 UK——含 drp-012 同型） | todo | mrp.md | F0.2 | none |
+| F2.7 mfg-委外 P1 簇（mfg3-001 计价缺料/002 红冲半段/003 Pattern B 复活/004/005） | todo | subcontracting.md | F0.2 | none |
+| F2.8 assets-生命周期 P1 簇（ast-001 分配守恒/002/003 盘点漏录报废/004/005/006；Deferred：F2.1 二期 posted listener 域内收口） | todo | assets owner docs | F0.2 | none |
+| F2.9 assets-折旧 P1 簇（ast2-001 工作量法恒 0/002 基数双计/003/004/005 缺 ReversedListener/006；Deferred：F2.1 二期 posted listener 域内收口） | todo | depreciation-and-posting.md | F0.2 | none |
+| F2.10 sales+purchase P1 簇（sal-001 客户级反转/002 dashboard 死状态/004；pur-001/002/003 中未入 F1 部分） | todo | sales/purchase owner docs | F0.2 | none |
+| F2.11 inventory P1 簇（inv-001 locationId 回退/002 findBalance 键/003 流水不可变/004） | todo | inventory owner docs | F0.2 | none |
+| F2.12 prj+qa P1 簇（prj-001..007；qa-001 SPC 幻影/002 复检死锁/003 inject 断裂/004 severity/005；Deferred：F2.1 二期 posted listener 域内收口） | todo | projects/quality owner docs | F0.2 | none |
+| F2.13 mnt+hr P1 簇（mnt-001/002/003；hr-001；hr2-001..005；Deferred：F2.1 二期 posted listener 域内收口） | todo | maintenance/hr owner docs | F0.2 | none |
+| F2.14 crm+cs P1 簇（crm-001/002；crm2-001/002；cs-001/002/003） | todo | crm/cs owner docs | F0.2 | none |
+| F2.15 ct+b2b+drp+log+aps+notify P1 簇（ct-001..004；b2b-001；drp-001..003；log-001/002；aps-001/002；notify-001/002） | todo | 各域 owner docs | F0.2 | none |
+| **第三批：P2/P3 联动簇** | | | | |
+| F3.1 orgId 隔离族（写侧 writer 缺失族 + 读侧聚合族） | todo | module-boundaries.md | F2.x | none |
+| F3.2 cron 键漂移家族（9 域 job.yaml 双键统一） | todo | job-scheduling.md | F2.x | none |
+| F3.3 notify 模板种子三库补齐 + 事务内外发修复（notify-001/002 与 log-002/aps-006 联动） | todo | notify owner docs | F2.x | none |
+| F3.4 currentUserId 宽 catch 全域族 + 死常量/死配置键清理 | todo | — | F2.x | none |
+| F3.5-F3.x 各域 P2 簇（md×5/pur×6/sal×16/inv×11/fin×10/fin2×5/fin3×5/fin4×8/mfg×6/mfg2×10/mfg3×7/ast×10/ast2×8/prj×7/qa×9/mnt×6/hr2×9/crm×6/crm2×10/cs×11/ct×13/b2b×8/drp×11/log×7/aps×6/notify×4/common×1——按域逐项或合并小簇，由执行时按索引余量展开追加） | todo | 各域 owner docs | F2.x | none |
+| F3.y P3 波次（210 条，按域批量「小修+说明」处理，证伪项归档说明） | todo | 各域 owner docs | F3.5+ | none |
 
 ### MV — 全量回归验证
 
@@ -243,3 +274,8 @@ graph LR
 
 - Independent draft review iteration 1: `acceptable after minor revision`（agent `agent_75618868-ea61-48e7-aadf-b181373c83c0`，2026-08-25）——6 维度（规范符合性/用户指令忠实度/覆盖完整性/粒度合理性/既有基础设施关系/可执行性）全通过；2 项必改（基线总数 3,677/694 → 3,364/753 并内联计数命令；需在 backlog README 注册行）、3 项建议（C8.1 三份薄报告、检查项预声明拆分机制、V.2 deferred 显式报告）均已修订落盘。审查者实测复核了 22 个域级计数、19 个 design 目录、arm-index/checker/baselines 存在性与 git 零代码改动。
 - 修订后裁决：M0/M1 工作项置 `ready`，路线图生效。
+
+## 收官审计记录（C8.3，2026-08-26）
+
+- 独立收官审计（fresh session agent `agent_72a36cff`）：**检查阶段通过**。6 条 P0/P1 finding 证据抽验 100% 真实（mfg-001/pur-001/qa-004/fin2-001/sal-001/notify-001 逐一实核源码）；28 报告 ↔ 28 工作项一一映射；索引 533 行计数吻合；零代码改动纪律确认（ai-check 名下提交仅 docs）。3 项小问题：C3.1 状态机械回写遗漏（本日已补）、索引"29 份"笔误（已更正 28）、fin2-001 行号漂移 ±4（无需处理）。
+- 修复阶段优先级建议（审计产出）：第一批 = P0-CK-mfg-001 + P1-CK-fin-003 同链（5+ 站点）→ REQUIRES_NEW 孤儿凭证族（9+ 站点）→ CRUD 守卫族（AbstractErpCrudBizModel 方案）→ fin-005 AcctSchemaResolver null；第二批 = P1 域簇（finance 17 → mfg 12 → assets 12 → sal/pur 7 → 其余 42）；第三批 = P2/P3 联动簇（orgId 隔离族/cron 键漂移 9 域/notify 模板种子三库一次补齐/currentUserId 族）。保护区域路由：ORM 变更项走 dual-agent-approval，过账引擎/auth 走 plan-first。

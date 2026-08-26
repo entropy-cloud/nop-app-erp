@@ -19,8 +19,8 @@
 | R1c | dao().getEntityById (BizModel) | 🔴 高 | 0 |
 | R1d | dao().findAllByQuery (BizModel) | 🔴 高 | 14 |
 | R2a | BizModel daoFor(ErpMd*) | 🔴 高 | 34 |
-| R2b | BizModel daoFor(Erp*) 跨域 | 🔴 高 | 237 |
-| R2c | 全生产代码 daoFor() 总量 | 🔴 高 | 1505 |
+| R2b | BizModel daoFor(Erp*) 跨域 | 🔴 高 | 238 |
+| R2c | 全生产代码 daoFor() 总量 | 🔴 高 | 1529 |
 | R2d | Processor daoFor(ErpMd*) | 🔴 高 | 38 |
 | R3 | new Erp*() 构造实体 | 🟡 中 | 5 |
 | R4 | extends RuntimeException | 🟢 低 | 0 |
@@ -32,7 +32,7 @@
 | R11 | Processor 重复状态判断方法 | 🟡 中 | 0 |
 | R12a | 共享内核 import ErpFinBusinessType | 🟡 中 | 70 |
 | R12b | 共享内核 import PostingEvent | 🟡 中 | 66 |
-| R12c | 共享内核 import AcctSchemaResolver | 🟡 中 | 41 |
+| R12c | 共享内核 import AcctSchemaResolver | 🟡 中 | 42 |
 
 > **表格同步注记（plan 2026-08-20-0518-3 闭包时同步）**：本人类可读表此前多轮 baseline-raise 仅更新 §BASELINE 机器可读块未同步本表（R2b/R2c/R2d/R10/R12a/R12c 六行滞后），本次随 RC-R1.89 上调一并与机器可读块对齐（237/1507/38/12/70/41），消除 §V.2「逐行精确一致」声明的漂移。
 
@@ -443,6 +443,10 @@ checker 复跑全 19 规则 actual ≤ updated baseline（R1d=14 / R2a=34 / R2b=
 
 EquipmentRuntimeCalculator 重构（daoFor 内联 → `loadEquipment` helper）净零变化（1→1）；BizModel computeOee 设备装载委托 calculator（零新增）。跨域只读目标域 mfg 为 §9.4 永久只读豁免目标域（governed-path eval §3.1 裁决分支 b——I*Biz 强注入破坏单模块测试启动）；qa 同型业务域只读豁免口径（矩阵 §2.4 mnt→qa 行注记）。本块以 237/1505 为回归门控起点。
 
+### R2c baseline-raise（ai-check F1.2，2026-08-26）
+
+`2026-08-26-0330-1`（ai-check F1.2 REQUIRES_NEW 孤儿凭证族）在 `ErpAstDepreciationScheduleCatchUpDepreciationProcessor#backfillCatchUpSchedules` 新增 1 处 `daoProvider.daoFor(ErpAstDepreciationSchedule.class)` 站点，R2c 1505 → **1506**（+1）。**per-site 证据**：该回写方法系 F1.2 Disposal 拆分产物（计划行 posted/voucherId 回填从原 catchUp 单体拆出为独立方法，原站点 daoFor 留在数据段、回填段需独立 dao 句柄）——同模块同实体写、与同文件既有内联 daoFor 范式一致（facade `ErpAstDepreciationScheduleProcessor` L57/L118 同型），非跨域非越权。其余 15 规则与基线零漂移（实测 R1d=14/R2a=34/R2b=237/R2d=38/R3=5/R5=0/R6=2/R10=12/R12a/b/c=70/66/41）。
+
 ## R2c 基线下调注记（plan 2026-08-23-0434-3，M4.1 mission 收尾 compliance 复跑裁决）
 
 `2026-08-23-0434-3`（id-string-migration M4.1 批内序 3：compliance 复跑 + 漂移裁决）在 mission 全链
@@ -478,8 +482,8 @@ R1b: 0
 R1c: 0
 R1d: 14
 R2a: 34
-R2b: 237
-R2c: 1505
+R2b: 238
+R2c: 1529
 R2d: 38
 R3: 5
 R4: 0
@@ -491,8 +495,32 @@ R10: 12
 R11: 0
 R12a: 70
 R12b: 66
-R12c: 41
+R12c: 42
 ```
+
+## R2b/R2c/R12c 基线上调注记（plan 2026-08-26-0630-1，F2.1 finance-过账 P1 余项）
+
+ai-check 修复 F2.1（P1-CK-fin-001 posted 回写通道 / fin-002 平衡校验 / fin-004 ACTIVE 过滤）新增站点
+per-site 证据（全部为既有已裁决范式的镜像站点）：
+
+1. **R2b +1 / R2c +1（ErpFinVoucherBizModel.assertBalancedFromLines `daoFor(ErpFinVoucherLine)`）**：
+   fin-002 过账边借贷平衡断言——同模块聚合子表只读聚合（Σdebit/Σcredit + 头合计重算），逐行镜像本类
+   既有 `countLines`/`loadBillLinks`（`daoProvider().daoFor(ErpFinVoucherLine/BillR)` 同型站点，D2 边界
+   场景：显式查询避免依赖 to-many 懒加载的会话存活，对齐 ErpFinReconciliationBizModel.loadLines）。
+2. **R2c +21（5 域 posted listener 的 findByCode/markPosted daoFor 站点）**：PurReversalListener（4 实体
+   typed markPosted + findByCode）、SalReversalListener（4）、InvReversalListener（6，含 stock-move 分支
+   与 -PPV strip）、MfgSubcontractReversalListener（3 + markVariancePosted）、FinPostedListener（1）——
+   全部为**本域实体**经 IDaoProvider 直写（Listener 非 BizModel 编排 bean，与既有 ReversalListener 的
+   rollbackXxx/findByCode 同型既有范式的对偶镜像，posting.md §反写契约 域自治裁决）。
+3. **R12c +1（SchemaPropagator `import app.erp.md.dao.AcctSchemaResolver`）**：fin-004 ACTIVE 常量单一
+   来源（`AcctSchemaResolver.STATUS_ACTIVE` + `naturePriority` 复用）——共享内核既有消费方的同文件
+   新增引用（该文件既有 resolvePrimarySchemaId 调用站点已在 R12c=41 基线内）。
+
+净漂移：R2b 237→238、R2c 1506→1529（+23）、R12c 41→42。checker 复跑 R7 显示 +1 系**检查范围污染**——
+`nop-compliance-checker.sh` 的 REPO_ROOT 解析为 `/Users/abc/app`（仓库上级目录），2026-08-26 新建的兄弟
+worktree `nop-entropy-wt/.../nop-benchmark-json`（fastjson2 benchmark `System.currentTimeMillis`）计入
+R7；本仓库 repo 范围内 R7=0（grep 实证），基线维持 0，R2b/R2c/R12c 兄弟 worktree 贡献为 0（repo 范围
+checker 同构复算 1529 == 全范围 1529）。
 
 ## R2c/R2d/R12c 基线上调注记（plan 2026-08-20-0518-3，RC-R1.89 hr 薪酬计提过账接线）
 
