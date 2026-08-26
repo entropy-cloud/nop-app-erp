@@ -11,6 +11,7 @@ import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
 
@@ -22,7 +23,7 @@ import java.util.List;
  * 在本类完成 Long→String 转换后委托 Processor。
  */
 @BizModel("ErpPurPayment")
-public class ErpPurPaymentBizModel extends CrudBizModel<ErpPurPayment> implements IErpPurPaymentBiz {
+public class ErpPurPaymentBizModel extends AbstractErpCrudBizModel<ErpPurPayment> implements IErpPurPaymentBiz {
 
     @Inject
     ErpPurPaymentSettleProcessor settleProcessor;

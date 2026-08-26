@@ -1,7 +1,9 @@
 package app.erp.sal.service.posting;
 
 import app.erp.fin.dao.ErpFinBusinessType;
+import app.erp.fin.service.posting.IErpFinVoucherPostedListener;
 import app.erp.fin.service.posting.IErpFinVoucherReversedListener;
+import app.erp.fin.service.posting.VoucherPostedEvent;
 import app.erp.fin.service.posting.VoucherReversedEvent;
 import app.erp.sal.dao.entity.ErpSalDelivery;
 import app.erp.sal.dao.entity.ErpSalInvoice;
@@ -35,10 +37,84 @@ import static io.nop.api.core.beans.FilterBeans.eq;
  * <p>监听者失败经 {@code ErpFinReversalListenerRegistry.dispatch} 的 try/catch 隔离，不阻断其他域监听者、
  * 不回滚已过账红字凭证；失败落入 finance 5.1 异常工作台。
  */
-public class SalReversalListener implements IErpFinVoucherReversedListener {
+public class SalReversalListener implements IErpFinVoucherReversedListener, IErpFinVoucherPostedListener {
 
     @Inject
     IDaoProvider daoProvider;
+
+    /**
+     * F2.1（P1-CK-fin-001）：正向过账成功回写——悬挂场景补 posted 三字段（已 true 跳过；miss no-op）。
+     */
+    @Override
+    public void onVoucherPosted(VoucherPostedEvent event, IServiceContext context) {
+        String businessType = event.getBusinessType();
+        if (businessType == null) {
+            return;
+        }
+        String code = event.getBillHeadCode();
+        java.sql.Timestamp now = io.nop.api.core.time.CoreMetrics.currentTimestamp();
+        switch (businessType) {
+            case "AR_INVOICE":
+                markPosted(findByCode(ErpSalInvoice.class, code), now);
+                break;
+            case "RECEIPT":
+                markPosted(findByCode(ErpSalReceipt.class, code), now);
+                break;
+            case "SALES_RETURN":
+                markPosted(findByCode(ErpSalReturn.class, code), now);
+                break;
+            case "SALES_OUTPUT":
+                markPosted(findByCode(ErpSalDelivery.class, code), now);
+                break;
+            default:
+                break;
+        }
+    }
+
+    private void markPosted(ErpSalInvoice invoice, java.sql.Timestamp now) {
+        if (invoice == null || Boolean.TRUE.equals(invoice.getPosted())) {
+            return;
+        }
+        invoice.setPosted(true);
+        invoice.setPostedAt(now);
+        invoice.setPostedBy(currentUserId());
+        daoProvider.daoFor(ErpSalInvoice.class).updateEntity(invoice);
+    }
+
+    private void markPosted(ErpSalReceipt receipt, java.sql.Timestamp now) {
+        if (receipt == null || Boolean.TRUE.equals(receipt.getPosted())) {
+            return;
+        }
+        receipt.setPosted(true);
+        receipt.setPostedAt(now);
+        receipt.setPostedBy(currentUserId());
+        daoProvider.daoFor(ErpSalReceipt.class).updateEntity(receipt);
+    }
+
+    private void markPosted(ErpSalReturn returnOrder, java.sql.Timestamp now) {
+        if (returnOrder == null || Boolean.TRUE.equals(returnOrder.getPosted())) {
+            return;
+        }
+        returnOrder.setPosted(true);
+        returnOrder.setPostedAt(now);
+        returnOrder.setPostedBy(currentUserId());
+        daoProvider.daoFor(ErpSalReturn.class).updateEntity(returnOrder);
+    }
+
+    private void markPosted(ErpSalDelivery delivery, java.sql.Timestamp now) {
+        if (delivery == null || Boolean.TRUE.equals(delivery.getPosted())) {
+            return;
+        }
+        delivery.setPosted(true);
+        delivery.setPostedAt(now);
+        delivery.setPostedBy(currentUserId());
+        daoProvider.daoFor(ErpSalDelivery.class).updateEntity(delivery);
+    }
+
+    private static String currentUserId() {
+        io.nop.api.core.auth.IUserContext ctx = io.nop.api.core.auth.IUserContext.get();
+        return ctx != null ? ctx.getUserId() : null;
+    }
 
     @Override
     public void onVoucherReversed(VoucherReversedEvent event, IServiceContext context) {

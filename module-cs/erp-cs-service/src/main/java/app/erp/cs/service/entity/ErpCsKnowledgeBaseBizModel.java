@@ -17,6 +17,7 @@ import io.nop.api.core.beans.TreeBean;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
 
@@ -27,7 +28,7 @@ import java.util.List;
 import java.util.Map;
 
 @BizModel("ErpCsKnowledgeBase")
-public class ErpCsKnowledgeBaseBizModel extends CrudBizModel<ErpCsKnowledgeBase> implements IErpCsKnowledgeBaseBiz {
+public class ErpCsKnowledgeBaseBizModel extends AbstractErpCrudBizModel<ErpCsKnowledgeBase> implements IErpCsKnowledgeBaseBiz {
 
     private static final org.slf4j.Logger LOG = org.slf4j.LoggerFactory.getLogger(ErpCsKnowledgeBaseBizModel.class);
 

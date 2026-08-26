@@ -6,7 +6,7 @@
     "visitId": "@var:visitId",
     "requestId": "@var:reqId",
     "equipmentId": "1",
-    "businessDate": "@var:ErpFinVoucher@voucherDate",
+    "businessDate": "@var:ErpInvStockMove@businessDate_1",
     "warehouseId": "2",
     "totalAmount": 10.0000,
     "docStatus": "ACTIVE",

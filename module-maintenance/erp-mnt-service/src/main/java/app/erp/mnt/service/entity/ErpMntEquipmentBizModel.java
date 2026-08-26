@@ -9,11 +9,12 @@ import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
 
 @BizModel("ErpMntEquipment")
-public class ErpMntEquipmentBizModel extends CrudBizModel<ErpMntEquipment> implements IErpMntEquipmentBiz {
+public class ErpMntEquipmentBizModel extends AbstractErpCrudBizModel<ErpMntEquipment> implements IErpMntEquipmentBiz {
 
     @Inject
     EquipmentStatusLogWriter statusLogWriter;

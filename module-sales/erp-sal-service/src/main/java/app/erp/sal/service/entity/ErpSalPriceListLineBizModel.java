@@ -4,6 +4,7 @@ package app.erp.sal.service.entity;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 import io.nop.biz.crud.EntityData;
 import io.nop.core.context.IServiceContext;
 
@@ -24,7 +25,7 @@ import static io.nop.api.core.beans.FilterBeans.eq;
  * {@code docs/design/date-ranged-validity-pattern.md} §6。
  */
 @BizModel("ErpSalPriceListLine")
-public class ErpSalPriceListLineBizModel extends CrudBizModel<ErpSalPriceListLine> implements IErpSalPriceListLineBiz {
+public class ErpSalPriceListLineBizModel extends AbstractErpCrudBizModel<ErpSalPriceListLine> implements IErpSalPriceListLineBiz {
 
     public ErpSalPriceListLineBizModel() {
         setEntityName(ErpSalPriceListLine.class.getName());

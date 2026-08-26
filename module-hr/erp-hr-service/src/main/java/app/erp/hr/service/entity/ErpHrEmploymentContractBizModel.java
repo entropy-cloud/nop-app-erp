@@ -12,6 +12,7 @@ import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.api.core.time.CoreMetrics;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 import io.nop.biz.crud.EntityData;
 import io.nop.core.context.IServiceContext;
 
@@ -45,7 +46,7 @@ import static io.nop.api.core.beans.FilterBeans.lt;
  * <p>到期扫描由 {@code ErpHrContractExpiryJob}（定时 Job）调用，通知派发经 {@code IErpSysNotificationBiz}。
  */
 @BizModel("ErpHrEmploymentContract")
-public class ErpHrEmploymentContractBizModel extends CrudBizModel<ErpHrEmploymentContract>
+public class ErpHrEmploymentContractBizModel extends AbstractErpCrudBizModel<ErpHrEmploymentContract>
         implements IErpHrEmploymentContractBiz {
 
     private static final Logger LOG = LoggerFactory.getLogger(ErpHrEmploymentContractBizModel.class);

@@ -10,6 +10,7 @@ import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
 
@@ -23,7 +24,7 @@ import java.util.Objects;
  * <p>对齐 {@code docs/design/crm/sales-forecast.md §状态机}。
  */
 @BizModel("ErpCrmForecastPeriod")
-public class ErpCrmForecastPeriodBizModel extends CrudBizModel<ErpCrmForecastPeriod>
+public class ErpCrmForecastPeriodBizModel extends AbstractErpCrudBizModel<ErpCrmForecastPeriod>
         implements IErpCrmForecastPeriodBiz {
 
     @Inject

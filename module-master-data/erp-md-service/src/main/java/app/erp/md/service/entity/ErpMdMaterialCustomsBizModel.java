@@ -3,6 +3,7 @@ package app.erp.md.service.entity;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 import io.nop.biz.crud.EntityData;
 import io.nop.core.context.IServiceContext;
 import io.nop.api.core.beans.query.QueryBean;
@@ -37,7 +38,7 @@ import static io.nop.api.core.beans.FilterBeans.eq;
  * （触发：业务客户具体业务流程需求 + 跨域 owner doc 授权）。
  */
 @BizModel("ErpMdMaterialCustoms")
-public class ErpMdMaterialCustomsBizModel extends CrudBizModel<ErpMdMaterialCustoms>
+public class ErpMdMaterialCustomsBizModel extends AbstractErpCrudBizModel<ErpMdMaterialCustoms>
         implements app.erp.md.biz.IErpMdMaterialCustomsBiz {
 
     @Inject

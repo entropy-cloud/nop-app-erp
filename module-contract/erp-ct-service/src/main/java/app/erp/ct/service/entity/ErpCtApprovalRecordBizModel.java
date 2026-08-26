@@ -19,6 +19,7 @@ import io.nop.api.core.config.AppConfig;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.api.core.time.CoreMetrics;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
 
@@ -36,7 +37,7 @@ import java.util.Map;
  * 归 {@code ErpCtContractBizModel#approveTermination/rejectTermination}（D1 选项 B）。
  */
 @BizModel("ErpCtApprovalRecord")
-public class ErpCtApprovalRecordBizModel extends CrudBizModel<ErpCtApprovalRecord> implements IErpCtApprovalRecordBiz{
+public class ErpCtApprovalRecordBizModel extends AbstractErpCrudBizModel<ErpCtApprovalRecord> implements IErpCtApprovalRecordBiz{
 
     @Inject
     ErpCtApprovalWorkflowEngine engine;

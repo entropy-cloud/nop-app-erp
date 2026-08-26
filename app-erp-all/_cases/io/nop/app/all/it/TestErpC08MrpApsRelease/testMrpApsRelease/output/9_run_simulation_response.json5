@@ -1,9 +1,9 @@
 {
   "data": {
-    "id": "100018",
+    "id": "100020",
     "scenarioId": "@var:scenarioId",
     "versionNo": 1,
-    "computedMrpPlanId": "100011",
+    "computedMrpPlanId": "100013",
     "snapshotSummary": "lines=0,totalNet=0,totalPlanned=0,shortageMaterials=0",
     "status": "COMPLETED",
     "status_label": "COMPLETED-运算完成",

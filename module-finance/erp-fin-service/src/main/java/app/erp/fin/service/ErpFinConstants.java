@@ -182,6 +182,8 @@ public interface ErpFinConstants extends ErpFinDocStatus {
 
     /** 监听者派发失败记录的 failedStage 标识（落入 ErpFinPostingException 异常工作台）。 */
     String FAILED_STAGE_NOTIFY_REVERSAL_LISTENER = "notify-reversal-listener";
+    // F2.1（P1-CK-fin-001）：正向 posted 监听者派发失败阶段标记
+    String FAILED_STAGE_NOTIFY_POSTED_LISTENER = "notify-posted-listener";
 
     /** 过账异常告警通知派发开关（默认 true；plan 2026-07-06-0642-1 §Phase 1）。关闭时跳过 notify 调用。 */
     String CONFIG_POSTING_EXCEPTION_NOTIFY_ENABLED = "erp-fin.posting-exception-notify-enabled";

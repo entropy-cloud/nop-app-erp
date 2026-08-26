@@ -34,6 +34,22 @@
         </property>
     </bean>
 
+    <!-- F2.1（P1-CK-fin-001）：正向过账监听者注册中心（业财闭环方向一补全）。启动期收集各域
+         IErpFinVoucherPostedListener 实现，由 sweep RetryHelper/手动 RetryProcessor 两「调用方不在场」
+         通道在凭证成功落账后派发 VoucherPostedEvent（域回写源单 posted）。镜像上方 Reversal registry。 -->
+    <bean id="app.erp.fin.service.posting.ErpFinPostedListenerRegistry"
+          class="app.erp.fin.service.posting.ErpFinPostedListenerRegistry">
+        <property name="listeners">
+            <ioc:collect-beans by-type="app.erp.fin.service.posting.IErpFinVoucherPostedListener"
+                               only-concrete-classes="true" ioc:ignore-depends="true"/>
+        </property>
+    </bean>
+
+    <!-- F2.1：finance 本域 posted 监听者（EXPENSE_CLAIM/EMPLOYEE_ADVANCE/NOTES_*）。
+         经上方 ErpFinPostedListenerRegistry 的 collect-beans by-type 自动聚合。 -->
+    <bean id="app.erp.fin.service.posting.FinPostedListener"
+          class="app.erp.fin.service.posting.FinPostedListener"/>
+
     <!-- GlDistribution 科目分摊 FactsValidator（plan 2026-08-15-1838-1，RC-R1.41）：
          注册为 Bean 后由 ErpFinAcctDocRegistry 经上方 ioc:collect-beans by-type=IErpFinFactsValidator 自动聚合。
          规则载体 = Bean 内静态规则表（rules setter 注入，D1 裁决不物化 ErpFinGlDistribution ORM 实体）：

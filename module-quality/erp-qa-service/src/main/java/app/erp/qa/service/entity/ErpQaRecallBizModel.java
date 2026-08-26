@@ -15,6 +15,7 @@ import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
 
@@ -33,7 +34,7 @@ import java.util.Map;
  * <p>status 操作轴固定来源态/目标态判断委托 {@link ErpQaRecallStateMachine}（实体级状态机 Bean，契约 §4/§7）。
  */
 @BizModel("ErpQaRecall")
-public class ErpQaRecallBizModel extends CrudBizModel<ErpQaRecall> implements IErpQaRecallBiz {
+public class ErpQaRecallBizModel extends AbstractErpCrudBizModel<ErpQaRecall> implements IErpQaRecallBiz {
 
     @Inject
     ErpQaRecallRegisterProcessor registerProcessor;

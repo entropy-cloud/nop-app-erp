@@ -8,6 +8,7 @@ import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
 
@@ -17,7 +18,7 @@ import jakarta.inject.Inject;
  * （R6.3 per-mutation Processor，protected step 方法供下游覆盖）。
  */
 @BizModel("ErpAstAsset")
-public class ErpAstAssetBizModel extends CrudBizModel<ErpAstAsset> implements IErpAstAssetBiz {
+public class ErpAstAssetBizModel extends AbstractErpCrudBizModel<ErpAstAsset> implements IErpAstAssetBiz {
 
     @Inject
     ErpAstAssetSuspendResumeProcessor suspendResumeProcessor;

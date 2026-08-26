@@ -16,6 +16,7 @@ import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.biz.BizQuery;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
 
@@ -31,7 +32,7 @@ import java.util.List;
  * <p>语义见 {@code docs/design/assets/cip.md}；状态字典 {@code erp-ast/cip-status}。
  */
 @BizModel("ErpAstCip")
-public class ErpAstCipBizModel extends CrudBizModel<ErpAstCip> implements IErpAstCipBiz {
+public class ErpAstCipBizModel extends AbstractErpCrudBizModel<ErpAstCip> implements IErpAstCipBiz {
 
     @Inject
     ErpAstCipProcessor cipProcessor;

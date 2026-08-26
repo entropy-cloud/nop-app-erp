@@ -168,6 +168,13 @@ public class SalaryPostingDispatcher {
      * 失败吞异常返回 false（不阻塞 PAID 终态）+ 派发告警（G3 错误传播分级 P1-MA2-048）。
      */
     public boolean tryPostPayment(ErpHrSalary salary) {
+        // F1.2（P2-CK-hr2-006）：去重守卫镜像计提链（tryPostAccrual D3）——主事务回滚后重试
+        // markPaid 时命中即跳过，避免冗余引擎调用（并保持与计提链一致的幂等语义）
+        if (alreadyPosted(buildBillCode(salary), ErpFinBusinessType.SALARY_PAYMENT)) {
+            LOG.info("薪酬发放凭证已存在，去重守卫跳过：salaryId={}, billCode={}",
+                    salary.getId(), buildBillCode(salary));
+            return true;
+        }
         try {
             PostingEvent event = buildPaymentEvent(salary);
             String voucherId = executor.postEvent(event);
@@ -189,6 +196,10 @@ public class SalaryPostingDispatcher {
      * {@code ErpFinPostingProcessor.alreadyPosted}（已冲销凭证不视为命中——同 billCode 允许重过账）。
      */
     protected boolean alreadyPosted(String billCode, ErpFinBusinessType businessType) {
+        if (daoProvider == null) {
+            // 裸构造（单元测试直 new 无 IoC）时跳过反查——守卫仅在容器注入环境下生效
+            return false;
+        }
         IEntityDao<ErpFinVoucherBillR> linkDao = daoProvider.daoFor(ErpFinVoucherBillR.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("billCode", billCode));

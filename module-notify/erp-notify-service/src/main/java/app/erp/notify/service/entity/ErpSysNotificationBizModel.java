@@ -14,6 +14,7 @@ import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.annotations.core.Optional;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 import io.nop.core.context.IServiceContext;
 import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
@@ -36,7 +37,7 @@ import static io.nop.api.core.beans.FilterBeans.in;
  * `docs/plans/2026-07-06-0504-1-notification-dispatch-subsystem.md`。
  */
 @BizModel("ErpSysNotification")
-public class ErpSysNotificationBizModel extends CrudBizModel<ErpSysNotification> implements IErpSysNotificationBiz {
+public class ErpSysNotificationBizModel extends AbstractErpCrudBizModel<ErpSysNotification> implements IErpSysNotificationBiz {
 
     @Inject
     ErpSysNotificationNotifyProcessor notifyProcessor;

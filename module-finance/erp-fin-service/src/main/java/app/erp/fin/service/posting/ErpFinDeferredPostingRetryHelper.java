@@ -30,7 +30,7 @@ import java.util.Map;
  * 成功标记 RETRIED，失败递增 retryCount。单条失败隔离不阻断 batch 继续处理其他记录（由 batch skipPolicy 兜底）。
  *
  * <p>O-16 补偿：REQUIRES_NEW 已提交但调用方在 posted=true 设置前失败的场景，
- * {@code voucherBiz.post()} 经引擎 {@code alreadyPosted()} 幂等命中返回 null，本类据此标记 RETRIED（补偿成功）。
+ * {@code voucherBiz.post()} 经引擎幂等命中返回既有凭证 id（F1.1 前{@code alreadyPosted()}命中返回 null），本类据此标记 RETRIED（补偿成功，两态皆成功）。
  */
 public class ErpFinDeferredPostingRetryHelper {
 
@@ -48,6 +48,10 @@ public class ErpFinDeferredPostingRetryHelper {
     IErpFinVoucherBiz voucherBiz;
     @Inject
     IErpSysNotificationBiz notificationBiz;
+    @Inject
+    ErpFinPostedListenerRegistry postedListenerRegistry;
+    @Inject
+    ErpFinPostingExceptionRecorder exceptionRecorder;
 
     public void setDaoProvider(IDaoProvider daoProvider) {
         this.daoProvider = daoProvider;
@@ -104,7 +108,35 @@ public class ErpFinDeferredPostingRetryHelper {
                 String voucherId = voucherBiz.post(event, ctx);
                 LOG.debug("erp-fin-deferred-posting-retry-post: exceptionId={}, billHeadCode={}, voucherId={}",
                         ex.getId(), ex.getBillHeadCode(), voucherId);
+                // F2.1（P1-CK-fin-001）：调用方不在场通道——凭证落账成功（含 F1.1 幂等命中返回既有 id）
+                // 后派发 posted 事件，域监听者回写源单 posted（悬挂闭环）。失败落工作台且 eventData 透传
+                // （下轮 sweep 幂等命中再派发 → 自愈），原异常记录仍 markRetried（凭证法律效力不回滚）。
+                if (voucherId != null) {
+                    dispatchPostedEvent(ex, event, voucherId, ctx);
+                }
             }
+        }
+    }
+
+    /** F2.1：派发 posted 事件；监听者失败经 recorder 落工作台（eventData 透传自愈）。 */
+    protected void dispatchPostedEvent(ErpFinPostingException ex, PostingEvent event, String voucherId,
+                                       IServiceContext ctx) {
+        VoucherPostedEvent posted = new VoucherPostedEvent();
+        posted.setVoucherId(voucherId);
+        posted.setBillHeadCode(event.getBillHeadCode());
+        posted.setBusinessType(ex.getBusinessType());
+        posted.setBillType(ex.getBusinessType());
+        posted.setTraceId(ex.getTraceId());
+        java.util.List<ErpFinPostedListenerRegistry.ListenerFailure> failures =
+                postedListenerRegistry.dispatch(posted, ctx);
+        for (ErpFinPostedListenerRegistry.ListenerFailure failure : failures) {
+            exceptionRecorder.record(ex.getTraceId(), ex.getBillHeadCode(), ex.getBusinessType(),
+                    ex.getPostingType(),
+                    ErpFinPostingErrors.ERR_POSTED_LISTENER_FAILED.getErrorCode(),
+                    "posted-listener " + failure.getListenerName() + " failed: " + failure.getErrorMessage(),
+                    ErpFinConstants.FAILED_STAGE_NOTIFY_POSTED_LISTENER,
+                    ex.getVoucherDate(), ex.getOrgId(), ex.getAcctSchemaId(),
+                    ex.getCurrencyId(), ex.getExchangeRate(), ex.getEventData());
         }
     }
 

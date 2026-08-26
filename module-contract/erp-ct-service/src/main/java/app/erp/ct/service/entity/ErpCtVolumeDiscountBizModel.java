@@ -7,6 +7,7 @@ import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 import io.nop.biz.crud.EntityData;
 import io.nop.core.context.IServiceContext;
 
@@ -32,7 +33,7 @@ import static io.nop.api.core.beans.FilterBeans.eq;
  * 重叠抛 {@link ErpCtErrors#ERR_CT_DISCOUNT_BAND_OVERLAP}。
  */
 @BizModel("ErpCtVolumeDiscount")
-public class ErpCtVolumeDiscountBizModel extends CrudBizModel<ErpCtVolumeDiscount>
+public class ErpCtVolumeDiscountBizModel extends AbstractErpCrudBizModel<ErpCtVolumeDiscount>
         implements IErpCtVolumeDiscountBiz {
 
     public ErpCtVolumeDiscountBizModel() {

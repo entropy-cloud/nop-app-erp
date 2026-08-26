@@ -31,6 +31,10 @@ public class ErpFinPostingExceptionRetryProcessor {
     IDaoProvider daoProvider;
     @Inject
     IErpFinVoucherBiz voucherBiz;
+    @Inject
+    app.erp.fin.service.posting.ErpFinPostedListenerRegistry postedListenerRegistry;
+    @Inject
+    app.erp.fin.service.posting.ErpFinPostingExceptionRecorder exceptionRecorder;
 
     public ErpFinPostingException retry(String exceptionId, IServiceContext context) {
         ErpFinPostingException entity = requirePending(exceptionId);
@@ -49,8 +53,11 @@ public class ErpFinPostingExceptionRetryProcessor {
             if (voucherId != null) {
                 entity.setVoucherId(voucherId);
                 entity.setStatus(ErpFinConstants.POSTING_EXCEPTION_STATUS_RETRIED);
+                // F2.1（P1-CK-fin-001）：调用方不在场通道——凭证落账后派发 posted 事件
+                //（域监听者回写源单 posted；失败落工作台 eventData 透传自愈，镜像 sweep doRetry）。
+                dispatchPostedEvent(entity, event, voucherId, context);
             } else {
-                // 幂等命中（源单已过账）也算重试成功。
+                // F1.1 后引擎幂等命中返回既有凭证 id（非 null）——null 仅无凭证可派发，不派发（与 doRetry 同语义）。
                 entity.setStatus(ErpFinConstants.POSTING_EXCEPTION_STATUS_RETRIED);
             }
         } else {
@@ -117,6 +124,28 @@ public class ErpFinPostingExceptionRetryProcessor {
             return ctx == null ? null : ctx.getUserId();
         } catch (Exception e) {
             return null;
+        }
+    }
+
+    /** F2.1：派发 posted 事件；监听者失败经 recorder 落工作台（eventData 透传自愈），不阻断 RETRIED。 */
+    protected void dispatchPostedEvent(ErpFinPostingException entity, PostingEvent event, String voucherId,
+                                       IServiceContext context) {
+        app.erp.fin.service.posting.VoucherPostedEvent posted = new app.erp.fin.service.posting.VoucherPostedEvent();
+        posted.setVoucherId(voucherId);
+        posted.setBillHeadCode(event.getBillHeadCode());
+        posted.setBusinessType(entity.getBusinessType());
+        posted.setBillType(entity.getBusinessType());
+        posted.setTraceId(entity.getTraceId());
+        java.util.List<app.erp.fin.service.posting.ErpFinPostedListenerRegistry.ListenerFailure> failures =
+                postedListenerRegistry.dispatch(posted, context);
+        for (app.erp.fin.service.posting.ErpFinPostedListenerRegistry.ListenerFailure failure : failures) {
+            exceptionRecorder.record(entity.getTraceId(), entity.getBillHeadCode(), entity.getBusinessType(),
+                    entity.getPostingType(),
+                    app.erp.fin.service.posting.ErpFinPostingErrors.ERR_POSTED_LISTENER_FAILED.getErrorCode(),
+                    "posted-listener " + failure.getListenerName() + " failed: " + failure.getErrorMessage(),
+                    ErpFinConstants.FAILED_STAGE_NOTIFY_POSTED_LISTENER,
+                    entity.getVoucherDate(), entity.getOrgId(), entity.getAcctSchemaId(),
+                    entity.getCurrencyId(), entity.getExchangeRate(), entity.getEventData());
         }
     }
 }

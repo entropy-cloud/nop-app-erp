@@ -16,6 +16,7 @@ import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.biz.BizQuery;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
 
@@ -29,7 +30,7 @@ import jakarta.inject.Inject;
  * <p>权威状态机见 {@code docs/design/inventory/state-machine.md}；跨域契约见 {@code docs/design/inventory/cross-domain.md}。
  */
 @BizModel("ErpInvStockMove")
-public class ErpInvStockMoveBizModel extends CrudBizModel<ErpInvStockMove> implements IErpInvStockMoveBiz {
+public class ErpInvStockMoveBizModel extends AbstractErpCrudBizModel<ErpInvStockMove> implements IErpInvStockMoveBiz {
 
     @Inject
     ErpInvStockMoveProcessor stockMoveProcessor;

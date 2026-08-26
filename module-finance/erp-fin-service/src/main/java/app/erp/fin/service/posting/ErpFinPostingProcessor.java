@@ -119,7 +119,8 @@ public class ErpFinPostingProcessor {
     IErpFinGlMappingResolver glMappingResolver;
 
     /**
-     * 正向过账编排。幂等命中（源单已过账）返回 {@code null}。
+     * 正向过账编排。幂等命中（源单已过账）返回既有 POSTED 凭证 id（非 null——调用方以
+     * {@code voucherId != null} 判定成功置 posted，返回既有 id 使重试/重入不悬挂）。
      *
      * <p>多套账传播：当 {@code erp-fin.multi-schema-enabled=true} 且源账套 {@code isPropagate=true} 时，
      * 同一笔业务自动在所有目标账套各生成一张凭证。Facts 生成一次（schema 无关），persistVoucher 按账套循环。
@@ -136,13 +137,25 @@ public class ErpFinPostingProcessor {
 
         List<String> targetSchemas = schemaPropagator.resolveTargetSchemas(event.getOrgId(), event.getAcctSchemaId());
 
-        if (alreadyPosted(event, event.getAcctSchemaId(), context)) {
-            LOG.info("过账幂等命中（源单已过账），空操作：traceId={}, billHeadCode={}, businessType={}",
-                    run.traceId, run.billHeadCode, run.businessType);
-            return null;
+        ErpFinVoucher existing = findPostedVoucher(event.getBillHeadCode(), event.getBusinessType(),
+                event.getAcctSchemaId(), context);
+        if (existing != null) {
+            LOG.info("过账幂等命中（源单已过账），返回既有凭证：traceId={}, billHeadCode={}, businessType={}, voucherId={}",
+                    run.traceId, run.billHeadCode, run.businessType, existing.getId());
+            return existing.getId();
         }
 
         try {
+            // F1.4（P1-CK-fin-005）：账套 fail-closed 守卫——组织零账套行时 resolver 返回 null，
+            // 修复前 SchemaPropagator 空列表 → 零凭证静默返回（无异常记录/告警的第三态）。
+            // 置于 try 内（幂等短路之后）：抛错经 catch → recordPostFailure → PENDING → sweep
+            // 重试链 + G2 告警，可观测性闭环（先例：reverseProcess 的 ERR_REVERSE_SOURCE_NOT_FOUND）。
+            if (event.getAcctSchemaId() == null) {
+                throw new NopException(ErpFinPostingErrors.ERR_NO_ACTIVE_SCHEMA)
+                        .param(ErpFinPostingErrors.ARG_ORG_ID, event.getOrgId())
+                        .param(ErpFinPostingErrors.ARG_BUSINESS_TYPE, run.businessType)
+                        .param(ErpFinPostingErrors.ARG_BILL_HEAD_CODE, run.billHeadCode);
+            }
             IErpFinAcctDocProvider provider = timeStage("resolveProvider", run,
                     () -> resolveProvider(event, context));
             run.providerName = provider.getClass().getSimpleName();
@@ -907,12 +920,19 @@ public class ErpFinPostingProcessor {
 
     protected ErpFinVoucher findPostedVoucher(String billHeadCode, ErpFinBusinessType businessType,
                                               IServiceContext context) {
+        return findPostedVoucher(billHeadCode, businessType, null, context);
+    }
+
+    /** 按账套过滤的幂等命中凭证查找（{@code acctSchemaId} null = 任意账套，向后兼容单账套调用）。 */
+    protected ErpFinVoucher findPostedVoucher(String billHeadCode, ErpFinBusinessType businessType,
+                                              String acctSchemaId, IServiceContext context) {
         List<ErpFinVoucherBillR> links = findBillLinks(billHeadCode, businessType, context);
         IEntityDao<ErpFinVoucher> voucherDao = daoProvider.daoFor(ErpFinVoucher.class);
         for (ErpFinVoucherBillR link : links) {
             ErpFinVoucher voucher = voucherDao.getEntityById(link.getVoucherId());
             if (voucher != null && VOUCHER_STATUS_POSTED.equals(voucher.getDocStatus())
-                    && !Boolean.TRUE.equals(voucher.getIsReversed())) {
+                    && !Boolean.TRUE.equals(voucher.getIsReversed())
+                    && (acctSchemaId == null || Objects.equals(voucher.getAcctSchemaId(), acctSchemaId))) {
                 return voucher;
             }
         }

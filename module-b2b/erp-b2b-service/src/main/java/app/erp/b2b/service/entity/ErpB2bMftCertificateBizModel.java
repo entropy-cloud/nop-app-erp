@@ -9,6 +9,7 @@ import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.time.CoreMetrics;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 import io.nop.core.context.IServiceContext;
 import io.nop.dao.api.IEntityDao;
 
@@ -27,7 +28,7 @@ import static io.nop.api.core.beans.FilterBeans.le;
  * <p>对应 {@code managed-file-transfer.md §证书管理}。
  */
 @BizModel("ErpB2bMftCertificate")
-public class ErpB2bMftCertificateBizModel extends CrudBizModel<ErpB2bMftCertificate>
+public class ErpB2bMftCertificateBizModel extends AbstractErpCrudBizModel<ErpB2bMftCertificate>
         implements IErpB2bMftCertificateBiz {
 
     public ErpB2bMftCertificateBizModel() {

@@ -11,6 +11,7 @@ import io.nop.api.core.config.AppConfig;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.api.core.time.CoreMetrics;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 import io.nop.core.context.IServiceContext;
 import io.nop.dao.api.IEntityDao;
 
@@ -57,7 +58,7 @@ import static io.nop.api.core.beans.FilterBeans.le;
  * 合同→发票为显式业务触发，生成的草稿后续由 purchase/sales 域审核过账管道处理。
  */
 @BizModel("ErpCtInvoicePlan")
-public class ErpCtInvoicePlanBizModel extends CrudBizModel<ErpCtInvoicePlan> implements IErpCtInvoicePlanBiz {
+public class ErpCtInvoicePlanBizModel extends AbstractErpCrudBizModel<ErpCtInvoicePlan> implements IErpCtInvoicePlanBiz {
 
     @Inject
     ErpCtInvoicePlanTriggerInvoiceProcessor triggerInvoiceProcessor;

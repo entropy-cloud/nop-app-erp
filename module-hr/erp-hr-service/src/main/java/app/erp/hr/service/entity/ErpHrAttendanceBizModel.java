@@ -10,6 +10,7 @@ import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.api.core.time.CoreMetrics;
 import io.nop.commons.util.StringHelper;import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 import io.nop.biz.crud.EntityData;
 import io.nop.core.context.IServiceContext;
 
@@ -36,7 +37,7 @@ import static io.nop.api.core.beans.FilterBeans.eq;
  * 扩展打卡端点 clockIn/clockOut + 当日查询。依赖 Phase 1 新增的 (employeeId, date) 唯一约束。
  */
 @BizModel("ErpHrAttendance")
-public class ErpHrAttendanceBizModel extends CrudBizModel<ErpHrAttendance> implements IErpHrAttendanceBiz {
+public class ErpHrAttendanceBizModel extends AbstractErpCrudBizModel<ErpHrAttendance> implements IErpHrAttendanceBiz {
 
     public ErpHrAttendanceBizModel() {
         setEntityName(ErpHrAttendance.class.getName());

@@ -10,13 +10,14 @@ import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
 
 import java.util.List;
 
 @BizModel("ErpFinBankReconciliation")
-public class ErpFinBankReconciliationBizModel extends CrudBizModel<ErpFinBankReconciliation>
+public class ErpFinBankReconciliationBizModel extends AbstractErpCrudBizModel<ErpFinBankReconciliation>
         implements IErpFinBankReconciliationBiz {
     public ErpFinBankReconciliationBizModel() {
         setEntityName(ErpFinBankReconciliation.class.getName());

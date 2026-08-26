@@ -11,6 +11,7 @@ import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 import io.nop.core.context.IServiceContext;
 
 import java.util.Objects;
@@ -23,7 +24,7 @@ import io.nop.biz.crud.EntityData;
  * 状态迁移非法时抛 {@code ERR_APS_SCHEDULE_ILLEGAL_STATUS}。
  */
 @BizModel("ErpApsSchedule")
-public class ErpApsScheduleBizModel extends CrudBizModel<ErpApsSchedule> implements IErpApsScheduleBiz {
+public class ErpApsScheduleBizModel extends AbstractErpCrudBizModel<ErpApsSchedule> implements IErpApsScheduleBiz {
 
     public ErpApsScheduleBizModel() {
         setEntityName(ErpApsSchedule.class.getName());

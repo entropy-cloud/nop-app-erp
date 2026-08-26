@@ -11,6 +11,7 @@ import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
 
@@ -22,7 +23,7 @@ import java.util.List;
  * {@code <source x:override="replace">} 注入 {@link ErpSalQuotationProcessor#onSubmit}/{@link ErpSalQuotationProcessor#onApproved}。
  */
 @BizModel("ErpSalQuotation")
-public class ErpSalQuotationBizModel extends CrudBizModel<ErpSalQuotation> implements IErpSalQuotationBiz {
+public class ErpSalQuotationBizModel extends AbstractErpCrudBizModel<ErpSalQuotation> implements IErpSalQuotationBiz {
 
     @Inject
     ErpSalQuotationConfirmCustomerAcceptedProcessor confirmCustomerAcceptedProcessor;

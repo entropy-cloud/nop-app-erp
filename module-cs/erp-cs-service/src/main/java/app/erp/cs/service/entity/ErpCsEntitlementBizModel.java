@@ -18,6 +18,7 @@ import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.api.core.time.CoreMetrics;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 import io.nop.core.context.IServiceContext;
 import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
@@ -50,7 +51,7 @@ import static io.nop.api.core.beans.FilterBeans.lt;
  * <p>权益匹配经 {@link EntitlementMatcher}（纯函数式，加载函数注入便于单测）。
  */
 @BizModel("ErpCsEntitlement")
-public class ErpCsEntitlementBizModel extends CrudBizModel<ErpCsEntitlement> implements IErpCsEntitlementBiz {
+public class ErpCsEntitlementBizModel extends AbstractErpCrudBizModel<ErpCsEntitlement> implements IErpCsEntitlementBiz {
 
     private static final Logger LOG = LoggerFactory.getLogger(ErpCsEntitlementBizModel.class);
 

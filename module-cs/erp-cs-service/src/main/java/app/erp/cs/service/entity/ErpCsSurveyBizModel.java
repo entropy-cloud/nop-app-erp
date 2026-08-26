@@ -15,6 +15,7 @@ import io.nop.api.core.annotations.core.Optional;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
 
@@ -42,7 +43,7 @@ import io.nop.api.core.time.CoreMetrics;
  * <p>NPS 分类（PROMOTER/PASSIVE/DETRACTOR）经 {@link NpsClassifier} 派生，不持久化（ORM 无分类列）。
  */
 @BizModel("ErpCsSurvey")
-public class ErpCsSurveyBizModel extends CrudBizModel<ErpCsSurvey> implements IErpCsSurveyBiz {
+public class ErpCsSurveyBizModel extends AbstractErpCrudBizModel<ErpCsSurvey> implements IErpCsSurveyBiz {
 
     public ErpCsSurveyBizModel() {
         setEntityName(ErpCsSurvey.class.getName());

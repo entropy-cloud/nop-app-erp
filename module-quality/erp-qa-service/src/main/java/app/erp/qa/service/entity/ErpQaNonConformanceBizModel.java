@@ -17,6 +17,7 @@ import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.annotations.core.Optional;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
 
@@ -30,7 +31,7 @@ import jakarta.inject.Inject;
  * 非法迁移抛 {@link ErpQaErrors#ERR_INVALID_NCR_STATUS_TRANSITION}。
  */
 @BizModel("ErpQaNonConformance")
-public class ErpQaNonConformanceBizModel extends CrudBizModel<ErpQaNonConformance> implements IErpQaNonConformanceBiz {
+public class ErpQaNonConformanceBizModel extends AbstractErpCrudBizModel<ErpQaNonConformance> implements IErpQaNonConformanceBiz {
 
     @Inject
     ErpQaNonConformanceResolveProcessor resolveProcessor;

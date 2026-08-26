@@ -11,6 +11,7 @@ import io.nop.api.core.annotations.biz.BizQuery;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.annotations.core.Optional;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
 
@@ -24,7 +25,7 @@ import java.util.List;
  * （protected step 可被 Delta 覆盖）。
  */
 @BizModel("ErpInvDrpLeadTimeRecord")
-public class ErpInvDrpLeadTimeRecordBizModel extends CrudBizModel<ErpInvDrpLeadTimeRecord>
+public class ErpInvDrpLeadTimeRecordBizModel extends AbstractErpCrudBizModel<ErpInvDrpLeadTimeRecord>
         implements IErpInvDrpLeadTimeRecordBiz {
 
     @Inject

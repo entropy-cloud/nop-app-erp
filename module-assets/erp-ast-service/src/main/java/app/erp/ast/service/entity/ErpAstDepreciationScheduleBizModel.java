@@ -12,6 +12,7 @@ import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
 
@@ -26,7 +27,7 @@ import java.util.List;
  * <p>语义见 {@code depreciation-and-posting.md} §1/§5；{@code @BizMutation} 钉事务/会话边界。
  */
 @BizModel("ErpAstDepreciationSchedule")
-public class ErpAstDepreciationScheduleBizModel extends CrudBizModel<ErpAstDepreciationSchedule>
+public class ErpAstDepreciationScheduleBizModel extends AbstractErpCrudBizModel<ErpAstDepreciationSchedule>
         implements IErpAstDepreciationScheduleBiz {
 
     @Inject

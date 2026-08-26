@@ -1,7 +1,7 @@
 {
   "data": {
     "id": "@var:tsId",
-    "code": "@var:tsCode",
+    "code": "@var:ErpPrjTimesheet@code",
     "orgId": "2",
     "projectId": "@var:prjId",
     "taskId": "@var:taskId",

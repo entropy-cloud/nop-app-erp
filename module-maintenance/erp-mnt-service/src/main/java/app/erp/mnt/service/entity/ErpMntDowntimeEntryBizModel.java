@@ -13,6 +13,7 @@ import io.nop.api.core.annotations.biz.BizQuery;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
 
@@ -22,7 +23,7 @@ import java.util.List;
 import static io.nop.api.core.beans.FilterBeans.isNull;
 
 @BizModel("ErpMntDowntimeEntry")
-public class ErpMntDowntimeEntryBizModel extends CrudBizModel<ErpMntDowntimeEntry> implements IErpMntDowntimeEntryBiz {
+public class ErpMntDowntimeEntryBizModel extends AbstractErpCrudBizModel<ErpMntDowntimeEntry> implements IErpMntDowntimeEntryBiz {
 
     @Inject
     ErpMntDowntimeEntryRecordProcessor recordProcessor;

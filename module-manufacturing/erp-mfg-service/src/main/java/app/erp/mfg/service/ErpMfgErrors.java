@@ -304,4 +304,12 @@ public interface ErpMfgErrors {
             "erp.err.mfg.approver-is-creator",
             "审核人与单据创建人不可为同一人（违反职责分离）：{userId}",
             ARG_USER_ID);
+
+    // --- F1.1（ai-check P0-CK-mfg-001）：完工入库移动单关联单号超长守卫 ---
+    String ARG_COMPLETED_QUANTITY = "completedQuantity";
+
+    ErrorCode ERR_COMPLETION_MOVE_BILL_CODE_TOO_LONG = ErrorCode.define(
+            "erp.err.mfg.completion-move-bill-code-too-long",
+            "完工入库移动单关联单号超长（工单[{workOrderCode}]累计完工量[{completedQuantity}]拼接后超过 relatedBillCode 列 50 字符上限）",
+            ARG_WORK_ORDER_CODE, ARG_COMPLETED_QUANTITY);
 }

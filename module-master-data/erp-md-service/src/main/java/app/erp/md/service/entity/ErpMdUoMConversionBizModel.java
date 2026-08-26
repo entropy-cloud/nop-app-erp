@@ -8,6 +8,7 @@ import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.config.AppConfig;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 import io.nop.core.context.IServiceContext;
 import io.nop.dao.api.IEntityDao;
 
@@ -37,7 +38,7 @@ import static io.nop.api.core.beans.FilterBeans.isNull;
  * 同单位换算（fromUoMId==toUoMId）直接返回原值。{@link BigDecimal} {@link RoundingMode#HALF_UP} scale=4。
  */
 @BizModel("ErpMdUoMConversion")
-public class ErpMdUoMConversionBizModel extends CrudBizModel<ErpMdUoMConversion> implements IErpMdUoMConversionBiz {
+public class ErpMdUoMConversionBizModel extends AbstractErpCrudBizModel<ErpMdUoMConversion> implements IErpMdUoMConversionBiz {
 
     public ErpMdUoMConversionBizModel() {
         setEntityName(ErpMdUoMConversion.class.getName());

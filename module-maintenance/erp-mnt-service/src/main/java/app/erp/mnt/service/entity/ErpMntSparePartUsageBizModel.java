@@ -8,11 +8,12 @@ import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
 
 @BizModel("ErpMntSparePartUsage")
-public class ErpMntSparePartUsageBizModel extends CrudBizModel<ErpMntSparePartUsage>
+public class ErpMntSparePartUsageBizModel extends AbstractErpCrudBizModel<ErpMntSparePartUsage>
         implements IErpMntSparePartUsageBiz {
 
     @Inject

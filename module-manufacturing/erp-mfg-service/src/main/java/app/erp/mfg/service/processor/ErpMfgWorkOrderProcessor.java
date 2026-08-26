@@ -7,6 +7,7 @@ import app.erp.inv.biz.ReservationLineRequest;
 import app.erp.inv.biz.StockMoveLineRequest;
 import app.erp.inv.biz.StockMoveRequest;
 import app.erp.inv.dao.ErpInvDaoConstants;
+import app.erp.inv.dao.entity.ErpInvStockMove;
 import app.erp.mfg.biz.BomExplosionNode;
 import app.erp.mfg.dao.entity.ErpMfgBom;
 import app.erp.mfg.dao.entity.ErpMfgBomLine;
@@ -395,7 +396,7 @@ public class ErpMfgWorkOrderProcessor {
         request.setCurrencyId(wo.getCurrencyId());
         request.setAcctSchemaId(resolveAcctSchemaId(wo.getOrgId()));
         request.setRelatedBillType(ErpMfgConstants.RELATED_BILL_TYPE_MFG_WORK_ORDER);
-        request.setRelatedBillCode(wo.getCode());
+        request.setRelatedBillCode(completionMoveBillCode(wo, context));
         StockMoveLineRequest line = new StockMoveLineRequest();
         line.setMaterialId(productId);
         line.setUoMId(uomId);
@@ -406,6 +407,28 @@ public class ErpMfgWorkOrderProcessor {
         lines.add(line);
         request.setLines(lines);
         stockMoveBiz.generateMove(request, context);
+    }
+
+    /**
+     * 完工入库移动单关联单号：首张保持 {@code wo.code} 精确值（既有查找/断言消费者零破坏），
+     * 后续增量报工追加 {@code "-C" + 累计完工量} 后缀（累计量严格单调保证唯一——inventory 侧
+     * generateMove 对 business-linked 请求按 (relatedBillType, relatedBillCode) 幂等去重，
+     * 固定 wo.code 会吞掉第二次起的增量报工，P0-CK-mfg-001）。
+     * relatedBillCode 列 VARCHAR(50)：超长显式报错而非静默截断。
+     */
+    protected String completionMoveBillCode(ErpMfgWorkOrder wo, IServiceContext context) {
+        ErpInvStockMove first = stockMoveBiz.findByRelatedBill(
+                ErpMfgConstants.RELATED_BILL_TYPE_MFG_WORK_ORDER, wo.getCode(), context);
+        if (first == null) {
+            return wo.getCode();
+        }
+        String code = wo.getCode() + "-C" + nz(wo.getCompletedQuantity()).stripTrailingZeros().toPlainString();
+        if (code.length() > 50) {
+            throw new NopException(ErpMfgErrors.ERR_COMPLETION_MOVE_BILL_CODE_TOO_LONG)
+                    .param(ErpMfgErrors.ARG_WORK_ORDER_CODE, wo.getCode())
+                    .param(ErpMfgErrors.ARG_COMPLETED_QUANTITY, wo.getCompletedQuantity());
+        }
+        return code;
     }
 
     /**

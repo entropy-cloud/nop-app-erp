@@ -31,6 +31,7 @@ import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 import io.nop.commons.util.StringHelper;
 import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
@@ -59,7 +60,7 @@ import static io.nop.api.core.beans.FilterBeans.eq;
  * </ul>
  */
 @BizModel("ErpHrEmployee")
-public class ErpHrEmployeeBizModel extends CrudBizModel<ErpHrEmployee> implements IErpHrEmployeeBiz {
+public class ErpHrEmployeeBizModel extends AbstractErpCrudBizModel<ErpHrEmployee> implements IErpHrEmployeeBiz {
 
     private static final Logger LOG = LoggerFactory.getLogger(ErpHrEmployeeBizModel.class);
 

@@ -1,6 +1,7 @@
 package app.erp.fin.service.posting;
 
 import app.erp.fin.service.ErpFinConstants;
+import app.erp.md.dao.AcctSchemaResolver;
 import app.erp.md.dao.entity.ErpMdAcctSchema;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.config.AppConfig;
@@ -112,11 +113,10 @@ public class SchemaPropagator {
         IEntityDao<ErpMdAcctSchema> dao = daoProvider.daoFor(ErpMdAcctSchema.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("orgId", orgId));
+        q.addFilter(eq("status", AcctSchemaResolver.STATUS_ACTIVE));
         List<ErpMdAcctSchema> list = dao.findAllByQuery(q);
-        list.sort(Comparator.comparingInt(s -> {
-            int statusScore = "ACTIVE".equals(s.getStatus()) ? 0 : 100;
-            return statusScore + app.erp.md.dao.AcctSchemaResolver.naturePriority(s.getNature());
-        }));
+        // F2.1（P1-CK-fin-004）：查询已过滤 ACTIVE，statusScore 死代码化简——排序仅按 nature
+        list.sort(Comparator.comparingInt(s -> app.erp.md.dao.AcctSchemaResolver.naturePriority(s.getNature())));
         return list;
     }
 

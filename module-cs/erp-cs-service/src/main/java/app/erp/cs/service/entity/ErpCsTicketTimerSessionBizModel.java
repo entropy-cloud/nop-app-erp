@@ -12,6 +12,7 @@ import io.nop.api.core.annotations.biz.BizQuery;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.annotations.core.Optional;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
 
@@ -27,7 +28,7 @@ import java.util.List;
  * config {@code erp-cs.time-tracking-enabled=false} 拒绝全部计时器 mutation（plan D6）。
  */
 @BizModel("ErpCsTicketTimerSession")
-public class ErpCsTicketTimerSessionBizModel extends CrudBizModel<ErpCsTicketTimerSession>
+public class ErpCsTicketTimerSessionBizModel extends AbstractErpCrudBizModel<ErpCsTicketTimerSession>
         implements IErpCsTicketTimerSessionBiz {
 
     @Inject

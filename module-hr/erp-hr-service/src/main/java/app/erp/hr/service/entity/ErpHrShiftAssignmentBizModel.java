@@ -17,6 +17,7 @@ import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 import io.nop.core.context.IServiceContext;
 import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
@@ -39,7 +40,7 @@ import io.nop.biz.crud.EntityData;
  * 不直接操作 {@code daoProvider().daoFor(ErpHrShift.class)}。
  */
 @BizModel("ErpHrShiftAssignment")
-public class ErpHrShiftAssignmentBizModel extends CrudBizModel<ErpHrShiftAssignment>
+public class ErpHrShiftAssignmentBizModel extends AbstractErpCrudBizModel<ErpHrShiftAssignment>
         implements IErpHrShiftAssignmentBiz {
 
     @Inject

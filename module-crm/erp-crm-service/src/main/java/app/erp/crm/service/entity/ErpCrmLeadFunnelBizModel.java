@@ -15,6 +15,7 @@ import io.nop.api.core.annotations.core.Optional;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.convert.ConvertHelper;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 import io.nop.core.context.IServiceContext;
 import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
@@ -35,7 +36,7 @@ import static io.nop.api.core.beans.FilterBeans.eq;
  * <p>对齐 {@code docs/design/crm/lead-waterfall.md}（聚合计算流程 / 漏斗可视化数据结构）。
  */
 @BizModel("ErpCrmLeadFunnel")
-public class ErpCrmLeadFunnelBizModel extends CrudBizModel<ErpCrmLeadFunnel> implements IErpCrmLeadFunnelBiz {
+public class ErpCrmLeadFunnelBizModel extends AbstractErpCrudBizModel<ErpCrmLeadFunnel> implements IErpCrmLeadFunnelBiz {
 
     @Inject
     IErpCrmLeadBiz leadBiz;

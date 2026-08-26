@@ -8,6 +8,7 @@ import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 import io.nop.biz.crud.EntityData;
 import io.nop.core.context.IServiceContext;
 import io.nop.dao.api.IEntityDao;
@@ -34,7 +35,7 @@ import java.util.List;
  * <p>对齐 projects 0930-3 范式（{@code ErpPrjTaskBizModel} 的 defaultPrepareSave 钩子）。
  */
 @BizModel("ErpCsCatalogCategory")
-public class ErpCsCatalogCategoryBizModel extends CrudBizModel<ErpCsCatalogCategory>
+public class ErpCsCatalogCategoryBizModel extends AbstractErpCrudBizModel<ErpCsCatalogCategory>
         implements IErpCsCatalogCategoryBiz {
 
     private static final Logger LOG = LoggerFactory.getLogger(ErpCsCatalogCategoryBizModel.class);

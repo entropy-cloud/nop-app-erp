@@ -8,6 +8,7 @@ import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
 
@@ -20,7 +21,7 @@ import java.util.List;
  * 非审批动作（cancel）经 per-mutation {@link ErpSalDeliveryCancelProcessor}。
  */
 @BizModel("ErpSalDelivery")
-public class ErpSalDeliveryBizModel extends CrudBizModel<ErpSalDelivery> implements IErpSalDeliveryBiz {
+public class ErpSalDeliveryBizModel extends AbstractErpCrudBizModel<ErpSalDelivery> implements IErpSalDeliveryBiz {
 
     @Inject
     ErpSalDeliveryCancelProcessor cancelProcessor;

@@ -20,6 +20,7 @@ import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.api.core.time.CoreMetrics;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
 
@@ -46,7 +47,7 @@ import static io.nop.api.core.beans.FilterBeans.eq;
  * </ul>
  */
 @BizModel("ErpCsCannedResponse")
-public class ErpCsCannedResponseBizModel extends CrudBizModel<ErpCsCannedResponse> implements IErpCsCannedResponseBiz {
+public class ErpCsCannedResponseBizModel extends AbstractErpCrudBizModel<ErpCsCannedResponse> implements IErpCsCannedResponseBiz {
 
     private static final DateTimeFormatter DATE_FMT = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     private static final DateTimeFormatter DATETIME_FMT = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");

@@ -5,6 +5,7 @@ import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizQuery;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 import io.nop.core.context.IServiceContext;
 
 import app.erp.md.biz.IErpMdOrganizationBiz;
@@ -23,7 +24,7 @@ import java.util.Map;
  * （Employee/Warehouse 的 orgId）；默认无实现时返回空 Map。
  */
 @BizModel("ErpMdOrganization")
-public class ErpMdOrganizationBizModel extends CrudBizModel<ErpMdOrganization> implements IErpMdOrganizationBiz {
+public class ErpMdOrganizationBizModel extends AbstractErpCrudBizModel<ErpMdOrganization> implements IErpMdOrganizationBiz {
 
     /**
      * 跨域引用计数 SPI（F7 §3）。master-data 不可反向依赖下游域，

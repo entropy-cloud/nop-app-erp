@@ -9,6 +9,7 @@ import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
 
@@ -20,7 +21,7 @@ import jakarta.inject.Inject;
  * <p>权威设计见 {@code docs/design/inventory/consignment.md}（所有权转移单 + 状态机 + 同库位调账）。
  */
 @BizModel("ErpInvOwnershipTransfer")
-public class ErpInvOwnershipTransferBizModel extends CrudBizModel<ErpInvOwnershipTransfer>
+public class ErpInvOwnershipTransferBizModel extends AbstractErpCrudBizModel<ErpInvOwnershipTransfer>
         implements IErpInvOwnershipTransferBiz {
 
     @Inject

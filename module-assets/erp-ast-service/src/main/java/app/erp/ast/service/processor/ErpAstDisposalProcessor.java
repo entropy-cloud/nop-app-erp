@@ -97,8 +97,11 @@ public class ErpAstDisposalProcessor {
         validateAssetDisposable(asset, context);
 
         // RC-R1.52 出售补提接线（reuse P1-RC-029 投影，L1 UC-AST-05 ⑤「先补提当期折旧至出售日」）：
-        // 损益计算前补提自最近已执行期至出售期的漏提折旧，避免月中处置累计折旧低估→净值高估→gainLoss 误算
-        catchUpDepreciationToDisposalPeriod(disposal, asset, context);
+        // 损益计算前补提自最近已执行期至出售期的漏提折旧，避免月中处置累计折旧低估→净值高估→gainLoss 误算。
+        // F1.2（P2-CK-ast-015 Disposal 链拆分）：数据段（计划行+资产字段）先行为 gainLoss 供数；
+        // #CATCHUP 凭证段后置到 DISPOSAL 凭证相邻处（两张 REQUIRES_NEW 凭证尾部连续提交，
+        // 消除凭证后可抛窗口——设备联动/取消计划/处置写库均在其前）。
+        List<ErpAstDepreciationSchedule> catchUpCreated = catchUpDepreciationToDisposalPeriod(disposal, asset, context);
 
         BigDecimal original = nz(asset.getOriginalValue());
         BigDecimal accumDep = nz(asset.getAccumulatedDepreciation());
@@ -130,9 +133,20 @@ public class ErpAstDisposalProcessor {
         disposalDao().updateEntity(disposal);
         orm().flushSession();
 
+        // F1.2：#CATCHUP 凭证段后置（保持 CATCHUP→DISPOSAL 原凭证顺序），与 DISPOSAL 凭证尾部连续提交。
+        // 计划行 posted/voucherId 回填推迟到两凭证全提交后的最终尾部（REQUIRES_NEW 内层 flush 看不见
+        // 主事务未提交 INSERT，中途回填会触发跨连接 update-entity-not-found——实证见 F1.2 调试）。
+        String catchUpVoucherId = null;
+        if (catchUpCreated != null && !catchUpCreated.isEmpty()) {
+            catchUpVoucherId = postDisposalCatchUpVoucher(disposal, asset, catchUpCreated, context);
+        }
+
         ErpAstAssetCategory category = asset.getCategory();
         String voucherId = postingDispatcher.tryPost(disposal, asset, category);
 
+        if (catchUpVoucherId != null) {
+            catchUpDepreciationProcessor.backfillCatchUpSchedules(catchUpCreated, catchUpVoucherId);
+        }
         disposal = reload(id);
         Timestamp now = CoreMetrics.currentTimestamp();
         if (voucherId != null) {
@@ -280,23 +294,24 @@ public class ErpAstDisposalProcessor {
      * （Phase 1 Decision：IDLE 不允许补提——闲置期无折旧义务，恢复至 IN_SERVICE 后方可补提，出售时 IDLE 以卡片账面计提为准）。
      * 补提经 {@code catchUpDepreciation} 以出售期间为当前期间落行 + 汇总凭证（billHeadCode 后缀 #CATCHUP）。
      */
-    protected void catchUpDepreciationToDisposalPeriod(ErpAstDisposal disposal, ErpAstAsset asset, IServiceContext context) {
+    protected List<ErpAstDepreciationSchedule> catchUpDepreciationToDisposalPeriod(ErpAstDisposal disposal,
+                                                                                     ErpAstAsset asset, IServiceContext context) {
         if (asset.getStatus() == null
                 || !Objects.equals(asset.getStatus(), ErpAstConstants.ASSET_STATUS_IN_SERVICE)) {
-            return;
+            return java.util.Collections.emptyList();
         }
         if (disposal.getBusinessDate() == null) {
-            return;
+            return java.util.Collections.emptyList();
         }
         String disposalPeriod;
         try {
             disposalPeriod = java.time.YearMonth.from(disposal.getBusinessDate()).toString();
         } catch (Exception e) {
-            return;
+            return java.util.Collections.emptyList();
         }
         String lastExecuted = depreciationScheduleFacade.findLastExecutedPeriod(asset.getId());
         if (lastExecuted == null || lastExecuted.compareTo(disposalPeriod) >= 0) {
-            return;
+            return java.util.Collections.emptyList();
         }
         List<String> missed = new java.util.ArrayList<>();
         java.time.YearMonth cursor = java.time.YearMonth.parse(lastExecuted).plusMonths(1);
@@ -305,7 +320,15 @@ public class ErpAstDisposalProcessor {
             missed.add(cursor.toString());
             cursor = cursor.plusMonths(1);
         }
-        catchUpDepreciationProcessor.catchUpDepreciation(asset.getId(), disposalPeriod, missed, context);
+        // F1.2 数据段模式（postVoucher=false）：凭证段由 postDisposalCatchUpVoucher 后置
+        return catchUpDepreciationProcessor.catchUpDepreciation(asset.getId(), disposalPeriod, missed, context, false);
+    }
+
+    /** F1.2：#CATCHUP 凭证段后置（仅过账，计划行回填由调用方尾部统一执行；currentPeriod = 处置业务日所属期间）。 */
+    protected String postDisposalCatchUpVoucher(ErpAstDisposal disposal, ErpAstAsset asset,
+                                                 List<ErpAstDepreciationSchedule> created, IServiceContext context) {
+        String disposalPeriod = java.time.YearMonth.from(disposal.getBusinessDate()).toString();
+        return catchUpDepreciationProcessor.postCatchUpVoucherOnly(asset, created, disposalPeriod, context);
     }
 
     protected void cancelPendingSchedules(String assetId) {

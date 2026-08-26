@@ -9,6 +9,7 @@ import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
 
@@ -21,7 +22,7 @@ import jakarta.inject.Inject;
  * <p>权威：{@code docs/design/manufacturing/state-machine.md}、{@code docs/design/inventory/cross-domain.md}。
  */
 @BizModel("ErpMfgMaterialIssue")
-public class ErpMfgMaterialIssueBizModel extends CrudBizModel<ErpMfgMaterialIssue> implements IErpMfgMaterialIssueBiz {
+public class ErpMfgMaterialIssueBizModel extends AbstractErpCrudBizModel<ErpMfgMaterialIssue> implements IErpMfgMaterialIssueBiz {
 
     @Inject
     ErpMfgMaterialIssueConfirmProcessor confirmProcessor;

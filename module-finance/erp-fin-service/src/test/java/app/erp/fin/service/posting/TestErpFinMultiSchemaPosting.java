@@ -54,6 +54,7 @@ public class TestErpFinMultiSchemaPosting extends JunitAutoTestCase {
     static final String ORG_ID = "1";
     static final String PRIMARY_SCHEMA_ID = "8001";   // FINANCIAL 主账套
     static final String SECONDARY_SCHEMA_ID = "8002"; // MANAGEMENT 账套
+    static final String INACTIVE_SCHEMA_ID = "8003";  // 停用账套（F2.1 排除例）
     static final String CURRENCY_ID = "1";
 
     static final String DC_DEBIT = ErpFinConstants.DC_DEBIT;
@@ -153,6 +154,35 @@ public class TestErpFinMultiSchemaPosting extends JunitAutoTestCase {
         assertFalse(primary.getId().equals(secondary.getId()), "主/次凭证为不同实体");
     }
 
+    /**
+     * F2.1（P1-CK-fin-004）：INACTIVE 账套排除——同组织存在停用账套（isPropagate=true 也无效）时，
+     * 传播列表不包含停用账套、不为其生成凭证（修复前 findActiveSchemasByOrg 无 ACTIVE 过滤照常传播）。
+     */
+    @Test
+    public void testInactiveSchemaExcludedFromPropagation() {
+        setMultiSchemaEnabled(true);
+        ormTemplate.runInSession(() -> {
+            seedAcctSchema(PRIMARY_SCHEMA_ID, "FIN", "财务账套", "FINANCIAL", true);
+            seedAcctSchema(SECONDARY_SCHEMA_ID, "MGT", "管理账套", "MANAGEMENT", false);
+            seedAcctSchema(INACTIVE_SCHEMA_ID, "TAX", "停用账套", "TAX", true, "INACTIVE");
+            seedOpenPeriod("2026-07", 2026, 7, LocalDate.of(2026, 7, 1), LocalDate.of(2026, 7, 31));
+            seedSubject("6602", "管理费用", "EXPENSE", "DEBIT");
+            seedSubject("2221", "应交税费-进项税", "ASSET", "DEBIT");
+            seedSubject("2202", "应付账款", "LIABILITY", "CREDIT");
+            seedApInvoiceTemplate();
+        });
+
+        PostingEvent event = apInvoiceEvent("AP-MS-INACT-001", PRIMARY_SCHEMA_ID);
+
+        String voucherId = ormTemplate.runInSession(session -> voucherBiz.post(event, CTX));
+        assertNotNull(voucherId, "主账套应返回凭证 ID");
+
+        List<ErpFinVoucher> vouchers = findVouchers("AP-MS-INACT-001");
+        assertEquals(2, vouchers.size(), "传播仅覆盖 ACTIVE 账套（主+次），INACTIVE 不计入");
+        assertFalse(vouchers.stream().anyMatch(v -> INACTIVE_SCHEMA_ID.equals(v.getAcctSchemaId())),
+                "INACTIVE 账套（即使 isPropagate=true）不生成凭证");
+    }
+
     // ---------- helpers: seed ----------
 
     private void seedBaseline(boolean primaryPropagate) {
@@ -169,6 +199,11 @@ public class TestErpFinMultiSchemaPosting extends JunitAutoTestCase {
     }
 
     private void seedAcctSchema(String id, String code, String name, String nature, boolean propagate) {
+        seedAcctSchema(id, code, name, nature, propagate, "ACTIVE");
+    }
+
+    private void seedAcctSchema(String id, String code, String name, String nature, boolean propagate,
+                                String status) {
         IEntityDao<ErpMdAcctSchema> dao = daoProvider.daoFor(ErpMdAcctSchema.class);
         ErpMdAcctSchema schema = new ErpMdAcctSchema();
         schema.orm_propValueByName("id", id);
@@ -178,7 +213,7 @@ public class TestErpFinMultiSchemaPosting extends JunitAutoTestCase {
         schema.setNature(nature);
         schema.setFunctionalCurrencyId(CURRENCY_ID);
         schema.setIsPropagate(propagate);
-        schema.setStatus("ACTIVE");
+        schema.setStatus(status);
         dao.saveEntity(schema);
     }
 

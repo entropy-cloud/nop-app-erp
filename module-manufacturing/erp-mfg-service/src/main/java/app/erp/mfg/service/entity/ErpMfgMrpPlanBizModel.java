@@ -8,6 +8,7 @@ import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
 
@@ -16,7 +17,7 @@ import jakarta.inject.Inject;
  * {@code runMrp}（@BizMutation）委托 {@link ErpMfgMrpPlanRunMrpProcessor}（R6.2 per-mutation 拆分）。
  */
 @BizModel("ErpMfgMrpPlan")
-public class ErpMfgMrpPlanBizModel extends CrudBizModel<ErpMfgMrpPlan> implements IErpMfgMrpPlanBiz {
+public class ErpMfgMrpPlanBizModel extends AbstractErpCrudBizModel<ErpMfgMrpPlan> implements IErpMfgMrpPlanBiz {
     @Inject
     ErpMfgMrpPlanRunMrpProcessor runMrpProcessor;
 

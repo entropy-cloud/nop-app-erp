@@ -5,6 +5,7 @@ import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
 
@@ -13,7 +14,7 @@ import app.erp.inv.dao.entity.ErpInvTransferOrder;
 import app.erp.inv.service.processor.ErpInvTransferOrderConfirmProcessor;
 
 @BizModel("ErpInvTransferOrder")
-public class ErpInvTransferOrderBizModel extends CrudBizModel<ErpInvTransferOrder> implements IErpInvTransferOrderBiz {
+public class ErpInvTransferOrderBizModel extends AbstractErpCrudBizModel<ErpInvTransferOrder> implements IErpInvTransferOrderBiz {
     public ErpInvTransferOrderBizModel(){
         setEntityName(ErpInvTransferOrder.class.getName());
     }

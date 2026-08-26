@@ -1,7 +1,7 @@
 {
   "data": {
     "id": "@var:woId",
-    "code": "@var:ErpMfgWorkOrder@code",
+    "code": "@var:ErpInvReservation@sourceBillCode",
     "orgId": "2",
     "bomId": "@var:bomId",
     "routingId": null,
@@ -43,13 +43,13 @@
     "amountFunctional": 0.0000,
     "sourceScheduleId": null,
     "delVersion": 0,
-    "version": 7,
+    "version": 6,
     "createdBy": "autotest-ref",
     "createTime": "*",
     "updatedBy": "autotest-ref",
     "updateTime": "*",
     "snapshotBomVersion": null,
-    "snapshotBomId": "100011"
+    "snapshotBomId": "100013"
   },
   "status": 0
 }

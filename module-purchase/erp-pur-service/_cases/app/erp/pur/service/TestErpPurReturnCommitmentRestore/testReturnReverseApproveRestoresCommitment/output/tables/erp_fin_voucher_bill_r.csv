@@ -4,4 +4,4 @@ A,18,16,PURCHASE_ORDER_COMMITMENT,@var:ErpFinVoucherBillR@billCode_5,,PURCHASE_O
 A,25,22,PURCHASE_RETURN,@var:ErpFinVoucherBillR@billCode_4,,PURCHASE_RETURN,0,0,autotest-ref,*,autotest-ref,*
 A,29,27,PURCHASE_ORDER_COMMITMENT,@var:ErpFinVoucherBillR@billCode_5,,PURCHASE_ORDER_COMMITMENT,0,0,autotest-ref,*,autotest-ref,*
 A,33,30,PURCHASE_RETURN,@var:ErpFinVoucherBillR@billCode_4,,PURCHASE_RETURN,0,0,autotest-ref,*,autotest-ref,*
-A,39,37,PURCHASE_ORDER_COMMITMENT,@var:ErpFinVoucherBillR@billCode_5,,PURCHASE_ORDER_COMMITMENT,0,0,autotest-ref,*,autotest-ref,*
+A,40,38,PURCHASE_ORDER_COMMITMENT,@var:ErpFinVoucherBillR@billCode_5,,PURCHASE_ORDER_COMMITMENT,0,0,autotest-ref,*,autotest-ref,*

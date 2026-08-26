@@ -9,13 +9,14 @@ import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
 
 import java.util.List;
 
 @BizModel("ErpMdCurrency")
-public class ErpMdCurrencyBizModel extends CrudBizModel<ErpMdCurrency> implements IErpMdCurrencyBiz {
+public class ErpMdCurrencyBizModel extends AbstractErpCrudBizModel<ErpMdCurrency> implements IErpMdCurrencyBiz {
 
     @Inject
     ErpMdCurrencyRefreshRatesFromApiProcessor refreshRatesFromApiProcessor;

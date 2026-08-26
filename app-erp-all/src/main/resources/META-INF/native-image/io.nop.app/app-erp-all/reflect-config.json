@@ -3849,6 +3849,15 @@
         "parameterTypes": []
       },
       {
+        "name": "postDisposalCatchUpVoucher",
+        "parameterTypes": [
+          "app.erp.ast.dao.entity.ErpAstDisposal",
+          "app.erp.ast.dao.entity.ErpAstAsset",
+          "java.util.List",
+          "io.nop.core.context.IServiceContext"
+        ]
+      },
+      {
         "name": "reload",
         "parameterTypes": [
           "java.lang.String"
@@ -8476,6 +8485,74 @@
       }
     ],
     "name": "app.erp.common.service.AbstractCancelProcessor"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [
+      {
+        "name": "defaultPrepareDelete",
+        "parameterTypes": [
+          "io.nop.orm.IOrmEntity",
+          "io.nop.core.context.IServiceContext"
+        ]
+      },
+      {
+        "name": "defaultPrepareUpdate",
+        "parameterTypes": [
+          "io.nop.biz.crud.EntityData",
+          "io.nop.core.context.IServiceContext"
+        ]
+      },
+      {
+        "name": "isStatusLockEnabled",
+        "parameterTypes": []
+      },
+      {
+        "name": "locked",
+        "parameterTypes": [
+          "io.nop.orm.IOrmEntity",
+          "java.lang.String"
+        ]
+      }
+    ],
+    "name": "app.erp.common.service.AbstractErpCrudBizModel"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [
+      {
+        "name": "defaultPrepareDelete",
+        "parameterTypes": [
+          "io.nop.orm.IOrmEntity",
+          "io.nop.core.context.IServiceContext"
+        ]
+      },
+      {
+        "name": "defaultPrepareUpdate",
+        "parameterTypes": [
+          "io.nop.biz.crud.EntityData",
+          "io.nop.core.context.IServiceContext"
+        ]
+      },
+      {
+        "name": "immutable",
+        "parameterTypes": [
+          "io.nop.orm.IOrmEntity",
+          "java.lang.String"
+        ]
+      }
+    ],
+    "name": "app.erp.common.service.AbstractErpImmutableCrudBizModel"
   },
   {
     "allDeclaredConstructors": true,
@@ -22733,7 +22810,14 @@
         "name": "postingProcessor"
       }
     ],
-    "methods": [],
+    "methods": [
+      {
+        "name": "assertBalancedFromLines",
+        "parameterTypes": [
+          "app.erp.fin.dao.entity.ErpFinVoucher"
+        ]
+      }
+    ],
     "name": "app.erp.fin.service.entity.ErpFinVoucherBizModel"
   },
   {
@@ -22977,11 +23061,19 @@
       },
       {
         "allowWrite": true,
+        "name": "exceptionRecorder"
+      },
+      {
+        "allowWrite": true,
         "name": "notificationBiz"
       },
       {
         "allowWrite": true,
         "name": "ormTemplate"
+      },
+      {
+        "allowWrite": true,
+        "name": "postedListenerRegistry"
       },
       {
         "allowWrite": true,
@@ -22998,6 +23090,15 @@
         "parameterTypes": [
           "app.erp.fin.dao.entity.ErpFinPostingException",
           "java.lang.Exception"
+        ]
+      },
+      {
+        "name": "dispatchPostedEvent",
+        "parameterTypes": [
+          "app.erp.fin.dao.entity.ErpFinPostingException",
+          "app.erp.fin.dao.PostingEvent",
+          "java.lang.String",
+          "io.nop.core.context.IServiceContext"
         ]
       },
       {
@@ -23059,6 +23160,21 @@
     ],
     "methods": [],
     "name": "app.erp.fin.service.posting.ErpFinGlMappingResolver"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [
+      {
+        "allowWrite": true,
+        "name": "listeners"
+      }
+    ],
+    "methods": [],
+    "name": "app.erp.fin.service.posting.ErpFinPostedListenerRegistry"
   },
   {
     "allDeclaredConstructors": true,
@@ -23266,6 +23382,15 @@
         "parameterTypes": [
           "java.lang.String",
           "app.erp.fin.dao.ErpFinBusinessType",
+          "io.nop.core.context.IServiceContext"
+        ]
+      },
+      {
+        "name": "findPostedVoucher",
+        "parameterTypes": [
+          "java.lang.String",
+          "app.erp.fin.dao.ErpFinBusinessType",
+          "java.lang.String",
           "io.nop.core.context.IServiceContext"
         ]
       },
@@ -27802,6 +27927,14 @@
       },
       {
         "allowWrite": true,
+        "name": "exceptionRecorder"
+      },
+      {
+        "allowWrite": true,
+        "name": "postedListenerRegistry"
+      },
+      {
+        "allowWrite": true,
         "name": "voucherBiz"
       }
     ],
@@ -27813,6 +27946,15 @@
       {
         "name": "daoProvider",
         "parameterTypes": []
+      },
+      {
+        "name": "dispatchPostedEvent",
+        "parameterTypes": [
+          "app.erp.fin.dao.entity.ErpFinPostingException",
+          "app.erp.fin.dao.PostingEvent",
+          "java.lang.String",
+          "io.nop.core.context.IServiceContext"
+        ]
       },
       {
         "name": "parseBusinessType",
@@ -42693,6 +42835,13 @@
         ]
       },
       {
+        "name": "completionMoveBillCode",
+        "parameterTypes": [
+          "app.erp.mfg.dao.entity.ErpMfgWorkOrder",
+          "io.nop.core.context.IServiceContext"
+        ]
+      },
+      {
         "name": "createReservations",
         "parameterTypes": [
           "app.erp.mfg.dao.entity.ErpMfgWorkOrder",
@@ -49375,6 +49524,13 @@
         "parameterTypes": [
           "java.lang.Class",
           "java.lang.String"
+        ]
+      },
+      {
+        "name": "markPosted",
+        "parameterTypes": [
+          "io.nop.orm.IOrmEntity",
+          "java.sql.Timestamp"
         ]
       },
       {

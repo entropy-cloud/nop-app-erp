@@ -5,6 +5,7 @@ import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 import io.nop.biz.crud.EntityData;
 import io.nop.core.context.IServiceContext;
 import io.nop.dao.api.IEntityDao;
@@ -23,7 +24,7 @@ import java.util.List;
  * <p>维护钩子：单配置器规则数不超 {@code erp-crm.cpq.max-rules-per-configurator} 上限。
  */
 @BizModel("ErpCrmConfigRule")
-public class ErpCrmConfigRuleBizModel extends CrudBizModel<ErpCrmConfigRule> implements IErpCrmConfigRuleBiz {
+public class ErpCrmConfigRuleBizModel extends AbstractErpCrudBizModel<ErpCrmConfigRule> implements IErpCrmConfigRuleBiz {
     public ErpCrmConfigRuleBizModel() {
         setEntityName(ErpCrmConfigRule.class.getName());
     }

@@ -8,6 +8,7 @@ import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.api.core.time.CoreMetrics;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 import io.nop.core.context.IServiceContext;
 import io.nop.dao.api.IEntityDao;
 
@@ -32,7 +33,7 @@ import static io.nop.api.core.beans.FilterBeans.eq;
  * 同合同其他版本 isCurrent=false。
  */
 @BizModel("ErpCtContractVersion")
-public class ErpCtContractVersionBizModel extends CrudBizModel<ErpCtContractVersion>
+public class ErpCtContractVersionBizModel extends AbstractErpCrudBizModel<ErpCtContractVersion>
         implements IErpCtContractVersionBiz {
 
     @Inject

@@ -16,6 +16,7 @@ import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 import io.nop.core.context.IServiceContext;
 import io.nop.core.lang.json.JsonTool;
 import io.nop.dao.api.IEntityDao;
@@ -40,7 +41,7 @@ import static io.nop.api.core.beans.FilterBeans.in;
  * 创建/删除排班经 {@link IErpHrShiftAssignmentBiz}（同域 I*Biz 统一入口）。
  */
 @BizModel("ErpHrShiftRotationPattern")
-public class ErpHrShiftRotationPatternBizModel extends CrudBizModel<ErpHrShiftRotationPattern>
+public class ErpHrShiftRotationPatternBizModel extends AbstractErpCrudBizModel<ErpHrShiftRotationPattern>
         implements IErpHrShiftRotationPatternBiz {
 
     @Inject

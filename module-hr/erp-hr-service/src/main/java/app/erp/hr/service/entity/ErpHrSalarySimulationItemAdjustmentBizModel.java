@@ -4,6 +4,7 @@ import io.nop.api.core.annotations.biz.BizLoader;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.ContextSource;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 
 import app.erp.common.service.MaskHelper;
 import app.erp.hr.biz.IErpHrSalarySimulationItemAdjustmentBiz;
@@ -14,7 +15,7 @@ import java.util.List;
 import java.util.Set;
 
 @BizModel("ErpHrSalarySimulationItemAdjustment")
-public class ErpHrSalarySimulationItemAdjustmentBizModel extends CrudBizModel<ErpHrSalarySimulationItemAdjustment> implements IErpHrSalarySimulationItemAdjustmentBiz{
+public class ErpHrSalarySimulationItemAdjustmentBizModel extends AbstractErpCrudBizModel<ErpHrSalarySimulationItemAdjustment> implements IErpHrSalarySimulationItemAdjustmentBiz{
     public ErpHrSalarySimulationItemAdjustmentBizModel(){
         setEntityName(ErpHrSalarySimulationItemAdjustment.class.getName());
     }

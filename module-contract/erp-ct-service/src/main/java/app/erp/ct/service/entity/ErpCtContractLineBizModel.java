@@ -8,13 +8,14 @@ import io.nop.api.core.annotations.biz.BizLoader;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.ContextSource;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 
 import app.erp.common.service.MaskHelper;
 import app.erp.ct.biz.IErpCtContractLineBiz;
 import app.erp.contract.dao.entity.ErpCtContractLine;
 
 @BizModel("ErpCtContractLine")
-public class ErpCtContractLineBizModel extends CrudBizModel<ErpCtContractLine> implements IErpCtContractLineBiz{
+public class ErpCtContractLineBizModel extends AbstractErpCrudBizModel<ErpCtContractLine> implements IErpCtContractLineBiz{
     public ErpCtContractLineBizModel(){
         setEntityName(ErpCtContractLine.class.getName());
     }

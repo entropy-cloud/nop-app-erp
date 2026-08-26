@@ -132,7 +132,7 @@ public class TestErpMfgMaterialIssue extends JunitAutoTestCase {
 
     // ---------- seed helpers ----------
 
-    private void generateIncoming(String materialId, String billCode, BigDecimal qty, BigDecimal unitCost) {
+    protected void generateIncoming(String materialId, String billCode, BigDecimal qty, BigDecimal unitCost) {
         Map<String, Object> req = new LinkedHashMap<>();
         req.put("moveType", MOVE_TYPE_INCOMING);
         req.put("orgId", ORG_ID);
@@ -151,7 +151,7 @@ public class TestErpMfgMaterialIssue extends JunitAutoTestCase {
         rpcOk(mutation, "ErpInvStockMove__generateMove", Map.of("request", req));
     }
 
-    private void seedMaterial(String id, String costMethod) {
+    protected void seedMaterial(String id, String costMethod) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMdMaterial> dao = daoProvider.daoFor(ErpMdMaterial.class);
             ErpMdMaterial m = new ErpMdMaterial();
@@ -166,7 +166,7 @@ public class TestErpMfgMaterialIssue extends JunitAutoTestCase {
         });
     }
 
-    private void seedBom(String bomId, String productId, String componentId, BigDecimal qty) {
+    protected void seedBom(String bomId, String productId, String componentId, BigDecimal qty) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMfgBom> dao = daoProvider.daoFor(ErpMfgBom.class);
             ErpMfgBom bom = new ErpMfgBom();
@@ -190,7 +190,7 @@ public class TestErpMfgMaterialIssue extends JunitAutoTestCase {
         });
     }
 
-    private String seedWorkOrder(String code) {
+    protected String seedWorkOrder(String code) {
         String id = String.valueOf(8100 + Math.abs(code.hashCode() % 800));
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMfgWorkOrder> dao = daoProvider.daoFor(ErpMfgWorkOrder.class);
@@ -209,7 +209,7 @@ public class TestErpMfgMaterialIssue extends JunitAutoTestCase {
         return id;
     }
 
-    private String seedWorkOrderLine(String woId, String materialId, BigDecimal plannedQty) {
+    protected String seedWorkOrderLine(String woId, String materialId, BigDecimal plannedQty) {
         String id = String.valueOf(9100 + Math.abs((woId + "" + materialId).hashCode() % 800));
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMfgWorkOrderLine> dao = daoProvider.daoFor(ErpMfgWorkOrderLine.class);
@@ -226,7 +226,7 @@ public class TestErpMfgMaterialIssue extends JunitAutoTestCase {
         return id;
     }
 
-    private String seedIssue(String code, String woId) {
+    protected String seedIssue(String code, String woId) {
         String id = String.valueOf(8200 + Math.abs(code.hashCode() % 800));
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMfgMaterialIssue> dao = daoProvider.daoFor(ErpMfgMaterialIssue.class);
@@ -245,7 +245,7 @@ public class TestErpMfgMaterialIssue extends JunitAutoTestCase {
         return id;
     }
 
-    private void seedIssueLine(String id, String issueId, String materialId, BigDecimal qty, String wolId) {
+    protected void seedIssueLine(String id, String issueId, String materialId, BigDecimal qty, String wolId) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMfgMaterialIssueLine> dao = daoProvider.daoFor(ErpMfgMaterialIssueLine.class);
             ErpMfgMaterialIssueLine line = new ErpMfgMaterialIssueLine();
@@ -263,7 +263,7 @@ public class TestErpMfgMaterialIssue extends JunitAutoTestCase {
 
     // ---------- query helpers ----------
 
-    private ErpInvStockBalance findBalance(String materialId) {
+    protected ErpInvStockBalance findBalance(String materialId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("materialId", materialId));
         q.addFilter(eq("warehouseId", WAREHOUSE_ID));
@@ -271,7 +271,7 @@ public class TestErpMfgMaterialIssue extends JunitAutoTestCase {
         return list.isEmpty() ? null : list.get(0);
     }
 
-    private ErpInvStockMove findMove(String billType, String billCode) {
+    protected ErpInvStockMove findMove(String billType, String billCode) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("relatedBillType", billType));
         q.addFilter(eq("relatedBillCode", billCode));
@@ -279,17 +279,17 @@ public class TestErpMfgMaterialIssue extends JunitAutoTestCase {
         return list.isEmpty() ? null : list.get(0);
     }
 
-    private ApiResponse<?> rpc(io.nop.graphql.core.ast.GraphQLOperationType op, String action, Map<String, Object> args) {
+    protected ApiResponse<?> rpc(io.nop.graphql.core.ast.GraphQLOperationType op, String action, Map<String, Object> args) {
         IGraphQLExecutionContext ctx = graphQLEngine.newRpcContext(op, action, ApiRequest.build(args));
         return graphQLEngine.executeRpc(ctx);
     }
 
-    private void rpcOk(io.nop.graphql.core.ast.GraphQLOperationType op, String action, Map<String, Object> args) {
+    protected void rpcOk(io.nop.graphql.core.ast.GraphQLOperationType op, String action, Map<String, Object> args) {
         ApiResponse<?> resp = rpc(op, action, args);
         assertEquals(0, resp.getStatus(), action + " 应成功: " + resp);
     }
 
-    private static BigDecimal bd(String v) {
+    protected static BigDecimal bd(String v) {
         return new BigDecimal(v);
     }
 }

@@ -4,7 +4,7 @@
     "code": "@var:ErpFinArApItem@sourceBillCode_1",
     "orgId": "@var:ErpMdSubject@code",
     "supplierId": "2401",
-    "businessDate": "@var:ErpPurInvoice@businessDate",
+    "businessDate": "@var:ErpFinVoucher@voucherDate",
     "currencyId": "6401",
     "exchangeRate": 1.00000000,
     "amountSource": 56.5000,

@@ -71,6 +71,8 @@ public class TestErpPrjTimesheetMulticurrencyPosting extends JunitAutoTestCase {
     IOrmTemplate ormTemplate;
     @Inject
     IErpPrjTimesheetBiz timesheetBiz;
+    @Inject
+    app.erp.prj.service.posting.TimesheetPostingDispatcher timesheetPostingDispatcher;
 
     // ---------- ① 非本位币 + 汇率 seed → 折算过账 ----------
 
@@ -209,6 +211,47 @@ public class TestErpPrjTimesheetMulticurrencyPosting extends JunitAutoTestCase {
             assertEquals(0, line.getAmountFunctional().compareTo(new BigDecimal("8000")),
                     "amount=8000（既有断言零回归）");
         }
+    }
+
+    // ---------- ④ F1.1（ai-check P1-CK-fin-003 传导站点回归）：幂等重入不悬挂 ----------
+
+    /**
+     * approve 成功（posted=true）后 dispatcher 二次 tryPost（重试/重入场景）——过账引擎幂等命中
+     * 现返回既有凭证 id（F1.1 前返回 null），{@code voucherId != null} 判定成立 → 返回 true，
+     * posted 不悬挂。修复前本用例失败（幂等命中被误判失败返回 false）。
+     */
+    @Test
+    public void testIdempotentRepostKeepsPostedTrue() {
+        final String tsCode = "TS-FX-IDEM-001";
+        String tsId = ormTemplate.runInSession(session -> {
+            seedOpenPeriod("2026-07");
+            seedAcctSchema("1");
+            seedCurrency(CNY_ID, "CNY", true);
+            String debitSubjectId = seedSubject("5101", "项目开发成本");
+            String payrollSubjectId = seedSubject("2211", "应付职工薪酬");
+            seedConfigSubject(payrollSubjectId);
+            String projectTypeId = seedProjectType("PT-RD-IDEM", "研发项目-幂等", debitSubjectId);
+            String projectId = seedProject("PRJ-FX-IDEM-001", "幂等重入项目", projectTypeId,
+                    ErpPrjConstants.PROJECT_STATUS_OPEN, new BigDecimal("100000"));
+            String activityTypeId = seedActivityType("DEV-FX", "开发", "300", null);
+            String taskId = seedTask(projectId, "任务-幂等", ErpPrjConstants.TASK_STATUS_IN_PROGRESS);
+            return seedTimesheet(tsCode, projectId, taskId, activityTypeId,
+                    "10", "800", ErpPrjConstants.APPROVE_STATUS_UNSUBMITTED, CNY_ID);
+        });
+
+        ormTemplate.runInSession(() -> timesheetBiz.submit(tsId, CTX));
+        ErpPrjTimesheet ts = ormTemplate.runInSession(session -> timesheetBiz.approve(tsId, CTX));
+        assertTrue(Boolean.TRUE.equals(ts.getPosted()), "首次过账成功 posted=true");
+
+        // 幂等重入：同一工时单再次 tryPost（模拟 sweep 重试/重入）——引擎幂等命中返回既有凭证 id
+        Boolean reposted = ormTemplate.runInSession(session ->
+                timesheetPostingDispatcher.tryPost(daoProvider.daoFor(ErpPrjTimesheet.class).getEntityById(tsId)));
+        assertEquals(Boolean.TRUE, reposted,
+                "F1.1：幂等重入应返回 true（引擎返回既有凭证 id，voucherId != null 成立）——修复前因 null 返回 false 造成 posted 悬挂");
+
+        // 凭证仍只 1 张（幂等不重复建凭证）
+        List<ErpFinVoucherBillR> links = findBillLinks(tsCode, "PROJECT_COST_COLLECTION");
+        assertEquals(1, links.size(), "幂等重入不产生第二张凭证/回链");
     }
 
     // ---------- ③b currencyId=null → rate=1 行为保持 ----------

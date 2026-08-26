@@ -14,6 +14,7 @@ import io.nop.api.core.annotations.biz.BizQuery;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 import io.nop.biz.crud.EntityData;
 import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
@@ -42,7 +43,7 @@ import org.slf4j.LoggerFactory;
  * {@link ErpPurErrors#ERR_QUOTATION_ILLEGAL_STATUS_TRANSITION}（同 Order/Req 模式）。行为变化已显式记录。
  */
 @BizModel("ErpPurQuotation")
-public class ErpPurQuotationBizModel extends CrudBizModel<ErpPurQuotation> implements IErpPurQuotationBiz {
+public class ErpPurQuotationBizModel extends AbstractErpCrudBizModel<ErpPurQuotation> implements IErpPurQuotationBiz {
 
     private static final Logger LOG = LoggerFactory.getLogger(ErpPurQuotationBizModel.class);
 

@@ -3,6 +3,7 @@ package app.erp.cs.service.entity;
 
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 
 import app.erp.cs.biz.IErpCsContractBiz;
 import app.erp.cs.dao.entity.ErpCsContract;
@@ -11,7 +12,7 @@ import io.nop.core.context.IServiceContext;
 import java.util.List;
 
 @BizModel("ErpCsContract")
-public class ErpCsContractBizModel extends CrudBizModel<ErpCsContract> implements IErpCsContractBiz{
+public class ErpCsContractBizModel extends AbstractErpCrudBizModel<ErpCsContract> implements IErpCsContractBiz{
     public ErpCsContractBizModel(){
         setEntityName(ErpCsContract.class.getName());
     }

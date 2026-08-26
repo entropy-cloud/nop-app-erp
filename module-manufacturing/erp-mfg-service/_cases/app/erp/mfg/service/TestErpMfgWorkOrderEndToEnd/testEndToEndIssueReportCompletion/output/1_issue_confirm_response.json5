@@ -6,7 +6,7 @@
     "workOrderId": "8977",
     "jobCardId": null,
     "warehouseId": "3401",
-    "businessDate": "@var:ErpFinPostingException@voucherDate",
+    "businessDate": "@var:ErpInvStockMove@businessDate_1",
     "docStatus": "DONE",
     "docStatus_label": "DONE-已出库",
     "approveStatus": "UNSUBMITTED",

@@ -11,6 +11,7 @@ import io.nop.api.core.auth.IUserContext;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.api.core.time.CoreMetrics;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 import io.nop.core.context.IServiceContext;
 import io.nop.dao.api.IEntityDao;
 
@@ -50,7 +51,7 @@ import jakarta.inject.Inject;
  * 而非注入 {@code IErpPurInvoiceBiz}/{@code IErpSalInvoiceBiz}（同 InvoicePlan，避免服务依赖级联）。
  */
 @BizModel("ErpCtRebateSettlement")
-public class ErpCtRebateSettlementBizModel extends CrudBizModel<ErpCtRebateSettlement>
+public class ErpCtRebateSettlementBizModel extends AbstractErpCrudBizModel<ErpCtRebateSettlement>
         implements IErpCtRebateSettlementBiz {
 
     @Inject

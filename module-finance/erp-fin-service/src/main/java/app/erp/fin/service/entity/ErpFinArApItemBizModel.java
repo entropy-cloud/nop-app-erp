@@ -8,6 +8,7 @@ import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.config.AppConfig;
 import io.nop.api.core.time.CoreMetrics;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 import io.nop.core.context.IServiceContext;
 import java.util.Objects;
 
@@ -28,7 +29,7 @@ import static io.nop.api.core.beans.FilterBeans.eq;
 import static io.nop.api.core.beans.FilterBeans.in;
 
 @BizModel("ErpFinArApItem")
-public class ErpFinArApItemBizModel extends CrudBizModel<ErpFinArApItem> implements IErpFinArApItemBiz {
+public class ErpFinArApItemBizModel extends AbstractErpCrudBizModel<ErpFinArApItem> implements IErpFinArApItemBiz {
     public ErpFinArApItemBizModel() {
         setEntityName(ErpFinArApItem.class.getName());
     }

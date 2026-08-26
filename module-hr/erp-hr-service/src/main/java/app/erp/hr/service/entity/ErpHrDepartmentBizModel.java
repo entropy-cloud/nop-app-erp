@@ -7,6 +7,7 @@ import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.annotations.core.Optional;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
 
@@ -24,7 +25,7 @@ import java.util.Map;
 import static io.nop.api.core.beans.FilterBeans.eq;
 
 @BizModel("ErpHrDepartment")
-public class ErpHrDepartmentBizModel extends CrudBizModel<ErpHrDepartment> implements IErpHrDepartmentBiz {
+public class ErpHrDepartmentBizModel extends AbstractErpCrudBizModel<ErpHrDepartment> implements IErpHrDepartmentBiz {
 
     @Inject
     IErpHrEmployeeBiz employeeBiz;

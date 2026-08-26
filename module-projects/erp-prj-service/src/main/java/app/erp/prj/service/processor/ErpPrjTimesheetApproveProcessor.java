@@ -46,6 +46,12 @@ public class ErpPrjTimesheetApproveProcessor {
             throw illegalTransition(timesheet, status, "SUBMITTED");
         }
 
+        // F1.2（P1-CK-prj-006 工时链）：成本归集前移到 tryPost（REQUIRES_NEW 凭证独立提交）之前——
+        // 归集可抛（STRICT 预算超限/行异常），原顺序下失败会回滚主事务但凭证已提交（孤儿凭证）。
+        // 前移后预算拒绝发生在凭证提交前（工时单留 SUBMITTED 无凭证 = 正确语义）；
+        // 「归集与过账同事务」（cost-collection.md §4.2）经同主事务保持。
+        costAggregator.aggregateFromTimesheet(timesheet);
+
         boolean posted = postingDispatcher.tryPost(timesheet);
         timesheet = timesheetDao().getEntityById(timesheetId);
         timesheet.setStatus(stateMachine.approveTargetStatus());
@@ -57,10 +63,6 @@ public class ErpPrjTimesheetApproveProcessor {
             timesheet.setPostedBy(currentUserId());
         }
         timesheetDao().updateEntity(timesheet);
-
-        // 归集：工时 APPROVED 同事务生成/追加归集行 + 增量回写 actualCost
-        // （cost-collection.md §4.2，归集与过账同事务保证强一致）
-        costAggregator.aggregateFromTimesheet(timesheet);
         return timesheet;
     }
 

@@ -29,6 +29,7 @@ import java.util.Map;
 import static io.nop.api.core.beans.FilterBeans.eq;
 import static io.nop.graphql.core.ast.GraphQLOperationType.mutation;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -52,6 +53,33 @@ public class TestErpPurPaymentApproval extends JunitAutoTestCase {
     IOrmTemplate ormTemplate;
     @Inject
     IGraphQLEngine graphQLEngine;
+
+    /**
+     * F1.2（P1-CK-pur-002 Payment 站点）：SoD 守卫前置于 doPosting 之前——创建人自审被拒时零凭证。
+     */
+    @Test
+    public void testSoDRejectionProducesZeroVoucher() {
+        seedPeriodAndSubjects();
+        ErpPurPayment payment = paymentOf("PY-SOD-ZERO-001", new BigDecimal("113"));
+        payment.setApproveStatus(ErpPurConstants.APPROVE_STATUS_SUBMITTED);
+        ormTemplate.runInSession(() -> {
+            seedActiveSupplier(SUPPLIER_ID);
+            daoProvider.daoFor(ErpPurPayment.class).saveEntity(payment);
+        });
+
+        String creator = reload(payment).getCreatedBy();
+        io.nop.api.core.auth.IUserContext.set(null);
+        io.nop.auth.core.login.UserContextImpl uc = new io.nop.auth.core.login.UserContextImpl();
+        uc.setUserId(creator);
+        io.nop.api.core.auth.IUserContext.set(uc);
+
+        ApiResponse<?> bad = approve(payment.getId());
+        assertEquals(ErpPurErrors.ERR_PUR_APPROVER_IS_CREATOR.getErrorCode(), bad.getCode(),
+                "创建人=审核人 → SoD 守卫应抛 ERR_PUR_APPROVER_IS_CREATOR");
+        assertNull(findBillLink(payment.getCode()),
+                "F1.2：SoD 拒绝发生在 doPosting 之前——零业财回链（修复前为 1 张孤儿 PAYMENT 凭证）");
+        io.nop.api.core.auth.IUserContext.set(null);
+    }
 
     @Test
     public void testSubmitApproveReverse() {

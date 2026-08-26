@@ -3,13 +3,14 @@ package app.erp.crm.service.entity;
 
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 
 import app.erp.crm.biz.IErpCrmBundlePricingLineBiz;
 import app.erp.crm.dao.entity.ErpCrmBundlePricingLine;
 import java.util.List;
 
 @BizModel("ErpCrmBundlePricingLine")
-public class ErpCrmBundlePricingLineBizModel extends CrudBizModel<ErpCrmBundlePricingLine> implements IErpCrmBundlePricingLineBiz{
+public class ErpCrmBundlePricingLineBizModel extends AbstractErpCrudBizModel<ErpCrmBundlePricingLine> implements IErpCrmBundlePricingLineBiz{
     public ErpCrmBundlePricingLineBizModel(){
         setEntityName(ErpCrmBundlePricingLine.class.getName());
     }

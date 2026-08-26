@@ -13,6 +13,7 @@ import io.nop.api.core.annotations.biz.BizQuery;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
 
@@ -29,7 +30,7 @@ import static io.nop.api.core.beans.FilterBeans.eq;
  * <p>权威：{@code docs/architecture/multi-company.md §Decision C}。
  */
 @BizModel("ErpFinIntercompanyMatch")
-public class ErpFinIntercompanyMatchBizModel extends CrudBizModel<ErpFinIntercompanyMatch>
+public class ErpFinIntercompanyMatchBizModel extends AbstractErpCrudBizModel<ErpFinIntercompanyMatch>
         implements IErpFinIntercompanyMatchBiz {
 
     @Inject

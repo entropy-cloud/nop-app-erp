@@ -18,6 +18,7 @@ import io.nop.api.core.annotations.biz.BizQuery;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
 
@@ -37,7 +38,7 @@ import static io.nop.api.core.beans.FilterBeans.eq;
  * 强制质检门控 {@link #isInspectionCleared} 供业务域 confirm/DONE 前校验。
  */
 @BizModel("ErpQaInspection")
-public class ErpQaInspectionBizModel extends CrudBizModel<ErpQaInspection> implements IErpQaInspectionBiz {
+public class ErpQaInspectionBizModel extends AbstractErpCrudBizModel<ErpQaInspection> implements IErpQaInspectionBiz {
 
     @Inject
     ErpQaInspectionRecordResultProcessor recordResultProcessor;

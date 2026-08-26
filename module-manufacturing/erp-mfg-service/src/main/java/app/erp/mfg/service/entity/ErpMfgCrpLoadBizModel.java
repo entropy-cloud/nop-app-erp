@@ -12,6 +12,7 @@ import io.nop.api.core.annotations.biz.BizQuery;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.annotations.core.Optional;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
 
@@ -24,7 +25,7 @@ import java.util.List;
  * {@code getLoadReport} 为 :45 只读查询保留委托 {@link CrpLoadCalculator}。
  */
 @BizModel("ErpMfgCrpLoad")
-public class ErpMfgCrpLoadBizModel extends CrudBizModel<ErpMfgCrpLoad> implements IErpMfgCrpLoadBiz {
+public class ErpMfgCrpLoadBizModel extends AbstractErpCrudBizModel<ErpMfgCrpLoad> implements IErpMfgCrpLoadBiz {
     @Inject
     CrpLoadCalculator crpLoadCalculator;
     @Inject

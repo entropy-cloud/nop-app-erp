@@ -9,6 +9,7 @@ import app.erp.sal.service.ErpSalErrors;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 import io.nop.biz.crud.EntityData;
 import io.nop.core.context.IServiceContext;
 
@@ -36,7 +37,7 @@ import static io.nop.api.core.beans.FilterBeans.eq;
  * 范式在 BizModel 内构造 {@link PricingRuleDateRange} 适配器，将 TIMESTAMP 截断到 {@code LocalDate}。
  */
 @BizModel("ErpSalPricingRule")
-public class ErpSalPricingRuleBizModel extends CrudBizModel<ErpSalPricingRule> implements IErpSalPricingRuleBiz {
+public class ErpSalPricingRuleBizModel extends AbstractErpCrudBizModel<ErpSalPricingRule> implements IErpSalPricingRuleBiz {
 
     public ErpSalPricingRuleBizModel() {
         setEntityName(ErpSalPricingRule.class.getName());

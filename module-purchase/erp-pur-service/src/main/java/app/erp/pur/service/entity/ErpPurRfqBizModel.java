@@ -7,6 +7,7 @@ import io.nop.api.core.annotations.biz.BizQuery;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
 
@@ -29,7 +30,7 @@ import app.erp.pur.service.statemachine.ErpPurRfqDocumentStateMachine;
  * （isCancelled→{@link ErpPurErrors#ERR_RFQ_ILLEGAL_DOC_STATUS_TRANSITION}，来源态→{@link ErpPurErrors#ERR_RFQ_ILLEGAL_STATUS_TRANSITION}）。
  */
 @BizModel("ErpPurRfq")
-public class ErpPurRfqBizModel extends CrudBizModel<ErpPurRfq> implements IErpPurRfqBiz {
+public class ErpPurRfqBizModel extends AbstractErpCrudBizModel<ErpPurRfq> implements IErpPurRfqBiz {
 
     @Inject
     ErpPurRfqDocumentStateMachine stateMachine;

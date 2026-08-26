@@ -13,6 +13,7 @@ import io.nop.api.core.annotations.biz.BizQuery;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 import io.nop.core.context.IServiceContext;
 import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
@@ -38,7 +39,7 @@ import static io.nop.api.core.beans.FilterBeans.or;
  * 其余（NORMAL/NULL/RESERVATION）凭证行=实际数，余量=预算−实际−承付（对齐控制引擎 P1-MA2-084 三通道分离口径）。
  */
 @BizModel("ErpFinBudgetLine")
-public class ErpFinBudgetLineBizModel extends CrudBizModel<ErpFinBudgetLine> implements IErpFinBudgetLineBiz {
+public class ErpFinBudgetLineBizModel extends AbstractErpCrudBizModel<ErpFinBudgetLine> implements IErpFinBudgetLineBiz {
 
     /** 聚合通道：BUDGET 凭证 → 预算数。 */
     private static final String CHANNEL_BUDGET = "budget";

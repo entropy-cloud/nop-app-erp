@@ -27,6 +27,7 @@ import io.nop.api.core.annotations.core.Optional;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
 
@@ -43,7 +44,7 @@ import io.nop.biz.crud.EntityData;
 import static io.nop.api.core.beans.FilterBeans.eq;
 
 @BizModel("ErpApsOperationOrder")
-public class ErpApsOperationOrderBizModel extends CrudBizModel<ErpApsOperationOrder> implements IErpApsOperationOrderBiz {
+public class ErpApsOperationOrderBizModel extends AbstractErpCrudBizModel<ErpApsOperationOrder> implements IErpApsOperationOrderBiz {
 
     @Inject
     ErpApsSchedulingScheduleForwardProcessor scheduleForwardProcessor;

@@ -22,6 +22,7 @@ import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 import io.nop.core.context.IServiceContext;
 import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
@@ -41,7 +42,7 @@ import static io.nop.api.core.beans.FilterBeans.eq;
  * 不直接操作 daoProvider（除了 ErpHrAttendance 的 findExistingByDate 辅助）。
  */
 @BizModel("ErpHrShift")
-public class ErpHrShiftBizModel extends CrudBizModel<ErpHrShift> implements IErpHrShiftBiz {
+public class ErpHrShiftBizModel extends AbstractErpCrudBizModel<ErpHrShift> implements IErpHrShiftBiz {
 
     @Inject
     IErpHrShiftAssignmentBiz assignmentBiz;

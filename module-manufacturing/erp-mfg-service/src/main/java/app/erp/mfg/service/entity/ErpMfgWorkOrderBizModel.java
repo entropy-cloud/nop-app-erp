@@ -18,6 +18,7 @@ import io.nop.api.core.annotations.biz.BizQuery;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.annotations.core.Optional;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
 
@@ -35,7 +36,7 @@ import java.util.List;
  * <p>语义见 {@code docs/design/manufacturing/state-machine.md §适用对象一}。
  */
 @BizModel("ErpMfgWorkOrder")
-public class ErpMfgWorkOrderBizModel extends CrudBizModel<ErpMfgWorkOrder> implements IErpMfgWorkOrderBiz {
+public class ErpMfgWorkOrderBizModel extends AbstractErpCrudBizModel<ErpMfgWorkOrder> implements IErpMfgWorkOrderBiz {
 
     @Inject
     ErpMfgWorkOrderProcessor workOrderProcessor;

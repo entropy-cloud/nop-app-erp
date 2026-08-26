@@ -62,6 +62,17 @@ public class ErpAstDepreciationScheduleCatchUpDepreciationProcessor {
      */
     public List<ErpAstDepreciationSchedule> catchUpDepreciation(String assetId, String currentPeriod,
                                                                 List<String> missedPeriods, IServiceContext context) {
+        return catchUpDepreciation(assetId, currentPeriod, missedPeriods, context, true);
+    }
+
+    /**
+     * F1.2（P2-CK-ast-015 Disposal 链拆分）：{@code postVoucher=false} 时只执行数据段（计划行落库 +
+     * 资产字段更新 + flush，不产凭证），凭证段经 {@link #postCatchUpVoucher} 由调用方后置到
+     * REQUIRES_NEW 凭证相邻处统一提交（Disposal approve 两张凭证尾部连续，消除中间可抛窗口的孤儿面）。
+     */
+    public List<ErpAstDepreciationSchedule> catchUpDepreciation(String assetId, String currentPeriod,
+                                                                List<String> missedPeriods, IServiceContext context,
+                                                                boolean postVoucher) {
         ErpAstAsset asset = facade.requireAsset(assetId);
         facade.validateAssetInService(asset, context);
         facade.requirePeriodOpen(currentPeriod, context);
@@ -135,23 +146,54 @@ public class ErpAstDepreciationScheduleCatchUpDepreciationProcessor {
         daoProvider.daoFor(ErpAstAsset.class).saveOrUpdateEntity(asset);
         facade.orm().flushSession();
 
-        // 单张汇总凭证（Decision RC-R1.52-D1）：金额 = Σ漏提期补提额，记账期间 = currentPeriod（开放期间，
-        // 已结账漏提期无法逐期过账——财务引擎按凭证日期 resolveOpenPeriod 落账）
+        if (!postVoucher) {
+            return created;
+        }
+        postCatchUpVoucher(asset, created, currentPeriod, context);
+        return created;
+    }
+
+    /**
+     * 凭证段（F1.2 拆分）：单张汇总凭证（Decision RC-R1.52-D1）——金额 = Σ漏提期补提额，
+     * 记账期间 = currentPeriod（开放期间，已结账漏提期无法逐期过账——财务引擎按凭证日期
+     * resolveOpenPeriod 落账）+ 计划行 posted/voucherId 回写。由 {@code catchUpDepreciation(...,true)}
+     * 内部调用，或由 Disposal approve 后置到 DISPOSAL 凭证相邻处统一提交。
+     */
+    public void postCatchUpVoucher(ErpAstAsset asset, List<ErpAstDepreciationSchedule> created,
+                                    String currentPeriod, IServiceContext context) {
+        String voucherId = postCatchUpVoucherOnly(asset, created, currentPeriod, context);
+        if (voucherId != null) {
+            backfillCatchUpSchedules(created, voucherId);
+        }
+    }
+
+    /** F1.2 拆分：仅过账 #CATCHUP 凭证（不回写计划行——Disposal 链两凭证全提交后统一回填，避免主事务脏实体在内层 REQUIRES_NEW flush 上的跨连接 update-entity-not-found）。 */
+    public String postCatchUpVoucherOnly(ErpAstAsset asset, List<ErpAstDepreciationSchedule> created,
+                                          String currentPeriod, IServiceContext context) {
+        ErpAstAssetCategory category = asset.getCategory();
+        BigDecimal total = BigDecimal.ZERO;
+        for (ErpAstDepreciationSchedule s : created) {
+            total = total.add(ErpAstDepreciationScheduleProcessor.nz(s.getActualAmount()));
+        }
         List<String> caughtPeriods = created.stream().map(ErpAstDepreciationSchedule::getPeriod)
                 .sorted().collect(Collectors.toList());
-        if (total.signum() != 0) {
-            String voucherId = postingDispatcher.tryPostCatchUp(asset, category, currentPeriod, total, caughtPeriods);
-            if (voucherId != null) {
-                for (ErpAstDepreciationSchedule s : created) {
-                    s.setPosted(true);
-                    s.setPostedAt(now);
-                    s.setPostedBy(facade.currentUserId());
-                    s.setVoucherId(voucherId);
-                    scheduleDao.saveOrUpdateEntity(s);
-                }
-            }
+        if (total.signum() == 0) {
+            return null;
         }
-        return created;
+        return postingDispatcher.tryPostCatchUp(asset, category, currentPeriod, total, caughtPeriods);
+    }
+
+    /** F1.2 拆分：计划行 posted/voucherId 回填（须在全部 REQUIRES_NEW 凭证提交后执行）。 */
+    public void backfillCatchUpSchedules(List<ErpAstDepreciationSchedule> created, String voucherId) {
+        IEntityDao<ErpAstDepreciationSchedule> scheduleDao = daoProvider.daoFor(ErpAstDepreciationSchedule.class);
+        Timestamp now = CoreMetrics.currentTimestamp();
+        for (ErpAstDepreciationSchedule s : created) {
+            s.setPosted(true);
+            s.setPostedAt(now);
+            s.setPostedBy(facade.currentUserId());
+            s.setVoucherId(voucherId);
+            scheduleDao.saveOrUpdateEntity(s);
+        }
     }
 
     /** 去重 + 升序 + 格式/时序守卫（漏提期须可解析且不晚于当前期间——补提仅覆盖前期漏提额与出售期当期，不提前记账未来期间）。 */

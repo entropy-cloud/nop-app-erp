@@ -24,6 +24,7 @@ import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.convert.ConvertHelper;
 import io.nop.api.core.time.CoreMetrics;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 import io.nop.core.context.IServiceContext;
 import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
@@ -56,7 +57,7 @@ import java.util.Collections;
  */
 @BizModel("ErpCrmLeadSequenceProgress")
 public class ErpCrmLeadSequenceProgressBizModel
-        extends CrudBizModel<ErpCrmLeadSequenceProgress>
+        extends AbstractErpCrudBizModel<ErpCrmLeadSequenceProgress>
         implements IErpCrmLeadSequenceProgressBiz {
 
     @Inject

@@ -8,6 +8,7 @@ import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
 
@@ -22,7 +23,7 @@ import java.util.List;
  * （owner doc {@code split-merge.md} §关键业务规则 5 不可逆契约）。
  */
 @BizModel("ErpAstMerge")
-public class ErpAstMergeBizModel extends CrudBizModel<ErpAstMerge> implements IErpAstMergeBiz {
+public class ErpAstMergeBizModel extends AbstractErpCrudBizModel<ErpAstMerge> implements IErpAstMergeBiz {
 
     @Inject
     ErpAstMergeCancelProcessor cancelProcessor;

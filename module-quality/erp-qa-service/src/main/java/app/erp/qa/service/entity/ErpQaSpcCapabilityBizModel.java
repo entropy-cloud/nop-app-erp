@@ -8,6 +8,7 @@ import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.annotations.core.Optional;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
 
@@ -19,7 +20,7 @@ import java.time.LocalDate;
  * per-mutation Processor，下游可经 Delta beans.xml 同名 bean id 覆盖。
  */
 @BizModel("ErpQaSpcCapability")
-public class ErpQaSpcCapabilityBizModel extends CrudBizModel<ErpQaSpcCapability> implements IErpQaSpcCapabilityBiz {
+public class ErpQaSpcCapabilityBizModel extends AbstractErpCrudBizModel<ErpQaSpcCapability> implements IErpQaSpcCapabilityBiz {
 
     @Inject
     ErpQaSpcCapabilityCalculateCapabilityProcessor calculateCapabilityProcessor;

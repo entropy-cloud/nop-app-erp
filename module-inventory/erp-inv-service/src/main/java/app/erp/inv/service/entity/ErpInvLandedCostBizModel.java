@@ -12,6 +12,7 @@ import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.biz.BizQuery;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
 
@@ -29,7 +30,7 @@ import java.util.Map;
  * {@code docs/plans/2026-07-11-2329-1-logistics-path2-landed-cost-orchestration.md}。
  */
 @BizModel("ErpInvLandedCost")
-public class ErpInvLandedCostBizModel extends CrudBizModel<ErpInvLandedCost> implements IErpInvLandedCostBiz {
+public class ErpInvLandedCostBizModel extends AbstractErpCrudBizModel<ErpInvLandedCost> implements IErpInvLandedCostBiz {
 
     @Inject
     ErpInvLandedCostProcessor landedCostProcessor;

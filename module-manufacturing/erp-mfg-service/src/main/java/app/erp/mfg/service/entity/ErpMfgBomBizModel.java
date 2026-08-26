@@ -7,6 +7,7 @@ import io.nop.api.core.annotations.biz.BizQuery;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
 
@@ -32,7 +33,7 @@ import app.erp.mfg.service.processor.ErpMfgBomRollupCostProcessor;
  * {@code findDefaultBom}/{@code explode} 为 :45 只读查询保留委托 {@link BomExpander}。
  */
 @BizModel("ErpMfgBom")
-public class ErpMfgBomBizModel extends CrudBizModel<ErpMfgBom> implements IErpMfgBomBiz {
+public class ErpMfgBomBizModel extends AbstractErpCrudBizModel<ErpMfgBom> implements IErpMfgBomBiz {
     @Inject
     BomExpander bomExpander;
     @Inject

@@ -5,6 +5,7 @@ import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 
 import app.erp.hr.biz.IErpHrTimesheetBiz;
 import app.erp.hr.biz.IErpHrTimesheetLineBiz;
@@ -23,7 +24,7 @@ import static io.nop.api.core.beans.FilterBeans.and;
 import static io.nop.api.core.beans.FilterBeans.eq;
 
 @BizModel("ErpHrTimesheetLine")
-public class ErpHrTimesheetLineBizModel extends CrudBizModel<ErpHrTimesheetLine> implements IErpHrTimesheetLineBiz{
+public class ErpHrTimesheetLineBizModel extends AbstractErpCrudBizModel<ErpHrTimesheetLine> implements IErpHrTimesheetLineBiz{
 
     @Inject
     IErpHrTimesheetBiz timesheetBiz;

@@ -12,6 +12,7 @@ import io.nop.api.core.config.AppConfig;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.api.core.time.CoreMetrics;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 import io.nop.biz.crud.EntityData;
 import io.nop.core.context.IServiceContext;
 import io.nop.core.lang.json.JsonTool;
@@ -61,7 +62,7 @@ import static io.nop.api.core.beans.FilterBeans.contains;
  * 关键值} 拼接，上传/OCR 完成/补录/metadataTags 变更时重建（上限 4000 对齐列宽）。
  */
 @BizModel("ErpCtDocument")
-public class ErpCtDocumentBizModel extends CrudBizModel<ErpCtDocument> implements IErpCtDocumentBiz {
+public class ErpCtDocumentBizModel extends AbstractErpCrudBizModel<ErpCtDocument> implements IErpCtDocumentBiz {
 
     static final Logger LOG = LoggerFactory.getLogger(ErpCtDocumentBizModel.class);
 

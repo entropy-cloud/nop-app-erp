@@ -13,6 +13,7 @@ import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
 
@@ -26,7 +27,7 @@ import java.util.List;
  * {@code reverseSettlement} 红冲凭证 + 回退卡片状态。
  */
 @BizModel("ErpPrjProjectSettlement")
-public class ErpPrjProjectSettlementBizModel extends CrudBizModel<ErpPrjProjectSettlement>
+public class ErpPrjProjectSettlementBizModel extends AbstractErpCrudBizModel<ErpPrjProjectSettlement>
         implements IErpPrjProjectSettlementBiz {
 
     @Inject

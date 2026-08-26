@@ -16,6 +16,7 @@ import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
 
@@ -29,7 +30,7 @@ import java.util.List;
  * <p>语义与配置门控见 {@code bad-debt.md}；{@code @BizMutation} 钉事务/会话边界。
  */
 @BizModel("ErpFinBadDebt")
-public class ErpFinBadDebtBizModel extends CrudBizModel<ErpFinBadDebt> implements IErpFinBadDebtBiz {
+public class ErpFinBadDebtBizModel extends AbstractErpCrudBizModel<ErpFinBadDebt> implements IErpFinBadDebtBiz {
 
     @Inject
     BadDebtProvisionService badDebtProvisionService;

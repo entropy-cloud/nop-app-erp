@@ -43,11 +43,11 @@
     "amountFunctional": 0.0000,
     "sourceScheduleId": null,
     "delVersion": 0,
-    "version": 8,
+    "version": 7,
     "createdBy": "autotest-ref",
     "createTime": "@var:ErpMfgWorkOrder@createTime",
     "updatedBy": "autotest-ref",
-    "updateTime": "@var:ErpMfgWorkOrder@updateTime_8",
+    "updateTime": "@var:ErpInvStockMove@updateTime_5",
     "snapshotBomVersion": null,
     "snapshotBomId": "6"
   },

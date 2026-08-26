@@ -142,7 +142,8 @@ public class TestErpFinCreditFacilityInterest extends JunitAutoTestCase {
                 creditFacilityBiz.accrueInterest(facilityId, from, to, CTX));
 
         assertNotNull(firstVoucherId, "首次调用应生成凭证");
-        assertNull(secondVoucherId, "二次同参数调用幂等命中返回 null");
+        assertNotNull(secondVoucherId, "二次同参数调用幂等命中应返回既有凭证 id（F1.1：非 null 防 dispatcher posted 悬挂）");
+        assertEquals(firstVoucherId, secondVoucherId, "幂等命中返回的应是与首单相同的凭证 id");
 
         // 仅 1 张 (billHeadCode, businessType) 回链
         String billHeadCode = "CFI-INT-" + facilityId + "-" + from + "_" + to;

@@ -26,6 +26,18 @@ public interface ErpFinPostingErrors {
     ErrorCode ERR_NO_PROVIDER = ErrorCode.define("erp.err.fin.posting.no-provider",
             "未找到业务类型 {businessType} 的过账 Provider", ARG_BUSINESS_TYPE);
 
+    // F1.4（ai-check P1-CK-fin-005）：账套解析空 fail-closed
+    String ARG_ORG_ID = "orgId";
+
+
+    // F2.1（P1-CK-fin-001）：posted 监听者派发失败（落工作台自愈，非阻断）
+    ErrorCode ERR_POSTED_LISTENER_FAILED = ErrorCode.define("erp.err.fin.posting.posted-listener-failed",
+            "正向过账回写监听者失败（已落异常工作台，下轮 sweep 自愈重派）");
+
+    ErrorCode ERR_NO_ACTIVE_SCHEMA = ErrorCode.define("erp.err.fin.posting.no-active-schema",
+            "组织未配置账套，无法过账：orgId={orgId}，businessType={businessType}，billHeadCode={billHeadCode}（fail-closed——修复前该场景静默零凭证，与 open 的 fin-004 ACTIVE 过滤收紧联动）",
+            ARG_ORG_ID, ARG_BUSINESS_TYPE, ARG_BILL_HEAD_CODE);
+
     ErrorCode ERR_TEMPLATE_NOT_FOUND = ErrorCode.define("erp.err.fin.posting.template-not-found",
             "未找到业务类型 {businessType} 的启用凭证模板", ARG_BUSINESS_TYPE);
 

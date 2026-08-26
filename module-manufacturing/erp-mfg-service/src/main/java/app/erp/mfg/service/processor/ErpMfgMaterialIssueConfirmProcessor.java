@@ -64,17 +64,21 @@ public class ErpMfgMaterialIssueConfirmProcessor extends AbstractErpMfgMaterialI
         issue.setDocStatus(ErpMfgConstants.ISSUE_STATUS_CONFIRMED);
         issueDao().updateEntity(issue);
 
-        // 构造出库移动单请求并生成（业务联动自动 DRAFT→CONFIRMED→DONE，扣减库存；幂等键防重复）
-        StockMoveRequest request = stockMoveBuilder.build(issue, lines, context);
-        ErpInvStockMove move = stockMoveBiz.generateMove(request, context);
-        // 跨域 generateMove 推进至 DONE 并更新余额；刷盘使 DONE 状态落地当前事务连接
-        ormTemplate.flushSession();
-
+        // F1.2（P2-CK-mfg-011 领料链）：预留消耗与 actualQuantity 回写前移到 generateMove（内含
+        // REQUIRES_NEW 出库凭证）之前——两步均可抛且仅依赖 issue lines，原顺序下失败会回滚主事务
+        // 但凭证已独立提交。残余（aggregateIssueMaterialCost/issue DONE/applyMaterialCost/
+        // dispatchIfApplicable）依赖移动单产出不可前移，归 Deferred（plan F1.2 §mfg 领料链凭证后残余）。
         // 领料消耗预留（UC-MFG-06 ⑬⑭⑯）：config-gated；查无预留 no-op 零写入；领料移动单主链零改动
         consumeReservations(issue, lines, context);
 
         // 回写 WorkOrderLine.actualQuantity（按领料行 workOrderLineId 匹配）
         writebackWorkOrderLineActualQty(lines, context);
+
+        // 构造出库移动单请求并生成（业务联动自动 DRAFT→CONFIRMED→DONE，扣减库存；幂等键防重复）
+        StockMoveRequest request = stockMoveBuilder.build(issue, lines, context);
+        ErpInvStockMove move = stockMoveBiz.generateMove(request, context);
+        // 跨域 generateMove 推进至 DONE 并更新余额；刷盘使 DONE 状态落地当前事务连接
+        ormTemplate.flushSession();
 
         // issue-status CONFIRMED→DONE（已出库）；汇总领料出库流水 totalCost → WorkOrder.materialCost
         BigDecimal materialCostDelta = aggregateIssueMaterialCost(move, context);

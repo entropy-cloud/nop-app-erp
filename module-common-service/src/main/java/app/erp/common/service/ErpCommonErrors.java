@@ -25,4 +25,21 @@ public interface ErpCommonErrors {
             "非法状态转换：当前={currentStatus}，期望={expectedStatus}",
             ARG_CURRENT_STATUS, ARG_EXPECTED_STATUS
     );
+
+    // --- F1.3（ai-check P1-CK-pur-003 族）：通用 CRUD 状态锁 ---
+    String ARG_ENTITY_NAME = "entityName";
+    String ARG_ENTITY_KEY = "entityKey";
+    String ARG_ACTION = "action";
+
+    ErrorCode ERR_CRUD_STATUS_LOCKED = ErrorCode.define(
+            "nop.err.erp.common.crud-status-locked",
+            "单据已审核/已过账锁定，禁止通用{action}：{entityName}#{entityKey}（合法编辑请经状态机动作）",
+            ARG_ACTION, ARG_ENTITY_NAME, ARG_ENTITY_KEY
+    );
+
+    ErrorCode ERR_CRUD_IMMUTABLE_ENTITY = ErrorCode.define(
+            "nop.err.erp.common.crud-immutable-entity",
+            "不可变台账实体，禁止通用{action}：{entityName}#{entityKey}（台账由域内编排驱动）",
+            ARG_ACTION, ARG_ENTITY_NAME, ARG_ENTITY_KEY
+    );
 }

@@ -15,6 +15,7 @@ import io.nop.api.core.annotations.core.Optional;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
 
@@ -31,7 +32,7 @@ import static io.nop.api.core.beans.FilterBeans.isNull;
  * <p>对齐 {@code docs/design/crm/territory.md §业务规则 1 区域树 / §实现注记}。
  */
 @BizModel("ErpCrmTerritory")
-public class ErpCrmTerritoryBizModel extends CrudBizModel<ErpCrmTerritory> implements IErpCrmTerritoryBiz {
+public class ErpCrmTerritoryBizModel extends AbstractErpCrudBizModel<ErpCrmTerritory> implements IErpCrmTerritoryBiz {
 
     @Inject
     ErpCrmTerritoryCreateChildProcessor createChildProcessor;

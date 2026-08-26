@@ -8,6 +8,7 @@ import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 
 import jakarta.inject.Inject;
 
@@ -15,7 +16,7 @@ import java.util.List;
 import java.util.Map;
 
 @BizModel("ErpFinVoucherTemplate")
-public class ErpFinVoucherTemplateBizModel extends CrudBizModel<ErpFinVoucherTemplate> implements IErpFinVoucherTemplateBiz {
+public class ErpFinVoucherTemplateBizModel extends AbstractErpCrudBizModel<ErpFinVoucherTemplate> implements IErpFinVoucherTemplateBiz {
 
     @Inject
     ErpFinVoucherTemplateRenderTemplateProcessor renderTemplateProcessor;

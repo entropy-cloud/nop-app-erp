@@ -10,6 +10,7 @@ import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.api.core.time.CoreMetrics;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 import io.nop.core.context.IServiceContext;
 
 import app.erp.common.service.MaskHelper;
@@ -47,7 +48,7 @@ import io.nop.biz.crud.EntityData;
  * {@code IErpPurInvoiceBiz}/{@code IErpSalInvoiceBiz}（同 InvoicePlan，避免服务依赖级联）。
  */
 @BizModel("ErpCtRebateAgreement")
-public class ErpCtRebateAgreementBizModel extends CrudBizModel<ErpCtRebateAgreement>
+public class ErpCtRebateAgreementBizModel extends AbstractErpCrudBizModel<ErpCtRebateAgreement>
         implements IErpCtRebateAgreementBiz {
 
     @Inject

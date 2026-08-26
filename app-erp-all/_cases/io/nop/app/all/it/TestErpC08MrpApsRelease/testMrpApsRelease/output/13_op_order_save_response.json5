@@ -1,6 +1,6 @@
 {
   "data": {
-    "id": "100029",
+    "id": "100031",
     "code": "@var:ErpApsOperationOrder@code",
     "workOrderId": "@var:releasedWoId",
     "operationName": "C08 装配工序",
@@ -21,7 +21,7 @@
     "updatedBy": "autotest-ref",
     "updateTime": "*",
     "earliestStartDateT": "@var:ErpApsOperationOrder@earliestStartDateT",
-    "businessDate": "@var:ErpApsOperationOrder@businessDate",
+    "businessDate": "@var:ErpFinPostingException@voucherDate",
     "plannedStartDateT": null,
     "plannedEndDateT": null,
     "realStartDateT": null,

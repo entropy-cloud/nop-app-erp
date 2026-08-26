@@ -9,6 +9,7 @@ import io.nop.api.core.annotations.core.Optional;
 import jakarta.annotation.Nullable;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 import io.nop.core.context.IServiceContext;
 
 import app.erp.md.biz.IErpMdPartnerBiz;
@@ -23,7 +24,7 @@ import static io.nop.api.core.beans.FilterBeans.eq;
 import static io.nop.api.core.beans.FilterBeans.ne;
 
 @BizModel("ErpMdPartner")
-public class ErpMdPartnerBizModel extends CrudBizModel<ErpMdPartner> implements IErpMdPartnerBiz {
+public class ErpMdPartnerBizModel extends AbstractErpCrudBizModel<ErpMdPartner> implements IErpMdPartnerBiz {
 
     /**
      * 跨域引用计数 SPI（F7 §3）。master-data 不可反向依赖 purchase/sales/inventory，

@@ -14,6 +14,7 @@ import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.biz.BizQuery;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
 
@@ -25,7 +26,7 @@ import jakarta.inject.Inject;
  * {@link SimulationVersionComparator}。
  */
 @BizModel("ErpMfgMrpScenario")
-public class ErpMfgMrpScenarioBizModel extends CrudBizModel<ErpMfgMrpScenario> implements IErpMfgMrpScenarioBiz {
+public class ErpMfgMrpScenarioBizModel extends AbstractErpCrudBizModel<ErpMfgMrpScenario> implements IErpMfgMrpScenarioBiz {
 
     @Inject
     SimulationVersionComparator simulationComparator;

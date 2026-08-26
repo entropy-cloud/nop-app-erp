@@ -16,6 +16,7 @@ import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.biz.RequestBean;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
 
@@ -27,7 +28,7 @@ import jakarta.inject.Inject;
  * <p>语义见 {@code docs/design/manufacturing/state-machine.md §适用对象二}。
  */
 @BizModel("ErpMfgJobCard")
-public class ErpMfgJobCardBizModel extends CrudBizModel<ErpMfgJobCard> implements IErpMfgJobCardBiz {
+public class ErpMfgJobCardBizModel extends AbstractErpCrudBizModel<ErpMfgJobCard> implements IErpMfgJobCardBiz {
 
     @Inject
     ErpMfgJobCardStartJobProcessor startJobProcessor;

@@ -10,6 +10,7 @@ import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 import io.nop.core.context.IServiceContext;
 import java.util.List;
 import java.util.Objects;
@@ -25,7 +26,7 @@ import io.nop.api.core.time.CoreMetrics;
  * 非法迁移抛 {@link ErpQaErrors#ERR_INVALID_ACTION_STATUS_TRANSITION}。
  */
 @BizModel("ErpQaAction")
-public class ErpQaActionBizModel extends CrudBizModel<ErpQaAction> implements IErpQaActionBiz {
+public class ErpQaActionBizModel extends AbstractErpCrudBizModel<ErpQaAction> implements IErpQaActionBiz {
 
     public ErpQaActionBizModel() {
         setEntityName(ErpQaAction.class.getName());

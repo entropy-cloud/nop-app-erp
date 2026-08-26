@@ -6,6 +6,7 @@ import app.erp.ast.dao.entity.ErpAstAssetCapitalization;
 import app.erp.ast.service.processor.ErpAstAssetCapitalizationProcessor;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 import jakarta.inject.Inject;
 
 import java.util.List;
@@ -15,7 +16,7 @@ import java.util.List;
  * withdrawApproval）经 xbiz 单行委托 {@link ErpAstAssetCapitalizationProcessor} 全权处理。
  */
 @BizModel("ErpAstAssetCapitalization")
-public class ErpAstAssetCapitalizationBizModel extends CrudBizModel<ErpAstAssetCapitalization>
+public class ErpAstAssetCapitalizationBizModel extends AbstractErpCrudBizModel<ErpAstAssetCapitalization>
         implements IErpAstAssetCapitalizationBiz {
 
     @Inject

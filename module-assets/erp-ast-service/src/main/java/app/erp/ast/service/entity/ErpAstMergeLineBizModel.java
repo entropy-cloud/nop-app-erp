@@ -5,11 +5,12 @@ import app.erp.ast.biz.IErpAstMergeLineBiz;
 import app.erp.ast.dao.entity.ErpAstMergeLine;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 
 import java.util.List;
 
 @BizModel("ErpAstMergeLine")
-public class ErpAstMergeLineBizModel extends CrudBizModel<ErpAstMergeLine> implements IErpAstMergeLineBiz {
+public class ErpAstMergeLineBizModel extends AbstractErpCrudBizModel<ErpAstMergeLine> implements IErpAstMergeLineBiz {
     public ErpAstMergeLineBizModel() {
         setEntityName(ErpAstMergeLine.class.getName());
     }

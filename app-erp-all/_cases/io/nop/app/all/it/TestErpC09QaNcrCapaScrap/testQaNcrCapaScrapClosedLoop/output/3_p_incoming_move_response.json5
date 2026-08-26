@@ -1,7 +1,7 @@
 {
   "data": {
     "id": "100002",
-    "code": "@var:ErpInvStockMove@code",
+    "code": "@var:ErpFinPostingException@billHeadCode",
     "moveType": "INCOMING",
     "moveType_label": "INCOMING-入库",
     "orgId": "2",
@@ -15,6 +15,8 @@
     "approveStatus": "UNSUBMITTED",
     "approveStatus_label": "UNSUBMITTED-未提交",
     "posted": false,
+    "postedAt": null,
+    "postedBy": null,
     "relatedBillType": "PUR_RECEIPT",
     "relatedBillCode": "@var:ErpInvStockMove@relatedBillCode",
     "remark": null,
@@ -25,9 +27,7 @@
     "updatedBy": "autotest-ref",
     "updateTime": "*",
     "originMoveId": null,
-    "originReturnedMoveId": null,
-    "postedAt": null,
-    "postedBy": null
+    "originReturnedMoveId": null
   },
   "status": 0
 }

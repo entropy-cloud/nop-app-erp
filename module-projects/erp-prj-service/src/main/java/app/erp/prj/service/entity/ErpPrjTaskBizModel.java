@@ -16,6 +16,7 @@ import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.api.core.time.CoreMetrics;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 import io.nop.biz.crud.EntityData;
 import io.nop.core.context.IServiceContext;
 import io.nop.dao.api.IEntityDao;
@@ -48,7 +49,7 @@ import static io.nop.api.core.beans.FilterBeans.eq;
  * {@link NopException}+{@link ErpPrjErrors} 作用域码。
  */
 @BizModel("ErpPrjTask")
-public class ErpPrjTaskBizModel extends CrudBizModel<ErpPrjTask> implements IErpPrjTaskBiz {
+public class ErpPrjTaskBizModel extends AbstractErpCrudBizModel<ErpPrjTask> implements IErpPrjTaskBiz {
 
     private static final Logger LOG = LoggerFactory.getLogger(ErpPrjTaskBizModel.class);
 

@@ -3,6 +3,7 @@ package app.erp.qa.service.entity;
 
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 
 import app.erp.qa.biz.IErpQaReviewBiz;
 import app.erp.qa.dao.entity.ErpQaReview;
@@ -10,7 +11,7 @@ import app.erp.qa.dao.entity.ErpQaReview;
 import java.util.List;
 
 @BizModel("ErpQaReview")
-public class ErpQaReviewBizModel extends CrudBizModel<ErpQaReview> implements IErpQaReviewBiz{
+public class ErpQaReviewBizModel extends AbstractErpCrudBizModel<ErpQaReview> implements IErpQaReviewBiz{
     public ErpQaReviewBizModel(){
         setEntityName(ErpQaReview.class.getName());
     }

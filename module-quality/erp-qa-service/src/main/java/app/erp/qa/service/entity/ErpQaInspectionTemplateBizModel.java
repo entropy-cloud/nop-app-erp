@@ -3,6 +3,7 @@ package app.erp.qa.service.entity;
 
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 
 import app.erp.qa.biz.IErpQaInspectionTemplateBiz;
 import app.erp.qa.dao.entity.ErpQaInspectionTemplate;
@@ -10,7 +11,7 @@ import app.erp.qa.dao.entity.ErpQaInspectionTemplate;
 import java.util.List;
 
 @BizModel("ErpQaInspectionTemplate")
-public class ErpQaInspectionTemplateBizModel extends CrudBizModel<ErpQaInspectionTemplate> implements IErpQaInspectionTemplateBiz{
+public class ErpQaInspectionTemplateBizModel extends AbstractErpCrudBizModel<ErpQaInspectionTemplate> implements IErpQaInspectionTemplateBiz{
     public ErpQaInspectionTemplateBizModel(){
         setEntityName(ErpQaInspectionTemplate.class.getName());
     }

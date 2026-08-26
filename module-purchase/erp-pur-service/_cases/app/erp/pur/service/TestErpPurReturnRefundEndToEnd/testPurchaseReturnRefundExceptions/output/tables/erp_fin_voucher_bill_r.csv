@@ -2,5 +2,5 @@ _chgType,ID,VOUCHER_ID,BILL_TYPE,BILL_CODE,BILL_LINE_CODE,BUSINESS_TYPE,DEL_VERS
 A,15,12,PURCHASE_INPUT,@var:ErpFinVoucherBillR@billCode,,PURCHASE_INPUT,0,0,autotest-ref,*,autotest-ref,*
 A,22,19,PURCHASE_RETURN,@var:ErpFinVoucherBillR@billCode_2,,PURCHASE_RETURN,0,0,autotest-ref,*,autotest-ref,*
 A,27,24,PURCHASE_RETURN,@var:ErpFinVoucherBillR@billCode_2,,PURCHASE_RETURN,0,0,autotest-ref,*,autotest-ref,*
-A,37,33,AP_INVOICE,@var:ErpFinVoucherBillR@billCode_3,,AP_INVOICE,0,0,autotest-ref,*,autotest-ref,*
-A,45,42,PURCHASE_RETURN,@var:ErpFinVoucherBillR@billCode_4,,PURCHASE_RETURN,0,0,autotest-ref,*,autotest-ref,*
+A,38,34,AP_INVOICE,@var:ErpFinVoucherBillR@billCode_3,,AP_INVOICE,0,0,autotest-ref,*,autotest-ref,*
+A,46,43,PURCHASE_RETURN,@var:ErpFinVoucherBillR@billCode_4,,PURCHASE_RETURN,0,0,autotest-ref,*,autotest-ref,*

@@ -10,6 +10,7 @@ import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
 
@@ -18,7 +19,7 @@ import jakarta.inject.Inject;
  * 三个 release*（@BizMutation）各委托独立 per-mutation Processor（R6.2 拆分）。
  */
 @BizModel("ErpMfgMrpPlanLine")
-public class ErpMfgMrpPlanLineBizModel extends CrudBizModel<ErpMfgMrpPlanLine> implements IErpMfgMrpPlanLineBiz {
+public class ErpMfgMrpPlanLineBizModel extends AbstractErpCrudBizModel<ErpMfgMrpPlanLine> implements IErpMfgMrpPlanLineBiz {
     @Inject
     ErpMfgMrpPlanLineReleasePurchaseRequestProcessor releasePurchaseRequestProcessor;
     @Inject

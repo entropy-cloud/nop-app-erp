@@ -4,6 +4,7 @@ import app.erp.pur.dao.entity.ErpPurPayment;
 import app.erp.pur.service.ErpPurConstants;
 import app.erp.pur.service.ErpPurErrors;
 import app.erp.common.service.AbstractApproveProcessor;
+import app.erp.common.service.SoDGuard;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.core.context.IServiceContext;
 import io.nop.dao.api.IEntityDao;
@@ -20,6 +21,9 @@ public class ErpPurPaymentApproveProcessor extends AbstractApproveProcessor<ErpP
         if (payment.isApproved()) {
             return payment;
         }
+        // F1.2（P1-CK-pur-002）：SoD 守卫前置于 doPosting（REQUIRES_NEW 凭证）之前，杜绝孤儿凭证
+        SoDGuard.assertApproverNotCreator(payment.getCreatedBy(), currentUserId(),
+                ErpPurErrors.ERR_PUR_APPROVER_IS_CREATOR);
         processor.validateNotCancelled(payment, context);
         processor.validateTransitionForApprove(payment, context);
         processor.validateBusinessRulesForApprove(payment, context);

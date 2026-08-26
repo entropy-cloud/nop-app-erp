@@ -26,9 +26,9 @@ import app.erp.fin.dao.entity.ErpFinVoucher;
 public interface IErpFinVoucherBiz extends ICrudBiz<ErpFinVoucher> {
 
     /**
-     * 从业务事件创建并过账凭证。幂等：源单据已过账时返回 {@code null}。
+     * 从业务事件创建并过账凭证。幂等：源单据已过账时返回既有 POSTED 凭证 ID（不新建）。
      *
-     * @return 新建凭证 ID；源单据已过账（幂等命中）返回 {@code null}
+     * @return 新建凭证 ID；源单据已过账（幂等命中）返回既有凭证 ID（调用方 {@code voucherId != null} 判定成功语义不受影响）
      */
     @BizMutation
     String post(@Name("event") PostingEvent event, IServiceContext context);

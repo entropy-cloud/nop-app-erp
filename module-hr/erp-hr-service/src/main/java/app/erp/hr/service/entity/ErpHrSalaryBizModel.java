@@ -26,6 +26,7 @@ import io.nop.api.core.annotations.core.Optional;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 import io.nop.core.context.IServiceContext;
 import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
@@ -57,7 +58,7 @@ import io.nop.biz.crud.EntityData;
  * {@link SalaryPostingDispatcher}（跨域经 finance {@code IErpFinVoucherBiz}）。
  */
 @BizModel("ErpHrSalary")
-public class ErpHrSalaryBizModel extends CrudBizModel<ErpHrSalary> implements IErpHrSalaryBiz {
+public class ErpHrSalaryBizModel extends AbstractErpCrudBizModel<ErpHrSalary> implements IErpHrSalaryBiz {
 
     @Inject
     PayrollCalculator payrollCalculator;

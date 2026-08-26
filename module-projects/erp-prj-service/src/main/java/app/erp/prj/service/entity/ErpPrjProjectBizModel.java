@@ -15,6 +15,7 @@ import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
 import org.slf4j.Logger;
@@ -43,7 +44,7 @@ import java.util.Objects;
  * 已拆为独立 per-mutation Processor（{@code processor-extension-pattern.md}），本类仅作 facade 单行委托。
  */
 @BizModel("ErpPrjProject")
-public class ErpPrjProjectBizModel extends CrudBizModel<ErpPrjProject> implements IErpPrjProjectBiz {
+public class ErpPrjProjectBizModel extends AbstractErpCrudBizModel<ErpPrjProject> implements IErpPrjProjectBiz {
 
     private static final Logger LOG = LoggerFactory.getLogger(ErpPrjProjectBizModel.class);
 

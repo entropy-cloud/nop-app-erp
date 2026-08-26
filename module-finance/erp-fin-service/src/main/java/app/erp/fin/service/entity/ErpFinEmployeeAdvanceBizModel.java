@@ -16,6 +16,7 @@ import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 import io.nop.core.context.IServiceContext;
 import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
@@ -40,7 +41,7 @@ import static io.nop.api.core.beans.FilterBeans.like;
  * {@link #reverseCashRepay} 反向现金还款红冲闭环（plan 2026-07-18-1745-3）。
  */
 @BizModel("ErpFinEmployeeAdvance")
-public class ErpFinEmployeeAdvanceBizModel extends CrudBizModel<ErpFinEmployeeAdvance> implements IErpFinEmployeeAdvanceBiz {
+public class ErpFinEmployeeAdvanceBizModel extends AbstractErpCrudBizModel<ErpFinEmployeeAdvance> implements IErpFinEmployeeAdvanceBiz {
 
     private static final Logger LOG = LoggerFactory.getLogger(ErpFinEmployeeAdvanceBizModel.class);
 

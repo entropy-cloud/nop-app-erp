@@ -1,6 +1,6 @@
 {
   "data": {
-    "id": "100008",
+    "id": "100010",
     "code": "@var:ErpMfgWorkOrder@code",
     "orgId": "2",
     "bomId": "@var:bomId",
@@ -8,7 +8,7 @@
     "plannedQuantity": 1,
     "completedQuantity": 0,
     "scrappedQuantity": 0,
-    "businessDate": "@var:ErpInvStockMove@businessDate",
+    "businessDate": "@var:ErpFinPostingException@voucherDate",
     "currencyId": "1",
     "materialCost": 0,
     "laborCost": 0,

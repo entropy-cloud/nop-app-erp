@@ -22,6 +22,7 @@ import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.beans.TreeBean;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 import io.nop.core.context.IServiceContext;
 import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
@@ -49,7 +50,7 @@ import io.nop.biz.crud.EntityData;
  * 跨实体访问经 {@link IErpHrSalaryBiz}（同模块）+ {@link IDaoProvider}（ItemAdjustment/Employee 只读查询）。
  */
 @BizModel("ErpHrSalarySimulation")
-public class ErpHrSalarySimulationBizModel extends CrudBizModel<ErpHrSalarySimulation>
+public class ErpHrSalarySimulationBizModel extends AbstractErpCrudBizModel<ErpHrSalarySimulation>
         implements IErpHrSalarySimulationBiz {
 
     @Inject

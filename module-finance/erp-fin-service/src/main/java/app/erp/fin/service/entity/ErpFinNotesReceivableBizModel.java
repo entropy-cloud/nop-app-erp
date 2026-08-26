@@ -15,6 +15,7 @@ import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.annotations.core.Optional;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
 
@@ -30,7 +31,7 @@ import java.util.List;
  * <p>语义与配置门控见 {@code treasury.md}；{@code @BizMutation} 钉事务/会话边界。
  */
 @BizModel("ErpFinNotesReceivable")
-public class ErpFinNotesReceivableBizModel extends CrudBizModel<ErpFinNotesReceivable> implements IErpFinNotesReceivableBiz {
+public class ErpFinNotesReceivableBizModel extends AbstractErpCrudBizModel<ErpFinNotesReceivable> implements IErpFinNotesReceivableBiz {
 
     @Inject
     ErpFinNotesReceivableReceiveProcessor receiveProcessor;

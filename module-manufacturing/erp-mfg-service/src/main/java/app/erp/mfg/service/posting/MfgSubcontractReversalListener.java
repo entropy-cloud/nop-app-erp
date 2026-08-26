@@ -1,7 +1,9 @@
 package app.erp.mfg.service.posting;
 
 import app.erp.fin.service.posting.IErpFinVoucherReversedListener;
+import app.erp.fin.service.posting.VoucherPostedEvent;
 import app.erp.fin.service.posting.VoucherReversedEvent;
+import app.erp.fin.service.posting.IErpFinVoucherPostedListener;
 import app.erp.mfg.dao.entity.ErpMfgSubcontractOrder;
 import app.erp.mfg.service.ErpMfgConstants;
 import io.nop.api.core.beans.query.QueryBean;
@@ -31,7 +33,7 @@ import static io.nop.api.core.beans.FilterBeans.eq;
  * <p>监听者失败经 {@code ErpFinReversalListenerRegistry.dispatch} 的 try/catch 隔离，不阻断其他域监听者、
  * 不回滚已过账红字凭证。
  */
-public class MfgSubcontractReversalListener implements IErpFinVoucherReversedListener {
+public class MfgSubcontractReversalListener implements IErpFinVoucherReversedListener, IErpFinVoucherPostedListener {
 
     static final String SUFFIX_ISSUE = "-SI";
     static final String SUFFIX_RECEIPT = "-SR";
@@ -39,6 +41,90 @@ public class MfgSubcontractReversalListener implements IErpFinVoucherReversedLis
 
     @Inject
     IDaoProvider daoProvider;
+
+    /**
+     * F2.1（P1-CK-fin-001）：正向过账成功回写。mfg 域覆盖：SUBCONTRACT_FEE（strip -SF）→
+     * SubcontractOrder（dispatcher 仅 fee 段 markPosted，issue/receipt 段无 posted 追踪不回写）；
+     * MANUFACTURING_ISSUE（strip -MI）→ MaterialIssue；PRODUCTION_VARIANCE（strip -PV）→
+     * WorkOrder 名下 CostVariance 行 posted=true（对齐 ProductionVarianceDispatcher.markPosted，
+     * 该实体无 postedAt/postedBy 列）。
+     */
+    @Override
+    public void onVoucherPosted(VoucherPostedEvent event, IServiceContext context) {
+        String businessType = event.getBusinessType();
+        if (businessType == null) {
+            return;
+        }
+        java.sql.Timestamp now = io.nop.api.core.time.CoreMetrics.currentTimestamp();
+        switch (businessType) {
+            case "SUBCONTRACT_FEE":
+                markPosted(findByCode(ErpMfgSubcontractOrder.class,
+                        stripBillHeadSuffix(event.getBillHeadCode())), now);
+                break;
+            case "MANUFACTURING_ISSUE":
+                markPosted(findByCode(app.erp.mfg.dao.entity.ErpMfgMaterialIssue.class,
+                        stripSuffix(event.getBillHeadCode(), "-MI")), now);
+                break;
+            case "PRODUCTION_VARIANCE":
+                markVariancePosted(stripSuffix(event.getBillHeadCode(), "-PV"));
+                break;
+            default:
+                break;
+        }
+    }
+
+    private static String stripSuffix(String code, String suffix) {
+        return code != null && code.endsWith(suffix) ? code.substring(0, code.length() - suffix.length()) : code;
+    }
+
+    /** 生产差异回写：按工单 code 反查名下全部 CostVariance 行置 posted（镜像 dispatcher 的 markPosted(lines)）。 */
+    private void markVariancePosted(String workOrderCode) {
+        if (workOrderCode == null) {
+            return;
+        }
+        app.erp.mfg.dao.entity.ErpMfgWorkOrder wo = findByCode(
+                app.erp.mfg.dao.entity.ErpMfgWorkOrder.class, workOrderCode);
+        if (wo == null) {
+            return;
+        }
+        io.nop.api.core.beans.query.QueryBean q = new io.nop.api.core.beans.query.QueryBean();
+        q.addFilter(io.nop.api.core.beans.FilterBeans.eq("workOrderId", wo.getId()));
+        java.util.List<app.erp.mfg.dao.entity.ErpMfgCostVariance> lines =
+                daoProvider.daoFor(app.erp.mfg.dao.entity.ErpMfgCostVariance.class).findAllByQuery(q);
+        io.nop.dao.api.IEntityDao<app.erp.mfg.dao.entity.ErpMfgCostVariance> dao =
+                daoProvider.daoFor(app.erp.mfg.dao.entity.ErpMfgCostVariance.class);
+        for (app.erp.mfg.dao.entity.ErpMfgCostVariance line : lines) {
+            if (!Boolean.TRUE.equals(line.getPosted())) {
+                line.setPosted(true);
+                dao.updateEntity(line);
+            }
+        }
+    }
+
+    private void markPosted(ErpMfgSubcontractOrder order, java.sql.Timestamp now) {
+        if (order == null || Boolean.TRUE.equals(order.getPosted())) {
+            return;
+        }
+        order.setPosted(true);
+        order.setPostedAt(now);
+        order.setPostedBy(currentUserId());
+        daoProvider.daoFor(ErpMfgSubcontractOrder.class).updateEntity(order);
+    }
+
+    private void markPosted(app.erp.mfg.dao.entity.ErpMfgMaterialIssue issue, java.sql.Timestamp now) {
+        if (issue == null || Boolean.TRUE.equals(issue.getPosted())) {
+            return;
+        }
+        issue.setPosted(true);
+        issue.setPostedAt(now);
+        issue.setPostedBy(currentUserId());
+        daoProvider.daoFor(app.erp.mfg.dao.entity.ErpMfgMaterialIssue.class).updateEntity(issue);
+    }
+
+    private static String currentUserId() {
+        io.nop.api.core.auth.IUserContext ctx = io.nop.api.core.auth.IUserContext.get();
+        return ctx != null ? ctx.getUserId() : null;
+    }
 
     @Override
     public void onVoucherReversed(VoucherReversedEvent event, IServiceContext context) {

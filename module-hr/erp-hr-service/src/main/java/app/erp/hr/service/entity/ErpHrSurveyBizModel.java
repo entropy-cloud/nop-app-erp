@@ -8,6 +8,7 @@ import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.convert.ConvertHelper;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 import io.nop.biz.crud.EntityData;
 import io.nop.core.context.IServiceContext;
 
@@ -31,7 +32,7 @@ import static io.nop.api.core.beans.FilterBeans.eq;
  * publish 后问卷配置字段与题目经 defaultPrepareUpdate 守卫禁止修改（不可编辑守卫，版本化归 successor）。
  */
 @BizModel("ErpHrSurvey")
-public class ErpHrSurveyBizModel extends CrudBizModel<ErpHrSurvey> implements IErpHrSurveyBiz {
+public class ErpHrSurveyBizModel extends AbstractErpCrudBizModel<ErpHrSurvey> implements IErpHrSurveyBiz {
 
     @Inject
     IErpHrSurveyQuestionBiz surveyQuestionBiz;

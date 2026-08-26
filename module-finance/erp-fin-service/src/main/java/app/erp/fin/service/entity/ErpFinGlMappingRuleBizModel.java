@@ -12,6 +12,7 @@ import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.biz.BizQuery;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 import io.nop.biz.crud.EntityData;
 import jakarta.inject.Inject;
 
@@ -28,7 +29,7 @@ import java.util.List;
  * <p>权威：{@code docs/design/finance/gl-mapping-rules.md §4.2 主动失效机制}。
  */
 @BizModel("ErpFinGlMappingRule")
-public class ErpFinGlMappingRuleBizModel extends CrudBizModel<ErpFinGlMappingRule> implements IErpFinGlMappingRuleBiz {
+public class ErpFinGlMappingRuleBizModel extends AbstractErpCrudBizModel<ErpFinGlMappingRule> implements IErpFinGlMappingRuleBiz {
 
     @Inject
     IErpFinGlMappingResolver glMappingResolver;

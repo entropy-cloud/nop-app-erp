@@ -10,6 +10,7 @@ import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.annotations.core.Optional;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
 
@@ -22,7 +23,7 @@ import java.util.Map;
  * <p>对齐 {@code docs/design/crm/README.md}（CPQ §产品配置器）。
  */
 @BizModel("ErpCrmProductConfigurator")
-public class ErpCrmProductConfiguratorBizModel extends CrudBizModel<ErpCrmProductConfigurator>
+public class ErpCrmProductConfiguratorBizModel extends AbstractErpCrudBizModel<ErpCrmProductConfigurator>
         implements IErpCrmProductConfiguratorBiz {
 
     @Inject

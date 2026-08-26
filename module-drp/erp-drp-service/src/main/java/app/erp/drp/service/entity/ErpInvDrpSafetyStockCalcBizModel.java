@@ -10,6 +10,7 @@ import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.biz.BizQuery;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
 
@@ -21,7 +22,7 @@ import java.math.BigDecimal;
  * {@link #findEffectiveSafetyStock} 为只读查询保留委派 {@link SafetyStockEngine}。
  */
 @BizModel("ErpInvDrpSafetyStockCalc")
-public class ErpInvDrpSafetyStockCalcBizModel extends CrudBizModel<ErpInvDrpSafetyStockCalc>
+public class ErpInvDrpSafetyStockCalcBizModel extends AbstractErpCrudBizModel<ErpInvDrpSafetyStockCalc>
         implements IErpInvDrpSafetyStockCalcBiz {
 
     @Inject

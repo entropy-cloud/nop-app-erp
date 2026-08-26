@@ -8,6 +8,7 @@ import app.erp.sal.service.support.ErpSalCtDiscountApplier;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.config.AppConfig;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 import io.nop.biz.crud.EntityData;
 import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
@@ -15,7 +16,7 @@ import jakarta.inject.Inject;
 import java.util.List;
 
 @BizModel("ErpSalOrderLine")
-public class ErpSalOrderLineBizModel extends CrudBizModel<ErpSalOrderLine> implements IErpSalOrderLineBiz {
+public class ErpSalOrderLineBizModel extends AbstractErpCrudBizModel<ErpSalOrderLine> implements IErpSalOrderLineBiz {
 
     @Inject
     ErpSalCtDiscountApplier ctDiscountApplier;

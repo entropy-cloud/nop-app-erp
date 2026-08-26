@@ -103,6 +103,32 @@ public class TestErpFinPostingService extends JunitAutoTestCase {
         assertEquals(1, countBillLinks("AP-HAPPY-001", BUSINESS_TYPE_AP_INVOICE), "应生成 1 条业财回链");
     }
 
+    /**
+     * F1.4（P1-CK-fin-005）：账套解析空 fail-closed——acctSchemaId=null（组织零账套行）时
+     * 引擎抛 ERR_NO_ACTIVE_SCHEMA（经 recordPostFailure 进异常工作台），不再静默零凭证返回 null。
+     */
+    @Test
+    public void testNullSchemaFailsClosed() {
+        LocalDate voucherDate = LocalDate.of(2026, 6, 15);
+        seed(() -> {
+            seedOpenPeriod("2026-06", 2026, 6, LocalDate.of(2026, 6, 1), LocalDate.of(2026, 6, 30),
+                    PERIOD_STATUS_OPEN);
+        });
+
+        PostingEvent event = apInvoiceEvent("AP-NULLSCHEMA-001", voucherDate,
+                new BigDecimal("100"), new BigDecimal("13"), new BigDecimal("113"));
+        event.setAcctSchemaId(null);
+
+        NopException ex = assertThrows(NopException.class,
+                () -> ormTemplate.runInSession(session -> voucherBiz.post(event, CTX)),
+                "F1.4：null 账套应 fail-closed 抛错（修复前静默返回 null 零凭证）");
+        assertEquals("erp.err.fin.posting.no-active-schema", ex.getErrorCode(),
+                "错误码 = 组织未配置账套");
+        assertEquals("AP-NULLSCHEMA-001", ex.getParam("billHeadCode"), "错误参数携带单号");
+        assertEquals(0, countBillLinks("AP-NULLSCHEMA-001", BUSINESS_TYPE_AP_INVOICE),
+                "零凭证/零回链（fail-closed 而非静默第三态）");
+    }
+
     @Test
     public void testPostIdempotent() {
         LocalDate voucherDate = LocalDate.of(2026, 6, 15);
@@ -123,10 +149,10 @@ public class TestErpFinPostingService extends JunitAutoTestCase {
         output("1_idempotent_responses.json5", java.util.Arrays.asList(first, second));
 
         assertNotNull(first, "首次过账应生成凭证");
-        assertNull(second, "重复过账应空操作返回 null");
+        assertNotNull(second, "重复过账幂等命中应返回既有凭证 id（F1.1：非 null 防 dispatcher posted 悬挂）");
+        assertEquals(first, second, "幂等命中返回的应是与首单相同的凭证 id");
         assertEquals(1, countBillLinks("AP-IDEM-001", BUSINESS_TYPE_AP_INVOICE),
                 "幂等：不应产生第二张凭证/回链");
-        assertNotEquals(first, second);
     }
 
     @Test

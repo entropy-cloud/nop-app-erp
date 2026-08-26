@@ -6,6 +6,7 @@ import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
 
@@ -25,7 +26,7 @@ import app.erp.inv.service.statemachine.ErpInvStockTakeStateMachine;
  * <p>权威状态机见 {@code docs/design/inventory/state-machine.md} §盘点单状态机。
  */
 @BizModel("ErpInvStockTake")
-public class ErpInvStockTakeBizModel extends CrudBizModel<ErpInvStockTake> implements IErpInvStockTakeBiz {
+public class ErpInvStockTakeBizModel extends AbstractErpCrudBizModel<ErpInvStockTake> implements IErpInvStockTakeBiz {
     public ErpInvStockTakeBizModel(){
         setEntityName(ErpInvStockTake.class.getName());
     }

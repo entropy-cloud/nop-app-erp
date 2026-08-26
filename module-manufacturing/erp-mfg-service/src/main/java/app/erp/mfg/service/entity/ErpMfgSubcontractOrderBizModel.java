@@ -12,6 +12,7 @@ import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
 
@@ -26,7 +27,7 @@ import java.math.BigDecimal;
  * <p>语义见 {@code docs/design/manufacturing/subcontracting.md}。
  */
 @BizModel("ErpMfgSubcontractOrder")
-public class ErpMfgSubcontractOrderBizModel extends CrudBizModel<ErpMfgSubcontractOrder> implements IErpMfgSubcontractOrderBiz {
+public class ErpMfgSubcontractOrderBizModel extends AbstractErpCrudBizModel<ErpMfgSubcontractOrder> implements IErpMfgSubcontractOrderBiz {
 
     @Inject
     ErpMfgSubcontractOrderProcessor subcontractOrderProcessor;

@@ -17,6 +17,7 @@ import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.time.CoreMetrics;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 import io.nop.commons.util.StringHelper;
 import io.nop.core.context.IServiceContext;
 import io.nop.api.core.time.CoreMetrics;
@@ -56,7 +57,7 @@ import static io.nop.api.core.beans.FilterBeans.isNull;
  * <p>事务边界：@BizMutation 自动包装（facade 入口）。
  */
 @BizModel("ErpInvReservation")
-public class ErpInvReservationBizModel extends CrudBizModel<ErpInvReservation> implements IErpInvReservationBiz{
+public class ErpInvReservationBizModel extends AbstractErpCrudBizModel<ErpInvReservation> implements IErpInvReservationBiz{
 
     private static final Logger LOG = LoggerFactory.getLogger(ErpInvReservationBizModel.class);
 

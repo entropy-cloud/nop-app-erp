@@ -4,6 +4,7 @@ import app.erp.pur.dao.entity.ErpPurInvoice;
 import app.erp.pur.service.ErpPurConstants;
 import app.erp.pur.service.ErpPurErrors;
 import app.erp.common.service.AbstractApproveProcessor;
+import app.erp.common.service.SoDGuard;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.core.context.IServiceContext;
 import io.nop.dao.api.IEntityDao;
@@ -20,13 +21,19 @@ public class ErpPurInvoiceApproveProcessor extends AbstractApproveProcessor<ErpP
         if (invoice.isApproved()) {
             return invoice;
         }
+        // F1.2（P1-CK-pur-002）：SoD 守卫 SoD-first（最廉价失败优先，对齐 ErpPurReceiveApproveProcessor 范式）——
+        // 前置于 doPosting（REQUIRES_NEW 凭证独立提交）之前，杜绝「守卫抛错回滚主事务但凭证已提交」的孤儿凭证
+        SoDGuard.assertApproverNotCreator(invoice.getCreatedBy(), currentUserId(),
+                ErpPurErrors.ERR_PUR_APPROVER_IS_CREATOR);
         processor.validateNotCancelled(invoice, context);
         processor.validateTransitionForApprove(invoice, context);
         processor.validateBusinessRulesForApprove(invoice, context);
+        // F1.2（R3）：承付释放 hook 前移至 doPosting 之前（release 为 SYNC 同事务，前移事务安全；
+        // 原位置在 REQUIRES_NEW 凭证之后构成孤儿凭证窗口）
+        processor.runCommitmentReleaseOnInvoiceApproveHook(invoice, context);
         boolean posted = processor.doPosting(invoice, context);
         invoice = dao().getEntityById(id);
         processor.doApprove(invoice, posted, context);
-        processor.runCommitmentReleaseOnInvoiceApproveHook(invoice, context);
         return invoice;
     }
 

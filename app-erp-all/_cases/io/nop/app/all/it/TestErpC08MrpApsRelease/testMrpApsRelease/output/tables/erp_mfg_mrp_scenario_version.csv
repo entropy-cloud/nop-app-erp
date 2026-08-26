@@ -1,2 +1,2 @@
 _chgType,ID,SCENARIO_ID,VERSION_NO,COMPUTED_MRP_PLAN_ID,SNAPSHOT_SUMMARY,STATUS,PROMOTED_PLAN_ID,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
-A,100018,100010,1,100011,"lines=0,totalNet=0,totalPlanned=0,shortageMaterials=0",ARCHIVED,100019,0,1,autotest-ref,*,autotest-ref,*
+A,100020,100012,1,100013,"lines=0,totalNet=0,totalPlanned=0,shortageMaterials=0",ARCHIVED,100021,0,1,autotest-ref,*,autotest-ref,*

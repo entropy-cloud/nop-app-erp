@@ -13,6 +13,7 @@ import io.nop.api.core.config.AppConfig;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.api.core.time.CoreMetrics;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 import io.nop.biz.crud.EntityData;
 import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
@@ -65,7 +66,7 @@ import static io.nop.api.core.beans.FilterBeans.eq;
  * 创建校验/提交校验经注入 {@link IErpCtContractLineBiz} 汇总行金额（RC-R1.32，D1 语义）。
  */
 @BizModel("ErpCtContract")
-public class ErpCtContractBizModel extends CrudBizModel<ErpCtContract> implements IErpCtContractBiz {
+public class ErpCtContractBizModel extends AbstractErpCrudBizModel<ErpCtContract> implements IErpCtContractBiz {
 
     private static final Logger LOG = LoggerFactory.getLogger(ErpCtContractBizModel.class);
 

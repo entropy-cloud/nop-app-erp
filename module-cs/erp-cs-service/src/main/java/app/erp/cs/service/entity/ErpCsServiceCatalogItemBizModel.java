@@ -9,6 +9,7 @@ import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.annotations.core.Optional;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
 
@@ -25,7 +26,7 @@ import java.util.Map;
  * <p>config-gated by {@link app.erp.cs.service.ErpCsConfigs#isServiceCatalogEnabled}。
  */
 @BizModel("ErpCsServiceCatalogItem")
-public class ErpCsServiceCatalogItemBizModel extends CrudBizModel<ErpCsServiceCatalogItem>
+public class ErpCsServiceCatalogItemBizModel extends AbstractErpCrudBizModel<ErpCsServiceCatalogItem>
         implements IErpCsServiceCatalogItemBiz {
 
     @Inject

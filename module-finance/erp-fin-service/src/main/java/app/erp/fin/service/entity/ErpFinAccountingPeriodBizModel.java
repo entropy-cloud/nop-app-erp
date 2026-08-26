@@ -15,6 +15,7 @@ import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.biz.BizQuery;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
 
@@ -27,7 +28,7 @@ import jakarta.inject.Inject;
  * ORM Session 由编排层 {@link ErpFinAccountingPeriodProcessor} 获取，期末凭证生成完成后再做状态簿记 + flush。
  */
 @BizModel("ErpFinAccountingPeriod")
-public class ErpFinAccountingPeriodBizModel extends CrudBizModel<ErpFinAccountingPeriod>
+public class ErpFinAccountingPeriodBizModel extends AbstractErpCrudBizModel<ErpFinAccountingPeriod>
         implements IErpFinAccountingPeriodBiz {
 
     @Inject

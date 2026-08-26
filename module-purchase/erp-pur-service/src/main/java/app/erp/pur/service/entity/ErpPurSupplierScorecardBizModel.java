@@ -8,6 +8,7 @@ import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
 
@@ -17,7 +18,7 @@ import jakarta.inject.Inject;
  * + status DRAFT→FINALIZED + standing=RED 跨域 AVL 联动（{@code docs/design/purchase/supplier-evaluation.md §业务规则2/3/4}）。
  */
 @BizModel("ErpPurSupplierScorecard")
-public class ErpPurSupplierScorecardBizModel extends CrudBizModel<ErpPurSupplierScorecard> implements IErpPurSupplierScorecardBiz {
+public class ErpPurSupplierScorecardBizModel extends AbstractErpCrudBizModel<ErpPurSupplierScorecard> implements IErpPurSupplierScorecardBiz {
 
     @Inject
     ErpPurSupplierScorecardFinalizeScorecardProcessor finalizeScorecardProcessor;

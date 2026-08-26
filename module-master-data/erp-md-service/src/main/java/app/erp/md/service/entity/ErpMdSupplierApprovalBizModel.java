@@ -17,6 +17,7 @@ import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.api.core.time.CoreMetrics;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 import io.nop.biz.crud.EntityData;
 import io.nop.core.context.IServiceContext;
 import io.nop.dao.api.IEntityDao;
@@ -46,7 +47,7 @@ import static io.nop.api.core.beans.FilterBeans.eq;
  * （MUTEX 策略）。{@code status=REJECTED} 的记录视为「已废弃」不参与互斥（业务上 REJECTED 不生效）。
  */
 @BizModel("ErpMdSupplierApproval")
-public class ErpMdSupplierApprovalBizModel extends CrudBizModel<ErpMdSupplierApproval> implements IErpMdSupplierApprovalBiz {
+public class ErpMdSupplierApprovalBizModel extends AbstractErpCrudBizModel<ErpMdSupplierApproval> implements IErpMdSupplierApprovalBiz {
 
     public ErpMdSupplierApprovalBizModel() {
         setEntityName(ErpMdSupplierApproval.class.getName());

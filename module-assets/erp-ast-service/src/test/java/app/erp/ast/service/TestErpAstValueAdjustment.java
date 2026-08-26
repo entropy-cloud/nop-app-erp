@@ -200,6 +200,50 @@ public class TestErpAstValueAdjustment extends JunitAutoTestCase {
         assertTrue(isAllVouchersReversed("ADJ-REV-IMP-001", "VALUE_ADJUSTMENT"), "VALUE_ADJUSTMENT 凭证已红字冲销");
     }
 
+    /**
+     * F1.2（R1 配对鉴别用例）：凭证失败（posted=false）场景下 reverseApprove 仍无条件回滚 NBV。
+     * applyAssetValueChange 已无条件前移（approve 时无论凭证成败 NBV 都已变更），reverse 对称回滚。
+     * 场景构造：直种 APPROVED+posted=false 调整单 + 资产净值已减（模拟「价值变更已应用、凭证失败」）。
+     */
+    @Test
+    public void testReverseUnconditionalRollbackWhenPostingFailed() {
+        String[] assetIdHolder = new String[1];
+        String adjustmentId = ormTemplate.runInSession(session -> {
+            seedCoreBasics();
+            String categoryId = seedCategoryWithSubjects("CAT-VA-POSTFAIL", "凭证失败类别");
+            String assetId = AstTestSupport.seedAsset(daoProvider, "AST-VA-POSTFAIL", "凭证失败资产", categoryId, "1",
+                    new BigDecimal("12000"), BigDecimal.ZERO,
+                    ErpAstConstants.DEPRECIATION_METHOD_STRAIGHT_LINE, 12,
+                    ErpAstConstants.ASSET_STATUS_IN_SERVICE);
+            // 模拟 approve：价值变更已应用（NBV 12000→9000 + 减值准备 +3000），凭证失败 posted=false
+            ErpAstAsset asset = daoProvider.daoFor(ErpAstAsset.class).getEntityById(assetId);
+            asset.setNetBookValue(new BigDecimal("9000"));
+            asset.setCurrentValue(new BigDecimal("9000"));
+            daoProvider.daoFor(ErpAstAsset.class).saveOrUpdateEntity(asset);
+            assetIdHolder[0] = assetId;
+            return seedAdjustment("ADJ-VA-POSTFAIL-001", assetId, ErpAstConstants.ADJUSTMENT_TYPE_IMPAIRMENT,
+                    new BigDecimal("3000"), LocalDate.of(2026, 7, 15));
+        });
+        // 直种 APPROVED + posted=false（凭证失败态）
+        ormTemplate.runInSession(session -> {
+            ErpAstValueAdjustment adj = daoProvider.daoFor(ErpAstValueAdjustment.class).getEntityById(adjustmentId);
+            adj.setApproveStatus(ErpAstConstants.APPROVE_STATUS_APPROVED);
+            adj.setDocStatus("APPROVED");
+            adj.setPosted(false);
+            daoProvider.daoFor(ErpAstValueAdjustment.class).saveOrUpdateEntity(adj);
+            return null;
+        });
+
+        assertEquals(0, reverseApprove(adjustmentId).getStatus(), "反审核应成功（posted=false 路径）");
+        ErpAstValueAdjustment reversed = daoProvider.daoFor(ErpAstValueAdjustment.class).getEntityById(adjustmentId);
+        assertFalse(Boolean.TRUE.equals(reversed.getPosted()), "posted 保持 false");
+        assertEquals(ErpAstConstants.APPROVE_STATUS_REJECTED, reversed.getApproveStatus());
+
+        ErpAstAsset afterReverse = daoProvider.daoFor(ErpAstAsset.class).getEntityById(assetIdHolder[0]);
+        assertEquals(0, nz(afterReverse.getNetBookValue()).compareTo(new BigDecimal("12000")),
+                "F1.2（R1 配对）：posted=false 时 reverse 仍无条件回滚 NBV 至 12000——修复前该场景净值永久漂移");
+    }
+
     // ---------- rpc helpers ----------
 
     private ApiResponse<?> submitForApproval(String id) {

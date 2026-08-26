@@ -5,7 +5,7 @@
     "moveType": "INCOMING",
     "moveType_label": "INCOMING-入库",
     "orgId": "2",
-    "businessDate": "@var:ErpInvStockMove@businessDate",
+    "businessDate": "@var:ErpFinPostingException@voucherDate",
     "sourceWarehouseId": null,
     "sourceLocationId": null,
     "destWarehouseId": "2",
@@ -15,19 +15,19 @@
     "approveStatus": "UNSUBMITTED",
     "approveStatus_label": "UNSUBMITTED-未提交",
     "posted": false,
+    "postedAt": null,
+    "postedBy": null,
     "relatedBillType": "SEED_STOCK",
     "relatedBillCode": "@var:ErpInvStockMove@relatedBillCode",
     "remark": null,
     "delVersion": 0,
     "version": 1,
     "createdBy": "autotest-ref",
-    "createTime": "@var:ErpInvStockMove@createTime",
+    "createTime": "@var:ErpInvStockMoveLine@updateTime",
     "updatedBy": "autotest-ref",
     "updateTime": "*",
     "originMoveId": null,
-    "originReturnedMoveId": null,
-    "postedAt": null,
-    "postedBy": null
+    "originReturnedMoveId": null
   },
   "status": 0
 }

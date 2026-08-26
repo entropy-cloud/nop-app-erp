@@ -14,6 +14,7 @@ import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.biz.BizQuery;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
 
@@ -24,7 +25,7 @@ import jakarta.inject.Inject;
  * {@link #runSimulation}/{@link #promoteToFormalPlan} 各委派独立自包含 Processor；{@link #compareVersions} 为只读查询保留委派 {@link DrpSimulationVersionComparator}。
  */
 @BizModel("ErpDrpScenario")
-public class ErpDrpScenarioBizModel extends CrudBizModel<ErpDrpScenario> implements IErpDrpScenarioBiz {
+public class ErpDrpScenarioBizModel extends AbstractErpCrudBizModel<ErpDrpScenario> implements IErpDrpScenarioBiz {
 
     @Inject
     DrpSimulationVersionComparator simulationComparator;

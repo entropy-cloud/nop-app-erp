@@ -17,6 +17,7 @@ import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.api.core.time.CoreMetrics;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
 
@@ -41,7 +42,7 @@ import java.util.Collections;
  * <p>对齐 {@code docs/design/crm/README.md §业务规则2 活动时间线派生 / §业务规则4 事件提醒}。
  */
 @BizModel("ErpCrmEvent")
-public class ErpCrmEventBizModel extends CrudBizModel<ErpCrmEvent> implements IErpCrmEventBiz {
+public class ErpCrmEventBizModel extends AbstractErpCrudBizModel<ErpCrmEvent> implements IErpCrmEventBiz {
 
     @Inject
     LeadActivityDerivationHelper leadDerivationHelper;

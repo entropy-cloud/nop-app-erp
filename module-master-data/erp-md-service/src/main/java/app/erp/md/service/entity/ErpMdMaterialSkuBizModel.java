@@ -11,6 +11,7 @@ import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.config.AppConfig;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 import io.nop.biz.crud.EntityData;
 import io.nop.core.context.IServiceContext;
 import io.nop.dao.api.IEntityDao;
@@ -58,7 +59,7 @@ import static io.nop.api.core.beans.FilterBeans.eq;
  * List 收集器聚合），避免基础域反向依赖下游域构成依赖环。
  */
 @BizModel("ErpMdMaterialSku")
-public class ErpMdMaterialSkuBizModel extends CrudBizModel<ErpMdMaterialSku> implements IErpMdMaterialSkuBiz {
+public class ErpMdMaterialSkuBizModel extends AbstractErpCrudBizModel<ErpMdMaterialSku> implements IErpMdMaterialSkuBiz {
 
     @Inject
     @Nullable

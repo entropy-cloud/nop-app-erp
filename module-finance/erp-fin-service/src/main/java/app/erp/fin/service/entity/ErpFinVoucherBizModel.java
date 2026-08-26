@@ -12,6 +12,7 @@ import io.nop.api.core.annotations.txn.Transactional;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.api.core.time.CoreMetrics;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 import io.nop.core.context.IServiceContext;
 
 import app.erp.fin.biz.IErpFinVoucherBiz;
@@ -56,7 +57,7 @@ import static io.nop.api.core.beans.FilterBeans.eq;
  * DRAFT→POSTED 状态切换与红冲标记（不与跨域业财过账入口 {@link #post} 混淆）。
  */
 @BizModel("ErpFinVoucher")
-public class ErpFinVoucherBizModel extends CrudBizModel<ErpFinVoucher> implements IErpFinVoucherBiz {
+public class ErpFinVoucherBizModel extends AbstractErpCrudBizModel<ErpFinVoucher> implements IErpFinVoucherBiz {
     public ErpFinVoucherBizModel() {
         setEntityName(ErpFinVoucher.class.getName());
     }
@@ -99,6 +100,8 @@ public class ErpFinVoucherBizModel extends CrudBizModel<ErpFinVoucher> implement
                     .param(ErpFinErrors.ARG_VOUCHER_ID, voucherId)
                     .param(ErpFinErrors.ARG_CURRENT_STATUS, voucher.getDocStatus());
         }
+        // F1.2→F2.1（P1-CK-fin-002）：借贷平衡校验——DRAFT→POSTED 迁移边守卫（state-machine.md L40）
+        assertBalancedFromLines(voucher);
         voucher.setDocStatus(documentStateMachine.postVoucherTargetStatus());
         voucher.setPostedBy(context.getUserContext() != null ? context.getUserContext().getUserId() : null);
         voucher.setPostedAt(CoreMetrics.currentTimestamp());
@@ -200,5 +203,31 @@ public class ErpFinVoucherBizModel extends CrudBizModel<ErpFinVoucher> implement
                     .param(ErpFinErrors.ARG_VOUCHER_ID, voucher.getId())
                     .param(ErpFinErrors.ARG_PERIOD_STATUS, status);
         }
+    }
+
+    /**
+     * F2.1（P1-CK-fin-002）：过账边借贷平衡断言——聚合凭证行 Σdebit vs Σcredit（null→ZERO，
+     * compareTo 容忍 scale 差异；负数红字风格天然对称通过）。通过后重算头合计并随本次
+     * updateEntity 持久化（修复手工 CRUD 凭证头合计 stale/null 漂移）。零行凭证 Σ0==Σ0 通过
+     * （期末零凭证先例 CloseVoucherWriter L80 单独拒绝零合计，此处不重复裁决）。
+     */
+    protected void assertBalancedFromLines(ErpFinVoucher voucher) {
+        io.nop.api.core.beans.query.QueryBean q = new io.nop.api.core.beans.query.QueryBean();
+        q.addFilter(io.nop.api.core.beans.FilterBeans.eq("voucherId", voucher.getId()));
+        java.util.List<ErpFinVoucherLine> lines = daoProvider().daoFor(ErpFinVoucherLine.class).findAllByQuery(q);
+        java.math.BigDecimal debit = java.math.BigDecimal.ZERO;
+        java.math.BigDecimal credit = java.math.BigDecimal.ZERO;
+        for (ErpFinVoucherLine line : lines) {
+            debit = debit.add(line.getDebitAmount() != null ? line.getDebitAmount() : java.math.BigDecimal.ZERO);
+            credit = credit.add(line.getCreditAmount() != null ? line.getCreditAmount() : java.math.BigDecimal.ZERO);
+        }
+        if (debit.compareTo(credit) != 0) {
+            throw new NopException(app.erp.fin.service.posting.ErpFinPostingErrors.ERR_UNBALANCED)
+                    .param("totalDebit", debit)
+                    .param("totalCredit", credit)
+                    .param(ErpFinErrors.ARG_VOUCHER_ID, voucher.getId());
+        }
+        voucher.setTotalDebit(debit);
+        voucher.setTotalCredit(credit);
     }
 }

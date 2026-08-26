@@ -8,6 +8,7 @@ import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
 
@@ -19,7 +20,7 @@ import java.util.List;
  * per-mutation {@link ErpFinExpenseClaimCancelProcessor}。
  */
 @BizModel("ErpFinExpenseClaim")
-public class ErpFinExpenseClaimBizModel extends CrudBizModel<ErpFinExpenseClaim> implements IErpFinExpenseClaimBiz {
+public class ErpFinExpenseClaimBizModel extends AbstractErpCrudBizModel<ErpFinExpenseClaim> implements IErpFinExpenseClaimBiz {
 
     @Inject
     ErpFinExpenseClaimCancelProcessor cancelProcessor;

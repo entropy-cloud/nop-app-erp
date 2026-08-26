@@ -1,6 +1,6 @@
 {
   "data": {
-    "id": "100010",
+    "id": "100012",
     "workOrderId": "@var:woId",
     "lineNo": 20,
     "lineType": "OUTPUT",

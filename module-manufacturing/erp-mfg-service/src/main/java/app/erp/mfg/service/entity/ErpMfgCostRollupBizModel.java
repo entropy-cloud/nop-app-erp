@@ -10,6 +10,7 @@ import io.nop.api.core.annotations.biz.BizQuery;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 import io.nop.core.context.IServiceContext;
 import io.nop.dao.api.IEntityDao;
 import io.nop.orm.IOrmTemplate;
@@ -23,7 +24,7 @@ import java.util.Set;
 import static io.nop.api.core.beans.FilterBeans.eq;
 
 @BizModel("ErpMfgCostRollup")
-public class ErpMfgCostRollupBizModel extends CrudBizModel<ErpMfgCostRollup> implements IErpMfgCostRollupBiz {
+public class ErpMfgCostRollupBizModel extends AbstractErpCrudBizModel<ErpMfgCostRollup> implements IErpMfgCostRollupBiz {
 
     @Inject
     IOrmTemplate ormTemplate;

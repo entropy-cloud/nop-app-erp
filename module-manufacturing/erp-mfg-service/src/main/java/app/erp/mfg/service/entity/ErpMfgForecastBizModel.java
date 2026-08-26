@@ -11,6 +11,7 @@ import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
 
@@ -28,7 +29,7 @@ import jakarta.inject.Inject;
  * plan 2026-08-12-1841-3。
  */
 @BizModel("ErpMfgForecast")
-public class ErpMfgForecastBizModel extends CrudBizModel<ErpMfgForecast> implements IErpMfgForecastBiz {
+public class ErpMfgForecastBizModel extends AbstractErpCrudBizModel<ErpMfgForecast> implements IErpMfgForecastBiz {
 
     @Inject
     ErpMfgForecastStateMachine stateMachine;

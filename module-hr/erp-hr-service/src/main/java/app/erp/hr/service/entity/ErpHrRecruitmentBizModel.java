@@ -7,6 +7,7 @@ import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.api.core.time.CoreMetrics;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 import io.nop.biz.crud.EntityData;
 import io.nop.core.context.IServiceContext;
 
@@ -40,7 +41,7 @@ import java.util.List;
  * 归 successor（见 plan Deferred But Adjudicated）。
  */
 @BizModel("ErpHrRecruitment")
-public class ErpHrRecruitmentBizModel extends CrudBizModel<ErpHrRecruitment> implements IErpHrRecruitmentBiz {
+public class ErpHrRecruitmentBizModel extends AbstractErpCrudBizModel<ErpHrRecruitment> implements IErpHrRecruitmentBiz {
 
     @Inject
     IErpHrEmployeeBiz employeeBiz;

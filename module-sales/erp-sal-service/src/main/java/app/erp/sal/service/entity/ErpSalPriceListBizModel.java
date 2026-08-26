@@ -4,6 +4,7 @@ package app.erp.sal.service.entity;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 import io.nop.biz.crud.EntityData;
 import io.nop.core.context.IServiceContext;
 import org.slf4j.Logger;
@@ -30,7 +31,7 @@ import static io.nop.api.core.beans.FilterBeans.eq;
  * {@code docs/design/date-ranged-validity-pattern.md} §4 PRIORITY 策略段。
  */
 @BizModel("ErpSalPriceList")
-public class ErpSalPriceListBizModel extends CrudBizModel<ErpSalPriceList> implements IErpSalPriceListBiz {
+public class ErpSalPriceListBizModel extends AbstractErpCrudBizModel<ErpSalPriceList> implements IErpSalPriceListBiz {
 
     private static final Logger LOG = LoggerFactory.getLogger(ErpSalPriceListBizModel.class);
 

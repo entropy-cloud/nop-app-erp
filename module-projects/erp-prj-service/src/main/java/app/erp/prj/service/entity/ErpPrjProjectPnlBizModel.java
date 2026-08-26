@@ -9,6 +9,7 @@ import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.biz.BizQuery;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
 
@@ -26,7 +27,7 @@ import java.util.List;
  * （{@code processor-extension-pattern.md}），本类仅作 facade 单行委托；{@code getProjectPnl} 保留内联。
  */
 @BizModel("ErpPrjProjectPnl")
-public class ErpPrjProjectPnlBizModel extends CrudBizModel<ErpPrjProjectPnl> implements IErpPrjProjectPnlBiz {
+public class ErpPrjProjectPnlBizModel extends AbstractErpCrudBizModel<ErpPrjProjectPnl> implements IErpPrjProjectPnlBiz {
 
     @Inject
     ProjectPnlCalculator pnlCalculator;

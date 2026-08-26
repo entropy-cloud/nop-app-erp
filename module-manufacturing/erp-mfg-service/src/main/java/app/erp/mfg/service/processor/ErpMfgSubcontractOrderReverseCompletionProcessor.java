@@ -21,7 +21,6 @@ public class ErpMfgSubcontractOrderReverseCompletionProcessor {
         facade.validateCanReverse(order, context);
         facade.reverseGlPostings(order, context);
         facade.reverseInventoryMoves(order, context);
-        facade.doReverseCompletion(order, context);
-        return order;
+        return facade.doReverseCompletion(order, context);
     }
 }

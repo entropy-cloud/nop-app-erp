@@ -26,7 +26,7 @@
     "delVersion": 0,
     "version": 2,
     "createdBy": "autotest-ref",
-    "createTime": "@var:ErpMntVisit@createTime",
+    "createTime": "@var:ErpMntRequest@updateTime_1",
     "updatedBy": "autotest-ref",
     "updateTime": "*",
     "requestId": "@var:reqId"

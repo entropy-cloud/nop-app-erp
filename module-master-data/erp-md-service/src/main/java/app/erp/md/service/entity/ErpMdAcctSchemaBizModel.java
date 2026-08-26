@@ -6,6 +6,7 @@ import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 import io.nop.core.context.IServiceContext;
 
 import app.erp.md.biz.IErpMdAcctSchemaBiz;
@@ -18,7 +19,7 @@ import java.util.Comparator;
 import java.util.List;
 
 @BizModel("ErpMdAcctSchema")
-public class ErpMdAcctSchemaBizModel extends CrudBizModel<ErpMdAcctSchema> implements IErpMdAcctSchemaBiz{
+public class ErpMdAcctSchemaBizModel extends AbstractErpCrudBizModel<ErpMdAcctSchema> implements IErpMdAcctSchemaBiz{
     public ErpMdAcctSchemaBizModel(){
         setEntityName(ErpMdAcctSchema.class.getName());
     }

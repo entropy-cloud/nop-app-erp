@@ -9,6 +9,7 @@ import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
 
@@ -21,7 +22,7 @@ import jakarta.inject.Inject;
  * <p>权威：{@code docs/architecture/multi-company.md §Decision D}。
  */
 @BizModel("ErpFinConsolidationElimination")
-public class ErpFinConsolidationEliminationBizModel extends CrudBizModel<ErpFinConsolidationElimination>
+public class ErpFinConsolidationEliminationBizModel extends AbstractErpCrudBizModel<ErpFinConsolidationElimination>
         implements IErpFinConsolidationEliminationBiz {
 
     @Inject

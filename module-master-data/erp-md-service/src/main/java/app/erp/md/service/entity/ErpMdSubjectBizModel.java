@@ -8,6 +8,7 @@ import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.annotations.core.Optional;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 import io.nop.core.context.IServiceContext;
 
 import app.erp.md.biz.IErpMdSubjectBiz;
@@ -17,7 +18,7 @@ import static io.nop.api.core.beans.FilterBeans.eq;
 import static io.nop.api.core.beans.FilterBeans.ne;
 
 @BizModel("ErpMdSubject")
-public class ErpMdSubjectBizModel extends CrudBizModel<ErpMdSubject> implements IErpMdSubjectBiz {
+public class ErpMdSubjectBizModel extends AbstractErpCrudBizModel<ErpMdSubject> implements IErpMdSubjectBiz {
     public ErpMdSubjectBizModel() {
         setEntityName(ErpMdSubject.class.getName());
     }

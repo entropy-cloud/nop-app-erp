@@ -41,9 +41,12 @@ public class ErpMntVisitCompleteProcessor extends AbstractErpMntVisitProcessor {
         } catch (NopException e) {
             throw illegalVisitTransition(visit, from, ErpMntDaoConstants.VISIT_STATUS_IN_PROGRESS, e);
         }
-        doComplete(visit, context);
+        // F1.2（P2-CK-mnt-007）：设备状态恢复与 request 联动前移到 doComplete（内含 REQUIRES_NEW
+        // 工时 GL 凭证）之前——两步均可抛（设备写/request 状态机守卫），原顺序下失败会回滚主事务
+        // 但凭证已独立提交。同主事务前移原子性不变。
         equipmentStatusLinker.restoreToRunning(visit.getEquipmentId(), context);
         completeLinkedRequest(visit, context);
+        doComplete(visit, context);
         return visit;
     }
 
@@ -63,7 +66,8 @@ public class ErpMntVisitCompleteProcessor extends AbstractErpMntVisitProcessor {
         // 失败不阻断 complete 终态（吞异常范式，对齐 MaintenanceIssuePostingDispatcher.dispatchIfApplicable）。
         if (laborPostingDispatcher.isPostingEnabled()) {
             if (!laborPostingDispatcher.postLabor(visit, context)) {
-                LOG.warn("Labor posting skipped or failed for visit {}", visit.getCode());
+                // F1.2：幂等命中（voucherAlreadyExists 预检）或未配置费率属正常跳过，降 info（真实失败已由 dispatcher 侧告警）
+                LOG.info("Labor posting skipped (idempotent hit or rate unconfigured) for visit {}", visit.getCode());
             }
         }
     }

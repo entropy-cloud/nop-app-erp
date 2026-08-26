@@ -9,6 +9,7 @@ import io.nop.api.core.convert.ConvertHelper;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.api.core.time.CoreMetrics;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 import io.nop.commons.crypto.HashHelper;
 import io.nop.commons.util.StringHelper;
 import io.nop.core.context.IServiceContext;
@@ -42,7 +43,7 @@ import static io.nop.api.core.beans.FilterBeans.eq;
  * check-then-insert 单请求并发窗口与 A4.2.144 TOCTOU 同型 watch-only，见 Deferred But Adjudicated）。
  */
 @BizModel("ErpHrSurveyResponse")
-public class ErpHrSurveyResponseBizModel extends CrudBizModel<ErpHrSurveyResponse> implements IErpHrSurveyResponseBiz {
+public class ErpHrSurveyResponseBizModel extends AbstractErpCrudBizModel<ErpHrSurveyResponse> implements IErpHrSurveyResponseBiz {
 
     @Inject
     IErpHrSurveyBiz surveyBiz;

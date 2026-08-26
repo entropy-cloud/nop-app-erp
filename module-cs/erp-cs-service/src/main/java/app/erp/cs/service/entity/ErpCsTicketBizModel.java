@@ -29,6 +29,7 @@ import io.nop.api.core.annotations.core.Optional;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
 
@@ -59,7 +60,7 @@ import io.nop.biz.crud.EntityData;
  * reopen 时取消未响应的调查（删除 SENT 状态调查避免误发）。
  */
 @BizModel("ErpCsTicket")
-public class ErpCsTicketBizModel extends CrudBizModel<ErpCsTicket> implements IErpCsTicketBiz {
+public class ErpCsTicketBizModel extends AbstractErpCrudBizModel<ErpCsTicket> implements IErpCsTicketBiz {
 
     private static final org.slf4j.Logger LOG = org.slf4j.LoggerFactory.getLogger(ErpCsTicketBizModel.class);
 

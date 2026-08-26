@@ -9,6 +9,7 @@ import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.api.core.time.CoreMetrics;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 import io.nop.biz.crud.EntityData;
 import io.nop.core.context.IServiceContext;
 
@@ -44,7 +45,7 @@ import static io.nop.api.core.beans.FilterBeans.in;
  * 本引擎是 plan 0831-3 悬空钩子的唯一合法触发源。
  */
 @BizModel("ErpHrLeaveRequest")
-public class ErpHrLeaveRequestBizModel extends CrudBizModel<ErpHrLeaveRequest> implements IErpHrLeaveRequestBiz {
+public class ErpHrLeaveRequestBizModel extends AbstractErpCrudBizModel<ErpHrLeaveRequest> implements IErpHrLeaveRequestBiz {
     @Inject
     IErpHrLeaveBalanceBiz leaveBalanceBiz;
     @Inject

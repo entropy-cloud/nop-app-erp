@@ -6,6 +6,7 @@ import app.erp.hr.service.ErpHrErrors;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 import io.nop.biz.crud.EntityData;
 import io.nop.core.context.IServiceContext;
 import io.nop.dao.api.IEntityDao;
@@ -20,7 +21,7 @@ import java.util.Set;
  * 检测自引用与祖先链回环，违例抛 {@link ErpHrErrors#ERR_COMPETENCY_PARENT_CYCLE}。
  */
 @BizModel("ErpHrCompetency")
-public class ErpHrCompetencyBizModel extends CrudBizModel<ErpHrCompetency>
+public class ErpHrCompetencyBizModel extends AbstractErpCrudBizModel<ErpHrCompetency>
         implements IErpHrCompetencyBiz {
 
     public ErpHrCompetencyBizModel() {

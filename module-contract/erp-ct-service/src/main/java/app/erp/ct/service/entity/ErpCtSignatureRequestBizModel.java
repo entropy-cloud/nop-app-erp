@@ -25,6 +25,7 @@ import io.nop.api.core.config.AppConfig;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.api.core.time.CoreMetrics;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 import io.nop.core.context.IServiceContext;
 import io.nop.core.lang.json.JsonTool;
 import jakarta.inject.Inject;
@@ -69,7 +70,7 @@ import static io.nop.api.core.beans.FilterBeans.eq;
  * {@link IErpCtContractVersionBiz#signVersion}（FINALIZED→SIGNED + isCurrent 翻转）。
  */
 @BizModel("ErpCtSignatureRequest")
-public class ErpCtSignatureRequestBizModel extends CrudBizModel<ErpCtSignatureRequest>
+public class ErpCtSignatureRequestBizModel extends AbstractErpCrudBizModel<ErpCtSignatureRequest>
         implements IErpCtSignatureRequestBiz {
 
     /** webhook HMAC 密钥（mock 测试可控；真实部署可扩展凭证配置）。 */

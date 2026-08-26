@@ -6,6 +6,7 @@ import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.annotations.core.Optional;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
 
@@ -20,7 +21,7 @@ import app.erp.drp.service.processor.ErpInvDrpCrossDockProcessor;
  * （protected step 可被 Delta 覆盖）。总门控 {@code erp-inv.drp-xdock-enabled} 默认 false。
  */
 @BizModel("ErpInvDrpCrossDock")
-public class ErpInvDrpCrossDockBizModel extends CrudBizModel<ErpInvDrpCrossDock> implements IErpInvDrpCrossDockBiz {
+public class ErpInvDrpCrossDockBizModel extends AbstractErpCrudBizModel<ErpInvDrpCrossDock> implements IErpInvDrpCrossDockBiz {
 
     @Inject
     ErpInvDrpCrossDockProcessor crossDockProcessor;

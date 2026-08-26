@@ -7,13 +7,14 @@ import io.nop.api.core.annotations.biz.BizLoader;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.ContextSource;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 
 import app.erp.common.service.MaskHelper;
 import app.erp.pur.biz.IErpPurSupplierPriceListBiz;
 import app.erp.pur.dao.entity.ErpPurSupplierPriceList;
 
 @BizModel("ErpPurSupplierPriceList")
-public class ErpPurSupplierPriceListBizModel extends CrudBizModel<ErpPurSupplierPriceList> implements IErpPurSupplierPriceListBiz{
+public class ErpPurSupplierPriceListBizModel extends AbstractErpCrudBizModel<ErpPurSupplierPriceList> implements IErpPurSupplierPriceListBiz{
     public ErpPurSupplierPriceListBizModel(){
         setEntityName(ErpPurSupplierPriceList.class.getName());
     }

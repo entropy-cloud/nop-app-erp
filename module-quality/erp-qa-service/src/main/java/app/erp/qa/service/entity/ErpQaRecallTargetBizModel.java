@@ -5,6 +5,7 @@ import app.erp.qa.biz.IErpQaRecallTargetBiz;
 import app.erp.qa.dao.entity.ErpQaRecallTarget;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 
 import java.util.List;
 
@@ -13,7 +14,7 @@ import java.util.List;
  * {@link ErpQaRecallBizModel} 的状态机编排驱动。
  */
 @BizModel("ErpQaRecallTarget")
-public class ErpQaRecallTargetBizModel extends CrudBizModel<ErpQaRecallTarget> implements IErpQaRecallTargetBiz {
+public class ErpQaRecallTargetBizModel extends AbstractErpCrudBizModel<ErpQaRecallTarget> implements IErpQaRecallTargetBiz {
 
     public ErpQaRecallTargetBizModel() {
         setEntityName(ErpQaRecallTarget.class.getName());

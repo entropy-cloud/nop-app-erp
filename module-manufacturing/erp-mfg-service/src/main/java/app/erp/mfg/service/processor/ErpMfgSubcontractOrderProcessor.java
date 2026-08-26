@@ -224,12 +224,20 @@ public class ErpMfgSubcontractOrderProcessor {
         return original.getSourceWarehouseId() != null;
     }
 
-    protected void doReverseCompletion(ErpMfgSubcontractOrder order, IServiceContext context) {
-        order.setPosted(false);
-        order.setPostedAt(null);
-        order.setPostedBy(null);
-        order.setDocStatus(documentStateMachine.reverseCompletionTargetStatus());
-        orderDao().updateEntity(order);
+    protected ErpMfgSubcontractOrder doReverseCompletion(ErpMfgSubcontractOrder order, IServiceContext context) {
+        // F1.2 同型残余（委外红冲链）：reverseGlPostings/reverseInventoryMoves 内含 REQUIRES_NEW 红冲凭证
+        // 与跨域反向移动，返回后当前 session 持有的 order 可能被 evict——按 ID 重载后再回退，
+        // 避免 updateEntity 报 save-entity-not-transient（镜像 WorkOrder 报工链既有 reload 范式）。
+        ErpMfgSubcontractOrder managed = orderDao().getEntityById(order.getId());
+        if (managed == null) {
+            managed = order;
+        }
+        managed.setPosted(false);
+        managed.setPostedAt(null);
+        managed.setPostedBy(null);
+        managed.setDocStatus(documentStateMachine.reverseCompletionTargetStatus());
+        orderDao().updateEntity(managed);
+        return managed;
     }
 
     // ---------- step：审批迁移校验（protected，下游可逐个覆盖） ----------

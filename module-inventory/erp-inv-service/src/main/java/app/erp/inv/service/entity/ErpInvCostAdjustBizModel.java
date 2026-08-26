@@ -8,6 +8,7 @@ import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
 
@@ -20,7 +21,7 @@ import jakarta.inject.Inject;
  * {@code docs/plans/2026-07-05-2352-3-inventory-cost-adjustment.md}。
  */
 @BizModel("ErpInvCostAdjust")
-public class ErpInvCostAdjustBizModel extends CrudBizModel<ErpInvCostAdjust> implements IErpInvCostAdjustBiz {
+public class ErpInvCostAdjustBizModel extends AbstractErpCrudBizModel<ErpInvCostAdjust> implements IErpInvCostAdjustBiz {
 
     @Inject
     ErpInvCostAdjustApplyCostAdjustProcessor applyCostAdjustProcessor;

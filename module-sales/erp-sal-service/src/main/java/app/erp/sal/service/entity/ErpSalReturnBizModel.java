@@ -10,6 +10,7 @@ import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
 
@@ -23,7 +24,7 @@ import java.util.List;
  * 换货出库单生成（UC-SAL-06）经 per-mutation {@link ErpSalReturnGenerateExchangeDeliveryProcessor}。
  */
 @BizModel("ErpSalReturn")
-public class ErpSalReturnBizModel extends CrudBizModel<ErpSalReturn> implements IErpSalReturnBiz {
+public class ErpSalReturnBizModel extends AbstractErpCrudBizModel<ErpSalReturn> implements IErpSalReturnBiz {
 
     @Inject
     ErpSalReturnCancelProcessor cancelProcessor;

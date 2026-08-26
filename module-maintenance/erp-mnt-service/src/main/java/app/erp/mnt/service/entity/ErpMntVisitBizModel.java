@@ -14,12 +14,13 @@ import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.annotations.core.Optional;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 import io.nop.biz.crud.EntityData;
 import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
 
 @BizModel("ErpMntVisit")
-public class ErpMntVisitBizModel extends CrudBizModel<ErpMntVisit> implements IErpMntVisitBiz {
+public class ErpMntVisitBizModel extends AbstractErpCrudBizModel<ErpMntVisit> implements IErpMntVisitBiz {
 
     @Inject
     ErpMntVisitScheduleProcessor scheduleProcessor;

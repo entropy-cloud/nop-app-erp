@@ -12,6 +12,7 @@ import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
 
@@ -37,7 +38,7 @@ import jakarta.inject.Inject;
  * （{@code processor-extension-pattern.md}），本类仅作 facade 单行委托；{@code reject} 保留内联。
  */
 @BizModel("ErpPrjTimesheet")
-public class ErpPrjTimesheetBizModel extends CrudBizModel<ErpPrjTimesheet> implements IErpPrjTimesheetBiz {
+public class ErpPrjTimesheetBizModel extends AbstractErpCrudBizModel<ErpPrjTimesheet> implements IErpPrjTimesheetBiz {
 
     @Inject
     ErpPrjTimesheetSubmitProcessor submitProcessor;

@@ -232,7 +232,7 @@ public class ErpPurPaymentProcessor {
     }
 
     protected void doApprove(ErpPurPayment payment, boolean posted, IServiceContext context) {
-        SoDGuard.assertApproverNotCreator(payment.getCreatedBy(), currentUserId(), ErpPurErrors.ERR_PUR_APPROVER_IS_CREATOR);
+        // F1.2：SoD 守卫已前移至 ErpPurPaymentApproveProcessor#approve（doPosting 之前）
         payment.setApproveStatus(stateMachine.approveTargetStatus());
         payment.setApprovedBy(currentUserId());
         payment.setApprovedAt(CoreMetrics.currentTimestamp());

@@ -16,6 +16,7 @@ import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 import io.nop.biz.crud.EntityData;
 import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
@@ -38,7 +39,7 @@ import jakarta.inject.Inject;
  * 本类仅保留单行委托 + CRUD 钩子（{@link #defaultPrepareSave}）。
  */
 @BizModel("ErpLogShipment")
-public class ErpLogShipmentBizModel extends CrudBizModel<ErpLogShipment> implements IErpLogShipmentBiz {
+public class ErpLogShipmentBizModel extends AbstractErpCrudBizModel<ErpLogShipment> implements IErpLogShipmentBiz {
 
     @Inject
     ErpLogShipmentSaveProcessor saveProcessor;

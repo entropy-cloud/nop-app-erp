@@ -12,6 +12,7 @@ import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.annotations.core.Optional;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
 
@@ -33,7 +34,7 @@ import static io.nop.api.core.beans.FilterBeans.eq;
  * 轻量审批）承载 UC-CS-12 异常「可重试最多 3 次」；{@link #findFulfillmentProgress} 承载后置「状态可跟踪」。
  */
 @BizModel("ErpCsCatalogFulfillment")
-public class ErpCsCatalogFulfillmentBizModel extends CrudBizModel<ErpCsCatalogFulfillment>
+public class ErpCsCatalogFulfillmentBizModel extends AbstractErpCrudBizModel<ErpCsCatalogFulfillment>
         implements IErpCsCatalogFulfillmentBiz {
 
     @Inject

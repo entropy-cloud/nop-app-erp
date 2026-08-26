@@ -22,6 +22,7 @@ import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.api.core.time.CoreMetrics;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 import io.nop.core.context.IServiceContext;
 import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
@@ -45,7 +46,7 @@ import static io.nop.api.core.beans.FilterBeans.in;
  * 经 {@code daoProvider}（Employee 主数据本域直接 dao 即可，无需 IBiz 抽象——仅取外键字段）。
  */
 @BizModel("ErpHrGapAnalysis")
-public class ErpHrGapAnalysisBizModel extends CrudBizModel<ErpHrGapAnalysis>
+public class ErpHrGapAnalysisBizModel extends AbstractErpCrudBizModel<ErpHrGapAnalysis>
         implements IErpHrGapAnalysisBiz {
 
     @Inject

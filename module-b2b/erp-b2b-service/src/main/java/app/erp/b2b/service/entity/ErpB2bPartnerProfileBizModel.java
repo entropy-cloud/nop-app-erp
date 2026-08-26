@@ -19,6 +19,7 @@ import io.nop.api.core.config.AppConfig;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.api.core.time.CoreMetrics;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 import io.nop.commons.util.StringHelper;
 import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
@@ -43,7 +44,7 @@ import static io.nop.api.core.beans.FilterBeans.eq;
  * 不实现——无 partnerProfileId 锚点，登记 Deferred（successor = 伙伴级 EDI 统计需求立项）。
  */
 @BizModel("ErpB2bPartnerProfile")
-public class ErpB2bPartnerProfileBizModel extends CrudBizModel<ErpB2bPartnerProfile> implements IErpB2bPartnerProfileBiz {
+public class ErpB2bPartnerProfileBizModel extends AbstractErpCrudBizModel<ErpB2bPartnerProfile> implements IErpB2bPartnerProfileBiz {
 
     @Inject
     ErpB2bPartnerProfileStateMachine stateMachine;

@@ -2,4 +2,4 @@ _chgType,ID,CODE,ORG_ID,MOVE_ID,MOVE_LINE_ID,MATERIAL_ID,SKU_ID,WAREHOUSE_ID,LOC
 A,11,@var:ErpInvStockLedger@code,3601,8,9,6601,,5601,,10.0000,5.0000,50.00000000,10.0000,50.00000000,MOVING_AVERAGE,9601,8601,@var:ErpInvStockLedger@businessDate,,,0,0,autotest-ref,*,autotest-ref,*,,OWNED
 A,18,@var:ErpInvStockLedger@code_1,3601,16,17,6601,,5601,,-2.0000,5.0000,-10.00000000,8.0000,40.00000000,MOVING_AVERAGE,9601,8601,@var:ErpInvStockLedger@businessDate_2,,,0,0,autotest-ref,*,autotest-ref,*,,OWNED
 A,30,@var:ErpInvStockLedger@code_2,3601,28,29,6601,,5601,,2.0000,5.0000,10.00000000,10.0000,50.00000000,MOVING_AVERAGE,,8601,@var:ErpInvStockLedger@businessDate_2,,,0,0,autotest-ref,*,autotest-ref,*,,OWNED
-A,41,@var:ErpInvStockLedger@code_3,3601,39,40,6601,,5601,,-4.0000,5.0000,-20.00000000,6.0000,30.00000000,MOVING_AVERAGE,9601,8601,@var:ErpInvStockLedger@businessDate_2,,,0,0,autotest-ref,*,autotest-ref,*,,OWNED
+A,42,@var:ErpInvStockLedger@code_3,3601,40,41,6601,,5601,,-4.0000,5.0000,-20.00000000,6.0000,30.00000000,MOVING_AVERAGE,9601,8601,@var:ErpInvStockLedger@businessDate_2,,,0,0,autotest-ref,*,autotest-ref,*,,OWNED

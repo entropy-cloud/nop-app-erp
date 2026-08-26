@@ -15,6 +15,7 @@ import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.api.core.time.CoreMetrics;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 import io.nop.biz.crud.EntityData;
 import io.nop.core.context.IServiceContext;
 import io.nop.dao.api.IEntityDao;
@@ -37,7 +38,7 @@ import jakarta.inject.Inject;
  * 动态守卫保留原位：retry 的 retryCount++/error/blockingLevel 清除、sentAt/acknowledgedAt 写入、markError 的 error msg。
  */
 @BizModel("ErpB2bEdiDoc")
-public class ErpB2bEdiDocBizModel extends CrudBizModel<ErpB2bEdiDoc> implements IErpB2bEdiDocBiz {
+public class ErpB2bEdiDocBizModel extends AbstractErpCrudBizModel<ErpB2bEdiDoc> implements IErpB2bEdiDocBiz {
 
     @Inject
     ErpB2bEdiDocCreateOutboundProcessor createOutboundProcessor;

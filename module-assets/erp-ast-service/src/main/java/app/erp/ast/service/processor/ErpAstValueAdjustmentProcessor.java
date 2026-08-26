@@ -79,12 +79,15 @@ public class ErpAstValueAdjustmentProcessor {
         adjustmentDao().updateEntity(adjustment);
         orm().flushSession();
 
+        // F1.2（P2-CK-ast-015 VA 链 + 审查 R1）：资产账面价值变更无条件前移到 tryPost（REQUIRES_NEW
+        // 凭证）之前——原 voucherId!=null 条件性使价值变更位于凭证提交后，凭证提交后主事务失败
+        // 回滚时 NBV 变更一并回滚（一致），但「REQUIRES_NEW 已提交+主事务回滚」重试场景经 F1.1
+        // 幂等收敛后凭证已存在而首次 apply 已回滚，条件性会永久漏改 NBV。前移 + executeReverseApprove
+        // 无条件回滚配对（R1 Decision：放弃 voucherId 条件性，对齐「posted=false+告警」纪律）。
+        applyAssetValueChange(adjustment, asset);
+
         ErpAstAssetCategory category = asset.getCategory();
         String voucherId = postingDispatcher.tryPost(adjustment, asset, category);
-
-        if (voucherId != null) {
-            applyAssetValueChange(adjustment, asset);
-        }
 
         adjustment = reload(id);
         Timestamp now = CoreMetrics.currentTimestamp();
@@ -107,9 +110,11 @@ public class ErpAstValueAdjustmentProcessor {
 
     protected ErpAstValueAdjustment executeReverseApprove(String id, ErpAstValueAdjustment adjustment,
                                                             IServiceContext context) {
+        // F1.2（R1 配对）：applyAssetValueChange 已无条件前移（approve 时无论凭证成败 NBV 都已变更），
+        // 反审核对称地无条件回滚 NBV；凭证红冲仍仅对 posted=true 执行。
+        rollbackAssetValue(adjustment);
         if (Boolean.TRUE.equals(adjustment.getPosted())) {
             postingDispatcher.reverse(adjustment);
-            rollbackAssetValue(adjustment);
             adjustment = reload(id);
             adjustment.setPosted(false);
             adjustment.setPostedAt(null);
@@ -291,12 +296,15 @@ public class ErpAstValueAdjustmentProcessor {
         adjustmentDao().updateEntity(adjustment);
         orm().flushSession();
 
+        // F1.2（P2-CK-ast-015 VA 链 + 审查 R1）：资产账面价值变更无条件前移到 tryPost（REQUIRES_NEW
+        // 凭证）之前——原 voucherId!=null 条件性使价值变更位于凭证提交后，凭证提交后主事务失败
+        // 回滚时 NBV 变更一并回滚（一致），但「REQUIRES_NEW 已提交+主事务回滚」重试场景经 F1.1
+        // 幂等收敛后凭证已存在而首次 apply 已回滚，条件性会永久漏改 NBV。前移 + executeReverseApprove
+        // 无条件回滚配对（R1 Decision：放弃 voucherId 条件性，对齐「posted=false+告警」纪律）。
+        applyAssetValueChange(adjustment, asset);
+
         ErpAstAssetCategory category = asset.getCategory();
         String voucherId = postingDispatcher.tryPost(adjustment, asset, category);
-
-        if (voucherId != null) {
-            applyAssetValueChange(adjustment, asset);
-        }
 
         adjustment = reload(id);
         Timestamp now = CoreMetrics.currentTimestamp();

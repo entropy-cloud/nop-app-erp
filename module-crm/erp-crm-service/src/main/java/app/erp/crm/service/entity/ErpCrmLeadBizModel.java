@@ -31,6 +31,7 @@ import io.nop.api.core.annotations.core.Optional;
 import io.nop.api.core.beans.FilterBeans;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 import io.nop.biz.crud.EntityData;
 import io.nop.core.context.IServiceContext;
 import io.nop.dao.api.IEntityDao;
@@ -55,7 +56,7 @@ import static io.nop.api.core.beans.FilterBeans.notIn;
  * 转化方法在 {@link IErpCrmLeadBiz}（继承 {@code IErpCrmConversionBiz}）上声明，本类实现。
  */
 @BizModel("ErpCrmLead")
-public class ErpCrmLeadBizModel extends CrudBizModel<ErpCrmLead> implements IErpCrmLeadBiz {
+public class ErpCrmLeadBizModel extends AbstractErpCrudBizModel<ErpCrmLead> implements IErpCrmLeadBiz {
 
     @Inject
     ErpCrmLeadQualifyProcessor qualifyProcessor;

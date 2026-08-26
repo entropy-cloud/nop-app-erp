@@ -4,6 +4,7 @@ package app.erp.md.service.entity;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 import io.nop.biz.crud.EntityData;
 import io.nop.core.context.IServiceContext;
 
@@ -22,7 +23,7 @@ import static io.nop.api.core.beans.FilterBeans.eq;
  * 重叠抛 {@link ErpMdErrors#ERR_MD_DATE_RANGE_OVERLAP}。
  */
 @BizModel("ErpMdTaxRate")
-public class ErpMdTaxRateBizModel extends CrudBizModel<ErpMdTaxRate> implements IErpMdTaxRateBiz {
+public class ErpMdTaxRateBizModel extends AbstractErpCrudBizModel<ErpMdTaxRate> implements IErpMdTaxRateBiz {
 
     public ErpMdTaxRateBizModel() {
         setEntityName(ErpMdTaxRate.class.getName());

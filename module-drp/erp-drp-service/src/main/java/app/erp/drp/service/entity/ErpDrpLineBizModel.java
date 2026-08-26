@@ -16,6 +16,7 @@ import io.nop.api.core.annotations.core.Optional;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
 
@@ -34,7 +35,7 @@ import static io.nop.api.core.beans.FilterBeans.eq;
  * {@link #approveLine}（单步状态迁移 SUGGESTED→APPROVED）保留内联实现。
  */
 @BizModel("ErpDrpLine")
-public class ErpDrpLineBizModel extends CrudBizModel<ErpDrpLine> implements IErpDrpLineBiz {
+public class ErpDrpLineBizModel extends AbstractErpCrudBizModel<ErpDrpLine> implements IErpDrpLineBiz {
 
     @Inject
     ErpDrpLineReleaseLineProcessor releaseLineProcessor;

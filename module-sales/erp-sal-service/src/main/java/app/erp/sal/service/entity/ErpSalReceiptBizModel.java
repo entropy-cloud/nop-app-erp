@@ -11,6 +11,7 @@ import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
 
@@ -22,7 +23,7 @@ import java.util.List;
  * {@code <source x:override="replace">} 注入 {@link ErpSalReceiptProcessor#onSubmit}/{@link ErpSalReceiptProcessor#onApproved}/{@link ErpSalReceiptProcessor#onReverseApproved}。
  */
 @BizModel("ErpSalReceipt")
-public class ErpSalReceiptBizModel extends CrudBizModel<ErpSalReceipt> implements IErpSalReceiptBiz {
+public class ErpSalReceiptBizModel extends AbstractErpCrudBizModel<ErpSalReceipt> implements IErpSalReceiptBiz {
 
     @Inject
     ErpSalReceiptSettleProcessor settleProcessor;

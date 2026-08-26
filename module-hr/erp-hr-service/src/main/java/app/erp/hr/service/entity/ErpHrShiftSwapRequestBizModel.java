@@ -14,6 +14,7 @@ import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 import io.nop.core.context.IServiceContext;
 import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
@@ -28,7 +29,7 @@ import java.util.List;
  * 扩展 PENDING→APPROVED/REJECTED/CANCELLED 状态机；APPROVED 时双方 assignment 互换班次并记录 swapRequestId。
  */
 @BizModel("ErpHrShiftSwapRequest")
-public class ErpHrShiftSwapRequestBizModel extends CrudBizModel<ErpHrShiftSwapRequest>
+public class ErpHrShiftSwapRequestBizModel extends AbstractErpCrudBizModel<ErpHrShiftSwapRequest>
         implements IErpHrShiftSwapRequestBiz {
 
     @Inject

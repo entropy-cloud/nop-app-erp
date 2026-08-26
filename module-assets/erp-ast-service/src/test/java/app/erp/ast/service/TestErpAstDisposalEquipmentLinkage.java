@@ -123,6 +123,13 @@ public class TestErpAstDisposalEquipmentLinkage extends JunitAutoTestCase {
             ErpAstAsset asset = daoProvider.daoFor(ErpAstAsset.class).getEntityById(assetId);
             assertEquals(ErpAstConstants.ASSET_STATUS_IN_SERVICE, asset.getStatus(),
                     "资产状态回滚（设备停用是 L1 硬断言，处置成功但设备未停用 = 契约破坏）");
+            // F1.2（P2-CK-ast-015 Disposal 拆分核心保证）：联动失败回滚主事务时，DISPOSAL 与 #CATCHUP
+            // 两张凭证均未提交（拆分前 #CATCHUP 凭证先于联动独立提交，回滚后残留孤儿凭证）
+            long disposalLinks = countBillLinks(DISPOSAL_CODE, "ASSET_DISPOSAL");
+            assertEquals(0, disposalLinks, "F1.2：联动失败 → DISPOSAL 凭证零提交（无孤儿）");
+            String assetCode = daoProvider.daoFor(ErpAstAsset.class).getEntityById(assetId).getCode();
+            assertEquals(0, countBillLinks(assetCode + "#2026-07#CATCHUP", "DEPRECIATION"),
+                    "F1.2：联动失败 → #CATCHUP 补提凭证零提交（拆分前该凭证先于联动提交必残留孤儿）");
         } finally {
             mockMnt().failLink = false;
         }
@@ -189,5 +196,14 @@ public class TestErpAstDisposalEquipmentLinkage extends JunitAutoTestCase {
                                       ApiRequest<?> request) {
         IGraphQLExecutionContext ctx = graphQLEngine.newRpcContext(op, action, request);
         return graphQLEngine.executeRpc(ctx);
+    }
+
+    private long countBillLinks(String billCode, String businessType) {
+        return ormTemplate.runInSession(sess -> {
+            io.nop.api.core.beans.query.QueryBean q = new io.nop.api.core.beans.query.QueryBean();
+            q.addFilter(io.nop.api.core.beans.FilterBeans.eq("billCode", billCode));
+            q.addFilter(io.nop.api.core.beans.FilterBeans.eq("businessType", businessType));
+            return daoProvider.daoFor(app.erp.fin.dao.entity.ErpFinVoucherBillR.class).findAllByQuery(q).size();
+        });
     }
 }

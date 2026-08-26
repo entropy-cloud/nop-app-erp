@@ -7,6 +7,7 @@ import io.nop.api.core.annotations.biz.BizLoader;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.ContextSource;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 
 import app.erp.common.service.MaskHelper;
 import app.erp.mfg.biz.IErpMfgCostRollupLineBiz;
@@ -31,7 +32,7 @@ import app.erp.mfg.service.costing.CostBandClassifier;
  * {@code TestErpInvStandardCostResolverValueExemptionInvariant} 复跑绿。
  */
 @BizModel("ErpMfgCostRollupLine")
-public class ErpMfgCostRollupLineBizModel extends CrudBizModel<ErpMfgCostRollupLine> implements IErpMfgCostRollupLineBiz {
+public class ErpMfgCostRollupLineBizModel extends AbstractErpCrudBizModel<ErpMfgCostRollupLine> implements IErpMfgCostRollupLineBiz {
     public ErpMfgCostRollupLineBizModel() {
         setEntityName(ErpMfgCostRollupLine.class.getName());
     }

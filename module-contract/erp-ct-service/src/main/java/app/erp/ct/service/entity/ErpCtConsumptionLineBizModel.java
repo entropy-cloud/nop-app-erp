@@ -10,6 +10,7 @@ import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.biz.ContextSource;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
 
@@ -20,7 +21,7 @@ import app.erp.ct.service.processor.ErpCtConsumptionPeriodSummarizeProcessor;
 import app.erp.contract.dao.entity.ErpCtConsumptionLine;
 
 @BizModel("ErpCtConsumptionLine")
-public class ErpCtConsumptionLineBizModel extends CrudBizModel<ErpCtConsumptionLine> implements IErpCtConsumptionLineBiz{
+public class ErpCtConsumptionLineBizModel extends AbstractErpCrudBizModel<ErpCtConsumptionLine> implements IErpCtConsumptionLineBiz{
 
     @Inject
     ErpCtConsumptionPeriodSummarizeProcessor periodSummarizeProcessor;

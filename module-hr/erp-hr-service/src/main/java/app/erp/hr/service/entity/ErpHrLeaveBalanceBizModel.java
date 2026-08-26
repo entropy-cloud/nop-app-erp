@@ -4,6 +4,7 @@ package app.erp.hr.service.entity;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.time.CoreMetrics;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 import io.nop.biz.crud.EntityData;
 import io.nop.core.context.IServiceContext;
 
@@ -17,7 +18,7 @@ import java.util.List;
  * usedDays 为派生值（实时聚合 Σ approved LeaveRequest.durationDays），不落库。
  */
 @BizModel("ErpHrLeaveBalance")
-public class ErpHrLeaveBalanceBizModel extends CrudBizModel<ErpHrLeaveBalance> implements IErpHrLeaveBalanceBiz {
+public class ErpHrLeaveBalanceBizModel extends AbstractErpCrudBizModel<ErpHrLeaveBalance> implements IErpHrLeaveBalanceBiz {
     public ErpHrLeaveBalanceBizModel() {
         setEntityName(ErpHrLeaveBalance.class.getName());
     }

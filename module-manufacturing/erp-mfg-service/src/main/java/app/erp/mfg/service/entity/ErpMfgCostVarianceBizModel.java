@@ -11,6 +11,7 @@ import io.nop.api.core.annotations.biz.BizQuery;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.annotations.core.Optional;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
 
@@ -29,7 +30,7 @@ import java.util.Objects;
  * <p>权威：{@code docs/design/manufacturing/variance-analysis.md}。
  */
 @BizModel("ErpMfgCostVariance")
-public class ErpMfgCostVarianceBizModel extends CrudBizModel<ErpMfgCostVariance> implements IErpMfgCostVarianceBiz {
+public class ErpMfgCostVarianceBizModel extends AbstractErpCrudBizModel<ErpMfgCostVariance> implements IErpMfgCostVarianceBiz {
 
     @Inject
     ProductionVarianceCalculator productionVarianceCalculator;

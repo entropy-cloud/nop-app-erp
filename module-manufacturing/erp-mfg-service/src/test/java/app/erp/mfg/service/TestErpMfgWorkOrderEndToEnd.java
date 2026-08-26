@@ -77,7 +77,7 @@ public class TestErpMfgWorkOrderEndToEnd extends JunitAutoTestCase {
         seedBom("9101", P, M1, bd("2"));
         generateIncoming(M1, "PR-E2E-001", bd("10"), bd("5"));   // M1: 10 @ avgCost 5
 
-        String woId = seedWorkOrder("WO-E2E", "9101");
+        String woId = seedWorkOrder("WO-E2E", "9101", bd("1"));
         String wolId = seedWorkOrderLine(woId, M1, bd("2"), "INPUT", null);
         seedWorkOrderLine(woId, P, bd("1"), "OUTPUT", WAREHOUSE_ID);
 
@@ -141,6 +141,66 @@ public class TestErpMfgWorkOrderEndToEnd extends JunitAutoTestCase {
         assertEquals(0, pBalance.getTotalQuantity().compareTo(bd("1")), "产成品 P 入库 1 件");
     }
 
+    /**
+     * P0-CK-mfg-001（ai-check F1.1 Phase 2）：增量报工不被固定幂等键吞掉——
+     * 首张完工移动单保持 wo.code 精确键（既有消费者兼容），后续报工追加 "-C{累计完工量}" 后缀，
+     * 每次报工生成独立移动单且数量守恒（Σ移动行数量 = completedQuantity）。
+     */
+    @Test
+    public void testIncrementalReportCompletionGeneratesSeparateMoves() {
+        seedMaterial(P, null);
+        seedMaterial(M1, "MOVING_AVERAGE");
+        seedBom("9103", P, M1, bd("2"));
+        generateIncoming(M1, "PR-E2E-INCR", bd("10"), bd("5"));
+
+        String woId = seedWorkOrder("WO-INCR", "9103", bd("5"));
+        String wolId = seedWorkOrderLine(woId, M1, bd("4"), "INPUT", null);
+        seedWorkOrderLine(woId, P, bd("5"), "OUTPUT", WAREHOUSE_ID);
+
+        rpcOk(mutation, "ErpMfgWorkOrder__submitForApproval", Map.of("id", woId));
+        rpcOk(mutation, "ErpMfgWorkOrder__approve", Map.of("id", woId));
+        rpcOk(mutation, "ErpMfgWorkOrder__checkAvailability", Map.of("workOrderId", woId));
+        rpcOk(mutation, "ErpMfgWorkOrder__start", Map.of("workOrderId", woId));
+
+        String issueId = seedIssue("MI-INCR", woId);
+        seedIssueLine("9302", issueId, M1, bd("4"), wolId);
+        rpcOk(mutation, "ErpMfgMaterialIssue__confirm", Map.of("issueId", issueId));
+
+        // 第一次报工 3 件：移动单 relatedBillCode == wo.code（精确，首单）
+        rpcOk(mutation, "ErpMfgWorkOrder__reportCompletion",
+                Map.of("workOrderId", woId, "completedQty", bd("3")));
+        ErpInvStockMove firstMove = findMove(ErpMfgConstants.RELATED_BILL_TYPE_MFG_WORK_ORDER, "WO-INCR");
+        assertNotNull(firstMove, "首次报工应生成完工移动单");
+        assertEquals("WO-INCR", firstMove.getRelatedBillCode(), "首张完工移动单保持 wo.code 精确键（F1.1 既有消费者兼容）");
+        BigDecimal firstQty = ormTemplate.runInSession(sess -> daoProvider
+                .daoFor(ErpInvStockMove.class).getEntityById(firstMove.getId()).getLines().stream()
+                .findFirst().orElseThrow().getQuantity());
+        assertEquals(0, firstQty.compareTo(bd("3")), "首张移动单数量 = 本次增量 3");
+
+        // 第二次报工 2 件（累计 5，未达计划 5+1=6 前不触发完成态——本例 OUTPUT 计划 5，累计即达计划转 COMPLETED）
+        rpcOk(mutation, "ErpMfgWorkOrder__reportCompletion",
+                Map.of("workOrderId", woId, "completedQty", bd("2")));
+
+        ErpMfgWorkOrder wo = daoProvider.daoFor(ErpMfgWorkOrder.class).getEntityById(woId);
+        assertEquals(0, wo.getCompletedQuantity().compareTo(bd("5")), "累计完工 = 3+2 = 5");
+
+        // 第二张移动单：后缀键（"-C5" = 累计完工量 5）
+        QueryBean q = new QueryBean();
+        q.addFilter(eq("relatedBillType", ErpMfgConstants.RELATED_BILL_TYPE_MFG_WORK_ORDER));
+        q.addFilter(eq("relatedBillCode", "WO-INCR-C5"));
+        List<ErpInvStockMove> second = daoProvider.daoFor(ErpInvStockMove.class).findAllByQuery(q);
+        assertEquals(1, second.size(), "第二次报工应生成第二张完工移动单（P0-CK-mfg-001 修复前被固定幂等键吞掉）");
+        BigDecimal secondQty = ormTemplate.runInSession(sess -> daoProvider
+                .daoFor(ErpInvStockMove.class).getEntityById(second.get(0).getId()).getLines().stream()
+                .findFirst().orElseThrow().getQuantity());
+        assertEquals(0, secondQty.compareTo(bd("2")), "第二张移动单数量 = 本次增量 2");
+
+        // 数量守恒：库存累计入库 = 累计完工量
+        ErpInvStockBalance pBalance = findBalance(P);
+        assertNotNull(pBalance, "产成品应入库");
+        assertEquals(0, pBalance.getTotalQuantity().compareTo(bd("5")), "产成品入库累计 = 3+2 = 5 = completedQuantity");
+    }
+
     @Test
     public void testInspectionGateBlocksCompletionWhenEnabled() {
         seedMaterial(P, null);
@@ -149,7 +209,7 @@ public class TestErpMfgWorkOrderEndToEnd extends JunitAutoTestCase {
         seedBomInspectionRequired("9102", true);
         generateIncoming(M1, "PR-E2E-GATE", bd("10"), bd("5"));
 
-        String woId = seedWorkOrder("WO-GATE", "9102");
+        String woId = seedWorkOrder("WO-GATE", "9102", bd("1"));
         seedWorkOrderLine(woId, M1, bd("1"), "INPUT", null);
         seedWorkOrderLine(woId, P, bd("1"), "OUTPUT", WAREHOUSE_ID);
 
@@ -190,7 +250,7 @@ public class TestErpMfgWorkOrderEndToEnd extends JunitAutoTestCase {
         seedMaterial(M1, "MOVING_AVERAGE");
         seedBom("9103", P, M1, bd("1"));
         generateIncoming(M1, "PR-E2E-JC", bd("10"), bd("5"));
-        String woId = seedWorkOrder("WO-JC", "9103");
+        String woId = seedWorkOrder("WO-JC", "9103", bd("1"));
         seedWorkOrderLine(woId, M1, bd("1"), "INPUT", null);
         String jobCardId = seedJobCard(woId);
 
@@ -296,7 +356,7 @@ public class TestErpMfgWorkOrderEndToEnd extends JunitAutoTestCase {
         });
     }
 
-    private String seedWorkOrder(String code, String bomId) {
+    private String seedWorkOrder(String code, String bomId, java.math.BigDecimal plannedQty) {
         String id = String.valueOf(8300L + (long) Math.abs(code.hashCode() % 700));
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMfgWorkOrder> dao = daoProvider.daoFor(ErpMfgWorkOrder.class);
@@ -307,7 +367,7 @@ public class TestErpMfgWorkOrderEndToEnd extends JunitAutoTestCase {
             wo.setBomId(bomId);
             wo.setOrgId(ORG_ID);
             wo.setCurrencyId(CURRENCY_ID);
-            wo.setPlannedQuantity(bd("1"));
+            wo.setPlannedQuantity(plannedQty);
             wo.setBusinessDate(LocalDate.of(2026, 7, 1));
             wo.setDocStatus(ErpMfgConstants.WORK_ORDER_STATUS_DRAFT);
             dao.saveEntity(wo);

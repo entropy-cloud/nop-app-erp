@@ -14,6 +14,7 @@ import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.annotations.core.Optional;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
 
@@ -31,7 +32,7 @@ import java.util.List;
  * <p>对齐 {@code docs/design/crm/territory.md §配额层级汇总 / §业务规则 4-5 / §实现注记 4}。
  */
 @BizModel("ErpCrmQuota")
-public class ErpCrmQuotaBizModel extends CrudBizModel<ErpCrmQuota> implements IErpCrmQuotaBiz {
+public class ErpCrmQuotaBizModel extends AbstractErpCrudBizModel<ErpCrmQuota> implements IErpCrmQuotaBiz {
 
     @Inject
     QuotaRollupCalculator quotaRollupCalculator;

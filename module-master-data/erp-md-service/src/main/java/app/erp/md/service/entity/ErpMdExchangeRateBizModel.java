@@ -4,6 +4,7 @@ package app.erp.md.service.entity;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 import io.nop.biz.crud.EntityData;
 import io.nop.core.context.IServiceContext;
 
@@ -26,7 +27,7 @@ import static io.nop.api.core.beans.FilterBeans.eq;
  * 关闭时跳过校验，回归历史「允许多条同日汇率」行为，用于业务方临时放行场景。
  */
 @BizModel("ErpMdExchangeRate")
-public class ErpMdExchangeRateBizModel extends CrudBizModel<ErpMdExchangeRate> implements IErpMdExchangeRateBiz {
+public class ErpMdExchangeRateBizModel extends AbstractErpCrudBizModel<ErpMdExchangeRate> implements IErpMdExchangeRateBiz {
 
     public ErpMdExchangeRateBizModel() {
         setEntityName(ErpMdExchangeRate.class.getName());

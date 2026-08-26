@@ -19,6 +19,7 @@ import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.convert.ConvertHelper;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
 
@@ -43,7 +44,7 @@ import static io.nop.api.core.beans.FilterBeans.eq;
  * （L1「爽约费金额从系统参数配置读取」，默认 0）+ priorityScore 提升（优先重新预约权）。
  */
 @BizModel("ErpLogDeliveryBooking")
-public class ErpLogDeliveryBookingBizModel extends CrudBizModel<ErpLogDeliveryBooking> implements IErpLogDeliveryBookingBiz {
+public class ErpLogDeliveryBookingBizModel extends AbstractErpCrudBizModel<ErpLogDeliveryBooking> implements IErpLogDeliveryBookingBiz {
 
     @Inject
     IErpLogShipmentBiz shipmentBiz;

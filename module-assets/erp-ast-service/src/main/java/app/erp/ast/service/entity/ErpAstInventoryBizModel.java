@@ -15,6 +15,7 @@ import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
 
@@ -24,7 +25,7 @@ import jakarta.inject.Inject;
  * {@link ErpAstInventoryProcessor}。详见 owner doc {@code docs/design/assets/inventory.md}。
  */
 @BizModel("ErpAstInventory")
-public class ErpAstInventoryBizModel extends CrudBizModel<ErpAstInventory> implements IErpAstInventoryBiz {
+public class ErpAstInventoryBizModel extends AbstractErpCrudBizModel<ErpAstInventory> implements IErpAstInventoryBiz {
 
     @Inject
     ErpAstInventoryProcessor inventoryProcessor;

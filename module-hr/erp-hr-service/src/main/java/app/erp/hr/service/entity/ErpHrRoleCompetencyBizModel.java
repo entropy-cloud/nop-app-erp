@@ -7,6 +7,7 @@ import app.erp.hr.service.ErpHrErrors;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 import io.nop.biz.crud.EntityData;
 import io.nop.core.context.IServiceContext;
 
@@ -18,7 +19,7 @@ import java.util.List;
  * 检测，超范围抛 {@link ErpHrErrors#ERR_ROLE_COMPETENCY_INVALID_LEVEL}。
  */
 @BizModel("ErpHrRoleCompetency")
-public class ErpHrRoleCompetencyBizModel extends CrudBizModel<ErpHrRoleCompetency>
+public class ErpHrRoleCompetencyBizModel extends AbstractErpCrudBizModel<ErpHrRoleCompetency>
         implements IErpHrRoleCompetencyBiz {
 
     public ErpHrRoleCompetencyBizModel() {

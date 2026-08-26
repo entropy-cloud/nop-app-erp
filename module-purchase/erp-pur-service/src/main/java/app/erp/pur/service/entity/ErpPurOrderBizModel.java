@@ -21,6 +21,7 @@ import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 import io.nop.biz.crud.EntityData;
 import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
@@ -37,7 +38,7 @@ import static io.nop.api.core.beans.FilterBeans.eq;
  * Long→String 转换后委托 Processor。
  */
 @BizModel("ErpPurOrder")
-public class ErpPurOrderBizModel extends CrudBizModel<ErpPurOrder> implements IErpPurOrderBiz {
+public class ErpPurOrderBizModel extends AbstractErpCrudBizModel<ErpPurOrder> implements IErpPurOrderBiz {
 
     @Inject
     RequisitionToOrderConverter converter;

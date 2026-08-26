@@ -29,7 +29,7 @@
     "updateTime": "*",
     "earliestStartDateT": "@var:ErpApsOperationOrder@earliestStartDateT",
     "latestEndDateT": null,
-    "businessDate": "@var:ErpApsOperationOrder@businessDate",
+    "businessDate": "@var:ErpFinPostingException@voucherDate",
     "selectedRoutingId": null,
     "routingSelectionReason": null,
     "routingSelectionReason_label": null,

@@ -94,6 +94,8 @@ public class TestErpHrSalaryPostingChain extends JunitAutoTestCase {
     IGraphQLEngine graphQLEngine;
     @Inject
     SocialInsuranceCalculator socialInsuranceCalculator;
+    @Inject
+    app.erp.hr.service.posting.SalaryPostingDispatcher salaryPostingDispatcher;
 
     /**
      * ①⑤⑧：approve 联动生成 270/290/300 三凭证（科目/金额/ER 重算值断言）+ 三凭证 Dr==Cr 平衡 +
@@ -256,6 +258,30 @@ public class TestErpHrSalaryPostingChain extends JunitAutoTestCase {
         assertEquals(1, countBillLinks(billCode, ErpFinBusinessType.SALARY), "⑦ 无重复 270");
         assertEquals(1, countBillLinks(billCode, ErpFinBusinessType.SOCIAL_INSURANCE_ER), "⑦ 无重复 290");
         assertEquals(1, countBillLinks(billCode, ErpFinBusinessType.HOUSING_FUND_ER), "⑦ 无重复 300");
+    }
+
+    /**
+     * F1.2（P2-CK-hr2-006）：tryPostPayment 补 alreadyPosted 去重守卫（镜像计提链 D3）——
+     * markPaid 落 280 凭证后重试场景直调 tryPostPayment：守卫命中跳过并计为成功，
+     * bill-link 计数不变（守卫短路，无冗余引擎调用）。
+     */
+    @Test
+    public void testMarkPaidPaymentDedupGuardSkipsExistingVoucher() {
+        String employeeId = seedFullEnvironment(true);
+        ErpHrSalary salary = ormTemplate.runInSession(session -> salaryBiz.calculateSalary(employeeId, 2026, 4, CTX));
+        String salaryId = salary.getId();
+        assertEquals(0, submitSalary(salaryId).getStatus());
+        assertEquals(0, approveSalary(salaryId).getStatus());
+        ormTemplate.runInSession(session -> salaryBiz.markPaid(salaryId, CTX));
+        String billCode = billCode(2026, 4, salaryId);
+        assertEquals(1, countBillLinks(billCode, ErpFinBusinessType.SALARY_PAYMENT), "markPaid 应生成 1 张 280 凭证");
+
+        // 重试场景（主事务回滚后 markPaid 重入 / 直调）：守卫命中既有 280 → 跳过并计为成功
+        boolean retried = ormTemplate.runInSession(session -> salaryPostingDispatcher.tryPostPayment(
+                daoProvider.daoFor(ErpHrSalary.class).getEntityById(salaryId)));
+        assertTrue(retried, "F1.2：tryPostPayment 去重守卫命中跳过并计为成功（镜像 tryPostAccrual）");
+        assertEquals(1, countBillLinks(billCode, ErpFinBusinessType.SALARY_PAYMENT),
+                "守卫短路：无第二张 280 凭证/回链");
     }
 
     /**

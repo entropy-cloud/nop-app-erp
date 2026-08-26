@@ -222,7 +222,7 @@ public class ErpPurInvoiceProcessor {
     }
 
     protected void doApprove(ErpPurInvoice invoice, boolean posted, IServiceContext context) {
-        SoDGuard.assertApproverNotCreator(invoice.getCreatedBy(), currentUserId(), ErpPurErrors.ERR_PUR_APPROVER_IS_CREATOR);
+        // F1.2：SoD 守卫已前移至 ErpPurInvoiceApproveProcessor#approve（SoD-first，doPosting 之前）
         invoice.setApproveStatus(stateMachine.approveTargetStatus());
         invoice.setApprovedBy(currentUserId());
         invoice.setApprovedAt(CoreMetrics.currentTimestamp());

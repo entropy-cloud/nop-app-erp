@@ -8,6 +8,7 @@ import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.time.CoreMetrics;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 import io.nop.core.context.IServiceContext;
 import io.nop.core.lang.json.JsonTool;
 
@@ -51,7 +52,7 @@ import static io.nop.api.core.beans.FilterBeans.in;
  * 评分算术平均；driverScores/questionBreakdown/trendData 为 JSON 承载（见 Plan Decision 聚合口径）。
  */
 @BizModel("ErpHrSurveyResult")
-public class ErpHrSurveyResultBizModel extends CrudBizModel<ErpHrSurveyResult> implements IErpHrSurveyResultBiz {
+public class ErpHrSurveyResultBizModel extends AbstractErpCrudBizModel<ErpHrSurveyResult> implements IErpHrSurveyResultBiz {
 
     @Inject
     IErpHrSurveyBiz surveyBiz;

@@ -9,6 +9,7 @@ import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 import io.nop.biz.crud.EntityData;
 import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
@@ -18,7 +19,7 @@ import jakarta.inject.Inject;
  * {@link #runDrp}/{@link #resetToDraft}/{@link #approvePlan} 各委派独立自包含 Processor（编排位置迁移，业务语义不变）。
  */
 @BizModel("ErpDrpPlan")
-public class ErpDrpPlanBizModel extends CrudBizModel<ErpDrpPlan> implements IErpDrpPlanBiz {
+public class ErpDrpPlanBizModel extends AbstractErpCrudBizModel<ErpDrpPlan> implements IErpDrpPlanBiz {
 
     @Inject
     ErpDrpPlanRunDrpProcessor runDrpProcessor;

@@ -10,6 +10,7 @@ import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
 
@@ -24,7 +25,7 @@ import java.time.LocalDate;
  * ORM 层版本校验，失败抛 StaleObjectException）。
  */
 @BizModel("ErpFinCreditFacility")
-public class ErpFinCreditFacilityBizModel extends CrudBizModel<ErpFinCreditFacility> implements IErpFinCreditFacilityBiz {
+public class ErpFinCreditFacilityBizModel extends AbstractErpCrudBizModel<ErpFinCreditFacility> implements IErpFinCreditFacilityBiz {
 
     @Inject
     ErpFinCreditFacilityReserveCreditProcessor reserveCreditProcessor;

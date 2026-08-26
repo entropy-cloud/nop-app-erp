@@ -13,6 +13,7 @@ import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
 
@@ -24,7 +25,7 @@ import jakarta.inject.Inject;
  * <p>语义见 {@code budget.md §ErpFinBudgetScenario}。
  */
 @BizModel("ErpFinBudgetScenario")
-public class ErpFinBudgetScenarioBizModel extends CrudBizModel<ErpFinBudgetScenario> implements IErpFinBudgetScenarioBiz {
+public class ErpFinBudgetScenarioBizModel extends AbstractErpCrudBizModel<ErpFinBudgetScenario> implements IErpFinBudgetScenarioBiz {
 
     @Inject
     ErpFinBudgetScenarioSubmitForApprovalProcessor submitForApprovalProcessor;

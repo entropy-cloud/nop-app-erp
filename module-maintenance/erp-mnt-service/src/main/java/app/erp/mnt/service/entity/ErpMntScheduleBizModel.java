@@ -8,6 +8,7 @@ import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 import io.nop.biz.crud.EntityData;
 import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
@@ -15,7 +16,7 @@ import jakarta.inject.Inject;
 import java.time.LocalDate;
 
 @BizModel("ErpMntSchedule")
-public class ErpMntScheduleBizModel extends CrudBizModel<ErpMntSchedule> implements IErpMntScheduleBiz {
+public class ErpMntScheduleBizModel extends AbstractErpCrudBizModel<ErpMntSchedule> implements IErpMntScheduleBiz {
 
     @Inject
     ErpMntScheduleGenerateDueVisitsProcessor generateDueVisitsProcessor;

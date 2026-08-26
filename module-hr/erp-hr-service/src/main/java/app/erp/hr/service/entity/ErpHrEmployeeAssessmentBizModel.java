@@ -15,6 +15,7 @@ import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
 
@@ -35,7 +36,7 @@ import io.nop.biz.crud.EntityData;
  * COMPLETED 时委托 {@link IErpHrGapAnalysisBiz#refreshGapAnalysis} 触发差距快照刷新。
  */
 @BizModel("ErpHrEmployeeAssessment")
-public class ErpHrEmployeeAssessmentBizModel extends CrudBizModel<ErpHrEmployeeAssessment>
+public class ErpHrEmployeeAssessmentBizModel extends AbstractErpCrudBizModel<ErpHrEmployeeAssessment>
         implements IErpHrEmployeeAssessmentBiz {
 
     @Inject

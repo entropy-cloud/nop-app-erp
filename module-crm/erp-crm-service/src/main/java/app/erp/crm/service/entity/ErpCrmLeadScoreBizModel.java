@@ -8,6 +8,7 @@ import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.annotations.core.Optional;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
 
@@ -19,7 +20,7 @@ import jakarta.inject.Inject;
  * （Option B 不扩 ORM，详见 Phase 2 Decision）。
  */
 @BizModel("ErpCrmLeadScore")
-public class ErpCrmLeadScoreBizModel extends CrudBizModel<ErpCrmLeadScore> implements IErpCrmLeadScoreBiz {
+public class ErpCrmLeadScoreBizModel extends AbstractErpCrudBizModel<ErpCrmLeadScore> implements IErpCrmLeadScoreBiz {
 
     @Inject
     ErpCrmLeadScoreRecalculateScoreProcessor recalculateScoreProcessor;

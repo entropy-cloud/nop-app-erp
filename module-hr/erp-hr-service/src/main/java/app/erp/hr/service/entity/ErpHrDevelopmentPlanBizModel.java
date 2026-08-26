@@ -17,6 +17,7 @@ import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.api.core.time.CoreMetrics;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 import io.nop.core.context.IServiceContext;
 import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
@@ -45,7 +46,7 @@ import io.nop.biz.crud.EntityData;
  * {@link IErpHrDevelopmentPlanItemBiz}。
  */
 @BizModel("ErpHrDevelopmentPlan")
-public class ErpHrDevelopmentPlanBizModel extends CrudBizModel<ErpHrDevelopmentPlan>
+public class ErpHrDevelopmentPlanBizModel extends AbstractErpCrudBizModel<ErpHrDevelopmentPlan>
         implements IErpHrDevelopmentPlanBiz {
 
     @Inject

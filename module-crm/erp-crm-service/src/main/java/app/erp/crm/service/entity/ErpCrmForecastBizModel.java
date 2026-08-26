@@ -7,6 +7,7 @@ import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
 
@@ -17,7 +18,7 @@ import jakarta.inject.Inject;
  * <p>对齐 {@code docs/design/crm/sales-forecast.md}。
  */
 @BizModel("ErpCrmForecast")
-public class ErpCrmForecastBizModel extends CrudBizModel<ErpCrmForecast> implements IErpCrmForecastBiz {
+public class ErpCrmForecastBizModel extends AbstractErpCrudBizModel<ErpCrmForecast> implements IErpCrmForecastBiz {
 
     @Inject
     ErpCrmForecastRefreshForecastProcessor refreshForecastProcessor;

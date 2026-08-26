@@ -48,6 +48,30 @@ public class TestErpPurInvoiceApproval extends JunitAutoTestCase {
     @Inject
     IGraphQLEngine graphQLEngine;
 
+    /**
+     * F1.2（P1-CK-pur-002）：SoD 守卫前置于 doPosting（REQUIRES_NEW 凭证）之前——
+     * 创建人自审被拒时**零凭证产生**（修复前守卫位于凭证提交之后，留下孤儿 AP_INVOICE 凭证）。
+     */
+    @Test
+    public void testSoDRejectionProducesZeroVoucher() {
+        ErpPurInvoice invoice = newInvoice("PI-SOD-ZERO-001");
+        ormTemplate.runInSession(() -> {
+            seedActiveSupplier(SUPPLIER_ID);
+            saveInvoiceWithLine(invoice);
+        });
+        assertEquals(0, submit(invoice.getId()).getStatus());
+
+        String creator = reload(invoice).getCreatedBy();
+        io.nop.api.core.auth.IUserContext.set(null);
+        setApproverUserContext(creator);
+        ApiResponse<?> bad = approve(invoice.getId());
+        assertEquals(ErpPurErrors.ERR_PUR_APPROVER_IS_CREATOR.getErrorCode(), bad.getCode(),
+                "创建人=审核人 → SoD 守卫应抛 ERR_PUR_APPROVER_IS_CREATOR");
+        assertEquals(0, countInvoiceVoucherLinks(invoice.getCode()),
+                "F1.2：SoD 拒绝发生在 doPosting 之前——零凭证/零回链（修复前为 1 张孤儿凭证）");
+        io.nop.api.core.auth.IUserContext.set(null);
+    }
+
     @Test
     public void testSubmitApproveReverseRejectResubmit() {
         ErpPurInvoice invoice = newInvoice("PI-APP-001");
@@ -219,5 +243,20 @@ public class TestErpPurInvoiceApproval extends JunitAutoTestCase {
         partner.setPartnerType("CUSTOMER");
         partner.setStatus(status);
         dao.saveEntity(partner);
+    }
+
+    private void setApproverUserContext(String userId) {
+        io.nop.auth.core.login.UserContextImpl uc = new io.nop.auth.core.login.UserContextImpl();
+        uc.setUserId(userId);
+        io.nop.api.core.auth.IUserContext.set(uc);
+    }
+
+    private long countInvoiceVoucherLinks(String invoiceCode) {
+        return ormTemplate.runInSession(sess -> {
+            io.nop.api.core.beans.query.QueryBean q = new io.nop.api.core.beans.query.QueryBean();
+            q.addFilter(io.nop.api.core.beans.FilterBeans.eq("billCode", invoiceCode));
+            q.addFilter(io.nop.api.core.beans.FilterBeans.eq("businessType", "AP_INVOICE"));
+            return daoProvider.daoFor(app.erp.fin.dao.entity.ErpFinVoucherBillR.class).findAllByQuery(q).size();
+        });
     }
 }

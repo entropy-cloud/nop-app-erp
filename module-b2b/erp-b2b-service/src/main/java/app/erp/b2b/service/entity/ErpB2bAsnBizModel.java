@@ -14,6 +14,7 @@ import io.nop.api.core.annotations.biz.BizQuery;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 import io.nop.biz.crud.EntityData;
 import io.nop.core.context.IServiceContext;
 import io.nop.dao.api.IEntityDao;
@@ -37,7 +38,7 @@ import static io.nop.api.core.beans.FilterBeans.le;
  * <p>编排已按 R6.7 每 mutation 一 Processor 拆分（Cat-B 自包含）。BizModel 仅保留 @BizMutation/@BizQuery 入口与单行委托。
  */
 @BizModel("ErpB2bAsn")
-public class ErpB2bAsnBizModel extends CrudBizModel<ErpB2bAsn> implements IErpB2bAsnBiz {
+public class ErpB2bAsnBizModel extends AbstractErpCrudBizModel<ErpB2bAsn> implements IErpB2bAsnBiz {
 
     @Inject
     ErpB2bAsnHandleInboundWebhookProcessor handleInboundWebhookProcessor;

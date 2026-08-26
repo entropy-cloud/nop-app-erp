@@ -8,6 +8,7 @@ import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
 
@@ -19,7 +20,7 @@ import java.util.List;
  * Long→String 转换后委托 per-mutation {@link ErpPurReturnCancelProcessor}。
  */
 @BizModel("ErpPurReturn")
-public class ErpPurReturnBizModel extends CrudBizModel<ErpPurReturn> implements IErpPurReturnBiz {
+public class ErpPurReturnBizModel extends AbstractErpCrudBizModel<ErpPurReturn> implements IErpPurReturnBiz {
 
     @Inject
     ErpPurReturnCancelProcessor cancelProcessor;

@@ -26,6 +26,7 @@ import io.nop.api.core.exceptions.NopException;
 import io.nop.api.core.time.CoreMetrics;
 import io.nop.api.core.auth.IUserContext;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 import io.nop.commons.concurrent.executor.GlobalExecutors;
 import io.nop.commons.metrics.GlobalMeterRegistry;
 import io.nop.core.context.IServiceContext;
@@ -62,7 +63,7 @@ import static io.nop.api.core.beans.FilterBeans.in;
  * 的 REQUIRES_NEW 独立事务（失败回滚不污染本工作台事务）。
  */
 @BizModel("ErpFinPostingException")
-public class ErpFinPostingExceptionBizModel extends CrudBizModel<ErpFinPostingException>
+public class ErpFinPostingExceptionBizModel extends AbstractErpCrudBizModel<ErpFinPostingException>
         implements IErpFinPostingExceptionBiz {
 
     private static final Logger LOG = LoggerFactory.getLogger(ErpFinPostingExceptionBizModel.class);

@@ -25,6 +25,7 @@ import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 import io.nop.core.context.IServiceContext;
 import io.nop.core.context.ServiceContextImpl;
 import io.nop.dao.api.IEntityDao;
@@ -49,7 +50,7 @@ import static io.nop.api.core.beans.FilterBeans.eq;
  * 事务入口钉在 {@code @BizMutation}。
  */
 @BizModel("ErpFinReconciliation")
-public class ErpFinReconciliationBizModel extends CrudBizModel<ErpFinReconciliation> implements IErpFinReconciliationBiz {
+public class ErpFinReconciliationBizModel extends AbstractErpCrudBizModel<ErpFinReconciliation> implements IErpFinReconciliationBiz {
 
     @Inject
     DualSideConsistencyChecker dualSideConsistencyChecker;

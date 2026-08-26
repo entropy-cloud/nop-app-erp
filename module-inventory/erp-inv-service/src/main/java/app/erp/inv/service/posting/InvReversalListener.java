@@ -2,7 +2,9 @@ package app.erp.inv.service.posting;
 
 import app.erp.fin.dao.ErpFinBusinessType;
 import app.erp.fin.service.posting.IErpFinVoucherReversedListener;
+import app.erp.fin.service.posting.VoucherPostedEvent;
 import app.erp.fin.service.posting.VoucherReversedEvent;
+import app.erp.fin.service.posting.IErpFinVoucherPostedListener;
 import app.erp.inv.dao.entity.ErpInvOwnershipTransfer;
 import app.erp.inv.dao.entity.ErpInvStockMove;
 import app.erp.inv.dao.entity.ErpInvStockTake;
@@ -34,10 +36,107 @@ import static io.nop.api.core.beans.FilterBeans.eq;
  * <p>监听者失败经 {@code ErpFinReversalListenerRegistry.dispatch} 的 try/catch 隔离，不阻断其他域监听者、
  * 不回滚已过账红字凭证；失败落入 finance 5.1 异常工作台。
  */
-public class InvReversalListener implements IErpFinVoucherReversedListener {
+public class InvReversalListener implements IErpFinVoucherReversedListener, IErpFinVoucherPostedListener {
 
     @Inject
     IDaoProvider daoProvider;
+
+    /**
+     * F2.1（P1-CK-fin-001）：正向过账成功回写。inv 域覆盖：OWNERSHIP_TRANSFER/INTER_TRANSFER/
+     * COST_ADJUSTMENT/LANDED_COST 直接 findByCode；PURCHASE_INPUT/SALES_OUTPUT/
+     * MANUFACTURING_RECEIPT → ErpInvStockMove（move.code；PURCHASE_INPUT 与 purchase 域
+     * billHeadCode 并存——findByCode miss 一侧自然 no-op）；PURCHASE_PRICE_VARIANCE strip "-PPV" 后缀。
+     */
+    @Override
+    public void onVoucherPosted(VoucherPostedEvent event, IServiceContext context) {
+        String businessType = event.getBusinessType();
+        if (businessType == null) {
+            return;
+        }
+        String code = event.getBillHeadCode();
+        java.sql.Timestamp now = io.nop.api.core.time.CoreMetrics.currentTimestamp();
+        switch (businessType) {
+            case "OWNERSHIP_TRANSFER":
+                markPosted(findByCode(ErpInvOwnershipTransfer.class, code), now);
+                break;
+            case "INTER_TRANSFER":
+                markPosted(findByCode(ErpInvTransferOrder.class, code), now);
+                break;
+            case "COST_ADJUSTMENT":
+                markPosted(findByCode(app.erp.inv.dao.entity.ErpInvCostAdjust.class, code), now);
+                break;
+            case "LANDED_COST":
+                markPosted(findByCode(app.erp.inv.dao.entity.ErpInvLandedCost.class, code), now);
+                break;
+            case "PURCHASE_INPUT":
+            case "SALES_OUTPUT":
+            case "MANUFACTURING_RECEIPT":
+                markPosted(findByCode(ErpInvStockMove.class, code), now);
+                break;
+            case "PURCHASE_PRICE_VARIANCE":
+                markPosted(findByCode(ErpInvStockMove.class,
+                        code != null && code.endsWith("-PPV")
+                                ? code.substring(0, code.length() - 4) : code), now);
+                break;
+            default:
+                break;
+        }
+    }
+
+    private void markPosted(ErpInvOwnershipTransfer transfer, java.sql.Timestamp now) {
+        if (transfer == null || Boolean.TRUE.equals(transfer.getPosted())) {
+            return;
+        }
+        transfer.setPosted(true);
+        transfer.setPostedAt(now);
+        transfer.setPostedBy(currentUserId());
+        daoProvider.daoFor(ErpInvOwnershipTransfer.class).updateEntity(transfer);
+    }
+
+    private void markPosted(ErpInvTransferOrder order, java.sql.Timestamp now) {
+        if (order == null || Boolean.TRUE.equals(order.getPosted())) {
+            return;
+        }
+        order.setPosted(true);
+        order.setPostedAt(now);
+        order.setPostedBy(currentUserId());
+        daoProvider.daoFor(ErpInvTransferOrder.class).updateEntity(order);
+    }
+
+    private void markPosted(app.erp.inv.dao.entity.ErpInvCostAdjust adjust, java.sql.Timestamp now) {
+        if (adjust == null || Boolean.TRUE.equals(adjust.getPosted())) {
+            return;
+        }
+        adjust.setPosted(true);
+        adjust.setPostedAt(now);
+        adjust.setPostedBy(currentUserId());
+        daoProvider.daoFor(app.erp.inv.dao.entity.ErpInvCostAdjust.class).updateEntity(adjust);
+    }
+
+    private void markPosted(app.erp.inv.dao.entity.ErpInvLandedCost landedCost, java.sql.Timestamp now) {
+        if (landedCost == null || Boolean.TRUE.equals(landedCost.getPosted())) {
+            return;
+        }
+        landedCost.setPosted(true);
+        landedCost.setPostedAt(now);
+        landedCost.setPostedBy(currentUserId());
+        daoProvider.daoFor(app.erp.inv.dao.entity.ErpInvLandedCost.class).updateEntity(landedCost);
+    }
+
+    private void markPosted(ErpInvStockMove move, java.sql.Timestamp now) {
+        if (move == null || Boolean.TRUE.equals(move.getPosted())) {
+            return;
+        }
+        move.setPosted(true);
+        move.setPostedAt(now);
+        move.setPostedBy(currentUserId());
+        daoProvider.daoFor(ErpInvStockMove.class).updateEntity(move);
+    }
+
+    private static String currentUserId() {
+        io.nop.api.core.auth.IUserContext ctx = io.nop.api.core.auth.IUserContext.get();
+        return ctx != null ? ctx.getUserId() : null;
+    }
 
     @Override
     public void onVoucherReversed(VoucherReversedEvent event, IServiceContext context) {

@@ -25,6 +25,7 @@ import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 import io.nop.biz.crud.EntityData;
 import io.nop.commons.util.StringHelper;
 import io.nop.core.context.IServiceContext;
@@ -50,7 +51,7 @@ import static io.nop.api.core.beans.FilterBeans.eq;
  * 跨聚合写契约（报价→订单转化、发货进度回写、防重查询）留 Facade。
  */
 @BizModel("ErpSalOrder")
-public class ErpSalOrderBizModel extends CrudBizModel<ErpSalOrder> implements IErpSalOrderBiz {
+public class ErpSalOrderBizModel extends AbstractErpCrudBizModel<ErpSalOrder> implements IErpSalOrderBiz {
 
     private static final Logger LOG = LoggerFactory.getLogger(ErpSalOrderBizModel.class);
 

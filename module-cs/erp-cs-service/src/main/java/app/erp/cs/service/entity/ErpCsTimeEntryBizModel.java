@@ -14,6 +14,7 @@ import io.nop.api.core.annotations.core.Optional;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.api.core.time.CoreMetrics;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 import io.nop.core.context.IServiceContext;
 import io.nop.commons.util.StringHelper;
 import jakarta.inject.Inject;
@@ -29,7 +30,7 @@ import java.sql.Timestamp;
  * 审批人链（§3.3，advisory）：工单 assignedToId → SLA 策略团队 teamLeaderId → config 主管兜底，全空 WARN 跳过。
  */
 @BizModel("ErpCsTimeEntry")
-public class ErpCsTimeEntryBizModel extends CrudBizModel<ErpCsTimeEntry> implements IErpCsTimeEntryBiz {
+public class ErpCsTimeEntryBizModel extends AbstractErpCrudBizModel<ErpCsTimeEntry> implements IErpCsTimeEntryBiz {
 
     private static final org.slf4j.Logger LOG = org.slf4j.LoggerFactory.getLogger(ErpCsTimeEntryBizModel.class);
 

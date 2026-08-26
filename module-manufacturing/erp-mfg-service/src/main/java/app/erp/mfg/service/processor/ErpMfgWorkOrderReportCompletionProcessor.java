@@ -61,18 +61,9 @@ public class ErpMfgWorkOrderReportCompletionProcessor {
         wo.setCompletedQuantity(newCompleted);
         ErpMfgWorkOrderProcessor.recomputeTotals(wo);
 
-        facade.generateCompletionMove(wo, completedQty, context);
-
-        // 完工入库成功后写入生产批次基因链（inputLot→outputLot 消耗行）。
-        // best-effort（BatchGenealogyWriter 内部 try/catch，不阻断完工入库）；config-gated erp-mfg.genealogy-write-enabled。
-        facade.writeBatchGenealogy(wo, completedQty, context);
-
-        // generateCompletionMove 经 cross-BizModel generateMove 调用，其内部 GL 过账用 REQUIRES_NEW 事务，
-        // 成功过账后当前 session 实体可能被 evict。重新加载 wo 并重应用字段，避免 updateEntity 报 save-entity-not-transient。
-        wo = facade.workOrderDao().getEntityById(workOrderId);
-        wo.setCompletedQuantity(newCompleted);
-        ErpMfgWorkOrderProcessor.recomputeTotals(wo);
-
+        // F1.2（P2-CK-mfg-011 报工链）：工单持久化与预留释放前移到 generateCompletionMove（内含
+        // REQUIRES_NEW 完工入库凭证）之前——updateEntity/reload 与 releaseRemainingReservations 均可抛，
+        // 原顺序下失败会回滚主事务但凭证已独立提交（孤儿凭证）。同主事务前移原子性不变。
         if (willFinish) {
             wo.setDocStatus(facade.documentStateMachine.reportCompletionTargetStatus());
             wo.setActualEndDate(CoreMetrics.today());
@@ -84,6 +75,16 @@ public class ErpMfgWorkOrderReportCompletionProcessor {
         if (willFinish) {
             facade.releaseRemainingReservations(wo, context);
         }
+
+        facade.generateCompletionMove(wo, completedQty, context);
+
+        // 完工入库成功后写入生产批次基因链（inputLot→outputLot 消耗行）。
+        // best-effort（BatchGenealogyWriter 内部 try/catch，不阻断完工入库）；config-gated erp-mfg.genealogy-write-enabled。
+        facade.writeBatchGenealogy(wo, completedQty, context);
+
+        // generateCompletionMove 经 cross-BizModel generateMove 调用，其内部 GL 过账用 REQUIRES_NEW 事务，
+        // 成功过账后当前 session 实体可能被 evict。差异段/alert 只读消费 wo，重载防 evict 读失败。
+        wo = facade.workOrderDao().getEntityById(workOrderId);
 
         // 完工达量（willFinish）：config-gated 自动触发生产差异计算 + 过账。G3 错误传播分级（posting-log.md）：
         // 「无 FIRMED 标准成本」（ERR_VARIANCE_NO_STANDARD_COST）容错跳过（差异未配置，非故障）；

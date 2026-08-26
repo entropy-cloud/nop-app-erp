@@ -13,6 +13,7 @@ import io.nop.api.core.annotations.biz.BizQuery;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 import io.nop.core.context.IServiceContext;
 import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
@@ -29,7 +30,7 @@ import java.util.Set;
  * {@link BatchGenealogyTracer}（纯查询服务）；召回报告从问题批次出发全链识别受影响成品批次。
  */
 @BizModel("ErpMfgBatchGenealogy")
-public class ErpMfgBatchGenealogyBizModel extends CrudBizModel<ErpMfgBatchGenealogy> implements IErpMfgBatchGenealogyBiz {
+public class ErpMfgBatchGenealogyBizModel extends AbstractErpCrudBizModel<ErpMfgBatchGenealogy> implements IErpMfgBatchGenealogyBiz {
     public ErpMfgBatchGenealogyBizModel() {
         setEntityName(ErpMfgBatchGenealogy.class.getName());
     }

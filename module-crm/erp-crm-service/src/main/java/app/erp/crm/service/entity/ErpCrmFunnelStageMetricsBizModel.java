@@ -9,6 +9,7 @@ import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.convert.ConvertHelper;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 import io.nop.core.context.IServiceContext;
 
 import java.util.Comparator;
@@ -20,7 +21,7 @@ import java.util.List;
  * <p>对齐 {@code docs/design/crm/lead-waterfall.md}（阶段度量明细）。
  */
 @BizModel("ErpCrmFunnelStageMetrics")
-public class ErpCrmFunnelStageMetricsBizModel extends CrudBizModel<ErpCrmFunnelStageMetrics>
+public class ErpCrmFunnelStageMetricsBizModel extends AbstractErpCrudBizModel<ErpCrmFunnelStageMetrics>
         implements IErpCrmFunnelStageMetricsBiz {
 
     public ErpCrmFunnelStageMetricsBizModel() {

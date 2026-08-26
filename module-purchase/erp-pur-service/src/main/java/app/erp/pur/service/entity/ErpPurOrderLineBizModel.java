@@ -3,6 +3,7 @@ package app.erp.pur.service.entity;
 
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 import io.nop.biz.crud.EntityData;
 import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
@@ -16,7 +17,7 @@ import app.erp.pur.service.support.ErpPurCtDiscountApplier;
  * 解析量折扣折后价写行金额（fill-when-absent，D2 裁决选项 a——命中才改写，无命中回退原价零改写）。
  */
 @BizModel("ErpPurOrderLine")
-public class ErpPurOrderLineBizModel extends CrudBizModel<ErpPurOrderLine> implements IErpPurOrderLineBiz{
+public class ErpPurOrderLineBizModel extends AbstractErpCrudBizModel<ErpPurOrderLine> implements IErpPurOrderLineBiz{
 
     @Inject
     ErpPurCtDiscountApplier ctDiscountApplier;

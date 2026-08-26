@@ -5,7 +5,7 @@
     "hasPrev": null,
     "items": [
       {
-        "id": "100035",
+        "id": "100037",
         "workOrderId": "@var:woId",
         "lineNo": 10,
         "varianceType": "MATERIAL_USAGE",
@@ -34,7 +34,7 @@
         "updateTime": "*"
       },
       {
-        "id": "100036",
+        "id": "100038",
         "workOrderId": "@var:woId",
         "lineNo": 20,
         "varianceType": "LABOR_EFFICIENCY",
@@ -63,7 +63,7 @@
         "updateTime": "*"
       },
       {
-        "id": "100037",
+        "id": "100039",
         "workOrderId": "@var:woId",
         "lineNo": 30,
         "varianceType": "LABOR_RATE",
@@ -92,7 +92,7 @@
         "updateTime": "*"
       },
       {
-        "id": "100038",
+        "id": "100040",
         "workOrderId": "@var:woId",
         "lineNo": 40,
         "varianceType": "OVERHEAD",
@@ -121,7 +121,7 @@
         "updateTime": "*"
       },
       {
-        "id": "100039",
+        "id": "100041",
         "workOrderId": "@var:woId",
         "lineNo": 50,
         "varianceType": "VOLUME",

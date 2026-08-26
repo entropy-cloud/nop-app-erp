@@ -17,6 +17,7 @@ import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.annotations.core.Optional;
 import io.nop.biz.crud.CrudBizModel;
+import app.erp.common.service.AbstractErpCrudBizModel;
 import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
 
@@ -31,7 +32,7 @@ import java.math.BigDecimal;
  * <p>语义见 {@code docs/design/assets/maintenance.md}；{@code @BizMutation} 钉事务/会话边界。
  */
 @BizModel("ErpAstMaintenance")
-public class ErpAstMaintenanceBizModel extends CrudBizModel<ErpAstMaintenance>
+public class ErpAstMaintenanceBizModel extends AbstractErpCrudBizModel<ErpAstMaintenance>
         implements IErpAstMaintenanceBiz {
 
     @Inject

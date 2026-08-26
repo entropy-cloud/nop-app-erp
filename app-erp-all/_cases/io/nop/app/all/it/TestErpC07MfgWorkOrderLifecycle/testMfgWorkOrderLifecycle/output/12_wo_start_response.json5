@@ -1,7 +1,7 @@
 {
   "data": {
     "id": "@var:woId",
-    "code": "@var:ErpMfgWorkOrder@code",
+    "code": "@var:ErpInvReservation@sourceBillCode",
     "orgId": "2",
     "bomId": "@var:bomId",
     "routingId": null,
@@ -14,7 +14,7 @@
     "plannedQuantity": 1.0000,
     "completedQuantity": 0.0000,
     "scrappedQuantity": 0.0000,
-    "businessDate": "@var:ErpInvStockMove@businessDate",
+    "businessDate": "@var:ErpFinPostingException@voucherDate",
     "plannedStartDate": null,
     "plannedEndDate": null,
     "actualStartDate": "2026-07-17",
@@ -49,7 +49,7 @@
     "updatedBy": "autotest-ref",
     "updateTime": "*",
     "snapshotBomVersion": null,
-    "snapshotBomId": "100011"
+    "snapshotBomId": "100013"
   },
   "status": 0
 }
