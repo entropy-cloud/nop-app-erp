@@ -166,15 +166,29 @@ public class AutoReconciliationEngine {
 
     // ---------- BY_RATIO：按发票开口余额比例分摊每笔收付款项，尾差归末行 ----------
 
+    /** F2.2：Σ 剩余 open（分母重算用，跳过 ≤ precision 的已耗尽项）。 */
+    private BigDecimal sumRemainingOpen(Map<String, BigDecimal> invoiceOpen, BigDecimal precision) {
+        BigDecimal total = BigDecimal.ZERO;
+        for (BigDecimal open : invoiceOpen.values()) {
+            if (open != null && open.compareTo(precision) > 0) {
+                total = total.add(open);
+            }
+        }
+        return total;
+    }
+
     protected void matchByRatio(List<ErpFinArApItem> invoices, List<ErpFinArApItem> payments,
                                 BigDecimal precision, boolean allowOver,
                                 String partnerId, String direction, MatchResult result) {
         List<ErpFinArApItem> sortedInvoices = sortByDueOrBusinessDate(invoices);
         Map<String, BigDecimal> invoiceOpen = indexOpen(sortedInvoices);
-        BigDecimal totalInvoiceOpen = sumOpen(sortedInvoices);
 
         for (ErpFinArApItem payment : payments) {
+            // F2.2（P1-CK-fin2-001）：分母每笔付款迭代前按剩余 open 重算——原实现循环外一次计算，
+            // 多笔付款下后续 share 用陈旧分母（比例语义失真）且放大尾差；重算与 FIFO/BY_AMOUNT
+            // 「每笔对当前剩余匹配」结构对齐。
             BigDecimal pmtOpen = openFunctional(payment);
+            BigDecimal totalInvoiceOpen = sumRemainingOpen(invoiceOpen, precision);
             if (pmtOpen.compareTo(precision) <= 0 || totalInvoiceOpen.compareTo(precision) <= 0) {
                 result.unmatched.add(unmatched(partnerId, direction, payment, UNMATCHED_NO_CANDIDATE));
                 continue;
@@ -206,7 +220,9 @@ public class AutoReconciliationEngine {
             if (tail.abs().compareTo(precision) > 0 && lastValidIdx >= 0) {
                 ErpFinArApItem lastInvoice = sortedInvoices.get(lastValidIdx);
                 BigDecimal invOpen = invoiceOpen.get(lastInvoice.getId());
-                if (invOpen != null && (allowOver || invOpen.add(tail).compareTo(precision.negate()) >= 0)) {
+                // F2.2（P1-CK-fin2-001）：尾差守卫方向修正——结算 tail 后剩余应为 invOpen - tail ≥ -precision
+                //（原 add 方向反，任何正 tail 恒通过 → 超开行）
+                if (invOpen != null && (allowOver || invOpen.subtract(tail).compareTo(precision.negate()) >= 0)) {
                     result.lines.add(line(payment, lastInvoice, tail));
                     invoiceOpen.put(lastInvoice.getId(), invOpen.subtract(tail));
                 }

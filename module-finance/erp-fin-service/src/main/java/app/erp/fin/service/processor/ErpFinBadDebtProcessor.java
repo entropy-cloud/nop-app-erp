@@ -52,6 +52,9 @@ import static io.nop.api.core.beans.FilterBeans.eq;
  */
 public class ErpFinBadDebtProcessor {
 
+    /** F2.2：坏账金额比较精度（对齐核销精度语义）。 */
+    private static final BigDecimal BAD_DEBT_PRECISION = new BigDecimal("0.01");
+
     @Inject
     IDaoProvider daoProvider;
 
@@ -123,6 +126,14 @@ public class ErpFinBadDebtProcessor {
         // step 2：回退 ArApItem 状态对称（与 executeWriteOff/executeRecovery 反向）
         ErpFinArApItem item = debt.getSourceArApItem();
         if (item != null) {
+            // F2.2（P1-CK-fin2-004 时序 2）：现态守卫——writeOff 反审需 item 现为 WRITTEN_OFF、
+            // recovery 反审需现为 OPEN（recovery 已批准后 item=OPEN，再反审原 WRITE_OFF 单
+            // 属交错时序，无条件覆写会双重回滚污染）
+            if (Objects.equals(debt.getDocType(), ErpFinConstants.BAD_DEBT_TYPE_WRITE_OFF)) {
+                assertItemStatusForReverseOfWriteOff(item);
+            } else {
+                assertItemStatusForReverseOfRecovery(item);
+            }
             BigDecimal amount = debt.getAmount();
             if (Objects.equals(debt.getDocType(), ErpFinConstants.BAD_DEBT_TYPE_WRITE_OFF)) {
                 // writeOff 反向：WRITTEN_OFF → OPEN；settled-=amount，open+=amount
@@ -167,8 +178,19 @@ public class ErpFinBadDebtProcessor {
      * protected：下游可覆盖凭证生成或辅助账变异逻辑。
      */
     protected void executeWriteOff(ErpFinBadDebt debt, ErpFinArApItem item, IServiceContext context) {
+        // F2.2（P1-CK-fin2-004）：现态守卫——writeOff 需 item 现为 OPEN/PARTIAL（交错时序下
+        // item 可能已被反审核/收回改态，照常执行会写穿）
+        assertItemStatusForWriteOff(item);
         BigDecimal amount = debt.getAmount();
         validateAmount(amount, item);
+        // F2.2：后置残额断言——writeOff 语义要求核销后 open 归零（残额 > precision 时拒绝，
+        // 防残额永久退出账龄/计提基础且不可再核销）
+        BigDecimal residual = nz(item.getOpenAmountFunctional()).subtract(amount);
+        if (residual.abs().compareTo(BAD_DEBT_PRECISION) > 0) {
+            throw new NopException(ErpFinErrors.ERR_BAD_DEBT_RESIDUAL_NOT_ZERO)
+                    .param(ErpFinErrors.ARG_BAD_DEBT_ID, debt.getId())
+                    .param("residualOpen", residual);
+        }
         item.setSettledAmountFunctional(nz(item.getSettledAmountFunctional()).add(amount));
         item.setSettledAmountSource(nz(item.getSettledAmountSource()).add(amount));
         item.setOpenAmountFunctional(nz(item.getOpenAmountFunctional()).subtract(amount));
@@ -192,7 +214,15 @@ public class ErpFinBadDebtProcessor {
      * protected：下游可覆盖。
      */
     protected void executeRecovery(ErpFinBadDebt debt, ErpFinArApItem item, IServiceContext context) {
+        // F2.2（P1-CK-fin2-004）：现态守卫——recovery 需 item 现为 WRITTEN_OFF；且金额对称校验
+        // （amount ≤ settled，防负 settled——悬空 RECOVERY 单在原单反审核后 approve 时 settled 已被扣过）
+        assertItemStatusForRecovery(item);
         BigDecimal amount = debt.getAmount();
+        if (amount.compareTo(nz(item.getSettledAmountFunctional())) > 0) {
+            throw new NopException(ErpFinErrors.ERR_BAD_DEBT_RECOVERY_EXCEEDS_SETTLED)
+                    .param(ErpFinErrors.ARG_BAD_DEBT_ID, debt.getId())
+                    .param("settledAmount", item.getSettledAmountFunctional());
+        }
         item.setSettledAmountFunctional(nz(item.getSettledAmountFunctional()).subtract(amount));
         item.setSettledAmountSource(nz(item.getSettledAmountSource()).subtract(amount));
         item.setOpenAmountFunctional(nz(item.getOpenAmountFunctional()).add(amount));
@@ -422,5 +452,41 @@ public class ErpFinBadDebtProcessor {
 
     protected static BigDecimal nz(BigDecimal v) {
         return v != null ? v : BigDecimal.ZERO;
+    }
+
+    // ---------- F2.2（P1-CK-fin2-004）：交错时序现态守卫 ----------
+
+    protected void assertItemStatusForWriteOff(ErpFinArApItem item) {
+        String status = item.getStatus();
+        if (!ErpFinConstants.AR_AP_STATUS_OPEN.equals(status)
+                && !ErpFinConstants.AR_AP_STATUS_PARTIAL.equals(status)) {
+            throw itemStateMismatch(item, status);
+        }
+    }
+
+    protected void assertItemStatusForRecovery(ErpFinArApItem item) {
+        String status = item.getStatus();
+        if (!ErpFinConstants.AR_AP_STATUS_WRITTEN_OFF.equals(status)) {
+            throw itemStateMismatch(item, status);
+        }
+    }
+
+    protected void assertItemStatusForReverseOfWriteOff(ErpFinArApItem item) {
+        String status = item.getStatus();
+        if (!ErpFinConstants.AR_AP_STATUS_WRITTEN_OFF.equals(status)) {
+            throw itemStateMismatch(item, status);
+        }
+    }
+
+    protected void assertItemStatusForReverseOfRecovery(ErpFinArApItem item) {
+        String status = item.getStatus();
+        if (!ErpFinConstants.AR_AP_STATUS_OPEN.equals(status)) {
+            throw itemStateMismatch(item, status);
+        }
+    }
+
+    protected NopException itemStateMismatch(ErpFinArApItem item, String status) {
+        return new NopException(ErpFinErrors.ERR_BAD_DEBT_ITEM_STATE_MISMATCH)
+                .param(ErpFinErrors.ARG_CURRENT_STATUS, status);
     }
 }

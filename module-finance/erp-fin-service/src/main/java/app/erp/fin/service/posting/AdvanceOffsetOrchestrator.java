@@ -103,7 +103,7 @@ public class AdvanceOffsetOrchestrator {
 
     /**
      * 报销反审核/作废前反向抵扣：红冲 SETTLE 凭证 + 恢复借款应收辅助账 open + 回滚借款单 settled/outstanding。
-     * 报销应付辅助账由随后的 EXPENSE_CLAIM 红冲（cancelOnReverse）取消，此处不处理。
+     * 报销应付辅助账的 settled 先在本处归零（F2.2），再由随后的 EXPENSE_CLAIM 红冲（cancelOnReverse）取消。
      */
     public void reverseOffset(ErpFinExpenseClaim claim) {
         BigDecimal settledNet = findSettleVoucherAmount(claim.getCode());
@@ -112,6 +112,14 @@ public class AdvanceOffsetOrchestrator {
         }
         // 红冲 SETTLE 凭证
         advanceDispatcher.reverseSettle(claim.getCode());
+        // F2.2（P2-CK-fin2-005 方案 a）：归零报销 payable 侧 settled——原实现留 settled 给随后的
+        // cancelOnReverse 取消，新守卫（settled>0 拒绝）会击穿本默认开启主路径；先归零再取消，
+        // 终态不变（CANCELLED + open=0）
+        ErpFinArApItem payableItem = findItemByBill(ErpFinConstants.SOURCE_BILL_EXPENSE_CLAIM,
+                claim.getCode(), ErpFinConstants.DIRECTION_PAYABLE);
+        if (payableItem != null && nz(payableItem.getSettledAmountFunctional()).signum() > 0) {
+            reverseSettlement(payableItem, payableItem.getSettledAmountFunctional());
+        }
         // 恢复借款应收辅助账 open（按 settleAdvanceId 定位借款单 → 其应收辅助账）
         String advanceId = claim.getSettleAdvanceId();
         ErpFinEmployeeAdvance advance = advanceId != null
@@ -225,5 +233,19 @@ public class AdvanceOffsetOrchestrator {
 
     private static BigDecimal nz(BigDecimal v) {
         return v != null ? v : BigDecimal.ZERO;
+    }
+
+    /** F2.2：按单据定位辅助账项（不过滤状态——抵扣后可能已 SETTLED）。 */
+    private ErpFinArApItem findItemByBill(String sourceBillType, String sourceBillCode, String direction) {
+        IEntityDao<ErpFinArApItem> dao = daoProvider.daoFor(ErpFinArApItem.class);
+        QueryBean q = new QueryBean();
+        q.addFilter(and(
+                eq("sourceBillType", sourceBillType),
+                eq("sourceBillCode", sourceBillCode),
+                eq("direction", direction)
+        ));
+        q.setLimit(1);
+        List<ErpFinArApItem> items = dao.findAllByQuery(q);
+        return items.isEmpty() ? null : items.get(0);
     }
 }

@@ -165,11 +165,11 @@
 | P3-CK-fin-017 | P3 | D10 | ck-finance-posting.md | resolveOpenPeriod 期间命中集无排序——重叠期间配置下 get(0) 不确定 | 新增 | open |  |
 | P3-CK-fin-018 | P3 | D6 | ck-finance-posting.md | CommitmentVoucherGenerator 红冲行 dcDirection 保留原方向但借贷互换——与引擎红冲范式字段语义分裂 | 新增 | open |  |
 | P3-CK-fin-019 | P3 | D2/D9 | ck-finance-posting.md | PostingRun.captureTemplate 恒置 null——成功日志与失败记录的模板描述观测点死置 | 新增 | open |  |
-| P1-CK-fin2-001 | P1 | D6 | ck-finance-arap.md | BY_RATIO 分摊分母不随收付款迭代刷新 + 尾差守卫方向写反——多笔收付款下生成超开分摊行，整批自动核销失败或比例语义失真 | 主 agent 已实证（尾差守卫方向反） | open |  |
-| P1-CK-fin2-002 | P1 | D6/D8 | ck-finance-arap.md | settleWithFx 双侧按各自汇率不对称结算，reverseSettle 却按行金额对称回滚——FX 核销红冲后付款项辅助账残留 |fxGainLoss| 偏差 | 新增 | open |  |
-| P1-CK-fin2-003 | P1 | D5/D6 | ck-finance-arap.md | post 校验不聚合同一辅助账项的多行累计——手工核销单多行共享同一 item 时可静默超核销（settled>amount、open 为负、状态 SETTLED） | 新增 | open |  |
-| P1-CK-fin2-004 | P1 | D3/D8 | ck-finance-arap.md | 坏账执行体在审批/反审核时点不校验辅助账当前状态——交错时序下 settled/open 可被写穿（负 settled、虚增 open、部分核销残留） | 新增 | open |  |
-| P2-CK-fin2-005 | P2 | D3/D8，佐证 P2-CK-pur-005 / P2-CK-sal-012 | ck-finance-arap.md | 源单红冲的辅助账回滚通道（cancelOnReverse）不守卫已核销项、不级联已过账核销单——且核销单 reverse 会把 CANCELLED 项复活为 OPEN | 证实 P2-CK-pur-005/sal-012（finance 侧） | open |  |
+| P1-CK-fin2-001 | P1 | D6 | ck-finance-arap.md | BY_RATIO 分摊分母不随收付款迭代刷新 + 尾差守卫方向写反——多笔收付款下生成超开分摊行，整批自动核销失败或比例语义失真 | 主 agent 已实证（尾差守卫方向反） |fixed | F2.2：分母每笔重算 + 尾差守卫 subtract 方向；两测试绿（600+500 vs 500+500 无超开 + 3×500 P3 unmatched） |
+| P1-CK-fin2-002 | P1 | D6/D8 | ck-finance-arap.md | settleWithFx 双侧按各自汇率不对称结算，reverseSettle 却按行金额对称回滚——FX 核销红冲后付款项辅助账残留 fxGainLoss 偏差 | 新增 |fixed | F2.2：FX 路径 reverseSettle(lines, fxPath=true) 重演回滚（持久化证据 fxGainLoss≠0 分支）；非 FX 路径逐字节不变 |
+| P1-CK-fin2-003 | P1 | D5/D6 | ck-finance-arap.md | post 校验不聚合同一辅助账项的多行累计——手工核销单多行共享同一 item 时可静默超核销（settled>amount、open 为负、状态 SETTLED） | 新增 |fixed | F2.2：post 前按 invoice/paymentItemId 分组聚合 validateAggregatedNotOver；两行共享 item 各 60 vs 100 拒绝测试绿 |
+| P1-CK-fin2-004 | P1 | D3/D8 | ck-finance-arap.md | 坏账执行体在审批/反审核时点不校验辅助账当前状态——交错时序下 settled/open 可被写穿（负 settled、虚增 open、部分核销残留） | 新增 |fixed | F2.2：execute* 四现态守卫（writeOff/recovery/reverseOf 各自对称）+ executeRecovery settled 对称校验 + executeWriteOff 残额后置断言；悬空 recovery 拒绝测试绿 |
+| P2-CK-fin2-005 | P2 | D3/D8，佐证 P2-CK-pur-005 / P2-CK-sal-012 | ck-finance-arap.md | 源单红冲的辅助账回滚通道（cancelOnReverse）不守卫已核销项、不级联已过账核销单——且核销单 reverse 会把 CANCELLED 项复活为 OPEN | 证实 P2-CK-pur-005/sal-012（finance 侧） |fixed | F2.2：cancelOnReverse settled>0 守卫 + applySettlement reverse 对 CANCELLED 拒绝 + reverseOffset 扩展先归零 payable 侧 settled（方案 a；TestErpFinExpenseOffsetAdvance 全绿零回归） |
 | P2-CK-fin2-006 | P2 | D8 | ck-finance-arap.md | 坏账核销/收回/反审核与报销抵扣借款改写辅助账 open 后不刷新 ErpMdPartner 余额缓存——receivableBalance/payableBalance 陈旧直至该伙伴下次核销 | 新增 | open |  |
 | P2-CK-fin2-007 | P2 | D8/D6，同族 P1-CK-fin-004/011 | ck-finance-arap.md | AR/AP 聚合读路径缺 acctSchemaId/orgId 隔离；多账套计提逐 schema 循环却用全局 Allowance 与全局应收基础 | 新增 | open |  |
 | P2-CK-fin2-008 | P2 | D4/D7 | ck-finance-arap.md | 定时自动核销单事务全量原子 + 业务开关关闭时整批抛错——与声明的「记录级重试（单条失败不阻断）」失败接力模型不符 | 新增 | open |  |
@@ -604,4 +604,4 @@
 ## 阶段状态
 
 - 检查阶段（M0-M8）：进行中——**已闭合（2026-08-26）**：28/28 检查工作项 done + C8.3 独立收官审计通过（agent_72a36cff，证据抽验 6/6 真实、索引计数吻合、零代码改动确认）。
-- 修复阶段（MF/MV/MG）：**进行中**——F0-F2.1 done（**34 findings 终态**：33 fixed + mfg-011 部分注记；五计划独立审计通过）。F2.2（finance-AR/AP P1 簇）ready。open 余 497（fixed 35——含并行 mission 期间 sal-018/019 证伪裁决面）。
+- 修复阶段（MF/MV/MG）：**进行中**——F0-F2.2 done（**40 findings 终态**：39 fixed + mfg-011 部分注记）。F2.3 ready。open 余 493（实测）。

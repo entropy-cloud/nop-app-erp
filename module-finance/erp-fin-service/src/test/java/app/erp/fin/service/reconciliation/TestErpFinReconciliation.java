@@ -70,6 +70,41 @@ public class TestErpFinReconciliation extends JunitAutoTestCase {
         assertEquals(0, head.getTotalAmountFunctional().compareTo(new BigDecimal("300")));
     }
 
+    /**
+     * F2.2（P1-CK-fin2-003）：手工核销单多行共享同一辅助账项——聚合校验拒绝超核销。
+     * 修复前：两行各 60 vs open=100 的逐行校验通过 → settled=120/open=−20/SETTLED（静默超核销）。
+     */
+    @Test
+    public void testMultiLineSharedItemAggregatedRejected() {
+        String partnerId = "30";
+        String[] fixture = setup(partnerId, new BigDecimal("200"), new BigDecimal("100"),
+                LocalDate.of(2026, 6, 8), LocalDate.of(2026, 6, 10));
+
+        // 两笔付款项（各 open 100）对同一发票项（open=100）各 60——发票项聚合 120 > 100
+        String payment2 = ormTemplate.runInSession(sess -> {
+            ErpFinArApItem p2 = newItem(ErpFinConstants.DIRECTION_PAYABLE, partnerId,
+                    "PAYMENT", "PAY-" + partnerId + "-2", new BigDecimal("100"), LocalDate.of(2026, 6, 10));
+            return p2.getId();
+        });
+        ErpFinReconciliation head = ormTemplate.runInSession(session -> reconciliationBiz.create(
+                ErpFinConstants.DIRECTION_PAYABLE, partnerId, LocalDate.of(2026, 6, 20),
+                java.util.Arrays.asList(
+                        line(fixture[0], fixture[1], "60"),
+                        line(payment2, fixture[1], "60")), CTX));
+
+        NopException ex = assertThrows(NopException.class,
+                () -> ormTemplate.runInSession(session -> reconciliationBiz.post(head.getId(), CTX)),
+                "F2.2：多行共享同一发票项累计 120 > open 100 应被聚合校验拒绝（修复前静默超核销）");
+        assertEquals("erp.err.fin.reconciliation.over-amount", ex.getErrorCode());
+        // 单行合法路径零回归：单行 60 通过
+        ErpFinReconciliation ok = ormTemplate.runInSession(session -> reconciliationBiz.create(
+                ErpFinConstants.DIRECTION_PAYABLE, partnerId, LocalDate.of(2026, 6, 21),
+                java.util.Collections.singletonList(line(fixture[0], fixture[1], "60")), CTX));
+        ormTemplate.runInSession(() -> reconciliationBiz.post(ok.getId(), CTX));
+        assertEquals(ErpFinConstants.AR_AP_STATUS_PARTIAL, item(fixture[1]).getStatus(),
+                "单行 60 正常核销（open 100 → PARTIAL）");
+    }
+
     @Test
     public void testFullSettlement() {
         String partnerId = "20";
@@ -162,6 +197,33 @@ public class TestErpFinReconciliation extends JunitAutoTestCase {
         assertThrows(NopException.class, () -> ormTemplate.runInSession(session -> reconciliationBiz.post(head.getId(), CTX)),
                 "已过账核销单不应再次过账");
         assertNotEquals(ErpFinConstants.RECON_STATUS_DRAFT, recon(head.getId()).getDocStatus());
+    }
+
+    /**
+     * F2.2（P2-CK-fin2-005）：已作废辅助账项的核销单 reverse 被拒（防复活 OPEN）。
+     */
+    @Test
+    public void testReverseSettleOnCancelledItemRejected() {
+        String partnerId = "40";
+        String[] fixture = setup(partnerId, new BigDecimal("100"), new BigDecimal("100"),
+                LocalDate.of(2026, 6, 8), LocalDate.of(2026, 6, 10));
+        ErpFinReconciliation head = ormTemplate.runInSession(session -> reconciliationBiz.create(
+                ErpFinConstants.DIRECTION_PAYABLE, partnerId, LocalDate.of(2026, 6, 20),
+                java.util.Collections.singletonList(line(fixture[0], fixture[1], "100")), CTX));
+        ormTemplate.runInSession(() -> reconciliationBiz.post(head.getId(), CTX));
+
+        // 模拟源单红冲将辅助账项置 CANCELLED（settled=0 场景下 cancelOnReverse 合法通过）
+        ormTemplate.runInSession(sess -> {
+            ErpFinArApItem invoice = item(fixture[1]);
+            invoice.setStatus(ErpFinConstants.AR_AP_STATUS_CANCELLED);
+            daoProvider.daoFor(ErpFinArApItem.class).saveOrUpdateEntity(invoice);
+            return null;
+        });
+
+        NopException ex = assertThrows(NopException.class,
+                () -> ormTemplate.runInSession(session -> reconciliationBiz.reverse(head.getId(), CTX)),
+                "F2.2：CANCELLED 项的核销单 reverse 应被拒（修复前无条件回写复活 OPEN）");
+        assertEquals("erp.err.fin.ar-ap-item.cancelled-not-settlable", ex.getErrorCode());
     }
 
     // ---------- helpers ----------

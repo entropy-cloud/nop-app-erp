@@ -20,7 +20,7 @@
 | R1d | dao().findAllByQuery (BizModel) | 🔴 高 | 14 |
 | R2a | BizModel daoFor(ErpMd*) | 🔴 高 | 34 |
 | R2b | BizModel daoFor(Erp*) 跨域 | 🔴 高 | 240 |
-| R2c | 全生产代码 daoFor() 总量 | 🔴 高 | 1536 |
+| R2c | 全生产代码 daoFor() 总量 | 🔴 高 | 1538 |
 | R2d | Processor daoFor(ErpMd*) | 🔴 高 | 38 |
 | R3 | new Erp*() 构造实体 | 🟡 中 | 5 |
 | R4 | extends RuntimeException | 🟢 低 | 0 |
@@ -28,7 +28,7 @@
 | R6 | @Transactional in BizModel | 🟢 低 | 2 |
 | R7 | System.currentTimeMillis() | 🟢 低 | 0 |
 | R8 | Processor 无 xbiz 接线 | 🔴 高 | 0 |
-| R10 | REQUIRES_NEW 事务 | 🟡 中 | 12 |
+| R10 | REQUIRES_NEW 事务 | 🟡 中 | 14 |
 | R11 | Processor 重复状态判断方法 | 🟡 中 | 0 |
 | R12a | 共享内核 import ErpFinBusinessType | 🟡 中 | 70 |
 | R12b | 共享内核 import PostingEvent | 🟡 中 | 66 |
@@ -483,7 +483,7 @@ R1c: 0
 R1d: 14
 R2a: 34
 R2b: 240
-R2c: 1536
+R2c: 1538
 R2d: 38
 R3: 5
 R4: 0
@@ -491,12 +491,26 @@ R5: 0
 R6: 2
 R7: 0
 R8: 0
-R10: 12
+R10: 14
 R11: 0
 R12a: 70
 R12b: 66
 R12c: 42
 ```
+
+### R10 基线上调注记（plan 2026-08-27-2006-1，E3.5 AP 文档管道失败落账 + 逐项隔离）
+
+`2026-08-27-2006-1`（E3.5 P1-1/P1-2/P1-3）在 `ErpFinApDocumentPipelineProcessor`（`module-finance/erp-fin-service/.../processor/`）引入 **R10 +2**，为既有文档化 pattern 类的合法同型新增（镜像 RC-R1.2 `ErpFinBankReconAutoReverseHelper` / RC-R1.23 `ErpCrmLeadScoringRecalcHelper` 登记法）：
+
+| 规则 | 旧基线 | 新基线 | actual | 性质 | per-site 证据 |
+|------|--------|--------|--------|------|---------------|
+| R10 | 12 | **14** | 14 | **baseline-raise**（+2） | ①`ErpFinApDocumentPipelineProcessor#persistFailure:482`——P1-1 失败落账独立事务：FAILED 状态 + FAIL 轨迹行 REQUIRES_NEW + `runInNewSession` 按 id 重载更新提交，保证外层 `@BizMutation`/batch process 事务回滚后失败证据存活（`retry()` FAILED 守卫因此在同步路径可达）；②`#processOne:347`——P1-2 逐项失败隔离：`processPending` 每文档 REQUIRES_NEW 独立事务 + try/catch WARN 继续（batch.xml 保持 process scope，单文档失败不回滚先行成功文档、不阻断后续 RECEIVED 文档）。两处均为 batch 事务不提供 per-item 隔离/回滚存活语义的显式独立事务边界，先例范式逐行镜像。 |
+
+checker 复跑全 19 规则 actual == updated baseline（R1d=14/R2a=34/R2b=240/R2c=1538/R2d=38/R3=5/R6=2/R10=14/R12a/b/c=70/66/42，其余=0），零其余漂移。独立结束审计按本注记 per-site 证据复核。
+
+### R2c baseline-raise（ai-check F2.2，2026-08-27）
+
+`2026-08-27-2100-1`（ai-check F2.2 finance-AR/AP P1 簇）新增 2 处 daoFor 站点，R2c 1536 → **1538**（+2）。**per-site 证据**：①`ErpFinReconciliationPostProcessor#validateAggregatedNotOver`（fin2-003 聚合校验——同模块 ErpFinArApItem 只读，镜像同文件 validateLine 的 daoProvider 范式）；②`AdvanceOffsetOrchestrator#findItemByBill`（fin2-005 reverseOffset 扩展——同模块 ErpFinArApItem 写前定位，与同文件 findOpenItem 同型但不过滤状态）。均同模块非跨域。
 
 ## R2b/R2c/R12c 基线上调注记（plan 2026-08-26-0630-1，F2.1 finance-过账 P1 余项）
 

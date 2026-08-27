@@ -292,4 +292,64 @@ public class TestErpSalMultiCurrencyReconFx extends JunitAutoTestCase {
         partner.setStatus("ACTIVE");
         dao.saveEntity(partner);
     }
+
+    /**
+     * F2.2（P1-CK-fin2-002）：FX settle → reverse → 双侧 open/settled 归位断言。
+     * 修复前 reverse 按行金额对称回滚（7910 双侧）——收款项残留 settled=113/open 偏差；
+     * 修复后按各自汇率重演回退（收款项退 8023、发票项退 7910）双侧归零。
+     */
+    @Test
+    public void testFxSettleThenReverseRestoresBothSides() {
+        seedPrereqs();
+        AppConfig.getConfigProvider().assignConfigValue(
+                ErpFinConstants.CONFIG_RECON_FX_GAIN_LOSS_ENABLED, "true");
+        AppConfig.getConfigProvider().assignConfigValue(
+                ErpFinConstants.CONFIG_AR_SUBJECT_CODE, "1131");
+        AppConfig.getConfigProvider().assignConfigValue(
+                ErpFinConstants.CONFIG_FX_GAIN_LOSS_SUBJECT_CODE, "6051");
+
+        String invVoucherId = ormTemplate.runInSession(s -> voucherBiz.post(arInvoiceEvent("AR-MC-RV", RATE_INV), CTX));
+        String rcvVoucherId = ormTemplate.runInSession(s -> voucherBiz.post(receiptEvent("RC-MC-RV", RATE_RECV), CTX));
+        assertNotNull(invVoucherId);
+        assertNotNull(rcvVoucherId);
+        ErpFinArApItem invoiceItem = findArApItem("AR-MC-RV");
+        ErpFinArApItem receiptItem = findArApItem("RC-MC-RV");
+
+        ReconciliationLineInput line = new ReconciliationLineInput();
+        line.setInvoiceItemId(invoiceItem.getId());
+        line.setPaymentItemId(receiptItem.getId());
+        line.setSettledAmountSource(SOURCE_AMT);
+        line.setSettledAmountFunctional(new BigDecimal("7910"));
+
+        ErpFinReconciliation head = ormTemplate.runInSession(s ->
+                reconciliationBiz.create(ErpFinConstants.DIRECTION_RECEIVABLE, CUSTOMER_ID,
+                        LocalDate.of(2026, 7, 26), Collections.singletonList(line), CTX));
+        ormTemplate.runInSession(s -> reconciliationBiz.post(head.getId(), CTX));
+
+        // post 后双侧状态
+        assertEquals(0, new BigDecimal("7910").compareTo(
+                ormTemplate.runInSession(s -> reload(invoiceItem).getSettledAmountFunctional())),
+                "发票侧 settled = 1130×7.0 = 7910");
+        assertEquals(0, new BigDecimal("8023").compareTo(
+                ormTemplate.runInSession(s -> reload(receiptItem).getSettledAmountFunctional())),
+                "收款项 settled = 1130×7.1 = 8023");
+
+        // reverse（F2.2：fxPath=true 重演回滚）
+        ormTemplate.runInSession(s -> reconciliationBiz.reverse(head.getId(), CTX));
+
+        ErpFinArApItem invAfter = ormTemplate.runInSession(s -> reload(invoiceItem));
+        ErpFinArApItem rcvAfter = ormTemplate.runInSession(s -> reload(receiptItem));
+        org.junit.jupiter.api.Assertions.assertEquals(0, BigDecimal.ZERO.compareTo(invAfter.getSettledAmountFunctional()),
+                "F2.2：reverse 后发票侧 settled 归零（退 7910）");
+        org.junit.jupiter.api.Assertions.assertEquals(0, BigDecimal.ZERO.compareTo(rcvAfter.getSettledAmountFunctional()),
+                "F2.2：reverse 后收款项 settled 归零（退 8023——修复前按行值 7910 对称回滚残留 113）");
+        org.junit.jupiter.api.Assertions.assertEquals(0, new BigDecimal("7910").compareTo(invAfter.getOpenAmountFunctional()),
+                "发票侧 open 恢复 7910");
+        org.junit.jupiter.api.Assertions.assertEquals(0, new BigDecimal("8023").compareTo(rcvAfter.getOpenAmountFunctional()),
+                "收款项 open 恢复 8023");
+    }
+
+    private ErpFinArApItem reload(ErpFinArApItem item) {
+        return daoProvider.daoFor(ErpFinArApItem.class).getEntityById(item.getId());
+    }
 }

@@ -4,6 +4,8 @@ import app.erp.fin.dao.entity.ErpFinArApItem;
 import app.erp.fin.dao.entity.ErpFinReconciliation;
 import app.erp.fin.dao.entity.ErpFinReconciliationLine;
 import app.erp.fin.service.ErpFinConstants;
+import app.erp.fin.service.ErpFinErrors;
+import io.nop.api.core.exceptions.NopException;
 import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
@@ -95,12 +97,34 @@ public class ReconciliationSettler {
      * 红冲结算：按原核销行的相反数恢复双方辅助账（settled-=amt / open+=amt / 状态降级回 OPEN 或 PARTIAL）。
      */
     public void reverseSettle(List<ErpFinReconciliationLine> lines) {
+        reverseSettle(lines, false);
+    }
+
+    /**
+     * F2.2（P1-CK-fin2-002）：FX 路径红冲对称回滚。
+     *
+     * <p>{@code fxPath=true} 时按 {@code settledSource × item.exchangeRate} 现算重演
+     * {@link #settleWithFx} 的逆运算（两侧各按自身汇率回退）——修复前一律用 line 输入的
+     * settledAmountFunctional 对称回滚，双侧 rate 不同时收付款项残留 |Δrate×amount| 偏差。
+     * 触发条件用持久化证据（head.fxGainLoss 或 hasFxVoucher），防 post/reverse 间 config 翻转；
+     * 非 FX 路径（fxPath=false）逐字节保持原行为。
+     */
+    public void reverseSettle(List<ErpFinReconciliationLine> lines, boolean fxPath) {
         Map<String, ErpFinArApItem> cache = loadItems(lines);
         for (ErpFinReconciliationLine line : lines) {
-            BigDecimal amtFunctional = nz(line.getSettledAmountFunctional());
             BigDecimal amtSource = nz(line.getSettledAmountSource());
-            applySettlement(cache.get(line.getPaymentItemId()), amtFunctional, amtSource, true);
-            applySettlement(cache.get(line.getInvoiceItemId()), amtFunctional, amtSource, true);
+            ErpFinArApItem paymentItem = cache.get(line.getPaymentItemId());
+            ErpFinArApItem invoiceItem = cache.get(line.getInvoiceItemId());
+            if (fxPath) {
+                BigDecimal paymentFunctional = computeFunctionalSettled(paymentItem, amtSource);
+                BigDecimal invoiceFunctional = computeFunctionalSettled(invoiceItem, amtSource);
+                applySettlement(paymentItem, paymentFunctional, amtSource, true);
+                applySettlement(invoiceItem, invoiceFunctional, amtSource, true);
+            } else {
+                BigDecimal amtFunctional = nz(line.getSettledAmountFunctional());
+                applySettlement(paymentItem, amtFunctional, amtSource, true);
+                applySettlement(invoiceItem, amtFunctional, amtSource, true);
+            }
         }
     }
 
@@ -108,6 +132,11 @@ public class ReconciliationSettler {
                                    boolean reverse) {
         if (item == null) {
             return;
+        }
+        // F2.2（P2-CK-fin2-005）：reverse 对 CANCELLED 项拒绝——无条件回写会把作废源单的
+        // 辅助账复活回核销/账龄池
+        if (reverse && ErpFinConstants.AR_AP_STATUS_CANCELLED.equals(item.getStatus())) {
+            throw new NopException(ErpFinErrors.ERR_AR_AP_ITEM_CANCELLED_NOT_SETTLABLE);
         }
         int sign = reverse ? -1 : 1;
         BigDecimal deltaFunctional = amtFunctional.multiply(BigDecimal.valueOf(sign));

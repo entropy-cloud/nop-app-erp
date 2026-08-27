@@ -25,7 +25,11 @@ public class ErpFinReconciliationReverseProcessor extends AbstractErpFinReconcil
         assertCanReverse(head);
         List<ErpFinReconciliationLine> lines = loadLines(reconciliationId);
 
-        settler.reverseSettle(lines);
+        // F2.2（P1-CK-fin2-002）：FX 路径红冲走重演回滚——按持久化证据（fxGainLoss ≠ 0）判定，
+        // 非 FX 路径（fxGainLoss=0 或 null）逐字节保持原行为
+        boolean fxPath = head.getFxGainLoss() != null
+                && head.getFxGainLoss().signum() != 0;
+        settler.reverseSettle(lines, fxPath);
         reverseReconFxVoucher(head, context);
         head.setDocStatus(stateMachine.reverseTargetStatus());
 

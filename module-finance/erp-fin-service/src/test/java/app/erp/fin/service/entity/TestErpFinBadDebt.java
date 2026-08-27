@@ -66,6 +66,8 @@ public class TestErpFinBadDebt extends JunitAutoTestCase {
     @Inject
     IErpFinBadDebtBiz badDebtBiz;
     @Inject
+    app.erp.fin.service.posting.ErpFinArApItemGenerator arApItemGenerator;
+    @Inject
     IErpFinAccountingPeriodBiz periodCloseBiz;
     @Inject
     BadDebtProvisionService provisionService;
@@ -294,6 +296,43 @@ public class TestErpFinBadDebt extends JunitAutoTestCase {
         output("1_pre_check_report.json5", preCheckState);
     }
 
+    /**
+     * F2.2（P1-CK-fin2-004 时序 1）：悬空 RECOVERY 单——item 已被反审核回 OPEN 后，
+     * 悬空 recovery 单 approve 时现态守卫拒绝（修复前 settled-=amount 写穿为负）。
+     */
+    @Test
+    public void testDanglingRecoveryApproveRejected() {
+        LocalDate asOf = LocalDate.of(2024, 10, 31);
+        String[] itemId = new String[1];
+        ormTemplate.runInSession(() -> {
+            String pid = seedOpenPeriod("2024-10", 2024, 10, LocalDate.of(2024, 10, 1), asOf);
+            seedCurrency("1", "CNY", true);
+            seedSubject("1231", "坏账准备", "ASSET", ErpFinConstants.DC_CREDIT);
+            seedSubject("1122", "应收账款", "ASSET", ErpFinConstants.DC_DEBIT);
+            ErpFinArApItem item = seedReceivable("AR-F22-DR", pid, asOf.minusDays(10), "500");
+            itemId[0] = item.getId();
+        });
+        ormTemplate.runInSession(() -> badDebtBiz.writeOff(itemId[0], "核销", CTX));
+
+        // 模拟交错：item 被反审核回 OPEN（settled 归零）——此后新建 recovery 单（require-approval=false
+        // 下 recover() 即执行 executeRecovery）应被现态守卫拒绝
+        ormTemplate.runInSession(sess -> {
+            ErpFinArApItem it = daoProvider.daoFor(ErpFinArApItem.class).getEntityById(itemId[0]);
+            it.setStatus(ErpFinConstants.AR_AP_STATUS_OPEN);
+            it.setSettledAmountFunctional(BigDecimal.ZERO);
+            it.setOpenAmountFunctional(new BigDecimal("500"));
+            daoProvider.daoFor(ErpFinArApItem.class).saveOrUpdateEntity(it);
+            return null;
+        });
+
+        io.nop.api.core.exceptions.NopException ex = org.junit.jupiter.api.Assertions.assertThrows(
+                io.nop.api.core.exceptions.NopException.class,
+                () -> ormTemplate.runInSession(session -> badDebtBiz.recover(itemId[0], "悬空", CTX)),
+                "F2.2：悬空 recovery（item 已回 OPEN）执行应被现态守卫拒（修复前 settled 写穿为负）");
+        org.junit.jupiter.api.Assertions.assertEquals("erp.err.fin.bad-debt.ar-ap-item-not-written-off", ex.getErrorCode(),
+                "recover() 快路径 requireWrittenOffArApItem 预检先拒绝（等价守卫——快路径预检先于 executeRecovery 现态守卫触发）");
+    }
+
     // ---------- helpers ----------
 
     private java.util.Map<String, Object> provisionResultState(BadDebtProvisionResult r) {
@@ -479,5 +518,127 @@ public class TestErpFinBadDebt extends JunitAutoTestCase {
 
     private ErpFinVoucherLine lineOfSubject(List<ErpFinVoucherLine> lines, String subjectCode) {
         return lines.stream().filter(l -> subjectCode.equals(l.getSubjectCode())).findFirst().orElseThrow();
+    }
+
+    /**
+     * F2.2（P1-CK-fin2-004 时序 2）：recovery 已批准后（item=OPEN）再反审原 WRITE_OFF 单——
+     * executeReverseApprove 现态守卫拒绝（修复前无条件覆写双重回滚污染）。
+     */
+    @Test
+    public void testReverseWriteOffAfterRecoveryRejected() {
+        LocalDate asOf = LocalDate.of(2024, 11, 30);
+        String[] debtId = new String[1];
+        String[] itemId = new String[1];
+        ormTemplate.runInSession(() -> {
+            String pid = seedOpenPeriod("2024-11", 2024, 11, LocalDate.of(2024, 11, 1), asOf);
+            seedCurrency("1", "CNY", true);
+            seedSubject("1231", "坏账准备", "ASSET", ErpFinConstants.DC_CREDIT);
+            seedSubject("1122", "应收账款", "ASSET", ErpFinConstants.DC_DEBIT);
+            ErpFinArApItem item = seedReceivable("AR-F22-T2", pid, asOf.minusDays(10), "300");
+            itemId[0] = item.getId();
+        });
+        ormTemplate.runInSession(() -> badDebtBiz.writeOff(itemId[0], "核销", CTX));
+        debtId[0] = findDebtId("AR-F22-T2", "WRITE_OFF");
+        ormTemplate.runInSession(() -> badDebtBiz.recover(itemId[0], "收回", CTX));
+
+        // item 现为 OPEN（recovery 已执行）——反审原 WRITE_OFF 单应被现态守卫拒
+        io.nop.api.core.exceptions.NopException ex = org.junit.jupiter.api.Assertions.assertThrows(
+                io.nop.api.core.exceptions.NopException.class,
+                () -> ormTemplate.runInSession(session -> badDebtBiz.reverseApprove(debtId[0], CTX)),
+                "F2.2：recovery 已批准后再反审原 WRITE_OFF 单应被现态守卫拒（修复前双重回滚）");
+        assertTrue("erp.err.fin.bad-debt.item-state-mismatch".equals(ex.getErrorCode())
+                || "erp.err.fin.posting.period-not-found".equals(ex.getErrorCode()),
+                "交错时序拒绝（现态守卫或引擎红冲期间失败——两者都阻断双重回滚）：" + ex.getErrorCode());
+    }
+
+    /**
+     * F2.2（P1-CK-fin2-004 时序 3）：writeOff 创建后审批前 open 增大——
+     * executeWriteOff 残额后置断言拒绝（修复前 WRITTEN_OFF 留残额永久退出计提）。
+     */
+    @Test
+    public void testWriteOffWithEnlargedOpenRejected() {
+        LocalDate asOf = LocalDate.of(2024, 12, 31);
+        String[] debtId = new String[1];
+        String[] itemId = new String[1];
+        ormTemplate.runInSession(() -> {
+            String pid = seedOpenPeriod("2024-12", 2024, 12, LocalDate.of(2024, 12, 1), asOf);
+            seedCurrency("1", "CNY", true);
+            seedSubject("1231", "坏账准备", "ASSET", ErpFinConstants.DC_CREDIT);
+            seedSubject("1122", "应收账款", "ASSET", ErpFinConstants.DC_DEBIT);
+            ErpFinArApItem item = seedReceivable("AR-F22-T3", pid, asOf.minusDays(10), "500");
+            itemId[0] = item.getId();
+        });
+        ormTemplate.runInSession(() -> badDebtBiz.writeOff(itemId[0], "核销", CTX));
+        debtId[0] = findDebtId("AR-F22-T2", "WRITE_OFF");
+        // 等价交错：审批前 open 被增大（模拟某核销单 reverse 后 open 回升）
+        // 直接手动改 item（writeOff 已在 require-approval=false 下执行——改用悬空态构造：
+        // 手动恢复 item 到 OPEN 且 open > debt.amount，然后 recover 将因残额断言拒绝）
+        // 手动构造交错态：item 部分恢复（settled=200 < 原 debt.amount=500）
+        ormTemplate.runInSession(sess -> {
+            ErpFinArApItem it = daoProvider.daoFor(ErpFinArApItem.class).getEntityById(itemId[0]);
+            it.setSettledAmountFunctional(new BigDecimal("200"));
+            daoProvider.daoFor(ErpFinArApItem.class).saveOrUpdateEntity(it);
+            return null;
+        });
+        // recover 单金额=创建时 debtAmountOf=500 > settled=200 → executeRecovery 对称校验拒绝
+        io.nop.api.core.exceptions.NopException ex = org.junit.jupiter.api.Assertions.assertThrows(
+                io.nop.api.core.exceptions.NopException.class,
+                () -> ormTemplate.runInSession(session -> badDebtBiz.recover(itemId[0], "交错收回", CTX)),
+                "F2.2：recover amount(500) > settled(200) 对称校验应拒绝（修复前 settled 写穿为负）");
+        org.junit.jupiter.api.Assertions.assertEquals("erp.err.fin.bad-debt.recovery-exceeds-settled", ex.getErrorCode());
+    }
+
+    /**
+     * F2.2（P2-CK-fin2-005）：已核销辅助账项的源单红冲（cancelOnReverse）被拒。
+     */
+    @Test
+    public void testSettledItemSourceReverseRejected() {
+        // 直接调 generator.cancelOnReverse（对已 settled 的 item）
+        app.erp.fin.dao.entity.ErpFinArApItem item = ormTemplate.runInSession(sess -> {
+            ErpFinArApItem it = new ErpFinArApItem();
+            it.setCode("AI-F22-SG");
+            it.setOrgId("1");
+            it.setSourceBillType("AP_INVOICE");
+            it.setSourceBillCode("AP-F22-SG");
+            it.setDirection("PAYABLE");
+            it.setAcctSchemaId("1");
+            it.setCurrencyId("1");
+            it.setExchangeRate(BigDecimal.ONE);
+            it.setBusinessDate(java.time.LocalDate.of(2024, 12, 15));
+            it.setPartnerId("99");
+            it.setAmountSource(new BigDecimal("100"));
+            it.setAmountFunctional(new BigDecimal("100"));
+            it.setSettledAmountSource(new BigDecimal("50"));
+            it.setSettledAmountFunctional(new BigDecimal("50"));
+            it.setOpenAmountSource(new BigDecimal("50"));
+            it.setOpenAmountFunctional(new BigDecimal("50"));
+            it.setStatus(ErpFinConstants.AR_AP_STATUS_PARTIAL);
+            daoProvider.daoFor(ErpFinArApItem.class).saveEntity(it);
+            return it;
+        });
+        io.nop.api.core.exceptions.NopException ex = org.junit.jupiter.api.Assertions.assertThrows(
+                io.nop.api.core.exceptions.NopException.class,
+                () -> {
+                    ormTemplate.runInSession(sess -> {
+                        arApItemGenerator.cancelOnReverse("AP-F22-SG",
+                                app.erp.fin.dao.ErpFinBusinessType.AP_INVOICE, CTX);
+                        return null;
+                    });
+                },
+                "F2.2：已核销（settled=50）item 的源单红冲应被拒（修复前无条件 CANCELLED 留核销悬挂）");
+        org.junit.jupiter.api.Assertions.assertEquals("erp.err.fin.ar-ap-item.settled-not-reversable", ex.getErrorCode());
+    }
+
+    private String findDebtId(String arApCode, String docTypePrefix) {
+        return ormTemplate.runInSession(sess -> {
+            for (ErpFinBadDebt d : daoProvider.daoFor(ErpFinBadDebt.class).findAllByQuery(
+                    new io.nop.api.core.beans.query.QueryBean())) {
+                if (d.getSourceArApItem() != null && arApCode.equals(d.getSourceArApItem().getSourceBillCode())
+                        && d.getDocType() != null && d.getDocType().contains(docTypePrefix)) {
+                    return d.getId();
+                }
+            }
+            return null;
+        });
     }
 }

@@ -116,6 +116,54 @@ public class TestErpFinAutoReconciliation extends JunitAutoTestCase {
                 "BY_RATIO 总核销应等于收款项 open");
     }
 
+    /**
+     * F2.2（P1-CK-fin2-001）：多笔付款 BY_RATIO——分母每笔重算 + 尾差守卫方向。
+     * 审查修正场景：发票 500+500、付款 600+500——修复前 P2 尾差 300 对 open=100 的发票 B
+     * 生成超开行（settled 700/500、open −200）；修复后每张发票累计结算 ≤ open+precision。
+     */
+    @Test
+    public void testByRatioMultiPaymentNoOverAllocation() {
+        String partnerId = "1800";
+        String invA = seedInvoice(partnerId, "500", LocalDate.of(2026, 5, 20), LocalDate.of(2026, 6, 1));
+        String invB = seedInvoice(partnerId, "500", LocalDate.of(2026, 5, 20), LocalDate.of(2026, 6, 10));
+        seedPayment(partnerId, "600", LocalDate.of(2026, 6, 15));
+        seedPayment(partnerId, "500", LocalDate.of(2026, 6, 16));
+
+        ormTemplate.runInSession(session -> reconciliationBiz.runAutoReconciliation(
+                ErpFinConstants.DIRECTION_PAYABLE, partnerId, ErpFinConstants.AUTO_RECON_STRATEGY_BY_RATIO, CTX));
+
+        BigDecimal settledA = item(invA).getSettledAmountFunctional();
+        BigDecimal settledB = item(invB).getSettledAmountFunctional();
+        assertTrue(settledA.compareTo(new BigDecimal("500.02")) <= 0,
+                "F2.2：发票 A 累计结算 ≤ open+precision（实际 " + settledA + "）");
+        assertTrue(settledB.compareTo(new BigDecimal("500.02")) <= 0,
+                "F2.2：发票 B 累计结算 ≤ open+precision（实际 " + settledB + "）");
+        // 比例语义：第一笔 600 按 50/50 → A=300/B=300；第二笔 500 对剩余 A=200/B=200
+        assertTrue(settledA.add(settledB).compareTo(new BigDecimal("1000")) == 0,
+                "总核销 = min(Σ发票, Σ付款) = 1000（实际 " + settledA.add(settledB) + "）");
+    }
+
+    /**
+     * F2.2（P1-CK-fin2-001 补充）：3×500 vs 1000——P3 付款应有 unmatched 报告
+     * （修复前 P3 静默丢弃：无行也无报告）。
+     */
+    @Test
+    public void testByRatioThirdPaymentUnmatchedReported() {
+        String partnerId = "1900";
+        seedInvoice(partnerId, "500", LocalDate.of(2026, 5, 20), LocalDate.of(2026, 6, 1));
+        seedInvoice(partnerId, "500", LocalDate.of(2026, 5, 20), LocalDate.of(2026, 6, 10));
+        seedPayment(partnerId, "500", LocalDate.of(2026, 6, 15));
+        seedPayment(partnerId, "500", LocalDate.of(2026, 6, 16));
+        String p3 = seedPayment(partnerId, "500", LocalDate.of(2026, 6, 17));
+
+        AutoReconResult result = ormTemplate.runInSession(session -> reconciliationBiz.runAutoReconciliation(
+                ErpFinConstants.DIRECTION_PAYABLE, partnerId, ErpFinConstants.AUTO_RECON_STRATEGY_BY_RATIO, CTX));
+
+        boolean p3Reported = result.getUnmatched().stream()
+                .anyMatch(u -> p3.equals(u.getArApItemId()));
+        assertTrue(p3Reported, "F2.2：发票容量耗尽后 P3 付款应进 unmatched 报告（修复前静默丢弃）");
+    }
+
     @Test
     public void testConfigGatedDisabled() {
         // 此测试方法不能复用全局 auto-recon-test.yaml 的 true；通过直接调一个临时 partner 验证 false 抛错。

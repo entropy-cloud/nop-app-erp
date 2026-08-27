@@ -10,6 +10,7 @@ import app.erp.fin.service.classify.IErpFinApDocClassifier;
 import app.erp.fin.service.ocr.IErpFinOcrEngine;
 import app.erp.pur.dao.entity.ErpPurInvoice;
 import app.erp.pur.biz.IErpPurInvoiceBiz;
+import io.nop.api.core.annotations.txn.TransactionPropagation;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.config.AppConfig;
 import io.nop.api.core.exceptions.NopException;
@@ -21,9 +22,13 @@ import io.nop.core.context.IServiceContext;
 import io.nop.file.core.IFileRecord;
 import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
+import io.nop.dao.txn.ITransactionTemplate;
 import io.nop.file.core.IFileStore;
 import io.nop.file.core.UploadRequestBean;
+import io.nop.orm.IOrmTemplate;
 import jakarta.inject.Inject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
@@ -53,8 +58,13 @@ import static io.nop.api.core.beans.FilterBeans.eq;
  * 每步落 {@link ErpFinApDocumentLog} 处理轨迹（AP-4 审计追溯：文档-发票-凭证回链经 invoiceId + 既有链路）。
  * 管道 config-gate（{@code erp-fin.ap-doc-pipeline-enabled}）默认关闭；异步批量消费经 nop-batch
  * （{@code fin/ap-document.batch.xml}，RECEIVED 状态扫描）。
+ *
+ * <p>失败可观测（plan 2026-08-27-2006-1）：步骤失败经独立事务落账 FAILED + FAIL 轨迹（外层事务回滚后存活）；
+ * 异步消费逐文档独立事务隔离（单文档失败不回滚先行成功文档、不阻断后续 RECEIVED 文档）。
  */
 public class ErpFinApDocumentPipelineProcessor {
+
+    static final Logger LOG = LoggerFactory.getLogger(ErpFinApDocumentPipelineProcessor.class);
 
     /** 解析要素抽取的文本预览截断长度（parseResult.excerpt）。 */
     private static final int EXCERPT_MAX = 400;
@@ -70,6 +80,16 @@ public class ErpFinApDocumentPipelineProcessor {
 
     @Inject
     IFileStore fileStore;
+
+    /**
+     * 失败落账 / 逐项隔离独立事务载体（plan 2026-08-27-2006-1 P1-1/P1-2，
+     * 镜像 {@code ErpFinBankReconAutoReverseHelper} / {@code ErpCrmLeadScoringRecalcHelper} 范式）。
+     */
+    @Inject
+    ITransactionTemplate transactionTemplate;
+
+    @Inject
+    IOrmTemplate ormTemplate;
 
     /** 采购发票管道（跨域 I*Biz，懒解析：pur-service 聚合时可用，单 fin 模块测试下为 null 走明确失败）。 */
     private IErpPurInvoiceBiz purInvoiceBiz;
@@ -103,6 +123,7 @@ public class ErpFinApDocumentPipelineProcessor {
 
     public ErpFinApDocument upload(String fileName, String mimeType, String fileBase64,
                                    String orgId, IServiceContext context) {
+        requirePipelineEnabled(null);
         acquireUploadPermit();
         byte[] content = decodeBase64(fileBase64);
         long maxLen = AppConfig.var(ErpFinConfigs.CONFIG_AP_DOC_MAX_FILE_LENGTH,
@@ -292,7 +313,13 @@ public class ErpFinApDocumentPipelineProcessor {
         return process(documentId, context);
     }
 
-    /** 扫描待处理文档（nop-batch 异步消费入口：RECEIVED 状态）。 */
+    /**
+     * 扫描待处理文档（nop-batch 异步消费入口：RECEIVED 状态）。
+     *
+     * <p>P1-2 逐项失败隔离（plan 2026-08-27-2006-1）：单文档失败不回滚先行已成功文档、不阻断后续
+     * RECEIVED 文档（此前队头失败回滚整批并饿死后续扫描）。失败文档以 FAILED 终态落账
+     * （{@link #persistFailure}），自然退出 RECEIVED 扫描循环，不再被重复命中。
+     */
     public int processPending(IServiceContext context) {
         requirePipelineEnabled(null);
         QueryBean q = new QueryBean();
@@ -301,10 +328,32 @@ public class ErpFinApDocumentPipelineProcessor {
         List<ErpFinApDocument> pending = docDao().findAllByQuery(q);
         int processed = 0;
         for (ErpFinApDocument doc : pending) {
-            process(doc.getId(), context);
-            processed++;
+            if (processOne(doc.getId(), context)) {
+                processed++;
+            }
         }
         return processed;
+    }
+
+    /**
+     * 单文档独立事务处理 + 失败隔离（镜像 {@code ErpCrmLeadScoringRecalcHelper.recalculateOne} 范式：
+     * batch.xml 保持 process 事务 scope，per-item 隔离由本方法 REQUIRES_NEW 承载——
+     * nop-batch process/chunk 两 scope 均整 chunk 单事务，不提供逐条隔离）。
+     *
+     * @return true=处理成功（含挂人工门）；false=处理失败（WARN 记录，批次继续）
+     */
+    protected boolean processOne(String documentId, IServiceContext context) {
+        try {
+            return transactionTemplate.runInTransaction(null, TransactionPropagation.REQUIRES_NEW, txn ->
+                    ormTemplate.runInSession(session -> {
+                        process(documentId, context);
+                        session.flush();
+                        return true;
+                    }));
+        } catch (Exception e) {
+            LOG.warn("erp-fin-ap-doc-process-failed: documentId={}, reason={}", documentId, e.getMessage());
+            return false;
+        }
     }
 
     // ---------- 解析（步骤 1） ----------
@@ -412,13 +461,40 @@ public class ErpFinApDocumentPipelineProcessor {
     }
 
     private RuntimeException fail(ErpFinApDocument doc, String step, String message) {
-        doc.setStatus("FAILED");
-        doc.setErrorMsg("步骤 " + step + " 失败：" + message);
-        docDao().saveOrUpdateEntity(doc);
-        log(doc.getId(), "FAIL", false, doc.getErrorMsg());
+        String errorMsg = "步骤 " + step + " 失败：" + message;
+        persistFailure(doc.getId(), step, errorMsg);
         return new NopException(ErpFinErrors.ERR_AP_DOC_DRAFT_FAILED)
                 .param(ErpFinErrors.ARG_DOCUMENT_ID, doc.getId())
                 .param(ErpFinErrors.ARG_STEP, step);
+    }
+
+    /**
+     * P1-1 失败落账独立事务（plan 2026-08-27-2006-1）：FAILED 状态 + FAIL 轨迹行经 REQUIRES_NEW
+     * 独立事务提交，保证外层 {@code @BizMutation} / batch process 事务随异常回滚后失败证据仍存活
+     * （{@code retry()} 的 FAILED 守卫因此在同步路径可达）。
+     *
+     * <p>块内按 id 在新 session 重载实体后更新（外层事务可能已对同一行 staged PARSED/CLASSIFIED 写，
+     * 直接 saveOrUpdate 传入实例有 session 附着/行锁自阻塞风险）；失败落账自身异常仅 WARN——
+     * 不掩盖原始业务异常。镜像 {@code ErpFinBankReconAutoReverseHelper} 独立事务范式。
+     */
+    private void persistFailure(String documentId, String step, String errorMsg) {
+        try {
+            transactionTemplate.runInTransaction(null, TransactionPropagation.REQUIRES_NEW, txn ->
+                    ormTemplate.runInNewSession(session -> {
+                        ErpFinApDocument d = docDao().getEntityById(documentId);
+                        if (d != null) {
+                            d.setStatus("FAILED");
+                            d.setErrorMsg(errorMsg);
+                            docDao().saveOrUpdateEntity(d);
+                            log(documentId, "FAIL", false, errorMsg);
+                            session.flush();
+                        }
+                        return null;
+                    }));
+        } catch (Exception e) {
+            LOG.warn("erp-fin-ap-doc-fail-persist-error: documentId={}, step={}, reason={}",
+                    documentId, step, e.getMessage());
+        }
     }
 
     private void log(String documentId, String step, boolean success, String detail) {
@@ -440,7 +516,13 @@ public class ErpFinApDocumentPipelineProcessor {
     }
 
     private byte[] readFile(ErpFinApDocument doc) {
-        IFileRecord record = fileStore.getFile(doc.getFileId());
+        IFileRecord record;
+        try {
+            record = fileStore.getFile(doc.getFileId());
+        } catch (Exception e) {
+            // 文件记录缺失（如 nop-file 记录不存在）与读取失败同样计入 PARSE 失败落账（P1-1）
+            throw fail(doc, "PARSE", "文件读取失败：" + e.getMessage());
+        }
         if (record == null) {
             throw fail(doc, "PARSE", "文件不存在（fileId=" + doc.getFileId() + "）");
         }

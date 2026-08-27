@@ -133,6 +133,16 @@ public class ErpFinArApItemGenerator {
         }
         List<ErpFinArApItem> items = findItems(profile.sourceBillType, billHeadCode, context);
         for (ErpFinArApItem item : items) {
+            // F2.2（P2-CK-fin2-005）：已核销守卫——settled>0 的项直接取消会留下核销悬挂
+            // （核销单仍 POSTED、发票侧 settled 残留），拒绝并提示先 reverse 核销单。
+            // 报销抵扣借款主路径（advance-auto-offset-on-expense 默认开）经
+            // AdvanceOffsetOrchestrator#reverseOffset 扩展先归零 payable 侧 settled 后到达此处。
+            BigDecimal settled = item.getSettledAmountFunctional();
+            if (settled != null && settled.signum() > 0) {
+                throw new NopException(ErpFinErrors.ERR_AR_AP_ITEM_SETTLED_NOT_REVERSABLE)
+                        .param(ErpFinErrors.ARG_BILL_HEAD_CODE, billHeadCode)
+                        .param("settledAmount", settled);
+            }
             item.setStatus(ErpFinConstants.AR_AP_STATUS_CANCELLED);
             item.setOpenAmountSource(BigDecimal.ZERO);
             item.setOpenAmountFunctional(BigDecimal.ZERO);

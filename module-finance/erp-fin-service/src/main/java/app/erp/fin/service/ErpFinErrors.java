@@ -30,6 +30,7 @@ public interface ErpFinErrors {
     String ARG_CLAIMANT_ID = "claimantId";
     String ARG_EMPLOYEE_ID = "employeeId";
     String ARG_CURRENT_STATUS = "currentStatus";
+    String ARG_BILL_HEAD_CODE = "billHeadCode";
     String ARG_EXPECTED_STATUS = "expectedStatus";
     String ARG_CURRENT_DOC_STATUS = "currentDocStatus";
     String ARG_EXPECTED_DOC_STATUS = "expectedDocStatus";
@@ -369,6 +370,20 @@ public interface ErpFinErrors {
 
     ErrorCode ERR_BAD_DEBT_AR_AP_ITEM_NOT_OPEN = ErrorCode.define("erp.err.fin.bad-debt.ar-ap-item-not-open",
             "应收辅助账项 {arApItemId} 当前状态不可坏账核销（须为 OPEN/PARTIAL）", ARG_AR_AP_ITEM_ID);
+
+    // F2.2（P2-CK-fin2-005）：辅助账回滚通道守卫
+    ErrorCode ERR_AR_AP_ITEM_SETTLED_NOT_REVERSABLE = ErrorCode.define("erp.err.fin.ar-ap-item.settled-not-reversable",
+            "辅助账项已核销（settled={settledAmount}）不可随源单红冲——请先反审核相关核销单", "settledAmount");
+    ErrorCode ERR_AR_AP_ITEM_CANCELLED_NOT_SETTLABLE = ErrorCode.define("erp.err.fin.ar-ap-item.cancelled-not-settlable",
+            "目标辅助账项已作废，核销单不可反向回写（防作废项复活）");
+
+    // F2.2（P1-CK-fin2-004）：坏账执行体交错时序守卫
+    ErrorCode ERR_BAD_DEBT_RESIDUAL_NOT_ZERO = ErrorCode.define("erp.err.fin.bad-debt.residual-not-zero",
+            "坏账核销后残额非零（{residualOpen}）——审批期间 open 已变化，请作废重建单据", ARG_BAD_DEBT_ID);
+    ErrorCode ERR_BAD_DEBT_RECOVERY_EXCEEDS_SETTLED = ErrorCode.define("erp.err.fin.bad-debt.recovery-exceeds-settled",
+            "坏账收回金额超过当前已核销额（settled={settledAmount}）——交错时序下收回单已悬空", ARG_BAD_DEBT_ID);
+    ErrorCode ERR_BAD_DEBT_ITEM_STATE_MISMATCH = ErrorCode.define("erp.err.fin.bad-debt.item-state-mismatch",
+            "辅助账项现态与操作不匹配（currentStatus={currentStatus}）——交错时序拒绝写穿", ARG_BAD_DEBT_ID);
 
     ErrorCode ERR_BAD_DEBT_AR_AP_ITEM_NOT_WRITTEN_OFF = ErrorCode.define("erp.err.fin.bad-debt.ar-ap-item-not-written-off",
             "应收辅助账项 {arApItemId} 当前状态非 WRITTEN_OFF，不可恢复", ARG_AR_AP_ITEM_ID);
