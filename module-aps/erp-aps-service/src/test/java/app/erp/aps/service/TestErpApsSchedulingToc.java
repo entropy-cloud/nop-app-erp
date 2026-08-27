@@ -49,8 +49,13 @@ public class TestErpApsSchedulingToc extends JunitAutoTestCase {
     @Inject
     ApsBottleneckDetector bottleneckDetector;
 
+    @Inject
+    io.nop.dao.api.IDaoProvider daoProvider;
+
     private static final String MACHINE_A = "100";
     private static final String MACHINE_B = "101";
+    private static final String MACHINE_C = "102";
+    private static final String MACHINE_D = "103";
     private static final LocalDateTime HORIZON_START = LocalDateTime.parse("2026-07-10T00:00:00");
     private static final LocalDateTime HORIZON_END = LocalDateTime.parse("2026-07-11T00:00:00");
 
@@ -171,7 +176,38 @@ public class TestErpApsSchedulingToc extends JunitAutoTestCase {
         assertFalse(rates.isEmpty());
     }
 
+    @Test
+    public void testBottleneckDetectorPlannedWindowBounds() {
+        // ① 完全排在 horizon 之后的 PLANNED 工序（plannedStart > horizonEnd）→ 不计入负荷、无瓶颈判定输入
+        seedPlannedOp("DET-X1", MACHINE_C, "2026-07-12T08:00:00", "2026-07-12T16:00:00");
+        // ② 跨 horizonEnd 边界相交（plannedStart <= horizonEnd 且 plannedEnd >= horizonStart）→ 正常计入
+        seedPlannedOp("DET-X2", MACHINE_D, "2026-07-10T22:00:00", "2026-07-11T06:00:00");
+        // ③ 完全 in-horizon → 正常计入（既有窗口语义零回归）
+        seedPlannedOp("DET-X3", MACHINE_B, "2026-07-10T02:00:00", "2026-07-10T06:00:00");
+
+        Map<String, BigDecimal> rates = bottleneckDetector.detectLoadRates(java.util.List.of(), HORIZON_START, HORIZON_END);
+        assertFalse(rates.containsKey(MACHINE_C), "beyond-horizon PLANNED 工序不计入窗口负荷");
+        assertEquals(0, new BigDecimal("0.3333").compareTo(rates.get(MACHINE_D)), "跨边界相交工序计入 8h/24h");
+        assertEquals(0, new BigDecimal("0.1667").compareTo(rates.get(MACHINE_B)), "in-horizon 工序计入 4h/24h");
+    }
+
     // ==================== 辅助 ====================
+
+    /** 直接落库一条 PLANNED 工序（detector 只读 machineId/plannedStart/plannedEnd，不走排产动作）。 */
+    private void seedPlannedOp(String code, String machineId, String plannedStart, String plannedEnd) {
+        app.erp.aps.dao.entity.ErpApsOperationOrder op = new app.erp.aps.dao.entity.ErpApsOperationOrder();
+        op.setCode(code);
+        op.setWorkOrderId("1");
+        op.setOperationName(code);
+        op.setSequence(10);
+        op.setMachineId(machineId);
+        op.setQty(BigDecimal.ONE);
+        op.setStatus("PLANNED");
+        op.setBusinessDate(java.time.LocalDate.parse("2026-07-10"));
+        op.setPlannedStartDateT(java.sql.Timestamp.valueOf(LocalDateTime.parse(plannedStart)));
+        op.setPlannedEndDateT(java.sql.Timestamp.valueOf(LocalDateTime.parse(plannedEnd)));
+        daoProvider.daoFor(app.erp.aps.dao.entity.ErpApsOperationOrder.class).saveEntity(op);
+    }
 
     private app.erp.aps.dao.entity.ErpApsOperationOrder opOf(String code, String machineId, int priority,
                                                              String setup, String perUnit, String qty) {

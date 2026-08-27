@@ -21,12 +21,13 @@ import java.util.Set;
 
 import static io.nop.api.core.beans.FilterBeans.ge;
 import static io.nop.api.core.beans.FilterBeans.in;
+import static io.nop.api.core.beans.FilterBeans.le;
 
 /**
  * TOC 瓶颈识别器（E3.4 试点，`constraint-based-planning.md` §2 / AP-3）。
  *
  * <p>负荷侧：horizon 内待排工序（DRAFT/UNSCHEDULABLE）按 {@code computeDuration} 估算工时 + 既有
- * PLANNED 工序已占时段，按 machineId 聚合。产能侧：经 {@link IErpMfgCapacityProvider} SPI 复用
+ * PLANNED 工序已占时段（区间与 horizon 相交才计入），按 machineId 聚合。产能侧：经 {@link IErpMfgCapacityProvider} SPI 复用
  * {@code CrpLoadCalculator} 产能派生链（日历出勤 × 效率，mfg-service 实现）；SPI 未收集（模块缺失/
  * 单模块测试）时兜底 24h/日。{@code loadRate = loadHours / capacityHours}（capacity≤0 且有负荷 → 9999，
  * 语义同 CrpLoadCalculator.computeLoadRate）。
@@ -120,6 +121,8 @@ public class ApsBottleneckDetector {
         return fallback;
     }
 
+    /** horizon 区间相交的 PLANNED/IN_PROGRESS 工序（对齐 {@code ErpApsSchedulingProcessor.loadPlannedInWindow}
+     * 窗口重叠范式：plannedEnd >= horizonStart 且 plannedStart <= horizonEnd；完全排在 horizon 之后的工序不计入）。 */
     private List<ErpApsOperationOrder> findPlannedInHorizon(LocalDateTime horizonStart, LocalDateTime horizonEnd) {
         if (horizonStart == null || horizonEnd == null) {
             return Collections.emptyList();
@@ -127,6 +130,7 @@ public class ApsBottleneckDetector {
         QueryBean q = new QueryBean();
         q.addFilter(in("status", List.of("PLANNED", "IN_PROGRESS")));
         q.addFilter(ge("plannedEndDateT", horizonStart));
+        q.addFilter(le("plannedStartDateT", horizonEnd));
         // 同域实体只读聚合（machineId 聚合统计），IDaoProvider 直访对齐 ApsLoadSourceProvider 范式
         return daoProvider.daoFor(ErpApsOperationOrder.class).findAllByQuery(q);
     }
