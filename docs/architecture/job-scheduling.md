@@ -116,6 +116,7 @@ nop-job-local（已接入 app-erp-all 框架，docs/logs/2026/06-23.md:14-17）
 | `erp-fin-posting-async-sweep` | 过账引擎异步派发 + 兜底扫描重试 | 未定 | `post(PostingEvent)` | 中 | job | DEFERRED | — | `plans/2026-07-01-0811-1:53,186` |
 | `erp-fin-posting-exception-precheck` | 期末结账前置门控：扫 `ErpFinPostingException` 未决项 | （结账内部步骤） | `ErpFinAccountingPeriodProcessor.preCheck()` | 中 | job | WIRED（结账内部） | — | `module-finance/.../ErpFinAccountingPeriodBizModel.java:38`；`docs/design/finance/posting-log.md:168` |
 | `erp-fin-changelog-ttl` | `NopSysChangeLog` 过期清理（平台无内建 TTL） | 定期 | （待实现） | 大 | **batch-candidate** | DEFERRED | — | `docs/design/finance/posting-log.md:119`；`plans/2026-07-04-1452-1` |
+| `erp-fin-ap-doc-processing` | AP 文档摄取管道异步消费（RECEIVED 文档 → 解析 → 分类 → 草稿；逐文档独立事务失败隔离，毒文档 FAILED 终态退出扫描不阻断后续） | 每 5 分钟（默认 cron `0 */5 * * * ?`） | `nopBatchTaskRunner.executeAsync` → `fin/ap-document.batch.xml` → `ErpFinApDocumentPipelineProcessor.processPending`（单文档动作 = `IErpFinApDocumentBiz.processApDocument`） | 中 | batch | **WIRED**（E3.5，2026-08-27：`fin/ap-document.batch.xml` + job.yaml 三件套，config-gated 默认关闭；管道总开关 `erp-fin.ap-doc-pipeline-enabled` 亦默认关） | `nop.job.erp-fin-ap-doc-processing.enabled/.cron-expr`（默认 false / `0 */5 * * * ?`） | `docs/design/finance/document-driven-ap-automation.md`；`app-erp-all/src/main/resources/_vfs/nop/job/conf/erp-fin-ap-doc-processing.job.yaml`；`module-finance/erp-fin-service/.../_vfs/nop/batch-task/fin/ap-document.batch.xml` |
 
 ### 3.2 Assets（资产）
 
@@ -239,7 +240,7 @@ nop-job-local（已接入 app-erp-all 框架，docs/logs/2026/06-23.md:14-17）
 | `erp-ct-signature-status-poll` | 主动轮询在途电子签署请求状态 | `0 0 */2 * * ?`（每 2 小时） | `queryAndUpdateStatus()` / `findExpiringRequests()` | 小 | job | DEFERRED | `erp-ct.signature-status-polling-cron` | `plans/2026-07-04-2200-2:51,147-150` |
 | `erp-ct-usage-billing-rebate` | 用量计费 / 返利重估 / 多币种重估 | 定期 | （待实现） | 中 | job | DEFERRED | — | `plans/2026-07-04-1115-1:204` |
 
-**目录汇总**：本节登记 **52 个**作业（远超 ≥40 目标），覆盖 16 个域。
+**目录汇总**：本节登记 **53 个**作业（远超 ≥40 目标），覆盖 16 个域。
 
 ---
 

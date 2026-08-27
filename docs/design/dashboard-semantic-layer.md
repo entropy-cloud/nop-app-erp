@@ -63,7 +63,7 @@
 - **缺口清单与登记去向（Decision，2026-08-26）**：
   | # | 缺口 | 判定 | 登记去向 | 理由 |
   |---|------|------|---------|------|
-  | G1 | 看板 `getDashboardKpi`/trend/topN/alerts 全族直连 DAO 聚合，role-row-filter 不生效（跨用户聚合泄漏） | enforcement 栈扩展 | `docs/backlog/permissions-enforcement-roadmap.md` Follow-up（P1） | 修复形态 = 查询路径改造走管道或 EQL `@enable_filter`，属 data-auth enforcement 覆盖面扩展，与 E2.x 同栈同范式（loginAsRole 账号池/负向 Proof 复用） |
+  | G1 | 看板 `getDashboardKpi`/trend/topN/alerts 全族直连 DAO 聚合，role-row-filter 不生效（跨用户聚合泄漏）。**E3 批同型补录（2026-08-28，plan `2026-08-28-0219-3` P2-2，逐一核查）**：`getInventorySnapshot`（E3.2，`ormTemplate.findListByQuery` 直连，QueryBean→SQL `enableFilter=false` 同型）+ `checkStockBalanceConsistency`（E3.2，同上 + `daoFor(ErpInvStockBalance).findAll`）+ `getAssetAuditTrail`（E3.8，`daoFor(ErpAstAssetActionLog).findAllByQuery`）——同型绕过，修复随 G1 族同机制收口；排除：`uploadApDocument` 族与 `scheduleToc` 为写路径（行级过滤非其缺口面，RBAC/审批门承载） | enforcement 栈扩展 | `docs/backlog/permissions-enforcement-roadmap.md` Follow-up（P1） | 修复形态 = 查询路径改造走管道或 EQL `@enable_filter`，属 data-auth enforcement 覆盖面扩展，与 E2.x 同栈同范式（loginAsRole 账号池/负向 Proof 复用） |
   | G2 | 各域报表 BizModel（`ErpXxxReportBizModel` 数据集/renderHtml）同样直连 DAO，行级过滤不生效 | enforcement 栈扩展 | 同上（并入 G1 项） | 与 G1 同根因同修复形态；报表面另涉 R2-P1 保密字段脱敏缺口（已登记于该 roadmap E-stack），行级与字段级须一并收口 |
   | G3 | 管道内路径（`I*Biz` findOpenItems 族）已过检查点但 finance 全见设计 → 无实际收敛（设计决定，非缺陷） | 登记不修 | `roles-and-permissions.md` E2.3 覆盖矩阵（已有「finance 全见设计决定」记载） | 全见为 E2.3 审计裁决，多组织/orgId 维隔离归独立开关（`erp.multi-company.org-isolation-enabled`，E2.1 Non-Goal） |
 - **本计划不实施任何缺口修复**（E3.1b 范围 = 核实 + 登记）。

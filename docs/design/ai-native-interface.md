@@ -75,6 +75,12 @@
   5. 审计标识断言落为「调用方身份（userId）落账断言」（actorType 不落地，见上）。
   6. 平台能力登记：`GraphQLToolProvider` 存在性与复用边界登记（本文档 + `business-module-metadata.md` 雏形关系）。
 
+## 实现注记（AST 单父约束 workaround）
+
+> E3.6 落地期发现（2026-08-27，`TestErpAiIntrospectionEnabled` 落地时实证）：平台 GraphQL 引擎对**经查询语句解析**的 introspection 深层形状存在 **AST 单父约束**限制——introspection 元字段（如 `__Type.fields`）携带带默认值参数的深层选择集在同一解析树中触发单父约束报错（浅层形状如 `__schema{queryType types}` 不受影响，可直接经查询语句断言）。
+
+**workaround**（`app-erp-all/src/test/java/io/nop/app/all/it/TestErpAiIntrospectionEnabled.java`）：action description 断言不经 introspection 查询语句，改经**引擎 schema 定义 API**（`IGraphQLEngine.getOperationDefinition` → `GraphQLFieldDefinition.getDescription()`）——schema 定义 API 与 introspection 查询共享同一元数据源（`GraphQLToolProvider` 亦同源），断言效力等价。这是平台 AST 解析层的既有约束（应用层不修平台），登记于此供后续 introspection 深层断言复用同一规避模式。
+
 ## 落地策略（分阶段）
 
 | 阶段 | 内容 | 状态 |

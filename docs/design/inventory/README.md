@@ -128,7 +128,7 @@
 | `state-machine.md` | 库存移动单与盘点单状态机详解 |
 | `cross-domain.md` | 与采购/销售/财务的协作规则、余量校验、过账数据契约 |
 | `trace-chain.md` | 库存追溯链设计（移动单自关联、退货反查、批次追溯） |
-| `audit-snapshot-cycle-count.md` | 库存审计快照与周期盘点设计（E1.4，2026-08-12 erp-survey 批次，暂不编码） |
+| `audit-snapshot-cycle-count.md` | 库存审计快照与周期盘点设计（E1.4 设计，2026-08-12 erp-survey 批次；已实现 E3.2，2026-08-26，派生快照查询 + 对账校验作业） |
 
 ## 实现落位提示
 
