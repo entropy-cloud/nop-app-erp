@@ -54,7 +54,7 @@
 | 阶段 | 内容 | 状态 |
 |------|------|------|
 | 设计 | 本文档（快照语义 + 周期盘点 + 对账整合） | ✅ 已完成（本批次） |
-| 实现（快照查询） | `getInventorySnapshot` BizQuery + 对账校验项（含 `erp-inv-stock-check` 作业落地） | ✅ done（E3.2，2026-08-26：`IErpInvStockLedgerBiz.getInventorySnapshot/checkStockBalanceConsistency`（DB 级 GROUP BY 余额维度派生）+ `erp-inv-stock-check` 作业三件套（batch.xml + job.yaml config-gated 默认关闭 + BizQuery 入口，差异时作业失败可观测）；JUnit `TestErpInvSnapshotAndStockCheck` 5 用例 + E2E `inv-snapshot.value.spec.ts` 数值断言（快照派生/asOf 边界/一致性）；零 ORM 变更） |
+| 实现（快照查询） | `getInventorySnapshot` BizQuery + 对账校验项（含 `erp-inv-stock-check` 作业落地） | ✅ done（E3.2，2026-08-26：`IErpInvStockLedgerBiz.getInventorySnapshot/checkStockBalanceConsistency`（DB 级 GROUP BY 余额维度派生）+ `erp-inv-stock-check` 作业三件套（batch.xml + job.yaml config-gated 默认关闭 + BizQuery 入口，差异时作业失败可观测）；JUnit `TestErpInvSnapshotAndStockCheck` 9 用例 + E2E `inv-snapshot.value.spec.ts` 数值断言（快照派生/asOf 边界/一致性）；零 ORM 变更。2026-08-28 P1-4 修复：对账 `balanceKey` 补 `orgId`/`ownerId` 对齐自然键 7 维（`UK_INV_STOCK_BALANCE_NATURAL`），差异行携带全维度诊断字段（LEDGER_ONLY 分支取派生聚合行），+4 多组织/多货主负路径用例，plan `2026-08-27-2006-2`） |
 | 实现（周期盘点） | CycleCountTask 视图/状态机（复用 StockTake 链） | todo（触发条件驱动；ORM 变更已获授权，`erp-enhancement-roadmap.md` §8.1） |
 
 ## 反模式自检表

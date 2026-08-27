@@ -59,7 +59,7 @@
 | 阶段 | 内容 | 状态 |
 |------|------|------|
 | 设计 | 本文档（求解器分离 + TOC 瓶颈 + 多约束 + 预测衔接 + KPI） | ✅ 已完成（本批次） |
-| 试点实现 | `IApsSchedulingSolver` 分离 + 瓶颈识别（`scheduleToc`） | ✅ done（E3.4，2026-08-27：`IApsSchedulingSolver` + `GreedyApsSchedulingSolver` 默认实现（`ioc:collect-beans` 收集 + `erp-aps.scheduling-solver` config 切换，默认行为不变经既有 JUnit/E2E 零回归证明）；`scheduleToc` = `ApsBottleneckDetector`（复用 mfg `IErpMfgCapacityProvider` SPI 负荷率派生链）+ 瓶颈优先排程；`SchedulingResult` 扩展 bottleneckMachineIds/machineLoadRates；JUnit 4 用例 + E2E spec） |
+| 试点实现 | `IApsSchedulingSolver` 分离 + 瓶颈识别（`scheduleToc`） | ✅ done（E3.4，2026-08-27：`IApsSchedulingSolver` + `GreedyApsSchedulingSolver` 默认实现（`ioc:collect-beans` 收集 + `erp-aps.scheduling-solver` config 切换，默认行为不变经既有 JUnit/E2E 零回归证明）；`scheduleToc` = `ApsBottleneckDetector`（复用 mfg `IErpMfgCapacityProvider` SPI 负荷率派生链）+ 瓶颈优先排程；`SchedulingResult` 扩展 bottleneckMachineIds/machineLoadRates；JUnit 5 用例 + E2E spec。2026-08-28 P1-5 修复：`findPlannedInHorizon` 补 `plannedStartDateT <= horizonEnd` 上界（对齐 `loadPlannedInWindow` 区间相交范式），horizon 后工序不计入负荷，+1 beyond-horizon/跨边界/in-horizon 用例，plan `2026-08-27-2006-2`） |
 | 深化实现 | 多约束扩展 / 预测→排产衔接 / 排产 KPI 看板 | todo（触发条件驱动） |
 
 ## 反模式自检表
