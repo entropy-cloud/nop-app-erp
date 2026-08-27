@@ -13,6 +13,7 @@ import app.erp.common.service.AbstractErpCrudBizModel;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.biz.BizQuery;
+import io.nop.api.core.annotations.core.Description;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.exceptions.NopException;
@@ -89,6 +90,7 @@ public class ErpAstAssetBizModel extends AbstractErpCrudBizModel<ErpAstAsset> im
 
     @Override
     @BizQuery
+    @Description("资产操作审计时间轴：返回该资产全部生命周期事件（状态/归属变化 + 业务回链），按时间倒序")
     public List<Map<String, Object>> getAssetAuditTrail(@Name("assetId") String assetId, IServiceContext context) {
         return ormTemplate.runInSession(session -> {
             QueryBean q = new QueryBean();

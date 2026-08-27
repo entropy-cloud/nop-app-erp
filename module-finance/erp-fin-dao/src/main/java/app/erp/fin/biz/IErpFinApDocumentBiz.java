@@ -2,6 +2,7 @@ package app.erp.fin.biz;
 
 import io.nop.orm.biz.ICrudBiz;
 import io.nop.api.core.annotations.biz.BizMutation;
+import io.nop.api.core.annotations.core.Description;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.annotations.core.Optional;
 import io.nop.core.context.IServiceContext;
@@ -18,6 +19,7 @@ public interface IErpFinApDocumentBiz extends ICrudBiz<ErpFinApDocument>{
      * @param fileBase64 文件内容 base64 编码
      */
     @BizMutation
+    @Description("上传应付（AP）文档进入摄取管道：文件本体存 nop-file，落 RECEIVED 状态与摄取轨迹")
     ErpFinApDocument uploadApDocument(@Name("fileName") String fileName,
                                       @Optional @Name("mimeType") String mimeType,
                                       @Name("fileBase64") String fileBase64,

@@ -8,6 +8,7 @@ import app.erp.inv.dao.entity.ErpInvStockLedger;
 import app.erp.common.service.AbstractErpImmutableCrudBizModel;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizQuery;
+import io.nop.api.core.annotations.core.Description;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.annotations.core.Optional;
 import io.nop.api.core.beans.query.QueryBean;
@@ -56,6 +57,7 @@ public class ErpInvStockLedgerBizModel extends AbstractErpImmutableCrudBizModel<
 
     @Override
     @BizQuery
+    @Description("库存审计快照：对不可变流水按余额维度聚合的截至时点派生视图（支持仓库/物料/时点过滤）")
     public Map<String, Object> getInventorySnapshot(@Optional @Name("warehouseId") String warehouseId,
                                                     @Optional @Name("materialIds") List<String> materialIds,
                                                     @Optional @Name("asOfDate") LocalDate asOfDate,
@@ -94,6 +96,7 @@ public class ErpInvStockLedgerBizModel extends AbstractErpImmutableCrudBizModel<
 
     @Override
     @BizQuery
+    @Description("库存账实一致性校验：账面余额与流水派生快照逐维比对，报告差异行（含单侧缺失）")
     public Map<String, Object> checkStockBalanceConsistency(@Optional @Name("asOfDate") LocalDate asOfDate,
                                                             IServiceContext context) {
         LocalDate asOf = asOfDate != null ? asOfDate : CoreMetrics.currentDate();

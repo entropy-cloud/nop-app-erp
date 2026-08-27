@@ -23,6 +23,7 @@ import app.erp.aps.service.statemachine.ErpApsOperationOrderStateMachine;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.biz.BizQuery;
+import io.nop.api.core.annotations.core.Description;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.annotations.core.Optional;
 import io.nop.api.core.beans.query.QueryBean;
@@ -104,6 +105,7 @@ public class ErpApsOperationOrderBizModel extends AbstractErpCrudBizModel<ErpAps
 
     @Override
     @BizMutation
+    @Description("TOC 瓶颈驱动排产：识别 horizon 内超阈值瓶颈中心先排（拉动式），再前/后向兜底排非瓶颈，结果携带瓶颈清单与各中心负荷率")
     public SchedulingResult scheduleToc(@Name("scheduleId") String scheduleId, IServiceContext context) {
         return scheduleTocProcessor.scheduleToc(scheduleId, context);
     }

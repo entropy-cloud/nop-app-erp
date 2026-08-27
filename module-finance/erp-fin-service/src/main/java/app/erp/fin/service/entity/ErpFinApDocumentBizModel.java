@@ -2,6 +2,7 @@ package app.erp.fin.service.entity;
 
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
+import io.nop.api.core.annotations.core.Description;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.annotations.core.Optional;
 import io.nop.biz.crud.CrudBizModel;
@@ -30,6 +31,7 @@ public class ErpFinApDocumentBizModel extends CrudBizModel<ErpFinApDocument> imp
 
     @Override
     @BizMutation
+    @Description("上传应付（AP）文档进入摄取管道：文件本体存 nop-file，落 RECEIVED 状态与摄取轨迹")
     public ErpFinApDocument uploadApDocument(@Name("fileName") String fileName,
                                              @Optional @Name("mimeType") String mimeType,
                                              @Name("fileBase64") String fileBase64,

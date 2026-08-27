@@ -2,6 +2,7 @@ package app.erp.ast.biz;
 
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.biz.BizQuery;
+import io.nop.api.core.annotations.core.Description;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.core.context.IServiceContext;
 import io.nop.orm.biz.ICrudBiz;
@@ -34,5 +35,6 @@ public interface IErpAstAssetBiz extends ICrudBiz<ErpAstAsset>{
      * 按 createTime 倒序返回该资产全部生命周期事件（状态/归属变化 + 各业务回链）。
      */
     @BizQuery
+    @Description("资产操作审计时间轴：返回该资产全部生命周期事件（状态/归属变化 + 业务回链），按时间倒序")
     List<Map<String, Object>> getAssetAuditTrail(@Name("assetId") String assetId, IServiceContext context);
 }

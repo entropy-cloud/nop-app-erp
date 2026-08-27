@@ -4,6 +4,7 @@ package app.erp.aps.biz;
 import app.erp.aps.dao.entity.ErpApsOperationOrder;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.biz.BizQuery;
+import io.nop.api.core.annotations.core.Description;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.annotations.core.Optional;
 import io.nop.core.context.IServiceContext;
@@ -93,6 +94,7 @@ public interface IErpApsOperationOrderBiz extends ICrudBiz<ErpApsOperationOrder>
      * 既有前向/后向排产行为不变（独立新模式）。
      */
     @BizMutation
+    @Description("TOC 瓶颈驱动排产：识别 horizon 内超阈值瓶颈中心先排（拉动式），再前/后向兜底排非瓶颈，结果携带瓶颈清单与各中心负荷率")
     SchedulingResult scheduleToc(@Name("scheduleId") String scheduleId, IServiceContext context);
 
     /**
