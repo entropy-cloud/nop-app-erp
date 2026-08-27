@@ -1,6 +1,6 @@
 # 2026-08-27-2006-1-e35-ap-pipeline-failure-isolation-and-gate E3.5 AP 文档管道失败落账持久化 + 逐项隔离 + upload 门
 
-> Plan Status: active（独立草案审查共识：iteration 1 acceptable-as-is，task `ses_fbcde3401ffeQj5NUahefnWxt7`）
+> Plan Status: completed（独立结束审计 PASS，task `ses_fbbfe20fdffelqWFdju6hiwjPa`，2026-08-28；草案审查共识：iteration 1 acceptable-as-is，task `ses_fbcde3401ffeQj5NUahefnWxt7`）
 > Last Reviewed: 2026-08-27
 > Source: `docs/audits/2026-08-26-2226-multi-audit-erp-enhancement.md` P1-1/P1-2/P1-3（多面审计 needs revision；`docs/audits/2026-08-26-2226-open-audit-erp-enhancement.md` §独立复证记录 三项机制独立复证成立）
 > Related: plan `2026-08-26-0735-2`（E3 整体实现，已关闭——本计划修复其遗留 P1）、plan `2026-08-14-1815-2`（bank-recon/crm REQUIRES_NEW 失败隔离先例）
@@ -57,7 +57,7 @@ Skill: `nop-backend-dev`
   - 落地：`processPending` 循环改调新增 `protected processOne(documentId, context)`——`runInTransaction(null, REQUIRES_NEW)` + `runInSession` 包 `process(documentId)` + 显式 flush，try/catch WARN 返回 boolean（失败不计数不中断）；FAILED 终态自然退出 RECEIVED 扫描。
 - [x] `Fix` **P1-3 upload() 补 config 门**：`upload()` 入口调用 `requirePipelineEnabled`（默认关闭时上传被拒，错误码 `ERR_AP_DOC_PIPELINE_DISABLED`），与其余四入口对齐。Skill: `nop-backend-dev`
 - [x] `Proof` **FAILED 持久化测试（同步路径）**：构造步骤失败（如 DRAFT 阶段 pur 服务不可用或 PARSE 文件读取失败），断言调用抛出后文档状态仍为 `FAILED`、errorMsg 落账、`FAIL` 轨迹行存在、`retry()` 守卫可达且可重试。Skill: `nop-testing`
-  - 落地：`testFailedStatusPersistedAfterSyncFailure`——毒文档（fileId 指向不存在文件记录 → PARSE 失败）经 `processApDocument` 报错后，断言 FAILED/errorMsg/FAIL 轨迹在外层事务回滚后存活；随后修复文件引用（copyFileRef）→ `retryApDocument` 过 FAILED 守卫全管道 DRAFTED + retryCount=1 + RETRY 轨迹（守卫可达且可重试全环）。
+  - 落地：`testFailedStatusPersistedAfterSyncProcessFailure`——毒文档（fileId 指向不存在文件记录 → PARSE 失败）经 `processApDocument` 报错后，断言 FAILED/errorMsg/FAIL 轨迹在外层事务回滚后存活；随后修复文件引用（copyFileRef）→ `retryApDocument` 过 FAILED 守卫全管道 DRAFTED + retryCount=1 + RETRY 轨迹（守卫可达且可重试全环）。
 - [x] `Proof` **逐项隔离测试（异步路径语义）**：队列含毒文档 + 正常文档，毒文档失败后正常文档仍被处理成功；毒文档 FAILED + FAIL 轨迹存活且不再被 RECEIVED 扫描命中。Skill: `nop-testing`
   - 落地：`testProcessPendingPerItemFailureIsolation`——毒文档 + 正常文档混队直调 `processPending`：processed=1、正常文档 DRAFTED（先行成功不被回滚/阻断）、毒文档 FAILED + FAIL 轨迹、二次扫描 0 命中（FAILED 终态退出 RECEIVED 循环）。
 - [x] `Proof` **upload 门测试**：管道关闭时 `uploadApDocument` 被拒（更新 `testPipelineDisabledByDefault` 断言面，upload 由「成功」改为「被拒」）。Skill: `nop-testing`
@@ -98,14 +98,14 @@ Exit Criteria:
 
 > 完整仓库验证在此处：结束时运行一次（对齐 `docs/context/project-context.md` 真实命令；全量 `mvn test` 归 mission VERIFY 批亦可在结审计前完成）。
 
-- [ ] 范围内行为完成（P1-1/P1-2/P1-3 三缺陷修复且负路径测试同落——多面审计复审要求①）
-- [ ] 相关文档对齐（复核 `document-driven-ap-automation.md`/`ai-native-interface.md` 中「默认关闭零暴露」「处理轨迹落账」表述与实现一致；如本计划未改变其表述则不写）
-- [ ] 已运行验证（scoped mvn test + app-erp-all IT + 受影响 E2E + compliance checker——复审要求②③）
-- [ ] 无范围内项目降级为 deferred/follow-up
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：状态、阶段、门控和日志都一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计
-- [ ] 结束证据存在于文件中（多面审计复审要求④的回填由独立复审/审计闭环执行，执行者只备好证据）
+- [x] 范围内行为完成（P1-1/P1-2/P1-3 三缺陷修复且负路径测试同落——多面审计复审要求①）
+- [x] 相关文档对齐（复核 `document-driven-ap-automation.md`/`ai-native-interface.md` 中「默认关闭零暴露」「处理轨迹落账」表述与实现一致；如本计划未改变其表述则不写）（复核结论：修复使实现回归文档既有表述——upload 门恢复「默认关闭」语义、REQUIRES_NEW 落账实现 AP-4 轨迹落账语义，文档无需改动）
+- [x] 已运行验证（scoped mvn test + app-erp-all IT + 受影响 E2E + compliance checker——复审要求②③）（E2E/IT/checker 证据见 Phase 2 实测记录；闭包时复跑：fin-service 522/522 绿、app-erp-all 64/64 绿（1 skipped 预存）、checker 全 19 规则 actual ≤ baseline（R10=14 与基线一致））
+- [x] 无范围内项目降级为 deferred/follow-up
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证：状态、阶段、门控和日志都一致
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计（task `ses_fbbfe20fdffelqWFdju6hiwjPa`，verdict PASS，零阻塞项——见 Closure 证据）
+- [x] 结束证据存在于文件中（多面审计复审要求④的回填由独立复审/审计闭环执行，执行者只备好证据）
 
 ## Deferred But Adjudicated
 
@@ -113,12 +113,12 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: pending
+Status Note: closed（2026-08-28）——P1-1/P1-2/P1-3 全部落地且三组负路径 IT 绿；Phase 2 收口验证（scoped IT + E2E flux + checker R10 12→14 per-site 登记）完成；独立结束审计 PASS 后关闭。多面审计 `Audit Status` 翻转归 mission 审计闭环（三计划 2006-1/2/3 全 completed 后独立复审执行），本计划不翻转。
 
 Closure Audit Evidence:
 
-- Auditor / Agent: pending
-- Evidence: pending
+- Auditor / Agent: 独立子代理 fresh session（task `ses_fbbfe20fdffelqWFdju6hiwjPa`，2026-08-28）
+- Evidence: Verdict **PASS**，零 BLOCKING 项。活仓核verified：persistFailure REQUIRES_NEW+runInNewSession 按 id 重载（:482-490，落账异常仅 WARN :494-497）+ readFile 异常纳入 PARSE 落账（:524/:527/:537）；processOne REQUIRES_NEW+runInSession+显式 flush+try/catch WARN（:345-356，processPending :330-334 循环，batch.xml 保持 process scope）；requirePipelineEnabled 五入口（upload:126/process:155/confirmAndDraft:277/retry:303/processPending:324）；三测试存在（:225/:264/:206-215）且审计抽查复跑 8/8 绿；checker 复跑全 19 规则 actual ≤ baseline（R10=14 per-site 注记行号与活仓一致）；日志/基线/roadmap/设计文档一致性确认。2 项 NON-BLOCKING：①计划/日志中测试名缩写（已修正为全名 `testFailedStatusPersistedAfterSyncProcessFailure`）；②R2c 1538→1537 为后续 F2.3 已登记改善（`compliance-baseline.md:513`），非漂移。
 
 Follow-up:
 
