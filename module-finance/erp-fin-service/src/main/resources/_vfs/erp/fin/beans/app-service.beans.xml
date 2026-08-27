@@ -465,4 +465,23 @@
           class="app.erp.fin.service.statemachine.ErpFinEmployeeAdvanceApprovalStateMachine"/>
     <bean id="app.erp.fin.service.statemachine.ErpFinEmployeeAdvanceDocumentStateMachine"
           class="app.erp.fin.service.statemachine.ErpFinEmployeeAdvanceDocumentStateMachine"/>
+
+    <!-- E3.5 文档摄取管道（document-driven-ap-automation.md）：OCR 引擎 SPI（默认本地文本抽取，
+          tess4j 可插拔）+ 分类引擎 SPI（默认规则引擎，Phase 2 ML 注入预留）+ 管道 Processor
+          （ioc:collect-beans 收集引擎列表，对齐 IErpFinAcctDocProvider 注入范式）。 -->
+    <bean id="app.erp.fin.service.ocr.ErpFinTextExtractOcrEngine"
+          class="app.erp.fin.service.ocr.ErpFinTextExtractOcrEngine"/>
+    <bean id="app.erp.fin.service.classify.ErpFinApDocRuleClassifier"
+          class="app.erp.fin.service.classify.ErpFinApDocRuleClassifier"/>
+    <bean id="app.erp.fin.service.processor.ErpFinApDocumentPipelineProcessor"
+          class="app.erp.fin.service.processor.ErpFinApDocumentPipelineProcessor">
+        <property name="ocrEngines">
+            <ioc:collect-beans by-type="app.erp.fin.service.ocr.IErpFinOcrEngine"
+                               only-concrete-classes="true" ioc:ignore-depends="true"/>
+        </property>
+        <property name="classifiers">
+            <ioc:collect-beans by-type="app.erp.fin.service.classify.IErpFinApDocClassifier"
+                               only-concrete-classes="true" ioc:ignore-depends="true"/>
+        </property>
+    </bean>
 </beans>

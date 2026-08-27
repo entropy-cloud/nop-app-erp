@@ -102,6 +102,33 @@ CREATE TABLE erp_md_material_category(
   constraint PK_erp_md_material_category primary key (id)
 );
 
+CREATE TABLE erp_fin_ap_document(
+  id INT8 NOT NULL ,
+  org_id INT8  ,
+  file_name VARCHAR(200) NOT NULL ,
+  file_ext VARCHAR(20)  ,
+  mime_type VARCHAR(100)  ,
+  file_length INT8  ,
+  file_id VARCHAR(200)  ,
+  source_type VARCHAR(20) default 'UPLOAD'  NOT NULL ,
+  status VARCHAR(20) default 'RECEIVED'  NOT NULL ,
+  doc_type VARCHAR(20)  ,
+  partner_id INT8  ,
+  confidence NUMERIC(5,4)  ,
+  parse_result VARCHAR(4000)  ,
+  invoice_id INT8  ,
+  error_msg VARCHAR(1000)  ,
+  retry_count INT4 default 0   ,
+  del_version INT8 default 0  NOT NULL ,
+  version INT4 default 0  NOT NULL ,
+  created_by VARCHAR(50) NOT NULL ,
+  create_time TIMESTAMP NOT NULL ,
+  updated_by VARCHAR(50) NOT NULL ,
+  update_time TIMESTAMP NOT NULL ,
+  remark VARCHAR(1000)  ,
+  constraint PK_erp_fin_ap_document primary key (id)
+);
+
 CREATE TABLE erp_ast_asset(
   id INT8  ,
   code VARCHAR(50)  ,
@@ -321,6 +348,21 @@ CREATE TABLE erp_fin_intercompany_transfer_price(
   update_time TIMESTAMP NOT NULL ,
   remark VARCHAR(1000)  ,
   constraint PK_erp_fin_intercompany_transfer_price primary key (id)
+);
+
+CREATE TABLE erp_fin_ap_document_log(
+  id INT8 NOT NULL ,
+  document_id INT8 NOT NULL ,
+  step VARCHAR(20) NOT NULL ,
+  success BOOLEAN  ,
+  detail VARCHAR(1000)  ,
+  del_version INT8 default 0  NOT NULL ,
+  version INT4 default 0  NOT NULL ,
+  created_by VARCHAR(50) NOT NULL ,
+  create_time TIMESTAMP NOT NULL ,
+  updated_by VARCHAR(50) NOT NULL ,
+  update_time TIMESTAMP NOT NULL ,
+  constraint PK_erp_fin_ap_document_log primary key (id)
 );
 
 CREATE TABLE erp_fin_voucher_template_line(
@@ -1050,6 +1092,54 @@ CREATE TABLE erp_fin_budget_control_log(
                 
       COMMENT ON TABLE erp_md_material_category IS '物料分类';
                 
+      COMMENT ON TABLE erp_fin_ap_document IS 'AP 摄取文档';
+                
+      COMMENT ON COLUMN erp_fin_ap_document.id IS 'ID';
+                    
+      COMMENT ON COLUMN erp_fin_ap_document.org_id IS '业务组织';
+                    
+      COMMENT ON COLUMN erp_fin_ap_document.file_name IS '文件名';
+                    
+      COMMENT ON COLUMN erp_fin_ap_document.file_ext IS '文件扩展名';
+                    
+      COMMENT ON COLUMN erp_fin_ap_document.mime_type IS 'MIME 类型';
+                    
+      COMMENT ON COLUMN erp_fin_ap_document.file_length IS '文件大小(字节)';
+                    
+      COMMENT ON COLUMN erp_fin_ap_document.file_id IS '文件引用(nop-file)';
+                    
+      COMMENT ON COLUMN erp_fin_ap_document.source_type IS '来源';
+                    
+      COMMENT ON COLUMN erp_fin_ap_document.status IS '文档状态';
+                    
+      COMMENT ON COLUMN erp_fin_ap_document.doc_type IS '单据类型';
+                    
+      COMMENT ON COLUMN erp_fin_ap_document.partner_id IS '对应方(供应商)';
+                    
+      COMMENT ON COLUMN erp_fin_ap_document.confidence IS '分类置信度';
+                    
+      COMMENT ON COLUMN erp_fin_ap_document.parse_result IS '解析结果';
+                    
+      COMMENT ON COLUMN erp_fin_ap_document.invoice_id IS '草稿发票回链';
+                    
+      COMMENT ON COLUMN erp_fin_ap_document.error_msg IS '错误信息';
+                    
+      COMMENT ON COLUMN erp_fin_ap_document.retry_count IS '重试次数';
+                    
+      COMMENT ON COLUMN erp_fin_ap_document.del_version IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_fin_ap_document.version IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_fin_ap_document.created_by IS '创建人';
+                    
+      COMMENT ON COLUMN erp_fin_ap_document.create_time IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_fin_ap_document.updated_by IS '修改人';
+                    
+      COMMENT ON COLUMN erp_fin_ap_document.update_time IS '修改时间';
+                    
+      COMMENT ON COLUMN erp_fin_ap_document.remark IS '备注';
+                    
       COMMENT ON TABLE erp_ast_asset IS '固定资产';
                 
       COMMENT ON TABLE erp_fin_voucher_template IS '凭证模板';
@@ -1427,6 +1517,30 @@ CREATE TABLE erp_fin_budget_control_log(
       COMMENT ON COLUMN erp_fin_intercompany_transfer_price.update_time IS '修改时间';
                     
       COMMENT ON COLUMN erp_fin_intercompany_transfer_price.remark IS '备注';
+                    
+      COMMENT ON TABLE erp_fin_ap_document_log IS 'AP 文档处理日志';
+                
+      COMMENT ON COLUMN erp_fin_ap_document_log.id IS 'ID';
+                    
+      COMMENT ON COLUMN erp_fin_ap_document_log.document_id IS 'AP 文档';
+                    
+      COMMENT ON COLUMN erp_fin_ap_document_log.step IS '处理步骤';
+                    
+      COMMENT ON COLUMN erp_fin_ap_document_log.success IS '是否成功';
+                    
+      COMMENT ON COLUMN erp_fin_ap_document_log.detail IS '明细';
+                    
+      COMMENT ON COLUMN erp_fin_ap_document_log.del_version IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_fin_ap_document_log.version IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_fin_ap_document_log.created_by IS '创建人';
+                    
+      COMMENT ON COLUMN erp_fin_ap_document_log.create_time IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_fin_ap_document_log.updated_by IS '修改人';
+                    
+      COMMENT ON COLUMN erp_fin_ap_document_log.update_time IS '修改时间';
                     
       COMMENT ON TABLE erp_fin_voucher_template_line IS '凭证模板行';
                 

@@ -503,4 +503,42 @@ public interface ErpFinErrors {
     ErrorCode ERR_GL_DISTRIBUTION_PERCENT_SUM = ErrorCode.define("erp.err.fin.gl-distribution.percent-sum",
             "科目分摊规则 {ruleCode} 分摊比例合计 {percentSum} 不等于 100，拒绝过账",
             ARG_RULE_CODE, ARG_PERCENT_SUM);
+
+    // ---------- E3.5 文档摄取管道（document-driven-ap-automation.md） ----------
+
+    String ARG_DOCUMENT_ID = "documentId";
+    String ARG_FILE_NAME = "fileName";
+    String ARG_STATUS = "status";
+    String ARG_STEP = "step";
+
+    ErrorCode ERR_AP_DOC_PIPELINE_DISABLED = ErrorCode.define("erp.err.fin.ap-doc.pipeline-disabled",
+            "文档摄取管道未启用（erp-fin.ap-doc-pipeline-enabled=false）",
+            ARG_DOCUMENT_ID);
+
+    ErrorCode ERR_AP_DOC_NOT_FOUND = ErrorCode.define("erp.err.fin.ap-doc.not-found",
+            "AP 文档不存在：{documentId}",
+            ARG_DOCUMENT_ID);
+
+    ErrorCode ERR_AP_DOC_ILLEGAL_STATUS = ErrorCode.define("erp.err.fin.ap-doc.illegal-status",
+            "AP 文档 {documentId} 当前状态 {status} 不允许执行该操作",
+            ARG_DOCUMENT_ID, ARG_STATUS);
+
+    ErrorCode ERR_AP_DOC_FILE_TOO_LARGE = ErrorCode.define("erp.err.fin.ap-doc.file-too-large",
+            "上传文件 {fileName} 超过管道大小上限",
+            ARG_FILE_NAME);
+
+    ErrorCode ERR_AP_DOC_PARSE_FAILED = ErrorCode.define("erp.err.fin.ap-doc.parse-failed",
+            "AP 文档 {documentId} 解析失败：{step}",
+            ARG_DOCUMENT_ID, ARG_STEP);
+
+    ErrorCode ERR_AP_DOC_DRAFT_FAILED = ErrorCode.define("erp.err.fin.ap-doc.draft-failed",
+            "AP 文档 {documentId} 草稿发票生成失败：{step}",
+            ARG_DOCUMENT_ID, ARG_STEP);
+
+    /** E3.6 护栏：管道上传入口限流（自动化批量面）。 */
+    String ARG_RATE_LIMIT_RPS = "rateLimitRps";
+
+    ErrorCode ERR_AP_DOC_RATE_LIMITED = ErrorCode.define("erp.err.fin.ap-doc.rate-limited",
+            "AP 文档上传入口限流（{rateLimitRps} rps），请降低批量速率",
+            ARG_RATE_LIMIT_RPS);
 }

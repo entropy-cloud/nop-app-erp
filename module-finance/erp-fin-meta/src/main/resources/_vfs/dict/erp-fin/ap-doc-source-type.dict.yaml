@@ -1,0 +1,15 @@
+# __XGEN_FORCE_OVERRIDE__
+label: AP 文档来源
+locale: zh-CN
+valueType: string
+description: 
+options:
+
+  - label: 上传
+    value: UPLOAD
+    description: 
+  
+  - label: 邮件
+    value: EMAIL
+    description: 
+  

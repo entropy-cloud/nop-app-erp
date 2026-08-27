@@ -4,6 +4,10 @@ site:
       displayName: Accounting Period
     ErpFinAccountingPeriodStatus-main:
       displayName: Period Close Status
+    ErpFinApDocument-main:
+      displayName: AP Document
+    ErpFinApDocumentLog-main:
+      displayName: AP Document Log
     ErpFinArApItem-main:
       displayName: AR/AP Subledger
     ErpFinBadDebt-main:
@@ -44,6 +48,14 @@ site:
       displayName: Close Period
     FNPT:ErpFinAccountingPeriod:reverseClose:
       displayName: Reverse Close
+    FNPT:ErpFinApDocument:confirmAndDraftApDocument:
+      displayName: Confirm And Draft
+    FNPT:ErpFinApDocument:processApDocument:
+      displayName: Process AP Document
+    FNPT:ErpFinApDocument:retryApDocument:
+      displayName: Retry AP Document
+    FNPT:ErpFinApDocument:uploadApDocument:
+      displayName: Upload AP Document
     FNPT:ErpFinBadDebt:reverseApprove:
       displayName: Reverse Approve
     FNPT:ErpFinBadDebt:writeOff:
@@ -84,6 +96,8 @@ site:
       displayName: Finance
     expense-claim:
       displayName: Expense Claim
+    fin-apdoc:
+      displayName: AP Document Ingestion
     fin-arap:
       displayName: AR/AP
     fin-bank-recon:

@@ -70,6 +70,39 @@
                                   url="/erp/fin/pages/ErpFinAccountingPeriodStatus/main.page.yaml"/>
                     </children>
                 </resource>
+                <!-- E3.5 AP 文档摄取管道（document-driven-ap-automation.md：上传→解析→分类→草稿） -->
+                <resource id="fin-apdoc" displayName="AP 文档摄取" i18n-en:displayName="AP Document Ingestion"
+                          icon="file-import" resourceType="SUBM" orderNo="290" roles="财务员">
+                    <children>
+                        <resource id="ErpFinApDocument-main" displayName="AP 摄取文档"
+                                  i18n-en:displayName="AP Document" icon="file-import"
+                                  component="FLUX" resourceType="SUBM" orderNo="29010"
+                                  url="/erp/fin/pages/ErpFinApDocument/main.page.yaml">
+                            <children>
+                                <resource id="FNPT:ErpFinApDocument:uploadApDocument" displayName="上传 AP 文档" i18n-en:displayName="Upload AP Document"
+                                          resourceType="FNPT" orderNo="29011" roles="财务员">
+                                    <permissions>ErpFinApDocument:uploadApDocument</permissions>
+                                </resource>
+                                <resource id="FNPT:ErpFinApDocument:processApDocument" displayName="处理 AP 文档（解析→分类→草稿）" i18n-en:displayName="Process AP Document"
+                                          resourceType="FNPT" orderNo="29012" roles="财务员">
+                                    <permissions>ErpFinApDocument:processApDocument</permissions>
+                                </resource>
+                                <resource id="FNPT:ErpFinApDocument:confirmAndDraftApDocument" displayName="人工复核放行" i18n-en:displayName="Confirm And Draft"
+                                          resourceType="FNPT" orderNo="29013" roles="财务员">
+                                    <permissions>ErpFinApDocument:confirmAndDraftApDocument</permissions>
+                                </resource>
+                                <resource id="FNPT:ErpFinApDocument:retryApDocument" displayName="重试 AP 文档" i18n-en:displayName="Retry AP Document"
+                                          resourceType="FNPT" orderNo="29014" roles="财务员">
+                                    <permissions>ErpFinApDocument:retryApDocument</permissions>
+                                </resource>
+                            </children>
+                        </resource>
+                        <resource id="ErpFinApDocumentLog-main" displayName="AP 文档处理日志"
+                                  i18n-en:displayName="AP Document Log" icon="history"
+                                  component="FLUX" resourceType="SUBM" orderNo="29020"
+                                  url="/erp/fin/pages/ErpFinApDocumentLog/main.page.yaml"/>
+                    </children>
+                </resource>
                 <!-- 应收应付 -->
                 <resource id="fin-arap" displayName="应收应付" i18n-en:displayName="AR/AP"
                           icon="arrow-left-right" resourceType="SUBM" orderNo="300" roles="财务员">

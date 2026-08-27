@@ -102,6 +102,33 @@ CREATE TABLE erp_md_material_category(
   constraint PK_erp_md_material_category primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
+CREATE TABLE erp_fin_ap_document(
+  ID BIGINT NOT NULL    COMMENT 'ID',
+  ORG_ID BIGINT NULL    COMMENT '业务组织',
+  FILE_NAME VARCHAR(200) NOT NULL    COMMENT '文件名',
+  FILE_EXT VARCHAR(20) NULL    COMMENT '文件扩展名',
+  MIME_TYPE VARCHAR(100) NULL    COMMENT 'MIME 类型',
+  FILE_LENGTH BIGINT NULL    COMMENT '文件大小(字节)',
+  FILE_ID VARCHAR(200) NULL    COMMENT '文件引用(nop-file)',
+  SOURCE_TYPE VARCHAR(20) default 'UPLOAD'  NOT NULL    COMMENT '来源',
+  STATUS VARCHAR(20) default 'RECEIVED'  NOT NULL    COMMENT '文档状态',
+  DOC_TYPE VARCHAR(20) NULL    COMMENT '单据类型',
+  PARTNER_ID BIGINT NULL    COMMENT '对应方(供应商)',
+  CONFIDENCE DECIMAL(5,4) NULL    COMMENT '分类置信度',
+  PARSE_RESULT VARCHAR(4000) NULL    COMMENT '解析结果',
+  INVOICE_ID BIGINT NULL    COMMENT '草稿发票回链',
+  ERROR_MSG VARCHAR(1000) NULL    COMMENT '错误信息',
+  RETRY_COUNT INTEGER default 0  NULL    COMMENT '重试次数',
+  DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
+  VERSION INTEGER default 0  NOT NULL    COMMENT '数据版本',
+  CREATED_BY VARCHAR(50) NOT NULL    COMMENT '创建人',
+  CREATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '创建时间',
+  UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
+  UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
+  REMARK VARCHAR(1000) NULL    COMMENT '备注',
+  constraint PK_erp_fin_ap_document primary key (ID)
+)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
+
 CREATE TABLE erp_ast_asset(
   ID BIGINT NULL    COMMENT 'null',
   CODE VARCHAR(50) NULL    COMMENT 'null',
@@ -321,6 +348,21 @@ CREATE TABLE erp_fin_intercompany_transfer_price(
   UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
   REMARK VARCHAR(1000) NULL    COMMENT '备注',
   constraint PK_erp_fin_intercompany_transfer_price primary key (ID)
+)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
+
+CREATE TABLE erp_fin_ap_document_log(
+  ID BIGINT NOT NULL    COMMENT 'ID',
+  DOCUMENT_ID BIGINT NOT NULL    COMMENT 'AP 文档',
+  STEP VARCHAR(20) NOT NULL    COMMENT '处理步骤',
+  SUCCESS BOOLEAN NULL    COMMENT '是否成功',
+  DETAIL VARCHAR(1000) NULL    COMMENT '明细',
+  DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
+  VERSION INTEGER default 0  NOT NULL    COMMENT '数据版本',
+  CREATED_BY VARCHAR(50) NOT NULL    COMMENT '创建人',
+  CREATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '创建时间',
+  UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
+  UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
+  constraint PK_erp_fin_ap_document_log primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
 CREATE TABLE erp_fin_voucher_template_line(
@@ -1050,6 +1092,8 @@ CREATE TABLE erp_fin_budget_control_log(
                 
    ALTER TABLE erp_md_material_category COMMENT '物料分类';
                 
+   ALTER TABLE erp_fin_ap_document COMMENT 'AP 摄取文档';
+                
    ALTER TABLE erp_ast_asset COMMENT '固定资产';
                 
    ALTER TABLE erp_fin_voucher_template COMMENT '凭证模板';
@@ -1067,6 +1111,8 @@ CREATE TABLE erp_fin_budget_control_log(
    ALTER TABLE erp_fin_gl_mapping_rule COMMENT '科目映射规则';
                 
    ALTER TABLE erp_fin_intercompany_transfer_price COMMENT '跨法人转移定价规则';
+                
+   ALTER TABLE erp_fin_ap_document_log COMMENT 'AP 文档处理日志';
                 
    ALTER TABLE erp_fin_voucher_template_line COMMENT '凭证模板行';
                 

@@ -1,0 +1,13 @@
+jobName: erp-fin-ap-doc-processing
+enabled: "@cfg:nop.job.erp-fin-ap-doc-processing.enabled|false"
+displayName: AP Document Ingestion Pipeline
+description: E3.5 文档摄取管道异步消费（RECEIVED 文档 → 解析 → 分类 → 草稿）；nop-batch 调用 ErpFinApDocumentPipelineProcessor.processPending；管道总开关 erp-fin.ap-doc-pipeline-enabled 默认关闭
+jobGroup: erp-fin
+trigger:
+  cronExpr: "@cfg:nop.job.erp-fin-ap-doc-processing.cron-expr|0 */5 * * * ?"
+invoker:
+  bean: nopBatchTaskRunner
+  method: executeAsync
+params:
+  taskPath: /nop/batch-task/fin/ap-document.batch.xml
+  params: {}

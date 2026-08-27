@@ -2,6 +2,8 @@ entity:
   label:
     ErpFinAccountingPeriod: Accounting Period
     ErpFinAccountingPeriodStatus: Period Close Status
+    ErpFinApDocument: AP Document
+    ErpFinApDocumentLog: AP Document Log
     ErpFinArApItem: AR/AP Subledger
     ErpFinBadDebt: Bad Debt
     ErpFinBankReconciliation: Bank Reconciliation
@@ -91,6 +93,49 @@ prop:
       period: Period
       acctSchema: Acct Schema
       acctSchema.name: Acct Schema
+    ErpFinApDocument:
+      id: ID
+      orgId: Organization
+      fileName: File Name
+      fileExt: File Ext
+      mimeType: MIME Type
+      fileLength: File Length
+      fileId: File
+      sourceType: Source Type
+      sourceType_label: null
+      status: Status
+      status_label: null
+      docType: Doc Type
+      docType_label: null
+      partnerId: Partner
+      confidence: Confidence
+      parseResult: Parse Result
+      invoiceId: Draft Invoice
+      errorMsg: Error Msg
+      retryCount: Retry Count
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      remark: Remark
+      parseResultComponent: null
+      fileIdComponentFileStatus: null
+    ErpFinApDocumentLog:
+      id: ID
+      documentId: AP Document
+      step: Step
+      step_label: null
+      success: Success
+      detail: Detail
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      document: Document
     ErpFinArApItem:
       id: ID
       code: Code
@@ -1209,6 +1254,10 @@ dict:
     erp-fin/intercompany-match-status: Intercompany Match Status
     erp-fin/elimination-type: Elimination Type
     erp-fin/elimination-status: Elimination Status
+    erp-fin/ap-doc-source-type: AP Doc Source Type
+    erp-fin/ap-doc-status: AP Doc Status
+    erp-fin/ap-doc-type: AP Doc Type
+    erp-fin/ap-doc-log-step: AP Doc Log Step
 dict.option.label:
   erp-fin/voucher-type:
     RECEIPT: Receive
@@ -1474,3 +1523,27 @@ dict.option.label:
     CANDIDATE: Candidate
     DRAFT_VOUCHER: Draft Voucher
     POSTED: Posted
+  erp-fin/ap-doc-source-type:
+    UPLOAD: Upload
+    EMAIL: Email（预留）
+  erp-fin/ap-doc-status:
+    RECEIVED: Received
+    PARSED: Parsed
+    CLASSIFIED: Classified
+    DRAFTED: Drafted
+    MANUAL_REVIEW: Manual Review
+    FAILED: Failed
+    ARCHIVED: Archived
+  erp-fin/ap-doc-type:
+    VAT_INVOICE: VAT Invoice
+    GENERAL_INVOICE: General Invoice
+    RECEIPT: Receipt
+    OTHER: Other
+  erp-fin/ap-doc-log-step:
+    RECEIVE: Receive
+    PARSE: Parse
+    CLASSIFY: Classify
+    DRAFT: Draft
+    MANUAL_REVIEW: Manual Review
+    RETRY: Retry
+    FAIL: Fail

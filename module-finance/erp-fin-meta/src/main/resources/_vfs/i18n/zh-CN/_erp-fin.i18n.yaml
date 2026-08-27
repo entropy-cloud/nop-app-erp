@@ -2,6 +2,8 @@ entity:
   label:
     ErpFinAccountingPeriod: 会计期间
     ErpFinAccountingPeriodStatus: 期间结账状态
+    ErpFinApDocument: AP 摄取文档
+    ErpFinApDocumentLog: AP 文档处理日志
     ErpFinArApItem: 应收应付明细账
     ErpFinBadDebt: 坏账单
     ErpFinBankReconciliation: 银行对账(余额调节表)
@@ -88,6 +90,49 @@ prop:
       postedVouchers: 已过账凭证数
       totalVouchers: 凭证总数
       unpostedVouchers: 未过账凭证数
+      updateTime: 修改时间
+      updatedBy: 修改人
+      version: 数据版本
+    ErpFinApDocument:
+      confidence: 分类置信度
+      createTime: 创建时间
+      createdBy: 创建人
+      delVersion: 逻辑删除版本
+      docType: 单据类型
+      docType_label: 单据类型
+      errorMsg: 错误信息
+      fileExt: 文件扩展名
+      fileId: 文件引用(nop-file)
+      fileIdComponentFileStatus: null
+      fileLength: 文件大小(字节)
+      fileName: 文件名
+      id: ID
+      invoiceId: 草稿发票回链
+      mimeType: MIME 类型
+      orgId: 业务组织
+      parseResult: 解析结果
+      parseResultComponent: null
+      partnerId: 对应方(供应商)
+      remark: 备注
+      retryCount: 重试次数
+      sourceType: 来源
+      sourceType_label: 来源
+      status: 文档状态
+      status_label: 文档状态
+      updateTime: 修改时间
+      updatedBy: 修改人
+      version: 数据版本
+    ErpFinApDocumentLog:
+      createTime: 创建时间
+      createdBy: 创建人
+      delVersion: 逻辑删除版本
+      detail: 明细
+      document: null
+      documentId: AP 文档
+      id: ID
+      step: 处理步骤
+      step_label: 处理步骤
+      success: 是否成功
       updateTime: 修改时间
       updatedBy: 修改人
       version: 数据版本

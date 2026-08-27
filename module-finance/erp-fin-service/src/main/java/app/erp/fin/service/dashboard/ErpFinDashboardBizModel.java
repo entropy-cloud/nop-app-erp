@@ -9,6 +9,7 @@ import app.erp.md.dao.AcctSchemaResolver;
 import app.erp.md.dao.entity.ErpMdSubject;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizQuery;
+import io.nop.api.core.annotations.core.Description;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.annotations.core.Optional;
 import io.nop.api.core.beans.query.QueryBean;
@@ -53,6 +54,7 @@ public class ErpFinDashboardBizModel {
     @Inject
     IOrmTemplate ormTemplate;
 
+    @Description("财务看板 KPI（本期收入/支出/净利润、银行存款、应收/应付余额）")
     @BizQuery
     public Map<String, Object> getDashboardKpi(@Optional @Name("periodId") String periodId,
                                                 IServiceContext context) {

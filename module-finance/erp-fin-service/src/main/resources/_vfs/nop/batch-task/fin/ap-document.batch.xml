@@ -1,0 +1,26 @@
+<batch taskName="fin.ap-document"
+       batchSize="5"
+       transactionScope="process"
+       saveState="true"
+       x:schema="/nop/schema/task/batch.xdef"
+       xmlns:x="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:c="c">
+
+    <!-- E3.5 文档摄取管道异步消费（document-driven-ap-automation.md §1「管道即队列」+
+         AP-4：复用 nop-job→nop-batch 范式，不新建队列基建）。loader 返回单哨兵行，processor 逐个
+         处理 RECEIVED 文档；config-gate 由 job yaml 层控制（默认关闭）。 -->
+    <loader>
+        <source><![CDATA[
+            return [{}];
+        ]]></source>
+    </loader>
+
+    <processor name="process">
+        <source><![CDATA[
+            const biz = inject('IErpFinApDocumentBiz');
+            const processor = inject('app.erp.fin.service.processor.ErpFinApDocumentPipelineProcessor');
+            const n = processor.processPending(batchChunkCtx.serviceContext);
+            return { processed: n };
+        ]]></source>
+    </processor>
+</batch>

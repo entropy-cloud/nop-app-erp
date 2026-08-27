@@ -1,0 +1,35 @@
+# __XGEN_FORCE_OVERRIDE__
+label: AP 文档处理步骤
+locale: zh-CN
+valueType: string
+description: 
+options:
+
+  - label: 接收
+    value: RECEIVE
+    description: 
+  
+  - label: 解析
+    value: PARSE
+    description: 
+  
+  - label: 分类
+    value: CLASSIFY
+    description: 
+  
+  - label: 草稿生成
+    value: DRAFT
+    description: 
+  
+  - label: 人工复核
+    value: MANUAL_REVIEW
+    description: 
+  
+  - label: 重试
+    value: RETRY
+    description: 
+  
+  - label: 失败
+    value: FAIL
+    description: 
+  

@@ -54,6 +54,8 @@ start_server() {
     -Derp-mfg.subcontract-release-enabled=true \
     -Derp-fin.bad-debt-allowance-subject-code=1231 \
     -Derp-fin.bad-debt-expense-subject-code=6701 \
+    -Derp-fin.ap-doc-pipeline-enabled=true \
+    -Dnop.file.store-dir=./nop-file-store \
     -Derp-fin.ar-subject-code=1122 \
     -Derp-fin.ap-subject-code=2202 \
     -Derp-fin.exchange-gain-loss-subject-code=6603 \

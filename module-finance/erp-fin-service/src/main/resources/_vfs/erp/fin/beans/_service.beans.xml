@@ -5,6 +5,13 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
 
+    <bean id="app.erp.fin.service.entity.ErpFinApDocumentBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpFinApDocument" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.fin.biz.IErpFinApDocumentBiz" ioc:force-lazy-property="true" lazy-init="true" primary="true">
+        <property name="bizObjName" value="ErpFinApDocument"/>
+    </bean>
+
     <bean id="app.erp.fin.service.entity.ErpFinVoucherTemplateBizModel" ioc:type="@bean:id" ioc:default="true"/>
 
     <bean id="biz_ErpFinVoucherTemplate" class="io.nop.biz.proxy.BizProxyFactoryBean"
@@ -67,6 +74,14 @@
           ioc:type="app.erp.fin.biz.IErpFinIntercompanyTransferPriceBiz" ioc:force-lazy-property="true" lazy-init="true"
           primary="true">
         <property name="bizObjName" value="ErpFinIntercompanyTransferPrice"/>
+    </bean>
+
+    <bean id="app.erp.fin.service.entity.ErpFinApDocumentLogBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpFinApDocumentLog" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.fin.biz.IErpFinApDocumentLogBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpFinApDocumentLog"/>
     </bean>
 
     <bean id="app.erp.fin.service.entity.ErpFinVoucherTemplateLineBizModel" ioc:type="@bean:id" ioc:default="true"/>

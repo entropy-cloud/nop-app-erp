@@ -1138,4 +1138,104 @@ public interface _ErpFinDaoConstants {
      */
     String ELIMINATION_STATUS_POSTED = "POSTED";
                     
+    /**
+     * AP 文档来源: 上传 
+     */
+    String AP_DOC_SOURCE_TYPE_UPLOAD = "UPLOAD";
+                    
+    /**
+     * AP 文档来源: 邮件 
+     */
+    String AP_DOC_SOURCE_TYPE_EMAIL = "EMAIL";
+                    
+    /**
+     * AP 文档状态: 已接收 
+     */
+    String AP_DOC_STATUS_RECEIVED = "RECEIVED";
+                    
+    /**
+     * AP 文档状态: 已解析 
+     */
+    String AP_DOC_STATUS_PARSED = "PARSED";
+                    
+    /**
+     * AP 文档状态: 已分类 
+     */
+    String AP_DOC_STATUS_CLASSIFIED = "CLASSIFIED";
+                    
+    /**
+     * AP 文档状态: 已生成草稿 
+     */
+    String AP_DOC_STATUS_DRAFTED = "DRAFTED";
+                    
+    /**
+     * AP 文档状态: 待人工复核 
+     */
+    String AP_DOC_STATUS_MANUAL_REVIEW = "MANUAL_REVIEW";
+                    
+    /**
+     * AP 文档状态: 处理失败 
+     */
+    String AP_DOC_STATUS_FAILED = "FAILED";
+                    
+    /**
+     * AP 文档状态: 已归档 
+     */
+    String AP_DOC_STATUS_ARCHIVED = "ARCHIVED";
+                    
+    /**
+     * AP 文档类型: 增值税发票 
+     */
+    String AP_DOC_TYPE_VAT_INVOICE = "VAT_INVOICE";
+                    
+    /**
+     * AP 文档类型: 普通发票 
+     */
+    String AP_DOC_TYPE_GENERAL_INVOICE = "GENERAL_INVOICE";
+                    
+    /**
+     * AP 文档类型: 收据 
+     */
+    String AP_DOC_TYPE_RECEIPT = "RECEIPT";
+                    
+    /**
+     * AP 文档类型: 其他 
+     */
+    String AP_DOC_TYPE_OTHER = "OTHER";
+                    
+    /**
+     * AP 文档处理步骤: 接收 
+     */
+    String AP_DOC_LOG_STEP_RECEIVE = "RECEIVE";
+                    
+    /**
+     * AP 文档处理步骤: 解析 
+     */
+    String AP_DOC_LOG_STEP_PARSE = "PARSE";
+                    
+    /**
+     * AP 文档处理步骤: 分类 
+     */
+    String AP_DOC_LOG_STEP_CLASSIFY = "CLASSIFY";
+                    
+    /**
+     * AP 文档处理步骤: 草稿生成 
+     */
+    String AP_DOC_LOG_STEP_DRAFT = "DRAFT";
+                    
+    /**
+     * AP 文档处理步骤: 人工复核 
+     */
+    String AP_DOC_LOG_STEP_MANUAL_REVIEW = "MANUAL_REVIEW";
+                    
+    /**
+     * AP 文档处理步骤: 重试 
+     */
+    String AP_DOC_LOG_STEP_RETRY = "RETRY";
+                    
+    /**
+     * AP 文档处理步骤: 失败 
+     */
+    String AP_DOC_LOG_STEP_FAIL = "FAIL";
+                    
 }

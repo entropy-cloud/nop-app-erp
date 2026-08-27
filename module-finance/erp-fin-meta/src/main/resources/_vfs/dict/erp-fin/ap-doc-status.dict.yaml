@@ -1,0 +1,35 @@
+# __XGEN_FORCE_OVERRIDE__
+label: AP 文档状态
+locale: zh-CN
+valueType: string
+description: 
+options:
+
+  - label: 已接收
+    value: RECEIVED
+    description: 
+  
+  - label: 已解析
+    value: PARSED
+    description: 
+  
+  - label: 已分类
+    value: CLASSIFIED
+    description: 
+  
+  - label: 已生成草稿
+    value: DRAFTED
+    description: 
+  
+  - label: 待人工复核
+    value: MANUAL_REVIEW
+    description: 
+  
+  - label: 处理失败
+    value: FAILED
+    description: 
+  
+  - label: 已归档
+    value: ARCHIVED
+    description: 
+  

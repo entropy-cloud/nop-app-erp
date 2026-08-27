@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<meta x:schema="/nop/schema/xmeta.xdef" xmlns:x="/nop/schema/xdsl.xdef" xmlns:i18n-en="i18n-en" xmlns:ext="ext"
+      xmlns:xpl="xpl" ext:model="orm" ext:icon="file-import" ext:web-renderer="flux" xmlns:c="c" xmlns:graphql="graphql"
+      xmlns:meta-gen="meta-gen" xmlns:biz="biz" displayName="AP 摄取文档" i18n-en:displayName="AP Document"
+      tagSet="gid,erp.finance" xmlns:ui="ui" xmlns:orm="orm">
+
+    <entityName>app.erp.fin.dao.entity.ErpFinApDocument</entityName>
+
+    <primaryKey>id</primaryKey>
+
+    <x:gen-extends>
+        <meta-gen:DefaultMetaGenExtends xpl:lib="/nop/core/xlib/meta-gen.xlib"/>
+    </x:gen-extends>
+
+    <x:post-extends>
+        <meta-gen:DefaultMetaPostExtends xpl:lib="/nop/core/xlib/meta-gen.xlib"/>
+    </x:post-extends>
+
+    <keys/>
+
+    <props>
+        <prop name="id" displayName="ID" propId="1" i18n-en:displayName="ID" tagSet="seq-default" mandatory="true"
+              queryable="true" sortable="true" insertable="true" updatable="false">
+            <schema type="java.lang.String"/>
+        </prop>
+        <prop name="orgId" displayName="业务组织" propId="2" i18n-en:displayName="Organization" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.String"/>
+        </prop>
+        <prop name="fileName" displayName="文件名" propId="3" i18n-en:displayName="File Name" mandatory="true"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema domain="code" type="java.lang.String" precision="200"/>
+        </prop>
+        <prop name="fileExt" displayName="文件扩展名" propId="4" i18n-en:displayName="File Ext" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.String" precision="20"/>
+        </prop>
+        <prop name="mimeType" displayName="MIME 类型" propId="5" i18n-en:displayName="MIME Type" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.String" precision="100"/>
+        </prop>
+        <prop name="fileLength" displayName="文件大小(字节)" propId="6" i18n-en:displayName="File Length" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="fileId" displayName="文件引用(nop-file)" propId="7" i18n-en:displayName="File" tagSet="var"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema stdDomain="file" type="java.lang.String" precision="200"/>
+        </prop>
+        <prop name="sourceType" displayName="来源" propId="8" i18n-en:displayName="Source Type" mandatory="true"
+              queryable="true" sortable="true" insertable="true" updatable="true" defaultValue="UPLOAD">
+            <schema type="java.lang.String" precision="20" dict="erp-fin/ap-doc-source-type"/>
+        </prop>
+        <prop name="status" displayName="文档状态" propId="9" i18n-en:displayName="Status" mandatory="true" queryable="true"
+              sortable="true" insertable="true" updatable="true" defaultValue="RECEIVED">
+            <schema type="java.lang.String" precision="20" dict="erp-fin/ap-doc-status"/>
+        </prop>
+        <prop name="docType" displayName="单据类型" propId="10" i18n-en:displayName="Doc Type" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.String" precision="20" dict="erp-fin/ap-doc-type"/>
+        </prop>
+        <prop name="partnerId" displayName="对应方(供应商)" propId="11" i18n-en:displayName="Partner" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.String"/>
+        </prop>
+        <prop name="confidence" displayName="分类置信度" propId="12" i18n-en:displayName="Confidence" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema type="java.math.BigDecimal" precision="5" scale="4"/>
+        </prop>
+        <prop name="parseResult" displayName="解析结果" propId="13" i18n-en:displayName="Parse Result" queryable="true"
+              sortable="true" insertable="true" updatable="true" graphql:jsonComponentProp="parseResultComponent">
+            <schema stdDomain="json" domain="json-4000" type="java.lang.String" precision="4000"/>
+        </prop>
+        <prop name="invoiceId" displayName="草稿发票回链" propId="14" i18n-en:displayName="Draft Invoice" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.String"/>
+        </prop>
+        <prop name="errorMsg" displayName="错误信息" propId="15" i18n-en:displayName="Error Msg" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.String" precision="1000"/>
+        </prop>
+        <prop name="retryCount" displayName="重试次数" propId="16" i18n-en:displayName="Retry Count" queryable="true"
+              sortable="true" insertable="true" updatable="true" defaultValue="0">
+            <schema type="java.lang.Integer"/>
+        </prop>
+        <prop name="delVersion" displayName="逻辑删除版本" propId="17" i18n-en:displayName="Del Flag" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false" ui:show="R" defaultValue="0">
+            <schema domain="delVersion" type="java.lang.Long"/>
+        </prop>
+        <prop name="version" displayName="数据版本" propId="18" i18n-en:displayName="Version" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false" internal="true" defaultValue="0">
+            <schema domain="version" type="java.lang.Integer"/>
+        </prop>
+        <prop name="createdBy" displayName="创建人" propId="19" i18n-en:displayName="Created By" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false">
+            <schema domain="createdBy" type="java.lang.String" precision="50"/>
+        </prop>
+        <prop name="createTime" displayName="创建时间" propId="20" i18n-en:displayName="Create Time" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false">
+            <schema domain="createTime" type="java.sql.Timestamp"/>
+        </prop>
+        <prop name="updatedBy" displayName="修改人" propId="21" i18n-en:displayName="Updated By" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false">
+            <schema domain="updatedBy" type="java.lang.String" precision="50"/>
+        </prop>
+        <prop name="updateTime" displayName="修改时间" propId="22" i18n-en:displayName="Update Time" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false">
+            <schema domain="updateTime" type="java.sql.Timestamp"/>
+        </prop>
+        <prop name="remark" displayName="备注" propId="23" i18n-en:displayName="Remark" queryable="true" sortable="true"
+              insertable="true" updatable="true">
+            <schema domain="remark" type="java.lang.String" precision="1000"/>
+        </prop>
+        <prop name="parseResultComponent" tagSet="json,pub,edit" ext:kind="component" internal="true" insertable="true"
+              updatable="true" lazy="true">
+            <schema type="io.nop.orm.component.JsonOrmComponent"/>
+        </prop>
+        <prop name="fileIdComponentFileStatus" mapToProp="fileIdComponent.fileStatus" internal="true" lazy="true">
+            <schema type="io.nop.api.core.beans.file.FileStatusBean"/>
+        </prop>
+    </props>
+</meta>
