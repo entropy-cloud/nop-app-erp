@@ -62,7 +62,9 @@ public class ErpFinBudgetScenarioCarryForwardProcessor {
         Map<String, BigDecimal> aggregation = aggregateSourceAmounts(source);
         BigDecimal sourceBudget = aggregation.getOrDefault("budget", BigDecimal.ZERO);
         BigDecimal sourceActual = aggregation.getOrDefault("actual", BigDecimal.ZERO);
-        BigDecimal sourceRemaining = sourceBudget.subtract(sourceActual);
+        // F2.3（P1-CK-fin3-002）：三量口径对齐 owner doc 与控制引擎（budget − actual − commitment）
+        BigDecimal sourceCommitment = aggregateCommitment(source);
+        BigDecimal sourceRemaining = sourceBudget.subtract(sourceActual).subtract(sourceCommitment);
 
         BigDecimal carriedAmount = computeCarriedAmount(actualRule, sourceBudget, sourceActual, sourceRemaining);
 
@@ -274,92 +276,45 @@ public class ErpFinBudgetScenarioCarryForwardProcessor {
                 maxLineNo = l.getLineNo();
             }
         }
-        ErpFinBudgetLine cl = lineDao.newEntity();
-        cl.setScenarioId(target.getId());
-        cl.setLineNo(maxLineNo + 1);
-        cl.setOrgId(target.getOrgId());
-        cl.setAcctSchemaId(target.getAcctSchemaId());
-        cl.setSubjectId(source.getId());
-        cl.setSubjectCode("CARRY-FORWARD-" + source.getCode());
-        cl.setBudgetAmountSource(carried);
-        cl.setBudgetAmountFunctional(carried);
-        cl.setCurrencyId(target.getCurrencyId());
-        cl.setExchangeRate(BigDecimal.ONE);
-        cl.setRemark("Carry-forward from " + source.getCode() + " (rule=" + rule + ")");
-        lineDao.saveEntity(cl);
+        // F2.3（P1-CK-fin3-001）：结转行按源方案明细行科目维度写入——修复前单行汇总且
+        // subjectId 误写 source.getId()（方案实体 id 而非科目 id），结转额度永不参与预算控制/报表
+        List<ErpFinBudgetLine> sourceLines = facade.loadBudgetLines(source.getId());
+        int lineNo = maxLineNo;
+        for (ErpFinBudgetLine sl : sourceLines) {
+            if (sl.getSubjectId() == null) {
+                continue;
+            }
+            BigDecimal lineShare = computeLineShare(sl, sourceLines, carried);
+            if (lineShare.signum() <= 0) {
+                continue;
+            }
+            ErpFinBudgetLine cl = lineDao.newEntity();
+            cl.setScenarioId(target.getId());
+            cl.setLineNo(++lineNo);
+            cl.setOrgId(target.getOrgId());
+            cl.setAcctSchemaId(target.getAcctSchemaId());
+            cl.setSubjectId(sl.getSubjectId());
+            cl.setSubjectCode(sl.getSubjectCode());
+            cl.setPeriodId(sl.getPeriodId());
+            cl.setCostCenterId(sl.getCostCenterId());
+            cl.setBudgetAmountSource(lineShare);
+            cl.setBudgetAmountFunctional(lineShare);
+            cl.setCurrencyId(target.getCurrencyId());
+            cl.setExchangeRate(BigDecimal.ONE);
+            cl.setRemark("Carry-forward from " + source.getCode() + " (rule=" + rule + ")");
+            lineDao.saveEntity(cl);
+        }
     }
 
-    /** 结转生成 BUDGET 凭证写入目标方案（简化：单边凭证，记录结转金额；实际部署可扩展为完整 Dr/Cr 分录）。 */
+    /**
+     * F2.3（P1-CK-fin3-001）：结转凭证段移除——原实现写单张 Dr=Cr 同科目凭证（净额恒 0，无信息量），
+     * 且凭证行 subjectId 误用方案实体 id。结转额度经 appendCarryForwardLines 按科目维度写入
+     * budget lines（POSTING_TYPE_BUDGET 通道由 getBudgetVsActual/aggregateAmount 聚合），
+     * 预算控制/报表面已由行修复完整覆盖。凭证载体归 owner doc 后续裁决（若需审计轨迹再设计真实 Dr/Cr 对）。
+     */
     protected void writeCarryForwardVoucher(ErpFinBudgetScenario source, ErpFinBudgetScenario target,
                                             BigDecimal carriedAmount) {
-        if (carriedAmount == null || carriedAmount.signum() == 0) {
-            return;
-        }
-        String periodId = resolveFirstPeriodId(source);
-        IEntityDao<ErpFinVoucher> vDao = daoProvider.daoFor(ErpFinVoucher.class);
-        IEntityDao<ErpFinVoucherLine> lDao = daoProvider.daoFor(ErpFinVoucherLine.class);
-        IEntityDao<ErpFinVoucherBillR> billRDao = daoProvider.daoFor(ErpFinVoucherBillR.class);
-
-        ErpFinVoucher v = vDao.newEntity();
-        v.setCode("CARRY-FORWARD-" + source.getCode() + "-" + target.getCode() + "-"
-                + StringHelper.generateUUID().substring(0, 8));
-        v.setVoucherType("TRANSFER");
-        v.setPostingType(ErpFinConstants.POSTING_TYPE_BUDGET);
-        v.setVoucherDate(CoreMetrics.today());
-        v.setOrgId(target.getOrgId());
-        v.setAcctSchemaId(target.getAcctSchemaId());
-        v.setPeriodId(periodId);
-        v.setTotalDebit(carriedAmount);
-        v.setTotalCredit(carriedAmount);
-        v.setIsReversed(false);
-        v.setDocStatus(ErpFinConstants.VOUCHER_STATUS_POSTED);
-        v.setPostedAt(CoreMetrics.currentTimestamp());
-        vDao.saveEntity(v);
-
-        ErpFinVoucherLine d = lDao.newEntity();
-        d.setVoucherId(v.getId());
-        d.setLineNo(1);
-        d.setSubjectId(source.getId());
-        d.setSubjectCode("CARRY-FORWARD-" + source.getCode());
-        d.setSubjectName("预算结转");
-        d.setDcDirection(ErpFinConstants.DC_DEBIT);
-        d.setDebitAmount(carriedAmount);
-        d.setCreditAmount(BigDecimal.ZERO);
-        d.setCurrencyId(target.getCurrencyId());
-        d.setExchangeRate(BigDecimal.ONE);
-        d.setAmountSource(carriedAmount);
-        d.setAmountFunctional(carriedAmount);
-        d.setAcctSchemaId(target.getAcctSchemaId());
-        d.setOrgId(target.getOrgId());
-        d.setBusinessType("BUDGET_SCENARIO_CARRY_FORWARD");
-        d.setMemo("预算结转：" + source.getCode() + " → " + target.getCode());
-        lDao.saveEntity(d);
-
-        ErpFinVoucherLine c = lDao.newEntity();
-        c.setVoucherId(v.getId());
-        c.setLineNo(2);
-        c.setSubjectId(source.getId());
-        c.setSubjectCode("CARRY-FORWARD-" + source.getCode());
-        c.setSubjectName("预算结转");
-        c.setDcDirection(ErpFinConstants.DC_CREDIT);
-        c.setDebitAmount(BigDecimal.ZERO);
-        c.setCreditAmount(carriedAmount);
-        c.setCurrencyId(target.getCurrencyId());
-        c.setExchangeRate(BigDecimal.ONE);
-        c.setAmountSource(carriedAmount);
-        c.setAmountFunctional(carriedAmount);
-        c.setAcctSchemaId(target.getAcctSchemaId());
-        c.setOrgId(target.getOrgId());
-        c.setBusinessType("BUDGET_SCENARIO_CARRY_FORWARD");
-        c.setMemo("预算结转：" + source.getCode() + " → " + target.getCode());
-        lDao.saveEntity(c);
-
-        ErpFinVoucherBillR billR = billRDao.newEntity();
-        billR.setVoucherId(v.getId());
-        billR.setBillType("BUDGET_SCENARIO_CARRY_FORWARD");
-        billR.setBillCode("CARRY-FORWARD-" + source.getCode() + "-" + target.getCode());
-        billR.setBusinessType("BUDGET_SCENARIO_CARRY_FORWARD");
-        billRDao.saveEntity(billR);
+        // F2.3: 移除（见 javadoc）——保留方法签名供下游覆盖
     }
 
     /** 取源方案第一个 BudgetLine 的 periodId（结转凭证期间归属）。 */
@@ -389,5 +344,53 @@ public class ErpFinBudgetScenarioCarryForwardProcessor {
         log.setCarriedAt(CoreMetrics.currentTimestamp());
         log.setCarriedBy(facade.resolveUserId(context));
         dao.saveEntity(log);
+    }
+
+    /** F2.3（P1-CK-fin3-002）：聚合源方案的承付款（COMMITMENT 通道凭证行，对齐 getBudgetVsActual 三通道口径）。 */
+    private BigDecimal aggregateCommitment(ErpFinBudgetScenario source) {
+        List<ErpFinBudgetLine> lines = facade.loadBudgetLines(source.getId());
+        BigDecimal commitment = BigDecimal.ZERO;
+        for (ErpFinBudgetLine l : lines) {
+            if (l.getPeriodId() == null || l.getSubjectId() == null) {
+                continue;
+            }
+            QueryBean vq = new QueryBean();
+            vq.addFilter(eq("periodId", l.getPeriodId()));
+            vq.addFilter(eq("docStatus", ErpFinConstants.VOUCHER_STATUS_POSTED));
+            vq.addFilter(eq("isReversed", Boolean.FALSE));
+            vq.addFilter(eq("postingType", ErpFinConstants.POSTING_TYPE_COMMITMENT));
+            List<ErpFinVoucher> vouchers = daoProvider.daoFor(ErpFinVoucher.class).findAllByQuery(vq);
+            if (vouchers.isEmpty()) {
+                continue;
+            }
+            List<String> voucherIds = new ArrayList<>();
+            for (ErpFinVoucher v : vouchers) {
+                voucherIds.add(v.getId());
+            }
+            QueryBean lq = new QueryBean();
+            lq.addFilter(io.nop.api.core.beans.FilterBeans.in("voucherId", voucherIds));
+            lq.addFilter(eq("subjectId", l.getSubjectId()));
+            if (l.getCostCenterId() != null) {
+                lq.addFilter(eq("costCenterId", l.getCostCenterId()));
+            }
+            for (ErpFinVoucherLine vl : daoProvider.daoFor(ErpFinVoucherLine.class).findAllByQuery(lq)) {
+                commitment = commitment.add(vl.getAmountFunctional() != null
+                        ? vl.getAmountFunctional() : BigDecimal.ZERO);
+            }
+        }
+        return commitment;
+    }
+
+    /** F2.3（P1-CK-fin3-001）：按源行 budgetAmount 占比分摊结转额度。 */
+    private BigDecimal computeLineShare(ErpFinBudgetLine sl, List<ErpFinBudgetLine> sourceLines, BigDecimal carried) {
+        BigDecimal total = BigDecimal.ZERO;
+        for (ErpFinBudgetLine l : sourceLines) {
+            total = total.add(l.getBudgetAmountFunctional() != null ? l.getBudgetAmountFunctional() : BigDecimal.ZERO);
+        }
+        if (total.signum() <= 0) {
+            return BigDecimal.ZERO;
+        }
+        BigDecimal own = sl.getBudgetAmountFunctional() != null ? sl.getBudgetAmountFunctional() : BigDecimal.ZERO;
+        return own.multiply(carried).divide(total, 4, RoundingMode.HALF_UP);
     }
 }

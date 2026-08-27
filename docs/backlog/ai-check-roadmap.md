@@ -116,8 +116,8 @@
 | **第二批：P1 域簇** | | | | |
 | F2.1 finance-过账 P1 余项（fin-001 源单 posted 回写通道/fin-002 凭证平衡校验/fin-004） | done | finance owner docs | F0.2 | none |
 | F2.2 finance-ARAP P1 簇（fin2-001 尾差守卫/002 FX 不对称/003 聚合超核销/004/005） | done | ar-ap-reconciliation.md | F0.2 | none |
-| F2.3 finance-预算成本 P1 簇（fin3-001 carryForward 科目错链/002/003 方向敏感/004 TOCTOU/005 账套硬编码） | ready | budget.md、costing-methods.md | F0.2 | none |
-| F2.4 finance-期间 P1 簇（fin4-001 FX 重估口径/002 多账套 N 倍/003 跨法人单价入账） | todo | period-close.md | F0.2 | none |
+| F2.3 finance-预算成本 P1 簇（fin3-001 carryForward 科目错链/002/003 方向敏感/004 TOCTOU/005 账套硬编码） | done | budget.md、costing-methods.md | F0.2 | none |
+| F2.4 finance-期间 P1 簇（fin4-001 FX 重估口径/002 多账套 N 倍/003 跨法人单价入账） | ready | period-close.md | F0.2 | none |
 | F2.5 mfg-工单 P1 簇（mfg-002 驳回死锁/003 红冲不回退成本/004/005；Deferred：F2.1 二期 posted listener 域内收口） | todo | manufacturing owner docs | F0.2 | none |
 | F2.6 mfg-BOM/MRP P1 簇（mfg2-001 安全库存双扣/002 低阶码/003 版本号 ASC 撞 UK——含 drp-012 同型） | todo | mrp.md | F0.2 | none |
 | F2.7 mfg-委外 P1 簇（mfg3-001 计价缺料/002 红冲半段/003 Pattern B 复活/004/005） | todo | subcontracting.md | F0.2 | none |

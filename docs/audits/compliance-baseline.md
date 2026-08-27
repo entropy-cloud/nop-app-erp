@@ -20,7 +20,7 @@
 | R1d | dao().findAllByQuery (BizModel) | 🔴 高 | 14 |
 | R2a | BizModel daoFor(ErpMd*) | 🔴 高 | 34 |
 | R2b | BizModel daoFor(Erp*) 跨域 | 🔴 高 | 240 |
-| R2c | 全生产代码 daoFor() 总量 | 🔴 高 | 1538 |
+| R2c | 全生产代码 daoFor() 总量 | 🔴 高 | 1537 |
 | R2d | Processor daoFor(ErpMd*) | 🔴 高 | 38 |
 | R3 | new Erp*() 构造实体 | 🟡 中 | 5 |
 | R4 | extends RuntimeException | 🟢 低 | 0 |
@@ -483,7 +483,7 @@ R1c: 0
 R1d: 14
 R2a: 34
 R2b: 240
-R2c: 1538
+R2c: 1537
 R2d: 38
 R3: 5
 R4: 0
@@ -507,6 +507,10 @@ R12c: 42
 | R10 | 12 | **14** | 14 | **baseline-raise**（+2） | ①`ErpFinApDocumentPipelineProcessor#persistFailure:482`——P1-1 失败落账独立事务：FAILED 状态 + FAIL 轨迹行 REQUIRES_NEW + `runInNewSession` 按 id 重载更新提交，保证外层 `@BizMutation`/batch process 事务回滚后失败证据存活（`retry()` FAILED 守卫因此在同步路径可达）；②`#processOne:347`——P1-2 逐项失败隔离：`processPending` 每文档 REQUIRES_NEW 独立事务 + try/catch WARN 继续（batch.xml 保持 process scope，单文档失败不回滚先行成功文档、不阻断后续 RECEIVED 文档）。两处均为 batch 事务不提供 per-item 隔离/回滚存活语义的显式独立事务边界，先例范式逐行镜像。 |
 
 checker 复跑全 19 规则 actual == updated baseline（R1d=14/R2a=34/R2b=240/R2c=1538/R2d=38/R3=5/R6=2/R10=14/R12a/b/c=70/66/42，其余=0），零其余漂移。独立结束审计按本注记 per-site 证据复核。
+
+### R2c baseline 下降（ai-check F2.3，2026-08-27）
+
+`2026-08-27`（ai-check F2.3）净 **-1**：carryForward 凭证段移除（-4 daoFor：voucher/voucherLine/billR/subject）+ aggregateCommitment 新增（+3 daoFor：voucher/line/subject）→ 1538 → **1537**。改善方向（合规非回归）。
 
 ### R2c baseline-raise（ai-check F2.2，2026-08-27）
 

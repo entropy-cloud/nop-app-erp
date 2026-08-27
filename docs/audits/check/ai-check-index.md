@@ -182,11 +182,11 @@
 | P3-CK-fin2-015 | P3 | D2 | ck-finance-arap.md | DualSideConsistencyChecker 把坏账核销的合法单侧变异报为 INCONSISTENT——告警噪音侵蚀检查器信任 | 新增 | open |  |
 | P3-CK-fin2-016 | P3 | D4 | ck-finance-arap.md | 声明配置零消费：`erp-fin.bad-debt-exclude-disputed` 无 disputed 字段支撑，计提范围排除争议项的 doc 承诺不生效 | 新增 | open |  |
 | P3-CK-fin2-017 | P3 | D10 | ck-finance-arap.md | resolvePeriodId 无 orgId 过滤无排序 setLimit(1)（同族 P3-CK-fin-017 新站点）+ BadDebtProvisionService 账套解析魔法默认 "1" | 新增 | open |  |
-| P1-CK-fin3-001 | P1 | D6/D8 | ck-finance-budget-costing.md | carryForward 结转预算额度传递链三重断裂——结转行科目指向 Scenario id、结转凭证 Dr/Cr 双行同科目净额恒 0、期间挂源年度，结转额度永不参与目标方案预算 | 主 agent 已实证（subjectId=方案 id） | open |  |
-| P1-CK-fin3-002 | P1 | D6 | ck-finance-budget-costing.md | carryForward 余量公式漏减 commitment——`sourceRemaining = budget − actual` 两量口径，owner doc 与控制引擎均为三量 `budget − actual − commitment` | 新增 | open |  |
-| P1-CK-fin3-003 | P1 | D6 | ck-finance-budget-costing.md | getBudgetVsActual 实际数通道用 ΣamountFunctional 方向不敏感——期末结转凭证（postingType=NORMAL）贷方结平行计入后 actual 翻倍、availableAmount 大幅低估 | 新增 | open |  |
-| P1-CK-fin3-004 | P1 | D7 | ck-finance-budget-costing.md | 预算控制 check-then-act TOCTOU 无并发防护——HARD 控制下并发单据共享预算余量双双通过 | 新增 | open |  |
-| P1-CK-fin3-005 | P1 | D8 | ck-finance-budget-costing.md | 承付凭证 orgId/acctSchemaId/currencyId 硬编码 + 预算控制聚合无账套维度——多账套下承付凭证全部落账套 1、预算控制跨账套混算 | 新增 | open |  |
+| P1-CK-fin3-001 | P1 | D6/D8 | ck-finance-budget-costing.md | carryForward 结转预算额度传递链三重断裂——结转行科目指向 Scenario id、结转凭证 Dr/Cr 双行同科目净额恒 0、期间挂源年度，结转额度永不参与目标方案预算 | 主 agent 已实证（subjectId=方案 id） |fixed | F2.3：结转行按源方案科目维度写入（subjectId=科目 id + periodId + 占比分摊）+ 净额 0 凭证段移除；TestErpFinBudgetCarryForward 5/5 绿 |
+| P1-CK-fin3-002 | P1 | D6 | ck-finance-budget-costing.md | carryForward 余量公式漏减 commitment——`sourceRemaining = budget − actual` 两量口径，owner doc 与控制引擎均为三量 `budget − actual − commitment` | 新增 |fixed | F2.3：sourceRemaining 三量口径补 commitment 减项（aggregateCommitment COMMITMENT 通道聚合） |
+| P1-CK-fin3-003 | P1 | D6 | ck-finance-budget-costing.md | getBudgetVsActual 实际数通道用 ΣamountFunctional 方向不敏感——期末结转凭证（postingType=NORMAL）贷方结平行计入后 actual 翻倍、availableAmount 大幅低估 | 新增 |fixed | F2.3：getBudgetVsActual actual 通道贷方行取负（方向敏感）——期末结转凭证不再使 actual 翻倍 |
+| P1-CK-fin3-004 | P1 | D7 | ck-finance-budget-costing.md | 预算控制 check-then-act TOCTOU 无并发防护——HARD 控制下并发单据共享预算余量双双通过 | 新增 |fixed | F2.3：check() 外层 per-(subject|costCenter|period) ConcurrentHashMap 串行锁使 check-then-act 原子化 |
+| P1-CK-fin3-005 | P1 | D8 | ck-finance-budget-costing.md | 承付凭证 orgId/acctSchemaId/currencyId 硬编码 + 预算控制聚合无账套维度——多账套下承付凭证全部落账套 1、预算控制跨账套混算 | 新增 |fixed | F2.3：resolveOrgAndSchema 经期间 org→AcctSchemaResolver 解析主账套 + resolveCurrencyId 经账套本位币（无账套回退占位） |
 | P2-CK-fin3-006 | P2 | D3 | ck-finance-budget-costing.md | rollForward 目标方案 approveStatus 写入字典外值 "DRAFT"——wf/approve-status 值域仅 UNSUBMITTED/SUBMITTED/APPROVED/REJECTED | 新增 | open |  |
 | P2-CK-fin3-007 | P2 | D9 | ck-finance-budget-costing.md | 预算聚合三路径全量实体加载 + 内存过滤——check 每 3 通道全量载入当期 POSTED 凭证、carryForward 逐行 N×M 载入、getBudgetVsActual 全量载入 | 新增 | open |  |
 | P2-CK-fin3-008 | P2 | D5 跨域 | ck-finance-budget-costing.md | 预算 check 调用侧 costCenterId 恒传 null——成本中心维度预算行不可达，控制只对「无成本中心」预算行生效 | 新增 | open |  |
@@ -604,4 +604,4 @@
 ## 阶段状态
 
 - 检查阶段（M0-M8）：进行中——**已闭合（2026-08-26）**：28/28 检查工作项 done + C8.3 独立收官审计通过（agent_72a36cff，证据抽验 6/6 真实、索引计数吻合、零代码改动确认）。
-- 修复阶段（MF/MV/MG）：**进行中**——F0-F2.2 done（**40 findings 终态**：39 fixed + mfg-011 部分注记）。F2.3 ready。open 余 493（实测）。
+- 修复阶段（MF/MV/MG）：**进行中**——F0-F2.3 done（**45 findings 终态**：44 fixed + mfg-011 部分注记）。F2.4 ready。open 余 488。

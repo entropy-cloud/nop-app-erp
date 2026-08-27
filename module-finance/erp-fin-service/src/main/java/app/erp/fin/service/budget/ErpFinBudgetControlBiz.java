@@ -53,6 +53,10 @@ import static io.nop.api.core.beans.FilterBeans.or;
  */
 public class ErpFinBudgetControlBiz implements IErpFinBudgetControlBiz {
 
+    /** F2.3（P1-CK-fin3-004）：预算检查 per-维度串行锁表（有界：科目×成本中心×期间组合数）。 */
+    private static final java.util.concurrent.ConcurrentHashMap<String, Object> CHECK_LOCKS =
+            new java.util.concurrent.ConcurrentHashMap<>();
+
     private static final Logger LOG = LoggerFactory.getLogger(ErpFinBudgetControlBiz.class);
 
     @Inject
@@ -61,6 +65,17 @@ public class ErpFinBudgetControlBiz implements IErpFinBudgetControlBiz {
     @Override
     public BudgetCheckResult check(String subjectId, String costCenterId, String periodId, BigDecimal amount,
                                    String sourceBillType, String sourceBillCode, IServiceContext context) {
+        // F2.3（P1-CK-fin3-004）：TOCTOU 并发防护——check-then-act 期间并发单据共享预算余量可双双
+        // 通过 HARD 控制。per-(subject|costCenter|period) 粒度应用级串行锁使 check 内聚合+判定原子化
+        // （同 JVM 内并发场景收窄到锁队列；跨 JVM 场景由 DB 事务隔离兜底——ControlLog insert 冲突）。
+        String lockKey = subjectId + "|" + (costCenterId != null ? costCenterId : "") + "|" + periodId;
+        synchronized (CHECK_LOCKS.computeIfAbsent(lockKey, k -> new Object())) {
+            return doCheck(subjectId, costCenterId, periodId, amount, sourceBillType, sourceBillCode, context);
+        }
+    }
+
+    private BudgetCheckResult doCheck(String subjectId, String costCenterId, String periodId, BigDecimal amount,
+                                      String sourceBillType, String sourceBillCode, IServiceContext context) {
         if (!isBudgetCheckEnabled()) {
             return new BudgetCheckResult(BudgetCheckResult.ACTION_PASS, BigDecimal.ZERO, null);
         }

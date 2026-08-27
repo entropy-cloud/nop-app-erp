@@ -67,8 +67,8 @@ public class ErpFinBudgetCommitmentBizModel implements IErpFinBudgetCommitmentBi
         }
         String currencyId = resolveCurrencyId(periodId);
         String[] orgSchema = resolveOrgAndSchema(periodId);
-        String orgId = orgSchema[0] != null ? orgSchema[0] : "1";
-        String acctSchemaId = orgSchema[1] != null ? orgSchema[1] : "1";
+        String orgId = orgSchema[0];
+        String acctSchemaId = orgSchema[1];
 
         String voucherId = commitmentVoucherGenerator.generateCommitment(sourceBillType, sourceBillCode, subject, costCenterId,
                 orgId, acctSchemaId, periodId, currencyId, amount);
@@ -151,24 +151,27 @@ public class ErpFinBudgetCommitmentBizModel implements IErpFinBudgetCommitmentBi
     }
 
     private String resolveCurrencyId(String periodId) {
-        if (periodId == null) {
-            return "1";
+        // F2.3（P1-CK-fin3-005）：经主账套解析本位币——修复前硬编码 "1"
+        String[] orgSchema = resolveOrgAndSchema(periodId);
+        if (orgSchema[1] == null) {
+            return "1"; // 无账套时回退本位币占位（凭证行 mandatory）
         }
-        ErpFinAccountingPeriod p = daoProvider.daoFor(ErpFinAccountingPeriod.class).getEntityById(periodId);
-        if (p == null || p.getOrgId() == null) {
-            return "1";
-        }
-        return "1";
+        app.erp.md.dao.entity.ErpMdAcctSchema schema =
+                daoProvider.daoFor(app.erp.md.dao.entity.ErpMdAcctSchema.class).getEntityById(orgSchema[1]);
+        return schema != null && schema.getFunctionalCurrencyId() != null ? schema.getFunctionalCurrencyId() : "1";
     }
 
     private String[] resolveOrgAndSchema(String periodId) {
+        // F2.3（P1-CK-fin3-005）：经期间 org → AcctSchemaResolver 解析主账套——修复前 acctSchemaId
+        // 硬编码 "1"（多账套下承付凭证全部落账套 1）；org 也可能为 null（期间缺 org）
         if (periodId == null) {
-            return new String[]{"1", "1"};
+            return new String[]{"1", "1"}; // 无期间回退（凭证行 mandatory）
         }
         ErpFinAccountingPeriod p = daoProvider.daoFor(ErpFinAccountingPeriod.class).getEntityById(periodId);
-        if (p == null) {
+        if (p == null || p.getOrgId() == null) {
             return new String[]{"1", "1"};
         }
-        return new String[]{p.getOrgId(), "1"};
+        String schemaId = app.erp.md.dao.AcctSchemaResolver.resolvePrimarySchemaId(daoProvider, p.getOrgId());
+        return new String[]{p.getOrgId(), schemaId != null ? schemaId : "1"};
     }
 }

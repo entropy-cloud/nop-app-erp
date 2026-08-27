@@ -109,7 +109,11 @@ public class ErpFinBudgetLineBizModel extends AbstractErpCrudBizModel<ErpFinBudg
             } else if (CHANNEL_COMMITMENT.equals(channel)) {
                 row.setCommitmentAmount(row.getCommitmentAmount().add(amount));
             } else {
-                row.setActualAmount(row.getActualAmount().add(amount));
+                // F2.3（P1-CK-fin3-003）：actual 通道方向敏感——期末结转凭证（postingType=NORMAL）
+                // 的贷方结平行按方向取负计入，修复前 ΣamountFunctional 不分方向使 actual 翻倍
+                BigDecimal signed = ErpFinConstants.DC_CREDIT.equals(l.getDcDirection())
+                        ? amount.negate() : amount;
+                row.setActualAmount(row.getActualAmount().add(signed));
             }
         }
         for (BudgetVsActualRow row : agg.values()) {

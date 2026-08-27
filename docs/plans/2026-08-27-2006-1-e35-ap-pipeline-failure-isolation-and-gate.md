@@ -69,22 +69,26 @@ Exit Criteria:
 
 ### Phase 2 - 收口验证与登记
 
-Status: planned
+Status: completed
 Targets: `docs/audits/compliance-baseline.md`（仅 R10 per-site 登记）、`docs/logs/2026/`、本计划 Closure
 Skill: `nop-testing`
 
 - Item Types: `Proof | Fix`
 - Prereqs: Phase 1
 
-- [ ] `Proof` scoped 全量复跑：`mvn test -pl module-finance/erp-fin-service` + `mvn test -pl app-erp-all`（IT 层全绿）。Skill: `nop-testing`
-- [ ] `Proof` 受影响 E2E 复跑（flux 模式）：`fin-ap-document.value.spec.ts` + `ai-interface.value.spec.ts` 绿。Skill: `none`
-- [ ] `Fix` compliance checker 复跑：新增 REQUIRES_NEW 站点按 per-site 证据登记 R10 基线上调（先例 RC-R1.23 登记法，注记 + 机器可读块同步）；如有新增 daoFor 站点（预期无）须开基线裁决 successor，不得内联。Skill: `none`
-- [ ] `Proof` 日志条目（`docs/logs/` 当日，含验证状态与全绿注记 + 多面审计复审要求四项证据备齐供独立复审）。**翻转触发权登记**：多面审计 `Audit Status: planned → closed` 由 mission 审计闭环的独立复审执行，触发条件 = 本批三计划（`2026-08-27-2006-1/2/3`）全部 `completed`；执行计划不自行翻转审计状态。Skill: `none`
+- [x] `Proof` scoped 全量复跑：`mvn test -pl module-finance/erp-fin-service` + `mvn test -pl app-erp-all`（IT 层全绿）。Skill: `nop-testing`
+  - 实测：fin-service **519/519 绿**；app-erp-all **64/64 绿（1 skipped = 预存 `ErpAllWebPagesCollectTest` @Disabled JDK26/ANTLR 维持）**；另全 reactor `mvn clean install -DskipTests` BUILD SUCCESS。
+- [x] `Proof` 受影响 E2E 复跑（flux 模式）：`fin-ap-document.value.spec.ts` + `ai-interface.value.spec.ts` 绿。Skill: `none`
+  - 实测：`_tmp-server.sh start`（fresh DB，server JVM 携带 `-Derp-fin.ap-doc-pipeline-enabled=true`）+ `BASE_URL=http://127.0.0.1:8011 SKIP_WEBSERVER=1 npx playwright test`（仓库根执行）——两 spec **5/5 用例绿**（含 upload→parse→classify→draft 全链 + `/r/` 通道 upload 身份落账，证明 upload 门在 enabled 部署下零回归）。
+- [x] `Fix` compliance checker 复跑：新增 REQUIRES_NEW 站点按 per-site 证据登记 R10 基线上调（先例 RC-R1.23 登记法，注记 + 机器可读块同步）；如有新增 daoFor 站点（预期无）须开基线裁决 successor，不得内联。Skill: `none`
+  - 实测：R10 **12→14**（+2 per-site：`ErpFinApDocumentPipelineProcessor#persistFailure:482` / `#processOne:347`，注记节 + BASELINE 机器可读块 + 人类可读基线表三处同步）；R2c/R2b/R2d/R12c 零漂移（1538/240/38/42 == 基线，无新增 daoFor 站点）；checker 复跑全 19 规则 actual == updated baseline。
+- [x] `Proof` 日志条目（`docs/logs/` 当日，含验证状态与全绿注记 + 多面审计复审要求四项证据备齐供独立复审）。**翻转触发权登记**：多面审计 `Audit Status: planned → closed` 由 mission 审计闭环的独立复审执行，触发条件 = 本批三计划（`2026-08-27-2006-1/2/3`）全部 `completed`；执行计划不自行翻转审计状态。Skill: `none`
+  - 落地：`docs/logs/2026/08-27.md` 顶部新增本计划条目（验证全绿注记 + 四项证据索引 + 审计翻转触发权归 mission 闭环）。
 
 Exit Criteria:
 
-- [ ] checker actual ≤ baseline（R10 上调有 per-site 注记）
-- [ ] 日志条目落盘
+- [x] checker actual ≤ baseline（R10 上调有 per-site 注记）
+- [x] 日志条目落盘
 
 ## Draft Review Record
 

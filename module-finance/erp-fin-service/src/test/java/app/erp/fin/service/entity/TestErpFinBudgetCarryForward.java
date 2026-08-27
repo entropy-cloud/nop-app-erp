@@ -323,7 +323,9 @@ public class TestErpFinBudgetCarryForward extends JunitAutoTestCase {
         List<ErpFinBudgetLine> lines = daoProvider.daoFor(ErpFinBudgetLine.class).findAllByQuery(q);
         BigDecimal sum = BigDecimal.ZERO;
         for (ErpFinBudgetLine l : lines) {
-            if (l.getSubjectCode() != null && l.getSubjectCode().contains("CARRY-FORWARD-")) {
+            // F2.3（P1-CK-fin3-001）：结转行改用源方案科目编码（不再伪造 CARRY-FORWARD- 前缀），
+            // 改经 remark 标识（"Carry-forward from ..."）识别结转行
+            if (l.getRemark() != null && l.getRemark().contains("Carry-forward from")) {
                 sum = sum.add(l.getBudgetAmountFunctional() != null
                         ? l.getBudgetAmountFunctional() : BigDecimal.ZERO);
             }
