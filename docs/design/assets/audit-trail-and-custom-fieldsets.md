@@ -26,6 +26,7 @@
 - **目标**：资产卡片（ErpAstAsset）的「谁/何时/做了什么/从哪到哪」完整轨迹，与会计日志（财务面）互补——本设计覆盖**实物/生命周期面**。
 - **设计**：
   - 审计事件类型：CREATE / UPDATE（字段级变更摘要）/ STATUS_CHANGE（IN_SERVICE→IDLE→SCRAPPED 等）/ MAINTENANCE（维修关联）/ VALUATION（减值/重估）/ DISPOSAL / TRANSFER（组织/位置变更）。
+  - **UPDATE 事件覆盖面登记（P2-4 定稿，2026-08-28 plan 2026-08-28-0219-2）**：触发字段白名单 = 信息字段（name/brandModel/remark/extFieldValues/modelId）+ 财务敏感字段（acquisitionDate/originalValue/residualValue/depreciationMethod/depreciationRate/usefulLifeMonths/categoryId——决定折旧计提口径或记账路由的卡片参数，双源圈定自本节事件语义 + orm 资产表字段语义）；事件 remark 携带变更字段名清单（如「资产信息更新（变更字段：depreciationMethod, residualValue）」）。**与 VALUATION 的边界**：currentValue 变更归 VALUATION 事件（减值/重估语义），不入 UPDATE 白名单（避免单字段双类型）；code/orgId/currencyId/staffId 为标识/组织属性、accumulatedDepreciation/netBookValue 为处理器回写汇总列，均不入清单。
   - 承载：优先复用既有审计基础设施（`posting-log.md` 会计日志同型追加业务审计类型）；若需独立资产审计实体（`ErpAstAssetActionLog`），ORM 变更已获授权（roadmap §8.1，E3 门控）。
   - 查询：`getAssetAuditTrail(assetId)` BizQuery 返回时间轴（对齐 `getDashboardKpi` 只读聚合范式）。
 - **与既有审计的关系**：不重复记录业务 action（BizModel 动作审计已有），聚焦**资产状态与归属变化**这一特定视角。
@@ -35,6 +36,7 @@
 - **目标**：资产型号（ErpAstAssetModel）级扩展字段（如 IT 资产的 CPU/内存/序列号格式），避免为每类资产加列。
 - **设计**：
   - 首选平台能力：ext 字段/JsonOrmComponent（平台文档 `../nop-entropy/docs-for-ai/02-core-guides/orm-model-design.md`，`stdDomain=json`/`tagSet=json` 自动生成 JsonOrmComponent）——字段集定义 = 型号记录上声明 ext 字段键集合，实例资产 ext 字段按型号校验。**注：项目 18 域 orm.xml 当前零使用该模式，E3.3 将是首次启用，实现前置须核实平台 ext 字段用法（并入 E3.3 计划 Phase 1 Explore）**。
+  - **逻辑删除型号守卫语义（P2-5 定稿，2026-08-28 plan 2026-08-28-0219-2）**：①新绑定拒绝——modelId 设置/变更时目标型号已逻辑删除（delVersion != 0）则拒绝（域内码 `erp.err.ast.asset-model.deleted` 钩子层兜底；标准 Map/GraphQL 入口另由平台 `ObjMetaBasedValidator` 的 deleted-ref 预检先行以通用码拒绝——双层守卫）；②存量豁免——「绑定后型号被删」的存量资产后续保存不按已删型号 extFieldDefs 强制校验，既有 extFieldValues 不触发任何拒绝（含原必填键缺失场景），保证存量保存零可见回归。
   - 型号级字段集管理界面（view.xml 定制）作为实现项（roadmap E3.3，plan-first）。
 - **否决**：新建通用「字段集元数据表 + 动态表单引擎」（Baserow/NocoBase 式）——与平台 JsonOrmComponent 重复，运维成本高。
 
@@ -58,6 +60,7 @@
 | 设计 | 本文档（审计轨迹 + 字段集 + 身份集成触发条件） | ✅ 已完成（本批次） |
 | 实现（字段集） | 型号级 ext 字段声明 + 管理界面（`ErpAstAssetModel` 新实体 + json 列，经 dual-agent-approval） | ✅ done（E3.3，2026-08-27：`ErpAstAssetModel.extFieldDefs` + `ErpAstAsset.modelId/extFieldValues`（json-4000，dual-agent 批准清单 #0/#1/#2）；BizModel 保存/更新钩子按型号校验（非法键/缺必填/类型不匹配/无型号带值 4 类拒绝，专用 ErrorCode）；型号管理页 view.xml + flux E2E） |
 | 实现（审计轨迹） | `getAssetAuditTrail` + 资产状态/归属变化记录（独立审计实体） | ✅ done（E3.8，2026-08-27：`ErpAstAssetActionLog`（dual-agent 批准清单 #3）+ `ErpAstAssetAuditRecorder` 同事务记录，事件类型 7 类全覆盖（CRUD 钩子 CREATE/UPDATE/STATUS_CHANGE/TRANSFER/VALUATION + Processor MAINTENANCE/DISPOSAL）；`getAssetAuditTrail` 时间轴 BizQuery（createTime+id 逆序，from/to 快照 + 回链）） |
+| P2 加固 | UPDATE 审计覆盖面扩展（§1 白名单登记）+ 逻辑删除型号双路径守卫（§2 守卫语义） | ✅ done（2026-08-28，plan `2026-08-28-0219-2`：财务敏感 7 字段入 UPDATE 事件 + remark 字段名清单；新绑定拒绝 + 存量豁免；MAINTENANCE/DISPOSAL 事件 JUnit 收口 7 类型全覆盖） |
 | 身份集成 | SCIM/LDAP | todo（触发条件驱动） |
 
 ## 反模式自检表
