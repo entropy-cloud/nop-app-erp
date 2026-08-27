@@ -71,7 +71,7 @@
   1. introspection config-gate 验证：JUnit 证明开启后 IntrospectionQuery 可用且含 description（默认保持关闭）。
   2. action 描述补全（代表性覆盖）：11 个 `getDashboardKpi` action 补 `@Description`（IBiz 同步）——AI 只读消费面范本；「新增对外 action 应带 @Description」约定登记。
   3. REST/GraphQL 双通道一致性：E2E 同一 operation（`getDashboardKpi`）经 `/graphql` 与 `/r/` 两通道数值一致断言。
-  4. 护栏：高影响 action 门径复用验证——无权限角色经 `/r/` 通道调用高影响 mutation 被拒（负路径 E2E，复用 permissions 账号池范式）；限流护栏复用 `IRateLimiter` 的接线落点 = E3.5 管道入口（自动化批量面，防 AI/自动化批量误操作），人类用户面默认无限流；审批门对 AI 通道复用既有审批流（AI 无法静默绕过，既有审批测试为证）。
+  4. 护栏：高影响 action 门径复用验证——无权限角色经 `/r/` 通道调用高影响 mutation 被拒（负路径 E2E，复用 permissions 账号池范式）；限流护栏复用 `IRateLimiter` 的接线落点 = E3.5 管道 upload 单入口，对该入口的全部调用方（含人类用户经 `/r/` 上传）默认 10 rps、`0 = 不限流`（P2-11 措辞对齐修正，plan `2026-08-28-0219-1`：原「人类用户面默认无限流」表述失实——限流仅接线于管道 upload 单入口，人类用户通用面（非管道入口）无全局限流，守卫强度不变）；审批门对 AI 通道复用既有审批流（AI 无法静默绕过，既有审批测试为证）。
   5. 审计标识断言落为「调用方身份（userId）落账断言」（actorType 不落地，见上）。
   6. 平台能力登记：`GraphQLToolProvider` 存在性与复用边界登记（本文档 + `business-module-metadata.md` 雏形关系）。
 

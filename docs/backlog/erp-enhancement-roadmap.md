@@ -207,25 +207,25 @@ graph LR
 
 > 2026-08-27 由 erp-enhancement mission 审计轮登记（multi/open 两审计 P2 项分流，`docs/plans/00-plan-authoring-and-execution-guide.md` 反松弛规则：P2 不单独驱动 remediation plan）。每项带来源审计路径保持可追溯；标注「随 plan 顺带」的项在对应 P1 修复计划执行时可顺带收口（须在计划中补记范围变更理由），不构成该计划的完成义务。
 
-- [ ] E3.5 重复上传幂等缺失（无 fileId/内容哈希去重，同文件重传 → 第二 RECEIVED → 第二草稿；去重责任是否后移三单匹配未落文档）（来源：`docs/audits/2026-08-26-2226-multi-audit-erp-enhancement.md` P2-1；建议随 plan 2026-08-27-2006-1 顺带评估）
+- [x] E3.5 重复上传幂等缺失（无 fileId/内容哈希去重，同文件重传 → 第二 RECEIVED → 第二草稿；去重责任是否后移三单匹配未落文档）（来源：`docs/audits/2026-08-26-2226-multi-audit-erp-enhancement.md` P2-1；建议随 plan 2026-08-27-2006-1 顺带评估） ✅ plan `2026-08-28-0219-1`（方案 A 应用层守卫：fileName+非终态+SHA-256 内容比对，`ERR_AP_DOC_DUPLICATE_UPLOAD` 指向既有文档；并发残留风险 + 最终权威去重 = 三单匹配边界登记 owner doc §P2 加固裁决登记）
 - [ ] E3.5 `getInventorySnapshot` 绕过 role-row-filter 未登记入 G1 缺口族（`dashboard-semantic-layer.md` §4 清单补录）（来源：multi-audit P2-2；归 permissions-enforcement G1 族同机制收口）
-- [ ] dict 死状态 `ARCHIVED`（`erp-fin/ap-doc-status`）全仓无 writer（来源：multi-audit P2-3；lesson-10 家族）
+- [x] dict 死状态 `ARCHIVED`（`erp-fin/ap-doc-status`）全仓无 writer（来源：multi-audit P2-3；lesson-10 家族） ✅ plan `2026-08-28-0219-1`（裁决方案 A：保留 dict 值 + writer 归属 = 邮件摄取落地时自动归档，触发条件显式登记 owner doc §P2 加固裁决登记）
 - [ ] E3.3 资产 UPDATE 审计白名单过窄：`depreciationMethod/depreciationRate/acquisitionDate/categoryId` 等财务敏感字段变更零审计事件（来源：multi-audit P2-4）
 - [ ] 逻辑删除资产型号可被绑定：`ErpAstAssetModel` `useLogicalDelete=true` 但校验钩子不拒已删型号（来源：multi-audit P2-5）
-- [ ] E3.5 分类引擎确定性/上界瑕疵：≤2000 伙伴加载无排序首匹配不确定 + 超量静默落人工门；`String.valueOf(null)` → `"null"` 幻影路径（来源：multi-audit P2-6）
-- [ ] E3.5 OCR 默认引擎吞异常零日志 + PDFBox 全内存无页数上限（来源：multi-audit P2-7）
-- [ ] E3.5 上传入口输入契约松：无 MIME/扩展名白名单；`fileName` 未按列精度 200 截断；非法 base64 抛裸 `IllegalArgumentException`（来源：multi-audit P2-8；建议随 plan 2026-08-27-2006-1 顺带）
-- [ ] E3.5 错误码契约错位：`ERR_AP_DOC_PARSE_FAILED` 定义未用，PARSE 失败以 `ERR_AP_DOC_DRAFT_FAILED` 面客（来源：multi-audit P2-9；建议随 plan 2026-08-27-2006-1 顺带）
+- [x] E3.5 分类引擎确定性/上界瑕疵：≤2000 伙伴加载无排序首匹配不确定 + 超量静默落人工门；`String.valueOf(null)` → `"null"` 幻影路径（来源：multi-audit P2-6） ✅ plan `2026-08-28-0219-1`（id 升序确定性排序 + `findPageByQuery` 使上界真实生效【执行发现 `findAllByQuery` 忽略 QueryBean.limit，原 setLimit(2000) 实为无界加载】+ 超限 WARN 可观测 + null 幻影收口；Proof = `TestErpFinApDocRuleClassifierDeterminism` 4 用例）
+- [x] E3.5 OCR 默认引擎吞异常零日志 + PDFBox 全内存无页数上限（来源：multi-audit P2-7） ✅ plan `2026-08-28-0219-1`（catch WARN `erp-fin-ap-doc-pdf-extract-failed`（fileName/mimeType/reason，损坏件与扫描件可区分）+ 页数上限 `erp-fin.ap-doc-pdf-max-pages` 默认 50 config-gate 超限 WARN 落人工门；Proof = `TestErpFinTextExtractOcrEngineObservability` 3 用例）
+- [x] E3.5 上传入口输入契约松：无 MIME/扩展名白名单；`fileName` 未按列精度 200 截断；非法 base64 抛裸 `IllegalArgumentException`（来源：multi-audit P2-8；建议随 plan 2026-08-27-2006-1 顺带） ✅ plan `2026-08-28-0219-1`（白名单 pdf/txt/csv/json/xml/png/jpg/jpeg + MIME 对齐；超长拒绝 `file-type-not-allowed`/`file-name-too-long`/`invalid-base64` 三专属错误码；Proof = `TestErpFinApDocumentPipeline.testUploadContractNegativePaths`）
+- [x] E3.5 错误码契约错位：`ERR_AP_DOC_PARSE_FAILED` 定义未用，PARSE 失败以 `ERR_AP_DOC_DRAFT_FAILED` 面客（来源：multi-audit P2-9；建议随 plan 2026-08-27-2006-1 顺带） ✅ plan `2026-08-28-0219-1`（`fail()` 按 step 映射：PARSE → parse-failed / DRAFT 与 CLASSIFY（复用裁决登记）→ draft-failed）
 - [ ] E3 批新增 5 个对外 action 零 `@Description`（违反 `ai-native-interface.md:72` 自登记约定）（来源：multi-audit P2-10）
-- [ ] E3.5 限流默认 10rps 对所有调用方生效 vs owner doc「人类用户面默认无限流」措辞失实（来源：multi-audit P2-11）
+- [x] E3.5 限流默认 10rps 对所有调用方生效 vs owner doc「人类用户面默认无限流」措辞失实（来源：multi-audit P2-11） ✅ plan `2026-08-28-0219-1`（`ai-native-interface.md` 最小落地集 item 4 措辞对齐实际语义：限流落点 = 管道 upload 单入口、全部调用方默认 10rps、0=不限流；默认值未改）
 - [ ] 悬空引用 ×2：`TestErpAiIntrospectionEnabled` 注释指 `ai-native-interface.md` 不存在的实现注记；E3 计划「IBiz 同步」空指（来源：multi-audit P2-12）
 - [ ] `data-dependency-matrix.md` 缺登记：fin→md `ErpMdPartner` 只读边 + aps→mfg `IErpMfgCapacityProvider` SPI 边（§2.4 矩阵行）（来源：multi-audit P2-13；与开放审计 P2-C fin→pur 行合并一次收口）
-- [ ] E3 批测试充分性缺口：`ap-document.batch.xml` + job yaml 接线零覆盖；MAINTENANCE/DISPOSAL 审计事件零 JUnit；TOC 阈值等值边界未测；`TestErpInvSnapshotAndStockCheck` 零值等价断言空转；`TestErpFinApDocumentPipeline` `enableActionAuth=FALSE`（来源：multi-audit P2-14）
-- [ ] `ErpFinBankReconAutoReverseHelper.java:117` 生产代码 `LocalDate.now()` 违反 CoreMetrics 约定（checker R7 不覆盖该形态）（来源：multi-audit P2-15；随下次 fin 域触碰修复）
+- [ ] E3 批测试充分性缺口：`ap-document.batch.xml` + job yaml 接线零覆盖；MAINTENANCE/DISPOSAL 审计事件零 JUnit；TOC 阈值等值边界未测；`TestErpInvSnapshotAndStockCheck` 零值等价断言空转；`TestErpFinApDocumentPipeline` `enableActionAuth=FALSE`（来源：multi-audit P2-14）——**fin 部分已收口** ✅ plan `2026-08-28-0219-1`（`TestErpFinApDocBatchWiring` 落地时发现并修复 batch.xml 两处运行时缺陷：接口名 inject unknown-bean + 恒非空 loader 无限 chunk 循环，改 orm-reader 触发扫描 + bean id 注入；job yaml 注册形态断言；enableActionAuth=FALSE 理由注记 + 鉴权拒绝路径由 P2-E E2E 承载）；非 fin 部分归 plan 2（assets 等）
+- [x] `ErpFinBankReconAutoReverseHelper.java:117` 生产代码 `LocalDate.now()` 违反 CoreMetrics 约定（checker R7 不覆盖该形态）（来源：multi-audit P2-15；随下次 fin 域触碰修复） ✅ plan `2026-08-28-0219-1`（`CoreMetrics.currentDate().withDayOfMonth(1)` 等价替换，行为零变化，`TestErpFinBankReconAutoReverseJob` 5 用例零回归）
 - [ ] 工作树遗留：`module-projects/erp-prj-service/_cases/.../TestErpPrjDummyProbe/` + `cases-retention.bak/` 未跟踪脚手架（08-27 日志已登记故意遗留）；5 个 ai-check docs 修改未提交属另一 mission 流（来源：multi-audit P2-16；watch-only）
 - [ ] `job-scheduling.md` 漏登记生产 nop-job `erp-fin-ap-doc-processing`（含 `nop.job.erp-fin-ap-doc-processing.enabled/.cron-expr` 两部署键；对齐 :131 inv 行格式补 §3.x）（来源：`docs/audits/2026-08-26-2226-open-audit-erp-enhancement.md` P2-A；文档注册批）
 - [ ] 设计路由层 README「暂不编码」标注陈旧 ×6：`docs/design/README.md:40-41` + finance/aps/inventory/assets 各 README（→「已实现（E3.x，2026-08-26/27）」）（来源：open-audit P2-B；文档注册批）
 - [ ] `data-dependency-matrix.md` finance 行 R-only 特征化失实：E3.5 fin→pur 经 `IErpPurInvoiceBiz.save()` command 写边未登记（§2.4 补边 + 行特征修正）（来源：open-audit P2-C；与 multi P2-13 合并收口）
 - [ ] `known-good-baselines.md` 未落 E3 批全绿行（3889 锚落后于 +23 新测试；P1 修复批全量重跑时落新行并做差量归因）（来源：open-audit P2-D；随 mission VERIFY 批收口）
-- [ ] 六个新 mutation（`uploadApDocument` 等）鉴权面零有效覆盖 + E3 计划 Phase 7 证据归因漂移（负路径实际测 BadDebt 既有 mutation；建议补 uploadApDocument 无权限拒绝路径 E2E）（来源：open-audit P2-E；建议随 plan 2026-08-27-2006-1 顺带评估）
+- [x] 六个新 mutation（`uploadApDocument` 等）鉴权面零有效覆盖 + E3 计划 Phase 7 证据归因漂移（负路径实际测 BadDebt 既有 mutation；建议补 uploadApDocument 无权限拒绝路径 E2E）（来源：open-audit P2-E；建议随 plan 2026-08-27-2006-1 顺带评估） ✅ plan `2026-08-28-0219-1`（E2E `ai-interface.value.spec.ts` 新增 `uploadApDocument denied for unauthorized role` 用例——role-restricted 经 `/r/` 被 FNPT enforcement 拒；E3 计划 Phase 7 ④ post-hoc 归因注记落盘；`TestErpFinApDocumentPipeline` 保持 FALSE 的理由补注记）
 - [ ] `AGENTS.md` BizModel 包名示例 `io.github.nop.app.erp.<domain>.service` 与全仓实态 `app.erp.<short>.service` 不符（存量漂移）（来源：open-audit P2-F；随下次 AGENTS.md 人工维护窗口）
