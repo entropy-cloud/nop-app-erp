@@ -4,7 +4,9 @@
     "feasible": true,
     "scheduledOperationIds": [
       "@var:opOrderId"
-    ]
+    ],
+    "bottleneckMachineIds": [],
+    "machineLoadRates": {}
   },
   "status": 0
 }
