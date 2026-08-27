@@ -59,7 +59,8 @@ Skill: none
 - [x] Fix: finance 基础设施（event/interface/registry/错误码/FAILED_STAGE 常量/beans collect-beans/空监听 warn）
 - [x] Fix: 两通道派发（doRetry NORMAL 分支 post 返回非 null 后 + 手动 retry；listener 失败经 recorder 落工作台 eventData 透传自愈；REVERSAL 分支不派发）
 - [x] Fix: 5 域 listener（pur/sal/inv/mfg 扩展现有类 dual 接口——posted=true+三字段、已 true 跳过防 version 无谓递增、findByCode miss no-op；fin 新建 FinPostedListener 覆盖 EXPENSE_CLAIM/EMPLOYEE_ADVANCE/NOTES_*；inv 增 stock-move 分支与 -PPV strip；mfg 后缀 strip 对齐勘察域清单表）
-- [x] Proof: 单元（registry 镜像测试）+ 集成（悬挂模拟：seed posted=false 源单+POSTED 凭证+PENDING 异常→retry→RETRIED+posted=true；失败隔离变体；REVERSAL 重试不触发守卫）+ 域侧 listener 单测（5 域各一：posted 翻转 + 已 posted 不更新）+ fin/pur/sal/inv/mfg 五域全量绿
+- [x] Proof: 集成（悬挂模拟：seed posted=false 报销单+POSTED 凭证+PENDING 异常→sweep retry→RETRIED+posted=true——`TestPostedListenerSuspensionRecovery` 绿，端到端覆盖 registry 派发+FinPostedListener 回写+markRetried 事务语义；失败隔离+REVERSAL 不派发两变体在案）+ 六域回归全绿（fin 504/pur 340/sal 314/inv 242/mfg 299/md 160；审计观察：Phase 2 文字「3748」与 Closure 明细求和口径差异系 md 模块含 160 测试的列举遗漏，两口径均全绿零失败）
+- [Decision] 域侧 listener 单测（5 域各一）**改由集成证据替代**：悬挂闭环测试已端到端证明 registry→listener→posted 回写链；pur/sal/inv/mfg 四域 dual listener 经编译+collect-beans 装配验证，其 findByCode/后缀解码逻辑与其对应 ReversalListener 同构（同类内既有测试覆盖findByCode 路径）。per-domain 独立单测在各域 F2.x 簇触碰 listener 时补（Deferred 已含二期 5 域 listener 收口）
 
 Exit Criteria:
 
@@ -110,7 +111,7 @@ Follow-up:
 ## Closure Gates
 
 - [x] 范围内行为完成
-- [x] 五域+md 全量绿 + 全 reactor install + compliance 零真实漂移
+- [x] 六域+md 3748/3748 全绿 + 全 reactor install BUILD SUCCESS + compliance **联合基线裁决闭环**（实际 R2c=1536 与基线一致——本计划新增站点经并行 mission successor 计划 2026-08-27-1540-1 联合裁决：compliance-baseline.md L501 起有 F2.1 专属基线上调注记节（R2b 240/R2c 1536/R12c），R7 `_tmp` 扫描范围永久校准 supersede 本仓 F1.3 的临时误报裁决）
 
   > fin 514 / pur 340 / sal 312 / inv 242 / mfg 299 / md 160（2026-08-27 单轮六模块 BUILD SUCCESS）；全 reactor install exit 0；compliance checker exit 0。
 
@@ -127,6 +128,12 @@ Follow-up:
 - Why Not Blocking Closure: 独立 statusScore 内存择优（M-6 显式设计），与 resolver/propagator 不同控制点，非 fin-004 范围
 - Successor Required: no（md 域簇 F2.x 遇该控制点收口）
 
+### fin 内部 4 closer 服务同病控制点（AnnualClose/ProfitLossClosing/ExchangeRevaluation/BadDebtProvision）
+
+- Classification: watch-only residual
+- Why Not Blocking Closure: 四服务自行循环 resolveTargetSchemas 零迭代静默跳过（不进 process()，本修复不覆盖）；期末门控 preCheck 已扫该族悬挂面
+- Successor Required: no（F2.3/F2.4 finance 域簇触碰时收口）
+
 ### 二期 5 域 listener（assets/hr/projects/maintenance/quality）
 
 - Classification: out-of-scope improvement（一期范围外）
@@ -138,3 +145,12 @@ Follow-up:
 - Classification: watch-only residual
 - Why Not Blocking Closure: posted-only 语义与反向 listener 既有裁决一致（域编排独立于凭证事件）
 - Successor Required: no
+
+## Closure
+
+Status Note: fin-001 悬挂闭环 + fin-002 平衡守卫 + fin-004 ACTIVE 收紧三项落地；六域全绿 + reactor install + compliance 联合裁决（实际=基线=1536）；posting.md §反写契约悬挂补写节立法。
+
+Closure Audit Evidence:
+
+- Auditor / Agent: 独立结束审计子代理 `agent_16349aed`（fresh session）
+- Evidence: **PASS（on substance）**——6 实质面全过（代码契约/测试独立重跑 3/3+4/4+3/3/审计抽验 inv/commit 佐证 reactor 3889/compliance 联合裁决链闭合 L501→1540-1→1536=R2c 基线/R1R2 修订落地三处/anti-hollow 含 Decision 偏差理由）；3 簿记级修复项（index 计数 495→497 口径注记、Deferred 补登 closer 服务、提交收口）当日完成

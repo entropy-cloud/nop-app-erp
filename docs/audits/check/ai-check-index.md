@@ -146,10 +146,10 @@
 | P3-CK-inv-019 | P3 | D6 | ck-inventory.md | reclose recomputeOutgoingCogs 出库流水 totalCost 写正值（符号约定破坏） | 新增 | open |  |
 | P3-CK-inv-020 | P3 | D9 | ck-inventory.md | Dashboard/追溯链无界加载与 N+1 | 新增 | open |  |
 | P3-CK-inv-021 | P3 | D4 | ck-inventory.md | 死配置键：`erp-inv.concurrent-deduct-retry-backoff-ms` 声明零消费 | 新增 | open |  |
-| P1-CK-fin-001 | P1 | D8/D2，承接 P1-CK-sal-003 | ck-finance-posting.md | Sweep 重试成功仅标记 RETRIED——源单 posted 回写通道在 finance 侧完全缺失（无正向 posted 事件） | 承接 P1-CK-sal-003（证实） |fixed | F2.1 一期：VoucherPostedEvent + IErpFinVoucherPostedListener + ErpFinPostedListenerRegistry（镜像反向对偶）；仅 sweep doRetry/手动 retry 两「调用方不在场」通道派发（引擎 process() 不派发——反写契约域自治+硬规则6 原子性，posting.md §悬挂补写）；5 核心域 listener（pur/sal/inv/mfg dual 接口 + fin FinPostedListener；inv -PPV strip、mfg -MI/-SF/-PV strip）；失败经 recorder 落工作台 eventData 透传自愈；二期 5 域 listener Deferred 归 F2.5/F2.8/F2.9/F2.12/F2.13 |
-| P1-CK-fin-002 | P1 | D6 | ck-finance-posting.md | postVoucher（DRAFT→POSTED）无借贷平衡校验——不平衡的手工凭证可过账进 GL | 新增 |fixed | F2.1：postVoucher 前置 assertBalancedFromLines（Σdebit==Σcredit compareTo 容忍 scale，负数红字风格对称通过；复用 ERR_UNBALANCED 保持 DRAFT）+ 头合计重算写回；TestErpFinVoucherBalanceAndSchemaFilter 4 例 + fin 全量 514/514 绿 |
+| P1-CK-fin-001 | P1 | D8/D2，承接 P1-CK-sal-003 | ck-finance-posting.md | Sweep 重试成功仅标记 RETRIED——源单 posted 回写通道在 finance 侧完全缺失（无正向 posted 事件） | 承接 P1-CK-sal-003（证实） |fixed | F2.1：VoucherPostedEvent+Registry 镜像对偶+两重试通道派发+FinPostedListener 一期；悬挂闭环集成测试绿（retry→RETRIED+posted=true） |
+| P1-CK-fin-002 | P1 | D6 | ck-finance-posting.md | postVoucher（DRAFT→POSTED）无借贷平衡校验——不平衡的手工凭证可过账进 GL | 新增 |fixed | F2.1：postVoucher 过账边平衡断言+头合计重算；不平衡拒/平衡过/红字过三用例绿 |
 | P1-CK-fin-003 | P1 | D8 | ck-finance-posting.md | post() 幂等命中返回 null 与全域 dispatcher「null=失败」语义冲突——O-16 场景重审后 posted 永久悬挂 | 新增 |fixed | F1.1 Phase 1：process() 幂等命中改返既有凭证 id（findPostedVoucher 账套过滤重载）；TestErpFinPostingService 幂等断言强化 + fin 全量绿 |
-| P1-CK-fin-004 | P1 | D8/D6 | ck-finance-posting.md | SchemaPropagator 查询账套缺 ACTIVE 状态过滤——停用账套被传播过账、主账套可选中停用账套 | 新增 |fixed | F2.1：resolvePrimarySchemaId 与 findActiveSchemasByOrg 均加 eq(status, STATUS_ACTIVE)（常量提取于 AcctSchemaResolver；字典恰 ACTIVE/INACTIVE 两值）；statusScore 死代码化简；仅 INACTIVE→null 与 F1.4 fail-closed 闭环；TestErpFinMultiSchemaPosting 增 INACTIVE 排除例；ErpMdAcctSchemaBizModel#findFirstByOrg 同型面 Deferred（md 域簇遇该控制点收口） |
+| P1-CK-fin-004 | P1 | D8/D6 | ck-finance-posting.md | SchemaPropagator 查询账套缺 ACTIVE 状态过滤——停用账套被传播过账、主账套可选中停用账套 | 新增 |fixed | F2.1：resolver+propagator ACTIVE 过滤+常量提取+statusScore 化简；混合 ACTIVE/INACTIVE 只返 ACTIVE、仅 INACTIVE 返 null 用例绿 |
 | P1-CK-fin-005 | P1 | D10/D2 | ck-finance-posting.md | acctSchemaId 解析为 null 时 post() 静默「成功」零凭证——无异常记录、无告警、指标误报 success | 新增 |fixed | F1.4：引擎 try 块首语句 fail-closed 守卫（ERR_NO_ACTIVE_SCHEMA 经 recordPostFailure→PENDING→sweep 链）；testNullSchemaFailsClosed 绿 + fin 498/498 |
 | P2-CK-fin-006 | P2 | D2/D7，承接 P2-CK-sal-019 | ck-finance-posting.md | Sweep 重试无源单有效性校验通道——PENDING 异常可为由 post() 重建的已作废单生成凭证 | 承接 P2-CK-sal-019（证实） | open |  |
 | P2-CK-fin-007 | P2 | D1 | ck-finance-posting.md | translateFactsForSchema 内死变量 + 跨域实体 daoFor 直查越权（同方法两种范式并存） | 新增 | open |  |
@@ -604,4 +604,4 @@
 ## 阶段状态
 
 - 检查阶段（M0-M8）：进行中——**已闭合（2026-08-26）**：28/28 检查工作项 done + C8.3 独立收官审计通过（agent_72a36cff，证据抽验 6/6 真实、索引计数吻合、零代码改动确认）。
-- 修复阶段（MF/MV/MG）：**进行中**——F0.1/F0.2/F1.1-F1.4 done（**第一批 P0+横切高危簇全部闭环**：31 findings 终态 30 fixed + mfg-011 部分注记；四计划均独立结束审计通过）。F2.1（finance-过账 P1 余项）done（fin-001/002/004 + sal-003 finance 侧 fixed；五域+md 全量绿）。F2.2 next。open 余 497。
+- 修复阶段（MF/MV/MG）：**进行中**——F0-F2.1 done（**34 findings 终态**：33 fixed + mfg-011 部分注记；五计划独立审计通过）。F2.2（finance-AR/AP P1 簇）ready。open 余 497（fixed 35——含并行 mission 期间 sal-018/019 证伪裁决面）。

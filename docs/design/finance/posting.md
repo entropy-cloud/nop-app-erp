@@ -413,6 +413,13 @@ VoucherBillR（业财回链）
   - `ErpFinVoucherBillR` 业财回链：双向反查凭证与源单（凭证号 ↔ 单据号）。
 - 此设计与 iDempiere/Metasfresh/Odoo/ERPNext 一致——主流开源 ERP 均无独立反写记录表。
 
+### 悬挂补写：两重试通道派发 `VoucherPostedEvent`（F2.1 立法 2026-08-26）
+
+- **场景**：REQUIRES_NEW 凭证已提交 + 主事务回滚 → 源单 `posted=false` + 凭证存在 + `ErpFinPostingException` PENDING。
+- **通道（仅「调用方不在场」的两通道，引擎 `process()` 路径不派发）**：sweep `ErpFinDeferredPostingRetryHelper#doRetry` 与手动 `ErpFinPostingExceptionRetryProcessor#retry` 在 post 成功（含幂等命中）后派发 `VoucherPostedEvent`，各域 `IErpFinVoucherPostedListener` 回写 posted 三字段（镜像反向 `IErpFinVoucherReversedListener` 对偶；已 true 跳过；miss no-op 分期降级）。
+- **引擎路径不派发的依据**：本契约「域自治」+ 硬规则 6 原子性（posted=true 随内层事务提前提交逃逸主事务回滚）+ F1.1 幂等收敛已覆盖 SYNC 重审悬挂。
+- **失败自愈**：listener 失败经 recorder 落工作台（failedStage=notify-posted-listener，eventData 透传）→ 下轮 sweep 幂等命中再派发。
+
 ### 反写时序：默认 SYNC 强一致
 
 - 默认 SYNC：业务+库存+凭证同事务，`posted` 与凭证落库原子提交，无需独立反写步骤。

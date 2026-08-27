@@ -115,7 +115,7 @@
 | F1.4 P1-CK-fin-005 AcctSchemaResolver null 静默成功 fail-closed（含 6 dispatcher 传导面 ast/sal/pur/prj/mfg） | done | `docs/design/finance/multiple-accounting-schemas.md` | F0.2 | none |
 | **第二批：P1 域簇** | | | | |
 | F2.1 finance-过账 P1 余项（fin-001 源单 posted 回写通道/fin-002 凭证平衡校验/fin-004） | done | finance owner docs | F0.2 | none |
-| F2.2 finance-ARAP P1 簇（fin2-001 尾差守卫/002 FX 不对称/003 聚合超核销/004/005） | todo | ar-ap-reconciliation.md | F0.2 | none |
+| F2.2 finance-ARAP P1 簇（fin2-001 尾差守卫/002 FX 不对称/003 聚合超核销/004/005） | ready | ar-ap-reconciliation.md | F0.2 | none |
 | F2.3 finance-预算成本 P1 簇（fin3-001 carryForward 科目错链/002/003 方向敏感/004 TOCTOU/005 账套硬编码） | todo | budget.md、costing-methods.md | F0.2 | none |
 | F2.4 finance-期间 P1 簇（fin4-001 FX 重估口径/002 多账套 N 倍/003 跨法人单价入账） | todo | period-close.md | F0.2 | none |
 | F2.5 mfg-工单 P1 簇（mfg-002 驳回死锁/003 红冲不回退成本/004/005；Deferred：F2.1 二期 posted listener 域内收口） | todo | manufacturing owner docs | F0.2 | none |
