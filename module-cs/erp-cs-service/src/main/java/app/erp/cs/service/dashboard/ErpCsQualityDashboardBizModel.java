@@ -7,6 +7,7 @@ import app.erp.cs.dao.entity.ErpCsTicket;
 import app.erp.cs.service.ErpCsConstants;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizQuery;
+import io.nop.api.core.annotations.core.Description;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.annotations.core.Optional;
 import io.nop.api.core.beans.query.QueryBean;
@@ -63,6 +64,7 @@ public class ErpCsQualityDashboardBizModel {
 
     // ===================== KPI =====================
 
+    @Description("客服看板 KPI（工单量与状态分布、CSAT/NPS、SLA 达标、知识库命中）")
     @BizQuery
     public Map<String, Object> getDashboardKpi(@Optional @Name("startDate") String startDate,
                                                 @Optional @Name("endDate") String endDate,

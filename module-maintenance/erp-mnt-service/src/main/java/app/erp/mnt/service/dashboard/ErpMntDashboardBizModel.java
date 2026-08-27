@@ -11,6 +11,7 @@ import app.erp.mnt.service.ErpMntErrors;
 import app.erp.mnt.service.support.OeeCalculator;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizQuery;
+import io.nop.api.core.annotations.core.Description;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.annotations.core.Optional;
 import io.nop.api.core.beans.query.QueryBean;
@@ -66,6 +67,7 @@ public class ErpMntDashboardBizModel {
     @Inject
     OeeCalculator oeeCalculator;
 
+    @Description("维护看板 KPI（维护工单量与完成、设备可用率、备件消耗）")
     @BizQuery
     public Map<String, Object> getDashboardKpi(@Optional @Name("startDate") LocalDate startDate,
                                                 @Optional @Name("endDate") LocalDate endDate,

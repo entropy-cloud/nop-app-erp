@@ -10,6 +10,7 @@ import app.erp.qa.service.ErpQaConfigs;
 import app.erp.qa.service.ErpQaConstants;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizQuery;
+import io.nop.api.core.annotations.core.Description;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.annotations.core.Optional;
 import io.nop.api.core.beans.query.QueryBean;
@@ -64,6 +65,7 @@ public class ErpQaDashboardBizModel {
     @Inject
     IOrmTemplate ormTemplate;
 
+    @Description("质检看板 KPI（质检单量与合格率、NCR/CAPA 状态分布）")
     @BizQuery
     public Map<String, Object> getDashboardKpi(@Optional @Name("startDate") LocalDate startDate,
                                                 @Optional @Name("endDate") LocalDate endDate,

@@ -9,6 +9,7 @@ import app.erp.sal.dao.entity.ErpSalOrder;
 import app.erp.sal.service.ErpSalConstants;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizQuery;
+import io.nop.api.core.annotations.core.Description;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.annotations.core.Optional;
 import io.nop.api.core.beans.query.QueryBean;
@@ -58,6 +59,7 @@ public class ErpSalDashboardBizModel {
     @Inject
     IErpFinArApItemBiz arApItemBiz;
 
+    @Description("销售看板 KPI（订单额、收入、毛利、回款、应收余额）")
     @BizQuery
     public Map<String, Object> getDashboardKpi(@Optional @Name("startDate") LocalDate startDate,
                                                 @Optional @Name("endDate") LocalDate endDate,

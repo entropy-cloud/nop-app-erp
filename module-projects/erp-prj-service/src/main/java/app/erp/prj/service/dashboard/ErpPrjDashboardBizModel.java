@@ -7,6 +7,7 @@ import app.erp.prj.dao.entity.ErpPrjProjectPnl;
 import app.erp.prj.service.ErpPrjConstants;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizQuery;
+import io.nop.api.core.annotations.core.Description;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.annotations.core.Optional;
 import io.nop.api.core.beans.query.QueryBean;
@@ -59,6 +60,7 @@ public class ErpPrjDashboardBizModel {
     @Inject
     IOrmTemplate ormTemplate;
 
+    @Description("项目看板 KPI（项目收入/成本/毛利、里程碑与结算进度）")
     @BizQuery
     public Map<String, Object> getDashboardKpi(IServiceContext context) {
         return ormTemplate.runInSession(session -> {

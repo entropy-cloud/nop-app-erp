@@ -5,6 +5,7 @@ import app.erp.md.dao.entity.ErpMdMaterialSku;
 import app.erp.md.dao.entity.ErpMdPartner;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizQuery;
+import io.nop.api.core.annotations.core.Description;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.core.context.IServiceContext;
 import io.nop.dao.api.IDaoProvider;
@@ -44,6 +45,7 @@ public class ErpMdDashboardBizModel {
     @Inject
     IOrmTemplate ormTemplate;
 
+    @Description("主数据看板 KPI（物料/伙伴/客户等主数据活跃度统计与告警）")
     @BizQuery
     public Map<String, Object> getDashboardKpi(IServiceContext context) {
         return ormTemplate.runInSession(session -> {

@@ -13,6 +13,7 @@ import app.erp.pur.dao.entity.ErpPurReceiveLine;
 import app.erp.pur.service.ErpPurConstants;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizQuery;
+import io.nop.api.core.annotations.core.Description;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.annotations.core.Optional;
 import io.nop.api.core.beans.query.QueryBean;
@@ -66,6 +67,7 @@ public class ErpPurDashboardBizModel {
     @Inject
     IErpFinArApItemBiz arApItemBiz;
 
+    @Description("采购看板 KPI（采购订单额、应付余额、到货及时率、三单匹配状态分布）")
     @BizQuery
     public Map<String, Object> getDashboardKpi(@Optional @Name("startDate") LocalDate startDate,
                                                 @Optional @Name("endDate") LocalDate endDate,
