@@ -62,7 +62,7 @@
 
 ## 前置调研结论（2026-08-26，E3 整体计划 Phase 1）——「最小落地集」冻结
 
-- **introspection 可用性（活仓核验）**：平台自研 GraphQL 引擎支持完整 introspection（`__Schema/__Type/__Field` 等 spec 类型 + 字段/参数/枚举值级 description），经 config `nop.graphql.schema-introspection.enabled` 门控，**默认 false**（应用当前显式关闭）。描述元数据来源：实体字段从 orm/xmeta displayName/description 富覆盖（中文），Java action 从 `@Description` 注解，xbiz 从 displayName，读时经 i18n 解析。另：`nop.debug=true` 时启动即 dump 完整 schema（`/_dump/nop/main/graphql/schema.graphql`），应用已开启——离线发现通道现成。
+- **introspection 可用性（活仓核验）**：平台自研 GraphQL 引擎支持完整 introspection（`__Schema/__Type/__Field` 等 spec 类型 + 字段/参数/枚举值级 description），经 config `nop.graphql.schema-introspection.enabled` 门控，**默认 false**（全部应用工件显式关闭：app-erp-all + 19 分域 app，2026-08-28 经计划 `2026-08-27-2006-3` 对齐）。描述元数据来源：实体字段从 orm/xmeta displayName/description 富覆盖（中文），Java action 从 `@Description` 注解，xbiz 从 displayName，读时经 i18n 解析。另：`nop.debug=true` 时启动即 dump 完整 schema（`/_dump/nop/main/graphql/schema.graphql`），应用已开启——离线发现通道现成。
 - **schema 规模与质量缺口**：应用侧声明操作 804 个（260 @BizQuery + 546 @BizMutation，另有 CRUD 内建），实体类型描述完整，但**应用自定义 action 零 `@Description`**（grep 0 命中）——action 级发现描述是主要缺口。
 - **双通道一致性（静态核实）**：REST 通道 `/r/{bizObj__action}`（GET/POST，`QuarkusGraphQLWebService`）与 GraphQL `/graphql` 经同一 `IGraphQLEngine`（`initRpcContext + executeRpc`）分发——通道一致性由共享引擎保证，行为级验证以 E2E 断言落地。
 - **平台桥登记（平台优先，不重建）**：平台 `nop-ai-tools` 自带 `GraphQLToolProvider`（任意 `bizObj__action` 包装为 AI function tool：description + JSON Schema 输入 + 引擎执行）——平台级 GraphQL→AI 工具桥已存在，应用层不重复实现、不强制启用。

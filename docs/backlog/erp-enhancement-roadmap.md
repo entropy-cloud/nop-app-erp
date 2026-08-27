@@ -142,7 +142,7 @@
 | E3.3 | 型号级 ext 字段键声明 + 管理界面（view.xml 定制，零 ORM）✅ 已落地（ORM 承载经 dual-agent 批准（meta 层无持久化 ext 机制）；型号实体 + 校验 + 页面，2026-08-27） |
 | E3.4 | `IApsSchedulingSolver` 接口 + 贪心默认实现保留 + `scheduleToc` 瓶颈识别试点 ✅ 已落地（config 切换 + SchedulingResult 扩展，2026-08-27） |
 | E3.5 | OCR 引擎选型调研 → 管道实现（文档 → 解析 → 草稿发票 → 三单匹配）；分类引擎 Phase 1 规则优先 + Phase 2 ML 经 SPI 注入（`IErpFinAcctDocProvider` 注入范式）；ORM 变更（文档引用/解析字段）已授权 ✅ 已落地（SPI 双引擎 + 端到端管道 + 人工门，config-gate 默认关闭，2026-08-27；**P1 修复加固**（multi-audit P1-1/2/3，plan `2026-08-27-2006-1`，2026-08-27）：步骤失败 FAILED+FAIL 轨迹 REQUIRES_NEW 独立事务落账（外层回滚后存活，retry 守卫同步路径可达）+ `processPending` 逐文档独立事务失败隔离（毒文档不回滚先行成功/不阻断后续/FAILED 终态退出扫描）+ upload 门补齐「默认关闭零暴露」成立） |
-| E3.6 | GraphQL schema 对 AI 工具发现的可用性调研（introspection/类型描述）→ AI 工具消费约定 + 护栏（ORM actorType 字段已授权）。**不采用 MCP**（用户 2026-08-12 裁决：GraphQL 类型定义即 API，REST/GraphQL 双通道）✅ 已落地（最小落地集 6 项冻结清单逐项，actorType 裁决不落地，2026-08-27） |
+| E3.6 | GraphQL schema 对 AI 工具发现的可用性调研（introspection/类型描述）→ AI 工具消费约定 + 护栏（ORM actorType 字段已授权）。**不采用 MCP**（用户 2026-08-12 裁决：GraphQL 类型定义即 API，REST/GraphQL 双通道）✅ 已落地（最小落地集 6 项冻结清单逐项，actorType 裁决不落地，2026-08-27；**P1 修复收口**（multi-audit P1-6，plan `2026-08-27-2006-3`，2026-08-28）：19 分域 app `schema-introspection.enabled` 翻 `false`，全部 20 应用工件默认关闭，owner doc「显式关闭」断言对齐为真） |
 | E3.7 | **暂缓**：触发条件 = 真实 nop-wf 跨域编排需求（人工门控/超时/整链追溯）出现后按 E1.7 设计实现 |
 | E3.8 | 资产状态/归属变化审计记录 + `getAssetAuditTrail` 时间轴查询（优先复用会计日志；独立审计实体 ORM 已授权）✅ 已落地（独立实体裁决 + 7 事件类型全覆盖，2026-08-27） |
 
