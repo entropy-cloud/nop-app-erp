@@ -1,6 +1,7 @@
 package app.erp.aps.service;
 
 import app.erp.aps.service.scheduling.ApsBottleneckDetector;
+import app.erp.aps.service.scheduling.ApsSchedulingRequest;
 import app.erp.aps.service.scheduling.GreedyApsSchedulingSolver;
 import app.erp.aps.service.scheduling.IApsSchedulingSolver;
 import io.nop.api.core.annotations.autotest.NopTestConfig;
@@ -81,6 +82,35 @@ public class TestErpApsSchedulingToc extends JunitAutoTestCase {
     }
 
     // ---------------- TOC：瓶颈识别 + 拉动式排产可观测 ----------------
+
+    /**
+     * P2-14：TOC 阈值等值边界语义锁定（{@code GreedyApsSchedulingSolver.resolveBottlenecks} 严格大于）：
+     * 负荷率 == 阈值不触发瓶颈、> 阈值触发、< 阈值不触发（纯算法直调，空工序单不触 DB）。
+     */
+    @Test
+    public void testTocBottleneckThresholdEqualityBoundary() {
+        GreedyApsSchedulingSolver solver = new GreedyApsSchedulingSolver();
+        ApsSchedulingRequest request = new ApsSchedulingRequest();
+        request.setMode(IApsSchedulingSolver.MODE_TOC);
+        request.setOrders(java.util.List.of());
+        request.setMaintenanceConstraints(java.util.List.of());
+        request.setRoutings(java.util.List.of());
+        request.setBufferMinutes(0);
+        request.setHorizonStart(HORIZON_START);
+        request.setHorizonEnd(HORIZON_END);
+        request.setDefaultEarliestStart(HORIZON_START);
+        request.setBottleneckThreshold(0.5);
+        Map<String, BigDecimal> rates = new LinkedHashMap<>();
+        rates.put(MACHINE_A, new BigDecimal("0.5"));
+        rates.put(MACHINE_B, new BigDecimal("0.500001"));
+        rates.put(MACHINE_C, new BigDecimal("0.4"));
+        request.setMachineLoadRates(rates);
+
+        app.erp.aps.biz.SchedulingResult result = solver.solve(request);
+        assertEquals(1, result.getBottleneckMachineIds().size(),
+                "== 阈值不触发瓶颈，仅严格大于触发（A==0.5 排除、B>0.5 命中、C<0.5 排除）");
+        assertEquals(MACHINE_B, result.getBottleneckMachineIds().get(0));
+    }
 
     @Test
     public void testScheduleTocBottleneckFirstAndPullBackward() {

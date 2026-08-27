@@ -43,9 +43,26 @@ import static io.nop.api.core.beans.FilterBeans.eq;
  * 声明校验 {@link ErpAstAsset#extFieldValues}（非法键/缺必填/类型不匹配拒绝，ErrorCode 范式）；
  * (2) E3.8 审计——CRUD 主入口记录 CREATE/UPDATE/STATUS_CHANGE/TRANSFER/VALUATION 事件
  * （diff 变更前后值），{@link #getAssetAuditTrail} 返回时间轴。
+ *
+ * <p>P2 批扩展（plan 2026-08-28-0219-2）：P2-4 UPDATE 审计白名单纳入财务敏感字段
+ * （见 {@link #UPDATE_AUDITED_FIELDS}，remark 带变更字段名清单）；P2-5 逻辑删除型号双路径守卫
+ * （新绑定拒绝 {@code ERR_AST_ASSET_MODEL_DELETED} + 存量绑定豁免，见
+ * {@link #validateExtFieldValues(ErpAstAsset, boolean)}）。
  */
 @BizModel("ErpAstAsset")
 public class ErpAstAssetBizModel extends AbstractErpCrudBizModel<ErpAstAsset> implements IErpAstAssetBiz {
+
+    /**
+     * UPDATE 审计触发字段白名单（P2-4 定稿，owner doc §1 覆盖面登记）：信息字段 + 财务敏感字段。
+     * 财务敏感 = 决定折旧计提口径或记账路由的卡片参数（acquisitionDate/originalValue/residualValue/
+     * depreciationMethod/depreciationRate/usefulLifeMonths/categoryId）；currentValue 例外——归
+     * VALUATION 事件（减值/重估语义）。code/orgId/currencyId/staffId 为标识/组织属性不入清单；
+     * accumulatedDepreciation/netBookValue 为处理器回写汇总列（非用户 CRUD 面）不入清单。
+     */
+    private static final String[] UPDATE_AUDITED_FIELDS = {
+            "name", "brandModel", "remark", "extFieldValues", "modelId",
+            "acquisitionDate", "originalValue", "residualValue",
+            "depreciationMethod", "depreciationRate", "usefulLifeMonths", "categoryId"};
 
     @Inject
     ErpAstAssetSuspendResumeProcessor suspendResumeProcessor;
@@ -110,7 +127,7 @@ public class ErpAstAssetBizModel extends AbstractErpCrudBizModel<ErpAstAsset> im
     @Override
     protected void defaultPrepareSave(EntityData<ErpAstAsset> entityData, IServiceContext context) {
         super.defaultPrepareSave(entityData, context);
-        validateExtFieldValues(entityData.getEntity());
+        validateExtFieldValues(entityData.getEntity(), true);
     }
 
     /** CREATE 审计在保存后记录（seq 主键在 save 后才可读；对齐 hr afterEntityChange 范式）。 */
@@ -131,9 +148,9 @@ public class ErpAstAssetBizModel extends AbstractErpCrudBizModel<ErpAstAsset> im
     protected void defaultPrepareUpdate(EntityData<ErpAstAsset> entityData, IServiceContext context) {
         super.defaultPrepareUpdate(entityData, context);
         ErpAstAsset asset = entityData.getEntity();
-        validateExtFieldValues(asset);
-
         Map<String, Object> oldValues = asset.orm_dirtyOldValues();
+        validateExtFieldValues(asset, changed(oldValues, "modelId"));
+
         ErpAstAssetAuditRecorder.Before before = new ErpAstAssetAuditRecorder.Before(
                 str(oldValues.get("status")), str(oldValues.get("departmentId")),
                 str(oldValues.get("locationId")), str(oldValues.get("employeeId")));
@@ -152,10 +169,15 @@ public class ErpAstAssetBizModel extends AbstractErpCrudBizModel<ErpAstAsset> im
             auditRecorder.record(asset, ErpAstDaoConstants.AUDIT_EVENT_TYPE_VALUATION, before,
                     null, null, "资产价值调整：" + from + " → " + to);
         }
-        if (changed(oldValues, "name") || changed(oldValues, "brandModel") || changed(oldValues, "remark")
-                || changed(oldValues, "extFieldValues") || changed(oldValues, "modelId")) {
+        List<String> updatedFields = new ArrayList<>();
+        for (String prop : UPDATE_AUDITED_FIELDS) {
+            if (changed(oldValues, prop)) {
+                updatedFields.add(prop);
+            }
+        }
+        if (!updatedFields.isEmpty()) {
             auditRecorder.record(asset, ErpAstDaoConstants.AUDIT_EVENT_TYPE_UPDATE, before,
-                    null, null, "资产信息更新");
+                    null, null, "资产信息更新（变更字段：" + String.join(", ", updatedFields) + "）");
         }
     }
 
@@ -164,8 +186,13 @@ public class ErpAstAssetBizModel extends AbstractErpCrudBizModel<ErpAstAsset> im
     /**
      * 按型号 {@code extFieldDefs}（[{key,label,type,required}]）校验资产 {@code extFieldValues}：
      * 无型号不允许携带值；有型号时非法键拒绝、必填缺失拒绝、类型不匹配拒绝（string/number/boolean）。
+     *
+     * <p>P2-5 逻辑删除型号双路径守卫：{@code modelBindingChanged}（save 一律视为新绑定；update 以
+     * modelId 是否变更判定）——新绑定/变更绑定到已删型号（delVersion != 0）拒绝；存量绑定（绑定后
+     * 型号被删）豁免——不按已删型号 extFieldDefs 强制校验，既有 extFieldValues 不触发任何拒绝
+     * （含「无型号不允许携带值」类拒绝），保证存量资产后续保存零回归。
      */
-    protected void validateExtFieldValues(ErpAstAsset asset) {
+    protected void validateExtFieldValues(ErpAstAsset asset, boolean modelBindingChanged) {
         Map<String, Object> values = parseJsonMap(asset.getExtFieldValues());
         String modelId = asset.getModelId();
 
@@ -180,6 +207,16 @@ public class ErpAstAssetBizModel extends AbstractErpCrudBizModel<ErpAstAsset> im
         if (model == null) {
             throw new NopException(ErpAstErrors.ERR_AST_ASSET_MODEL_NOT_FOUND)
                     .param(ErpAstErrors.ARG_MODEL_ID, modelId);
+        }
+
+        Long delVersion = model.getDelVersion();
+        if (delVersion != null && delVersion != 0L) {
+            if (modelBindingChanged) {
+                throw new NopException(ErpAstErrors.ERR_AST_ASSET_MODEL_DELETED)
+                        .param(ErpAstErrors.ARG_MODEL_ID, modelId)
+                        .param(ErpAstErrors.ARG_MODEL_CODE, model.getCode());
+            }
+            return;
         }
 
         Map<String, Map<String, Object>> defs = parseExtFieldDefs(model);

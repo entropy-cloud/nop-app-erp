@@ -409,6 +409,12 @@ public interface ErpAstErrors {
             "资产型号不存在：{modelId}",
             ARG_MODEL_ID);
 
+    // P2-5：逻辑删除型号不允许新绑定（存量绑定豁免走跳过校验，非错误路径）
+    ErrorCode ERR_AST_ASSET_MODEL_DELETED = ErrorCode.define(
+            "erp.err.ast.asset-model.deleted",
+            "资产型号 {modelCode} 已删除，不允许绑定到资产",
+            ARG_MODEL_CODE, ARG_MODEL_ID);
+
     ErrorCode ERR_AST_EXT_FIELD_NOT_DECLARED = ErrorCode.define(
             "erp.err.ast.ext-field.not-declared",
             "资产 {assetCode} 扩展字段 {extFieldKey} 未在型号 {modelCode} 的字段集中声明",

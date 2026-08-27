@@ -159,9 +159,17 @@ public class TestErpInvSnapshotAndStockCheck extends JunitAutoTestCase {
         assertEquals(1, ledgerOnly);
         assertEquals(Boolean.FALSE, report.get("consistent"));
 
-        // 零值账面独有不报（0 = 0 等价）
+        // 零值账面独有不报差异（0 = 0 等价）：补种零值余额行（无对应流水）后差异集保持 3 行，
+        // 即零值行不出现在差异集（P2-14 修复：原 >= 3 断言空转，未断言零值行不出现）
+        seedBalance(WH_A, MAT_B, "0", "0");
         Map<String, Object> zeroReport = ledgerBiz.checkStockBalanceConsistency(LocalDate.of(2026, 7, 31), CTX);
-        assertTrue(((Number) zeroReport.get("mismatchCount")).intValue() >= 3);
+        assertEquals(3, ((Number) zeroReport.get("mismatchCount")).intValue(),
+                "零值账面独有行（数量/成本均为 0）不出现在差异集，差异数保持 3");
+        @SuppressWarnings("unchecked")
+        List<Map<String, Object>> zeroMismatches = (List<Map<String, Object>>) zeroReport.get("mismatches");
+        assertTrue(zeroMismatches.stream().noneMatch(m -> WH_A.equals(String.valueOf(m.get("warehouseId")))
+                && MAT_B.equals(String.valueOf(m.get("materialId")))),
+                "差异集中不存在零值行（WH_A/MAT_B）诊断项");
     }
 
     // ---------- 多组织/多货主负路径（对账键 7 维 = 自然键） ----------

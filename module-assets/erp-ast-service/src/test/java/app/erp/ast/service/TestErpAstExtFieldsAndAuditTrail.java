@@ -19,6 +19,7 @@ import io.nop.core.context.IServiceContext;
 import io.nop.core.context.ServiceContextImpl;
 import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
+import io.nop.api.core.exceptions.NopException;
 import io.nop.graphql.core.engine.IGraphQLEngine;
 import io.nop.orm.IOrmTemplate;
 import jakarta.inject.Inject;
@@ -36,6 +37,7 @@ import static io.nop.graphql.core.ast.GraphQLOperationType.query;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -203,6 +205,94 @@ public class TestErpAstExtFieldsAndAuditTrail extends JunitAutoTestCase {
         assertEquals(null, transfer.getFromLocationId());
     }
 
+    // ---------- P2-4 财务敏感字段 UPDATE 审计 + P2-5 逻辑删除型号双路径守卫（plan 2026-08-28-0219-2） ----------
+
+    @Test
+    public void testFinancialFieldChangeAuditedAsUpdateWithFieldNames() {
+        ErpAstAsset asset = seedAsset("AST-AUD-FIN", null, null);
+
+        assertEquals(0, graphQLEngine.executeRpc(graphQLEngine.newRpcContext(mutation,
+                "ErpAstAsset__update", ApiRequest.build(Map.of("data", Map.of(
+                        "id", asset.getId(),
+                        "depreciationMethod", "DECLINING",
+                        "residualValue", new BigDecimal("500"),
+                        "acquisitionDate", "2026-07-15"))))).getStatus(),
+                "财务敏感字段变更应保存成功");
+
+        IEntityDao<ErpAstAssetActionLog> dao = daoProvider.daoFor(ErpAstAssetActionLog.class);
+        QueryBean q = new QueryBean();
+        q.addFilter(eq("assetId", asset.getId()));
+        q.addFilter(eq("eventType", "UPDATE"));
+        List<ErpAstAssetActionLog> updates = dao.findAllByQuery(q);
+        assertEquals(1, updates.size(), "财务字段变更产生 1 条 UPDATE 审计事件");
+        String summary = updates.get(0).getSummary();
+        assertTrue(summary.contains("depreciationMethod"), "remark 带变更字段名 depreciationMethod: " + summary);
+        assertTrue(summary.contains("residualValue"), "remark 带变更字段名 residualValue: " + summary);
+        assertTrue(summary.contains("acquisitionDate"), "remark 带变更字段名 acquisitionDate: " + summary);
+    }
+
+    @Test
+    public void testNewBindingToDeletedModelRejected() {
+        // 双层守卫（执行发现登记，见计划执行注记）：平台 ObjMetaBasedValidator 对 ext:relation FK 的
+        // deleted-ref 预检先于 BizModel 钩子——标准 Map/GraphQL 入口以平台通用码拒绝已删型号绑定
+        // （审计 P2-5 前半句「可被绑定」对标准入口实测不成立）；钩子层 ERR_AST_ASSET_MODEL_DELETED
+        // 为域内语义兜底（存量豁免同方法落地，防 meta 漂移移除 ext:relation 预检或内部构造路径）。
+        String modelId = seedModel("MDL-DEL-1", "[{\"key\":\"cpu\",\"label\":\"CPU\",\"type\":\"string\",\"required\":true}]");
+        deleteModel(modelId);
+
+        // 新绑定路径 ①：save 携带已删 modelId → 拒绝（错误码断言；biz 直调与 GraphQL 共用同一校验管道）
+        seedCurrency();
+        Map<String, Object> data = new HashMap<>();
+        data.put("code", "AST-DEL-M1");
+        data.put("name", "AST-DEL-M1-name");
+        data.put("acquisitionDate", LocalDate.of(2026, 7, 1).toString());
+        data.put("originalValue", new BigDecimal("10000"));
+        data.put("currentValue", new BigDecimal("10000"));
+        data.put("status", "DRAFT");
+        data.put("currencyId", "1");
+        data.put("modelId", modelId);
+        NopException saveEx = assertThrows(NopException.class,
+                () -> ormTemplate.runInSession(sess -> assetBiz.save(new HashMap<>(data), CTX)),
+                "新资产绑定已删型号应被拒绝");
+        assertEquals("nop.err.dao.unknown-entity", saveEx.getErrorCode(),
+                "标准入口的已删 ref 拒绝码 = 平台 deleted-ref 预检层");
+
+        // 新绑定路径 ②：存量无型号资产 update 变更 modelId 至已删型号 → 拒绝
+        ErpAstAsset asset = seedAsset("AST-DEL-M2", null, null);
+        NopException updateEx = assertThrows(NopException.class,
+                () -> ormTemplate.runInSession(sess -> assetBiz.update(
+                        Map.of("id", asset.getId(), "modelId", modelId), CTX)),
+                "变更绑定至已删型号应被拒绝");
+        assertEquals("nop.err.dao.unknown-entity", updateEx.getErrorCode());
+    }
+
+    @Test
+    public void testStockAssetWithDeletedModelExemptedFromValidation() {
+        // 存量路径：资产绑定型号并携带合规 extFieldValues 后型号被逻辑删除 →
+        // 后续保存不按已删 defs 强制（原必填键缺失场景通过），且不报 ERR_AST_EXT_FIELD_WITHOUT_MODEL
+        String modelId = seedModel("MDL-DEL-2", "[{\"key\":\"cpu\",\"label\":\"CPU\",\"type\":\"string\",\"required\":true}]");
+        ErpAstAsset asset = seedAsset("AST-DEL-M3", modelId, "{\"cpu\":\"i7\"}");
+        deleteModel(modelId);
+
+        // 场景 ①：普通字段保存通过（modelId 未变更 → 存量豁免）
+        assertEquals(0, graphQLEngine.executeRpc(graphQLEngine.newRpcContext(mutation,
+                "ErpAstAsset__update", ApiRequest.build(Map.of("data", Map.of(
+                        "id", asset.getId(), "name", "改名后服务器"))))).getStatus(),
+                "已删型号存量资产普通保存应通过");
+
+        // 场景 ②：原必填键缺失（cpu 不在值集）→ 值不再按已删 defs 校验，通过
+        assertEquals(0, graphQLEngine.executeRpc(graphQLEngine.newRpcContext(mutation,
+                "ErpAstAsset__update", ApiRequest.build(Map.of("data", Map.of(
+                        "id", asset.getId(), "extFieldValues", "{\"ramGb\":32}"))))).getStatus(),
+                "已删型号 defs 不再强制，原必填键缺失不拒绝");
+
+        // 场景 ③：清空值同样通过（豁免对既有值零强制）
+        assertEquals(0, graphQLEngine.executeRpc(graphQLEngine.newRpcContext(mutation,
+                "ErpAstAsset__update", ApiRequest.build(Map.of("data", Map.of(
+                        "id", asset.getId(), "extFieldValues", "{}"))))).getStatus(),
+                "已删型号存量资产清空值保存应通过");
+    }
+
     // ---------- seeds ----------
 
     private void seedOrgRefs() {
@@ -262,6 +352,16 @@ public class TestErpAstExtFieldsAndAuditTrail extends JunitAutoTestCase {
             m.setExtFieldDefs(extFieldDefs);
             modelBiz.saveEntity(m, null, CTX);
             return m.getId();
+        });
+    }
+
+    /** 逻辑删除型号（useLogicalDelete → deleteEntity 即 UPDATE delVersion，对齐生产删除路径）。 */
+    private void deleteModel(String modelId) {
+        ormTemplate.runInSession(sess -> {
+            IEntityDao<ErpAstAssetModel> dao = daoProvider.daoFor(ErpAstAssetModel.class);
+            ErpAstAssetModel m = dao.getEntityById(modelId);
+            dao.deleteEntity(m);
+            return null;
         });
     }
 
