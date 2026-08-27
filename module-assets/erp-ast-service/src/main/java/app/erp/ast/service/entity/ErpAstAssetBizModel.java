@@ -176,7 +176,7 @@ public class ErpAstAssetBizModel extends AbstractErpCrudBizModel<ErpAstAsset> im
             return;
         }
 
-        ErpAstAssetModel model = daoProvider().daoFor(ErpAstAssetModel.class).getEntityById(modelId);
+        ErpAstAssetModel model = asset.getModel();
         if (model == null) {
             throw new NopException(ErpAstErrors.ERR_AST_ASSET_MODEL_NOT_FOUND)
                     .param(ErpAstErrors.ARG_MODEL_ID, modelId);

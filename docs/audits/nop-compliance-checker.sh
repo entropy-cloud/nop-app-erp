@@ -23,7 +23,11 @@ trap "rm -rf $TMPDIR" EXIT
 # 性能优化（plan 2026-07-20-2200-1 M-1）：使用 `-prune` 跳过 target/_gen/node_modules/.git，
 # 而非 `-not -path`（后者仍会进入被排除目录后再过滤）。
 # 实测优化前 81s，优化后约 30s（prune 避免对 ~850 个被排除目录的递归 descend）。
-PRUNE_DIRS='-type d \( -name target -o -name _gen -o -name node_modules -o -name .git \) -prune'
+# R7 扫描范围校准（plan 2026-08-27-1540-1 Phase 2 Decision 方案 A，对齐 R8 排除集校准先例）：
+# 追加排除 `_tmp/`——git-ignored 本地草稿区（.gitignore:26）永不入库，CI 干净检出不命中，
+# 故 CI 门控行为零变化；仅消除本地复跑 R7 假 +1（本地草稿被扫描产生误报，实测 `_tmp/`
+# 对 19 规则唯一贡献 = 1 处 R7 命中）。残留风险：`_tmp` 内生产违规被静默豁免——可忽略（永不入库）。
+PRUNE_DIRS='-type d \( -name target -o -name _gen -o -name node_modules -o -name .git -o -name _tmp \) -prune'
 
 # 递归搜索（性能优化：-prune 跳过 _gen/target/node_modules/.git 目录）
 rgrep() {
