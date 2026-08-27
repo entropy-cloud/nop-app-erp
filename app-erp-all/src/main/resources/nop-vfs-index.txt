@@ -25,6 +25,7 @@
 /_init-data/erp_hr_salary_simulation_item_adj.csv
 /_init-data/erp_inv_cost_layer.csv
 /_init-data/erp_inv_stock_balance.csv
+/_init-data/erp_inv_stock_ledger.csv
 /_init-data/erp_inv_stock_move.csv
 /_init-data/erp_inv_stock_move_line.csv
 /_init-data/erp_md_acct_schema.csv
@@ -133,6 +134,7 @@
 /dict/erp-ast/adjustment-type.dict.yaml
 /dict/erp-ast/allocation-method.dict.yaml
 /dict/erp-ast/asset-status.dict.yaml
+/dict/erp-ast/audit-event-type.dict.yaml
 /dict/erp-ast/capitalization-source-type.dict.yaml
 /dict/erp-ast/cip-cost-type.dict.yaml
 /dict/erp-ast/cip-status.dict.yaml
@@ -516,6 +518,10 @@
 /erp/ast/model/ErpAstAsset/ErpAstAsset.xmeta
 /erp/ast/model/ErpAstAsset/_ErpAstAsset.xbiz
 /erp/ast/model/ErpAstAsset/_ErpAstAsset.xmeta
+/erp/ast/model/ErpAstAssetActionLog/ErpAstAssetActionLog.xbiz
+/erp/ast/model/ErpAstAssetActionLog/ErpAstAssetActionLog.xmeta
+/erp/ast/model/ErpAstAssetActionLog/_ErpAstAssetActionLog.xbiz
+/erp/ast/model/ErpAstAssetActionLog/_ErpAstAssetActionLog.xmeta
 /erp/ast/model/ErpAstAssetCapitalization/ErpAstAssetCapitalization.xbiz
 /erp/ast/model/ErpAstAssetCapitalization/ErpAstAssetCapitalization.xmeta
 /erp/ast/model/ErpAstAssetCapitalization/_ErpAstAssetCapitalization.xbiz
@@ -524,6 +530,10 @@
 /erp/ast/model/ErpAstAssetCategory/ErpAstAssetCategory.xmeta
 /erp/ast/model/ErpAstAssetCategory/_ErpAstAssetCategory.xbiz
 /erp/ast/model/ErpAstAssetCategory/_ErpAstAssetCategory.xmeta
+/erp/ast/model/ErpAstAssetModel/ErpAstAssetModel.xbiz
+/erp/ast/model/ErpAstAssetModel/ErpAstAssetModel.xmeta
+/erp/ast/model/ErpAstAssetModel/_ErpAstAssetModel.xbiz
+/erp/ast/model/ErpAstAssetModel/_ErpAstAssetModel.xmeta
 /erp/ast/model/ErpAstCip/ErpAstCip.xbiz
 /erp/ast/model/ErpAstCip/ErpAstCip.xmeta
 /erp/ast/model/ErpAstCip/_ErpAstCip.xbiz
@@ -594,6 +604,11 @@
 /erp/ast/pages/ErpAstAsset/main.page.yaml
 /erp/ast/pages/ErpAstAsset/picker.page.yaml
 /erp/ast/pages/ErpAstAsset/ref-asset.page.yaml
+/erp/ast/pages/ErpAstAssetActionLog/ErpAstAssetActionLog.lib.xjs
+/erp/ast/pages/ErpAstAssetActionLog/ErpAstAssetActionLog.view.xml
+/erp/ast/pages/ErpAstAssetActionLog/_gen/_ErpAstAssetActionLog.view.xml
+/erp/ast/pages/ErpAstAssetActionLog/main.page.yaml
+/erp/ast/pages/ErpAstAssetActionLog/picker.page.yaml
 /erp/ast/pages/ErpAstAssetCapitalization/ErpAstAssetCapitalization.lib.xjs
 /erp/ast/pages/ErpAstAssetCapitalization/ErpAstAssetCapitalization.view.xml
 /erp/ast/pages/ErpAstAssetCapitalization/_gen/_ErpAstAssetCapitalization.view.xml
@@ -604,6 +619,11 @@
 /erp/ast/pages/ErpAstAssetCategory/_gen/_ErpAstAssetCategory.view.xml
 /erp/ast/pages/ErpAstAssetCategory/main.page.yaml
 /erp/ast/pages/ErpAstAssetCategory/picker.page.yaml
+/erp/ast/pages/ErpAstAssetModel/ErpAstAssetModel.lib.xjs
+/erp/ast/pages/ErpAstAssetModel/ErpAstAssetModel.view.xml
+/erp/ast/pages/ErpAstAssetModel/_gen/_ErpAstAssetModel.view.xml
+/erp/ast/pages/ErpAstAssetModel/main.page.yaml
+/erp/ast/pages/ErpAstAssetModel/picker.page.yaml
 /erp/ast/pages/ErpAstCip/ErpAstCip.lib.xjs
 /erp/ast/pages/ErpAstCip/ErpAstCip.view.xml
 /erp/ast/pages/ErpAstCip/_gen/_ErpAstCip.view.xml
@@ -4495,6 +4515,7 @@
 /nop/batch-task/fin/bank-recon-auto-reverse.batch.xml
 /nop/batch-task/fin/cash-forecast-refresh.batch.xml
 /nop/batch-task/fin/deferred-posting-sweep.batch.xml
+/nop/batch-task/inv/stock-check.batch.xml
 /nop/batch-task/mfg/jobcard-auto-generate.batch.xml
 /nop/batch-task/prj/pnl-calc.batch.xml
 /nop/batch-task/qa/spc-capability.batch.xml
@@ -4636,6 +4657,7 @@
 /nop/job/conf/erp-fin-deferred-posting-sweep.job.yaml
 /nop/job/conf/erp-hr-contract-expiry.job.yaml
 /nop/job/conf/erp-hr-leave-approver-timeout.job.yaml
+/nop/job/conf/erp-inv-stock-check.job.yaml
 /nop/job/conf/erp-log-draft-escalation.job.yaml
 /nop/job/conf/erp-log-tracking-poll.job.yaml
 /nop/job/conf/erp-mfg-crp-run.job.yaml

@@ -25,6 +25,9 @@ test-results/
 playwright-report/
 _tmp/
 
+# nop-file runtime store (E2E/local-run uploads via /f/upload, e.g. AP document pipeline)
+/nop-file-store/
+
 # OS files
 .DS_Store
 

@@ -1269,6 +1269,16 @@
     "allPublicMethods": true,
     "fields": [],
     "methods": [],
+    "name": "app.erp.ast.dao.entity.ErpAstAssetActionLog"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [],
     "name": "app.erp.ast.dao.entity.ErpAstAssetCapitalization"
   },
   {
@@ -1280,6 +1290,16 @@
     "fields": [],
     "methods": [],
     "name": "app.erp.ast.dao.entity.ErpAstAssetCategory"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [],
+    "name": "app.erp.ast.dao.entity.ErpAstAssetModel"
   },
   {
     "allDeclaredConstructors": true,
@@ -1459,6 +1479,21 @@
         "parameterTypes": []
       }
     ],
+    "name": "app.erp.ast.dao.entity._gen._ErpAstAssetActionLog"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [
+      {
+        "name": "newInstance",
+        "parameterTypes": []
+      }
+    ],
     "name": "app.erp.ast.dao.entity._gen._ErpAstAssetCapitalization"
   },
   {
@@ -1475,6 +1510,21 @@
       }
     ],
     "name": "app.erp.ast.dao.entity._gen._ErpAstAssetCategory"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [
+      {
+        "name": "newInstance",
+        "parameterTypes": []
+      }
+    ],
+    "name": "app.erp.ast.dao.entity._gen._ErpAstAssetModel"
   },
   {
     "allDeclaredConstructors": true,
@@ -1711,6 +1761,21 @@
       {
         "allowWrite": true,
         "name": "daoProvider"
+      }
+    ],
+    "methods": [],
+    "name": "app.erp.ast.service.audit.ErpAstAssetAuditRecorder"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [
+      {
+        "allowWrite": true,
+        "name": "daoProvider"
       },
       {
         "allowWrite": true,
@@ -1726,13 +1791,66 @@
     "allPublicConstructors": true,
     "allPublicFields": true,
     "allPublicMethods": true,
+    "fields": [],
+    "methods": [],
+    "name": "app.erp.ast.service.entity.ErpAstAssetActionLogBizModel"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
     "fields": [
+      {
+        "allowWrite": true,
+        "name": "auditRecorder"
+      },
+      {
+        "allowWrite": true,
+        "name": "ormTemplate"
+      },
       {
         "allowWrite": true,
         "name": "suspendResumeProcessor"
       }
     ],
-    "methods": [],
+    "methods": [
+      {
+        "name": "afterEntityChange",
+        "parameterTypes": [
+          "app.erp.ast.dao.entity.ErpAstAsset",
+          "java.lang.String",
+          "io.nop.core.context.IServiceContext"
+        ]
+      },
+      {
+        "name": "defaultPrepareSave",
+        "parameterTypes": [
+          "io.nop.biz.crud.EntityData",
+          "io.nop.core.context.IServiceContext"
+        ]
+      },
+      {
+        "name": "defaultPrepareUpdate",
+        "parameterTypes": [
+          "io.nop.biz.crud.EntityData",
+          "io.nop.core.context.IServiceContext"
+        ]
+      },
+      {
+        "name": "parseExtFieldDefs",
+        "parameterTypes": [
+          "app.erp.ast.dao.entity.ErpAstAssetModel"
+        ]
+      },
+      {
+        "name": "validateExtFieldValues",
+        "parameterTypes": [
+          "app.erp.ast.dao.entity.ErpAstAsset"
+        ]
+      }
+    ],
     "name": "app.erp.ast.service.entity.ErpAstAssetBizModel"
   },
   {
@@ -1759,6 +1877,16 @@
     "fields": [],
     "methods": [],
     "name": "app.erp.ast.service.entity.ErpAstAssetCategoryBizModel"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [],
+    "name": "app.erp.ast.service.entity.ErpAstAssetModelBizModel"
   },
   {
     "allDeclaredConstructors": true,
@@ -3069,6 +3197,10 @@
       },
       {
         "allowWrite": true,
+        "name": "auditRecorder"
+      },
+      {
+        "allowWrite": true,
         "name": "daoProvider"
       }
     ],
@@ -3693,6 +3825,10 @@
       {
         "allowWrite": true,
         "name": "assetStateMachine"
+      },
+      {
+        "allowWrite": true,
+        "name": "auditRecorder"
       },
       {
         "allowWrite": true,
@@ -4675,6 +4811,10 @@
     "allPublicFields": true,
     "allPublicMethods": true,
     "fields": [
+      {
+        "allowWrite": true,
+        "name": "auditRecorder"
+      },
       {
         "allowWrite": true,
         "name": "facade"
@@ -6413,6 +6553,10 @@
       {
         "allowWrite": true,
         "name": "approveProcessor"
+      },
+      {
+        "allowWrite": true,
+        "name": "auditRecorder"
       },
       {
         "allowWrite": true,
@@ -23689,6 +23833,29 @@
     "fields": [
       {
         "allowWrite": true,
+        "name": "daoProvider"
+      }
+    ],
+    "methods": [
+      {
+        "name": "findByCode",
+        "parameterTypes": [
+          "java.lang.Class",
+          "java.lang.String"
+        ]
+      }
+    ],
+    "name": "app.erp.fin.service.posting.FinPostedListener"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [
+      {
+        "allowWrite": true,
         "name": "voucherBiz"
       }
     ],
@@ -34293,7 +34460,12 @@
     "allPublicConstructors": true,
     "allPublicFields": true,
     "allPublicMethods": true,
-    "fields": [],
+    "fields": [
+      {
+        "allowWrite": true,
+        "name": "ormTemplate"
+      }
+    ],
     "methods": [],
     "name": "app.erp.inv.service.entity.ErpInvStockLedgerBizModel"
   },
