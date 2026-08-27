@@ -18,6 +18,7 @@ import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
 import io.nop.orm.IOrmTemplate;
 import jakarta.inject.Inject;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -82,6 +83,15 @@ public class TestErpRoleRowFilterIsolation extends JunitAutoTestCase {
         AppConfig.getConfigProvider().assignConfigValue(CFG_DATA_AUTH_PATH, DEFAULT_DATA_AUTH_PATH);
         IUserContext.set(null);
         ContextProvider.getOrCreateContext().setUserRefNo(null);
+    }
+
+    /** 类级注销 data-auth-cache：同 JVM 其他测试类（如 TestErpSalDashboardRowFilterCoverage）各自新建 checker 时不再全局重复注册。 */
+    @AfterAll
+    static void destroySharedChecker() {
+        if (SHARED_CHECKER != null) {
+            SHARED_CHECKER.destroy();
+            SHARED_CHECKER = null;
+        }
     }
 
     @Test
