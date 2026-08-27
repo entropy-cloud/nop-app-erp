@@ -7,6 +7,7 @@ import app.erp.mfg.service.ErpMfgConstants;
 import app.erp.mfg.service.crp.CrpLoadCalculator;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizQuery;
+import io.nop.api.core.annotations.core.Description;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.annotations.core.Optional;
 import io.nop.api.core.beans.query.QueryBean;
@@ -62,6 +63,7 @@ public class ErpMfgDashboardBizModel {
         this.crpLoadCalculator = crpLoadCalculator;
     }
 
+    @Description("制造看板 KPI（工单完成率、在制数量、生产差异、CRP 负荷）")
     @BizQuery
     public Map<String, Object> getDashboardKpi(@Optional @Name("startDate") LocalDate startDate,
                                                 @Optional @Name("endDate") LocalDate endDate,

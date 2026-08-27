@@ -9,7 +9,10 @@ import app.erp.aps.dao.entity.ErpApsSchedule;
 import app.erp.aps.service.ErpApsConfigs;
 import app.erp.aps.service.ErpApsConstants;
 import app.erp.aps.service.ErpApsErrors;
+import app.erp.aps.service.scheduling.ApsBottleneckDetector;
+import app.erp.aps.service.scheduling.ApsSchedulingRequest;
 import app.erp.aps.service.scheduling.ErpApsSchedulingEngine;
+import app.erp.aps.service.scheduling.IApsSchedulingSolver;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.config.AppConfig;
 import io.nop.api.core.exceptions.NopException;
@@ -55,6 +58,22 @@ public class ErpApsSchedulingProcessor {
     @Inject
     IOrmTemplate ormTemplate;
 
+    /** E3.4 求解器策略集（ioc:collect-beans 收集；按 erp-aps.scheduling-solver 选择，默认 GREEDY）。 */
+    @Inject
+    java.util.List<IApsSchedulingSolver> schedulingSolvers = java.util.Collections.emptyList();
+
+    /** E3.4 瓶颈识别器（负荷率派生链：待排工时 + 已排占用 / 产能经 IErpMfgCapacityProvider SPI）。 */
+    @Inject
+    ApsBottleneckDetector bottleneckDetector;
+
+    public void setSchedulingSolvers(java.util.List<IApsSchedulingSolver> schedulingSolvers) {
+        this.schedulingSolvers = schedulingSolvers == null ? java.util.Collections.emptyList() : schedulingSolvers;
+    }
+
+    public void setBottleneckDetector(ApsBottleneckDetector bottleneckDetector) {
+        this.bottleneckDetector = bottleneckDetector;
+    }
+
     // ---------- 编排 ----------
 
     protected SchedulingResult run(ErpApsSchedule schedule, String mode, IServiceContext context) {
@@ -67,13 +86,82 @@ public class ErpApsSchedulingProcessor {
         LocalDateTime horizonStart = schedule.getHorizonStart() == null ? null : schedule.getHorizonStart().toLocalDateTime();
         LocalDateTime horizonEnd = schedule.getHorizonEnd() == null ? null : schedule.getHorizonEnd().toLocalDateTime();
 
-        ErpApsSchedulingEngine engine = newEngine(buffer, horizonStart, horizonEnd, CoreMetrics.today());
-        SchedulingResult result = ErpApsConstants.SCHEDULING_MODE_BACKWARD.equals(mode)
-                ? engine.scheduleBackward(pending, maintenance, routings, horizonStart)
-                : engine.scheduleForward(pending, maintenance, null, routings, horizonStart);
+        // E3.4：经求解器策略接口分派（默认 GREEDY = 既有贪心引擎适配，调用形状不变）
+        ApsSchedulingRequest request = new ApsSchedulingRequest();
+        request.setMode(mode);
+        request.setOrders(pending);
+        request.setMaintenanceConstraints(maintenance);
+        request.setFrozenPlanned(null);
+        request.setRoutings(routings);
+        request.setBufferMinutes(buffer);
+        request.setHorizonStart(horizonStart);
+        request.setHorizonEnd(horizonEnd);
+        request.setDefaultEarliestStart(horizonStart);
+        request.setRoutingEffectiveDate(CoreMetrics.today());
+        SchedulingResult result = resolveSolver().solve(request);
 
         persist(pending, result);
         return result;
+    }
+
+    /**
+     * E3.4 TOC 瓶颈驱动排产（`constraint-based-planning.md` §2）：负荷率派生链识别瓶颈中心 →
+     * 求解器按 TOC 模式先排瓶颈（拉动式）再排非瓶颈（前/后向兜底）；结果携带瓶颈清单 + 各中心负荷率。
+     */
+    protected SchedulingResult runToc(ErpApsSchedule schedule, IServiceContext context) {
+        List<ErpApsOperationOrder> pending = loadPendingOrders(schedule);
+        List<ErpApsConstraint> maintenance = loadMaintenanceConstraints(schedule);
+        List<ErpApsOpRouting> routings = loadEnabledRoutings();
+        int buffer = AppConfig.var(ErpApsConfigs.CONFIG_BUFFER_MINUTES_BETWEEN_OPS,
+                ErpApsConfigs.DEFAULT_BUFFER_MINUTES_BETWEEN_OPS);
+        double threshold = AppConfig.var(ErpApsConfigs.CONFIG_TOC_BOTTLENECK_THRESHOLD,
+                ErpApsConfigs.DEFAULT_TOC_BOTTLENECK_THRESHOLD);
+        LocalDateTime horizonStart = schedule.getHorizonStart() == null ? null : schedule.getHorizonStart().toLocalDateTime();
+        LocalDateTime horizonEnd = schedule.getHorizonEnd() == null ? null : schedule.getHorizonEnd().toLocalDateTime();
+
+        java.util.Map<String, java.math.BigDecimal> loadRates = bottleneckDetector == null
+                ? java.util.Collections.emptyMap()
+                : bottleneckDetector.detectLoadRates(pending, horizonStart, horizonEnd);
+
+        ApsSchedulingRequest request = new ApsSchedulingRequest();
+        request.setMode(IApsSchedulingSolver.MODE_TOC);
+        request.setOrders(pending);
+        request.setMaintenanceConstraints(maintenance);
+        request.setFrozenPlanned(null);
+        request.setRoutings(routings);
+        request.setBufferMinutes(buffer);
+        request.setHorizonStart(horizonStart);
+        request.setHorizonEnd(horizonEnd);
+        request.setDefaultEarliestStart(horizonStart);
+        request.setRoutingEffectiveDate(CoreMetrics.today());
+        request.setMachineLoadRates(loadRates);
+        request.setBottleneckThreshold(threshold);
+        SchedulingResult result = resolveSolver().solve(request);
+
+        persist(pending, result);
+        return result;
+    }
+
+    /** 求解器解析：按 config 选择；未注册名回退 GREEDY（行为不变，日志可观测）。 */
+    protected IApsSchedulingSolver resolveSolver() {
+        String name = AppConfig.var(ErpApsConfigs.CONFIG_SCHEDULING_SOLVER,
+                ErpApsConfigs.DEFAULT_SCHEDULING_SOLVER);
+        for (IApsSchedulingSolver solver : schedulingSolvers) {
+            if (solver.getName().equals(name)) {
+                return solver;
+            }
+        }
+        if (!ErpApsConfigs.DEFAULT_SCHEDULING_SOLVER.equals(name)) {
+            org.slf4j.LoggerFactory.getLogger(ErpApsSchedulingProcessor.class)
+                    .warn("求解器 {} 未注册，回退默认贪心 GREEDY（注册数 {}）", name, schedulingSolvers.size());
+        }
+        for (IApsSchedulingSolver solver : schedulingSolvers) {
+            if (IApsSchedulingSolver.SOLVER_GREEDY.equals(solver.getName())) {
+                return solver;
+            }
+        }
+        throw new NopException(ErpApsErrors.ERR_APS_SOLVER_NOT_RESOLVED)
+                .param(ErpApsErrors.ARG_SOLVER_NAME, name);
     }
 
     // ---------- step：数据加载（protected，下游可覆盖） ----------

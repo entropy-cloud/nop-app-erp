@@ -93,6 +93,11 @@
         </property>
     </bean>
 
+    <!-- 工作中心可用产能 SPI 实现（E3.4 TOC 瓶颈识别试点，AP-3 复用 CrpLoadCalculator 产能派生链）：
+          包装 getLoadReport 按工作中心聚合逐日 capacityHours，供 aps-service 经 ioc:collect-beans 收集。 -->
+    <bean id="app.erp.mfg.service.crp.CrpCapacityProvider"
+          class="app.erp.mfg.service.crp.CrpCapacityProvider"/>
+
     <!-- 需求预测实体级状态机 Bean（plan 2026-08-12-1841-3 M2.19；契约 docs/architecture/entity-state-machine-bean.md）：
           一 Bean 对一实体一轴 status，承载 approve/cancel 迁移矩阵。实体 BizModel 经 @BizModel 自动发现，
           Bean 须显式 FQN-id 注册（同 cs/purchase 范式）。 -->

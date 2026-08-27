@@ -15,6 +15,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import io.nop.api.core.time.CoreMetrics;
 import io.nop.commons.util.DateHelper;
 
@@ -244,6 +245,199 @@ public class ErpApsSchedulingEngine {
             result.addScheduled(op.getId());
         }
         return result;
+    }
+
+    // ---------- TOC 瓶颈驱动排产（E3.4 试点，constraint-based-planning.md §2） ----------
+
+    /**
+     * TOC 瓶颈驱动排产试点：先排瓶颈中心工序（拉动式，共享时间轴与工序链游标），再排非瓶颈
+     * （瓶颈前序以瓶颈开工为锚后向倒排 B1；其余前向兜底 B2）。瓶颈清单由调用方经负荷率派生链
+     * （{@code ApsBottleneckDetector}）识别后传入；既有前向/后向排产行为不受影响（独立方法）。
+     *
+     * <p>试点边界：混合阶段的同 WO 工序链采用与既有引擎一致的链游标简化语义（记录最大前向序号完工
+     * 与最小后向序号开工），跨阶段间隔工序（如 B1 后又出现 B2 的中间序号）按游标近似约束。
+     */
+    public SchedulingResult scheduleToc(List<ErpApsOperationOrder> orders,
+                                        List<ErpApsConstraint> maintenanceConstraints,
+                                        List<ErpApsOpRouting> routings,
+                                        Set<String> bottleneckMachineIds,
+                                        LocalDateTime defaultEarliestStart) {
+        SchedulingResult result = new SchedulingResult();
+        Map<String, WorkCenterTimeline> timelines = buildTimelines(maintenanceConstraints);
+        Map<String, OpChain> chainByWorkOrder = new HashMap<>();
+        LocalDateTime floor = floor(defaultEarliestStart);
+        Set<String> bottlenecks = bottleneckMachineIds == null ? Set.of() : bottleneckMachineIds;
+
+        List<ErpApsOperationOrder> bottleneckOps = new ArrayList<>();
+        List<ErpApsOperationOrder> restOps = new ArrayList<>();
+        for (ErpApsOperationOrder op : orders) {
+            if (touchesBottleneck(op, routings, bottlenecks)) {
+                bottleneckOps.add(op);
+            } else {
+                restOps.add(op);
+            }
+        }
+
+        // Phase A：瓶颈中心工序先排（产能保护优先于优先级排序）
+        for (ErpApsOperationOrder op : sortByForward(bottleneckOps)) {
+            tocScheduleForward(op, routings, timelines, chainByWorkOrder, floor, result);
+        }
+
+        // Phase B1：非瓶颈中同 WO 前序（sequence < 链上序号）以后序开工为锚后向倒排（拉动式）
+        List<ErpApsOperationOrder> pullBackward = new ArrayList<>();
+        List<ErpApsOperationOrder> forwardRest = new ArrayList<>();
+        for (ErpApsOperationOrder op : restOps) {
+            OpChain chain = chainByWorkOrder.get(op.getWorkOrderId());
+            if (chain != null && chain.lastSequence != null && chain.lastStart != null
+                    && op.getSequence() != null && op.getSequence() < chain.lastSequence) {
+                pullBackward.add(op);
+            } else {
+                forwardRest.add(op);
+            }
+        }
+        pullBackward.sort(Comparator
+                .comparing(ErpApsOperationOrder::getWorkOrderId, Comparator.nullsLast(Comparator.naturalOrder()))
+                .thenComparing(ErpApsOperationOrder::getSequence, Comparator.nullsLast(Comparator.reverseOrder())));
+        for (ErpApsOperationOrder op : pullBackward) {
+            tocScheduleBackward(op, routings, timelines, chainByWorkOrder, floor, result);
+        }
+
+        // Phase B2：其余非瓶颈工序按既有前向规则兜底
+        for (ErpApsOperationOrder op : sortByForward(forwardRest)) {
+            tocScheduleForward(op, routings, timelines, chainByWorkOrder, floor, result);
+        }
+        return result;
+    }
+
+    /** 工序任一候选路由命中瓶颈中心（含无路由时的主工作中心判定）。 */
+    private boolean touchesBottleneck(ErpApsOperationOrder op, List<ErpApsOpRouting> routings, Set<String> bottlenecks) {
+        if (bottlenecks.isEmpty()) {
+            return false;
+        }
+        for (RoutingCandidate c : resolveCandidates(op, routings)) {
+            if (c.machineId != null && bottlenecks.contains(c.machineId)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void tocScheduleForward(ErpApsOperationOrder op, List<ErpApsOpRouting> routings,
+                                    Map<String, WorkCenterTimeline> timelines,
+                                    Map<String, OpChain> chainByWorkOrder, LocalDateTime floor,
+                                    SchedulingResult result) {
+        List<RoutingCandidate> candidates = resolveCandidates(op, routings);
+        if (candidates.isEmpty()) {
+            op.setPlannedStartDateT(null);
+            op.setPlannedEndDateT(null);
+            op.setStatus(ErpApsConstants.OP_STATUS_UNSCHEDULABLE);
+            result.addConflict(op.getId(), "NO_AVAILABLE_ROUTING",
+                    "工序 " + (op.getCode() == null ? op.getId() : op.getCode())
+                            + " 全部启用路由被过滤（生效期/批量约束），无候选路由");
+            return;
+        }
+        LocalDateTime earliest = effectiveEarliestStart(op, floor);
+        earliest = applyPredecessorConstraint(op, earliest, chainByWorkOrder);
+
+        RoutingCandidate chosen = null;
+        LocalDateTime start = null;
+        for (RoutingCandidate c : candidates) {
+            WorkCenterTimeline tl = timelines.computeIfAbsent(c.machineId, WorkCenterTimeline::new);
+            LocalDateTime s = tl.findFreeSlotForward(earliest, c.duration, horizonEnd);
+            if (s != null) {
+                chosen = c;
+                start = s;
+                break;
+            }
+        }
+        if (chosen == null) {
+            op.setPlannedStartDateT(null);
+            op.setPlannedEndDateT(null);
+            op.setStatus(ErpApsConstants.OP_STATUS_UNSCHEDULABLE);
+            result.addConflict(op.getId(), "NO_AVAILABLE_SLOT",
+                    "工序 " + (op.getCode() == null ? op.getId() : op.getCode()) + " 展望期内无连续可用时段（TOC）");
+            return;
+        }
+        LocalDateTime end = start.plusMinutes(chosen.duration);
+        applySelection(op, chosen, timelines);
+        op.setPlannedStartDateT(DateHelper.dateTimeToTimestamp(start));
+        op.setPlannedEndDateT(DateHelper.dateTimeToTimestamp(end));
+        op.setStatus(ErpApsConstants.OP_STATUS_PLANNED);
+        timelines.computeIfAbsent(chosen.machineId, WorkCenterTimeline::new)
+                .addBusy(start, end, "op:" + (op.getCode() == null ? op.getId() : op.getCode()));
+        recordChainToc(chainByWorkOrder, op, start, end);
+        result.addScheduled(op.getId());
+    }
+
+    private void tocScheduleBackward(ErpApsOperationOrder op, List<ErpApsOpRouting> routings,
+                                     Map<String, WorkCenterTimeline> timelines,
+                                     Map<String, OpChain> chainByWorkOrder, LocalDateTime floor,
+                                     SchedulingResult result) {
+        List<RoutingCandidate> candidates = resolveCandidates(op, routings);
+        if (candidates.isEmpty()) {
+            op.setStatus(ErpApsConstants.OP_STATUS_UNSCHEDULABLE);
+            result.addConflict(op.getId(), "NO_AVAILABLE_ROUTING",
+                    "工序 " + (op.getCode() == null ? op.getId() : op.getCode())
+                            + " 全部启用路由被过滤（生效期/批量约束），无候选路由");
+            return;
+        }
+        LocalDateTime before = op.getLatestEndDateT() != null ? op.getLatestEndDateT().toLocalDateTime() : horizonEnd;
+        if (before == null) {
+            before = horizonEnd;
+        }
+        if (before == null) {
+            op.setStatus(ErpApsConstants.OP_STATUS_DRAFT);
+            result.addConflict(op.getId(), "NO_DEADLINE",
+                    "工序未配置 latestEndDateT 且排产方案未限定 horizonEnd，TOC 后向倒排无终点");
+            return;
+        }
+        before = applySuccessorConstraint(op, before, chainByWorkOrder);
+
+        RoutingCandidate chosen = null;
+        LocalDateTime start = null;
+        for (RoutingCandidate c : candidates) {
+            WorkCenterTimeline tl = timelines.computeIfAbsent(c.machineId, WorkCenterTimeline::new);
+            LocalDateTime s = tl.findFreeSlotBackward(before, c.duration);
+            if (s != null) {
+                chosen = c;
+                start = s;
+                break;
+            }
+        }
+        if (chosen == null) {
+            op.setStatus(ErpApsConstants.OP_STATUS_DRAFT);
+            result.addConflict(op.getId(), "NO_AVAILABLE_SLOT",
+                    "工序 " + (op.getCode() == null ? op.getId() : op.getCode()) + " 终点前无连续可用时段（TOC 倒排）");
+            return;
+        }
+        LocalDateTime earliest = effectiveEarliestStart(op, floor);
+        if (start.isBefore(earliest)) {
+            op.setStatus(ErpApsConstants.OP_STATUS_DRAFT);
+            result.setFeasible(false);
+            result.addConflict(op.getId(), "DEADLINE_NOT_REACHABLE",
+                    "TOC 倒排开工 " + start + " 早于最早可开工 " + earliest);
+            return;
+        }
+        LocalDateTime end = start.plusMinutes(chosen.duration);
+        applySelection(op, chosen, timelines);
+        op.setPlannedStartDateT(DateHelper.dateTimeToTimestamp(start));
+        op.setPlannedEndDateT(DateHelper.dateTimeToTimestamp(end));
+        op.setStatus(ErpApsConstants.OP_STATUS_PLANNED);
+        timelines.computeIfAbsent(chosen.machineId, WorkCenterTimeline::new)
+                .addBusy(start, end, "op:" + (op.getCode() == null ? op.getId() : op.getCode()));
+        recordChainBackward(chainByWorkOrder, op, start);
+        result.addScheduled(op.getId());
+    }
+
+    /** TOC 链游标记录（前向）：同时记 lastStart/lastEnd，供 B1 后向锚定与 B2 前序约束复用。 */
+    private void recordChainToc(Map<String, OpChain> chainByWorkOrder, ErpApsOperationOrder op,
+                                LocalDateTime start, LocalDateTime end) {
+        OpChain chain = chainByWorkOrder.computeIfAbsent(op.getWorkOrderId(), k -> new OpChain());
+        if (chain.lastSequence == null || (op.getSequence() != null && op.getSequence() > chain.lastSequence)) {
+            chain.lastSequence = op.getSequence();
+            chain.lastEnd = end;
+            chain.lastStart = start;
+        }
     }
 
     // ---------- 替代路由选择（RC-R1.87，alternative-routing.md §二） ----------

@@ -1,0 +1,13 @@
+jobName: erp-inv-stock-check
+enabled: "@cfg:nop.job.erp-inv-stock-check.enabled|false"
+displayName: Inventory Stock Balance Check
+description: 每日 03:00 库存余额对账（账面余额 ErpInvStockBalance = 流水派生快照一致性校验）；nop-batch 调用 IErpInvStockLedgerBiz.checkStockBalanceConsistency，差异时作业失败（可观测）
+jobGroup: erp-inv
+trigger:
+  cronExpr: "@cfg:nop.job.erp-inv-stock-check.cron-expr|0 0 3 * * ?"
+invoker:
+  bean: nopBatchTaskRunner
+  method: executeAsync
+params:
+  taskPath: /nop/batch-task/inv/stock-check.batch.xml
+  params: {}

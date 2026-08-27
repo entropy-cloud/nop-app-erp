@@ -139,4 +139,12 @@ public interface ErpApsErrors {
             "erp.err.aps.dispatch.reason-required",
             "工序工单 {operationOrderCode} 手动强制派工必须填写跳检原因",
             ARG_OP_CODE);
+
+    /** E3.4 求解器无法解析（config 指定名未注册且 GREEDY 兜底也不可用）。 */
+    String ARG_SOLVER_NAME = "solverName";
+
+    ErrorCode ERR_APS_SOLVER_NOT_RESOLVED = ErrorCode.define(
+            "erp.err.aps.solver.not-resolved",
+            "排产求解器 {solverName} 未注册且默认贪心不可用",
+            ARG_SOLVER_NAME);
 }

@@ -88,6 +88,14 @@ public interface IErpApsOperationOrderBiz extends ICrudBiz<ErpApsOperationOrder>
     SchedulingResult scheduleBackward(@Name("scheduleId") String scheduleId, IServiceContext context);
 
     /**
+     * E3.4 TOC 瓶颈驱动排产试点（`constraint-based-planning.md` §2）：负荷率派生链识别 horizon 内
+     * 超阈值瓶颈中心，先排瓶颈（拉动式）再排非瓶颈（前/后向兜底）；结果携带瓶颈清单 + 各中心负荷率。
+     * 既有前向/后向排产行为不变（独立新模式）。
+     */
+    @BizMutation
+    SchedulingResult scheduleToc(@Name("scheduleId") String scheduleId, IServiceContext context);
+
+    /**
      * F11 批量前向排产（plan 2026-07-22-0444-2 Phase 2）：循环调单条 {@link #scheduleForward}，
      * 逐行执行（模式 b：行级失败不阻塞其他行），返回 {@link BatchOperationResult} 含成功数 + 失败明细。
      *

@@ -1,0 +1,25 @@
+<batch taskName="inv.stock-check"
+       batchSize="1"
+       transactionScope="process"
+       saveState="true"
+       x:schema="/nop/schema/task/batch.xdef"
+       xmlns:x="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:c="c">
+
+    <loader>
+        <source><![CDATA[
+            return [{ asOfDate: null }];
+        ]]></source>
+    </loader>
+
+    <processor name="process">
+        <source><![CDATA[
+            const biz = inject('IErpInvStockLedgerBiz');
+            const report = biz.checkStockBalanceConsistency(item.asOfDate, batchChunkCtx.serviceContext);
+            if (report.mismatchCount > 0) {
+                throw new Error('erp-inv-stock-check: 账面余额与流水派生快照不一致，asOfDate=' + report.asOfDate
+                    + ', mismatchCount=' + report.mismatchCount);
+            }
+        ]]></source>
+    </processor>
+</batch>

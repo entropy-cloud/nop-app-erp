@@ -10,7 +10,23 @@
 
     <!-- APS 排产状态机编排 Processor（Facade + Processor 两层结构，protected step 方法供下游覆盖） -->
     <bean id="app.erp.aps.service.processor.ErpApsSchedulingProcessor"
-          class="app.erp.aps.service.processor.ErpApsSchedulingProcessor"/>
+          class="app.erp.aps.service.processor.ErpApsSchedulingProcessor">
+        <property name="schedulingSolvers">
+            <ioc:collect-beans by-type="app.erp.aps.service.scheduling.IApsSchedulingSolver"
+                               only-concrete-classes="true" ioc:ignore-depends="true"/>
+        </property>
+        <property name="bottleneckDetector" ref="app.erp.aps.service.scheduling.ApsBottleneckDetector"/>
+    </bean>
+
+    <!-- E3.4 TOC 瓶颈识别器：负荷率派生链（待排工时 + 已排占用 / 产能经 IErpMfgCapacityProvider SPI，
+          mfg-service CrpCapacityProvider 复用 CrpLoadCalculator 派生链；SPI 空时兜底 24h/日）。 -->
+    <bean id="app.erp.aps.service.scheduling.ApsBottleneckDetector"
+          class="app.erp.aps.service.scheduling.ApsBottleneckDetector">
+        <property name="capacityProviders">
+            <ioc:collect-beans by-type="app.erp.mfg.biz.IErpMfgCapacityProvider"
+                               only-concrete-classes="true" ioc:ignore-depends="true"/>
+        </property>
+    </bean>
 
     <!-- per-mutation D-mutation Processor beans (R6.7)：类别 A 每 D-mutation 独立 Processor。
          facade delete-after-extract（类保留为 helper 持有者），per-mutation 经 @Inject facade 调用共享 protected helper。 -->
@@ -20,6 +36,14 @@
           class="app.erp.aps.service.processor.ErpApsSchedulingScheduleBackwardProcessor"/>
     <bean id="app.erp.aps.service.processor.ErpApsSchedulingInsertRushOrderProcessor"
           class="app.erp.aps.service.processor.ErpApsSchedulingInsertRushOrderProcessor"/>
+    <!-- E3.4 TOC 瓶颈驱动排产 per-mutation Processor（constraint-based-planning.md §2）。 -->
+    <bean id="app.erp.aps.service.processor.ErpApsSchedulingScheduleTocProcessor"
+          class="app.erp.aps.service.processor.ErpApsSchedulingScheduleTocProcessor"/>
+
+    <!-- E3.4 求解器分离：默认贪心求解器（既有引擎适配，行为不变）。经 ioc:collect-beans 收集到
+          ErpApsSchedulingProcessor.schedulingSolvers，按 erp-aps.scheduling-solver 选择（对齐 D3 子计算器注入范式）。 -->
+    <bean id="app.erp.aps.service.scheduling.GreedyApsSchedulingSolver"
+          class="app.erp.aps.service.scheduling.GreedyApsSchedulingSolver"/>
 
     <!-- ATP/CTP 交期承诺模拟服务（跨域 I*Biz 只读聚合 inventory + 工艺路线追溯 mfg） -->
     <bean id="app.erp.aps.service.atpctp.ErpApsAtpCtpService"

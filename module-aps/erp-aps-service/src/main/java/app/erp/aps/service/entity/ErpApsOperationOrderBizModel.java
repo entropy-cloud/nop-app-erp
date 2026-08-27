@@ -17,6 +17,7 @@ import app.erp.aps.service.processor.ErpApsSchedulingInsertRushOrderProcessor;
 import app.erp.aps.service.processor.ErpApsSchedulingProcessor;
 import app.erp.aps.service.processor.ErpApsSchedulingScheduleBackwardProcessor;
 import app.erp.aps.service.processor.ErpApsSchedulingScheduleForwardProcessor;
+import app.erp.aps.service.processor.ErpApsSchedulingScheduleTocProcessor;
 import app.erp.aps.service.processor.ErpApsWorkOrderToOperationProcessor;
 import app.erp.aps.service.statemachine.ErpApsOperationOrderStateMachine;
 import io.nop.api.core.annotations.biz.BizModel;
@@ -51,6 +52,9 @@ public class ErpApsOperationOrderBizModel extends AbstractErpCrudBizModel<ErpAps
 
     @Inject
     ErpApsSchedulingScheduleBackwardProcessor scheduleBackwardProcessor;
+
+    @Inject
+    ErpApsSchedulingScheduleTocProcessor scheduleTocProcessor;
 
     @Inject
     ErpApsSchedulingInsertRushOrderProcessor insertRushOrderProcessor;
@@ -96,6 +100,12 @@ public class ErpApsOperationOrderBizModel extends AbstractErpCrudBizModel<ErpAps
     @BizMutation
     public SchedulingResult scheduleBackward(@Name("scheduleId") String scheduleId, IServiceContext context) {
         return scheduleBackwardProcessor.scheduleBackward(scheduleId, context);
+    }
+
+    @Override
+    @BizMutation
+    public SchedulingResult scheduleToc(@Name("scheduleId") String scheduleId, IServiceContext context) {
+        return scheduleTocProcessor.scheduleToc(scheduleId, context);
     }
 
     /**

@@ -41,4 +41,12 @@ public interface ErpApsConfigs {
     /** 自动派工扫描 cron（RC-R1.88）：空 = 不调度（job 跳过）。 */
     String CONFIG_AUTO_DISPATCH_CRON = "erp-aps.auto-dispatch-cron";
     String DEFAULT_AUTO_DISPATCH_CRON = "";
+
+    /** E3.4 求解器选择（`constraint-based-planning.md` §1）：GREEDY（默认，行为不变）/ 可插拔求解器名。 */
+    String CONFIG_SCHEDULING_SOLVER = "erp-aps.scheduling-solver";
+    String DEFAULT_SCHEDULING_SOLVER = "GREEDY";
+
+    /** E3.4 TOC 瓶颈阈值：horizon 负荷率超过该值的工作中心视为瓶颈（默认对齐 CRP overload 阈值 1.0）。 */
+    String CONFIG_TOC_BOTTLENECK_THRESHOLD = "erp-aps.toc-bottleneck-threshold";
+    double DEFAULT_TOC_BOTTLENECK_THRESHOLD = 1.0;
 }
