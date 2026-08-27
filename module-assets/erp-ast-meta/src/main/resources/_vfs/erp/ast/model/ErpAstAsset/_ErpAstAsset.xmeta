@@ -134,10 +134,24 @@
               sortable="true" insertable="true" updatable="true" defaultValue="0">
             <schema domain="amount" type="java.math.BigDecimal" precision="20" scale="4"/>
         </prop>
+        <prop name="modelId" displayName="资产型号" propId="29" i18n-en:displayName="Asset Model" queryable="true"
+              sortable="true" insertable="true" updatable="true" ext:relation="model">
+            <schema type="java.lang.String"/>
+        </prop>
+        <prop name="extFieldValues" displayName="扩展字段值" propId="30" i18n-en:displayName="Ext Field Values"
+              queryable="true" sortable="true" insertable="true" updatable="true"
+              graphql:jsonComponentProp="extFieldValuesComponent">
+            <schema stdDomain="json" domain="json-4000" type="java.lang.String" precision="4000"/>
+        </prop>
         <prop name="category" i18n-en:displayName="Category" tagSet="pub" ext:kind="to-one" internal="true"
               queryable="true" ext:joinLeftProp="categoryId" ext:joinRightProp="id" insertable="false" updatable="false"
               lazy="true">
             <schema bizObjName="ErpAstAssetCategory"/>
+        </prop>
+        <prop name="model" i18n-en:displayName="Asset Model" tagSet="pub" ext:kind="to-one" internal="true"
+              queryable="true" ext:joinLeftProp="modelId" ext:joinRightProp="id" insertable="false" updatable="false"
+              lazy="true">
+            <schema bizObjName="ErpAstAssetModel"/>
         </prop>
         <prop name="department" i18n-en:displayName="Department" tagSet="pub" ext:kind="to-one" internal="true"
               queryable="true" ext:joinLeftProp="departmentId" ext:joinRightProp="id" ext:joinRightDisplayProp="name"
@@ -190,6 +204,10 @@
         </prop>
         <prop name="staff.name" i18n-en:displayName="Staff" internal="true" queryable="true" sortable="true" lazy="true">
             <schema type="String"/>
+        </prop>
+        <prop name="extFieldValuesComponent" tagSet="json,pub,edit" ext:kind="component" internal="true"
+              insertable="true" updatable="true" lazy="true">
+            <schema type="io.nop.orm.component.JsonOrmComponent"/>
         </prop>
     </props>
 </meta>

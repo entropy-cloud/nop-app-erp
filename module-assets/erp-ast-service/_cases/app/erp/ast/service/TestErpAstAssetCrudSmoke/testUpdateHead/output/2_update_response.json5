@@ -29,7 +29,9 @@
     "updateTime": "@var:ErpAstAsset@updateTime_1",
     "remark": "冒烟-已修改",
     "accumulatedDepreciation": 0.0000,
-    "netBookValue": 0.0000
+    "netBookValue": 0.0000,
+    "modelId": null,
+    "extFieldValues": null
   },
   "status": 0
 }

@@ -29,7 +29,10 @@
   "remark": "",
   "accumulatedDepreciation": 0.0,
   "netBookValue": 0.0,
+  "modelId": "",
+  "extFieldValues": "",
   "category": null,
+  "model": null,
   "department": null,
   "department.name": "",
   "location": null,
@@ -41,5 +44,6 @@
   "org": null,
   "org.name": "",
   "staff": null,
-  "staff.name": ""
+  "staff.name": "",
+  "extFieldValuesComponent": null
 }

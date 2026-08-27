@@ -98,6 +98,12 @@
 
                 <!--净值-->
                 <col id="netBookValue" ui:number="true" sortable="true"/>
+
+                <!--资产型号-->
+                <col id="modelId" sortable="true"/>
+
+                <!--扩展字段值-->
+                <col id="extFieldValues" sortable="true"/>
             </cols>
         </grid>
         <grid id="pick-list" x:prototype="list" x:abstract="true"/>
@@ -119,6 +125,7 @@
  createTime[创建时间] updatedBy[修改人]
  updateTime[修改时间] remark[备注]
  accumulatedDepreciation[累计折旧] netBookValue[净值]
+ modelId[资产型号] extFieldValues[扩展字段值]
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-固定资产" i18n-en:title="Add Fixed Asset" x:prototype="edit"/>
@@ -134,7 +141,8 @@
  employeeId[使用人(职员)] staffId[使用人(往来单位,旧字段保留)]
  brandModel[品牌型号] status[资产状态]
  remark[备注] accumulatedDepreciation[累计折旧]
- netBookValue[净值] 
+ netBookValue[净值] modelId[资产型号]
+ extFieldValues[扩展字段值] 
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

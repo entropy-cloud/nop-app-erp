@@ -87,6 +87,9 @@
  departmentId[使用部门] locationId[使用地点]
  employeeId[使用人(职员)] staffId[使用人(往来单位,旧字段保留)]
  brandModel[品牌型号]
+==========>ext[扩展信息(E3.3)]======
+ modelId[资产型号]
+ extFieldValues[扩展字段值](2)
  remark[备注](2)
             </layout>
         </form>

@@ -133,12 +133,23 @@ public class _ErpAstAsset extends DynamicOrmEntity{
     public static final String PROP_NAME_netBookValue = "netBookValue";
     public static final int PROP_ID_netBookValue = 28;
     
+    /* 资产型号: MODEL_ID BIGINT */
+    public static final String PROP_NAME_modelId = "modelId";
+    public static final int PROP_ID_modelId = 29;
+    
+    /* 扩展字段值: EXT_FIELD_VALUES VARCHAR */
+    public static final String PROP_NAME_extFieldValues = "extFieldValues";
+    public static final int PROP_ID_extFieldValues = 30;
+    
 
-    private static int _PROP_ID_BOUND = 29;
+    private static int _PROP_ID_BOUND = 31;
 
     
     /* relation:  */
     public static final String PROP_NAME_category = "category";
+    
+    /* relation:  */
+    public static final String PROP_NAME_model = "model";
     
     /* relation:  */
     public static final String PROP_NAME_department = "department";
@@ -158,11 +169,14 @@ public class _ErpAstAsset extends DynamicOrmEntity{
     /* relation:  */
     public static final String PROP_NAME_staff = "staff";
     
+    /* component:  */
+    public static final String PROP_NAME_extFieldValuesComponent = "extFieldValuesComponent";
+    
 
     protected static final List<String> PK_PROP_NAMES = Arrays.asList(PROP_NAME_id);
     protected static final int[] PK_PROP_IDS = new int[]{PROP_ID_id};
 
-    private static final String[] PROP_ID_TO_NAME = new String[29];
+    private static final String[] PROP_ID_TO_NAME = new String[31];
     private static final Map<String,Integer> PROP_NAME_TO_ID = new HashMap<>();
     static{
       
@@ -250,6 +264,12 @@ public class _ErpAstAsset extends DynamicOrmEntity{
           PROP_ID_TO_NAME[PROP_ID_netBookValue] = PROP_NAME_netBookValue;
           PROP_NAME_TO_ID.put(PROP_NAME_netBookValue, PROP_ID_netBookValue);
       
+          PROP_ID_TO_NAME[PROP_ID_modelId] = PROP_NAME_modelId;
+          PROP_NAME_TO_ID.put(PROP_NAME_modelId, PROP_ID_modelId);
+      
+          PROP_ID_TO_NAME[PROP_ID_extFieldValues] = PROP_NAME_extFieldValues;
+          PROP_NAME_TO_ID.put(PROP_NAME_extFieldValues, PROP_ID_extFieldValues);
+      
     }
 
     
@@ -336,6 +356,12 @@ public class _ErpAstAsset extends DynamicOrmEntity{
     
     /* 净值: NET_BOOK_VALUE */
     private java.math.BigDecimal _netBookValue;
+    
+    /* 资产型号: MODEL_ID */
+    private java.lang.String _modelId;
+    
+    /* 扩展字段值: EXT_FIELD_VALUES */
+    private java.lang.String _extFieldValues;
     
 
     public _ErpAstAsset(){
@@ -494,6 +520,12 @@ public class _ErpAstAsset extends DynamicOrmEntity{
         
             case PROP_ID_netBookValue:
                return getNetBookValue();
+        
+            case PROP_ID_modelId:
+               return getModelId();
+        
+            case PROP_ID_extFieldValues:
+               return getExtFieldValues();
         
            default:
               return super.orm_propValue(propId);
@@ -786,6 +818,26 @@ public class _ErpAstAsset extends DynamicOrmEntity{
                break;
             }
         
+            case PROP_ID_modelId:{
+               java.lang.String typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toString(value,
+                       err-> newTypeConversionError(PROP_NAME_modelId));
+               }
+               setModelId(typedValue);
+               break;
+            }
+        
+            case PROP_ID_extFieldValues:{
+               java.lang.String typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toString(value,
+                       err-> newTypeConversionError(PROP_NAME_extFieldValues));
+               }
+               setExtFieldValues(typedValue);
+               break;
+            }
+        
            default:
               super.orm_propValue(propId,value);
         }
@@ -987,6 +1039,20 @@ public class _ErpAstAsset extends DynamicOrmEntity{
             case PROP_ID_netBookValue:{
                onInitProp(propId);
                this._netBookValue = (java.math.BigDecimal)value;
+               
+               break;
+            }
+        
+            case PROP_ID_modelId:{
+               onInitProp(propId);
+               this._modelId = (java.lang.String)value;
+               
+               break;
+            }
+        
+            case PROP_ID_extFieldValues:{
+               onInitProp(propId);
+               this._extFieldValues = (java.lang.String)value;
                
                break;
             }
@@ -1530,6 +1596,44 @@ public class _ErpAstAsset extends DynamicOrmEntity{
     }
     
     /**
+     * 资产型号: MODEL_ID
+     */
+    public final java.lang.String getModelId(){
+         onPropGet(PROP_ID_modelId);
+         return _modelId;
+    }
+
+    /**
+     * 资产型号: MODEL_ID
+     */
+    public final void setModelId(java.lang.String value){
+        if(onPropSet(PROP_ID_modelId,value)){
+            this._modelId = value;
+            internalClearRefs(PROP_ID_modelId);
+            
+        }
+    }
+    
+    /**
+     * 扩展字段值: EXT_FIELD_VALUES
+     */
+    public final java.lang.String getExtFieldValues(){
+         onPropGet(PROP_ID_extFieldValues);
+         return _extFieldValues;
+    }
+
+    /**
+     * 扩展字段值: EXT_FIELD_VALUES
+     */
+    public final void setExtFieldValues(java.lang.String value){
+        if(onPropSet(PROP_ID_extFieldValues,value)){
+            this._extFieldValues = value;
+            internalClearRefs(PROP_ID_extFieldValues);
+            
+        }
+    }
+    
+    /**
      * 
      */
     public final app.erp.ast.dao.entity.ErpAstAssetCategory getCategory(){
@@ -1546,6 +1650,29 @@ public class _ErpAstAsset extends DynamicOrmEntity{
            internalSetRefEntity(PROP_NAME_category, refEntity,()->{
            
                            this.setCategoryId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
+    /**
+     * 
+     */
+    public final app.erp.ast.dao.entity.ErpAstAssetModel getModel(){
+       return (app.erp.ast.dao.entity.ErpAstAssetModel)internalGetRefEntity(PROP_NAME_model);
+    }
+
+    public final void setModel(app.erp.ast.dao.entity.ErpAstAssetModel refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setModelId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_model, refEntity,()->{
+           
+                           this.setModelId(refEntity.getId());
                        
            });
            }
@@ -1690,5 +1817,22 @@ public class _ErpAstAsset extends DynamicOrmEntity{
        
     }
        
+   private io.nop.orm.component.JsonOrmComponent _extFieldValuesComponent;
+
+   private static Map<String,Integer> COMPONENT_PROP_ID_MAP_extFieldValuesComponent = new HashMap<>();
+   static{
+      
+         COMPONENT_PROP_ID_MAP_extFieldValuesComponent.put(io.nop.orm.component.JsonOrmComponent.PROP_NAME__jsonText,PROP_ID_extFieldValues);
+      
+   }
+
+   public final io.nop.orm.component.JsonOrmComponent getExtFieldValuesComponent(){
+      if(_extFieldValuesComponent == null){
+          _extFieldValuesComponent = new io.nop.orm.component.JsonOrmComponent();
+          _extFieldValuesComponent.bindToEntity(this, COMPONENT_PROP_ID_MAP_extFieldValuesComponent);
+      }
+      return _extFieldValuesComponent;
+   }
+
 }
 // resume CPD analysis - CPD-ON

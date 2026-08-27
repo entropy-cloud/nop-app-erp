@@ -1,8 +1,10 @@
 package app.erp.ast.service.processor;
 
+import app.erp.ast.dao.ErpAstDaoConstants;
 import app.erp.ast.dao.entity.ErpAstAsset;
 import app.erp.ast.service.ErpAstConstants;
 import app.erp.ast.service.ErpAstErrors;
+import app.erp.ast.service.audit.ErpAstAssetAuditRecorder;
 import app.erp.ast.service.statemachine.ErpAstAssetStateMachine;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.api.core.time.CoreMetrics;
@@ -27,6 +29,9 @@ public class ErpAstAssetSuspendResumeProcessor {
     @Inject
     ErpAstAssetStateMachine assetStateMachine;
 
+    @Inject
+    ErpAstAssetAuditRecorder auditRecorder;
+
     /** 暂停时点 remark 标记前缀（闲置时长派生的时间基准，idleSince 列不落 ORM）。 */
     static final String IDLE_SINCE_PREFIX = "闲置自 ";
 
@@ -37,12 +42,16 @@ public class ErpAstAssetSuspendResumeProcessor {
         } catch (NopException e) {
             throw illegalTransition(asset, e);
         }
+        String fromStatus = asset.getStatus();
         asset.setStatus(assetStateMachine.suspendTargetStatus());
         // 暂停时点强制记录（Phase 3 Decision：remark「闲置自 {date}」强制，非可选）
         String remark = asset.getRemark();
         String idleMark = IDLE_SINCE_PREFIX + CoreMetrics.today();
         asset.setRemark(remark == null || remark.trim().isEmpty() ? idleMark : remark + "；" + idleMark);
         assetDao().saveOrUpdateEntity(asset);
+        auditRecorder.record(asset, ErpAstDaoConstants.AUDIT_EVENT_TYPE_STATUS_CHANGE,
+                new ErpAstAssetAuditRecorder.Before(fromStatus, asset.getDepartmentId(), asset.getLocationId(), asset.getEmployeeId()),
+                null, null, "资产闲置（suspend）");
         return asset;
     }
 
@@ -53,8 +62,12 @@ public class ErpAstAssetSuspendResumeProcessor {
         } catch (NopException e) {
             throw illegalTransition(asset, e);
         }
+        String fromStatus = asset.getStatus();
         asset.setStatus(assetStateMachine.resumeTargetStatus());
         assetDao().saveOrUpdateEntity(asset);
+        auditRecorder.record(asset, ErpAstDaoConstants.AUDIT_EVENT_TYPE_STATUS_CHANGE,
+                new ErpAstAssetAuditRecorder.Before(fromStatus, asset.getDepartmentId(), asset.getLocationId(), asset.getEmployeeId()),
+                null, null, "资产恢复使用（resume）");
         return asset;
     }
 

@@ -429,6 +429,34 @@
         }
 
 
+        private String _modelId;
+
+    
+        @PropMeta(propId=29)
+    
+        public String getModelId(){
+            return _modelId;
+        }
+
+        public void setModelId(String value){
+            this._modelId = value;
+        }
+
+
+        private String _extFieldValues;
+
+    
+        @PropMeta(propId=30)
+    
+        public String getExtFieldValues(){
+            return _extFieldValues;
+        }
+
+        public void setExtFieldValues(String value){
+            this._extFieldValues = value;
+        }
+
+
         private Map<String,Object> _category;
 
         public Map<String,Object> getCategory(){
@@ -437,6 +465,17 @@
 
         public void setCategory(Map<String,Object> value){
             this._category = value;
+        }
+
+
+        private Map<String,Object> _model;
+
+        public Map<String,Object> getModel(){
+            return _model;
+        }
+
+        public void setModel(Map<String,Object> value){
+            this._model = value;
         }
 
 

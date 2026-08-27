@@ -320,4 +320,32 @@
         }
 
 
+        private String _modelId;
+
+    
+        @PropMeta(propId=29)
+    
+        public String getModelId(){
+            return _modelId;
+        }
+
+        public void setModelId(String value){
+            this._modelId = value;
+        }
+
+
+        private String _extFieldValues;
+
+    
+        @PropMeta(propId=30)
+    
+        public String getExtFieldValues(){
+            return _extFieldValues;
+        }
+
+        public void setExtFieldValues(String value){
+            this._extFieldValues = value;
+        }
+
+
     }

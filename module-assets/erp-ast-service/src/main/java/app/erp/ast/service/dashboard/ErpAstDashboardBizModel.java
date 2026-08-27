@@ -7,6 +7,7 @@ import app.erp.ast.dao.entity.ErpAstDepreciationSchedule;
 import app.erp.ast.service.ErpAstConstants;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizQuery;
+import io.nop.api.core.annotations.core.Description;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.annotations.core.Optional;
 import io.nop.api.core.beans.query.QueryBean;
@@ -52,6 +53,7 @@ public class ErpAstDashboardBizModel {
     @Inject
     IOrmTemplate ormTemplate;
 
+    @Description("资产看板 KPI（资产原值/净值/累计折旧、状态分布、本期折旧）")
     @BizQuery
     public Map<String, Object> getDashboardKpi(@Optional @Name("periodId") String periodId,
                                                 IServiceContext context) {

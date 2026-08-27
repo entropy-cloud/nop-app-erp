@@ -1,12 +1,15 @@
-
 package app.erp.ast.biz;
 
 import io.nop.api.core.annotations.biz.BizMutation;
+import io.nop.api.core.annotations.biz.BizQuery;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.core.context.IServiceContext;
 import io.nop.orm.biz.ICrudBiz;
 
 import app.erp.ast.dao.entity.ErpAstAsset;
+
+import java.util.List;
+import java.util.Map;
 
 public interface IErpAstAssetBiz extends ICrudBiz<ErpAstAsset>{
 
@@ -26,4 +29,10 @@ public interface IErpAstAssetBiz extends ICrudBiz<ErpAstAsset>{
     @BizMutation
     ErpAstAsset resume(@Name("assetId") String assetId, IServiceContext context);
 
+    /**
+     * 资产操作审计时间轴（E3.8，`audit-trail-and-custom-fieldsets.md` §1）：
+     * 按 createTime 倒序返回该资产全部生命周期事件（状态/归属变化 + 各业务回链）。
+     */
+    @BizQuery
+    List<Map<String, Object>> getAssetAuditTrail(@Name("assetId") String assetId, IServiceContext context);
 }

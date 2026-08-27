@@ -13,11 +13,15 @@ alter table erp_md_material_category add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' 
 
 alter table erp_ast_asset_category add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT NULL;
 
-alter table erp_ast_asset add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT NULL;
+alter table erp_ast_asset_model add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT NULL;
 
 alter table erp_ast_asset_capitalization add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT NULL;
 
 alter table erp_ast_inventory add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT NULL;
+
+alter table erp_ast_asset add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT NULL;
+
+alter table erp_ast_asset_action_log add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT NULL;
 
 alter table erp_ast_depreciation_schedule add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT NULL;
 
@@ -68,14 +72,20 @@ alter table erp_md_material_category add constraint PK_erp_md_material_category 
 alter table erp_ast_asset_category drop constraint PK_erp_ast_asset_category;
 alter table erp_ast_asset_category add constraint PK_erp_ast_asset_category primary key (NOP_TENANT_ID, ID);
 
-alter table erp_ast_asset drop constraint PK_erp_ast_asset;
-alter table erp_ast_asset add constraint PK_erp_ast_asset primary key (NOP_TENANT_ID, ID);
+alter table erp_ast_asset_model drop constraint PK_erp_ast_asset_model;
+alter table erp_ast_asset_model add constraint PK_erp_ast_asset_model primary key (NOP_TENANT_ID, ID);
 
 alter table erp_ast_asset_capitalization drop constraint PK_erp_ast_asset_capitalization;
 alter table erp_ast_asset_capitalization add constraint PK_erp_ast_asset_capitalization primary key (NOP_TENANT_ID, ID);
 
 alter table erp_ast_inventory drop constraint PK_erp_ast_inventory;
 alter table erp_ast_inventory add constraint PK_erp_ast_inventory primary key (NOP_TENANT_ID, ID);
+
+alter table erp_ast_asset drop constraint PK_erp_ast_asset;
+alter table erp_ast_asset add constraint PK_erp_ast_asset primary key (NOP_TENANT_ID, ID);
+
+alter table erp_ast_asset_action_log drop constraint PK_erp_ast_asset_action_log;
+alter table erp_ast_asset_action_log add constraint PK_erp_ast_asset_action_log primary key (NOP_TENANT_ID, ID);
 
 alter table erp_ast_depreciation_schedule drop constraint PK_erp_ast_depreciation_schedule;
 alter table erp_ast_depreciation_schedule add constraint PK_erp_ast_depreciation_schedule primary key (NOP_TENANT_ID, ID);

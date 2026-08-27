@@ -29,7 +29,9 @@
     "employeeId": null,
     "staffId": null,
     "brandModel": null,
-    "remark": null
+    "remark": null,
+    "modelId": null,
+    "extFieldValues": null
   },
   "status": 0
 }

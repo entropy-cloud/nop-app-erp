@@ -396,4 +396,36 @@ public interface ErpAstErrors {
             "erp.err.ast.maintenance.already-reversed",
             "维修工单 {maintenanceCode} 已红冲，不允许二次红冲",
             ARG_MAINTENANCE_CODE);
+
+    // --- E3.3 型号级 ext 字段集校验（audit-trail-and-custom-fieldsets.md §2） ---
+    String ARG_MODEL_ID = "modelId";
+    String ARG_MODEL_CODE = "modelCode";
+    String ARG_EXT_FIELD_KEY = "extFieldKey";
+    String ARG_EXT_FIELD_TYPE = "extFieldType";
+    String ARG_EXT_FIELD_VALUE = "extFieldValue";
+
+    ErrorCode ERR_AST_ASSET_MODEL_NOT_FOUND = ErrorCode.define(
+            "erp.err.ast.asset-model.not-found",
+            "资产型号不存在：{modelId}",
+            ARG_MODEL_ID);
+
+    ErrorCode ERR_AST_EXT_FIELD_NOT_DECLARED = ErrorCode.define(
+            "erp.err.ast.ext-field.not-declared",
+            "资产 {assetCode} 扩展字段 {extFieldKey} 未在型号 {modelCode} 的字段集中声明",
+            ARG_ASSET_CODE, ARG_EXT_FIELD_KEY, ARG_MODEL_CODE);
+
+    ErrorCode ERR_AST_EXT_FIELD_REQUIRED_MISSING = ErrorCode.define(
+            "erp.err.ast.ext-field.required-missing",
+            "资产 {assetCode} 缺少型号 {modelCode} 声明的必填扩展字段 {extFieldKey}",
+            ARG_ASSET_CODE, ARG_EXT_FIELD_KEY, ARG_MODEL_CODE);
+
+    ErrorCode ERR_AST_EXT_FIELD_TYPE_MISMATCH = ErrorCode.define(
+            "erp.err.ast.ext-field.type-mismatch",
+            "资产 {assetCode} 扩展字段 {extFieldKey} 期望类型 {extFieldType}，实际值不匹配：{extFieldValue}",
+            ARG_ASSET_CODE, ARG_EXT_FIELD_KEY, ARG_EXT_FIELD_TYPE, ARG_EXT_FIELD_VALUE);
+
+    ErrorCode ERR_AST_EXT_FIELD_WITHOUT_MODEL = ErrorCode.define(
+            "erp.err.ast.ext-field.without-model",
+            "资产 {assetCode} 未指定型号，不允许携带扩展字段值（须先指定 modelId）",
+            ARG_ASSET_CODE);
 }

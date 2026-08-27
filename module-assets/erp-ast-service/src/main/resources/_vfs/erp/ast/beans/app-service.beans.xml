@@ -206,6 +206,9 @@
           class="app.erp.ast.service.processor.ErpAstDepreciationScheduleCatchUpDepreciationProcessor"/>
     <bean id="app.erp.ast.service.processor.ErpAstAssetSuspendResumeProcessor"
           class="app.erp.ast.service.processor.ErpAstAssetSuspendResumeProcessor"/>
+    <!-- E3.8 资产操作审计记录器（ErpAstAssetActionLog 承载，状态/归属变化视角，与会计日志互补） -->
+    <bean id="app.erp.ast.service.audit.ErpAstAssetAuditRecorder"
+          class="app.erp.ast.service.audit.ErpAstAssetAuditRecorder"/>
     <bean id="app.erp.ast.service.processor.ErpAstDepreciationScheduleExecuteBatchDepreciationProcessor"
           class="app.erp.ast.service.processor.ErpAstDepreciationScheduleExecuteBatchDepreciationProcessor"/>
     <bean id="app.erp.ast.service.processor.ErpAstDepreciationScheduleReverseDepreciationProcessor"

@@ -3,8 +3,8 @@
     "assetStatus": "SCRAPPED"
   },
   {
-    "posted": true,
-    "gainLoss": -12000.0000
+    "gainLoss": -12000.0000,
+    "posted": true
   },
   {
     "schedule202608": "CANCELLED"

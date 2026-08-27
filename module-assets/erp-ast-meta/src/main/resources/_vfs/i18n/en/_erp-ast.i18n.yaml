@@ -1,8 +1,10 @@
 entity:
   label:
     ErpAstAsset: Fixed Asset
+    ErpAstAssetActionLog: Asset Action Log
     ErpAstAssetCapitalization: Asset Capitalization
     ErpAstAssetCategory: Asset Category
+    ErpAstAssetModel: Asset Model
     ErpAstCip: CIP
     ErpAstCipCostItem: CIP Cost Item
     ErpAstCipProgressBilling: CIP Progress Billing
@@ -51,7 +53,10 @@ prop:
       remark: Remark
       accumulatedDepreciation: Accumulated Depreciation
       netBookValue: Net Book Value
+      modelId: Asset Model
+      extFieldValues: Ext Field Values
       category: Category
+      model: Asset Model
       department: Department
       department.name: Department
       location: Location
@@ -64,6 +69,32 @@ prop:
       org.name: Org
       staff: Staff
       staff.name: Staff
+      extFieldValuesComponent: null
+    ErpAstAssetActionLog:
+      id: ID
+      assetId: Asset
+      eventType: Event Type
+      eventType_label: null
+      fromStatus: From Status
+      fromStatus_label: null
+      toStatus: To Status
+      toStatus_label: null
+      fromDepartmentId: From Department
+      toDepartmentId: To Department
+      fromLocationId: From Location
+      toLocationId: To Location
+      fromStaffId: From Staff
+      toStaffId: To Staff
+      refEntityName: Ref Entity Name
+      refEntityId: Ref Entity Id
+      summary: Summary
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      asset: Asset
     ErpAstAssetCapitalization:
       id: ID
       code: Code
@@ -131,6 +162,21 @@ prop:
       disposalGainLossSubject.name: Disposal Gain/Loss Subject
       cipSubject: CIP Subject
       cipSubject.name: CIP Subject
+    ErpAstAssetModel:
+      id: ID
+      code: Code
+      name: Name
+      categoryId: Category
+      extFieldDefs: Ext Field Definitions
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      remark: Remark
+      category: Category
+      extFieldDefsComponent: null
     ErpAstCip:
       id: ID
       code: Code
@@ -648,6 +694,7 @@ dict:
     erp-ast/cip-cost-type: CIP Cost Type
     erp-ast/inventory-status: Inventory Status
     erp-ast/variance-type: Variance Type
+    erp-ast/audit-event-type: Asset Audit Event Type
     erp-ast/inventory-line-disposition: Inventory Line Disposition
     erp-ast/maintenance-status: Maintenance Status
     erp-ast/maintenance-treatment: Maintenance Treatment
@@ -709,6 +756,14 @@ dict.option.label:
     SURPLUS: Surplus
     SHORTAGE: Shortage
     MATCHED: Matched
+  erp-ast/audit-event-type:
+    CREATE: Create
+    UPDATE: Update
+    STATUS_CHANGE: Status Change
+    TRANSFER: Transfer
+    MAINTENANCE: Maintenance
+    VALUATION: Valuation
+    DISPOSAL: Disposal
   erp-ast/inventory-line-disposition:
     NONE: None
     NEW_CARD: New Card

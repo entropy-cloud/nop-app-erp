@@ -2,10 +2,14 @@ site:
   resource:
     ErpAstAsset-main:
       displayName: Fixed Asset
+    ErpAstAssetActionLog-main:
+      displayName: Asset Action Log
     ErpAstAssetCapitalization-main:
       displayName: Asset Capitalization
     ErpAstAssetCategory-main:
       displayName: Asset Category
+    ErpAstAssetModel-main:
+      displayName: Asset Model
     ErpAstCip-main:
       displayName: CIP
     ErpAstDepreciationSchedule-main:

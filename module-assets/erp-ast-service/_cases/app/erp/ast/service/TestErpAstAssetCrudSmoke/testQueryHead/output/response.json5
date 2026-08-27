@@ -34,7 +34,9 @@
         "updateTime": "@var:ErpAstAsset@updateTime",
         "remark": null,
         "accumulatedDepreciation": 0.0000,
-        "netBookValue": 0.0000
+        "netBookValue": 0.0000,
+        "modelId": null,
+        "extFieldValues": null
       }
     ],
     "limit": 10,

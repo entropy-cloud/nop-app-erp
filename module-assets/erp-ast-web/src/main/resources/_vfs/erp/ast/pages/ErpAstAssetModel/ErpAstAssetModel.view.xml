@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- E3.3 资产型号管理（型号级 ext 字段集声明载体，audit-trail-and-custom-fieldsets.md §2）。
+     生成层之上定制：列表收敛业务列；extFieldDefs 用多行文本编辑（JSON 数组 [{key,label,type,required}]）。 -->
+<view x:extends="_gen/_ErpAstAssetModel.view.xml" x:schema="/nop/schema/xui/xview.xdef" xmlns:x="/nop/schema/xdsl.xdef">
+
+    <grids>
+        <grid id="list">
+            <cols x:override="bounded-merge">
+                <col id="code"/>
+                <col id="name"/>
+                <col id="categoryId"/>
+                <col id="extFieldDefs"/>
+                <col id="remark"/>
+            </cols>
+        </grid>
+        <grid id="pick-list"/>
+    </grids>
+
+    <forms>
+        <form id="view"/>
+        <form id="edit">
+            <layout>
+                code[型号编码] name[型号名称]
+                categoryId[所属类别]
+                extFieldDefs[扩展字段集定义]
+                remark[备注]
+            </layout>
+            <cells>
+                <cell id="extFieldDefs">
+                    <gen-control>
+                        <textarea placeholder='扩展字段集定义（JSON 数组，如 [{"key":"cpu","label":"CPU","type":"string","required":true}]，type ∈ string/number/boolean）' minRows="4"/>
+                    </gen-control>
+                </cell>
+            </cells>
+        </form>
+        <form id="add" x:prototype="edit" editMode="add"/>
+    </forms>
+
+    <pages>
+        <crud name="main"/>
+        <picker name="picker"/>
+    </pages>
+</view>

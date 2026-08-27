@@ -1,6 +1,6 @@
 {
   "data": {
-    "id": "2",
+    "id": "3",
     "assetId": "1",
     "period": "2026-07",
     "plannedAmount": 1000,
@@ -14,9 +14,9 @@
     "delVersion": 0,
     "version": 0,
     "createdBy": "autotest-ref",
-    "createTime": "@var:ErpAstDepreciationSchedule@createTime",
+    "createTime": "@var:ErpAstDepreciationSchedule@updateTime",
     "updatedBy": "autotest-ref",
-    "updateTime": "@var:ErpAstDepreciationSchedule@createTime",
+    "updateTime": "@var:ErpAstDepreciationSchedule@updateTime",
     "orgId": null,
     "actualAmount": null,
     "netBookValue": null,

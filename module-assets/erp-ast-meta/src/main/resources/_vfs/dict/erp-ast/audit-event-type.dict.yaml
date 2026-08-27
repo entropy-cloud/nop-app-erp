@@ -1,0 +1,35 @@
+# __XGEN_FORCE_OVERRIDE__
+label: 资产审计事件类型
+locale: zh-CN
+valueType: string
+description: 
+options:
+
+  - label: 创建
+    value: CREATE
+    description: 
+  
+  - label: 更新
+    value: UPDATE
+    description: 
+  
+  - label: 状态变更
+    value: STATUS_CHANGE
+    description: 
+  
+  - label: 归属转移
+    value: TRANSFER
+    description: 
+  
+  - label: 维护
+    value: MAINTENANCE
+    description: 
+  
+  - label: 价值调整
+    value: VALUATION
+    description: 
+  
+  - label: 处置
+    value: DISPOSAL
+    description: 
+  

@@ -23,6 +23,16 @@
                                   i18n-en:displayName="Asset Category" icon="folder-tree"
                                   component="FLUX" resourceType="SUBM" orderNo="110"
                                   url="/erp/ast/pages/ErpAstAssetCategory/main.page.yaml"/>
+                        <!-- E3.3 型号级 ext 字段集管理 -->
+                        <resource id="ErpAstAssetModel-main" displayName="资产型号"
+                                  i18n-en:displayName="Asset Model" icon="box"
+                                  component="FLUX" resourceType="SUBM" orderNo="120"
+                                  url="/erp/ast/pages/ErpAstAssetModel/main.page.yaml"/>
+                        <!-- E3.8 资产操作审计轨迹（只读查询入口） -->
+                        <resource id="ErpAstAssetActionLog-main" displayName="资产操作审计"
+                                  i18n-en:displayName="Asset Action Log" icon="history"
+                                  component="FLUX" resourceType="SUBM" orderNo="130"
+                                  url="/erp/ast/pages/ErpAstAssetActionLog/main.page.yaml"/>
                     </children>
                 </resource>
                 <!-- 折旧 -->

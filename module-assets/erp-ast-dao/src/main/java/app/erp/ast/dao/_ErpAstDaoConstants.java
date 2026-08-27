@@ -224,6 +224,41 @@ public interface _ErpAstDaoConstants {
     String VARIANCE_TYPE_MATCHED = "MATCHED";
                     
     /**
+     * 资产审计事件类型: 创建 
+     */
+    String AUDIT_EVENT_TYPE_CREATE = "CREATE";
+                    
+    /**
+     * 资产审计事件类型: 更新 
+     */
+    String AUDIT_EVENT_TYPE_UPDATE = "UPDATE";
+                    
+    /**
+     * 资产审计事件类型: 状态变更 
+     */
+    String AUDIT_EVENT_TYPE_STATUS_CHANGE = "STATUS_CHANGE";
+                    
+    /**
+     * 资产审计事件类型: 归属转移 
+     */
+    String AUDIT_EVENT_TYPE_TRANSFER = "TRANSFER";
+                    
+    /**
+     * 资产审计事件类型: 维护 
+     */
+    String AUDIT_EVENT_TYPE_MAINTENANCE = "MAINTENANCE";
+                    
+    /**
+     * 资产审计事件类型: 价值调整 
+     */
+    String AUDIT_EVENT_TYPE_VALUATION = "VALUATION";
+                    
+    /**
+     * 资产审计事件类型: 处置 
+     */
+    String AUDIT_EVENT_TYPE_DISPOSAL = "DISPOSAL";
+                    
+    /**
      * 盘点差异处置: 无需处置 
      */
     String INVENTORY_LINE_DISPOSITION_NONE = "NONE";

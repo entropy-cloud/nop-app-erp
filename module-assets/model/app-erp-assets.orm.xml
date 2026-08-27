@@ -60,6 +60,8 @@
         <!-- 资产域特有域 -->
         <domain name="assetCode" precision="50" stdSqlType="VARCHAR"/>
         <domain name="depreciationRate" stdSqlType="DECIMAL" precision="10" scale="6"/>
+        <!-- E3.3 ext 字段集承载（json 列声明前置，对齐 nop-job.orm.xml 预定义域模式） -->
+        <domain name="json-4000" precision="4000" stdDomain="json" stdSqlType="VARCHAR"/>
     </domains>
 
     <dicts>
@@ -136,6 +138,16 @@
             <option code="SHORTAGE" label="盘亏" value="SHORTAGE" i18n-en:label='Shortage'/>
             <option code="MATCHED" label="一致" value="MATCHED" i18n-en:label='Matched'/>
         </dict>
+        <!-- E3.8 资产操作审计事件类型（owner doc audit-trail-and-custom-fieldsets.md §1 清单） -->
+        <dict label="资产审计事件类型" name="erp-ast/audit-event-type" valueType="string" i18n-en:label='Asset Audit Event Type'>
+            <option code="CREATE" label="创建" value="CREATE" i18n-en:label='Create'/>
+            <option code="UPDATE" label="更新" value="UPDATE" i18n-en:label='Update'/>
+            <option code="STATUS_CHANGE" label="状态变更" value="STATUS_CHANGE" i18n-en:label='Status Change'/>
+            <option code="TRANSFER" label="归属转移" value="TRANSFER" i18n-en:label='Transfer'/>
+            <option code="MAINTENANCE" label="维护" value="MAINTENANCE" i18n-en:label='Maintenance'/>
+            <option code="VALUATION" label="价值调整" value="VALUATION" i18n-en:label='Valuation'/>
+            <option code="DISPOSAL" label="处置" value="DISPOSAL" i18n-en:label='Disposal'/>
+        </dict>
         <!-- 盘点差异处置：NEW_CARD 盘盈建新卡 / DISPOSAL 盘亏触发处置 / INVESTIGATE 标记调查 / NONE 无需处置(一致) -->
         <dict label="盘点差异处置" name="erp-ast/inventory-line-disposition" valueType="string" i18n-en:label='Inventory Line Disposition'>
             <option code="NONE" label="无需处置" value="NONE" i18n-en:label='None'/>
@@ -203,10 +215,16 @@
                 <!-- 累计折旧/净值汇总列（折旧执行/处置时回写，反映卡片级汇总，区别于 schedule 条目级） -->
                 <column name="accumulatedDepreciation" code="ACCUMULATED_DEPRECIATION" displayName="累计折旧" propId="27" domain="amount" stdSqlType="DECIMAL" precision="20" scale="4" defaultValue="0" i18n-en:displayName='Accumulated Depreciation' />
                 <column name="netBookValue" code="NET_BOOK_VALUE" displayName="净值" propId="28" domain="amount" stdSqlType="DECIMAL" precision="20" scale="4" defaultValue="0" i18n-en:displayName='Net Book Value' />
+                <!-- E3.3 型号级 ext 字段集：型号引用 + 实例扩展字段值（按型号 extFieldDefs 校验） -->
+                <column name="modelId" code="MODEL_ID" displayName="资产型号" propId="29" stdSqlType="BIGINT" stdDataType="string" i18n-en:displayName='Asset Model' />
+                <column name="extFieldValues" code="EXT_FIELD_VALUES" displayName="扩展字段值" propId="30" domain="json-4000" stdSqlType="VARCHAR" precision="4000" i18n-en:displayName='Ext Field Values' />
             </columns>
-            <relations>
+             <relations>
                 <to-one name="category" refEntityName="app.erp.ast.dao.entity.ErpAstAssetCategory" tagSet="pub" i18n-en:displayName='Category'>
                     <join><on leftProp="categoryId" rightProp="id"/></join>
+                </to-one>
+                <to-one name="model" refEntityName="app.erp.ast.dao.entity.ErpAstAssetModel" tagSet="pub" i18n-en:displayName='Asset Model'>
+                    <join><on leftProp="modelId" rightProp="id"/></join>
                 </to-one>
                 <!-- Cross-module references handled via I*Biz at BizModel level -->
                 <to-one name="department" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Department'>
@@ -249,6 +267,9 @@
                 </index>
                 <index name="IDX_AST_ASSET_STAFF_ID" unique="false">
                     <column name="staffId"/>
+                </index>
+                <index name="IDX_AST_ASSET_MODEL_ID" unique="false">
+                    <column name="modelId"/>
                 </index>
             </indexes>
         </entity>
@@ -316,6 +337,84 @@
                 </index>
                 <index name="IDX_AST_ASSET_CATEGORY_CIP_SUBJECT_ID" unique="false">
                     <column name="cipSubjectId"/>
+                </index>
+            </indexes>
+        </entity>
+
+        <!-- E3.3 资产型号（型号级 ext 字段集声明载体：extFieldDefs = [{key,label,type,required}]） -->
+        <entity ext:web-renderer="flux" className="app.erp.ast.dao.entity.ErpAstAssetModel"
+                displayName="资产型号" ext:icon="box" i18n-en:displayName="Asset Model" name="app.erp.ast.dao.entity.ErpAstAssetModel"
+                tableName="erp_ast_asset_model" tagSet="gid,erp.assets" registerShortName="true"
+                useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion"
+                versionProp="version" createTimeProp="createTime" createrProp="createdBy"
+                updateTimeProp="updateTime" updaterProp="updatedBy">
+            <columns>
+                <column name="id" code="ID" displayName="ID" propId="1" stdSqlType="BIGINT" stdDataType="string" primary="true" mandatory="true" tagSet="seq-default" i18n-en:displayName='ID' />
+                <column name="code" code="CODE" displayName="型号编码" propId="2" domain="code" stdSqlType="VARCHAR" precision="50" mandatory="true" i18n-en:displayName='Code' tagSet="var" />
+                <column name="name" code="NAME" displayName="型号名称" propId="3" domain="name" stdSqlType="VARCHAR" precision="200" mandatory="true" i18n-en:displayName='Name' />
+                <column name="categoryId" code="CATEGORY_ID" displayName="所属类别" propId="4" stdSqlType="BIGINT" stdDataType="string" i18n-en:displayName='Category' />
+                <column name="extFieldDefs" code="EXT_FIELD_DEFS" displayName="扩展字段集定义" propId="5" domain="json-4000" stdSqlType="VARCHAR" precision="4000" i18n-en:displayName='Ext Field Definitions' />
+                <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="6" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0" i18n-en:displayName='Del Flag'  ui:show="R"/>
+                <column name="version" code="VERSION" displayName="数据版本" propId="7" domain="version" stdSqlType="INTEGER" stdDataType="int" mandatory="true" defaultValue="0" i18n-en:displayName='Version' />
+                <column name="createdBy" code="CREATED_BY" displayName="创建人" propId="8" domain="createdBy" stdSqlType="VARCHAR" precision="50" mandatory="true" i18n-en:displayName='Created By' />
+                <column name="createTime" code="CREATE_TIME" displayName="创建时间" propId="9" domain="createTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Create Time' />
+                <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="10" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" i18n-en:displayName='Updated By' />
+                <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="11" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
+                <column name="remark" code="REMARK" displayName="备注" propId="12" domain="remark" stdSqlType="VARCHAR" precision="1000" i18n-en:displayName='Remark' />
+            </columns>
+            <relations>
+                <to-one name="category" refEntityName="app.erp.ast.dao.entity.ErpAstAssetCategory" tagSet="pub" i18n-en:displayName='Category'>
+                    <join><on leftProp="categoryId" rightProp="id"/></join>
+                </to-one>
+            </relations>
+            <unique-keys>
+                <unique-key name="UK_AST_ASSET_MODEL_CODE" columns="code"/>
+            </unique-keys>
+            <indexes>
+                <index name="IDX_AST_ASSET_MODEL_CATEGORY_ID" unique="false">
+                    <column name="categoryId"/>
+                </index>
+            </indexes>
+        </entity>
+
+        <!-- E3.8 资产操作审计（独立实体承载：资产生命周期事件，与会计日志（财务面）互补） -->
+        <entity ext:web-renderer="flux" className="app.erp.ast.dao.entity.ErpAstAssetActionLog"
+                displayName="资产操作审计" ext:icon="history" i18n-en:displayName="Asset Action Log" name="app.erp.ast.dao.entity.ErpAstAssetActionLog"
+                tableName="erp_ast_asset_action_log" tagSet="gid,erp.assets" registerShortName="true"
+                useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion"
+                versionProp="version" createTimeProp="createTime" createrProp="createdBy"
+                updateTimeProp="updateTime" updaterProp="updatedBy">
+            <columns>
+                <column name="id" code="ID" displayName="ID" propId="1" stdSqlType="BIGINT" stdDataType="string" primary="true" mandatory="true" tagSet="seq-default" i18n-en:displayName='ID' />
+                <column name="assetId" code="ASSET_ID" displayName="资产" propId="2" stdSqlType="BIGINT" stdDataType="string" mandatory="true" i18n-en:displayName='Asset' />
+                <column name="eventType" code="EVENT_TYPE" displayName="事件类型" propId="3" stdSqlType="VARCHAR" precision="20" stdDataType="string" mandatory="true" ext:dict="erp-ast/audit-event-type" i18n-en:displayName='Event Type' />
+                <column name="fromStatus" code="FROM_STATUS" displayName="变更前资产状态" propId="4" stdSqlType="VARCHAR" precision="20" stdDataType="string" ext:dict="erp-ast/asset-status" i18n-en:displayName='From Status' />
+                <column name="toStatus" code="TO_STATUS" displayName="变更后资产状态" propId="5" stdSqlType="VARCHAR" precision="20" stdDataType="string" ext:dict="erp-ast/asset-status" i18n-en:displayName='To Status' />
+                <column name="fromDepartmentId" code="FROM_DEPARTMENT_ID" displayName="变更前部门" propId="6" stdSqlType="BIGINT" stdDataType="string" i18n-en:displayName='From Department' />
+                <column name="toDepartmentId" code="TO_DEPARTMENT_ID" displayName="变更后部门" propId="7" stdSqlType="BIGINT" stdDataType="string" i18n-en:displayName='To Department' />
+                <column name="fromLocationId" code="FROM_LOCATION_ID" displayName="变更前地点" propId="8" stdSqlType="BIGINT" stdDataType="string" i18n-en:displayName='From Location' />
+                <column name="toLocationId" code="TO_LOCATION_ID" displayName="变更后地点" propId="9" stdSqlType="BIGINT" stdDataType="string" i18n-en:displayName='To Location' />
+                <column name="fromStaffId" code="FROM_STAFF_ID" displayName="变更前使用人" propId="10" stdSqlType="BIGINT" stdDataType="string" i18n-en:displayName='From Staff' />
+                <column name="toStaffId" code="TO_STAFF_ID" displayName="变更后使用人" propId="11" stdSqlType="BIGINT" stdDataType="string" i18n-en:displayName='To Staff' />
+                <column name="refEntityName" code="REF_ENTITY_NAME" displayName="关联单据实体" propId="12" stdSqlType="VARCHAR" precision="50" stdDataType="string" i18n-en:displayName='Ref Entity Name' />
+                <column name="refEntityId" code="REF_ENTITY_ID" displayName="关联单据ID" propId="13" stdSqlType="BIGINT" stdDataType="string" i18n-en:displayName='Ref Entity Id' />
+                <column name="summary" code="SUMMARY" displayName="摘要" propId="14" stdSqlType="VARCHAR" precision="1000" stdDataType="string" i18n-en:displayName='Summary' />
+                <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="15" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0" i18n-en:displayName='Del Flag'  ui:show="R"/>
+                <column name="version" code="VERSION" displayName="数据版本" propId="16" domain="version" stdSqlType="INTEGER" stdDataType="int" mandatory="true" defaultValue="0" i18n-en:displayName='Version' />
+                <column name="createdBy" code="CREATED_BY" displayName="创建人" propId="17" domain="createdBy" stdSqlType="VARCHAR" precision="50" mandatory="true" i18n-en:displayName='Created By' />
+                <column name="createTime" code="CREATE_TIME" displayName="创建时间" propId="18" domain="createTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Create Time' />
+                <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="19" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" i18n-en:displayName='Updated By' />
+                <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="20" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
+            </columns>
+            <relations>
+                <to-one name="asset" refEntityName="app.erp.ast.dao.entity.ErpAstAsset" tagSet="pub" i18n-en:displayName='Asset'>
+                    <join><on leftProp="assetId" rightProp="id"/></join>
+                </to-one>
+            </relations>
+            <indexes>
+                <index name="IDX_AST_ACTION_LOG_ASSET_TIME" unique="false">
+                    <column name="assetId"/>
+                    <column name="createTime"/>
                 </index>
             </indexes>
         </entity>

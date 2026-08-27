@@ -1,10 +1,12 @@
 package app.erp.ast.service.processor;
 
+import app.erp.ast.dao.ErpAstDaoConstants;
 import app.erp.ast.dao.entity.ErpAstAsset;
 import app.erp.ast.dao.entity.ErpAstAssetCategory;
 import app.erp.ast.dao.entity.ErpAstValueAdjustment;
 import app.erp.ast.service.ErpAstConstants;
 import app.erp.ast.service.ErpAstErrors;
+import app.erp.ast.service.audit.ErpAstAssetAuditRecorder;
 import app.erp.ast.service.posting.ValueAdjustmentPostingDispatcher;
 import app.erp.ast.service.statemachine.ErpAstValueAdjustmentApprovalStateMachine;
 import app.erp.ast.service.statemachine.ErpAstValueAdjustmentDocumentStateMachine;
@@ -27,6 +29,9 @@ public class ErpAstValueAdjustmentProcessor {
 
     @Inject
     IDaoProvider daoProvider;
+
+    @Inject
+    ErpAstAssetAuditRecorder auditRecorder;
 
     @Inject
     ValueAdjustmentPostingDispatcher postingDispatcher;
@@ -227,6 +232,7 @@ public class ErpAstValueAdjustmentProcessor {
     protected void applyAssetValueChange(ErpAstValueAdjustment adjustment, ErpAstAsset asset) {
         BigDecimal amount = nz(adjustment.getAdjustmentAmount());
         BigDecimal currentNbv = nz(asset.getNetBookValue());
+        BigDecimal fromValue = asset.getCurrentValue();
         String type = adjustment.getAdjustmentType();
 
         BigDecimal newNbv;
@@ -247,6 +253,10 @@ public class ErpAstValueAdjustmentProcessor {
         }
 
         daoProvider.daoFor(ErpAstAsset.class).saveOrUpdateEntity(asset);
+        auditRecorder.record(asset, ErpAstDaoConstants.AUDIT_EVENT_TYPE_VALUATION,
+                new ErpAstAssetAuditRecorder.Before(asset.getStatus(), asset.getDepartmentId(), asset.getLocationId(), asset.getEmployeeId()),
+                "ErpAstValueAdjustment", adjustment.getId(),
+                "价值调整（" + type + " " + amount + "）：" + nz(fromValue) + " → " + newNbv);
     }
 
     protected void rollbackAssetValue(ErpAstValueAdjustment adjustment) {
@@ -264,9 +274,14 @@ public class ErpAstValueAdjustmentProcessor {
         } else {
             restoredNbv = currentNbv.add(amount);
         }
+        BigDecimal fromValue = asset.getCurrentValue();
         asset.setNetBookValue(restoredNbv);
         asset.setCurrentValue(restoredNbv);
         daoProvider.daoFor(ErpAstAsset.class).saveOrUpdateEntity(asset);
+        auditRecorder.record(asset, ErpAstDaoConstants.AUDIT_EVENT_TYPE_VALUATION,
+                new ErpAstAssetAuditRecorder.Before(asset.getStatus(), asset.getDepartmentId(), asset.getLocationId(), asset.getEmployeeId()),
+                "ErpAstValueAdjustment", adjustment.getId(),
+                "价值调整冲销（" + type + " " + amount + "）：" + nz(fromValue) + " → " + restoredNbv);
     }
 
     protected boolean shouldAdjustDepreciationBase(String adjustmentType) {

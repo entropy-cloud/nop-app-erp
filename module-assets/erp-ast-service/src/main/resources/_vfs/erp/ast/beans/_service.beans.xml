@@ -13,11 +13,11 @@
         <property name="bizObjName" value="ErpAstAssetCategory"/>
     </bean>
 
-    <bean id="app.erp.ast.service.entity.ErpAstAssetBizModel" ioc:type="@bean:id" ioc:default="true"/>
+    <bean id="app.erp.ast.service.entity.ErpAstAssetModelBizModel" ioc:type="@bean:id" ioc:default="true"/>
 
-    <bean id="biz_ErpAstAsset" class="io.nop.biz.proxy.BizProxyFactoryBean" ioc:type="app.erp.ast.biz.IErpAstAssetBiz"
-          ioc:force-lazy-property="true" lazy-init="true" primary="true">
-        <property name="bizObjName" value="ErpAstAsset"/>
+    <bean id="biz_ErpAstAssetModel" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.ast.biz.IErpAstAssetModelBiz" ioc:force-lazy-property="true" lazy-init="true" primary="true">
+        <property name="bizObjName" value="ErpAstAssetModel"/>
     </bean>
 
     <bean id="app.erp.ast.service.entity.ErpAstAssetCapitalizationBizModel" ioc:type="@bean:id" ioc:default="true"/>
@@ -33,6 +33,21 @@
     <bean id="biz_ErpAstInventory" class="io.nop.biz.proxy.BizProxyFactoryBean"
           ioc:type="app.erp.ast.biz.IErpAstInventoryBiz" ioc:force-lazy-property="true" lazy-init="true" primary="true">
         <property name="bizObjName" value="ErpAstInventory"/>
+    </bean>
+
+    <bean id="app.erp.ast.service.entity.ErpAstAssetBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpAstAsset" class="io.nop.biz.proxy.BizProxyFactoryBean" ioc:type="app.erp.ast.biz.IErpAstAssetBiz"
+          ioc:force-lazy-property="true" lazy-init="true" primary="true">
+        <property name="bizObjName" value="ErpAstAsset"/>
+    </bean>
+
+    <bean id="app.erp.ast.service.entity.ErpAstAssetActionLogBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpAstAssetActionLog" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.ast.biz.IErpAstAssetActionLogBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpAstAssetActionLog"/>
     </bean>
 
     <bean id="app.erp.ast.service.entity.ErpAstDepreciationScheduleBizModel" ioc:type="@bean:id" ioc:default="true"/>

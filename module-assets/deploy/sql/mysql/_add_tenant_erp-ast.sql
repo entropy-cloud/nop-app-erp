@@ -13,11 +13,15 @@ alter table erp_md_material_category add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' N
 
 alter table erp_ast_asset_category add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
-alter table erp_ast_asset add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
+alter table erp_ast_asset_model add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
 alter table erp_ast_asset_capitalization add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
 alter table erp_ast_inventory add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
+
+alter table erp_ast_asset add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
+
+alter table erp_ast_asset_action_log add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
 alter table erp_ast_depreciation_schedule add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
@@ -68,14 +72,20 @@ alter table erp_md_material_category add primary key (NOP_TENANT_ID, ID);
 alter table erp_ast_asset_category drop primary key;
 alter table erp_ast_asset_category add primary key (NOP_TENANT_ID, ID);
 
-alter table erp_ast_asset drop primary key;
-alter table erp_ast_asset add primary key (NOP_TENANT_ID, ID);
+alter table erp_ast_asset_model drop primary key;
+alter table erp_ast_asset_model add primary key (NOP_TENANT_ID, ID);
 
 alter table erp_ast_asset_capitalization drop primary key;
 alter table erp_ast_asset_capitalization add primary key (NOP_TENANT_ID, ID);
 
 alter table erp_ast_inventory drop primary key;
 alter table erp_ast_inventory add primary key (NOP_TENANT_ID, ID);
+
+alter table erp_ast_asset drop primary key;
+alter table erp_ast_asset add primary key (NOP_TENANT_ID, ID);
+
+alter table erp_ast_asset_action_log drop primary key;
+alter table erp_ast_asset_action_log add primary key (NOP_TENANT_ID, ID);
 
 alter table erp_ast_depreciation_schedule drop primary key;
 alter table erp_ast_depreciation_schedule add primary key (NOP_TENANT_ID, ID);

@@ -76,26 +76,12 @@ CREATE TABLE erp_ast_asset_category(
   constraint PK_erp_ast_asset_category primary key (id)
 );
 
-CREATE TABLE erp_ast_asset(
+CREATE TABLE erp_ast_asset_model(
   id INT8 NOT NULL ,
   code VARCHAR(50) NOT NULL ,
   name VARCHAR(200) NOT NULL ,
-  org_id INT8  ,
   category_id INT8  ,
-  acquisition_date DATE NOT NULL ,
-  currency_id INT8  ,
-  original_value NUMERIC(20,4) NOT NULL ,
-  current_value NUMERIC(20,4)  ,
-  residual_value NUMERIC(20,4) default 0   ,
-  depreciation_method VARCHAR(20)  ,
-  depreciation_rate NUMERIC(10,6)  ,
-  useful_life_months INT4  ,
-  department_id INT8  ,
-  location_id INT8  ,
-  employee_id INT8  ,
-  staff_id INT8  ,
-  brand_model VARCHAR(200)  ,
-  status VARCHAR(20) NOT NULL ,
+  ext_field_defs VARCHAR(4000)  ,
   del_version INT8 default 0  NOT NULL ,
   version INT4 default 0  NOT NULL ,
   created_by VARCHAR(50) NOT NULL ,
@@ -103,9 +89,7 @@ CREATE TABLE erp_ast_asset(
   updated_by VARCHAR(50) NOT NULL ,
   update_time TIMESTAMP NOT NULL ,
   remark VARCHAR(1000)  ,
-  accumulated_depreciation NUMERIC(20,4) default 0   ,
-  net_book_value NUMERIC(20,4) default 0   ,
-  constraint PK_erp_ast_asset primary key (id)
+  constraint PK_erp_ast_asset_model primary key (id)
 );
 
 CREATE TABLE erp_ast_asset_capitalization(
@@ -174,6 +158,64 @@ CREATE TABLE erp_ast_inventory(
   update_time TIMESTAMP NOT NULL ,
   remark VARCHAR(1000)  ,
   constraint PK_erp_ast_inventory primary key (id)
+);
+
+CREATE TABLE erp_ast_asset(
+  id INT8 NOT NULL ,
+  code VARCHAR(50) NOT NULL ,
+  name VARCHAR(200) NOT NULL ,
+  org_id INT8  ,
+  category_id INT8  ,
+  acquisition_date DATE NOT NULL ,
+  currency_id INT8  ,
+  original_value NUMERIC(20,4) NOT NULL ,
+  current_value NUMERIC(20,4)  ,
+  residual_value NUMERIC(20,4) default 0   ,
+  depreciation_method VARCHAR(20)  ,
+  depreciation_rate NUMERIC(10,6)  ,
+  useful_life_months INT4  ,
+  department_id INT8  ,
+  location_id INT8  ,
+  employee_id INT8  ,
+  staff_id INT8  ,
+  brand_model VARCHAR(200)  ,
+  status VARCHAR(20) NOT NULL ,
+  del_version INT8 default 0  NOT NULL ,
+  version INT4 default 0  NOT NULL ,
+  created_by VARCHAR(50) NOT NULL ,
+  create_time TIMESTAMP NOT NULL ,
+  updated_by VARCHAR(50) NOT NULL ,
+  update_time TIMESTAMP NOT NULL ,
+  remark VARCHAR(1000)  ,
+  accumulated_depreciation NUMERIC(20,4) default 0   ,
+  net_book_value NUMERIC(20,4) default 0   ,
+  model_id INT8  ,
+  ext_field_values VARCHAR(4000)  ,
+  constraint PK_erp_ast_asset primary key (id)
+);
+
+CREATE TABLE erp_ast_asset_action_log(
+  id INT8 NOT NULL ,
+  asset_id INT8 NOT NULL ,
+  event_type VARCHAR(20) NOT NULL ,
+  from_status VARCHAR(20)  ,
+  to_status VARCHAR(20)  ,
+  from_department_id INT8  ,
+  to_department_id INT8  ,
+  from_location_id INT8  ,
+  to_location_id INT8  ,
+  from_staff_id INT8  ,
+  to_staff_id INT8  ,
+  ref_entity_name VARCHAR(50)  ,
+  ref_entity_id INT8  ,
+  summary VARCHAR(1000)  ,
+  del_version INT8 default 0  NOT NULL ,
+  version INT4 default 0  NOT NULL ,
+  created_by VARCHAR(50) NOT NULL ,
+  create_time TIMESTAMP NOT NULL ,
+  updated_by VARCHAR(50) NOT NULL ,
+  update_time TIMESTAMP NOT NULL ,
+  constraint PK_erp_ast_asset_action_log primary key (id)
 );
 
 CREATE TABLE erp_ast_depreciation_schedule(
@@ -615,63 +657,31 @@ CREATE TABLE erp_ast_maintenance_cost(
                     
       COMMENT ON COLUMN erp_ast_asset_category.cip_subject_id IS '在建工程科目';
                     
-      COMMENT ON TABLE erp_ast_asset IS '固定资产';
+      COMMENT ON TABLE erp_ast_asset_model IS '资产型号';
                 
-      COMMENT ON COLUMN erp_ast_asset.id IS 'ID';
+      COMMENT ON COLUMN erp_ast_asset_model.id IS 'ID';
                     
-      COMMENT ON COLUMN erp_ast_asset.code IS '资产编码';
+      COMMENT ON COLUMN erp_ast_asset_model.code IS '型号编码';
                     
-      COMMENT ON COLUMN erp_ast_asset.name IS '资产名称';
+      COMMENT ON COLUMN erp_ast_asset_model.name IS '型号名称';
                     
-      COMMENT ON COLUMN erp_ast_asset.org_id IS '所属组织';
+      COMMENT ON COLUMN erp_ast_asset_model.category_id IS '所属类别';
                     
-      COMMENT ON COLUMN erp_ast_asset.category_id IS '资产类别';
+      COMMENT ON COLUMN erp_ast_asset_model.ext_field_defs IS '扩展字段集定义';
                     
-      COMMENT ON COLUMN erp_ast_asset.acquisition_date IS '取得日期';
+      COMMENT ON COLUMN erp_ast_asset_model.del_version IS '逻辑删除版本';
                     
-      COMMENT ON COLUMN erp_ast_asset.currency_id IS '币种';
+      COMMENT ON COLUMN erp_ast_asset_model.version IS '数据版本';
                     
-      COMMENT ON COLUMN erp_ast_asset.original_value IS '原值';
+      COMMENT ON COLUMN erp_ast_asset_model.created_by IS '创建人';
                     
-      COMMENT ON COLUMN erp_ast_asset.current_value IS '当前价值';
+      COMMENT ON COLUMN erp_ast_asset_model.create_time IS '创建时间';
                     
-      COMMENT ON COLUMN erp_ast_asset.residual_value IS '残值';
+      COMMENT ON COLUMN erp_ast_asset_model.updated_by IS '修改人';
                     
-      COMMENT ON COLUMN erp_ast_asset.depreciation_method IS '折旧方法';
+      COMMENT ON COLUMN erp_ast_asset_model.update_time IS '修改时间';
                     
-      COMMENT ON COLUMN erp_ast_asset.depreciation_rate IS '折旧率';
-                    
-      COMMENT ON COLUMN erp_ast_asset.useful_life_months IS '使用年限(月)';
-                    
-      COMMENT ON COLUMN erp_ast_asset.department_id IS '使用部门';
-                    
-      COMMENT ON COLUMN erp_ast_asset.location_id IS '使用地点';
-                    
-      COMMENT ON COLUMN erp_ast_asset.employee_id IS '使用人(职员)';
-                    
-      COMMENT ON COLUMN erp_ast_asset.staff_id IS '使用人(往来单位,旧字段保留)';
-                    
-      COMMENT ON COLUMN erp_ast_asset.brand_model IS '品牌型号';
-                    
-      COMMENT ON COLUMN erp_ast_asset.status IS '资产状态';
-                    
-      COMMENT ON COLUMN erp_ast_asset.del_version IS '逻辑删除版本';
-                    
-      COMMENT ON COLUMN erp_ast_asset.version IS '数据版本';
-                    
-      COMMENT ON COLUMN erp_ast_asset.created_by IS '创建人';
-                    
-      COMMENT ON COLUMN erp_ast_asset.create_time IS '创建时间';
-                    
-      COMMENT ON COLUMN erp_ast_asset.updated_by IS '修改人';
-                    
-      COMMENT ON COLUMN erp_ast_asset.update_time IS '修改时间';
-                    
-      COMMENT ON COLUMN erp_ast_asset.remark IS '备注';
-                    
-      COMMENT ON COLUMN erp_ast_asset.accumulated_depreciation IS '累计折旧';
-                    
-      COMMENT ON COLUMN erp_ast_asset.net_book_value IS '净值';
+      COMMENT ON COLUMN erp_ast_asset_model.remark IS '备注';
                     
       COMMENT ON TABLE erp_ast_asset_capitalization IS '资产资本化';
                 
@@ -796,6 +806,110 @@ CREATE TABLE erp_ast_maintenance_cost(
       COMMENT ON COLUMN erp_ast_inventory.update_time IS '修改时间';
                     
       COMMENT ON COLUMN erp_ast_inventory.remark IS '备注';
+                    
+      COMMENT ON TABLE erp_ast_asset IS '固定资产';
+                
+      COMMENT ON COLUMN erp_ast_asset.id IS 'ID';
+                    
+      COMMENT ON COLUMN erp_ast_asset.code IS '资产编码';
+                    
+      COMMENT ON COLUMN erp_ast_asset.name IS '资产名称';
+                    
+      COMMENT ON COLUMN erp_ast_asset.org_id IS '所属组织';
+                    
+      COMMENT ON COLUMN erp_ast_asset.category_id IS '资产类别';
+                    
+      COMMENT ON COLUMN erp_ast_asset.acquisition_date IS '取得日期';
+                    
+      COMMENT ON COLUMN erp_ast_asset.currency_id IS '币种';
+                    
+      COMMENT ON COLUMN erp_ast_asset.original_value IS '原值';
+                    
+      COMMENT ON COLUMN erp_ast_asset.current_value IS '当前价值';
+                    
+      COMMENT ON COLUMN erp_ast_asset.residual_value IS '残值';
+                    
+      COMMENT ON COLUMN erp_ast_asset.depreciation_method IS '折旧方法';
+                    
+      COMMENT ON COLUMN erp_ast_asset.depreciation_rate IS '折旧率';
+                    
+      COMMENT ON COLUMN erp_ast_asset.useful_life_months IS '使用年限(月)';
+                    
+      COMMENT ON COLUMN erp_ast_asset.department_id IS '使用部门';
+                    
+      COMMENT ON COLUMN erp_ast_asset.location_id IS '使用地点';
+                    
+      COMMENT ON COLUMN erp_ast_asset.employee_id IS '使用人(职员)';
+                    
+      COMMENT ON COLUMN erp_ast_asset.staff_id IS '使用人(往来单位,旧字段保留)';
+                    
+      COMMENT ON COLUMN erp_ast_asset.brand_model IS '品牌型号';
+                    
+      COMMENT ON COLUMN erp_ast_asset.status IS '资产状态';
+                    
+      COMMENT ON COLUMN erp_ast_asset.del_version IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_ast_asset.version IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_ast_asset.created_by IS '创建人';
+                    
+      COMMENT ON COLUMN erp_ast_asset.create_time IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_ast_asset.updated_by IS '修改人';
+                    
+      COMMENT ON COLUMN erp_ast_asset.update_time IS '修改时间';
+                    
+      COMMENT ON COLUMN erp_ast_asset.remark IS '备注';
+                    
+      COMMENT ON COLUMN erp_ast_asset.accumulated_depreciation IS '累计折旧';
+                    
+      COMMENT ON COLUMN erp_ast_asset.net_book_value IS '净值';
+                    
+      COMMENT ON COLUMN erp_ast_asset.model_id IS '资产型号';
+                    
+      COMMENT ON COLUMN erp_ast_asset.ext_field_values IS '扩展字段值';
+                    
+      COMMENT ON TABLE erp_ast_asset_action_log IS '资产操作审计';
+                
+      COMMENT ON COLUMN erp_ast_asset_action_log.id IS 'ID';
+                    
+      COMMENT ON COLUMN erp_ast_asset_action_log.asset_id IS '资产';
+                    
+      COMMENT ON COLUMN erp_ast_asset_action_log.event_type IS '事件类型';
+                    
+      COMMENT ON COLUMN erp_ast_asset_action_log.from_status IS '变更前资产状态';
+                    
+      COMMENT ON COLUMN erp_ast_asset_action_log.to_status IS '变更后资产状态';
+                    
+      COMMENT ON COLUMN erp_ast_asset_action_log.from_department_id IS '变更前部门';
+                    
+      COMMENT ON COLUMN erp_ast_asset_action_log.to_department_id IS '变更后部门';
+                    
+      COMMENT ON COLUMN erp_ast_asset_action_log.from_location_id IS '变更前地点';
+                    
+      COMMENT ON COLUMN erp_ast_asset_action_log.to_location_id IS '变更后地点';
+                    
+      COMMENT ON COLUMN erp_ast_asset_action_log.from_staff_id IS '变更前使用人';
+                    
+      COMMENT ON COLUMN erp_ast_asset_action_log.to_staff_id IS '变更后使用人';
+                    
+      COMMENT ON COLUMN erp_ast_asset_action_log.ref_entity_name IS '关联单据实体';
+                    
+      COMMENT ON COLUMN erp_ast_asset_action_log.ref_entity_id IS '关联单据ID';
+                    
+      COMMENT ON COLUMN erp_ast_asset_action_log.summary IS '摘要';
+                    
+      COMMENT ON COLUMN erp_ast_asset_action_log.del_version IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_ast_asset_action_log.version IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_ast_asset_action_log.created_by IS '创建人';
+                    
+      COMMENT ON COLUMN erp_ast_asset_action_log.create_time IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_ast_asset_action_log.updated_by IS '修改人';
+                    
+      COMMENT ON COLUMN erp_ast_asset_action_log.update_time IS '修改时间';
                     
       COMMENT ON TABLE erp_ast_depreciation_schedule IS '折旧计划';
                 

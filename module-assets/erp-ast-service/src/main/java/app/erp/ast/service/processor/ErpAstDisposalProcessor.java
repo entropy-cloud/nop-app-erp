@@ -1,11 +1,13 @@
 package app.erp.ast.service.processor;
 
+import app.erp.ast.dao.ErpAstDaoConstants;
 import app.erp.ast.dao.entity.ErpAstAsset;
 import app.erp.ast.dao.entity.ErpAstAssetCategory;
 import app.erp.ast.dao.entity.ErpAstDepreciationSchedule;
 import app.erp.ast.dao.entity.ErpAstDisposal;
 import app.erp.ast.service.ErpAstConstants;
 import app.erp.ast.service.ErpAstErrors;
+import app.erp.ast.service.audit.ErpAstAssetAuditRecorder;
 import app.erp.ast.service.posting.DisposalPostingDispatcher;
 import app.erp.ast.service.statemachine.ErpAstAssetStateMachine;
 import app.erp.ast.service.statemachine.ErpAstDepreciationScheduleStateMachine;
@@ -35,6 +37,9 @@ public class ErpAstDisposalProcessor {
 
     @Inject
     IDaoProvider daoProvider;
+
+    @Inject
+    ErpAstAssetAuditRecorder auditRecorder;
 
     @Inject
     DisposalPostingDispatcher postingDispatcher;
@@ -111,12 +116,16 @@ public class ErpAstDisposalProcessor {
 
         // 固定来源/目标态判断委托 StateMachine Bean（M4.40，契约 §4/§7；按 disposalType 选 scrap/sell 目标态）
         assetStateMachine.assertCanDispose(asset.getStatus());
+        String fromStatus = asset.getStatus();
         String terminalStatus = disposal.getDisposalType() != null
                 && Objects.equals(disposal.getDisposalType(), ErpAstConstants.DISPOSAL_TYPE_SOLD)
                         ? assetStateMachine.disposeSellTargetStatus()
                         : assetStateMachine.disposeScrapTargetStatus();
         asset.setStatus(terminalStatus);
         daoProvider.daoFor(ErpAstAsset.class).saveOrUpdateEntity(asset);
+        auditRecorder.record(asset, ErpAstDaoConstants.AUDIT_EVENT_TYPE_DISPOSAL,
+                new ErpAstAssetAuditRecorder.Before(fromStatus, asset.getDepartmentId(), asset.getLocationId(), asset.getEmployeeId()),
+                "ErpAstDisposal", disposal.getId(), "资产处置（" + disposal.getDisposalType() + "）");
 
         cancelPendingSchedules(asset.getId());
 
@@ -173,8 +182,12 @@ public class ErpAstDisposalProcessor {
             if (asset != null) {
                 // 固定来源/目标态判断委托 StateMachine Bean（M4.40，契约 §4/§7）
                 assetStateMachine.assertCanReverseDispose(asset.getStatus());
+                String fromStatus = asset.getStatus();
                 asset.setStatus(assetStateMachine.reverseDisposalTargetStatus());
                 daoProvider.daoFor(ErpAstAsset.class).saveOrUpdateEntity(asset);
+                auditRecorder.record(asset, ErpAstDaoConstants.AUDIT_EVENT_TYPE_STATUS_CHANGE,
+                        new ErpAstAssetAuditRecorder.Before(fromStatus, asset.getDepartmentId(), asset.getLocationId(), asset.getEmployeeId()),
+                        "ErpAstDisposal", disposal.getId(), "处置冲销恢复资产状态");
             }
             restoreCancelledSchedules(disposal.getAssetId());
             // RC-R1.77：冲销对称恢复与资产恢复同分支（仅 posted==TRUE），防「设备 RUNNING / 资产 SCRAPPED」分叉；
