@@ -31,7 +31,7 @@ nop:
 # 支持graphql __schema查询，
   graphql:
     schema-introspection:
-      enabled: true
+      enabled: false
 
 # devservices 会启用testcontainers来管理测试数据库
 quarkus:
