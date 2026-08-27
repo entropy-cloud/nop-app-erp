@@ -56,8 +56,8 @@
 | 阶段 | 内容 | 状态 |
 |------|------|------|
 | 设计 | 本文档（审计轨迹 + 字段集 + 身份集成触发条件） | ✅ 已完成（本批次） |
-| 实现（字段集） | 型号级 ext 字段声明 + 管理界面（`ErpAstAssetModel` 新实体 + json 列，经 dual-agent-approval） | in progress（`2026-08-26-0735-2` Phase 4） |
-| 实现（审计轨迹） | `getAssetAuditTrail` + 资产状态/归属变化记录（独立审计实体） | in progress（`2026-08-26-0735-2` Phase 4） |
+| 实现（字段集） | 型号级 ext 字段声明 + 管理界面（`ErpAstAssetModel` 新实体 + json 列，经 dual-agent-approval） | ✅ done（E3.3，2026-08-27：`ErpAstAssetModel.extFieldDefs` + `ErpAstAsset.modelId/extFieldValues`（json-4000，dual-agent 批准清单 #0/#1/#2）；BizModel 保存/更新钩子按型号校验（非法键/缺必填/类型不匹配/无型号带值 4 类拒绝，专用 ErrorCode）；型号管理页 view.xml + flux E2E） |
+| 实现（审计轨迹） | `getAssetAuditTrail` + 资产状态/归属变化记录（独立审计实体） | ✅ done（E3.8，2026-08-27：`ErpAstAssetActionLog`（dual-agent 批准清单 #3）+ `ErpAstAssetAuditRecorder` 同事务记录，事件类型 7 类全覆盖（CRUD 钩子 CREATE/UPDATE/STATUS_CHANGE/TRANSFER/VALUATION + Processor MAINTENANCE/DISPOSAL）；`getAssetAuditTrail` 时间轴 BizQuery（createTime+id 逆序，from/to 快照 + 回链）） |
 | 身份集成 | SCIM/LDAP | todo（触发条件驱动） |
 
 ## 反模式自检表

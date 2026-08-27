@@ -128,7 +128,7 @@ nop-job-local（已接入 app-erp-all 框架，docs/logs/2026/06-23.md:14-17）
 
 | 作业标识 | 业务功能 | 触发频率 | 调用入口 | 量级 | 执行模式 | 状态 | 配置键 | 证据 |
 |----------|----------|----------|----------|------|----------|------|--------|------|
-| `erp-inv-stock-check` | 库存余额对账（账实核对） | 每日 03:00 | （待实现） | 大 | **batch-candidate** | REGISTERED | `erp-inv.stock-check-cron`（`0 0 3 * * ?`） | `job-scheduling.md`(原):33`；`docs/design/inventory/README.md` 定时作业 |
+| `erp-inv-stock-check` | 库存余额对账（账实核对：账面余额 = 流水派生快照一致性，差异时作业失败） | 每日 03:00 | `IErpInvStockLedgerBiz.checkStockBalanceConsistency()` | 大 | **batch-candidate** | **WIRED**（E3.2，2026-08-26：`inv/stock-check.batch.xml` + job.yaml 三件套，config-gated 默认关闭） | `nop.job.erp-inv-stock-check.enabled/.cron-expr`（默认 false / `0 0 3 * * ?`；§3.3 原登记键 `erp-inv.stock-check-cron` 对应实际落地键） | `docs/design/inventory/audit-snapshot-cycle-count.md` §实现路径确认；`module-inventory/.../entity/ErpInvStockLedgerBizModel.java` |
 | `erp-inv-costing-reclose` | 期末 FIFO 兜底重算（扫本期 DONE 移动，重建缺失成本层，重算 COGS） | （结账 INV 步骤） | `ErpInvCostingBizModel.reclosePeriodCosts()` | 大 | **batch-candidate** | WIRED（结账内部） | `erp-fin.inv-costing-reclose-on-close` | `docs/design/finance/period-close.md:9`；`module-inventory/.../ErpInvCostingBizModel.java:61` |
 | `erp-drp-run` | DRP 净需求计算（分销网络） | 未定 | `ErpDrpPlanBizModel.runDrp()` | 中 | job | DEFERRED | `erp-inv.drp-run-schedule` | `docs/design/drp/README.md:99`；`plans/2026-07-04-1115-2:202-205` |
 | `erp-drp-ss-recompute` | 安全库存重算（min-max / 周期 / 按需） | 未定 | （待实现） | 中 | job | DEFERRED | `erp-inv.drp-ss-schedule-cron` | `docs/design/drp/safety-stock-optimization.md:200` |

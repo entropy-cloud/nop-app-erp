@@ -1,6 +1,6 @@
 # 2026-08-26-0735-2-e3-integrated-implementation E3 整体实现：KPI 度量目录与行级安全核实 / 库存审计快照 / 资产字段集与审计轨迹 / APS 求解器试点 / 文档摄取管道 / AI 接口层
 
-> Plan Status: active
+> Plan Status: completed
 > Mission: erp-enhancement
 > Work Item: E3.1 + E3.1b + E3.2 + E3.3 + E3.4 + E3.5 + E3.6 + E3.8（E3.7 暂缓排除，见 Non-Goals）
 > Last Reviewed: 2026-08-26
@@ -116,125 +116,151 @@ Exit Criteria:
 
 ### Phase 2 — E3.1 KPI 度量目录 + E3.1b 行级安全核实（零代码/核实）
 
-Status: planned
+Status: completed
 Targets: `docs/design/dashboards.md`、`docs/design/dashboard-semantic-layer.md`、`docs/design/roles-and-permissions.md`
 Skill: none（目录登记与核实；核实需运行 %test profile 实测）
 
 - Item Types: `Add | Proof | Decision`
 - Prereqs: 无（与 Phase 1 可并行）
 
-- [ ] Add: `dashboards.md` 新增「KPI 度量目录」章节——10 域全部 KPI 逐项登记（名称/定义公式/数据来源表+过滤条件/单位/口径说明），口径与 value-spec 数据驱动断言对照（抽样核对期望值表派生口径一致）；跨域重复口径（如 finance vs purchase 应付）显式对齐登记。
-- [ ] Proof: E3.1b 数据权限覆盖核实——静态表征（getDashboardKpi/报表 BizQuery 的查询路径是否过 role-row-filter/data-auth 检查点）+ %test profile 运行时抽样实测（受限账号 vs admin 对同一 KPI/报表的可见差异，复用 permissions 测试账号池/loginAsRole 范式）；结论与缺口清单落 `dashboard-semantic-layer.md` §4。
+- [x] Add: `dashboards.md` 新增「KPI 度量目录」章节——10 域全部 KPI 逐项登记（名称/定义公式/数据来源表+过滤条件/单位/口径说明），口径与 value-spec 数据驱动断言对照（抽样核对期望值表派生口径一致）；跨域重复口径（如 finance vs purchase 应付）显式对齐登记。
+      → 完成（2026-08-26）：11 域全量登记（10 核心域 + CS 客服绩效看板——活仓更正：CS 看板已随域深化落地，原覆盖表「产品基线外」行同步更正）+ 跨域重复口径对齐表（ar/ap/账龄/及时率/折旧 5 组）+ 状态字段横向对照速查表；value-spec 抽样核对一致（finance revenue=1130 / projects grossMarginPct=0.4 等见章首注记）。
+- [x] Proof: E3.1b 数据权限覆盖核实——静态表征（getDashboardKpi/报表 BizQuery 的查询路径是否过 role-row-filter/data-auth 检查点）+ %test profile 运行时抽样实测（受限账号 vs admin 对同一 KPI/报表的可见差异，复用 permissions 测试账号池/loginAsRole 范式）；结论与缺口清单落 `dashboard-semantic-layer.md` §4。
       - Skill: `nop-testing`
-- [ ] Add: nop-datav DataAuth/RbacAuth 边界注记（master 实态引用：平台全链已合入 master 且 DataAuth/RbacAuth 实体在，但应用层看板未挂载 nop-datav，边界 = 平台能力存在 + 应用层不依赖）；`roles-and-permissions.md` 相应注记；`dashboard-semantic-layer.md` 中全部 2026-08-13 平台状态过期表述**全量对齐 master 实态**（覆盖段落：头部平台核对注记 / 来源与背景·平台能力基线 / 现状 vs Superset 对照表 / §0 平台能力边界 / §3 协议化暴露（ChatBI feat 分支注记）/ §4 行级安全 / AP-8 / 相关文档——不留内部自相矛盾的权威 owner doc）。
-- [ ] Decision: E3.1b 缺口登记去向裁决——缺口实施属 enforcement 栈扩展：逐项判定归属（permissions-enforcement roadmap follow-up vs 本 roadmap 候选工作项），登记理由记录在案；本计划不实施任何缺口修复。
+      → 完成（2026-08-26）：静态表征 = 两检查点（CrudBizModel.appendFilter / ORM FILTER marker）均不在直连 DAO 路径（QueryBean→SQL enableFilter=false）；运行时实证 `TestErpSalDashboardRowFilterCoverage`（双销售员种子：看板跨用户聚合 vs CRUD 管道隔离对照 + 灰度 OFF 回归，2 tests 绿）；结论+缺口清单（G1/G2/G3）落 `dashboard-semantic-layer.md` §4。
+- [x] Add: nop-datav DataAuth/RbacAuth 边界注记（master 实态引用：平台全链已合入 master 且 DataAuth/RbacAuth 实体在，但应用层看板未挂载 nop-datav，边界 = 平台能力存在 + 应用层不依赖）；`roles-and-permissions.md` 相应注记；`dashboard-semantic-layer.md` 中全部 2026-08-13 平台状态过期表述**全量对齐 master 实态**（覆盖段落：头部平台核对注记 / 来源与背景·平台能力基线 / 现状 vs Superset 对照表 / §0 平台能力边界 / §3 协议化暴露（ChatBI feat 分支注记）/ §4 行级安全 / AP-8 / 相关文档——不留内部自相矛盾的权威 owner doc）。
+      → 完成（2026-08-26）：七段全量重写为 master 实态（nop-datav 全链已合入 master + DataAuth 经平台 CrudBizModel 管道同型机制 + 应用层零依赖引用边界 + 挂载触发条件 2026-08-26 重裁）；roles-and-permissions.md 数据权限节补边界注记。
+- [x] Decision: E3.1b 缺口登记去向裁决——缺口实施属 enforcement 栈扩展：逐项判定归属（permissions-enforcement roadmap follow-up vs 本 roadmap 候选工作项），登记理由记录在案；本计划不实施任何缺口修复。
+      → 裁决（2026-08-26）：G1（看板聚合）+ G2（报表数据集，与 R2-P1 保密面同面收口）→ permissions-enforcement roadmap 新增 §E3.1b P1 工作项（enforcement 栈扩展，理由与修复方向随项登记）；G3（管道内 finance 全见）→ 设计决定不修（E2.3 覆盖矩阵已记载）。本计划零缺口修复实施。
 
 Exit Criteria:
 
-- [ ] 度量目录章节覆盖 10 域全部 KPI 且抽样口径与 value-spec 一致；E3.1b 核实结论 + 缺口登记落盘（无未登记的开放结尾）。
+- [x] 度量目录章节覆盖 10 域全部 KPI 且抽样口径与 value-spec 一致；E3.1b 核实结论 + 缺口登记落盘（无未登记的开放结尾）。
 
 ### Phase 3 — E3.2 库存审计快照查询
 
-Status: planned
+Status: completed
 Targets: `module-inventory/erp-inv-service/`（BizModel + 对账校验）
 Skill: nop-backend-dev
 
 - Item Types: `Add | Proof`
 - Prereqs: Phase 1（E3.2 实现路径确认；预期零 ORM）
 
-- [ ] Add: `getInventorySnapshot(warehouseId, materialIds, asOfDate)` @BizQuery——派生视图实现（期初/流水汇总口径按 Phase 1 确认），返回数量 + 成本 + 库位维度；asOfDate 语义对齐 businessDate（AP-5）。
-- [ ] Add: 每日对账机制增「账面余额 = 快照派生值」一致性校验项（挂既有对账 Job/校验项族，`domain-design-guidelines.md` 对账机制扩展）。
-- [ ] Proof: JUnit（快照 vs 既有链路数据确定性对照，含 asOfDate 边界：时点前/后流水裁剪）+ 浏览器层/GraphQL E2E 数值断言（对齐 value-spec 范式）；`Skill: nop-testing`
+- [x] Add: `getInventorySnapshot(warehouseId, materialIds, asOfDate)` @BizQuery——派生视图实现（期初/流水汇总口径按 Phase 1 确认），返回数量 + 成本 + 库位维度；asOfDate 语义对齐 businessDate（AP-5）。
+      → 完成（2026-08-26）：`IErpInvStockLedgerBiz.getInventorySnapshot`（IBiz 先行 + BizModel 实现；DB 级 GROUP BY 余额维度 orgId/warehouseId/locationId/materialId/skuId/batchNo/ownerId + SUM(quantity/totalCost)，unitCost=totalCost/quantity scale 4；返回 {asOfDate,rowCount,rows,totalQuantity,totalCost}）。
+- [x] Add: 每日对账机制增「账面余额 = 快照派生值」一致性校验项（挂既有对账 Job/校验项族，`domain-design-guidelines.md` 对账机制扩展）。
+      → 完成（2026-08-26）：`checkStockBalanceConsistency(asOfDate)` BizQuery（三型差异可观测：QTY_OR_COST_MISMATCH / BOOK_ONLY_NO_LEDGER / LEDGER_ONLY_NO_BALANCE，零值等价不报）+ deferred 作业 `erp-inv-stock-check` 落地为载体（`inv/stock-check.batch.xml` + `erp-inv-stock-check.job.yaml` config-gated 默认关闭 + 差异时作业失败可观测；job-scheduling.md §3.3 REGISTERED→WIRED）。
+- [x] Proof: JUnit（快照 vs 既有链路数据确定性对照，含 asOfDate 边界：时点前/后流水裁剪）+ 浏览器层/GraphQL E2E 数值断言（对齐 value-spec 范式）；`Skill: nop-testing`
+      → 完成（2026-08-26）：`TestErpInvSnapshotAndStockCheck` 5 用例绿（确定性对照流水直加 / 边界当日计入+时点后裁剪 / 仓库+物料过滤 / 一致基线 / 三型差异）；E2E `inv-snapshot.value.spec.ts` 绿（种子基线 180/10450、边界 06-29 空 & 07-02 仅期初、仓库过滤、一致性 mismatchCount=0）；inv 域全量 247 tests 零回归。
 
 Exit Criteria:
 
-- [ ] BizQuery 可查且数值确定性可证（单测 + E2E 全绿）；对账校验项落地且失败模式可观测；零 ORM（或物化表触发结论已登记）。
+- [x] BizQuery 可查且数值确定性可证（单测 + E2E 全绿）；对账校验项落地且失败模式可观测；零 ORM（或物化表触发结论已登记）。
 
 ### Phase 4 — E3.3 资产 ext 字段集 + E3.8 审计轨迹（assets 域同域两项）
 
-Status: planned
+Status: completed
 Targets: `module-assets/`（orm.xml 仅当 Phase 1 裁决需要 / meta / service / web view.xml）
 Skill: nop-backend-dev + nop-frontend-dev
 
 - Item Types: `Add | Proof`
 - Prereqs: Phase 1（E3.3 ext 用法核实 + E3.8 承载裁决 + ORM 清单 dual-agent 批准）
 
-- [ ] Add: E3.3 型号级 ext 字段键声明（承载形态按 Phase 1 结论，零 ORM 首选）+ 实例资产 ext 字段按型号校验（非法键/类型拒绝，ErrorCode 走 NopException 范式）。
-- [ ] Add: E3.3 字段集管理界面（view.xml 定制，flux 渲染，对齐 nop-frontend-dev 反模式自检）。
-- [ ] Add: E3.8 资产状态/归属变化审计记录（承载按 Phase 1 裁决；事件类型覆盖 owner doc §1 清单：CREATE/UPDATE/STATUS_CHANGE/MAINTENANCE/VALUATION/DISPOSAL/TRANSFER）+ `getAssetAuditTrail(assetId)` 时间轴 BizQuery。
-- [ ] Proof: JUnit + 浏览器层 E2E（字段集管理界面 CRUD + 实例校验负路径；审计时间轴查询含跨事件排序与回链）；`Skill: nop-testing`
+- [x] Add: E3.3 型号级 ext 字段键声明（承载形态按 Phase 1 结论，零 ORM 首选）+ 实例资产 ext 字段按型号校验（非法键/类型拒绝，ErrorCode 走 NopException 范式）。
+      → 完成（2026-08-27）：承载按 Phase 1 裁决落 ORM（`ErpAstAssetModel.extFieldDefs` json-4000 + `ErpAstAsset.modelId/extFieldValues`，批准清单 #0/#1/#2）；`ErpAstAssetBizModel.defaultPrepareSave/Update` 钩子校验（无型号带值拒绝 / 非法键拒绝 / 必填缺失拒绝 / 类型不匹配拒绝，`ErpAstErrors` 5 个专用错误码 NopException 范式）。
+- [x] Add: E3.3 字段集管理界面（view.xml 定制，flux 渲染，对齐 nop-frontend-dev 反模式自检）。
+      → 完成（2026-08-27）：`ErpAstAssetModel` 页面（view.xml + action-auth + 菜单）+ `ErpAstAsset` 表单增 modelId/extFieldValues 字段；flux 渲染 E2E `ast-ext-fields-audit.value.spec.ts` 页面 CRUD 用例绿。
+- [x] Add: E3.8 资产状态/归属变化审计记录（承载按 Phase 1 裁决；事件类型覆盖 owner doc §1 清单：CREATE/UPDATE/STATUS_CHANGE/MAINTENANCE/VALUATION/DISPOSAL/TRANSFER）+ `getAssetAuditTrail(assetId)` 时间轴 BizQuery。
+      → 完成（2026-08-27）：独立实体 `ErpAstAssetActionLog`（批准清单 #3 + 字典 7 事件类型全覆盖）；`ErpAstAssetAuditRecorder` 在 CRUD 钩子 + 4 个 Processor（suspend/resume/维护完工/处置/价值调整）同事务记录；`getAssetAuditTrail` 时间轴 BizQuery（createTime+id 排序，from/to 快照 + 回链字段）。
+- [x] Proof: JUnit + 浏览器层 E2E（字段集管理界面 CRUD + 实例校验负路径；审计时间轴查询含跨事件排序与回链）；`Skill: nop-testing`
+      → 完成（2026-08-27）：`TestErpAstExtFieldsAndAuditTrail` 6 用例绿；E2E 3 用例绿（型号页 CRUD / 实例负路径 / 时间轴逆序+回链）；assets 域既有快照基线按 Phase 1 预告重录（加列+审计行），全量 `mvn test` 零回归。
 
 Exit Criteria:
 
-- [ ] 两能力端到端可用（界面 + 查询口），审计事件类型全覆盖 owner doc 清单，测试全绿；assets owner doc 落地策略表更新。
+- [x] 两能力端到端可用（界面 + 查询口），审计事件类型全覆盖 owner doc 清单，测试全绿；assets owner doc 落地策略表更新。
+      → 完成（2026-08-27）：`audit-trail-and-custom-fieldsets.md` 落地策略表两行 in progress → done + 实现注记。
 
 ### Phase 5 — E3.4 APS 求解器分离 + scheduleToc 瓶颈识别试点
 
-Status: planned
+Status: completed
 Targets: `module-aps/erp-aps-service/`（接口 + 引擎 + TOC 实现）
 Skill: nop-backend-dev
 
 - Item Types: `Add | Proof`
 - Prereqs: 无（与 Phase 3/4 可并行）
 
-- [ ] Add: `IApsSchedulingSolver` 接口 + 既有贪心引擎适配为默认实现（**既有 scheduleForward/scheduleBackward 行为不变**，既有排产 JUnit/E2E 零回归即证明）+ bean 注册 + config 切换（对齐 D3 子计算器注入范式）。
-- [ ] Add: `scheduleToc` 瓶颈识别试点——复用 `CrpLoadCalculator` 负荷率派生链（AP-3）识别 horizon 内超阈值瓶颈中心，先排瓶颈（拉动式）再排非瓶颈（前/后向兜底）；`SchedulingResult` 扩展 bottleneckMachineIds + 各中心负荷率。
-- [ ] Proof: JUnit（既有排产用例零回归 + TOC 用例：瓶颈中心优先排程可观测 + 结果扩展字段非空）+ 既有 aps E2E spec 扩展断言（如 `aps-operation-order`/`aps-rush-order` 范式适用则扩展，否则 JUnit 为准）；`Skill: nop-testing`
+- [x] Add: `IApsSchedulingSolver` 接口 + 既有贪心引擎适配为默认实现（**既有 scheduleForward/scheduleBackward 行为不变**，既有排产 JUnit/E2E 零回归即证明）+ bean 注册 + config 切换（对齐 D3 子计算器注入范式）。
+      → 完成（2026-08-27）：`IApsSchedulingSolver` 接口 + `GreedyApsSchedulingSolver` 默认实现（`app-service.beans.xml` `ioc:collect-beans` 收集 + `ErpApsConfigs.CONFIG_SCHEDULING_SOLVER`（`erp-aps.scheduling-solver`）切换，Processor 按名选择）；既有前/后向排产行为经既有 JUnit/E2E（aps-operation-order/aps-rush-order/aps-schedule 3 spec 9 用例）零回归证明。
+- [x] Add: `scheduleToc` 瓶颈识别试点——复用 `CrpLoadCalculator` 负荷率派生链（AP-3）识别 horizon 内超阈值瓶颈中心，先排瓶颈（拉动式）再排非瓶颈（前/后向兜底）；`SchedulingResult` 扩展 bottleneckMachineIds + 各中心负荷率。
+      → 完成（2026-08-27）：`ApsBottleneckDetector`（复用 mfg 域 `IErpMfgCapacityProvider` SPI 负荷率派生链 + CRP 同源口径）+ `ErpApsSchedulingScheduleTocProcessor`（`scheduleToc` mutation：瓶颈中心工序优先排程，非瓶颈前/后向兜底）；`SchedulingResult` 扩展 `bottleneckMachineIds` + `machineLoadRates`。
+- [x] Proof: JUnit（既有排产用例零回归 + TOC 用例：瓶颈中心优先排程可观测 + 结果扩展字段非空）+ 既有 aps E2E spec 扩展断言（如 `aps-operation-order`/`aps-rush-order` 范式适用则扩展，否则 JUnit 为准）；`Skill: nop-testing`
+      → 完成（2026-08-27）：`TestErpApsSchedulingToc` 4 用例绿（瓶颈优先可观测 / 扩展字段非空 / 阈值边界 / 默认贪心行为不变）+ E2E `aps-schedule-toc.action.spec.ts` 绿（瓶颈排程 + 负荷率扩展断言）。
 
 Exit Criteria:
 
-- [ ] 求解器可插拔（接口 + 默认贪心 + config 切换）且默认行为不变有测试证明；scheduleToc 试点落地 + 结果扩展可观测。
+- [x] 求解器可插拔（接口 + 默认贪心 + config 切换）且默认行为不变有测试证明；scheduleToc 试点落地 + 结果扩展可观测。
 
 ### Phase 6 — E3.5 文档摄取管道
 
-Status: planned
+Status: completed
 Targets: `module-finance/`（ORM 加性变更如清单批准 / service 管道 / web 入口）、`../nop-entropy` 只读核实
 Skill: nop-backend-dev
 
 - Item Types: `Add | Proof`
 - Prereqs: Phase 1（OCR 选型 + nop-file 核实 + ORM 清单 dual-agent 批准）
 
-- [ ] Add: 管道实体与字段落地（按批准清单：文档引用/解析结果字段/文档处理日志；文件本体存 nop-file，业务表只存引用+解析字段——AP-3）。
-- [ ] Add: 管道步骤编排——上传入口 → OCR 解析（选型引擎，SPI 抽象）→ 分类（Phase 1 规则引擎：文件名/关键字段 → 单据类型/对应方 + 置信度；低置信挂人工队列）→ 草稿 `ErpPurInvoice`（approveStatus=UNSUBMITTED，人工确认门 AP-1）→ 三单匹配预填衔接（解析结果只作预填，校验走既有链路 AP-5）；异步步骤经 nop-job/事件（AP-4）。
-- [ ] Add: 分类引擎 SPI（Phase 2 ML 注入预留，对齐 `IErpFinAcctDocProvider` 注入范式）+ 审计追溯（文档处理轨迹日志 + 文档-发票-凭证回链）。
-- [ ] Proof: JUnit（管道正路径 + 低置信人工门 + 幂等/失败重试路径）+ E2E（上传→草稿→三单匹配预填浏览器层断言）；config-gate 默认关闭下既有套件零回归；`Skill: nop-testing`
+- [x] Add: 管道实体与字段落地（按批准清单：文档引用/解析结果字段/文档处理日志；文件本体存 nop-file，业务表只存引用+解析字段——AP-3）。
+      → 完成（2026-08-27）：`ErpFinApDocument`（fileId 引用 nop-file + parseResult/confidence/invoiceId 草稿回链）+ `ErpFinApDocumentLog`（RECEIVE/PARSE/CLASSIFY/DRAFT/MANUAL_REVIEW/RETRY/FAIL 七步轨迹）+ 3 字典（批准清单 #4/#5）；文件本体经 `nopFileStore`（`/f/upload` 端点）承载，业务表零全文。
+- [x] Add: 管道步骤编排——上传入口 → OCR 解析（选型引擎，SPI 抽象）→ 分类（Phase 1 规则引擎：文件名/关键字段 → 单据类型/对应方 + 置信度；低置信挂人工队列）→ 草稿 `ErpPurInvoice`（approveStatus=UNSUBMITTED，人工确认门 AP-1）→ 三单匹配预填衔接（解析结果只作预填，校验走既有链路 AP-5）；异步步骤经 nop-job/事件（AP-4）。
+      → 完成（2026-08-27）：`ErpFinApDocumentPipelineProcessor` 编排上传→解析→分类→草稿→预填（草稿经既有 `IErpPurInvoiceBiz` 管道创建 UNSUBMITTED，解析值只预填不校验）；config-gate `erp-fin.ap-doc-pipeline-enabled` 默认关闭；异步载体 = `fin/ap-document.batch.xml`（nop-batch）+ `erp-fin-ap-doc-processing.job.yaml`（nop-job，默认关闭）；低置信（<阈值）置 MANUAL_REVIEW 挂人工队列，人工门不可绕过。
+- [x] Add: 分类引擎 SPI（Phase 2 ML 注入预留，对齐 `IErpFinAcctDocProvider` 注入范式）+ 审计追溯（文档处理轨迹日志 + 文档-发票-凭证回链）。
+      → 完成（2026-08-27）：`IErpFinOcrEngine` SPI（默认 `ErpFinTextExtractOcrEngine`：PDFBox 数字 PDF/txt 文本抽取，零新增依赖；tess4j 适配器可插拔）+ `IErpFinApDocClassifier` SPI（默认 `ErpFinApDocRuleClassifier` 规则引擎，ML 注入预留）；追溯 = DocumentLog 步骤轨迹 + document.invoiceId 回链（草稿→后续过账经既有 voucher 回链链路闭环）。
+- [x] Proof: JUnit（管道正路径 + 低置信人工门 + 幂等/失败重试路径）+ E2E（上传→草稿→三单匹配预填浏览器层断言）；config-gate 默认关闭下既有套件零回归；`Skill: nop-testing`
+      → 完成（2026-08-27）：`TestErpFinApDocumentPipeline`（app-erp-all IT）6 用例绿（正路径含预填断言 / 低置信人工门 / 重复上传幂等 / 解析失败重试计数 / 默认关闭零暴露 / 处理轨迹落账）；E2E `fin-ap-document.value.spec.ts` 2 用例绿（真实数字文档上传→草稿预填 / 扫描件低置信 MANUAL_REVIEW）；全量 `mvn test` 默认配置零回归。
 
 Exit Criteria:
 
-- [ ] 管道端到端落地（上传→OCR→分类→草稿→预填）且人工门不可绕过；测试全绿；OCR 引擎无外部云依赖。
+- [x] 管道端到端落地（上传→OCR→分类→草稿→预填）且人工门不可绕过；测试全绿；OCR 引擎无外部云依赖。
 
 ### Phase 7 — E3.6 AI 接口层
 
-Status: planned
+Status: completed
 Targets: `module-*/`（如需 actorType 字段按批准清单）、GraphQL/REST 通道验证、护栏接线
 Skill: nop-backend-dev
 
 - Item Types: `Add | Proof`
 - Prereqs: Phase 1（GraphQL 可用性调研 + 最小落地集定稿 + ORM 清单裁决）
 
-- [ ] Add: AI 工具消费约定最小落地集（按 Phase 1 冻结清单逐项落地：action 元数据/描述补全等——不新建 AI 专用业务 API，AP-1 外挂化裁决）+ REST 与 GraphQL 双通道调用一致性验证。
-- [ ] Add: 护栏接线——高影响 action 确认门复用既有审批流（use-approval）；`actorType=AI` 审计标识（仅当 Phase 1 裁决需要，ORM 授权 §8.1）；限流复用 `IRateLimiter`。**不采用 MCP**（任何形态——用户裁决）。
-- [ ] Proof: JUnit + GraphQL/浏览器层 E2E（AI 通道调用正路径 + 未授权/超限负路径 + 审计标识落账断言）；`Skill: nop-testing`
+- [x] Add: AI 工具消费约定最小落地集（按 Phase 1 冻结清单逐项落地：action 元数据/描述补全等——不新建 AI 专用业务 API，AP-1 外挂化裁决）+ REST 与 GraphQL 双通道调用一致性验证。
+      → 完成（2026-08-27，冻结 6 项逐项核对零增删）：①introspection config-gate JUnit 双证（`TestErpAiIntrospectionEnabled` 开启后 IntrospectionQuery 可用含 description / `TestErpAiIntrospectionDisabledByDefault` 默认关闭拒绝）；②11 个 `getDashboardKpi` 补 `@Description`（IBiz 同步，11 域 grep 核对）；③双通道一致性 E2E（`ai-interface.value.spec.ts` 同一 operation `/graphql` vs `/r/` 数值一致）；④护栏负路径 E2E（无权限角色经 `/r/` 调高影响 mutation 被拒）+ 限流复用 `IRateLimiter` 落地 E3.5 管道上传入口（`ErpFinConfigs` + Processor 令牌桶，人类用户面默认不限流）；⑤调用方身份落账断言（E2E 断言管道上传 createdBy=调用 userId；actorType 不落地按 Phase 1 裁决）；⑥`GraphQLToolProvider` 平台能力登记（`ai-native-interface.md` 前置调研结论 + `business-module-metadata.md` §6.2 雏形关系）。不新建 AI 专用业务 API；不采用 MCP（任何形态）。
+- [x] Add: 护栏接线——高影响 action 确认门复用既有审批流（use-approval）；`actorType=AI` 审计标识（仅当 Phase 1 裁决需要，ORM 授权 §8.1）；限流复用 `IRateLimiter`。**不采用 MCP**（任何形态——用户裁决）。
+      → 完成（2026-08-27）：高影响 action 门径 = 既有审批流复用验证（无权限角色负路径 E2E + 既有审批测试为证，AI 通道无法静默绕过）；actorType=AI 按 Phase 1 裁决**不落地**（触发条件登记于 `ai-native-interface.md`，§8.1 E3.6 授权行未使用）；限流 = `IRateLimiter` 接线于 E3.5 管道入口（自动化批量面）。零 MCP 引入（grep 核对无 MCP 适配/包装代码）。
+- [x] Proof: JUnit + GraphQL/浏览器层 E2E（AI 通道调用正路径 + 未授权/超限负路径 + 审计标识落账断言）；`Skill: nop-testing`
+      → 完成（2026-08-27）：JUnit 2 用例（introspection 开/关）+ E2E `ai-interface.value.spec.ts` 3 用例绿（双通道一致 / 未授权拒绝 / 身份落账）；全量 `mvn test` 零回归。
 
 Exit Criteria:
 
-- [ ] AI 消费面按 Phase 1 冻结的最小落地集**逐项**落地且双通道一致（清单项零增删）；护栏负路径可证；`ai-native-interface.md` 落地策略表更新。
+- [x] AI 消费面按 Phase 1 冻结的最小落地集**逐项**落地且双通道一致（清单项零增删）；护栏负路径可证；`ai-native-interface.md` 落地策略表更新。
+      → 完成（2026-08-27）：6 项冻结清单逐项核对（见上，零增删）；`ai-native-interface.md` 落地策略表随 Phase 8 更新。
 
 ### Phase 8 — 收尾：全量验证 + owner docs + roadmap 收口
 
-Status: planned
+Status: completed
 Targets: `docs/backlog/erp-enhancement-roadmap.md`、各 owner docs、`docs/logs/`
 Skill: nop-testing
 
 - Item Types: `Proof | Add`
 - Prereqs: Phase 2-7 全部
 
-- [ ] Proof: 全量验证（mission 注册标准）——`mvn clean install -DskipTests` BUILD SUCCESS + `mvn test` 零回归 + `bash docs/audits/nop-compliance-checker.sh` 零漂移（基线漂移则按 known failure mode 开基线裁决，不得静默）+ 涉前端/GraphQL 项 E2E 全绿（flux 模式）。
-- [ ] Add: owner docs 对齐（**6 份**含落地策略表的 E1 设计文档——ai-native-interface / dashboard-semantic-layer / document-driven-ap-automation / audit-snapshot-cycle-count / audit-trail-and-custom-fieldsets / constraint-based-planning——落地策略表 todo→done + 实现注记；cross-domain-flow-orchestration.md 属暂缓 E3.7，不在 todo→done 之列）；`ai-native-interface.md` 中 2026-08-13 平台状态过期表述（来源与背景 / §3.5 / 相关文档）全量对齐 master 实态；roadmap §2 计数 + §5 E3 非暂缓项 done + §6 交付物 ✅（E3.7 保持 todo 暂缓）；**roadmap §3/§8 平台能力跟踪更新**（nop-datav 全链已合入 master 的 2026-08-26 活仓事实，替换 2026-08-13 过期核对记录——显式更新，不得静默）；`missions/erp-enhancement.json` description 中同型平台状态表述同步更新（第三真相源不得漂移）；`docs/logs/` 日志条目。
+- [x] Proof: 全量验证（mission 注册标准）——`mvn clean install -DskipTests` BUILD SUCCESS + `mvn test` 零回归 + `bash docs/audits/nop-compliance-checker.sh` 零漂移（基线漂移则按 known failure mode 开基线裁决，不得静默）+ 涉前端/GraphQL 项 E2E 全绿（flux 模式）。
+      → 完成（2026-08-27）：①全 reactor `mvn clean install -DskipTests` BUILD SUCCESS（156 模块）；②全量 `mvn test` 零回归（新增 TestErpAstExtFieldsAndAuditTrail 6 / TestErpApsSchedulingToc 4 / TestErpFinApDocumentPipeline 6 / TestErpAiIntrospection×2 / TestErpInvSnapshotAndStockCheck 5 及 assets 快照基线重录后全绿）；③E2E flux 模式 19 用例绿（本计划 5 spec 10 用例 + 既有 aps/assets 回归 3 spec 9 用例）；④compliance checker：R7 本地 +1 = `_tmp/` git-ignore 草稿误报（CI 干净检出不命中，先例裁决不改基线）；**R2b +3（238→241）/ R2c +8（1529→1537）为已知漂移，显式登记不静默**——per-site 证据：`ErpAstAssetBizModel` 审计时间轴只读聚合 + 型号校验钩子内查（管道中段再入 IBiz 管道有重入风险）、`ErpInvStockLedgerBizModel` 一致性对账系统级读（须无行过滤）、`ErpAstAssetAuditRecorder` 业务事务内审计追加（posting-log recorder 同族）、`ApsBottleneckDetector` 排产系统级读（须无行过滤）、`ErpFinApDocRuleClassifier` 批处理上下文伙伴匹配、`ErpFinApDocumentPipelineProcessor`×2 自聚合实体 Processor 访问——均为基线既有同族合法模式（先例：F1/F2 批 per-site 上调 R2b 237→238 / R2c 1505→1529）；因「调高基线唯一途径=开独立计划」且本计划无权内联上调，按 known failure mode 登记 closure gates + Follow-up 归 successor 基线裁决计划（Fix 或 baseline-raise 二选一）。
+- [x] Add: owner docs 对齐（**6 份**含落地策略表的 E1 设计文档——ai-native-interface / dashboard-semantic-layer / document-driven-ap-automation / audit-snapshot-cycle-count / audit-trail-and-custom-fieldsets / constraint-based-planning——落地策略表 todo→done + 实现注记；cross-domain-flow-orchestration.md 属暂缓 E3.7，不在 todo→done 之列）；`ai-native-interface.md` 中 2026-08-13 平台状态过期表述（来源与背景 / §3.5 / 相关文档）全量对齐 master 实态；roadmap §2 计数 + §5 E3 非暂缓项 done + §6 交付物 ✅（E3.7 保持 todo 暂缓）；**roadmap §3/§8 平台能力跟踪更新**（nop-datav 全链已合入 master 的 2026-08-26 活仓事实，替换 2026-08-13 过期核对记录——显式更新，不得静默）；`missions/erp-enhancement.json` description 中同型平台状态表述同步更新（第三真相源不得漂移）；`docs/logs/` 日志条目。
+      → 完成（2026-08-27）：6 份 owner doc 落地策略表全部 done + 实现注记（dashboard-semantic-layer/audit-snapshot-cycle-count 随 Phase 2/3 已先行更新，余 4 份本次收口）；ai-native-interface.md 三处过期表述全量改 master 实态（来源与背景/§3.5/相关文档 + §2 护栏表 actorType 行落地裁决对齐）；roadmap §2（todo 9→1 / done 10→18）+ §5（E3 非暂缓 8 项全 done）+ §6（8 项 ✅ 已落地注记）+ §3/§4/§4.1/§8 nop-datav 全部过期表述显式更新为 master 实态；missions/erp-enhancement.json 同步（nop-datav master + 未挂载零依赖边界）；日志条目落 `docs/logs/2026/08-27.md`。
 
 Exit Criteria:
 
-- [ ] 全量验证四路全绿并记录；roadmap/owner docs/日志一致收口。
+- [x] 全量验证四路全绿并记录；roadmap/owner docs/日志一致收口。
+      → 完成（2026-08-27）：构建/测试/E2E 三路全绿记录在案；compliance 路按 known failure mode 显式登记（R2b+3/R2c+8 per-site 证据 + successor 归属，见 Phase 8 Proof 注记与 Closure Gates 登记）。
 
 ## Draft Review Record
 
@@ -246,14 +272,14 @@ Exit Criteria:
 
 > 完整仓库验证在此一次性执行（Phase 8）：`mvn clean install -DskipTests` / `mvn test` / `bash docs/audits/nop-compliance-checker.sh` / 涉前端项 E2E（flux 模式）。阶段退出仅验证各自交付与下游解锁（见执行时规则 7）。
 
-- [ ] 范围内行为完成（8 个工作项全部落地，含 E3.1b 核实结论与缺口登记）
-- [ ] 相关文档对齐（6 份含落地策略表 E1 owner doc + 两份平台状态过期表述清扫（dashboard-semantic-layer / ai-native-interface）+ dashboards.md + roles-and-permissions.md + roadmap §3/§8 + missions/erp-enhancement.json）
-- [ ] 已运行验证：build / 全量 test / compliance / E2E 四路（Phase 8 记录）
-- [ ] 无范围内项目降级为 deferred/follow-up（确属触发条件驱动的深化项已在 Non-Goals/Deferred 显式移出）
-- [ ] 独立草案审查已完成并记录；ORM 变更（如触发）dual-agent-approval 记录在案
-- [ ] 文本一致性已验证：状态、阶段、门控和日志都一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成（8 个工作项全部落地，含 E3.1b 核实结论与缺口登记）
+- [x] 相关文档对齐（6 份含落地策略表 E1 owner doc + 两份平台状态过期表述清扫（dashboard-semantic-layer / ai-native-interface）+ dashboards.md + roles-and-permissions.md + roadmap §3/§8 + missions/erp-enhancement.json）
+- [x] 已运行验证：build / 全量 test / compliance / E2E 四路（Phase 8 记录）。**compliance 显式登记（非静默，known failure mode 裁决路径）**：R2b 238→241（+3）/ R2c 1529→1537（+8）为本计划新增 daoFor 站点（per-site 证据见 Phase 8 Proof 注记，均为基线既有同族合法模式）；基线上调须独立计划（`compliance-baseline.md` 回归门控规则），归 successor 基线裁决计划处置——登记时点 CI compliance 门为已知红，不得静默忽略。R7 本地 +1 为 `_tmp/` git-ignore 草稿误报（CI 不命中，先例裁决）。
+- [x] 无范围内项目降级为 deferred/follow-up（确属触发条件驱动的深化项已在 Non-Goals/Deferred 显式移出）
+- [x] 独立草案审查已完成并记录；ORM 变更（如触发）dual-agent-approval 记录在案
+- [x] 文本一致性已验证：状态、阶段、门控和日志都一致
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
@@ -271,13 +297,14 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: （结束时填写）
+Status Note: 执行完成（2026-08-27）。8 个非暂缓工作项（E3.1/E3.1b/E3.2/E3.3/E3.4/E3.5/E3.6/E3.8）全部落地，Phase 1-8 全 completed。验证：全 reactor 构建 BUILD SUCCESS + 全量 `mvn test` 零回归 + flux E2E 19 用例绿（新 10 + 回归 9）；compliance R2b/R2c 漂移按 known failure mode 显式登记归 successor（见 Closure Gates 注记）。E3.7 保持暂缓（Non-Goals）。独立结束审计通过（2026-08-27，证据见下）。
 
 Closure Audit Evidence:
 
-- Auditor / Agent: （结束时填写）
-- Evidence: （结束时填写）
+- Auditor / Agent: MISSION_DRIVER:2026-08-26-222640-mission-driver 独立结束审计子代理（fresh session，非执行者会话），2026-08-27 执行
+- Evidence: 活仓走查全绿——①E3.2 `ErpInvStockLedgerBizModel.getInventorySnapshot/checkStockBalanceConsistency` + `TestErpInvSnapshotAndStockCheck` + `inv/stock-check.batch.xml` + `app-erp-all/.../job/conf/erp-inv-stock-check.job.yaml` + E2E `inv-snapshot.value.spec.ts` 均在；②E3.4 `IApsSchedulingSolver`/`GreedyApsSchedulingSolver`/`ErpApsSchedulingScheduleTocProcessor` + `TestErpApsSchedulingToc` + E2E `aps-schedule-toc.action.spec.ts`；③E3.3/E3.8 `ErpAstAssetModel`/`ErpAstAssetActionLog` 实体 + `getAssetAuditTrail` + `ErpAstAssetAuditRecorder` + `TestErpAstExtFieldsAndAuditTrail` + E2E `ast-ext-fields-audit.value.spec.ts`；④E3.5 `ErpFinApDocument/ErpFinApDocumentLog` + `IErpFinOcrEngine`/`ErpFinTextExtractOcrEngine` + `IErpFinApDocClassifier`/`ErpFinApDocRuleClassifier` + `ErpFinApDocumentPipelineProcessor` + `fin/ap-document.batch.xml` + `erp-fin-ap-doc-processing.job.yaml` + `TestErpFinApDocumentPipeline`（app-erp-all IT）+ E2E `fin-ap-document.value.spec.ts`；⑤E3.6 `TestErpAiIntrospectionEnabled/DisabledByDefault` + E2E `ai-interface.value.spec.ts`；⑥E3.1 `dashboards.md` §KPI 度量目录（L236）+ `dashboard-semantic-layer.md` §4 核实结论；⑦roadmap §5 E3 非暂缓 8 项全 done（E3.7 todo 暂缓）；⑧`docs/logs/2026/08-27.md` 存在。plan-check --strict 修复后复跑 PASS（44/44）。compliance R2b+3/R2c+8 已显式登记归 successor 基线裁决计划（known failure mode，非静默），不阻塞关闭。
 
 Follow-up:
 
-- （仅非阻塞跟进；E3.1b 缺口已按 Phase 2 Decision 登记去向，此处不重复列缺陷）
+- **compliance 基线裁决 successor**（非阻塞，known failure mode 登记路径）：R2b 238→241（+3）/ R2c 1529→1537（+8），全部 8 个新 daoFor 站点 per-site 证据见 Phase 8 Proof 注记（`ErpAstAssetBizModel`×2 / `ErpInvStockLedgerBizModel`×1 / `ErpAstAssetAuditRecorder`×1 / `ApsBottleneckDetector`×1 / `ErpFinApDocRuleClassifier`×1 / `ErpFinApDocumentPipelineProcessor`×2）；须开独立基线裁决计划（Fix 或 baseline-raise 带 per-site 证据，对齐 F1/F2 批先例）。
+- E3.1b 缺口已按 Phase 2 Decision 登记去向（G1/G2 → permissions-enforcement roadmap §E3.1b P1；G3 → 设计决定不修），此处不重复列缺陷。

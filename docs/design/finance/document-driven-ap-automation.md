@@ -74,7 +74,7 @@ OCR 解析(发票要素提取: 供应商/金额/日期/税号/行项)
 |------|------|------|
 | 设计 | 本文档（管道 + 分类 + 邮件 + 审计） | ✅ 已完成（本批次） |
 | 前置调研 | OCR 引擎选型（Tesseract 等）、`nop-file` 能力核实 | ✅ 已完成（2026-08-26，结论见上节） |
-| 实现 | 摄取管道（上传→解析→分类→草稿→预填）随 E3 整体计划实施（`2026-08-26-0735-2` Phase 6）；config-gate 默认关闭；ORM 变更按 §8.1 授权清单落地 | in progress |
+| 实现 | 摄取管道（上传→解析→分类→草稿→预填）随 E3 整体计划实施（`2026-08-26-0735-2` Phase 6）；config-gate 默认关闭；ORM 变更按 §8.1 授权清单落地 | ✅ done（E3.5，2026-08-27：`ErpFinApDocument/ErpFinApDocumentLog`（dual-agent 批准清单 #4/#5）+ `ErpFinApDocumentPipelineProcessor` 端到端编排（上传→`IErpFinOcrEngine` 默认 PDFBox 文本抽取→`IErpFinApDocClassifier` 规则分类→UNSUBMITTED 草稿→三单匹配预填，低置信挂 MANUAL_REVIEW 人工门）；异步载体 nop-batch/nop-job 默认关闭；`erp-fin.ap-doc-pipeline-enabled` config-gate；E3.6 护栏 `IRateLimiter` 接线上传入口；IT 6 用例 + E2E 2 用例） |
 
 ## 反模式自检表
 

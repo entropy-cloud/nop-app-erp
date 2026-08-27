@@ -127,6 +127,7 @@
 - **操作权限资源点**：`*.action-auth.xml`（`TOPM`/`SUBM`/`FNPT`）由 codegen 自动产出，定义菜单与功能权限点。三层文件链与定制约定见 `app-overview.md §菜单权威源与定制约定`。
 - **角色→权限点映射**（粗粒度）：见下方"角色→权限点映射"节。权限点 ID 引用 `_erp-*.action-auth.xml` 生成文件为真相源（AGENTS.md 规则 7 ——不在散文重复生成文件定义）。FNPT 权限点模式：每实体约 2 个（query/mutation），格式 `<permissions>{EntityName}:{action}</permissions>`，详见各域 `_erp-*.action-auth.xml`。
 - **数据权限规则**：`data-auth.xml` 行级过滤——设计能力独立于操作级开关（平台机制见 `nop-entropy/docs-for-ai/02-core-guides/auth-and-permissions.md` 数据权限节）。**运行时灰度**：本 app 经 config-gated `ErpRoleDataAuthChecker`（bean `nopDataAuthChecker`）门控，双层默认 OFF（`nop.auth.enable-data-auth=false` + `erp.data-auth.role-row-filter-enabled=false`）→ checker `getFilter` 返回 null → 不附加任何条件（单组织基线零回归）。翻转须同时开启两者（successor，见上方"行级过滤落地状态"）。
+- **nop-datav DataAuth 边界注记（E3.1b，2026-08-26）**：平台 nop-datav（master 已合入全模块链，2026-08-26 活仓核实）自带 DataAuth/RbacAuth 数据权限（经平台 `DefaultDataAuthChecker` → `CrudBizModel` 管道，与 app 同型机制；`TestNopDatavDataAuth`/`TestNopDatavRbacAuth` 测试在 master）——但其保护面是 nop-datav 自身实体（看板/面板/分享等资源），**不覆盖应用层看板/报表 BizQuery**；且应用层未挂载 nop-datav（app 各模块零依赖引用）。边界 = 平台能力存在（master）+ 应用层不依赖。应用层看板/报表聚合路径的行级覆盖缺口（直连 DAO 不经检查点）已核实并登记 enforcement 栈扩展（`permissions-enforcement-roadmap.md` §E3.1b；核实结论与缺口清单见 `dashboard-semantic-layer.md` §4）。
 
 ## 角色→权限点映射
 

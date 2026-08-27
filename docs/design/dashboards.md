@@ -32,7 +32,7 @@
 |---|---|---|
 | sales / purchase / inventory / finance / assets / projects / manufacturing / maintenance / quality / master-data | **已设计**（见下方 §1-§9 + 主数据看板） | 10 看板已在本文定义，指标可追溯到实体 |
 | crm | **产品基线外** | 触发条件：CRM 深化部署（线索漏斗转化率/活动达成/营销 ROI 看板）。当前 CRM 域有完整数据模型与状态机，看板为后续范围 |
-| cs | **产品基线外** | 触发条件：CS 深化部署（SLA 达成率/工单积压/CSAT 趋势看板）。当前 CS 域有 SLA 策略与满意度数据，看板为后续范围 |
+| cs | **已落地**（客服绩效看板，2026-08-26 活仓更正） | `ErpCsQualityDashboard`（SLA 达成率/超时数/平均解决与首响时长/团队 SLA 排名/客服 CSAT-NPS-CES 明细）已随 CS 域深化落地（BizModel + 页面 + 菜单 + 集成测试，`module-cs/erp-cs-service/.../ErpCsQualityDashboardBizModel.java`）——原「产品基线外」表述系扩展域看板落地前的陈旧快照。KPI 口径已登记入下方「KPI 度量目录」§CS |
 | hr | **产品基线外** | 触发条件：HR 深化部署（人头/薪酬成本/考勤异常/招聘漏斗看板）。当前 HR 域有员工/薪酬/考勤数据，看板为后续范围 |
 | aps | **产品基线外** | 触发条件：APS 深化部署（排产利用率/订单准时率/瓶颈工作中心看板）。APS 排产结果可复用 manufacturing 看板的工单准时率指标 |
 | contract | **产品基线外** | 触发条件：合同深化部署（到期/续约/执行率/用量计费看板） |
@@ -230,6 +230,188 @@
 | 停用主数据数 | 各主数据 | count(status=INACTIVE) | KPI |
 
 **说明**:主数据看板偏数据治理,指标少且静态,无趋势/预警复杂度。
+
+---
+
+## KPI 度量目录（Metric Catalog）
+
+> **定位**（E3.1，roadmap §5）：本章是全部看板 KPI **规范口径的单一真相**——名称 / 定义公式 / 数据来源（表+过滤）/ 单位 / 口径说明。用途：value-spec 数值断言对照审计、新增 KPI 口径书写范式、跨域重复口径显式对齐、未来接入平台语义层（nop-metadata Measure/Dimension）的映射输入（触发条件驱动，见 `dashboard-semantic-layer.md` §1）。
+>
+> **口径与实现对齐**：各条目按对应 `ErpXxxDashboardBizModel` 实现逐项登记（2026-08-26 活仓核验）；value-spec 数值断言（`tests/e2e/dashboards/*.value.spec.ts`）为数据驱动的口径覆盖域，抽样核对一致（如 finance `revenue=1130` = GlBalance CREDIT 科目 `periodCredit-periodDebit`；projects `grossMarginPct=0.4` = `ΣgrossProfit/Σrevenue` = 20000/50000）。
+>
+> **通用约定**：金额单位=本位币（币种由 amountFunctional/currentBalance 等本位币字段承载）；比率单位=0-1 小数（前端 ×100 显示 %）；count=计数；date 窗口回显字段（startDate/endDate/period）不计入指标。空值统一经 `DashboardUtil.nz()` 归零（OEE 卡片除外：无数据=null，显示 "—"）。预警阈值一律 config 化（`erp-dash.*`，默认 0=禁用），非硬编码。
+
+### 销售域（ErpSalDashboard）
+
+| 指标 key | 名称 | 定义公式 | 数据来源（表+过滤） | 单位 | 口径说明 |
+|---|---|---|---|---|---|
+| salesAmount | 本期销售额 | Σ amountFunctional | `ErpSalInvoice`，`posted=true` + `businessDate ∈ [startDate,endDate]`（缺省本月1日~今天） | 本位币 | 过账布尔位口径（**非** docStatus） |
+| orderCount | 本期订单量 | count(*) | `ErpSalOrder`，`docStatus='ACTIVE'` | count | **无日期过滤**（全量 ACTIVE） |
+| invoiceCount | 发票数 | count(*) | 同 salesAmount | count | 与销售额同一发票集 |
+| conversionRate | 订单→开票转化率 | invoiceCount / orderCount | 派生 | 比率 | 分母 0 → 0.0 |
+| arBalance | 应收余额 | Σ openAmountFunctional | `ErpFinArApItem`（经 `IErpFinArApItemBiz.findOpenItems`），`direction='RECEIVABLE'` + `status ∈ ('OPEN','PARTIAL')` | 本位币 | 跨域只读；与财务域 arBalance 同源同式（见对齐表） |
+| 趋势（salesAmount/month） | 销售趋势 | 按 businessDate 月分组 Σ amountFunctional | 同 salesAmount，近 N 月（默认 12） | 本位币 | — |
+| 客户 TOP10 | 客户排行 | GROUP BY customerId Σ amountFunctional 降序 | 同 salesAmount（DB 级聚合） | 本位币 | — |
+| 应收超期预警 | 预警卡片 | 账龄（`dueDate ?? businessDate` → today）> 天阈值 **且** 余额 > 金额阈值 | 同 arBalance | 天/本位币 | 双阈值同时命中；`erp-dash.sal-ar-overdue-days/-amount` 默认 0=禁用 |
+
+### 采购域（ErpPurDashboard）
+
+| 指标 key | 名称 | 定义公式 | 数据来源（表+过滤） | 单位 | 口径说明 |
+|---|---|---|---|---|---|
+| purchaseAmount | 本期采购额 | Σ amountFunctional | `ErpPurInvoice`，`docStatus='ACTIVE'` + `businessDate ∈ [startDate,endDate]` | 本位币 | **docStatus 口径**（与销售发票 posted 布尔位不同，易混淆） |
+| orderCount | 本期订单量 | count(*) | `ErpPurOrder`，`docStatus='ACTIVE'` | count | 无日期过滤 |
+| apBalance | 应付余额 | Σ openAmountFunctional | `ErpFinArApItem`（findOpenItems），`direction='PAYABLE'` + `status ∈ ('OPEN','PARTIAL')` | 本位币 | 与财务域 apBalance 同源同式 |
+| onTimeRate | 到货及时率 | count(receive.businessDate ≤ 关联 orderLine.deliveryDate) / count(有 orderId 的 receive) | `ErpPurReceive`(docStatus='ACTIVE') ⟕ `ErpPurOrder` | 比率 | 分母仅计 `orderId != null` 的收货单 |
+| 趋势（purchaseAmount/month） | 采购趋势 | 按 businessDate 月分组 Σ amountFunctional | 同 purchaseAmount，近 N 月 | 本位币 | — |
+| 供应商 TOP10 | 供应商排行 | 按 supplierId Σ amountFunctional 降序 | 同 purchaseAmount（内存聚合） | 本位币 | — |
+| 三单匹配差异 | 预警卡片 | 发票行 unitPrice vs 关联订单行 unitPrice，`|diff|/orderPrice > tolerance` | `ErpPurInvoiceLine` → `receiveLineId → ErpPurReceiveLine.orderLineId → ErpPurOrderLine` | 比率 | `erp-pur.match-price-tolerance` 默认 0.05 |
+| 应付超期预警 | 预警卡片 | 账龄（dueDate ?? businessDate）> 天阈值 | 同 apBalance | 天 | `erp-dash.pur-ap-overdue-days` 默认 0=禁用 |
+
+### 库存域（ErpInvDashboard）
+
+| 指标 key | 名称 | 定义公式 | 数据来源（表+过滤） | 单位 | 口径说明 |
+|---|---|---|---|---|---|
+| totalValue | 库存总值 | Σ totalCost | `ErpInvStockBalance`（DB 级 GROUP BY warehouseId + SUM 后汇总），无过滤 | 本位币 | 全量余额时点值 |
+| incomingQty | 本期入库量 | Σ StockMoveLine.quantity（moveType=INCOMING） | `ErpInvStockMove`(docStatus='DONE') + 行，`businessDate ∈ 期内` | 数量 | — |
+| outgoingQty | 本期出库量 | Σ \|quantity\|（moveType=OUTGOING，绝对值） | 同上 | 数量 | — |
+| turnoverRate | 库存周转率 | 出库成本 / 平均库存（scale 4） | 分子=期内 DONE+OUTGOING 移动行 Σ totalCost；分母≈当前 totalValue | 比率 | **近似口径**：平均库存以当前时点值代替期间均值 |
+| 趋势（netValueChange/month） | 库存价值变动 | 按 businessDate 月分组 Σ totalCost | `ErpInvStockLedger`（仅日期过滤，正负净变动） | 本位币 | 流水派生（E3.2 快照同源） |
+| 仓库分布 | 占比图 | GROUP BY warehouseId Σ totalCost 降序 | `ErpInvStockBalance` | 本位币 | — |
+| 缺料预警 | 预警列表 | availableQuantity < Material.safetyStock | `ErpInvStockBalance` × `ErpMdMaterial`（safetyStock>0 才比对） | 数量 | 扫描上限 5000 |
+| 滞销库存 | 预警列表 | totalQuantity>0 且最后出库日 < today−N 天 | `ErpInvStockBalance` × DONE+OUTGOING 移动按 materialId 聚合 | 天 | `erp-dash.inv-slow-moving-days` 默认 0=禁用 |
+| 批次效期预警 | 预警列表 | expiryDate ∈ [today, today+N] | `ErpInvBatch` | 天 | `erp-dash.inv-batch-expiry-days` 默认 0=禁用 |
+
+### 财务域（ErpFinDashboard）
+
+| 指标 key | 名称 | 定义公式 | 数据来源（表+过滤） | 单位 | 口径说明 |
+|---|---|---|---|---|---|
+| revenue | 本期收入 | Σ periodActivity(b)，subject.subjectClass='INCOME' | `ErpFinGlBalance` ⟕ `ErpMdSubject`，`periodId=目标期间` + `orgId=period.orgId` + `acctSchemaId=组织主账套` | 本位币 | periodActivity：DEBIT 科目=periodDebit−periodCredit，CREDIT=periodCredit−periodDebit；期间缺省=最近会计期间，无期间全 0 |
+| expense | 本期支出 | Σ periodActivity(b)，subjectClass ∈ ('EXPENSE','COST') | 同上 | 本位币 | — |
+| netProfit | 本期净利润 | revenue − expense | 派生 | 本位币 | — |
+| bankBalance | 银行存款余额 | Σ currentBalance | `ErpFinFundAccount`，`accountType='BANK'` | 本位币 | — |
+| arBalance / apBalance | 应收/应付余额 | Σ openAmountFunctional | `ErpFinArApItem`（RECEIVABLE/PAYABLE，OPEN+PARTIAL，同期间组织/账套 scope） | 本位币 | 与 sales/purchase 域同源（findOpenItems），但多组织/账套 scope 过滤 |
+| 收支/利润趋势 | 趋势图 | 按会计期间 month 分组 revenue/expense/netProfit | 期间集合 × GlBalance（orgId/schemaId scope） | 本位币 | — |
+| 现金流预警 | 预警卡片 | bankBalance < 阈值 | 同 bankBalance | 本位币 | `erp-dash.fin-cash-flow-threshold` 默认 0=禁用 |
+
+### 资产域（ErpAstDashboard）
+
+| 指标 key | 名称 | 定义公式 | 数据来源（表+过滤） | 单位 | 口径说明 |
+|---|---|---|---|---|---|
+| originalValue | 资产原值合计 | Σ originalValue | `ErpAstAsset`，`status='IN_SERVICE'` | 本位币 | — |
+| accumulatedDepreciation | 累计折旧 | Σ accumulatedDepreciation | 同上 | 本位币 | — |
+| netBookValue | 资产净值 | originalValue − accumulatedDepreciation | 派生（总量差） | 本位币 | 逐行净值求和等价 |
+| periodDepreciation | 本期折旧 | Σ actualAmount | `ErpAstDepreciationSchedule`，`status='EXECUTED'` + `period=目标期间`（缺省当前 yyyy-MM） | 本位币 | — |
+| cipBalance | 在建工程余额 | Σ accumulatedCost | `ErpAstCip`，`isCompleted=false` | 本位币 | 未转固 |
+| 类别分布 | 占比图 | 按 categoryId Σ 逐行净值降序 | `ErpAstAsset`(IN_SERVICE) ⟕ Category | 本位币 | — |
+| 折旧趋势 | 趋势图 | 按 period 分组 Σ actualAmount | `ErpAstDepreciationSchedule`(EXECUTED)，近 N 月桶 | 本位币 | helper 无日期过滤，全量加载后分桶 |
+| 折旧未计提预警 | 预警列表 | IN_SERVICE 且当前 period 无 EXECUTED 条目 | `ErpAstAsset` × Schedule | — | — |
+
+### 项目域（ErpPrjDashboard）
+
+| 指标 key | 名称 | 定义公式 | 数据来源（表+过滤） | 单位 | 口径说明 |
+|---|---|---|---|---|---|
+| openProjectCount | 在手项目数 | count(*) | `ErpPrjProject`，`status='OPEN'` | count | — |
+| totalBudget | 项目总预算 | Σ totalAmount | `ErpPrjBudget`，`projectId ∈ (OPEN 项目)` | 本位币 | 仅计 OPEN 项目 |
+| incurredCost | 已发生成本 | Σ totalAmount | `ErpPrjCostCollection`，`projectId ∈ (OPEN 项目)` | 本位币 | 仅计 OPEN 项目 |
+| executionRate | 预算执行率 | incurredCost / totalBudget（scale 4） | 派生 | 比率 | 分母 ≤0 → 0 |
+| projectCount | 损益汇总项目数 | distinct projectId | `ErpPrjProjectPnl`（ProjectPnlCalculator 周期物化），可选 projectId 过滤 | count | — |
+| totalRevenue / totalCost / totalGrossProfit | 收入/成本/毛利合计 | Σ 对应列 | 同上 | 本位币 | — |
+| grossMarginPct | 整体毛利率 | Σ grossProfit / Σ revenueAmount（scale 4） | 派生（DECIMAL 直加） | 比率 | 分母 ≤0 → 0；**不用**行级 grossMarginPct 加权（避免字符串列歧义） |
+| 状态分布 | 占比图 | GROUP BY status count 降序 | `ErpPrjProject` | count | — |
+| 成本超支预警 | 预警列表 | Σ CostCollection > Σ Budget（cost>0 前提） | 逐项目比对 | 本位币 | 扫描上限 5000 |
+| 项目延期预警 | 预警列表 | status ≠ 'COMPLETED' 且 endDate < today | `ErpPrjProject` | 天 | — |
+
+### 制造域（ErpMfgDashboard）
+
+| 指标 key | 名称 | 定义公式 | 数据来源（表+过滤） | 单位 | 口径说明 |
+|---|---|---|---|---|---|
+| inProcessCount | 在制工单数 | count(*) | `ErpMfgWorkOrder`，`docStatus ∈ ('IN_PROCESS','STOCK_RESERVED')` | count | — |
+| periodCompletedQty | 本期完工量 | Σ completedQuantity | `ErpMfgWorkOrder`，`docStatus='COMPLETED'` + `actualEndDate ∈ 期内` | 数量 | — |
+| stockPartialCount | 齐套待产 | count(*) | `ErpMfgWorkOrder`，`docStatus='STOCK_PARTIAL'` | count | — |
+| onTimeRate | 工单准时率 | count(COMPLETED 且 actualEndDate ≤ plannedEndDate) / count(COMPLETED) | `ErpMfgWorkOrder`(COMPLETED) | 比率 | **全量 COMPLETED 不限日期**；分母 0 → 0.0 |
+| 状态分布 | 占比图 | GROUP BY docStatus count 降序 | `ErpMfgWorkOrder` | count | — |
+| 完工趋势 | 趋势图 | 按 actualEndDate 月分组 Σ completedQuantity | `ErpMfgWorkOrder`(COMPLETED) | 数量 | — |
+| 工单延期预警 | 预警列表 | docStatus ∉ ('COMPLETED','CLOSED','CANCELLED') 且 plannedEndDate < today | `ErpMfgWorkOrder` | 天 | — |
+| CRP 负荷（getCrpLoadChartData） | 负荷图 | 按 loadDate Σ loadHours / Σ capacityHours / loadRate=load/cap | `CrpLoadCalculator`（WorkcenterCalendar 出勤 × WorkcenterCapacity.efficiencyFactor 派生链） | 小时/比率 | 窗口缺省近 `erp-dash.mfg-crp-default-days`（默认 7）天；cap≤0 且 load>0 → 9999 哨兵 |
+
+### 维护域（ErpMntDashboard）
+
+| 指标 key | 名称 | 定义公式 | 数据来源（表+过滤） | 单位 | 口径说明 |
+|---|---|---|---|---|---|
+| equipmentTotal | 设备总数 | count(*) | `ErpMntEquipment`，`status ≠ 'DECOMMISSIONED'` | count | — |
+| runningCount | 运行中设备 | count(*) | `ErpMntEquipment`，`status='RUNNING'` | count | — |
+| openRequestCount | 待处理维护请求 | count(*) | `ErpMntRequest`，`status='OPEN'` | count | 不限日期 |
+| periodVisitCount | 本期维护访问数 | count(*) | `ErpMntVisit`，`status='COMPLETED'` + `businessDate ∈ 期内` | count | — |
+| OEE 卡片（getDashboardOeeKpi） | 设备 OEE | fleet 级三分量与 OEE 均值（Σ/可计算设备数，scale 4） | `OeeCalculator`（跨域只读 mfg/qa）：availability=runningHours/(calendarHours−downtimeHours)；performance=actualOutput/(capacityPerHour×runningHours)；quality=qualifiedQuantity/actualOutput；OEE=三分量乘积 | 比率 | 无数据设备不计入均值（显示 "—"）；任一分量 null → OEE=null（D4 裁决：无数据 ≠ 零效率） |
+| 状态分布 | 占比图 | GROUP BY status count 降序 | `ErpMntEquipment` | count | — |
+| 设备停机预警 | 预警卡片 | status='DOWN' 且存在 endTime=null 的 DowntimeEntry | `ErpMntEquipment` × `ErpMntDowntimeEntry` | — | — |
+| 维护逾期预警 | 预警列表 | isActive=1 且 nextDueDate < today−N 天 且无 Visit 引用 | `ErpMntSchedule` × `ErpMntVisit` | 天 | `erp-dash.mnt-maintenance-overdue-days` 默认 0；Visit 扫描上限 5000 |
+
+### 质量域（ErpQaDashboard）
+
+| 指标 key | 名称 | 定义公式 | 数据来源（表+过滤） | 单位 | 口径说明 |
+|---|---|---|---|---|---|
+| inspectionCount | 本期质检数 | count(*) | `ErpQaInspection`，`inspectionDate ∈ 期内` | count | **无状态字段过滤**（result 含 PENDING） |
+| passRate | 合格率 | count(result='ACCEPTED') / count(*) | 同上 | 比率 | 分母 0 → 0.0 |
+| rejectedCount | 不合格数 | count(result='REJECTED') | 同上 | count | — |
+| openNcrCount | 开放 NCR 数 | count(*) | `ErpQaNonConformance`，`status ∈ ('OPEN','IN_REVIEW')` | count | 不限日期 |
+| SPC 预警（getSpcOutOfControlWarning） | 预警卡片 | distinct chartId 计数 ×3 | `ErpQaSpcSample`(isOutOfControl=true)；`ErpQaSpcCapability`(capabilityLevel='INADEQUATE')；`ErpQaNonConformance`(sourceType='SPC' 且 OPEN/IN_REVIEW) | count | 后两项 config-gated（`erp-dash.qa-spc-include-inadequate/-ncr`，默认 true） |
+| 合格率趋势 | 趋势图 | 按 inspectionDate 月分组 total/accepted/passRate | `ErpQaInspection` | 比率 | — |
+| 不合格原因 TOP | 占比图 | GROUP BY dispositionType count 降序 | `ErpQaNonConformance` | count | defectType 未物化，以处置决定为代理维度 |
+| CAPA 逾期预警 | 预警列表 | status ≠ 'COMPLETED' 且 dueDate < today−N 天 | `ErpQaAction` | 天 | `erp-dash.qa-capa-overdue-days` 默认 0 |
+| SPC 控制图数据 | 控制图 | chartType + cl/ucl/lcl + 子组序列 | `ErpQaSpcChart` + `ErpQaSpcSample`（计数型 defectRate=defectCount/inspectedCount） | — | 控制限 SpcControlLimitCalculator 持久化；chartId 解析：入参 > config > 最新 |
+
+### 主数据域（ErpMdDashboard）
+
+| 指标 key | 名称 | 定义公式 | 数据来源（表+过滤） | 单位 | 口径说明 |
+|---|---|---|---|---|---|
+| materialCount | 物料总数 | count(*) | `ErpMdMaterial`，无过滤 | count | — |
+| customerCount | 客户数 | count(*) | `ErpMdPartner`，`partnerType='CUSTOMER'` | count | — |
+| vendorCount | 供应商数 | count(*) | `ErpMdPartner`，`partnerType='SUPPLIER'` | count | — |
+| inactiveMaterialCount | 停用物料数 | count(*) | `ErpMdMaterial`，`status='INACTIVE'` | count | — |
+| inactivePartnerCount | 停用往来单位数 | count(*) | `ErpMdPartner`，`status='INACTIVE'` | count | — |
+| 无 SKU 物料 | 预警列表 | 无关联 MaterialSku 行 | `ErpMdMaterial` × `ErpMdMaterialSku` | — | 数据质量 |
+| 无价格 SKU | 预警列表 | 四价格档全部 ≤0 | `ErpMdMaterialSku` | — | purchasePrice/salePrice/wholesalePrice/retailPrice |
+
+### CS 域（ErpCsQualityDashboard，客服绩效看板）
+
+| 指标 key | 名称 | 定义公式 | 数据来源（表+过滤） | 单位 | 口径说明 |
+|---|---|---|---|---|---|
+| totalTickets | 已关闭工单数 | count(*) | `ErpCsTicket`，`status='CLOSED'` + `createTime ∈ [start 00:00, end+1d 00:00)` | count | **时间字段 createTime**（非 businessDate）；两参均空=不过滤 |
+| slaCompletedCount / slaBreachedCount | SLA 达标/超时数 | count(isSlaCompleted=TRUE) / total − 达标 | 同上 | count | — |
+| slaCompletionRate | SLA 达成率 | slaCompleted / total（scale 4） | 派生 | 比率 | total=0 → **null**（非 0） |
+| avgResolutionHours | 平均解决时长 | Σ(duration 分钟×60000)/有 duration 工单数/3600000 | 同上（duration>0 才计入） | 小时 | 无样本 → null |
+| avgFirstResponseHours | 平均首次响应时长 | Σ(startTime−createTime)/正差样本数/3600000 | 同上（负差丢弃） | 小时 | 无样本 → null |
+| 团队 SLA 排名 | 排名表 | 按 team 聚合 total/达标/达成率/平均解决时长，达标数降序 | Ticket ⟕ `slaPolicyId → ErpCsSlaPolicy.teamId → ErpCsTeam` | — | Ticket 无 teamId 列，经策略间接关联；null → "(未分派)" |
+| 客服满意度明细 | 明细表 | 按 assignedToId 聚合 ticketCount/surveyCount/avgCsat/avgNps/avgCes（scale 2） | `ErpCsTicket` × `ErpCsSurvey`（csat/nps/ces null→0） | 分 | 无样本 → null |
+
+### 跨域重复口径对齐登记
+
+| 口径 | 各域出现 | 对齐结论 |
+|---|---|---|
+| 应收余额（arBalance） | sales KPI / finance KPI | **同源同式**：均 Σ openAmountFunctional（RECEIVABLE，OPEN+PARTIAL），sales 经 `IErpFinArApItemBiz.findOpenItems`（无 scope 过滤），finance 同方法 + 期间组织/账套 scope 过滤。多账套时 finance 值 ≤ sales 值（scope 收敛），单账套基线相等 |
+| 应付余额（apBalance） | purchase KPI / finance KPI | 同上（PAYABLE 方向） |
+| 账龄基准日 | sales 应收超期 / purchase 应付超期 / finance aging 报表 | 统一 `dueDate ?? businessDate`（finance aging 的 AR/AP 基准可 config 切换 `erp-fin.ar/ap-aging-base`，看板预警不切换） |
+| 到货及时率 vs 工单准时率 | purchase onTimeRate / manufacturing onTimeRate | 语义同型（实际日期 ≤ 计划日期比率），数据源与字段不同（receive vs workOrder），各自登记 |
+| 折旧口径 | assets KPI / finance 凭证 | assets 看板读 Schedule(EXECUTED).actualAmount；财务面经折旧过账凭证（posting-log），金额同源（折旧计提执行即过账） |
+
+### 状态字段口径横向对照（易混淆点速查）
+
+| 域 | 实体 | 字段 | 值 | 备注 |
+|---|---|---|---|---|
+| sales | ErpSalInvoice | `posted` | `Boolean.TRUE` | 布尔过账位，**不是** docStatus |
+| sales/purchase | ErpSalOrder / ErpPurInvoice/Order/Receive | `docStatus` | `'ACTIVE'` | 采购域发票用 docStatus（与销售 posted 不同） |
+| inventory | ErpInvStockMove | `docStatus` + `moveType` | `'DONE'` + INCOMING/OUTGOING | — |
+| finance | ErpFinGlBalance | `periodId`+`orgId`+`acctSchemaId` | 期间定位 | 科目分类经 `ErpMdSubject.subjectClass/direction` |
+| finance | ErpFinArApItem | `direction`+`status` | RECEIVABLE/PAYABLE；OPEN/PARTIAL | SETTLED/CANCELLED/WRITTEN_OFF 排除 |
+| assets | ErpAstAsset / Schedule / Cip | `status`/`status`/`isCompleted` | IN_SERVICE / EXECUTED / false | — |
+| projects | ErpPrjProject | `status` | OPEN | 预算/成本仅计 OPEN 项目 |
+| manufacturing | ErpMfgWorkOrder | `docStatus` | IN_PROCESS+STOCK_RESERVED / COMPLETED / STOCK_PARTIAL | — |
+| maintenance | Equipment/Request/Visit | `status` | ≠DECOMMISSIONED / RUNNING / OPEN / COMPLETED | — |
+| quality | ErpQaInspection | （无状态过滤） | 仅 inspectionDate 范围 | result ∈ PENDING/ACCEPTED/CONDITIONAL/REJECTED |
+| quality | ErpQaNonConformance | `status` | OPEN/IN_REVIEW | — |
+| master-data | Material/Partner | `status` | INACTIVE（停用计数） | partnerType 值 CUSTOMER/SUPPLIER |
+| cs | ErpCsTicket | `status` | CLOSED | 时间过滤用 createTime |
 
 ---
 

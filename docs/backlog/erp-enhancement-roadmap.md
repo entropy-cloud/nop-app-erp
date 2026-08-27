@@ -1,6 +1,6 @@
 # ERP 增强路线图（ERP Enhancement Roadmap）
 
-> **最后更新**: 2026-08-26
+> **最后更新**: 2026-08-27
 > **来源**: `docs/analysis/erp-survey/2026-08-12-0000-innovation-trends.md`（创新趋势总览）+ 同批次 14 份项目调研报告（erpclaw/twenty/frappe/baserow/frepple/openboxes/fleetbase/inventree/beancount/paperless-ngx/n8n/superset/snipe-it/medusa）
 > **前置条件**: `deepening-roadmap.md` ✅ done（11/11，07-20 批次缺口已闭环）；`core-business-roadmap.md` ✅ done；`extended-roadmap.md` ✅ done
 
@@ -20,17 +20,17 @@
 
 | State | Count |
 |-------|-------|
-| todo | 9 |
+| todo | 1 |
 | ready | 0 |
-| done | 10 |
+| done | 18 |
 
 ## 3. 框架/平台复用
 
 | 能力 | 提供方式 |
 |------|----------|
-| AI 接入 | `nop-ai`（LLM 接入）+ **nop-datav ChatBI**（`feat-nop-datav` 分支：NL→查询/看板/大屏生成，master 未合入；平台能力，应用层只做业务面 AI 消费/暴露设计） |
+| AI 接入 | `nop-ai`（LLM 接入）+ **nop-datav ChatBI**（NL→查询/看板/大屏生成，平台全链**已合入 master**（2026-08-26 活仓核实）；平台能力，应用层只做业务面 AI 消费/暴露设计） |
 | BI 语义层/元数据 | **nop-metadata**（master 已合入：`NopMetaTableMeasure/Dimension/Join/Filter` + queryAggregation + 血缘/质量/对账/联邦查询，平台文档 `03-modules/nop-metadata.md`） |
-| 可视化平台 | **nop-datav**（`feat-nop-datav` 分支完整链：看板/大屏/面板/分享/导出/定时报告/告警/DataAuth；master 当前仅 `nop-datav-chart` 单模块） |
+| 可视化平台 | **nop-datav**（全链已合入 master（2026-08-26 活仓核实）：看板/大屏/面板/分享/导出/定时报告/告警/DataAuth；应用层看板未挂载，触发条件见 `dashboard-semantic-layer.md` §0） |
 | 工作流/审批 | `nop-wf`（含人工节点/human-approval 门） |
 | 报表/看板 | `nop-report` + 各域 `getDashboardKpi`（AMIS 渲染） |
 | 扩展字段 | `JsonOrmComponent` / ext 字段模式（资产自定义字段集首选） |
@@ -43,12 +43,12 @@
 
 | 域/主题 | 已实现 | 本批次补充设计 |
 |---------|--------|----------------|
-| AI 接口层 | action 层即 API（BizModel/GraphQL 自动暴露）；enforcement 栈；nop-ai；**平台 ChatBI（nop-datav feat 分支）** | `ai-native-interface.md`（GraphQL 类型定义即 API + REST/GraphQL 双通道 + AI 护栏 + human-approval 门 + 原语化裁决；**否决 MCP**；ChatBI 平台归属） |
+| AI 接口层 | action 层即 API（BizModel/GraphQL 自动暴露）；enforcement 栈；nop-ai；**平台 ChatBI（nop-datav master）** | `ai-native-interface.md`（GraphQL 类型定义即 API + REST/GraphQL 双通道 + AI 护栏 + human-approval 门 + 原语化裁决；**否决 MCP**；ChatBI 平台归属） |
 | aps 排产 | 贪心前/后向排产 + MAINTENANCE 单约束 | `aps/constraint-based-planning.md`（求解器分离/TOC 瓶颈/多约束/预测衔接/KPI） |
 | finance 文档入口 | b2b EDI/MFT；AP 三单匹配 | `finance/document-driven-ap-automation.md`（OCR→分类→草稿→三单匹配管道） |
 | inventory | 3 层模型 + 一次性 StockTake + 批次追溯 | `inventory/audit-snapshot-cycle-count.md`（快照语义/周期盘点/对账整合） |
 | assets | 折旧/CIP/维护/盘点/价值调整 + 会计日志 | `assets/audit-trail-and-custom-fieldsets.md`（Actionlog 轨迹/型号级字段集/SCIM 触发） |
-| 看板 | 10 域 KPI + 24 报表 + AMIS + value-spec；**平台语义层 nop-metadata（master）+ 平台可视化 nop-datav（feat 分支）** | `dashboard-semantic-layer.md`（KPI 度量目录对齐平台语义层/嵌入式 API-first/行级安全核实；**否决 MCP**） |
+| 看板 | 10 域 KPI + 24 报表 + AMIS + value-spec；**平台语义层 nop-metadata（master）+ 平台可视化 nop-datav（master，应用层未挂载）** | `dashboard-semantic-layer.md`（KPI 度量目录对齐平台语义层/嵌入式 API-first/行级安全核实；**否决 MCP**） |
 | 跨域流程编排 | Processor 链 + 事件链 + 审批 wf 链 | `cross-domain-flow-orchestration.md`（必要性分析 + 补充 wf 关联形态，**暂不编码**） |
 | 记账内核 | 3 层过账 + 红字冲销 + 平衡校验 | Beancount/ERPClaw 对照确认（E2.1，零代码） |
 | 低代码/扩展机制 | Delta + SPI + D4 研究 | Frappe/Baserow/InvenTree/Fleetbase 对照确认（E2.2/E2.3，零代码） |
@@ -77,7 +77,7 @@
 | AI 建表/建页面助手（Kuma 形态） | baserow | 触发条件驱动：AI 生成元数据/页面需求出现时评估（E1.1 只管业务面 AI 消费/暴露，元数据生成不在本期范围），不立项 |
 | MCP 服务（ERPClaw mcp/tool_router、Superset mcp_service） | erpclaw / superset | **否决采用**（用户 2026-08-12 裁决：应用与平台均不使用 MCP）——API 由 GraphQL 类型定义描述，经 REST + GraphQL 双通道调用 |
 | 轻量语义层（指标/维度规范化） | superset | **对照确认（平台已实现）**：nop-metadata（master 已合入）提供 `NopMetaTableMeasure/Dimension/Join/Filter` + queryAggregation——语义层运行时已有，应用层度量目录为口径对齐映射（`dashboard-semantic-layer.md` §0/§1），不立项 |
-| 嵌入式 SDK / ChatBI / 定时报告 / 告警 | superset / n8n | **对照确认（平台已实现，feat 分支在途）**：nop-datav 平台提供嵌入式看板、ChatBI（NL→查询/看板/大屏）、定时报告、轻量告警、DataAuth——master 仅合入 chart 单模块，完整链在 `feat-nop-datav`；应用层不重复实现，平台合入 master 后评估挂载（`dashboard-semantic-layer.md` §0） |
+| 嵌入式 SDK / ChatBI / 定时报告 / 告警 | superset / n8n | **对照确认（平台已实现，master 已合入）**：nop-datav 平台提供嵌入式看板、ChatBI（NL→查询/看板/大屏）、定时报告、轻量告警、DataAuth——全链已合入 master（2026-08-26 活仓核实）；应用层不重复实现，挂载触发条件已重裁（应用层运行时配置化 KPI/外部嵌入/挂载真实需求，`dashboard-semantic-layer.md` §0） |
 | 事件总线（redis/local） | medusa | 对照确认：`NopSysEvent` 主题路由已具备，不立项 |
 | 30+ 模块微服务化拆分 | medusa | 对照确认：18 域 DAG 独立部署路线（`domain-module-split-analysis.md`），不立项 |
 | 物流核心对象/ledger 同仓 | fleetbase | 对照确认：nop logistics 域状态机 + 独立 finance 域更彻底，不立项 |
@@ -112,15 +112,15 @@
 
 | Work Item | 状态 | Owner Doc | 依赖 | 复用 |
 |-----------|------|-----------|------|------|
-| E3.1: 看板 KPI 度量目录登记（dashboards.md 章节，口径对齐 nop-metadata 语义层，零代码） | todo | `dashboard-semantic-layer.md` §1 | E1.6 | nop-metadata（语义层映射输入） |
-| E3.1b: 看板/报表行级安全核实（数据权限覆盖核实 + nop-datav DataAuth 边界 + 缺口登记） | todo | `dashboard-semantic-layer.md` §4 | E1.6 | enforcement 栈 / nop-datav DataAuth |
-| E3.2: 库存审计快照查询 `getInventorySnapshot` + 对账校验项 | todo | `inventory/audit-snapshot-cycle-count.md` §1 | E1.4 | 3 层模型派生 |
-| E3.3: 资产型号级 ext 字段集管理界面（零 ORM；前置核实平台 JsonOrmComponent 用法） | todo | `assets/audit-trail-and-custom-fieldsets.md` §2 | E1.5 | JsonOrmComponent |
-| E3.4: APS 求解器分离 + 瓶颈识别试点（默认贪心保持） | todo | `aps/constraint-based-planning.md` §1-2 | E1.3 | IApsSchedulingSolver |
-| E3.5: 文档摄取管道（前置 OCR/nop-file 调研；ORM 已授权） | todo | `finance/document-driven-ap-automation.md` | E1.2 | nop-file / nop-job |
-| E3.6: AI 接口层（前置 GraphQL schema 工具发现可用性调研；ORM 已授权） | todo | `ai-native-interface.md` | E1.1 | nop-ai / IGraphQLEngine |
+| E3.1: 看板 KPI 度量目录登记（dashboards.md 章节，口径对齐 nop-metadata 语义层，零代码） | done | `dashboard-semantic-layer.md` §1 | E1.6 | nop-metadata（语义层映射输入） |
+| E3.1b: 看板/报表行级安全核实（数据权限覆盖核实 + nop-datav DataAuth 边界 + 缺口登记） | done | `dashboard-semantic-layer.md` §4 | E1.6 | enforcement 栈 / nop-datav DataAuth |
+| E3.2: 库存审计快照查询 `getInventorySnapshot` + 对账校验项 | done | `inventory/audit-snapshot-cycle-count.md` §1 | E1.4 | 3 层模型派生 |
+| E3.3: 资产型号级 ext 字段集管理界面（零 ORM；前置核实平台 JsonOrmComponent 用法） | done | `assets/audit-trail-and-custom-fieldsets.md` §2 | E1.5 | JsonOrmComponent |
+| E3.4: APS 求解器分离 + 瓶颈识别试点（默认贪心保持） | done | `aps/constraint-based-planning.md` §1-2 | E1.3 | IApsSchedulingSolver |
+| E3.5: 文档摄取管道（前置 OCR/nop-file 调研；ORM 已授权） | done | `finance/document-driven-ap-automation.md` | E1.2 | nop-file / nop-job |
+| E3.6: AI 接口层（前置 GraphQL schema 工具发现可用性调研；ORM 已授权） | done | `ai-native-interface.md` | E1.1 | nop-ai / IGraphQLEngine |
 | E3.7: 跨域流程编排试点（**暂缓**，触发条件驱动） | todo | `cross-domain-flow-orchestration.md` | E1.7 + 触发条件 | nop-wf |
-| E3.8: 资产操作审计轨迹实现（`getAssetAuditTrail`；ORM 已授权） | todo | `assets/audit-trail-and-custom-fieldsets.md` §1 | E1.5 | 会计日志 |
+| E3.8: 资产操作审计轨迹实现（`getAssetAuditTrail`；ORM 已授权） | done | `assets/audit-trail-and-custom-fieldsets.md` §1 | E1.5 | 会计日志 |
 
 ## 6. Work Item Details
 
@@ -136,15 +136,15 @@
 | E2.1 | posting.md 补「记账内核审计性对照」段（平衡校验约束清单核对 + 结论登记）✅ 已产出（9 项清单：7 覆盖 / 1 不适用 / 1 部分覆盖登记触发条件） |
 | E2.2 | erp-survey 对照注记（Frappe/Baserow 与 Nop 模型驱动路径差异结论，引用既有报告）✅ 已产出（`2026-08-26-0000-lowcode-boundary-and-toolchain-notes.md`，含工具链对照 §2） |
 | E2.3 | plugin-hot-management-research.md 补三方对照段（InvenTree registry / Fleetbase extensions 与既有裁决）✅ 已产出（§11，结论：佐证无分歧） |
-| E3.1 | dashboards.md 增 KPI 度量目录章节（10 域 KPI 口径/数据来源/单位登记，口径=数据驱动数值断言覆盖域）；目录作为未来 nop-metadata 语义层（Measure/Dimension）映射输入 |
-| E3.1b | 核实 enforcement 数据权限（role-row-filter）对 `getDashboardKpi`/报表查询的覆盖 + nop-datav DataAuth/RbacAuth 边界（feat 分支），缺口登记（实施属 enforcement 栈扩展） |
-| E3.2 | `getInventorySnapshot` BizQuery + 期末对账一致性校验项（零 ORM） |
-| E3.3 | 型号级 ext 字段键声明 + 管理界面（view.xml 定制，零 ORM） |
-| E3.4 | `IApsSchedulingSolver` 接口 + 贪心默认实现保留 + `scheduleToc` 瓶颈识别试点 |
-| E3.5 | OCR 引擎选型调研 → 管道实现（文档 → 解析 → 草稿发票 → 三单匹配）；分类引擎 Phase 1 规则优先 + Phase 2 ML 经 SPI 注入（`IErpFinAcctDocProvider` 注入范式）；ORM 变更（文档引用/解析字段）已授权 |
-| E3.6 | GraphQL schema 对 AI 工具发现的可用性调研（introspection/类型描述）→ AI 工具消费约定 + 护栏（ORM actorType 字段已授权）。**不采用 MCP**（用户 2026-08-12 裁决：GraphQL 类型定义即 API，REST/GraphQL 双通道） |
+| E3.1 | dashboards.md 增 KPI 度量目录章节（10 域 KPI 口径/数据来源/单位登记，口径=数据驱动数值断言覆盖域）；目录作为未来 nop-metadata 语义层（Measure/Dimension）映射输入 ✅ 已落地（11 域全量登记 + 跨域对齐表 + 状态字段对照，2026-08-26） |
+| E3.1b | 核实 enforcement 数据权限（role-row-filter）对 `getDashboardKpi`/报表查询的覆盖 + nop-datav DataAuth/RbacAuth 边界（master 实态），缺口登记（实施属 enforcement 栈扩展）✅ 已落地（静态表征 + 运行时实测 + G1/G2/G3 缺口登记，2026-08-26） |
+| E3.2 | `getInventorySnapshot` BizQuery + 期末对账一致性校验项（零 ORM）✅ 已落地（派生视图 + `erp-inv-stock-check` 作业，2026-08-26） |
+| E3.3 | 型号级 ext 字段键声明 + 管理界面（view.xml 定制，零 ORM）✅ 已落地（ORM 承载经 dual-agent 批准（meta 层无持久化 ext 机制）；型号实体 + 校验 + 页面，2026-08-27） |
+| E3.4 | `IApsSchedulingSolver` 接口 + 贪心默认实现保留 + `scheduleToc` 瓶颈识别试点 ✅ 已落地（config 切换 + SchedulingResult 扩展，2026-08-27） |
+| E3.5 | OCR 引擎选型调研 → 管道实现（文档 → 解析 → 草稿发票 → 三单匹配）；分类引擎 Phase 1 规则优先 + Phase 2 ML 经 SPI 注入（`IErpFinAcctDocProvider` 注入范式）；ORM 变更（文档引用/解析字段）已授权 ✅ 已落地（SPI 双引擎 + 端到端管道 + 人工门，config-gate 默认关闭，2026-08-27） |
+| E3.6 | GraphQL schema 对 AI 工具发现的可用性调研（introspection/类型描述）→ AI 工具消费约定 + 护栏（ORM actorType 字段已授权）。**不采用 MCP**（用户 2026-08-12 裁决：GraphQL 类型定义即 API，REST/GraphQL 双通道）✅ 已落地（最小落地集 6 项冻结清单逐项，actorType 裁决不落地，2026-08-27） |
 | E3.7 | **暂缓**：触发条件 = 真实 nop-wf 跨域编排需求（人工门控/超时/整链追溯）出现后按 E1.7 设计实现 |
-| E3.8 | 资产状态/归属变化审计记录 + `getAssetAuditTrail` 时间轴查询（优先复用会计日志；独立审计实体 ORM 已授权） |
+| E3.8 | 资产状态/归属变化审计记录 + `getAssetAuditTrail` 时间轴查询（优先复用会计日志；独立审计实体 ORM 已授权）✅ 已落地（独立实体裁决 + 7 事件类型全覆盖，2026-08-27） |
 
 ## 7. 依赖图
 
@@ -176,7 +176,7 @@ graph LR
 - **流程编排暂缓**：E3.7 不进入编码状态（用户 2026-08-12 指示）；触发条件未满足前保持 todo。
 - **ORM 授权**：E3.5（文档引用/解析字段）、E3.6（actorType 字段）、E3.2（如物化快照表）、E3.8（独立审计实体）涉及的 ORM 变更**已获人工批准**（§8.1 授权记录），实施时在整体计划中显式列出变更清单，按 dual-agent-approval 规则执行（双独立子 agent 批准）；E3.3 首选 ext 字段规避 ORM。
 - **平台优先**：任何实现项先核实 Nop 平台能力（nop-ai/nop-wf/nop-file/nop-job/nop-metadata/nop-datav），不重建。
-- **平台能力跟踪（2026-08-13 核对）**：nop-metadata（BI 语义层/元数据中心）**master 已合入**——应用层语义层需求复用平台（E3.1 度量目录=口径对齐映射）；nop-datav（可视化平台含 ChatBI/DataAuth）完整链在 **`feat-nop-datav` 分支、master 仅 chart 单模块**——应用层不得依赖分支 API，平台合入 master 后评估挂载（`dashboard-semantic-layer.md` §0/AP-8）。
+- **平台能力跟踪（2026-08-26 活仓复核，替换 2026-08-13 过期核对记录）**：nop-metadata（BI 语义层/元数据中心）**master 已合入**——应用层语义层需求复用平台（E3.1 度量目录=口径对齐映射，已落地）；nop-datav（可视化平台含 ChatBI/DataAuth）**全链已合入 master**（2026-08-19~23 收口提交含「datav 630 tests 全绿」，2026-08-26 活仓核实 master HEAD 跟踪全模块链——2026-08-13 记录「完整链在 feat 分支、master 仅 chart 单模块」已过期）；应用层看板**未挂载 nop-datav、零依赖**，挂载触发条件已重裁（应用层运行时配置化 KPI / 外部嵌入 / 挂载真实需求出现，`dashboard-semantic-layer.md` §0）。
 - **AI 接口裁决（用户 2026-08-12）**：应用系统提供给 AI 的接口**不通过 MCP**，整个 Nop 平台均不使用 MCP；API 由 GraphQL 类型定义描述，经 REST 与 GraphQL 两种方式调用。所有 E1/E3 设计与实现项遵守此裁决。
 - **业务逻辑单一真相**：AI/管道/协调器只编排，不复制业务规则（对齐 processor-per-mutation 契约）。
 - **与既有 roadmap 边界**：deepening-roadmap（07-20 批次）已 done 不重复；frontend-ui-roadmap 保持独立；本 roadmap 只登记 08-12 批次识别项。

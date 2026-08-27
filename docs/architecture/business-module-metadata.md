@@ -190,6 +190,10 @@ D4 研究按 3 个正交维度（D-Load 运行时类加载/卸载 / D-Select 启
 
 路径 2/3 的实际实现均归 successor，由 D4 研究 §6.5 的触发条件驱动（业务客户明确裁剪/启停需求 + 架构 owner doc 授权）。
 
+## 6.2 与 AI 工具发现的关系（E3.6 平台能力登记，2026-08-26）
+
+本元数据（`version` / `businessDependencies` / `optionalFeatures`）是 **AI 工具发现的雏形**（`ai-native-interface.md` §4「外挂化」裁决）：模块级业务能力自描述为 AI 消费面提供「哪些业务模块存在、版本如何、哪些特性可开关」的结构化输入。AI 工具的**运行时发现通道** = GraphQL schema introspection（平台 `IGraphQLEngine`，`bizObjName.action` 即工具名）；平台 `nop-ai-tools` 已自带 `GraphQLToolProvider`（任意 `bizObj__action` 包装为 AI function tool：description + JSON Schema 输入 + 引擎执行）——**平台级 GraphQL→AI 工具桥已存在，应用层不重复实现、不强制启用**（平台优先，登记不重建）。边界：本文档只管模块元数据 schema；AI 接口层约定（双通道/护栏/MCP 否决）归 `ai-native-interface.md`。
+
 ## 7. 反模式自检表
 
 | # | 反模式 | 正确做法 |

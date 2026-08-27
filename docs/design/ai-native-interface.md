@@ -8,7 +8,7 @@
 
 - 2026 年开源 ERP 创新趋势「AI 原生架构」：ERPClaw 定义「action 层即 API + 不可变 GL」，Twenty 将 Agents/Workflows 作为一等公民，n8n 提供 human-in-the-loop 审批门。
 - 参考报告：`docs/analysis/erp-survey/2026-08-12-0000-erpclaw.md`、`2026-08-12-0000-twenty.md`、`2026-08-12-0000-n8n.md`、`2026-08-12-0000-innovation-trends.md` §1.1。
-- 平台边界：`nop-ai` 提供 LLM 接入（平台能力，非应用层缺口）；**nop-datav 平台（`feat-nop-datav` 分支，master 未合入）已实现 ChatBI**——NL→数据集查询（D6-1）/NL→看板生成（D6-1b）/NL→大屏生成（D6-2），是平台侧 AI 消费 BI 能力的现成形态（不依赖 MCP）；本文只管 ERP 业务面的 AI 消费/暴露设计。
+- 平台边界：`nop-ai` 提供 LLM 接入（平台能力，非应用层缺口）；**nop-datav 平台全链（含 ChatBI：NL→数据集查询/看板生成/大屏生成）已合入 `../nop-entropy` master**（2026-08-26 活仓核实，见 `dashboard-semantic-layer.md` §0）——平台侧 AI 消费 BI 能力的现成形态（不依赖 MCP）；本文只管 ERP 业务面的 AI 消费/暴露设计。
 
 ## 现状基线（nop-app-erp 已具备）
 
@@ -41,7 +41,7 @@
 |------|------|----------|
 | 状态变更确认门 | AI 发起的状态变更 action 需要显式确认标记（per-invocation），AI 无法静默绕过 | 可复用既有审批流（`use-approval`）作为高影响 action 的门；低影响 action 经 `action-auth.xml` 白名单 |
 | 能力边界 | 只读查询默认开放；写操作按 enforcement 栈既有规则（RBAC + SoD + 数据权限） | 已具备，无需新机制 |
-| 操作审计 | AI 发起的每次 action 记录完整输入输出 + 业务实体变化 | 复用会计日志/审计轨迹，增加 `actorType=AI` 标识字段（设计预留，ORM 变更已获授权，`erp-enhancement-roadmap.md` §8.1） |
+| 操作审计 | AI 发起的每次 action 记录完整输入输出 + 业务实体变化 | 复用会计日志/审计轨迹，增加 `actorType=AI` 标识字段（设计预留；**落地裁决=暂不落地**，触发条件与依据见 §前置调研结论，`erp-enhancement-roadmap.md` §8.1 E3.6 授权行未使用） |
 | 限流/频控 | 防止 AI 批量误操作 | 复用既有 `IRateLimiter`（D1 已落地） |
 
 ### 3. human-in-the-loop 门（参考 n8n approvals 节点 / Medusa 长流程）
@@ -50,9 +50,9 @@
 - 设计：AI 编排场景下，人工确认动作复用既有 wf 回调机制（`wf-integration-design.md` 三层桥接），不新建审批路径。
 - 与跨域流程编排的关系：见 `docs/architecture/cross-domain-flow-orchestration.md`（同为分析+设计，暂不编码）。
 
-### 3.5 平台 AI 消费能力边界（2026-08-13 核对）
+### 3.5 平台 AI 消费能力边界（2026-08-26 活仓核对）
 
-- **ChatBI 归属平台**：nop-datav（`feat-nop-datav` 分支）已实现 NL→数据集查询 / NL→看板生成 / NL→大屏生成——AI 消费 BI/可视化能力的现成平台形态；应用层不重复实现，只经 GraphQL/REST 调用（平台合入 master 后评估接入，见 `dashboard-semantic-layer.md` §0）。
+- **ChatBI 归属平台**：nop-datav 全链（api/app/codegen/core/dao/meta/service/web + DataAuth/RbacAuth/审计实体）**已合入 `../nop-entropy` master**（含 ChatBI：NL→数据集查询/看板生成/大屏生成）——AI 消费 BI/可视化能力的现成平台形态；应用层不重复实现，只经 GraphQL/REST 调用（挂载触发条件见 `dashboard-semantic-layer.md` §0：应用层运行时配置化 KPI/外部嵌入/挂载真实需求出现）。
 - **本文作用域**：ERP 业务面（BizMethod action 层 + 护栏 + 门）；平台 AI 基建（nop-ai LLM 接入、nop-datav ChatBI、nop-metadata 语义层）与应用层的关系以「外挂化消费」为准，不交叉实现。
 
 ### 4. AI 原语化 vs 外挂化（参考 Twenty）
@@ -81,7 +81,7 @@
 |------|------|------|
 | 设计 | 本文档（GraphQL 类型定义即 API + REST/GraphQL 双通道 + 护栏 + 门 + 原语化裁决；**否决 MCP**） | ✅ 已完成（本批次） |
 | 前置调研 | GraphQL schema 对 AI 工具发现的可用性（introspection/类型描述完整性）；action 元数据生成可行性 | ✅ 已完成（2026-08-26，结论与最小落地集见上节） |
-| 实现 | 最小落地集 6 项随 E3 整体计划实施（`2026-08-26-0735-2` Phase 7，按冻结清单逐项验收）；actorType 字段不落地（触发条件见上） | in progress |
+| 实现 | 最小落地集 6 项随 E3 整体计划实施（`2026-08-26-0735-2` Phase 7，按冻结清单逐项验收）；actorType 字段不落地（触发条件见上） | ✅ done（E3.6，2026-08-27：冻结 6 项逐项落地零增删——introspection config-gate JUnit 双证 / 11 域 `getDashboardKpi` `@Description` 补全 / 双通道一致性 E2E / 护栏负路径 E2E + `IRateLimiter` 接线 E3.5 管道入口 / 调用方身份落账断言 / `GraphQLToolProvider` 平台登记（本文档 + `business-module-metadata.md` §6.2）；零 MCP） |
 
 ## 反模式自检表
 
@@ -99,6 +99,6 @@
 - `docs/architecture/api-response-conventions.md` — API 响应约定；`../nop-entropy/docs-for-ai/02-core-guides/api-and-graphql.md` — GraphQL/REST 双通道调用（平台文档）
 - `docs/architecture/business-module-metadata.md` — 模块元数据（AI 工具发现的雏形）
 - `docs/architecture/cross-domain-flow-orchestration.md` — 跨域流程编排（同批分析+设计）
-- `docs/design/dashboard-semantic-layer.md` — 看板语义层（ChatBI 平台归属 + MCP 否决，同批姊妹主题）
-- `../nop-entropy` `feat-nop-datav` 分支 — 平台 ChatBI（D6-1/D6-1b/D6-2，master 未合入）
+- `docs/design/dashboard-semantic-layer.md` — 看板语义层（ChatBI 平台归属 + MCP 否决，同批姊妹主题；nop-datav master 实态见其 §0）
+- `../nop-entropy` master `nop-datav` 模块 — 平台 ChatBI（D6-1/D6-1b/D6-2，全链已合入 master，2026-08-26 活仓核实；应用层未挂载，边界见上 §3.5）
 - `docs/backlog/erp-enhancement-roadmap.md` — 本主题 roadmap（E1 设计补充 / E3 实现门控）
