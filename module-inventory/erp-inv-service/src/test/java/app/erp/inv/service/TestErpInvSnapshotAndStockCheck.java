@@ -164,14 +164,97 @@ public class TestErpInvSnapshotAndStockCheck extends JunitAutoTestCase {
         assertTrue(((Number) zeroReport.get("mismatchCount")).intValue() >= 3);
     }
 
+    // ---------- 多组织/多货主负路径（对账键 7 维 = 自然键） ----------
+
+    @Test
+    public void testStockCheckMultiOrgNoFalseMismatch() {
+        // 双组织同仓库/物料：各组织流水与余额值均正确 → 零假差异
+        // （旧 5 维键下 derivedByKey 同键折叠，必产假 BOOK_ONLY_NO_LEDGER/假 QTY_OR_COST_MISMATCH）
+        seedLedger("CHK-MO1", "1", null, WH_A, MAT_A, "100", "2", "200", LocalDate.of(2026, 7, 3));
+        seedLedger("CHK-MO2", "2", null, WH_A, MAT_A, "50", "2", "100", LocalDate.of(2026, 7, 5));
+        seedBalance("1", null, WH_A, MAT_A, "100", "200");
+        seedBalance("2", null, WH_A, MAT_A, "50", "100");
+
+        Map<String, Object> report = ledgerBiz.checkStockBalanceConsistency(LocalDate.of(2026, 7, 31), CTX);
+        assertEquals(0, ((Number) report.get("mismatchCount")).intValue(), "多组织各值正确 → 零假差异");
+        assertEquals(Boolean.TRUE, report.get("consistent"));
+    }
+
+    @Test
+    public void testStockCheckMultiOrgRealDifferenceDetectedWithOrgDim() {
+        // 组织 1 正确；组织 2 账面 40 vs 派生 50 → 仅该组织差异被检出，dimensionKey 含 org 维
+        seedLedger("CHK-MO3", "1", null, WH_A, MAT_A, "100", "2", "200", LocalDate.of(2026, 7, 3));
+        seedBalance("1", null, WH_A, MAT_A, "100", "200");
+        seedLedger("CHK-MO4", "2", null, WH_A, MAT_A, "50", "2", "100", LocalDate.of(2026, 7, 5));
+        seedBalance("2", null, WH_A, MAT_A, "40", "100");
+
+        Map<String, Object> report = ledgerBiz.checkStockBalanceConsistency(LocalDate.of(2026, 7, 31), CTX);
+        assertEquals(1, ((Number) report.get("mismatchCount")).intValue(), "多组织下单组织真实差异被检出");
+
+        @SuppressWarnings("unchecked")
+        List<Map<String, Object>> mismatches = (List<Map<String, Object>>) report.get("mismatches");
+        Map<String, Object> m = mismatches.get(0);
+        assertEquals("QTY_OR_COST_MISMATCH", m.get("type"));
+        assertEquals("2", String.valueOf(m.get("orgId")), "差异行携带 orgId 诊断字段");
+        assertTrue(String.valueOf(m.get("dimensionKey")).startsWith("2|"), "dimensionKey 含 org 维");
+        assertEquals(0, new BigDecimal("40").compareTo((BigDecimal) m.get("bookQuantity")));
+        assertEquals(0, new BigDecimal("50").compareTo((BigDecimal) m.get("derivedQuantity")));
+        assertEquals(Boolean.FALSE, report.get("consistent"));
+    }
+
+    @Test
+    public void testStockCheckMultiOwnerNoFalseMismatch() {
+        // 多货主同组织/仓库/物料：各货主流水与余额值均正确 → 零假差异（同型于多组织断言）
+        seedLedger("CHK-OW1", "1", "301", WH_A, MAT_A, "100", "2", "200", LocalDate.of(2026, 7, 3));
+        seedLedger("CHK-OW2", "1", "302", WH_A, MAT_A, "60", "2", "120", LocalDate.of(2026, 7, 5));
+        seedBalance("1", "301", WH_A, MAT_A, "100", "200");
+        seedBalance("1", "302", WH_A, MAT_A, "60", "120");
+
+        Map<String, Object> report = ledgerBiz.checkStockBalanceConsistency(LocalDate.of(2026, 7, 31), CTX);
+        assertEquals(0, ((Number) report.get("mismatchCount")).intValue(), "多货主各值正确 → 零假差异");
+        assertEquals(Boolean.TRUE, report.get("consistent"));
+    }
+
+    @Test
+    public void testStockCheckMultiOwnerRealDifferenceDetectedWithOwnerDim() {
+        // 货主 301 正确；货主 302 账面 30 vs 派生 60 → 差异被检出且 dimensionKey 含 owner 维；
+        // 货主 303 流水独有（LEDGER_ONLY）→ 诊断两维取自派生聚合行
+        seedLedger("CHK-OW3", "1", "301", WH_A, MAT_A, "100", "2", "200", LocalDate.of(2026, 7, 3));
+        seedBalance("1", "301", WH_A, MAT_A, "100", "200");
+        seedLedger("CHK-OW4", "1", "302", WH_A, MAT_A, "60", "2", "120", LocalDate.of(2026, 7, 5));
+        seedBalance("1", "302", WH_A, MAT_A, "30", "120");
+        seedLedger("CHK-OW5", "1", "303", WH_A, MAT_A, "9", "1", "9", LocalDate.of(2026, 7, 6));
+
+        Map<String, Object> report = ledgerBiz.checkStockBalanceConsistency(LocalDate.of(2026, 7, 31), CTX);
+        assertEquals(2, ((Number) report.get("mismatchCount")).intValue());
+
+        @SuppressWarnings("unchecked")
+        List<Map<String, Object>> mismatches = (List<Map<String, Object>>) report.get("mismatches");
+        Map<String, Object> qtyMismatch = mismatches.stream()
+                .filter(m -> "QTY_OR_COST_MISMATCH".equals(m.get("type"))).findFirst().orElseThrow();
+        assertEquals("302", String.valueOf(qtyMismatch.get("ownerId")), "差异行携带 ownerId 诊断字段");
+        assertTrue(String.valueOf(qtyMismatch.get("dimensionKey")).endsWith("|302|"), "dimensionKey 含 owner 维");
+
+        Map<String, Object> ledgerOnly = mismatches.stream()
+                .filter(m -> "LEDGER_ONLY_NO_BALANCE".equals(m.get("type"))).findFirst().orElseThrow();
+        assertEquals("303", String.valueOf(ledgerOnly.get("ownerId")), "LEDGER_ONLY 行 ownerId 取自派生聚合行");
+        assertEquals("1", String.valueOf(ledgerOnly.get("orgId")), "LEDGER_ONLY 行 orgId 取自派生聚合行");
+    }
+
     // ---------- seeds ----------
 
     private void seedLedger(String code, String warehouseId, String materialId,
                             String qty, String unitCost, String totalCost, LocalDate businessDate) {
+        seedLedger(code, "1", null, warehouseId, materialId, qty, unitCost, totalCost, businessDate);
+    }
+
+    private void seedLedger(String code, String orgId, String ownerId, String warehouseId, String materialId,
+                            String qty, String unitCost, String totalCost, LocalDate businessDate) {
         ormTemplate.runInSession(sess -> {
             ErpInvStockLedger l = new ErpInvStockLedger();
             l.setCode(code);
-            l.setOrgId("1");
+            l.setOrgId(orgId);
+            l.setOwnerId(ownerId);
             l.setMoveId("9100");
             l.setMoveLineId("9101");
             l.setMaterialId(materialId);
@@ -188,10 +271,16 @@ public class TestErpInvSnapshotAndStockCheck extends JunitAutoTestCase {
     }
 
     private void seedBalance(String warehouseId, String materialId, String qty, String totalCost) {
+        seedBalance("1", null, warehouseId, materialId, qty, totalCost);
+    }
+
+    private void seedBalance(String orgId, String ownerId, String warehouseId, String materialId,
+                             String qty, String totalCost) {
         ormTemplate.runInSession(sess -> {
             IEntityDao<ErpInvStockBalance> dao = daoProvider.daoFor(ErpInvStockBalance.class);
             ErpInvStockBalance b = dao.newEntity();
-            b.setOrgId("1");
+            b.setOrgId(orgId);
+            b.setOwnerId(ownerId);
             b.setMaterialId(materialId);
             b.setWarehouseId(warehouseId);
             b.setTotalQuantity(new BigDecimal(qty));

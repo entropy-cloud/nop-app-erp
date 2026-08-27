@@ -115,7 +115,7 @@ public class ErpInvStockLedgerBizModel extends AbstractErpImmutableCrudBizModel<
                 BigDecimal bookCost = nz(bal.getTotalCost());
                 if (derived == null) {
                     if (bookQty.signum() != 0 || bookCost.signum() != 0) {
-                        mismatches.add(mismatchRow(balRow, key, bookQty, bookCost,
+                        mismatches.add(mismatchRow(balRow, null, key, bookQty, bookCost,
                                 BigDecimal.ZERO, BigDecimal.ZERO, "BOOK_ONLY_NO_LEDGER"));
                     }
                     continue;
@@ -123,7 +123,7 @@ public class ErpInvStockLedgerBizModel extends AbstractErpImmutableCrudBizModel<
                 BigDecimal derivedQty = DashboardUtil.toBigDecimal(derived.get("quantity"));
                 BigDecimal derivedCost = DashboardUtil.toBigDecimal(derived.get("totalCost"));
                 if (bookQty.compareTo(derivedQty) != 0 || bookCost.compareTo(derivedCost) != 0) {
-                    mismatches.add(mismatchRow(balRow, key, bookQty, bookCost,
+                    mismatches.add(mismatchRow(balRow, derived, key, bookQty, bookCost,
                             derivedQty, derivedCost, "QTY_OR_COST_MISMATCH"));
                 }
             }
@@ -131,7 +131,7 @@ public class ErpInvStockLedgerBizModel extends AbstractErpImmutableCrudBizModel<
                 BigDecimal derivedQty = DashboardUtil.toBigDecimal(derived.get("quantity"));
                 BigDecimal derivedCost = DashboardUtil.toBigDecimal(derived.get("totalCost"));
                 if (derivedQty.signum() != 0 || derivedCost.signum() != 0) {
-                    mismatches.add(mismatchRow(null, balanceKey(derived),
+                    mismatches.add(mismatchRow(null, derived, balanceKey(derived),
                             BigDecimal.ZERO, BigDecimal.ZERO, derivedQty, derivedCost, "LEDGER_ONLY_NO_BALANCE"));
                 }
             }
@@ -170,28 +170,32 @@ public class ErpInvStockLedgerBizModel extends AbstractErpImmutableCrudBizModel<
         return ormTemplate.findListByQuery(q);
     }
 
+    /** 比对键 = 余额自然键全 7 维（对齐 {@link #SNAPSHOT_DIMS} 与 {@code UK_INV_STOCK_BALANCE_NATURAL}）；
+     * 缺 orgId/ownerId 会在多组织/多货主数据下键碰撞，产生假差异并遮蔽真实差异。 */
     private static String balanceKey(Map<String, Object> row) {
         StringBuilder sb = new StringBuilder();
-        for (String dim : new String[]{"warehouseId", "locationId", "materialId", "skuId", "batchNo"}) {
+        for (String dim : SNAPSHOT_DIMS) {
             Object v = row.get(dim);
             sb.append(v == null ? "" : String.valueOf(v)).append('|');
         }
         return sb.toString();
     }
 
-    private static Map<String, Object> mismatchRow(Map<String, Object> balance, String key,
+    /** 差异输出行：全维度诊断字段取 balance 行；LEDGER_ONLY 分支无 balance 行，取派生聚合行。 */
+    private static Map<String, Object> mismatchRow(Map<String, Object> balance, Map<String, Object> derived, String key,
                                                    BigDecimal bookQty, BigDecimal bookCost,
                                                    BigDecimal derivedQty, BigDecimal derivedCost, String type) {
+        Map<String, Object> dims = balance != null ? balance : derived;
         Map<String, Object> row = new LinkedHashMap<>();
         row.put("balanceId", balance != null ? balance.get("id") : null);
         row.put("dimensionKey", key);
-        if (balance != null) {
-            row.put("warehouseId", balance.get("warehouseId"));
-            row.put("locationId", balance.get("locationId"));
-            row.put("materialId", balance.get("materialId"));
-            row.put("skuId", balance.get("skuId"));
-            row.put("batchNo", balance.get("batchNo"));
-        }
+        row.put("orgId", dims.get("orgId"));
+        row.put("ownerId", dims.get("ownerId"));
+        row.put("warehouseId", dims.get("warehouseId"));
+        row.put("locationId", dims.get("locationId"));
+        row.put("materialId", dims.get("materialId"));
+        row.put("skuId", dims.get("skuId"));
+        row.put("batchNo", dims.get("batchNo"));
         row.put("type", type);
         row.put("bookQuantity", bookQty);
         row.put("bookTotalCost", bookCost);
