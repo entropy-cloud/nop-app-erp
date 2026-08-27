@@ -121,17 +121,34 @@ public class ErpFinApDocumentPipelineProcessor {
 
     // ---------- 上传入口（步骤 0：接收） ----------
 
+    /**
+     * P2-8 上传入口白名单（plan 2026-08-28-0219-1，与默认 OCR 引擎实际可解析能力对齐）：
+     * pdf/txt/csv/json/xml 可直接抽取文本；png/jpg/jpeg 过白名单后由默认引擎返回 null 落人工门（合法扫描件分支）。
+     */
+    private static final java.util.Set<String> ALLOWED_FILE_EXTS =
+            java.util.Set.of("pdf", "txt", "csv", "json", "xml", "png", "jpg", "jpeg");
+    private static final java.util.Set<String> ALLOWED_MIME_EXACT =
+            java.util.Set.of("application/pdf", "application/json", "application/xml",
+                    "image/png", "image/jpeg");
+    /** fileName 列精度（orm erp_fin_ap_document.file_name VARCHAR(200)）。 */
+    private static final int FILE_NAME_MAX_LENGTH = 200;
+    /** P2-1 重复上传守卫覆盖的非终态集合（终态 FAILED/MANUAL_REVIEW/ARCHIVED 外可重传）。 */
+    private static final java.util.List<String> DEDUP_GUARD_STATUSES =
+            java.util.List.of("RECEIVED", "PARSED", "CLASSIFIED", "DRAFTED");
+
     public ErpFinApDocument upload(String fileName, String mimeType, String fileBase64,
                                    String orgId, IServiceContext context) {
         requirePipelineEnabled(null);
         acquireUploadPermit();
-        byte[] content = decodeBase64(fileBase64);
+        validateUploadContract(fileName, mimeType);
+        byte[] content = decodeBase64(fileName, fileBase64);
         long maxLen = AppConfig.var(ErpFinConfigs.CONFIG_AP_DOC_MAX_FILE_LENGTH,
                 ErpFinConfigs.DEFAULT_AP_DOC_MAX_FILE_LENGTH);
         if (content.length > maxLen) {
             throw new NopException(ErpFinErrors.ERR_AP_DOC_FILE_TOO_LARGE)
                     .param(ErpFinErrors.ARG_FILE_NAME, fileName);
         }
+        rejectDuplicateUpload(fileName, content);
         String fileId = saveFile(fileName, mimeType, content);
 
         ErpFinApDocument doc = docDao().newEntity();
@@ -460,10 +477,19 @@ public class ErpFinApDocumentPipelineProcessor {
         return sb.toString();
     }
 
+    /**
+     * 步骤失败面客错误码对位（P2-9，plan 2026-08-28-0219-1）：PARSE 步 →
+     * {@code ERR_AP_DOC_PARSE_FAILED}；DRAFT 步 → {@code ERR_AP_DOC_DRAFT_FAILED}；
+     * CLASSIFY 步（仅「无分类引擎注册」部署异常）复用 {@code ERR_AP_DOC_DRAFT_FAILED}——
+     * 分类为草稿前置步骤，失败即草稿无法生成，且不为部署异常新增专属面客码（复用裁决登记于计划执行注记）。
+     */
     private RuntimeException fail(ErpFinApDocument doc, String step, String message) {
         String errorMsg = "步骤 " + step + " 失败：" + message;
         persistFailure(doc.getId(), step, errorMsg);
-        return new NopException(ErpFinErrors.ERR_AP_DOC_DRAFT_FAILED)
+        io.nop.api.core.exceptions.ErrorCode code = "PARSE".equals(step)
+                ? ErpFinErrors.ERR_AP_DOC_PARSE_FAILED
+                : ErpFinErrors.ERR_AP_DOC_DRAFT_FAILED;
+        return new NopException(code)
                 .param(ErpFinErrors.ARG_DOCUMENT_ID, doc.getId())
                 .param(ErpFinErrors.ARG_STEP, step);
     }
@@ -538,11 +564,95 @@ public class ErpFinApDocumentPipelineProcessor {
         }
     }
 
-    private byte[] decodeBase64(String fileBase64) {
+    private byte[] decodeBase64(String fileName, String fileBase64) {
         if (StringHelper.isEmpty(fileBase64)) {
             return new byte[0];
         }
-        return Base64.getDecoder().decode(fileBase64);
+        try {
+            return Base64.getDecoder().decode(fileBase64);
+        } catch (IllegalArgumentException e) {
+            // P2-8：非法 base64 以 NopException 范式面客（不再裸抛 IllegalArgumentException）
+            throw new NopException(ErpFinErrors.ERR_AP_DOC_INVALID_BASE64, e)
+                    .param(ErpFinErrors.ARG_FILE_NAME, fileName);
+        }
+    }
+
+    /** P2-8 上传入口契约：fileName 非空 + 列精度 200 上限 + 扩展名/MIME 白名单。 */
+    private void validateUploadContract(String fileName, String mimeType) {
+        if (StringHelper.isBlank(fileName)) {
+            throw new NopException(ErpFinErrors.ERR_AP_DOC_FILE_TYPE_NOT_ALLOWED)
+                    .param(ErpFinErrors.ARG_FILE_NAME, fileName);
+        }
+        if (fileName.length() > FILE_NAME_MAX_LENGTH) {
+            throw new NopException(ErpFinErrors.ERR_AP_DOC_FILE_NAME_TOO_LONG)
+                    .param(ErpFinErrors.ARG_FILE_NAME, fileName);
+        }
+        String ext = extOf(fileName);
+        if (ext == null || !ALLOWED_FILE_EXTS.contains(ext.toLowerCase())) {
+            throw new NopException(ErpFinErrors.ERR_AP_DOC_FILE_TYPE_NOT_ALLOWED)
+                    .param(ErpFinErrors.ARG_FILE_NAME, fileName);
+        }
+        if (mimeType != null && !isAllowedMime(mimeType)) {
+            throw new NopException(ErpFinErrors.ERR_AP_DOC_FILE_TYPE_NOT_ALLOWED)
+                    .param(ErpFinErrors.ARG_FILE_NAME, fileName);
+        }
+    }
+
+    private boolean isAllowedMime(String mimeType) {
+        String normalized = mimeType.toLowerCase().trim();
+        if (ALLOWED_MIME_EXACT.contains(normalized) || normalized.startsWith("text/")) {
+            return true;
+        }
+        // 默认引擎 isPlainText/isPdf 按 contains 判定，白名单对齐同语义（如 application/xml; charset=UTF-8）
+        return normalized.contains("pdf") || normalized.contains("json") || normalized.contains("xml");
+    }
+
+    /**
+     * P2-1 重复上传守卫（plan 2026-08-28-0219-1 方案 A，应用层零 ORM）：按 fileName 查非终态
+     * （RECEIVED/PARSED/CLASSIFIED/DRAFTED）文档，fileLength 相同者逐候选读文件本体比对内容摘要，
+     * 命中即拒绝并指向既有文档。并发窗口残留风险（两请求同刻通过守卫）登记 owner doc
+     * （最终权威去重 = 三单匹配）。
+     */
+    private void rejectDuplicateUpload(String fileName, byte[] content) {
+        QueryBean q = new QueryBean();
+        q.addFilter(eq("fileName", fileName));
+        q.addFilter(io.nop.api.core.beans.FilterBeans.in("status", DEDUP_GUARD_STATUSES));
+        List<ErpFinApDocument> candidates = docDao().findAllByQuery(q);
+        for (ErpFinApDocument candidate : candidates) {
+            if (candidate.getFileLength() != null && candidate.getFileLength() == content.length
+                    && contentMatches(candidate, content)) {
+                throw new NopException(ErpFinErrors.ERR_AP_DOC_DUPLICATE_UPLOAD)
+                        .param(ErpFinErrors.ARG_FILE_NAME, fileName)
+                        .param(ErpFinErrors.ARG_DOCUMENT_ID, candidate.getId())
+                        .param(ErpFinErrors.ARG_STATUS, candidate.getStatus());
+            }
+        }
+    }
+
+    /** 候选文档文件本体内容摘要比对；读取失败视为不重复（不阻断新上传）。 */
+    private boolean contentMatches(ErpFinApDocument candidate, byte[] content) {
+        try {
+            IFileRecord record = fileStore.getFile(candidate.getFileId());
+            if (record == null) {
+                return false;
+            }
+            java.security.MessageDigest digest = java.security.MessageDigest.getInstance("SHA-256");
+            byte[] candidateHash;
+            try (InputStream in = record.getResource().getInputStream(); ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+                byte[] buf = new byte[8192];
+                int n;
+                while ((n = in.read(buf)) > 0) {
+                    out.write(buf, 0, n);
+                }
+                candidateHash = digest.digest(out.toByteArray());
+            }
+            byte[] contentHash = java.security.MessageDigest.getInstance("SHA-256").digest(content);
+            return java.util.Arrays.equals(candidateHash, contentHash);
+        } catch (Exception e) {
+            LOG.warn("erp-fin-ap-doc-dedup-read-failed: documentId={}, fileId={}, reason={}",
+                    candidate.getId(), candidate.getFileId(), e.getMessage());
+            return false;
+        }
     }
 
     private String extOf(String fileName) {

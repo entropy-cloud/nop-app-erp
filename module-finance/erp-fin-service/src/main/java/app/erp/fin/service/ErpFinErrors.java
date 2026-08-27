@@ -556,4 +556,24 @@ public interface ErpFinErrors {
     ErrorCode ERR_AP_DOC_RATE_LIMITED = ErrorCode.define("erp.err.fin.ap-doc.rate-limited",
             "AP 文档上传入口限流（{rateLimitRps} rps），请降低批量速率",
             ARG_RATE_LIMIT_RPS);
+
+    /** P2-8 上传入口契约（plan 2026-08-28-0219-1）：扩展名/MIME 白名单外的类型拒绝。 */
+    ErrorCode ERR_AP_DOC_FILE_TYPE_NOT_ALLOWED = ErrorCode.define("erp.err.fin.ap-doc.file-type-not-allowed",
+            "上传文件 {fileName} 的类型不在管道白名单内（允许扩展名：pdf/txt/csv/json/xml/png/jpg/jpeg）",
+            ARG_FILE_NAME);
+
+    /** P2-8：fileName 超过列精度 200 拒绝（与 erp_fin_ap_document.file_name VARCHAR(200) 列语义一致）。 */
+    ErrorCode ERR_AP_DOC_FILE_NAME_TOO_LONG = ErrorCode.define("erp.err.fin.ap-doc.file-name-too-long",
+            "上传文件名 {fileName} 超过 200 字符上限",
+            ARG_FILE_NAME);
+
+    /** P2-8：非法 base64 内容拒绝（NopException 范式，替代裸 IllegalArgumentException）。 */
+    ErrorCode ERR_AP_DOC_INVALID_BASE64 = ErrorCode.define("erp.err.fin.ap-doc.invalid-base64",
+            "上传文件 {fileName} 的 fileBase64 不是合法 base64 编码",
+            ARG_FILE_NAME);
+
+    /** P2-1 重复上传守卫：内容 + 文件名同且非终态的同文件文档已存在，拒绝并指向既有文档（plan 2026-08-28-0219-1 方案 A）。 */
+    ErrorCode ERR_AP_DOC_DUPLICATE_UPLOAD = ErrorCode.define("erp.err.fin.ap-doc.duplicate-upload",
+            "文件 {fileName} 与未完结文档 {documentId} 内容相同（非终态 {status}），禁止重复上传；完结后重传或走既有文档处理",
+            ARG_FILE_NAME, ARG_DOCUMENT_ID, ARG_STATUS);
 }

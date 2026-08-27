@@ -21,4 +21,12 @@ public interface ErpFinConfigs {
     /** E3.6 护栏：管道上传入口限流（自动化批量面，IRateLimiter 令牌桶；0 = 不限流）。 */
     String CONFIG_AP_DOC_UPLOAD_RATE_LIMIT_RPS = "erp-fin.ap-doc-upload-rate-limit-rps";
     double DEFAULT_AP_DOC_UPLOAD_RATE_LIMIT_RPS = 10.0;
+
+    /** P2-7（plan 2026-08-28-0219-1）：默认 OCR 引擎 PDF 页数上限（防大 PDF 全内存 CPU/内存放大；超限 WARN + 返回 null 落人工门；<=0 = 不限）。 */
+    String CONFIG_AP_DOC_PDF_MAX_PAGES = "erp-fin.ap-doc-pdf-max-pages";
+    int DEFAULT_AP_DOC_PDF_MAX_PAGES = 50;
+
+    /** P2-6：分类引擎伙伴候选加载上限（超限 WARN + 截断候选继续内存匹配，可观测不改变人工门语义）。 */
+    String CONFIG_AP_DOC_PARTNER_MATCH_LIMIT = "erp-fin.ap-doc-partner-match-limit";
+    int DEFAULT_AP_DOC_PARTNER_MATCH_LIMIT = 2000;
 }

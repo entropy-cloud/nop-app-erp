@@ -7,17 +7,27 @@
        xmlns:c="c">
 
     <!-- E3.5 文档摄取管道异步消费（document-driven-ap-automation.md §1「管道即队列」+
-         AP-4：复用 nop-job→nop-batch 范式，不新建队列基建）。loader 返回单哨兵行，processor 逐个
-         处理 RECEIVED 文档；config-gate 由 job yaml 层控制（默认关闭）。 -->
+         AP-4：复用 nop-job→nop-batch 范式，不新建队列基建）。loader 为 RECEIVED 触发扫描
+     （orm-reader 自然终止——排空即空集返回），processor 调 processPending 自扫描逐项处理
+     （内部 REQUIRES_NEW per-item 失败隔离，plan 2026-08-27-2006-1 P1-2）；config-gate 由
+     job yaml 层控制（默认关闭）。
+         P2-14 接线修正（plan 2026-08-28-0219-1，执行期发现两处运行时缺陷并修复）：
+     ① 原 processor inject('IErpFinApDocumentBiz') 非注册 bean id（unknown-bean-for-name），
+       对齐 bank-recon-auto-reverse.batch.xml 按 beans.xml bean id 注入范式；
+     ② 原 loader &lt;source&gt;return [{}]&lt;/source&gt; 恒返回单哨兵行——batch 框架按「loader 返回空集」
+       判定完成，恒非空 = 无限 chunk 循环（job 永不结束），改 orm-reader 触发扫描。 -->
     <loader>
-        <source><![CDATA[
-            return [{}];
-        ]]></source>
+        <orm-reader entityName="app.erp.fin.dao.entity.ErpFinApDocument">
+            <query>
+                <filter>
+                    <eq name="status" value="RECEIVED"/>
+                </filter>
+            </query>
+        </orm-reader>
     </loader>
 
     <processor name="process">
         <source><![CDATA[
-            const biz = inject('IErpFinApDocumentBiz');
             const processor = inject('app.erp.fin.service.processor.ErpFinApDocumentPipelineProcessor');
             const n = processor.processPending(batchChunkCtx.serviceContext);
             return { processed: n };

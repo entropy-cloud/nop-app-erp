@@ -10,12 +10,12 @@ import io.nop.core.context.IServiceContext;
 import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
 import io.nop.dao.txn.ITransactionTemplate;
+import io.nop.api.core.time.CoreMetrics;
 import io.nop.orm.IOrmTemplate;
 import jakarta.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.time.LocalDate;
 import java.util.List;
 
 import static io.nop.api.core.beans.FilterBeans.eq;
@@ -114,7 +114,7 @@ public class ErpFinBankReconAutoReverseHelper {
         IEntityDao<ErpFinBankReconciliation> dao = daoProvider.daoFor(ErpFinBankReconciliation.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("docStatus", ErpFinConstants.VOUCHER_STATUS_POSTED));
-        q.addFilter(lt("reconciliationDate", LocalDate.now().withDayOfMonth(1)));
+        q.addFilter(lt("reconciliationDate", CoreMetrics.currentDate().withDayOfMonth(1)));
         return dao.findAllByQuery(q);
     }
 }

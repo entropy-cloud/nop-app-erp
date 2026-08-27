@@ -17,6 +17,9 @@ async function bearerFromPage(page: import('@playwright/test').Page): Promise<st
  *   `/graphql` 与 `/r/` 两通道（共享 IGraphQLEngine）数值一致断言；
  * - item 4 护栏负路径：无权限角色经 `/r/` 通道调用高影响 mutation（`ErpFinBadDebt__writeOff`，
  *   FNPT 声明）被拒（enforcement 门径复用，AI/用户共用 action 层无旁路）；
+ *   **P2-E 归因修正 + 补齐（plan 2026-08-28-0219-1）**：E3 计划 Phase 7 ④ 的负路径证据实测的是
+ *   既有 BadDebt mutation（非 E3 批新增 API 面）；新增 E3.5 管道 mutation 面（`uploadApDocument`）
+ *   的无权限拒绝路径由本 spec `uploadApDocument denied for unauthorized role` 用例承载；
  * - item 5 调用方身份落账：REST 通道以 role-finance 身份经 E3.5 管道上传 →
  *   `ErpFinApDocument.createdBy` = 该账号 userId（审计标识 = 身份落账，actorType 不落地裁决）。
  */
@@ -68,6 +71,31 @@ test.describe('E3.6 AI interface layer (dual channel + guardrails + identity aud
     expect(
       JSON.stringify(json),
       'rejection should carry no-permission / 没有访问权限 token',
+    ).toContain('没有访问权限');
+  });
+
+  test('uploadApDocument denied for unauthorized role via /r/ channel (P2-E)', async ({ page }) => {
+    await loginAndNavigate(page, '/ErpFinApDocument-main');
+    // P2-E（plan 2026-08-28-0219-1）：E3 批新增 mutation 面的鉴权拒绝路径——
+    // role-restricted 无 FNPT:ErpFinApDocument:uploadApDocument 权限（种子 roles=财务员），
+    // action-auth 已登记该权限项，enforcement 应拒绝（区别于既有 BadDebt 负路径实测面）
+    const loginResp = await page.request.post('/r/LoginApi__login', {
+      data: { loginType: 1, principalId: 'role-restricted', principalSecret: '123' },
+    });
+    const restrictedToken = (await loginResp.json())?.data?.accessToken;
+    expect(restrictedToken, 'role-restricted REST login should return token').toBeTruthy();
+
+    const ts = Date.now();
+    const base64 = Buffer.from(`收据\n收款单位：无权限上传探测\n金额：1.00\n`, 'utf-8').toString('base64');
+    const resp = await page.request.post('/r/ErpFinApDocument__uploadApDocument', {
+      headers: { Authorization: `Bearer ${restrictedToken}` },
+      data: { fileName: `p2e-deny-${ts}.txt`, mimeType: 'text/plain', fileBase64: base64 },
+    });
+    const json: any = await resp.json();
+    expect(json?.status, 'unauthorized uploadApDocument should be non-zero status').not.toBe(0);
+    expect(
+      JSON.stringify(json),
+      'rejection should carry no-permission / 没有访问权限 token (FNPT enforcement, not business guard)',
     ).toContain('没有访问权限');
   });
 

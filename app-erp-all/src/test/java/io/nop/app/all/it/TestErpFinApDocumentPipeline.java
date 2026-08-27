@@ -50,6 +50,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  *   <li>幂等/失败重试：DRAFTED 重复处理拒绝；MANUAL_REVIEW 重试计数 + RETRY 轨迹；</li>
  *   <li>config-gate：管道关闭时 process 拒绝（默认关闭，既有套件零回归）。</li>
  * </ul>
+ *
+ * <p>P2 加固负路径（plan `2026-08-28-0219-1` Phase 1）：上传入口契约（白名单/文件名精度/base64）、
+ * 重复上传守卫（方案 A）、PARSE 失败专属面客码 `ERR_AP_DOC_PARSE_FAILED`。
+ *
+ * <p>鉴权面说明（plan `2026-08-28-0219-1` Phase 2 注记）：本 IT 保持
+ * {@code enableActionAuth=FALSE}——鉴权拒绝路径（无权限角色经 `/r/` 调 `uploadApDocument` 被拒）
+ * 由 E2E `ai-interface.value.spec.ts` 承载（真实 enforcement 栈 + permissions 账号池），IT 层不重复断言。
  */
 @NopTestConfig(localDb = true,
         initDatabaseSchema = OptionalBoolean.TRUE,
@@ -231,8 +238,9 @@ public class TestErpFinApDocumentPipeline extends JunitAutoTestCase {
         ApiResponse<?> resp = executeRpc(GraphQLOperationType.mutation, "ErpFinApDocument__processApDocument",
                 ApiRequest.build(Map.of("documentId", poisonId)));
         assertTrue(resp.getStatus() != 0, "步骤失败应向调用方报错");
-        assertTrue(String.valueOf(resp.getCode()).contains("draft-failed"),
-                "失败响应应为管道步骤失败错误码: " + resp.getCode());
+        // P2-9：PARSE 步失败面客码 = parse-failed（原 draft-failed 契约错位修正）
+        assertTrue(String.valueOf(resp.getCode()).contains("parse-failed"),
+                "PARSE 失败响应应为解析失败错误码: " + resp.getCode());
 
         Map<String, Object> doc = get("ErpFinApDocument", poisonId, "id status errorMsg");
         assertEquals("FAILED", doc.get("status"), "FAILED 状态须在外层事务回滚后存活");
@@ -287,6 +295,100 @@ public class TestErpFinApDocumentPipeline extends JunitAutoTestCase {
 
         // FAILED 终态退出 RECEIVED 扫描循环：二次扫描零命中（毒文档不再被重复处理/饿死后续）
         assertEquals(0, pipelineProcessor.processPending(CTX), "FAILED 文档不得再被 RECEIVED 扫描命中");
+    }
+
+    @Test
+    public void testUploadContractNegativePaths() {
+        // P2-8（plan 2026-08-28-0219-1）：上传入口契约负路径——白名单外扩展名 / 超长文件名 / 非法 base64
+        // 均以 NopException 专属参数面客（错误码 + fileName 参数），不再裸 IllegalArgumentException。
+        // 限流关零（多笔连发会被默认 10rps 令牌桶拦截，掩盖契约拒绝码；范式对齐 testUploadRateLimitedGuard）
+        enablePipeline();
+        setConfig(ErpFinConfigs.CONFIG_AP_DOC_UPLOAD_RATE_LIMIT_RPS, "0");
+        try {
+            String content = "发票\n名称：深圳市测试供应商有限公司\n发票号码：INV-CONTRACT-0001\n";
+            String base64 = Base64.getEncoder().encodeToString(content.getBytes(StandardCharsets.UTF_8));
+
+            ApiResponse<?> badExt = executeRpc(GraphQLOperationType.mutation, "ErpFinApDocument__uploadApDocument",
+                    ApiRequest.build(Map.of("fileName", "invoice.exe", "mimeType", "application/octet-stream",
+                            "fileBase64", base64)));
+            assertTrue(badExt.getStatus() != 0, "白名单外扩展名应被拒");
+            assertTrue(String.valueOf(badExt.getCode()).contains("file-type-not-allowed"),
+                    "拒绝应携带 file-type-not-allowed 错误码: " + badExt.getCode());
+
+            ApiResponse<?> badMime = executeRpc(GraphQLOperationType.mutation, "ErpFinApDocument__uploadApDocument",
+                    ApiRequest.build(Map.of("fileName", "invoice.docx", "mimeType", "application/pdf",
+                            "fileBase64", base64)));
+            assertTrue(badMime.getStatus() != 0, "扩展名与 MIME 任一不符白名单应被拒");
+            assertTrue(String.valueOf(badMime.getCode()).contains("file-type-not-allowed"),
+                    "拒绝码: " + badMime.getCode());
+
+            String overlong = "x".repeat(201) + ".txt";
+            ApiResponse<?> badName = executeRpc(GraphQLOperationType.mutation, "ErpFinApDocument__uploadApDocument",
+                    ApiRequest.build(Map.of("fileName", overlong, "mimeType", "text/plain", "fileBase64", base64)));
+            assertTrue(badName.getStatus() != 0, "超列精度 200 文件名应被拒");
+            assertTrue(String.valueOf(badName.getCode()).contains("file-name-too-long"),
+                    "拒绝应携带 file-name-too-long 错误码: " + badName.getCode());
+
+            ApiResponse<?> badBase64 = executeRpc(GraphQLOperationType.mutation, "ErpFinApDocument__uploadApDocument",
+                    ApiRequest.build(Map.of("fileName", "broken-base64.txt", "mimeType", "text/plain",
+                            "fileBase64", "not@@valid@@base64!!")));
+            assertTrue(badBase64.getStatus() != 0, "非法 base64 应被拒");
+            assertTrue(String.valueOf(badBase64.getCode()).contains("invalid-base64"),
+                    "非法 base64 应以 NopException 专属错误码面客: " + badBase64.getCode());
+
+            // 白名单内合法分支回归：png 过白名单后落 RECEIVED（扫描件人工门为合法业务分支）
+            Map<String, Object> png = mutation("ErpFinApDocument__uploadApDocument", Map.of(
+                    "fileName", "contract-scan.png", "mimeType", "image/png",
+                    "fileBase64", Base64.getEncoder().encodeToString(new byte[]{1, 2, 3, 4})));
+            assertEquals("RECEIVED", png.get("status"));
+        } finally {
+            setConfig(ErpFinConfigs.CONFIG_AP_DOC_UPLOAD_RATE_LIMIT_RPS,
+                    String.valueOf(ErpFinConfigs.DEFAULT_AP_DOC_UPLOAD_RATE_LIMIT_RPS));
+        }
+    }
+
+    @Test
+    public void testDuplicateUploadRejectedPointingToExisting() {
+        // P2-1（plan 2026-08-28-0219-1 方案 A）：同 fileName + 同内容的非终态文档重传被拒并指向既有文档；
+        // 同名不同内容放行；终态（MANUAL_REVIEW）不拦截（人工复核后允许重传）。
+        // 限流关零（多笔连发会被默认 10rps 令牌桶拦截，掩盖 duplicate-upload 拒绝码）
+        enablePipeline();
+        setConfig(ErpFinConfigs.CONFIG_AP_DOC_UPLOAD_RATE_LIMIT_RPS, "0");
+        try {
+            String content = "收据\n收款单位：不知名公司\n金额：50.00\n";
+            String base64 = Base64.getEncoder().encodeToString(content.getBytes(StandardCharsets.UTF_8));
+            Map<String, Object> existing = mutation("ErpFinApDocument__uploadApDocument", Map.of(
+                    "fileName", "dup-guard.txt", "mimeType", "text/plain", "fileBase64", base64));
+            String existingId = String.valueOf(existing.get("id"));
+
+            ApiResponse<?> dup = executeRpc(GraphQLOperationType.mutation, "ErpFinApDocument__uploadApDocument",
+                    ApiRequest.build(Map.of("fileName", "dup-guard.txt", "mimeType", "text/plain",
+                            "fileBase64", base64)));
+            assertTrue(dup.getStatus() != 0, "非终态同内容重传应被拒");
+            assertTrue(String.valueOf(dup.getCode()).contains("duplicate-upload"),
+                    "拒绝应携带 duplicate-upload 错误码: " + dup.getCode());
+            assertTrue(String.valueOf(dup).contains(existingId), "拒绝信息应指向既有文档: " + dup);
+
+            // 同名不同内容：非重复，放行
+            String otherContent = "收据\n收款单位：另一家不知名公司\n金额：80.00\n";
+            Map<String, Object> different = mutation("ErpFinApDocument__uploadApDocument", Map.of(
+                    "fileName", "dup-guard.txt", "mimeType", "text/plain",
+                    "fileBase64", Base64.getEncoder().encodeToString(otherContent.getBytes(StandardCharsets.UTF_8))));
+            assertTrue(String.valueOf(different.get("id")).length() > 0, "同名不同内容应放行");
+            assertFalse(String.valueOf(different.get("id")).equals(existingId));
+
+            // 既有文档转终态（MANUAL_REVIEW）后同内容重传放行（守卫只覆盖非终态）
+            Map<String, Object> processed = mutation("ErpFinApDocument__processApDocument",
+                    Map.of("documentId", existingId));
+            assertEquals("MANUAL_REVIEW", processed.get("status"));
+            Map<String, Object> afterTerminal = mutation("ErpFinApDocument__uploadApDocument", Map.of(
+                    "fileName", "dup-guard.txt", "mimeType", "text/plain", "fileBase64", base64));
+            assertFalse(String.valueOf(afterTerminal.get("id")).equals(existingId),
+                    "终态后同内容重传应放行（新文档）");
+        } finally {
+            setConfig(ErpFinConfigs.CONFIG_AP_DOC_UPLOAD_RATE_LIMIT_RPS,
+                    String.valueOf(ErpFinConfigs.DEFAULT_AP_DOC_UPLOAD_RATE_LIMIT_RPS));
+        }
     }
 
     // ---------- seeds & helpers ----------
