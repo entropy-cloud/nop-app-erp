@@ -1,0 +1,77 @@
+{
+  "name": "ai-check-r2",
+  "description": "ai-check 第二轮：以「代码 × 历史 × Deferred」三路交叉审计为方法学核心，消化第一轮 488 open finding，按域切片重启三路审计，重点扫描历史 deferred 触发条件已满足项。配套 skill: code-history-deferred-triangulation-audit-prompt + executions/audit-roadmap-authoring-workflow。多次执行隔离：每次必新建 <YYYY-MM-DD-HHmm>-ai-check-r2 子目录。",
+  "roadmapPath": "docs/backlog/ai-check-r2-roadmap.md",
+  "plansDir": "docs/plans",
+  "planGuide": "docs/plans/00-plan-authoring-and-execution-guide.md",
+  "auditsDir": "docs/audits/check",
+  "contextDir": "docs/context",
+  "moduleDir": ".",
+  "commands": {
+    "test": "mvn test",
+    "build": "mvn clean install -DskipTests",
+    "compliance": "bash docs/audits/nop-compliance-checker.sh"
+  },
+  "prompts": {
+    "triangulationAudit": "docs/skills/code-history-deferred-triangulation-audit-prompt.md",
+    "auditRoadmapAuthoring": "docs/skills/audit-remediation-roadmap-authoring-prompt.md",
+    "executionWorkflow": "docs/skills/executions/audit-roadmap-authoring-workflow.md",
+    "behavioralScan": "docs/skills/behavioral-failure-mode-scan-prompt.md",
+    "codeQualityAudit": "docs/skills/code-quality-audit-prompt.md",
+    "bugDiagnosis": "docs/skills/bug-diagnosis-prompt.md",
+    "closureAudit": "docs/skills/closure-audit-prompt.md",
+    "complianceBaselineDrift": "docs/skills/compliance-baseline-drift-adjudication-prompt.md"
+  },
+  "commitFormat": "<type>: <description>",
+  "extends": "ai-check",
+  "indexPath": "docs/audits/check/ai-check-index.md",
+  "reportDir": "docs/audits/check",
+  "reportNaming": "ck-<slice>.md",
+  "executionDirPrefix": "docs/audits/check/",
+  "reportDirTemplate": "<executionDirPrefix><YYYY-MM-DD-HHmm>-ai-check-r2/",
+  "roundIndexTemplate": "<reportDirTemplate>ai-check-r2-index.md",
+  "reportTemplate": "<reportDirTemplate>ck-<slice>.md",
+  "deferredTriggerIndex": "docs/audits/check/<YYYY-MM-DD-HHmm>-ai-check-r2/ai-check-r2-deferred-trigger-index.md",
+  "executionMode": "serial",
+  "executionIsolationDiscipline": {
+    "enabled": true,
+    "description": "每次执行必新建以 <YYYY-MM-DD-HHmm>-ai-check-r2/ 命名的子目录；不写到 docs/audits/check/ 扁平空间；不复用历史目录；历史子目录只读保留。",
+    "timestampPrecision": "minute (HHmm)；同 mission 同分钟并发用秒级补齐",
+    "formatStrict": "YYYY-MM-DD-HHmm-<mission-name>",
+    "forbidden": [
+      "复用历史执行目录",
+      "覆盖 docs/audits/check/ck-*.md 扁平空间",
+      "历史目录中追加新文件"
+    ]
+  },
+  "protectionZones": {
+    "ormModel": "auto + dual-agent-approval",
+    "apiContract": "auto + dual-agent-approval",
+    "accountingPosting": "plan-first",
+    "authPermissions": "plan-first",
+    "dataDeletion": "auto + dual-agent-approval"
+  },
+  "severityLevels": ["P0", "P1", "P2", "P3"],
+  "repairChannelRules": {
+    "P0": "immediate (plan-internal Phase or async-injected fix plan)",
+    "P1": "batched by domain / file cluster",
+    "P2": "deferred successor with explicit trigger condition",
+    "P3": "note only, no plan"
+  },
+  "twoPhaseDiscipline": {
+    "auditPlansMustNotModifyCode": true,
+    "fixPlansMustWriteFailingTestFirst": true,
+    "auditReportsGoTo": "<reportDirTemplate>ck-<slice>.md",
+    "indexUpdateRequiredAfterReport": true,
+    "indexUpdateRequiredAfterFix": true,
+    "twoIndexUpdate": [
+      "<roundIndexTemplate>（本轮索引）",
+      "docs/audits/check/ai-check-index.md（跨轮聚合索引）"
+    ]
+  },
+  "crossRoundFindingIdRules": {
+    "conflictHandlingReference": "docs/skills/code-history-deferred-triangulation-audit-prompt.md §3.1",
+    "conflictSuffix": "-r2 / -r3",
+    "neverOverwriteHistoricalIds": true
+  }
+}

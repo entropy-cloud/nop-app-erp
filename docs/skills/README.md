@@ -53,6 +53,8 @@
 | `configuration-audit-prompt.md` | ERP 配置设计的归类合理性与落地完整性审计（技术运维/系统开关/业务规则/用户偏好四分类 + ORM 字段落地核对） | 需求审计、状态机审计（用对应专项提示） | `domain-design-guidelines.md`、`docs/analysis/*configuration*`、所有 `<domain>/model/*.orm.xml`、`ioc-and-config.md` | 配置归类汇总表 + 业务规则配置的 ORM 字段覆盖清单 + 系统开关/技术配置/用户级配置清单 + 命名一致性结论 |
 | `behavioral-failure-mode-scan-prompt.md` | closure 前对单域/单切片做代码层行为失败模式扫描（B1 业财过账吞异常悬挂 / B2 dict 死状态 / B3 调度链断裂 / B4 守卫散点） | 设计层状态机图审查（用 state-machine-business-review）、单计划闭合（用 closure-audit）、平台规则合规（用 nop-platform-conformance）、多维整件挑战（用 multi-dimensional-audit） | 目标域范围、状态机 owner doc、ORM 模型、调度链描述（job-scheduling.md + batch.xml + cron 键） | 按 B1/B2/B3.1/B3.2/B4 分组的 finding 清单（含 4 信号核查 + 裁决 + 证据编号）+ 复用 or 新增裁决 |
 | `requirement-compliance-audit-prompt.md` | 需求→实现符合性审计的五级追踪矩阵（L1 use-cases → L5 运行时）+ §4 三判据核验 + 方案 B 关闭项复查 + MR0/MR1 修复阶段方法路由（§5 保护区域双批准 / §11 批量裁决 + per-site 基线证据 + 生命周期回写）（mission `requirement-compliance` 入口） | doc↔code 文本一致性（已由 audit-remediation MA1-MA7 收口）、单一对象窄审计、单域行为扫描（用 behavioral-failure-mode-scan）、需求本身的修订（须人工批准） | L1 use-cases + L2 owner doc + L3 代码 + L4 测试 + L5 运行时 + `product-scope.md` + `arm-index.md` | methodology §6 的 9 段落报告骨架 + 五级追踪矩阵 + P1-RC-xxx finding + arm-index 衔接（薄壳指向 methodology 主体） |
+| `code-history-deferred-triangulation-audit-prompt.md` | 对**已经过多次审计、体量大、容易产生疏漏**的复杂项目（或其下一个切片）做**三路交叉审计**（代码 × 历史审计 × 历史 plan 的 deferred 触发条件扫描），重点发现**历史已识别但遗漏传染**与**触发条件已满足的 deferred 项**；**每次执行必须新建 `docs/audits/check/<YYYY-MM-DD-HHmm>-<mission-name>/` 子目录**避免多轮冲突 | 项目刚起步无历史审计记录；单对象窄审计；设计文档 vs 实现 drift；状态机图审查 | 该切片 owner doc + ORM 模型 + 实际手写代码 + `docs/audits/` 历史 + `docs/lessons/` 经验 + 最近 50 份 `docs/plans/` 的 Deferred / Successor / Non-Goal 段 | `<执行目录>/ck-<slice>.md`（5 段结构）+ `<执行目录>/<mission-name>-index.md`（本轮）+ 同步 `docs/audits/check/ai-check-index.md`（跨轮聚合）；**不修改代码**（修复走专门 plan） |
+| `audit-roadmap-authoring-workflow.md`（位于 `docs/skills/executions/`） | 拟制审计类 roadmap（"代码 × 历史 × Deferred"三路交叉审计 + 修复闭环）的**标准执行流**——5 阶段（需求识别 → roadmap 拟制 → 三路审计 → 修复闭环 → 验证收口）+ 与 Mission Driver 衔接；**§1.4 明确每次执行必须新子目录的隔离纪律** | 单对象窄审计；非审计类 roadmap（如业财功能 roadmap）；不熟悉 Mission Driver 运作 | 至少 `code-history-deferred-triangulation-audit-prompt` + `audit-remediation-roadmap-authoring-prompt` + `00-roadmap-authoring-guide.md` 已熟悉 | 按 5 阶段顺序执行 + 每阶段输入输出对齐示例 |
 
 ## 入门技能
 
@@ -82,6 +84,8 @@
 - `configuration-audit-prompt.md`
 - `behavioral-failure-mode-scan-prompt.md`
 - `requirement-compliance-audit-prompt.md`
+- `code-history-deferred-triangulation-audit-prompt.md`
+- `audit-roadmap-authoring-workflow.md`（位于 `docs/skills/executions/`，执行流文档而非纯提示词）
 
 ## 关联文档
 
