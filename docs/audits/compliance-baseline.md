@@ -19,8 +19,8 @@
 | R1c | dao().getEntityById (BizModel) | 🔴 高 | 0 |
 | R1d | dao().findAllByQuery (BizModel) | 🔴 高 | 14 |
 | R2a | BizModel daoFor(ErpMd*) | 🔴 高 | 34 |
-| R2b | BizModel daoFor(Erp*) 跨域 | 🔴 高 | 238 |
-| R2c | 全生产代码 daoFor() 总量 | 🔴 高 | 1529 |
+| R2b | BizModel daoFor(Erp*) 跨域 | 🔴 高 | 240 |
+| R2c | 全生产代码 daoFor() 总量 | 🔴 高 | 1536 |
 | R2d | Processor daoFor(ErpMd*) | 🔴 高 | 38 |
 | R3 | new Erp*() 构造实体 | 🟡 中 | 5 |
 | R4 | extends RuntimeException | 🟢 低 | 0 |
@@ -482,8 +482,8 @@ R1b: 0
 R1c: 0
 R1d: 14
 R2a: 34
-R2b: 238
-R2c: 1529
+R2b: 240
+R2c: 1536
 R2d: 38
 R3: 5
 R4: 0
@@ -521,6 +521,11 @@ per-site 证据（全部为既有已裁决范式的镜像站点）：
 worktree `nop-entropy-wt/.../nop-benchmark-json`（fastjson2 benchmark `System.currentTimeMillis`）计入
 R7；本仓库 repo 范围内 R7=0（grep 实证），基线维持 0，R2b/R2c/R12c 兄弟 worktree 贡献为 0（repo 范围
 checker 同构复算 1529 == 全范围 1529）。
+
+> **R7 supersede 注记（plan 2026-08-27-1540-1）**：上文「兄弟 worktree 污染 / repo 范围内 R7=0」为
+> 2026-08-26 当时实态表述；当前（2026-08-27）本地复跑 R7 +1 根因 = `_tmp/` 本地草稿被扫描（REPO_ROOT
+> 解析正常，banner 实测 `仓库: /Users/abc/app/nop-app-erp`；命中 `.gitignore:26 _tmp/`）——已按该计划
+> R7 裁决（方案 A）校准 checker `PRUNE_DIRS` 排除 `_tmp`，R7 基线维持 0（校准后 actual=0）。
 
 ## R2c/R2d/R12c 基线上调注记（plan 2026-08-20-0518-3，RC-R1.89 hr 薪酬计提过账接线）
 
@@ -684,3 +689,24 @@ checker 复跑全 19 规则 actual ≤ updated baseline（R2b=236=R2b 基线不�
 - `ErpApsAutoDispatchProcessor`（aps 同域 + mfg/inv 跨域只读）：`opOrderDao`/`dispatchRuleDao`/`dispatchLogDao` `daoFor(ErpApsOperationOrder/ErpApsDispatchRule/ErpApsDispatchLog.class)`（aps 同域派工/日志，零新列裁决载体）、`resolveMaxConcurrentOps` `daoFor(ErpMfgWorkcenter.class)`（capacity 缺省回落只读）、`checkMaterialAvailability` `daoFor(ErpMfgWorkOrder.class)` + `resolveBom` `daoFor(ErpMfgBom.class)` ×2 + `loadBomLines` `daoFor(ErpMfgBomLine.class)`（D5 裁决选项 A 工单 BOM 单层展开只读）、`sumAvailable` `daoFor(ErpInvStockBalance.class)`（D5 inventory 可用量聚合只读）
 
 全部站点为 load-by-id 工具查询或批量聚合（无 `getEntityById(FK)` chained 形态，无 Type 1 重构候选）；无 BizModel 站点（R2a/R2b 零变化）；跨域通知（notify）经 IBiz 注入。本块以 R2c=1497 为回归门控起点（对齐 R1.48/R1.72/R1.73-75/R1.76/R1.81-82 baseline-raise 先例）。
+
+## R2b/R2c 基线上调注记 + 站点 #2 Fix + R7 `_tmp` 扫描范围校准（plan 2026-08-27-1540-1，E3 closure successor）
+
+`2026-08-27-1540-1`（E3 收尾 successor：compliance 基线漂移裁决）逐站点裁决 E3 整体计划（`2026-08-26-0735-2`）Closure Gates 显式登记的 R2b 238→241（+3）/ R2c 1529→1537（+8）漂移 + R7 本地 +1 误报（根因 = `_tmp/` 草稿扫描）。**8 漂移站点 per-site 裁决汇总**（源计划 E3 Phases 3–6，file:line 与代码上下文语义活仓实测核验）：
+
+| # | 站点（file:line） | daoFor 实参 | 裁决 | 合法性分类 |
+|---|------------------|------------|------|-----------|
+| 1 | `ErpAstAssetBizModel.java:81` | `ErpAstAssetActionLog` | baseline-raise | assets 同域 BizModel 审计时间轴只读聚合——跨行 orderBy 聚合查询非 FK 导航，ORM to-one 不可替代；审计实体无 I*Biz 业务面（R1.73-75 `ErpMntEquipmentStatusLog` 先例） |
+| 2 | `ErpAstAssetBizModel.java:179` | `ErpAstAssetModel` | **Fix**（已落地） | **Type-1**：`asset.getModelId()` 作用域托管实体 getter + ORM `<to-one name="model">` 已建模（`module-assets/model/app-erp-assets.orm.xml:226`）——重构为 `asset.getModel()`（生成 getter `_gen/_ErpAstAsset:1662`，与 `getEntityById` 收敛同一 session PK load，同族先例 0605-3/2000-1/0941-1）；scoped 测试 `TestErpAstExtFieldsAndAuditTrail` 6/6 绿 |
+| 3 | `ErpInvStockLedgerBizModel.java:107` | `ErpInvStockBalance` | baseline-raise | inv 同域 BizModel 对账系统级读——比对面必须无行过滤全量加载（I*Biz findList 施加 objMeta filterable 校验 + 数据权限行过滤，破坏对账前提，RC-R1.19 同型实测先例） |
+| 4 | `ErpAstAssetAuditRecorder.java:47` | `ErpAstAssetActionLog` | baseline-raise | assets 同域审计记录器业务事务内追加（`EquipmentStatusLogWriter:31`/`ErpFinPostingExceptionRecorder` 同族文档化豁免） |
+| 5 | `ApsBottleneckDetector.java:131` | `ErpApsOperationOrder` | baseline-raise | aps 同域排产系统级读（PLANNED/IN_PROGRESS 负荷聚合须无行过滤，`ApsLoadSourceProvider` 范式先例） |
+| 6 | `ErpFinApDocRuleClassifier.java:99` | `ErpMdPartner` | baseline-raise | fin→md 跨域只读名称模糊匹配（双向 contains 非 FK 导航）；SPI 批处理上下文 IBiz force-lazy 注入不可达（RC-R1.2 `ErpFinBankReconAutoReverseHelper` 先例）；`data-dependency-matrix.md` §2.4 fin→md 只读边背书 |
+| 7 | `ErpFinApDocumentPipelineProcessor.java:515` | `ErpFinApDocument` | baseline-raise | fin 管道自聚合实体存取（per-mutation Processor `dao()` 契约族，1057-2 +149 / R6.8 +130 先例） |
+| 8 | `ErpFinApDocumentPipelineProcessor.java:519` | `ErpFinApDocumentLog` | baseline-raise | 同 #7——`logDao()` 处理轨迹 accessor（AP-4 审计追溯） |
+
+**基线裁决值**：站点 #2 Fix 消除后 checker 复跑实测 **R2b=240**（241−1；净 +2 = 站点 #1/#3）/ **R2c=1536**（1537−1；净 +7 = 除 #2 外全部），其余 17 规则 = 基线（实测 R1a/b/c=0、R1d=14、R2a=34、R2d=38、R3=5、R4/R5/R7/R8/R11=0、R6=2、R10=12、R12a/b/c=70/66/42）。替代方案逐一否决理由（I*Biz 注入 / ORM `<to-one>` getter / CrudBizModel `dao()`）+ 残留风险见 `docs/plans/2026-08-27-1540-1-e3-successor-compliance-baseline-adjudication.md` §Phase 1 Evidence。
+
+**R7 `_tmp` 扫描范围校准（Decision 方案 A）**：checker `PRUNE_DIRS` 追加 `-o -name _tmp`（对齐 R8 排除集校准先例 `1057-1`/`0656-1`）——`_tmp/` 为 git-ignored 本地草稿区（`.gitignore:26`）永不入库，CI 干净检出不命中，故 CI 门控行为零变化（测量范围修正非基线放水）；仅消除本地复跑 R7 假 +1（实测 `_tmp/` 对 19 规则唯一贡献 = 1 处 R7）。**R7 基线维持 0**（校准后 actual=0，不上调）。残留风险：`_tmp` 内生产违规被静默豁免——可忽略（永不入库，CI 干净检出不受排除影响）。F2.1 注记（plan 2026-08-26-0630-1）R7 段落已补 supersede 交叉引用（见上文该节注记）。
+
+本块以 R2b=240 / R2c=1536 / R7=0 为回归门控起点，CI green 语义恢复（全 19 规则 actual ≤ baseline，门控 python 模拟 PASS）。

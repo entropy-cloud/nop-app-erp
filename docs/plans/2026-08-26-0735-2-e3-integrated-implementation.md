@@ -307,4 +307,5 @@ Closure Audit Evidence:
 Follow-up:
 
 - **compliance 基线裁决 successor**（非阻塞，known failure mode 登记路径）：R2b 238→241（+3）/ R2c 1529→1537（+8），全部 8 个新 daoFor 站点 per-site 证据见 Phase 8 Proof 注记（`ErpAstAssetBizModel`×2 / `ErpInvStockLedgerBizModel`×1 / `ErpAstAssetAuditRecorder`×1 / `ApsBottleneckDetector`×1 / `ErpFinApDocRuleClassifier`×1 / `ErpFinApDocumentPipelineProcessor`×2）；须开独立基线裁决计划（Fix 或 baseline-raise 带 per-site 证据，对齐 F1/F2 批先例）。
+  → **已解决（2026-08-27）**：successor plan `2026-08-27-1540-1` 完成裁决——站点 #2（`ErpAstAssetBizModel:179`）Fix 为 ORM `<to-one>` getter `asset.getModel()`，其余 7 站点 baseline-raise；基线上调 R2b 238→**240** / R2c 1529→**1536**（Fix 后实测）；R7 `_tmp` 扫描校准（方案 A，基线维持 0）；门控模拟全 19 规则 PASS（CI green 恢复）。详见 successor plan §Phase 1/2 Evidence + `compliance-baseline.md` 裁决注记节。
 - E3.1b 缺口已按 Phase 2 Decision 登记去向（G1/G2 → permissions-enforcement roadmap §E3.1b P1；G3 → 设计决定不修），此处不重复列缺陷。
