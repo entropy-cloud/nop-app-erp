@@ -36,7 +36,7 @@
 
 ### Phase 1 - fin2-001 BY_RATIO 修复
 
-Status: planned
+Status: completed
 Targets: `AutoReconciliationEngine#matchByRatio`
 Skill: none
 
@@ -52,7 +52,7 @@ Exit Criteria:
 
 ### Phase 2 - fin2-003 聚合校验
 
-Status: planned
+Status: completed
 Targets: `AbstractErpFinReconciliationProcessor#validateLine` 或 PostProcessor
 Skill: none
 
@@ -68,7 +68,7 @@ Exit Criteria:
 
 ### Phase 3 - fin2-002 FX 对称回滚
 
-Status: planned
+Status: completed
 Targets: `ReconciliationSettler#settleWithFx/reverseSettle`
 Skill: none
 
@@ -84,7 +84,7 @@ Exit Criteria:
 
 ### Phase 4 - fin2-004 坏账状态守卫
 
-Status: planned
+Status: completed
 Targets: `ErpFinBadDebtProcessor`
 Skill: none
 
@@ -100,7 +100,7 @@ Exit Criteria:
 
 ### Phase 5 - fin2-005 回滚通道守卫
 
-Status: planned
+Status: completed
 Targets: `ErpFinArApItemGenerator#cancelOnReverse`、`ReconciliationSettler#applySettlement`
 Skill: none
 
