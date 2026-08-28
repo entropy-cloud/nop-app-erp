@@ -162,9 +162,9 @@
 
 | # | Work Item | Status | Owner Doc | Deps | Skill |
 |---|---|---|---|---|---|
-| M5.1 | 全域矩阵审计：状态可达性、终态出边、重复/冲突边、dict 与全部 writer 对照 | todo | 各域状态机 owner doc、所有相关 ORM | M1.3 + M2 + M3 + M4 的全部展开项 done | `state-machine-business-review-prompt.md` |
-| M5.2 | 可重复运行的状态机一致性检查与 CI/本地验证接线；明确误报裁决和新增状态的维护义务 | todo | M0.1 产物、`docs/audits/`、`docs/testing/` | M5.1 | `nop-testing` |
-| M5.3 | 最终跨域回归、Delta 覆盖回归、owner doc 对齐及独立 closure audit | todo | 本路线图所有 owner docs | M5.2 | `nop-testing` + `state-machine-business-review-prompt.md` |
+| M5.1 | 全域矩阵审计：状态可达性、终态出边、重复/冲突边、dict 与全部 writer 对照 | done（commit `1f62edfd3`：plan + 工具 `state-machine-coverage-check.py` + 报告 + 维护入口；105 Bean / 0 finding / 4 维度对账全通过） | 各域状态机 owner doc、所有相关 ORM | M1.3 + M2 + M3 + M4 的全部展开项 done | `state-machine-business-review-prompt.md` |
+| M5.2 | 可重复运行的状态机一致性检查与 CI/本地验证接线；明确误报裁决和新增状态的维护义务 | done（commit `87c4f5364`：`tools/check-state-machine-coverage.sh` wrapper + 多次执行隔离目录 + LATEST 链接 + `scripts/README.md` + 维护入口强化 §7-§9；CG3 strict mode finding 检测能力已验证） | M0.1 产物、`docs/audits/`、`docs/testing/` | M5.1 | `nop-testing` |
+| M5.3 | 最终跨域回归、Delta 覆盖回归、owner doc 对齐及独立 closure audit | todo（本会话未启动：M5.1+M5.2 已 done 且零 finding；M5.3 核心要求 `mvn clean install` 全量 + 跨域回归需下轮启动；独立 closure audit 子代理依赖稳定子代理通道；详见 `docs/architecture/state-machine-matrix.md §9` closure audit checklist） | 本路线图所有 owner docs | M5.2 | `nop-testing` + `state-machine-business-review-prompt.md` |
 
 ## 框架与既有复用
 
