@@ -1,6 +1,6 @@
 # AI 实现代码检查路线图（ai-check）
 
-> 最后更新：2026-08-25
+> 最后更新：2026-08-28-2115（**本会话推进**：MG 预演产物 + lesson 17 + V.1 全量构建基线登记 1:55 min + 3 份 plan 修订；F0-F2.3 全部 done（**45 findings 终态**：44 fixed + 1 部分注记）；F2.4 ready（唯一未启动 P1 修复批）；M5.3 等 mission closure 仍受独立子代理阻塞——本会话已 commit 4 个进展：`39bd8b9d1` M5.3 CG1-CG5 通过 / `edab50773` lesson 17 + MG 预演 / `03a4a96a5` V.1 全量构建基线；剩余 60+ 工作项需 plan-audit / 独立子代理 closure-audit / 人工批准）
 > Source：用户直接请求（2026-08-25）——"检查项目的各个模块的实现代码，是否存在问题。先拟制 ai-check-roadmap.md，然后按照 roadmap 规划逐个检查，检查结果保存在 docs/audits/check 目录下，不要直接修改代码……全部检查完毕之后逐项编写测试代码验证并修正，如果检查后发现不是问题的，则要说明，修复了的也要修改状态。P0 到 P3 级别的问题都要修复。"
 > Related：`docs/backlog/audit-remediation-roadmap.md`（前一轮 arm 审计-修复 mission，已闭合）、`docs/backlog/requirement-compliance-roadmap.md`（已闭合）
 
