@@ -30,6 +30,7 @@ import static io.nop.api.core.beans.FilterBeans.eq;
 import static io.nop.graphql.core.ast.GraphQLOperationType.mutation;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -81,6 +82,35 @@ public class TestErpAstValueAdjustment extends JunitAutoTestCase {
         assertEquals(0, nz(asset.getNetBookValue()).compareTo(new BigDecimal("9000")), "减值后净值=9000");
 
         assertTrue(!findBillLinks("ADJ-IMP-001", "VALUE_ADJUSTMENT").isEmpty(), "VALUE_ADJUSTMENT 凭证回链已落库");
+    }
+
+    /**
+     * P1-CK-ast-005 回归：减值金额不得超过账面净值（上限 = NBV − 残值）。
+     * 修复前无上限校验——NBV=4500 录减值 10000 → newNbv=−5500 落库，处置 gainLoss 虚高收益进 GL。
+     */
+    @Test
+    public void testImpairmentAmountExceedsNbvRejected() {
+        String[] assetIdHolder = new String[1];
+        String adjustmentId = ormTemplate.runInSession(session -> {
+            seedCoreBasics();
+            String categoryId = seedCategoryWithSubjects("CAT-IMP-OVR", "超限减值类别");
+            String assetId = AstTestSupport.seedAsset(daoProvider, "AST-IMP-OVR", "超限减值资产", categoryId, "1",
+                    new BigDecimal("4500"), new BigDecimal("500"),
+                    ErpAstConstants.DEPRECIATION_METHOD_STRAIGHT_LINE, 12,
+                    ErpAstConstants.ASSET_STATUS_IN_SERVICE);
+            assetIdHolder[0] = assetId;
+            return seedAdjustment("ADJ-IMP-OVR-001", assetId, ErpAstConstants.ADJUSTMENT_TYPE_IMPAIRMENT,
+                    new BigDecimal("10000"), LocalDate.of(2026, 7, 15));
+        });
+
+        ApiResponse<?> submitResp = submitForApproval(adjustmentId);
+        assertNotEquals(0, submitResp.getStatus(), "超限减值提交应拒绝");
+        assertEquals(ErpAstErrors.ERR_ADJUSTMENT_AMOUNT_EXCEEDS_NBV.getErrorCode(), submitResp.getCode(),
+                "减值金额 > NBV−残值(4000) 应拒绝（submit 前置校验）");
+
+        ErpAstAsset asset = daoProvider.daoFor(ErpAstAsset.class).getEntityById(assetIdHolder[0]);
+        assertEquals(0, nz(asset.getNetBookValue()).compareTo(new BigDecimal("4500")),
+                "拒绝后资产净值不变（修复前为负 −5500）");
     }
 
     @Test

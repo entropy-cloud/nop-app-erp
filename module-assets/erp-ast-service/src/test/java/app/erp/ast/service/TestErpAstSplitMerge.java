@@ -4,6 +4,7 @@ import app.erp.ast.biz.IErpAstMergeBiz;
 import app.erp.ast.biz.IErpAstSplitBiz;
 import app.erp.ast.dao.entity.ErpAstAsset;
 import app.erp.ast.dao.entity.ErpAstAssetCategory;
+import app.erp.ast.dao.entity.ErpAstDepreciationSchedule;
 import app.erp.ast.dao.entity.ErpAstMerge;
 import app.erp.ast.dao.entity.ErpAstMergeLine;
 import app.erp.ast.dao.entity.ErpAstSplit;
@@ -34,6 +35,7 @@ import static io.nop.api.core.beans.FilterBeans.eq;
 import static io.nop.graphql.core.ast.GraphQLOperationType.mutation;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -122,6 +124,51 @@ public class TestErpAstSplitMerge extends JunitAutoTestCase {
         // ASSET_SPLIT 凭证回链（Dr 3 / Cr 1）
         List<ErpFinVoucherBillR> links = findBillLinks("SPL-001", "ASSET_SPLIT");
         assertTrue(!links.isEmpty(), "ASSET_SPLIT 凭证回链已落库");
+    }
+
+    /**
+     * P1-CK-ast-001 + ast-002 回归：PROPORTIONAL 拆分的累计折旧守恒 + 残值按比例分摊。
+     * - ast-001：第一遍按比例 + 最大项补差的结果不被「无条件二次派生循环」覆盖——Σ line.accumulatedDepreciationAmount == 源累计折旧
+     *   （修复前 ratio 派生值覆盖补差结果 → Σ = 99.9999 ≠ 100）。
+     * - ast-002：目标卡残值按比例分摊——Σ target.residualValue == 源残值（修复前全额复制 → N 倍放大）。
+     */
+    @Test
+    public void testProportionalSplitConservesAccumDepAndResidual() {
+        String[] sourceHolder = new String[1];
+        String splitId = ormTemplate.runInSession(session -> {
+            seedCoreBasics();
+            String categoryId = seedCategory("CAT-SP3", "拆分类别3");
+            String assetId = AstTestSupport.seedAsset(daoProvider, "AST-SP3", "守恒拆分源", categoryId, "1",
+                    new BigDecimal("1000"), new BigDecimal("90"),
+                    ErpAstConstants.DEPRECIATION_METHOD_STRAIGHT_LINE, 60,
+                    ErpAstConstants.ASSET_STATUS_IN_SERVICE);
+            ErpAstAsset src = daoProvider.daoFor(ErpAstAsset.class).getEntityById(assetId);
+            src.setAccumulatedDepreciation(new BigDecimal("100"));
+            src.setNetBookValue(new BigDecimal("900"));
+            daoProvider.daoFor(ErpAstAsset.class).saveOrUpdateEntity(src);
+            sourceHolder[0] = assetId;
+            return seedSplit("SPL-003", assetId, categoryId, new BigDecimal("1000"), "1");
+        });
+        // 三等分：首遍 dep = 33.3333×3 = 99.9999 → 最大项补差 +0.0001 → Σ=100
+        seedProportionalLines(splitId, "1", new BigDecimal[]{
+                new BigDecimal("0.3333333334"), new BigDecimal("0.3333333333"), new BigDecimal("0.3333333333")});
+
+        assertEquals(0, submitForApproval(splitId).getStatus(), "拆分提交成功");
+        assertEquals(0, approve(splitId).getStatus(), "拆分审核成功");
+
+        List<ErpAstSplitLine> lines = loadSplitLines(splitId);
+        BigDecimal sumDep = BigDecimal.ZERO;
+        BigDecimal sumResidual = BigDecimal.ZERO;
+        for (ErpAstSplitLine line : lines) {
+            sumDep = sumDep.add(nz(line.getAccumulatedDepreciationAmount()));
+            ErpAstAsset t = daoProvider.daoFor(ErpAstAsset.class).getEntityById(line.getTargetAssetId());
+            assertNotNull(t, "目标资产已回写");
+            sumResidual = sumResidual.add(nz(t.getResidualValue()));
+        }
+        assertEquals(0, sumDep.compareTo(new BigDecimal("100")),
+                "ast-001：Σ 累计折旧 = 源 100（修复前二次派生覆盖 → 99.9999）");
+        assertEquals(0, sumResidual.compareTo(new BigDecimal("90")),
+                "ast-002：Σ 目标残值 = 源 90（修复前全额复制 → 270）");
     }
 
     @Test
@@ -282,6 +329,46 @@ public class TestErpAstSplitMerge extends JunitAutoTestCase {
         assertTrue(!findBillLinks("MRG-001", "ASSET_MERGE").isEmpty(), "ASSET_MERGE 凭证回链已落库");
     }
 
+    /**
+     * P1-CK-ast-006 回归：合并卡残值 = Σ 源残值 + 剩余期间加权年限 + 折旧计划基数 = 剩余可折旧净值。
+     * 修复前残值归零 + 全年限加权 + 计划基数 = 全额原值 → 已折旧部分被再提一遍（过度折旧）。
+     */
+    @Test
+    public void testMergeConservesResidualAndRemainingLife() {
+        String[] targetHolder = new String[1];
+        String mergeId = ormTemplate.runInSession(session -> {
+            seedCoreBasics();
+            String categoryId = seedCategory("CAT-MG3", "合并类别3");
+            String a1 = seedAssetWithResidual("AST-MG4", categoryId, new BigDecimal("50000"),
+                    new BigDecimal("10000"), new BigDecimal("1000"));
+            String a2 = seedAssetWithResidual("AST-MG5", categoryId, new BigDecimal("30000"),
+                    new BigDecimal("6000"), new BigDecimal("600"));
+            String mid = seedMerge("MRG-002", "1", "1");
+            seedMergeLine(mid, "1", a1, 10);
+            seedMergeLine(mid, "1", a2, 20);
+            return mid;
+        });
+
+        assertEquals(0, mergeSubmit(mergeId).getStatus(), "合并提交成功");
+        assertEquals(0, mergeApprove(mergeId).getStatus(), "合并审核成功");
+
+        ErpAstMerge merge = daoProvider.daoFor(ErpAstMerge.class).getEntityById(mergeId);
+        ErpAstAsset target = daoProvider.daoFor(ErpAstAsset.class).getEntityById(merge.getTargetAssetId());
+        assertEquals(0, nz(target.getResidualValue()).compareTo(new BigDecimal("1600")),
+                "ast-006：合并卡残值 = Σ 源残值 1000+600 = 1600（修复前归零）");
+        assertEquals(48, target.getUsefulLifeMonths().intValue(),
+                "ast-006：合并卡年限 = 剩余期间加权 48（源 60 − 已执行 12；修复前全年限 60）");
+
+        // 计划总额 = 剩余可折旧净值 = totalNbv(64000) − totalResidual(1600) = 62400
+        List<ErpAstDepreciationSchedule> schedules = schedulesOf(target.getId());
+        BigDecimal sumPlanned = BigDecimal.ZERO;
+        for (ErpAstDepreciationSchedule s : schedules) {
+            sumPlanned = sumPlanned.add(nz(s.getPlannedAmount()));
+        }
+        assertEquals(0, sumPlanned.compareTo(new BigDecimal("62400")),
+                "ast-006：计划总额 = 剩余可折旧净值 62400（修复前 100000）");
+    }
+
     @Test
     public void testMergeCrossCurrencyRejected() {
         String mergeId = ormTemplate.runInSession(session -> {
@@ -355,6 +442,25 @@ public class TestErpAstSplitMerge extends JunitAutoTestCase {
         src.setNetBookValue(original.subtract(accumDep));
         daoProvider.daoFor(ErpAstAsset.class).saveOrUpdateEntity(src);
         return assetId;
+    }
+
+    private String seedAssetWithResidual(String code, String categoryId, BigDecimal original,
+                                         BigDecimal accumDep, BigDecimal residual) {
+        String assetId = AstTestSupport.seedAsset(daoProvider, code, code, categoryId, "1",
+                original, residual,
+                ErpAstConstants.DEPRECIATION_METHOD_STRAIGHT_LINE, 60,
+                ErpAstConstants.ASSET_STATUS_IN_SERVICE);
+        ErpAstAsset src = daoProvider.daoFor(ErpAstAsset.class).getEntityById(assetId);
+        src.setAccumulatedDepreciation(accumDep);
+        src.setNetBookValue(original.subtract(accumDep));
+        daoProvider.daoFor(ErpAstAsset.class).saveOrUpdateEntity(src);
+        return assetId;
+    }
+
+    private List<ErpAstDepreciationSchedule> schedulesOf(String assetId) {
+        QueryBean q = new QueryBean();
+        q.addFilter(eq("assetId", assetId));
+        return daoProvider.daoFor(ErpAstDepreciationSchedule.class).findAllByQuery(q);
     }
 
     private String seedAssetWithDepAndCurrency(String code, String categoryId, BigDecimal original,

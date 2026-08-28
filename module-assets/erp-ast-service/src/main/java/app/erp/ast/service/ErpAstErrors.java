@@ -25,6 +25,8 @@ public interface ErpAstErrors {
     String ARG_EXPECTED_DOC_STATUS = "expectedDocStatus";
     String ARG_DEPRECIATION_METHOD = "depreciationMethod";
     String ARG_AMOUNT = "amount";
+    String ARG_MAX_AMOUNT = "maxAmount";
+    String ARG_RESIDUAL_VALUE = "residualValue";
     String ARG_ADJUSTMENT_CODE = "adjustmentCode";
     String ARG_ADJUSTMENT_ID = "adjustmentId";
     String ARG_ADJUSTMENT_TYPE = "adjustmentType";
@@ -174,6 +176,10 @@ public interface ErpAstErrors {
             "erp.err.ast.adjustment.amount-invalid",
             "价值调整单 {adjustmentCode} 调整金额无效",
             ARG_ADJUSTMENT_CODE, ARG_AMOUNT);
+    ErrorCode ERR_ADJUSTMENT_AMOUNT_EXCEEDS_NBV = ErrorCode.define(
+            "erp.err.ast.adjustment.amount-exceeds-nbv",
+            "价值调整单 {adjustmentCode} 减值/重估下调金额 {amount} 超过资产账面净值上限 {maxAmount}（不得使净值低于残值 {residualValue}）",
+            ARG_ADJUSTMENT_CODE, ARG_AMOUNT, ARG_MAX_AMOUNT, ARG_RESIDUAL_VALUE);
     ErrorCode ERR_ADJUSTMENT_ALREADY_REVERSED = ErrorCode.define(
             "erp.err.ast.adjustment.already-reversed",
             "价值调整单 {adjustmentCode} 已红冲，不允许二次红冲",
@@ -361,6 +367,10 @@ public interface ErpAstErrors {
     ErrorCode ERR_AST_INVENTORY_ALREADY_POSTED = ErrorCode.define(
             "erp.err.ast.inventory.already-posted",
             "盘点单 {inventoryCode} 已过账（POSTED 终态），纠错请走 reverse",
+            ARG_INVENTORY_CODE);
+    ErrorCode ERR_AST_INVENTORY_ACTUAL_QUANTITY_MISSING = ErrorCode.define(
+            "erp.err.ast.inventory.actual-quantity-missing",
+            "盘点单 {inventoryCode} 存在未录入实盘数量的行（actualQuantity 为空，漏录行将按实盘 0 判盘亏并静默报废在用资产），请补录后 reconcile",
             ARG_INVENTORY_CODE);
 
     // --- 资产维修（UC-AST-10） ---

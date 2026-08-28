@@ -93,8 +93,10 @@ public class ErpAstMergeProcessor {
         BigDecimal totalOriginal = sum(sources, ErpAstAsset::getOriginalValue);
         BigDecimal totalAccumDep = sum(sources, ErpAstAsset::getAccumulatedDepreciation);
         BigDecimal totalNbv = sum(sources, ErpAstAsset::getNetBookValue);
+        BigDecimal totalResidual = sum(sources, ErpAstAsset::getResidualValue);
         String depreciationMethod = resolveDepreciationMethod(sources);
         int usefulLifeMonths = resolveUsefulLifeMonths(sources);
+        int elapsedMonths = resolveElapsedMonths(sources, usefulLifeMonths);
         LocalDate acquisitionDate = resolveEarliestAcquisitionDate(sources);
 
         // 写回各行贡献快照
@@ -111,7 +113,7 @@ public class ErpAstMergeProcessor {
 
         // step 3: 创建 1 个目标资产卡片 + 折旧计划
         ErpAstAsset target = createTargetAsset(merge, sources, lines, totalOriginal, totalAccumDep, totalNbv,
-                depreciationMethod, usefulLifeMonths, acquisitionDate, context);
+                totalResidual, depreciationMethod, usefulLifeMonths, elapsedMonths, acquisitionDate, context);
 
         // step 4: 各源资产处置（DISPOSED + 账面净值归零）
         disposeSourceAssets(sources);
@@ -290,6 +292,52 @@ public class ErpAstMergeProcessor {
     }
 
     protected int resolveUsefulLifeMonths(List<ErpAstAsset> sources) {
+        // P1-CK-ast-006：剩余折旧期间按加权平均剩余期间取整（owner doc split-merge.md 字面）——
+        // 修复前按全年限加权（已折旧期间计入基数，合并卡每月计提 = 全额原值/全年限 → 过度折旧）。
+        BigDecimal totalNbv = BigDecimal.ZERO;
+        BigDecimal weighted = BigDecimal.ZERO;
+        for (ErpAstAsset src : sources) {
+            BigDecimal nbv = nz(src.getNetBookValue());
+            int remaining = remainingMonths(src);
+            if (remaining <= 0) {
+                continue;
+            }
+            totalNbv = totalNbv.add(nbv);
+            weighted = weighted.add(nbv.multiply(BigDecimal.valueOf(remaining)));
+        }
+        if (totalNbv.signum() <= 0) {
+            ErpAstAsset first = sources.isEmpty() ? null : sources.get(0);
+            return first != null && first.getUsefulLifeMonths() != null ? first.getUsefulLifeMonths() : 0;
+        }
+        return weighted.divide(totalNbv, 0, RoundingMode.HALF_UP).intValue();
+    }
+
+    /** 单源剩余折旧期间 = max(有效年限 − 已执行期数(按累计折旧/月折旧推), 1)。 */
+    protected int remainingMonths(ErpAstAsset src) {
+        Integer months = src.getUsefulLifeMonths();
+        if (months == null || months <= 0) {
+            return 0;
+        }
+        int elapsed = inheritedMonths(src);
+        return Math.max(months - elapsed, 1);
+    }
+
+    /** 已执行期数 = 累计折旧 / 月折旧额（直线法口径，镜像 ErpAstSplitProcessor 的 inheritedMonths 推导）。 */
+    protected int inheritedMonths(ErpAstAsset src) {
+        BigDecimal depBase = nz(src.getOriginalValue()).subtract(nz(src.getResidualValue()));
+        Integer months = src.getUsefulLifeMonths();
+        if (depBase.signum() <= 0 || months == null || months <= 0) {
+            return 0;
+        }
+        BigDecimal monthly = depBase.divide(BigDecimal.valueOf(months), VALUE_SCALE, RoundingMode.HALF_UP);
+        if (monthly.signum() <= 0) {
+            return 0;
+        }
+        return nz(src.getAccumulatedDepreciation()).divide(monthly, 0, RoundingMode.HALF_UP).intValue();
+    }
+
+    /** 合并后已执行期数（按 NBV 加权）——用于折旧计划起点（P1-CK-ast-006）。 */
+    protected int resolveElapsedMonths(List<ErpAstAsset> sources, int remainingLife) {
         BigDecimal totalNbv = BigDecimal.ZERO;
         BigDecimal weighted = BigDecimal.ZERO;
         for (ErpAstAsset src : sources) {
@@ -298,12 +346,15 @@ public class ErpAstMergeProcessor {
             if (months == null || months <= 0) {
                 continue;
             }
+            int elapsed = months - remainingMonths(src);
+            if (elapsed < 0) {
+                elapsed = 0;
+            }
             totalNbv = totalNbv.add(nbv);
-            weighted = weighted.add(nbv.multiply(BigDecimal.valueOf(months)));
+            weighted = weighted.add(nbv.multiply(BigDecimal.valueOf(elapsed)));
         }
         if (totalNbv.signum() <= 0) {
-            ErpAstAsset first = sources.isEmpty() ? null : sources.get(0);
-            return first != null && first.getUsefulLifeMonths() != null ? first.getUsefulLifeMonths() : 0;
+            return 0;
         }
         return weighted.divide(totalNbv, 0, RoundingMode.HALF_UP).intValue();
     }
@@ -323,7 +374,8 @@ public class ErpAstMergeProcessor {
 
     protected ErpAstAsset createTargetAsset(ErpAstMerge merge, List<ErpAstAsset> sources, List<ErpAstMergeLine> lines,
                                             BigDecimal totalOriginal, BigDecimal totalAccumDep, BigDecimal totalNbv,
-                                            String depreciationMethod, int usefulLifeMonths,
+                                            BigDecimal totalResidual,
+                                            String depreciationMethod, int usefulLifeMonths, int elapsedMonths,
                                             LocalDate acquisitionDate, IServiceContext context) {
         ErpAstAsset first = sources.get(0);
         IEntityDao<ErpAstAsset> dao = daoProvider.daoFor(ErpAstAsset.class);
@@ -336,7 +388,8 @@ public class ErpAstMergeProcessor {
         target.setCurrencyId(merge.getCurrencyId() != null ? merge.getCurrencyId() : first.getCurrencyId());
         target.setOriginalValue(totalOriginal);
         target.setCurrentValue(totalOriginal);
-        target.setResidualValue(BigDecimal.ZERO);
+        // P1-CK-ast-006：合并卡残值 = Σ 源残值（修复前归零 → 残值约束失效，过度折旧）。
+        target.setResidualValue(totalResidual);
         target.setDepreciationMethod(depreciationMethod);
         target.setUsefulLifeMonths(usefulLifeMonths);
         target.setAccumulatedDepreciation(totalAccumDep);
@@ -344,7 +397,8 @@ public class ErpAstMergeProcessor {
         target.setStatus(ErpAstConstants.ASSET_STATUS_IN_SERVICE);
         dao.saveEntity(target);
 
-        generateDepreciationScheduleForTarget(merge, target, totalOriginal, depreciationMethod, usefulLifeMonths);
+        generateDepreciationScheduleForTarget(merge, target, totalNbv, totalResidual,
+                depreciationMethod, usefulLifeMonths, elapsedMonths);
         return target;
     }
 
@@ -353,7 +407,8 @@ public class ErpAstMergeProcessor {
     }
 
     protected void generateDepreciationScheduleForTarget(ErpAstMerge merge, ErpAstAsset target,
-                                                         BigDecimal original, String method, int months) {
+                                                         BigDecimal remainingNbv, BigDecimal residual,
+                                                         String method, int months, int elapsedMonths) {
         if (method == null || months <= 0) {
             return;
         }
@@ -361,10 +416,15 @@ public class ErpAstMergeProcessor {
             return;
         }
         IEntityDao<ErpAstDepreciationSchedule> dao = daoProvider.daoFor(ErpAstDepreciationSchedule.class);
-        BigDecimal depBase = original;
+        // P1-CK-ast-006：计划基数 = 剩余可折旧净值 − 残值（修复前用全额原值 → 已折旧部分被再提一遍）。
+        BigDecimal depBase = remainingNbv.subtract(residual);
+        if (depBase.signum() < 0) {
+            depBase = BigDecimal.ZERO;
+        }
         BigDecimal monthlyAmount = depBase.divide(BigDecimal.valueOf(months), VALUE_SCALE, RoundingMode.HALF_UP);
         LocalDate baseDate = target.getAcquisitionDate() != null ? target.getAcquisitionDate() : CoreMetrics.today();
-        LocalDate start = baseDate.plusMonths(1);
+        // P1-CK-ast-006：计划起点 = 继承点（源已执行期数）次月（修复前从源购置次月起排覆盖历史）。
+        LocalDate start = baseDate.plusMonths(elapsedMonths).plusMonths(1);
         for (int i = 0; i < months; i++) {
             LocalDate periodDate = start.plusMonths(i);
             ErpAstDepreciationSchedule schedule = dao.newEntity();
@@ -377,7 +437,7 @@ public class ErpAstMergeProcessor {
             schedule.setPlannedAmount(planned);
             schedule.setActualAmount(BigDecimal.ZERO);
             schedule.setAccumulatedDepreciation(BigDecimal.ZERO);
-            schedule.setNetBookValue(original);
+            schedule.setNetBookValue(remainingNbv);
             schedule.setStatus(ErpAstConstants.SCHEDULE_STATUS_PENDING);
             schedule.setBusinessDate(periodDate.withDayOfMonth(1));
             dao.saveEntity(schedule);

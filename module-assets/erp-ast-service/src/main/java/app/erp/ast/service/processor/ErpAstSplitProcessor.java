@@ -314,15 +314,16 @@ public class ErpAstSplitProcessor {
             applyRemainderForAccumDep(lines, maxPropIndex, roundingMode, sourceAccumDep, sumAccumDep);
         }
         // FIXED_AMOUNT 模式下 originalCostAmount 已由用户给定，累计折旧按金额比例派生
-        BigDecimal totalFixed = lines.stream().map(l -> nz(l.getOriginalCostAmount()))
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
-        for (ErpAstSplitLine line : lines) {
-            BigDecimal orig = nz(line.getOriginalCostAmount());
-            BigDecimal ratio = sourceOriginal.signum() == 0 ? BigDecimal.ZERO
-                    : orig.divide(sourceOriginal, VALUE_SCALE + 2, RoundingMode.HALF_UP);
-            BigDecimal dep = sourceAccumDep.multiply(ratio).setScale(VALUE_SCALE, RoundingMode.HALF_UP);
-            line.setAccumulatedDepreciationAmount(dep);
-            totalFixed = totalFixed.add(BigDecimal.ZERO);
+        // （P1-CK-ast-001 修复：仅 FIXED_AMOUNT 模式执行二次派生——修复前无条件执行，
+        //  用 ratio 派生值覆盖 PROPORTIONAL 第一遍的最大项补差结果，Σ 累计折旧 ≠ 源值）。
+        if (fixedMode) {
+            for (ErpAstSplitLine line : lines) {
+                BigDecimal orig = nz(line.getOriginalCostAmount());
+                BigDecimal ratio = sourceOriginal.signum() == 0 ? BigDecimal.ZERO
+                        : orig.divide(sourceOriginal, VALUE_SCALE + 2, RoundingMode.HALF_UP);
+                BigDecimal dep = sourceAccumDep.multiply(ratio).setScale(VALUE_SCALE, RoundingMode.HALF_UP);
+                line.setAccumulatedDepreciationAmount(dep);
+            }
         }
         // 派生净值
         for (ErpAstSplitLine line : lines) {
@@ -332,6 +333,23 @@ public class ErpAstSplitProcessor {
 
     protected boolean isFixedAmountLine(ErpAstSplitLine line) {
         return Objects.equals(line.getAllocationMethod(), ErpAstConstants.ALLOCATION_METHOD_FIXED_AMOUNT);
+    }
+
+    /**
+     * P1-CK-ast-002：目标卡残值按分摊比例派生——PROPORTIONAL 用行比例；FIXED_AMOUNT 用
+     * 金额比例（orig/sourceOriginal）。修复前全额复制使 Σ 残值 N 倍放大。
+     */
+    protected BigDecimal allocatedResidual(ErpAstAsset source, ErpAstSplitLine line) {
+        BigDecimal sourceResidual = nz(source.getResidualValue());
+        if (sourceResidual.signum() == 0) {
+            return BigDecimal.ZERO;
+        }
+        BigDecimal prop = nz(line.getProportion());
+        BigDecimal ratio = prop.signum() > 0 ? prop
+                : (nz(source.getOriginalValue()).signum() > 0
+                        ? nz(line.getOriginalCostAmount()).divide(nz(source.getOriginalValue()), VALUE_SCALE + 2, RoundingMode.HALF_UP)
+                        : BigDecimal.ZERO);
+        return sourceResidual.multiply(ratio).setScale(VALUE_SCALE, RoundingMode.HALF_UP);
     }
 
     protected void applyRemainder(List<ErpAstSplitLine> lines, int maxIndex, String mode,
@@ -375,7 +393,9 @@ public class ErpAstSplitProcessor {
             asset.setCurrencyId(source.getCurrencyId());
             asset.setOriginalValue(nz(line.getOriginalCostAmount()));
             asset.setCurrentValue(nz(line.getOriginalCostAmount()));
-            asset.setResidualValue(nz(source.getResidualValue()));
+            // P1-CK-ast-002 修复：目标卡残值按比例分摊（修复前全额复制到每张卡 → Σ 残值 N 倍放大，
+            // 卡片/计划/执行三口径分叉，直线法折旧系统性低估）。FIXED_AMOUNT 按金额比例派生。
+            asset.setResidualValue(allocatedResidual(source, line));
             asset.setDepreciationMethod(source.getDepreciationMethod());
             asset.setUsefulLifeMonths(source.getUsefulLifeMonths());
             asset.setAccumulatedDepreciation(nz(line.getAccumulatedDepreciationAmount()));
@@ -420,14 +440,18 @@ public class ErpAstSplitProcessor {
         int remainingMonths = Math.max(totalMonths - inheritedMonths, 1);
 
         IEntityDao<ErpAstDepreciationSchedule> dao = daoProvider.daoFor(ErpAstDepreciationSchedule.class);
-        BigDecimal depBase = original.subtract(residual);
+        // P1-CK-ast-006：计划基数 = 剩余可折旧净值 = (原值 − 已提累计折旧) − 残值（修复前不减已提，
+        // 计划总额虚高；已折旧部分被再提一遍）。
+        BigDecimal depBase = original.subtract(nz(line.getAccumulatedDepreciationAmount())).subtract(residual);
         if (depBase.signum() < 0) {
             depBase = BigDecimal.ZERO;
         }
         BigDecimal monthlyAmount = depBase.divide(BigDecimal.valueOf(remainingMonths), VALUE_SCALE, RoundingMode.HALF_UP);
 
         LocalDate baseDate = source.getAcquisitionDate() != null ? source.getAcquisitionDate() : CoreMetrics.today();
-        LocalDate start = baseDate.plusMonths(1);
+        // P1-CK-ast-006：计划起点 = 继承点（源已执行期数）次月（修复前从源购置次月起排，
+        // 覆盖历史期间 → 历史 PENDING 死行堆积 + 预警/计划报表把历史行计入待提）。
+        LocalDate start = baseDate.plusMonths(inheritedMonths).plusMonths(1);
         for (int i = 0; i < remainingMonths; i++) {
             LocalDate periodDate = start.plusMonths(i);
             ErpAstDepreciationSchedule schedule = dao.newEntity();

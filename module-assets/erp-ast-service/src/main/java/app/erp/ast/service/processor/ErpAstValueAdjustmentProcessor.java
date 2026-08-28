@@ -209,6 +209,23 @@ public class ErpAstValueAdjustmentProcessor {
                     .param(ErpAstErrors.ARG_ADJUSTMENT_CODE, adjustment.getCode())
                     .param(ErpAstErrors.ARG_AMOUNT, adjustment.getAdjustmentAmount());
         }
+        // P1-CK-ast-005：减值/重估下调金额上限 = NBV − 残值（不得使账面净值低于残值）。
+        // REVALUATION_UP 为增值方向无上限。
+        if (!Objects.equals(adjustment.getAdjustmentType(), ErpAstConstants.ADJUSTMENT_TYPE_REVALUATION_UP)) {
+            ErpAstAsset asset = adjustment.getAsset();
+            if (asset != null) {
+                BigDecimal nbv = nz(asset.getNetBookValue());
+                BigDecimal residual = nz(asset.getResidualValue()).max(BigDecimal.ZERO);
+                BigDecimal maxAmount = nbv.subtract(residual).max(BigDecimal.ZERO);
+                if (nz(adjustment.getAdjustmentAmount()).compareTo(maxAmount) > 0) {
+                    throw new NopException(ErpAstErrors.ERR_ADJUSTMENT_AMOUNT_EXCEEDS_NBV)
+                            .param(ErpAstErrors.ARG_ADJUSTMENT_CODE, adjustment.getCode())
+                            .param(ErpAstErrors.ARG_AMOUNT, adjustment.getAdjustmentAmount())
+                            .param(ErpAstErrors.ARG_MAX_AMOUNT, maxAmount)
+                            .param(ErpAstErrors.ARG_RESIDUAL_VALUE, residual);
+                }
+            }
+        }
     }
 
     protected void validateAssetAdjustable(ErpAstAsset asset, IServiceContext context) {
@@ -239,7 +256,8 @@ public class ErpAstValueAdjustmentProcessor {
         if (Objects.equals(type, ErpAstConstants.ADJUSTMENT_TYPE_REVALUATION_UP)) {
             newNbv = currentNbv.add(amount);
         } else {
-            newNbv = currentNbv.subtract(amount);
+            // P1-CK-ast-005：下限兜底 max(残值, 0)——减值不得使账面净值低于残值（修复前可为负）。
+            newNbv = currentNbv.subtract(amount).max(nz(asset.getResidualValue()).max(BigDecimal.ZERO));
         }
         asset.setNetBookValue(newNbv);
         asset.setCurrentValue(newNbv);

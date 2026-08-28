@@ -31,6 +31,7 @@ import static io.nop.api.core.beans.FilterBeans.eq;
 import static io.nop.graphql.core.ast.GraphQLOperationType.mutation;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -139,6 +140,33 @@ public class TestErpAstInventory extends JunitAutoTestCase {
         // ASSET_INVENTORY_ADJUSTMENT 凭证回链已落库（盘盈 + 盘亏各 2 行分录 = 4 行）
         List<ErpFinVoucherBillR> links = findBillLinks("INV-001", "ASSET_INVENTORY_ADJUSTMENT");
         assertFalse(links.isEmpty(), "ASSET_INVENTORY_ADJUSTMENT 凭证回链已落库");
+    }
+
+    /**
+     * P1-CK-ast-003 回归：reconcile 前置实盘数量完整性校验。
+     * 修复前漏录行 actualQuantity=null 按实盘 0 判盘亏，processVariance 将资产静默 SCRAPPED（数据破坏级）。
+     */
+    @Test
+    public void testReconcileRejectsMissingActualQuantity() {
+        String invId = ormTemplate.runInSession(session -> {
+            seedCoreBasics();
+            String categoryId = seedCategory("CAT-MISS-INV", "漏录类别");
+            AstTestSupport.seedAsset(daoProvider, "AST-MISS-INV", "漏录资产", categoryId, "1",
+                    new BigDecimal("8000"), BigDecimal.ZERO,
+                    ErpAstConstants.DEPRECIATION_METHOD_STRAIGHT_LINE, 12,
+                    ErpAstConstants.ASSET_STATUS_IN_SERVICE);
+            return seedInventory("INV-MISS-001", "漏录盘点", categoryId, LocalDate.of(2026, 7, 15));
+        });
+
+        assertEquals(0, createInventory(invId).getStatus(), "createInventory 成功（展开账面行）");
+        assertEquals(1, findLines(invId).size(), "1 行账面行");
+        assertEquals(0, submitForCount(invId).getStatus(), "submitForCount 成功（DRAFT→COUNTING）");
+
+        // 不录入实盘数量（actualQuantity 保持 null）→ 直接 reconcile 应拒绝
+        ApiResponse<?> resp = reconcile(invId);
+        assertNotEquals(0, resp.getStatus(), "漏录实盘 reconcile 应拒绝");
+        assertEquals(ErpAstErrors.ERR_AST_INVENTORY_ACTUAL_QUANTITY_MISSING.getErrorCode(), resp.getCode(),
+                "存在 actualQuantity==null 行应拒绝（修复前按实盘 0 判盘亏报废资产）");
     }
 
     @Test

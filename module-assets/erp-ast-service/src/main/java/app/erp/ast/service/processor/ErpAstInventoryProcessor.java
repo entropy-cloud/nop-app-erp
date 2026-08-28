@@ -162,6 +162,14 @@ public class ErpAstInventoryProcessor {
 
     protected void calculateVariance(ErpAstInventory inv, IServiceContext context) {
         List<ErpAstInventoryLine> lines = findLines(inv.getId());
+        // P1-CK-ast-003：实盘数量完整性前置校验——漏录行按实盘 0 判盘亏，processVariance 会将在用
+        // 资产静默 SCRAPPED（数据破坏级）。reconcile 前必须全部行已录入 actualQuantity。
+        for (ErpAstInventoryLine line : lines) {
+            if (line.getActualQuantity() == null) {
+                throw new NopException(ErpAstErrors.ERR_AST_INVENTORY_ACTUAL_QUANTITY_MISSING)
+                        .param(ErpAstErrors.ARG_INVENTORY_CODE, inv.getCode());
+            }
+        }
         int surplusCount = 0, shortageCount = 0, matchedCount = 0;
         BigDecimal surplusAmount = BigDecimal.ZERO, shortageAmount = BigDecimal.ZERO;
         for (ErpAstInventoryLine line : lines) {

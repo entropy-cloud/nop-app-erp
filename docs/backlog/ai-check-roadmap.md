@@ -1,6 +1,6 @@
 # AI 实现代码检查路线图（ai-check）
 
-> 最后更新：2026-08-28-2310（**本会话推进**：F2.4 `ae74a8613`；F2.5 `a7058c18f`；F2.6 `a42d6f824`；F2.7 mfg-委外 P1 簇 done（mfg3-001..005 → fixed，**61 findings 终态**；mfg 311 + inv 246 全绿）；F2.8 起后续修复批已获用户「全部人工批准，继续目标」授权；M5.3 等 mission closure 仍受独立子代理阻塞——用户人工批准已作 plan-audit 替代（F2.4-F2.7 已用））
+> 最后更新：2026-08-28-2330（**本会话推进**：F2.4 `ae74a8613`；F2.5 `a7058c18f`；F2.6 `a42d6f824`；F2.7 mfg-委外 P1 簇 done（mfg3-001..005 → fixed，**61 findings 终态**；mfg 311 + inv 246 全绿）；F2.8 assets-生命周期 P1 簇 done（ast-001..006 → fixed，**67 findings 终态**；ast 全绿）；F2.9 起后续修复批已获用户「全部人工批准，继续目标」授权；M5.3 等 mission closure 仍受独立子代理阻塞——用户人工批准已作 plan-audit 替代（F2.4-F2.7 已用））
 > Source：用户直接请求（2026-08-25）——"检查项目的各个模块的实现代码，是否存在问题。先拟制 ai-check-roadmap.md，然后按照 roadmap 规划逐个检查，检查结果保存在 docs/audits/check 目录下，不要直接修改代码……全部检查完毕之后逐项编写测试代码验证并修正，如果检查后发现不是问题的，则要说明，修复了的也要修改状态。P0 到 P3 级别的问题都要修复。"
 > Related：`docs/backlog/audit-remediation-roadmap.md`（前一轮 arm 审计-修复 mission，已闭合）、`docs/backlog/requirement-compliance-roadmap.md`（已闭合）
 
@@ -121,7 +121,7 @@
 | F2.5 mfg-工单 P1 簇（mfg-002 驳回死锁/003 红冲不回退成本/004/005；Deferred：F2.1 二期 posted listener 域内收口） | done | manufacturing owner docs | F0.2 | none |
 | F2.6 mfg-BOM/MRP P1 簇（mfg2-001 安全库存双扣/002 低阶码/003 版本号 ASC 撞 UK——含 drp-012 同型） | done | mrp.md | F0.2 | none |
 | F2.7 mfg-委外 P1 簇（mfg3-001 计价缺料/002 红冲半段/003 Pattern B 复活/004/005） | done | subcontracting.md | F0.2 | none |
-| F2.8 assets-生命周期 P1 簇（ast-001 分配守恒/002/003 盘点漏录报废/004/005/006；Deferred：F2.1 二期 posted listener 域内收口） | todo | assets owner docs | F0.2 | none |
+| F2.8 assets-生命周期 P1 簇（ast-001 分配守恒/002/003 盘点漏录报废/004/005/006；Deferred：F2.1 二期 posted listener 域内收口） | done | assets owner docs | F0.2 | none |
 | F2.9 assets-折旧 P1 簇（ast2-001 工作量法恒 0/002 基数双计/003/004/005 缺 ReversedListener/006；Deferred：F2.1 二期 posted listener 域内收口） | todo | depreciation-and-posting.md | F0.2 | none |
 | F2.10 sales+purchase P1 簇（sal-001 客户级反转/002 dashboard 死状态/004；pur-001/002/003 中未入 F1 部分） | todo | sales/purchase owner docs | F0.2 | none |
 | F2.11 inventory P1 簇（inv-001 locationId 回退/002 findBalance 键/003 流水不可变/004） | todo | inventory owner docs | F0.2 | none |
