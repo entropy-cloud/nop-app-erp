@@ -27,7 +27,10 @@ When a bug, retrospective, or audit reveals a repeatable pattern, consider promo
 - `14-config-gate-deployment-contract-adjudication.md` — **config-gate 认定范式**：「功能默认关闭」≠「功能缺失」，反之硬契约禁 config 化稀释。A4.1.4 首立三源核对法（真相源部署契约声明 / module-meta optionalFeatures / 生产 yaml 普查），跨 ≥10 切片复用 + MR1 修复 config 化裁决反向应用。含对称误判（假阳性/假阴性）自检清单。
 - `15-xbiz-xscript-no-trycatch-sink-to-java-bean.md` — **xbiz XScript 无法 try/catch**：XLang 引擎不支持 TryStatement，多步编排/失败隔离/复杂守卫必须下沉 Java Bean（Guard/StateMachine/编排 Processor 范式），xbiz source 只做薄委托（状态写回 + 一行 inject）。M4.64 机制注记 + RC-R1.89 D2 薪酬三路计提编排两案定稿。
 - `16-cross-repo-schema-contract-consumer-source-verification.md` — **跨仓库 schema 契约须对照消费端渲染器源码验证**：松耦合契约失效是静默降级非抛错——生成侧输出 `valueField`、消费侧读 `valueKey`，运行时退化 fallback 无任何报错；结构性契约测试（键存在性）146 全绿但功能全坏。plan 2026-08-24-1147-1 三轮 plan-audit 全过、closure-audit 捕获 2 项 P0 实录。含四步强制清单（读消费端解析点 / 契约对照表进文档 / 深度断言 / 抽样落盘统计分布）。
+- `17-code-history-deferred-triangulation-audit.md` — **代码 × 历史 × Deferred 三路交叉审计**：新一輪审计 mission 的非平凡增量 = 三路交叉（代码 / 历史 / Deferred），第三路（读最近 50 份 plan 的 Deferred 段）= 隐藏的 finding 金矿。ai-check-r2 M0.2 扫描揭示 8 项已满足 / 11 项部分满足 / 21 项未满足的 deferred 触发条件。含多次执行隔离纪律 + 状态机延用 + 同型 finding 合并基类 + 保护区域不绕。
 
-> **2026-07-31 提升裁决（plan `2026-07-31-1330-2` G.2）**：候选 6 模式中 5 个提升为 `07`–`11`；`@Inject private` **排除**——已被 `docs/skills/README.md §已知失败模式 #6` 收录为速查项（单一规则无 case 复杂度，不另建 lesson）。
+> **2026-08-28 提升裁决（ai-check-r2 M0.7 自审）**：M0 阶段执行后沉淀方法学——三路交叉审计范式入课为 `17`。
 
 > **2026-08-20 提升裁决（plan `2026-08-20-1255-2` G.1，requirement-compliance mission MG）**：roadmap 点名两类必入——`12` 文档化简化滥用 + `13` 需求基线陈旧；mission 证据高频候选 5 项逐一裁决——config-gate 认定范式（跨 ≥10 切片复现）入课为 `14`、xbiz XScript 编排下沉（M4.64+R1.89 双案平台机制约束）入课为 `15`、死常量/死列激活与 dangling dict 值设计预防**划界归并 lesson 10**（"声明但无写点"同族，已扩边界注记）、owner doc 表述过时未随实现更新**划界归并 lesson 13**（审计快照型陈旧案例族，已收录 payroll.md 案）。
+
+> **2026-08-28 提升裁决（ai-check-r2 M0.7 自审 + M5.3 收口预演）**：M0 阶段执行后沉淀方法学——三路交叉审计范式入课为 `17`。M5.3 closure audit CG1-CG5 主会话全通过，CG6 successor 触发条件登记（子代理通道恢复 / 人工裁决）。

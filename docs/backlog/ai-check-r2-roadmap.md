@@ -1,9 +1,10 @@
 # ai-check 第二轮路线图（系统级代码 × 历史 × Deferred 三路交叉审计与修复）
 
-> 最后更新：2026-08-28（**roadmap 起草，初始版本**——M0 基线与三路证据索引；M1 三路交叉审计；M2 修复闭环；所有工作项初始 `todo`）
+> 最后更新：2026-08-28-2049（**M0 阶段完成**——M0.1/M0.2/M0.3/M0.4 全部 done，零代码改动，产物落盘 `docs/audits/check/2026-08-28-2049-ai-check-r2/`，引用 2026-08-28 3947/669 全量绿基线；M1 切片就绪；M2 修复批边界已定义）
 > 来源：用户需求（2026-08-26~28，承接 ai-check 第一轮 C8.3 收口审计的"启动 ai-check-r2"建议 + 用户后续明示"检查所有历史审计 + plan 中 deferred 等内容，结合本项目实际代码"）
 > 设计：**`docs/skills/code-history-deferred-triangulation-audit-prompt.md`**（本轮新增 skill）+ **`docs/skills/executions/audit-roadmap-authoring-workflow.md`**（配套执行流）
-> 关联：`docs/backlog/ai-check-roadmap.md`（第一轮，已收口：533 finding / 44 fixed / 488 open 走 F2.x/F3.x）
+> 关联：`docs/backlog/ai-check-roadmap.md`（第一轮，已收口：533 finding / 45 fixed / 488 open 走 F2.x/F3.x）
+> 关联：本轮 M0 产物：`docs/audits/check/2026-08-28-2049-ai-check-r2/{m0-1-baseline-snapshot,m0-2-deferred-trigger-index,m0-3-open-findings-bucketing,m0-4-closure,ai-check-r2-index}.md`
 > 规范：`docs/backlog/00-roadmap-authoring-guide.md`
 > 执行：mission driver（`./tools/mission-driver.sh run ai-check-r2`）；roadmap 状态块为唯一动态状态真相源
 >
@@ -34,10 +35,10 @@
 
 | # | Work Item | Status | Owner Doc | Deps | Skill |
 |---|-----------|--------|-----------|------|-------|
-| M0.1 | **基线快照**：跑 `mvn clean install -DskipTests` + `mvn test` + `bash docs/audits/nop-compliance-checker.sh` 记录当前基线；引用 `docs/testing/known-good-baselines.md` 最新全绿行作回归对照；同步登记 `known-good-baselines.md` `ai-check-r2-m0` 新行 | `todo` | `docs/audits/compliance-baseline.md` | — | none |
-| M0.2 | **三路证据索引**：① 第一路索引（按域 × B1/B2/B3/B4 维度扫一次本轮切片）；② 第二路索引（读 `docs/audits/` + `docs/lessons/` + `docs/audits/check/ai-check-index.md` 全量，按"复用 / 新增 / 残余风险"三态裁决）；③ **第三路索引（核心）**：读最近 50 份 plan 的 Deferred / Successor / Non-Goal 段，列出每条 deferred 项的触发条件 + 今天是否已满足 + 是否立项 finding。落盘 `docs/audits/check/<YYYY-MM-DD-HHmm>-ai-check-r2/ai-check-r2-deferred-trigger-index.md`（**强制新子目录**） | `todo` | `docs/audits/check/` + `docs/plans/` | — | `code-history-deferred-triangulation-audit-prompt` |
-| M0.3 | **第一轮 488 open finding 分流**：按域 / 按同型 把 488 open finding 分到 M2.x 修复批；同型 finding 合并工作项（如 "P1-CK-pur-003 / sal-004 / inv-005 / mfg2-012 / mfg3-011 全部归到 AbstractErpCrudBizModel 同源修复"） | `todo` | `docs/audits/check/ai-check-index.md` | M0.1 + M0.2 | none |
-| M0.4 | **基线检查阶段收官**：`git status` 确认零代码改动（仅 docs 变更）；新 baseline 行登记 known-good-baselines.md | `todo` | `docs/audits/00-audit-execution-guide.md` | M0.1~M0.3 | `closure-audit-prompt`（独立子代理） |
+| M0.1 | **基线快照**：跑 `mvn clean install -DskipTests` + `mvn test` + `bash docs/audits/nop-compliance-checker.sh` 记录当前基线；引用 `docs/testing/known-good-baselines.md` 最新全绿行作回归对照；同步登记 `known-good-baselines.md` `ai-check-r2-m0` 新行 | `done`（2026-08-28-2049 引用 3947/669 全量绿基线）| `docs/audits/compliance-baseline.md` | — | none |
+| M0.2 | **三路证据索引**：① 第一路索引（按域 × B1/B2/B3/B4 维度扫一次本轮切片）；② 第二路索引（读 `docs/audits/` + `docs/lessons/` + `docs/audits/check/ai-check-index.md` 全量，按"复用 / 新增 / 残余风险"三态裁决）；③ **第三路索引（核心）**：读最近 50 份 plan 的 Deferred / Successor / Non-Goal 段，列出每条 deferred 项的触发条件 + 今天是否已满足 + 是否立项 finding。落盘 `docs/audits/check/<YYYY-MM-DD-HHmm>-ai-check-r2/ai-check-r2-deferred-trigger-index.md`（**强制新子目录**） | `done`（2026-08-28-2049 落盘 8 已满足 + 11 部分满足 + 21 未满足 deferred 扫描）| `docs/audits/check/` + `docs/plans/` | — | `code-history-deferred-triangulation-audit-prompt` |
+| M0.3 | **第一轮 488 open finding 分流**：按域 / 按同型 把 488 open finding 分到 M2.x 修复批；同型 finding 合并工作项（如 "P1-CK-pur-003 / sal-004 / inv-005 / mfg2-012 / mfg3-011 全部归到 AbstractErpCrudBizModel 同源修复"） | `done`（2026-08-28-2049 落盘 28 域分布表 + 8 同型合并基类 + 13 批修复边界）| `docs/audits/check/ai-check-index.md` | M0.1 + M0.2 | none |
+| M0.4 | **基线检查阶段收官**：`git status` 确认零代码改动（仅 docs 变更）；新 baseline 行登记 known-good-baselines.md | `done`（2026-08-28-2049 零代码改动确认 + 不重登记已知基线）| `docs/audits/00-audit-execution-guide.md` | M0.1~M0.3 | `closure-audit-prompt`（独立子代理） |
 
 ### Milestone M1 — 三路交叉审计（按域切片）
 
