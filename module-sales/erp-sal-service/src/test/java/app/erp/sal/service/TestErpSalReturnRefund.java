@@ -7,6 +7,7 @@ import app.erp.md.dao.entity.ErpMdSubject;
 import app.erp.sal.dao.entity.ErpSalDelivery;
 import app.erp.sal.dao.entity.ErpSalDeliveryLine;
 import app.erp.sal.dao.entity.ErpSalInvoice;
+import app.erp.sal.dao.entity.ErpSalInvoiceLine;
 import app.erp.sal.dao.entity.ErpSalOrder;
 import app.erp.sal.dao.entity.ErpSalOrderLine;
 import app.erp.sal.dao.entity.ErpSalReceipt;
@@ -78,18 +79,22 @@ public class TestErpSalReturnRefund extends JunitAutoTestCase {
         seedPeriodAndSubjects();
         String[] deliveryCtx = seedApprovedDelivery("SD-RFD-001", new BigDecimal("10"));
 
-        // 发票 113 + 收款 113，核销 → 发票 receivedStatus=RECEIVED
+        // 发票 113 + 收款 60（部分核销）——完全核销（RECEIVED）会被 pre-approve 守卫
+        // ERR_RETURN_INVOICE_SETTLED 拒绝（returns.md RC-R1.19），退款编排仅承接 PARTIAL/OPEN 残余。
         String invoiceId = nextId();
         String receiptId = nextId();
         ormTemplate.runInSession(session -> {
             newApprovedInvoice("SI-RFD-001", invoiceId, new BigDecimal("113"));
-            newApprovedReceipt("SR-RFD-001", receiptId, new BigDecimal("113"));
+            // P1-CK-sal-001：发票行须与退货行 deliveryLineId 关联（真实开票流经出库行），
+            // 退款编排才能定位到关联发票（修复前按客户全量反转；无关联则跳过）。
+            seedInvoiceLineWithDeliveryLink(invoiceId, deliveryCtx[1], MATERIAL_ID, new BigDecimal("4"));
+            newApprovedReceipt("SR-RFD-001", receiptId, new BigDecimal("60"));
             return null;
         });
-        assertEquals(0, settle(receiptId, invoiceId, new BigDecimal("113")).getStatus(), "预核销应成功");
-        assertEquals(ErpSalConstants.RECEIVED_STATUS_RECEIVED,
+        assertEquals(0, settle(receiptId, invoiceId, new BigDecimal("60")).getStatus(), "预核销应成功");
+        assertEquals(ErpSalConstants.RECEIVED_STATUS_PARTIAL,
                 daoProvider.daoFor(ErpSalInvoice.class).getEntityById(invoiceId).getReceivedStatus(),
-                "发票 receivedStatus=RECEIVED");
+                "发票 receivedStatus=PARTIAL（部分核销）");
 
         String returnId = nextId();
         ormTemplate.runInSession(session -> {
@@ -334,6 +339,21 @@ public class TestErpSalReturnRefund extends JunitAutoTestCase {
         invoice.setTotalAmountWithTax(withTax);
         invoice.setPosted(false);
         dao.saveEntity(invoice);
+    }
+
+    /** 发票行经 deliveryLineId 关联出库行（P1-CK-sal-001：退款编排按此链路定位关联发票）。 */
+    private void seedInvoiceLineWithDeliveryLink(String invoiceId, String deliveryLineId,
+                                                 String materialId, BigDecimal qty) {
+        IEntityDao<ErpSalInvoiceLine> dao = daoProvider.daoFor(ErpSalInvoiceLine.class);
+        ErpSalInvoiceLine line = new ErpSalInvoiceLine();
+        line.setId(String.valueOf(idSeq.incrementAndGet()));
+        line.setInvoiceId(invoiceId);
+        line.setLineNo(10);
+        line.setMaterialId(materialId);
+        line.setUoMId(UOM_ID);
+        line.setQuantity(qty);
+        line.setDeliveryLineId(deliveryLineId);
+        dao.saveEntity(line);
     }
 
     private void newApprovedReceipt(String code, String receiptId, BigDecimal total) {

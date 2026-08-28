@@ -34,10 +34,12 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import static io.nop.api.core.beans.FilterBeans.and;
 import static io.nop.api.core.beans.FilterBeans.eq;
 import static io.nop.api.core.beans.FilterBeans.ge;
 import static io.nop.api.core.beans.FilterBeans.in;
 import static io.nop.api.core.beans.FilterBeans.le;
+import static io.nop.api.core.beans.FilterBeans.ne;
 import app.erp.common.service.DashboardUtil;
 
 /**
@@ -46,7 +48,7 @@ import app.erp.common.service.DashboardUtil;
  * 镜像 {@code ErpFinDashboardBizModel} 范式。
  *
  * <p>KPI 口径：本期销售额取自 {@link ErpSalInvoice}（posted, businessDate 期内 Σ amountFunctional）；
- * 本期订单量取自 {@link ErpSalOrder}（docStatus=ACTIVE count）；订单→开票转化率 = invoice count / order count；
+ * 本期订单量取自 {@link ErpSalOrder}（approveStatus=APPROVED 且非 CANCELLED：count）；订单→开票转化率 = invoice count / order count；
  * 应收余额跨域读 {@link ErpFinArApItem}（direction=RECEIVABLE, OPEN+PARTIAL），经 {@link IErpFinArApItemBiz} 注入（R 跨域只读）。
  */
 @BizModel("ErpSalDashboard")
@@ -224,7 +226,7 @@ public class ErpSalDashboardBizModel {
     private long countActiveOrders() {
         IEntityDao<ErpSalOrder> dao = daoProvider.daoFor(ErpSalOrder.class);
         QueryBean q = new QueryBean();
-        q.addFilter(eq("docStatus", ErpSalConstants.DOC_STATUS_ACTIVE));
+        q.addFilter(and(eq("approveStatus", ErpSalConstants.APPROVE_STATUS_APPROVED), ne("docStatus", ErpSalConstants.DOC_STATUS_CANCELLED)));
         return dao.countByQuery(q);
     }
 

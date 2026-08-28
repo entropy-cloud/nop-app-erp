@@ -81,7 +81,7 @@
 | P3-CK-md-012 | P3 | D9 | ck-master-data | Dashboard 预警 5000 行截断无标记（显式裁决保留） | 新增 | open |  |
 | P3-CK-md-013 | P3 | D6 | ck-master-data | 报表价格 null→0 展示不一致 | 新增 | open |  |
 | P3-CK-md-014 | P3 | D1 | ck-master-data | requireSku 错误码语义漂移 | 新增 | open |  |
-| P1-CK-pur-001 | P1 | D3 | ck-purchase.md | 采购看板全部主查询消费 docStatus=ACTIVE 死状态（全域零 writer），KPI/趋势/TOP N/及时率/三单预警恒空 | 新增 | open |  |
+| P1-CK-pur-001 | P1 | D3 | ck-purchase.md | 采购看板全部主查询消费 docStatus=ACTIVE 死状态（全域零 writer），KPI/趋势/TOP N/及时率/三单预警恒空 | 新增 | fixed | F2.10：ErpPurDashboardBizModel 三处查询 eq(docStatus,ACTIVE) → and(eq(approveStatus,APPROVED), ne(docStatus,CANCELLED))；TestErpPurDashboard#testKpiCountsApprovedOrdersWithRealDocStatus（DRAFT+APPROVED 计入、CANCELLED 不计）红→绿 |
 | P1-CK-pur-002 | P1 | D7/D2 | ck-purchase.md | Invoice/Payment approve 链 SoD 守卫位于 doPosting（REQUIRES_NEW 已提交）之后——守卫抛错回滚主事务但凭证已独立提交成孤儿 | 新增 |fixed | F1.2：Invoice/Payment SoD 前移 SoD-first + Invoice 承付 hook 前移（SYNC 同事务）；TestErpPurInvoice/PaymentApproval SoD 零凭证断言；pur 336 全绿 |
 | P1-CK-pur-003 | P1 | D5/D3 | ck-purchase.md | 通用 CRUD update 路径无「已审核/已过账不可修改」守卫（头+行全实体）——三单匹配/核销/聚合的数据基线可被直接改写 | 新增 |fixed | F1.3：AbstractErpCrudBizModel 状态锁基类（posted/APPROVED 拒通用 update/delete）+ 363 文件全域接入；TestErpPurCrudStatusLock 五分支绿；19 域 7249/7249 全绿 |
 | P2-CK-pur-004 | P2 | D6/D8 | ck-purchase.md | 「CANCELLED 但仍 APPROVED 计入聚合」三处联发 + cancel/reverseApprove 后订单收货进度不重算 | 复用注记：RC-R1.11 口径 | open |  |
@@ -95,9 +95,9 @@
 | P3-CK-pur-012 | P3 | D4 | ck-purchase.md | 声明未接线的配置/常量（doc-code 漂移） | 新增 | open |  |
 | P3-CK-pur-013 | P3 | D7 | ck-purchase.md | batchApprove 逐行吞 NopException 但共享单事务——失败行此前的会话脏写随外层提交 | 新增 | open |  |
 | P3-CK-pur-014 | P3 | D10 | ck-purchase.md | ThreeWayMatcher 悬挂回链静默跳过校验 | 新增 | open |  |
-| P1-CK-sal-001 | P1 | D6/D8 | ck-sales.md | ReturnRefundOrchestrator 客户级全量反转核销——不限于退货关联发票，无关联发票时也触发 | 新增 | open |  |
-| P1-CK-sal-002 | P1 | D3/D6 | ck-sales.md | Dashboard 订单量 KPI 查询死状态 ACTIVE——orderCount/conversionRate 恒 0 | 新增 | open |  |
-| P1-CK-sal-003 | P1 | D8，跨域核对归属 C3.1 | ck-sales.md | 延迟过账重试成功后 sales 源单 posted 标志不回写——红冲门控被跳过、暂估判定失真 | 跨域核对归属 C3.1 |fixed | finance 侧控制点 P1-CK-fin-001 已于 F2.1 修复（VoucherPostedEvent 悬挂补写通道 + SalReversalListener dual 接口回写 AR_INVOICE/RECEIPT/SALES_RETURN/SALES_OUTPUT）；sales 侧遗留面（红冲门控/暂估判定的域内复核）归 F2.10 联动收口 |
+| P1-CK-sal-001 | P1 | D6/D8 | ck-sales.md | ReturnRefundOrchestrator 客户级全量反转核销——不限于退货关联发票，无关联发票时也触发 | 新增 | fixed | F2.10：orchestrateRefund 限定退货关联发票（退货行 deliveryLineId → 发票行链路，对齐 validateInvoiceNotSettled）；无关联发票 → 跳过（returns.md RC-R1.19 一致）；TestErpSalReturnExchange#testPriceDifferenceNegativeRefunds 改断言无关发票核销不被反转；TestErpSalReturnRefund 场景改部分核销（完全核销被 pre-approve 守卫拒绝是既有正确语义）红→绿 |
+| P1-CK-sal-002 | P1 | D3/D6 | ck-sales.md | Dashboard 订单量 KPI 查询死状态 ACTIVE——orderCount/conversionRate 恒 0 | 新增 | fixed | F2.10：ErpSalDashboardBizModel.countActiveOrders 改 and(eq(approveStatus,APPROVED), ne(docStatus,CANCELLED))；TestErpSalDashboard#testKpiCountsApprovedOrdersWithRealDocStatus 红→绿 |
+| P1-CK-sal-003 | P1 | D8，跨域核对归属 C3.1 | ck-sales.md | 延迟过账重试成功后 sales 源单 posted 标志不回写——红冲门控被跳过、暂估判定失真 | 跨域核对归属 C3.1 |fixed | F2.1 已修 finance 侧（posted 事件回写）；F2.10 sales 侧收口：ErpSalInvoiceReverseApprove/Cancel 红冲前置改为 `posted || hasActivePosting(code)`（ErpFinVoucherBillR 反查未红冲 AR_INVOICE 凭证——sweep 重试成功后 posted 未回写但凭证存在仍红冲，孤儿凭证不再滞留） |
 | P1-CK-sal-004 | P1 | D5 | ck-sales.md | 通用 CRUD 更新/删除无单据状态守卫——「posted=true 后物理锁定」设计承诺未实现 | 新增 |fixed | F1.3：AbstractErpCrudBizModel 状态锁基类（posted/APPROVED 拒通用 update/delete）+ 363 文件全域接入；TestErpPurCrudStatusLock 五分支绿；19 域 7249/7249 全绿 |
 | P2-CK-sal-005 | P2 | D6 | ck-sales.md | 促销规则 materialCategoryId 目标维度未参与行匹配——类目规则全局命中所有行 | 新增 | open |  |
 | P2-CK-sal-006 | P2 | D6 | ck-sales.md | GIFT 规则触发物料不在订单时仍生成赠品行 | 新增 | open |  |

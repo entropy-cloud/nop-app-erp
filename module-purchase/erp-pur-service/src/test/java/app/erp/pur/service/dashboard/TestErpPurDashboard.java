@@ -86,6 +86,24 @@ public class TestErpPurDashboard extends JunitAutoTestCase {
         assertEquals(1.0, (double) kpi.get("onTimeRate"), 0.001);
     }
 
+    /**
+     * P1-CK-pur-001 回归：真实单据状态（docStatus=DRAFT/SUBMITTED，approveStatus=APPROVED）下的订单
+     * 计入 KPI。修复前主查询过滤 docStatus=ACTIVE 死状态（全域零 writer）→ orderCount/purchaseAmount 恒 0；
+     * 修复后按 approveStatus=APPROVED 且非 CANCELLED 口径聚合。
+     */
+    @Test
+    public void testKpiCountsApprovedOrdersWithRealDocStatus() {
+        ormTemplate.runInSession(() -> {
+            seedSupplier("521", "S-REAL");
+            seedOrder("721", "521", ErpPurConstants.DOC_STATUS_DRAFT, CoreMetrics.currentDate().plusDays(7));
+            seedOrder("722", "521", ErpPurConstants.DOC_STATUS_CANCELLED, CoreMetrics.currentDate().plusDays(7));
+        });
+
+        Map<String, Object> kpi = dashboardBiz.getDashboardKpi(null, null, CTX);
+        assertEquals(1L, kpi.get("orderCount"),
+                "真实 DRAFT+APPROVED 订单计入（修复前 ACTIVE 过滤恒 0）；CANCELLED 不计入");
+    }
+
     @Test
     public void testOnTimeRateLateDelivery() {
         ormTemplate.runInSession(() -> {

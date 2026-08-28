@@ -41,8 +41,9 @@ public class ErpSalInvoiceCancelProcessor extends AbstractCancelProcessor<ErpSal
         ErpSalInvoice invoice = requireEntity(id);
         validateTransitionForCancel(invoice, context);
         String approveStatus = invoice.getApproveStatus();
+        // P1-CK-sal-003（sales 侧收口）：posted 标志 + 凭证存在性双判（sweep 异步重试成功后 posted 不回写）。
         if (approveStatus != null && Objects.equals(approveStatus, ErpSalConstants.APPROVE_STATUS_APPROVED)
-                && Boolean.TRUE.equals(invoice.getPosted())) {
+                && (Boolean.TRUE.equals(invoice.getPosted()) || processor.hasActivePosting(invoice.getCode()))) {
             postingDispatcher.reverse(invoice);
             invoice = dao().getEntityById(id);
             invoice.setPosted(false);

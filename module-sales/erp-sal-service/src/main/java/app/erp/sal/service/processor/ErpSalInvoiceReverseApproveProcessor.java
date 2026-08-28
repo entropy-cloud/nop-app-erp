@@ -37,7 +37,9 @@ public class ErpSalInvoiceReverseApproveProcessor extends AbstractReverseApprove
             return invoice;
         }
         validateTransitionForReverseApprove(invoice, context);
-        if (Boolean.TRUE.equals(invoice.getPosted())) {
+        // P1-CK-sal-003（sales 侧收口）：posted 标志 + 凭证存在性双判——sweep 异步重试成功后
+        // posted 不回写但凭证已存在，按凭证存在性仍须红冲（修复前仅看 posted → 孤儿凭证滞留）。
+        if (Boolean.TRUE.equals(invoice.getPosted()) || processor.hasActivePosting(invoice.getCode())) {
             postingDispatcher.reverse(invoice);
             invoice = dao().getEntityById(id);
             invoice.setPosted(false);

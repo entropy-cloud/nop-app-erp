@@ -38,10 +38,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import static io.nop.api.core.beans.FilterBeans.and;
 import static io.nop.api.core.beans.FilterBeans.eq;
 import static io.nop.api.core.beans.FilterBeans.ge;
 import static io.nop.api.core.beans.FilterBeans.in;
 import static io.nop.api.core.beans.FilterBeans.le;
+import static io.nop.api.core.beans.FilterBeans.ne;
 import app.erp.common.service.DashboardUtil;
 
 /**
@@ -247,7 +249,7 @@ public class ErpPurDashboardBizModel {
     private List<ErpPurInvoice> loadActiveInvoicesInRange(LocalDate from, LocalDate to) {
         IEntityDao<ErpPurInvoice> dao = daoProvider.daoFor(ErpPurInvoice.class);
         QueryBean q = new QueryBean();
-        q.addFilter(eq("docStatus", ErpPurConstants.DOC_STATUS_ACTIVE));
+        q.addFilter(and(eq("approveStatus", ErpPurConstants.APPROVE_STATUS_APPROVED), ne("docStatus", ErpPurConstants.DOC_STATUS_CANCELLED)));
         if (from != null) q.addFilter(ge("businessDate", from));
         if (to != null) q.addFilter(le("businessDate", to));
         return dao.findAllByQuery(q);
@@ -256,7 +258,7 @@ public class ErpPurDashboardBizModel {
     private long countActiveOrders() {
         IEntityDao<ErpPurOrder> dao = daoProvider.daoFor(ErpPurOrder.class);
         QueryBean q = new QueryBean();
-        q.addFilter(eq("docStatus", ErpPurConstants.DOC_STATUS_ACTIVE));
+        q.addFilter(and(eq("approveStatus", ErpPurConstants.APPROVE_STATUS_APPROVED), ne("docStatus", ErpPurConstants.DOC_STATUS_CANCELLED)));
         return dao.countByQuery(q);
     }
 
@@ -273,7 +275,7 @@ public class ErpPurDashboardBizModel {
     private double computeOnTimeRate() {
         IEntityDao<ErpPurReceive> rDao = daoProvider.daoFor(ErpPurReceive.class);
         QueryBean rq = new QueryBean();
-        rq.addFilter(eq("docStatus", ErpPurConstants.DOC_STATUS_ACTIVE));
+        rq.addFilter(and(eq("approveStatus", ErpPurConstants.APPROVE_STATUS_APPROVED), ne("docStatus", ErpPurConstants.DOC_STATUS_CANCELLED)));
         List<ErpPurReceive> receives = rDao.findAllByQuery(rq);
         if (receives.isEmpty()) return 0.0;
         Map<String, LocalDate> orderDeliveryMap = loadOrderDeliveryDates();

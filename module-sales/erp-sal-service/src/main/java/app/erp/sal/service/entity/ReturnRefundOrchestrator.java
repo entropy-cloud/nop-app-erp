@@ -1,9 +1,12 @@
 package app.erp.sal.service.entity;
 
+import app.erp.sal.biz.IErpSalInvoiceLineBiz;
 import app.erp.sal.dao.entity.ErpSalInvoice;
+import app.erp.sal.dao.entity.ErpSalInvoiceLine;
 import app.erp.sal.dao.entity.ErpSalReceipt;
 import app.erp.sal.dao.entity.ErpSalReceiptLine;
 import app.erp.sal.dao.entity.ErpSalReturn;
+import app.erp.sal.dao.entity.ErpSalReturnLine;
 import app.erp.sal.service.ErpSalConstants;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.dao.api.IDaoProvider;
@@ -11,6 +14,7 @@ import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
 
 import java.math.BigDecimal;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -18,6 +22,7 @@ import java.util.Set;
 import static io.nop.api.core.beans.FilterBeans.and;
 import static io.nop.api.core.beans.FilterBeans.eq;
 import static io.nop.api.core.beans.FilterBeans.gt;
+import static io.nop.api.core.beans.FilterBeans.in;
 
 /**
  * 销售退货退款编排器（{@code returns.md §退款}）。退货审核通过后，按客户应收收款状态路由：
@@ -41,19 +46,55 @@ public class ReturnRefundOrchestrator {
     IDaoProvider daoProvider;
 
     @Inject
+    IErpSalInvoiceLineBiz invoiceLineBiz;
+
+    @Inject
     ReceiptSettler receiptSettler;
 
     /**
      * 退货审核后调用。对客户已收款核销的发票，生成反向核销行恢复发票/收款余额与状态。无已核销记录时空操作。
+     *
+     * <p>P1-CK-sal-001 修复：反转核销**限定退货关联发票**（经退货行 deliveryLineId → 发票行链路，
+     * 对齐 {@code ErpSalReturnProcessor.validateInvoiceNotSettled} 既有链路解析）——修复前按客户
+     * 全量反转（无关联发票的未开票退货也会反转客户名下其他订单发票的核销）；无关联发票 → 跳过
+     * （与 owner doc returns.md RC-R1.19「无关联发票跳过」一致）。
      */
     public void orchestrateRefund(ErpSalReturn returnOrder) {
         if (returnOrder.getCustomerId() == null) {
             return;
         }
-        List<ErpSalInvoice> receivedInvoices = findReceivedInvoicesOfCustomer(returnOrder.getCustomerId());
+        Set<String> relatedInvoiceIds = relatedInvoiceIds(returnOrder);
+        if (relatedInvoiceIds.isEmpty()) {
+            return;
+        }
+        List<ErpSalInvoice> receivedInvoices = findReceivedInvoicesOfCustomer(returnOrder.getCustomerId(),
+                relatedInvoiceIds);
         for (ErpSalInvoice invoice : receivedInvoices) {
             reverseSettlementsForInvoice(invoice);
         }
+    }
+
+    /** 退货关联发票集合：退货行 deliveryLineId → ErpSalInvoiceLine.deliveryLineId → invoiceId。 */
+    private Set<String> relatedInvoiceIds(ErpSalReturn returnOrder) {
+        Set<String> deliveryLineIds = new HashSet<>();
+        for (ErpSalReturnLine line : returnOrder.getLines()) {
+            if (line.getDeliveryLineId() != null) {
+                deliveryLineIds.add(line.getDeliveryLineId());
+            }
+        }
+        if (deliveryLineIds.isEmpty()) {
+            return Collections.emptySet();
+        }
+        // 经 I*Biz（对齐跨实体访问纪律，不新增 daoFor 站点）
+        QueryBean q = new QueryBean();
+        q.addFilter(in("deliveryLineId", deliveryLineIds));
+        Set<String> invoiceIds = new HashSet<>();
+        for (ErpSalInvoiceLine il : invoiceLineBiz.findList(q, null, null)) {
+            if (il.getInvoiceId() != null) {
+                invoiceIds.add(il.getInvoiceId());
+            }
+        }
+        return invoiceIds;
     }
 
     /**
@@ -66,13 +107,14 @@ public class ReturnRefundOrchestrator {
         // 属退款方式路由（treasury 面）Non-Goal，触发条件满足时再扩展。
     }
 
-    private List<ErpSalInvoice> findReceivedInvoicesOfCustomer(String customerId) {
+    private List<ErpSalInvoice> findReceivedInvoicesOfCustomer(String customerId, Set<String> invoiceIds) {
         IEntityDao<ErpSalInvoice> dao = daoProvider.daoFor(ErpSalInvoice.class);
         QueryBean q = new QueryBean();
         q.addFilter(and(
                 eq("customerId", customerId),
                 eq("approveStatus", ErpSalConstants.APPROVE_STATUS_APPROVED),
-                gt("receivedAmount", BigDecimal.ZERO)));
+                gt("receivedAmount", BigDecimal.ZERO),
+                in("id", invoiceIds)));
         return dao.findAllByQuery(q);
     }
 

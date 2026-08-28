@@ -87,6 +87,23 @@ public class TestErpSalDashboard extends JunitAutoTestCase {
         assertEquals(0, ((BigDecimal) kpi.get("arBalance")).compareTo(new BigDecimal("500")));
     }
 
+    /**
+     * P1-CK-sal-002 回归：真实单据状态（docStatus 非 ACTIVE，approveStatus=APPROVED）下的订单计入 KPI。
+     * 修复前 countActiveOrders 过滤 docStatus=ACTIVE 死状态（全域零 writer）→ orderCount/conversionRate 恒 0。
+     */
+    @Test
+    public void testKpiCountsApprovedOrdersWithRealDocStatus() {
+        ormTemplate.runInSession(() -> {
+            seedCustomer("621", "C-REAL");
+            seedOrder("821", "621", ErpSalConstants.DOC_STATUS_DRAFT);
+            seedOrder("822", "621", ErpSalConstants.DOC_STATUS_CANCELLED);
+        });
+
+        Map<String, Object> kpi = dashboardBiz.getDashboardKpi(null, null, CTX);
+        assertEquals(1L, kpi.get("orderCount"),
+                "真实 DRAFT+APPROVED 订单计入（修复前 ACTIVE 过滤恒 0）；CANCELLED 不计入");
+    }
+
     @Test
     public void testTrendMonthlySeries() {
         ormTemplate.runInSession(() -> {

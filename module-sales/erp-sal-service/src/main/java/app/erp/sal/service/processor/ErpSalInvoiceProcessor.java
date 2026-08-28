@@ -1,6 +1,9 @@
 package app.erp.sal.service.processor;
 
 import app.erp.fin.biz.IErpFinBudgetCommitmentBiz;
+import app.erp.fin.biz.IErpFinVoucherBillRBiz;
+import app.erp.fin.biz.IErpFinVoucherBiz;
+import app.erp.fin.dao.entity.ErpFinVoucherBillR;
 import app.erp.fin.service.ErpFinConstants;
 import app.erp.md.biz.IErpMdPartnerBiz;
 import app.erp.md.dao.entity.ErpMdPartner;
@@ -61,6 +64,12 @@ public class ErpSalInvoiceProcessor {
 
     @Inject
     IErpFinBudgetCommitmentBiz budgetCommitmentBiz;
+
+    @Inject
+    IErpFinVoucherBillRBiz voucherBillRBiz;
+
+    @Inject
+    IErpFinVoucherBiz voucherBiz;
 
     @Inject
     ErpSalInvoiceSubmitForApprovalProcessor submitForApprovalProcessor;
@@ -389,5 +398,31 @@ public class ErpSalInvoiceProcessor {
         QueryBean q = new QueryBean();
         q.addFilter(io.nop.api.core.beans.FilterBeans.in(field, new ArrayList<>(values)));
         return q;
+    }
+
+    /**
+     * P1-CK-sal-003（sales 侧收口）：按凭证存在性判定红冲前置——posted 标志可能因 sweep 异步重试
+     * 成功而未回写（posted=false 但 AR_INVOICE 凭证已存在且未红冲），修复前 gate 仅看 posted 标志
+     * 跳过红冲 → 孤儿凭证滞留 GL。查 ErpFinVoucherBillR（billCode=invoice.code + businessType=AR_INVOICE）
+     * → 关联凭证未红冲即视为「存在有效过账」。
+     */
+    public boolean hasActivePosting(String invoiceCode) {
+        if (invoiceCode == null) {
+            return false;
+        }
+        // 经 I*Biz（对齐跨实体访问纪律，不新增 daoFor 站点）
+        io.nop.api.core.beans.query.QueryBean q = new io.nop.api.core.beans.query.QueryBean();
+        q.addFilter(io.nop.api.core.beans.FilterBeans.eq("billCode", invoiceCode));
+        q.addFilter(io.nop.api.core.beans.FilterBeans.eq("businessType", app.erp.fin.dao.ErpFinBusinessType.AR_INVOICE.name()));
+        for (ErpFinVoucherBillR link : voucherBillRBiz.findList(q, null, null)) {
+            if (link.getVoucherId() == null) {
+                continue;
+            }
+            app.erp.fin.dao.entity.ErpFinVoucher voucher = voucherBiz.getEntityById(link.getVoucherId());
+            if (voucher != null && !Boolean.TRUE.equals(voucher.getIsReversed())) {
+                return true;
+            }
+        }
+        return false;
     }
 }

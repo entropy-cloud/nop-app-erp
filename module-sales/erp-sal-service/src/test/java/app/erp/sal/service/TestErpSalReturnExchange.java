@@ -47,6 +47,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import static io.nop.api.core.beans.FilterBeans.eq;
 import static io.nop.graphql.core.ast.GraphQLOperationType.mutation;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -265,11 +266,14 @@ public class TestErpSalReturnExchange extends JunitAutoTestCase {
         lines.add(exchangeLine(MATERIAL_ID, new BigDecimal("3"), new BigDecimal("5")));
         assertEquals(0, generateExchangeDelivery(returnId, lines).getStatus()); // 换货含税 15 → Δ=−15
 
-        assertTrue(hasNegativeLine(receiptId, invoiceId), "Δ<0 应生成反向（负金额）核销行（退款）");
+        // P1-CK-sal-001：Δ<0 退款仅作用于退货关联发票——本测试的再核销发票（SI-XC-DIFF-N-001）
+        // 与退货单无 deliveryLineId 链路，不被反转（修复前按客户全量反转核销）。
+        assertFalse(hasNegativeLine(receiptId, invoiceId), "无关发票核销不被反转（P1-CK-sal-001）");
         ErpSalInvoice invoice = daoProvider.daoFor(ErpSalInvoice.class).getEntityById(invoiceId);
-        assertEquals(0, BigDecimal.ZERO.compareTo(invoice.getReceivedAmount()), "退款后发票 receivedAmount 回减为 0");
-        assertEquals(ErpSalConstants.RECEIVED_STATUS_UNRECEIVED, invoice.getReceivedStatus(),
-                "退款后发票 receivedStatus 回 UNRECEIVED");
+        assertEquals(0, new BigDecimal("113").compareTo(invoice.getReceivedAmount()),
+                "无关发票 receivedAmount 保持不变");
+        assertEquals(ErpSalConstants.RECEIVED_STATUS_RECEIVED, invoice.getReceivedStatus(),
+                "无关发票 receivedStatus 保持 RECEIVED");
 
         ErpSalReturn returnOrder = reload(returnId);
         ErpSalDelivery delivery = daoProvider.daoFor(ErpSalDelivery.class)
