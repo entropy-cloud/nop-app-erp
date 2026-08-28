@@ -257,7 +257,8 @@ public class SimulationDrpEngine {
     private int nextVersionNo(String scenarioId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("scenarioId", scenarioId));
-        q.addOrderField("versionNo", false);
+        // P2-CK-drp-012 修复（同型 P1-CK-mfg2-003）：DESC 取最大 versionNo（修复前升序取最小 → 第 3 次撞 UK）
+        q.addOrderField("versionNo", true);
         q.setLimit(1);
         List<ErpDrpScenarioVersion> top = daoProvider.daoFor(ErpDrpScenarioVersion.class).findAllByQuery(q);
         if (top.isEmpty() || top.get(0).getVersionNo() == null) return 1;

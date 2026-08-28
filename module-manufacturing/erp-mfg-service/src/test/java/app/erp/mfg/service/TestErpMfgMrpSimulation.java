@@ -282,6 +282,36 @@ public class TestErpMfgMrpSimulation extends JunitAutoTestCase {
         assertTrue(diff.getShortageInBoth().contains(M1), "M1 在两版本均缺料");
     }
 
+    /**
+     * P1-CK-mfg2-003 回归：同场景第 3 次仿真运行 versionNo=3 不撞 UK
+     * （修复前 nextVersionNo 升序取最小 versionNo+1 → 第 3 次运行与既有 v2 冲突，
+     * 原始约束异常中断——「粗调/细调/最终」多版本迭代循环第 3 次起必炸）。
+     */
+    @Test
+    public void testThirdVersionRunSucceeds() {
+        seedMaterial(M1, null, null);
+        String basePlanId = seedPlan("BASE-V3");
+        seedManualDemand(basePlanId, M1, bd("5"), LocalDate.of(2026, 8, 15));
+        runMrpOnce(basePlanId);
+
+        enableSimulation();
+        String scenarioId = seedScenario("SIM-V3", basePlanId);
+
+        ErpMfgMrpScenarioVersion v1 = runSimulationViaRpc(scenarioId);
+        assertEquals(1, v1.getVersionNo(), "第 1 次运行 versionNo=1");
+
+        resetScenarioToDraft(scenarioId);
+        paramResolver.invalidateCache();
+        ErpMfgMrpScenarioVersion v2 = runSimulationViaRpc(scenarioId);
+        assertEquals(2, v2.getVersionNo(), "第 2 次运行 versionNo=2");
+
+        resetScenarioToDraft(scenarioId);
+        paramResolver.invalidateCache();
+        ErpMfgMrpScenarioVersion v3 = runSimulationViaRpc(scenarioId);
+        assertEquals(3, v3.getVersionNo(),
+                "第 3 次运行 versionNo=3（修复前取最小 1+1=2 撞既有 v2 UK 抛错）");
+    }
+
     // ---------- helpers ----------
 
     private void enableSimulation() {

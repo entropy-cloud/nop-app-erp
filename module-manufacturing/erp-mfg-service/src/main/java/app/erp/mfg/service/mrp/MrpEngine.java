@@ -24,6 +24,7 @@ import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 import static io.nop.api.core.beans.FilterBeans.eq;
@@ -94,9 +95,16 @@ public class MrpEngine {
         LocalDate defaultDate = plan.getBusinessDate() != null ? plan.getBusinessDate() : CoreMetrics.today();
         int[] lineNo = {10};
 
-        for (TopDemand top : topDemandsByMaterial(demands)) {
+        // P1-CK-mfg2-001/002 修复：run 内按物料累计已消耗可用量（共享子件可用量仅扣一次），
+        // SAFETY_STOCK 需求行已是净缺口（safety−available），跳过 available 扣减且不消耗。
+        java.util.Map<String, BigDecimal> availableConsumed = new java.util.HashMap<>();
+        for (TopDemand top : topDemandsByMaterial(demands, false)) {
             processMaterial(plan, top.materialId, top.gross, top.uoMId, top.requirementDate != null ? top.requirementDate : defaultDate,
-                    null, new LinkedHashSet<>(), lineDao, lineNo);
+                    null, new LinkedHashSet<>(), lineDao, lineNo, availableConsumed, false);
+        }
+        for (TopDemand top : topDemandsByMaterial(demands, true)) {
+            processMaterial(plan, top.materialId, top.gross, top.uoMId, top.requirementDate != null ? top.requirementDate : defaultDate,
+                    null, new LinkedHashSet<>(), lineDao, lineNo, availableConsumed, true);
         }
 
         plan.setStatus(stateMachine.completeTargetStatus());
@@ -105,7 +113,8 @@ public class MrpEngine {
 
     private void processMaterial(ErpMfgMrpPlan plan, String materialId, BigDecimal grossQty, String uoMId,
                                  LocalDate requirementDate, String parentLineId, Set<String> path,
-                                 IEntityDao<ErpMfgMrpPlanLine> lineDao, int[] lineNo) {
+                                 IEntityDao<ErpMfgMrpPlanLine> lineDao, int[] lineNo,
+                                 java.util.Map<String, BigDecimal> availableConsumed, boolean skipAvailable) {
         if (materialId == null || grossQty == null || grossQty.signum() <= 0) {
             return;
         }
@@ -113,11 +122,22 @@ public class MrpEngine {
             return; // 兜底防环（BomExpander 已检测显式环）
         }
 
-        BigDecimal available = availableQuantity(materialId, plan.getOrgId());
+        BigDecimal totalAvailable = availableQuantity(materialId, plan.getOrgId());
         BigDecimal scheduled = BigDecimal.ZERO;
-        BigDecimal net = grossQty.subtract(available).subtract(scheduled);
-        if (net.signum() < 0) {
-            net = BigDecimal.ZERO;
+        BigDecimal net;
+        if (skipAvailable) {
+            // P1-CK-mfg2-001：SAFETY_STOCK 需求行已是净缺口（DemandAggregator/applySafetyStockOverride
+            // 已按 safety−available 求值），直接作为净需求；不消耗 available（净额已含扣减）。
+            net = grossQty;
+        } else {
+            // P1-CK-mfg2-002：共享子件可用量仅扣一次——本 run 内已消耗量累计，剩余可用量 = total − consumed
+            BigDecimal consumed = nz(availableConsumed.get(materialId));
+            BigDecimal effective = totalAvailable.subtract(consumed).max(BigDecimal.ZERO);
+            availableConsumed.merge(materialId, grossQty.min(effective).max(BigDecimal.ZERO), BigDecimal::add);
+            net = grossQty.subtract(effective).subtract(scheduled);
+            if (net.signum() < 0) {
+                net = BigDecimal.ZERO;
+            }
         }
         BigDecimal planned = lotSize(net);
 
@@ -137,7 +157,7 @@ public class MrpEngine {
         line.setOrderType(orderType);
         line.setGrossRequirement(grossQty);
         line.setScheduledReceipt(scheduled);
-        line.setOnHand(available);
+        line.setOnHand(totalAvailable);
         line.setNetRequirement(net);
         line.setPlannedQuantity(planned);
         line.setPlannedDate(plannedDate);
@@ -152,7 +172,7 @@ public class MrpEngine {
                 List<BomExplosionNode> children = bomExpander.explode(bom.getId(), planned, false);
                 for (BomExplosionNode child : children) {
                     processMaterial(plan, child.getMaterialId(), child.getQuantity(), null,
-                            plannedDate, line.getId(), path, lineDao, lineNo);
+                            plannedDate, line.getId(), path, lineDao, lineNo, availableConsumed, false);
                 }
             } finally {
                 path.remove(materialId);
@@ -226,10 +246,14 @@ public class MrpEngine {
         return total;
     }
 
-    private List<TopDemand> topDemandsByMaterial(List<ErpMfgMrpDemand> demands) {
+    private List<TopDemand> topDemandsByMaterial(List<ErpMfgMrpDemand> demands, boolean safetyOnly) {
         java.util.Map<String, TopDemand> byMaterial = new java.util.LinkedHashMap<>();
         for (ErpMfgMrpDemand d : demands) {
             if (d.getMaterialId() == null) {
+                continue;
+            }
+            boolean safety = Objects.equals(d.getDemandSource(), ErpMfgConstants.MRP_DEMAND_SOURCE_SAFETY_STOCK);
+            if (safetyOnly != safety) {
                 continue;
             }
             TopDemand t = byMaterial.computeIfAbsent(d.getMaterialId(), k -> new TopDemand(k));

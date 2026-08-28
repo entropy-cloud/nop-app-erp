@@ -169,6 +169,38 @@ public class TestErpDrpSimulation extends JunitAutoTestCase {
         assertTrue(diff.getLineDiffs().size() >= 1, "至少 1 行 diff");
     }
 
+    /**
+     * P2-CK-drp-012 回归（同型 P1-CK-mfg2-003）：同场景第 3 次仿真运行 versionNo=3 不撞
+     * UK_DRP_SCENARIO_VERSION_SCN_VER（修复前 nextVersionNo 升序取最小 versionNo+1 → 第 3 次撞既有 v2）。
+     */
+    @Test
+    public void testThirdVersionRunSucceeds() {
+        seedMaterial(M1);
+        seedWarehouse(WAREHOUSE_ID);
+        seedParameter(M1, WAREHOUSE_ID, bd("10"), null);
+        seedBalance(M1, WAREHOUSE_ID, bd("0"));
+
+        String basePlanId = seedPlan("DRP-BASE-V3");
+        runDrpOnce(basePlanId);
+
+        enableSimulation();
+        String scenarioId = seedScenario("DRP-SIM-V3", basePlanId);
+
+        ErpDrpScenarioVersion v1 = runSimulationViaRpc(scenarioId);
+        assertEquals(1, v1.getVersionNo(), "第 1 次运行 versionNo=1");
+
+        resetScenarioToDraft(scenarioId);
+        paramResolver.invalidateCache();
+        ErpDrpScenarioVersion v2 = runSimulationViaRpc(scenarioId);
+        assertEquals(2, v2.getVersionNo(), "第 2 次运行 versionNo=2");
+
+        resetScenarioToDraft(scenarioId);
+        paramResolver.invalidateCache();
+        ErpDrpScenarioVersion v3 = runSimulationViaRpc(scenarioId);
+        assertEquals(3, v3.getVersionNo(),
+                "第 3 次运行 versionNo=3（修复前取最小 1+1=2 撞既有 v2 UK 抛错）");
+    }
+
     @Test
     public void testPromoteToFormalPlanCreatesDraft() {
         seedMaterial(M1);

@@ -59,9 +59,13 @@ public class TestErpMfgMrpEngine extends JunitAutoTestCase {
     static final String M2 = "7103";  // 采购件（安全库存补货）
     static final String M3 = "7104";  // 采购件（lot sizing / 提前期）
     static final String M4 = "7105";  // 采购件（负净需求归零）
+    static final String M5 = "7109";  // 采购件（安全库存补货 case B）
     static final String A = "7106";   // 制造件（多级 pegging 链顶层）
     static final String B = "7107";   // 制造件（多级 pegging 中层）
     static final String C = "7108";   // 采购件（多级 pegging 底层）
+    static final String D = "7113";   // 制造件（共享子件测试父件 1）
+    static final String E = "7114";   // 制造件（共享子件测试父件 2）
+    static final String F = "7115";   // 采购件（共享子件）
 
     @Inject
     IDaoProvider daoProvider;
@@ -238,6 +242,80 @@ public class TestErpMfgMrpEngine extends JunitAutoTestCase {
                 "netRequirement = gross(10) − available(2)，不减 scheduledReceipt(0)");
     }
 
+    // ---------- F2.6（P1-CK-mfg2-001/002）净额口径回归 ----------
+
+    /**
+     * P1-CK-mfg2-001 回归：SAFETY_STOCK 需求行已是净缺口（safety − available），引擎不再二次扣减 available。
+     * 修复前 available ≥ safety/2 时净需求恒 0（永不补货）、available < safety/2 时少补恰等于 available。
+     */
+    @Test
+    public void testSafetyStockNetNotDoubleDeducted() {
+        // case A：available(99) 接近 safety(100) → 缺口 1（修复前净需求 0 永不补货）
+        seedMaterial(M2, null, bd("100"));
+        seedBalance(M2, bd("99"));
+        String planA = seedPlan("MRP-SS-A");
+        runMrpOk(planA);
+
+        ErpMfgMrpPlanLine lineA = findLine(linesOf(planA), M2, null);
+        assertNotNull(lineA, "M2 计划行应存在");
+        assertEquals(0, lineA.getGrossRequirement().compareTo(bd("1")), "需求行 = 100−99 = 1");
+        assertEquals(0, lineA.getNetRequirement().compareTo(bd("1")),
+                "net = 1（修复前二次扣减 → 0）");
+        assertEquals(0, lineA.getPlannedQuantity().compareTo(bd("1")));
+
+        // case B：available(10) < safety/2 → 缺口 90（修复前 80，少补恰等于 available）
+        seedMaterial(M5, null, bd("100"));
+        seedBalance(M5, bd("10"));
+        String planB = seedPlan("MRP-SS-B");
+        runMrpOk(planB);
+
+        ErpMfgMrpPlanLine lineB = findLine(linesOf(planB), M5, null);
+        assertNotNull(lineB, "M5 计划行应存在");
+        assertEquals(0, lineB.getNetRequirement().compareTo(bd("90")),
+                "net = 100−10 = 90（修复前 80）");
+        assertEquals(0, lineB.getPlannedQuantity().compareTo(bd("90")));
+    }
+
+    /**
+     * P1-CK-mfg2-002 回归：共享子件可用量整个 run 仅扣一次（低阶码净额口径）。
+     * A(100)+B(100) 共用子件 C（1:1），available(C)=50 → C 总建议量 = 200−50 = 150
+     * （修复前每个父分支各扣一次 50 → 总 100，少 50）。
+     */
+    @Test
+    public void testSharedComponentAvailableConsumedOnce() {
+        seedMaterial(D, null, null);
+        seedMaterial(E, null, null);
+        seedMaterial(F, null, null);
+        seedBom("8401", D, F, bd("1"));
+        seedBom("8402", E, F, bd("1"));
+        seedBalance(F, bd("50"));
+
+        String planId = seedPlan("MRP-SHARE");
+        seedManualDemand(planId, D, bd("100"), LocalDate.of(2026, 7, 15));
+        seedManualDemand(planId, E, bd("100"), LocalDate.of(2026, 7, 15));
+        runMrpOk(planId);
+
+        List<ErpMfgMrpPlanLine> lines = linesOf(planId);
+        ErpMfgMrpPlanLine dLine = findLine(lines, D, null);
+        ErpMfgMrpPlanLine eLine = findLine(lines, E, null);
+        assertNotNull(dLine, "D 计划行应存在");
+        assertNotNull(eLine, "E 计划行应存在");
+        assertEquals(0, dLine.getPlannedQuantity().compareTo(bd("100")));
+        assertEquals(0, eLine.getPlannedQuantity().compareTo(bd("100")));
+
+        BigDecimal totalF = BigDecimal.ZERO;
+        int fCount = 0;
+        for (ErpMfgMrpPlanLine l : lines) {
+            if (F.equals(l.getMaterialId())) {
+                totalF = totalF.add(nz(l.getPlannedQuantity()));
+                fCount++;
+            }
+        }
+        assertTrue(fCount >= 2, "F 应有两个父分支计划行（pegging 保持）");
+        assertEquals(0, totalF.compareTo(bd("150")),
+                "共享子件可用量仅扣一次：200−50=150（修复前 100）");
+    }
+
     // ---------- helpers ----------
 
     private void runMrpOk(String planId) {
@@ -412,6 +490,10 @@ public class TestErpMfgMrpEngine extends JunitAutoTestCase {
 
     private void setConfig(String key, String value) {
         io.nop.api.core.config.AppConfig.getConfigProvider().assignConfigValue(key, value);
+    }
+
+    private static BigDecimal nz(BigDecimal v) {
+        return v != null ? v : BigDecimal.ZERO;
     }
 
     private static BigDecimal bd(String v) {

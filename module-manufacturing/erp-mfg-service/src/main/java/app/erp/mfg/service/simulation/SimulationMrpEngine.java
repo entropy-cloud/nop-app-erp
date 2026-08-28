@@ -148,10 +148,18 @@ public class SimulationMrpEngine {
         LocalDate defaultDate = computed.getBusinessDate() != null ? computed.getBusinessDate() : CoreMetrics.today();
         int[] lineNo = {10};
         IEntityDao<ErpMfgMrpPlanLine> lineDao = daoProvider.daoFor(ErpMfgMrpPlanLine.class);
-        for (TopDemand top : topDemandsByMaterial(demands)) {
+        // P1-CK-mfg2-001/002 修复：run 内按物料累计已消耗可用量（共享子件可用量仅扣一次），
+        // SAFETY_STOCK 需求行已是净缺口（safety−available），跳过 available 扣减且不消耗。
+        java.util.Map<String, BigDecimal> availableConsumed = new java.util.HashMap<>();
+        for (TopDemand top : topDemandsByMaterial(demands, false)) {
             processMaterial(computed, top.materialId, top.gross, top.uoMId,
                     top.requirementDate != null ? top.requirementDate : defaultDate,
-                    null, new LinkedHashSet<>(), lineDao, lineNo, scenarioId);
+                    null, new LinkedHashSet<>(), lineDao, lineNo, scenarioId, availableConsumed, false);
+        }
+        for (TopDemand top : topDemandsByMaterial(demands, true)) {
+            processMaterial(computed, top.materialId, top.gross, top.uoMId,
+                    top.requirementDate != null ? top.requirementDate : defaultDate,
+                    null, new LinkedHashSet<>(), lineDao, lineNo, scenarioId, availableConsumed, true);
         }
 
         // computed plan RUNNING→COMPLETED（经 Bean 守卫 + 目标态，对齐 MrpEngine formal 链）
@@ -305,7 +313,8 @@ public class SimulationMrpEngine {
 
     private void processMaterial(ErpMfgMrpPlan plan, String materialId, BigDecimal grossQty, String uoMId,
                                   LocalDate requirementDate, String parentLineId, Set<String> path,
-                                  IEntityDao<ErpMfgMrpPlanLine> lineDao, int[] lineNo, String scenarioId) {
+                                  IEntityDao<ErpMfgMrpPlanLine> lineDao, int[] lineNo, String scenarioId,
+                                  java.util.Map<String, BigDecimal> availableConsumed, boolean skipAvailable) {
         if (materialId == null || grossQty == null || grossQty.signum() <= 0) {
             return;
         }
@@ -313,11 +322,22 @@ public class SimulationMrpEngine {
             return;
         }
 
-        BigDecimal available = availableQuantity(materialId, plan.getOrgId());
+        BigDecimal totalAvailable = availableQuantity(materialId, plan.getOrgId());
         BigDecimal scheduled = BigDecimal.ZERO;
-        BigDecimal net = grossQty.subtract(available).subtract(scheduled);
-        if (net.signum() < 0) {
-            net = BigDecimal.ZERO;
+        BigDecimal net;
+        if (skipAvailable) {
+            // P1-CK-mfg2-001：SAFETY_STOCK 需求行已是净缺口（applySafetyStockOverride 已按
+            // safety−available 求值），直接作为净需求；不消耗 available。
+            net = grossQty;
+        } else {
+            // P1-CK-mfg2-002：共享子件可用量仅扣一次（run 内 consumed 累计）
+            BigDecimal consumed = nz(availableConsumed.get(materialId));
+            BigDecimal effective = totalAvailable.subtract(consumed).max(BigDecimal.ZERO);
+            availableConsumed.merge(materialId, grossQty.min(effective).max(BigDecimal.ZERO), BigDecimal::add);
+            net = grossQty.subtract(effective).subtract(scheduled);
+            if (net.signum() < 0) {
+                net = BigDecimal.ZERO;
+            }
         }
         BigDecimal planned = lotSize(net, scenarioId);
 
@@ -337,7 +357,7 @@ public class SimulationMrpEngine {
         line.setOrderType(orderType);
         line.setGrossRequirement(grossQty);
         line.setScheduledReceipt(scheduled);
-        line.setOnHand(available);
+        line.setOnHand(totalAvailable);
         line.setNetRequirement(net);
         line.setPlannedQuantity(planned);
         line.setPlannedDate(plannedDate);
@@ -352,7 +372,7 @@ public class SimulationMrpEngine {
                 List<BomExplosionNode> children = bomExpander.explode(bom.getId(), planned, false);
                 for (BomExplosionNode child : children) {
                     processMaterial(plan, child.getMaterialId(), child.getQuantity(), null,
-                            plannedDate, line.getId(), path, lineDao, lineNo, scenarioId);
+                            plannedDate, line.getId(), path, lineDao, lineNo, scenarioId, availableConsumed, false);
                 }
             } finally {
                 path.remove(materialId);
@@ -442,10 +462,14 @@ public class SimulationMrpEngine {
         return total;
     }
 
-    private List<TopDemand> topDemandsByMaterial(List<ErpMfgMrpDemand> demands) {
+    private List<TopDemand> topDemandsByMaterial(List<ErpMfgMrpDemand> demands, boolean safetyOnly) {
         java.util.Map<String, TopDemand> byMaterial = new java.util.LinkedHashMap<>();
         for (ErpMfgMrpDemand d : demands) {
             if (d.getMaterialId() == null) {
+                continue;
+            }
+            boolean safety = Objects.equals(d.getDemandSource(), ErpMfgConstants.MRP_DEMAND_SOURCE_SAFETY_STOCK);
+            if (safetyOnly != safety) {
                 continue;
             }
             TopDemand t = byMaterial.computeIfAbsent(d.getMaterialId(), k -> new TopDemand(k));
@@ -483,7 +507,8 @@ public class SimulationMrpEngine {
     private int nextVersionNo(String scenarioId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("scenarioId", scenarioId));
-        q.addOrderField("versionNo", false);
+        // P1-CK-mfg2-003 修复：DESC 取最大 versionNo（修复前升序取最小 → 第 3 次运行撞既有 v2 UK）
+        q.addOrderField("versionNo", true);
         q.setLimit(1);
         List<ErpMfgMrpScenarioVersion> top = daoProvider.daoFor(ErpMfgMrpScenarioVersion.class).findAllByQuery(q);
         if (top.isEmpty() || top.get(0).getVersionNo() == null) {
