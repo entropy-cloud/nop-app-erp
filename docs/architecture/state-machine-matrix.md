@@ -184,3 +184,98 @@ python3 docs/audits/scripts/state-machine-coverage-check.py --root /path/to/repo
   - `2026-08-14-0456-*`（finance/hr/logistics）
   - `2026-08-13-0810-*`（purchase/sales/inventory）
   - 等等（M2/M3/M4 共 65+ 计划）
+
+## 7 M5.2 守卫层与 CI 集成
+
+### 7.1 守卫层构成
+
+M5.2 守卫层由 3 部分组成：
+
+1. **核心工具**：`docs/audits/scripts/state-machine-coverage-check.py`（M5.1）— 4 维度对账 + writer 索引 + 白名单
+2. **Bash wrapper**：`tools/check-state-machine-coverage.sh`（M5.2）— 本地 manual + CI strict 双入口
+3. **报告落点**：`docs/audits/check/<YYYY-MM-DD-HHmm>-entity-state-machine-m5-2/`（**多次执行隔离纪律**——每次新建子目录，不污染历史报告）
+4. **LATEST 链接**：`docs/audits/check/LATEST-m5-2` → 最新一份报告（best-effort 符号链接）
+
+### 7.2 使用方式
+
+```bash
+# 本地 manual（开发期，finding 存在也 exit 0）
+bash tools/check-state-machine-coverage.sh
+
+# CI strict（CI 期，finding 存在 exit 1）
+bash tools/check-state-machine-coverage.sh --strict
+
+# 自定义根目录
+bash tools/check-state-machine-coverage.sh --root /path/to/repo
+
+# 直接调用工具（绕过 wrapper）
+python3 docs/audits/scripts/state-machine-coverage-check.py \
+    --root . \
+    --json-output /tmp/audit.json \
+    --md-output /tmp/audit.md
+```
+
+### 7.3 CI 集成策略
+
+| 模式 | 触发条件 | 行为 |
+|---|---|---|
+| **本地 manual**（默认） | 开发期任意时刻 | exit 0 always；finding 仅日志告警 |
+| **CI strict** | PR 改动 `module-*/erp-*-service/src/main/java/**/*StateMachine*.java` 或 `**/*.orm.xml` 或 `**/*Constants.java` | exit 1 if unwhitelisted finding |
+| **Mission closure** | M5.3 启动时 | `bash tools/check-state-machine-coverage.sh --strict` + 全量 `mvn test` + 跨域回归 |
+
+**CI 集成建议**（伪代码，参考 .github/workflows/）：
+
+```yaml
+- name: State Machine Matrix Check
+  if: |
+    contains(github.event.pull_request.changed_files, 'StateMachine') ||
+    contains(github.event.pull_request.changed_files, '.orm.xml')
+  run: bash tools/check-state-machine-coverage.sh --strict
+- name: Upload report
+  if: always()
+  uses: actions/upload-artifact@v4
+  with:
+    name: state-machine-audit
+    path: docs/audits/check/LATEST-m5-2/
+```
+
+**警告**：CI 默认不 gate（防止误报阻断开发流）。建议在首次跑通若干 PR 后，由 reviewer 决定是否升级到必过。
+
+## 8 误报裁决流程
+
+工具可能产生**已知误报**（如下游 setStatus 形态未被覆盖）。裁决流程：
+
+### 8.1 添加白名单条目
+
+1. **复现**：跑工具拿到误报的 finding（保存 finding_type + bean_class + detail 前 50 字符）
+2. **判断**：人工核实该 finding 是否为已知误报
+3. **修改工具**：
+   ```python
+   # docs/audits/scripts/state-machine-coverage-check.py
+   KNOWN_FALSE_POSITIVES = {
+       # (bean_class, finding_type, detail[:50])
+       ("ErpXxxStateMachine", "ORPHAN_DICT_VALUE", "细节前缀..."),
+   }
+   ```
+4. **同步文档**：
+   - `docs/audits/state-machine-matrix-audit.md` §4 表格加一行
+   - 本文档 §4 表格加一行
+5. **重跑工具**验证：白名单命中数 +1，待处理数 -1
+6. **重跑 wrapper**：包含白名单登记的 M5.2 plan 由独立子代理 audit 后落 commit
+
+### 8.2 误报白名单当前为空
+
+见 §4。当前工具检测到的所有 finding 都不是已知误报。
+
+## 9 M5.3 closure audit 扩展 checklist
+
+M5.3 是 entity-state-machine-migration mission 的**收官里程碑**。当 M5.1 + M5.2 都 done 后，启动 M5.3 closure audit。需独立子代理用 `closure-audit-prompt.md` 跑以下 6 项：
+
+- [ ] **CG1**：M5.1 工具 `bash tools/check-state-machine-coverage.sh --strict` 退出码 0（确保扫描 + writer 索引 + 4 维度对账正确）
+- [ ] **CG2**：M5.1 工具在 stub 场景下检测到 5 个 finding + exit 1（确保 finding 检测能力）
+- [ ] **CG3**：M5.2 wrapper 的多次执行隔离目录正确创建（`docs/audits/check/<TS>-entity-state-machine-m5-2/`）
+- [ ] **CG4**：`docs/architecture/state-machine-matrix.md` 全部 9 章节齐全（§1 审计方法学 / §2 工具使用 / §3 维护义务 / §4 白名单 / §5 工具开发约定 / §6 关联文档 / §7 M5.2 守卫层 / §8 误报裁决 / §9 closure audit checklist）
+- [ ] **CG5**：`mvn clean install -DskipTests` 全仓 BUILD SUCCESS + compliance 零漂移（最后一次全量验证）
+- [ ] **CG6**：所有产物在 commit 历史中可追溯（plan doc / 工具脚本 / 报告 / 维护入口 / wrapper / LATEST 链接）
+
+若 6 项全过，由独立子代理在 M5.3 plan 中标注「M5.3 done」，mission closure audit PASS，roadmap 全部工作项 done，**entity-state-machine-migration mission 完结**。
