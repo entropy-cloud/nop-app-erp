@@ -337,6 +337,12 @@ public class ErpInvStockMoveProcessor {
         if (Objects.equals(moveType, ErpInvConstants.MOVE_TYPE_OUTGOING)) {
             return ErpInvConstants.MOVE_TYPE_INCOMING;
         }
+        // P1-CK-mfg3-002 修复：MANUFACTURE（完工/委外成品入库）为入库类移动单——反向应冲减入库仓
+        // （OUTGOING from destWarehouseId）。修复前保持不变使委外收货红冲反向单缺目标仓库被 mfg 侧
+        // canSafelyReverse 恒拒，成品滞留库存（委外红冲闭环库存侧断裂）。
+        if (Objects.equals(moveType, ErpInvConstants.MOVE_TYPE_MANUFACTURING)) {
+            return ErpInvConstants.MOVE_TYPE_OUTGOING;
+        }
         return moveType;
     }
 

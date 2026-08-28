@@ -10,6 +10,8 @@ import app.erp.mfg.dao.entity.ErpMfgCostRollup;
 import app.erp.mfg.dao.entity.ErpMfgCostRollupLine;
 import app.erp.mfg.dao.entity.ErpMfgCostVariance;
 import app.erp.mfg.dao.entity.ErpMfgJobCardTimeLog;
+import app.erp.mfg.dao.entity.ErpMfgSubcontractOrder;
+import app.erp.mfg.dao.entity.ErpMfgSubcontractOrderLine;
 import app.erp.mfg.dao.entity.ErpMfgWorkOrder;
 import app.erp.mfg.dao.entity.ErpMfgWorkcenter;
 import app.erp.mfg.service.costing.ProductionVarianceCalculator;
@@ -70,6 +72,7 @@ public class TestErpMfgProductionVariance extends JunitAutoTestCase {
     static final String WC1 = "6201";
     static final String PERIOD_CODE = "2026-07";
     static final String VOUCHER_STATUS_POSTED = "POSTED";
+    static final String SUPPLIER_ID = "4601";
 
     static final String SUBJECT_MATERIAL_VARIANCE = "1410";
     static final String SUBJECT_WIP_MATERIAL = "1411";
@@ -363,6 +366,40 @@ public class TestErpMfgProductionVariance extends JunitAutoTestCase {
         assertEquals(5, lines.size(), "两侧 subcontractCost 均为 0 → 不生成 SUBCONTRACT 行（保持 5 类）");
         assertTrue(lines.stream().noneMatch(l -> ErpMfgConstants.VARIANCE_TYPE_SUBCONTRACT.equals(l.getVarianceType())),
                 "无 SUBCONTRACT 差异行");
+    }
+
+    /**
+     * P1-CK-mfg3-005 回归：完工时按产品归集实际委外费填入 wo.subcontractCost（config-gated）。
+     * 修复前该字段全仓零 writer——SUBCONTRACT 差异实际侧恒 0，差异行失真并可过账错误方向凭证。
+     * COMPLETED 委外单：产品 P 加工费 100、委外量 10 → perUnit=10；工单完工 2 → wo.subcontractCost=20。
+     */
+    @Test
+    public void testSubcontractCostAggregatedOnCompletion() {
+        seedProduct(P);
+        seedWorkcenter(WC1, bd("20"));
+        String bomId = seedBom("9212", P);
+        seedBomOperation("4212", bomId, WC1, bd("60"));
+        seedPeriodAndSubjects();
+
+        seedCompletedSubcontractOrder("SUB-AGG", P, bd("100"), bd("10"));
+
+        String woId = seedInProcessWorkOrder("8212", "WO-PV-AGG", bomId, P,
+                bd("2"), bd("20"), bd("20"), bd("10"));
+
+        setConfig(ErpMfgConstants.CONFIG_SUBCONTRACT_COST_AGGREGATION_ENABLED, "true");
+        try {
+            Map<String, Object> req = new LinkedHashMap<>();
+            req.put("workOrderId", woId);
+            req.put("completedQty", bd("2"));
+            ApiResponse<?> resp = executeRpc(mutation, "ErpMfgWorkOrder__reportCompletion", ApiRequest.build(req));
+            assertEquals(0, resp.getStatus(), "完工应成功: " + resp);
+
+            ErpMfgWorkOrder wo = daoProvider.daoFor(ErpMfgWorkOrder.class).getEntityById(woId);
+            assertEquals(0, bd("20").compareTo(nzQty(wo.getSubcontractCost())),
+                    "完工后 wo.subcontractCost = 10×2 = 20（修复前恒 0，零 writer）");
+        } finally {
+            setConfig(ErpMfgConstants.CONFIG_SUBCONTRACT_COST_AGGREGATION_ENABLED, "false");
+        }
     }
 
     @Test
@@ -825,6 +862,45 @@ public class TestErpMfgProductionVariance extends JunitAutoTestCase {
                                       ApiRequest<?> request) {
         IGraphQLExecutionContext ctx = graphQLEngine.newRpcContext(op, action, request);
         return graphQLEngine.executeRpc(ctx);
+    }
+
+    private void setConfig(String key, String value) {
+        AppConfig.getConfigProvider().assignConfigValue(key, value);
+    }
+
+    private String seedCompletedSubcontractOrder(String code, String productId, BigDecimal fee, BigDecimal qty) {
+        String id = String.valueOf(9300 + Math.abs(code.hashCode() % 500));
+        ormTemplate.runInSession(() -> {
+            IEntityDao<ErpMfgSubcontractOrder> dao = daoProvider.daoFor(ErpMfgSubcontractOrder.class);
+            ErpMfgSubcontractOrder order = new ErpMfgSubcontractOrder();
+            order.orm_propValueByName("id", id);
+            order.setCode(code);
+            order.setOrgId(ORG_ID);
+            order.setSupplierId(SUPPLIER_ID);
+            order.setProductId(productId);
+            order.setBusinessDate(LocalDate.of(2026, 7, 1));
+            order.setCurrencyId(CURRENCY_ID);
+            order.setProcessingFee(fee);
+            order.setTotalAmount(fee);
+            order.setDocStatus(ErpMfgConstants.SUBCONTRACT_STATUS_COMPLETED);
+            order.setApproveStatus(ErpMfgConstants.APPROVE_STATUS_APPROVED);
+            order.orm_propValueByName("postedStatus", "DRAFT");
+            dao.saveEntity(order);
+            IEntityDao<ErpMfgSubcontractOrderLine> ldao = daoProvider.daoFor(ErpMfgSubcontractOrderLine.class);
+            ErpMfgSubcontractOrderLine line = new ErpMfgSubcontractOrderLine();
+            line.orm_propValueByName("id", String.valueOf(Long.parseLong(id) + 100));
+            line.setSubcontractOrderId(id);
+            line.setLineNo(10);
+            line.setMaterialId(productId);
+            line.setUoMId(UOM_ID);
+            line.setQuantity(qty);
+            ldao.saveEntity(line);
+        });
+        return id;
+    }
+
+    private static BigDecimal nzQty(BigDecimal v) {
+        return v != null ? v : BigDecimal.ZERO;
     }
 
     private static BigDecimal bd(String v) {

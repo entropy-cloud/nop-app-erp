@@ -148,6 +148,41 @@ public class TestErpMfgBatchGenealogy extends JunitAutoTestCase {
         assertTrue(rows.isEmpty(), "无批次原料时应跳过基因链写入");
     }
 
+    /**
+     * P1-CK-mfg3-004 回归：多仓布局下输入批次按领料单头仓库解析。
+     * 输入批次在原料仓 3601（seedBatch 默认仓 + 领料单头仓库），产成品入库到成品仓 3602（产出行
+     * destWarehouseId）。修复前 resolveInputLot 用产成品仓 3602 查原料批次 → 恒 null → 基因链零输入行，
+     * 追溯/召回静默为空；修复后按领料单头仓库 3601 解析 → 基因链行写入。
+     */
+    @Test
+    public void testMultiWarehouseInputLotResolved() {
+        seedMaterial(P, null);
+        seedMaterial(M1, "MOVING_AVERAGE");
+        seedBom("9411", P, M1, bd("1"));
+
+        String inputLotId = seedBatch("2011", "BATCH-M1-MW", M1, bd("10"));
+
+        String woId = seedWorkOrder("WO-BG-MW", "9411", bd("1"));
+        String inputWolId = seedWorkOrderLine(woId, M1, bd("1"), "INPUT", null);
+        // 产成品入库到成品仓 3602（≠ 原料仓 3601）
+        seedWorkOrderLine(woId, P, bd("1"), "OUTPUT", "3602");
+
+        String issueId = seedIssue("MI-BG-MW", woId);
+        seedIssueLineWithBatch("9412", issueId, M1, bd("1"), inputWolId, "BATCH-M1-MW");
+
+        Map<String, Object> completeReq = new LinkedHashMap<>();
+        completeReq.put("workOrderId", woId);
+        completeReq.put("completedQty", bd("1"));
+        rpcOk(mutation, "ErpMfgWorkOrder__reportCompletion", completeReq);
+
+        List<ErpMfgBatchGenealogy> rows = findGenealogyByWorkOrder(woId);
+        assertFalse(rows.isEmpty(), "多仓布局下基因链应写入输入行（修复前按成品仓查原料批次恒空）");
+        ErpMfgBatchGenealogy row = rows.get(0);
+        assertEquals(inputLotId, row.getInputLotId(), "inputLotId 应为原料仓批次");
+        assertEquals(M1, row.getInputMaterialId(), "inputMaterialId 应为 M1");
+        assertEquals(0, row.getInputQty().compareTo(bd("1")), "inputQty 应为 1");
+    }
+
     @Test
     public void testForwardAndBackwardTrace() {
         seedMaterial(P, null);

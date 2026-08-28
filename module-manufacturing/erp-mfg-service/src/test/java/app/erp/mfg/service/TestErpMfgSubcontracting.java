@@ -5,7 +5,9 @@ import app.erp.fin.dao.entity.ErpFinAccountingPeriod;
 import app.erp.fin.dao.entity.ErpFinVoucher;
 import app.erp.fin.dao.entity.ErpFinVoucherBillR;
 import app.erp.fin.dao.entity.ErpFinVoucherLine;
+import app.erp.inv.dao.entity.ErpInvStockBalance;
 import app.erp.inv.dao.entity.ErpInvStockMove;
+import app.erp.inv.dao.entity.ErpInvStockMoveLine;
 import app.erp.mfg.dao.entity.ErpMfgMrpPlan;
 import app.erp.mfg.dao.entity.ErpMfgMrpPlanLine;
 import app.erp.mfg.dao.entity.ErpMfgSubcontractOrder;
@@ -121,6 +123,17 @@ public class TestErpMfgSubcontracting extends JunitAutoTestCase {
             ErpInvStockMove receiptMove = findMove(ErpMfgConstants.RELATED_BILL_TYPE_MFG_SUBCONTRACT_RECEIPT, "SUB-LC");
             assertNotNull(receiptMove, "应生成成品入库移动单");
 
+            // P1-CK-mfg3-001：成品单位成本 = (材料成本 + 加工费)/收货量。
+            // 发料 M1 2 件@5 = 10 材料成本；加工费 50；收货 1 → (10+50)/1 = 60（修复前 50，材料成本缺失）。
+            ErpInvStockMoveLine receiptLine = findMoveLine(receiptMove.getId(), P);
+            assertNotNull(receiptLine, "收货移动单行应存在");
+            assertEquals(0, bd("60").compareTo(receiptLine.getUnitCost()),
+                    "委外成品单位成本含材料成本：(2×5 + 50)/1 = 60");
+            ErpInvStockBalance finishedBalance = findBalance(P, WAREHOUSE_ID);
+            assertNotNull(finishedBalance, "产成品余额应存在");
+            assertEquals(0, bd("60").compareTo(finishedBalance.getTotalCost()),
+                    "产成品存货金额 = 材料成本 10 + 加工费 50 = 60（修复前 50）");
+
             rpcOk(mutation, "ErpMfgSubcontractOrder__postProcessingFee", Map.of("subcontractOrderId", orderId));
             assertEquals(ErpMfgConstants.SUBCONTRACT_STATUS_COMPLETED, statusOf(orderId));
 
@@ -156,6 +169,40 @@ public class TestErpMfgSubcontracting extends JunitAutoTestCase {
                 Map.of("subcontractOrderId", orderId, "sourceWarehouseId", WAREHOUSE_ID));
         assertEquals(ErpMfgErrors.ERR_SUBCONTRACT_ILLEGAL_STATUS_TRANSITION.getErrorCode(), resp.getCode(),
                 "DRAFT→ISSUED 非法迁移应拒绝");
+    }
+
+    /**
+     * P1-CK-mfg3-003 回归：CANCELLED 终态不可复活。
+     * 修复前 Pattern B custom override 绕过骨架 validateNotCancelled——cancel 只翻 docStatus 不动
+     * approveStatus，CANCELLED+SUBMITTED 单可经 approve 复活为已审核（重新进入发料链）；
+     * DRAFT 态 cancel 后可经 submitForApproval 复活。
+     */
+    @Test
+    public void testCancelledOrderCannotRevive() {
+        seedPeriodAndSubjects();
+        seedMaterial(M1, "MOVING_AVERAGE");
+        seedMaterial(P, null);
+
+        // 复活路径一：submit → approve → cancel（approveStatus 仍 SUBMITTED）→ 再 approve 应拒绝
+        String orderId = seedSubcontractOrder("SUB-REVIVE", bd("30"));
+        seedSubcontractLine("9802", orderId, M1, bd("1"));
+        rpcOk(mutation, "ErpMfgSubcontractOrder__submitForApproval", Map.of("id", orderId));
+        rpcOk(mutation, "ErpMfgSubcontractOrder__approve", Map.of("id", orderId));
+        rpcOk(mutation, "ErpMfgSubcontractOrder__cancel", Map.of("subcontractOrderId", orderId));
+        assertEquals(ErpMfgConstants.SUBCONTRACT_STATUS_CANCELLED, statusOf(orderId));
+
+        ApiResponse<?> approveResp = rpc(mutation, "ErpMfgSubcontractOrder__approve", Map.of("id", orderId));
+        assertEquals(ErpMfgErrors.ERR_SUBCONTRACT_ILLEGAL_STATUS_TRANSITION.getErrorCode(), approveResp.getCode(),
+                "CANCELLED 单不可重新审核（复活路径一）");
+        assertEquals(ErpMfgConstants.SUBCONTRACT_STATUS_CANCELLED, statusOf(orderId),
+                "approve 失败后状态保持 CANCELLED");
+
+        // 复活路径二：DRAFT 态 cancel 后 submitForApproval 应拒绝
+        String order2 = seedSubcontractOrder("SUB-REVIVE2", bd("30"));
+        rpcOk(mutation, "ErpMfgSubcontractOrder__cancel", Map.of("subcontractOrderId", order2));
+        ApiResponse<?> submitResp = rpc(mutation, "ErpMfgSubcontractOrder__submitForApproval", Map.of("id", order2));
+        assertEquals(ErpMfgErrors.ERR_SUBCONTRACT_ILLEGAL_STATUS_TRANSITION.getErrorCode(), submitResp.getCode(),
+                "CANCELLED 单不可重新提交（复活路径二）");
     }
 
     @Test
@@ -580,6 +627,26 @@ public class TestErpMfgSubcontracting extends JunitAutoTestCase {
         q.addFilter(eq("relatedBillType", billType));
         q.addFilter(eq("relatedBillCode", billCode));
         List<ErpInvStockMove> list = daoProvider.daoFor(ErpInvStockMove.class).findAllByQuery(q);
+        return list.isEmpty() ? null : list.get(0);
+    }
+
+    private ErpInvStockMoveLine findMoveLine(String moveId, String materialId) {
+        QueryBean q = new QueryBean();
+        q.addFilter(eq("moveId", moveId));
+        List<ErpInvStockMoveLine> lines = daoProvider.daoFor(ErpInvStockMoveLine.class).findAllByQuery(q);
+        for (ErpInvStockMoveLine l : lines) {
+            if (materialId.equals(l.getMaterialId())) {
+                return l;
+            }
+        }
+        return lines.isEmpty() ? null : lines.get(0);
+    }
+
+    private ErpInvStockBalance findBalance(String materialId, String warehouseId) {
+        QueryBean q = new QueryBean();
+        q.addFilter(eq("materialId", materialId));
+        q.addFilter(eq("warehouseId", warehouseId));
+        List<ErpInvStockBalance> list = daoProvider.daoFor(ErpInvStockBalance.class).findAllByQuery(q);
         return list.isEmpty() ? null : list.get(0);
     }
 

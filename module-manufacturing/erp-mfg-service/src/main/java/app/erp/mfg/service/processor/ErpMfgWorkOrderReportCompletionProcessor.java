@@ -59,6 +59,8 @@ public class ErpMfgWorkOrderReportCompletionProcessor {
         }
 
         wo.setCompletedQuantity(newCompleted);
+        // P1-CK-mfg3-005：完工时归集实际委外费（config-gated；置于 recomputeTotals 前使 totalCost/unitCost 含委外费）
+        facade.applySubcontractCostToWorkOrder(wo, context);
         ErpMfgWorkOrderProcessor.recomputeTotals(wo);
 
         // F1.2（P2-CK-mfg-011 报工链）：工单持久化与预留释放前移到 generateCompletionMove（内含

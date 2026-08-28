@@ -6,6 +6,7 @@ import app.erp.fin.dao.entity.ErpFinAccountingPeriod;
 import app.erp.fin.dao.entity.ErpFinVoucher;
 import app.erp.fin.dao.entity.ErpFinVoucherBillR;
 import app.erp.fin.service.ErpFinConstants;
+import app.erp.inv.dao.entity.ErpInvStockBalance;
 import app.erp.inv.dao.entity.ErpInvStockMove;
 import app.erp.mfg.dao.entity.ErpMfgSubcontractOrder;
 import app.erp.mfg.dao.entity.ErpMfgSubcontractOrderLine;
@@ -137,6 +138,17 @@ public class TestErpMfgSubcontractReverse extends JunitAutoTestCase {
             assertNotNull(redVoucher, "应存在 SUBCONTRACT_FEE 红字冲销凭证");
             assertEquals(ErpFinConstants.POSTING_TYPE_REVERSAL, redVoucher.getPostingType(),
                     "红字凭证 postingType=REVERSAL");
+
+            // P1-CK-mfg3-002：红冲反向两段库存移动——成品回库（P 余额归 0）+ 材料退回（M1 余额恢复 10）。
+            // 修复前收货 MANUFACTURE 移动单被 canSafelyReverse 恒拒跳过，成品滞留（库存双计）。
+            ErpInvStockBalance pAfter = findBalance(P, WAREHOUSE_ID);
+            assertNotNull(pAfter, "产成品余额行应存在");
+            assertEquals(0, BigDecimal.ZERO.compareTo(totalQtyOf(pAfter)),
+                    "红冲后产成品余额归 0（修复前滞留 1）");
+            ErpInvStockBalance m1After = findBalance(M1, WAREHOUSE_ID);
+            assertNotNull(m1After, "原料余额行应存在");
+            assertEquals(0, bd("10").compareTo(totalQtyOf(m1After)),
+                    "红冲后原料余额恢复 10（发料 2 退回）");
         } finally {
             setConfig(ErpMfgConstants.CONFIG_SUBCONTRACT_POSTING_ENABLED, "false");
         }
@@ -438,6 +450,18 @@ public class TestErpMfgSubcontractReverse extends JunitAutoTestCase {
 
     private void setConfig(String key, String value) {
         io.nop.api.core.config.AppConfig.getConfigProvider().assignConfigValue(key, value);
+    }
+
+    private ErpInvStockBalance findBalance(String materialId, String warehouseId) {
+        QueryBean q = new QueryBean();
+        q.addFilter(eq("materialId", materialId));
+        q.addFilter(eq("warehouseId", warehouseId));
+        List<ErpInvStockBalance> list = daoProvider.daoFor(ErpInvStockBalance.class).findAllByQuery(q);
+        return list.isEmpty() ? null : list.get(0);
+    }
+
+    private static BigDecimal totalQtyOf(ErpInvStockBalance balance) {
+        return balance.getTotalQuantity() != null ? balance.getTotalQuantity() : BigDecimal.ZERO;
     }
 
     private static BigDecimal bd(String v) {

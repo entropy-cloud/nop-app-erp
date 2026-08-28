@@ -2,9 +2,11 @@ package app.erp.mfg.service.processor;
 
 import app.erp.fin.biz.IErpFinVoucherBiz;
 import app.erp.fin.dao.ErpFinBusinessType;
+import app.erp.inv.biz.IErpInvStockLedgerBiz;
 import app.erp.inv.biz.IErpInvStockMoveBiz;
 import app.erp.inv.biz.StockMoveLineRequest;
 import app.erp.inv.biz.StockMoveRequest;
+import app.erp.inv.dao.entity.ErpInvStockLedger;
 import app.erp.inv.dao.entity.ErpInvStockMove;
 import app.erp.mfg.dao.entity.ErpMfgSubcontractOrder;
 import app.erp.mfg.dao.entity.ErpMfgSubcontractOrderLine;
@@ -26,6 +28,7 @@ import io.nop.api.core.time.CoreMetrics;
 import io.nop.core.context.IServiceContext;
 import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
+import io.nop.orm.IOrmTemplate;
 import jakarta.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -66,7 +69,11 @@ public class ErpMfgSubcontractOrderProcessor {
     @Inject
     IDaoProvider daoProvider;
     @Inject
+    IOrmTemplate ormTemplate;
+    @Inject
     IErpInvStockMoveBiz stockMoveBiz;
+    @Inject
+    IErpInvStockLedgerBiz stockLedgerBiz;
     @Inject
     SubcontractPostingDispatcher subcontractPostingDispatcher;
     @Inject
@@ -212,13 +219,14 @@ public class ErpMfgSubcontractOrderProcessor {
     }
 
     /**
-     * 判断移动单是否可安全反向。库存域 {@code inverseMoveType} 仅反转 INCOMING↔OUTGOING，
-     * MANUFACTURE 等类型保持不变；bookkeeper 对非 OUTGOING 类型走 onIncoming（用 destWarehouseId）。
-     * 故反向冲销的可用仓库取决于原单的 sourceWarehouseId（OUTGOING/MANUFACTURE 反向）或 destWarehouseId（INCOMING 反向）。
+     * 判断移动单是否可安全反向。库存域 {@code inverseMoveType} 反转 INCOMING/MANUFACTURE → OUTGOING、
+     * OUTGOING → INCOMING（P1-CK-mfg3-002 修复后 MANUFACTURE 与 INCOMING 同语义：反向 OUTGOING
+     * 从原 destWarehouseId 冲减）；其他类型保持不变（bookkeeper 非 OUTGOING 走 onIncoming 用 destWarehouseId）。
+     * 故反向冲销的可用仓库取决于原单的 sourceWarehouseId（OUTGOING 反向）或 destWarehouseId（INCOMING/MANUFACTURE 反向）。
      */
     protected boolean canSafelyReverse(ErpInvStockMove original) {
         String moveType = original.getMoveType();
-        if (Objects.equals(moveType, "INCOMING")) {
+        if (Objects.equals(moveType, "INCOMING") || Objects.equals(moveType, "MANUFACTURE")) {
             return original.getDestWarehouseId() != null;
         }
         return original.getSourceWarehouseId() != null;
@@ -243,6 +251,9 @@ public class ErpMfgSubcontractOrderProcessor {
     // ---------- step：审批迁移校验（protected，下游可逐个覆盖） ----------
 
     protected void validateTransitionForSubmit(ErpMfgSubcontractOrder order, IServiceContext context) {
+        // P1-CK-mfg3-003：Pattern B override 绕过骨架 validateNotCancelled——补 docStatus 终态守卫
+        // （cancel 只翻 docStatus=CANCELLED、approveStatus 不动，无此守卫可经 submit/approve 复活）。
+        assertNotCancelled(order);
         String status = order.getApproveStatus();
         try {
             approvalStateMachine.assertCanSubmit(status);
@@ -261,6 +272,7 @@ public class ErpMfgSubcontractOrderProcessor {
     }
 
     protected void validateTransitionForApprove(ErpMfgSubcontractOrder order, IServiceContext context) {
+        assertNotCancelled(order);
         String status = order.getApproveStatus();
         try {
             approvalStateMachine.assertCanApprove(status);
@@ -270,11 +282,22 @@ public class ErpMfgSubcontractOrderProcessor {
     }
 
     protected void validateTransitionForReject(ErpMfgSubcontractOrder order, IServiceContext context) {
+        assertNotCancelled(order);
         String status = order.getApproveStatus();
         try {
             approvalStateMachine.assertCanReject(status);
         } catch (NopException e) {
             throw illegalTransition(order, status, ErpMfgConstants.APPROVE_STATUS_SUBMITTED);
+        }
+    }
+
+    /** P1-CK-mfg3-003：CANCELLED 为终态，任何审批迁移不得复活（骨架 validateNotCancelled 的 Pattern B 等价守卫）。 */
+    protected void assertNotCancelled(ErpMfgSubcontractOrder order) {
+        if (Objects.equals(order.getDocStatus(), ErpMfgConstants.SUBCONTRACT_STATUS_CANCELLED)) {
+            throw new NopException(ErpMfgErrors.ERR_SUBCONTRACT_ILLEGAL_STATUS_TRANSITION)
+                    .param(ErpMfgErrors.ARG_SUBCONTRACT_ORDER_CODE, order.getCode())
+                    .param(ErpMfgErrors.ARG_CURRENT_STATUS, order.getDocStatus())
+                    .param(ErpMfgErrors.ARG_EXPECTED_STATUS, "非 CANCELLED（已取消不可恢复）");
         }
     }
 
@@ -381,7 +404,7 @@ public class ErpMfgSubcontractOrderProcessor {
         request.setRelatedBillType(ErpMfgConstants.RELATED_BILL_TYPE_MFG_SUBCONTRACT_RECEIPT);
         request.setRelatedBillCode(order.getCode());
 
-        BigDecimal unitCost = computeReceiptUnitCost(order, receivedQty);
+        BigDecimal unitCost = computeReceiptUnitCost(order, receivedQty, context);
 
         List<StockMoveLineRequest> moveLines = new ArrayList<>();
         StockMoveLineRequest ml = new StockMoveLineRequest();
@@ -397,16 +420,45 @@ public class ErpMfgSubcontractOrderProcessor {
     }
 
     /**
-     * 委外成品单位成本 =（材料成本 + 加工费）/ 收货数量。材料成本取委外行加工费汇总近似（本期简化，
-     * 精确材料成本归集归 N=2 计划 2026-07-13-0455-2 成本要素拆分）。加工费取订单头 processingFee。
+     * 委外成品单位成本 =（发料材料成本 + 加工费）/ 收货数量（P1-CK-mfg3-001 修复）。
+     * 修复前分子仅含头 processingFee——产成品存货低估（缺材料成本）+ 1408 委外物资科目
+     * 每单沉淀一笔永不结清的材料成本净额。材料成本 = 发料移动单（MFG_SUBCONTRACT_ISSUE）
+     * 流水 totalCost 绝对值合计（与 {@code SubcontractPostingDispatcher} SI 段口径一致）。
      */
-    protected BigDecimal computeReceiptUnitCost(ErpMfgSubcontractOrder order, BigDecimal receivedQty) {
+    protected BigDecimal computeReceiptUnitCost(ErpMfgSubcontractOrder order, BigDecimal receivedQty,
+                                                IServiceContext context) {
         if (receivedQty == null || receivedQty.signum() <= 0) {
             return BigDecimal.ZERO;
         }
         BigDecimal fee = nz(order.getProcessingFee());
-        BigDecimal total = fee;
+        BigDecimal materialCost = aggregateIssueMaterialCost(order, context);
+        BigDecimal total = fee.add(materialCost);
         return total.divide(receivedQty, 4, RoundingMode.HALF_UP);
+    }
+
+    /**
+     * 聚合委外发料移动单流水材料成本（|totalCost| 合计）。经 relatedBillType+relatedBillCode 反查
+     * 发料 OUTGOING 移动单 → 流水 totalCost 为负（出库扣减）取绝对值。无移动单/无流水 → 0。
+     * 跨域读经 I*Biz（对齐跨实体访问纪律，避免新增 daoFor 站点）。
+     */
+    protected BigDecimal aggregateIssueMaterialCost(ErpMfgSubcontractOrder order, IServiceContext context) {
+        if (order == null || order.getCode() == null) {
+            return BigDecimal.ZERO;
+        }
+        ErpInvStockMove issueMove = stockMoveBiz.findByRelatedBill(
+                ErpMfgConstants.RELATED_BILL_TYPE_MFG_SUBCONTRACT_ISSUE, order.getCode(), context);
+        if (issueMove == null) {
+            return BigDecimal.ZERO;
+        }
+        ormTemplate.flushSession();
+        QueryBean lq = new QueryBean();
+        lq.addFilter(eq("moveId", issueMove.getId()));
+        List<ErpInvStockLedger> ledgers = stockLedgerBiz.findList(lq, null, context);
+        BigDecimal sum = BigDecimal.ZERO;
+        for (ErpInvStockLedger l : ledgers) {
+            sum = sum.add(nz(l.getTotalCost()).abs());
+        }
+        return sum;
     }
 
     // ---------- 校验/查询辅助（protected，供派生复用与覆盖） ----------

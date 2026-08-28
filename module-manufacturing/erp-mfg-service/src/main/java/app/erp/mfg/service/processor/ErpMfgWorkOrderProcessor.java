@@ -9,9 +9,12 @@ import app.erp.inv.biz.StockMoveRequest;
 import app.erp.inv.dao.ErpInvDaoConstants;
 import app.erp.inv.dao.entity.ErpInvStockMove;
 import app.erp.mfg.biz.BomExplosionNode;
+import app.erp.mfg.biz.IErpMfgSubcontractOrderBiz;
 import app.erp.mfg.dao.entity.ErpMfgBom;
 import app.erp.mfg.dao.entity.ErpMfgBomLine;
 import app.erp.mfg.dao.entity.ErpMfgBomOperation;
+import app.erp.mfg.dao.entity.ErpMfgSubcontractOrder;
+import app.erp.mfg.dao.entity.ErpMfgSubcontractOrderLine;
 import app.erp.mfg.dao.entity.ErpMfgWorkOrder;
 import app.erp.mfg.dao.entity.ErpMfgWorkOrderBomLineSnapshot;
 import app.erp.mfg.dao.entity.ErpMfgWorkOrderBomOperationSnapshot;
@@ -54,6 +57,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import static io.nop.api.core.beans.FilterBeans.eq;
 
@@ -75,6 +79,8 @@ public class ErpMfgWorkOrderProcessor {
 
     @Inject
     IDaoProvider daoProvider;
+    @Inject
+    IErpMfgSubcontractOrderBiz subcontractOrderBiz;
     @Inject
     KitAvailabilityChecker kitAvailabilityChecker;
     @Inject
@@ -474,6 +480,55 @@ public class ErpMfgWorkOrderProcessor {
         BigDecimal completed = nz(wo.getCompletedQuantity());
         wo.setUnitCost(completed.signum() != 0 ? total.divide(completed, 4, RoundingMode.HALF_UP)
                 : BigDecimal.ZERO);
+    }
+
+    /**
+     * P1-CK-mfg3-005 修复：完工时按产品归集实际委外费填入 {@code wo.subcontractCost}。
+     * config-gated（{@code erp-mfg.subcontract-cost-aggregation-enabled}，与 CostRollupService 标准侧同键）
+     * ——关时恒 0 零回归（向后兼容）；开时镜像 {@code CostRollupService.aggregateSubcontractCost} 口径：
+     * 聚合该产品全部 COMPLETED 委外单加工费池，按产量分摊（perUnit = 总加工费/委外总量，
+     * wo 份额 = perUnit × 工单完工量）。修复前该字段零 writer，SUBCONTRACT 差异实际侧恒 0 →
+     * 差异行失真并可过账错误方向凭证。
+     */
+    protected void applySubcontractCostToWorkOrder(ErpMfgWorkOrder wo, IServiceContext context) {
+        if (!isSubcontractCostAggregationEnabled()) {
+            return;
+        }
+        String productId = wo.getProductId();
+        if (productId == null) {
+            return;
+        }
+        QueryBean q = new QueryBean();
+        q.addFilter(eq("productId", productId));
+        q.addFilter(eq("docStatus", ErpMfgConstants.SUBCONTRACT_STATUS_COMPLETED));
+        List<ErpMfgSubcontractOrder> orders = subcontractOrderBiz.findList(q, null, context);
+        if (orders.isEmpty()) {
+            return;
+        }
+        BigDecimal totalFee = BigDecimal.ZERO;
+        BigDecimal totalQty = BigDecimal.ZERO;
+        for (ErpMfgSubcontractOrder order : orders) {
+            totalFee = totalFee.add(nz(order.getProcessingFee()));
+            for (ErpMfgSubcontractOrderLine line : order.getLines()) {
+                if (Objects.equals(line.getMaterialId(), productId)) {
+                    totalQty = totalQty.add(nz(line.getQuantity()));
+                }
+            }
+        }
+        if (totalQty.signum() == 0) {
+            return;
+        }
+        BigDecimal perUnit = totalFee.divide(totalQty, 6, RoundingMode.HALF_UP);
+        wo.setSubcontractCost(perUnit.multiply(nz(wo.getCompletedQuantity())));
+    }
+
+    protected boolean isSubcontractCostAggregationEnabled() {
+        try {
+            String value = AppConfig.var(ErpMfgConstants.CONFIG_SUBCONTRACT_COST_AGGREGATION_ENABLED, "false");
+            return value != null && Boolean.parseBoolean(value.trim());
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     // ---------- 校验/查询辅助（protected，供派生复用与覆盖） ----------

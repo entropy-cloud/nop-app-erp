@@ -131,7 +131,7 @@ public class BatchGenealogyWriter {
             return;
         }
 
-        List<ErpMfgMaterialIssueLine> issueLines = findIssueLinesWithBatch(wo.getId());
+        List<IssueLineCtx> issueLines = findIssueLinesWithBatch(wo.getId());
         if (issueLines.isEmpty()) {
             return;
         }
@@ -150,8 +150,11 @@ public class BatchGenealogyWriter {
 
         int lineNo = 10;
         Set<String> usedInputLots = new HashSet<>();
-        for (ErpMfgMaterialIssueLine issueLine : issueLines) {
-            ErpInvBatch inputLot = resolveInputLot(issueLine, warehouseId);
+        for (IssueLineCtx ctx : issueLines) {
+            ErpMfgMaterialIssueLine issueLine = ctx.line;
+            // P1-CK-mfg3-004 修复：输入批次按领料单头仓库解析（修复前用产成品仓 destWarehouseId
+            // 查原料批次——多仓布局下恒 null，基因链零输入行，追溯/召回静默为空）。
+            ErpInvBatch inputLot = resolveInputLot(issueLine, ctx.issueWarehouseId);
             if (inputLot == null) {
                 continue;
             }
@@ -220,7 +223,7 @@ public class BatchGenealogyWriter {
 
     // ---------- step：查询辅助（protected，供派生复用与覆盖） ----------
 
-    protected List<ErpMfgMaterialIssueLine> findIssueLinesWithBatch(String workOrderId) {
+    protected List<IssueLineCtx> findIssueLinesWithBatch(String workOrderId) {
         IEntityDao<ErpMfgMaterialIssue> issueDao = daoProvider.daoFor(ErpMfgMaterialIssue.class);
         QueryBean iq = new QueryBean();
         iq.addFilter(eq("workOrderId", workOrderId));
@@ -229,7 +232,7 @@ public class BatchGenealogyWriter {
             return new ArrayList<>();
         }
         IEntityDao<ErpMfgMaterialIssueLine> lineDao = daoProvider.daoFor(ErpMfgMaterialIssueLine.class);
-        List<ErpMfgMaterialIssueLine> result = new ArrayList<>();
+        List<IssueLineCtx> result = new ArrayList<>();
         for (ErpMfgMaterialIssue issue : issues) {
             if (!isIssueConsumed(issue)) {
                 continue;
@@ -240,11 +243,22 @@ public class BatchGenealogyWriter {
             for (ErpMfgMaterialIssueLine line : lines) {
                 if (line.getBatchNo() != null && !line.getBatchNo().trim().isEmpty()
                         && line.getIssuedQuantity() != null && line.getIssuedQuantity().signum() > 0) {
-                    result.add(line);
+                    result.add(new IssueLineCtx(line, issue.getWarehouseId()));
                 }
             }
         }
         return result;
+    }
+
+    /** 领料行 + 领料单头仓库（P1-CK-mfg3-004：输入批次按领料仓而非产成品仓解析）。 */
+    protected static class IssueLineCtx {
+        final ErpMfgMaterialIssueLine line;
+        final String issueWarehouseId;
+
+        IssueLineCtx(ErpMfgMaterialIssueLine line, String issueWarehouseId) {
+            this.line = line;
+            this.issueWarehouseId = issueWarehouseId;
+        }
     }
 
     protected boolean isIssueConsumed(ErpMfgMaterialIssue issue) {
