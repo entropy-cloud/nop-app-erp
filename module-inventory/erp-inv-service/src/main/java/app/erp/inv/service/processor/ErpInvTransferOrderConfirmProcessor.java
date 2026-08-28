@@ -3,6 +3,7 @@ package app.erp.inv.service.processor;
 import app.erp.fin.biz.IErpFinIntercompanyTransferBiz;
 import app.erp.inv.biz.IErpInvTransferOrderBiz;
 import app.erp.inv.dao.entity.ErpInvTransferOrder;
+import app.erp.inv.dao.entity.ErpInvTransferOrderLine;
 import app.erp.inv.service.ErpInvErrors;
 import app.erp.inv.service.statemachine.ErpInvTransferOrderStateMachine;
 import io.nop.api.core.exceptions.NopException;
@@ -54,8 +55,16 @@ public class ErpInvTransferOrderConfirmProcessor {
         if (intercompanyTransferBiz != null && order.getFromWarehouseId() != null
                 && order.getToWarehouseId() != null && order.getBusinessDate() != null) {
             try {
+                // P1-CK-fin4-003：传调拨行数量聚合（materialId → Σquantity），使凭证金额 = 单价 × 数量。
+                java.util.Map<String, java.math.BigDecimal> qtyByMaterial = new java.util.HashMap<>();
+                for (ErpInvTransferOrderLine line : order.getLines()) {
+                    if (line.getMaterialId() == null || line.getQuantity() == null) {
+                        continue;
+                    }
+                    qtyByMaterial.merge(line.getMaterialId(), line.getQuantity(), java.math.BigDecimal::add);
+                }
                 intercompanyTransferBiz.onTransferConfirmed(order.getId(), order.getFromWarehouseId(),
-                        order.getToWarehouseId(), order.getBusinessDate(), context);
+                        order.getToWarehouseId(), qtyByMaterial, order.getBusinessDate(), context);
             } catch (RuntimeException e) {
                 org.slf4j.LoggerFactory.getLogger(ErpInvTransferOrderConfirmProcessor.class)
                         .warn("intercompany posting failed for transfer {}: {}", order.getId(), e.getMessage());

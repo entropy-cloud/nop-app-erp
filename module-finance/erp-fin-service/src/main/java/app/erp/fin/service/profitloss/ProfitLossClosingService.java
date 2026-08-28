@@ -67,8 +67,9 @@ public class ProfitLossClosingService {
     }
 
     private String closeForSchema(ErpFinAccountingPeriod period, String acctSchemaId, IServiceContext context) {
-        // 收集本期已过账、非红冲凭证 ID。
-        List<String> voucherIds = findPostedVoucherIds(period.getId());
+        // 收集本期已过账、非红冲凭证 ID（按账套过滤——P1-CK-fin4-002 修复：多账套模式下每个账套的结转凭证
+        // 只含本账套金额，否则每个账套都含全域金额 N 倍重复入账）。
+        List<String> voucherIds = findPostedVoucherIds(period.getId(), acctSchemaId);
         if (voucherIds.isEmpty()) {
             return null;
         }
@@ -76,6 +77,8 @@ public class ProfitLossClosingService {
         IEntityDao<ErpFinVoucherLine> lineDao = daoProvider.daoFor(ErpFinVoucherLine.class);
         QueryBean q = new QueryBean();
         q.addFilter(in("voucherId", voucherIds));
+        // 行级账套过滤（与凭证 ID 过滤双保险——跨账套重复行不进聚合）。
+        q.addFilter(eq("acctSchemaId", acctSchemaId));
         List<ErpFinVoucherLine> lines = lineDao.findAllByQuery(q);
 
         // 按科目聚合（缓存科目取 subjectClass）。
@@ -182,12 +185,16 @@ public class ProfitLossClosingService {
         return daoProvider.daoFor(ErpMdSubject.class).getEntityById(id);
     }
 
-    private List<String> findPostedVoucherIds(String periodId) {
+    private List<String> findPostedVoucherIds(String periodId, String acctSchemaId) {
         IEntityDao<ErpFinVoucher> dao = daoProvider.daoFor(ErpFinVoucher.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("periodId", periodId));
         q.addFilter(eq("docStatus", ErpFinConstants.VOUCHER_STATUS_POSTED));
         q.addFilter(eq("isReversed", Boolean.FALSE));
+        // 账套过滤（P1-CK-fin4-002）：只取本账套凭证；acctSchemaId 为 null 时回退主账套查询全部。
+        if (acctSchemaId != null && !acctSchemaId.isEmpty()) {
+            q.addFilter(eq("acctSchemaId", acctSchemaId));
+        }
         // 预算/承付凭证（postingType=BUDGET/COMMITMENT）是影子凭证，不得计入实际损益结转（budget.md 规则4/6/8）。
         q.addFilter(or(isNull("postingType"),
                 notIn("postingType", java.util.Arrays.asList(

@@ -40,6 +40,29 @@ public interface IErpFinIntercompanyTransferBiz {
                                               IServiceContext context);
 
     /**
+     * 跨法人调拨后置触发（P1-CK-fin4-003 修复）：与 {@link #onTransferConfirmed(String, String, String, java.time.LocalDate, IServiceContext)}
+     * 同语义，但携带调拨行数量与物料，使凭证金额 = 转移定价单价 × Σ数量（修复前仅按单价入账，N 倍失真；
+     * materialId=null 使物料级定价规则永不命中）。
+     *
+     * <p>调用点：{@code ErpInvTransferOrderBizModel.confirm} 后置 hook（inventory 域传 order 行数量聚合）。
+     *
+     * @param transferOrderId 调拨单 ID
+     * @param fromWarehouseId 调出仓库 ID
+     * @param toWarehouseId   调入仓库 ID
+     * @param qtyByMaterial   调拨行数量聚合：{@code materialId → Σquantity}（用于转移定价解析 + 凭证金额 = 单价 × 数量）
+     * @param businessDate    业务日期（用于转移定价有效期匹配）
+     * @param context         服务上下文
+     * @return 配对凭证 ID 列表（AR 凭证 + AP 凭证）；config-gated 关闭或同法人或无定价规则时返回空列表
+     */
+    @BizMutation
+    java.util.List<String> onTransferConfirmed(@Name("transferOrderId") String transferOrderId,
+                                              @Name("fromWarehouseId") String fromWarehouseId,
+                                              @Name("toWarehouseId") String toWarehouseId,
+                                              @Name("qtyByMaterial") java.util.Map<String, java.math.BigDecimal> qtyByMaterial,
+                                              @Name("businessDate") java.time.LocalDate businessDate,
+                                              IServiceContext context);
+
+    /**
      * 跨公司贸易单据（采购订单/销售订单）approve 后置触发：识别执行组织所属法人根 + 经转移定价规则表反向查找对手方法人根，
      * 若跨法人则以订单金额生成配对内部销售/采购凭证（plan 2026-07-24-1351-2，multi-company.md §跨公司 PO/SO 触发路径）。
      *

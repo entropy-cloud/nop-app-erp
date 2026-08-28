@@ -3,6 +3,8 @@ package app.erp.fin.service.entity;
 import app.erp.fin.dao.ErpFinBusinessType;
 import app.erp.fin.dao.entity.ErpFinAccountingPeriod;
 import app.erp.fin.dao.entity.ErpFinGlBalance;
+import app.erp.fin.dao.entity.ErpFinVoucher;
+import app.erp.fin.dao.entity.ErpFinVoucherBillR;
 import app.erp.fin.service.ErpFinConstants;
 import app.erp.md.dao.entity.ErpMdSubject;
 import io.nop.api.core.annotations.autotest.NopTestConfig;
@@ -163,6 +165,85 @@ public class TestErpFinAnnualClose extends PeriodCloseTestSupport {
         // 本位币账户不重估 + 无外币 AR/AP → 无 FX 凭证。
         assertEquals(0, countVouchersByBillCode("FX-REVAL-2025-09",
                 ErpFinBusinessType.EXCHANGE_GAIN_LOSS.name()), "本位币账户无外币重估凭证");
+    }
+
+    /**
+     * 跨期银行存款外币重估回归（P1-CK-fin4-001）：账面本位币基准须为累计口径。
+     * 8 月建外币账户 800 账面（借 1002/贷 1001）→ 9 月无新分录。
+     * 8 月 closePeriod（期末汇率 8.5）：重估 850，diff=50（正确差额）。
+     * 9 月 closePeriod（期末汇率 8.5）：若账面只聚合 9 月分录（0）→ diff=850（错误全额重估，GL 虚增）；
+     * 修复后账面为累计 800 → diff=50（正确差额，与 8 月相同）。
+     */
+    @Test
+    public void testBankFxRevaluationCrossPeriodCumulative() {
+        String augPeriodId = ormTemplate.runInSession(session -> {
+            String pid = seedOpenPeriod("2025-08", 2025, 8);
+            Map<String, ErpMdSubject> subjects = new HashMap<>();
+            subjects.put("1001", seedSubject("1001", "库存现金", "ASSET", ErpFinConstants.DC_DEBIT));
+            subjects.put("1002", seedSubject("1002", "银行存款", "ASSET", ErpFinConstants.DC_DEBIT));
+            subjects.put("6603", seedSubject("6603", "汇兑损益", ErpFinConstants.SUBJECT_CLASS_EXPENSE, ErpFinConstants.DC_DEBIT));
+            subjects.put("4103", seedSubject("4103", "本年利润", "EQUITY", ErpFinConstants.DC_CREDIT));
+            seedCurrency("1", "CNY", true);
+            seedCurrency("2", "EUR", false);
+            seedPostedVoucher("V-BANK-AUG", pid, LocalDate.of(2025, 8, 10), subjects,
+                    new Object[]{"1002", "银行存款", ErpFinConstants.DC_DEBIT, new BigDecimal("800")},
+                    new Object[]{"1001", "库存现金", ErpFinConstants.DC_CREDIT, new BigDecimal("800")});
+            seedFundAccount("BANK-EUR", "2", subjects.get("1002").getId(), new BigDecimal("100"));
+            return pid;
+        });
+        ormTemplate.runInSession(() -> periodBiz.closePeriod(augPeriodId, CTX));
+
+        // 8 月（期末汇率 8.5）：diff = 100×8.5 − 800 = 50。
+        assertTrue(countVouchersByBillCode("FX-REVAL-2025-08",
+                ErpFinBusinessType.EXCHANGE_GAIN_LOSS.name()) >= 1, "8 月银行存款外币重估凭证已生成");
+
+        String sepPeriodId = ormTemplate.runInSession(session -> {
+            String pid = seedOpenPeriod("2025-09", 2025, 9);
+            return pid;
+        });
+        ormTemplate.runInSession(() -> periodBiz.closePeriod(sepPeriodId, CTX));
+
+        // 9 月（期末汇率 8.5）：正确 diff = 100×8.5 − 800 = 50（账面为累计 800）。
+        // 回归断言：9 月重估凭证金额必须等于 50，而非全额 850（即账面基准已累计化）。
+        BigDecimal expectedDiff = new BigDecimal("50");
+        assertTrue(countVouchersByBillCode("FX-REVAL-2025-09",
+                ErpFinBusinessType.EXCHANGE_GAIN_LOSS.name()) >= 1, "9 月银行存款外币重估凭证已生成");
+        BigDecimal actual = totalVoucherAmountByBillCode("FX-REVAL-2025-09",
+                ErpFinBusinessType.EXCHANGE_GAIN_LOSS.name());
+        assertEquals(0, expectedDiff.compareTo(actual),
+                "9 月重估凭证金额应为差额 50（账面基准累计化），实际为 " + actual);
+    }
+
+    /** 统计指定 billCode+业务类型凭证的借方总额（单边），用于重估差额断言。 */
+    private BigDecimal totalVoucherAmountByBillCode(String billCode, String businessType) {
+        // billHeadCode 存于 ErpFinVoucherBillR.billCode（CloseVoucherWriter 写回链），经 voucherId 关联 Voucher。
+        IEntityDao<ErpFinVoucherBillR> billRDao = daoProvider.daoFor(ErpFinVoucherBillR.class);
+        QueryBean bq = new QueryBean();
+        bq.addFilter(eq("billCode", billCode));
+        bq.addFilter(eq("businessType", businessType));
+        java.util.Set<String> voucherIds = new java.util.HashSet<>();
+        for (ErpFinVoucherBillR r : billRDao.findAllByQuery(bq)) {
+            if (r.getVoucherId() != null) {
+                voucherIds.add(r.getVoucherId());
+            }
+        }
+        if (voucherIds.isEmpty()) {
+            return BigDecimal.ZERO;
+        }
+        IEntityDao<ErpFinVoucher> vDao = daoProvider.daoFor(ErpFinVoucher.class);
+        QueryBean vq = new QueryBean();
+        vq.addFilter(eq("docStatus", ErpFinConstants.VOUCHER_STATUS_POSTED));
+        BigDecimal total = BigDecimal.ZERO;
+        for (ErpFinVoucher v : vDao.findAllByQuery(vq)) {
+            if (voucherIds.contains(v.getId())) {
+                total = total.add(nz(v.getTotalDebit()));
+            }
+        }
+        return total;
+    }
+
+    private static BigDecimal nz(BigDecimal v) {
+        return v == null ? BigDecimal.ZERO : v;
     }
 
     // ---------- helpers ----------

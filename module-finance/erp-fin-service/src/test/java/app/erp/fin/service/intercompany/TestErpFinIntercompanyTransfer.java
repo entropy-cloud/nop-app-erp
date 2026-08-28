@@ -128,6 +128,55 @@ public class TestErpFinIntercompanyTransfer extends JunitAutoTestCase {
         assertTrue(voucherIds.isEmpty(), "同法人调拨不应生成凭证");
     }
 
+    /**
+     * P1-CK-fin4-003 回归：跨法人调拨凭证金额 = 转移定价单价 × Σ数量。
+     * 100 件 × 单价 150 → 凭证金额应为 15000（修复前仅按单价 150 入账，N 倍失真）。
+     * 同时验证 materialId 参与定价解析（firstMaterialId 非 null 命中物料级规则不抛错）。
+     */
+    @Test
+    public void testOnTransferConfirmedQuantityAmount() {
+        String[] ids = seedReturn(() -> {
+            ErpMdOrganization companyA = seedOrganization("ORG-CA2", "公司A2", ErpFinConstants.ORG_TYPE_COMPANY, null);
+            ErpMdOrganization companyB = seedOrganization("ORG-CB2", "公司B2", ErpFinConstants.ORG_TYPE_COMPANY, null);
+            ErpMdWarehouse whA = seedWarehouse("WH-A2", "仓库A2", companyA.getId());
+            ErpMdWarehouse whB = seedWarehouse("WH-B2", "仓库B2", companyB.getId());
+            seedPricingRule(companyA.getId(), companyB.getId());
+            seedSubject("1131", "内部应收");
+            seedSubject("5001", "内部销售收入");
+            seedSubject("1401", "内部采购成本");
+            seedSubject("2202", "内部应付");
+            seedOpenPeriod("2026-IC2-7", 2026, 7);
+            return new String[]{companyA.getId(), companyB.getId(), whA.getId(), whB.getId()};
+        });
+        transferPriceResolver.invalidateCache();
+        String whAId = ids[2];
+        String whBId = ids[3];
+
+        // 100 件 × 单价 150 = 15000。materialId 传 "MAT-IC2-001"（任意有效非 null，验证解析不抛错）。
+        java.util.Map<String, BigDecimal> qtyByMaterial = new java.util.HashMap<>();
+        qtyByMaterial.put("MAT-IC2-001", new BigDecimal("100"));
+
+        List<String> voucherIds = ormTemplate.runInSession(session ->
+                intercompanyTransferBiz.onTransferConfirmed("5003", whAId, whBId,
+                        qtyByMaterial, LocalDate.of(2026, 7, 15), CTX));
+
+        assertEquals(2, voucherIds.size(), "跨法人调拨（带数量）应生成 2 条配对凭证（AR + AP）");
+
+        // AR 凭证借方总额 = 单价 × 数量 = 15000（修复前为 150）。
+        QueryBean lineQ = new QueryBean();
+        lineQ.addFilter(eq("voucherId", voucherIds.get(0)));
+        List<ErpFinVoucherLine> arLines = daoProvider.daoFor(ErpFinVoucherLine.class).findAllByQuery(lineQ);
+        BigDecimal totalDebit = arLines.stream()
+                .map(l -> l.getDebitAmount() != null ? l.getDebitAmount() : BigDecimal.ZERO)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        BigDecimal totalCredit = arLines.stream()
+                .map(l -> l.getCreditAmount() != null ? l.getCreditAmount() : BigDecimal.ZERO)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        assertEquals(0, totalDebit.compareTo(totalCredit), "AR 凭证借贷应平衡");
+        assertEquals(0, totalDebit.compareTo(new BigDecimal("15000")),
+                "AR 凭证金额应为 单价 150 × 数量 100 = 15000（P1-CK-fin4-003 修复），实际为 " + totalDebit);
+    }
+
     // ---------- 跨公司 PO/SO trade-document 路径（plan 2026-07-24-1351-2）----------
 
     @Test

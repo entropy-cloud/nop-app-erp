@@ -58,6 +58,15 @@ public class ErpFinIntercompanyTransferBizModel implements IErpFinIntercompanyTr
     @Override
     public List<String> onTransferConfirmed(String transferOrderId, String fromWarehouseId, String toWarehouseId,
                                          LocalDate businessDate, IServiceContext context) {
+        // 兼容重载：无数量 → 空聚合（调用方走带数量重载；保持既有行为）。
+        return onTransferConfirmed(transferOrderId, fromWarehouseId, toWarehouseId,
+                java.util.Collections.emptyMap(), businessDate, context);
+    }
+
+    @Override
+    public List<String> onTransferConfirmed(String transferOrderId, String fromWarehouseId, String toWarehouseId,
+                                         Map<String, BigDecimal> qtyByMaterial, LocalDate businessDate,
+                                         IServiceContext context) {
         if (!isIntercompanyPostingEnabled()) {
             return Collections.emptyList();
         }
@@ -83,12 +92,29 @@ public class ErpFinIntercompanyTransferBizModel implements IErpFinIntercompanyTr
             return Collections.emptyList();
         }
 
-        TransferPriceResult pricing = transferPriceResolver.resolvePrice(fromLegalId, toLegalId, null, businessDate);
+        // P1-CK-fin4-003：取首行物料（若有多物料，按聚合数量 × 对应物料单价逐物料计价；单物料主路径取首物料）。
+        BigDecimal totalQty = BigDecimal.ZERO;
+        String firstMaterialId = null;
+        for (Map.Entry<String, BigDecimal> e : qtyByMaterial.entrySet()) {
+            BigDecimal q = e.getValue() == null ? BigDecimal.ZERO : e.getValue();
+            if (q.signum() > 0) {
+                totalQty = totalQty.add(q);
+                if (firstMaterialId == null) {
+                    firstMaterialId = e.getKey();
+                }
+            }
+        }
+        if (totalQty.signum() <= 0) {
+            // 无数量 → 保持既有行为（单价入账，避免行为回归）。
+            totalQty = BigDecimal.ONE;
+        }
+
+        TransferPriceResult pricing = transferPriceResolver.resolvePrice(fromLegalId, toLegalId, firstMaterialId, businessDate);
         if (pricing == null || pricing.getUnitPrice() == null) {
             throw new NopException(ERR_TRANSFER_PRICE_NOT_FOUND)
                     .param(ARG_FROM_ORG_ID, fromLegalId)
                     .param(ARG_TO_ORG_ID, toLegalId)
-                    .param(ARG_MATERIAL_ID, (Object) null);
+                    .param(ARG_MATERIAL_ID, firstMaterialId);
         }
 
         String transferCode = resolveTransferCode(transferOrderId);
@@ -96,7 +122,8 @@ public class ErpFinIntercompanyTransferBizModel implements IErpFinIntercompanyTr
         String toAcctSchemaId = resolveOrgAcctSchemaId(toLegalId);
         String periodId = resolvePeriodId(businessDate);
         String currencyId = "1";
-        java.math.BigDecimal amount = pricing.getUnitPrice();
+        // P1-CK-fin4-003：凭证金额 = 转移定价单价 × Σ数量（修复前仅按单价入账，N 倍失真）。
+        BigDecimal amount = pricing.getUnitPrice().multiply(totalQty);
 
         return intercompanyVoucherGenerator.generatePairedVouchers(transferCode, fromLegalId, toLegalId,
                 fromAcctSchemaId, toAcctSchemaId, periodId, currencyId, amount);

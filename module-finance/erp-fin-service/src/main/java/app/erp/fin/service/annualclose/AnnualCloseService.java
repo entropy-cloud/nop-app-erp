@@ -97,9 +97,9 @@ public class AnnualCloseService {
         if (year == null) {
             return null;
         }
-        // 本年利润科目净余额 = Σ(credit − debit) over 本年度已过账非红冲凭证分录。
+        // 本年利润科目净余额 = Σ(credit − debit) over 本年度已过账非红冲凭证分录（按账套过滤，P1-CK-fin4-002）。
         ErpMdSubject cypSubject = requireSubject(ErpFinConstants.CONFIG_CURRENT_YEAR_PROFIT_SUBJECT_CODE, "本年利润");
-        BigDecimal cypNet = subjectNetForYear(cypSubject.getId(), year);
+        BigDecimal cypNet = subjectNetForYear(cypSubject.getId(), year, acctSchemaId);
         if (cypNet.compareTo(BigDecimal.ZERO) == 0) {
             // 本年利润已为零（无发生或已结转），无需结转。
             return null;
@@ -147,15 +147,17 @@ public class AnnualCloseService {
         }
         String functionalCurrencyId = resolveFunctionalCurrencyId();
 
-        // 本年各科目净余额：按科目聚合 debit/credit。
-        Map<String, SubjectYearAgg> agg = aggregateYearSubjectActivity(year);
+        // 本年各科目净余额：按科目聚合 debit/credit（按账套过滤，P1-CK-fin4-002——每账套独立快照）。
+        Map<String, SubjectYearAgg> agg = aggregateYearSubjectActivity(year, acctSchemaId);
         if (agg.isEmpty()) {
             return;
         }
         IEntityDao<ErpFinGlBalance> glDao = daoProvider.daoFor(ErpFinGlBalance.class);
-        // 先清除次年 1 月既有年初快照（幂等：支持反结账后重新结转）。
+        // 先清除次年 1 月既有年初快照（幂等：支持反结账后重新结转）。P1-CK-fin4-002：clear 加账套维度，
+        // 否则多账套循环中迭代 2 删除迭代 1 写入的次年快照，最终只余最后账套。
         QueryBean clearQ = new QueryBean();
         clearQ.addFilter(eq("periodId", nextJan.getId()));
+        clearQ.addFilter(eq("acctSchemaId", acctSchemaId));
         for (ErpFinGlBalance old : glDao.findAllByQuery(clearQ)) {
             glDao.deleteEntity(old);
         }
@@ -215,10 +217,11 @@ public class AnnualCloseService {
         ErpMdSubject arSubject = arCode == null ? null : findSubjectByCode(arCode);
         ErpMdSubject apSubject = apCode == null ? null : findSubjectByCode(apCode);
         if (arSubject != null) {
-            arGl = subjectNetForYear(arSubject.getId(), year).negate().max(BigDecimal.ZERO);
+            // 对账门控沿用单账套语义（主账套，与 GL 聚合同作用域）；null 回退全部（单账套部署）。
+            arGl = subjectNetForYear(arSubject.getId(), year, resolveAcctSchemaId(period.getId())).negate().max(BigDecimal.ZERO);
         }
         if (apSubject != null) {
-            apGl = subjectNetForYear(apSubject.getId(), year).max(BigDecimal.ZERO);
+            apGl = subjectNetForYear(apSubject.getId(), year, resolveAcctSchemaId(period.getId())).max(BigDecimal.ZERO);
         }
 
         if (arSubject != null && arAux.subtract(arGl).abs().compareTo(precision) > 0) {
@@ -274,8 +277,8 @@ public class AnnualCloseService {
 
     // ===================== helpers =====================
 
-    private BigDecimal subjectNetForYear(String subjectId, int year) {
-        List<String> voucherIds = findYearPostedVoucherIds(year);
+    private BigDecimal subjectNetForYear(String subjectId, int year, String acctSchemaId) {
+        List<String> voucherIds = findYearPostedVoucherIds(year, acctSchemaId);
         if (voucherIds.isEmpty()) {
             return BigDecimal.ZERO;
         }
@@ -291,8 +294,8 @@ public class AnnualCloseService {
         return credit.subtract(debit);
     }
 
-    private Map<String, SubjectYearAgg> aggregateYearSubjectActivity(int year) {
-        List<String> voucherIds = findYearPostedVoucherIds(year);
+    private Map<String, SubjectYearAgg> aggregateYearSubjectActivity(int year, String acctSchemaId) {
+        List<String> voucherIds = findYearPostedVoucherIds(year, acctSchemaId);
         Map<String, SubjectYearAgg> agg = new LinkedHashMap<>();
         if (voucherIds.isEmpty()) {
             return agg;
@@ -300,6 +303,10 @@ public class AnnualCloseService {
         IEntityDao<ErpFinVoucherLine> lineDao = daoProvider.daoFor(ErpFinVoucherLine.class);
         QueryBean q = new QueryBean();
         q.addFilter(in("voucherId", voucherIds));
+        // 行级账套过滤（P1-CK-fin4-002 双保险）。
+        if (acctSchemaId != null && !acctSchemaId.isEmpty()) {
+            q.addFilter(eq("acctSchemaId", acctSchemaId));
+        }
         Set<String> excludeTypes = new HashSet<>();
         excludeTypes.add(ErpFinBusinessType.PROFIT_TO_RETAINED_EARNINGS.name());
         for (ErpFinVoucherLine l : lineDao.findAllByQuery(q)) {
@@ -317,8 +324,8 @@ public class AnnualCloseService {
         return agg;
     }
 
-    private List<String> findYearPostedVoucherIds(int year) {
-        // 经期间表关联本年所有期间，再取这些期间内已过账非红冲凭证。
+    private List<String> findYearPostedVoucherIds(int year, String acctSchemaId) {
+        // 经期间表关联本年所有期间，再取这些期间内已过账非红冲凭证（按账套过滤，P1-CK-fin4-002）。
         IEntityDao<ErpFinAccountingPeriod> pDao = daoProvider.daoFor(ErpFinAccountingPeriod.class);
         QueryBean pq = new QueryBean();
         pq.addFilter(eq("year", year));
@@ -336,6 +343,9 @@ public class AnnualCloseService {
         vq.addFilter(in("periodId", periodIds));
         vq.addFilter(eq("docStatus", ErpFinConstants.VOUCHER_STATUS_POSTED));
         vq.addFilter(eq("isReversed", Boolean.FALSE));
+        if (acctSchemaId != null && !acctSchemaId.isEmpty()) {
+            vq.addFilter(eq("acctSchemaId", acctSchemaId));
+        }
         // 预算/承付凭证（postingType=BUDGET/COMMITMENT）是影子凭证，不得计入实际年度结转/未分配利润（budget.md 规则4/6/8）。
         vq.addFilter(or(isNull("postingType"),
                 notIn("postingType", java.util.Arrays.asList(

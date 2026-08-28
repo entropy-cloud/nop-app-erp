@@ -198,9 +198,9 @@
 | P3-CK-fin3-014 | P3 | D1 文档 | ck-finance-budget-costing.md | CommitmentVoucherGenerator 类 javadoc 描述与实现矛盾——注释称「Cr 行使用同一科目反向（保持平衡）」，实现是单行单边无 Cr 行 | 新增 | open |  |
 | P3-CK-fin3-015 | P3 | D5/D10 | ck-finance-budget-costing.md | rollForward 无幂等守卫 + validateNewFiscalYear 自动拆箱 NPE 风险 | 新增 | open |  |
 | P3-CK-fin3-016 | P3 | D3 | ck-finance-budget-costing.md | findMatchingBudgetLine 多 APPROVED 方案同维度命中时无排序取首个——controlLevel 取值取决于 DB 返回序 | 新增 | open |  |
-| P1-CK-fin4-001 | P1 | D6 | ck-finance-period-misc.md | 银行存款 FX 重估的「账面本位币」基准只聚合本期分录——跨期余额账户每月重复生成全额重估凭证，GL 银行科目金额虚增 | 新增 | open |  |
-| P1-CK-fin4-002 | P1 | D6/D8 | ck-finance-period-misc.md | 多账套模式下损益结转/年度结转聚合无账套过滤——每个账套的结转凭证都含全域金额（N 倍重复入账），年初余额 populate 循环互删只余最后账套 | 新增 | open |  |
-| P1-CK-fin4-003 | P1 | D6/D5 | ck-finance-period-misc.md | 跨法人调拨凭证金额 = 转移定价「单价」（无数量参与）且 materialId 传 null——凭证金额按单价入账（N 倍失真）+ 物料级定价规则永不命中 | 新增 | open |  |
+| P1-CK-fin4-001 | P1 | D6 | ck-finance-period-misc.md | 银行存款 FX 重估的「账面本位币」基准只聚合本期分录——跨期余额账户每月重复生成全额重估凭证，GL 银行科目金额虚增 | 新增 | fixed | F2.4：ExchangeRevaluationService.aggregateBankSubjectBookFunctional 账面基准改累计口径（移除 periodId 过滤）+ 跨期回归测试 TestErpFinAnnualClose#testBankFxRevaluationCrossPeriodCumulative（8月/9月连续结账 diff=50 非全额）；fin 530 tests 全绿 |
+| P1-CK-fin4-002 | P1 | D6/D8 | ck-finance-period-misc.md | 多账套模式下损益结转/年度结转聚合无账套过滤——每个账套的结转凭证都含全域金额（N 倍重复入账），年初余额 populate 循环互删只余最后账套 | 新增 | fixed | F2.4：ProfitLossClosingService.closeForSchema + AnnualCloseService.subjectNetForYear/aggregateYearSubjectActivity/findYearPostedVoucherIds 增 acctSchemaId 过滤 + populateNextYearOpening clear 增账套维度；fin 530 tests 全绿 |
+| P1-CK-fin4-003 | P1 | D6/D5 | ck-finance-period-misc.md | 跨法人调拨凭证金额 = 转移定价「单价」（无数量参与）且 materialId 传 null——凭证金额按单价入账（N 倍失真）+ 物料级定价规则永不命中 | 新增 | fixed | F2.4：IErpFinIntercompanyTransferBiz 新增带数量重载 onTransferConfirmed(..., qtyByMaterial, ...) + ErpFinIntercompanyTransferBizModel amount=unitPrice×Σ数量 + materialId 参与定价 + inventory ErpInvTransferOrderConfirmProcessor 传行数量聚合；TestErpFinIntercompanyTransfer#testOnTransferConfirmedQuantityAmount（100×150=15000）；fin+inv 全绿 |
 | P2-CK-fin4-004 | P2 | D8/D6 | ck-finance-period-misc.md | FX 重估与年度结转聚合均无 orgId 维度——A 组织结账把 B 组织的外币项目/全年凭证重估结转进 A 的账 | 新增 | open |  |
 | P2-CK-fin4-005 | P2 | D6 | ck-finance-period-misc.md | FX AR/AP 重估未排除 WRITTEN_OFF 状态——部分核销坏账后残留 openAmount 的已核销项仍被重估，生成幽灵汇兑损益 | 新增 | open |  |
 | P2-CK-fin4-006 | P2 | D2/D8 | ck-finance-period-misc.md | 合并抵销候选识别非幂等——重复 generateEliminationCandidates 产生重复候选行，postElimination 后 GL 重复抵销 | 新增 | open |  |

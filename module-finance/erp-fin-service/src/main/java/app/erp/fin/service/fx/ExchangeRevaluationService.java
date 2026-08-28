@@ -215,12 +215,18 @@ public class ExchangeRevaluationService {
                 period.getEndDate(), lines, "期末汇兑重估-银行存款");
     }
 
-    /** 聚合本期间各银行科目已过账非红冲分录的账面本位币（debit−credit），用于银行存款重估比对。 */
+    /**
+     * 聚合各银行科目已过账非红冲分录的账面本位币（debit−credit），用于银行存款重估比对。
+     * <p>P1-CK-fin4-001 修复：账面基准为<b>累计</b>口径——聚合该科目全部期间（不限结账当期）的已过账分录净额，
+     * 与 {@link ErpFinFundAccount#getCurrentBalance()}（累计当前余额）量纲一致。修复前仅聚合本期，
+     * 跨期账户每月重复生成全额重估凭证（book=0 → diff=全值），GL 银行科目金额虚增。
+     * FX 重估/期间结转/损益结转自身分录排除（不落入账面基准，避免下月 diff 不收敛）。
+     */
     private Map<String, BigDecimal> aggregateBankSubjectBookFunctional(String periodId) {
         Map<String, BigDecimal> result = new HashMap<>();
         IEntityDao<ErpFinVoucher> vDao = daoProvider.daoFor(ErpFinVoucher.class);
         QueryBean vq = new QueryBean();
-        vq.addFilter(eq("periodId", periodId));
+        // 累计口径：不按 periodId 过滤（跨期账户账面 = 自始已过账分录净额）。
         vq.addFilter(eq("docStatus", ErpFinConstants.VOUCHER_STATUS_POSTED));
         vq.addFilter(eq("isReversed", Boolean.FALSE));
         // 预算/承付凭证（postingType=BUDGET/COMMITMENT）是影子凭证，不得计入实际银行存款重估（budget.md 规则4/6/8）。
