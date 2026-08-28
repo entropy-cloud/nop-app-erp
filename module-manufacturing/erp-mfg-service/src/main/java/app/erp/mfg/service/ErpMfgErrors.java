@@ -312,4 +312,18 @@ public interface ErpMfgErrors {
             "erp.err.mfg.completion-move-bill-code-too-long",
             "完工入库移动单关联单号超长（工单[{workOrderCode}]累计完工量[{completedQuantity}]拼接后超过 relatedBillCode 列 50 字符上限）",
             ARG_WORK_ORDER_CODE, ARG_COMPLETED_QUANTITY);
+
+    // --- P1-CK-mfg-004：完工入库静默缺失守卫 ---
+    String ARG_DEST_WAREHOUSE_ID = "destWarehouseId";
+    String ARG_UOM_ID = "uoMId";
+
+    ErrorCode ERR_COMPLETION_WAREHOUSE_MISSING = ErrorCode.define(
+            "erp.err.mfg.completion-warehouse-missing",
+            "完工入库缺少产成品入库仓库：工单[{workOrderCode}]产出行未配置 destWarehouseId（产成品将永不入库）",
+            ARG_WORK_ORDER_CODE, ARG_DEST_WAREHOUSE_ID);
+
+    ErrorCode ERR_COMPLETION_UOM_MISSING = ErrorCode.define(
+            "erp.err.mfg.completion-uom-missing",
+            "完工入库缺少计量单位：工单[{workOrderCode}]产出行与物料[{productId}]均未配置 UoM（产成品将永不入库）",
+            ARG_WORK_ORDER_CODE, ARG_PRODUCT_ID, ARG_UOM_ID);
 }

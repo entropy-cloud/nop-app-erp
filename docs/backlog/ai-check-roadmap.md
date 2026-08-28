@@ -1,6 +1,6 @@
 # AI 实现代码检查路线图（ai-check）
 
-> 最后更新：2026-08-28-2115（**本会话推进**：MG 预演产物 + lesson 17 + V.1 全量构建基线登记 1:55 min + 3 份 plan 修订；F0-F2.3 全部 done（**45 findings 终态**：44 fixed + 1 部分注记）；F2.4 ready（唯一未启动 P1 修复批）；M5.3 等 mission closure 仍受独立子代理阻塞——本会话已 commit 4 个进展：`39bd8b9d1` M5.3 CG1-CG5 通过 / `edab50773` lesson 17 + MG 预演 / `03a4a96a5` V.1 全量构建基线；剩余 60+ 工作项需 plan-audit / 独立子代理 closure-audit / 人工批准）
+> 最后更新：2026-08-28-2205（**本会话推进**：F2.4 已 commit（`ae74a8613`，fin 530 + inv 251 + app-erp-all 68 全绿）；F2.5 mfg-工单 P1 簇 done（mfg-002/003/004/005 → fixed，**52 findings 终态**；mfg 302 全绿 + inv 回归）；F2.6 起后续修复批已获用户「全部人工批准，继续目标」授权；M5.3 等 mission closure 仍受独立子代理阻塞——用户人工批准已作 plan-audit 替代（F2.4/F2.5 已用））
 > Source：用户直接请求（2026-08-25）——"检查项目的各个模块的实现代码，是否存在问题。先拟制 ai-check-roadmap.md，然后按照 roadmap 规划逐个检查，检查结果保存在 docs/audits/check 目录下，不要直接修改代码……全部检查完毕之后逐项编写测试代码验证并修正，如果检查后发现不是问题的，则要说明，修复了的也要修改状态。P0 到 P3 级别的问题都要修复。"
 > Related：`docs/backlog/audit-remediation-roadmap.md`（前一轮 arm 审计-修复 mission，已闭合）、`docs/backlog/requirement-compliance-roadmap.md`（已闭合）
 
@@ -118,7 +118,7 @@
 | F2.2 finance-ARAP P1 簇（fin2-001 尾差守卫/002 FX 不对称/003 聚合超核销/004/005） | done | ar-ap-reconciliation.md | F0.2 | none |
 | F2.3 finance-预算成本 P1 簇（fin3-001 carryForward 科目错链/002/003 方向敏感/004 TOCTOU/005 账套硬编码） | done | budget.md、costing-methods.md | F0.2 | none |
 | F2.4 finance-期间 P1 簇（fin4-001 FX 重估口径/002 多账套 N 倍/003 跨法人单价入账） | done | period-close.md | F0.2 | none |
-| F2.5 mfg-工单 P1 簇（mfg-002 驳回死锁/003 红冲不回退成本/004/005；Deferred：F2.1 二期 posted listener 域内收口） | todo | manufacturing owner docs | F0.2 | none |
+| F2.5 mfg-工单 P1 簇（mfg-002 驳回死锁/003 红冲不回退成本/004/005；Deferred：F2.1 二期 posted listener 域内收口） | done | manufacturing owner docs | F0.2 | none |
 | F2.6 mfg-BOM/MRP P1 簇（mfg2-001 安全库存双扣/002 低阶码/003 版本号 ASC 撞 UK——含 drp-012 同型） | todo | mrp.md | F0.2 | none |
 | F2.7 mfg-委外 P1 簇（mfg3-001 计价缺料/002 红冲半段/003 Pattern B 复活/004/005） | todo | subcontracting.md | F0.2 | none |
 | F2.8 assets-生命周期 P1 簇（ast-001 分配守恒/002/003 盘点漏录报废/004/005/006；Deferred：F2.1 二期 posted listener 域内收口） | todo | assets owner docs | F0.2 | none |

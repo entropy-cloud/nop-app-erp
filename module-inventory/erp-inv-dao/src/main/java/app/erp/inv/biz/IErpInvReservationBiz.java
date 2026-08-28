@@ -67,4 +67,16 @@ public interface IErpInvReservationBiz extends ICrudBiz<ErpInvReservation>{
     @BizMutation
     ErpInvReservation consumeReservation(@Name("request") ReservationConsumeRequest request,
                                          IServiceContext context);
+
+    /**
+     * 红冲回退领料消耗（consumeReservation 逆操作，mfg 领料红冲 P1-CK-mfg-003 闭环）。按
+     * (sourceBillType, sourceBillCode) 定位预留头，行维度回退：consumedQuantity −= 实回退、
+     * 库存余额 reservedQuantity += 实回退（乐观锁）。实回退 = min(请求量, 该行已消耗量)
+     * ——不超过已消耗，不产生负消耗；头 status 按消耗回退后状态重映射（全回退 → OPEN）。
+     *
+     * @return 回退后的预留头；查无预留记录返回 null（no-op，零写入）
+     */
+    @BizMutation
+    ErpInvReservation unconsumeReservation(@Name("request") ReservationConsumeRequest request,
+                                           IServiceContext context);
 }

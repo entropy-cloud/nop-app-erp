@@ -1,6 +1,5 @@
 package app.erp.mfg.service.processor;
 
-import app.erp.inv.biz.IErpInvReservationBiz;
 import app.erp.inv.biz.ReservationConsumeLine;
 import app.erp.inv.biz.ReservationConsumeRequest;
 import app.erp.inv.biz.StockMoveRequest;
@@ -41,9 +40,6 @@ import static io.nop.api.core.beans.FilterBeans.eq;
 public class ErpMfgMaterialIssueConfirmProcessor extends AbstractErpMfgMaterialIssueProcessor {
 
     private static final Logger LOG = LoggerFactory.getLogger(ErpMfgMaterialIssueConfirmProcessor.class);
-
-    @Inject
-    IErpInvReservationBiz reservationBiz;
 
     public ErpMfgMaterialIssue confirm(String issueId, IServiceContext context) {
         ErpMfgMaterialIssue issue = requireIssue(issueId, context);
@@ -171,30 +167,6 @@ public class ErpMfgMaterialIssueConfirmProcessor extends AbstractErpMfgMaterialI
         if (isOverPickWarningEnabled()) {
             LOG.warn("工单 {} 领料超预留：materialId={}, 领料量={}, 预留未消耗量={}（over-pick-warning=true 放行）",
                     wo.getCode(), materialId, issued.toPlainString(), remaining.toPlainString());
-        }
-    }
-
-    protected ErpInvReservation findReservation(String workOrderCode) {
-        QueryBean q = new QueryBean();
-        q.addFilter(eq("sourceBillType", ErpMfgConstants.SOURCE_BILL_TYPE_WORK_ORDER));
-        q.addFilter(eq("sourceBillCode", workOrderCode));
-        List<ErpInvReservation> list = daoProvider.daoFor(ErpInvReservation.class).findAllByQuery(q);
-        return list.isEmpty() ? null : list.get(0);
-    }
-
-    protected List<ErpInvReservationLine> findReservationLines(String reservationId) {
-        QueryBean q = new QueryBean();
-        q.addFilter(eq("reservationId", reservationId));
-        q.addOrderField("lineNo", false);
-        return new ArrayList<>(daoProvider.daoFor(ErpInvReservationLine.class).findAllByQuery(q));
-    }
-
-    protected boolean isReservationEnabled() {
-        try {
-            String value = AppConfig.var(ErpMfgConstants.CONFIG_RESERVATION_ENABLED, "true");
-            return value == null || value.trim().isEmpty() || Boolean.parseBoolean(value.trim());
-        } catch (Exception e) {
-            return true;
         }
     }
 

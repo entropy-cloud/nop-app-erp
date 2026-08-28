@@ -1,5 +1,6 @@
 package app.erp.mfg.service;
 
+import app.erp.fin.dao.entity.ErpFinAccountingPeriod;
 import app.erp.inv.dao.entity.ErpInvReservation;
 import app.erp.inv.dao.entity.ErpInvReservationLine;
 import app.erp.inv.dao.entity.ErpInvStockBalance;
@@ -9,7 +10,9 @@ import app.erp.mfg.dao.entity.ErpMfgMaterialIssue;
 import app.erp.mfg.dao.entity.ErpMfgMaterialIssueLine;
 import app.erp.mfg.dao.entity.ErpMfgWorkOrder;
 import app.erp.mfg.dao.entity.ErpMfgWorkOrderLine;
+import app.erp.md.dao.entity.ErpMdAcctSchema;
 import app.erp.md.dao.entity.ErpMdMaterial;
+import app.erp.md.dao.entity.ErpMdSubject;
 import io.nop.api.core.annotations.autotest.NopTestConfig;
 import io.nop.api.core.annotations.core.OptionalBoolean;
 import io.nop.api.core.beans.ApiRequest;
@@ -61,9 +64,12 @@ public class TestErpMfgReservationLifecycle extends JunitBaseTestCase {
     static final String WAREHOUSE_ID = "3401";
     static final String UOM_ID = "5401";
     static final String CURRENCY_ID = "6401";
+    static final String ACCT_SCHEMA_ID = "7401";
     static final String P = "1101";     // 产成品
     static final String M1 = "1102";    // 子件
     static final String MOVE_TYPE_INCOMING = "INCOMING";
+    static final String SUBJECT_INVENTORY = "1401";
+    static final String SUBJECT_WIP = "1411";
 
     @Inject
     IDaoProvider daoProvider;
@@ -71,6 +77,47 @@ public class TestErpMfgReservationLifecycle extends JunitBaseTestCase {
     IOrmTemplate ormTemplate;
     @Inject
     IGraphQLEngine graphQLEngine;
+
+    // ---------- P1-CK-mfg-002：驳回/反审核后重新提交（双轴守卫互锁回归） ----------
+
+    /**
+     * P1-CK-mfg-002 回归：reject 后工单可重新提交（驳回不再成为准终态）。
+     * 修复前 doReject 只翻 approveStatus=REJECTED、docStatus 停留 SUBMITTED，
+     * 重提被 documentStateMachine.assertCanSubmit(仅 DRAFT) 拦截——只能作废重建。
+     * 修复后 doReject 回写 docStatus=DRAFT，重提可达。
+     */
+    @Test
+    public void testRejectThenResubmit() {
+        seedBase("9121", "WO-REJECT-RESUBMIT", "2");
+        String woId = seedWorkOrder("WO-REJECT-RESUBMIT", "9121");
+        rpcOk(mutation, "ErpMfgWorkOrder__submitForApproval", Map.of("id", woId));
+        rpcOk(mutation, "ErpMfgWorkOrder__reject", Map.of("id", woId));
+
+        // 驳回后 approveStatus=REJECTED + docStatus=DRAFT（修复后），重提应成功。
+        rpcOk(mutation, "ErpMfgWorkOrder__submitForApproval", Map.of("id", woId), "驳回后重新提交应成功（P1-CK-mfg-002）");
+        ErpMfgWorkOrder wo = daoProvider.daoFor(ErpMfgWorkOrder.class).getEntityById(woId);
+        assertEquals(ErpMfgConstants.APPROVE_STATUS_SUBMITTED, wo.getApproveStatus(), "重提后 approveStatus=SUBMITTED");
+        assertEquals(ErpMfgConstants.WORK_ORDER_STATUS_SUBMITTED, wo.getDocStatus(), "重提后 docStatus=SUBMITTED");
+    }
+
+    /**
+     * P1-CK-mfg-002 回归：reverseApprove（未开工前提）后工单可重新提交。
+     * 修复前 doReverseApprove 只翻 approveStatus=REJECTED、docStatus 停留 NOT_STARTED，重提被拦。
+     * 修复后回写 docStatus=DRAFT，重提可达。
+     */
+    @Test
+    public void testReverseApproveThenResubmit() {
+        seedBase("9122", "WO-REVAPPR-RESUBMIT", "2");
+        String woId = seedWorkOrder("WO-REVAPPR-RESUBMIT", "9122");
+        rpcOk(mutation, "ErpMfgWorkOrder__submitForApproval", Map.of("id", woId));
+        rpcOk(mutation, "ErpMfgWorkOrder__approve", Map.of("id", woId));
+        rpcOk(mutation, "ErpMfgWorkOrder__reverseApprove", Map.of("id", woId));
+
+        // 反审核后 docStatus=DRAFT（修复后），重提应成功。
+        rpcOk(mutation, "ErpMfgWorkOrder__submitForApproval", Map.of("id", woId), "反审核后重新提交应成功（P1-CK-mfg-002）");
+        ErpMfgWorkOrder wo = daoProvider.daoFor(ErpMfgWorkOrder.class).getEntityById(woId);
+        assertEquals(ErpMfgConstants.APPROVE_STATUS_SUBMITTED, wo.getApproveStatus(), "重提后 approveStatus=SUBMITTED");
+    }
 
     // ---------- ① 审核创建预留（UC-MFG-05） ----------
 
@@ -214,6 +261,61 @@ public class TestErpMfgReservationLifecycle extends JunitBaseTestCase {
         assertEquals(app.erp.inv.dao.ErpInvDaoConstants.RESERVATION_STATUS_CONSUMED, reservation.getStatus(),
                 "领料领完 → CONSUMED（⑦）");
         assertEquals(0, findBalance(M1).getReservedQuantity().compareTo(bd("0")), "余额预留量清零");
+    }
+
+    // ---------- P1-CK-mfg-003：领料红冲回退预留消耗（闭环回归） ----------
+
+    /**
+     * P1-CK-mfg-003 回归：reverseConfirm 红冲后预留消耗闭环回退。
+     * 修复前 confirm 消耗预留（consumedQuantity+= / 余额预留量-=）后红冲只回滚 GL 与库存移动单，
+     * 预留 consumedQuantity 单向残留——重领料超预留、完工释放量失真。
+     * 修复后红冲镜像回退：consumedQuantity 3→0、余额预留量 1→4、工单 materialCost/totalCost 归零、
+     * 行 actualQuantity 回退。
+     */
+    @Test
+    public void testReverseConfirmRestoresReservationConsumed() {
+        seedPeriodAndSubjects();
+        seedBase("9111", "WO-RSV-REV", "2");
+        generateIncoming(M1, "PR-RSV-RV", bd("10"), bd("5"), ACCT_SCHEMA_ID);
+        String woId = seedWorkOrder("WO-RSV-REV", "9111");
+        String wolId = seedWorkOrderLine(woId, M1, bd("2"), "INPUT", null, WAREHOUSE_ID);
+        seedWorkOrderLine(woId, P, bd("1"), "OUTPUT", WAREHOUSE_ID, null);
+
+        rpcOk(mutation, "ErpMfgWorkOrder__submitForApproval", Map.of("id", woId));
+        rpcOk(mutation, "ErpMfgWorkOrder__approve", Map.of("id", woId));
+        rpcOk(mutation, "ErpMfgWorkOrder__checkAvailability", Map.of("workOrderId", woId));
+        rpcOk(mutation, "ErpMfgWorkOrder__start", Map.of("workOrderId", woId));
+
+        String issueId = seedIssue("MI-RSV-REV", woId);
+        seedIssueLine("9309", issueId, M1, bd("3"), wolId);
+        rpcOk(mutation, "ErpMfgMaterialIssue__confirm", Map.of("issueId", issueId));
+
+        // 前置：confirm 消耗预留（consumed=3、余额预留 4−3=1）+ 工单材料成本 3×5=15
+        ErpInvReservation before = findReservation("WO-RSV-REV");
+        assertNotNull(before, "confirm 前置：预留头应存在");
+        assertEquals(0, findBalance(M1).getReservedQuantity().compareTo(bd("1")),
+                "confirm 后余额预留量 = 4 − 3 = 1");
+        ErpMfgWorkOrder woBefore = daoProvider.daoFor(ErpMfgWorkOrder.class).getEntityById(woId);
+        assertTrue(nz(woBefore.getMaterialCost()).signum() > 0, "confirm 后工单材料成本 > 0");
+
+        // 红冲：预留消耗回退 + 工单成本/行量回退
+        rpcOk(mutation, "ErpMfgMaterialIssue__reverseConfirm", Map.of("issueId", issueId));
+
+        ErpInvReservation after = findReservation("WO-RSV-REV");
+        List<ErpInvReservationLine> afterLines = findReservationLines(after.getId());
+        assertEquals(0, afterLines.get(0).getConsumedQuantity().compareTo(bd("0")),
+                "红冲后 consumedQuantity 回退 0");
+        assertEquals(0, afterLines.get(0).getReservedQuantity().compareTo(bd("4")),
+                "行预留量保持初始 4");
+        assertEquals(app.erp.inv.dao.ErpInvDaoConstants.RESERVATION_STATUS_OPEN, after.getStatus(),
+                "全回退 → OPEN（⑦）");
+        assertEquals(0, findBalance(M1).getReservedQuantity().compareTo(bd("4")),
+                "余额预留量恢复 4");
+        ErpMfgWorkOrder woAfter = daoProvider.daoFor(ErpMfgWorkOrder.class).getEntityById(woId);
+        assertEquals(0, nz(woAfter.getMaterialCost()).compareTo(BigDecimal.ZERO),
+                "红冲后 materialCost 归零");
+        assertEquals(0, nz(woAfter.getTotalCost()).compareTo(BigDecimal.ZERO),
+                "红冲后 totalCost 归零");
     }
 
     // ---------- ⑤ 超预留警告放行（D1） ----------
@@ -444,12 +546,18 @@ public class TestErpMfgReservationLifecycle extends JunitBaseTestCase {
     }
 
     private void generateIncoming(String materialId, String billCode, BigDecimal qty, BigDecimal unitCost) {
+        generateIncoming(materialId, billCode, qty, unitCost, null);
+    }
+
+    private void generateIncoming(String materialId, String billCode, BigDecimal qty, BigDecimal unitCost,
+                                  String acctSchemaId) {
         Map<String, Object> req = new LinkedHashMap<>();
         req.put("moveType", MOVE_TYPE_INCOMING);
         req.put("orgId", ORG_ID);
         req.put("businessDate", "2026-07-01");
         req.put("currencyId", CURRENCY_ID);
         req.put("destWarehouseId", WAREHOUSE_ID);
+        req.put("acctSchemaId", acctSchemaId);
         req.put("relatedBillType", "PUR_RECEIPT");
         req.put("relatedBillCode", billCode);
         Map<String, Object> line = new LinkedHashMap<>();
@@ -618,6 +726,59 @@ public class TestErpMfgReservationLifecycle extends JunitBaseTestCase {
 
     private void setConfig(String key, String value) {
         io.nop.api.core.config.AppConfig.getConfigProvider().assignConfigValue(key, value);
+    }
+
+    // ---------- finance seed（领料红冲需过账 → 期间/账套/科目） ----------
+
+    private void seedPeriodAndSubjects() {
+        ormTemplate.runInSession(() -> {
+            seedAcctSchema();
+            seedOpenPeriod();
+            seedSubject(SUBJECT_INVENTORY, "原材料存货", "ASSET", "DEBIT");
+            seedSubject(SUBJECT_WIP, "在制品", "ASSET", "DEBIT");
+        });
+    }
+
+    private void seedAcctSchema() {
+        IEntityDao<ErpMdAcctSchema> dao = daoProvider.daoFor(ErpMdAcctSchema.class);
+        ErpMdAcctSchema schema = new ErpMdAcctSchema();
+        schema.orm_propValueByName("id", ACCT_SCHEMA_ID);
+        schema.setCode("ACCT-" + ORG_ID);
+        schema.setName("账套 " + ORG_ID);
+        schema.setOrgId(ORG_ID);
+        schema.orm_propValueByName("nature", "FINANCIAL");
+        schema.setFunctionalCurrencyId(CURRENCY_ID);
+        schema.orm_propValueByName("status", "ACTIVE");
+        dao.saveEntity(schema);
+    }
+
+    private void seedOpenPeriod() {
+        IEntityDao<ErpFinAccountingPeriod> dao = daoProvider.daoFor(ErpFinAccountingPeriod.class);
+        ErpFinAccountingPeriod period = new ErpFinAccountingPeriod();
+        period.setCode("2026-07-RSV-REV");
+        period.setName("2026-07-RSV-REV");
+        period.setOrgId(ORG_ID);
+        period.orm_propValueByName("year", 2026);
+        period.orm_propValueByName("month", 7);
+        period.setStartDate(LocalDate.of(2026, 7, 1));
+        period.setEndDate(LocalDate.of(2026, 7, 31));
+        period.orm_propValueByName("status", "OPEN");
+        dao.saveEntity(period);
+    }
+
+    private void seedSubject(String code, String name, String subjectClass, String direction) {
+        IEntityDao<ErpMdSubject> dao = daoProvider.daoFor(ErpMdSubject.class);
+        ErpMdSubject subject = new ErpMdSubject();
+        subject.setCode(code);
+        subject.setName(name);
+        subject.orm_propValueByName("subjectClass", subjectClass);
+        subject.orm_propValueByName("direction", direction);
+        subject.orm_propValueByName("status", "ACTIVE");
+        dao.saveEntity(subject);
+    }
+
+    private static BigDecimal nz(BigDecimal v) {
+        return v != null ? v : BigDecimal.ZERO;
     }
 
     private static BigDecimal bd(String v) {

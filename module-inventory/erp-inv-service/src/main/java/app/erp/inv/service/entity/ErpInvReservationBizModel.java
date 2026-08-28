@@ -48,6 +48,8 @@ import static io.nop.api.core.beans.FilterBeans.isNull;
  *       头 status 按 D2 裁决映射（CANCELLED / CONSUMED / PARTIALLY_CONSUMED）。</li>
  *   <li>{@link #consumeReservation}：领料消耗（consumedQuantity+= / reservedQuantity-= / 库存余额.预留量-=），
  *       超出未消耗量部分按 min 语义封顶（超预留警告由 mfg 侧按 D1 裁决）。</li>
+ *   <li>{@link #unconsumeReservation}：红冲回退（consumedQuantity-= / 库存余额.预留量+=，min 封顶于已消耗）——
+ *       mfg 领料红冲闭环（P1-CK-mfg-003）。</li>
  * </ul>
  *
  * <p>D4 裁决（选项 A 落地）：直接在 BizModel 实现（对齐 {@code ErpInvStockMoveBizModel} 委托范式），
@@ -324,6 +326,102 @@ public class ErpInvReservationBizModel extends AbstractErpCrudBizModel<ErpInvRes
         final BigDecimal delta = qty;
         bookkeeper.updateBalanceWithRetry(balance, b -> {
             b.setReservedQuantity(nz(b.getReservedQuantity()).subtract(delta));
+            bookkeeper.recomputeAvailable(b);
+        });
+    }
+
+    // ---------- 红冲回退（P1-CK-mfg-003，consumeReservation 逆操作） ----------
+
+    /**
+     * 红冲回退领料消耗（consumeReservation 逆操作）。按 (sourceBillType, sourceBillCode) 定位预留头，
+     * 行维度回退：consumedQuantity −= 实回退、库存余额预留量 += 实回退（乐观锁 + 重试）。
+     * 实回退 = min(请求量, 该行已消耗量)——不超过已消耗，不产生负消耗。
+     *
+     * @return 回退后的预留头；查无预留记录返回 null（no-op，零写入）
+     */
+    @BizMutation
+    public ErpInvReservation unconsumeReservation(@Name("request") ReservationConsumeRequest request,
+                                                  IServiceContext context) {
+        if (request == null) {
+            return null;
+        }
+        // no-op 语义（MINOR-4）：查无预留记录 → 静默返回 null（零异常零写入）
+        ErpInvReservation header = findHeader(request.getSourceBillType(), request.getSourceBillCode());
+        if (header == null) {
+            return null;
+        }
+        // 已取消/已过期预留不再恢复（防御：正常流程不会走到）
+        if (Objects.equals(header.getStatus(), ErpInvDaoConstants.RESERVATION_STATUS_CANCELLED)) {
+            return header;
+        }
+        List<ErpInvReservationLine> lines = loadLines(header.getId());
+        if (lines.isEmpty()) {
+            return header;
+        }
+        List<ReservationConsumeLine> consumeLines = request.getLines();
+        if (consumeLines == null) {
+            return header;
+        }
+        boolean anyRestored = false;
+        for (ReservationConsumeLine consume : consumeLines) {
+            if (consume == null || consume.getMaterialId() == null) {
+                continue;
+            }
+            BigDecimal restored = restoreFromLines(header.getOrgId(), lines, consume);
+            anyRestored = anyRestored || restored.signum() > 0;
+        }
+        if (anyRestored) {
+            header.setStatus(resolveConsumeStatus(lines));
+            reservationDao().updateEntity(header);
+        }
+        return header;
+    }
+
+    /**
+     * 按消耗行匹配预留行（与 {@link #consumeFromLines} 同匹配语义），逐行回退：
+     * consumedQuantity −= 实回退、库存余额预留量 += 实回退。
+     * 实回退 = min(请求量, 该行已消耗量 consumedQuantity)——不超过已消耗，不产生负消耗。
+     *
+     * @return 实际回退量
+     */
+    protected BigDecimal restoreFromLines(String orgId, List<ErpInvReservationLine> lines,
+                                          ReservationConsumeLine consume) {
+        List<ErpInvReservationLine> matched = matchLines(lines, consume);
+        if (matched.isEmpty()) {
+            return BigDecimal.ZERO;
+        }
+        BigDecimal remainingToRestore = nz(consume.getQuantity());
+        BigDecimal totalRestored = BigDecimal.ZERO;
+        for (ErpInvReservationLine line : matched) {
+            if (remainingToRestore.signum() <= 0) {
+                break;
+            }
+            BigDecimal lineConsumed = nz(line.getConsumedQuantity());
+            if (lineConsumed.signum() <= 0) {
+                continue;
+            }
+            BigDecimal take = remainingToRestore.min(lineConsumed);
+            line.setConsumedQuantity(lineConsumed.subtract(take));
+            reservationLineDao().updateEntity(line);
+            restoreBalance(orgId, line, take);
+            totalRestored = totalRestored.add(take);
+            remainingToRestore = remainingToRestore.subtract(take);
+        }
+        return totalRestored;
+    }
+
+    /** 余额预留量 += 实回退（乐观锁 + 重试）。余额行不存在则跳过（防御，不阻断回退）。 */
+    protected void restoreBalance(String orgId, ErpInvReservationLine line, BigDecimal qty) {
+        ErpInvStockBalance balance = findBalance(orgId, line.getMaterialId(), line.getSkuId(),
+                line.getWarehouseId(), line.getLocationId(), line.getBatchNo());
+        if (balance == null) {
+            LOG.warn("unconsumeReservation 未找到余额行，跳过余额恢复：materialId={}, warehouseId={}",
+                    line.getMaterialId(), line.getWarehouseId());
+            return;
+        }
+        final BigDecimal delta = qty;
+        bookkeeper.updateBalanceWithRetry(balance, b -> {
+            b.setReservedQuantity(nz(b.getReservedQuantity()).add(delta));
             bookkeeper.recomputeAvailable(b);
         });
     }

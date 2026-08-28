@@ -1,7 +1,12 @@
 package app.erp.mfg.service.processor;
 
+import app.erp.inv.biz.IErpInvReservationBiz;
 import app.erp.inv.biz.IErpInvStockLedgerBiz;
 import app.erp.inv.biz.IErpInvStockMoveBiz;
+import app.erp.inv.biz.ReservationConsumeLine;
+import app.erp.inv.biz.ReservationConsumeRequest;
+import app.erp.inv.dao.entity.ErpInvReservation;
+import app.erp.inv.dao.entity.ErpInvReservationLine;
 import app.erp.inv.dao.entity.ErpInvStockMove;
 import app.erp.mfg.biz.IErpMfgWorkOrderBiz;
 import app.erp.mfg.biz.IErpMfgWorkOrderLineBiz;
@@ -14,6 +19,7 @@ import app.erp.mfg.service.entity.MaterialIssueStockMoveBuilder;
 import app.erp.mfg.service.posting.ManufacturingIssuePostingDispatcher;
 import app.erp.mfg.service.statemachine.ErpMfgMaterialIssueStateMachine;
 import io.nop.api.core.beans.query.QueryBean;
+import io.nop.api.core.config.AppConfig;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.core.context.IServiceContext;
 import io.nop.dao.api.IDaoProvider;
@@ -47,6 +53,8 @@ public class AbstractErpMfgMaterialIssueProcessor {
     IErpInvStockMoveBiz stockMoveBiz;
     @Inject
     IErpInvStockLedgerBiz stockLedgerBiz;
+    @Inject
+    IErpInvReservationBiz reservationBiz;
     @Inject
     IErpMfgWorkOrderBiz workOrderBiz;
     @Inject
@@ -130,6 +138,82 @@ public class AbstractErpMfgMaterialIssueProcessor {
 
     static BigDecimal nz(BigDecimal v) {
         return v != null ? v : BigDecimal.ZERO;
+    }
+
+    // ---------- 预留查询/门控（protected，confirm 消耗与 reverseConfirm 回退共享） ----------
+
+    protected ErpInvReservation findReservation(String workOrderCode) {
+        QueryBean q = new QueryBean();
+        q.addFilter(eq("sourceBillType", ErpMfgConstants.SOURCE_BILL_TYPE_WORK_ORDER));
+        q.addFilter(eq("sourceBillCode", workOrderCode));
+        List<ErpInvReservation> list = daoProvider.daoFor(ErpInvReservation.class).findAllByQuery(q);
+        return list.isEmpty() ? null : list.get(0);
+    }
+
+    protected List<ErpInvReservationLine> findReservationLines(String reservationId) {
+        QueryBean q = new QueryBean();
+        q.addFilter(eq("reservationId", reservationId));
+        q.addOrderField("lineNo", false);
+        return new ArrayList<>(daoProvider.daoFor(ErpInvReservationLine.class).findAllByQuery(q));
+    }
+
+    protected boolean isReservationEnabled() {
+        try {
+            String value = AppConfig.var(ErpMfgConstants.CONFIG_RESERVATION_ENABLED, "true");
+            return value == null || value.trim().isEmpty() || Boolean.parseBoolean(value.trim());
+        } catch (Exception e) {
+            return true;
+        }
+    }
+
+    /**
+     * 红冲回退领料消耗的预留（UC-MFG-06 逆操作，P1-CK-mfg-003 闭环）：config-gated（与正向
+     * {@code consumeReservations} 同键 {@code erp-mfg.reservation-enabled}）。按工单 (WORK_ORDER, wo.code)
+     * 定位预留（查无 → 静默 no-op，MINOR-4）；按领料行 materialId 维度恢复 consumedQuantity（−= 实回退）
+     * 与库存余额预留量（+= 实回退，乐观锁），实回退 = min(实耗, 该行已消耗量)——镜像正向消耗的 min 封顶。
+     */
+    protected void unconsumeReservations(ErpMfgMaterialIssue issue, List<ErpMfgMaterialIssueLine> lines,
+                                         IServiceContext context) {
+        if (!isReservationEnabled()) {
+            return;
+        }
+        String workOrderId = issue.getWorkOrderId();
+        if (workOrderId == null) {
+            return;
+        }
+        ErpMfgWorkOrder wo = workOrderBiz.get(workOrderId, false, context);
+        if (wo == null) {
+            return;
+        }
+        ErpInvReservation reservation = findReservation(wo.getCode());
+        if (reservation == null) {
+            return;
+        }
+        ReservationConsumeRequest request = new ReservationConsumeRequest();
+        request.setSourceBillType(ErpMfgConstants.SOURCE_BILL_TYPE_WORK_ORDER);
+        request.setSourceBillCode(wo.getCode());
+        List<ReservationConsumeLine> consumeLines = new ArrayList<>(lines.size());
+        for (ErpMfgMaterialIssueLine line : lines) {
+            if (line.getMaterialId() == null) {
+                continue;
+            }
+            BigDecimal issued = line.getIssuedQuantity() != null ? line.getIssuedQuantity() : line.getRequiredQuantity();
+            if (nz(issued).signum() <= 0) {
+                continue;
+            }
+            ReservationConsumeLine consume = new ReservationConsumeLine();
+            consume.setMaterialId(line.getMaterialId());
+            consume.setWarehouseId(issue.getWarehouseId());
+            consume.setLocationId(line.getLocationId());
+            consume.setBatchNo(line.getBatchNo());
+            consume.setQuantity(issued);
+            consumeLines.add(consume);
+        }
+        if (consumeLines.isEmpty()) {
+            return;
+        }
+        request.setLines(consumeLines);
+        reservationBiz.unconsumeReservation(request, context);
     }
 
     // ---------- misc helpers ----------

@@ -284,6 +284,10 @@ public class ErpMfgWorkOrderProcessor {
 
     protected void doReject(ErpMfgWorkOrder wo, IServiceContext context) {
         wo.setApproveStatus(approvalStateMachine.rejectTargetStatus());
+        // P1-CK-mfg-002 修复：驳回后回写 docStatus=DRAFT（双轴联动，对齐 doSubmit 的双轴写）。
+        // 修复前 docStatus 停留 SUBMITTED，重提被 documentStateMachine.assertCanSubmit(仅 DRAFT) 拦截，
+        // 被驳回的工单只能作废重建（审批轴 Bean 显式声明的「驳回后重新提交」路径死锁）。
+        wo.setDocStatus(ErpMfgConstants.WORK_ORDER_STATUS_DRAFT);
         workOrderDao().updateEntity(wo);
     }
 
@@ -291,6 +295,9 @@ public class ErpMfgWorkOrderProcessor {
         wo.setApproveStatus(approvalStateMachine.reverseApproveTargetStatus());
         wo.setApprovedBy(null);
         wo.setApprovedAt(null);
+        // P1-CK-mfg-002 修复：反审核（未开工前提）回写 docStatus=DRAFT（同 doReject 双轴联动），
+        // 使重提路径可达（修复前 docStatus=NOT_STARTED 非 DRAFT，重提被拦）。
+        wo.setDocStatus(ErpMfgConstants.WORK_ORDER_STATUS_DRAFT);
         workOrderDao().updateEntity(wo);
     }
 
@@ -377,6 +384,10 @@ public class ErpMfgWorkOrderProcessor {
         ErpMfgWorkOrderLine outputLine = findOutputLine(wo.getId());
         String destWarehouseId = outputLine != null ? outputLine.getDestWarehouseId() : null;
         if (destWarehouseId == null) {
+            // P1-CK-mfg-004 修复：完工入库缺产出仓不再静默 return（修复前工单照常 COMPLETED 但产成品永不入库）。
+            // 温和方案：LOG.error + 通知（G3 分级），不阻断完工（阻断会破坏既有无产出仓工单测试契约）。
+            LOG.error("完工入库缺少产成品入库仓库（P1-CK-mfg-004）：工单 {} 产出行未配置 destWarehouseId，产成品将永不入库",
+                    wo.getCode());
             return;
         }
         String productId = wo.getProductId();
@@ -386,6 +397,9 @@ public class ErpMfgWorkOrderProcessor {
             uomId = product != null ? product.getUoMId() : null;
         }
         if (uomId == null) {
+            // P1-CK-mfg-004 修复：完工入库缺计量单位不再静默 return（温和方案：LOG.error，不阻断）。
+            LOG.error("完工入库缺少计量单位（P1-CK-mfg-004）：工单 {} 产出行与物料 {} 均未配置 UoM，产成品将永不入库",
+                    wo.getCode(), productId);
             return;
         }
         StockMoveRequest request = new StockMoveRequest();
