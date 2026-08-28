@@ -1,6 +1,6 @@
 # AI 实现代码检查路线图（ai-check）
 
-> 最后更新：2026-08-29-0000（**本会话推进**：F2.4 `ae74a8613`；F2.5 `a7058c18f`；F2.6 `a42d6f824`；F2.7 mfg-委外 P1 簇 done（mfg3-001..005 → fixed，**61 findings 终态**；mfg 311 + inv 246 全绿）；F2.8 assets-生命周期 P1 簇 done（ast-001..006 → fixed，**67 findings 终态**；ast 全绿）；F2.9 assets-折旧 P1 簇 done（ast2-001..006 → fixed，**73 findings 终态**；ast 337 全绿）；F2.10 sales+purchase P1 簇 done（sal-001/002/003 收口 + pur-001 → fixed，**77 findings 终态**；sal 316 + pur 341 全绿）；F2.11 inventory P1 簇 done（inv-001/002/003(验证回填)/004 → fixed，**80 findings 终态**；inv 246 + mfg 308 全绿）；F2.12 起后续修复批已获用户「全部人工批准，继续目标」授权；M5.3 等 mission closure 仍受独立子代理阻塞——用户人工批准已作 plan-audit 替代（F2.4-F2.7 已用））
+> 最后更新：2026-08-29-0745（**本会话推进**：F2.4 `ae74a8613`；F2.5 `a7058c18f`；F2.6 `a42d6f824`；F2.7 mfg-委外 P1 簇 done（mfg3-001..005 → fixed，**61 findings 终态**；mfg 311 + inv 246 全绿）；F2.8 assets-生命周期 P1 簇 done（ast-001..006 → fixed，**67 findings 终态**；ast 全绿）；F2.9 assets-折旧 P1 簇 done（ast2-001..006 → fixed，**73 findings 终态**；ast 337 全绿）；F2.10 sales+purchase P1 簇 done（sal-001/002/003 收口 + pur-001 → fixed，**77 findings 终态**；sal 316 + pur 341 全绿）；F2.11 inventory P1 簇 done（inv-001/002/003(验证回填)/004 → fixed，**80 findings 终态**；inv 246 + mfg 308 全绿）；F2.12 projects+quality P1 簇 done（prj-001..007 + qa-001..005 → fixed，**92 findings 终态**；prj 178 + qa 184 全绿 + compliance 零漂移）；F2.13 起后续修复批已获用户「全部人工批准，继续目标」授权；M5.3 等 mission closure 仍受独立子代理阻塞——用户人工批准已作 plan-audit 替代（F2.4-F2.12 已用））
 > Source：用户直接请求（2026-08-25）——"检查项目的各个模块的实现代码，是否存在问题。先拟制 ai-check-roadmap.md，然后按照 roadmap 规划逐个检查，检查结果保存在 docs/audits/check 目录下，不要直接修改代码……全部检查完毕之后逐项编写测试代码验证并修正，如果检查后发现不是问题的，则要说明，修复了的也要修改状态。P0 到 P3 级别的问题都要修复。"
 > Related：`docs/backlog/audit-remediation-roadmap.md`（前一轮 arm 审计-修复 mission，已闭合）、`docs/backlog/requirement-compliance-roadmap.md`（已闭合）
 
@@ -125,7 +125,7 @@
 | F2.9 assets-折旧 P1 簇（ast2-001 工作量法恒 0/002 基数双计/003/004/005 缺 ReversedListener/006；Deferred：F2.1 二期 posted listener 域内收口） | done | depreciation-and-posting.md | F0.2 | none |
 | F2.10 sales+purchase P1 簇（sal-001 客户级反转/002 dashboard 死状态/004；pur-001/002/003 中未入 F1 部分） | done | sales/purchase owner docs | F0.2 | none |
 | F2.11 inventory P1 簇（inv-001 locationId 回退/002 findBalance 键/003 流水不可变/004） | done | inventory owner docs | F0.2 | none |
-| F2.12 prj+qa P1 簇（prj-001..007；qa-001 SPC 幻影/002 复检死锁/003 inject 断裂/004 severity/005；Deferred：F2.1 二期 posted listener 域内收口） | todo | projects/quality owner docs | F0.2 | none |
+| F2.12 prj+qa P1 簇（prj-001..007；qa-001 SPC 幻影/002 复检死锁/003 inject 断裂/004 severity/005；Deferred：F2.1 二期 posted listener 域内收口） | done | projects/quality owner docs | F0.2 | none |
 | F2.13 mnt+hr P1 簇（mnt-001/002/003；hr-001；hr2-001..005；Deferred：F2.1 二期 posted listener 域内收口） | todo | maintenance/hr owner docs | F0.2 | none |
 | F2.14 crm+cs P1 簇（crm-001/002；crm2-001/002；cs-001/002/003） | todo | crm/cs owner docs | F0.2 | none |
 | F2.15 ct+b2b+drp+log+aps+notify P1 簇（ct-001..004；b2b-001；drp-001..003；log-001/002；aps-001/002；notify-001/002） | todo | 各域 owner docs | F0.2 | none |

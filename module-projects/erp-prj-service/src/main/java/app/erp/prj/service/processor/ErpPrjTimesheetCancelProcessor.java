@@ -25,6 +25,8 @@ public class ErpPrjTimesheetCancelProcessor {
     TimesheetPostingDispatcher postingDispatcher;
     @Inject
     ErpPrjTimesheetStateMachine stateMachine;
+    @Inject
+    app.erp.prj.service.cost.ProjectCostAggregator costAggregator;
 
     public ErpPrjTimesheet cancel(String timesheetId, IServiceContext context) {
         ErpPrjTimesheet timesheet = requireTimesheet(timesheetId);
@@ -40,6 +42,9 @@ public class ErpPrjTimesheetCancelProcessor {
                 timesheet.setPostedAt(null);
                 timesheet.setPostedBy(null);
             }
+            // P1-CK-prj-001：归集镜像回退（删除 LABOR 归集行 + 头 totalAmount + project.actualCost 减回）
+            // ——修复前 GL 凭证已红冲而项目成本/PnL 仍含该笔（业账分叉），撤回改时重提后归集金额陈旧。
+            costAggregator.rollbackFromTimesheet(timesheet);
         }
         timesheet.setStatus(stateMachine.cancelTargetStatus());
         timesheetDao().updateEntity(timesheet);

@@ -239,6 +239,40 @@ public class TestErpQaInspectionStateMachine extends JunitAutoTestCase {
         assertFalse(Boolean.TRUE.equals(resp.getData()));
     }
 
+    /**
+     * P1-CK-qa-002：同一业务单据存在多份质检单时，isInspectionCleared 以最新结果为准（owner doc
+     * 「复检结果与原检冲突 | 以复检结果为准」）。修复前任一历史 REJECTED 永久阻塞（owner doc 设计
+     * 的「复检新建质检单」路径无法解锁强制质检门）。
+     *
+     * <p>覆盖两个方向：①原检 REJECTED + 复检 ACCEPTED → cleared=true；②原检 ACCEPTED + 复检
+     * REJECTED → cleared=false（最新决定放行）。落库顺序保证复检单 id 更大（ORM 自增）；
+     * findByRelatedBill 按 id ASC，最新质检单为末元素。
+     */
+    @Test
+    public void testIsInspectionClearedUsesLatestInspectionResult() {
+        // 方向 ①：原检 REJECTED → 复检 ACCEPTED → cleared=true（复检解锁）
+        seedInspectionSharedBill("INS-LATEST-1", "BILL-LATEST",
+                ErpQaConstants.INSPECTION_RESULT_REJECTED, "950001");
+        seedInspectionSharedBill("INS-LATEST-2", "BILL-LATEST",
+                ErpQaConstants.INSPECTION_RESULT_ACCEPTED, "950002");
+        ApiResponse<?> clearedAfter = rpc(query, "ErpQaInspection__isInspectionCleared",
+                ApiRequest.build(Map.of("billType", "ERP_PUR_RECEIPT", "billCode", "BILL-LATEST")));
+        assertEquals(0, clearedAfter.getStatus());
+        assertEquals(Boolean.TRUE, clearedAfter.getData(),
+                "原 REJECTED + 复检 ACCEPTED → 以最新复检为准放行（P1-CK-qa-002 方向①）");
+
+        // 方向 ②：原检 ACCEPTED → 复检 REJECTED → cleared=false（最新复检阻塞）
+        seedInspectionSharedBill("INS-LATEST-3", "BILL-LATEST-2",
+                ErpQaConstants.INSPECTION_RESULT_ACCEPTED, "950003");
+        seedInspectionSharedBill("INS-LATEST-4", "BILL-LATEST-2",
+                ErpQaConstants.INSPECTION_RESULT_REJECTED, "950004");
+        ApiResponse<?> clearedAfter2 = rpc(query, "ErpQaInspection__isInspectionCleared",
+                ApiRequest.build(Map.of("billType", "ERP_PUR_RECEIPT", "billCode", "BILL-LATEST-2")));
+        assertEquals(0, clearedAfter2.getStatus());
+        assertEquals(Boolean.FALSE, clearedAfter2.getData(),
+                "原 ACCEPTED + 复检 REJECTED → 以最新复检为准阻塞（P1-CK-qa-002 方向②）");
+    }
+
     // ---------- helpers ----------
 
     private ErpQaInspection loadInspection(String insId) {
@@ -328,6 +362,37 @@ public class TestErpQaInspectionStateMachine extends JunitAutoTestCase {
 
     private LineSpec withLine(String parameterName, String specMin, String specMax) {
         return new LineSpec(parameterName, toBigDecimal(specMin), toBigDecimal(specMax));
+    }
+
+    /**
+     * P1-CK-qa-002 测试辅助：直接落库一份指定 result 的质检单（绕过 recordResult 状态机），与
+     * 同 billCode 的另一份质检单构造「原检 + 复检」共存场景。id 由调用方显式传入以保证两单 id
+     * 可控单调（findByRelatedBill 按 id ASC，最新=末元素——后插入的 id 更大才落入末位）。
+     */
+    private String seedInspectionSharedBill(String code, String sharedBillCode, String result) {
+        return seedInspectionSharedBill(code, sharedBillCode, result, null);
+    }
+
+    private String seedInspectionSharedBill(String code, String sharedBillCode, String result, String explicitId) {
+        String id = explicitId != null ? explicitId : String.valueOf(900000L + (long) (Math.abs(code.hashCode()) % 100000));
+        ormTemplate.runInSession(() -> {
+            IEntityDao<ErpQaInspection> dao = daoProvider.daoFor(ErpQaInspection.class);
+            ErpQaInspection ins = new ErpQaInspection();
+            ins.orm_propValueByName("id", id);
+            ins.setCode(code);
+            ins.setInspectionType(ErpQaConstants.INSPECTION_TYPE_INCOMING);
+            ins.setMaterialId(MATERIAL_ID);
+            ins.setResult(result);
+            ins.setDocStatus(ErpQaConstants.DOC_STATUS_ACTIVE);
+            ins.setApproveStatus(ErpQaConstants.APPROVE_STATUS_APPROVED);
+            ins.setPosted(Boolean.FALSE);
+            ins.setInspectionDate(CoreMetrics.currentDate());
+            ins.setBusinessDate(CoreMetrics.currentDate());
+            ins.setRelatedBillType("ERP_PUR_RECEIPT");
+            ins.setRelatedBillCode(sharedBillCode);
+            dao.saveEntity(ins);
+        });
+        return id;
     }
 
     private static BigDecimal toBigDecimal(String value) {

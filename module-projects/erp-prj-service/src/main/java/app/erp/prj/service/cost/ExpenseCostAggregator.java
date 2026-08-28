@@ -92,7 +92,9 @@ public class ExpenseCostAggregator {
         for (ErpFinExpenseClaim claim : approvedClaims) {
             List<ErpFinExpenseClaimLine> lines = findLinesForProject(claim.getId(), projectId);
             for (ErpFinExpenseClaimLine line : lines) {
-                String sourceBillCode = claim.getCode();
+                // P1-CK-prj-003：幂等键行级化（claim.code + 行号，对齐物料路径范式）——修复前用
+                // 报销单头 code，跨项目报销单只有第一个刷新的项目被归集，其余项目行被 existsLine 静默吞掉。
+                String sourceBillCode = claim.getCode() + "-" + line.getLineNo();
                 if (existsLine(ErpPrjConstants.SOURCE_BILL_TYPE_EXPENSE, sourceBillCode)) {
                     continue;
                 }

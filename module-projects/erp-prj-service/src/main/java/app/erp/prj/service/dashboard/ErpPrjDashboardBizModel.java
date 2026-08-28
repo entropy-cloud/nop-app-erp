@@ -182,11 +182,24 @@ public class ErpPrjDashboardBizModel {
             }
             List<ErpPrjProjectPnl> rows = dao.findAllByQuery(q);
 
+            // P1-CK-prj-007：每项目仅取最新 CALCULATED 快照（periodTo DESC，id DESC 决胜）——
+            // 修复前多快照全量求和使收入/成本/毛利随快照数线性放大（默认 job 每日一快照）。
+            java.util.Map<String, ErpPrjProjectPnl> latestByProject = new java.util.LinkedHashMap<>();
+            for (ErpPrjProjectPnl p : rows) {
+                if (!ErpPrjConstants.PNL_CALC_STATUS_CALCULATED.equals(p.getCalcStatus())) {
+                    continue;
+                }
+                ErpPrjProjectPnl cur = latestByProject.get(p.getProjectId());
+                if (cur == null || isNewerSnapshot(p, cur)) {
+                    latestByProject.put(p.getProjectId(), p);
+                }
+            }
+
             BigDecimal totalRevenue = BigDecimal.ZERO;
             BigDecimal totalCost = BigDecimal.ZERO;
             BigDecimal totalGrossProfit = BigDecimal.ZERO;
             Set<String> projectIds = new HashSet<>();
-            for (ErpPrjProjectPnl p : rows) {
+            for (ErpPrjProjectPnl p : latestByProject.values()) {
                 totalRevenue = totalRevenue.add(DashboardUtil.nz(p.getRevenueAmount()));
                 totalCost = totalCost.add(DashboardUtil.nz(p.getTotalCost()));
                 totalGrossProfit = totalGrossProfit.add(DashboardUtil.nz(p.getGrossProfit()));
@@ -207,6 +220,23 @@ public class ErpPrjDashboardBizModel {
     }
 
     // ===================== helpers =====================
+
+    /** P1-CK-prj-007：快照新旧比较——periodTo 更晚者新；同 periodTo 时 id 更大者新。 */
+    private boolean isNewerSnapshot(ErpPrjProjectPnl candidate, ErpPrjProjectPnl current) {
+        if (candidate.getPeriodTo() != null && current.getPeriodTo() != null) {
+            int cmp = candidate.getPeriodTo().compareTo(current.getPeriodTo());
+            if (cmp != 0) {
+                return cmp > 0;
+            }
+        } else if (candidate.getPeriodTo() != null) {
+            return true;
+        } else if (current.getPeriodTo() != null) {
+            return false;
+        }
+        String cid = candidate.getId();
+        String tid = current.getId();
+        return cid != null && tid != null && cid.compareTo(tid) > 0;
+    }
 
     private List<ErpPrjProject> loadOpenProjects() {
         IEntityDao<ErpPrjProject> dao = daoProvider.daoFor(ErpPrjProject.class);

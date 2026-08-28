@@ -141,6 +141,11 @@ public class SpcSamplingService {
         //    简化：以 (sourceCode, sourceLineCode, measuredValue) 三元组为幂等键
         List<ErpQaSpcSample> existingSamples = findSamples(chartId);
         java.util.Set<String> sampledKeys = buildSampledKeys(existingSamples);
+        // P1-CK-qa-001：已采样 inspection 集合（经 sample.sourceCode → inspection）——候选点若其
+        // inspection 已入任一子组则跳过整点。修复前幂等键按各点自身 code 重建，与存量子组首点 code
+        // 不匹配（非首点键永不命中）→ 第二次起调度把历史已采样点重混成「幻影子组」（样本表污染 →
+        // 控制限漂移 → 假失控 → 假 NCR/CAPA）。
+        java.util.Set<String> sampledInspectionIds = buildSampledInspectionIds(existingSamples);
 
         // 3. 解析并过滤候选点（数值化、未采样）
         List<SamplePoint> pendingPoints = new ArrayList<>();
@@ -151,6 +156,9 @@ public class SpcSamplingService {
             }
             ErpQaInspection inspection = resolveInspection(line.getInspectionId());
             if (inspection == null) {
+                continue;
+            }
+            if (sampledInspectionIds.contains(line.getInspectionId())) {
                 continue;
             }
             String key = inspection.getCode() + "#" + safeLineNo(line) + "#" + value.toPlainString();
@@ -431,6 +439,36 @@ public class SpcSamplingService {
             }
         }
         return keys;
+    }
+
+    /**
+     * P1-CK-qa-001：已采样 inspection 集合——存量样本 sourceCode（子组首点 code）→ inspection id。
+     * 候选点按 inspectionId 整点跳过（修复前幂等键按各点自身 code 重建与存量首点 code 不匹配，
+     * 非首点永远被重混进新子组）。
+     */
+    private java.util.Set<String> buildSampledInspectionIds(List<ErpQaSpcSample> existingSamples) {
+        java.util.Set<String> ids = new java.util.HashSet<>();
+        for (ErpQaSpcSample s : existingSamples) {
+            String sourceCode = s.getSourceCode();
+            if (sourceCode == null) {
+                continue;
+            }
+            ErpQaInspection ins = findInspectionByCode(sourceCode);
+            if (ins != null) {
+                ids.add(ins.getId());
+            }
+        }
+        return ids;
+    }
+
+    private ErpQaInspection findInspectionByCode(String code) {
+        // P1-CK-qa-001：I*Biz 化——inspectionBiz.findPage 等价于 dao().findAllByQuery（service-layer.md R2c 收敛）
+        QueryBean q = new QueryBean();
+        q.addFilter(eq("code", code));
+        q.setLimit(1);
+        PageBean<ErpQaInspection> page = inspectionBiz.findPage(q, io.nop.api.core.beans.FieldSelectionBean.DEFAULT_SELECTION, new io.nop.core.context.ServiceContextImpl());
+        List<ErpQaInspection> items = page.getItems();
+        return items.isEmpty() ? null : items.get(0);
     }
 
     @SuppressWarnings("unchecked")

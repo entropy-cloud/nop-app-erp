@@ -92,6 +92,14 @@ public class ErpQaRecallStateMachine {
         return ErpQaConstants.RECALL_STATUS_CANCELLED;
     }
 
+    /** P1-CK-qa-005：reverseApprove 联动目标态=OPEN（撤销审批后 status 回退至审批前 OPEN，
+     *  与 approveTargetStatus=APPROVED 对偶；审批轴 reverseApproveTargetStatus=REJECTED
+     *  仅回写 approveStatus，不联动 status 复位——fix 前 doReverseApprove 漏写 status 导致
+     *  撤回死锁 + 已撤审召回仍可 locateTargets/notifyCustomers/generateReturns）。 */
+    public String reverseApproveTargetStatus() {
+        return ErpQaConstants.RECALL_STATUS_OPEN;
+    }
+
     public String cancelTargetStatus() {
         return ErpQaConstants.RECALL_STATUS_CANCELLED;
     }

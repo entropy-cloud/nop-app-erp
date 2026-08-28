@@ -34,6 +34,8 @@ import java.util.List;
 
 import static io.nop.api.core.beans.FilterBeans.and;
 import static io.nop.api.core.beans.FilterBeans.eq;
+import static io.nop.api.core.beans.FilterBeans.or;
+import static io.nop.api.core.beans.FilterBeans.startsWith;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -99,7 +101,8 @@ public class TestErpPrjExpenseAggregation extends JunitAutoTestCase {
                 ErpPrjConstants.SOURCE_BILL_TYPE_EXPENSE, "EC-EXP-001");
         assertTrue(line != null, "EXPENSE 归集行已生成");
         assertEquals(ErpPrjConstants.COST_CATEGORY_EXPENSE, line.getCostCategory());
-        assertEquals("EC-EXP-001", line.getSourceBillCode());
+        // P1-CK-prj-003：行级幂等键 = claimCode-lineNo（行 lineNo=1）
+        assertEquals("EC-EXP-001-1", line.getSourceBillCode());
         assertEquals(0, line.getAmount().compareTo(new BigDecimal("100.00")));
 
         // actualCost 已回写
@@ -465,7 +468,9 @@ public class TestErpPrjExpenseAggregation extends JunitAutoTestCase {
     private List<ErpPrjCostCollectionLine> findAllCollectionLines(String sourceBillType, String sourceBillCode) {
         IEntityDao<ErpPrjCostCollectionLine> dao = daoProvider.daoFor(ErpPrjCostCollectionLine.class);
         QueryBean q = new QueryBean();
-        q.addFilter(and(eq("sourceBillType", sourceBillType), eq("sourceBillCode", sourceBillCode)));
+        // P1-CK-prj-003：兼容两种键形态（裸 claimCode 与行级 claimCode-lineNo）
+        q.addFilter(and(eq("sourceBillType", sourceBillType),
+                or(eq("sourceBillCode", sourceBillCode), startsWith("sourceBillCode", sourceBillCode + "-"))));
         return dao.findAllByQuery(q);
     }
 }

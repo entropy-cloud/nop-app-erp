@@ -34,12 +34,15 @@ public class ErpPrjProjectSettlementCancelProcessor extends AbstractCancelProces
                         .param(ErpPrjErrors.ARG_REASON, "质保金已到期返还（返还凭证独立存在），取消主结算会悬挂返还凭证，不允许");
             }
             processor.postingDispatcher.reverse(settlement);
-            processor.rollbackAssetIfNeeded(settlement);
             settlement = processor.requireSettlement(id);
             settlement.setPosted(false);
             settlement.setPostedAt(null);
             settlement.setPostedBy(null);
         }
+        // P1-CK-prj-005：资产回退与 posted 解耦——CLOSE 转固在过账前建卡（IN_SERVICE），过账失败
+        // （posted=false）时 cancel 同样须回退资产卡（修复前被锁在 posted 分支内 → 卡片永久滞留
+        // 在役并进入折旧，且 reverseSettlement 的 posted 硬守卫封死恢复路径）。
+        processor.rollbackAssetIfNeeded(settlement);
         processor.doCancel(settlement, context);
         processor.save(settlement);
         return settlement;

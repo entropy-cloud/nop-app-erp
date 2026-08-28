@@ -1,5 +1,8 @@
 package app.erp.prj.service.cost;
 
+import app.erp.prj.biz.IErpPrjCostCollectionBiz;
+import app.erp.prj.biz.IErpPrjCostCollectionLineBiz;
+import app.erp.prj.biz.IErpPrjProjectBiz;
 import app.erp.prj.dao.entity.ErpPrjActivityType;
 import app.erp.prj.dao.entity.ErpPrjCostCollection;
 import app.erp.prj.dao.entity.ErpPrjCostCollectionLine;
@@ -7,8 +10,11 @@ import app.erp.prj.dao.entity.ErpPrjProject;
 import app.erp.prj.dao.entity.ErpPrjProjectType;
 import app.erp.prj.dao.entity.ErpPrjTimesheet;
 import app.erp.prj.service.ErpPrjConstants;
+import io.nop.api.core.beans.FieldSelectionBean;
+import io.nop.api.core.beans.PageBean;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.time.CoreMetrics;
+import io.nop.core.context.ServiceContextImpl;
 import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
@@ -37,6 +43,12 @@ public class ProjectCostAggregator {
 
     @Inject
     IDaoProvider daoProvider;
+    @Inject
+    IErpPrjCostCollectionBiz collectionBiz;
+    @Inject
+    IErpPrjCostCollectionLineBiz lineBiz;
+    @Inject
+    IErpPrjProjectBiz projectBiz;
 
     /**
      * 从工时单归集人工成本。返回 true 表示新增了归集行；false 表示幂等命中（已归集）。
@@ -96,6 +108,50 @@ public class ProjectCostAggregator {
             daoProvider.daoFor(ErpPrjProject.class).updateEntity(project);
         }
         return true;
+    }
+
+    /**
+     * P1-CK-prj-001：工时 cancel 的归集镜像回退——删除该工时单的 LABOR 归集行 + 头 totalAmount 减回 +
+     * 项目 actualCost 减回（aggregateFromTimesheet 逆操作）。修复前 cancel 只红冲 GL 凭证，归集行/头/
+     * project.actualCost 永久残留（撤回改时重提后归集金额陈旧、业账两面净额分叉）。
+     * 幂等：无归集行 → no-op。跨实体访问走 I*Biz（lineBiz/collectionBiz/projectBiz），符合 service-layer.md。
+     */
+    public void rollbackFromTimesheet(ErpPrjTimesheet timesheet) {
+        if (timesheet == null || timesheet.getCode() == null) {
+            return;
+        }
+        QueryBean q = new QueryBean();
+        q.addFilter(eq("sourceBillType", ErpPrjConstants.SOURCE_BILL_TYPE_TIMESHEET));
+        q.addFilter(eq("sourceBillCode", timesheet.getCode()));
+        // P1-CK-prj-001：I*Biz 化——lineBiz.findPage 等价于 dao().findAllByQuery（service-layer.md R2c 收敛）
+        PageBean<ErpPrjCostCollectionLine> page = lineBiz.findPage(q, FieldSelectionBean.DEFAULT_SELECTION, new ServiceContextImpl());
+        List<ErpPrjCostCollectionLine> lines = page.getItems();
+        if (lines.isEmpty()) {
+            return;
+        }
+        BigDecimal total = BigDecimal.ZERO;
+        String headId = null;
+        for (ErpPrjCostCollectionLine line : lines) {
+            total = total.add(nz(line.getAmount()));
+            if (headId == null && line.getCostCollectionId() != null) {
+                headId = line.getCostCollectionId();
+            }
+            lineBiz.deleteEntity(line, null, new ServiceContextImpl());
+        }
+        if (headId != null) {
+            ErpPrjCostCollection head = collectionBiz.get(headId, false, new ServiceContextImpl());
+            if (head != null) {
+                head.setTotalAmount(nz(head.getTotalAmount()).subtract(total).max(BigDecimal.ZERO));
+                collectionBiz.updateEntity(head, null, new ServiceContextImpl());
+            }
+        }
+        if (timesheet.getProjectId() != null) {
+            ErpPrjProject project = projectBiz.get(String.valueOf(timesheet.getProjectId()), false, new ServiceContextImpl());
+            if (project != null) {
+                project.setActualCost(nz(project.getActualCost()).subtract(total).max(BigDecimal.ZERO));
+                projectBiz.updateEntity(project, null, new ServiceContextImpl());
+            }
+        }
     }
 
     /**

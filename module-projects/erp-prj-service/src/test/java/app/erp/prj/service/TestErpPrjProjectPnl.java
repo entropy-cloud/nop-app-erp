@@ -6,6 +6,7 @@ import app.erp.md.dao.entity.ErpMdAcctSchema;
 import app.erp.md.dao.entity.ErpMdPartner;
 import app.erp.md.service.ErpMdConstants;
 import app.erp.prj.biz.IErpPrjProjectPnlBiz;
+import app.erp.prj.biz.IErpPrjBillingBiz;
 import app.erp.prj.dao.entity.ErpPrjBilling;
 import app.erp.prj.dao.entity.ErpPrjBudget;
 import app.erp.prj.dao.entity.ErpPrjBudgetLine;
@@ -62,6 +63,8 @@ public class TestErpPrjProjectPnl extends JunitAutoTestCase {
     IOrmTemplate ormTemplate;
     @Inject
     IErpPrjProjectPnlBiz pnlBiz;
+    @Inject
+    IErpPrjBillingBiz billingBiz;
 
     @Test
     public void testRefreshPnlWithRevenueAndFourCategoryCost() {
@@ -169,6 +172,56 @@ public class TestErpPrjProjectPnl extends JunitAutoTestCase {
         assertEquals(first.getId(), second.getId(), "重算幂等：同期间不产生重复行");
         assertEquals(1, countPnlForProject(holder[0]), "仅一行汇总");
         assertEquals(0, second.getRevenueAmount().compareTo(new BigDecimal("5000")), "收入数值保持一致");
+    }
+
+    /**
+     * P1-CK-prj-002：开票单 BizModel save/update 触发 amountFunctional 联动（totalAmount × exchangeRate）。
+     * 修复前 amountFunctional 全仓零 writer（默认 0）——PnL 收入/结算收入读该字段恒 0，
+     * 开票金额 totalAmount 永不进入收入计算。
+     */
+    @Test
+    public void testBillingSaveSyncsAmountFunctional() {
+        String[] holder = new String[2];
+        ormTemplate.runInSession(session -> {
+            seedOpenPeriod("2026-07");
+            seedAcctSchema("1");
+            String subjectId = seedSubject("5101", "项目成本");
+            String projectTypeId = seedProjectType("PT-BILL-SYNC", "开票联动", subjectId);
+            String customerId = seedPartner("CUST-SYNC", "联动客户");
+            String projectId = seedProject("PRJ-BILL-SYNC-001", "开票联动测试项目", projectTypeId,
+                    ErpPrjConstants.PROJECT_STATUS_OPEN);
+            holder[0] = projectId;
+            holder[1] = customerId;
+            return null;
+        });
+
+        // 单币种 rate=1：amountFunctional = 10000 × 1 = 10000
+        java.util.Map<String, Object> data1 = new java.util.LinkedHashMap<>();
+        data1.put("code", "B-SYNC-001");
+        data1.put("projectId", holder[0]);
+        data1.put("customerId", holder[1]);
+        data1.put("businessDate", "2026-07-15");
+        data1.put("exchangeRate", 1);
+        data1.put("totalAmount", 10000);
+        data1.put("docStatus", ErpPrjConstants.DOC_STATUS_DRAFT);
+        data1.put("approveStatus", ErpPrjConstants.APPROVE_STATUS_UNSUBMITTED);
+        ErpPrjBilling b1 = ormTemplate.runInSession(session -> billingBiz.save(data1, CTX));
+        assertEquals(0, b1.getAmountFunctional().compareTo(new BigDecimal("10000.00")),
+                "单币种 amountFunctional=totalAmount×1");
+
+        // 多币种 rate=0.85：amountFunctional = 5000 × 0.85 = 4250
+        java.util.Map<String, Object> data2 = new java.util.LinkedHashMap<>();
+        data2.put("code", "B-SYNC-002");
+        data2.put("projectId", holder[0]);
+        data2.put("customerId", holder[1]);
+        data2.put("businessDate", "2026-07-15");
+        data2.put("exchangeRate", new java.math.BigDecimal("0.85"));
+        data2.put("totalAmount", 5000);
+        data2.put("docStatus", ErpPrjConstants.DOC_STATUS_DRAFT);
+        data2.put("approveStatus", ErpPrjConstants.APPROVE_STATUS_UNSUBMITTED);
+        ErpPrjBilling b2 = ormTemplate.runInSession(session -> billingBiz.save(data2, CTX));
+        assertEquals(0, b2.getAmountFunctional().compareTo(new BigDecimal("4250.0000")),
+                "多币种 amountFunctional=totalAmount×exchangeRate");
     }
 
     // ---------- seed helpers ----------

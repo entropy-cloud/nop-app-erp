@@ -325,4 +325,19 @@ public class ErpPrjProjectSettlementProcessor {
             return BigDecimal.ZERO;
         }
     }
+
+    /**
+     * P1-CK-prj-004：同项目未取消的 FINAL/CLOSE 结算单（重复创建守卫）。INTERIM 不计。
+     */
+    public ErpPrjProjectSettlement findActiveFinalOrCloseSettlement(String projectId) {
+        IEntityDao<ErpPrjProjectSettlement> dao = daoProvider.daoFor(ErpPrjProjectSettlement.class);
+        QueryBean q = new QueryBean();
+        q.addFilter(eq("projectId", projectId));
+        q.addFilter(ne("docStatus", ErpPrjConstants.DOC_STATUS_CANCELLED));
+        q.addFilter(io.nop.api.core.beans.FilterBeans.in("settlementType",
+                java.util.Arrays.asList(ErpPrjConstants.SETTLEMENT_TYPE_FINAL, ErpPrjConstants.SETTLEMENT_TYPE_CLOSE)));
+        q.setLimit(1);
+        List<ErpPrjProjectSettlement> list = dao.findAllByQuery(q);
+        return list.isEmpty() ? null : list.get(0);
+    }
 }

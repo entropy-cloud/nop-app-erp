@@ -60,8 +60,10 @@ public class NcrLifecycleService {
         ncr.setInspectionId(inspection.getId());
         ncr.setMaterialId(inspection.getMaterialId());
         ncr.setQuantity(resolveRejectQuantity(inspection, lines));
-        // severity 字段 mandatory：默认 NORMAL(20)，评审时再改；dispositionType 留待评审裁决（非 mandatory）
-        ncr.orm_propValueByName("severity", 20);
+        // severity 字段 mandatory：默认 NORMAL（erp-qa/severity 字典字符串码值），评审时再改；
+        // dispositionType 留待评审裁决（非 mandatory）。P1-CK-qa-004：修复前用 Integer 20 写 String
+        // 字典列 → 落库 "20" 非法字典值（UI 映射失效 + 召回升级/报表聚合污染）。
+        ncr.setSeverity(ErpQaConstants.NCR_SEVERITY_NORMAL);
         ncr.setStatus(ErpQaConstants.NCR_STATUS_OPEN);
         ncr.setDescription(buildRejectDescription(lines));
         dao.saveEntity(ncr);

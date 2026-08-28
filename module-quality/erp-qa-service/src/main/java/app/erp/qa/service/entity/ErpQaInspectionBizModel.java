@@ -84,17 +84,19 @@ public class ErpQaInspectionBizModel extends AbstractErpCrudBizModel<ErpQaInspec
                                        @Name("billCode") String billCode,
                                        IServiceContext context) {
         List<ErpQaInspection> inspections = findByRelatedBill(billType, billCode, context);
-        for (ErpQaInspection ins : inspections) {
-            String result = ins.getResult();
-            if (result == null || Objects.equals(result, ErpQaConstants.INSPECTION_RESULT_PENDING)) {
-                return false;
-            }
-            // ACCEPTED / CONDITIONAL 放行；REJECTED 阻塞（业务域应触发退货/返工/NCR 处置）
-            if (Objects.equals(result, ErpQaConstants.INSPECTION_RESULT_REJECTED)) {
-                return false;
-            }
+        if (inspections.isEmpty()) {
+            return true;
         }
-        return true;
+        // P1-CK-qa-002：以最新质检单结果为准（state-machine.md §4「复检结果与原检冲突 | 以复检结果为准」）——
+        // findByRelatedBill 按 id ASC（最旧在前）→ 最新质检单为末元素。修复前任一历史 REJECTED 永久阻塞
+        // （owner doc 设计的「复检新建质检单」路径无法解锁强制质检门，复检 ACCEPTED 后仍永远放不了行）。
+        ErpQaInspection latest = inspections.get(inspections.size() - 1);
+        String result = latest.getResult();
+        if (result == null || Objects.equals(result, ErpQaConstants.INSPECTION_RESULT_PENDING)) {
+            return false;
+        }
+        // ACCEPTED / CONDITIONAL 放行；REJECTED 阻塞（业务域应触发退货/返工/NCR 处置）
+        return !Objects.equals(result, ErpQaConstants.INSPECTION_RESULT_REJECTED);
     }
 
     @Override

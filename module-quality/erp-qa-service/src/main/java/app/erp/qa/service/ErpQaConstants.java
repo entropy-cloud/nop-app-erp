@@ -84,6 +84,13 @@ public interface ErpQaConstants extends ErpQaDocStatus {
     String RECALL_SEVERITY_HIGH = "HIGH";
     String RECALL_SEVERITY_CRITICAL = "CRITICAL";
 
+    // NCR 严重程度（erp-qa/severity 字符串字典，P1-CK-qa-004：修复前 autoCreateNcrFromInspection 用
+    // Integer 20 写 String 列 → 非法字典值 "20"）
+    String NCR_SEVERITY_LOW = "LOW";
+    String NCR_SEVERITY_NORMAL = "NORMAL";
+    String NCR_SEVERITY_HIGH = "HIGH";
+    String NCR_SEVERITY_CRITICAL = "CRITICAL";
+
     // 召回状态（erp-qa/recall-status，5 态）
     String RECALL_STATUS_OPEN = "OPEN";
     String RECALL_STATUS_APPROVED = "APPROVED";

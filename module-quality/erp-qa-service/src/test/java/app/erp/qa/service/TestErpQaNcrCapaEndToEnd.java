@@ -69,6 +69,10 @@ public class TestErpQaNcrCapaEndToEnd extends JunitAutoTestCase {
         assertNotNull(ncr, "REJECTED 自动生成 NCR");
         assertEquals(ErpQaConstants.NCR_STATUS_OPEN, ncr.getStatus());
         assertEquals(ErpQaConstants.NCR_SOURCE_TYPE_INSPECTION, ncr.getSourceType());
+        // P1-CK-qa-004：自动生成 NCR severity 默认 NORMAL（erp-qa/severity 字典字符串码值），评审时再改。
+        // 修复前用 Integer 20 写 String 字典列 → 落库 "20" 非法字典值（UI 映射失效 + 召回升级/报表聚合污染）。
+        assertEquals(ErpQaConstants.NCR_SEVERITY_NORMAL, ncr.getSeverity(),
+                "自动生成 NCR severity 默认 NORMAL（字典字符串码值）");
         String ncrId = ncr.getId();
 
         // 2. NCR submitReview OPEN→IN_REVIEW

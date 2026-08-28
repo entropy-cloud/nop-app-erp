@@ -151,6 +151,38 @@ public class TestErpQaRecallStateMachine extends JunitAutoTestCase {
                 "withdraw→UNSUBMITTED（inline 提取激活 per-mutation 运行时路径）");
     }
 
+    /**
+     * P1-CK-qa-005：reverseApprove 须双轴联动——approveStatus 由 APPROVED 回退 REJECTED，status 由
+     * APPROVED 回退 OPEN。修复前只回写 approveStatus=REJECTED、status 仍 APPROVED：
+     * ① 重提死锁（validateBusinessRulesForSubmit 要求 status=OPEN）；② 已撤审召回仍可
+     * locateTargets/notifyCustomers/generateReturns（守卫只看 status），绕过强制审批门
+     * （recall.md 业务规则 4「所有召回 APPROVED 才能执行」）。
+     */
+    @Test
+    public void testReverseApproveResetsStatusToOpen() {
+        String recallId = registerRecall("RC-REVAP-STAT", ErpQaConstants.RECALL_SEVERITY_MEDIUM);
+
+        // submit → approve（双轴进入终态）
+        rpcOk(mutation, "ErpQaRecall__submitForApproval", Map.of("id", recallId));
+        rpcOk(mutation, "ErpQaRecall__approve", Map.of("id", recallId));
+        ErpQaRecall approved = reload(recallId);
+        assertEquals(ErpQaConstants.APPROVE_STATUS_APPROVED, approved.getApproveStatus(), "approve→approveStatus=APPROVED");
+        assertEquals(ErpQaConstants.RECALL_STATUS_APPROVED, approved.getStatus(), "approve→status=APPROVED");
+
+        // reverseApprove：双轴回退
+        rpcOk(mutation, "ErpQaRecall__reverseApprove", Map.of("id", recallId));
+        ErpQaRecall afterReverse = reload(recallId);
+        assertEquals(ErpQaConstants.APPROVE_STATUS_REJECTED, afterReverse.getApproveStatus(),
+                "reverseApprove→approveStatus=REJECTED");
+        assertEquals(ErpQaConstants.RECALL_STATUS_OPEN, afterReverse.getStatus(),
+                "reverseApprove→status=OPEN（P1-CK-qa-005 双轴联动）");
+
+        // 验证守卫：撤审后不能 locateTargets（status=OPEN 而非 APPROVED）
+        ApiResponse<?> locateResp = rpc(mutation, "ErpQaRecall__locateTargets", Map.of("recallId", recallId));
+        assertEquals(ErpQaErrors.ERR_INVALID_RECALL_STATUS_TRANSITION.getErrorCode(), locateResp.getCode(),
+                "status=OPEN 时 locateTargets 非法（强制审批门生效）");
+    }
+
     // ---------- helpers ----------
 
     private ErpQaRecall reload(String recallId) {

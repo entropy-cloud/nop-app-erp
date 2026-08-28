@@ -190,6 +190,69 @@ public class TestErpPrjProjectSettlement extends JunitAutoTestCase {
         }
     }
 
+    /**
+     * P1-CK-prj-004：同项目已存在未取消的 FINAL 结算单时，重复 createSettlement(FINAL) 须抛
+     * {@link ErpPrjErrors#ERR_SETTLEMENT_ALREADY_EXISTS}（修复前可反复 createSettlement+approve
+     * 全额过账 → GL 收入/成本重复确认）。INTERIM 阶段结算放行。
+     */
+    @Test
+    public void testDuplicateFinalSettlementRejected() {
+        String[] holder = new String[1];
+        ormTemplate.runInSession(session -> {
+            seedFullSetup("STL-DUP");
+            holder[0] = seedProjectWithBillingAndCost("PRJ-STL-DUP", "重复结算测试项目");
+            return null;
+        });
+        ormTemplate.runInSession(() -> pnlBiz.refreshPnl(holder[0], null, null, CTX));
+
+        // 首次创建 FINAL：成功
+        ormTemplate.runInSession(session -> settlementBiz.createSettlement(holder[0],
+                ErpPrjConstants.SETTLEMENT_TYPE_FINAL, CTX));
+
+        // 重复创建 FINAL：抛 ERR_SETTLEMENT_ALREADY_EXISTS
+        NopException ex = assertThrows(NopException.class,
+                () -> ormTemplate.runInSession(session -> settlementBiz.createSettlement(holder[0],
+                        ErpPrjConstants.SETTLEMENT_TYPE_FINAL, CTX)));
+        assertEquals(ErpPrjErrors.ERR_SETTLEMENT_ALREADY_EXISTS.getErrorCode(), ex.getErrorCode(),
+                "重复 FINAL 结算拒绝（P1-CK-prj-004）");
+        assertEquals(holder[0], ex.getParam(ErpPrjErrors.ARG_PROJECT_ID), "错误携带 projectId");
+        assertEquals(ErpPrjConstants.SETTLEMENT_TYPE_FINAL, ex.getParam(ErpPrjErrors.ARG_SETTLEMENT_TYPE),
+                "错误携带 settlementType");
+    }
+
+    /**
+     * P1-CK-prj-005：CLOSE 结算 approve 后已建资产卡片（IN_SERVICE），cancel 须回退卡片（status=DRAFT）。
+     * 修复前 rollbackAssetIfNeeded 被锁在 posted 分支内 → 过账失败时 cancel 不回退资产（卡片滞留
+     * 在役并进入折旧，且 reverseSettlement 的 posted 硬守卫封死恢复路径）。
+     */
+    @Test
+    public void testCancelCloseSettlementRollsBackAssetCard() {
+        String[] holder = new String[1];
+        ormTemplate.runInSession(session -> {
+            seedFullSetup("STL-CANCEL-CLOSE");
+            holder[0] = seedProjectWithBillingAndCost("PRJ-STL-CANCL", "cancel 转固测试项目");
+            return null;
+        });
+        ormTemplate.runInSession(() -> pnlBiz.refreshPnl(holder[0], null, null, CTX));
+
+        ErpPrjProjectSettlement settlement = ormTemplate.runInSession(session -> settlementBiz.createSettlement(holder[0],
+                ErpPrjConstants.SETTLEMENT_TYPE_CLOSE, CTX));
+        ormTemplate.runInSession(() -> settlementBiz.submit(settlement.getId(), CTX));
+        ErpPrjProjectSettlement approved = ormTemplate.runInSession(session -> settlementBiz.approve(settlement.getId(), CTX));
+
+        String assetCardId = approved.getAssetCardId();
+        assertNotNull(assetCardId, "approve 后转固卡片已创建");
+        ErpAstAsset assetBefore = daoProvider.daoFor(ErpAstAsset.class).getEntityById(assetCardId);
+        assertEquals("IN_SERVICE", assetBefore.getStatus(), "approve 后卡片状态 IN_SERVICE");
+
+        // cancel：无论 posted 与否，rollbackAssetIfNeeded 都须触发（与 posted 解耦）
+        ErpPrjProjectSettlement cancelled = ormTemplate.runInSession(session -> settlementBiz.cancel(approved.getId(), CTX));
+        assertEquals(ErpPrjConstants.DOC_STATUS_CANCELLED, cancelled.getDocStatus(), "cancel→CANCELLED");
+
+        ErpAstAsset assetAfter = daoProvider.daoFor(ErpAstAsset.class).getEntityById(assetCardId);
+        assertEquals("DRAFT", assetAfter.getStatus(), "cancel 后卡片状态回退 DRAFT（P1-CK-prj-005）");
+    }
+
     // ---------- seed helpers ----------
 
     private void seedFullSetup(String tag) {

@@ -25,6 +25,18 @@ public class ErpPrjProjectSettlementCreateSettlementProcessor {
 
     public ErpPrjProjectSettlement createSettlement(String projectId, String settlementType, IServiceContext context) {
         ErpPrjProject project = facade.loadProject(projectId);
+        // P1-CK-prj-004：同项目已存在未取消的 FINAL/CLOSE 结算单时拒绝重复创建（修复前可反复
+        // createSettlement+approve 全额过账 → GL 收入/成本重复确认）。INTERIM 阶段结算放行。
+        if (ErpPrjConstants.SETTLEMENT_TYPE_FINAL.equals(settlementType)
+                || ErpPrjConstants.SETTLEMENT_TYPE_CLOSE.equals(settlementType)) {
+            ErpPrjProjectSettlement existing = facade.findActiveFinalOrCloseSettlement(projectId);
+            if (existing != null) {
+                throw new NopException(ErpPrjErrors.ERR_SETTLEMENT_ALREADY_EXISTS)
+                        .param(ErpPrjErrors.ARG_PROJECT_ID, projectId)
+                        .param(ErpPrjErrors.ARG_SETTLEMENT_TYPE, settlementType)
+                        .param(ErpPrjErrors.ARG_SETTLEMENT_CODE, existing.getCode());
+            }
+        }
         ErpPrjProjectPnl snapshot = facade.pnlBiz.getProjectPnl(projectId, context);
         if (snapshot == null) {
             throw new NopException(ErpPrjErrors.ERR_SETTLEMENT_PNL_SNAPSHOT_MISSING)

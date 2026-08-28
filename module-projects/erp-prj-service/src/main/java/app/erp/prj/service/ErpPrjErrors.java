@@ -156,6 +156,12 @@ public interface ErpPrjErrors {
             "erp.err.prj.settlement.type-not-close",
             "结算单 {settlementCode} 类型={settlementType}，非 CLOSE 不允许转固",
             ARG_SETTLEMENT_CODE, ARG_SETTLEMENT_TYPE);
+    // P1-CK-prj-004：同项目已存在未取消的 FINAL/CLOSE 结算单时拒绝重复创建（修复前可反复
+    // createSettlement+approve 全额过账 → GL 收入/成本重复确认）
+    ErrorCode ERR_SETTLEMENT_ALREADY_EXISTS = ErrorCode.define(
+            "erp.err.prj.settlement.already-exists",
+            "项目 {projectId} 已存在未取消的 {settlementType} 结算单（{settlementCode}），禁止重复创建",
+            ARG_PROJECT_ID, ARG_SETTLEMENT_TYPE, ARG_SETTLEMENT_CODE);
 
     // --- 结算质保金（RC-R1.63 / P1-RC-052，UC-PRJ-07 ④⑤；D3 守卫链 + 返还过账隔离语义） ---
     String ARG_REASON = "reason";

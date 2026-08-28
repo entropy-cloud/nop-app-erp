@@ -10,6 +10,8 @@ import app.erp.md.dao.entity.ErpMdSubject;
 import app.erp.md.service.ErpMdConstants;
 import app.erp.prj.biz.IErpPrjTimesheetBiz;
 import app.erp.prj.dao.entity.ErpPrjActivityType;
+import app.erp.prj.dao.entity.ErpPrjCostCollection;
+import app.erp.prj.dao.entity.ErpPrjCostCollectionLine;
 import app.erp.prj.dao.entity.ErpPrjProject;
 import app.erp.prj.dao.entity.ErpPrjProjectType;
 import app.erp.prj.dao.entity.ErpPrjTask;
@@ -244,6 +246,82 @@ public class TestErpPrjTimesheetCost extends JunitAutoTestCase {
         // 直接 approve（DRAFT 状态，未 submit）→ 应抛非法迁移
         NopException ex = assertThrows(NopException.class, () -> ormTemplate.runInSession(session -> timesheetBiz.approve(tsId, CTX)));
         assertEquals(ErpPrjErrors.ERR_TIMESHEET_ILLEGAL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode());
+    }
+
+    /**
+     * P1-CK-prj-001：APPROVED+posted 工时 cancel 须回退归集镜像（删除 LABOR 归集行 + 头 totalAmount
+     * 减回 + project.actualCost 减回）。修复前 cancel 仅红冲 GL 凭证，归集行/头/actualCost 永久残留
+     * （业账分叉），撤回改时重提后归集金额陈旧。
+     */
+    @Test
+    public void testCancelApprovedTimesheetRollsBackCostCollection() {
+        final String tsCode = "TS-CANCEL-001";
+        String[] holder = new String[2];
+        ormTemplate.runInSession(session -> {
+            seedOpenPeriod("2026-07");
+            seedAcctSchema("1");
+            String debitSubjectId = seedSubject("5101", "项目开发成本");
+            String payrollSubjectId = seedSubject("2211", "应付职工薪酬");
+            seedConfigSubject(payrollSubjectId);
+            String projectTypeId = seedProjectType("PT-RD", "研发项目", debitSubjectId);
+            String projectId = seedProject("PRJ-CANCEL-001", "cancel 回退归集测试项目", projectTypeId,
+                    ErpPrjConstants.PROJECT_STATUS_OPEN, new BigDecimal("100000"));
+            holder[0] = projectId;
+            String activityTypeId = seedActivityType("DEV", "开发", "300", null);
+            String taskId = seedTask(projectId, "任务-cancel", ErpPrjConstants.TASK_STATUS_IN_PROGRESS);
+            holder[1] = seedTimesheet(tsCode, projectId, taskId, activityTypeId,
+                    "10", "800", ErpPrjConstants.APPROVE_STATUS_UNSUBMITTED);
+            return null;
+        });
+        String tsId = holder[1];
+
+        // submit → approve（posted=true，归集镜像落库）
+        ormTemplate.runInSession(() -> timesheetBiz.submit(tsId, CTX));
+        ErpPrjTimesheet approved = ormTemplate.runInSession(session -> timesheetBiz.approve(tsId, CTX));
+        assertTrue(Boolean.TRUE.equals(approved.getPosted()), "approve 后 posted=true");
+
+        // approve 前置断言：LABOR 归集行 + 头 totalAmount + project.actualCost 已回写
+        List<ErpPrjCostCollectionLine> linesBefore = findCollectionLines(tsCode);
+        assertEquals(1, linesBefore.size(), "approve 后已生成 1 条 LABOR 归集行");
+        assertEquals(ErpPrjConstants.COST_CATEGORY_LABOR, linesBefore.get(0).getCostCategory());
+        BigDecimal headTotalBefore = readHeadTotalAmount(holder[0]);
+        assertTrue(headTotalBefore.compareTo(new BigDecimal("8000.00")) == 0,
+                "approve 后归集头 totalAmount=8000");
+        ErpPrjProject projectBefore = daoProvider.daoFor(ErpPrjProject.class).getEntityById(holder[0]);
+        assertEquals(0, projectBefore.getActualCost().compareTo(new BigDecimal("8000.00")),
+                "approve 后 project.actualCost=8000");
+
+        // cancel：红冲 GL + 回退归集
+        ErpPrjTimesheet cancelled = ormTemplate.runInSession(session -> timesheetBiz.cancel(tsId, CTX));
+        assertEquals(ErpPrjConstants.APPROVE_STATUS_UNSUBMITTED, cancelled.getStatus(), "cancel→UNSUBMITTED（撤回语义）");
+        assertFalse(Boolean.TRUE.equals(cancelled.getPosted()), "cancel 后 posted=false");
+
+        // 归集镜像回退断言
+        assertTrue(findCollectionLines(tsCode).isEmpty(), "cancel 后 LABOR 归集行已删除");
+        BigDecimal headTotalAfter = readHeadTotalAmount(holder[0]);
+        assertEquals(0, headTotalAfter.compareTo(BigDecimal.ZERO), "cancel 后归集头 totalAmount=0");
+        ErpPrjProject projectAfter = daoProvider.daoFor(ErpPrjProject.class).getEntityById(holder[0]);
+        assertEquals(0, projectAfter.getActualCost().compareTo(BigDecimal.ZERO),
+                "cancel 后 project.actualCost=0（业账对齐）");
+    }
+
+    private List<ErpPrjCostCollectionLine> findCollectionLines(String timesheetCode) {
+        IEntityDao<ErpPrjCostCollectionLine> dao = daoProvider.daoFor(ErpPrjCostCollectionLine.class);
+        QueryBean q = new QueryBean();
+        q.addFilter(and(eq("sourceBillType", ErpPrjConstants.SOURCE_BILL_TYPE_TIMESHEET),
+                eq("sourceBillCode", timesheetCode)));
+        return dao.findAllByQuery(q);
+    }
+
+    private BigDecimal readHeadTotalAmount(String projectId) {
+        IEntityDao<ErpPrjCostCollection> dao = daoProvider.daoFor(ErpPrjCostCollection.class);
+        QueryBean q = new QueryBean();
+        q.addFilter(eq("projectId", projectId));
+        List<ErpPrjCostCollection> heads = dao.findAllByQuery(q);
+        if (heads.isEmpty()) {
+            return BigDecimal.ZERO;
+        }
+        return heads.get(0).getTotalAmount() != null ? heads.get(0).getTotalAmount() : BigDecimal.ZERO;
     }
 
     // ---------- seed helpers ----------

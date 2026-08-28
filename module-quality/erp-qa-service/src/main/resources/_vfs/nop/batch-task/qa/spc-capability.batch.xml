@@ -18,7 +18,7 @@
 
     <processor name="process">
         <source><![CDATA[
-            const biz = inject('IErpQaSpcCapabilityBiz');
+            const biz = inject('app.erp.qa.service.entity.ErpQaSpcCapabilityBizModel');
             const periodTo = java.time.LocalDate.now();
             const periodFrom = periodTo.minusDays(30);
             biz.calculateCapability(item.id, periodFrom, periodTo, batchChunkCtx.serviceContext);

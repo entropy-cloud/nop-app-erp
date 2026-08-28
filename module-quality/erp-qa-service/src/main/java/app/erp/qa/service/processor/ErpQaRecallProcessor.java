@@ -164,7 +164,12 @@ public class ErpQaRecallProcessor {
     }
 
     protected void doReverseApprove(ErpQaRecall recall, IServiceContext context) {
+        // P1-CK-qa-005：双轴联动镜像（doApprove 写 approveStatus=APPROVED + status=APPROVED）——
+        // 修复前只回写 approveStatus=REJECTED、status 仍 APPROVED：① 重提死锁（validateBusinessRulesForSubmit
+        // 要求 status=OPEN）；② 已撤审召回仍可 locateTargets/notifyCustomers/generateReturns（守卫只看
+        // status），绕过强制审批门（recall.md 业务规则 4「所有召回 APPROVED 才能执行」）。
         recall.setApproveStatus(approvalStateMachine.reverseApproveTargetStatus());
+        recall.setStatus(statusStateMachine.reverseApproveTargetStatus());
         recall.setApprovedBy(null);
         recall.setApprovedAt(null);
         recallDao().updateEntity(recall);
