@@ -72,8 +72,15 @@ public class DisposalAcctDocProvider implements IErpFinAcctDocProvider {
         String gainLossSubject = readCode(event, ErpAstConstants.BILL_DATA_DISPOSAL_GAINLOSS_SUBJECT_CODE,
                 SUBJECT_DISPOSAL_LOSS);
 
-        // 账面净值 = 原值 − 累计折旧（1606 中间科目 Step1 结转额）
-        BigDecimal net = original.subtract(accumDep);
+        // P1-CK-ast2-006：账面净值读资产实际净账面（BILL_DATA_NET_BOOK_VALUE，含 VA 调整联动）——
+        // 修复前 original−accumDep 忽略价值调整额（减值/重估后处置 Step1 结转额错误）。
+        // 兼容旧 billData 缺 NET_BOOK_VALUE 时回退 original−accumDep（readDecimal 对缺键返回 ZERO，
+        // 故按 raw key 存在性判定）。
+        Object rawNet = event.getBillData() != null
+                ? event.getBillData().get(ErpAstConstants.BILL_DATA_NET_BOOK_VALUE) : null;
+        BigDecimal net = rawNet != null
+                ? readDecimal(event, ErpAstConstants.BILL_DATA_NET_BOOK_VALUE)
+                : original.subtract(accumDep);
 
         List<VoucherFact> facts = new ArrayList<>(7);
         // ---- Step1：结转原值 + 累计折旧至 1606 固定资产清理 ----

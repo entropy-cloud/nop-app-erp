@@ -32,7 +32,12 @@ import static io.nop.api.core.beans.FilterBeans.eq;
 import static io.nop.graphql.core.ast.GraphQLOperationType.mutation;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import app.erp.ast.biz.IErpAstDepreciationScheduleBiz;
+import app.erp.ast.service.ErpAstErrors;
+import io.nop.core.context.ServiceContextImpl;
 
 /**
  * 资本化（转固）审批→建卡→折旧计划生成→CAPITALIZATION(80) 业财过账 端到端单测（plan Phase 2）。
@@ -52,6 +57,47 @@ public class TestErpAstCapitalization extends JunitAutoTestCase {
     IOrmTemplate ormTemplate;
     @Inject
     IGraphQLEngine graphQLEngine;
+    @Inject
+    IErpAstDepreciationScheduleBiz scheduleBiz;
+
+    private static final ServiceContextImpl CTX = new ServiceContextImpl();
+
+    /**
+     * P1-CK-ast2-004 回归：已执行折旧后逆资本化应拒绝（须先逐期 reverseDepreciation）。
+     * 修复前红冲只冲 CAPITALIZATION 凭证——已执行 DEPRECIATION 凭证滞留 GL 而资产累计清零
+     * （闭环断裂）；cancelSchedules 无状态过滤把 EXECUTED 行直接写 CANCELLED（绕过状态机）。
+     */
+    @Test
+    public void testReverseApproveRejectedAfterDepreciationExecuted() {
+        String capId = ormTemplate.runInSession(session -> {
+            seedOpenPeriod("2026-06", 2026, 6, LocalDate.of(2026, 6, 1), LocalDate.of(2026, 6, 30));
+            seedOpenPeriod("2026-07", 2026, 7, LocalDate.of(2026, 7, 1), LocalDate.of(2026, 7, 31));
+            seedAcctSchema("1");
+            String fixedAssetSubjectId = seedSubject("1601", "固定资产");
+            seedSubject("1002", "银行存款");
+            String categoryId = seedCategory("CAT-AST-2", "设备类2",
+                    ErpAstConstants.DEPRECIATION_METHOD_STRAIGHT_LINE, 12, fixedAssetSubjectId);
+            return seedCapitalization("CAP-AST-002", categoryId,
+                    ErpAstConstants.SOURCE_TYPE_DIRECT_PURCHASE, new BigDecimal("12000"),
+                    LocalDate.of(2026, 6, 15));
+        });
+        assertEquals(0, submitForApproval(capId).getStatus(), "提交成功");
+        assertEquals(0, approve(capId).getStatus(), "审核成功");
+
+        ErpAstAsset asset = findAssetByCode("AST-CAP-AST-002");
+        assertNotNull(asset, "资本化建卡成功");
+
+        // 执行一期折旧（2026-07，资本化次月）→ EXECUTED + posted
+        ErpAstDepreciationSchedule executed = ormTemplate.runInSession(session ->
+                scheduleBiz.executeDepreciation(asset.getId(), "2026-07", CTX));
+        assertEquals(ErpAstConstants.SCHEDULE_STATUS_EXECUTED, executed.getStatus(), "折旧已执行");
+
+        // 已执行折旧后逆资本化 → 拒绝（修复前红冲通过、折旧凭证滞留 GL）
+        ApiResponse<?> resp = executeRpc("ErpAstAssetCapitalization__reverseApprove", Map.of("id", capId));
+        assertNotEquals(0, resp.getStatus(), "已执行折旧后逆资本化应拒绝");
+        assertEquals(ErpAstErrors.ERR_CAPITALIZATION_HAS_EXECUTED_DEPRECIATION.getErrorCode(), resp.getCode(),
+                "逆资本化前置守卫：存在已执行折旧须先逐期冲销");
+    }
 
     @Test
     public void testApproveCreatesAssetScheduleAndPosting() {

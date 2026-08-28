@@ -43,11 +43,33 @@ public class ErpAstDepreciationScheduleExecuteDepreciationProcessor {
         ErpAstAsset asset = facade.requireAsset(assetId);
         facade.validateAssetInService(asset, context);
         facade.requirePeriodOpen(period, context);
+        // P1-CK-ast2-003：当月增加下月提守卫——period 必须晚于资本化（获取）月份。
+        // 修复前期末结账批量路径对资本化当月资产照常计提（计划外多提一个月）。
+        if (asset.getAcquisitionDate() != null && period != null) {
+            try {
+                java.time.YearMonth periodYm = java.time.YearMonth.parse(period);
+                java.time.YearMonth acquisitionYm = java.time.YearMonth.from(asset.getAcquisitionDate());
+                if (!periodYm.isAfter(acquisitionYm)) {
+                    throw new NopException(ErpAstErrors.ERR_DEPRECIATION_PERIOD_BEFORE_ACQUISITION)
+                            .param(ErpAstErrors.ARG_ASSET_CODE, asset.getCode())
+                            .param(ErpAstErrors.ARG_PERIOD, period)
+                            .param(ErpAstErrors.ARG_ACQUISITION_DATE, asset.getAcquisitionDate().toString());
+                }
+            } catch (java.time.format.DateTimeParseException ignore) {
+                // period 非 YYYY-MM 形态（防御），跳过守卫
+            }
+        }
 
         ErpAstAssetCategory category = asset.getCategory();
         String method = asset.getDepreciationMethod() != null ? asset.getDepreciationMethod()
                 : (category != null && category.getDepreciationMethod() != null ? category.getDepreciationMethod()
                         : ErpAstConstants.DEPRECIATION_METHOD_STRAIGHT_LINE);
+        // P1-CK-ast2-001：工作量法（UNITS）运行时零数据面（两个调用点均传 null 工作量参数，
+        // ORM 无工作量列）——静默恒 0 掩盖漏提，改为显式业务错误（owner doc §十 登记 Deferred）。
+        if (Objects.equals(method, ErpAstConstants.DEPRECIATION_METHOD_UNITS)) {
+            throw new NopException(ErpAstErrors.ERR_DEPRECIATION_UNITS_NOT_CONFIGURED)
+                    .param(ErpAstErrors.ARG_ASSET_CODE, asset.getCode());
+        }
         int months = asset.getUsefulLifeMonths() != null ? asset.getUsefulLifeMonths()
                 : (category != null && category.getUsefulLifeMonths() != null ? category.getUsefulLifeMonths() : 0);
 
@@ -60,6 +82,9 @@ public class ErpAstDepreciationScheduleExecuteDepreciationProcessor {
             schedule = facade.findSchedule(assetId, period);
         }
 
+        // 幂等重执行红冲（posted=true → 反向）经 ErpAstDepreciationReversalListener 同步回退：监听者置
+        // schedule.status=REVERSED + posted=false 并回滚资产累计/净值——本块以 status==EXECUTED 为前置
+        // 天然跳过（避免双重回退）；悬挂自愈路径（posted=false 无红冲、监听者不触发）本块仍负责回退。
         if (schedule != null && schedule.getActualAmount() != null
                 && schedule.getStatus() != null
                 && Objects.equals(schedule.getStatus(), ErpAstConstants.SCHEDULE_STATUS_EXECUTED)) {

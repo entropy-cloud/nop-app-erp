@@ -55,7 +55,10 @@ public class ErpAstDepreciationScheduleRecalculateForCapitalizationMaintenancePr
 
         int regenerated = 0;
         if (remainingMonths > 0) {
-            BigDecimal depreciableBase = original.add(ErpAstDepreciationScheduleProcessor.nz(increment)).subtract(residual).subtract(accumulated);
+            // P1-CK-ast2-002 修复：基数按当前卡片状态重算（原值已含/已减增量——调用方
+            // applyTreatmentCapitalize/rollbackCapitalization 先改 originalValue 再调本方法）。
+            // 修复前 `.add(nz(increment))` 使增量双计（资本化后多提 X / 回退后少提 X）。
+            BigDecimal depreciableBase = original.subtract(residual).subtract(accumulated);
             if (depreciableBase.signum() < 0) {
                 depreciableBase = BigDecimal.ZERO;
             }
@@ -80,7 +83,8 @@ public class ErpAstDepreciationScheduleRecalculateForCapitalizationMaintenancePr
                 schedule.setPlannedAmount(planned);
                 schedule.setActualAmount(BigDecimal.ZERO);
                 schedule.setAccumulatedDepreciation(BigDecimal.ZERO);
-                schedule.setNetBookValue(original.add(ErpAstDepreciationScheduleProcessor.nz(increment)).subtract(accumulated));
+                // P1-CK-ast2-002：计划行 NBV 同步去掉双计（原值已含增量）
+                schedule.setNetBookValue(original.subtract(accumulated));
                 schedule.setStatus(ErpAstConstants.SCHEDULE_STATUS_PENDING);
                 schedule.setBusinessDate(periodMonth.atDay(1));
                 scheduleDao.saveEntity(schedule);

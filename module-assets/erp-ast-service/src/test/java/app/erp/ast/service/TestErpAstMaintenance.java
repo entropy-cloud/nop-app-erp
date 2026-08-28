@@ -105,6 +105,12 @@ public class TestErpAstMaintenance extends JunitAutoTestCase {
         // 折旧计划重算：原 PENDING 条目被删除，重新生成（config-gated 默认 true）
         List<ErpAstDepreciationSchedule> pending = findPendingSchedules(assetHolder[0]);
         assertFalse(pending.isEmpty(), "折旧计划重算生成了新的 PENDING 条目");
+        // P1-CK-ast2-002：计划总额 = 原值(125000) − 残值(5000) − 已提(0) = 120000（修复前增量双计 → 145000）
+        BigDecimal sumPlanned = pending.stream()
+                .map(s -> s.getPlannedAmount() != null ? s.getPlannedAmount() : BigDecimal.ZERO)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        assertEquals(0, sumPlanned.compareTo(new BigDecimal("120000")),
+                "资本化维修后计划总额=120000（修复前 145000 双计）");
 
         // MAINTENANCE_CAPITALIZATION 凭证回链
         List<ErpFinVoucherBillR> links = findBillLinks("MNT-CAP-001", "MAINTENANCE_CAPITALIZATION");

@@ -41,6 +41,9 @@ public class ErpAstAssetCapitalizationProcessor {
     IDaoProvider daoProvider;
 
     @Inject
+    app.erp.ast.biz.IErpAstDepreciationScheduleBiz scheduleBiz;
+
+    @Inject
     CapitalizationPostingDispatcher postingDispatcher;
 
     @Inject
@@ -112,8 +115,15 @@ public class ErpAstAssetCapitalizationProcessor {
     protected ErpAstAssetCapitalization executeReverseApprove(String id, ErpAstAssetCapitalization cap,
                                                                 IServiceContext context) {
         if (Boolean.TRUE.equals(cap.getPosted())) {
-            postingDispatcher.reverse(cap);
             ErpAstAsset asset = findAssetByCode(resolveAssetCode(cap));
+            // P1-CK-ast2-004：逆资本化前置守卫——已执行折旧时拒绝（须先逐期 reverseDepreciation），
+            // 修复前红冲后 DEPRECIATION 凭证滞留 GL 而资产累计清零（闭环断裂）。
+            if (asset != null && countExecutedDepreciation(asset.getId(), context) > 0) {
+                throw new NopException(ErpAstErrors.ERR_CAPITALIZATION_HAS_EXECUTED_DEPRECIATION)
+                        .param(ErpAstErrors.ARG_ASSET_CODE, asset.getCode())
+                        .param(ErpAstErrors.ARG_EXECUTED_COUNT, countExecutedDepreciation(asset.getId(), context));
+            }
+            postingDispatcher.reverse(cap);
             if (asset != null) {
                 // 固定来源/目标态判断委托 StateMachine Bean（M4.40，契约 §4/§7）
                 assetStateMachine.assertCanReverseCapitalize(asset.getStatus());
@@ -130,6 +140,15 @@ public class ErpAstAssetCapitalizationProcessor {
         cap.setDocStatus(documentStateMachine.reverseApproveTargetStatus());
         capDao().updateEntity(cap);
         return cap;
+    }
+
+    /** 资产已执行折旧期数（ast2-004 逆资本化守卫）。 */
+    protected int countExecutedDepreciation(String assetId, IServiceContext context) {
+        QueryBean q = new QueryBean();
+        q.addFilter(eq("assetId", assetId));
+        q.addFilter(eq("status", ErpAstConstants.SCHEDULE_STATUS_EXECUTED));
+        // 经 I*Biz（对齐跨实体访问纪律，不新增 daoFor 站点）
+        return scheduleBiz.findList(q, null, context).size();
     }
 
     // ---------- step：迁移校验（protected，下游可逐个覆盖） ----------
@@ -311,6 +330,9 @@ public class ErpAstAssetCapitalizationProcessor {
         IEntityDao<ErpAstDepreciationSchedule> dao = daoProvider.daoFor(ErpAstDepreciationSchedule.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("assetId", assetId));
+        // P1-CK-ast2-004：仅取消 PENDING 行（状态机契约 assertCanCancel 仅 PENDING 合法）——
+        // 修复前无状态过滤把 EXECUTED/REVERSED 行一并写 CANCELLED（绕过状态机 + posted 残留）。
+        q.addFilter(eq("status", ErpAstConstants.SCHEDULE_STATUS_PENDING));
         for (ErpAstDepreciationSchedule s : dao.findAllByQuery(q)) {
             s.setStatus(scheduleStateMachine.cancelTargetStatus());
             dao.saveOrUpdateEntity(s);

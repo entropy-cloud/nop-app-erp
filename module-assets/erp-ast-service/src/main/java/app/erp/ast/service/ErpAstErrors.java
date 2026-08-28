@@ -18,6 +18,8 @@ public interface ErpAstErrors {
     String ARG_ASSET_ID = "assetId";
     String ARG_CATEGORY_ID = "categoryId";
     String ARG_PERIOD = "period";
+    String ARG_ACQUISITION_DATE = "acquisitionDate";
+    String ARG_EXECUTED_COUNT = "executedCount";
     String ARG_CURRENT_PERIOD = "currentPeriod";
     String ARG_CURRENT_STATUS = "currentStatus";
     String ARG_EXPECTED_STATUS = "expectedStatus";
@@ -110,6 +112,21 @@ public interface ErpAstErrors {
             "erp.err.ast.depreciation.useful-life-invalid",
             "资产 {assetCode} 使用年限或折旧方法无效，无法计算折旧",
             ARG_ASSET_CODE);
+    // P1-CK-ast2-001：工作量法（UNITS）运行时零数据面（ORM 无工作量列）——拒绝静默零，改为显式业务错误
+    ErrorCode ERR_DEPRECIATION_UNITS_NOT_CONFIGURED = ErrorCode.define(
+            "erp.err.ast.depreciation.units-not-configured",
+            "资产 {assetCode} 折旧方法为工作量法（UNITS）但系统未配置工作量数据（ORM 无期间工作量列），折旧计算不可用——请改用直线法/余额递减法或等待工作量数据面接入",
+            ARG_ASSET_CODE);
+    // P1-CK-ast2-003：折旧期间不得早于资本化次月（当月增加下月提）
+    ErrorCode ERR_DEPRECIATION_PERIOD_BEFORE_ACQUISITION = ErrorCode.define(
+            "erp.err.ast.depreciation.period-before-acquisition",
+            "资产 {assetCode} 期间 {period} 早于资本化次月（获取日期 {acquisitionDate}），按「当月增加下月提」规则不可计提",
+            ARG_ASSET_CODE, ARG_PERIOD, ARG_ACQUISITION_DATE);
+    // P1-CK-ast2-004：逆资本化前置——存在已执行折旧行时拒绝（须先逐期 reverseDepreciation）
+    ErrorCode ERR_CAPITALIZATION_HAS_EXECUTED_DEPRECIATION = ErrorCode.define(
+            "erp.err.ast.capitalization.has-executed-depreciation",
+            "资产 {assetCode} 已有已执行折旧（{executedCount} 期），逆资本化前须先逐期冲销折旧（reverseDepreciation），避免 DEPRECIATION 凭证滞留 GL",
+            ARG_ASSET_CODE, ARG_EXECUTED_COUNT);
     ErrorCode ERR_SCHEDULE_ILLEGAL_STATUS_TRANSITION = ErrorCode.define(
             "erp.err.ast.schedule.illegal-status-transition",
             "折旧计划执行状态={currentStatus}，不允许执行该操作（期望状态={expectedStatus}）",

@@ -86,6 +86,11 @@ public class ErpAstDepreciationScheduleCatchUpDepreciationProcessor {
         String method = asset.getDepreciationMethod() != null ? asset.getDepreciationMethod()
                 : (category != null && category.getDepreciationMethod() != null ? category.getDepreciationMethod()
                         : ErpAstConstants.DEPRECIATION_METHOD_STRAIGHT_LINE);
+        // P1-CK-ast2-001：工作量法静默恒 0 → 显式业务错误（同 executeDepreciation 守卫）。
+        if (Objects.equals(method, ErpAstConstants.DEPRECIATION_METHOD_UNITS)) {
+            throw new NopException(ErpAstErrors.ERR_DEPRECIATION_UNITS_NOT_CONFIGURED)
+                    .param(ErpAstErrors.ARG_ASSET_CODE, asset.getCode());
+        }
         int months = asset.getUsefulLifeMonths() != null ? asset.getUsefulLifeMonths()
                 : (category != null && category.getUsefulLifeMonths() != null ? category.getUsefulLifeMonths() : 0);
 

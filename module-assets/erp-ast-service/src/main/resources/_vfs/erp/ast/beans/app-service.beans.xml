@@ -241,4 +241,7 @@
           class="app.erp.ast.service.processor.ErpAstMaintenancePostProcessor"/>
     <bean id="app.erp.ast.service.processor.ErpAstMaintenanceReverseProcessor"
           class="app.erp.ast.service.processor.ErpAstMaintenanceReverseProcessor"/>
+
+    <bean id="app.erp.ast.service.posting.ErpAstDepreciationReversalListener"
+          class="app.erp.ast.service.posting.ErpAstDepreciationReversalListener"/>
 </beans>

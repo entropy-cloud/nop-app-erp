@@ -255,6 +255,9 @@ public class ErpAstValueAdjustmentProcessor {
         BigDecimal newNbv;
         if (Objects.equals(type, ErpAstConstants.ADJUSTMENT_TYPE_REVALUATION_UP)) {
             newNbv = currentNbv.add(amount);
+            // P1-CK-ast2-006：重估增值同步上调原值——保持 originalValue − accumulatedDepreciation ==
+            // netBookValue 不变量（修复前 originalValue 不动，资产登记簿与 GL 固定资产科目余额漂移）。
+            asset.setOriginalValue(nz(asset.getOriginalValue()).add(amount));
         } else {
             // P1-CK-ast-005：下限兜底 max(残值, 0)——减值不得使账面净值低于残值（修复前可为负）。
             newNbv = currentNbv.subtract(amount).max(nz(asset.getResidualValue()).max(BigDecimal.ZERO));
@@ -289,6 +292,8 @@ public class ErpAstValueAdjustmentProcessor {
         BigDecimal restoredNbv;
         if (Objects.equals(type, ErpAstConstants.ADJUSTMENT_TYPE_REVALUATION_UP)) {
             restoredNbv = currentNbv.subtract(amount);
+            // P1-CK-ast2-006：重估增值红冲同步下调原值（applyAssetValueChange 的镜像）。
+            asset.setOriginalValue(nz(asset.getOriginalValue()).subtract(amount));
         } else {
             restoredNbv = currentNbv.add(amount);
         }

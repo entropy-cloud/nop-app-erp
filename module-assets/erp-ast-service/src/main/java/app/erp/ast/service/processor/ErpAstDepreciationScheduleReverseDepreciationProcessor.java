@@ -2,6 +2,7 @@ package app.erp.ast.service.processor;
 
 import app.erp.ast.dao.entity.ErpAstAsset;
 import app.erp.ast.dao.entity.ErpAstDepreciationSchedule;
+import app.erp.ast.service.ErpAstConstants;
 import app.erp.ast.service.ErpAstErrors;
 import app.erp.ast.service.posting.DepreciationPostingDispatcher;
 import app.erp.ast.service.statemachine.ErpAstDepreciationScheduleStateMachine;
@@ -11,6 +12,7 @@ import io.nop.dao.api.IDaoProvider;
 import jakarta.inject.Inject;
 
 import java.math.BigDecimal;
+import java.util.Objects;
 
 /**
  * ErpAstDepreciationSchedule reverseDepreciation per-mutation Processor（R6.3，{@code processor-extension-pattern.md} 每 mutation 一 Processor）。
@@ -50,11 +52,19 @@ public class ErpAstDepreciationScheduleReverseDepreciationProcessor {
         ErpAstAsset asset = facade.requireAsset(assetId);
         if (Boolean.TRUE.equals(schedule.getPosted())) {
             postingDispatcher.reverse(asset, period);
+            // P1-CK-ast2-005：红冲事件同步派发 ErpAstDepreciationReversalListener——监听者已回退
+            // 资产累计/净值并置 schedule.status=REVERSED。重载后以 REVERSED 标记跳过自身回退，
+            // 避免双重应用（修复前无监听者时本方法负责回退）。
+            schedule = facade.findSchedule(assetId, period);
         }
-        BigDecimal oldAmount = ErpAstDepreciationScheduleProcessor.nz(schedule.getActualAmount());
-        asset.setAccumulatedDepreciation(ErpAstDepreciationScheduleProcessor.nz(asset.getAccumulatedDepreciation()).subtract(oldAmount));
-        asset.setNetBookValue(ErpAstDepreciationScheduleProcessor.nz(asset.getNetBookValue()).add(oldAmount));
-        daoProvider.daoFor(ErpAstAsset.class).saveOrUpdateEntity(asset);
+        boolean listenerRolledBack = schedule != null
+                && Objects.equals(schedule.getStatus(), ErpAstConstants.SCHEDULE_STATUS_REVERSED);
+        if (!listenerRolledBack) {
+            BigDecimal oldAmount = ErpAstDepreciationScheduleProcessor.nz(schedule.getActualAmount());
+            asset.setAccumulatedDepreciation(ErpAstDepreciationScheduleProcessor.nz(asset.getAccumulatedDepreciation()).subtract(oldAmount));
+            asset.setNetBookValue(ErpAstDepreciationScheduleProcessor.nz(asset.getNetBookValue()).add(oldAmount));
+            daoProvider.daoFor(ErpAstAsset.class).saveOrUpdateEntity(asset);
+        }
 
         schedule.setStatus(scheduleStateMachine.reverseTargetStatus());
         schedule.setPosted(false);

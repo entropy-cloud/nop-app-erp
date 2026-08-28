@@ -110,12 +110,15 @@ public class DisposalPostingDispatcher {
         BigDecimal original = nz(asset.getOriginalValue());
         BigDecimal accumDep = nz(asset.getAccumulatedDepreciation());
         BigDecimal disposalAmount = nz(disposal.getDisposalAmount());
-        BigDecimal nbv = original.subtract(accumDep);
+        // P1-CK-ast2-006：净值读资产实际净账面（含价值调整联动）——修复前 original−accumDep 忽略
+        // VA 调整额（减值/重估后处置损益错误）。
+        BigDecimal nbv = nz(asset.getNetBookValue());
         BigDecimal gainLoss = disposalAmount.subtract(nbv);
 
         Map<String, Object> billData = new LinkedHashMap<>();
         billData.put(ErpAstConstants.BILL_DATA_ORIGINAL_VALUE, original);
         billData.put(ErpAstConstants.BILL_DATA_ACCUMULATED_DEPRECIATION, accumDep);
+        billData.put(ErpAstConstants.BILL_DATA_NET_BOOK_VALUE, nbv);
         billData.put(ErpAstConstants.BILL_DATA_DISPOSAL_AMOUNT, disposalAmount);
         billData.put(ErpAstConstants.BILL_DATA_GAIN_LOSS, gainLoss);
         billData.put(ErpAstConstants.BILL_DATA_DISPOSAL_TYPE, disposal.getDisposalType());

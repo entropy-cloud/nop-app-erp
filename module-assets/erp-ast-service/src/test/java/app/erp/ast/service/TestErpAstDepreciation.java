@@ -38,6 +38,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import app.erp.ast.service.ErpAstErrors;
 
 /**
  * 折旧计算/执行/批量 + DEPRECIATION(70) 过账 + 残值约束 + 期间控制 + 幂等 端到端单测（plan Phase 3）。
@@ -369,6 +370,54 @@ public class TestErpAstDepreciation extends JunitAutoTestCase {
     }
 
     /**
+     * P1-CK-ast2-001 回归：工作量法（UNITS）折旧不再静默恒 0——改为显式业务错误。
+     * 修复前两个调用点传 null 工作量参数且 ORM 无工作量列 → 每月 EXECUTED 行 amount=0 掩盖漏提。
+     */
+    @Test
+    public void testUnitsMethodRejectedNotSilentZero() {
+        String assetId = ormTemplate.runInSession(session -> {
+            seedBasics();
+            String categoryId = AstTestSupport.seedCategory(daoProvider, "CAT-UNITS", "工作量法类别",
+                    ErpAstConstants.DEPRECIATION_METHOD_UNITS, 12, null, null, null);
+            return AstTestSupport.seedAsset(daoProvider, "AST-UNITS", "工作量法资产", categoryId, "1",
+                    new BigDecimal("12000"), BigDecimal.ZERO,
+                    ErpAstConstants.DEPRECIATION_METHOD_UNITS, 12,
+                    ErpAstConstants.ASSET_STATUS_IN_SERVICE);
+        });
+        NopException ex = assertThrows(NopException.class, () -> ormTemplate.runInSession(session ->
+                scheduleBiz.executeDepreciation(assetId, START_PERIOD, CTX)), "UNITS 折旧应拒绝");
+        assertEquals(ErpAstErrors.ERR_DEPRECIATION_UNITS_NOT_CONFIGURED.getErrorCode(), ex.getErrorCode(),
+                "工作量法零数据面 → 显式业务错误（修复前静默 0）");
+    }
+
+    /**
+     * P1-CK-ast2-003 回归：当月增加下月提——资本化当月（获取月）计提应拒绝。
+     * 修复前期末结账批量路径对资本化当月资产照常计提（计划外多提一个月）。
+     */
+    @Test
+    public void testPeriodBeforeAcquisitionMonthRejected() {
+        String assetId = ormTemplate.runInSession(session -> {
+            seedBasics();
+            AstTestSupport.seedPeriod(daoProvider, "2026-06", 2026, 6, ErpAstConstants.PERIOD_STATUS_OPEN);
+            String categoryId = AstTestSupport.seedCategory(daoProvider, "CAT-ACQ", "下月提类别",
+                    ErpAstConstants.DEPRECIATION_METHOD_STRAIGHT_LINE, 12, null, null, null);
+            return AstTestSupport.seedAsset(daoProvider, "AST-ACQ", "下月提资产", categoryId, "1",
+                    new BigDecimal("12000"), BigDecimal.ZERO,
+                    ErpAstConstants.DEPRECIATION_METHOD_STRAIGHT_LINE, 12,
+                    ErpAstConstants.ASSET_STATUS_IN_SERVICE);
+        });
+        // AstTestSupport.seedAsset 固定 acquisitionDate=2026-06-01 → 2026-06（当月）计提应拒绝
+        NopException ex = assertThrows(NopException.class, () -> ormTemplate.runInSession(session ->
+                scheduleBiz.executeDepreciation(assetId, "2026-06", CTX)), "资本化当月计提应拒绝");
+        assertEquals(ErpAstErrors.ERR_DEPRECIATION_PERIOD_BEFORE_ACQUISITION.getErrorCode(), ex.getErrorCode(),
+                "当月增加下月提守卫");
+        // 次月（2026-07）正常计提
+        ErpAstDepreciationSchedule s = ormTemplate.runInSession(session ->
+                scheduleBiz.executeDepreciation(assetId, START_PERIOD, CTX));
+        assertEquals(ErpAstConstants.SCHEDULE_STATUS_EXECUTED, s.getStatus(), "次月正常计提");
+    }
+
+    /**
      * 并发首次折旧 UK 兜底（plan 2026-07-30-0841-2 R1.28 P1-MA2-089）：2 线程同时为同资产同期首次计提，
      * UK_AST_DEPRECIATION_ASSET_PERIOD 保证仅 1 条 active 计划行 + 累计折旧不双计；冲突方抛友好错误码。
      */
@@ -376,8 +425,7 @@ public class TestErpAstDepreciation extends JunitAutoTestCase {
     // 关闭输出表校验，以方法内确定性断言为准（nop-testing「非确定路径不录制不可比基线」）。
     @EnableSnapshot(checkOutput = false)
     @Test
-    public void testConcurrentFirstDepreciationNoDuplicate() throws Exception {
-        String assetId = ormTemplate.runInSession(session -> {
+    public void testConcurrentFirstDepreciationNoDuplicate() throws Exception {        String assetId = ormTemplate.runInSession(session -> {
             seedBasics();
             String categoryId = AstTestSupport.seedCategory(daoProvider, "CAT-UK089", "UK089类别",
                     ErpAstConstants.DEPRECIATION_METHOD_STRAIGHT_LINE, 12, null, null, null);
