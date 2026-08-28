@@ -451,23 +451,14 @@ public class StockMoveBookkeeper implements BookingContext {
 
     ErpInvStockBalance findBalance(String orgId, String materialId, String skuId, String warehouseId,
                                    String locationId, String batchNo, String ownerId) {
-        IEntityDao<ErpInvStockBalance> dao = daoProvider.daoFor(ErpInvStockBalance.class);
-        QueryBean q = new QueryBean();
-        q.addFilter(eq("orgId", orgId));
-        q.addFilter(eq("materialId", materialId));
-        q.addFilter(eq("warehouseId", warehouseId));
-        if (locationId != null) {
-            q.addFilter(eq("locationId", locationId));
+        // P1-CK-inv-002：统一到自然键精确匹配（skuId 过滤 + nullable 列 IS NULL）——修复前 skuId
+        // 永不过滤、null 维度不做 IS NULL 匹配，lookup (loc=null,batch=null) 会命中带 loc/batch 的
+        // 既有行（任意首行），余额/流水落到错误维度行。owner 维度保留既有门控：disabled 强制
+        // ownerId=null 匹配（基线行为）；enabled 按调用方 ownerId（eq/isNull）。
+        if (!isOwnershipTrackingEnabled()) {
+            return findBalanceByNaturalKey(orgId, materialId, skuId, warehouseId, locationId, batchNo, null);
         }
-        if (batchNo != null) {
-            q.addFilter(eq("batchNo", batchNo));
-        }
-        // owner 维度入键仅当 ownership-tracking-enabled（默认关）。关闭时 ownerId 强制 null，等价既有行为。
-        if (isOwnershipTrackingEnabled() && ownerId != null) {
-            q.addFilter(eq("ownerId", ownerId));
-        }
-        List<ErpInvStockBalance> list = dao.findAllByQuery(q);
-        return list.isEmpty() ? null : list.get(0);
+        return findBalanceByNaturalKey(orgId, materialId, skuId, warehouseId, locationId, batchNo, ownerId);
     }
 
     /** owner 维度开关：默认关（对齐 Odoo feature group，非 VMI 用户无感知）。 */

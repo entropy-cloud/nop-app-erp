@@ -135,6 +135,9 @@ public class ErpInvStockMoveProcessor {
     }
 
     protected void validateAvailable(ErpInvStockMove move, List<ErpInvStockMoveLine> lines, IServiceContext context) {
+        // P1-CK-inv-004：批次/序列号管控物料的出库必须指定批次/序列号（缺失拒绝确认）——
+        // 置于效期守卫之前（修复前无批号行被 validateBatchExpiry 静默跳过放行）。
+        validateBatchSerialPresence(move, lines, context);
         // 效期守卫为合规门禁，置于负库存短路之前（RC-R1.20 Decision：allow-negative-stock 不豁免批次过期）
         validateBatchExpiry(move, lines, context);
         if (isNegativeStockAllowed()) {
@@ -193,6 +196,42 @@ public class ErpInvStockMoveProcessor {
                         .param(ErpInvErrors.ARG_MATERIAL_ID, line.getMaterialId())
                         .param(ErpInvErrors.ARG_BATCH_NO, line.getBatchNo())
                         .param(ErpInvErrors.ARG_EXPIRY_DATE, batch.getExpiryDate().toString());
+            }
+        }
+    }
+
+    /**
+     * P1-CK-inv-004：批次/序列号管控物料出库的批次/序列号缺失守卫（state-machine.md §4「批次/序列号缺失：
+     * 启用批次/序列号的物料，移动单必须指定批次/序列号；缺失拒绝确认」）。仅在出库/内部转移移动单
+     * （{@code reservesOnConfirm} 命中类型）生效——与可用量校验同型边界；INCOMING 类移动单收批次属
+     * 质检域职责。批次在库校验：批号非空但 {@code findBatch} 查无 → 拒绝。序列号「未售/在库状态」翻转
+     * writer 缺失为独立特性（ErpInvSerialNumberBizModel CRUD 桩），本守卫先落「缺失拒绝」子句。
+     */
+    protected void validateBatchSerialPresence(ErpInvStockMove move, List<ErpInvStockMoveLine> lines,
+                                               IServiceContext context) {
+        if (!reservesOnConfirm(move.getMoveType())) {
+            return;
+        }
+        for (ErpInvStockMoveLine line : lines) {
+            ErpMdMaterial material = materialBiz.get(line.getMaterialId(), true, context);
+            if (material == null) {
+                continue;
+            }
+            if (Boolean.TRUE.equals(material.getIsBatchManaged())) {
+                if (StringHelper.isBlank(line.getBatchNo())) {
+                    throw new NopException(ErpInvErrors.ERR_BATCH_REQUIRED)
+                            .param(ErpInvErrors.ARG_MATERIAL_ID, line.getMaterialId());
+                }
+                if (findBatch(move, line, context) == null) {
+                    throw new NopException(ErpInvErrors.ERR_BATCH_NOT_FOUND)
+                            .param(ErpInvErrors.ARG_MATERIAL_ID, line.getMaterialId())
+                            .param(ErpInvErrors.ARG_BATCH_NO, line.getBatchNo());
+                }
+            }
+            if (Boolean.TRUE.equals(material.getIsSerialManaged())
+                    && StringHelper.isBlank(line.getSerialNo())) {
+                throw new NopException(ErpInvErrors.ERR_SERIAL_REQUIRED)
+                        .param(ErpInvErrors.ARG_MATERIAL_ID, line.getMaterialId());
             }
         }
     }

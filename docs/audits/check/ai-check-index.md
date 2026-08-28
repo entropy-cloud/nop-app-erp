@@ -125,10 +125,10 @@
 | P3-CK-sal-028 | P3 | D5 | ck-sales.md | settle 静默跳过非正数分配项 | 新增 | open |  |
 | P3-CK-sal-029 | P3 | D6 | ck-sales.md | 合同量折扣回退基数取当前行价——重复应用二次折扣风险 | 新增 | open |  |
 | P3-CK-sal-030 | P3 | D8 | ck-sales.md | 库存移动行未透传库位/批号/序列号——DTO 支持但构造器留空 | 新增 | open |  |
-| P1-CK-inv-001 | P1 | D6/D8 | ck-inventory.md | 4 个出库策略 locationId 回退误用 `move.getSourceWarehouseId()`——仓库 ID 写入库位列，余额维度污染 | 新增 | open |  |
-| P1-CK-inv-002 | P1 | D6/D8 | ck-inventory.md | `upsertBalance/findBalance` 查询键与 UK 自然键不一致——skuId 永不过滤、null 维度不做 IS NULL 匹配，余额行错配写入 | 新增 | open |  |
+| P1-CK-inv-001 | P1 | D6/D8 | ck-inventory.md | 4 个出库策略 locationId 回退误用 `move.getSourceWarehouseId()`——仓库 ID 写入库位列，余额维度污染 | 新增 | fixed | F2.11：WeightedAverage/Batch/Lifo/Specific 四策略 onOutgoing locationId 回退改 `move.getSourceLocationId()`（对齐 MovingAverage/Fifo）；无库位出库不再把 warehouseId 写入库位列；inv 246 全绿 + mfg 308 跨域回归绿 |
+| P1-CK-inv-002 | P1 | D6/D8 | ck-inventory.md | `upsertBalance/findBalance` 查询键与 UK 自然键不一致——skuId 永不过滤、null 维度不做 IS NULL 匹配，余额行错配写入 | 新增 | fixed | F2.11：StockMoveBookkeeper.findBalance 统一委托 findBalanceByNaturalKey（skuId 过滤 + nullable IS NULL，owner 门控保留）+ ErpInvReservationBizModel.findBalance 同步；CostAdjustmentService 补 batchNo IS NULL（skuId/locationId 维度行无此字段，残留 successor）；inv 246 全绿 |
 | P1-CK-inv-003 | P1 | D3/D5 | ck-inventory.md | 「库存流水不可变 / 余额由流水驱动」两条核心规则在 CRUD 层零强制——Ledger/Balance 可经通用 mutation 直接改删 | 新增 |fixed | F1.3：AbstractErpImmutableCrudBizModel——ledger/balance 拒全部通用 update/delete；TestErpInvLedgerImmutable 绿 |
-| P1-CK-inv-004 | P1 | D3/D5 | ck-inventory.md | owner doc §4「批次/序列号缺失拒绝确认」未实现——批次管控物料无批号出库被跳过放行；序列号「未售校验」全缺 | 新增 | open |  |
+| P1-CK-inv-004 | P1 | D3/D5 | ck-inventory.md | owner doc §4「批次/序列号缺失拒绝确认」未实现——批次管控物料无批号出库被跳过放行；序列号「未售校验」全缺 | 新增 | fixed | F2.11：validateBatchSerialPresence 前置守卫——批次管控物料出库无批号抛 ERR_BATCH_REQUIRED、批号在库校验（查无抛 ERR_BATCH_NOT_FOUND）、序列号管控无 serialNo 抛 ERR_SERIAL_REQUIRED（「未售/在库状态」翻转 writer 缺失为独立特性，Deferred）；TestErpInvBatchExpiryInterception +2 测试红→绿 |
 | P1-CK-inv-005 | P1 | D5/D3 | ck-inventory.md | 通用 CRUD update 无状态守卫——同型 P1-CK-pur-003/P1-CK-sal-004（不复用展开） | 同型 P1-CK-pur-003/P1-CK-sal-004 |fixed | F1.3：AbstractErpCrudBizModel 状态锁基类（posted/APPROVED 拒通用 update/delete）+ 363 文件全域接入；TestErpPurCrudStatusLock 五分支绿；19 域 7249/7249 全绿 |
 | P2-CK-inv-006 | P2 | D6/D10 | ck-inventory.md | OwnershipTransfer `reclassifyBalance` 除法无 scale——非整除即 ArithmeticException，VMI DONE 崩溃 | 新增 | open |  |
 | P2-CK-inv-007 | P2 | D6/D8 | ck-inventory.md | VMI 所有权转移对层式计价物料零成本转移——`source.getAvgCost()` 对 FIFO/LIFO/BATCH/SPECIFIC 恒为 null | 新增 | open |  |

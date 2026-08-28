@@ -110,6 +110,36 @@ public class TestErpInvBatchExpiryInterception extends JunitAutoTestCase {
         assertNull(balance, "拒绝路径不进入 applyReservation/upsertBalance，不应产生余额行");
     }
 
+    // ---------- P1-CK-inv-004：批次/序列号管控物料出库缺失守卫 ----------
+
+    /**
+     * 批次管控物料出库无批号 → ERR_BATCH_REQUIRED（修复前 validateBatchExpiry 对空批号行
+     * 静默 continue 放行——批次追溯链断裂）。
+     */
+    @Test
+    public void testBatchManagedMaterialRequiresBatchNoOnOutgoing() {
+        seedBatchLedger(BATCH_FUTURE, MATERIAL_BATCH_FUTURE, CoreMetrics.currentDate().plusDays(30));
+
+        ApiResponse<?> resp = genMove(outgoingReq("SALES_SHIP", "SS-REQ-001", MATERIAL_BATCH_FUTURE,
+                new BigDecimal("5"), null));
+        assertEquals(ErpInvErrors.ERR_BATCH_REQUIRED.getErrorCode(), resp.getCode(),
+                "批次管控物料出库必须指定批次号（缺失拒绝确认）");
+    }
+
+    /**
+     * 批次管控物料出库指定不存在批号 → ERR_BATCH_NOT_FOUND（「批次在库」校验，修复前 findBatch null
+     * 同样 continue 放行——不存在批号可出库）。
+     */
+    @Test
+    public void testBatchNotInWarehouseRejectedOnOutgoing() {
+        seedBatchLedger(BATCH_FUTURE, MATERIAL_BATCH_FUTURE, CoreMetrics.currentDate().plusDays(30));
+
+        ApiResponse<?> resp = genMove(outgoingReq("SALES_SHIP", "SS-NF-001", MATERIAL_BATCH_FUTURE,
+                new BigDecimal("5"), "BATCH-NO-SUCH"));
+        assertEquals(ErpInvErrors.ERR_BATCH_NOT_FOUND.getErrorCode(), resp.getCode(),
+                "指定批次在仓库不存在应拒绝（批次在库校验）");
+    }
+
     // ---------- ⑦ 两步流：CRUD save DRAFT → confirm(moveId) 拒绝后保持 DRAFT + reserved 不变 ----------
 
     @Test

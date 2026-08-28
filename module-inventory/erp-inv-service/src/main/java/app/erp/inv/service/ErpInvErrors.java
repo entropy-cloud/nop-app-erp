@@ -45,6 +45,7 @@ public interface ErpInvErrors {
 
     // 批次效期拦截（RC-R1.20 / P1-RC-031，UC-INV-06 ④）
     String ARG_BATCH_NO = "batchNo";
+    String ARG_SERIAL_NO = "serialNo";
     String ARG_EXPIRY_DATE = "expiryDate";
 
     ErrorCode ERR_ILLEGAL_STATUS_TRANSITION = ErrorCode.define("erp.err.inv.illegal-status-transition",
@@ -60,6 +61,18 @@ public interface ErpInvErrors {
     ErrorCode ERR_BATCH_EXPIRED = ErrorCode.define("erp.err.inv.batch-expired",
             "批次已过期：物料 {materialId} / 批次 {batchNo} 有效期至 {expiryDate}，拒绝出库确认",
             ARG_MATERIAL_ID, ARG_BATCH_NO, ARG_EXPIRY_DATE);
+
+    // P1-CK-inv-004（state-machine.md §4「批次/序列号缺失拒绝确认」）：
+    // 批次/序列号管控物料的出库移动单必须指定批次/序列号——缺失拒绝确认（修复前无批号行静默跳过）。
+    ErrorCode ERR_BATCH_REQUIRED = ErrorCode.define("erp.err.inv.batch-required",
+            "批次管控物料 {materialId} 出库必须指定批次号（缺失拒绝确认）",
+            ARG_MATERIAL_ID);
+    ErrorCode ERR_BATCH_NOT_FOUND = ErrorCode.define("erp.err.inv.batch-not-found",
+            "批次管控物料 {materialId} 指定批次 {batchNo} 在仓库不存在（缺失拒绝确认）",
+            ARG_MATERIAL_ID, ARG_BATCH_NO);
+    ErrorCode ERR_SERIAL_REQUIRED = ErrorCode.define("erp.err.inv.serial-required",
+            "序列号管控物料 {materialId} 出库必须指定序列号（缺失拒绝确认）",
+            ARG_MATERIAL_ID);
 
     // 并发扣减乐观锁冲突重试耗尽（plan 2026-07-07-0024-2；UC-INV-08；concurrency-and-transactions.md §模式四）
     ErrorCode ERR_INV_CONCURRENT_DEDUCT_CONFLICT = ErrorCode.define("erp.err.inv.concurrent-deduct-conflict",

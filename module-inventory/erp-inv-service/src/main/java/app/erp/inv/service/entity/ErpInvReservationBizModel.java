@@ -508,16 +508,26 @@ public class ErpInvReservationBizModel extends AbstractErpCrudBizModel<ErpInvRes
      *  owner 维度仅 ownership-tracking-enabled 时入键——与库存移动单路径查询口径一致）。 */
     protected ErpInvStockBalance findBalance(String orgId, String materialId, String skuId, String warehouseId,
                                              String locationId, String batchNo) {
+        // P1-CK-inv-002：镜像 StockMoveBookkeeper.findBalance 自然键精确匹配（skuId 过滤 + nullable IS NULL）
         IEntityDao<ErpInvStockBalance> dao = balanceDao();
         QueryBean q = new QueryBean();
         q.addFilter(eq("orgId", orgId));
         q.addFilter(eq("materialId", materialId));
+        if (skuId != null) {
+            q.addFilter(eq("skuId", skuId));
+        } else {
+            q.addFilter(isNull("skuId"));
+        }
         q.addFilter(eq("warehouseId", warehouseId));
         if (locationId != null) {
             q.addFilter(eq("locationId", locationId));
+        } else {
+            q.addFilter(isNull("locationId"));
         }
         if (batchNo != null) {
             q.addFilter(eq("batchNo", batchNo));
+        } else {
+            q.addFilter(isNull("batchNo"));
         }
         if (bookkeeper.isOwnershipTrackingEnabled()) {
             q.addFilter(isNull("ownerId"));

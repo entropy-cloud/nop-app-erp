@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Objects;
 
 import static io.nop.api.core.beans.FilterBeans.eq;
+import static io.nop.api.core.beans.FilterBeans.isNull;
 
 /**
  * 成本调整引擎（plan 2026-07-05-2352-3；costing-methods.md §成本调整）。
@@ -277,8 +278,13 @@ public class CostAdjustmentService {
         q.addFilter(eq("orgId", orgId));
         q.addFilter(eq("materialId", materialId));
         q.addFilter(eq("warehouseId", warehouseId));
+        // P1-CK-inv-002（部分）：batchNo 为 null 时 IS NULL 精确匹配（修复前可能命中带批次的既有行）。
+        // 成本调整行无 skuId/locationId 维度，不参与过滤（既有余额行可能带库位——loc 精确匹配会漏配，
+        // 该维度归独立 successor）。
         if (batchNo != null) {
             q.addFilter(eq("batchNo", batchNo));
+        } else {
+            q.addFilter(isNull("batchNo"));
         }
         List<ErpInvStockBalance> list = dao.findAllByQuery(q);
         return list.isEmpty() ? null : list.get(0);

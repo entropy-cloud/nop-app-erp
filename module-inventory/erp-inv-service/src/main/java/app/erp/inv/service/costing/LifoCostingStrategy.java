@@ -80,7 +80,7 @@ public class LifoCostingStrategy implements CostingStrategy {
                                  BookingContext ctx) {
         String warehouseId = move.getSourceWarehouseId();
         String locationId = line.getSourceLocationId() != null ? line.getSourceLocationId()
-                : move.getSourceWarehouseId();
+                : move.getSourceLocationId();
         ErpInvStockBalance balance = ctx.upsertBalance(move, line, warehouseId, locationId);
         BigDecimal qty = nz(line.getQuantity());
 
