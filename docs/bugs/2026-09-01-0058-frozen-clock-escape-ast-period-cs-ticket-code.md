@@ -2,7 +2,7 @@
 
 > 来源：mission `2026-08-29-1913-1-page-graphql-to-rest-migration` 收尾验证（2026-09-01，系统日期跨月当日，全 reactor `mvn test -fae`）
 > 关联：`docs/bugs/2026-09-01-0017-frozen-clock-escape-bankrecon-employee-advance.md`（同族根因，fin 侧同日已修复并 closed；本条为其 **ast/cs 侧未迁移残例**）
-> 状态：**open**（本轮不修，归属独立冻结时钟对齐切片，见文末 successor）
+> 状态：**closed**（2026-09-01 当日已按 0017 配方修复并全 reactor 复绿，见文末修复落地）
 
 ## 问题
 
@@ -23,6 +23,14 @@
 - hr/drp 的 08-31 已知失败本轮**通过**（drp `TestErpDrpCrossDock` 等 98/98 绿），进一步佐证 08-31 那批失败亦与时钟/数据时点相关，非稳定回归。
 
 ## 修复方案（successor 切片执行，未落地）
+
+> **修复落地（2026-09-01，mission verify 步当日修复，无需 successor）**：按 0017 配方执行并全绿——
+>
+> 1. **ast 生产侧**：`ErpAstDepreciationScheduleRecalculateForCapitalizationMaintenanceProcessor` 重算基数月 `YearMonth.now()`（裸系统时钟）→ `YearMonth.from(CoreMetrics.today())`（回归 IClock 时间线，fin 侧同款）。
+> 2. **cs 生产侧接缝**：TK 编码日期源在平台 `SysCodeRuleGenerator` ← `nopSysCalendar`（`DefaultSysCalendar` 直读 `LocalDateTime.now()`，绕过冻结时钟）。cs 测试 delta `app-dao.beans.xml` 覆盖 `nopSysCalendar` → 新增 `app.erp.common.test.CoreMetricsSysCalendar`（经 `CoreMetrics` 读日期；未冻结线程委托系统真实时钟，生产行为不变）。
+> 3. **测试类接线**：`TestErpAstMaintenance` 补 `AstFrozenClockExtension`；`TestErpCsTicketCreateEnrichment` / `TestErpCsCatalogFulfillmentEngine` 补 `CsFrozenClockExtension`（参考日均 2026-07-17）。
+> 4. **快照对齐参考日**：ast 5 用例 `erp_ast_depreciation_schedule.csv` 重算行 PERIOD 序列整体 -1 月（种子行 PLANNED=0 不动）；cs 11 文件 `TK202608*`→`TK202607*`、`cs_ticket_code_seq_202608`→`cs_ticket_code_seq_202607`。
+> 5. **验证**：ast-service 339/339、cs-service 185/185、app-erp-all 69/69（1 pre-existing skip）全绿；全 reactor `mvn test -fae` **BUILD SUCCESS**（139+ 模块全绿，含原失败 ast/cs 两模块）。
 
 按 0017 已验证配方：
 
