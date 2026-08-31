@@ -1,0 +1,23 @@
+{
+  "name": "comprehensive-test-data-and-visual-coverage",
+  "description": "nop-app-erp 全量测试数据 + 视觉回归覆盖 mission（roadmap 已就位 docs/backlog/comprehensive-test-data-and-visual-coverage-roadmap.md，状态 ready：2026-08-31 人工批准转 ready + 4 轮独立子代理审查收敛 iteration 4 0 Blocker + 0 Major + 0 Minor 残留；19 工作项 M0.1~M0.3 / M1.1a~M1.5 / M2.1~M2.4 / M3.1 全部 ready；不立即执行，待用户用 `./tools/mission-driver.sh run comprehensive-test-data-and-visual-coverage` 启动）：363 app.erp.* 实体 seed 全覆盖 + 视觉 E2E 像素断言扩面。完成口径：roadmap §目的「完成口径对账」段权威；约束：执行期任何 seed 变更触发快照重录双面义务；E2E 运行不依赖 AI；AI 截屏仅诊断不裁决；动态状态真相源 = roadmap。保护区域：M0/M1 涉及 seed 与 ORM 边界讨论时按 ask-first + 双独立子代理批准保护区域走；M2 视觉 mask 调整按独立 plan-audit 走；M1.2a1 finance + M1.3 HR + M1.5 b2b EDI 涉既有保护区域（accounting/finance postings + auth/permissions + deployment/external integrations）。",
+  "roadmapPath": "docs/backlog/comprehensive-test-data-and-visual-coverage-roadmap.md",
+  "plansDir": "docs/plans",
+  "planGuide": "docs/plans/00-plan-authoring-and-execution-guide.md",
+  "auditsDir": "docs/audits",
+  "contextDir": "docs/context",
+  "moduleDir": ".",
+  "commands": {
+    "test": "mvn test",
+    "build": "mvn clean install -DskipTests",
+    "compliance": "bash docs/audits/nop-compliance-checker.sh"
+  },
+  "prompts": {
+    "multiAudit": "docs/skills/multi-dimensional-audit-prompt.md",
+    "openAudit": "docs/skills/open-ended-audit-prompt.md"
+  },
+  "commitFormat": "<type>: <description>",
+  "model": "zhipuai-coding-plan/glm-5.3-flash",
+  "variant": "max",
+  "statusNote": "roadmap 已就位（docs/backlog/comprehensive-test-data-and-visual-coverage-roadmap.md，385 行 iteration 3 修订后版 + iteration 4 修订后版）。3 路独立子代理审查轨迹：iteration 1 NEEDS REVISION（8 Blocker + 16 Major + 17 Minor 全部并入 v2）；iteration 2 NEEDS REVISION（4 Blocker + 12 Major + 10 Minor 全部并入 v3）；iteration 3 NEEDS REVISION（1 Major + 3 Minor，剩 mission statusNote 同步 + seed 计数 92→93 校准 + 已知 good-baselines 行引用清理）；iteration 4 综合 accept 审查（0 Blocker + 1 Major + 0 Minor——1 Major = 92→93 校准 L10/L105 覆盖漏改，已修订）。**2026-08-31 人工批准转 ready**——所有 19 工作项 todo→ready，roadmap 就绪进入 mission driver 执行期；不立即执行，待用户用 `./tools/mission-driver.sh run comprehensive-test-data-and-visual-coverage` 启动。注意：roadmap §规则 10 声明 mission driver 拒绝 todo/ready DRAFT_PLANS 是 roadmap 自述约定——实际 driver 代码（engine.js / config.js / roadmap-check.mjs）无 todo/ready 强制 gate，依赖 plan 阶段人工校验 + mission-driver 流程纪律。注意：`audit-rounds` 是 mission driver run 时 `flow.json:maxAuditRounds` 的展示值（DEEP_AUDIT step 轮次），与 roadmap frontmatter 无关——roadmap 不含 audit-rounds 字段。"
+}

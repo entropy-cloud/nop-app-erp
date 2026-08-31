@@ -1,0 +1,86 @@
+{
+  "name": "ai-check-r3",
+  "description": "ai-check 第三轮：逐模块 × 五维（后端/前端/seed/单元测试/i18n）标准符合性深度审计 + i18n 硬编码中文确定性清剿。与 r1（行为缺陷 D1-D10）/ r2（代码×历史×Deferred 三路交叉）并行不吞并。方法学特征：①规范成文先行（M0.1 新建 docs/architecture/i18n-compliance.md 裁定 ErrorCode 中文合规 + Errors @Locale(zh-CN) + LOG 英文化 + 白名单制）；②机械类违规用 tools/check-hardcoded-cjk.mjs 全量扫描 + 基线单向收紧（--strict 脚本绿=闭环，镜像 i18n-coverage-checker.sh anti-fake-green 范式）；③五维×21 核对单元（19 业务域 + common-service + app-erp-all 横切）覆盖矩阵强制全覆盖禁抽样。多次执行隔离：本轮唯一规范子目录 <YYYY-MM-DD-HHmm>-ai-check-r3 由 M0.3 创建，plan 幂等复用，历史轮次目录只读。独立草案审查：迭代 1 NEEDS REVISION（extends 链断裂等 5 项）→ 迭代 2 PASS-WITH-MINOR（2026-08-31，mission-check + dry-run 16 步 + 解析器 48 工作项实测通过），M0 全 ready。",
+  "roadmapPath": "docs/backlog/ai-check-r3-roadmap.md",
+  "plansDir": "docs/plans",
+  "planGuide": "docs/plans/00-plan-authoring-and-execution-guide.md",
+  "auditsDir": "docs/audits/check",
+  "contextDir": "docs/context",
+  "moduleDir": ".",
+  "commands": {
+    "test": "mvn test",
+    "build": "mvn clean install -DskipTests",
+    "compliance": "bash docs/audits/nop-compliance-checker.sh",
+    "i18nCoverage": "bash docs/audits/i18n-coverage-checker.sh",
+    "cjkCheck": "node tools/check-hardcoded-cjk.mjs --strict"
+  },
+  "prompts": {
+    "auditRoadmapAuthoring": "docs/skills/audit-remediation-roadmap-authoring-prompt.md",
+    "executionWorkflow": "docs/skills/executions/audit-roadmap-authoring-workflow.md",
+    "platformConformance": "docs/skills/nop-platform-conformance-audit-prompt.md",
+    "codeQualityAudit": "docs/skills/code-quality-audit-prompt.md",
+    "behavioralScan": "docs/skills/behavioral-failure-mode-scan-prompt.md",
+    "bugDiagnosis": "docs/skills/bug-diagnosis-prompt.md",
+    "planAudit": "docs/skills/plan-audit-prompt.md",
+    "closureAudit": "docs/skills/closure-audit-prompt.md",
+    "complianceBaselineDrift": "docs/skills/compliance-baseline-drift-adjudication-prompt.md",
+    "i18nStandard": "docs/architecture/i18n-compliance.md"
+  },
+  "commitFormat": "<type>: <description>",
+  "model": "zhipuai-coding-plan/glm-5.3-flash",
+  "variant": "max",
+  "indexPath": "docs/audits/check/ai-check-index.md",
+  "reportDir": "docs/audits/check",
+  "reportNaming": "ck-<slice>.md",
+  "executionDirPrefix": "docs/audits/check/",
+  "reportDirTemplate": "<executionDirPrefix><YYYY-MM-DD-HHmm>-ai-check-r3/",
+  "roundIndexTemplate": "<reportDirTemplate>ai-check-r3-index.md",
+  "reportTemplate": "<reportDirTemplate>ck-<slice>.md",
+  "cjkBaseline": "docs/audits/cjk-baseline.md",
+  "i18nStandardDoc": "docs/architecture/i18n-compliance.md",
+  "executionMode": "serial",
+  "executionIsolationDiscipline": {
+    "enabled": true,
+    "description": "每轮执行使用 M0.3 创建的唯一规范子目录 <YYYY-MM-DD-HHmm>-ai-check-r3/（路径登记于本轮索引头部）；本轮内各 plan 幂等复用该目录（mkdir -p 同一路径）；不写到 docs/audits/check/ 扁平空间；不复用历史轮次目录（含 r1/r2 目录）；历史子目录只读保留。新开一轮执行 = 新时间戳新目录。",
+    "timestampPrecision": "minute (HHmm)；同 mission 同分钟并发用秒级补齐",
+    "formatStrict": "YYYY-MM-DD-HHmm-<mission-name>",
+    "forbidden": [
+      "复用历史执行目录",
+      "覆盖 docs/audits/check/ck-*.md 扁平空间",
+      "历史目录中追加新文件"
+    ]
+  },
+  "protectionZones": {
+    "ormModel": "auto + dual-agent-approval",
+    "apiContract": "auto + dual-agent-approval",
+    "accountingPosting": "plan-first",
+    "authPermissions": "plan-first",
+    "dataDeletion": "auto + dual-agent-approval",
+    "seedData": "plan-first（seed-data.md 快照重录双面义务触发时）"
+  },
+  "severityLevels": ["P0", "P1", "P2", "P3"],
+  "repairChannelRules": {
+    "P0": "immediate (plan-internal Phase or async-injected fix plan)",
+    "P1": "batched by domain / dimension cluster",
+    "P2": "deferred successor with explicit trigger condition",
+    "P3": "note only, no plan"
+  },
+  "twoPhaseDiscipline": {
+    "auditPlansMustNotModifyCode": true,
+    "fixPlansMustWriteFailingTestFirst": true,
+    "fixFailingTestEquivalent": "MI 修复批以 tools/check-hardcoded-cjk.mjs 对应 CAT 红线为失败测试等价物（M0.2 交付后生效）",
+    "auditReportsGoTo": "<reportDirTemplate>ck-<slice>.md",
+    "indexUpdateRequiredAfterReport": true,
+    "indexUpdateRequiredAfterFix": true,
+    "twoIndexUpdate": [
+      "<roundIndexTemplate>（本轮索引）",
+      "docs/audits/check/ai-check-index.md（跨轮聚合索引）"
+    ]
+  },
+  "crossRoundFindingIdRules": {
+    "conflictHandlingReference": "docs/skills/code-history-deferred-triangulation-audit-prompt.md §3.1",
+    "conflictSuffix": "-r3",
+    "neverOverwriteHistoricalIds": true,
+    "parallelRoundsNote": "r1（F2.13+/F3.x/V/G）与 r2（M1.x/M2.x）继续独立推进；三轮共写跨轮聚合索引，本轮只追加不回写他轮行"
+  }
+}

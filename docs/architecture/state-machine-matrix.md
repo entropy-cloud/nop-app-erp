@@ -271,11 +271,11 @@ python3 docs/audits/scripts/state-machine-coverage-check.py \
 
 M5.3 是 entity-state-machine-migration mission 的**收官里程碑**。当 M5.1 + M5.2 都 done 后，启动 M5.3 closure audit。需独立子代理用 `closure-audit-prompt.md` 跑以下 6 项：
 
-- [ ] **CG1**：M5.1 工具 `bash tools/check-state-machine-coverage.sh --strict` 退出码 0（确保扫描 + writer 索引 + 4 维度对账正确）
-- [ ] **CG2**：M5.1 工具在 stub 场景下检测到 5 个 finding + exit 1（确保 finding 检测能力）
-- [ ] **CG3**：M5.2 wrapper 的多次执行隔离目录正确创建（`docs/audits/check/<TS>-entity-state-machine-m5-2/`）
-- [ ] **CG4**：`docs/architecture/state-machine-matrix.md` 全部 9 章节齐全（§1 审计方法学 / §2 工具使用 / §3 维护义务 / §4 白名单 / §5 工具开发约定 / §6 关联文档 / §7 M5.2 守卫层 / §8 误报裁决 / §9 closure audit checklist）
-- [ ] **CG5**：`mvn clean install -DskipTests` 全仓 BUILD SUCCESS + compliance 零漂移（最后一次全量验证）
-- [ ] **CG6**：所有产物在 commit 历史中可追溯（plan doc / 工具脚本 / 报告 / 维护入口 / wrapper / LATEST 链接）
+- [x] **CG1**：M5.1 工具 `bash tools/check-state-machine-coverage.sh --strict` 退出码 0（确保扫描 + writer 索引 + 4 维度对账正确）——2026-08-31 HEAD 复核 105 Bean / 0 finding（2209 目录）
+- [x] **CG2**：M5.1 工具在 stub 场景下检测到 5 个 finding + exit 1（确保 finding 检测能力）——2026-08-31 5 stub 补验：4 类型全覆盖（ORPHAN_DICT_VALUE×2 + UNREACHABLE/REVERSIBLE_TERMINAL/DUPLICATE 各 1）+ exit 1，删除后恢复 0/exit 0
+- [x] **CG3**：M5.2 wrapper 的多次执行隔离目录正确创建（`docs/audits/check/<TS>-entity-state-machine-m5-2/`）——2026-08-31 2216/2217 新子目录 + LATEST-m5-2 指向最新 + 08-28 历史只读保留
+- [x] **CG4**：`docs/architecture/state-machine-matrix.md` 全部 9 章节齐全（§1 审计方法学 / §2 工具使用 / §3 维护义务 / §4 白名单 / §5 工具开发约定 / §6 关联文档 / §7 M5.2 守卫层 / §8 误报裁决 / §9 closure audit checklist）——2026-08-31 grep 复核行号 8/21/81/125/148/173/188/244/270，每章节 ≥5 行
+- [x] **CG5**：`mvn clean install -DskipTests` 全仓 BUILD SUCCESS + compliance 零漂移（最后一次全量验证）——锚定 known-good-baselines 2026-08-31 plan-1426-2 行（156 模块 + 3975 tests）+ checker exit 0 R2c=1542 精确一致
+- [x] **CG6**：所有产物在 commit 历史中可追溯（plan doc / 工具脚本 / 报告 / 维护入口 / wrapper / LATEST 链接）——独立子代理 closure-audit-prompt 2026-08-31 **Verdict: ACCEPT**（`docs/audits/check/2026-08-28-2103-entity-state-machine-m5-3/closure-audit.md`）
 
 若 6 项全过，由独立子代理在 M5.3 plan 中标注「M5.3 done」，mission closure audit PASS，roadmap 全部工作项 done，**entity-state-machine-migration mission 完结**。

@@ -1,0 +1,12 @@
+{
+  "summary": {
+    "beans_scanned": 105,
+    "findings_total": 0,
+    "findings_after_whitelist": 0,
+    "whitelisted": 0
+  },
+  "by_domain": {},
+  "by_finding_type": {},
+  "findings": [],
+  "whitelisted_findings": []
+}
