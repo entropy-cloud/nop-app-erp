@@ -62,7 +62,7 @@ body:
               - type: text
                 tag: span
                 className: h3 text-success
-                text: "${kpiData?.slaCompletionRate != null ? ((kpiData.slaCompletionRate * 100) | round:1) + '%' : '-'}"
+                text: "${kpiData?.slaCompletionRate != null ? (ROUND(kpiData.slaCompletionRate * 100, 1)) + '%' : '-'}"
       - colSpan: 1
         body:
           - type: card

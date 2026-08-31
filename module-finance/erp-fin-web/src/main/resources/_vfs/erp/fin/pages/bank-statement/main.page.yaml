@@ -45,7 +45,7 @@ body:
               - type: text
                 tag: span
                 className: h3 text-success
-                text: "¥${(statementData?.items ?? []).reduce((s, r) => s + (Number(r.totalDebit) || 0), 0) ?? 0 | round:2}"
+                text: "¥${ROUND(((statementData?.items ?? []).reduce((s, r) => s + (Number(r.totalDebit) || 0), 0) ?? 0), 2)}"
       - colSpan: 1
         body:
           - type: card
@@ -58,7 +58,7 @@ body:
               - type: text
                 tag: span
                 className: h3 text-danger
-                text: "¥${(statementData?.items ?? []).reduce((s, r) => s + (Number(r.totalCredit) || 0), 0) ?? 0 | round:2}"
+                text: "¥${ROUND(((statementData?.items ?? []).reduce((s, r) => s + (Number(r.totalCredit) || 0), 0) ?? 0), 2)}"
 
   - type: crud
     name: statementCrud

@@ -86,11 +86,11 @@ body:
       - type: text
         tag: div
         className: m-b
-        text: "账面净值：<strong>¥${previewAssetData?.netBookValue ?? 0 | round:2}</strong> · 处置金额：<strong>¥${step1Form?.disposalAmount ?? 0 | round:2}</strong>"
+        text: "账面净值：<strong>¥${ROUND((previewAssetData?.netBookValue ?? 0), 2)}</strong> · 处置金额：<strong>¥${ROUND((step1Form?.disposalAmount ?? 0), 2)}</strong>"
       - type: text
         tag: div
         className: "alert alert-${(Number(step1Form?.disposalAmount || 0) - Number(previewAssetData?.netBookValue || 0)) >= 0 ? 'success' : 'danger'}"
-        text: "${(Number(step1Form?.disposalAmount || 0) - Number(previewAssetData?.netBookValue || 0)) >= 0 ? '清理收益' : '清理损失'}：¥${(Number(step1Form?.disposalAmount || 0) - Number(previewAssetData?.netBookValue || 0)) | round:2}"
+        text: "${(Number(step1Form?.disposalAmount || 0) - Number(previewAssetData?.netBookValue || 0)) >= 0 ? '清理收益' : '清理损失'}：¥${ROUND((Number(step1Form?.disposalAmount || 0) - Number(previewAssetData?.netBookValue || 0)), 2)}"
 
       # Step 3：确认提交
       - type: button

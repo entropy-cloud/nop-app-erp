@@ -6,6 +6,7 @@ title: 制造概览
 body:
 - type: form
   name: filterForm
+  valuesPath: filterForm
   title: ""
   mode: inline
   wrapWithPanel: false
@@ -81,7 +82,7 @@ body:
       - type: text
         tag: h3
         className: text-success
-        text: "${kpiData?.periodCompletedQty ?? 0 | round:2}"
+        text: "${ROUND((kpiData?.periodCompletedQty ?? 0), 2)}"
   - colSpan: 1
     body:
     - type: card
@@ -94,7 +95,7 @@ body:
       - type: text
         tag: h3
         className: text-primary
-        text: "${kpiData?.onTimeRate ?? 0 | round:2}"
+        text: "${ROUND((kpiData?.onTimeRate ?? 0), 2)}"
   - colSpan: 1
     body:
     - type: card

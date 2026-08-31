@@ -99,17 +99,53 @@ export interface DashboardVisualAssertion {
   expectedKpiTokens?: string[];
   hasChart: boolean;
   alertTable: boolean;
-  /** Form field values to fill before reloading, locking deterministic seed
-   * values (aligned with the value-spec layer). Without these, date/period
-   * KPIs would drift with the server clock. */
+  /** Fillable filter inputs (input-text / input-number), keyed by field name. */
   filterValues?: Record<string, string>;
+  /** Flux date-picker filters, keyed by the trigger's aria-label (field label).
+   * The picker is a button + calendar popover (no fillable input), so dates are
+   * chosen by driving the calendar day buttons (aria-label "YYYY年M月D日 星期X"). */
+  filterDates?: Record<string, string>;
   /** GraphQL action name whose response marks the post-reload KPI ready.
    * Defaults to `getDashboardKpi`. */
   kpiAction?: string;
 }
 
 async function kpiSpanTexts(page: Page): Promise<string[]> {
-  return page.locator('span.h3').allTextContents();
+  // Flux renders KPI values as real <h3> tags (text tag: h3) inside the
+  // `.border.rounded.p-3` cards; `span.h3` is the legacy AMIS markup.
+  return page.locator('.border.rounded.p-3 h3, .border.rounded.p-3 span.h3').allTextContents();
+}
+
+/** Pick a date in the flux calendar popover (react-day-picker day buttons carry
+ * a full-date aria-label, month nav buttons are 前往上个月/前往下个月). */
+async function pickFluxDate(page: Page, label: string, value: string): Promise<void> {
+  const [y, mo, d] = value.split('-').map(Number);
+  const target = `${y}年${mo}月${d}日`;
+  const trigger = page.locator(`[data-testid="date-trigger"][aria-label="${label}"]`).first();
+  await trigger.click();
+  const popover = page.locator('[data-testid="date-popover"]');
+  await popover.waitFor({ state: 'visible', timeout: 5_000 });
+
+  for (let i = 0; i < 24; i++) {
+    const day = popover.locator(`button[aria-label^="${target} "]`);
+    if (await day.count() > 0) {
+      await day.first().click();
+      await popover.waitFor({ state: 'hidden', timeout: 5_000 }).catch(() => {});
+      return;
+    }
+    // Detect the DISPLAYED month via the day-15 cell: leading/trailing grid
+    // cells belong to adjacent months, but day 15 always belongs to the
+    // displayed one.
+    const probe = await popover.locator('button').filter({ hasText: /^15$/ }).first().getAttribute('aria-label');
+    const m = probe?.match(/(\d{4})年(\d{1,2})月/);
+    if (!m) throw new Error(`Cannot read displayed month for date picker "${label}"`);
+    const cur = Number(m[1]) * 12 + Number(m[2]);
+    const tgt = y * 12 + mo;
+    const nav = tgt < cur ? '前往上个月' : '前往下个月';
+    await popover.locator(`button[aria-label="${nav}"]`).click();
+    await page.waitForTimeout(250);
+  }
+  throw new Error(`Date ${value} not reachable in the "${label}" calendar`);
 }
 
 export function assertDashboardRendered(cfg: DashboardVisualAssertion): void {
@@ -117,14 +153,14 @@ export function assertDashboardRendered(cfg: DashboardVisualAssertion): void {
     test('renders KPI cards + echarts canvas + alert table via AMIS GraphQL pipeline', async ({ page }) => {
       const kpiAction = cfg.kpiAction ?? 'getDashboardKpi';
 
-      // Initial load (default/empty filters) — captures the AMIS GraphQL
-      // pipeline integrity. Defect A (mangled `$var`) still returns HTTP 200
-      // here, so this alone does not prove values; the token assertions below do.
+      // Initial load (default/empty filters) — captures the dashboard data
+      // pipeline integrity. A mangled `$var` still returns HTTP 200 here, so
+      // this alone does not prove values; the token assertions below do.
+      // Dashboards call the backend via REST (`/r/<Biz>__<action>`), not GraphQL.
       const initialResponsePromise = page.waitForResponse(
         (resp) => {
-          if (!resp.url().includes('/graphql')) return false;
-          const body = resp.request().postData() || '';
-          return body.includes(kpiAction);
+          if (!resp.url().includes('/r/')) return false;
+          return resp.url().includes(kpiAction) || decodeURIComponent(resp.url()).includes(kpiAction);
         },
         { timeout: 30_000 },
       );
@@ -132,22 +168,37 @@ export function assertDashboardRendered(cfg: DashboardVisualAssertion): void {
       await loginAndNavigate(page, cfg.route);
       await initialResponsePromise;
 
-      // Deterministic filtered reload: fill the filter form, then click the
-      // "刷新" reload button, then wait for the post-reload KPI response. This
-      // locks date/period ranges to seed values (same caliber as value specs).
-      if (cfg.filterValues && Object.keys(cfg.filterValues).length > 0) {
-        for (const [name, value] of Object.entries(cfg.filterValues)) {
-          await page.locator(`input[name="${name}"]`).first().fill(value);
-        }
+      // Deterministic filtered reload: set the filter fields, then wait for the
+      // auto-reload they trigger. No button click is needed (and clicking is
+      // unreliable): the data-source args templates read `filterForm?.x`, flux
+      // dependency-tracking treats those reads as dependencies, and the
+      // valuesPath publish after each field change re-dispatches the source
+      // (debounced ~4s). Register the response listener BEFORE the fills —
+      // the click-triggered refreshSource after a fill-triggered reload is
+      // deduped and would never fire a new request.
+      const hasDateFilters = cfg.filterDates && Object.keys(cfg.filterDates).length > 0;
+      const hasValueFilters = cfg.filterValues && Object.keys(cfg.filterValues).length > 0;
+      if (hasDateFilters || hasValueFilters) {
         const reloadResponsePromise = page.waitForResponse(
           (resp) => {
-            if (!resp.url().includes('/graphql')) return false;
-            const body = resp.request().postData() || '';
-            return body.includes(kpiAction);
+            if (!resp.url().includes('/r/')) return false;
+            return resp.url().includes(kpiAction) || decodeURIComponent(resp.url()).includes(kpiAction);
           },
           { timeout: 30_000 },
         );
-        await page.getByRole('button', { name: /刷新|Refresh/ }).first().click();
+        if (hasValueFilters) {
+          for (const [name, value] of Object.entries(cfg.filterValues!)) {
+            await page.locator(`input[name="${name}"]`).first().fill(value);
+          }
+        }
+        if (hasDateFilters) {
+          for (const [label, value] of Object.entries(cfg.filterDates!)) {
+            await pickFluxDate(page, label, value);
+          }
+        }
+        // The fills are debounced; the first caught response may still carry a
+        // partial filter set. The token assertions below poll to the final
+        // values, so this wait only synchronizes on the reload pipeline.
         await reloadResponsePromise;
       }
 
@@ -171,14 +222,16 @@ export function assertDashboardRendered(cfg: DashboardVisualAssertion): void {
       }
 
       if (cfg.hasChart) {
+        // Flux renders charts with recharts (SVG); legacy AMIS used echarts canvas.
+        const chart = page.locator('canvas, svg.recharts-surface').first();
         await expect(
-          page.locator('canvas').first(),
-          `${cfg.domain} echarts canvas should render`,
+          chart,
+          `${cfg.domain} chart should render`,
         ).toBeVisible({ timeout: 20_000 });
-        const box = await page.locator('canvas').first().boundingBox();
+        const box = await chart.boundingBox();
         expect(
           box !== null && box.width > 0 && box.height > 0,
-          `${cfg.domain} echarts canvas should have non-zero size`,
+          `${cfg.domain} chart should have non-zero size`,
         ).toBe(true);
       }
 

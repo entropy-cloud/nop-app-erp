@@ -32,9 +32,8 @@ async function driveAndSnapshot(page: Page, cfg: DashboardSnapshot): Promise<voi
   const kpiAction = 'getDashboardKpi';
   const initialResponsePromise = page.waitForResponse(
     (resp) => {
-      if (!resp.url().includes('/graphql')) return false;
-      const body = resp.request().postData() || '';
-      return body.includes(kpiAction);
+      if (!resp.url().includes('/r/')) return false;
+      return resp.url().includes(kpiAction) || decodeURIComponent(resp.url()).includes(kpiAction);
     },
     { timeout: 30_000 },
   );
@@ -48,9 +47,8 @@ async function driveAndSnapshot(page: Page, cfg: DashboardSnapshot): Promise<voi
     }
     const reloadResponsePromise = page.waitForResponse(
       (resp) => {
-        if (!resp.url().includes('/graphql')) return false;
-        const body = resp.request().postData() || '';
-        return body.includes(kpiAction);
+        if (!resp.url().includes('/r/')) return false;
+        return resp.url().includes(kpiAction) || decodeURIComponent(resp.url()).includes(kpiAction);
       },
       { timeout: 30_000 },
     );

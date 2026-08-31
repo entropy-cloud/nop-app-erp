@@ -6,6 +6,7 @@ title: 资产概览
 body:
 - type: form
   name: filterForm
+  valuesPath: filterForm
   title: ""
   mode: inline
   wrapWithPanel: false
@@ -57,7 +58,7 @@ body:
       - type: text
         tag: h3
         className: text-primary
-        text: "¥${kpiData?.originalValue ?? 0 | round:2}"
+        text: "¥${ROUND((kpiData?.originalValue ?? 0), 2)}"
   - colSpan: 1
     body:
     - type: card
@@ -70,7 +71,7 @@ body:
       - type: text
         tag: h3
         className: text-danger
-        text: "¥${kpiData?.accumulatedDepreciation ?? 0 | round:2}"
+        text: "¥${ROUND((kpiData?.accumulatedDepreciation ?? 0), 2)}"
   - colSpan: 1
     body:
     - type: card
@@ -83,7 +84,7 @@ body:
       - type: text
         tag: h3
         className: font-bold
-        text: "¥${kpiData?.netBookValue ?? 0 | round:2}"
+        text: "¥${ROUND((kpiData?.netBookValue ?? 0), 2)}"
   - colSpan: 1
     body:
     - type: card
@@ -96,7 +97,7 @@ body:
       - type: text
         tag: h3
         className: text-warning
-        text: "¥${kpiData?.periodDepreciation ?? 0 | round:2}"
+        text: "¥${ROUND((kpiData?.periodDepreciation ?? 0), 2)}"
   - colSpan: 1
     body:
     - type: card
@@ -108,7 +109,7 @@ body:
         text: 在建工程余额
       - type: text
         tag: h3
-        text: "¥${kpiData?.cipBalance ?? 0 | round:2}"
+        text: "¥${ROUND((kpiData?.cipBalance ?? 0), 2)}"
 - type: data-source
   name: categoryData
   action: ajax

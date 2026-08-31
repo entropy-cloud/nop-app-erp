@@ -92,7 +92,7 @@ body:
               - type: text
                 tag: span
                 className: h3 text-success
-                text: "${kpiData?.passRate ?? 0 | round:2}"
+                text: "${ROUND((kpiData?.passRate ?? 0), 2)}"
       - colSpan: 1
         body:
           - type: card

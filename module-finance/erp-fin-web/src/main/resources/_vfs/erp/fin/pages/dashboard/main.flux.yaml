@@ -6,6 +6,7 @@ title: 财务概览
 body:
 - type: form
   name: filterForm
+  valuesPath: filterForm
   title: ""
   mode: inline
   wrapWithPanel: false
@@ -61,7 +62,7 @@ body:
       - type: text
         tag: h3
         className: m-t-xs m-b-0 text-success
-        text: "¥${kpiData?.revenue ?? 0 | round:2}"
+        text: "¥${ROUND((kpiData?.revenue ?? 0), 2)}"
   - colSpan: 1
     body:
     - type: card
@@ -74,7 +75,7 @@ body:
       - type: text
         tag: h3
         className: m-t-xs m-b-0 text-danger
-        text: "¥${kpiData?.expense ?? 0 | round:2}"
+        text: "¥${ROUND((kpiData?.expense ?? 0), 2)}"
   - colSpan: 1
     body:
     - type: card
@@ -87,7 +88,7 @@ body:
       - type: text
         tag: h3
         className: m-t-xs m-b-0 font-bold
-        text: "¥${kpiData?.netProfit ?? 0 | round:2}"
+        text: "¥${ROUND((kpiData?.netProfit ?? 0), 2)}"
   - colSpan: 1
     body:
     - type: card
@@ -100,7 +101,7 @@ body:
       - type: text
         tag: h3
         className: m-t-xs m-b-0
-        text: "¥${kpiData?.bankBalance ?? 0 | round:2}"
+        text: "¥${ROUND((kpiData?.bankBalance ?? 0), 2)}"
   - colSpan: 1
     body:
     - type: card
@@ -113,7 +114,7 @@ body:
       - type: text
         tag: h3
         className: m-t-xs m-b-0 text-primary
-        text: "¥${kpiData?.arBalance ?? 0 | round:2}"
+        text: "¥${ROUND((kpiData?.arBalance ?? 0), 2)}"
   - colSpan: 1
     body:
     - type: card
@@ -126,7 +127,7 @@ body:
       - type: text
         tag: h3
         className: m-t-xs m-b-0 text-warning
-        text: "¥${kpiData?.apBalance ?? 0 | round:2}"
+        text: "¥${ROUND((kpiData?.apBalance ?? 0), 2)}"
 - type: data-source
   name: trendData
   action: ajax

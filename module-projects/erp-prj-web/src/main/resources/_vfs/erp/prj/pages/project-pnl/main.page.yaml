@@ -44,7 +44,7 @@ body:
               - type: text
                 tag: span
                 className: h3 text-success
-                text: "¥${(pnlData?.items ?? []).reduce((s, r) => s + (Number(r.revenueAmount) || 0), 0) ?? 0 | round:2}"
+                text: "¥${ROUND(((pnlData?.items ?? []).reduce((s, r) => s + (Number(r.revenueAmount) || 0), 0) ?? 0), 2)}"
       - colSpan: 1
         body:
           - type: card
@@ -57,7 +57,7 @@ body:
               - type: text
                 tag: span
                 className: h3 text-danger
-                text: "¥${(pnlData?.items ?? []).reduce((s, r) => s + (Number(r.totalCost) || 0), 0) ?? 0 | round:2}"
+                text: "¥${ROUND(((pnlData?.items ?? []).reduce((s, r) => s + (Number(r.totalCost) || 0), 0) ?? 0), 2)}"
       - colSpan: 1
         body:
           - type: card
@@ -70,7 +70,7 @@ body:
               - type: text
                 tag: span
                 className: h3 text-primary
-                text: "¥${(pnlData?.items ?? []).reduce((s, r) => s + (Number(r.grossProfit) || 0), 0) ?? 0 | round:2}"
+                text: "¥${ROUND(((pnlData?.items ?? []).reduce((s, r) => s + (Number(r.grossProfit) || 0), 0) ?? 0), 2)}"
 
   - type: crud
     className: m-3

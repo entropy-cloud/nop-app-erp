@@ -6,6 +6,7 @@ title: 采购概览
 body:
 - type: form
   name: filterForm
+  valuesPath: filterForm
   title: ""
   mode: inline
   wrapWithPanel: false
@@ -68,7 +69,7 @@ body:
       - type: text
         tag: h3
         className: text-primary
-        text: "¥${kpiData?.purchaseAmount ?? 0 | round:2}"
+        text: "¥${ROUND((kpiData?.purchaseAmount ?? 0), 2)}"
   - colSpan: 1
     body:
     - type: card
@@ -94,7 +95,7 @@ body:
       - type: text
         tag: h3
         className: text-warning
-        text: "¥${kpiData?.apBalance ?? 0 | round:2}"
+        text: "¥${ROUND((kpiData?.apBalance ?? 0), 2)}"
   - colSpan: 1
     body:
     - type: card
@@ -107,7 +108,7 @@ body:
       - type: text
         tag: h3
         className: text-success
-        text: "${kpiData?.onTimeRate ?? 0 | round:2}"
+        text: "${ROUND((kpiData?.onTimeRate ?? 0), 2)}"
 - type: data-source
   name: trendData
   action: ajax

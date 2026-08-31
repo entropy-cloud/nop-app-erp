@@ -74,7 +74,7 @@ body:
               - type: text
                 tag: span
                 className: h3 text-primary
-                text: "¥${kpiData?.totalValue ?? 0 | round:2}"
+                text: "¥${ROUND((kpiData?.totalValue ?? 0), 2)}"
       - colSpan: 1
         body:
           - type: card
@@ -87,7 +87,7 @@ body:
               - type: text
                 tag: span
                 className: h3 text-success
-                text: "${kpiData?.incomingQty ?? 0 | round:2}"
+                text: "${ROUND((kpiData?.incomingQty ?? 0), 2)}"
       - colSpan: 1
         body:
           - type: card
@@ -100,7 +100,7 @@ body:
               - type: text
                 tag: span
                 className: h3 text-danger
-                text: "${kpiData?.outgoingQty ?? 0 | round:2}"
+                text: "${ROUND((kpiData?.outgoingQty ?? 0), 2)}"
       - colSpan: 1
         body:
           - type: card
@@ -113,7 +113,7 @@ body:
               - type: text
                 tag: span
                 className: h3 font-bold
-                text: "${kpiData?.turnoverRate ?? 0 | round:4}"
+                text: "${ROUND((kpiData?.turnoverRate ?? 0), 4)}"
 
   - type: data-source
     name: trendData

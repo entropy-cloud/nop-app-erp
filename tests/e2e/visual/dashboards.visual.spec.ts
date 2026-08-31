@@ -13,14 +13,15 @@ import { assertDashboardRendered } from './_helper';
 // Expected tokens derive from the value-spec layer
 // (tests/e2e/dashboards/*.value.spec.ts -> docs/analysis/2026-07-08-1445-2-...).
 //
-// NOTE on date filters: the AMIS `input-date` filter renders no fillable
-// `<input name>` (it is a custom picker component), so date-range dashboards
-// are asserted on their DEFAULT current-month load. The seed data is dated
-// 2026-07, so when the server clock is in that month the default range
-// (month-to-date) covers the seed and the tokens match. The deterministic
-// date-locked assertions live in the value-spec layer (which posts explicit
-// startDate/endDate). periodId-based dashboards (finance/assets) DO expose a
-// fillable input and are locked explicitly.
+// NOTE on date filters: flux `input-date` renders a fillable `<input
+// name>`, so every parameterized dashboard is locked to the seed window via
+// explicit filterValues (mirroring the value-spec layer). This is required,
+// not optional: global-setup pins the "current period" to the running month
+// (E2E-AUTO-<yyyymm>), so the unfiltered month-to-date default no longer
+// covers the fixed 2026-07 seed dates once the clock moves past July 2026.
+// The form values only reach the page-level data-sources because the
+// dashboard filterForm declares `valuesPath: filterForm` (flux forms publish
+// to the parent scope only via valuesPath).
 
 assertDashboardRendered({
   domain: 'finance',
@@ -34,6 +35,10 @@ assertDashboardRendered({
 assertDashboardRendered({
   domain: 'sales',
   route: '/sal-dashboard-main',
+  // Explicit seed-month range (mirrors sales.value.spec.ts). The unfiltered
+  // default is month-to-date; global-setup pins the current period to the
+  // running month, which no longer covers the fixed 2026-07 seed dates.
+  filterDates: { 开始日期: '2026-07-01', 结束日期: '2026-07-31' },
   expectedKpiTokens: ['1000'],
   hasChart: true,
   alertTable: true,
@@ -42,6 +47,7 @@ assertDashboardRendered({
 assertDashboardRendered({
   domain: 'purchase',
   route: '/pur-dashboard-main',
+  filterDates: { 开始日期: '2026-07-01', 结束日期: '2026-07-31' },
   expectedKpiTokens: ['850'],
   hasChart: true,
   alertTable: true,
@@ -50,6 +56,7 @@ assertDashboardRendered({
 assertDashboardRendered({
   domain: 'inventory',
   route: '/inv-dashboard-main',
+  filterDates: { 开始日期: '2026-07-01', 结束日期: '2026-07-31' },
   expectedKpiTokens: ['10450'],
   hasChart: true,
   alertTable: true,
@@ -78,9 +85,9 @@ assertDashboardRendered({
 assertDashboardRendered({
   domain: 'manufacturing',
   route: '/mfg-dashboard-main',
-  // Default month-to-date load (seed 2026-07) -> periodCompletedQty = 80.
-  // (The value spec's 180 spans the wider 2026-06-01..07-31 range.)
-  expectedKpiTokens: ['80'],
+  // Same range as manufacturing.value.spec.ts -> periodCompletedQty = 180.
+  filterDates: { 开始日期: '2026-06-01', 结束日期: '2026-07-31' },
+  expectedKpiTokens: ['180'],
   hasChart: true,
   alertTable: true,
 });
@@ -88,6 +95,7 @@ assertDashboardRendered({
 assertDashboardRendered({
   domain: 'maintenance',
   route: '/mnt-dashboard-main',
+  filterDates: { 开始日期: '2026-07-01', 结束日期: '2026-07-31' },
   expectedKpiTokens: ['3'],
   hasChart: true,
   alertTable: true,
@@ -96,6 +104,7 @@ assertDashboardRendered({
 assertDashboardRendered({
   domain: 'quality',
   route: '/qa-dashboard-main',
+  filterDates: { 开始日期: '2026-07-01', 结束日期: '2026-07-31' },
   // passRate 0.6666.. -> round:2 -> "0.67", distinctive proof of $var fix.
   expectedKpiTokens: ['0.67'],
   hasChart: true,

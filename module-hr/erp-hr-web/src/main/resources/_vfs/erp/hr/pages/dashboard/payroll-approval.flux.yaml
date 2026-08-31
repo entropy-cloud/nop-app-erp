@@ -5,6 +5,8 @@ type: page
 title: 薪酬核算审批
 body:
 - type: form
+  name: filterForm
+  valuesPath: filterForm
   submitScope: surface
   body:
   - type: grid
@@ -58,8 +60,8 @@ body:
             url: '@query:ErpHrSalary__findPayrollSummary'
             method: post
             data:
-              year: ${year ?? null}
-              month: ${month ?? null}
+              year: ${filterForm?.year ?? null}
+              month: ${filterForm?.month ?? null}
           then:
           - action: refreshSource
             targetId: summary
@@ -74,8 +76,8 @@ body:
     url: '@query:ErpHrSalary__findPayrollSummary'
     method: post
     data:
-      year: ${year ?? null}
-      month: ${month ?? null}
+      year: ${filterForm?.year ?? null}
+      month: ${filterForm?.month ?? null}
 - type: data-source
   name: salaryRaw
   dependsOn:
@@ -86,8 +88,8 @@ body:
     method: post
     data:
       limit: 2000
-      filter_year: ${year ?? null}
-      filter_month: ${month ?? null}
+      filter_year: ${filterForm?.year ?? null}
+      filter_month: ${filterForm?.month ?? null}
     selection: items{ id year month orgId employeeId grossSalary netSalary taxAmount socialInsurance basicSalary paymentStatus approveStatus } total
 - type: grid
   columns: 10

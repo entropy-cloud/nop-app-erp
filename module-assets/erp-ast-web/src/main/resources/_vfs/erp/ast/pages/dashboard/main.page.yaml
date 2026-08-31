@@ -59,7 +59,7 @@ body:
               - type: text
                 tag: span
                 className: h3 text-primary
-                text: "¥${kpiData?.originalValue ?? 0 | round:2}"
+                text: "¥${ROUND((kpiData?.originalValue ?? 0), 2)}"
       - colSpan: 1
         body:
           - type: card
@@ -72,7 +72,7 @@ body:
               - type: text
                 tag: span
                 className: h3 text-danger
-                text: "¥${kpiData?.accumulatedDepreciation ?? 0 | round:2}"
+                text: "¥${ROUND((kpiData?.accumulatedDepreciation ?? 0), 2)}"
       - colSpan: 1
         body:
           - type: card
@@ -85,7 +85,7 @@ body:
               - type: text
                 tag: span
                 className: h3 font-bold
-                text: "¥${kpiData?.netBookValue ?? 0 | round:2}"
+                text: "¥${ROUND((kpiData?.netBookValue ?? 0), 2)}"
       - colSpan: 1
         body:
           - type: card
@@ -98,7 +98,7 @@ body:
               - type: text
                 tag: span
                 className: h3 text-warning
-                text: "¥${kpiData?.periodDepreciation ?? 0 | round:2}"
+                text: "¥${ROUND((kpiData?.periodDepreciation ?? 0), 2)}"
       - colSpan: 1
         body:
           - type: card
@@ -111,7 +111,7 @@ body:
               - type: text
                 tag: span
                 className: h3
-                text: "¥${kpiData?.cipBalance ?? 0 | round:2}"
+                text: "¥${ROUND((kpiData?.cipBalance ?? 0), 2)}"
 
   - type: data-source
     name: categoryData

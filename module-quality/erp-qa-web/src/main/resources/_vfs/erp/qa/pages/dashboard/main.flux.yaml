@@ -6,6 +6,7 @@ title: 质量概览
 body:
 - type: form
   name: filterForm
+  valuesPath: filterForm
   title: ""
   mode: inline
   wrapWithPanel: false
@@ -84,7 +85,7 @@ body:
       - type: text
         tag: h3
         className: text-success
-        text: "${kpiData?.passRate ?? 0 | round:2}"
+        text: "${ROUND((kpiData?.passRate ?? 0), 2)}"
   - colSpan: 1
     body:
     - type: card

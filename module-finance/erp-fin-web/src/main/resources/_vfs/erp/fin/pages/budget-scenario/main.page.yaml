@@ -45,7 +45,7 @@ body:
               - type: text
                 tag: span
                 className: h3 text-primary
-                text: "¥${(scenarioData?.items ?? []).reduce((s, r) => s + (Number(r.amountFunctional) || 0), 0) ?? 0 | round:2}"
+                text: "¥${ROUND(((scenarioData?.items ?? []).reduce((s, r) => s + (Number(r.amountFunctional) || 0), 0) ?? 0), 2)}"
       - colSpan: 1
         body:
           - type: card

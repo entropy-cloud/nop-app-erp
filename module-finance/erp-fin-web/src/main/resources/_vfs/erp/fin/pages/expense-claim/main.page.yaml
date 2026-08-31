@@ -45,7 +45,7 @@ body:
               - type: text
                 tag: span
                 className: h3 text-primary
-                text: "¥${(claimData?.items ?? []).reduce((s, r) => s + (Number(r.amountWithTax) || 0), 0) ?? 0 | round:2}"
+                text: "¥${ROUND(((claimData?.items ?? []).reduce((s, r) => s + (Number(r.amountWithTax) || 0), 0) ?? 0), 2)}"
       - colSpan: 1
         body:
           - type: card

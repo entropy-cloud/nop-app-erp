@@ -62,7 +62,7 @@ body:
               - type: text
                 tag: span
                 className: h3 text-primary
-                text: "¥${kpiData?.totalBudget ?? 0 | round:2}"
+                text: "¥${ROUND((kpiData?.totalBudget ?? 0), 2)}"
       - colSpan: 1
         body:
           - type: card
@@ -75,7 +75,7 @@ body:
               - type: text
                 tag: span
                 className: h3 text-danger
-                text: "¥${kpiData?.incurredCost ?? 0 | round:2}"
+                text: "¥${ROUND((kpiData?.incurredCost ?? 0), 2)}"
       - colSpan: 1
         body:
           - type: card
@@ -88,7 +88,7 @@ body:
               - type: text
                 tag: span
                 className: h3 text-warning
-                text: "${kpiData?.executionRate ?? 0 | round:2}"
+                text: "${ROUND((kpiData?.executionRate ?? 0), 2)}"
 
   - type: data-source
     name: grossMarginData
@@ -130,7 +130,7 @@ body:
               - type: text
                 tag: span
                 className: h3 text-primary
-                text: "¥${grossMarginData?.totalRevenue ?? 0 | round:2}"
+                text: "¥${ROUND((grossMarginData?.totalRevenue ?? 0), 2)}"
       - colSpan: 1
         body:
           - type: card
@@ -143,7 +143,7 @@ body:
               - type: text
                 tag: span
                 className: h3 text-danger
-                text: "¥${grossMarginData?.totalCost ?? 0 | round:2}"
+                text: "¥${ROUND((grossMarginData?.totalCost ?? 0), 2)}"
       - colSpan: 1
         body:
           - type: card
@@ -156,7 +156,7 @@ body:
               - type: text
                 tag: span
                 className: h3 text-success
-                text: "${grossMarginData?.grossMarginPct ?? 0 | round:4}"
+                text: "${ROUND((grossMarginData?.grossMarginPct ?? 0), 4)}"
 
   - type: data-source
     name: statusData
