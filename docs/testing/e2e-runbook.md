@@ -836,7 +836,7 @@ useWorkflow 审批轴浏览器层覆盖需 nop-entropy 平台工作流引擎支�
 
 ## 像素级截图视觉回归层 E2E（`visual/*.snapshot.spec.ts`，10 看板 + 6 代表性报表）
 
-在前端渲染层 DOM 断言之上，2026-07-17-2010-2 叠加了**像素级截图视觉回归层**（`tests/e2e/visual/dashboards.snapshot.spec.ts` + `tests/e2e/visual/reports.snapshot.spec.ts`，共 1 spec / 16 测试）。区别于 DOM 内容/结构断言（数值渲染进 DOM + echarts canvas 存在 + 表格行），本层 `expect(page).toHaveSnapshot(...)` 比对**整页位图**，捕获 DOM 层的结构盲区：CSS 错位 / 元素重叠 / echarts canvas 尺寸塌缩 / 响应式断点破坏。
+在前端渲染层 DOM 断言之上，2026-07-17-2010-2 叠加了**像素级截图视觉回归层**（`tests/e2e/visual/dashboards.snapshot.spec.ts` + `tests/e2e/visual/reports.snapshot.spec.ts`，共 2 spec / 16 测试）。区别于 DOM 内容/结构断言（数值渲染进 DOM + echarts canvas 存在 + 表格行），本层 `expect(page).toHaveScreenshot(...)` 比对**整页位图**，捕获 DOM 层的结构盲区：CSS 错位 / 元素重叠 / echarts canvas 尺寸塌缩 / 响应式断点破坏。
 
 ### 可行性裁决依据（Phase 1 Explore）
 
@@ -887,6 +887,91 @@ BASE_URL=http://127.0.0.1:8011 SKIP_WEBSERVER=1 \
 - **跨浏览器矩阵**（Firefox/WebKit/移动视口）：本计划 Non-Goal，AMIS 主目标为 Chromium，归 successor（触发条件：需支持非 Chromium 浏览器时）。
 - **报表下载产物字节级 diff**：本层仅覆盖 AMIS 前端渲染 HTML 注入容器的像素比对，不覆盖 XLSX/PDF 下载产物（由 `reports.download.spec.ts` 二进制有效性回归层覆盖；字节级 diff 仍 open optimization candidate）。
 - **canvas 内容真实性**：canvas 经 canonical mask 屏蔽像素比对（防御动画漂移），不直接断言 echarts 图表数据正确性（数值正确性由 `*.value.spec.ts` + DOM 内容层 `*.visual.spec.ts` 共同覆盖）。
+
+## 视觉方法论（M0.3 固化，2026-09-01）
+
+> 来源：plan `docs/plans/2026-09-01-0301-2-m03-visual-methodology-codification.md`（roadmap `comprehensive-test-data-and-visual-coverage` M0.3）。本节是像素视觉断言**方法论规范的单一真相源**（九要素，M2.1~M2.4 实施必须遵循）；上方「像素级截图视觉回归层」段是该方法的既有落地实证基线，下方「视觉断言扩面边界」段是 M0.1 裁决的进/出边界——三者互补不重复，本文不复制其正文。
+
+### 1. AI 截屏仅诊断不裁决
+
+像素 diff 信号由 AI 视觉理解**仅作根因诊断**（定位哪一块布局/样式变化），**不得由 AI 主观判定 pass/fail**。裁决面严格遵循两层既有断言结果：`toHaveScreenshot` 的 `maxDiffPixelRatio` 容差判定 + DOM 层内容/结构断言（`*.visual.spec.ts` / `*.value.spec.ts`）。该规则已固化在 `tests/e2e/visual/_helper.ts` 顶部注释块（import 块下、Pixel-snapshot section comment 之上）：本文件所有 `assertSnapshot` / `assertXxxPixelSnapshot` 调用结果为 pass/fail 唯一裁决依据；CI 中任何 `toHaveScreenshot` 失败由独立子代理 plan-audit 复核根因。
+
+### 2. mask 动态区域标准
+
+像素断言的动态区域按下列五类标准处理（**何时必须 mask** 的进/出边界见下方「视觉断言扩面边界 §mask 时机标准」，本节定手法）：
+
+| 动态区域类别 | 手法 | 既有落点 |
+|---|---|---|
+| 用户名/头像等会话身份文本 | canonical mask `page.locator('header').first()` | `_helper.ts` assertSnapshot 内建 |
+| echarts canvas 动画末态 | canonical mask `page.locator('canvas')` + 动画末态等待（`networkidle` + 1500ms）双保险 | `_helper.ts` assertSnapshot 内建 + `waitForEchartsSettle` |
+| 日期参数 / 服务端时间戳（`${NOW()}` 默认值、时间列） | 页级附加 `opts.mask`（如报表日期戳容器）；或确定性填充有效日期（镜像 reports.visual `fillDates` 范式） | opts.mask 按需 |
+| AMIS 自适应布局断点 | 不 mask——像素断言固定在 Playwright 默认 viewport（1280×720）执行，跨断点响应式表现不进像素层 | 约定，无代码 |
+| 排序不稳定行序 | mask 或降级为 DOM 层断言（像素层不承担行序回归） | 边界段 §mask 时机标准 5 |
+
+新增像素断言（M2.x）时：先判断目标区域命中哪类标准；canonical mask 已覆盖前两类，后三类按需 `opts.mask` / 确定性填充 / 不进像素层。mask 区域调整属视觉 mask 保护区域，须 plan 内独立 plan-audit（roadmap §横切 1）。
+
+### 3. 跨次重跑稳定性阈值
+
+双档阈值，依 2010-2 Phase 1 实测（3 次新鲜浏览器上下文，finance 参数化 + master-data 非参数化 × 4 变体全 0 diff）：
+
+- **严格档 `maxDiffPixels: 0`**（exact match）：用于可行性裁决与本地根因复核口径——同 OS/浏览器版本下跨次渲染应像素级一致。
+- **宽容档 `maxDiffPixelRatio: 0.01`**（1%）：CI / 日常门禁默认（`playwright.config.ts` 全局 `expect.toHaveScreenshot.maxDiffPixelRatio` + `assertSnapshot` 默认值一致），吸收 CI 环境次像素抗锯齿漂移；仍远小于真实布局回归（CSS 错位/元素重叠/canvas 塌缩均 > 1%）。
+
+跨次重跑稳定判据：同 OS/浏览器版本下 3 次新鲜运行全绿（2010-2 Phase 2 实证范式）。跨 OS/浏览器版本的基线隔离靠 Playwright 快照文件名平台后缀（`-chromium-darwin`）自动分支。
+
+### 4. snapshot 双面重录协议
+
+任何驱动视觉断言基线的变更——**seed CSV 变更、page.yaml/view.xml/报表 `.xpt.xml` 模板变更、mask 调整**——触发双面重录义务：
+
+1. **同步重录，禁止单面**：DOM 断言基线（`*.visual.spec.ts` / `*.value.spec.ts` 期望值）与像素断言基线（`*-snapshots/*.png`）必须同步重录。DOM 与像素层消费同一渲染结果，单面重录会使两层对同一渲染态给出矛盾裁决。
+2. **重录前置**：先复跑确认漂移仅来自预期变更（非真实缺陷），审视 diff 报告（`test-results/*-actual.png` vs baseline）后再重录（命令见上方「基线更新流程」段）。
+3. **`--update-snapshots` 边界**：仅用于确认漂移合法后的基线重录；CI 中重录同样走该 flag，但 PR review 必须人工核查 mask 合理性——mask 区域不得扩大到掩盖真实布局回归的程度（如把正文区域整体 mask 换取绿灯属违规）。
+4. **对账**：`git diff --stat tests/e2e/visual/**-snapshots/` 变更须与触发源（seed/模板/mask 变更清单）一一对账，无源头的变化不得合入。
+
+### 5. 快照重录合规声明协议（载体裁决）
+
+**裁决 = 候选 B：plan `Draft Review Record` 内强制「快照重录合规声明」段 + 本协议为载体**；不创建 `.github/PULL_REQUEST_TEMPLATE.md`（实仓现无该文件）。
+
+- **声明内容**：触发双面重录的变更在对应 plan 的 `## Draft Review Record` 中声明——重录触发源、双面（DOM + 像素）同步完成、mask 合理性自查结论、`git diff --stat tests/e2e/visual/**-snapshots/` 对账结果。
+- **审查机制**：声明由 plan EXECUTE 阶段独立子代理审查（roadmap §横切 8 同款机制）；roadmap §横切 3 的「PR 模板 grep」实际 grep 目标即 plan 文件 `## Draft Review Record` 段，M3.1 兜底已含「逐 plan 复核 + snapshot diff 对账」的机制化检查。
+- **替代方案（候选 A，rejected）**：创建最小 PR 模板含必填「快照重录合规声明」段。rejected 理由：本仓库当前工作流为 mission-driver + plan 文件驱动，PR review 环节由 plan 流程的独立子代理承担；PR 模板对自动化提交无强制力，且新增仓库级流程资产需人工维护。
+- **残留风险**：若未来出现**绕过 plan 流程**的直接 snapshot 变更（人类主导 PR、无 plan 文件），声明可能被遗漏。缓解：M3.1 兜底的 `git diff --stat` 对账仍可事后捕获无声明变更；触发条件 = 出现绕过 plan 流程的 snapshot 变更实证时，升级为候选 A（PR 模板）或混合载体。
+
+### 6. `toHaveScreenshot` 命名锁定
+
+Playwright 截图断言 API 的权威名为 **`toHaveScreenshot`**（`_helper.ts` `assertSnapshot` 封装内部调用）；`toHaveSnapshot` 是部分历史文档使用的旧别名，**全仓文档统一 `toHaveScreenshot`**。勘误记录：本节落地时同步勘误上方「像素级截图视觉回归层」段行文——原 `expect(page).toHaveSnapshot(...)` 修正为 `expect(page).toHaveScreenshot(...)`，原「共 1 spec / 16 测试」修正为「共 2 spec / 16 测试」（`dashboards.snapshot.spec.ts` 10 测试 + `reports.snapshot.spec.ts` 6 测试）。
+
+### 7. M2.x helper 扩展规则
+
+`tests/e2e/visual/_helper.ts` 共享函数扩展纪律（M2.1~M2.4 四段并行时的冲突防线）：
+
+- **只增不改**：M2.x 只能**新增**按场景拆分的像素层 helper 子集——`assertCrudPixelSnapshot`（M2.1）/ `assertBusinessActionPixelSnapshot`（M2.2）/ `assertReportPixelSnapshot`（M2.3）/ `assertDashboardPixelSnapshot`（M2.4）。
+- **不改既有函数**：`assertSnapshot`（像素统一封装）与 DOM 层 `assertDashboardRendered` / `assertReportRendered` 的签名与语义冻结，仅引用不重命名。
+- **命名并列**：像素层新子集命名 `assertXxxPixelSnapshot`，与 DOM 层 `assertXxxRendered` 语义并列（同一场景两层：DOM 主层 + 像素互补层），通过后缀区分归属层。
+- 共享函数扩展需求一律先归 M0.3 范畴裁决（即本节），M2.x 不得径自修改。
+
+### 8. 与 6 处 Deferred 的层叠关系
+
+视觉断言三层叠放：**value 数值断言层（后端聚合正确性）→ visual DOM 内容/结构层（渲染管线完整性，主层）→ snapshot 像素层（布局/样式盲区，互补层）**。像素层不替代 DOM 层：canvas 数值正确性归 value/DOM 层，DOM 层的 CSS 错位/元素重叠/canvas 塌缩盲区归像素层。
+
+2010-2 消费的 6 处 Deferred（异质 bundle）与本层关系——各 bundle 未 RELEASE 子集去向：
+
+| Deferred 源 | bundle 构成 | 像素子集 | 未 RELEASE 子集去向 |
+|---|---|---|---|
+| `2026-07-09-1249-2` | 纯像素基线 | 整体 RELEASED by 2010-2（即本层） | — |
+| `2026-07-09-2330-2` / `2026-07-09-1728-1` | 像素基线 + 跨浏览器 | 像素子集 RELEASED by 2010-2 | 跨浏览器矩阵：2010-2 Non-Goal（AMIS 主目标 Chromium 单 project；触发条件：需支持非 Chromium 时） |
+| `2026-07-09-0930-3` / `2026-07-09-1045-2` / `2026-07-09-1145-1` | 像素视觉回归 + 报表下载产物 diff + 跨浏览器 triple-bundle（血缘溯 0637-1） | 像素子集 RELEASED by 2010-2 | 报表下载产物**字节级** diff：0204-1 仅交付二进制有效性回归层（`reports.download.spec.ts`），字节级 diff 仍 open optimization candidate，roadmap M2.3 亦仅做像素层；跨浏览器矩阵：同上 Non-Goal |
+
+### 9. CI 集成约定
+
+- **CI 入口**：`.github/workflows/e2e.yml`（ubuntu-latest + JDK 21 + `mvn clean install -DskipTests -Dquarkus.package.type=uber-jar` + node 20 + `npx playwright install --with-deps chromium` + `npm run e2e`，`E2E_ENGINE=flux`）。
+- **E2E 运行不依赖 AI**：所有视觉断言在 playwright headed/headless CI 中独立运行；`playwright.config.ts` **不引入任何 AI 模型/服务调用**（roadmap §横切 4 硬约束）。AI 仅在失败后的根因诊断层介入（见 §1），不进入断言执行路径。
+- **四要素在位**：字体固化（`SNAPSHOT_FONT_CHAIN` 注入，防御 CI 镜像字体漂移）+ mask（canonical header/canvas + opts.mask）+ 容差（`maxDiffPixelRatio: 0.01` 全局默认）+ flux webServer（`-Dnop.web.render-mode=flux`，fresh-DB 语义沿 1143-1）。
+- **基线平台隔离**：现有基线捕获于 macOS + Chrome（快照名含 `-chromium-darwin` 后缀）；Linux CI 跑像素层需分支专属基线（见上方「已知限制」段）——扩面（M2.x）如需 CI 像素门禁，先捕获对应平台基线并登记 `known-good-baselines.md`。
+
+### M0.1 回调义务登记
+
+mask 区域与扩面边界的**最终值**待 M0.1 裁决（plan `2026-09-01-0301-1-m01-seed-scope-adjudication.md`）落地后回调修订；**回调触发条件 = M0.1 完成**。登记时点说明：M0.1 已于 2026-09-01 完成（其裁决「视觉断言扩面边界」段已落在本文件下方），本方法论段已按该裁决口径书写；若 M0.1 裁决后续修订（如 mask 时机标准或扩面抽样边界变更），原位回调修订本段与 `docs/design/dashboards.md` 注记。本计划收口不等待该回调（roadmap M0.3 Deps 列明示弱依赖可并行）。
 
 ## 视觉断言扩面边界（M0.1 裁决，2026-09-01）
 

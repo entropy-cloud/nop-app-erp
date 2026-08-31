@@ -40,6 +40,7 @@
 | `2026-08-23-ar-ap-aging-now-expression-flux.md` | ar-ap-aging 页 `${NOW()}` AMIS 公式 flux 求值失败（console error 门控 4 用例红；08-11 已失败被计数误差漏记） |
 | `2026-08-23-report-download-button-flux-gap.md` | 报表下载按钮 button-toolbar/actionType:download flux 渲染缺口（10 AMIS 按钮用例预存红；08-11 同因漏记） |
 | `2026-08-23-hr-shift-scheduling-concurrent-snapshot-id-flake.md` | TestErpHrShiftScheduling 并发排班快照存活行 id 非确定性（M3.3 seq-default 迁移引入，~50% flake；survivor id @var 引用修复） |
+| `2026-09-01-0400-report-flux-rewrite-browser-assertion-drift.md` | 报表 flux 原生重写（751749e17，08-31）后报表正文 `${reportHtmlData}` 未解包 `.data` 静默空渲染 + reports visual/snapshot 谓词 `/graphql`→`/r/` 漂移 + inventory 像素基线跨月漂移（三层根因，归 successor） |
 
 ### 数据/字段长度类
 

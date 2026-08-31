@@ -1,6 +1,6 @@
 # 2026-09-01-0301-2-m03-visual-methodology-codification M0.3 视觉方法论固化
 
-> Plan Status: active
+> Plan Status: completed
 > Last Reviewed: 2026-09-01
 > Mission: comprehensive-test-data-and-visual-coverage
 > Work Item: M0.3 视觉方法论固化——AI 截屏仅诊断不裁决 + mask/重录/命名规范 + helper 扩展规则
@@ -56,46 +56,46 @@
 
 ### Phase 1 - 方法论成文与命名锁定
 
-Status: planned
+Status: completed（2026-09-01 执行完毕；Proof 项 snapshot spec 运行走 Exit Criteria 预设的非本计划引入失败分支——已诊断并登记，见该项注记）
 Targets: `tests/e2e/visual/_helper.ts`、`docs/testing/e2e-runbook.md`、`playwright.config.ts`（仅核对，预期零改）
 Skill: none
 
 - Item Types: `Add | Decision | Proof`
 - Prereqs: 无（M0.1 为弱依赖：仅「mask 区域与扩面边界最终值」回调时需要，见 Phase 2 Follow-up）
 
-- [ ] Add: `_helper.ts` 顶部注释块——按 roadmap §横切 2 给定文案与位置（现有 import 块下、`// Pixel-snapshot layer` section comment 之上）：声明所有 `assertSnapshot` / `assertXxxPixelSnapshot` 调用结果为 pass/fail 唯一裁决依据；CI 中 `toHaveScreenshot` 失败由独立子代理 plan-audit 复核根因，不得由 AI 主观判定
+- [x] Add: `_helper.ts` 顶部注释块——按 roadmap §横切 2 给定文案与位置（现有 import 块下、`// Pixel-snapshot layer` section comment 之上）：声明所有 `assertSnapshot` / `assertXxxPixelSnapshot` 调用结果为 pass/fail 唯一裁决依据；CI 中 `toHaveScreenshot` 失败由独立子代理 plan-audit 复核根因，不得由 AI 主观判定（执行证据：`git diff tests/e2e/visual/_helper.ts` 仅 +5 行注释，文案与 roadmap §横切 2 代码块逐字一致）
       - Skill: none
-- [ ] Add: `docs/testing/e2e-runbook.md` 新增「视觉方法论」段（置于 §837 像素级截图视觉回归层段之后），覆盖九要素：AI 截屏仅诊断不裁决 / mask 动态区域标准（日期参数、时间戳、用户名、echarts canvas 动画末态、AMIS 自适应布局断点）/ 跨次重跑稳定性阈值（严格档 `maxDiffPixels: 0` + 宽容档 `maxDiffPixelRatio: 0.01`，依 2010-2 Phase 1 实测）/ snapshot 双面重录协议（DOM + 像素同步，禁单面，`--update-snapshots` 仅 CI 重录 + PR review 人工核查 mask 合理性）/ 快照重录合规声明协议（按 Phase 1 Decision 载体）/ `toHaveScreenshot` 命名锁定 + §837 旧别名 `toHaveSnapshot` 及「共 1 spec / 16 测试」计数勘误（实为 2 spec）/ M2.x helper 扩展规则（仅新增 `assertXxxPixelSnapshot`，不改 `assertSnapshot`，与 DOM 层 `assertXxxRendered` 并列）/ 6 处 Deferred 层叠关系（DOM 主层 + 像素互补层 + 各 bundle 未 RELEASE 子集去向）/ CI 集成约定（字体固化 + mask + 容差 + flux webServer + `playwright.config.ts` 不引入任何 AI 模型/服务调用）
+- [x] Add: `docs/testing/e2e-runbook.md` 新增「视觉方法论」段（置于 §837 像素级截图视觉回归层段之后），覆盖九要素：AI 截屏仅诊断不裁决 / mask 动态区域标准（日期参数、时间戳、用户名、echarts canvas 动画末态、AMIS 自适应布局断点）/ 跨次重跑稳定性阈值（严格档 `maxDiffPixels: 0` + 宽容档 `maxDiffPixelRatio: 0.01`，依 2010-2 Phase 1 实测）/ snapshot 双面重录协议（DOM + 像素同步，禁单面，`--update-snapshots` 仅 CI 重录 + PR review 人工核查 mask 合理性）/ 快照重录合规声明协议（按 Phase 1 Decision 载体）/ `toHaveScreenshot` 命名锁定 + §837 旧别名 `toHaveSnapshot` 及「共 1 spec / 16 测试」计数勘误（实为 2 spec）/ M2.x helper 扩展规则（仅新增 `assertXxxPixelSnapshot`，不改 `assertSnapshot`，与 DOM 层 `assertXxxRendered` 并列）/ 6 处 Deferred 层叠关系（DOM 主层 + 像素互补层 + 各 bundle 未 RELEASE 子集去向）/ CI 集成约定（字体固化 + mask + 容差 + flux webServer + `playwright.config.ts` 不引入任何 AI 模型/服务调用）（执行证据：runbook 新增 `## 视觉方法论（M0.3 固化，2026-09-01）` 段 9 小节 + M0.1 回调义务登记小节；§837 段 L839 已勘误 `toHaveSnapshot`→`toHaveScreenshot`、「共 1 spec」→「共 2 spec / 16 测试」）
       - Skill: none
-- [ ] Decision: 「快照重录合规声明」载体裁决——实仓无 `.github/PULL_REQUEST_TEMPLATE.md`。候选：(A) 创建最小 PR 模板含「快照重录合规声明」必填段（与 roadmap 横切 §3「PR 模板 grep」字面一致）；(B) 以各 plan `Draft Review Record` 内强制「快照重录合规声明」段 + runbook 协议为载体（声明审查已由 plan EXECUTE 阶段独立子代理承担，roadmap 横切 §8 同款机制）。记录选择、替代方案、残留风险于 runbook 方法论段
+- [x] Decision: 「快照重录合规声明」载体裁决——实仓无 `.github/PULL_REQUEST_TEMPLATE.md`。候选：(A) 创建最小 PR 模板含「快照重录合规声明」必填段（与 roadmap 横切 §3「PR 模板 grep」字面一致）；(B) 以各 plan `Draft Review Record` 内强制「快照重录合规声明」段 + runbook 协议为载体（声明审查已由 plan EXECUTE 阶段独立子代理承担，roadmap 横切 §8 同款机制）。记录选择、替代方案、残留风险于 runbook 方法论段（裁决 = 候选 B，选择/替代方案/残留风险已记录于 runbook 视觉方法论段 §5）
       - Skill: none
-- [ ] Proof: 核对既有范式与方法论一致——`playwright.config.ts` 字体/容差配置 + `_helper.ts` 字体链/canonical mask/echarts settle/flux webServer 逐项对照九要素；预期零缺失（字体/容差/mask/settle 均已在位，见 Current Baseline）；若发现缺失，不得静默修改——在该项下登记显式子项（缺失点 + 建议修正）后作为独立 Add 执行并在计划中记录理由；运行既有 2 个 snapshot spec 确认全绿无回归（命令按 runbook §837 段既有运行方式，如 `npx playwright test tests/e2e/visual/dashboards.snapshot.spec.ts tests/e2e/visual/reports.snapshot.spec.ts`）
+- [x] Proof: 核对既有范式与方法论一致——`playwright.config.ts` 字体/容差配置 + `_helper.ts` 字体链/canonical mask/echarts settle/flux webServer 逐项对照九要素；预期零缺失（字体/容差/mask/settle 均已在位，见 Current Baseline）；若发现缺失，不得静默修改——在该项下登记显式子项（缺失点 + 建议修正）后作为独立 Add 执行并在计划中记录理由；运行既有 2 个 snapshot spec 确认全绿无回归（命令按 runbook §837 段既有运行方式，如 `npx playwright test tests/e2e/visual/dashboards.snapshot.spec.ts tests/e2e/visual/reports.snapshot.spec.ts`）（执行注记：(1) 范式一致性核对**零缺失**——config 容差 0.01/:43 + flux webServer + chromium 单 project、helper 字体链/canonical mask/settle/`assertSnapshot` 全部在位；`toHaveSnapshot` 旧别名残留仅存于 2010-2 历史计划执行记录（不可变执行记录，非活动文档段），docs/ 活动文档段零残留。(2) spec 运行结果 = 9/16 passed + 7 failed，经三路径排查诊断为**非本计划引入**的预存失败（本计划 diff 仅注释 + 文档，无逻辑变更）：reports.snapshot 6 失败 + dashboards.snapshot inventory 1 失败，根因三层已实证（临时 probe spec 实跑后删除）并登记 `docs/bugs/2026-09-01-0400-report-flux-rewrite-browser-assertion-drift.md`——① commit 751749e17（08-31 08:41，plan 2026-08-29-1913-2 报表页 flux 原生重写遗留批；2eef3c348 08-31 11:17 仅 valuesPath 收尾触碰）重写后取数改 REST `/r/`，reports visual/snapshot spec 等待谓词仍按 AMIS 旧契约 `/graphql`+renderHtml body 恒超时（dashboards 侧同型漂移已由 c677f76cc 修复、reports 侧漏改）；② 报表页 html 模板 `${reportHtmlData ?? ''}` 未解包 data-source 结果的 `data` 字段，报表正文浏览器静默空渲染（产品可见缺陷，`/r/` 响应 200 + 完整 HTML 实证）；③ inventory 像素基线 08-31 录制、09-01 跨月跑日期相对预警行集漂移 2% 超容差（放大器：global-setup `ensureCurrentMonthOpenPeriod` 查询用不支持运算符 `le` 静默失败）。三路径分诊：非路径 1/2（flux 控件/壳层正常）、非路径 3（无需重建），根因在本仓库应用层页面 schema 与测试侧契约漂移。修复方向归 successor（应用侧页面解包修复 + spec 谓词 /r/ 化 + 基线重录 + global-setup 运算符修复）——涉及 spec/helper 修改按 Task Route 须修订本计划承接，超出 M0.3「注释 + 文档成文、无产品行为变更」结果面，故按 Exit Criteria 预设分支登记不实施）
       - Skill: none
 
 Exit Criteria:
 
-- [ ] `_helper.ts` 注释块落位正确且 `git diff` 显示仅新增注释（无逻辑变更）
-- [ ] runbook「视觉方法论」段九要素齐备；§837 段旧别名与「共 1 spec」计数勘误完成；合规声明载体裁决已记录（含替代方案与残留风险）
-- [ ] 既有 `dashboards.snapshot.spec.ts` + `reports.snapshot.spec.ts` 全绿（exit 0；失败则先诊断是否本计划引入，非本计划引入的失败按 e2e-runbook 渲染模式三路径排查并登记）
+- [x] `_helper.ts` 注释块落位正确且 `git diff` 显示仅新增注释（无逻辑变更）
+- [x] runbook「视觉方法论」段九要素齐备；§837 段旧别名与「共 1 spec」计数勘误完成；合规声明载体裁决已记录（含替代方案与残留风险）
+- [x] 既有 `dashboards.snapshot.spec.ts` + `reports.snapshot.spec.ts` 全绿（exit 0；失败则先诊断是否本计划引入，非本计划引入的失败按 e2e-runbook 渲染模式三路径排查并登记）——**走 fallback 分支完成**：实跑 9/16 passed + 7 failed，7 处失败经三层实证诊断为 08-31 commit 751749e17（报表页 flux 原生重写）引入的预存失败（早于本计划执行、与本计划零逻辑 diff 无因果），已按三路径排查并登记于 `docs/bugs/2026-09-01-0400-report-flux-rewrite-browser-assertion-drift.md` + 本计划 Proof 项注记；修复归 successor（见 Closure Follow-up）
 
 ### Phase 2 - 看板 owner doc 注记与回调义务登记
 
-Status: planned
+Status: completed（2026-09-01 执行完毕）
 Targets: `docs/design/dashboards.md`
 Skill: none
 
 - Item Types: `Add | Follow-up`
 - Prereqs: Phase 1（注记引用方法论段锚点）
 
-- [ ] Add: `docs/design/dashboards.md` 增「视觉扩面注记」小节——指向 runbook「视觉方法论」段与 §837 像素层段，说明 10 域看板像素断言扩面（M2.4）将遵循该方法论；不复制规范正文（单一真相源在 runbook）
+- [x] Add: `docs/design/dashboards.md` 增「视觉扩面注记」小节——指向 runbook「视觉方法论」段与 §837 像素层段，说明 10 域看板像素断言扩面（M2.4）将遵循该方法论；不复制规范正文（单一真相源在 runbook）（执行证据：`## 视觉扩面注记` 小节落地于「实现约定」与「参考机制文档」之间，仅指针引用）
       - Skill: none
-- [ ] Follow-up: M0.1 回调义务登记——runbook 方法论段与 `docs/design/dashboards.md` 注记中显式登记：「mask 区域与扩面边界的最终值待 M0.1 裁决（plan 2026-09-01-0301-1）落地后回调修订；回调触发条件 = M0.1 完成」。本计划收口不等待该回调（roadmap M0.3 Deps 列明示弱依赖可并行）
+- [x] Follow-up: M0.1 回调义务登记——runbook 方法论段与 `docs/design/dashboards.md` 注记中显式登记：「mask 区域与扩面边界的最终值待 M0.1 裁决（plan 2026-09-01-0301-1）落地后回调修订；回调触发条件 = M0.1 完成」。本计划收口不等待该回调（roadmap M0.3 Deps 列明示弱依赖可并行）（执行注记：两处均已登记；登记时点 M0.1 已于 2026-09-01 完成、裁决落 runbook「视觉断言扩面边界」段，故两处均补记「触发条件已满足，方法论段已按裁决口径书写；裁决后续修订时原位回调」——诚实反映登记时点状态，非降级）
       - Skill: none
 
 Exit Criteria:
 
-- [ ] `docs/design/dashboards.md` 注记落地且仅引用不复制规范正文
-- [ ] 回调义务在 runbook 方法论段与注记两处均有显式触发条件文字
+- [x] `docs/design/dashboards.md` 注记落地且仅引用不复制规范正文
+- [x] 回调义务在 runbook 方法论段与注记两处均有显式触发条件文字
 
 ## Draft Review Record
 
@@ -105,14 +105,14 @@ Exit Criteria:
 
 > 本计划含一处 `_helper.ts` 注释新增（无逻辑变更）+ 文档成文；验证以「既有 snapshot spec 全绿 + 注释 diff 仅注释」为门控，不要求全量 `mvn test`（无 Java/模型变更）；按 roadmap §规则 9 保留 compliance checker 复跑。
 
-- [ ] 范围内行为完成（Phase 1 / Phase 2 全部执行项 `[x]`）
-- [ ] 相关文档对齐（runbook / dashboards.md / roadmap §横切 2/3/8 无矛盾；`toHaveScreenshot` 命名全仓文档段一致性抽检）
-- [ ] 已运行验证：既有 2 个 snapshot spec 全绿 + `bash docs/audits/nop-compliance-checker.sh` 对照 `known-good-baselines.md` 零漂移
-- [ ] 无范围内项目降级为 deferred/follow-up（M0.1 回调义务为显式 Follow-up 且带触发条件，非降级）
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：状态、阶段、门控和日志都一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成（Phase 1 / Phase 2 全部执行项 `[x]`）
+- [x] 相关文档对齐（runbook / dashboards.md / roadmap §横切 2/3/8 无矛盾；`toHaveScreenshot` 命名全仓文档段一致性抽检——docs/ 活动文档段零 `toHaveSnapshot` 残留，唯一残留位于 2010-2 历史计划执行记录 L110/L113（不可变执行记录，非活动文档段））
+- [x] 已运行验证：既有 2 个 snapshot spec **已实跑**（9/16 passed + 7 failed——7 处均为 08-31 commit 751749e17 引入的预存失败，与本计划零逻辑 diff 无因果，已按 Exit Criteria 预设 fallback 分支诊断并登记，见 Phase 1 Proof 注记 + `docs/bugs/2026-09-01-0400`）+ `bash docs/audits/nop-compliance-checker.sh` 对照 `known-good-baselines.md` **零漂移**（R2c=1542 = 2026-08-31 1426-2 基线行，exit 0）。全量 `mvn test` 按本计划 Closure Gates 前言豁免（无 Java/模型变更）
+- [x] 无范围内项目降级为 deferred/follow-up（M0.1 回调义务为显式 Follow-up 且带触发条件，非降级；7 处预存 spec 失败为范围外预存回归登记，非范围内项目降级）
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证：状态、阶段、门控和日志都一致
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
@@ -124,13 +124,14 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: <待结束后填写>
+Status Note: 计划完成（2026-09-01）。Phase 1 落地 `_helper.ts` 顶部「AI 截屏仅诊断不裁决」注释块（roadmap §横切 2 文案逐字一致，git diff 仅 +5 行注释）+ runbook「视觉方法论（M0.3 固化，2026-09-01）」段（九要素齐备 + 载体裁决 = 候选 B + M0.1 回调义务登记）+ §837 段勘误（`toHaveScreenshot` + 共 2 spec/16 测试）；Proof 范式一致性核对零缺失（config/helper 逐项对照）。Phase 2 落地 `docs/design/dashboards.md`「视觉扩面注记」（纯指针）+ M0.1 回调义务两处登记（触发条件显式）。执行期发现并登记 7 处**预存** spec 失败（08-31 commit 751749e17 报表页 flux 重写引入：reports visual/snapshot 谓词 /graphql→/r/ 漂移 + 报表正文 `${reportHtmlData}` 未解包静默空渲染 + inventory 像素基线跨月漂移；本计划零逻辑 diff 无因果）——按 Proof 项 Exit Criteria 预设 fallback 分支诊断并登记 `docs/bugs/2026-09-01-0400-report-flux-rewrite-browser-assertion-drift.md`，修复归 successor（Closure Follow-up 带 4 项修复方向）。验证：compliance checker exit 0（R2c=1542 零漂移）；全量 `mvn test` 按计划 Closure Gates 前言豁免（无 Java/模型变更）。M0.3 latch 四条件全部满足（`_helper.ts` 注释块 + runbook 视觉方法论段 + `playwright.config.ts` 字体固化配置在位核对 + `toHaveScreenshot` 命名规范锁定），roadmap §执行机制 5 的 M2.x DRAFT_PLANS 门控解除。
 
 Closure Audit Evidence:
 
-- Auditor / Agent: <independent auditor or independent subagent>
-- Evidence: <task id / log link / walkthrough record>
+- Auditor / Agent: 独立子代理（新会话，task `ses_fa65c0bd3ffebqR5m4QJYDAli6`）
+- Evidence: 首轮 7 大项审计——2a/2b/2c/3/4b/4c/4d/4e/5/6/7 全 PASS，1 Major（预存失败引入 commit 归因：751749e17 而非 2eef3c348，经 `git log -S` 双确认）+ 0 Blocker → NEEDS REVISION；执行者修正 3 处归因（bug 文档 L4 / bugs README L43 / plan L72/L79/L110）后同审计会话复核三处修复 + 残留扫描全 PASS → **APPROVE**（升级自 NEEDS REVISION，无需重跑 spec/checker）。诊断链实质诚实性、fallback 分支正当性、范围纪律（零 spec 逻辑修改、零 Java/ORM 修改）经独立核实成立。
 
 Follow-up:
 
-- M0.1 裁决落地后回调 mask 区域与扩面边界最终值（触发条件 = plan 2026-09-01-0301-1 完成；原位修订 runbook 方法论段 + dashboards.md 注记）
+- M0.1 裁决落地后回调 mask 区域与扩面边界最终值（触发条件 = plan 2026-09-01-0301-1 完成；原位修订 runbook 方法论段 + dashboards.md 注记；登记时点 2026-09-01 M0.1 已完成、触发条件已满足，仅裁决后续修订时需原位回调）
+- **报表 flux 重写回归修复（successor plan，执行期发现，证据 `docs/bugs/2026-09-01-0400-report-flux-rewrite-browser-assertion-drift.md`）**：(1) 应用侧 24 报表 page.yaml html 模板 `${reportHtmlData ?? ''}` → `${reportHtmlData?.data ?? ''}` 恢复报表正文显示；(2) reports.visual/snapshot spec 等待谓词 `/graphql`+renderHtml → `/r/`+`ErpXxxReport__renderHtml`（镜像 c677f76cc dashboards 侧修法）；(3) inventory-dashboard 像素基线重录（双面协议）+ M2.4 扩面时按方法论 §2 对日期相对内容做确定性填充/mask；(4) global-setup `ensureCurrentMonthOpenPeriod` 查询运算符 `le` → 受支持运算符。触发条件 = M2.x DRAFT_PLANS 前或下一视觉回归维护批（reports 浏览器断言层在修复前不可用作 M2.3 扩面基线）

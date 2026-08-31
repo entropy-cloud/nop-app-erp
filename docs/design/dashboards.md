@@ -424,6 +424,13 @@
 5. **配置化**:阈值(如缺料安全库存、账龄预警天数、现金流下限)放系统配置(NopSysVariable),非硬编码。
 6. **取数范式**:看板/报表 flux page.yaml 中 GraphQL 查询的 `$var` 转义、`data-source` 发布消费范式与报表渲染容器范式详见 [`docs/architecture/view-and-page-strategy.md §看板/报表 AMIS 取数范式约定`](../architecture/view-and-page-strategy.md)（flux 模式下 `data-source` 替代 AMIS service+adaptor，取数语义不变）。
 
+## 视觉扩面注记
+
+> 本节为指针性注记，不复制规范正文（单一真相源在 runbook）。
+
+- **像素断言扩面（M2.4）遵循既有方法论**：10 域看板像素断言扩面（`comprehensive-test-data-and-visual-coverage` roadmap M2.4，扩展 `tests/e2e/visual/dashboards.snapshot.spec.ts` 范式至全 26 看板 spec）**必须遵循** `docs/testing/e2e-runbook.md`「视觉方法论（M0.3 固化）」段——AI 截屏仅诊断不裁决、mask 动态区域标准、跨次重跑稳定性阈值、双面重录协议、`assertDashboardPixelSnapshot` 像素 helper 子集扩展规则（不改既有 `assertSnapshot` / DOM 层 `assertDashboardRendered`）；像素层范式基线见同文件「像素级截图视觉回归层」段。
+- **M0.1 回调义务登记**：mask 区域与扩面边界的最终值待 M0.1 裁决（plan `2026-09-01-0301-1`）落地后回调修订；**回调触发条件 = M0.1 完成**（M0.1 已于 2026-09-01 完成，裁决落 runbook「视觉断言扩面边界」段；若该裁决后续修订，原位回调修订 runbook 视觉方法论段与本注记）。回调义务与触发条件同步登记于 runbook 视觉方法论段「M0.1 回调义务登记」小节。
+
 ## 参考机制文档
 
 - 各域 state-machine.md(状态分布指标)
