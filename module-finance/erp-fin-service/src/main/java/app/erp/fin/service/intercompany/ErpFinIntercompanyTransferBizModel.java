@@ -92,7 +92,10 @@ public class ErpFinIntercompanyTransferBizModel implements IErpFinIntercompanyTr
             return Collections.emptyList();
         }
 
-        // P1-CK-fin4-003：取首行物料（若有多物料，按聚合数量 × 对应物料单价逐物料计价；单物料主路径取首物料）。
+        // P1-CK-fin4-003：Σ调拨行数量（跨物料聚合）参与凭证金额（amount = 单价 × Σ数量）。
+        // 物料维度取首个正数量物料参与定价解析（使物料级定价规则可命中）。
+        // 近似语义（登记）：多物料调拨单按「首物料单价 × 跨物料 Σ数量」入账（非逐物料 Σ price(m)×qty(m)），
+        // 且首物料选取依赖调用方 map 顺序——逐物料精确计价为 successor（dual-agent review 2026-08-31 findings）。
         BigDecimal totalQty = BigDecimal.ZERO;
         String firstMaterialId = null;
         for (Map.Entry<String, BigDecimal> e : qtyByMaterial.entrySet()) {
