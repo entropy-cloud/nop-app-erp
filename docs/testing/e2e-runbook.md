@@ -888,6 +888,42 @@ BASE_URL=http://127.0.0.1:8011 SKIP_WEBSERVER=1 \
 - **报表下载产物字节级 diff**：本层仅覆盖 AMIS 前端渲染 HTML 注入容器的像素比对，不覆盖 XLSX/PDF 下载产物（由 `reports.download.spec.ts` 二进制有效性回归层覆盖；字节级 diff 仍 open optimization candidate）。
 - **canvas 内容真实性**：canvas 经 canonical mask 屏蔽像素比对（防御动画漂移），不直接断言 echarts 图表数据正确性（数值正确性由 `*.value.spec.ts` + DOM 内容层 `*.visual.spec.ts` 共同覆盖）。
 
+## 视觉断言扩面边界（M0.1 裁决，2026-09-01）
+
+> 来源：plan `docs/plans/2026-09-01-0301-1-m01-seed-scope-adjudication.md`（roadmap `comprehensive-test-data-and-visual-coverage` M0.1 (c)）。本节裁决**像素断言扩面的范围边界**（哪些场景/状态进、哪些不进、何时必须 mask）；mask 的标准范式（canonical mask 清单、容差、字体固化、重录协议）由 M0.3「视觉方法论固化」锁定（基线见上方「像素级截图视觉回归层」段），实施归 M2.1~M2.4。
+
+### 四场景进出裁决
+
+| 场景 | 进/不进 | 裁决理由 |
+|---|---|---|
+| CRUD 页面像素断言 | **进**（代表性抽样 30~50 页，M2.1） | 列表/表单/drawer 是布局回归高发面（CSS 错位/表头塌缩/必填标星缺失）；全量页面基线维护成本失控，抽样按「每域代表性主单据 + 非标准视图」选型（与 `crud/` 套件 18 主单据选型同源扩展） |
+| 业务动作对话框/抽屉像素断言 | **进**（代表性 30~50 mutation 路径，M2.2） | 对话框/抽屉宽度、按钮排布、Toast/拒绝弹窗位置是 DOM 断言结构盲区；含负向动作**拒绝弹窗的渲染存在性**截图（属正向视觉断言，见下方 Non-Goal 边界说明） |
+| 报表像素断言 | **进**（全 50 报表 spec 扩像素层，M2.3） | 2010-2 已建 `reports.snapshot.spec.ts` 范式；渲染 HTML 注入容器的像素比对可捕获模板样式回归；列表态 + 参数切换态 + 导出 HTML 态选代表性快照 |
+| 看板像素断言 | **进**（全 26 看板 spec 扩像素层，M2.4） | echarts canvas 尺寸塌缩/卡片错位只能靠像素层捕获；canvas 内容经 canonical mask 屏蔽（数值正确性归 `*.value.spec.ts`） |
+| 报表下载产物字节级 diff | **不进** | 二进制有效性回归已有独立层（魔数 + token，`reports.download.spec.ts`）；字节级 diff 经 0204-1 裁决为 open optimization candidate，M2.3 仅做像素层 |
+| 跨浏览器矩阵（Firefox/WebKit/移动视口） | **不进** | 2010-2 Non-Goal 沿用；主目标 Chromium 单 project |
+| 探索性采集脚本（`_exploration/`） | **不进**（维持现状） | 纯截图采集、不做断言、不更新基线（脚本头已声明） |
+
+### mask 时机标准（何时必须 mask）
+
+像素断言目标区域满足下列任一条件时**必须 mask**（具体 mask 手法与 canonical 清单归 M0.3 范式；现有 canonical mask = `header` + `canvas`）：
+
+1. **会话/身份动态**：用户名、头像、租户标识（现 `header` canonical mask 覆盖）。
+2. **服务端时间戳**：`${NOW()}` 日期参数默认值、创建/更新时间列、任何随运行时刻变化的文本（现 `${NOW()}` 容器按需 `opts.mask`）。
+3. **canvas 动画末态不确定**：echarts canvas 一律 canonical mask（动画等待 + mask 双保险；跨环境动画时序漂移不可控，2010-2 可行性实证以此为前提）。
+4. **AMIS 自适应断点**：像素断言固定在 Playwright 默认 viewport（1280×720）下执行；跨断点响应式表现不进像素层（断点切换属交互行为，归手动/探索验证），无需 mask——直接不在敏感 viewport 下断言。
+5. **排序不稳定行序**：无稳定 order by 的列表容器，mask 或降级为 DOM 层断言（像素层不承担行序回归）。
+
+### 负向视觉断言归 Non-Goal 的理由
+
+「数据负向态」的样式正确性断言（校验红字、非法迁移 Toast 的视觉细节等）不进 M2.x：负向态渲染与数据负向测试（业务动作 spec 守卫断言）**耦合度高**——同一负路径须先经 GraphQL/业务动作层验证守卫生效，像素层才有稳定输入；强行复刻负路径使基线数量近似翻倍且每条基线绑定前置业务动作链，维护成本与脆弱度不可接受。归 successor 候选（触发条件：M2.x 落地后出现负向 UI 回归的实证需求）。边界说明：M2.2 的「拒绝弹窗截图」仅断言弹窗**渲染存在**（正向视觉断言），不校验其样式细节，与本 Non-Goal 不冲突。
+
+### 替代方案与残留风险
+
+- 替代 1：全量页面像素断言（999 页 × 多状态）——基线维护成本与 CI 时长失控。rejected，维持代表性抽样。
+- 替代 2：canvas 不 mask、仅靠动画等待——跨环境动画时序漂移不可控（与 2010-2 可行性实证结论冲突）。rejected。
+- 残留风险：抽样选型可能漏掉个别高价值页面——每域先覆盖 `crud/` 套件 18 代表性主单据再扩展；遗漏页面经回归事故驱动补入（按「基线更新流程」协议重录）。
+
 ## 报表下载产物运行时回归层 E2E（`reports/`，24 域 × 2 产物）
 
 在报表 AMIS 前端渲染层之上，2026-07-12-0204-1 叠加了报表下载产物（XLSX/PDF）的运行时二进制有效性回归（`tests/e2e/reports/reports.download.spec.ts`，1 spec / 48 测试）。本层验证「page → 下载目标 → `Erp{Domain}Report__download` → 二进制产物」全路径的**后端可达性 + 产物有效性**：每产物非空 + 正确魔数（XLSX=`PK\x03\x04` zip 头 / PDF=`%PDF`）+ 弱结构 token（经文本提取断言产物含报表专属 title/label token）。

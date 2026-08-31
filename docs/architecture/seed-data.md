@@ -479,3 +479,461 @@ CRP 重算链经 nop-job 双层门控默认关：`erp-mfg.crp-run-cron` 默认�
 - CRP 负荷前端可视化增强（echarts 负荷/产能对比图、超负荷高亮）——本计划使 crp-load 报表数值可观测（HTML token 断言），不做 echarts 可视化增强（前端能力面）；触发条件：产品要求 CRP 负荷看板可视化时。
 - crp_load 重算链 seed / calculateLoad 端到端——本计划 seed 静态 crp_load 行令报表可观测，不触发 `CrpLoadCalculator.calculateLoad` 重算（重算会清区间写新行覆盖 seed）；触发条件：需在部署期种子上验证 calculateLoad 从 WorkOrder 重算到 crp_load 快照的端到端正确性时。
 - 制造域配置/执行链其他表 seed（BOM/Routing/MRP/JobCard/MaterialIssue/Subcontract/CostRollup/BatchGenealogy/work_order_line）——0930-1 既定 Deferred，crp-load 报表 `getLoadReport` 不读这些表；触发条件不变。
+## 全量化裁决（seed 全量覆盖口径，2026-09-01）
+
+> 来源：plan `docs/plans/2026-09-01-0301-1-m01-seed-scope-adjudication.md`（roadmap `comprehensive-test-data-and-visual-coverage` 工作项 M0.1）。本节是 app.erp.* 计数口径、seed 数据分层、270 缺 seed 实体最小数据集规格的**权威登记处**；`docs/backlog/comprehensive-test-data-and-visual-coverage-roadmap.md` §目的 口径表中与本表冲突的表述以本表为准。视觉扩面边界裁决见 `docs/testing/e2e-runbook.md`「视觉断言扩面边界」节。
+
+### 计数口径裁决（多档口径对账）
+
+**裁决**：「seed 全量覆盖目标集」= `rg 'className="app\.erp\.' module-*/model/*.orm.xml` 唯一计数 **363**（2026-09-01 实仓复算）。分项裁决：
+
+- **notGenCode 引用声明不计入**：实仓 113 处 `notGenCode="true"` 实体声明**全部仅携带 `name="app.erp.*"` 属性、无 `className` 属性**（含 drp 6 处等 19 文件），是跨域 FK join 的表引用别名；其 23 个物理表全部由 owner 域的 className 实体持有并已计入 363（程序化核验：notGenCode 引用表 ⊆ className 实体表集，零遗漏）。不生成独立 Entity 类、不产生新表 → 不进目标集、不进缺 seed 清单。roadmap §目的「363（含 notGenCode 子类）」的表述在实仓 grep 语义下精确化为：notGenCode 声明天然不在 `className="app.erp.*"` grep 口径内。
+- **sys_* 跨域表计入**：`ErpSysNotificationTemplate`（已 seed）/ `ErpSysNotification` / `ErpSysNotificationRead`（缺 seed）均为 className `app.erp.notify.*` 实体 → 在 363 目标集内。
+- **部署配置表 `ErpSysConfig` 计入**（className `app.erp.md.dao.entity.ErpSysConfig`，表 `erp_sys_config`）→ 在 363 内，且因无 CSV 在 270 缺 seed 清单内。
+- **平台表（66 个）不计入**：非 `app.erp.*`（`NopAuthUser`/`NopSysDict` 等，平台资产管理边界）。其中 4 表（`nop_auth_user` / `nop_auth_user_role` / `nop_auth_role` / `nop_sys_code_rule`）因演示启动前置已有 seed CSV，属平台侧装载，不进入 363 覆盖目标。
+
+**多档口径对账表**（权威登记处；roadmap §目的 口径表失实行按历史档在此登记，roadmap 本体勘误不在 M0.1 范围）：
+
+| 档 | 值 | 来源 | 2026-09-01 实仓复核 | 状态 |
+|---|---|---|---|---|
+| className 唯一计数 | **363** | `rg 'className="app\.erp\.'` module-*/model/*.orm.xml | 复算 363；19 域分布与 roadmap §当前基线 1:1 零漂移 | **权威（当前）** |
+| 有 seed 的 app.erp.* 实体 | 93 | `_init-data/` 93 个 `erp_*` CSV ↔ entity tableName 精确匹配 | 复算 93 | 权威（当前） |
+| 平台 seed CSV | 4 | `nop_auth_user` / `nop_auth_user_role` / `nop_auth_role` / `nop_sys_code_rule` | 复算 4 | 权威（当前） |
+| 精确缺 seed | **270** | roadmap §当前基线 + 本节重算（entity tableName ↔ CSV 精确匹配，逐域小计相加 = 270） | 复算 270；逐域分布与 roadmap §当前基线零漂移；逐实体规格见下节 | **权威（当前）** |
+| 「backlog README 350」 | 350 | roadmap §目的 口径表「backlog README L134（过时应更新）」行 | backlog README L134 现值已是「约 363」，全文件 0 处「350」→ 该行对 README 现值的表述已失实 | **已失效历史档**（仅存于 roadmap §目的 口径表表述；以本表为登记处，roadmap 本体勘误不在 M0.1 范围） |
+| 门禁注释 app.erp 计数 | 352 | `TestErpSeedDataIntegrity.java:36`「Phase 1 Decision (a)：418 = app.erp.* 352 + 平台 66」 | 实仓 363 > 352：注释早于后续 ORM 实体扩展 | 过期历史档（计数修正归 M0.2 门禁扩展消费） |
+| seed-data 旧总口径 | 418 = 352 + 66 | 本文档「通用引用完整性校验」段 | findAll 全实体门禁语义仍有效，唯计数过期（app.erp 352→363） | 过期历史档（修正归 M0.2 消费） |
+| 1143-1 宽口径缺 seed | 275 | plan `2026-08-31-1143-1` L56「**不**补全 275 张缺失表 seed」 | 原文未附逐表明细，无法从现行实仓 1:1 复算；与精确 270 差 +5 归因于当时实体集/口径未细分 | 历史档（被 270 精确清点取代） |
+
+**精确化附注**：roadmap §目的 口径表对 270 的注「不含 sys_* 部署表」须按本表精确化——270 = 363 全集减 93 有 CSV 者，**包含** `erp_sys_config` / `erp_sys_notification` / `erp_sys_notification_read` 三个 sys_* 语义的 app.erp.* 实体（它们是 className 实体）；「不含」仅对平台 `nop_*` 表成立（本就不在 app.erp.* 口径内）。
+
+**替代方案（rejected）与残留风险**：
+
+- 替代 1：目标集扩为「全部物理表」（363 + 平台 66 + notGenCode 别名表）——平台表归平台资产管理边界、notGenCode 是别名非独立实体，扩集徒增门禁噪音且越权平台边界。rejected。
+- 替代 2：将 `ErpSysConfig` / `ErpSysNotification` 族移出目标集（「部署配置」语义豁免）——它们是业务可查实体（GraphQL/AMIS CRUD 面在网），移出将再造「全量覆盖」与门禁 findAll 范围的口径漂移。rejected。
+- 残留风险：ORM 实体集随产品演进继续增长，363 / 93 / 270 是 2026-09-01 时点快照；M0.2 / M1.x / M3.1 各门禁点须按同命令重算刷新，漂移 > 0 时先更新本表再消费，禁止沿用旧计数起草新 plan。
+
+### seed 数据分层裁决（演示种子 / E2E 种子 / 业务动作 negative 种子）
+
+| 层 | 定义 | 物理载体 | 装载语义 |
+|---|---|---|---|
+| 演示种子（demo seed） | fresh-DB 启动后演示/沙盒界面可见的最小可用业务数据 | `_vfs/_init-data/` 全部资产（97 CSV + 1 SQL + M1.x 新增 CSV） | 1143-1 裁决：`application.yaml` 默认 `init-database-data: true`（演示/沙盒默认开）；fresh-DB 重置是运行前置（`DataInitInitializer` 非幂等）；生产部署按 1143-1 裁决改用 MySQL/PostgreSQL + 数据集隔离 + 业务动作闸门配置，不复用演示脚本 |
+| E2E 种子（E2E seed） | E2E「数据可见性」断言（`*.list-value.spec.ts` / `*.visual.spec.ts` / 像素层）读取的数据 | **与演示种子同物理集**（同一批 `_init-data/` 行）——E2E 不设第二 CSV 集 | 同上（E2E webServer 即 fresh-DB 全量装载）；E2E 会话级动态行由测试自建自清理，不入 seed |
+| 业务动作 negative 种子（negative seed） | 供业务动作 spec 非法迁移/守卫负路径直接消费的**专用行**（终态行、禁用行等） | **并入各实体 CSV 内**（不新建独立 negative 文件、不入测试夹具模块） | 同上演示种子装载；行级用途以本文「规格表」用例指示列为准 |
+
+**分层边界规则**：(1) 三层全部落在 1143-1「演示/沙盒默认装载」语义内，prod 语义不变（部署显式关闭或评审后开启；`TestErpSeedDataIntegrity` 门禁是 prod 适用面的完整性底线——roadmap 横切关注点 5）；(2) 命名约定唯一 = `<tableName>.csv`（`DataInitInitializer.loadCsvData` 契约，soft-shorthand 如 `erp_md_uom` 沿用既有表名，不新引入别名体系）；(3) `app-erp-test-data` 测试共享夹具是**测试资产**，与本部署资产边界不可混淆（本文档头部资产类型裁决维持）。
+
+**替代方案（rejected）与残留风险**：
+
+- 替代 1：E2E 独立种子目录（`init-database-data-location` 按环境切换）——形成双真相源 + E2E 与演示数据漂移风险，E2E 与演示的可见性诉求高度重叠。rejected。
+- 替代 2：negative 种子入 `app-erp-test-data` 夹具——与「部署资产 vs 测试资产」边界冲突；且业务动作 E2E 运行在 fresh-DB 全量装载后，夹具行不在该装载路径上。rejected。
+- 残留风险：negative 行混入演示界面可能展示「异常状态」行——以每 CSV 行数上限（≤ 20）+ 本节规格表用例指示控制；若某 negative 行造成演示语义困扰，按「快照重录义务」节流程迁移至测试夹具并在此登记（触发条件：演示验收方提出异议）。
+
+### 270 个缺 seed 实体最小可用数据集规格表（M1.x 直接消费）
+
+> Phase 2 产出（2026-09-01）。本规格表按域逐实体列出 270 个缺 seed 实体（精确对齐 roadmap §当前基线「缺 seed」列），供 M0.2 门禁扩展与 M1.x 11 个工作项 plan 起草时**逐行引用**；每域标题标注对应 M1.x 工作项编号（每工作项 ≤ 50 实体拆分约束天然满足：最大单域 32）。
+
+**通用约定**：
+
+1. **文件名** = `<tableName>.csv`（tableName 以 ORM 实体定义为唯一权威；`DataInitInitializer.loadCsvData` 按表名查找）。
+2. **行数上限**：每 CSV ≤ 20 行（roadmap M1 补齐原则）；「建议行数」列给域内建议（配置/字典 1~3、单据头 2~3 跨状态、行表 1~2/头、日志 1~2）。
+3. **拓扑序**：同批 CSV 无需手工排序文件名——`DataInitInitializer` 按 ORM `getEntityModelsInTopoOrder()` 自动排序。
+4. **FK 闭环规则**：必填 FK 必须指向「已 seed 行」（标记〔已seed〕）或「同批 M1.x 新增行」（标记〔本批〕）；可选 FK 可留空或指向已 seed 行；**禁止悬空引用**（`TestErpSeedDataIntegrity` 引用完整性门禁，白名单豁免须登记证据）。跨域引用显式标注 `〔跨域:<域>·已seed|本批〕`。
+5. **用例指示编码**：`P` = 最小正例行；`N-TERM` = 附 1 行终态行（docStatus/status 终态如 CANCELLED/REJECTED/CLOSED，供业务动作非法迁移守卫负路径）；`N-DIS` = 附 1 行禁用/停用行（enabled/isActive=false，供启用前置守卫负路径）；行表用例随头（`1~2/头`）。编码依据 = 实体 ORM 是否携带 `docStatus`/`status`/`enabled`/`isActive` 列（2026-09-01 逐实体程序化核验：124/270 实体带状态列）。
+6. **审计列**：CSV 列头省略审计列（对齐既有 97 CSV 约定，见「模块 deploy 种子同步义务」节）。
+7. **敏感字段**：HR 域 PII 字段按 2026-08-11 E4.2 MaskHelper 范式脱敏后再 seed（roadmap M1.3 约束沿用，owner doc F7 PII 集为准）。
+8. **owner-doc 同步**：每工作项完成后按 roadmap 规则回写 `docs/design/<domain>/` 增「种子数据」段。
+
+**CSV-only 可满足性核验（Phase 2 编制时程序化核验，2026-09-01）**：270 实体的 mandatory to-one 关系**零环**、**零指向未知实体**；必填 FK 目标全部为「已 seed」或「同批 M1.x」实体 → **全部 270 实体可在 CSV-only 路径下承载最小数据集，无需 ORM 增列**，本 plan「Deferred But Adjudicated」保持零条目。
+
+**与 M1.x 拆分对齐小计**（逐域小计相加 = 270，零遗漏零重复）：
+
+| 域 | 缺 seed | M1.x 工作项 |
+|---|---|---|
+| master-data | 4 | M1.1a |
+| sales | 8 | M1.1a |
+| inventory | 16 | M1.1b |
+| purchase | 12 | M1.1c |
+| finance | 26 | M1.2a1 |
+| manufacturing | 26 | M1.2a2 |
+| maintenance | 7 | M1.2b |
+| quality | 10 | M1.2b |
+| projects | 11 | M1.2b |
+| assets | 17 | M1.2c |
+| notify | 2 | M1.2c |
+| hr | 32 | M1.3 |
+| crm | 30 | M1.4a |
+| cs | 15 | M1.4a |
+| aps | 7 | M1.4b |
+| logistics | 8 | M1.4b |
+| b2b | 13 | M1.5 |
+| contract | 15 | M1.5 |
+| drp | 11 | M1.5 |
+| **总计** | **270** | 11 工作项 |
+
+逐域规格表（域序对齐小计表；域内按实体名字典序）：
+#### master-data（4 缺 → M1.x 工作项 **M1.1a**）
+
+| 实体 | 建议 CSV | 建议行数 | 主子表组 | 必填 FK 闭环依赖 | 用例指示 |
+|---|---|---|---|---|---|
+| ErpMdMaterialCustoms | `erp_md_material_customs.csv` | 1~3 | —（独立表） | ErpMdMaterial〔已seed〕 | P |
+| ErpMdSubjectMapping | `erp_md_subject_mapping.csv` | 1~3 | —（独立表） | ErpMdSubject〔已seed〕、ErpMdAcctSchema〔已seed〕 | P |
+| ErpMdSupplierApproval | `erp_md_supplier_approval.csv` | 2~3 | —（独立表） | ErpMdPartner〔已seed〕、ErpMdMaterialCategory〔已seed〕 | P+N-TERM |
+| ErpSysConfig | `erp_sys_config.csv` | 1~3 | —（独立表） | —（无必填 FK） | P |
+
+#### sales（8 缺 → M1.x 工作项 **M1.1a**）
+
+| 实体 | 建议 CSV | 建议行数 | 主子表组 | 必填 FK 闭环依赖 | 用例指示 |
+|---|---|---|---|---|---|
+| ErpSalContract | `erp_sal_contract.csv` | 2~3 | —（独立表） | ErpMdPartner〔跨域:md·已seed〕、ErpMdCurrency〔跨域:md·已seed〕 | P+N-TERM |
+| ErpSalPriceList | `erp_sal_price_list.csv` | 1~2 | —（独立表） | —（无必填 FK） | P+N-DIS |
+| ErpSalPriceListLine | `erp_sal_price_list_line.csv` | 1~2/头 | ErpSalPriceList（子表） | ErpSalPriceList〔本批〕 | P |
+| ErpSalPricingRule | `erp_sal_pricing_rule.csv` | 1~2 | —（独立表） | —（无必填 FK） | P+N-DIS |
+| ErpSalQuotation | `erp_sal_quotation.csv` | 2~3 | —（独立表） | ErpMdPartner〔跨域:md·已seed〕、ErpMdCurrency〔跨域:md·已seed〕 | P+N-TERM |
+| ErpSalQuotationLine | `erp_sal_quotation_line.csv` | 1~2/头 | ErpSalQuotation（子表） | ErpSalQuotation〔本批〕、ErpMdMaterial〔跨域:md·已seed〕、ErpMdUoM〔跨域:md·已seed〕 | P |
+| ErpSalReturn | `erp_sal_return.csv` | 2~3 | —（独立表） | ErpMdPartner〔跨域:md·已seed〕、ErpMdWarehouse〔跨域:md·已seed〕、ErpMdCurrency〔跨域:md·已seed〕 | P+N-TERM |
+| ErpSalReturnLine | `erp_sal_return_line.csv` | 1~2/头 | ErpSalReturn（子表） | ErpSalReturn〔本批〕、ErpMdMaterial〔跨域:md·已seed〕、ErpMdUoM〔跨域:md·已seed〕 | P |
+
+#### inventory（16 缺 → M1.x 工作项 **M1.1b**）
+
+| 实体 | 建议 CSV | 建议行数 | 主子表组 | 必填 FK 闭环依赖 | 用例指示 |
+|---|---|---|---|---|---|
+| ErpInvBatch | `erp_inv_batch.csv` | 2~3 | —（独立表） | ErpMdMaterial〔跨域:md·已seed〕、ErpMdWarehouse〔跨域:md·已seed〕 | P+N-TERM |
+| ErpInvCostAdjust | `erp_inv_cost_adjust.csv` | 2~3 | —（独立表） | —（无必填 FK） | P+N-TERM |
+| ErpInvCostAdjustLine | `erp_inv_cost_adjust_line.csv` | 1~2/头 | ErpInvCostAdjust（子表） | ErpInvCostAdjust〔本批〕、ErpMdMaterial〔跨域:md·已seed〕、ErpMdWarehouse〔跨域:md·已seed〕 | P |
+| ErpInvLandedCost | `erp_inv_landed_cost.csv` | 2~3 | —（独立表） | —（无必填 FK） | P+N-TERM |
+| ErpInvLandedCostLine | `erp_inv_landed_cost_line.csv` | 1~2/头 | ErpInvLandedCost（子表） | ErpInvLandedCost〔本批〕 | P |
+| ErpInvOwnershipTransfer | `erp_inv_ownership_transfer.csv` | 2~3 | —（独立表） | ErpMdPartner〔跨域:md·已seed〕、ErpMdWarehouse〔跨域:md·已seed〕、ErpMdLocation〔跨域:md·已seed〕 | P+N-TERM |
+| ErpInvOwnershipTransferLine | `erp_inv_ownership_transfer_line.csv` | 1~2/头 | ErpInvOwnershipTransfer（子表） | ErpInvOwnershipTransfer〔本批〕、ErpMdMaterial〔跨域:md·已seed〕 | P |
+| ErpInvPickingOrder | `erp_inv_picking_order.csv` | 2~3 | —（独立表） | ErpMdWarehouse〔跨域:md·已seed〕 | P+N-TERM |
+| ErpInvPickingOrderLine | `erp_inv_picking_order_line.csv` | 1~2/头 | ErpInvPickingOrder（子表） | ErpInvPickingOrder〔本批〕、ErpMdMaterial〔跨域:md·已seed〕、ErpMdUoM〔跨域:md·已seed〕 | P |
+| ErpInvReservation | `erp_inv_reservation.csv` | 2~3 | —（独立表） | —（无必填 FK） | P+N-TERM |
+| ErpInvReservationLine | `erp_inv_reservation_line.csv` | 1~2/头 | ErpInvReservation（子表） | ErpInvReservation〔本批〕、ErpMdMaterial〔跨域:md·已seed〕、ErpMdWarehouse〔跨域:md·已seed〕、ErpMdUoM〔跨域:md·已seed〕 | P |
+| ErpInvSerialNumber | `erp_inv_serial_number.csv` | 2~3 | —（独立表） | ErpMdMaterial〔跨域:md·已seed〕 | P+N-TERM |
+| ErpInvStockTake | `erp_inv_stock_take.csv` | 2~3 | —（独立表） | ErpMdWarehouse〔跨域:md·已seed〕 | P+N-TERM |
+| ErpInvStockTakeLine | `erp_inv_stock_take_line.csv` | 1~2/头 | ErpInvStockTake（子表） | ErpInvStockTake〔本批〕、ErpMdMaterial〔跨域:md·已seed〕、ErpMdUoM〔跨域:md·已seed〕 | P |
+| ErpInvTransferOrder | `erp_inv_transfer_order.csv` | 2~3 | —（独立表） | ErpMdWarehouse〔跨域:md·已seed〕 | P+N-TERM |
+| ErpInvTransferOrderLine | `erp_inv_transfer_order_line.csv` | 1~2/头 | ErpInvTransferOrder（子表） | ErpInvTransferOrder〔本批〕、ErpMdMaterial〔跨域:md·已seed〕、ErpMdUoM〔跨域:md·已seed〕 | P |
+
+#### purchase（12 缺 → M1.x 工作项 **M1.1c**）
+
+| 实体 | 建议 CSV | 建议行数 | 主子表组 | 必填 FK 闭环依赖 | 用例指示 |
+|---|---|---|---|---|---|
+| ErpPurQuotation | `erp_pur_quotation.csv` | 2~3 | —（独立表） | ErpMdPartner〔跨域:md·已seed〕、ErpMdCurrency〔跨域:md·已seed〕 | P+N-TERM |
+| ErpPurQuotationLine | `erp_pur_quotation_line.csv` | 1~2/头 | ErpPurQuotation（子表） | ErpPurQuotation〔本批〕、ErpMdMaterial〔跨域:md·已seed〕、ErpMdUoM〔跨域:md·已seed〕 | P |
+| ErpPurRequisition | `erp_pur_requisition.csv` | 2~3 | —（独立表） | ErpMdEmployee〔跨域:md·已seed〕 | P+N-TERM |
+| ErpPurRequisitionLine | `erp_pur_requisition_line.csv` | 1~2/头 | ErpPurRequisition（子表） | ErpPurRequisition〔本批〕、ErpMdMaterial〔跨域:md·已seed〕、ErpMdUoM〔跨域:md·已seed〕 | P |
+| ErpPurReturn | `erp_pur_return.csv` | 2~3 | —（独立表） | ErpMdPartner〔跨域:md·已seed〕、ErpMdWarehouse〔跨域:md·已seed〕、ErpMdCurrency〔跨域:md·已seed〕 | P+N-TERM |
+| ErpPurReturnLine | `erp_pur_return_line.csv` | 1~2/头 | ErpPurReturn（子表） | ErpPurReturn〔本批〕、ErpMdMaterial〔跨域:md·已seed〕、ErpMdUoM〔跨域:md·已seed〕 | P |
+| ErpPurRfq | `erp_pur_rfq.csv` | 2~3 | —（独立表） | —（无必填 FK） | P+N-TERM |
+| ErpPurRfqLine | `erp_pur_rfq_line.csv` | 1~2/头 | ErpPurRfq（子表） | ErpPurRfq〔本批〕、ErpMdMaterial〔跨域:md·已seed〕、ErpMdUoM〔跨域:md·已seed〕 | P |
+| ErpPurSupplierPriceList | `erp_pur_supplier_price_list.csv` | 1~2 | —（独立表） | ErpMdPartner〔跨域:md·已seed〕、ErpMdMaterial〔跨域:md·已seed〕、ErpMdUoM〔跨域:md·已seed〕、ErpMdCurrency〔跨域:md·已seed〕 | P+N-DIS |
+| ErpPurSupplierScorecard | `erp_pur_supplier_scorecard.csv` | 2~3 | —（独立表） | ErpMdPartner〔跨域:md·已seed〕 | P+N-TERM |
+| ErpPurSupplierScorecardCriteria | `erp_pur_supplier_scorecard_criteria.csv` | 1~2/头 | ErpPurSupplierScorecard（子表） | ErpPurSupplierScorecard〔本批〕 | P |
+| ErpPurSupplierScorecardVariable | `erp_pur_supplier_scorecard_variable.csv` | 1~3 | —（独立表） | ErpPurSupplierScorecardCriteria〔本批〕 | P |
+
+#### finance（26 缺 → M1.x 工作项 **M1.2a1**）
+
+| 实体 | 建议 CSV | 建议行数 | 主子表组 | 必填 FK 闭环依赖 | 用例指示 |
+|---|---|---|---|---|---|
+| ErpFinApDocument | `erp_fin_ap_document.csv` | 2~3 | —（独立表） | —（无必填 FK） | P+N-TERM |
+| ErpFinApDocumentLog | `erp_fin_ap_document_log.csv` | 1~2/头 | ErpFinApDocument（子表） | ErpFinApDocument〔本批〕 | P |
+| ErpFinBadDebt | `erp_fin_bad_debt.csv` | 1~3 | —（独立表） | ErpMdPartner〔跨域:md·已seed〕、ErpMdAcctSchema〔跨域:md·已seed〕、ErpMdCurrency〔跨域:md·已seed〕、ErpFinArApItem〔已seed〕、ErpMdOrganization〔跨域:md·已seed〕 | P |
+| ErpFinBankReconciliation | `erp_fin_bank_reconciliation.csv` | 2~3 | —（独立表） | ErpFinFundAccount〔本批〕、ErpMdOrganization〔跨域:md·已seed〕 | P+N-TERM |
+| ErpFinBankReconciliationLine | `erp_fin_bank_reconciliation_line.csv` | 1~2/头 | ErpFinBankReconciliation（子表） | ErpFinBankReconciliation〔本批〕 | P |
+| ErpFinBankStatement | `erp_fin_bank_statement.csv` | 2~3 | —（独立表） | ErpFinFundAccount〔本批〕、ErpMdOrganization〔跨域:md·已seed〕 | P+N-TERM |
+| ErpFinBankStatementLine | `erp_fin_bank_statement_line.csv` | 1~2/头 | ErpFinBankStatement（子表） | ErpFinBankStatement〔本批〕、ErpMdCurrency〔跨域:md·已seed〕 | P |
+| ErpFinBudgetCarryForwardLog | `erp_fin_budget_carry_forward_log.csv` | 1~3 | —（独立表） | ErpFinBudgetScenario〔本批〕、ErpMdOrganization〔跨域:md·已seed〕 | P |
+| ErpFinBudgetControlLog | `erp_fin_budget_control_log.csv` | 1~3 | —（独立表） | ErpMdOrganization〔跨域:md·已seed〕 | P |
+| ErpFinBudgetLine | `erp_fin_budget_line.csv` | 1~3 | —（独立表） | ErpFinBudgetScenario〔本批〕、ErpMdAcctSchema〔跨域:md·已seed〕、ErpMdSubject〔跨域:md·已seed〕、ErpMdCurrency〔跨域:md·已seed〕、ErpMdOrganization〔跨域:md·已seed〕 | P |
+| ErpFinBudgetRollforwardLog | `erp_fin_budget_rollforward_log.csv` | 1~3 | —（独立表） | ErpFinBudgetScenario〔本批〕、ErpMdOrganization〔跨域:md·已seed〕 | P |
+| ErpFinBudgetScenario | `erp_fin_budget_scenario.csv` | 2~3 | —（独立表） | ErpMdAcctSchema〔跨域:md·已seed〕、ErpMdCurrency〔跨域:md·已seed〕、ErpMdOrganization〔跨域:md·已seed〕 | P+N-TERM |
+| ErpFinConsolidationElimination | `erp_fin_consolidation_elimination.csv` | 2~3 | —（独立表） | ErpFinAccountingPeriod〔已seed〕、ErpMdOrganization〔跨域:md·已seed〕 | P+N-TERM |
+| ErpFinEmployeeAdvance | `erp_fin_employee_advance.csv` | 2~3 | —（独立表） | ErpMdEmployee〔跨域:md·已seed〕、ErpMdCurrency〔跨域:md·已seed〕、ErpMdOrganization〔跨域:md·已seed〕 | P+N-TERM |
+| ErpFinExpenseClaim | `erp_fin_expense_claim.csv` | 2~3 | —（独立表） | ErpMdEmployee〔跨域:md·已seed〕、ErpMdCurrency〔跨域:md·已seed〕、ErpMdOrganization〔跨域:md·已seed〕 | P+N-TERM |
+| ErpFinExpenseClaimLine | `erp_fin_expense_claim_line.csv` | 1~2/头 | ErpFinExpenseClaim（子表） | ErpFinExpenseClaim〔本批〕 | P |
+| ErpFinFundAccount | `erp_fin_fund_account.csv` | 2~3 | —（独立表） | ErpMdCurrency〔跨域:md·已seed〕 | P+N-TERM |
+| ErpFinGlMappingRule | `erp_fin_gl_mapping_rule.csv` | 1~2 | —（独立表） | ErpMdOrganization〔跨域:md·已seed〕 | P+N-DIS |
+| ErpFinIntercompanyMatch | `erp_fin_intercompany_match.csv` | 2~3 | —（独立表） | ErpFinAccountingPeriod〔已seed〕、ErpMdOrganization〔跨域:md·已seed〕 | P+N-TERM |
+| ErpFinIntercompanyTransferPrice | `erp_fin_intercompany_transfer_price.csv` | 1~2 | —（独立表） | ErpMdOrganization〔跨域:md·已seed〕 | P+N-DIS |
+| ErpFinPostingException | `erp_fin_posting_exception.csv` | 2~3 | —（独立表） | —（无必填 FK） | P+N-TERM |
+| ErpFinReconciliation | `erp_fin_reconciliation.csv` | 2~3 | —（独立表） | ErpMdPartner〔跨域:md·已seed〕、ErpMdAcctSchema〔跨域:md·已seed〕、ErpMdCurrency〔跨域:md·已seed〕、ErpMdOrganization〔跨域:md·已seed〕 | P+N-TERM |
+| ErpFinReconciliationLine | `erp_fin_reconciliation_line.csv` | 1~2/头 | ErpFinReconciliation（子表） | ErpFinReconciliation〔本批〕、ErpFinArApItem〔已seed〕 | P |
+| ErpFinTrialBalance | `erp_fin_trial_balance.csv` | 1~3 | —（独立表） | ErpMdAcctSchema〔跨域:md·已seed〕、ErpFinAccountingPeriod〔已seed〕、ErpMdSubject〔跨域:md·已seed〕、ErpMdOrganization〔跨域:md·已seed〕 | P |
+| ErpFinVoucherTemplate | `erp_fin_voucher_template.csv` | 1~2 | —（独立表） | —（无必填 FK） | P+N-DIS |
+| ErpFinVoucherTemplateLine | `erp_fin_voucher_template_line.csv` | 1~2/头 | ErpFinVoucherTemplate（子表） | ErpFinVoucherTemplate〔本批〕 | P |
+
+#### manufacturing（26 缺 → M1.x 工作项 **M1.2a2**）
+
+| 实体 | 建议 CSV | 建议行数 | 主子表组 | 必填 FK 闭环依赖 | 用例指示 |
+|---|---|---|---|---|---|
+| ErpMfgBatchGenealogy | `erp_mfg_batch_genealogy.csv` | 1~3 | —（独立表） | ErpMfgWorkOrder〔已seed〕、ErpMdMaterial〔跨域:md·已seed〕、ErpInvBatch〔跨域:inv·本批〕、ErpMdUoM〔跨域:md·已seed〕 | P |
+| ErpMfgBom | `erp_mfg_bom.csv` | 1~2 | —（独立表） | ErpMdMaterial〔跨域:md·已seed〕 | P+N-DIS |
+| ErpMfgBomByproduct | `erp_mfg_bom_byproduct.csv` | 1~2/头 | ErpMfgBom（子表） | ErpMfgBom〔本批〕、ErpMdMaterial〔跨域:md·已seed〕、ErpMdUoM〔跨域:md·已seed〕 | P |
+| ErpMfgBomLine | `erp_mfg_bom_line.csv` | 1~2/头 | ErpMfgBom（子表） | ErpMfgBom〔本批〕、ErpMdMaterial〔跨域:md·已seed〕、ErpMdUoM〔跨域:md·已seed〕 | P |
+| ErpMfgBomOperation | `erp_mfg_bom_operation.csv` | 1~2/头 | ErpMfgBom（子表） | ErpMfgBom〔本批〕、ErpMfgRoutingOperation〔本批〕 | P |
+| ErpMfgCostRollup | `erp_mfg_cost_rollup.csv` | 2~3 | —（独立表） | —（无必填 FK） | P+N-TERM |
+| ErpMfgCostRollupLine | `erp_mfg_cost_rollup_line.csv` | 1~2/头 | ErpMfgCostRollup（子表） | ErpMfgCostRollup〔本批〕、ErpMdMaterial〔跨域:md·已seed〕、ErpMdUoM〔跨域:md·已seed〕 | P |
+| ErpMfgJobCard | `erp_mfg_job_card.csv` | 2~3 | —（独立表） | ErpMfgWorkOrder〔已seed〕 | P+N-TERM |
+| ErpMfgJobCardTimeLog | `erp_mfg_job_card_time_log.csv` | 1~2/头 | ErpMfgJobCard（子表） | ErpMfgJobCard〔本批〕、ErpMfgWorkOrder〔已seed〕、ErpMdEmployee〔跨域:md·已seed〕 | P |
+| ErpMfgMaterialIssue | `erp_mfg_material_issue.csv` | 2~3 | —（独立表） | ErpMfgWorkOrder〔已seed〕、ErpMdWarehouse〔跨域:md·已seed〕 | P+N-TERM |
+| ErpMfgMaterialIssueLine | `erp_mfg_material_issue_line.csv` | 1~2/头 | ErpMfgMaterialIssue（子表） | ErpMfgMaterialIssue〔本批〕、ErpMdMaterial〔跨域:md·已seed〕、ErpMdUoM〔跨域:md·已seed〕 | P |
+| ErpMfgMrpDemand | `erp_mfg_mrp_demand.csv` | 1~3 | —（独立表） | ErpMfgMrpPlan〔本批〕、ErpMdMaterial〔跨域:md·已seed〕、ErpMdUoM〔跨域:md·已seed〕 | P |
+| ErpMfgMrpPlan | `erp_mfg_mrp_plan.csv` | 2~3 | —（独立表） | —（无必填 FK） | P+N-TERM |
+| ErpMfgMrpPlanLine | `erp_mfg_mrp_plan_line.csv` | 1~2/头 | ErpMfgMrpPlan（子表） | ErpMfgMrpPlan〔本批〕、ErpMdMaterial〔跨域:md·已seed〕、ErpMdUoM〔跨域:md·已seed〕 | P |
+| ErpMfgMrpScenario | `erp_mfg_mrp_scenario.csv` | 2~3 | —（独立表） | —（无必填 FK） | P+N-TERM |
+| ErpMfgMrpScenarioParam | `erp_mfg_mrp_scenario_param.csv` | 1~2/头 | ErpMfgMrpScenario（子表） | ErpMfgMrpScenario〔本批〕 | P |
+| ErpMfgMrpScenarioVersion | `erp_mfg_mrp_scenario_version.csv` | 1~2/头 | ErpMfgMrpScenario（子表） | ErpMfgMrpScenario〔本批〕 | P+N-TERM |
+| ErpMfgProductionVersion | `erp_mfg_production_version.csv` | 1~2 | —（独立表） | ErpMdMaterial〔跨域:md·已seed〕、ErpMfgBom〔本批〕、ErpMfgRouting〔本批〕 | P+N-DIS |
+| ErpMfgRouting | `erp_mfg_routing.csv` | 1~2 | —（独立表） | —（无必填 FK） | P+N-DIS |
+| ErpMfgRoutingOperation | `erp_mfg_routing_operation.csv` | 1~2/头 | ErpMfgRouting（子表） | ErpMfgRouting〔本批〕 | P |
+| ErpMfgSubcontractOrder | `erp_mfg_subcontract_order.csv` | 2~3 | —（独立表） | ErpMdPartner〔跨域:md·已seed〕、ErpMdCurrency〔跨域:md·已seed〕、ErpMdMaterial〔跨域:md·已seed〕 | P+N-TERM |
+| ErpMfgSubcontractOrderLine | `erp_mfg_subcontract_order_line.csv` | 1~2/头 | ErpMfgSubcontractOrder（子表） | ErpMfgSubcontractOrder〔本批〕、ErpMdMaterial〔跨域:md·已seed〕、ErpMdUoM〔跨域:md·已seed〕 | P |
+| ErpMfgWorkOrderBomLineSnapshot | `erp_mfg_work_order_bom_line_snapshot.csv` | 1~3 | —（独立表） | —（无必填 FK） | P |
+| ErpMfgWorkOrderBomOperationSnapshot | `erp_mfg_work_order_bom_operation_snapshot.csv` | 1~3 | —（独立表） | —（无必填 FK） | P |
+| ErpMfgWorkOrderBomSnapshot | `erp_mfg_work_order_bom_snapshot.csv` | 1~3 | —（独立表） | —（无必填 FK） | P |
+| ErpMfgWorkOrderLine | `erp_mfg_work_order_line.csv` | 1~3 | —（独立表） | ErpMfgWorkOrder〔已seed〕、ErpMdMaterial〔跨域:md·已seed〕、ErpMdUoM〔跨域:md·已seed〕 | P |
+
+#### maintenance（7 缺 → M1.x 工作项 **M1.2b**）
+
+| 实体 | 建议 CSV | 建议行数 | 主子表组 | 必填 FK 闭环依赖 | 用例指示 |
+|---|---|---|---|---|---|
+| ErpMntCalibration | `erp_mnt_calibration.csv` | 2~3 | —（独立表） | ErpMntEquipment〔已seed〕 | P+N-TERM |
+| ErpMntEquipmentStatusLog | `erp_mnt_equipment_status_log.csv` | 1~3 | —（独立表） | ErpMntEquipment〔已seed〕 | P |
+| ErpMntMaintenanceTeam | `erp_mnt_maintenance_team.csv` | 1~3 | —（独立表） | —（无必填 FK） | P |
+| ErpMntMaintenanceTeamMember | `erp_mnt_maintenance_team_member.csv` | 1~2/头 | ErpMntMaintenanceTeam（子表） | ErpMntMaintenanceTeam〔本批〕、ErpMdEmployee〔跨域:md·已seed〕 | P |
+| ErpMntSparePartUsageLine | `erp_mnt_spare_part_usage_line.csv` | 1~3 | —（独立表） | ErpMntSparePartUsage〔已seed〕、ErpMdMaterial〔跨域:md·已seed〕、ErpMdUoM〔跨域:md·已seed〕 | P |
+| ErpMntTaskTemplate | `erp_mnt_task_template.csv` | 1~2 | —（独立表） | —（无必填 FK） | P+N-DIS |
+| ErpMntTaskTemplateLine | `erp_mnt_task_template_line.csv` | 1~2/头 | ErpMntTaskTemplate（子表） | ErpMntTaskTemplate〔本批〕 | P |
+
+#### quality（10 缺 → M1.x 工作项 **M1.2b**）
+
+| 实体 | 建议 CSV | 建议行数 | 主子表组 | 必填 FK 闭环依赖 | 用例指示 |
+|---|---|---|---|---|---|
+| ErpQaCalibration | `erp_qa_calibration.csv` | 2~3 | —（独立表） | —（无必填 FK） | P+N-TERM |
+| ErpQaInspectionLine | `erp_qa_inspection_line.csv` | 1~3 | —（独立表） | ErpQaInspection〔已seed〕 | P |
+| ErpQaInspectionTemplate | `erp_qa_inspection_template.csv` | 1~2 | —（独立表） | —（无必填 FK） | P+N-DIS |
+| ErpQaInspectionTemplateLine | `erp_qa_inspection_template_line.csv` | 1~2/头 | ErpQaInspectionTemplate（子表） | ErpQaInspectionTemplate〔本批〕 | P |
+| ErpQaQualityGoal | `erp_qa_quality_goal.csv` | 2~3 | —（独立表） | —（无必填 FK） | P+N-TERM |
+| ErpQaRecall | `erp_qa_recall.csv` | 2~3 | —（独立表） | —（无必填 FK） | P+N-TERM |
+| ErpQaRecallTarget | `erp_qa_recall_target.csv` | 1~2/头 | ErpQaRecall（子表） | ErpQaRecall〔本批〕 | P |
+| ErpQaReview | `erp_qa_review.csv` | 2~3 | —（独立表） | —（无必填 FK） | P+N-TERM |
+| ErpQaRiskRegister | `erp_qa_risk_register.csv` | 2~3 | —（独立表） | —（无必填 FK） | P+N-TERM |
+| ErpQaSamplingPlan | `erp_qa_sampling_plan.csv` | 1~2 | —（独立表） | —（无必填 FK） | P+N-DIS |
+
+#### projects（11 缺 → M1.x 工作项 **M1.2b**）
+
+| 实体 | 建议 CSV | 建议行数 | 主子表组 | 必填 FK 闭环依赖 | 用例指示 |
+|---|---|---|---|---|---|
+| ErpPrjActivityType | `erp_prj_activity_type.csv` | 1~3 | —（独立表） | —（无必填 FK） | P |
+| ErpPrjBilling | `erp_prj_billing.csv` | 2~3 | —（独立表） | ErpPrjProject〔已seed〕、ErpMdPartner〔跨域:md·已seed〕 | P+N-TERM |
+| ErpPrjBillingLine | `erp_prj_billing_line.csv` | 1~2/头 | ErpPrjBilling（子表） | ErpPrjBilling〔本批〕 | P |
+| ErpPrjBudgetLine | `erp_prj_budget_line.csv` | 1~3 | —（独立表） | ErpPrjBudget〔已seed〕 | P |
+| ErpPrjCostCollectionLine | `erp_prj_cost_collection_line.csv` | 1~3 | —（独立表） | ErpPrjCostCollection〔已seed〕 | P |
+| ErpPrjMilestone | `erp_prj_milestone.csv` | 2~3 | —（独立表） | ErpPrjProject〔已seed〕 | P+N-TERM |
+| ErpPrjProjectSettlement | `erp_prj_project_settlement.csv` | 2~3 | —（独立表） | ErpPrjProject〔已seed〕 | P+N-TERM |
+| ErpPrjProjectSettlementLine | `erp_prj_project_settlement_line.csv` | 1~2/头 | ErpPrjProjectSettlement（子表） | ErpPrjProjectSettlement〔本批〕 | P |
+| ErpPrjProjectUser | `erp_prj_project_user.csv` | 1~3 | —（独立表） | ErpPrjProject〔已seed〕、ErpMdEmployee〔跨域:md·已seed〕 | P |
+| ErpPrjRole | `erp_prj_role.csv` | 1~3 | —（独立表） | —（无必填 FK） | P |
+| ErpPrjTask | `erp_prj_task.csv` | 2~3 | —（独立表） | ErpPrjProject〔已seed〕 | P+N-TERM |
+
+#### assets（17 缺 → M1.x 工作项 **M1.2c**）
+
+| 实体 | 建议 CSV | 建议行数 | 主子表组 | 必填 FK 闭环依赖 | 用例指示 |
+|---|---|---|---|---|---|
+| ErpAstAssetActionLog | `erp_ast_asset_action_log.csv` | 1~3 | —（独立表） | ErpAstAsset〔已seed〕 | P |
+| ErpAstAssetCapitalization | `erp_ast_asset_capitalization.csv` | 2~3 | —（独立表） | —（无必填 FK） | P+N-TERM |
+| ErpAstAssetModel | `erp_ast_asset_model.csv` | 1~3 | —（独立表） | —（无必填 FK） | P |
+| ErpAstCip | `erp_ast_cip.csv` | 2~3 | —（独立表） | —（无必填 FK） | P+N-TERM |
+| ErpAstCipCostItem | `erp_ast_cip_cost_item.csv` | 1~2/头 | ErpAstCip（子表） | ErpAstCip〔本批〕 | P |
+| ErpAstCipProgressBilling | `erp_ast_cip_progress_billing.csv` | 1~2/头 | ErpAstCip（子表） | ErpAstCip〔本批〕 | P |
+| ErpAstDisposal | `erp_ast_disposal.csv` | 2~3 | —（独立表） | ErpAstAsset〔已seed〕 | P+N-TERM |
+| ErpAstInventory | `erp_ast_inventory.csv` | 2~3 | —（独立表） | —（无必填 FK） | P+N-TERM |
+| ErpAstInventoryLine | `erp_ast_inventory_line.csv` | 1~2/头 | ErpAstInventory（子表） | ErpAstInventory〔本批〕 | P |
+| ErpAstMaintenance | `erp_ast_maintenance.csv` | 2~3 | —（独立表） | ErpAstAsset〔已seed〕 | P+N-TERM |
+| ErpAstMaintenanceCost | `erp_ast_maintenance_cost.csv` | 1~2/头 | ErpAstMaintenance（子表） | ErpAstMaintenance〔本批〕 | P |
+| ErpAstMerge | `erp_ast_merge.csv` | 2~3 | —（独立表） | —（无必填 FK） | P+N-TERM |
+| ErpAstMergeLine | `erp_ast_merge_line.csv` | 1~2/头 | ErpAstMerge（子表） | ErpAstMerge〔本批〕、ErpAstAsset〔已seed〕 | P |
+| ErpAstMovement | `erp_ast_movement.csv` | 2~3 | —（独立表） | ErpAstAsset〔已seed〕 | P+N-TERM |
+| ErpAstSplit | `erp_ast_split.csv` | 2~3 | —（独立表） | ErpAstAsset〔已seed〕 | P+N-TERM |
+| ErpAstSplitLine | `erp_ast_split_line.csv` | 1~2/头 | ErpAstSplit（子表） | ErpAstSplit〔本批〕 | P |
+| ErpAstValueAdjustment | `erp_ast_value_adjustment.csv` | 2~3 | —（独立表） | ErpAstAsset〔已seed〕 | P+N-TERM |
+
+#### notify（2 缺 → M1.x 工作项 **M1.2c**）
+
+| 实体 | 建议 CSV | 建议行数 | 主子表组 | 必填 FK 闭环依赖 | 用例指示 |
+|---|---|---|---|---|---|
+| ErpSysNotification | `erp_sys_notification.csv` | 2~3 | —（独立表） | —（无必填 FK） | P+N-TERM |
+| ErpSysNotificationRead | `erp_sys_notification_read.csv` | 1~2/头 | ErpSysNotification（子表） | ErpSysNotification〔本批〕 | P |
+
+#### hr（32 缺 → M1.x 工作项 **M1.3**）
+
+| 实体 | 建议 CSV | 建议行数 | 主子表组 | 必填 FK 闭环依赖 | 用例指示 |
+|---|---|---|---|---|---|
+| ErpHrAssessmentDetail | `erp_hr_assessment_detail.csv` | 1~3 | —（独立表） | ErpHrEmployeeAssessment〔本批〕、ErpHrCompetency〔本批〕 | P |
+| ErpHrAttendance | `erp_hr_attendance.csv` | 1~3 | —（独立表） | ErpHrEmployee〔已seed〕 | P |
+| ErpHrCompetency | `erp_hr_competency.csv` | 1~3 | —（独立表） | —（无必填 FK） | P |
+| ErpHrCompetencyLevel | `erp_hr_competency_level.csv` | 1~2/头 | ErpHrCompetency（子表） | ErpHrCompetency〔本批〕 | P |
+| ErpHrDevelopmentPlan | `erp_hr_development_plan.csv` | 2~3 | —（独立表） | ErpHrEmployee〔已seed〕 | P+N-TERM |
+| ErpHrDevelopmentPlanItem | `erp_hr_development_plan_item.csv` | 1~2/头 | ErpHrDevelopmentPlan（子表） | ErpHrDevelopmentPlan〔本批〕、ErpHrCompetency〔本批〕 | P+N-TERM |
+| ErpHrEmployeeAssessment | `erp_hr_employee_assessment.csv` | 2~3 | —（独立表） | ErpHrEmployee〔已seed〕 | P+N-TERM |
+| ErpHrEmploymentContract | `erp_hr_employment_contract.csv` | 2~3 | —（独立表） | ErpHrEmployee〔已seed〕 | P+N-TERM |
+| ErpHrGapAnalysis | `erp_hr_gap_analysis.csv` | 1~3 | —（独立表） | ErpHrEmployee〔已seed〕、ErpHrCompetency〔本批〕 | P |
+| ErpHrLeaveBalance | `erp_hr_leave_balance.csv` | 1~3 | —（独立表） | ErpHrEmployee〔已seed〕 | P |
+| ErpHrLeaveRequest | `erp_hr_leave_request.csv` | 2~3 | —（独立表） | ErpHrEmployee〔已seed〕 | P+N-TERM |
+| ErpHrPayrollBankFile | `erp_hr_payroll_bank_file.csv` | 2~3 | —（独立表） | —（无必填 FK） | P+N-TERM |
+| ErpHrPosition | `erp_hr_position.csv` | 1~3 | —（独立表） | —（无必填 FK） | P |
+| ErpHrRecruitment | `erp_hr_recruitment.csv` | 2~3 | —（独立表） | —（无必填 FK） | P+N-TERM |
+| ErpHrRoleCompetency | `erp_hr_role_competency.csv` | 1~3 | —（独立表） | ErpHrPosition〔本批〕、ErpHrCompetency〔本批〕 | P |
+| ErpHrSalary | `erp_hr_salary.csv` | 1~3 | —（独立表） | ErpHrEmployee〔已seed〕 | P |
+| ErpHrSalaryItem | `erp_hr_salary_item.csv` | 1~3 | —（独立表） | —（无必填 FK） | P |
+| ErpHrShift | `erp_hr_shift.csv` | 1~3 | —（独立表） | —（无必填 FK） | P |
+| ErpHrShiftAssignment | `erp_hr_shift_assignment.csv` | 1~2/头 | ErpHrShift（子表） | ErpHrEmployee〔已seed〕、ErpHrShift〔本批〕 | P+N-TERM |
+| ErpHrShiftRotationPattern | `erp_hr_shift_rotation_pattern.csv` | 1~3 | —（独立表） | —（无必填 FK） | P |
+| ErpHrShiftSwapRequest | `erp_hr_shift_swap_request.csv` | 2~3 | —（独立表） | ErpHrEmployee〔已seed〕、ErpHrShiftAssignment〔本批〕 | P+N-TERM |
+| ErpHrSocialInsuranceBase | `erp_hr_social_insurance_base.csv` | 1~3 | —（独立表） | ErpHrEmployee〔已seed〕 | P |
+| ErpHrSocialInsuranceConfig | `erp_hr_social_insurance_config.csv` | 1~3 | —（独立表） | —（无必填 FK） | P |
+| ErpHrSurvey | `erp_hr_survey.csv` | 2~3 | —（独立表） | —（无必填 FK） | P+N-TERM |
+| ErpHrSurveyAnswer | `erp_hr_survey_answer.csv` | 1~3 | —（独立表） | ErpHrSurveyResponse〔本批〕、ErpHrSurveyQuestion〔本批〕 | P |
+| ErpHrSurveyQuestion | `erp_hr_survey_question.csv` | 1~2/头 | ErpHrSurvey（子表） | ErpHrSurvey〔本批〕 | P |
+| ErpHrSurveyResponse | `erp_hr_survey_response.csv` | 1~2/头 | ErpHrSurvey（子表） | ErpHrSurvey〔本批〕 | P |
+| ErpHrSurveyResult | `erp_hr_survey_result.csv` | 1~2/头 | ErpHrSurvey（子表） | ErpHrSurvey〔本批〕 | P |
+| ErpHrTaxConfig | `erp_hr_tax_config.csv` | 1~3 | —（独立表） | —（无必填 FK） | P |
+| ErpHrTaxSpecialDeduction | `erp_hr_tax_special_deduction.csv` | 1~3 | —（独立表） | ErpHrEmployee〔已seed〕 | P |
+| ErpHrTimesheet | `erp_hr_timesheet.csv` | 2~3 | —（独立表） | ErpHrEmployee〔已seed〕 | P+N-TERM |
+| ErpHrTimesheetLine | `erp_hr_timesheet_line.csv` | 1~2/头 | ErpHrTimesheet（子表） | ErpHrTimesheet〔本批〕、ErpHrEmployee〔已seed〕 | P |
+
+#### crm（30 缺 → M1.x 工作项 **M1.4a**）
+
+| 实体 | 建议 CSV | 建议行数 | 主子表组 | 必填 FK 闭环依赖 | 用例指示 |
+|---|---|---|---|---|---|
+| ErpCrmActivity | `erp_crm_activity.csv` | 1~3 | —（独立表） | ErpCrmLead〔已seed〕 | P |
+| ErpCrmBundlePricing | `erp_crm_bundle_pricing.csv` | 1~2 | —（独立表） | —（无必填 FK） | P+N-DIS |
+| ErpCrmBundlePricingLine | `erp_crm_bundle_pricing_line.csv` | 1~2/头 | ErpCrmBundlePricing（子表） | ErpCrmBundlePricing〔本批〕 | P |
+| ErpCrmCampaign | `erp_crm_campaign.csv` | 1~3 | —（独立表） | —（无必填 FK） | P |
+| ErpCrmConfigRule | `erp_crm_config_rule.csv` | 1~3 | —（独立表） | ErpCrmProductConfigurator〔本批〕 | P |
+| ErpCrmEvent | `erp_crm_event.csv` | 2~3 | —（独立表） | —（无必填 FK） | P+N-TERM |
+| ErpCrmEventCategory | `erp_crm_event_category.csv` | 1~3 | —（独立表） | —（无必填 FK） | P |
+| ErpCrmForecastAccuracy | `erp_crm_forecast_accuracy.csv` | 1~3 | —（独立表） | ErpCrmForecastPeriod〔已seed〕 | P |
+| ErpCrmFunnelStageMetrics | `erp_crm_funnel_stage_metrics.csv` | 1~3 | —（独立表） | ErpCrmLeadFunnel〔本批〕、ErpCrmStage〔已seed〕 | P |
+| ErpCrmLeadConvLog | `erp_crm_lead_conv_log.csv` | 1~3 | —（独立表） | ErpCrmLead〔已seed〕 | P |
+| ErpCrmLeadFunnel | `erp_crm_lead_funnel.csv` | 1~3 | —（独立表） | —（无必填 FK） | P |
+| ErpCrmLeadScore | `erp_crm_lead_score.csv` | 1~3 | —（独立表） | ErpCrmLead〔已seed〕 | P |
+| ErpCrmLeadScoreConfig | `erp_crm_lead_score_config.csv` | 1~2 | —（独立表） | —（无必填 FK） | P+N-DIS |
+| ErpCrmLeadScoreConfigLine | `erp_crm_lead_score_config_line.csv` | 1~2/头 | ErpCrmLeadScoreConfig（子表） | ErpCrmLeadScoreConfig〔本批〕 | P |
+| ErpCrmLeadScoreLine | `erp_crm_lead_score_line.csv` | 1~2/头 | ErpCrmLeadScore（子表） | ErpCrmLeadScore〔本批〕 | P |
+| ErpCrmLeadSequenceProgress | `erp_crm_lead_seq_progress.csv` | 2~3 | —（独立表） | ErpCrmLead〔已seed〕、ErpCrmSequence〔本批〕 | P+N-TERM |
+| ErpCrmLeadStatus | `erp_crm_lead_status.csv` | 1~3 | —（独立表） | —（无必填 FK） | P |
+| ErpCrmLostReason | `erp_crm_lost_reason.csv` | 1~3 | —（独立表） | —（无必填 FK） | P |
+| ErpCrmPriceRule | `erp_crm_price_rule.csv` | 1~2 | —（独立表） | —（无必填 FK） | P+N-DIS |
+| ErpCrmProductConfigurator | `erp_crm_product_configurator.csv` | 1~2 | —（独立表） | —（无必填 FK） | P+N-DIS |
+| ErpCrmQuota | `erp_crm_quota.csv` | 1~3 | —（独立表） | —（无必填 FK） | P |
+| ErpCrmQuoteTemplate | `erp_crm_quote_template.csv` | 1~3 | —（独立表） | —（无必填 FK） | P |
+| ErpCrmSequence | `erp_crm_sequence.csv` | 1~2 | —（独立表） | —（无必填 FK） | P+N-DIS |
+| ErpCrmSequenceAssignment | `erp_crm_sequence_assignment.csv` | 1~2/头 | ErpCrmSequence（子表） | ErpCrmSequence〔本批〕 | P+N-DIS |
+| ErpCrmSequenceStep | `erp_crm_sequence_step.csv` | 1~2/头 | ErpCrmSequence（子表） | ErpCrmSequence〔本批〕 | P |
+| ErpCrmSource | `erp_crm_source.csv` | 1~3 | —（独立表） | —（无必填 FK） | P |
+| ErpCrmTeam | `erp_crm_team.csv` | 1~3 | —（独立表） | —（无必填 FK） | P |
+| ErpCrmTeamMember | `erp_crm_team_member.csv` | 1~2/头 | ErpCrmTeam（子表） | ErpCrmTeam〔本批〕 | P |
+| ErpCrmTerritory | `erp_crm_territory.csv` | 1~2 | —（独立表） | —（无必填 FK） | P+N-DIS |
+| ErpCrmTerritoryAssignmentRule | `erp_crm_territory_assignment_rule.csv` | 1~2/头 | ErpCrmTerritory（子表） | ErpCrmTerritory〔本批〕 | P+N-DIS |
+
+#### cs（15 缺 → M1.x 工作项 **M1.4a**）
+
+| 实体 | 建议 CSV | 建议行数 | 主子表组 | 必填 FK 闭环依赖 | 用例指示 |
+|---|---|---|---|---|---|
+| ErpCsAgentRate | `erp_cs_agent_rate.csv` | 1~2 | —（独立表） | —（无必填 FK） | P+N-DIS |
+| ErpCsCannedCategory | `erp_cs_canned_category.csv` | 1~3 | —（独立表） | —（无必填 FK） | P |
+| ErpCsCannedResponse | `erp_cs_canned_response.csv` | 1~2 | —（独立表） | —（无必填 FK） | P+N-DIS |
+| ErpCsCatalogCategory | `erp_cs_catalog_category.csv` | 1~2 | —（独立表） | —（无必填 FK） | P+N-DIS |
+| ErpCsCatalogFulfillment | `erp_cs_catalog_fulfillment.csv` | 1~3 | —（独立表） | ErpCsServiceCatalogItem〔本批〕 | P |
+| ErpCsContract | `erp_cs_contract.csv` | 2~3 | —（独立表） | —（无必填 FK） | P+N-TERM |
+| ErpCsEntitlement | `erp_cs_entitlement.csv` | 1~2 | —（独立表） | ErpMdPartner〔跨域:md·已seed〕 | P+N-DIS |
+| ErpCsKnowledgeBase | `erp_cs_knowledge_base.csv` | 1~3 | —（独立表） | —（无必填 FK） | P |
+| ErpCsServiceCatalogItem | `erp_cs_service_catalog_item.csv` | 1~2 | —（独立表） | —（无必填 FK） | P+N-DIS |
+| ErpCsSlaPolicy | `erp_cs_sla_policy.csv` | 1~3 | —（独立表） | —（无必填 FK） | P |
+| ErpCsTeam | `erp_cs_team.csv` | 1~3 | —（独立表） | —（无必填 FK） | P |
+| ErpCsTicketAction | `erp_cs_ticket_action.csv` | 1~3 | —（独立表） | ErpCsTicket〔已seed〕 | P |
+| ErpCsTicketFulfillmentStep | `erp_cs_ticket_fulfillment_step.csv` | 2~3 | —（独立表） | ErpCsTicket〔已seed〕、ErpCsCatalogFulfillment〔本批〕 | P+N-TERM |
+| ErpCsTicketTimerSession | `erp_cs_ticket_timer_session.csv` | 2~3 | —（独立表） | ErpCsTicket〔已seed〕 | P+N-TERM |
+| ErpCsTimeEntry | `erp_cs_time_entry.csv` | 1~3 | —（独立表） | ErpCsTicket〔已seed〕 | P |
+
+#### aps（7 缺 → M1.x 工作项 **M1.4b**）
+
+| 实体 | 建议 CSV | 建议行数 | 主子表组 | 必填 FK 闭环依赖 | 用例指示 |
+|---|---|---|---|---|---|
+| ErpApsCapacityReservation | `erp_aps_capacity_reservation.csv` | 1~3 | —（独立表） | —（无必填 FK） | P |
+| ErpApsConstraint | `erp_aps_constraint.csv` | 1~3 | —（独立表） | —（无必填 FK） | P |
+| ErpApsDispatchLog | `erp_aps_dispatch_log.csv` | 1~3 | —（独立表） | ErpApsOperationOrder〔本批〕 | P |
+| ErpApsDispatchRule | `erp_aps_dispatch_rule.csv` | 1~3 | —（独立表） | —（无必填 FK） | P |
+| ErpApsOpRouting | `erp_aps_op_routing.csv` | 1~3 | —（独立表） | —（无必填 FK） | P |
+| ErpApsOperationOrder | `erp_aps_operation_order.csv` | 2~3 | —（独立表） | —（无必填 FK） | P+N-TERM |
+| ErpApsSchedule | `erp_aps_schedule.csv` | 2~3 | —（独立表） | —（无必填 FK） | P+N-TERM |
+
+#### logistics（8 缺 → M1.x 工作项 **M1.4b**）
+
+| 实体 | 建议 CSV | 建议行数 | 主子表组 | 必填 FK 闭环依赖 | 用例指示 |
+|---|---|---|---|---|---|
+| ErpLogCarrier | `erp_log_carrier.csv` | 1~2 | —（独立表） | —（无必填 FK） | P+N-DIS |
+| ErpLogCarrierConfig | `erp_log_carrier_config.csv` | 1~2/头 | ErpLogCarrier（子表） | ErpLogCarrier〔本批〕 | P+N-DIS |
+| ErpLogDeliveryBooking | `erp_log_delivery_booking.csv` | 2~3 | —（独立表） | ErpLogShipment〔本批〕、ErpLogDeliveryWindow〔本批〕 | P+N-TERM |
+| ErpLogDeliveryWindow | `erp_log_delivery_window.csv` | 1~2 | —（独立表） | ErpMdPartner〔跨域:md·已seed〕 | P+N-DIS |
+| ErpLogShipment | `erp_log_shipment.csv` | 2~3 | —（独立表） | ErpLogCarrier〔本批〕 | P+N-TERM |
+| ErpLogShipmentLine | `erp_log_shipment_line.csv` | 1~2/头 | ErpLogShipment（子表） | ErpLogShipment〔本批〕 | P |
+| ErpLogShipmentLog | `erp_log_shipment_log.csv` | 1~2/头 | ErpLogShipment（子表） | ErpLogShipment〔本批〕 | P |
+| ErpLogShipmentParcel | `erp_log_shipment_parcel.csv` | 1~2/头 | ErpLogShipment（子表） | ErpLogShipment〔本批〕 | P+N-DIS |
+
+#### b2b（13 缺 → M1.x 工作项 **M1.5**）
+
+| 实体 | 建议 CSV | 建议行数 | 主子表组 | 必填 FK 闭环依赖 | 用例指示 |
+|---|---|---|---|---|---|
+| ErpB2bAsn | `erp_b2b_asn.csv` | 2~3 | —（独立表） | —（无必填 FK） | P+N-TERM |
+| ErpB2bAsnLine | `erp_b2b_asn_line.csv` | 1~2/头 | ErpB2bAsn（子表） | ErpB2bAsn〔本批〕 | P |
+| ErpB2bCertificationChecklist | `erp_b2b_certification_checklist.csv` | 1~3 | —（独立表） | ErpB2bPartnerProfile〔本批〕 | P |
+| ErpB2bCodeMapping | `erp_b2b_code_mapping.csv` | 1~3 | —（独立表） | —（无必填 FK） | P |
+| ErpB2bEdiDoc | `erp_b2b_edi_doc.csv` | 1~3 | —（独立表） | —（无必填 FK） | P |
+| ErpB2bEdiFormat | `erp_b2b_edi_format.csv` | 1~2 | —（独立表） | —（无必填 FK） | P+N-DIS |
+| ErpB2bEdiLog | `erp_b2b_edi_log.csv` | 1~3 | —（独立表） | —（无必填 FK） | P |
+| ErpB2bMftCertificate | `erp_b2b_mft_certificate.csv` | 1~2 | —（独立表） | —（无必填 FK） | P+N-DIS |
+| ErpB2bMftConfig | `erp_b2b_mft_config.csv` | 1~3 | —（独立表） | ErpMdPartner〔跨域:md·已seed〕 | P |
+| ErpB2bMftLog | `erp_b2b_mft_log.csv` | 2~3 | —（独立表） | ErpB2bMftConfig〔本批〕 | P+N-TERM |
+| ErpB2bPartnerCredential | `erp_b2b_partner_credential.csv` | 1~2 | —（独立表） | ErpB2bPartnerProfile〔本批〕 | P+N-DIS |
+| ErpB2bPartnerProfile | `erp_b2b_partner_profile.csv` | 2~3 | —（独立表） | —（无必填 FK） | P+N-TERM |
+| ErpB2bTestExchange | `erp_b2b_test_exchange.csv` | 1~3 | —（独立表） | ErpB2bPartnerProfile〔本批〕 | P |
+
+#### contract（15 缺 → M1.x 工作项 **M1.5**）
+
+| 实体 | 建议 CSV | 建议行数 | 主子表组 | 必填 FK 闭环依赖 | 用例指示 |
+|---|---|---|---|---|---|
+| ErpCtApprovalMatrix | `erp_ct_approval_matrix.csv` | 1~2 | —（独立表） | —（无必填 FK） | P+N-DIS |
+| ErpCtApprovalRecord | `erp_ct_approval_record.csv` | 1~3 | —（独立表） | ErpCtContract〔本批〕 | P |
+| ErpCtConsumptionLine | `erp_ct_consumption_line.csv` | 1~3 | —（独立表） | ErpCtContractLine〔本批〕 | P |
+| ErpCtContract | `erp_ct_contract.csv` | 2~3 | —（独立表） | ErpMdPartner〔跨域:md·已seed〕 | P+N-TERM |
+| ErpCtContractLine | `erp_ct_contract_line.csv` | 1~2/头 | ErpCtContract（子表） | ErpCtContract〔本批〕 | P |
+| ErpCtContractVersion | `erp_ct_contract_version.csv` | 1~2/头 | ErpCtContract（子表） | ErpCtContract〔本批〕 | P+N-TERM |
+| ErpCtDocument | `erp_ct_document.csv` | 1~3 | —（独立表） | —（无必填 FK） | P |
+| ErpCtInvoicePlan | `erp_ct_invoice_plan.csv` | 1~3 | —（独立表） | ErpCtContractLine〔本批〕 | P |
+| ErpCtRebateAccrual | `erp_ct_rebate_accrual.csv` | 1~3 | —（独立表） | ErpCtRebateAgreement〔本批〕 | P |
+| ErpCtRebateAgreement | `erp_ct_rebate_agreement.csv` | 2~3 | —（独立表） | ErpMdPartner〔跨域:md·已seed〕 | P+N-TERM |
+| ErpCtRebateSettlement | `erp_ct_rebate_settlement.csv` | 2~3 | —（独立表） | ErpCtRebateAgreement〔本批〕 | P+N-TERM |
+| ErpCtRebateTier | `erp_ct_rebate_tier.csv` | 1~3 | —（独立表） | ErpCtRebateAgreement〔本批〕 | P |
+| ErpCtSignatureRequest | `erp_ct_signature_request.csv` | 2~3 | —（独立表） | ErpCtContractVersion〔本批〕 | P+N-TERM |
+| ErpCtTemplate | `erp_ct_template.csv` | 1~2 | —（独立表） | —（无必填 FK） | P+N-DIS |
+| ErpCtVolumeDiscount | `erp_ct_volume_discount.csv` | 1~3 | —（独立表） | ErpCtContractLine〔本批〕 | P |
+
+#### drp（11 缺 → M1.x 工作项 **M1.5**）
+
+| 实体 | 建议 CSV | 建议行数 | 主子表组 | 必填 FK 闭环依赖 | 用例指示 |
+|---|---|---|---|---|---|
+| ErpDrpLine | `erp_drp_line.csv` | 2~3 | —（独立表） | ErpDrpPlan〔本批〕、ErpMdMaterial〔跨域:md·已seed〕、ErpMdWarehouse〔跨域:md·已seed〕 | P+N-TERM |
+| ErpDrpParameter | `erp_drp_parameter.csv` | 1~3 | —（独立表） | ErpMdWarehouse〔跨域:md·已seed〕、ErpMdMaterial〔跨域:md·已seed〕 | P |
+| ErpDrpPlan | `erp_drp_plan.csv` | 2~3 | —（独立表） | —（无必填 FK） | P+N-TERM |
+| ErpDrpScenario | `erp_drp_scenario.csv` | 2~3 | —（独立表） | —（无必填 FK） | P+N-TERM |
+| ErpDrpScenarioParam | `erp_drp_scenario_param.csv` | 1~2/头 | ErpDrpScenario（子表） | ErpDrpScenario〔本批〕 | P |
+| ErpDrpScenarioVersion | `erp_drp_scenario_version.csv` | 1~2/头 | ErpDrpScenario（子表） | ErpDrpScenario〔本批〕 | P+N-TERM |
+| ErpInvDrpCrossDock | `erp_inv_drp_cross_dock.csv` | 2~3 | —（独立表） | ErpMdMaterial〔跨域:md·已seed〕 | P+N-TERM |
+| ErpInvDrpDockAppointment | `erp_inv_drp_dock_appointment.csv` | 2~3 | —（独立表） | ErpMdWarehouse〔跨域:md·已seed〕、ErpInvDrpCrossDock〔本批〕 | P+N-TERM |
+| ErpInvDrpLeadTimeRecord | `erp_inv_drp_lead_time_record.csv` | 1~3 | —（独立表） | ErpMdPartner〔跨域:md·已seed〕、ErpMdMaterial〔跨域:md·已seed〕 | P |
+| ErpInvDrpSafetyStockCalc | `erp_inv_drp_safety_stock_calc.csv` | 1~3 | —（独立表） | ErpMdMaterial〔跨域:md·已seed〕 | P |
+| ErpInvDrpSupplierScore | `erp_inv_drp_supplier_score.csv` | 1~3 | —（独立表） | ErpMdPartner〔跨域:md·已seed〕、ErpMdMaterial〔跨域:md·已seed〕 | P |
+
