@@ -25,7 +25,6 @@ import java.time.LocalDate;
 import static io.nop.graphql.core.ast.GraphQLOperationType.mutation;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -178,8 +177,16 @@ public class TestErpHrDepartmentPositionDeleteGuard extends JunitAutoTestCase {
     @Test
     public void testDeleteEmptyPositionAllowed() {
         String posId = ormTemplate.runInSession(session -> seedPosition("P-EMPTY"));
-        ormTemplate.runInSession(session -> positionBiz.delete(posId, new ServiceContextImpl()));
-        assertNull(daoProvider.daoFor(ErpHrPosition.class).getEntityById(posId));
+        boolean deleted = ormTemplate.runInSession(session -> positionBiz.delete(posId, new ServiceContextImpl()));
+        assertTrue(deleted, "守卫通过的职位删除应返回 true（P1-CK-hr-001）");
+
+        // ErpHrPosition useLogicalDelete=true——逻辑删除后行仍在，getEntityById 主键读不过滤 delVersion，
+        // 断言语义对齐 testDeleteEmptyDepartmentAllowed。
+        ErpHrPosition afterDelete = ormTemplate.runInSession(s ->
+                daoProvider.daoFor(ErpHrPosition.class).getEntityById(posId));
+        assertNotNull(afterDelete, "逻辑删除后行仍可查到");
+        assertTrue(afterDelete.getDelVersion() != null && afterDelete.getDelVersion() > 0,
+                "delVersion 应被逻辑删除递增，was=" + afterDelete.getDelVersion());
     }
 
     // ---------- rpc helpers (unused, reserved) ----------
