@@ -10,6 +10,7 @@ import app.erp.fin.dao.entity.ErpFinVoucherBillR;
 import app.erp.fin.dao.entity.ErpFinVoucherLine;
 import app.erp.fin.service.ErpFinConstants;
 import app.erp.fin.service.ErpFinErrors;
+import app.erp.fin.service.FinFrozenClockExtension;
 import app.erp.fin.service.posting.provider.EmployeeAdvanceAcctDocProvider;
 import app.erp.md.dao.entity.ErpMdAcctSchema;
 import app.erp.md.dao.entity.ErpMdEmployee;
@@ -26,6 +27,7 @@ import io.nop.dao.api.IEntityDao;
 import io.nop.orm.IOrmTemplate;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -62,6 +64,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         initDatabaseSchema = OptionalBoolean.TRUE,
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpFinEmployeeAdvanceCashRepay extends JunitAutoTestCase {
+
+    // cashRepay 过账 voucherDate 读 CoreMetrics.today()，冻结到 fin 参考日使 seed 期间与过账同源、
+    // 输出确定性，消除月初翻车税（设计文档 §4.2）。
+    @RegisterExtension
+    static FinFrozenClockExtension finClock = new FinFrozenClockExtension();
 
     private static final IServiceContext CTX = new ServiceContextImpl();
 

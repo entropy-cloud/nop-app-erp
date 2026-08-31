@@ -10,6 +10,7 @@ import app.erp.fin.dao.entity.ErpFinFundAccount;
 import app.erp.fin.dao.entity.ErpFinVoucher;
 import app.erp.fin.dao.entity.ErpFinVoucherBillR;
 import app.erp.fin.service.ErpFinConstants;
+import app.erp.fin.service.FinFrozenClockExtension;
 import app.erp.md.dao.entity.ErpMdSubject;
 import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.spi.ILoggingEvent;
@@ -18,6 +19,7 @@ import io.nop.api.core.annotations.autotest.NopTestConfig;
 import io.nop.api.core.annotations.core.OptionalBoolean;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.config.AppConfig;
+import io.nop.api.core.time.CoreMetrics;
 import io.nop.autotest.junit.JunitAutoTestCase;
 import io.nop.core.context.IServiceContext;
 import io.nop.core.context.ServiceContextImpl;
@@ -28,6 +30,7 @@ import jakarta.inject.Inject;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
@@ -62,6 +65,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         initDatabaseSchema = OptionalBoolean.TRUE,
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpFinBankReconAutoReverseJob extends JunitAutoTestCase {
+    // reverseAll 扫描 cutoff 与 post voucherDate 均读 CoreMetrics 当前日期；冻结到 fin 参考日使
+    // 「当月」seed 与扫描口径同源、输出确定性，消除月初翻车税（设计文档 §4.2）。
+    @RegisterExtension
+    static FinFrozenClockExtension finClock = new FinFrozenClockExtension();
+
     private static final IServiceContext CTX = new ServiceContextImpl();
 
     static final String DC_DEBIT = ErpFinConstants.DC_DEBIT;
@@ -138,7 +146,7 @@ public class TestErpFinBankReconAutoReverseJob extends JunitAutoTestCase {
         long seed = System.nanoTime();
         String subjectId = "9102";
         final String[] ctx = new String[1];
-        LocalDate today = LocalDate.now();
+        LocalDate today = CoreMetrics.today();
         ormTemplate.runInSession(() -> {
             seedSubject(subjectId, "1002", "银行存款");
             seedSubject("91020", "2240OTHER", "未达账项调整");
