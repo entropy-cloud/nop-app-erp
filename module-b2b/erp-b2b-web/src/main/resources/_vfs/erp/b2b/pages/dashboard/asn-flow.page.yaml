@@ -8,6 +8,7 @@ remark: "提前发货通知（ErpB2bAsn）列表 + 流程条跟踪。三活跃�
 body:
   - type: form
     name: filterForm
+    valuesPath: filterForm
     title: "筛选条件"
     mode: inline
     wrapWithPanel: false

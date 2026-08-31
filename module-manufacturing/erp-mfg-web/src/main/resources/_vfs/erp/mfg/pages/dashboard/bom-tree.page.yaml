@@ -8,6 +8,7 @@ remark: "BOM 多级展开树浏览。调 ErpMfgBom__explode 获取扁平 List，
 body:
   - type: form
     name: filterForm
+    valuesPath: filterForm
     title: "展开参数"
     mode: inline
     wrapWithPanel: false

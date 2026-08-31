@@ -8,6 +8,7 @@ remark: "选择 EDI 文档后，按 ErpB2bEdiLog 展示状态时间线（directi
 body:
   - type: form
     name: filterForm
+    valuesPath: filterForm
     title: "EDI 文档选择"
     mode: inline
     wrapWithPanel: false

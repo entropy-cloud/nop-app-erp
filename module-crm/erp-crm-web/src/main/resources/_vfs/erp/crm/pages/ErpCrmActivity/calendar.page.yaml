@@ -10,6 +10,7 @@ remark: "CRM 活动按活动日期（activityDate）分组的卡片视图（月�
 body:
   - type: form
     name: filterForm
+    valuesPath: filterForm
     title: "筛选"
     mode: inline
     wrapWithPanel: false

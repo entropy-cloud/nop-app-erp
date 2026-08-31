@@ -5,6 +5,7 @@ title: "工单 SLA/CSAT 综合统计表"
 body:
   - type: form
     name: filterForm
+    valuesPath: filterForm
     title: ""
     mode: inline
     className: m-3

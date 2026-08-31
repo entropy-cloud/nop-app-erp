@@ -46,6 +46,7 @@ body:
 
   - type: form
     name: actionForm
+    valuesPath: actionForm
     title: "执行盘点操作"
     className: m-3
     mode: inline

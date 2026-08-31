@@ -9,6 +9,7 @@ remark: "按年月过滤薪酬记录（ErpHrSalary），前端聚合汇总卡片
 body:
   - type: form
     name: filterForm
+    valuesPath: filterForm
     title: "薪酬期间筛选"
     mode: inline
     wrapWithPanel: false

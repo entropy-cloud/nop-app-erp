@@ -23,6 +23,7 @@ body:
 
   - type: form
     name: filterForm
+    valuesPath: filterForm
     title: "选择维护访问"
     className: m-3
     mode: inline
@@ -150,6 +151,7 @@ body:
         text: "Step 3 · 执行结果录入"
       - type: form
         name: resultForm
+        valuesPath: resultForm
         mode: normal
         body:
           - type: textarea

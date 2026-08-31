@@ -7,6 +7,7 @@ remark: "客服工单操作日志（ErpCsTicketAction）按操作时间倒序的
 body:
   - type: form
     name: filterForm
+    valuesPath: filterForm
     title: "筛选"
     mode: inline
     wrapWithPanel: false

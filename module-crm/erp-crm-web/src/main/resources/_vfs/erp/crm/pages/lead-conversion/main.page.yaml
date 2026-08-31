@@ -26,6 +26,7 @@ body:
 
   - type: form
     name: step1Form
+    valuesPath: step1Form
     title: "Step 1 · 选择线索"
     className: m-3
     mode: normal
@@ -68,6 +69,7 @@ body:
         text: "Step 2 · 选择目标阶段"
       - type: form
         name: step2Form
+        valuesPath: step2Form
         mode: normal
         body:
           - type: select

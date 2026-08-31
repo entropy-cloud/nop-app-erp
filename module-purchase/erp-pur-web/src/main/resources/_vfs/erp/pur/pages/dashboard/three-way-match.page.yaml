@@ -9,6 +9,7 @@ remark: "采购订单 ↔ 入库单 ↔ 发票 三表并列联查。顶部差异
 body:
   - type: form
     name: filterForm
+    valuesPath: filterForm
     title: "筛选条件"
     mode: inline
     wrapWithPanel: false

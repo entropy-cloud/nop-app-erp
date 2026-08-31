@@ -9,6 +9,7 @@ remark: "6 列状态看板。行级按钮经 ErpCsTicket 状态机 mutation 触�
 body:
   - type: form
     name: filterForm
+    valuesPath: filterForm
     title: "筛选"
     mode: inline
     wrapWithPanel: false

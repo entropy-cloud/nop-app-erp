@@ -5,6 +5,7 @@ title: "质检合格率统计表"
 body:
   - type: form
     name: filterForm
+    valuesPath: filterForm
     title: ""
     mode: inline
     className: m-3

@@ -9,6 +9,7 @@ remark: "4 列状态看板（待开始 / 进行中 / 已完成 / 阻塞）。行
 body:
   - type: form
     name: filterForm
+    valuesPath: filterForm
     title: "筛选"
     mode: inline
     wrapWithPanel: false

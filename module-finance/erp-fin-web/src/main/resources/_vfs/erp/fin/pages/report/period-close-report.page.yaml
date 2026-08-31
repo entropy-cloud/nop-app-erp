@@ -5,6 +5,7 @@ title: "期末结账报告"
 body:
   - type: form
     name: filterForm
+    valuesPath: filterForm
     title: ""
     mode: inline
     className: m-3

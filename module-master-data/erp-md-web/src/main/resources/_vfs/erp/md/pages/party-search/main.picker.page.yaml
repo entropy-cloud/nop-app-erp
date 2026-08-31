@@ -11,6 +11,7 @@ title: "选择 Party（联合检索）"
 body:
   - type: form
     name: partyFilter
+    valuesPath: partyFilter
     title: "过滤条件"
     mode: inline
     submitOnChange: true

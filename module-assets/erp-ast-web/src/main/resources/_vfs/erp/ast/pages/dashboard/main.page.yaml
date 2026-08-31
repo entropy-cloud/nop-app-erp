@@ -6,6 +6,7 @@ title: "资产概览"
 body:
   - type: form
     name: filterForm
+    valuesPath: filterForm
     title: ""
     mode: inline
     wrapWithPanel: false

@@ -9,6 +9,7 @@ remark: "选择合同与两个版本（ErpCtContractVersion），对比版本元
 body:
   - type: form
     name: filterForm
+    valuesPath: filterForm
     title: "版本选择"
     mode: inline
     wrapWithPanel: false

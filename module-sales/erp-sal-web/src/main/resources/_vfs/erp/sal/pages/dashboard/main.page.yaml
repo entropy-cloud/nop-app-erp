@@ -6,6 +6,7 @@ title: "销售概览"
 body:
   - type: form
     name: filterForm
+    valuesPath: filterForm
     title: ""
     mode: inline
     wrapWithPanel: false

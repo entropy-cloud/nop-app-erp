@@ -93,8 +93,6 @@ body:
   args:
     url: '@query:ErpPrjDashboard__getProjectGrossMargin'
     method: post
-    data:
-      projectId: "${filterForm?.projectId || null}"
     selection: projectCount totalRevenue totalCost grossMarginPct
 - type: grid
   className: m-3

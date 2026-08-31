@@ -5,6 +5,7 @@ title: "预测差异报表"
 body:
   - type: form
     name: filterForm
+    valuesPath: filterForm
     title: ""
     mode: inline
     className: m-3

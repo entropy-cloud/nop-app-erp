@@ -5,6 +5,7 @@ title: "维护历史表"
 body:
   - type: form
     name: filterForm
+    valuesPath: filterForm
     title: ""
     mode: inline
     className: m-3

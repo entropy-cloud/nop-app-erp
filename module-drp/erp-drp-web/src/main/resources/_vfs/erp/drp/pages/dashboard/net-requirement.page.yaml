@@ -10,6 +10,7 @@ remark: "选择 DRP 计划后，展示 ErpDrpLine 净需求明细。每行包含
 body:
   - type: form
     name: filterForm
+    valuesPath: filterForm
     title: "计划选择"
     mode: inline
     wrapWithPanel: false

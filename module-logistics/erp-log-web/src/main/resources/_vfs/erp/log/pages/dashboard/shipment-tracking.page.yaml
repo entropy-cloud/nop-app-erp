@@ -9,6 +9,7 @@ remark: "选择发运单后，按 ErpLogShipmentLog 时间线展示物流网关�
 body:
   - type: form
     name: filterForm
+    valuesPath: filterForm
     title: "发运单选择"
     mode: inline
     wrapWithPanel: false

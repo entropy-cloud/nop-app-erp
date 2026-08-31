@@ -8,6 +8,7 @@ remark: "CRM 活动按活动日期（activityDate）倒序的纵向时间线。�
 body:
   - type: form
     name: filterForm
+    valuesPath: filterForm
     title: "筛选"
     mode: inline
     wrapWithPanel: false

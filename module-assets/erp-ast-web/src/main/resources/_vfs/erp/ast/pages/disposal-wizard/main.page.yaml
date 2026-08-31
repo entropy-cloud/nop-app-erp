@@ -21,6 +21,7 @@ body:
 
   - type: form
     name: step1Form
+    valuesPath: step1Form
     title: "Step 1 · 选择资产与处置类型"
     className: m-3
     mode: normal

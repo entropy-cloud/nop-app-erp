@@ -5,6 +5,7 @@ title: "薪酬模拟对比报表"
 body:
   - type: form
     name: filterForm
+    valuesPath: filterForm
     title: ""
     mode: inline
     className: m-3
