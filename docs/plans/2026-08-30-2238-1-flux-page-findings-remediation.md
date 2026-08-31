@@ -73,7 +73,7 @@
 
 ### Phase 1 - 上游 3 项（U1 / U2' / U3b）
 
-Status: planned
+Status: completed
 Targets: `../nop-chaos-flux/packages/flux-renderers-data/src/data-schema-validation.ts`；`../nop-entropy（master + fix-ai-check 两树）/nop-frontend-support/nop-web/src/main/resources/_vfs/nop/web/xlib/flux-web/grid_crud.xpl`、`.../xlib/flux-control.xlib`
 Skill: none
 
@@ -92,7 +92,7 @@ Exit Criteria:
 
 ### Phase 2 - ERP view.xml 修复（F1/F2/F3/F4-cs/F9a/F11）
 
-Status: planned
+Status: completed
 Targets: ct/drp/fin/hr/inv/log/mfg/mnt/cs 各模块 `*.view.xml`
 Skill: none
 
@@ -113,7 +113,7 @@ Exit Criteria:
 
 ### Phase 3 - ERP 手写 page.yaml/.flux.yaml 修复（F4-yaml/F5/F6/F7/F8/F10/F12）
 
-Status: planned
+Status: completed
 Targets: 对应 `main.page.yaml` / `.flux.yaml` / picker 页（F5 在 **main.flux.yaml**）
 Skill: none
 
@@ -134,19 +134,27 @@ Exit Criteria:
 
 ### Phase 4 - 端到端验证、视觉回归与收口
 
-Status: planned
+Status: completed（2026-08-31：validate:flux erp exit 0 / 全量构建绿 / checker 零漂移 / 视觉 10+10 绿 / 行为冒烟完成；三仓日志见 docs/logs/2026/08-30.md 与 nop-entropy ai-dev/logs/2026/08-30.md）
 Targets: wrapper 脚本、`_tmp/flux-page-validation-report.json`、e2e visual baselines、三仓日志
 Skill: none
 
 - Item Types: `Proof | Add | Follow-up`
 - Prereqs: Phase 1-3
 
-- [ ] Add：`scripts/validate-flux-pages.sh` 增加 ERP 范围校验步骤（validator 直验 `$EXPORT_DIR/erp` 子树，零上游改动）——ERP 侧退出码必须 0；全量（含平台页）保留原语义
-- [ ] Proof：`npm run validate:flux`——erp 子树 exit 0 / error 0；全量报告留存（平台残余登记 Deferred）
-- [ ] Proof：ERP 全量 `mvn clean install -DskipTests` 绿 + `bash docs/audits/nop-compliance-checker.sh` 零漂移
-- [ ] Proof：视觉回归——`dashboards.snapshot.spec.ts` **全量 10 test**：复跑确认漂移仅来自 KPI 区激活（当前空渲染 → 卡片网格），按 runbook `--update-snapshots` 重录并 diff 审视；`dashboards.visual` KPI 断言预期翻绿；party-search picker / mnt visit-wizard 视觉核验；受影响行为激活页（b2b 附件下载、asn-flow 行选中、mnt link 跳转）对应 e2e 冒烟（存在用例则复跑，无则手动核验记录）
-- [ ] Add：三仓日志 + 设计文档发现分级节更新为终态数字
-- [ ] Follow-up：平台页残余（variant 9 手写字面量、static 90 等）登记 nop-entropy 上游跟进
+- **执行中范围扩展（Decision，2026-08-30/31，用户指令触发）**：视觉回归揭示两簇新根因，均在「修复=激活真实缺陷」义务范围内：
+  - **V1 看板过滤失效簇（P1）**：9 域看板 + payroll 的页面级 data-source 模板读 `${filterForm?.x}` 恒 null——flux named form **仅经 `valuesPath` 才向父作用域发布值**（`form-runtime.ts setupExternalPublication`），未配置时过滤参数从未发出（探针证实请求体 `periodId:null`）。修复=filterForm 补 `valuesPath: filterForm`（9 看板 + payroll 同源重写）。KPI 断言由此翻绿（finance 1130/sales 1000/purchase 850/inventory 10450/assets 135000/mfg 180/quality 0.67 全命中 value-spec 权威值）。
+  - **V2 文档缺口（用户直接指令，人工批准）**：`@query:`/`@mutation:` 前缀的 CRUD 参数整形（nopRpcResolver operationRegistry：尾缀命中注册操作只提交特定命名参数、filter_* 转 TreeBean、未注册 @query 透传、未注册 @mutation 兜底 `{data}`）docs-for-ai 未覆盖——已补 `docs-for-ai/02-core-guides/flux-rendering.md`（两树同步提交 1584f4a2cf / 4c275d80c2），含 /p/ 行、valuesPath 跨作用域规则与页面作者规则。
+  - **V3 行为激活范式修正**：asn-flow 行点击 `onRowClick+setValue` 不可用（行事件 action 上下文=行作用域，`scope.update` 本地写行内遮蔽；crud selection 组合态固定写 `$_crud.<id>.*` 且 reaction 不订阅该命名空间）——重写为操作列按钮 + `openDialog`（行绑定 `${id}` 进 surface 作用域，flux-guide crud-with-dialog 范式）。voucher/recon 反冲预览模板 flux 化（HTML 标签非法→纯文本多节点 + `previewData?.x` 可选访问 + `| default:` 管道→`??`）。
+  - **V4 测试侧腐化修复**：`_helper.ts` REST `/r/` 等待（8/29 迁移遗留）、KPI 取值选择器 `h3`、图表断言 `svg.recharts-surface`、`pickFluxDate` 日历驱动（day-15 探测显示月份防上月格振荡）、过滤重载改为 fill 自动重载等待（模板依赖跟踪防抖重发，click refreshSource 被去重）；spec 补 6 域权威 seed 窗口参数；reverse-preview.action.spec 数据构造修复（postVoucher 从行重算合计→补平衡分录行）。
+
+- [x] Add：`scripts/validate-flux-pages.sh` 增加 ERP 范围校验步骤（validator 直验 `$EXPORT_DIR/erp` 子树，零上游改动）——ERP 侧退出码必须 0；全量（含平台页）保留原语义
+- [x] Proof：`npm run validate:flux`——erp 子树 exit 0 / error 0；全量报告留存（平台残余登记 Deferred）
+- [x] Proof：ERP 全量 `mvn clean install -DskipTests` 绿（FULL_BUILD_EXIT=0，2026-08-31）+ `bash docs/audits/nop-compliance-checker.sh` 零漂移（exit 0，命中项均为既有形态）
+- [x] Proof：视觉回归——`dashboards.snapshot.spec.ts` **全量 10 test**：复跑确认漂移仅来自 KPI 区激活（35% 像素=卡片网格从空渲染激活，diff 审视 + CDN 截图目检确认 6 卡横排正常），`--update-snapshots` 重录后 10/10 绿；`dashboards.visual` KPI 断言 **10/10 翻绿**（V1 修复后）；party-search picker（rowKey 修复后 f16 系列绿）；行为激活冒烟完成：voucher 红冲 dialog 内容渲染无模板错误、asn 流程 dialog detail+steps+明细行全渲染、cs kbSuggestion 条件空态正常（种子无匹配属业务语义）、recon 反冲模板与 voucher 同款（种子无 POSTED 数据，按钮存在性由 visibleOn 守卫，模式由 voucher 证明）、reverse-preview.action.spec + f16-p2 复跑 8/8 绿
+- [x] Add：三仓日志（ERP docs/logs/2026/08-30.md 两段 + nop-entropy ai-dev/logs/2026/08-30.md 追加 V2 文档变更段）+ 发现分账终态补记（本节下方「终态对账」）
+- [x] Follow-up：平台页残余（variant 4 处手写字面量、static 90 等）已登记 Deferred But Adjudicated → successor 触发条件落盘
+
+**终态对账（2026-08-31）**：erp/* 892 error → **0**（erp 子树 validator exit 0，999 页导出 0 失败）；执行中范围扩展 V1-V4 另修 9 看板 + payroll 过滤失效（valuesPath）、asn-flow 交互范式、voucher/recon 预览模板、6 处测试侧腐化。视觉终态：dashboards.snapshot 10/10（KPI 激活基线重录）+ dashboards.visual 10/10（KPI token 全命中 value-spec 权威值）。
 
 Exit Criteria:
 
