@@ -1,3 +1,6 @@
+# 客服绩效看板（plan 2026-08-29-1913-2 Phase 1）。
+# flux 原生重写：data-source → KPI 卡 + chart + crud。
+# 数据源：ErpCsQualityDashboard__getDashboardKpi / __getTeamSlaRanking / __getAgentCsatBreakdown。
 type: page
 title: "客服绩效看板"
 body:
@@ -11,129 +14,149 @@ body:
       - type: input-date
         name: startDate
         label: "开始日期"
-        format: "YYYY-MM-DD"
+        format: YYYY-MM-DD
         clearable: true
       - type: input-date
         name: endDate
         label: "结束日期"
-        format: "YYYY-MM-DD"
+        format: YYYY-MM-DD
         clearable: true
       - type: button
         label: "刷新"
-        icon: "refresh-cw"
-        actionType: reload
-        target: "kpiService,teamRankingChart,agentCsatCrud"
+        icon: refresh-cw
+        onClick:
+          action: refreshSource
+          targetId: kpiData
+          then:
+            action: refreshSource
+            targetId: teamRankingData
+          then:
+            action: refreshSource
+            targetId: agentCsatData
 
-  - type: service
-    name: kpiService
-    api:
-      url: /graphql
+  - type: data-source
+    name: kpiData
+    action: ajax
+    args:
+      url: '@query:ErpCsQualityDashboard__getDashboardKpi'
       method: post
-      dataType: raw
       data:
-        query: "query(${'$'}startDate:String,${'$'}endDate:String){ ErpCsQualityDashboard__getDashboardKpi(startDate:${'$'}startDate,endDate:${'$'}endDate) }"
-        variables:
-          startDate: "${startDate || null}"
-          endDate: "${endDate || null}"
-      adaptor: |
-        const d = payload.data || {};
-        const gql = d.data ? d.data : d;
-        const kpi = gql.ErpCsQualityDashboard__getDashboardKpi || {};
-        return { status: 0, msg: '', data: kpi };
-    body:
-      - type: grid
-        className: m-3
-        gap: 'sm'
-        columns:
-          - type: wrapper
-            className: "border rounded p-3"
+        startDate: "${filterForm?.startDate || null}"
+        endDate: "${filterForm?.endDate || null}"
+      selection: slaCompletionRate avgResolutionHours slaBreachedCount totalTickets avgFirstResponseHours
+
+  - type: grid
+    className: m-3
+    gap: sm
+    columns: 5
+    items:
+      - colSpan: 1
+        body:
+          - type: card
+            className: border rounded p-3
             body:
-              - type: tpl
-                tpl: "<div class='text-muted'>SLA 达标率</div>"
-              - type: tpl
-                tpl: "<span class='h3 text-success'>${slaCompletionRate != null ? (slaCompletionRate * 100).toFixed(1) + '%' : '-'}</span>"
-          - type: wrapper
-            className: "border rounded p-3"
+              - type: text
+                tag: div
+                className: text-muted
+                text: "SLA 达标率"
+              - type: text
+                tag: span
+                className: h3 text-success
+                text: "${kpiData?.slaCompletionRate != null ? ((kpiData.slaCompletionRate * 100) | round:1) + '%' : '-'}"
+      - colSpan: 1
+        body:
+          - type: card
+            className: border rounded p-3
             body:
-              - type: tpl
-                tpl: "<div class='text-muted'>平均解决时长(小时)</div>"
-              - type: tpl
-                tpl: "<span class='h3'>${avgResolutionHours != null ? avgResolutionHours : '-'}</span>"
-          - type: wrapper
-            className: "border rounded p-3"
+              - type: text
+                tag: div
+                className: text-muted
+                text: "平均解决时长(小时)"
+              - type: text
+                tag: span
+                className: h3
+                text: "${kpiData?.avgResolutionHours ?? '-'}"
+      - colSpan: 1
+        body:
+          - type: card
+            className: border rounded p-3
             body:
-              - type: tpl
-                tpl: "<div class='text-muted'>超时工单数</div>"
-              - type: tpl
-                tpl: "<span class='h3 text-danger'>${slaBreachedCount != null ? slaBreachedCount : 0}</span>"
-          - type: wrapper
-            className: "border rounded p-3"
+              - type: text
+                tag: div
+                className: text-muted
+                text: "超时工单数"
+              - type: text
+                tag: span
+                className: h3 text-danger
+                text: "${kpiData?.slaBreachedCount ?? 0}"
+      - colSpan: 1
+        body:
+          - type: card
+            className: border rounded p-3
             body:
-              - type: tpl
-                tpl: "<div class='text-muted'>已关闭工单数</div>"
-              - type: tpl
-                tpl: "<span class='h3'>${totalTickets != null ? totalTickets : 0}</span>"
-          - type: wrapper
-            className: "border rounded p-3"
+              - type: text
+                tag: div
+                className: text-muted
+                text: "已关闭工单数"
+              - type: text
+                tag: span
+                className: h3
+                text: "${kpiData?.totalTickets ?? 0}"
+      - colSpan: 1
+        body:
+          - type: card
+            className: border rounded p-3
             body:
-              - type: tpl
-                tpl: "<div class='text-muted'>平均首次响应时长(小时)</div>"
-              - type: tpl
-                tpl: "<span class='h3'>${avgFirstResponseHours != null ? avgFirstResponseHours : '-'}</span>"
+              - type: text
+                tag: div
+                className: text-muted
+                text: "平均首次响应时长(小时)"
+              - type: text
+                tag: span
+                className: h3
+                text: "${kpiData?.avgFirstResponseHours ?? '-'}"
+
+  - type: data-source
+    name: teamRankingData
+    action: ajax
+    args:
+      url: '@query:ErpCsQualityDashboard__getTeamSlaRanking'
+      method: post
+      data:
+        startDate: "${filterForm?.startDate || null}"
+        endDate: "${filterForm?.endDate || null}"
+      selection: teamName slaCompletionRate totalTickets
 
   - type: chart
-    name: teamRankingChart
-    className: m-3
-    api:
-      url: /graphql
+    chartType: bar
+    title: "团队 SLA 达标率排名"
+    source: ${teamRankingData ?? []}
+    xAxis: { dataKey: teamName }
+    yAxis: { label: "达标率/工单数" }
+    legend: true
+    height: 300
+    series:
+      - { name: "SLA达标率", dataRegionKey: slaCompletionRate }
+      - { name: "工单数", dataRegionKey: totalTickets }
+
+  - type: data-source
+    name: agentCsatData
+    action: ajax
+    args:
+      url: '@query:ErpCsQualityDashboard__getAgentCsatBreakdown'
       method: post
-      dataType: raw
       data:
-        query: "query(${'$'}startDate:String,${'$'}endDate:String){ ErpCsQualityDashboard__getTeamSlaRanking(startDate:${'$'}startDate,endDate:${'$'}endDate) }"
-        variables:
-          startDate: "${startDate || null}"
-          endDate: "${endDate || null}"
-      adaptor: |
-        const d = payload.data || {};
-        const gql = d.data ? d.data : d;
-        const rows = gql.ErpCsQualityDashboard__getTeamSlaRanking || [];
-        return {
-          status: 0,
-          msg: '',
-          data: {
-            title: { text: '团队 SLA 达标率排名' },
-            tooltip: { trigger: 'axis' },
-            legend: { data: ['SLA达标率', '工单数'] },
-            xAxis: { type: 'category', data: rows.map(function(r){return r.teamName;}) },
-            yAxis: [{ type: 'value', name: '达标率', max: 1 }, { type: 'value', name: '工单数' }],
-            series: [
-              { name: 'SLA达标率', type: 'bar', data: rows.map(function(r){return r.slaCompletionRate;}) },
-              { name: '工单数', type: 'bar', yAxisIndex: 1, data: rows.map(function(r){return r.totalTickets;}) }
-            ]
-          }
-        };
+        startDate: "${filterForm?.startDate || null}"
+        endDate: "${filterForm?.endDate || null}"
+      selection: agentId ticketCount surveyCount avgCsat avgNps avgCes
 
   - type: crud
-    name: agentCsatCrud
     className: m-3
     title: "客服 CSAT/NPS/CES 明细"
+    source: ${agentCsatData ?? []}
     syncLocation: false
     headerToolbar: []
     footerToolbar: []
-    api:
-      url: /graphql
-      method: post
-      dataType: raw
-      data:
-        query: "query(${'$'}startDate:String,${'$'}endDate:String){ ErpCsQualityDashboard__getAgentCsatBreakdown(startDate:${'$'}startDate,endDate:${'$'}endDate) }"
-        variables:
-          startDate: "${startDate || null}"
-          endDate: "${endDate || null}"
-      adaptor: |
-        const d = payload.data || {};
-        const gql = d.data ? d.data : d;
-        const rows = gql.ErpCsQualityDashboard__getAgentCsatBreakdown || [];
-        return { status: 0, msg: '', data: { items: rows, count: rows.length } };
     columns:
       - name: agentId
         label: "客服ID"

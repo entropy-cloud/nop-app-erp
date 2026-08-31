@@ -81,7 +81,7 @@ body:
         start: ${event.start}
         end: ${event.end}
   onTaskClick:
-    action: notify
+    action: showToast
     args:
       level: info
       message: ${"点击工序 " + event.id}

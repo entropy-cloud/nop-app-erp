@@ -1,0 +1,222 @@
+# 项目概览 dashboard（plan 2026-08-28-1600-1 Phase 1）。
+# flux 原生重写：service → data-source + chart + crud。
+# 数据源：ErpPrjDashboard__getDashboardKpi / __getProjectGrossMargin / __getProjectStatusDistribution / __findCostOverrunAlert / __findDelayedProjectAlert。
+type: page
+title: 项目概览
+body:
+- type: button
+  label: 刷新
+  icon: refresh-cw
+  className: m-3
+  onClick:
+    action: refreshSource
+    targetId: kpiData
+    then:
+      action: refreshSource
+      targetId: grossMarginData
+      then:
+        action: refreshSource
+        targetId: statusData
+        then:
+          action: refreshSource
+          targetId: costOverrunData
+          then:
+            action: refreshSource
+            targetId: delayedProjectData
+- type: data-source
+  name: kpiData
+  action: ajax
+  args:
+    url: '@query:ErpPrjDashboard__getDashboardKpi'
+    method: post
+    selection: openProjectCount totalBudget incurredCost executionRate
+- type: grid
+  className: m-3
+  gap: sm
+  columns: 4
+  items:
+  - colSpan: 1
+    body:
+    - type: card
+      className: border rounded p-3
+      body:
+      - type: text
+        tag: div
+        className: text-muted
+        text: 在手项目数
+      - type: text
+        tag: h3
+        className: font-bold
+        text: "${kpiData?.openProjectCount ?? 0}"
+  - colSpan: 1
+    body:
+    - type: card
+      className: border rounded p-3
+      body:
+      - type: text
+        tag: div
+        className: text-muted
+        text: 项目总预算
+      - type: text
+        tag: h3
+        className: text-primary
+        text: "¥${kpiData?.totalBudget ?? 0 | round:2}"
+  - colSpan: 1
+    body:
+    - type: card
+      className: border rounded p-3
+      body:
+      - type: text
+        tag: div
+        className: text-muted
+        text: 已发生成本
+      - type: text
+        tag: h3
+        className: text-danger
+        text: "¥${kpiData?.incurredCost ?? 0 | round:2}"
+  - colSpan: 1
+    body:
+    - type: card
+      className: border rounded p-3
+      body:
+      - type: text
+        tag: div
+        className: text-muted
+        text: 预算执行率
+      - type: text
+        tag: h3
+        className: text-warning
+        text: "${kpiData?.executionRate ?? 0 | round:2}"
+- type: data-source
+  name: grossMarginData
+  action: ajax
+  args:
+    url: '@query:ErpPrjDashboard__getProjectGrossMargin'
+    method: post
+    data:
+      projectId: "${filterForm?.projectId || null}"
+    selection: projectCount totalRevenue totalCost grossMarginPct
+- type: grid
+  className: m-3
+  gap: sm
+  columns: 4
+  items:
+  - colSpan: 1
+    body:
+    - type: card
+      className: border rounded p-3
+      body:
+      - type: text
+        tag: div
+        className: text-muted
+        text: 项目损益汇总数
+      - type: text
+        tag: h3
+        className: font-bold
+        text: "${grossMarginData?.projectCount ?? 0}"
+  - colSpan: 1
+    body:
+    - type: card
+      className: border rounded p-3
+      body:
+      - type: text
+        tag: div
+        className: text-muted
+        text: 收入合计
+      - type: text
+        tag: h3
+        className: text-primary
+        text: "¥${grossMarginData?.totalRevenue ?? 0 | round:2}"
+  - colSpan: 1
+    body:
+    - type: card
+      className: border rounded p-3
+      body:
+      - type: text
+        tag: div
+        className: text-muted
+        text: 成本合计
+      - type: text
+        tag: h3
+        className: text-danger
+        text: "¥${grossMarginData?.totalCost ?? 0 | round:2}"
+  - colSpan: 1
+    body:
+    - type: card
+      className: border rounded p-3
+      body:
+      - type: text
+        tag: div
+        className: text-muted
+        text: 整体毛利率
+      - type: text
+        tag: h3
+        className: text-success
+        text: "${grossMarginData?.grossMarginPct ?? 0 | round:4}"
+- type: data-source
+  name: statusData
+  action: ajax
+  args:
+    url: '@query:ErpPrjDashboard__getProjectStatusDistribution'
+    method: post
+    selection: status count
+- type: chart
+  chartType: pie
+  title: 项目状态分布
+  source: ${statusData ?? []}
+  height: 300
+- type: data-source
+  name: costOverrunData
+  action: ajax
+  args:
+    url: '@query:ErpPrjDashboard__findCostOverrunAlert'
+    method: post
+    selection: projectCode projectName budget incurredCost overrunAmount
+- type: crud
+  title: 成本超支项目预警
+  source: ${costOverrunData}
+  syncLocation: false
+  headerToolbar: []
+  footerToolbar: []
+  columns:
+  - name: projectCode
+    label: 项目编码
+  - name: projectName
+    label: 项目名称
+  - name: budget
+    label: 预算
+    type: number
+    precision: 2
+  - name: incurredCost
+    label: 已发生成本
+    type: number
+    precision: 2
+  - name: overrunAmount
+    label: 超支金额
+    type: number
+    precision: 2
+- type: data-source
+  name: delayedProjectData
+  action: ajax
+  args:
+    url: '@query:ErpPrjDashboard__findDelayedProjectAlert'
+    method: post
+    selection: projectCode projectName endDate status overdueDays
+- type: crud
+  title: 项目延期预警（计划完成日 < 今天 且 未 COMPLETED）
+  source: ${delayedProjectData}
+  syncLocation: false
+  headerToolbar: []
+  footerToolbar: []
+  columns:
+  - name: projectCode
+    label: 项目编码
+  - name: projectName
+    label: 项目名称
+  - name: endDate
+    label: 计划完成日
+  - name: status
+    label: 状态
+  - name: overdueDays
+    label: 逾期(天)
+    type: number

@@ -86,7 +86,7 @@
                 <col id="varianceQuantity">
                     <gen-control>
                         <c:script><![CDATA[
-                            return { type: 'number', kilometer: true, precision: 4 };
+                            return { precision: 4 };
                         ]]></c:script>
                     </gen-control>
                 </col>
@@ -147,7 +147,7 @@
                 <col id="varianceAmount">
                     <gen-control>
                         <c:script><![CDATA[
-                            return { type: 'number', kilometer: true, precision: 4 };
+                            return { precision: 4 };
                         ]]></c:script>
                     </gen-control>
                 </col>

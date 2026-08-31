@@ -21,10 +21,9 @@
                             const valueProp = dispMeta?.id || 'status';
                             const labelProp = propMeta?.['graphql:labelProp'] || (valueProp + '_label');
                             return {
-                                type: "tpl",
-                                tpl: '<span class="label label-${' + valueProp
+                                cell: { type: "text", text: '<span class="label label-${' + valueProp
                                     + " == 'ACTIVE' ? 'success' : 'default'}\">"
-                                    + "${" + labelProp + "}</span>"
+                                    + "${" + labelProp + "}</span>" }
                             };
                         ]]></c:script>
                     </gen-control>

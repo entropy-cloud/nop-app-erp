@@ -28,10 +28,9 @@
                                 + inList(warningVals) + " ? 'warning' : "
                                 + inList(primaryVals) + " ? 'primary' : 'default'";
                             return {
-                                type: "tpl",
-                                tpl: '<span class="label label-${' + expr + "}"
+                                cell: { type: "text", text: '<span class="label label-${' + expr + "}"
                                     + ">"
-                                    + "${" + labelProp + "}</span>"
+                                    + "${" + labelProp + "}</span>" }
                             };
                         ]]></c:script>
                     </gen-control>
@@ -66,10 +65,9 @@
                                 + inList(warningVals) + " ? 'warning' : "
                                 + inList(primaryVals) + " ? 'primary' : 'default'";
                             return {
-                                type: "tpl",
-                                tpl: '<span class="label label-${' + expr + "}"
+                                cell: { type: "text", text: '<span class="label label-${' + expr + "}"
                                     + ">"
-                                    + "${" + labelProp + "}</span>"
+                                    + "${" + labelProp + "}</span>" }
                             };
                         ]]></c:script>
                     </gen-control>
@@ -89,10 +87,9 @@
                             const valueProp = dispMeta?.id || 'docStatus';
                             const labelProp = propMeta?.['graphql:labelProp'] || (valueProp + '_label');
                             return {
-                                type: "tpl",
-                                tpl: '<span class="label label-${' + valueProp
+                                cell: { type: "text", text: '<span class="label label-${' + valueProp
                                     + " == 'ACTIVE' ? 'primary' : 'default'}\">"
-                                    + "${" + labelProp + "}</span>"
+                                    + "${" + labelProp + "}</span>" }
                             };
                         ]]></c:script>
                     </gen-control>
@@ -164,7 +161,7 @@
                         </data>
                     </dialog>
                 </action>
-                <action id="row-create-request-button" label="创建维修请求" i18n-en:label="Create Request" level="primary" icon="fa fa-plus"
+                <action actionType="link" id="row-create-request-button" label="创建维修请求" i18n-en:label="Create Request" level="primary" icon="fa fa-plus"
                         tooltip="跳转到维修请求列表（带设备上下文筛选），新建请求时自动预填设备"
                         link="/ErpMntRequest-main?filter_equipmentId=${id}">
                     <visibleOn>${status != 'DECOMMISSIONED'}</visibleOn>

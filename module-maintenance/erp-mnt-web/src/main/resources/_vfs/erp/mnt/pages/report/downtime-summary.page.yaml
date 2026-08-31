@@ -1,7 +1,10 @@
+# 停机统计表（plan 2026-08-29-1913-2 Phase 1）。
+# flux 原生重写：data-source → form → html。
 type: page
 title: "停机统计表"
 body:
   - type: form
+    name: filterForm
     title: ""
     mode: inline
     className: m-3
@@ -13,58 +16,58 @@ body:
       - type: input-date
         name: startDate
         label: "开始日期"
-        valueFormat: "YYYY-MM-DD"
+        valueFormat: YYYY-MM-DD
       - type: input-date
         name: endDate
         label: "结束日期"
-        valueFormat: "YYYY-MM-DD"
+        valueFormat: YYYY-MM-DD
       - type: button
         label: "渲染报表"
-        actionType: reload
-        target: "reportService"
-      - type: button-toolbar
-        buttons:
-          - type: button
-            label: "下载 XLSX"
-            actionType: download
-            api:
-              url: /p/ErpMntReport__download
-              method: post
-              responseType: blob
-              data:
-                reportName: "downtime-summary"
-                renderType: "xlsx"
-                data: { equipmentId: "${equipmentId}", startDate: "${startDate}", endDate: "${endDate}" }
-          - type: button
-            label: "下载 PDF"
-            actionType: download
-            api:
-              url: /p/ErpMntReport__download
-              method: post
-              responseType: blob
-              data:
-                reportName: "downtime-summary"
-                renderType: "pdf"
-                data: { equipmentId: "${equipmentId}", startDate: "${startDate}", endDate: "${endDate}" }
-      - type: service
-        name: reportService
-        id: reportContainer
-        initFetch: false
+        onClick:
+          action: refreshSource
+          targetId: reportHtmlData
+      - type: button
+        label: "下载 XLSX"
+        actionType: download
         api:
-          url: /graphql
+          url: /p/ErpMntReport__download
           method: post
-          dataType: raw
+          responseType: blob
           data:
-            query: "query(${'$'}reportName:String!,${'$'}equipmentId:BigDecimal,${'$'}startDate:String,${'$'}endDate:String){ ErpMntReport__renderHtml(reportName:${'$'}reportName,data:{equipmentId:${'$'}equipmentId,startDate:${'$'}startDate,endDate:${'$'}endDate}) }"
-            variables:
-              reportName: "downtime-summary"
-              equipmentId: "${equipmentId}"
-              startDate: "${startDate}"
-              endDate: "${endDate}"
-          adaptor: |
-            const d = payload.data || {};
-            const html = (d.data ? d.data : d).ErpMntReport__renderHtml || '';
-            return { status: 0, msg: '', data: { reportHtml: html } };
-        body:
-          - type: html
-            html: "${reportHtml}"
+            reportName: "downtime-summary"
+            renderType: "xlsx"
+            data:
+              equipmentId: "${filterForm?.equipmentId}"
+              startDate: "${filterForm?.startDate}"
+              endDate: "${filterForm?.endDate}"
+      - type: button
+        label: "下载 PDF"
+        actionType: download
+        api:
+          url: /p/ErpMntReport__download
+          method: post
+          responseType: blob
+          data:
+            reportName: "downtime-summary"
+            renderType: "pdf"
+            data:
+              equipmentId: "${filterForm?.equipmentId}"
+              startDate: "${filterForm?.startDate}"
+              endDate: "${filterForm?.endDate}"
+
+  - type: data-source
+    name: reportHtmlData
+    action: ajax
+    args:
+      url: '@query:ErpMntReport__renderHtml'
+      method: post
+      data:
+        reportName: "downtime-summary"
+        data:
+          equipmentId: "${filterForm?.equipmentId}"
+          startDate: "${filterForm?.startDate}"
+          endDate: "${filterForm?.endDate}"
+
+  - type: html
+    className: m-3
+    html: "${reportHtmlData ?? ''}"

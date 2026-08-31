@@ -1,3 +1,6 @@
+# 销售概览 dashboard（plan 2026-08-29-1913-1 Phase 1）。
+# flux 原生重写：data-source → KPI 卡 + chart（趋势/TOP10 客户）+ crud（应收超期预警）。
+# 数据源：ErpSalDashboard__getDashboardKpi / __getDashboardTrend / __findCustomerTopN / __findArOverdueAlert。
 type: page
 title: "销售概览"
 body:
@@ -11,152 +14,152 @@ body:
       - type: input-date
         name: startDate
         label: "开始日期"
-        format: "YYYY-MM-DD"
+        format: YYYY-MM-DD
         placeholder: "留空=本月1日"
         clearable: true
       - type: input-date
         name: endDate
         label: "结束日期"
-        format: "YYYY-MM-DD"
+        format: YYYY-MM-DD
         placeholder: "留空=今天"
         clearable: true
       - type: button
         label: "刷新"
-        icon: "refresh-cw"
-        actionType: reload
-        target: "kpiService,trendChart,topNCustomerChart,arOverdueCrud"
+        icon: refresh-cw
+        onClick:
+          action: refreshSource
+          targetId: kpiData
+          then:
+            action: refreshSource
+            targetId: trendData
+            then:
+              action: refreshSource
+              targetId: topNCustomerData
+              then:
+                action: refreshSource
+                targetId: arOverdueData
 
-  - type: service
-    name: kpiService
-    api:
-      url: /graphql
+  - type: data-source
+    name: kpiData
+    action: ajax
+    args:
+      url: '@query:ErpSalDashboard__getDashboardKpi'
       method: post
-      dataType: raw
       data:
-        query: "query(${'$'}startDate:String,${'$'}endDate:String){ ErpSalDashboard__getDashboardKpi(startDate:${'$'}startDate,endDate:${'$'}endDate) }"
-        variables:
-          startDate: "${startDate || null}"
-          endDate: "${endDate || null}"
-      adaptor: |
-        const d = payload.data || {};
-        const gql = d.data ? d.data : d;
-        const kpi = gql.ErpSalDashboard__getDashboardKpi || {};
-        return { status: 0, msg: '', data: kpi };
-    body:
-      - type: grid
-        className: m-3
-        gap: 'sm'
-        columns:
-          - type: wrapper
-            className: "border rounded p-3"
-            body:
-              - type: tpl
-                tpl: "<div class='text-muted'>本期销售额</div>"
-              - type: tpl
-                tpl: "<span class='h3 text-success'>¥${salesAmount | round:2}</span>"
-          - type: wrapper
-            className: "border rounded p-3"
-            body:
-              - type: tpl
-                tpl: "<div class='text-muted'>本期订单量</div>"
-              - type: tpl
-                tpl: "<span class='h3 font-bold'>${orderCount}</span>"
-          - type: wrapper
-            className: "border rounded p-3"
-            body:
-              - type: tpl
-                tpl: "<div class='text-muted'>订单→开票转化率</div>"
-              - type: tpl
-                tpl: "<span class='h3 text-primary'>${conversionRate | round:2}</span>"
-          - type: wrapper
-            className: "border rounded p-3"
-            body:
-              - type: tpl
-                tpl: "<div class='text-muted'>应收余额</div>"
-              - type: tpl
-                tpl: "<span class='h3 text-warning'>¥${arBalance | round:2}</span>"
+        startDate: "${filterForm?.startDate || null}"
+        endDate: "${filterForm?.endDate || null}"
+      selection: salesAmount orderCount conversionRate arBalance
 
-  - type: chart
-    name: trendChart
+  - type: grid
     className: m-3
-    api:
-      url: /graphql
-      method: post
-      dataType: raw
-      data:
-        query: "query(${'$'}months:Int){ ErpSalDashboard__getDashboardTrend(months:${'$'}months) }"
-        variables:
-          months: 12
-      adaptor: |
-        const d = payload.data || {};
-        const gql = d.data ? d.data : d;
-        const rows = gql.ErpSalDashboard__getDashboardTrend || [];
-        return {
-          status: 0,
-          msg: '',
-          data: {
-            title: { text: '销售趋势（近12月）' },
-            tooltip: { trigger: 'axis' },
-            legend: { data: ['销售额'] },
-            xAxis: { type: 'category', data: rows.map(function(r){return r.month;}) },
-            yAxis: { type: 'value' },
-            series: [
-              { name: '销售额', type: 'line', data: rows.map(function(r){return r.salesAmount;}) }
-            ]
-          }
-        };
+    gap: sm
+    columns: 4
+    items:
+      - colSpan: 1
+        body:
+          - type: card
+            className: border rounded p-3
+            body:
+              - type: text
+                tag: div
+                className: text-muted
+                text: 本期销售额
+              - type: text
+                tag: span
+                className: h3 text-success
+                text: "¥${kpiData?.salesAmount ?? 0 | round:2}"
+      - colSpan: 1
+        body:
+          - type: card
+            className: border rounded p-3
+            body:
+              - type: text
+                tag: div
+                className: text-muted
+                text: 本期订单量
+              - type: text
+                tag: span
+                className: h3 font-bold
+                text: "${kpiData?.orderCount ?? 0}"
+      - colSpan: 1
+        body:
+          - type: card
+            className: border rounded p-3
+            body:
+              - type: text
+                tag: div
+                className: text-muted
+                text: 订单→开票转化率
+              - type: text
+                tag: span
+                className: h3 text-primary
+                text: "${kpiData?.conversionRate ?? 0 | round:2}"
+      - colSpan: 1
+        body:
+          - type: card
+            className: border rounded p-3
+            body:
+              - type: text
+                tag: div
+                className: text-muted
+                text: 应收余额
+              - type: text
+                tag: span
+                className: h3 text-warning
+                text: "¥${kpiData?.arBalance ?? 0 | round:2}"
 
+  - type: data-source
+    name: trendData
+    action: ajax
+    args:
+      url: '@query:ErpSalDashboard__getDashboardTrend'
+      method: post
+      data:
+        months: 12
+      selection: month salesAmount
   - type: chart
-    name: topNCustomerChart
-    className: m-3
-    api:
-      url: /graphql
-      method: post
-      dataType: raw
-      data:
-        query: "query(${'$'}limit:Int){ ErpSalDashboard__findCustomerTopN(limit:${'$'}limit) }"
-        variables:
-          limit: 10
-      adaptor: |
-        const d = payload.data || {};
-        const gql = d.data ? d.data : d;
-        const rows = gql.ErpSalDashboard__findCustomerTopN || [];
-        return {
-          status: 0,
-          msg: '',
-          data: {
-            title: { text: '客户 TOP10 销售占比' },
-            tooltip: { trigger: 'item' },
-            legend: { orient: 'vertical', left: 'right' },
-            series: [
-              {
-                name: '销售额',
-                type: 'pie',
-                radius: ['40%', '70%'],
-                data: rows.map(function(r){return {name: r.customerName || '客户#' + r.customerId, value: r.salesAmount};})
-              }
-            ]
-          }
-        };
+    chartType: line
+    title: "销售趋势（近12月）"
+    source: ${trendData ?? []}
+    xAxis: { dataKey: month }
+    yAxis: { label: "销售额" }
+    legend: true
+    height: 300
+    series:
+      - { name: "销售额", dataRegionKey: salesAmount }
 
+  - type: data-source
+    name: topNCustomerData
+    action: ajax
+    args:
+      url: '@query:ErpSalDashboard__findCustomerTopN'
+      method: post
+      data:
+        limit: 10
+      selection: customerId customerName salesAmount
+  - type: chart
+    chartType: pie
+    title: "客户 TOP10 销售占比"
+    source: ${topNCustomerData ?? []}
+    height: 300
+    series:
+      - { name: "销售额", dataRegionKey: salesAmount, nameField: customerName }
+
+  - type: data-source
+    name: arOverdueData
+    action: ajax
+    args:
+      url: '@query:ErpSalDashboard__findArOverdueAlert'
+      method: post
+      selection: partnerName sourceBillCode openAmount ageDays
   - type: crud
     name: arOverdueCrud
     className: m-3
     title: "应收超期预警（阈值经 erp-dash.sal-ar-overdue-days / sal-ar-overdue-amount 配置）"
+    source: ${arOverdueData ?? []}
     syncLocation: false
     headerToolbar: []
     footerToolbar: []
-    api:
-      url: /graphql
-      method: post
-      dataType: raw
-      data:
-        query: "{ ErpSalDashboard__findArOverdueAlert }"
-      adaptor: |
-        const d = payload.data || {};
-        const gql = d.data ? d.data : d;
-        const rows = gql.ErpSalDashboard__findArOverdueAlert || [];
-        return { status: 0, msg: '', data: { items: rows, count: rows.length } };
     columns:
       - name: partnerName
         label: "客户"

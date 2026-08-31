@@ -1,0 +1,134 @@
+# 主数据概览 dashboard（plan 2026-08-28-1600-1 Phase 1）。
+# flux 原生重写：service → data-source + crud。
+# 数据源：ErpMdDashboard__getDashboardKpi / __findMaterialWithoutSkuAlert / __findSkuWithoutPriceAlert。
+type: page
+title: 主数据概览
+body:
+- type: button
+  label: 刷新
+  icon: refresh-cw
+  className: m-3
+  onClick:
+    action: refreshSource
+    targetId: kpiData
+    then:
+      action: refreshSource
+      targetId: materialWithoutSkuData
+      then:
+        action: refreshSource
+        targetId: skuWithoutPriceData
+- type: data-source
+  name: kpiData
+  action: ajax
+  args:
+    url: '@query:ErpMdDashboard__getDashboardKpi'
+    method: post
+    selection: materialCount customerCount vendorCount inactiveMaterialCount inactivePartnerCount
+- type: grid
+  className: m-3
+  gap: sm
+  columns: 5
+  items:
+  - colSpan: 1
+    body:
+    - type: card
+      className: border rounded p-3
+      body:
+      - type: text
+        tag: div
+        className: text-muted
+        text: 物料总数
+      - type: text
+        tag: h3
+        className: font-bold
+        text: "${kpiData?.materialCount ?? 0}"
+  - colSpan: 1
+    body:
+    - type: card
+      className: border rounded p-3
+      body:
+      - type: text
+        tag: div
+        className: text-muted
+        text: 客户数
+      - type: text
+        tag: h3
+        className: text-primary
+        text: "${kpiData?.customerCount ?? 0}"
+  - colSpan: 1
+    body:
+    - type: card
+      className: border rounded p-3
+      body:
+      - type: text
+        tag: div
+        className: text-muted
+        text: 供应商数
+      - type: text
+        tag: h3
+        className: text-success
+        text: "${kpiData?.vendorCount ?? 0}"
+  - colSpan: 1
+    body:
+    - type: card
+      className: border rounded p-3
+      body:
+      - type: text
+        tag: div
+        className: text-muted
+        text: 停用物料数
+      - type: text
+        tag: h3
+        className: text-warning
+        text: "${kpiData?.inactiveMaterialCount ?? 0}"
+  - colSpan: 1
+    body:
+    - type: card
+      className: border rounded p-3
+      body:
+      - type: text
+        tag: div
+        className: text-muted
+        text: 停用往来单位数
+      - type: text
+        tag: h3
+        className: text-danger
+        text: "${kpiData?.inactivePartnerCount ?? 0}"
+- type: data-source
+  name: materialWithoutSkuData
+  action: ajax
+  args:
+    url: '@query:ErpMdDashboard__findMaterialWithoutSkuAlert'
+    method: post
+    selection: materialCode materialName status
+- type: crud
+  title: 无 SKU 物料预警（数据质量）
+  source: ${materialWithoutSkuData}
+  syncLocation: false
+  headerToolbar: []
+  footerToolbar: []
+  columns:
+  - name: materialCode
+    label: 物料编码
+  - name: materialName
+    label: 物料名称
+  - name: status
+    label: 状态
+- type: data-source
+  name: skuWithoutPriceData
+  action: ajax
+  args:
+    url: '@query:ErpMdDashboard__findSkuWithoutPriceAlert'
+    method: post
+    selection: skuCode materialId
+- type: crud
+  title: 无价格 SKU 预警（数据质量）
+  source: ${skuWithoutPriceData}
+  syncLocation: false
+  headerToolbar: []
+  footerToolbar: []
+  columns:
+  - name: skuCode
+    label: SKU 编码
+  - name: materialId
+    label: 物料ID

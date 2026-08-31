@@ -20,12 +20,11 @@
                             const valueProp = dispMeta?.id || 'docStatus';
                             const labelProp = propMeta?.['graphql:labelProp'] || (valueProp + '_label');
                             return {
-                                type: "tpl",
-                                tpl: '<span class="label label-${' + valueProp
+                                cell: { type: "text", text: '<span class="label label-${' + valueProp
                                     + " == 'ACTIVE' ? 'primary' : 'default'}\" "
                                     + "${" + valueProp
                                     + " == 'CANCELLED' ? \"style='text-decoration:line-through'\" : ''}>"
-                                    + "${" + labelProp + "}</span>"
+                                    + "${" + labelProp + "}</span>" }
                             };
                         ]]></c:script>
                     </gen-control>
@@ -36,12 +35,11 @@
                             const valueProp = dispMeta?.id || 'approveStatus';
                             const labelProp = propMeta?.['graphql:labelProp'] || (valueProp + '_label');
                             return {
-                                type: "tpl",
-                                tpl: '<span class="label label-${' + valueProp
+                                cell: { type: "text", text: '<span class="label label-${' + valueProp
                                     + " == 'APPROVED' ? 'success' : "
                                     + valueProp + " == 'REJECTED' ? 'danger' : "
                                     + valueProp + " == 'SUBMITTED' ? 'info' : 'default'}\">"
-                                    + "${" + labelProp + "}</span>"
+                                    + "${" + labelProp + "}</span>" }
                             };
                         ]]></c:script>
                     </gen-control>
@@ -96,9 +94,7 @@
                 <cell id="workOrderProgress" custom="true" notSubmit="true">
                     <gen-control>
                         <c:script><![CDATA[
-                            return {
-                                type: 'tpl',
-                                tpl: '<div class="m-b">' +
+                            return { type: 'text', type: 'text', text: '<div class="m-b">' +
                                     '<div class="text-muted m-b-xs">完工进度 <span class="font-bold">' + '${' + 'plannedQuantity ? (completedQuantity || 0) + " / " + plannedQuantity : "—"' + '}</span></div>' +
                                     '<div style="height:18px;background:#f0f0f0;border-radius:9px;overflow:hidden;position:relative;">' +
                                         '<div style="height:100%;width:' + '${' + 'plannedQuantity ? completedQuantity / plannedQuantity * 100 : 0' + '}%;background:' + '${' + 'plannedQuantity ? (completedQuantity / plannedQuantity >= 0.9 ? "#5cb85c" : (completedQuantity / plannedQuantity >= 0.7 ? "#f0ad4e" : "#d9534f")) : "#ccc"' + '}%;transition:width .3s;"></div>' +
@@ -109,8 +105,7 @@
                                         '<div style="height:100%;width:' + '${' + 'plannedQuantity ? scrappedQuantity / plannedQuantity * 100 : 0' + '}%;background:#d9534f;"></div>' +
                                     '</div>' +
                                     '<div class="m-t-md"><span class="label label-' + '${' + 'docStatus == "COMPLETED" ? "success" : (docStatus == "IN_PROCESS" || docStatus == "STARTED" ? "primary" : (docStatus == "CANCELLED" ? "danger" : "default"))' + '}">工单阶段：' + '${' + 'docStatus' + '}</span></div>' +
-                                    '</div>'
-                            };
+                                    '</div>' };
                         ]]></c:script>
                     </gen-control>
                 </cell>
@@ -257,7 +252,7 @@
                         </data>
                     </drawer>
                 </action>
-                <action id="row-view-completion-move-button" label="查看完工入库" i18n-en:label="View Completion Inbound" level="primary" icon="fa fa-arrow-right"
+                <action actionType="link" id="row-view-completion-move-button" label="查看完工入库" i18n-en:label="View Completion Inbound" level="primary" icon="fa fa-arrow-right"
                         tooltip="跳转到库存移动单列表（按来源单据号筛选；mfg→inv 跨域非 FK，按 sourceBillCode 字符串匹配降级为 URL 跳转）"
                         link="/ErpInvStockMove-main"/>
                 <action id="row-view-voucher-button" label="关联凭证" i18n-en:label="Linked Voucher" level="info" icon="fa fa-link"

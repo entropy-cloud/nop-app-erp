@@ -65,7 +65,7 @@ body:
         id: ${event.id}
         activityDate: ${event.start.substring(0, 10)}
   onEventClick:
-    action: notify
+    action: showToast
     args:
       level: info
       message: ${"点击活动 " + event.id}

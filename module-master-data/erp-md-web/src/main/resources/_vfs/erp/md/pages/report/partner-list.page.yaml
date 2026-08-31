@@ -1,7 +1,12 @@
+# 往来单位清单（plan 2026-08-29-1913-1 Phase 1）。
+# flux 原生重写：data-source → form → html。
+# 数据源：ErpMdReport__renderHtml（报表渲染）。
+# 下载按钮保留 /p/{ErpMdReport__download} 路径（plan 2026-07-12-0413-1 已修复）。
 type: page
 title: "往来单位清单"
 body:
   - type: form
+    name: filterForm
     title: ""
     mode: inline
     className: m-3
@@ -12,49 +17,45 @@ body:
         placeholder: "CUSTOMER=客户 / SUPPLIER=供应商（留空查全部）"
       - type: button
         label: "渲染报表"
-        actionType: reload
-        target: "reportService"
-      - type: button-toolbar
-        buttons:
-          - type: button
-            label: "下载 XLSX"
-            actionType: download
-            api:
-              url: /p/ErpMdReport__download
-              method: post
-              responseType: blob
-              data:
-                reportName: "partner-list"
-                renderType: "xlsx"
-                data: { partnerType: "${partnerType}" }
-          - type: button
-            label: "下载 PDF"
-            actionType: download
-            api:
-              url: /p/ErpMdReport__download
-              method: post
-              responseType: blob
-              data:
-                reportName: "partner-list"
-                renderType: "pdf"
-                data: { partnerType: "${partnerType}" }
-      - type: service
-        name: reportService
-        id: reportContainer
-        initFetch: false
+        onClick:
+          action: refreshSource
+          targetId: reportHtmlData
+      - type: button
+        label: "下载 XLSX"
+        actionType: download
         api:
-          url: /graphql
+          url: /p/ErpMdReport__download
           method: post
-          dataType: raw
+          responseType: blob
           data:
-            query: "query(${'$'}reportName:String!,${'$'}partnerType:String){ ErpMdReport__renderHtml(reportName:${'$'}reportName,data:{partnerType:${'$'}partnerType}) }"
-            variables:
-              reportName: "partner-list"
-              partnerType: "${partnerType}"
-          adaptor: |
-            const d = payload.data || {};
-            const html = (d.data ? d.data : d).ErpMdReport__renderHtml || '';
-            return { status: 0, msg: '', data: { reportHtml: html } };
-        body:
-          - type: html
-            html: "${reportHtml}"
+            reportName: "partner-list"
+            renderType: "xlsx"
+            data:
+              partnerType: "${filterForm?.partnerType}"
+      - type: button
+        label: "下载 PDF"
+        actionType: download
+        api:
+          url: /p/ErpMdReport__download
+          method: post
+          responseType: blob
+          data:
+            reportName: "partner-list"
+            renderType: "pdf"
+            data:
+              partnerType: "${filterForm?.partnerType}"
+
+  - type: data-source
+    name: reportHtmlData
+    action: ajax
+    args:
+      url: '@query:ErpMdReport__renderHtml'
+      method: post
+      data:
+        reportName: "partner-list"
+        data:
+          partnerType: "${filterForm?.partnerType}"
+
+  - type: html
+    className: m-3
+    html: "${reportHtmlData ?? ''}"

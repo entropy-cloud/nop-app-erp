@@ -1,85 +1,117 @@
+# 主数据概览 dashboard（plan 2026-08-29-1913-1 Phase 1）。
+# flux 原生重写：data-source → service（KPI 卡） + crud（数据质量预警）。
+# 数据源：ErpMdDashboard__getDashboardKpi / __findMaterialWithoutSkuAlert / __findSkuWithoutPriceAlert。
 type: page
 title: "主数据概览"
 body:
   - type: button
     label: "刷新"
     icon: "refresh-cw"
-    actionType: reload
-    target: "kpiService,materialWithoutSkuCrud,skuWithoutPriceCrud"
+    onClick:
+      action: refreshSource
+      targetId: kpiData
+      then:
+        action: refreshSource
+        targetId: materialAlertData
+        then:
+          action: refreshSource
+          targetId: skuAlertData
     className: m-3
 
-  - type: service
-    name: kpiService
-    api:
-      url: /graphql
+  - type: data-source
+    name: kpiData
+    action: ajax
+    args:
+      url: '@query:ErpMdDashboard__getDashboardKpi'
       method: post
-      dataType: raw
-      data:
-        query: "{ ErpMdDashboard__getDashboardKpi }"
-      adaptor: |
-        const d = payload.data || {};
-        const gql = d.data ? d.data : d;
-        const kpi = gql.ErpMdDashboard__getDashboardKpi || {};
-        return { status: 0, msg: '', data: kpi };
-    body:
-      - type: grid
-        className: m-3
-        gap: 'sm'
-        columns:
-          - type: wrapper
-            className: "border rounded p-3"
-            body:
-              - type: tpl
-                tpl: "<div class='text-muted'>物料总数</div>"
-              - type: tpl
-                tpl: "<span class='h3 font-bold'>${materialCount}</span>"
-          - type: wrapper
-            className: "border rounded p-3"
-            body:
-              - type: tpl
-                tpl: "<div class='text-muted'>客户数</div>"
-              - type: tpl
-                tpl: "<span class='h3 text-primary'>${customerCount}</span>"
-          - type: wrapper
-            className: "border rounded p-3"
-            body:
-              - type: tpl
-                tpl: "<div class='text-muted'>供应商数</div>"
-              - type: tpl
-                tpl: "<span class='h3 text-success'>${vendorCount}</span>"
-          - type: wrapper
-            className: "border rounded p-3"
-            body:
-              - type: tpl
-                tpl: "<div class='text-muted'>停用物料数</div>"
-              - type: tpl
-                tpl: "<span class='h3 text-warning'>${inactiveMaterialCount}</span>"
-          - type: wrapper
-            className: "border rounded p-3"
-            body:
-              - type: tpl
-                tpl: "<div class='text-muted'>停用往来单位数</div>"
-              - type: tpl
-                tpl: "<span class='h3 text-danger'>${inactivePartnerCount}</span>"
+      selection: materialCount customerCount vendorCount inactiveMaterialCount inactivePartnerCount
 
+  - type: grid
+    className: m-3
+    gap: sm
+    columns: 5
+    items:
+      - colSpan: 1
+        body:
+          - type: card
+            className: border rounded p-3
+            body:
+              - type: text
+                tag: div
+                className: text-muted
+                text: 物料总数
+              - type: text
+                tag: span
+                className: h3 font-bold
+                text: "${kpiData?.materialCount ?? 0}"
+      - colSpan: 1
+        body:
+          - type: card
+            className: border rounded p-3
+            body:
+              - type: text
+                tag: div
+                className: text-muted
+                text: 客户数
+              - type: text
+                tag: span
+                className: h3 text-primary
+                text: "${kpiData?.customerCount ?? 0}"
+      - colSpan: 1
+        body:
+          - type: card
+            className: border rounded p-3
+            body:
+              - type: text
+                tag: div
+                className: text-muted
+                text: 供应商数
+              - type: text
+                tag: span
+                className: h3 text-success
+                text: "${kpiData?.vendorCount ?? 0}"
+      - colSpan: 1
+        body:
+          - type: card
+            className: border rounded p-3
+            body:
+              - type: text
+                tag: div
+                className: text-muted
+                text: 停用物料数
+              - type: text
+                tag: span
+                className: h3 text-warning
+                text: "${kpiData?.inactiveMaterialCount ?? 0}"
+      - colSpan: 1
+        body:
+          - type: card
+            className: border rounded p-3
+            body:
+              - type: text
+                tag: div
+                className: text-muted
+                text: 停用往来单位数
+              - type: text
+                tag: span
+                className: h3 text-danger
+                text: "${kpiData?.inactivePartnerCount ?? 0}"
+
+  - type: data-source
+    name: materialAlertData
+    action: ajax
+    args:
+      url: '@query:ErpMdDashboard__findMaterialWithoutSkuAlert'
+      method: post
+      selection: materialCode materialName status
   - type: crud
     name: materialWithoutSkuCrud
     className: m-3
     title: "无 SKU 物料预警（数据质量）"
+    source: ${materialAlertData ?? []}
     syncLocation: false
     headerToolbar: []
     footerToolbar: []
-    api:
-      url: /graphql
-      method: post
-      dataType: raw
-      data:
-        query: "{ ErpMdDashboard__findMaterialWithoutSkuAlert }"
-      adaptor: |
-        const d = payload.data || {};
-        const gql = d.data ? d.data : d;
-        const rows = gql.ErpMdDashboard__findMaterialWithoutSkuAlert || [];
-        return { status: 0, msg: '', data: { items: rows, count: rows.length } };
     columns:
       - name: materialCode
         label: "物料编码"
@@ -88,24 +120,21 @@ body:
       - name: status
         label: "状态"
 
+  - type: data-source
+    name: skuAlertData
+    action: ajax
+    args:
+      url: '@query:ErpMdDashboard__findSkuWithoutPriceAlert'
+      method: post
+      selection: skuCode materialId
   - type: crud
     name: skuWithoutPriceCrud
     className: m-3
     title: "无价格 SKU 预警（数据质量）"
+    source: ${skuAlertData ?? []}
     syncLocation: false
     headerToolbar: []
     footerToolbar: []
-    api:
-      url: /graphql
-      method: post
-      dataType: raw
-      data:
-        query: "{ ErpMdDashboard__findSkuWithoutPriceAlert }"
-      adaptor: |
-        const d = payload.data || {};
-        const gql = d.data ? d.data : d;
-        const rows = gql.ErpMdDashboard__findSkuWithoutPriceAlert || [];
-        return { status: 0, msg: '', data: { items: rows, count: rows.length } };
     columns:
       - name: skuCode
         label: "SKU 编码"

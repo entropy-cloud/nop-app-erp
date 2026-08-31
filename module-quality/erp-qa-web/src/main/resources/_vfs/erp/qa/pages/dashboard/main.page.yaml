@@ -1,3 +1,7 @@
+# 质量概览 dashboard（plan 2026-08-29-1913-2 Phase 1）。
+# flux 原生重写：data-source → KPI 卡 + chart + SPC 控件 + crud。
+# 数据源：ErpQaDashboard__getDashboardKpi / __getDashboardTrend / __findDefectTopN
+#       / __getSpcOutOfControlWarning / __getSpcControlChartData / __findCapaOverdueAlert。
 type: page
 title: "质量概览"
 body:
@@ -11,257 +15,236 @@ body:
       - type: input-date
         name: startDate
         label: "开始日期"
-        format: "YYYY-MM-DD"
+        format: YYYY-MM-DD
         placeholder: "留空=本月1日"
         clearable: true
       - type: input-date
         name: endDate
         label: "结束日期"
-        format: "YYYY-MM-DD"
+        format: YYYY-MM-DD
         placeholder: "留空=今天"
+        clearable: true
+      - type: input-text
+        name: chartId
+        label: "SPC控制图ID"
+        placeholder: "留空显示 KPI"
         clearable: true
       - type: button
         label: "刷新"
-        icon: "refresh-cw"
-        actionType: reload
-        target: "kpiService,trendChart,defectChart,spcWarningService,spcControlChart,capaOverdueCrud"
+        icon: refresh-cw
+        onClick:
+          action: refreshSource
+          targetId: kpiData
+          then:
+            action: refreshSource
+            targetId: trendData
+          then:
+            action: refreshSource
+            targetId: defectData
+          then:
+            action: refreshSource
+            targetId: spcWarningData
+          then:
+            action: refreshSource
+            targetId: spcChartData
+          then:
+            action: refreshSource
+            targetId: capaOverdueData
 
-  - type: service
-    name: kpiService
-    api:
-      url: /graphql
+  - type: data-source
+    name: kpiData
+    action: ajax
+    args:
+      url: '@query:ErpQaDashboard__getDashboardKpi'
       method: post
-      dataType: raw
       data:
-        query: "query(${'$'}startDate:String,${'$'}endDate:String){ ErpQaDashboard__getDashboardKpi(startDate:${'$'}startDate,endDate:${'$'}endDate) }"
-        variables:
-          startDate: "${startDate || null}"
-          endDate: "${endDate || null}"
-      adaptor: |
-        const d = payload.data || {};
-        const gql = d.data ? d.data : d;
-        const kpi = gql.ErpQaDashboard__getDashboardKpi || {};
-        return { status: 0, msg: '', data: kpi };
-    body:
-      - type: grid
-        className: m-3
-        gap: 'sm'
-        columns:
-          - type: wrapper
-            className: "border rounded p-3"
+        startDate: "${filterForm?.startDate || null}"
+        endDate: "${filterForm?.endDate || null}"
+      selection: inspectionCount passRate rejectedCount openNcrCount
+
+  - type: grid
+    className: m-3
+    gap: sm
+    columns: 4
+    items:
+      - colSpan: 1
+        body:
+          - type: card
+            className: border rounded p-3
             body:
-              - type: tpl
-                tpl: "<div class='text-muted'>本期质检数</div>"
-              - type: tpl
-                tpl: "<span class='h3 font-bold'>${inspectionCount}</span>"
-          - type: wrapper
-            className: "border rounded p-3"
+              - type: text
+                tag: div
+                className: text-muted
+                text: "本期质检数"
+              - type: text
+                tag: span
+                className: h3 font-bold
+                text: "${kpiData?.inspectionCount ?? 0}"
+      - colSpan: 1
+        body:
+          - type: card
+            className: border rounded p-3
             body:
-              - type: tpl
-                tpl: "<div class='text-muted'>合格率</div>"
-              - type: tpl
-                tpl: "<span class='h3 text-success'>${passRate | round:2}</span>"
-          - type: wrapper
-            className: "border rounded p-3"
+              - type: text
+                tag: div
+                className: text-muted
+                text: "合格率"
+              - type: text
+                tag: span
+                className: h3 text-success
+                text: "${kpiData?.passRate ?? 0 | round:2}"
+      - colSpan: 1
+        body:
+          - type: card
+            className: border rounded p-3
             body:
-              - type: tpl
-                tpl: "<div class='text-muted'>不合格数</div>"
-              - type: tpl
-                tpl: "<span class='h3 text-danger'>${rejectedCount}</span>"
-          - type: wrapper
-            className: "border rounded p-3"
+              - type: text
+                tag: div
+                className: text-muted
+                text: "不合格数"
+              - type: text
+                tag: span
+                className: h3 text-danger
+                text: "${kpiData?.rejectedCount ?? 0}"
+      - colSpan: 1
+        body:
+          - type: card
+            className: border rounded p-3
             body:
-              - type: tpl
-                tpl: "<div class='text-muted'>开放 NCR 数</div>"
-              - type: tpl
-                tpl: "<span class='h3 text-warning'>${openNcrCount}</span>"
+              - type: text
+                tag: div
+                className: text-muted
+                text: "开放 NCR 数"
+              - type: text
+                tag: span
+                className: h3 text-warning
+                text: "${kpiData?.openNcrCount ?? 0}"
+
+  - type: data-source
+    name: trendData
+    action: ajax
+    args:
+      url: '@query:ErpQaDashboard__getDashboardTrend'
+      method: post
+      data:
+        months: 12
+      selection: month passRate
+  - type: chart
+    chartType: line
+    title: "合格率趋势（近12月）"
+    source: ${trendData ?? []}
+    xAxis: { dataKey: month }
+    yAxis: { label: "合格率" }
+    legend: true
+    height: 300
+    series:
+      - { name: "合格率", dataRegionKey: passRate }
+
+  - type: data-source
+    name: defectData
+    action: ajax
+    args:
+      url: '@query:ErpQaDashboard__findDefectTopN'
+      method: post
+      data:
+        limit: 10
+      selection: dispositionType count
+  - type: chart
+    chartType: pie
+    title: "不合格原因 TOP（按处置决定聚合）"
+    source: ${defectData ?? []}
+    height: 300
+    series:
+      - { name: "数量", dataRegionKey: count, nameField: dispositionType }
+
+  - type: data-source
+    name: spcWarningData
+    action: ajax
+    args:
+      url: '@query:ErpQaDashboard__getSpcOutOfControlWarning'
+      selection: outOfControlChartCount includeInadequate inadequateCapabilityCount includeNcr openSpcNcrCount
+
+  - type: grid
+    className: m-3
+    gap: sm
+    columns: 3
+    items:
+      - colSpan: 1
+        body:
+          - type: card
+            className: border rounded p-3
+            body:
+              - type: text
+                tag: div
+                className: text-muted
+                text: "SPC 失控图数"
+              - type: text
+                tag: span
+                className: h3 text-danger
+                text: "${spcWarningData?.outOfControlChartCount ?? 0}"
+      - colSpan: 1
+        body:
+          - type: card
+            className: border rounded p-3
+            body:
+              - type: text
+                tag: div
+                className: text-muted
+                text: "能力不足(INADEQUATE)图数"
+              - type: text
+                tag: span
+                className: h3 ${spcWarningData?.includeInadequate ? 'text-warning' : 'text-muted'}
+                text: "${spcWarningData?.inadequateCapabilityCount ?? 0}"
+      - colSpan: 1
+        body:
+          - type: card
+            className: border rounded p-3
+            body:
+              - type: text
+                tag: div
+                className: text-muted
+                text: "待处置 SPC NCR 数"
+              - type: text
+                tag: span
+                className: h3 ${spcWarningData?.includeNcr ? 'text-warning' : 'text-muted'}
+                text: "${spcWarningData?.openSpcNcrCount ?? 0}"
+
+  - type: data-source
+    name: spcChartData
+    action: ajax
+    args:
+      url: '@query:ErpQaDashboard__getSpcControlChartData'
+      method: post
+      data:
+        chartId: "${filterForm?.chartId || null}"
+      selection: chartName chartType samples ucl lcl cl
 
   - type: chart
-    name: trendChart
-    className: m-3
-    api:
-      url: /graphql
-      method: post
-      dataType: raw
-      data:
-        query: "query(${'$'}months:Int){ ErpQaDashboard__getDashboardTrend(months:${'$'}months) }"
-        variables:
-          months: 12
-      adaptor: |
-        const d = payload.data || {};
-        const gql = d.data ? d.data : d;
-        const rows = gql.ErpQaDashboard__getDashboardTrend || [];
-        return {
-          status: 0,
-          msg: '',
-          data: {
-            title: { text: '合格率趋势（近12月）' },
-            tooltip: { trigger: 'axis' },
-            legend: { data: ['合格率'] },
-            xAxis: { type: 'category', data: rows.map(function(r){return r.month;}) },
-            yAxis: { type: 'value' },
-            series: [
-              { name: '合格率', type: 'line', data: rows.map(function(r){return r.passRate;}) }
-            ]
-          }
-        };
+    chartType: line
+    title: "SPC 控制图"
+    visibleOn: "${filterForm?.chartId}"
+    source: ${spcChartData?.samples ?? []}
+    xAxis: { dataKey: subgroupNo }
+    yAxis: { label: "${(spcChartData?.chartType === 'P' || spcChartData?.chartType === 'NP' || spcChartData?.chartType === 'C' || spcChartData?.chartType === 'U') ? '缺陷率' : '均值'}" }
+    legend: true
+    height: 300
+    series:
+      - { name: "样本值", dataRegionKey: mean }
 
-  - type: chart
-    name: defectChart
-    className: m-3
-    api:
-      url: /graphql
-      method: post
-      dataType: raw
-      data:
-        query: "query(${'$'}limit:Int){ ErpQaDashboard__findDefectTopN(limit:${'$'}limit) }"
-        variables:
-          limit: 10
-      adaptor: |
-        const d = payload.data || {};
-        const gql = d.data ? d.data : d;
-        const rows = gql.ErpQaDashboard__findDefectTopN || [];
-        return {
-          status: 0,
-          msg: '',
-          data: {
-            title: { text: '不合格原因 TOP（按处置决定聚合）' },
-            tooltip: { trigger: 'item' },
-            legend: { orient: 'vertical', left: 'right' },
-            series: [
-              {
-                name: '数量',
-                type: 'pie',
-                radius: ['40%', '70%'],
-                data: rows.map(function(r){return {name: r.dispositionType, value: r.count};})
-              }
-            ]
-          }
-        };
-
-  - type: service
-    name: spcWarningService
-    api:
-      url: /graphql
-      method: post
-      dataType: raw
-      data:
-        query: "{ ErpQaDashboard__getSpcOutOfControlWarning }"
-      adaptor: |
-        const d = payload.data || {};
-        const gql = d.data ? d.data : d;
-        const w = gql.ErpQaDashboard__getSpcOutOfControlWarning || {};
-        return { status: 0, msg: '', data: w };
-    body:
-      - type: grid
-        className: m-3
-        gap: 'sm'
-        columns:
-          - type: wrapper
-            className: "border rounded p-3"
-            body:
-              - type: tpl
-                tpl: "<div class='text-muted'>SPC 失控图数</div>"
-              - type: tpl
-                tpl: "<span class='h3 text-danger'>${outOfControlChartCount}</span>"
-          - type: wrapper
-            className: "border rounded p-3"
-            body:
-              - type: tpl
-                tpl: "<div class='text-muted'>能力不足(INADEQUATE)图数</div>"
-              - type: tpl
-                tpl: "<span class='h3 ${includeInadequate ? 'text-warning' : 'text-muted'}'>${inadequateCapabilityCount}</span>"
-          - type: wrapper
-            className: "border rounded p-3"
-            body:
-              - type: tpl
-                tpl: "<div class='text-muted'>待处置 SPC NCR 数</div>"
-              - type: tpl
-                tpl: "<span class='h3 ${includeNcr ? 'text-warning' : 'text-muted'}'>${openSpcNcrCount}</span>"
-
-  - type: chart
-    name: spcControlChart
-    className: m-3
-    api:
-      url: /graphql
-      method: post
-      dataType: raw
-      data:
-        query: "query(${'$'}chartId:String){ ErpQaDashboard__getSpcControlChartData(chartId:${'$'}chartId) }"
-        variables:
-          chartId: "${chartId || null}"
-      adaptor: |
-        const d = payload.data || {};
-        const gql = d.data ? d.data : d;
-        const result = gql.ErpQaDashboard__getSpcControlChartData || {};
-        const samples = result.samples || [];
-        const ucl = result.ucl;
-        const lcl = result.lcl;
-        const cl = result.cl;
-        const chartType = result.chartType || '';
-        const isAttributes = chartType === 'P' || chartType === 'NP' || chartType === 'C' || chartType === 'U';
-        // 计数型样本纵轴 = defectRate（defectCount/inspectedCount）；计量型纵轴 = mean
-        const seriesData = samples.map(function(s){
-          var v = isAttributes
-            ? (s.defectRate != null ? s.defectRate : (s.inspectedCount ? s.defectCount / s.inspectedCount : 0))
-            : s.mean;
-          return { value: v, itemStyle: s.isOutOfControl ? {color: 'red'} : undefined };
-        });
-        const markLines = [];
-        if (ucl != null) markLines.push({ yAxis: ucl, name: 'UCL', lineStyle: {color: 'red', type: 'dashed'}, label: {position: 'end', formatter: 'UCL'} });
-        if (lcl != null) markLines.push({ yAxis: lcl, name: 'LCL', lineStyle: {color: 'red', type: 'dashed'}, label: {position: 'end', formatter: 'LCL'} });
-        if (cl != null)  markLines.push({ yAxis: cl,  name: 'CL',  lineStyle: {color: 'green'}, label: {position: 'end', formatter: 'CL'} });
-        const series = { type: 'line', data: seriesData };
-        if (markLines.length > 0) series.markLine = { symbol: 'none', data: markLines };
-        const yAxisName = isAttributes ? '缺陷率' : '均值';
-        return {
-          status: 0,
-          msg: '',
-          data: {
-            title: { text: 'SPC 控制图：' + (result.chartName || '') + ' (' + chartType + ')' },
-            tooltip: {
-              trigger: 'axis',
-              formatter: function(params) {
-                let s = params[0].axisValueLabel + '<br/>';
-                const idx = params[0].dataIndex;
-                params.forEach(function(p){
-                  s += p.marker + ' ' + p.seriesName + ': ' + p.value + '<br/>';
-                });
-                const sample = samples[idx];
-                if (sample) {
-                  if (sample.defectCount != null) s += '缺陷数: ' + sample.defectCount + '<br/>';
-                  if (sample.inspectedCount != null) s += '检验数: ' + sample.inspectedCount + '<br/>';
-                  if (sample.isOutOfControl && sample.violatedRules) {
-                    s += '违规规则: ' + sample.violatedRules + '<br/>';
-                  }
-                }
-                return s;
-              }
-            },
-            xAxis: { type: 'category', name: '子组号', data: samples.map(function(s){return s.subgroupNo;}) },
-            yAxis: { type: 'value', name: yAxisName },
-            series: [series]
-          }
-        };
+  - type: data-source
+    name: capaOverdueData
+    action: ajax
+    args:
+      url: '@query:ErpQaDashboard__findCapaOverdueAlert'
+      selection: actionType dueDate status overdueDays
 
   - type: crud
-    name: capaOverdueCrud
     className: m-3
     title: "CAPA 逾期预警（阈值经 erp-dash.qa-capa-overdue-days 配置）"
+    source: ${capaOverdueData ?? []}
     syncLocation: false
     headerToolbar: []
     footerToolbar: []
-    api:
-      url: /graphql
-      method: post
-      dataType: raw
-      data:
-        query: "{ ErpQaDashboard__findCapaOverdueAlert }"
-      adaptor: |
-        const d = payload.data || {};
-        const gql = d.data ? d.data : d;
-        const rows = gql.ErpQaDashboard__findCapaOverdueAlert || [];
-        return { status: 0, msg: '', data: { items: rows, count: rows.length } };
     columns:
       - name: actionType
         label: "行动类型"

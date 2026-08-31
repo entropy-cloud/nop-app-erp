@@ -19,11 +19,10 @@
                             const valueProp = dispMeta?.id || 'status';
                             const labelProp = propMeta?.['graphql:labelProp'] || (valueProp + '_label');
                             return {
-                                type: "tpl",
-                                tpl: '<span class="label label-${' + valueProp
+                                cell: { type: "text", text: '<span class="label label-${' + valueProp
                                     + " == 'RECEIVED' || " + valueProp + " == 'PAID' || " + valueProp + " == 'DELIVERED' || " + valueProp + " == 'COMPLETED' || " + valueProp + " == 'SETTLED' ? 'success' : "
                                     + valueProp + " == 'PARTIAL' || " + valueProp + " == 'IN_PROGRESS' ? 'primary' : 'default'}\">"
-                                    + "${" + labelProp + "}</span>"
+                                    + "${" + labelProp + "}</span>" }
                             };
                         ]]></c:script>
                     </gen-control>
@@ -34,12 +33,11 @@
                             const valueProp = dispMeta?.id || 'docStatus';
                             const labelProp = propMeta?.['graphql:labelProp'] || (valueProp + '_label');
                             return {
-                                type: "tpl",
-                                tpl: '<span class="label label-${' + valueProp
+                                cell: { type: "text", text: '<span class="label label-${' + valueProp
                                     + " == 'ACTIVE' ? 'primary' : 'default'}\" "
                                     + "${" + valueProp
                                     + " == 'CANCELLED' ? \"style='text-decoration:line-through'\" : ''}>"
-                                    + "${" + labelProp + "}</span>"
+                                    + "${" + labelProp + "}</span>" }
                             };
                         ]]></c:script>
                     </gen-control>
@@ -50,12 +48,11 @@
                             const valueProp = dispMeta?.id || 'approveStatus';
                             const labelProp = propMeta?.['graphql:labelProp'] || (valueProp + '_label');
                             return {
-                                type: "tpl",
-                                tpl: '<span class="label label-${' + valueProp
+                                cell: { type: "text", text: '<span class="label label-${' + valueProp
                                     + " == 'APPROVED' ? 'success' : "
                                     + valueProp + " == 'REJECTED' ? 'danger' : "
                                     + valueProp + " == 'SUBMITTED' ? 'info' : 'default'}\">"
-                                    + "${" + labelProp + "}</span>"
+                                    + "${" + labelProp + "}</span>" }
                             };
                         ]]></c:script>
                     </gen-control>

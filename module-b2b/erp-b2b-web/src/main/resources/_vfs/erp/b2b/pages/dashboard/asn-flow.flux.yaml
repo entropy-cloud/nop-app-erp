@@ -55,7 +55,7 @@ body:
   name: asnDetail
   dependsOn:
   - selectedAsnId
-  sendOn: ${selectedAsnId != null}
+  sendOn: selectedAsnId != null
   action: ajax
   args:
     url: '@query:ErpB2bAsn__get'
@@ -67,7 +67,7 @@ body:
   name: asnLines
   dependsOn:
   - selectedAsnId
-  sendOn: ${selectedAsnId != null}
+  sendOn: selectedAsnId != null
   action: ajax
   args:
     url: '@query:ErpB2bAsnLine__findPage'
@@ -103,10 +103,11 @@ body:
     label: 发货日期
   - name: trackingNo
     label: 追踪号
-  rowClick:
-    action: set-value
+  onRowClick:
+    action: setValue
     args:
-      selectedAsnId: ${$slot?.record?.id}
+      path: selectedAsnId
+      value: ${record.id}
 - type: text
   text: '${asnDetail ? "ASN 流程：" + (asnDetail?.code ?? "—") + " · 合作伙伴: " + (asnDetail?.partnerId ?? "—") + " · 追踪号: " + (asnDetail?.trackingNo ?? "—") : "点击列表行查看 ASN 流程详情"}'
   className: text-muted m-t m-b

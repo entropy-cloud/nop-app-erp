@@ -418,7 +418,7 @@ public class ErpSalInvoiceProcessor {
             if (link.getVoucherId() == null) {
                 continue;
             }
-            app.erp.fin.dao.entity.ErpFinVoucher voucher = voucherBiz.getEntityById(link.getVoucherId());
+            app.erp.fin.dao.entity.ErpFinVoucher voucher = voucherBiz.get(link.getVoucherId(), true, null);
             if (voucher != null && !Boolean.TRUE.equals(voucher.getIsReversed())) {
                 return true;
             }

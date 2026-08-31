@@ -53,7 +53,7 @@ body:
   name: logRaw
   dependsOn:
   - ediDocId
-  sendOn: ${ediDocId != null}
+  sendOn: ediDocId != null
   action: ajax
   args:
     url: '@query:ErpB2bEdiLog__findPage'
@@ -64,7 +64,8 @@ body:
     selection: items{ id ediDocId direction resultCode resultMsg requestPayload responsePayload logTime } total
 - type: data-source
   name: timelineItems
-  formula: '${((raw) => ((raw && raw.items) ? raw.items : []).map((r) => { const ok = r.resultCode === "OK" || r.resultCode === "SUCCESS" || r.resultCode === "0"; const titleParts = ["[" + (r.direction || "?") + "]"]; if (r.resultCode) titleParts.push(r.resultCode); return { time: r.logTime, title: titleParts.join(" · "), detail: r.resultMsg ?? "", level: ok ? "success" : "error" }; }))(logRaw)}'
+  formula: |-
+    ${ARRAYMAP((logRaw && logRaw.items) ? logRaw.items : [], (r) => ({ time: r.logTime, title: "[" + (r.direction ?? "?") + "]" + (r.resultCode ? " · " + r.resultCode : ""), detail: r.resultMsg ?? "", level: (r.resultCode == "OK" || r.resultCode == "SUCCESS" || r.resultCode == "0") ? "success" : "error" }))}
 - type: text
   text: '${ediDoc ? (ediDoc?.code ?? "—") + " · 状态: " + (ediDoc?.state ?? "—") + " · 关联单据: " + (ediDoc?.relatedBillType ?? "—") + " / " + (ediDoc?.relatedBillCode ?? "—") + " · 重试次数: " + (ediDoc?.retryCount ?? 0) + " · 发送: " + (ediDoc?.sentAt ?? "—") + " · 确认: " + (ediDoc?.acknowledgedAt ?? "—") : "请输入有效的 EDI 文档ID 后点击「查询详情」。"}'
   className: text-muted m-b

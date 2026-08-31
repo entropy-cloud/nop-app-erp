@@ -1,3 +1,7 @@
+# 制造概览 dashboard（plan 2026-08-29-1913-2 Phase 1）。
+# flux 原生重写：data-source → KPI 卡 + chart + crud。
+# 数据源：ErpMfgDashboard__getDashboardKpi / __getWorkOrderStatusDistribution / __getDashboardTrend
+#       / __getCrpLoadChartData / __findDelayedWorkOrderAlert。
 type: page
 title: "制造概览"
 body:
@@ -11,198 +15,182 @@ body:
       - type: input-date
         name: startDate
         label: "开始日期"
-        format: "YYYY-MM-DD"
+        format: YYYY-MM-DD
         placeholder: "留空=本月1日"
         clearable: true
       - type: input-date
         name: endDate
         label: "结束日期"
-        format: "YYYY-MM-DD"
+        format: YYYY-MM-DD
         placeholder: "留空=今天"
+        clearable: true
+      - type: input-text
+        name: workcenterId
+        label: "工作中心ID"
+        placeholder: "留空=全部"
         clearable: true
       - type: button
         label: "刷新"
-        icon: "refresh-cw"
-        actionType: reload
-        target: "kpiService,statusChart,trendChart,crpLoadChart,delayedWorkOrderCrud"
+        icon: refresh-cw
+        onClick:
+          action: refreshSource
+          targetId: kpiData
+          then:
+            action: refreshSource
+            targetId: statusData
+          then:
+            action: refreshSource
+            targetId: trendData
+          then:
+            action: refreshSource
+            targetId: crpLoadData
+          then:
+            action: refreshSource
+            targetId: delayedWorkOrderData
 
-  - type: service
-    name: kpiService
-    api:
-      url: /graphql
+  - type: data-source
+    name: kpiData
+    action: ajax
+    args:
+      url: '@query:ErpMfgDashboard__getDashboardKpi'
       method: post
-      dataType: raw
       data:
-        query: "query(${'$'}startDate:String,${'$'}endDate:String){ ErpMfgDashboard__getDashboardKpi(startDate:${'$'}startDate,endDate:${'$'}endDate) }"
-        variables:
-          startDate: "${startDate || null}"
-          endDate: "${endDate || null}"
-      adaptor: |
-        const d = payload.data || {};
-        const gql = d.data ? d.data : d;
-        const kpi = gql.ErpMfgDashboard__getDashboardKpi || {};
-        return { status: 0, msg: '', data: kpi };
-    body:
-      - type: grid
-        className: m-3
-        gap: 'sm'
-        columns:
-          - type: wrapper
-            className: "border rounded p-3"
+        startDate: "${filterForm?.startDate || null}"
+        endDate: "${filterForm?.endDate || null}"
+      selection: inProcessCount periodCompletedQty onTimeRate stockPartialCount
+
+  - type: grid
+    className: m-3
+    gap: sm
+    columns: 4
+    items:
+      - colSpan: 1
+        body:
+          - type: card
+            className: border rounded p-3
             body:
-              - type: tpl
-                tpl: "<div class='text-muted'>在制工单数</div>"
-              - type: tpl
-                tpl: "<span class='h3 font-bold'>${inProcessCount}</span>"
-          - type: wrapper
-            className: "border rounded p-3"
+              - type: text
+                tag: div
+                className: text-muted
+                text: "在制工单数"
+              - type: text
+                tag: span
+                className: h3 font-bold
+                text: "${kpiData?.inProcessCount ?? 0}"
+      - colSpan: 1
+        body:
+          - type: card
+            className: border rounded p-3
             body:
-              - type: tpl
-                tpl: "<div class='text-muted'>本期完工量</div>"
-              - type: tpl
-                tpl: "<span class='h3 text-success'>${periodCompletedQty | round:2}</span>"
-          - type: wrapper
-            className: "border rounded p-3"
+              - type: text
+                tag: div
+                className: text-muted
+                text: "本期完工量"
+              - type: text
+                tag: span
+                className: h3 text-success
+                text: "${kpiData?.periodCompletedQty ?? 0 | round:2}"
+      - colSpan: 1
+        body:
+          - type: card
+            className: border rounded p-3
             body:
-              - type: tpl
-                tpl: "<div class='text-muted'>工单准时率</div>"
-              - type: tpl
-                tpl: "<span class='h3 text-primary'>${onTimeRate | round:2}</span>"
-          - type: wrapper
-            className: "border rounded p-3"
+              - type: text
+                tag: div
+                className: text-muted
+                text: "工单准时率"
+              - type: text
+                tag: span
+                className: h3 text-primary
+                text: "${kpiData?.onTimeRate ?? 0 | round:2}"
+      - colSpan: 1
+        body:
+          - type: card
+            className: border rounded p-3
             body:
-              - type: tpl
-                tpl: "<div class='text-muted'>齐套待产</div>"
-              - type: tpl
-                tpl: "<span class='h3 text-warning'>${stockPartialCount}</span>"
+              - type: text
+                tag: div
+                className: text-muted
+                text: "齐套待产"
+              - type: text
+                tag: span
+                className: h3 text-warning
+                text: "${kpiData?.stockPartialCount ?? 0}"
+
+  - type: data-source
+    name: statusData
+    action: ajax
+    args:
+      url: '@query:ErpMfgDashboard__getWorkOrderStatusDistribution'
+      selection: status count
 
   - type: chart
-    name: statusChart
-    className: m-3
-    api:
-      url: /graphql
+    chartType: pie
+    title: "工单状态分布"
+    source: ${statusData ?? []}
+    height: 300
+    series:
+      - { name: "工单数", dataRegionKey: count, nameField: status }
+
+  - type: data-source
+    name: trendData
+    action: ajax
+    args:
+      url: '@query:ErpMfgDashboard__getDashboardTrend'
       method: post
-      dataType: raw
       data:
-        query: "{ ErpMfgDashboard__getWorkOrderStatusDistribution }"
-      adaptor: |
-        const d = payload.data || {};
-        const gql = d.data ? d.data : d;
-        const rows = gql.ErpMfgDashboard__getWorkOrderStatusDistribution || [];
-        return {
-          status: 0,
-          msg: '',
-          data: {
-            title: { text: '工单状态分布' },
-            tooltip: { trigger: 'item' },
-            legend: { orient: 'vertical', left: 'right' },
-            series: [
-              {
-                name: '工单数',
-                type: 'pie',
-                radius: ['40%', '70%'],
-                data: rows.map(function(r){return {name: r.status, value: r.count};})
-              }
-            ]
-          }
-        };
+        months: 12
+      selection: month completedQty
 
   - type: chart
-    name: trendChart
-    className: m-3
-    api:
-      url: /graphql
+    chartType: line
+    title: "产成品产出趋势（近12月）"
+    source: ${trendData ?? []}
+    xAxis: { dataKey: month }
+    yAxis: { label: "完工量" }
+    legend: true
+    height: 300
+    series:
+      - { name: "完工量", dataRegionKey: completedQty }
+
+  - type: data-source
+    name: crpLoadData
+    action: ajax
+    args:
+      url: '@query:ErpMfgDashboard__getCrpLoadChartData'
       method: post
-      dataType: raw
       data:
-        query: "query(${'$'}months:Int){ ErpMfgDashboard__getDashboardTrend(months:${'$'}months) }"
-        variables:
-          months: 12
-      adaptor: |
-        const d = payload.data || {};
-        const gql = d.data ? d.data : d;
-        const rows = gql.ErpMfgDashboard__getDashboardTrend || [];
-        return {
-          status: 0,
-          msg: '',
-          data: {
-            title: { text: '产成品产出趋势（近12月）' },
-            tooltip: { trigger: 'axis' },
-            legend: { data: ['完工量'] },
-            xAxis: { type: 'category', data: rows.map(function(r){return r.month;}) },
-            yAxis: { type: 'value' },
-            series: [
-              { name: '完工量', type: 'line', data: rows.map(function(r){return r.completedQty;}) }
-            ]
-          }
-        };
+        workcenterId: "${filterForm?.workcenterId || null}"
+        dateFrom: "${filterForm?.dateFrom || null}"
+        dateTo: "${filterForm?.dateTo || null}"
+      selection: overallLoadRate series
 
   - type: chart
-    name: crpLoadChart
-    className: m-3
-    api:
-      url: /graphql
-      method: post
-      dataType: raw
-      data:
-        query: "query(${'$'}workcenterId:String,${'$'}dateFrom:String,${'$'}dateTo:String){ ErpMfgDashboard__getCrpLoadChartData(workcenterId:${'$'}workcenterId,dateFrom:${'$'}dateFrom,dateTo:${'$'}dateTo) }"
-        variables:
-          workcenterId: "${workcenterId || null}"
-          dateFrom: "${dateFrom || null}"
-          dateTo: "${dateTo || null}"
-      adaptor: |
-        const d = payload.data || {};
-        const gql = d.data ? d.data : d;
-        const result = gql.ErpMfgDashboard__getCrpLoadChartData || {};
-        const series = result.series || [];
-        return {
-          status: 0,
-          msg: '',
-          data: {
-            title: { text: 'CRP 负荷/产能对比图（区间总负荷率：' + (result.overallLoadRate != null ? result.overallLoadRate : '-') + '）' },
-            tooltip: {
-              trigger: 'axis',
-              formatter: function(params) {
-                let s = params[0].axisValueLabel + '<br/>';
-                params.forEach(function(p){
-                  s += p.marker + ' ' + p.seriesName + ': ' + p.value + '<br/>';
-                });
-                const idx = params[0].dataIndex;
-                const row = series[idx];
-                if (row && row.loadRate != null) {
-                  s += '负荷率: ' + row.loadRate + '<br/>';
-                }
-                return s;
-              }
-            },
-            legend: { data: ['负荷工时', '产能工时'] },
-            xAxis: { type: 'category', data: series.map(function(r){return r.loadDate;}) },
-            yAxis: [{ type: 'value', name: '工时', position: 'left' }],
-            series: [
-              { name: '负荷工时', type: 'bar', data: series.map(function(r){return r.loadHours;}) },
-              { name: '产能工时', type: 'line', data: series.map(function(r){return r.capacityHours;}) }
-            ]
-          }
-        };
+    chartType: bar
+    title: "CRP 负荷/产能对比图"
+    source: ${crpLoadData?.series ?? []}
+    xAxis: { dataKey: loadDate }
+    yAxis: { label: "工时" }
+    legend: true
+    height: 300
+    series:
+      - { name: "负荷工时", dataRegionKey: loadHours }
+      - { name: "产能工时", dataRegionKey: capacityHours }
+
+  - type: data-source
+    name: delayedWorkOrderData
+    action: ajax
+    args:
+      url: '@query:ErpMfgDashboard__findDelayedWorkOrderAlert'
+      selection: workOrderCode plannedEndDate docStatus overdueDays
 
   - type: crud
-    name: delayedWorkOrderCrud
     className: m-3
     title: "工单延期预警（计划完成日 < 今天 且 未完工）"
+    source: ${delayedWorkOrderData ?? []}
     syncLocation: false
     headerToolbar: []
     footerToolbar: []
-    api:
-      url: /graphql
-      method: post
-      dataType: raw
-      data:
-        query: "{ ErpMfgDashboard__findDelayedWorkOrderAlert }"
-      adaptor: |
-        const d = payload.data || {};
-        const gql = d.data ? d.data : d;
-        const rows = gql.ErpMfgDashboard__findDelayedWorkOrderAlert || [];
-        return { status: 0, msg: '', data: { items: rows, count: rows.length } };
     columns:
       - name: workOrderCode
         label: "工单编码"

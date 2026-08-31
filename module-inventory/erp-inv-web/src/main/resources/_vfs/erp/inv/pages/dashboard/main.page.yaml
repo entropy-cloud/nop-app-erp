@@ -1,3 +1,7 @@
+# 库存概览 dashboard（plan 2026-08-29-1913-1 Phase 1）。
+# flux 原生重写：data-source → KPI 卡 + chart + crud（缺料/滞销/批次效期预警）。
+# 数据源：ErpInvDashboard__getDashboardKpi / __getDashboardTrend / __findWarehouseDistribution
+#       / __findShortageAlert / __findSlowMovingAlert / __findBatchExpiryAlert。
 type: page
 title: "库存概览"
 body:
@@ -11,150 +15,154 @@ body:
       - type: input-date
         name: startDate
         label: "开始日期"
-        format: "YYYY-MM-DD"
+        format: YYYY-MM-DD
         placeholder: "留空=本月1日"
         clearable: true
       - type: input-date
         name: endDate
         label: "结束日期"
-        format: "YYYY-MM-DD"
+        format: YYYY-MM-DD
         placeholder: "留空=今天"
         clearable: true
       - type: button
         label: "刷新"
-        icon: "refresh-cw"
-        actionType: reload
-        target: "kpiService,trendChart,warehouseChart,shortageCrud,slowMovingCrud,batchExpiryCrud"
+        icon: refresh-cw
+        onClick:
+          action: refreshSource
+          targetId: kpiData
+          then:
+            action: refreshSource
+            targetId: trendData
+            then:
+              action: refreshSource
+              targetId: warehouseData
+              then:
+                action: refreshSource
+                targetId: shortageData
+                then:
+                  action: refreshSource
+                  targetId: slowMovingData
+                  then:
+                    action: refreshSource
+                    targetId: batchExpiryData
 
-  - type: service
-    name: kpiService
-    api:
-      url: /graphql
+  - type: data-source
+    name: kpiData
+    action: ajax
+    args:
+      url: '@query:ErpInvDashboard__getDashboardKpi'
       method: post
-      dataType: raw
       data:
-        query: "query(${'$'}startDate:String,${'$'}endDate:String){ ErpInvDashboard__getDashboardKpi(startDate:${'$'}startDate,endDate:${'$'}endDate) }"
-        variables:
-          startDate: "${startDate || null}"
-          endDate: "${endDate || null}"
-      adaptor: |
-        const d = payload.data || {};
-        const gql = d.data ? d.data : d;
-        const kpi = gql.ErpInvDashboard__getDashboardKpi || {};
-        return { status: 0, msg: '', data: kpi };
-    body:
-      - type: grid
-        className: m-3
-        gap: 'sm'
-        columns:
-          - type: wrapper
-            className: "border rounded p-3"
-            body:
-              - type: tpl
-                tpl: "<div class='text-muted'>库存总值</div>"
-              - type: tpl
-                tpl: "<span class='h3 text-primary'>¥${totalValue | round:2}</span>"
-          - type: wrapper
-            className: "border rounded p-3"
-            body:
-              - type: tpl
-                tpl: "<div class='text-muted'>本期入库量</div>"
-              - type: tpl
-                tpl: "<span class='h3 text-success'>${incomingQty | round:2}</span>"
-          - type: wrapper
-            className: "border rounded p-3"
-            body:
-              - type: tpl
-                tpl: "<div class='text-muted'>本期出库量</div>"
-              - type: tpl
-                tpl: "<span class='h3 text-danger'>${outgoingQty | round:2}</span>"
-          - type: wrapper
-            className: "border rounded p-3"
-            body:
-              - type: tpl
-                tpl: "<div class='text-muted'>库存周转率</div>"
-              - type: tpl
-                tpl: "<span class='h3 font-bold'>${turnoverRate | round:4}</span>"
+        startDate: "${filterForm?.startDate || null}"
+        endDate: "${filterForm?.endDate || null}"
+      selection: totalValue incomingQty outgoingQty turnoverRate
 
-  - type: chart
-    name: trendChart
+  - type: grid
     className: m-3
-    api:
-      url: /graphql
-      method: post
-      dataType: raw
-      data:
-        query: "query(${'$'}months:Int){ ErpInvDashboard__getDashboardTrend(months:${'$'}months) }"
-        variables:
-          months: 12
-      adaptor: |
-        const d = payload.data || {};
-        const gql = d.data ? d.data : d;
-        const rows = gql.ErpInvDashboard__getDashboardTrend || [];
-        return {
-          status: 0,
-          msg: '',
-          data: {
-            title: { text: '库存价值月度变动（近12月）' },
-            tooltip: { trigger: 'axis' },
-            legend: { data: ['净变动成本'] },
-            xAxis: { type: 'category', data: rows.map(function(r){return r.month;}) },
-            yAxis: { type: 'value' },
-            series: [
-              { name: '净变动成本', type: 'bar', data: rows.map(function(r){return r.netValueChange;}) }
-            ]
-          }
-        };
+    gap: sm
+    columns: 4
+    items:
+      - colSpan: 1
+        body:
+          - type: card
+            className: border rounded p-3
+            body:
+              - type: text
+                tag: div
+                className: text-muted
+                text: 库存总值
+              - type: text
+                tag: span
+                className: h3 text-primary
+                text: "¥${kpiData?.totalValue ?? 0 | round:2}"
+      - colSpan: 1
+        body:
+          - type: card
+            className: border rounded p-3
+            body:
+              - type: text
+                tag: div
+                className: text-muted
+                text: 本期入库量
+              - type: text
+                tag: span
+                className: h3 text-success
+                text: "${kpiData?.incomingQty ?? 0 | round:2}"
+      - colSpan: 1
+        body:
+          - type: card
+            className: border rounded p-3
+            body:
+              - type: text
+                tag: div
+                className: text-muted
+                text: 本期出库量
+              - type: text
+                tag: span
+                className: h3 text-danger
+                text: "${kpiData?.outgoingQty ?? 0 | round:2}"
+      - colSpan: 1
+        body:
+          - type: card
+            className: border rounded p-3
+            body:
+              - type: text
+                tag: div
+                className: text-muted
+                text: 库存周转率
+              - type: text
+                tag: span
+                className: h3 font-bold
+                text: "${kpiData?.turnoverRate ?? 0 | round:4}"
 
+  - type: data-source
+    name: trendData
+    action: ajax
+    args:
+      url: '@query:ErpInvDashboard__getDashboardTrend'
+      method: post
+      data:
+        months: 12
+      selection: month netValueChange
   - type: chart
-    name: warehouseChart
-    className: m-3
-    api:
-      url: /graphql
-      method: post
-      dataType: raw
-      data:
-        query: "{ ErpInvDashboard__findWarehouseDistribution }"
-      adaptor: |
-        const d = payload.data || {};
-        const gql = d.data ? d.data : d;
-        const rows = gql.ErpInvDashboard__findWarehouseDistribution || [];
-        return {
-          status: 0,
-          msg: '',
-          data: {
-            title: { text: '仓库库存价值分布' },
-            tooltip: { trigger: 'item' },
-            legend: { orient: 'vertical', left: 'right' },
-            series: [
-              {
-                name: '库存价值',
-                type: 'pie',
-                radius: '60%',
-                data: rows.map(function(r){return {name: r.warehouseName || '仓库#' + r.warehouseId, value: r.totalValue};})
-              }
-            ]
-          }
-        };
+    chartType: bar
+    title: "库存价值月度变动（近12月）"
+    source: ${trendData ?? []}
+    xAxis: { dataKey: month }
+    yAxis: { label: "金额" }
+    legend: true
+    height: 300
+    series:
+      - { name: "净变动成本", dataRegionKey: netValueChange }
 
+  - type: data-source
+    name: warehouseData
+    action: ajax
+    args:
+      url: '@query:ErpInvDashboard__findWarehouseDistribution'
+      method: post
+      selection: warehouseId warehouseName totalValue
+  - type: chart
+    chartType: pie
+    title: "仓库库存价值分布"
+    source: ${warehouseData ?? []}
+    height: 300
+
+  - type: data-source
+    name: shortageData
+    action: ajax
+    args:
+      url: '@query:ErpInvDashboard__findShortageAlert'
+      method: post
+      selection: materialName warehouseName availableQuantity safetyStock
   - type: crud
     name: shortageCrud
     className: m-3
     title: "缺料预警（availableQty < material.safetyStock）"
+    source: ${shortageData ?? []}
     syncLocation: false
     headerToolbar: []
     footerToolbar: []
-    api:
-      url: /graphql
-      method: post
-      dataType: raw
-      data:
-        query: "{ ErpInvDashboard__findShortageAlert }"
-      adaptor: |
-        const d = payload.data || {};
-        const gql = d.data ? d.data : d;
-        const rows = gql.ErpInvDashboard__findShortageAlert || [];
-        return { status: 0, msg: '', data: { items: rows, count: rows.length } };
     columns:
       - name: materialName
         label: "物料"
@@ -165,24 +173,21 @@ body:
       - name: safetyStock
         label: "安全库存"
 
+  - type: data-source
+    name: slowMovingData
+    action: ajax
+    args:
+      url: '@query:ErpInvDashboard__findSlowMovingAlert'
+      method: post
+      selection: materialName warehouseName totalQuantity lastOutDate
   - type: crud
     name: slowMovingCrud
     className: m-3
     title: "滞销库存预警（阈值经 erp-dash.inv-slow-moving-days 配置）"
+    source: ${slowMovingData ?? []}
     syncLocation: false
     headerToolbar: []
     footerToolbar: []
-    api:
-      url: /graphql
-      method: post
-      dataType: raw
-      data:
-        query: "{ ErpInvDashboard__findSlowMovingAlert }"
-      adaptor: |
-        const d = payload.data || {};
-        const gql = d.data ? d.data : d;
-        const rows = gql.ErpInvDashboard__findSlowMovingAlert || [];
-        return { status: 0, msg: '', data: { items: rows, count: rows.length } };
     columns:
       - name: materialName
         label: "物料"
@@ -193,24 +198,21 @@ body:
       - name: lastOutDate
         label: "最后出库日"
 
+  - type: data-source
+    name: batchExpiryData
+    action: ajax
+    args:
+      url: '@query:ErpInvDashboard__findBatchExpiryAlert'
+      method: post
+      selection: batchNo materialName warehouseName expiryDate remainingDays availableQuantity
   - type: crud
     name: batchExpiryCrud
     className: m-3
     title: "批次效期预警（阈值经 erp-dash.inv-batch-expiry-days 配置）"
+    source: ${batchExpiryData ?? []}
     syncLocation: false
     headerToolbar: []
     footerToolbar: []
-    api:
-      url: /graphql
-      method: post
-      dataType: raw
-      data:
-        query: "{ ErpInvDashboard__findBatchExpiryAlert }"
-      adaptor: |
-        const d = payload.data || {};
-        const gql = d.data ? d.data : d;
-        const rows = gql.ErpInvDashboard__findBatchExpiryAlert || [];
-        return { status: 0, msg: '', data: { items: rows, count: rows.length } };
     columns:
       - name: batchNo
         label: "批次号"

@@ -1,11 +1,11 @@
-# CS 工单看板（F13 非标准视图，plan 2026-07-22-0845-3 §Phase 1）。
+# CS 工单看板（F13 非标准视图，plan 2026-07-22-0845-3 §Phase 1 + plan 2026-08-29-1913-2 Phase 1）。
 # 6 列 crud（按 erp-cs/ticket-status 字典：NEW/ASSIGNED/IN_PROGRESS/RESOLVED/CLOSED/CANCELLED）
 # + 行级状态机 row-action（Phase 0 Explore (a) 降级裁决）。
 # 经既有 @BizMutation：assign / start / resolve / close / reopen / cancel（ErpCsTicketBizModel）。
-# SLA 超时卡片 🔴 标记（deadlineDateTime < now 且 isSlaCompleted=false）+ 待分派列（NEW）高亮。
+# SLA 超时卡片 🔴 标记（deadlineDateTime < now 且 isSlaCompleted=false）。
 type: page
 title: "工单看板"
-remark: "6 列状态看板。行级按钮经 ErpCsTicket 状态机 mutation 触发迁移：NEW→assign（分配处理人），ASSIGNED→start，IN_PROGRESS→resolve（含解决说明），RESOLVED→close 或 reopen，CANCELLED/CLOSED 为终态。SLA 超时卡片以 🔴 标记（deadlineDateTime < now 且 isSlaCompleted=false）。"
+remark: "6 列状态看板。行级按钮经 ErpCsTicket 状态机 mutation 触发迁移。SLA 超时卡片以 🔴 标记。"
 body:
   - type: form
     name: filterForm
@@ -21,37 +21,112 @@ body:
         clearable: true
       - type: button
         label: "刷新看板"
-        icon: "refresh-cw"
-        actionType: reload
-        target: "colNew,colAssigned,colInProgress,colResolved,colClosed,colCancelled"
+        icon: refresh-cw
+        onClick:
+          action: refreshSource
+          targetId: newData
+          then:
+            action: refreshSource
+            targetId: assignedData
+          then:
+            action: refreshSource
+            targetId: inProgressData
+          then:
+            action: refreshSource
+            targetId: resolvedData
+          then:
+            action: refreshSource
+            targetId: closedData
+          then:
+            action: refreshSource
+            targetId: cancelledData
+
+  # 6 个 data-source
+  - type: data-source
+    name: newData
+    action: ajax
+    args:
+      url: '@query:ErpCsTicket__findPage'
+      method: post
+      data:
+        filter_status: "NEW"
+        filter_customerId: "${filterForm?.customerId || null}"
+        limit: 50
+      selection: id code subject priority status assignedToId deadlineDateTime isSlaCompleted customerId
+
+  - type: data-source
+    name: assignedData
+    action: ajax
+    args:
+      url: '@query:ErpCsTicket__findPage'
+      method: post
+      data:
+        filter_status: "ASSIGNED"
+        filter_customerId: "${filterForm?.customerId || null}"
+        limit: 50
+      selection: id code subject priority status assignedToId deadlineDateTime isSlaCompleted customerId
+
+  - type: data-source
+    name: inProgressData
+    action: ajax
+    args:
+      url: '@query:ErpCsTicket__findPage'
+      method: post
+      data:
+        filter_status: "IN_PROGRESS"
+        filter_customerId: "${filterForm?.customerId || null}"
+        limit: 50
+      selection: id code subject priority status assignedToId deadlineDateTime isSlaCompleted customerId
+
+  - type: data-source
+    name: resolvedData
+    action: ajax
+    args:
+      url: '@query:ErpCsTicket__findPage'
+      method: post
+      data:
+        filter_status: "RESOLVED"
+        filter_customerId: "${filterForm?.customerId || null}"
+        limit: 50
+      selection: id code subject priority status assignedToId deadlineDateTime isSlaCompleted customerId
+
+  - type: data-source
+    name: closedData
+    action: ajax
+    args:
+      url: '@query:ErpCsTicket__findPage'
+      method: post
+      data:
+        filter_status: "CLOSED"
+        filter_customerId: "${filterForm?.customerId || null}"
+        limit: 50
+      selection: id code subject priority status assignedToId deadlineDateTime isSlaCompleted customerId
+
+  - type: data-source
+    name: cancelledData
+    action: ajax
+    args:
+      url: '@query:ErpCsTicket__findPage'
+      method: post
+      data:
+        filter_status: "CANCELLED"
+        filter_customerId: "${filterForm?.customerId || null}"
+        limit: 50
+      selection: id code subject priority status assignedToId deadlineDateTime isSlaCompleted customerId
 
   - type: grid
     className: m-3
     columns:
-      # ① NEW 待分派（闪烁高亮，提醒运营响应）
+      # ① NEW
       - type: crud
         name: colNew
         title: "① 新建 (NEW)"
         headerToolbar: []
         footerToolbar: ["statistics"]
         syncLocation: false
-        className: "bg-warning-subtle"
-        api: &ticketApiTpl
-          url: /graphql
-          method: post
-          dataType: raw
-          data:
-            query: "query(${'$'}s:String,${'$'}c:String,${'$'}lim:Int){ ErpCsTicket__findPage(filter_status:${'$'}s,filter_customerId:${'$'}c,limit:${'$'}lim){ items{ id code subject priority status assignedToId deadlineDateTime isSlaCompleted customerId } total } }"
-            variables:
-              s: "NEW"
-              c: "${customerId || null}"
-              lim: 50
-          adaptor: |
-            const d = payload.data || {};
-            const gql = d.data ? d.data : d;
-            const page = gql.ErpCsTicket__findPage || { items: [], total: 0 };
-            return { status: 0, msg: '', data: { items: page.items || [], count: page.total || 0 } };
-        columns: &ticketColsNew
+        className: bg-warning-subtle
+        source: ${newData?.items ?? []}
+        columns:
           - name: code
             label: "单号"
             width: 130
@@ -80,35 +155,24 @@ body:
                     type: form
                     api:
                       method: post
-                      url: /graphql
-                      dataType: raw
+                      url: '@mutation:ErpCsTicket__assign'
                       data:
-                        query: "mutation(${'$'}id:String,${'$'}a:String){ ErpCsTicket__assign(ticketId:${'$'}id,assignedToId:${'$'}a){ id status } }"
-                        variables:
-                          id: "${id}"
-                          a: "${assignedToId}"
+                        ticketId: "${id}"
+                        assignedToId: "${assignedToId}"
                     body:
                       - type: input-text
                         name: assignedToId
                         label: "处理人用户ID"
                         placeholder: "分配给处理人（用户ID）"
-                reload: colNew,colAssigned
 
-      # ② ASSIGNED 已分派
+      # ② ASSIGNED
       - type: crud
         name: colAssigned
         title: "② 已分派 (ASSIGNED)"
         headerToolbar: []
         footerToolbar: ["statistics"]
         syncLocation: false
-        api:
-          <<: *ticketApiTpl
-          data:
-            query: "query(${'$'}s:String,${'$'}c:String,${'$'}lim:Int){ ErpCsTicket__findPage(filter_status:${'$'}s,filter_customerId:${'$'}c,limit:${'$'}lim){ items{ id code subject priority status assignedToId deadlineDateTime isSlaCompleted customerId } total } }"
-            variables:
-              s: "ASSIGNED"
-              c: "${customerId || null}"
-              lim: 50
+        source: ${assignedData?.items ?? []}
         columns:
           - name: code
             label: "单号"
@@ -134,29 +198,18 @@ body:
                 confirmText: "确认开始处理？"
                 api:
                   method: post
-                  url: /graphql
-                  dataType: raw
+                  url: '@mutation:ErpCsTicket__start'
                   data:
-                    query: "mutation(${'$'}id:String){ ErpCsTicket__start(ticketId:${'$'}id){ id status } }"
-                    variables:
-                      id: "${id}"
-                reload: colAssigned,colInProgress
+                    ticketId: "${id}"
 
-      # ③ IN_PROGRESS 处理中
+      # ③ IN_PROGRESS
       - type: crud
         name: colInProgress
         title: "③ 处理中 (IN_PROGRESS)"
         headerToolbar: []
         footerToolbar: ["statistics"]
         syncLocation: false
-        api:
-          <<: *ticketApiTpl
-          data:
-            query: "query(${'$'}s:String,${'$'}c:String,${'$'}lim:Int){ ErpCsTicket__findPage(filter_status:${'$'}s,filter_customerId:${'$'}c,limit:${'$'}lim){ items{ id code subject priority status assignedToId deadlineDateTime isSlaCompleted customerId } total } }"
-            variables:
-              s: "IN_PROGRESS"
-              c: "${customerId || null}"
-              lim: 50
+        source: ${inProgressData?.items ?? []}
         columns:
           - name: code
             label: "单号"
@@ -186,35 +239,24 @@ body:
                     type: form
                     api:
                       method: post
-                      url: /graphql
-                      dataType: raw
+                      url: '@mutation:ErpCsTicket__resolve'
                       data:
-                        query: "mutation(${'$'}id:String,${'$'}r:String){ ErpCsTicket__resolve(ticketId:${'$'}id,resolution:${'$'}r){ id status } }"
-                        variables:
-                          id: "${id}"
-                          r: "${resolution}"
+                        ticketId: "${id}"
+                        resolution: "${resolution}"
                     body:
                       - type: textarea
                         name: resolution
                         label: "解决说明"
                         placeholder: "可选：记录解决方案"
-                reload: colInProgress,colResolved
 
-      # ④ RESOLVED 已解决
+      # ④ RESOLVED
       - type: crud
         name: colResolved
         title: "④ 已解决 (RESOLVED)"
         headerToolbar: []
         footerToolbar: ["statistics"]
         syncLocation: false
-        api:
-          <<: *ticketApiTpl
-          data:
-            query: "query(${'$'}s:String,${'$'}c:String,${'$'}lim:Int){ ErpCsTicket__findPage(filter_status:${'$'}s,filter_customerId:${'$'}c,limit:${'$'}lim){ items{ id code subject priority status assignedToId deadlineDateTime isSlaCompleted customerId } total } }"
-            variables:
-              s: "RESOLVED"
-              c: "${customerId || null}"
-              lim: 50
+        source: ${resolvedData?.items ?? []}
         columns:
           - name: code
             label: "单号"
@@ -233,16 +275,12 @@ body:
                 label: "关闭"
                 level: success
                 size: sm
-                confirmText: "确认关闭工单？关闭后为终态（终态前 SLA 违约工单需在备注注明超时原因）"
+                confirmText: "确认关闭工单？"
                 api:
                   method: post
-                  url: /graphql
-                  dataType: raw
+                  url: '@mutation:ErpCsTicket__close'
                   data:
-                    query: "mutation(${'$'}id:String){ ErpCsTicket__close(ticketId:${'$'}id){ id status } }"
-                    variables:
-                      id: "${id}"
-                reload: colResolved,colClosed
+                    ticketId: "${id}"
               - type: button
                 label: "重开"
                 level: warning
@@ -250,67 +288,45 @@ body:
                 confirmText: "确认驳回重开？将退回「处理中」"
                 api:
                   method: post
-                  url: /graphql
-                  dataType: raw
+                  url: '@mutation:ErpCsTicket__reopen'
                   data:
-                    query: "mutation(${'$'}id:String){ ErpCsTicket__reopen(ticketId:${'$'}id){ id status } }"
-                    variables:
-                      id: "${id}"
-                reload: colResolved,colInProgress
+                    ticketId: "${id}"
 
-      # ⑤ CLOSED 已关闭（只读终态）
+      # ⑤ CLOSED
       - type: crud
         name: colClosed
         title: "⑤ 已关闭 (CLOSED)"
         headerToolbar: []
         footerToolbar: ["statistics"]
         syncLocation: false
-        api:
-          <<: *ticketApiTpl
-          data:
-            query: "query(${'$'}s:String,${'$'}c:String,${'$'}lim:Int){ ErpCsTicket__findPage(filter_status:${'$'}s,filter_customerId:${'$'}c,limit:${'$'}lim){ items{ id code subject priority status assignedToId deadlineDateTime isSlaCompleted customerId } total } }"
-            variables:
-              s: "CLOSED"
-              c: "${customerId || null}"
-              lim: 50
+        source: ${closedData?.items ?? []}
         columns:
           - name: code
             label: "单号"
             width: 130
-            className: text-muted
           - name: subject
             label: "主题"
             width: 200
-            className: text-muted
           - name: priority
             label: "优先级"
             type: tpl
             tpl: '<span class="label label-default">${priority}</span>'
 
-      # ⑥ CANCELLED 已取消（只读终态）
+      # ⑥ CANCELLED
       - type: crud
         name: colCancelled
         title: "⑥ 已取消 (CANCELLED)"
         headerToolbar: []
         footerToolbar: ["statistics"]
         syncLocation: false
-        api:
-          <<: *ticketApiTpl
-          data:
-            query: "query(${'$'}s:String,${'$'}c:String,${'$'}lim:Int){ ErpCsTicket__findPage(filter_status:${'$'}s,filter_customerId:${'$'}c,limit:${'$'}lim){ items{ id code subject priority status assignedToId deadlineDateTime isSlaCompleted customerId } total } }"
-            variables:
-              s: "CANCELLED"
-              c: "${customerId || null}"
-              lim: 50
+        source: ${cancelledData?.items ?? []}
         columns:
           - name: code
             label: "单号"
             width: 130
-            className: text-muted
           - name: subject
             label: "主题"
             width: 200
-            className: text-muted
           - name: priority
             label: "优先级"
             type: tpl

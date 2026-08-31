@@ -1,7 +1,10 @@
+# 工单 SLA/CSAT 综合统计表（plan 2026-08-29-1913-2 Phase 1）。
+# flux 原生重写：data-source → form → html。
 type: page
 title: "工单 SLA/CSAT 综合统计表"
 body:
   - type: form
+    name: filterForm
     title: ""
     mode: inline
     className: m-3
@@ -12,49 +15,45 @@ body:
         placeholder: "按工单类型过滤（留空查全部）"
       - type: button
         label: "渲染报表"
-        actionType: reload
-        target: "reportService"
-      - type: button-toolbar
-        buttons:
-          - type: button
-            label: "下载 XLSX"
-            actionType: download
-            api:
-              url: /p/ErpCsReport__download
-              method: post
-              responseType: blob
-              data:
-                reportName: "ticket-sla-csat-summary"
-                renderType: "xlsx"
-                data: { ticketType: "${ticketType}" }
-          - type: button
-            label: "下载 PDF"
-            actionType: download
-            api:
-              url: /p/ErpCsReport__download
-              method: post
-              responseType: blob
-              data:
-                reportName: "ticket-sla-csat-summary"
-                renderType: "pdf"
-                data: { ticketType: "${ticketType}" }
-      - type: service
-        name: reportService
-        id: reportContainer
-        initFetch: false
+        onClick:
+          action: refreshSource
+          targetId: reportHtmlData
+      - type: button
+        label: "下载 XLSX"
+        actionType: download
         api:
-          url: /graphql
+          url: /p/ErpCsReport__download
           method: post
-          dataType: raw
+          responseType: blob
           data:
-            query: "query(${'$'}reportName:String!,${'$'}ticketType:String){ ErpCsReport__renderHtml(reportName:${'$'}reportName,data:{ticketType:${'$'}ticketType}) }"
-            variables:
-              reportName: "ticket-sla-csat-summary"
-              ticketType: "${ticketType}"
-          adaptor: |
-            const d = payload.data || {};
-            const html = (d.data ? d.data : d).ErpCsReport__renderHtml || '';
-            return { status: 0, msg: '', data: { reportHtml: html } };
-        body:
-          - type: html
-            html: "${reportHtml}"
+            reportName: "ticket-sla-csat-summary"
+            renderType: "xlsx"
+            data:
+              ticketType: "${filterForm?.ticketType}"
+      - type: button
+        label: "下载 PDF"
+        actionType: download
+        api:
+          url: /p/ErpCsReport__download
+          method: post
+          responseType: blob
+          data:
+            reportName: "ticket-sla-csat-summary"
+            renderType: "pdf"
+            data:
+              ticketType: "${filterForm?.ticketType}"
+
+  - type: data-source
+    name: reportHtmlData
+    action: ajax
+    args:
+      url: '@query:ErpCsReport__renderHtml'
+      method: post
+      data:
+        reportName: "ticket-sla-csat-summary"
+        data:
+          ticketType: "${filterForm?.ticketType}"
+
+  - type: html
+    className: m-3
+    html: "${reportHtmlData ?? ''}"

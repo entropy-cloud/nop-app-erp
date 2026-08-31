@@ -35,7 +35,7 @@ body:
   name: planData
   dependsOn:
   - planId
-  sendOn: ${planId != null}
+  sendOn: planId != null
   action: ajax
   args:
     url: '@query:ErpDrpPlan__get'

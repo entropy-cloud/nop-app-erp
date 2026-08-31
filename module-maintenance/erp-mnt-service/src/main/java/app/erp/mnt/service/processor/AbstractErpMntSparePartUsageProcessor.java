@@ -65,12 +65,15 @@ public abstract class AbstractErpMntSparePartUsageProcessor {
     }
 
     protected void validateNotConfirmed(ErpMntSparePartUsage usage, IServiceContext context) {
-        if (Boolean.TRUE.equals(usage.getPosted())) {
-            return;
-        }
-        String docStatus = usage.getDocStatus();
-        if (docStatus != null && Objects.equals(docStatus, ErpMntDaoConstants.DOC_STATUS_ACTIVE)) {
-            return;
+        // P1-CK-mnt-001：接线状态机 Bean——confirm 仅 DRAFT 合法。修复前该方法是空守卫
+        // （两个分支 + fallthrough 全部 return，无 throw）——CANCELLED 终态可复活为 ACTIVE+posted=true，
+        // 单据状态对已回滚的库存/GL 撒谎（reverseConfirm 路径已建独立 REVERSAL 单、原单 docStatus
+        // 保持 DONE 不动，故 confirm 再次幂等短路放行——终态复活使单据失实）。
+        try {
+            documentStateMachine.assertCanConfirm(usage.getDocStatus());
+        } catch (NopException e) {
+            throw new NopException(ErpMntErrors.ERR_SPARE_PART_USAGE_NOT_POSTED, e)
+                    .param(ErpMntErrors.ARG_USAGE_CODE, usage.getCode());
         }
     }
 

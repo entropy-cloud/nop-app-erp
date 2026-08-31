@@ -34,10 +34,9 @@
                                 + inList(warningVals) + " ? 'warning' : "
                                 + inList(primaryVals) + " ? 'primary' : 'default'";
                             return {
-                                type: "tpl",
-                                tpl: '<span class="label label-${' + expr + "}"
+                                cell: { type: "text", text: '<span class="label label-${' + expr + "}"
                                     + ">"
-                                    + "${" + labelProp + "}</span>"
+                                    + "${" + labelProp + "}</span>" }
                             };
                         ]]></c:script>
                     </gen-control>
@@ -56,10 +55,9 @@
                             const valueProp = dispMeta?.id || 'status';
                             const labelProp = propMeta?.['graphql:labelProp'] || (valueProp + '_label');
                             return {
-                                type: "tpl",
-                                tpl: '<span class="label label-${' + valueProp
+                                cell: { type: "text", text: '<span class="label label-${' + valueProp
                                     + " == 'ACTIVE' || " + valueProp + " == 'OPEN' ? 'primary' : 'default'}\">"
-                                    + "${" + labelProp + "}</span>"
+                                    + "${" + labelProp + "}</span>" }
                             };
                         ]]></c:script>
                     </gen-control>
@@ -176,7 +174,7 @@
                     </messages>
                     <visibleOn>${status != 'COMPLETED' &amp;&amp; status != 'CANCELLED'}</visibleOn>
                 </action>
-                <action id="row-create-task-button" label="创建任务" i18n-en:label="Create Task" level="primary" icon="fa fa-plus"
+                <action actionType="link" id="row-create-task-button" label="创建任务" i18n-en:label="Create Task" level="primary" icon="fa fa-plus"
                         tooltip="跳转到任务列表（带项目上下文筛选），新建任务时自动预填项目"
                         link="/ErpPrjTask-main?filter_projectId=${id}">
                     <visibleOn>${status == 'OPEN'}</visibleOn>

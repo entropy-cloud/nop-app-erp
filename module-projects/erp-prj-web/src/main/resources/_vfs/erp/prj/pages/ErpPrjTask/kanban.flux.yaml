@@ -52,7 +52,7 @@ body:
         taskId: ${event.cardId.substring(5)}
         blockReason: 看板拖拽标记阻塞
   onCardClick:
-    action: notify
+    action: showToast
     args:
       level: info
       message: ${"点击卡片 " + event.cardId}

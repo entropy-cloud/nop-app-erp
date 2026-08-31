@@ -1,3 +1,6 @@
+# 资产概览 dashboard（plan 2026-08-29-1913-2 Phase 1）。
+# flux 原生重写：data-source → KPI 卡 + chart + crud。
+# 数据源：ErpAstDashboard__getDashboardKpi / __getAssetCategoryDistribution / __getDashboardTrend / __findDepreciationMissingAlert。
 type: page
 title: "资产概览"
 body:
@@ -15,145 +18,150 @@ body:
         clearable: true
       - type: button
         label: "刷新"
-        icon: "refresh-cw"
-        actionType: reload
-        target: "kpiService,categoryChart,trendChart,depreciationMissingCrud"
+        icon: refresh-cw
+        onClick:
+          action: refreshSource
+          targetId: kpiData
+          then:
+            action: refreshSource
+            targetId: categoryData
+          then:
+            action: refreshSource
+            targetId: trendData
+          then:
+            action: refreshSource
+            targetId: depreciationMissingData
 
-  - type: service
-    name: kpiService
-    api:
-      url: /graphql
+  - type: data-source
+    name: kpiData
+    action: ajax
+    args:
+      url: '@query:ErpAstDashboard__getDashboardKpi'
       method: post
-      dataType: raw
       data:
-        query: "query(${'$'}periodId:String){ ErpAstDashboard__getDashboardKpi(periodId:${'$'}periodId) }"
-        variables:
-          periodId: "${periodId || null}"
-      adaptor: |
-        const d = payload.data || {};
-        const gql = d.data ? d.data : d;
-        const kpi = gql.ErpAstDashboard__getDashboardKpi || {};
-        return { status: 0, msg: '', data: kpi };
-    body:
-      - type: grid
-        className: m-3
-        gap: 'sm'
-        columns:
-          - type: wrapper
-            className: "border rounded p-3"
+        periodId: "${filterForm?.periodId || null}"
+      selection: originalValue accumulatedDepreciation netBookValue periodDepreciation cipBalance
+
+  - type: grid
+    className: m-3
+    gap: sm
+    columns: 5
+    items:
+      - colSpan: 1
+        body:
+          - type: card
+            className: border rounded p-3
             body:
-              - type: tpl
-                tpl: "<div class='text-muted'>资产原值合计</div>"
-              - type: tpl
-                tpl: "<span class='h3 text-primary'>¥${originalValue | round:2}</span>"
-          - type: wrapper
-            className: "border rounded p-3"
+              - type: text
+                tag: div
+                className: text-muted
+                text: "资产原值合计"
+              - type: text
+                tag: span
+                className: h3 text-primary
+                text: "¥${kpiData?.originalValue ?? 0 | round:2}"
+      - colSpan: 1
+        body:
+          - type: card
+            className: border rounded p-3
             body:
-              - type: tpl
-                tpl: "<div class='text-muted'>累计折旧</div>"
-              - type: tpl
-                tpl: "<span class='h3 text-danger'>¥${accumulatedDepreciation | round:2}</span>"
-          - type: wrapper
-            className: "border rounded p-3"
+              - type: text
+                tag: div
+                className: text-muted
+                text: "累计折旧"
+              - type: text
+                tag: span
+                className: h3 text-danger
+                text: "¥${kpiData?.accumulatedDepreciation ?? 0 | round:2}"
+      - colSpan: 1
+        body:
+          - type: card
+            className: border rounded p-3
             body:
-              - type: tpl
-                tpl: "<div class='text-muted'>资产净值</div>"
-              - type: tpl
-                tpl: "<span class='h3 font-bold'>¥${netBookValue | round:2}</span>"
-          - type: wrapper
-            className: "border rounded p-3"
+              - type: text
+                tag: div
+                className: text-muted
+                text: "资产净值"
+              - type: text
+                tag: span
+                className: h3 font-bold
+                text: "¥${kpiData?.netBookValue ?? 0 | round:2}"
+      - colSpan: 1
+        body:
+          - type: card
+            className: border rounded p-3
             body:
-              - type: tpl
-                tpl: "<div class='text-muted'>本期折旧</div>"
-              - type: tpl
-                tpl: "<span class='h3 text-warning'>¥${periodDepreciation | round:2}</span>"
-          - type: wrapper
-            className: "border rounded p-3"
+              - type: text
+                tag: div
+                className: text-muted
+                text: "本期折旧"
+              - type: text
+                tag: span
+                className: h3 text-warning
+                text: "¥${kpiData?.periodDepreciation ?? 0 | round:2}"
+      - colSpan: 1
+        body:
+          - type: card
+            className: border rounded p-3
             body:
-              - type: tpl
-                tpl: "<div class='text-muted'>在建工程余额</div>"
-              - type: tpl
-                tpl: "<span class='h3'>¥${cipBalance | round:2}</span>"
+              - type: text
+                tag: div
+                className: text-muted
+                text: "在建工程余额"
+              - type: text
+                tag: span
+                className: h3
+                text: "¥${kpiData?.cipBalance ?? 0 | round:2}"
+
+  - type: data-source
+    name: categoryData
+    action: ajax
+    args:
+      url: '@query:ErpAstDashboard__getAssetCategoryDistribution'
+      selection: categoryId categoryName netBookValue
 
   - type: chart
-    name: categoryChart
-    className: m-3
-    api:
-      url: /graphql
-      method: post
-      dataType: raw
-      data:
-        query: "{ ErpAstDashboard__getAssetCategoryDistribution }"
-      adaptor: |
-        const d = payload.data || {};
-        const gql = d.data ? d.data : d;
-        const rows = gql.ErpAstDashboard__getAssetCategoryDistribution || [];
-        return {
-          status: 0,
-          msg: '',
-          data: {
-            title: { text: '资产类别分布（按净值）' },
-            tooltip: { trigger: 'item' },
-            legend: { orient: 'vertical', left: 'right' },
-            series: [
-              {
-                name: '净值',
-                type: 'pie',
-                radius: ['40%', '70%'],
-                data: rows.map(function(r){return {name: r.categoryName || '类别#' + r.categoryId, value: r.netBookValue};})
-              }
-            ]
-          }
-        };
+    chartType: pie
+    title: "资产类别分布（按净值）"
+    source: ${categoryData ?? []}
+    height: 300
+    series:
+      - { name: "净值", dataRegionKey: netBookValue, nameField: categoryName }
 
-  - type: chart
-    name: trendChart
-    className: m-3
-    api:
-      url: /graphql
+  - type: data-source
+    name: trendData
+    action: ajax
+    args:
+      url: '@query:ErpAstDashboard__getDashboardTrend'
       method: post
-      dataType: raw
       data:
-        query: "query(${'$'}months:Int){ ErpAstDashboard__getDashboardTrend(months:${'$'}months) }"
-        variables:
-          months: 12
-      adaptor: |
-        const d = payload.data || {};
-        const gql = d.data ? d.data : d;
-        const rows = gql.ErpAstDashboard__getDashboardTrend || [];
-        return {
-          status: 0,
-          msg: '',
-          data: {
-            title: { text: '折旧趋势（近12月）' },
-            tooltip: { trigger: 'axis' },
-            legend: { data: ['折旧额'] },
-            xAxis: { type: 'category', data: rows.map(function(r){return r.period;}) },
-            yAxis: { type: 'value' },
-            series: [
-              { name: '折旧额', type: 'line', data: rows.map(function(r){return r.depreciationAmount;}) }
-            ]
-          }
-        };
+        months: 12
+      selection: period depreciationAmount
+  - type: chart
+    chartType: line
+    title: "折旧趋势（近12月）"
+    source: ${trendData ?? []}
+    xAxis: { dataKey: period }
+    yAxis: { label: "折旧额" }
+    legend: true
+    height: 300
+    series:
+      - { name: "折旧额", dataRegionKey: depreciationAmount }
+
+  - type: data-source
+    name: depreciationMissingData
+    action: ajax
+    args:
+      url: '@query:ErpAstDashboard__findDepreciationMissingAlert'
+      selection: assetCode assetName period originalValue
 
   - type: crud
-    name: depreciationMissingCrud
     className: m-3
     title: "折旧未计提预警（在用资产本期无 EXECUTED 折旧计划）"
+    source: ${depreciationMissingData ?? []}
     syncLocation: false
     headerToolbar: []
     footerToolbar: []
-    api:
-      url: /graphql
-      method: post
-      dataType: raw
-      data:
-        query: "{ ErpAstDashboard__findDepreciationMissingAlert }"
-      adaptor: |
-        const d = payload.data || {};
-        const gql = d.data ? d.data : d;
-        const rows = gql.ErpAstDashboard__findDepreciationMissingAlert || [];
-        return { status: 0, msg: '', data: { items: rows, count: rows.length } };
     columns:
       - name: assetCode
         label: "资产编码"

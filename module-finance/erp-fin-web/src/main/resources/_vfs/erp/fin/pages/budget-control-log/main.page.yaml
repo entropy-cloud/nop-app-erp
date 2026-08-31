@@ -1,72 +1,84 @@
-# 预算控制日志（plan 2026-08-03-1232-4 Phase 1）。
+# 预算控制日志（plan 2026-08-03-1232-4 Phase 1 + plan 2026-08-29-1913-2 Phase 1）。
+# flux 原生重写：data-source → KPI 卡 + crud。
 # 数据来源：ErpFinBudgetControlLog 实体 findPage（只读审计日志）。零后端 delta。
 type: page
 title: "预算控制日志"
 body:
-  - type: service
-    name: kpiService
-    className: m-3
-    api:
-      url: /graphql
+  - type: data-source
+    name: logData
+    action: ajax
+    args:
+      url: '@query:ErpFinBudgetControlLog__findPage'
       method: post
-      dataType: raw
       data:
-        query: "query(${'$'}lim:Int){ ErpFinBudgetControlLog__findPage(query:{limit:${'$'}lim}){ items{ id actionResult requestedAmount } total } }"
-        variables:
-          lim: 500
-      adaptor: |
-        const d = payload.data || {};
-        const gql = d.data ? d.data : d;
-        const page = gql.ErpFinBudgetControlLog__findPage || { items: [], total: 0 };
-        const rows = page.items || [];
-        const hardBlocked = rows.filter(function(r){ return (r.actionResult||'') === 'HARD'; }).length;
-        const warned = rows.filter(function(r){ return (r.actionResult||'') === 'WARN'; }).length;
-        const passed = rows.filter(function(r){ return (r.actionResult||'') === 'PASS'; }).length;
-        return { status: 0, msg: '', data: { total: rows.length, hardBlocked: hardBlocked, warned: warned, passed: passed } };
-    body:
-      - type: grid
-        className: m-3
-        gap: 'sm'
-        columns:
-          - type: wrapper
-            className: "border rounded p-3"
+        query:
+          limit: 200
+      selection: id businessDate sourceBillType sourceBillCode subjectId requestedAmount availableAmount actionResult operatorId operatedAt reason
+
+  - type: grid
+    className: m-3
+    gap: sm
+    columns: 4
+    items:
+      - colSpan: 1
+        body:
+          - type: card
+            className: border rounded p-3
             body:
-              - { type: tpl, tpl: "<div class='text-muted'>日志总数</div>" }
-              - { type: tpl, tpl: "<span class='h3'>${total}</span>" }
-          - type: wrapper
-            className: "border rounded p-3"
+              - type: text
+                tag: div
+                className: text-muted
+                text: "日志总数"
+              - type: text
+                tag: span
+                className: h3
+                text: "${logData?.items?.length ?? 0}"
+      - colSpan: 1
+        body:
+          - type: card
+            className: border rounded p-3
             body:
-              - { type: tpl, tpl: "<div class='text-muted'>硬阻断</div>" }
-              - { type: tpl, tpl: "<span class='h3 text-danger'>${hardBlocked}</span>" }
-          - type: wrapper
-            className: "border rounded p-3"
+              - type: text
+                tag: div
+                className: text-muted
+                text: "硬阻断"
+              - type: text
+                tag: span
+                className: h3 text-danger
+                text: "${(logData?.items ?? []).filter(item => item.actionResult === 'HARD').length ?? 0}"
+      - colSpan: 1
+        body:
+          - type: card
+            className: border rounded p-3
             body:
-              - { type: tpl, tpl: "<div class='text-muted'>警告放行</div>" }
-              - { type: tpl, tpl: "<span class='h3 text-warning'>${warned}</span>" }
-          - type: wrapper
-            className: "border rounded p-3"
+              - type: text
+                tag: div
+                className: text-muted
+                text: "警告放行"
+              - type: text
+                tag: span
+                className: h3 text-warning
+                text: "${(logData?.items ?? []).filter(item => item.actionResult === 'WARN').length ?? 0}"
+      - colSpan: 1
+        body:
+          - type: card
+            className: border rounded p-3
             body:
-              - { type: tpl, tpl: "<div class='text-muted'>放行</div>" }
-              - { type: tpl, tpl: "<span class='h3 text-success'>${passed}</span>" }
+              - type: text
+                tag: div
+                className: text-muted
+                text: "放行"
+              - type: text
+                tag: span
+                className: h3 text-success
+                text: "${(logData?.items ?? []).filter(item => item.actionResult === 'PASS').length ?? 0}"
 
   - type: crud
     name: logCrud
     className: m-3
     title: "控制日志列表"
+    source: ${logData?.items ?? []}
     syncLocation: false
-    api:
-      url: /graphql
-      method: post
-      dataType: raw
-      data:
-        query: "query(${'$'}lim:Int){ ErpFinBudgetControlLog__findPage(query:{limit:${'$'}lim}){ items{ id businessDate sourceBillType sourceBillCode subjectId requestedAmount availableAmount actionResult operatorId operatedAt reason } total } }"
-        variables:
-          lim: 200
-      adaptor: |
-        const d = payload.data || {};
-        const gql = d.data ? d.data : d;
-        const page = gql.ErpFinBudgetControlLog__findPage || { items: [], total: 0 };
-        return { status: 0, msg: '', data: { items: page.items || [], count: page.total || 0 } };
     columns:
       - { name: businessDate, label: "业务日期" }
       - { name: sourceBillType, label: "单据类型" }

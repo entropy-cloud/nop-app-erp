@@ -10,6 +10,7 @@ import app.erp.qa.dao.entity.ErpQaSpcChart;
 import app.erp.qa.dao.entity.ErpQaSpcSample;
 import app.erp.qa.service.ErpQaConstants;
 import app.erp.qa.service.ErpQaErrors;
+import io.nop.api.core.beans.PageBean;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.api.core.time.CoreMetrics;

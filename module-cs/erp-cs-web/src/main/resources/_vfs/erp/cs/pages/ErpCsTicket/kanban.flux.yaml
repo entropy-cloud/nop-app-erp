@@ -71,7 +71,7 @@ body:
       data:
         ticketId: ${event.cardId.substring(5)}
   onCardClick:
-    action: notify
+    action: showToast
     args:
       level: info
       message: ${"点击工单 " + event.cardId}

@@ -1,11 +1,11 @@
-# Project 任务看板（F13 非标准视图，plan 2026-07-22-0845-3 §Phase 1）。
+# Project 任务看板（F13 非标准视图，plan 2026-07-22-0845-3 §Phase 1 + plan 2026-08-29-1913-2 Phase 1）。
 # 4 列 crud（TODO/IN_PROGRESS/DONE/BLOCKED）+ 行级状态机 row-action。
 # 经 Phase 0 Explore (a) 降级裁决：不使用拖拽，行级按钮触发既有 @BizMutation
 #   startTask / completeTask / blockTask(blockReason) / unblockTask（task-dag.md §4）。
 # 优先级颜色（erp-prj/priority 字典）+ BLOCKED 卡片 blockReason 显示。
 type: page
 title: "任务看板"
-remark: "4 列状态看板（待开始 / 进行中 / 已完成 / 阻塞）。行级按钮经 ErpPrjTask 状态机 mutation 触发迁移：TODO→startTask，IN_PROGRESS→completeTask 或 blockTask（dialog 收集阻塞原因），BLOCKED→unblockTask。DONE 列只读。"
+remark: "4 列状态看板（待开始 / 进行中 / 已完成 / 阻塞）。行级按钮经 ErpPrjTask 状态机 mutation 触发迁移。DONE 列只读。"
 body:
   - type: form
     name: filterForm
@@ -21,9 +21,67 @@ body:
         clearable: true
       - type: button
         label: "刷新看板"
-        icon: "refresh-cw"
-        actionType: reload
-        target: "colTodo,colInProgress,colDone,colBlocked"
+        icon: refresh-cw
+        onClick:
+          action: refreshSource
+          targetId: todoData
+          then:
+            action: refreshSource
+            targetId: inProgressData
+          then:
+            action: refreshSource
+            targetId: doneData
+          then:
+            action: refreshSource
+            targetId: blockedData
+
+  - type: data-source
+    name: todoData
+    action: ajax
+    args:
+      url: '@query:ErpPrjTask__findPage'
+      method: post
+      data:
+        filter_status: "TODO"
+        filter_projectId: "${filterForm?.projectId || null}"
+        limit: 50
+      selection: id title priority blockReason plannedEndDate assigneeId status
+
+  - type: data-source
+    name: inProgressData
+    action: ajax
+    args:
+      url: '@query:ErpPrjTask__findPage'
+      method: post
+      data:
+        filter_status: "IN_PROGRESS"
+        filter_projectId: "${filterForm?.projectId || null}"
+        limit: 50
+      selection: id title priority blockReason plannedEndDate assigneeId status
+
+  - type: data-source
+    name: doneData
+    action: ajax
+    args:
+      url: '@query:ErpPrjTask__findPage'
+      method: post
+      data:
+        filter_status: "DONE"
+        filter_projectId: "${filterForm?.projectId || null}"
+        limit: 50
+      selection: id title priority plannedEndDate actualEndDate assigneeId status
+
+  - type: data-source
+    name: blockedData
+    action: ajax
+    args:
+      url: '@query:ErpPrjTask__findPage'
+      method: post
+      data:
+        filter_status: "BLOCKED"
+        filter_projectId: "${filterForm?.projectId || null}"
+        limit: 50
+      selection: id title priority blockReason plannedEndDate assigneeId status
 
   - type: grid
     className: m-3
@@ -35,20 +93,7 @@ body:
         headerToolbar: []
         footerToolbar: ["statistics"]
         syncLocation: false
-        api:
-          url: /graphql
-          method: post
-          dataType: raw
-          data:
-            query: "query(${'$'}p:String,${'$'}lim:Int){ ErpPrjTask__findPage(filter_status:\"TODO\",filter_projectId:${'$'}p,limit:${'$'}lim){ items{ id title priority blockReason plannedEndDate assigneeId status } total } }"
-            variables:
-              p: "${projectId || null}"
-              lim: 50
-          adaptor: |
-            const d = payload.data || {};
-            const gql = d.data ? d.data : d;
-            const page = gql.ErpPrjTask__findPage || { items: [], total: 0 };
-            return { status: 0, msg: '', data: { items: page.items || [], count: page.total || 0 } };
+        source: ${todoData?.items ?? []}
         columns:
           - name: title
             label: "任务标题"
@@ -60,7 +105,7 @@ body:
           - name: plannedEndDate
             label: "计划结束"
             type: date
-            format: "YYYY-MM-DD"
+            format: YYYY-MM-DD
           - type: operation
             label: "操作"
             buttons:
@@ -71,15 +116,16 @@ body:
                 confirmText: "确认开始任务？将迁移到「进行中」"
                 api:
                   method: post
-                  url: /graphql
-                  dataType: raw
+                  url: '@mutation:ErpPrjTask__startTask'
                   data:
-                    query: "mutation(${'$'}id:String){ ErpPrjTask__startTask(taskId:${'$'}id){ id status } }"
-                    variables:
-                      id: "${id}"
-                messages:
-                  success: "任务已开始"
-                reload: colTodo,colInProgress
+                    taskId: "${id}"
+                onEvent:
+                  after-success:
+                    action: refreshSource
+                    targetId: todoData
+                    then:
+                      action: refreshSource
+                      targetId: inProgressData
 
       # ② IN_PROGRESS 进行中
       - type: crud
@@ -88,20 +134,7 @@ body:
         headerToolbar: []
         footerToolbar: ["statistics"]
         syncLocation: false
-        api:
-          url: /graphql
-          method: post
-          dataType: raw
-          data:
-            query: "query(${'$'}p:String,${'$'}lim:Int){ ErpPrjTask__findPage(filter_status:\"IN_PROGRESS\",filter_projectId:${'$'}p,limit:${'$'}lim){ items{ id title priority blockReason plannedEndDate assigneeId status } total } }"
-            variables:
-              p: "${projectId || null}"
-              lim: 50
-          adaptor: |
-            const d = payload.data || {};
-            const gql = d.data ? d.data : d;
-            const page = gql.ErpPrjTask__findPage || { items: [], total: 0 };
-            return { status: 0, msg: '', data: { items: page.items || [], count: page.total || 0 } };
+        source: ${inProgressData?.items ?? []}
         columns:
           - name: title
             label: "任务标题"
@@ -113,7 +146,7 @@ body:
           - name: plannedEndDate
             label: "计划结束"
             type: date
-            format: "YYYY-MM-DD"
+            format: YYYY-MM-DD
           - type: operation
             label: "操作"
             buttons:
@@ -124,15 +157,16 @@ body:
                 confirmText: "确认完成任务？将迁移到「已完成」"
                 api:
                   method: post
-                  url: /graphql
-                  dataType: raw
+                  url: '@mutation:ErpPrjTask__completeTask'
                   data:
-                    query: "mutation(${'$'}id:String){ ErpPrjTask__completeTask(taskId:${'$'}id){ id status } }"
-                    variables:
-                      id: "${id}"
-                messages:
-                  success: "任务已完成"
-                reload: colInProgress,colDone
+                    taskId: "${id}"
+                onEvent:
+                  after-success:
+                    action: refreshSource
+                    targetId: inProgressData
+                    then:
+                      action: refreshSource
+                      targetId: doneData
               - type: button
                 label: "阻塞"
                 level: danger
@@ -144,22 +178,16 @@ body:
                     type: form
                     api:
                       method: post
-                      url: /graphql
-                      dataType: raw
+                      url: '@mutation:ErpPrjTask__blockTask'
                       data:
-                        query: "mutation(${'$'}id:String,${'$'}r:String){ ErpPrjTask__blockTask(taskId:${'$'}id,blockReason:${'$'}r){ id status } }"
-                        variables:
-                          id: "${id}"
-                          r: "${blockReason}"
+                        taskId: "${id}"
+                        blockReason: "${blockReason}"
                     body:
                       - type: textarea
                         name: blockReason
                         label: "阻塞原因"
                         required: true
-                        placeholder: "必填：阻塞原因（后端 ERR_TASK_BLOCK_REASON_REQUIRED 守卫）"
-                messages:
-                  success: "任务已阻塞"
-                reload: colInProgress,colBlocked
+                        placeholder: "必填：阻塞原因"
 
       # ③ DONE 已完成（只读）
       - type: crud
@@ -168,25 +196,11 @@ body:
         headerToolbar: []
         footerToolbar: ["statistics"]
         syncLocation: false
-        api:
-          url: /graphql
-          method: post
-          dataType: raw
-          data:
-            query: "query(${'$'}p:String,${'$'}lim:Int){ ErpPrjTask__findPage(filter_status:\"DONE\",filter_projectId:${'$'}p,limit:${'$'}lim){ items{ id title priority plannedEndDate actualEndDate assigneeId status } total } }"
-            variables:
-              p: "${projectId || null}"
-              lim: 50
-          adaptor: |
-            const d = payload.data || {};
-            const gql = d.data ? d.data : d;
-            const page = gql.ErpPrjTask__findPage || { items: [], total: 0 };
-            return { status: 0, msg: '', data: { items: page.items || [], count: page.total || 0 } };
+        source: ${doneData?.items ?? []}
         columns:
           - name: title
             label: "任务标题"
             width: 200
-            className: text-muted
           - name: priority
             label: "优先级"
             type: tpl
@@ -194,7 +208,7 @@ body:
           - name: actualEndDate
             label: "实际完成"
             type: date
-            format: "YYYY-MM-DD"
+            format: YYYY-MM-DD
 
       # ④ BLOCKED 阻塞
       - type: crud
@@ -203,26 +217,11 @@ body:
         headerToolbar: []
         footerToolbar: ["statistics"]
         syncLocation: false
-        className: "bg-danger-subtle"
-        api:
-          url: /graphql
-          method: post
-          dataType: raw
-          data:
-            query: "query(${'$'}p:String,${'$'}lim:Int){ ErpPrjTask__findPage(filter_status:\"BLOCKED\",filter_projectId:${'$'}p,limit:${'$'}lim){ items{ id title priority blockReason plannedEndDate assigneeId status } total } }"
-            variables:
-              p: "${projectId || null}"
-              lim: 50
-          adaptor: |
-            const d = payload.data || {};
-            const gql = d.data ? d.data : d;
-            const page = gql.ErpPrjTask__findPage || { items: [], total: 0 };
-            return { status: 0, msg: '', data: { items: page.items || [], count: page.total || 0 } };
+        source: ${blockedData?.items ?? []}
         columns:
           - name: title
             label: "任务标题"
             width: 200
-            className: text-danger
           - name: priority
             label: "优先级"
             type: tpl
@@ -241,12 +240,13 @@ body:
                 confirmText: "确认解除阻塞？将迁移回「进行中」"
                 api:
                   method: post
-                  url: /graphql
-                  dataType: raw
+                  url: '@mutation:ErpPrjTask__unblockTask'
                   data:
-                    query: "mutation(${'$'}id:String){ ErpPrjTask__unblockTask(taskId:${'$'}id){ id status } }"
-                    variables:
-                      id: "${id}"
-                messages:
-                  success: "任务已解除阻塞"
-                reload: colBlocked,colInProgress
+                    taskId: "${id}"
+                onEvent:
+                  after-success:
+                    action: refreshSource
+                    targetId: blockedData
+                    then:
+                      action: refreshSource
+                      targetId: inProgressData

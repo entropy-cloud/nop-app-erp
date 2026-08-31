@@ -1,4 +1,4 @@
-# SPC 控制图可视化页（plan 2026-08-03-1232-4 Phase 1）。
+# SPC 控制图可视化页（plan 2026-08-03-1232-4 Phase 1 + plan 2026-08-29-1913-2 Phase 1）。
 #
 # 数据来源：ErpQaDashboard__getSpcControlChartData（ErpQaDashboardBizModel:241）——返回
 # chartCode/chartName/chartType + cl/ucl/lcl 三控制限 + samples[]（subgroupNo/mean/
@@ -8,6 +8,17 @@
 type: page
 title: "SPC 控制图"
 body:
+  - type: data-source
+    name: chartsData
+    action: ajax
+    args:
+      url: '@query:ErpQaSpcChart__findPage'
+      method: post
+      data:
+        query:
+          limit: 200
+      selection: id code name chartType
+
   - type: form
     name: filterForm
     title: ""
@@ -20,94 +31,59 @@ body:
         label: "控制图"
         clearable: true
         placeholder: "留空=最近一张控制图"
-        source:
-          url: /graphql
-          method: post
-          dataType: raw
-          data:
-            query: "query(${'$'}lim:Int){ ErpQaSpcChart__findPage(query:{limit:${'$'}lim}){ items{ id code name chartType } total } }"
-            variables:
-              lim: 200
-          adaptor: |
-            const d = payload.data || {};
-            const gql = d.data ? d.data : d;
-            const page = gql.ErpQaSpcChart__findPage || { items: [], total: 0 };
-            const opts = (page.items || []).map(function(c){
-              return { label: (c.code || '') + ' · ' + (c.name || '') + ' (' + (c.chartType || '') + ')', value: c.id };
-            });
-            return { options: opts };
+        source: ${chartsData?.items ?? []}
+        valueField: id
+        labelField: "${code || ''} · ${name || ''} (${chartType || ''})"
       - type: button
         label: "刷新"
-        icon: "refresh-cw"
-        actionType: reload
-        target: "spcChart,sampleCrud"
+        icon: refresh-cw
+        onClick:
+          action: refreshSource
+          targetId: spcChartData
+          then:
+            action: refreshSource
+            targetId: sampleData
+
+  - type: data-source
+    name: spcChartData
+    action: ajax
+    args:
+      url: '@query:ErpQaDashboard__getSpcControlChartData'
+      method: post
+      data:
+        chartId: "${filterForm?.chartId || null}"
+      selection: chartName chartType samples ucl lcl cl
 
   - type: chart
-    name: spcChart
-    className: m-3
-    api:
-      url: /graphql
+    chartType: line
+    title: "SPC 控制图"
+    source: ${spcChartData?.samples ?? []}
+    xAxis: { dataKey: subgroupNo }
+    yAxis: { label: "${(spcChartData?.chartType === 'P' || spcChartData?.chartType === 'NP' || spcChartData?.chartType === 'C' || spcChartData?.chartType === 'U') ? '缺陷率' : '均值'}" }
+    legend: true
+    height: 300
+    series:
+      - { name: "样本值", dataRegionKey: mean }
+
+  - type: data-source
+    name: sampleData
+    action: ajax
+    args:
+      url: '@query:ErpQaSpcSample__findPage'
       method: post
-      dataType: raw
       data:
-        query: "query(${'$'}chartId:String){ ErpQaDashboard__getSpcControlChartData(chartId:${'$'}chartId) }"
-        variables:
-          chartId: "${chartId || null}"
-      adaptor: |
-        const d = payload.data || {};
-        const gql = d.data ? d.data : d;
-        const result = gql.ErpQaDashboard__getSpcControlChartData || {};
-        const samples = result.samples || [];
-        const ucl = result.ucl;
-        const lcl = result.lcl;
-        const cl = result.cl;
-        const chartType = result.chartType || '';
-        const isAttributes = chartType === 'P' || chartType === 'NP' || chartType === 'C' || chartType === 'U';
-        const seriesData = samples.map(function(s){
-          var v = isAttributes
-            ? (s.defectRate != null ? s.defectRate : (s.inspectedCount ? s.defectCount / s.inspectedCount : 0))
-            : s.mean;
-          return { value: v, itemStyle: s.isOutOfControl ? {color: 'red'} : undefined };
-        });
-        const markLines = [];
-        if (ucl != null) markLines.push({ yAxis: ucl, name: 'UCL', lineStyle: {color: 'red', type: 'dashed'}, label: {position: 'end', formatter: 'UCL=' + ucl} });
-        if (lcl != null) markLines.push({ yAxis: lcl, name: 'LCL', lineStyle: {color: 'red', type: 'dashed'}, label: {position: 'end', formatter: 'LCL=' + lcl} });
-        if (cl != null)  markLines.push({ yAxis: cl,  name: 'CL',  lineStyle: {color: 'green'}, label: {position: 'end', formatter: 'CL=' + cl} });
-        const series = { type: 'line', data: seriesData };
-        if (markLines.length > 0) series.markLine = { symbol: 'none', data: markLines };
-        const yAxisName = isAttributes ? '缺陷率' : '均值';
-        return {
-          status: 0,
-          msg: '',
-          data: {
-            title: { text: 'SPC 控制图：' + (result.chartName || '') + ' (' + chartType + ')' },
-            tooltip: { trigger: 'axis' },
-            xAxis: { type: 'category', name: '子组号', data: samples.map(function(s){return s.subgroupNo;}) },
-            yAxis: { type: 'value', name: yAxisName },
-            series: [series]
-          }
-        };
+        query:
+          limit: 200
+          filter:
+            chartId: "${filterForm?.chartId || null}"
+      selection: id chartId subgroupNo sampleTime mean range stdDev defectCount inspectedCount defectRate isOutOfControl violatedRules
 
   - type: crud
-    name: sampleCrud
     className: m-3
     title: "样本明细"
+    source: ${sampleData?.items ?? []}
     syncLocation: false
     headerToolbar: []
-    api:
-      url: /graphql
-      method: post
-      dataType: raw
-      data:
-        query: "query(${'$'}chartId:String,${'$'}lim:Int){ ErpQaSpcSample__findPage(query:{limit:${'$'}lim,filter:{eq:{chartId:${{'$'}}chartId}}}){ items{ id chartId subgroupNo sampleTime mean range stdDev defectCount inspectedCount defectRate isOutOfControl violatedRules } total } }"
-        variables:
-          chartId: "${chartId || null}"
-          lim: 200
-      adaptor: |
-        const d = payload.data || {};
-        const gql = d.data ? d.data : d;
-        const page = gql.ErpQaSpcSample__findPage || { items: [], total: 0 };
-        return { status: 0, msg: '', data: { items: page.items || [], count: page.total || 0 } };
     columns:
       - name: subgroupNo
         label: "子组号"

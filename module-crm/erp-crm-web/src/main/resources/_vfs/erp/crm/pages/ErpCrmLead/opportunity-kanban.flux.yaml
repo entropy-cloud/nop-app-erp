@@ -52,7 +52,7 @@ body:
         leadId: ${event.cardId.substring(5)}
         toStageId: ${event.toColumnId.substring(4)}
   onCardClick:
-    action: notify
+    action: showToast
     args:
       level: info
       message: ${"点击商机 " + event.cardId}

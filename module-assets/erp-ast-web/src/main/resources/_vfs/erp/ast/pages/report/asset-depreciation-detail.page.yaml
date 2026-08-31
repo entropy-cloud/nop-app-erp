@@ -1,7 +1,10 @@
+# 资产折旧明细表（plan 2026-08-29-1913-2 Phase 1）。
+# flux 原生重写：data-source → form → html。
 type: page
 title: "资产折旧明细表"
 body:
   - type: form
+    name: filterForm
     title: ""
     mode: inline
     className: m-3
@@ -13,58 +16,58 @@ body:
       - type: input-date
         name: startDate
         label: "开始日期"
-        valueFormat: "YYYY-MM-DD"
+        valueFormat: YYYY-MM-DD
       - type: input-date
         name: endDate
         label: "结束日期"
-        valueFormat: "YYYY-MM-DD"
+        valueFormat: YYYY-MM-DD
       - type: button
         label: "渲染报表"
-        actionType: reload
-        target: "reportService"
-      - type: button-toolbar
-        buttons:
-          - type: button
-            label: "下载 XLSX"
-            actionType: download
-            api:
-              url: /p/ErpAstReport__download
-              method: post
-              responseType: blob
-              data:
-                reportName: "asset-depreciation-detail"
-                renderType: "xlsx"
-                data: { categoryId: "${categoryId}", startDate: "${startDate}", endDate: "${endDate}" }
-          - type: button
-            label: "下载 PDF"
-            actionType: download
-            api:
-              url: /p/ErpAstReport__download
-              method: post
-              responseType: blob
-              data:
-                reportName: "asset-depreciation-detail"
-                renderType: "pdf"
-                data: { categoryId: "${categoryId}", startDate: "${startDate}", endDate: "${endDate}" }
-      - type: service
-        name: reportService
-        id: reportContainer
-        initFetch: false
+        onClick:
+          action: refreshSource
+          targetId: reportHtmlData
+      - type: button
+        label: "下载 XLSX"
+        actionType: download
         api:
-          url: /graphql
+          url: /p/ErpAstReport__download
           method: post
-          dataType: raw
+          responseType: blob
           data:
-            query: "query(${'$'}reportName:String!,${'$'}categoryId:BigDecimal,${'$'}startDate:String,${'$'}endDate:String){ ErpAstReport__renderHtml(reportName:${'$'}reportName,data:{categoryId:${'$'}categoryId,startDate:${'$'}startDate,endDate:${'$'}endDate}) }"
-            variables:
-              reportName: "asset-depreciation-detail"
-              categoryId: "${categoryId}"
-              startDate: "${startDate}"
-              endDate: "${endDate}"
-          adaptor: |
-            const d = payload.data || {};
-            const html = (d.data ? d.data : d).ErpAstReport__renderHtml || '';
-            return { status: 0, msg: '', data: { reportHtml: html } };
-        body:
-          - type: html
-            html: "${reportHtml}"
+            reportName: "asset-depreciation-detail"
+            renderType: "xlsx"
+            data:
+              categoryId: "${filterForm?.categoryId}"
+              startDate: "${filterForm?.startDate}"
+              endDate: "${filterForm?.endDate}"
+      - type: button
+        label: "下载 PDF"
+        actionType: download
+        api:
+          url: /p/ErpAstReport__download
+          method: post
+          responseType: blob
+          data:
+            reportName: "asset-depreciation-detail"
+            renderType: "pdf"
+            data:
+              categoryId: "${filterForm?.categoryId}"
+              startDate: "${filterForm?.startDate}"
+              endDate: "${filterForm?.endDate}"
+
+  - type: data-source
+    name: reportHtmlData
+    action: ajax
+    args:
+      url: '@query:ErpAstReport__renderHtml'
+      method: post
+      data:
+        reportName: "asset-depreciation-detail"
+        data:
+          categoryId: "${filterForm?.categoryId}"
+          startDate: "${filterForm?.startDate}"
+          endDate: "${filterForm?.endDate}"
+
+  - type: html
+    className: m-3
+    html: "${reportHtmlData ?? ''}"

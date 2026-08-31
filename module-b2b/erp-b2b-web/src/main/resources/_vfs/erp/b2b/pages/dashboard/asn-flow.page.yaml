@@ -1,12 +1,10 @@
-# b2b ASN 流程条（F16 P2 复杂页面，plan 2026-07-22-1400-2 §Phase 2）。
-# 经 Draft Review B1 修正：字典 erp-b2b/asn-status 实际 4 值 RECEIVED/MATCHED/RECEIVED_TO_STOCK/CANCELLED
-# （roadmap「五阶段」为笔误，VALIDATED/PENDING_RECEIPT 不存在）。
-# 三活跃阶段 RECEIVED→MATCHED→RECEIVED_TO_STOCK + CANCELLED 终态，each+tpl 色块 + 当前阶段高亮。
-# 字段名经实时仓库核实：ErpB2bAsn.code/status/partnerId；ErpB2bAsnLine 无 poLineId/receiveLineId/matched-status，
-# 明细匹配状态以 quantity(订单) vs shippedQty(发货) 对比呈现。
+# b2b ASN 流程条（F16 P2 复杂页面，plan 2026-07-22-1400-2 §Phase 2 + plan 2026-08-29-1913-2 Phase 1）。
+# flux 原生重写：data-source → form → crud + dialog 流程详情。
+# 字典 erp-b2b/asn-status 实际 4 值 RECEIVED/MATCHED/RECEIVED_TO_STOCK/CANCELLED。
+# 字段名经实时仓库核实：ErpB2bAsn.code/status/partnerId；明细行 quantity vs shippedQty。
 type: page
 title: "ASN 流程跟踪"
-remark: "提前发货通知（ErpB2bAsn）列表 + 流程条跟踪。三活跃阶段 RECEIVED→MATCHED→RECEIVED_TO_STOCK（当前阶段高亮）+ CANCELLED 终态。明细行展示 quantity（订单数量）vs shippedQty（发货数量）匹配状态。字典 erp-b2b/asn-status 实际 4 值。"
+remark: "提前发货通知（ErpB2bAsn）列表 + 流程条跟踪。三活跃阶段 RECEIVED→MATCHED→RECEIVED_TO_STOCK + CANCELLED 终态。"
 body:
   - type: form
     name: filterForm
@@ -26,30 +24,31 @@ body:
           - { label: "已取消 (CANCELLED)", value: "CANCELLED" }
       - type: button
         label: "刷新"
-        icon: "refresh-cw"
-        actionType: reload
-        target: "asnCrud"
+        icon: refresh-cw
+        onClick:
+          action: refreshSource
+          targetId: asnData
+
+  - type: data-source
+    name: asnData
+    action: ajax
+    args:
+      url: '@query:ErpB2bAsn__findPage'
+      method: post
+      data:
+        query:
+          limit: 200
+          filter:
+            status: "${filterForm?.statusFilter || null}"
+      selection: id code status partnerId sourceEdiDocId shipmentDate estimatedArrivalDate trackingNo relatedBillType relatedBillCode businessDate
 
   - type: crud
-    name: asnCrud
     className: m-3
     title: "ASN 列表"
+    source: ${asnData?.items ?? []}
     headerToolbar: []
     footerToolbar: ["statistics"]
     syncLocation: false
-    api:
-      url: /graphql
-      method: post
-      dataType: raw
-      data:
-        query: "query(${'$'}lim:Int){ ErpB2bAsn__findPage(query:{limit:${'$'}lim}){ items{ id code status partnerId sourceEdiDocId shipmentDate estimatedArrivalDate trackingNo relatedBillType relatedBillCode businessDate } total } }"
-        variables:
-          lim: 200
-      adaptor: |
-        const d = payload.data || {};
-        const gql = d.data ? d.data : d;
-        const page = gql.ErpB2bAsn__findPage || { items: [], total: 0 };
-        return { status: 0, msg: '', data: { items: page.items || [], count: page.total || 0 } };
     columns:
       - { name: code, label: "ASN编号" }
       - { name: status, label: "状态", type: tpl, tpl: '<span class="label label-${status == "RECEIVED_TO_STOCK" ? "success" : (status == "MATCHED" ? "primary" : (status == "CANCELLED" ? "default" : "warning"))}">${status}</span>' }
@@ -69,116 +68,54 @@ body:
               size: lg
               actions: []
               body:
-                - type: service
-                  name: asnFlowService
-                  api:
-                    url: /graphql
+                - type: data-source
+                  name: asnDetail
+                  action: ajax
+                  args:
+                    url: '@query:ErpB2bAsn__get'
                     method: post
-                    dataType: raw
                     data:
-                      query: "query(${'$'}lim:Int,${'$'}aid:String){ asn: ErpB2bAsn__get(id:${'$'}aid){ id code status partnerId shipmentDate estimatedArrivalDate trackingNo relatedBillType relatedBillCode } lines: ErpB2bAsnLine__findPage(query:{limit:${'$'}lim}){ items{ id asnId lineNo materialId supplierPartNo quantity shippedQty } total } }"
-                      variables:
-                        lim: 5000
-                        aid: "${id}"
-                    adaptor: |
-                      const d = payload.data || {};
-                      const gql = d.data ? d.data : d;
-                      const asn = gql.asn || {};
-                      const linesPage = gql.lines || { items: [], total: 0 };
-                      let lines = linesPage.items || [];
-                      // Client-side filter by asnId (from row scope)
-                      const aidVal = typeof id !== 'undefined' ? id : null;
-                      if (aidVal != null && aidVal !== '') {
-                        lines = lines.filter(function(l){ return l.asnId == aidVal; });
-                      }
-
-                      // 三活跃阶段 + CANCELLED 终态
-                      const stages = [
-                        { key: 'RECEIVED', label: '已接收', desc: 'ASN 已接收' },
-                        { key: 'MATCHED', label: '已匹配', desc: '与采购订单匹配完成' },
-                        { key: 'RECEIVED_TO_STOCK', label: '已入库', desc: '货物已验收入库' }
-                      ];
-                      const order = ['RECEIVED', 'MATCHED', 'RECEIVED_TO_STOCK'];
-                      const curIdx = order.indexOf(asn.status);
-                      const isCancelled = asn.status === 'CANCELLED';
-
-                      const flowSteps = stages.map(function(s, i){
-                        let state = 'todo';
-                        if (isCancelled) {
-                          state = 'todo';
-                        } else if (curIdx >= 0 && i < curIdx) {
-                          state = 'done';
-                        } else if (curIdx === i) {
-                          state = 'current';
-                        }
-                        var bg = '#f1f5f9';
-                        var fg = '#6b7280';
-                        var fw = 'normal';
-                        var border = 'transparent';
-                        if (state === 'current') { bg = '#3b82f6'; fg = '#ffffff'; fw = 'bold'; border = '#1d4ed8'; }
-                        else if (state === 'done') { bg = '#22c55e'; fg = '#ffffff'; }
-                        return {
-                          key: s.key,
-                          label: s.label,
-                          desc: s.desc,
-                          state: state,
-                          styleText: 'background:' + bg + ';color:' + fg + ';font-weight:' + fw + ';border:2px solid ' + border + ';'
-                        };
-                      });
-
-                      // 明细行匹配状态：quantity vs shippedQty
-                      const lineRows = lines.map(function(l){
-                        const q = parseFloat(l.quantity) || 0;
-                        const sq = parseFloat(l.shippedQty) || 0;
-                        let matchState = 'pending';
-                        if (sq > 0 && sq >= q) matchState = 'full';
-                        else if (sq > 0 && sq < q) matchState = 'partial';
-                        else if (sq === 0 && q > 0) matchState = 'unshipped';
-                        return {
-                          id: l.id,
-                          lineNo: l.lineNo,
-                          materialId: l.materialId,
-                          supplierPartNo: l.supplierPartNo,
-                          quantity: q,
-                          shippedQty: sq,
-                          matchState: matchState
-                        };
-                      });
-
-                      return {
-                        status: 0,
-                        msg: '',
-                        data: {
-                          asn: asn,
-                          flowSteps: flowSteps,
-                          isCancelled: isCancelled,
-                          lines: lineRows,
-                          lineCount: lineRows.length
-                        }
-                  body:
-                    - type: tpl
-                      tpl: '<div class="m-b"><strong>${asn.code}</strong> · 合作伙伴: ${asn.partnerId} · 追踪号: ${asn.trackingNo || "—"} · 发货: ${asn.shipmentDate || "—"} · 预计到货: ${asn.estimatedArrivalDate || "—"}</div>'
-                    - type: tpl
-                      visibleOn: "${isCancelled}"
-                      tpl: '<div class="alert alert-warning">该 ASN 已取消（CANCELLED 终态），流程未完成。</div>'
-                    - type: each
-                      name: flowSteps
-                      items: "${flowSteps}"
-                      placeholder: " "
-                      body:
-                        - type: tpl
-                          tpl: '<div style="flex:1;text-align:center;padding:8px;border-radius:6px;margin-right:6px;${styleText}">${label}<div style="font-size:11px;margin-top:4px;opacity:0.9;">${desc}</div></div>'
-                    - type: tpl
-                      tpl: '<hr/><h5>明细行匹配状态（quantity 订单数量 vs shippedQty 发货数量）</h5><div class="text-muted">共 ${lineCount} 行</div>'
-                    - type: table
-                      source: "${lines}"
-                      columns:
-                        - { name: lineNo, label: "行号" }
-                        - { name: materialId, label: "物料" }
-                        - { name: supplierPartNo, label: "供应商料号" }
-                        - { name: quantity, label: "订单数量", type: number, precision: 2 }
-                        - { name: shippedQty, label: "发货数量", type: number, precision: 2 }
-                        - name: matchState
-                          label: "匹配状态"
-                          type: tpl
-                          tpl: '<span class="label label-${matchState == "full" ? "success" : (matchState == "partial" ? "warning" : "default")}">${matchState == "full" ? "已发足" : (matchState == "partial" ? "部分发货" : "未发货")}</span>'
+                      id: "${id}"
+                    selection: id code status partnerId shipmentDate estimatedArrivalDate trackingNo relatedBillType relatedBillCode
+                - type: data-source
+                  name: asnLinesData
+                  action: ajax
+                  args:
+                    url: '@query:ErpB2bAsnLine__findPage'
+                    method: post
+                    data:
+                      query:
+                        limit: 5000
+                        filter:
+                          asnId: "${id}"
+                      selection: id asnId lineNo materialId supplierPartNo quantity shippedQty
+                - type: text
+                  tag: div
+                  className: m-b
+                  text: "<strong>${asnDetail?.code}</strong> · 合作伙伴: ${asnDetail?.partnerId} · 追踪号: ${asnDetail?.trackingNo || '—'} · 发货: ${asnDetail?.shipmentDate || '—'} · 预计到货: ${asnDetail?.estimatedArrivalDate || '—'}"
+                - type: text
+                  tag: div
+                  className: alert alert-warning
+                  visibleOn: "${asnDetail?.status == 'CANCELLED'}"
+                  text: "该 ASN 已取消（CANCELLED 终态），流程未完成。"
+                - type: steps
+                  items:
+                    - { key: "RECEIVED", label: "已接收", status: "${(asnDetail?.status === 'RECEIVED' || asnDetail?.status === 'MATCHED' || asnDetail?.status === 'RECEIVED_TO_STOCK') ? 'finish' : (asnDetail?.status === 'CANCELLED' ? 'wait' : 'process')}" }
+                    - { key: "MATCHED", label: "已匹配", status: "${(asnDetail?.status === 'MATCHED' || asnDetail?.status === 'RECEIVED_TO_STOCK') ? 'finish' : (asnDetail?.status === 'CANCELLED' ? 'wait' : (asnDetail?.status === 'RECEIVED' ? 'process' : 'wait'))}" }
+                    - { key: "RECEIVED_TO_STOCK", label: "已入库", status: "${asnDetail?.status === 'RECEIVED_TO_STOCK' ? 'finish' : 'wait'}" }
+                - type: crud
+                  title: "明细行匹配状态（quantity vs shippedQty）"
+                  source: ${asnLinesData?.items ?? []}
+                  syncLocation: false
+                  headerToolbar: []
+                  footerToolbar: []
+                  columns:
+                    - { name: lineNo, label: "行号" }
+                    - { name: materialId, label: "物料" }
+                    - { name: supplierPartNo, label: "供应商料号" }
+                    - { name: quantity, label: "订单数量", type: number, precision: 2 }
+                    - { name: shippedQty, label: "发货数量", type: number, precision: 2 }
+                    - name: matchState
+                      label: "匹配状态"
+                      type: tpl
+                      tpl: '<span class="label label-${(shippedQty >= quantity && quantity > 0) ? "success" : (shippedQty > 0 && shippedQty < quantity) ? "warning" : "default"}">${(shippedQty >= quantity && quantity > 0) ? "已发足" : (shippedQty > 0 && shippedQty < quantity) ? "部分发货" : "未发货"}</span>'

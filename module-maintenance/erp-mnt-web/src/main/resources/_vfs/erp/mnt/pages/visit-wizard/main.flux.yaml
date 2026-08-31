@@ -79,7 +79,7 @@ body:
   - key: info
     title: 1. 维护信息确认
     body:
-    - type: panel
+    - type: container
       className: bg-white border rounded p-3 m-b
       body:
       - type: text
@@ -101,7 +101,7 @@ body:
   - key: spare
     title: 2. 备件消耗
     body:
-    - type: panel
+    - type: container
       className: bg-white border rounded p-3 m-b
       body:
       - type: text
@@ -110,7 +110,7 @@ body:
   - key: result
     title: 3. 执行结果
     body:
-    - type: panel
+    - type: container
       className: bg-white border rounded p-3 m-b
       body:
       - type: form
@@ -151,7 +151,7 @@ body:
   - key: complete
     title: 4. 确认完成
     body:
-    - type: panel
+    - type: container
       className: bg-white border rounded p-3 m-b
       body:
       - type: text

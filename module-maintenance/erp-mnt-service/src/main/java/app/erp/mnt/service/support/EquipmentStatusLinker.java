@@ -116,9 +116,24 @@ public class EquipmentStatusLinker {
         restoreToRunning(equipmentId, ErpMntDaoConstants.STATUS_LOG_SOURCE_VISIT, context);
     }
 
-    /** 带日志来源的恢复：visit 路径传 VISIT，停机路径传 DOWNTIME（RC-R1.73 状态日志来源区分）。 */
+    /**
+     * 带日志来源的恢复：visit 路径传 VISIT，停机路径传 DOWNTIME（RC-R1.73 状态日志来源区分）。
+     *
+     * <p>P1-CK-mnt-003：增加「设备当前 ∈ {UNDER_MAINTENANCE, DOWN} 才恢复，否则 no-op（不变分支）」
+     * 守卫。修复前无条件恢复——取消从未启动 visit（DRAFT/SCHEDULED）强改设备 RUNNING（owner doc
+     * equipment-integration.md §3.3 表格「不变（或恢复）」二选一退化为恒恢复），visit/downtime
+     * 交叉场景互相抹掉对方临时态（污染运行时长聚合 + mfg 排产门控）。守卫保护两条失真路径：
+     * ①取消未启动 visit 时设备本就处于 IDLE/DOWN（非本流程置入态）→ no-op；
+     * ②visit 路径恢复时设备已是 RUNNING/IDLE（已脱管）→ no-op 避免覆盖。
+     */
     public void restoreToRunning(String equipmentId, String logSource, IServiceContext context) {
         if (!ErpMntConfigs.equipmentStatusLinkEnabled() || equipmentId == null) {
+            return;
+        }
+        // P1-CK-mnt-003 守卫：设备当前必须处于本流程置入的临时态（UNDER_MAINTENANCE 或 DOWN）
+        String currentStatus = readEquipmentStatus(equipmentId, context);
+        if (!ErpMntDaoConstants.EQUIPMENT_STATUS_UNDER_MAINTENANCE.equals(currentStatus)
+                && !ErpMntDaoConstants.EQUIPMENT_STATUS_DOWN.equals(currentStatus)) {
             return;
         }
         String priorStatus = consumePriorStatus(equipmentId);
@@ -126,6 +141,12 @@ public class EquipmentStatusLinker {
                 ? ErpMntDaoConstants.EQUIPMENT_STATUS_IDLE
                 : ErpMntDaoConstants.EQUIPMENT_STATUS_RUNNING;
         changeEquipmentStatus(equipmentId, targetStatus, logSource, context);
+    }
+
+    /** 读设备当前状态（仅在守卫中调用）。 */
+    protected String readEquipmentStatus(String equipmentId, IServiceContext context) {
+        ErpMntEquipment equipment = equipmentBiz.get(String.valueOf(equipmentId), false, context);
+        return equipment != null ? equipment.getStatus() : null;
     }
 
     /**

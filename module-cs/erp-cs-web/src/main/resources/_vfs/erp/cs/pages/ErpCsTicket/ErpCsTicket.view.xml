@@ -31,10 +31,9 @@
                                 + inList(warningVals) + " ? 'warning' : "
                                 + inList(primaryVals) + " ? 'primary' : 'default'";
                             return {
-                                type: "tpl",
-                                tpl: '<span class="label label-${' + expr + "}"
+                                cell: { type: "text", text: '<span class="label label-${' + expr + "}"
                                     + ">"
-                                    + "${" + labelProp + "}</span>"
+                                    + "${" + labelProp + "}</span>" }
                             };
                         ]]></c:script>
                     </gen-control>
@@ -45,12 +44,11 @@
                             const valueProp = dispMeta?.id || 'docStatus';
                             const labelProp = propMeta?.['graphql:labelProp'] || (valueProp + '_label');
                             return {
-                                type: "tpl",
-                                tpl: '<span class="label label-${' + valueProp
+                                cell: { type: "text", text: '<span class="label label-${' + valueProp
                                     + " == 'ACTIVE' ? 'primary' : 'default'}\" "
                                     + "${" + valueProp
                                     + " == 'CANCELLED' ? \"style='text-decoration:line-through'\" : ''}>"
-                                    + "${" + labelProp + "}</span>"
+                                    + "${" + labelProp + "}</span>" }
                             };
                         ]]></c:script>
                     </gen-control>
@@ -61,12 +59,11 @@
                             const valueProp = dispMeta?.id || 'approveStatus';
                             const labelProp = propMeta?.['graphql:labelProp'] || (valueProp + '_label');
                             return {
-                                type: "tpl",
-                                tpl: '<span class="label label-${' + valueProp
+                                cell: { type: "text", text: '<span class="label label-${' + valueProp
                                     + " == 'APPROVED' ? 'success' : "
                                     + valueProp + " == 'REJECTED' ? 'danger' : "
                                     + valueProp + " == 'SUBMITTED' ? 'info' : 'default'}\">"
-                                    + "${" + labelProp + "}</span>"
+                                    + "${" + labelProp + "}</span>" }
                             };
                         ]]></c:script>
                     </gen-control>
@@ -135,38 +132,67 @@
                 </cell>
                 <cell id="__kbSuggestion" custom="true" notSubmit="true">
                     <gen-control>
-                        <wrapper className="m-t-sm">
-                            <body j:list="true">
-                                <service name="kbSuggestion">
-                                    <api method="post" url="/graphql" dataType="raw"
-                                         sendOn="${'$'}{subject &amp;&amp; subject.length >= 2}">
-                                        <data>
-                                            <query><![CDATA[query($subject:String,$limit:Int){ ErpCsKnowledgeBase__suggestForTicket(subject:$subject,limit:$limit) }]]></query>
-                                            <variables>
-                                                <subject>${'$'}{subject}</subject>
-                                                <limit>5</limit>
-                                            </variables>
-                                        </data>
-                                        <adaptor><![CDATA[var d=payload.data||{};var g=d.data?d.data:d;var it=(g.ErpCsKnowledgeBase__suggestForTicket||[]).map(function(i){return{kbId:i.id,code:i.code,title:i.title,contentSummary:i.contentSummary};});return{status:0,msg:'',data:{items:it}};]]></adaptor>
-                                    </api>
-                                    <body j:list="true">
-                                        <list source="${'$'}{items}" placeholder="${'$'}{subject &amp;&amp; subject.length >= 2 ? '未匹配到知识库文章，建议解决后创建新条目' : '输入工单主题后将显示相关知识库文章'}">
-                                            <listItem>
-                                                <body j:list="true">
-                                                    <tpl tpl="&lt;strong&gt;${'$'}{title}&lt;/strong&gt;&lt;br/&gt;&lt;span class='text-muted text-sm'&gt;${'$'}{contentSummary}&lt;/span&gt;"/>
-                                                </body>
-                                                <actions j:list="true">
-                                                    <button label="采纳并参考" i18n-en:label="Adopt &amp; Reference" level="primary" size="sm" actionType="dialog"
-                                                             visibleOn="${'$'}{!!id}">
-                                                        <dialog page="adoptKnowledge" size="sm"/>
-                                                    </button>
-                                                </actions>
-                                            </listItem>
-                                        </list>
-                                    </body>
-                                </service>
-                            </body>
-                        </wrapper>
+                        <c:script><![CDATA[
+                            // flux 原生重写（原 amis wrapper/service/list/tpl 组合在 flux 下不可编译也不渲染）：
+                            // REST /r/ 取数（原走 /graphql，违反本仓 REST 约定）+ data-source + list 渲染；
+                            // 采纳动作直接调 ErpCsTicket__adoptKnowledge（与 adoptKnowledge 表单意图一致）。
+                            return {
+                                type: 'container',
+                                className: 'm-t-sm',
+                                body: [
+                                    {
+                                        type: 'data-source', name: 'kbSuggestion',
+                                        sendOn: 'subject && subject.length >= 2',
+                                        action: 'ajax',
+                                        args: {
+                                            url: '@query:ErpCsKnowledgeBase__suggestForTicket',
+                                            method: 'post',
+                                            data: { subject: '${subject}', limit: 5 }
+                                        }
+                                    },
+                                    {
+                                        type: 'list',
+                                        items: '${kbSuggestion}',
+                                        empty: "${subject && subject.length >= 2 ? '未匹配到知识库文章，建议解决后创建新条目' : '输入工单主题后将显示相关知识库文章'}",
+                                        item: {
+                                            type: 'container', direction: 'column', gap: 'xs',
+                                            body: [
+                                                {
+                                                    type: 'text',
+                                                    text: "<strong>${item.title}</strong><br/><span class='text-muted text-sm'>${item.contentSummary}</span>"
+                                                },
+                                                {
+                                                    type: 'button', label: '采纳并参考', level: 'primary', size: 'sm',
+                                                    onClick: {
+                                                        action: 'openDialog',
+                                                        args: {
+                                                            size: 'sm',
+                                                            title: '采纳知识库文章',
+                                                            body: {
+                                                                type: 'form', submitScope: 'surface',
+                                                                body: [
+                                                                    { name: 'knowledgeBaseId', type: 'input-text', hidden: true, value: '${item.id}' },
+                                                                    { name: 'autoResolve', type: 'checkbox', label: '采纳后直接解决' }
+                                                                ],
+                                                                submitAction: {
+                                                                    action: 'ajax',
+                                                                    args: {
+                                                                        url: '@mutation:ErpCsTicket__adoptKnowledge',
+                                                                        method: 'post',
+                                                                        data: { ticketId: '${id}', knowledgeBaseId: '${knowledgeBaseId}', autoResolve: '${autoResolve}' }
+                                                                    },
+                                                                    then: [ { action: 'closeSurface' }, { action: 'refreshNearest' } ]
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    }
+                                ]
+                            };
+                        ]]></c:script>
                     </gen-control>
                 </cell>
             </cells>
@@ -199,38 +225,67 @@
                 </cell>
                 <cell id="__kbSuggestion" custom="true" notSubmit="true">
                     <gen-control>
-                        <wrapper className="m-t-sm">
-                            <body j:list="true">
-                                <service name="kbSuggestion">
-                                    <api method="post" url="/graphql" dataType="raw"
-                                         sendOn="${'$'}{subject &amp;&amp; subject.length >= 2}">
-                                        <data>
-                                            <query><![CDATA[query($subject:String,$limit:Int){ ErpCsKnowledgeBase__suggestForTicket(subject:$subject,limit:$limit) }]]></query>
-                                            <variables>
-                                                <subject>${'$'}{subject}</subject>
-                                                <limit>5</limit>
-                                            </variables>
-                                        </data>
-                                        <adaptor><![CDATA[var d=payload.data||{};var g=d.data?d.data:d;var it=(g.ErpCsKnowledgeBase__suggestForTicket||[]).map(function(i){return{kbId:i.id,code:i.code,title:i.title,contentSummary:i.contentSummary};});return{status:0,msg:'',data:{items:it}};]]></adaptor>
-                                    </api>
-                                    <body j:list="true">
-                                        <list source="${'$'}{items}" placeholder="${'$'}{subject &amp;&amp; subject.length >= 2 ? '未匹配到知识库文章，建议解决后创建新条目' : '输入工单主题后将显示相关知识库文章'}">
-                                            <listItem>
-                                                <body j:list="true">
-                                                    <tpl tpl="&lt;strong&gt;${'$'}{title}&lt;/strong&gt;&lt;br/&gt;&lt;span class='text-muted text-sm'&gt;${'$'}{contentSummary}&lt;/span&gt;"/>
-                                                </body>
-                                                <actions j:list="true">
-                                                    <button label="采纳并参考" i18n-en:label="Adopt &amp; Reference" level="primary" size="sm" actionType="dialog"
-                                                             visibleOn="${'$'}{!!id}">
-                                                        <dialog page="adoptKnowledge" size="sm"/>
-                                                    </button>
-                                                </actions>
-                                            </listItem>
-                                        </list>
-                                    </body>
-                                </service>
-                            </body>
-                        </wrapper>
+                        <c:script><![CDATA[
+                            // flux 原生重写（原 amis wrapper/service/list/tpl 组合在 flux 下不可编译也不渲染）：
+                            // REST /r/ 取数（原走 /graphql，违反本仓 REST 约定）+ data-source + list 渲染；
+                            // 采纳动作直接调 ErpCsTicket__adoptKnowledge（与 adoptKnowledge 表单意图一致）。
+                            return {
+                                type: 'container',
+                                className: 'm-t-sm',
+                                body: [
+                                    {
+                                        type: 'data-source', name: 'kbSuggestion',
+                                        sendOn: 'subject && subject.length >= 2',
+                                        action: 'ajax',
+                                        args: {
+                                            url: '@query:ErpCsKnowledgeBase__suggestForTicket',
+                                            method: 'post',
+                                            data: { subject: '${subject}', limit: 5 }
+                                        }
+                                    },
+                                    {
+                                        type: 'list',
+                                        items: '${kbSuggestion}',
+                                        empty: "${subject && subject.length >= 2 ? '未匹配到知识库文章，建议解决后创建新条目' : '输入工单主题后将显示相关知识库文章'}",
+                                        item: {
+                                            type: 'container', direction: 'column', gap: 'xs',
+                                            body: [
+                                                {
+                                                    type: 'text',
+                                                    text: "<strong>${item.title}</strong><br/><span class='text-muted text-sm'>${item.contentSummary}</span>"
+                                                },
+                                                {
+                                                    type: 'button', label: '采纳并参考', level: 'primary', size: 'sm',
+                                                    onClick: {
+                                                        action: 'openDialog',
+                                                        args: {
+                                                            size: 'sm',
+                                                            title: '采纳知识库文章',
+                                                            body: {
+                                                                type: 'form', submitScope: 'surface',
+                                                                body: [
+                                                                    { name: 'knowledgeBaseId', type: 'input-text', hidden: true, value: '${item.id}' },
+                                                                    { name: 'autoResolve', type: 'checkbox', label: '采纳后直接解决' }
+                                                                ],
+                                                                submitAction: {
+                                                                    action: 'ajax',
+                                                                    args: {
+                                                                        url: '@mutation:ErpCsTicket__adoptKnowledge',
+                                                                        method: 'post',
+                                                                        data: { ticketId: '${id}', knowledgeBaseId: '${knowledgeBaseId}', autoResolve: '${autoResolve}' }
+                                                                    },
+                                                                    then: [ { action: 'closeSurface' }, { action: 'refreshNearest' } ]
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    }
+                                ]
+                            };
+                        ]]></c:script>
                     </gen-control>
                 </cell>
             </cells>

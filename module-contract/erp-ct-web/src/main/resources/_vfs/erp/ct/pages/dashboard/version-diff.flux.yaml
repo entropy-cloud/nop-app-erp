@@ -84,7 +84,7 @@ body:
   name: versionAData
   dependsOn:
   - versionAId
-  sendOn: ${versionAId != null}
+  sendOn: versionAId != null
   action: ajax
   args:
     url: '@query:ErpCtContractVersion__get'
@@ -96,7 +96,7 @@ body:
   name: versionBData
   dependsOn:
   - versionBId
-  sendOn: ${versionBId != null}
+  sendOn: versionBId != null
   action: ajax
   args:
     url: '@query:ErpCtContractVersion__get'

@@ -156,20 +156,23 @@ public class TestErpMntVisitRequestStateMachine extends JunitAutoTestCase {
 
     @Test
     public void testRestoreWithoutPriorLinkFallsBackToRunning() {
+        // P1-CK-mnt-003：修复后行为——设备当前 ∈ {UNDER_MAINTENANCE, DOWN} 才恢复，否则 no-op
+        // （owner doc equipment-integration.md §3.3「不变（或恢复）」二选一现实现为「不变」分支）。
+        // 修复前无条件恢复——取消从未启动 visit 强改设备 RUNNING（缓存缺失回退 RUNNING 是已观察缺陷）。
+        // 现回归断言：IDLE 设备无前置 linkTo* 时 restore 不应改变状态。
         ormTemplate.runInSession(session -> {
             seedEquipment(OTHER_EQUIPMENT_ID, ErpMntDaoConstants.EQUIPMENT_STATUS_IDLE);
             return null;
         });
 
-        // 模拟重启语义：无前置 linkTo*（缓存缺失），直接 restore → 恢复 RUNNING 而非异常（watch-only 回退语义断言）
         ormTemplate.runInSession(session -> {
             equipmentStatusLinker.restoreToRunning(OTHER_EQUIPMENT_ID, CTX);
             return null;
         });
 
-        assertEquals(ErpMntDaoConstants.EQUIPMENT_STATUS_RUNNING,
+        assertEquals(ErpMntDaoConstants.EQUIPMENT_STATUS_IDLE,
                 daoProvider.daoFor(ErpMntEquipment.class).getEntityById(OTHER_EQUIPMENT_ID).getStatus(),
-                "缓存缺失回退 RUNNING（现状已接受行为）");
+                "缓存缺失 + 设备 IDLE 时 restoreToRunning 应 no-op 保持 IDLE（不变分支，P1-CK-mnt-003）");
     }
 
     @Test

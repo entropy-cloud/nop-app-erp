@@ -39,13 +39,13 @@ body:
           data:
             keyword: ${keyword ?? null}
         target: deptTree
-- type: wrapper
+- type: card
   className: bg-white p-3 rounded shadow-sm
   body:
-  - type: tpl
-    visibleOn: '${deptTree && deptTree.length === 0}'
+  - type: text
+    visible: '${deptTree && deptTree.length === 0}'
     className: text-muted text-center p-5
-    tpl: '<i class="fa fa-info-circle"></i> 未找到匹配的部门。请清空关键字后刷新，或确认部门主数据已录入。'
+    text: '<i class="fa fa-info-circle"></i> 未找到匹配的部门。请清空关键字后刷新，或确认部门主数据已录入。'
   - type: tree
     visibleOn: '${deptTree && deptTree.length > 0}'
     data: ${deptTree}

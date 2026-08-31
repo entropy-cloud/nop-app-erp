@@ -1,7 +1,10 @@
+# 应收应付账龄（plan 2026-08-29-1913-2 Phase 1）。
+# flux 原生重写：data-source → form → html。
 type: page
 title: "应收应付账龄"
 body:
   - type: form
+    name: filterForm
     title: ""
     mode: inline
     className: m-3
@@ -13,49 +16,45 @@ body:
         valueFormat: "YYYY-MM-DD"
       - type: button
         label: "渲染报表"
-        actionType: reload
-        target: "reportService"
-      - type: button-toolbar
-        buttons:
-          - type: button
-            label: "下载 XLSX"
-            actionType: download
-            api:
-              url: /p/ErpFinReport__download
-              method: post
-              responseType: blob
-              data:
-                reportName: "ar-ap-aging"
-                renderType: "xlsx"
-                data: { asOfDate: "${asOfDate}" }
-          - type: button
-            label: "下载 PDF"
-            actionType: download
-            api:
-              url: /p/ErpFinReport__download
-              method: post
-              responseType: blob
-              data:
-                reportName: "ar-ap-aging"
-                renderType: "pdf"
-                data: { asOfDate: "${asOfDate}" }
-      - type: service
-        name: reportService
-        id: reportContainer
-        initFetch: false
+        onClick:
+          action: refreshSource
+          targetId: reportHtmlData
+      - type: button
+        label: "下载 XLSX"
+        actionType: download
         api:
-          url: /graphql
+          url: /p/ErpFinReport__download
           method: post
-          dataType: raw
+          responseType: blob
           data:
-            query: "query(${'$'}reportName:String!,${'$'}asOfDate:String){ ErpFinReport__renderHtml(reportName:${'$'}reportName,data:{asOfDate:${'$'}asOfDate}) }"
-            variables:
-              reportName: "ar-ap-aging"
-              asOfDate: "${asOfDate}"
-          adaptor: |
-            const d = payload.data || {};
-            const html = (d.data ? d.data : d).ErpFinReport__renderHtml || '';
-            return { status: 0, msg: '', data: { reportHtml: html } };
-        body:
-          - type: html
-            html: "${reportHtml}"
+            reportName: "ar-ap-aging"
+            renderType: "xlsx"
+            data:
+              asOfDate: "${filterForm?.asOfDate}"
+      - type: button
+        label: "下载 PDF"
+        actionType: download
+        api:
+          url: /p/ErpFinReport__download
+          method: post
+          responseType: blob
+          data:
+            reportName: "ar-ap-aging"
+            renderType: "pdf"
+            data:
+              asOfDate: "${filterForm?.asOfDate}"
+
+  - type: data-source
+    name: reportHtmlData
+    action: ajax
+    args:
+      url: '@query:ErpFinReport__renderHtml'
+      method: post
+      data:
+        reportName: "ar-ap-aging"
+        data:
+          asOfDate: "${filterForm?.asOfDate}"
+
+  - type: html
+    className: m-3
+    html: "${reportHtmlData ?? ''}"

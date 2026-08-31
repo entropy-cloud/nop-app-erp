@@ -20,12 +20,11 @@
                             const valueProp = dispMeta?.id || 'docStatus';
                             const labelProp = propMeta?.['graphql:labelProp'] || (valueProp + '_label');
                             return {
-                                type: "tpl",
-                                tpl: '<span class="label label-${' + valueProp
+                                cell: { type: "text", text: '<span class="label label-${' + valueProp
                                     + " == 'ACTIVE' ? 'primary' : 'default'}\" "
                                     + "${" + valueProp
                                     + " == 'CANCELLED' ? \"style='text-decoration:line-through'\" : ''}>"
-                                    + "${" + labelProp + "}</span>"
+                                    + "${" + labelProp + "}</span>" }
                             };
                         ]]></c:script>
                     </gen-control>
@@ -36,12 +35,11 @@
                             const valueProp = dispMeta?.id || 'approveStatus';
                             const labelProp = propMeta?.['graphql:labelProp'] || (valueProp + '_label');
                             return {
-                                type: "tpl",
-                                tpl: '<span class="label label-${' + valueProp
+                                cell: { type: "text", text: '<span class="label label-${' + valueProp
                                     + " == 'APPROVED' ? 'success' : "
                                     + valueProp + " == 'REJECTED' ? 'danger' : "
                                     + valueProp + " == 'SUBMITTED' ? 'info' : 'default'}\">"
-                                    + "${" + labelProp + "}</span>"
+                                    + "${" + labelProp + "}</span>" }
                             };
                         ]]></c:script>
                     </gen-control>
@@ -201,7 +199,7 @@
                     </messages>
                     <visibleOn>${docStatus != 'CANCELLED'}</visibleOn>
                 </action>
-                <action id="row-create-delivery-button" label="创建出库单" i18n-en:label="Create Outbound Order" level="primary" icon="fa fa-plus"
+                <action actionType="link" id="row-create-delivery-button" label="创建出库单" i18n-en:label="Create Outbound Order" level="primary" icon="fa fa-plus"
                         tooltip="跳转到出库单列表（带订单上下文筛选），新建出库单时自动预填订单"
                         link="/ErpSalDelivery-main?filter_orderId=${id}">
                     <visibleOn>${approveStatus == 'APPROVED' &amp;&amp; docStatus != 'CANCELLED'}</visibleOn>

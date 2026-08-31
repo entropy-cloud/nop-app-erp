@@ -59,7 +59,7 @@ body:
   name: poList
   dependsOn:
   - supplierId
-  sendOn: ${supplierId != null}
+  sendOn: supplierId != null
   action: ajax
   args:
     url: '@query:ErpPurOrder__findPage'
@@ -72,7 +72,7 @@ body:
   name: receiveList
   dependsOn:
   - supplierId
-  sendOn: ${supplierId != null}
+  sendOn: supplierId != null
   action: ajax
   args:
     url: '@query:ErpPurReceive__findPage'
@@ -85,7 +85,7 @@ body:
   name: invoiceList
   dependsOn:
   - supplierId
-  sendOn: ${supplierId != null}
+  sendOn: supplierId != null
   action: ajax
   args:
     url: '@query:ErpPurInvoice__findPage'

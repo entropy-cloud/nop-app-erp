@@ -1,66 +1,69 @@
-# 资产盘点工作台（plan 2026-08-03-1232-4 Phase 3）。
+# 资产盘点工作台（plan 2026-08-03-1232-4 Phase 3 + plan 2026-08-29-1913-2 Phase 1）。
 # 数据来源：ErpAstInventory 实体 findPage（资产盘点单）。零后端 delta。
 type: page
 title: "资产盘点"
 body:
-  - type: service
-    name: kpiService
-    className: m-3
-    api:
-      url: /graphql
+  - type: data-source
+    name: stocktakeData
+    action: ajax
+    args:
+      url: '@query:ErpAstInventory__findPage'
       method: post
-      dataType: raw
       data:
-        query: "query(${'$'}lim:Int){ ErpAstInventory__findPage(query:{limit:${'$'}lim}){ items{ id status } total } }"
-        variables:
-          lim: 500
-      adaptor: |
-        const d = payload.data || {};
-        const gql = d.data ? d.data : d;
-        const page = gql.ErpAstInventory__findPage || { items: [], total: 0 };
-        const rows = page.items || [];
-        const draft = rows.filter(function(r){ return (r.status||'') === 'DRAFT'; }).length;
-        const done = rows.filter(function(r){ return (r.status||'') === 'DONE'; }).length;
-        return { status: 0, msg: '', data: { count: rows.length, draft: draft, done: done } };
-    body:
-      - type: grid
-        className: m-3
-        gap: 'sm'
-        columns:
-          - type: wrapper
-            className: "border rounded p-3"
+        query:
+          limit: 200
+      selection: id code name orgId status rangeDepartmentId rangeCategoryId rangeLocationId responsibleById businessDate
+
+  - type: grid
+    className: m-3
+    gap: sm
+    columns: 3
+    items:
+      - colSpan: 1
+        body:
+          - type: card
+            className: border rounded p-3
             body:
-              - { type: tpl, tpl: "<div class='text-muted'>盘点单数</div>" }
-              - { type: tpl, tpl: "<span class='h3'>${count}</span>" }
-          - type: wrapper
-            className: "border rounded p-3"
+              - type: text
+                tag: div
+                className: text-muted
+                text: "盘点单数"
+              - type: text
+                tag: span
+                className: h3
+                text: "${stocktakeData?.items?.length ?? 0}"
+      - colSpan: 1
+        body:
+          - type: card
+            className: border rounded p-3
             body:
-              - { type: tpl, tpl: "<div class='text-muted'>待盘点</div>" }
-              - { type: tpl, tpl: "<span class='h3 text-warning'>${draft}</span>" }
-          - type: wrapper
-            className: "border rounded p-3"
+              - type: text
+                tag: div
+                className: text-muted
+                text: "待盘点"
+              - type: text
+                tag: span
+                className: h3 text-warning
+                text: "${(stocktakeData?.items ?? []).filter(item => item.status === 'DRAFT').length ?? 0}"
+      - colSpan: 1
+        body:
+          - type: card
+            className: border rounded p-3
             body:
-              - { type: tpl, tpl: "<div class='text-muted'>已完成</div>" }
-              - { type: tpl, tpl: "<span class='h3 text-success'>${done}</span>" }
+              - type: text
+                tag: div
+                className: text-muted
+                text: "已完成"
+              - type: text
+                tag: span
+                className: h3 text-success
+                text: "${(stocktakeData?.items ?? []).filter(item => item.status === 'DONE').length ?? 0}"
 
   - type: crud
-    name: stocktakeCrud
     className: m-3
     title: "资产盘点单列表"
+    source: ${stocktakeData?.items ?? []}
     syncLocation: false
-    api:
-      url: /graphql
-      method: post
-      dataType: raw
-      data:
-        query: "query(${'$'}lim:Int){ ErpAstInventory__findPage(query:{limit:${'$'}lim}){ items{ id code name orgId status rangeDepartmentId rangeCategoryId rangeLocationId responsibleById businessDate } total } }"
-        variables:
-          lim: 200
-      adaptor: |
-        const d = payload.data || {};
-        const gql = d.data ? d.data : d;
-        const page = gql.ErpAstInventory__findPage || { items: [], total: 0 };
-        return { status: 0, msg: '', data: { items: page.items || [], count: page.total || 0 } };
     columns:
       - { name: code, label: "单号" }
       - { name: name, label: "名称" }

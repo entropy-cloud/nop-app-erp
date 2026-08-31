@@ -1,9 +1,8 @@
-# logistics 发运追踪时间线（F16 P2 复杂页面，plan 2026-07-22-1400-2 §Phase 2）。
-# 复用 F13 timeline each+tpl 降级范式（plan 2026-07-22-0845-3 §Phase 0 Explore (b)：原生 type:timeline 可用）。
-# 数据源 ErpLogShipmentLog__findList filter shipmentId → adaptor 映射 timeline items
-# （actionType/executedAt/isSuccess + errorCode/errorMessage 失败时 + httpStatus）。
-# 字段名经实时仓库核实（Draft Review B2 已修正）：actionType/executedAt/isSuccess/requestBody/responseBody/httpStatus/errorCode/errorMessage
-# （非 eventType/logTime/result）。超期警告：estimatedDeliveryDate < now 红色标记（前端组装）。地图 = Non-Goal。
+# logistics 发运追踪时间线（F16 P2 复杂页面，plan 2026-07-22-1400-2 §Phase 2 + plan 2026-08-29-1913-1 Phase 1）。
+# flux 原生重写：data-source → form → timeline。
+# 数据源：ErpLogShipmentLog__findPage + ErpLogShipment__get（前端按 shipmentId 过滤后展示）。
+# 字段名经实时仓库核实：actionType/executedAt/isSuccess/requestBody/responseBody/httpStatus/errorCode/errorMessage。
+# 超期警告：estimatedDeliveryDate < now 红色标记。地图 = Non-Goal。
 type: page
 title: "发运追踪时间线"
 remark: "选择发运单后，按 ErpLogShipmentLog 时间线展示物流网关交互事件（actionType/executedAt/isSuccess），失败事件显示 errorCode/errorMessage。超期未送达（estimatedDeliveryDate < 今天）红色标记。地图为 Non-Goal。"
@@ -23,101 +22,55 @@ body:
         clearable: true
       - type: button
         label: "查询时间线"
-        icon: "route"
-        actionType: reload
-        target: "trackingService"
+        icon: route
+        onClick:
+          action: refreshSource
+          targetId: trackingData
 
-  - type: service
-    name: trackingService
-    className: m-3
-    api:
-      url: /graphql
+  - type: data-source
+    name: trackingData
+    action: ajax
+    args:
+      url: '@query:ErpLogShipmentLog__findPage'
       method: post
-      dataType: raw
       data:
-        query: "query(${'$'}lim:Int,${'$'}sid:String){ logs: ErpLogShipmentLog__findPage(query:{limit:${'$'}lim}){ items{ id shipmentId actionType executedAt isSuccess httpStatus errorCode errorMessage requestBody responseBody } total } shipment: ErpLogShipment__get(id:${'$'}sid){ id code estimatedDeliveryDate actualDeliveryDate status trackingNo carrierId totalParcels } }"
-        variables:
-          lim: 5000
-          sid: "${shipmentId || null}"
-      adaptor: |
-        const d = payload.data || {};
-        if (d.errors || !d.data) {
-          return { status: 0, msg: '', data: { items: [], hasData: false, shipment: null, overdue: false } };
-        }
-        const gql = d.data ? d.data : d;
-        const logsPage = gql.logs || { items: [], total: 0 };
-        let logs = logsPage.items || [];
-        // Client-side filter by shipmentId
-        const sidVal = typeof shipmentId !== 'undefined' ? shipmentId : null;
-        if (sidVal != null && sidVal !== '') {
-          logs = logs.filter(function(r){ return r.shipmentId == sidVal; });
-        }
-        logs.sort(function(a,b){ return String(b.executedAt||'').localeCompare(String(a.executedAt||'')); });
-        const shipment = gql.shipment || null;
+        query:
+          limit: 5000
+      selection: id shipmentId actionType executedAt isSuccess httpStatus errorCode errorMessage requestBody responseBody
 
-        const typeColor = {
-          CREATE: '#3b82f6',
-          SEND: '#0ea5e9',
-          RECEIVE: '#22c55e',
-          ACK: '#8b5cf6',
-          STATUS_UPDATE: '#f59e0b',
-          ERROR: '#ef4444',
-          DELIVER: '#16a34a'
-        };
+  - type: data-source
+    name: shipmentInfo
+    action: ajax
+    args:
+      url: '@query:ErpLogShipment__get'
+      method: post
+      data:
+        id: "${filterForm?.shipmentId || null}"
+      selection: id code estimatedDeliveryDate actualDeliveryDate status trackingNo carrierId totalParcels
 
-        const items = logs.map(function(r){
-          const ok = r.isSuccess === true || r.isSuccess === 'true';
-          const color = ok ? (typeColor[r.actionType] || '#6b7280') : '#ef4444';
-          const titleParts = ['[' + (r.actionType || 'EVENT') + ']'];
-          if (r.httpStatus != null) titleParts.push('HTTP ' + r.httpStatus);
-          if (ok) titleParts.push('成功');
-          else titleParts.push('失败');
-          const detailParts = [];
-          if (!ok) {
-            if (r.errorCode) detailParts.push('错误码: ' + r.errorCode);
-            if (r.errorMessage) detailParts.push('信息: ' + r.errorMessage);
-          }
-          return {
-            time: r.executedAt,
-            title: titleParts.join(' · '),
-            detail: detailParts.join(' / '),
-            color: color,
-            isSuccess: ok,
-            _raw: r
-          };
-        });
+  - type: text
+    className: m-3
+    tag: div
+    visibleOn: "${shipmentInfo}"
+    text: '<div class="panel panel-default"><div class="panel-body"><strong>${shipmentInfo?.code || "—"}</strong> · 追踪号: ${shipmentInfo?.trackingNo || "—"} · 状态: ${shipmentInfo?.status || "—"} · 包裹数: ${shipmentInfo?.totalParcels || 0} · 预计送达: ${shipmentInfo?.estimatedDeliveryDate || "—"} ${(shipmentInfo?.estimatedDeliveryDate && !shipmentInfo?.actualDeliveryDate && shipmentInfo?.estimatedDeliveryDate < today) ? "<span class=\"label label-danger\">超期未送达</span>" : ""}</div></div>'
 
-        // 超期警告：estimatedDeliveryDate < 今天 且未实际送达
-        let overdue = false;
-        if (shipment && shipment.estimatedDeliveryDate && !shipment.actualDeliveryDate) {
-          const today = new Date().toISOString().substring(0, 10);
-          const estStr = String(shipment.estimatedDeliveryDate).substring(0, 10);
-          overdue = estStr < today;
-        }
+  - type: text
+    className: m-3
+    tag: div
+    visibleOn: "${!trackingData?.items?.length && !shipmentInfo}"
+    text: '<div class="text-muted p-3">请输入有效的发运单ID后点击「查询时间线」。若无事件日志，说明该发运单尚未触发网关交互。</div>'
 
-        return {
-          status: 0,
-          msg: '',
-          data: {
-            items: items,
-            hasData: items.length > 0 || shipment != null,
-            shipment: shipment,
-            overdue: overdue,
-            logCount: items.length
-          }
-        };
-    body:
-      - type: tpl
-        visibleOn: "${shipment}"
-        tpl: '<div class="panel panel-default"><div class="panel-body"><strong>${shipment.code || "—"}</strong> · 追踪号: ${shipment.trackingNo || "—"} · 状态: ${shipment.status || "—"} · 包裹数: ${shipment.totalParcels || 0} · 预计送达: ${shipment.estimatedDeliveryDate || "—"} ${overdue ? "<span class=\"label label-danger\">超期未送达</span>" : ""}</div></div>'
-      - type: tpl
-        visibleOn: "${!hasData}"
-        tpl: '<div class="text-muted p-3">请输入有效的发运单ID后点击「查询时间线」。若无事件日志，说明该发运单尚未触发网关交互。</div>'
-      - type: tpl
-        visibleOn: "${hasData}"
-        tpl: '<div class="text-muted m-b-sm">事件数：${logCount}（按 executedAt 倒序）</div>'
-      - type: timeline
-        visibleOn: "${hasData}"
-        items: "${items}"
-        direction: vertical
-        placeholder: "该发运单暂无网关交互日志"
+  - type: text
+    className: m-3
+    tag: div
+    visibleOn: "${trackingData?.items?.length}"
+    text: '<div class="text-muted m-b-sm">事件数：${trackingData?.items?.length || 0}（按 executedAt 倒序）</div>'
+
+  - type: timeline
+    className: m-3
+    source: ${trackingData?.items ?? []}
+    items:
+      - time: "${executedAt}"
+        title: "${'[' + (actionType || 'EVENT') + '] ' + (httpStatus != null ? 'HTTP ' + httpStatus + ' ' : '') + (isSuccess ? '成功' : '失败')}"
+        detail: "${!isSuccess ? ((errorCode ? '错误码: ' + errorCode : '') + (errorMessage ? ' / 信息: ' + errorMessage : '')) : ''}"
+        color: "${isSuccess ? (actionType === 'CREATE' ? '#3b82f6' : actionType === 'SEND' ? '#0ea5e9' : actionType === 'RECEIVE' ? '#22c55e' : actionType === 'ACK' ? '#8b5cf6' : actionType === 'STATUS_UPDATE' ? '#f59e0b' : actionType === 'DELIVER' ? '#16a34a' : '#6b7280') : '#ef4444'}"

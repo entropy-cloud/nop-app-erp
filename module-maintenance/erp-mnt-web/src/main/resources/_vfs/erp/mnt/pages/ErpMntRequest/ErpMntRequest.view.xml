@@ -27,10 +27,9 @@
                                 + inList(warningVals) + " ? 'warning' : "
                                 + inList(primaryVals) + " ? 'primary' : 'default'";
                             return {
-                                type: "tpl",
-                                tpl: '<span class="label label-${' + expr + "}"
+                                cell: { type: "text", text: '<span class="label label-${' + expr + "}"
                                     + ">"
-                                    + "${" + labelProp + "}</span>"
+                                    + "${" + labelProp + "}</span>" }
                             };
                         ]]></c:script>
                     </gen-control>

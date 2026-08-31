@@ -45,6 +45,32 @@ public interface ErpHrErrors {
     String ARG_LEVEL_MAP_KEY = "levelMapKey";
     String ARG_LEVEL_MAP_VALUE = "levelMapValue";
 
+    // --- 组织主数据删除引用守卫（P1-CK-hr-001）---
+    String ARG_DEPT_ID = "deptId";
+    String ARG_DEPT_NAME = "deptName";
+    String ARG_REF_COUNT = "refCount";
+    String ARG_REF_TYPE = "refType";
+    ErrorCode ERR_DEPT_HAS_EMPLOYEES = ErrorCode.define(
+            "erp.err.hr.dept-has-employees",
+            "部门 [{deptName}] 仍有 {refCount} 名在职员工，无法删除",
+            ARG_DEPT_ID, ARG_DEPT_NAME, ARG_REF_COUNT);
+    ErrorCode ERR_DEPT_HAS_SUB_DEPARTMENTS = ErrorCode.define(
+            "erp.err.hr.dept-has-sub-departments",
+            "部门 [{deptName}] 仍有 {refCount} 个子部门，无法删除",
+            ARG_DEPT_ID, ARG_DEPT_NAME, ARG_REF_COUNT);
+    ErrorCode ERR_DEPT_HAS_RECRUITMENTS = ErrorCode.define(
+            "erp.err.hr.dept-has-recruitments",
+            "部门 [{deptName}] 仍有 {refCount} 个未关闭招聘单（{refType}），无法删除",
+            ARG_DEPT_ID, ARG_DEPT_NAME, ARG_REF_COUNT, ARG_REF_TYPE);
+    ErrorCode ERR_POSITION_HAS_EMPLOYEES = ErrorCode.define(
+            "erp.err.hr.position-has-employees",
+            "职位 [{positionId}] 仍有 {refCount} 名在职员工，无法删除",
+            ARG_POSITION_ID, ARG_REF_COUNT);
+    ErrorCode ERR_POSITION_HAS_RECRUITMENTS = ErrorCode.define(
+            "erp.err.hr.position-has-recruitments",
+            "职位 [{positionId}] 仍有 {refCount} 个未关闭招聘单，无法删除",
+            ARG_POSITION_ID, ARG_REF_COUNT);
+
     // --- 报表渲染作用域参数键 ---
     String ARG_REPORT_NAME = "reportName";
     String ARG_RENDER_TYPE = "renderType";

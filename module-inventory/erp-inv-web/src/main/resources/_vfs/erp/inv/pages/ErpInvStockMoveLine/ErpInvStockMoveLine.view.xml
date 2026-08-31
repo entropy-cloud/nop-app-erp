@@ -82,7 +82,7 @@
                 <col id="totalCost">
                     <gen-control>
                         <c:script><![CDATA[
-                            return { type: 'number', kilometer: true, precision: 2 };
+                            return { precision: 2 };
                         ]]></c:script>
                     </gen-control>
                 </col>

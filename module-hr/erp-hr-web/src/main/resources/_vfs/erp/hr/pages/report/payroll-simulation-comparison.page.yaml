@@ -1,7 +1,10 @@
+# 薪酬模拟对比报表（plan 2026-08-29-1913-2 Phase 1）。
+# flux 原生重写：data-source → form → html。
 type: page
 title: "薪酬模拟对比报表"
 body:
   - type: form
+    name: filterForm
     title: ""
     mode: inline
     className: m-3
@@ -13,49 +16,45 @@ body:
         value: 1
       - type: button
         label: "渲染报表"
-        actionType: reload
-        target: "reportService"
-      - type: button-toolbar
-        buttons:
-          - type: button
-            label: "下载 XLSX"
-            actionType: download
-            api:
-              url: /p/ErpHrReport__download
-              method: post
-              responseType: blob
-              data:
-                reportName: "payroll-simulation-comparison"
-                renderType: "xlsx"
-                data: { simulationId: "${simulationId}" }
-          - type: button
-            label: "下载 PDF"
-            actionType: download
-            api:
-              url: /p/ErpHrReport__download
-              method: post
-              responseType: blob
-              data:
-                reportName: "payroll-simulation-comparison"
-                renderType: "pdf"
-                data: { simulationId: "${simulationId}" }
-      - type: service
-        name: reportService
-        id: reportContainer
-        initFetch: false
+        onClick:
+          action: refreshSource
+          targetId: reportHtmlData
+      - type: button
+        label: "下载 XLSX"
+        actionType: download
         api:
-          url: /graphql
+          url: /p/ErpHrReport__download
           method: post
-          dataType: raw
+          responseType: blob
           data:
-            query: "query(${'$'}reportName:String!,${'$'}simulationId:BigDecimal){ ErpHrReport__renderHtml(reportName:${'$'}reportName,data:{simulationId:${'$'}simulationId}) }"
-            variables:
-              reportName: "payroll-simulation-comparison"
-              simulationId: "${simulationId}"
-          adaptor: |
-            const d = payload.data || {};
-            const html = (d.data ? d.data : d).ErpHrReport__renderHtml || '';
-            return { status: 0, msg: '', data: { reportHtml: html } };
-        body:
-          - type: html
-            html: "${reportHtml}"
+            reportName: "payroll-simulation-comparison"
+            renderType: "xlsx"
+            data:
+              simulationId: "${filterForm?.simulationId}"
+      - type: button
+        label: "下载 PDF"
+        actionType: download
+        api:
+          url: /p/ErpHrReport__download
+          method: post
+          responseType: blob
+          data:
+            reportName: "payroll-simulation-comparison"
+            renderType: "pdf"
+            data:
+              simulationId: "${filterForm?.simulationId}"
+
+  - type: data-source
+    name: reportHtmlData
+    action: ajax
+    args:
+      url: '@query:ErpHrReport__renderHtml'
+      method: post
+      data:
+        reportName: "payroll-simulation-comparison"
+        data:
+          simulationId: "${filterForm?.simulationId}"
+
+  - type: html
+    className: m-3
+    html: "${reportHtmlData ?? ''}"

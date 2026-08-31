@@ -47,7 +47,7 @@ body:
   name: logRaw
   dependsOn:
   - shipmentId
-  sendOn: ${shipmentId != null}
+  sendOn: shipmentId != null
   action: ajax
   args:
     url: '@query:ErpLogShipmentLog__findPage'

@@ -180,6 +180,44 @@ public class TestErpMntSparePartUsageReversal extends JunitAutoTestCase {
         assertEquals(ErpMntDaoConstants.DOC_STATUS_DRAFT, usage.getDocStatus());
     }
 
+    // ---------- 场景 3：P1-CK-mnt-001 ——confirm 接线状态机守卫（修复前空守卫致 CANCELLED 复活 ACTIVE+posted=true） ----------
+
+    @Test
+    public void testConfirmRejectsCancelledUsage() {
+        // P1-CK-mnt-001：confirm 仅 DRAFT 合法——CANCELLED 终态再次 confirm 应被守卫拒绝（修复前空守卫放行
+        // → SparePartIssueService.issue 幂等短路返回但 applyIssueResult 仍翻 ACTIVE+posted=true 复活）。
+        enablePosting(true);
+        seedPeriodAndSubjects();
+        seedMaterial(M1, "MOVING_AVERAGE");
+        seedEquipment(EQUIPMENT_ID);
+        seedStock("SEED-MNT-CANCEL", M1, bd("20"), bd("5"));
+
+        String usageId = nextId();
+        ormTemplate.runInSession(session -> {
+            seedUsage(usageId, EQUIPMENT_ID, "SP-CANCEL-GUARD");
+            seedUsageLine(nextId(), usageId, M1, bd("10"), bd("5"));
+            return null;
+        });
+
+        // confirm → reverseConfirm → CANCELLED+posted=false
+        assertEquals(0, confirm(usageId).getStatus(), "首次 confirm 应成功");
+        assertEquals(0, reverseConfirm(usageId).getStatus(), "reverseConfirm 应成功");
+        ErpMntSparePartUsage cancelled = loadUsage(usageId);
+        assertEquals(ErpMntDaoConstants.DOC_STATUS_CANCELLED, cancelled.getDocStatus());
+        assertFalse(Boolean.TRUE.equals(cancelled.getPosted()));
+
+        // 再次 confirm：CANCELLED 终态应被守卫拒绝
+        ApiResponse<?> resp = confirm(usageId);
+        assertEquals(ErpMntErrors.ERR_SPARE_PART_USAGE_NOT_POSTED.getErrorCode(), resp.getCode(),
+                "CANCELLED 终态 confirm 应被状态机守卫拒绝（P1-CK-mnt-001）");
+
+        // 状态不变：仍是 CANCELLED+posted=false（confirm 失败未推进）
+        ErpMntSparePartUsage after = loadUsage(usageId);
+        assertEquals(ErpMntDaoConstants.DOC_STATUS_CANCELLED, after.getDocStatus(),
+                "守卫拒绝后 docStatus 不变");
+        assertFalse(Boolean.TRUE.equals(after.getPosted()), "守卫拒绝后 posted 不变");
+    }
+
     // ---------- rpc helpers ----------
 
     private ApiResponse<?> confirm(String usageId) {

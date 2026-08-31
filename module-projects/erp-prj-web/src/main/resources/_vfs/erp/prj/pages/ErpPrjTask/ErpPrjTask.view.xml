@@ -31,10 +31,9 @@
                                 + inList(warningVals) + " ? 'warning' : "
                                 + inList(primaryVals) + " ? 'primary' : 'default'";
                             return {
-                                type: "tpl",
-                                tpl: '<span class="label label-${' + expr + "}"
+                                cell: { type: "text", text: '<span class="label label-${' + expr + "}"
                                     + ">"
-                                    + "${" + labelProp + "}</span>"
+                                    + "${" + labelProp + "}</span>" }
                             };
                         ]]></c:script>
                     </gen-control>
@@ -140,7 +139,7 @@
                     </messages>
                     <visibleOn>${status == 'BLOCKED'}</visibleOn>
                 </action>
-                <action id="row-view-child-task-button" label="子任务" i18n-en:label="Child Tasks" level="info" icon="fa fa-sitemap"
+                <action actionType="link" id="row-view-child-task-button" label="子任务" i18n-en:label="Child Tasks" level="info" icon="fa fa-sitemap"
                         tooltip="跳转到任务列表（按父任务筛选），查看此任务的子任务"
                         link="/ErpPrjTask-main?filter_parentTaskId=${id}">
                 </action>

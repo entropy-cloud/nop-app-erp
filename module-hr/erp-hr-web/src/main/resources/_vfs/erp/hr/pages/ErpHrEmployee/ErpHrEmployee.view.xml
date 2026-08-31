@@ -16,7 +16,7 @@
                 <col id="bankAccountId" label="工资卡账户" i18n-en:label="Payroll Bank Account">
                     <gen-control>
                         <c:script><![CDATA[
-                            return { type: 'tpl', tpl: '****${(bankAccountId || "").slice(-4)}' };
+                            return { cell: { type: 'text', text: '****${(bankAccountId || "").slice(-4)}' } };
                         ]]></c:script>
                     </gen-control>
                 </col>
@@ -43,10 +43,9 @@
                             const valueProp = dispMeta?.id || 'status';
                             const labelProp = propMeta?.['graphql:labelProp'] || (valueProp + '_label');
                             return {
-                                type: "tpl",
-                                tpl: '<span class="label label-${' + valueProp
+                                cell: { type: "text", text: '<span class="label label-${' + valueProp
                                     + " == 'ACTIVE' ? 'success' : 'default'}\">"
-                                    + "${" + labelProp + "}</span>"
+                                    + "${" + labelProp + "}</span>" }
                             };
                         ]]></c:script>
                     </gen-control>
@@ -79,10 +78,9 @@
                             const valueProp = dispMeta?.id || 'status';
                             const labelProp = propMeta?.['graphql:labelProp'] || (valueProp + '_label');
                             return {
-                                type: "tpl",
-                                tpl: '<span class="label label-${' + valueProp
+                                cell: { type: "text", text: '<span class="label label-${' + valueProp
                                     + " == 'APPROVED' ? 'success' : 'default'}\">"
-                                    + "${" + labelProp + "}</span>"
+                                    + "${" + labelProp + "}</span>" }
                             };
                         ]]></c:script>
                     </gen-control>
@@ -102,10 +100,9 @@
                             const valueProp = dispMeta?.id || 'status';
                             const labelProp = propMeta?.['graphql:labelProp'] || (valueProp + '_label');
                             return {
-                                type: "tpl",
-                                tpl: '<span class="label label-${' + valueProp
+                                cell: { type: "text", text: '<span class="label label-${' + valueProp
                                     + " == 'APPROVED' ? 'success' : 'default'}\">"
-                                    + "${" + labelProp + "}</span>"
+                                    + "${" + labelProp + "}</span>" }
                             };
                         ]]></c:script>
                     </gen-control>
@@ -147,28 +144,28 @@
                 <cell id="idCardNo">
                     <gen-control>
                         <c:script><![CDATA[
-                            return { type: 'tpl', tpl: '${(idCardNo || "").slice(0,1)}******${(idCardNo || "").slice(-4)}' };
+                            return { type: 'text', type: 'text', text: '${(idCardNo || "").slice(0,1)}******${(idCardNo || "").slice(-4)}' };
                         ]]></c:script>
                     </gen-control>
                 </cell>
                 <cell id="mobilePhone">
                     <gen-control>
                         <c:script><![CDATA[
-                            return { type: 'tpl', tpl: '${(mobilePhone || "").slice(0,3)}****${(mobilePhone || "").slice(-4)}' };
+                            return { type: 'text', type: 'text', text: '${(mobilePhone || "").slice(0,3)}****${(mobilePhone || "").slice(-4)}' };
                         ]]></c:script>
                     </gen-control>
                 </cell>
                 <cell id="bankAccountId">
                     <gen-control>
                         <c:script><![CDATA[
-                            return { type: 'tpl', tpl: '****${(bankAccountId || "").slice(-4)}' };
+                            return { type: 'text', type: 'text', text: '****${(bankAccountId || "").slice(-4)}' };
                         ]]></c:script>
                     </gen-control>
                 </cell>
                 <cell id="socialSecurityNo">
                     <gen-control>
                         <c:script><![CDATA[
-                            return { type: 'tpl', tpl: '******' };
+                            return { type: 'text', type: 'text', text: '******' };
                         ]]></c:script>
                     </gen-control>
                 </cell>
@@ -223,7 +220,7 @@
                 <cell id="taxFileNo">
                     <gen-control>
                         <c:script><![CDATA[
-                            return { type: 'tpl', tpl: '******' };
+                            return { type: 'text', type: 'text', text: '******' };
                         ]]></c:script>
                     </gen-control>
                 </cell>
@@ -265,7 +262,9 @@
             <cells>
                 <cell id="employeeId" label="员工ID" i18n-en:label="Employee ID" domain="long" custom="true">
                     <gen-control>
-                        <input-number hidden="true"/>
+                        <c:script><![CDATA[
+                            return { type: 'input-number', hidden: true };
+                        ]]></c:script>
                     </gen-control>
                 </cell>
                 <cell id="targetDepartmentId" label="目标部门" i18n-en:label="Target Department" domain="long" custom="true">
@@ -330,39 +329,7 @@
                 <action id="row-delete-button" level="danger" label="删除" i18n-en:label="Delete">
                     <api url="@mutation:ErpHrEmployee__delete?id=$id"/>
                     <confirmText>确认删除此员工？</confirmText>
-                    <onEvent>
-                        <click>
-                            <actions>
-                                <action>
-                                    <actionType>ajax</actionType>
-                                    <api>
-                                        <method>post</method>
-                                        <url>/graphql</url>
-                                        <data>
-                                            <query>${"query{ErpHrEmployee__countReferences(id:" + id + "){k v}}"}</query>
-                                        </data>
-                                        <responseType>response</responseType>
-                                    </api>
-                                    <outputVar>refCount</outputVar>
-                                </action>
-                                <action>
-                                    <actionType>dialog</actionType>
-                                    <condition>${refCount &amp;&amp; refCount.data &amp;&amp; refCount.data.ErpHrEmployee__countReferences &amp;&amp; refCount.data.ErpHrEmployee__countReferences.length > 0}</condition>
-                                    <dialog>
-                                        <title>无法删除：存在引用</title>
-                                        <body>该员工被以下 HR 业务单据引用，删除将被阻断。请先解除引用关系。</body>
-                                        <actions>
-                                            <action>
-                                                <type>button</type>
-                                                <actionType>close</actionType>
-                                                <label>知道了</label>
-                                            </action>
-                                        </actions>
-                                    </dialog>
-                                </action>
-                            </actions>
-                        </click>
-                    </onEvent>
+                    
                 </action>
             </rowActions>
         </crud>

@@ -52,16 +52,19 @@ body:
       body:
       - type: button
         label: 刷新汇总与明细
-        actionType: ajax
-        action: ajax
-        args:
-          url: '@query:ErpHrSalary__findPayrollSummary'
-          method: post
-          data:
-            year: ${year ?? null}
-            month: ${month ?? null}
-        target: summary
-        refreshSource: salaryRaw
+        onClick:
+          action: ajax
+          args:
+            url: '@query:ErpHrSalary__findPayrollSummary'
+            method: post
+            data:
+              year: ${year ?? null}
+              month: ${month ?? null}
+          then:
+          - action: refreshSource
+            targetId: summary
+          - action: refreshSource
+            targetId: salaryRaw
 - type: data-source
   name: summary
   dependsOn:
@@ -166,26 +169,34 @@ body:
       PAID: success
       PENDING: warning
       VOID: default
-  actions:
-  - label: 标记已发放
-    actionType: ajax
-    action: ajax
-    confirmText: 确认标记此薪酬记录为已发放？
-    args:
-      url: '@mutation:ErpHrSalary__markPaid'
-      method: post
-      data:
-        salaryId: ${$slot?.record?.id}
-    visible: ${$slot?.record?.paymentStatus == "PENDING"}
-    refreshSource: salaryRaw
-  - label: 作废
-    actionType: ajax
-    action: ajax
-    confirmText: 确认作废此薪酬记录？此操作不可逆。
-    args:
-      url: '@mutation:ErpHrSalary__voidSalary'
-      method: post
-      data:
-        salaryId: ${$slot?.record?.id}
-    visible: ${$slot?.record?.paymentStatus != "VOID"}
-    refreshSource: salaryRaw
+  - type: operation
+    label: 操作
+    buttons:
+    - type: button
+      label: 标记已发放
+      variant: outline
+      visible: ${paymentStatus == "PENDING"}
+      onClick:
+        action: ajax
+        confirmText: 确认标记此薪酬记录为已发放？
+        args:
+          url: '@mutation:ErpHrSalary__markPaid'
+          method: post
+          data:
+            salaryId: ${id}
+        then:
+        - action: refreshNearest
+    - type: button
+      label: 作废
+      variant: destructive
+      visible: ${paymentStatus != "VOID"}
+      onClick:
+        action: ajax
+        confirmText: 确认作废此薪酬记录？此操作不可逆。
+        args:
+          url: '@mutation:ErpHrSalary__voidSalary'
+          method: post
+          data:
+            salaryId: ${id}
+        then:
+        - action: refreshNearest

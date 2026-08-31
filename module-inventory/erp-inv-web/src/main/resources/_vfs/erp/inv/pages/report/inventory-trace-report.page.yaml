@@ -1,7 +1,12 @@
+# 库存追溯可视化报表（plan 2026-08-29-1913-1 Phase 1）。
+# flux 原生重写：data-source → form → html。
+# 数据源：ErpInvReport__renderHtml（报表渲染）。
+# 下载按钮保留 /p/{ErpInvReport__download} 路径（plan 2026-07-12-0413-1 已修复）。
 type: page
 title: "库存追溯可视化报表"
 body:
   - type: form
+    name: filterForm
     title: ""
     mode: inline
     className: m-3
@@ -20,51 +25,51 @@ body:
         placeholder: "按仓库过滤"
       - type: button
         label: "渲染报表"
-        actionType: reload
-        target: "reportService"
-      - type: button-toolbar
-        buttons:
-          - type: button
-            label: "下载 XLSX"
-            actionType: download
-            api:
-              url: /p/ErpInvReport__download
-              method: post
-              responseType: blob
-              data:
-                reportName: "inventory-trace-report"
-                renderType: "xlsx"
-                data: { batchNo: "${batchNo}", materialId: "${materialId}", warehouseId: "${warehouseId}" }
-          - type: button
-            label: "下载 PDF"
-            actionType: download
-            api:
-              url: /p/ErpInvReport__download
-              method: post
-              responseType: blob
-              data:
-                reportName: "inventory-trace-report"
-                renderType: "pdf"
-                data: { batchNo: "${batchNo}", materialId: "${materialId}", warehouseId: "${warehouseId}" }
-      - type: service
-        name: reportService
-        id: reportContainer
-        initFetch: false
+        onClick:
+          action: refreshSource
+          targetId: reportHtmlData
+      - type: button
+        label: "下载 XLSX"
+        actionType: download
         api:
-          url: /graphql
+          url: /p/ErpInvReport__download
           method: post
-          dataType: raw
+          responseType: blob
           data:
-            query: "query(${'$'}reportName:String!,${'$'}batchNo:String,${'$'}materialId:BigDecimal,${'$'}warehouseId:BigDecimal){ ErpInvReport__renderHtml(reportName:${'$'}reportName,data:{batchNo:${'$'}batchNo,materialId:${'$'}materialId,warehouseId:${'$'}warehouseId}) }"
-            variables:
-              reportName: "inventory-trace-report"
-              batchNo: "${batchNo}"
-              materialId: "${materialId}"
-              warehouseId: "${warehouseId}"
-          adaptor: |
-            const d = payload.data || {};
-            const html = (d.data ? d.data : d).ErpInvReport__renderHtml || '';
-            return { status: 0, msg: '', data: { reportHtml: html } };
-        body:
-          - type: html
-            html: "${reportHtml}"
+            reportName: "inventory-trace-report"
+            renderType: "xlsx"
+            data:
+              batchNo: "${filterForm?.batchNo}"
+              materialId: "${filterForm?.materialId}"
+              warehouseId: "${filterForm?.warehouseId}"
+      - type: button
+        label: "下载 PDF"
+        actionType: download
+        api:
+          url: /p/ErpInvReport__download
+          method: post
+          responseType: blob
+          data:
+            reportName: "inventory-trace-report"
+            renderType: "pdf"
+            data:
+              batchNo: "${filterForm?.batchNo}"
+              materialId: "${filterForm?.materialId}"
+              warehouseId: "${filterForm?.warehouseId}"
+
+  - type: data-source
+    name: reportHtmlData
+    action: ajax
+    args:
+      url: '@query:ErpInvReport__renderHtml'
+      method: post
+      data:
+        reportName: "inventory-trace-report"
+        data:
+          batchNo: "${filterForm?.batchNo}"
+          materialId: "${filterForm?.materialId}"
+          warehouseId: "${filterForm?.warehouseId}"
+
+  - type: html
+    className: m-3
+    html: "${reportHtmlData ?? ''}"

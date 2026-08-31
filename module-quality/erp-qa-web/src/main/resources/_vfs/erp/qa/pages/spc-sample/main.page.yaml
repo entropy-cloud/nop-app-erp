@@ -1,4 +1,4 @@
-# SPC 样本数据页（plan 2026-08-03-1232-4 Phase 1）。
+# SPC 样本数据页（plan 2026-08-03-1232-4 Phase 1 + plan 2026-08-29-1913-2 Phase 1）。
 #
 # 数据来源：ErpQaSpcSample 实体（CRUD findPage）——subgroupNo/sampleTime/mean/range/
 # stdDev/defectCount/inspectedCount/defectRate/isOutOfControl/violatedRules。
@@ -6,52 +6,33 @@
 type: page
 title: "SPC 样本数据"
 body:
-  - type: chart
-    name: sampleTrendChart
-    className: m-3
-    api:
-      url: /graphql
+  - type: data-source
+    name: sampleData
+    action: ajax
+    args:
+      url: '@query:ErpQaSpcSample__findPage'
       method: post
-      dataType: raw
       data:
-        query: "query(${'$'}lim:Int){ ErpQaSpcSample__findPage(query:{limit:${'$'}lim}){ items{ id subgroupNo mean range isOutOfControl } total } }"
-        variables:
-          lim: 200
-      adaptor: |
-        const d = payload.data || {};
-        const gql = d.data ? d.data : d;
-        const page = gql.ErpQaSpcSample__findPage || { items: [], total: 0 };
-        const rows = (page.items || []).slice().sort(function(a,b){ return (a.subgroupNo||0) - (b.subgroupNo||0); });
-        return {
-          status: 0,
-          msg: '',
-          data: {
-            title: { text: '样本均值趋势' },
-            tooltip: { trigger: 'axis' },
-            xAxis: { type: 'category', name: '子组号', data: rows.map(function(r){ return r.subgroupNo; }) },
-            yAxis: { type: 'value', name: '均值' },
-            series: [{ type: 'line', data: rows.map(function(r){ return { value: r.mean, itemStyle: r.isOutOfControl ? {color:'red'} : undefined }; }) }]
-          }
-        };
+        query:
+          limit: 200
+      selection: id chartId subgroupNo sampleTime mean range stdDev defectCount inspectedCount defectRate isOutOfControl violatedRules
+
+  - type: chart
+    chartType: line
+    title: "样本均值趋势"
+    source: ${sampleData?.items ?? []}
+    xAxis: { dataKey: subgroupNo }
+    yAxis: { label: "均值" }
+    legend: true
+    height: 300
+    series:
+      - { name: "均值", dataRegionKey: mean }
 
   - type: crud
-    name: sampleCrud
     className: m-3
     title: "样本记录"
+    source: ${sampleData?.items ?? []}
     syncLocation: false
-    api:
-      url: /graphql
-      method: post
-      dataType: raw
-      data:
-        query: "query(${'$'}lim:Int){ ErpQaSpcSample__findPage(query:{limit:${'$'}lim}){ items{ id chartId subgroupNo sampleTime mean range stdDev defectCount inspectedCount defectRate isOutOfControl violatedRules } total } }"
-        variables:
-          lim: 200
-      adaptor: |
-        const d = payload.data || {};
-        const gql = d.data ? d.data : d;
-        const page = gql.ErpQaSpcSample__findPage || { items: [], total: 0 };
-        return { status: 0, msg: '', data: { items: page.items || [], count: page.total || 0 } };
     columns:
       - name: chartId
         label: "控制图ID"

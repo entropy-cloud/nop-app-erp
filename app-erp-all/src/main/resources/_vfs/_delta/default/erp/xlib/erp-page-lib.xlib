@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+  ERP 页面公共标签库（plan 2026-08-28-1600-1 Phase 0 Decision）。
+  提供 <erp:report> 标签，封装报表页三段式结构：
+    filter form + data-source (renderHtml) + html 渲染 + 下载按钮 toolbar。
+
+  用法（在 page.yaml / flux.yaml 中）：
+    x:gen-extends: |
+      <erp:Report title="利润表" reportName="income-statement"
+                   endpoint="ErpFinReport" downloadUrl="/p/ErpFinReport__download"
+                   filterFields="periodId:input-number:会计期间ID:输入期间ID:1" />
+
+  filterFields 格式：逗号分隔，每项 name:type:label:placeholder:defaultValue
+-->
+<lib x:schema="/nop/schema/xlib.xdef"
+     xmlns:x="/nop/schema/xdsl.xdef"
+     xmlns:c="c">
+
+    <tags>
+
+        <!--
+            报表页标签：封装 filter form + service renderHtml + html 块 + 下载按钮。
+            参数：
+              title        - 页面标题
+              reportName   - 报表名称（renderHtml 的 reportName 参数）
+              endpoint     - GraphQL 端点前缀（如 ErpFinReport → ErpFinReport__renderHtml）
+              downloadUrl  - 下载端点 URL（如 /p/ErpFinReport__download）
+              filterFields - 逗号分隔的 filter 字段定义（name:type:label:placeholder:defaultValue）
+        -->
+        <Report>
+            <attr name="title" type="string" required="true"/>
+            <attr name="reportName" type="string" required="true"/>
+            <attr name="endpoint" type="string" required="true"/>
+            <attr name="downloadUrl" type="string" required="true"/>
+            <attr name="filterFields" type="string" required="true"/>
+
+            <source><![CDATA[
+                const title = this.title;
+                const reportName = this.reportName;
+                const endpoint = this.endpoint;
+                const downloadUrl = this.downloadUrl;
+                const filterFieldsStr = this.filterFields || '';
+
+                // Parse filter fields: name:type:label:placeholder:defaultValue
+                const filterFields = filterFieldsStr.split(',').map(function(f) {
+                    const parts = f.trim().split(':');
+                    return {
+                        name: parts[0] || '',
+                        type: parts[1] || 'input-text',
+                        label: parts[2] || parts[0] || '',
+                        placeholder: parts[3] || '',
+                        defaultValue: parts[4] || ''
+                    };
+                }).filter(function(f) { return f.name; });
+
+                // Build form body (filter fields + render button + download toolbar)
+                var formBody = [];
+                filterFields.forEach(function(f) {
+                    var field = { name: f.name, label: f.label, placeholder: f.placeholder };
+                    if (f.type === 'input-date') {
+                        field.type = 'input-date';
+                        field.valueFormat = 'YYYY-MM-DD';
+                    } else if (f.type === 'input-number') {
+                        field.type = 'input-number';
+                    } else {
+                        field.type = 'input-text';
+                    }
+                    if (f.defaultValue) {
+                        field.value = f.defaultValue;
+                    }
+                    formBody.push(field);
+                });
+
+                // Render button
+                formBody.push({
+                    type: 'button',
+                    label: '渲染报表',
+                    actionType: 'reload',
+                    target: 'reportService'
+                });
+
+                // Download toolbar
+                var downloadData = {};
+                filterFields.forEach(function(f) {
+                    downloadData[f.name] = '${' + f.name + '}';
+                });
+
+                formBody.push({
+                    type: 'button-toolbar',
+                    buttons: [
+                        {
+                            type: 'button',
+                            label: '下载 XLSX',
+                            actionType: 'download',
+                            api: {
+                                url: downloadUrl,
+                                method: 'post',
+                                responseType: 'blob',
+                                data: Object.assign({ reportName: reportName, renderType: 'xlsx' }, { data: downloadData })
+                            }
+                        },
+                        {
+                            type: 'button',
+                            label: '下载 PDF',
+                            actionType: 'download',
+                            api: {
+                                url: downloadUrl,
+                                method: 'post',
+                                responseType: 'blob',
+                                data: Object.assign({ reportName: reportName, renderType: 'pdf' }, { data: downloadData })
+                            }
+                        }
+                    ]
+                });
+
+                // Build GraphQL query variables
+                var queryVars = filterFields.map(function(f) {
+                    return "${'$'}" + f.name + ":String";
+                }).join(',');
+
+                var dataVars = filterFields.map(function(f) {
+                    return f.name + ":${'$'}" + f.name;
+                }).join(',');
+
+                var gqlVars = filterFields.map(function(f) {
+                    return f.name + ":\"${" + f.name + "}\"";
+                }).join(',');
+
+                // Build the complete flux page schema
+                var page = {
+                    type: 'page',
+                    title: title,
+                    body: [
+                        {
+                            type: 'form',
+                            title: '',
+                            mode: 'inline',
+                            className: 'm-3',
+                            body: formBody
+                        },
+                        {
+                            type: 'service',
+                            name: 'reportService',
+                            id: 'reportContainer',
+                            initFetch: false,
+                            api: {
+                                url: '/graphql',
+                                method: 'post',
+                                dataType: 'raw',
+                                data: {
+                                    query: "query(${'$'}reportName:String!," + queryVars + "){ " + endpoint + "__renderHtml(reportName:${'$'}reportName,data:{" + dataVars + "}) }",
+                                    variables: Object.assign({ reportName: reportName },
+                                        filterFields.reduce(function(acc, f) {
+                                            acc[f.name] = '${' + f.name + '}';
+                                            return acc;
+                                        }, {})
+                                    )
+                                },
+                                adaptor: "var d = payload.data || {};\nvar gql = d.data ? d.data : d;\nvar html = gql." + endpoint + "__renderHtml || '';\nreturn { status: 0, msg: '', data: { reportHtml: html } };"
+                            },
+                            body: [
+                                {
+                                    type: 'html',
+                                    html: '${reportHtml}'
+                                }
+                            ]
+                        }
+                    ]
+                };
+
+                return page;
+            ]]></source>
+        </Report>
+
+    </tags>
+
+</lib>

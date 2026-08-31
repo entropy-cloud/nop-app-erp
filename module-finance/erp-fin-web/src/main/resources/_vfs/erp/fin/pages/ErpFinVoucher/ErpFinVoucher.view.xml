@@ -16,11 +16,8 @@
                 <col id="balanceStatus" label="平衡状态" i18n-en:label="Balance Status" sortable="true" custom="true">
                     <gen-control>
                         <c:script><![CDATA[
-                            return {
-                                type: 'tpl',
-                                tpl: '<span class="label label-${totalDebit == totalCredit ? "success" : "danger"}">' +
-                                    '${totalDebit == totalCredit ? "✓ 平衡" : "✗ 不平衡"}</span>'
-                            };
+                            return { cell: { type: 'text', text: '<span class="label label-${totalDebit == totalCredit ? "success" : "danger"}">' +
+                                    '${totalDebit == totalCredit ? "✓ 平衡" : "✗ 不平衡"}</span>' } };
                         ]]></c:script>
                     </gen-control>
                 </col>
@@ -30,12 +27,11 @@
                             const valueProp = dispMeta?.id || 'docStatus';
                             const labelProp = propMeta?.['graphql:labelProp'] || (valueProp + '_label');
                             return {
-                                type: "tpl",
-                                tpl: '<span class="label label-${' + valueProp
+                                cell: { type: "text", text: '<span class="label label-${' + valueProp
                                     + " == 'ACTIVE' ? 'primary' : 'default'}\" "
                                     + "${" + valueProp
                                     + " == 'CANCELLED' ? \"style='text-decoration:line-through'\" : ''}>"
-                                    + "${" + labelProp + "}</span>"
+                                    + "${" + labelProp + "}</span>" }
                             };
                         ]]></c:script>
                     </gen-control>
@@ -82,7 +78,6 @@
  balanceBadge[平衡校验]
 =========>lines[分录行]======
  quickTemplate[快捷模板](2)
- autoBalance[借贷自动平衡](2)
  lines[分录行](2)
  remark[备注](2)
             </layout>
@@ -97,9 +92,9 @@
                     <gen-control>
                         <c:script><![CDATA[
                             return {
-                                type: 'tpl',
-                                className: 'mb-0',
-                                tpl: '<span class="label label-${' + 'totalDebit == totalCredit ? "success" : "danger' + '}"><i class="fa ${' + 'totalDebit == totalCredit ? "fa-check-circle" : "fa-exclamation-triangle' + '}"></i> ${' + 'totalDebit == totalCredit ? "借贷平衡" : "借贷不平衡（需点击下方刷新合计按钮）"' + '}</span>'
+                                type: 'text',
+                                    className: 'mb-0',
+                                    text: '<span class="label label-${' + 'totalDebit == totalCredit ? "success" : "danger' + '}"><i class="fa ${' + 'totalDebit == totalCredit ? "fa-check-circle" : "fa-exclamation-triangle' + '}"></i> ${' + 'totalDebit == totalCredit ? "借贷平衡" : "借贷不平衡（需点击下方刷新合计按钮）"' + '}</span>'
                             };
                         ]]></c:script>
                     </gen-control>
@@ -135,28 +130,7 @@
                   在 P0 实际未实施」），本计划对齐既有行为：head totals 由本按钮 + 保存后服务端写入。
                   actionType=custom + script 经 doAction(setValue) 写回 lines + totalDebit + totalCredit。
                 -->
-                <cell id="autoBalance" custom="true" notSubmit="true">
-                    <gen-control>
-                        <c:script><![CDATA[
-                            return {
-                                type: 'button',
-                                label: '刷新合计 + 借贷自动平衡（差额填入末行）',
-                                level: 'warning',
-                                icon: 'fa fa-balance-scale',
-                                onEvent: {
-                                    click: {
-                                        actions: [
-                                            {
-                                                actionType: 'custom',
-                                                script: 'const lines = Array.isArray(event.data.lines) ? event.data.lines.slice() : []; const totalD = lines.reduce((s, l) => s + (Number(l.debitAmount) || 0), 0); const totalC = lines.reduce((s, l) => s + (Number(l.creditAmount) || 0), 0); if (lines.length === 0) { doAction({actionType:"setValue", args:{value:{totalDebit: 0, totalCredit: 0}}}); doAction({actionType:"toast", args:{msgtype:"info", msg:"无分录行"}}); return; } if (Math.abs(totalD - totalC) < 0.0001) { doAction({actionType:"setValue", args:{value:{totalDebit: totalD, totalCredit: totalC}}}); doAction({actionType:"toast", args:{msgtype:"success", msg:"凭证已平衡，合计已刷新"}}); return; } const last = lines[lines.length - 1]; const diff = totalD - totalC; if (diff > 0) { last.creditAmount = (Number(last.creditAmount) || 0) + diff; } else { last.debitAmount = (Number(last.debitAmount) || 0) + (-diff); } doAction({actionType:"setValue", args:{value:{lines: lines, totalDebit: totalD + (diff < 0 ? (-diff) : 0), totalCredit: totalC + (diff > 0 ? diff : 0)}}});'
-                                            }
-                                        ]
-                                    }
-                                }
-                            };
-                        ]]></c:script>
-                    </gen-control>
-                </cell>
+                
                 <!--
                   lines 子表 cell：引用 ErpFinVoucherLine sub-grid-edit（17 列布局）。
                   xview schema 限制 <view> 仅允许 <data> 子节点，onEvent 头聚合已移到 autoBalance 按钮触发。
@@ -191,6 +165,42 @@
                 <cell id="voucherDate" filterOp="date-between"/>
             </cells>
         </form>
+        <!-- 红字冲销预览（row-reverse-button 的 dialog 载体；plan 2026-08-30-2238-1 flux 原生化重写） -->
+        <form id="reversePreview" title="红字冲销预览" i18n-en:title="Red Reverse Preview" size="sm">
+            <layout>
+previewBody[预览]
+</layout>
+            <cells>
+                <cell id="previewBody" custom="true" notSubmit="true">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return {
+                                type: 'container', direction: 'column', gap: 'sm',
+                                body: [
+                                    {
+                                        type: 'data-source', name: 'previewData', action: 'ajax',
+                                        args: { url: '@query:ErpFinVoucher__previewReverseVoucher', method: 'post', data: { voucherId: '${id}' } }
+                                    },
+                                    {
+                                        type: 'text',
+                                        text: "凭证号：<b>${previewData.voucherCode}</b>（${previewData.voucherType}）<br/>凭证日期：${previewData.voucherDate} ｜ 分录行数：${previewData.lineCount}<br/>原借方合计：${previewData.totalDebit} ｜ 原贷方合计：${previewData.totalCredit}<br/>红字预估借方：<span style='color:#d9534f'>${previewData.reversedDebit}</span> ｜ 红字预估贷方：<span style='color:#d9534f'>${previewData.reversedCredit}</span><br/>确认后原凭证将被标记为「已红冲」，不可恢复。"
+                                    },
+                                    {
+                                        type: 'button', label: '确认红冲', level: 'danger',
+                                        onClick: {
+                                            action: 'ajax',
+                                            args: { url: '@mutation:ErpFinVoucher__reverseVoucher?voucherId=${id}', method: 'post' },
+                                            messages: { success: '凭证已红冲' },
+                                            then: [ { action: 'closeSurface' }, { action: 'refreshNearest' } ]
+                                        }
+                                    }
+                                ]
+                            };
+                        ]]></c:script>
+                    </gen-control>
+                </cell>
+            </cells>
+        </form>
     </forms>
 
     <pages>
@@ -208,53 +218,12 @@
                     <visibleOn>${docStatus == 'DRAFT'}</visibleOn>
                     <disabledOn>${(totalDebit || 0) != (totalCredit || 0)}</disabledOn>
                 </action>
-                <action id="row-reverse-button" label="红冲" i18n-en:label="Red Reverse" level="danger" icon="fa fa-undo">
+                <action id="row-reverse-button" label="红冲" i18n-en:label="Red Reverse" level="danger" icon="fa fa-undo" actionType="dialog">
                     <visibleOn>${docStatus == 'POSTED' &amp;&amp; !isReversed}</visibleOn>
-                    <!-- F7 §3 冲销预览（plan 2026-07-23-1145-2 Phase 2）：先调 previewReverseVoucher 展示冲销影响，
-                         用户确认后才执行 reverseVoucher。preview-then-confirm 范式（区别于删除的 blocker 范式）。 -->
-                    <onEvent>
-                        <click>
-                            <actions>
-                                <action>
-                                    <actionType>ajax</actionType>
-                                    <api>
-                                        <method>post</method>
-                                        <url>/graphql</url>
-                                        <data>
-                                            <query>${"query{ErpFinVoucher__previewReverseVoucher(voucherId:" + id + "){voucherCode voucherType voucherDate totalDebit totalCredit reversedDebit reversedCredit lineCount willSetReversed billLinks{billType billCode businessType}}}"}</query>
-                                        </data>
-                                        <responseType>response</responseType>
-                                    </api>
-                                    <outputVar>preview</outputVar>
-                                </action>
-                                <action>
-                                    <actionType>dialog</actionType>
-                                    <dialog>
-                                        <title>红字冲销预览</title>
-                                        <body>
-                                            <tpl tpl="凭证号：&lt;b&gt;${'$'}{preview.data.ErpFinVoucher__previewReverseVoucher.voucherCode}&lt;/b&gt;（${'$'}{preview.data.ErpFinVoucher__previewReverseVoucher.voucherType}）&lt;br/&gt;凭证日期：${'$'}{preview.data.ErpFinVoucher__previewReverseVoucher.voucherDate} ｜ 分录行数：${'$'}{preview.data.ErpFinVoucher__previewReverseVoucher.lineCount}&lt;br/&gt;原借方合计：${'$'}{preview.data.ErpFinVoucher__previewReverseVoucher.totalDebit} ｜ 原贷方合计：${'$'}{preview.data.ErpFinVoucher__previewReverseVoucher.totalCredit}&lt;br/&gt;红字预估借方：&lt;span style='color:#d9534f'&gt;${'$'}{preview.data.ErpFinVoucher__previewReverseVoucher.reversedDebit}&lt;/span&gt; ｜ 红字预估贷方：&lt;span style='color:#d9534f'&gt;${'$'}{preview.data.ErpFinVoucher__previewReverseVoucher.reversedCredit}&lt;/span&gt;&lt;br/&gt;确认后原凭证将被标记为「已红冲」，不可恢复。"/>
-                                        </body>
-                                        <actions>
-                                            <action>
-                                                <type>button</type>
-                                                <actionType>ajax</actionType>
-                                                <label>确认红冲</label>
-                                                <level>danger</level>
-                                                <api url="@mutation:ErpFinVoucher__reverseVoucher?voucherId=$id"/>
-                                                <messages><success>凭证已红冲</success></messages>
-                                                <close>true</close>
-                                            </action>
-                                            <action>
-                                                <type>button</type>
-                                                <actionType>close</actionType>
-                                                <label>取消</label>
-                                            </action>
-                                        </actions>
-                                    </dialog>
-                                </action>
-                            </actions>
-                        </click>
-                    </onEvent>
+                    <!-- F7 §3 冲销预览（plan 2026-07-23-1145-2 Phase 2，2026-08-31 flux 原生化重写）：
+                         preview-then-confirm 范式：dialog 指向 reversePreview 页（data-source 调 previewReverseVoucher REST），
+                         确认按钮调 __reverseVoucher。原 amis onEvent ajax+outputVar+dialog 链在 flux 下不可编译。 -->
+                    <dialog page="reversePreview" size="sm"/>
                 </action>
                 <action id="row-view-source-bills-button" label="源单据" i18n-en:label="Source Bills" level="info" icon="fa fa-reply"
                         tooltip="反查生成本凭证的源业务单据，并提供跳转（经 ErpFinVoucherBillR voucherId 反查）"
@@ -268,6 +237,9 @@
                 <action id="row-delete-button"/>
             </rowActions>
         </crud>
+        <!-- 红字冲销预览页（row-reverse-button 的 dialog page= 指向此页） -->
+        <simple name="reversePreview" form="reversePreview"/>
+
         <picker name="picker"/>
     </pages>
 </view>

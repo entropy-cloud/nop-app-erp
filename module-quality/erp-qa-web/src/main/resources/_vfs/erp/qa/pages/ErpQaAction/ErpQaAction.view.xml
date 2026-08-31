@@ -26,10 +26,9 @@
                                 + inList(warningVals) + " ? 'warning' : "
                                 + inList(primaryVals) + " ? 'primary' : 'default'";
                             return {
-                                type: "tpl",
-                                tpl: '<span class="label label-${' + expr + "}"
+                                cell: { type: "text", text: '<span class="label label-${' + expr + "}"
                                     + ">"
-                                    + "${" + labelProp + "}</span>"
+                                    + "${" + labelProp + "}</span>" }
                             };
                         ]]></c:script>
                     </gen-control>
@@ -53,10 +52,7 @@
                 <col id="status" mandatory="true" sortable="true">
                     <gen-control>
                         <c:script><![CDATA[
-                            return {
-                                type: 'tpl',
-                                tpl: '<span class="label label-${status == "COMPLETED" || status == "APPROVED" ? "success" : status == "REJECTED" || status == "CANCELLED" ? "danger" : status == "IN_PROGRESS" || status == "OPEN" ? "primary" : "default"}">${status}</span>'
-                            };
+                            return { cell: { type: 'text', text: '<span class="label label-${status == "COMPLETED" || status == "APPROVED" ? "success" : status == "REJECTED" || status == "CANCELLED" ? "danger" : status == "IN_PROGRESS" || status == "OPEN" ? "primary" : "default"}">${status}</span>' } };
                         ]]></c:script>
                     </gen-control>
                 </col>

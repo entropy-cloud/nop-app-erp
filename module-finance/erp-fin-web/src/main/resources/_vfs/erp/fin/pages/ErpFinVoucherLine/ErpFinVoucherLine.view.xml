@@ -76,28 +76,7 @@
                                     { name: 'id', label: 'ID', hidden: true },
                                     { name: 'code', label: '@i18n:common.code' },
                                     { name: 'name', label: '@i18n:common.name' }
-                                ],
-                                onEvent: {
-                                    change: {
-                                        actions: [
-                                            {
-                                                actionType: 'setValue',
-                                                args: {
-                                                    value: {
-                                                        subjectCode: '${event.data.selectedItem ? event.data.selectedItem.code : ""}',
-                                                        subjectName: '${event.data.selectedItem ? event.data.selectedItem.name : ""}',
-                                                        isAuxiliaryPartner: '${event.data.selectedItem ? (event.data.selectedItem.isAuxiliaryPartner || 0) : 0}',
-                                                        isAuxiliaryDepartment: '${event.data.selectedItem ? (event.data.selectedItem.isAuxiliaryDepartment || 0) : 0}',
-                                                        isAuxiliaryProject: '${event.data.selectedItem ? (event.data.selectedItem.isAuxiliaryProject || 0) : 0}',
-                                                        isAuxiliaryWarehouse: '${event.data.selectedItem ? (event.data.selectedItem.isAuxiliaryWarehouse || 0) : 0}',
-                                                        isAuxiliaryProduct: '${event.data.selectedItem ? (event.data.selectedItem.isAuxiliaryProduct || 0) : 0}',
-                                                        isAuxiliaryCostCenter: '${event.data.selectedItem ? (event.data.selectedItem.isAuxiliaryCostCenter || 0) : 0}'
-                                                    }
-                                                }
-                                            }
-                                        ]
-                                    }
-                                }
+                                ]
                             };
                         ]]></c:script>
                     </gen-control>
@@ -105,7 +84,7 @@
                 <col id="subjectCode">
                     <gen-control>
                         <c:script><![CDATA[
-                            return { type: 'static', name: 'subjectCode', label: '科目编码' };
+                            return { name: 'subjectCode', label: '科目编码' };
                         ]]></c:script>
                     </gen-control>
                 </col>
@@ -148,21 +127,7 @@
                                 step: 0.0001,
                                 precision: 4,
                                 validations: { minimum: 0 },
-                                validationErrors: { minimum: '借方金额不能为负' },
-                                onEvent: {
-                                    change: {
-                                        actions: [
-                                            {
-                                                actionType: 'setValue',
-                                                args: {
-                                                    value: {
-                                                        amountSource: '${debitAmount || 0}'
-                                                    }
-                                                }
-                                            }
-                                        ]
-                                    }
-                                }
+                                validationErrors: { minimum: '借方金额不能为负' }
                             };
                         ]]></c:script>
                     </gen-control>
@@ -179,21 +144,7 @@
                                 step: 0.0001,
                                 precision: 4,
                                 validations: { minimum: 0 },
-                                validationErrors: { minimum: '贷方金额不能为负' },
-                                onEvent: {
-                                    change: {
-                                        actions: [
-                                            {
-                                                actionType: 'setValue',
-                                                args: {
-                                                    value: {
-                                                        amountSource: '${creditAmount || 0}'
-                                                    }
-                                                }
-                                            }
-                                        ]
-                                    }
-                                }
+                                validationErrors: { minimum: '贷方金额不能为负' }
                             };
                         ]]></c:script>
                     </gen-control>
@@ -216,21 +167,7 @@
                                 precision: 8,
                                 value: 1,
                                 validations: { minimum: 0 },
-                                validationErrors: { minimum: '汇率不能为负' },
-                                onEvent: {
-                                    change: {
-                                        actions: [
-                                            {
-                                                actionType: 'setValue',
-                                                args: {
-                                                    value: {
-                                                        amountFunctional: '${ROUND((amountSource || 0) * (exchangeRate || 1), 4)}'
-                                                    }
-                                                }
-                                            }
-                                        ]
-                                    }
-                                }
+                                validationErrors: { minimum: '汇率不能为负' }
                             };
                         ]]></c:script>
                     </gen-control>
@@ -245,21 +182,7 @@
                                 step: 0.0001,
                                 precision: 4,
                                 validations: { minimum: 0 },
-                                validationErrors: { minimum: '原币金额不能为负' },
-                                onEvent: {
-                                    change: {
-                                        actions: [
-                                            {
-                                                actionType: 'setValue',
-                                                args: {
-                                                    value: {
-                                                        amountFunctional: '${ROUND((amountSource || 0) * (exchangeRate || 1), 4)}'
-                                                    }
-                                                }
-                                            }
-                                        ]
-                                    }
-                                }
+                                validationErrors: { minimum: '原币金额不能为负' }
                             };
                         ]]></c:script>
                     </gen-control>
@@ -267,7 +190,7 @@
                 <col id="amountFunctional">
                     <gen-control>
                         <c:script><![CDATA[
-                            return { type: 'static', name: 'amountFunctional', label: '本位币金额' };
+                            return { name: 'amountFunctional', label: '本位币金额' };
                         ]]></c:script>
                     </gen-control>
                 </col>

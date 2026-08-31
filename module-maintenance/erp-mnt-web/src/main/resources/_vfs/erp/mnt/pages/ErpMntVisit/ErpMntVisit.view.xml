@@ -26,10 +26,9 @@
                                 + inList(warningVals) + " ? 'warning' : "
                                 + inList(primaryVals) + " ? 'primary' : 'default'";
                             return {
-                                type: "tpl",
-                                tpl: '<span class="label label-${' + expr + "}"
+                                cell: { type: "text", text: '<span class="label label-${' + expr + "}"
                                     + ">"
-                                    + "${" + labelProp + "}</span>"
+                                    + "${" + labelProp + "}</span>" }
                             };
                         ]]></c:script>
                     </gen-control>
@@ -119,7 +118,7 @@
             <rowActions x:override="bounded-merge">
                 <action id="row-view-button"/>
                 <action id="row-update-button" actionType="drawer"/>
-                <action id="row-visit-wizard-button" label="执行向导" i18n-en:label="Execution Wizard" level="info" icon="fa fa-magic"
+                <action actionType="link" id="row-visit-wizard-button" label="执行向导" i18n-en:label="Execution Wizard" level="info" icon="fa fa-magic"
                         tooltip="打开维护访问执行向导（4 步：信息确认→备件消耗→执行结果→确认完成）"
                         link="/mnt-visit-wizard?id=$id">
                     <visibleOn>${status == 'SCHEDULED' || status == 'IN_PROGRESS'}</visibleOn>

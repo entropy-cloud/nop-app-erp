@@ -18,12 +18,11 @@
                             const valueProp = dispMeta?.id || 'docStatus';
                             const labelProp = propMeta?.['graphql:labelProp'] || (valueProp + '_label');
                             return {
-                                type: "tpl",
-                                tpl: '<span class="label label-${' + valueProp
+                                cell: { type: "text", text: '<span class="label label-${' + valueProp
                                     + " == 'ACTIVE' ? 'primary' : 'default'}\" "
                                     + "${" + valueProp
                                     + " == 'CANCELLED' ? \"style='text-decoration:line-through'\" : ''}>"
-                                    + "${" + labelProp + "}</span>"
+                                    + "${" + labelProp + "}</span>" }
                             };
                         ]]></c:script>
                     </gen-control>
@@ -34,12 +33,11 @@
                             const valueProp = dispMeta?.id || 'approveStatus';
                             const labelProp = propMeta?.['graphql:labelProp'] || (valueProp + '_label');
                             return {
-                                type: "tpl",
-                                tpl: '<span class="label label-${' + valueProp
+                                cell: { type: "text", text: '<span class="label label-${' + valueProp
                                     + " == 'APPROVED' ? 'success' : "
                                     + valueProp + " == 'REJECTED' ? 'danger' : "
                                     + valueProp + " == 'SUBMITTED' ? 'info' : 'default'}\">"
-                                    + "${" + labelProp + "}</span>"
+                                    + "${" + labelProp + "}</span>" }
                             };
                         ]]></c:script>
                     </gen-control>
@@ -159,7 +157,7 @@
                         </data>
                     </drawer>
                 </action>
-                <action id="row-view-ledger-link-button" label="查看流水" i18n-en:label="View Transactions" level="primary" icon="fa fa-arrow-right"
+                <action actionType="link" id="row-view-ledger-link-button" label="查看流水" i18n-en:label="View Transactions" level="primary" icon="fa fa-arrow-right"
                         tooltip="跳转到库存流水列表（带移动单上下文筛选）"
                         link="/ErpInvStockLedger-main?filter_moveId=${id}"/>
                 <action id="row-view-voucher-button" label="关联凭证" i18n-en:label="Linked Voucher" level="info" icon="fa fa-link"
