@@ -31,6 +31,7 @@ import io.nop.auth.dao.entity.NopAuthRole;
 import io.nop.auth.dao.entity.NopAuthUser;
 import io.nop.auth.dao.entity.NopAuthUserRole;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import java.sql.Timestamp;
 import java.time.LocalDate;
@@ -63,6 +64,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         initDatabaseSchema = OptionalBoolean.TRUE,
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpCsCatalogFulfillmentEngine extends JunitAutoTestCase {
+
+    // 冻结时钟（bug 2026-09-01-0058）：子工单 TK 月前缀经 nopSysCalendar→CoreMetrics 联动冻结
+    @RegisterExtension
+    static CsFrozenClockExtension frozenClock = new CsFrozenClockExtension();
 
     static final String CUSTOMER_ID = "9401";
     static final String TICKET_TYPE_ID = "9402";

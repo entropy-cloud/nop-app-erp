@@ -31,6 +31,7 @@ import io.nop.orm.IOrmTemplate;
 import io.nop.sys.dao.entity.NopSysCodeRule;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import java.sql.Timestamp;
 import java.time.LocalDate;
@@ -64,6 +65,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         initDatabaseSchema = OptionalBoolean.TRUE,
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpCsTicketCreateEnrichment extends JunitAutoTestCase {
+
+    // 冻结时钟（bug 2026-09-01-0058）：TK 月前缀/序列行名经 nopSysCalendar→CoreMetrics 联动冻结，
+    // 快照对齐参考日 2026-07（TK202607* / cs_ticket_code_seq_202607）
+    @RegisterExtension
+    static CsFrozenClockExtension frozenClock = new CsFrozenClockExtension();
 
     static final String CUSTOMER_ID = "5301";
     static final String TICKET_TYPE_ID = "6301";

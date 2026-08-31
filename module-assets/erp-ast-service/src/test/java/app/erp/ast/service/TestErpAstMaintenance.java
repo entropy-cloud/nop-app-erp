@@ -22,6 +22,7 @@ import io.nop.graphql.core.engine.IGraphQLEngine;
 import io.nop.orm.IOrmTemplate;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -48,6 +49,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         initDatabaseSchema = OptionalBoolean.TRUE,
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpAstMaintenance extends JunitAutoTestCase {
+
+    // 冻结时钟（bug 2026-09-01-0058）：折旧计划重算基数月经 CoreMetrics 派生，快照对齐参考日 2026-07
+    @RegisterExtension
+    static AstFrozenClockExtension astClock = new AstFrozenClockExtension();
 
     private static final IServiceContext CTX = new ServiceContextImpl();
 

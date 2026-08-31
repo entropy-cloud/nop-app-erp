@@ -65,9 +65,11 @@ public class ErpAstDepreciationScheduleRecalculateForCapitalizationMaintenancePr
             BigDecimal monthly = depreciableBase.divide(BigDecimal.valueOf(remainingMonths), 4, RoundingMode.HALF_UP);
 
             String lastExecutedPeriod = facade.findLastExecutedPeriod(assetId);
+            // 经 CoreMetrics IClock 时间线取当前月（与域冻结时钟测试扩展联动；直读 YearMonth.now()
+            // 会绕过冻结时钟，使重算期次快照随月初滚动漂移——bug 2026-09-01-0058）
             java.time.YearMonth baseMonth = lastExecutedPeriod != null
                     ? java.time.YearMonth.parse(lastExecutedPeriod).plusMonths(1)
-                    : java.time.YearMonth.now();
+                    : java.time.YearMonth.from(io.nop.api.core.time.CoreMetrics.today());
 
             for (int i = 0; i < remainingMonths; i++) {
                 java.time.YearMonth periodMonth = baseMonth.plusMonths(i);

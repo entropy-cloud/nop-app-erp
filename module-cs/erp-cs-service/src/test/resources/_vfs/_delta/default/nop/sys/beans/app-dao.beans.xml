@@ -17,4 +17,9 @@
         <property name="ormTemplate" ref="nopOrmTemplate" ioc:lazy-property="true"/>
         <property name="transactionTemplate" ref="nopTransactionTemplate" ioc:lazy-property="true"/>
     </bean>
+
+    <!-- CodeRule 日期源对齐冻结时钟（bug 2026-09-01-0058）：平台 DefaultSysCalendar 直读系统时钟，
+         TK 编码月前缀/按月序列名不受 ThreadLocalFrozenClock 控制，月初滚动快照翻红。
+         经 CoreMetricsSysCalendar 回归 IClock 时间线，随 CsFrozenClockExtension 冻结联动。 -->
+    <bean id="nopSysCalendar" class="app.erp.common.test.CoreMetricsSysCalendar" x:override="replace"/>
 </beans>
