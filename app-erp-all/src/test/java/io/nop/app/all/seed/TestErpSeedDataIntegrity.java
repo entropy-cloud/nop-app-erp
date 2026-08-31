@@ -5,7 +5,9 @@ import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.ioc.BeanContainer;
 import io.nop.commons.util.StringHelper;
 import io.nop.core.initialize.CoreInitialization;
+import io.nop.core.resource.IResource;
 import io.nop.core.resource.ResourceHelper;
+import io.nop.core.resource.VirtualFileSystem;
 import io.nop.core.unittest.BaseTestCase;
 import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
@@ -19,11 +21,14 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -32,8 +37,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  *
  * <p>两个通用校验：
  * <ul>
- *   <li>{@link #testAllSeedTablesLoadable()}——枚举 {@code IDaoProvider.getEntityNames()}（全量含平台实体，
- *       Phase 1 Decision (a)：418 = app.erp.* 352 + 平台 66），逐实体 {@code findAll()} 不抛异常；
+ *   <li>{@link #testAllSeedTablesLoadable()}——枚举 {@code IDaoProvider.getEntityNames()}（动态全量含平台实体，
+ *       随 ORM 演进自动扩展；2026-09-01 快照 = app.erp.* 363 + 平台 66；计数口径权威登记处 =
+ *       {@code docs/architecture/seed-data.md}「全量化裁决」段对账表，漂移 &gt; 0 时先更新对账表再消费——
+ *       M0.1 残留风险条款更新协议），逐实体 {@code findAll()} 不抛异常；
  *       存在 seed CSV 的表行数 &gt; 0（镜像 {@code DataInitInitializer.loadCsvData} 的 CSV 查找逻辑）。</li>
  *   <li>{@link #testNonNullRelationKeysPointToExistingRows()}——逐实体经
  *       {@code getEntityModel().getRelations()} 取全部 <b>to-one</b> 关系，逐行取 join leftProp 值，
@@ -42,9 +49,25 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  *       （Phase 1 Decision (a) 语义精确；实证当前零命中）。to-many 为反向关系不重复校验。</li>
  * </ul>
  *
- * <p>白名单豁免机制：{@link #WHITELIST_KEYS} 三元组 (ownerEntity, relationName, key) 常量表。
- * Phase 1 初扫 722 个非空 FK 值零悬空，当前白名单为空；未来 seed 追加引入合法弱指针/占位引用时在此登记。
- * 占位软引用（如 spc_chart.parameterId=0，ORM 无 {@code <to-one>}）天然跳过无需登记。
+ * <p>M0.2 门禁强化（plan 2026-09-01-0527-1，按 M0.1 裁决口径锚定）新增两断言：
+ * <ul>
+ *   <li>{@link #testAdjudicatedScopePinned()}——app.erp.* 实体计数锚定 M0.1 裁决快照常量
+ *       {@link #EXPECTED_APP_ERP_ENTITY_COUNT}（scope-pinning，防 ORM 演进口径漂移静默通过；M0.1 目标集
+ *       口径 = className 唯一计数 363）+ 已知模型声明缺 className 属性实体集锚定
+ *       （{@link #EXPECTED_MODEL_CLASSNAME_OMITTED_ENTITIES}，2026-09-01 实仓核实 finance 域 5 个，
+ *       运行时实体集 = 363 + 5）+ sys_* 语义实体（{@code ErpSysNotification}/
+ *       {@code ErpSysNotificationRead}/{@code ErpSysConfig}）在 app.erp.* 集内（M0.1 计入裁决）；
+ *       平台实体（{@code NopAuthUser}）在动态 findAll 全量语义内但不计入 363 目标集常量（M0.1 排除裁决）。</li>
+ *   <li>{@link #testSeedAssetInventoryBaselines()}——零孤儿 CSV（{@code _init-data/} 每个 {@code .csv} ↔
+ *       已知实体 tableName 精确匹配；{@code erp_md_uom}/{@code erp_md_uom_conversion} 软缩写即真实表名，
+ *       精确匹配天然覆盖）+ app.erp.* 与平台 CSV 基线常量（{@link #EXPECTED_APP_ERP_CSV_COUNT} 93 +
+ *       {@link #EXPECTED_PLATFORM_CSV_COUNT} 4，对齐 plan 1143-1「97 CSV」实证基线快照）。</li>
+ * </ul>
+ *
+ * <p>白名单豁免机制核验注记（M0.2 Proof，2026-09-01）：{@link #WHITELIST_KEYS} 三元组 (ownerEntity,
+ * relationName, key) 登记纪律 + 每项豁免注明证据来源要求 + 占位软引用（ORM 无 {@code <to-one>} 关系，如
+ * {@code spc_chart.parameterId=0}）天然跳过语义，经与 M0.1 裁决对账均满足 roadmap M0.2「白名单豁免常量表」
+ * 需求，机制无需扩展（建成于 plan 2000-1；本注记为核验结论，非豁免登记处）。
  *
  * <p>采用 {@code BaseTestCase} + 手动 {@code CoreInitialization.initialize()}（镜像
  * {@code TestAuthSeedLoadingProof}），因 NopJunitExtension ALL_LAZY 模式下
@@ -53,6 +76,57 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class TestErpSeedDataIntegrity extends BaseTestCase {
 
     static final String INIT_DATA_LOCATION = "/_init-data/";
+
+    /**
+     * sys_* 语义 app.erp.* 实体（M0.1 分项裁决：计入 363 目标集）。
+     */
+    static final String ENTITY_ERP_SYS_NOTIFICATION = "app.erp.notify.dao.entity.ErpSysNotification";
+    static final String ENTITY_ERP_SYS_NOTIFICATION_READ = "app.erp.notify.dao.entity.ErpSysNotificationRead";
+    static final String ENTITY_ERP_SYS_CONFIG = "app.erp.md.dao.entity.ErpSysConfig";
+
+    /**
+     * 平台实体代表（M0.1 排除裁决：在动态 findAll 全量语义内，不计入 363 目标集常量）。
+     */
+    static final String ENTITY_PLATFORM_NOP_AUTH_USER = "io.nop.auth.dao.entity.NopAuthUser";
+
+    /**
+     * 实体模型声明缺 className 属性的 app.erp.* 实体（2026-09-01 实仓核实：finance 域 5 个手写实体）。
+     *
+     * <p>这些实体定义完整（列/关系/物理表/生成 Java 类均在，codegen 与运行时按 entity name 默认补齐
+     * className），但 {@code rg 'className="app\.erp\.'} 口径天然遗漏它们——M0.1 裁决 363 与「270 缺 seed
+     * 规格表」按该口径编制，未收录此 5 个（它们也无 seed CSV，实际运行时 app.erp.* 实体集 = 363 + 5）。
+     * 新增同类实体时按更新协议先对账 seed-data.md 再扩充本集合；模型补齐 className 属性后同步移除。
+     */
+    static final Set<String> EXPECTED_MODEL_CLASSNAME_OMITTED_ENTITIES = Set.of(
+            "app.erp.fin.dao.entity.ErpFinCashForecast",
+            "app.erp.fin.dao.entity.ErpFinCreditFacility",
+            "app.erp.fin.dao.entity.ErpFinNotesDiscount",
+            "app.erp.fin.dao.entity.ErpFinNotesPayable",
+            "app.erp.fin.dao.entity.ErpFinNotesReceivable");
+
+    /**
+     * app.erp.* 实体唯一计数快照常量（M0.1 裁决口径，2026-09-01 实仓复算）。
+     *
+     * <p>更新协议（M0.1 残留风险条款，禁止跳步）：ORM 演进后先重跑
+     * {@code rg -o 'className="app\.erp\.[^"]+"' module-&#42;/model/*.orm.xml --no-filename | sort -u | wc -l}
+     * 取唯一计数 → 更新 {@code docs/architecture/seed-data.md}「全量化裁决」段对账表 → 再改本常量；
+     * 禁止跳过对账表直接改常量。
+     */
+    static final int EXPECTED_APP_ERP_ENTITY_COUNT = 363;
+
+    /**
+     * app.erp.* 实体 seed CSV 基线常量（plan 1143-1「97 CSV」实证基线快照的 app.erp.* 分项）。
+     *
+     * <p>M1.x 每批 seed 落地后的随批更新协议：更新本常量与 {@link #EXPECTED_PLATFORM_CSV_COUNT} +
+     * 同步 {@code docs/architecture/seed-data.md}「全量化裁决」段对账表 + 在该批 plan 中登记。
+     */
+    static final int EXPECTED_APP_ERP_CSV_COUNT = 93;
+
+    /**
+     * 平台实体 seed CSV 基线常量（{@code nop_auth_user}/{@code nop_auth_user_role}/{@code nop_auth_role}/
+     * {@code nop_sys_code_rule} 共 4；更新协议同 {@link #EXPECTED_APP_ERP_CSV_COUNT}）。
+     */
+    static final int EXPECTED_PLATFORM_CSV_COUNT = 4;
 
     /**
      * 白名单豁免表：(ownerEntity, relationName, key) 三元组。
@@ -137,6 +211,97 @@ public class TestErpSeedDataIntegrity extends BaseTestCase {
         }
         assertTrue(emptyTables.isEmpty(),
                 "以下有 seed CSV 的表行数为 0（悬空 seed 文件或加载失败）:\n" + String.join("\n", emptyTables));
+    }
+
+    /**
+     * M0.2 裁决口径 scope-pinning：门禁锚定 app.erp.* 实体计数与 M0.1 裁决快照常量一致，
+     * ORM 增删实体时计数漂移显式失败而非静默通过。
+     *
+     * <p>M0.1 目标集口径 = className 唯一计数（363）。运行时 getEntityNames() 实测还含 5 个模型声明
+     * 缺 className 属性的实体（grep 口径遗漏项，见 {@link #EXPECTED_MODEL_CLASSNAME_OMITTED_ENTITIES}；
+     * 运行时 className 按 name 默认补齐，无法经 {@code getClassName()} 区分），故运行时计数断言 =
+     * 363 + 已知遗漏集，双向漂移均显式失败。
+     */
+    @Test
+    public void testAdjudicatedScopePinned() {
+        IDaoProvider daoProvider = BeanContainer.getBeanByType(IDaoProvider.class);
+        Set<String> entityNames = new TreeSet<>(daoProvider.getEntityNames());
+
+        Set<String> appErpEntities = new TreeSet<>();
+        for (String entityName : entityNames) {
+            if (entityName.startsWith("app.erp."))
+                appErpEntities.add(entityName);
+        }
+
+        assertEquals(EXPECTED_APP_ERP_ENTITY_COUNT + EXPECTED_MODEL_CLASSNAME_OMITTED_ENTITIES.size(),
+                appErpEntities.size(),
+                "app.erp.* 运行时实体计数与 M0.1 裁决快照常量（363）+ 已知声明缺 className 集合（5）漂移。"
+                        + "更新协议（M0.1 残留风险条款，禁止跳步）：先重跑 rg -o 'className=\"app\\.erp\\.[^\"]+\"' "
+                        + "module-*/model/*.orm.xml --no-filename | sort -u | wc -l 取唯一计数"
+                        + " → 更新 docs/architecture/seed-data.md「全量化裁决」段对账表 → 再改 EXPECTED_APP_ERP_ENTITY_COUNT；"
+                        + "若为新增声明缺 className 实体，同时扩充 EXPECTED_MODEL_CLASSNAME_OMITTED_ENTITIES");
+        assertTrue(appErpEntities.containsAll(EXPECTED_MODEL_CLASSNAME_OMITTED_ENTITIES),
+                "已知声明缺 className 属性的实体须在运行时实体集内");
+
+        // M0.1 计入裁决：sys_* 语义 className 实体在 363 目标集内
+        assertTrue(appErpEntities.contains(ENTITY_ERP_SYS_NOTIFICATION),
+                ENTITY_ERP_SYS_NOTIFICATION + " 必须在 app.erp.* 裁决目标集内（M0.1 计入）");
+        assertTrue(appErpEntities.contains(ENTITY_ERP_SYS_NOTIFICATION_READ),
+                ENTITY_ERP_SYS_NOTIFICATION_READ + " 必须在 app.erp.* 裁决目标集内（M0.1 计入）");
+        assertTrue(appErpEntities.contains(ENTITY_ERP_SYS_CONFIG),
+                ENTITY_ERP_SYS_CONFIG + " 必须在 app.erp.* 裁决目标集内（M0.1 计入）");
+
+        // M0.1 排除裁决：平台实体在动态 findAll 全量语义内，但不计入 363 目标集常量
+        assertTrue(entityNames.contains(ENTITY_PLATFORM_NOP_AUTH_USER),
+                ENTITY_PLATFORM_NOP_AUTH_USER + " 必须在动态 findAll 全量语义内（平台 66 表随 ORM 演进全量枚举）");
+        assertFalse(appErpEntities.contains(ENTITY_PLATFORM_NOP_AUTH_USER),
+                ENTITY_PLATFORM_NOP_AUTH_USER + " 属平台资产管理边界，不计入 app.erp.* 目标集（M0.1 排除）");
+    }
+
+    /**
+     * M0.2 seed 资产清单断言：零孤儿 CSV（无对应实体表的 CSV 是 M1.x 新增命名错误的典型形态）
+     * + app.erp.* 与平台 CSV 基线常量对账（对齐 plan 1143-1「97 CSV」实证基线，为 M1.x 每批落地提供对账基准）。
+     */
+    @Test
+    public void testSeedAssetInventoryBaselines() {
+        IDaoProvider daoProvider = BeanContainer.getBeanByType(IDaoProvider.class);
+
+        // 已知实体 tableName 集（表名以 ORM 实体定义为唯一权威；分类按实体名前缀，erp_sys_* 等
+        // sys 语义表归属由 className 决定而非文件名前缀）
+        Map<String, String> tableNameToEntity = new HashMap<>();
+        for (String entityName : daoProvider.getEntityNames()) {
+            IEntityModel model = ((IOrmEntityDao<?>) daoForEntity(entityName)).getEntityModel();
+            tableNameToEntity.putIfAbsent(model.getTableName(), entityName);
+        }
+
+        List<IResource> csvFiles = new ArrayList<>();
+        List<String> orphanCsvs = new ArrayList<>();
+        int appErpCsvCount = 0;
+        int platformCsvCount = 0;
+        for (IResource child : VirtualFileSystem.instance().getChildren(INIT_DATA_LOCATION)) {
+            String fileName = child.getName();
+            if (!fileName.endsWith(".csv"))
+                continue; // zz-sequence-advance.sql 等非 CSV 资产不在本断言范围
+            csvFiles.add(child);
+            String tableName = fileName.substring(0, fileName.length() - ".csv".length());
+            String entityName = tableNameToEntity.get(tableName);
+            if (entityName == null) {
+                orphanCsvs.add(fileName);
+            } else if (entityName.startsWith("app.erp.")) {
+                appErpCsvCount++;
+            } else {
+                platformCsvCount++;
+            }
+        }
+        assertFalse(csvFiles.isEmpty(), "_init-data/ 必须存在 seed CSV 资产");
+        assertTrue(orphanCsvs.isEmpty(),
+                "发现孤儿 CSV（_init-data/ 下无对应实体表的 CSV，M1.x 新增 CSV 命名错误典型形态）:\n"
+                        + String.join("\n", orphanCsvs));
+
+        assertEquals(EXPECTED_APP_ERP_CSV_COUNT, appErpCsvCount,
+                "app.erp.* CSV 基线漂移：按常量 javadoc 随批更新协议对账后更新常量 + 同步 seed-data.md 对账表 + 该批 plan 登记");
+        assertEquals(EXPECTED_PLATFORM_CSV_COUNT, platformCsvCount,
+                "平台 CSV 基线漂移：按常量 javadoc 随批更新协议对账后更新常量 + 同步 seed-data.md 对账表 + 该批 plan 登记");
     }
 
     @Test
