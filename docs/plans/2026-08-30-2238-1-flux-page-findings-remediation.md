@@ -1,6 +1,6 @@
 # 2026-08-30-2238-1-flux-page-findings-remediation Flux 页面验证发现集修复（ERP 源 + 上游 3 项）
 
-> Plan Status: active
+> Plan Status: completed
 > Last Reviewed: 2026-08-30
 > Source: plan 2026-08-30-1126-1（Flux 页面导出+编译验证工具链）首跑发现集；用户指令「修复 nop-app-erp 中发现的问题」
 > Related: `docs/architecture/flux-page-export-and-validation.md`（工具链契约）、plan 2026-08-30-1126-1（Follow-up：发现项修复切片）
@@ -155,7 +155,7 @@ Skill: none
 - [x] Add：三仓日志（ERP docs/logs/2026/08-30.md 两段 + nop-entropy ai-dev/logs/2026/08-30.md 追加 V2 文档变更段）+ 发现分账终态补记（本节下方「终态对账」）
 - [x] Follow-up：平台页残余（variant 4 处手写字面量、static 90 等）已登记 Deferred But Adjudicated → successor 触发条件落盘
 
-**终态对账（2026-08-31）**：erp/* 892 error → **0**（erp 子树 validator exit 0，999 页导出 0 失败）；执行中范围扩展 V1-V4 另修 9 看板 + payroll 过滤失效（valuesPath）、asn-flow 交互范式、voucher/recon 预览模板、6 处测试侧腐化。视觉终态：dashboards.snapshot 10/10（KPI 激活基线重录）+ dashboards.visual 10/10（KPI token 全命中 value-spec 权威值）。
+**终态对账（2026-08-31，复审核准口径）**：erp/* 892 error → **0**（erp 子树 validator exit 0，999 页导出 0 失败）；执行中范围扩展 V1-V5 另修 **8 看板 + payroll 过滤失效（V1，valuesPath）**、asn-flow 交互范式、voucher/recon 预览模板、6 处测试侧腐化，及 **53 文件 valuesPath 同型清剿（V5，含 cs 绩效看板与 report/wizard/picker 集群；复审独立重扫 0 残留）**。视觉终态：dashboards.snapshot 10/10（KPI 激活基线重录）+ dashboards.visual 10/10（KPI token 全命中 value-spec 权威值）。
 
 Exit Criteria:
 
@@ -199,7 +199,7 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: 首轮结束审计 NEEDS_REVISION → MF-1..MF-4 处置完成，待复审。
+Status Note: **completed（2026-08-31 复审 APPROVE 闭合，无需第三轮审计）**。
 
 MF 处置记录（2026-08-31）：
 
@@ -210,8 +210,9 @@ MF 处置记录（2026-08-31）：
 
 Closure Audit Evidence:
 
-- Auditor / Agent: 首轮 agent_1caacaf2-2e40-45b0-a1be-7775d64b4a90（NEEDS_REVISION，MF-1..MF-4）；复审 pending
-- Evidence: 审计报告全文见会话记录；MF 处置提交 7e324192fc（entropy master）/ 2eef3c348（ERP）；验证产物 /tmp/vis-kpi6.log、/tmp/vis-snap2.log、/tmp/beh6.log、/tmp/reg1.log、/tmp/reg2.log、/tmp/validate-final2.log、/tmp/full-build.log、/tmp/checker.log
+- Auditor / Agent: 首轮 agent_1caacaf2-2e40-45b0-a1be-7775d64b4a90（NEEDS_REVISION，MF-1..MF-4）；复审同 agent（2026-08-31）——**APPROVE**：MF-1..4 全部 CLOSED（master 7e324192fc 三文件核验 + `git log -S __crud_load__` 命中；prj 死引用删除 + 口径勘误留痕；同型缺陷独立重扫 0 残留 + 导出语料 valuesPath 实证；全文 `- [ ]` 计数 0），无第三轮义务
+- Evidence: 两轮审计报告全文见会话记录；MF 处置提交 7e324192fc（entropy master）/ 2eef3c348（ERP）；验证产物 /tmp/vis-kpi6.log、/tmp/vis-snap2.log、/tmp/beh6.log、/tmp/reg1.log、/tmp/reg2.log、/tmp/validate-final2.log、/tmp/full-build.log、/tmp/checker.log
+- 复审 CONCERN 登记（不阻塞）：(1) flux-web.xlib 两树存在非本计划的 G-001 块漂移（master 1063f7f4b9 未移植 fix-ai-check），归 G-001 owner 计划跟进；(2) V5 行为实证探针未留存（以导出语料 + reg2/validate-final2 回归代偿），后续关键行为实证宜可重放 spec 固化
 
 Follow-up:
 
