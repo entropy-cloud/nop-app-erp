@@ -327,15 +327,16 @@ public class ErpPrjProjectSettlementProcessor {
     }
 
     /**
-     * P1-CK-prj-004：同项目未取消的 FINAL/CLOSE 结算单（重复创建守卫）。INTERIM 不计。
+     * P1-CK-prj-004（plan 2026-08-31-1426-2 守卫收窄）：同项目未取消的**指定类型**结算单（同类型重复创建守卫）。
+     * FINAL（竣工结算）与 CLOSE（转固结算）业务语义并列（profitability.md §关键流程 2），跨类型凭证语义不同
+     * 不构成重复确认，跨类型放行（CLOSE→FINAL 两阶段链合法）；INTERIM 不计。
      */
-    public ErpPrjProjectSettlement findActiveFinalOrCloseSettlement(String projectId) {
+    public ErpPrjProjectSettlement findActiveSettlementOfType(String projectId, String settlementType) {
         IEntityDao<ErpPrjProjectSettlement> dao = daoProvider.daoFor(ErpPrjProjectSettlement.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("projectId", projectId));
         q.addFilter(ne("docStatus", ErpPrjConstants.DOC_STATUS_CANCELLED));
-        q.addFilter(io.nop.api.core.beans.FilterBeans.in("settlementType",
-                java.util.Arrays.asList(ErpPrjConstants.SETTLEMENT_TYPE_FINAL, ErpPrjConstants.SETTLEMENT_TYPE_CLOSE)));
+        q.addFilter(eq("settlementType", settlementType));
         q.setLimit(1);
         List<ErpPrjProjectSettlement> list = dao.findAllByQuery(q);
         return list.isEmpty() ? null : list.get(0);

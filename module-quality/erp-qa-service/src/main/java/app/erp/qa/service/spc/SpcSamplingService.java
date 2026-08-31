@@ -10,7 +10,6 @@ import app.erp.qa.dao.entity.ErpQaSpcChart;
 import app.erp.qa.dao.entity.ErpQaSpcSample;
 import app.erp.qa.service.ErpQaConstants;
 import app.erp.qa.service.ErpQaErrors;
-import io.nop.api.core.beans.PageBean;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.api.core.time.CoreMetrics;
@@ -463,13 +462,15 @@ public class SpcSamplingService {
     }
 
     private ErpQaInspection findInspectionByCode(String code) {
-        // P1-CK-qa-001：I*Biz 化——inspectionBiz.findPage 等价于 dao().findAllByQuery（service-layer.md R2c 收敛）
+        // P1-CK-qa-001：I*Biz 化——findList(q, null, ctx) 等价于 dao().findAllByQuery（service-layer.md R2c 收敛）。
+        // plan 2026-08-31-1426-2 修正：F2.12 原实现误用 findPage(q, DEFAULT_SELECTION, ctx)——DEFAULT_SELECTION
+        // 不含 total/items 字段，doFindPageByQueryDirectly 短路返回空 PageBean，检验单按 code 查找恒空
+        // （SPC 采样的幂等键/候选过滤失效）。
         QueryBean q = new QueryBean();
         q.addFilter(eq("code", code));
         q.setLimit(1);
-        PageBean<ErpQaInspection> page = inspectionBiz.findPage(q, io.nop.api.core.beans.FieldSelectionBean.DEFAULT_SELECTION, new io.nop.core.context.ServiceContextImpl());
-        List<ErpQaInspection> items = page.getItems();
-        return items.isEmpty() ? null : items.get(0);
+        List<ErpQaInspection> items = inspectionBiz.findList(q, null, new io.nop.core.context.ServiceContextImpl());
+        return items == null || items.isEmpty() ? null : items.get(0);
     }
 
     @SuppressWarnings("unchecked")

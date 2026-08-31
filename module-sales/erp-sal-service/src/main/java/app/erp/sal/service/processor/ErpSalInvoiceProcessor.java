@@ -414,7 +414,7 @@ public class ErpSalInvoiceProcessor {
         io.nop.api.core.beans.query.QueryBean q = new io.nop.api.core.beans.query.QueryBean();
         q.addFilter(io.nop.api.core.beans.FilterBeans.eq("billCode", invoiceCode));
         q.addFilter(io.nop.api.core.beans.FilterBeans.eq("businessType", app.erp.fin.dao.ErpFinBusinessType.AR_INVOICE.name()));
-        for (ErpFinVoucherBillR link : voucherBillRBiz.findList(q, null, null)) {
+        for (ErpFinVoucherBillR link : voucherBillRBiz.findList(q, null, new io.nop.core.context.ServiceContextImpl())) {
             if (link.getVoucherId() == null) {
                 continue;
             }

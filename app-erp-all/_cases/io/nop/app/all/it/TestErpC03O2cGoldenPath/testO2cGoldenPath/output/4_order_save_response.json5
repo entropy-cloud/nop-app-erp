@@ -1,7 +1,7 @@
 {
   "data": {
     "id": "100003",
-    "code": "@var:ErpSalOrder@code",
+    "code": "@var:ErpB2bEdiDoc@relatedBillCode",
     "orgId": "2",
     "customerId": "1",
     "warehouseId": "1",

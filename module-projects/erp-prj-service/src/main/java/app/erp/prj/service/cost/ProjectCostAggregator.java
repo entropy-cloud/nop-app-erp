@@ -10,8 +10,6 @@ import app.erp.prj.dao.entity.ErpPrjProject;
 import app.erp.prj.dao.entity.ErpPrjProjectType;
 import app.erp.prj.dao.entity.ErpPrjTimesheet;
 import app.erp.prj.service.ErpPrjConstants;
-import io.nop.api.core.beans.FieldSelectionBean;
-import io.nop.api.core.beans.PageBean;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.time.CoreMetrics;
 import io.nop.core.context.ServiceContextImpl;
@@ -123,10 +121,12 @@ public class ProjectCostAggregator {
         QueryBean q = new QueryBean();
         q.addFilter(eq("sourceBillType", ErpPrjConstants.SOURCE_BILL_TYPE_TIMESHEET));
         q.addFilter(eq("sourceBillCode", timesheet.getCode()));
-        // P1-CK-prj-001：I*Biz 化——lineBiz.findPage 等价于 dao().findAllByQuery（service-layer.md R2c 收敛）
-        PageBean<ErpPrjCostCollectionLine> page = lineBiz.findPage(q, FieldSelectionBean.DEFAULT_SELECTION, new ServiceContextImpl());
-        List<ErpPrjCostCollectionLine> lines = page.getItems();
-        if (lines.isEmpty()) {
+        // P1-CK-prj-001：I*Biz 化——findList(q, null, ctx) 等价于 dao().findAllByQuery（service-layer.md R2c 收敛）。
+        // plan 2026-08-31-1426-2 修正：F2.12 原实现误用 findPage(q, DEFAULT_SELECTION, ctx)——DEFAULT_SELECTION
+        // 不含 total/items 字段，doFindPageByQueryDirectly 短路返回空 PageBean（total=-1/items=null），
+        // 回退查询恒空 → 归集行永不回退（业账分叉复发）。
+        List<ErpPrjCostCollectionLine> lines = lineBiz.findList(q, null, new ServiceContextImpl());
+        if (lines == null || lines.isEmpty()) {
             return;
         }
         BigDecimal total = BigDecimal.ZERO;

@@ -38,6 +38,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 import static io.nop.api.core.beans.FilterBeans.eq;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
@@ -251,6 +252,41 @@ public class TestErpPrjProjectSettlement extends JunitAutoTestCase {
 
         ErpAstAsset assetAfter = daoProvider.daoFor(ErpAstAsset.class).getEntityById(assetCardId);
         assertEquals("DRAFT", assetAfter.getStatus(), "cancel 后卡片状态回退 DRAFT（P1-CK-prj-005）");
+    }
+
+    /**
+     * P1-CK-prj-004（plan 2026-08-31-1426-2 守卫收窄）：同项目已存在未取消的 CLOSE 结算单时，
+     * 重复 createSettlement(CLOSE) 须抛 {@link ErpPrjErrors#ERR_SETTLEMENT_ALREADY_EXISTS}
+     * （收窄后 CLOSE 侧拒绝路径覆盖——镜像 testDuplicateFinalSettlementRejected）；
+     * 同时验证跨类型放行：已有 CLOSE 时 createSettlement(FINAL) 不被守卫拦截（CLOSE→FINAL
+     * 两阶段链合法，profitability.md §关键流程 2 FINAL/CLOSE 语义并列）。
+     */
+    @Test
+    public void testDuplicateCloseSettlementRejectedAndCrossTypeAllowed() {
+        String[] holder = new String[1];
+        ormTemplate.runInSession(session -> {
+            seedFullSetup("STL-DUP-CLOSE");
+            holder[0] = seedProjectWithBillingAndCost("PRJ-STL-DUPC", "重复转固结算测试项目");
+            return null;
+        });
+        ormTemplate.runInSession(() -> pnlBiz.refreshPnl(holder[0], null, null, CTX));
+
+        // 首次创建 CLOSE：成功
+        ormTemplate.runInSession(session -> settlementBiz.createSettlement(holder[0],
+                ErpPrjConstants.SETTLEMENT_TYPE_CLOSE, CTX));
+
+        // 重复创建 CLOSE：抛 ERR_SETTLEMENT_ALREADY_EXISTS（同类型防重）
+        NopException ex = assertThrows(NopException.class,
+                () -> ormTemplate.runInSession(session -> settlementBiz.createSettlement(holder[0],
+                        ErpPrjConstants.SETTLEMENT_TYPE_CLOSE, CTX)));
+        assertEquals(ErpPrjErrors.ERR_SETTLEMENT_ALREADY_EXISTS.getErrorCode(), ex.getErrorCode(),
+                "重复 CLOSE 结算拒绝（P1-CK-prj-004 CLOSE 侧）");
+        assertEquals(ErpPrjConstants.SETTLEMENT_TYPE_CLOSE, ex.getParam(ErpPrjErrors.ARG_SETTLEMENT_TYPE),
+                "错误携带 settlementType=CLOSE");
+
+        // 跨类型放行：已有 CLOSE 时创建 FINAL 不被守卫拦截（CLOSE→FINAL 两阶段合法）
+        assertDoesNotThrow(() -> ormTemplate.runInSession(session -> settlementBiz.createSettlement(holder[0],
+                ErpPrjConstants.SETTLEMENT_TYPE_FINAL, CTX)), "已有 CLOSE 时 FINAL 创建放行（守卫收窄）");
     }
 
     // ---------- seed helpers ----------

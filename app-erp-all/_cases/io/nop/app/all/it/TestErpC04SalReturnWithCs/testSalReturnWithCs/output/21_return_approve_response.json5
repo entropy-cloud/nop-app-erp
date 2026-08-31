@@ -1,7 +1,7 @@
 {
   "data": {
     "id": "@var:returnId",
-    "code": "@var:ErpFinArApItem@sourceBillCode_1",
+    "code": "@var:ErpSalReturn@code",
     "orgId": "2",
     "deliveryId": "@var:deliveryId",
     "customerId": "1",

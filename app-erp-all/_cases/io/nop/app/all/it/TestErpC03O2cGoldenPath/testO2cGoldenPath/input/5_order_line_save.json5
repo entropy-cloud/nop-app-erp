@@ -4,6 +4,7 @@
       orderId: "@var:orderId",
       lineNo: 1,
       materialId: "1",
+      skuId: "1",
       uoMId: "1",
       quantity: 10,
       unitPrice: 100,

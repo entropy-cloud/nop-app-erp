@@ -89,7 +89,9 @@ public class ReturnRefundOrchestrator {
         QueryBean q = new QueryBean();
         q.addFilter(in("deliveryLineId", deliveryLineIds));
         Set<String> invoiceIds = new HashSet<>();
-        for (ErpSalInvoiceLine il : invoiceLineBiz.findList(q, null, null)) {
+        // plan 2026-08-31-1426-2 修正：I*Biz 化时 context 误传 null——管道内 getEvalScope() NPE；
+        // 显式构造 ServiceContextImpl（无请求上下文的内部编排场景）。
+        for (ErpSalInvoiceLine il : invoiceLineBiz.findList(q, null, new io.nop.core.context.ServiceContextImpl())) {
             if (il.getInvoiceId() != null) {
                 invoiceIds.add(il.getInvoiceId());
             }

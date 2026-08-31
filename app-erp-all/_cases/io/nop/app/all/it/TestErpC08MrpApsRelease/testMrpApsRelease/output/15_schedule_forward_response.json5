@@ -1,12 +1,12 @@
 {
   "data": {
+    "bottleneckMachineIds": [],
     "conflicts": [],
     "feasible": true,
+    "machineLoadRates": {},
     "scheduledOperationIds": [
       "@var:opOrderId"
-    ],
-    "bottleneckMachineIds": [],
-    "machineLoadRates": {}
+    ]
   },
   "status": 0
 }

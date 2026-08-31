@@ -5,6 +5,7 @@
     "deliveryLineId": "@var:deliveryLineId",
     "lineNo": 1,
     "materialId": "1",
+    "skuId": "1",
     "uoMId": "1",
     "quantity": 4,
     "unitPrice": 10,
@@ -16,7 +17,6 @@
     "createTime": "@var:ErpSalReturnLine@createTime",
     "updatedBy": "autotest-ref",
     "updateTime": "@var:ErpSalReturnLine@createTime",
-    "skuId": null,
     "taxRate": null,
     "taxAmount": null,
     "remark": null

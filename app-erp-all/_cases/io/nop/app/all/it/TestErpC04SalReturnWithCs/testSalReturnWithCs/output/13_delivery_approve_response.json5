@@ -6,7 +6,7 @@
     "orderId": "@var:orderId",
     "customerId": "1",
     "warehouseId": "1",
-    "businessDate": "@var:ErpInvStockMove@businessDate",
+    "businessDate": "@var:ErpFinVoucher@voucherDate",
     "currencyId": "1",
     "exchangeRate": 1.00000000,
     "amountSource": 0.0000,
