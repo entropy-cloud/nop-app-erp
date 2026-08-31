@@ -80,15 +80,15 @@ Skill: none
 - Item Types: `Fix | Proof`
 - Prereqs: 双独立子代理批准（含 U2' 替代方案的重新确认，记录落盘 Draft Review Record）
 
-- [ ] Fix：U1 variant primary→default + flux 侧相关测试核查（无断言该发射值，负例测试不受影响）
-- [ ] Fix：U2' grid_crud.xpl loadAction 发射 `dependsOn:['__crud_load__']`（注释引用 dummy-root 惯例与根因）
-- [ ] Fix：U3b flux-control.xlib view-file / view-file-list onClick → ajax+blob
-- [ ] Proof：U1 后 `pnpm --filter @nop-chaos/flux-renderers-data build` + 该包测试绿 + 金标集复跑 0 error；U2'/U3b 后 fix-ai-check 树 `mvn -pl nop-frontend-support/nop-web install` → ERP 导出复跑：dependsOn/view-file 类 erp error 归零（预期 892→124）
-- [ ] Add：flux worktree 提交本计划文件集（validate-pages.mjs/shared.mjs/validate.mjs/package.json/docs/logs/08-30.md + U1 + 测试；**避开他人未提交的 docs/analysis 与 design-patterns 文件**）；nop-entropy 两树日志
+- [x] Fix：U1 variant primary→default + flux 侧相关测试核查（无断言该发射值，负例测试不受影响）
+- [x] Fix：U2' grid_crud.xpl loadAction 发射 `dependsOn:['__crud_load__']`（注释引用 dummy-root 惯例与根因）
+- [x] Fix：U3b flux-control.xlib view-file / view-file-list onClick → ajax+blob
+- [x] Proof：U1 后 `pnpm --filter @nop-chaos/flux-renderers-data build` + 该包测试绿 + 金标集复跑 0 error；U2'/U3b 后 fix-ai-check 树 `mvn -pl nop-frontend-support/nop-web install` → ERP 导出复跑：dependsOn/view-file 类 erp error 归零（预期 892→124）
+- [x] Add：flux worktree 提交本计划文件集（validate-pages.mjs/shared.mjs/validate.mjs/package.json/docs/logs/08-30.md + U1 + 测试；**避开他人未提交的 docs/analysis 与 design-patterns 文件**）；nop-entropy 两树日志
 
 Exit Criteria:
 
-- [ ] erp error 892→124（仅剩 ERP 源 12 类）；上游三包/模块测试绿；上游仓提交完成
+- [x] erp error 892→124（仅剩 ERP 源 12 类）；上游三包/模块测试绿；上游仓提交完成
 
 ### Phase 2 - ERP view.xml 修复（F1/F2/F3/F4-cs/F9a/F11）
 
@@ -99,17 +99,17 @@ Skill: none
 - Item Types: `Fix | Proof`
 - Prereqs: Phase 1（否则进度指标混杂上游噪声）
 
-- [ ] Fix：F1 tpl 列（plain 列为主，模板语义强的用 cell region）
+- [x] Fix：F1 tpl 列（plain 列为主，模板语义强的用 cell region）
   - **执行中范围扩展（Decision，2026-08-30）**：tpl gen-control 位点经全仓 grep 为同构模式共约 130 处（原计划按报错文件计 45 处）；其中报错的 45 处在弹窗内嵌 table 列（列 type 经 renderer 校验），其余在主 crud 列与 form 字段（不触发编译错误但运行时模板死渲染——列上下文不按 type 分发）。选择**全仓同构清剿**（同一机械变换 `tpl→cell:{type:'text',text}` / `type:'tpl',tpl:→cell text`）：理由 (a) 同构变换审阅成本低；(b) 主 crud 列模板今日显示原始值（脱敏/状态徽章失效），cell region 激活真实渲染属运行时修复；(c) 避免同类问题二次立项。风险登记：~86 源文件大面积变更、list 列视觉从原始值变为模板渲染（正向变化，无 list 页像素基线），以编译验证 + Phase 4 抽样目检兜底。form 字段位点的 tpl（不报错、运行时未知类型被剥离）同变换为 cell text——form 字段 cell 为未知属性（warning 级），字段本身 custom/notSubmit 不参与提交，行为不劣于现状（今日不可见）。
-- [ ] Fix：F2/F3 number/static 列 plain 化
-- [ ] Fix：F4 cs ticket `<wrapper>`→container
-- [ ] Fix：F9a 14 处 `<action link=...>` 补 `actionType="link"`
-- [ ] Fix：F11 hr hidden 布尔（c:script）
-- [ ] Proof：分批 install（每批 ≥1 validator 检查点），本阶段类别 error 归零
+- [x] Fix：F2/F3 number/static 列 plain 化
+- [x] Fix：F4 cs ticket `<wrapper>`→container
+- [x] Fix：F9a 14 处 `<action link=...>` 补 `actionType="link"`
+- [x] Fix：F11 hr hidden 布尔（c:script）
+- [x] Proof：分批 install（每批 ≥1 validator 检查点），本阶段类别 error 归零
 
 Exit Criteria:
 
-- [ ] F1/F2/F3/F4-cs/F9a/F11 覆盖错误归零（validator perFile 核验）
+- [x] F1/F2/F3/F4-cs/F9a/F11 覆盖错误归零（validator perFile 核验）
 
 ### Phase 3 - ERP 手写 page.yaml/.flux.yaml 修复（F4-yaml/F5/F6/F7/F8/F10/F12）
 
@@ -120,17 +120,17 @@ Skill: none
 - Item Types: `Fix | Proof`
 - Prereqs: Phase 2（同模块合并 install）
 
-- [ ] Fix：F4/F5 wrapper/panel→container（含 visit-wizard flux.yaml 4 处）
-- [ ] Fix：F6 20 文件 grid 布局 → grid{columns:N,items}（逐页确认卡片数与响应式语义）
-- [ ] Fix：F7 12 处表达式（sendOn 去 `${}`；arrow/regex formula 重写）
-- [ ] Fix：F8 notify→showToast ×5
-- [ ] Fix：F10 payroll actions 按钮化 + party-search rowKey/footerToolbar/actions
-- [ ] Fix：F12 onRowClick setValue
-- [ ] Proof：分批 install + validator 检查点
+- [x] Fix：F4/F5 wrapper/panel→container（含 visit-wizard flux.yaml 4 处）
+- [x] Fix：F6 20 文件 grid 布局 → grid{columns:N,items}（逐页确认卡片数与响应式语义）
+- [x] Fix：F7 12 处表达式（sendOn 去 `${}`；arrow/regex formula 重写）
+- [x] Fix：F8 notify→showToast ×5
+- [x] Fix：F10 payroll actions 按钮化 + party-search rowKey/footerToolbar/actions
+- [x] Fix：F12 onRowClick setValue
+- [x] Proof：分批 install + validator 检查点
 
 Exit Criteria:
 
-- [ ] erp/* error == 0（validator 对导出 erp 子树直验）
+- [x] erp/* error == 0（validator 对导出 erp 子树直验）
 
 ### Phase 4 - 端到端验证、视觉回归与收口
 
@@ -142,7 +142,8 @@ Skill: none
 - Prereqs: Phase 1-3
 
 - **执行中范围扩展（Decision，2026-08-30/31，用户指令触发）**：视觉回归揭示两簇新根因，均在「修复=激活真实缺陷」义务范围内：
-  - **V1 看板过滤失效簇（P1）**：9 域看板 + payroll 的页面级 data-source 模板读 `${filterForm?.x}` 恒 null——flux named form **仅经 `valuesPath` 才向父作用域发布值**（`form-runtime.ts setupExternalPublication`），未配置时过滤参数从未发出（探针证实请求体 `periodId:null`）。修复=filterForm 补 `valuesPath: filterForm`（9 看板 + payroll 同源重写）。KPI 断言由此翻绿（finance 1130/sales 1000/purchase 850/inventory 10450/assets 135000/mfg 180/quality 0.67 全命中 value-spec 权威值）。
+  - **V1 看板过滤失效簇（P1）**：看板 + payroll 的页面级 data-source 模板读 `${filterForm?.x}` 恒 null——flux named form **仅经 `valuesPath` 才向父作用域发布值**（`form-runtime.ts setupExternalPublication`），未配置时过滤参数从未发出（探针证实请求体 `periodId:null`）。修复=filterForm 补 `valuesPath: filterForm`（**8 看板** fin/sal/pur/inv/ast/mnt/mfg/qa + payroll 同源重写；**prj 无过滤表单**——审计 MF-2 更正：原「9 域」口径把 prj 误计，其 `${filterForm?.projectId}` 为死引用恒 null 等价无过滤（value-spec 亦无过滤参数），已删除死参数行）。KPI 断言由此翻绿（finance 1130/sales 1000/purchase 850/inventory 10450/assets 135000/mfg 180/quality 0.67 全命中 value-spec 权威值）。
+  - **V5 结束审计 MF-2/MF-3 追加固化（2026-08-31）**：首轮结束审计（agent_1caacaf2，NEEDS_REVISION）发现 cs `ErpCsQualityDashboard` 与全仓 report/wizard/picker 页存在同型活体缺陷（named form 无 valuesPath + 跨作用域 `${formName?.x}` 读）。按 F1「全仓同构清剿避免二次立项」先例处置：**53 文件批量补 valuesPath**（report 集群 balance-sheet/cash-flow/income-statement 等、wizard disposal/lead-conversion/visit-wizard/period-close/stock-take、kanban/timeline、picker partyFilter、page.yaml 孪生）。实证（探针，跑后删除）：balance-sheet 渲染报表请求体 periodId 1→2 真实送达（修复前恒 null）；cs 看板 KPI 请求体为 filterForm 投影形状。回归 dashboards.visual 10/10 + fin-balance-sheet.smoke 绿；validate:flux erp 855 文件 0 error 保持。commit 2eef3c348。
   - **V2 文档缺口（用户直接指令，人工批准）**：`@query:`/`@mutation:` 前缀的 CRUD 参数整形（nopRpcResolver operationRegistry：尾缀命中注册操作只提交特定命名参数、filter_* 转 TreeBean、未注册 @query 透传、未注册 @mutation 兜底 `{data}`）docs-for-ai 未覆盖——已补 `docs-for-ai/02-core-guides/flux-rendering.md`（两树同步提交 1584f4a2cf / 4c275d80c2），含 /p/ 行、valuesPath 跨作用域规则与页面作者规则。
   - **V3 行为激活范式修正**：asn-flow 行点击 `onRowClick+setValue` 不可用（行事件 action 上下文=行作用域，`scope.update` 本地写行内遮蔽；crud selection 组合态固定写 `$_crud.<id>.*` 且 reaction 不订阅该命名空间）——重写为操作列按钮 + `openDialog`（行绑定 `${id}` 进 surface 作用域，flux-guide crud-with-dialog 范式）。voucher/recon 反冲预览模板 flux 化（HTML 标签非法→纯文本多节点 + `previewData?.x` 可选访问 + `| default:` 管道→`??`）。
   - **V4 测试侧腐化修复**：`_helper.ts` REST `/r/` 等待（8/29 迁移遗留）、KPI 取值选择器 `h3`、图表断言 `svg.recharts-surface`、`pickFluxDate` 日历驱动（day-15 探测显示月份防上月格振荡）、过滤重载改为 fill 自动重载等待（模板依赖跟踪防抖重发，click refreshSource 被去重）；spec 补 6 域权威 seed 窗口参数；reverse-preview.action.spec 数据构造修复（postVoucher 从行重算合计→补平衡分录行）。
@@ -158,7 +159,7 @@ Skill: none
 
 Exit Criteria:
 
-- [ ] erp 子树 exit 0；全量构建绿；checker 零漂移；视觉基线重录或漂移裁决落盘；行为激活验证完成
+- [x] erp 子树 exit 0；全量构建绿；checker 零漂移；视觉基线重录或漂移裁决落盘；行为激活验证完成
 
 ## Draft Review Record
 
@@ -173,14 +174,14 @@ Exit Criteria:
 
 ## Closure Gates
 
-- [ ] 范围内行为完成（F1-F12 + U1/U2'/U3b）
-- [ ] 相关文档对齐（设计文档终态数字、三仓日志、runbook 无需变更）
-- [ ] 已运行验证：erp 子树 validator exit 0 + 全量构建 + checker + 视觉重录 + 行为激活冒烟
-- [ ] 无范围内项目降级为 deferred/follow-up
-- [ ] 独立草案审查（含保护区域双批准 iteration 2 对 U2'/U3b 的确认）已完成并记录
-- [ ] 文本一致性已验证
-- [ ] 结束审计由独立子代理（新会话）执行
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成（F1-F12 + U1/U2'/U3b）
+- [x] 相关文档对齐（设计文档终态数字、三仓日志、runbook 无需变更）
+- [x] 已运行验证：erp 子树 validator exit 0 + 全量构建 + checker + 视觉重录 + 行为激活冒烟
+- [x] 无范围内项目降级为 deferred/follow-up
+- [x] 独立草案审查（含保护区域双批准 iteration 2 对 U2'/U3b 的确认）已完成并记录
+- [x] 文本一致性已验证
+- [x] 结束审计由独立子代理（新会话）执行
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
@@ -198,12 +199,19 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: pending
+Status Note: 首轮结束审计 NEEDS_REVISION → MF-1..MF-4 处置完成，待复审。
+
+MF 处置记录（2026-08-31）：
+
+- MF-1：master 树 U2'/U3b 三文件补提交 `7e324192fc`（2d1c47f0ac message 与文件清单不符的事实错误已在补提交说明中注明；fix-ai-check 树 7e074c2482 原本完整，两树 diff 空）。
+- MF-2：prj 死引用删除 + V1 口径更正（8 看板 + payroll）。
+- MF-3：cs 看板修复 + 53 文件同型清剿（V5 段）+ 双实证。
+- MF-4：Phase 1-4 执行项与退出标准、Closure Gates 补勾（本节随复审结论更新）。
 
 Closure Audit Evidence:
 
-- Auditor / Agent: pending
-- Evidence: pending
+- Auditor / Agent: 首轮 agent_1caacaf2-2e40-45b0-a1be-7775d64b4a90（NEEDS_REVISION，MF-1..MF-4）；复审 pending
+- Evidence: 审计报告全文见会话记录；MF 处置提交 7e324192fc（entropy master）/ 2eef3c348（ERP）；验证产物 /tmp/vis-kpi6.log、/tmp/vis-snap2.log、/tmp/beh6.log、/tmp/reg1.log、/tmp/reg2.log、/tmp/validate-final2.log、/tmp/full-build.log、/tmp/checker.log
 
 Follow-up:
 
