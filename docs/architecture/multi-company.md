@@ -93,6 +93,8 @@
 - **跨法人调拨**：config-gated 默认 false（保护既有基线）；启用后经转移定价规则生成配对凭证
 - **配对/抵消**：均为期末批处理，config-gated 默认 false，不改变日常过账路径
 
+> **调拨凭证金额口径（单价 × 数量，2026-08-28，plan `2026-08-28-2054-2` F2.4-3）**：跨法人调拨配对凭证金额 = 转移定价<b>单价 × Σ调拨行数量</b>（按物料聚合），非单价本身。SPI 新增带数量重载 `onTransferConfirmed(transferOrderId, fromWarehouseId, toWarehouseId, qtyByMaterial, businessDate, context)`（`qtyByMaterial: materialId → Σquantity`；无数量重载保持既有行为作兼容回退），inventory 调用点 `ErpInvTransferOrderConfirmProcessor.dispatchIntercompanyPosting` 传 `order` 行数量聚合；`materialId` 同时参与定价解析（取首行物料），使物料级转移定价规则可命中。修复前凭证金额按单价入账（N 倍失真）且 materialId 恒 null（物料级定价规则永不命中）。回归：`TestErpFinIntercompanyTransfer#testOnTransferConfirmedQuantityAmount`（100 件 × 单价 150 → 双法人各入账 15000）。
+
 ### 跨公司 PO/SO 触发路径（plan 2026-07-24-1351-2 EXPAND）
 
 > 将 intercompany 凭证生成从单一 inventory transfer confirm 扩展至跨公司 **采购订单（ErpPurOrder）** + **销售订单（ErpSalOrder）** approve/reverseApprove 生命周期。订单级 approve 已完整表达跨法人交易语义（买卖双方 + 金额），故 receive/delivery 联级归 successor（避免订单级 + 货物移动级双重计量）。

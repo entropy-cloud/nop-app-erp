@@ -112,6 +112,8 @@
 
 > **同事务期末凭证可见性裁决（2026-08-25，plan `2026-08-25-0330-2`）**：closePeriod 单事务内产生的全部期末凭证（汇兑重估 EXCHANGE_GAIN_LOSS、损益结转 PERIOD_CLOSE 等，经 `CloseVoucherWriter` 直接持久化）对同事务后续 DB 直查聚合（损益结转聚合、试算平衡表快照、年度结转聚合）**必须可见**——实现契约为 `CloseVoucherWriter.writeVoucher` 写侧统一 `flushSession()`（flush 边界为实现契约，非可选优化）。由此：**PERIOD_CLOSE 凭证必含 FX 腿**（汇兑损益为费用类科目，经贷方分录结转至本年利润，`ProfitLossClosingService` §步骤5 语义；结账后汇兑损益科目净额归零为派生不变量——重估先于结账的排序见 `ar-ap-reconciliation.md` §重估排序）。缺陷历史与机制见 `docs/bugs/2026-08-25-closeperiod-fx-flush-profit-loss-missing-leg.md`。
 
+> **银行存款 FX 重估账面基准口径（累计，2026-08-28，plan `2026-08-28-2054-2` F2.4-1）**：银行存款重估的「账面本位币」比对基准为<b>累计口径</b>——聚合该科目<b>全部期间</b>（不限结账当期）已过账非红冲分录的 debit−credit 净额（排除 EXCHANGE_GAIN_LOSS / PERIOD_CLOSE / PROFIT_TO_RETAINED_EARNINGS 自身分录，避免下月 diff 不收敛），与 `ErpFinFundAccount.currentBalance`（累计当前余额）量纲一致。修复前仅聚合本期分录，跨期账户每月重复生成全额重估凭证（book=0 → diff=全值），GL 银行科目金额虚增。实现：`ExchangeRevaluationService.aggregateBankSubjectBookFunctional`；回归：`TestErpFinAnnualClose#testBankFxRevaluationCrossPeriodCumulative`（8 月/9 月连续结账，9 月 diff=50 非全额 850）。
+
 ## 成本核算方法
 
 ### 移动加权平均法

@@ -21,7 +21,7 @@
 | plan 文件 | 范围 | 状态 | 关键说明 |
 |---|---|---|---|
 | `docs/plans/2026-08-28-2054-1-entity-state-machine-m5-3-closure-audit.md` | entity-state-machine M5.3 closure audit（6 CG + 5 阶段）| draft（已修订：Item Types + 跑测试估算 + 失败回退登记）| 独立子代理 closure-audit-prompt 不可用——plan 注册 successor 触发条件 = 子代理通道恢复 |
-| `docs/plans/2026-08-28-2054-2-ai-check-f2-4-finance-period-p1.md` | ai-check F2.4 finance-期间 P1 簇（3 finding + dual-agent-approval）| draft（已修订：Item Types + 跑测试估算 + 修复细节具体化 + 跨域接口签名草案）| 独立 plan-audit 不可得——plan 保持 draft |
+| `docs/plans/2026-08-28-2054-2-ai-check-f2-4-finance-period-p1.md` | ai-check F2.4 finance-期间 P1 簇（3 finding + dual-agent-approval）| completed（M0 时为 draft；后经用户人工批准 plan-audit 实施，2026-08-31 执行闭合）| dual-agent-approval 两独立子代理 ACCEPT（2026-08-31，session `ses_fa7862959ffe9s66sanuS24P9q` / `ses_fa785ec5dffeebMswYJMMll4n4`）|
 | `docs/plans/2026-08-28-2059-3-ai-check-f2-5-mfg-workorder-p1.md` | ai-check F2.5 mfg-工单 P1 簇（4 finding）| draft（已修订：Item Types + 跑测试估算 + finding ID 精确化登记）| 同上 |
 
 **3 份 plan 共同阻塞**：plan-guide #12 要求独立草案审查通过后转 active 才能实施。本会话子代理通道结构性不可用（已派发 6 个全失败）→ plan 保持 draft 状态，无法进入实施阶段。
@@ -55,7 +55,7 @@
 
 | 批 | 范围 | 状态（ai-check-r1 roadmap）|
 |---|---|---|
-| F2.4 finance-期间 P1 簇 | fin4-001/002/003 | **ready** |
+| F2.4 finance-期间 P1 簇 | fin4-001/002/003 | **done**（2026-08-31 登记：3 finding fixed，commit `ae74a8613` + `TestErpFinClosingMultiSchema` 补测；见 ai-check-index.md + ai-check-roadmap.md） |
 | F2.5 mfg-工单 P1 簇 | mfg-002..005 | todo |
 | F2.6 mfg-BOM/MRP P1 簇 | mfg2-001..003 | todo |
 | F2.7 mfg-委外 P1 簇 | mfg3-001..005 | todo |

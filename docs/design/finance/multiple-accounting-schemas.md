@@ -105,6 +105,14 @@
 
 > 具体字段定义、类型与字典以对应域 `model/app-erp-<domain>.orm.xml` 为准；本表只标识账套维度的落位，不重复 schema。
 
+### 期末结账写路径的账套维度（实现注记，P1-CK-fin4-002）
+
+多账套模式（`erp-fin.multi-schema-enabled=true` + 主账套 `isPropagate`）下，期末结账/年度结转的<b>写路径</b>聚合必须按账套维度过滤——每账套的结转凭证仅含<b>本账套</b>金额，年初余额 populate 按账套维度 clear + 写入：
+
+- **损益结转**：`ProfitLossClosingService.closeForSchema` 经 `SchemaPropagator` 逐账套循环，凭证 ID 收集（`findPostedVoucherIds`）与分录行聚合均加 `eq(acctSchemaId, schemaId)` 过滤（双保险）。修复前聚合无账套过滤，每账套凭证都含全域金额（N 倍重复入账）。
+- **年度结转**：`AnnualCloseService.subjectNetForYear` / `aggregateYearSubjectActivity` / `findYearPostedVoucherIds` 同型账套过滤；`populateNextYearOpening` 的次年年初快照 clear 加 `eq(acctSchemaId, schemaId)` 维度——否则多账套循环中迭代 N 删除迭代 N−1 写入的快照，最终只余最后账套（互删）。
+- 回归：`TestErpFinClosingMultiSchema`（损益结转每账套独立 1000/3000 非全域 4000 + 年初余额两账套快照独立共存）。
+
 ## 账套管理
 
 ### 创建账套
