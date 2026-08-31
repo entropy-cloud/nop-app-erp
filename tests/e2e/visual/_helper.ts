@@ -2,6 +2,11 @@ import { test, expect, loginAndNavigate } from '../fixtures';
 import { getEngine } from '../pages';
 import type { Page, Locator } from '@playwright/test';
 
+/**
+ * AI 截屏仅诊断不裁决——本文件所有 assertSnapshot / assertXxxPixelSnapshot 调用结果为 pass/fail 唯一裁决依据。
+ * CI 中任何 toHaveScreenshot 失败由独立子代理 plan-audit 复核根因，不得由 AI 主观判定。
+ */
+
 // ----------------------------------------------------------------------------
 // Pixel-snapshot layer (plan 2026-07-17-2010-2)
 // ----------------------------------------------------------------------------
