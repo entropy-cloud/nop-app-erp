@@ -15,6 +15,7 @@ nop:
     render-mode: flux
   orm:
     init-database-schema: true
+    init-database-data: true
   datasource:
     driver-class-name: org.h2.Driver
     jdbc-url: jdbc:h2:./db/erp

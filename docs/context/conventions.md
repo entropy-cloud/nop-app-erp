@@ -42,6 +42,7 @@
 - 保持 `docs/context/project-context.md` 中的验证命令最新。
 - 不要报告未实际运行的命令的验证成功。
 - 复制模板后不要保留占位符验证命令。
+- **长输出命令（mvn test、mvn install、Playwright run、E2E 服务端日志等）必须先全量落盘再做摘要**。禁止 `cmd 2>&1 | tail -N > file` 这种写法——`tail` 在 `>` 重定向前执行，写入文件的只有尾部 N 行，前面几万行 BUILD 输出（失败用例 stack trace、Surefire 报告链接、模块级错误）全部丢光，恰好查不到失败细节。落盘路径用**项目根 `_tmp/`**（仓库统一临时区，`.gitignore:26 _tmp/` + 08-27 `/**/_tmp/` 模块内兜底；模块内 `_tmp/` 非合法位置；不要用全局 `/tmp/`，与项目先例 `_tmp/e2e-server.log`/`_tmp/v1-surefire-evidence/`/`_tmp/flux-page-validation-report.json`/`_tmp/<plan-id>-surefire-evidence/` 等一致）。正确模式：先 `cmd > _tmp/<purpose>.log 2>&1; echo "EXIT=$?"` 落盘，再 `grep -E "Tests run:|BUILD|ERROR|FAILURE" _tmp/<purpose>.log | tail -20` 出摘要；或 `cmd 2>&1 | tee _tmp/<purpose>.log | grep ... | tail -20` 同时保留全量与屏幕摘要。命名建议按用途/计划/里程碑（如 `_tmp/<plan-id>-<purpose>.log` 或 `_tmp/<purpose>-<milestone>.log`），便于一键追溯。失败排查从全量日志文件出发（`rg "FAIL|ERROR|Tests run.*Failures: [^0]" _tmp/<purpose>.log` 或 `less _tmp/<purpose>.log`），不要重跑命令后只取 tail；重要日志路径应写回当日 `docs/logs/{year}/{month}-{day}.md` 或 `docs/bugs/<id>.md` 证据节便于复盘。
 
 ## 时间 API 使用约定
 

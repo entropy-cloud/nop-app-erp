@@ -182,9 +182,11 @@ E2E_ENGINE=flux SKIP_WEBSERVER=1 npx playwright test
 
 ### 种子库启动（演示 / 数据可见性）
 
+> **自 plan `2026-08-31-1143-1-app-erp-all-default-seed-loading` 起，`app-erp-all` 默认开启 seed 装载**——`application.yaml:18` 含 `init-database-data: true`（位于 `init-database-schema: true` 后一行）。启动入口首选 `scripts/start-app.sh`（含 fresh-DB 重置）；手动启动仍需先 `rm -f db/erp.mv.db db/erp.trace.db` 后 `java -jar`（seed 非幂等）。
+
 默认 webServer 命令（方式 A）已含 **部署期种子数据初始化**：
 
-- `-Dnop.orm.init-database-data=true` — 激活平台 `DataInitInitializer`（条件 bean，仅此 JVM 属性开启时实例化），从 `_vfs/_init-data/*.csv` 按拓扑序插入 **91 张 CSV**：
+- `-Dnop.orm.init-database-data=true` — 激活平台 `DataInitInitializer`（条件 bean，仅此 JVM 属性开启时实例化；自 2026-08-31 起 application.yaml 默认已开，JVM 属性仍保留作显式控制），从 `_vfs/_init-data/*.csv` 按拓扑序插入 **97 张 CSV**（+ `zz-sequence-advance.sql`）：
   - **21 张核心主数据表**（1234-1）：组织/币种/计量单位/物料/SKU/往来单位/仓库/员工/科目体系/税率/结算方式等（科目体系：8 基础科目 + 1249-1 补齐 5 过账科目 1401/1403/1131/2221/6401 + 1800-1 补齐 1 NCR SCRAP 科目 6711 + 0413-2 补齐 3 finance 业务动作科目 1231 坏账准备/6701 信用减值损失/2240OTHER 未达账项调整 + 0215-1 补齐 5 assets 业务动作科目 1601 固定资产/1602 累计折旧/1603 在建工程/6301 营业外收入/6602 折旧费用 + 0742-2 补齐 3 projects 业务动作科目 5101 项目成本/2211 应付职工薪酬/4103 本年利润 + 1218-1 补齐 3 assets VALUE_ADJUSTMENT 科目 6702 资产减值损失/1604 固定资产减值准备/4002 资本公积 + 1218-2 补齐 2 finance ExpenseClaim/EmployeeAdvance 科目 2241 其他应付款-员工/1221 其他应收款-员工预支，使 Pur/Sal/Inv/QA/Ast/Prj 过账 + finance 银行对账/坏账核销收回计提 Provider/config 科目码经 `findByCode` 可达，解除过账优雅降级）
   - **23 张业务交易单据表**（1445-1）：P2P（PO/Receive/Invoice/Payment 头+行）+ O2C（SO/Delivery/Invoice/Receipt 头+行）+ 已过账财务产物（凭证/凭证行/凭证回链/AR-AP 辅助账/GL 余额/会计期间 OPEN）
   - **13 张运营域表**（2210-1）：库存（stock_move+line/stock_balance/cost_layer）+ 资产（asset_category/asset/depreciation_schedule）+ 项目（project_type/project/cost_collection/timesheet/budget/project_pnl）；三域看板读域表非 GL，posted 统一 false
@@ -1002,7 +1004,7 @@ npx playwright show-trace test-results/<test-name>/trace.zip
 
 ## 已知限制
 
-- **空库冒烟**：~~H2 文件库无业务数据，KPI 卡片渲染 DOM 但数值为 0/空。~~ **已解除**：webServer 默认含 `-Dnop.orm.init-database-data=true`（fresh-DB 重置 + 91 张 CSV 种子：21 主数据 + 23 P2P/O2C 交易单据 + 13 运营域表 + 4 制造域表 + 11 维护+质量域表 + 12 CRM/CS/HR 域表 + 3 质量域 SPC 表 + 4 制造域工作中心配置链+crp_load 表 + 3 处加性追加）。核心域（finance/sales/purchase）+ 运营域（inventory/assets/projects）+ 扩展域（manufacturing/maintenance/quality）看板 KPI 与报表数值经交易数据驱动**非空可观测**（含质量域 SPC 失控预警三计数器非空 + 制造域 CRP 负荷报表非空）；CRM/CS/HR 三域 5 报表经种子数据驱动**非空可观测**（三域无看板）。核心域 + 运营域 + 扩展域（manufacturing/maintenance/quality）+ 扩展域（CRM/CS/HR 纯报表域）+ 主数据域（master-data 看板/2 报表）均已叠加**数据驱动数值断言层**（28 `*.value.spec.ts`，见上方「数据驱动数值断言层」）；其余扩展域（logistics/b2b/contract/drp/aps）无看板无报表未 seed。
+- **空库冒烟**：~~H2 文件库无业务数据，KPI 卡片渲染 DOM 但数值为 0/空。~~ **已解除**：webServer 默认含 `-Dnop.orm.init-database-data=true`（fresh-DB 重置 + **97 张 CSV** 种子——**权威计数源 = `app-erp-all/src/main/resources/_vfs/_init-data/` 实仓 `ls *.csv | wc -l`**，明细分类含「13 运营域表」不含 `erp_inv_stock_ledger`、两处「加性追加」与「notify/cs 聚合 2 表」为跨批次叙述注记与平台表重叠，不参与逐项求和；修正前旧文「91 + 明细求和 94」自相矛盾，2026-08-31 勘误）。核心域（finance/sales/purchase）+ 运营域（inventory/assets/projects）+ 扩展域（manufacturing/maintenance/quality）看板 KPI 与报表数值经交易数据驱动**非空可观测**（含质量域 SPC 失控预警三计数器非空 + 制造域 CRP 负荷报表非空）；CRM/CS/HR 三域 5 报表经种子数据驱动**非空可观测**（三域无看板）。核心域 + 运营域 + 扩展域（manufacturing/maintenance/quality）+ 扩展域（CRM/CS/HR 纯报表域）+ 主数据域（master-data 看板/2 报表）均已叠加**数据驱动数值断言层**（28 `*.value.spec.ts`，见上方「数据驱动数值断言层」）；其余扩展域（logistics/b2b/contract/drp/aps）无看板无报表未 seed。
 - **单浏览器**：仅 chromium（Chrome channel），不支持 Firefox/WebKit/移动视口。
 - **冒烟级**：不断言像素级视觉一致性、不验证报表渲染内容正确性、不断言下载产物。
 - **页面验证已恢复**：`ErpCsTicket.view.xml`/`ErpHrEmployee.view.xml` layout 缺陷已修复（见 `docs/bugs/`），启动期页面模型校验（`validate-page-model=true`）已恢复全绿，不再使用 `-Dnop.web.validate-page-model=false` 绕过。
@@ -1029,7 +1031,7 @@ mvn test -pl app-erp-all                                # 全量（含既有 12 
   （父 POM `forkCount=4 + parallel=classes` 与共享文件型 H2 竞态——roadmap 已知约束 1）。
 - **基类**：`ErpIntegrationTestCase extends JunitAutoTestCase`（机制 (c)「抑制 tableInit 的文件 H2 双模方案」）：
   双模强制 `localDb=false + tableInit=false`；per-method `container.restart()` 后显式触发惰性
-  `DataInitInitializer` 装载**全量 96 seed**；fresh-DB 每类 1 次（initBeans 删 `db/erp.mv.db/.trace.db`
+  `DataInitInitializer` 装载**全量 97 seed**（97 CSV + 1 SQL，权威计数源 = `_vfs/_init-data/` 实仓）；fresh-DB 每类 1 次（initBeans 删 `db/erp.mv.db/.trace.db`
   + restart 重建 + seed 重灌）。共享 step helper 集（`rpcMutation`/`submitForApproval`/`approve`/
   `requireVoucherBalanced`/`findApItem`/`findStockMove` 等）供 B1-Bn 复用。
 - **用例前置**：`@NopTestConfig(localDb=false, initDatabaseSchema=TRUE, enableActionAuth=FALSE)` +
