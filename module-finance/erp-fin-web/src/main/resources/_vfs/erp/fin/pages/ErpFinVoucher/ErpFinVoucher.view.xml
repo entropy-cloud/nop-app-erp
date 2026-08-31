@@ -181,9 +181,31 @@ previewBody[预览]
                                         type: 'data-source', name: 'previewData', action: 'ajax',
                                         args: { url: '@query:ErpFinVoucher__previewReverseVoucher', method: 'post', data: { voucherId: '${id}' } }
                                     },
+                                    // flux text 模板为纯文本：无 HTML 标签；previewData 未就绪时可选访问回退
+                                    {
+                                        type: 'text', className: 'text-muted',
+                                        text: '加载预览中…',
+                                        visibleOn: '${previewData == null}'
+                                    },
+                                    {
+                                        type: 'text', className: 'font-medium',
+                                        text: '凭证号：${previewData?.voucherCode ?? "—"}（${previewData?.voucherType ?? "—"}）｜ 凭证日期：${previewData?.voucherDate ?? "—"}｜ 分录行数：${previewData?.lineCount ?? 0}',
+                                        visibleOn: '${previewData != null}'
+                                    },
                                     {
                                         type: 'text',
-                                        text: "凭证号：<b>${previewData.voucherCode}</b>（${previewData.voucherType}）<br/>凭证日期：${previewData.voucherDate} ｜ 分录行数：${previewData.lineCount}<br/>原借方合计：${previewData.totalDebit} ｜ 原贷方合计：${previewData.totalCredit}<br/>红字预估借方：<span style='color:#d9534f'>${previewData.reversedDebit}</span> ｜ 红字预估贷方：<span style='color:#d9534f'>${previewData.reversedCredit}</span><br/>确认后原凭证将被标记为「已红冲」，不可恢复。"
+                                        text: '原借方合计：${previewData?.totalDebit ?? 0}｜ 原贷方合计：${previewData?.totalCredit ?? 0}',
+                                        visibleOn: '${previewData != null}'
+                                    },
+                                    {
+                                        type: 'text', className: 'text-danger',
+                                        text: '红字预估借方：${previewData?.reversedDebit ?? 0}｜ 红字预估贷方：${previewData?.reversedCredit ?? 0}',
+                                        visibleOn: '${previewData != null}'
+                                    },
+                                    {
+                                        type: 'text', className: 'text-muted',
+                                        text: '确认后原凭证将被标记为「已红冲」，不可恢复。',
+                                        visibleOn: '${previewData != null}'
                                     },
                                     {
                                         type: 'button', label: '确认红冲', level: 'danger',

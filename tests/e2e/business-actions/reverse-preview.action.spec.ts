@@ -6,6 +6,8 @@ import {
     callMutationOk,
     verifyState,
     deleteById,
+    findFirst,
+    eqFilter,
 } from './_helper';
 import { GraphQLClient } from '../pages';
 import type { Page } from '@playwright/test';
@@ -20,6 +22,10 @@ import type { Page } from '@playwright/test';
  *
  * 范式与 ast-depreciation.action.spec.ts 一致：loginAndNavigate 建立 nop-token 会话后经 GraphQLClient 调
  * 自定义 @BizQuery/@BizMutation。需要 8011 端口运行 app（BASE_URL + SKIP_WEBSERVER=1）。
+ *
+ * 数据注意：postVoucher 会 assertBalancedFromLines 并把 header 合计重算为分录行和
+ * （ErpFinVoucherBizModel F1.2→F2.1 借贷平衡校验），因此凭证必须带平衡分录行，
+ * 仅 header totalDebit 的裸凭证过账后合计为 0。
  */
 
 const ORG_ID = '1';
@@ -40,6 +46,38 @@ async function createPostedVoucher(page: Page, code: string, amount: number): Pr
         docStatus: 'DRAFT',
     });
     const id = saved.id;
+
+    // 平衡分录行（Dr 1401 / Cr 2202）——过账校验与合计重算都基于行
+    const debitSubject = await findFirst<any>(page, 'ErpMdSubject', eqFilter('code', '1401'), 'id code');
+    const creditSubject = await findFirst<any>(page, 'ErpMdSubject', eqFilter('code', '2202'), 'id code');
+    const cny = await findFirst<any>(page, 'ErpMdCurrency', eqFilter('code', 'CNY'), 'id code');
+    expect(debitSubject, 'seed subject 1401 should exist').toBeTruthy();
+    expect(creditSubject, 'seed subject 2202 should exist').toBeTruthy();
+    expect(cny, 'seed currency CNY should exist').toBeTruthy();
+
+    await createViaSave(page, 'ErpFinVoucherLine', {
+        voucherId: id,
+        acctSchemaId: ACCT_SCHEMA_ID,
+        lineNo: 1,
+        subjectId: debitSubject.id,
+        subjectCode: '1401',
+        dcDirection: 'DEBIT',
+        debitAmount: amount,
+        creditAmount: 0,
+        currencyId: cny.id,
+    });
+    await createViaSave(page, 'ErpFinVoucherLine', {
+        voucherId: id,
+        acctSchemaId: ACCT_SCHEMA_ID,
+        lineNo: 2,
+        subjectId: creditSubject.id,
+        subjectCode: '2202',
+        dcDirection: 'CREDIT',
+        debitAmount: 0,
+        creditAmount: amount,
+        currencyId: cny.id,
+    });
+
     await callMutationOk(page, 'ErpFinVoucher', 'postVoucher', { voucherId: id }, 'id docStatus');
     return String(id);
 }

@@ -5,6 +5,8 @@ type: page
 title: ASN 流程跟踪
 body:
 - type: form
+  name: filterForm
+  valuesPath: asnFilter
   submitScope: surface
   body:
   - type: grid
@@ -36,51 +38,25 @@ body:
           method: post
           data:
             limit: 200
-            filter_status: ${statusFilter ?? null}
+            filter_status: ${asnFilter?.statusFilter ?? null}
           selection: items{ id code status partnerId sourceEdiDocId shipmentDate estimatedArrivalDate trackingNo relatedBillType relatedBillCode businessDate } total
         target: asnList
 - type: data-source
   name: asnList
   dependsOn:
-  - __asn_load__
+  - asnFilter
   action: ajax
   args:
     url: '@query:ErpB2bAsn__findPage'
     method: post
     data:
       limit: 200
-      filter_status: ${statusFilter ?? null}
+      filter_status: ${asnFilter?.statusFilter ?? null}
     selection: items{ id code status partnerId sourceEdiDocId shipmentDate estimatedArrivalDate trackingNo relatedBillType relatedBillCode businessDate } total
-- type: data-source
-  name: asnDetail
-  dependsOn:
-  - selectedAsnId
-  sendOn: selectedAsnId != null
-  action: ajax
-  args:
-    url: '@query:ErpB2bAsn__get'
-    method: post
-    data:
-      id: ${selectedAsnId ?? 0}
-    selection: id code status partnerId shipmentDate estimatedArrivalDate trackingNo relatedBillType relatedBillCode
-- type: data-source
-  name: asnLines
-  dependsOn:
-  - selectedAsnId
-  sendOn: selectedAsnId != null
-  action: ajax
-  args:
-    url: '@query:ErpB2bAsnLine__findPage'
-    method: post
-    data:
-      limit: 5000
-      filter_asnId: ${selectedAsnId ?? null}
-    selection: items{ id asnId lineNo materialId supplierPartNo quantity shippedQty } total
-- type: data-source
-  name: flowSteps
-  formula: '${!asnDetail ? [] : [{ key: "RECEIVED", title: "已接收" }, { key: "MATCHED", title: "已匹配" }, { key: "RECEIVED_TO_STOCK", title: "已入库" }].map((s, i) => ({ key: s.key, title: s.title, status: (asnDetail.status === "CANCELLED") ? "wait" : ((["RECEIVED", "MATCHED", "RECEIVED_TO_STOCK"].indexOf(asnDetail.status) >= 0 && i < ["RECEIVED", "MATCHED", "RECEIVED_TO_STOCK"].indexOf(asnDetail.status)) ? "finish" : ((i === ["RECEIVED", "MATCHED", "RECEIVED_TO_STOCK"].indexOf(asnDetail.status)) ? "process" : "wait")) }))}'
 - type: crud
+  id: asnCrud
   source: ${asnList?.items ?? []}
+  rowKey: id
   columns:
   - name: code
     label: ASN编号
@@ -103,37 +79,67 @@ body:
     label: 发货日期
   - name: trackingNo
     label: 追踪号
-  onRowClick:
-    action: setValue
-    args:
-      path: selectedAsnId
-      value: ${record.id}
-- type: text
-  text: '${asnDetail ? "ASN 流程：" + (asnDetail?.code ?? "—") + " · 合作伙伴: " + (asnDetail?.partnerId ?? "—") + " · 追踪号: " + (asnDetail?.trackingNo ?? "—") : "点击列表行查看 ASN 流程详情"}'
-  className: text-muted m-t m-b
-  visible: ${asnDetail != null}
-- type: steps
-  items: ${flowSteps ?? []}
-  visible: ${asnDetail != null}
-- type: text
-  text: 明细行匹配状态（quantity 订单数量 vs shippedQty 发货数量）
-  className: text-muted m-t m-b
-  visible: ${asnDetail != null}
-- type: table
-  source: ${asnLines?.items ?? []}
-  columns:
-  - name: lineNo
-    label: 行号
-  - name: materialId
-    label: 物料
-  - name: supplierPartNo
-    label: 供应商料号
-  - name: quantity
-    label: 订单数量
-    type: number
-    precision: 2
-  - name: shippedQty
-    label: 发货数量
-    type: number
-    precision: 2
-  visible: ${asnDetail != null}
+  - type: operation
+    label: 操作
+    buttons:
+    - type: button
+      label: 流程
+      level: primary
+      onClick:
+        action: openDialog
+        args:
+          title: 'ASN 流程：${code ?? ""}'
+          size: lg
+          data:
+            id: ${id}
+            code: ${code}
+          body:
+          # 弹层内数据源经 dialog data（行绑定 id）取数——openDialog 的 data
+          # 进入 surface 作用域，body 内模板直接读 ${id}。
+          - type: data-source
+            name: asnDetail
+            action: ajax
+            args:
+              url: '@query:ErpB2bAsn__get'
+              method: post
+              data:
+                id: ${id ?? 0}
+              selection: id code status partnerId shipmentDate estimatedArrivalDate trackingNo relatedBillType relatedBillCode
+          - type: data-source
+            name: asnLines
+            action: ajax
+            args:
+              url: '@query:ErpB2bAsnLine__findPage'
+              method: post
+              data:
+                limit: 5000
+                filter_asnId: ${id ?? null}
+              selection: items{ id asnId lineNo materialId supplierPartNo quantity shippedQty } total
+          - type: data-source
+            name: flowSteps
+            formula: '${!asnDetail ? [] : [{ key: "RECEIVED", title: "已接收" }, { key: "MATCHED", title: "已匹配" }, { key: "RECEIVED_TO_STOCK", title: "已入库" }].map((s, i) => ({ key: s.key, title: s.title, status: (asnDetail.status === "CANCELLED") ? "wait" : ((["RECEIVED", "MATCHED", "RECEIVED_TO_STOCK"].indexOf(asnDetail.status) >= 0 && i < ["RECEIVED", "MATCHED", "RECEIVED_TO_STOCK"].indexOf(asnDetail.status)) ? "finish" : ((i === ["RECEIVED", "MATCHED", "RECEIVED_TO_STOCK"].indexOf(asnDetail.status)) ? "process" : "wait")) }))}'
+          - type: text
+            text: '${asnDetail ? "合作伙伴: " + (asnDetail?.partnerId ?? "—") + " · 追踪号: " + (asnDetail?.trackingNo ?? "—") : "加载中…"}'
+            className: text-muted m-b
+          - type: steps
+            items: ${flowSteps ?? []}
+          - type: text
+            text: 明细行匹配状态（quantity 订单数量 vs shippedQty 发货数量）
+            className: text-muted m-t m-b
+          - type: table
+            source: ${asnLines?.items ?? []}
+            columns:
+            - name: lineNo
+              label: 行号
+            - name: materialId
+              label: 物料
+            - name: supplierPartNo
+              label: 供应商料号
+            - name: quantity
+              label: 订单数量
+              type: number
+              precision: 2
+            - name: shippedQty
+              label: 发货数量
+              type: number
+              precision: 2

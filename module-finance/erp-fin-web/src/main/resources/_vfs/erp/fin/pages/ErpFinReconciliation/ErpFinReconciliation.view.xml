@@ -95,9 +95,31 @@ previewBody[预览]
                                         type: 'data-source', name: 'previewData', action: 'ajax',
                                         args: { url: '@query:ErpFinReconciliation__previewReverse', method: 'post', data: { reconciliationId: '${id}' } }
                                     },
+                                    // flux text 模板为纯文本：无 HTML 标签；previewData 未就绪时可选访问回退
+                                    {
+                                        type: 'text', className: 'text-muted',
+                                        text: '加载预览中…',
+                                        visibleOn: '${previewData == null}'
+                                    },
+                                    {
+                                        type: 'text', className: 'font-medium',
+                                        text: '核销单号：${previewData?.code ?? "—"}（${previewData?.direction ?? "—"}）｜ 核销总额(本位币)：${previewData?.totalAmountFunctional ?? 0}',
+                                        visibleOn: '${previewData != null}'
+                                    },
                                     {
                                         type: 'text',
-                                        text: "核销单号：<b>${previewData.code}</b>（${previewData.direction}）<br/>核销总额(本位币)：${previewData.totalAmountFunctional}<br/>将回退 ${(previewData.revertedItems ?? []).length} 项 AR/AP 辅助账（SETTLED→OPEN/PARTIAL），并刷新往来单位余额。<br/><span style='color:#8a6d3b'>注意：核销冲销不生成红字凭证（凭证由收付款审核时生成）。</span><br/>确认后核销单状态将置为「已冲销」，不可恢复。"
+                                        text: '将回退 ${(previewData?.revertedItems ?? []).length} 项 AR/AP 辅助账（SETTLED→OPEN/PARTIAL），并刷新往来单位余额。',
+                                        visibleOn: '${previewData != null}'
+                                    },
+                                    {
+                                        type: 'text', className: 'text-warning',
+                                        text: '注意：核销冲销不生成红字凭证（凭证由收付款审核时生成）。',
+                                        visibleOn: '${previewData != null}'
+                                    },
+                                    {
+                                        type: 'text', className: 'text-muted',
+                                        text: '确认后核销单状态将置为「已冲销」，不可恢复。',
+                                        visibleOn: '${previewData != null}'
                                     },
                                     {
                                         type: 'button', label: '确认冲销', level: 'danger',
@@ -123,9 +145,9 @@ previewBody[预览]
                 <action id="auto-reconcile-button" label="自动核销" i18n-en:label="Auto Settle" level="primary" icon="fa fa-magic">
                     <api url="@mutation:ErpFinReconciliation__runAutoReconciliation">
                         <data>
-                            <direction>${direction | default:'RECEIVABLE'}</direction>
-                            <partnerId>${partnerId | default:null}</partnerId>
-                            <strategy>${strategy | default:null}</strategy>
+                            <direction>${direction ?? 'RECEIVABLE'}</direction>
+                            <partnerId>${partnerId ?? null}</partnerId>
+                            <strategy>${strategy ?? null}</strategy>
                         </data>
                     </api>
                     <confirmText>确认执行自动核销？系统将按 FIFO 策略匹配 OPEN/PARTIAL 收付款项与发票项。配置标志 erp-fin.auto-reconcile 必须开启，否则操作将被拒绝。</confirmText>
