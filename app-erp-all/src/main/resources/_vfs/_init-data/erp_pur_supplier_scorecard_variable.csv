@@ -1,0 +1,4 @@
+ID,CRITERIA_ID,VARIABLE_NAME,PATH,VALUE
+1,1,pass_rate,pur.receipt.qualifiedRate,90
+2,2,on_time_rate,pur.receipt.onTimeRate,95
+3,3,price_deviation,pur.receipt.priceDeviation,80

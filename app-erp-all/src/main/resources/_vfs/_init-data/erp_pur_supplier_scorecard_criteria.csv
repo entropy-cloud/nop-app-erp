@@ -1,0 +1,10 @@
+ID,SCORECARD_ID,CRITERIA_NAME,WEIGHT,FORMULA,SCORE,WEIGHTED_SCORE
+1,1,质量,40.00,pass_rate,90.00,36.00
+2,1,交付,30.00,on_time_rate,95.00,28.50
+3,1,价格,30.00,price_deviation,80.00,24.00
+4,2,质量,40.00,pass_rate,55.00,22.00
+5,2,交付,30.00,on_time_rate,60.00,18.00
+6,2,价格,30.00,price_deviation,40.00,12.00
+7,3,质量,40.00,pass_rate,80.00,32.00
+8,3,交付,30.00,on_time_rate,73.00,21.90
+9,3,价格,30.00,price_deviation,57.00,17.10
