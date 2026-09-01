@@ -1,0 +1,4 @@
+ID,TEMPLATE_ID,LINE_NO,TASK_NAME,STANDARD_MINUTES,MATERIAL_ID,QUANTITY,REMARK
+1,1,1,主轴润滑脂更换,60.00,3,2,主轴轴承润滑（P）
+2,1,2,冷却液更换与导轨清洁,120.00,,,冷却系统保养（P）
+3,2,1,皮带张紧度检查,60.00,4,1,输送皮带检查（P）

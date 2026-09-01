@@ -1,0 +1,3 @@
+ID,CODE,NAME,INSPECTION_TYPE,MATERIAL_ID,IS_ACTIVE,REMARK
+1,IT-2026-001,原料 X 来料检验模板,INCOMING,3,1,启用态来料检验模板（P）
+2,IT-2026-002,产品甲完工检验模板(停用),FINAL,1,0,停用态检验模板（启用前置守卫负路径）（N-DIS）

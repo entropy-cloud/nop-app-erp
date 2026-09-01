@@ -1,0 +1,3 @@
+ID,CODE,NAME,EQUIPMENT_CATEGORY_ID,STANDARD_MINUTES,INSTRUCTION,IS_ACTIVE,REMARK
+1,TT-2026-001,数控机床月度保养模板,1,240.00,按月执行主轴润滑/冷却液更换/导轨清洁,1,启用态保养模板（P）
+2,TT-2026-002,输送带季度保养模板(停用),1,120.00,按季执行皮带张紧与滚筒检查,0,停用态模板（启用前置守卫负路径）（N-DIS）
