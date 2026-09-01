@@ -947,6 +947,7 @@ Playwright 截图断言 API 的权威名为 **`toHaveScreenshot`**（`_helper.ts
 
 - **只增不改**：M2.x 只能**新增**按场景拆分的像素层 helper 子集——`assertCrudPixelSnapshot`（M2.1）/ `assertBusinessActionPixelSnapshot`（M2.2）/ `assertReportPixelSnapshot`（M2.3）/ `assertDashboardPixelSnapshot`（M2.4）。
 - **不改既有函数**：`assertSnapshot`（像素统一封装）与 DOM 层 `assertDashboardRendered` / `assertReportRendered` 的签名与语义冻结，仅引用不重命名。
+- **范围澄清**：上述「签名与语义冻结」限定于 M2.x 扩面批；bug 修复批经独立计划授权可修改既有 DOM 层 helper（先例：plan `2026-09-01-0527-2` 修 `assertReportRendered` 等待谓词 /r/ 化），`assertSnapshot` 函数体保持零变更边界不变。
 - **命名并列**：像素层新子集命名 `assertXxxPixelSnapshot`，与 DOM 层 `assertXxxRendered` 语义并列（同一场景两层：DOM 主层 + 像素互补层），通过后缀区分归属层。
 - 共享函数扩展需求一律先归 M0.3 范畴裁决（即本节），M2.x 不得径自修改。
 
