@@ -1,0 +1,3 @@
+ID,TEMPLATE_ID,NOTIFICATION_TYPE,RECIPIENT_USER_ID,CHANNEL,SUBJECT,BODY,STATUS,MERGE_COUNT,SENT_AT,ERROR_MSG
+7301,7101,cs.sla-overdue,demo-user,IN_APP,SLA超期预警: 演示客户A,客户 演示客户A 工单 CS-DEMO-001 已超 SLA（升级 L1，第 1 次），请跟进,SENT,1,2026-06-30T09:00:00,
+7302,7102,fin.posting-exception,demo-user,IN_APP,过账异常告警,过账异常: 单据 V-DEMO-001 金额 1000.00，请立即处置,FAILED,1,,演示终态行：渠道发送失败（negative 终态行）
