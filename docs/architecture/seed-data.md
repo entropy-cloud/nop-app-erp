@@ -26,7 +26,7 @@
 >   1. **全表可加载**：枚举 `IDaoProvider.getEntityNames()`（**动态全量含平台实体，随 ORM 演进自动扩展**，含 `NopAuthUser`/`NopSysDict` 等；2026-09-01 快照 = app.erp.\* 363 + 已知声明缺 className 5 + 平台 66——计数口径权威登记处 = 下方「全量化裁决」段对账表，漂移 &gt; 0 时先更新对账表再消费），逐实体 `findAll()` 零异常；存在 seed CSV 的表行数 > 0（CSV 查找镜像 `DataInitInitializer.loadCsvData` 逻辑，97 CSV 全覆盖）。
 >   2. **非空关联键指向合法数据**：逐实体经 `getEntityModel().getRelations()` 取全部 **to-one** 关系，逐行校验 join leftProp 非空值存在于 refEntity（主键 join 用 refEntity 主键集 Set 内存比对；非主键 join 按 refProp 值 `existsByQuery` 语义精确查询——实证当前全仓 0 命中）。
 > - **覆盖范围与实证结论**：全量实体（2000-1 时点历史口径 418 = app.erp.\* 352 + 平台 66，当前动态口径见上方修正与「全量化裁决」段对账表）、全量 to-one 关系（app 1057 + 平台）、722 个非空 FK 值**零悬空引用**；`spc_chart.parameterId=0` 无 `<to-one>` 天然跳过；`crp_load.workOrderId=1`→`WO-2026-001`、`workcenterId=1`→`WC-001`、`erp_mnt_*.csv` equipmentId 跨域引用全部合法。白名单豁免机制（`WHITELIST_KEYS` 三元组）当前为空，供未来 seed 追加登记。
-> - **门禁强化已落地**（2026-09-01，plan `2026-09-01-0527-1-m02-seed-gate-hardening`）——在两层通用校验之上新增 M0.2 裁决口径断言：scope-pinning（app.erp.* className 唯一计数 363 快照常量 + 已知声明缺 className 实体集 5 + sys_* 语义实体在集 + 平台实体语义保留，双向漂移显式失败）+ seed 资产清单（零孤儿 CSV：`_init-data/` 每个 `.csv` ↔ 实体 tableName 精确匹配；app.erp.\*/平台 CSV 基线常量 93 + 4，M1.1a 批次起 app.erp.* 分项按随批更新协议推进至 121（M1.1b 批次），见下方对账表 M1.1a/M1.1b 行）；快照重录双面义务前置评估 = 本计划零 seed CSV 变更，义务未触发（评估记录见该 plan 执行注记）。
+> - **门禁强化已落地**（2026-09-01，plan `2026-09-01-0527-1-m02-seed-gate-hardening`）——在两层通用校验之上新增 M0.2 裁决口径断言：scope-pinning（app.erp.* className 唯一计数 363 快照常量 + 已知声明缺 className 实体集 5 + sys_* 语义实体在集 + 平台实体语义保留，双向漂移显式失败） + seed 资产清单（零孤儿 CSV：`_init-data/` 每个 `.csv` ↔ 实体 tableName 精确匹配；app.erp.\*/平台 CSV 基线常量 93 + 4，M1.1a 批次起 app.erp.* 分项按随批更新协议推进至 133（M1.1c 批次），见下方对账表 M1.1a/M1.1b/M1.1c 行）；快照重录双面义务前置评估 = 本计划零 seed CSV 变更，义务未触发（评估记录见该 plan 执行注记）。
 > - **后续 seed 追加义务**：任何 `_init-data/*.csv` 新增/修改必须保持引用完整性（本测试为门禁）；确需弱指针/占位引用时在 `WHITELIST_KEYS` 登记并注明证据来源（seed CSV 注释 / 本文档注记 / bug 记录）。
 > - **notify/cs 种子聚合已落地**（2026-08-25，plan `2026-08-25-0330-1`）——新增 **2 张部署配置表 CSV**（聚合前少 2 张，现共 **97 CSV**）：`erp_sys_notification_template.csv`（27 行模板族，转制自 `module-notify/deploy/sql/{三方言}/_seed_erp-notify.sql`，CSV 列头按既有约定省略审计列；三方言 diff 零差异）+ `nop_sys_code_rule.csv`（1 行 `cs-ticket-code` TK 编号规则，转制自 `module-cs/deploy/sql/{三方言}/_seed_erp-cs.sql`；String PK CSV 先例 = `nop_auth_role.csv`）。效果：聚合 app fresh-DB 启动后通知子系统与 CS TK 编号在无手工导入下即工作（修复 OA-01 产品级种子契约漂移——此前模板驱动通知静默丢弃 + TK 编号缺失回退）。联动：面 2 集成用例快照重录（C01/C04/C16/C17，见「快照重录义务」节）+ owner-doc 勘误修正（`integration-testing.md` §C16 勘误(4) 根因改「种子未聚合」）。
 > - **执行期先决修复**（本计划 Phase 3 绿化必要，均已在 `docs/bugs/` 登记）：nop-entropy `OrmTransactionListener` NPE（`e5ee02b40` lazy-property 回归，null-guard 修复，双独立子代理批准见计划文件「Cross-Repo Fix Approvals」）；mfg `ErpMfgCostRollupLine.view.xml` 档位 cells `custom="true"`（E4.1 代理字段 cell-not-prop 回归，bug `2026-08-14-0930-mfg-...` 方案 A）。
@@ -72,7 +72,7 @@ app-erp-seed/
 
 > 2026-08-25 登记（roadmap V.2，plan `docs/plans/2026-08-25-0232-1-v2-closure-alignment-docs-registration.md` Phase 1；roadmap 横切关注点 1「快照重录义务」的强制规则落点）。
 
-部署期 seed 资产（`app-erp-all/src/main/resources/_vfs/_init-data/`，**97 CSV 基点 + M1.x 新增 CSV + 1 SQL**（`zz-sequence-advance.sql`；M1.1b 批次后 = 125 CSV + 1 SQL，见对账表 M1.1a/M1.1b 行），`DataInitInitializer` 拓扑序加载）是下述**双面测试快照的输入源**：三层全比对（response 快照 + DB 状态快照 + JUnit 关键断言）下，任何 seed CSV/SQL 变更（含未来计划追加种子）都会破坏受影响快照的录制口径。
+部署期 seed 资产（`app-erp-all/src/main/resources/_vfs/_init-data/`，**97 CSV 基点 + M1.x 新增 CSV + 1 SQL**（`zz-sequence-advance.sql`；M1.1b 批次后 = 125 CSV + 1 SQL，M1.1c 批次后 = 137 CSV + 1 SQL，见对账表 M1.1a/M1.1b/M1.1c 行），`DataInitInitializer` 拓扑序加载）是下述**双面测试快照的输入源**：三层全比对（response 快照 + DB 状态快照 + JUnit 关键断言）下，任何 seed CSV/SQL 变更（含未来计划追加种子）都会破坏受影响快照的录制口径。
 
 ### 双面资产盘点
 
@@ -81,7 +81,7 @@ app-erp-seed/
 
 ### 义务规则（强制）
 
-1. **触发条件**：任何部署期 seed 资产（97 CSV 基点 + M1.x 新增 CSV + `zz-sequence-advance.sql`；M1.1b 后 = 125 CSV + 1 SQL）新增/修改/删除。
+1. **触发条件**：任何部署期 seed 资产（97 CSV 基点 + M1.x 新增 CSV + `zz-sequence-advance.sql`；M1.1b 后 = 125 CSV + 1 SQL，M1.1c 后 = 137 CSV + 1 SQL）新增/修改/删除。
 2. **重录义务（双面）**：变更方**同步重录受影响快照**——
    - 面 1：受影响各域 `_cases` 快照（force-save 重录；delVersion 列语义与响应快照 `*` 通配恢复口径见 e2e-runbook「JUnit 快照 delVersion 列语义」节）；
    - 面 2：`app-erp-all` 集成用例快照（基类 fresh-DB 重灌全量 seed 后按用例重录）。
@@ -498,16 +498,17 @@ CRP 重算链经 nop-job 双层门控默认关：`erp-mfg.crp-run-cron` 默认�
 | 档 | 值 | 来源 | 2026-09-01 实仓复核 | 状态 |
 |---|---|---|---|---|
 | className 唯一计数 | **363** | `rg 'className="app\.erp\.'` module-*/model/*.orm.xml | 复算 363；19 域分布与 roadmap §当前基线 1:1 零漂移 | **权威（当前）** |
-| 有 seed 的 app.erp.* 实体 | 121 | `_init-data/` 121 个 `erp_*` CSV ↔ entity tableName 精确匹配 | 复算 121（93 基线 + M1.1a 批次 12 + M1.1b 批次 16，2026-09-01） | 权威（当前） |
+| 有 seed 的 app.erp.* 实体 | 133 | `_init-data/` 133 个 `erp_*` CSV ↔ entity tableName 精确匹配 | 复算 133（93 基线 + M1.1a 批次 12 + M1.1b 批次 16 + M1.1c 批次 12，2026-09-01） | 权威（当前） |
 | 平台 seed CSV | 4 | `nop_auth_user` / `nop_auth_user_role` / `nop_auth_role` / `nop_sys_code_rule` | 复算 4 | 权威（当前） |
-| 精确缺 seed | **242** | roadmap §当前基线 + 本节重算（entity tableName ↔ CSV 精确匹配，逐域小计相加） | 复算 242（= 270 − M1.1a 批次 12 − M1.1b 批次 16：master-data 4 + sales 8 + inventory 16 已落地，规格表三节已由 M1.1a/M1.1b 消费落地）；purchase 及其余 8 工作项待 M1.x 后续批次 | **权威（当前）** |
+| 精确缺 seed | **230** | roadmap §当前基线 + 本节重算（entity tableName ↔ CSV 精确匹配，逐域小计相加） | 复算 230（= 270 − M1.1a 批次 12 − M1.1b 批次 16 − M1.1c 批次 12：master-data 4 + sales 8 + inventory 16 + purchase 12 已落地，规格表四节已由 M1.1a/M1.1b/M1.1c 消费落地）；finance 及其余 8 工作项待 M1.x 后续批次 | **权威（当前）** |
 | M1.1a 批次增量 | +12 CSV（app.erp.*） | plan `docs/plans/2026-09-01-0838-1-m11a-md-sal-seed-expansion.md`（master-data 4 + sales 8，CSV-only 路径） | 复算：有 seed 93→105 / 缺 seed 270→258 / 平台 4 不变；`TestErpSeedDataIntegrity` 基线常量 93→105 随批更新（常量 javadoc 登记） | 权威（当前批次档） |
 | M1.1b 批次增量 | +16 CSV（app.erp.*） | plan `docs/plans/2026-09-01-0838-2-m11b-inventory-seed-expansion.md`（inventory 16，CSV-only 路径） | 复算：有 seed 105→121 / 缺 seed 258→242 / 平台 4 不变；`TestErpSeedDataIntegrity` 基线常量 105→121 随批更新（常量 javadoc 登记） | 权威（当前批次档） |
+| M1.1c 批次增量 | +12 CSV（app.erp.*） | plan `docs/plans/2026-09-01-0838-3-m11c-purchase-seed-expansion.md`（purchase 12，CSV-only 路径） | 复算：有 seed 121→133 / 缺 seed 242→230 / 平台 4 不变；`TestErpSeedDataIntegrity` 基线常量 121→133 随批更新（常量 javadoc 登记） | 权威（当前批次档） |
 | 「backlog README 350」 | 350 | roadmap §目的 口径表「backlog README L134（过时应更新）」行 | backlog README L134 现值已是「约 363」，全文件 0 处「350」→ 该行对 README 现值的表述已失实 | **已失效历史档**（仅存于 roadmap §目的 口径表表述；以本表为登记处，roadmap 本体勘误不在 M0.1 范围） |
 | 门禁注释 app.erp 计数 | 352 | `TestErpSeedDataIntegrity.java:36`「Phase 1 Decision (a)：418 = app.erp.* 352 + 平台 66」 | 实仓 363 > 352：注释早于后续 ORM 实体扩展 | 过期历史档（计数修正归 M0.2 门禁扩展消费） |
 | seed-data 旧总口径 | 418 = 352 + 66 | 本文档「通用引用完整性校验」段 | findAll 全实体门禁语义仍有效，唯计数过期（app.erp 352→363） | 过期历史档（修正归 M0.2 消费） |
 | 1143-1 宽口径缺 seed | 275 | plan `2026-08-31-1143-1` L56「**不**补全 275 张缺失表 seed」 | 原文未附逐表明细，无法从现行实仓 1:1 复算；与精确 270 差 +5 归因于当时实体集/口径未细分 | 历史档（被 270 精确清点取代） |
-| 运行时注册实体集（`getEntityNames`） | **368 = 363 + 5** | 2026-09-01 M0.2 门禁实测（`TestErpSeedDataIntegrity#testAdjudicatedScopePinned`，plan `2026-09-01-0527-1`） | +5 = finance 域 5 个模型声明缺 `className` 属性实体（`ErpFinCashForecast` / `ErpFinCreditFacility` / `ErpFinNotesDiscount` / `ErpFinNotesPayable` / `ErpFinNotesReceivable`）——实体定义完整（物理表/生成 Java 类均在，codegen 与运行时按 entity name 默认补齐）但 className grep 口径天然遗漏、无 seed CSV、不在下方 270 规格表内 | **补充档（M1.x seed 补齐须按运行时口径消费：M1.1b 后全集缺 = 242 + 5 = 247；finance 仍缺 26+5=31，待 M1.2a1；roadmap 本体勘误归 roadmap owner）** |
+| 运行时注册实体集（`getEntityNames`） | **368 = 363 + 5** | 2026-09-01 M0.2 门禁实测（`TestErpSeedDataIntegrity#testAdjudicatedScopePinned`，plan `2026-09-01-0527-1`） | +5 = finance 域 5 个模型声明缺 `className` 属性实体（`ErpFinCashForecast` / `ErpFinCreditFacility` / `ErpFinNotesDiscount` / `ErpFinNotesPayable` / `ErpFinNotesReceivable`）——实体定义完整（物理表/生成 Java 类均在，codegen 与运行时按 entity name 默认补齐）但 className grep 口径天然遗漏、无 seed CSV、不在下方 270 规格表内 | **补充档（M1.x seed 补齐须按运行时口径消费：M1.1c 后全集缺 = 230 + 5 = 235；finance 仍缺 26+5=31，待 M1.2a1；roadmap 本体勘误归 roadmap owner）** |
 
 **精确化附注**：roadmap §目的 口径表对 270 的注「不含 sys_* 部署表」须按本表精确化——270 = 363 全集减 93 有 CSV 者，**包含** `erp_sys_config` / `erp_sys_notification` / `erp_sys_notification_read` 三个 sys_* 语义的 app.erp.* 实体（它们是 className 实体）；「不含」仅对平台 `nop_*` 表成立（本就不在 app.erp.* 口径内）。
 
