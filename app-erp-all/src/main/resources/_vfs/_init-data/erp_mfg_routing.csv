@@ -1,0 +1,3 @@
+ID,CODE,NAME,IS_ACTIVE,REMARK
+1,RT-2026-001,产品甲主装配工艺,true,产品甲标准工艺路线（下料→装配测试 两道工序 挂 WC-001）
+2,RT-2026-002,产品乙检验工艺,false,停用工艺路线 N-DIS 负例（isActive=false 启用前置守卫）
