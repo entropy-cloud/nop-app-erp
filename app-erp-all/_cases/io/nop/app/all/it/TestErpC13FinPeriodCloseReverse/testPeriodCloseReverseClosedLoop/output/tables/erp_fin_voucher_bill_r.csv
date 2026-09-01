@@ -1,7 +1,7 @@
 _chgType,ID,VOUCHER_ID,BILL_TYPE,BILL_CODE,BILL_LINE_CODE,BUSINESS_TYPE,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
 A,100004,100001,EXCHANGE_GAIN_LOSS,@var:ErpFinVoucherBillR@billCode,,EXCHANGE_GAIN_LOSS,0,0,autotest-ref,*,autotest-ref,*
 A,100010,100005,PERIOD_CLOSE,@var:ErpFinVoucherBillR@billCode_5,,PERIOD_CLOSE,0,0,autotest-ref,*,autotest-ref,*
-A,100023,100018,PERIOD_CLOSE,@var:ErpFinVoucherBillR@billCode_5,,PERIOD_CLOSE,0,0,autotest-ref,*,autotest-ref,*
-A,100027,100024,EXCHANGE_GAIN_LOSS,@var:ErpFinVoucherBillR@billCode,,EXCHANGE_GAIN_LOSS,0,0,autotest-ref,*,autotest-ref,*
-A,100031,100028,EXCHANGE_GAIN_LOSS,@var:ErpFinVoucherBillR@billCode,,EXCHANGE_GAIN_LOSS,0,0,autotest-ref,*,autotest-ref,*
-A,100037,100032,PERIOD_CLOSE,@var:ErpFinVoucherBillR@billCode_5,,PERIOD_CLOSE,0,0,autotest-ref,*,autotest-ref,*
+A,100026,100021,PERIOD_CLOSE,@var:ErpFinVoucherBillR@billCode_5,,PERIOD_CLOSE,0,0,autotest-ref,*,autotest-ref,*
+A,100030,100027,EXCHANGE_GAIN_LOSS,@var:ErpFinVoucherBillR@billCode,,EXCHANGE_GAIN_LOSS,0,0,autotest-ref,*,autotest-ref,*
+A,100034,100031,EXCHANGE_GAIN_LOSS,@var:ErpFinVoucherBillR@billCode,,EXCHANGE_GAIN_LOSS,0,0,autotest-ref,*,autotest-ref,*
+A,100040,100035,PERIOD_CLOSE,@var:ErpFinVoucherBillR@billCode_5,,PERIOD_CLOSE,0,0,autotest-ref,*,autotest-ref,*
