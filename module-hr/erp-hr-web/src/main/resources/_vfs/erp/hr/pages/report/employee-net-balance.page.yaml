@@ -49,4 +49,5 @@ body:
 
   - type: html
     className: m-3
-    html: "${reportHtmlData ?? ''}"
+    sanitize: false
+    content: "${reportHtmlData ?? ''}"

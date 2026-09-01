@@ -13,7 +13,6 @@ body:
       - type: input-date
         name: asOfDate
         label: "账龄基准日"
-        value: "${NOW()}"
         valueFormat: "YYYY-MM-DD"
       - type: button
         label: "渲染报表"
@@ -58,4 +57,5 @@ body:
 
   - type: html
     className: m-3
-    html: "${reportHtmlData ?? ''}"
+    sanitize: false
+    content: "${reportHtmlData ?? ''}"

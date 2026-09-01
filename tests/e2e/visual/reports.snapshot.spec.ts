@@ -1,9 +1,9 @@
 import { test, loginAndNavigate } from '../fixtures';
-import { assertSnapshot } from './_helper';
-import { getEngine } from '../pages';
+import { assertSnapshot, pickFluxDate } from './_helper';
 import type { Page } from '@playwright/test';
 
-// Pixel-snapshot layer (plan 2026-07-17-2010-2 Phase 2).
+// Pixel-snapshot layer (plan 2026-07-17-2010-2 Phase 2; /r/ predicate realigned
+// by plan 2026-09-01-0527-2).
 //
 // Representative subset of the 24 report pages, covering the four parameter
 // shapes identified in reports.visual.spec.ts:
@@ -12,13 +12,13 @@ import type { Page } from '@playwright/test';
 //   3. date-param        — fin-ar-ap-aging (账龄基准日 date input)
 //   4. string/number-param — cs-ticket-sla-csat-summary (ticketType)
 //
-// Page-driving (login → navigate → fill ID/date params → click 渲染报表 →
-// wait for renderHtml GraphQL response) mirrors reports.visual.spec.ts so
-// every snapshot has deterministic seed data behind it. assertSnapshot adds
-// font hardening + canonical mask (header) + 1% ratio tolerance. Reports
-// emit HTML tables (no echarts canvas), so the canvas canonical mask is a
-// no-op here; the header mask covers the AMIS shell's user-name/avatar
-// dynamic region.
+// Page-driving (login → navigate → auto-fetch /r/<Biz>__renderHtml on load →
+// fill ID/date params → wait for the fill-triggered reload) mirrors
+// reports.visual.spec.ts so every snapshot has deterministic seed data behind
+// it. assertSnapshot adds font hardening + canonical mask (header) + 1% ratio
+// tolerance. Reports emit HTML tables (no echarts canvas), so the canvas
+// canonical mask is a no-op here; the header mask covers the shell's
+// user-name/avatar dynamic region.
 //
 // Baseline update: when a report .xpt.xml template or page.yaml changes
 // intentionally, re-record with `--update-snapshots`.
@@ -31,32 +31,48 @@ interface ReportSnapshot {
 }
 
 async function driveReportAndSnapshot(page: Page, cfg: ReportSnapshot): Promise<void> {
-  const renderResponsePromise = page.waitForResponse(
-    (resp) => {
-      if (!resp.url().includes('/graphql')) return false;
-      const body = resp.request().postData() || '';
-      return body.includes('renderHtml');
-    },
-    { timeout: 30_000 },
-  );
+  // Flux report pages auto-fetch on load (data-source action ajax → REST
+  // /r/<Biz>__renderHtml). Register the listener BEFORE navigation; no 渲染报表
+  // button click is needed (and clicking is unreliable/deduped under flux).
+  const responsePredicate = (resp: import('@playwright/test').Response): boolean => {
+    if (!resp.url().includes('/r/')) return false;
+    return (
+      resp.url().includes('renderHtml') || decodeURIComponent(resp.url()).includes('renderHtml')
+    );
+  };
+  const initialResponsePromise = page.waitForResponse(responsePredicate, { timeout: 30_000 });
 
   await loginAndNavigate(page, cfg.route);
+  await initialResponsePromise;
 
-  if (cfg.fill) {
-    for (const [name, value] of Object.entries(cfg.fill)) {
-      await page.locator(`input[name="${name}"]`).first().fill(value);
+  const hasValueFills = cfg.fill && Object.keys(cfg.fill).length > 0;
+  const hasDateFills = cfg.fillDates && Object.keys(cfg.fillDates).length > 0;
+  if (hasValueFills || hasDateFills) {
+    let reloadExpected = hasDateFills;
+    const pendingFills: Array<() => Promise<void>> = [];
+    if (hasValueFills) {
+      for (const [name, value] of Object.entries(cfg.fill!)) {
+        const input = page.locator(`input[name="${name}"]`).first();
+        const current = await input.inputValue();
+        if (current !== value) {
+          pendingFills.push(() => input.fill(value));
+          reloadExpected = true;
+        }
+      }
+    }
+    if (reloadExpected) {
+      const reloadResponsePromise = page.waitForResponse(responsePredicate, { timeout: 30_000 });
+      for (const fillOp of pendingFills) {
+        await fillOp();
+      }
+      if (hasDateFills) {
+        for (const [label, value] of Object.entries(cfg.fillDates!)) {
+          await pickFluxDate(page, label, value);
+        }
+      }
+      await reloadResponsePromise;
     }
   }
-
-  if (cfg.fillDates) {
-    const engine = getEngine();
-    for (const [label, value] of Object.entries(cfg.fillDates)) {
-      await engine.dateInputByLabel(page, label).fill(value);
-    }
-  }
-
-  await page.getByRole('button', { name: /渲染报表|Render/ }).first().click();
-  await renderResponsePromise;
 
   // Reports emit static HTML; allow DOM injection + table render to settle.
   await page.waitForLoadState('networkidle', { timeout: 10_000 }).catch(() => {});

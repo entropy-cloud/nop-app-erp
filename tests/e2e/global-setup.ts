@@ -60,6 +60,10 @@ async function ensureCurrentMonthOpenPeriod(
 
     const headers = { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` };
     // filter 须走 GraphQL variable（Map）——内联对象字面量不支持带 $ 前缀的 key。
+    // 「期间包含 today」用受支持运算符表达（plan 2026-09-01-0527-2）：缺省过滤校验
+    // 只允许 eq/in/dateBetween/dateTimeBetween（不支持 le/ge），故 startDate/endDate
+    // 各用一条 dateBetween（value=[min,max]，含端点）表达 startDate<=today 与
+    // endDate>=today 的包含语义。
     const findResp = await page.request.post('/graphql', {
       headers,
       data: {
@@ -69,8 +73,8 @@ async function ensureCurrentMonthOpenPeriod(
           f: {
             $type: 'and',
             $body: [
-              { $type: 'le', name: 'startDate', value: today },
-              { $type: 'ge', name: 'endDate', value: today },
+              { $type: 'dateBetween', name: 'startDate', value: ['1900-01-01', today] },
+              { $type: 'dateBetween', name: 'endDate', value: [today, '2999-12-31'] },
             ],
           },
         },

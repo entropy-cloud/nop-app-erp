@@ -1,5 +1,4 @@
 import { test, expect, loginAndNavigate } from '../fixtures';
-import { getEngine } from '../pages';
 import type { Page, Locator } from '@playwright/test';
 
 /**
@@ -122,8 +121,10 @@ async function kpiSpanTexts(page: Page): Promise<string[]> {
 }
 
 /** Pick a date in the flux calendar popover (react-day-picker day buttons carry
- * a full-date aria-label, month nav buttons are 前往上个月/前往下个月). */
-async function pickFluxDate(page: Page, label: string, value: string): Promise<void> {
+ * a full-date aria-label, month nav buttons are 前往上个月/前往下个月). Exported
+ * additively (plan 2026-09-01-0527-2) for sibling snapshot specs; frozen helpers
+ * (assertSnapshot / assertDashboardRendered / assertReportRendered) untouched. */
+export async function pickFluxDate(page: Page, label: string, value: string): Promise<void> {
   const [y, mo, d] = value.split('-').map(Number);
   const target = `${y}年${mo}月${d}日`;
   const trigger = page.locator(`[data-testid="date-trigger"][aria-label="${label}"]`).first();
@@ -254,45 +255,77 @@ export interface ReportVisualAssertion {
   reportLabel: string;
   route: string;
   expectedTokens: string[];
+  /** Fillable filter inputs (input-number / input-text), keyed by field name. */
   fill?: Record<string, string>;
-  /** AMIS input-date fields to fill, keyed by form-item label text. Date
-   * inputs have no fillable <input name>, so they are targeted by the label
-   * of their enclosing .cxd-Form-item wrapper. Used when the page.yaml
-   * default (e.g. ${NOW()}) produces an unparseable value. */
+  /** Flux date-picker filters, keyed by the trigger's aria-label (field label).
+   * The picker is a button + calendar popover (no fillable input), so dates are
+   * chosen by driving the calendar day buttons via pickFluxDate. Used when the
+   * page.yaml default (e.g. ${NOW()}) produces an unparseable value. */
   fillDates?: Record<string, string>;
 }
 
 export function assertReportRendered(cfg: ReportVisualAssertion): void {
-  test.describe(`${cfg.reportLabel} report AMIS render`, () => {
-    test('injects renderHtml response into the page via AMIS service reload', async ({ page }) => {
-      const renderResponsePromise = page.waitForResponse(
-        (resp) => {
-          if (!resp.url().includes('/graphql')) return false;
-          const body = resp.request().postData() || '';
-          return body.includes('renderHtml');
-        },
-        { timeout: 30_000 },
-      );
+  test.describe(`${cfg.reportLabel} report flux render`, () => {
+    test('renders renderHtml response into the page via flux data-source', async ({ page }) => {
+      // Flux report pages auto-fetch on load: the data-source (action ajax,
+      // `@query:<Biz>__renderHtml`) dispatches a REST `/r/<Biz>__renderHtml`
+      // request as soon as the page mounts. Register the listener BEFORE
+      // navigation (plan 2026-09-01-0527-2: the legacy AMIS orchestration —
+      // `/graphql` + renderHtml body + 渲染报表 button click — no longer exists).
+      const responsePredicate = (resp: import('@playwright/test').Response): boolean => {
+        if (!resp.url().includes('/r/')) return false;
+        return (
+          resp.url().includes('renderHtml') || decodeURIComponent(resp.url()).includes('renderHtml')
+        );
+      };
+      const initialResponsePromise = page.waitForResponse(responsePredicate, { timeout: 30_000 });
 
       await loginAndNavigate(page, cfg.route);
 
-      if (cfg.fill) {
-        for (const [name, value] of Object.entries(cfg.fill)) {
-          await page.locator(`input[name="${name}"]`).first().fill(value);
-        }
-      }
-
-      if (cfg.fillDates) {
-        const engine = getEngine();
-        for (const [label, value] of Object.entries(cfg.fillDates)) {
-          await engine.dateInputByLabel(page, label).fill(value);
-        }
-      }
-
-      await page.getByRole('button', { name: /渲染报表|Render/ }).first().click();
-
-      const renderResponse = await renderResponsePromise;
+      const renderResponse = await initialResponsePromise;
       expect(renderResponse.status(), `${cfg.reportLabel} renderHtml should return 200`).toBe(200);
+
+      // Deterministic filtered reload: set the filter fields, then wait for the
+      // auto-reload they trigger. No button click is needed (and clicking is
+      // unreliable): the data-source args templates read `filterForm?.x`, flux
+      // dependency-tracking treats those reads as dependencies, and the
+      // valuesPath publish after each field change re-dispatches the source
+      // (debounced ~4s). A fill that sets the input's current value does NOT
+      // re-dispatch the source — only wait for the reload when something
+      // actually changed (the initial load already rendered with the unchanged
+      // value). The response listener is registered only when a reload is
+      // expected, right before the first mutation.
+      const hasValueFills = cfg.fill && Object.keys(cfg.fill).length > 0;
+      const hasDateFills = cfg.fillDates && Object.keys(cfg.fillDates).length > 0;
+      if (hasValueFills || hasDateFills) {
+        let reloadExpected = hasDateFills;
+        const pendingFills: Array<() => Promise<void>> = [];
+        if (hasValueFills) {
+          for (const [name, value] of Object.entries(cfg.fill!)) {
+            const input = page.locator(`input[name="${name}"]`).first();
+            const current = await input.inputValue();
+            if (current !== value) {
+              pendingFills.push(() => input.fill(value));
+              reloadExpected = true;
+            }
+          }
+        }
+        if (reloadExpected) {
+          const reloadResponsePromise = page.waitForResponse(responsePredicate, { timeout: 30_000 });
+          for (const fillOp of pendingFills) {
+            await fillOp();
+          }
+          if (hasDateFills) {
+            for (const [label, value] of Object.entries(cfg.fillDates!)) {
+              await pickFluxDate(page, label, value);
+            }
+          }
+          // The fills are debounced; the first caught response may still carry
+          // a partial filter set. The token assertions below poll to the final
+          // values, so this wait only synchronizes on the reload pipeline.
+          await reloadResponsePromise;
+        }
+      }
 
       const firstToken = cfg.expectedTokens[0];
       await expect.poll(

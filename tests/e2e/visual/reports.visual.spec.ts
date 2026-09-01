@@ -1,35 +1,25 @@
 import { assertReportRendered } from './_helper';
 
-// AMIS front-end render-layer assertions for reports.
+// Report front-end render-layer DOM assertions.
 //
-// Defect B (docs/bugs/2026-07-09-1249-report-render-container-wiring.md):
-// the "渲染报表" button fired renderHtml (backend returned HTML) but the
-// response never reached the DOM. Defect A additionally mangled the `$var`
-// in the renderHtml query. Both are fixed (plan 2026-07-09-1728-1).
+// Historical context (plan 2026-07-09-1728-1): the original AMIS-era page used
+// a "渲染报表" button + service reload; defect B (docs/bugs/2026-07-09-1249)
+// was the renderHtml response never reaching the DOM. The pages were rewritten
+// flux-native (plan 2026-08-29-1913-2: data-source → form → html), so the
+// orchestration is now: page load auto-fetches /r/<Biz>__renderHtml via the
+// flux data-source; fills trigger a debounced auto-reload; no button click.
+// The renderHtml body must be UNPACKED into the html renderer's `content` prop
+// (`content: "${reportHtmlData ?? ''}"` + sanitize:false, plan
+// 2026-09-01-0527-2) — bare object refs or the ignored `html:` key render an
+// empty body silently (docs/bugs/2026-09-01-0400).
 //
-// IMPLEMENTATION NOTE (deviation from the plan's prescribed onEvent mirror):
-// the balance-sheet `onEvent: setVariable(event.data.result) + setValue`
-// reference pattern turned out to be itself broken at runtime — (1) the
-// legacy button-ajax result is NOT exposed as `event.data.result` (amis-core
-// AjaxAction stores it under `outputVar`, default `responseResult`), and (2)
-// CmptAction resolves targets via `componentId`/`componentName`, ignoring the
-// `target:` field. The working pattern (verified here) is the same one the
-// dashboards use: the render button does `actionType: reload` of an in-form
-// `service` (name: reportService, initFetch: false) whose api has an adaptor
-// that flattens the report HTML to `data.reportHtml`, and whose body is a
-// `type: html html: "${reportHtml}"`. The service lives INSIDE the form so it
-// shares the form's field-value scope (a sibling service gets periodId="" ->
-// BigDecimal NumberFormatException). See plan Phase 3 Decision Record.
-//
-// These assertions drive the real AMIS page, click "渲染报表", wait for the
-// AMIS-issued renderHtml response, then assert the report-specific tokens
-// (subject names / labels that appear ONLY in the rendered report HTML) are
-// now in the DOM. Pre-fix the container is empty; post-fix the rendered HTML
-// is injected. Tokens derive from the value-spec layer
-// (tests/e2e/reports/*.value.spec.ts) and the .xpt.xml templates; numeric
-// values are comma-formatted in the HTML (e.g. "1,130.00") so format-
-// independent subject/label tokens are used here, with comma-stripping left
-// to the value-spec layer.
+// These assertions drive the real flux page, wait for the /r/ renderHtml
+// response, then assert the report-specific tokens (subject names / labels
+// that appear ONLY in the rendered report HTML) are now in the DOM. Tokens
+// derive from the value-spec layer (tests/e2e/reports/*.value.spec.ts) and
+// the .xpt.xml templates; numeric values are comma-formatted in the HTML
+// (e.g. "1,130.00") so format-independent subject/label tokens are used
+// here, with comma-stripping left to the value-spec layer.
 //
 // Token selection: 2-3 format-independent subject/label tokens per report
 // (title / column headers / dimension codes / dict labels). Numeric tokens
@@ -38,10 +28,12 @@ import { assertReportRendered } from './_helper';
 // "120000.00" assertion. Tokens < 1000 (e.g. "200.00", "0.50") are safe.
 //
 // Fill strategy (aligned with value-spec layer + 1728-1:182 residual risk):
-// date-param reports (AMIS input-date) have NO fillable <input name>, so
+// date-param reports (flux input-date) have NO fillable <input name>, so
 // only ID/dimension params (input-number/input-text) are filled; date filters
-// are left empty and the backend treats null date ranges as full extent
-// (matching the value-spec layer's zero-date behavior).
+// are driven via the flux calendar popover (pickFluxDate) only when the
+// page.yaml default (e.g. ${NOW()} raw timestamp) is unparseable; empty date
+// ranges are treated by the backend as full extent (matching the value-spec
+// layer's zero-date behavior).
 
 // === finance (5) ===
 
@@ -64,9 +56,10 @@ assertReportRendered({
 assertReportRendered({
   reportLabel: 'fin-ar-ap-aging',
   route: '/ar-ap-aging',
-  // asOfDate input-date has value: "${NOW()}" which evaluates to a raw Unix
-  // timestamp (e.g. "1783621109") that the backend cannot parse as a date.
-  // Fill it with a valid ISO date to override the broken default.
+  // The page.yaml default (formerly "${NOW()}") is removed (plan
+  // 2026-09-01-0527-2: flux templates have no NOW() and the node failed to
+  // render). Empty default = backend full extent; pick a valid ISO date via
+  // the flux calendar popover to exercise the parameterized render path.
   fillDates: { '账龄基准日': '2026-07-08' },
   expectedTokens: ['应收应付账龄分析表', '未核销余额合计'],
 });
