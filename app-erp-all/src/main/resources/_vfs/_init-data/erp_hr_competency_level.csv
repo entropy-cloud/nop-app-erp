@@ -1,0 +1,5 @@
+ID,COMPETENCY_ID,LEVEL_NUMBER,LEVEL_NAME,BEHAVIORAL_ANCHOR,SORT_ORDER
+1,1,1,入门,能在指导下完成基础沟通,1
+2,1,2,熟练,能独立处理复杂沟通场景,2
+3,2,1,入门,能在指导下完成基础销售动作,1
+4,2,2,熟练,能独立完成成交闭环,2
