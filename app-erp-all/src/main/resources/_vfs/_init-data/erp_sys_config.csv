@@ -1,0 +1,4 @@
+ID,CONFIG_KEY,CONFIG_VALUE,ORG_ID,DESCRIPTION
+1,erp.demo.currency.precision,2,,演示全局金额精度配置
+2,erp.demo.posting.mode,ONLINE,2,演示公司过账模式配置
+3,erp.demo.export.row-limit,1000,,演示全局导出行数上限
