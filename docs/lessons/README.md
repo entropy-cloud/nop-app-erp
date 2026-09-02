@@ -28,6 +28,7 @@ When a bug, retrospective, or audit reveals a repeatable pattern, consider promo
 - `15-xbiz-xscript-no-trycatch-sink-to-java-bean.md` — **xbiz XScript 无法 try/catch**：XLang 引擎不支持 TryStatement，多步编排/失败隔离/复杂守卫必须下沉 Java Bean（Guard/StateMachine/编排 Processor 范式），xbiz source 只做薄委托（状态写回 + 一行 inject）。M4.64 机制注记 + RC-R1.89 D2 薪酬三路计提编排两案定稿。
 - `16-cross-repo-schema-contract-consumer-source-verification.md` — **跨仓库 schema 契约须对照消费端渲染器源码验证**：松耦合契约失效是静默降级非抛错——生成侧输出 `valueField`、消费侧读 `valueKey`，运行时退化 fallback 无任何报错；结构性契约测试（键存在性）146 全绿但功能全坏。plan 2026-08-24-1147-1 三轮 plan-audit 全过、closure-audit 捕获 2 项 P0 实录。含四步强制清单（读消费端解析点 / 契约对照表进文档 / 深度断言 / 抽样落盘统计分布）。
 - `17-code-history-deferred-triangulation-audit.md` — **代码 × 历史 × Deferred 三路交叉审计**：新一輪审计 mission 的非平凡增量 = 三路交叉（代码 / 历史 / Deferred），第三路（读最近 50 份 plan 的 Deferred 段）= 隐藏的 finding 金矿。ai-check-r2 M0.2 扫描揭示 8 项已满足 / 11 项部分满足 / 21 项未满足的 deferred 触发条件。含多次执行隔离纪律 + 状态机延用 + 同型 finding 合并基类 + 保护区域不绕。
+- `18-schema-contract-redesign-no-type-sniffing-no-sugar.md` — **契约重设计中禁类型嗅探与语法糖复发**：类型嗅探（`type === 'crud'`）与 sugar（顶层 `columns`/`options` 兼容层）是同一架构失败的两个症状——在 renderer 命令式设计集成而非在 schema 声明式设计协议。破坏性重设计下旧测试是迁移清单非验收标准；"让旧测试不改通过"驱动连环回摆（picker v3 实施期三次回摆实录）。含声明/身份判别式 + 契约回摆四驱动力表 + 决策树。
 
 > **2026-08-28 提升裁决（ai-check-r2 M0.7 自审）**：M0 阶段执行后沉淀方法学——三路交叉审计范式入课为 `17`。
 

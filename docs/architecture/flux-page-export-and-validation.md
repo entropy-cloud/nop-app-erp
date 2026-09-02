@@ -101,24 +101,20 @@ nop-app-erp 的页面模型是 `.page.yaml`（内嵌 AMIS 语义 DSL），flux-o
 
 **替代方案**：扩展 flux-bundle 导出 compiler API 并 repack tgz 到 nop-chaos-next libs，验证器放 next。否决（本切片）：需走完整 repack 链（build → pack → import-flux-to-libs → pnpm install），成本与风险高，作为演进路径（§8）。
 
-### D4 ERP 导出测试放 app-erp-all 聚合层（回应「在 WebPageTest 里做」的提议）
+### D4 导出验证合并到 WebPagesTest（codegen 模板 + 聚合层）
 
-**决策**：新增 `ErpAllFluxPagesExportTest`（app-erp-all，`JunitBaseTestCase`，与 `ErpAllWebPagesTest` 同环境），调 `WebPageExporter` 输出到 `app-erp-all/target/flux-pages/`。**不**改造 19 个模块各自的 `ErpXxxWebPagesTest`。
+**决策**：codegen 模板 `{moduleClassPrefix}WebPagesTest.java.xgen` 生成的测试类直接调用 `WebPageExporter.exportPages()` 完成 flux 模式验证 + JSON 导出（一步完成，不拆分两个测试类）。聚合层 `ErpAllFluxPagesTest` 使用相同模式，作为跨域全量验证入口。
 
-**与既有 `ErpAllFluxPagesTest` 的职责边界**（两者同包共存，命名仅差一词，须防混淆）：
+**实现方式**：
 
-- `ErpAllFluxPagesTest`（既有）— flux 模式**加载正确性**：对全部页面 `getPage`，断言零异常（验证 Java 生成链本身）。
-- `ErpAllFluxPagesExportTest`（新增）— **产物导出 + JS 验证入口**：产出 flux 页面 JSON 产物与 manifest，供 JS 编译验证消费（验证页面符合 flux 框架要求）。
-
-两类测试互补（前者抓 Java 侧生成错误，后者把产物交给 flux 编译器抓 schema/表达式错误），均在各自 Javadoc 交叉引用对方。
+- codegen 模板（nop-entropy `WebPagesTest.java.xgen`）：`options.setRenderMode("flux")` + `WebPageExporter.exportPages()` → 零失败 = 页面结构合法 + 导出产物就绪
+- `ErpAllFluxPagesTest`（app-erp-all）：同构逻辑，覆盖全模块聚合场景
+- 删除了独立的 `ErpAllFluxPagesExportTest`（功能已合并）
 
 **理由**：
 
-1. 单模块测试的 VFS = 本模块 + Maven 依赖模块的并集。逐模块导出会把平台/依赖模块页面重复渲染多达 19 次，产物散落在 19 个 target 目录，JS 侧还要去重合并——聚合层一次成型（`mvn -pl app-erp-all test -Dtest=...FluxPagesExportTest`）。
-2. 聚合层环境已被双重证明：`ErpAllWebPagesTest.validateAllPages()`（amis 全量加载）与 `ErpAllFluxPagesTest`（flux 全量加载）均在已知良好基线（2026-08-28：3947 tests / 0 failures）稳定通过；被 `@Disabled` 的 `ErpAllWebPagesCollectTest` 的不稳定是 zulu-26/ANTLR 全局 parser 故障（H-2），与导出方式无关，且其重启用条件已另行登记。
-3. 用户提议的「跑完 WebPageTest 就生成到 target 下」在**模块本地调试**场景依然成立：`WebPageExporter` 支持 moduleId/pattern 参数，任何模块可自建同构测试只导本模块页面——工具通用性不牺牲，只是 ERP 默认接线选聚合层。
-
-**替代方案**：改造现有 `ErpAllWebPagesTest` 或 `ErpAllFluxPagesTest` 顺带导出。否决：验证与导出关注点不同，渲染模式切换与恢复的测试卫生（`@AfterEach` 恢复 amis + 双清缓存）应隔离在独立测试类，避免污染同 JVM 其他测试。
+1. `exportPages()` 内部逐页调用 `renderPageTo()` → `getPage()`，失败则收集到 `failedPages`——导出成功即证明页面可加载、可编译，验证与导出是同一操作的两面
+2. codegen 模板覆盖每个域模块的本地验证，聚合层覆盖跨域全量验证，两层互补
 
 ### D5 目录与产物约定
 
@@ -232,8 +228,8 @@ pnpm flux:validate-pages -- <dir>...
 
 | # | 变更 | 位置 |
 | --- | --- | --- |
-| E1 | `ErpAllFluxPagesExportTest`（app-erp-all）：flux 模式导出全部 enabled modules 页面到 `target/flux-pages/`；断言 `failedPages` 为空且 `pageCount > 800`（当前基线 855 ERP 页 + 平台模块页；阈值防「空导出绿灯」，精确计数登记在 manifest 与日志） | `app-erp-all/src/test/java/io/nop/app/all/web/` |
-| E2 | `scripts/validate-flux-pages.sh`：① 跑 E1（`mvn -pl app-erp-all test -Dtest=ErpAllFluxPagesExportTest`）② 定位兄弟目录 nop-chaos-flux，校验 dist 存在（缺失则提示 `pnpm build`）③ 运行 validate-pages.mjs（报告落 `_tmp/flux-page-validation-report.json`）④ 透传退出码 | `scripts/` |
+| E1 | `ErpAllFluxPagesTest`（app-erp-all）+ codegen 模板 `*WebPagesTest`：flux 模式导出全部 enabled modules 页面到 `target/flux-pages/`；断言 `failedPages` 为空且 `pageCount > 0` | `app-erp-all/src/test/java/io/nop/app/all/web/` + codegen 模板 |
+| E2 | `scripts/validate-flux-pages.sh`：① 跑 E1（`mvn -pl app-erp-all test -Dtest=ErpAllFluxPagesTest`）② 定位兄弟目录 nop-chaos-flux，校验 dist 存在（缺失则提示 `pnpm build`）③ 运行 validate-pages.mjs（报告落 `_tmp/flux-page-validation-report.json`）④ 透传退出码 | `scripts/` |
 | E3 | 根 `package.json` 增 `"validate:flux": "bash scripts/validate-flux-pages.sh"` | 根 |
 | E4 | `docs/testing/e2e-runbook.md`「渲染模式」节增补一节：工具链用法 + 与三路径的关系（此为第 0 路径：写 E2E 之前的静态门禁） | 文档 |
 | E5 | 日志 `docs/logs/2026/08-30.md` | 日志 |
@@ -259,7 +255,7 @@ npm run validate:flux
 
 | 风险 | 影响 | 缓解 |
 | --- | --- | --- |
-| zulu-26/ANTLR H-2 不稳定波及导出测试 | 导出测试闪烁 | 同环境 `ErpAllWebPagesTest` 基线稳定；若复现 H-2，按 `docs/bugs/2026-07-20-2200-page-error-count-instability.md` 重启用条件处理，并退回「逐模块导出」备选（工具已支持 moduleId 过滤） |
+| zulu-26/ANTLR H-2 不稳定波及页面测试 | 页面测试闪烁 | 同环境 `ErpAllWebPagesTest` 基线稳定；若复现 H-2，按 `docs/bugs/2026-07-20-2200-page-error-count-instability.md` 重启用条件处理，并退回「逐模块导出」备选（工具已支持 moduleId 过滤） |
 | flux 仓 dist 未构建/过期 | 验证器无法运行或验证旧编译器 | wrapper 前置校验 dist 存在性并提示 `pnpm build`；验证器报错退出码 2 区分环境错误与页面错误 |
 | 渲染器定义包模块作用域触碰浏览器全局 | Node 加载即崩 | 复用 `css-stub`/`env-stub` 双桩（`validate.mjs` 已实证） |
 | ERP 存量页面暴露真实 flux 编译错误 | 验证红灯 | 这是工具目的而非缺陷：发现项分级处置（页面 schema 问题修页面；框架问题走 nop-chaos-flux 流程；本仓记录于日志/bugs）。首批运行允许以「报告产出 + 已知问题清单」作为阶段性验收，修复归后续切片，但**不得**为绿灯放宽校验层级或跳过页面 |

@@ -54,7 +54,7 @@ npm install
 npm run validate:flux
 ```
 
-一条命令完成：① `mvn -pl app-erp-all test -Dtest=ErpAllFluxPagesExportTest` 以 flux 模式把全部 enabled modules 页面（当前 999 页，其中 ERP 855）导出到 `app-erp-all/target/flux-pages/`（含 `manifest.json`，导出语义与生产 `PageProvider__getPage` 一致，含 flux.yaml 回退）；② 校验兄弟仓 nop-chaos-flux dist 就绪；③ 用 flux 编译器（`validateSchema` + `compile`）批量校验导出产物，报告落 `_tmp/flux-page-validation-report.json`。退出码 0=全部通过 / 1=存在 error 级发现 / 2=环境错误。架构契约与发现分级见 `docs/architecture/flux-page-export-and-validation.md`；手写 flux.yaml 孪生页面的「导出 == 生产 getPage」等价性由导出测试内置断言守护。新增页面后若怀疑 schema 不合 flux 约束（未知 renderer type、表达式编译失败、属性枚举越界等），先跑本门禁再写浏览器用例。
+一条命令完成：① `mvn -pl app-erp-all test -Dtest=ErpAllFluxPagesTest` 以 flux 模式把全部 enabled modules 页面（当前 999 页，其中 ERP 855）导出到 `app-erp-all/target/flux-pages/`（含 `manifest.json`，导出语义与生产 `PageProvider__getPage` 一致，含 flux.yaml 回退）；② 校验兄弟仓 nop-chaos-flux dist 就绪；③ 用 flux 编译器（`validateSchema` + `compile`）批量校验导出产物，报告落 `_tmp/flux-page-validation-report.json`。退出码 0=全部通过 / 1=存在 error 级发现 / 2=环境错误。架构契约与发现分级见 `docs/architecture/flux-page-export-and-validation.md`；手写 flux.yaml 孪生页面的「导出 == 生产 getPage」等价性由导出测试内置断言守护。新增页面后若怀疑 schema 不合 flux 约束（未知 renderer type、表达式编译失败、属性枚举越界等），先跑本门禁再写浏览器用例。
 
 > **m2 新鲜度警示**：`-pl app-erp-all` 消费本地 m2 中的模块 jar 而非工作树源码——修改任何模块的 `*.page.yaml`/`*.flux.yaml` 后，须先 `mvn -pl <该模块> install -DskipTests`（或全量构建）再跑本门禁，否则验证的是陈旧页面（历史教训：2026-08-30 结束审计以此击穿过一次绿色声明，见 plan 2026-08-30-1126-1「结束审计整改」）。源清单对账口径须排除 target 副本：`find module-* -path '*src/main/resources/_vfs*' -name '*.page.yaml' | wc -l`。
 

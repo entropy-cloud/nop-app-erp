@@ -48,6 +48,7 @@
 | 增量重新生成（模型变更后） | `mvn clean install -DskipTests`（触发 gen-orm.xgen 增量链） |
 | XML well-formed 校验 | `xmllint --noout module-<domain>/model/app-erp-<domain>.orm.xml` |
 | 合规性检查 | `bash docs/audits/nop-compliance-checker.sh` |
+| flux 页面结构验证（E2E 前置门禁） | `npm run validate:flux`（导出 + flux-compiler 编译校验，exit 0 = 全量页面结构合法） |
 
 ## 当前使用的可选层
 
