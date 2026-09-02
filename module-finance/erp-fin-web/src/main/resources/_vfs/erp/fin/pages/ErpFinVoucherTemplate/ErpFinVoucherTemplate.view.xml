@@ -82,16 +82,9 @@
                                         wrapWithPanel: false,
                                         api: {
                                             method: 'post',
-                                            url: '/graphql',
-                                            dataType: 'raw',
-                                            data: {
-                                                query: 'mutation($bt:String,$ctx:JSONObject){ ErpFinVoucherTemplate__renderTemplate(businessType:$bt,context:$ctx) }',
-                                                variables: {
-                                                    bt: '${' + 'businessType}',
-                                                    ctx: { DOC_TOTAL: '${' + 'DOC_TOTAL}' }
-                                                }
-                                            },
-                                            adaptor: 'const gql = (payload.data||{}).data || payload.data || {}; const rows = gql.ErpFinVoucherTemplate__renderTemplate || []; return { status: 0, msg: "", data: { previewLines: rows } };'
+                                            url: '/r/ErpFinVoucherTemplate__renderTemplate',
+                                            data: { businessType: '${' + 'businessType}', context: { DOC_TOTAL: '${' + 'DOC_TOTAL}' } },
+                                            adaptor: 'const rows = payload.data || []; return { status: 0, msg: "", data: { previewLines: rows } };'
                                         },
                                         body: [
                                             { type: 'static', name: 'businessType', label: '业务类型' },

@@ -119,13 +119,10 @@
                                                 actionType: 'ajax',
                                                 api: {
                                                     method: 'post',
-                                                    url: '/graphql',
-                                                    dataType: 'raw',
-                                                    data: {
-                                                        query: '${"query{ErpMdSubject__isCodeUnique(code:\"" + code + "\",excludeId:" + (id || "null") + "){v}}"}'
-                                                    },
+                                                     url: '/r/ErpMdSubject__isCodeUnique',
+                                                    data: { code: '${code}', excludeId: '${id}' },
                                                     responseType: 'response',
-                                                    adapt: 'function(payload){ var ok = payload && payload.data && payload.data.ErpMdSubject__isCodeUnique === true; return { status: ok ? 0 : 500, msg: ok ? "" : "编码已存在" }; }'
+                                                    adapt: 'function(payload){ var ok = payload && payload.status === 0 && payload.data === true; return { status: ok ? 0 : 500, msg: ok ? "" : "编码已存在" }; }'
                                                 }
                                             }
                                         ]
@@ -162,13 +159,10 @@
                                                 actionType: 'ajax',
                                                 api: {
                                                     method: 'post',
-                                                    url: '/graphql',
-                                                    dataType: 'raw',
-                                                    data: {
-                                                        query: '${"query{ErpMdSubject__isCodeUnique(code:\"" + code + "\",excludeId:" + (id || "null") + "){v}}"}'
-                                                    },
+                                                     url: '/r/ErpMdSubject__isCodeUnique',
+                                                    data: { code: '${code}', excludeId: '${id}' },
                                                     responseType: 'response',
-                                                    adapt: 'function(payload){ var ok = payload && payload.data && payload.data.ErpMdSubject__isCodeUnique === true; return { status: ok ? 0 : 500, msg: ok ? "" : "编码已存在" }; }'
+                                                    adapt: 'function(payload){ var ok = payload && payload.status === 0 && payload.data === true; return { status: ok ? 0 : 500, msg: ok ? "" : "编码已存在" }; }'
                                                 }
                                             }
                                         ]

@@ -82,11 +82,11 @@
                             <actions>
                                 <action>
                                     <actionType>ajax</actionType>
-                                    <api>
+                                     <api>
                                         <method>post</method>
-                                        <url>/graphql</url>
+                                        <url>/r/ErpMdOrganization__countReferences</url>
                                         <data>
-                                            <query>${"query{ErpMdOrganization__countReferences(id:" + id + "){k v}}"}</query>
+                                            <id>${id}</id>
                                         </data>
                                         <responseType>response</responseType>
                                     </api>
@@ -94,7 +94,7 @@
                                 </action>
                                 <action>
                                     <actionType>dialog</actionType>
-                                    <condition>${refCount &amp;&amp; refCount.data &amp;&amp; refCount.data.ErpMdOrganization__countReferences &amp;&amp; refCount.data.ErpMdOrganization__countReferences.length > 0}</condition>
+                                    <condition>${refCount &amp;&amp; refCount.status === 0 &amp;&amp; refCount.data &amp;&amp; Object.keys(refCount.data).length > 0}</condition>
                                     <dialog>
                                         <title>无法删除：存在引用</title>
                                         <body>该组织被以下业务对象引用，删除将被阻断。请先解除引用关系。</body>

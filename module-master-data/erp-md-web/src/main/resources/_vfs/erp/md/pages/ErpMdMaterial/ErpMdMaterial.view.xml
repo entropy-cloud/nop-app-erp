@@ -183,13 +183,10 @@
                                                 actionType: 'ajax',
                                                 api: {
                                                     method: 'post',
-                                                    url: '/graphql',
-                                                    dataType: 'raw',
-                                                    data: {
-                                                        query: '${"query{ErpMdMaterial__isCodeUnique(code:\"" + code + "\",excludeId:" + (id || "null") + "){v}}"}'
-                                                    },
+                                                     url: '/r/ErpMdMaterial__isCodeUnique',
+                                                    data: { code: '${code}', excludeId: '${id}' },
                                                     responseType: 'response',
-                                                    adapt: 'function(payload){ var ok = payload && payload.data && payload.data.ErpMdMaterial__isCodeUnique === true; return { status: ok ? 0 : 500, msg: ok ? "" : "编码已存在" }; }'
+                                                    adapt: 'function(payload){ var ok = payload && payload.status === 0 && payload.data === true; return { status: ok ? 0 : 500, msg: ok ? "" : "编码已存在" }; }'
                                                 }
                                             }
                                         ]
@@ -258,13 +255,10 @@
                                                 actionType: 'ajax',
                                                 api: {
                                                     method: 'post',
-                                                    url: '/graphql',
-                                                    dataType: 'raw',
-                                                    data: {
-                                                        query: '${"query{ErpMdMaterial__isCodeUnique(code:\"" + code + "\",excludeId:" + (id || "null") + "){v}}"}'
-                                                    },
+                                                     url: '/r/ErpMdMaterial__isCodeUnique',
+                                                    data: { code: '${code}', excludeId: '${id}' },
                                                     responseType: 'response',
-                                                    adapt: 'function(payload){ var ok = payload && payload.data && payload.data.ErpMdMaterial__isCodeUnique === true; return { status: ok ? 0 : 500, msg: ok ? "" : "编码已存在" }; }'
+                                                    adapt: 'function(payload){ var ok = payload && payload.status === 0 && payload.data === true; return { status: ok ? 0 : 500, msg: ok ? "" : "编码已存在" }; }'
                                                 }
                                             }
                                         ]
@@ -341,11 +335,11 @@
                             <actions>
                                 <action>
                                     <actionType>ajax</actionType>
-                                    <api>
+                                     <api>
                                         <method>post</method>
-                                        <url>/graphql</url>
+                                        <url>/r/ErpMdMaterial__countReferences</url>
                                         <data>
-                                            <query>${"query{ErpMdMaterial__countReferences(id:" + id + "){k v}}"}</query>
+                                            <id>${id}</id>
                                         </data>
                                         <responseType>response</responseType>
                                     </api>
@@ -353,7 +347,7 @@
                                 </action>
                                 <action>
                                     <actionType>dialog</actionType>
-                                    <condition>${refCount &amp;&amp; refCount.data &amp;&amp; refCount.data.ErpMdMaterial__countReferences &amp;&amp; refCount.data.ErpMdMaterial__countReferences.length > 0}</condition>
+                                    <condition>${refCount &amp;&amp; refCount.status === 0 &amp;&amp; refCount.data &amp;&amp; Object.keys(refCount.data).length > 0}</condition>
                                     <dialog>
                                         <title>无法删除：存在引用</title>
                                         <body>该物料被以下业务单据引用，删除将被阻断。请先解除引用关系。</body>
