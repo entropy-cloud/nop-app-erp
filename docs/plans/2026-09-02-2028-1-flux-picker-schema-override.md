@@ -1,7 +1,7 @@
 # 2026-09-02-2028-1 Flux picker 改造：pickerSchema 规范化 + picker/CRUD 职责分离
 
-> Plan Status: active
-> Last Reviewed: 2026-09-02
+> Plan Status: completed
+> Last Reviewed: 2026-09-03
 > Source: `flux-guide/design-patterns/picker-transfer.md`(设计 v3 权威源)+ `flux-guide/09-amis-migration.md` Picker 节 + AMIS→Flux 转换层 368 条 `pickerSchema` 警告
 > Related: `packages/flux-renderers-form-advanced/src/composite-field/composite-schemas.ts`(PickerSchema 定义)、`packages/flux-renderers-form-advanced/src/picker-renderer.tsx`(picker 渲染器)、`packages/flux-renderers-form-advanced/src/picker-helpers.ts`(CRUD 构建 helper)、`packages/flux-renderers-data/src/schemas.ts`(CRUD `rowSelection` 已有能力)、AMIS `packages/amis/src/renderers/Form/Picker.tsx`
 > Audit: required
@@ -661,7 +661,7 @@ Auditor / Agent: 独立子 agent session `ses_f9da88e02fferioDPZtQ6GKZLv`(genera
 
 ### v3.4 定稿（2026-09-02 深夜收尾轮）
 
-用户裁决后最终实现:①`pick` 注册为 Flux **builtin action**(BUILT_IN_ACTION_REGISTRY + DEFINITIONS fieldRules + dispatcher case + runtime adapter **委托 `ctx.picker` ambient 回调**——镜像 `ctx.form`/`onSubmitSuccess` 先例,adapter 零 picker 知识、零魔法路径,此前 scope.update 直写版已撤);②`ActionContext.picker` ambient 句柄 + `PickerRuntimeContext`/`useCurrentPickerRuntime` 全链路;③picker 回调 single 即提交 / multiple 累积(累积用 ref,popup 内容 fragment-scope 未提交窗口内禁止重渲染)+ Confirm 一次性提交 + G1 空 Confirm 不清值;④`pickerSchema` 声明为 **region**(combo items / detail-view content 同款延迟区域,父作用域零值编译);⑤契约诚实:fields 声明与实现对齐,`onItemClick` 撤声明(标签 UI 未落地,Deferred);⑥Contract-honesty guard 全过。
+用户裁决后最终实现:①`pick` 注册为 Flux **builtin action**(BUILT_IN_ACTION_REGISTRY + DEFINITIONS fieldRules + dispatcher case + runtime adapter **委托 `ctx.picker` ambient 回调**——镜像 `ctx.form`/`onSubmitSuccess` 先例,adapter 零 picker 知识、零魔法路径,此前 scope.update 直写版已撤);②`ActionContext.picker` ambient 句柄 + `PickerRuntimeContext`/`useCurrentPickerRuntime` 全链路;③picker 回调 single 即提交 / multiple 累积(累积用 ref,popup 内容 fragment-scope 未提交窗口内禁止重渲染)+ Confirm 一次性提交 + G1 空 Confirm 不清值;④`pickerSchema` 声明为 **region**(combo items / detail-view content 同款延迟区域,父作用域零值编译);⑤契约诚实:fields 声明与实现对齐,`onItemClick` 渲染器 fields 未注册(接口层声明保留,行为 Deferred 待标签 UI successor);⑥Contract-honesty guard 全过。
 
 **验证(full-green)**:`pnpm -w typecheck` 37 包全过;flux-core 513 / flux-action-core 210 / flux-runtime 1433 / flux-react 517 / flux-renderers-data 1046 / **flux-renderers-form-advanced 1063(138 文件)** 全绿。Deferred:`onItemClick` 待已选标签 UI 落地后恢复声明(successor: picker 标签 UI plan)。
 
@@ -683,3 +683,20 @@ B2 五个新测试文件落地 + Phase 5 全量验证 + B5/B6/B8 收尾。逐 Ph
 - **本会话新增修复（抽样驱动）**：①delta flux-control.xlib 5 tag `dependsOn` + `selection` 拆除（运行时 500 根因）；②`rebuild-flux-chain.sh` 全链重建后旧 bundle 无 v3 picker 的环境坑已排除。
 
 **Deferred（不变，successor：picker 标签 UI plan）**：已选标签 UI（labelTpl 复合渲染 / delimiter-joinValues 值拼接 / overflowConfig 折叠 / itemClearable / onItemClick 行为）。
+
+### 独立结束审计（2026-09-03，session `ses_f9bdcda94ffel1yRuQhLacqTFR`）
+
+Auditor / Agent: 独立子 agent session `ses_f9bdcda94ffel1yRuQhLacqTFR`（general subagent_type, fresh session, 与主执行者上下文隔离）
+
+- Verdict: `NEEDS REVISION`（**documentation-only**——全部工程实质经独立复验成立：Phase 1-4 逐项 PASS、tsc clean、18 新用例全过、导出 JSON 精确匹配 v3 形态、`_vfs` 零旧字段、文档终态正确）
+- 发现与处置：
+  | 编号 | 级别 | 发现 | 处置 |
+  |------|------|------|------|
+  | M1 | Major | Plan Status 仍 `active` 与已勾选 Closure Gate 1 矛盾（审计时序：状态翻转依门控后置于审计） | **已修复**：审计通过后翻转 `completed` + Last Reviewed 2026-09-03 |
+  | m1 | Minor | Closure Gate 3（独立结束审计）先勾后审 | 审计实质通过后该勾选即为真（本节即审计记录） |
+  | m2 | Minor | 日志条目缺本计划自身 commit hash | **已修复**：本节补齐三仓 hash（见下） |
+  | m3 | Minor | v3.4 节 `onItemClick` 撤声明措辞与接口层声明保留不一致 | **已修复**：措辞订正为「渲染器 fields 未注册（接口层声明保留，行为 Deferred）」 |
+  | m4 | Minor | delta flux-control.xlib 头注释 `rowSelection` 残留 | **已修复**：注释订正 `selection` |
+- 三仓 closure commits：nop-chaos-flux `1fb1ce915`(refactor) + `27feaf49a`/`b6cf3d8c1`(test 5 文件 18 用例) + `6c22256a8`(docs)；nop-entropy `a9aa30d655`(fix flux-web) + `43dd1ed4b3`(chore web assets)；nop-app-erp `99158a1cd`(fix delta xlib+5 view.xml+抽样 spec) + `8cb2212b8`(docs plan+log)
+- 审计确认的非阻塞残留（登记在案）：325 invalid-property-value（dropdown-button variant 词表，上游 18b70ec91 预存，归 ui 变体 owner 域）；warnings 13866→18004（上游严格校验器 646d16ba4 新增码，数值不可比）；标签 UI 族 Deferred（successor: picker 标签 UI plan）
+- **结论：修订落盘后计划收口，Plan Status = `completed`。**

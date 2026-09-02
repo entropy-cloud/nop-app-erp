@@ -13,7 +13,7 @@
 v3.2 落地契约（flux PickerSchema，composite-schemas.ts:172-249，picker-transfer.md）：
   - type: 'picker'
   - pickerPopup: { type:'dialog', size:'lg', title:... }    弹出层配置
-  - pickerSchema: { type:'crud', loadAction:..., columns:..., rowSelection:... }   弹窗内容
+  - pickerSchema: { type:'crud', loadAction:..., columns:..., selection:... }   弹窗内容
   - valueField / labelField / multiple       匹配 flux PickerSchema v3 契约
 
   v3.2 移除字段（不输出）：pickerDialog / valueKey / labelKey / 顶层 loadAction / 顶层 columns
