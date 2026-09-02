@@ -60,7 +60,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  *       平台实体（{@code NopAuthUser}）在动态 findAll 全量语义内但不计入 363 目标集常量（M0.1 排除裁决）。</li>
  *   <li>{@link #testSeedAssetInventoryBaselines()}——零孤儿 CSV（{@code _init-data/} 每个 {@code .csv} ↔
  *       已知实体 tableName 精确匹配；{@code erp_md_uom}/{@code erp_md_uom_conversion} 软缩写即真实表名，
- *       精确匹配天然覆盖）+ app.erp.* 与平台 CSV 基线常量（{@link #EXPECTED_APP_ERP_CSV_COUNT} 314（M1.4a 起，
+ *       精确匹配天然覆盖）+ app.erp.* 与平台 CSV 基线常量（{@link #EXPECTED_APP_ERP_CSV_COUNT} 329（M1.4b 起，
  *       批次沿革见常量 javadoc）+ {@link #EXPECTED_PLATFORM_CSV_COUNT} 4，基点 = plan 1143-1「97 CSV」实证快照）。</li>
  * </ul>
  *
@@ -127,10 +127,11 @@ public class TestErpSeedDataIntegrity extends BaseTestCase {
      * → 190（M1.2a2 批次 plan 2026-09-01-1245-2，manufacturing 26 规格表，对账表已同步 2026-09-01）
      * → 218（M1.2b 批次 plan 2026-09-01-1245-3，maintenance 7 + quality 10 + projects 11，对账表已同步 2026-09-01）
       * → 237（M1.2c 批次 plan 2026-09-01-2255-1，assets 17 + notify 2，对账表已同步 2026-09-02）
-      * → 269（M1.3 批次 plan 2026-09-01-2255-2，hr 32，对账表已同步 2026-09-02）
-      * → 314（M1.4a 批次 plan 2026-09-01-2255-3，crm 30 + cs 15，对账表已同步 2026-09-02）。
-      */
-    static final int EXPECTED_APP_ERP_CSV_COUNT = 314;
+       * → 269（M1.3 批次 plan 2026-09-01-2255-2，hr 32，对账表已同步 2026-09-02）
+       * → 314（M1.4a 批次 plan 2026-09-01-2255-3，crm 30 + cs 15，对账表已同步 2026-09-02）
+       * → 329（M1.4b 批次 plan 2026-09-02-1415-1，aps 7 + logistics 8，对账表已同步 2026-09-02）。
+       */
+    static final int EXPECTED_APP_ERP_CSV_COUNT = 329;
 
     /**
      * 平台实体 seed CSV 基线常量（{@code nop_auth_user}/{@code nop_auth_user_role}/{@code nop_auth_role}/

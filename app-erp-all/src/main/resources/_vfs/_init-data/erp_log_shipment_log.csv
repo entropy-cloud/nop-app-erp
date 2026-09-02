@@ -1,0 +1,3 @@
+ID,SHIPMENT_ID,ORG_ID,GATEWAY_ID,ACTION_TYPE,REQUEST_BODY,RESPONSE_BODY,HTTP_STATUS,IS_SUCCESS,EXECUTED_AT,REMARK
+1,1,2,demo-sf-gateway,CREATE_SHIPMENT,"{""code"":""SHP-2026-001""}","{""trackingNo"":""TRK-DEMO-001""}",200,true,2026-08-03 09:00:00,网关日志（P）
+2,1,2,demo-sf-gateway,TRACK,"{""trackingNo"":""TRK-DEMO-001""}","{""status"":""IN_TRANSIT""}",200,true,2026-08-04 09:00:00,网关日志（P）
