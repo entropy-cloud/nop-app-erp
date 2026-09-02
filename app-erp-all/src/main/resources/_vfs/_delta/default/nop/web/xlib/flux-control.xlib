@@ -74,29 +74,18 @@ v3.2 落地契约（flux PickerSchema，composite-schemas.ts:172-249，picker-tr
                     },
                     valueField: valueField,
                     labelField: labelField,
+                    multiple: propMeta.type?.collectionLike || propMeta.listSchema,
+                    // 内容异步复用实体 picker 页面：dynamic-renderer 运行时拉取 .flux.yaml（已加载页面缓存，
+                    // 二次打开无异步）；异步边界天然打破 x:extends 构建期自引用递归，selection 由页面级
+                    // NormalizeApi 拼出真实值（docs/bugs/2026-09-03-picker-loadaction-selection-convert-time-misjudgment.md）。
                     pickerSchema: {
-                        type: 'crud',
-                        selection: { type: 'radio', keepOnPageChange: true },
-                        selectionOwnership: 'scope',
-                        selectionStatePath: '$_picker.selection',
-                        dataStatePath: '$_picker.rows',
-                        autoClearSelectionOnRefresh: false,
+                        type: 'dynamic-renderer',
+                        autoLoad: true,
                         loadAction: {
                             action: 'ajax',
-                            args: {
-                                url: '@query:' + bizObjName + '__findPage',
-                                selection: '{@pageSelection}'
-                            }
-                        },
-                        columns: [
-                            { type: 'index', name: 'index', label: '@i18n:common.index', width: 50, fixed: 'left', align: 'center', toggled: false },
-                            { name: valueField, label: valueField, hidden: true },
-                            { name: 'code', label: '@i18n:common.code' },
-                            { name: 'name', label: '@i18n:common.name' },
-                            ...(labelField && labelField !== 'name' ? [{ name: labelField, label: labelField }] : [])
-                        ]
-                    },
-                    multiple: propMeta.type?.collectionLike || propMeta.listSchema
+                            args: { url: XuiHelper.getRelationPickerUrl(dispMeta, propMeta, objMeta) }
+                        }
+                    }
                 });
             ]]></source>
         </edit-relation>
@@ -121,27 +110,18 @@ v3.2 落地契约（flux PickerSchema，composite-schemas.ts:172-249，picker-tr
                     },
                     valueField: 'roleId',
                     labelField: 'roleName',
+                    multiple: false,
+                    // 内容异步复用实体 picker 页面：dynamic-renderer 运行时拉取 .flux.yaml（已加载页面缓存，
+                    // 二次打开无异步）；异步边界天然打破 x:extends 构建期自引用递归，selection 由页面级
+                    // NormalizeApi 拼出真实值（docs/bugs/2026-09-03-picker-loadaction-selection-convert-time-misjudgment.md）。
                     pickerSchema: {
-                        type: 'crud',
-                        selection: { type: 'radio', keepOnPageChange: true },
-                        selectionOwnership: 'scope',
-                        selectionStatePath: '$_picker.selection',
-                        dataStatePath: '$_picker.rows',
-                        autoClearSelectionOnRefresh: false,
+                        type: 'dynamic-renderer',
+                        autoLoad: true,
                         loadAction: {
                             action: 'ajax',
-                            args: {
-                                url: '@query:NopAuthRole__findPage',
-                                selection: '{@pageSelection}'
-                            }
-                        },
-                        columns: [
-                            { type: 'index', name: 'index', label: '@i18n:common.index', width: 50, fixed: 'left', align: 'center', toggled: false },
-                            { name: 'roleId', label: '@i18n:auth.role.id', hidden: true },
-                            { name: 'roleName', label: '@i18n:auth.role.name' }
-                        ]
-                    },
-                    multiple: false
+                            args: { url: '/nop/auth/pages/NopAuthRole/picker.page.yaml' }
+                        }
+                    }
                 });
             ]]></source>
         </edit-roleId>
@@ -166,27 +146,18 @@ v3.2 落地契约（flux PickerSchema，composite-schemas.ts:172-249，picker-tr
                     },
                     valueField: 'userId',
                     labelField: 'userName',
+                    multiple: false,
+                    // 内容异步复用实体 picker 页面：dynamic-renderer 运行时拉取 .flux.yaml（已加载页面缓存，
+                    // 二次打开无异步）；异步边界天然打破 x:extends 构建期自引用递归，selection 由页面级
+                    // NormalizeApi 拼出真实值（docs/bugs/2026-09-03-picker-loadaction-selection-convert-time-misjudgment.md）。
                     pickerSchema: {
-                        type: 'crud',
-                        selection: { type: 'radio', keepOnPageChange: true },
-                        selectionOwnership: 'scope',
-                        selectionStatePath: '$_picker.selection',
-                        dataStatePath: '$_picker.rows',
-                        autoClearSelectionOnRefresh: false,
+                        type: 'dynamic-renderer',
+                        autoLoad: true,
                         loadAction: {
                             action: 'ajax',
-                            args: {
-                                url: '@query:NopAuthUser__findPage',
-                                selection: '{@pageSelection}'
-                            }
-                        },
-                        columns: [
-                            { type: 'index', name: 'index', label: '@i18n:common.index', width: 50, fixed: 'left', align: 'center', toggled: false },
-                            { name: 'userId', label: '@i18n:auth.user.id', hidden: true },
-                            { name: 'userName', label: '@i18n:auth.user.name' }
-                        ]
-                    },
-                    multiple: false
+                            args: { url: '/nop/auth/pages/NopAuthUser/picker.page.yaml' }
+                        }
+                    }
                 });
             ]]></source>
         </edit-userId>
@@ -227,28 +198,18 @@ v3.2 落地契约（flux PickerSchema，composite-schemas.ts:172-249，picker-tr
                     },
                     valueField: valueField,
                     labelField: labelField,
+                    multiple: false,
+                    // 内容异步复用实体 picker 页面：dynamic-renderer 运行时拉取 .flux.yaml（已加载页面缓存，
+                    // 二次打开无异步）；异步边界天然打破 x:extends 构建期自引用递归，selection 由页面级
+                    // NormalizeApi 拼出真实值（docs/bugs/2026-09-03-picker-loadaction-selection-convert-time-misjudgment.md）。
                     pickerSchema: {
-                        type: 'crud',
-                        selection: { type: 'radio', keepOnPageChange: true },
-                        selectionOwnership: 'scope',
-                        selectionStatePath: '$_picker.selection',
-                        dataStatePath: '$_picker.rows',
-                        autoClearSelectionOnRefresh: false,
+                        type: 'dynamic-renderer',
+                        autoLoad: true,
                         loadAction: {
                             action: 'ajax',
-                            args: {
-                                url: '@query:' + bizObjName + '__findPage',
-                                selection: '{@pageSelection}'
-                            }
-                        },
-                        columns: [
-                            { type: 'index', name: 'index', label: '@i18n:common.index', width: 50, fixed: 'left', align: 'center', toggled: false },
-                            { name: valueField, label: valueField, hidden: true },
-                            { name: 'code', label: '@i18n:common.code' },
-                            { name: labelField, label: labelField }
-                        ]
-                    },
-                    multiple: false
+                            args: { url: pickerUrl }
+                        }
+                    }
                 });
             ]]></source>
         </edit-ref-id>
@@ -288,28 +249,18 @@ v3.2 落地契约（flux PickerSchema，composite-schemas.ts:172-249，picker-tr
                     },
                     valueField: valueField,
                     labelField: labelField,
+                    multiple: true,
+                    // 内容异步复用实体 picker 页面：dynamic-renderer 运行时拉取 .flux.yaml（已加载页面缓存，
+                    // 二次打开无异步）；异步边界天然打破 x:extends 构建期自引用递归，selection 由页面级
+                    // NormalizeApi 拼出真实值（docs/bugs/2026-09-03-picker-loadaction-selection-convert-time-misjudgment.md）。
                     pickerSchema: {
-                        type: 'crud',
-                        selection: { type: 'radio', keepOnPageChange: true },
-                        selectionOwnership: 'scope',
-                        selectionStatePath: '$_picker.selection',
-                        dataStatePath: '$_picker.rows',
-                        autoClearSelectionOnRefresh: false,
+                        type: 'dynamic-renderer',
+                        autoLoad: true,
                         loadAction: {
                             action: 'ajax',
-                            args: {
-                                url: '@query:' + bizObjName + '__findPage',
-                                selection: '{@pageSelection}'
-                            }
-                        },
-                        columns: [
-                            { type: 'index', name: 'index', label: '@i18n:common.index', width: 50, fixed: 'left', align: 'center', toggled: false },
-                            { name: valueField, label: valueField, hidden: true },
-                            { name: 'code', label: '@i18n:common.code' },
-                            { name: labelField, label: labelField }
-                        ]
-                    },
-                    multiple: true
+                            args: { url: pickerUrl }
+                        }
+                    }
                 });
             ]]></source>
         </edit-ref-ids>

@@ -188,7 +188,7 @@
                                             labelField: 'lineNo',
                                             pickerSchema: {
                                                 type: 'crud',
-                                                loadAction: { action: 'ajax', args: { url: '@query:ErpSalDeliveryLine__findPage', 'gql:selection': '{@pageSelection}' } },
+                                                loadAction: { action: 'ajax', dependsOn: ['__crud_load__'], args: { url: '@query:ErpSalDeliveryLine__findPage' } },
                                                 columns: [
                                                     { name: 'id', label: 'ID', hidden: true },
                                                     { name: 'lineNo', label: '@i18n:common.lineNo|行号' }

@@ -73,7 +73,7 @@
                                 labelField: 'name',
                                 pickerSchema: {
                                     type: 'crud',
-                                    loadAction: { action: 'ajax', args: { url: '@query:ErpMdSubject__findPage', 'gql:selection': '{@pageSelection}' } },
+                                    loadAction: { action: 'ajax', dependsOn: ['__crud_load__'], args: { url: '@query:ErpMdSubject__findPage' } },
                                     columns: [
                                         { name: 'id', label: 'ID', hidden: true },
                                         { name: 'code', label: '@i18n:common.code' },
