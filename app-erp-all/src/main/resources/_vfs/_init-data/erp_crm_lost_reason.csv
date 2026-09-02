@@ -1,0 +1,3 @@
+ID,CODE,NAME,SEQUENCE,REMARK
+1,LR-PRICE,价格因素,10,丢单原因（P）
+2,LR-FEATURE,功能不满足,20,丢单原因（P）

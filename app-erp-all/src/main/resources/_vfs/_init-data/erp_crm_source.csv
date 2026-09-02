@@ -1,0 +1,4 @@
+ID,CODE,NAME,SEQUENCE,REMARK
+1,SRC-WEB,官网表单,10,线索来源（P）
+2,SRC-EXHIBITION,行业展会,20,线索来源（P）
+3,SRC-REFERRAL,客户转介绍,30,线索来源（P）

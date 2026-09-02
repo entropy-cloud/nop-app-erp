@@ -1,0 +1,3 @@
+ID,CODE,NAME,SEQUENCE,IS_DEFAULT,REMARK
+1,LS-NEW,新建,10,true,线索状态（P）
+2,LS-WORKING,跟进中,20,false,线索状态（P）

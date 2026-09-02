@@ -1,0 +1,3 @@
+ID,CODE,NAME,TEMPLATE_CONTENT,IS_DEFAULT,REMARK
+1,QT-STANDARD,标准报价模板,标准报价单模板正文,false,报价模板（P）
+2,QT-DEFAULT,默认报价模板,含税总价报价模板正文,true,报价模板（P）
