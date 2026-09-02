@@ -68,15 +68,18 @@
                                 name: 'subjectId',
                                 label: '科目',
                                 required: true,
-                                pickerDialog: { title: '@i18n:control.picker.subjectSelect|科目选择', size: 'lg' },
-                                valueKey: 'id',
-                                labelKey: 'name',
-                                loadAction: { action: 'ajax', args: { url: '@query:ErpMdSubject__findPage', 'gql:selection': '{@pageSelection}' } },
-                                columns: [
-                                    { name: 'id', label: 'ID', hidden: true },
-                                    { name: 'code', label: '@i18n:common.code' },
-                                    { name: 'name', label: '@i18n:common.name' }
-                                ]
+                                pickerPopup: { title: '@i18n:control.picker.subjectSelect|科目选择', size: 'lg' },
+                                valueField: 'id',
+                                labelField: 'name',
+                                pickerSchema: {
+                                    type: 'crud',
+                                    loadAction: { action: 'ajax', args: { url: '@query:ErpMdSubject__findPage', 'gql:selection': '{@pageSelection}' } },
+                                    columns: [
+                                        { name: 'id', label: 'ID', hidden: true },
+                                        { name: 'code', label: '@i18n:common.code' },
+                                        { name: 'name', label: '@i18n:common.name' }
+                                    ]
+                                }
                             };
                         ]]></c:script>
                     </gen-control>

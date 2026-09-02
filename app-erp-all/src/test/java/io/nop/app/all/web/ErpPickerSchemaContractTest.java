@@ -20,15 +20,14 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * Plan 2026-08-24-1147-1 Phase 1.2: picker schema 契约测试.
+ * Plan 2026-08-24-1147-1 Phase 1.2: picker schema 契约测试 (v3.2 更新, plan 2026-09-02-2028-1).
  *
- * 在 flux 模式下,form JSON 中所有 type=='picker' 节点必须满足 flux PickerSchema 契约:
- * - 必须含 pickerDialog 键 (字符串/对象均可)
- * - 必须含 loadAction 或 options 至少一个
+ * 在 flux 模式下,form JSON 中所有 type=='picker' 节点必须满足 flux PickerSchema v3 契约:
+ * - 必须含 pickerPopup 键 (字符串/对象/boolean 均可)
+ * - 必须含 valueField 与 labelField (替代 v1 的 valueKey/labelKey)
+ * - 必须含 pickerSchema 子树 (含 type + loadAction 或 source)
  * - 必须不含 AMIS 关键字: joinValues / extractValue / x:extends
- *
- * 当前代码 (nop-entropy flux-control.xlib 输出 AMIS 风格 schema) 应当全红;
- * Phase 2 引入 _vfs/_delta/default/nop/web/xlib/flux-control.xlib 覆盖后应当转绿.
+ * - 必须不含 v1 已废弃字段: pickerDialog / valueKey / labelKey
  */
 @NopTestConfig(initDatabaseSchema = OptionalBoolean.TRUE)
 public class ErpPickerSchemaContractTest extends JunitBaseTestCase {
@@ -90,17 +89,21 @@ public class ErpPickerSchemaContractTest extends JunitBaseTestCase {
     }
 
     private static boolean isCompliant(Map<String, Object> picker) {
-        if (!picker.containsKey("pickerDialog")) return false;
-        boolean hasLoadAction = picker.containsKey("loadAction");
-        boolean hasOptions = picker.containsKey("options");
-        if (!hasLoadAction && !hasOptions) return false;
-        for (String keyword : AMIS_KEYWORDS) {
-            if (picker.containsKey(keyword)) return false;
-        }
-        // F4: 必须用 valueKey/labelKey (flux PickerSchema 契约), 不能用 valueField/labelField
-        if (picker.containsKey("valueField") || picker.containsKey("labelField")) return false;
-        // F3: loadAction.args.url 不能含 literal "null" (bizObjName 派生失败的退化痕迹)
-        Object loadAction = picker.get("loadAction");
+        // F0 (v3): 必须含 pickerPopup
+        if (!picker.containsKey("pickerPopup")) return false;
+        // F1 (v3): 必须用 valueField/labelField (不能含 v1 的 valueKey/labelKey)
+        if (picker.containsKey("valueKey") || picker.containsKey("labelKey")) return false;
+        if (!picker.containsKey("valueField") || !picker.containsKey("labelField")) return false;
+        // F2 (v3): 必须含 pickerSchema 子树, 且 pickerSchema 必须有 type + loadAction 或 source
+        Object pickerSchema = picker.get("pickerSchema");
+        if (!(pickerSchema instanceof Map)) return false;
+        Map<String, Object> schema = (Map<String, Object>) pickerSchema;
+        if (!schema.containsKey("type")) return false;
+        boolean schemaHasLoadAction = schema.containsKey("loadAction");
+        boolean schemaHasSource = schema.containsKey("source");
+        if (!schemaHasLoadAction && !schemaHasSource) return false;
+        // F3 (legacy): loadAction.args.url 不能含 literal "null"
+        Object loadAction = schema.get("loadAction");
         if (loadAction instanceof Map) {
             Object args = ((Map<?, ?>) loadAction).get("args");
             if (args instanceof Map) {
@@ -108,6 +111,12 @@ public class ErpPickerSchemaContractTest extends JunitBaseTestCase {
                 if (url instanceof String && ((String) url).contains("null")) return false;
             }
         }
+        // AMIS 关键字: 必须不含
+        for (String keyword : AMIS_KEYWORDS) {
+            if (picker.containsKey(keyword)) return false;
+        }
+        // v1 已废弃字段: 必须不含 pickerDialog
+        if (picker.containsKey("pickerDialog")) return false;
         return true;
     }
 

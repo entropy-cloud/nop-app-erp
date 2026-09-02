@@ -138,15 +138,18 @@
                                             type: 'picker',
                                             name: 'selectedOrderLines',
                                             label: '选择销售订单行',
-                                            pickerDialog: { title: '@i18n:control.picker.salOrderLineSelect|选择销售订单行', size: 'lg' },
+                                            pickerPopup: { title: '@i18n:control.picker.salOrderLineSelect|选择销售订单行', size: 'lg' },
                                             multiple: true,
-                                            valueKey: 'id',
-                                            labelKey: 'lineNo',
-                                            loadAction: { action: 'ajax', args: { url: '@query:ErpSalOrderLine__findPage', 'gql:selection': '{@pageSelection}' } },
-                                            columns: [
-                                                { name: 'id', label: 'ID', hidden: true },
-                                                { name: 'lineNo', label: '@i18n:common.lineNo|行号' }
-                                            ],
+                                            valueField: 'id',
+                                            labelField: 'lineNo',
+                                            pickerSchema: {
+                                                type: 'crud',
+                                                loadAction: { action: 'ajax', args: { url: '@query:ErpSalOrderLine__findPage', 'gql:selection': '{@pageSelection}' } },
+                                                columns: [
+                                                    { name: 'id', label: 'ID', hidden: true },
+                                                    { name: 'lineNo', label: '@i18n:common.lineNo|行号' }
+                                                ]
+                                            },
                                             required: true
                                         }
                                     ]

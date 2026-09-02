@@ -10,14 +10,17 @@
   - 仅重写 edit-relation / edit-roleId / edit-userId / edit-ref-id / edit-ref-ids 的 source 输出
   - 其余 70 个 tag（edit-double / edit-text / edit-date / etc.）从 super 继承不变
 
-输出契约（flux PickerSchema，composite-schemas.ts:168-181）：
+v3.2 落地契约（flux PickerSchema，composite-schemas.ts:172-249，picker-transfer.md）：
   - type: 'picker'
-  - pickerDialog: { title, size:lg }    必需，触发 dialog 打开
-  - loadAction: { action:ajax, args:{url, gql:selection} }  必需，crudMode 触发嵌入 CRUD
-  - columns: [...]                       嵌入 CRUD 的列定义
-  - valueKey / labelKey / multiple       匹配 flux PickerSchema（picker-renderer.tsx:56-57 只读 valueKey/labelKey）
+  - pickerPopup: { type:'dialog', size:'lg', title:... }    弹出层配置
+  - pickerSchema: { type:'crud', loadAction:..., columns:..., rowSelection:... }   弹窗内容
+  - valueField / labelField / multiple       匹配 flux PickerSchema v3 契约
 
-  显式不输出 AMIS 关键字：x:extends / source / joinValues / extractValue / pickerSchema
+  v3.2 移除字段（不输出）：pickerDialog / valueKey / labelKey / 顶层 loadAction / 顶层 columns
+  v3.2 选择提交：pickerSchema(CRUD) 内的操作列按钮通过 {action:'pick', args:{value, rows}} 提交选择
+  （picker 渲染器统一通过 PickerContext 累积，不再读 CRUD selectionStatePath）
+
+  历史参考：plan 2026-09-02-2028-1-flux-picker-schema-override.md（v3.2 架构调整）
 -->
 <lib x:extends="super"
      x:schema="/nop/schema/xlib.xdef"
@@ -33,7 +36,7 @@
               2. propMeta['ui:queryUrl'] 显式标注
               3. XuiHelper.getRefBizObjName(propMeta) 通用派生
               4. dispMeta['ui:queryUrl'] fallback
-            valueKey/labelKey 而非 valueField/labelField（修复 closure-audit P0-1，匹配 flux PickerSchema 契约）
+            v3.2 字段命名:valueField/labelField 而非 valueKey/labelKey（plan 2026-09-02-2028-1）
         -->
         <edit-relation>
             <attr name="dispMeta"/>
@@ -49,42 +52,50 @@
                     || propMeta['ui:queryUrl']
                     || XuiHelper.getRefBizObjName(propMeta)
                     || (dispMeta && dispMeta['ui:queryUrl']);
-                const valueKey = relProp ? relProp['ext:joinRightProp'] : (propMeta.name || 'id');
-                const labelKey = relProp ? (relProp['ext:joinRightDisplayProp'] || relProp['ext:joinRightProp']) : 'name';
-                const titleKey = '@i18n:control.picker.title|' + (relProp && relProp.displayName || labelKey || bizObjName || '选择');
+                const valueField = relProp ? relProp['ext:joinRightProp'] : (propMeta.name || 'id');
+                const labelField = relProp ? (relProp['ext:joinRightDisplayProp'] || relProp['ext:joinRightProp']) : 'name';
+                const titleKey = '@i18n:control.picker.title|' + (relProp && relProp.displayName || labelField || bizObjName || '选择');
 
                 if (!bizObjName) {
-                    // 退化方案: bizObjName 缺失时不输出 pickerDialog,让 picker 渲染器走 fallback
                     return _.filterNull({
                         type: 'picker',
-                        pickerDialog: false,
-                        valueKey: valueKey,
-                        labelKey: labelKey
+                        pickerPopup: false,
+                        valueField: valueField,
+                        labelField: labelField
                     });
                 }
 
                 return _.filterNull({
                     type: 'picker',
-                    pickerDialog: {
+                    pickerPopup: {
+                        type: 'dialog',
                         title: titleKey,
                         size: 'lg'
                     },
-                    valueKey: valueKey,
-                    labelKey: labelKey,
-                    loadAction: {
-                        action: 'ajax',
-                        args: {
-                            url: '@query:' + bizObjName + '__findPage',
-                            'gql:selection': '{@pageSelection}'
-                        }
+                    valueField: valueField,
+                    labelField: labelField,
+                    pickerSchema: {
+                        type: 'crud',
+                        selection: { type: 'radio', keepOnPageChange: true },
+                        selectionOwnership: 'scope',
+                        selectionStatePath: '$_picker.selection',
+                        dataStatePath: '$_picker.rows',
+                        autoClearSelectionOnRefresh: false,
+                        loadAction: {
+                            action: 'ajax',
+                            args: {
+                                url: '@query:' + bizObjName + '__findPage',
+                                selection: '{@pageSelection}'
+                            }
+                        },
+                        columns: [
+                            { type: 'index', name: 'index', label: '@i18n:common.index', width: 50, fixed: 'left', align: 'center', toggled: false },
+                            { name: valueField, label: valueField, hidden: true },
+                            { name: 'code', label: '@i18n:common.code' },
+                            { name: 'name', label: '@i18n:common.name' },
+                            ...(labelField && labelField !== 'name' ? [{ name: labelField, label: labelField }] : [])
+                        ]
                     },
-                    columns: [
-                        { type: 'index', name: 'index', label: '@i18n:common.index', width: 50, fixed: 'left', align: 'center', toggled: false },
-                        { name: valueKey, label: valueKey, hidden: true },
-                        { name: 'code', label: '@i18n:common.code' },
-                        { name: 'name', label: '@i18n:common.name' },
-                        ...(labelKey && labelKey !== 'name' ? [{ name: labelKey, label: labelKey }] : [])
-                    ],
                     multiple: propMeta.type?.collectionLike || propMeta.listSchema
                 });
             ]]></source>
@@ -103,24 +114,33 @@
             <source><![CDATA[
                 return _.filterNull({
                     type: 'picker',
-                    pickerDialog: {
+                    pickerPopup: {
+                        type: 'dialog',
                         title: '@i18n:control.picker.roleSelect|选择角色',
                         size: 'lg'
                     },
-                    valueKey: 'roleId',
-                    labelKey: 'roleName',
-                    loadAction: {
-                        action: 'ajax',
-                        args: {
-                            url: '@query:NopAuthRole__findPage',
-                            'gql:selection': '{@pageSelection}'
-                        }
+                    valueField: 'roleId',
+                    labelField: 'roleName',
+                    pickerSchema: {
+                        type: 'crud',
+                        selection: { type: 'radio', keepOnPageChange: true },
+                        selectionOwnership: 'scope',
+                        selectionStatePath: '$_picker.selection',
+                        dataStatePath: '$_picker.rows',
+                        autoClearSelectionOnRefresh: false,
+                        loadAction: {
+                            action: 'ajax',
+                            args: {
+                                url: '@query:NopAuthRole__findPage',
+                                selection: '{@pageSelection}'
+                            }
+                        },
+                        columns: [
+                            { type: 'index', name: 'index', label: '@i18n:common.index', width: 50, fixed: 'left', align: 'center', toggled: false },
+                            { name: 'roleId', label: '@i18n:auth.role.id', hidden: true },
+                            { name: 'roleName', label: '@i18n:auth.role.name' }
+                        ]
                     },
-                    columns: [
-                        { type: 'index', name: 'index', label: '@i18n:common.index', width: 50, fixed: 'left', align: 'center', toggled: false },
-                        { name: 'roleId', label: '@i18n:auth.role.id', hidden: true },
-                        { name: 'roleName', label: '@i18n:auth.role.name' }
-                    ],
                     multiple: false
                 });
             ]]></source>
@@ -139,24 +159,33 @@
             <source><![CDATA[
                 return _.filterNull({
                     type: 'picker',
-                    pickerDialog: {
+                    pickerPopup: {
+                        type: 'dialog',
                         title: '@i18n:control.picker.userSelect|选择用户',
                         size: 'lg'
                     },
-                    valueKey: 'userId',
-                    labelKey: 'userName',
-                    loadAction: {
-                        action: 'ajax',
-                        args: {
-                            url: '@query:NopAuthUser__findPage',
-                            'gql:selection': '{@pageSelection}'
-                        }
+                    valueField: 'userId',
+                    labelField: 'userName',
+                    pickerSchema: {
+                        type: 'crud',
+                        selection: { type: 'radio', keepOnPageChange: true },
+                        selectionOwnership: 'scope',
+                        selectionStatePath: '$_picker.selection',
+                        dataStatePath: '$_picker.rows',
+                        autoClearSelectionOnRefresh: false,
+                        loadAction: {
+                            action: 'ajax',
+                            args: {
+                                url: '@query:NopAuthUser__findPage',
+                                selection: '{@pageSelection}'
+                            }
+                        },
+                        columns: [
+                            { type: 'index', name: 'index', label: '@i18n:common.index', width: 50, fixed: 'left', align: 'center', toggled: false },
+                            { name: 'userId', label: '@i18n:auth.user.id', hidden: true },
+                            { name: 'userName', label: '@i18n:auth.user.name' }
+                        ]
                     },
-                    columns: [
-                        { type: 'index', name: 'index', label: '@i18n:common.index', width: 50, fixed: 'left', align: 'center', toggled: false },
-                        { name: 'userId', label: '@i18n:auth.user.id', hidden: true },
-                        { name: 'userName', label: '@i18n:auth.user.name' }
-                    ],
                     multiple: false
                 });
             ]]></source>
@@ -175,43 +204,50 @@
 
             <source><![CDATA[
                 const pickerUrl = propMeta['ui:pickerUrl'] || '';
-                // 从 /module/pages/BizObjName/picker.page.yaml 路径末段提取 bizObjName
                 const urlMatch = pickerUrl.match(/\/pages\/([^/]+)\/picker\.page\.yaml/);
                 const bizObjName = urlMatch ? urlMatch[1] : (propMeta['ui:queryUrl'] || propMeta['refBizObjName']);
-                const valueKey = 'id';
-                const labelKey = propMeta['ui:refLabelProp'] || 'name';
+                const valueField = 'id';
+                const labelField = propMeta['ui:refLabelProp'] || 'name';
 
                 if (!bizObjName) {
-                    // 退化方案: bizObjName 缺失时不输出 pickerDialog,让 picker 渲染器走 fallback
                     return {
                         type: 'picker',
-                        pickerDialog: false,
-                        valueKey: valueKey,
-                        labelKey: labelKey
+                        pickerPopup: false,
+                        valueField: valueField,
+                        labelField: labelField
                     };
                 }
 
                 return _.filterNull({
                     type: 'picker',
-                    pickerDialog: {
+                    pickerPopup: {
+                        type: 'dialog',
                         title: '@i18n:control.picker.refSelect|选择引用',
                         size: 'lg'
                     },
-                    valueKey: valueKey,
-                    labelKey: labelKey,
-                    loadAction: {
-                        action: 'ajax',
-                        args: {
-                            url: '@query:' + bizObjName + '__findPage',
-                            'gql:selection': '{@pageSelection}'
-                        }
+                    valueField: valueField,
+                    labelField: labelField,
+                    pickerSchema: {
+                        type: 'crud',
+                        selection: { type: 'radio', keepOnPageChange: true },
+                        selectionOwnership: 'scope',
+                        selectionStatePath: '$_picker.selection',
+                        dataStatePath: '$_picker.rows',
+                        autoClearSelectionOnRefresh: false,
+                        loadAction: {
+                            action: 'ajax',
+                            args: {
+                                url: '@query:' + bizObjName + '__findPage',
+                                selection: '{@pageSelection}'
+                            }
+                        },
+                        columns: [
+                            { type: 'index', name: 'index', label: '@i18n:common.index', width: 50, fixed: 'left', align: 'center', toggled: false },
+                            { name: valueField, label: valueField, hidden: true },
+                            { name: 'code', label: '@i18n:common.code' },
+                            { name: labelField, label: labelField }
+                        ]
                     },
-                    columns: [
-                        { type: 'index', name: 'index', label: '@i18n:common.index', width: 50, fixed: 'left', align: 'center', toggled: false },
-                        { name: valueKey, label: valueKey, hidden: true },
-                        { name: 'code', label: '@i18n:common.code' },
-                        { name: labelKey, label: labelKey }
-                    ],
                     multiple: false
                 });
             ]]></source>
@@ -231,39 +267,48 @@
                 const pickerUrl = propMeta['ui:pickerUrl'] || '';
                 const urlMatch = pickerUrl.match(/\/pages\/([^/]+)\/picker\.page\.yaml/);
                 const bizObjName = urlMatch ? urlMatch[1] : (propMeta['ui:queryUrl'] || propMeta['refBizObjName']);
-                const valueKey = 'id';
-                const labelKey = propMeta['ui:refLabelProp'] || 'name';
+                const valueField = 'id';
+                const labelField = propMeta['ui:refLabelProp'] || 'name';
 
                 if (!bizObjName) {
                     return {
                         type: 'picker',
-                        pickerDialog: false,
-                        valueKey: valueKey,
-                        labelKey: labelKey
+                        pickerPopup: false,
+                        valueField: valueField,
+                        labelField: labelField
                     };
                 }
 
                 return _.filterNull({
                     type: 'picker',
-                    pickerDialog: {
+                    pickerPopup: {
+                        type: 'dialog',
                         title: '@i18n:control.picker.refSelect|选择引用',
                         size: 'lg'
                     },
-                    valueKey: valueKey,
-                    labelKey: labelKey,
-                    loadAction: {
-                        action: 'ajax',
-                        args: {
-                            url: '@query:' + bizObjName + '__findPage',
-                            'gql:selection': '{@pageSelection}'
-                        }
+                    valueField: valueField,
+                    labelField: labelField,
+                    pickerSchema: {
+                        type: 'crud',
+                        selection: { type: 'radio', keepOnPageChange: true },
+                        selectionOwnership: 'scope',
+                        selectionStatePath: '$_picker.selection',
+                        dataStatePath: '$_picker.rows',
+                        autoClearSelectionOnRefresh: false,
+                        loadAction: {
+                            action: 'ajax',
+                            args: {
+                                url: '@query:' + bizObjName + '__findPage',
+                                selection: '{@pageSelection}'
+                            }
+                        },
+                        columns: [
+                            { type: 'index', name: 'index', label: '@i18n:common.index', width: 50, fixed: 'left', align: 'center', toggled: false },
+                            { name: valueField, label: valueField, hidden: true },
+                            { name: 'code', label: '@i18n:common.code' },
+                            { name: labelField, label: labelField }
+                        ]
                     },
-                    columns: [
-                        { type: 'index', name: 'index', label: '@i18n:common.index', width: 50, fixed: 'left', align: 'center', toggled: false },
-                        { name: valueKey, label: valueKey, hidden: true },
-                        { name: 'code', label: '@i18n:common.code' },
-                        { name: labelKey, label: labelKey }
-                    ],
                     multiple: true
                 });
             ]]></source>

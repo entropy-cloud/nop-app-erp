@@ -21,7 +21,7 @@ EXPORT_DIR="$REPO_ROOT/app-erp-all/target/flux-pages"
 REPORT="$REPO_ROOT/_tmp/flux-page-validation-report.json"
 
 echo "[1/3] Exporting all pages in flux mode (app-erp-all JUnit) ..."
-(cd "$REPO_ROOT" && mvn -pl app-erp-all test -Dtest=ErpAllFluxPagesExportTest -Dsurefire.failIfNoSpecifiedTests=false)
+(cd "$REPO_ROOT" && mvn -pl app-erp-all test -Dtest=ErpAllFluxPagesTest -Dsurefire.failIfNoSpecifiedTests=false)
 
 if [ ! -f "$EXPORT_DIR/manifest.json" ]; then
   echo "ERROR: export manifest not found at $EXPORT_DIR/manifest.json" >&2
