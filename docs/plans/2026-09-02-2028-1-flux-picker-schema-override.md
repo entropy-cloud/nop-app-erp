@@ -658,3 +658,9 @@ Auditor / Agent: 独立子 agent session `ses_f9da88e02fferioDPZtQ6GKZLv`(genera
 
 - `ErpAllFluxPagesTest`（999 页导出）**0 failures 全绿**；`ErpPickerSchemaContractTest` 首跑 86/146 违反 v3 契约 → 系统化定位（nop-debugging 四阶段 + probe 实证 merged controlLib = flux-control.xlib）→ 根因 = nop-entropy `flux-web.xlib GenFormSimpleCell` v1 时代 `valueField→valueKey` 重命名 shim 回改 v3 输出 → **已在 nop-entropy 源头拆除该 shim**（nop-web 重建安装，ai-dev/logs/2026/09-02.md 登记）→ 复验 **146/146 全合规 + `mvn test -pl app-erp-all` 70/0/0/1 BUILD SUCCESS + `mvn install -DskipTests -pl app-erp-all -am` BUILD SUCCESS**。
 - 仍归 successor（不变）：B2 五个新测试文件、B3 pick action Flux action dispatcher 注册、flux 仓 6 个旧测试迁移、`npm run validate:flux` 编译器门禁复跑、picker 页视觉抽样。
+
+### v3.4 定稿（2026-09-02 深夜收尾轮）
+
+用户裁决后最终实现:①`pick` 注册为 Flux **builtin action**(BUILT_IN_ACTION_REGISTRY + DEFINITIONS fieldRules + dispatcher case + runtime adapter **委托 `ctx.picker` ambient 回调**——镜像 `ctx.form`/`onSubmitSuccess` 先例,adapter 零 picker 知识、零魔法路径,此前 scope.update 直写版已撤);②`ActionContext.picker` ambient 句柄 + `PickerRuntimeContext`/`useCurrentPickerRuntime` 全链路;③picker 回调 single 即提交 / multiple 累积(累积用 ref,popup 内容 fragment-scope 未提交窗口内禁止重渲染)+ Confirm 一次性提交 + G1 空 Confirm 不清值;④`pickerSchema` 声明为 **region**(combo items / detail-view content 同款延迟区域,父作用域零值编译);⑤契约诚实:fields 声明与实现对齐,`onItemClick` 撤声明(标签 UI 未落地,Deferred);⑥Contract-honesty guard 全过。
+
+**验证(full-green)**:`pnpm -w typecheck` 37 包全过;flux-core 513 / flux-action-core 210 / flux-runtime 1433 / flux-react 517 / flux-renderers-data 1046 / **flux-renderers-form-advanced 1063(138 文件)** 全绿。Deferred:`onItemClick` 待已选标签 UI 落地后恢复声明(successor: picker 标签 UI plan)。
