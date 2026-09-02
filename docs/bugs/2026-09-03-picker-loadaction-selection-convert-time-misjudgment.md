@@ -71,3 +71,36 @@
 
 - Lesson 16（跨仓库 schema 契约消费端验证）、Lesson 18（契约重设计禁类型嗅探与语法糖）
 - `nop-chaos-flux/flux-guide/design-patterns/picker-transfer.md` v3.3 协议（scope 发布 + builtin pick 回调）
+
+## 补记(2026-09-03 深夜):真根因定位 + x:extends 复用尝试
+
+### 真根因(修正前文"半条链路"表述的粒度)
+
+`selection` 是 runtime 一等参数没错,但**误删的直接诱因**是:控件级手写 loadAction **不经过
+NormalizeApi**(它只被 pageModel 层 api 字段显式调用),因此 `'gql:selection': '{@pageSelection}'`
+中的 `{@...}` 模板**从不被渲染**,以字面量直达运行时(实证:导出 JSON `main.page.json:543` picker
+的 `gql:selection` 为字面量,而同文件 :977 页面级 CRUD 的 `selection` 是 NormalizeApi 渲染的真值
+`total,page,items{...}`)。后端对非法 selection 容错 → 默认投影 → 页面"碰巧能用",死值潜伏至今。
+`pageSelection` 本身没有问题——它是 grid_crud.xpl genScope 的变量,经 NormalizeApi 正常渲染;
+问题是 delta tag / gen-control 上下文**既无该变量、也不经过渲染管线**。
+
+### AMIS 先例与 x:extends 复用(正确方向)
+
+AMIS `control.xlib:912-960`(edit-relation/edit-roleId/edit-userId)**从不手写 loadAction**:
+`type:'picker'` + `x:extends: <实体>/picker.page.yaml`(该 yaml 仅一行 `x:gen-extends: GenPage(page="picker")`,
+经 grid_crud.xpl picker 分支动态展开,loadAction 由 pageModel 管道拼出真实 selection)+ 字段级覆盖
+(valueField/labelField/multiple)。flux 控件可完全复用此模式。
+
+### 复用尝试的新阻塞:自引用递归(未解决,successor)
+
+delta 5 tag 改为 x:extends 复用后:`ErpMntEquipment/main.page.yaml` 报
+`handler-exceed-max-nested-level (maxLevel=50)`——设备表含 parentId 自关联,picker.page.yaml 展开的
+grid/queryForm 中关联列再次生成 edit-relation picker → 再次 x:extends 同一 picker.page.yaml → 无限
+递归。已回滚 flux-control.xlib 至手写基线(999/0 可用性优先)。
+
+**Successor 修复方案(两选一,需先查清 GenGridCols/GenFormBody 对 picker page 的控件调用链)**:
+1. 自引用守卫:tag 内 `bizObjName === objMeta.name` 时不复用(退化为无内容 picker 或安全手写)
+2. picker.page.yaml 的列/查询生成禁用编辑控件(picker page 本无编辑语义),根除递归
+
+同时回滚并行会话的 `dependsOn: ['__crud_load__']`(页面级官方产物存在该字段,但控件级手写
+args 中同样无消费点;其真实消费体系为 async-data source/reaction)。
