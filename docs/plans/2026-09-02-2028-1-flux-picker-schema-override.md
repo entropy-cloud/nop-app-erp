@@ -700,3 +700,14 @@ Auditor / Agent: 独立子 agent session `ses_f9bdcda94ffel1yRuQhLacqTFR`（gene
 - 三仓 closure commits：nop-chaos-flux `1fb1ce915`(refactor) + `27feaf49a`/`b6cf3d8c1`(test 5 文件 18 用例) + `6c22256a8`(docs)；nop-entropy `a9aa30d655`(fix flux-web) + `43dd1ed4b3`(chore web assets)；nop-app-erp `99158a1cd`(fix delta xlib+5 view.xml+抽样 spec) + `8cb2212b8`(docs plan+log)
 - 审计确认的非阻塞残留（登记在案）：325 invalid-property-value（dropdown-button variant 词表，上游 18b70ec91 预存，归 ui 变体 owner 域）；warnings 13866→18004（上游严格校验器 646d16ba4 新增码，数值不可比）；标签 UI 族 Deferred（successor: picker 标签 UI plan）
 - **结论：修订落盘后计划收口，Plan Status = `completed`。**
+
+## Closure(v3.5 最终收口,2026-09-03)
+
+- **Deferred 清空,全部实现**:onItemClick(已选标签点击事件)、labelTpl(structuralFields lazyEval + effect 预计算)、joinValues+delimiter(多选确认写回拼接)、extractValue(整行写回)、itemClearable/overflowConfig.maxTagCount(标签 UI + 折叠)、embed(内嵌渲染)、5 个新测试文件(并行会话起草 + 本会话实现对齐:delimiter join 断言、labelTpl 复合模板断言)。
+- **最终架构 v3.4/v3.5**:pickerSchema(region 延迟/dynamic-renderer 异步复用实体 picker 页面)+ pick builtin action(ambient ctx.picker 回调)+ scope 固定发布路径 + 多选标签 UI;零类型嗅探、零组件 id、零魔法路径。
+- **验证(full-green)**:form-advanced **143 文件 1081/1081** 全绿;typecheck + eslint 清;`validate:flux` exit 0(999 页,pickerSchema 警告 368→0);Java `ErpAllFluxPagesTest`+`ErpPickerSchemaContractTest` BUILD SUCCESS。
+- **提交链**:nop-chaos-flux `ea676f76c`/`44ef5188f`;nop-entropy `0bf4d34ee3`;nop-app-erp `b60cd477f`/`c0cbd184d`/`504e0a0f1`/`d8825a8cc`/`5c077dfb4`。
+- **已知边界(successor)**:x:extends 复用路径因自引用递归被 dynamic-renderer 方案取代(递归根因与守卫思路存 bug 报告);overflowTagPopover 定制仅在标签折叠计数层实现。
+
+Closure Audit Evidence:
+- Auditor / Agent: 独立子代理 plan-audit `ses_f9dc26819ffe6sF1y7f2PpBmIu`(acceptable with revisions,3 阻塞已修)+ 独立子代理 closure audit `ses_f9da88e02fferioDPZtQ6GKZLv`(not ready→B1/B4/B7 已修,B2/B3 由本收口完成);最终执行者依据全绿验证 + 双独立审计记录收口。
