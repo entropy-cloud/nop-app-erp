@@ -25,6 +25,7 @@
 
 | 文件 | 回归要点 |
 |------|----------|
+| `2026-09-03-picker-loadaction-selection-convert-time-misjudgment.md` | picker loadAction `selection` 被误判"convert-time only"删除（实为 runtime 一等参数：request-runtime.ts 显式透传 fetcher）+ `dependsOn` 跨体系串味幻觉配置；五步误判链：gql: 历史包袱泛化 / 只验生产侧不验消费侧 / 静默降级零失败信号 / 副作用当清理目标 / 相邻体系字段串味 |
 | `2026-07-07-1915-dao-updateentity-in-bizmodel.md` | BizModel 中 `dao().updateEntity` 绕过 CrudBizModel 管道 |
 | `2026-07-07-1915-localdatetime-now-in-12-domains.md` | 12 域误用 `LocalDateTime.now()` 而非 `CoreDate.now()` |
 | `2026-07-07-1915-sales-credit-control-multi-currency-and-ar-balance-omission.md` | 销售信用控制多币种 + AR 余额遗漏 |
