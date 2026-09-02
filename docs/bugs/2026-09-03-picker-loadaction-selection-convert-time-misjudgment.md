@@ -104,3 +104,12 @@ grid/queryForm 中关联列再次生成 edit-relation picker → 再次 x:extend
 
 同时回滚并行会话的 `dependsOn: ['__crud_load__']`(页面级官方产物存在该字段,但控件级手写
 args 中同样无消费点;其真实消费体系为 async-data source/reaction)。
+
+## 修复落地(d8825a8cc, 2026-09-03)
+
+采用 flux 原生 **dynamic-renderer** 机制(`flux-renderers-basic/src/dynamic-renderer.tsx`):
+控件级 picker 的 `pickerSchema` = `{type:'dynamic-renderer', loadAction:{ajax: 实体 picker 页面路径}}`,
+运行时异步拉取页面 schema 并渲染,**已加载页面缓存**(二次打开无异步);异步边界天然打破
+x:extends 构建期自引用递归(ErpMntEquipment parentId 自关联实测触发 maxLevel=50 后已消)。
+5 个 delta tag 全部改为该形态,selection 由页面级 NormalizeApi 权威拼出,`{@pageSelection}` 死值与
+无消费的 `dependsOn` 一并清除。验证:999/999 页 0 错误 + 契约测试绿 + BUILD SUCCESS。
