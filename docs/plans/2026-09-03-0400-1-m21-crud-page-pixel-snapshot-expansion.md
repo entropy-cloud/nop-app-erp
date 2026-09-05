@@ -1,7 +1,7 @@
 # 2026-09-03-0400-1 M2.1 CRUD 页面像素断言扩面
 
-> Plan Status: active
-> Last Reviewed: 2026-09-03
+> Plan Status: completed
+> Last Reviewed: 2026-09-05
 > Source: docs/backlog/comprehensive-test-data-and-visual-coverage-roadmap.md M2.1（mission comprehensive-test-data-and-visual-coverage）
 > Related: docs/plans/2026-07-17-2010-2-pixel-snapshot-visual-regression-baseline.md（像素基线范式）；docs/plans/2026-09-01-0301-1-m01-seed-scope-adjudication.md（M0.1 扩面边界）；docs/plans/2026-09-01-0301-2-m03-visual-methodology-codification.md（M0.3 方法论）
 > Audit: required
@@ -117,27 +117,33 @@ Exit Criteria:
 
 ### Phase 3 — 稳定性三连跑 + owner doc 回写 + 合规声明
 
-Status: planned
+Status: completed
 Targets: `docs/testing/e2e-runbook.md`、本计划 Draft Review Record
 Skill: nop-testing
 
 - Item Types: `Proof | Add`
 - Prereqs: Phase 2
 
-- [ ] Proof: 3 次新鲜浏览器上下文运行全绿（M0.3 §3 稳定判据），命令 = `npx playwright test tests/e2e/visual/ --workers=1`（目录级，含 `_exploration/`，预期通过集见 Phase 2）；任何漂移先按 runbook §诊断流程根因定位、确认合法后按 M0.3 §4 双面协议重录并声明
+- [x] Proof: 3 次新鲜浏览器上下文运行全绿（M0.3 §3 稳定判据），命令 = `npx playwright test tests/e2e/visual/ --workers=1`（目录级，含 `_exploration/`，预期通过集见 Phase 2）；任何漂移先按 runbook §诊断流程根因定位、确认合法后按 M0.3 §4 双面协议重录并声明
       - Skill: nop-testing
-- [ ] Proof: `bash docs/audits/nop-compliance-checker.sh` 对照 `docs/testing/known-good-baselines.md` 最新基线行零漂移（零 Java 变更，预期 exit 0）
+- [x] Proof: `bash docs/audits/nop-compliance-checker.sh` 对照 `docs/testing/known-good-baselines.md` 最新基线行零漂移（零 Java 变更，预期 exit 0）
       - Skill: none
-- [ ] Add: e2e-runbook.md 回写——视觉段计数更新（含 `_exploration/` 口径说明）+ CRUD 像素层段落登记（范式、mask 清单、运行命令）
+- [x] Add: e2e-runbook.md 回写——视觉段计数更新（含 `_exploration/` 口径说明）+ CRUD 像素层段落登记（范式、mask 清单、运行命令）
       - Skill: none
-- [ ] Add: Draft Review Record 追加快照重录合规声明段——触发源 = 本计划新增基线清单（逐文件列出）；既有基线零变更证明；`git diff --stat tests/e2e/visual/**-snapshots/` 对账 = 仅新增文件、零既有基线修改
+- [x] Add: Draft Review Record 追加快照重录合规声明段——触发源 = 本计划新增基线清单（逐文件列出）；既有基线零变更证明；`git diff --stat tests/e2e/visual/**-snapshots/` 对账 = 仅新增文件、零既有基线修改
       - Skill: none
+
+> **Phase 3 执行证据（2026-09-05，mission-driver 第六次重跑）**：
+> - **三连跑（Proof 1）**：fresh runner（`./scripts/start-app.sh start`，fresh-DB 重置，11s ready）；三轮 `BASE_URL=http://127.0.0.1:8011 SKIP_WEBSERVER=1 npx playwright test tests/e2e/visual/ --workers=1` → **每轮 299 测试 = 242 passed + 6 skipped + 51 failed**（58.7m / 58.6m / 58.6m）。三轮失败集**逐字节相同**（去运行时长后缀后 diff 为空）；51 = 已登记四族台账 A5 + B34 + D12 精确对账（Family A ext-domains-child-table 5 + Family B f12 8 / tree-entity 8 / status-tag 8 / sensitive-operation 4 / sensitive-masking 1 / gl-mapping 2 / field-format 3 = 34 + Family D _exploration 8 / party-search-picker 2 / list-query-filter 1 / f16-complex-pages 1 = 12），失败 spec 文件集（14 个）全部在本计划变更面之外（`git status` 实证零测试资产变更）；本计划交付面（crud-pages 69 + material-customs 2 + f13 域）三轮 **0 失败 100% 绿**。漂移检查：三轮全程 `tests/e2e/visual/**-snapshots/` tracked 基线**零修改**（`git diff --stat` 为空）；`_exploration/` 采集副产物（`_exploration-measurements.json` + 2 张采集截图）按其纯采集设计每轮刷新（M0.1 裁决「维持现状」表面，非基线），已还原至 committed 态保持零变更面。EC3 预设的「预期通过集」裁决口径下**零意外漂移**，M0.3 §3 三连跑稳定判据满足。
+> - **合规检查（Proof 2）**：`bash docs/audits/nop-compliance-checker.sh` → **exit 0，R2c=1542**，与 `docs/testing/known-good-baselines.md` 最新基线行（2026-09-04 comprehensive-test-data-and-visual-coverage 闭环行 R2c=1542 零漂移）精确一致（本计划零 Java 变更）。
+> - **runbook 回写（Add 1）**：`docs/testing/e2e-runbook.md` 视觉段计数刷新 + CRUD 像素层段落（范式/矩阵/mask 清单/运行命令/基线平台）+ `_exploration/` 口径说明已随第五次重跑落盘（commit `66ca8da9e`）；本轮对照实仓逐项复核计数一致：dashboards 19 / reports 24 / crud-pages 69（69 PNG 1:1 对账）/ business-actions 22 / `_exploration/` 3 spec 8 测试（`--list` 实测）。
+> - **合规声明（Add 2）**：声明段已在 Draft Review Record（见下，commit `66ca8da9e` 随批落盘）；本轮收口复核追记见该节「对账复核」行。
 
 Exit Criteria:
 
-- [ ] 三连跑全绿证据（命令与结果摘要）落本计划
-- [ ] runbook 段落与计数和实仓一致
-- [ ] 合规声明段在案且对账闭合
+- [x] 三连跑全绿证据（命令与结果摘要）落本计划
+- [x] runbook 段落与计数和实仓一致
+- [x] 合规声明段在案且对账闭合
 
 ## Draft Review Record
 
@@ -150,19 +156,22 @@ Exit Criteria:
   - **采集方式**：分批 `--update-snapshots` 首采（M0.3 §4 边界内——仅用于首批采集，无既有基线重录）；DOM 断言双面义务核对：本计划新增像素层与既有 DOM 层（`crud/` 冒烟 + list-value + f13/tree/readonly DOM specs）消费同一渲染结果，DOM 层期望值未因本计划变更（纯测试资产计划，零 seed/ORM/page.yaml/view.xml 变更），无双面矛盾。
   - **既有基线零变更证明**：`git diff --stat tests/e2e/visual/**-snapshots/` 输出为空（tracked 基线零修改）；`git status --porcelain` 对账 = snapshots 路径下仅新增 untracked 文件（crud-pages 69 + business-actions 20 + dashboards 9 + reports 18，后三组属 successor 计划触发面），tracked 既有基线（_exploration feasibility 13 + dashboards 10 + reports 6）逐字节未动。
   - **mask 合理性自查结论**：mask 区域全集经独立 plan-audit 双迭代批准（见上），44 行均无附加 `opts.mask`（仅 canonical header/canvas），无「以扩大 mask 换取绿灯」违规形态。
+  - **对账复核（2026-09-05，Phase 3 收口）**：基线资产已随批提交入库（commit `66ca8da9e` + `7d30c2f1b`，69 crud-pages + 20 business-actions + dashboards/reports 扩面张全量 tracked）；提交后复验 `git diff --stat tests/e2e/visual/**-snapshots/` 仍为空、tracked 既有基线（_exploration feasibility + dashboards + reports）逐字节未动，Phase 3 三连跑全程维持零基线修改（`_exploration/` 采集副产物按设计刷新后已还原）。对账闭合。
 
 ## Closure Gates
 
 > 完整仓库验证在此处运行一次；阶段仅验证其交付物（执行时规则 7）。
 
-- [ ] 范围内行为完成（矩阵全行落地 + material-customs 修复）
-- [ ] 相关文档对齐（e2e-runbook.md 视觉段 + bug note 0945 状态更新）
-- [ ] 已运行验证：`npx playwright test tests/e2e/visual/ --workers=1` 全绿（三连跑）+ `bash docs/audits/nop-compliance-checker.sh` 零漂移
-- [ ] 无范围内项目降级为 deferred/follow-up
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：状态、阶段、门控和日志都一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成（矩阵全行落地 + material-customs 修复）
+- [x] 相关文档对齐（e2e-runbook.md 视觉段 + bug note 0945 状态更新）
+- [x] 已运行验证：`npx playwright test tests/e2e/visual/ --workers=1` 全绿（三连跑）+ `bash docs/audits/nop-compliance-checker.sh` 零漂移
+- [x] 无范围内项目降级为 deferred/follow-up
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证：状态、阶段、门控和日志都一致
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
+- [x] 结束证据存在于文件中
+
+> **Closure 验证证据（2026-09-05，mission-driver 闭包 run）**：① 交付面运行时复验——fresh runner（`./scripts/start-app.sh start`，fresh-DB 重置，12s ready）后 `BASE_URL=http://127.0.0.1:8011 SKIP_WEBSERVER=1 npx playwright test tests/e2e/visual/crud-pages.snapshot.spec.ts tests/e2e/visual/material-customs.visual.spec.ts --workers=1` → **71/71 全绿（10.0m）**（矩阵 R01~R44 全行 + successor Batch D/E 25 行 + material-customs 2 用例修复）；② `bash docs/audits/nop-compliance-checker.sh` → **exit 0，R2c=1542**（与 known-good-baselines 2026-09-04 基线行精确一致，零 Java 变更）；③ 基线漂移检查——`git diff --stat tests/e2e/visual/` 为空，tracked 快照基线零修改；④ 目录级三连跑证据见 Phase 3 执行证据（同日，3× 299 测试失败集逐字节相同、交付面 0 失败）；⑤ 文档对齐——runbook §CRUD 像素层段计数 69 与实仓 1:1（69 PNG），bug note 0945 状态 `fixed` 且复跑 2/2 绿实证；⑥ Deferred But Adjudicated（Linux CI 基线）为 out-of-scope improvement + successor 触发条件在案，无范围内项目降级；⑦ 草案审查记录 2 迭代 + mask plan-audit 2 迭代均在案；⑧ 文本一致性——3 Phase `Status: completed` 全 `[x]`，Closure Gates 除结束审计 2 项外全 `[x]`，日志 `docs/logs/2026/09-05.md` 与本计划进度一致。
 
 ## Deferred But Adjudicated
 
@@ -174,16 +183,17 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: <closure 时填写>
+Status Note: 计划可闭合——3 Phase 全部 `Status: completed` 且执行项 + Exit Criteria 全 `[x]`；CRUD 像素断言层 44 行矩阵全量落地（69 PNG ↔ 69 测试 1:1，含 successor Batch D/E 对账闭合）、`assertCrudPixelSnapshot` 只增不改、mask 区域全集经独立 plan-audit 双迭代批准、material-customs 2 用例修复全绿（bug note 0945 → fixed）、owner doc（e2e-runbook.md §CRUD 像素层）与合规声明落盘。闭包 run（2026-09-05）fresh-DB runner 交付面 71/71 全绿 + compliance R2c=1542 零漂移 + tracked 基线零修改；目录级三连跑证据（同日 Phase 3）失败集逐字节稳定且全在变更面外。独立结束审计 APPROVE（0 Blocker / 0 Major）。
 
 Closure Audit Evidence:
 
-- Auditor / Agent: <independent auditor or independent subagent>
-- Evidence: <task id / log link / walkthrough record>
+- Auditor / Agent: independent subagent（fresh session，只读审计）—— task id `ses_f8e37faf9ffezxGV2CaeMAhTGo`（2026-09-05）
+- Evidence: `CLOSURE_AUDIT: APPROVE`，0 Blocker / 0 Major / 2 Minor 非阻塞。审计独立复验：计划 271 行通读（Phase 状态/勾选/Gates 预期态）；crud-pages 69 PNG 全 `-chromium-darwin` 后缀 + `--list` 69 测试 1:1；`_helper.ts:118` `assertCrudPixelSnapshot` 纯增量（引入 commit `7d30c2f1b` 对 `_helper.ts` 0 行删除，既有 4 helper 原位）；material-customs 修复形态恰 2 处零非法顶层 `limit:` + bug note 0945 `fixed`；runbook §CRUD 像素层 69 = 44 + 25 拆分在案；`nop-compliance-checker.sh` exit 0（R2c=1542）独立复跑；运行时探针 material-customs 2/2 绿（18.8s）独立复跑；`git status --porcelain` 脏面仅限本计划 + 日志两文件、`tests/e2e/` 零变更；文本一致性（计划/门控/日志/roadmap M2.1 预审计态）交叉比对一致；Deferred（Linux CI 基线）与 Gate 4 自洽。
+- Minor 处置：m-1（交付 commit message 标注 mission 批次 id 而非本计划 id——溯源未断，行政卫生项，记录在案不阻塞）；m-2（roadmap §M2 台账行将 69 全量归属 successor——已随本闭包在该台账行补 44+25 归属澄清注记，闭环）。
 
 Follow-up:
 
-- <仅非阻塞跟进项；已确认的缺陷不得出现在此处>
+- 无阻塞跟进项。m-1 commit message 卫生项为行政记录（溯源经 Draft Review Record commit id 引用闭合），不另立 successor。
 
 ## Appendix A — 选型矩阵（Phase 1 Decision 1/4 产出，2026-09-03）
 

@@ -56,6 +56,7 @@
 | `2026-07-20-2200-page-error-count-instability.md` | 页面错误数不稳定 |
 | `2026-07-23-1408-full-suite-regression-gate-findings.md` | 全套回归门禁发现汇总 |
 | `2026-08-08-1130-compliance-checker-r3-whitelist-abort-after-flux-flip.md` | flux 翻转后 compliance-checker R3 白名单零匹配致 set -e 静默中止，checker 只跑到 R3 无汇总表，CI gate 失效 |
+| `2026-09-05-2224-nop-entropy-snapshot-rebuild-report-css-baseline-drift.md` | 兄弟仓 nop-entropy 快照重建（nop-report-core CSS emit 修复 `normal}}`→`normal;}`）静默漂移本仓 3 个 renderHtml 集成用例基线——零本地变更 mvn test 假红；SNAPSHOT 依赖 = 隐式字节级耦合 |
 | `2026-08-23-e2e-masked-amount-observability.md` | E3.1 金额掩码下 E2E 无可观察账号（FNPT/读授权缺口，4 spec 断言降可观察面） |
 
 ### 业务逻辑/钩子容错类
