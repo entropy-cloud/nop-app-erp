@@ -31,7 +31,7 @@ test.describe('C2 Material Customs backend wiring', () => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           query: `query {
-            ErpMdMaterial__findPage(limit: 1) {
+            ErpMdMaterial__findPage(query: { limit: 1 }) {
               total
               items {
                 code
@@ -67,7 +67,7 @@ test.describe('C2 Material Customs backend wiring', () => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           query: `query {
-            ErpMdMaterialCustoms__findPage(limit: 10) {
+            ErpMdMaterialCustoms__findPage(query: { limit: 10 }) {
               total
               items {
                 id code materialId declarationNo partnerId

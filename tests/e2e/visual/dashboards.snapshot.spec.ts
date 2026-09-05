@@ -33,20 +33,29 @@ interface DashboardSnapshot {
    * cannot pin (plan 2026-09-01-0527-2 inventory adjudication: trend chart
    * rolling window). Evaluated against the live page. */
   maskLocators?: (page: Page) => Locator[];
+  /** For non-KPI dashboards that don't have getDashboardKpi endpoint. */
+  skipKpiWait?: boolean;
 }
 
 async function driveAndSnapshot(page: Page, cfg: DashboardSnapshot): Promise<void> {
   const kpiAction = 'getDashboardKpi';
-  const initialResponsePromise = page.waitForResponse(
-    (resp) => {
-      if (!resp.url().includes('/r/')) return false;
-      return resp.url().includes(kpiAction) || decodeURIComponent(resp.url()).includes(kpiAction);
-    },
-    { timeout: 30_000 },
-  );
+  let initialResponsePromise: Promise<import('@playwright/test').Response | null> | null = null;
+
+  if (!cfg.skipKpiWait) {
+    initialResponsePromise = page.waitForResponse(
+      (resp) => {
+        if (!resp.url().includes('/r/')) return false;
+        return resp.url().includes(kpiAction) || decodeURIComponent(resp.url()).includes(kpiAction);
+      },
+      { timeout: 30_000 },
+    );
+  }
 
   await loginAndNavigate(page, cfg.route);
-  await initialResponsePromise;
+
+  if (initialResponsePromise) {
+    await initialResponsePromise;
+  }
 
   const hasValues = cfg.filterValues && Object.keys(cfg.filterValues).length > 0;
   const hasDates = cfg.filterDates && Object.keys(cfg.filterDates).length > 0;
@@ -57,18 +66,29 @@ async function driveAndSnapshot(page: Page, cfg: DashboardSnapshot): Promise<voi
     for (const [label, value] of Object.entries(cfg.filterDates ?? {})) {
       await pickFluxDate(page, label, value);
     }
-    const reloadResponsePromise = page.waitForResponse(
-      (resp) => {
-        if (!resp.url().includes('/r/')) return false;
-        return resp.url().includes(kpiAction) || decodeURIComponent(resp.url()).includes(kpiAction);
-      },
-      { timeout: 30_000 },
-    );
-    await page.getByRole('button', { name: /刷新|Refresh/ }).first().click();
-    await reloadResponsePromise;
+    if (!cfg.skipKpiWait) {
+      const reloadResponsePromise = page.waitForResponse(
+        (resp) => {
+          if (!resp.url().includes('/r/')) return false;
+          return resp.url().includes(kpiAction) || decodeURIComponent(resp.url()).includes(kpiAction);
+        },
+        { timeout: 30_000 },
+      );
+      await page.getByRole('button', { name: /刷新|Refresh/ }).first().click();
+      await reloadResponsePromise;
+    } else {
+      await page.getByRole('button', { name: /刷新|Refresh/ }).first().click().catch(() => {});
+      await page.waitForTimeout(1000);
+    }
   }
 
-  await page.locator('.border.rounded.p-3').first().waitFor({ state: 'visible', timeout: 15_000 });
+  if (!cfg.skipKpiWait) {
+    await page.locator('.border.rounded.p-3').first().waitFor({ state: 'visible', timeout: 15_000 });
+  } else {
+    // For non-KPI dashboards, wait for any content to render
+    await page.waitForLoadState('networkidle', { timeout: 15_000 }).catch(() => {});
+    await page.waitForTimeout(1000);
+  }
 
   const extraMasks = cfg.maskLocators ? cfg.maskLocators(page) : [];
   await assertSnapshot(page, {
@@ -168,6 +188,88 @@ test.describe('Dashboard pixel-snapshot baseline (10 domains)', () => {
       domain: 'master-data',
       route: '/md-dashboard-main',
       hasChart: false,
+    });
+  });
+
+  // Extended-domain dashboards (F16 P2 complex pages)
+  test('purchase three-way-match snapshot', async ({ page }) => {
+    await driveAndSnapshot(page, {
+      domain: 'purchase-three-way-match',
+      route: '/pur-three-way-match',
+      hasChart: false,
+      skipKpiWait: true,
+    });
+  });
+
+  test('drp net-requirement snapshot', async ({ page }) => {
+    await driveAndSnapshot(page, {
+      domain: 'drp-net-requirement',
+      route: '/drp-net-requirement',
+      hasChart: false,
+      skipKpiWait: true,
+    });
+  });
+
+  test('manufacturing bom-tree snapshot', async ({ page }) => {
+    await driveAndSnapshot(page, {
+      domain: 'manufacturing-bom-tree',
+      route: '/mfg-bom-tree',
+      hasChart: false,
+      skipKpiWait: true,
+    });
+  });
+
+  test('b2b asn-flow snapshot', async ({ page }) => {
+    await driveAndSnapshot(page, {
+      domain: 'b2b-asn-flow',
+      route: '/b2b-asn-flow',
+      hasChart: false,
+      skipKpiWait: true,
+    });
+  });
+
+  test('b2b edi-detail snapshot', async ({ page }) => {
+    await driveAndSnapshot(page, {
+      domain: 'b2b-edi-detail',
+      route: '/b2b-edi-detail',
+      hasChart: false,
+      skipKpiWait: true,
+    });
+  });
+
+  test('hr payroll-approval snapshot', async ({ page }) => {
+    await driveAndSnapshot(page, {
+      domain: 'hr-payroll-approval',
+      route: '/hr-payroll-approval',
+      hasChart: false,
+      skipKpiWait: true,
+    });
+  });
+
+  test('hr org-chart snapshot', async ({ page }) => {
+    await driveAndSnapshot(page, {
+      domain: 'hr-org-chart',
+      route: '/hr-org-chart',
+      hasChart: false,
+      skipKpiWait: true,
+    });
+  });
+
+  test('logistics shipment-tracking snapshot', async ({ page }) => {
+    await driveAndSnapshot(page, {
+      domain: 'logistics-shipment-tracking',
+      route: '/log-shipment-tracking',
+      hasChart: false,
+      skipKpiWait: true,
+    });
+  });
+
+  test('contract version-diff snapshot', async ({ page }) => {
+    await driveAndSnapshot(page, {
+      domain: 'contract-version-diff',
+      route: '/ct-version-diff',
+      hasChart: false,
+      skipKpiWait: true,
     });
   });
 });

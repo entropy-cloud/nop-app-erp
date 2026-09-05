@@ -97,6 +97,30 @@ export async function assertSnapshot(page: Page, opts: SnapshotOptions): Promise
 
 // ----------------------------------------------------------------------------
 
+/** Options for the CRUD pixel-snapshot subset (plan 2026-09-03-0400-1 M2.1).
+ * `name` is required; everything else mirrors SnapshotOptions defaults. */
+export interface CrudPixelSnapshotOptions extends Omit<SnapshotOptions, 'skipEchartsSettle'> {
+  /** CRUD target pages are table/form surfaces without charts by default, so
+   * the canonical echarts settle wait is skipped. Pass false for a CRUD page
+   * that embeds a canvas chart. */
+  skipEchartsSettle?: boolean;
+}
+
+/**
+ * CRUD pixel-snapshot subset. Reuses the assertSnapshot paradigm (font
+ * hardening + canonical mask header/canvas + 1% ratio tolerance) with
+ * `skipEchartsSettle` defaulting to true — CRUD list/add-form/drawer pages
+ * have no echarts canvas, and the page-driving layer (CrudListPage waits +
+ * networkidle) already synchronizes on data load. Additive-only per the M0.3
+ * §7 frozen-helpers rule: assertSnapshot and the DOM assertXxxRendered
+ * helpers are referenced, never modified.
+ */
+export async function assertCrudPixelSnapshot(page: Page, opts: CrudPixelSnapshotOptions): Promise<void> {
+  await assertSnapshot(page, { ...opts, skipEchartsSettle: opts.skipEchartsSettle ?? true });
+}
+
+// ----------------------------------------------------------------------------
+
 export interface DashboardVisualAssertion {
   domain: string;
   route: string;

@@ -142,8 +142,14 @@ export class CrudListPage extends BasePage {
     if (row) {
       await this.engine.rowAction(row, /编辑/);
     }
-    const dialog = this.engine.dialog(this.page);
-    await dialog.waitFor({ state: 'visible' });
+    // 编辑动作可能打开 dialog（view 缺省 actionType）或 drawer（view 中
+    // actionType="drawer"），等待两者任一可见（与 pages/debug.ts dialogSelectors
+    // 同时收录 dialog-surface/drawer-surface 的口径一致）。
+    await this.engine
+      .dialog(this.page)
+      .or(this.engine.drawer(this.page))
+      .first()
+      .waitFor({ state: 'visible' });
 
     // 等待编辑表单的 loadAction 填充字段后再填写：
     // loadAction 触发 __get (ajax) 并用 form.setValues() 填充响应数据。
@@ -157,7 +163,7 @@ export class CrudListPage extends BasePage {
       .waitForFunction(
         () => {
           const inputs = document.querySelectorAll(
-            '[data-slot="dialog-surface"] input, [data-slot="dialog-content"] input',
+            '[data-slot="dialog-surface"] input, [data-slot="dialog-content"] input, [data-slot="drawer-surface"] input, [data-slot="drawer-content"] input',
           );
           let anyFilled = false;
           for (const el of inputs) {

@@ -135,4 +135,155 @@ test.describe('Report pixel-snapshot baseline (representative subset)', () => {
       fill: { workcenterId: '1' },
     });
   });
+
+  // 6. finance — balance sheet (parameterized ID)
+  test('fin-balance-sheet snapshot', async ({ page }) => {
+    await driveReportAndSnapshot(page, {
+      reportLabel: 'fin-balance-sheet',
+      route: '/balance-sheet',
+      fill: { periodId: '1' },
+    });
+  });
+
+  // 7. finance — cash flow (parameterized ID)
+  test('fin-cash-flow snapshot', async ({ page }) => {
+    await driveReportAndSnapshot(page, {
+      reportLabel: 'fin-cash-flow',
+      route: '/cash-flow',
+      fill: { periodId: '1' },
+    });
+  });
+
+  // 8. finance — period close report (parameterized ID)
+  test('fin-period-close-report snapshot', async ({ page }) => {
+    await driveReportAndSnapshot(page, {
+      reportLabel: 'fin-period-close-report',
+      route: '/period-close-report',
+      fill: { periodId: '1' },
+    });
+  });
+
+  // 9. manufacturing — production variance (zero-param)
+  test('mfg-production-variance snapshot', async ({ page }) => {
+    await driveReportAndSnapshot(page, {
+      reportLabel: 'mfg-production-variance',
+      route: '/production-variance-report',
+    });
+  });
+
+  // 10. manufacturing — forecast variance (zero-param)
+  test('mfg-forecast-variance snapshot', async ({ page }) => {
+    await driveReportAndSnapshot(page, {
+      reportLabel: 'mfg-forecast-variance',
+      route: '/forecast-variance-report',
+    });
+  });
+
+  // 11. assets — depreciation detail (zero-param)
+  test('ast-asset-depreciation-detail snapshot', async ({ page }) => {
+    await driveReportAndSnapshot(page, {
+      reportLabel: 'ast-asset-depreciation-detail',
+      route: '/asset-depreciation-detail',
+    });
+  });
+
+  // 12. assets — disposal detail (zero-param)
+  test('ast-asset-disposal-detail snapshot', async ({ page }) => {
+    await driveReportAndSnapshot(page, {
+      reportLabel: 'ast-asset-disposal-detail',
+      route: '/asset-disposal-detail',
+    });
+  });
+
+  // 13. maintenance — downtime summary (number-param)
+  test('mnt-downtime-summary snapshot', async ({ page }) => {
+    await driveReportAndSnapshot(page, {
+      reportLabel: 'mnt-downtime-summary',
+      route: '/downtime-summary',
+      fill: { equipmentId: '1' },
+    });
+  });
+
+  // 14. maintenance — maintenance history (zero-param)
+  test('mnt-maintenance-history snapshot', async ({ page }) => {
+    await driveReportAndSnapshot(page, {
+      reportLabel: 'mnt-maintenance-history',
+      route: '/maintenance-history',
+    });
+  });
+
+  // 15. projects — cost summary (zero-param)
+  test('prj-project-cost-summary snapshot', async ({ page }) => {
+    await driveReportAndSnapshot(page, {
+      reportLabel: 'prj-project-cost-summary',
+      route: '/project-cost-summary',
+    });
+  });
+
+  // 16. projects — timesheet detail (number-param)
+  test('prj-timesheet-detail snapshot', async ({ page }) => {
+    await driveReportAndSnapshot(page, {
+      reportLabel: 'prj-timesheet-detail',
+      route: '/timesheet-detail',
+      fill: { projectId: '1' },
+    });
+  });
+
+  // 17. quality — inspection summary (zero-param)
+  test('qa-inspection-summary snapshot', async ({ page }) => {
+    await driveReportAndSnapshot(page, {
+      reportLabel: 'qa-inspection-summary',
+      route: '/inspection-summary',
+    });
+  });
+
+  // 18. quality — NCR/CAPA summary (zero-param)
+  test('qa-ncr-capa-summary snapshot', async ({ page }) => {
+    await driveReportAndSnapshot(page, {
+      reportLabel: 'qa-ncr-capa-summary',
+      route: '/ncr-capa-summary',
+    });
+  });
+
+  // 19. master-data — partner list (zero-param)
+  test('md-partner-list snapshot', async ({ page }) => {
+    await driveReportAndSnapshot(page, {
+      reportLabel: 'md-partner-list',
+      route: '/partner-list',
+    });
+  });
+
+  // 20. inventory — trace report (zero-param, data may be empty)
+  test('inv-inventory-trace snapshot', async ({ page }) => {
+    await driveReportAndSnapshot(page, {
+      reportLabel: 'inv-inventory-trace',
+      route: '/inventory-trace-report',
+    });
+  });
+
+  // 21. CRM — forecast accuracy (number-param)
+  test('crm-forecast-accuracy snapshot', async ({ page }) => {
+    await driveReportAndSnapshot(page, {
+      reportLabel: 'crm-forecast-accuracy',
+      route: '/forecast-accuracy',
+      fill: { forecastId: '1' },
+    });
+  });
+
+  // 22. HR — employee net balance (zero-param)
+  test('hr-employee-net-balance snapshot', async ({ page }) => {
+    await driveReportAndSnapshot(page, {
+      reportLabel: 'hr-employee-net-balance',
+      route: '/employee-net-balance',
+    });
+  });
+
+  // 23. HR — payroll simulation comparison (number-param)
+  test('hr-payroll-simulation-comparison snapshot', async ({ page }) => {
+    await driveReportAndSnapshot(page, {
+      reportLabel: 'hr-payroll-simulation-comparison',
+      route: '/payroll-simulation-comparison',
+      fill: { simulationId: '1' },
+    });
+  });
 });
