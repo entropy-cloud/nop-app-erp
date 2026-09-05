@@ -169,6 +169,27 @@ export async function assertBusinessActionPixelSnapshot(
 
 // ----------------------------------------------------------------------------
 
+/** Options for the report pixel-snapshot subset (plan 2026-09-03-0400-3 M2.3). */
+export interface ReportPixelSnapshotOptions extends Omit<SnapshotOptions, 'skipEchartsSettle'> {
+  /** Report pages render seed-frozen HTML tables (no echarts canvas), so the
+   * canonical echarts settle wait is skipped — matching how the 2010-2
+   * baseline batch captured the existing report baselines. Pass false for a
+   * report page that embeds a canvas chart. */
+  skipEchartsSettle?: boolean;
+}
+
+/**
+ * Report pixel-snapshot subset. Reuses the assertSnapshot paradigm (font
+ * hardening + canonical mask header/canvas + 1% ratio tolerance) with
+ * `skipEchartsSettle` defaulting to true. Additive-only per the M0.3 §7
+ * frozen-helpers rule: assertSnapshot is referenced, never modified.
+ */
+export async function assertReportPixelSnapshot(page: Page, opts: ReportPixelSnapshotOptions): Promise<void> {
+  await assertSnapshot(page, { ...opts, skipEchartsSettle: opts.skipEchartsSettle ?? true });
+}
+
+// ----------------------------------------------------------------------------
+
 export interface DashboardVisualAssertion {
   domain: string;
   route: string;

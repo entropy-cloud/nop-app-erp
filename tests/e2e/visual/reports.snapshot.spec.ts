@@ -1,5 +1,5 @@
 import { test, loginAndNavigate } from '../fixtures';
-import { assertSnapshot, pickFluxDate } from './_helper';
+import { assertReportPixelSnapshot, assertSnapshot, pickFluxDate } from './_helper';
 import type { Page } from '@playwright/test';
 
 // Pixel-snapshot layer (plan 2026-07-17-2010-2 Phase 2; /r/ predicate realigned
@@ -30,7 +30,7 @@ interface ReportSnapshot {
   fillDates?: Record<string, string>;
 }
 
-async function driveReportAndSnapshot(page: Page, cfg: ReportSnapshot): Promise<void> {
+async function driveReportToState(page: Page, cfg: ReportSnapshot): Promise<void> {
   // Flux report pages auto-fetch on load (data-source action ajax → REST
   // /r/<Biz>__renderHtml). Register the listener BEFORE navigation; no 渲染报表
   // button click is needed (and clicking is unreliable/deduped under flux).
@@ -73,14 +73,40 @@ async function driveReportAndSnapshot(page: Page, cfg: ReportSnapshot): Promise<
       await reloadResponsePromise;
     }
   }
+}
 
-  // Reports emit static HTML; allow DOM injection + table render to settle.
+/** Let the renderHtml table injection settle before capture (shared by both
+ * capture paths). */
+async function waitForReportRenderSettle(page: Page): Promise<void> {
   await page.waitForLoadState('networkidle', { timeout: 10_000 }).catch(() => {});
   await page.waitForTimeout(500);
+}
+
+async function driveReportAndSnapshot(page: Page, cfg: ReportSnapshot): Promise<void> {
+  await driveReportToState(page, cfg);
+
+  // Reports emit static HTML; allow DOM injection + table render to settle.
+  await waitForReportRenderSettle(page);
 
   await assertSnapshot(page, {
     name: `${cfg.reportLabel}-report.png`,
     skipEchartsSettle: true,
+  });
+}
+
+/**
+ * Default-param-state capture (plan 2026-09-03-0400-3 M2.3). Same driving
+ * paradigm, but the snapshot goes through the `assertReportPixelSnapshot`
+ * subset and the baseline name carries the `-report-default` suffix so the
+ * new baselines are orthogonal to the existing per-page ones (zero existing
+ * baseline modified).
+ */
+async function driveReportDefaultSnapshot(page: Page, cfg: ReportSnapshot): Promise<void> {
+  await driveReportToState(page, cfg);
+  await waitForReportRenderSettle(page);
+
+  await assertReportPixelSnapshot(page, {
+    name: `${cfg.reportLabel}-report-default.png`,
   });
 }
 
@@ -278,12 +304,68 @@ test.describe('Report pixel-snapshot baseline (representative subset)', () => {
     });
   });
 
-  // 23. HR — payroll simulation comparison (number-param)
+  // 23. HR — payroll simulation comparison (number-param, page.yaml default 1)
   test('hr-payroll-simulation-comparison snapshot', async ({ page }) => {
     await driveReportAndSnapshot(page, {
       reportLabel: 'hr-payroll-simulation-comparison',
       route: '/payroll-simulation-comparison',
       fill: { simulationId: '1' },
+    });
+  });
+});
+
+// Default-param-state expansion (plan 2026-09-03-0400-3 M2.3). The 24 tests
+// above pin exactly one state per page; for the 6 parameterized pages whose
+// page.yaml carries NO default, the missing default-render state (empty
+// params → backend full-extent render over frozen seed data) is pinned here
+// via assertReportPixelSnapshot. Baselines are named
+// `<label>-report-default.png` and are orthogonal to the ones above — zero
+// existing baseline is modified. The 5 pages whose page.yaml defaults the
+// param to the seeded value 1 (fin ×4 + hr-payroll-simulation-comparison)
+// collapse both states into the existing snapshots above (matrix Appendix
+// A.2-1 of the plan), so they have no test here.
+test.describe('Report pixel-snapshot default-param states (M2.3 expansion)', () => {
+  // Batch 1 (m23-default-b1)
+  test('fin-ar-ap-aging default-state snapshot', async ({ page }) => {
+    await driveReportDefaultSnapshot(page, {
+      reportLabel: 'fin-ar-ap-aging',
+      route: '/ar-ap-aging',
+    });
+  });
+
+  test('mfg-crp-load default-state snapshot', async ({ page }) => {
+    await driveReportDefaultSnapshot(page, {
+      reportLabel: 'mfg-crp-load',
+      route: '/crp-load-report',
+    });
+  });
+
+  test('mnt-downtime-summary default-state snapshot', async ({ page }) => {
+    await driveReportDefaultSnapshot(page, {
+      reportLabel: 'mnt-downtime-summary',
+      route: '/downtime-summary',
+    });
+  });
+
+  // Batch 2 (m23-default-b2)
+  test('prj-timesheet-detail default-state snapshot', async ({ page }) => {
+    await driveReportDefaultSnapshot(page, {
+      reportLabel: 'prj-timesheet-detail',
+      route: '/timesheet-detail',
+    });
+  });
+
+  test('cs-ticket-sla-csat-summary default-state snapshot', async ({ page }) => {
+    await driveReportDefaultSnapshot(page, {
+      reportLabel: 'cs-ticket-sla-csat-summary',
+      route: '/ticket-sla-csat-summary',
+    });
+  });
+
+  test('crm-forecast-accuracy default-state snapshot', async ({ page }) => {
+    await driveReportDefaultSnapshot(page, {
+      reportLabel: 'crm-forecast-accuracy',
+      route: '/forecast-accuracy',
     });
   });
 });
