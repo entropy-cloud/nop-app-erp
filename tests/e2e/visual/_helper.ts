@@ -121,6 +121,54 @@ export async function assertCrudPixelSnapshot(page: Page, opts: CrudPixelSnapsho
 
 // ----------------------------------------------------------------------------
 
+/** Options for the business-action pixel-snapshot subset (plan 2026-09-03-0400-2 M2.2). */
+export interface BusinessActionPixelSnapshotOptions extends Omit<SnapshotOptions, 'skipEchartsSettle'> {
+  /** Business-action surfaces (confirm dialogs / drawers / post-execution lists)
+   * have no charts by default, so the canonical echarts settle wait is skipped. */
+  skipEchartsSettle?: boolean;
+  /** Mode C wait strategy: selector that must become visible before capture
+   * (the sonner rejection toast, `[data-sonner-toast]`). A timeout THROWS —
+   * the rejection rendering is part of the asserted behavior, a missing toast
+   * is a failure, not a skip. */
+  waitForSelector?: string;
+  /** Timeout for waitForSelector (default 8s — covers the mutation round-trip). */
+  waitForSelectorTimeout?: number;
+  /** Mode B settle: wait until the success toast has auto-dismissed before
+   * capturing the post-execution list state (best-effort, 10s cap). */
+  waitToastGone?: boolean;
+}
+
+/**
+ * Business-action pixel-snapshot subset. Reuses the assertSnapshot paradigm
+ * (font hardening + canonical mask header/canvas + 1% ratio tolerance) with
+ * mode-specific wait strategies: mode A (dialog open) needs none; mode B
+ * (post-execution) waits the success toast gone; mode C (guard rejection)
+ * waits the error toast visible and fails if it never renders. Additive-only
+ * per the M0.3 §7 frozen-helpers rule: assertSnapshot / assertCrudPixelSnapshot
+ * are referenced, never modified.
+ */
+export async function assertBusinessActionPixelSnapshot(
+  page: Page,
+  opts: BusinessActionPixelSnapshotOptions,
+): Promise<void> {
+  if (opts.waitForSelector) {
+    await page
+      .locator(opts.waitForSelector)
+      .first()
+      .waitFor({ state: 'visible', timeout: opts.waitForSelectorTimeout ?? 8_000 });
+  }
+  if (opts.waitToastGone) {
+    await page
+      .locator('[data-sonner-toast]')
+      .first()
+      .waitFor({ state: 'hidden', timeout: 10_000 })
+      .catch(() => {});
+  }
+  await assertSnapshot(page, { ...opts, skipEchartsSettle: opts.skipEchartsSettle ?? true });
+}
+
+// ----------------------------------------------------------------------------
+
 export interface DashboardVisualAssertion {
   domain: string;
   route: string;
