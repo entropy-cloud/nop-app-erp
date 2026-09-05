@@ -23,6 +23,7 @@
     -->
     <actions>
         <mutation name="submitForApproval">
+            <auth permissions="ErpHrSalary:mutation"/>
             <arg name="id" type="String" mandatory="true"/>
             <arg name="svcCtx" kind="ServiceContext"/>
             <return>
@@ -79,6 +80,7 @@
             ]]></source>
         </mutation>
         <mutation name="reject">
+            <auth permissions="ErpHrSalary:approve"/>
 
             <arg name="id" type="String" mandatory="true"/>
             <arg name="svcCtx" kind="ServiceContext"/>
@@ -120,6 +122,7 @@
             ]]></source>
         </mutation>
         <mutation name="withdrawApproval">
+            <auth permissions="ErpHrSalary:reverseApprove"/>
 
             <arg name="id" type="String" mandatory="true"/>
             <arg name="svcCtx" kind="ServiceContext"/>

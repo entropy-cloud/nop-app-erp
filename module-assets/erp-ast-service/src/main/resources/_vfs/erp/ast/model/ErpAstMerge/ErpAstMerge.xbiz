@@ -3,6 +3,7 @@
 
     <actions>
         <mutation name="submitForApproval">
+            <auth permissions="ErpAstMerge:mutation"/>
             <arg name="id" type="String" mandatory="true"/>
             <arg name="svcCtx" kind="ServiceContext"/>
             <return>
@@ -24,6 +25,7 @@
             ]]></c:script></source>
         </mutation>
         <mutation name="reject">
+            <auth permissions="ErpAstMerge:approve"/>
             <arg name="id" type="String" mandatory="true"/>
             <arg name="svcCtx" kind="ServiceContext"/>
             <return>
@@ -45,6 +47,7 @@
             ]]></c:script></source>
         </mutation>
         <mutation name="withdrawApproval">
+            <auth permissions="ErpAstMerge:reverseApprove"/>
             <arg name="id" type="String" mandatory="true"/>
             <arg name="svcCtx" kind="ServiceContext"/>
             <return>

@@ -3,6 +3,7 @@
 
     <actions>
         <mutation name="submitForApproval">
+            <auth permissions="ErpSalReceipt:mutation"/>
             <arg name="id" type="String" mandatory="true"/>
             <arg name="svcCtx" kind="ServiceContext"/>
             <return>
@@ -32,6 +33,7 @@
             ]]></c:script></source>
         </mutation>
         <mutation name="reject">
+            <auth permissions="ErpSalReceipt:approve"/>
             <arg name="id" type="String" mandatory="true"/>
             <arg name="svcCtx" kind="ServiceContext"/>
             <return>
@@ -53,6 +55,7 @@
             ]]></c:script></source>
         </mutation>
             <mutation name="withdrawApproval">
+                <auth permissions="ErpSalReceipt:reverseApprove"/>
             <arg name="id" type="String" mandatory="true"/>
             <arg name="svcCtx" kind="ServiceContext"/>
             <return>

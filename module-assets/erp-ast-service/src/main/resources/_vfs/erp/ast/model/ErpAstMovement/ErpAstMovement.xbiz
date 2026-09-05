@@ -3,6 +3,7 @@
 
     <actions>
         <mutation name="submitForApproval">
+            <auth permissions="ErpAstMovement:mutation"/>
             <arg name="id" type="String" mandatory="true"/>
             <arg name="svcCtx" kind="ServiceContext"/>
             <return>
@@ -50,6 +51,7 @@
             ]]></source>
         </mutation>
         <mutation name="reject">
+            <auth permissions="ErpAstMovement:approve"/>
             <arg name="id" type="String" mandatory="true"/>
             <arg name="svcCtx" kind="ServiceContext"/>
             <return>
@@ -99,6 +101,7 @@
             ]]></source>
         </mutation>
         <mutation name="withdrawApproval">
+            <auth permissions="ErpAstMovement:reverseApprove"/>
             <arg name="id" type="String" mandatory="true"/>
             <arg name="svcCtx" kind="ServiceContext"/>
             <return>

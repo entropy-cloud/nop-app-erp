@@ -3,6 +3,7 @@
 
     <actions>
         <mutation name="submitForApproval">
+            <auth permissions="ErpInvCostAdjust:mutation"/>
             <source><c:script><![CDATA[
                 return inject('app.erp.inv.service.processor.ErpInvCostAdjustSubmitForApprovalProcessor').submitForApproval(id, svcCtx);
             ]]></c:script></source>
@@ -19,6 +20,7 @@
             ]]></c:script></source>
         </mutation>
         <mutation name="reject">
+            <auth permissions="ErpInvCostAdjust:approve"/>
             <source><c:script><![CDATA[
                 return inject('app.erp.inv.service.processor.ErpInvCostAdjustRejectProcessor').reject(id, svcCtx);
             ]]></c:script></source>
@@ -35,6 +37,7 @@
             ]]></c:script></source>
         </mutation>
         <mutation name="withdrawApproval">
+            <auth permissions="ErpInvCostAdjust:reverseApprove"/>
             <source><c:script><![CDATA[
                 return inject('app.erp.inv.service.processor.ErpInvCostAdjustWithdrawApprovalProcessor').withdrawApproval(id, svcCtx);
             ]]></c:script></source>

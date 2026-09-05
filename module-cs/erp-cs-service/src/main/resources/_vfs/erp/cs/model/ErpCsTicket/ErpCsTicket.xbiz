@@ -3,6 +3,7 @@
 
     <actions>
         <mutation name="submitForApproval">
+            <auth permissions="ErpCsTicket:mutation"/>
             <arg name="id" type="String" mandatory="true"/>
             <arg name="svcCtx" kind="ServiceContext"/>
             <return>
@@ -52,6 +53,7 @@
             ]]></source>
         </mutation>
         <mutation name="reject">
+            <auth permissions="ErpCsTicket:approve"/>
             <arg name="id" type="String" mandatory="true"/>
             <arg name="svcCtx" kind="ServiceContext"/>
             <return>
@@ -103,6 +105,7 @@
             ]]></source>
         </mutation>
         <mutation name="withdrawApproval">
+            <auth permissions="ErpCsTicket:reverseApprove"/>
             <arg name="id" type="String" mandatory="true"/>
             <arg name="svcCtx" kind="ServiceContext"/>
             <return>
