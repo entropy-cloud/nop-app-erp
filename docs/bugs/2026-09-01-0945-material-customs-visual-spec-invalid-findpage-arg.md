@@ -2,7 +2,7 @@
 
 - 日期：2026-09-01
 - 发现于：plan `2026-09-01-0838-1-m11a-md-sal-seed-expansion` Phase 3 视觉快照双面义务核查（运行受影响视觉 spec 时）
-- 状态：open（successor 修复）
+- 状态：fixed（2026-09-03 全绿复验：plan `2026-09-03-0400-1-m21-crud-page-pixel-snapshot-expansion` Phase 2 按 0945 方案落地 2 处 `findPage(query: {limit: N})` 后，双 amis 阻塞（`2026-09-03-dual-amis-instance-cell-renderer-double-registration-boot-pageerror`）经 plan `2026-09-03-0938-1` 修复解除，fresh runner 上 `npx playwright test tests/e2e/visual/material-customs.visual.spec.ts --workers=1` → **2/2 绿**）
 
 ## 症状
 

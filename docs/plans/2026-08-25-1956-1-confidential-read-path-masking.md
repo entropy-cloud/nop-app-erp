@@ -84,7 +84,8 @@ Targets: `module-hr/erp-hr-service/src/test/`、`module-master-data/erp-md-servi
 ## Draft Review Record
 
 - dispatch review #review-2026-08-25-201158-mission-driver-2026-08-25-1956-1-confidential-read-path-masking-1-7c4a1e9b to opencode-reviewer-2026-08-25-201158
-- 2026-08-25：iteration 1，共识 accept（review 就地修正 3 处 Major 事实基线：mfg @BizQuery 零服务端调用方/resolver 走自有 DAO 直读、`TestErpMdReportRendering:80-83` 实断言四档价格、`TestErpHrReportRendering:188-201` 同须适配；Phase 1/2/3 对应条目已同步） #review-2026-08-25-201158-mission-driver-2026-08-25-1956-1-confidential-read-path-masking-1-7c4a1e9b
+- 2026-08-25：iteration 1，共识 accept #review-2026-08-25-201158-mission-driver-2026-08-25-1956-1-confidential-read-path-masking-1-7c4a1e9b
+- review 就地修正 3 处 Major 事实基线：mfg @BizQuery 零服务端调用方/resolver 走自有 DAO 直读、`TestErpMdReportRendering:80-83` 实断言四档价格、`TestErpHrReportRendering:188-201` 同须适配；Phase 1/2/3 对应条目已同步。
 
 ## Verification
 
@@ -92,3 +93,6 @@ Targets: `module-hr/erp-hr-service/src/test/`、`module-master-data/erp-md-servi
 - pass compliance 2026-08-26-0208-verify basisHash=bf4b49840985bbe284c7a081ed5d641e5cd2e65c147ddf19d4fba133b753bcdf exit=0
 
 ## Closure
+
+- dispatch audit #audit-2026-09-05-123532-mission-driver-2026-08-25-1956-1-confidential-read-path-masking-1-50075771 to ses_auditor_2026-09-05-123532 models={exec:zhipuai/glm-5.3-flash,aud:zhipuai/glm-5.3-flash}
+- accepted #audit-2026-09-05-123532-mission-driver-2026-08-25-1956-1-confidential-read-path-masking-1-50075771：独立结束审计通过——三站点读取面 masking 均已在活仓核验落地（hr `ErpHrReportBizModel` SALARY_MASK_ROLES/maskDecimal :318-320、md `ErpMdReportBizModel` PRICE_ROLES/maskPrice :242、mfg `ErpMfgCostRollupBizModel` COST_ROLES/maskDecimal :70 且无 daoProvider 字段遮蔽），三站点测试与 E3.2 双守卫 + `TestErpInvResolverRawValueAfterReadPathMasking` 在仓，owner doc §9.7.11 读取面登记与 E4.2 注记同步，`docs/logs/2026/08-25.md` 已登记；验证 = `plan-check.mjs --strict` 全绿（12/12 checked）+ frontmatter verify 键 `test`/`compliance` 均 pass exit=0。
