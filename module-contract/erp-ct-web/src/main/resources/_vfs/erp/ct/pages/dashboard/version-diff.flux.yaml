@@ -57,14 +57,14 @@ body:
       - type: select
         name: versionAId
         label: 版本 A
-        source: '${(versionList?.items ?? []).map((v) => ({ label: "v" + v.versionNo + " (" + (v.versionDate ? String(v.versionDate).substring(0, 10) : "—") + ", " + v.status + (v.isCurrent ? ", 当前)" : ")"), value: v.id }))}'
+        source: '${(versionList?.items ?? []).map((v) => ({ label: "v" + v.versionNo + " (" + (v.versionDate ? ("" + (v.versionDate)).substring(0, 10) : "—") + ", " + v.status + (v.isCurrent ? ", 当前)" : ")"), value: v.id }))}'
         clearable: true
     - colSpan: 3
       body:
       - type: select
         name: versionBId
         label: 版本 B
-        source: '${(versionList?.items ?? []).map((v) => ({ label: "v" + v.versionNo + " (" + (v.versionDate ? String(v.versionDate).substring(0, 10) : "—") + ", " + v.status + (v.isCurrent ? ", 当前)" : ")"), value: v.id }))}'
+        source: '${(versionList?.items ?? []).map((v) => ({ label: "v" + v.versionNo + " (" + (v.versionDate ? ("" + (v.versionDate)).substring(0, 10) : "—") + ", " + v.status + (v.isCurrent ? ", 当前)" : ")"), value: v.id }))}'
         clearable: true
     - colSpan: 2
       body:
@@ -106,7 +106,7 @@ body:
     selection: id versionNo versionDate status approvedBy approvedAt isCurrent content remark
 - type: data-source
   name: metaRows
-  formula: '${(!versionAData || !versionBData) ? [] : [{ key: "versionNo", label: "版本号", isDate: false, isBool: false }, { key: "versionDate", label: "版本日期", isDate: true, isBool: false }, { key: "status", label: "版本状态", isDate: false, isBool: false }, { key: "isCurrent", label: "是否当前版本", isDate: false, isBool: true }, { key: "approvedBy", label: "批准人", isDate: false, isBool: false }, { key: "approvedAt", label: "批准时间", isDate: true, isBool: false }, { key: "remark", label: "备注", isDate: false, isBool: false }].map((f) => ({ field: f.label, valueA: (versionAData[f.key] == null || versionAData[f.key] === "") ? "—" : (f.isDate ? String(versionAData[f.key]).substring(0, 19).replace("T", " ") : (f.isBool ? ((versionAData[f.key] === true || versionAData[f.key] === "true") ? "是" : "否") : String(versionAData[f.key]))), valueB: (versionBData[f.key] == null || versionBData[f.key] === "") ? "—" : (f.isDate ? String(versionBData[f.key]).substring(0, 19).replace("T", " ") : (f.isBool ? ((versionBData[f.key] === true || versionBData[f.key] === "true") ? "是" : "否") : String(versionBData[f.key]))), changed: ((versionAData[f.key] == null || versionAData[f.key] === "") ? "—" : String(versionAData[f.key])) !== ((versionBData[f.key] == null || versionBData[f.key] === "") ? "—" : String(versionBData[f.key])) }))}'
+  formula: '${(!versionAData || !versionBData) ? [] : [{ key: "versionNo", label: "版本号", isDate: false, isBool: false }, { key: "versionDate", label: "版本日期", isDate: true, isBool: false }, { key: "status", label: "版本状态", isDate: false, isBool: false }, { key: "isCurrent", label: "是否当前版本", isDate: false, isBool: true }, { key: "approvedBy", label: "批准人", isDate: false, isBool: false }, { key: "approvedAt", label: "批准时间", isDate: true, isBool: false }, { key: "remark", label: "备注", isDate: false, isBool: false }].map((f) => ({ field: f.label, valueA: (versionAData[f.key] == null || versionAData[f.key] === "") ? "—" : (f.isDate ? ("" + (versionAData[f.key])).substring(0, 19).replace("T", " ") : (f.isBool ? ((versionAData[f.key] === true || versionAData[f.key] === "true") ? "是" : "否") : ("" + (versionAData[f.key])))), valueB: (versionBData[f.key] == null || versionBData[f.key] === "") ? "—" : (f.isDate ? ("" + (versionBData[f.key])).substring(0, 19).replace("T", " ") : (f.isBool ? ((versionBData[f.key] === true || versionBData[f.key] === "true") ? "是" : "否") : ("" + (versionBData[f.key])))), changed: ((versionAData[f.key] == null || versionAData[f.key] === "") ? "—" : ("" + (versionAData[f.key]))) !== ((versionBData[f.key] == null || versionBData[f.key] === "") ? "—" : ("" + (versionBData[f.key]))) }))}'
 - type: text
   text: '${versionAData && versionBData ? "版本元数据对比（v" + (versionAData?.versionNo ?? "—") + " vs v" + (versionBData?.versionNo ?? "—") + "）· 变更字段数：" + (metaRows ?? []).filter((r) => r.changed).length : "选择两个不同版本后点击「对比版本」。"}'
   className: text-muted m-b

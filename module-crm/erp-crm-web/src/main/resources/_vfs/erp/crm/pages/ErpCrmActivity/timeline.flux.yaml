@@ -20,7 +20,7 @@ body:
     selection: items{ id activityType activityDate summary leadId lead{ companyName } } total
 - type: data-source
   name: timelineItems
-  formula: '${(rawData.items ?? []).map(a => ({ time: String(a.activityDate ?? ""), title: a.activityType === "CALL" ? "📞 通话" : a.activityType === "EMAIL" ? "✉️ 邮件" : a.activityType === "MEETING" ? "👥 会议" : a.activityType === "NOTE" ? "📝 备注" : String(a.activityType ?? ""), detail: (a.summary ?? "") + ((a.lead && a.lead.companyName) ? " · " + a.lead.companyName : ""), level: a.activityType === "MEETING" ? "success" : a.activityType === "CALL" ? "primary" : "default" }))}'
+  formula: '${(rawData.items ?? []).map(a => ({ time: ("" + (a.activityDate ?? "")), title: a.activityType === "CALL" ? "📞 通话" : a.activityType === "EMAIL" ? "✉️ 邮件" : a.activityType === "MEETING" ? "👥 会议" : a.activityType === "NOTE" ? "📝 备注" : ("" + (a.activityType ?? "")), detail: (a.summary ?? "") + ((a.lead && a.lead.companyName) ? " · " + a.lead.companyName : ""), level: a.activityType === "MEETING" ? "success" : a.activityType === "CALL" ? "primary" : "default" }))}'
 - type: form
   submitScope: surface
   body:

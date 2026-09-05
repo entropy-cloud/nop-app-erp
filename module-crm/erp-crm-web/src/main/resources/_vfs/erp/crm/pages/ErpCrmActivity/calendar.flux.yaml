@@ -19,7 +19,7 @@ body:
     selection: items{ id activityType activityDate summary leadId lead{ companyName } } total
 - type: data-source
   name: calendarEvents
-  formula: '${(rawData.items ?? []).map(a => ({ id: String(a.id), title: (a.activityType === "CALL" ? "📞" : a.activityType === "EMAIL" ? "✉️" : a.activityType === "MEETING" ? "👥" : "📝") + " " + (a.summary ?? a.activityType ?? ""), start: String(a.activityDate ?? "") + "T09:00", end: String(a.activityDate ?? "") + "T10:00", type: a.activityType ?? "note" }))}'
+  formula: '${(rawData.items ?? []).map(a => ({ id: ("" + (a.id)), title: (a.activityType === "CALL" ? "📞" : a.activityType === "EMAIL" ? "✉️" : a.activityType === "MEETING" ? "👥" : "📝") + " " + (a.summary ?? a.activityType ?? ""), start: ("" + (a.activityDate ?? "")) + "T09:00", end: ("" + (a.activityDate ?? "")) + "T10:00", type: a.activityType ?? "note" }))}'
 - type: form
   submitScope: surface
   body:

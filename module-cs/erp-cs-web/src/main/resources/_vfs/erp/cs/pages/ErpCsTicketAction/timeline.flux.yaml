@@ -20,7 +20,7 @@ body:
     selection: items{ id ticketId actionType fromStatus toStatus operatorId content createTime } total
 - type: data-source
   name: timelineItems
-  formula: '${(rawData.items ?? []).map(a => ({ time: String(a.createTime ?? ""), title: a.actionType === "ASSIGN" ? "分派" : a.actionType === "CLOSE" ? "关闭" : a.actionType === "CANCEL" ? "取消" : a.actionType === "ESCALATE" ? "升级" : a.actionType === "NOTE" ? "备注" : String(a.actionType ?? ""), detail: String((a.fromStatus ?? "—") + " → " + (a.toStatus ?? "—") + " · 操作人:" + (a.operatorId ?? "—") + " · " + (a.content ?? "")), level: a.actionType === "CLOSE" ? "success" : a.actionType === "CANCEL" ? "error" : a.actionType === "ESCALATE" ? "warning" : "default" }))}'
+  formula: '${(rawData.items ?? []).map(a => ({ time: ("" + (a.createTime ?? "")), title: a.actionType === "ASSIGN" ? "分派" : a.actionType === "CLOSE" ? "关闭" : a.actionType === "CANCEL" ? "取消" : a.actionType === "ESCALATE" ? "升级" : a.actionType === "NOTE" ? "备注" : ("" + (a.actionType ?? "")), detail: ("" + ((a.fromStatus ?? "—") + " → " + (a.toStatus ?? "—") + " · 操作人:" + (a.operatorId ?? "—") + " · " + (a.content ?? ""))), level: a.actionType === "CLOSE" ? "success" : a.actionType === "CANCEL" ? "error" : a.actionType === "ESCALATE" ? "warning" : "default" }))}'
 - type: form
   submitScope: surface
   body:
