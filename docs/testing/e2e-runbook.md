@@ -332,7 +332,7 @@ master-data ErpMdPartner 经 `runCrudWriteCycle`（GraphQL 层）+ `runAmisFormW
 - **状态隔离**：fresh-DB 每次启动重置（webServer 默认 `rm -f db/erp.mv.db`）+ 同运行内唯一 code（`E2E-{entityName}-{ts}`）。
 - **表单 UI 写路径（0814-1 新增，历史命名 AMIS）**：`runAmisFormWrite`（引擎无关实现，当前于 flux 引擎下运行）经浏览器 UI 点「新增」→填表单（文本 + dict 下拉）→「确认」→列表/GraphQL 验证→行操作「编辑」→验证更新→（delete）。dict 下拉经 DOM evaluate 定位（label/option 多 locale 变体 + dict value code 匹配，规避 zh/en locale 漂移）。**已知限制**：action-group dropdown 的 Delete action（gated by confirmText）在 Playwright 下不触发其 confirm/API（Edit action 直接开 dialog 正常）→ 该 spec 的 delete 改用同一 GraphQL `__delete` mutation（UI 按钮调用的同一端点），delete 机制本身由 GraphQL 层写 spec 独立证明。seq-default id 字段在 add 表单被标 mandatory（ORM 仍服务端生成实际 id，表单值仅满足客户端校验）。
 
-## 业务动作浏览器层 E2E（`business-actions/`，18 域 113 spec）
+## 业务动作浏览器层 E2E（`business-actions/`，18 域 117 spec）
 
 在 CRUD 读写路径之上，0814-2 叠加了自定义 `@BizMutation` 经 GraphQL `/graphql` 的全栈可达性 + 状态机迁移验证（解除 0628-2 Deferred「复杂业务动作 E2E」），覆盖 3 个代表域的非审批状态机/过账动作。2026-07-09-2004-1 将覆盖由 3 域扩展至 6 域：新增 maintenance Visit（5 态+设备联动副作用）、projects Task（4 态+前驱 DAG 门控）、quality CAPA（3 态）+ NCR（无 CAPA 路径），进一步验证三原语 helper 范式在多型状态机（含副作用联动、DAG 门控、过账标志）下的可复用性。2026-07-10-0335-1 将覆盖扩展至 10 域：新增 4 个 DIRECT useApproval 审批轴实体（manufacturing WorkOrder / purchase Return / sales Return / quality Recall），验证审批轴 `submitForApproval`→`approve`→`approveStatus` 翻转 + reject 守卫 + 审批后域特定状态迁移 + Return approve 的 `posted` 布尔翻转（过账触发可观测）。2026-07-10-0335-2 补齐两条 DIRECT 业务动作路径：NCR resolve CAPA 闭包门控（跨实体依赖门控负/正路径）+ maintenance Request 自定义 status 5 态状态机（use-approval tagSet 但无 approveStatus 列，自定义 status 驱动），验证三原语范式在跨实体依赖门控 + 自定义（非平台审批轴）状态机下的可复用性。2026-07-10-1800-1 新增 NCR SCRAP 过账凭证行断言（resolve AUTO_POST → NcrPostingDispatcher → NcrScrapAcctDocProvider → Dr 6711 / Cr 1401），验证凭证行级科目码/金额在 quality 域过账下的正确性。2026-07-12-0204-2 新增 finance 核销单 `ErpFinReconciliation` 生命周期（DIRECT `@BizMutation` create→post→reverse + 双面对账 `@BizQuery` + 5 validateLine 守卫负路径），解除 finance 核销作为核心域 business-actions E2E 最大缺口（核销独立作用于辅助账 ErpFinArApItem，不经 xwf；post/reverse 对辅助账 openAmount/status 回写断言 + 自包含 partner 隔离使往来余额字段随 cleanup 消失）。useWorkflow（xwf）域经 2330-1 权威裁决浏览器层不可行，排除。
 
@@ -845,7 +845,7 @@ useWorkflow 审批轴浏览器层覆盖需 nop-entropy 平台工作流引擎支�
 | `dashboards.snapshot.spec.ts` | 19 | 2010-2 首建 10 + M2.4 扩面 +9（plan 2026-09-04-1721-1） |
 | `reports.snapshot.spec.ts` | 24 | 2010-2 首建 6 + M2.3 扩面 +18（同上） |
 | `crud-pages.snapshot.spec.ts` | 69 | M2.1 基础矩阵 44（plan 2026-09-03-0400-1）+ Batch D/E +25（plan 2026-09-04-1721-1 Phase 1） |
-| `business-actions.snapshot.spec.ts` | 22 | M2.2（plan 2026-09-04-1721-1 Phase 2；2 skipped = ErpCrmLead/ErpCsTicket status-tags flux 迁移期预存） |
+| `business-actions.snapshot.spec.ts` | 57 | 前置批 22（M2.2 plan 2026-09-04-1721-1 Phase 2；2 skipped = ErpCrmLead/ErpCsTicket status-tags flux 迁移期预存）+ M2.2 矩阵 35（plan 2026-09-03-0400-2：模式 A 23 + B 4 + C 8） |
 
 ### CRUD 页面像素层（M2.1，plan 2026-09-03-0400-1）
 
@@ -854,6 +854,18 @@ useWorkflow 审批轴浏览器层覆盖需 nop-entropy 平台工作流引擎支�
 - **mask 清单**：canonical `header`（会话身份）+ `canvas`（CRUD 页 0 匹配时为无害 no-op）；44 行逐行按 M0.1 §mask 时机标准五条判定动态区域并实测（全量网格审计列 x ≥ 2031 视口外 / add-form 未持久化无 stamp / drawer 视口内 stamp 遮挡实证 / kanban·timeline 卡片为静态种子日期），**均无附加 `opts.mask`**。残留风险（未来列结构/宽度变更使审计列进入视口）由目录级三连跑漂移检出，按兜底处置（该行 `opts.mask` 或降级 DOM 层断言）登记——见 plan 2026-09-03-0400-1 附录 A。
 - **运行命令**：`BASE_URL=http://127.0.0.1:8011 SKIP_WEBSERVER=1 npx playwright test tests/e2e/visual/crud-pages.snapshot.spec.ts --workers=1`（69 测试约 10 分钟；每批落地期分批验证命令同源）。
 - **基线平台**：macOS + Chrome `channel: 'chrome'`（`-chromium-darwin` 后缀隔离，沿 2010-2 口径）。
+
+### 业务动作像素层（M2.2，plan 2026-09-03-0400-2）
+
+- **范式**：`assertBusinessActionPixelSnapshot(page, opts)`（`_helper.ts`，只增不改纪律）委托既有 `assertSnapshot`（字体固化 + canonical mask `header`/`canvas` + 1% 容差），`skipEchartsSettle` 缺省 `true`；模式专属等待策略——模式 C `waitForSelector`（拒绝 toast 必须渲染，超时**抛错**即断言失败）+ `waitForSelectorTimeout`、模式 B `waitToastGone`（成功 toast 消失后采集，10s 兜底放行）。
+- **三种采集模式**（spec `business-actions.snapshot.spec.ts` cfg 驱动，矩阵 35 行见 plan 附录 A）：
+  - **模式 A 对话框/抽屉打开态（23 行，14 域）**：种子行点动作 → confirm 对话框/drawer surface 渲染 → 截图 → Escape 取消。零状态变更由 flux `runtime-action-helpers.ts` confirmText 门机制级保证（env.confirm 取消 = `createCancelledResult`，不发起后端调用）；page 类对话框按 dialog∪drawer 联合等待（镜像 `CrudListPage.clickEdit` 先例）。
+  - **模式 B 执行后列表态（4 行，4 域）**：GraphQL `__save` 建自包含行（`E2E-BAS-*` 确定性编码）→ `page.reload()` 全文档重载拾取新行（同 URL `page.goto` 为同文档 hash 导航不触发重取；`Navigation.login` 表单等待仅在未认证上下文可解，故单次登录后禁再入）→ alert-dialog 确认执行 mutation → toast 消失 + 刷新 → 截列表态（新行 id 单元格 mask，按 `__save` 返回 seq id 精确文本定位——本 flux build 表格 td 无 `data-field` 属性）→ `deleteByFilter(code)` cleanup。
+  - **模式 C 拒绝 Toast 渲染存在性（8 行，4 域）**：种子终态行点动作 → confirm → 后端守卫（状态机非法迁移/CAPA 门，首语句抛错先于任何 ORM 写）→ sonner error toast 必须渲染（`waitForSelector('[data-sonner-toast]')`，缺失即失败）→ 截图（toaster mask 防文案漂移；元素缺席 = 无遮挡块 = diff 失败，存在性断言不被 mask 削弱）。
+- **mask 清单**：canonical `header`/`canvas` 之外仅两类附加 mask——模式 C 8 行 `[data-sonner-toaster]`（toast 文案防漂移，`waitForSelector` 强制存在性）；模式 B 4 行新行 id 单元格（seq 生成 id 跨 run 漂移防护，零匹配守卫响亮失败）；其余行经 M2.1 既有几何实证零附加 mask。全集经独立 plan-audit（iteration 1 APPROVE）。
+- **运行命令**：`BASE_URL=http://127.0.0.1:8011 SKIP_WEBSERVER=1 npx playwright test tests/e2e/visual/business-actions.snapshot.spec.ts --workers=1`（57 测试约 9 分钟；分批落地期 `--update-snapshots` 仅限首批采集且以 `-g "m22-A|m22-B|m22-C"` 限定，不触碰既有基线）。
+- **基线平台**：macOS + Chrome `channel: 'chrome'`（`-chromium-darwin` 后缀，沿 2010-2 口径）；3 次新鲜运行全绿实证（2026-09-06，55 passed + 2 skipped × 3 连跑零漂移）。
+- **状态安全**：模式 A/C 全部行零状态变更（confirm 取消零后端调用 / 守卫首语句抛错先于 ORM 写，无 REQUIRES_NEW 旁路写者）；模式 B 自包含行 cleanup 后零残留（4 域既有 business-actions spec 复跑全绿 + GraphQL 直查 `E2E-BAS-*` total=0 双证据）——写路径采集与种子驱动基线互不污染。
 
 ### `_exploration/` 口径说明
 
@@ -1278,7 +1290,7 @@ tests/e2e/
 │   ├── master-data.write.amis.spec.ts # master-data CRUD 写路径表单 UI 层（历史命名 amis，UI 新增/编辑/删除，0814-1）
 │   ├── quality.write.spec.ts         # quality ErpQaRiskRegister CRUD 写路径 GraphQL 层（0814-1，含 dict status）
 │   └── maintenance.write.spec.ts     # maintenance ErpMntEquipmentCategory CRUD 写路径 GraphQL 层（0814-1）
-├── business-actions/                 # 业务动作浏览器层 E2E（0814-2 + 2004-1 + 0335-1 + 0215-3 + 0508-1 + 0941-2 + 1218-1 + 1005-2，自定义 @BizMutation 经 GraphQL，17 域 63 spec）
+├── business-actions/                 # 业务动作浏览器层 E2E（0814-2 + 2004-1 + 0335-1 + 0215-3 + 0508-1 + 0941-2 + 1218-1 + 1005-2 等，自定义 @BizMutation 经 GraphQL，18 域 117 spec）
 │   ├── _helper.ts                    # createViaSave/callMutation/verifyState/eqFilter/deleteByFilter 原语
 │   ├── inventory-stock-move.action.spec.ts  # StockMove generateMove/complete/cancel 状态机+过账
 │   ├── crm-lead.action.spec.ts              # Lead qualify/moveStage/cancel 状态迁移
