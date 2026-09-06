@@ -126,7 +126,7 @@ public class ErpDrpCrossDockStagingTimeoutJob {
                         count++;
                     }
                 } catch (Exception e) {
-                    LOG.warn("erp-drp-xdock-staging-timeout: 单条回退失败（隔离继续）：crossDockId={}, reason={}",
+                    LOG.warn("erp-drp-xdock-staging-timeout: single-record fallback failed (isolated, continuing): crossDockId={}, reason={}",
                             dock.getId(), e.getMessage());
                 }
             }
@@ -144,7 +144,7 @@ public class ErpDrpCrossDockStagingTimeoutJob {
     protected boolean fallbackToNormalStorage(ErpInvDrpCrossDock dock, IServiceContext ctx) {
         String stagingWarehouseId = resolveStagingWarehouseId(dock);
         if (stagingWarehouseId == null) {
-            LOG.warn("erp-drp-xdock-staging-timeout: 无法解析暂存仓库，跳过：crossDockId={}", dock.getId());
+            LOG.warn("erp-drp-xdock-staging-timeout: cannot resolve staging warehouse, skipping: crossDockId={}", dock.getId());
             return false;
         }
         StockMoveRequest request = new StockMoveRequest();
