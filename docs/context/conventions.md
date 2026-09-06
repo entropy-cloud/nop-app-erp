@@ -37,6 +37,15 @@
 - 默认优先不添加注释。
 - 仅当本地约束容易被误读且代码本身不足以表达时才添加注释。
 
+## i18n 与日志语言
+
+- LOG 消息统一英文，不走 i18n。
+- 异常路径参数传状态码/枚举名/字典值本身，不传中文散文（错误消息语义由 `ErrorCode.define` 中文模板承载）。
+- `*Errors.java` 接口必须标注 `@Locale("zh-CN")`。
+- `*.page.yaml`/`*.flux.yaml` 用户可见文案必须补 `i18nEn`（或模型源 `i18n-en` 属性）。
+- 运行时字符串中文白名单制，豁免唯一通道 = 显式登记；`_` 前缀生成 i18n yaml 禁手改。
+- 判定冲突以 `docs/architecture/i18n-compliance.md` 为唯一权威（判定准绳表、白名单登记格式、修复模式对照表）。
+
 ## 验证规则
 
 - 保持 `docs/context/project-context.md` 中的验证命令最新。

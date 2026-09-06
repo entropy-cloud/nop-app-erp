@@ -159,6 +159,7 @@
 11. **业财过账吞异常悬挂（lesson 09）**：宽 `catch(Exception)` 吞咽只 `log.warn` → 业务侧 `posted=false` 永久悬挂、无告警闭环。R1.16 跨 12 站点同族。详细 grep 程式与决策树见 `behavioral-failure-mode-scan-prompt.md §1`。
 12. **dict 死状态（lesson 10）**：dict 声明无 `setStatus` writer 的状态值（永不出现），owner doc 迁移图却声明进/出迁移。MR1 跨 finance/mfg/hr/inv/qa/prj/contract/aps/logistics 多域同型。详细 grep 程式与决策树见 `behavioral-failure-mode-scan-prompt.md §2`。
 13. **arm-index 状态不回填（lesson 11）**：修复在 roadmap 标 `done` + 计划 `completed`，但 arm-index finding 行 `修复状态` 仍 `todo (R*.x)`。V.5 发现 102 条陈旧标签批量回填。状态回填是闭合的一部分，不是事后清理。
+14. **硬编码中文（ai-check-r3）**：运行时面（LOG/异常参数/运行时字符串/page·flux yaml）中文违规——LOG 统一英文、异常参数传状态码/枚举名/字典值本身、`ErrorCode.define` 中文描述合规（zh-CN 源语言）、白名单登记是唯一豁免通道、`_` 前缀生成 i18n yaml 禁手改、探针计数口径敏感须 M0.2 脚本 + M0.3 基线冻结。判定入口：`docs/architecture/i18n-compliance.md`（唯一权威）。
 
 ---
 
