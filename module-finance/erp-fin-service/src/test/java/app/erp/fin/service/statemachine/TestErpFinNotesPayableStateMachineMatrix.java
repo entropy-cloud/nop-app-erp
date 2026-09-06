@@ -99,8 +99,8 @@ public class TestErpFinNotesPayableStateMachineMatrix {
             assertEquals(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode());
             assertEquals("writeOff", ex.getParam(ErpFinNotesPayableStateMachine.ARG_ACTION));
             assertEquals(s, ex.getParam(ErpCommonErrors.ARG_CURRENT_STATUS));
-            assertEquals("非终态", ex.getParam(ErpCommonErrors.ARG_EXPECTED_STATUS),
-                    "writeOff expected 文案对外不变");
+            assertEquals("!" + String.join(" / ", sm.terminalStatuses()), ex.getParam(ErpCommonErrors.ARG_EXPECTED_STATUS),
+                    "writeOff expected 为否定码列表（plan 2026-09-07-0043-2 CAT-2 传码收敛）");
         }
     }
 

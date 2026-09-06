@@ -111,7 +111,7 @@ public class ErpFinExpenseClaimProcessor {
         try {
             approvalStateMachine.assertCanSubmit(status);
         } catch (NopException e) {
-            throw illegalTransition(claim, status, "UNSUBMITTED 或 REJECTED", e);
+            throw illegalTransition(claim, status, "UNSUBMITTED / REJECTED", e);
         }
     }
 
@@ -161,7 +161,7 @@ public class ErpFinExpenseClaimProcessor {
         try {
             documentStateMachine.assertCanCancel(claim.getDocStatus());
         } catch (NopException e) {
-            throw illegalDocTransition(claim, claim.getDocStatus(), "非已作废", e);
+            throw illegalDocTransition(claim, claim.getDocStatus(), "!CANCELLED", e);
         }
     }
 

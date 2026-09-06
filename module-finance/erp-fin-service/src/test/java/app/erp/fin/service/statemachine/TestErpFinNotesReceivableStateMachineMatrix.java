@@ -114,8 +114,8 @@ public class TestErpFinNotesReceivableStateMachineMatrix {
             assertEquals(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode());
             assertEquals("collect", ex.getParam(ErpFinNotesReceivableStateMachine.ARG_ACTION));
             assertEquals(s, ex.getParam(ErpCommonErrors.ARG_CURRENT_STATUS));
-            assertEquals("RECEIVED 或 DISCOUNTED", ex.getParam(ErpCommonErrors.ARG_EXPECTED_STATUS),
-                    "collect expected 文案对外不变");
+            assertEquals("RECEIVED / DISCOUNTED", ex.getParam(ErpCommonErrors.ARG_EXPECTED_STATUS),
+                    "collect expected 为码列表（plan 2026-09-07-0043-2 CAT-2 传码收敛）");
         }
     }
 
@@ -138,7 +138,7 @@ public class TestErpFinNotesReceivableStateMachineMatrix {
                 ErpFinConstants.NOTES_RECV_COLLECTION_PENDING)) {
             sm.assertCanWriteOff(s); // 合法不抛
         }
-        // 3 终态非法（expected「非终态」文案对外不变）
+        // 3 终态非法（expected = ! 前缀 + 终态码列表，plan 2026-09-07-0043-2 CAT-2 传码收敛）
         for (String s : Arrays.asList(ErpFinConstants.NOTES_RECV_HONORED,
                 ErpFinConstants.NOTES_RECV_DISHONORED,
                 ErpFinConstants.NOTES_RECV_WRITE_OFF)) {
@@ -147,8 +147,8 @@ public class TestErpFinNotesReceivableStateMachineMatrix {
             assertEquals(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode());
             assertEquals("writeOff", ex.getParam(ErpFinNotesReceivableStateMachine.ARG_ACTION));
             assertEquals(s, ex.getParam(ErpCommonErrors.ARG_CURRENT_STATUS));
-            assertEquals("非终态", ex.getParam(ErpCommonErrors.ARG_EXPECTED_STATUS),
-                    "writeOff expected 文案对外不变");
+            assertEquals("!" + String.join(" / ", sm.terminalStatuses()), ex.getParam(ErpCommonErrors.ARG_EXPECTED_STATUS),
+                    "writeOff expected 为否定码列表（plan 2026-09-07-0043-2 CAT-2 传码收敛）");
         }
     }
 

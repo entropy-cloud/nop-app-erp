@@ -38,7 +38,7 @@ import java.util.List;
  *   <li>{@code honor} {COLLECTION_PENDING}→HONORED。</li>
  *   <li>{@code dishonor} {COLLECTION_PENDING}→DISHONORED（拒付转应收，treasury.md §规则 3）。</li>
  *   <li>{@code writeOff} {非终态}→WRITE_OFF（{@link #assertCanWriteOff(String)} 校验 {@code !isTerminal(from)}，
- *       保留 loose 语义，expected「非终态」）。</li>
+ *       保留 loose 语义，expected 为「!」前缀 + 终态码列表（plan 2026-09-07-0043-2 CAT-2 传码收敛））。</li>
  * </ul>
  *
  * <p><b>ENDORSED 非终态中间态</b>：背书后票据所有权已转移，<b>仅可 writeOff 出边</b>——不可 collect/
@@ -46,7 +46,7 @@ import java.util.List;
  *
  * <p>非法边抛 common 层 {@link ErpCommonErrors#ERR_ILLEGAL_STATUS_TRANSITION}（参数 {@code currentStatus}/
  * {@code expectedStatus}），并附 {@code action} 补充诊断参数；领域 ErrorCode 映射归 Processor（契约 §7），
- * expectedStatus 文案（如「RECEIVED 或 DISCOUNTED」「非终态」）由本 Bean 承载、对外不变。
+ * expectedStatus 码文案（如「RECEIVED / DISCOUNTED」「! 终态码列表」）由本 Bean 承载（CAT-2 传码，plan 2026-09-07-0043-2）。
  */
 public class ErpFinNotesReceivableStateMachine {
 
@@ -90,14 +90,14 @@ public class ErpFinNotesReceivableStateMachine {
     }
 
     /**
-     * collect 入口守卫：来源态为 {@code RECEIVED} 或 {@code DISCOUNTED} 合法（双源，expected「RECEIVED 或 DISCOUNTED」）。
+     * collect 入口守卫：来源态为 {@code RECEIVED} 或 {@code DISCOUNTED} 合法（双源，expected「RECEIVED / DISCOUNTED」）。
      *
      * <p>接线方 {@code ErpFinNotesReceivableCollectProcessor}（直接注入 Bean）。
      */
     public void assertCanCollect(String status) {
         if (!ErpFinConstants.NOTES_RECV_RECEIVED.equals(status)
                 && !ErpFinConstants.NOTES_RECV_DISCOUNTED.equals(status)) {
-            throw illegal("collect", status, "RECEIVED 或 DISCOUNTED");
+            throw illegal("collect", status, "RECEIVED / DISCOUNTED");
         }
     }
 
@@ -124,13 +124,13 @@ public class ErpFinNotesReceivableStateMachine {
     }
 
     /**
-     * writeOff 入口守卫：来源态为<b>任意非终态</b>合法（{@code !isTerminal(from)}，loose 语义，expected「非终态」）。
+     * writeOff 入口守卫：来源态为<b>任意非终态</b>合法（{@code !isTerminal(from)}，loose 语义，expected 为 {@code "!" + 终态码列表}）。
      *
      * <p>接线方 {@code ErpFinNotesReceivableWriteOffProcessor}（经 facade {@code validateTransitionForWriteOff}）。
      */
     public void assertCanWriteOff(String status) {
         if (isTerminal(status)) {
-            throw illegal("writeOff", status, "非终态");
+            throw illegal("writeOff", status, "!" + String.join(" / ", terminalStatuses()));
         }
     }
 

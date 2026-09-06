@@ -90,7 +90,7 @@ public class ErpFinEmployeeAdvanceProcessor {
         try {
             approvalStateMachine.assertCanSubmit(status);
         } catch (NopException e) {
-            throw illegalTransition(advance, status, "UNSUBMITTED 或 REJECTED", e);
+            throw illegalTransition(advance, status, "UNSUBMITTED / REJECTED", e);
         }
     }
 
@@ -140,7 +140,7 @@ public class ErpFinEmployeeAdvanceProcessor {
         try {
             documentStateMachine.assertCanCancel(advance.getDocStatus());
         } catch (NopException e) {
-            throw illegalDocTransition(advance, advance.getDocStatus(), "非已作废", e);
+            throw illegalDocTransition(advance, advance.getDocStatus(), "!CANCELLED", e);
         }
     }
 

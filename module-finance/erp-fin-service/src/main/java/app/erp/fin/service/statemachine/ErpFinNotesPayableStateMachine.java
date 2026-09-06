@@ -34,7 +34,7 @@ import java.util.List;
  *   <li>{@code honor} {ISSUED}→HONORED（守卫 ISSUED，expected「ISSUED」）。</li>
  *   <li>{@code dishonor} {ISSUED}→DISHONORED。</li>
  *   <li>{@code writeOff} {非终态}→WRITE_OFF（{@link #assertCanWriteOff(String)} 校验 {@code !isTerminal(from)}，
- *       保留 loose 语义，expected「非终态」）。</li>
+ *       保留 loose 语义，expected 为「!」前缀 + 终态码列表（plan 2026-09-07-0043-2 CAT-2 传码收敛））。</li>
  * </ul>
  *
  * <p><b>writer 放置</b>：Payable 4 动作 writer 全部在 facade {@code do*}（无 per-mutation 不对称，
@@ -42,7 +42,7 @@ import java.util.List;
  *
  * <p>非法边抛 common 层 {@link ErpCommonErrors#ERR_ILLEGAL_STATUS_TRANSITION}（参数 {@code currentStatus}/
  * {@code expectedStatus}），并附 {@code action} 补充诊断参数；领域 ErrorCode 映射归 Processor（契约 §7），
- * expectedStatus 文案（如「ISSUED」「非终态」）由本 Bean 承载、对外不变。
+ * expectedStatus 码文案（如「ISSUED」「! 终态码列表」）由本 Bean 承载（CAT-2 传码，plan 2026-09-07-0043-2）。
  */
 public class ErpFinNotesPayableStateMachine {
 
@@ -86,13 +86,13 @@ public class ErpFinNotesPayableStateMachine {
     }
 
     /**
-     * writeOff 入口守卫：来源态为<b>任意非终态</b>合法（{@code !isTerminal(from)}，loose 语义，expected「非终态」）。
+     * writeOff 入口守卫：来源态为<b>任意非终态</b>合法（{@code !isTerminal(from)}，loose 语义，expected 为 {@code "!" + 终态码列表}）。
      *
      * <p>接线方 {@code ErpFinNotesPayableWriteOffProcessor}（经 facade {@code validateTransitionForWriteOff}）。
      */
     public void assertCanWriteOff(String status) {
         if (isTerminal(status)) {
-            throw illegal("writeOff", status, "非终态");
+            throw illegal("writeOff", status, "!" + String.join(" / ", terminalStatuses()));
         }
     }
 

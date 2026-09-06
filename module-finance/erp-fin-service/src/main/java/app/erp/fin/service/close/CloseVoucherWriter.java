@@ -29,6 +29,10 @@ public final class CloseVoucherWriter {
     public static final String POSTING_TYPE_NORMAL = "NORMAL";
     public static final String VOUCHER_TYPE_TRANSFER = "TRANSFER";
 
+    private static final io.nop.api.core.exceptions.ErrorCode ERR_PERIOD_CLOSE_UNBALANCED =
+            io.nop.api.core.exceptions.ErrorCode.define(
+                    "erp.err.fin.period-close.unbalanced", "期末结账凭证借贷不平衡：借={td}, 贷={tc}");
+
     private CloseVoucherWriter() {
     }
 
@@ -81,8 +85,7 @@ public final class CloseVoucherWriter {
             return null;
         }
         if (totalDebit.compareTo(totalCredit) != 0) {
-            throw new NopException(io.nop.api.core.exceptions.ErrorCode.define(
-                    "erp.err.fin.period-close.unbalanced", "期末结账凭证借贷不平衡：借={td}, 贷={tc}"))
+            throw new NopException(ERR_PERIOD_CLOSE_UNBALANCED)
                     .param("td", totalDebit.toPlainString()).param("tc", totalCredit.toPlainString());
         }
 

@@ -202,7 +202,7 @@ public class ErpFinApDocumentPipelineProcessor {
                                                 IServiceContext context) {
         IErpFinApDocClassifier classifier = firstClassifier();
         if (classifier == null) {
-            throw fail(doc, "CLASSIFY", "无分类引擎注册");
+            throw fail(doc, "CLASSIFY", "no classify engine registered");
         }
         ApDocClassification c = classifier.classify(doc, parseResult, context);
         doc.setDocType(c.getDocType());
@@ -237,7 +237,7 @@ public class ErpFinApDocumentPipelineProcessor {
         }
         IErpPurInvoiceBiz purInvoiceBiz = purInvoiceBiz();
         if (purInvoiceBiz == null) {
-            throw fail(doc, "DRAFT", "采购发票服务不可用（app-erp-purchase-service 未聚合）");
+            throw fail(doc, "DRAFT", "purchase invoice service unavailable (app-erp-purchase-service not aggregated)");
         }
         try {
             Map<String, Object> data = buildDraftData(doc, parseResult);
@@ -301,7 +301,7 @@ public class ErpFinApDocumentPipelineProcessor {
         if (StringHelper.isEmpty(partnerId)) {
             throw new NopException(ErpFinErrors.ERR_AP_DOC_DRAFT_FAILED)
                     .param(ErpFinErrors.ARG_DOCUMENT_ID, documentId)
-                    .param(ErpFinErrors.ARG_STEP, "人工放行必须显式指定对应方 partnerId");
+                    .param(ErpFinErrors.ARG_STEP, "MANUAL_REVIEW_PARTNER_REQUIRED");
         }
         doc.setPartnerId(partnerId);
         doc.setConfidence(BigDecimal.ONE);
@@ -547,10 +547,10 @@ public class ErpFinApDocumentPipelineProcessor {
             record = fileStore.getFile(doc.getFileId());
         } catch (Exception e) {
             // 文件记录缺失（如 nop-file 记录不存在）与读取失败同样计入 PARSE 失败落账（P1-1）
-            throw fail(doc, "PARSE", "文件读取失败：" + e.getMessage());
+            throw fail(doc, "PARSE", "file read failed: " + e.getMessage());
         }
         if (record == null) {
-            throw fail(doc, "PARSE", "文件不存在（fileId=" + doc.getFileId() + "）");
+            throw fail(doc, "PARSE", "file not found (fileId=" + doc.getFileId() + ")");
         }
         try (InputStream in = record.getResource().getInputStream(); ByteArrayOutputStream out = new ByteArrayOutputStream()) {
             byte[] buf = new byte[8192];
@@ -560,7 +560,7 @@ public class ErpFinApDocumentPipelineProcessor {
             }
             return out.toByteArray();
         } catch (Exception e) {
-            throw fail(doc, "PARSE", "文件读取失败：" + e.getMessage());
+            throw fail(doc, "PARSE", "file read failed: " + e.getMessage());
         }
     }
 

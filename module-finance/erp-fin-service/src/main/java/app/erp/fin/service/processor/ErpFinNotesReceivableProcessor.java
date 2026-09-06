@@ -88,7 +88,7 @@ public class ErpFinNotesReceivableProcessor {
     protected void requireDiscountInputs(ErpFinNotesReceivable note, LocalDate discountDate, String bankId,
                                           BigDecimal discountRate, BigDecimal exchangeRate, IServiceContext context) {
         if (discountDate == null || discountRate == null || bankId == null) {
-            throw illegalTransition(note, note.getStatus(), "贴现日/贴现银行/贴现率非空");
+            throw illegalTransition(note, note.getStatus(), "DISCOUNT_DATE/DISCOUNT_BANK/DISCOUNT_RATE_REQUIRED");
         }
         // 注：config 启用 + 外币票据 + exchangeRate=null 时走 ZERO 兜底路径（向后兼容），不强制抛错。
         // exchangeGainLoss 派生在 buildDiscount 中按 fxPlugEnabled 三联条件（enabled + 外币 + exchangeRate≠null）判定。

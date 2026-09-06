@@ -222,7 +222,7 @@ public class ErpFinVoucherTemplateRenderTemplateProcessor {
         BigDecimal parseFactor() {
             skipWs();
             if (pos >= n) {
-                throw invalid("表达式为空或意外结束");
+                throw invalid("EMPTY_OR_UNEXPECTED_END");
             }
             char c = s.charAt(pos);
             if (c == '(') {
@@ -230,7 +230,7 @@ public class ErpFinVoucherTemplateRenderTemplateProcessor {
                 BigDecimal v = parseExpr();
                 skipWs();
                 if (pos >= n || s.charAt(pos) != ')') {
-                    throw invalid("括号不匹配，缺少 ')'");
+                    throw invalid("UNBALANCED_PAREN");
                 }
                 pos++;
                 return v;
@@ -249,7 +249,7 @@ public class ErpFinVoucherTemplateRenderTemplateProcessor {
             if (isDigit(c) || c == '.') {
                 return readNumber();
             }
-            throw invalid("非白名单字符 '" + c + "'");
+            throw invalid("NON_WHITELIST_CHAR:" + c);
         }
 
         private BigDecimal readVariable() {
@@ -270,7 +270,7 @@ public class ErpFinVoucherTemplateRenderTemplateProcessor {
             } catch (NumberFormatException e) {
                 throw new NopException(ErpFinPostingErrors.ERR_TEMPLATE_EXPR_INVALID)
                         .param(ErpFinPostingErrors.ARG_EXPRESSION, s)
-                        .param(ErpFinPostingErrors.ARG_REASON, "变量 " + name + " 值非数字：" + val);
+                        .param(ErpFinPostingErrors.ARG_REASON, "VAR_VALUE_NOT_NUMERIC:" + name + ":" + val);
             }
         }
 
@@ -283,14 +283,14 @@ public class ErpFinVoucherTemplateRenderTemplateProcessor {
             try {
                 return new BigDecimal(num);
             } catch (NumberFormatException e) {
-                throw invalid("非法数字字面量：" + num);
+                throw invalid("ILLEGAL_NUMBER:" + num);
             }
         }
 
         void expectEnd() {
             skipWs();
             if (pos < n) {
-                throw invalid("表达式尾部存在未解析字符 '" + s.charAt(pos) + "'");
+                throw invalid("UNPARSED_CHAR:" + s.charAt(pos));
             }
         }
 

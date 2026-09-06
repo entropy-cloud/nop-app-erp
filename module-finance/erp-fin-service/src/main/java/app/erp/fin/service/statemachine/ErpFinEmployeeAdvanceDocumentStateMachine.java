@@ -52,7 +52,7 @@ public class ErpFinEmployeeAdvanceDocumentStateMachine {
      */
     public void assertCanCancel(String docStatus) {
         if (isCancelled(docStatus)) {
-            throw illegal("cancel", docStatus, "非已作废");
+            throw illegal("cancel", docStatus, "!CANCELLED");
         }
     }
 
