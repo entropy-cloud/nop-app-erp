@@ -108,7 +108,7 @@ public class ErpCrmLeadProcessor {
         Integer toSeq = toStage.getSequence();
         if (fromSeq != null && toSeq != null && toSeq < fromSeq) {
             if (ErpCrmConfigs.allowStageBackward()) {
-                LOG.warn("erp-crm-lead: 允许阶段回退（allow-stage-backward=true）：leadCode={}, fromSeq={}, toSeq={}",
+                LOG.warn("erp-crm-lead: stage backward move allowed (allow-stage-backward=true): leadCode={}, fromSeq={}, toSeq={}",
                         lead.getCode(), fromSeq, toSeq);
                 return;
             }

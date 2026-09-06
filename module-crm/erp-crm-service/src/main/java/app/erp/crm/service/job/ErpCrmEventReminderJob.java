@@ -84,7 +84,7 @@ public class ErpCrmEventReminderJob {
                 count++;
             } catch (Exception e) {
                 // 单条失败隔离：不影响后续事件提醒派发
-                LOG.warn("erp-crm-event-reminder: 单条事件通知失败（隔离继续）：eventId={}, reason={}",
+                LOG.warn("erp-crm-event-reminder: single-event notification failed (isolated, continuing): eventId={}, reason={}",
                         event.getId(), e.getMessage());
             }
         }

@@ -84,7 +84,7 @@ public class ErpCrmSequenceOverdueJob {
                 notifyOverdue(row, ctx);
                 count++;
             } catch (Exception e) {
-                LOG.warn("erp-crm-sequence-overdue: 单条逾期通知失败（隔离继续）：progressId={}, reason={}",
+                LOG.warn("erp-crm-sequence-overdue: single-overdue notification failed (isolated, continuing): progressId={}, reason={}",
                         row.get("progressId"), e.getMessage());
             }
         }
