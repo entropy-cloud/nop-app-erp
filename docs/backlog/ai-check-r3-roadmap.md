@@ -60,7 +60,7 @@
 | Work Item | Status | Owner Doc | Deps | Skill |
 |---|---|---|---|---|
 | MI.1 **Errors 接口 `@Locale("zh-CN")` 补齐**：22 个 `*Errors.java` 加 `@Locale("zh-CN")` 注解 + import（纯加性；平台先例 `BatchErrors`/`NopAuthErrors`）；验证 = 全量 build + 域测试零回归 | `done` | `docs/errors/README.md` + `nop-entropy error-handling.md` | M0.6 | none |
-| MI.2 **LOG 英文化批 1（最重两域）**：finance（54 行/21 文件）+ assets（39 行/10 文件）——LOG 消息改英文，保留 `{}` 占位参数；过账 dispatcher 族 warn/error 降级消息语义不变（对齐 lesson 09：不得借机改吞异常行为） | `todo` | `docs/architecture/i18n-compliance.md`（M0.1） | M0.6 | none |
+| MI.2 **LOG 英文化批 1（最重两域）**：finance（54 行/21 文件）+ assets（39 行/10 文件）——LOG 消息改英文，保留 `{}` 占位参数；过账 dispatcher 族 warn/error 降级消息语义不变（对齐 lesson 09：不得借机改吞异常行为） | `done`（2026-09-07，plan `2026-09-06-2104-2`：两域 CAT1 54+39 → 0，`--strict` PASS，fin 533 / ast 339 测试绿 + 全 reactor 绿） | `docs/architecture/i18n-compliance.md`（M0.1） | M0.6 | none |
 | MI.3 **LOG 英文化批 2**：manufacturing 31 + inventory 26 + cs 23 + b2b 22 + purchase 22 + sales 22 + hr 20（约 166 行） | `todo` | 同上 | MI.2 | none |
 | MI.4 **LOG 英文化批 3 + CAT-1 归零**：logistics 19 + notify 15 + projects 14 + contract 12 + maintenance 10 + crm 3 + drp 2 + quality 1（约 76 行）；收官断言 CAT-1 全域 = 0 | `todo` | 同上 | MI.3 | none |
 | MI.5a **异常路径中文参数清剿 1/2——抽象族 + 四大域**：common-service 抽象族先行（`AbstractProcessor.illegal*` helper 的期望态参数改传状态码/枚举名本身，调用点随签名收敛）+ purchase 32 / sales 30 / assets 29 / finance 20（探针粗口径，M0.2 冻结为准）；错误消息语义不变（中文仍由 ErrorCode 模板承载） | `todo` | `domain-design-guidelines.md` §七 + `processor-extension-pattern.md` | MI.4 | none |

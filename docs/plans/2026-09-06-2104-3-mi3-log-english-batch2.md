@@ -1,5 +1,5 @@
 ---
-status: draft
+status: active
 mission: ai-check-r3
 work-item: MI.3
 group: "2026-09-06-2104"
@@ -112,6 +112,21 @@ Exit Criteria:
 
 ## Draft Review Record
 
-## Verification
+- dispatch review #review-2026-09-05-123532-mission-driver-2026-09-06-2104-3-mi3-log-english-batch2-1-53cbab9a to 2026-09-05-123532-mission-driver
+- 2026-09-07：iteration 1，共识 accept #review-2026-09-05-123532-mission-driver-2026-09-06-2104-3-mi3-log-english-batch2-1-53cbab9a（审查中补 Closure Gates 缺失：空 `## Verification` 节替换为可勾选结束门控，含 compliance checker 零漂移复跑项——LOG 字符串属生产代码变更）
+
+## Closure Gates
+
+> 仅在所有执行项与各 Phase 退出标准勾选 `[x]` 后关闭。完整仓库验证在此处运行一次（阶段退出仅做域级脚本断言与模块测试）。
+
+- [ ] 范围内行为完成：7 域 CAT-1 归零（165 行 / 59 文件），LOG 消息模板全部英文且语义与原中文消息等价
+- [ ] `node tools/check-hardcoded-cjk.mjs --strict` exit 0：7 域 CAT1 = 0 落账，其余域与 CAT2/3/4 计数不高于 SNAPSHOT 快照（单向收紧合法下降）
+- [ ] 7 个域 service 模块（erp-mfg/erp-inv/erp-cs/erp-b2b/erp-pur/erp-sal/erp-hr -service）聚合 `mvn test`（含 `-am`）全绿，零新增失败
+- [ ] 生产代码变更零基线漂移：复跑 `bash docs/audits/nop-compliance-checker.sh` 确认 actual 不高于 baseline（LOG 字符串变更不应触发漂移；若漂移则闭包前按 `docs/lessons/` 既定路径开独立基线裁决）
+- [ ] 无范围内项目降级为 deferred/follow-up
+- [ ] 独立草案审查已完成并记录（见 Draft Review Record）
+- [ ] 文本一致性已验证：frontmatter status、各 Phase 状态、退出标准、门控与 `docs/logs/` 条目一致
+- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
+- [ ] 结束证据存在于文件中（Closure 节 + `docs/logs/` 登记）
 
 ## Closure
