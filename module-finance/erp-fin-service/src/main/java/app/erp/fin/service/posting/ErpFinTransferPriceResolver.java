@@ -47,7 +47,7 @@ public class ErpFinTransferPriceResolver implements IErpFinTransferPriceResolver
         try {
             reloadCache();
         } catch (RuntimeException e) {
-            LOG.warn("转移定价规则缓存初始化失败，降级为每次查 DB：{}", e.getMessage());
+            LOG.warn("transfer-price rule cache init failed, falling back to per-call DB query: {}", e.getMessage());
             cacheLoaded = false;
         }
     }
@@ -167,7 +167,7 @@ public class ErpFinTransferPriceResolver implements IErpFinTransferPriceResolver
             ErpMdMaterial material = daoProvider.daoFor(ErpMdMaterial.class).getEntityById(materialId);
             return material == null ? null : material.getCategoryId();
         } catch (RuntimeException e) {
-            LOG.debug("materialCategoryId lookup 失败 materialId={}: {}", materialId, e.getMessage());
+            LOG.debug("materialCategoryId lookup failed materialId={}: {}", materialId, e.getMessage());
             return null;
         }
     }
@@ -197,7 +197,7 @@ public class ErpFinTransferPriceResolver implements IErpFinTransferPriceResolver
         cache.clear();
         cache.putAll(newCache);
         cacheLoaded = true;
-        LOG.info("转移定价规则缓存已加载：{} 条规则，{} 个 (fromOrgId, toOrgId) 索引", all.size(), newCache.size());
+        LOG.info("transfer-price rule cache loaded: {} rules, {} (fromOrgId, toOrgId) index keys", all.size(), newCache.size());
     }
 
     private static String cacheKey(String fromOrgId, String toOrgId) {

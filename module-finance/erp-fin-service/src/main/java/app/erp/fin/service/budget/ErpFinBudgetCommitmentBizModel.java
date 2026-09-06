@@ -72,7 +72,7 @@ public class ErpFinBudgetCommitmentBizModel implements IErpFinBudgetCommitmentBi
 
         String voucherId = commitmentVoucherGenerator.generateCommitment(sourceBillType, sourceBillCode, subject, costCenterId,
                 orgId, acctSchemaId, periodId, currencyId, amount);
-        LOG.info("承付占用：单据 {}/{} 科目 {} 期间 {} 金额 {} → 凭证 {}",
+        LOG.info("Budget commitment occupied: bill {}/{} subject {} period {} amount {} → voucher {}",
                 sourceBillType, sourceBillCode, subjectId, periodId, amount, voucherId);
         return voucherId;
     }
@@ -94,7 +94,7 @@ public class ErpFinBudgetCommitmentBizModel implements IErpFinBudgetCommitmentBi
         if (reversalIds.isEmpty()) {
             return null;
         }
-        LOG.info("承付释放：单据 {}/{} → 红冲凭证 {}", sourceBillType, sourceBillCode, reversalIds);
+        LOG.info("Budget commitment released: bill {}/{} → reversal vouchers {}", sourceBillType, sourceBillCode, reversalIds);
         return reversalIds.get(0);
     }
 

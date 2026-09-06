@@ -100,7 +100,7 @@ public class ErpFinEmployeeAdvanceBizModel extends AbstractErpCrudBizModel<ErpFi
         // 委派过账派发器：失败不阻断字段更新（仅 log warn）
         boolean posted = advancePostingDispatcher.postCashRepay(advance, amount, context);
         if (!posted) {
-            LOG.warn("员工借款现金还款凭证生成失败但字段已更新：advanceId={}, amount={}", advanceId, amount);
+            LOG.warn("Employee advance cash repay voucher generation failed but fields already updated: advanceId={}, amount={}", advanceId, amount);
         }
 
         return advance;

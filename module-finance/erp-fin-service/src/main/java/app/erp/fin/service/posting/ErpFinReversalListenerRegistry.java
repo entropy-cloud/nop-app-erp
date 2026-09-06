@@ -71,8 +71,8 @@ public class ErpFinReversalListenerRegistry {
         // 必须注册至少一个监听者——此 warn 在生产日志中会暴露配置遗漏，避免运行期静默跳过监听者派发
         // 导致业务单据状态与凭证不一致。
         if (listeners.isEmpty()) {
-            LOG.warn("凭证红冲监听者注册中心启动时未发现任何 IErpFinVoucherReversedListener 实现（errorCode={}）；"
-                    + "红冲反写闭环不可用。生产环境（app-erp-all）必须注册至少一个监听者。",
+            LOG.warn("no IErpFinVoucherReversedListener implementation found on reversed-listener registry startup (errorCode={}); "
+                    + "reversal write-back loop unavailable. Production (app-erp-all) must register at least one listener.",
                     ErpFinPostingErrors.ERR_POSTING_NO_LISTENERS_REGISTERED.getErrorCode());
         }
         listeners = Collections.unmodifiableList(listeners);
@@ -107,7 +107,7 @@ public class ErpFinReversalListenerRegistry {
                         ? ((io.nop.api.core.exceptions.NopException) e).getDescription() : e.getMessage();
                 String listenerName = listener.getClass().getName();
                 failures.add(new ListenerFailure(listenerName, errorCode, errorMsg));
-                LOG.warn("凭证红冲监听者回退失败（隔离，不阻断其他监听者/不回滚红字凭证）：traceId={}, listener={}, billHeadCode={}, businessType={}, errorCode={}, errorMsg={}",
+                LOG.warn("reversed-listener write-back failed (isolated; does not block other listeners or roll back the reversal voucher): traceId={}, listener={}, billHeadCode={}, businessType={}, errorCode={}, errorMsg={}",
                         event.getTraceId(), listenerName, event.getBillHeadCode(),
                         event.getBusinessType(), errorCode, errorMsg);
             }

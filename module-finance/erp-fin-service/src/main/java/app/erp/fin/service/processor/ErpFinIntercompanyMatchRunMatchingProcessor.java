@@ -106,7 +106,7 @@ public class ErpFinIntercompanyMatchRunMatchingProcessor {
             count++;
         }
 
-        LOG.info("公司间配对完成：期间 {} 识别 {} 条配对记录（去重 {} 条既有 pairKey）",
+        LOG.info("intercompany matching completed: period {} matched {} records (deduplicated {} existing pairKeys)",
                 periodId, count, allBillCodes.size() - count);
         return count;
     }

@@ -71,7 +71,7 @@ public class ErpFinGlMappingResolver implements IErpFinGlMappingResolver {
             try {
                 reloadCache();
             } catch (RuntimeException e) {
-                LOG.warn("GL 映射规则缓存初始化失败，降级为每次查 DB：{}", e.getMessage());
+                LOG.warn("gl-mapping rule cache init failed, falling back to per-call DB query: {}", e.getMessage());
                 cacheLoaded = false;
             }
         }
@@ -219,7 +219,7 @@ public class ErpFinGlMappingResolver implements IErpFinGlMappingResolver {
             ErpMdMaterial material = daoProvider.daoFor(ErpMdMaterial.class).getEntityById(materialId);
             return material == null ? null : material.getCategoryId();
         } catch (RuntimeException e) {
-            LOG.debug("materialCategoryId lookup 失败 materialId={}: {}", materialId, e.getMessage());
+            LOG.debug("materialCategoryId lookup failed materialId={}: {}", materialId, e.getMessage());
             return null;
         }
     }
@@ -283,7 +283,7 @@ public class ErpFinGlMappingResolver implements IErpFinGlMappingResolver {
         cache.putAll(newCache);
         cacheLoaded = true;
         lastLoadTimeMillis = CoreMetrics.currentTimeMillis();
-        LOG.info("GL 映射规则缓存已加载：{} 条规则，{} 个索引键，orgDimension={}", all.size(), newCache.size(), orgDimEnabled);
+        LOG.info("gl-mapping rule cache loaded: {} rules, {} index keys, orgDimension={}", all.size(), newCache.size(), orgDimEnabled);
     }
 
     private static String cacheKey(String orgId, String businessType, String accountKey) {

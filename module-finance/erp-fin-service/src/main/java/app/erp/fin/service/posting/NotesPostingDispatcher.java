@@ -60,9 +60,9 @@ public class NotesPostingDispatcher {
             return voucherId != null;
         } catch (Exception e) {
             if (e instanceof NopException) {
-                LOG.warn("票据过账失败，单据 {} 保持原态、posted=false：{}", code, e.getMessage());
+                LOG.warn("notes posting failed, bill {} keeps its current status, posted=false: {}", code, e.getMessage());
             } else {
-                LOG.error("票据过账异常，单据 {} 保持原态、posted=false", code, e);
+                LOG.error("notes posting error, bill {} keeps its current status, posted=false", code, e);
             }
             return false;
         }

@@ -115,7 +115,7 @@ public class ErpFinAccountingPeriodProcessor {
             }
         } catch (NopException e) {
             // Allowance/Expense 科目未配置时门控跳过（告警不阻断，避免阻塞未启用坏账模块的账套）。
-            LOG.warn("期末结账：期间 {} 坏账准备充足性门控跳过（{}）", period.getCode(), e.getMessage());
+            LOG.warn("period closing: bad debt provision sufficiency gate skipped for period {} ({})", period.getCode(), e.getMessage());
         }
     }
 
@@ -188,15 +188,15 @@ public class ErpFinAccountingPeriodProcessor {
                     .getBizObject(ErpAstDepreciationSchedule.class.getSimpleName()).asProxy();
         } catch (Exception e) {
             // impl 未就绪（assets 域未部署）：容错跳过，告警不阻断结账。
-            LOG.warn("期末结账：期间 {} 折旧集成跳过（impl 未就绪：{}）", period.getCode(), e.getMessage());
+            LOG.warn("period closing: depreciation integration skipped for period {} (impl not ready: {})", period.getCode(), e.getMessage());
             return;
         }
         try {
             int processed = depreciationBiz.executeBatchDepreciation(period.getCode(), context);
-            LOG.info("期末结账：期间 {} 批量折旧完成，成功计提 {} 项资产", period.getCode(), processed);
+            LOG.info("period closing: batch depreciation completed for period {}, {} assets depreciated successfully", period.getCode(), processed);
         } catch (NopException e) {
             // G3 配置错误/真实故障：阻断结账，避免期间带病关闭（GL 缺折旧凭证）。
-            LOG.error("期末结账：期间 {} 折旧失败（配置错误/真实故障，阻断结账）：{}", period.getCode(), e.getMessage());
+            LOG.error("period closing: depreciation failed for period {} (config error or real failure, closing blocked): {}", period.getCode(), e.getMessage());
             throw e;
         }
     }
@@ -216,18 +216,18 @@ public class ErpFinAccountingPeriodProcessor {
             costingBiz = bizObjectManager.getBizObject("ErpInvCosting").asProxy();
         } catch (Exception e) {
             // impl 未就绪（inventory 域未部署）：容错跳过，告警不阻断结账。
-            LOG.warn("期末结账：期间 {} 存货成本兜底重算跳过（impl 未就绪：{}）", period.getCode(), e.getMessage());
+            LOG.warn("period closing: inventory cost fallback recompute skipped for period {} (impl not ready: {})", period.getCode(), e.getMessage());
             return;
         }
         try {
             CostingRecloseReport report = costingBiz.reclosePeriodCosts(period.getId(),
                     period.getStartDate(), period.getEndDate(), context);
-            LOG.info("期末结账：期间 {} 存货成本兜底重算完成，扫描 {} 单，补算入库层 {} / 出库 COGS {}",
+            LOG.info("period closing: inventory cost fallback recompute completed for period {}, {} moves scanned, {} incoming layers and {} outgoing COGS ledgers recomputed",
                     period.getCode(), report.getScannedMoves(),
                     report.getRecomputedIncomingLayers(), report.getRecomputedOutgoingLedgers());
         } catch (NopException e) {
             // G3 配置错误/真实故障：阻断结账，避免期间带病关闭（GL 缺成本调整凭证）。
-            LOG.error("期末结账：期间 {} 存货成本兜底重算失败（配置错误/真实故障，阻断结账）：{}",
+            LOG.error("period closing: inventory cost fallback recompute failed for period {} (config error or real failure, closing blocked): {}",
                     period.getCode(), e.getMessage());
             throw e;
         }
@@ -244,7 +244,7 @@ public class ErpFinAccountingPeriodProcessor {
                     .getBizObject(ErpAstDepreciationSchedule.class.getSimpleName()).asProxy();
         } catch (Exception e) {
             // impl 未就绪（assets 域未部署）：容错跳过，告警不阻断反结账。
-            LOG.warn("期末结账：期间 {} 反结账折旧冲销跳过（impl 未就绪：{}）", period.getCode(), e.getMessage());
+            LOG.warn("period unclosing: depreciation reversal skipped for period {} (impl not ready: {})", period.getCode(), e.getMessage());
             return;
         }
         try {
@@ -258,7 +258,7 @@ public class ErpFinAccountingPeriodProcessor {
             }
         } catch (NopException e) {
             // G3 配置错误/真实故障：阻断反结账，避免状态不一致。
-            LOG.error("期末结账：期间 {} 反结账折旧冲销失败（配置错误/真实故障，阻断反结账）：{}",
+            LOG.error("period unclosing: depreciation reversal failed for period {} (config error or real failure, unclosing blocked): {}",
                     period.getCode(), e.getMessage());
             throw e;
         }
@@ -501,7 +501,7 @@ public class ErpFinAccountingPeriodProcessor {
                 keys.add(e.getBillHeadCode() == null ? ("trace:" + e.getTraceId()) : e.getBillHeadCode());
             }
         } catch (Exception e) {
-            LOG.debug("期末前置检查：finance 异常工作台扫描跳过（{}）", e.getMessage());
+            LOG.debug("period pre-check: finance exception workbench scan skipped ({})", e.getMessage());
         }
         return keys;
     }
@@ -525,7 +525,7 @@ public class ErpFinAccountingPeriodProcessor {
             }
         } catch (Exception e) {
             // assets 实体未注册（单域 finance 测试无 ast-dao impl）时安全跳过。
-            LOG.debug("期末前置检查：assets 折旧 posted=false 扫描跳过（{}）", e.getMessage());
+            LOG.debug("period pre-check: assets depreciation posted=false scan skipped ({})", e.getMessage());
         }
         return keys;
     }
@@ -547,7 +547,7 @@ public class ErpFinAccountingPeriodProcessor {
             }
         } catch (Exception e) {
             // inventory 实体未注册时安全跳过。
-            LOG.debug("期末前置检查：inventory 到岸成本 posted=false 扫描跳过（{}）", e.getMessage());
+            LOG.debug("period pre-check: inventory landed cost posted=false scan skipped ({})", e.getMessage());
         }
         return keys;
     }

@@ -95,13 +95,13 @@ public class ErpFinBudgetScenarioProcessor {
                     .param(ErpFinErrors.ARG_SCENARIO_CODE, scenario.getCode());
         }
         scenario.setVoucherId(voucherIds.get(0));
-        LOG.info("预算方案 {} 审核通过，生成 {} 张 BUDGET 凭证：{}", scenario.getCode(), voucherIds.size(), voucherIds);
+        LOG.info("Budget scenario {} approved, {} BUDGET vouchers generated: {}", scenario.getCode(), voucherIds.size(), voucherIds);
     }
 
     /** 作废时红冲全部 BUDGET 凭证。 */
     public void reverseBudgetVoucher(ErpFinBudgetScenario scenario, IServiceContext context) {
         List<String> reversalIds = budgetVoucherGenerator.reverse(scenario);
-        LOG.info("预算方案 {} 作废，红冲 {} 张 BUDGET 凭证：{}", scenario.getCode(), reversalIds.size(), reversalIds);
+        LOG.info("Budget scenario {} voided, {} BUDGET vouchers reversed: {}", scenario.getCode(), reversalIds.size(), reversalIds);
     }
 
     public void validateTransition(ErpFinBudgetScenario scenario, String target, String... allowedFrom) {

@@ -42,9 +42,9 @@ public class EmployeeAdvancePostingDispatcher {
             return voucherId != null;
         } catch (Exception e) {
             if (e instanceof NopException) {
-                LOG.warn("借款单过账失败，借款单 {} 保持 APPROVED、posted=false：{}", advance.getCode(), e.getMessage());
+                LOG.warn("employee advance posting failed, advance {} keeps APPROVED, posted=false: {}", advance.getCode(), e.getMessage());
             } else {
-                LOG.error("借款单过账异常，借款单 {} 保持 APPROVED、posted=false", advance.getCode(), e);
+                LOG.error("employee advance posting error, advance {} keeps APPROVED, posted=false", advance.getCode(), e);
             }
             return false;
         }
@@ -76,7 +76,7 @@ public class EmployeeAdvancePostingDispatcher {
             String voucherId = executor.postEvent(event);
             return voucherId != null;
         } catch (Exception e) {
-            LOG.error("借款清算过账失败，报销单 {} 净额 {}：{}", claimCode, netAmount, e.getMessage(), e);
+            LOG.error("employee advance settle posting failed, claim {} net amount {}: {}", claimCode, netAmount, e.getMessage(), e);
             return false;
         }
     }
@@ -113,7 +113,7 @@ public class EmployeeAdvancePostingDispatcher {
             String voucherId = executor.postEvent(event);
             return voucherId != null;
         } catch (Exception e) {
-            LOG.error("借款现金还款过账失败，借款单 {} 还款金额 {}：{}", advance.getCode(), amount, e.getMessage(), e);
+            LOG.error("employee advance cash repay posting failed, advance {} repay amount {}: {}", advance.getCode(), amount, e.getMessage(), e);
             return false;
         }
     }

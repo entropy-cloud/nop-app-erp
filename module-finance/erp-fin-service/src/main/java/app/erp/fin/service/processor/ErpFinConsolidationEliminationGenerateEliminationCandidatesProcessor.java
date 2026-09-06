@@ -110,7 +110,7 @@ public class ErpFinConsolidationEliminationGenerateEliminationCandidatesProcesso
                     .param(ErpFinErrors.ARG_PERIOD_ID, periodId);
         }
 
-        LOG.info("抵消候选识别完成：期间 {} 识别 {} 条候选", periodId, count);
+        LOG.info("elimination candidate detection completed: period {} detected {} candidates", periodId, count);
         return count;
     }
 

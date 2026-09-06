@@ -72,8 +72,8 @@ public class ErpFinPostedListenerRegistry {
     public void init() {
         // O-19 镜像：启动期校验——分期部署下部分域未上线属预期（降级 warn）；全量部署应至少有 FinPostedListener。
         if (listeners.isEmpty()) {
-            LOG.warn("正向过账监听者注册中心启动时未发现任何 IErpFinVoucherPostedListener 实现"
-                    + "（分期部署下部分域未上线属预期；全量部署应至少有 FinPostedListener）");
+            LOG.warn("no IErpFinVoucherPostedListener implementation found on posted-listener registry startup"
+                    + " (expected under staged deployment with some domains not yet live; a full deployment should register at least FinPostedListener)");
         }
         listeners = Collections.unmodifiableList(listeners);
     }
@@ -107,7 +107,7 @@ public class ErpFinPostedListenerRegistry {
                         ? ((io.nop.api.core.exceptions.NopException) e).getDescription() : e.getMessage();
                 String listenerName = listener.getClass().getName();
                 failures.add(new ListenerFailure(listenerName, errorCode, errorMsg));
-                LOG.warn("正向过账监听者回写失败（隔离，不阻断其他监听者/不回滚 RETRIED）：traceId={}, listener={}, billHeadCode={}, businessType={}, errorCode={}, errorMsg={}",
+                LOG.warn("posted-listener write-back failed (isolated; does not block other listeners or roll back RETRIED): traceId={}, listener={}, billHeadCode={}, businessType={}, errorCode={}, errorMsg={}",
                         event.getTraceId(), listenerName, event.getBillHeadCode(),
                         event.getBusinessType(), errorCode, errorMsg);
             }

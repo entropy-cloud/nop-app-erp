@@ -54,7 +54,7 @@ public class ErpFinBudgetScenarioRollForwardProcessor {
         BigDecimal sourceAmount = copyBudgetLinesForRollForward(source, target, actualStrategy);
 
         writeRollforwardLog(source, target, actualStrategy, newFiscalYear, sourceAmount, context);
-        LOG.info("预算滚动复制：{} → {}（strategy={}, newFiscalYear={}, sourceAmt={})",
+        LOG.info("budget roll-forward copy: {} → {} (strategy={}, newFiscalYear={}, sourceAmt={})",
                 source.getCode(), target.getCode(), actualStrategy, newFiscalYear, sourceAmount);
         return target;
     }

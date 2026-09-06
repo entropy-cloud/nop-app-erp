@@ -111,7 +111,7 @@ public class ErpFinBudgetControlBiz implements IErpFinBudgetControlBiz {
         if (ErpFinConstants.BUDGET_CONTROL_WARN.equals(controlLevel)) {
             writeControlLog(match, periodId, sourceBillType, sourceBillCode, amount, available,
                     BudgetCheckResult.ACTION_WARNED, context);
-            LOG.warn("预算告警放行：单据 {}/{} 科目 {} 申请 {} 余量 {}（WARN 模式）",
+            LOG.warn("Budget warning pass-through: bill {}/{} subject {} requested {} available {} (WARN mode)",
                     sourceBillType, sourceBillCode, subjectId, amount, available);
             return new BudgetCheckResult(BudgetCheckResult.ACTION_WARNED, available, match.line.getId());
         }

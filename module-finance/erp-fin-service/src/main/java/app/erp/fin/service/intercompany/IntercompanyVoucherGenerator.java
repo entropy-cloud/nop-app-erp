@@ -106,7 +106,7 @@ public class IntercompanyVoucherGenerator {
             voucherIds.add(apVoucherId);
         }
 
-        LOG.info("跨法人内部交易配对凭证生成：调拨单 {} AR凭证={} AP凭证={} 金额={}",
+        LOG.info("Intercompany matched-pair voucher generation: transfer order {} AR voucher={} AP voucher={} amount={}",
                 transferOrderCode, arVoucherId, apVoucherId, amount);
         return voucherIds;
     }
@@ -135,7 +135,7 @@ public class IntercompanyVoucherGenerator {
                 reversalIds.add(reversal.getId());
             }
         }
-        LOG.info("跨法人内部交易红冲：单据 {} → 红冲凭证 {}", sourceBillCode, reversalIds);
+        LOG.info("Intercompany reversal: bill {} → reversal vouchers {}", sourceBillCode, reversalIds);
         return reversalIds;
     }
 
@@ -274,7 +274,7 @@ public class IntercompanyVoucherGenerator {
             String resolved = glMappingResolver.resolveSubjectCode(billTypeForLog, accountKey, dims, acctSchemaId);
             return resolved != null ? resolved : defaultCode;
         } catch (RuntimeException e) {
-            LOG.debug("intercompany 科目解析失败，回落默认：billType={} accountKey={}: {}", billTypeForLog, accountKey,
+            LOG.debug("intercompany subject resolution failed, falling back to default: billType={} accountKey={}: {}", billTypeForLog, accountKey,
                     e.getMessage());
             return defaultCode;
         }

@@ -279,7 +279,7 @@ public class ErpFinIntercompanyTransferBizModel implements IErpFinIntercompanyTr
             List<app.erp.fin.dao.entity.ErpFinAccountingPeriod> list = dao.findAllByQuery(q);
             return list.isEmpty() ? null : list.get(0).getId();
         } catch (RuntimeException e) {
-            LOG.debug("period lookup 失败 businessDate={}: {}", businessDate, e.getMessage());
+            LOG.debug("period lookup failed businessDate={}: {}", businessDate, e.getMessage());
             return null;
         }
     }

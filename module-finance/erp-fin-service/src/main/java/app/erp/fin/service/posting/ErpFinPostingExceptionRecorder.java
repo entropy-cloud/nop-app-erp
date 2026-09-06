@@ -118,7 +118,7 @@ public class ErpFinPostingExceptionRecorder {
                     }));
         } catch (Exception e) {
             // 持久化失败不阻断主异常传播：仅告警，原过账异常照常向上抛出（失败不静默，但记录器自身失败降级）。
-            LOG.warn("过账异常记录写入失败（降级，原过账异常仍向上传播）：traceId={}, errorCode={}, stage={}, reason={}",
+            LOG.warn("posting exception record write failed (degraded; original posting exception still propagates): traceId={}, errorCode={}, stage={}, reason={}",
                     traceId, errorCode, failedStage, e.getMessage());
             return;
         }
@@ -163,7 +163,7 @@ public class ErpFinPostingExceptionRecorder {
                     }));
         } catch (Exception e) {
             // 通知派发失败不阻断主异常传播：仅告警
-            LOG.warn("过账异常告警通知派发失败（降级）：exceptionId={}, billHeadCode={}, reason={}",
+            LOG.warn("posting exception alert notification dispatch failed (degraded): exceptionId={}, billHeadCode={}, reason={}",
                     exceptionId, billHeadCode, e.getMessage());
         }
     }

@@ -140,7 +140,7 @@ public class ErpFinPostingProcessor {
         ErpFinVoucher existing = findPostedVoucher(event.getBillHeadCode(), event.getBusinessType(),
                 event.getAcctSchemaId(), context);
         if (existing != null) {
-            LOG.info("过账幂等命中（源单已过账），返回既有凭证：traceId={}, billHeadCode={}, businessType={}, voucherId={}",
+            LOG.info("posting idempotent hit (source bill already posted), returning existing voucher: traceId={}, billHeadCode={}, businessType={}, voucherId={}",
                     run.traceId, run.billHeadCode, run.businessType, existing.getId());
             return existing.getId();
         }
@@ -179,7 +179,7 @@ public class ErpFinPostingProcessor {
             String originalSchemaId = event.getAcctSchemaId();
             for (String schemaId : targetSchemas) {
                 if (alreadyPosted(event, schemaId, context)) {
-                    LOG.info("跳过已过账账套：traceId={}, billHeadCode={}, schemaId={}",
+                    LOG.info("skipping already-posted acct schema: traceId={}, billHeadCode={}, schemaId={}",
                             run.traceId, run.billHeadCode, schemaId);
                     continue;
                 }
@@ -211,7 +211,7 @@ public class ErpFinPostingProcessor {
             // observability.md §5.1 指标 1（Counter）+ 指标 2（Timer）：成功路径埋点
             postingMetrics.recordLatency(run.businessType, CoreMetrics.nanoTimeDiff(processBegin));
             postingMetrics.recordResult(run.businessType, true);
-            LOG.info("过账成功：traceId={}, billHeadCode={}, businessType={}, voucherId={}, schemas={}, provider={}, fallback={}, template={}, timings(ms)={}",
+            LOG.info("posting succeeded: traceId={}, billHeadCode={}, businessType={}, voucherId={}, schemas={}, provider={}, fallback={}, template={}, timings(ms)={}",
                     run.traceId, run.billHeadCode, run.businessType, primaryVoucherId,
                     voucherCount, run.providerName, run.isFallback, run.templateDesc, run.timingsMillis());
             return primaryVoucherId;
@@ -271,7 +271,7 @@ public class ErpFinPostingProcessor {
 
             postingMetrics.recordLatency(run.businessType, CoreMetrics.nanoTimeDiff(reverseBegin));
             postingMetrics.recordResult(run.businessType, true);
-            LOG.info("红冲成功：traceId={}, billHeadCode={}, businessType={}, voucherId={}, schemas={}, timings(ms)={}",
+            LOG.info("reversal succeeded: traceId={}, billHeadCode={}, businessType={}, voucherId={}, schemas={}, timings(ms)={}",
                     run.traceId, run.billHeadCode, run.businessType, primaryReversalId, originals.size(),
                     run.timingsMillis());
             return primaryReversalId;
@@ -321,7 +321,7 @@ public class ErpFinPostingProcessor {
 
     protected void logFailure(PostingRun run, RuntimeException e) {
         String code = e instanceof NopException ? ((NopException) e).getErrorCode() : null;
-        LOG.error("过账失败：traceId={}, billHeadCode={}, businessType={}, failedStage={}, errorCode={}, errorMsg={}",
+        LOG.error("posting failed: traceId={}, billHeadCode={}, businessType={}, failedStage={}, errorCode={}, errorMsg={}",
                 run.traceId, run.billHeadCode, run.businessType, run.currentStage, code, e.getMessage());
     }
 
@@ -570,7 +570,7 @@ public class ErpFinPostingProcessor {
         }
         ErpMdCurrency currency = findCurrencyById(event.getCurrencyId(), context);
         if (currency == null) {
-            LOG.warn("汇率缺失守卫：币种 {} 不存在，无法判定本位币归属，保守放行 rate=1", event.getCurrencyId());
+            LOG.warn("missing exchange rate guard: currency {} not found, cannot determine functional currency attribution, conservatively passing with rate=1", event.getCurrencyId());
             return EXCHANGE_RATE_DEFAULT;
         }
         if (Boolean.TRUE.equals(currency.getIsFunctional())) {
@@ -651,7 +651,7 @@ public class ErpFinPostingProcessor {
                         .param(ErpFinPostingErrors.ARG_ACCOUNT_KEY, fact.getAccountKey())
                         .param(ErpFinPostingErrors.ARG_DIMENSIONS, dims);
             } else {
-                LOG.info("gl-mapping rule miss fallback: businessType={} accountKey={} → 保留 Provider 既有 subjectCode={}",
+                LOG.info("gl-mapping rule miss fallback: businessType={} accountKey={} → keep provider's existing subjectCode={}",
                         fact.getBusinessType(), fact.getAccountKey(), fact.getSubjectCode());
             }
         }

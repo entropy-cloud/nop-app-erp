@@ -43,9 +43,9 @@ public class ExpenseClaimPostingDispatcher {
             return voucherId != null;
         } catch (Exception e) {
             if (e instanceof NopException) {
-                LOG.warn("报销单过账失败，报销单 {} 保持 APPROVED、posted=false：{}", claim.getCode(), e.getMessage());
+                LOG.warn("expense claim posting failed, claim {} keeps APPROVED, posted=false: {}", claim.getCode(), e.getMessage());
             } else {
-                LOG.error("报销单过账异常，报销单 {} 保持 APPROVED、posted=false", claim.getCode(), e);
+                LOG.error("expense claim posting error, claim {} keeps APPROVED, posted=false", claim.getCode(), e);
             }
             return false;
         }

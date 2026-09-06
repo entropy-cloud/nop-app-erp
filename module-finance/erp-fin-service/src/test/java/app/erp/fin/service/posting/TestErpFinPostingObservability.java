@@ -106,7 +106,7 @@ public class TestErpFinPostingObservability extends JunitAutoTestCase {
         assertNotNull(event.getTraceId(), "traceId 缺失时应由引擎入口生成");
         assertTrue(event.getTraceId().length() > 0, "生成的 traceId 非空");
 
-        ILoggingEvent successLog = findLogContaining("过账成功");
+        ILoggingEvent successLog = findLogContaining("posting succeeded");
         assertNotNull(successLog, "成功路径应记录结构化日志");
         String rendered = successLog.getFormattedMessage();
         assertContains(rendered, "traceId=" + event.getTraceId(), "成功日志含 traceId");
@@ -132,7 +132,7 @@ public class TestErpFinPostingObservability extends JunitAutoTestCase {
                 "模板缺失应抛 NopException");
         assertEquals("erp.err.fin.posting.template-not-found", ex.getErrorCode());
 
-        ILoggingEvent failLog = findLogContaining("过账失败");
+        ILoggingEvent failLog = findLogContaining("posting failed");
         assertNotNull(failLog, "失败路径应记录结构化日志");
         String rendered = failLog.getFormattedMessage();
         assertContains(rendered, "traceId=TRACE-FIXED-NOPL", "失败日志含传入 traceId");
@@ -160,7 +160,7 @@ public class TestErpFinPostingObservability extends JunitAutoTestCase {
                 "借贷不平衡应抛 NopException");
         assertEquals("erp.err.fin.posting.unbalanced", ex.getErrorCode());
 
-        ILoggingEvent failLog = findLogContaining("过账失败");
+        ILoggingEvent failLog = findLogContaining("posting failed");
         assertNotNull(failLog, "失败路径应记录结构化日志");
         String rendered = failLog.getFormattedMessage();
         assertContains(rendered, "traceId=TRACE-FIXED-UNBAL", "失败日志含传入 traceId");
@@ -187,7 +187,7 @@ public class TestErpFinPostingObservability extends JunitAutoTestCase {
                 "期间已结账应抛 NopException");
         assertEquals("erp.err.fin.posting.period-closed", ex.getErrorCode());
 
-        ILoggingEvent failLog = findLogContaining("过账失败");
+        ILoggingEvent failLog = findLogContaining("posting failed");
         assertNotNull(failLog, "失败路径应记录结构化日志");
         String rendered = failLog.getFormattedMessage();
         assertContains(rendered, "traceId=TRACE-FIXED-CLSD", "失败日志含传入 traceId");

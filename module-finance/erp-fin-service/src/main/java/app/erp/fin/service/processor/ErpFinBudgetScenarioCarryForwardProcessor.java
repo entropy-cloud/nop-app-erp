@@ -75,7 +75,7 @@ public class ErpFinBudgetScenarioCarryForwardProcessor {
 
         closeSourceScenario(source);
         writeCarryForwardLog(source, target, actualRule, sourceRemaining, sourceActual, carriedAmount, context);
-        LOG.info("预算结转：{} → {}（rule={}, sourceRemaining={}, carried={})",
+        LOG.info("budget carry-forward: {} → {} (rule={}, sourceRemaining={}, carried={})",
                 source.getCode(), target.getCode(), actualRule, sourceRemaining, carriedAmount);
         return source;
     }

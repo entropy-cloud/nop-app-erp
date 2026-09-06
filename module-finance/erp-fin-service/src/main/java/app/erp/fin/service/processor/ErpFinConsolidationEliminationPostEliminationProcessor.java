@@ -61,7 +61,7 @@ public class ErpFinConsolidationEliminationPostEliminationProcessor {
         candidate.setStatus(ErpFinConstants.ELIMINATION_STATUS_DRAFT_VOUCHER);
         elimDao.updateEntity(candidate);
 
-        LOG.info("抵消分录草稿生成：候选 {} → 草稿凭证 {} 金额 {}", candidateId, voucherId, amount);
+        LOG.info("elimination entry draft generated: candidate {} → draft voucher {} amount {}", candidateId, voucherId, amount);
         return voucherId;
     }
 
