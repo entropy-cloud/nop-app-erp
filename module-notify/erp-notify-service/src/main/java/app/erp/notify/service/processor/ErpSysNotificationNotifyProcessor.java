@@ -41,7 +41,7 @@ public class ErpSysNotificationNotifyProcessor {
         try {
             ErpSysNotificationTemplate template = findActiveTemplate(eventType, ctx);
             if (template == null) {
-                LOG.warn("notify: 业务事件[{}]无 ACTIVE 模板，config-gated 静默跳过", eventType);
+                LOG.warn("notify: business event [{}] has no ACTIVE template, config-gated silent skip", eventType);
                 return Collections.emptyList();
             }
             List<ErpSysNotification> result = dispatcher.dispatch(template, context);
@@ -57,7 +57,7 @@ public class ErpSysNotificationNotifyProcessor {
         } catch (Exception e) {
             // 通知是 best-effort 关注点：任何失败（模板缺失/渲染失败/接收人解析失败/落库失败）
             // 均不阻断调用方业务事实（与 notification-strategy.md config-gated 语义一致）。
-            LOG.error("notify: 业务事件[{}]通知派发失败（不阻断调用方）: {}", eventType, e.getMessage(), e);
+            LOG.error("notify: business event [{}] notification dispatch failed (non-blocking for caller): {}", eventType, e.getMessage(), e);
             return Collections.emptyList();
         }
     }

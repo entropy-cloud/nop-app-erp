@@ -18,7 +18,7 @@ public class NoopSmsSender implements ISmsSender {
 
     @Override
     public void sendMessage(SmsMessage message) {
-        LOG.debug("notify.noop-sms-sender: 跳过实际发送 mobile={}", message.getMobile());
+        LOG.debug("notify.noop-sms-sender: skipping actual send mobile={}", message.getMobile());
     }
 
     @Override

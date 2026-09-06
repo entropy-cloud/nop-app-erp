@@ -79,7 +79,7 @@ public class NotificationDispatcher {
 
         Set<String> recipients = recipientResolver.resolve(template, context);
         if (recipients.isEmpty()) {
-            LOG.warn("notify.dispatch: 模板[{}] notificationType={} 解析接收人为空，config-gated 跳过",
+            LOG.warn("notify.dispatch: template[{}] notificationType={} resolved to empty recipients, config-gated skip",
                     template.getId(), template.getNotificationType());
             return Collections.emptyList();
         }
@@ -153,7 +153,7 @@ public class NotificationDispatcher {
                     ErpNotifyConfigs.DEFAULT_NOTIFY_EMAIL_ENABLED)) {
                 sendEmailIfPossible(n);
             } else {
-                LOG.warn("notify.dispatch: 通知[{}] 渠道 EMAIL 配置未启用(erp-notify.email-enabled=false)，跳过派发",
+                LOG.warn("notify.dispatch: notification[{}] channel EMAIL not enabled by config (erp-notify.email-enabled=false), skipping dispatch",
                         n.getId());
             }
         }
@@ -162,7 +162,7 @@ public class NotificationDispatcher {
                     ErpNotifyConfigs.DEFAULT_NOTIFY_SMS_ENABLED)) {
                 sendSmsIfPossible(n);
             } else {
-                LOG.warn("notify.dispatch: 通知[{}] 渠道 SMS 配置未启用(erp-notify.sms-enabled=false)，跳过派发",
+                LOG.warn("notify.dispatch: notification[{}] channel SMS not enabled by config (erp-notify.sms-enabled=false), skipping dispatch",
                         n.getId());
             }
         }
@@ -170,7 +170,7 @@ public class NotificationDispatcher {
 
     private void sendEmailIfPossible(ErpSysNotification n) {
         if (emailSender == null) {
-            LOG.warn("notify.dispatch: 通知[{}] 无 IEmailSender 实现，跳过邮件派发", n.getId());
+            LOG.warn("notify.dispatch: notification[{}] has no IEmailSender implementation, skipping email dispatch", n.getId());
             return;
         }
         try {
@@ -178,24 +178,24 @@ public class NotificationDispatcher {
             mail.setSubject(StringHelper.toString(n.getSubject(), ""));
             mail.setText(StringHelper.toString(n.getBody(), ""));
             emailSender.sendEmail(mail);
-            LOG.info("notify.dispatch: 通知[{}] 邮件派发成功", n.getId());
+            LOG.info("notify.dispatch: notification[{}] email dispatched successfully", n.getId());
         } catch (Exception e) {
-            LOG.error("notify.dispatch: 通知[{}] 邮件派发失败（不阻断业务）: {}", n.getId(), e.getMessage(), e);
+            LOG.error("notify.dispatch: notification[{}] email dispatch failed (non-blocking): {}", n.getId(), e.getMessage(), e);
         }
     }
 
     private void sendSmsIfPossible(ErpSysNotification n) {
         if (smsSender == null) {
-            LOG.warn("notify.dispatch: 通知[{}] 无 ISmsSender 实现，跳过短信派发", n.getId());
+            LOG.warn("notify.dispatch: notification[{}] has no ISmsSender implementation, skipping SMS dispatch", n.getId());
             return;
         }
         try {
             SmsMessage sms = new SmsMessage();
             sms.setText(StringHelper.toString(n.getBody(), ""));
             smsSender.sendMessage(sms);
-            LOG.info("notify.dispatch: 通知[{}] 短信派发成功", n.getId());
+            LOG.info("notify.dispatch: notification[{}] SMS dispatched successfully", n.getId());
         } catch (Exception e) {
-            LOG.error("notify.dispatch: 通知[{}] 短信派发失败（不阻断业务）: {}", n.getId(), e.getMessage(), e);
+            LOG.error("notify.dispatch: notification[{}] SMS dispatch failed (non-blocking): {}", n.getId(), e.getMessage(), e);
         }
     }
 

@@ -129,7 +129,7 @@ public class NotificationRecipientResolver {
         IEntityDao<NopAuthRole> roleDao = daoProvider.daoFor(NopAuthRole.class);
         List<NopAuthRole> roles = roleDao.findAllByQuery(roleQ);
         if (roles.isEmpty()) {
-            LOG.warn("notify.resolve-role: 角色名{}无匹配 NopAuthRole，config-gated 返回空", roleNames);
+            LOG.warn("notify.resolve-role: role names {} matched no NopAuthRole, config-gated empty return", roleNames);
             return Collections.emptySet();
         }
         List<String> roleIds = new ArrayList<>(roles.size());
@@ -175,7 +175,7 @@ public class NotificationRecipientResolver {
     private Set<String> resolvePartner(ErpSysNotificationTemplate template, Map<String, Object> cfg) {
         // bootstrap 阶段业务伙伴→用户的映射尚未建立，站内消息按 partner 不可达；config-gated 返回空。
         Object partnerId = cfg.get("partnerId");
-        LOG.warn("notify.resolve-partner: 模板[{}] partnerId={} 暂无 partner→user 映射，config-gated 返回空",
+        LOG.warn("notify.resolve-partner: template[{}] partnerId={} has no partner-to-user mapping yet, config-gated empty return",
                 template.getId(), partnerId);
         return Collections.emptySet();
     }

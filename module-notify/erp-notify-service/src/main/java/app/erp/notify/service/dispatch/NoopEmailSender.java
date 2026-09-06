@@ -18,7 +18,7 @@ public class NoopEmailSender implements IEmailSender {
 
     @Override
     public void sendEmail(EmailMessage mail) {
-        LOG.debug("notify.noop-email-sender: 跳过实际发送 to={}", mail.getTo());
+        LOG.debug("notify.noop-email-sender: skipping actual send to={}", mail.getTo());
     }
 
     @Override
