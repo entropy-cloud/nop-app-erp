@@ -157,7 +157,7 @@ public class ErpAstSplitProcessor {
         try {
             approvalStateMachine.assertCanSubmitForApproval(status);
         } catch (NopException e) {
-            throw illegalTransition(split, status, "UNSUBMITTED 或 REJECTED", e);
+            throw illegalTransition(split, status, "UNSUBMITTED / REJECTED", e);
         }
     }
 
@@ -191,13 +191,13 @@ public class ErpAstSplitProcessor {
     protected void validateTransitionForCancel(ErpAstSplit split, IServiceContext context) {
         String docStatus = split.getDocStatus();
         if (docStatus != null && Objects.equals(docStatus, ErpAstConstants.DOC_STATUS_ACTIVE)) {
-            throw illegalDocTransition(split, docStatus, "非已生效");
+            throw illegalDocTransition(split, docStatus, "!" + ErpAstConstants.DOC_STATUS_ACTIVE);
         }
         if (documentStateMachine.isCancelled(docStatus)) {
-            throw illegalDocTransition(split, docStatus, "非已作废");
+            throw illegalDocTransition(split, docStatus, "!" + ErpAstConstants.DOC_STATUS_CANCELLED);
         }
         if (Boolean.TRUE.equals(split.getPosted())) {
-            throw illegalDocTransition(split, docStatus, "非已过账");
+            throw illegalDocTransition(split, docStatus, "!POSTED");
         }
     }
 
@@ -497,7 +497,7 @@ public class ErpAstSplitProcessor {
 
     protected void validateNotCancelled(ErpAstSplit split, IServiceContext context) {
         if (split.isCancelled()) {
-            throw illegalDocTransition(split, split.getDocStatus(), "非已作废");
+            throw illegalDocTransition(split, split.getDocStatus(), "!" + ErpAstConstants.DOC_STATUS_CANCELLED);
         }
     }
 

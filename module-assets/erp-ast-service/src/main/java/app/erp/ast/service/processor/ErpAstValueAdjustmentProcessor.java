@@ -141,7 +141,7 @@ public class ErpAstValueAdjustmentProcessor {
         try {
             approvalStateMachine.assertCanSubmitForApproval(status);
         } catch (NopException e) {
-            throw illegalTransition(adjustment, status, "UNSUBMITTED 或 REJECTED", e);
+            throw illegalTransition(adjustment, status, "UNSUBMITTED / REJECTED", e);
         }
     }
 
@@ -187,11 +187,11 @@ public class ErpAstValueAdjustmentProcessor {
             documentStateMachine.assertCanCancel(docStatus);
         } catch (NopException e) {
             boolean active = ErpAstConstants.DOC_STATUS_ACTIVE.equals(docStatus);
-            throw illegalDocTransition(adjustment, docStatus, active ? "非已生效" : "非已作废", e);
+            throw illegalDocTransition(adjustment, docStatus, active ? "!" + ErpAstConstants.DOC_STATUS_ACTIVE : "!" + ErpAstConstants.DOC_STATUS_CANCELLED, e);
         }
         // posted 动态守卫保留原位（posted 不入轴，契约 §3）
         if (Boolean.TRUE.equals(adjustment.getPosted())) {
-            throw illegalDocTransition(adjustment, docStatus, "非已过账");
+            throw illegalDocTransition(adjustment, docStatus, "!POSTED");
         }
     }
 
@@ -368,7 +368,7 @@ public class ErpAstValueAdjustmentProcessor {
 
     protected void validateNotCancelled(ErpAstValueAdjustment adjustment, IServiceContext context) {
         if (documentStateMachine.isCancelled(adjustment.getDocStatus())) {
-            throw illegalDocTransition(adjustment, adjustment.getDocStatus(), "非已作废");
+            throw illegalDocTransition(adjustment, adjustment.getDocStatus(), "!" + ErpAstConstants.DOC_STATUS_CANCELLED);
         }
     }
 

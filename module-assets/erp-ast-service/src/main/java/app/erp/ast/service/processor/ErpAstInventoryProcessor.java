@@ -92,7 +92,7 @@ public class ErpAstInventoryProcessor {
         try {
             stateMachine.assertCanCancel(status);
         } catch (NopException e) {
-            throw mapIllegalTransition(e, inv, "DRAFT 或 COUNTING");
+            throw mapIllegalTransition(e, inv, "DRAFT / COUNTING");
         }
         inv.setStatus(stateMachine.cancelTargetStatus());
         inventoryDao().updateEntity(inv);
@@ -300,7 +300,7 @@ public class ErpAstInventoryProcessor {
     protected void validateTransition(ErpAstInventory inv, String expected, String action) {
         String status = inv.getStatus();
         if (status != null && !Objects.equals(status, expected)) {
-            throw illegalTransition(inv, status, expected + "（操作 " + action + "）");
+            throw illegalTransition(inv, status, expected + " (action=" + action + ")");
         }
     }
 

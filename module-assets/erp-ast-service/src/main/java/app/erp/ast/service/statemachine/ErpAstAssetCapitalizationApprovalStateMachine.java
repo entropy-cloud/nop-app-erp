@@ -55,7 +55,7 @@ public class ErpAstAssetCapitalizationApprovalStateMachine {
         if (!ErpAstConstants.APPROVE_STATUS_UNSUBMITTED.equals(status)
                 && !ErpAstConstants.APPROVE_STATUS_REJECTED.equals(status)) {
             throw illegal("submitForApproval", status,
-                    ErpAstConstants.APPROVE_STATUS_UNSUBMITTED + " 或 " + ErpAstConstants.APPROVE_STATUS_REJECTED);
+                    ErpAstConstants.APPROVE_STATUS_UNSUBMITTED + " /" + ErpAstConstants.APPROVE_STATUS_REJECTED);
         }
     }
 

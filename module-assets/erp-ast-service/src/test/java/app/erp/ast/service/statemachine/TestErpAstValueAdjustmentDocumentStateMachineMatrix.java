@@ -112,8 +112,8 @@ public class TestErpAstValueAdjustmentDocumentStateMachineMatrix {
                 "拒绝元数据携带动作名");
         assertEquals(ErpAstConstants.DOC_STATUS_ACTIVE, ex.getParam(ErpCommonErrors.ARG_CURRENT_STATUS),
                 "拒绝元数据携带当前态");
-        assertEquals("非已生效", ex.getParam(ErpCommonErrors.ARG_EXPECTED_STATUS),
-                "拒绝元数据携带期望态诊断（接线方按当前态区分领域码 expected 参数）");
+        assertEquals("!" + ErpAstConstants.DOC_STATUS_ACTIVE, ex.getParam(ErpCommonErrors.ARG_EXPECTED_STATUS),
+                "拒绝元数据携带期望态诊断（否定语义 = ! 前缀 + 被禁状态码，plan 2026-09-07-0043-2 Decision）");
     }
 
     @Test
@@ -125,8 +125,8 @@ public class TestErpAstValueAdjustmentDocumentStateMachineMatrix {
                 "Bean 报告 common 层非法迁移码");
         assertEquals(ErpAstConstants.DOC_STATUS_CANCELLED, ex.getParam(ErpCommonErrors.ARG_CURRENT_STATUS),
                 "拒绝元数据携带当前态");
-        assertEquals("非已作废", ex.getParam(ErpCommonErrors.ARG_EXPECTED_STATUS),
-                "拒绝元数据携带期望态诊断");
+        assertEquals("!" + ErpAstConstants.DOC_STATUS_CANCELLED, ex.getParam(ErpCommonErrors.ARG_EXPECTED_STATUS),
+                "拒绝元数据携带期望态诊断（否定语义 = ! 前缀 + 被禁状态码，plan 2026-09-07-0043-2 Decision）");
     }
 
     // ---------- (d) transitions() 元数据与显式方法语义一致 ----------

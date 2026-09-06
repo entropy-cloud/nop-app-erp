@@ -102,7 +102,7 @@ public class ErpAstMaintenanceStateMachine {
         if (!ErpAstConstants.MAINTENANCE_STATUS_DRAFT.equals(s)
                 && !ErpAstConstants.MAINTENANCE_STATUS_SUBMITTED.equals(s)) {
             throw illegal("cancel", s,
-                    ErpAstConstants.MAINTENANCE_STATUS_DRAFT + " 或 " + ErpAstConstants.MAINTENANCE_STATUS_SUBMITTED);
+                    ErpAstConstants.MAINTENANCE_STATUS_DRAFT + " /" + ErpAstConstants.MAINTENANCE_STATUS_SUBMITTED);
         }
     }
 

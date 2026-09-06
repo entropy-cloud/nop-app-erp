@@ -162,7 +162,7 @@ public class ErpAstMergeProcessor {
         try {
             approvalStateMachine.assertCanSubmitForApproval(status);
         } catch (NopException e) {
-            throw illegalTransition(merge, status, "UNSUBMITTED 或 REJECTED", e);
+            throw illegalTransition(merge, status, "UNSUBMITTED / REJECTED", e);
         }
     }
 
@@ -196,13 +196,13 @@ public class ErpAstMergeProcessor {
     protected void validateTransitionForCancel(ErpAstMerge merge, IServiceContext context) {
         String docStatus = merge.getDocStatus();
         if (docStatus != null && Objects.equals(docStatus, ErpAstConstants.DOC_STATUS_ACTIVE)) {
-            throw illegalDocTransition(merge, docStatus, "非已生效");
+            throw illegalDocTransition(merge, docStatus, "!" + ErpAstConstants.DOC_STATUS_ACTIVE);
         }
         if (documentStateMachine.isCancelled(docStatus)) {
-            throw illegalDocTransition(merge, docStatus, "非已作废");
+            throw illegalDocTransition(merge, docStatus, "!" + ErpAstConstants.DOC_STATUS_CANCELLED);
         }
         if (Boolean.TRUE.equals(merge.getPosted())) {
-            throw illegalDocTransition(merge, docStatus, "非已过账");
+            throw illegalDocTransition(merge, docStatus, "!POSTED");
         }
     }
 
@@ -475,7 +475,7 @@ public class ErpAstMergeProcessor {
 
     protected void validateNotCancelled(ErpAstMerge merge, IServiceContext context) {
         if (merge.isCancelled()) {
-            throw illegalDocTransition(merge, merge.getDocStatus(), "非已作废");
+            throw illegalDocTransition(merge, merge.getDocStatus(), "!" + ErpAstConstants.DOC_STATUS_CANCELLED);
         }
     }
 

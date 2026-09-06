@@ -50,7 +50,7 @@ public class ErpAstValueAdjustmentDocumentStateMachine {
      */
     public void assertCanApprove(String docStatus) {
         if (isCancelled(docStatus)) {
-            throw illegal("approve", docStatus, "非已作废");
+            throw illegal("approve", docStatus, "!" + ErpAstConstants.DOC_STATUS_CANCELLED);
         }
     }
 
@@ -67,10 +67,10 @@ public class ErpAstValueAdjustmentDocumentStateMachine {
      */
     public void assertCanCancel(String docStatus) {
         if (ErpAstConstants.DOC_STATUS_ACTIVE.equals(docStatus)) {
-            throw illegal("cancel", docStatus, "非已生效");
+            throw illegal("cancel", docStatus, "!" + ErpAstConstants.DOC_STATUS_ACTIVE);
         }
         if (isCancelled(docStatus)) {
-            throw illegal("cancel", docStatus, "非已作废");
+            throw illegal("cancel", docStatus, "!" + ErpAstConstants.DOC_STATUS_CANCELLED);
         }
     }
 

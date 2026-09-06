@@ -94,6 +94,6 @@ public class ErpAstAssetSuspendResumeProcessor {
                 .param(ErpAstErrors.ARG_ASSET_CODE, asset.getCode())
                 .param(ErpAstErrors.ARG_CURRENT_STATUS, asset.getStatus())
                 .param(ErpAstErrors.ARG_EXPECTED_STATUS,
-                        ErpAstConstants.ASSET_STATUS_IN_SERVICE + " 或 " + ErpAstConstants.ASSET_STATUS_IDLE);
+                        ErpAstConstants.ASSET_STATUS_IN_SERVICE + " /" + ErpAstConstants.ASSET_STATUS_IDLE);
     }
 }

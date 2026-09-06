@@ -77,7 +77,7 @@ public class ErpAstMaintenanceProcessor {
         try {
             stateMachine.assertCanCancel(status);
         } catch (NopException e) {
-            throw mapIllegalTransition(e, m, "DRAFT 或 SUBMITTED");
+            throw mapIllegalTransition(e, m, "DRAFT / SUBMITTED");
         }
         m.setStatus(stateMachine.cancelTargetStatus());
         maintenanceDao().updateEntity(m);

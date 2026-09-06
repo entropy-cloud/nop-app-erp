@@ -158,7 +158,7 @@ public class ErpAstAssetCapitalizationProcessor {
         try {
             approvalStateMachine.assertCanSubmitForApproval(status);
         } catch (NopException e) {
-            throw illegalTransition(cap, status, "UNSUBMITTED 或 REJECTED", e);
+            throw illegalTransition(cap, status, "UNSUBMITTED / REJECTED", e);
         }
     }
 
@@ -200,7 +200,7 @@ public class ErpAstAssetCapitalizationProcessor {
 
     protected void validateTransitionForCancel(ErpAstAssetCapitalization cap, IServiceContext context) {
         if (documentStateMachine.isCancelled(cap.getDocStatus())) {
-            throw illegalDocTransition(cap, cap.getDocStatus(), "非已作废");
+            throw illegalDocTransition(cap, cap.getDocStatus(), "!" + ErpAstConstants.DOC_STATUS_CANCELLED);
         }
     }
 

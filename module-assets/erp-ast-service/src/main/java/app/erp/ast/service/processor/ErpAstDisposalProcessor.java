@@ -211,7 +211,7 @@ public class ErpAstDisposalProcessor {
         try {
             approvalStateMachine.assertCanSubmitForApproval(status);
         } catch (NopException e) {
-            throw illegalTransition(disposal, status, "UNSUBMITTED 或 REJECTED", e);
+            throw illegalTransition(disposal, status, "UNSUBMITTED / REJECTED", e);
         }
     }
 
@@ -253,7 +253,7 @@ public class ErpAstDisposalProcessor {
 
     protected void validateTransitionForCancel(ErpAstDisposal disposal, IServiceContext context) {
         if (documentStateMachine.isCancelled(disposal.getDocStatus())) {
-            throw illegalDocTransition(disposal, disposal.getDocStatus(), "非已作废");
+            throw illegalDocTransition(disposal, disposal.getDocStatus(), "!" + ErpAstConstants.DOC_STATUS_CANCELLED);
         }
     }
 

@@ -49,7 +49,7 @@ public class ErpAstAssetCapitalizationDocumentStateMachine {
      */
     public void assertCanApprove(String docStatus) {
         if (isCancelled(docStatus)) {
-            throw illegal("approve", docStatus, "非已作废");
+            throw illegal("approve", docStatus, "!" + ErpAstConstants.DOC_STATUS_CANCELLED);
         }
     }
 
@@ -60,7 +60,7 @@ public class ErpAstAssetCapitalizationDocumentStateMachine {
      */
     public void assertCanReverseApprove(String docStatus) {
         if (isCancelled(docStatus)) {
-            throw illegal("reverseApprove", docStatus, "非已作废");
+            throw illegal("reverseApprove", docStatus, "!" + ErpAstConstants.DOC_STATUS_CANCELLED);
         }
     }
 

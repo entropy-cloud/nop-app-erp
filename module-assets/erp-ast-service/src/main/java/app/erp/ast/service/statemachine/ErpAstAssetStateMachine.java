@@ -92,7 +92,7 @@ public class ErpAstAssetStateMachine {
         if (!ErpAstConstants.ASSET_STATUS_IN_SERVICE.equals(s)
                 && !ErpAstConstants.ASSET_STATUS_IDLE.equals(s)) {
             throw illegal("dispose", s,
-                    ErpAstConstants.ASSET_STATUS_IN_SERVICE + " 或 " + ErpAstConstants.ASSET_STATUS_IDLE);
+                    ErpAstConstants.ASSET_STATUS_IN_SERVICE + " /" + ErpAstConstants.ASSET_STATUS_IDLE);
         }
     }
 
@@ -104,7 +104,7 @@ public class ErpAstAssetStateMachine {
         if (!ErpAstConstants.ASSET_STATUS_SCRAPPED.equals(s)
                 && !ErpAstConstants.ASSET_STATUS_SOLD.equals(s)) {
             throw illegal("reverseDisposal", s,
-                    ErpAstConstants.ASSET_STATUS_SCRAPPED + " 或 " + ErpAstConstants.ASSET_STATUS_SOLD);
+                    ErpAstConstants.ASSET_STATUS_SCRAPPED + " /" + ErpAstConstants.ASSET_STATUS_SOLD);
         }
     }
 
@@ -117,7 +117,7 @@ public class ErpAstAssetStateMachine {
         if (!ErpAstConstants.ASSET_STATUS_IN_SERVICE.equals(s)
                 && !ErpAstConstants.ASSET_STATUS_IDLE.equals(s)) {
             throw illegal("inventoryShortageDisposal", s,
-                    ErpAstConstants.ASSET_STATUS_IN_SERVICE + " 或 " + ErpAstConstants.ASSET_STATUS_IDLE);
+                    ErpAstConstants.ASSET_STATUS_IN_SERVICE + " /" + ErpAstConstants.ASSET_STATUS_IDLE);
         }
     }
 

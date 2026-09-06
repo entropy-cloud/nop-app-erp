@@ -92,7 +92,7 @@ public class ErpAstInventoryStateMachine {
         if (!ErpAstConstants.INVENTORY_STATUS_DRAFT.equals(s)
                 && !ErpAstConstants.INVENTORY_STATUS_COUNTING.equals(s)) {
             throw illegal("cancel", s,
-                    ErpAstConstants.INVENTORY_STATUS_DRAFT + " 或 " + ErpAstConstants.INVENTORY_STATUS_COUNTING);
+                    ErpAstConstants.INVENTORY_STATUS_DRAFT + " /" + ErpAstConstants.INVENTORY_STATUS_COUNTING);
         }
     }
 
