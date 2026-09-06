@@ -139,7 +139,7 @@ public class ErpSalReturnProcessor {
         }
         if (!Objects.equals(status, ErpSalConstants.APPROVE_STATUS_UNSUBMITTED)
                 && !Objects.equals(status, ErpSalConstants.APPROVE_STATUS_REJECTED)) {
-            throw illegalTransition(returnOrder, status, "UNSUBMITTED 或 REJECTED");
+            throw illegalTransition(returnOrder, status, "UNSUBMITTED / REJECTED");
         }
     }
 
@@ -174,7 +174,7 @@ public class ErpSalReturnProcessor {
     protected void validateTransitionForCancel(ErpSalReturn returnOrder, IServiceContext context) {
         String docStatus = returnOrder.getDocStatus();
         if (docStatus != null && Objects.equals(docStatus, ErpSalConstants.DOC_STATUS_CANCELLED)) {
-            throw illegalDocTransition(returnOrder, docStatus, "非已作废");
+            throw illegalDocTransition(returnOrder, docStatus, "!" + ErpSalConstants.DOC_STATUS_CANCELLED);
         }
     }
 
@@ -302,7 +302,7 @@ public class ErpSalReturnProcessor {
         if (period == null) {
             throw new NopException(ErpSalErrors.ERR_RETURN_PERIOD_CLOSED)
                     .param(ErpSalErrors.ARG_RETURN_CODE, returnOrder.getCode())
-                    .param(ErpSalErrors.ARG_PERIOD, businessDate == null ? "未设置业务日期" : businessDate.toString());
+                    .param(ErpSalErrors.ARG_PERIOD, businessDate == null ? null : businessDate.toString());
         }
         if (!Objects.equals(period.getStatus(), ErpSalConstants.PERIOD_STATUS_OPEN)) {
             throw new NopException(ErpSalErrors.ERR_RETURN_PERIOD_CLOSED)
@@ -450,7 +450,7 @@ public class ErpSalReturnProcessor {
 
     protected void validateNotCancelled(ErpSalReturn returnOrder, IServiceContext context) {
         if (returnOrder.isCancelled()) {
-            throw illegalDocTransition(returnOrder, returnOrder.getDocStatus(), "非已作废");
+            throw illegalDocTransition(returnOrder, returnOrder.getDocStatus(), "!" + ErpSalConstants.DOC_STATUS_CANCELLED);
         }
     }
 

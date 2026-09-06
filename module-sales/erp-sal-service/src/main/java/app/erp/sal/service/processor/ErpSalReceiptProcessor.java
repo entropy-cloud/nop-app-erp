@@ -94,7 +94,7 @@ public class ErpSalReceiptProcessor {
         }
         if (!Objects.equals(status, ErpSalConstants.APPROVE_STATUS_UNSUBMITTED)
                 && !Objects.equals(status, ErpSalConstants.APPROVE_STATUS_REJECTED)) {
-            throw illegalTransition(receipt, status, "UNSUBMITTED 或 REJECTED");
+            throw illegalTransition(receipt, status, "UNSUBMITTED / REJECTED");
         }
     }
 
@@ -129,7 +129,7 @@ public class ErpSalReceiptProcessor {
     protected void validateTransitionForCancel(ErpSalReceipt receipt, IServiceContext context) {
         String docStatus = receipt.getDocStatus();
         if (docStatus != null && Objects.equals(docStatus, ErpSalConstants.DOC_STATUS_CANCELLED)) {
-            throw illegalDocTransition(receipt, docStatus, "非已作废");
+            throw illegalDocTransition(receipt, docStatus, "!" + ErpSalConstants.DOC_STATUS_CANCELLED);
         }
     }
 
@@ -213,7 +213,7 @@ public class ErpSalReceiptProcessor {
 
     protected void validateNotCancelled(ErpSalReceipt receipt, IServiceContext context) {
         if (receipt.isCancelled()) {
-            throw illegalDocTransition(receipt, receipt.getDocStatus(), "非已作废");
+            throw illegalDocTransition(receipt, receipt.getDocStatus(), "!" + ErpSalConstants.DOC_STATUS_CANCELLED);
         }
     }
 
