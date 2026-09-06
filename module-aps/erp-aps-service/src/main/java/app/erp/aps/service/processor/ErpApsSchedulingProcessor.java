@@ -153,7 +153,7 @@ public class ErpApsSchedulingProcessor {
         }
         if (!ErpApsConfigs.DEFAULT_SCHEDULING_SOLVER.equals(name)) {
             org.slf4j.LoggerFactory.getLogger(ErpApsSchedulingProcessor.class)
-                    .warn("求解器 {} 未注册，回退默认贪心 GREEDY（注册数 {}）", name, schedulingSolvers.size());
+                    .warn("Solver {} not registered, falling back to default GREEDY (registered count {})", name, schedulingSolvers.size());
         }
         for (IApsSchedulingSolver solver : schedulingSolvers) {
             if (IApsSchedulingSolver.SOLVER_GREEDY.equals(solver.getName())) {
