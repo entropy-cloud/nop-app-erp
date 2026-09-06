@@ -83,7 +83,7 @@ public class BatchGenealogyWriter {
         try {
             doWrite(wo, completedQty, context);
         } catch (Exception e) {
-            LOG.error("工单 {} 完工写入批次基因链失败（best-effort，不阻断完工入库）", wo.getCode(), e);
+            LOG.error("Failed to write batch genealogy on completion for work order {} (best-effort, non-blocking for completion receipt)", wo.getCode(), e);
             dispatchGenealogyWriteFailureAlert(wo, e);
         }
     }
@@ -109,7 +109,7 @@ public class BatchGenealogyWriter {
         try {
             notificationBiz.notify(ErpMfgConstants.NOTIFY_EVENT_GENEALOGY_WRITE_FAILURE, ctx, serviceCtx);
         } catch (Exception notifyErr) {
-            LOG.warn("基因链写失败告警派发失败（降级）：workOrderCode={}, reason={}",
+            LOG.warn("Genealogy write failure alert dispatch failed (degraded): workOrderCode={}, reason={}",
                     wo.getCode(), notifyErr.getMessage());
         }
     }

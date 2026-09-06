@@ -165,7 +165,7 @@ public class ErpMfgMaterialIssueConfirmProcessor extends AbstractErpMfgMaterialI
             return;
         }
         if (isOverPickWarningEnabled()) {
-            LOG.warn("工单 {} 领料超预留：materialId={}, 领料量={}, 预留未消耗量={}（over-pick-warning=true 放行）",
+            LOG.warn("Work order {} material issue over reservation: materialId={}, issuedQty={}, unconsumedReservedQty={} (over-pick-warning=true, allowing)",
                     wo.getCode(), materialId, issued.toPlainString(), remaining.toPlainString());
         }
     }

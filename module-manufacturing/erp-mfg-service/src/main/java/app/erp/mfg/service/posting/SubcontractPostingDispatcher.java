@@ -144,9 +144,9 @@ public class SubcontractPostingDispatcher {
             }
         } catch (Exception e) {
             if (e instanceof NopException) {
-                LOG.warn("委外加工费过账失败，委外单 {} 保持 posted=false：{}", order.getCode(), e.getMessage());
+                LOG.warn("Subcontract processing fee posting failed, subcontract order {} remains posted=false: {}", order.getCode(), e.getMessage());
             } else {
-                LOG.error("委外加工费过账异常，委外单 {} 保持 posted=false", order.getCode(), e);
+                LOG.error("Subcontract processing fee posting error, subcontract order {} remains posted=false", order.getCode(), e);
             }
             dispatchFailureAlert(order, "加工费", e);
         }
@@ -157,9 +157,9 @@ public class SubcontractPostingDispatcher {
             executor.postEvent(event);
         } catch (Exception e) {
             if (e instanceof NopException) {
-                LOG.warn("委外{}过账失败，委外单 {}：{}", stageLabel, order.getCode(), e.getMessage());
+                LOG.warn("Subcontract {} posting failed, subcontract order {}: {}", stageLabel, order.getCode(), e.getMessage());
             } else {
-                LOG.error("委外{}过账异常，委外单 {}", stageLabel, order.getCode(), e);
+                LOG.error("Subcontract {} posting error, subcontract order {}", stageLabel, order.getCode(), e);
             }
             // G3：issue/receipt 段无 posted 追踪（仅 fee 段 markPosted），段级过账状态经
             // ErpFinVoucherBillR（billHeadCode+businessType）判重可查；失败派发告警闭环。
@@ -182,7 +182,7 @@ public class SubcontractPostingDispatcher {
         try {
             notificationBiz.notify(NOTIFY_EVENT_SUBCONTRACT_FAILURE, ctx, serviceCtx);
         } catch (Exception notifyErr) {
-            LOG.warn("委外{}过账失败告警派发失败（降级）：subcontractCode={}, reason={}",
+            LOG.warn("Subcontract {} posting failure alert dispatch failed (degraded): subcontractCode={}, reason={}",
                     stageLabel, order.getCode(), notifyErr.getMessage());
         }
     }

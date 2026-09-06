@@ -258,7 +258,7 @@ public class ProductionVarianceCalculator {
             IServiceContext serviceCtx = new ServiceContextImpl();
             notificationBiz.notify(ErpMfgConstants.NOTIFY_EVENT_PRODUCTION_VARIANCE, ctx, serviceCtx);
         } catch (Exception e) {
-            LOG.warn("生产差异阈值告警派发失败（降级，主计算流程继续）：workOrderId={}, reason={}",
+            LOG.warn("Production variance threshold alert dispatch failed (degraded, main calculation flow continues): workOrderId={}, reason={}",
                     wo.getId(), e.getMessage());
         }
     }

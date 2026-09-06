@@ -110,9 +110,9 @@ public class ProductionVarianceDispatcher {
             }
         } catch (Exception e) {
             if (e instanceof NopException) {
-                LOG.warn("生产差异过账失败，工单 {} 保持 posted=false：{}", wo.getCode(), e.getMessage());
+                LOG.warn("Production variance posting failed, work order {} remains posted=false: {}", wo.getCode(), e.getMessage());
             } else {
-                LOG.error("生产差异过账异常，工单 {} 保持 posted=false", wo.getCode(), e);
+                LOG.error("Production variance posting error, work order {} remains posted=false", wo.getCode(), e);
             }
         }
     }
@@ -148,7 +148,7 @@ public class ProductionVarianceDispatcher {
         try {
             executor.reverse(billHeadCode, ErpFinBusinessType.PRODUCTION_VARIANCE);
         } catch (Exception e) {
-            LOG.warn("生产差异红冲失败或无原凭证，工单 {} billHeadCode={} 不阻断重算：{}",
+            LOG.warn("Production variance reversal failed or no original voucher, work order {} billHeadCode={} non-blocking for recalculation: {}",
                     wo.getCode(), billHeadCode, e.getMessage());
         }
     }

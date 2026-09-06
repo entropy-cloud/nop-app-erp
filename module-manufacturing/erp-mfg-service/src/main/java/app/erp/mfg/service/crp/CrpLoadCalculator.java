@@ -124,7 +124,7 @@ public class CrpLoadCalculator {
             }
         }
         if (apsMode) {
-            LOG.info("CRP APS 负荷来源分布：aps 命中 {} 工单，WorkOrder 日期回退 {} 工单（窗口 {}~{}）",
+            LOG.info("CRP APS load source distribution: {} work orders hit APS, {} work orders fell back to WorkOrder dates (window {}~{})",
                     apsHits, woFallbacks, periodFrom, periodTo);
         }
         return written;
@@ -318,7 +318,7 @@ public class CrpLoadCalculator {
             return false;
         }
         if (apsLoadSourceProviders == null || apsLoadSourceProviders.isEmpty()) {
-            LOG.warn("erp-mfg.crp-load-source=APS 但未收集到 IErpApsLoadSourceProvider 实现（APS 模块缺失？），回退 WORK_ORDER");
+            LOG.warn("erp-mfg.crp-load-source=APS but no IErpApsLoadSourceProvider implementation collected (APS module missing?), falling back to WORK_ORDER");
             return false;
         }
         return true;

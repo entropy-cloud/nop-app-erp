@@ -173,10 +173,10 @@ public class ErpMfgSubcontractOrderProcessor {
             mfgPostingExecutor.reverse(billHeadCode, businessType);
         } catch (Exception e) {
             if (e instanceof NopException) {
-                LOG.warn("委外红冲 GL 凭证失败（吞异常保持幂等），委外单 {} billHeadCode={}: {}",
+                LOG.warn("Subcontract GL voucher reversal failed (exception swallowed to keep idempotency), subcontract order {} billHeadCode={}: {}",
                         order.getCode(), billHeadCode, e.getMessage());
             } else {
-                LOG.error("委外红冲 GL 凭证异常（吞异常保持幂等），委外单 {} billHeadCode={}",
+                LOG.error("Subcontract GL voucher reversal error (exception swallowed to keep idempotency), subcontract order {} billHeadCode={}",
                         order.getCode(), billHeadCode, e);
             }
         }
@@ -201,18 +201,18 @@ public class ErpMfgSubcontractOrderProcessor {
                 return;
             }
             if (!canSafelyReverse(original)) {
-                LOG.warn("委外红冲跳过库存移动反向（移动单仓库不满足反向前置，MANUFACTURE 移动单 sourceWarehouseId 为空时"
-                                + "其反向冲销的 bookkeeper destWarehouseId 为空），委外单 {} relatedBillType={} moveCode={}",
+                LOG.warn("Subcontract reversal skipped inventory move reverse (move warehouse does not satisfy reversal precondition, when MANUFACTURE move sourceWarehouseId is empty"
+                                + " its reversed bookkeeper destWarehouseId is also empty), subcontract order {} relatedBillType={} moveCode={}",
                         order.getCode(), relatedBillType, original.getCode());
                 return;
             }
             stockMoveBiz.reverse(original.getId(), context);
         } catch (Exception e) {
             if (e instanceof NopException) {
-                LOG.warn("委外红冲反向库存移动失败（吞异常保持幂等），委外单 {} relatedBillType={}: {}",
+                LOG.warn("Subcontract reversal failed to reverse inventory move (exception swallowed to keep idempotency), subcontract order {} relatedBillType={}: {}",
                         order.getCode(), relatedBillType, e.getMessage());
             } else {
-                LOG.error("委外红冲反向库存移动异常（吞异常保持幂等），委外单 {} relatedBillType={}",
+                LOG.error("Subcontract reversal error reversing inventory move (exception swallowed to keep idempotency), subcontract order {} relatedBillType={}",
                         order.getCode(), relatedBillType, e);
             }
         }

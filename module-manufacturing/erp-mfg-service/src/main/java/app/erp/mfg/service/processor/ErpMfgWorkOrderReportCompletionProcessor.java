@@ -101,9 +101,9 @@ public class ErpMfgWorkOrderReportCompletionProcessor {
                 facade.productionVarianceDispatcher.dispatchIfApplicable(workOrderId);
             } catch (Exception e) {
                 if (facade.isNoStandardCostError(e)) {
-                    LOG.warn("工单 {} 完工差异计算跳过（无 FIRMED 标准成本，非故障）：{}", wo.getCode(), e.getMessage());
+                    LOG.warn("Work order {} completion variance calculation skipped (no FIRMED standard cost, not a fault): {}", wo.getCode(), e.getMessage());
                 } else {
-                    LOG.error("工单 {} 完工触发生产差异计算/过账失败（不阻断完工，可经手动 calculateVariances 重算，已派发告警）",
+                    LOG.error("Work order {} completion-triggered production variance calculation/posting failed (non-blocking for completion, recalculate via manual calculateVariances, alert dispatched)",
                             wo.getCode(), e);
                     facade.dispatchVarianceFailureAlert(wo, e);
                 }

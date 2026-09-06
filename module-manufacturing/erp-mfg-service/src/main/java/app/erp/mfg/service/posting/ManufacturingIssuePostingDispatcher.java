@@ -106,9 +106,9 @@ public class ManufacturingIssuePostingDispatcher {
             }
         } catch (Exception e) {
             if (e instanceof NopException) {
-                LOG.warn("生产领料过账失败，领料单 {} 保持 posted=false：{}", issue.getCode(), e.getMessage());
+                LOG.warn("Material issue posting failed, issue {} remains posted=false: {}", issue.getCode(), e.getMessage());
             } else {
-                LOG.error("生产领料过账异常，领料单 {} 保持 posted=false", issue.getCode(), e);
+                LOG.error("Material issue posting error, issue {} remains posted=false", issue.getCode(), e);
             }
         }
     }

@@ -173,7 +173,7 @@ public class ErpMfgWorkOrderProcessor {
             inspectionBiz.cancelForBusinessBill(ErpMfgConstants.RELATED_BILL_TYPE_MFG_WORK_ORDER,
                     wo.getCode(), context);
         } catch (Exception e) {
-            LOG.warn("工单作废联动取消质检失败（降级不阻断）：workOrderCode={}, reason={}",
+            LOG.warn("Work order cancel linked inspection cancellation failed (degraded, non-blocking): workOrderCode={}, reason={}",
                     wo.getCode(), e.getMessage());
         }
     }
@@ -202,7 +202,7 @@ public class ErpMfgWorkOrderProcessor {
         try {
             notificationBiz.notify(NOTIFY_EVENT_VARIANCE_FAILURE, ctx, serviceCtx);
         } catch (Exception notifyErr) {
-            LOG.warn("生产差异过账失败告警派发失败（降级）：workOrderCode={}, reason={}",
+            LOG.warn("Production variance posting failure alert dispatch failed (degraded): workOrderCode={}, reason={}",
                     wo.getCode(), notifyErr.getMessage());
         }
     }
@@ -392,7 +392,7 @@ public class ErpMfgWorkOrderProcessor {
         if (destWarehouseId == null) {
             // P1-CK-mfg-004 修复：完工入库缺产出仓不再静默 return（修复前工单照常 COMPLETED 但产成品永不入库）。
             // 温和方案：LOG.error + 通知（G3 分级），不阻断完工（阻断会破坏既有无产出仓工单测试契约）。
-            LOG.error("完工入库缺少产成品入库仓库（P1-CK-mfg-004）：工单 {} 产出行未配置 destWarehouseId，产成品将永不入库",
+            LOG.error("Completion receipt missing finished product warehouse (P1-CK-mfg-004): work order {} output line has no destWarehouseId, finished product will never be received into stock",
                     wo.getCode());
             return;
         }
@@ -404,7 +404,7 @@ public class ErpMfgWorkOrderProcessor {
         }
         if (uomId == null) {
             // P1-CK-mfg-004 修复：完工入库缺计量单位不再静默 return（温和方案：LOG.error，不阻断）。
-            LOG.error("完工入库缺少计量单位（P1-CK-mfg-004）：工单 {} 产出行与物料 {} 均未配置 UoM，产成品将永不入库",
+            LOG.error("Completion receipt missing UoM (P1-CK-mfg-004): work order {} output line and material {} both have no UoM configured, finished product will never be received into stock",
                     wo.getCode(), productId);
             return;
         }
@@ -624,7 +624,7 @@ public class ErpMfgWorkOrderProcessor {
         }
         ErpMfgBom bom = resolveSnapshotSourceBom(wo);
         if (bom == null) {
-            LOG.warn("工单 {} 无 BOM（bomId 为空且无默认 BOM），跳过 BOM 快照（不阻断提交，读侧保持实时 BOM）",
+            LOG.warn("Work order {} has no BOM (bomId empty and no default BOM), skipping BOM snapshot (non-blocking for submit, read side remains live BOM)",
                     wo.getCode());
             return;
         }
@@ -704,7 +704,7 @@ public class ErpMfgWorkOrderProcessor {
                 bomId = kitAvailabilityChecker.resolveBomId(wo);
             } catch (NopException e) {
                 if (ErpMfgErrors.ERR_DEFAULT_BOM_NOT_FOUND.getErrorCode().equals(e.getErrorCode())) {
-                    LOG.warn("工单 {} 无默认 BOM，跳过物料预留创建（reservation-enabled，不阻断审核）", wo.getCode());
+                    LOG.warn("Work order {} has no default BOM, skipping material reservation creation (reservation-enabled, non-blocking for approval)", wo.getCode());
                     return;
                 }
                 throw e;
@@ -744,7 +744,7 @@ public class ErpMfgWorkOrderProcessor {
             String materialId = e.getKey();
             String warehouseId = warehouseByMaterial.get(materialId);
             if (warehouseId == null) {
-                LOG.warn("工单 {} 子件 {} 无领料仓库（WO 行 sourceWarehouseId 缺失），跳过该行预留", wo.getCode(), materialId);
+                LOG.warn("Work order {} component {} has no issue warehouse (WO line sourceWarehouseId missing), skipping reservation for this line", wo.getCode(), materialId);
                 continue;
             }
             ReservationLineRequest line = new ReservationLineRequest();
@@ -756,7 +756,7 @@ public class ErpMfgWorkOrderProcessor {
             lines.add(line);
         }
         if (lines.isEmpty()) {
-            LOG.warn("工单 {} 子件均无领料仓库，跳过全部预留创建", wo.getCode());
+            LOG.warn("Work order {} no component has an issue warehouse, skipping all reservation creation", wo.getCode());
             return;
         }
         request.setLines(lines);
