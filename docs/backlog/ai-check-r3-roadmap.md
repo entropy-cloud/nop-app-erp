@@ -59,7 +59,7 @@
 
 | Work Item | Status | Owner Doc | Deps | Skill |
 |---|---|---|---|---|
-| MI.1 **Errors 接口 `@Locale("zh-CN")` 补齐**：22 个 `*Errors.java` 加 `@Locale("zh-CN")` 注解 + import（纯加性；平台先例 `BatchErrors`/`NopAuthErrors`）；验证 = 全量 build + 域测试零回归 | `todo` | `docs/errors/README.md` + `nop-entropy error-handling.md` | M0.6 | none |
+| MI.1 **Errors 接口 `@Locale("zh-CN")` 补齐**：22 个 `*Errors.java` 加 `@Locale("zh-CN")` 注解 + import（纯加性；平台先例 `BatchErrors`/`NopAuthErrors`）；验证 = 全量 build + 域测试零回归 | `done` | `docs/errors/README.md` + `nop-entropy error-handling.md` | M0.6 | none |
 | MI.2 **LOG 英文化批 1（最重两域）**：finance（54 行/21 文件）+ assets（39 行/10 文件）——LOG 消息改英文，保留 `{}` 占位参数；过账 dispatcher 族 warn/error 降级消息语义不变（对齐 lesson 09：不得借机改吞异常行为） | `todo` | `docs/architecture/i18n-compliance.md`（M0.1） | M0.6 | none |
 | MI.3 **LOG 英文化批 2**：manufacturing 31 + inventory 26 + cs 23 + b2b 22 + purchase 22 + sales 22 + hr 20（约 166 行） | `todo` | 同上 | MI.2 | none |
 | MI.4 **LOG 英文化批 3 + CAT-1 归零**：logistics 19 + notify 15 + projects 14 + contract 12 + maintenance 10 + crm 3 + drp 2 + quality 1（约 76 行）；收官断言 CAT-1 全域 = 0 | `todo` | 同上 | MI.3 | none |
