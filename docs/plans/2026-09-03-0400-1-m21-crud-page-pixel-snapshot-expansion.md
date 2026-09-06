@@ -115,6 +115,8 @@ Exit Criteria:
 >
 > **断点续起完成（2026-09-05，mission-driver 第五次重跑）**：① 基线对账——`crud-pages.snapshot.spec.ts` 69 测试 ↔ `crud-pages.snapshot.spec.ts-snapshots/` 69 PNG 一一对应（本计划矩阵 R01~R44 全部落地 + successor 计划 `2026-09-04-1721-1` Phase 1 对同一 spec 追加 Batch D/E 25 行，对账闭合）；② 全 spec 实跑 `BASE_URL=http://127.0.0.1:8011 SKIP_WEBSERVER=1 npx playwright test tests/e2e/visual/crud-pages.snapshot.spec.ts --workers=1` → **69/69 全绿（9.8m）**；③ 目录级运行（EC3）——`npx playwright test tests/e2e/visual/ --workers=1` → 299 测试 = **242 passed + 6 skipped（business-actions 2 个 flux 迁移期预存 + 4 个 spec 内条件 skip）+ 51 failed**，51 失败集与 2026-09-03 已登记四族分账精确对账：Family A 5（ext-domains-child-table，bug note `2026-09-02-ext-domains-child-table-amis-legacy-selector-flux-preexisting-red`）+ Family B 34（f12/tree-entity/status-tag/sensitive/gl-mapping/field-format，AMIS 遗留选择器，早于本计划）+ Family D 12（`_exploration/` feasibility AMIS 期基线 + complex-pages 采集，EC3 括号内已预设该表面失败时按 runbook §诊断流程根因定位并声明）= 51；Family C 12（flux 运行时回归）经 1930-1 修复后**已从失败集消失**（63→51 精确收敛）；三轮目录级运行失败集逐字节相同（runbook §诊断流程根因定位结论：确定性预存台账，非漂移），且失败集内全部 spec 文件不在本计划变更面（`git status` 实证），本计划交付面（crud-pages 69 + material-customs 2 + f13 域）三轮 100% 绿——EC3 裁决为「零意外漂移」满足。
 
+> **阻塞解除补充条目（2026-09-06，flux 容忍 + scheduling bundle 计划收尾）**：`docs/plans/2026-09-03-1815-1-flux-unpublished-scope-tolerance-and-scheduling-bundle.md`（与 1930-1 同源 bug note 的容忍式修复计划）Phase 3 链路发布 + fresh-DB runner 实证完成——f13 **8/8** 绿（kanban ×3 转绿实证 = scheduling 渲染器入 bundle 生效）、crud-pages **69/69** 绿（复跑，零漂移）、f16 目录级 11/1/2 逐例归因回写 bug note（Family C 抛错症状消除；残留均非本根因）。恢复条件**持续兑现**，且 F4 使 kanban/calendar/gantt 像素基线免受渲染器缺席毒化，M2.1 后续像素采集面据此稳固。
+
 ### Phase 3 — 稳定性三连跑 + owner doc 回写 + 合规声明
 
 Status: completed

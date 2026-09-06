@@ -2,7 +2,7 @@
 
 - 日期：2026-09-03
 - 发现于：plan `2026-09-03-0938-1-dual-amis-office-viewer-peer-alignment` Phase 2 全量 visual 目录级验证（双 amis pageerror 消除后首次暴露）；同日 M2.1 计划 `2026-09-03-0400-1` Phase 2 批次 C 复现
-- 状态：fixed（未提交，工作树；跨仓库保护区 = nop-chaos-flux/nop-chaos-next `auto + dual-agent-approval`；待 successor 双独立子 agent 批准后提交）
+- 状态：fixed（未提交，工作树，owner 提交移交；跨仓库保护区 = nop-chaos-flux/nop-chaos-next `auto + dual-agent-approval`；修复计划 = docs/plans/2026-09-03-1815-1-flux-unpublished-scope-tolerance-and-scheduling-bundle.md，Phase 1 双批准 + Phase 2 F1-F4 落地 + Phase 3 链路发布与 ERP 实证完成，见下方「2026-09-06 回写」节）
 - 影响：**flux data-source 驱动页面 + 未护栏公式消费节点**的渲染正确性与 E2E console 守卫；不影响 dashboards/reports 像素资产（2026-09-03 全量 visual 目录级运行中 dashboards/reports 全部通过）、不影响 18 域 CRUD 列表/表单（自含数据管线）
 
 ## 症状（2026-09-03 全量 visual 目录级运行实测，63 失败/225 中归本家族 12）
@@ -36,3 +36,23 @@
 2. 机制层候选修复面（以 bisect 结论为准）：渲染期公式求值对「未发布 data-source 名」的失败路径应可恢复（依赖订阅保留/延迟求值/`onDependenciesChange` 不因求值失败清空）；或公式型 data-source start 失败后保留依赖记录待 scope 变更重算；看板渲染器单独核实 `9a21ad932`。
 3. 门禁补强（本仓可做）：f13/crud-pages 即守卫——任何 flux 重打 tgz + 全链重建的收口必须跑 `tests/e2e/visual/f13-non-standard-views.visual.spec.ts` + `crud-pages.snapshot.spec.ts`（fixtures console 守卫链路），不得只跑 dashboards/reports 子集（M1.5「50/50」口径漏洞）。
 4. 修复落地区域 = nop-chaos-flux（源码）→ `repack-flux-and-refresh.sh` 重打 tgz → 全链重建，全程按保护区 `auto + dual-agent-approval`（跨仓库 plan + 双独立子 agent 批准）。
+
+## 2026-09-06 回写（修复计划 Phase 3 归因勘误 + 实证）
+
+**归因勘误（修正本 note §根因证据链 6-8 的 bisect 方向）**：
+
+1. **修正 1——tgz 不是载体**：git-HEAD 内 libs tgz 与 flux master `44ef5188f` 现-build 产物逐字节相同（cmp 实证），且该 tgz（vintage ≈08-27~08-30）同样复现 timeline 抛错（vite dev A/B 实测）。§7 观察到的「新旧 90 区域 diff」实为 git-HEAD tgz 与 09-02 临时 sync 产物的对比；§7 的动态 bisect 建议作废。
+2. **修正 2——前端组合不改变结果**：git worktree 复原历史组合（next@`61f5dc2`+flux@`3912109e9` / next@`61f5dc2`+flux@master / next@HEAD+flux@`08-04`）全部复现 timeline 2/2 node-error → 失败与「哪天引入」无关，系目标页对「data-source 未发布期」的容忍缺陷从未在真实验证中暴露（f13 E2E 当年绿证据不覆盖本缺陷面）。§8 kanban 缺席归因 `9a21ad932` 作废。
+3. **修正 3——kanban/calendar/gantt 渲染器从未进 bundle（产品缺口非回归）**：`registerDefaultFluxRenderers` 只注册六包，`flux-renderers-scheduling` 从未在列 → ERP authored `type: kanban/calendar` 静默不渲染。已在修复计划 F4 中将 scheduling 入 bundle 默认注册面（含 styles.css @import）。
+
+**修复内容**（plan 2026-09-03-1815-1 Phase 2，flux 工作树，未提交）：F1 `evaluateLeaf` 抛出路径依赖落盘（finally）+ F2 公式 data-source publish sentinel 容忍（pending + 依赖保留，不 reportPublishFailure）+ F3 `resolveNodeProps` sentinel 引用稳定回退（含 **meta 表达式对称 catch 增量登记**：when/visible/className 同经 `evaluateCompiledValue`、mount 期同样命中 sentinel → sentinel→`undefined` 回退 + 依赖保持，plan Non-Goal 预留条件触发后按约定增量落地，2026-09-06 结束审计补录）+ F4 scheduling 渲染器入 bundle（新增单测共 9 个）。语义沿 `evaluateControllerStopCondition` 既有 sentinel 先例，非新造。
+
+**ERP 实证（2026-09-06，fresh-DB runner + 重打 tgz 全链）**：
+
+- f13 全 spec **8/8 绿**（timeline ×2 + kanban ×3 + calendar ×2 + org-chart 对照 ×1；timeline 页零 console error 探针在案）。
+- `crud-pages.snapshot.spec.ts` **69/69 绿**（R41 /crm-activity-timeline 转绿；零基线漂移）。
+- f16 目录级 **11 passed / 1 failed / 2 skipped**，逐例归因：
+  - Family C（本根因，tpl 求值抛错）目标面：mfg work-order 进度 tab 实测 dialog 打开、**零 console error**、无错误框锁存——抛错症状已消除。
+  - `finance ErpFinVoucher edit drawer ... autoBalance buttons` failed：**非本根因**——autoBalance 按钮在 `751749e17`（08-31 flux 编译清理，plan 2026-08-30-2238-1）中被移除而 f16 spec 仍断言，spec/view 漂移，归 ERP e2e 基建 owner 域处置（修 spec 或恢复按钮）。
+  - `mfg ErpMfgWorkOrder view drawer` + `quality ErpQaNonConformance view drawer` skipped：**非本根因**——种子行在案（WO-2026-001..004），skip 系 helper `openFirstRowDrawer` 的 `[data-slot="drawer-surface"]` 定位器与现行 dialog 型 view 弹层（`dialog-*` slots）失配，归 f16 spec 基建域。
+  - 残留（successor）：work-order 工单进度仪表板 custom text cell（HTML-string tpl）内容渲染为空（无报错）——页面写法/控件语义归后续规范文档决策（本修复计划 Non-Goal，见其 Non-Goals「ERP 页面公式改写」条）。
