@@ -43,9 +43,9 @@ public class PurPaymentPostingDispatcher {
             return voucherId != null;
         } catch (Exception e) {
             if (e instanceof NopException) {
-                LOG.warn("付款单过账失败，付款单 {} 保持 APPROVED、posted=false：{}", payment.getCode(), e.getMessage());
+                LOG.warn("Payment document posting failed, payment document {} remains APPROVED, posted=false: {}", payment.getCode(), e.getMessage());
             } else {
-                LOG.error("付款单过账异常，付款单 {} 保持 APPROVED、posted=false", payment.getCode(), e);
+                LOG.error("Payment document posting error, payment document {} remains APPROVED, posted=false", payment.getCode(), e);
             }
             return false;
         }
@@ -59,9 +59,9 @@ public class PurPaymentPostingDispatcher {
             executor.reverse(payment.getCode(), ErpFinBusinessType.PAYMENT);
         } catch (Exception e) {
             if (e instanceof NopException) {
-                LOG.warn("付款单红字冲销失败，付款单 {}：{}", payment.getCode(), e.getMessage());
+                LOG.warn("Payment document reversal failed, payment document {}: {}", payment.getCode(), e.getMessage());
             } else {
-                LOG.error("付款单红字冲销异常，付款单 {}", payment.getCode(), e);
+                LOG.error("Payment document reversal error, payment document {}", payment.getCode(), e);
             }
             throw e;
         }

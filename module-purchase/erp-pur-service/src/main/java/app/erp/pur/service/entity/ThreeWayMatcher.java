@@ -80,7 +80,7 @@ public class ThreeWayMatcher {
                 if (strict) {
                     throw err;
                 }
-                LOG.warn("三单匹配数量超入库（非严格模式放行）：发票={} 行={} 发票数量={} 入库数量={}",
+                LOG.warn("Three-way match quantity exceeds received (allowed in non-strict mode): invoice={} line={} invoiceQty={} receivedQty={}",
                         invoiceCode, line.getLineNo(), invoiceQty, receivedQty);
             }
 
@@ -94,7 +94,7 @@ public class ThreeWayMatcher {
                         if (isPostDifferenceStrategy()) {
                             // RC-R1.50：策略「接收并过账差异」——价格超容差 warn 放行（差异经 buildEvent 差异键
                             // → createFacts PPV 行过账，见 PurAcctDocProvider 1403 拆分语义）
-                            LOG.warn("三单匹配价格超容差（接收并过账差异策略放行）：发票={} 行={} 发票单价={} 订单单价={} 容差={}%",
+                            LOG.warn("Three-way match price exceeds tolerance (allowed by accept-and-post-variance policy): invoice={} line={} invoicePrice={} orderPrice={} tolerance={}%",
                                     invoiceCode, line.getLineNo(), invoicePrice, orderPrice, priceTolerance);
                         } else {
                             NopException err = new NopException(ErpPurErrors.ERR_INVOICE_PRICE_MISMATCH)
@@ -105,7 +105,7 @@ public class ThreeWayMatcher {
                             if (strict) {
                                 throw err;
                             }
-                            LOG.warn("三单匹配价格超容差（非严格模式放行）：发票={} 行={} 发票单价={} 订单单价={} 容差={}%",
+                            LOG.warn("Three-way match price exceeds tolerance (allowed in non-strict mode): invoice={} line={} invoicePrice={} orderPrice={} tolerance={}%",
                                     invoiceCode, line.getLineNo(), invoicePrice, orderPrice, priceTolerance);
                         }
                     }
@@ -188,7 +188,7 @@ public class ThreeWayMatcher {
         try {
             return new BigDecimal(raw.trim());
         } catch (NumberFormatException e) {
-            LOG.warn("容差配置 {} 值非法={}，回退默认 {}", key, raw, defaultValue);
+            LOG.warn("Tolerance config {} has invalid value {}, fallback to default {}", key, raw, defaultValue);
             return new BigDecimal(defaultValue);
         }
     }

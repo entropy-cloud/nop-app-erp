@@ -133,7 +133,7 @@ public class RequisitionToOrderConverter {
         try {
             return new BigDecimal(taxRate.trim());
         } catch (NumberFormatException e) {
-            LOG.warn("请购→订单转化遇到非法税率格式 [{}]，按零税率处理", taxRate, e);
+            LOG.warn("Requisition-to-order conversion encountered invalid tax rate format [{}], treating as zero tax rate", taxRate, e);
             return null;
         }
     }

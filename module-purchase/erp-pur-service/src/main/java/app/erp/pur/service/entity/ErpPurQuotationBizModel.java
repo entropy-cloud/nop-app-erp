@@ -74,7 +74,7 @@ public class ErpPurQuotationBizModel extends AbstractErpCrudBizModel<ErpPurQuota
                     .param(ErpPurErrors.ARG_STANDING, "SUSPENDED/REJECTED/RED");
         }
         if (decision == SupplierEligibilityChecker.Decision.WARN) {
-            LOG.warn("供应商 {} 近期评分偏低（YELLOW），请关注其交付/质量表现", quotation.getSupplierId());
+            LOG.warn("Supplier {} recent low score (YELLOW), watch its delivery/quality performance", quotation.getSupplierId());
         }
     }
 

@@ -246,7 +246,7 @@ public class ErpPurReceiveProcessor {
             if (strict) {
                 throw err;
             }
-            LOG.warn("入库超收超容差（非严格模式放行）：入库单={} 行={} 累计入库数量={} 订单数量={} 容差={}%",
+            LOG.warn("Receipt over-received beyond tolerance (allowed in non-strict mode): receipt={} line={} cumulativeReceived={} orderedQty={} tolerance={}%",
                     receive.getCode(), rl.getLineNo(), received, ordered, tolerance);
         }
     }
@@ -326,7 +326,7 @@ public class ErpPurReceiveProcessor {
                     move != null ? move.getId() : null,
                     drpMaterialIds, context);
         } catch (Exception e) {
-            LOG.warn("入库审批后置：越库收货标记失败（隔离不阻断）：receiveCode={}, reason={}",
+            LOG.warn("Receipt post-approval hook: cross-dock receipt marking failed (isolated, non-blocking): receiveCode={}, reason={}",
                     receive.getCode(), e.getMessage());
         }
     }
@@ -383,7 +383,7 @@ public class ErpPurReceiveProcessor {
                     order.getBusinessDate(), receive.getBusinessDate(), expectedLeadTime,
                     drpMaterialIds, context);
         } catch (Exception e) {
-            LOG.warn("收货审批后置：提前期记录失败（隔离不阻断）：receiveCode={}, reason={}",
+            LOG.warn("Receipt post-approval hook: lead time recording failed (isolated, non-blocking): receiveCode={}, reason={}",
                     receive.getCode(), e.getMessage());
         }
     }

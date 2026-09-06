@@ -64,7 +64,7 @@ public class ErpPurReceiveCancelProcessor extends AbstractCancelProcessor<ErpPur
             inspectionBiz.cancelForBusinessBill(ErpPurConstants.RELATED_BILL_TYPE_PUR_RECEIVE,
                     receive.getCode(), context);
         } catch (Exception e) {
-            LOG.warn("入库单作废联动取消质检失败（降级不阻断）：receiveCode={}, reason={}",
+            LOG.warn("Receipt cancel linked inspection cancellation failed (degraded, non-blocking): receiveCode={}, reason={}",
                     receive.getCode(), e.getMessage());
         }
     }

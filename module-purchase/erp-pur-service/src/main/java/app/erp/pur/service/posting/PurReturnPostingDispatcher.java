@@ -48,10 +48,10 @@ public class PurReturnPostingDispatcher {
             return voucherId != null;
         } catch (Exception e) {
             if (e instanceof NopException) {
-                LOG.warn("采购退货过账失败，退货单 {} 保持 APPROVED、posted=false：{}",
+                LOG.warn("Purchase return posting failed, return order {} remains APPROVED, posted=false: {}",
                         returnOrder.getCode(), e.getMessage());
             } else {
-                LOG.error("采购退货过账异常，退货单 {} 保持 APPROVED、posted=false", returnOrder.getCode(), e);
+                LOG.error("Purchase return posting error, return order {} remains APPROVED, posted=false", returnOrder.getCode(), e);
             }
             return false;
         }
@@ -66,9 +66,9 @@ public class PurReturnPostingDispatcher {
             executor.reverse(returnOrder.getCode(), ErpFinBusinessType.PURCHASE_RETURN);
         } catch (Exception e) {
             if (e instanceof NopException) {
-                LOG.warn("采购退货红字冲销失败，退货单 {}：{}", returnOrder.getCode(), e.getMessage());
+                LOG.warn("Purchase return reversal failed, return order {}: {}", returnOrder.getCode(), e.getMessage());
             } else {
-                LOG.error("采购退货红字冲销异常，退货单 {}", returnOrder.getCode(), e);
+                LOG.error("Purchase return reversal error, return order {}", returnOrder.getCode(), e);
             }
             throw e;
         }

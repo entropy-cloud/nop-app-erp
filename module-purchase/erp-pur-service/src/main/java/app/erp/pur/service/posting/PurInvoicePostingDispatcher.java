@@ -51,9 +51,9 @@ public class PurInvoicePostingDispatcher {
             return voucherId != null;
         } catch (Exception e) {
             if (e instanceof NopException) {
-                LOG.warn("采购发票过账失败，发票 {} 保持 APPROVED、posted=false：{}", invoice.getCode(), e.getMessage());
+                LOG.warn("Purchase invoice posting failed, invoice {} remains APPROVED, posted=false: {}", invoice.getCode(), e.getMessage());
             } else {
-                LOG.error("采购发票过账异常，发票 {} 保持 APPROVED、posted=false", invoice.getCode(), e);
+                LOG.error("Purchase invoice posting error, invoice {} remains APPROVED, posted=false", invoice.getCode(), e);
             }
             return false;
         }
@@ -68,9 +68,9 @@ public class PurInvoicePostingDispatcher {
             executor.reverse(invoice.getCode(), ErpFinBusinessType.AP_INVOICE);
         } catch (Exception e) {
             if (e instanceof NopException) {
-                LOG.warn("采购发票红字冲销失败，发票 {}：{}", invoice.getCode(), e.getMessage());
+                LOG.warn("Purchase invoice reversal failed, invoice {}: {}", invoice.getCode(), e.getMessage());
             } else {
-                LOG.error("采购发票红字冲销异常，发票 {}", invoice.getCode(), e);
+                LOG.error("Purchase invoice reversal error, invoice {}", invoice.getCode(), e);
             }
             throw e;
         }
