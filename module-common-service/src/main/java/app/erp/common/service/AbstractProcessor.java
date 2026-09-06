@@ -89,6 +89,11 @@ public abstract class AbstractProcessor<T extends OrmEntity> {
                 .param(ErpCommonErrors.ARG_BIZ_OBJ_ID, id);
     }
 
+    /**
+     * 契约（plan 2026-09-07-0043-2 MI.5a Decision）：current 与 expected 均传状态码/枚举名/字典值本身，
+     * 禁止中文散文；否定语义（如「非已作废」）传 {@code "!" + 状态码}（如 {@code "!CANCELLED"}），
+     * 不改 ErrorCode 模板与抛出条件。中文语义仍由 ErrorCode.define 模板 + i18n 承载。
+     */
     protected NopException defaultIllegalStatusException(String current, String... expected) {
         return new NopException(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION)
                 .param(ErpCommonErrors.ARG_CURRENT_STATUS, current)

@@ -53,7 +53,7 @@ public abstract class AbstractApproveProcessor<T extends OrmEntity> extends Abst
 
     protected void validateNotCancelled(T entity, IServiceContext context) {
         if (isCancelled(entity)) {
-            throw illegalStatusException(entity, "CANCELLED", "非已作废");
+            throw illegalStatusException(entity, "CANCELLED", "!CANCELLED");
         }
     }
 

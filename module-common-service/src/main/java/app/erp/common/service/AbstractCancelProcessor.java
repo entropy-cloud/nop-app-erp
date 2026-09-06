@@ -30,7 +30,7 @@ public abstract class AbstractCancelProcessor<T extends OrmEntity> extends Abstr
     protected void validateTransitionForCancel(T entity, IServiceContext context) {
         String docStatus = getDocStatus(entity);
         if (Objects.equals(docStatus, cancelledDocStatus())) {
-            throw illegalStatusException(entity, docStatus, "非已作废");
+            throw illegalStatusException(entity, docStatus, "!" + cancelledDocStatus());
         }
     }
 
