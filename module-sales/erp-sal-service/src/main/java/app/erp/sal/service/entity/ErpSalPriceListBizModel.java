@@ -82,7 +82,7 @@ public class ErpSalPriceListBizModel extends AbstractErpCrudBizModel<ErpSalPrice
         int top = safePriority(effective.get(0));
         int next = safePriority(effective.get(1));
         if (top == next) {
-            LOG.warn("价格清单同 customerGroupCode={},partnerId={} 维度在 validFrom={} 存在多份相同优先级（={}）清单，取价可能产生歧义（warn-only，不阻断保存）",
+            LOG.warn("Price list dimension customerGroupCode={},partnerId={} has multiple same-priority (={}) price lists effective on validFrom={}, price lookup may be ambiguous (warn-only, save not blocked)",
                     entity.getCustomerGroupCode(), entity.getPartnerId(),
                     entity.getValidFrom(), top);
         }

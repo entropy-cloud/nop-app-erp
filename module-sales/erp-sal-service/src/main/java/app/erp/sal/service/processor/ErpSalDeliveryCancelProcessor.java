@@ -63,7 +63,7 @@ public class ErpSalDeliveryCancelProcessor extends AbstractCancelProcessor<ErpSa
             inspectionBiz.cancelForBusinessBill(ErpSalConstants.RELATED_BILL_TYPE_SAL_DELIVERY,
                     delivery.getCode(), context);
         } catch (Exception e) {
-            LOG.warn("出库单作废联动取消质检失败（降级不阻断）：deliveryCode={}, reason={}",
+            LOG.warn("Delivery cancel linked inspection cancellation failed (degraded, non-blocking): deliveryCode={}, reason={}",
                     delivery.getCode(), e.getMessage());
         }
     }

@@ -256,7 +256,7 @@ public class ErpSalOrderProcessor {
                         .param(ErpSalErrors.ARG_AVAILABLE, available)
                         .param(ErpSalErrors.ARG_REQUIRED, required);
             }
-            LOG.warn("销售订单 {} 第 {} 行物料 {}（仓库 {}）可用量 {} 不足需求 {}，订单级预校验 WARN 放行（出库审核仍会强制校验）",
+            LOG.warn("Sales order {} line {} material {} (warehouse {}) available quantity {} insufficient for required {}, order-level pre-check WARN released (delivery approval still enforces the check)",
                     order.getCode(), line.getLineNo(), materialId, warehouseId, available, required);
         }
     }

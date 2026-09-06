@@ -43,9 +43,9 @@ public class SalInvoicePostingDispatcher {
             return voucherId != null;
         } catch (Exception e) {
             if (e instanceof NopException) {
-                LOG.warn("销售发票过账失败，发票 {} 保持 APPROVED、posted=false：{}", invoice.getCode(), e.getMessage());
+                LOG.warn("Sales invoice posting failed, invoice {} remains APPROVED, posted=false: {}", invoice.getCode(), e.getMessage());
             } else {
-                LOG.error("销售发票过账异常，发票 {} 保持 APPROVED、posted=false", invoice.getCode(), e);
+                LOG.error("Sales invoice posting error, invoice {} remains APPROVED, posted=false", invoice.getCode(), e);
             }
             return false;
         }
@@ -60,9 +60,9 @@ public class SalInvoicePostingDispatcher {
             executor.reverse(invoice.getCode(), ErpFinBusinessType.AR_INVOICE);
         } catch (Exception e) {
             if (e instanceof NopException) {
-                LOG.warn("销售发票红字冲销失败，发票 {}：{}", invoice.getCode(), e.getMessage());
+                LOG.warn("Sales invoice reversal failed, invoice {}: {}", invoice.getCode(), e.getMessage());
             } else {
-                LOG.error("销售发票红字冲销异常，发票 {}", invoice.getCode(), e);
+                LOG.error("Sales invoice reversal error, invoice {}", invoice.getCode(), e);
             }
             throw e;
         }

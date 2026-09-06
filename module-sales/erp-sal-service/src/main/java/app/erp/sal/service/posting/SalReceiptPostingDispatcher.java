@@ -43,9 +43,9 @@ public class SalReceiptPostingDispatcher {
             return voucherId != null;
         } catch (Exception e) {
             if (e instanceof NopException) {
-                LOG.warn("收款单过账失败，收款单 {} 保持 APPROVED、posted=false：{}", receipt.getCode(), e.getMessage());
+                LOG.warn("Receipt document posting failed, receipt {} remains APPROVED, posted=false: {}", receipt.getCode(), e.getMessage());
             } else {
-                LOG.error("收款单过账异常，收款单 {} 保持 APPROVED、posted=false", receipt.getCode(), e);
+                LOG.error("Receipt document posting error, receipt {} remains APPROVED, posted=false", receipt.getCode(), e);
             }
             return false;
         }
@@ -59,9 +59,9 @@ public class SalReceiptPostingDispatcher {
             executor.reverse(receipt.getCode(), ErpFinBusinessType.RECEIPT);
         } catch (Exception e) {
             if (e instanceof NopException) {
-                LOG.warn("收款单红字冲销失败，收款单 {}：{}", receipt.getCode(), e.getMessage());
+                LOG.warn("Receipt document reversal failed, receipt {}: {}", receipt.getCode(), e.getMessage());
             } else {
-                LOG.error("收款单红字冲销异常，收款单 {}", receipt.getCode(), e);
+                LOG.error("Receipt document reversal error, receipt {}", receipt.getCode(), e);
             }
             throw e;
         }

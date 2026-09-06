@@ -52,7 +52,7 @@ public final class ReturnCostStrategyResolver {
                 || ErpSalConstants.RETURN_COST_METHOD_AGREEMENT.equals(trimmed)) {
             return trimmed;
         }
-        LOG.warn("配置 erp-sal.return-cost-method 非法值 [{}]，回退默认 original", trimmed);
+        LOG.warn("Invalid value [{}] for config erp-sal.return-cost-method, falling back to default original", trimmed);
         return ErpSalConstants.RETURN_COST_METHOD_ORIGINAL;
     }
 
@@ -66,7 +66,7 @@ public final class ReturnCostStrategyResolver {
         if (avgCost != null) {
             return avgCost;
         }
-        LOG.warn("current 策略下未找到物料 {} 仓库 {} 的库存成本，回退行 unitPrice={}",
+        LOG.warn("current strategy: inventory cost not found for material {} warehouse {}, falling back to line unitPrice={}",
                 materialId, warehouseId, base);
         return base;
     }

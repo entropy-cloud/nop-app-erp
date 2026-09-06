@@ -292,7 +292,7 @@ public class ErpSalOrderBizModel extends AbstractErpCrudBizModel<ErpSalOrder> im
             PriceValidationResult vr = mdMaterialSkuBiz.validatePrice(
                     skuId, finalPrice, materialCategoryId, context);
             if (vr.isWarning()) {
-                LOG.warn("销售订单 {} 促销后行 skuId={} 最终售价 {} 低于底线 {}（价格校验级别={} WARN 放行）",
+                LOG.warn("Sales order {} after promotion line skuId={} final price {} below floor price {} (price check level={} WARN released)",
                         order.getCode(), skuId, finalPrice, vr.getMinPrice(), vr.getLevel());
             }
         }

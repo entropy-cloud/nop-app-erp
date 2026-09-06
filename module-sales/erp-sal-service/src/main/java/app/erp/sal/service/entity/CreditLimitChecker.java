@@ -183,7 +183,7 @@ public class CreditLimitChecker {
         }
         if (ErpSalConstants.CREDIT_CHECK_LEVEL_SPECIAL_APPROVAL.equals(level)) {
             if (hasSpecialApprovalPermission(context)) {
-                LOG.info("客户 {} 信用额度超限（额度={}, 可用={}, 本单含税(本位币)={}，单据类型={}），策略=SPECIAL_APPROVAL 持专项审批权限放行",
+                LOG.info("Customer {} credit limit exceeded (limit={}, available={}, bill amount incl. tax (functional currency)={}, bill type={}), policy=SPECIAL_APPROVAL with special approval permission, released",
                         partner.getId(), creditLimit, available, billAmountFunctional, billType);
                 return;
             }
@@ -193,7 +193,7 @@ public class CreditLimitChecker {
                     .param(ErpSalErrors.ARG_AVAILABLE, available)
                     .param(ErpSalErrors.ARG_ORDER_AMOUNT, billAmountFunctional);
         }
-        LOG.warn("客户 {} 信用额度超限（额度={}, 可用={}, 本单含税(本位币)={}，单据类型={}），策略={} 放行",
+        LOG.warn("Customer {} credit limit exceeded (limit={}, available={}, bill amount incl. tax (functional currency)={}, bill type={}), policy={} released",
                 partner.getId(), creditLimit, available, billAmountFunctional, billType, level);
         // SOFT_WARNING 放行后派发通知（config-gated）：提醒销售员跟进客户超限单据
         notifyCreditOverLimit(partner, billCode, billAmountFunctional, creditLimit, outstanding, available,
@@ -249,7 +249,7 @@ public class CreditLimitChecker {
             notificationBiz.notify(ErpSalConstants.NOTIFY_EVENT_CREDIT_OVER_LIMIT, ctx, context);
         } catch (Exception e) {
             // 通知派发失败不阻断 SOFT_WARNING 放行（config-gated 降级语义）
-            LOG.warn("信用超限 notify 派发失败（降级，主放行流程继续）：customerId={}, reason={}",
+            LOG.warn("Credit limit exceeded notify dispatch failed (degraded, main release flow continues): customerId={}, reason={}",
                     partner.getId(), e.getMessage());
         }
     }

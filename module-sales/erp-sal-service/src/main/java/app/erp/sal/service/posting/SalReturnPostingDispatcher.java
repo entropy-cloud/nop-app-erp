@@ -65,7 +65,7 @@ public class SalReturnPostingDispatcher {
      */
     public boolean tryPost(ErpSalReturn returnOrder) {
         if (!isEstimatedReceivableOutstanding(returnOrder)) {
-            LOG.debug("销售退货 {} 源出库单未暂估（posted=false），跳过 SALES_RETURN 事件构造",
+            LOG.debug("Sales return {} source delivery not provisionally posted (posted=false), skipping SALES_RETURN event construction",
                     returnOrder.getCode());
             return false;
         }
@@ -75,10 +75,10 @@ public class SalReturnPostingDispatcher {
             return voucherId != null;
         } catch (Exception e) {
             if (e instanceof NopException) {
-                LOG.warn("销售退货过账失败，退货单 {} 保持 APPROVED、posted=false：{}",
+                LOG.warn("Sales return posting failed, return order {} remains APPROVED, posted=false: {}",
                         returnOrder.getCode(), e.getMessage());
             } else {
-                LOG.error("销售退货过账异常，退货单 {} 保持 APPROVED、posted=false", returnOrder.getCode(), e);
+                LOG.error("Sales return posting error, return order {} remains APPROVED, posted=false", returnOrder.getCode(), e);
             }
             return false;
         }
@@ -93,9 +93,9 @@ public class SalReturnPostingDispatcher {
             executor.reverse(returnOrder.getCode(), ErpFinBusinessType.SALES_RETURN);
         } catch (Exception e) {
             if (e instanceof NopException) {
-                LOG.warn("销售退货红字冲销失败，退货单 {}：{}", returnOrder.getCode(), e.getMessage());
+                LOG.warn("Sales return reversal failed, return order {}: {}", returnOrder.getCode(), e.getMessage());
             } else {
-                LOG.error("销售退货红字冲销异常，退货单 {}", returnOrder.getCode(), e);
+                LOG.error("Sales return reversal error, return order {}", returnOrder.getCode(), e);
             }
             throw e;
         }
