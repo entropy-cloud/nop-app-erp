@@ -145,7 +145,7 @@ public class ErpB2bOnboardingMonitorJob {
                         count++;
                     }
                 } catch (Exception e) {
-                    LOG.warn("erp-b2b-onboarding-monitor: 单伙伴监控失败（隔离继续）：partnerCode={}, reason={}",
+                    LOG.warn("erp-b2b-onboarding-monitor: per-partner monitor failed (isolated, continuing): partnerCode={}, reason={}",
                             profile.getCode(), e.getMessage());
                 }
             }
@@ -187,7 +187,7 @@ public class ErpB2bOnboardingMonitorJob {
         try {
             codes = JsonTool.parseBeanFromText(allowedFormats, List.class);
         } catch (Exception e) {
-            LOG.warn("erp-b2b-onboarding-monitor: allowedFormats 解析失败（跳过）：partnerCode={}, reason={}",
+            LOG.warn("erp-b2b-onboarding-monitor: allowedFormats parse failed (skipped): partnerCode={}, reason={}",
                     profile.getCode(), e.getMessage());
             return Collections.emptyList();
         }

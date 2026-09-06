@@ -165,7 +165,7 @@ public class ErpB2bAsnHandleInboundWebhookProcessor {
         }
 
         writeEdiLog(ediDoc, ErpB2bConstants.DIRECTION_INBOUND, false, payload, null);
-        LOG.info("ASN 入站解析成功：asnCode={} partnerCode={} lines={}",
+        LOG.info("ASN inbound parse succeeded: asnCode={} partnerCode={} lines={}",
                 asn.getCode(), profile.getCode(), parsed.getLines().size());
         return asn.getId();
     }

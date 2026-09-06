@@ -39,14 +39,14 @@ public class ErpB2bEdiDocCreateOutboundProcessor {
     public ErpB2bEdiDoc createOutbound(String relatedBillType, String relatedBillCode, IServiceContext context) {
         List<IErpB2bEdiProvider> providers = ediRegistry.findOutboundProviders(relatedBillType);
         if (providers.isEmpty()) {
-            LOG.info("无适用出站 EDI 格式：relatedBillType={} relatedBillCode={}（静默跳过）", relatedBillType, relatedBillCode);
+            LOG.info("No applicable outbound EDI format: relatedBillType={} relatedBillCode={} (silently skipped)", relatedBillType, relatedBillCode);
             return null;
         }
 
         IErpB2bEdiProvider provider = providers.get(0);
         ErpB2bEdiFormat format = findFormatByCode(provider.getCode());
         if (format == null) {
-            LOG.warn("EDI 格式配置记录不存在：code={}（跳过）", provider.getCode());
+            LOG.warn("EDI format config record not found: code={} (skipped)", provider.getCode());
             return null;
         }
 

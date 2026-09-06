@@ -84,7 +84,7 @@ public class TransportManager {
                 if (!retryable || attempt >= maxRetries) {
                     break;
                 }
-                LOG.warn("MFT 传输失败（第{}次重试），ediDocId={}：{}", attempt + 1, ediDocId, e.getMessage());
+                LOG.warn("MFT transport failed (retry attempt {}), ediDocId={}: {}", attempt + 1, ediDocId, e.getMessage());
                 sleepSilently(1);
             }
         }
@@ -99,7 +99,7 @@ public class TransportManager {
                 : ErpB2bConstants.MFT_STATUS_FAILED;
         writeLog(config, ediDocId, ErpB2bConstants.DIRECTION_OUTBOUND, status,
                 TransportResult.failure(errorCode, errorMsg), lastFailure, startTime, durationMs, maxRetries);
-        LOG.error("MFT 传输死信，ediDocId={} 保留 TO_SEND：{}", ediDocId, errorMsg);
+        LOG.error("MFT transport dead-letter, ediDocId={} kept TO_SEND: {}", ediDocId, errorMsg);
         return false;
     }
 
@@ -125,7 +125,7 @@ public class TransportManager {
                 dao.saveOrUpdateEntity(doc);
             }
         } catch (Exception e) {
-            LOG.warn("回填 EdiDoc markSent 失败（不阻塞传输成功），ediDocId={}：{}", ediDocId, e.getMessage());
+            LOG.warn("Failed to write back EdiDoc markSent (non-blocking for transport success), ediDocId={}: {}", ediDocId, e.getMessage());
         }
     }
 

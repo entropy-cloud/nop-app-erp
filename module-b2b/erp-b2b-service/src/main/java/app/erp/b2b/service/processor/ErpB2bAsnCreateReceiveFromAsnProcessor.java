@@ -50,7 +50,7 @@ public class ErpB2bAsnCreateReceiveFromAsnProcessor {
         boolean enabled = AppConfig.var(ErpB2bConfigs.CONFIG_ASN_AUTO_CREATE_RECEIVE,
                 ErpB2bConfigs.DEFAULT_ASN_AUTO_CREATE_RECEIVE);
         if (!enabled) {
-            LOG.info("ASN→采购入库自动创建未启用（erp-b2b.asn-auto-create-receive=false），跳过");
+            LOG.info("ASN create receive auto-creation not enabled (erp-b2b.asn-auto-create-receive=false), skipped");
             return null;
         }
 
@@ -60,7 +60,7 @@ public class ErpB2bAsnCreateReceiveFromAsnProcessor {
 
         ErpPurOrder po = findPurchaseOrder(asn.getRelatedBillCode());
         if (po == null) {
-            LOG.warn("ASN {} 创建入库失败：PO {} 不存在", asn.getCode(), asn.getRelatedBillCode());
+            LOG.warn("ASN {} create receive failed: PO {} not found", asn.getCode(), asn.getRelatedBillCode());
             return asn;
         }
 
@@ -86,7 +86,7 @@ public class ErpB2bAsnCreateReceiveFromAsnProcessor {
         asn.setStatus(stateMachine.createReceiveFromAsnTargetStatus());
         daoProvider.daoFor(ErpB2bAsn.class).saveOrUpdateEntity(asn);
 
-        LOG.info("ASN {} 创建采购入库草稿 {} 成功（RECEIVED_TO_STOCK）", asn.getCode(), receive.getCode());
+        LOG.info("ASN {} created purchase receive draft {} (RECEIVED_TO_STOCK)", asn.getCode(), receive.getCode());
         return asn;
     }
 
@@ -112,7 +112,7 @@ public class ErpB2bAsnCreateReceiveFromAsnProcessor {
     protected void fillReceiveLinesFromAsn(ErpB2bAsn asn, ErpPurReceive receive, ErpPurOrder po) {
         List<ErpB2bAsnLine> asnLines = findAsnLines(asn.getId());
         if (asnLines.isEmpty()) {
-            LOG.warn("ASN {} 无 AsnLine 行，createReceiveFromAsn 仅建 Receive 头不回填行级", asn.getCode());
+            LOG.warn("ASN {} has no AsnLine rows, createReceiveFromAsn creates Receive header only without line-level backfill", asn.getCode());
             return;
         }
         // 一次性拉取 PO 行列表，O(N) 反查 unitPrice/taxRate/orderLineId（Decision (a)①）
@@ -164,11 +164,11 @@ public class ErpB2bAsnCreateReceiveFromAsnProcessor {
             try {
                 lineDao.saveEntity(receiveLine);
             } catch (RuntimeException e) {
-                LOG.warn("ASN {} 行 {} 持久化 ReceiveLine 失败：{}", asn.getCode(), asnLine.getLineNo(), e.getMessage());
+                LOG.warn("ASN {} line {} failed to persist ReceiveLine: {}", asn.getCode(), asnLine.getLineNo(), e.getMessage());
                 throw e;
             }
         }
-        LOG.info("ASN {} 行级回填完成：{} 行 ErpPurReceiveLine", asn.getCode(), asnLines.size());
+        LOG.info("ASN {} line-level backfill completed: {} ErpPurReceiveLine rows", asn.getCode(), asnLines.size());
     }
 
     // ---------- 内部辅助 ----------

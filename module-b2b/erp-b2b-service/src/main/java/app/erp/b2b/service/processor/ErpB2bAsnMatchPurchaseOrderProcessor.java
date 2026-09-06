@@ -51,7 +51,7 @@ public class ErpB2bAsnMatchPurchaseOrderProcessor {
         // 查采购订单
         ErpPurOrder po = findPurchaseOrder(asn.getRelatedBillCode());
         if (po == null) {
-            LOG.info("ASN {} 未匹配到采购订单 {}（保留 RECEIVED）", asn.getCode(), asn.getRelatedBillCode());
+            LOG.info("ASN {} purchase order {} not matched (RECEIVED kept)", asn.getCode(), asn.getRelatedBillCode());
             return asn;
         }
 
@@ -60,7 +60,7 @@ public class ErpB2bAsnMatchPurchaseOrderProcessor {
             asn.setRemark("采购订单已关闭/取消：" + asn.getRelatedBillCode());
             daoProvider.daoFor(ErpB2bAsn.class).saveOrUpdateEntity(asn);
             markEdiDocError(asn.getSourceEdiDocId(), "PO_CLOSED: " + asn.getRelatedBillCode(), context);
-            LOG.warn("ASN {} 关联采购订单 {} 已关闭/取消", asn.getCode(), asn.getRelatedBillCode());
+            LOG.warn("ASN {} associated purchase order {} closed/cancelled", asn.getCode(), asn.getRelatedBillCode());
             return asn;
         }
 
@@ -71,7 +71,7 @@ public class ErpB2bAsnMatchPurchaseOrderProcessor {
         for (ErpB2bAsnLine asnLine : asnLines) {
             ErpPurOrderLine matchedPoLine = findMatchingPoLine(poLines, asnLine.getMaterialId());
             if (matchedPoLine == null) {
-                LOG.warn("ASN {} 行物料 {} 未在 PO {} 中找到", asn.getCode(), asnLine.getMaterialId(), asn.getRelatedBillCode());
+                LOG.warn("ASN {} line material {} not found in PO {}", asn.getCode(), asnLine.getMaterialId(), asn.getRelatedBillCode());
                 continue;
             }
             if (asnLine.getShippedQty() != null && matchedPoLine.getQuantity() != null) {
@@ -94,10 +94,10 @@ public class ErpB2bAsnMatchPurchaseOrderProcessor {
         try {
             ediDocBiz.archive(asn.getSourceEdiDocId(), context);
         } catch (Exception e) {
-            LOG.warn("ASN {} 归档 EdiDoc 失败（不阻塞匹配）：{}", asn.getCode(), e.getMessage());
+            LOG.warn("ASN {} failed to archive EdiDoc (non-blocking for match): {}", asn.getCode(), e.getMessage());
         }
 
-        LOG.info("ASN {} 匹配采购订单 {} 成功（MATCHED）", asn.getCode(), asn.getRelatedBillCode());
+        LOG.info("ASN {} matched purchase order {} (MATCHED)", asn.getCode(), asn.getRelatedBillCode());
         return asn;
     }
 
@@ -176,7 +176,7 @@ public class ErpB2bAsnMatchPurchaseOrderProcessor {
         try {
             ediDocBiz.markError(ediDocId, error, context);
         } catch (Exception e) {
-            LOG.warn("回填 EdiDoc markError 失败：{}", e.getMessage());
+            LOG.warn("Failed to write back EdiDoc markError: {}", e.getMessage());
         }
     }
 }

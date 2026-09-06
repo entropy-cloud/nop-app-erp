@@ -47,7 +47,7 @@ public class CodeMappingResolver {
         if (mapping != null) {
             return mapping.getExternalCode();
         }
-        LOG.warn("出站代码映射未找到：partnerId={} type={} internalCode={}（保留原值）", partnerId, mappingType, internalCode);
+        LOG.warn("Outbound code mapping not found: partnerId={} type={} internalCode={} (original value kept)", partnerId, mappingType, internalCode);
         return internalCode;
     }
 
@@ -67,7 +67,7 @@ public class CodeMappingResolver {
         if (mapping != null) {
             return mapping.getInternalCode();
         }
-        LOG.warn("入站代码映射未找到：partnerId={} type={} externalCode={}（保留原值）", partnerId, mappingType, externalCode);
+        LOG.warn("Inbound code mapping not found: partnerId={} type={} externalCode={} (original value kept)", partnerId, mappingType, externalCode);
         return externalCode;
     }
 
