@@ -206,7 +206,7 @@ public class ErpCtDocumentBizModel extends AbstractErpCrudBizModel<ErpCtDocument
                 archive(doc.getId(), context);
                 count++;
             } catch (Exception ex) {
-                LOG.warn("erp-ct-doc-retention: 单条文档归档失败（隔离继续）：documentId={}, reason={}",
+                LOG.warn("erp-ct-doc-retention: single-document archive failed (isolated, continuing): documentId={}, reason={}",
                         doc.getId(), ex.getMessage());
             }
         }
@@ -231,7 +231,7 @@ public class ErpCtDocumentBizModel extends AbstractErpCrudBizModel<ErpCtDocument
                 purge(doc.getId(), context);
                 count++;
             } catch (Exception ex) {
-                LOG.warn("erp-ct-doc-retention: 单条文档销毁失败（隔离继续）：documentId={}, reason={}",
+                LOG.warn("erp-ct-doc-retention: single-document purge failed (isolated, continuing): documentId={}, reason={}",
                         doc.getId(), ex.getMessage());
             }
         }
@@ -556,7 +556,7 @@ public class ErpCtDocumentBizModel extends AbstractErpCrudBizModel<ErpCtDocument
                 notificationBiz.notify(ErpCtConstants.NOTIFY_EVENT_DOCUMENT_PURGED, payload, context);
             }
         } catch (Exception ex) {
-            LOG.warn("erp-ct-doc-purged: 审计通知派发失败（best-effort 跳过）：documentId={}, reason={}",
+            LOG.warn("erp-ct-doc-purged: audit notification dispatch failed (best-effort skip): documentId={}, reason={}",
                     doc.getId(), ex.getMessage());
         }
     }

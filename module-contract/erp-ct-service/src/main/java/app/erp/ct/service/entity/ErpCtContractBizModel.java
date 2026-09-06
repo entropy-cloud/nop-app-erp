@@ -356,7 +356,7 @@ public class ErpCtContractBizModel extends AbstractErpCrudBizModel<ErpCtContract
                 updateEntity(contract, null, context);
                 expired.add(contract);
             } catch (Exception ex) {
-                LOG.warn("erp-ct-contract-expiry: 单条合同到期失败（隔离继续）：contractId={}, reason={}",
+                LOG.warn("erp-ct-contract-expiry: single-contract expiry failed (isolated, continuing): contractId={}, reason={}",
                         contract.getId(), ex.getMessage());
             }
         }
@@ -391,7 +391,7 @@ public class ErpCtContractBizModel extends AbstractErpCrudBizModel<ErpCtContract
             try {
                 contractInvoicePlanBiz.triggerInvoice(plan.getId(), context);
             } catch (Exception ex) {
-                LOG.warn("erp-ct-contract-expiry: 到期前开票触发失败（隔离继续）：contractId={}, planId={}, reason={}",
+                LOG.warn("erp-ct-contract-expiry: pre-expiry invoice trigger failed (isolated, continuing): contractId={}, planId={}, reason={}",
                         contract.getId(), plan.getId(), ex.getMessage());
             }
         }
@@ -434,7 +434,7 @@ public class ErpCtContractBizModel extends AbstractErpCrudBizModel<ErpCtContract
         draft.setStatus(ErpCtConstants.CONTRACT_STATUS_DRAFT);
         draft.setBusinessDate(CoreMetrics.today());
         saveEntity(draft, null, context);
-        LOG.info("erp-ct-contract-expiry: 自动创建续期草稿：parentContractId={}, draftCode={}",
+        LOG.info("erp-ct-contract-expiry: auto-created renewal draft: parentContractId={}, draftCode={}",
                 contract.getId(), draft.getCode());
     }
 

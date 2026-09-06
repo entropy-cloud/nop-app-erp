@@ -123,7 +123,7 @@ public class ErpCtContractExpiryJob {
                     count++;
                 }
             } catch (Exception ex) {
-                LOG.warn("erp-ct-contract-expiry: 单条合同预警失败（隔离继续）：contractId={}, reason={}",
+                LOG.warn("erp-ct-contract-expiry: single-contract warning failed (isolated, continuing): contractId={}, reason={}",
                         contract.getId(), ex.getMessage());
             }
         }
@@ -174,7 +174,7 @@ public class ErpCtContractExpiryJob {
     protected boolean notifyEscalation(ErpCtContract contract, IServiceContext ctx) {
         String escalationUserId = resolveEscalationUserId(contract.getCreatedBy(), ctx);
         if (escalationUserId == null) {
-            LOG.warn("erp-ct-contract-expiry: 无经办人上级（无直接上级且无部门负责人），跳过升级通知：contractId={}",
+            LOG.warn("erp-ct-contract-expiry: no handler manager (no direct manager and no department head), skipping escalation notice: contractId={}",
                     contract.getId());
             return false;
         }

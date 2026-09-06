@@ -60,12 +60,12 @@ public class ErpCtDocRetentionJob {
             if (autoArchiveEnabled()) {
                 archived = runArchiveScan(ctx);
             } else {
-                LOG.info("erp-ct-doc-retention: doc-auto-archive=false，到期归档扫描跳过");
+                LOG.info("erp-ct-doc-retention: doc-auto-archive=false, expiry archive scan skipped");
             }
             if (autoPurgeEnabled()) {
                 purged = runPurgeScan(ctx);
             } else {
-                LOG.info("erp-ct-doc-retention: doc-auto-purge=false（默认，需人工确认），到期销毁扫描跳过");
+                LOG.info("erp-ct-doc-retention: doc-auto-purge=false (default, manual confirmation required), expiry purge scan skipped");
             }
             LOG.info("erp-ct-doc-retention-done: archived={}, purged={}", archived, purged);
         } catch (Exception e) {

@@ -126,7 +126,7 @@ public class ErpCtApprovalTimeoutEscalationJob {
                         count++;
                     }
                 } catch (Exception e) {
-                    LOG.warn("erp-ct-approval-timeout: 单条审批升级失败（隔离继续）：recordId={}, reason={}",
+                    LOG.warn("erp-ct-approval-timeout: single-record approval escalation failed (isolated, continuing): recordId={}, reason={}",
                             record.getId(), e.getMessage());
                 }
             }
@@ -142,7 +142,7 @@ public class ErpCtApprovalTimeoutEscalationJob {
     protected boolean escalateRecord(ErpCtApprovalRecord record, IServiceContext ctx) {
         String escalationUserId = resolveEscalationUserId(record, ctx);
         if (escalationUserId == null) {
-            LOG.warn("erp-ct-approval-timeout: 无升级接收人（无上一节点审批人且无合同经办人），跳过：recordId={}",
+            LOG.warn("erp-ct-approval-timeout: no escalation recipient (no previous-node approver and no contract handler), skipping: recordId={}",
                     record.getId());
             return false;
         }
