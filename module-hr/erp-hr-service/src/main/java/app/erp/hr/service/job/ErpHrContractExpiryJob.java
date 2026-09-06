@@ -79,7 +79,7 @@ public class ErpHrContractExpiryJob {
                 notifyExpiry(c, ctx);
                 count++;
             } catch (Exception ex) {
-                LOG.warn("erp-hr-contract-expiry: 单条合同预警失败（隔离继续）：contractId={}, reason={}",
+                LOG.warn("erp-hr-contract-expiry: single contract expiry warning failed (failure isolated, continuing): contractId={}, reason={}",
                         c.getId(), ex.getMessage());
             }
         }

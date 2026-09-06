@@ -137,7 +137,7 @@ public class ErpHrLeaveApproverTimeoutJob {
                         count++;
                     }
                 } catch (Exception e) {
-                    LOG.warn("erp-hr-leave-approver-timeout: 单条休假转派失败（隔离继续）：leaveId={}, reason={}",
+                    LOG.warn("erp-hr-leave-approver-timeout: single leave request reassignment failed (failure isolated, continuing): leaveId={}, reason={}",
                             leave.getId(), e.getMessage());
                 }
             }
@@ -151,13 +151,13 @@ public class ErpHrLeaveApproverTimeoutJob {
     protected boolean escalateLeave(ErpHrLeaveRequest leave, IServiceContext ctx) {
         String targetId = resolveEscalationTarget(leave.getEmployeeId(), ctx);
         if (targetId == null) {
-            LOG.warn("erp-hr-leave-approver-timeout: 休假单无转派目标（无直接上级且无部门负责人），跳过：leaveId={}, employeeId={}",
+            LOG.warn("erp-hr-leave-approver-timeout: leave request has no reassignment target (no direct supervisor and no department head), skipping: leaveId={}, employeeId={}",
                     leave.getId(), leave.getEmployeeId());
             return false;
         }
         // 幂等守卫：approverId 已 == 目标人则跳过（防重复派发；首扫后 updateEntity 刷新 updateTime 亦不再命中过滤）
         if (leave.getApproverId() != null && leave.getApproverId().equals(targetId)) {
-            LOG.info("erp-hr-leave-approver-timeout: 幂等跳过（approverId 已为目标审批人）：leaveId={}", leave.getId());
+            LOG.info("erp-hr-leave-approver-timeout: idempotent skip (approverId already equals target approver): leaveId={}", leave.getId());
             return false;
         }
         leave.setApproverId(targetId);

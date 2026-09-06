@@ -183,7 +183,7 @@ public class IncomeTaxCalculator {
             }
         } catch (Exception e) {
             String snippet = json.length() > 200 ? json.substring(0, 200) : json;
-            LOG.warn("累计薪酬数据 JSON 解析失败：employeeId={}, year={}, json 片段={}", employeeId, year, snippet, e);
+            LOG.warn("Failed to parse cumulative pay data JSON: employeeId={}, year={}, json snippet={}", employeeId, year, snippet, e);
             throw new NopException(ErpHrErrors.ERR_HR_CUMULATIVE_DATA_CORRUPT, e)
                     .param(ErpHrErrors.ARG_EMPLOYEE_ID, employeeId)
                     .param(ErpHrErrors.ARG_YEAR, year);

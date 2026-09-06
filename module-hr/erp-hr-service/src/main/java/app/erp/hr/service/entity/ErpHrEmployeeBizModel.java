@@ -211,7 +211,7 @@ public class ErpHrEmployeeBizModel extends AbstractErpCrudBizModel<ErpHrEmployee
         q.setLimit(1);
         long count = leaveRequestBiz.findCount(q, context);
         if (count > 0) {
-            LOG.warn("员工[{}]调动生效日期[{}]与已批准休假冲突，已告警不阻塞（UC-HR-08）", employeeId, effectiveDate);
+            LOG.warn("Employee[{}] transfer effective date[{}] conflicts with approved leave, alerted and non-blocking (UC-HR-08)", employeeId, effectiveDate);
         }
     }
 

@@ -85,7 +85,7 @@ public class SalaryPostingDispatcher {
      */
     public boolean tryPostAccrual(ErpHrSalary salary) {
         if (alreadyPosted(buildBillCode(salary), ErpFinBusinessType.SALARY)) {
-            LOG.info("薪酬计提凭证已存在，去重守卫跳过：salaryId={}, billCode={}",
+            LOG.info("Salary accrual voucher already exists, skipped by dedup guard: salaryId={}, billCode={}",
                     salary.getId(), buildBillCode(salary));
             return true;
         }
@@ -95,10 +95,10 @@ public class SalaryPostingDispatcher {
             return voucherId != null;
         } catch (Exception e) {
             if (e instanceof NopException) {
-                LOG.warn("薪酬计提过账失败，薪酬记录 {} 保持 APPROVED：{}",
+                LOG.warn("Salary accrual posting failed, salary record {} remains APPROVED: {}",
                         salary.getId(), e.getMessage());
             } else {
-                LOG.error("薪酬计提过账异常，薪酬记录 {} 保持 APPROVED", salary.getId(), e);
+                LOG.error("Salary accrual posting error, salary record {} remains APPROVED", salary.getId(), e);
             }
             dispatchFailureAlert(salary, "计提", e);
             return false;
@@ -112,7 +112,7 @@ public class SalaryPostingDispatcher {
      */
     public boolean tryPostSocialInsuranceER(ErpHrSalary salary) {
         if (alreadyPosted(buildBillCode(salary), ErpFinBusinessType.SOCIAL_INSURANCE_ER)) {
-            LOG.info("社保公司承担凭证已存在，去重守卫跳过：salaryId={}, billCode={}",
+            LOG.info("Employer social insurance voucher already exists, skipped by dedup guard: salaryId={}, billCode={}",
                     salary.getId(), buildBillCode(salary));
             return true;
         }
@@ -125,9 +125,9 @@ public class SalaryPostingDispatcher {
             return voucherId != null;
         } catch (Exception e) {
             if (e instanceof NopException) {
-                LOG.warn("社保公司承担过账失败，薪酬记录 {} 保持 APPROVED：{}", salary.getId(), e.getMessage());
+                LOG.warn("Employer social insurance posting failed, salary record {} remains APPROVED: {}", salary.getId(), e.getMessage());
             } else {
-                LOG.error("社保公司承担过账异常，薪酬记录 {} 保持 APPROVED", salary.getId(), e);
+                LOG.error("Employer social insurance posting error, salary record {} remains APPROVED", salary.getId(), e);
             }
             dispatchFailureAlert(salary, "社保", e);
             return false;
@@ -141,7 +141,7 @@ public class SalaryPostingDispatcher {
      */
     public boolean tryPostHousingFundER(ErpHrSalary salary) {
         if (alreadyPosted(buildBillCode(salary), ErpFinBusinessType.HOUSING_FUND_ER)) {
-            LOG.info("公积金公司承担凭证已存在，去重守卫跳过：salaryId={}, billCode={}",
+            LOG.info("Employer housing fund voucher already exists, skipped by dedup guard: salaryId={}, billCode={}",
                     salary.getId(), buildBillCode(salary));
             return true;
         }
@@ -154,9 +154,9 @@ public class SalaryPostingDispatcher {
             return voucherId != null;
         } catch (Exception e) {
             if (e instanceof NopException) {
-                LOG.warn("公积金公司承担过账失败，薪酬记录 {} 保持 APPROVED：{}", salary.getId(), e.getMessage());
+                LOG.warn("Employer housing fund posting failed, salary record {} remains APPROVED: {}", salary.getId(), e.getMessage());
             } else {
-                LOG.error("公积金公司承担过账异常，薪酬记录 {} 保持 APPROVED", salary.getId(), e);
+                LOG.error("Employer housing fund posting error, salary record {} remains APPROVED", salary.getId(), e);
             }
             dispatchFailureAlert(salary, "公积金", e);
             return false;
@@ -171,7 +171,7 @@ public class SalaryPostingDispatcher {
         // F1.2（P2-CK-hr2-006）：去重守卫镜像计提链（tryPostAccrual D3）——主事务回滚后重试
         // markPaid 时命中即跳过，避免冗余引擎调用（并保持与计提链一致的幂等语义）
         if (alreadyPosted(buildBillCode(salary), ErpFinBusinessType.SALARY_PAYMENT)) {
-            LOG.info("薪酬发放凭证已存在，去重守卫跳过：salaryId={}, billCode={}",
+            LOG.info("Salary payment voucher already exists, skipped by dedup guard: salaryId={}, billCode={}",
                     salary.getId(), buildBillCode(salary));
             return true;
         }
@@ -181,9 +181,9 @@ public class SalaryPostingDispatcher {
             return voucherId != null;
         } catch (Exception e) {
             if (e instanceof NopException) {
-                LOG.warn("薪酬发放过账失败，薪酬记录 {} 已 PAID：{}", salary.getId(), e.getMessage());
+                LOG.warn("Salary payment posting failed, salary record {} already PAID: {}", salary.getId(), e.getMessage());
             } else {
-                LOG.error("薪酬发放过账异常，薪酬记录 {} 已 PAID", salary.getId(), e);
+                LOG.error("Salary payment posting error, salary record {} already PAID", salary.getId(), e);
             }
             dispatchFailureAlert(salary, "发放", e);
             return false;
@@ -237,7 +237,7 @@ public class SalaryPostingDispatcher {
         try {
             notificationBiz.notify(NOTIFY_EVENT_SALARY_FAILURE, ctx, serviceCtx);
         } catch (Exception notifyErr) {
-            LOG.warn("薪酬过账失败告警派发失败（降级）：salaryId={}, reason={}",
+            LOG.warn("Salary posting failure alert dispatch failed (degraded): salaryId={}, reason={}",
                     salary.getId(), notifyErr.getMessage());
         }
     }
