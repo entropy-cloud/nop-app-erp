@@ -148,10 +148,10 @@ public class ErpInvStockTakeCompleteTakeProcessor {
         } catch (Exception e) {
             deleteOrphanDiffMove(take, line, qty, gain);
             if (e instanceof NopException) {
-                LOG.warn("盘点差异移动单生成失败（行 {} 物料 {} 已隔离，盘点单 {} 继续）：{}",
+                LOG.warn("Stock take variance move creation failed (line {} material {} isolated, stock take {} continues): {}",
                         line.getLineNo(), line.getMaterialId(), take.getCode(), e.getMessage());
             } else {
-                LOG.error("盘点差异移动单生成异常（行 {} 物料 {} 已隔离，盘点单 {} 继续）",
+                LOG.error("Stock take variance move creation error (line {} material {} isolated, stock take {} continues)",
                         line.getLineNo(), line.getMaterialId(), take.getCode(), e);
             }
             dispatchDiffGenerationFailureAlert(take, line, e);
@@ -231,12 +231,12 @@ public class ErpInvStockTakeCompleteTakeProcessor {
                     moveLineDao().deleteEntity(cl);
                 }
                 moveDao().deleteEntity(candidate);
-                LOG.warn("盘点差异移动单生成失败，已同事务删除孤立 DRAFT 移动单 {}（盘点单 {} 行 {}）",
+                LOG.warn("Stock take variance move creation failed, orphaned DRAFT stock move {} deleted in same transaction (stock take {} line {})",
                         candidate.getCode(), take.getCode(), line.getLineNo());
                 break;
             }
         } catch (Exception cleanupErr) {
-            LOG.warn("盘点差异移动单生成失败后孤立 DRAFT 清理异常（盘点单 {} 行 {}）：{}",
+            LOG.warn("Orphaned DRAFT cleanup error after stock take variance move creation failure (stock take {} line {}): {}",
                     take.getCode(), line.getLineNo(), cleanupErr.getMessage());
         }
     }
@@ -276,7 +276,7 @@ public class ErpInvStockTakeCompleteTakeProcessor {
         try {
             notificationBiz.notify(NOTIFY_EVENT_STOCKTAKE_DIFF_GENERATION_FAILED, ctx, serviceCtx);
         } catch (Exception notifyErr) {
-            LOG.warn("盘点差异移动单生成失败告警派发失败（降级）：takeCode={}, reason={}",
+            LOG.warn("Stock take variance move creation failure alert dispatch failed (degraded): takeCode={}, reason={}",
                     take.getCode(), notifyErr.getMessage());
         }
     }

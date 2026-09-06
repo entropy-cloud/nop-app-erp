@@ -62,9 +62,9 @@ public class LandedCostPostingDispatcher {
             return postEvent(event);
         } catch (Exception e) {
             if (e instanceof NopException) {
-                LOG.warn("到岸成本过账失败，单 {} 保持 posted=false：{}", landedCost.getCode(), e.getMessage());
+                LOG.warn("Landed cost posting failed, document {} remains posted=false: {}", landedCost.getCode(), e.getMessage());
             } else {
-                LOG.error("到岸成本过账异常，单 {} 保持 posted=false", landedCost.getCode(), e);
+                LOG.error("Landed cost posting error, document {} remains posted=false", landedCost.getCode(), e);
             }
             return null;
         }

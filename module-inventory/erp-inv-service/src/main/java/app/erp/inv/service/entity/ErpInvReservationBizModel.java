@@ -85,7 +85,7 @@ public class ErpInvReservationBizModel extends AbstractErpCrudBizModel<ErpInvRes
         // 幂等：同 (sourceBillType, sourceBillCode) 已存在未取消预留 → 返回既有头（不重复预留/占用）
         ErpInvReservation existing = findHeader(request.getSourceBillType(), request.getSourceBillCode());
         if (existing != null && !Objects.equals(existing.getStatus(), ErpInvDaoConstants.RESERVATION_STATUS_CANCELLED)) {
-            LOG.info("createReservation 幂等命中：sourceBillType={}, sourceBillCode={}, reservationId={}",
+            LOG.info("createReservation idempotent hit: sourceBillType={}, sourceBillCode={}, reservationId={}",
                     request.getSourceBillType(), request.getSourceBillCode(), existing.getId());
             return existing;
         }
@@ -119,7 +119,7 @@ public class ErpInvReservationBizModel extends AbstractErpCrudBizModel<ErpInvRes
     protected void createReservationLine(ErpInvReservation header, ReservationLineRequest lineReq, int lineNo) {
         if (lineReq == null || lineReq.getMaterialId() == null || lineReq.getWarehouseId() == null
                 || lineReq.getUomId() == null) {
-            LOG.warn("createReservation 跳过预留行（materialId/warehouseId/uomId 缺失）：sourceBillCode={}, lineNo={}",
+            LOG.warn("createReservation skip reservation line (materialId/warehouseId/uomId missing): sourceBillCode={}, lineNo={}",
                     header.getSourceBillCode(), lineNo);
             return;
         }
@@ -203,7 +203,7 @@ public class ErpInvReservationBizModel extends AbstractErpCrudBizModel<ErpInvRes
         ErpInvStockBalance balance = findBalance(orgId, line.getMaterialId(), line.getSkuId(),
                 line.getWarehouseId(), line.getLocationId(), line.getBatchNo());
         if (balance == null) {
-            LOG.warn("releaseReservation 未找到余额行，跳过余额释放：materialId={}, warehouseId={}",
+            LOG.warn("releaseReservation balance line not found, skipping balance release: materialId={}, warehouseId={}",
                     line.getMaterialId(), line.getWarehouseId());
             return;
         }
@@ -319,7 +319,7 @@ public class ErpInvReservationBizModel extends AbstractErpCrudBizModel<ErpInvRes
         ErpInvStockBalance balance = findBalance(orgId, line.getMaterialId(), line.getSkuId(),
                 line.getWarehouseId(), line.getLocationId(), line.getBatchNo());
         if (balance == null) {
-            LOG.warn("consumeReservation 未找到余额行，跳过余额消耗：materialId={}, warehouseId={}",
+            LOG.warn("consumeReservation balance line not found, skipping balance consumption: materialId={}, warehouseId={}",
                     line.getMaterialId(), line.getWarehouseId());
             return;
         }
@@ -415,7 +415,7 @@ public class ErpInvReservationBizModel extends AbstractErpCrudBizModel<ErpInvRes
         ErpInvStockBalance balance = findBalance(orgId, line.getMaterialId(), line.getSkuId(),
                 line.getWarehouseId(), line.getLocationId(), line.getBatchNo());
         if (balance == null) {
-            LOG.warn("unconsumeReservation 未找到余额行，跳过余额恢复：materialId={}, warehouseId={}",
+            LOG.warn("unconsumeReservation balance line not found, skipping balance restore: materialId={}, warehouseId={}",
                     line.getMaterialId(), line.getWarehouseId());
             return;
         }

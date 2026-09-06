@@ -62,10 +62,10 @@ public class OwnershipTransferPostingDispatcher {
         } catch (Exception e) {
             // 过账失败不阻塞转移单终态：保持 DONE + posted=false，由兜底扫描重试。
             if (e instanceof NopException) {
-                LOG.warn("所有权转移过账失败，转移单 {} 保持 DONE、posted=false：{}",
+                LOG.warn("Ownership transfer posting failed, transfer {} remains DONE, posted=false: {}",
                         transfer.getCode(), e.getMessage());
             } else {
-                LOG.error("所有权转移过账异常，转移单 {} 保持 DONE、posted=false", transfer.getCode(), e);
+                LOG.error("Ownership transfer posting error, transfer {} remains DONE, posted=false", transfer.getCode(), e);
             }
         }
     }

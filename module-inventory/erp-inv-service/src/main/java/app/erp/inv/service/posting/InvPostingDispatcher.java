@@ -69,9 +69,9 @@ public class InvPostingDispatcher {
         } catch (Exception e) {
             // 过账失败不阻塞移动单终态：保持 DONE + posted=false，由兜底扫描重试。
             if (e instanceof NopException) {
-                LOG.warn("存货过账失败，移动单 {} 保持 DONE、posted=false：{}", move.getCode(), e.getMessage());
+                LOG.warn("Inventory posting failed, stock move {} remains DONE, posted=false: {}", move.getCode(), e.getMessage());
             } else {
-                LOG.error("存货过账异常，移动单 {} 保持 DONE、posted=false", move.getCode(), e);
+                LOG.error("Inventory posting error, stock move {} remains DONE, posted=false", move.getCode(), e);
             }
         }
 
@@ -140,10 +140,10 @@ public class InvPostingDispatcher {
                 // 安全（O-22）：PPV 金额属于敏感采购成本数据，错误日志中必须脱敏（仅保留量级，隐藏末尾精度）
                 String maskedAmount = maskAmount(ppvAmount);
                 if (e instanceof NopException) {
-                    LOG.warn("采购价差过账失败，移动单 {} 行 {} 金额(脱敏){}：{}",
+                    LOG.warn("Purchase price variance posting failed, stock move {} line {} amount(masked){}: {}",
                             move.getCode(), line.getId(), maskedAmount, sanitizeMessage(e.getMessage()));
                 } else {
-                    LOG.error("采购价差过账异常，移动单 {} 行 {} 金额(脱敏){}", move.getCode(), line.getId(), maskedAmount, e);
+                    LOG.error("Purchase price variance posting error, stock move {} line {} amount(masked){}", move.getCode(), line.getId(), maskedAmount, e);
                 }
             }
         }

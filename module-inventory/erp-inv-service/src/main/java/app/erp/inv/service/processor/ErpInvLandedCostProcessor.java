@@ -166,10 +166,10 @@ public class ErpInvLandedCostProcessor {
             postingDispatcher.reverse(landedCost);
         } catch (Exception e) {
             if (e instanceof NopException) {
-                LOG.warn("到岸成本红冲 GL 凭证失败（吞异常保持幂等），单 {} billHeadCode={}: {}",
+                LOG.warn("Landed cost reversal GL voucher failed (exception swallowed to keep idempotency), document {} billHeadCode={}: {}",
                         landedCost.getCode(), landedCost.getCode(), e.getMessage());
             } else {
-                LOG.error("到岸成本红冲 GL 凭证异常（吞异常保持幂等），单 {} billHeadCode={}",
+                LOG.error("Landed cost reversal GL voucher error (exception swallowed to keep idempotency), document {} billHeadCode={}",
                         landedCost.getCode(), landedCost.getCode(), e);
             }
             // G4 错误传播分级（plan 2026-07-30-0341-2 P1-MA4-020）：到岸成本 reverse 方向无 sweep 覆盖，
@@ -524,7 +524,7 @@ public class ErpInvLandedCostProcessor {
         try {
             notificationBiz.notify(NOTIFY_EVENT_LANDED_COST_REVERSE_FAILURE, ctx, serviceCtx);
         } catch (Exception notifyErr) {
-            LOG.warn("到岸成本 reverse 过账失败告警派发失败（降级）：billCode={}, reason={}",
+            LOG.warn("Landed cost reverse posting failure alert dispatch failed (degraded): billCode={}, reason={}",
                     landedCost.getCode(), notifyErr.getMessage());
         }
     }

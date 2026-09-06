@@ -119,7 +119,7 @@ public class StandardCostResolver {
             }
         } catch (Exception e) {
             // 属性不存在时反射读取抛错（预期，当前 Non-Goal 路径），记录 debug 便于诊断，返回 null 由调用方抛 ERR_STANDARD_COST_NOT_AVAILABLE
-            LOG.debug("standardCost 属性读取失败（物料 {}），返回 null 走标准成本缺失处理", materialId, e);
+            LOG.debug("standardCost property read failed (material {}), returning null for standard cost missing handling", materialId, e);
         }
         return null;
     }

@@ -53,9 +53,9 @@ public class CostAdjustmentPostingDispatcher {
             return postEvent(event);
         } catch (Exception e) {
             if (e instanceof NopException) {
-                LOG.warn("成本调整过账失败，调整单 {} 保持 posted=false：{}", adjust.getCode(), e.getMessage());
+                LOG.warn("Cost adjustment posting failed, adjustment {} remains posted=false: {}", adjust.getCode(), e.getMessage());
             } else {
-                LOG.error("成本调整过账异常，调整单 {} 保持 posted=false", adjust.getCode(), e);
+                LOG.error("Cost adjustment posting error, adjustment {} remains posted=false", adjust.getCode(), e);
             }
             return null;
         }
@@ -67,9 +67,9 @@ public class CostAdjustmentPostingDispatcher {
             voucherBiz.reverse(adjust.getCode(), ErpFinBusinessType.COST_ADJUSTMENT, context);
         } catch (Exception e) {
             if (e instanceof NopException) {
-                LOG.warn("成本调整红字冲销失败，调整单 {}：{}", adjust.getCode(), e.getMessage());
+                LOG.warn("Cost adjustment reversal failed, adjustment {}: {}", adjust.getCode(), e.getMessage());
             } else {
-                LOG.error("成本调整红字冲销异常，调整单 {}", adjust.getCode(), e);
+                LOG.error("Cost adjustment reversal error, adjustment {}", adjust.getCode(), e);
             }
             throw e;
         }
