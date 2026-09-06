@@ -132,7 +132,8 @@ public class GatewayDispatcher {
                 if (!retryable || attempt >= maxRetries) {
                     break;
                 }
-                LOG.warn("承运商网关下单失败（第{}次重试），运单 {}：{}", attempt + 1, shipment.getCode(), e.getMessage());
+                LOG.warn("Carrier gateway delivery order failed (retry attempt {}), shipment {}: {}",
+                        attempt + 1, shipment.getCode(), e.getMessage());
                 sleepSilently(intervals[Math.min(attempt, intervals.length - 1)]);
             }
         }
@@ -318,7 +319,8 @@ public class GatewayDispatcher {
         try {
             deliveryBookingBiz.releaseForShipment(shipment.getId(), new ServiceContextImpl());
         } catch (Exception e) {
-            LOG.warn("发运单 {} 状态迁移后释放配送预约失败（降级不阻断）：{}", shipment.getCode(), e.getMessage());
+            LOG.warn("Failed to release delivery booking after shipment {} status transition (degraded, non-blocking): {}",
+                    shipment.getCode(), e.getMessage());
         }
     }
 
@@ -389,7 +391,7 @@ public class GatewayDispatcher {
         daoProvider.daoFor(ErpLogShipment.class).saveOrUpdateEntity(shipment);
         String code = retryable ? "GATEWAY_RETRY_EXHAUSTED" : "GATEWAY_NON_RETRYABLE";
         writeLog(shipment, actionType, request, null, httpStatusOf(failure), code, errMsg, false);
-        LOG.error("承运商网关下单死信，运单 {} 保留 ADVISED：{}", shipment.getCode(), errMsg);
+        LOG.error("Carrier gateway delivery order dead-lettered, shipment {} kept ADVISED: {}", shipment.getCode(), errMsg);
         // G4 错误传播分级（plan 2026-07-30-0341-2 P1-MA2-080）：logistics 网关无 DeferredPostingSweepJob 覆盖，
         // 死信派发 IErpSysNotificationBiz 告警使运营感知（ADVISED 静默悬挂→告警闭环）。
         dispatchDeadLetterAlert(shipment, code, errMsg);
@@ -411,7 +413,7 @@ public class GatewayDispatcher {
         try {
             notificationBiz.notify(NOTIFY_EVENT_GATEWAY_DEAD_LETTER, ctx, serviceCtx);
         } catch (Exception notifyErr) {
-            LOG.warn("网关死信告警派发失败（降级）：shipmentCode={}, reason={}",
+            LOG.warn("Gateway dead-letter alert dispatch failed (degraded): shipmentCode={}, reason={}",
                     shipment.getCode(), notifyErr.getMessage());
         }
     }

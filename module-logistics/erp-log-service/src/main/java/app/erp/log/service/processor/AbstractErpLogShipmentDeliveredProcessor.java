@@ -113,7 +113,7 @@ abstract class AbstractErpLogShipmentDeliveredProcessor {
         String mode = AppConfig.var(ErpLogConfigs.CONFIG_SHIPMENT_SETTLEMENT_MODE,
                 ErpLogConfigs.SETTLEMENT_MODE_AUTO);
         if (ErpLogConfigs.SETTLEMENT_MODE_MANUAL.equals(mode)) {
-            LOG.info("运费结算模式=MANUAL，运单 {} DELIVERED 后标记待人工处理", shipment.getCode());
+            LOG.info("Freight settlement mode=MANUAL, shipment {} marked pending manual handling after DELIVERED", shipment.getCode());
             return;
         }
         PostingEvent event = buildFreightPostingEvent(shipment);
@@ -125,10 +125,10 @@ abstract class AbstractErpLogShipmentDeliveredProcessor {
         } catch (Exception e) {
             // 过账失败不阻塞 DELIVERED 终态：保持 PENDING，由兜底扫描重试（参 InvPostingDispatcher 失败语义）。
             if (e instanceof NopException) {
-                LOG.warn("运费过账失败，运单 {} 保持 DELIVERED、freightSettlementStatus=PENDING：{}",
+                LOG.warn("Freight posting failed, shipment {} kept DELIVERED with freightSettlementStatus=PENDING: {}",
                         shipment.getCode(), e.getMessage());
             } else {
-                LOG.error("运费过账异常，运单 {} 保持 DELIVERED、freightSettlementStatus=PENDING", shipment.getCode(), e);
+                LOG.error("Freight posting exception, shipment {} kept DELIVERED with freightSettlementStatus=PENDING", shipment.getCode(), e);
             }
             // G4 错误传播分级（plan 2026-08-02-1500-1 P1-MA2-080）：logistics 无 finance sweep 兜底，
             // 失败派发告警使运费过账悬挂可被感知（对齐 MaintenanceLaborPostingDispatcher.dispatchFailureAlert 范式）。
@@ -157,7 +157,7 @@ abstract class AbstractErpLogShipmentDeliveredProcessor {
         }
 
         if (freightAmount == null || freightAmount.compareTo(BigDecimal.ZERO) <= 0) {
-            LOG.info("运单 {} PURCHASE_RECEIPT DELIVERED 但 freightAmount={}≤0，无 path-2 职责，标记 SETTLED",
+            LOG.info("Shipment {} PURCHASE_RECEIPT DELIVERED but freightAmount={}<=0, no path-2 duty, marking SETTLED",
                     shipment.getCode(), freightAmount);
             gatewayDispatcher.saveShipment(markSettled(shipment));
             return;
@@ -167,17 +167,17 @@ abstract class AbstractErpLogShipmentDeliveredProcessor {
             ErpInvLandedCost landedCost = landedCostBiz.generateFreightLandedCost(
                     shipment.getRelatedBillCode(), freightAmount,
                     shipment.getFreightCurrencyId(), null, context);
-            LOG.info("path-2 自动创建到岸成本单 {}：运单 {} / 采购入库单 {} / 运费 {}",
+            LOG.info("path-2 auto-created landed cost {}: shipment {} / purchase receipt {} / freight {}",
                     landedCost.getCode(), shipment.getCode(), shipment.getRelatedBillCode(), freightAmount);
             publishDeliveredEvent(shipment);
             gatewayDispatcher.saveShipment(markSettled(shipment));
         } catch (Exception e) {
             // path-2 失败保持 PENDING，允许 scanForPolling/webhook 重入重试（对齐 path-1 失败语义）
             if (e instanceof NopException) {
-                LOG.error("path-2 到岸成本自动创建失败，运单 {} 保持 PENDING：{}",
+                LOG.error("path-2 landed cost auto-creation failed, shipment {} kept PENDING: {}",
                         shipment.getCode(), e.getMessage());
             } else {
-                LOG.error("path-2 到岸成本自动创建异常，运单 {} 保持 PENDING", shipment.getCode(), e);
+                LOG.error("path-2 landed cost auto-creation exception, shipment {} kept PENDING", shipment.getCode(), e);
             }
         }
     }
@@ -191,7 +191,7 @@ abstract class AbstractErpLogShipmentDeliveredProcessor {
      */
     protected void notifySalesDeliveryStatus(ErpLogShipment shipment, IServiceContext context) {
         if (salDeliveryBiz == null || salOrderBiz == null) {
-            LOG.info("sales Facade 未部署（@Nullable 容错），跳过交付状态回写：发运单 {}", shipment.getCode());
+            LOG.info("sales Facade not deployed (@Nullable fallback), skipping delivery status write-back: shipment {}", shipment.getCode());
             return;
         }
         try {
@@ -199,7 +199,7 @@ abstract class AbstractErpLogShipmentDeliveredProcessor {
             q.addFilter(io.nop.api.core.beans.FilterBeans.eq("code", shipment.getRelatedBillCode()));
             ErpSalDelivery delivery = salDeliveryBiz.findFirst(q, null, context);
             if (delivery == null || delivery.getOrderId() == null) {
-                LOG.warn("销售出库单 {} 不存在或无源订单，跳过交付状态回写（发运单 {}）",
+                LOG.warn("Sales delivery {} not found or has no source order, skipping delivery status write-back (shipment {})",
                         shipment.getRelatedBillCode(), shipment.getCode());
                 return;
             }
@@ -210,10 +210,10 @@ abstract class AbstractErpLogShipmentDeliveredProcessor {
             }
             salOrderBiz.updateDeliveryStatus(delivery.getOrderId(),
                     ErpLogConstants.SALES_DELIVERY_STATUS_DELIVERED, context);
-            LOG.info("发运单 {} DELIVERED 交付状态回写 sales：出库单 {} → 订单 {} deliveryStatus=DELIVERED",
+            LOG.info("Shipment {} DELIVERED wrote back delivery status to sales: delivery {} -> order {} deliveryStatus=DELIVERED",
                     shipment.getCode(), delivery.getCode(), delivery.getOrderId());
         } catch (Exception e) {
-            LOG.warn("交付状态回写 sales 失败（降级不阻断 DELIVERED 与运费过账）：shipmentCode={}, reason={}",
+            LOG.warn("Delivery status write-back to sales failed (degraded, does not block DELIVERED or freight posting): shipmentCode={}, reason={}",
                     shipment.getCode(), e.getMessage());
         }
     }
@@ -234,7 +234,7 @@ abstract class AbstractErpLogShipmentDeliveredProcessor {
         try {
             notificationBiz.notify(NOTIFY_EVENT_LOG_FREIGHT_POSTING_FAILURE, ctx, serviceCtx);
         } catch (Exception notifyErr) {
-            LOG.warn("运费过账失败告警派发失败（降级）：shipmentCode={}, reason={}",
+            LOG.warn("Freight posting failure alert dispatch failed (degraded): shipmentCode={}, reason={}",
                     shipment.getCode(), notifyErr.getMessage());
         }
     }
@@ -283,7 +283,7 @@ abstract class AbstractErpLogShipmentDeliveredProcessor {
         ShipmentDeliveredEvent evt = new ShipmentDeliveredEvent(shipment.getId(), shipment.getCode(),
                 shipment.getRelatedBillType(), shipment.getRelatedBillCode(), shipment.getCarrierId(),
                 shipment.getFreightAmount(), shipment.getFreightCurrencyId());
-        LOG.info("ShipmentDeliveredEvent 发布（path-2 采购运费交接）：{}", evt.getShipmentCode());
+        LOG.info("ShipmentDeliveredEvent published (path-2 purchase freight handoff): {}", evt.getShipmentCode());
     }
 
     protected IEntityDao<ErpLogShipment> dao() {

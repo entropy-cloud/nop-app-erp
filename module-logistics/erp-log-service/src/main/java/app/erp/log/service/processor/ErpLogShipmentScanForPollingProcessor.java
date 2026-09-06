@@ -25,7 +25,7 @@ public class ErpLogShipmentScanForPollingProcessor extends AbstractErpLogShipmen
             try {
                 onDelivered(shipment, context);
             } catch (Exception e) {
-                LOG.error("轮询驱动 DELIVERED 后 onDelivered 失败，运单 {} 保持 PENDING：{}",
+                LOG.error("onDelivered failed after polling-driven DELIVERED, shipment {} kept PENDING: {}",
                         shipment.getCode(), e.getMessage(), e);
             }
         }

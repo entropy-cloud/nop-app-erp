@@ -110,7 +110,7 @@ public class ErpLogDraftEscalationJob {
                         count++;
                     }
                 } catch (Exception e) {
-                    LOG.warn("erp-log-draft-escalation: 单条升级失败（隔离继续）：shipmentId={}, reason={}",
+                    LOG.warn("erp-log-draft-escalation: single-record escalation failed (isolated, continuing): shipmentId={}, reason={}",
                             shipment.getId(), e.getMessage());
                 }
             }
