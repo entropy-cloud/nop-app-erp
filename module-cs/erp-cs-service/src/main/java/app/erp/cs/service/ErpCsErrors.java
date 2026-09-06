@@ -1,5 +1,6 @@
 package app.erp.cs.service;
 
+import io.nop.api.core.annotations.core.Locale;
 import io.nop.api.core.exceptions.ErrorCode;
 
 /**
@@ -9,6 +10,7 @@ import io.nop.api.core.exceptions.ErrorCode;
  * {@code docs/design/customer-service/sla.md}、{@code docs/design/customer-service/csat.md}、
  * {@code docs/plans/2026-07-04-0700-2-cs-ticket-sla-csat.md}。
  */
+@Locale("zh-CN")
 public interface ErpCsErrors {
 
     String ARG_TICKET_ID = "ticketId";

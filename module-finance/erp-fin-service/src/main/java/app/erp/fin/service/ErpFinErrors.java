@@ -1,11 +1,13 @@
 package app.erp.fin.service;
 
+import io.nop.api.core.annotations.core.Locale;
 import io.nop.api.core.exceptions.ErrorCode;
 
 /**
  * 财务域业务错误码。应收应付辅助账生成与核销流程中的业务异常使用
  * {@link io.nop.api.core.exceptions.NopException} + 本接口的 {@link ErrorCode}。
  */
+@Locale("zh-CN")
 public interface ErpFinErrors {
 
     String ARG_SOURCE_BILL_CODE = "sourceBillCode";

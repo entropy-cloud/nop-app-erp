@@ -1,10 +1,12 @@
 package app.erp.crm.service;
 
+import io.nop.api.core.annotations.core.Locale;
 import io.nop.api.core.exceptions.ErrorCode;
 
 /**
  * CRM 域业务异常错误码。所有 CRM 流程中的业务异常使用 {@link io.nop.api.core.exceptions.NopException} + 本接口的 {@link ErrorCode}。
  */
+@Locale("zh-CN")
 public interface ErpCrmErrors {
 
     String ARG_LEAD_ID = "leadId";

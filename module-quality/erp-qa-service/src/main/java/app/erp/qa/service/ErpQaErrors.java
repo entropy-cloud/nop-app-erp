@@ -1,5 +1,6 @@
 package app.erp.qa.service;
 
+import io.nop.api.core.annotations.core.Locale;
 import io.nop.api.core.exceptions.ErrorCode;
 
 /**
@@ -8,6 +9,7 @@ import io.nop.api.core.exceptions.ErrorCode;
  * <p>权威：{@code docs/design/quality/state-machine.md}、
  * {@code docs/plans/2026-07-02-2237-3-quality-inspection-trigger-ncr-capa.md}。
  */
+@Locale("zh-CN")
 public interface ErpQaErrors {
 
     String ARG_INSPECTION_ID = "inspectionId";

@@ -1,5 +1,6 @@
 package app.erp.ast.service;
 
+import io.nop.api.core.annotations.core.Locale;
 import io.nop.api.core.exceptions.ErrorCode;
 
 /**
@@ -7,6 +8,7 @@ import io.nop.api.core.exceptions.ErrorCode;
  * {@link io.nop.api.core.exceptions.NopException} + 本接口的 {@link ErrorCode}。
  * 描述用中文，框架经 i18n 翻译。
  */
+@Locale("zh-CN")
 public interface ErpAstErrors {
 
     // --- 作用域参数键 ---

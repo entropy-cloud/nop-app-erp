@@ -1,11 +1,13 @@
 package app.erp.sal.service;
 
 import app.erp.md.service.daterange.ErpDateRangeOverlapValidator;
+import io.nop.api.core.annotations.core.Locale;
 import io.nop.api.core.exceptions.ErrorCode;
 
 /**
  * 销售域业务异常错误码。所有销售流程中的业务异常使用 {@link io.nop.api.core.exceptions.NopException} + 本接口的 {@link ErrorCode}。
  */
+@Locale("zh-CN")
 public interface ErpSalErrors {
 
     String ARG_DELIVERY_ID = "deliveryId";

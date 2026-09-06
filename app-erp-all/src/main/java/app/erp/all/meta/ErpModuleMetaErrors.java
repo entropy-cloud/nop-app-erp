@@ -1,5 +1,6 @@
 package app.erp.all.meta;
 
+import io.nop.api.core.annotations.core.Locale;
 import io.nop.api.core.exceptions.ErrorCode;
 
 /**
@@ -8,6 +9,7 @@ import io.nop.api.core.exceptions.ErrorCode;
  *
  * <p>读取器本身的诊断查询返回结果对象，不直接抛异常（诊断场景允许返回不完整清单）。
  */
+@Locale("zh-CN")
 public interface ErpModuleMetaErrors {
 
     String ARG_MODULE_ID = "moduleId";

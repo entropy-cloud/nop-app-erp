@@ -1,10 +1,12 @@
 package app.erp.b2b.service;
 
+import io.nop.api.core.annotations.core.Locale;
 import io.nop.api.core.exceptions.ErrorCode;
 
 /**
  * B2B/EDI 域业务异常错误码。所有 B2B 流程中的业务异常使用 {@link io.nop.api.core.exceptions.NopException} + 本接口的 {@link ErrorCode}。
  */
+@Locale("zh-CN")
 public interface ErpB2bErrors {
 
     String ARG_EDI_FORMAT_CODE = "ediFormatCode";

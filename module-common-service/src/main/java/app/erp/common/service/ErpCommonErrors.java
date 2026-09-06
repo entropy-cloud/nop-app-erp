@@ -1,5 +1,6 @@
 package app.erp.common.service;
 
+import io.nop.api.core.annotations.core.Locale;
 import io.nop.api.core.exceptions.ErrorCode;
 
 /**
@@ -8,6 +9,7 @@ import io.nop.api.core.exceptions.ErrorCode;
  * <p>具体域应优先使用各自 {@code *Errors.java} 中定义的域特有错误码（更精准的描述）；
  * 本接口仅提供抽象基类默认实现使用的兜底错误码。
  */
+@Locale("zh-CN")
 public interface ErpCommonErrors {
     String ARG_BIZ_OBJ_NAME = "bizObjName";
     String ARG_BIZ_OBJ_ID = "bizObjId";

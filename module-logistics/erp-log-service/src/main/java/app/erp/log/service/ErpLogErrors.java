@@ -1,10 +1,12 @@
 package app.erp.log.service;
 
+import io.nop.api.core.annotations.core.Locale;
 import io.nop.api.core.exceptions.ErrorCode;
 
 /**
  * 物流域业务异常错误码。所有物流流程中的业务异常使用 {@link io.nop.api.core.exceptions.NopException} + 本接口的 {@link ErrorCode}。
  */
+@Locale("zh-CN")
 public interface ErpLogErrors {
 
     String ARG_SHIPMENT_ID = "shipmentId";

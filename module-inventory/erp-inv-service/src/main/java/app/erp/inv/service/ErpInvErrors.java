@@ -1,10 +1,12 @@
 package app.erp.inv.service;
 
+import io.nop.api.core.annotations.core.Locale;
 import io.nop.api.core.exceptions.ErrorCode;
 
 /**
  * 库存域业务异常错误码。所有库存流程中的业务异常使用 {@link io.nop.api.core.exceptions.NopException} + 本接口的 {@link ErrorCode}。
  */
+@Locale("zh-CN")
 public interface ErpInvErrors {
 
     String ARG_MOVE_ID = "moveId";

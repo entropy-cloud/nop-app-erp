@@ -1,5 +1,6 @@
 package app.erp.drp.service;
 
+import io.nop.api.core.annotations.core.Locale;
 import io.nop.api.core.exceptions.ErrorCode;
 
 /**
@@ -8,6 +9,7 @@ import io.nop.api.core.exceptions.ErrorCode;
  * <p>权威：`docs/design/drp/README.md`、`docs/design/drp/state-machine.md`、`docs/design/drp/safety-stock-optimization.md`、
  * `docs/plans/2026-07-04-1115-2-drp-net-requirement-safety-stock.md`。
  */
+@Locale("zh-CN")
 public interface ErpDrpErrors {
 
     String ARG_DRP_PLAN_ID = "drpPlanId";

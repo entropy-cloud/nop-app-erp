@@ -1,5 +1,6 @@
 package app.erp.notify.service;
 
+import io.nop.api.core.annotations.core.Locale;
 import io.nop.api.core.exceptions.ErrorCode;
 
 /**
@@ -8,6 +9,7 @@ import io.nop.api.core.exceptions.ErrorCode;
  * <p>权威：`docs/architecture/notification-strategy.md`、
  * `docs/plans/2026-07-06-0504-1-notification-dispatch-subsystem.md`。
  */
+@Locale("zh-CN")
 public interface ErpNotifyErrors {
 
     String ARG_NOTIFICATION_TYPE = "notificationType";

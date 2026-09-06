@@ -1,10 +1,12 @@
 package app.erp.pur.service;
 
+import io.nop.api.core.annotations.core.Locale;
 import io.nop.api.core.exceptions.ErrorCode;
 
 /**
  * 采购域业务异常错误码。所有采购流程中的业务异常使用 {@link io.nop.api.core.exceptions.NopException} + 本接口的 {@link ErrorCode}。
  */
+@Locale("zh-CN")
 public interface ErpPurErrors {
 
     String ARG_RECEIVE_ID = "receiveId";

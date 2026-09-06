@@ -1,5 +1,6 @@
 package app.erp.ct.service;
 
+import io.nop.api.core.annotations.core.Locale;
 import io.nop.api.core.exceptions.ErrorCode;
 
 /**
@@ -10,6 +11,7 @@ import io.nop.api.core.exceptions.ErrorCode;
  *（dict: erp-ct/contract-status、erp-ct/version-status、erp-ct/settlement-status、
  * erp-ct/rebate-agreement-status）。
  */
+@Locale("zh-CN")
 public interface ErpCtErrors {
 
     String ARG_CONTRACT_ID = "contractId";

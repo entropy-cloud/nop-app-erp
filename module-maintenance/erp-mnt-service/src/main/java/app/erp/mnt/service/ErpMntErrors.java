@@ -1,10 +1,12 @@
 package app.erp.mnt.service;
 
+import io.nop.api.core.annotations.core.Locale;
 import io.nop.api.core.exceptions.ErrorCode;
 
 /**
  * 维护域业务异常错误码。所有维护流程中的业务异常使用 {@link io.nop.api.core.exceptions.NopException} + 本接口的 {@link ErrorCode}。
  */
+@Locale("zh-CN")
 public interface ErpMntErrors {
 
     String ARG_VISIT_ID = "visitId";

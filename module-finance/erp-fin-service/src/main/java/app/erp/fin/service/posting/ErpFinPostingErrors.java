@@ -1,10 +1,12 @@
 package app.erp.fin.service.posting;
 
+import io.nop.api.core.annotations.core.Locale;
 import io.nop.api.core.exceptions.ErrorCode;
 
 /**
  * 业财过账引擎错误码。所有过账流程中的业务异常使用 {@link io.nop.api.core.exceptions.NopException} + 本接口的 {@link ErrorCode}。
  */
+@Locale("zh-CN")
 public interface ErpFinPostingErrors {
 
     String ARG_BUSINESS_TYPE = "businessType";
