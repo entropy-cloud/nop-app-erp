@@ -124,7 +124,7 @@ public class NcrPostingDispatcher {
         q.setLimit(1);
         List<ErpInvStockBalance> balances = dao.findAllByQuery(q);
         if (balances.isEmpty()) {
-            LOG.warn("NCR 报废物料 {} 无库存余额记录，单位成本按 0 计（凭证金额为 0）", materialId);
+            LOG.warn("NCR scrap material {} has no stock balance record, unit cost treated as 0 (voucher amount 0)", materialId);
             return null;
         }
         return balances.get(0);
