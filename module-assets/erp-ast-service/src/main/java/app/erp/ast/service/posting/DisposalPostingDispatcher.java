@@ -54,9 +54,9 @@ public class DisposalPostingDispatcher {
             return executor.postEvent(event);
         } catch (Exception e) {
             if (e instanceof NopException) {
-                LOG.warn("处置过账失败，处置单 {} 保持 posted=false：{}", disposal.getCode(), e.getMessage());
+                LOG.warn("disposal posting failed, disposal bill {} keeps posted=false: {}", disposal.getCode(), e.getMessage());
             } else {
-                LOG.error("处置过账异常，处置单 {} 保持 posted=false", disposal.getCode(), e);
+                LOG.error("disposal posting error, disposal bill {} keeps posted=false", disposal.getCode(), e);
             }
             dispatchFailureAlert(disposal, e);
             return null;
@@ -77,7 +77,7 @@ public class DisposalPostingDispatcher {
         try {
             notificationBiz.notify(NOTIFY_EVENT_DISPOSAL_FAILURE, ctx, serviceCtx);
         } catch (Exception notifyErr) {
-            LOG.warn("处置过账失败告警派发失败（降级）：billCode={}, reason={}",
+            LOG.warn("disposal posting failure alert dispatch failed (degraded): billCode={}, reason={}",
                     disposal.getCode(), notifyErr.getMessage());
         }
     }
@@ -87,9 +87,9 @@ public class DisposalPostingDispatcher {
             executor.reverse(disposal.getCode(), ErpFinBusinessType.DISPOSAL);
         } catch (Exception e) {
             if (e instanceof NopException) {
-                LOG.warn("处置红字冲销失败，处置单 {}：{}", disposal.getCode(), e.getMessage());
+                LOG.warn("disposal reversal failed, disposal bill {}: {}", disposal.getCode(), e.getMessage());
             } else {
-                LOG.error("处置红字冲销异常，处置单 {}", disposal.getCode(), e);
+                LOG.error("disposal reversal error, disposal bill {}", disposal.getCode(), e);
             }
             throw e;
         }

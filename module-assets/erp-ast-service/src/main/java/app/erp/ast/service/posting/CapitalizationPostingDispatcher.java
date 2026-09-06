@@ -59,9 +59,9 @@ public class CapitalizationPostingDispatcher {
             return voucherId != null;
         } catch (Exception e) {
             if (e instanceof NopException) {
-                LOG.warn("资本化过账失败，资本化单 {} 保持 APPROVED、posted=false：{}", cap.getCode(), e.getMessage());
+                LOG.warn("capitalization posting failed, capitalization bill {} keeps APPROVED, posted=false: {}", cap.getCode(), e.getMessage());
             } else {
-                LOG.error("资本化过账异常，资本化单 {} 保持 APPROVED、posted=false", cap.getCode(), e);
+                LOG.error("capitalization posting error, capitalization bill {} keeps APPROVED, posted=false", cap.getCode(), e);
             }
             dispatchFailureAlert(cap, e);
             return false;
@@ -82,7 +82,7 @@ public class CapitalizationPostingDispatcher {
         try {
             notificationBiz.notify(NOTIFY_EVENT_CAPITALIZATION_FAILURE, ctx, serviceCtx);
         } catch (Exception notifyErr) {
-            LOG.warn("资本化过账失败告警派发失败（降级）：billCode={}, reason={}",
+            LOG.warn("capitalization posting failure alert dispatch failed (degraded): billCode={}, reason={}",
                     cap.getCode(), notifyErr.getMessage());
         }
     }
@@ -95,9 +95,9 @@ public class CapitalizationPostingDispatcher {
             executor.reverse(cap.getCode(), ErpFinBusinessType.CAPITALIZATION);
         } catch (Exception e) {
             if (e instanceof NopException) {
-                LOG.warn("资本化红字冲销失败，资本化单 {}：{}", cap.getCode(), e.getMessage());
+                LOG.warn("capitalization reversal failed, capitalization bill {}: {}", cap.getCode(), e.getMessage());
             } else {
-                LOG.error("资本化红字冲销异常，资本化单 {}", cap.getCode(), e);
+                LOG.error("capitalization reversal error, capitalization bill {}", cap.getCode(), e);
             }
             throw e;
         }

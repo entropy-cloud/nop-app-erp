@@ -42,9 +42,9 @@ public class AssetInventoryPostingDispatcher {
             return executor.postEvent(event);
         } catch (Exception e) {
             if (e instanceof NopException) {
-                LOG.warn("盘点过账失败，盘点单 {} 保持 posted=false：{}", inventory.getCode(), e.getMessage());
+                LOG.warn("inventory posting failed, inventory bill {} keeps posted=false: {}", inventory.getCode(), e.getMessage());
             } else {
-                LOG.error("盘点过账异常，盘点单 {} 保持 posted=false", inventory.getCode(), e);
+                LOG.error("inventory posting error, inventory bill {} keeps posted=false", inventory.getCode(), e);
             }
             return null;
         }
@@ -55,9 +55,9 @@ public class AssetInventoryPostingDispatcher {
             executor.reverse(inventory.getCode(), ErpFinBusinessType.ASSET_INVENTORY_ADJUSTMENT);
         } catch (Exception e) {
             if (e instanceof NopException) {
-                LOG.warn("盘点红字冲销失败，盘点单 {}：{}", inventory.getCode(), e.getMessage());
+                LOG.warn("inventory reversal failed, inventory bill {}: {}", inventory.getCode(), e.getMessage());
             } else {
-                LOG.error("盘点红字冲销异常，盘点单 {}", inventory.getCode(), e);
+                LOG.error("inventory reversal error, inventory bill {}", inventory.getCode(), e);
             }
             throw e;
         }

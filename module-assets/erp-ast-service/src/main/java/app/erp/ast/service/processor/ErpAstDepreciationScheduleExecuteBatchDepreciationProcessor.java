@@ -48,7 +48,7 @@ public class ErpAstDepreciationScheduleExecuteBatchDepreciationProcessor {
                 executeDepreciationProcessor.executeDepreciation(asset.getId(), period, context);
                 processed++;
             } catch (Exception e) {
-                LOG.warn("批量折旧：资产 {} 期间 {} 计提失败，跳过：{}", asset.getCode(), period, e.getMessage());
+                LOG.warn("batch depreciation: asset {} period {} accrual failed, skipped: {}", asset.getCode(), period, e.getMessage());
             }
         }
         return processed;

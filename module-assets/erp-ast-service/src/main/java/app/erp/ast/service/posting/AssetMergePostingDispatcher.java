@@ -50,9 +50,9 @@ public class AssetMergePostingDispatcher {
             return voucherId != null;
         } catch (Exception e) {
             if (e instanceof NopException) {
-                LOG.warn("资产合并过账失败，合并单 {} 保持 posted=false：{}", merge.getCode(), e.getMessage());
+                LOG.warn("asset merge posting failed, merge bill {} keeps posted=false: {}", merge.getCode(), e.getMessage());
             } else {
-                LOG.error("资产合并过账异常，合并单 {} 保持 posted=false", merge.getCode(), e);
+                LOG.error("asset merge posting error, merge bill {} keeps posted=false", merge.getCode(), e);
             }
             return false;
         }

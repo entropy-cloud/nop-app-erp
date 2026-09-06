@@ -52,9 +52,9 @@ public class AssetSplitPostingDispatcher {
             return voucherId != null;
         } catch (Exception e) {
             if (e instanceof NopException) {
-                LOG.warn("资产拆分过账失败，拆分单 {} 保持 posted=false：{}", split.getCode(), e.getMessage());
+                LOG.warn("asset split posting failed, split bill {} keeps posted=false: {}", split.getCode(), e.getMessage());
             } else {
-                LOG.error("资产拆分过账异常，拆分单 {} 保持 posted=false", split.getCode(), e);
+                LOG.error("asset split posting error, split bill {} keeps posted=false", split.getCode(), e);
             }
             return false;
         }

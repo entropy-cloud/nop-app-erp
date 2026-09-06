@@ -42,9 +42,9 @@ public class ValueAdjustmentPostingDispatcher {
             return executor.postEvent(event);
         } catch (Exception e) {
             if (e instanceof NopException) {
-                LOG.warn("价值调整过账失败，调整单 {} 保持 posted=false：{}", adjustment.getCode(), e.getMessage());
+                LOG.warn("value adjustment posting failed, adjustment bill {} keeps posted=false: {}", adjustment.getCode(), e.getMessage());
             } else {
-                LOG.error("价值调整过账异常，调整单 {} 保持 posted=false", adjustment.getCode(), e);
+                LOG.error("value adjustment posting error, adjustment bill {} keeps posted=false", adjustment.getCode(), e);
             }
             return null;
         }
@@ -55,9 +55,9 @@ public class ValueAdjustmentPostingDispatcher {
             executor.reverse(adjustment.getCode(), ErpFinBusinessType.VALUE_ADJUSTMENT);
         } catch (Exception e) {
             if (e instanceof NopException) {
-                LOG.warn("价值调整红字冲销失败，调整单 {}：{}", adjustment.getCode(), e.getMessage());
+                LOG.warn("value adjustment reversal failed, adjustment bill {}: {}", adjustment.getCode(), e.getMessage());
             } else {
-                LOG.error("价值调整红字冲销异常，调整单 {}", adjustment.getCode(), e);
+                LOG.error("value adjustment reversal error, adjustment bill {}", adjustment.getCode(), e);
             }
             throw e;
         }

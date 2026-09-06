@@ -43,9 +43,9 @@ public class MaintenanceCapitalizationPostingDispatcher {
             return executor.postEvent(event);
         } catch (Exception e) {
             if (e instanceof NopException) {
-                LOG.warn("维修资本化过账失败，维修单 {} 保持 posted=false：{}", maintenance.getCode(), e.getMessage());
+                LOG.warn("maintenance capitalization posting failed, maintenance bill {} keeps posted=false: {}", maintenance.getCode(), e.getMessage());
             } else {
-                LOG.error("维修资本化过账异常，维修单 {} 保持 posted=false", maintenance.getCode(), e);
+                LOG.error("maintenance capitalization posting error, maintenance bill {} keeps posted=false", maintenance.getCode(), e);
             }
             return null;
         }
@@ -56,9 +56,9 @@ public class MaintenanceCapitalizationPostingDispatcher {
             executor.reverse(maintenance.getCode(), ErpFinBusinessType.MAINTENANCE_CAPITALIZATION);
         } catch (Exception e) {
             if (e instanceof NopException) {
-                LOG.warn("维修资本化红字冲销失败，维修单 {}：{}", maintenance.getCode(), e.getMessage());
+                LOG.warn("maintenance capitalization reversal failed, maintenance bill {}: {}", maintenance.getCode(), e.getMessage());
             } else {
-                LOG.error("维修资本化红字冲销异常，维修单 {}", maintenance.getCode(), e);
+                LOG.error("maintenance capitalization reversal error, maintenance bill {}", maintenance.getCode(), e);
             }
             throw e;
         }

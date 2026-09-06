@@ -43,9 +43,9 @@ public class MaintenanceExpensePostingDispatcher {
             return executor.postEvent(event);
         } catch (Exception e) {
             if (e instanceof NopException) {
-                LOG.warn("维修费用化过账失败，维修单 {} 保持 posted=false：{}", maintenance.getCode(), e.getMessage());
+                LOG.warn("maintenance expense posting failed, maintenance bill {} keeps posted=false: {}", maintenance.getCode(), e.getMessage());
             } else {
-                LOG.error("维修费用化过账异常，维修单 {} 保持 posted=false", maintenance.getCode(), e);
+                LOG.error("maintenance expense posting error, maintenance bill {} keeps posted=false", maintenance.getCode(), e);
             }
             return null;
         }
@@ -56,9 +56,9 @@ public class MaintenanceExpensePostingDispatcher {
             executor.reverse(maintenance.getCode(), ErpFinBusinessType.MAINTENANCE_EXPENSE);
         } catch (Exception e) {
             if (e instanceof NopException) {
-                LOG.warn("维修费用化红字冲销失败，维修单 {}：{}", maintenance.getCode(), e.getMessage());
+                LOG.warn("maintenance expense reversal failed, maintenance bill {}: {}", maintenance.getCode(), e.getMessage());
             } else {
-                LOG.error("维修费用化红字冲销异常，维修单 {}", maintenance.getCode(), e);
+                LOG.error("maintenance expense reversal error, maintenance bill {}", maintenance.getCode(), e);
             }
             throw e;
         }

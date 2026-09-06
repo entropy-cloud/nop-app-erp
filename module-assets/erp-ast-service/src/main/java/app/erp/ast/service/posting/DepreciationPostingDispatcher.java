@@ -57,10 +57,10 @@ public class DepreciationPostingDispatcher {
             return executor.postEvent(event);
         } catch (Exception e) {
             if (e instanceof NopException) {
-                LOG.warn("折旧过账失败，资产 {} 期间 {} 保持 posted=false：{}",
+                LOG.warn("depreciation posting failed, asset {} period {} keeps posted=false: {}",
                         asset.getCode(), schedule.getPeriod(), e.getMessage());
             } else {
-                LOG.error("折旧过账异常，资产 {} 期间 {} 保持 posted=false",
+                LOG.error("depreciation posting error, asset {} period {} keeps posted=false",
                         asset.getCode(), schedule.getPeriod(), e);
             }
             dispatchFailureAlert(asset, schedule, e);
@@ -87,7 +87,7 @@ public class DepreciationPostingDispatcher {
         try {
             notificationBiz.notify(NOTIFY_EVENT_DEPRECIATION_FAILURE, ctx, serviceCtx);
         } catch (Exception notifyErr) {
-            LOG.warn("折旧过账失败告警派发失败（降级）：assetCode={}, reason={}",
+            LOG.warn("depreciation posting failure alert dispatch failed (degraded): assetCode={}, reason={}",
                     asset.getCode(), notifyErr.getMessage());
         }
     }
@@ -106,10 +106,10 @@ public class DepreciationPostingDispatcher {
             return executor.postEvent(event);
         } catch (Exception e) {
             if (e instanceof NopException) {
-                LOG.warn("折旧补提过账失败，资产 {} 当前期间 {} 保持 posted=false：{}",
+                LOG.warn("depreciation make-up posting failed, asset {} current period {} keeps posted=false: {}",
                         asset.getCode(), currentPeriod, e.getMessage());
             } else {
-                LOG.error("折旧补提过账异常，资产 {} 当前期间 {} 保持 posted=false",
+                LOG.error("depreciation make-up posting error, asset {} current period {} keeps posted=false",
                         asset.getCode(), currentPeriod, e);
             }
             dispatchFailureAlert(asset, currentPeriod, caughtUpPeriods, e);
@@ -135,7 +135,7 @@ public class DepreciationPostingDispatcher {
         try {
             notificationBiz.notify(NOTIFY_EVENT_DEPRECIATION_FAILURE, ctx, serviceCtx);
         } catch (Exception notifyErr) {
-            LOG.warn("折旧补提失败告警派发失败（降级）：assetCode={}, reason={}",
+            LOG.warn("depreciation make-up failure alert dispatch failed (degraded): assetCode={}, reason={}",
                     asset.getCode(), notifyErr.getMessage());
         }
     }
@@ -178,9 +178,9 @@ public class DepreciationPostingDispatcher {
             executor.reverse(billHeadCode(asset.getCode(), period), ErpFinBusinessType.DEPRECIATION);
         } catch (Exception e) {
             if (e instanceof NopException) {
-                LOG.warn("折旧红字冲销失败，资产 {} 期间 {}：{}", asset.getCode(), period, e.getMessage());
+                LOG.warn("depreciation reversal failed, asset {} period {}: {}", asset.getCode(), period, e.getMessage());
             } else {
-                LOG.error("折旧红字冲销异常，资产 {} 期间 {}", asset.getCode(), period, e);
+                LOG.error("depreciation reversal error, asset {} period {}", asset.getCode(), period, e);
             }
             throw e;
         }
