@@ -66,6 +66,7 @@ verify: [test]
 ## Verification
 
 - pass test 2026-09-06-1451-1-mvn exit=0 2026-09-06 全 reactor BUILD SUCCESS（156 模块，8012 tests / 0 failures / 0 errors），优于 `known-good-baselines.md` 2026-09-04 行——该行登记的 2 个预存失败（hr `TestErpHrDepartmentPositionDeleteGuard#testDeleteEmptyPositionAllowed` + drp `TestErpDrpCrossDock#testStagingTimeoutFallbackJob`）本轮实测均已通过，零新增失败。全量日志：`_tmp/2026-09-06-1451-1-mvn-test.log`（68M 行，app-erp-all 集成测试 DDL 逐实体落盘所致，非异常）。
+- pass test 2026-09-06-1556-r3m0-verify exit=0 mission-driver verify run：全 reactor `mvn clean install -DskipTests`（2:16）+ `mvn test`（21:55）双 BUILD SUCCESS，Results 行精确汇总 4006 tests / 0 failures / 0 errors / 1 skipped，对照 2026-09-04 行零新增失败。日志：`_tmp/ai-check-r3-r3m0-verify-build.log` / `_tmp/ai-check-r3-r3m0-verify-test.log`。
 
 ## Closure
 

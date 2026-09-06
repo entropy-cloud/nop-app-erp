@@ -1,0 +1,285 @@
+╔══════════════════════════════════════════════════════════════╗
+║  Nop 平台合规性启发式检测器                                  ║
+║  仓库: /Users/abc/app/nop-app-erp
+╚══════════════════════════════════════════════════════════════╝
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+[R1] 🔴 高 — BizModel 中 dao() 直接调用（绕过 CrudBizModel 生命周期）
+规则: safe-api-reference.md — 禁止绕过 CrudBizModel 管道
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+▸ R1a: dao().saveEntity() — 应用 saveEntity(entity, null, context)
+  → 命中: 0 处
+
+▸ R1b: dao().updateEntity() — 应用 updateEntity(entity, null, context)
+  → 命中: 0 处
+
+▸ R1c: dao().getEntityById() — 应用 requireEntity(id, null, context)
+  → 命中: 0 处
+
+▸ R1d: dao().findAllByQuery() — 应用 findList(query, null, context)
+  /Users/abc/app/nop-app-erp/module-crm/erp-crm-service/src/main/java/app/erp/crm/service/entity/ErpCrmLeadSequenceProgressBizModel.java:199:        return dao().findAllByQuery(q).stream().findFirst().orElse(null);
+  /Users/abc/app/nop-app-erp/module-crm/erp-crm-service/src/main/java/app/erp/crm/service/entity/ErpCrmLeadSequenceProgressBizModel.java:205:        return dao().findAllByQuery(q);
+  /Users/abc/app/nop-app-erp/module-crm/erp-crm-service/src/main/java/app/erp/crm/service/entity/ErpCrmLeadSequenceProgressBizModel.java:214:        return dao().findAllByQuery(q);
+  /Users/abc/app/nop-app-erp/module-master-data/erp-md-service/src/main/java/app/erp/md/service/entity/ErpMdExchangeRateBizModel.java:65:                dao().findAllByQuery(query),
+  /Users/abc/app/nop-app-erp/module-master-data/erp-md-service/src/main/java/app/erp/md/service/entity/ErpMdMaterialCustomsBizModel.java:90:        for (ErpMdMaterialCustoms existing : dao().findAllByQuery(query)) {
+  /Users/abc/app/nop-app-erp/module-master-data/erp-md-service/src/main/java/app/erp/md/service/entity/ErpMdSupplierApprovalBizModel.java:90:        List<ErpMdSupplierApproval> samePartner = dao().findAllByQuery(query);
+  /Users/abc/app/nop-app-erp/module-master-data/erp-md-service/src/main/java/app/erp/md/service/entity/ErpMdTaxRateBizModel.java:58:                dao().findAllByQuery(query),
+  /Users/abc/app/nop-app-erp/module-master-data/erp-md-service/src/main/java/app/erp/md/service/entity/ErpMdPartnerBizModel.java:70:        return dao().findAllByQuery(query).isEmpty();
+  /Users/abc/app/nop-app-erp/module-master-data/erp-md-service/src/main/java/app/erp/md/service/entity/ErpMdAcctSchemaBizModel.java:38:        List<ErpMdAcctSchema> schemas = dao().findAllByQuery(q);
+  /Users/abc/app/nop-app-erp/module-master-data/erp-md-service/src/main/java/app/erp/md/service/entity/ErpMdMaterialBizModel.java:116:        return dao().findAllByQuery(query).isEmpty();
+  /Users/abc/app/nop-app-erp/module-master-data/erp-md-service/src/main/java/app/erp/md/service/entity/ErpMdSubjectBizModel.java:58:        return dao().findAllByQuery(query).isEmpty();
+  /Users/abc/app/nop-app-erp/module-sales/erp-sal-service/src/main/java/app/erp/sal/service/entity/ErpSalPriceListBizModel.java:73:        List<ErpSalPriceList> sameDimension = dao().findAllByQuery(query);
+  /Users/abc/app/nop-app-erp/module-sales/erp-sal-service/src/main/java/app/erp/sal/service/entity/ErpSalPriceListLineBizModel.java:62:                dao().findAllByQuery(query),
+  /Users/abc/app/nop-app-erp/module-sales/erp-sal-service/src/main/java/app/erp/sal/service/entity/ErpSalPricingRuleBizModel.java:80:        List<ErpSalPricingRule> existing = dao().findAllByQuery(query);
+  → 命中: 14 处
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+[R2] 🔴 高 — daoFor() 绕过 I*Biz 接口
+规则: service-layer.md — 跨实体访问必须注入 I*Biz 接口
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+▸ R2a: BizModel 中 daoFor(ErpMd*) — 跨 master-data 域
+  /Users/abc/app/nop-app-erp/module-purchase/erp-pur-service/src/main/java/app/erp/pur/service/dashboard/ErpPurDashboardBizModel.java:159:            IEntityDao<ErpMdPartner> partnerDao = daoProvider.daoFor(ErpMdPartner.class);
+  /Users/abc/app/nop-app-erp/module-purchase/erp-pur-service/src/main/java/app/erp/pur/service/dashboard/ErpPurDashboardBizModel.java:188:            IEntityDao<ErpMdPartner> partnerDao = daoProvider.daoFor(ErpMdPartner.class);
+  /Users/abc/app/nop-app-erp/module-purchase/erp-pur-service/src/main/java/app/erp/pur/service/dashboard/ErpPurDashboardBizModel.java:234:                    ErpMdPartner p = daoProvider.daoFor(ErpMdPartner.class).getEntityById(it.getPartnerId());
+  /Users/abc/app/nop-app-erp/module-hr/erp-hr-service/src/main/java/app/erp/hr/service/report/ErpHrReportBizModel.java:275:        IEntityDao<ErpMdPartner> dao = daoProvider.daoFor(ErpMdPartner.class);
+  /Users/abc/app/nop-app-erp/module-finance/erp-fin-service/src/main/java/app/erp/fin/service/entity/ErpFinBudgetLineBizModel.java:147:        return daoProvider().daoFor(ErpMdSubject.class).getEntityById(id);
+  /Users/abc/app/nop-app-erp/module-finance/erp-fin-service/src/main/java/app/erp/fin/service/intercompany/ErpFinIntercompanyTransferBizModel.java:229:        ErpMdWarehouse wh = daoProvider.daoFor(ErpMdWarehouse.class).getEntityById(warehouseId);
+  /Users/abc/app/nop-app-erp/module-finance/erp-fin-service/src/main/java/app/erp/fin/service/intercompany/ErpFinIntercompanyTransferBizModel.java:240:        IEntityDao<ErpMdOrganization> dao = daoProvider.daoFor(ErpMdOrganization.class);
+  /Users/abc/app/nop-app-erp/module-finance/erp-fin-service/src/main/java/app/erp/fin/service/budget/ErpFinBudgetCommitmentBizModel.java:122:        return daoProvider.daoFor(ErpMdSubject.class).getEntityById(subjectId);
+  /Users/abc/app/nop-app-erp/module-finance/erp-fin-service/src/main/java/app/erp/fin/service/budget/ErpFinBudgetCommitmentBizModel.java:131:        IEntityDao<ErpMdSubject> dao = daoProvider.daoFor(ErpMdSubject.class);
+  /Users/abc/app/nop-app-erp/module-quality/erp-qa-service/src/main/java/app/erp/qa/service/report/ErpQaReportBizModel.java:361:        List<ErpMdMaterial> materials = daoProvider.daoFor(ErpMdMaterial.class).findAllByQuery(q);
+  /Users/abc/app/nop-app-erp/module-master-data/erp-md-service/src/main/java/app/erp/md/service/party/ErpPartyBizModel.java:173:                IEntityDao<ErpMdPartner> dao = daoProvider.daoFor(ErpMdPartner.class);
+  /Users/abc/app/nop-app-erp/module-master-data/erp-md-service/src/main/java/app/erp/md/service/party/ErpPartyBizModel.java:180:                IEntityDao<ErpMdEmployee> dao = daoProvider.daoFor(ErpMdEmployee.class);
+  /Users/abc/app/nop-app-erp/module-master-data/erp-md-service/src/main/java/app/erp/md/service/party/ErpPartyBizModel.java:187:                IEntityDao<ErpMdOrganization> dao = daoProvider.daoFor(ErpMdOrganization.class);
+  /Users/abc/app/nop-app-erp/module-master-data/erp-md-service/src/main/java/app/erp/md/service/party/ErpPartyBizModel.java:229:                ErpMdPartner e = daoProvider.daoFor(ErpMdPartner.class).getEntityById(partyId);
+  /Users/abc/app/nop-app-erp/module-master-data/erp-md-service/src/main/java/app/erp/md/service/party/ErpPartyBizModel.java:233:                ErpMdEmployee e = daoProvider.daoFor(ErpMdEmployee.class).getEntityById(partyId);
+  /Users/abc/app/nop-app-erp/module-master-data/erp-md-service/src/main/java/app/erp/md/service/party/ErpPartyBizModel.java:237:                ErpMdOrganization e = daoProvider.daoFor(ErpMdOrganization.class).getEntityById(partyId);
+  /Users/abc/app/nop-app-erp/module-master-data/erp-md-service/src/main/java/app/erp/md/service/entity/ErpMdUoMConversionBizModel.java:99:        IEntityDao<ErpMdUoMConversion> conversionDao = daoProvider().daoFor(ErpMdUoMConversion.class);
+  /Users/abc/app/nop-app-erp/module-master-data/erp-md-service/src/main/java/app/erp/md/service/entity/ErpMdUoMConversionBizModel.java:126:        IEntityDao<ErpMdMaterialSku> skuDao = daoProvider().daoFor(ErpMdMaterialSku.class);
+  /Users/abc/app/nop-app-erp/module-master-data/erp-md-service/src/main/java/app/erp/md/service/entity/ErpMdMaterialSkuBizModel.java:433:        IEntityDao<ErpMdMaterialCategory> categoryDao = daoProvider().daoFor(ErpMdMaterialCategory.class);
+  /Users/abc/app/nop-app-erp/module-master-data/erp-md-service/src/main/java/app/erp/md/service/entity/ErpMdMaterialSkuBizModel.java:457:        ErpMdMaterial material = daoProvider().daoFor(ErpMdMaterial.class).getEntityById(materialId);
+  /Users/abc/app/nop-app-erp/module-master-data/erp-md-service/src/main/java/app/erp/md/service/dashboard/ErpMdDashboardBizModel.java:52:            IEntityDao<ErpMdMaterial> materialDao = daoProvider.daoFor(ErpMdMaterial.class);
+  /Users/abc/app/nop-app-erp/module-master-data/erp-md-service/src/main/java/app/erp/md/service/dashboard/ErpMdDashboardBizModel.java:53:            IEntityDao<ErpMdPartner> partnerDao = daoProvider.daoFor(ErpMdPartner.class);
+  /Users/abc/app/nop-app-erp/module-master-data/erp-md-service/src/main/java/app/erp/md/service/dashboard/ErpMdDashboardBizModel.java:76:            IEntityDao<ErpMdMaterialSku> skuDao = daoProvider.daoFor(ErpMdMaterialSku.class);
+  /Users/abc/app/nop-app-erp/module-master-data/erp-md-service/src/main/java/app/erp/md/service/dashboard/ErpMdDashboardBizModel.java:84:            IEntityDao<ErpMdMaterial> materialDao = daoProvider.daoFor(ErpMdMaterial.class);
+  /Users/abc/app/nop-app-erp/module-master-data/erp-md-service/src/main/java/app/erp/md/service/dashboard/ErpMdDashboardBizModel.java:107:            IEntityDao<ErpMdMaterialSku> skuDao = daoProvider.daoFor(ErpMdMaterialSku.class);
+  /Users/abc/app/nop-app-erp/module-master-data/erp-md-service/src/main/java/app/erp/md/service/report/ErpMdReportBizModel.java:254:            List<ErpMdPartner> partners = daoProvider.daoFor(ErpMdPartner.class).findAllByQuery(q);
+  /Users/abc/app/nop-app-erp/module-master-data/erp-md-service/src/main/java/app/erp/md/service/report/ErpMdReportBizModel.java:283:        return daoProvider.daoFor(ErpMdMaterial.class).findAllByQuery(q);
+  /Users/abc/app/nop-app-erp/module-master-data/erp-md-service/src/main/java/app/erp/md/service/report/ErpMdReportBizModel.java:291:        List<ErpMdMaterialSku> skus = daoProvider.daoFor(ErpMdMaterialSku.class).findAllByQuery(q);
+  /Users/abc/app/nop-app-erp/module-sales/erp-sal-service/src/main/java/app/erp/sal/service/dashboard/ErpSalDashboardBizModel.java:154:            IEntityDao<ErpMdPartner> partnerDao = daoProvider.daoFor(ErpMdPartner.class);
+  /Users/abc/app/nop-app-erp/module-sales/erp-sal-service/src/main/java/app/erp/sal/service/dashboard/ErpSalDashboardBizModel.java:202:                    ErpMdPartner p = daoProvider.daoFor(ErpMdPartner.class).getEntityById(it.getPartnerId());
+  /Users/abc/app/nop-app-erp/module-inventory/erp-inv-service/src/main/java/app/erp/inv/service/dashboard/ErpInvDashboardBizModel.java:154:            IEntityDao<ErpMdWarehouse> whDao = daoProvider.daoFor(ErpMdWarehouse.class);
+  /Users/abc/app/nop-app-erp/module-inventory/erp-inv-service/src/main/java/app/erp/inv/service/dashboard/ErpInvDashboardBizModel.java:374:        IEntityDao<ErpMdMaterial> dao = daoProvider.daoFor(ErpMdMaterial.class);
+  /Users/abc/app/nop-app-erp/module-inventory/erp-inv-service/src/main/java/app/erp/inv/service/dashboard/ErpInvDashboardBizModel.java:386:        IEntityDao<ErpMdMaterial> dao = daoProvider.daoFor(ErpMdMaterial.class);
+  /Users/abc/app/nop-app-erp/module-inventory/erp-inv-service/src/main/java/app/erp/inv/service/dashboard/ErpInvDashboardBizModel.java:398:        IEntityDao<ErpMdWarehouse> dao = daoProvider.daoFor(ErpMdWarehouse.class);
+  → 命中: 34 处
+
+▸ R2b: BizModel 中 daoFor(Erp*) — 全部跨域引用
+  /Users/abc/app/nop-app-erp/module-purchase/erp-pur-service/src/main/java/app/erp/pur/service/entity/ErpPurOrderBizModel.java:130:            daoFor(ErpPurOrderLine.class).saveEntity(orderLine);
+  /Users/abc/app/nop-app-erp/module-purchase/erp-pur-service/src/main/java/app/erp/pur/service/dashboard/ErpPurDashboardBizModel.java:159:            IEntityDao<ErpMdPartner> partnerDao = daoProvider.daoFor(ErpMdPartner.class);
+  /Users/abc/app/nop-app-erp/module-purchase/erp-pur-service/src/main/java/app/erp/pur/service/dashboard/ErpPurDashboardBizModel.java:188:            IEntityDao<ErpMdPartner> partnerDao = daoProvider.daoFor(ErpMdPartner.class);
+  /Users/abc/app/nop-app-erp/module-purchase/erp-pur-service/src/main/java/app/erp/pur/service/dashboard/ErpPurDashboardBizModel.java:234:                    ErpMdPartner p = daoProvider.daoFor(ErpMdPartner.class).getEntityById(it.getPartnerId());
+  /Users/abc/app/nop-app-erp/module-purchase/erp-pur-service/src/main/java/app/erp/pur/service/dashboard/ErpPurDashboardBizModel.java:250:        IEntityDao<ErpPurInvoice> dao = daoProvider.daoFor(ErpPurInvoice.class);
+  /Users/abc/app/nop-app-erp/module-purchase/erp-pur-service/src/main/java/app/erp/pur/service/dashboard/ErpPurDashboardBizModel.java:259:        IEntityDao<ErpPurOrder> dao = daoProvider.daoFor(ErpPurOrder.class);
+  /Users/abc/app/nop-app-erp/module-purchase/erp-pur-service/src/main/java/app/erp/pur/service/dashboard/ErpPurDashboardBizModel.java:276:        IEntityDao<ErpPurReceive> rDao = daoProvider.daoFor(ErpPurReceive.class);
+  /Users/abc/app/nop-app-erp/module-purchase/erp-pur-service/src/main/java/app/erp/pur/service/dashboard/ErpPurDashboardBizModel.java:299:        IEntityDao<ErpPurOrder> dao = daoProvider.daoFor(ErpPurOrder.class);
+  /Users/abc/app/nop-app-erp/module-purchase/erp-pur-service/src/main/java/app/erp/pur/service/dashboard/ErpPurDashboardBizModel.java:313:        IEntityDao<ErpPurInvoiceLine> ilDao = daoProvider.daoFor(ErpPurInvoiceLine.class);
+  /Users/abc/app/nop-app-erp/module-purchase/erp-pur-service/src/main/java/app/erp/pur/service/dashboard/ErpPurDashboardBizModel.java:323:        IEntityDao<ErpPurReceiveLine> rlDao = daoProvider.daoFor(ErpPurReceiveLine.class);
+  /Users/abc/app/nop-app-erp/module-purchase/erp-pur-service/src/main/java/app/erp/pur/service/dashboard/ErpPurDashboardBizModel.java:332:        IEntityDao<ErpPurOrderLine> olDao = daoProvider.daoFor(ErpPurOrderLine.class);
+  /Users/abc/app/nop-app-erp/module-hr/erp-hr-service/src/main/java/app/erp/hr/service/entity/ErpHrSalarySimulationBizModel.java:360:        IEntityDao<ErpHrSalarySimulationItemAdjustment> dao = daoProvider().daoFor(ErpHrSalarySimulationItemAdjustment.class);
+  /Users/abc/app/nop-app-erp/module-hr/erp-hr-service/src/main/java/app/erp/hr/service/entity/ErpHrSalarySimulationBizModel.java:411:        IEntityDao<ErpHrEmployee> dao = daoProvider().daoFor(ErpHrEmployee.class);
+  /Users/abc/app/nop-app-erp/module-hr/erp-hr-service/src/main/java/app/erp/hr/service/entity/ErpHrSalarySimulationBizModel.java:485:        IEntityDao<ErpHrSalary> dao = daoProvider().daoFor(ErpHrSalary.class);
+  /Users/abc/app/nop-app-erp/module-hr/erp-hr-service/src/main/java/app/erp/hr/service/entity/ErpHrSalarySimulationBizModel.java:496:        IEntityDao<ErpHrSalarySimulationItemAdjustment> dao = daoProvider().daoFor(ErpHrSalarySimulationItemAdjustment.class);
+  ... (共 242 处)
+  → 命中: 242 处
+
+▸ R2c: 全生产代码 daoFor() 总量
+  → 生产代码总计: 1542 处
+
+▸ R2d: Processor/Dispatcher/Engine 中 daoFor(ErpMd*)
+  /Users/abc/app/nop-app-erp/module-purchase/erp-pur-service/src/main/java/app/erp/pur/service/processor/ErpPurPaymentProcessor.java:197:        IEntityDao<ErpMdSubject> dao = daoProvider.daoFor(ErpMdSubject.class);
+  /Users/abc/app/nop-app-erp/module-purchase/erp-pur-service/src/main/java/app/erp/pur/service/processor/ErpPurOrderProcessor.java:311:        IEntityDao<ErpMdSubject> dao = daoProvider.daoFor(ErpMdSubject.class);
+  /Users/abc/app/nop-app-erp/module-drp/erp-drp-service/src/main/java/app/erp/drp/service/processor/ErpInvDrpCrossDockProcessor.java:401:            ErpMdLocation location = daoProvider.daoFor(ErpMdLocation.class)
+  /Users/abc/app/nop-app-erp/module-drp/erp-drp-service/src/main/java/app/erp/drp/service/processor/ErpInvDrpCrossDockProcessor.java:423:        ErpMdMaterial material = daoProvider.daoFor(ErpMdMaterial.class).getEntityById(materialId);
+  /Users/abc/app/nop-app-erp/module-hr/erp-hr-service/src/main/java/app/erp/hr/service/posting/SalaryPostingDispatcher.java:366:        IEntityDao<ErpMdAcctSchema> dao = daoProvider.daoFor(ErpMdAcctSchema.class);
+  /Users/abc/app/nop-app-erp/module-manufacturing/erp-mfg-service/src/main/java/app/erp/mfg/service/processor/ErpMfgWorkOrderProcessor.java:402:            ErpMdMaterial product = daoProvider.daoFor(ErpMdMaterial.class).getEntityById(productId);
+  /Users/abc/app/nop-app-erp/module-manufacturing/erp-mfg-service/src/main/java/app/erp/mfg/service/processor/ErpMfgWorkOrderProcessor.java:799:        ErpMdMaterial material = daoProvider.daoFor(ErpMdMaterial.class).getEntityById(materialId);
+  /Users/abc/app/nop-app-erp/module-manufacturing/erp-mfg-service/src/main/java/app/erp/mfg/service/processor/ErpMfgSubcontractOrderProcessor.java:516:        ErpMdMaterial product = daoProvider.daoFor(ErpMdMaterial.class).getEntityById(productId);
+  /Users/abc/app/nop-app-erp/module-manufacturing/erp-mfg-service/src/main/java/app/erp/mfg/service/mrp/MrpEngine.java:216:        ErpMdMaterial material = daoProvider.daoFor(ErpMdMaterial.class).getEntityById(materialId);
+  /Users/abc/app/nop-app-erp/module-manufacturing/erp-mfg-service/src/main/java/app/erp/mfg/service/mrp/MrpEngine.java:227:        ErpMdMaterial material = daoProvider.daoFor(ErpMdMaterial.class).getEntityById(materialId);
+  /Users/abc/app/nop-app-erp/module-manufacturing/erp-mfg-service/src/main/java/app/erp/mfg/service/simulation/SimulationMrpEngine.java:286:        IEntityDao<ErpMdMaterial> matDao = daoProvider.daoFor(ErpMdMaterial.class);
+  /Users/abc/app/nop-app-erp/module-manufacturing/erp-mfg-service/src/main/java/app/erp/mfg/service/simulation/SimulationMrpEngine.java:432:        ErpMdMaterial material = daoProvider.daoFor(ErpMdMaterial.class).getEntityById(materialId);
+  /Users/abc/app/nop-app-erp/module-manufacturing/erp-mfg-service/src/main/java/app/erp/mfg/service/simulation/SimulationMrpEngine.java:443:        ErpMdMaterial material = daoProvider.daoFor(ErpMdMaterial.class).getEntityById(materialId);
+  /Users/abc/app/nop-app-erp/module-assets/erp-ast-service/src/main/java/app/erp/ast/service/posting/AssetMergePostingDispatcher.java:121:        IEntityDao<ErpMdSubject> dao = daoProvider.daoFor(ErpMdSubject.class);
+  /Users/abc/app/nop-app-erp/module-assets/erp-ast-service/src/main/java/app/erp/ast/service/posting/DepreciationPostingDispatcher.java:228:        IEntityDao<ErpMdSubject> dao = daoProvider.daoFor(ErpMdSubject.class);
+  /Users/abc/app/nop-app-erp/module-assets/erp-ast-service/src/main/java/app/erp/ast/service/posting/AssetSplitPostingDispatcher.java:118:        IEntityDao<ErpMdSubject> dao = daoProvider.daoFor(ErpMdSubject.class);
+  /Users/abc/app/nop-app-erp/module-assets/erp-ast-service/src/main/java/app/erp/ast/service/posting/CapitalizationPostingDispatcher.java:148:        IEntityDao<ErpMdSubject> dao = daoProvider.daoFor(ErpMdSubject.class);
+  /Users/abc/app/nop-app-erp/module-assets/erp-ast-service/src/main/java/app/erp/ast/service/posting/AssetInventoryPostingDispatcher.java:106:        IEntityDao<ErpMdSubject> dao = daoProvider.daoFor(ErpMdSubject.class);
+  /Users/abc/app/nop-app-erp/module-assets/erp-ast-service/src/main/java/app/erp/ast/service/posting/MaintenanceExpensePostingDispatcher.java:102:        IEntityDao<ErpMdSubject> dao = daoProvider.daoFor(ErpMdSubject.class);
+  /Users/abc/app/nop-app-erp/module-assets/erp-ast-service/src/main/java/app/erp/ast/service/posting/MaintenanceCapitalizationPostingDispatcher.java:102:        IEntityDao<ErpMdSubject> dao = daoProvider.daoFor(ErpMdSubject.class);
+  /Users/abc/app/nop-app-erp/module-assets/erp-ast-service/src/main/java/app/erp/ast/service/posting/DisposalPostingDispatcher.java:144:        IEntityDao<ErpMdSubject> dao = daoProvider.daoFor(ErpMdSubject.class);
+  /Users/abc/app/nop-app-erp/module-assets/erp-ast-service/src/main/java/app/erp/ast/service/posting/ValueAdjustmentPostingDispatcher.java:102:        IEntityDao<ErpMdSubject> dao = daoProvider.daoFor(ErpMdSubject.class);
+  /Users/abc/app/nop-app-erp/module-finance/erp-fin-service/src/main/java/app/erp/fin/service/processor/ErpFinBadDebtProcessor.java:387:        IEntityDao<ErpMdSubject> dao = daoProvider.daoFor(ErpMdSubject.class);
+  /Users/abc/app/nop-app-erp/module-finance/erp-fin-service/src/main/java/app/erp/fin/service/processor/AbstractErpFinReconciliationProcessor.java:240:        IEntityDao<ErpMdSubject> dao = daoProvider.daoFor(ErpMdSubject.class);
+  /Users/abc/app/nop-app-erp/module-finance/erp-fin-service/src/main/java/app/erp/fin/service/processor/ErpFinExpenseClaimProcessor.java:249:        IEntityDao<ErpMdSubject> dao = daoProvider.daoFor(ErpMdSubject.class);
+  /Users/abc/app/nop-app-erp/module-finance/erp-fin-service/src/main/java/app/erp/fin/service/processor/ErpFinNotesReceivableProcessor.java:320:        IEntityDao<ErpMdCurrency> dao = daoProvider.daoFor(ErpMdCurrency.class);
+  /Users/abc/app/nop-app-erp/module-finance/erp-fin-service/src/main/java/app/erp/fin/service/posting/ExpenseClaimPostingDispatcher.java:95:        IEntityDao<ErpMdEmployee> dao = daoProvider.daoFor(ErpMdEmployee.class);
+  /Users/abc/app/nop-app-erp/module-finance/erp-fin-service/src/main/java/app/erp/fin/service/posting/EmployeeAdvancePostingDispatcher.java:151:        IEntityDao<ErpMdEmployee> dao = daoProvider.daoFor(ErpMdEmployee.class);
+  /Users/abc/app/nop-app-erp/module-finance/erp-fin-service/src/main/java/app/erp/fin/service/posting/ErpFinPostingProcessor.java:755:                    targetSubject = daoProvider.daoFor(ErpMdSubject.class).getEntityById(mappedId);
+  /Users/abc/app/nop-app-erp/module-b2b/erp-b2b-service/src/main/java/app/erp/b2b/service/processor/ErpB2bAsnCreateReceiveFromAsnProcessor.java:121:        IEntityDao<ErpMdMaterial> materialDao = daoProvider.daoFor(ErpMdMaterial.class);
+  /Users/abc/app/nop-app-erp/module-master-data/erp-md-service/src/main/java/app/erp/md/service/processor/ErpMdCurrencyRefreshRatesFromApiProcessor.java:43:        IEntityDao<ErpMdCurrency> currencyDao = daoProvider.daoFor(ErpMdCurrency.class);
+  /Users/abc/app/nop-app-erp/module-master-data/erp-md-service/src/main/java/app/erp/md/service/processor/ErpMdCurrencyRefreshRatesFromApiProcessor.java:63:        IEntityDao<ErpMdExchangeRate> rateDao = daoProvider.daoFor(ErpMdExchangeRate.class);
+  /Users/abc/app/nop-app-erp/module-master-data/erp-md-service/src/main/java/app/erp/md/service/processor/ErpMdSupplierApprovalSuspendByPartnerProcessor.java:56:        IEntityDao<ErpMdSupplierApproval> dao = daoProvider.daoFor(ErpMdSupplierApproval.class);
+  /Users/abc/app/nop-app-erp/module-master-data/erp-md-service/src/main/java/app/erp/md/service/processor/ErpMdSupplierApprovalSuspendByPartnerProcessor.java:81:        daoProvider.daoFor(ErpMdSupplierApproval.class).updateEntity(approval);
+  /Users/abc/app/nop-app-erp/module-sales/erp-sal-service/src/main/java/app/erp/sal/service/processor/ErpSalOrderProcessor.java:461:        IEntityDao<ErpMdSubject> dao = daoProvider.daoFor(ErpMdSubject.class);
+  /Users/abc/app/nop-app-erp/module-projects/erp-prj-service/src/main/java/app/erp/prj/service/posting/TimesheetPostingDispatcher.java:278:        IEntityDao<ErpMdSubject> dao = daoProvider.daoFor(ErpMdSubject.class);
+  /Users/abc/app/nop-app-erp/module-maintenance/erp-mnt-service/src/main/java/app/erp/mnt/service/posting/MaintenanceIssuePostingDispatcher.java:242:        ErpMdAcctSchema schema = daoProvider.daoFor(ErpMdAcctSchema.class).getEntityById(acctSchemaId);
+  /Users/abc/app/nop-app-erp/module-maintenance/erp-mnt-service/src/main/java/app/erp/mnt/service/posting/MaintenanceLaborPostingDispatcher.java:245:        ErpMdAcctSchema schema = daoProvider.daoFor(ErpMdAcctSchema.class).getEntityById(acctSchemaId);
+  → 命中: 38 处
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+[R3] 🟡 中 — new Erp*() 直接构造实体
+规则: safe-api-reference.md — 应使用 newEntity()（仅计已注册 ORM 实体构造）
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  /Users/abc/app/nop-app-erp/module-hr/erp-hr-service/src/main/java/app/erp/hr/service/competency/GapAnalysisCalculator.java:90:        return new ErpHrGapAnalysis();
+  /Users/abc/app/nop-app-erp/module-manufacturing/erp-mfg-service/src/main/java/app/erp/mfg/service/simulation/SimulationMrpEngine.java:299:            ErpMfgMrpDemand demand = new ErpMfgMrpDemand();
+  /Users/abc/app/nop-app-erp/module-crm/erp-crm-service/src/main/java/app/erp/crm/service/support/FunnelAggregationEngine.java:273:            ErpCrmFunnelStageMetrics m = new ErpCrmFunnelStageMetrics();
+  /Users/abc/app/nop-app-erp/module-crm/erp-crm-service/src/main/java/app/erp/crm/service/support/QuotaRollupCalculator.java:105:        ErpCrmQuota virtual = new ErpCrmQuota();
+  /Users/abc/app/nop-app-erp/module-sales/erp-sal-service/src/main/java/app/erp/sal/service/support/ErpSalPricingRuleEngine.java:206:        ErpSalOrderLine giftLine = new ErpSalOrderLine();
+  → 命中: 5 处（仅计已注册 ORM 实体；非实体 Erp* 前缀类已校准排除）
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+[R4] 🟢 低 — extends RuntimeException
+  → 命中: 0 处
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+[R5] 🟡 中 — @Inject + private
+  → 命中: 0 处
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+[R6] 🟢 低 — @Transactional 在 BizModel 上
+  /Users/abc/app/nop-app-erp/module-finance/erp-fin-service/src/main/java/app/erp/fin/service/entity/ErpFinVoucherBizModel.java:75:    @Transactional(propagation = TransactionPropagation.REQUIRES_NEW)
+  /Users/abc/app/nop-app-erp/module-finance/erp-fin-service/src/main/java/app/erp/fin/service/entity/ErpFinVoucherBizModel.java:83:    @Transactional(propagation = TransactionPropagation.REQUIRES_NEW)
+  → 命中: 2 处（需逐个判断是否有意的 REQUIRES_NEW）
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+[R7] 🟢 低 — System.currentTimeMillis()
+  → 命中: 0 处
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+[R8] 🔴 高 — Processor 缺少 xbiz 接线
+规则: service-layer-orchestration.md — Processor 需 xbiz 绑定
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  → 命中: 0 个孤儿 Processor（已排除 module-common-service + extends Abstract*Processor + 域级 abstract 基类 + 被消费 Processor）
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+[R9] 🟡 中 — doReverseApprove 行为不一致
+启发式: 同类 Processor 的反审核方法应有一致的字段处理
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  反审核时清除 approvedBy/approvedAt 的 Processor:
+    ✓ module-purchase/erp-pur-service/src/main/java/app/erp/pur/service/processor/ErpPurPaymentProcessor.java
+    ✓ module-purchase/erp-pur-service/src/main/java/app/erp/pur/service/processor/ErpPurOrderProcessor.java
+    ✓ module-purchase/erp-pur-service/src/main/java/app/erp/pur/service/processor/ErpPurReceiveProcessor.java
+    ✓ module-purchase/erp-pur-service/src/main/java/app/erp/pur/service/processor/ErpPurReturnProcessor.java
+    ✓ module-purchase/erp-pur-service/src/main/java/app/erp/pur/service/processor/ErpPurInvoiceProcessor.java
+    ✓ module-purchase/erp-pur-service/src/main/java/app/erp/pur/service/processor/ErpPurReceiveReverseApproveProcessor.java
+    ✓ module-purchase/erp-pur-service/src/main/java/app/erp/pur/service/processor/ErpPurReturnReverseApproveProcessor.java
+    ✓ module-purchase/erp-pur-service/src/main/java/app/erp/pur/service/processor/ErpPurRequisitionProcessor.java
+    ✓ module-manufacturing/erp-mfg-service/src/main/java/app/erp/mfg/service/processor/ErpMfgWorkOrderProcessor.java
+    ✓ module-manufacturing/erp-mfg-service/src/main/java/app/erp/mfg/service/processor/ErpMfgSubcontractOrderProcessor.java
+    ✓ module-finance/erp-fin-service/src/main/java/app/erp/fin/service/processor/ErpFinEmployeeAdvanceProcessor.java
+    ✓ module-finance/erp-fin-service/src/main/java/app/erp/fin/service/processor/ErpFinExpenseClaimProcessor.java
+    ✓ module-quality/erp-qa-service/src/main/java/app/erp/qa/service/processor/ErpQaRecallProcessor.java
+    ✓ module-sales/erp-sal-service/src/main/java/app/erp/sal/service/processor/ErpSalOrderProcessor.java
+    ✓ module-sales/erp-sal-service/src/main/java/app/erp/sal/service/processor/ErpSalQuotationProcessor.java
+    ✓ module-sales/erp-sal-service/src/main/java/app/erp/sal/service/processor/ErpSalDeliveryProcessor.java
+    ✓ module-sales/erp-sal-service/src/main/java/app/erp/sal/service/processor/ErpSalReceiptProcessor.java
+    ✓ module-sales/erp-sal-service/src/main/java/app/erp/sal/service/processor/ErpSalReturnProcessor.java
+    ✓ module-sales/erp-sal-service/src/main/java/app/erp/sal/service/processor/ErpSalInvoiceProcessor.java
+
+  反审核时未清除的 Processor（仅改 approveStatus）:
+    ✗ module-purchase/erp-pur-service/src/main/java/app/erp/pur/service/processor/ErpPurInvoiceReverseApproveProcessor.java
+    ✗ module-purchase/erp-pur-service/src/main/java/app/erp/pur/service/processor/ErpPurOrderReverseApproveProcessor.java
+    ✗ module-purchase/erp-pur-service/src/main/java/app/erp/pur/service/processor/ErpPurRequisitionReverseApproveProcessor.java
+    ✗ module-purchase/erp-pur-service/src/main/java/app/erp/pur/service/processor/ErpPurPaymentReverseApproveProcessor.java
+    ✗ module-manufacturing/erp-mfg-service/src/main/java/app/erp/mfg/service/processor/ErpMfgWorkOrderReverseApproveProcessor.java
+    ✗ module-manufacturing/erp-mfg-service/src/main/java/app/erp/mfg/service/processor/ErpMfgSubcontractOrderReverseApproveProcessor.java
+    ✗ module-manufacturing/erp-mfg-service/src/main/java/app/erp/mfg/service/processor/ErpMfgWorkOrderSubmitForApprovalProcessor.java
+    ✗ module-manufacturing/erp-mfg-service/src/main/java/app/erp/mfg/service/processor/ErpMfgSubcontractOrderSubmitForApprovalProcessor.java
+    ✗ module-common-service/src/main/java/app/erp/common/service/AbstractReverseApproveProcessor.java
+    ✗ module-finance/erp-fin-service/src/main/java/app/erp/fin/service/processor/ErpFinEmployeeAdvanceReverseApproveProcessor.java
+    ✗ module-finance/erp-fin-service/src/main/java/app/erp/fin/service/processor/ErpFinExpenseClaimReverseApproveProcessor.java
+    ✗ module-quality/erp-qa-service/src/main/java/app/erp/qa/service/processor/ErpQaRecallReverseApproveProcessor.java
+    ✗ module-sales/erp-sal-service/src/main/java/app/erp/sal/service/processor/ErpSalOrderReverseApproveProcessor.java
+    ✗ module-sales/erp-sal-service/src/main/java/app/erp/sal/service/processor/ErpSalQuotationReverseApproveProcessor.java
+    ✗ module-inventory/erp-inv-service/src/main/java/app/erp/inv/service/processor/ErpInvLandedCostReverseApproveProcessor.java
+    ✗ module-inventory/erp-inv-service/src/main/java/app/erp/inv/service/processor/ErpInvLandedCostProcessor.java
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+[R10] 🟡 中 — REQUIRES_NEW 事务
+  /Users/abc/app/nop-app-erp/module-crm/erp-crm-service/src/main/java/app/erp/crm/service/job/ErpCrmLeadScoringRecalcHelper.java:71:            return transactionTemplate.runInTransaction(null, TransactionPropagation.REQUIRES_NEW, txn ->
+  /Users/abc/app/nop-app-erp/module-finance/erp-fin-service/src/main/java/app/erp/fin/service/bankrecon/ErpFinBankReconAutoReverseHelper.java:93:            return transactionTemplate.runInTransaction(null, TransactionPropagation.REQUIRES_NEW, txn ->
+  /Users/abc/app/nop-app-erp/module-finance/erp-fin-service/src/main/java/app/erp/fin/service/entity/ErpFinVoucherBizModel.java:75:    @Transactional(propagation = TransactionPropagation.REQUIRES_NEW)
+  /Users/abc/app/nop-app-erp/module-finance/erp-fin-service/src/main/java/app/erp/fin/service/entity/ErpFinVoucherBizModel.java:83:    @Transactional(propagation = TransactionPropagation.REQUIRES_NEW)
+  /Users/abc/app/nop-app-erp/module-finance/erp-fin-service/src/main/java/app/erp/fin/service/processor/ErpFinApDocumentPipelineProcessor.java:364:            return transactionTemplate.runInTransaction(null, TransactionPropagation.REQUIRES_NEW, txn ->
+  /Users/abc/app/nop-app-erp/module-finance/erp-fin-service/src/main/java/app/erp/fin/service/processor/ErpFinApDocumentPipelineProcessor.java:508:            transactionTemplate.runInTransaction(null, TransactionPropagation.REQUIRES_NEW, txn ->
+  /Users/abc/app/nop-app-erp/module-finance/erp-fin-service/src/main/java/app/erp/fin/service/posting/ErpFinDeferredPostingRetryHelper.java:87:            return transactionTemplate.runInTransaction(null, TransactionPropagation.REQUIRES_NEW, txn ->
+  /Users/abc/app/nop-app-erp/module-finance/erp-fin-service/src/main/java/app/erp/fin/service/posting/ErpFinDeferredPostingRetryHelper.java:173:            escalatedToManual = transactionTemplate.runInTransaction(null, TransactionPropagation.REQUIRES_NEW, txn ->
+  /Users/abc/app/nop-app-erp/module-finance/erp-fin-service/src/main/java/app/erp/fin/service/posting/ErpFinPostingExceptionRecorder.java:95:            exceptionId = transactionTemplate.runInTransaction(null, TransactionPropagation.REQUIRES_NEW, txn ->
+  /Users/abc/app/nop-app-erp/module-finance/erp-fin-service/src/main/java/app/erp/fin/service/posting/ErpFinPostingExceptionRecorder.java:159:            transactionTemplate.runInTransaction(null, TransactionPropagation.REQUIRES_NEW, txn ->
+  /Users/abc/app/nop-app-erp/module-cs/erp-cs-service/src/main/java/app/erp/cs/service/entity/CsTicketMonthSeqCodeRuleVariable.java:59:                transactionTemplate.runInTransaction(null, TransactionPropagation.REQUIRES_NEW, txn -> {
+  /Users/abc/app/nop-app-erp/module-cs/erp-cs-service/src/main/java/app/erp/cs/service/processor/ErpCsTicketTimerSessionOps.java:76:                transactionTemplate.runInTransaction(null, TransactionPropagation.REQUIRES_NEW, txn -> {
+  /Users/abc/app/nop-app-erp/module-cs/erp-cs-service/src/main/java/app/erp/cs/service/processor/ErpCsCatalogFulfillmentExecuteFulfillmentStepsProcessor.java:666:                    transactionTemplate.runInTransaction(null, TransactionPropagation.REQUIRES_NEW, txn -> {
+  /Users/abc/app/nop-app-erp/module-projects/erp-prj-service/src/main/java/app/erp/prj/service/job/ErpPrjProjectPnlCalcHelper.java:75:            return transactionTemplate.runInTransaction(null, TransactionPropagation.REQUIRES_NEW, txn ->
+  → 命中: 14 处
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+[R11] 🟡 中 — Processor 中重复定义的状态判断方法（应上提到实体）
+规则: DDD 实体方法上提——isAlreadyApproved/isAlreadyRejected 应为实体方法 isApproved/isRejected
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  → 命中: 0 处（实体方法上提后应为 0）
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+[R12] 🟡 中 — 共享内核跨域 import 计数（裁决见 docs/analysis/shared-kernel-extraction-decision.md）
+规则: F4 闭包项 #5 — 3 共享类型跨域 import 不得无记录增长（基线 69/66/38）
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+▸ R12a: import ErpFinBusinessType（跨域，排除 module-finance）
+  → 命中: 71 处
+
+▸ R12b: import PostingEvent（跨域，排除 module-finance）
+  → 命中: 66 处
+
+▸ R12c: import AcctSchemaResolver（跨域，排除 module-master-data）
+  → 命中: 42 处
+
+╔══════════════════════════════════════════════════════════════╗
+║  汇总                                                      ║
+╚══════════════════════════════════════════════════════════════╝
+
+规则 描述                                     严重度 命中
+------ ------------------------------------------ -------- ------
+R1a    dao().saveEntity (BizModel)                🔴 高 0
+R1b    dao().updateEntity (BizModel)              🔴 高 0
+R1c    dao().getEntityById (BizModel)             🔴 高 0
+R1d    dao().findAllByQuery (BizModel)            🔴 高 14
+R2a    BizModel daoFor(ErpMd*)                    🔴 高 34
+R2b    BizModel daoFor(Erp*) 跨域               🔴 高 242
+R2c    全生产代码 daoFor() 总量            🔴 高 1542
+R2d    Processor daoFor(ErpMd*)                   🔴 高 38
+R3     new Erp*() 构造实体                    🟡 中 5
+R4     extends RuntimeException                   🟢 低 0
+R5     @Inject private                            🟡 中 0
+R6     @Transactional in BizModel                 🟢 低 2
+R7     System.currentTimeMillis()                 🟢 低 0
+R8     Processor 无 xbiz 接线                  🔴 高 0
+R10    REQUIRES_NEW 事务                        🟡 中 14
+R11    Processor 重复状态判断方法         🟡 中 0
+R12a   共享内核 import ErpFinBusinessType     🟡 中 71
+R12b   共享内核 import PostingEvent           🟡 中 66
+R12c   共享内核 import AcctSchemaResolver     🟡 中 42
+
+检测完成。
+注意: 命中项需人工逐一确认是否为合理偏离（如文档化的 REQUIRES_NEW）。

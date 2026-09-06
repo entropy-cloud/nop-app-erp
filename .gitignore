@@ -60,3 +60,7 @@ module-*/erp-*-meta/module-meta.yaml
 # Stray root build artifacts: vfs-index/native-image config leaked to project root by a build
 # run with the wrong CWD. The authoritative copies live under app-erp-all/src/main/resources/.
 /src/
+
+# Raw full-reactor mvn test logs under audit execution dirs: multi-GB local evidence
+# (summaries live in the .md records; e.g. ai-check-r3 m0-3 logs are ~5GB each).
+docs/audits/check/**/*mvn-test*.log
