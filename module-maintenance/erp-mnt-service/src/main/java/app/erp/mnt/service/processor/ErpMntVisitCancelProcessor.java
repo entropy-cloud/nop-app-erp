@@ -43,10 +43,11 @@ public class ErpMntVisitCancelProcessor extends AbstractErpMntVisitProcessor {
                 laborPostingDispatcher.reverseLabor(visit);
             } catch (Exception e) {
                 if (e instanceof NopException) {
-                    LOG.warn("维修工时费用化红冲失败，访问 {} 保持 CANCELLED 终态（凭证孤儿由人工或兜底处理）：{}",
+                    LOG.warn("Maintenance labor capitalization reversal failed, visit {} kept in CANCELLED terminal state (orphan voucher left to manual or fallback handling): {}",
                             visit.getCode(), e.getMessage());
                 } else {
-                    LOG.error("维修工时费用化红冲异常，访问 {} 保持 CANCELLED 终态", visit.getCode(), e);
+                    LOG.error("Maintenance labor capitalization reversal exception, visit {} kept in CANCELLED terminal state",
+                            visit.getCode(), e);
                 }
             }
         }

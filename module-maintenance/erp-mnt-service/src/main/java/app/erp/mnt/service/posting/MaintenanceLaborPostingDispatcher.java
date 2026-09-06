@@ -118,10 +118,10 @@ public class MaintenanceLaborPostingDispatcher {
             return voucherId != null;
         } catch (Exception e) {
             if (e instanceof NopException) {
-                LOG.warn("维修工时费用化过账失败，访问 {} 保持 complete 终态（posted 语义不变）：{}",
+                LOG.warn("Maintenance labor capitalization posting failed, visit {} kept in complete terminal state (posted semantics unchanged): {}",
                         visit.getCode(), e.getMessage());
             } else {
-                LOG.error("维修工时费用化过账异常，访问 {} 保持 complete 终态（posted 语义不变）",
+                LOG.error("Maintenance labor capitalization posting exception, visit {} kept in complete terminal state (posted semantics unchanged)",
                         visit.getCode(), e);
             }
             // G3 错误传播分级（plan 2026-07-30-0341-2 P1-MA2-074）：失败派发告警使 GL 缺 MAINTENANCE_LABOR 凭证悬挂可被感知。
@@ -145,7 +145,7 @@ public class MaintenanceLaborPostingDispatcher {
         try {
             notificationBiz.notify(NOTIFY_EVENT_MAINTENANCE_LABOR_FAILURE, ctx, serviceCtx);
         } catch (Exception notifyErr) {
-            LOG.warn("维修工时费用化过账失败告警派发失败（降级）：visitCode={}, reason={}",
+            LOG.warn("Maintenance labor posting failure alert dispatch failed (degraded): visitCode={}, reason={}",
                     visit.getCode(), notifyErr.getMessage());
         }
     }

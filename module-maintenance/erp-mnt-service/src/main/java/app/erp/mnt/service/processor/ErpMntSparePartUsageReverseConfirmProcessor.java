@@ -34,7 +34,7 @@ public class ErpMntSparePartUsageReverseConfirmProcessor extends AbstractErpMntS
         try {
             issuePostingDispatcher.reverseIssue(usage);
         } catch (NopException e) {
-            LOG.error("备件消耗红冲 GL 凭证失败，红冲终止（保持 ACTIVE 可重试），消耗单 {} billHeadCode={}: {}",
+            LOG.error("Spare-part issue GL voucher reversal failed, reversal aborted (kept ACTIVE retryable), usage {} billHeadCode={}: {}",
                     usage.getCode(), usage.getCode() + "-MI", e.getMessage());
             throw e;
         }
@@ -46,7 +46,7 @@ public class ErpMntSparePartUsageReverseConfirmProcessor extends AbstractErpMntS
             try {
                 stockMoveBiz.reverse(originalMove.getId(), context);
             } catch (NopException e) {
-                LOG.error("备件消耗红冲反向库存移动失败，红冲终止（保持 ACTIVE 可重试），消耗单 {} moveCode={}: {}",
+                LOG.error("Spare-part issue reverse stock move failed, reversal aborted (kept ACTIVE retryable), usage {} moveCode={}: {}",
                         usage.getCode(), originalMove.getCode(), e.getMessage());
                 throw e;
             }

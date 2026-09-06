@@ -119,10 +119,11 @@ public class MaintenanceIssuePostingDispatcher {
             executor.postEvent(event);
         } catch (Exception e) {
             if (e instanceof NopException) {
-                LOG.warn("维修备件消耗过账失败，消耗单 {} 保持库存已出库（posted 语义不变）：{}",
+                LOG.warn("Maintenance spare-part issue posting failed, usage {} kept with inventory already issued (posted semantics unchanged): {}",
                         usage.getCode(), e.getMessage());
             } else {
-                LOG.error("维修备件消耗过账异常，消耗单 {} 保持库存已出库（posted 语义不变）", usage.getCode(), e);
+                LOG.error("Maintenance spare-part issue posting exception, usage {} kept with inventory already issued (posted semantics unchanged)",
+                        usage.getCode(), e);
             }
             // G3 错误传播分级（plan 2026-07-30-0341-2 P1-MA2-074）：失败派发告警使 GL 缺 MAINTENANCE_ISSUE 凭证悬挂可被感知。
             dispatchFailureAlert(usage, e);
@@ -144,7 +145,7 @@ public class MaintenanceIssuePostingDispatcher {
         try {
             notificationBiz.notify(NOTIFY_EVENT_MAINTENANCE_ISSUE_FAILURE, ctx, serviceCtx);
         } catch (Exception notifyErr) {
-            LOG.warn("维修备件消耗过账失败告警派发失败（降级）：usageCode={}, reason={}",
+            LOG.warn("Maintenance issue posting failure alert dispatch failed (degraded): usageCode={}, reason={}",
                     usage.getCode(), notifyErr.getMessage());
         }
     }
