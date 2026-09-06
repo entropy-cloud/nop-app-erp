@@ -14,5 +14,6 @@
 | `m0-3-mvn-install.log` / `m0-3-mvn-test.log` | M0.3 | `mvn clean install -DskipTests` / 全 reactor `mvn test` 原始日志 |
 | `m0-3-compliance-checker.log` / `m0-3-i18n-coverage-checker.log` | M0.3 | 两个既有 checker 原始输出 |
 | `m0-4-page-yaml-source-map.md` | M0.4 | 页面 yaml 源头链判定标准 + 修复策略矩阵（覆盖冻结口径下全部含 CJK 页面 yaml 文件） |
+| `m0-5-audit-checklists.md` | M0.5 | 五维 × 21 核对单元强制核对矩阵（冻结版）：每维 owner doc 锚点 + 判定标准 + 机械核查程式 + 跨轮查重程序与列 + S 级 11 切片粒度与共享代码唯一归属 + M1.1~M1.16 唯一格集合映射 |
 
 > i18n 工具链产物 = 脚本输出 + 基线登记（roadmap 横切关注点 13）：M0.2/M0.3 的 checker/快照产物落 `docs/audits/cjk-baseline.md` + 本目录，不产 `ck-*` 报告；`ck-*` 报告自 M1.x 审计切片起产出。

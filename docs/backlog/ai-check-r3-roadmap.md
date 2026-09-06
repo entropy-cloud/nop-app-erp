@@ -39,7 +39,7 @@
 
 ## Work Item Status
 
-> 唯一的动态状态块。状态：`todo` / `ready` / `done`。**独立草案审查**已通过（2026-08-31，迭代 2 PASS-WITH-MINOR），M0 全部 `ready`；后续项随依赖完成逐项转 `ready`。**独立结束审计**通过转 `done`。AI 不自行重排优先级或发明工作项。
+> 唯一的动态状态块。状态：`todo` / `ready` / `done`。**独立草案审查**已通过（2026-08-31，迭代 2 PASS-WITH-MINOR）；**M0 全部 `done`**（2026-09-06 M0.6 收官：独立子代理 closure audit 通过，plan `2026-09-06-1451-3`）；后续项随依赖完成逐项转 `ready`。**独立结束审计**通过转 `done`。AI 不自行重排优先级或发明工作项。
 
 ### Milestone M0 — 标准成文与工具链基线（前置）
 
@@ -49,8 +49,8 @@
 | M0.2 **CJK 硬编码检测脚本**：新建 `tools/check-hardcoded-cjk.mjs`——扫描 main Java（排除 `target/`/`_gen/`/`src/test/`/注释行）+ `*.page.yaml`/`*.flux.yaml`；五类分级：CAT-1 LOG 语句中文 / CAT-2 异常路径中文参数 / CAT-3 运行时字符串中文（文件级白名单豁免机制）/ CAT-4 页面 yaml 中文无 i18nEn / CAT-5 注释（豁免不计）；`--baseline` 落快照 + `--strict` 门控（新增违规即失败，镜像 F15 checker anti-fake-green 自证纪律）；基线文件落 `docs/audits/cjk-baseline.md`（对齐 compliance-baseline.md 范式：单向收紧，调高须独立计划裁决） | `done` | `docs/audits/i18n-coverage-checker.sh`（范式）+ `docs/audits/compliance-baseline.md`（门控范式） | M0.1 | none |
 | M0.3 **基线快照与执行目录初始化**：新建**本轮唯一规范执行目录** `docs/audits/check/<YYYY-MM-DD-HHmm>-ai-check-r3/`（本轮内所有 plan 幂等复用该目录，`mkdir -p` 同一路径；目录路径登记于本轮索引头部；新开一轮执行才建新时间戳目录）；跑 M0.2 脚本落全量基线（脚本口径冻结 §目的 探针数）；记录 `mvn clean install -DskipTests` + `mvn test` + compliance checker + i18n-coverage-checker 四项基线（含 known-good-baselines 最新行登记的预存失败清单，作 MV.1 零新增失败对照面）；`docs/testing/known-good-baselines.md` 登记 `ai-check-r3-m0` 行 | `done` | `docs/testing/known-good-baselines.md` | M0.2 | none |
 | M0.4 **页面 yaml CJK 源头链核实（探针）**：对含 CJK 的 `*.page.yaml`/`*.flux.yaml`（文件数约 121~147，M0.2/M0.3 口径冻结为准）逐类判定生成链——codegen 产物（须改 view.xml / xmeta 源 + `i18n-en` 属性，禁改生成物，lesson 06）/ 手写页（直接补 `i18nEn`）；产出修复策略矩阵落执行目录 `m0-4-page-yaml-source-map.md` | `done` | `docs/architecture/view-and-page-strategy.md` + `docs/lessons/`（lesson 06 代码生成产物编辑必被覆盖） | M0.2 | none |
-| M0.5 **五维符合性审计检查清单冻结**：五维（DIM-B 后端 / DIM-F 前端 / DIM-S seed / DIM-T 单测 / DIM-I i18n）× 核对单元（19 业务域 + common-service + app-erp-all 横切，共 21 格）检查清单——每维列权威 owner doc 锚点 + 判定标准 + grep/脚本核查程序式 + **跨轮查重列**（每候选 finding 必查 `docs/audits/check/ai-check-index.md` 与 r1/r2 既有 finding：同型已 fixed 复用范式、同型 open 归并原 ID、确属新发才立 `-r3` 新 ID）；DIM-B 锚 `nop-platform-conformance-audit-prompt` 15 维度 + compliance checker R1-R12；DIM-F 锚 `view-and-page-strategy.md` + 各 pattern doc + e2e-runbook §编写规范；DIM-S 锚 `docs/architecture/seed-data.md`（快照重录双面义务 / `_init-data` 同步义务 / `TestErpSeedDataIntegrity` 门禁）；DIM-T 锚 `docs/architecture/testing-strategy.md`（覆盖要求 / SnapshotTest 纪律 / test-depth-classification）；DIM-I 锚 M0.1 owner doc + M0.2 脚本；落执行目录 `m0-5-audit-checklists.md` | `ready` | 各维 owner doc（见左） | M0.1 + M0.2 | `nop-platform-conformance-audit-prompt`（维度来源） |
-| M0.6 **M0 收官**：`git status` 确认零 `module-*`/`app-erp-all` 生产代码改动（M0 仅 docs + tools 脚本）；五项 M0 产物齐全；独立子代理 closure audit | `ready` | `docs/audits/00-audit-execution-guide.md` | M0.1~M0.5 | `closure-audit-prompt`（独立子代理） |
+| M0.5 **五维符合性审计检查清单冻结**：五维（DIM-B 后端 / DIM-F 前端 / DIM-S seed / DIM-T 单测 / DIM-I i18n）× 核对单元（19 业务域 + common-service + app-erp-all 横切，共 21 格）检查清单——每维列权威 owner doc 锚点 + 判定标准 + grep/脚本核查程序式 + **跨轮查重列**（每候选 finding 必查 `docs/audits/check/ai-check-index.md` 与 r1/r2 既有 finding：同型已 fixed 复用范式、同型 open 归并原 ID、确属新发才立 `-r3` 新 ID）；DIM-B 锚 `nop-platform-conformance-audit-prompt` 15 维度 + compliance checker R1-R12；DIM-F 锚 `view-and-page-strategy.md` + 各 pattern doc + e2e-runbook §编写规范；DIM-S 锚 `docs/architecture/seed-data.md`（快照重录双面义务 / `_init-data` 同步义务 / `TestErpSeedDataIntegrity` 门禁）；DIM-T 锚 `docs/architecture/testing-strategy.md`（覆盖要求 / SnapshotTest 纪律 / test-depth-classification）；DIM-I 锚 M0.1 owner doc + M0.2 脚本；落执行目录 `m0-5-audit-checklists.md` | `done` | 各维 owner doc（见左） | M0.1 + M0.2 | `nop-platform-conformance-audit-prompt`（维度来源） |
+| M0.6 **M0 收官**：`git status` 确认零 `module-*`/`app-erp-all` 生产代码改动（M0 仅 docs + tools 脚本）；五项 M0 产物齐全；独立子代理 closure audit | `done` | `docs/audits/00-audit-execution-guide.md` | M0.1~M0.5 | `closure-audit-prompt`（独立子代理） |
 
 ### Milestone MI — i18n 硬编码清剿（脚本驱动，红 → 绿）
 

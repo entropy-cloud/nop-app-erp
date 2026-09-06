@@ -107,6 +107,8 @@ Exit Criteria:
 - pass cjk-self-test ai-check-r3-m0-2 exit=0 `node tools/check-hardcoded-cjk.mjs --self-test` 10/10 PASS（独立审计现场复跑）
 - pass compliance-checker ai-check-r3-m0-3 exit=0 `bash docs/audits/nop-compliance-checker.sh` exit 0，R2c=1542 零漂移（独立审计现场复跑）
 - pass i18n-coverage ai-check-r3-m0-3 exit=0 `bash docs/audits/i18n-coverage-checker.sh` PASS exit 0（独立审计现场复跑）
+- pass test ai-check-r3-verify-2026-09-06-1905 exit=0 mission-driver verify run：全 reactor `mvn clean install -DskipTests`（5:09，156 模块 SUCCESS）+ `mvn test`（47:51）双 BUILD SUCCESS，Results 行精确汇总（含 app-erp-all `[WARNING] Tests run` 行）4006 tests / 0 failures / 0 errors / 1 skipped，与 `ai-check-r3-m0` 基线行精确一致、零新增失败；附属复跑 `--strict`/`--self-test` 双绿
+- pass test ai-check-r3-verify-2026-09-06-2056 exit=0 mission-driver verify run：全 reactor `mvn clean install -DskipTests`（2:05 min，156/156 模块 SUCCESS）+ `mvn test`（18:30 min）双 BUILD SUCCESS exit 0，模块 Results 行汇总（INFO 40 模块 + app-erp-all `[WARNING] Tests run` 行 70/0/0/1）= 4006 tests / 0 failures / 0 errors / 1 skipped，与 `ai-check-r3-m0` 基线行精确一致、零新增失败
 
 ## Closure
 
