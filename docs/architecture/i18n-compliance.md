@@ -55,7 +55,7 @@
 | 分级 | 违规面 | 修复模式 | 关键边界 |
 |------|--------|----------|----------|
 | CAT-1 | LOG 语句含中文 | **LOG 英文化**：消息模板改英文，保留 `{}` 占位参数与参数值不变 | 仅改消息载体，禁止借机改业务行为（`docs/lessons/09-posting-exception-swallow-suspension.md`：不得改吞异常行为）；不走 i18n |
-| CAT-2 | 异常路径携带中文散文参数 | **异常参数传码**：`.param(...)` 值改传状态码/枚举名/字典值本身（如 `"非已作废"` → `status` / `status.name()` / 字典 key） | 错误消息语义不变——中文仍由 `ErrorCode.define` 中文模板承载（判定 #1 合规）；错误码 key 与 ARG 常量名不变 |
+| CAT-2 | 异常路径携带中文散文参数 | **异常参数传码**：`.param(...)` 值改传状态码/枚举名/字典值本身（如 `"非已作废"` → `status` / `status.name()` / 字典 key）；否定语义（「非已作废/非终态」型）传 `"!" + 被禁状态码`（如 `"!CANCELLED"`，码集合传 `"!" + String.join(" / ", codes)`，见 plan `2026-09-07-0043-2` Phase 1 Decision） | 错误消息语义不变——中文仍由 `ErrorCode.define` 中文模板承载（判定 #1 合规）；错误码 key 与 ARG 常量名不变 |
 | CAT-3 | 运行时字符串中文 | **逐簇裁决**，三选一：(a) 改字典 key / 枚举名（业务数据回归字典真相）；(b) 改英文；(c) 白名单登记（§白名单登记格式） | `@Description("中文")` 按 E3 计划豁免登记；业务数据默认值逐簇裁决，不做一刀切；登记落 `docs/audits/cjk-baseline.md` |
 | CAT-4 | `*.page.yaml` / `*.flux.yaml` 用户可见文案中文无英文承载 | **补 `i18nEn` 或模型源 `i18n-en`**：手写页直接在 yaml 节点补 `i18nEn: "..."` 属性；codegen 产物改模型源（view.xml / xmeta 补 `i18n-en` 属性）后重新生成 | codegen 产物禁改生成物（`docs/lessons/06-codegen-product-edit-overwrite.md`）；codegen / 手写页的源头链判定以 M0.4 策略矩阵（`m0-4-page-yaml-source-map.md`）为准；英文译法统一取 `docs/design/i18n-glossary.md`（414 token 冻结基准，新词先扩表再使用） |
 
