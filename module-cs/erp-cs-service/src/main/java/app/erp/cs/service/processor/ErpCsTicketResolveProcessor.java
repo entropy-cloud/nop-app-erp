@@ -107,7 +107,7 @@ public class ErpCsTicketResolveProcessor {
                     ? ticket.getAssignedToId() : context.getUserId());
             notificationBiz.notify(ErpCsConstants.NOTIFY_EVENT_KNOWLEDGE_SUGGEST_CREATE, ctx, context);
         } catch (Exception e) {
-            LOG.warn("knowledge-suggest-create 通知派发失败（降级，resolve 主流程继续）：ticketId={}, reason={}",
+            LOG.warn("knowledge-suggest-create notification dispatch failed (degraded, resolve main flow continues): ticketId={}, reason={}",
                     ticket.getId(), e.getMessage());
         }
     }

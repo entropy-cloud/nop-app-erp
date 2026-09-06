@@ -112,12 +112,12 @@ public class ErpCsTimeEntryBizModel extends AbstractErpCrudBizModel<ErpCsTimeEnt
                 approver = StringHelper.isBlank(fallback) ? null : fallback;
             }
             if (approver == null) {
-                LOG.warn("计时条目[{}]审批人链解析全空（工单未分派/团队无负责人/无 config 兜底），跳过审批人登记", entry.getId());
+                LOG.warn("Time entry[{}] approver chain resolved empty (ticket unassigned/team has no leader/no config fallback), skipping approver registration", entry.getId());
             } else {
-                LOG.info("计时条目[{}]解析审批人: {}", entry.getId(), approver);
+                LOG.info("Time entry[{}] resolved approver: {}", entry.getId(), approver);
             }
         } catch (Exception e) {
-            LOG.warn("计时条目[{}]审批人链解析失败（advisory，不阻断提交）：{}", entry.getId(), e.getMessage());
+            LOG.warn("Time entry[{}] approver chain resolution failed (advisory, submission not blocked): {}", entry.getId(), e.getMessage());
         }
     }
 

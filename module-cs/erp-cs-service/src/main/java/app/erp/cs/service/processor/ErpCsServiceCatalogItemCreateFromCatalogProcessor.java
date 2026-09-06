@@ -67,7 +67,7 @@ public class ErpCsServiceCatalogItemCreateFromCatalogProcessor {
                 fulfillmentBiz.executeFulfillmentSteps(catalogItemId, ticket.getId(), context);
             } catch (Exception e) {
                 // 履行登记失败不阻断建单主流程（已建单可由客服手动跟进）
-                LOG.warn("fulfillment-execute-failed (建单已成功，降级): catalogItemId={}, ticketId={}, reason={}",
+                LOG.warn("fulfillment-execute-failed (ticket creation succeeded, degraded): catalogItemId={}, ticketId={}, reason={}",
                         catalogItemId, ticket.getId(), e.getMessage());
             }
         }
@@ -144,7 +144,7 @@ public class ErpCsServiceCatalogItemCreateFromCatalogProcessor {
         try {
             schema = JsonTool.parseBeanFromText(config, Map.class);
         } catch (Exception e) {
-            LOG.warn("request-form-config-parse-failed (跳过必填校验): catalogItemId={}, reason={}",
+            LOG.warn("request-form-config-parse-failed (skipping required-field validation): catalogItemId={}, reason={}",
                     item.getId(), e.getMessage());
             return;
         }
@@ -153,7 +153,7 @@ public class ErpCsServiceCatalogItemCreateFromCatalogProcessor {
         }
         Object fieldsObj = schema.get("fields");
         if (!(fieldsObj instanceof List)) {
-            LOG.warn("request-form-config-fields-not-array (跳过必填校验): catalogItemId={}", item.getId());
+            LOG.warn("request-form-config-fields-not-array (skipping required-field validation): catalogItemId={}", item.getId());
             return;
         }
         for (Object fieldObj : (List<?>) fieldsObj) {

@@ -354,7 +354,7 @@ public class ErpCsCatalogFulfillmentExecuteFulfillmentStepsProcessor {
         try {
             notificationBiz.notify(ErpCsConstants.NOTIFY_EVENT_FULFILLMENT_NOTIFY_CUSTOMER, ctx, context);
         } catch (Exception e) {
-            LOG.warn("fulfillment-notify-customer 派发失败（降级，链继续）：ticketId={}, reason={}",
+            LOG.warn("fulfillment-notify-customer dispatch failed (degraded, chain continues): ticketId={}, reason={}",
                     ticket.getId(), e.getMessage());
         }
         writeAudit(ticket, step.getActionType(), null, null, "DONE: 客户通知已派发", context);
@@ -650,7 +650,7 @@ public class ErpCsCatalogFulfillmentExecuteFulfillmentStepsProcessor {
             ctx.put("retryCount", step.getRetryCount());
             notificationBiz.notify(ErpCsConstants.NOTIFY_EVENT_FULFILLMENT_STEP_FAILED, ctx, context);
         } catch (Exception e) {
-            LOG.warn("fulfillment-step-failed 通知派发失败（降级）：ticketId={}, reason={}",
+            LOG.warn("fulfillment-step-failed notification dispatch failed (degraded): ticketId={}, reason={}",
                     ticket.getId(), e.getMessage());
         }
     }
@@ -668,7 +668,7 @@ public class ErpCsCatalogFulfillmentExecuteFulfillmentStepsProcessor {
                         return null;
                     }));
         } catch (Exception e) {
-            LOG.warn("fulfillment-step-failed 通知派发失败（降级）：ticketId={}, reason={}",
+            LOG.warn("fulfillment-step-failed notification dispatch failed (degraded): ticketId={}, reason={}",
                     ticket.getId(), e.getMessage());
         }
     }
@@ -685,7 +685,7 @@ public class ErpCsCatalogFulfillmentExecuteFulfillmentStepsProcessor {
             ctx.put("approverRole", approverRole);
             notificationBiz.notify(ErpCsConstants.NOTIFY_EVENT_FULFILLMENT_APPROVAL_REQUEST, ctx, context);
         } catch (Exception e) {
-            LOG.warn("fulfillment-approval-request 通知派发失败（降级）：ticketId={}, reason={}",
+            LOG.warn("fulfillment-approval-request notification dispatch failed (degraded): ticketId={}, reason={}",
                     ticket.getId(), e.getMessage());
         }
     }
@@ -716,7 +716,7 @@ public class ErpCsCatalogFulfillmentExecuteFulfillmentStepsProcessor {
             Map<String, Object> parsed = JsonTool.parseBeanFromText(actionConfig, Map.class);
             return parsed == null ? new LinkedHashMap<>() : parsed;
         } catch (Exception e) {
-            LOG.warn("fulfillment-action-config-parse-failed（按缺省策略执行）: {}", e.getMessage());
+            LOG.warn("fulfillment-action-config-parse-failed (proceeding with default policy): {}", e.getMessage());
             return new LinkedHashMap<>();
         }
     }

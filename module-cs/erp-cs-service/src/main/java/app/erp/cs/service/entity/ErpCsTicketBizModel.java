@@ -135,7 +135,7 @@ public class ErpCsTicketBizModel extends AbstractErpCrudBizModel<ErpCsTicket> im
             try {
                 matchAndAttachSlaProcessor.matchAndAttachSla(ticket.getId(), context);
             } catch (Exception e) {
-                LOG.warn("自动挂载 SLA 失败（降级，创建主流程继续）：ticketId={}, reason={}",
+                LOG.warn("Auto SLA attach failed (degraded, ticket creation main flow continues): ticketId={}, reason={}",
                         ticket.getId(), e.getMessage());
             }
         }
@@ -542,7 +542,7 @@ public class ErpCsTicketBizModel extends AbstractErpCrudBizModel<ErpCsTicket> im
             notificationBiz.notify(ErpCsConstants.NOTIFY_EVENT_SLA_OVERDUE, ctx, context);
         } catch (Exception e) {
             // 通知派发失败不阻断 SLA 升级主流程（config-gated 降级语义）
-            LOG.warn("SLA notify 派发失败（降级，主升级流程继续）：ticketId={}, reason={}",
+            LOG.warn("SLA notify dispatch failed (degraded, main escalation flow continues): ticketId={}, reason={}",
                     ticket.getId(), e.getMessage());
         }
     }
@@ -573,7 +573,7 @@ public class ErpCsTicketBizModel extends AbstractErpCrudBizModel<ErpCsTicket> im
             ctx.put("submitterUserId", ticket.getCreatedBy());
             notificationBiz.notify(ErpCsConstants.NOTIFY_EVENT_TICKET_CREATED, ctx, context);
         } catch (Exception e) {
-            LOG.warn("工单创建确认通知派发失败（降级，主流程继续）：ticketId={}, reason={}",
+            LOG.warn("Ticket creation confirmation notification dispatch failed (degraded, main flow continues): ticketId={}, reason={}",
                     ticket.getId(), e.getMessage());
         }
     }
@@ -590,7 +590,7 @@ public class ErpCsTicketBizModel extends AbstractErpCrudBizModel<ErpCsTicket> im
             ctx.put("customerName", resolveCustomerName(ticket.getCustomerId(), context));
             notificationBiz.notify(ErpCsConstants.NOTIFY_EVENT_TICKET_ASSIGN_NO_MATCH, ctx, context);
         } catch (Exception e) {
-            LOG.warn("分派无匹配升级通知派发失败（降级，主流程继续）：ticketId={}, reason={}",
+            LOG.warn("No-assignee-match escalation notification dispatch failed (degraded, main flow continues): ticketId={}, reason={}",
                     ticket.getId(), e.getMessage());
         }
     }

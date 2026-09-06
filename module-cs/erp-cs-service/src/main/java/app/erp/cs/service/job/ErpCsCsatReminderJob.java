@@ -107,7 +107,7 @@ public class ErpCsCsatReminderJob {
                 notifySurvey(survey, state, ctx);
                 count++;
             } catch (Exception e) {
-                LOG.warn("erp-cs-csat-reminder: 单条调查通知失败（隔离继续）：surveyId={}, reason={}",
+                LOG.warn("erp-cs-csat-reminder: single survey notification failed (failure isolated, continuing): surveyId={}, reason={}",
                         survey.getId(), e.getMessage());
             }
         }

@@ -87,7 +87,7 @@ public class ErpCsEntitlementExpiryJob {
                 notifyExpiry(e, ctx);
                 count++;
             } catch (Exception ex) {
-                LOG.warn("erp-cs-entitlement-expiry: 单条权益预警失败（隔离继续）：entitlementId={}, reason={}",
+                LOG.warn("erp-cs-entitlement-expiry: single entitlement warning failed (failure isolated, continuing): entitlementId={}, reason={}",
                         e.getId(), ex.getMessage());
             }
         }

@@ -216,7 +216,7 @@ public class ErpCsTicketScanOverdueTicketsProcessor {
             notificationBiz.notify(ErpCsConstants.NOTIFY_EVENT_SLA_OVERDUE, ctx, context);
         } catch (Exception e) {
             // 通知派发失败不阻断 SLA 升级主流程（config-gated 降级语义）
-            LOG.warn("SLA notify 派发失败（降级，主升级流程继续）：ticketId={}, reason={}",
+            LOG.warn("SLA notify dispatch failed (degraded, main escalation flow continues): ticketId={}, reason={}",
                     ticket.getId(), e.getMessage());
         }
     }

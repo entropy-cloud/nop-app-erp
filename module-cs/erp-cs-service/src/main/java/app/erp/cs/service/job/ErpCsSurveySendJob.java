@@ -155,7 +155,7 @@ public class ErpCsSurveySendJob {
     protected void markFailed(ErpCsSurvey survey, Exception cause) {
         survey.setStatus(ErpCsConstants.SURVEY_STATUS_FAILED);
         survey.setFailureCount(survey.getFailureCount() == null ? 1 : survey.getFailureCount() + 1);
-        LOG.warn("erp-cs-survey-send: 单条调查派发失败（标记 FAILED，隔离继续）：surveyId={}, failureCount={}, reason={}",
+        LOG.warn("erp-cs-survey-send: single survey dispatch failed (marked FAILED, failure isolated, continuing): surveyId={}, failureCount={}, reason={}",
                 survey.getId(), survey.getFailureCount(), cause.getMessage());
     }
 

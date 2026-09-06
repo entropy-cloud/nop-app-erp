@@ -78,7 +78,7 @@ public class ErpCsFulfillmentRetryJob {
             try {
                 retried += fulfillmentProcessor.retryForJob(ticketId, ctx);
             } catch (Exception e) {
-                LOG.warn("erp-cs-fulfillment-retry: 单张工单重试失败（隔离继续）：ticketId={}, reason={}",
+                LOG.warn("erp-cs-fulfillment-retry: single ticket retry failed (failure isolated, continuing): ticketId={}, reason={}",
                         ticketId, e.getMessage());
             }
         }

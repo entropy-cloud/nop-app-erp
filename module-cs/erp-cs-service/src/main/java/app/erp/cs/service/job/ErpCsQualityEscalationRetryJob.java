@@ -94,14 +94,14 @@ public class ErpCsQualityEscalationRetryJob {
                 try {
                     ErpCsTicket ticket = ticketBiz.get(String.valueOf(action.getTicketId()), true, ctx);
                     if (ticket == null) {
-                        LOG.warn("erp-cs-quality-retry: 工单不存在（跳过）：ticketId={}", action.getTicketId());
+                        LOG.warn("erp-cs-quality-retry: ticket not found (skipped): ticketId={}", action.getTicketId());
                         continue;
                     }
                     if (escalateToQualityProcessor.retryPendingEscalation(ticket, action, ctx)) {
                         count++;
                     }
                 } catch (Exception e) {
-                    LOG.warn("erp-cs-quality-retry: 单条重试失败（隔离继续）：ticketId={}, reason={}",
+                    LOG.warn("erp-cs-quality-retry: single retry failed (failure isolated, continuing): ticketId={}, reason={}",
                             action.getTicketId(), e.getMessage());
                 }
             }
