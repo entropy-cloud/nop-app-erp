@@ -63,7 +63,7 @@ public class BudgetChecker {
                         .param(ErpPrjErrors.ARG_BUDGET_USED, used)
                         .param(ErpPrjErrors.ARG_AMOUNT, addAmount);
             }
-            LOG.warn("项目 {} 预算超限（WARNING 模式放行）：总预算={}, 已使用={}, 拟新增={}",
+            LOG.warn("Project {} budget exceeded (WARNING mode pass-through): total={}, used={}, proposedAdd={}",
                     projectId, total, used, addAmount);
         }
     }

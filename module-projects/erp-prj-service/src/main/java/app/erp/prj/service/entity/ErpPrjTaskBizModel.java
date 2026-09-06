@@ -188,7 +188,7 @@ public class ErpPrjTaskBizModel extends AbstractErpCrudBizModel<ErpPrjTask> impl
                     .param(ErpPrjErrors.ARG_DEPENDS_ON_TASK_ID, dependsOnId)
                     .param(ErpPrjErrors.ARG_DEPENDS_ON_TASK_STATUS, predecessorStatus);
         }
-        LOG.warn("任务 {} 的前置任务 {} 当前状态 {} 未完成（WARN 模式放行），task-dag.md §4.3",
+        LOG.warn("Task {} predecessor {} current status {} not done (WARN mode pass-through), task-dag.md §4.3",
                 task.getId(), dependsOnId, predecessorStatus);
     }
 

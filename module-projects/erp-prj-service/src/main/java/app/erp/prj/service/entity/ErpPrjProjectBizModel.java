@@ -183,7 +183,7 @@ public class ErpPrjProjectBizModel extends AbstractErpCrudBizModel<ErpPrjProject
                     .param(ErpPrjErrors.ARG_PROJECT_ID, project.getId())
                     .param(ErpPrjErrors.ARG_MISSING_FIELDS, missingFields);
         }
-        LOG.warn("项目 {} 立项前置校验失败：缺少必填字段 {}（WARN 模式放行），state-machine.md §迁移完整性 DRAFT→OPEN",
+        LOG.warn("Project {} start precondition check failed: missing required fields {} (WARN mode pass-through), state-machine.md §transition completeness DRAFT→OPEN",
                 project.getId(), missingFields);
     }
 

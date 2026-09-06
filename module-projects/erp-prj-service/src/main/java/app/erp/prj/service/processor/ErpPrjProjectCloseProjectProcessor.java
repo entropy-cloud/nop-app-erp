@@ -95,7 +95,7 @@ public class ErpPrjProjectCloseProjectProcessor {
                     .param(ErpPrjErrors.ARG_PROJECT_ID, projectId)
                     .param(ErpPrjErrors.ARG_TASK_STATUSES, UNFINISHED_TASK_STATUSES);
         }
-        LOG.warn("项目 {} 存在 {} 个未结束任务（状态={}，WARN 模式放行），state-machine.md §迁移完整性 OPEN→COMPLETED",
+        LOG.warn("Project {} has {} unfinished tasks (statuses={}, WARN mode pass-through), state-machine.md §transition completeness OPEN→COMPLETED",
                 projectId, count, UNFINISHED_TASK_STATUSES);
     }
 

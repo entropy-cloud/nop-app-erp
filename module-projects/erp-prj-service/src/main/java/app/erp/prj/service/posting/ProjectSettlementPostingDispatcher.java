@@ -45,9 +45,11 @@ public class ProjectSettlementPostingDispatcher {
             return voucherId != null;
         } catch (Exception e) {
             if (e instanceof NopException) {
-                LOG.warn("项目结算过账失败，结算单 {} 保持 APPROVED、posted=false：{}", settlement.getCode(), e.getMessage());
+                LOG.warn("Project settlement posting failed, settlement {} kept APPROVED with posted=false: {}",
+                        settlement.getCode(), e.getMessage());
             } else {
-                LOG.error("项目结算过账异常，结算单 {} 保持 APPROVED、posted=false", settlement.getCode(), e);
+                LOG.error("Project settlement posting exception, settlement {} kept APPROVED with posted=false",
+                        settlement.getCode(), e);
             }
             return false;
         }
@@ -61,9 +63,9 @@ public class ProjectSettlementPostingDispatcher {
             executor.reverse(settlement.getCode(), ErpFinBusinessType.PROJECT_SETTLEMENT);
         } catch (Exception e) {
             if (e instanceof NopException) {
-                LOG.warn("项目结算红字冲销失败，结算单 {}：{}", settlement.getCode(), e.getMessage());
+                LOG.warn("Project settlement reversal posting failed, settlement {}: {}", settlement.getCode(), e.getMessage());
             } else {
-                LOG.error("项目结算红字冲销异常，结算单 {}", settlement.getCode(), e);
+                LOG.error("Project settlement reversal posting exception, settlement {}", settlement.getCode(), e);
             }
             throw e;
         }
@@ -81,9 +83,9 @@ public class ProjectSettlementPostingDispatcher {
             return executor.postEvent(event);
         } catch (Exception e) {
             if (e instanceof NopException) {
-                LOG.warn("质保金返还凭证过账失败，结算单 {}：{}", settlement.getCode(), e.getMessage());
+                LOG.warn("Retention return voucher posting failed, settlement {}: {}", settlement.getCode(), e.getMessage());
             } else {
-                LOG.error("质保金返还凭证过账异常，结算单 {}", settlement.getCode(), e);
+                LOG.error("Retention return voucher posting exception, settlement {}", settlement.getCode(), e);
             }
             throw new NopException(ErpPrjErrors.ERR_RETENTION_RETURN_POSTING_FAILED, e)
                     .param(ErpPrjErrors.ARG_SETTLEMENT_CODE, settlement.getCode());

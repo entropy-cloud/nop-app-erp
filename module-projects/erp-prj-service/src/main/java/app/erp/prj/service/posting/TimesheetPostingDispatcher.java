@@ -80,9 +80,11 @@ public class TimesheetPostingDispatcher {
             return voucherId != null;
         } catch (Exception e) {
             if (e instanceof NopException) {
-                LOG.warn("工时过账失败，工时单 {} 保持 APPROVED、posted=false：{}", timesheet.getCode(), e.getMessage());
+                LOG.warn("Timesheet posting failed, timesheet {} kept APPROVED with posted=false: {}",
+                        timesheet.getCode(), e.getMessage());
             } else {
-                LOG.error("工时过账异常，工时单 {} 保持 APPROVED、posted=false", timesheet.getCode(), e);
+                LOG.error("Timesheet posting exception, timesheet {} kept APPROVED with posted=false",
+                        timesheet.getCode(), e);
             }
             dispatchFailureAlert(timesheet, e);
             return false;
@@ -104,7 +106,7 @@ public class TimesheetPostingDispatcher {
         try {
             notificationBiz.notify(NOTIFY_EVENT_TIMESHEET_FAILURE, ctx, serviceCtx);
         } catch (Exception notifyErr) {
-            LOG.warn("工时过账失败告警派发失败（降级）：timesheetCode={}, reason={}",
+            LOG.warn("Timesheet posting failure alert dispatch failed (degraded): timesheetCode={}, reason={}",
                     timesheet.getCode(), notifyErr.getMessage());
         }
     }
@@ -205,7 +207,7 @@ public class TimesheetPostingDispatcher {
         IServiceContext context = currentContext();
         ErpMdCurrency currency = findCurrencyById(currencyId, context);
         if (currency == null) {
-            LOG.warn("工时过账汇率解析：币种 {} 不存在，无法判定本位币归属，保守放行 rate=1", currencyId);
+            LOG.warn("Timesheet posting exchange-rate resolution: currency {} not found, functional currency unknown, conservatively passing rate=1", currencyId);
             return BigDecimal.ONE;
         }
         if (Boolean.TRUE.equals(currency.getIsFunctional())) {
