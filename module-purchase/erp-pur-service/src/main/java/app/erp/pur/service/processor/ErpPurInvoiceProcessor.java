@@ -133,7 +133,7 @@ public class ErpPurInvoiceProcessor {
         }
         if (!Objects.equals(status, ErpPurConstants.APPROVE_STATUS_UNSUBMITTED)
                 && !Objects.equals(status, ErpPurConstants.APPROVE_STATUS_REJECTED)) {
-            throw illegalTransition(invoice, status, "UNSUBMITTED 或 REJECTED");
+            throw illegalTransition(invoice, status, "UNSUBMITTED / REJECTED");
         }
     }
 
@@ -171,7 +171,7 @@ public class ErpPurInvoiceProcessor {
         try {
             documentStateMachine.assertCanCancel(invoice.getDocStatus());
         } catch (NopException e) {
-            throw illegalDocTransition(invoice, invoice.getDocStatus(), "非已作废");
+            throw illegalDocTransition(invoice, invoice.getDocStatus(), "!CANCELLED");
         }
     }
 
@@ -264,7 +264,7 @@ public class ErpPurInvoiceProcessor {
 
     protected void validateNotCancelled(ErpPurInvoice invoice, IServiceContext context) {
         if (invoice.isCancelled()) {
-            throw illegalDocTransition(invoice, invoice.getDocStatus(), "非已作废");
+            throw illegalDocTransition(invoice, invoice.getDocStatus(), "!CANCELLED");
         }
     }
 

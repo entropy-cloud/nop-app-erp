@@ -36,7 +36,7 @@ public class ErpPurRequisitionDocumentStateMachine {
 
     public void assertCanCancel(String docStatus) {
         if (isTerminal(docStatus)) {
-            throw illegal("cancel", docStatus, "非已作废");
+            throw illegal("cancel", docStatus, "!" + ErpPurDocStatus.DOC_STATUS_CANCELLED);
         }
     }
 

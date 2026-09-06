@@ -117,7 +117,7 @@ public class ErpPurPaymentProcessor {
         }
         if (!Objects.equals(status, ErpPurConstants.APPROVE_STATUS_UNSUBMITTED)
                 && !Objects.equals(status, ErpPurConstants.APPROVE_STATUS_REJECTED)) {
-            throw illegalTransition(payment, status, "UNSUBMITTED 或 REJECTED");
+            throw illegalTransition(payment, status, "UNSUBMITTED / REJECTED");
         }
     }
 
@@ -155,7 +155,7 @@ public class ErpPurPaymentProcessor {
         try {
             documentStateMachine.assertCanCancel(payment.getDocStatus());
         } catch (NopException e) {
-            throw illegalDocTransition(payment, payment.getDocStatus(), "非已作废");
+            throw illegalDocTransition(payment, payment.getDocStatus(), "!CANCELLED");
         }
     }
 
@@ -274,7 +274,7 @@ public class ErpPurPaymentProcessor {
 
     protected void validateNotCancelled(ErpPurPayment payment, IServiceContext context) {
         if (payment.isCancelled()) {
-            throw illegalDocTransition(payment, payment.getDocStatus(), "非已作废");
+            throw illegalDocTransition(payment, payment.getDocStatus(), "!CANCELLED");
         }
     }
 

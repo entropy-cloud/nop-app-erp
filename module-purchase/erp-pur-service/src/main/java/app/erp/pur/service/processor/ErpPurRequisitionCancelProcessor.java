@@ -51,7 +51,7 @@ public class ErpPurRequisitionCancelProcessor extends AbstractCancelProcessor<Er
         try {
             stateMachine.assertCanCancel(entity.getDocStatus());
         } catch (NopException e) {
-            throw illegalStatusException(entity, entity.getDocStatus(), "非已作废");
+            throw illegalStatusException(entity, entity.getDocStatus(), "!CANCELLED");
         }
     }
 

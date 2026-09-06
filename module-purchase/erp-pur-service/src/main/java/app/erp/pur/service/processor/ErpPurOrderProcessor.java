@@ -122,7 +122,7 @@ public class ErpPurOrderProcessor {
         }
         if (!Objects.equals(status, ErpPurConstants.APPROVE_STATUS_UNSUBMITTED)
                 && !Objects.equals(status, ErpPurConstants.APPROVE_STATUS_REJECTED)) {
-            throw illegalTransition(order, status, "UNSUBMITTED 或 REJECTED");
+            throw illegalTransition(order, status, "UNSUBMITTED / REJECTED");
         }
     }
 
@@ -157,7 +157,7 @@ public class ErpPurOrderProcessor {
     protected void validateTransitionForCancel(ErpPurOrder order, IServiceContext context) {
         String docStatus = order.getDocStatus();
         if (docStatus != null && Objects.equals(docStatus, ErpPurConstants.DOC_STATUS_CANCELLED)) {
-            throw illegalDocTransition(order, docStatus, "非已作废");
+            throw illegalDocTransition(order, docStatus, "!" + ErpPurConstants.DOC_STATUS_CANCELLED);
         }
     }
 
@@ -379,7 +379,7 @@ public class ErpPurOrderProcessor {
 
     protected void validateNotCancelled(ErpPurOrder order, IServiceContext context) {
         if (order.isCancelled()) {
-            throw illegalDocTransition(order, order.getDocStatus(), "非已作废");
+            throw illegalDocTransition(order, order.getDocStatus(), "!" + ErpPurConstants.DOC_STATUS_CANCELLED);
         }
     }
 

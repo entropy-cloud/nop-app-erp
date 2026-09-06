@@ -88,7 +88,7 @@ public class ErpPurQuotationBizModel extends AbstractErpCrudBizModel<ErpPurQuota
             throw new NopException(ErpPurErrors.ERR_QUOTATION_ILLEGAL_DOC_STATUS_TRANSITION)
                     .param(ErpPurErrors.ARG_QUOTATION_CODE, quotation.getCode())
                     .param(ErpPurErrors.ARG_CURRENT_DOC_STATUS, quotation.getDocStatus())
-                    .param(ErpPurErrors.ARG_EXPECTED_DOC_STATUS, "非已作废");
+                    .param(ErpPurErrors.ARG_EXPECTED_DOC_STATUS, "!" + ErpPurDocStatus.DOC_STATUS_CANCELLED);
         }
         quotation.setDocStatus(stateMachine.cancelTargetStatus());
         updateEntity(quotation, null, context);
@@ -105,7 +105,7 @@ public class ErpPurQuotationBizModel extends AbstractErpCrudBizModel<ErpPurQuota
         try {
             approvalStateMachine.assertCanSubmit(approveStatus);
         } catch (NopException e) {
-            throw illegalStatus(code, approveStatus, "UNSUBMITTED 或 REJECTED");
+            throw illegalStatus(code, approveStatus, "UNSUBMITTED / REJECTED");
         }
         return approvalStateMachine.submitTargetStatus();
     }
@@ -167,7 +167,7 @@ public class ErpPurQuotationBizModel extends AbstractErpCrudBizModel<ErpPurQuota
             throw new NopException(ErpPurErrors.ERR_QUOTATION_ILLEGAL_DOC_STATUS_TRANSITION)
                     .param(ErpPurErrors.ARG_QUOTATION_CODE, code)
                     .param(ErpPurErrors.ARG_CURRENT_DOC_STATUS, docStatus)
-                    .param(ErpPurErrors.ARG_EXPECTED_DOC_STATUS, "非已作废");
+                    .param(ErpPurErrors.ARG_EXPECTED_DOC_STATUS, "!" + ErpPurDocStatus.DOC_STATUS_CANCELLED);
         }
     }
 

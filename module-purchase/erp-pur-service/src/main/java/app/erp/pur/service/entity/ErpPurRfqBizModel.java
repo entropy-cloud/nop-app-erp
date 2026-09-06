@@ -52,7 +52,7 @@ public class ErpPurRfqBizModel extends AbstractErpCrudBizModel<ErpPurRfq> implem
             throw new NopException(ErpPurErrors.ERR_RFQ_ILLEGAL_DOC_STATUS_TRANSITION)
                     .param(ErpPurErrors.ARG_RFQ_CODE, rfq.getCode())
                     .param(ErpPurErrors.ARG_CURRENT_DOC_STATUS, rfq.getDocStatus())
-                    .param(ErpPurErrors.ARG_EXPECTED_DOC_STATUS, "非已作废");
+                    .param(ErpPurErrors.ARG_EXPECTED_DOC_STATUS, "!" + ErpPurDocStatus.DOC_STATUS_CANCELLED);
         }
         rfq.setDocStatus(stateMachine.cancelTargetStatus());
         updateEntity(rfq, null, context);
@@ -69,7 +69,7 @@ public class ErpPurRfqBizModel extends AbstractErpCrudBizModel<ErpPurRfq> implem
         try {
             approvalStateMachine.assertCanSubmit(approveStatus);
         } catch (NopException e) {
-            throw illegalStatus(code, approveStatus, "UNSUBMITTED 或 REJECTED");
+            throw illegalStatus(code, approveStatus, "UNSUBMITTED / REJECTED");
         }
         return approvalStateMachine.submitTargetStatus();
     }
@@ -131,7 +131,7 @@ public class ErpPurRfqBizModel extends AbstractErpCrudBizModel<ErpPurRfq> implem
             throw new NopException(ErpPurErrors.ERR_RFQ_ILLEGAL_DOC_STATUS_TRANSITION)
                     .param(ErpPurErrors.ARG_RFQ_CODE, code)
                     .param(ErpPurErrors.ARG_CURRENT_DOC_STATUS, docStatus)
-                    .param(ErpPurErrors.ARG_EXPECTED_DOC_STATUS, "非已作废");
+                    .param(ErpPurErrors.ARG_EXPECTED_DOC_STATUS, "!" + ErpPurDocStatus.DOC_STATUS_CANCELLED);
         }
     }
 
