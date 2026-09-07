@@ -60,7 +60,7 @@ public class ErpInvOwnershipTransferProcessor {
             throw new NopException(ErpInvErrors.ERR_OWNERSHIP_TRANSFER_ILLEGAL_STATUS, e)
                     .param(ErpInvErrors.ARG_TRANSFER_CODE, transfer.getCode())
                     .param(ErpInvErrors.ARG_CURRENT_STATUS, status)
-                    .param(ErpInvErrors.ARG_EXPECTED_STATUS, "DRAFT或CONFIRMED");
+                    .param(ErpInvErrors.ARG_EXPECTED_STATUS, "DRAFT / CONFIRMED");
         }
         transfer.setDocStatus(stateMachine.cancelTargetStatus());
         transferDao().saveOrUpdateEntity(transfer);
@@ -276,7 +276,7 @@ public class ErpInvOwnershipTransferProcessor {
             throw new NopException(ErpInvErrors.ERR_OWNERSHIP_TRANSFER_ILLEGAL_STATUS, e)
                     .param(ErpInvErrors.ARG_TRANSFER_CODE, transfer.getCode())
                     .param(ErpInvErrors.ARG_CURRENT_STATUS, status)
-                    .param(ErpInvErrors.ARG_EXPECTED_STATUS, expected + "（目标：" + actionTarget + "）");
+                    .param(ErpInvErrors.ARG_EXPECTED_STATUS, expected + " (target: " + actionTarget + ")");
         }
     }
 

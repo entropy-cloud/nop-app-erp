@@ -84,7 +84,7 @@ public class ErpInvStockMoveStateMachine {
     public void assertCanCancel(String docStatus) {
         if (!ErpInvDocStatus.DOC_STATUS_DRAFT.equals(docStatus)
                 && !ErpInvDocStatus.DOC_STATUS_CONFIRMED.equals(docStatus)) {
-            throw illegal("cancel", docStatus, "DRAFT或CONFIRMED");
+            throw illegal("cancel", docStatus, "DRAFT / CONFIRMED");
         }
     }
 

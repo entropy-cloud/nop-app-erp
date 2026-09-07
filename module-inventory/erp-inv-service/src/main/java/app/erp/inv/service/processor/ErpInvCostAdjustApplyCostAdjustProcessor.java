@@ -66,7 +66,7 @@ public class ErpInvCostAdjustApplyCostAdjustProcessor {
             throw new NopException(ErpInvErrors.ERR_ILLEGAL_STATUS_TRANSITION, e)
                     .param(ErpInvErrors.ARG_MOVE_CODE, adjust.getCode())
                     .param(ErpInvErrors.ARG_CURRENT_STATUS, adjust.getDocStatus())
-                    .param(ErpInvErrors.ARG_EXPECTED_STATUS, "DRAFT或CONFIRMED");
+                    .param(ErpInvErrors.ARG_EXPECTED_STATUS, "DRAFT / CONFIRMED");
         }
         if (facade.isApprovalRequired() && !Objects.equals(facade.currentApproveStatus(adjust),
                 ErpInvConstants.APPROVE_STATUS_APPROVED)) {

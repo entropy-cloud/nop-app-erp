@@ -79,7 +79,7 @@ public class ErpInvOwnershipTransferStateMachine {
     public void assertCanCancel(String docStatus) {
         if (!ErpInvConstants.OWNERSHIP_TRANSFER_STATUS_DRAFT.equals(docStatus)
                 && !ErpInvConstants.OWNERSHIP_TRANSFER_STATUS_CONFIRMED.equals(docStatus)) {
-            throw illegal("cancel", docStatus, "DRAFT或CONFIRMED");
+            throw illegal("cancel", docStatus, "DRAFT / CONFIRMED");
         }
     }
 

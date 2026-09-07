@@ -82,7 +82,7 @@ public class ErpInvStockTakeStateMachine {
     public void assertCanCancel(String docStatus) {
         if (ErpInvDocStatus.DOC_STATUS_DONE.equals(docStatus)
                 || ErpInvDocStatus.DOC_STATUS_CANCELLED.equals(docStatus)) {
-            throw illegal("cancel", docStatus, "非DONE且非CANCELLED");
+            throw illegal("cancel", docStatus, "!DONE / CANCELLED");
         }
     }
 

@@ -28,7 +28,7 @@ public class ErpInvCostAdjustReverseApproveProcessor extends AbstractReverseAppr
         }
         processor.validateTransitionForReverseApprove(adjust);
         if (Boolean.TRUE.equals(adjust.getPosted())) {
-            throw processor.illegalTransition(adjust, processor.currentApproveStatus(adjust), "未过账（先冲销再反审）");
+            throw processor.illegalTransition(adjust, processor.currentApproveStatus(adjust), "!POSTED");
         }
         adjust.setApproveStatus(ErpInvConstants.APPROVE_STATUS_REJECTED);
         processor.adjustDao().updateEntity(adjust);

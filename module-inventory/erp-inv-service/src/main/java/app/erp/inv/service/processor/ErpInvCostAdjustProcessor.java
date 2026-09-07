@@ -1,5 +1,6 @@
 package app.erp.inv.service.processor;
 
+import app.erp.inv.dao.constants.ErpInvDocStatus;
 import app.erp.inv.dao.entity.ErpInvCostAdjust;
 import app.erp.inv.dao.entity.ErpInvCostAdjustLine;
 import app.erp.inv.service.ErpInvConstants;
@@ -84,7 +85,7 @@ public class ErpInvCostAdjustProcessor {
     protected void validateTransitionForSubmit(ErpInvCostAdjust adjust) {
         String status = currentApproveStatus(adjust);
         if (!Objects.equals(status, ErpInvConstants.APPROVE_STATUS_UNSUBMITTED) && !Objects.equals(status, ErpInvConstants.APPROVE_STATUS_REJECTED)) {
-            throw illegalTransition(adjust, status, "UNSUBMITTED 或 REJECTED");
+            throw illegalTransition(adjust, status, "UNSUBMITTED / REJECTED");
         }
     }
 
@@ -118,7 +119,7 @@ public class ErpInvCostAdjustProcessor {
 
     protected void validateNotCancelled(ErpInvCostAdjust adjust, IServiceContext context) {
         if (adjust.isCancelled()) {
-            throw illegalTransition(adjust, adjust.getDocStatus(), "非已取消");
+            throw illegalTransition(adjust, adjust.getDocStatus(), "!" + ErpInvDocStatus.DOC_STATUS_CANCELLED);
         }
     }
 

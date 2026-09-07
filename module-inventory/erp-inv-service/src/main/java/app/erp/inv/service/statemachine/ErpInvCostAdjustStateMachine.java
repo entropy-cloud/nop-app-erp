@@ -67,7 +67,7 @@ public class ErpInvCostAdjustStateMachine {
     public void assertCanApplyCostAdjust(String docStatus) {
         if (!ErpInvDocStatus.DOC_STATUS_DRAFT.equals(docStatus)
                 && !ErpInvDocStatus.DOC_STATUS_CONFIRMED.equals(docStatus)) {
-            throw illegal("applyCostAdjust", docStatus, "DRAFT或CONFIRMED");
+            throw illegal("applyCostAdjust", docStatus, "DRAFT / CONFIRMED");
         }
     }
 

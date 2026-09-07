@@ -35,7 +35,7 @@ public class ErpInvStockMoveCancelProcessor {
             throw new NopException(ErpInvErrors.ERR_ILLEGAL_STATUS_TRANSITION, e)
                     .param(ErpInvErrors.ARG_MOVE_CODE, move.getCode())
                     .param(ErpInvErrors.ARG_CURRENT_STATUS, status)
-                    .param(ErpInvErrors.ARG_EXPECTED_STATUS, "DRAFT或CONFIRMED");
+                    .param(ErpInvErrors.ARG_EXPECTED_STATUS, "DRAFT / CONFIRMED");
         }
         if (Objects.equals(status, ErpInvConstants.DOC_STATUS_CONFIRMED)) {
             facade.releaseReservation(move, facade.loadLines(move.getId()), context);
