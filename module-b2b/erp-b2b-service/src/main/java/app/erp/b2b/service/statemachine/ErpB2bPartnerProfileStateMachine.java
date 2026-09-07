@@ -102,7 +102,7 @@ public class ErpB2bPartnerProfileStateMachine {
      */
     public void assertCanDeactivate(String status) {
         if (ErpB2bConstants.PARTNER_STATUS_TERMINATED.equals(status)) {
-            throw illegal("deactivate", status, "非终态（REGISTERED/TESTING/CERTIFIED/PRODUCTION/SUSPENDED）");
+            throw illegal("deactivate", status, "!REGISTERED / TESTING / CERTIFIED / PRODUCTION / SUSPENDED");
         }
     }
 
