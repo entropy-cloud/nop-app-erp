@@ -89,6 +89,35 @@
 
 完整 414 个去重 token 的 zh→en 映射见代码生成配套脚本使用的 `i18n_map.json`（本计划执行时由扫描脚本产出，落地后归档）。本表为人工审校基准；新增业务术语须先入本表再用于代码。
 
+## MI.8 手写页批次新增术语
+
+> 登记义务：MI.8 手写页 CAT-4 清剿批新词「先扩本表再使用」（`docs/architecture/i18n-compliance.md` 修复模式对照表 CAT-4 行）。条目式样沿 414 基准既有表格。
+
+### 批 1/2 finance + projects（plan 2026-09-07-0902-3，2026-09-07）
+
+| 中文 | English | 语义边界 |
+|----|---------|--------|
+| 期末结账向导 | Period Close Wizard | finance 期末结账向导页（F12 Tier C） |
+| 前置检查 | Pre-check | preCheck 只读结账前置检查动作 |
+| 月度结账 | Monthly Close | closePeriod 月度关账动作 |
+| 年度结转 | Annual Carry-Forward | 12 月年度结账分支（结转=Carry-Forward 既有） |
+| 年度结账 | Annual Close | 年度结账分支/结果面 |
+| 终关 | Finalize | finalizePeriod CLOSED→CLOSED_FINAL 终态锁定 |
+| 凭证 | Voucher | 记账凭证（凭证号=Voucher No 沿 view.xml 既有） |
+| 已过账凭证 | Posted Vouchers | 凭证计数列标签 |
+| 未过账凭证 | Unposted Vouchers | 凭证计数列标签 |
+| 总凭证 | Total Vouchers | 凭证计数列标签 |
+| 坏账准备 | Bad-Debt Allowance | 应收坏账准备计提面（allowance 系字段） |
+| 损益结转 | P&L Carry-Forward | 期末损益结转 |
+| 汇兑重估 | FX Revaluation | 期末汇兑重估 |
+| 本年利润 | Current Profit | 损益结转中间科目 |
+| 未分配利润 | Retained Earnings | 年度结转目标科目 |
+| 反结账原因 | Un-close Reason | 反结账审计必填原因（反结账=Un-close 既有） |
+| 红冲影响 | Red-Reverse Impact | 反结账红冲预览面（红冲=Red Reverse 既有） |
+| 项目盈亏 | Project P&L | projects 项目盈亏页 |
+| 项目结算 | Project Settlement | projects 项目结算单（结算=Settle 既有） |
+| 工时明细 | Timesheet Detail | projects 工时明细报表（工时=Timesheet 沿 view.xml） |
+
 ## 维护
 
 - 新增业务页面用到本表未收录的中文 label 时，**先扩充本表**，再用一致译法补 `i18n-en:`。
