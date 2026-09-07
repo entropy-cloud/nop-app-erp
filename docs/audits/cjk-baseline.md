@@ -499,10 +499,78 @@ files:
 
 
 
+## 批注账 (MI.x Batch Ledger)
+
+> MI.x 分批执行协议义务（`docs/backlog/ai-check-r3-roadmap.md` MI.6 行）：每批完成记入本账，MI.6 保持 todo 直至 CAT-3 = 0 或白名单全覆盖。红线→归零逐域对账以各批 plan 勾选注记与脚本实跑数字为准。
+
+| 批次 | Plan | 范围 | 红线（批前） | 批后 | 对账 | 验证 |
+|------|------|------|--------------|------|------|------|
+| MI.6 批 1/2 | `docs/plans/2026-09-07-0902-1-mi6-runtime-string-cat3-batch1.md`（2026-09-07） | finance 80/24 + assets 58/21 + cs 43/11 = **181 行 / 56 文件** | 全局 CAT3=390（CAT1=0/CAT2=0/CAT4=1700） | finance **0** / assets **0** / cs **0**；全局 CAT3 **209**（CAT1/2/4 持平 0/0/1700） | 181 → 0 逐域归零；白名单登记 11 文件（fin 5 / ast 4 / cs 2，§WHITELIST）；`--strict` PASS exit 0，0 新增违规，其余域 CAT3 与 CAT1/2/4 计数不高于快照 | erp-fin 525 + erp-ast 337 + erp-cs 185 = **1047 tests 全绿 0 失败**；协议 = `docs/architecture/i18n-compliance.md` CAT-3 行（plan Phase 1 Decision：C1 `@Description` / C2 功能契约窄类 / (a) 字典回归 / (b) 英文）；快照外科变换 133 文件（消息/名称列），seed CSV 零改动 |
+
+
+
 ## WHITELIST (machine-readable)
 
 > 文件级白名单是运行时字符串中文（CAT-3，及经独立裁决允许的其他 CAT）的**唯一豁免通道**（`docs/architecture/i18n-compliance.md §白名单登记格式`）。脚本解析本块做文件级豁免：`- file: <repo 相对路径>` + `cats: [3]`（数字或 CAT 前缀均可；省略 `cats` 行 = 豁免该文件全部 CAT-1..4）。四要素（文件路径/理由/owner doc 指针/裁决来源）以同行注释或条目下方注释行登记，缺一不可。白名单只增不删；调高（新增豁免）须附裁决来源，无裁决来源的登记无效。
 
 ```yaml
-# （空——MI.x 逐簇裁决后按上述格式追加；当前无任何登记豁免）
+# ===== 批 1/2 finance（plan 2026-09-07-0902-1 MI.6 Phase 2；协议 = i18n-compliance.md CAT-3 行 + plan Phase 1 Decision）=====
+# 文件路径（四要素1）；理由（四要素2）；owner doc（四要素3）；裁决来源（四要素4）逐条登记如下：
+- file: module-finance/erp-fin-dao/src/main/java/app/erp/fin/biz/IErpFinApDocumentBiz.java
+  cats: [3]
+  # 理由: @Description("中文") 专属文件（1 行），BizModel meta 注解供平台 meta 消费，按 E3 计划（plan 2026-08-28-0219-3）豁免
+  # owner doc: docs/architecture/i18n-compliance.md 判定准绳表 #5 + 修复模式对照表 CAT-3 行
+  # 裁决来源: plan 2026-09-07-0902-1 Phase 1 Decision C1（2026-09-07，逐簇裁决）
+- file: module-finance/erp-fin-service/src/main/java/app/erp/fin/service/dashboard/ErpFinDashboardBizModel.java
+  cats: [3]
+  # 理由: @Description("中文") 专属文件（1 行），同 E3 豁免
+  # owner doc: docs/architecture/i18n-compliance.md 判定准绳表 #5
+  # 裁决来源: plan 2026-09-07-0902-1 Phase 1 Decision C1（2026-09-07）
+- file: module-finance/erp-fin-service/src/main/java/app/erp/fin/service/entity/ErpFinApDocumentBizModel.java
+  cats: [3]
+  # 理由: @Description("中文") 专属文件（1 行），同 E3 豁免
+  # owner doc: docs/architecture/i18n-compliance.md 判定准绳表 #5
+  # 裁决来源: plan 2026-09-07-0902-1 Phase 1 Decision C1（2026-09-07）
+- file: module-finance/erp-fin-service/src/main/java/app/erp/fin/service/classify/ErpFinApDocRuleClassifier.java
+  cats: [3]
+  # 理由: 混合文件——setReason 诊断散文 2 行已按 (b) 改英文（本批 Phase 2 Fix）；剩余 3 行 excerpt.contains("增值税专用发票"/"电子发票"/"收据") 为文档内容匹配，中文字面量即行为本体（改英文破坏发票类型分类行为，违行为不变式），C2 窄类豁免
+  # owner doc: docs/architecture/i18n-compliance.md 判定准绳表 #5 + 修复模式对照表 CAT-3 行（C2 功能型中文内容契约）
+  # 裁决来源: plan 2026-09-07-0902-1 Phase 1 Decision C2①（2026-09-07，逐簇裁决）
+- file: module-finance/erp-fin-service/src/main/java/app/erp/fin/service/processor/ErpFinApDocumentPipelineProcessor.java
+  cats: [3]
+  # 理由: 混合文件——摄取轨迹/错误消息 9 行已按 (b) 改英文（本批 Phase 2 Fix）；剩余 6 行发票 OCR 解析 Pattern（P_INVOICE_NO/P_INVOICE_DATE/P_AMOUNT_WITH_TAX/P_TAX/P_TOTAL_EX_TAX/P_SUPPLIER_NAME）为中文发票版式解析契约，改英文破坏要素抽取行为，C2 窄类豁免
+  # owner doc: docs/architecture/i18n-compliance.md 判定准绳表 #5 + 修复模式对照表 CAT-3 行（C2 功能型中文内容契约）
+  # 裁决来源: plan 2026-09-07-0902-1 Phase 1 Decision C2①（2026-09-07，逐簇裁决）
+# ===== 批 1/2 assets（plan 2026-09-07-0902-1 MI.6 Phase 3；协议同上）=====
+- file: module-assets/erp-ast-dao/src/main/java/app/erp/ast/biz/IErpAstAssetBiz.java
+  cats: [3]
+  # 理由: @Description("中文") 专属文件（1 行），BizModel meta 注解供平台 meta 消费，按 E3 计划豁免
+  # owner doc: docs/architecture/i18n-compliance.md 判定准绳表 #5
+  # 裁决来源: plan 2026-09-07-0902-1 Phase 1 Decision C1（2026-09-07，逐簇裁决）
+- file: module-assets/erp-ast-service/src/main/java/app/erp/ast/service/dashboard/ErpAstDashboardBizModel.java
+  cats: [3]
+  # 理由: @Description("中文") 专属文件（1 行），同 E3 豁免
+  # owner doc: docs/architecture/i18n-compliance.md 判定准绳表 #5
+  # 裁决来源: plan 2026-09-07-0902-1 Phase 1 Decision C1（2026-09-07）
+- file: module-assets/erp-ast-service/src/main/java/app/erp/ast/service/entity/ErpAstAssetBizModel.java
+  cats: [3]
+  # 理由: 混合文件——auditRecorder 审计消息 5 行已按 (b) 改英文（本批 Phase 3 Fix）；剩余 1 行 @Description("资产操作审计时间轴…") 按 E3 豁免，整文件登记
+  # owner doc: docs/architecture/i18n-compliance.md 判定准绳表 #5 + 修复模式对照表 CAT-3 行（混合文件规则 ii）
+  # 裁决来源: plan 2026-09-07-0902-1 Phase 1 Decision C1+C2③（2026-09-07）
+- file: module-assets/erp-ast-service/src/main/java/app/erp/ast/service/processor/ErpAstAssetSuspendResumeProcessor.java
+  cats: [3]
+  # 理由: 混合文件——audit 消息 2 行已按 (b) 改英文（本批 Phase 3 Fix）；剩余 IDLE_SINCE_PREFIX="闲置自 " 为文档化字符串契约（IErpAstAssetBiz javadoc「闲置时长派生的时间基准」+ TestErpAstIdleStateMachine 断言 remark 含该前缀），改英文即破坏契约与测试，C2 窄类豁免
+  # owner doc: docs/architecture/i18n-compliance.md 判定准绳表 #5 + 修复模式对照表 CAT-3 行（C2 功能型中文内容契约③）
+  # 裁决来源: plan 2026-09-07-0902-1 Phase 1 Decision C2③（2026-09-07）
+# ===== 批 1/2 cs（plan 2026-09-07-0902-1 MI.6 Phase 4；协议同上）=====
+- file: module-cs/erp-cs-service/src/main/java/app/erp/cs/service/ErpCsConstants.java
+  cats: [3]
+  # 理由: FULFILLMENT_DEFAULT_APPROVER_ROLE="客服主管" 为 seed/通知配置数据契约（运行期匹配 nop_auth_role 角色名与通知模板 roles 数组，见 _cases 中 nop_auth_role.csv 与 erp_sys_notification_template.csv 实证），改英文破坏角色解析与通知投递行为，C2 窄类豁免
+  # owner doc: docs/architecture/i18n-compliance.md 判定准绳表 #5 + 修复模式对照表 CAT-3 行（C2 功能型中文内容契约②）
+  # 裁决来源: plan 2026-09-07-0902-1 Phase 1 Decision C2②（2026-09-07，逐簇裁决）
+- file: module-cs/erp-cs-service/src/main/java/app/erp/cs/service/dashboard/ErpCsQualityDashboardBizModel.java
+  cats: [3]
+  # 理由: 混合文件——看板 teamName "(未分派)" 1 行已按 (b) 改英文（本批 Phase 4 Fix）；剩余 1 行 @Description("客服看板 KPI…") 按 E3 豁免，整文件登记
+  # owner doc: docs/architecture/i18n-compliance.md 判定准绳表 #5 + 修复模式对照表 CAT-3 行（混合文件规则 ii）
+  # 裁决来源: plan 2026-09-07-0902-1 Phase 1 Decision C1（2026-09-07）
 ```

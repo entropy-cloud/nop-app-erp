@@ -56,7 +56,7 @@
 |------|--------|----------|----------|
 | CAT-1 | LOG 语句含中文 | **LOG 英文化**：消息模板改英文，保留 `{}` 占位参数与参数值不变 | 仅改消息载体，禁止借机改业务行为（`docs/lessons/09-posting-exception-swallow-suspension.md`：不得改吞异常行为）；不走 i18n |
 | CAT-2 | 异常路径携带中文散文参数 | **异常参数传码**：`.param(...)` 值改传状态码/枚举名/字典值本身（如 `"非已作废"` → `status` / `status.name()` / 字典 key）；否定语义（「非已作废/非终态」型）传 `"!" + 被禁状态码`（如 `"!CANCELLED"`，码集合传 `"!" + String.join(" / ", codes)`，见 plan `2026-09-07-0043-2` Phase 1 Decision） | 错误消息语义不变——中文仍由 `ErrorCode.define` 中文模板承载（判定 #1 合规）；错误码 key 与 ARG 常量名不变 |
-| CAT-3 | 运行时字符串中文 | **逐簇裁决**，三选一：(a) 改字典 key / 枚举名（业务数据回归字典真相）；(b) 改英文；(c) 白名单登记（§白名单登记格式） | `@Description("中文")` 按 E3 计划豁免登记；业务数据默认值逐簇裁决，不做一刀切；登记落 `docs/audits/cjk-baseline.md` |
+| CAT-3 | 运行时字符串中文 | **逐簇裁决**，三选一：(a) 改字典 key / 枚举名（业务数据回归字典真相）；(b) 改英文；(c) 白名单登记（§白名单登记格式） | `@Description("中文")` 按 E3 计划豁免登记；业务数据默认值逐簇裁决，不做一刀切；登记落 `docs/audits/cjk-baseline.md`。**混合文件白名单规则 + (a)(c) 簇级细化**（plan `2026-09-07-0902-1` Phase 1 Decision）：(i) `@Description` 专属文件整文件登记；(ii) 混合文件先修真实运行时行、后整文件登记（登记时点在该文件全部 CAT-3 行满足豁免条件之后）；(iii) 真实运行时字符串逐簇修复——字典真相重复字面量（AcctDocProvider 科目显示名等）按 (a) 置空回落 master-data 字典名（过账引擎 isBlank 回填，快照零漂移）；功能型中文内容契约按 (c) 窄类登记豁免（OCR/解析正则、文档内容匹配、seed/通知配置数据契约、文档化字符串契约——改英文即破坏行为，违反行为不变式）；其余真实运行时字符串改英文（持久化面改动触发 `_cases` 快照重录，seed CSV 零改动不触发横切关注点 7） |
 | CAT-4 | `*.page.yaml` / `*.flux.yaml` 用户可见文案中文无英文承载 | **补 `i18nEn` 或模型源 `i18n-en`**：手写页直接在 yaml 节点补 `i18nEn: "..."` 属性；codegen 产物改模型源（view.xml / xmeta 补 `i18n-en` 属性）后重新生成 | codegen 产物禁改生成物（`docs/lessons/06-codegen-product-edit-overwrite.md`）；codegen / 手写页的源头链判定以 M0.4 策略矩阵（`m0-4-page-yaml-source-map.md`）为准；英文译法统一取 `docs/design/i18n-glossary.md`（414 token 冻结基准，新词先扩表再使用） |
 
 ## 探针口径指针
