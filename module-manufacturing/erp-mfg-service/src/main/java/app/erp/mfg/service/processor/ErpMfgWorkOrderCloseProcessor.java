@@ -31,7 +31,7 @@ public class ErpMfgWorkOrderCloseProcessor {
         try {
             documentStateMachine.assertCanClose(status);
         } catch (io.nop.api.core.exceptions.NopException e) {
-            throw facade.illegalTransition(wo, status, "STOPPED 或 IN_PROCESS");
+            throw facade.illegalTransition(wo, status, "STOPPED / IN_PROCESS");
         }
     }
 

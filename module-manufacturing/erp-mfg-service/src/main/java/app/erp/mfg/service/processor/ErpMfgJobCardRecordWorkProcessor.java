@@ -35,7 +35,7 @@ public class ErpMfgJobCardRecordWorkProcessor {
         try {
             stateMachine.assertCanRecordWork(from);
         } catch (NopException e) {
-            throw facade.illegalTransition(jc, from, "WORK_IN_PROGRESS 或 SUBMITTED", e);
+            throw facade.illegalTransition(jc, from, "WORK_IN_PROGRESS / SUBMITTED", e);
         }
         BigDecimal laborCost = computeLaborCost(record);
 

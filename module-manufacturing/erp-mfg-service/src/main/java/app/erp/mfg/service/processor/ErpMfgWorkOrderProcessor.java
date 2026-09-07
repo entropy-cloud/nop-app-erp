@@ -214,7 +214,7 @@ public class ErpMfgWorkOrderProcessor {
         try {
             approvalStateMachine.assertCanSubmit(status);
         } catch (NopException e) {
-            throw illegalTransition(wo, status, "UNSUBMITTED 或 REJECTED");
+            throw illegalTransition(wo, status, "UNSUBMITTED / REJECTED");
         }
     }
 
@@ -314,7 +314,7 @@ public class ErpMfgWorkOrderProcessor {
         try {
             documentStateMachine.assertCanStart(status);
         } catch (NopException e) {
-            throw illegalTransition(wo, status, "STOCK_RESERVED 或 STOCK_PARTIAL");
+            throw illegalTransition(wo, status, "STOCK_RESERVED / STOCK_PARTIAL");
         }
         // 动态业务守卫（config-gated 部分齐套开工许可）保留原位
         if (ErpMfgConstants.WORK_ORDER_STATUS_STOCK_PARTIAL.equals(status) && !isAllowPartialKitStart()) {
@@ -369,7 +369,7 @@ public class ErpMfgWorkOrderProcessor {
         try {
             documentStateMachine.assertCanCancel(status);
         } catch (NopException e) {
-            throw illegalTransition(wo, status, "DRAFT、SUBMITTED 或 NOT_STARTED");
+            throw illegalTransition(wo, status, "DRAFT / SUBMITTED / NOT_STARTED");
         }
     }
 

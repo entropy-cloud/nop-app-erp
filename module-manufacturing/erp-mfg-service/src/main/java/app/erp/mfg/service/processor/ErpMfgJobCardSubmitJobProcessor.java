@@ -24,7 +24,7 @@ public class ErpMfgJobCardSubmitJobProcessor {
         try {
             stateMachine.assertCanSubmitJob(from);
         } catch (NopException e) {
-            throw facade.illegalTransition(jc, from, "WORK_IN_PROGRESS 或 ON_HOLD", e);
+            throw facade.illegalTransition(jc, from, "WORK_IN_PROGRESS / ON_HOLD", e);
         }
         doSubmitJob(jc);
         return jc;

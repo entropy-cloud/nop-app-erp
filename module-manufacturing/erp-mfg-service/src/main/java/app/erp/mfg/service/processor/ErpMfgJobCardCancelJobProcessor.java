@@ -24,7 +24,7 @@ public class ErpMfgJobCardCancelJobProcessor {
         try {
             stateMachine.assertCanCancelJob(from);
         } catch (NopException e) {
-            throw facade.illegalTransition(jc, from, "OPEN、WORK_IN_PROGRESS 或 ON_HOLD", e);
+            throw facade.illegalTransition(jc, from, "OPEN / WORK_IN_PROGRESS / ON_HOLD", e);
         }
         doCancelJob(jc);
         return jc;

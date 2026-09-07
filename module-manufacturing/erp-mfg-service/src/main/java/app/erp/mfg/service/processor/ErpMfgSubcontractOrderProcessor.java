@@ -258,7 +258,7 @@ public class ErpMfgSubcontractOrderProcessor {
         try {
             approvalStateMachine.assertCanSubmit(status);
         } catch (NopException e) {
-            throw illegalTransition(order, status, "UNSUBMITTED 或 REJECTED");
+            throw illegalTransition(order, status, "UNSUBMITTED / REJECTED");
         }
     }
 
@@ -297,7 +297,7 @@ public class ErpMfgSubcontractOrderProcessor {
             throw new NopException(ErpMfgErrors.ERR_SUBCONTRACT_ILLEGAL_STATUS_TRANSITION)
                     .param(ErpMfgErrors.ARG_SUBCONTRACT_ORDER_CODE, order.getCode())
                     .param(ErpMfgErrors.ARG_CURRENT_STATUS, order.getDocStatus())
-                    .param(ErpMfgErrors.ARG_EXPECTED_STATUS, "非 CANCELLED（已取消不可恢复）");
+                    .param(ErpMfgErrors.ARG_EXPECTED_STATUS, "!CANCELLED");
         }
     }
 
@@ -316,7 +316,7 @@ public class ErpMfgSubcontractOrderProcessor {
         try {
             documentStateMachine.assertCanCancel(status);
         } catch (NopException e) {
-            throw illegalTransition(order, status, "DRAFT、SUBMITTED 或 APPROVED");
+            throw illegalTransition(order, status, "DRAFT / SUBMITTED / APPROVED");
         }
     }
 
