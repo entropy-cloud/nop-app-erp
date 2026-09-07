@@ -90,7 +90,7 @@ public class ErpCsTicketStateMachine {
      */
     public void assertCanCancel(String status) {
         if (isTerminal(status)) {
-            throw illegal("cancel", status, "非终态(NEW/ASSIGNED/IN_PROGRESS/RESOLVED)");
+            throw illegal("cancel", status, "!NEW / ASSIGNED / IN_PROGRESS / RESOLVED");
         }
     }
 

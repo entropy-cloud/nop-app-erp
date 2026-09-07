@@ -44,7 +44,7 @@ public class ErpCsTimeEntryBizModel extends AbstractErpCrudBizModel<ErpCsTimeEnt
         ErpCsTimeEntry entry = requireEntry(timeEntryId, context);
         String current = entry.getApprovalStatus();
         if (current != null && !ErpCsConstants.TIME_ENTRY_APPROVE_REJECTED.equals(current)) {
-            throw illegalApprovalStatus(entry, "NULL(DRAFT) 或 REJECTED");
+            throw illegalApprovalStatus(entry, "NULL(DRAFT) / REJECTED");
         }
         if (ErpCsConfigs.isTimeEntryRequireDescription() && StringHelper.isBlank(entry.getDescription())) {
             throw new NopException(ErpCsErrors.ERR_CS_TIME_ENTRY_DESCRIPTION_REQUIRED)
