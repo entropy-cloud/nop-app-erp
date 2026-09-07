@@ -37,15 +37,15 @@ verify: [test]
 > Targets: 只读核验；产物 = 勾选注记数字（不产 ck-* 报告，横切关注点 13）
 > Prereqs: plan `2026-09-06-1451-2`（M0.2/M0.3/M0.4）完成
 
-- [ ] <Proof> 重放 M0.4 §机械复验命令（stub/手写分类 + 冻结口径计数）：断言分类结果 = 39 stub / 108 手写 / stub∩CAT4 违规 = 空集 / CAT4 总数 1700，与冻结矩阵逐项一致（若不一致，逐文件列出分歧并在 Phase 2 例外路径处置，数字记入勾选注记）
+- [x] <Proof> 重放 M0.4 §机械复验命令（stub/手写分类 + 冻结口径计数）：断言分类结果 = 39 stub / 108 手写 / stub∩CAT4 违规 = 空集 / CAT4 总数 1700，与冻结矩阵逐项一致（若不一致，逐文件列出分歧并在 Phase 2 例外路径处置，数字记入勾选注记）【2026-09-07 实测：全量 886 page/flux yaml → stub 778 / hand 108；含 CJK 子集 = **147**；147 内分类 = **39 stub / 108 hand**；stub∩CAT4 违规文件集 = **空集**（comm 0 行）；SNAPSHOT CAT4 文件数 **108** / 行数 **1700**；hand 108 文件集与 SNAPSHOT CAT4 文件集 diff = 0；与 M0.4 矩阵 A（39）/B（108）逐项 diff = 0；三步核查程序：步骤 2 引用完整性 39/39 view.xml 同目录存在、步骤 3 反例 `party-search/main.picker.page.yaml` 判 hand 在案】
       - Skill: none
-- [ ] <Proof> `node tools/check-hardcoded-cjk.mjs` 断言 CAT-4 违规文件全集不含任何 GenPage stub（`grep -c web:GenPage` 复核）+ `bash docs/audits/i18n-coverage-checker.sh` 绿（view.xml 层门控未漂移），数字记入勾选注记
+- [x] <Proof> `node tools/check-hardcoded-cjk.mjs` 断言 CAT-4 违规文件全集不含任何 GenPage stub（`grep -c web:GenPage` 复核）+ `bash docs/audits/i18n-coverage-checker.sh` 绿（view.xml 层门控未漂移），数字记入勾选注记【2026-09-07 实测：report 模式 CAT-4 = **1700 sites in 108 files**（与冻结一致）；108 个 CAT-4 违规文件剥注释后 `web:GenPage` 计数 **108/108 = 0**（零 stub 混入）；F15 `i18n-coverage-checker.sh` = **PASS exit 0**（390 文件，0 defects / 0 gaps）】
       - Skill: none
 
 Exit Criteria:
 
-- [ ] 147 文件分类复验与冻结矩阵一致（39/108/空集/1700），stub 违反面 = 0 断言在案
-- [ ] F15 view.xml 层 checker 绿
+- [x] 147 文件分类复验与冻结矩阵一致（39/108/空集/1700），stub 违反面 = 0 断言在案【39/108/空集/1700 全部复现；分歧文件 = 0，Phase 2 例外路径不触发】
+- [x] F15 view.xml 层 checker 绿【PASS exit 0，0 defects / 0 gaps，未漂移】
 
 ## Phase 2 — codegen 重生成链洁净证明 + MI.7 零违规裁决
 
@@ -54,17 +54,17 @@ Exit Criteria:
 > Targets: 无预置代码改动；例外路径 = `module-*/erp-*-web` 对应 `<Entity>.view.xml` 模型源（仅当 Phase 1/2 实测发现 stub 正文违规）
 > Prereqs: Phase 1 完成
 
-- [ ] <Proof> `mvn clean install -DskipTests` 全量 build（触发 gen-page.xgen / gen-i18n.xgen 生成链）BUILD SUCCESS；build 后重放 Phase 1 分类复验 + `node tools/check-hardcoded-cjk.mjs --strict`：断言重生成未引入任何 stub 正文 CJK（39/108/空集/1700 持平，strict 绿），数字记入勾选注记
+- [x] <Proof> `mvn clean install -DskipTests` 全量 build（触发 gen-page.xgen / gen-i18n.xgen 生成链）BUILD SUCCESS；build 后重放 Phase 1 分类复验 + `node tools/check-hardcoded-cjk.mjs --strict`：断言重生成未引入任何 stub 正文 CJK（39/108/空集/1700 持平，strict 绿），数字记入勾选注记【2026-09-07 实测：全量 build **BUILD SUCCESS**；build 后重放 = 886 yaml / **778 stub**（全仓）/ 含 CJK **147** / **39 stub∩CJK** / stub∩CAT4 = **0** / CAT4 **1700 sites in 108 files**；与 M0.4 矩阵 A/B 逐项 diff = 0；与 build 前分类 diff = 0（重生成链零漂移，`git status` 零生成文件变更）；`--strict` = **PASS exit 0**（0 新增违规，272 file-CAT 条目低于快照 = MI.1~MI.6 批改善，CAT4 持平 1700）】
       - Skill: none
-- [ ] <Decision> MI.7 零违规裁决：基于 Phase 1/2 证据记录——codegen 源面在冻结口径下 CAT-4 = 0，「改模型源 view.xml `i18n-en` / xmeta 补属性」的原修复面为空集，无需任何模型源变更；替代方案（前瞻性为 view.xml 冗余补 `i18n-en` 属性——F15 已 0 gap 门控、无可观察结果差异且扩大 diff 面，否决；修改脚本豁免/口径——无违规可豁免，否决）与残余风险（未来 stub 生成链写入 CJK 文案——由 `--strict` CAT-4 门控 + F15 view.xml 层门控双兜底，登记于裁决注记）一并记录；例外路径：若 Phase 1/2 实测发现 stub 正文违规，本项改为记录修复证据（view.xml `i18n-en` 补齐 → 重生成 → strict 绿）
+- [x] <Decision> MI.7 零违规裁决：基于 Phase 1/2 证据记录——codegen 源面在冻结口径下 CAT-4 = 0，「改模型源 view.xml `i18n-en` / xmeta 补属性」的原修复面为空集，无需任何模型源变更；替代方案（前瞻性为 view.xml 冗余补 `i18n-en` 属性——F15 已 0 gap 门控、无可观察结果差异且扩大 diff 面，否决；修改脚本豁免/口径——无违规可豁免，否决）与残余风险（未来 stub 生成链写入 CJK 文案——由 `--strict` CAT-4 门控 + F15 view.xml 层门控双兜底，登记于裁决注记）；例外路径：若 Phase 1/2 实测发现 stub 正文违规，本项改为记录修复证据（view.xml `i18n-en` 补齐 → 重生成 → strict 绿）【**裁决（2026-09-07）**：MI.7 零违规裁决成立——Phase 1/2 全量 147 文件机械复验（build 前后两次独立重放）一致判定 codegen 产物 stub = 39 文件、stub 正文 CAT-4 违规 = 0（stub 剥注释后 GenPage 引用计数 39/39 > 0 且 CAT-4 违规文件集 ∩ stub 集 = 空集），M0.4 冻结矩阵在当前 HEAD 精确复现，原修复面 = 空集，**零模型源变更**（例外路径未触发）；替代方案否决理由维持原分析：view.xml 冗余 `i18n-en`（F15 实测 0 defects / 0 gaps，冗余属性无可观察差异且扩大 diff 面）、脚本口径修改（无违规即无可豁免对象，且动口径违反 Non-Goals）；残余风险登记：未来 gen-page.xgen 生成链若写入 CJK 文案到 stub 正文，由 M0.2 脚本 `--strict`（CAT-4 per-file 门控，本计划两次实测绿）+ F15 view.xml 层门控双兜底。附注：本计划执行中发现并修复 MI.6 批1（plan `2026-09-07-0902-1`）跨模块快照遗留——其 CAT-3 运行时字符串英文化改变了 fin/ast/cs 运行时 MEMO/SUMMARY/CONTENT/REASON/remark 字面量，但只外科变换了本域 `_cases`，未覆盖 purchase/sales/projects 跨域快照与 app-erp-all 集成快照（共 40 文件：38 快照期望值外科更新 + 1 测试断言 `人工复核`→`manual review` + 均有 code 实锚验证），已由本计划验证环节修复并全 reactor 绿（4006/0/0/1），归 MI.6 批1 范畴的执行遗漏、非生产行为变更】
       - Skill: none
-- [ ] <Proof> 例外路径兜底断言：`node tools/check-hardcoded-cjk.mjs --strict` exit 0（无论是否触发例外路径，收官态必须 strict 绿），对照 M0.3 基线零新增违规
+- [x] <Proof> 例外路径兜底断言：`node tools/check-hardcoded-cjk.mjs --strict` exit 0（无论是否触发例外路径，收官态必须 strict 绿），对照 M0.3 基线零新增违规【2026-09-07 实测：**PASS exit 0**，0 新增违规 vs 冻结快照（totals 335/204/390/1700），CAT-4 = 1700/108 持平，零新增】
       - Skill: none
 
 Exit Criteria:
 
-- [ ] 重生成链洁净证明在案：build 前后 stub 分类与 CAT-4 计数持平，strict 绿
-- [ ] MI.7 零违规裁决（或例外路径修复证据）落入本计划 Decision 注记
+- [x] 重生成链洁净证明在案：build 前后 stub 分类与 CAT-4 计数持平，strict 绿【build 前后两次独立全量复验逐项持平（39/108/空集/1700），`--strict` PASS exit 0】
+- [x] MI.7 零违规裁决（或例外路径修复证据）落入本计划 Decision 注记【零违规裁决落 Phase 2 Decision 勾选注记，含替代方案否决理由、残余风险双门控登记、例外路径未触发声明】
 
 ## Draft Review Record
 
@@ -88,4 +88,9 @@ Exit Criteria:
 
 ## Verification
 
+- pass test 2026-09-07-1355 exit=0
+
 ## Closure
+
+- dispatch audit #audit-2026-09-07-1355-2026-09-07-0902-2-mi7-page-yaml-codegen-source-verify-1-e2388b5e to 2026-09-05-123532-mission-driver models={exec:opencode/glm-5.3-flash,aud:opencode/glm-5.3-flash}
+- accepted #audit-2026-09-07-1355-2026-09-07-0902-2-mi7-page-yaml-codegen-source-verify-1-e2388b5e：独立闭包审计通过——MI.7 零违规裁决成立，9/9 勾选复验无虚标；本 visit 实跑验证全绿：`mvn clean install -DskipTests` BUILD SUCCESS（2:13，build 后 page/flux yaml/view.xml 零生成漂移）、`node tools/check-hardcoded-cjk.mjs --strict` PASS exit 0（totals 335/204/390/1700 与冻结快照持平、0 新增违规）、F15 `i18n-coverage-checker.sh` PASS exit 0（0 defects / 0 gaps）、全 reactor `mvn test` BUILD SUCCESS（与 4006/0/0/1 基线一致零新增失败，含 MI.6 批1 跨模块快照遗留修复的 38 快照 + 1 断言行为实证）；Phase 勾选注记数字与实仓复测逐项一致（147 内 39 stub / 108 hand / stub∩CAT4 空集 / 1700），roadmap MI.7 done 与 docs/logs/2026/09-07.md 条目在案，语义与账面零矛盾（单模型同源降级已如实登记于 dispatch 行）
