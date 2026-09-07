@@ -4,9 +4,11 @@
 #       / __findCostOverrunAlert / __findDelayedProjectAlert。
 type: page
 title: "项目概览"
+i18nEn: "Project Overview"
 body:
   - type: button
     label: "刷新"
+    i18nEn: "Refresh"
     icon: refresh-cw
     className: m-3
     onClick:
@@ -46,6 +48,7 @@ body:
                 tag: div
                 className: text-muted
                 text: "在手项目数"
+                i18nEn: "Open Projects"
               - type: text
                 tag: span
                 className: h3 font-bold
@@ -59,6 +62,7 @@ body:
                 tag: div
                 className: text-muted
                 text: "项目总预算"
+                i18nEn: "Total Budget"
               - type: text
                 tag: span
                 className: h3 text-primary
@@ -72,6 +76,7 @@ body:
                 tag: div
                 className: text-muted
                 text: "已发生成本"
+                i18nEn: "Incurred Cost"
               - type: text
                 tag: span
                 className: h3 text-danger
@@ -85,6 +90,7 @@ body:
                 tag: div
                 className: text-muted
                 text: "预算执行率"
+                i18nEn: "Budget Execution Rate"
               - type: text
                 tag: span
                 className: h3 text-warning
@@ -114,6 +120,7 @@ body:
                 tag: div
                 className: text-muted
                 text: "项目损益汇总数"
+                i18nEn: "Projects in P&L Summary"
               - type: text
                 tag: span
                 className: h3 font-bold
@@ -127,6 +134,7 @@ body:
                 tag: div
                 className: text-muted
                 text: "收入合计"
+                i18nEn: "Total Revenue"
               - type: text
                 tag: span
                 className: h3 text-primary
@@ -140,6 +148,7 @@ body:
                 tag: div
                 className: text-muted
                 text: "成本合计"
+                i18nEn: "Total Cost"
               - type: text
                 tag: span
                 className: h3 text-danger
@@ -153,6 +162,7 @@ body:
                 tag: div
                 className: text-muted
                 text: "整体毛利率"
+                i18nEn: "Overall Gross Margin"
               - type: text
                 tag: span
                 className: h3 text-success
@@ -168,10 +178,14 @@ body:
   - type: chart
     chartType: pie
     title: "项目状态分布"
+    i18nEn: "Project Status Distribution"
     source: ${statusData ?? []}
     height: 300
     series:
-      - { name: "项目数", dataRegionKey: count, nameField: status }
+      - dataRegionKey: count
+        name: "项目数"
+        i18nEn: "Projects"
+        nameField: status
 
   - type: data-source
     name: costOverrunData
@@ -183,6 +197,7 @@ body:
   - type: crud
     className: m-3
     title: "成本超支项目预警"
+    i18nEn: "Cost Overrun Alert"
     source: ${costOverrunData ?? []}
     syncLocation: false
     headerToolbar: []
@@ -190,14 +205,19 @@ body:
     columns:
       - name: projectCode
         label: "项目编码"
+        i18nEn: "Project Code"
       - name: projectName
         label: "项目名称"
+        i18nEn: "Project Name"
       - name: budget
         label: "预算"
+        i18nEn: "Budget"
       - name: incurredCost
         label: "已发生成本"
+        i18nEn: "Incurred Cost"
       - name: overrunAmount
         label: "超支金额"
+        i18nEn: "Overrun Amount"
 
   - type: data-source
     name: delayedProjectData
@@ -209,6 +229,7 @@ body:
   - type: crud
     className: m-3
     title: "项目延期预警（计划完成日 < 今天 且 未 COMPLETED）"
+    i18nEn: "Delayed Project Alert (planned end < today and not COMPLETED)"
     source: ${delayedProjectData ?? []}
     syncLocation: false
     headerToolbar: []
@@ -216,11 +237,16 @@ body:
     columns:
       - name: projectCode
         label: "项目编码"
+        i18nEn: "Project Code"
       - name: projectName
         label: "项目名称"
+        i18nEn: "Project Name"
       - name: endDate
         label: "计划完成日"
+        i18nEn: "Planned End Date"
       - name: status
         label: "状态"
+        i18nEn: "Status"
       - name: overdueDays
         label: "逾期(天)"
+        i18nEn: "Overdue (Days)"

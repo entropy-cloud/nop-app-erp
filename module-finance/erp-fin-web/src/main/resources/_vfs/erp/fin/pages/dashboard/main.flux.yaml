@@ -3,6 +3,7 @@
 # 数据源：ErpFinDashboard__getDashboardKpi / __getDashboardTrend / __findCashFlowAlert。
 type: page
 title: 财务概览
+i18nEn: Finance Overview
 body:
 - type: form
   name: filterForm
@@ -16,12 +17,16 @@ body:
     name: periodId
     label: 会计期间ID
     placeholder: 留空=全部期间
+    i18nEn:
+      label: Accounting Period ID
+      placeholder: Blank = all periods
     clearable: true
     size: sm
     style:
       maxWidth: 240px
   - type: button
     label: 刷新
+    i18nEn: Refresh
     icon: refresh-cw
     level: primary
     size: sm
@@ -59,6 +64,7 @@ body:
         tag: div
         className: text-muted
         text: 本期收入
+        i18nEn: Revenue (Period)
       - type: text
         tag: h3
         className: m-t-xs m-b-0 text-success
@@ -72,6 +78,7 @@ body:
         tag: div
         className: text-muted
         text: 本期支出
+        i18nEn: Expense (Period)
       - type: text
         tag: h3
         className: m-t-xs m-b-0 text-danger
@@ -85,6 +92,7 @@ body:
         tag: div
         className: text-muted
         text: 本期净利润
+        i18nEn: Net Profit (Period)
       - type: text
         tag: h3
         className: m-t-xs m-b-0 font-bold
@@ -98,6 +106,7 @@ body:
         tag: div
         className: text-muted
         text: 银行存款余额
+        i18nEn: Bank Balance
       - type: text
         tag: h3
         className: m-t-xs m-b-0
@@ -111,6 +120,7 @@ body:
         tag: div
         className: text-muted
         text: 应收余额
+        i18nEn: AR Balance
       - type: text
         tag: h3
         className: m-t-xs m-b-0 text-primary
@@ -124,6 +134,7 @@ body:
         tag: div
         className: text-muted
         text: 应付余额
+        i18nEn: AP Balance
       - type: text
         tag: h3
         className: m-t-xs m-b-0 text-warning
@@ -143,12 +154,21 @@ body:
   source: ${trendData ?? []}
   xAxis: { dataKey: month }
   yAxis: { label: 金额 }
+  i18nEn:
+    title: Income/Expense & Profit Trend (Last 12 Months)
+    yAxis: Amount
   legend: true
   height: 300
   series:
-  - { name: 收入, dataRegionKey: revenue }
-  - { name: 支出, dataRegionKey: expense }
-  - { name: 净利润, dataRegionKey: netProfit }
+  - dataRegionKey: revenue
+    name: 收入
+    i18nEn: Revenue
+  - dataRegionKey: expense
+    name: 支出
+    i18nEn: Expense
+  - dataRegionKey: netProfit
+    name: 净利润
+    i18nEn: Net Profit
 - type: data-source
   name: cashFlowData
   action: ajax
@@ -158,6 +178,7 @@ body:
     selection: alertType bankBalance threshold shortfall
 - type: crud
   title: 现金流预警
+  i18nEn: Cash Flow Alert
   source: ${cashFlowData}
   syncLocation: false
   headerToolbar: []
@@ -165,15 +186,19 @@ body:
   columns:
   - name: alertType
     label: 预警类型
+    i18nEn: Alert Type
   - name: bankBalance
     label: 银行余额
+    i18nEn: Bank Balance
     type: number
     precision: 2
   - name: threshold
     label: 阈值
+    i18nEn: Threshold
     type: number
     precision: 2
   - name: shortfall
     label: 缺口
+    i18nEn: Shortfall
     type: number
     precision: 2

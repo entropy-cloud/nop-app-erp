@@ -3,8 +3,10 @@
 # 触发条件：ErpFinBankLedgerLine 实体就绪后落地。
 type: page
 title: "账面流水（Deferred）"
+i18nEn: "Bank Ledger Lines (Deferred)"
 body:
   - type: alert
     body: "本页为 Deferred——账面流水（book-side ledger line）需新增 ErpFinBankLedgerLine 实体（ORM ask-first 保护区域）。实体就绪后落地。详见 plan 2026-08-03-1232-4。"
+    i18nEn: "This page is deferred — book-side ledger lines require the new ErpFinBankLedgerLine entity (ORM ask-first protected zone). To be implemented once the entity is ready. See plan 2026-08-03-1232-4."
     level: warning
     className: m-3

@@ -4,6 +4,7 @@
 # 下载按钮保留 /p/{ErpFinReport__download} 路径（plan 2026-07-12-0413-1 已修复）。
 type: page
 title: "资产负债表"
+i18nEn: "Balance Sheet"
 body:
   - type: form
     name: filterForm
@@ -16,14 +17,19 @@ body:
         name: periodId
         label: "会计期间ID"
         placeholder: "输入期间ID"
+        i18nEn:
+          label: "Accounting Period ID"
+          placeholder: "Enter period ID"
         value: 1
       - type: button
         label: "渲染报表"
+        i18nEn: "Render Report"
         onClick:
           action: refreshSource
           targetId: reportHtmlData
       - type: button
         label: "下载 XLSX"
+        i18nEn: "Download XLSX"
         actionType: download
         api:
           url: /p/ErpFinReport__download
@@ -36,6 +42,7 @@ body:
               periodId: "${filterForm?.periodId}"
       - type: button
         label: "下载 PDF"
+        i18nEn: "Download PDF"
         actionType: download
         api:
           url: /p/ErpFinReport__download

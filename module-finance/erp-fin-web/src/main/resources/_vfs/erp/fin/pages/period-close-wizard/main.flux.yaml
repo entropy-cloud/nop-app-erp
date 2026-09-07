@@ -6,6 +6,7 @@
 # per-module 关账状态卡经 data-source（ErpFinAccountingPeriodStatus）。
 type: page
 title: 期末结账向导
+i18nEn: Period Close Wizard
 body:
 - type: form
   submitScope: surface
@@ -21,6 +22,9 @@ body:
         required: true
         clearable: true
         placeholder: 选择要结账的会计期间
+        i18nEn:
+          label: Accounting Period
+          placeholder: Select the accounting period to close
         source:
           action: ajax
           args:
@@ -33,6 +37,7 @@ body:
       body:
       - type: button
         label: 进入向导
+        i18nEn: Enter Wizard
         actionType: ajax
         action: ajax
         args:
@@ -68,6 +73,7 @@ body:
     selection: items{ id periodId acctSchemaId arStatus apStatus invStatus glStatus assetStatus totalVouchers postedVouchers unpostedVouchers } total
 - type: text
   text: ${"当前期间：" + (periodData?.code ?? "—") + "（" + (periodData?.year ?? "—") + "年" + (periodData?.month ?? "—") + "月）· 状态：" + (periodData?.status ?? "—")}
+  i18nEn: '${"Current Period: " + (periodData?.code ?? "—") + " (" + (periodData?.year ?? "—") + "-" + (periodData?.month ?? "—") + ") · Status: " + (periodData?.status ?? "—")}'
   className: text-muted m-b
 - type: wizard
   linear: true
@@ -76,9 +82,11 @@ body:
   steps:
   - key: preCheck
     title: 1. 前置检查
+    i18nEn: 1. Pre-check
     body:
     - type: text
       text: 扫描未过账凭证 / 未核销应收应付 / 未处置过账异常 / 坏账准备充足性。阻断项存在时禁止继续结账。
+      i18nEn: Scans unposted vouchers / unsettled AR-AP / unresolved posting exceptions / bad-debt allowance sufficiency. Continuing is blocked when blocking items exist.
       className: text-muted m-b
     - type: data-source
       name: preCheckReport
@@ -92,12 +100,15 @@ body:
         selection: unpostedVoucherCodes unsettledArApCodes unresolvedPostingExceptionKeys allowanceRequired allowanceBalance allowanceShortfall allowanceExcess
     - type: text
       text: ${"检查项：未过账凭证 " + (preCheckReport?.unpostedVoucherCodes ?? []).length + " · 未核销应收应付 " + (preCheckReport?.unsettledArApCodes ?? []).length + " · 未处置过账异常 " + (preCheckReport?.unresolvedPostingExceptionKeys ?? []).length + " · 坏账准备缺口 " + (preCheckReport?.allowanceShortfall ?? 0)}
+      i18nEn: '${"Checks: unposted vouchers " + (preCheckReport?.unpostedVoucherCodes ?? []).length + " · unsettled AR/AP " + (preCheckReport?.unsettledArApCodes ?? []).length + " · unresolved posting exceptions " + (preCheckReport?.unresolvedPostingExceptionKeys ?? []).length + " · allowance shortfall " + (preCheckReport?.allowanceShortfall ?? 0)}'
       className: m-b
   - key: closePeriod
     title: 2. 月度结账
+    i18nEn: 2. Monthly Close
     body:
     - type: text
       text: '${"一次性同步编排 AR→AP→INV→AST→GL 模块关账 + 损益结转 + 汇兑重估。" + ((periodData?.month ?? 0) == 12 ? "本期间为 12 月，closePeriod 将一并执行年度结转分支（本年利润→未分配利润 + 次年期间生成）。" : "")}'
+      i18nEn: '${"One-shot synchronous orchestration of AR→AP→INV→AST→GL module close + P&L carry-forward + FX revaluation." + ((periodData?.month ?? 0) == 12 ? "This is a December period: closePeriod will also run the annual carry-forward branch (current profit → retained earnings + next-year period generation)." : "")}'
       className: text-muted m-b
     - type: button
       label: 执行月度结账
@@ -109,14 +120,19 @@ body:
         data:
           periodId: ${periodId}
       confirmText: 确认结账此会计期间？结账后该期间凭证不可修改。
+      i18nEn:
+        label: Run Monthly Close
+        confirmText: Confirm closing this accounting period? Vouchers in this period become immutable once closed.
       visible: ${periodData?.status == "OPEN" || periodData?.status == "CLOSING"}
       target: periodData
   - key: annualRollover
     title: 3. 年度结转
+    i18nEn: 3. Annual Carry-Forward
     visible: ${(periodData?.month ?? 0) == 12}
     body:
     - type: text
       text: 12 月期间 closePeriod 已执行年度结转分支：本年利润→未分配利润结转凭证 + 次年年初余额 populate + 次年 12 期间自动创建。此步展示结果，非独立 mutation。
+      i18nEn: 'For December periods closePeriod has run the annual carry-forward branch: current profit → retained earnings carry-forward vouchers + next-year opening balance populate + next December period auto-created. This step only shows the result, not an independent mutation.'
       className: text-muted m-b
     - type: data-source
       name: nextYearPeriods
@@ -131,12 +147,15 @@ body:
         selection: items{ id year month status code } total
     - type: text
       text: ${"次年 " + ((periodData?.year ?? 0) + 1) + " 共生成 " + (nextYearPeriods?.total ?? 0) + " 个期间"}
+      i18nEn: '${"Next year " + ((periodData?.year ?? 0) + 1) + ": " + (nextYearPeriods?.total ?? 0) + " periods generated"}'
       className: text-muted
   - key: finalize
     title: 4. 终关
+    i18nEn: 4. Finalize
     body:
     - type: text
       text: CLOSED → CLOSED_FINAL，最终锁定期间。终关后只能经反结账回退。
+      i18nEn: CLOSED → CLOSED_FINAL, finally locking the period. After finalize only un-close can roll back.
       className: text-muted m-b
     - type: button
       label: 执行终关
@@ -148,19 +167,27 @@ body:
         data:
           periodId: ${periodId}
       confirmText: 确认终关？终关后期间进入 CLOSED_FINAL 最终锁定态。
+      i18nEn:
+        label: Finalize Period
+        confirmText: Confirm finalize? After finalize the period enters the CLOSED_FINAL final locked state.
       visible: ${periodData?.status == "CLOSED"}
       target: periodData
   - key: reverseClose
     title: 反结账
+    i18nEn: Un-close
     body:
     - type: text
       text: 一次性执行反结账（红冲结转凭证 + 解锁业务单据 + 重开期间）。反结账后期间状态回退至 OPEN。
+      i18nEn: One-shot un-close (red-reverse carry-forward vouchers + unlock business documents + reopen the period). After un-close the period status falls back to OPEN.
       className: text-warning m-b
     - type: input-text
       name: reverseCloseReason
       label: 反结账原因（必填，审计要求）
       required: true
       placeholder: 请输入反结账原因（如：更正XX凭证错误）
+      i18nEn:
+        label: Un-close Reason (required, audit requirement)
+        placeholder: Enter un-close reason (e.g. correct voucher error)
     - type: button
       label: 执行反结账
       actionType: ajax
@@ -172,9 +199,13 @@ body:
           periodId: ${periodId}
           reason: ${reverseCloseReason}
       confirmText: 最后确认：执行反结账？此操作将红冲本期结转凭证并重开期间，不可撤销。
+      i18nEn:
+        label: Run Un-close
+        confirmText: 'Final confirmation: run un-close? This red-reverses this period''s carry-forward vouchers and reopens the period. Irreversible.'
       visible: ${periodData?.status == "CLOSED" || periodData?.status == "CLOSED_FINAL"}
       target: periodData
 - type: text
   text: '${(statusRows?.total ?? 0) > 0 ? "per-module 关账结果（ErpFinAccountingPeriodStatus）已加载，共 " + (statusRows?.total ?? 0) + " 条" : ""}'
+  i18nEn: '${(statusRows?.total ?? 0) > 0 ? "Per-module close result (ErpFinAccountingPeriodStatus) loaded, " + (statusRows?.total ?? 0) + " rows in total" : ""}'
   className: text-muted m-t
   visible: ${(statusRows?.total ?? 0) > 0}

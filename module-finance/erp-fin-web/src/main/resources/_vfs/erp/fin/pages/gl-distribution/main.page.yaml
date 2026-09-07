@@ -3,8 +3,10 @@
 # 触发条件：GL Distribution 实体与 IErpFinFactsValidator 实现就绪后落地。
 type: page
 title: "分摊规则（Deferred）"
+i18nEn: "GL Distribution (Deferred)"
 body:
   - type: alert
     body: "本页为 Deferred——GL Distribution（按成本中心再分摊规则）在设计文档中明确 Deferred，无实体与后端链（ORM ask-first 保护区域）。实体就绪后落地。详见 plan 2026-08-03-1232-4。"
+    i18nEn: "This page is deferred — GL Distribution (cost-center redistribution rules) is explicitly deferred in the design docs, with no entity or backend chain yet (ORM ask-first protected zone). To be implemented once the entity is ready. See plan 2026-08-03-1232-4."
     level: warning
     className: m-3

@@ -2,6 +2,7 @@
 # 数据来源：ErpPrjProjectSettlement 实体 findPage（createSettlement→approve→posted 链已实现）。零后端 delta。
 type: page
 title: "项目结算单"
+i18nEn: "Project Settlement"
 body:
   - type: data-source
     name: settlementData
@@ -28,6 +29,7 @@ body:
                 tag: div
                 className: text-muted
                 text: "结算单数"
+                i18nEn: "Settlements"
               - type: text
                 tag: span
                 className: h3
@@ -41,6 +43,7 @@ body:
                 tag: div
                 className: text-muted
                 text: "最终收入"
+                i18nEn: "Final Revenue"
               - type: text
                 tag: span
                 className: h3 text-success
@@ -54,6 +57,7 @@ body:
                 tag: div
                 className: text-muted
                 text: "最终成本"
+                i18nEn: "Final Cost"
               - type: text
                 tag: span
                 className: h3 text-danger
@@ -67,6 +71,7 @@ body:
                 tag: div
                 className: text-muted
                 text: "最终利润"
+                i18nEn: "Final Profit"
               - type: text
                 tag: span
                 className: h3 text-primary
@@ -75,15 +80,34 @@ body:
   - type: crud
     className: m-3
     title: "结算单列表"
+    i18nEn: "Settlement List"
     source: ${settlementData?.items ?? []}
     syncLocation: false
     columns:
-      - { name: code, label: "单号" }
-      - { name: projectId, label: "项目" }
-      - { name: customerId, label: "客户" }
-      - { name: businessDate, label: "业务日期" }
-      - { name: settlementType, label: "结算类型" }
-      - { name: finalRevenue, label: "最终收入" }
-      - { name: finalCost, label: "最终成本" }
-      - { name: finalProfit, label: "最终利润" }
-      - { name: docStatus, label: "状态" }
+      - name: code
+        label: "单号"
+        i18nEn: "Doc No"
+      - name: projectId
+        label: "项目"
+        i18nEn: "Project"
+      - name: customerId
+        label: "客户"
+        i18nEn: "Customer"
+      - name: businessDate
+        label: "业务日期"
+        i18nEn: "Business Date"
+      - name: settlementType
+        label: "结算类型"
+        i18nEn: "Settlement Type"
+      - name: finalRevenue
+        label: "最终收入"
+        i18nEn: "Final Revenue"
+      - name: finalCost
+        label: "最终成本"
+        i18nEn: "Final Cost"
+      - name: finalProfit
+        label: "最终利润"
+        i18nEn: "Final Profit"
+      - name: docStatus
+        label: "状态"
+        i18nEn: "Status"

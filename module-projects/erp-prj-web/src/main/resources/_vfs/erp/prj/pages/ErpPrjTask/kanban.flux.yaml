@@ -3,6 +3,7 @@
 # 拖拽语义（Phase 0 Decision）：相邻态受限拖拽，onCardMove 按目标列路由 mutation。
 type: page
 title: 任务看板
+i18nEn: Task Kanban
 body:
 - type: data-source
   name: boardData
@@ -26,11 +27,15 @@ body:
         name: projectId
         label: 项目ID
         placeholder: 过滤项目
+        i18nEn:
+          label: Project ID
+          placeholder: Filter by project
         clearable: true
     - colSpan: 2
       body:
       - type: button
         label: 刷新看板
+        i18nEn: Refresh Kanban
         actionType: ajax
         action: ajax
         args:
@@ -51,8 +56,10 @@ body:
       data:
         taskId: ${event.cardId.substring(5)}
         blockReason: 看板拖拽标记阻塞
+        i18nEn: Blocked via kanban drag
   onCardClick:
     action: showToast
     args:
       level: info
       message: ${"点击卡片 " + event.cardId}
+      i18nEn: ${"Card clicked " + event.cardId}

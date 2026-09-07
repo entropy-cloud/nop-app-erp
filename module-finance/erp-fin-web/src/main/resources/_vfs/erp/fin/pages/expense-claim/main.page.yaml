@@ -3,6 +3,7 @@
 # 数据来源：ErpFinExpenseClaim 实体 findPage。零后端 delta。
 type: page
 title: "费用报销单"
+i18nEn: "Expense Claim"
 body:
   - type: data-source
     name: claimData
@@ -29,6 +30,7 @@ body:
                 tag: div
                 className: text-muted
                 text: "报销单总数"
+                i18nEn: "Total Claims"
               - type: text
                 tag: span
                 className: h3
@@ -42,6 +44,7 @@ body:
                 tag: div
                 className: text-muted
                 text: "报销总额"
+                i18nEn: "Total Claimed"
               - type: text
                 tag: span
                 className: h3 text-primary
@@ -55,6 +58,7 @@ body:
                 tag: div
                 className: text-muted
                 text: "待提交"
+                i18nEn: "Pending Submit"
               - type: text
                 tag: span
                 className: h3 text-warning
@@ -68,6 +72,7 @@ body:
                 tag: div
                 className: text-muted
                 text: "已审核"
+                i18nEn: "Audited"
               - type: text
                 tag: span
                 className: h3 text-success
@@ -77,19 +82,41 @@ body:
     name: claimCrud
     className: m-3
     title: "报销单列表"
+    i18nEn: "Expense Claim List"
     source: ${claimData?.items ?? []}
     syncLocation: false
     columns:
-      - { name: code, label: "单号" }
-      - { name: claimantId, label: "报销人" }
-      - { name: departmentId, label: "部门" }
-      - { name: businessDate, label: "业务日期" }
-      - { name: paymentMode, label: "付款方式" }
-      - { name: amountWithTax, label: "含税金额" }
-      - { name: settleAdvance, label: "抵扣借款" }
-      - { name: docStatus, label: "单据状态" }
+      - name: code
+        label: "单号"
+        i18nEn: "Doc No"
+      - name: claimantId
+        label: "报销人"
+        i18nEn: "Reimburser"
+      - name: departmentId
+        label: "部门"
+        i18nEn: "Department"
+      - name: businessDate
+        label: "业务日期"
+        i18nEn: "Business Date"
+      - name: paymentMode
+        label: "付款方式"
+        i18nEn: "Payment Mode"
+      - name: amountWithTax
+        label: "含税金额"
+        i18nEn: "Amount with Tax"
+      - name: settleAdvance
+        label: "抵扣借款"
+        i18nEn: "Offset Loan"
+      - name: docStatus
+        label: "单据状态"
+        i18nEn: "Doc Status"
       - name: approveStatus
         label: "审核状态"
         type: tpl
         tpl: '${approveStatus == "APPROVED" ? "<span class=\"label label-success\">已审核</span>" : (approveStatus == "REJECTED" ? "<span class=\"label label-danger\">已驳回</span>" : "<span class=\"label label-default\">" + (approveStatus || "—") + "</span>")}'
-      - { name: reason, label: "事由" }
+        i18nEn:
+          label: "Audit Status"
+          tpl: '${approveStatus == "APPROVED" ? "<span class=\"label label-success\">Audited</span>" : (approveStatus == "REJECTED" ? "<span class=\"label label-danger\">Rejected</span>" : "<span class=\"label label-default\">" + (approveStatus || "—") + "</span>")}'
+      - name: reason
+        label: "事由"
+        i18nEn: "Reason"

@@ -2,6 +2,7 @@
 # flux 原生重写：data-source → form → html。
 type: page
 title: "项目成本汇总表"
+i18nEn: "Project Cost Summary Report"
 body:
   - type: form
     name: filterForm
@@ -14,21 +15,28 @@ body:
         name: projectId
         label: "项目ID"
         placeholder: "留空查询全部项目"
+        i18nEn:
+          label: "Project ID"
+          placeholder: "Blank = all projects"
       - type: input-date
         name: startDate
         label: "开始日期"
+        i18nEn: "Start Date"
         valueFormat: YYYY-MM-DD
       - type: input-date
         name: endDate
         label: "结束日期"
+        i18nEn: "End Date"
         valueFormat: YYYY-MM-DD
       - type: button
         label: "渲染报表"
+        i18nEn: "Render Report"
         onClick:
           action: refreshSource
           targetId: reportHtmlData
       - type: button
         label: "下载 XLSX"
+        i18nEn: "Download XLSX"
         actionType: download
         api:
           url: /p/ErpPrjReport__download
@@ -43,6 +51,7 @@ body:
               endDate: "${filterForm?.endDate}"
       - type: button
         label: "下载 PDF"
+        i18nEn: "Download PDF"
         actionType: download
         api:
           url: /p/ErpPrjReport__download

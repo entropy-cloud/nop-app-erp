@@ -3,6 +3,7 @@
 # 数据来源：ErpFinBudgetControlLog 实体 findPage（只读审计日志）。零后端 delta。
 type: page
 title: "预算控制日志"
+i18nEn: "Budget Control Log"
 body:
   - type: data-source
     name: logData
@@ -29,6 +30,7 @@ body:
                 tag: div
                 className: text-muted
                 text: "日志总数"
+                i18nEn: "Total Log Entries"
               - type: text
                 tag: span
                 className: h3
@@ -42,6 +44,7 @@ body:
                 tag: div
                 className: text-muted
                 text: "硬阻断"
+                i18nEn: "Hard Block"
               - type: text
                 tag: span
                 className: h3 text-danger
@@ -55,6 +58,7 @@ body:
                 tag: div
                 className: text-muted
                 text: "警告放行"
+                i18nEn: "Warning Pass"
               - type: text
                 tag: span
                 className: h3 text-warning
@@ -68,6 +72,7 @@ body:
                 tag: div
                 className: text-muted
                 text: "放行"
+                i18nEn: "Pass"
               - type: text
                 tag: span
                 className: h3 text-success
@@ -77,19 +82,41 @@ body:
     name: logCrud
     className: m-3
     title: "控制日志列表"
+    i18nEn: "Control Log List"
     source: ${logData?.items ?? []}
     syncLocation: false
     columns:
-      - { name: businessDate, label: "业务日期" }
-      - { name: sourceBillType, label: "单据类型" }
-      - { name: sourceBillCode, label: "单据号" }
-      - { name: subjectId, label: "科目" }
-      - { name: requestedAmount, label: "申请金额" }
-      - { name: availableAmount, label: "检查时余量" }
+      - name: businessDate
+        label: "业务日期"
+        i18nEn: "Business Date"
+      - name: sourceBillType
+        label: "单据类型"
+        i18nEn: "Doc Type"
+      - name: sourceBillCode
+        label: "单据号"
+        i18nEn: "Doc No"
+      - name: subjectId
+        label: "科目"
+        i18nEn: "Account"
+      - name: requestedAmount
+        label: "申请金额"
+        i18nEn: "Applied Amount"
+      - name: availableAmount
+        label: "检查时余量"
+        i18nEn: "Qty at Check"
       - name: actionResult
         label: "控制结果"
         type: tpl
         tpl: '${actionResult == "HARD" ? "<span class=\"label label-danger\">硬阻断</span>" : (actionResult == "WARN" ? "<span class=\"label label-warning\">警告</span>" : "<span class=\"label label-success\">放行</span>")}'
-      - { name: operatorId, label: "操作人" }
-      - { name: operatedAt, label: "操作时间" }
-      - { name: reason, label: "原因" }
+        i18nEn:
+          label: "Control Result"
+          tpl: '${actionResult == "HARD" ? "<span class=\"label label-danger\">Hard Block</span>" : (actionResult == "WARN" ? "<span class=\"label label-warning\">Warning</span>" : "<span class=\"label label-success\">Pass</span>")}'
+      - name: operatorId
+        label: "操作人"
+        i18nEn: "Operator"
+      - name: operatedAt
+        label: "操作时间"
+        i18nEn: "Operation Time"
+      - name: reason
+        label: "原因"
+        i18nEn: "Reason"

@@ -3,6 +3,7 @@
 # 数据来源：ErpFinBudgetScenario 实体 findPage。零后端 delta。
 type: page
 title: "预算方案"
+i18nEn: "Budget Plan"
 body:
   - type: data-source
     name: scenarioData
@@ -29,6 +30,7 @@ body:
                 tag: div
                 className: text-muted
                 text: "方案总数"
+                i18nEn: "Total Plans"
               - type: text
                 tag: span
                 className: h3
@@ -42,6 +44,7 @@ body:
                 tag: div
                 className: text-muted
                 text: "预算总额(本位币)"
+                i18nEn: "Total Budget (Functional)"
               - type: text
                 tag: span
                 className: h3 text-primary
@@ -55,6 +58,7 @@ body:
                 tag: div
                 className: text-muted
                 text: "已批准方案"
+                i18nEn: "Approved Plans"
               - type: text
                 tag: span
                 className: h3 text-success
@@ -64,18 +68,38 @@ body:
     name: scenarioCrud
     className: m-3
     title: "预算方案列表"
+    i18nEn: "Budget Plan List"
     source: ${scenarioData?.items ?? []}
     syncLocation: false
     columns:
-      - { name: code, label: "方案编码" }
-      - { name: name, label: "方案名称" }
-      - { name: fiscalYear, label: "预算年度" }
-      - { name: scenarioType, label: "方案类型" }
-      - { name: budgetGroupCode, label: "预算组" }
-      - { name: amountFunctional, label: "预算金额(本位币)" }
-      - { name: controlLevel, label: "控制级别" }
-      - { name: docStatus, label: "方案状态" }
+      - name: code
+        label: "方案编码"
+        i18nEn: "Plan Code"
+      - name: name
+        label: "方案名称"
+        i18nEn: "Plan Name"
+      - name: fiscalYear
+        label: "预算年度"
+        i18nEn: "Budget Year"
+      - name: scenarioType
+        label: "方案类型"
+        i18nEn: "Plan Type"
+      - name: budgetGroupCode
+        label: "预算组"
+        i18nEn: "Budget Group"
+      - name: amountFunctional
+        label: "预算金额(本位币)"
+        i18nEn: "Budget Amt (Functional)"
+      - name: controlLevel
+        label: "控制级别"
+        i18nEn: "Control Level"
+      - name: docStatus
+        label: "方案状态"
+        i18nEn: "Plan Status"
       - name: approveStatus
         label: "审核状态"
         type: tpl
         tpl: '${approveStatus == "APPROVED" ? "<span class=\"label label-success\">已批准</span>" : (approveStatus == "REJECTED" ? "<span class=\"label label-danger\">已驳回</span>" : "<span class=\"label label-default\">" + (approveStatus || "—") + "</span>")}'
+        i18nEn:
+          label: "Audit Status"
+          tpl: '${approveStatus == "APPROVED" ? "<span class=\"label label-success\">Approved</span>" : (approveStatus == "REJECTED" ? "<span class=\"label label-danger\">Rejected</span>" : "<span class=\"label label-default\">" + (approveStatus || "—") + "</span>")}'

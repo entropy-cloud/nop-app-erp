@@ -304,6 +304,28 @@ function scanJavaFile(relPath, content) {
 
 const YAML_KEY_SCALAR_RE = /^(\s*)(-\s+)?([A-Za-z_][\w.-]*\s*:\s*)(.*)$/;
 
+// CAT-4 coverage carrier: a mapping may carry ONE `i18nEn:` entry whose value is a
+// nested mapping keyed by the covered attribute names (block carrier form — required
+// because YAML mappings cannot repeat the `i18nEn` key, which the flux export JSON
+// round-trip rejects as nop.err.core.json.duplicate-key). Scalar carriers keep the
+// legacy adjacency semantics (must be the first non-list sibling key after the CJK line).
+function blockCarrierCovers(lines, carrierLine, keyName) {
+  const indentOf = (s) => s.match(/^ */)[0].length;
+  const carrierIndent = indentOf(lines[carrierLine]);
+  const keyRe = new RegExp('^' + keyName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\s*:\\s*(.*)$');
+  for (let j = carrierLine + 1; j < Math.min(carrierLine + 30, lines.length); j++) {
+    const t = lines[j].trim();
+    if (t === '' || t.startsWith('#')) continue;
+    if (indentOf(lines[j]) <= carrierIndent) break;
+    const km = t.match(keyRe);
+    if (km) {
+      const v = km[1].replace(/^["']|["']$/g, '').trim();
+      if (v && !CJK_RE.test(v)) return true;
+    }
+  }
+  return false;
+}
+
 function scanYamlFile(relPath, content) {
   const lines = content.split('\n');
   const sites = [];
@@ -320,25 +342,30 @@ function scanYamlFile(relPath, content) {
     if (!CJK_RE.test(raw)) continue;
     const m = raw.match(YAML_KEY_SCALAR_RE);
     if (m && m[4] && CJK_RE.test(m[4])) {
-      // `key: 中文value` — covered only by an `i18nEn: <non-CJK>` sibling of the SAME
-      // mapping node: same indent, no intervening same-indent key (stop at indent < target
-      // or at another key at target indent)
+      // `key: 中文value` — covered by an `i18nEn` sibling of the SAME mapping node:
+      // scalar `i18nEn: <non-CJK>` must be the first non-list sibling (legacy adjacency),
+      // block `i18nEn:` carrier must contain `<key>: <non-CJK>` in its nested mapping
       const indent = m[1].length;
+      const keyName = m[3].replace(/\s*:\s*$/, '');
       let covered = false;
-      for (let j = i + 1; j < Math.min(i + 30, lines.length); j++) {
+      let seenSiblingKey = false;
+      for (let j = i + 1; j < Math.min(i + 60, lines.length); j++) {
         const t = lines[j].trim();
         if (t === '' || t.startsWith('#')) continue;
         const jIndent = indentOf(lines[j]);
         if (jIndent < indent) break;
-        if (jIndent === indent) {
-          if (!t.startsWith('-')) {
-            const en = t.match(/^i18nEn\s*:\s*(.*)$/);
-            if (en) {
-              const v = en[1].replace(/^["']|["']$/g, '').trim();
-              if (v && !CJK_RE.test(v)) { covered = true; break; }
+        if (jIndent === indent && !t.startsWith('-')) {
+          const en = t.match(/^i18nEn\s*:\s*(.*)$/);
+          if (en) {
+            const v = en[1].replace(/^["']|["']$/g, '').trim();
+            if (v && !CJK_RE.test(v)) {
+              if (!seenSiblingKey) covered = true;
+              break;
             }
-            break; // another same-indent key: left this node's entry range
+            if (!v && blockCarrierCovers(lines, j, keyName)) covered = true;
+            break;
           }
+          seenSiblingKey = true;
         }
       }
       if (!covered) sites.push({ cat: 'CAT4', line: i + 1, text: trimmed });
@@ -773,6 +800,32 @@ export function runSelfTest() {
   expect('CAT-4 bare zh title caught', yaml.sites.some(s => s.line === 3 && s.cat === 'CAT4'));
   expect('CAT-4 i18nEn-covered label exempt', !yaml.sites.some(s => s.line === 6));
   expect('yaml comment line exempt (CAT-5 only)', yaml.cat5 === 1);
+
+  // CAT-4 yaml: block-carrier i18nEn (single entry per mapping, nested keys per attr)
+  const yamlCarrier = scanYamlFile('__inject__/probe-carrier.page.yaml', [
+    '- type: input',
+    '  label: 注入标签',
+    '  placeholder: 注入占位',
+    '  i18nEn:',
+    '    label: Injected Label',
+    '    placeholder: Injected placeholder',
+  ].join('\n'));
+  expect('CAT-4 block carrier covers label+placeholder', !yamlCarrier.sites.length);
+  const yamlCarrierMiss = scanYamlFile('__inject__/probe-carrier-miss.page.yaml', [
+    '- type: input',
+    '  label: 注入标签',
+    '  placeholder: 注入占位',
+    '  i18nEn:',
+    '    label: Injected Label',
+  ].join('\n'));
+  expect('CAT-4 block carrier missing key still caught', yamlCarrierMiss.sites.some(s => s.line === 3 && s.cat === 'CAT4'));
+  const yamlScalarLate = scanYamlFile('__inject__/probe-scalar-late.page.yaml', [
+    '- type: input',
+    '  label: 注入标签',
+    '  remark: 其他',
+    '  i18nEn: "Injected Label"',
+  ].join('\n'));
+  expect('CAT-4 scalar carrier after sibling key keeps legacy adjacency', yamlScalarLate.sites.some(s => s.line === 2 && s.cat === 'CAT4'));
 
   // --strict delta math: baseline missing the injected file must flag it
   const fakeBaseline = { files: {}, totals: { CAT1: 0, CAT2: 0, CAT3: 0, CAT4: 0 } };

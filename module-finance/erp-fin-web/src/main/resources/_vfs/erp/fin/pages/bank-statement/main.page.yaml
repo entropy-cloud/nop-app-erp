@@ -3,6 +3,7 @@
 # 数据来源：ErpFinBankStatement 实体 findPage。零后端 delta。
 type: page
 title: "银行对账单"
+i18nEn: "Bank Statement"
 body:
   - type: data-source
     name: statementData
@@ -29,6 +30,7 @@ body:
                 tag: div
                 className: text-muted
                 text: "对账单数"
+                i18nEn: "Statements"
               - type: text
                 tag: span
                 className: h3
@@ -42,6 +44,7 @@ body:
                 tag: div
                 className: text-muted
                 text: "借方合计"
+                i18nEn: "Total Debit"
               - type: text
                 tag: span
                 className: h3 text-success
@@ -55,6 +58,7 @@ body:
                 tag: div
                 className: text-muted
                 text: "贷方合计"
+                i18nEn: "Total Credit"
               - type: text
                 tag: span
                 className: h3 text-danger
@@ -64,15 +68,34 @@ body:
     name: statementCrud
     className: m-3
     title: "对账单列表"
+    i18nEn: "Statement List"
     source: ${statementData?.items ?? []}
     syncLocation: false
     columns:
-      - { name: code, label: "单号" }
-      - { name: orgId, label: "业务组织" }
-      - { name: fundAccountId, label: "资金账户" }
-      - { name: statementDate, label: "对账单日期" }
-      - { name: beginningBalance, label: "期初余额" }
-      - { name: endingBalance, label: "期末余额" }
-      - { name: totalDebit, label: "借方合计" }
-      - { name: totalCredit, label: "贷方合计" }
-      - { name: docStatus, label: "状态" }
+      - name: code
+        label: "单号"
+        i18nEn: "Doc No"
+      - name: orgId
+        label: "业务组织"
+        i18nEn: "Business Org"
+      - name: fundAccountId
+        label: "资金账户"
+        i18nEn: "Cash Account"
+      - name: statementDate
+        label: "对账单日期"
+        i18nEn: "Statement Date"
+      - name: beginningBalance
+        label: "期初余额"
+        i18nEn: "Opening Balance"
+      - name: endingBalance
+        label: "期末余额"
+        i18nEn: "Closing Balance"
+      - name: totalDebit
+        label: "借方合计"
+        i18nEn: "Total Debit"
+      - name: totalCredit
+        label: "贷方合计"
+        i18nEn: "Total Credit"
+      - name: docStatus
+        label: "状态"
+        i18nEn: "Status"

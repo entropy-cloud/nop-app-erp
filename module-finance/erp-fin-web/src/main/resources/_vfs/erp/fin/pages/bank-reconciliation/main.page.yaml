@@ -3,6 +3,7 @@
 # 数据来源：ErpFinBankReconciliation 实体 findPage（generate/post/reverse 链已实现）。零后端 delta。
 type: page
 title: "余额调节表"
+i18nEn: "Bank Reconciliation"
 body:
   - type: data-source
     name: reconData
@@ -29,6 +30,7 @@ body:
                 tag: div
                 className: text-muted
                 text: "调节表数"
+                i18nEn: "Reconciliations"
               - type: text
                 tag: span
                 className: h3
@@ -42,6 +44,7 @@ body:
                 tag: div
                 className: text-muted
                 text: "已平衡"
+                i18nEn: "Balanced"
               - type: text
                 tag: span
                 className: h3 text-success
@@ -55,6 +58,7 @@ body:
                 tag: div
                 className: text-muted
                 text: "未平衡"
+                i18nEn: "Unbalanced"
               - type: text
                 tag: span
                 className: h3 text-danger
@@ -64,18 +68,38 @@ body:
     name: reconCrud
     className: m-3
     title: "调节表列表"
+    i18nEn: "Reconciliation List"
     source: ${reconData?.items ?? []}
     syncLocation: false
     columns:
-      - { name: code, label: "单号" }
-      - { name: orgId, label: "业务组织" }
-      - { name: fundAccountId, label: "资金账户" }
-      - { name: reconciliationDate, label: "调节日期" }
-      - { name: bookBalance, label: "账面余额" }
-      - { name: statementBalance, label: "对账单余额" }
-      - { name: unreconciledDiff, label: "未调节差异" }
+      - name: code
+        label: "单号"
+        i18nEn: "Doc No"
+      - name: orgId
+        label: "业务组织"
+        i18nEn: "Business Org"
+      - name: fundAccountId
+        label: "资金账户"
+        i18nEn: "Cash Account"
+      - name: reconciliationDate
+        label: "调节日期"
+        i18nEn: "Reconciliation Date"
+      - name: bookBalance
+        label: "账面余额"
+        i18nEn: "Book Balance"
+      - name: statementBalance
+        label: "对账单余额"
+        i18nEn: "Statement Balance"
+      - name: unreconciledDiff
+        label: "未调节差异"
+        i18nEn: "Unreconciled Difference"
       - name: isBalanced
         label: "已平衡"
         type: tpl
         tpl: '${isBalanced ? "<span class=\"label label-success\">已平衡</span>" : "<span class=\"label label-danger\">未平衡</span>"}'
-      - { name: docStatus, label: "状态" }
+        i18nEn:
+          label: "Balanced"
+          tpl: '${isBalanced ? "<span class=\"label label-success\">Balanced</span>" : "<span class=\"label label-danger\">Unbalanced</span>"}'
+      - name: docStatus
+        label: "状态"
+        i18nEn: "Status"

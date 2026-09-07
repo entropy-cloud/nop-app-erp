@@ -2,6 +2,7 @@
 # 数据来源：ErpPrjProjectPnl 实体 findPage。零后端 delta。
 type: page
 title: "项目损益汇总"
+i18nEn: "Project P&L Summary"
 body:
   - type: data-source
     name: pnlData
@@ -28,6 +29,7 @@ body:
                 tag: div
                 className: text-muted
                 text: "损益记录数"
+                i18nEn: "P&L Records"
               - type: text
                 tag: span
                 className: h3
@@ -41,6 +43,7 @@ body:
                 tag: div
                 className: text-muted
                 text: "总收入"
+                i18nEn: "Total Revenue"
               - type: text
                 tag: span
                 className: h3 text-success
@@ -54,6 +57,7 @@ body:
                 tag: div
                 className: text-muted
                 text: "总成本"
+                i18nEn: "Total Cost"
               - type: text
                 tag: span
                 className: h3 text-danger
@@ -67,6 +71,7 @@ body:
                 tag: div
                 className: text-muted
                 text: "总毛利"
+                i18nEn: "Total Gross Profit"
               - type: text
                 tag: span
                 className: h3 text-primary
@@ -75,15 +80,34 @@ body:
   - type: crud
     className: m-3
     title: "损益记录列表"
+    i18nEn: "P&L Record List"
     source: ${pnlData?.items ?? []}
     syncLocation: false
     columns:
-      - { name: code, label: "单号" }
-      - { name: projectId, label: "项目" }
-      - { name: periodFrom, label: "起始期间" }
-      - { name: periodTo, label: "结束期间" }
-      - { name: revenueAmount, label: "收入" }
-      - { name: totalCost, label: "成本" }
-      - { name: grossProfit, label: "毛利" }
-      - { name: grossMarginPct, label: "毛利率" }
-      - { name: calcStatus, label: "计算状态" }
+      - name: code
+        label: "单号"
+        i18nEn: "Doc No"
+      - name: projectId
+        label: "项目"
+        i18nEn: "Project"
+      - name: periodFrom
+        label: "起始期间"
+        i18nEn: "Period From"
+      - name: periodTo
+        label: "结束期间"
+        i18nEn: "Period To"
+      - name: revenueAmount
+        label: "收入"
+        i18nEn: "Revenue"
+      - name: totalCost
+        label: "成本"
+        i18nEn: "Cost"
+      - name: grossProfit
+        label: "毛利"
+        i18nEn: "Gross Profit"
+      - name: grossMarginPct
+        label: "毛利率"
+        i18nEn: "Gross Margin %"
+      - name: calcStatus
+        label: "计算状态"
+        i18nEn: "Calc Status"

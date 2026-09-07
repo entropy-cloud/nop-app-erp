@@ -5,6 +5,7 @@
 # TreeBean filter 须经 $f:Map 变量传递。
 type: page
 title: "关联凭证"
+i18nEn: "Related Vouchers"
 body:
   - type: data-source
     name: voucherLinkData
@@ -26,10 +27,12 @@ body:
     className: m-3
     tag: div
     text: '<div class="text-muted">单据编号：<b>${billCode}</b> ｜ 共 ${voucherLinkData?.total || 0} 条关联凭证</div>'
+    i18nEn: '<div class="text-muted">Doc code: <b>${billCode}</b> | ${voucherLinkData?.total || 0} related vouchers in total</div>'
 
   - type: crud
     className: m-3
     title: "关联凭证列表"
+    i18nEn: "Related Voucher List"
     source: ${voucherLinkData?.items ?? []}
     syncLocation: false
     headerToolbar: []
@@ -37,23 +40,32 @@ body:
     columns:
       - name: voucher.code
         label: "凭证号"
+        i18nEn: "Voucher No"
       - name: businessType
         label: "业务类型"
+        i18nEn: "Business Type"
       - name: voucher.voucherType
         label: "凭证字"
+        i18nEn: "Voucher Type"
       - name: voucher.postingType
         label: "过账类型"
+        i18nEn: "Posting Type"
         type: tpl
         tpl: '<span class="label label-${voucher.postingType == "REVERSAL" ? "danger" : "success"}">${voucher.postingType}</span>'
       - name: voucher.totalDebit
         label: "借方合计"
+        i18nEn: "Total Debit"
         type: number
         precision: 2
       - name: voucher.totalCredit
         label: "贷方合计"
+        i18nEn: "Total Credit"
         type: number
         precision: 2
       - name: voucher.isReversed
         label: "红冲状态"
         type: tpl
         tpl: '<span class="label label-${voucher.isReversed ? "danger" : "default"}">${voucher.isReversed ? "已红冲" : "正常"}</span>'
+        i18nEn:
+          label: "Red-Reverse Status"
+          tpl: '<span class="label label-${voucher.isReversed ? "danger" : "default"}">${voucher.isReversed ? "Red-Reversed" : "Normal"}</span>'

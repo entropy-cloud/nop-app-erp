@@ -7,6 +7,7 @@
 # 系统生成凭证（PERIOD_CLOSE/EXCHANGE_GAIN_LOSS/PROFIT_TO_RETAINED_EARNINGS/BAD_DEBT_RESERVE/BAD_DEBT_RELEASE）无源单据，link='' 不显示跳转。
 type: page
 title: "源单据"
+i18nEn: "Source Bills"
 body:
   - type: data-source
     name: sourceBillData
@@ -33,10 +34,12 @@ body:
     className: m-3
     tag: div
     text: '<div class="text-muted">共 ${sourceBillData?.total || 0} 条源单据关联</div>'
+    i18nEn: '<div class="text-muted">${sourceBillData?.total || 0} source bill links in total</div>'
 
   - type: crud
     className: m-3
     title: "源单据列表"
+    i18nEn: "Source Bill List"
     source: ${sourceBills ?? []}
     syncLocation: false
     headerToolbar: []
@@ -44,12 +47,16 @@ body:
     columns:
       - name: billType
         label: "单据类型"
+        i18nEn: "Doc Type"
       - name: billCode
         label: "单据编号"
+        i18nEn: "Doc Code"
       - name: businessType
         label: "业务类型"
+        i18nEn: "Business Type"
       - type: operation
         label: "操作"
+        i18nEn: "Actions"
         buttons:
           - type: button
             label: "跳转源单据"
