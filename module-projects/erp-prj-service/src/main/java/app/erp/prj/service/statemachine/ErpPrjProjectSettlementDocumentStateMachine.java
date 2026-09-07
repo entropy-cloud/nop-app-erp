@@ -76,7 +76,7 @@ public class ErpPrjProjectSettlementDocumentStateMachine {
      */
     public void assertCanCancel(String docStatus) {
         if (isTerminal(docStatus)) {
-            throw illegal("cancel", docStatus, "非CANCELLED");
+            throw illegal("cancel", docStatus, "!CANCELLED");
         }
     }
 

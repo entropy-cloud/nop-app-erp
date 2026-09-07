@@ -32,7 +32,7 @@ public class ErpPrjProjectSettlementReverseSettlementProcessor {
         if (facade.isRetentionReturned(settlement)) {
             throw new NopException(ErpPrjErrors.ERR_RETENTION_RETURN_NOT_ALLOWED)
                     .param(ErpPrjErrors.ARG_SETTLEMENT_CODE, settlement.getCode())
-                    .param(ErpPrjErrors.ARG_REASON, "质保金已到期返还（返还凭证独立存在），红冲主结算会悬挂返还凭证，不允许");
+                    .param(ErpPrjErrors.ARG_REASON, "RETENTION_ALREADY_RETURNED");
         }
         facade.postingDispatcher.reverse(settlement);
         facade.rollbackAssetIfNeeded(settlement);

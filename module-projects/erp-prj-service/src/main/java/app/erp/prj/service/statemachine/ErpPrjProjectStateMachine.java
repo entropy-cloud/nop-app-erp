@@ -89,7 +89,7 @@ public class ErpPrjProjectStateMachine {
      */
     public void assertCanCancel(String status) {
         if (isTerminal(status)) {
-            throw illegal("cancel", status, "非终态(DRAFT/OPEN/ON_HOLD)");
+            throw illegal("cancel", status, "!DRAFT / OPEN / ON_HOLD");
         }
     }
 

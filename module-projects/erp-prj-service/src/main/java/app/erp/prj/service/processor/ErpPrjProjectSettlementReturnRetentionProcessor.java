@@ -37,18 +37,18 @@ public class ErpPrjProjectSettlementReturnRetentionProcessor {
         // 守卫链（硬守卫失败抛 ERR_RETENTION_RETURN_NOT_ALLOWED）
         if (!ErpPrjConstants.DOC_STATUS_APPROVED.equals(settlement.getDocStatus())
                 || !ErpPrjConstants.APPROVE_STATUS_APPROVED.equals(settlement.getApproveStatus())) {
-            throw notAllowed(settlement, "结算单非已审批状态（docStatus/approveStatus 须 APPROVED）");
+            throw notAllowed(settlement, "!APPROVED");
         }
         if (!Boolean.TRUE.equals(settlement.getPosted())) {
-            throw notAllowed(settlement, "结算单未过账（posted=false），留存凭证未生成不可返还");
+            throw notAllowed(settlement, "!POSTED");
         }
         BigDecimal retention = settlement.getRetentionAmount();
         if (retention == null || retention.signum() <= 0) {
-            throw notAllowed(settlement, "无质保金留存（retentionAmount 为空或<=0）");
+            throw notAllowed(settlement, "NO_RETENTION");
         }
         LocalDate due = settlement.getRetentionDueDate();
         if (due == null || due.isAfter(CoreMetrics.today())) {
-            throw notAllowed(settlement, "质保金未到期（retentionDueDate=" + due + " 晚于今天）");
+            throw notAllowed(settlement, "RETENTION_NOT_DUE: " + due);
         }
 
         // 返还是用户显式操作：过账失败显式抛 ERR_RETENTION_RETURN_POSTING_FAILED（与主结算过账失败隔离语义区分）

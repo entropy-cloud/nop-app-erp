@@ -140,7 +140,7 @@ public class ErpPrjProjectSettlementProcessor {
         try {
             documentStateMachine.assertCanCancel(docStatus);
         } catch (NopException e) {
-            throw illegalTransition(settlement, docStatus, "非CANCELLED");
+            throw illegalTransition(settlement, docStatus, "!CANCELLED");
         }
     }
 
