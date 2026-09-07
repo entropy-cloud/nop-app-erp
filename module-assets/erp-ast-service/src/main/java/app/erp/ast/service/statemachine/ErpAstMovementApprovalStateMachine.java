@@ -1,7 +1,7 @@
 package app.erp.ast.service.statemachine;
 
 import app.erp.ast.service.ErpAstConstants;
-import app.erp.common.service.ErpCommonErrors;
+import app.erp.ast.service.ErpAstErrors;
 import io.nop.api.core.exceptions.NopException;
 
 import java.util.Arrays;
@@ -24,9 +24,10 @@ import java.util.List;
  * {@code ErpAstMovement.xbiz} 的 {@code <source>} 脚本（无 Processor），本 Bean 将固定守卫/目标态集中化后，
  * 由 xbiz source 经 {@code inject} 取得并委托调用（行为/错误码/权限保持不变）。
  *
- * <p>非法边抛 common 层 {@link ErpCommonErrors#ERR_ILLEGAL_STATUS_TRANSITION}（参数 {@code currentStatus}/
- * {@code expectedStatus}），并附 {@code action} 补充诊断参数；领域 ErrorCode 映射归 xbiz source（契约 §7，
- * 本实体无 Processor 层）。
+ * <p>非法边直抛领域码 {@link ErpAstErrors#ERR_AST_MOVEMENT_ILLEGAL_STATUS_TRANSITION}（参数
+ * {@code action}/{@code currentStatus}/{@code expectedStatus}；plan 2026-09-07-2200-1 裸奔通道修正：
+ * 原 common 码 {@code nop.err.erp.common.illegal-status-transition} 直达调用方，改为领域码一步到位，
+ * 无转码层）。
  *
  * <p>迁移矩阵（6 条边，对应 5 命名动作——submitForApproval 双源）：
  * submitForApproval(UNSUBMITTED→SUBMITTED)、submitForApproval(REJECTED→SUBMITTED)、
@@ -47,8 +48,8 @@ public class ErpAstMovementApprovalStateMachine {
     /**
      * submitForApproval 守卫：来源态为 {@code UNSUBMITTED}/{@code null}/{@code REJECTED} 合法（初始提交或驳回后重新提交）。
      *
-     * <p>非法来源态报告 common 层非法边（携带 {@code action=submitForApproval}/{@code fromStatus}）。
-     * xbiz source 映射为 {@code nop.err.wf.approve.invalid-status}（错误码对外不变）。
+     * <p>非法来源态直抛领域码 {@code ERR_AST_MOVEMENT_ILLEGAL_STATUS_TRANSITION}
+     * （携带 {@code action=submitForApproval}/{@code currentStatus}）。
      */
     public void assertCanSubmitForApproval(String approveStatus) {
         String status = normalize(approveStatus);
@@ -152,10 +153,10 @@ public class ErpAstMovementApprovalStateMachine {
     }
 
     private static NopException illegal(String action, String currentStatus, String expectedStatus) {
-        return new NopException(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION)
-                .param(ErpCommonErrors.ARG_CURRENT_STATUS, currentStatus)
-                .param(ErpCommonErrors.ARG_EXPECTED_STATUS, expectedStatus)
-                .param(ARG_ACTION, action);
+        return new NopException(ErpAstErrors.ERR_AST_MOVEMENT_ILLEGAL_STATUS_TRANSITION)
+                .param(ErpAstErrors.ARG_CURRENT_STATUS, currentStatus)
+                .param(ErpAstErrors.ARG_EXPECTED_STATUS, expectedStatus)
+                .param(ErpAstErrors.ARG_ACTION, action);
     }
 
     /** 只读迁移定义记录（供 M5.1/M5.2 可达性/完备性分析与文档一致性校验消费）。 */

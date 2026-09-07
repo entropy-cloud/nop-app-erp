@@ -25,6 +25,7 @@ public interface ErpAstErrors {
     String ARG_CURRENT_PERIOD = "currentPeriod";
     String ARG_CURRENT_STATUS = "currentStatus";
     String ARG_EXPECTED_STATUS = "expectedStatus";
+    String ARG_ACTION = "action";
     String ARG_CURRENT_DOC_STATUS = "currentDocStatus";
     String ARG_EXPECTED_DOC_STATUS = "expectedDocStatus";
     String ARG_DEPRECIATION_METHOD = "depreciationMethod";
@@ -94,11 +95,17 @@ public interface ErpAstErrors {
             "erp.err.ast.asset.not-found",
             "资产 {assetId} 不存在",
             ARG_ASSET_ID);
-    // 资产卡片自有状态机非法迁移（RC-R1.54 suspend/resume，契约 §7 common 作 cause）
+    // 资产卡片自有状态机非法迁移（RC-R1.54 suspend/resume，facade 同码补参）
     ErrorCode ERR_AST_ASSET_ILLEGAL_STATUS_TRANSITION = ErrorCode.define(
             "erp.err.ast.asset.illegal-status-transition",
             "资产 {assetCode} 当前状态={currentStatus}，不允许执行该操作（期望状态={expectedStatus}）",
-            ARG_ASSET_CODE, ARG_CURRENT_STATUS, ARG_EXPECTED_STATUS);    ErrorCode ERR_DEPRECIATION_PERIOD_NOT_FOUND = ErrorCode.define(
+            ARG_ASSET_CODE, ARG_CURRENT_STATUS, ARG_EXPECTED_STATUS);
+    // 资产移动单审批轴直抛领域码（plan 2026-09-07-2200-1：StateMachine 直抛领域错误码，裸奔通道修正）
+    ErrorCode ERR_AST_MOVEMENT_ILLEGAL_STATUS_TRANSITION = ErrorCode.define(
+            "erp.err.ast.movement.illegal-status-transition",
+            "资产移动单当前审批状态={currentStatus}，不允许执行该操作（期望状态={expectedStatus}）",
+            ARG_ACTION, ARG_CURRENT_STATUS, ARG_EXPECTED_STATUS);
+    ErrorCode ERR_DEPRECIATION_PERIOD_NOT_FOUND = ErrorCode.define(
             "erp.err.ast.depreciation.period-not-found",
             "折旧期间 {period} 未找到",
             ARG_PERIOD);
