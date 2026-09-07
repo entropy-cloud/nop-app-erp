@@ -195,7 +195,7 @@ public class NotificationRecipientResolver {
             throw new NopException(ErpNotifyErrors.ERR_NOTIFY_RECIPIENT_RESOLVE_FAILED, e)
                     .param(ErpNotifyErrors.ARG_NOTIFICATION_TYPE, "")
                     .param(ErpNotifyErrors.ARG_RESOLVER, "parseConfig")
-                    .param(ErpNotifyErrors.ARG_REASON, "recipientConfig 非合法 JSON: " + e.getMessage());
+                    .param(ErpNotifyErrors.ARG_REASON, "recipientConfig invalid JSON: " + e.getMessage());
         }
         return Collections.emptyMap();
     }
@@ -222,7 +222,7 @@ public class NotificationRecipientResolver {
         } catch (Exception e) {
             throw new NopException(ErpNotifyErrors.ERR_NOTIFY_RECIPIENT_RESOLVE_FAILED, e)
                     .param(ErpNotifyErrors.ARG_RESOLVER, "interpolateConfig")
-                    .param(ErpNotifyErrors.ARG_REASON, "recipientConfig 占位符插值失败: " + e.getMessage());
+                    .param(ErpNotifyErrors.ARG_REASON, "recipientConfig placeholder interpolation failed: " + e.getMessage());
         }
     }
 
