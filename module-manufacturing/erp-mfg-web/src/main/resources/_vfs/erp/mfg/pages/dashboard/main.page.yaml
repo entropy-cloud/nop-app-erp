@@ -4,6 +4,7 @@
 #       / __getCrpLoadChartData / __findDelayedWorkOrderAlert。
 type: page
 title: "制造概览"
+i18nEn: "Manufacturing Overview"
 body:
   - type: form
     name: filterForm
@@ -18,20 +19,30 @@ body:
         label: "开始日期"
         format: YYYY-MM-DD
         placeholder: "留空=本月1日"
+        i18nEn:
+          label: "Start Date"
+          placeholder: "blank = 1st of current month"
         clearable: true
       - type: input-date
         name: endDate
         label: "结束日期"
         format: YYYY-MM-DD
         placeholder: "留空=今天"
+        i18nEn:
+          label: "End Date"
+          placeholder: "blank = today"
         clearable: true
       - type: input-text
         name: workcenterId
         label: "工作中心ID"
         placeholder: "留空=全部"
+        i18nEn:
+          label: "Work Center ID"
+          placeholder: "blank = all"
         clearable: true
       - type: button
         label: "刷新"
+        i18nEn: "Refresh"
         icon: refresh-cw
         onClick:
           action: refreshSource
@@ -74,6 +85,7 @@ body:
                 tag: div
                 className: text-muted
                 text: "在制工单数"
+                i18nEn: "In-Process Work Orders"
               - type: text
                 tag: span
                 className: h3 font-bold
@@ -87,6 +99,7 @@ body:
                 tag: div
                 className: text-muted
                 text: "本期完工量"
+                i18nEn: "Completed Qty This Period"
               - type: text
                 tag: span
                 className: h3 text-success
@@ -100,6 +113,7 @@ body:
                 tag: div
                 className: text-muted
                 text: "工单准时率"
+                i18nEn: "Work Order On-Time Rate"
               - type: text
                 tag: span
                 className: h3 text-primary
@@ -113,6 +127,7 @@ body:
                 tag: div
                 className: text-muted
                 text: "齐套待产"
+                i18nEn: "Kit-Complete Pending Production"
               - type: text
                 tag: span
                 className: h3 text-warning
@@ -128,10 +143,15 @@ body:
   - type: chart
     chartType: pie
     title: "工单状态分布"
+    i18nEn: "Work Order Status Distribution"
     source: ${statusData ?? []}
     height: 300
     series:
-      - { name: "工单数", dataRegionKey: count, nameField: status }
+      -
+        name: "工单数"
+        i18nEn: "Work Order Count"
+        dataRegionKey: count
+        nameField: status
 
   - type: data-source
     name: trendData
@@ -146,13 +166,19 @@ body:
   - type: chart
     chartType: line
     title: "产成品产出趋势（近12月）"
+    i18nEn: "Finished Goods Output Trend (Last 12 Months)"
     source: ${trendData ?? []}
     xAxis: { dataKey: month }
-    yAxis: { label: "完工量" }
+    yAxis:
+      label: "完工量"
+      i18nEn: "Completed Qty"
     legend: true
     height: 300
     series:
-      - { name: "完工量", dataRegionKey: completedQty }
+      -
+        name: "完工量"
+        i18nEn: "Completed Qty"
+        dataRegionKey: completedQty
 
   - type: data-source
     name: crpLoadData
@@ -169,14 +195,23 @@ body:
   - type: chart
     chartType: bar
     title: "CRP 负荷/产能对比图"
+    i18nEn: "CRP Load/Capacity Comparison Chart"
     source: ${crpLoadData?.series ?? []}
     xAxis: { dataKey: loadDate }
-    yAxis: { label: "工时" }
+    yAxis:
+      label: "工时"
+      i18nEn: "Work Hours"
     legend: true
     height: 300
     series:
-      - { name: "负荷工时", dataRegionKey: loadHours }
-      - { name: "产能工时", dataRegionKey: capacityHours }
+      -
+        name: "负荷工时"
+        i18nEn: "Load Hours"
+        dataRegionKey: loadHours
+      -
+        name: "产能工时"
+        i18nEn: "Capacity Hours"
+        dataRegionKey: capacityHours
 
   - type: data-source
     name: delayedWorkOrderData
@@ -188,6 +223,7 @@ body:
   - type: crud
     className: m-3
     title: "工单延期预警（计划完成日 < 今天 且 未完工）"
+    i18nEn: "Delayed Work Order Alert (planned end date < today and not completed)"
     source: ${delayedWorkOrderData ?? []}
     syncLocation: false
     headerToolbar: []
@@ -195,9 +231,13 @@ body:
     columns:
       - name: workOrderCode
         label: "工单编码"
+        i18nEn: "Work Order Code"
       - name: plannedEndDate
         label: "计划完成日"
+        i18nEn: "Planned End Date"
       - name: docStatus
         label: "状态"
+        i18nEn: "Status"
       - name: overdueDays
         label: "逾期(天)"
+        i18nEn: "Overdue (days)"

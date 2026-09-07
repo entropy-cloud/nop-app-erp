@@ -6,11 +6,13 @@
 # 停 CONFIRMED 待库管员二次确认（移动单列表 complete 后差异才影响余额）；差异移动单跳过存货估值过账。
 type: page
 title: "盘点流程管理"
+i18nEn: "Stock Take Flow Management"
 body:
   - type: text
     className: m-3
     tag: div
     text: '<div class="alert alert-info"><strong>盘点三阶段流程</strong>：DRAFT（待盘点）→ IN_PROGRESS（盘点中，startTake）→ DONE（已完成，completeTake）。完成时自动生成盘盈/盘亏移动单（独立单停 CONFIRMED 待库管员二次确认）。</div>'
+    i18nEn: '<div class="alert alert-info"><strong>Stock Take Three-Phase Flow</strong>: DRAFT (pending stock take) → IN_PROGRESS (stock take in progress, startTake) → DONE (completed, completeTake). On completion, stock-take gain/loss movement orders are generated automatically (standalone orders stay CONFIRMED pending warehouse keeper double confirmation).</div>'
 
   - type: data-source
     name: stockTakeData
@@ -27,27 +29,45 @@ body:
     name: stockTakeCrud
     className: m-3
     title: "盘点单"
+    i18nEn: "Stock Take Order"
     source: ${stockTakeData?.items ?? []}
     syncLocation: false
     columns:
-      - { name: code, label: "单号" }
-      - { name: name, label: "名称" }
+      - name: code
+        label: "单号"
+        i18nEn: "Doc No"
+      - name: name
+        label: "名称"
+        i18nEn: "Name"
       - name: status
         label: "状态"
         type: tpl
         tpl: '${status == "DRAFT" ? "<span class=\"label label-default\">待盘点</span>" : (status == "IN_PROGRESS" ? "<span class=\"label label-warning\">盘点中</span>" : (status == "DONE" ? "<span class=\"label label-success\">已完成</span>" : "<span class=\"label\">" + (status||"—") + "</span>"))}'
-      - { name: rangeDepartmentId, label: "盘点部门" }
-      - { name: responsibleById, label: "负责人" }
-      - { name: businessDate, label: "业务日期" }
+        i18nEn:
+          label: "Status"
+          tpl: '${status == "DRAFT" ? "<span class=\"label label-default\">Pending Stock Take</span>" : (status == "IN_PROGRESS" ? "<span class=\"label label-warning\">Stock Take In Progress</span>" : (status == "DONE" ? "<span class=\"label label-success\">Completed</span>" : "<span class=\"label\">" + (status||"—") + "</span>"))}'
+      - name: rangeDepartmentId
+        label: "盘点部门"
+        i18nEn: "Stock Take Department"
+      - name: responsibleById
+        label: "负责人"
+        i18nEn: "Responsible Person"
+      - name: businessDate
+        label: "业务日期"
+        i18nEn: "Business Date"
       - name: actions
         label: "操作"
         type: tpl
         tpl: '${status == "DRAFT" ? "<span class=\"text-muted\">startTake →</span>" : (status == "IN_PROGRESS" ? "<span class=\"text-muted\">completeTake →</span>" : (status == "DONE" ? "<span class=\"text-success\">✓ 流程完成</span>" : ""))}'
+        i18nEn:
+          label: "Actions"
+          tpl: '${status == "DRAFT" ? "<span class=\"text-muted\">startTake →</span>" : (status == "IN_PROGRESS" ? "<span class=\"text-muted\">completeTake →</span>" : (status == "DONE" ? "<span class=\"text-success\">✓ Flow Complete</span>" : ""))}'
 
   - type: form
     name: actionForm
     valuesPath: actionForm
     title: "执行盘点操作"
+    i18nEn: "Execute Stock Take Action"
     className: m-3
     mode: inline
     wrapWithPanel: false
@@ -56,6 +76,9 @@ body:
         name: takeId
         label: "盘点单ID"
         placeholder: "输入盘点单ID"
+        i18nEn:
+          label: "Stock Take Order ID"
+          placeholder: "Enter stock take order ID"
         required: true
       - type: button
         label: "开始盘点 (startTake)"
@@ -63,6 +86,9 @@ body:
         icon: "fa fa-play"
         actionType: ajax
         confirmText: "确认开始盘点？状态将翻转为 IN_PROGRESS。"
+        i18nEn:
+          label: "Start Stock Take (startTake)"
+          confirmText: "Confirm starting the stock take? Status will flip to IN_PROGRESS."
         api:
           url: '@mutation:ErpInvStockTake__startTake'
           method: post
@@ -78,6 +104,9 @@ body:
         icon: "fa fa-check"
         actionType: ajax
         confirmText: "确认完成盘点？将自动生成盘盈/盘亏差异移动单（停 CONFIRMED 待库管员二次确认）。"
+        i18nEn:
+          label: "Complete Stock Take (completeTake)"
+          confirmText: "Confirm completing the stock take? Stock-take gain/loss variance movement orders will be generated automatically (orders stay CONFIRMED pending warehouse keeper double confirmation)."
         api:
           url: '@mutation:ErpInvStockTake__completeTake'
           method: post
@@ -93,6 +122,9 @@ body:
         icon: "fa fa-times"
         actionType: ajax
         confirmText: "确认取消盘点？"
+        i18nEn:
+          label: "Cancel Stock Take (cancelTake)"
+          confirmText: "Confirm cancelling the stock take?"
         api:
           url: '@mutation:ErpInvStockTake__cancelTake'
           method: post

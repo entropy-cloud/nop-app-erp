@@ -2,6 +2,7 @@
 # flux 原生重写：data-source → form → html。
 type: page
 title: "预测差异报表"
+i18nEn: "Forecast Variance Report"
 body:
   - type: form
     name: filterForm
@@ -14,21 +15,28 @@ body:
         name: materialId
         label: "物料ID"
         placeholder: "留空查询全部物料"
+        i18nEn:
+          label: "Material ID"
+          placeholder: "blank to query all materials"
       - type: input-date
         name: periodStart
         label: "区间起"
+        i18nEn: "Period Start"
         valueFormat: YYYY-MM-DD
       - type: input-date
         name: periodEnd
         label: "区间止"
+        i18nEn: "Period End"
         valueFormat: YYYY-MM-DD
       - type: button
         label: "渲染报表"
+        i18nEn: "Render Report"
         onClick:
           action: refreshSource
           targetId: reportHtmlData
       - type: button
         label: "下载 XLSX"
+        i18nEn: "Download XLSX"
         actionType: download
         api:
           url: /p/ErpMfgReport__download
@@ -43,6 +51,7 @@ body:
               periodEnd: "${filterForm?.periodEnd}"
       - type: button
         label: "下载 PDF"
+        i18nEn: "Download PDF"
         actionType: download
         api:
           url: /p/ErpMfgReport__download

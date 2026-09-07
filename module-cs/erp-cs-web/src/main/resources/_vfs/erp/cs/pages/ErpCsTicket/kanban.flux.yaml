@@ -3,6 +3,7 @@
 # 拖拽语义（Phase 0 Decision）：onCardMove 按目标列路由 mutation（assign/start/resolve/close/reopen）。
 type: page
 title: 工单看板
+i18nEn: Ticket Kanban
 body:
 - type: data-source
   name: boardData
@@ -26,11 +27,15 @@ body:
         name: customerId
         label: 客户ID
         placeholder: 过滤客户
+        i18nEn:
+          label: Customer ID
+          placeholder: Filter by customer
         clearable: true
     - colSpan: 2
       body:
       - type: button
         label: 刷新看板
+        i18nEn: Refresh Board
         actionType: ajax
         action: ajax
         args:
@@ -54,6 +59,11 @@ body:
       HIGH: 高
       MEDIUM: 中
       LOW: 低
+      i18nEn:
+        URGENT: Urgent
+        HIGH: High
+        MEDIUM: Medium
+        LOW: Low
     levelMap:
       URGENT: error
       HIGH: error
@@ -61,6 +71,7 @@ body:
       LOW: default
   - type: text
     text: '${card.data.deadlineDateTime && !card.data.isSlaCompleted ? "🔴 SLA超时 " + card.data.deadlineDateTime : (card.data.deadlineDateTime ? card.data.deadlineDateTime : "")}'
+    i18nEn: '${card.data.deadlineDateTime && !card.data.isSlaCompleted ? "🔴 SLA breached " + card.data.deadlineDateTime : (card.data.deadlineDateTime ? card.data.deadlineDateTime : "")}'
     className: text-xs text-red-500
     visible: ${card.data.deadlineDateTime && !card.data.isSlaCompleted}
   onCardMove:
@@ -75,3 +86,4 @@ body:
     args:
       level: info
       message: ${"点击工单 " + event.cardId}
+      i18nEn: ${"Ticket clicked " + event.cardId}

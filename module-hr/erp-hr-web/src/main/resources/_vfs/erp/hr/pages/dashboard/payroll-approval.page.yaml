@@ -6,11 +6,15 @@
 type: page
 title: "薪酬核算审批"
 remark: "按年月过滤薪酬记录（ErpHrSalary），前端聚合汇总卡片 + 明细支持标记已发放(markPaid)/作废(voidSalary)。实体无 departmentId，分组维度用 orgId。"
+i18nEn:
+  title: "Payroll Approval"
+  remark: "Filter payroll records (ErpHrSalary) by year/month; front-end aggregated summary cards + detail rows support mark-paid (markPaid) / void (voidSalary). The entity has no departmentId; grouping uses orgId."
 body:
   - type: form
     name: filterForm
     valuesPath: filterForm
     title: "薪酬期间筛选"
+    i18nEn: "Payroll Period Filter"
     mode: inline
     wrapWithPanel: false
     className: m-3
@@ -19,29 +23,58 @@ body:
         name: year
         label: "年份"
         placeholder: "如 2026"
+        i18nEn:
+          label: "Year"
+          placeholder: "e.g. 2026"
         value: 2026
         required: true
         clearable: true
       - type: select
         name: month
         label: "月份"
+        i18nEn: "Month"
         value: 1
         options:
-          - { label: "1月", value: 1 }
-          - { label: "2月", value: 2 }
-          - { label: "3月", value: 3 }
-          - { label: "4月", value: 4 }
-          - { label: "5月", value: 5 }
-          - { label: "6月", value: 6 }
-          - { label: "7月", value: 7 }
-          - { label: "8月", value: 8 }
-          - { label: "9月", value: 9 }
-          - { label: "10月", value: 10 }
-          - { label: "11月", value: 11 }
-          - { label: "12月", value: 12 }
+          - value: 1
+            label: "1月"
+            i18nEn: "Jan"
+          - value: 2
+            label: "2月"
+            i18nEn: "Feb"
+          - value: 3
+            label: "3月"
+            i18nEn: "Mar"
+          - value: 4
+            label: "4月"
+            i18nEn: "Apr"
+          - value: 5
+            label: "5月"
+            i18nEn: "May"
+          - value: 6
+            label: "6月"
+            i18nEn: "Jun"
+          - value: 7
+            label: "7月"
+            i18nEn: "Jul"
+          - value: 8
+            label: "8月"
+            i18nEn: "Aug"
+          - value: 9
+            label: "9月"
+            i18nEn: "Sep"
+          - value: 10
+            label: "10月"
+            i18nEn: "Oct"
+          - value: 11
+            label: "11月"
+            i18nEn: "Nov"
+          - value: 12
+            label: "12月"
+            i18nEn: "Dec"
         clearable: true
       - type: button
         label: "刷新汇总与明细"
+        i18nEn: "Refresh Summary & Detail"
         icon: refresh-cw
         onClick:
           action: refreshSource
@@ -71,6 +104,7 @@ body:
             tag: div
             className: text-muted
             text: "人数"
+            i18nEn: "Headcount"
           - type: text
             tag: h3
             className: m-t-sm
@@ -82,6 +116,7 @@ body:
             tag: div
             className: text-muted
             text: "应发合计"
+            i18nEn: "Total Gross"
           - type: text
             tag: h3
             className: m-t-sm text-primary
@@ -93,6 +128,7 @@ body:
             tag: div
             className: text-muted
             text: "社保合计"
+            i18nEn: "Total Social Insurance"
           - type: text
             tag: h3
             className: m-t-sm text-warning
@@ -104,6 +140,7 @@ body:
             tag: div
             className: text-muted
             text: "个税合计"
+            i18nEn: "Total Income Tax"
           - type: text
             tag: h3
             className: m-t-sm text-danger
@@ -115,6 +152,7 @@ body:
             tag: div
             className: text-muted
             text: "实发合计"
+            i18nEn: "Total Net Pay"
           - type: text
             tag: h3
             className: m-t-sm text-success
@@ -123,38 +161,64 @@ body:
   - type: crud
     className: m-3
     title: "薪酬明细（按年月过滤）"
+    i18nEn: "Payroll Detail (filtered by year/month)"
     source: ${salaryData?.items ?? []}
     headerToolbar: []
     footerToolbar: ["statistics"]
     syncLocation: false
     columns:
       - { name: id, label: "ID" }
-      - { name: employeeId, label: "员工ID" }
-      - { name: orgId, label: "组织" }
-      - { name: grossSalary, label: "应发", type: number, precision: 2 }
-      - { name: socialInsurance, label: "社保", type: number, precision: 2 }
-      - { name: taxAmount, label: "个税", type: number, precision: 2 }
-      - { name: netSalary, label: "实发", type: number, precision: 2 }
+      - name: employeeId
+        label: "员工ID"
+        i18nEn: "Employee ID"
+      - name: orgId
+        label: "组织"
+        i18nEn: "Org"
+      - name: grossSalary
+        label: "应发"
+        i18nEn: "Gross"
+        type: number
+        precision: 2
+      - name: socialInsurance
+        label: "社保"
+        i18nEn: "Social Insurance"
+        type: number
+        precision: 2
+      - name: taxAmount
+        label: "个税"
+        i18nEn: "Income Tax"
+        type: number
+        precision: 2
+      - name: netSalary
+        label: "实发"
+        i18nEn: "Net Pay"
+        type: number
+        precision: 2
       - name: paymentStatus
         label: "支付状态"
+        i18nEn: "Payment Status"
         cell:
           type: text
           text: '<span class="label label-${paymentStatus == "PAID" ? "success" : (paymentStatus == "VOID" ? "default" : "warning")}">${paymentStatus}</span>'
       - name: approveStatus
         label: "审批状态"
+        i18nEn: "Approval Status"
         cell:
           type: text
           text: '<span class="label label-${approveStatus == "APPROVED" ? "success" : (approveStatus == "REJECTED" ? "danger" : "info")}">${approveStatus}</span>'
       - type: operation
         label: "操作"
+        i18nEn: "Actions"
         buttons:
           - type: button
             label: "标记已发放"
+            i18nEn: "Mark Paid"
             variant: outline
             visible: '${paymentStatus == "PENDING"}'
             onClick:
               action: ajax
               confirmText: "确认标记此薪酬记录为已发放？"
+              i18nEn: "Confirm marking this payroll record as paid?"
               args:
                 method: post
                 url: '@mutation:ErpHrSalary__markPaid'
@@ -165,11 +229,13 @@ body:
                   targetId: salaryData
           - type: button
             label: "作废"
+            i18nEn: "Void"
             variant: destructive
             visible: '${paymentStatus != "VOID"}'
             onClick:
               action: ajax
               confirmText: "确认作废此薪酬记录？此操作不可逆。"
+              i18nEn: "Confirm voiding this payroll record? This action is irreversible."
               args:
                 method: post
                 url: '@mutation:ErpHrSalary__voidSalary'

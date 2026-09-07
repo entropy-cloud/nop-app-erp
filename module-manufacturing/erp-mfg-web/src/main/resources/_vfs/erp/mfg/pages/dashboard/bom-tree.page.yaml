@@ -5,11 +5,15 @@
 type: page
 title: "BOM 多级展开树"
 remark: "BOM 多级展开树浏览。调 ErpMfgBom__explode 获取扁平 List，含 level/materialId/quantity/manufactured。"
+i18nEn:
+  title: "BOM Multi-Level Explosion Tree"
+  remark: "Browse the BOM multi-level explosion tree. Calls ErpMfgBom__explode to get a flat List with level/materialId/quantity/manufactured."
 body:
   - type: form
     name: filterForm
     valuesPath: filterForm
     title: "展开参数"
+    i18nEn: "Explosion Parameters"
     mode: inline
     wrapWithPanel: false
     className: m-3
@@ -18,12 +22,16 @@ body:
         name: bomId
         label: "BOM ID"
         placeholder: "输入要展开的 BOM 主键"
+        i18nEn: "Enter the primary key of the BOM to explode"
         required: true
         clearable: true
       - type: input-number
         name: qty
         label: "期望产出量"
         placeholder: "留空=BOM 标准批量"
+        i18nEn:
+          label: "Expected Output Qty"
+          placeholder: "blank = BOM standard batch size"
         clearable: true
       - type: switch
         name: useMultiLevel
@@ -31,8 +39,13 @@ body:
         value: true
         onText: "是"
         offText: "否（仅单级）"
+        i18nEn:
+          label: "Multi-Level Explosion"
+          onText: "Yes"
+          offText: "No (single level only)"
       - type: button
         label: "展开 BOM"
+        i18nEn: "Explode BOM"
         icon: git-branch
         onClick:
           action: refreshSource
@@ -55,17 +68,20 @@ body:
     tag: div
     visibleOn: "${!explodeData || (explodeData?.length || 0) === 0}"
     text: '<div class="text-muted p-3">请输入 BOM ID 后点击「展开 BOM」。若已点击仍无数据，可能该 BOM 无明细行或不存在。</div>'
+    i18nEn: '<div class="text-muted p-3">Enter a BOM ID and click "Explode BOM". If no data appears after clicking, the BOM may have no detail lines or may not exist.</div>'
 
   - type: text
     className: m-3
     tag: div
     visibleOn: "${(explodeData?.length || 0) > 0}"
     text: '<div class="text-muted m-b-sm">展开节点数：${explodeData?.length || 0}</div>'
+    i18nEn: '<div class="text-muted m-b-sm">Exploded node count: ${explodeData?.length || 0}</div>'
 
   - type: tree
     className: m-3
     visibleOn: "${(explodeData?.length || 0) > 0}"
     title: "BOM 树"
+    i18nEn: "BOM Tree"
     source: ${explodeData ?? []}
     labelField: materialId
     keyField: materialId

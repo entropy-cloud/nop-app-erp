@@ -5,11 +5,15 @@
 type: page
 title: "活动时间线"
 remark: "CRM 活动按活动日期（activityDate）倒序的纵向时间线。支持按 leadId 过滤。"
+i18nEn:
+  title: "Activity Timeline"
+  remark: "Vertical timeline of CRM activities in descending activity date (activityDate) order. Supports filtering by leadId."
 body:
   - type: form
     name: filterForm
     valuesPath: filterForm
     title: "筛选"
+    i18nEn: "Filter"
     mode: inline
     wrapWithPanel: false
     className: m-3
@@ -18,9 +22,13 @@ body:
         name: leadId
         label: "线索/商机ID"
         placeholder: "过滤关联线索"
+        i18nEn:
+          label: "Lead/Opportunity ID"
+          placeholder: "Filter by related lead"
         clearable: true
       - type: button
         label: "刷新时间线"
+        i18nEn: "Refresh Timeline"
         icon: refresh-cw
         onClick:
           action: refreshSource
@@ -42,6 +50,7 @@ body:
     className: m-3
     tag: div
     text: '<div class="text-muted">共 ${activitiesData?.total || 0} 条活动记录</div>'
+    i18nEn: '<div class="text-muted">Total ${activitiesData?.total || 0} activity records</div>'
 
   - type: timeline
     className: m-3

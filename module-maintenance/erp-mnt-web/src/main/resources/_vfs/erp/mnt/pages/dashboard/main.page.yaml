@@ -4,6 +4,7 @@
 #       / __findEquipmentDowntimeAlert / __findMaintenanceOverdueAlert。
 type: page
 title: "维护概览"
+i18nEn: "Maintenance Overview"
 body:
   - type: form
     name: filterForm
@@ -18,15 +19,22 @@ body:
         label: "开始日期"
         format: YYYY-MM-DD
         placeholder: "留空=本月1日"
+        i18nEn:
+          label: "Start Date"
+          placeholder: "Leave blank = 1st of current month"
         clearable: true
       - type: input-date
         name: endDate
         label: "结束日期"
         format: YYYY-MM-DD
         placeholder: "留空=今天"
+        i18nEn:
+          label: "End Date"
+          placeholder: "Leave blank = today"
         clearable: true
       - type: button
         label: "刷新"
+        i18nEn: "Refresh"
         icon: refresh-cw
         onClick:
           action: refreshSource
@@ -69,6 +77,7 @@ body:
                 tag: div
                 className: text-muted
                 text: "设备总数"
+                i18nEn: "Equipment Total"
               - type: text
                 tag: span
                 className: h3 font-bold
@@ -82,6 +91,7 @@ body:
                 tag: div
                 className: text-muted
                 text: "运行中设备"
+                i18nEn: "Running Equipment"
               - type: text
                 tag: span
                 className: h3 text-success
@@ -95,6 +105,7 @@ body:
                 tag: div
                 className: text-muted
                 text: "待处理维护请求"
+                i18nEn: "Pending Maintenance Requests"
               - type: text
                 tag: span
                 className: h3 text-warning
@@ -108,6 +119,7 @@ body:
                 tag: div
                 className: text-muted
                 text: "本期维护访问数"
+                i18nEn: "Maintenance Visits This Period"
               - type: text
                 tag: span
                 className: h3 text-primary
@@ -131,6 +143,7 @@ body:
         tag: div
         className: text-muted
         text: "设备 OEE（可用率×性能×质量）"
+        i18nEn: "Equipment OEE (Availability × Performance × Quality)"
       - type: text
         tag: span
         className: h3 text-danger
@@ -139,6 +152,7 @@ body:
         tag: div
         className: text-muted text-sm
         text: "可用率 ${oeeData?.availabilityDisplay ?? '—'} · 性能 ${oeeData?.performanceDisplay ?? '—'} · 质量 ${oeeData?.qualityDisplay ?? '—'} · 样本 ${oeeData?.computedCount ?? 0}/${oeeData?.equipmentTotal ?? 0} 台"
+        i18nEn: "Availability ${oeeData?.availabilityDisplay ?? '—'} · Performance ${oeeData?.performanceDisplay ?? '—'} · Quality ${oeeData?.qualityDisplay ?? '—'} · Sample ${oeeData?.computedCount ?? 0}/${oeeData?.equipmentTotal ?? 0} units"
 
   - type: data-source
     name: statusData
@@ -150,10 +164,14 @@ body:
   - type: chart
     chartType: pie
     title: "设备状态分布"
+    i18nEn: "Equipment Status Distribution"
     source: ${statusData ?? []}
     height: 300
     series:
-      - { name: "设备数", dataRegionKey: count, nameField: status }
+      - dataRegionKey: count
+        name: "设备数"
+        i18nEn: "Equipment Count"
+        nameField: status
 
   - type: data-source
     name: downtimeData
@@ -165,6 +183,7 @@ body:
   - type: crud
     className: m-3
     title: "设备停机预警（状态=DOWN 且停机未恢复）"
+    i18nEn: "Equipment Downtime Alert (status = DOWN and not yet recovered)"
     source: ${downtimeData ?? []}
     syncLocation: false
     headerToolbar: []
@@ -172,10 +191,13 @@ body:
     columns:
       - name: equipmentCode
         label: "设备编码"
+        i18nEn: "Equipment Code"
       - name: equipmentName
         label: "设备名称"
+        i18nEn: "Equipment Name"
       - name: status
         label: "状态"
+        i18nEn: "Status"
 
   - type: data-source
     name: overdueData
@@ -187,6 +209,7 @@ body:
   - type: crud
     className: m-3
     title: "维护逾期预警（阈值经 erp-dash.mnt-maintenance-overdue-days 配置）"
+    i18nEn: "Maintenance Overdue Alert (threshold configured via erp-dash.mnt-maintenance-overdue-days)"
     source: ${overdueData ?? []}
     syncLocation: false
     headerToolbar: []
@@ -194,11 +217,16 @@ body:
     columns:
       - name: scheduleCode
         label: "计划编码"
+        i18nEn: "Schedule Code"
       - name: scheduleName
         label: "计划名称"
+        i18nEn: "Schedule Name"
       - name: equipmentId
         label: "设备ID"
+        i18nEn: "Equipment ID"
       - name: nextDueDate
         label: "下次到期日"
+        i18nEn: "Next Due Date"
       - name: overdueDays
         label: "逾期(天)"
+        i18nEn: "Overdue (days)"

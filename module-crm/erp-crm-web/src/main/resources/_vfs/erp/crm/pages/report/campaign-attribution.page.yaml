@@ -2,6 +2,7 @@
 # flux 原生重写：data-source → form → html。
 type: page
 title: "营销活动归因表"
+i18nEn: "Campaign Attribution Report"
 body:
   - type: form
     name: filterForm
@@ -11,11 +12,13 @@ body:
     body:
       - type: button
         label: "渲染报表"
+        i18nEn: "Render Report"
         onClick:
           action: refreshSource
           targetId: reportHtmlData
       - type: button
         label: "下载 XLSX"
+        i18nEn: "Download XLSX"
         actionType: download
         api:
           url: /p/ErpCrmReport__download
@@ -27,6 +30,7 @@ body:
             data: {}
       - type: button
         label: "下载 PDF"
+        i18nEn: "Download PDF"
         actionType: download
         api:
           url: /p/ErpCrmReport__download

@@ -3,6 +3,7 @@
 # 数据源：ErpAstDashboard__getDashboardKpi / __getAssetCategoryDistribution / __getDashboardTrend / __findDepreciationMissingAlert。
 type: page
 title: 资产概览
+i18nEn: "Asset Overview"
 body:
 - type: form
   name: filterForm
@@ -16,9 +17,13 @@ body:
     name: periodId
     label: 会计期间
     placeholder: "如 2026-07，留空=本月"
+    i18nEn:
+      label: "Accounting Period"
+      placeholder: "e.g. 2026-07, blank = current month"
     clearable: true
   - type: button
     label: 刷新
+    i18nEn: "Refresh"
     icon: refresh-cw
     onClick:
       action: refreshSource
@@ -55,6 +60,7 @@ body:
         tag: div
         className: text-muted
         text: 资产原值合计
+        i18nEn: "Total Original Value"
       - type: text
         tag: h3
         className: text-primary
@@ -68,6 +74,7 @@ body:
         tag: div
         className: text-muted
         text: 累计折旧
+        i18nEn: "Accumulated Depreciation"
       - type: text
         tag: h3
         className: text-danger
@@ -81,6 +88,7 @@ body:
         tag: div
         className: text-muted
         text: 资产净值
+        i18nEn: "Asset Net Value"
       - type: text
         tag: h3
         className: font-bold
@@ -94,6 +102,7 @@ body:
         tag: div
         className: text-muted
         text: 本期折旧
+        i18nEn: "Period Depreciation"
       - type: text
         tag: h3
         className: text-warning
@@ -107,6 +116,7 @@ body:
         tag: div
         className: text-muted
         text: 在建工程余额
+        i18nEn: "CIP Balance"
       - type: text
         tag: h3
         text: "¥${ROUND((kpiData?.cipBalance ?? 0), 2)}"
@@ -120,6 +130,7 @@ body:
 - type: chart
   chartType: pie
   title: 资产类别分布（按净值）
+  i18nEn: "Asset Category Distribution (by Net Value)"
   source: ${categoryData ?? []}
   height: 300
 - type: data-source
@@ -134,13 +145,18 @@ body:
 - type: chart
   chartType: line
   title: 折旧趋势（近12月）
+  i18nEn: "Depreciation Trend (last 12 months)"
   source: ${trendData ?? []}
   xAxis: { dataKey: period }
-  yAxis: { label: 折旧额 }
+  yAxis:
+    label: 折旧额
+    i18nEn: "Depreciation Amount"
   legend: true
   height: 300
   series:
-  - { name: 折旧额, dataRegionKey: depreciationAmount }
+  - dataRegionKey: depreciationAmount
+    name: 折旧额
+    i18nEn: "Depreciation Amount"
 - type: data-source
   name: depreciationMissingData
   action: ajax
@@ -150,6 +166,7 @@ body:
     selection: assetCode assetName period originalValue
 - type: crud
   title: 折旧未计提预警（在用资产本期无 EXECUTED 折旧计划）
+  i18nEn: "Missing Depreciation Alert (in-use assets with no EXECUTED depreciation plan this period)"
   source: ${depreciationMissingData}
   syncLocation: false
   headerToolbar: []
@@ -157,11 +174,15 @@ body:
   columns:
   - name: assetCode
     label: 资产编码
+    i18nEn: "Asset Code"
   - name: assetName
     label: 资产名称
+    i18nEn: "Asset Name"
   - name: period
     label: 期间
+    i18nEn: "Period"
   - name: originalValue
     label: 原值
+    i18nEn: "Original Value"
     type: number
     precision: 2

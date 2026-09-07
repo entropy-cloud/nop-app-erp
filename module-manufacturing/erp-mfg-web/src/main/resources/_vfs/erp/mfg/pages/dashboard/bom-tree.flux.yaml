@@ -4,6 +4,7 @@
 # flux 表达式仅支持箭头表达式体，嵌套重建（while 栈算法）移至后端聚合查询。
 type: page
 title: BOM 多级展开树
+i18nEn: "BOM Multi-Level Explosion Tree"
 body:
 - type: form
   submitScope: surface
@@ -17,6 +18,7 @@ body:
         name: bomId
         label: BOM ID
         placeholder: 输入要展开的 BOM 主键
+        i18nEn: "Enter the primary key of the BOM to explode"
         clearable: true
     - colSpan: 2
       body:
@@ -24,17 +26,22 @@ body:
         name: qty
         label: 期望产出量
         placeholder: 留空=标准批量
+        i18nEn:
+          label: "Expected Output Qty"
+          placeholder: "blank = standard batch size"
         clearable: true
     - colSpan: 2
       body:
       - type: switch
         name: useMultiLevel
         label: 多级展开
+        i18nEn: "Multi-Level Explosion"
         value: true
     - colSpan: 2
       body:
       - type: button
         label: 展开 BOM
+        i18nEn: "Explode BOM"
         actionType: ajax
         action: ajax
         args:
@@ -60,10 +67,12 @@ body:
       useMultiLevel: ${useMultiLevel ?? true}
 - type: text
   text: ${"展开节点数：" + (bomTree ?? []).length + "（多级展开/折叠，叶子节点 = 采购件；制造件可继续展开）"}
+  i18nEn: '${"Nodes expanded: " + (bomTree ?? []).length + " (multi-level expand/collapse; leaf nodes = purchased items; manufactured items can be expanded further)"}'
   className: text-muted m-b
   visible: ${(bomTree ?? []).length > 0}
 - type: text
   text: 请输入 BOM ID 后点击「展开 BOM」。若已点击仍无数据，可能该 BOM 无明细行或不存在。
+  i18nEn: 'Enter a BOM ID and click "Explode BOM". If no data appears after clicking, the BOM may have no detail lines or may not exist.'
   className: text-muted p-3
   visible: ${(bomTree ?? []).length == 0}
 - type: tree
@@ -80,4 +89,5 @@ body:
     className: font-medium
   - type: text
     text: '${node?.operationId ? " · 工序#" + node?.operationId : ""}'
+    i18nEn: '${node?.operationId ? " · Operation#" + node?.operationId : ""}'
     className: text-xs text-gray-500

@@ -5,6 +5,7 @@
 # 样本趋势图：line chart 按子组号展示均值趋势。零后端 delta，仅消费既有 @BizQuery。
 type: page
 title: "SPC 样本数据"
+i18nEn: "SPC Sample Data"
 body:
   - type: data-source
     name: sampleData
@@ -20,39 +21,57 @@ body:
   - type: chart
     chartType: line
     title: "样本均值趋势"
+    i18nEn: "Sample Mean Trend"
     source: ${sampleData?.items ?? []}
     xAxis: { dataKey: subgroupNo }
-    yAxis: { label: "均值" }
+    yAxis:
+      label: "均值"
+      i18nEn: "Mean"
     legend: true
     height: 300
     series:
-      - { name: "均值", dataRegionKey: mean }
+      - dataRegionKey: mean
+        name: "均值"
+        i18nEn: "Mean"
 
   - type: crud
     className: m-3
     title: "样本记录"
+    i18nEn: "Sample Records"
     source: ${sampleData?.items ?? []}
     syncLocation: false
     columns:
       - name: chartId
         label: "控制图ID"
+        i18nEn: "Control Chart ID"
       - name: subgroupNo
         label: "子组号"
+        i18nEn: "Subgroup No."
       - name: sampleTime
         label: "采样时间"
+        i18nEn: "Sample Time"
       - name: mean
         label: "均值"
+        i18nEn: "Mean"
       - name: range
         label: "极差"
+        i18nEn: "Range"
       - name: stdDev
         label: "标准差"
+        i18nEn: "Std Dev"
       - name: defectCount
         label: "缺陷数"
+        i18nEn: "Defect Count"
       - name: inspectedCount
         label: "检验数"
+        i18nEn: "Inspected Count"
       - name: isOutOfControl
         label: "失控"
         type: tpl
         tpl: '${isOutOfControl ? "<span class=\"label label-danger\">失控</span>" : "<span class=\"label label-success\">正常</span>"}'
+        i18nEn:
+          label: "Out of Control"
+          tpl: '${isOutOfControl ? "<span class=\"label label-danger\">Out of Control</span>" : "<span class=\"label label-success\">Normal</span>"}'
       - name: violatedRules
         label: "违规规则"
+        i18nEn: "Violated Rules"

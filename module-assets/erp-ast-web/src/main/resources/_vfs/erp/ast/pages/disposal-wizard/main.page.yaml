@@ -6,6 +6,7 @@
 # 三步：① 选择资产 + 处置类型 → ② 清理损益预览 → ③ 确认提交。
 type: page
 title: "资产处置向导"
+i18nEn: "Asset Disposal Wizard"
 body:
   # Step 1：选择资产 + 处置类型
   - type: data-source
@@ -23,6 +24,7 @@ body:
     name: step1Form
     valuesPath: step1Form
     title: "Step 1 · 选择资产与处置类型"
+    i18nEn: "Step 1 · Select Asset and Disposal Type"
     className: m-3
     mode: normal
     body:
@@ -35,25 +37,43 @@ body:
         source: ${assetsData?.items ?? []}
         valueField: id
         labelField: "${code} · ${name} (净值:${netBookValue || 0})"
+        i18nEn:
+          label: "Select Asset"
+          placeholder: "Select the asset to dispose"
+          labelField: "${code} · ${name} (Net Value:${netBookValue || 0})"
       - type: select
         name: disposalType
         label: "处置类型"
+        i18nEn: "Disposal Type"
         required: true
         options:
-          - { label: "出售", value: "SALE" }
-          - { label: "报废", value: "SCRAP" }
-          - { label: "捐赠", value: "DONATION" }
-          - { label: "毁损", value: "DAMAGE" }
+          - value: "SALE"
+            label: "出售"
+            i18nEn: "Sale"
+          - value: "SCRAP"
+            label: "报废"
+            i18nEn: "Scrap"
+          - value: "DONATION"
+            label: "捐赠"
+            i18nEn: "Donation"
+          - value: "DAMAGE"
+            label: "毁损"
+            i18nEn: "Damage"
       - type: input-number
         name: disposalAmount
         label: "处置金额"
         placeholder: "处置回收金额"
+        i18nEn:
+          label: "Disposal Amount"
+          placeholder: "Disposal recovery amount"
       - type: input-date
         name: businessDate
         label: "处置日期"
+        i18nEn: "Disposal Date"
         required: true
       - type: button
         label: "下一步：预览清理损益"
+        i18nEn: "Next: Preview Disposal P&L"
         level: primary
         icon: "fa fa-arrow-right"
         onClick:
@@ -80,18 +100,22 @@ body:
         tag: div
         className: alert alert-info
         text: "清理损益预览"
+        i18nEn: "Disposal P&L Preview"
       - type: text
         tag: div
         className: m-b
         text: "资产：<strong>${previewAssetData?.code || '—'}</strong> · ${previewAssetData?.name || '—'}"
+        i18nEn: "Asset: <strong>${previewAssetData?.code || '—'}</strong> · ${previewAssetData?.name || '—'}"
       - type: text
         tag: div
         className: m-b
         text: "账面净值：<strong>¥${ROUND((previewAssetData?.netBookValue ?? 0), 2)}</strong> · 处置金额：<strong>¥${ROUND((step1Form?.disposalAmount ?? 0), 2)}</strong>"
+        i18nEn: "Net Book Value: <strong>¥${ROUND((previewAssetData?.netBookValue ?? 0), 2)}</strong> · Disposal Amount: <strong>¥${ROUND((step1Form?.disposalAmount ?? 0), 2)}</strong>"
       - type: text
         tag: div
         className: "alert alert-${(Number(step1Form?.disposalAmount || 0) - Number(previewAssetData?.netBookValue || 0)) >= 0 ? 'success' : 'danger'}"
         text: "${(Number(step1Form?.disposalAmount || 0) - Number(previewAssetData?.netBookValue || 0)) >= 0 ? '清理收益' : '清理损失'}：¥${ROUND((Number(step1Form?.disposalAmount || 0) - Number(previewAssetData?.netBookValue || 0)), 2)}"
+        i18nEn: "${(Number(step1Form?.disposalAmount || 0) - Number(previewAssetData?.netBookValue || 0)) >= 0 ? 'Disposal Gain' : 'Disposal Loss'}: ¥${ROUND((Number(step1Form?.disposalAmount || 0) - Number(previewAssetData?.netBookValue || 0)), 2)}"
 
       # Step 3：确认提交
       - type: button
@@ -100,6 +124,9 @@ body:
         icon: "fa fa-check"
         actionType: ajax
         confirmText: "确认创建资产处置单并提交审批？"
+        i18nEn:
+          label: "Confirm and Submit Disposal Doc"
+          confirmText: "Confirm creating the asset disposal doc and submitting for approval?"
         api:
           url: '@mutation:ErpAstDisposal__save'
           method: post

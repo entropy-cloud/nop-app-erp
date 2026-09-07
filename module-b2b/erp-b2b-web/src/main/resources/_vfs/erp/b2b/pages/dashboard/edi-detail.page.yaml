@@ -5,11 +5,15 @@
 type: page
 title: "EDI 事务详情"
 remark: "选择 EDI 文档后，按 ErpB2bEdiLog 展示状态时间线（direction/resultCode/logTime），并双栏查看 requestPayload/responsePayload 报文（纯文本）。"
+i18nEn:
+  title: "EDI Transaction Detail"
+  remark: "After selecting an EDI document, shows the status timeline from ErpB2bEdiLog (direction/resultCode/logTime) and views requestPayload/responsePayload payloads side by side (plain text)."
 body:
   - type: form
     name: filterForm
     valuesPath: filterForm
     title: "EDI 文档选择"
+    i18nEn: "EDI Document Selection"
     mode: inline
     wrapWithPanel: false
     className: m-3
@@ -18,6 +22,9 @@ body:
         name: ediDocId
         label: "EDI文档ID"
         placeholder: "输入 EDI 文档主键"
+        i18nEn:
+          label: "EDI Document ID"
+          placeholder: "Enter EDI document primary key"
         required: true
         clearable: true
       - type: switch
@@ -26,8 +33,13 @@ body:
         value: false
         onText: "是"
         offText: "否"
+        i18nEn:
+          label: "Expand Payload"
+          onText: "Yes"
+          offText: "No"
       - type: button
         label: "查询详情"
+        i18nEn: "Query Detail"
         icon: file-text
         onClick:
           action: refreshSource
@@ -64,18 +76,21 @@ body:
     tag: div
     visibleOn: "${ediDocData?.id}"
     text: '<div class="panel panel-default"><div class="panel-body"><strong>${ediDocData?.code || "—"}</strong> · 状态: <span class="label label-info">${ediDocData?.state || "—"}</span> · 关联单据: ${ediDocData?.relatedBillType || "—"} / ${ediDocData?.relatedBillCode || "—"} · 重试次数: ${ediDocData?.retryCount || 0} · 发送: ${ediDocData?.sentAt || "—"} · 确认: ${ediDocData?.acknowledgedAt || "—"}</div></div>'
+    i18nEn: '<div class="panel panel-default"><div class="panel-body"><strong>${ediDocData?.code || "—"}</strong> · Status: <span class="label label-info">${ediDocData?.state || "—"}</span> · Related Document: ${ediDocData?.relatedBillType || "—"} / ${ediDocData?.relatedBillCode || "—"} · Retry Count: ${ediDocData?.retryCount || 0} · Sent: ${ediDocData?.sentAt || "—"} · Acknowledged: ${ediDocData?.acknowledgedAt || "—"}</div></div>'
 
   - type: text
     className: m-3
     tag: div
     visibleOn: "${!ediDocData?.id}"
     text: '<div class="text-muted p-3">请输入有效的 EDI 文档ID 后点击「查询详情」。</div>'
+    i18nEn: '<div class="text-muted p-3">Enter a valid EDI document ID, then click "Query Detail".</div>'
 
   - type: text
     className: m-3
     tag: div
     visibleOn: "${(ediLogsData?.items?.length || 0) > 0}"
     text: '<div class="text-muted m-b-sm">交互日志数：${ediLogsData?.items?.length || 0}（按 logTime 倒序）</div>'
+    i18nEn: '<div class="text-muted m-b-sm">Interaction log count: ${ediLogsData?.items?.length || 0} (by logTime descending)</div>'
 
   - type: timeline
     className: m-3
@@ -92,11 +107,13 @@ body:
     tag: div
     visibleOn: "${filterForm?.showPayload && (ediLogsData?.items?.length || 0) > 0}"
     text: '<hr/><h4 class="m-t-md">报文详情（requestPayload / responsePayload）</h4><div class="text-muted">纯文本展示。</div>'
+    i18nEn: '<hr/><h4 class="m-t-md">Payload Detail (requestPayload / responsePayload)</h4><div class="text-muted">Plain text display.</div>'
 
   - type: crud
     className: m-3
     visibleOn: "${filterForm?.showPayload}"
     title: "报文列表"
+    i18nEn: "Payload List"
     source: ${ediLogsData?.items ?? []}
     syncLocation: false
     headerToolbar: []
@@ -104,15 +121,24 @@ body:
     columns:
       - name: direction
         label: "方向"
+        i18nEn: "Direction"
       - name: resultCode
         label: "结果码"
+        i18nEn: "Result Code"
       - name: logTime
         label: "日志时间"
+        i18nEn: "Log Time"
       - name: requestPayload
         label: "请求报文"
         type: tpl
         tpl: '<pre style="max-height:200px;overflow:auto;background:#f6f8fa;padding:8px;border-radius:4px;font-size:12px;white-space:pre-wrap;word-break:break-all;">${requestPayload || "（无）"}</pre>'
+        i18nEn:
+          label: "Request Payload"
+          tpl: '<pre style="max-height:200px;overflow:auto;background:#f6f8fa;padding:8px;border-radius:4px;font-size:12px;white-space:pre-wrap;word-break:break-all;">${requestPayload || "(none)"}</pre>'
       - name: responsePayload
         label: "响应报文"
         type: tpl
         tpl: '<pre style="max-height:200px;overflow:auto;background:#f6f8fa;padding:8px;border-radius:4px;font-size:12px;white-space:pre-wrap;word-break:break-all;">${responsePayload || "（无）"}</pre>'
+        i18nEn:
+          label: "Response Payload"
+          tpl: '<pre style="max-height:200px;overflow:auto;background:#f6f8fa;padding:8px;border-radius:4px;font-size:12px;white-space:pre-wrap;word-break:break-all;">${responsePayload || "(none)"}</pre>'

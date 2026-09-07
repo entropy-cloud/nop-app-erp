@@ -6,6 +6,9 @@
 type: page
 title: "组织架构图"
 remark: "部门层级（ErpHrDepartment parent→children 嵌套）。每节点含员工数（ErpHrEmployee 按 departmentId 聚合）+ 负责人(managerId)。"
+i18nEn:
+  title: "Org Chart"
+  remark: "Department hierarchy (ErpHrDepartment parent→children nesting). Each node carries employee count (ErpHrEmployee aggregated by departmentId) + manager (managerId)."
 body:
   - type: data-source
     name: deptData
@@ -32,11 +35,18 @@ body:
   - type: tree
     className: m-3
     title: "组织架构"
+    i18nEn: "Org Structure"
     source: ${deptData?.items ?? []}
     labelField: name
     keyField: id
     childrenKey: children
     options:
-      - { value: empCount, label: "员工数" }
-      - { value: managerId, label: "负责人" }
-      - { value: empNames, label: "成员" }
+      - value: empCount
+        label: "员工数"
+        i18nEn: "Employee Count"
+      - value: managerId
+        label: "负责人"
+        i18nEn: "Manager"
+      - value: empNames
+        label: "成员"
+        i18nEn: "Members"

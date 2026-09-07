@@ -3,6 +3,7 @@
 # 数据源：ErpCsQualityDashboard__getDashboardKpi / __getTeamSlaRanking / __getAgentCsatBreakdown。
 type: page
 title: "客服绩效看板"
+i18nEn: "Customer Service Performance Dashboard"
 body:
   - type: form
     name: filterForm
@@ -15,15 +16,18 @@ body:
       - type: input-date
         name: startDate
         label: "开始日期"
+        i18nEn: "Start Date"
         format: YYYY-MM-DD
         clearable: true
       - type: input-date
         name: endDate
         label: "结束日期"
+        i18nEn: "End Date"
         format: YYYY-MM-DD
         clearable: true
       - type: button
         label: "刷新"
+        i18nEn: "Refresh"
         icon: refresh-cw
         onClick:
           action: refreshSource
@@ -60,6 +64,7 @@ body:
                 tag: div
                 className: text-muted
                 text: "SLA 达标率"
+                i18nEn: "SLA Compliance Rate"
               - type: text
                 tag: span
                 className: h3 text-success
@@ -73,6 +78,7 @@ body:
                 tag: div
                 className: text-muted
                 text: "平均解决时长(小时)"
+                i18nEn: "Avg Resolution Hours"
               - type: text
                 tag: span
                 className: h3
@@ -86,6 +92,7 @@ body:
                 tag: div
                 className: text-muted
                 text: "超时工单数"
+                i18nEn: "SLA Breached Tickets"
               - type: text
                 tag: span
                 className: h3 text-danger
@@ -99,6 +106,7 @@ body:
                 tag: div
                 className: text-muted
                 text: "已关闭工单数"
+                i18nEn: "Closed Tickets"
               - type: text
                 tag: span
                 className: h3
@@ -112,6 +120,7 @@ body:
                 tag: div
                 className: text-muted
                 text: "平均首次响应时长(小时)"
+                i18nEn: "Avg First Response Hours"
               - type: text
                 tag: span
                 className: h3
@@ -131,14 +140,21 @@ body:
   - type: chart
     chartType: bar
     title: "团队 SLA 达标率排名"
+    i18nEn: "Team SLA Compliance Ranking"
     source: ${teamRankingData ?? []}
     xAxis: { dataKey: teamName }
-    yAxis: { label: "达标率/工单数" }
+    yAxis:
+      label: "达标率/工单数"
+      i18nEn: "Compliance Rate / Tickets"
     legend: true
     height: 300
     series:
-      - { name: "SLA达标率", dataRegionKey: slaCompletionRate }
-      - { name: "工单数", dataRegionKey: totalTickets }
+      - dataRegionKey: slaCompletionRate
+        name: "SLA达标率"
+        i18nEn: "SLA Compliance Rate"
+      - dataRegionKey: totalTickets
+        name: "工单数"
+        i18nEn: "Ticket Count"
 
   - type: data-source
     name: agentCsatData
@@ -154,6 +170,7 @@ body:
   - type: crud
     className: m-3
     title: "客服 CSAT/NPS/CES 明细"
+    i18nEn: "Agent CSAT/NPS/CES Detail"
     source: ${agentCsatData ?? []}
     syncLocation: false
     headerToolbar: []
@@ -161,13 +178,19 @@ body:
     columns:
       - name: agentId
         label: "客服ID"
+        i18nEn: "Agent ID"
       - name: ticketCount
         label: "工单数"
+        i18nEn: "Ticket Count"
       - name: surveyCount
         label: "调查回复数"
+        i18nEn: "Survey Responses"
       - name: avgCsat
         label: "平均CSAT"
+        i18nEn: "Avg CSAT"
       - name: avgNps
         label: "平均NPS"
+        i18nEn: "Avg NPS"
       - name: avgCes
         label: "平均CES"
+        i18nEn: "Avg CES"

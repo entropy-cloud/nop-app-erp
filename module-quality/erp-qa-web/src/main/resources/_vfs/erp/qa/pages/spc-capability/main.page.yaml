@@ -4,6 +4,7 @@
 # 能力分布图：bar chart 按 capabilityLevel 分组计数。零后端 delta，仅消费既有 @BizQuery。
 type: page
 title: "过程能力分析"
+i18nEn: "Process Capability Analysis"
 body:
   - type: data-source
     name: capabilityData
@@ -19,26 +20,34 @@ body:
   - type: chart
     chartType: bar
     title: "能力等级分布"
+    i18nEn: "Capability Level Distribution"
     source: ${capabilityData?.items ?? []}
     xAxis: { dataKey: "capabilityLevel" }
-    yAxis: { label: "数量" }
+    yAxis:
+      label: "数量"
+      i18nEn: "Count"
     legend: true
     height: 300
 
   - type: crud
     className: m-3
     title: "能力分析记录"
+    i18nEn: "Capability Analysis Records"
     source: ${capabilityData?.items ?? []}
     syncLocation: false
     columns:
       - name: chartId
         label: "控制图ID"
+        i18nEn: "Control Chart ID"
       - name: periodFrom
         label: "起始期间"
+        i18nEn: "Period From"
       - name: periodTo
         label: "结束期间"
+        i18nEn: "Period To"
       - name: sampleCount
         label: "样本数"
+        i18nEn: "Sample Count"
       - name: cp
         label: "Cp"
       - name: cpk
@@ -51,7 +60,13 @@ body:
         label: "能力等级"
         type: tpl
         tpl: '${capabilityLevel == "EXCELLENT" ? "<span class=\"label label-success\">充足</span>" : (capabilityLevel == "ADEQUATE" ? "<span class=\"label label-primary\">尚可</span>" : (capabilityLevel == "INADEQUATE" ? "<span class=\"label label-danger\">不足</span>" : "<span class=\"label label-default\">未定义</span>"))}'
+        i18nEn:
+          label: "Capability Level"
+          tpl: '${capabilityLevel == "EXCELLENT" ? "<span class=\"label label-success\">Excellent</span>" : (capabilityLevel == "ADEQUATE" ? "<span class=\"label label-primary\">Adequate</span>" : (capabilityLevel == "INADEQUATE" ? "<span class=\"label label-danger\">Inadequate</span>" : "<span class=\"label label-default\">Undefined</span>"))}'
       - name: isStable
         label: "稳定"
         type: tpl
         tpl: '${isStable ? "<span class=\"label label-success\">稳定</span>" : "<span class=\"label label-warning\">不稳定</span>"}'
+        i18nEn:
+          label: "Stable"
+          tpl: '${isStable ? "<span class=\"label label-success\">Stable</span>" : "<span class=\"label label-warning\">Unstable</span>"}'

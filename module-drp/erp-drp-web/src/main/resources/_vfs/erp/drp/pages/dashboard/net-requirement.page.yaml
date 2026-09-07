@@ -7,11 +7,15 @@
 type: page
 title: "净需求计算报表"
 remark: "选择 DRP 计划后，展示 ErpDrpLine 净需求明细。每行包含 Σ 公式字段 + 建议补货量（suggestedQty）+ 补货类型（replenishmentType）。"
+i18nEn:
+  title: "Net Requirement Calculation Report"
+  remark: "Select a DRP plan to show ErpDrpLine net requirement details. Each row includes the Σ formula fields + suggested replenishment qty (suggestedQty) + replenishment type (replenishmentType)."
 body:
   - type: form
     name: filterForm
     valuesPath: filterForm
     title: "计划选择"
+    i18nEn: "Plan Selection"
     mode: inline
     wrapWithPanel: false
     className: m-3
@@ -20,10 +24,14 @@ body:
         name: planId
         label: "DRP计划ID"
         placeholder: "输入 DRP 计划主键"
+        i18nEn:
+          label: "DRP Plan ID"
+          placeholder: "Enter the DRP plan primary key"
         required: true
         clearable: true
       - type: button
         label: "加载净需求"
+        i18nEn: "Load Net Requirement"
         icon: calculator
         onClick:
           action: refreshSource
@@ -60,16 +68,19 @@ body:
     tag: div
     visibleOn: "${planInfo}"
     text: '<div class="panel panel-default"><div class="panel-body"><strong>${planInfo?.code || "—"}</strong> · ${planInfo?.planName || ""} · 状态: ${planInfo?.status || "—"} · 周期: ${planInfo?.periodFrom || "—"} ~ ${planInfo?.periodTo || "—"}</div></div>'
+    i18nEn: '<div class="panel panel-default"><div class="panel-body"><strong>${planInfo?.code || "—"}</strong> · ${planInfo?.planName || ""} · Status: ${planInfo?.status || "—"} · Period: ${planInfo?.periodFrom || "—"} ~ ${planInfo?.periodTo || "—"}</div></div>'
 
   - type: text
     className: m-3
     tag: div
     visibleOn: "${!linesData?.items?.length}"
     text: '<div class="text-muted p-3">请输入有效的 DRP 计划ID 后点击「加载净需求」。若无数据，说明该计划尚未运行 DrpEngine.runDrp 计算。</div>'
+    i18nEn: '<div class="text-muted p-3">Enter a valid DRP plan ID and click Load Net Requirement. If there is no data, the plan has not yet run the DrpEngine.runDrp calculation.</div>'
 
   - type: crud
     className: m-3
     title: "净需求明细"
+    i18nEn: "Net Requirement Details"
     source: ${linesData?.items ?? []}
     syncLocation: false
     headerToolbar: []
@@ -77,39 +88,52 @@ body:
     columns:
       - name: materialId
         label: "物料ID"
+        i18nEn: "Material ID"
       - name: warehouseId
         label: "仓库"
+        i18nEn: "Warehouse"
       - name: safetyStock
         label: "安全库存"
+        i18nEn: "Safety Stock"
         type: number
         precision: 2
       - name: forecastDemand
         label: "预测需求"
+        i18nEn: "Forecast Demand"
         type: number
         precision: 2
       - name: currentStock
         label: "当前库存"
+        i18nEn: "Current Stock"
         type: number
         precision: 2
       - name: allocatedQty
         label: "已分配"
+        i18nEn: "Allocated"
         type: number
         precision: 2
       - name: onOrderQty
         label: "在途"
+        i18nEn: "On Order"
         type: number
         precision: 2
       - name: netRequirement
         label: "净需求"
+        i18nEn: "Net Requirement"
         type: tpl
         tpl: '<span class="label label-${netRequirement > 0 ? "danger" : "success"}">${netRequirement}</span>'
       - name: suggestedQty
         label: "建议补货量"
+        i18nEn: "Suggested Replenishment Qty"
         type: number
         precision: 2
       - name: replenishmentType
         label: "补货类型"
         type: tpl
         tpl: '<span class="label label-${replenishmentType == "PURCHASE" ? "primary" : "info"}">${replenishmentType == "PURCHASE" ? "采购" : (replenishmentType == "TRANSFER" ? "调拨" : replenishmentType)}</span>'
+        i18nEn:
+          label: "Replenishment Type"
+          tpl: '<span class="label label-${replenishmentType == "PURCHASE" ? "primary" : "info"}">${replenishmentType == "PURCHASE" ? "Purchase" : (replenishmentType == "TRANSFER" ? "Transfer" : replenishmentType)}</span>'
       - name: status
         label: "状态"
+        i18nEn: "Status"

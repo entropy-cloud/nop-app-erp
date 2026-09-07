@@ -5,6 +5,7 @@
 # 字段级 diff 数据模型不支持（ErpCtContractVersion 仅 content blob + 元数据），维持降级并注明。
 type: page
 title: 合同版本对比
+i18nEn: "Contract Version Diff"
 body:
 - type: form
   submitScope: surface
@@ -18,11 +19,15 @@ body:
         name: contractId
         label: 合同ID
         placeholder: 输入合同主键
+        i18nEn:
+          label: "Contract ID"
+          placeholder: "Enter contract primary key"
         clearable: true
     - colSpan: 2
       body:
       - type: button
         label: 加载版本列表
+        i18nEn: "Load Version List"
         actionType: ajax
         action: ajax
         args:
@@ -58,6 +63,9 @@ body:
         name: versionAId
         label: 版本 A
         source: '${(versionList?.items ?? []).map((v) => ({ label: "v" + v.versionNo + " (" + (v.versionDate ? ("" + (v.versionDate)).substring(0, 10) : "—") + ", " + v.status + (v.isCurrent ? ", 当前)" : ")"), value: v.id }))}'
+        i18nEn:
+          label: "Version A"
+          source: '${(versionList?.items ?? []).map((v) => ({ label: "v" + v.versionNo + " (" + (v.versionDate ? ("" + (v.versionDate)).substring(0, 10) : "—") + ", " + v.status + (v.isCurrent ? ", current)" : ")"), value: v.id }))}'
         clearable: true
     - colSpan: 3
       body:
@@ -65,11 +73,15 @@ body:
         name: versionBId
         label: 版本 B
         source: '${(versionList?.items ?? []).map((v) => ({ label: "v" + v.versionNo + " (" + (v.versionDate ? ("" + (v.versionDate)).substring(0, 10) : "—") + ", " + v.status + (v.isCurrent ? ", 当前)" : ")"), value: v.id }))}'
+        i18nEn:
+          label: "Version B"
+          source: '${(versionList?.items ?? []).map((v) => ({ label: "v" + v.versionNo + " (" + (v.versionDate ? ("" + (v.versionDate)).substring(0, 10) : "—") + ", " + v.status + (v.isCurrent ? ", current)" : ")"), value: v.id }))}'
         clearable: true
     - colSpan: 2
       body:
       - type: button
         label: 对比版本
+        i18nEn: "Compare Versions"
         actionType: ajax
         action: ajax
         args:
@@ -107,29 +119,39 @@ body:
 - type: data-source
   name: metaRows
   formula: '${(!versionAData || !versionBData) ? [] : [{ key: "versionNo", label: "版本号", isDate: false, isBool: false }, { key: "versionDate", label: "版本日期", isDate: true, isBool: false }, { key: "status", label: "版本状态", isDate: false, isBool: false }, { key: "isCurrent", label: "是否当前版本", isDate: false, isBool: true }, { key: "approvedBy", label: "批准人", isDate: false, isBool: false }, { key: "approvedAt", label: "批准时间", isDate: true, isBool: false }, { key: "remark", label: "备注", isDate: false, isBool: false }].map((f) => ({ field: f.label, valueA: (versionAData[f.key] == null || versionAData[f.key] === "") ? "—" : (f.isDate ? ("" + (versionAData[f.key])).substring(0, 19).replace("T", " ") : (f.isBool ? ((versionAData[f.key] === true || versionAData[f.key] === "true") ? "是" : "否") : ("" + (versionAData[f.key])))), valueB: (versionBData[f.key] == null || versionBData[f.key] === "") ? "—" : (f.isDate ? ("" + (versionBData[f.key])).substring(0, 19).replace("T", " ") : (f.isBool ? ((versionBData[f.key] === true || versionBData[f.key] === "true") ? "是" : "否") : ("" + (versionBData[f.key])))), changed: ((versionAData[f.key] == null || versionAData[f.key] === "") ? "—" : ("" + (versionAData[f.key]))) !== ((versionBData[f.key] == null || versionBData[f.key] === "") ? "—" : ("" + (versionBData[f.key]))) }))}'
+  i18nEn: '${(!versionAData || !versionBData) ? [] : [{ key: "versionNo", label: "Version No", isDate: false, isBool: false }, { key: "versionDate", label: "Version Date", isDate: true, isBool: false }, { key: "status", label: "Version Status", isDate: false, isBool: false }, { key: "isCurrent", label: "Is Current Version", isDate: false, isBool: true }, { key: "approvedBy", label: "Approved By", isDate: false, isBool: false }, { key: "approvedAt", label: "Approved At", isDate: true, isBool: false }, { key: "remark", label: "Remark", isDate: false, isBool: false }].map((f) => ({ field: f.label, valueA: (versionAData[f.key] == null || versionAData[f.key] === "") ? "—" : (f.isDate ? ("" + (versionAData[f.key])).substring(0, 19).replace("T", " ") : (f.isBool ? ((versionAData[f.key] === true || versionAData[f.key] === "true") ? "Yes" : "No") : ("" + (versionAData[f.key])))), valueB: (versionBData[f.key] == null || versionBData[f.key] === "") ? "—" : (f.isDate ? ("" + (versionBData[f.key])).substring(0, 19).replace("T", " ") : (f.isBool ? ((versionBData[f.key] === true || versionBData[f.key] === "true") ? "Yes" : "No") : ("" + (versionBData[f.key])))), changed: ((versionAData[f.key] == null || versionAData[f.key] === "") ? "—" : ("" + (versionAData[f.key]))) !== ((versionBData[f.key] == null || versionBData[f.key] === "") ? "—" : ("" + (versionBData[f.key]))) }))}'
 - type: text
   text: '${versionAData && versionBData ? "版本元数据对比（v" + (versionAData?.versionNo ?? "—") + " vs v" + (versionBData?.versionNo ?? "—") + "）· 变更字段数：" + (metaRows ?? []).filter((r) => r.changed).length : "选择两个不同版本后点击「对比版本」。"}'
+  i18nEn: '${versionAData && versionBData ? "Version metadata diff (v" + (versionAData?.versionNo ?? "—") + " vs v" + (versionBData?.versionNo ?? "—") + ") · Changed field count: " + (metaRows ?? []).filter((r) => r.changed).length : "Select two different versions, then click \"Compare Versions\"."}'
   className: text-muted m-b
 - type: table
   source: ${metaRows ?? []}
   columns:
   - name: field
     label: 字段
+    i18nEn: "Field"
   - name: valueA
     label: 版本 A
+    i18nEn: "Version A"
   - name: valueB
     label: 版本 B
+    i18nEn: "Version B"
   - name: changed
     label: 变更
+    i18nEn: "Change"
     type: status
     labelMap:
-      'true': 已变更
-      'false': 一致
+      true: 已变更
+      false: 一致
+      i18nEn:
+        true: "Changed"
+        false: "Unchanged"
     levelMap:
       'true': warning
       'false': default
 - type: text
   text: 版本内容（content）对比 —— diff-view 双栏（字段级 diff 数据模型不支持，仅 content 文本快照）
+  i18nEn: "Version content (content) diff —— diff-view side-by-side (field-level diff data model unsupported, content text snapshot only)"
   className: text-muted m-t m-b
   visible: ${versionAData && versionBData}
 - type: diff-view

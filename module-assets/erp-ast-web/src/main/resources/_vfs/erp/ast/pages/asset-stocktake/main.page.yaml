@@ -2,6 +2,7 @@
 # 数据来源：ErpAstInventory 实体 findPage（资产盘点单）。零后端 delta。
 type: page
 title: "资产盘点"
+i18nEn: "Asset Stocktake"
 body:
   - type: data-source
     name: stocktakeData
@@ -28,6 +29,7 @@ body:
                 tag: div
                 className: text-muted
                 text: "盘点单数"
+                i18nEn: "Stocktake Doc Count"
               - type: text
                 tag: span
                 className: h3
@@ -41,6 +43,7 @@ body:
                 tag: div
                 className: text-muted
                 text: "待盘点"
+                i18nEn: "Pending Stocktake"
               - type: text
                 tag: span
                 className: h3 text-warning
@@ -54,6 +57,7 @@ body:
                 tag: div
                 className: text-muted
                 text: "已完成"
+                i18nEn: "Completed"
               - type: text
                 tag: span
                 className: h3 text-success
@@ -62,17 +66,35 @@ body:
   - type: crud
     className: m-3
     title: "资产盘点单列表"
+    i18nEn: "Asset Stocktake Doc List"
     source: ${stocktakeData?.items ?? []}
     syncLocation: false
     columns:
-      - { name: code, label: "单号" }
-      - { name: name, label: "名称" }
-      - { name: orgId, label: "所属组织" }
+      - name: code
+        label: "单号"
+        i18nEn: "Doc No."
+      - name: name
+        label: "名称"
+        i18nEn: "Name"
+      - name: orgId
+        label: "所属组织"
+        i18nEn: "Owning Org"
       - name: status
         label: "状态"
         type: tpl
         tpl: '${status == "DRAFT" ? "<span class=\"label label-default\">待盘点</span>" : (status == "IN_PROGRESS" ? "<span class=\"label label-warning\">盘点中</span>" : (status == "DONE" ? "<span class=\"label label-success\">已完成</span>" : "<span class=\"label\">" + (status||"—") + "</span>"))}'
-      - { name: rangeDepartmentId, label: "盘点部门" }
-      - { name: rangeCategoryId, label: "盘点类别" }
-      - { name: responsibleById, label: "负责人" }
-      - { name: businessDate, label: "业务日期" }
+        i18nEn:
+          label: "Status"
+          tpl: '${status == "DRAFT" ? "<span class=\"label label-default\">Pending Stocktake</span>" : (status == "IN_PROGRESS" ? "<span class=\"label label-warning\">Stocktaking</span>" : (status == "DONE" ? "<span class=\"label label-success\">Completed</span>" : "<span class=\"label\">" + (status||"—") + "</span>"))}'
+      - name: rangeDepartmentId
+        label: "盘点部门"
+        i18nEn: "Stocktake Department"
+      - name: rangeCategoryId
+        label: "盘点类别"
+        i18nEn: "Stocktake Category"
+      - name: responsibleById
+        label: "负责人"
+        i18nEn: "Responsible Person"
+      - name: businessDate
+        label: "业务日期"
+        i18nEn: "Business Date"

@@ -4,6 +4,7 @@
 # onEventChange 拖拽改日期 → update mutation（activityDate 字段）。
 type: page
 title: 活动日历
+i18nEn: "Activity Calendar"
 body:
 - type: data-source
   name: rawData
@@ -32,11 +33,15 @@ body:
         name: leadId
         label: 线索/商机ID
         placeholder: 过滤关联线索（可选）
+        i18nEn:
+          label: "Lead/Opportunity ID"
+          placeholder: "Filter by related lead (optional)"
         clearable: true
     - colSpan: 2
       body:
       - type: button
         label: 刷新日历
+        i18nEn: "Refresh Calendar"
         actionType: ajax
         action: ajax
         args:
@@ -49,6 +54,7 @@ body:
         target: rawData
 - type: text
   text: ${(rawData.total ?? 0) + " 项活动"}
+  i18nEn: '${(rawData.total ?? 0) + " activities"}'
   className: text-muted m-b
 - type: calendar
   view: month
@@ -69,3 +75,4 @@ body:
     args:
       level: info
       message: ${"点击活动 " + event.id}
+      i18nEn: '${"Clicked activity " + event.id}'

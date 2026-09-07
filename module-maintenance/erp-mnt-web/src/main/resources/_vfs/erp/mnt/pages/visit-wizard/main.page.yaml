@@ -9,6 +9,9 @@
 type: page
 title: "维护访问执行向导"
 remark: "引导式驱动既有 __start → __save → __complete 链 + __cancel。零后端 delta，仅编排 BizModel 已审计 mutation。"
+i18nEn:
+  title: "Maintenance Visit Execution Wizard"
+  remark: "Guides through the existing __start → __save → __complete chain + __cancel. Zero backend delta, only orchestrates audited BizModel mutations."
 body:
   - type: data-source
     name: visitsData
@@ -25,6 +28,7 @@ body:
     name: filterForm
     valuesPath: filterForm
     title: "选择维护访问"
+    i18nEn: "Select Maintenance Visit"
     className: m-3
     mode: inline
     body:
@@ -34,11 +38,15 @@ body:
         required: true
         clearable: true
         placeholder: "选择要执行的维护访问"
+        i18nEn:
+          label: "Maintenance Visit"
+          placeholder: "Select the maintenance visit to execute"
         source: ${visitsData?.items ?? []}
         valueField: id
         labelField: "${code || ('visit-' + id)} · [${status}]"
       - type: button
         label: "进入向导"
+        i18nEn: "Enter Wizard"
         level: primary
         icon: "fa fa-arrow-right"
         onClick:
@@ -64,14 +72,23 @@ body:
     tag: div
     visibleOn: "${visitData}"
     text: '<div class="alert alert-info"><strong>维护访问：</strong>${visitData?.code || "—"}（${visitType || || "—"}）· <strong>状态：</strong><span class="label label-${visitData?.status == "COMPLETED" ? "success" : (visitData?.status == "CANCELLED" ? "default" : (visitData?.status == "IN_PROGRESS" ? "warning" : "info"))}">${visitData?.status || "—"}</span></div>'
+    i18nEn: '<div class="alert alert-info"><strong>Maintenance Visit:</strong> ${visitData?.code || "—"} (${visitData?.visitType || "—"}) · <strong>Status:</strong> <span class="label label-${visitData?.status == "COMPLETED" ? "success" : (visitData?.status == "CANCELLED" ? "default" : (visitData?.status == "IN_PROGRESS" ? "warning" : "info"))}">${visitData?.status || "—"}</span></div>'
 
   - type: steps
     className: m-3
     items:
-      - { key: "info", label: "1. 维护信息确认" }
-      - { key: "spare", label: "2. 备件消耗" }
-      - { key: "result", label: "3. 执行结果" }
-      - { key: "complete", label: "4. 确认完成" }
+      - key: "info"
+        label: "1. 维护信息确认"
+        i18nEn: "1. Maintenance Info Confirmation"
+      - key: "spare"
+        label: "2. 备件消耗"
+        i18nEn: "2. Spare Part Consumption"
+      - key: "result"
+        label: "3. 执行结果"
+        i18nEn: "3. Execution Result"
+      - key: "complete"
+        label: "4. 确认完成"
+        i18nEn: "4. Confirm Completion"
 
   # Step 1: 开始执行
   - type: wrapper
@@ -80,10 +97,12 @@ body:
       - type: text
         tag: h5
         text: "Step 1 · 维护信息确认"
+        i18nEn: "Step 1 · Maintenance Info Confirmation"
       - type: text
         tag: div
         className: text-muted
         text: "调 __start 触发 SCHEDULED→IN_PROGRESS + 设备联动。"
+        i18nEn: "Calls __start to trigger SCHEDULED→IN_PROGRESS + equipment linkage."
       - type: button
         label: "开始执行"
         level: primary
@@ -91,6 +110,9 @@ body:
         actionType: ajax
         visibleOn: "${visitData?.status == 'SCHEDULED' || visitData?.status == 'DRAFT'}"
         confirmText: "确认开始执行此维护访问？状态将翻转为 IN_PROGRESS。"
+        i18nEn:
+          label: "Start Execution"
+          confirmText: "Confirm starting execution of this maintenance visit? Status will flip to IN_PROGRESS."
         api:
           url: '@mutation:ErpMntVisit__start'
           method: post
@@ -119,12 +141,15 @@ body:
       - type: text
         tag: h5
         text: "Step 2 · 备件消耗展示"
+        i18nEn: "Step 2 · Spare Part Consumption"
       - type: text
         tag: div
         className: text-muted
         text: "SparePartUsage 是嵌套文档，仅展示。备件消耗创建经独立 CRUD 页面。"
+        i18nEn: "SparePartUsage is a nested document, display only. Spare part consumption creation goes through the standalone CRUD page."
       - type: crud
         title: "备件消耗列表"
+        i18nEn: "Spare Part Usage List"
         source: ${sparePartsData?.items ?? []}
         syncLocation: false
         headerToolbar: []
@@ -132,14 +157,19 @@ body:
         columns:
           - name: code
             label: "编码"
+            i18nEn: "Code"
           - name: warehouseId
             label: "仓库"
+            i18nEn: "Warehouse"
           - name: totalAmount
             label: "总金额"
+            i18nEn: "Total Amount"
           - name: docStatus
             label: "状态"
+            i18nEn: "Status"
           - name: posted
             label: "过账"
+            i18nEn: "Posted"
 
   # Step 3: 执行结果录入
   - type: wrapper
@@ -149,6 +179,7 @@ body:
       - type: text
         tag: h5
         text: "Step 3 · 执行结果录入"
+        i18nEn: "Step 3 · Execution Result Entry"
       - type: form
         name: resultForm
         valuesPath: resultForm
@@ -158,12 +189,19 @@ body:
             name: result
             label: "执行结果"
             placeholder: "执行情况/发现"
+            i18nEn:
+              label: "Execution Result"
+              placeholder: "Findings / observations"
           - type: textarea
             name: remark
             label: "备注"
             placeholder: "其他备注"
+            i18nEn:
+              label: "Remark"
+              placeholder: "Other remarks"
           - type: button
             label: "保存执行结果"
+            i18nEn: "Save Execution Result"
             level: primary
             icon: "fa fa-save"
             actionType: ajax
@@ -187,12 +225,16 @@ body:
       - type: text
         tag: h5
         text: "Step 4 · 确认完成/取消"
+        i18nEn: "Step 4 · Confirm Completion / Cancel"
       - type: button
         label: "确认完成"
         level: success
         icon: "fa fa-check"
         actionType: ajax
         confirmText: "确认完成此维护访问？状态将翻转为 COMPLETED + 设备恢复。"
+        i18nEn:
+          label: "Confirm Completion"
+          confirmText: "Confirm completing this maintenance visit? Status will flip to COMPLETED + equipment restoration."
         api:
           url: '@mutation:ErpMntVisit__complete'
           method: post
@@ -208,6 +250,9 @@ body:
         icon: "fa fa-times"
         actionType: ajax
         confirmText: "确认取消此维护访问？"
+        i18nEn:
+          label: "Cancel"
+          confirmText: "Confirm cancelling this maintenance visit?"
         api:
           url: '@mutation:ErpMntVisit__cancel'
           method: post

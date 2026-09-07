@@ -4,6 +4,7 @@
 # 注：flux 表达式仅支持箭头表达式体（无块体），故 timeline items 经单 .map() 表达式构造。
 type: page
 title: 发运追踪时间线
+i18nEn: "Shipment Tracking Timeline"
 body:
 - type: form
   submitScope: surface
@@ -17,11 +18,15 @@ body:
         name: shipmentId
         label: 发运单ID
         placeholder: 输入发运单主键
+        i18nEn:
+          label: "Shipment Order ID"
+          placeholder: "Enter the shipment order primary key"
         clearable: true
     - colSpan: 2
       body:
       - type: button
         label: 查询时间线
+        i18nEn: "Query Timeline"
         actionType: ajax
         action: ajax
         args:
@@ -59,11 +64,14 @@ body:
 - type: data-source
   name: timelineItems
   formula: '${(logRaw?.items ?? []).map((r) => ({ time: r.executedAt, title: "[" + (r.actionType ?? "EVENT") + "]" + (r.httpStatus != null ? " · HTTP " + r.httpStatus : "") + " · " + ((r.isSuccess === true || r.isSuccess === "true") ? "成功" : "失败"), detail: ((r.isSuccess === true || r.isSuccess === "true") ? "" : ((r.errorCode ? "错误码: " + r.errorCode : "") + (r.errorMessage ? " 信息: " + r.errorMessage : ""))), level: ((r.isSuccess === true || r.isSuccess === "true") ? "success" : "error") }))}'
+  i18nEn: '${(logRaw?.items ?? []).map((r) => ({ time: r.executedAt, title: "[" + (r.actionType ?? "EVENT") + "]" + (r.httpStatus != null ? " · HTTP " + r.httpStatus : "") + " · " + ((r.isSuccess === true || r.isSuccess === "true") ? "Success" : "Failed"), detail: ((r.isSuccess === true || r.isSuccess === "true") ? "" : ((r.errorCode ? "Error Code: " + r.errorCode : "") + (r.errorMessage ? " Message: " + r.errorMessage : ""))), level: ((r.isSuccess === true || r.isSuccess === "true") ? "success" : "error") }))}'
 - type: text
   text: '${shipmentData ? (shipmentData.code ?? "—") + " · 追踪号: " + (shipmentData.trackingNo ?? "—") + " · 状态: " + (shipmentData.status ?? "—") + " · 包裹数: " + (shipmentData.totalParcels ?? 0) + " · 预计送达: " + (shipmentData.estimatedDeliveryDate ?? "—") : "请输入有效的发运单ID后点击「查询时间线」。"}'
+  i18nEn: '${shipmentData ? (shipmentData.code ?? "—") + " · Tracking No: " + (shipmentData.trackingNo ?? "—") + " · Status: " + (shipmentData.status ?? "—") + " · Parcels: " + (shipmentData.totalParcels ?? 0) + " · Estimated Delivery: " + (shipmentData.estimatedDeliveryDate ?? "—") : "Enter a valid shipment order ID and click \"Query Timeline\"."}'
   className: text-muted m-b
 - type: text
   text: ${"事件数：" + (timelineItems ?? []).length + "（按 executedAt 倒序）"}
+  i18nEn: '${"Event count: " + (timelineItems ?? []).length + " (sorted by executedAt descending)"}'
   className: text-muted m-b
   visible: ${(timelineItems ?? []).length > 0}
 - type: timeline

@@ -4,6 +4,7 @@
 # 字段：ErpB2bEdiDoc.state（非 status）/code；ErpB2bEdiLog.ediDocId/direction/resultCode/resultMsg/logTime/requestPayload/responsePayload。
 type: page
 title: EDI 事务详情
+i18nEn: "EDI Transaction Detail"
 body:
 - type: form
   submitScope: surface
@@ -17,17 +18,22 @@ body:
         name: ediDocId
         label: EDI文档ID
         placeholder: 输入 EDI 文档主键
+        i18nEn:
+          label: EDI Document ID
+          placeholder: Enter EDI document primary key
         clearable: true
     - colSpan: 2
       body:
       - type: switch
         name: showPayload
         label: 展开报文
+        i18nEn: "Expand Payload"
         value: false
     - colSpan: 2
       body:
       - type: button
         label: 查询详情
+        i18nEn: "Query Detail"
         actionType: ajax
         action: ajax
         args:
@@ -68,9 +74,11 @@ body:
     ${ARRAYMAP((logRaw && logRaw.items) ? logRaw.items : [], (r) => ({ time: r.logTime, title: "[" + (r.direction ?? "?") + "]" + (r.resultCode ? " · " + r.resultCode : ""), detail: r.resultMsg ?? "", level: (r.resultCode == "OK" || r.resultCode == "SUCCESS" || r.resultCode == "0") ? "success" : "error" }))}
 - type: text
   text: '${ediDoc ? (ediDoc?.code ?? "—") + " · 状态: " + (ediDoc?.state ?? "—") + " · 关联单据: " + (ediDoc?.relatedBillType ?? "—") + " / " + (ediDoc?.relatedBillCode ?? "—") + " · 重试次数: " + (ediDoc?.retryCount ?? 0) + " · 发送: " + (ediDoc?.sentAt ?? "—") + " · 确认: " + (ediDoc?.acknowledgedAt ?? "—") : "请输入有效的 EDI 文档ID 后点击「查询详情」。"}'
+  i18nEn: '${ediDoc ? (ediDoc?.code ?? "—") + " · Status: " + (ediDoc?.state ?? "—") + " · Related Document: " + (ediDoc?.relatedBillType ?? "—") + " / " + (ediDoc?.relatedBillCode ?? "—") + " · Retry Count: " + (ediDoc?.retryCount ?? 0) + " · Sent: " + (ediDoc?.sentAt ?? "—") + " · Acknowledged: " + (ediDoc?.acknowledgedAt ?? "—") : "Enter a valid EDI document ID, then click \"Query Detail\"."}'
   className: text-muted m-b
 - type: text
   text: ${"交互日志数：" + (timelineItems ?? []).length + "（按 logTime 倒序）"}
+  i18nEn: '${"Interaction log count: " + (timelineItems ?? []).length + " (by logTime descending)"}'
   className: text-muted m-b
   visible: ${(timelineItems ?? []).length > 0}
 - type: timeline
@@ -82,16 +90,20 @@ body:
   items:
   - key: payload
     title: 报文详情（requestPayload / responsePayload，纯文本展示，语法高亮为 Non-Goal）
+    i18nEn: "Payload Detail (requestPayload / responsePayload, plain text display; syntax highlighting is a Non-Goal)"
     body:
     - type: table
       source: '${(logRaw && logRaw?.items) ? logRaw?.items.slice().reverse() : []}'
       columns:
       - name: direction
         label: 方向
+        i18nEn: "Direction"
       - name: resultCode
         label: 结果
+        i18nEn: "Result"
       - name: logTime
         label: 时间
+        i18nEn: "Time"
       - name: requestPayload
         label: Request
       - name: responsePayload

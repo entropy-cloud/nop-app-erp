@@ -4,6 +4,7 @@
 # Σ 公式：safetyStock + forecastDemand − currentStock + allocatedQty − onOrderQty = netRequirement。
 type: page
 title: 净需求计算报表
+i18nEn: "Net Requirement Calculation Report"
 body:
 - type: form
   submitScope: surface
@@ -17,11 +18,15 @@ body:
         name: planId
         label: DRP计划ID
         placeholder: 输入 DRP 计划主键
+        i18nEn:
+          label: "DRP Plan ID"
+          placeholder: "Enter the DRP plan primary key"
         clearable: true
     - colSpan: 2
       body:
       - type: button
         label: 加载净需求
+        i18nEn: "Load Net Requirement"
         actionType: ajax
         action: ajax
         args:
@@ -55,9 +60,11 @@ body:
       planId: ${planId ?? null}
 - type: text
   text: '${planData ? (planData.code ?? "—") + " · " + (planData.planName ?? "") + " · 状态: " + (planData.status ?? "—") + " · 周期: " + (planData.periodFrom ?? "—") + " ~ " + (planData.periodTo ?? "—") : "请输入有效的 DRP 计划ID 后点击「加载净需求」。"}'
+  i18nEn: '${planData ? (planData.code ?? "—") + " · " + (planData.planName ?? "") + " · Status: " + (planData.status ?? "—") + " · Period: " + (planData.periodFrom ?? "—") + " ~ " + (planData.periodTo ?? "—") : "Enter a valid DRP plan ID and click Load Net Requirement."}'
   className: text-muted m-b
 - type: text
   text: '${"物料分组数: " + (netReq?.groupCount ?? 0) + " · 明细行数: " + (netReq?.totalLines ?? 0) + " · 净需求合计: " + (netReq?.grandNet ?? 0) + " · 建议补货合计: " + (netReq?.grandSuggested ?? 0)}'
+  i18nEn: '${"Material groups: " + (netReq?.groupCount ?? 0) + " · Detail lines: " + (netReq?.totalLines ?? 0) + " · Net requirement total: " + (netReq?.grandNet ?? 0) + " · Suggested replenishment total: " + (netReq?.grandSuggested ?? 0)}'
   className: text-muted m-b
   visible: ${(netReq?.groupCount ?? 0) > 0}
 - type: loop
@@ -66,37 +73,52 @@ body:
   body:
   - type: text
     text: '${"物料 #" + group.materialId + " · 明细 " + group.lineCount + " 行 · 净需求合计 " + group.totNet + " · 建议补货 " + group.totSuggested}'
+    i18nEn: '${"Material #" + group.materialId + " · " + group.lineCount + " detail lines · Net requirement total " + group.totNet + " · Suggested replenishment " + group.totSuggested}'
     className: font-medium m-t
   - type: text
     text: ${"Σ 公式：安全库存(" + group.totSafety + ") + 预测需求(" + group.totForecast + ") − 当前库存(" + group.totStock + ") + 已分配(" + group.totAlloc + ") − 在途(" + group.totOnOrder + ") = 净需求 " + group.totNet}
+    i18nEn: '${"Σ formula: Safety Stock(" + group.totSafety + ") + Forecast Demand(" + group.totForecast + ") − Current Stock(" + group.totStock + ") + Allocated(" + group.totAlloc + ") − On Order(" + group.totOnOrder + ") = Net Requirement " + group.totNet}'
     className: text-muted m-b
   - type: table
     source: ${group.detailRows}
     columns:
     - name: warehouseId
       label: 仓库
+      i18nEn: "Warehouse"
     - name: safetyStock
       label: 安全库存
+      i18nEn: "Safety Stock"
     - name: forecastDemand
       label: 预测需求
+      i18nEn: "Forecast Demand"
     - name: currentStock
       label: 当前库存
+      i18nEn: "Current Stock"
     - name: allocatedQty
       label: 已分配
+      i18nEn: "Allocated"
     - name: onOrderQty
       label: 在途
+      i18nEn: "On Order"
     - name: netRequirement
       label: 净需求
+      i18nEn: "Net Requirement"
     - name: suggestedQty
       label: 建议补货量
+      i18nEn: "Suggested Replenishment Qty"
     - name: replenishmentType
       label: 补货类型
+      i18nEn: "Replenishment Type"
       type: status
       labelMap:
         PURCHASE: 采购
         TRANSFER: 调拨
+        i18nEn:
+          PURCHASE: Purchase
+          TRANSFER: Transfer
       levelMap:
         PURCHASE: primary
         TRANSFER: info
     - name: status
       label: 状态
+      i18nEn: "Status"

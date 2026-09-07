@@ -4,6 +4,7 @@
 # 后端 findUnread/findRead/markRead/markAllRead 在 userId:null 时回退 ctx.getUserId()。
 type: page
 title: "我的通知"
+i18nEn: "My Notifications"
 body:
   - type: data-source
     name: unreadCountData
@@ -18,6 +19,7 @@ body:
     className: "m-3 d-flex justify-content-between align-items-center"
     tag: div
     text: "<span class='h4 m-0'>我的通知</span> <span class='ml-2 badge badge-danger'>未读 ${unreadCountData ?? 0} 条</span>"
+    i18nEn: "<span class='h4 m-0'>My Notifications</span> <span class='ml-2 badge badge-danger'>${unreadCountData ?? 0} Unread</span>"
 
   - type: button
     className: m-3
@@ -25,6 +27,9 @@ body:
     level: primary
     icon: "check-double"
     confirmText: "确认将所有未读通知标记为已读？"
+    i18nEn:
+      label: "Mark All Read"
+      confirmText: "Confirm marking all unread notifications as read?"
     actionType: ajax
     api:
       url: '@mutation:ErpSysNotification__markAllRead'
@@ -57,39 +62,52 @@ body:
         name: notificationType
         label: "类型"
         placeholder: "业务事件键"
+        i18nEn:
+          label: "Type"
+          placeholder: "Business event key"
         clearable: true
       - type: select
         name: channel
         label: "渠道"
+        i18nEn: "Channel"
         clearable: true
         options:
-          - label: "站内"
-            value: "IN_APP"
-          - label: "邮件"
-            value: "EMAIL"
+          - value: "IN_APP"
+            label: "站内"
+            i18nEn: "In-App"
+          - value: "EMAIL"
+            label: "邮件"
+            i18nEn: "Email"
       - type: input-date
         name: sentAtFrom
         label: "发送起"
+        i18nEn: "Sent From"
         format: "YYYY-MM-DD"
         clearable: true
       - type: input-date
         name: sentAtTo
         label: "发送止"
+        i18nEn: "Sent To"
         format: "YYYY-MM-DD"
         clearable: true
       - type: select
         name: status
         label: "生命周期"
+        i18nEn: "Lifecycle"
         clearable: true
         options:
-          - label: "已发送"
-            value: "SENT"
-          - label: "已合并"
-            value: "MERGED"
-          - label: "失败"
-            value: "FAILED"
+          - value: "SENT"
+            label: "已发送"
+            i18nEn: "Sent"
+          - value: "MERGED"
+            label: "已合并"
+            i18nEn: "Merged"
+          - value: "FAILED"
+            label: "失败"
+            i18nEn: "Failed"
       - type: button
         label: "刷新"
+        i18nEn: "Refresh"
         icon: "refresh-cw"
         onClick:
           action: refreshSource
@@ -108,7 +126,9 @@ body:
     name: inboxTabs
     className: m-3
     tabs:
-      - title: "未读"
+      -
+        title: "未读"
+        i18nEn: "Unread"
         body:
           - type: data-source
             name: unreadData
@@ -129,17 +149,22 @@ body:
             columns:
               - name: notificationType
                 label: "类型"
+                i18nEn: "Type"
                 width: 160
               - name: channel
                 label: "渠道"
+                i18nEn: "Channel"
                 width: 80
               - name: subject
                 label: "标题"
+                i18nEn: "Subject"
               - name: sentAt
                 label: "发送时间"
+                i18nEn: "Sent At"
                 width: 180
               - type: button
                 label: "查看"
+                i18nEn: "View"
                 level: primary
                 actionType: dialog
                 dialog:
@@ -149,8 +174,10 @@ body:
                   body:
                     - type: tpl
                       tpl: "<p><b>类型:</b> ${notificationType}</p><p><b>渠道:</b> ${channel}</p><p><b>发送时间:</b> ${sentAt}</p><p><b>状态:</b> ${status}</p><hr/><p><b>正文:</b></p><div>${body}</div><hr/><p><b>负载 JSON:</b></p><pre>${payloadJson}</pre>"
+                      i18nEn: "<p><b>Type:</b> ${notificationType}</p><p><b>Channel:</b> ${channel}</p><p><b>Sent At:</b> ${sentAt}</p><p><b>Status:</b> ${status}</p><hr/><p><b>Body:</b></p><div>${body}</div><hr/><p><b>Payload JSON:</b></p><pre>${payloadJson}</pre>"
               - type: button
                 label: "标记已读"
+                i18nEn: "Mark Read"
                 level: success
                 icon: "check"
                 actionType: ajax
@@ -173,7 +200,9 @@ body:
                           action: refreshSource
                           targetId: allData
 
-      - title: "已读"
+      -
+        title: "已读"
+        i18nEn: "Read"
         body:
           - type: data-source
             name: readData
@@ -194,17 +223,22 @@ body:
             columns:
               - name: notificationType
                 label: "类型"
+                i18nEn: "Type"
                 width: 160
               - name: channel
                 label: "渠道"
+                i18nEn: "Channel"
                 width: 80
               - name: subject
                 label: "标题"
+                i18nEn: "Subject"
               - name: sentAt
                 label: "发送时间"
+                i18nEn: "Sent At"
                 width: 180
               - type: button
                 label: "查看"
+                i18nEn: "View"
                 level: primary
                 actionType: dialog
                 dialog:
@@ -214,8 +248,11 @@ body:
                   body:
                     - type: tpl
                       tpl: "<p><b>类型:</b> ${notificationType}</p><p><b>渠道:</b> ${channel}</p><p><b>发送时间:</b> ${sentAt}</p><p><b>状态:</b> ${status}</p><hr/><p><b>正文:</b></p><div>${body}</div><hr/><p><b>负载 JSON:</b></p><pre>${payloadJson}</pre>"
+                      i18nEn: "<p><b>Type:</b> ${notificationType}</p><p><b>Channel:</b> ${channel}</p><p><b>Sent At:</b> ${sentAt}</p><p><b>Status:</b> ${status}</p><hr/><p><b>Body:</b></p><div>${body}</div><hr/><p><b>Payload JSON:</b></p><pre>${payloadJson}</pre>"
 
-      - title: "全部"
+      -
+        title: "全部"
+        i18nEn: "All"
         body:
           - type: data-source
             name: allData
@@ -236,27 +273,37 @@ body:
             columns:
               - name: notificationType
                 label: "类型"
+                i18nEn: "Type"
                 width: 160
               - name: channel
                 label: "渠道"
+                i18nEn: "Channel"
                 width: 80
               - name: subject
                 label: "标题"
+                i18nEn: "Subject"
               - name: status
                 label: "生命周期"
+                i18nEn: "Lifecycle"
                 width: 100
               - name: read
                 label: "已读"
+                i18nEn: "Read"
                 type: mapping
                 map:
-                  "true": "<span class='text-muted'>已读</span>"
-                  "false": "<span class='text-danger font-bold'>未读</span>"
+                  true: "<span class='text-muted'>已读</span>"
+                  false: "<span class='text-danger font-bold'>未读</span>"
+                  i18nEn:
+                    true: "<span class='text-muted'>Read</span>"
+                    false: "<span class='text-danger font-bold'>Unread</span>"
                 width: 80
               - name: sentAt
                 label: "发送时间"
+                i18nEn: "Sent At"
                 width: 180
               - type: button
                 label: "查看"
+                i18nEn: "View"
                 level: primary
                 actionType: dialog
                 dialog:
@@ -266,3 +313,4 @@ body:
                   body:
                     - type: tpl
                       tpl: "<p><b>类型:</b> ${notificationType}</p><p><b>渠道:</b> ${channel}</p><p><b>发送时间:</b> ${sentAt}</p><p><b>状态:</b> ${status}</p><p><b>已读:</b> ${read}</p><hr/><p><b>正文:</b></p><div>${body}</div><hr/><p><b>负载 JSON:</b></p><pre>${payloadJson}</pre>"
+                      i18nEn: "<p><b>Type:</b> ${notificationType}</p><p><b>Channel:</b> ${channel}</p><p><b>Sent At:</b> ${sentAt}</p><p><b>Status:</b> ${status}</p><p><b>Read:</b> ${read}</p><hr/><p><b>Body:</b></p><div>${body}</div><hr/><p><b>Payload JSON:</b></p><pre>${payloadJson}</pre>"

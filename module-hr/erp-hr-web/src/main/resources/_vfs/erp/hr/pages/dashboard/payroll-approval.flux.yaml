@@ -3,6 +3,7 @@
 # flux 表达式仅支持箭头表达式体，分组聚合移至后端聚合查询。
 type: page
 title: 薪酬核算审批
+i18nEn: "Payroll Approval"
 body:
 - type: form
   name: filterForm
@@ -17,6 +18,7 @@ body:
       - type: input-number
         name: year
         label: 年份
+        i18nEn: "Year"
         value: 2026
         clearable: true
     - colSpan: 2
@@ -24,36 +26,50 @@ body:
       - type: select
         name: month
         label: 月份
+        i18nEn: "Month"
         value: 1
         options:
-        - label: 1月
-          value: 1
-        - label: 2月
-          value: 2
-        - label: 3月
-          value: 3
-        - label: 4月
-          value: 4
-        - label: 5月
-          value: 5
-        - label: 6月
-          value: 6
-        - label: 7月
-          value: 7
-        - label: 8月
-          value: 8
-        - label: 9月
-          value: 9
-        - label: 10月
-          value: 10
-        - label: 11月
-          value: 11
-        - label: 12月
-          value: 12
+        - value: 1
+          label: 1月
+          i18nEn: "Jan"
+        - value: 2
+          label: 2月
+          i18nEn: "Feb"
+        - value: 3
+          label: 3月
+          i18nEn: "Mar"
+        - value: 4
+          label: 4月
+          i18nEn: "Apr"
+        - value: 5
+          label: 5月
+          i18nEn: "May"
+        - value: 6
+          label: 6月
+          i18nEn: "Jun"
+        - value: 7
+          label: 7月
+          i18nEn: "Jul"
+        - value: 8
+          label: 8月
+          i18nEn: "Aug"
+        - value: 9
+          label: 9月
+          i18nEn: "Sep"
+        - value: 10
+          label: 10月
+          i18nEn: "Oct"
+        - value: 11
+          label: 11月
+          i18nEn: "Nov"
+        - value: 12
+          label: 12月
+          i18nEn: "Dec"
     - colSpan: 2
       body:
       - type: button
         label: 刷新汇总与明细
+        i18nEn: "Refresh Summary & Detail"
         onClick:
           action: ajax
           args:
@@ -98,42 +114,55 @@ body:
     body:
     - type: text
       text: ${"人数\n" + (summary?.count ?? 0)}
+      i18nEn: '${"Headcount\n" + (summary?.count ?? 0)}'
   - colSpan: 2
     body:
     - type: text
       text: ${"应发合计\n" + (summary?.totalGross ?? 0)}
+      i18nEn: '${"Total Gross\n" + (summary?.totalGross ?? 0)}'
   - colSpan: 2
     body:
     - type: text
       text: ${"社保合计\n" + (summary?.totalSocial ?? 0)}
+      i18nEn: '${"Total Social Insurance\n" + (summary?.totalSocial ?? 0)}'
   - colSpan: 2
     body:
     - type: text
       text: ${"个税合计\n" + (summary?.totalTax ?? 0)}
+      i18nEn: '${"Total Income Tax\n" + (summary?.totalTax ?? 0)}'
   - colSpan: 2
     body:
     - type: text
       text: ${"实发合计\n" + (summary?.totalNet ?? 0)}
+      i18nEn: '${"Total Net Pay\n" + (summary?.totalNet ?? 0)}'
 - type: text
   text: 按组织（orgId）分组聚合：
+  i18nEn: "Grouped and aggregated by org (orgId):"
   className: text-muted m-b
 - type: table
   source: ${summary?.orgGroups ?? []}
   columns:
   - name: orgId
     label: 组织ID
+    i18nEn: "Org ID"
   - name: count
     label: 人数
+    i18nEn: "Headcount"
   - name: gross
     label: 应发
+    i18nEn: "Gross"
   - name: social
     label: 社保
+    i18nEn: "Social Insurance"
   - name: tax
     label: 个税
+    i18nEn: "Income Tax"
   - name: net
     label: 实发
+    i18nEn: "Net Pay"
 - type: text
   text: 薪酬明细（按年月过滤）
+  i18nEn: "Payroll Detail (filtered by year/month)"
   className: text-muted m-t m-b
 - type: crud
   source: ${salaryRaw?.items ?? []}
@@ -142,45 +171,59 @@ body:
     label: ID
   - name: employeeId
     label: 员工ID
+    i18nEn: "Employee ID"
   - name: orgId
     label: 组织
+    i18nEn: "Org"
   - name: grossSalary
     label: 应发
+    i18nEn: "Gross"
     type: number
     precision: 2
   - name: socialInsurance
     label: 社保
+    i18nEn: "Social Insurance"
     type: number
     precision: 2
   - name: taxAmount
     label: 个税
+    i18nEn: "Income Tax"
     type: number
     precision: 2
   - name: netSalary
     label: 实发
+    i18nEn: "Net Pay"
     type: number
     precision: 2
   - name: paymentStatus
     label: 支付状态
+    i18nEn: "Payment Status"
     type: status
     labelMap:
       PAID: 已发放
       PENDING: 待发放
       VOID: 作废
+      i18nEn:
+        PAID: Paid
+        PENDING: Pending
+        VOID: Void
     levelMap:
       PAID: success
       PENDING: warning
       VOID: default
   - type: operation
     label: 操作
+    i18nEn: "Actions"
     buttons:
     - type: button
       label: 标记已发放
+      i18nEn: "Mark Paid"
       variant: outline
       visible: ${paymentStatus == "PENDING"}
       onClick:
         action: ajax
         confirmText: 确认标记此薪酬记录为已发放？
+        i18nEn: "Confirm marking this payroll record as paid?"
         args:
           url: '@mutation:ErpHrSalary__markPaid'
           method: post
@@ -190,11 +233,13 @@ body:
         - action: refreshNearest
     - type: button
       label: 作废
+      i18nEn: "Void"
       variant: destructive
       visible: ${paymentStatus != "VOID"}
       onClick:
         action: ajax
         confirmText: 确认作废此薪酬记录？此操作不可逆。
+        i18nEn: "Confirm voiding this payroll record? This action is irreversible."
         args:
           url: '@mutation:ErpHrSalary__voidSalary'
           method: post

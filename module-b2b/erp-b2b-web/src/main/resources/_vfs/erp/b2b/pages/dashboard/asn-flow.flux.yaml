@@ -3,6 +3,7 @@
 # 数据源 ErpB2bAsn__findPage（列表）+ __get + ErpB2bAsnLine__findPage（明细）。
 type: page
 title: ASN 流程跟踪
+i18nEn: "ASN Flow Tracking"
 body:
 - type: form
   name: filterForm
@@ -17,20 +18,26 @@ body:
       - type: select
         name: statusFilter
         label: 状态
+        i18nEn: "Status"
         clearable: true
         options:
-        - label: 已接收 (RECEIVED)
-          value: RECEIVED
-        - label: 已匹配 (MATCHED)
-          value: MATCHED
-        - label: 已入库 (RECEIVED_TO_STOCK)
-          value: RECEIVED_TO_STOCK
-        - label: 已取消 (CANCELLED)
-          value: CANCELLED
+        - value: RECEIVED
+          label: 已接收 (RECEIVED)
+          i18nEn: "Received (RECEIVED)"
+        - value: MATCHED
+          label: 已匹配 (MATCHED)
+          i18nEn: "Matched (MATCHED)"
+        - value: RECEIVED_TO_STOCK
+          label: 已入库 (RECEIVED_TO_STOCK)
+          i18nEn: "Inbound (RECEIVED_TO_STOCK)"
+        - value: CANCELLED
+          label: 已取消 (CANCELLED)
+          i18nEn: "Cancelled (CANCELLED)"
     - colSpan: 2
       body:
       - type: button
         label: 刷新
+        i18nEn: "Refresh"
         actionType: ajax
         action: ajax
         args:
@@ -60,14 +67,21 @@ body:
   columns:
   - name: code
     label: ASN编号
+    i18nEn: "ASN No."
   - name: status
     label: 状态
+    i18nEn: "Status"
     type: status
     labelMap:
       RECEIVED: 已接收
       MATCHED: 已匹配
       RECEIVED_TO_STOCK: 已入库
       CANCELLED: 已取消
+      i18nEn:
+        RECEIVED: Received
+        MATCHED: Matched
+        RECEIVED_TO_STOCK: Inbound
+        CANCELLED: Cancelled
     levelMap:
       RECEIVED_TO_STOCK: success
       MATCHED: primary
@@ -75,20 +89,26 @@ body:
       CANCELLED: default
   - name: partnerId
     label: 合作伙伴
+    i18nEn: "Partner"
   - name: shipmentDate
     label: 发货日期
+    i18nEn: "Ship Date"
   - name: trackingNo
     label: 追踪号
+    i18nEn: "Tracking No."
   - type: operation
     label: 操作
+    i18nEn: "Actions"
     buttons:
     - type: button
       label: 流程
+      i18nEn: "Flow"
       level: primary
       onClick:
         action: openDialog
         args:
           title: 'ASN 流程：${code ?? ""}'
+          i18nEn: 'ASN Flow: ${code ?? ""}'
           size: lg
           data:
             id: ${id}
@@ -118,28 +138,36 @@ body:
           - type: data-source
             name: flowSteps
             formula: '${!asnDetail ? [] : [{ key: "RECEIVED", title: "已接收" }, { key: "MATCHED", title: "已匹配" }, { key: "RECEIVED_TO_STOCK", title: "已入库" }].map((s, i) => ({ key: s.key, title: s.title, status: (asnDetail.status === "CANCELLED") ? "wait" : ((["RECEIVED", "MATCHED", "RECEIVED_TO_STOCK"].indexOf(asnDetail.status) >= 0 && i < ["RECEIVED", "MATCHED", "RECEIVED_TO_STOCK"].indexOf(asnDetail.status)) ? "finish" : ((i === ["RECEIVED", "MATCHED", "RECEIVED_TO_STOCK"].indexOf(asnDetail.status)) ? "process" : "wait")) }))}'
+            i18nEn: '${!asnDetail ? [] : [{ key: "RECEIVED", title: "Received" }, { key: "MATCHED", title: "Matched" }, { key: "RECEIVED_TO_STOCK", title: "Inbound" }].map((s, i) => ({ key: s.key, title: s.title, status: (asnDetail.status === "CANCELLED") ? "wait" : ((["RECEIVED", "MATCHED", "RECEIVED_TO_STOCK"].indexOf(asnDetail.status) >= 0 && i < ["RECEIVED", "MATCHED", "RECEIVED_TO_STOCK"].indexOf(asnDetail.status)) ? "finish" : ((i === ["RECEIVED", "MATCHED", "RECEIVED_TO_STOCK"].indexOf(asnDetail.status)) ? "process" : "wait")) }))}'
           - type: text
             text: '${asnDetail ? "合作伙伴: " + (asnDetail?.partnerId ?? "—") + " · 追踪号: " + (asnDetail?.trackingNo ?? "—") : "加载中…"}'
+            i18nEn: '${asnDetail ? "Partner: " + (asnDetail?.partnerId ?? "—") + " · Tracking No.: " + (asnDetail?.trackingNo ?? "—") : "Loading…"}'
             className: text-muted m-b
           - type: steps
             items: ${flowSteps ?? []}
           - type: text
             text: 明细行匹配状态（quantity 订单数量 vs shippedQty 发货数量）
+            i18nEn: "Line Match State (quantity Order Qty vs shippedQty Shipped Qty)"
             className: text-muted m-t m-b
           - type: table
             source: ${asnLines?.items ?? []}
             columns:
             - name: lineNo
               label: 行号
+              i18nEn: "Line No."
             - name: materialId
               label: 物料
+              i18nEn: "Material"
             - name: supplierPartNo
               label: 供应商料号
+              i18nEn: "Supplier Part No."
             - name: quantity
               label: 订单数量
+              i18nEn: "Order Qty"
               type: number
               precision: 2
             - name: shippedQty
               label: 发货数量
+              i18nEn: "Shipped Qty"
               type: number
               precision: 2

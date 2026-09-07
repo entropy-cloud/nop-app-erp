@@ -6,11 +6,15 @@
 type: page
 title: "合同版本对比"
 remark: "选择合同与两个版本（ErpCtContractVersion），对比版本元数据（versionNo/versionDate/status/approvedBy/approvedAt/isCurrent 变更高亮）+ content 文本并排展示。版本实体仅存储 content 文本快照（无结构化业务字段），结构化字段级 diff 需 ORM 变更（归 successor）。"
+i18nEn:
+  title: "Contract Version Diff"
+  remark: "Select a contract and two versions (ErpCtContractVersion), compare version metadata (versionNo/versionDate/status/approvedBy/approvedAt/isCurrent change highlighting) + content text side by side. The version entity stores only a content text snapshot (no structured business fields); structured field-level diff requires ORM changes (deferred to successor)."
 body:
   - type: form
     name: filterForm
     valuesPath: filterForm
     title: "版本选择"
+    i18nEn: "Version Selection"
     mode: inline
     wrapWithPanel: false
     className: m-3
@@ -19,10 +23,14 @@ body:
         name: contractId
         label: "合同ID"
         placeholder: "输入合同主键"
+        i18nEn:
+          label: "Contract ID"
+          placeholder: "Enter contract primary key"
         required: true
         clearable: true
       - type: button
         label: "加载版本列表"
+        i18nEn: "Load Version List"
         icon: list
         onClick:
           action: refreshSource
@@ -46,18 +54,21 @@ body:
     tag: div
     visibleOn: "${!versionsData?.items?.length}"
     text: '<div class="text-muted p-3">请输入有效的合同ID后点击「加载版本列表」。</div>'
+    i18nEn: '<div class="text-muted p-3">Enter a valid contract ID, then click "Load Version List".</div>'
 
   - type: text
     className: m-3
     tag: div
     visibleOn: "${versionsData?.items?.length}"
     text: '<div class="text-muted m-b-sm">该合同共 ${versionsData?.items?.length || 0} 个版本，请在下方选择两个版本进行对比：</div>'
+    i18nEn: '<div class="text-muted m-b-sm">This contract has ${versionsData?.items?.length || 0} versions in total; select two versions below to compare:</div>'
 
   - type: form
     className: m-3
     visibleOn: "${versionsData?.items?.length}"
     name: compareForm
     title: "选择对比版本"
+    i18nEn: "Select Versions to Compare"
     mode: inline
     wrapWithPanel: false
     body:
@@ -67,6 +78,9 @@ body:
         source: ${versionsData?.items ?? []}
         valueField: id
         labelField: "v${versionNo} (${versionDate ? versionDate.substring(0,10) : '—'}, ${status}${isCurrent ? ', 当前' : ''})"
+        i18nEn:
+          label: "Version A"
+          labelField: "v${versionNo} (${versionDate ? versionDate.substring(0,10) : '—'}, ${status}${isCurrent ? ', current' : ''})"
         required: true
         clearable: true
       - type: select
@@ -75,10 +89,14 @@ body:
         source: ${versionsData?.items ?? []}
         valueField: id
         labelField: "v${versionNo} (${versionDate ? versionDate.substring(0,10) : '—'}, ${status}${isCurrent ? ', 当前' : ''})"
+        i18nEn:
+          label: "Version B"
+          labelField: "v${versionNo} (${versionDate ? versionDate.substring(0,10) : '—'}, ${status}${isCurrent ? ', current' : ''})"
         required: true
         clearable: true
       - type: button
         label: "对比版本"
+        i18nEn: "Compare Versions"
         icon: git-compare
         onClick:
           action: refreshSource
@@ -112,49 +130,97 @@ body:
     tag: div
     visibleOn: "${!versionA || !versionB}"
     text: '<div class="text-muted p-3">选择两个不同版本后点击「对比版本」。</div>'
+    i18nEn: '<div class="text-muted p-3">Select two different versions, then click "Compare Versions".</div>'
 
   - type: text
     className: m-3
     tag: div
     visibleOn: "${versionA && versionB}"
     text: '<h4 class="m-t-md">版本元数据对比（v${versionA?.versionNo} vs v${versionB?.versionNo}）</h4><div class="text-muted">字段级对比：见下方表格。变更字段黄色高亮。</div>'
+    i18nEn: '<h4 class="m-t-md">Version Metadata Diff (v${versionA?.versionNo} vs v${versionB?.versionNo})</h4><div class="text-muted">Field-level diff: see the table below. Changed fields are highlighted in yellow.</div>'
 
   - type: crud
     className: m-3
     visibleOn: "${versionA && versionB}"
     title: "版本元数据对比"
-    source: 
-      - { field: "版本号", valueA: "${versionA?.versionNo}", valueB: "${versionB?.versionNo}", changed: "${versionA?.versionNo !== versionB?.versionNo}" }
-      - { field: "版本日期", valueA: "${versionA?.versionDate}", valueB: "${versionB?.versionDate}", changed: "${versionA?.versionDate !== versionB?.versionDate}" }
-      - { field: "版本状态", valueA: "${versionA?.status}", valueB: "${versionB?.status}", changed: "${versionA?.status !== versionB?.status}" }
-      - { field: "是否当前版本", valueA: "${versionA?.isCurrent ? '是' : '否'}", valueB: "${versionB?.isCurrent ? '是' : '否'}", changed: "${versionA?.isCurrent !== versionB?.isCurrent}" }
-      - { field: "批准人", valueA: "${versionA?.approvedBy || '—'}", valueB: "${versionB?.approvedBy || '—'}", changed: "${versionA?.approvedBy !== versionB?.approvedBy}" }
-      - { field: "批准时间", valueA: "${versionA?.approvedAt || '—'}", valueB: "${versionB?.approvedAt || '—'}", changed: "${versionA?.approvedAt !== versionB?.approvedAt}" }
-      - { field: "备注", valueA: "${versionA?.remark || '—'}", valueB: "${versionB?.remark || '—'}", changed: "${versionA?.remark !== versionB?.remark}" }
+    i18nEn: "Version Metadata Diff"
+    source:
+      -
+        field: "版本号"
+        i18nEn: "Version No"
+        valueA: "${versionA?.versionNo}"
+        valueB: "${versionB?.versionNo}"
+        changed: "${versionA?.versionNo !== versionB?.versionNo}"
+      -
+        field: "版本日期"
+        i18nEn: "Version Date"
+        valueA: "${versionA?.versionDate}"
+        valueB: "${versionB?.versionDate}"
+        changed: "${versionA?.versionDate !== versionB?.versionDate}"
+      -
+        field: "版本状态"
+        i18nEn: "Version Status"
+        valueA: "${versionA?.status}"
+        valueB: "${versionB?.status}"
+        changed: "${versionA?.status !== versionB?.status}"
+      -
+        field: "是否当前版本"
+        valueA: "${versionA?.isCurrent ? '是' : '否'}"
+        valueB: "${versionB?.isCurrent ? '是' : '否'}"
+        i18nEn:
+          field: "Is Current Version"
+          valueA: "${versionA?.isCurrent ? 'Yes' : 'No'}"
+          valueB: "${versionB?.isCurrent ? 'Yes' : 'No'}"
+        changed: "${versionA?.isCurrent !== versionB?.isCurrent}"
+      -
+        field: "批准人"
+        i18nEn: "Approved By"
+        valueA: "${versionA?.approvedBy || '—'}"
+        valueB: "${versionB?.approvedBy || '—'}"
+        changed: "${versionA?.approvedBy !== versionB?.approvedBy}"
+      -
+        field: "批准时间"
+        i18nEn: "Approved At"
+        valueA: "${versionA?.approvedAt || '—'}"
+        valueB: "${versionB?.approvedAt || '—'}"
+        changed: "${versionA?.approvedAt !== versionB?.approvedAt}"
+      -
+        field: "备注"
+        i18nEn: "Remark"
+        valueA: "${versionA?.remark || '—'}"
+        valueB: "${versionB?.remark || '—'}"
+        changed: "${versionA?.remark !== versionB?.remark}"
     syncLocation: false
     headerToolbar: []
     footerToolbar: []
     columns:
       - name: field
         label: "字段"
+        i18nEn: "Field"
       - name: valueA
         label: "版本 A (v${versionA?.versionNo})"
+        i18nEn: "Version A (v${versionA?.versionNo})"
         type: tpl
         tpl: '<span style="${changed ? "background:#fef9c3;padding:2px 4px;border-radius:3px;" : ""}">${valueA}</span>'
       - name: valueB
         label: "版本 B (v${versionB?.versionNo})"
+        i18nEn: "Version B (v${versionB?.versionNo})"
         type: tpl
         tpl: '<span style="${changed ? "background:#fef9c3;padding:2px 4px;border-radius:3px;" : ""}">${valueB}</span>'
       - name: changed
         label: "变更"
         type: tpl
         tpl: '<span class="label label-${changed ? "warning" : "default"}">${changed ? "已变更" : "一致"}</span>'
+        i18nEn:
+          label: "Change"
+          tpl: '<span class="label label-${changed ? "warning" : "default"}">${changed ? "Changed" : "Unchanged"}</span>'
 
   - type: text
     className: m-3
     tag: div
     visibleOn: "${versionA && versionB}"
     text: '<hr/><h4>版本内容（content）并排对比</h4><div class="text-muted">纯文本展示（版本实体仅存储 content 文本快照）。${versionA?.content !== versionB?.content ? "<span class=\"label label-warning\">内容不同</span>" : "<span class=\"label label-success\">内容一致</span>"}</div>'
+    i18nEn: '<hr/><h4>Version Content (content) Side-by-Side Diff</h4><div class="text-muted">Plain text display (the version entity stores only a content text snapshot).${versionA?.content !== versionB?.content ? "<span class=\"label label-warning\">Content differs</span>" : "<span class=\"label label-success\">Content identical</span>"}</div>'
 
   - type: grid
     className: m-3
@@ -163,6 +229,8 @@ body:
       - type: text
         tag: div
         text: '<div><div class="text-muted">版本 A (v${versionA?.versionNo})</div><pre style="max-height:400px;overflow:auto;background:#f6f8fa;padding:8px;border-radius:4px;font-size:12px;white-space:pre-wrap;word-break:break-all;">${versionA?.content || "（无内容）"}</pre></div>'
+        i18nEn: '<div><div class="text-muted">Version A (v${versionA?.versionNo})</div><pre style="max-height:400px;overflow:auto;background:#f6f8fa;padding:8px;border-radius:4px;font-size:12px;white-space:pre-wrap;word-break:break-all;">${versionA?.content || "(no content)"}</pre></div>'
       - type: text
         tag: div
         text: '<div><div class="text-muted">版本 B (v${versionB?.versionNo})</div><pre style="max-height:400px;overflow:auto;background:#f6f8fa;padding:8px;border-radius:4px;font-size:12px;white-space:pre-wrap;word-break:break-all;">${versionB?.content || "（无内容）"}</pre></div>'
+        i18nEn: '<div><div class="text-muted">Version B (v${versionB?.versionNo})</div><pre style="max-height:400px;overflow:auto;background:#f6f8fa;padding:8px;border-radius:4px;font-size:12px;white-space:pre-wrap;word-break:break-all;">${versionB?.content || "(no content)"}</pre></div>'

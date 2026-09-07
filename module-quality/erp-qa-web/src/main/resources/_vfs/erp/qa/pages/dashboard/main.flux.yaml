@@ -3,6 +3,7 @@
 # 数据源：ErpQaDashboard__getDashboardKpi / __getDashboardTrend / __findDefectTopN / __getSpcOutOfControlWarning / __getSpcControlChartData / __findCapaOverdueAlert。
 type: page
 title: 质量概览
+i18nEn: "Quality Overview"
 body:
 - type: form
   name: filterForm
@@ -17,15 +18,22 @@ body:
     label: 开始日期
     format: YYYY-MM-DD
     placeholder: 留空=本月1日
+    i18nEn:
+      label: "Start Date"
+      placeholder: "Blank = 1st of current month"
     clearable: true
   - type: input-date
     name: endDate
     label: 结束日期
     format: YYYY-MM-DD
     placeholder: 留空=今天
+    i18nEn:
+      label: "End Date"
+      placeholder: "Blank = today"
     clearable: true
   - type: button
     label: 刷新
+    i18nEn: "Refresh"
     icon: refresh-cw
     onClick:
       action: refreshSource
@@ -69,6 +77,7 @@ body:
         tag: div
         className: text-muted
         text: 本期质检数
+        i18nEn: "Inspections This Period"
       - type: text
         tag: h3
         className: font-bold
@@ -82,6 +91,7 @@ body:
         tag: div
         className: text-muted
         text: 合格率
+        i18nEn: "Pass Rate"
       - type: text
         tag: h3
         className: text-success
@@ -95,6 +105,7 @@ body:
         tag: div
         className: text-muted
         text: 不合格数
+        i18nEn: "Rejected Count"
       - type: text
         tag: h3
         className: text-danger
@@ -108,6 +119,7 @@ body:
         tag: div
         className: text-muted
         text: 开放 NCR 数
+        i18nEn: "Open NCR Count"
       - type: text
         tag: h3
         className: text-warning
@@ -124,13 +136,18 @@ body:
 - type: chart
   chartType: line
   title: 合格率趋势（近12月）
+  i18nEn: "Pass Rate Trend (Last 12 Months)"
   source: ${trendData ?? []}
   xAxis: { dataKey: month }
-  yAxis: { label: 合格率 }
+  yAxis:
+    label: 合格率
+    i18nEn: "Pass Rate"
   legend: true
   height: 300
   series:
-  - { name: 合格率, dataRegionKey: passRate }
+  - dataRegionKey: passRate
+    name: 合格率
+    i18nEn: "Pass Rate"
 - type: data-source
   name: defectData
   action: ajax
@@ -143,6 +160,7 @@ body:
 - type: chart
   chartType: pie
   title: 不合格原因 TOP（按处置决定聚合）
+  i18nEn: "Top Defect Causes (Aggregated by Disposal Decision)"
   source: ${defectData ?? []}
   height: 300
 - type: data-source
@@ -166,6 +184,7 @@ body:
         tag: div
         className: text-muted
         text: SPC 失控图数
+        i18nEn: "Out-of-Control SPC Charts"
       - type: text
         tag: h3
         className: text-danger
@@ -179,6 +198,7 @@ body:
         tag: div
         className: text-muted
         text: 能力不足(INADEQUATE)图数
+        i18nEn: "Inadequate-Capability (INADEQUATE) Charts"
       - type: text
         tag: h3
         className: "${spcWarningData?.includeInadequate ? 'text-warning' : 'text-muted'}"
@@ -192,6 +212,7 @@ body:
         tag: div
         className: text-muted
         text: 待处置 SPC NCR 数
+        i18nEn: "SPC NCRs Pending Disposal"
       - type: text
         tag: h3
         className: "${spcWarningData?.includeNcr ? 'text-warning' : 'text-muted'}"
@@ -205,44 +226,17 @@ body:
     data:
       chartId: "${filterForm?.chartId || null}"
     selection: chartName chartType ucl lcl cl samples{ subgroupNo mean defectRate defectCount inspectedCount isOutOfControl violatedRules }
-  adaptor: |
-    var d = payload.data || {};
-    var result = d || {};
-    var samples = result.samples || [];
-    var ucl = result.ucl;
-    var lcl = result.lcl;
-    var cl = result.cl;
-    var chartType = result.chartType || '';
-    var isAttributes = chartType === 'P' || chartType === 'NP' || chartType === 'C' || chartType === 'U';
-    var seriesData = samples.map(function(s){
-      var v = isAttributes
-        ? (s.defectRate != null ? s.defectRate : (s.inspectedCount ? s.defectCount / s.inspectedCount : 0))
-        : s.mean;
-      return { value: v, itemStyle: s.isOutOfControl ? {color: 'red'} : undefined };
-    });
-    var markLines = [];
-    if (ucl != null) markLines.push({ yAxis: ucl, name: 'UCL', lineStyle: {color: 'red', type: 'dashed'}, label: {position: 'end', formatter: 'UCL'} });
-    if (lcl != null) markLines.push({ yAxis: lcl, name: 'LCL', lineStyle: {color: 'red', type: 'dashed'}, label: {position: 'end', formatter: 'LCL'} });
-    if (cl != null)  markLines.push({ yAxis: cl,  name: 'CL',  lineStyle: {color: 'green'}, label: {position: 'end', formatter: 'CL'} });
-    var series = { type: 'line', data: seriesData };
-    if (markLines.length > 0) series.markLine = { symbol: 'none', data: markLines };
-    var yAxisName = isAttributes ? '缺陷率' : '均值';
-    return {
-      status: 0,
-      msg: '',
-      data: {
-        chartName: result.chartName || '',
-        chartType: chartType,
-        xAxisData: samples.map(function(s){ return s.subgroupNo; }),
-        yAxisName: yAxisName,
-        series: [series]
-      }
-    };
+  adaptor: "var d = payload.data || {};\nvar result = d || {};\nvar samples = result.samples || [];\nvar ucl = result.ucl;\nvar lcl = result.lcl;\nvar cl = result.cl;\nvar chartType = result.chartType || '';\nvar isAttributes = chartType === 'P' || chartType === 'NP' || chartType === 'C' || chartType === 'U';\nvar seriesData = samples.map(function(s){\n  var v = isAttributes\n    ? (s.defectRate != null ? s.defectRate : (s.inspectedCount ? s.defectCount / s.inspectedCount : 0))\n    : s.mean;\n  return { value: v, itemStyle: s.isOutOfControl ? {color: 'red'} : undefined };\n});\nvar markLines = [];\nif (ucl != null) markLines.push({ yAxis: ucl, name: 'UCL', lineStyle: {color: 'red', type: 'dashed'}, label: {position: 'end', formatter: 'UCL'} });\nif (lcl != null) markLines.push({ yAxis: lcl, name: 'LCL', lineStyle: {color: 'red', type: 'dashed'}, label: {position: 'end', formatter: 'LCL'} });\nif (cl != null)  markLines.push({ yAxis: cl,  name: 'CL',  lineStyle: {color: 'green'}, label: {position: 'end', formatter: 'CL'} });\nvar series = { type: 'line', data: seriesData };\nif (markLines.length > 0) series.markLine = { symbol: 'none', data: markLines };\nvar yAxisName = isAttributes ? '缺陷率' : '均值';\nreturn {\n  status: 0,\n  msg: '',\n  data: {\n    chartName: result.chartName || '',\n    chartType: chartType,\n    xAxisData: samples.map(function(s){ return s.subgroupNo; }),\n    yAxisName: yAxisName,\n    series: [series]\n  }\n};\n"
+  i18nEn: "var d = payload.data || {};\nvar result = d || {};\nvar samples = result.samples || [];\nvar ucl = result.ucl;\nvar lcl = result.lcl;\nvar cl = result.cl;\nvar chartType = result.chartType || '';\nvar isAttributes = chartType === 'P' || chartType === 'NP' || chartType === 'C' || chartType === 'U';\nvar seriesData = samples.map(function(s){\n  var v = isAttributes\n    ? (s.defectRate != null ? s.defectRate : (s.inspectedCount ? s.defectCount / s.inspectedCount : 0))\n    : s.mean;\n  return { value: v, itemStyle: s.isOutOfControl ? {color: 'red'} : undefined };\n});\nvar markLines = [];\nif (ucl != null) markLines.push({ yAxis: ucl, name: 'UCL', lineStyle: {color: 'red', type: 'dashed'}, label: {position: 'end', formatter: 'UCL'} });\nif (lcl != null) markLines.push({ yAxis: lcl, name: 'LCL', lineStyle: {color: 'red', type: 'dashed'}, label: {position: 'end', formatter: 'LCL'} });\nif (cl != null)  markLines.push({ yAxis: cl,  name: 'CL',  lineStyle: {color: 'green'}, label: {position: 'end', formatter: 'CL'} });\nvar series = { type: 'line', data: seriesData };\nif (markLines.length > 0) series.markLine = { symbol: 'none', data: markLines };\nvar yAxisName = isAttributes ? 'Defect Rate' : 'Mean';\nreturn {\n  status: 0,\n  msg: '',\n  data: {\n    chartName: result.chartName || '',\n    chartType: chartType,\n    xAxisData: samples.map(function(s){ return s.subgroupNo; }),\n    yAxisName: yAxisName,\n    series: [series]\n  }\n};\n"
 - type: chart
   chartType: line
   title: "SPC 控制图：${spcChartData?.chartName ?? ''} (${spcChartData?.chartType ?? ''})"
+  i18nEn: "SPC Control Chart: ${spcChartData?.chartName ?? ''} (${spcChartData?.chartType ?? ''})"
   source: ${spcChartData?.series ?? []}
-  xAxis: { dataKey: subgroupNo, label: 子组号 }
+  xAxis:
+    dataKey: subgroupNo
+    label: 子组号
+    i18nEn: "Subgroup No."
   yAxis: { label: "${spcChartData?.yAxisName ?? ''}" }
   height: 300
 - type: data-source
@@ -254,6 +248,7 @@ body:
     selection: actionType dueDate status overdueDays
 - type: crud
   title: CAPA 逾期预警
+  i18nEn: "CAPA Overdue Alert"
   source: ${capaOverdueData}
   syncLocation: false
   headerToolbar: []
@@ -261,10 +256,14 @@ body:
   columns:
   - name: actionType
     label: 行动类型
+    i18nEn: "Action Type"
   - name: dueDate
     label: 计划完成日
+    i18nEn: "Planned Completion Date"
   - name: status
     label: 状态
+    i18nEn: "Status"
   - name: overdueDays
     label: 逾期(天)
+    i18nEn: "Overdue (Days)"
     type: number

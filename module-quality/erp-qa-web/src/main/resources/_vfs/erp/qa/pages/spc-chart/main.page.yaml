@@ -7,6 +7,7 @@
 # 样本列表：失控样本明细 + 违规规则。零后端 delta，仅消费既有 @BizQuery。
 type: page
 title: "SPC 控制图"
+i18nEn: "SPC Control Chart"
 body:
   - type: data-source
     name: chartsData
@@ -32,11 +33,15 @@ body:
         label: "控制图"
         clearable: true
         placeholder: "留空=最近一张控制图"
+        i18nEn:
+          label: "Control Chart"
+          placeholder: "Blank = most recent control chart"
         source: ${chartsData?.items ?? []}
         valueField: id
         labelField: "${code || ''} · ${name || ''} (${chartType || ''})"
       - type: button
         label: "刷新"
+        i18nEn: "Refresh"
         icon: refresh-cw
         onClick:
           action: refreshSource
@@ -58,13 +63,18 @@ body:
   - type: chart
     chartType: line
     title: "SPC 控制图"
+    i18nEn: "SPC Control Chart"
     source: ${spcChartData?.samples ?? []}
     xAxis: { dataKey: subgroupNo }
-    yAxis: { label: "${(spcChartData?.chartType === 'P' || spcChartData?.chartType === 'NP' || spcChartData?.chartType === 'C' || spcChartData?.chartType === 'U') ? '缺陷率' : '均值'}" }
+    yAxis:
+      label: "${(spcChartData?.chartType === 'P' || spcChartData?.chartType === 'NP' || spcChartData?.chartType === 'C' || spcChartData?.chartType === 'U') ? '缺陷率' : '均值'}"
+      i18nEn: "${(spcChartData?.chartType === 'P' || spcChartData?.chartType === 'NP' || spcChartData?.chartType === 'C' || spcChartData?.chartType === 'U') ? 'Defect Rate' : 'Mean'}"
     legend: true
     height: 300
     series:
-      - { name: "样本值", dataRegionKey: mean }
+      - dataRegionKey: mean
+        name: "样本值"
+        i18nEn: "Sample Value"
 
   - type: data-source
     name: sampleData
@@ -82,25 +92,36 @@ body:
   - type: crud
     className: m-3
     title: "样本明细"
+    i18nEn: "Sample Details"
     source: ${sampleData?.items ?? []}
     syncLocation: false
     headerToolbar: []
     columns:
       - name: subgroupNo
         label: "子组号"
+        i18nEn: "Subgroup No."
       - name: sampleTime
         label: "采样时间"
+        i18nEn: "Sample Time"
       - name: mean
         label: "均值"
+        i18nEn: "Mean"
       - name: range
         label: "极差"
+        i18nEn: "Range"
       - name: defectCount
         label: "缺陷数"
+        i18nEn: "Defect Count"
       - name: inspectedCount
         label: "检验数"
+        i18nEn: "Inspected Count"
       - name: isOutOfControl
         label: "失控"
         type: tpl
         tpl: '${isOutOfControl ? "<span class=\"label label-danger\">失控</span>" : "<span class=\"label label-success\">正常</span>"}'
+        i18nEn:
+          label: "Out of Control"
+          tpl: '${isOutOfControl ? "<span class=\"label label-danger\">Out of Control</span>" : "<span class=\"label label-success\">Normal</span>"}'
       - name: violatedRules
         label: "违规规则"
+        i18nEn: "Violated Rules"

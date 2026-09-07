@@ -3,8 +3,10 @@
 # 触发条件：ErpAstRepair 实体就绪后落地（若需与 ErpAstMaintenance 区分的独立维修工单实体）。
 type: page
 title: "资产维修（Deferred）"
+i18nEn: "Asset Repair (Deferred)"
 body:
   - type: alert
     body: "本页为 Deferred——无 ErpAstRepair 实体，需 ORM 扩展（ask-first 保护区域）。资产维修功能当前由 ErpAstMaintenance 实体承载（CRUD 页已存在）。详见 plan 2026-08-03-1232-4。"
+    i18nEn: "This page is Deferred — no ErpAstRepair entity exists; an ORM extension is required (ask-first protected area). Asset repair functionality is currently carried by the ErpAstMaintenance entity (CRUD page already exists). See plan 2026-08-03-1232-4."
     level: warning
     className: m-3

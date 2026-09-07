@@ -3,6 +3,7 @@
 # 数据源：ErpSalDashboard__getDashboardKpi / __getDashboardTrend / __findCustomerTopN / __findArOverdueAlert。
 type: page
 title: "销售概览"
+i18nEn: "Sales Overview"
 body:
   - type: form
     name: filterForm
@@ -17,15 +18,22 @@ body:
         label: "开始日期"
         format: YYYY-MM-DD
         placeholder: "留空=本月1日"
+        i18nEn:
+          label: "Start Date"
+          placeholder: "Leave blank = first day of this month"
         clearable: true
       - type: input-date
         name: endDate
         label: "结束日期"
         format: YYYY-MM-DD
         placeholder: "留空=今天"
+        i18nEn:
+          label: "End Date"
+          placeholder: "Leave blank = today"
         clearable: true
       - type: button
         label: "刷新"
+        i18nEn: "Refresh"
         icon: refresh-cw
         onClick:
           action: refreshSource
@@ -65,6 +73,7 @@ body:
                 tag: div
                 className: text-muted
                 text: 本期销售额
+                i18nEn: "Current Period Sales Amount"
               - type: text
                 tag: span
                 className: h3 text-success
@@ -78,6 +87,7 @@ body:
                 tag: div
                 className: text-muted
                 text: 本期订单量
+                i18nEn: "Current Period Order Count"
               - type: text
                 tag: span
                 className: h3 font-bold
@@ -91,6 +101,7 @@ body:
                 tag: div
                 className: text-muted
                 text: 订单→开票转化率
+                i18nEn: "Order-to-Invoice Conversion Rate"
               - type: text
                 tag: span
                 className: h3 text-primary
@@ -104,6 +115,7 @@ body:
                 tag: div
                 className: text-muted
                 text: 应收余额
+                i18nEn: "AR Balance"
               - type: text
                 tag: span
                 className: h3 text-warning
@@ -121,13 +133,18 @@ body:
   - type: chart
     chartType: line
     title: "销售趋势（近12月）"
+    i18nEn: "Sales Trend (Last 12 Months)"
     source: ${trendData ?? []}
     xAxis: { dataKey: month }
-    yAxis: { label: "销售额" }
+    yAxis:
+      label: "销售额"
+      i18nEn: "Sales Amount"
     legend: true
     height: 300
     series:
-      - { name: "销售额", dataRegionKey: salesAmount }
+      - dataRegionKey: salesAmount
+        name: "销售额"
+        i18nEn: "Sales Amount"
 
   - type: data-source
     name: topNCustomerData
@@ -141,10 +158,14 @@ body:
   - type: chart
     chartType: pie
     title: "客户 TOP10 销售占比"
+    i18nEn: "Customer Top 10 Sales Share"
     source: ${topNCustomerData ?? []}
     height: 300
     series:
-      - { name: "销售额", dataRegionKey: salesAmount, nameField: customerName }
+      - dataRegionKey: salesAmount
+        nameField: customerName
+        name: "销售额"
+        i18nEn: "Sales Amount"
 
   - type: data-source
     name: arOverdueData
@@ -157,6 +178,7 @@ body:
     name: arOverdueCrud
     className: m-3
     title: "应收超期预警（阈值经 erp-dash.sal-ar-overdue-days / sal-ar-overdue-amount 配置）"
+    i18nEn: "AR Overdue Alert (thresholds configured via erp-dash.sal-ar-overdue-days / sal-ar-overdue-amount)"
     source: ${arOverdueData ?? []}
     syncLocation: false
     headerToolbar: []
@@ -164,9 +186,13 @@ body:
     columns:
       - name: partnerName
         label: "客户"
+        i18nEn: "Customer"
       - name: sourceBillCode
         label: "单据号"
+        i18nEn: "Document No."
       - name: openAmount
         label: "未结金额"
+        i18nEn: "Open Amount"
       - name: ageDays
         label: "账龄(天)"
+        i18nEn: "Aging (Days)"

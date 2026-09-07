@@ -6,6 +6,9 @@
 type: page
 title: "团队休假日历"
 remark: "团队成员休假（ErpHrLeaveRequest status=APPROVED）按月展示。休假类型颜色编码块：年假=蓝/病假=黄/事假=橙/婚假=粉/产假=紫/丧假=灰/调休=青。"
+i18nEn:
+  title: "Team Vacation Calendar"
+  remark: "Team members' leave (ErpHrLeaveRequest status=APPROVED) displayed by month. Leave type color blocks: Annual Leave=blue / Sick Leave=yellow / Personal Leave=orange / Marriage Leave=pink / Maternity Leave=purple / Funeral Leave=gray / Comp Time Off=cyan."
 body:
   - type: data-source
     name: leaveData
@@ -22,6 +25,7 @@ body:
   - type: crud
     className: m-3
     title: "团队休假列表"
+    i18nEn: "Team Vacation List"
     source: ${leaveData?.items ?? []}
     syncLocation: false
     headerToolbar: []
@@ -29,19 +33,25 @@ body:
     columns:
       - name: employee.employeeName
         label: "员工"
+        i18nEn: "Employee"
       - name: employee.employeeCode
         label: "员工编码"
+        i18nEn: "Employee Code"
       - name: leaveType
         label: "休假类型"
+        i18nEn: "Leave Type"
         type: tpl
         tpl: '<span class="label label-${leaveType == "ANNUAL" ? "primary" : (leaveType == "SICK" ? "warning" : (leaveType == "PERSONAL" ? "default" : (leaveType == "MARRIAGE" ? "danger" : (leaveType == "MATERNITY" ? "info" : (leaveType == "FUNERAL" ? "default" : "info")))))">${leaveType}</span>'
       - name: startDate
         label: "开始日期"
+        i18nEn: "Start Date"
         type: date
         format: YYYY-MM-DD
       - name: endDate
         label: "结束日期"
+        i18nEn: "End Date"
         type: date
         format: YYYY-MM-DD
       - name: reason
         label: "原因"
+        i18nEn: "Reason"

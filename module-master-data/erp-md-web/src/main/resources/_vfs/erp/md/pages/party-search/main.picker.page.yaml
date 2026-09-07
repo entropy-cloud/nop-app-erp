@@ -8,11 +8,13 @@
 # 父页面经 `/erp/md/pages/party-search/main.picker.page.yaml` 引用本文件。
 type: page
 title: "选择 Party（联合检索）"
+i18nEn: "Select Party (Combined Search)"
 body:
   - type: form
     name: partyFilter
     valuesPath: partyFilter
     title: "过滤条件"
+    i18nEn: "Filter Conditions"
     mode: inline
     submitOnChange: true
     submitOnInit: true
@@ -22,18 +24,25 @@ body:
         name: keyword
         label: "关键字"
         placeholder: "编码 / 名称 / 电话 / 邮箱（≥2 字符）"
+        i18nEn:
+          label: "Keyword"
+          placeholder: "Code / Name / Phone / Email (≥2 chars)"
         value: ""
       - type: tag
         name: partyTypes
         label: "Party 类型"
+        i18nEn: "Party Type"
         value: ["PARTNER", "EMPLOYEE", "ORGANIZATION"]
         options:
-          - label: "往来单位"
-            value: "PARTNER"
-          - label: "职员"
-            value: "EMPLOYEE"
-          - label: "组织"
-            value: "ORGANIZATION"
+          - value: "PARTNER"
+            label: "往来单位"
+            i18nEn: "Business Partner"
+          - value: "EMPLOYEE"
+            label: "职员"
+            i18nEn: "Employee"
+          - value: "ORGANIZATION"
+            label: "组织"
+            i18nEn: "Organization"
         displayMode: normal
 
   - type: data-source
@@ -52,6 +61,7 @@ body:
     name: partyCrud
     className: m-3
     title: "Party 列表"
+    i18nEn: "Party List"
     source: ${partyData ?? []}
     syncLocation: false
     headerToolbar: []
@@ -59,24 +69,37 @@ body:
     columns:
       - name: partyType
         label: "类型"
+        i18nEn: "Type"
         type: mapping
         map:
           PARTNER: "<span class='label label-info'>往来单位</span>"
           EMPLOYEE: "<span class='label label-success'>职员</span>"
           ORGANIZATION: "<span class='label label-warning'>组织</span>"
+          i18nEn:
+            PARTNER: "<span class='label label-info'>Business Partner</span>"
+            EMPLOYEE: "<span class='label label-success'>Employee</span>"
+            ORGANIZATION: "<span class='label label-warning'>Organization</span>"
       - name: code
         label: "编码"
+        i18nEn: "Code"
       - name: name
         label: "名称"
+        i18nEn: "Name"
       - name: phone
         label: "电话"
+        i18nEn: "Phone"
         placeholder: "-"
       - name: email
         label: "邮箱"
+        i18nEn: "Email"
         placeholder: "-"
       - name: status
         label: "状态"
+        i18nEn: "Status"
         type: mapping
         map:
           ACTIVE: "<span class='label label-success'>启用</span>"
           INACTIVE: "<span class='label label-default'>停用</span>"
+          i18nEn:
+            ACTIVE: "<span class='label label-success'>Active</span>"
+            INACTIVE: "<span class='label label-default'>Inactive</span>"

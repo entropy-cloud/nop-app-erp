@@ -5,6 +5,7 @@
 # 拖拽持久化（Phase 0 Decision）：onTaskDragEnd → ErpApsOperationOrder__updateSchedule 写 plannedStart/EndDateT（无内联产能校验，裁决见 plan）。
 type: page
 title: 排产甘特图
+i18nEn: "Schedule Gantt"
 body:
 - type: data-source
   name: ganttData
@@ -29,6 +30,9 @@ body:
         name: machineId
         label: 工作中心ID
         placeholder: 留空=全部工作中心
+        i18nEn:
+          label: "Work Center ID"
+          placeholder: "Blank = all work centers"
         clearable: true
     - colSpan: 3
       body:
@@ -36,22 +40,31 @@ body:
         name: status
         label: 状态
         placeholder: 留空=全部状态
+        i18nEn:
+          label: "Status"
+          placeholder: "Blank = all statuses"
         clearable: true
         options:
-        - label: 草稿
-          value: DRAFT
-        - label: 已计划
-          value: PLANNED
-        - label: 进行中
-          value: IN_PROGRESS
-        - label: 已完成
-          value: FINISHED
-        - label: 已取消
-          value: CANCELLED
+        - value: DRAFT
+          label: 草稿
+          i18nEn: "Draft"
+        - value: PLANNED
+          label: 已计划
+          i18nEn: "Planned"
+        - value: IN_PROGRESS
+          label: 进行中
+          i18nEn: "In Progress"
+        - value: FINISHED
+          label: 已完成
+          i18nEn: "Finished"
+        - value: CANCELLED
+          label: 已取消
+          i18nEn: "Cancelled"
     - colSpan: 2
       body:
       - type: button
         label: 刷新甘特图
+        i18nEn: "Refresh Gantt"
         actionType: ajax
         action: ajax
         args:
@@ -63,6 +76,7 @@ body:
         target: ganttData
 - type: text
   text: ${"共 " + (ganttData?.tasks ?? []).length + " 道工序 · 依赖边 " + (ganttData?.links ?? []).length + " 条（同工单按工序顺序派生）"}
+  i18nEn: '${"Total " + (ganttData?.tasks ?? []).length + " tasks · dependency edges " + (ganttData?.links ?? []).length + " (derived by operation sequence within the same work order)"}'
   className: text-muted m-b
 - type: gantt
   tasks: ${ganttData?.tasks ?? []}
@@ -85,3 +99,4 @@ body:
     args:
       level: info
       message: ${"点击工序 " + event.id}
+      i18nEn: '${"Click operation " + event.id}'

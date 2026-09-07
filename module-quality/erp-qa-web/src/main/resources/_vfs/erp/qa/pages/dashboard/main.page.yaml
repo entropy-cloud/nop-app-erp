@@ -4,6 +4,7 @@
 #       / __getSpcOutOfControlWarning / __getSpcControlChartData / __findCapaOverdueAlert。
 type: page
 title: "质量概览"
+i18nEn: "Quality Overview"
 body:
   - type: form
     name: filterForm
@@ -18,20 +19,30 @@ body:
         label: "开始日期"
         format: YYYY-MM-DD
         placeholder: "留空=本月1日"
+        i18nEn:
+          label: "Start Date"
+          placeholder: "Blank = 1st of current month"
         clearable: true
       - type: input-date
         name: endDate
         label: "结束日期"
         format: YYYY-MM-DD
         placeholder: "留空=今天"
+        i18nEn:
+          label: "End Date"
+          placeholder: "Blank = today"
         clearable: true
       - type: input-text
         name: chartId
         label: "SPC控制图ID"
         placeholder: "留空显示 KPI"
+        i18nEn:
+          label: "SPC Control Chart ID"
+          placeholder: "Blank to show KPI"
         clearable: true
       - type: button
         label: "刷新"
+        i18nEn: "Refresh"
         icon: refresh-cw
         onClick:
           action: refreshSource
@@ -77,6 +88,7 @@ body:
                 tag: div
                 className: text-muted
                 text: "本期质检数"
+                i18nEn: "Inspections This Period"
               - type: text
                 tag: span
                 className: h3 font-bold
@@ -90,6 +102,7 @@ body:
                 tag: div
                 className: text-muted
                 text: "合格率"
+                i18nEn: "Pass Rate"
               - type: text
                 tag: span
                 className: h3 text-success
@@ -103,6 +116,7 @@ body:
                 tag: div
                 className: text-muted
                 text: "不合格数"
+                i18nEn: "Rejected Count"
               - type: text
                 tag: span
                 className: h3 text-danger
@@ -116,6 +130,7 @@ body:
                 tag: div
                 className: text-muted
                 text: "开放 NCR 数"
+                i18nEn: "Open NCR Count"
               - type: text
                 tag: span
                 className: h3 text-warning
@@ -133,13 +148,18 @@ body:
   - type: chart
     chartType: line
     title: "合格率趋势（近12月）"
+    i18nEn: "Pass Rate Trend (Last 12 Months)"
     source: ${trendData ?? []}
     xAxis: { dataKey: month }
-    yAxis: { label: "合格率" }
+    yAxis:
+      label: "合格率"
+      i18nEn: "Pass Rate"
     legend: true
     height: 300
     series:
-      - { name: "合格率", dataRegionKey: passRate }
+      - dataRegionKey: passRate
+        name: "合格率"
+        i18nEn: "Pass Rate"
 
   - type: data-source
     name: defectData
@@ -153,10 +173,14 @@ body:
   - type: chart
     chartType: pie
     title: "不合格原因 TOP（按处置决定聚合）"
+    i18nEn: "Top Defect Causes (Aggregated by Disposal Decision)"
     source: ${defectData ?? []}
     height: 300
     series:
-      - { name: "数量", dataRegionKey: count, nameField: dispositionType }
+      - dataRegionKey: count
+        name: "数量"
+        i18nEn: "Count"
+        nameField: dispositionType
 
   - type: data-source
     name: spcWarningData
@@ -179,6 +203,7 @@ body:
                 tag: div
                 className: text-muted
                 text: "SPC 失控图数"
+                i18nEn: "Out-of-Control SPC Charts"
               - type: text
                 tag: span
                 className: h3 text-danger
@@ -192,9 +217,10 @@ body:
                 tag: div
                 className: text-muted
                 text: "能力不足(INADEQUATE)图数"
+                i18nEn: "Inadequate-Capability (INADEQUATE) Charts"
               - type: text
                 tag: span
-                className: h3 ${spcWarningData?.includeInadequate ? 'text-warning' : 'text-muted'}
+                className: "h3 ${spcWarningData?.includeInadequate ? 'text-warning' : 'text-muted'}"
                 text: "${spcWarningData?.inadequateCapabilityCount ?? 0}"
       - colSpan: 1
         body:
@@ -205,9 +231,10 @@ body:
                 tag: div
                 className: text-muted
                 text: "待处置 SPC NCR 数"
+                i18nEn: "SPC NCRs Pending Disposal"
               - type: text
                 tag: span
-                className: h3 ${spcWarningData?.includeNcr ? 'text-warning' : 'text-muted'}
+                className: "h3 ${spcWarningData?.includeNcr ? 'text-warning' : 'text-muted'}"
                 text: "${spcWarningData?.openSpcNcrCount ?? 0}"
 
   - type: data-source
@@ -223,14 +250,19 @@ body:
   - type: chart
     chartType: line
     title: "SPC 控制图"
+    i18nEn: "SPC Control Chart"
     visibleOn: "${filterForm?.chartId}"
     source: ${spcChartData?.samples ?? []}
     xAxis: { dataKey: subgroupNo }
-    yAxis: { label: "${(spcChartData?.chartType === 'P' || spcChartData?.chartType === 'NP' || spcChartData?.chartType === 'C' || spcChartData?.chartType === 'U') ? '缺陷率' : '均值'}" }
+    yAxis:
+      label: "${(spcChartData?.chartType === 'P' || spcChartData?.chartType === 'NP' || spcChartData?.chartType === 'C' || spcChartData?.chartType === 'U') ? '缺陷率' : '均值'}"
+      i18nEn: "${(spcChartData?.chartType === 'P' || spcChartData?.chartType === 'NP' || spcChartData?.chartType === 'C' || spcChartData?.chartType === 'U') ? 'Defect Rate' : 'Mean'}"
     legend: true
     height: 300
     series:
-      - { name: "样本值", dataRegionKey: mean }
+      - dataRegionKey: mean
+        name: "样本值"
+        i18nEn: "Sample Value"
 
   - type: data-source
     name: capaOverdueData
@@ -242,6 +274,7 @@ body:
   - type: crud
     className: m-3
     title: "CAPA 逾期预警（阈值经 erp-dash.qa-capa-overdue-days 配置）"
+    i18nEn: "CAPA Overdue Alert (threshold via erp-dash.qa-capa-overdue-days)"
     source: ${capaOverdueData ?? []}
     syncLocation: false
     headerToolbar: []
@@ -249,9 +282,13 @@ body:
     columns:
       - name: actionType
         label: "行动类型"
+        i18nEn: "Action Type"
       - name: dueDate
         label: "计划完成日"
+        i18nEn: "Planned Completion Date"
       - name: status
         label: "状态"
+        i18nEn: "Status"
       - name: overdueDays
         label: "逾期(天)"
+        i18nEn: "Overdue (Days)"

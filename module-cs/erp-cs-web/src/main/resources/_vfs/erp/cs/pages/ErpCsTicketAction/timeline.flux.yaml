@@ -3,6 +3,7 @@
 # 数据源 ErpCsTicketAction__findPage，formula 映射 items（from→to 状态变迁）。
 type: page
 title: 工单操作日志时间线
+i18nEn: Ticket Action Log Timeline
 body:
 - type: data-source
   name: rawData
@@ -21,6 +22,7 @@ body:
 - type: data-source
   name: timelineItems
   formula: '${(rawData.items ?? []).map(a => ({ time: ("" + (a.createTime ?? "")), title: a.actionType === "ASSIGN" ? "分派" : a.actionType === "CLOSE" ? "关闭" : a.actionType === "CANCEL" ? "取消" : a.actionType === "ESCALATE" ? "升级" : a.actionType === "NOTE" ? "备注" : ("" + (a.actionType ?? "")), detail: ("" + ((a.fromStatus ?? "—") + " → " + (a.toStatus ?? "—") + " · 操作人:" + (a.operatorId ?? "—") + " · " + (a.content ?? ""))), level: a.actionType === "CLOSE" ? "success" : a.actionType === "CANCEL" ? "error" : a.actionType === "ESCALATE" ? "warning" : "default" }))}'
+  i18nEn: '${(rawData.items ?? []).map(a => ({ time: ("" + (a.createTime ?? "")), title: a.actionType === "ASSIGN" ? "Assign" : a.actionType === "CLOSE" ? "Close" : a.actionType === "CANCEL" ? "Cancel" : a.actionType === "ESCALATE" ? "Escalate" : a.actionType === "NOTE" ? "Note" : ("" + (a.actionType ?? "")), detail: ("" + ((a.fromStatus ?? "—") + " → " + (a.toStatus ?? "—") + " · Operator: " + (a.operatorId ?? "—") + " · " + (a.content ?? ""))), level: a.actionType === "CLOSE" ? "success" : a.actionType === "CANCEL" ? "error" : a.actionType === "ESCALATE" ? "warning" : "default" }))}'
 - type: form
   submitScope: surface
   body:
@@ -33,11 +35,15 @@ body:
         name: ticketId
         label: 工单ID
         placeholder: 过滤特定工单的操作历史
+        i18nEn:
+          label: Ticket ID
+          placeholder: Filter the action history of a specific ticket
         clearable: true
     - colSpan: 2
       body:
       - type: button
         label: 刷新时间线
+        i18nEn: Refresh Timeline
         actionType: ajax
         action: ajax
         args:
@@ -50,6 +56,7 @@ body:
         target: rawData
 - type: text
   text: ${"共 " + (rawData.total ?? 0) + " 条操作记录"}
+  i18nEn: ${"Total " + (rawData.total ?? 0) + " action records"}
   className: text-muted m-b
 - type: timeline
   items: ${timelineItems}

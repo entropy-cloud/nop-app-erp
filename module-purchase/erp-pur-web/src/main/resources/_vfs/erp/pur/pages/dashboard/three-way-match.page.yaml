@@ -6,11 +6,15 @@
 type: page
 title: "三单匹配联查"
 remark: "采购订单 ↔ 入库单 ↔ 发票 三表并列联查。顶部差异预警由 ErpPurDashboard__findThreeWayMatchDiffAlert 检测发票单价 vs 订单单价差异超容差（erp-pur.match-price-tolerance 配置，默认 5%）的发票。下方三表按供应商过滤并列展示，便于人工比对数量/单价。"
+i18nEn:
+  title: "Three-Way Match Linked Query"
+  remark: "Purchase Order ↔ Inbound Order ↔ Invoice, three tables side by side. The top variance alert is detected by ErpPurDashboard__findThreeWayMatchDiffAlert and lists invoices whose invoice unit price vs order unit price difference exceeds tolerance (erp-pur.match-price-tolerance, default 5%). The three tables below are shown side by side filtered by supplier, for manual comparison of quantity / unit price."
 body:
   - type: form
     name: filterForm
     valuesPath: filterForm
     title: "筛选条件"
+    i18nEn: "Filter Conditions"
     mode: inline
     wrapWithPanel: false
     className: m-3
@@ -19,9 +23,13 @@ body:
         name: supplierId
         label: "供应商ID"
         placeholder: "输入供应商ID过滤三表"
+        i18nEn:
+          label: "Supplier ID"
+          placeholder: "Enter supplier ID to filter the three tables"
         clearable: true
       - type: button
         label: "刷新联查"
+        i18nEn: "Refresh Linked Query"
         icon: refresh-cw
         onClick:
           action: refreshSource
@@ -48,6 +56,7 @@ body:
     name: threeWayMatchCrud
     className: m-3
     title: "① 差异预警（发票单价 vs 订单单价超容差）"
+    i18nEn: "① Variance Alert (invoice unit price vs order unit price over tolerance)"
     source: ${diffAlertData ?? []}
     headerToolbar: []
     footerToolbar: []
@@ -55,15 +64,23 @@ body:
     columns:
       - name: invoiceCode
         label: "发票号"
+        i18nEn: "Invoice No."
       - name: supplierName
         label: "供应商"
+        i18nEn: "Supplier"
       - name: varianceType
         label: "差异类型"
         type: tpl
         tpl: '<span class="label label-danger">${varianceType == "PRICE" ? "价格差异" : varianceType}</span>'
+        i18nEn:
+          label: "Variance Type"
+          tpl: '<span class="label label-danger">${varianceType == "PRICE" ? "Price Variance" : varianceType}</span>'
       - type: tpl
         label: "容差可视化"
         tpl: '<div style="display:flex;align-items:center;gap:6px;"><span style="display:inline-block;width:100%;max-width:120px;height:8px;background:#f0f0f0;border-radius:4px;overflow:hidden;position:relative;"><span style="display:block;width:5%;height:100%;background:#5cb85c;"></span></span><span class="text-muted">阈值 5% (erp-pur.match-price-tolerance)</span></div>'
+        i18nEn:
+          label: "Tolerance Visualization"
+          tpl: '<div style="display:flex;align-items:center;gap:6px;"><span style="display:inline-block;width:100%;max-width:120px;height:8px;background:#f0f0f0;border-radius:4px;overflow:hidden;position:relative;"><span style="display:block;width:5%;height:100%;background:#5cb85c;"></span></span><span class="text-muted">Threshold 5% (erp-pur.match-price-tolerance)</span></div>'
 
   - type: data-source
     name: poData
@@ -80,6 +97,7 @@ body:
     name: poCrud
     className: m-3
     title: "② 采购订单"
+    i18nEn: "② Purchase Order"
     source: ${poData?.items ?? []}
     headerToolbar: []
     footerToolbar: ["statistics"]
@@ -87,21 +105,26 @@ body:
     columns:
       - name: code
         label: "订单号"
+        i18nEn: "Order No."
       - name: businessDate
         label: "订单日期"
+        i18nEn: "Order Date"
         type: date
         format: "YYYY-MM-DD"
       - name: deliveryDate
         label: "交货日期"
+        i18nEn: "Delivery Date"
         type: date
         format: "YYYY-MM-DD"
       - name: totalAmount
         label: "订单金额"
+        i18nEn: "Order Amount"
         type: number
         kilometer: true
         precision: 2
       - name: docStatus
         label: "状态"
+        i18nEn: "Status"
         type: tpl
         tpl: '<span class="label label-${docStatus == "ACTIVE" ? "primary" : "default"}">${docStatus}</span>'
 
@@ -120,6 +143,7 @@ body:
     name: receiveCrud
     className: m-3
     title: "③ 采购入库单"
+    i18nEn: "③ Purchase Inbound Order"
     source: ${receiveData?.items ?? []}
     headerToolbar: []
     footerToolbar: ["statistics"]
@@ -127,17 +151,21 @@ body:
     columns:
       - name: code
         label: "入库单号"
+        i18nEn: "Inbound Order No."
       - name: businessDate
         label: "入库日期"
+        i18nEn: "Inbound Date"
         type: date
         format: "YYYY-MM-DD"
       - name: totalAmount
         label: "入库金额"
+        i18nEn: "Inbound Amount"
         type: number
         kilometer: true
         precision: 2
       - name: docStatus
         label: "状态"
+        i18nEn: "Status"
         type: tpl
         tpl: '<span class="label label-${docStatus == "ACTIVE" ? "primary" : "default"}">${docStatus}</span>'
 
@@ -156,6 +184,7 @@ body:
     name: invoiceCrud
     className: m-3
     title: "④ 采购发票"
+    i18nEn: "④ Purchase Invoice"
     source: ${invoiceData?.items ?? []}
     headerToolbar: []
     footerToolbar: ["statistics"]
@@ -163,16 +192,20 @@ body:
     columns:
       - name: code
         label: "发票号"
+        i18nEn: "Invoice No."
       - name: businessDate
         label: "发票日期"
+        i18nEn: "Invoice Date"
         type: date
         format: "YYYY-MM-DD"
       - name: totalAmount
         label: "发票金额"
+        i18nEn: "Invoice Amount"
         type: number
         kilometer: true
         precision: 2
       - name: docStatus
         label: "状态"
+        i18nEn: "Status"
         type: tpl
         tpl: '<span class="label label-${docStatus == "ACTIVE" ? "primary" : "default"}">${docStatus}</span>'

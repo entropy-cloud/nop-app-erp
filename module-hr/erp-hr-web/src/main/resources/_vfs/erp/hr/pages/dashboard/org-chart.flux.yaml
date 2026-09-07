@@ -3,6 +3,7 @@
 # 数据源 ErpHrDepartment__findDepartmentTree（嵌套树 + 员工计数）。
 type: page
 title: 组织架构图
+i18nEn: "Org Chart"
 body:
 - type: data-source
   name: deptTree
@@ -26,11 +27,15 @@ body:
         name: keyword
         label: 部门关键字
         placeholder: 输入部门名称/编码过滤
+        i18nEn:
+          label: Department Keyword
+          placeholder: Filter by department name/code
         clearable: true
     - colSpan: 2
       body:
       - type: button
         label: 重建架构图
+        i18nEn: "Rebuild Org Chart"
         actionType: ajax
         action: ajax
         args:
@@ -46,6 +51,7 @@ body:
     visible: '${deptTree && deptTree.length === 0}'
     className: text-muted text-center p-5
     text: '<i class="fa fa-info-circle"></i> 未找到匹配的部门。请清空关键字后刷新，或确认部门主数据已录入。'
+    i18nEn: '<i class="fa fa-info-circle"></i> No matching departments found. Clear the keyword and refresh, or confirm department master data has been entered.'
   - type: tree
     visibleOn: '${deptTree && deptTree.length > 0}'
     data: ${deptTree}
@@ -59,10 +65,12 @@ body:
     # 节点模板：用 ?? 提供空值兜底，避免"name 字段缺失 → 显示 undefined"的视觉问题
     - type: text
       text: ${(node?.name ?? '未命名部门') + " (" + (node?.empCount ?? 0) + "人)"}
+      i18nEn: '${(node?.name ?? ''Unnamed Department'') + " (" + (node?.empCount ?? 0) + " people)"}'
       className: font-medium
     - type: text
       text: '${node?.code ? " · " + node.code : ""}'
       className: text-xs text-gray-500
     - type: text
       text: '${node?.managerId ? " · 负责人#" + node.managerId : ""}'
+      i18nEn: '${node?.managerId ? " · Manager#" + node.managerId : ""}'
       className: text-xs text-gray-500

@@ -3,8 +3,10 @@
 # 触发条件：ErpQaNonConformanceDisposal 独立实体就绪后落地。
 type: page
 title: "不合格品处置单（Deferred）"
+i18nEn: "Non-Conforming Product Disposal (Deferred)"
 body:
   - type: alert
     body: "本页为 Deferred——无 ErpQaNonConformanceDisposal 实体，需 ORM 扩展（ask-first 保护区域）。NCR 处置当前经 ErpQaNonConformance.disposalType/disposalMethod 字段承载（CRUD 页已存在）。详见 plan 2026-08-03-1232-4。"
+    i18nEn: "This page is Deferred — no ErpQaNonConformanceDisposal entity exists yet; ORM extension required (ask-first protected area). NCR disposal is currently carried by the ErpQaNonConformance.disposalType/disposalMethod fields (CRUD page already exists). See plan 2026-08-03-1232-4."
     level: warning
     className: m-3

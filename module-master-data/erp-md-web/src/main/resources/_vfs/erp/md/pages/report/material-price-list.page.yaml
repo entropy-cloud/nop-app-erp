@@ -4,6 +4,7 @@
 # 下载按钮保留 /p/{ErpMdReport__download} 路径（plan 2026-07-12-0413-1 已修复）。
 type: page
 title: "物料价格清单"
+i18nEn: "Material Price List"
 body:
   - type: form
     name: filterForm
@@ -16,13 +17,18 @@ body:
         name: materialCode
         label: "物料编码"
         placeholder: "按物料编码精确过滤（留空查全部）"
+        i18nEn:
+          label: "Material Code"
+          placeholder: "Exact filter by material code (blank = all)"
       - type: button
         label: "渲染报表"
+        i18nEn: "Render Report"
         onClick:
           action: refreshSource
           targetId: reportHtmlData
       - type: button
         label: "下载 XLSX"
+        i18nEn: "Download XLSX"
         actionType: download
         api:
           url: /p/ErpMdReport__download
@@ -35,6 +41,7 @@ body:
               materialCode: "${filterForm?.materialCode}"
       - type: button
         label: "下载 PDF"
+        i18nEn: "Download PDF"
         actionType: download
         api:
           url: /p/ErpMdReport__download

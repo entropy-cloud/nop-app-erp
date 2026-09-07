@@ -6,11 +6,15 @@
 type: page
 title: "工单看板"
 remark: "6 列状态看板。行级按钮经 ErpCsTicket 状态机 mutation 触发迁移。SLA 超时卡片以 🔴 标记。"
+i18nEn:
+  title: "Ticket Kanban"
+  remark: "6-column status board. Row-level buttons trigger transitions via the ErpCsTicket state machine mutations. SLA-breached cards are marked with 🔴."
 body:
   - type: form
     name: filterForm
     valuesPath: filterForm
     title: "筛选"
+    i18nEn: "Filter"
     mode: inline
     wrapWithPanel: false
     className: m-3
@@ -19,9 +23,13 @@ body:
         name: customerId
         label: "客户ID"
         placeholder: "过滤客户"
+        i18nEn:
+          label: "Customer ID"
+          placeholder: "Filter by customer"
         clearable: true
       - type: button
         label: "刷新看板"
+        i18nEn: "Refresh Board"
         icon: refresh-cw
         onClick:
           action: refreshSource
@@ -122,6 +130,7 @@ body:
       - type: crud
         name: colNew
         title: "① 新建 (NEW)"
+        i18nEn: "① New (NEW)"
         headerToolbar: []
         footerToolbar: ["statistics"]
         syncLocation: false
@@ -130,12 +139,15 @@ body:
         columns:
           - name: code
             label: "单号"
+            i18nEn: "Doc No"
             width: 130
           - name: subject
             label: "主题"
+            i18nEn: "Subject"
             width: 200
           - name: priority
             label: "优先级"
+            i18nEn: "Priority"
             type: tpl
             tpl: '<span class="label label-${priority == "URGENT" || priority == "HIGH" ? "danger" : priority == "MEDIUM" ? "warning" : "default"}">${priority}</span>'
           - name: deadlineDateTime
@@ -144,14 +156,17 @@ body:
             tpl: '<span class="${deadlineDateTime && !isSlaCompleted ? "text-danger" : "text-muted"}">${deadlineDateTime ? deadlineDateTime : "—"}</span>'
           - type: operation
             label: "操作"
+            i18nEn: "Actions"
             buttons:
               - type: button
                 label: "分派"
+                i18nEn: "Assign"
                 level: primary
                 size: sm
                 actionType: dialog
                 dialog:
                   title: "分派工单"
+                  i18nEn: "Assign Ticket"
                   body:
                     type: form
                     api:
@@ -165,11 +180,15 @@ body:
                         name: assignedToId
                         label: "处理人用户ID"
                         placeholder: "分配给处理人（用户ID）"
+                        i18nEn:
+                          label: "Assignee User ID"
+                          placeholder: "Assign to handler (user ID)"
 
       # ② ASSIGNED
       - type: crud
         name: colAssigned
         title: "② 已分派 (ASSIGNED)"
+        i18nEn: "② Assigned (ASSIGNED)"
         headerToolbar: []
         footerToolbar: ["statistics"]
         syncLocation: false
@@ -177,12 +196,15 @@ body:
         columns:
           - name: code
             label: "单号"
+            i18nEn: "Doc No"
             width: 130
           - name: subject
             label: "主题"
+            i18nEn: "Subject"
             width: 200
           - name: priority
             label: "优先级"
+            i18nEn: "Priority"
             type: tpl
             tpl: '<span class="label label-${priority == "URGENT" || priority == "HIGH" ? "danger" : priority == "MEDIUM" ? "warning" : "default"}">${priority}</span>'
           - name: deadlineDateTime
@@ -191,12 +213,16 @@ body:
             tpl: '<span class="${deadlineDateTime && !isSlaCompleted ? "text-danger" : "text-muted"}">${deadlineDateTime ? deadlineDateTime : "—"}</span>'
           - type: operation
             label: "操作"
+            i18nEn: "Actions"
             buttons:
               - type: button
                 label: "开始"
                 level: primary
                 size: sm
                 confirmText: "确认开始处理？"
+                i18nEn:
+                  label: "Start"
+                  confirmText: "Confirm starting processing?"
                 api:
                   method: post
                   url: '@mutation:ErpCsTicket__start'
@@ -207,6 +233,7 @@ body:
       - type: crud
         name: colInProgress
         title: "③ 处理中 (IN_PROGRESS)"
+        i18nEn: "③ In Progress (IN_PROGRESS)"
         headerToolbar: []
         footerToolbar: ["statistics"]
         syncLocation: false
@@ -214,12 +241,15 @@ body:
         columns:
           - name: code
             label: "单号"
+            i18nEn: "Doc No"
             width: 130
           - name: subject
             label: "主题"
+            i18nEn: "Subject"
             width: 200
           - name: priority
             label: "优先级"
+            i18nEn: "Priority"
             type: tpl
             tpl: '<span class="label label-${priority == "URGENT" || priority == "HIGH" ? "danger" : priority == "MEDIUM" ? "warning" : "default"}">${priority}</span>'
           - name: deadlineDateTime
@@ -228,14 +258,17 @@ body:
             tpl: '<span class="${deadlineDateTime && !isSlaCompleted ? "text-danger" : "text-muted"}">${deadlineDateTime ? deadlineDateTime : "—"} ${deadlineDateTime && !isSlaCompleted ? "🔴" : ""}</span>'
           - type: operation
             label: "操作"
+            i18nEn: "Actions"
             buttons:
               - type: button
                 label: "解决"
+                i18nEn: "Resolve"
                 level: success
                 size: sm
                 actionType: dialog
                 dialog:
                   title: "标记工单解决"
+                  i18nEn: "Mark Ticket Resolved"
                   body:
                     type: form
                     api:
@@ -249,11 +282,15 @@ body:
                         name: resolution
                         label: "解决说明"
                         placeholder: "可选：记录解决方案"
+                        i18nEn:
+                          label: "Resolution"
+                          placeholder: "Optional: record the resolution"
 
       # ④ RESOLVED
       - type: crud
         name: colResolved
         title: "④ 已解决 (RESOLVED)"
+        i18nEn: "④ Resolved (RESOLVED)"
         headerToolbar: []
         footerToolbar: ["statistics"]
         syncLocation: false
@@ -261,22 +298,29 @@ body:
         columns:
           - name: code
             label: "单号"
+            i18nEn: "Doc No"
             width: 130
           - name: subject
             label: "主题"
+            i18nEn: "Subject"
             width: 200
           - name: priority
             label: "优先级"
+            i18nEn: "Priority"
             type: tpl
             tpl: '<span class="label label-${priority == "URGENT" || priority == "HIGH" ? "danger" : priority == "MEDIUM" ? "warning" : "default"}">${priority}</span>'
           - type: operation
             label: "操作"
+            i18nEn: "Actions"
             buttons:
               - type: button
                 label: "关闭"
                 level: success
                 size: sm
                 confirmText: "确认关闭工单？"
+                i18nEn:
+                  label: "Close"
+                  confirmText: "Confirm closing this ticket?"
                 api:
                   method: post
                   url: '@mutation:ErpCsTicket__close'
@@ -287,6 +331,9 @@ body:
                 level: warning
                 size: sm
                 confirmText: "确认驳回重开？将退回「处理中」"
+                i18nEn:
+                  label: "Reopen"
+                  confirmText: "Confirm reject-and-reopen? It will move back to \"In Progress\""
                 api:
                   method: post
                   url: '@mutation:ErpCsTicket__reopen'
@@ -297,6 +344,7 @@ body:
       - type: crud
         name: colClosed
         title: "⑤ 已关闭 (CLOSED)"
+        i18nEn: "⑤ Closed (CLOSED)"
         headerToolbar: []
         footerToolbar: ["statistics"]
         syncLocation: false
@@ -304,12 +352,15 @@ body:
         columns:
           - name: code
             label: "单号"
+            i18nEn: "Doc No"
             width: 130
           - name: subject
             label: "主题"
+            i18nEn: "Subject"
             width: 200
           - name: priority
             label: "优先级"
+            i18nEn: "Priority"
             type: tpl
             tpl: '<span class="label label-default">${priority}</span>'
 
@@ -317,6 +368,7 @@ body:
       - type: crud
         name: colCancelled
         title: "⑥ 已取消 (CANCELLED)"
+        i18nEn: "⑥ Cancelled (CANCELLED)"
         headerToolbar: []
         footerToolbar: ["statistics"]
         syncLocation: false
@@ -324,11 +376,14 @@ body:
         columns:
           - name: code
             label: "单号"
+            i18nEn: "Doc No"
             width: 130
           - name: subject
             label: "主题"
+            i18nEn: "Subject"
             width: 200
           - name: priority
             label: "优先级"
+            i18nEn: "Priority"
             type: tpl
             tpl: '<span class="label label-default">${priority}</span>'

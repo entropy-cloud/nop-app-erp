@@ -3,9 +3,11 @@
 # 数据源：ErpMdDashboard__getDashboardKpi / __findMaterialWithoutSkuAlert / __findSkuWithoutPriceAlert。
 type: page
 title: 主数据概览
+i18nEn: "Master Data Overview"
 body:
 - type: button
   label: 刷新
+  i18nEn: "Refresh"
   icon: refresh-cw
   className: m-3
   onClick:
@@ -38,6 +40,7 @@ body:
         tag: div
         className: text-muted
         text: 物料总数
+        i18nEn: "Total Materials"
       - type: text
         tag: h3
         className: font-bold
@@ -51,6 +54,7 @@ body:
         tag: div
         className: text-muted
         text: 客户数
+        i18nEn: "Customer Count"
       - type: text
         tag: h3
         className: text-primary
@@ -64,6 +68,7 @@ body:
         tag: div
         className: text-muted
         text: 供应商数
+        i18nEn: "Supplier Count"
       - type: text
         tag: h3
         className: text-success
@@ -77,6 +82,7 @@ body:
         tag: div
         className: text-muted
         text: 停用物料数
+        i18nEn: "Inactive Material Count"
       - type: text
         tag: h3
         className: text-warning
@@ -90,6 +96,7 @@ body:
         tag: div
         className: text-muted
         text: 停用往来单位数
+        i18nEn: "Inactive Business Partner Count"
       - type: text
         tag: h3
         className: text-danger
@@ -103,6 +110,7 @@ body:
     selection: materialCode materialName status
 - type: crud
   title: 无 SKU 物料预警（数据质量）
+  i18nEn: "Material Without SKU Alert (Data Quality)"
   source: ${materialWithoutSkuData}
   syncLocation: false
   headerToolbar: []
@@ -110,10 +118,13 @@ body:
   columns:
   - name: materialCode
     label: 物料编码
+    i18nEn: "Material Code"
   - name: materialName
     label: 物料名称
+    i18nEn: "Material Name"
   - name: status
     label: 状态
+    i18nEn: "Status"
 - type: data-source
   name: skuWithoutPriceData
   action: ajax
@@ -123,6 +134,7 @@ body:
     selection: skuCode materialId
 - type: crud
   title: 无价格 SKU 预警（数据质量）
+  i18nEn: "SKU Without Price Alert (Data Quality)"
   source: ${skuWithoutPriceData}
   syncLocation: false
   headerToolbar: []
@@ -130,5 +142,7 @@ body:
   columns:
   - name: skuCode
     label: SKU 编码
+    i18nEn: "SKU Code"
   - name: materialId
     label: 物料ID
+    i18nEn: "Material ID"

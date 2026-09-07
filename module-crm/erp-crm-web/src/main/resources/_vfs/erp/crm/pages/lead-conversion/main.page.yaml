@@ -6,11 +6,13 @@
 # 三步：① 选择线索 → ② 选择目标阶段 → ③ 确认转化。
 type: page
 title: "线索转化向导"
+i18nEn: "Lead Conversion Wizard"
 body:
   - type: text
     className: m-3
     tag: div
     tpl: '<div class="alert alert-info"><strong>线索转化三步向导</strong>：选择线索 → 选择目标漏斗阶段 → 确认转化（moveStage，stageId 单向递增）。</div>'
+    i18nEn: '<div class="alert alert-info"><strong>Lead Conversion 3-Step Wizard</strong>: select lead → select target funnel stage → confirm conversion (moveStage, stageId moves forward only).</div>'
 
   # Step 1：选择线索
   - type: data-source
@@ -28,6 +30,7 @@ body:
     name: step1Form
     valuesPath: step1Form
     title: "Step 1 · 选择线索"
+    i18nEn: "Step 1 · Select Lead"
     className: m-3
     mode: normal
     body:
@@ -39,8 +42,12 @@ body:
         source: ${leadsData?.items ?? []}
         valueField: id
         labelField: "${code} · 预期收入:${expectedRevenue || 0} · 当前阶段:${stage?.stageName || '—'}"
+        i18nEn:
+          label: "Select Lead"
+          labelField: "${code} · Expected Revenue: ${expectedRevenue || 0} · Current Stage: ${stage?.stageName || '—'}"
       - type: button
         label: "下一步：选择目标阶段"
+        i18nEn: "Next: Select Target Stage"
         level: primary
         icon: "fa fa-arrow-right"
         onClick:
@@ -67,6 +74,7 @@ body:
       - type: text
         tag: h5
         text: "Step 2 · 选择目标阶段"
+        i18nEn: "Step 2 · Select Target Stage"
       - type: form
         name: step2Form
         valuesPath: step2Form
@@ -75,6 +83,7 @@ body:
           - type: select
             name: toStageId
             label: "目标漏斗阶段"
+            i18nEn: "Target Funnel Stage"
             required: true
             source: ${stagesData?.items ?? []}
             valueField: id
@@ -83,12 +92,16 @@ body:
             tag: div
             className: text-muted
             text: "moveStage 按 ErpCrmStage.sequence 单向递增校验——目标阶段必须大于当前阶段。"
+            i18nEn: "moveStage validates forward-only progression by ErpCrmStage.sequence — the target stage must be greater than the current stage."
           - type: button
             label: "Step 3 · 确认转化（moveStage）"
             level: danger
             icon: "fa fa-check"
             actionType: ajax
             confirmText: "确认将线索转化到目标阶段？"
+            i18nEn:
+              label: "Step 3 · Confirm Conversion (moveStage)"
+              confirmText: "Confirm converting the lead to the target stage?"
             api:
               url: '@mutation:ErpCrmLead__moveStage'
               method: post

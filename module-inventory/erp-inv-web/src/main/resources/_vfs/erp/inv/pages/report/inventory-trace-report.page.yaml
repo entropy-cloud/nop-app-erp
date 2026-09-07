@@ -4,6 +4,7 @@
 # 下载按钮保留 /p/{ErpInvReport__download} 路径（plan 2026-07-12-0413-1 已修复）。
 type: page
 title: "库存追溯可视化报表"
+i18nEn: "Inventory Trace Visualization Report"
 body:
   - type: form
     name: filterForm
@@ -16,21 +17,32 @@ body:
         name: batchNo
         label: "批次号"
         placeholder: "按批次追溯（优先）"
+        i18nEn:
+          label: "Batch No"
+          placeholder: "Trace by batch (preferred)"
       - type: input-number
         name: materialId
         label: "物料ID"
         placeholder: "按物料过滤"
+        i18nEn:
+          label: "Material ID"
+          placeholder: "Filter by material"
       - type: input-number
         name: warehouseId
         label: "仓库ID"
         placeholder: "按仓库过滤"
+        i18nEn:
+          label: "Warehouse ID"
+          placeholder: "Filter by warehouse"
       - type: button
         label: "渲染报表"
+        i18nEn: "Render Report"
         onClick:
           action: refreshSource
           targetId: reportHtmlData
       - type: button
         label: "下载 XLSX"
+        i18nEn: "Download XLSX"
         actionType: download
         api:
           url: /p/ErpInvReport__download
@@ -45,6 +57,7 @@ body:
               warehouseId: "${filterForm?.warehouseId}"
       - type: button
         label: "下载 PDF"
+        i18nEn: "Download PDF"
         actionType: download
         api:
           url: /p/ErpInvReport__download

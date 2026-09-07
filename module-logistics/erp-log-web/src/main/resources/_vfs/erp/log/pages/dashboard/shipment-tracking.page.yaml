@@ -6,11 +6,15 @@
 type: page
 title: "发运追踪时间线"
 remark: "选择发运单后，按 ErpLogShipmentLog 时间线展示物流网关交互事件（actionType/executedAt/isSuccess），失败事件显示 errorCode/errorMessage。超期未送达（estimatedDeliveryDate < 今天）红色标记。地图为 Non-Goal。"
+i18nEn:
+  title: "Shipment Tracking Timeline"
+  remark: "After selecting a shipment order, displays logistics gateway interaction events (actionType/executedAt/isSuccess) on a timeline from ErpLogShipmentLog; failed events show errorCode/errorMessage. Overdue deliveries (estimatedDeliveryDate < today) are marked in red. Map is a Non-Goal."
 body:
   - type: form
     name: filterForm
     valuesPath: filterForm
     title: "发运单选择"
+    i18nEn: "Shipment Order Selection"
     mode: inline
     wrapWithPanel: false
     className: m-3
@@ -19,10 +23,14 @@ body:
         name: shipmentId
         label: "发运单ID"
         placeholder: "输入发运单主键"
+        i18nEn:
+          label: "Shipment Order ID"
+          placeholder: "Enter the shipment order primary key"
         required: true
         clearable: true
       - type: button
         label: "查询时间线"
+        i18nEn: "Query Timeline"
         icon: route
         onClick:
           action: refreshSource
@@ -54,18 +62,21 @@ body:
     tag: div
     visibleOn: "${shipmentInfo}"
     text: '<div class="panel panel-default"><div class="panel-body"><strong>${shipmentInfo?.code || "—"}</strong> · 追踪号: ${shipmentInfo?.trackingNo || "—"} · 状态: ${shipmentInfo?.status || "—"} · 包裹数: ${shipmentInfo?.totalParcels || 0} · 预计送达: ${shipmentInfo?.estimatedDeliveryDate || "—"} ${(shipmentInfo?.estimatedDeliveryDate && !shipmentInfo?.actualDeliveryDate && shipmentInfo?.estimatedDeliveryDate < today) ? "<span class=\"label label-danger\">超期未送达</span>" : ""}</div></div>'
+    i18nEn: '<div class="panel panel-default"><div class="panel-body"><strong>${shipmentInfo?.code || "—"}</strong> · Tracking No: ${shipmentInfo?.trackingNo || "—"} · Status: ${shipmentInfo?.status || "—"} · Parcels: ${shipmentInfo?.totalParcels || 0} · Estimated Delivery: ${shipmentInfo?.estimatedDeliveryDate || "—"} ${(shipmentInfo?.estimatedDeliveryDate && !shipmentInfo?.actualDeliveryDate && shipmentInfo?.estimatedDeliveryDate < today) ? "<span class=\"label label-danger\">Overdue</span>" : ""}</div></div>'
 
   - type: text
     className: m-3
     tag: div
     visibleOn: "${!trackingData?.items?.length && !shipmentInfo}"
     text: '<div class="text-muted p-3">请输入有效的发运单ID后点击「查询时间线」。若无事件日志，说明该发运单尚未触发网关交互。</div>'
+    i18nEn: '<div class="text-muted p-3">Enter a valid shipment order ID and click "Query Timeline". If there are no event logs, the shipment order has not triggered any gateway interaction yet.</div>'
 
   - type: text
     className: m-3
     tag: div
     visibleOn: "${trackingData?.items?.length}"
     text: '<div class="text-muted m-b-sm">事件数：${trackingData?.items?.length || 0}（按 executedAt 倒序）</div>'
+    i18nEn: '<div class="text-muted m-b-sm">Event count: ${trackingData?.items?.length || 0} (sorted by executedAt descending)</div>'
 
   - type: timeline
     className: m-3
@@ -74,4 +85,7 @@ body:
       - time: "${executedAt}"
         title: "${'[' + (actionType || 'EVENT') + '] ' + (httpStatus != null ? 'HTTP ' + httpStatus + ' ' : '') + (isSuccess ? '成功' : '失败')}"
         detail: "${!isSuccess ? ((errorCode ? '错误码: ' + errorCode : '') + (errorMessage ? ' / 信息: ' + errorMessage : '')) : ''}"
+        i18nEn:
+          title: "${'[' + (actionType || 'EVENT') + '] ' + (httpStatus != null ? 'HTTP ' + httpStatus + ' ' : '') + (isSuccess ? 'Success' : 'Failed')}"
+          detail: "${!isSuccess ? ((errorCode ? 'Error Code: ' + errorCode : '') + (errorMessage ? ' / Message: ' + errorMessage : '')) : ''}"
         color: "${isSuccess ? (actionType === 'CREATE' ? '#3b82f6' : actionType === 'SEND' ? '#0ea5e9' : actionType === 'RECEIVE' ? '#22c55e' : actionType === 'ACK' ? '#8b5cf6' : actionType === 'STATUS_UPDATE' ? '#f59e0b' : actionType === 'DELIVER' ? '#16a34a' : '#6b7280') : '#ef4444'}"

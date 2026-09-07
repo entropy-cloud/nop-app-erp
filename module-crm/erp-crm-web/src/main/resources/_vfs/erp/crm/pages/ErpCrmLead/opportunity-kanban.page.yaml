@@ -7,6 +7,9 @@
 type: page
 title: "商机看板"
 remark: "商机（ErpCrmLead leadType=OPPORTUNITY 子集）按漏斗阶段（ErpCrmStage 动态列）展示。每列一个 crud，行级「移动到阶段」按钮经 ErpCrmLead__moveStage mutation 触发阶段切换。赢单阶段（isWonStage=true）列只读。"
+i18nEn:
+  title: "Opportunity Kanban"
+  remark: "Opportunities (ErpCrmLead leadType=OPPORTUNITY subset) displayed by funnel stage (ErpCrmStage dynamic columns). One crud per column; the row-level \"Move to Stage\" button triggers stage switching via the ErpCrmLead__moveStage mutation. Columns whose stage is a won stage (isWonStage=true) are read-only."
 body:
   - type: data-source
     name: stagesData
@@ -21,6 +24,7 @@ body:
 
   - type: button
     label: "刷新看板"
+    i18nEn: "Refresh Kanban"
     icon: refresh-cw
     className: m-3
     onClick:
@@ -46,6 +50,7 @@ body:
     tag: div
     visibleOn: "${(stagesData?.items?.length || 0) === 0}"
     text: '<div class="alert alert-warning">尚未配置商机阶段（请先在「漏斗阶段」中维护 ErpCrmStage）</div>'
+    i18nEn: '<div class="alert alert-warning">No opportunity stages configured yet (maintain ErpCrmStage under "Funnel Stages" first)</div>'
 
   - type: wrapper
     className: m-3
@@ -53,14 +58,17 @@ body:
       - type: text
         tag: h4
         text: "商机看板"
+        i18nEn: "Opportunity Kanban"
       - type: text
         tag: div
         className: text-muted
         text: "按 ErpCrmStage 阶段分组的商机列表。每列显示该阶段商机及操作。"
+        i18nEn: "Opportunity list grouped by ErpCrmStage stage. Each column shows the opportunities of that stage with actions."
 
   - type: crud
     className: m-3
     title: "商机列表"
+    i18nEn: "Opportunity List"
     source: ${opportunityData?.items ?? []}
     syncLocation: false
     headerToolbar: []
@@ -68,38 +76,47 @@ body:
     columns:
       - name: code
         label: "商机号"
+        i18nEn: "Opportunity No."
         width: 120
       - name: companyName
         label: "客户"
+        i18nEn: "Customer"
         width: 160
       - name: stageId
         label: "阶段"
+        i18nEn: "Stage"
         type: tpl
         tpl: "${stagesData?.items?.find(s => s.id === stageId)?.stageName || stageId}"
       - name: expectedRevenue
         label: "预期收入"
+        i18nEn: "Expected Revenue"
         type: number
         kilometer: true
         precision: 2
       - name: expectedCloseDate
         label: "预期签单"
+        i18nEn: "Expected Close Date"
         type: date
         format: "YYYY-MM-DD"
       - name: probability
         label: "成交概率%"
+        i18nEn: "Win Probability%"
         type: tpl
         tpl: '<span class="label label-${probability >= 75 ? "success" : probability >= 50 ? "warning" : "default"}">${probability}%</span>'
       - type: operation
         label: "操作"
+        i18nEn: "Actions"
         buttons:
           - type: button
             label: "移动到阶段"
+            i18nEn: "Move to Stage"
             level: primary
             size: sm
             visibleOn: "${!stagesData?.items?.find(s => s.id === stageId)?.isWonStage}"
             actionType: dialog
             dialog:
               title: "移动商机到阶段"
+              i18nEn: "Move Opportunity to Stage"
               body:
                 type: form
                 api:
@@ -117,3 +134,6 @@ body:
                     valueField: id
                     labelField: stageName
                     placeholder: "选择目标阶段（赢单阶段经后端守卫拒绝非法迁移）"
+                    i18nEn:
+                      label: "Target Stage"
+                      placeholder: "Select target stage (invalid moves into won stages are rejected by the backend guard)"

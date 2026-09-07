@@ -2,6 +2,7 @@
 # flux 原生重写：data-source → form → html。
 type: page
 title: "工单 SLA/CSAT 综合统计表"
+i18nEn: "Ticket SLA/CSAT Summary Report"
 body:
   - type: form
     name: filterForm
@@ -14,13 +15,18 @@ body:
         name: ticketType
         label: "工单类型"
         placeholder: "按工单类型过滤（留空查全部）"
+        i18nEn:
+          label: "Ticket Type"
+          placeholder: "Filter by ticket type (blank = all)"
       - type: button
         label: "渲染报表"
+        i18nEn: "Render Report"
         onClick:
           action: refreshSource
           targetId: reportHtmlData
       - type: button
         label: "下载 XLSX"
+        i18nEn: "Download XLSX"
         actionType: download
         api:
           url: /p/ErpCsReport__download
@@ -33,6 +39,7 @@ body:
               ticketType: "${filterForm?.ticketType}"
       - type: button
         label: "下载 PDF"
+        i18nEn: "Download PDF"
         actionType: download
         api:
           url: /p/ErpCsReport__download

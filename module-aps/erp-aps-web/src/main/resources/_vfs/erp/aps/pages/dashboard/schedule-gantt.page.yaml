@@ -7,10 +7,14 @@
 type: page
 title: "排产甘特图"
 remark: "按 ErpApsOperationOrder 的 plannedStartDateT→plannedEndDateT 渲染甘特条，颜色编码 status。可拖拽修改排程时间（持久化至 ErpApsOperationOrder__updateSchedule）。工作中心分组显示。"
+i18nEn:
+  title: "Schedule Gantt"
+  remark: "Renders gantt bars from plannedStartDateT→plannedEndDateT of ErpApsOperationOrder with status color coding. Schedule times are drag-editable (persisted to ErpApsOperationOrder__updateSchedule). Grouped by work center."
 body:
   - type: form
     name: filterForm
     title: "筛选条件"
+    i18nEn: "Filter Conditions"
     mode: inline
     wrapWithPanel: false
     className: m-3
@@ -19,37 +23,55 @@ body:
         name: machineId
         label: "工作中心ID"
         placeholder: "留空=全部工作中心"
+        i18nEn:
+          label: "Work Center ID"
+          placeholder: "Blank = all work centers"
         clearable: true
       - type: select
         name: status
         label: "状态"
         placeholder: "留空=全部状态"
+        i18nEn:
+          label: "Status"
+          placeholder: "Blank = all statuses"
         clearable: true
         options:
-          - label: "草稿"
-            value: "DRAFT"
-          - label: "已计划"
-            value: "PLANNED"
-          - label: "进行中"
-            value: "IN_PROGRESS"
-          - label: "已完成"
-            value: "FINISHED"
-          - label: "已取消"
-            value: "CANCELLED"
+          - value: "DRAFT"
+            label: "草稿"
+            i18nEn: "Draft"
+          - value: "PLANNED"
+            label: "已计划"
+            i18nEn: "Planned"
+          - value: "IN_PROGRESS"
+            label: "进行中"
+            i18nEn: "In Progress"
+          - value: "FINISHED"
+            label: "已完成"
+            i18nEn: "Finished"
+          - value: "CANCELLED"
+            label: "已取消"
+            i18nEn: "Cancelled"
       - type: input-date
         name: startDate
         label: "开始日期"
         format: "YYYY-MM-DD"
         placeholder: "留空=不限"
+        i18nEn:
+          label: "Start Date"
+          placeholder: "Blank = no limit"
         clearable: true
       - type: input-date
         name: endDate
         label: "结束日期"
         format: "YYYY-MM-DD"
         placeholder: "留空=不限"
+        i18nEn:
+          label: "End Date"
+          placeholder: "Blank = no limit"
         clearable: true
       - type: button
         label: "查询"
+        i18nEn: "Query"
         icon: "search"
         onClick:
           action: refreshSource
@@ -72,16 +94,25 @@ body:
   - type: gantt
     className: m-3
     title: "排产甘特图（${ganttData?.items?.length || 0} 道工序）"
+    i18nEn: "Schedule Gantt (${ganttData?.items?.length || 0} operations)"
     tasks: ${ganttData?.items ?? []}
     draggable: true
     editable: true
     linkable: false
     defaultZoom: "week"
     columns:
-      - { name: code, label: "工序编码" }
-      - { name: operationName, label: "工序名" }
-      - { name: machineId, label: "工作中心" }
-      - { name: status, label: "状态" }
+      - name: code
+        label: "工序编码"
+        i18nEn: "Operation Code"
+      - name: operationName
+        label: "工序名"
+        i18nEn: "Operation Name"
+      - name: machineId
+        label: "工作中心"
+        i18nEn: "Work Center"
+      - name: status
+        label: "状态"
+        i18nEn: "Status"
     onTaskDragEnd:
       - action: callApi
         args:

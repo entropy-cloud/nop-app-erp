@@ -4,11 +4,15 @@
 type: page
 title: "工单操作日志时间线"
 remark: "客服工单操作日志（ErpCsTicketAction）按操作时间倒序的纵向时间线。fromStatus → toStatus 状态变迁。支持按 ticketId 过滤。"
+i18nEn:
+  title: "Ticket Action Log Timeline"
+  remark: "Vertical timeline of CS ticket action logs (ErpCsTicketAction) in descending action-time order, showing fromStatus → toStatus transitions. Filterable by ticketId."
 body:
   - type: form
     name: filterForm
     valuesPath: filterForm
     title: "筛选"
+    i18nEn: "Filter"
     mode: inline
     wrapWithPanel: false
     className: m-3
@@ -17,9 +21,13 @@ body:
         name: ticketId
         label: "工单ID"
         placeholder: "过滤特定工单的操作历史"
+        i18nEn:
+          label: "Ticket ID"
+          placeholder: "Filter the action history of a specific ticket"
         clearable: true
       - type: button
         label: "刷新时间线"
+        i18nEn: "Refresh Timeline"
         icon: refresh-cw
         onClick:
           action: refreshSource
@@ -41,6 +49,7 @@ body:
     className: m-3
     tag: div
     text: '<div class="text-muted">共 ${actionsData?.total || 0} 条操作记录</div>'
+    i18nEn: '<div class="text-muted">${actionsData?.total || 0} action records in total</div>'
 
   - type: timeline
     className: m-3
@@ -49,4 +58,7 @@ body:
       - time: "${createTime}"
         title: "[${actionType === 'ASSIGN' ? '分派' : actionType === 'CLOSE' ? '关闭' : actionType === 'CANCEL' ? '取消' : actionType === 'ESCALATE' ? '升级' : actionType === 'NOTE' ? '备注' : actionType || '—'}] ${fromStatus || '—'} → ${toStatus || '—'}"
         detail: "操作人: ${operatorId || '—'} · ${content || ''}"
+        i18nEn:
+          title: "[${actionType === 'ASSIGN' ? 'Assign' : actionType === 'CLOSE' ? 'Close' : actionType === 'CANCEL' ? 'Cancel' : actionType === 'ESCALATE' ? 'Escalate' : actionType === 'NOTE' ? 'Note' : actionType || '—'}] ${fromStatus || '—'} → ${toStatus || '—'}"
+          detail: "Operator: ${operatorId || '—'} · ${content || ''}"
         color: "${actionType === 'ASSIGN' ? '#3b82f6' : actionType === 'CLOSE' ? '#10b981' : actionType === 'CANCEL' ? '#ef4444' : actionType === 'ESCALATE' ? '#f59e0b' : '#6b7280'}"

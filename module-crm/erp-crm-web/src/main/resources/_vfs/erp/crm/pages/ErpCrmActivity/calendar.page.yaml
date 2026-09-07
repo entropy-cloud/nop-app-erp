@@ -7,11 +7,15 @@
 type: page
 title: "活动日历"
 remark: "CRM 活动按活动日期（activityDate）分组的卡片视图（月历语义）。支持按 leadId 过滤。"
+i18nEn:
+  title: "Activity Calendar"
+  remark: "CRM activities grouped by activity date (activityDate) as a card view (month-calendar semantics). Supports filtering by leadId."
 body:
   - type: form
     name: filterForm
     valuesPath: filterForm
     title: "筛选"
+    i18nEn: "Filter"
     mode: inline
     wrapWithPanel: false
     className: m-3
@@ -20,9 +24,13 @@ body:
         name: leadId
         label: "线索/商机ID"
         placeholder: "过滤关联线索（可选）"
+        i18nEn:
+          label: "Lead/Opportunity ID"
+          placeholder: "Filter by related lead (optional)"
         clearable: true
       - type: button
         label: "刷新日历"
+        i18nEn: "Refresh Calendar"
         icon: refresh-cw
         onClick:
           action: refreshSource
@@ -44,10 +52,12 @@ body:
     className: m-3
     tag: div
     text: '<div class="text-muted">${activitiesData?.items?.length || 0} 项活动</div>'
+    i18nEn: '<div class="text-muted">${activitiesData?.items?.length || 0} activities</div>'
 
   - type: crud
     className: m-3
     title: "活动列表（按日期）"
+    i18nEn: "Activity List (by Date)"
     source: ${activitiesData?.items ?? []}
     syncLocation: false
     headerToolbar: []
@@ -55,13 +65,17 @@ body:
     columns:
       - name: activityDate
         label: "日期"
+        i18nEn: "Date"
         type: date
         format: "YYYY-MM-DD"
       - name: activityType
         label: "类型"
+        i18nEn: "Type"
         type: tpl
         tpl: '<span class="label label-${activityType == "CALL" ? "primary" : (activityType == "MEETING" ? "success" : (activityType == "EMAIL" ? "default" : "warning"))}">${activityType}</span>'
       - name: lead.companyName
         label: "客户"
+        i18nEn: "Customer"
       - name: summary
         label: "摘要"
+        i18nEn: "Summary"

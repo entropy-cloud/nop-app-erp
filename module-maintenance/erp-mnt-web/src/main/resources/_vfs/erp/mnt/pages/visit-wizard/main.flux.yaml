@@ -5,6 +5,7 @@
 # 4 步：维护信息确认 → 备件消耗 → 执行结果 → 确认完成/取消。
 type: page
 title: 维护访问执行向导
+i18nEn: "Maintenance Visit Execution Wizard"
 body:
 - type: form
   submitScope: surface
@@ -21,6 +22,9 @@ body:
         required: true
         clearable: true
         placeholder: 选择要执行的维护访问
+        i18nEn:
+          label: "Maintenance Visit"
+          placeholder: "Select the maintenance visit to execute"
         source:
           action: ajax
           args:
@@ -33,6 +37,7 @@ body:
       body:
       - type: button
         label: 进入向导
+        i18nEn: "Enter Wizard"
         level: primary
         block: true
         actionType: ajax
@@ -69,6 +74,7 @@ body:
     selection: items{ id code warehouseId totalAmount docStatus approveStatus posted } total
 - type: text
   text: ${"维护访问：" + (visitData?.code ?? "—") + " · 状态：" + (visitData?.status ?? "—")}
+  i18nEn: 'Maintenance Visit: ${visitData?.code ?? "—"} · Status: ${visitData?.status ?? "—"}'
   className: text-muted m-t-xs m-b erp-wizard-header
 - type: wizard
   linear: true
@@ -78,12 +84,14 @@ body:
   steps:
   - key: info
     title: 1. 维护信息确认
+    i18nEn: "1. Maintenance Info Confirmation"
     body:
     - type: container
       className: bg-white border rounded p-3 m-b
       body:
       - type: text
         text: ${"维护类型：" + (visitData?.visitType ?? "—") + " · 访问日期：" + (visitData?.visitDate ?? "—") + " · 设备：" + (visitData?.equipmentId ?? "—") + " · 指派人：" + (visitData?.assignedTo ?? "—")}
+        i18nEn: 'Maintenance Type: ${visitData?.visitType ?? "—"} · Visit Date: ${visitData?.visitDate ?? "—"} · Equipment: ${visitData?.equipmentId ?? "—"} · Assigned To: ${visitData?.assignedTo ?? "—"}'
         className: text-muted m-b
       - type: button
         label: 开始执行
@@ -96,19 +104,25 @@ body:
           data:
             visitId: ${visitId}
         confirmText: 确认开始执行？设备状态将联动为维护中。
+        i18nEn:
+          label: "Start Execution"
+          confirmText: "Confirm starting execution? Equipment status will switch to Under Maintenance."
         visible: ${visitData?.status == "SCHEDULED"}
         target: visitData
   - key: spare
     title: 2. 备件消耗
+    i18nEn: "2. Spare Part Consumption"
     body:
     - type: container
       className: bg-white border rounded p-3 m-b
       body:
       - type: text
         text: ${"备件消耗记录：" + (spareParts?.total ?? 0) + " 条（SparePartUsage 嵌套文档，经独立 CRUD 页面创建明细行）"}
+        i18nEn: 'Spare Part Usage Records: ${spareParts?.total ?? 0} (SparePartUsage is a nested document; detail rows are created via the standalone CRUD page)'
         className: text-muted m-b
   - key: result
     title: 3. 执行结果
+    i18nEn: "3. Execution Result"
     body:
     - type: container
       className: bg-white border rounded p-3 m-b
@@ -121,22 +135,30 @@ body:
         - type: button-group
           name: resultValue
           label: 维护结果
+          i18nEn: "Maintenance Result"
           required: true
           value: ${visitData?.result ?? ""}
           options:
-          - label: 正常
-            value: NORMAL
-          - label: 异常
-            value: ABNORMAL
-          - label: 部分完成
-            value: PARTIAL
+          - value: NORMAL
+            label: 正常
+            i18nEn: "Normal"
+          - value: ABNORMAL
+            label: 异常
+            i18nEn: "Abnormal"
+          - value: PARTIAL
+            label: 部分完成
+            i18nEn: "Partial Complete"
         - type: textarea
           name: remarkValue
           label: 备注/建议
           value: ${visitData?.remark ?? ""}
           placeholder: 录入维护备注或建议
+          i18nEn:
+            label: "Remark / Suggestion"
+            placeholder: "Enter maintenance remarks or suggestions"
         - type: button
           label: 保存结果
+          i18nEn: "Save Result"
           level: primary
           actionType: ajax
           action: ajax
@@ -150,12 +172,14 @@ body:
                 remark: ${wizardData.result.remarkValue ?? visitData?.remark}
   - key: complete
     title: 4. 确认完成
+    i18nEn: "4. Confirm Completion"
     body:
     - type: container
       className: bg-white border rounded p-3 m-b
       body:
       - type: text
         text: 确认完成将翻转状态为 COMPLETED 并恢复设备状态为运行中。
+        i18nEn: "Confirming completion will flip the status to COMPLETED and restore equipment status to Running."
         className: text-muted m-b
       - type: button
         label: 确认完成
@@ -168,6 +192,9 @@ body:
           data:
             visitId: ${visitId}
         confirmText: 确认完成？状态将翻转为 COMPLETED，设备恢复运行中。
+        i18nEn:
+          label: "Confirm Completion"
+          confirmText: "Confirm completion? Status will flip to COMPLETED and equipment will resume Running."
         target: visitData
       - type: button
         label: 取消访问
@@ -180,4 +207,7 @@ body:
           data:
             visitId: ${visitId}
         confirmText: 确认取消？状态将翻转为 CANCELLED（终态），不可撤销。
+        i18nEn:
+          label: "Cancel Visit"
+          confirmText: "Confirm cancellation? Status will flip to CANCELLED (terminal state) and cannot be undone."
         target: visitData

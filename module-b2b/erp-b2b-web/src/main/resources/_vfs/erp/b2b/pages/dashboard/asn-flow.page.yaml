@@ -5,11 +5,15 @@
 type: page
 title: "ASN 流程跟踪"
 remark: "提前发货通知（ErpB2bAsn）列表 + 流程条跟踪。三活跃阶段 RECEIVED→MATCHED→RECEIVED_TO_STOCK + CANCELLED 终态。"
+i18nEn:
+  title: "ASN Flow Tracking"
+  remark: "Advance Ship Notice (ErpB2bAsn) list + flow bar tracking. Three active stages RECEIVED→MATCHED→RECEIVED_TO_STOCK + CANCELLED terminal state."
 body:
   - type: form
     name: filterForm
     valuesPath: filterForm
     title: "筛选条件"
+    i18nEn: "Filter Conditions"
     mode: inline
     wrapWithPanel: false
     className: m-3
@@ -17,14 +21,24 @@ body:
       - type: select
         name: statusFilter
         label: "状态"
+        i18nEn: "Status"
         clearable: true
         options:
-          - { label: "已接收 (RECEIVED)", value: "RECEIVED" }
-          - { label: "已匹配 (MATCHED)", value: "MATCHED" }
-          - { label: "已入库 (RECEIVED_TO_STOCK)", value: "RECEIVED_TO_STOCK" }
-          - { label: "已取消 (CANCELLED)", value: "CANCELLED" }
+          - value: "RECEIVED"
+            label: "已接收 (RECEIVED)"
+            i18nEn: "Received (RECEIVED)"
+          - value: "MATCHED"
+            label: "已匹配 (MATCHED)"
+            i18nEn: "Matched (MATCHED)"
+          - value: "RECEIVED_TO_STOCK"
+            label: "已入库 (RECEIVED_TO_STOCK)"
+            i18nEn: "Inbound (RECEIVED_TO_STOCK)"
+          - value: "CANCELLED"
+            label: "已取消 (CANCELLED)"
+            i18nEn: "Cancelled (CANCELLED)"
       - type: button
         label: "刷新"
+        i18nEn: "Refresh"
         icon: refresh-cw
         onClick:
           action: refreshSource
@@ -46,26 +60,48 @@ body:
   - type: crud
     className: m-3
     title: "ASN 列表"
+    i18nEn: "ASN List"
     source: ${asnData?.items ?? []}
     headerToolbar: []
     footerToolbar: ["statistics"]
     syncLocation: false
     columns:
-      - { name: code, label: "ASN编号" }
-      - { name: status, label: "状态", type: tpl, tpl: '<span class="label label-${status == "RECEIVED_TO_STOCK" ? "success" : (status == "MATCHED" ? "primary" : (status == "CANCELLED" ? "default" : "warning"))}">${status}</span>' }
-      - { name: partnerId, label: "合作伙伴" }
-      - { name: shipmentDate, label: "发货日期", type: date, format: "YYYY-MM-DD" }
-      - { name: estimatedArrivalDate, label: "预计到货", type: date, format: "YYYY-MM-DD" }
-      - { name: trackingNo, label: "追踪号" }
+      - name: code
+        label: "ASN编号"
+        i18nEn: "ASN No."
+      - name: status
+        type: tpl
+        tpl: '<span class="label label-${status == "RECEIVED_TO_STOCK" ? "success" : (status == "MATCHED" ? "primary" : (status == "CANCELLED" ? "default" : "warning"))}">${status}</span>'
+        label: "状态"
+        i18nEn: "Status"
+      - name: partnerId
+        label: "合作伙伴"
+        i18nEn: "Partner"
+      - name: shipmentDate
+        type: date
+        format: "YYYY-MM-DD"
+        label: "发货日期"
+        i18nEn: "Ship Date"
+      - name: estimatedArrivalDate
+        type: date
+        format: "YYYY-MM-DD"
+        label: "预计到货"
+        i18nEn: "Estimated Arrival"
+      - name: trackingNo
+        label: "追踪号"
+        i18nEn: "Tracking No."
       - type: operation
         label: "操作"
+        i18nEn: "Actions"
         buttons:
           - type: button
             label: "查看流程"
+            i18nEn: "View Flow"
             level: primary
             actionType: dialog
             dialog:
               title: "ASN 流程详情 - ${code}"
+              i18nEn: "ASN Flow Detail - ${code}"
               size: lg
               actions: []
               body:
@@ -94,29 +130,58 @@ body:
                   tag: div
                   className: m-b
                   text: "<strong>${asnDetail?.code}</strong> · 合作伙伴: ${asnDetail?.partnerId} · 追踪号: ${asnDetail?.trackingNo || '—'} · 发货: ${asnDetail?.shipmentDate || '—'} · 预计到货: ${asnDetail?.estimatedArrivalDate || '—'}"
+                  i18nEn: "<strong>${asnDetail?.code}</strong> · Partner: ${asnDetail?.partnerId} · Tracking No.: ${asnDetail?.trackingNo || '—'} · Shipment: ${asnDetail?.shipmentDate || '—'} · Estimated Arrival: ${asnDetail?.estimatedArrivalDate || '—'}"
                 - type: text
                   tag: div
                   className: alert alert-warning
                   visibleOn: "${asnDetail?.status == 'CANCELLED'}"
                   text: "该 ASN 已取消（CANCELLED 终态），流程未完成。"
+                  i18nEn: "This ASN has been cancelled (CANCELLED terminal state); flow not completed."
                 - type: steps
                   items:
-                    - { key: "RECEIVED", label: "已接收", status: "${(asnDetail?.status === 'RECEIVED' || asnDetail?.status === 'MATCHED' || asnDetail?.status === 'RECEIVED_TO_STOCK') ? 'finish' : (asnDetail?.status === 'CANCELLED' ? 'wait' : 'process')}" }
-                    - { key: "MATCHED", label: "已匹配", status: "${(asnDetail?.status === 'MATCHED' || asnDetail?.status === 'RECEIVED_TO_STOCK') ? 'finish' : (asnDetail?.status === 'CANCELLED' ? 'wait' : (asnDetail?.status === 'RECEIVED' ? 'process' : 'wait'))}" }
-                    - { key: "RECEIVED_TO_STOCK", label: "已入库", status: "${asnDetail?.status === 'RECEIVED_TO_STOCK' ? 'finish' : 'wait'}" }
+                    - key: "RECEIVED"
+                      label: "已接收"
+                      i18nEn: "Received"
+                      status: "${(asnDetail?.status === 'RECEIVED' || asnDetail?.status === 'MATCHED' || asnDetail?.status === 'RECEIVED_TO_STOCK') ? 'finish' : (asnDetail?.status === 'CANCELLED' ? 'wait' : 'process')}"
+                    - key: "MATCHED"
+                      label: "已匹配"
+                      i18nEn: "Matched"
+                      status: "${(asnDetail?.status === 'MATCHED' || asnDetail?.status === 'RECEIVED_TO_STOCK') ? 'finish' : (asnDetail?.status === 'CANCELLED' ? 'wait' : (asnDetail?.status === 'RECEIVED' ? 'process' : 'wait'))}"
+                    - key: "RECEIVED_TO_STOCK"
+                      label: "已入库"
+                      i18nEn: "Inbound"
+                      status: "${asnDetail?.status === 'RECEIVED_TO_STOCK' ? 'finish' : 'wait'}"
                 - type: crud
                   title: "明细行匹配状态（quantity vs shippedQty）"
+                  i18nEn: "Line Match State (quantity vs shippedQty)"
                   source: ${asnLinesData?.items ?? []}
                   syncLocation: false
                   headerToolbar: []
                   footerToolbar: []
                   columns:
-                    - { name: lineNo, label: "行号" }
-                    - { name: materialId, label: "物料" }
-                    - { name: supplierPartNo, label: "供应商料号" }
-                    - { name: quantity, label: "订单数量", type: number, precision: 2 }
-                    - { name: shippedQty, label: "发货数量", type: number, precision: 2 }
+                    - name: lineNo
+                      label: "行号"
+                      i18nEn: "Line No."
+                    - name: materialId
+                      label: "物料"
+                      i18nEn: "Material"
+                    - name: supplierPartNo
+                      label: "供应商料号"
+                      i18nEn: "Supplier Part No."
+                    - name: quantity
+                      label: "订单数量"
+                      i18nEn: "Order Qty"
+                      type: number
+                      precision: 2
+                    - name: shippedQty
+                      label: "发货数量"
+                      i18nEn: "Shipped Qty"
+                      type: number
+                      precision: 2
                     - name: matchState
                       label: "匹配状态"
                       type: tpl
                       tpl: '<span class="label label-${(shippedQty >= quantity && quantity > 0) ? "success" : (shippedQty > 0 && shippedQty < quantity) ? "warning" : "default"}">${(shippedQty >= quantity && quantity > 0) ? "已发足" : (shippedQty > 0 && shippedQty < quantity) ? "部分发货" : "未发货"}</span>'
+                      i18nEn:
+                        label: "Match State"
+                        tpl: '<span class="label label-${(shippedQty >= quantity && quantity > 0) ? "success" : (shippedQty > 0 && shippedQty < quantity) ? "warning" : "default"}">${(shippedQty >= quantity && quantity > 0) ? "Shipped in Full" : (shippedQty > 0 && shippedQty < quantity) ? "Partially Shipped" : "Not Shipped"}</span>'

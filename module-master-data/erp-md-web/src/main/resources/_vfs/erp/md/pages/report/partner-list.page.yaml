@@ -4,6 +4,7 @@
 # 下载按钮保留 /p/{ErpMdReport__download} 路径（plan 2026-07-12-0413-1 已修复）。
 type: page
 title: "往来单位清单"
+i18nEn: "Partner List"
 body:
   - type: form
     name: filterForm
@@ -16,13 +17,18 @@ body:
         name: partnerType
         label: "往来单位类型"
         placeholder: "CUSTOMER=客户 / SUPPLIER=供应商（留空查全部）"
+        i18nEn:
+          label: "Business Partner Type"
+          placeholder: "CUSTOMER=Customer / SUPPLIER=Supplier (blank = all)"
       - type: button
         label: "渲染报表"
+        i18nEn: "Render Report"
         onClick:
           action: refreshSource
           targetId: reportHtmlData
       - type: button
         label: "下载 XLSX"
+        i18nEn: "Download XLSX"
         actionType: download
         api:
           url: /p/ErpMdReport__download
@@ -35,6 +41,7 @@ body:
               partnerType: "${filterForm?.partnerType}"
       - type: button
         label: "下载 PDF"
+        i18nEn: "Download PDF"
         actionType: download
         api:
           url: /p/ErpMdReport__download

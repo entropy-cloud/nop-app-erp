@@ -3,6 +3,7 @@
 # 数据源：ErpMdCostCenter__findPage（树形 parentId 支持层级）。零后端 delta。
 type: page
 title: "成本中心"
+i18nEn: "Cost Center"
 body:
   - type: data-source
     name: costCenterData
@@ -29,6 +30,7 @@ body:
                 tag: div
                 className: text-muted
                 text: "成本中心数"
+                i18nEn: "Cost Center Count"
               - type: text
                 tag: span
                 className: h3
@@ -42,6 +44,7 @@ body:
                 tag: div
                 className: text-muted
                 text: "可预算"
+                i18nEn: "Budgetable"
               - type: text
                 tag: span
                 className: h3 text-primary
@@ -55,6 +58,7 @@ body:
                 tag: div
                 className: text-muted
                 text: "活跃"
+                i18nEn: "Active"
               - type: text
                 tag: span
                 className: h3 text-success
@@ -64,19 +68,36 @@ body:
     name: costCenterCrud
     className: m-3
     title: "成本中心列表"
+    i18nEn: "Cost Center List"
     source: ${costCenterData?.items ?? []}
     syncLocation: false
     columns:
-      - { name: code, label: "编码" }
-      - { name: name, label: "名称" }
-      - { name: orgId, label: "所属组织" }
-      - { name: managerId, label: "负责人" }
-      - { name: parentId, label: "上级成本中心" }
+      - name: code
+        label: "编码"
+        i18nEn: "Code"
+      - name: name
+        label: "名称"
+        i18nEn: "Name"
+      - name: orgId
+        label: "所属组织"
+        i18nEn: "Owning Org"
+      - name: managerId
+        label: "负责人"
+        i18nEn: "Manager"
+      - name: parentId
+        label: "上级成本中心"
+        i18nEn: "Parent Cost Center"
       - name: isBudgetable
         label: "可预算"
         type: tpl
         tpl: '${isBudgetable ? "<span class=\"label label-primary\">是</span>" : "<span class=\"label label-default\">否</span>"}'
+        i18nEn:
+          label: "Budgetable"
+          tpl: '${isBudgetable ? "<span class=\"label label-primary\">Yes</span>" : "<span class=\"label label-default\">No</span>"}'
       - name: status
         label: "状态"
         type: tpl
         tpl: '${status == "ACTIVE" ? "<span class=\"label label-success\">活跃</span>" : "<span class=\"label label-default\">" + (status||"—") + "</span>"}'
+        i18nEn:
+          label: "Status"
+          tpl: '${status == "ACTIVE" ? "<span class=\"label label-success\">Active</span>" : "<span class=\"label label-default\">" + (status||"—") + "</span>"}'

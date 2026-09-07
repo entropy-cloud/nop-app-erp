@@ -3,6 +3,7 @@
 # 拖拽语义（Phase 0 Decision）：onCardMove 调用 ErpCrmLead__moveStage（LeadProcessor 守卫）。
 type: page
 title: 商机看板
+i18nEn: "Opportunity Kanban"
 body:
 - type: data-source
   name: boardData
@@ -14,6 +15,7 @@ body:
     method: post
 - type: button
   label: 刷新看板
+  i18nEn: "Refresh Kanban"
   actionType: ajax
   action: ajax
   args:
@@ -37,9 +39,9 @@ body:
     className: text-xs
   - type: status
     value: ${card.data.probability}
-    labelMap:
-      90: 高概率
-      50: 中概率
+    labelMap: {90: 高概率, 50: 中概率}
+    i18nEn:
+      labelMap: {90: High Probability, 50: Medium Probability}
     levelMap:
       90: success
       50: warning
@@ -56,3 +58,4 @@ body:
     args:
       level: info
       message: ${"点击商机 " + event.cardId}
+      i18nEn: '${"Clicked opportunity " + event.cardId}'
