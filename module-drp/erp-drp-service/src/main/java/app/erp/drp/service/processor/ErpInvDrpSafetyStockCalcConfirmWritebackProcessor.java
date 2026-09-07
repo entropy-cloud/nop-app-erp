@@ -39,7 +39,7 @@ public class ErpInvDrpSafetyStockCalcConfirmWritebackProcessor {
         ErpInvDrpSafetyStockCalc calc = dao().getEntityById(calcId);
         if (calc == null) {
             throw new NopException(ErpDrpErrors.ERR_DRP_SS_METHOD_UNSUPPORTED)
-                    .param(ErpDrpErrors.ARG_METHOD, "安全库存计算记录不存在: " + calcId);
+                    .param(ErpDrpErrors.ARG_METHOD, "RECORD_NOT_FOUND: " + calcId);
         }
         return calc;
     }

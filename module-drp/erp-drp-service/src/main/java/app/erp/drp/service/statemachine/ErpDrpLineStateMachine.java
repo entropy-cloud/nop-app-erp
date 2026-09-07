@@ -67,7 +67,7 @@ public class ErpDrpLineStateMachine {
      */
     public void assertCanCancel(String status) {
         if (isTerminal(status)) {
-            throw illegal("cancel", status, "非终态(SUGGESTED/APPROVED)");
+            throw illegal("cancel", status, "!SUGGESTED / APPROVED");
         }
     }
 

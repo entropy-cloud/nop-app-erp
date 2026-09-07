@@ -209,7 +209,7 @@ public class SafetyStockEngine {
                 : calc.getCalculatedSafetyStock();
         if (value == null) {
             throw new NopException(ErpDrpErrors.ERR_DRP_SS_METHOD_UNSUPPORTED)
-                    .param(ErpDrpErrors.ARG_METHOD, "无计算结果，请先 calculate");
+                    .param(ErpDrpErrors.ARG_METHOD, "NO_CALC_RESULT_RUN_CALCULATE_FIRST");
         }
         ErpDrpParameter param = findParameter(calc.getMaterialId(), calc.getWarehouseId(), calc.getOrgId());
         if (param == null) {
@@ -378,12 +378,12 @@ public class SafetyStockEngine {
     private ErpInvDrpSafetyStockCalc requireCalc(String calcId) {
         if (calcId == null) {
             throw new NopException(ErpDrpErrors.ERR_DRP_SS_METHOD_UNSUPPORTED)
-                    .param(ErpDrpErrors.ARG_METHOD, "calcId 为空");
+                    .param(ErpDrpErrors.ARG_METHOD, "CALC_ID_REQUIRED");
         }
         ErpInvDrpSafetyStockCalc calc = daoProvider.daoFor(ErpInvDrpSafetyStockCalc.class).getEntityById(calcId);
         if (calc == null) {
             throw new NopException(ErpDrpErrors.ERR_DRP_SS_METHOD_UNSUPPORTED)
-                    .param(ErpDrpErrors.ARG_METHOD, "安全库存计算记录不存在: " + calcId);
+                    .param(ErpDrpErrors.ARG_METHOD, "RECORD_NOT_FOUND: " + calcId);
         }
         return calc;
     }

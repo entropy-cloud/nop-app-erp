@@ -155,7 +155,7 @@ public class ErpInvDrpCrossDockProcessor {
         assertXdockEnabled();
         if (Objects.equals(dock.getStatus(), ErpDrpConstants.XDOCK_STATUS_COMPLETED)
                 || Objects.equals(dock.getStatus(), ErpDrpConstants.XDOCK_STATUS_CANCELLED)) {
-            throw illegalTransition(dock, "非终态（PENDING/STAGING/MATCHED）");
+            throw illegalTransition(dock, "!PENDING / STAGING / MATCHED");
         }
         doCancel(dock, context);
         return dock;
@@ -413,7 +413,7 @@ public class ErpInvDrpCrossDockProcessor {
         }
         throw new NopException(ErpDrpErrors.ERR_DRP_XDOCK_ILLEGAL_TRANSITION)
                 .param(ErpDrpErrors.ARG_XDOCK_CODE, dock.getCode())
-                .param(ErpDrpErrors.ARG_EXPECTED_STATUS, "暂存库位或入站移动单缺失，无法解析出站源仓库");
+                .param(ErpDrpErrors.ARG_EXPECTED_STATUS, "STAGING_OR_INBOUND_MOVE_MISSING");
     }
 
     protected String resolveMaterialUomId(String materialId) {
@@ -467,13 +467,13 @@ public class ErpInvDrpCrossDockProcessor {
         if (id == null) {
             throw new NopException(ErpDrpErrors.ERR_DRP_XDOCK_ILLEGAL_TRANSITION)
                     .param(ErpDrpErrors.ARG_XDOCK_ID, id)
-                    .param(ErpDrpErrors.ARG_EXPECTED_STATUS, "id 非空");
+                    .param(ErpDrpErrors.ARG_EXPECTED_STATUS, "ID_REQUIRED");
         }
         ErpInvDrpCrossDock dock = dockDao().getEntityById(id);
         if (dock == null) {
             throw new NopException(ErpDrpErrors.ERR_DRP_XDOCK_ILLEGAL_TRANSITION)
                     .param(ErpDrpErrors.ARG_XDOCK_ID, id)
-                    .param(ErpDrpErrors.ARG_EXPECTED_STATUS, "越库记录不存在");
+                    .param(ErpDrpErrors.ARG_EXPECTED_STATUS, "XDOCK_RECORD_NOT_FOUND");
         }
         return dock;
     }
