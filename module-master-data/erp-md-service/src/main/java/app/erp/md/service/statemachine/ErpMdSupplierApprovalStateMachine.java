@@ -53,7 +53,7 @@ public class ErpMdSupplierApprovalStateMachine {
      */
     public void assertCanApply(String status) {
         if (status != null && !ErpMdConstants.APPROVAL_STATUS_REJECTED.equals(status)) {
-            throw illegal("apply", status, "null 或 REJECTED");
+            throw illegal("apply", status, "null / REJECTED");
         }
     }
 

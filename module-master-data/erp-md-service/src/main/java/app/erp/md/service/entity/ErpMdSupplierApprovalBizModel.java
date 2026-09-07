@@ -108,7 +108,7 @@ public class ErpMdSupplierApprovalBizModel extends AbstractErpCrudBizModel<ErpMd
         try {
             stateMachine.assertCanApply(status);
         } catch (NopException e) {
-            throw illegalTransition(approval, "空 或 REJECTED", e);
+            throw illegalTransition(approval, "null / REJECTED", e);
         }
         approval.setStatus(stateMachine.applyTargetStatus());
         updateEntity(approval, null, context);
@@ -123,7 +123,7 @@ public class ErpMdSupplierApprovalBizModel extends AbstractErpCrudBizModel<ErpMd
         try {
             stateMachine.assertCanApprove(status);
         } catch (NopException e) {
-            throw illegalTransition(approval, "APPLIED 或 PROBATION", e);
+            throw illegalTransition(approval, "APPLIED / PROBATION", e);
         }
         requireQualificationValid(approval);
         approval.setStatus(stateMachine.approveTargetStatus());
