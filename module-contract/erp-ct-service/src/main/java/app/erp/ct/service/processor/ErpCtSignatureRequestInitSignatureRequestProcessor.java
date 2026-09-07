@@ -26,7 +26,7 @@ public class ErpCtSignatureRequestInitSignatureRequestProcessor extends Abstract
         if (!enabled) {
             throw new NopException(ErpCtErrors.ERR_CT_SIGNATURE_INIT_FAILED)
                     .param(ErpCtErrors.ARG_PROVIDER_CODE, providerCode)
-                    .param("errorMsg", "erp-ct.e-signature-enabled=false，未启用电子签章（走线下签署）");
+                    .param("errorMsg", "e-signature disabled (erp-ct.e-signature-enabled=false, offline signing)");
         }
 
         ErpCtContractVersion version = contractVersionBiz.get(contractVersionId, false, context);
