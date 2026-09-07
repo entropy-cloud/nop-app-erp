@@ -136,7 +136,7 @@ public class TestErpFinApDocumentPipeline extends JunitAutoTestCase {
         assertEquals("MANUAL_REVIEW", doc.get("status"), "低置信应挂人工队列");
         assertNull(doc.get("invoiceId"), "人工门内不得生成草稿（AP-1）");
         assertEquals(0, new BigDecimal("0.3000").compareTo(new BigDecimal(String.valueOf(doc.get("confidence")))));
-        assertTrue(String.valueOf(doc.get("errorMsg")).contains("人工复核"));
+        assertTrue(String.valueOf(doc.get("errorMsg")).contains("manual review"));
         assertTrue(logSteps(docId).contains("MANUAL_REVIEW"), "人工门应落轨迹");
 
         // 人工放行：显式补充对应方

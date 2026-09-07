@@ -26,7 +26,7 @@
     "docStatus_label": "ACTIVE-已生效",
     "approveStatus": "UNSUBMITTED",
     "approveStatus_label": "UNSUBMITTED-未提交",
-    "remark": "无有效服务权益",
+    "remark": "no active service entitlement",
     "catalogItemId": null,
     "delVersion": 0,
     "version": 2,
