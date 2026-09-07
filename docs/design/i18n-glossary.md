@@ -118,6 +118,88 @@
 | 项目结算 | Project Settlement | projects 项目结算单（结算=Settle 既有） |
 | 工时明细 | Timesheet Detail | projects 工时明细报表（工时=Timesheet 沿 view.xml） |
 
+### 批 2/2 其余 17 域（plan 2026-09-07-1715-2，2026-09-08）
+
+> 登记义务同批 1：本批 17 域 82 文件 CAT-4 清剿引入的新业务术语逐词落账；通用 UI 词（刷新=Refresh、开始/结束日期=Start/End Date、筛选=Filter、渲染报表=Render Report、下载 XLSX/PDF、操作=Actions、金额=Amount、负责人=Responsible Person/Manager、留空=全部→blank = all 等）为本批统一口径，一并登记。
+
+| 中文 | English | 语义边界 |
+|----|---------|--------|
+| 维护访问 | Maintenance Visit | maintenance 维护访问单/执行向导主实体面 |
+| 维护访问执行向导 | Maintenance Visit Execution Wizard | maintenance F12 向导页 |
+| 备件消耗 | Spare Part Consumption | maintenance 备件消耗面（记录=Spare Part Usage Records） |
+| 设备联动 | Equipment Linkage | maintenance __start 设备状态联动 |
+| 维护概览 | Maintenance Overview | maintenance 看板 |
+| 设备 OEE | Equipment OEE (Availability × Performance × Quality) | 可用率×性能×质量 |
+| 停机 | Downtime | 停机统计/预警（停机统计表=Downtime Summary Report） |
+| 客服 | Agent | cs 客服坐席（客服绩效看板=Customer Service Performance Dashboard） |
+| 工单（cs 域） | Ticket | cs 客服工单（区别于制造 Work Order） |
+| 看板 | Kanban | cs/CRM 看板视图 |
+| 分派 | Assign | cs 工单分派（处理人=Assignee） |
+| SLA 超时 | SLA Breached | cs SLA 违约面（达标率=Compliance Rate） |
+| 质检 | Quality Inspection (QC) | quality 检验面（本期质检数=Inspections This Period） |
+| 合格率 | Pass Rate | quality 合格率/趋势 |
+| 不合格品处置 | Non-Conforming Product Disposal | quality NCR 处置单 |
+| 让步接收 | Concession Acceptance | quality 处置决定（退货=Return/报废=Scrap） |
+| 过程能力 | Process Capability | quality SPC 能力分析（充足/尚可/不足=Excellent/Adequate/Inadequate） |
+| 控制图 | Control Chart | quality SPC 图（失控=Out of Control） |
+| 子组 | Subgroup | quality SPC 采样子组（子组号=Subgroup No.） |
+| 极差 | Range | quality SPC 统计量（均值=Mean/标准差=Std Dev） |
+| 缺陷率 | Defect Rate | quality SPC p 图 |
+| 请假 | Leave | hr 请假面（年假/事假/病假/婚假/产假/丧假=Annual/Personal/Sick/Marriage/Maternity/Funeral Leave） |
+| 团队假期日历 | Team Vacation Calendar | hr 部门联合休假日历 |
+| 调休 | Comp Time Off | hr 休假类型 |
+| 组织架构图 | Org Chart | hr 部门树可视化 |
+| 薪酬审批 | Payroll Approval | hr 薪酬发放审批看板 |
+| 应发/实发 | Gross / Net Pay | hr 薪酬列（社保=Social Insurance/个税=Income Tax） |
+| 标记已发放 | Mark Paid | hr 发放动作（已发放/待发放=Paid/Pending） |
+| 三单匹配 | Three-Way Match | purchase 订单-入库-发票匹配（价格差异=Price Variance） |
+| 到货及时率 | On-Time Arrival Rate | purchase KPI |
+| 应付超期 | AP Overdue | purchase/finance 预警（账龄=Aging） |
+| 多级展开 | Multi-Level Explosion | manufacturing BOM 展开树 |
+| 工序 | Operation | manufacturing 工艺工序（区别 cs 记录语境） |
+| 齐套 | Kit-Complete | manufacturing 齐套待产 |
+| 负荷 | Load | manufacturing CRP 负荷（产能=Capacity/负荷工时=Load Hours） |
+| 完工 | Completion | manufacturing 完工量/入库（本期完工量=Completed Qty This Period） |
+| 委外 | Subcontract | manufacturing 委外面 |
+| 库存概览 | Inventory Overview | inventory 看板（库存总值=Total Inventory Value/周转率=Turnover Rate） |
+| 安全库存 | Safety Stock | inventory 缺料预警面 |
+| 滞销 | Slow-Moving | inventory 滞销库存预警 |
+| 盘点 | Stock Take | inventory 盘点三阶段流程（盘盈/盘亏=Gain/Loss） |
+| 批次 | Batch | inventory 批次/效期（到期日=Expiry Date） |
+| 所有权的转移 | Ownership Transfer | inventory 库存所有权转移 |
+| 提前发货通知 | Advance Ship Notice (ASN) | b2b ASN 全称 |
+| 报文 | Payload | b2b EDI 报文（请求/响应=Request/Response Payload） |
+| 已发足 | Shipped in Full | b2b 行匹配状态（部分发货=Partially Shipped） |
+| 确认（时间线） | Acknowledged | b2b EDI 997 确认 |
+| 合作伙伴 | Partner | b2b 交易伙伴（追踪号=Tracking No.） |
+| 资产盘点 | Asset Stocktake | assets 盘点单面（盘盈/盘亏=Surplus/Deficit） |
+| 处置向导 | Disposal Wizard | assets 处置流程（出售/报废/捐赠/毁损=Sale/Scrap/Donation/Damage） |
+| 累计折旧 | Accumulated Depreciation | assets 折旧面（折旧额=Depreciation Amount） |
+| 清理损益 | Disposal P&L | assets 处置清理（收益/损失=Gain/Loss，账面净值=Net Book Value） |
+| 在建工程 | CIP | assets 在建工程余额（缩写沿 414 基准） |
+| 活动日历 | Activity Calendar | crm 活动日历（时间线=Activity Timeline） |
+| 商机看板 | Opportunity Kanban | crm 商机阶段看板（阶段=Stage/赢单=Win） |
+| 线索转化 | Lead Conversion | crm 转化向导（转化=Convert） |
+| 转化漏斗 | Conversion Funnel | crm 漏斗报表（归因=Attribution） |
+| 成交概率 | Win Probability | crm 看板泳道（高/中概率=High/Medium Probability） |
+| 跟进 | Follow-up | crm 活动类型（通话/邮件/会议=Call/Email/Meeting） |
+| 主数据概览 | Master Data Overview | master-data 看板 |
+| 往来单位检索 | Partner Search | master-data 联合检索 picker |
+| 物料价目表 | Material Price List | master-data 报表（往来单位清单=Partner List） |
+| 版本对比 | Version Diff | contract 合同版本对比页 |
+| 并排对比 | Side-by-Side Diff | contract 双栏比对（已变更/一致=Changed/Unchanged） |
+| 收件箱 | Inbox | notify 我的通知页（已读/未读=Read/Unread） |
+| 全部标记已读 | Mark All Read | notify 批量动作（站内=In-App/渠道=Channel） |
+| 净需求 | Net Requirement | drp 净需求分解报表（建议补货量=Suggested Replenishment Qty） |
+| 补货 | Replenishment | drp 补货类型（采购/调拨=Purchase/Transfer） |
+| 销售概览 | Sales Overview | sales 看板（销售额=Sales Amount） |
+| 订单→开票转化率 | Order-to-Invoice Conversion Rate | sales KPI |
+| 应收超期 | AR Overdue | sales 预警（回款面沿 view.xml 既有） |
+| 排产甘特图 | Schedule Gantt | aps 排产甘特（排程=Schedule/工序条=Operation Bar） |
+| 已计划/进行中 | Planned / In Progress | aps/跨域状态色标 |
+| 发运追踪 | Shipment Tracking | logistics 追踪时间线（在途=In Transit/超期未送达=Overdue） |
+| 签收 | Delivered | logistics 终态事件 |
+
 ## 维护
 
 - 新增业务页面用到本表未收录的中文 label 时，**先扩充本表**，再用一致译法补 `i18n-en:`。
