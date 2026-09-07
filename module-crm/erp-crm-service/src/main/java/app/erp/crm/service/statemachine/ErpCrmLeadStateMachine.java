@@ -84,7 +84,7 @@ public class ErpCrmLeadStateMachine {
      */
     public void assertCanConvert(String docStatus) {
         if (ErpCrmConstants.DOC_STATUS_CONVERTED.equals(docStatus)) {
-            throw illegal("convert", docStatus, "非 " + ErpCrmConstants.DOC_STATUS_CONVERTED);
+            throw illegal("convert", docStatus, "!" + ErpCrmConstants.DOC_STATUS_CONVERTED);
         }
     }
 

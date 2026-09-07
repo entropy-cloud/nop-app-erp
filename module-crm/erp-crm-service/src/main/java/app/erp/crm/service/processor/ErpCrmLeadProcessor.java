@@ -88,7 +88,7 @@ public class ErpCrmLeadProcessor {
         String status = currentStatus(lead);
         if (!Objects.equals(status, ErpCrmConstants.DOC_STATUS_NEW)
                 && !Objects.equals(status, ErpCrmConstants.DOC_STATUS_QUALIFIED)) {
-            throw illegalTransition(lead, status, "NEW 或 QUALIFIED");
+            throw illegalTransition(lead, status, "NEW / QUALIFIED");
         }
     }
 
