@@ -229,7 +229,7 @@ public class ErpCsReportBizModel {
                         : null;
                 Map<String, Object> r = new LinkedHashMap<>();
                 r.put("ticketTypeId", a.ticketTypeId);
-                r.put("ticketTypeName", typeNames.getOrDefault(a.ticketTypeId, a.ticketTypeId == null ? "(全部)" : ""));
+                r.put("ticketTypeName", typeNames.getOrDefault(a.ticketTypeId, a.ticketTypeId == null ? "(all)" : ""));
                 r.put("totalTickets", a.totalTickets);
                 r.put("slaCompletedCount", a.slaCompletedCount);
                 r.put("slaBreachedCount", a.slaBreachedCount);

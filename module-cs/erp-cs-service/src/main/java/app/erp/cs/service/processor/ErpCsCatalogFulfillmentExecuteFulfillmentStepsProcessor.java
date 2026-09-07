@@ -219,14 +219,14 @@ public class ErpCsCatalogFulfillmentExecuteFulfillmentStepsProcessor {
     protected String executeStep(ErpCsTicketFulfillmentStep step, ErpCsTicket ticket, IServiceContext context) {
         String actionType = step.getActionType();
         if (actionType == null) {
-            markSkipped(step, ticket, "SKIPPED: 未知 actionType(null)", context);
+            markSkipped(step, ticket, "SKIPPED: unknown actionType(null)", context);
             return ErpCsConstants.FULFILLMENT_RESULT_SKIPPED;
         }
         Map<String, Object> config = parseActionConfig(step.getActionConfig());
         switch (actionType) {
             case ErpCsConstants.FULFILLMENT_ACTION_CREATE_TICKET:
                 // 工单已由 createFromCatalog 创建，保留 DONE 审计语义（主单已建）
-                markDone(step, ticket, "DONE: 工单已建", context);
+                markDone(step, ticket, "DONE: ticket created", context);
                 return ErpCsConstants.FULFILLMENT_RESULT_DONE;
             case ErpCsConstants.FULFILLMENT_ACTION_ASSIGN_TEAM:
             case ErpCsConstants.FULFILLMENT_ACTION_ASSIGN_AGENT:
@@ -241,14 +241,14 @@ public class ErpCsCatalogFulfillmentExecuteFulfillmentStepsProcessor {
                 return executeUpdateStatus(step, ticket, config, context);
             case ErpCsConstants.FULFILLMENT_ACTION_CLOSE_TICKET:
                 // L1 UC-CS-12 ② 未枚举值：维持审计 DONE 占位（arm-index P1-RC-061 done 注记边界）
-                markDone(step, ticket, "DONE: 关闭动作已登记（L1 未枚举，审计占位）", context);
+                markDone(step, ticket, "DONE: close action recorded (L1 not enumerated, audit placeholder)", context);
                 return ErpCsConstants.FULFILLMENT_RESULT_DONE;
             case ErpCsConstants.FULFILLMENT_ACTION_INVOKE_WORKFLOW:
                 // L1 UC-CS-12 ② 未枚举值：nop-workflow 集成 successor（plan Deferred 注记）
-                markSkipped(step, ticket, "SKIPPED: INVOKE_WORKFLOW 归 successor（nop-workflow 集成）", context);
+                markSkipped(step, ticket, "SKIPPED: INVOKE_WORKFLOW deferred to successor (nop-workflow integration)", context);
                 return ErpCsConstants.FULFILLMENT_RESULT_SKIPPED;
             default:
-                markSkipped(step, ticket, "SKIPPED: 未知 actionType " + actionType, context);
+                markSkipped(step, ticket, "SKIPPED: unknown actionType " + actionType, context);
                 return ErpCsConstants.FULFILLMENT_RESULT_SKIPPED;
         }
     }
@@ -269,14 +269,14 @@ public class ErpCsCatalogFulfillmentExecuteFulfillmentStepsProcessor {
         ErpCsTeam team = TicketAssignResolver.resolveTeam(attached, typeDefault);
         List<String> pool = ticketAssignResolver.resolveCandidatePool(team, context);
         if (pool.isEmpty()) {
-            markFailed(step, ticket, "分配失败：无可用处理人（候选池为空"
-                    + roleNote(step) + "）", context);
+            markFailed(step, ticket, "assign failed: no available assignee (candidate pool empty"
+                    + roleNote(step) + ")", context);
             return ErpCsConstants.FULFILLMENT_RESULT_FAILED;
         }
         String assignee = ticketAssignResolver.pickAssignee(method, pool,
                 findLastAssigned(pool, context), countOpenTickets(pool, context));
         if (assignee == null) {
-            markFailed(step, ticket, "分配失败：算法未选出处理人（mode=" + method + "）", context);
+            markFailed(step, ticket, "assign failed: algorithm selected no assignee (mode=" + method + ")", context);
             return ErpCsConstants.FULFILLMENT_RESULT_FAILED;
         }
         String from = ticket.getStatus();
@@ -289,7 +289,7 @@ public class ErpCsCatalogFulfillmentExecuteFulfillmentStepsProcessor {
         }
         ticketBiz.updateEntity(ticket, null, context);
         writeAudit(ticket, step.getActionType(), from, toStatus,
-                "DONE: 履行步骤分配处理人 " + assignee + "（mode=" + method + "）", context);
+                "DONE: fulfillment step assigned " + assignee + " (mode=" + method + ")", context);
         markStepDone(step, context);
         return ErpCsConstants.FULFILLMENT_RESULT_DONE;
     }
@@ -309,7 +309,7 @@ public class ErpCsCatalogFulfillmentExecuteFulfillmentStepsProcessor {
         step.setExecutedAt(CoreMetrics.currentTimestamp());
         step.setExecutedBy(operatorId(ticket, context));
         writeAudit(ticket, step.getActionType(), null, null,
-                "IN_PROGRESS: 审批请求已发起（审批人角色: " + approverRole + "）", context);
+                "IN_PROGRESS: approval request initiated (approver role: " + approverRole + ")", context);
         notifyApprovalRequest(step, ticket, approverRole, context);
         return ErpCsConstants.FULFILLMENT_RESULT_IN_PROGRESS;
     }
@@ -322,7 +322,7 @@ public class ErpCsCatalogFulfillmentExecuteFulfillmentStepsProcessor {
     protected String executeCreateChildTicket(ErpCsTicketFulfillmentStep step, ErpCsTicket ticket,
                                               Map<String, Object> config, IServiceContext context) {
         Map<String, Object> data = new LinkedHashMap<>();
-        data.put("subject", "[子工单] " + ticket.getSubject());
+        data.put("subject", "[sub-ticket] " + ticket.getSubject());
         data.put("customerId", ticket.getCustomerId());
         data.put("ticketTypeId", ticket.getTicketTypeId());
         data.put("priority", ticket.getPriority());
@@ -335,7 +335,7 @@ public class ErpCsCatalogFulfillmentExecuteFulfillmentStepsProcessor {
         }
         ErpCsTicket child = ticketBiz.save(data, context);
         writeAudit(ticket, step.getActionType(), null, null,
-                "DONE: 子工单已创建: " + child.getCode(), context);
+                "DONE: sub-ticket created: " + child.getCode(), context);
         markStepDone(step, context);
         return ErpCsConstants.FULFILLMENT_RESULT_DONE;
     }
@@ -357,7 +357,7 @@ public class ErpCsCatalogFulfillmentExecuteFulfillmentStepsProcessor {
             LOG.warn("fulfillment-notify-customer dispatch failed (degraded, chain continues): ticketId={}, reason={}",
                     ticket.getId(), e.getMessage());
         }
-        writeAudit(ticket, step.getActionType(), null, null, "DONE: 客户通知已派发", context);
+        writeAudit(ticket, step.getActionType(), null, null, "DONE: customer notification dispatched", context);
         markStepDone(step, context);
         return ErpCsConstants.FULFILLMENT_RESULT_DONE;
     }
@@ -370,29 +370,29 @@ public class ErpCsCatalogFulfillmentExecuteFulfillmentStepsProcessor {
     protected String executeUpdateStatus(ErpCsTicketFulfillmentStep step, ErpCsTicket ticket,
                                          Map<String, Object> config, IServiceContext context) {
         if (isBlankConfig(step.getActionConfig())) {
-            markFailed(step, ticket, "配置错误：UPDATE_STATUS 缺少 actionConfig（须含 status）", context);
+            markFailed(step, ticket, "config error: UPDATE_STATUS missing actionConfig (must contain status)", context);
             return ErpCsConstants.FULFILLMENT_RESULT_FAILED;
         }
         String target = configValue(config, "status");
         if (StringHelper.isEmpty(target)) {
-            markFailed(step, ticket, "配置错误：UPDATE_STATUS actionConfig 缺少 status", context);
+            markFailed(step, ticket, "config error: UPDATE_STATUS actionConfig missing status", context);
             return ErpCsConstants.FULFILLMENT_RESULT_FAILED;
         }
         String from = ticket.getStatus();
         if (target.equals(from)) {
-            writeAudit(ticket, step.getActionType(), from, target, "DONE: 状态已为 " + target + "（幂等 no-op）", context);
+            writeAudit(ticket, step.getActionType(), from, target, "DONE: status already " + target + " (idempotent no-op)", context);
             markStepDone(step, context);
             return ErpCsConstants.FULFILLMENT_RESULT_DONE;
         }
         String action = transitionAction(from, target);
         if (action == null) {
-            markFailed(step, ticket, "非法状态迁移: " + from + " → " + target, context);
+            markFailed(step, ticket, "illegal transition: " + from + " -> " + target, context);
             return ErpCsConstants.FULFILLMENT_RESULT_FAILED;
         }
         ticket.setStatus(target);
         ticketBiz.updateEntity(ticket, null, context);
         writeAudit(ticket, step.getActionType(), from, target,
-                "DONE: 状态迁移 " + from + " → " + target + "（" + action + " 边）", context);
+                "DONE: transition " + from + " -> " + target + " (" + action + " edge)", context);
         markStepDone(step, context);
         return ErpCsConstants.FULFILLMENT_RESULT_DONE;
     }
@@ -416,16 +416,16 @@ public class ErpCsCatalogFulfillmentExecuteFulfillmentStepsProcessor {
             step.setStatus(ErpCsConstants.FULFILLMENT_STEP_DONE);
             touchExecuted(step, ticket, context);
             writeAudit(ticket, step.getActionType(), null, null,
-                    "DONE: 审批通过" + (StringHelper.isEmpty(comment) ? "" : ": " + comment), context);
+                    "DONE: approval passed" + (StringHelper.isEmpty(comment) ? "" : ": " + comment), context);
             continueChain(step.getTicketId(), context);
         } else {
             step.setStatus(ErpCsConstants.FULFILLMENT_STEP_FAILED);
             step.setRetryCount(ErpCsConfigs.getFulfillmentRetryMax());
-            step.setLastError(truncate("审批驳回: " + (StringHelper.isEmpty(comment) ? "" : comment)));
+            step.setLastError(truncate("approval rejected: " + (StringHelper.isEmpty(comment) ? "" : comment)));
             touchExecuted(step, ticket, context);
             writeAudit(ticket, step.getActionType(), null, null,
-                    "FAILED: 审批驳回" + (StringHelper.isEmpty(comment) ? "" : ": " + comment)
-                            + "（retryCount 置 max，阻断自动重试）", context);
+                    "FAILED: approval rejected" + (StringHelper.isEmpty(comment) ? "" : ": " + comment)
+                            + " (retryCount set to max, auto-retry blocked)", context);
         }
         return step;
     }
@@ -444,7 +444,7 @@ public class ErpCsCatalogFulfillmentExecuteFulfillmentStepsProcessor {
                 continue;
             }
             if (step.getRetryCount() != null && step.getRetryCount() >= retryMax) {
-                notifyStepFailedRequireNew(step, ticket, "重试次数已达上限（" + retryMax + "），须人工介入", context);
+                notifyStepFailedRequireNew(step, ticket, "retry limit reached (" + retryMax + "), manual intervention required", context);
                 throw new NopException(ErpCsErrors.ERR_CS_FULFILLMENT_RETRY_EXCEEDED)
                         .param(ErpCsErrors.ARG_STEP_ID, step.getId())
                         .param(ErpCsErrors.ARG_ACTION_TYPE, step.getActionType())
@@ -477,7 +477,7 @@ public class ErpCsCatalogFulfillmentExecuteFulfillmentStepsProcessor {
                 continue;
             }
             if (step.getRetryCount() != null && step.getRetryCount() >= retryMax) {
-                notifyStepFailed(step, ticket, "重试次数已达上限（" + retryMax + "），须人工介入", context);
+                notifyStepFailed(step, ticket, "retry limit reached (" + retryMax + "), manual intervention required", context);
                 continue;
             }
             retried++;
@@ -544,7 +544,7 @@ public class ErpCsCatalogFulfillmentExecuteFulfillmentStepsProcessor {
             step.setStatus(ErpCsConstants.FULFILLMENT_STEP_DONE);
             touchExecuted(step, ticket, context);
             writeAudit(ticket, step.getActionType(), null, null,
-                    "DONE: 超时自动审批（超过 " + approvalTimeoutHours(step) + " 小时）", context);
+                    "DONE: timeout auto-approval (over " + approvalTimeoutHours(step) + " hours)", context);
             continueChain(step.getTicketId(), context);
             count++;
         }
@@ -588,7 +588,7 @@ public class ErpCsCatalogFulfillmentExecuteFulfillmentStepsProcessor {
             stateMachine.assertCanAssign(from);
             ticket.setStatus(stateMachine.assignTargetStatus());
             writeAudit(ticket, ErpCsConstants.ACTION_TYPE_ASSIGN, from, stateMachine.assignTargetStatus(),
-                    "履行链自动指派: " + ticket.getAssignedToId(), context);
+                    "fulfillment chain auto-assign: " + ticket.getAssignedToId(), context);
             from = stateMachine.assignTargetStatus();
         }
         stateMachine.assertCanStart(from);
@@ -597,7 +597,7 @@ public class ErpCsCatalogFulfillmentExecuteFulfillmentStepsProcessor {
             ticket.setStartDateTime(CoreMetrics.currentTimestamp());
         }
         writeAudit(ticket, ErpCsConstants.ACTION_TYPE_NOTE, from, stateMachine.startTargetStatus(),
-                "履行链推进开始处理", context);
+                "fulfillment chain start processing", context);
         ticketBiz.updateEntity(ticket, null, context);
     }
 
@@ -623,7 +623,7 @@ public class ErpCsCatalogFulfillmentExecuteFulfillmentStepsProcessor {
         step.setLastError(truncate(error));
         touchExecuted(step, ticket, context);
         writeAudit(ticket, step.getActionType(), null, null,
-                "FAILED: " + (error == null ? "未知错误" : error), context);
+                "FAILED: " + (error == null ? "unknown error" : error), context);
         notifyStepFailed(step, ticket, error, context);
     }
 

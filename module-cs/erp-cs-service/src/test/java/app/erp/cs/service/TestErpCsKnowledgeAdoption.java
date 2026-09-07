@@ -85,7 +85,7 @@ public class TestErpCsKnowledgeAdoption extends JunitAutoTestCase {
 
         // adopt 审计（先写入）+ resolve 审计（NOTE 标记解决）双行齐备
         assertEquals("knowledgeBaseId=" + kbId, findAction(ticketId, ErpCsConstants.ACTION_TYPE_ADOPT_KNOWLEDGE).getContent());
-        assertNotNull(findActionContentContains(ticketId, ErpCsConstants.ACTION_TYPE_NOTE, "标记解决"),
+        assertNotNull(findActionContentContains(ticketId, ErpCsConstants.ACTION_TYPE_NOTE, "mark resolved"),
                 "resolve 审计行应存在（委托既有 resolve 路径）");
 
         // survey 触发链（config on 默认）：resolve → ErpCsSurvey 落库

@@ -1,10 +1,10 @@
 _chgType,ID,TICKET_ID,ACTION_TYPE,FROM_STATUS,TO_STATUS,OPERATOR_ID,CONTENT,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
-A,10,9473,NOTE,ASSIGNED,IN_PROGRESS,autotest,履行链推进开始处理,0,0,autotest-ref,*,autotest-ref,*
-A,11,9473,UPDATE_STATUS,,,autotest,FAILED: 非法状态迁移: IN_PROGRESS → CLOSED,0,0,autotest-ref,*,autotest-ref,*
-A,12,9473,UPDATE_STATUS,IN_PROGRESS,RESOLVED,autotest,DONE: 状态迁移 IN_PROGRESS → RESOLVED（resolve 边）,0,0,autotest-ref,*,autotest-ref,*
-A,3,9472,REQUEST_APPROVAL,,,autotest,IN_PROGRESS: 审批请求已发起（审批人角色: 客服主管）,0,0,autotest-ref,*,autotest-ref,*
-A,4,9472,REQUEST_APPROVAL,,,autotest,DONE: 审批通过: RPC 冒烟,0,0,autotest-ref,*,autotest-ref,*
-A,5,9472,ASSIGN,NEW,ASSIGNED,autotest,履行链自动指派: autotest,0,0,autotest-ref,*,autotest-ref,*
-A,6,9472,NOTE,ASSIGNED,IN_PROGRESS,autotest,履行链推进开始处理,0,0,autotest-ref,*,autotest-ref,*
-A,7,9472,NOTIFY_CUSTOMER,,,autotest,DONE: 客户通知已派发,0,0,autotest-ref,*,autotest-ref,*
-A,9,9473,ASSIGN,NEW,ASSIGNED,autotest,履行链自动指派: autotest,0,0,autotest-ref,*,autotest-ref,*
+A,10,9473,NOTE,ASSIGNED,IN_PROGRESS,autotest,fulfillment chain start processing,0,0,autotest-ref,*,autotest-ref,*
+A,11,9473,UPDATE_STATUS,,,autotest,FAILED: illegal transition: IN_PROGRESS -> CLOSED,0,0,autotest-ref,*,autotest-ref,*
+A,12,9473,UPDATE_STATUS,IN_PROGRESS,RESOLVED,autotest,DONE: transition IN_PROGRESS -> RESOLVED (resolve edge),0,0,autotest-ref,*,autotest-ref,*
+A,3,9472,REQUEST_APPROVAL,,,autotest,IN_PROGRESS: approval request initiated (approver role: 客服主管),0,0,autotest-ref,*,autotest-ref,*
+A,4,9472,REQUEST_APPROVAL,,,autotest,DONE: approval passed: RPC 冒烟,0,0,autotest-ref,*,autotest-ref,*
+A,5,9472,ASSIGN,NEW,ASSIGNED,autotest,fulfillment chain auto-assign: autotest,0,0,autotest-ref,*,autotest-ref,*
+A,6,9472,NOTE,ASSIGNED,IN_PROGRESS,autotest,fulfillment chain start processing,0,0,autotest-ref,*,autotest-ref,*
+A,7,9472,NOTIFY_CUSTOMER,,,autotest,DONE: customer notification dispatched,0,0,autotest-ref,*,autotest-ref,*
+A,9,9473,ASSIGN,NEW,ASSIGNED,autotest,fulfillment chain auto-assign: autotest,0,0,autotest-ref,*,autotest-ref,*

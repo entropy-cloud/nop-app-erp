@@ -174,7 +174,7 @@ public class ErpCsQualityDashboardBizModel {
                         : null;
                 Map<String, Object> r = new LinkedHashMap<>();
                 r.put("teamId", a.teamId);
-                r.put("teamName", a.teamId == null ? "(未分派)" : teamNames.getOrDefault(a.teamId, ""));
+                r.put("teamName", a.teamId == null ? "(unassigned)" : teamNames.getOrDefault(a.teamId, ""));
                 r.put("totalTickets", a.totalTickets);
                 r.put("slaCompletedCount", a.slaCompleted);
                 r.put("slaCompletionRate", slaRate);

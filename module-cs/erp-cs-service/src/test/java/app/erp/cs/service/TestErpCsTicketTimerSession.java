@@ -338,7 +338,7 @@ public class TestErpCsTicketTimerSession extends JunitAutoTestCase {
                 args("timeEntryId", rejected, "rejectReason", "时长与工单记录不符")).getStatus(), "reject 成功");
         ErpCsTimeEntry rejectedEntry = reloadEntry(rejected);
         assertEquals(ErpCsConstants.TIME_ENTRY_APPROVE_REJECTED, rejectedEntry.getApprovalStatus(), "驳回");
-        assertTrue(rejectedEntry.getDescription().startsWith("[驳回] 时长与工单记录不符;"),
+        assertTrue(rejectedEntry.getDescription().startsWith("[REJECTED] 时长与工单记录不符;"),
                 "驳回原因追加 description 前缀（plan D4）");
         ormTemplate.runInSession(() -> {
             ErpCsTimeEntry managed = daoProvider.daoFor(ErpCsTimeEntry.class).getEntityById(rejected);

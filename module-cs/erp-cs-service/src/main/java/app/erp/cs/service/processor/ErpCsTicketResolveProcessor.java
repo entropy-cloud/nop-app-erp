@@ -73,7 +73,7 @@ public class ErpCsTicketResolveProcessor {
         }
         dao().updateEntity(ticket);
         writeAction(ticket, ErpCsConstants.ACTION_TYPE_NOTE, from, stateMachine.resolveTargetStatus(),
-                "标记解决: " + (resolution == null ? "" : resolution), context);
+                "mark resolved: " + (resolution == null ? "" : resolution), context);
 
         // CSAT 触发（config-gated）：trigger-status 默认 RESOLVED
         if (ErpCsConfigs.isSurveyEnabled()

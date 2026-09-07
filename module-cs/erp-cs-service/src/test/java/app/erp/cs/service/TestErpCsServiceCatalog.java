@@ -333,7 +333,7 @@ public class TestErpCsServiceCatalog extends JunitAutoTestCase {
                 "INVOKE_WORKFLOW 步骤 SKIPPED（L1 未枚举，nop-workflow successor）");
         assertEquals(ErpCsConstants.FULFILLMENT_STEP_FAILED, stepStatus(steps, 3),
                 "ASSIGN_TEAM 无成员池 → FAILED（真实分配语义）");
-        assertTrue(stepLastError(steps, 3) != null && stepLastError(steps, 3).contains("分配失败"),
+        assertTrue(stepLastError(steps, 3) != null && stepLastError(steps, 3).contains("assign failed"),
                 "FAILED 步骤 lastError 记录错误信息");
         assertEquals(ErpCsConstants.FULFILLMENT_STEP_PENDING, stepStatus(steps, 4),
                 "失败暂停：后续 NOTIFY_CUSTOMER 保持 PENDING");

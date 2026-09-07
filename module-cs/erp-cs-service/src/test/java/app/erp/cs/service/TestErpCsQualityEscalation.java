@@ -105,7 +105,7 @@ public class TestErpCsQualityEscalation extends JunitAutoTestCase {
         assertEquals(ErpCsConstants.NCR_SOURCE_TYPE_CS_TICKET, data.get("sourceType"));
         assertEquals("TK-QA-OK", data.get("sourceCode"));
         assertEquals(MATERIAL_ID, data.get("materialId"));
-        assertEquals("屏幕出现坏点；批次：B20260801", data.get("description"));
+        assertEquals("屏幕出现坏点; batch: B20260801", data.get("description"));
         assertEquals(new BigDecimal("5"), data.get("quantity"));
         assertEquals("NORMAL", data.get("severity"));
         assertEquals("OPEN", data.get("status"));

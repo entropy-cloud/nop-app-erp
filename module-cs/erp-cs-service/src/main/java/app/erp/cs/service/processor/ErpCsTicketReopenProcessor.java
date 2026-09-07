@@ -47,7 +47,7 @@ public class ErpCsTicketReopenProcessor {
         // 恢复计时：保留原 startDateTime（duration 在下次 resolve 时累加重算，因 startDateTime 不变）
         dao().updateEntity(ticket);
         writeAction(ticket, ErpCsConstants.ACTION_TYPE_NOTE, from, stateMachine.reopenTargetStatus(),
-                "驳回重开", context);
+                "reopen rejected", context);
 
         // reopen 时取消未响应的调查（避免误发）
         cancelUnrespondedSurvey(ticketId, context);

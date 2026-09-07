@@ -213,7 +213,7 @@ public class TestErpCsCatalogFulfillmentEngine extends JunitAutoTestCase {
         ErpCsTicketFulfillmentStep reloaded = reloadStep(step1.getId());
         assertEquals(ErpCsConstants.FULFILLMENT_STEP_FAILED, reloaded.getStatus(), "驳回 → FAILED");
         assertEquals(3, reloaded.getRetryCount().intValue(), "retryCount 置 max（默认 3，阻断自动重试链）");
-        assertTrue(reloaded.getLastError().contains("审批驳回"), "lastError 含驳回标识");
+        assertTrue(reloaded.getLastError().contains("approval rejected"), "lastError 含驳回标识");
         assertTrue(reloaded.getLastError().contains("方案不通过，请补充材料"), "lastError 含驳回意见");
     }
 
@@ -271,7 +271,7 @@ public class TestErpCsCatalogFulfillmentEngine extends JunitAutoTestCase {
         assertEquals(0, rb.getStatus(), "mutation 本身成功（步骤级失败不抛出）: " + rb);
         ErpCsTicketFulfillmentStep stepB1 = stepBySeq(ticketB, 1);
         assertEquals(ErpCsConstants.FULFILLMENT_STEP_FAILED, stepB1.getStatus(), "非法迁移 → FAILED");
-        assertTrue(stepB1.getLastError().contains("非法状态迁移"), "lastError 含非法迁移描述");
+        assertTrue(stepB1.getLastError().contains("illegal transition"), "lastError 含非法迁移描述");
         assertEquals(ErpCsConstants.FULFILLMENT_STEP_PENDING, stepBySeq(ticketB, 2).getStatus(), "链中断：后续 PENDING");
 
         // c) 缺配置：UPDATE_STATUS 无 actionConfig → FAILED 配置错误
@@ -283,7 +283,7 @@ public class TestErpCsCatalogFulfillmentEngine extends JunitAutoTestCase {
                 Map.of("catalogItemId", itemC, "ticketId", ticketC));
         ErpCsTicketFulfillmentStep stepC1 = stepBySeq(ticketC, 1);
         assertEquals(ErpCsConstants.FULFILLMENT_STEP_FAILED, stepC1.getStatus(), "缺配置 → FAILED");
-        assertTrue(stepC1.getLastError().contains("配置错误"), "lastError 含配置错误描述");
+        assertTrue(stepC1.getLastError().contains("config error"), "lastError 含配置错误描述");
     }
 
     // ---------- ⑦ CREATE_CHILD_TICKET 子单创建 + 双向弱指针 ----------
@@ -299,7 +299,7 @@ public class TestErpCsCatalogFulfillmentEngine extends JunitAutoTestCase {
                 Map.of("catalogItemId", CATALOG_ITEM_ID, "ticketId", ticketId));
         assertEquals(0, resp.getStatus(), "执行应成功: " + resp);
 
-        List<ErpCsTicket> children = daoProvider.daoFor(ErpCsTicket.class).findAllByQuery(likeSubject("[子工单] "));
+        List<ErpCsTicket> children = daoProvider.daoFor(ErpCsTicket.class).findAllByQuery(likeSubject("[sub-ticket] "));
         assertEquals(1, children.size(), "真实子工单已创建");
         ErpCsTicket child = children.get(0);
         assertEquals("parentTicketCode=TK-FUL-PARENT", child.getRemark(),
@@ -555,7 +555,7 @@ public class TestErpCsCatalogFulfillmentEngine extends JunitAutoTestCase {
         assertEquals(ErpCsConstants.FULFILLMENT_STEP_DONE, reloadStep(stepA1.getId()).getStatus(),
                 "超时（2h > timeoutHours=1）自动审批 → DONE");
         assertTrue(actionsOf(ticketA, ErpCsConstants.FULFILLMENT_ACTION_REQUEST_APPROVAL).stream()
-                        .anyMatch(a -> a.getContent() != null && a.getContent().contains("超时自动审批")),
+                        .anyMatch(a -> a.getContent() != null && a.getContent().contains("timeout auto-approval")),
                 "审计含「超时自动审批」");
         assertEquals(ErpCsConstants.FULFILLMENT_STEP_DONE, stepBySeq(ticketA, 2).getStatus(), "票 A 链恢复至末步 DONE");
         assertEquals(ErpCsConstants.TICKET_STATUS_IN_PROGRESS, reload(ticketA).getStatus(), "票 A 工单 IN_PROGRESS");

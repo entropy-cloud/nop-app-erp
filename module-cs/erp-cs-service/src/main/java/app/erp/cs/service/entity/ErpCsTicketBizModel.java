@@ -174,7 +174,7 @@ public class ErpCsTicketBizModel extends AbstractErpCrudBizModel<ErpCsTicket> im
         ticket.setStatus(stateMachine.assignTargetStatus());
         updateEntity(ticket, null, context);
         writeAction(ticket, ErpCsConstants.ACTION_TYPE_ASSIGN, from, stateMachine.assignTargetStatus(),
-                "创建自动分配处理人: " + assignee, context);
+                "auto-assign on create: " + assignee, context);
     }
 
     /** 工单类型默认策略（②建议匹配 slaPolicy 载体；自动挂载主链 team 来源——SlaPolicyMatcher 仅匹配 teamId IS NULL）。 */
@@ -238,7 +238,7 @@ public class ErpCsTicketBizModel extends AbstractErpCrudBizModel<ErpCsTicket> im
         ticket.setStatus(stateMachine.assignTargetStatus());
         updateEntity(ticket, null, context);
         writeAction(ticket, ErpCsConstants.ACTION_TYPE_ASSIGN, from, stateMachine.assignTargetStatus(),
-                "分派处理人: " + assignedToId, context);
+                "assign: " + assignedToId, context);
         return ticket;
     }
 
@@ -253,7 +253,7 @@ public class ErpCsTicketBizModel extends AbstractErpCrudBizModel<ErpCsTicket> im
         ticket.setStartDateTime(CoreMetrics.currentTimestamp());
         updateEntity(ticket, null, context);
         writeAction(ticket, ErpCsConstants.ACTION_TYPE_NOTE, from, stateMachine.startTargetStatus(),
-                "开始处理", context);
+                "start processing", context);
         return ticket;
     }
 
@@ -281,7 +281,7 @@ public class ErpCsTicketBizModel extends AbstractErpCrudBizModel<ErpCsTicket> im
         ticket.setEndDateTime(CoreMetrics.currentTimestamp());
         updateEntity(ticket, null, context);
         writeAction(ticket, ErpCsConstants.ACTION_TYPE_CLOSE, from, stateMachine.closeTargetStatus(),
-                "关闭工单", context);
+                "close ticket", context);
         return ticket;
     }
 
@@ -311,7 +311,7 @@ public class ErpCsTicketBizModel extends AbstractErpCrudBizModel<ErpCsTicket> im
         }
         updateEntity(ticket, null, context);
         writeAction(ticket, ErpCsConstants.ACTION_TYPE_CANCEL, from, stateMachine.cancelTargetStatus(),
-                "取消工单: " + (cancelReason == null ? "" : cancelReason), context);
+                "cancel ticket: " + (cancelReason == null ? "" : cancelReason), context);
         return ticket;
     }
 
@@ -336,7 +336,7 @@ public class ErpCsTicketBizModel extends AbstractErpCrudBizModel<ErpCsTicket> im
                 "knowledgeBaseId=" + knowledgeBaseId, context);
         if (Boolean.TRUE.equals(autoResolve)) {
             return resolveProcessor.resolve(ticketId,
-                    "采纳知识库文章解决: knowledgeBaseId=" + knowledgeBaseId, context);
+                    "resolved via knowledge base article: knowledgeBaseId=" + knowledgeBaseId, context);
         }
         return ticket;
     }
@@ -417,7 +417,7 @@ public class ErpCsTicketBizModel extends AbstractErpCrudBizModel<ErpCsTicket> im
         String[] statuses = {ErpCsConstants.TICKET_STATUS_NEW, ErpCsConstants.TICKET_STATUS_ASSIGNED,
                 ErpCsConstants.TICKET_STATUS_IN_PROGRESS, ErpCsConstants.TICKET_STATUS_RESOLVED,
                 ErpCsConstants.TICKET_STATUS_CLOSED, ErpCsConstants.TICKET_STATUS_CANCELLED};
-        String[] titles = {"新建", "已分派", "处理中", "已解决", "已关闭", "已取消"};
+        String[] titles = {"New", "Assigned", "In Progress", "Resolved", "Closed", "Cancelled"};
 
         Map<String, Object> board = new LinkedHashMap<>();
         List<String> rootChildren = new ArrayList<>();

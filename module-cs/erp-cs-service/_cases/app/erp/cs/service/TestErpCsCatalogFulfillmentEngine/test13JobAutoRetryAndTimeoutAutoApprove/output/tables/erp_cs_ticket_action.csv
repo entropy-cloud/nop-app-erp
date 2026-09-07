@@ -1,17 +1,17 @@
 _chgType,ID,TICKET_ID,ACTION_TYPE,FROM_STATUS,TO_STATUS,OPERATOR_ID,CONTENT,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
-A,10,9468,UPDATE_STATUS,,,autotest,FAILED: 非法状态迁移: NEW → CLOSED,0,0,autotest-ref,*,autotest-ref,*
-A,12,9469,ASSIGN,NEW,ASSIGNED,autotest,履行链自动指派: autotest,0,0,autotest-ref,*,autotest-ref,*
-A,13,9469,NOTE,ASSIGNED,IN_PROGRESS,autotest,履行链推进开始处理,0,0,autotest-ref,*,autotest-ref,*
-A,14,9469,REQUEST_APPROVAL,,,autotest,IN_PROGRESS: 审批请求已发起（审批人角色: 客服主管）,0,0,autotest-ref,*,autotest-ref,*
-A,15,9469,REQUEST_APPROVAL,,,autotest,FAILED: 审批驳回: 方案否决（retryCount 置 max，阻断自动重试）,0,0,autotest-ref,*,autotest-ref,*
-A,16,9466,REQUEST_APPROVAL,,,autotest,DONE: 超时自动审批（超过 1 小时）,0,0,autotest-ref,*,autotest-ref,*
-A,17,9466,ASSIGN,NEW,ASSIGNED,autotest,履行链自动指派: autotest,0,0,autotest-ref,*,autotest-ref,*
-A,18,9466,NOTE,ASSIGNED,IN_PROGRESS,autotest,履行链推进开始处理,0,0,autotest-ref,*,autotest-ref,*
-A,19,9466,NOTIFY_CUSTOMER,,,autotest,DONE: 客户通知已派发,0,0,autotest-ref,*,autotest-ref,*
-A,20,9468,UPDATE_STATUS,NEW,ASSIGNED,autotest,DONE: 状态迁移 NEW → ASSIGNED（assign 边）,0,0,autotest-ref,*,autotest-ref,*
-A,21,9468,NOTE,ASSIGNED,IN_PROGRESS,autotest,履行链推进开始处理,0,0,autotest-ref,*,autotest-ref,*
-A,22,9468,NOTIFY_CUSTOMER,,,autotest,DONE: 客户通知已派发,0,0,autotest-ref,*,autotest-ref,*
-A,3,9466,REQUEST_APPROVAL,,,autotest,IN_PROGRESS: 审批请求已发起（审批人角色: 客服主管）,0,0,autotest-ref,*,autotest-ref,*
-A,5,9467,ASSIGN,NEW,ASSIGNED,autotest,履行链自动指派: autotest,0,0,autotest-ref,*,autotest-ref,*
-A,6,9467,NOTE,ASSIGNED,IN_PROGRESS,autotest,履行链推进开始处理,0,0,autotest-ref,*,autotest-ref,*
-A,7,9467,REQUEST_APPROVAL,,,autotest,IN_PROGRESS: 审批请求已发起（审批人角色: 客服主管）,0,0,autotest-ref,*,autotest-ref,*
+A,10,9468,UPDATE_STATUS,,,autotest,FAILED: illegal transition: NEW -> CLOSED,0,0,autotest-ref,*,autotest-ref,*
+A,12,9469,ASSIGN,NEW,ASSIGNED,autotest,fulfillment chain auto-assign: autotest,0,0,autotest-ref,*,autotest-ref,*
+A,13,9469,NOTE,ASSIGNED,IN_PROGRESS,autotest,fulfillment chain start processing,0,0,autotest-ref,*,autotest-ref,*
+A,14,9469,REQUEST_APPROVAL,,,autotest,IN_PROGRESS: approval request initiated (approver role: 客服主管),0,0,autotest-ref,*,autotest-ref,*
+A,15,9469,REQUEST_APPROVAL,,,autotest,"FAILED: approval rejected: 方案否决 (retryCount set to max, auto-retry blocked)",0,0,autotest-ref,*,autotest-ref,*
+A,16,9466,REQUEST_APPROVAL,,,autotest,DONE: timeout auto-approval (over 1 hours),0,0,autotest-ref,*,autotest-ref,*
+A,17,9466,ASSIGN,NEW,ASSIGNED,autotest,fulfillment chain auto-assign: autotest,0,0,autotest-ref,*,autotest-ref,*
+A,18,9466,NOTE,ASSIGNED,IN_PROGRESS,autotest,fulfillment chain start processing,0,0,autotest-ref,*,autotest-ref,*
+A,19,9466,NOTIFY_CUSTOMER,,,autotest,DONE: customer notification dispatched,0,0,autotest-ref,*,autotest-ref,*
+A,20,9468,UPDATE_STATUS,NEW,ASSIGNED,autotest,DONE: transition NEW -> ASSIGNED (assign edge),0,0,autotest-ref,*,autotest-ref,*
+A,21,9468,NOTE,ASSIGNED,IN_PROGRESS,autotest,fulfillment chain start processing,0,0,autotest-ref,*,autotest-ref,*
+A,22,9468,NOTIFY_CUSTOMER,,,autotest,DONE: customer notification dispatched,0,0,autotest-ref,*,autotest-ref,*
+A,3,9466,REQUEST_APPROVAL,,,autotest,IN_PROGRESS: approval request initiated (approver role: 客服主管),0,0,autotest-ref,*,autotest-ref,*
+A,5,9467,ASSIGN,NEW,ASSIGNED,autotest,fulfillment chain auto-assign: autotest,0,0,autotest-ref,*,autotest-ref,*
+A,6,9467,NOTE,ASSIGNED,IN_PROGRESS,autotest,fulfillment chain start processing,0,0,autotest-ref,*,autotest-ref,*
+A,7,9467,REQUEST_APPROVAL,,,autotest,IN_PROGRESS: approval request initiated (approver role: 客服主管),0,0,autotest-ref,*,autotest-ref,*

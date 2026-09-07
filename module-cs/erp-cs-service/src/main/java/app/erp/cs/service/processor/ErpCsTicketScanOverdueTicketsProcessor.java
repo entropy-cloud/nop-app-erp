@@ -157,8 +157,8 @@ public class ErpCsTicketScanOverdueTicketsProcessor {
         // ESCALATE 审计 content 承载级别/次数/目标（plan D5；R1.68 质量路径须用独立 actionType 区分；
         // 目标空时无尾随空格——CSV 快照往返对尾随空白敏感）
         writeAction(ticket, ErpCsConstants.ACTION_TYPE_ESCALATE, ticket.getStatus(), ticket.getStatus(),
-                "SLA 超时升级 L" + nextLevel + "（第 " + nextCount + " 次）"
-                        + (target == null || target.isEmpty() ? "通知" : "通知 " + target), context);
+                "SLA overdue escalation L" + nextLevel + " (count " + nextCount + ")"
+                        + (target == null || target.isEmpty() ? " notify" : " notify " + target), context);
         notifyEscalation(ticket, policy, nextLevel, nextCount, target, context);
         return true;
     }

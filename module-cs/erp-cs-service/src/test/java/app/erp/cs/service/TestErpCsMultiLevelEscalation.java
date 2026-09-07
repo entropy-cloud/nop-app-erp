@@ -107,7 +107,7 @@ public class TestErpCsMultiLevelEscalation extends JunitAutoTestCase {
         assertEquals(Timestamp.valueOf(NOW), t.getLastEscalationAt(), "lastEscalationAt 落库 = 冻结 now");
         assertEquals(1, countEscalateActions(TICKET_ID), "首次扫描 1 条 ESCALATE 审计");
         ErpCsTicketAction action = lastEscalateAction(TICKET_ID);
-        assertEquals("SLA 超时升级 L1（第 1 次）通知 " + ESCALATION_USER, action.getContent(),
+        assertEquals("SLA overdue escalation L1 (count 1) notify " + ESCALATION_USER, action.getContent(),
                 "审计 content 承载级别/次数/目标（plan D5）");
         // 漂移修正断言：通知目标 = policy.escalationUserId（stringify），非 assignedToId
         ErpSysNotification n = lastNotification();
@@ -305,7 +305,7 @@ public class TestErpCsMultiLevelEscalation extends JunitAutoTestCase {
         // 新审计行 content 级别化（seq id 可能小于存量固定 id，按内容匹配而非按 id 序取尾行）
         boolean hasNewStyleContent = false;
         for (ErpCsTicketAction a : escalateActions(TICKET_ID)) {
-            if (("SLA 超时升级 L1（第 1 次）通知 " + ESCALATION_USER).equals(a.getContent())) {
+            if (("SLA overdue escalation L1 (count 1) notify " + ESCALATION_USER).equals(a.getContent())) {
                 hasNewStyleContent = true;
                 break;
             }

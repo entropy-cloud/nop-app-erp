@@ -1,4 +1,4 @@
 _chgType,ID,TICKET_ID,ACTION_TYPE,FROM_STATUS,TO_STATUS,OPERATOR_ID,CONTENT,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
-A,1,9276,NOTE,RESOLVED,IN_PROGRESS,autotest,驳回重开,0,0,autotest-ref,*,autotest-ref,*
-A,2,9286,NOTE,RESOLVED,IN_PROGRESS,autotest,驳回重开,0,0,autotest-ref,*,autotest-ref,*
-A,3,9289,NOTE,RESOLVED,IN_PROGRESS,autotest,驳回重开,0,0,autotest-ref,*,autotest-ref,*
+A,1,9276,NOTE,RESOLVED,IN_PROGRESS,autotest,reopen rejected,0,0,autotest-ref,*,autotest-ref,*
+A,2,9286,NOTE,RESOLVED,IN_PROGRESS,autotest,reopen rejected,0,0,autotest-ref,*,autotest-ref,*
+A,3,9289,NOTE,RESOLVED,IN_PROGRESS,autotest,reopen rejected,0,0,autotest-ref,*,autotest-ref,*

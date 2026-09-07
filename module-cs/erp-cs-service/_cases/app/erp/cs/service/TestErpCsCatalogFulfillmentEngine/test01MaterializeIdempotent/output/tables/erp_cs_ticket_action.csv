@@ -1,5 +1,5 @@
 _chgType,ID,TICKET_ID,ACTION_TYPE,FROM_STATUS,TO_STATUS,OPERATOR_ID,CONTENT,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
-A,3,9451,CREATE_TICKET,,,autotest,DONE: 工单已建,0,0,autotest-ref,*,autotest-ref,*
-A,4,9451,ASSIGN,NEW,ASSIGNED,autotest,履行链自动指派: autotest,0,0,autotest-ref,*,autotest-ref,*
-A,5,9451,NOTE,ASSIGNED,IN_PROGRESS,autotest,履行链推进开始处理,0,0,autotest-ref,*,autotest-ref,*
-A,6,9451,NOTIFY_CUSTOMER,,,autotest,DONE: 客户通知已派发,0,0,autotest-ref,*,autotest-ref,*
+A,3,9451,CREATE_TICKET,,,autotest,DONE: ticket created,0,0,autotest-ref,*,autotest-ref,*
+A,4,9451,ASSIGN,NEW,ASSIGNED,autotest,fulfillment chain auto-assign: autotest,0,0,autotest-ref,*,autotest-ref,*
+A,5,9451,NOTE,ASSIGNED,IN_PROGRESS,autotest,fulfillment chain start processing,0,0,autotest-ref,*,autotest-ref,*
+A,6,9451,NOTIFY_CUSTOMER,,,autotest,DONE: customer notification dispatched,0,0,autotest-ref,*,autotest-ref,*

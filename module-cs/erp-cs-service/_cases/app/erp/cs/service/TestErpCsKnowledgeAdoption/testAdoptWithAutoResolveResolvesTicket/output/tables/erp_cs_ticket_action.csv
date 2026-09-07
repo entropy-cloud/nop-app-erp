@@ -1,3 +1,3 @@
 _chgType,ID,TICKET_ID,ACTION_TYPE,FROM_STATUS,TO_STATUS,OPERATOR_ID,CONTENT,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
 A,1,8917,ADOPT_KNOWLEDGE,IN_PROGRESS,IN_PROGRESS,autotest,knowledgeBaseId=9389,0,0,autotest-ref,*,autotest-ref,*
-A,2,8917,NOTE,IN_PROGRESS,RESOLVED,autotest,标记解决: 采纳知识库文章解决: knowledgeBaseId=9389,0,0,autotest-ref,*,autotest-ref,*
+A,2,8917,NOTE,IN_PROGRESS,RESOLVED,autotest,mark resolved: resolved via knowledge base article: knowledgeBaseId=9389,0,0,autotest-ref,*,autotest-ref,*

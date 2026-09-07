@@ -1,5 +1,5 @@
 _chgType,ID,ORG_ID,TICKET_ID,FULFILLMENT_ID,CATALOG_ITEM_ID,SEQUENCE,ACTION_TYPE,ACTION_CONFIG,STATUS,RETRY_COUNT,LAST_ERROR,EXECUTED_AT,EXECUTED_BY,REMARK,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
-A,1,,9463,9421,9410,1,UPDATE_STATUS,"{""status"":""ASSIGNED""}",DONE,1,非法状态迁移: NEW → CLOSED,@var:ErpCsTicketFulfillmentStep@executedAt_1,autotest,,0,1,autotest-ref,*,autotest-ref,*
+A,1,,9463,9421,9410,1,UPDATE_STATUS,"{""status"":""ASSIGNED""}",DONE,1,illegal transition: NEW -> CLOSED,@var:ErpCsTicketFulfillmentStep@executedAt_1,autotest,,0,1,autotest-ref,*,autotest-ref,*
 A,2,,9463,9422,9410,2,NOTIFY_CUSTOMER,,DONE,0,,,,,0,1,autotest-ref,*,autotest-ref,*
 A,7,,9464,9423,9417,1,REQUEST_APPROVAL,,IN_PROGRESS,0,,@var:ErpCsTicketFulfillmentStep@executedAt_2,autotest,,0,0,autotest-ref,*,autotest-ref,*
 A,8,,9464,9424,9417,2,NOTIFY_CUSTOMER,,PENDING,0,,,,,0,0,autotest-ref,*,autotest-ref,*

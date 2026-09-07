@@ -92,7 +92,7 @@ public class ErpCsTimeEntryBizModel extends AbstractErpCrudBizModel<ErpCsTimeEnt
         entry.setApprovalStatus(ErpCsConstants.TIME_ENTRY_APPROVE_REJECTED);
         if (!StringHelper.isBlank(rejectReason)) {
             // 无独立驳回原因列：追加 description 前缀承载（plan D4，owner doc 回填注记）
-            entry.setDescription("[驳回] " + rejectReason.trim() + "; " + (entry.getDescription() == null ? "" : entry.getDescription()));
+            entry.setDescription("[REJECTED] " + rejectReason.trim() + "; " + (entry.getDescription() == null ? "" : entry.getDescription()));
         }
         entry.setApprovedById(context.getUserId());
         entry.setApprovedAt(Timestamp.valueOf(CoreMetrics.currentDateTime()));

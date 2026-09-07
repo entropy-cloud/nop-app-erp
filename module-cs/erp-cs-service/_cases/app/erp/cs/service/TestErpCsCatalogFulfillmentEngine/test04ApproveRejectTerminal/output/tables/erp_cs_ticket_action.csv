@@ -1,5 +1,5 @@
 _chgType,ID,TICKET_ID,ACTION_TYPE,FROM_STATUS,TO_STATUS,OPERATOR_ID,CONTENT,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
-A,2,9454,ASSIGN,NEW,ASSIGNED,autotest,履行链自动指派: autotest,0,0,autotest-ref,*,autotest-ref,*
-A,3,9454,NOTE,ASSIGNED,IN_PROGRESS,autotest,履行链推进开始处理,0,0,autotest-ref,*,autotest-ref,*
-A,4,9454,REQUEST_APPROVAL,,,autotest,IN_PROGRESS: 审批请求已发起（审批人角色: 客服主管）,0,0,autotest-ref,*,autotest-ref,*
-A,5,9454,REQUEST_APPROVAL,,,autotest,FAILED: 审批驳回: 方案不通过，请补充材料（retryCount 置 max，阻断自动重试）,0,0,autotest-ref,*,autotest-ref,*
+A,2,9454,ASSIGN,NEW,ASSIGNED,autotest,fulfillment chain auto-assign: autotest,0,0,autotest-ref,*,autotest-ref,*
+A,3,9454,NOTE,ASSIGNED,IN_PROGRESS,autotest,fulfillment chain start processing,0,0,autotest-ref,*,autotest-ref,*
+A,4,9454,REQUEST_APPROVAL,,,autotest,IN_PROGRESS: approval request initiated (approver role: 客服主管),0,0,autotest-ref,*,autotest-ref,*
+A,5,9454,REQUEST_APPROVAL,,,autotest,"FAILED: approval rejected: 方案不通过，请补充材料 (retryCount set to max, auto-retry blocked)",0,0,autotest-ref,*,autotest-ref,*

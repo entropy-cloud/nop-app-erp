@@ -85,7 +85,7 @@ public class ErpCsTicketMatchAndAttachSlaProcessor {
             }
             // 放行：标记"无服务权益"（写 remark 仅在为空时，避免覆盖既有备注）
             if (ticket.getRemark() == null || ticket.getRemark().isEmpty()) {
-                ticket.setRemark("无有效服务权益");
+                ticket.setRemark("no active service entitlement");
             }
             return null;
         }

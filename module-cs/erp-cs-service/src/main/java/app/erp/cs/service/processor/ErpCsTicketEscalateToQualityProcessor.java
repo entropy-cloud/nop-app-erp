@@ -170,7 +170,7 @@ public class ErpCsTicketEscalateToQualityProcessor {
         data.put("materialId", materialId);
         String description = defectDescription;
         if (!StringHelper.isBlank(batchInfo)) {
-            description = description + "；批次：" + batchInfo.trim();
+            description = description + "; batch: " + batchInfo.trim();
         }
         data.put("description", description);
         if (quantity != null) {

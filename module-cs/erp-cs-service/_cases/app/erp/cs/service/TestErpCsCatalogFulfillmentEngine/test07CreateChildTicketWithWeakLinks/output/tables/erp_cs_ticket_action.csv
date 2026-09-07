@@ -1,4 +1,4 @@
 _chgType,ID,TICKET_ID,ACTION_TYPE,FROM_STATUS,TO_STATUS,OPERATOR_ID,CONTENT,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
-A,2,9459,ASSIGN,NEW,ASSIGNED,autotest,履行链自动指派: autotest,0,0,autotest-ref,*,autotest-ref,*
-A,3,9459,NOTE,ASSIGNED,IN_PROGRESS,autotest,履行链推进开始处理,0,0,autotest-ref,*,autotest-ref,*
-A,5,9459,CREATE_CHILD_TICKET,,,autotest,DONE: 子工单已创建: TK2026070001,0,0,autotest-ref,*,autotest-ref,*
+A,2,9459,ASSIGN,NEW,ASSIGNED,autotest,fulfillment chain auto-assign: autotest,0,0,autotest-ref,*,autotest-ref,*
+A,3,9459,NOTE,ASSIGNED,IN_PROGRESS,autotest,fulfillment chain start processing,0,0,autotest-ref,*,autotest-ref,*
+A,5,9459,CREATE_CHILD_TICKET,,,autotest,DONE: sub-ticket created: TK2026070001,0,0,autotest-ref,*,autotest-ref,*
