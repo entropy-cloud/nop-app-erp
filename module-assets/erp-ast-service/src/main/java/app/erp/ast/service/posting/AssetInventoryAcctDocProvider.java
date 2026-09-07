@@ -62,12 +62,12 @@ public class AssetInventoryAcctDocProvider implements IErpFinAcctDocProvider {
 
         List<VoucherFact> facts = new ArrayList<>(4);
         if (surplus.signum() > 0) {
-            facts.add(fact(fixedAssetSubject, "固定资产", DC_DEBIT, surplus, event, ACCOUNT_KEY_FIXED_ASSET));
-            facts.add(fact(nonOpIncomeSubject, "营业外收入", DC_CREDIT, surplus, event, ACCOUNT_KEY_NON_OPERATING_INCOME));
+            facts.add(fact(fixedAssetSubject, null, DC_DEBIT, surplus, event, ACCOUNT_KEY_FIXED_ASSET));
+            facts.add(fact(nonOpIncomeSubject, null, DC_CREDIT, surplus, event, ACCOUNT_KEY_NON_OPERATING_INCOME));
         }
         if (shortage.signum() > 0) {
-            facts.add(fact(nonOpExpenseSubject, "营业外支出", DC_DEBIT, shortage, event, ACCOUNT_KEY_NON_OPERATING_EXPENSE));
-            facts.add(fact(fixedAssetSubject, "固定资产", DC_CREDIT, shortage, event, ACCOUNT_KEY_FIXED_ASSET));
+            facts.add(fact(nonOpExpenseSubject, null, DC_DEBIT, shortage, event, ACCOUNT_KEY_NON_OPERATING_EXPENSE));
+            facts.add(fact(fixedAssetSubject, null, DC_CREDIT, shortage, event, ACCOUNT_KEY_FIXED_ASSET));
         }
         return facts;
     }
@@ -76,6 +76,7 @@ public class AssetInventoryAcctDocProvider implements IErpFinAcctDocProvider {
                              PostingEvent event, String accountKey) {
         VoucherFact fact = new VoucherFact();
         fact.setSubjectCode(subjectCode);
+        // subjectName=null 时由 ErpFinPostingProcessor#resolveSubjects 回填 master-data 字典科目名
         fact.setSubjectName(subjectName);
         fact.setDcDirection(dcDirection);
         fact.setAmount(amount);

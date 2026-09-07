@@ -67,14 +67,14 @@ public class ValueAdjustmentAcctDocProvider implements IErpFinAcctDocProvider {
 
         List<VoucherFact> facts = new ArrayList<>(2);
         if (Objects.equals(adjustmentType, ErpAstConstants.ADJUSTMENT_TYPE_IMPAIRMENT)) {
-            facts.add(fact(impairmentLossSubject, "资产减值损失", DC_DEBIT, amount, event, ACCOUNT_KEY_IMPAIRMENT_LOSS));
-            facts.add(fact(impairmentProvisionSubject, "固定资产减值准备", DC_CREDIT, amount, event, ACCOUNT_KEY_IMPAIRMENT_PROVISION));
+            facts.add(fact(impairmentLossSubject, null, DC_DEBIT, amount, event, ACCOUNT_KEY_IMPAIRMENT_LOSS));
+            facts.add(fact(impairmentProvisionSubject, null, DC_CREDIT, amount, event, ACCOUNT_KEY_IMPAIRMENT_PROVISION));
         } else if (Objects.equals(adjustmentType, ErpAstConstants.ADJUSTMENT_TYPE_REVALUATION_UP)) {
-            facts.add(fact(fixedAssetSubject, "固定资产", DC_DEBIT, amount, event, ACCOUNT_KEY_FIXED_ASSET));
-            facts.add(fact(capitalReserveSubject, "资本公积-其他资本公积", DC_CREDIT, amount, event, ACCOUNT_KEY_CAPITAL_RESERVE));
+            facts.add(fact(fixedAssetSubject, null, DC_DEBIT, amount, event, ACCOUNT_KEY_FIXED_ASSET));
+            facts.add(fact(capitalReserveSubject, null, DC_CREDIT, amount, event, ACCOUNT_KEY_CAPITAL_RESERVE));
         } else if (Objects.equals(adjustmentType, ErpAstConstants.ADJUSTMENT_TYPE_REVALUATION_DOWN)) {
-            facts.add(fact(impairmentLossSubject, "资产减值损失", DC_DEBIT, amount, event, ACCOUNT_KEY_IMPAIRMENT_LOSS));
-            facts.add(fact(fixedAssetSubject, "固定资产", DC_CREDIT, amount, event, ACCOUNT_KEY_FIXED_ASSET));
+            facts.add(fact(impairmentLossSubject, null, DC_DEBIT, amount, event, ACCOUNT_KEY_IMPAIRMENT_LOSS));
+            facts.add(fact(fixedAssetSubject, null, DC_CREDIT, amount, event, ACCOUNT_KEY_FIXED_ASSET));
         }
         return facts;
     }
@@ -83,6 +83,7 @@ public class ValueAdjustmentAcctDocProvider implements IErpFinAcctDocProvider {
                              PostingEvent event, String accountKey) {
         VoucherFact fact = new VoucherFact();
         fact.setSubjectCode(subjectCode);
+        // subjectName=null 时由 ErpFinPostingProcessor#resolveSubjects 回填 master-data 字典科目名
         fact.setSubjectName(subjectName);
         fact.setDcDirection(dcDirection);
         fact.setAmount(amount);

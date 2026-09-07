@@ -381,7 +381,7 @@ public class ErpAstMergeProcessor {
         IEntityDao<ErpAstAsset> dao = daoProvider.daoFor(ErpAstAsset.class);
         ErpAstAsset target = dao.newEntity();
         target.setCode(generateTargetCode(merge));
-        target.setName(merge.getCode() + "-合并目标");
+        target.setName(merge.getCode() + "-merge-target");
         target.setOrgId(merge.getOrgId());
         target.setCategoryId(first.getCategoryId());
         target.setAcquisitionDate(acquisitionDate);

@@ -61,17 +61,17 @@ public class CapitalizationAcctDocProvider implements IErpFinAcctDocProvider {
         String creditAccountKey;
         if (Objects.equals(sourceType, ErpAstConstants.SOURCE_TYPE_CIP)) {
             creditSubject = readCode(event, ErpAstConstants.BILL_DATA_CREDIT_SUBJECT_CODE, SUBJECT_CIP);
-            creditName = "在建工程";
+            creditName = null; // 字典回归：置空由过账引擎回填 master-data 科目名
             creditAccountKey = ACCOUNT_KEY_CIP;
         } else {
             // DIRECT_PURCHASE → 银行存款/应付账款（基线取银行存款）
             creditSubject = readCode(event, ErpAstConstants.BILL_DATA_CREDIT_SUBJECT_CODE, SUBJECT_BANK_DEPOSIT);
-            creditName = "银行存款";
+            creditName = null; // 字典回归：同上
             creditAccountKey = ACCOUNT_KEY_BANK_DEPOSIT;
         }
 
         List<VoucherFact> facts = new ArrayList<>(2);
-        facts.add(fact(fixedAssetSubject, "固定资产", DC_DEBIT, amount, event, ACCOUNT_KEY_FIXED_ASSET));
+        facts.add(fact(fixedAssetSubject, null, DC_DEBIT, amount, event, ACCOUNT_KEY_FIXED_ASSET));
         facts.add(fact(creditSubject, creditName, DC_CREDIT, amount, event, creditAccountKey));
         return facts;
     }
@@ -80,6 +80,7 @@ public class CapitalizationAcctDocProvider implements IErpFinAcctDocProvider {
                              PostingEvent event, String accountKey) {
         VoucherFact fact = new VoucherFact();
         fact.setSubjectCode(subjectCode);
+        // subjectName=null 时由 ErpFinPostingProcessor#resolveSubjects 回填 master-data 字典科目名
         fact.setSubjectName(subjectName);
         fact.setDcDirection(dcDirection);
         fact.setAmount(amount);

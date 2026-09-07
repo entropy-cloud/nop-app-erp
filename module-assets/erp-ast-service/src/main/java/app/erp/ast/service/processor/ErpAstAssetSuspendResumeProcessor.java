@@ -51,7 +51,7 @@ public class ErpAstAssetSuspendResumeProcessor {
         assetDao().saveOrUpdateEntity(asset);
         auditRecorder.record(asset, ErpAstDaoConstants.AUDIT_EVENT_TYPE_STATUS_CHANGE,
                 new ErpAstAssetAuditRecorder.Before(fromStatus, asset.getDepartmentId(), asset.getLocationId(), asset.getEmployeeId()),
-                null, null, "资产闲置（suspend）");
+                null, null, "Asset suspended (suspend)");
         return asset;
     }
 
@@ -67,7 +67,7 @@ public class ErpAstAssetSuspendResumeProcessor {
         assetDao().saveOrUpdateEntity(asset);
         auditRecorder.record(asset, ErpAstDaoConstants.AUDIT_EVENT_TYPE_STATUS_CHANGE,
                 new ErpAstAssetAuditRecorder.Before(fromStatus, asset.getDepartmentId(), asset.getLocationId(), asset.getEmployeeId()),
-                null, null, "资产恢复使用（resume）");
+                null, null, "Asset resumed (resume)");
         return asset;
     }
 

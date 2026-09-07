@@ -125,7 +125,7 @@ public class ErpAstDisposalProcessor {
         daoProvider.daoFor(ErpAstAsset.class).saveOrUpdateEntity(asset);
         auditRecorder.record(asset, ErpAstDaoConstants.AUDIT_EVENT_TYPE_DISPOSAL,
                 new ErpAstAssetAuditRecorder.Before(fromStatus, asset.getDepartmentId(), asset.getLocationId(), asset.getEmployeeId()),
-                "ErpAstDisposal", disposal.getId(), "资产处置（" + disposal.getDisposalType() + "）");
+                "ErpAstDisposal", disposal.getId(), "Asset disposal (" + disposal.getDisposalType() + ")");
 
         cancelPendingSchedules(asset.getId());
 
@@ -187,7 +187,7 @@ public class ErpAstDisposalProcessor {
                 daoProvider.daoFor(ErpAstAsset.class).saveOrUpdateEntity(asset);
                 auditRecorder.record(asset, ErpAstDaoConstants.AUDIT_EVENT_TYPE_STATUS_CHANGE,
                         new ErpAstAssetAuditRecorder.Before(fromStatus, asset.getDepartmentId(), asset.getLocationId(), asset.getEmployeeId()),
-                        "ErpAstDisposal", disposal.getId(), "处置冲销恢复资产状态");
+                        "ErpAstDisposal", disposal.getId(), "Disposal reversal restores asset status");
             }
             restoreCancelledSchedules(disposal.getAssetId());
             // RC-R1.77：冲销对称恢复与资产恢复同分支（仅 posted==TRUE），防「设备 RUNNING / 资产 SCRAPPED」分叉；

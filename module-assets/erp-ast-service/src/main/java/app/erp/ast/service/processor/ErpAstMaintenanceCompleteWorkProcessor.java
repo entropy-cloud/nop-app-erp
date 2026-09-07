@@ -39,7 +39,7 @@ public class ErpAstMaintenanceCompleteWorkProcessor {
         if (m.getAsset() != null) {
             auditRecorder.record(m.getAsset(), ErpAstDaoConstants.AUDIT_EVENT_TYPE_MAINTENANCE,
                     ErpAstAssetAuditRecorder.Before.of(m.getAsset()),
-                    "ErpAstMaintenance", m.getId(), "维修完工（" + m.getCode() + "）");
+                    "ErpAstMaintenance", m.getId(), "Maintenance completed (" + m.getCode() + ")");
         }
         return m;
     }

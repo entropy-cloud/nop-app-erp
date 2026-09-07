@@ -50,11 +50,11 @@ public class DepreciationAcctDocProvider implements IErpFinAcctDocProvider {
         // RC-R1.52 方式B 补提标注（L1 UC-AST-07「补提凭证标注所属期间(审计)」）：CATCHUP_PERIODS 键存在时
         // 凭证行 memo 记「补提 {periods}」（VoucherFact.memo → ErpFinVoucherLine.memo，审计可追溯）。
         String catchUpPeriods = readCode(event, ErpAstConstants.BILL_DATA_CATCHUP_PERIODS, null);
-        String memo = catchUpPeriods != null ? "补提折旧(" + catchUpPeriods + ")" : null;
+        String memo = catchUpPeriods != null ? "catch-up depreciation(" + catchUpPeriods + ")" : null;
 
         List<VoucherFact> facts = new ArrayList<>(2);
-        facts.add(fact(expenseSubject, "折旧费用", DC_DEBIT, amount, event, ACCOUNT_KEY_DEPRECIATION_EXPENSE, memo));
-        facts.add(fact(accumSubject, "累计折旧", DC_CREDIT, amount, event, ACCOUNT_KEY_ACCUMULATED_DEPRECIATION, memo));
+        facts.add(fact(expenseSubject, null, DC_DEBIT, amount, event, ACCOUNT_KEY_DEPRECIATION_EXPENSE, memo));
+        facts.add(fact(accumSubject, null, DC_CREDIT, amount, event, ACCOUNT_KEY_ACCUMULATED_DEPRECIATION, memo));
         return facts;
     }
 
@@ -62,6 +62,7 @@ public class DepreciationAcctDocProvider implements IErpFinAcctDocProvider {
                              PostingEvent event, String accountKey, String memo) {
         VoucherFact fact = new VoucherFact();
         fact.setSubjectCode(subjectCode);
+        // subjectName=null 时由 ErpFinPostingProcessor#resolveSubjects 回填 master-data 字典科目名
         fact.setSubjectName(subjectName);
         fact.setDcDirection(dcDirection);
         fact.setAmount(amount);

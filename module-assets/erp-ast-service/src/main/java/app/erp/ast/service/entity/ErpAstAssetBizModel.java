@@ -142,7 +142,7 @@ public class ErpAstAssetBizModel extends AbstractErpCrudBizModel<ErpAstAsset> im
                 orm().flushSession();
             }
             auditRecorder.record(entity, ErpAstDaoConstants.AUDIT_EVENT_TYPE_CREATE, null,
-                    null, null, "资产创建");
+                    null, null, "Asset created");
         }
     }
 
@@ -159,17 +159,17 @@ public class ErpAstAssetBizModel extends AbstractErpCrudBizModel<ErpAstAsset> im
 
         if (changed(oldValues, "status")) {
             auditRecorder.record(asset, ErpAstDaoConstants.AUDIT_EVENT_TYPE_STATUS_CHANGE, before,
-                    null, null, "资产状态变更（CRUD 更新）：" + oldValues.get("status") + " → " + asset.getStatus());
+                    null, null, "Asset status change (CRUD update): " + oldValues.get("status") + " -> " + asset.getStatus());
         }
         if (changed(oldValues, "departmentId") || changed(oldValues, "locationId") || changed(oldValues, "employeeId")) {
             auditRecorder.record(asset, ErpAstDaoConstants.AUDIT_EVENT_TYPE_TRANSFER, before,
-                    null, null, "资产归属变更（部门/地点/使用人）");
+                    null, null, "Asset ownership change (department/location/user)");
         }
         if (changed(oldValues, "currentValue")) {
             BigDecimal from = toBigDecimal(oldValues.get("currentValue"));
             BigDecimal to = asset.getCurrentValue() == null ? BigDecimal.ZERO : asset.getCurrentValue();
             auditRecorder.record(asset, ErpAstDaoConstants.AUDIT_EVENT_TYPE_VALUATION, before,
-                    null, null, "资产价值调整：" + from + " → " + to);
+                    null, null, "Asset value adjustment: " + from + " -> " + to);
         }
         List<String> updatedFields = new ArrayList<>();
         for (String prop : UPDATE_AUDITED_FIELDS) {
@@ -179,7 +179,7 @@ public class ErpAstAssetBizModel extends AbstractErpCrudBizModel<ErpAstAsset> im
         }
         if (!updatedFields.isEmpty()) {
             auditRecorder.record(asset, ErpAstDaoConstants.AUDIT_EVENT_TYPE_UPDATE, before,
-                    null, null, "资产信息更新（变更字段：" + String.join(", ", updatedFields) + "）");
+                    null, null, "Asset info updated (changed fields: " + String.join(", ", updatedFields) + ")");
         }
     }
 

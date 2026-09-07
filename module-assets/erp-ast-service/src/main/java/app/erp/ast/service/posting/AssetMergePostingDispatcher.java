@@ -84,7 +84,7 @@ public class AssetMergePostingDispatcher {
             totalOriginal = totalOriginal.add(nz(src.getOriginalValue()));
         }
         List<Map<String, Object>> debitLines = new ArrayList<>();
-        debitLines.add(lineMap(debitSubject, "固定资产", totalOriginal,
+        debitLines.add(lineMap(debitSubject, null, totalOriginal,
                 target != null ? target.getCode() : merge.getCode()));
 
         // 贷方明细：按源资产各自类别 subjectId 拆 N 行
@@ -93,7 +93,7 @@ public class AssetMergePostingDispatcher {
             ErpAstAsset src = sources.get(i);
             ErpAstAssetCategory category = loadCategory(src.getCategoryId());
             String subjectCode = resolveSubjectCode(category != null ? category.getSubjectId() : null, "1601");
-            creditLines.add(lineMap(subjectCode, "固定资产", nz(src.getOriginalValue()), src.getCode()));
+            creditLines.add(lineMap(subjectCode, null, nz(src.getOriginalValue()), src.getCode()));
         }
 
         Map<String, Object> billData = new LinkedHashMap<>();

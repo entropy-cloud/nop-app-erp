@@ -378,7 +378,7 @@ public class ErpAstInventoryProcessor {
         if (line.getAssetNameSnapshot() != null && !line.getAssetNameSnapshot().trim().isEmpty()) {
             return line.getAssetNameSnapshot();
         }
-        return "盘盈资产-" + line.getLineNo();
+        return "Surplus asset-" + line.getLineNo();
     }
 
     protected IEntityDao<ErpAstInventory> inventoryDao() {

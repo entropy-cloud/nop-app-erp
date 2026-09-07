@@ -152,7 +152,7 @@ public class ErpAstCipProcessor {
         cap.setDocStatus(ErpAstConstants.DOC_STATUS_DRAFT);
         cap.setApproveStatus(ErpAstConstants.APPROVE_STATUS_UNSUBMITTED);
         cap.setBusinessDate(transferDate != null ? transferDate : CoreMetrics.today());
-        cap.setRemark("CIP转固:行[" + lineNos + "]");
+        cap.setRemark("CIP capitalization: lines[" + lineNos + "]");
         dao.saveEntity(cap);
         orm().flushSession();
         return cap;

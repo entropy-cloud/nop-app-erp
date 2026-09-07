@@ -81,7 +81,7 @@ public class AssetSplitPostingDispatcher {
             String categoryId = line.getCategoryId() != null ? line.getCategoryId() : source.getCategoryId();
             ErpAstAssetCategory category = loadCategory(categoryId);
             String subjectCode = resolveSubjectCode(category != null ? category.getSubjectId() : null, "1601");
-            debitLines.add(lineMap(subjectCode, "固定资产", nz(line.getOriginalCostAmount()),
+            debitLines.add(lineMap(subjectCode, null, nz(line.getOriginalCostAmount()),
                     target != null ? target.getCode() : line.getTargetAssetCode()));
         }
 
@@ -91,7 +91,7 @@ public class AssetSplitPostingDispatcher {
                 sourceCategory != null ? sourceCategory.getSubjectId() : null, "1601");
         BigDecimal sourceOriginal = nz(source.getOriginalValue());
         List<Map<String, Object>> creditLines = new ArrayList<>();
-        creditLines.add(lineMap(creditSubject, "固定资产", sourceOriginal, source.getCode()));
+        creditLines.add(lineMap(creditSubject, null, sourceOriginal, source.getCode()));
 
         Map<String, Object> billData = new LinkedHashMap<>();
         billData.put(ErpAstConstants.BILL_DATA_DEBIT_LINES, debitLines);

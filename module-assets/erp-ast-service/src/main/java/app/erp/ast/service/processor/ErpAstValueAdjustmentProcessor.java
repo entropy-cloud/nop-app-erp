@@ -277,7 +277,7 @@ public class ErpAstValueAdjustmentProcessor {
         auditRecorder.record(asset, ErpAstDaoConstants.AUDIT_EVENT_TYPE_VALUATION,
                 new ErpAstAssetAuditRecorder.Before(asset.getStatus(), asset.getDepartmentId(), asset.getLocationId(), asset.getEmployeeId()),
                 "ErpAstValueAdjustment", adjustment.getId(),
-                "价值调整（" + type + " " + amount + "）：" + nz(fromValue) + " → " + newNbv);
+                "Value adjustment (" + type + " " + amount + "): " + nz(fromValue) + " -> " + newNbv);
     }
 
     protected void rollbackAssetValue(ErpAstValueAdjustment adjustment) {
@@ -304,7 +304,7 @@ public class ErpAstValueAdjustmentProcessor {
         auditRecorder.record(asset, ErpAstDaoConstants.AUDIT_EVENT_TYPE_VALUATION,
                 new ErpAstAssetAuditRecorder.Before(asset.getStatus(), asset.getDepartmentId(), asset.getLocationId(), asset.getEmployeeId()),
                 "ErpAstValueAdjustment", adjustment.getId(),
-                "价值调整冲销（" + type + " " + amount + "）：" + nz(fromValue) + " → " + restoredNbv);
+                "Value adjustment reversal (" + type + " " + amount + "): " + nz(fromValue) + " -> " + restoredNbv);
     }
 
     protected boolean shouldAdjustDepreciationBase(String adjustmentType) {

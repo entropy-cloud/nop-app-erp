@@ -86,29 +86,29 @@ public class DisposalAcctDocProvider implements IErpFinAcctDocProvider {
         // ---- Step1：结转原值 + 累计折旧至 1606 固定资产清理 ----
         // 借：累计折旧（结转）
         if (accumDep.signum() != 0) {
-            facts.add(fact(accumSubject, "累计折旧", DC_DEBIT, accumDep, event, ACCOUNT_KEY_ACCUMULATED_DEPRECIATION));
+            facts.add(fact(accumSubject, null, DC_DEBIT, accumDep, event, ACCOUNT_KEY_ACCUMULATED_DEPRECIATION));
         }
         // 借：固定资产清理（净值结转）
         if (net.signum() > 0) {
-            facts.add(fact(SUBJECT_DISPOSAL_CLEARING, "固定资产清理", DC_DEBIT, net, event, ACCOUNT_KEY_DISPOSAL_CLEARING));
+            facts.add(fact(SUBJECT_DISPOSAL_CLEARING, null, DC_DEBIT, net, event, ACCOUNT_KEY_DISPOSAL_CLEARING));
         }
         // 贷：固定资产（结转原值）
-        facts.add(fact(fixedAssetSubject, "固定资产", DC_CREDIT, original, event, ACCOUNT_KEY_FIXED_ASSET));
+        facts.add(fact(fixedAssetSubject, null, DC_CREDIT, original, event, ACCOUNT_KEY_FIXED_ASSET));
         // ---- Step2：处置收入入 1606 + 损益从 1606 结转至 6711/6301 ----
         // 借：银行存款（处置收入，>0 时）
         if (disposalAmount.signum() > 0) {
-            facts.add(fact(SUBJECT_BANK_DEPOSIT, "银行存款", DC_DEBIT, disposalAmount, event, ACCOUNT_KEY_BANK_DEPOSIT));
-            facts.add(fact(SUBJECT_DISPOSAL_CLEARING, "固定资产清理", DC_CREDIT, disposalAmount, event,
+            facts.add(fact(SUBJECT_BANK_DEPOSIT, null, DC_DEBIT, disposalAmount, event, ACCOUNT_KEY_BANK_DEPOSIT));
+            facts.add(fact(SUBJECT_DISPOSAL_CLEARING, null, DC_CREDIT, disposalAmount, event,
                     ACCOUNT_KEY_DISPOSAL_CLEARING));
         }
         // 清理损益（gainLoss 正=收益贷，负=损失借；1606 网为零——借 1606(收益) / 贷 1606(损失) 对冲结转）
         if (gainLoss.signum() > 0) {
-            facts.add(fact(SUBJECT_DISPOSAL_CLEARING, "固定资产清理", DC_DEBIT, gainLoss, event,
+            facts.add(fact(SUBJECT_DISPOSAL_CLEARING, null, DC_DEBIT, gainLoss, event,
                     ACCOUNT_KEY_DISPOSAL_CLEARING));
-            facts.add(fact(gainLossSubject, "营业外收入", DC_CREDIT, gainLoss, event, ACCOUNT_KEY_NON_OPERATING_EXPENSE));
+            facts.add(fact(gainLossSubject, null, DC_CREDIT, gainLoss, event, ACCOUNT_KEY_NON_OPERATING_EXPENSE));
         } else if (gainLoss.signum() < 0) {
-            facts.add(fact(gainLossSubject, "营业外支出", DC_DEBIT, gainLoss.negate(), event, ACCOUNT_KEY_NON_OPERATING_EXPENSE));
-            facts.add(fact(SUBJECT_DISPOSAL_CLEARING, "固定资产清理", DC_CREDIT, gainLoss.negate(), event,
+            facts.add(fact(gainLossSubject, null, DC_DEBIT, gainLoss.negate(), event, ACCOUNT_KEY_NON_OPERATING_EXPENSE));
+            facts.add(fact(SUBJECT_DISPOSAL_CLEARING, null, DC_CREDIT, gainLoss.negate(), event,
                     ACCOUNT_KEY_DISPOSAL_CLEARING));
         }
         return facts;
@@ -118,6 +118,7 @@ public class DisposalAcctDocProvider implements IErpFinAcctDocProvider {
                              PostingEvent event, String accountKey) {
         VoucherFact fact = new VoucherFact();
         fact.setSubjectCode(subjectCode);
+        // subjectName=null 时由 ErpFinPostingProcessor#resolveSubjects 回填 master-data 字典科目名
         fact.setSubjectName(subjectName);
         fact.setDcDirection(dcDirection);
         fact.setAmount(amount);

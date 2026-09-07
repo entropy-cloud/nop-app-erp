@@ -44,11 +44,11 @@ public class AssetSplitAcctDocProvider implements IErpFinAcctDocProvider {
     public List<VoucherFact> createFacts(PostingEvent event, AcctDocContext ctx) {
         List<VoucherFact> facts = new ArrayList<>();
         for (Map<String, Object> row : readLines(event, ErpAstConstants.BILL_DATA_DEBIT_LINES)) {
-            facts.add(fact(readCode(row, "1601"), readName(row, "固定资产"), DC_DEBIT, readAmount(row), event,
+            facts.add(fact(readCode(row, "1601"), readName(row, null), DC_DEBIT, readAmount(row), event,
                     ACCOUNT_KEY_FIXED_ASSET));
         }
         for (Map<String, Object> row : readLines(event, ErpAstConstants.BILL_DATA_CREDIT_LINES)) {
-            facts.add(fact(readCode(row, "1601"), readName(row, "固定资产"), DC_CREDIT, readAmount(row), event,
+            facts.add(fact(readCode(row, "1601"), readName(row, null), DC_CREDIT, readAmount(row), event,
                     ACCOUNT_KEY_FIXED_ASSET));
         }
         return facts;
@@ -67,6 +67,7 @@ public class AssetSplitAcctDocProvider implements IErpFinAcctDocProvider {
                              PostingEvent event, String accountKey) {
         VoucherFact fact = new VoucherFact();
         fact.setSubjectCode(subjectCode);
+        // subjectName=null 时由 ErpFinPostingProcessor#resolveSubjects 回填 master-data 字典科目名
         fact.setSubjectName(subjectName);
         fact.setDcDirection(dcDirection);
         fact.setAmount(amount);

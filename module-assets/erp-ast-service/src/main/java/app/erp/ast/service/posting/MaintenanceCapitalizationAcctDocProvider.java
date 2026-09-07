@@ -62,11 +62,11 @@ public class MaintenanceCapitalizationAcctDocProvider implements IErpFinAcctDocP
         String bankSubject = readCode(event, ErpAstConstants.BILL_DATA_MAINTENANCE_BANK_SUBJECT_CODE, SUBJECT_BANK);
 
         List<VoucherFact> facts = new ArrayList<>(2);
-        facts.add(fact(fixedAssetSubject, "固定资产", DC_DEBIT, amount, event, ACCOUNT_KEY_FIXED_ASSET));
+        facts.add(fact(fixedAssetSubject, null, DC_DEBIT, amount, event, ACCOUNT_KEY_FIXED_ASSET));
         if (linkedVisit) {
-            facts.add(fact(clearingSubject, "维修中转清算", DC_CREDIT, amount, event, ACCOUNT_KEY_MAINTENANCE_CLEARING));
+            facts.add(fact(clearingSubject, null, DC_CREDIT, amount, event, ACCOUNT_KEY_MAINTENANCE_CLEARING));
         } else {
-            facts.add(fact(bankSubject, "银行存款", DC_CREDIT, amount, event, ACCOUNT_KEY_BANK_DEPOSIT));
+            facts.add(fact(bankSubject, null, DC_CREDIT, amount, event, ACCOUNT_KEY_BANK_DEPOSIT));
         }
         return facts;
     }
@@ -75,6 +75,7 @@ public class MaintenanceCapitalizationAcctDocProvider implements IErpFinAcctDocP
                              PostingEvent event, String accountKey) {
         VoucherFact fact = new VoucherFact();
         fact.setSubjectCode(subjectCode);
+        // subjectName=null 时由 ErpFinPostingProcessor#resolveSubjects 回填 master-data 字典科目名
         fact.setSubjectName(subjectName);
         fact.setDcDirection(dcDirection);
         fact.setAmount(amount);
