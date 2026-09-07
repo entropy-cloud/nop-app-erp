@@ -76,7 +76,7 @@ docs/audits/check/<YYYY-MM-DD-HHmm>-ai-check-r2/
 | Lesson 08（plan closure without independent audit）| 独立草案审查 + 独立 closure audit 是 mission 收官硬约束 |
 | Lesson 11（index status not backfilled after fix）| finding 状态回写是 mission 收口必要动作 |
 | Lesson 12（documented simplification abuse）| 第三路 deferred 扫描揭示的"已满足 deferred"可能正是 documented simplification 的根因 |
-| Lesson 15（xbiz XScript 无法 try/catch）| plan-level 实施受 plan-guide 约束 |
+| Lesson 15（xbiz XScript 编排下沉 Java Bean）| plan-level 实施受 plan-guide 约束 |
 | Lesson 16（跨仓库 schema 契约验证）| 第二路索引中需消费端源码验证 |
 
 ## 关键陷阱（执行期已验证）

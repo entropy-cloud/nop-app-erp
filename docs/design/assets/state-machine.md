@@ -241,7 +241,7 @@ Movement 审批状态逻辑原 100% 内联在 `ErpAstMovement.xbiz` 的 `<source
 - docStatus 防御守卫 → `documentStateMachine.isCancelled(entity.docStatus)`（boolean，xbiz 保留领域码 `nop.err.wf.approve.doc-cancelled` 抛出）。
 - **保留**：`<auth permissions>` 声明、approvedBy/approvedAt 置位与置空、`<x:extends>` 继承结构。
 
-> **错误码迁移说明（契约 §7）**：approveStatus 非法边由 Bean 抛 common 层码（`nop.err.erp.common.illegal-status-transition`，携带 action/currentStatus 元数据）；Movement 无 Processor 层做领域码映射（XScript 不支持 try-catch），故 common 码直接传播。doc-cancelled 守卫经 `isCancelled()` boolean helper 委托，xbiz 保留领域码 `nop.err.wf.approve.doc-cancelled`（错误码对外不变）。
+> **错误码迁移说明（契约 §7）**：approveStatus 非法边由 Bean 抛 common 层码（`nop.err.erp.common.illegal-status-transition`，携带 action/currentStatus 元数据）；Movement 无 Processor 层做领域码映射（XScript 现已支持 try-catch（plan 2258），此处下沉 Bean 映射是架构偏好），故 common 码直接传播。doc-cancelled 守卫经 `isCancelled()` boolean helper 委托，xbiz 保留领域码 `nop.err.wf.approve.doc-cancelled`（错误码对外不变）。
 
 ## 适用对象三：资产价值调整文档双轴（Disposal / Capitalization / ValueAdjustment）
 
