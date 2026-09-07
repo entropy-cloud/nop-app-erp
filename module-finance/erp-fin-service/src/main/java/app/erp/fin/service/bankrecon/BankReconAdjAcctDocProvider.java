@@ -76,7 +76,7 @@ public class BankReconAdjAcctDocProvider implements IErpFinAcctDocProvider {
         f.setAmount(amount);
         f.setAccountKey(accountKey);
         f.setAmountKey(null);
-        f.setMemo("银行对账未达账项调整");
+        f.setMemo("Bank reconciliation adjusting entry");
         f.setBusinessType(ErpFinBusinessType.BANK_RECON_ADJ.name());
         return f;
     }

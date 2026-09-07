@@ -139,7 +139,7 @@ public class ProfitLossClosingService {
         }
         // 有损益类发生额才解析本年利润科目（无发生额的干净期间无需配置 CYP）。
         ErpMdSubject cypSubject = requireSubject(ErpFinConstants.CONFIG_CURRENT_YEAR_PROFIT_SUBJECT_CODE,
-                "本年利润");
+                "Current-year profit");
         // 本年利润：贷方=收入合计，借方=费用+成本合计。
         if (totalIncome.compareTo(BigDecimal.ZERO) != 0) {
             plLines.add(new Line(cypSubject.getId(), cypSubject.getCode(), cypSubject.getName(),
@@ -155,7 +155,7 @@ public class ProfitLossClosingService {
         return CloseVoucherWriter.writeVoucher(daoProvider, "CLP", BILL_CODE_PREFIX + period.getCode(),
                 ErpFinBusinessType.PERIOD_CLOSE.name(), ErpFinBusinessType.PERIOD_CLOSE.name(),
                 orgId, acctSchemaId, period.getId(), functionalCurrencyId, BigDecimal.ONE,
-                period.getEndDate(), plLines, "期末损益结转");
+                period.getEndDate(), plLines, "Period-end P&L closing");
     }
 
     private ErpMdSubject requireSubject(String configKey, String label) {

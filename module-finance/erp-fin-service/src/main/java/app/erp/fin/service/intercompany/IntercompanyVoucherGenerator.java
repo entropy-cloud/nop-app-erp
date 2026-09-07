@@ -87,7 +87,7 @@ public class IntercompanyVoucherGenerator {
                 DEFAULT_REVENUE_SUBJECT_CODE);
         String arVoucherId = writeIntercompanyVoucher(transferOrderCode, ErpFinConstants.INTERCOMPANY_SALE_BILL_TYPE,
                 fromOrgLegalId, fromAcctSchemaId, periodId, currencyId, amount,
-                arSubjectCode, "内部应收", revenueSubjectCode, "内部销售收入");
+                arSubjectCode, "Intercompany AR", revenueSubjectCode, "Intercompany revenue"); // 记账摘要 memo 兼科目名兜底
         if (arVoucherId != null) {
             voucherIds.add(arVoucherId);
         }
@@ -101,7 +101,7 @@ public class IntercompanyVoucherGenerator {
                 DEFAULT_AP_SUBJECT_CODE);
         String apVoucherId = writeIntercompanyVoucher(transferOrderCode, ErpFinConstants.INTERCOMPANY_PURCHASE_BILL_TYPE,
                 toOrgLegalId, toAcctSchemaId, periodId, currencyId, amount,
-                costSubjectCode, "内部采购成本", apSubjectCode, "内部应付");
+                costSubjectCode, "Intercompany cost", apSubjectCode, "Intercompany AP"); // 记账摘要 memo 兼科目名兜底
         if (apVoucherId != null) {
             voucherIds.add(apVoucherId);
         }
@@ -236,7 +236,7 @@ public class IntercompanyVoucherGenerator {
             line.setAcctSchemaId(ol.getAcctSchemaId());
             line.setOrgId(ol.getOrgId());
             line.setBusinessType(ol.getBusinessType());
-            line.setMemo("跨法人内部交易红冲");
+            line.setMemo("Intercompany reversal");
             lineDao.saveEntity(line);
         }
 

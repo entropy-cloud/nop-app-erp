@@ -66,8 +66,8 @@ public class NotesReceivableAcctDocProvider implements IErpFinAcctDocProvider {
         switch (event.getBusinessType()) {
             case NOTES_RECEIVABLE_RECEIVED: {
                 BigDecimal face = readDecimal(event, ErpFinConstants.BILL_DATA_FACE_AMOUNT);
-                facts.add(fact(SUBJECT_NOTES_RECEIVABLE, "应收票据", DC_DEBIT, face, event, ACCOUNT_KEY_NOTES_RECEIVABLE));
-                VoucherFact cr = fact(SUBJECT_ACCOUNTS_RECEIVABLE, "应收账款", DC_CREDIT, face, event, ACCOUNT_KEY_AR);
+                facts.add(fact(SUBJECT_NOTES_RECEIVABLE, null, DC_DEBIT, face, event, ACCOUNT_KEY_NOTES_RECEIVABLE));
+                VoucherFact cr = fact(SUBJECT_ACCOUNTS_RECEIVABLE, null, DC_CREDIT, face, event, ACCOUNT_KEY_AR);
                 cr.setPartnerId(partnerId);
                 facts.add(cr);
                 break;
@@ -78,34 +78,34 @@ public class NotesReceivableAcctDocProvider implements IErpFinAcctDocProvider {
                 BigDecimal discountInterest = readDecimal(event, ErpFinConstants.BILL_DATA_DISCOUNT_INTEREST);
                 BigDecimal netAmount = readDecimal(event, ErpFinConstants.BILL_DATA_NET_AMOUNT);
                 BigDecimal fx = readDecimal(event, ErpFinConstants.BILL_DATA_EXCHANGE_GAIN_LOSS);
-                facts.add(fact(SUBJECT_BANK_DEPOSIT, "银行存款", DC_DEBIT, netAmount, event, ACCOUNT_KEY_BANK_DEPOSIT));
-                facts.add(fact(SUBJECT_FINANCIAL_EXPENSE_INTEREST, "财务费用-利息支出", DC_DEBIT, discountInterest, event,
+                facts.add(fact(SUBJECT_BANK_DEPOSIT, null, DC_DEBIT, netAmount, event, ACCOUNT_KEY_BANK_DEPOSIT));
+                facts.add(fact(SUBJECT_FINANCIAL_EXPENSE_INTEREST, null, DC_DEBIT, discountInterest, event,
                         ACCOUNT_KEY_FINANCIAL_EXPENSE));
                 if (fx.signum() != 0) {
                     if (fx.signum() > 0) {
-                        facts.add(fact(SUBJECT_EXCHANGE_GAIN_LOSS, "汇兑损益", DC_DEBIT, fx, event,
+                        facts.add(fact(SUBJECT_EXCHANGE_GAIN_LOSS, null, DC_DEBIT, fx, event,
                                 ACCOUNT_KEY_EXCHANGE_GAIN_LOSS));
                     } else {
-                        facts.add(fact(SUBJECT_EXCHANGE_GAIN_LOSS, "汇兑损益", DC_CREDIT, fx.negate(), event,
+                        facts.add(fact(SUBJECT_EXCHANGE_GAIN_LOSS, null, DC_CREDIT, fx.negate(), event,
                                 ACCOUNT_KEY_EXCHANGE_GAIN_LOSS));
                     }
                 }
-                facts.add(fact(SUBJECT_NOTES_RECEIVABLE, "应收票据", DC_CREDIT, face, event, ACCOUNT_KEY_NOTES_RECEIVABLE));
+                facts.add(fact(SUBJECT_NOTES_RECEIVABLE, null, DC_CREDIT, face, event, ACCOUNT_KEY_NOTES_RECEIVABLE));
                 break;
             }
             case NOTES_RECEIVABLE_ENDORSED: {
                 BigDecimal face = readDecimal(event, ErpFinConstants.BILL_DATA_FACE_AMOUNT);
-                VoucherFact dr = fact(SUBJECT_ACCOUNTS_PAYABLE, "应付账款", DC_DEBIT, face, event,
+                VoucherFact dr = fact(SUBJECT_ACCOUNTS_PAYABLE, null, DC_DEBIT, face, event,
                         ACCOUNT_KEY_ACCOUNTS_PAYABLE);
                 dr.setPartnerId(partnerId);
                 facts.add(dr);
-                facts.add(fact(SUBJECT_NOTES_RECEIVABLE, "应收票据", DC_CREDIT, face, event, ACCOUNT_KEY_NOTES_RECEIVABLE));
+                facts.add(fact(SUBJECT_NOTES_RECEIVABLE, null, DC_CREDIT, face, event, ACCOUNT_KEY_NOTES_RECEIVABLE));
                 break;
             }
             case NOTES_RECEIVABLE_COLLECTION: {
                 BigDecimal face = readDecimal(event, ErpFinConstants.BILL_DATA_FACE_AMOUNT);
-                facts.add(fact(SUBJECT_BANK_DEPOSIT, "银行存款", DC_DEBIT, face, event, ACCOUNT_KEY_BANK_DEPOSIT));
-                facts.add(fact(SUBJECT_NOTES_RECEIVABLE, "应收票据", DC_CREDIT, face, event, ACCOUNT_KEY_NOTES_RECEIVABLE));
+                facts.add(fact(SUBJECT_BANK_DEPOSIT, null, DC_DEBIT, face, event, ACCOUNT_KEY_BANK_DEPOSIT));
+                facts.add(fact(SUBJECT_NOTES_RECEIVABLE, null, DC_CREDIT, face, event, ACCOUNT_KEY_NOTES_RECEIVABLE));
                 break;
             }
             default:
@@ -118,6 +118,7 @@ public class NotesReceivableAcctDocProvider implements IErpFinAcctDocProvider {
                              PostingEvent event, String accountKey) {
         VoucherFact fact = new VoucherFact();
         fact.setSubjectCode(subjectCode);
+        // subjectName=null 时由 ErpFinPostingProcessor#resolveSubjects 回填 master-data 字典科目名
         fact.setSubjectName(subjectName);
         fact.setDcDirection(dcDirection);
         fact.setAmount(amount);

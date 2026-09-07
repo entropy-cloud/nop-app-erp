@@ -98,13 +98,13 @@ public class AnnualCloseService {
             return null;
         }
         // 本年利润科目净余额 = Σ(credit − debit) over 本年度已过账非红冲凭证分录（按账套过滤，P1-CK-fin4-002）。
-        ErpMdSubject cypSubject = requireSubject(ErpFinConstants.CONFIG_CURRENT_YEAR_PROFIT_SUBJECT_CODE, "本年利润");
+        ErpMdSubject cypSubject = requireSubject(ErpFinConstants.CONFIG_CURRENT_YEAR_PROFIT_SUBJECT_CODE, "Current-year profit");
         BigDecimal cypNet = subjectNetForYear(cypSubject.getId(), year, acctSchemaId);
         if (cypNet.compareTo(BigDecimal.ZERO) == 0) {
             // 本年利润已为零（无发生或已结转），无需结转。
             return null;
         }
-        ErpMdSubject retainedSubject = requireSubject(ErpFinConstants.CONFIG_RETAINED_EARNINGS_SUBJECT_CODE, "未分配利润");
+        ErpMdSubject retainedSubject = requireSubject(ErpFinConstants.CONFIG_RETAINED_EARNINGS_SUBJECT_CODE, "Retained earnings");
 
         List<Line> lines = new ArrayList<>();
         // cypNet > 0 表示贷方余额（净利润）：借本年利润 / 贷未分配利润。
@@ -127,7 +127,7 @@ public class AnnualCloseService {
                 ErpFinBusinessType.PROFIT_TO_RETAINED_EARNINGS.name(),
                 ErpFinBusinessType.PROFIT_TO_RETAINED_EARNINGS.name(),
                 period.getOrgId(), acctSchemaId, period.getId(), functionalCurrencyId, BigDecimal.ONE,
-                period.getEndDate(), lines, "年度结转：本年利润→未分配利润");
+                period.getEndDate(), lines, "Annual close: current-year profit to retained earnings");
     }
 
     /**

@@ -167,7 +167,7 @@ public class CommitmentVoucherGenerator {
         line.setAcctSchemaId(acctSchemaId);
         line.setOrgId(orgId);
         line.setBusinessType(billType);
-        line.setMemo(isReversal ? "承付释放红冲" : "订单承付占用");
+        line.setMemo(isReversal ? "Commitment release reversal" : "Order commitment occupancy");
         line.setCostCenterId(costCenterId);
         lineDao.saveEntity(line);
 
@@ -239,7 +239,7 @@ public class CommitmentVoucherGenerator {
             line.setAcctSchemaId(ol.getAcctSchemaId());
             line.setOrgId(ol.getOrgId());
             line.setBusinessType(billType);
-            line.setMemo("承付释放红冲");
+            line.setMemo("Commitment release reversal");
             line.setCostCenterId(ol.getCostCenterId());
             lineDao.saveEntity(line);
         }

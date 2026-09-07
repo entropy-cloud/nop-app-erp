@@ -335,10 +335,10 @@ public class TestErpFinReportRendering extends JunitAutoTestCase {
             String section = (String) r.get("section");
             String label = String.valueOf(r.get("label"));
             if ("module-status".equals(section)) hasModuleStatus = true;
-            if ("voucher".equals(section) && label.contains("损益结转")) {
+            if ("voucher".equals(section) && label.contains("P&L closing")) {
                 hasPeriodCloseVoucher = Integer.valueOf(1).equals(asInt(r.get("value")));
             }
-            if ("voucher".equals(section) && label.contains("汇兑重估")) {
+            if ("voucher".equals(section) && label.contains("FX revaluation")) {
                 hasFxRevalVoucher = Integer.valueOf(1).equals(asInt(r.get("value")));
             }
         }

@@ -53,16 +53,16 @@ public class NotesPayableAcctDocProvider implements IErpFinAcctDocProvider {
         List<VoucherFact> facts = new ArrayList<>();
         switch (event.getBusinessType()) {
             case NOTES_PAYABLE_ISSUED: {
-                VoucherFact dr = fact(SUBJECT_ACCOUNTS_PAYABLE, "应付账款", DC_DEBIT, face, event,
+                VoucherFact dr = fact(SUBJECT_ACCOUNTS_PAYABLE, null, DC_DEBIT, face, event,
                         ACCOUNT_KEY_ACCOUNTS_PAYABLE);
                 dr.setPartnerId(partnerId);
                 facts.add(dr);
-                facts.add(fact(SUBJECT_NOTES_PAYABLE, "应付票据", DC_CREDIT, face, event, ACCOUNT_KEY_NOTES_PAYABLE));
+                facts.add(fact(SUBJECT_NOTES_PAYABLE, null, DC_CREDIT, face, event, ACCOUNT_KEY_NOTES_PAYABLE));
                 break;
             }
             case NOTES_PAYABLE_HONORED: {
-                facts.add(fact(SUBJECT_NOTES_PAYABLE, "应付票据", DC_DEBIT, face, event, ACCOUNT_KEY_NOTES_PAYABLE));
-                facts.add(fact(SUBJECT_BANK_DEPOSIT, "银行存款", DC_CREDIT, face, event, ACCOUNT_KEY_BANK_DEPOSIT));
+                facts.add(fact(SUBJECT_NOTES_PAYABLE, null, DC_DEBIT, face, event, ACCOUNT_KEY_NOTES_PAYABLE));
+                facts.add(fact(SUBJECT_BANK_DEPOSIT, null, DC_CREDIT, face, event, ACCOUNT_KEY_BANK_DEPOSIT));
                 break;
             }
             default:
@@ -75,6 +75,7 @@ public class NotesPayableAcctDocProvider implements IErpFinAcctDocProvider {
                              PostingEvent event, String accountKey) {
         VoucherFact fact = new VoucherFact();
         fact.setSubjectCode(subjectCode);
+        // subjectName=null 时由 ErpFinPostingProcessor#resolveSubjects 回填 master-data 字典科目名
         fact.setSubjectName(subjectName);
         fact.setDcDirection(dcDirection);
         fact.setAmount(amount);

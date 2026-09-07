@@ -394,11 +394,11 @@ public class ErpFinReportBizModel {
                 }
             }
             List<Map<String, Object>> rows = new ArrayList<>();
-            rows.add(indirectRow(ErpFinConstants.CASH_FLOW_INDIRECT_NET_PROFIT, "净利润", netProfit));
-            rows.add(indirectRow(ErpFinConstants.CASH_FLOW_INDIRECT_NON_CASH, "非现金项目", nonCash));
-            rows.add(indirectRow(ErpFinConstants.CASH_FLOW_INDIRECT_WORKING_CAPITAL, "营运资金变动", workingCapital));
+            rows.add(indirectRow(ErpFinConstants.CASH_FLOW_INDIRECT_NET_PROFIT, "Net profit", netProfit));
+            rows.add(indirectRow(ErpFinConstants.CASH_FLOW_INDIRECT_NON_CASH, "Non-cash items", nonCash));
+            rows.add(indirectRow(ErpFinConstants.CASH_FLOW_INDIRECT_WORKING_CAPITAL, "Working capital changes", workingCapital));
             rows.add(indirectRow(ErpFinConstants.CASH_FLOW_INDIRECT_NET,
-                    "经营活动现金流量净额(间接法)", netProfit.add(nonCash).add(workingCapital)));
+                    "Net operating cash flow (indirect)", netProfit.add(nonCash).add(workingCapital)));
             return rows;
         });
     }
@@ -436,26 +436,26 @@ public class ErpFinReportBizModel {
 
             ErpFinAccountingPeriod period = daoProvider.daoFor(ErpFinAccountingPeriod.class).getEntityById(periodId);
             if (period != null) {
-                rows.add(metaRow("period", "期间编码", period.getCode()));
-                rows.add(metaRow("period", "年度/月份", period.getYear() + "-" + period.getMonth()));
-                rows.add(metaRow("period", "期间状态", period.getStatus()));
+                rows.add(metaRow("period", "Period code", period.getCode()));
+                rows.add(metaRow("period", "Year/Month", period.getYear() + "-" + period.getMonth()));
+                rows.add(metaRow("period", "Period status", period.getStatus()));
             }
 
             ErpFinAccountingPeriodStatus st = loadPeriodStatus(periodId);
         if (st != null) {
-            rows.add(metaRow("module-status", "AR 模块", st.getArStatus()));
-            rows.add(metaRow("module-status", "AP 模块", st.getApStatus()));
-            rows.add(metaRow("module-status", "INV 模块", st.getInvStatus()));
-            rows.add(metaRow("module-status", "GL 模块", st.getGlStatus()));
-            rows.add(metaRow("module-status", "AST 模块", st.getAssetStatus()));
-            rows.add(metaRow("voucher", "凭证总数", st.getTotalVouchers()));
-            rows.add(metaRow("voucher", "已过账凭证", st.getPostedVouchers()));
-            rows.add(metaRow("voucher", "未过账凭证", st.getUnpostedVouchers()));
+            rows.add(metaRow("module-status", "AR module", st.getArStatus()));
+            rows.add(metaRow("module-status", "AP module", st.getApStatus()));
+            rows.add(metaRow("module-status", "INV module", st.getInvStatus()));
+            rows.add(metaRow("module-status", "GL module", st.getGlStatus()));
+            rows.add(metaRow("module-status", "AST module", st.getAssetStatus()));
+            rows.add(metaRow("voucher", "Total vouchers", st.getTotalVouchers()));
+            rows.add(metaRow("voucher", "Posted vouchers", st.getPostedVouchers()));
+            rows.add(metaRow("voucher", "Unposted vouchers", st.getUnpostedVouchers()));
         }
 
-        rows.add(metaRow("voucher", "损益结转凭证数",
+        rows.add(metaRow("voucher", "P&L closing vouchers",
                 countBillR(periodId, ErpFinBusinessType.PERIOD_CLOSE.name())));
-        rows.add(metaRow("voucher", "汇兑重估凭证数",
+        rows.add(metaRow("voucher", "FX revaluation vouchers",
                 countBillR(periodId, ErpFinBusinessType.EXCHANGE_GAIN_LOSS.name())));
 
         return rows;

@@ -210,7 +210,7 @@ public abstract class AbstractErpFinReconciliationProcessor {
                 ErpFinBusinessType.EXCHANGE_GAIN_LOSS.name(), ErpFinBusinessType.EXCHANGE_GAIN_LOSS.name(),
                 head.getOrgId(), head.getAcctSchemaId(), resolvePeriodId(head.getBusinessDate()), head.getCurrencyId(),
                 head.getExchangeRate() != null ? head.getExchangeRate() : BigDecimal.ONE,
-                head.getBusinessDate(), lines, "核销已实现汇兑损益");
+                head.getBusinessDate(), lines, "Realized FX gain/loss settled");
     }
 
     /** 红冲核销汇兑损益凭证（若存在）。无 FX 凭证时静默跳过（兼容 config 关闭或差额=0 场景）。 */

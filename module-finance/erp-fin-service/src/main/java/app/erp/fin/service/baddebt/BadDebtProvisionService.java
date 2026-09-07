@@ -63,8 +63,8 @@ import static io.nop.api.core.beans.FilterBeans.or;
  */
 public class BadDebtProvisionService {
 
-    public static final String RESERVE_MEMO = "期末坏账准备计提";
-    public static final String RELEASE_MEMO = "期末坏账准备释放";
+    public static final String RESERVE_MEMO = "Period-end bad debt provision";
+    public static final String RELEASE_MEMO = "Period-end bad debt release";
 
     @Inject
     IDaoProvider daoProvider;
@@ -198,8 +198,8 @@ public class BadDebtProvisionService {
         int cmp = result.getRequiredProvision().compareTo(allowanceBalance);
         if (cmp > 0) {
             BigDecimal amount = result.getRequiredProvision().subtract(allowanceBalance);
-            ErpMdSubject expense = requireSubject(ErpFinConstants.CONFIG_BAD_DEBT_EXPENSE_SUBJECT_CODE, "信用减值损失");
-            ErpMdSubject allowance = requireSubject(ErpFinConstants.CONFIG_BAD_DEBT_ALLOWANCE_SUBJECT_CODE, "坏账准备");
+            ErpMdSubject expense = requireSubject(ErpFinConstants.CONFIG_BAD_DEBT_EXPENSE_SUBJECT_CODE, "Credit impairment loss");
+            ErpMdSubject allowance = requireSubject(ErpFinConstants.CONFIG_BAD_DEBT_ALLOWANCE_SUBJECT_CODE, "Bad debt allowance");
             List<Line> lines = Arrays.asList(
                     new Line(expense.getId(), expense.getCode(), expense.getName(),
                             ErpFinConstants.DC_DEBIT, amount, null),
@@ -214,8 +214,8 @@ public class BadDebtProvisionService {
             result.setVoucherId(voucherId);
         } else if (cmp < 0) {
             BigDecimal amount = allowanceBalance.subtract(result.getRequiredProvision());
-            ErpMdSubject expense = requireSubject(ErpFinConstants.CONFIG_BAD_DEBT_EXPENSE_SUBJECT_CODE, "信用减值损失");
-            ErpMdSubject allowance = requireSubject(ErpFinConstants.CONFIG_BAD_DEBT_ALLOWANCE_SUBJECT_CODE, "坏账准备");
+            ErpMdSubject expense = requireSubject(ErpFinConstants.CONFIG_BAD_DEBT_EXPENSE_SUBJECT_CODE, "Credit impairment loss");
+            ErpMdSubject allowance = requireSubject(ErpFinConstants.CONFIG_BAD_DEBT_ALLOWANCE_SUBJECT_CODE, "Bad debt allowance");
             List<Line> lines = Arrays.asList(
                     new Line(allowance.getId(), allowance.getCode(), allowance.getName(),
                             ErpFinConstants.DC_DEBIT, amount, null),

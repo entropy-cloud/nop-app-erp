@@ -439,7 +439,7 @@ public class ErpFinPostingProcessor {
         for (ErpFinReversalListenerRegistry.ListenerFailure f : failures) {
             String errorCode = StringHelper.isBlank(f.getErrorCode())
                     ? ErpFinPostingErrors.ERR_REVERSAL_LISTENER_FAILED.getErrorCode() : f.getErrorCode();
-            String errorMsg = "监听者=" + f.getListenerName() + "；" + (f.getErrorMessage() == null ? "" : f.getErrorMessage());
+            String errorMsg = "listener=" + f.getListenerName() + "; " + (f.getErrorMessage() == null ? "" : f.getErrorMessage());
             exceptionRecorder.record(run.traceId, billHeadCode, bizType, POSTING_TYPE_REVERSAL,
                     errorCode, errorMsg, ErpFinConstants.FAILED_STAGE_NOTIFY_REVERSAL_LISTENER,
                     null, null, null, null, null, null);

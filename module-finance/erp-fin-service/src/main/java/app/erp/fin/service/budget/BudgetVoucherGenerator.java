@@ -159,7 +159,7 @@ public class BudgetVoucherGenerator {
             line.setAcctSchemaId(scenario.getAcctSchemaId());
             line.setOrgId(scenario.getOrgId());
             line.setBusinessType(ErpFinConstants.BUDGET_VOUCHER_BILL_TYPE);
-            line.setMemo(isReversal ? "预算作废红冲" : "预算编制");
+            line.setMemo(isReversal ? "Budget reversal (red-letter)" : "Budget composition");
             line.setPartnerId(f.partnerId);
             line.setDepartmentId(f.departmentId);
             line.setProjectId(f.projectId);

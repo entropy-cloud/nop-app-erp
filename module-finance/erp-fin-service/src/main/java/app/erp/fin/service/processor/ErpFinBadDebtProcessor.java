@@ -205,7 +205,7 @@ public class ErpFinBadDebtProcessor {
                         ErpFinConstants.DC_DEBIT, amount, item.getPartnerId()),
                 new Line(ar.getId(), ar.getCode(), ar.getName(),
                         ErpFinConstants.DC_CREDIT, amount, item.getPartnerId()));
-        String voucherId = writeBadDebtVoucher(debt, item, ErpFinBusinessType.BAD_DEBT_WRITE_OFF, "坏账核销", lines);
+        String voucherId = writeBadDebtVoucher(debt, item, ErpFinBusinessType.BAD_DEBT_WRITE_OFF, "Bad debt write-off", lines);
         debt.setVoucherId(voucherId);
     }
 
@@ -237,7 +237,7 @@ public class ErpFinBadDebtProcessor {
                         ErpFinConstants.DC_DEBIT, amount, item.getPartnerId()),
                 new Line(allowance.getId(), allowance.getCode(), allowance.getName(),
                         ErpFinConstants.DC_CREDIT, amount, item.getPartnerId()));
-        String voucherId = writeBadDebtVoucher(debt, item, ErpFinBusinessType.BAD_DEBT_RECOVERY, "坏账收回恢复", lines);
+        String voucherId = writeBadDebtVoucher(debt, item, ErpFinBusinessType.BAD_DEBT_RECOVERY, "Bad debt recovery", lines);
         debt.setVoucherId(voucherId);
     }
 

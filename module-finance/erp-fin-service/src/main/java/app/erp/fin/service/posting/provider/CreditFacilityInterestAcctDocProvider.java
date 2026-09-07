@@ -54,9 +54,9 @@ public class CreditFacilityInterestAcctDocProvider implements IErpFinAcctDocProv
         }
         BigDecimal amount = readDecimal(event, "TOTAL");
         List<VoucherFact> facts = new ArrayList<>();
-        facts.add(fact(SUBJECT_FINANCIAL_EXPENSE_INTEREST, "财务费用-利息支出", DC_DEBIT, amount, event,
+        facts.add(fact(SUBJECT_FINANCIAL_EXPENSE_INTEREST, null, DC_DEBIT, amount, event,
                 ACCOUNT_KEY_FINANCIAL_EXPENSE));
-        facts.add(fact(SUBJECT_BANK_DEPOSIT, "银行存款", DC_CREDIT, amount, event, ACCOUNT_KEY_BANK_DEPOSIT));
+        facts.add(fact(SUBJECT_BANK_DEPOSIT, null, DC_CREDIT, amount, event, ACCOUNT_KEY_BANK_DEPOSIT));
         return facts;
     }
 
@@ -64,6 +64,7 @@ public class CreditFacilityInterestAcctDocProvider implements IErpFinAcctDocProv
                              PostingEvent event, String accountKey) {
         VoucherFact fact = new VoucherFact();
         fact.setSubjectCode(subjectCode);
+        // subjectName=null 时由 ErpFinPostingProcessor#resolveSubjects 回填 master-data 字典科目名
         fact.setSubjectName(subjectName);
         fact.setDcDirection(dcDirection);
         fact.setAmount(amount);

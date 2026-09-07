@@ -70,9 +70,9 @@ public class ErpFinApDocRuleClassifier implements IErpFinApDocClassifier {
         if (partner != null) {
             result.setPartnerId(partner.getId());
             score = score.add(SCORE_PARTNER);
-            result.setReason("供应商名「" + supplierName + "」匹配对应方 " + partner.getCode());
+            result.setReason("supplier name [" + supplierName + "] matched partner " + partner.getCode());
         } else {
-            result.setReason(StringHelper.isBlank(supplierName) ? "未识别供应商名" : "供应商名「" + supplierName + "」无匹配对应方");
+            result.setReason(StringHelper.isBlank(supplierName) ? "supplier name not recognized" : "supplier name [" + supplierName + "] has no matching partner");
         }
         result.setConfidence(score.min(BigDecimal.ONE).setScale(4, RoundingMode.HALF_UP));
         return result;

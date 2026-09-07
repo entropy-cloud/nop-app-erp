@@ -100,7 +100,7 @@ public class ErpFinConsolidationEliminationPostEliminationProcessor {
             debitLine.setSubjectId(debitSubject.getId());
         }
         debitLine.setSubjectCode(debitSubjectCode);
-        debitLine.setSubjectName("抵消-" + candidate.getEliminationType());
+        debitLine.setSubjectName("Elimination-" + candidate.getEliminationType());
         debitLine.setDcDirection(ErpFinConstants.DC_DEBIT);
         debitLine.setDebitAmount(amount);
         debitLine.setCreditAmount(BigDecimal.ZERO);
@@ -111,7 +111,7 @@ public class ErpFinConsolidationEliminationPostEliminationProcessor {
         debitLine.setAcctSchemaId("1");
         debitLine.setOrgId(candidate.getOrgId());
         debitLine.setBusinessType(ErpFinConstants.ELIMINATION_VOUCHER_BILL_TYPE);
-        debitLine.setMemo("合并抵消借方-" + candidate.getEliminationType());
+        debitLine.setMemo("Consolidation elimination debit - " + candidate.getEliminationType());
         lineDao.saveEntity(debitLine);
 
         // 贷方行
@@ -124,7 +124,7 @@ public class ErpFinConsolidationEliminationPostEliminationProcessor {
             creditLine.setSubjectId(creditSubject.getId());
         }
         creditLine.setSubjectCode(creditSubjectCode);
-        creditLine.setSubjectName("抵消对冲-" + candidate.getEliminationType());
+        creditLine.setSubjectName("Elimination offset-" + candidate.getEliminationType());
         creditLine.setDcDirection(ErpFinConstants.DC_CREDIT);
         creditLine.setDebitAmount(BigDecimal.ZERO);
         creditLine.setCreditAmount(amount);
@@ -135,7 +135,7 @@ public class ErpFinConsolidationEliminationPostEliminationProcessor {
         creditLine.setAcctSchemaId("1");
         creditLine.setOrgId(candidate.getOrgId());
         creditLine.setBusinessType(ErpFinConstants.ELIMINATION_VOUCHER_BILL_TYPE);
-        creditLine.setMemo("合并抵消贷方-" + candidate.getEliminationType());
+        creditLine.setMemo("Consolidation elimination credit - " + candidate.getEliminationType());
         lineDao.saveEntity(creditLine);
 
         // 业财回链

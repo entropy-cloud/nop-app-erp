@@ -62,28 +62,28 @@ public class EmployeeAdvanceAcctDocProvider implements IErpFinAcctDocProvider {
         String partnerId = asId(event.getBillData().get(ErpFinConstants.BILL_DATA_EMPLOYEE_ID));
 
         if (event.getBusinessType() == ErpFinBusinessType.EMPLOYEE_ADVANCE) {
-            VoucherFact debit = fact(SUBJECT_RECEIVABLE_EMPLOYEE, "其他应收款-员工预支", DC_DEBIT, amount, event,
+            VoucherFact debit = fact(SUBJECT_RECEIVABLE_EMPLOYEE, null, DC_DEBIT, amount, event,
                     ACCOUNT_KEY_EMPLOYEE_ADVANCE_RECEIVABLE);
             debit.setPartnerId(partnerId);
             facts.add(debit);
-            facts.add(fact(SUBJECT_BANK_DEPOSIT, "银行存款", DC_CREDIT, amount, event, ACCOUNT_KEY_BANK_DEPOSIT));
+            facts.add(fact(SUBJECT_BANK_DEPOSIT, null, DC_CREDIT, amount, event, ACCOUNT_KEY_BANK_DEPOSIT));
         } else { // EMPLOYEE_ADVANCE_SETTLE
             String settleType = asString(event.getBillData().get(ErpFinConstants.BILL_DATA_SETTLE_TYPE));
             if (ErpFinConstants.SETTLE_TYPE_CASH.equals(settleType)) {
                 // 现金还款路径（plan 2026-07-18-0718-2）：Dr 1002 银行存款 / Cr 1221 其他应收款-员工预支
-                VoucherFact debit = fact(SUBJECT_BANK_DEPOSIT, "银行存款", DC_DEBIT, amount, event, ACCOUNT_KEY_BANK_DEPOSIT);
+                VoucherFact debit = fact(SUBJECT_BANK_DEPOSIT, null, DC_DEBIT, amount, event, ACCOUNT_KEY_BANK_DEPOSIT);
                 facts.add(debit);
-                VoucherFact credit = fact(SUBJECT_RECEIVABLE_EMPLOYEE, "其他应收款-员工预支", DC_CREDIT, amount, event,
+                VoucherFact credit = fact(SUBJECT_RECEIVABLE_EMPLOYEE, null, DC_CREDIT, amount, event,
                         ACCOUNT_KEY_EMPLOYEE_ADVANCE_RECEIVABLE);
                 credit.setPartnerId(partnerId);
                 facts.add(credit);
             } else {
                 // 报销抵扣路径（默认 / OFFSET / null）：Dr 2241 应付-员工 / Cr 1221 应收-员工预支（既有行为不变）
-                VoucherFact debit = fact(SUBJECT_PAYABLE_EMPLOYEE, "其他应付款-员工", DC_DEBIT, amount, event,
+                VoucherFact debit = fact(SUBJECT_PAYABLE_EMPLOYEE, null, DC_DEBIT, amount, event,
                         ACCOUNT_KEY_EMPLOYEE_PAYABLE);
                 debit.setPartnerId(partnerId);
                 facts.add(debit);
-                VoucherFact credit = fact(SUBJECT_RECEIVABLE_EMPLOYEE, "其他应收款-员工预支", DC_CREDIT, amount, event,
+                VoucherFact credit = fact(SUBJECT_RECEIVABLE_EMPLOYEE, null, DC_CREDIT, amount, event,
                         ACCOUNT_KEY_EMPLOYEE_ADVANCE_RECEIVABLE);
                 credit.setPartnerId(partnerId);
                 facts.add(credit);
@@ -96,6 +96,7 @@ public class EmployeeAdvanceAcctDocProvider implements IErpFinAcctDocProvider {
                              PostingEvent event, String accountKey) {
         VoucherFact fact = new VoucherFact();
         fact.setSubjectCode(subjectCode);
+        // subjectName=null 时由 ErpFinPostingProcessor#resolveSubjects 回填 master-data 字典科目名
         fact.setSubjectName(subjectName);
         fact.setDcDirection(dcDirection);
         fact.setAmount(amount);

@@ -59,12 +59,12 @@ public class ExpenseClaimAcctDocProvider implements IErpFinAcctDocProvider {
                 ErpFinConstants.PAYMENT_MODE_OWN_ACCOUNT);
 
         List<VoucherFact> facts = new ArrayList<>();
-        facts.add(fact(SUBJECT_EXPENSE, "管理费用", DC_DEBIT, amountWithoutTax, event, ACCOUNT_KEY_ADMIN_EXPENSE));
-        facts.add(fact(SUBJECT_INPUT_VAT, "应交税费-进项税额", DC_DEBIT, tax, event, ACCOUNT_KEY_INPUT_VAT));
+        facts.add(fact(SUBJECT_EXPENSE, null, DC_DEBIT, amountWithoutTax, event, ACCOUNT_KEY_ADMIN_EXPENSE));
+        facts.add(fact(SUBJECT_INPUT_VAT, null, DC_DEBIT, tax, event, ACCOUNT_KEY_INPUT_VAT));
 
         boolean companyAccount = Objects.equals(paymentMode, ErpFinConstants.PAYMENT_MODE_COMPANY_ACCOUNT);
         String creditSubject = companyAccount ? SUBJECT_BANK_DEPOSIT : SUBJECT_PAYABLE_EMPLOYEE;
-        String creditName = companyAccount ? "银行存款" : "其他应付款-员工";
+        String creditName = null; // (a) 字典回归：置空由 resolveSubjects 回填 master-data 科目名
         String creditAccountKey = companyAccount ? ACCOUNT_KEY_BANK_DEPOSIT : ACCOUNT_KEY_EMPLOYEE_PAYABLE;
         VoucherFact credit = fact(creditSubject, creditName, DC_CREDIT, withTax, event, creditAccountKey);
         // 员工垫付挂应付-员工，携带往来维度（partnerId = employee.partnerId），便于辅助账与余额归集。
@@ -79,6 +79,7 @@ public class ExpenseClaimAcctDocProvider implements IErpFinAcctDocProvider {
                              PostingEvent event, String accountKey) {
         VoucherFact fact = new VoucherFact();
         fact.setSubjectCode(subjectCode);
+        // subjectName=null 时由 ErpFinPostingProcessor#resolveSubjects 回填 master-data 字典科目名
         fact.setSubjectName(subjectName);
         fact.setDcDirection(dcDirection);
         fact.setAmount(amount);

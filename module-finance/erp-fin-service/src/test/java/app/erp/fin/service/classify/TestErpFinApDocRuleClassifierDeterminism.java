@@ -119,7 +119,7 @@ public class TestErpFinApDocRuleClassifierDeterminism extends JunitAutoTestCase 
         assertNull(c.getDocType(), "excerpt null → docType null（非 \"null\" 字面路径）");
         assertNull(c.getPartnerId(), "supplierName null → 不匹配伙伴（\"null\" 守卫对齐）");
         assertEquals(0, BigDecimal.ZERO.compareTo(c.getConfidence()), "零要素 → 置信度 0");
-        assertTrue(c.getReason().contains("未识别供应商名"), "reason 不应含字面 null: " + c.getReason());
+        assertTrue(c.getReason().contains("supplier name not recognized"), "reason 不应含字面 null: " + c.getReason());
     }
 
     /** 超上限截断显式 WARN（可观测）；行为保持未匹配落人工门。 */

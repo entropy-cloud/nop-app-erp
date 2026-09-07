@@ -151,7 +151,7 @@ public class ExchangeRevaluationService {
         return CloseVoucherWriter.writeVoucher(daoProvider, "FXV", BILL_CODE_PREFIX + period.getCode(),
                 ErpFinBusinessType.EXCHANGE_GAIN_LOSS.name(), ErpFinBusinessType.EXCHANGE_GAIN_LOSS.name(),
                 period.getOrgId(), acctSchemaId, period.getId(), functionalCurrencyId, BigDecimal.ONE,
-                period.getEndDate(), lines, "期末汇兑重估-AR/AP");
+                period.getEndDate(), lines, "Period-end FX revaluation - AR/AP");
     }
 
     /**
@@ -212,7 +212,7 @@ public class ExchangeRevaluationService {
         return CloseVoucherWriter.writeVoucher(daoProvider, "FXB", BILL_CODE_PREFIX + period.getCode(),
                 ErpFinBusinessType.EXCHANGE_GAIN_LOSS.name(), ErpFinBusinessType.EXCHANGE_GAIN_LOSS.name(),
                 period.getOrgId(), acctSchemaId, period.getId(), functionalCurrencyId, BigDecimal.ONE,
-                period.getEndDate(), lines, "期末汇兑重估-银行存款");
+                period.getEndDate(), lines, "Period-end FX revaluation - bank deposit");
     }
 
     /**

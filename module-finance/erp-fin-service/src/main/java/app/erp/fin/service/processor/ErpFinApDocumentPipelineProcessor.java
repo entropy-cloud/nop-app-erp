@@ -162,7 +162,7 @@ public class ErpFinApDocumentPipelineProcessor {
         doc.setOrgId(orgId);
         doc.setRetryCount(0);
         docDao().saveEntity(doc);
-        log(doc.getId(), "RECEIVE", true, "接收上传文件 " + fileName + "（" + content.length + " 字节，fileId=" + fileId + "）");
+        log(doc.getId(), "RECEIVE", true, "received upload file " + fileName + " (" + content.length + " bytes, fileId=" + fileId + ")");
         return doc;
     }
 
@@ -182,7 +182,7 @@ public class ErpFinApDocumentPipelineProcessor {
             // 无文本（扫描件/图片或默认引擎不支持）→ 低置信挂人工门（AP-1，不可绕过）
             doc.setStatus("MANUAL_REVIEW");
             doc.setConfidence(BigDecimal.ZERO);
-            doc.setErrorMsg("文档无可抽取文本（扫描件或默认引擎不支持），需人工复核");
+            doc.setErrorMsg("No extractable text (scanned image or unsupported engine); manual review required");
             docDao().saveOrUpdateEntity(doc);
             log(doc.getId(), "MANUAL_REVIEW", true, doc.getErrorMsg());
             return doc;
@@ -191,7 +191,7 @@ public class ErpFinApDocumentPipelineProcessor {
         doc.setStatus("PARSED");
         doc.setErrorMsg(null);
         docDao().saveOrUpdateEntity(doc);
-        log(doc.getId(), "PARSE", true, "解析要素：invoiceNo=" + parseResult.get("invoiceNo")
+        log(doc.getId(), "PARSE", true, "parsed elements: invoiceNo=" + parseResult.get("invoiceNo")
                 + ", invoiceDate=" + parseResult.get("invoiceDate") + ", amount=" + parseResult.get("amount"));
 
         return classifyAndDraft(doc, parseResult, context);
@@ -216,7 +216,7 @@ public class ErpFinApDocumentPipelineProcessor {
                 ErpFinConfigs.DEFAULT_AP_DOC_CONFIDENCE_THRESHOLD);
         if (doc.getConfidence() == null || doc.getConfidence().doubleValue() < threshold) {
             doc.setStatus("MANUAL_REVIEW");
-            doc.setErrorMsg("分类置信度 " + doc.getConfidence() + " 低于阈值 " + threshold + "，挂人工复核");
+            doc.setErrorMsg("classification confidence " + doc.getConfidence() + " below threshold " + threshold + "; manual review");
             docDao().saveOrUpdateEntity(doc);
             log(doc.getId(), "MANUAL_REVIEW", true, doc.getErrorMsg());
             return doc;
@@ -246,7 +246,7 @@ public class ErpFinApDocumentPipelineProcessor {
             doc.setStatus("DRAFTED");
             doc.setErrorMsg(null);
             docDao().saveOrUpdateEntity(doc);
-            log(doc.getId(), "DRAFT", true, "草稿发票 " + invoice.getCode() + "（" + invoice.getId() + "，UNSUBMITTED）已生成，待人工确认后走既有三单匹配审核链路");
+            log(doc.getId(), "DRAFT", true, "draft invoice " + invoice.getCode() + " (" + invoice.getId() + ", UNSUBMITTED) generated; pending manual confirmation via existing three-way match approval chain");
             return doc;
         } catch (Exception e) {
             throw fail(doc, "DRAFT", rootMessage(e));
@@ -280,7 +280,7 @@ public class ErpFinApDocumentPipelineProcessor {
         data.put("totalAmount", total == null ? BigDecimal.ZERO : total);
         data.put("amountSource", amount == null ? BigDecimal.ZERO : amount);
         data.put("amountFunctional", amount == null ? BigDecimal.ZERO : amount);
-        data.put("remark", "E3.5 文档摄取管道自动草稿（文档 fileId=" + doc.getFileId() + "）");
+        data.put("remark", "E3.5 ingestion pipeline auto draft (doc fileId=" + doc.getFileId() + ")");
         if (doc.getOrgId() != null) {
             data.put("orgId", doc.getOrgId());
         }
@@ -306,7 +306,7 @@ public class ErpFinApDocumentPipelineProcessor {
         doc.setPartnerId(partnerId);
         doc.setConfidence(BigDecimal.ONE);
         docDao().saveOrUpdateEntity(doc);
-        log(doc.getId(), "MANUAL_REVIEW", true, "人工复核放行：partnerId=" + partnerId);
+        log(doc.getId(), "MANUAL_REVIEW", true, "manual review pass: partnerId=" + partnerId);
 
         Map<String, Object> parseResult = doc.getParseResult() == null ? Map.of()
                 : io.nop.core.lang.json.JsonTool.parseMap(doc.getParseResult());
@@ -326,7 +326,7 @@ public class ErpFinApDocumentPipelineProcessor {
         }
         doc.setRetryCount((doc.getRetryCount() == null ? 0 : doc.getRetryCount()) + 1);
         docDao().saveOrUpdateEntity(doc);
-        log(doc.getId(), "RETRY", true, "第 " + doc.getRetryCount() + " 次重试");
+        log(doc.getId(), "RETRY", true, "retry #" + doc.getRetryCount());
         return process(documentId, context);
     }
 
@@ -484,7 +484,7 @@ public class ErpFinApDocumentPipelineProcessor {
      * 分类为草稿前置步骤，失败即草稿无法生成，且不为部署异常新增专属面客码（复用裁决登记于计划执行注记）。
      */
     private RuntimeException fail(ErpFinApDocument doc, String step, String message) {
-        String errorMsg = "步骤 " + step + " 失败：" + message;
+        String errorMsg = "step " + step + " failed: " + message;
         persistFailure(doc.getId(), step, errorMsg);
         io.nop.api.core.exceptions.ErrorCode code = "PARSE".equals(step)
                 ? ErpFinErrors.ERR_AP_DOC_PARSE_FAILED
